@@ -1,4 +1,4 @@
-package dk.camelot64.kickc.ssa;
+package dk.camelot64.kickc.icl;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -11,7 +11,7 @@ public class SymbolManager {
    private Map<String, Symbol> symbols;
 
    private int intermediateVarCount = 0;
-   private int intermediateLabelCount = 0;
+   private int intermediateLabelCount = 1;
 
    public SymbolManager() {
       this.symbols = new LinkedHashMap<>();
@@ -45,15 +45,15 @@ public class SymbolManager {
       return symbol;
    }
 
-   public SSAJumpLabel newNamedJumpLabel(String name) {
+   public Symbol newNamedJumpLabel(String name) {
       Symbol symbol = addSymbol(name, SymbolType.LABEL, false);
-      return new SSAJumpLabel(name);
+      return symbol;
    }
 
-   public SSAJumpLabel newIntermediateJumpLabel() {
+   public Symbol newIntermediateJumpLabel() {
       String name = "@"+   intermediateLabelCount++;
-      addSymbol(name, SymbolType.LABEL, true);
-      return new SSAJumpLabel(name);
+      Symbol symbol = addSymbol(name, SymbolType.LABEL, true);
+      return symbol;
    }
 
    @Override
@@ -64,5 +64,9 @@ public class SymbolManager {
          out.append(symbol.toString() + "\n");
       }
       return out.toString();
+   }
+
+   public void remove(Symbol symbol) {
+      symbols.remove(symbol.getName());
    }
 }

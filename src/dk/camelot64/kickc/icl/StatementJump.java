@@ -1,4 +1,4 @@
-package dk.camelot64.kickc.ssa;
+package dk.camelot64.kickc.icl;
 
 /**
  * Single Static Assignment Form Statement unconditional jump.
@@ -6,20 +6,20 @@ package dk.camelot64.kickc.ssa;
  * <br>
  * <i> goto XX </i>
  */
-public class SSAStatementJump implements SSAStatement {
+public class StatementJump implements Statement {
 
-   private SSAJumpLabel destination;
+   private Symbol destination;
 
-   public SSAStatementJump(SSAJumpLabel destination) {
+   public StatementJump(Symbol destination) {
       this.destination = destination;
    }
 
-   public SSAJumpLabel getDestination() {
+   public Symbol getDestination() {
       return destination;
    }
 
    @Override
    public String toString() {
-      return "  "+"goto "+destination;
+      return "goto "+destination.getName();
    }
 }

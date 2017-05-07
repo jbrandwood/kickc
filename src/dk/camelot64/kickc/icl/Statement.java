@@ -1,10 +1,10 @@
-package dk.camelot64.kickc.ssa;
+package dk.camelot64.kickc.icl;
 
 /**
  * Single Static Assignment Form Statement.
  * Intermediate form used for compiler optimization.
  */
-public interface SSAStatement extends SSAFragment {
+public interface Statement {
 
 
 }

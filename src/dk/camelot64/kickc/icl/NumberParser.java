@@ -1,7 +1,7 @@
-package dk.camelot64.kickc.ssa;
+package dk.camelot64.kickc.icl;
 
 /** Parser for converting literal numbers to the corresponding Java Integer/Double */
-public class KickCNumberParser {
+public class NumberParser {
 
    public static Number parseLiteral(String literal) {
       boolean isInt = !literal.contains(".");

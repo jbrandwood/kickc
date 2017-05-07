@@ -1,21 +1,21 @@
-package dk.camelot64.kickc.ssa;
+package dk.camelot64.kickc.icl;
 
 /**
  * Pass through the SSA statements inferring types of unresolved variables.
  */
 public class PassTypeInference {
 
-   public void inferTypes(SSASequence sequence, SymbolManager symbols) {
-      for (SSAStatement statement : sequence.getStatements()) {
-         if (statement instanceof SSAStatementAssignment) {
-            SSAStatementAssignment assignment = (SSAStatementAssignment) statement;
+   public void inferTypes(StatementSequence sequence, SymbolManager symbols) {
+      for (Statement statement : sequence.getStatements()) {
+         if (statement instanceof StatementAssignment) {
+            StatementAssignment assignment = (StatementAssignment) statement;
             Symbol symbol = (Symbol) assignment.getlValue();
             if (SymbolType.VAR.equals(symbol.getType())) {
                // Unresolved symbol - perform inference
-               SSAOperator operator = assignment.getOperator();
+               Operator operator = assignment.getOperator();
                if (operator == null || assignment.getRValue1() == null) {
                   // Copy operation or Unary operation
-                  SSARValue rValue = assignment.getRValue2();
+                  RValue rValue = assignment.getRValue2();
                   SymbolType type = inferType(rValue);
                   symbol.setInferredType(type);
                } else {
@@ -30,7 +30,7 @@ public class PassTypeInference {
       }
    }
 
-   private SymbolType inferType(SymbolType type1, SSAOperator operator, SymbolType type2) {
+   private SymbolType inferType(SymbolType type1, Operator operator, SymbolType type2) {
       String op = operator.getOperator();
       switch (op) {
          case "==":
@@ -61,21 +61,21 @@ public class PassTypeInference {
       }
    }
 
-   private SymbolType inferType(SSARValue rValue) {
+   private SymbolType inferType(RValue rValue) {
       SymbolType type = SymbolType.VAR;
       if (rValue instanceof Symbol) {
          Symbol rSymbol = (Symbol) rValue;
          type = rSymbol.getType();
-      } else if (rValue instanceof SSAConstantInteger) {
-         SSAConstantInteger rInt = (SSAConstantInteger) rValue;
+      } else if (rValue instanceof ConstantInteger) {
+         ConstantInteger rInt = (ConstantInteger) rValue;
          if (rInt.getNumber() < 256) {
             type = SymbolType.BYTE;
          } else {
             type = SymbolType.WORD;
          }
-      } else if (rValue instanceof SSAConstantString) {
+      } else if (rValue instanceof ConstantString) {
          type = SymbolType.STRING;
-      } else if (rValue instanceof SSAConstantBool) {
+      } else if (rValue instanceof ConstantBool) {
          type = SymbolType.BOOLEAN;
       }
       return type;

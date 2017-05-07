@@ -1,4 +1,4 @@
-package dk.camelot64.kickc.ssa;
+package dk.camelot64.kickc.icl;
 
 /**
  * Single Static Assignment Form Statement.
@@ -8,56 +8,56 @@ package dk.camelot64.kickc.ssa;
  * <br>
  * <i> lValue := rValue1 &lt;operator&gt; rValue2 </i>
  */
-public class SSAStatementAssignment implements SSAStatement {
+public class StatementAssignment implements Statement {
 
    /** The variable being assigned a value by the statement. */
-   private SSALValue lValue;
+   private LValue lValue;
 
-   private SSARValue rValue1;
-   private SSAOperator operator;
-   private SSARValue rValue2;
+   private RValue rValue1;
+   private Operator operator;
+   private RValue rValue2;
 
-   public SSAStatementAssignment(SSALValue lValue, SSARValue rValue2) {
+   public StatementAssignment(LValue lValue, RValue rValue2) {
       this.lValue = lValue;
       this.rValue1 = null;
       this.operator = null;
       this.rValue2 = rValue2;
    }
 
-   public SSAStatementAssignment(SSALValue lValue, SSARValue rValue1, SSAOperator operator, SSARValue rValue2) {
+   public StatementAssignment(LValue lValue, RValue rValue1, Operator operator, RValue rValue2) {
       this.lValue = lValue;
       this.rValue1 = rValue1;
       this.operator = operator;
       this.rValue2 = rValue2;
    }
 
-   public SSAStatementAssignment(SSALValue lValue, SSAOperator operator, SSARValue rValue2) {
+   public StatementAssignment(LValue lValue, Operator operator, RValue rValue2) {
       this.lValue = lValue;
       this.rValue1 = null;
       this.operator = operator;
       this.rValue2 = rValue2;
    }
 
-   public SSALValue getlValue() {
+   public LValue getlValue() {
       return lValue;
    }
 
-   public SSARValue getRValue1() {
+   public RValue getRValue1() {
       return rValue1;
    }
 
-   public SSAOperator getOperator() {
+   public Operator getOperator() {
       return operator;
    }
 
-   public SSARValue getRValue2() {
+   public RValue getRValue2() {
       return rValue2;
    }
 
    @Override
    public String toString() {
       return
-               "  "+
+
                   lValue + " ← " +
                   (rValue1==null?"":rValue1+" ") +
                   (operator==null?"":operator+" ") +

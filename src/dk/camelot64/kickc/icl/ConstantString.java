@@ -1,13 +1,13 @@
-package dk.camelot64.kickc.ssa;
+package dk.camelot64.kickc.icl;
 
 /**
  * SSA form constant integer value
  */
-public class SSAConstantString implements SSAConstant {
+public class ConstantString implements Constant {
 
    private String value;
 
-   public SSAConstantString(String value) {
+   public ConstantString(String value) {
       this.value = value;
    }
 

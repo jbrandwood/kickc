@@ -1,4 +1,4 @@
-package dk.camelot64.kickc.ssa;
+package dk.camelot64.kickc.icl;
 
 /** Symbol Types */
 public enum SymbolType {

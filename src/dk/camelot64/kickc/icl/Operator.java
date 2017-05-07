@@ -1,11 +1,11 @@
-package dk.camelot64.kickc.ssa;
+package dk.camelot64.kickc.icl;
 
-/** SSA Form Operator. The operation performed on the rvalues in an SSA Statement. */
-public class SSAOperator {
+/** An Operator. The operation performed on the rvalues in a Statement. */
+public class Operator {
 
    private String operator;
 
-   public SSAOperator(String operator) {
+   public Operator(String operator) {
       this.operator = operator;
    }
 

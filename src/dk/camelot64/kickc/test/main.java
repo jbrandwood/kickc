@@ -3,7 +3,8 @@ package dk.camelot64.kickc.test;
 import dk.camelot64.kickc.parser.KickCLexer;
 import dk.camelot64.kickc.parser.KickCParser;
 import dk.camelot64.kickc.ssa.GenerateSSA;
-import dk.camelot64.kickc.ssa.SSAVariableManager;
+import dk.camelot64.kickc.ssa.PassTypeInference;
+import dk.camelot64.kickc.ssa.SSASequence;
 import org.antlr.v4.runtime.CharStream;
 import org.antlr.v4.runtime.CharStreams;
 import org.antlr.v4.runtime.CommonTokenStream;
@@ -18,9 +19,17 @@ public class main {
       KickCLexer lexer = new KickCLexer(input);
       KickCParser parser = new KickCParser(new CommonTokenStream(lexer));
       parser.setBuildParseTree(true);
-      KickCParser.ExprContext expr = parser.expr();
-      GenerateSSA ev = new GenerateSSA(new SSAVariableManager());
-      Object result = ev.visit(expr);
+      KickCParser.FileContext file = parser.file();
+      GenerateSSA ev = new GenerateSSA();
+      ev.visit(file);
+
+      PassTypeInference passTypeInference = new PassTypeInference();
+      passTypeInference.inferTypes(ev.getSequence(), ev.getSymbols());
+
+      System.out.println("PROGRAM");
+      System.out.println(ev.getSequence().toString());
+      System.out.println("SYMBOLS");
+      System.out.println(ev.getSymbols().toString());
    }
 
 }

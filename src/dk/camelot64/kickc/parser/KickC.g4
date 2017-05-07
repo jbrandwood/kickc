@@ -1,11 +1,29 @@
 // KickC grammar
 grammar KickC;
+
+file :
+    stmtSeq EOF
+    ;
+
+stmtSeq
+    : stmt+
+    ;
+
+stmt
+    : '{' stmtSeq '}' #stmtBlock
+    | (TYPE)? NAME ('=' expr)? ';' #stmtAssignment
+    | expr  ';' #stmtExpr
+    | 'if' '(' expr ')' stmt ( 'else' stmt )? #stmtIfElse
+    | 'while' '(' expr ')' stmt  #stmtWhile
+    ;
+
+
 expr
     : '(' expr ')' #exprPar
     | ('+' | '-' | 'not' | '!') expr #exprUnary
     | expr ('*' | '/' ) expr #exprBinary
     | expr ( '+' | '-')  expr #exprBinary
-    | expr ( '=' | '==' | '!=' | '<>' | '<' | '<=' | '=<' | '>=' | '=>' | '>' ) expr #exprBinary
+    | expr ( '==' | '!=' | '<>' | '<' | '<=' | '=<' | '>=' | '=>' | '>' ) expr #exprBinary
     | expr ( 'and' | '&&' )  expr #exprBinary
     | expr ( 'or' | '||' )  expr #exprBinary
     | NAME #exprId
@@ -13,6 +31,8 @@ expr
     | STRING #exprString
     | BOOLEAN #exprBool
     ;
+
+TYPE: 'byte' | 'word' | 'string' | 'boolean';
 STRING : '"' ('\\"' | ~'"')* '"';
 BOOLEAN : 'true' | 'false';
 NUMBER : NUMFLOAT | NUMINT ;

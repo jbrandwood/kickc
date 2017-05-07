@@ -11,6 +11,10 @@ public class SSAConstantInteger implements SSAConstant {
       this.number = number;
    }
 
+   public Integer getNumber() {
+      return number;
+   }
+
    @Override
    public String toString() {
       return Integer.toString(number);

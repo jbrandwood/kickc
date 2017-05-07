@@ -8,6 +8,86 @@ import org.antlr.v4.runtime.tree.ParseTreeListener;
  */
 public interface KickCListener extends ParseTreeListener {
 	/**
+	 * Enter a parse tree produced by {@link KickCParser#file}.
+	 * @param ctx the parse tree
+	 */
+	void enterFile(KickCParser.FileContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link KickCParser#file}.
+	 * @param ctx the parse tree
+	 */
+	void exitFile(KickCParser.FileContext ctx);
+	/**
+	 * Enter a parse tree produced by {@link KickCParser#stmtSeq}.
+	 * @param ctx the parse tree
+	 */
+	void enterStmtSeq(KickCParser.StmtSeqContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link KickCParser#stmtSeq}.
+	 * @param ctx the parse tree
+	 */
+	void exitStmtSeq(KickCParser.StmtSeqContext ctx);
+	/**
+	 * Enter a parse tree produced by the {@code stmtBlock}
+	 * labeled alternative in {@link KickCParser#stmt}.
+	 * @param ctx the parse tree
+	 */
+	void enterStmtBlock(KickCParser.StmtBlockContext ctx);
+	/**
+	 * Exit a parse tree produced by the {@code stmtBlock}
+	 * labeled alternative in {@link KickCParser#stmt}.
+	 * @param ctx the parse tree
+	 */
+	void exitStmtBlock(KickCParser.StmtBlockContext ctx);
+	/**
+	 * Enter a parse tree produced by the {@code stmtAssignment}
+	 * labeled alternative in {@link KickCParser#stmt}.
+	 * @param ctx the parse tree
+	 */
+	void enterStmtAssignment(KickCParser.StmtAssignmentContext ctx);
+	/**
+	 * Exit a parse tree produced by the {@code stmtAssignment}
+	 * labeled alternative in {@link KickCParser#stmt}.
+	 * @param ctx the parse tree
+	 */
+	void exitStmtAssignment(KickCParser.StmtAssignmentContext ctx);
+	/**
+	 * Enter a parse tree produced by the {@code stmtExpr}
+	 * labeled alternative in {@link KickCParser#stmt}.
+	 * @param ctx the parse tree
+	 */
+	void enterStmtExpr(KickCParser.StmtExprContext ctx);
+	/**
+	 * Exit a parse tree produced by the {@code stmtExpr}
+	 * labeled alternative in {@link KickCParser#stmt}.
+	 * @param ctx the parse tree
+	 */
+	void exitStmtExpr(KickCParser.StmtExprContext ctx);
+	/**
+	 * Enter a parse tree produced by the {@code stmtIfElse}
+	 * labeled alternative in {@link KickCParser#stmt}.
+	 * @param ctx the parse tree
+	 */
+	void enterStmtIfElse(KickCParser.StmtIfElseContext ctx);
+	/**
+	 * Exit a parse tree produced by the {@code stmtIfElse}
+	 * labeled alternative in {@link KickCParser#stmt}.
+	 * @param ctx the parse tree
+	 */
+	void exitStmtIfElse(KickCParser.StmtIfElseContext ctx);
+	/**
+	 * Enter a parse tree produced by the {@code stmtWhile}
+	 * labeled alternative in {@link KickCParser#stmt}.
+	 * @param ctx the parse tree
+	 */
+	void enterStmtWhile(KickCParser.StmtWhileContext ctx);
+	/**
+	 * Exit a parse tree produced by the {@code stmtWhile}
+	 * labeled alternative in {@link KickCParser#stmt}.
+	 * @param ctx the parse tree
+	 */
+	void exitStmtWhile(KickCParser.StmtWhileContext ctx);
+	/**
 	 * Enter a parse tree produced by the {@code exprBinary}
 	 * labeled alternative in {@link KickCParser#expr}.
 	 * @param ctx the parse tree

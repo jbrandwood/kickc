@@ -4,12 +4,21 @@ package dk.camelot64.kickc.ssa;
  * <ul>
  *    <li>Each potential modification of a language variable becomes a separate versioned SSA variable.</li>
  *    <li>Expressions are broken into separate SSA statements, each defining a new temporary/intermediate variable.</li>
- * </ul>*/
-public class SSAVariable implements SSARValue, SSALValue {
+ * </ul>
+ *
+ * Named variables are initially created without serials. These are first added after the basic control blocks have been defined.
+ *
+ * */
+public class SSAVariable implements SSARValue, SSALValue, SSAFragment {
 
    private String name;
 
-   private int serial;
+   private Integer serial;
+
+   public SSAVariable(String name) {
+      this.name = name;
+      this.serial = null;
+   }
 
    public SSAVariable(String name, int serial) {
       this.name = name;
@@ -26,6 +35,6 @@ public class SSAVariable implements SSARValue, SSALValue {
 
    @Override
    public String toString() {
-      return name + '_' + serial;
+      return name + (serial==null?"":"_"+serial);
    }
 }

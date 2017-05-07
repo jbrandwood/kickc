@@ -11,6 +11,53 @@ import org.antlr.v4.runtime.tree.ParseTreeVisitor;
  */
 public interface KickCVisitor<T> extends ParseTreeVisitor<T> {
 	/**
+	 * Visit a parse tree produced by {@link KickCParser#file}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitFile(KickCParser.FileContext ctx);
+	/**
+	 * Visit a parse tree produced by {@link KickCParser#stmtSeq}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitStmtSeq(KickCParser.StmtSeqContext ctx);
+	/**
+	 * Visit a parse tree produced by the {@code stmtBlock}
+	 * labeled alternative in {@link KickCParser#stmt}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitStmtBlock(KickCParser.StmtBlockContext ctx);
+	/**
+	 * Visit a parse tree produced by the {@code stmtAssignment}
+	 * labeled alternative in {@link KickCParser#stmt}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitStmtAssignment(KickCParser.StmtAssignmentContext ctx);
+	/**
+	 * Visit a parse tree produced by the {@code stmtExpr}
+	 * labeled alternative in {@link KickCParser#stmt}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitStmtExpr(KickCParser.StmtExprContext ctx);
+	/**
+	 * Visit a parse tree produced by the {@code stmtIfElse}
+	 * labeled alternative in {@link KickCParser#stmt}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitStmtIfElse(KickCParser.StmtIfElseContext ctx);
+	/**
+	 * Visit a parse tree produced by the {@code stmtWhile}
+	 * labeled alternative in {@link KickCParser#stmt}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitStmtWhile(KickCParser.StmtWhileContext ctx);
+	/**
 	 * Visit a parse tree produced by the {@code exprBinary}
 	 * labeled alternative in {@link KickCParser#expr}.
 	 * @param ctx the parse tree

@@ -15,6 +15,10 @@ public class PassGenerateStatementSequence extends KickCBaseVisitor<RValue> {
       this.sequence = new StatementSequence();
    }
 
+   public void generate(KickCParser.FileContext file) {
+      this.visit(file);
+   }
+
    @Override
    public RValue visitFile(KickCParser.FileContext ctx) {
       this.visit(ctx.stmtSeq());
@@ -169,4 +173,5 @@ public class PassGenerateStatementSequence extends KickCBaseVisitor<RValue> {
    public SymbolManager getSymbols() {
       return this.symbolManager;
    }
+
 }

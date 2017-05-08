@@ -65,13 +65,17 @@ public class ControlFlowBlock {
       return statements;
    }
 
+   public void addPhiStatement(Symbol newVersion) {
+      statements.add(0, new StatementPhi(newVersion));
+   }
+
    @Override
    public String toString() {
       StringBuffer out = new StringBuffer();
-      out.append(label.getName() + ":" + "\n");
-      out.append("  from:");
+      out.append(label.getName() + ":" );
+      out.append(" from");
       for (ControlFlowBlock predecessor : predecessors) {
-         out.append(predecessor.getLabel().getName()+" ");
+         out.append(" "+predecessor.getLabel().getName());
       }
       out.append("\n");
       for (Statement statement : statements) {

@@ -61,7 +61,7 @@ public class PassTypeInference {
       }
    }
 
-   private SymbolType inferType(RValue rValue) {
+   public static SymbolType inferType(RValue rValue) {
       SymbolType type = SymbolType.VAR;
       if (rValue instanceof Symbol) {
          Symbol rSymbol = (Symbol) rValue;

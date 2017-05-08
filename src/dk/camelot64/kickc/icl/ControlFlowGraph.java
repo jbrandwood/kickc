@@ -1,5 +1,6 @@
 package dk.camelot64.kickc.icl;
 
+import java.util.Collection;
 import java.util.Map;
 
 /** The control flow graph of the program.
@@ -30,5 +31,9 @@ public class ControlFlowGraph {
          out.append(block);
       }
       return out.toString();
+   }
+
+   public Collection<ControlFlowBlock> getAllBlocks() {
+      return blocks.values();
    }
 }

@@ -9,7 +9,6 @@ import java.util.Map;
 public class SymbolManager {
 
    private Map<String, Symbol> symbols;
-
    private int intermediateVarCount = 0;
    private int intermediateLabelCount = 1;
 
@@ -68,5 +67,11 @@ public class SymbolManager {
 
    public void remove(Symbol symbol) {
       symbols.remove(symbol.getName());
+   }
+
+   public Symbol createVersion(Symbol symbol) {
+      Symbol version = new Symbol(symbol, symbol.getNextVersionNumber());
+      symbols.put(version.getName(), version);
+      return version;
    }
 }

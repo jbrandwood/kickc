@@ -3,19 +3,42 @@ package dk.camelot64.kickc.icl;
 /** A Symbol (variable, jump label, etc.) */
 public class Symbol implements RValue, LValue {
 
+   /** The name of the symbol. */
    private String name;
 
+   /** The type of the symbol. VAR means tha type is unknown, and has not been inferred yet. */
    private SymbolType type;
 
+   /** true if the symbol type is infered (not declared) */
+   private boolean inferredType;
+
+   /** true if this is an intermediate variable that is created as a part of evaluating an expression. */
    private boolean intermediate;
 
-   private boolean inferredType;
+   /** If the symbol is a version of another symbol created during generation of single static assignment form (SSA) this contains the main symbol. */
+   private Symbol versionOf;
+
+   /** The number of the next version (if anyone versions this symbol)*/
+   private Integer nextVersionNumber;
 
    public Symbol(String name, SymbolType type, boolean intermediate) {
       this.name = name;
       this.type = type;
       this.intermediate = intermediate;
       this.inferredType = false;
+      this.versionOf = null;
+      if(!intermediate) {
+         this.nextVersionNumber = 0;
+      }
+   }
+
+   Symbol(Symbol versionOf, int version) {
+      this.name = versionOf.getName() + "#" + version;
+      this.type = versionOf.getType();
+      this.intermediate = versionOf.isIntermediate();
+      this.inferredType = versionOf.isInferredType();
+      this.versionOf = versionOf;
+      this.nextVersionNumber = null;
    }
 
    public String getName() {
@@ -35,9 +58,14 @@ public class Symbol implements RValue, LValue {
       return intermediate;
    }
 
+   /** Get the version number of the next version. (if anyone versions the symbol). */
+   int getNextVersionNumber() {
+      return nextVersionNumber++;
+   }
+
    @Override
    public String toString() {
-      return "("+name + ": " + type.getTypeName() + (inferredType ?"*":"") + ")";
+      return "("+type.getTypeName() + (inferredType ?"*":"") + ") "+name;
    }
 
    @Override
@@ -45,8 +73,6 @@ public class Symbol implements RValue, LValue {
       if (this == o) return true;
       if (o == null || getClass() != o.getClass()) return false;
       Symbol symbol = (Symbol) o;
-      if (intermediate != symbol.intermediate) return false;
-      if (inferredType != symbol.inferredType) return false;
       if (!name.equals(symbol.name)) return false;
       return type == symbol.type;
    }
@@ -54,9 +80,18 @@ public class Symbol implements RValue, LValue {
    @Override
    public int hashCode() {
       int result = name.hashCode();
-      result = 31 * result + (type != null ? type.hashCode() : 0);
-      result = 31 * result + (intermediate ? 1 : 0);
-      result = 31 * result + (inferredType ? 1 : 0);
       return result;
+   }
+
+   public boolean isInferredType() {
+      return inferredType;
+   }
+
+   public boolean isVersioned() {
+      return versionOf != null;
+   }
+
+   public Symbol getVersionOf() {
+      return versionOf;
    }
 }

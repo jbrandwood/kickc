@@ -1,11 +1,8 @@
 package dk.camelot64.kickc.test;
 
-import dk.camelot64.kickc.icl.ControlFlowGraph;
-import dk.camelot64.kickc.icl.PassGenerateControlFlowGraph;
+import dk.camelot64.kickc.icl.*;
 import dk.camelot64.kickc.parser.KickCLexer;
 import dk.camelot64.kickc.parser.KickCParser;
-import dk.camelot64.kickc.icl.PassGenerateStatementSequence;
-import dk.camelot64.kickc.icl.PassTypeInference;
 import org.antlr.v4.runtime.CharStream;
 import org.antlr.v4.runtime.CharStreams;
 import org.antlr.v4.runtime.CommonTokenStream;
@@ -22,14 +19,18 @@ public class main {
       parser.setBuildParseTree(true);
       KickCParser.FileContext file = parser.file();
       PassGenerateStatementSequence passGenerateStatementSequence = new PassGenerateStatementSequence();
-      passGenerateStatementSequence.visit(file);
-      new PassTypeInference().inferTypes(passGenerateStatementSequence.getSequence(), passGenerateStatementSequence.getSymbols());
-      PassGenerateControlFlowGraph passGenerateControlFlowGraph = new PassGenerateControlFlowGraph(passGenerateStatementSequence.getSymbols());
-      ControlFlowGraph controlFlowGraph = passGenerateControlFlowGraph.generate(passGenerateStatementSequence.getSequence());
+      passGenerateStatementSequence.generate(file);
+      StatementSequence statementSequence = passGenerateStatementSequence.getSequence();
+      SymbolManager symbolManager = passGenerateStatementSequence.getSymbols();
+      new PassTypeInference().inferTypes(statementSequence, symbolManager);
+      PassGenerateControlFlowGraph passGenerateControlFlowGraph = new PassGenerateControlFlowGraph(symbolManager);
+      ControlFlowGraph controlFlowGraph = passGenerateControlFlowGraph.generate(statementSequence);
+      PassGenerateSingleStaticAssignmentForm passGenerateSingleStaticAssignmentForm = new PassGenerateSingleStaticAssignmentForm(symbolManager, controlFlowGraph);
+      passGenerateSingleStaticAssignmentForm.generate();
       System.out.println("SYMBOLS");
-      System.out.println(passGenerateStatementSequence.getSymbols().toString());
+      System.out.println(symbolManager.toString());
       System.out.println("PROGRAM");
-      System.out.println(passGenerateStatementSequence.getSequence().toString());
+      System.out.println(statementSequence.toString());
       System.out.println("CONTROL FLOW GRAPH");
       System.out.println(controlFlowGraph.toString());
 

@@ -15,8 +15,12 @@ public class ConstantInteger implements Constant {
       return number;
    }
 
+   public SymbolType getType() {
+      return PassTypeInference.inferType(this);
+   }
+
    @Override
    public String toString() {
-      return Integer.toString(number);
+      return "("+getType().getTypeName()+") "+Integer.toString(number);
    }
 }

@@ -42,8 +42,16 @@ public class StatementAssignment implements Statement {
       return lValue;
    }
 
+   public void setLValue(LValue lValue) {
+      this.lValue = lValue;
+   }
+
    public RValue getRValue1() {
       return rValue1;
+   }
+
+   public void setRValue1(RValue rValue1) {
+      this.rValue1 = rValue1;
    }
 
    public Operator getOperator() {
@@ -52,6 +60,10 @@ public class StatementAssignment implements Statement {
 
    public RValue getRValue2() {
       return rValue2;
+   }
+
+   public void setRValue2(RValue rValue2) {
+      this.rValue2 = rValue2;
    }
 
    @Override
@@ -63,4 +75,5 @@ public class StatementAssignment implements Statement {
                   (operator==null?"":operator+" ") +
                   rValue2 ;
    }
+
 }

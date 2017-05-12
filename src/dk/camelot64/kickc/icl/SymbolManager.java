@@ -1,7 +1,6 @@
 package dk.camelot64.kickc.icl;
 
-import java.util.LinkedHashMap;
-import java.util.Map;
+import java.util.*;
 
 /**
  * Manages symbols (variables, labels)
@@ -58,7 +57,10 @@ public class SymbolManager {
    @Override
    public String toString() {
       StringBuffer out = new StringBuffer();
-      for (String name : symbols.keySet()) {
+      Set<String> names = symbols.keySet();
+      List<String> sortedNames = new ArrayList<>(names);
+      Collections.sort(sortedNames);
+      for (String name : sortedNames) {
          Symbol symbol = symbols.get(name);
          out.append(symbol.toString() + "\n");
       }

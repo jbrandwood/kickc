@@ -15,23 +15,46 @@ public class StatementPhi implements Statement {
    private Symbol lValue;
 
    /** The previous version of the symbol from predeccesor control blocks. */
-   private List<Symbol> previousVersions;
-
+   private List<PreviousSymbol> previousVersions;
 
    public StatementPhi(Symbol lValue) {
       this.lValue = lValue;
       this.previousVersions = new ArrayList<>();
    }
 
-   public LValue getlValue() {
+   /**
+    * A previous version of the symbol that the phi function might take its value from.
+    * Which value is chosen depends on which block transition was made.
+    */
+   public static class PreviousSymbol {
+      private ControlFlowBlock block;
+      private Symbol symbol;
+
+      public PreviousSymbol(ControlFlowBlock block, Symbol symbol) {
+         this.block = block;
+         this.symbol = symbol;
+      }
+
+      public ControlFlowBlock getBlock() {
+         return block;
+      }
+
+      public Symbol getSymbol() {
+         return symbol;
+      }
+
+
+   }
+
+   public Symbol getlValue() {
       return lValue;
    }
 
-   public void addPreviousVersion(Symbol previousVersion) {
-      previousVersions.add(previousVersion);
+   public void addPreviousVersion(ControlFlowBlock block, Symbol symbol) {
+      previousVersions.add(new PreviousSymbol(block, symbol));
    }
 
-   public List<Symbol> getPreviousVersions() {
+   public List<PreviousSymbol> getPreviousVersions() {
       return previousVersions;
    }
 
@@ -39,8 +62,8 @@ public class StatementPhi implements Statement {
    public String toString() {
       StringBuilder out = new StringBuilder();
       out.append(lValue + " ← " + "phi(");
-      for (Symbol previousVersion : previousVersions) {
-         out.append(" "+previousVersion.toString());
+      for (PreviousSymbol previousSymbol : previousVersions) {
+         out.append(" "+previousSymbol.getBlock().getLabel().getName()+"/"+previousSymbol.getSymbol().getName());
       }
       out.append(" )");
       return out.toString();

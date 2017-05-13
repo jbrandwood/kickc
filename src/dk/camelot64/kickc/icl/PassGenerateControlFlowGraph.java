@@ -9,17 +9,17 @@ import java.util.Map;
 public class PassGenerateControlFlowGraph {
 
    public static final String FIRST_BLOCK_NAME = "@0";
-   private SymbolManager symbolManager;
+   private SymbolTable symbolTable;
    private Map<Symbol, ControlFlowBlock> blocks;
    private ControlFlowBlock firstBlock;
 
-   public PassGenerateControlFlowGraph(SymbolManager symbolManager) {
-      this.symbolManager = symbolManager;
+   public PassGenerateControlFlowGraph(SymbolTable symbolTable) {
+      this.symbolTable = symbolTable;
       this.blocks = new LinkedHashMap<>();
    }
 
    public ControlFlowGraph generate(StatementSequence sequence) {
-      this.firstBlock = getOrCreateBlock(symbolManager.newNamedJumpLabel(FIRST_BLOCK_NAME));
+      this.firstBlock = getOrCreateBlock(symbolTable.newNamedJumpLabel(FIRST_BLOCK_NAME));
       ControlFlowBlock currentBlock = this.firstBlock;
       for (Statement statement : sequence.getStatements()) {
          if(statement instanceof StatementJumpTarget) {
@@ -33,13 +33,13 @@ public class PassGenerateControlFlowGraph {
             ControlFlowBlock jmpBlock = getOrCreateBlock(statementJump.getDestination());
             currentBlock.setDefaultSuccessor(jmpBlock);
             jmpBlock.addPredecessor(currentBlock);
-            ControlFlowBlock nextBlock = getOrCreateBlock(symbolManager.newIntermediateJumpLabel());
+            ControlFlowBlock nextBlock = getOrCreateBlock(symbolTable.newIntermediateJumpLabel());
             currentBlock = nextBlock;
          }  else if(statement instanceof StatementConditionalJump) {
             currentBlock.addStatement(statement);
             StatementConditionalJump statementConditionalJump = (StatementConditionalJump) statement;
             ControlFlowBlock jmpBlock = getOrCreateBlock(statementConditionalJump.getDestination());
-            ControlFlowBlock nextBlock = getOrCreateBlock(symbolManager.newIntermediateJumpLabel());
+            ControlFlowBlock nextBlock = getOrCreateBlock(symbolTable.newIntermediateJumpLabel());
             currentBlock.setDefaultSuccessor(nextBlock);
             currentBlock.setConditionalSuccessor(jmpBlock);
             nextBlock.addPredecessor(currentBlock);
@@ -74,11 +74,11 @@ public class PassGenerateControlFlowGraph {
       }
       for (ControlFlowBlock block : remove) {
          blocks.remove(block.getLabel());
-         symbolManager.remove(block.getLabel());
+         symbolTable.remove(block.getLabel());
       }
    }
 
-   private ControlFlowBlock getOrCreateBlock(Symbol label) {
+   private ControlFlowBlock getOrCreateBlock(Label label) {
       ControlFlowBlock block = blocks.get(label);
       if(block==null) {
          block = new ControlFlowBlock(label);

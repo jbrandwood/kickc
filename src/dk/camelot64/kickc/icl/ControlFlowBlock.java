@@ -7,7 +7,7 @@ import java.util.List;
  * The connections defines the control flow of the program. */
 public class ControlFlowBlock {
 
-   private Symbol label;
+   private Label label;
 
    private List<ControlFlowBlock> predecessors;
 
@@ -17,7 +17,7 @@ public class ControlFlowBlock {
 
    private ControlFlowBlock conditionalSuccessor;
 
-   public ControlFlowBlock(Symbol label) {
+   public ControlFlowBlock(Label label) {
       this.label = label;
       this.statements = new ArrayList<>();
       this.predecessors = new ArrayList<>();
@@ -25,7 +25,7 @@ public class ControlFlowBlock {
       this.conditionalSuccessor = null;
    }
 
-   public Symbol getLabel() {
+   public Label getLabel() {
       return label;
    }
 
@@ -65,7 +65,7 @@ public class ControlFlowBlock {
       return statements;
    }
 
-   public void addPhiStatement(Symbol newVersion) {
+   public void addPhiStatement(VariableVersion newVersion) {
       statements.add(0, new StatementPhi(newVersion));
    }
 

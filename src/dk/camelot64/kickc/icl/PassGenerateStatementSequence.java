@@ -7,11 +7,11 @@ import org.antlr.v4.runtime.tree.TerminalNode;
 /** Generates program SSA form by visiting the ANTLR4 parse tree*/
 public class PassGenerateStatementSequence extends KickCBaseVisitor<RValue> {
 
-   private SymbolManager symbolManager;
+   private SymbolTable symbolTable;
    private StatementSequence sequence;
 
    public PassGenerateStatementSequence() {
-      this.symbolManager = new SymbolManager();
+      this.symbolTable = new SymbolTable();
       this.sequence = new StatementSequence();
    }
 
@@ -49,8 +49,8 @@ public class PassGenerateStatementSequence extends KickCBaseVisitor<RValue> {
    @Override
    public RValue visitStmtIfElse(KickCParser.StmtIfElseContext ctx) {
       RValue rValue = this.visit(ctx.expr());
-      Symbol ifJumpLabel = symbolManager.newIntermediateJumpLabel();
-      Symbol elseJumpLabel = symbolManager.newIntermediateJumpLabel();
+      Label ifJumpLabel = symbolTable.newIntermediateJumpLabel();
+      Label elseJumpLabel = symbolTable.newIntermediateJumpLabel();
       Statement ifJmpStmt = new StatementConditionalJump(rValue, ifJumpLabel);
       sequence.addStatement(ifJmpStmt);
       Statement elseJmpStmt = new StatementJump(elseJumpLabel);
@@ -60,7 +60,7 @@ public class PassGenerateStatementSequence extends KickCBaseVisitor<RValue> {
       this.visit(ctx.stmt(0));
       KickCParser.StmtContext elseStmt = ctx.stmt(1);
       if(elseStmt!=null) {
-         Symbol endJumpLabel = symbolManager.newIntermediateJumpLabel();
+         Label endJumpLabel = symbolTable.newIntermediateJumpLabel();
          Statement endJmpStmt = new StatementJump(endJumpLabel);
          sequence.addStatement(endJmpStmt);
          StatementJumpTarget elseJumpTarget = new StatementJumpTarget(elseJumpLabel);
@@ -77,9 +77,9 @@ public class PassGenerateStatementSequence extends KickCBaseVisitor<RValue> {
 
    @Override
    public RValue visitStmtWhile(KickCParser.StmtWhileContext ctx) {
-      Symbol beginJumpLabel = symbolManager.newIntermediateJumpLabel();
-      Symbol doJumpLabel = symbolManager.newIntermediateJumpLabel();
-      Symbol endJumpLabel = symbolManager.newIntermediateJumpLabel();
+      Label beginJumpLabel = symbolTable.newIntermediateJumpLabel();
+      Label doJumpLabel = symbolTable.newIntermediateJumpLabel();
+      Label endJumpLabel = symbolTable.newIntermediateJumpLabel();
       StatementJumpTarget beginJumpTarget = new StatementJumpTarget(beginJumpLabel);
       sequence.addStatement(beginJumpTarget);
       RValue rValue = this.visit(ctx.expr());
@@ -100,11 +100,11 @@ public class PassGenerateStatementSequence extends KickCBaseVisitor<RValue> {
    @Override
    public RValue visitStmtAssignment(KickCParser.StmtAssignmentContext ctx) {
       if(ctx.TYPE()!=null) {
-         symbolManager.newVariableDeclaration(ctx.NAME().getText(), ctx.TYPE().getText());
+         symbolTable.newVariableDeclaration(ctx.NAME().getText(), ctx.TYPE().getText());
       }
       if(ctx.expr()!=null) {
          RValue rValue = this.visit(ctx.expr());
-         Symbol variable = symbolManager.newVariableAssignment(ctx.NAME().getText());
+         VariableUnversioned variable = symbolTable.newVariableUsage(ctx.NAME().getText());
          Statement stmt = new StatementAssignment(variable, rValue);
          sequence.addStatement(stmt);
       }
@@ -139,7 +139,7 @@ public class PassGenerateStatementSequence extends KickCBaseVisitor<RValue> {
       RValue right = this.visit(ctx.expr(1));
       String op = ((TerminalNode)ctx.getChild(1)).getSymbol().getText();
       Operator operator = new Operator(op);
-      Symbol tmpVar = symbolManager.newIntermediateAssignment();
+      VariableIntermediate tmpVar = symbolTable.newIntermediateAssignment();
       Statement stmt = new StatementAssignment(tmpVar, left, operator, right);
       sequence.addStatement(stmt);
       return tmpVar;
@@ -150,7 +150,7 @@ public class PassGenerateStatementSequence extends KickCBaseVisitor<RValue> {
       RValue child = this.visit(ctx.expr());
       String op = ((TerminalNode)ctx.getChild(0)).getSymbol().getText();
       Operator operator = new Operator(op);
-      Symbol tmpVar = symbolManager.newIntermediateAssignment();
+      VariableIntermediate tmpVar = symbolTable.newIntermediateAssignment();
       Statement stmt = new StatementAssignment(tmpVar, operator, child);
       sequence.addStatement(stmt);
       return tmpVar;
@@ -163,15 +163,15 @@ public class PassGenerateStatementSequence extends KickCBaseVisitor<RValue> {
 
    @Override
    public RValue visitExprId(KickCParser.ExprIdContext ctx) {
-      return symbolManager.newVariableUsage(ctx.NAME().getText());
+      return symbolTable.newVariableUsage(ctx.NAME().getText());
    }
 
    public StatementSequence getSequence() {
       return sequence;
    }
 
-   public SymbolManager getSymbols() {
-      return this.symbolManager;
+   public SymbolTable getSymbols() {
+      return this.symbolTable;
    }
 
 }

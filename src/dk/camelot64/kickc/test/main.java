@@ -21,14 +21,15 @@ public class main {
       PassGenerateStatementSequence passGenerateStatementSequence = new PassGenerateStatementSequence();
       passGenerateStatementSequence.generate(file);
       StatementSequence statementSequence = passGenerateStatementSequence.getSequence();
-      SymbolManager symbolManager = passGenerateStatementSequence.getSymbols();
-      new PassTypeInference().inferTypes(statementSequence, symbolManager);
-      PassGenerateControlFlowGraph passGenerateControlFlowGraph = new PassGenerateControlFlowGraph(symbolManager);
+      SymbolTable symbolTable = passGenerateStatementSequence.getSymbols();
+      new PassTypeInference().inferTypes(statementSequence, symbolTable);
+      PassGenerateControlFlowGraph passGenerateControlFlowGraph = new PassGenerateControlFlowGraph(symbolTable);
       ControlFlowGraph controlFlowGraph = passGenerateControlFlowGraph.generate(statementSequence);
-      PassGenerateSingleStaticAssignmentForm passGenerateSingleStaticAssignmentForm = new PassGenerateSingleStaticAssignmentForm(symbolManager, controlFlowGraph);
+      PassGenerateSingleStaticAssignmentForm passGenerateSingleStaticAssignmentForm = new PassGenerateSingleStaticAssignmentForm(
+            symbolTable, controlFlowGraph);
       passGenerateSingleStaticAssignmentForm.generate();
       System.out.println("SYMBOLS");
-      System.out.println(symbolManager.toString());
+      System.out.println(symbolTable.toString());
       System.out.println("PROGRAM");
       System.out.println(statementSequence.toString());
       System.out.println("CONTROL FLOW GRAPH");

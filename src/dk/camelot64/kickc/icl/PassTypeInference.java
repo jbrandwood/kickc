@@ -5,11 +5,11 @@ package dk.camelot64.kickc.icl;
  */
 public class PassTypeInference {
 
-   public void inferTypes(StatementSequence sequence, SymbolManager symbols) {
+   public void inferTypes(StatementSequence sequence, SymbolTable symbols) {
       for (Statement statement : sequence.getStatements()) {
          if (statement instanceof StatementAssignment) {
             StatementAssignment assignment = (StatementAssignment) statement;
-            Symbol symbol = (Symbol) assignment.getlValue();
+            Variable symbol = (Variable) assignment.getlValue();
             if (SymbolType.VAR.equals(symbol.getType())) {
                // Unresolved symbol - perform inference
                Operator operator = assignment.getOperator();

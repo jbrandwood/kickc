@@ -8,13 +8,13 @@ package dk.camelot64.kickc.icl;
  */
 public class StatementJump implements Statement {
 
-   private Symbol destination;
+   private Label destination;
 
-   public StatementJump(Symbol destination) {
+   public StatementJump(Label destination) {
       this.destination = destination;
    }
 
-   public Symbol getDestination() {
+   public Label getDestination() {
       return destination;
    }
 

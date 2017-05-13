@@ -5,13 +5,13 @@ package dk.camelot64.kickc.icl;
  */
 public class StatementJumpTarget implements Statement {
 
-   private Symbol label;
+   private Label label;
 
-   public StatementJumpTarget(Symbol label) {
+   public StatementJumpTarget(Label label) {
       this.label = label;
    }
 
-   public Symbol getLabel() {
+   public Label getLabel() {
       return label;
    }
 

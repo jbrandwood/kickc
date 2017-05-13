@@ -12,12 +12,12 @@ import java.util.List;
 public class StatementPhi implements Statement {
 
    /** The versioned variable being assigned a value by the statement. */
-   private Symbol lValue;
+   private VariableVersion lValue;
 
    /** The previous version of the symbol from predeccesor control blocks. */
    private List<PreviousSymbol> previousVersions;
 
-   public StatementPhi(Symbol lValue) {
+   public StatementPhi(VariableVersion lValue) {
       this.lValue = lValue;
       this.previousVersions = new ArrayList<>();
    }
@@ -28,9 +28,9 @@ public class StatementPhi implements Statement {
     */
    public static class PreviousSymbol {
       private ControlFlowBlock block;
-      private Symbol symbol;
+      private VariableVersion symbol;
 
-      public PreviousSymbol(ControlFlowBlock block, Symbol symbol) {
+      public PreviousSymbol(ControlFlowBlock block, VariableVersion symbol) {
          this.block = block;
          this.symbol = symbol;
       }
@@ -46,11 +46,11 @@ public class StatementPhi implements Statement {
 
    }
 
-   public Symbol getlValue() {
+   public VariableVersion getlValue() {
       return lValue;
    }
 
-   public void addPreviousVersion(ControlFlowBlock block, Symbol symbol) {
+   public void addPreviousVersion(ControlFlowBlock block, VariableVersion symbol) {
       previousVersions.add(new PreviousSymbol(block, symbol));
    }
 

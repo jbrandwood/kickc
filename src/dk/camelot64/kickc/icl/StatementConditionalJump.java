@@ -9,9 +9,9 @@ package dk.camelot64.kickc.icl;
 public class StatementConditionalJump implements Statement {
 
    private RValue condition;
-   private Symbol destination;
+   private Label destination;
 
-   public StatementConditionalJump(RValue condition, Symbol destination) {
+   public StatementConditionalJump(RValue condition, Label destination) {
       this.condition = condition;
       this.destination = destination;
    }
@@ -20,7 +20,7 @@ public class StatementConditionalJump implements Statement {
       return condition;
    }
 
-   public Symbol getDestination() {
+   public Label getDestination() {
       return destination;
    }
 

@@ -49,33 +49,7 @@ public class PassGenerateControlFlowGraph {
             currentBlock.addStatement(statement);
          }
       }
-      cullEmptyBlocks();
       return new ControlFlowGraph(blocks, firstBlock);
-   }
-
-   private void cullEmptyBlocks() {
-      List<ControlFlowBlock> remove = new ArrayList<>();
-      for (ControlFlowBlock block : blocks.values()) {
-         if(block.getStatements().isEmpty()) {
-            ControlFlowBlock successor = block.getDefaultSuccessor();
-            for (ControlFlowBlock predecessor : block.getPredecessors()) {
-               if(predecessor.getDefaultSuccessor().equals(block)) {
-                  predecessor.setDefaultSuccessor(successor);
-                  successor.addPredecessor(predecessor);
-               }
-               if(predecessor.getConditionalSuccessor().equals(block)) {
-                  predecessor.setConditionalSuccessor(successor);
-                  successor.addPredecessor(predecessor);
-               }
-            }
-            successor.removePredecessor(block);
-            remove.add(block);
-         }
-      }
-      for (ControlFlowBlock block : remove) {
-         blocks.remove(block.getLabel());
-         symbolTable.remove(block.getLabel());
-      }
    }
 
    private ControlFlowBlock getOrCreateBlock(Label label) {

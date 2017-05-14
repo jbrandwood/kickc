@@ -38,7 +38,7 @@ public class StatementAssignment implements Statement {
       this.rValue2 = rValue2;
    }
 
-   public LValue getlValue() {
+   public LValue getLValue() {
       return lValue;
    }
 

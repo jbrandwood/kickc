@@ -15,4 +15,8 @@ public class ConstantDouble implements Constant {
    public String toString() {
       return Double.toString(number);
    }
+
+   public Double getNumber() {
+      return number;
+   }
 }

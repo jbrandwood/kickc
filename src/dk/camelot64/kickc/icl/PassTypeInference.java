@@ -9,7 +9,7 @@ public class PassTypeInference {
       for (Statement statement : sequence.getStatements()) {
          if (statement instanceof StatementAssignment) {
             StatementAssignment assignment = (StatementAssignment) statement;
-            Variable symbol = (Variable) assignment.getlValue();
+            Variable symbol = (Variable) assignment.getLValue();
             if (SymbolType.VAR.equals(symbol.getType())) {
                // Unresolved symbol - perform inference
                Operator operator = assignment.getOperator();

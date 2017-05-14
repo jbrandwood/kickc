@@ -28,4 +28,8 @@ public class StatementConditionalJump implements Statement {
    public String toString() {
       return "if("+condition+") goto "+destination.getName();
    }
+
+   public void setCondition(RValue condition) {
+      this.condition = condition;
+   }
 }

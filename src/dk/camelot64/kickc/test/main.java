@@ -25,16 +25,25 @@ public class main {
       new PassTypeInference().inferTypes(statementSequence, symbolTable);
       PassGenerateControlFlowGraph passGenerateControlFlowGraph = new PassGenerateControlFlowGraph(symbolTable);
       ControlFlowGraph controlFlowGraph = passGenerateControlFlowGraph.generate(statementSequence);
+      PassCullEmptyBlocks passCullEmptyBlocks = new PassCullEmptyBlocks(symbolTable, controlFlowGraph);
+      passCullEmptyBlocks.cull();
       PassGenerateSingleStaticAssignmentForm passGenerateSingleStaticAssignmentForm = new PassGenerateSingleStaticAssignmentForm(
             symbolTable, controlFlowGraph);
       passGenerateSingleStaticAssignmentForm.generate();
+      PassConstantPropagation passConstantPropagation = new PassConstantPropagation(symbolTable, controlFlowGraph);
+      passConstantPropagation.propagateConstants();
+      PassAliasElimination passAliasElimination = new PassAliasElimination(symbolTable, controlFlowGraph);
+      passAliasElimination.eliminate();
+      PassRedundantPhiElimination passRedundantPhiElimination = new PassRedundantPhiElimination(symbolTable, controlFlowGraph);
+      passRedundantPhiElimination.eliminate();
+      PassCullEmptyBlocks passCullEmptyBlocks2 = new PassCullEmptyBlocks(symbolTable, controlFlowGraph);
+      passCullEmptyBlocks2.cull();
       System.out.println("SYMBOLS");
       System.out.println(symbolTable.toString());
       System.out.println("PROGRAM");
       System.out.println(statementSequence.toString());
       System.out.println("CONTROL FLOW GRAPH");
       System.out.println(controlFlowGraph.toString());
-
    }
 
 }

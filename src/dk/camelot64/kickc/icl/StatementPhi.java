@@ -14,7 +14,7 @@ public class StatementPhi implements Statement {
    /** The versioned variable being assigned a value by the statement. */
    private VariableVersion lValue;
 
-   /** The previous version of the symbol from predeccesor control blocks. */
+   /** The previous version of the rValue from predeccesor control blocks. */
    private List<PreviousSymbol> previousVersions;
 
    public StatementPhi(VariableVersion lValue) {
@@ -23,32 +23,40 @@ public class StatementPhi implements Statement {
    }
 
    /**
-    * A previous version of the symbol that the phi function might take its value from.
+    * A previous version of the rValue that the phi function might take its value from.
     * Which value is chosen depends on which block transition was made.
     */
    public static class PreviousSymbol {
       private ControlFlowBlock block;
-      private VariableVersion symbol;
+      private RValue rValue;
 
-      public PreviousSymbol(ControlFlowBlock block, VariableVersion symbol) {
+      public PreviousSymbol(ControlFlowBlock block, RValue rValue) {
          this.block = block;
-         this.symbol = symbol;
+         this.rValue = rValue;
       }
 
       public ControlFlowBlock getBlock() {
          return block;
       }
 
-      public Symbol getSymbol() {
-         return symbol;
+      public RValue getRValue() {
+         return rValue;
       }
 
 
+      public void setRValue(RValue RValue) {
+         this.rValue = RValue;
+      }
    }
 
-   public VariableVersion getlValue() {
+   public VariableVersion getLValue() {
       return lValue;
    }
+
+   public void setLValue(Variable lValue) {
+      this.lValue = (VariableVersion) lValue;
+   }
+
 
    public void addPreviousVersion(ControlFlowBlock block, VariableVersion symbol) {
       previousVersions.add(new PreviousSymbol(block, symbol));
@@ -63,7 +71,7 @@ public class StatementPhi implements Statement {
       StringBuilder out = new StringBuilder();
       out.append(lValue + " ← " + "phi(");
       for (PreviousSymbol previousSymbol : previousVersions) {
-         out.append(" "+previousSymbol.getBlock().getLabel().getName()+"/"+previousSymbol.getSymbol().getName());
+         out.append(" "+previousSymbol.getBlock().getLabel().getName()+"/"+previousSymbol.getRValue());
       }
       out.append(" )");
       return out.toString();

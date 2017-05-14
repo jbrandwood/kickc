@@ -6,14 +6,14 @@ import java.util.List;
 import java.util.Map;
 
 /** Pass that generates a control flow graph for the program */
-public class PassGenerateControlFlowGraph {
+public class Pass1GenerateControlFlowGraph {
 
    public static final String FIRST_BLOCK_NAME = "@0";
    private SymbolTable symbolTable;
    private Map<Symbol, ControlFlowBlock> blocks;
    private ControlFlowBlock firstBlock;
 
-   public PassGenerateControlFlowGraph(SymbolTable symbolTable) {
+   public Pass1GenerateControlFlowGraph(SymbolTable symbolTable) {
       this.symbolTable = symbolTable;
       this.blocks = new LinkedHashMap<>();
    }

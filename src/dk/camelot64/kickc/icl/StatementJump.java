@@ -22,4 +22,8 @@ public class StatementJump implements Statement {
    public String toString() {
       return "goto "+destination.getName();
    }
+
+   public void setDestination(Label destination) {
+      this.destination = destination;
+   }
 }

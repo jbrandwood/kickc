@@ -4,38 +4,25 @@ import java.util.HashMap;
 import java.util.Map;
 
 /** Compiler Pass eliminating alias assignments */
-public class PassAliasElimination {
+public class Pass2AliasElimination extends Pass2Optimization {
 
-   private SymbolTable symbolTable;
-   private ControlFlowGraph graph;
-
-   public PassAliasElimination(SymbolTable symbolTable, ControlFlowGraph graph) {
-      this.symbolTable = symbolTable;
-      this.graph = graph;
+   public Pass2AliasElimination(ControlFlowGraph graph, SymbolTable symbolTable) {
+      super(graph, symbolTable);
    }
 
    /**
     * Eliminate alias assignments replacing them with the aliassed variable.
     */
-   public void eliminate() {
+   @Override
+   public boolean optimize() {
       final Map<Variable, Variable> aliases = findAliases();
-      PassHelper.removeAssignments(graph, symbolTable, aliases.values());
-      PassHelper.replace(graph, aliases);
+      removeAssignments(aliases.values());
+      replaceVariables(aliases);
       for (Variable var : aliases.keySet()) {
          Variable alias = aliases.get(var);
          System.out.println("Alias " + var + " " + alias);
       }
-   }
-
-   /** Make sure aliases of other aliases are pointing to the final alias. */
-   private void finalizeAliases(Map<Variable, Variable> aliases) {
-      for (Variable variable : aliases.keySet()) {
-         Variable alias = aliases.get(variable);
-         while(aliases.get(alias)!=null) {
-            alias = aliases.get(alias);
-         }
-         aliases.put(variable, alias);
-      }
+      return (aliases.size()>0);
    }
 
    /**
@@ -71,7 +58,7 @@ public class PassAliasElimination {
             return null;
          }
       };
-      visitor.visitGraph(graph);
+      visitor.visitGraph(getGraph());
       return aliases;
    }
 

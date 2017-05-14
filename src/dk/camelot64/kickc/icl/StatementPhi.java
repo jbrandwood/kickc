@@ -47,6 +47,10 @@ public class StatementPhi implements Statement {
       public void setRValue(RValue RValue) {
          this.rValue = RValue;
       }
+
+      public void setBlock(ControlFlowBlock block) {
+         this.block = block;
+      }
    }
 
    public VariableVersion getLValue() {

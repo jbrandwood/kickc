@@ -4,14 +4,10 @@ import java.util.HashMap;
 import java.util.Map;
 
 /** Compiler Pass propagating constants in expressions eliminating constant variables */
-public class PassConstantPropagation {
+public class Pass2ConstantPropagation extends Pass2Optimization {
 
-   private SymbolTable symbolTable;
-   private ControlFlowGraph controlFlowGraph;
-
-   public PassConstantPropagation(SymbolTable symbolTable, ControlFlowGraph controlFlowGraph) {
-      this.symbolTable = symbolTable;
-      this.controlFlowGraph = controlFlowGraph;
+   public Pass2ConstantPropagation(ControlFlowGraph graph, SymbolTable symbolTable) {
+      super(graph, symbolTable);
    }
 
    /**
@@ -19,18 +15,16 @@ public class PassConstantPropagation {
     * @return true if no more constant propagation is possible. (no constant propagation was performed)
     * false if more constant propagation might be possible. (signalling another call)
     */
-   public void propagateConstants() {
-      boolean done;
-      do {
-         final Map<Variable, Constant> constants = findConstantVariables();
-         for (Variable constantVar : constants.keySet()) {
-            Constant constantValue = constants.get(constantVar);
-            System.out.println("Constant " + constantVar + " " + constantValue);
-         }
-         PassHelper.removeAssignments(controlFlowGraph, symbolTable, constants.keySet());
-         PassHelper.replace(controlFlowGraph, constants);
-         done = (constants.size()==0);
-      } while (!done);
+   @Override
+   public boolean optimize() {
+      final Map<Variable, Constant> constants = findConstantVariables();
+      for (Variable constantVar : constants.keySet()) {
+         Constant constantValue = constants.get(constantVar);
+         System.out.println("Constant " + constantVar + " " + constantValue);
+      }
+      removeAssignments(constants.keySet());
+      replaceVariables(constants);
+      return constants.size() > 0;
    }
 
    /**
@@ -42,10 +36,10 @@ public class PassConstantPropagation {
       ControlFlowGraphBaseVisitor<Void> visitor = new ControlFlowGraphBaseVisitor<Void>() {
          @Override
          public Void visitAssignment(StatementAssignment assignment) {
-            if(assignment.getLValue() instanceof VariableVersion || assignment.getLValue() instanceof VariableIntermediate ) {
+            if (assignment.getLValue() instanceof VariableVersion || assignment.getLValue() instanceof VariableIntermediate) {
                Variable variable = (Variable) assignment.getLValue();
-               if(assignment.getRValue1() == null && assignment.getRValue2() instanceof Constant) {
-                  if(assignment.getOperator()==null) {
+               if (assignment.getRValue1() == null && assignment.getRValue2() instanceof Constant) {
+                  if (assignment.getOperator() == null) {
                      // Constant assignment
                      Constant constant = (Constant) assignment.getRValue2();
                      constants.put(variable, constant);
@@ -54,9 +48,12 @@ public class PassConstantPropagation {
                      Constant constant = calculateUnary(assignment.getOperator(), (Constant) assignment.getRValue2());
                      constants.put(variable, constant);
                   }
-               } else if(assignment.getRValue1() instanceof Constant && assignment.getRValue2() instanceof Constant) {
+               } else if (assignment.getRValue1() instanceof Constant && assignment.getRValue2() instanceof Constant) {
                   // Constant binary expression
-                  Constant constant = calculateBinary(assignment.getOperator(), (Constant) assignment.getRValue1(), (Constant) assignment.getRValue2());
+                  Constant constant = calculateBinary(
+                        assignment.getOperator(),
+                        (Constant) assignment.getRValue1(),
+                        (Constant) assignment.getRValue2());
                   constants.put(variable, constant);
                }
             }
@@ -65,9 +62,9 @@ public class PassConstantPropagation {
 
          @Override
          public Void visitPhi(StatementPhi phi) {
-            if(phi.getPreviousVersions().size()==1) {
+            if (phi.getPreviousVersions().size() == 1) {
                StatementPhi.PreviousSymbol previousSymbol = phi.getPreviousVersions().get(0);
-               if(previousSymbol.getRValue() instanceof Constant) {
+               if (previousSymbol.getRValue() instanceof Constant) {
                   VariableVersion variable = phi.getLValue();
                   Constant constant = (Constant) previousSymbol.getRValue();
                   constants.put(variable, constant);
@@ -76,68 +73,68 @@ public class PassConstantPropagation {
             return null;
          }
       };
-      visitor.visitGraph(controlFlowGraph);
+      visitor.visitGraph(getGraph());
       return constants;
    }
 
 
    public static Constant calculateBinary(Operator operator, Constant c1, Constant c2) {
-      switch(operator.getOperator()) {
+      switch (operator.getOperator()) {
          case "-": {
-            if(c1 instanceof ConstantInteger && c2 instanceof ConstantInteger) {
+            if (c1 instanceof ConstantInteger && c2 instanceof ConstantInteger) {
                return new ConstantInteger(getInteger(c1) - getInteger(c2));
             } else {
                return new ConstantDouble(getDouble(c1) - getDouble(c2));
             }
          }
          case "+": {
-            if(c1 instanceof ConstantInteger && c2 instanceof ConstantInteger) {
+            if (c1 instanceof ConstantInteger && c2 instanceof ConstantInteger) {
                return new ConstantInteger(getInteger(c1) + getInteger(c2));
             } else {
                return new ConstantDouble(getDouble(c1) + getDouble(c2));
             }
          }
          default:
-            throw new RuntimeException("Unhandled Binary Operator "+operator.getOperator());
+            throw new RuntimeException("Unhandled Binary Operator " + operator.getOperator());
       }
    }
 
    private static Integer getInteger(Constant constant) {
-      if(constant instanceof ConstantInteger) {
+      if (constant instanceof ConstantInteger) {
          return ((ConstantInteger) constant).getNumber();
       } else {
-         throw new RuntimeException("Type Mismatch. Constant is not an integer number "+constant);
+         throw new RuntimeException("Type Mismatch. Constant is not an integer number " + constant);
       }
    }
 
    private static Double getDouble(Constant constant) {
-      if(constant instanceof ConstantDouble) {
+      if (constant instanceof ConstantDouble) {
          return ((ConstantDouble) constant).getNumber();
-      } else if(constant instanceof ConstantInteger) {
+      } else if (constant instanceof ConstantInteger) {
          return ((ConstantInteger) constant).getNumber().doubleValue();
       } else {
-         throw new RuntimeException("Type Mismatch. Constant is not a number "+constant);
+         throw new RuntimeException("Type Mismatch. Constant is not a number " + constant);
       }
    }
 
    public static Constant calculateUnary(Operator operator, Constant c) {
-      switch(operator.getOperator()) {
+      switch (operator.getOperator()) {
          case "-": {
-            if(c instanceof ConstantInteger) {
+            if (c instanceof ConstantInteger) {
                ConstantInteger cInt = (ConstantInteger) c;
                return new ConstantInteger(-cInt.getNumber());
-            } else if(c instanceof ConstantDouble) {
+            } else if (c instanceof ConstantDouble) {
                ConstantDouble cDoub = (ConstantDouble) c;
                return new ConstantDouble(-cDoub.getNumber());
-            }  else {
-               throw new RuntimeException("Type mismatch. Unary Minus cannot handle value "+c);
+            } else {
+               throw new RuntimeException("Type mismatch. Unary Minus cannot handle value " + c);
             }
          }
          case "+": {
             return c;
          }
          default:
-            throw new RuntimeException("Unhandled Unary Operator "+operator.getOperator());
+            throw new RuntimeException("Unhandled Unary Operator " + operator.getOperator());
       }
    }
 

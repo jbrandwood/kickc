@@ -4,27 +4,25 @@ import java.util.HashMap;
 import java.util.Map;
 
 /** Compiler Pass eliminating redundant phi functions */
-public class PassRedundantPhiElimination {
+public class Pass2RedundantPhiElimination extends Pass2Optimization{
 
-   private SymbolTable symbolTable;
-   private ControlFlowGraph graph;
-
-   public PassRedundantPhiElimination(SymbolTable symbolTable, ControlFlowGraph graph) {
-      this.symbolTable = symbolTable;
-      this.graph = graph;
+   public Pass2RedundantPhiElimination(ControlFlowGraph graph, SymbolTable symbolTable) {
+      super(graph, symbolTable);
    }
 
    /**
-    * Eliminate alias assignments replacing them with the aliassed variable.
+    * Eliminate alias assignments replacing them with the aliased variable.
     */
-   public void eliminate() {
+   @Override
+   public boolean optimize() {
       final Map<Variable, RValue> aliases = findRedundantPhis();
-      PassHelper.removeAssignments(graph, symbolTable, aliases.keySet());
-      PassHelper.replace(graph, aliases);
+      removeAssignments(aliases.keySet());
+      replaceVariables(aliases);
       for (Variable var : aliases.keySet()) {
          RValue alias = aliases.get(var);
          System.out.println("Redundant Phi " + var + " " + alias);
       }
+      return aliases.size()>0;
    }
 
    /**
@@ -50,12 +48,13 @@ public class PassRedundantPhiElimination {
             }
             if(found) {
                VariableVersion variable = phi.getLValue();
+               if(phiRValue==null) {phiRValue = VOID;}
                aliases.put(variable, phiRValue);
             }
             return null;
          }
       };
-      visitor.visitGraph(graph);
+      visitor.visitGraph(getGraph());
       return aliases;
    }
 

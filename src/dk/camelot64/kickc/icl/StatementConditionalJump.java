@@ -32,4 +32,8 @@ public class StatementConditionalJump implements Statement {
    public void setCondition(RValue condition) {
       this.condition = condition;
    }
+
+   public void setDestination(Label destination) {
+      this.destination = destination;
+   }
 }

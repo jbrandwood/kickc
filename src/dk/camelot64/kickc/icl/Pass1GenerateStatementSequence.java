@@ -5,12 +5,12 @@ import dk.camelot64.kickc.parser.KickCParser;
 import org.antlr.v4.runtime.tree.TerminalNode;
 
 /** Generates program SSA form by visiting the ANTLR4 parse tree*/
-public class PassGenerateStatementSequence extends KickCBaseVisitor<RValue> {
+public class Pass1GenerateStatementSequence extends KickCBaseVisitor<RValue> {
 
    private SymbolTable symbolTable;
    private StatementSequence sequence;
 
-   public PassGenerateStatementSequence() {
+   public Pass1GenerateStatementSequence() {
       this.symbolTable = new SymbolTable();
       this.sequence = new StatementSequence();
    }

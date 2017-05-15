@@ -33,6 +33,12 @@ public class Main {
       Pass1GenerateControlFlowGraph pass1GenerateControlFlowGraph = new Pass1GenerateControlFlowGraph(symbolTable);
       ControlFlowGraph controlFlowGraph = pass1GenerateControlFlowGraph.generate(statementSequence);
 
+      System.out.println("SYMBOLS");
+      System.out.println(symbolTable.toString());
+      System.out.println("CONTROL FLOW GRAPH");
+      System.out.println(controlFlowGraph.toString());
+
+
       Pass1GenerateSingleStaticAssignmentForm pass1GenerateSingleStaticAssignmentForm =
             new Pass1GenerateSingleStaticAssignmentForm(symbolTable, controlFlowGraph);
       pass1GenerateSingleStaticAssignmentForm.generate();
@@ -55,6 +61,9 @@ public class Main {
             }
          }
       }
+
+      Pass3RegisterAllocation pass3RegisterAllocation = new Pass3RegisterAllocation(controlFlowGraph, symbolTable);
+      pass3RegisterAllocation.allocate();
 
       System.out.println("SYMBOLS");
       System.out.println(symbolTable.toString());

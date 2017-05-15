@@ -10,9 +10,20 @@ public class SymbolTable {
    private Map<String, Symbol> symbols;
    private int intermediateVarCount = 0;
    private int intermediateLabelCount = 1;
+   private RegisterAllocation allocation;
 
    public SymbolTable() {
       this.symbols = new LinkedHashMap<>();
+   }
+
+   public Collection<Variable> getAllVariables() {
+      Collection<Variable> vars = new ArrayList<>();
+      for (Symbol symbol : symbols.values()) {
+         if(symbol instanceof Variable) {
+            vars.add((Variable) symbol);
+         }
+      }
+      return vars;
    }
 
    private Symbol addSymbol(Symbol symbol) {
@@ -54,19 +65,6 @@ public class SymbolTable {
       return symbol;
    }
 
-   @Override
-   public String toString() {
-      StringBuffer out = new StringBuffer();
-      Set<String> names = symbols.keySet();
-      List<String> sortedNames = new ArrayList<>(names);
-      Collections.sort(sortedNames);
-      for (String name : sortedNames) {
-         Symbol symbol = symbols.get(name);
-         out.append(symbol.toString() + "\n");
-      }
-      return out.toString();
-   }
-
    public void remove(Symbol symbol) {
       symbols.remove(symbol.getName());
    }
@@ -76,4 +74,37 @@ public class SymbolTable {
       symbols.put(version.getName(), version);
       return version;
    }
+
+   public void setAllocation(RegisterAllocation allocation) {
+      this.allocation = allocation;
+   }
+
+   public RegisterAllocation.Register getRegister(Variable variable) {
+      RegisterAllocation.Register register = null;
+      if(allocation!=null) {
+         register = allocation.getRegister(variable);
+      }
+      return register;
+   }
+
+   @Override
+   public String toString() {
+      StringBuffer out = new StringBuffer();
+      Set<String> names = symbols.keySet();
+      List<String> sortedNames = new ArrayList<>(names);
+      Collections.sort(sortedNames);
+      for (String name : sortedNames) {
+         Symbol symbol = symbols.get(name);
+         out.append(symbol.toString());
+         if(symbol instanceof Variable) {
+            RegisterAllocation.Register register = getRegister((Variable) symbol);
+            if(register!=null) {
+               out.append(" "+register);
+            }
+         }
+         out.append("\n");
+      }
+      return out.toString();
+   }
+
 }

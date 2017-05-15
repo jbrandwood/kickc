@@ -116,10 +116,10 @@ public abstract  class Pass2Optimization {
     * @param replacements Variables that have alias values.
     */
    public void replaceLabels(final Map<Label, Label> replacements) {
-      ControlFlowGraphBaseVisitor<Void> visitor = new ControlFlowGraphBaseVisitor() {
+      ControlFlowGraphBaseVisitor<Void> visitor = new ControlFlowGraphBaseVisitor<Void>() {
 
          @Override
-         public Object visitConditionalJump(StatementConditionalJump conditionalJump) {
+         public Void  visitConditionalJump(StatementConditionalJump conditionalJump) {
             if(getReplacement(replacements, conditionalJump.getDestination())!=null) {
                conditionalJump.setDestination(getReplacement(replacements, conditionalJump.getDestination()));
             }
@@ -127,7 +127,7 @@ public abstract  class Pass2Optimization {
          }
 
          @Override
-         public Object visitJump(StatementJump jump) {
+         public Void visitJump(StatementJump jump) {
             if(getReplacement(replacements, jump.getDestination())!=null) {
                jump.setDestination(getReplacement(replacements, jump.getDestination()));
             }
@@ -135,7 +135,7 @@ public abstract  class Pass2Optimization {
          }
 
          @Override
-         public Object visitPhi(StatementPhi phi) {
+         public Void visitPhi(StatementPhi phi) {
             for (StatementPhi.PreviousSymbol previousSymbol : phi.getPreviousVersions()) {
                Label replacement = getReplacement(replacements, previousSymbol.getBlock().getLabel());
                if(replacement !=null) {

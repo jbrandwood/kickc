@@ -8,7 +8,8 @@ import java.util.Map;
 /** Pass that generates a control flow graph for the program */
 public class Pass1GenerateControlFlowGraph {
 
-   public static final String FIRST_BLOCK_NAME = "@0";
+   public static final String BEGIN_BLOCK_NAME = "@BEGIN";
+   public static final String END_BLOCK_NAME = "@END";
    private SymbolTable symbolTable;
    private Map<Symbol, ControlFlowBlock> blocks;
    private ControlFlowBlock firstBlock;
@@ -19,8 +20,9 @@ public class Pass1GenerateControlFlowGraph {
    }
 
    public ControlFlowGraph generate(StatementSequence sequence) {
-      this.firstBlock = getOrCreateBlock(symbolTable.newNamedJumpLabel(FIRST_BLOCK_NAME));
+      this.firstBlock = getOrCreateBlock(symbolTable.newNamedJumpLabel(BEGIN_BLOCK_NAME));
       ControlFlowBlock currentBlock = this.firstBlock;
+      sequence.addStatement(new StatementJumpTarget(symbolTable.newNamedJumpLabel(END_BLOCK_NAME)));
       for (Statement statement : sequence.getStatements()) {
          if(statement instanceof StatementJumpTarget) {
             StatementJumpTarget statementJumpTarget = (StatementJumpTarget) statement;
@@ -49,6 +51,7 @@ public class Pass1GenerateControlFlowGraph {
             currentBlock.addStatement(statement);
          }
       }
+
       return new ControlFlowGraph(blocks, firstBlock);
    }
 

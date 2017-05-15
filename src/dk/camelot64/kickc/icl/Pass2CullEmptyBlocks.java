@@ -14,7 +14,7 @@ public class Pass2CullEmptyBlocks extends Pass2Optimization {
       List<ControlFlowBlock> remove = new ArrayList<>();
       Map<Label, Label> replace = new HashMap<>();
       for (ControlFlowBlock block : getGraph().getAllBlocks()) {
-         if (block.getStatements().isEmpty()) {
+         if (block.getStatements().isEmpty() && block.getLabel().isIntermediate()) {
             remove.add(block);
          }
       }
@@ -22,20 +22,20 @@ public class Pass2CullEmptyBlocks extends Pass2Optimization {
          ControlFlowBlock successor = block.getDefaultSuccessor();
          for (ControlFlowBlock predecessor : block.getPredecessors()) {
             replace.put(block.getLabel(), predecessor.getLabel());
-            if (predecessor.getDefaultSuccessor().equals(block)) {
+            if (block.equals(predecessor.getDefaultSuccessor())) {
                predecessor.setDefaultSuccessor(successor);
                if (successor != null) {
                   successor.addPredecessor(predecessor);
                }
             }
-            if (predecessor.getConditionalSuccessor().equals(block)) {
+            if (block.equals(predecessor.getConditionalSuccessor())) {
                predecessor.setConditionalSuccessor(successor);
                if (successor != null) {
                   successor.addPredecessor(predecessor);
                }
             }
          }
-         if (successor != null) {
+         if (successor != null && block.getLabel().isIntermediate()) {
             successor.removePredecessor(block);
          }
          getGraph().getAllBlocks().remove(block);

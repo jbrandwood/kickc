@@ -10,7 +10,7 @@ public abstract class AsmFragmentSignature {
    private SymbolTable symbols;
 
    /** Binding of named values in the fragment to values (constants, variables, ...) .*/
-   private Map<String, RValue> bindings;
+   private Map<String, Value> bindings;
 
    /** The string signature/name of the asm fragment. */
    private String signature;
@@ -20,7 +20,7 @@ public abstract class AsmFragmentSignature {
       this.bindings = new HashMap<>();
    }
 
-   public RValue getBinding(String name) {
+   public Value getBinding(String name) {
       return bindings.get(name);
    }
 
@@ -41,12 +41,15 @@ public abstract class AsmFragmentSignature {
    /** Constant byte indexing. */
    private int nextConstByteIdx = 1;
 
+   /** Label indexing. */
+   private int nextLabelIdx = 1;
+
    /**
     * Add bindings of a value.
     * @param value The value to bind.
     * @return The bound name of the value. If the value has already been bound the existing bound name is returned.
     */
-   public String bind(RValue value) {
+   public String bind(Value value) {
       // Find value if it is already bound
       for (String name : bindings.keySet()) {
          if (value.equals(bindings.get(name))) {
@@ -75,6 +78,10 @@ public abstract class AsmFragmentSignature {
          } else {
             throw new RuntimeException("Binding of word integers not supported " + intValue);
          }
+      } else if (value instanceof Label) {
+            String name = "la"+ nextLabelIdx++;
+            bindings.put(name, value);
+            return name;
       } else {
          throw new RuntimeException("Binding of value type not supported " + value);
       }

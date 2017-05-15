@@ -17,6 +17,7 @@ public class Pass2RedundantPhiElimination extends Pass2Optimization{
    public boolean optimize() {
       final Map<Variable, RValue> aliases = findRedundantPhis();
       removeAssignments(aliases.keySet());
+      deleteSymbols(aliases.keySet());
       replaceVariables(aliases);
       for (Variable var : aliases.keySet()) {
          RValue alias = aliases.get(var);

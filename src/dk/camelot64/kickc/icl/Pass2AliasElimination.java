@@ -18,6 +18,7 @@ public class Pass2AliasElimination extends Pass2Optimization {
       final Map<Variable, Variable> aliases = findAliases();
       removeAssignments(aliases.values());
       replaceVariables(aliases);
+      deleteSymbols(aliases.keySet());
       for (Variable var : aliases.keySet()) {
          Variable alias = aliases.get(var);
          System.out.println("Alias " + var + " " + alias);

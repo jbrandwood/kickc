@@ -23,4 +23,5 @@ public class ConstantInteger implements Constant {
    public String toString() {
       return "("+getType().getTypeName()+") "+Integer.toString(number);
    }
+
 }

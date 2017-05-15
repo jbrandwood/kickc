@@ -8,7 +8,6 @@ import org.antlr.v4.runtime.CharStreams;
 import org.antlr.v4.runtime.CommonTokenStream;
 
 import java.io.IOException;
-import java.io.LineNumberReader;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -32,12 +31,6 @@ public class Main {
 
       Pass1GenerateControlFlowGraph pass1GenerateControlFlowGraph = new Pass1GenerateControlFlowGraph(symbolTable);
       ControlFlowGraph controlFlowGraph = pass1GenerateControlFlowGraph.generate(statementSequence);
-
-      System.out.println("SYMBOLS");
-      System.out.println(symbolTable.toString());
-      System.out.println("CONTROL FLOW GRAPH");
-      System.out.println(controlFlowGraph.toString());
-
 
       Pass1GenerateSingleStaticAssignmentForm pass1GenerateSingleStaticAssignmentForm =
             new Pass1GenerateSingleStaticAssignmentForm(symbolTable, controlFlowGraph);
@@ -65,10 +58,16 @@ public class Main {
       Pass3RegisterAllocation pass3RegisterAllocation = new Pass3RegisterAllocation(controlFlowGraph, symbolTable);
       pass3RegisterAllocation.allocate();
 
+      Pass4CodeGeneration pass4CodeGeneration = new Pass4CodeGeneration(controlFlowGraph, symbolTable);
+
+      AsmSequence asmSequence = pass4CodeGeneration.generate();
+
       System.out.println("SYMBOLS");
       System.out.println(symbolTable.toString());
       System.out.println("CONTROL FLOW GRAPH");
       System.out.println(controlFlowGraph.toString());
+      System.out.println("ASSEMBLER");
+      System.out.println(asmSequence.toString());
    }
 
 }

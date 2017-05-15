@@ -35,14 +35,16 @@ public class RegisterAllocation {
    }
 
    /** The register type. */
-   public enum RegisterType { ZP };
+   public enum RegisterType {
+      ZP_BYTE, ZP_BOOL
+   };
 
    /** A zero page address used as a register for a single byte variable. */
-   public static class RegisterZp implements Register {
+   public static class RegisterZpByte implements Register {
 
       private int zp;
 
-      public RegisterZp(int zp) {
+      public RegisterZpByte(int zp) {
          this.zp = zp;
       }
 
@@ -52,12 +54,35 @@ public class RegisterAllocation {
 
       @Override
       public RegisterType getType() {
-         return  RegisterType.ZP;
+         return  RegisterType.ZP_BYTE;
       }
 
       @Override
       public String toString() {
-         return "zp:"+zp;
+         return "zp byte:"+zp;
+      }
+   }
+
+   /** A zero page address used as a register for a boolean variable. */
+   public static class RegisterZpBool implements Register {
+      private int zp;
+
+      public RegisterZpBool(int zp) {
+         this.zp = zp;
+      }
+
+      public int getZp() {
+         return zp;
+      }
+
+      @Override
+      public RegisterType getType() {
+         return  RegisterType.ZP_BOOL;
+      }
+
+      @Override
+      public String toString() {
+         return "zp bool:"+zp;
       }
    }
 
@@ -70,4 +95,5 @@ public class RegisterAllocation {
       }
       return out.toString();
    }
+
 }

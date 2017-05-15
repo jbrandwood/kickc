@@ -16,7 +16,11 @@ public class Pass3RegisterAllocation {
       int currentZp = 2;
       for (Variable var : symbols.getAllVariables()) {
          if(var instanceof VariableIntermediate || var instanceof VariableVersion)
-         allocation.allocate(var, new RegisterAllocation.RegisterZp(currentZp++));
+            if(var.getType().equals(SymbolType.BYTE)) {
+               allocation.allocate(var, new RegisterAllocation.RegisterZpByte(currentZp++));
+            } else if(var.getType().equals(SymbolType.BOOLEAN))  {
+               allocation.allocate(var, new RegisterAllocation.RegisterZpBool(currentZp++));
+            }
       }
       symbols.setAllocation(allocation);
    }

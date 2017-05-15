@@ -23,6 +23,7 @@ public class Pass2ConstantPropagation extends Pass2Optimization {
          System.out.println("Constant " + constantVar + " " + constantValue);
       }
       removeAssignments(constants.keySet());
+      deleteSymbols(constants.keySet());
       replaceVariables(constants);
       return constants.size() > 0;
    }

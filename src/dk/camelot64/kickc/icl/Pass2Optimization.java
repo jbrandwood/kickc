@@ -46,9 +46,9 @@ public abstract  class Pass2Optimization {
     * @param aliases Variables that have alias values.
     */
    public void replaceVariables(final Map<Variable, ? extends RValue> aliases) {
-      ControlFlowGraphBaseVisitor<Void> visitor = new ControlFlowGraphBaseVisitor() {
+      ControlFlowGraphBaseVisitor<Void> visitor = new ControlFlowGraphBaseVisitor<Void>() {
          @Override
-         public Object visitAssignment(StatementAssignment assignment) {
+         public Void visitAssignment(StatementAssignment assignment) {
             if(getAlias(aliases, assignment.getLValue()) !=null) {
                RValue alias = getAlias(aliases, assignment.getLValue());
                if(alias instanceof LValue) {
@@ -65,7 +65,7 @@ public abstract  class Pass2Optimization {
          }
 
          @Override
-         public Object visitConditionalJump(StatementConditionalJump conditionalJump) {
+         public Void visitConditionalJump(StatementConditionalJump conditionalJump) {
             if(getAlias(aliases, conditionalJump.getCondition())!=null) {
                conditionalJump.setCondition(getAlias(aliases, conditionalJump.getCondition()));
             }
@@ -73,7 +73,7 @@ public abstract  class Pass2Optimization {
          }
 
          @Override
-         public Object visitPhi(StatementPhi phi) {
+         public Void visitPhi(StatementPhi phi) {
             if(getAlias(aliases, phi.getLValue())!=null) {
                RValue alias = getAlias(aliases, phi.getLValue());
                if(alias instanceof LValue) {
@@ -164,7 +164,7 @@ public abstract  class Pass2Optimization {
 
 
    /**
-    * Remove all assignments to specific LValues from the control frlo graph (as they are no longer needed).
+    * Remove all assignments to specific LValues from the control flow graph (as they are no longer needed).
     * @param variables The variables to eliminate
     */
    public void removeAssignments(Collection<? extends LValue> variables) {
@@ -175,17 +175,26 @@ public abstract  class Pass2Optimization {
                StatementAssignment assignment = (StatementAssignment) statement;
                if (variables.contains(assignment.getLValue())) {
                   iterator.remove();
-                  symbolTable.remove((Symbol) assignment.getLValue());
                }
             } else if(statement instanceof StatementPhi) {
                StatementPhi phi = (StatementPhi) statement;
                if (variables.contains(phi.getLValue())) {
                   iterator.remove();
-                  symbolTable.remove(phi.getLValue());
                }
             }
          }
       }
    }
+
+   /**
+    * Remove variables from the symbol table
+    * @param variables The variables to remove
+    */
+   public void deleteSymbols(Collection<? extends LValue> variables) {
+      for (LValue variable : variables) {
+         symbolTable.remove((Symbol) variable);
+      }
+   }
+
 
 }

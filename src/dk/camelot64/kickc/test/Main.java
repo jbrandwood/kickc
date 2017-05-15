@@ -51,8 +51,8 @@ public class Main {
             if (stepOptimized) {
                System.out.println("Succesful optimization "+optimization);
                optimized = true;
-               System.out.println("CONTROL FLOW GRAPH");
-               System.out.println(controlFlowGraph.toString());
+               //System.out.println("CONTROL FLOW GRAPH");
+               //System.out.println(controlFlowGraph.toString());
             }
          }
       }

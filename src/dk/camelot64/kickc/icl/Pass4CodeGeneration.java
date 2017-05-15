@@ -1,13 +1,6 @@
 package dk.camelot64.kickc.icl;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.net.URL;
 import java.util.List;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 /**
  * Code Generation of 6502 Assembler from ICL/SSA Control Flow Graph
@@ -55,13 +48,13 @@ public class Pass4CodeGeneration {
 
    private void genStatement(AsmSequence asm, Statement statement) {
       if (statement instanceof StatementAssignment) {
-         AsmFragmentSignature asmFragmentSignature = new AsmFragmentSignatureAssignment((StatementAssignment) statement, symbols);
-         asm.addAsm("  // " + statement + "  //  " + asmFragmentSignature.getSignature());
-         genAsmFragment(asm, asmFragmentSignature);
+         AsmFragment asmFragment = new AsmFragment((StatementAssignment) statement, symbols);
+         asm.addAsm("  // " + statement + "  //  " + asmFragment.getSignature());
+         asmFragment.generateAsm(asm);
       } else if (statement instanceof StatementConditionalJump) {
-         AsmFragmentSignature asmFragmentSignature = new AsmFragmentSignatureConditionalJump((StatementConditionalJump) statement, symbols);
-         asm.addAsm("  // " + statement + "  //  " + asmFragmentSignature.getSignature());
-         genAsmFragment(asm, asmFragmentSignature);
+         AsmFragment asmFragment = new AsmFragment((StatementConditionalJump) statement, symbols);
+         asm.addAsm("  // " + statement + "  //  " + asmFragment.getSignature());
+         asmFragment.generateAsm(asm);
       } else {
          asm.addAsm("  // TODO: " + statement);
       }
@@ -102,9 +95,9 @@ public class Pass4CodeGeneration {
     * @param lValue The lValue
     */
    private void genAsmMove(AsmSequence asm, RValue rValue, LValue lValue) {
-      AsmFragmentSignatureAssignment signature = new AsmFragmentSignatureAssignment(lValue, rValue, symbols);
-      asm.addAsm("  // " + rValue + " = " + lValue + "  // " + signature.getSignature());
-      genAsmFragment(asm, signature);
+      AsmFragment asmFragment = new AsmFragment(lValue, rValue, symbols);
+      asm.addAsm("  // " + rValue + " = " + lValue + "  // " + asmFragment.getSignature());
+      asmFragment.generateAsm(asm);
    }
 
    private void genAsmLabel(AsmSequence asm, Label label) {
@@ -117,77 +110,6 @@ public class Pass4CodeGeneration {
 
    private void genAsmJump(AsmSequence asm, String label) {
       asm.addAsm("  jmp " + label.replace('@', 'B'));
-   }
-
-   /**
-    * Generate assembler code for an assembler fragment.
-    *
-    * @param asm               The assembler sequence to generate into.
-    * @param fragmentSignature Signature of the code fragment to generate
-    */
-   private void genAsmFragment(AsmSequence asm, AsmFragmentSignature fragmentSignature) {
-      String signature = fragmentSignature.getSignature();
-      ClassLoader classLoader = this.getClass().getClassLoader();
-      URL fragmentResource = classLoader.getResource("dk/camelot64/kickc/icl/asm/" + signature + ".asm");
-      if (fragmentResource == null) {
-         System.out.println("Fragment not found " + fragmentResource);
-         asm.addAsm("  // Fragment not found: " + signature);
-         return;
-      }
-      Pattern bindPattern = Pattern.compile(".*\\{([^}]*)}.*");
-      try {
-         InputStream fragmentStream = fragmentResource.openStream();
-         BufferedReader fragmentReader = new BufferedReader(new InputStreamReader(fragmentStream));
-         String line;
-         while ((line = fragmentReader.readLine()) != null) {
-            Matcher matcher = bindPattern.matcher(line);
-            if (matcher.matches()) {
-               String name = matcher.group(1);
-               String bound = getFragmentBoundValue(name, fragmentSignature);
-               line = line.replaceFirst("\\{[^}]*}", bound);
-            }
-            asm.addAsm("  " + line);
-         }
-         fragmentReader.close();
-         fragmentStream.close();
-      } catch (IOException e) {
-         throw new RuntimeException("Error reading code fragment " + fragmentResource);
-      }
-
-   }
-
-   /**
-    * Get the value to replace a bound name with from the fragment signature
-    *
-    * @param boundName         The name of the bound value in the fragment
-    * @param fragmentSignature The fragment signature containing the bindings
-    * @return The bound value to use in the generated ASM code
-    */
-   private String getFragmentBoundValue(String boundName, AsmFragmentSignature fragmentSignature) {
-      Value boundValue = fragmentSignature.getBinding(boundName);
-      String bound;
-      if (boundValue instanceof Variable) {
-         RegisterAllocation.Register register = symbols.getRegister((Variable) boundValue);
-         if (register instanceof RegisterAllocation.RegisterZpByte) {
-            bound = Integer.toString(((RegisterAllocation.RegisterZpByte) register).getZp());
-         } else if (register instanceof RegisterAllocation.RegisterZpBool) {
-            bound = Integer.toString(((RegisterAllocation.RegisterZpBool) register).getZp());
-         } else {
-            throw new RuntimeException("Register Type not implemented " + register);
-         }
-      } else if (boundValue instanceof ConstantInteger) {
-         ConstantInteger boundInt = (ConstantInteger) boundValue;
-         if (boundInt.getType().equals(SymbolType.BYTE)) {
-            bound = Integer.toString(boundInt.getNumber());
-         } else {
-            throw new RuntimeException("Bound Value Type not implemented " + boundValue);
-         }
-      } else if (boundValue instanceof Label) {
-            bound = ((Label) boundValue).getName().replace('@', 'B');
-      } else {
-         throw new RuntimeException("Bound Value Type not implemented " + boundValue);
-      }
-      return bound;
    }
 
 

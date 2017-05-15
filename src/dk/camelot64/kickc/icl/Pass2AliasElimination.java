@@ -1,6 +1,7 @@
 package dk.camelot64.kickc.icl;
 
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
 
 /** Compiler Pass eliminating alias assignments */
@@ -26,11 +27,48 @@ public class Pass2AliasElimination extends Pass2Optimization {
       return (aliases.size()>0);
    }
 
+   private Map<Variable, Variable> findAliases() {
+      Map<Variable, Variable> candidates = findAliasesCandidates();
+      cleanupCandidates(candidates);
+      return candidates;
+   }
+
+   // Remove all candidates that are used after assignment in phi blocks
+   private void cleanupCandidates(Map<Variable, Variable> candidates) {
+      Iterator<Variable> aliasIt = candidates.keySet().iterator();
+      while (aliasIt.hasNext()) {
+         final Variable alias  = aliasIt.next();
+         final Variable variable = candidates.get(alias);
+         final Boolean[] rMatch = {false};
+         final Boolean[] lMatch = {false};
+         ControlFlowGraphBaseVisitor<Void> candidateEliminator = new ControlFlowGraphBaseVisitor<Void>() {
+            @Override
+            public Void visitPhi(StatementPhi phi) {
+               for (StatementPhi.PreviousSymbol previousSymbol : phi.getPreviousVersions()) {
+                  if(previousSymbol.getRValue().equals(variable)) {
+                     rMatch[0] = true;
+                     break;
+                  }
+               }
+               if(phi.getLValue().equals(alias)) {
+                  lMatch[0] = true;
+               }
+               return null;
+            }
+         };
+         candidateEliminator.visitGraph(getGraph());
+         if(rMatch[0] && lMatch[0]) {
+            System.out.println("Alias candidate removed " + alias + " " + variable);
+            aliasIt.remove();
+         }
+      }
+   }
+
    /**
     * Find variables that have constant values.
     * @return Map from Variable to the Constant value
     */
-   private Map<Variable, Variable> findAliases() {
+   private Map<Variable, Variable> findAliasesCandidates() {
       final Map<Variable, Variable> aliases = new HashMap<>();
       ControlFlowGraphBaseVisitor<Void> visitor = new ControlFlowGraphBaseVisitor<Void>() {
          @Override

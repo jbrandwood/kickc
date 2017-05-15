@@ -14,7 +14,7 @@ import java.util.List;
 /** Test my KickC Grammar */
 public class Main {
    public static void main(String[] args) throws IOException {
-      CharStream input = CharStreams.fromFileName("src/dk/camelot64/kickc/test/test.kc");
+      CharStream input = CharStreams.fromFileName("src/dk/camelot64/kickc/test/fib.kc");
       System.out.println(input.toString());
       KickCLexer lexer = new KickCLexer(input);
       KickCParser parser = new KickCParser(new CommonTokenStream(lexer));
@@ -51,6 +51,8 @@ public class Main {
             if (stepOptimized) {
                System.out.println("Succesful optimization "+optimization);
                optimized = true;
+               System.out.println("CONTROL FLOW GRAPH");
+               System.out.println(controlFlowGraph.toString());
             }
          }
       }

@@ -56,7 +56,7 @@ public class Pass4CodeGeneration {
          asm.addAsm("  // " + statement + "  //  " + asmFragment.getSignature());
          asmFragment.generateAsm(asm);
       } else {
-         asm.addAsm("  // TODO: " + statement);
+         throw new RuntimeException("Statement not supported "+statement);
       }
    }
 
@@ -79,7 +79,7 @@ public class Pass4CodeGeneration {
          StatementPhi phi = (StatementPhi) statement;
          for (StatementPhi.PreviousSymbol previousSymbol : phi.getPreviousVersions()) {
             if (previousSymbol.getBlock().equals(predecessor)) {
-               genAsmMove(asm, previousSymbol.getRValue(), phi.getLValue());
+               genAsmMove(asm, phi.getLValue(), previousSymbol.getRValue());
                break;
             }
          }
@@ -87,16 +87,9 @@ public class Pass4CodeGeneration {
       genAsmJump(asm, block.getLabel().getName());
    }
 
-   /**
-    * Generate an assembler move from an Rvalue to an LValue
-    *
-    * @param asm    The assembler sequence
-    * @param rValue The rValue
-    * @param lValue The lValue
-    */
-   private void genAsmMove(AsmSequence asm, RValue rValue, LValue lValue) {
+   private void genAsmMove(AsmSequence asm, LValue lValue, RValue rValue) {
       AsmFragment asmFragment = new AsmFragment(lValue, rValue, symbols);
-      asm.addAsm("  // " + rValue + " = " + lValue + "  // " + asmFragment.getSignature());
+      asm.addAsm("  // " + lValue + " = " + rValue + "  // " + asmFragment.getSignature());
       asmFragment.generateAsm(asm);
    }
 

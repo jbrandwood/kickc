@@ -26,7 +26,11 @@ public class AsmFragment {
       this.bindings = new HashMap<>();
       this.symbols = symbols;
       StringBuilder signature = new StringBuilder();
-      signature.append(bind(conditionalJump.getCondition()));
+      if(conditionalJump.getRValue1()!=null) {
+         signature.append(bind(conditionalJump.getRValue1()));
+         signature.append(conditionalJump.getOperator().getOperator());
+      }
+      signature.append(bind(conditionalJump.getRValue2()));
       signature.append("?");
       signature.append(bind(conditionalJump.getDestination()));
       setSignature(signature.toString());

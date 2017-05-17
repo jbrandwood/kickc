@@ -42,6 +42,7 @@ public class Main {
       optimizations.add(new Pass2AliasElimination(controlFlowGraph, symbolTable));
       optimizations.add(new Pass2RedundantPhiElimination(controlFlowGraph, symbolTable));
       optimizations.add(new Pass2SelfPhiElimination(controlFlowGraph, symbolTable));
+      optimizations.add(new Pass2ConditionalJumpSimplification(controlFlowGraph, symbolTable));
 
       boolean optimized = true;
       while (optimized) {

@@ -25,5 +25,4 @@ public class Pass3RegisterAllocation {
       symbols.setAllocation(allocation);
    }
 
-
 }

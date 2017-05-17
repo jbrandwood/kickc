@@ -1,8 +1,6 @@
 package dk.camelot64.kickc.icl;
 
-import java.util.Collection;
-import java.util.Iterator;
-import java.util.Map;
+import java.util.*;
 
 /**
  * Optimization performed during Compiler Pass 2.
@@ -66,8 +64,11 @@ public abstract  class Pass2Optimization {
 
          @Override
          public Void visitConditionalJump(StatementConditionalJump conditionalJump) {
-            if(getAlias(aliases, conditionalJump.getCondition())!=null) {
-               conditionalJump.setCondition(getAlias(aliases, conditionalJump.getCondition()));
+            if(getAlias(aliases, conditionalJump.getRValue1())!=null) {
+               conditionalJump.setRValue1(getAlias(aliases, conditionalJump.getRValue1()));
+            }
+            if(getAlias(aliases, conditionalJump.getRValue2())!=null) {
+               conditionalJump.setRValue2(getAlias(aliases, conditionalJump.getRValue2()));
             }
             return null;
          }
@@ -196,5 +197,59 @@ public abstract  class Pass2Optimization {
       }
    }
 
+   public Map<LValue, StatementAssignment> getAllAssignments() {
+      final HashMap<LValue, StatementAssignment> assignments = new HashMap<>();
+      ControlFlowGraphBaseVisitor<Void> visitor = new ControlFlowGraphBaseVisitor<Void>() {
+         @Override
+         public Void visitAssignment(StatementAssignment assignment) {
+            assignments.put(assignment.getLValue(), assignment);
+            return null;
+         }
+      };
+      visitor.visitGraph(getGraph());
+      return assignments;
+   }
 
+   public Map<RValue, List<Statement>> getAllUsages() {
+      final HashMap<RValue, List<Statement>> usages = new HashMap<>();
+      ControlFlowGraphBaseVisitor<Void> visitor = new ControlFlowGraphBaseVisitor<Void>() {
+         @Override
+         public Void visitAssignment(StatementAssignment assignment) {
+            addUsage(assignment.getRValue1(), assignment);
+            addUsage(assignment.getRValue2(), assignment);
+            return null;
+         }
+
+         @Override
+         public Void visitConditionalJump(StatementConditionalJump conditionalJump) {
+            addUsage(conditionalJump.getRValue1(), conditionalJump);
+            addUsage(conditionalJump.getRValue2(), conditionalJump);
+            return null;
+         }
+
+         @Override
+         public Void visitPhi(StatementPhi phi) {
+            for (StatementPhi.PreviousSymbol previousSymbol : phi.getPreviousVersions()) {
+               addUsage(previousSymbol.getRValue(), phi);
+            }
+            return null;
+         }
+
+         private void addUsage(RValue rValue, Statement statement) {
+            if (rValue == null) {
+               return;
+            }
+            List<Statement> use = usages.get(rValue);
+            if (use == null) {
+               use = new ArrayList<>();
+               usages.put(rValue, use);
+            }
+            use.add(statement);
+         }
+
+      };
+      visitor.visitGraph(getGraph());
+
+      return usages;
+   }
 }

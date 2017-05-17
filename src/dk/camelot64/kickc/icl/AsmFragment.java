@@ -28,9 +28,15 @@ public class AsmFragment {
       StringBuilder signature = new StringBuilder();
       if(conditionalJump.getRValue1()!=null) {
          signature.append(bind(conditionalJump.getRValue1()));
+      }
+      if(conditionalJump.getOperator()!=null) {
          signature.append(conditionalJump.getOperator().getOperator());
       }
-      signature.append(bind(conditionalJump.getRValue2()));
+      if(conditionalJump.getRValue2() instanceof ConstantInteger && ((ConstantInteger) conditionalJump.getRValue2()).getNumber()==0) {
+         signature.append("0");
+      }  else {
+         signature.append(bind(conditionalJump.getRValue2()));
+      }
       signature.append("?");
       signature.append(bind(conditionalJump.getDestination()));
       setSignature(signature.toString());
@@ -58,7 +64,15 @@ public class AsmFragment {
       if (operator != null) {
          signature.append(operator.getOperator());
       }
-      signature.append(bind(rValue2));
+      if(
+            rValue2 instanceof ConstantInteger &&
+                  ((ConstantInteger) rValue2).getNumber()==1 &&
+                  operator!=null &&
+                  (operator.getOperator().equals("-") || operator.getOperator().equals("+"))) {
+         signature.append("1");
+      }  else {
+         signature.append(bind(rValue2));
+      }
       return signature.toString();
    }
 
@@ -106,6 +120,10 @@ public class AsmFragment {
             return name;
          } else if (RegisterAllocation.RegisterType.ZP_BOOL.equals(register.getType())) {
             String name = "zpbo" + nextZpBoolIdx++;
+            bindings.put(name, value);
+            return name;
+         } else if (RegisterAllocation.RegisterType.REG_X_BYTE.equals(register.getType())) {
+            String name = "xby" ;
             bindings.put(name, value);
             return name;
          } else {

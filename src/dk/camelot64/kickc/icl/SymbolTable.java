@@ -1,5 +1,7 @@
 package dk.camelot64.kickc.icl;
 
+import sun.jvm.hotspot.debugger.cdbg.Sym;
+
 import java.util.*;
 
 /**
@@ -73,6 +75,10 @@ public class SymbolTable {
       VariableVersion version = new VariableVersion(symbol, symbol.getNextVersionNumber());
       symbols.put(version.getName(), version);
       return version;
+   }
+
+   public Variable getVariable(String name) {
+      return (Variable) symbols.get(name);
    }
 
    public void setAllocation(RegisterAllocation allocation) {

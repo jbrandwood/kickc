@@ -36,7 +36,7 @@ public class RegisterAllocation {
 
    /** The register type. */
    public enum RegisterType {
-      ZP_BYTE, ZP_BOOL
+      ZP_BYTE, ZP_BOOL, REG_X_BYTE
    };
 
    /** A zero page address used as a register for a single byte variable. */
@@ -84,6 +84,23 @@ public class RegisterAllocation {
       public String toString() {
          return "zp bool:"+zp;
       }
+   }
+
+   /** The X register. */
+   public static class RegisterXByte implements Register {
+      @Override
+      public RegisterType getType() {
+         return RegisterType.REG_X_BYTE;
+      }
+
+      @Override
+      public String toString() {
+         return "reg byte x";
+      }
+   }
+
+   public static Register getRegisterX() {
+      return new RegisterXByte();
    }
 
    @Override

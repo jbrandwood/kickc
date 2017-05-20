@@ -21,11 +21,11 @@ public class Asm6502Parser extends Parser {
 		T__9=10, MNEMONIC=11, NUMINT=12, BININTEGER=13, DECINTEGER=14, HEXINTEGER=15, 
 		NAME=16, WS=17;
 	public static final int
-		RULE_file = 0, RULE_lineSeq = 1, RULE_line = 2, RULE_label = 3, RULE_comment = 4, 
-		RULE_instruction = 5, RULE_paramMode = 6, RULE_param = 7;
+		RULE_file = 0, RULE_lineSeq = 1, RULE_nline = 2, RULE_line = 3, RULE_label = 4, 
+		RULE_comment = 5, RULE_instruction = 6, RULE_paramMode = 7, RULE_param = 8;
 	public static final String[] ruleNames = {
-		"file", "lineSeq", "line", "label", "comment", "instruction", "paramMode", 
-		"param"
+		"file", "lineSeq", "nline", "line", "label", "comment", "instruction", 
+		"paramMode", "param"
 	};
 
 	private static final String[] _LITERAL_NAMES = {
@@ -115,9 +115,9 @@ public class Asm6502Parser extends Parser {
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(16);
+			setState(18);
 			lineSeq();
-			setState(17);
+			setState(19);
 			match(EOF);
 			}
 		}
@@ -133,11 +133,14 @@ public class Asm6502Parser extends Parser {
 	}
 
 	public static class LineSeqContext extends ParserRuleContext {
-		public List<LineContext> line() {
-			return getRuleContexts(LineContext.class);
+		public LineContext line() {
+			return getRuleContext(LineContext.class,0);
 		}
-		public LineContext line(int i) {
-			return getRuleContext(LineContext.class,i);
+		public List<NlineContext> nline() {
+			return getRuleContexts(NlineContext.class);
+		}
+		public NlineContext nline(int i) {
+			return getRuleContext(NlineContext.class,i);
 		}
 		public LineSeqContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
@@ -165,20 +168,70 @@ public class Asm6502Parser extends Parser {
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(20); 
+			setState(21);
+			line();
+			{
+			setState(25);
 			_errHandler.sync(this);
 			_la = _input.LA(1);
-			do {
+			while (_la==T__0) {
 				{
 				{
-				setState(19);
-				line();
+				setState(22);
+				nline();
 				}
 				}
-				setState(22); 
+				setState(27);
 				_errHandler.sync(this);
 				_la = _input.LA(1);
-			} while ( (((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << T__0) | (1L << T__2) | (1L << MNEMONIC) | (1L << NAME))) != 0) );
+			}
+			}
+			}
+		}
+		catch (RecognitionException re) {
+			_localctx.exception = re;
+			_errHandler.reportError(this, re);
+			_errHandler.recover(this, re);
+		}
+		finally {
+			exitRule();
+		}
+		return _localctx;
+	}
+
+	public static class NlineContext extends ParserRuleContext {
+		public LineContext line() {
+			return getRuleContext(LineContext.class,0);
+		}
+		public NlineContext(ParserRuleContext parent, int invokingState) {
+			super(parent, invokingState);
+		}
+		@Override public int getRuleIndex() { return RULE_nline; }
+		@Override
+		public void enterRule(ParseTreeListener listener) {
+			if ( listener instanceof Asm6502Listener ) ((Asm6502Listener)listener).enterNline(this);
+		}
+		@Override
+		public void exitRule(ParseTreeListener listener) {
+			if ( listener instanceof Asm6502Listener ) ((Asm6502Listener)listener).exitNline(this);
+		}
+		@Override
+		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
+			if ( visitor instanceof Asm6502Visitor ) return ((Asm6502Visitor<? extends T>)visitor).visitNline(this);
+			else return visitor.visitChildren(this);
+		}
+	}
+
+	public final NlineContext nline() throws RecognitionException {
+		NlineContext _localctx = new NlineContext(_ctx, getState());
+		enterRule(_localctx, 4, RULE_nline);
+		try {
+			enterOuterAlt(_localctx, 1);
+			{
+			setState(28);
+			match(T__0);
+			setState(29);
+			line();
 			}
 		}
 		catch (RecognitionException re) {
@@ -223,43 +276,41 @@ public class Asm6502Parser extends Parser {
 
 	public final LineContext line() throws RecognitionException {
 		LineContext _localctx = new LineContext(_ctx, getState());
-		enterRule(_localctx, 4, RULE_line);
+		enterRule(_localctx, 6, RULE_line);
 		int _la;
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(25);
+			setState(32);
 			_errHandler.sync(this);
 			_la = _input.LA(1);
 			if (_la==NAME) {
 				{
-				setState(24);
+				setState(31);
 				label();
 				}
 			}
 
-			setState(28);
+			setState(35);
 			_errHandler.sync(this);
 			_la = _input.LA(1);
 			if (_la==MNEMONIC) {
 				{
-				setState(27);
+				setState(34);
 				instruction();
 				}
 			}
 
-			setState(31);
+			setState(38);
 			_errHandler.sync(this);
 			_la = _input.LA(1);
 			if (_la==T__2) {
 				{
-				setState(30);
+				setState(37);
 				comment();
 				}
 			}
 
-			setState(33);
-			match(T__0);
 			}
 		}
 		catch (RecognitionException re) {
@@ -296,13 +347,13 @@ public class Asm6502Parser extends Parser {
 
 	public final LabelContext label() throws RecognitionException {
 		LabelContext _localctx = new LabelContext(_ctx, getState());
-		enterRule(_localctx, 6, RULE_label);
+		enterRule(_localctx, 8, RULE_label);
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(35);
+			setState(40);
 			match(NAME);
-			setState(36);
+			setState(41);
 			match(T__1);
 			}
 		}
@@ -339,26 +390,26 @@ public class Asm6502Parser extends Parser {
 
 	public final CommentContext comment() throws RecognitionException {
 		CommentContext _localctx = new CommentContext(_ctx, getState());
-		enterRule(_localctx, 8, RULE_comment);
+		enterRule(_localctx, 10, RULE_comment);
 		try {
 			int _alt;
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(38);
+			setState(43);
 			match(T__2);
-			setState(42);
+			setState(47);
 			_errHandler.sync(this);
 			_alt = getInterpreter().adaptivePredict(_input,4,_ctx);
 			while ( _alt!=1 && _alt!=org.antlr.v4.runtime.atn.ATN.INVALID_ALT_NUMBER ) {
 				if ( _alt==1+1 ) {
 					{
 					{
-					setState(39);
+					setState(44);
 					matchWildcard();
 					}
 					} 
 				}
-				setState(44);
+				setState(49);
 				_errHandler.sync(this);
 				_alt = getInterpreter().adaptivePredict(_input,4,_ctx);
 			}
@@ -401,19 +452,19 @@ public class Asm6502Parser extends Parser {
 
 	public final InstructionContext instruction() throws RecognitionException {
 		InstructionContext _localctx = new InstructionContext(_ctx, getState());
-		enterRule(_localctx, 10, RULE_instruction);
+		enterRule(_localctx, 12, RULE_instruction);
 		int _la;
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(45);
+			setState(50);
 			match(MNEMONIC);
-			setState(47);
+			setState(52);
 			_errHandler.sync(this);
 			_la = _input.LA(1);
 			if ((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << T__3) | (1L << T__6) | (1L << T__8) | (1L << NUMINT) | (1L << NAME))) != 0)) {
 				{
-				setState(46);
+				setState(51);
 				paramMode();
 				}
 			}
@@ -578,16 +629,16 @@ public class Asm6502Parser extends Parser {
 
 	public final ParamModeContext paramMode() throws RecognitionException {
 		ParamModeContext _localctx = new ParamModeContext(_ctx, getState());
-		enterRule(_localctx, 12, RULE_paramMode);
+		enterRule(_localctx, 14, RULE_paramMode);
 		try {
-			setState(72);
+			setState(77);
 			_errHandler.sync(this);
 			switch ( getInterpreter().adaptivePredict(_input,6,_ctx) ) {
 			case 1:
 				_localctx = new ModeAbsContext(_localctx);
 				enterOuterAlt(_localctx, 1);
 				{
-				setState(49);
+				setState(54);
 				param();
 				}
 				break;
@@ -595,9 +646,9 @@ public class Asm6502Parser extends Parser {
 				_localctx = new ModeImmContext(_localctx);
 				enterOuterAlt(_localctx, 2);
 				{
-				setState(50);
+				setState(55);
 				match(T__3);
-				setState(51);
+				setState(56);
 				param();
 				}
 				break;
@@ -605,9 +656,9 @@ public class Asm6502Parser extends Parser {
 				_localctx = new ModeAbsXContext(_localctx);
 				enterOuterAlt(_localctx, 3);
 				{
-				setState(52);
+				setState(57);
 				param();
-				setState(53);
+				setState(58);
 				match(T__4);
 				}
 				break;
@@ -615,9 +666,9 @@ public class Asm6502Parser extends Parser {
 				_localctx = new ModeAbsYContext(_localctx);
 				enterOuterAlt(_localctx, 4);
 				{
-				setState(55);
+				setState(60);
 				param();
-				setState(56);
+				setState(61);
 				match(T__5);
 				}
 				break;
@@ -625,13 +676,13 @@ public class Asm6502Parser extends Parser {
 				_localctx = new ModeIndYContext(_localctx);
 				enterOuterAlt(_localctx, 5);
 				{
-				setState(58);
+				setState(63);
 				match(T__6);
-				setState(59);
+				setState(64);
 				param();
-				setState(60);
+				setState(65);
 				match(T__7);
-				setState(61);
+				setState(66);
 				match(T__5);
 				}
 				break;
@@ -639,13 +690,13 @@ public class Asm6502Parser extends Parser {
 				_localctx = new ModeIndXContext(_localctx);
 				enterOuterAlt(_localctx, 6);
 				{
-				setState(63);
+				setState(68);
 				match(T__6);
-				setState(64);
+				setState(69);
 				param();
-				setState(65);
+				setState(70);
 				match(T__4);
-				setState(66);
+				setState(71);
 				match(T__7);
 				}
 				break;
@@ -653,11 +704,11 @@ public class Asm6502Parser extends Parser {
 				_localctx = new ModeIndContext(_localctx);
 				enterOuterAlt(_localctx, 7);
 				{
-				setState(68);
+				setState(73);
 				match(T__6);
-				setState(69);
+				setState(74);
 				param();
-				setState(70);
+				setState(75);
 				match(T__7);
 				}
 				break;
@@ -739,16 +790,16 @@ public class Asm6502Parser extends Parser {
 
 	public final ParamContext param() throws RecognitionException {
 		ParamContext _localctx = new ParamContext(_ctx, getState());
-		enterRule(_localctx, 14, RULE_param);
+		enterRule(_localctx, 16, RULE_param);
 		try {
-			setState(79);
+			setState(84);
 			_errHandler.sync(this);
 			switch (_input.LA(1)) {
 			case NAME:
 				_localctx = new ParamLabelContext(_localctx);
 				enterOuterAlt(_localctx, 1);
 				{
-				setState(74);
+				setState(79);
 				match(NAME);
 				}
 				break;
@@ -756,11 +807,11 @@ public class Asm6502Parser extends Parser {
 				_localctx = new ParamReplaceContext(_localctx);
 				enterOuterAlt(_localctx, 2);
 				{
-				setState(75);
+				setState(80);
 				match(T__8);
-				setState(76);
+				setState(81);
 				match(NAME);
-				setState(77);
+				setState(82);
 				match(T__9);
 				}
 				break;
@@ -768,7 +819,7 @@ public class Asm6502Parser extends Parser {
 				_localctx = new ParamIntContext(_localctx);
 				enterOuterAlt(_localctx, 3);
 				{
-				setState(78);
+				setState(83);
 				match(NUMINT);
 				}
 				break;
@@ -788,28 +839,29 @@ public class Asm6502Parser extends Parser {
 	}
 
 	public static final String _serializedATN =
-		"\3\u608b\ua72a\u8133\ub9ed\u417c\u3be7\u7786\u5964\3\23T\4\2\t\2\4\3\t"+
-		"\3\4\4\t\4\4\5\t\5\4\6\t\6\4\7\t\7\4\b\t\b\4\t\t\t\3\2\3\2\3\2\3\3\6\3"+
-		"\27\n\3\r\3\16\3\30\3\4\5\4\34\n\4\3\4\5\4\37\n\4\3\4\5\4\"\n\4\3\4\3"+
-		"\4\3\5\3\5\3\5\3\6\3\6\7\6+\n\6\f\6\16\6.\13\6\3\7\3\7\5\7\62\n\7\3\b"+
-		"\3\b\3\b\3\b\3\b\3\b\3\b\3\b\3\b\3\b\3\b\3\b\3\b\3\b\3\b\3\b\3\b\3\b\3"+
-		"\b\3\b\3\b\3\b\3\b\5\bK\n\b\3\t\3\t\3\t\3\t\3\t\5\tR\n\t\3\t\3,\2\n\2"+
-		"\4\6\b\n\f\16\20\2\2\2Y\2\22\3\2\2\2\4\26\3\2\2\2\6\33\3\2\2\2\b%\3\2"+
-		"\2\2\n(\3\2\2\2\f/\3\2\2\2\16J\3\2\2\2\20Q\3\2\2\2\22\23\5\4\3\2\23\24"+
-		"\7\2\2\3\24\3\3\2\2\2\25\27\5\6\4\2\26\25\3\2\2\2\27\30\3\2\2\2\30\26"+
-		"\3\2\2\2\30\31\3\2\2\2\31\5\3\2\2\2\32\34\5\b\5\2\33\32\3\2\2\2\33\34"+
-		"\3\2\2\2\34\36\3\2\2\2\35\37\5\f\7\2\36\35\3\2\2\2\36\37\3\2\2\2\37!\3"+
-		"\2\2\2 \"\5\n\6\2! \3\2\2\2!\"\3\2\2\2\"#\3\2\2\2#$\7\3\2\2$\7\3\2\2\2"+
-		"%&\7\22\2\2&\'\7\4\2\2\'\t\3\2\2\2(,\7\5\2\2)+\13\2\2\2*)\3\2\2\2+.\3"+
-		"\2\2\2,-\3\2\2\2,*\3\2\2\2-\13\3\2\2\2.,\3\2\2\2/\61\7\r\2\2\60\62\5\16"+
-		"\b\2\61\60\3\2\2\2\61\62\3\2\2\2\62\r\3\2\2\2\63K\5\20\t\2\64\65\7\6\2"+
-		"\2\65K\5\20\t\2\66\67\5\20\t\2\678\7\7\2\28K\3\2\2\29:\5\20\t\2:;\7\b"+
-		"\2\2;K\3\2\2\2<=\7\t\2\2=>\5\20\t\2>?\7\n\2\2?@\7\b\2\2@K\3\2\2\2AB\7"+
-		"\t\2\2BC\5\20\t\2CD\7\7\2\2DE\7\n\2\2EK\3\2\2\2FG\7\t\2\2GH\5\20\t\2H"+
-		"I\7\n\2\2IK\3\2\2\2J\63\3\2\2\2J\64\3\2\2\2J\66\3\2\2\2J9\3\2\2\2J<\3"+
-		"\2\2\2JA\3\2\2\2JF\3\2\2\2K\17\3\2\2\2LR\7\22\2\2MN\7\13\2\2NO\7\22\2"+
-		"\2OR\7\f\2\2PR\7\16\2\2QL\3\2\2\2QM\3\2\2\2QP\3\2\2\2R\21\3\2\2\2\n\30"+
-		"\33\36!,\61JQ";
+		"\3\u608b\ua72a\u8133\ub9ed\u417c\u3be7\u7786\u5964\3\23Y\4\2\t\2\4\3\t"+
+		"\3\4\4\t\4\4\5\t\5\4\6\t\6\4\7\t\7\4\b\t\b\4\t\t\t\4\n\t\n\3\2\3\2\3\2"+
+		"\3\3\3\3\7\3\32\n\3\f\3\16\3\35\13\3\3\4\3\4\3\4\3\5\5\5#\n\5\3\5\5\5"+
+		"&\n\5\3\5\5\5)\n\5\3\6\3\6\3\6\3\7\3\7\7\7\60\n\7\f\7\16\7\63\13\7\3\b"+
+		"\3\b\5\b\67\n\b\3\t\3\t\3\t\3\t\3\t\3\t\3\t\3\t\3\t\3\t\3\t\3\t\3\t\3"+
+		"\t\3\t\3\t\3\t\3\t\3\t\3\t\3\t\3\t\3\t\5\tP\n\t\3\n\3\n\3\n\3\n\3\n\5"+
+		"\nW\n\n\3\n\3\61\2\13\2\4\6\b\n\f\16\20\22\2\2\2]\2\24\3\2\2\2\4\27\3"+
+		"\2\2\2\6\36\3\2\2\2\b\"\3\2\2\2\n*\3\2\2\2\f-\3\2\2\2\16\64\3\2\2\2\20"+
+		"O\3\2\2\2\22V\3\2\2\2\24\25\5\4\3\2\25\26\7\2\2\3\26\3\3\2\2\2\27\33\5"+
+		"\b\5\2\30\32\5\6\4\2\31\30\3\2\2\2\32\35\3\2\2\2\33\31\3\2\2\2\33\34\3"+
+		"\2\2\2\34\5\3\2\2\2\35\33\3\2\2\2\36\37\7\3\2\2\37 \5\b\5\2 \7\3\2\2\2"+
+		"!#\5\n\6\2\"!\3\2\2\2\"#\3\2\2\2#%\3\2\2\2$&\5\16\b\2%$\3\2\2\2%&\3\2"+
+		"\2\2&(\3\2\2\2\')\5\f\7\2(\'\3\2\2\2()\3\2\2\2)\t\3\2\2\2*+\7\22\2\2+"+
+		",\7\4\2\2,\13\3\2\2\2-\61\7\5\2\2.\60\13\2\2\2/.\3\2\2\2\60\63\3\2\2\2"+
+		"\61\62\3\2\2\2\61/\3\2\2\2\62\r\3\2\2\2\63\61\3\2\2\2\64\66\7\r\2\2\65"+
+		"\67\5\20\t\2\66\65\3\2\2\2\66\67\3\2\2\2\67\17\3\2\2\28P\5\22\n\29:\7"+
+		"\6\2\2:P\5\22\n\2;<\5\22\n\2<=\7\7\2\2=P\3\2\2\2>?\5\22\n\2?@\7\b\2\2"+
+		"@P\3\2\2\2AB\7\t\2\2BC\5\22\n\2CD\7\n\2\2DE\7\b\2\2EP\3\2\2\2FG\7\t\2"+
+		"\2GH\5\22\n\2HI\7\7\2\2IJ\7\n\2\2JP\3\2\2\2KL\7\t\2\2LM\5\22\n\2MN\7\n"+
+		"\2\2NP\3\2\2\2O8\3\2\2\2O9\3\2\2\2O;\3\2\2\2O>\3\2\2\2OA\3\2\2\2OF\3\2"+
+		"\2\2OK\3\2\2\2P\21\3\2\2\2QW\7\22\2\2RS\7\13\2\2ST\7\22\2\2TW\7\f\2\2"+
+		"UW\7\16\2\2VQ\3\2\2\2VR\3\2\2\2VU\3\2\2\2W\23\3\2\2\2\n\33\"%(\61\66O"+
+		"V";
 	public static final ATN _ATN =
 		new ATNDeserializer().deserialize(_serializedATN.toCharArray());
 	static {

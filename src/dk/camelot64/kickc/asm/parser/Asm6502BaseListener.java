@@ -40,6 +40,18 @@ public class Asm6502BaseListener implements Asm6502Listener {
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
+	@Override public void enterNline(Asm6502Parser.NlineContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitNline(Asm6502Parser.NlineContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
 	@Override public void enterLine(Asm6502Parser.LineContext ctx) { }
 	/**
 	 * {@inheritDoc}

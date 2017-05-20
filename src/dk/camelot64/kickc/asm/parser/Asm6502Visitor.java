@@ -23,6 +23,12 @@ public interface Asm6502Visitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitLineSeq(Asm6502Parser.LineSeqContext ctx);
 	/**
+	 * Visit a parse tree produced by {@link Asm6502Parser#nline}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitNline(Asm6502Parser.NlineContext ctx);
+	/**
 	 * Visit a parse tree produced by {@link Asm6502Parser#line}.
 	 * @param ctx the parse tree
 	 * @return the visitor result

@@ -6,11 +6,15 @@ file :
     ;
 
 lineSeq
-    : line+
+    : line ( nline*)
+    ;
+
+nline
+    : '\n' line
     ;
 
 line
-    : label? instruction? comment? '\n'
+    : label? instruction? comment?
     ;
 
 label

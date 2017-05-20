@@ -31,6 +31,13 @@ public class Asm6502BaseVisitor<T> extends AbstractParseTreeVisitor<T> implement
 	 * <p>The default implementation returns the result of calling
 	 * {@link #visitChildren} on {@code ctx}.</p>
 	 */
+	@Override public T visitNline(Asm6502Parser.NlineContext ctx) { return visitChildren(ctx); }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation returns the result of calling
+	 * {@link #visitChildren} on {@code ctx}.</p>
+	 */
 	@Override public T visitLine(Asm6502Parser.LineContext ctx) { return visitChildren(ctx); }
 	/**
 	 * {@inheritDoc}

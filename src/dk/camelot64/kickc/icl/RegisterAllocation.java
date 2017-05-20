@@ -61,6 +61,21 @@ public class RegisterAllocation {
       public String toString() {
          return "zp byte:"+zp;
       }
+
+      @Override
+      public boolean equals(Object o) {
+         if (this == o) return true;
+         if (o == null || getClass() != o.getClass()) return false;
+
+         RegisterZpByte that = (RegisterZpByte) o;
+
+         return zp == that.zp;
+      }
+
+      @Override
+      public int hashCode() {
+         return zp;
+      }
    }
 
    /** A zero page address used as a register for a boolean variable. */
@@ -84,6 +99,21 @@ public class RegisterAllocation {
       public String toString() {
          return "zp bool:"+zp;
       }
+
+      @Override
+      public boolean equals(Object o) {
+         if (this == o) return true;
+         if (o == null || getClass() != o.getClass()) return false;
+
+         RegisterZpBool that = (RegisterZpBool) o;
+
+         return zp == that.zp;
+      }
+
+      @Override
+      public int hashCode() {
+         return zp;
+      }
    }
 
    /** The X register. */
@@ -96,6 +126,13 @@ public class RegisterAllocation {
       @Override
       public String toString() {
          return "reg byte x";
+      }
+
+      @Override
+      public boolean equals(Object obj) {
+         if (this == obj) return true;
+         if (obj == null || getClass() != obj.getClass()) return false;
+         return true;
       }
    }
 

@@ -1,4 +1,4 @@
-package dk.camelot64.kickc.icl;
+package dk.camelot64.kickc.asm;
 
 import java.util.ArrayList;
 import java.util.List;

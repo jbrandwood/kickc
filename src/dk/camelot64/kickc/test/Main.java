@@ -1,6 +1,7 @@
 package dk.camelot64.kickc.test;
 
 import dk.camelot64.kickc.icl.*;
+import dk.camelot64.kickc.asm.AsmSequence;
 import dk.camelot64.kickc.parser.KickCLexer;
 import dk.camelot64.kickc.parser.KickCParser;
 import org.antlr.v4.runtime.CharStream;

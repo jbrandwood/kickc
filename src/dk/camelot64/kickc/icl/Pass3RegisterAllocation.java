@@ -22,10 +22,10 @@ public class Pass3RegisterAllocation {
                allocation.allocate(var, new RegisterAllocation.RegisterZpBool(currentZp++));
             }
       }
-      allocation.allocate(symbols.getVariable("i#1"), RegisterAllocation.getRegisterX());
-      allocation.allocate(symbols.getVariable("i#3"), RegisterAllocation.getRegisterX());
-      allocation.allocate(symbols.getVariable("n1#1"), new RegisterAllocation.RegisterZpByte(8));
-      allocation.allocate(symbols.getVariable("n1#2"), new RegisterAllocation.RegisterZpByte(8));
+//      allocation.allocate(symbols.getVariable("i#1"), RegisterAllocation.getRegisterX());
+//      allocation.allocate(symbols.getVariable("i#3"), RegisterAllocation.getRegisterX());
+//      allocation.allocate(symbols.getVariable("n1#1"), new RegisterAllocation.RegisterZpByte(8));
+//      allocation.allocate(symbols.getVariable("n1#2"), new RegisterAllocation.RegisterZpByte(8));
       symbols.setAllocation(allocation);
    }
 

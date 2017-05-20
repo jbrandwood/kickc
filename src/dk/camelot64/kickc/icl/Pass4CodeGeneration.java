@@ -1,5 +1,8 @@
 package dk.camelot64.kickc.icl;
 
+import dk.camelot64.kickc.asm.AsmFragment;
+import dk.camelot64.kickc.asm.AsmSequence;
+
 import java.util.List;
 
 /**
@@ -27,12 +30,10 @@ public class Pass4CodeGeneration {
          // Generate exit
          ControlFlowBlock defaultSuccessor = block.getDefaultSuccessor();
          if (defaultSuccessor != null) {
-            if (defaultSuccessor.getPredecessors().size() > 1) {
-               String label = defaultSuccessor.getLabel().getName() + "_from_" + block.getLabel().getName();
-               genAsmJump(asm, label);
-            } else {
-               genAsmJump(asm, defaultSuccessor.getLabel().getName());
+            if(defaultSuccessor.getStatements().size()>0 && defaultSuccessor.getStatements().get(0) instanceof StatementPhi) {
+               genBlockPhiTransition(asm, block, defaultSuccessor);
             }
+            genAsmJump(asm, defaultSuccessor.getLabel().getName());
          }
       }
       return asm;
@@ -64,30 +65,45 @@ public class Pass4CodeGeneration {
       List<Statement> statements = block.getStatements();
       if (statements.size() > 0 && (statements.get(0) instanceof StatementPhi)) {
          for (ControlFlowBlock predecessor : block.getPredecessors()) {
-            genBlockEntryPoint(asm, block, predecessor);
+            if(block.equals(predecessor.getConditionalSuccessor())) {
+               genBlockPhiTransition(asm, predecessor, block);
+               genAsmJump(asm, block.getLabel().getName());
+            }
          }
       }
    }
 
-   private void genBlockEntryPoint(AsmSequence asm, ControlFlowBlock block, ControlFlowBlock predecessor) {
-      genAsmLabel(asm, block.getLabel().getName() + "_from_" + predecessor.getLabel().getName());
-      for (Statement statement : block.getStatements()) {
+   private void genBlockPhiTransition(AsmSequence asm, ControlFlowBlock fromBlock, ControlFlowBlock toBlock) {
+      genAsmLabel(asm, toBlock.getLabel().getName() + "_from_" + fromBlock.getLabel().getName());
+      for (Statement statement : toBlock.getStatements()) {
          if (!(statement instanceof StatementPhi)) {
             // No more phi statements to handle
             break;
          }
          StatementPhi phi = (StatementPhi) statement;
          for (StatementPhi.PreviousSymbol previousSymbol : phi.getPreviousVersions()) {
-            if (previousSymbol.getBlock().equals(predecessor)) {
+            if (previousSymbol.getBlock().equals(fromBlock)) {
                genAsmMove(asm, phi.getLValue(), previousSymbol.getRValue());
                break;
             }
          }
       }
-      genAsmJump(asm, block.getLabel().getName());
+   }
+
+   private RegisterAllocation.Register getRegister(RValue rValue) {
+      if(rValue instanceof Variable) {
+         return symbols.getRegister((Variable) rValue);
+      } else {
+         return null;
+      }
    }
 
    private void genAsmMove(AsmSequence asm, LValue lValue, RValue rValue) {
+      if(getRegister(lValue).equals(getRegister(rValue))) {
+         // Do not move from register to itself
+         asm.addAsm("  // " + lValue + " = " + rValue + "  // register copy "  );
+         return;
+      }
       AsmFragment asmFragment = new AsmFragment(lValue, rValue, symbols);
       asm.addAsm("  // " + lValue + " = " + rValue + "  // " + asmFragment.getSignature());
       asmFragment.generateAsm(asm);

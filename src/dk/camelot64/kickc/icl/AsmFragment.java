@@ -10,34 +10,42 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-/**  Code Generation Fragment that can handle loading of fragment file and binding of values / registers */
+/**
+ * Code Generation Fragment that can handle loading of fragment file and binding of values / registers
+ */
 public class AsmFragment {
 
-   /** The symbol table. */
+   /**
+    * The symbol table.
+    */
    private SymbolTable symbols;
 
-   /** Binding of named values in the fragment to values (constants, variables, ...) .*/
+   /**
+    * Binding of named values in the fragment to values (constants, variables, ...) .
+    */
    private Map<String, Value> bindings;
 
-   /** The string signature/name of the asm fragment. */
+   /**
+    * The string signature/name of the asm fragment.
+    */
    private String signature;
 
    public AsmFragment(StatementConditionalJump conditionalJump, SymbolTable symbols) {
       this.bindings = new HashMap<>();
       this.symbols = symbols;
       StringBuilder signature = new StringBuilder();
-      if(conditionalJump.getRValue1()!=null) {
+      if (conditionalJump.getRValue1() != null) {
          signature.append(bind(conditionalJump.getRValue1()));
       }
-      if(conditionalJump.getOperator()!=null) {
-         signature.append(conditionalJump.getOperator().getOperator());
+      if (conditionalJump.getOperator() != null) {
+         signature.append(getOperatorFragmentName(conditionalJump.getOperator()));
       }
-      if(conditionalJump.getRValue2() instanceof ConstantInteger && ((ConstantInteger) conditionalJump.getRValue2()).getNumber()==0) {
+      if (conditionalJump.getRValue2() instanceof ConstantInteger && ((ConstantInteger) conditionalJump.getRValue2()).getNumber() == 0) {
          signature.append("0");
-      }  else {
+      } else {
          signature.append(bind(conditionalJump.getRValue2()));
       }
-      signature.append("?");
+      signature.append("_then_");
       signature.append(bind(conditionalJump.getDestination()));
       setSignature(signature.toString());
    }
@@ -62,18 +70,45 @@ public class AsmFragment {
          signature.append(bind(rValue1));
       }
       if (operator != null) {
-         signature.append(operator.getOperator());
+         signature.append(getOperatorFragmentName(operator));
       }
-      if(
+      if (
             rValue2 instanceof ConstantInteger &&
-                  ((ConstantInteger) rValue2).getNumber()==1 &&
-                  operator!=null &&
+                  ((ConstantInteger) rValue2).getNumber() == 1 &&
+                  operator != null &&
                   (operator.getOperator().equals("-") || operator.getOperator().equals("+"))) {
          signature.append("1");
-      }  else {
+      } else {
          signature.append(bind(rValue2));
       }
       return signature.toString();
+   }
+
+   private static String getOperatorFragmentName(Operator operator) {
+      String op = operator.getOperator();
+      switch (op) {
+         case "+":
+            return "_plus_";
+         case "-":
+            return "_minus_";
+         case "==":
+            return "_eq_";
+         case "<>":
+         case "!=":
+            return "_neq_";
+         case "<":
+            return "_lt_";
+         case ">":
+            return "_gt_";
+         case "<=":
+         case "=<":
+            return "_le_";
+         case ">=":
+         case "=>":
+            return "_ge_";
+   default:
+      return op;
+      }
    }
 
    public Value getBinding(String name) {
@@ -88,20 +123,29 @@ public class AsmFragment {
       this.signature = signature;
    }
 
-   /** Zero page byte register name indexing. */
+   /**
+    * Zero page byte register name indexing.
+    */
    private int nextZpByteIdx = 1;
 
-   /** Zero page bool register name indexing. */
+   /**
+    * Zero page bool register name indexing.
+    */
    private int nextZpBoolIdx = 1;
 
-   /** Constant byte indexing. */
+   /**
+    * Constant byte indexing.
+    */
    private int nextConstByteIdx = 1;
 
-   /** Label indexing. */
+   /**
+    * Label indexing.
+    */
    private int nextLabelIdx = 1;
 
    /**
     * Add bindings of a value.
+    *
     * @param value The value to bind.
     * @return The bound name of the value. If the value has already been bound the existing bound name is returned.
     */
@@ -123,7 +167,7 @@ public class AsmFragment {
             bindings.put(name, value);
             return name;
          } else if (RegisterAllocation.RegisterType.REG_X_BYTE.equals(register.getType())) {
-            String name = "xby" ;
+            String name = "xby";
             bindings.put(name, value);
             return name;
          } else {
@@ -131,17 +175,17 @@ public class AsmFragment {
          }
       } else if (value instanceof ConstantInteger) {
          ConstantInteger intValue = (ConstantInteger) value;
-         if(intValue.getType().equals(SymbolType.BYTE)) {
-            String name = "coby"+ nextConstByteIdx++;
+         if (intValue.getType().equals(SymbolType.BYTE)) {
+            String name = "coby" + nextConstByteIdx++;
             bindings.put(name, value);
             return name;
          } else {
             throw new RuntimeException("Binding of word integers not supported " + intValue);
          }
       } else if (value instanceof Label) {
-            String name = "la"+ nextLabelIdx++;
-            bindings.put(name, value);
-            return name;
+         String name = "la" + nextLabelIdx++;
+         bindings.put(name, value);
+         return name;
       } else {
          throw new RuntimeException("Binding of value type not supported " + value);
       }
@@ -150,7 +194,7 @@ public class AsmFragment {
    /**
     * Get the value to replace a bound name with from the fragment signature
     *
-    * @param name         The name of the bound value in the fragment
+    * @param name The name of the bound value in the fragment
     * @return The bound value to use in the generated ASM code
     */
    public String getValue(String name) {
@@ -183,7 +227,7 @@ public class AsmFragment {
    /**
     * Generate assembler code for the assembler fragment.
     *
-    * @param asm               The assembler sequence to generate into.
+    * @param asm The assembler sequence to generate into.
     */
    public void generateAsm(AsmSequence asm) {
       String signature = this.getSignature();
@@ -215,7 +259,6 @@ public class AsmFragment {
       }
 
    }
-
 
 
 }

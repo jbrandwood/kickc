@@ -1,16 +1,8 @@
 // 6502 Assembler Grammar
 grammar Asm6502;
 
-file :
-    lineSeq EOF
-    ;
-
-lineSeq
-    : line ( nline*)
-    ;
-
-nline
-    : '\n' line
+file
+    : line ( '\n' line)* EOF
     ;
 
 line

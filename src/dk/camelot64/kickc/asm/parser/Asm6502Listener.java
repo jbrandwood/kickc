@@ -18,26 +18,6 @@ public interface Asm6502Listener extends ParseTreeListener {
 	 */
 	void exitFile(Asm6502Parser.FileContext ctx);
 	/**
-	 * Enter a parse tree produced by {@link Asm6502Parser#lineSeq}.
-	 * @param ctx the parse tree
-	 */
-	void enterLineSeq(Asm6502Parser.LineSeqContext ctx);
-	/**
-	 * Exit a parse tree produced by {@link Asm6502Parser#lineSeq}.
-	 * @param ctx the parse tree
-	 */
-	void exitLineSeq(Asm6502Parser.LineSeqContext ctx);
-	/**
-	 * Enter a parse tree produced by {@link Asm6502Parser#nline}.
-	 * @param ctx the parse tree
-	 */
-	void enterNline(Asm6502Parser.NlineContext ctx);
-	/**
-	 * Exit a parse tree produced by {@link Asm6502Parser#nline}.
-	 * @param ctx the parse tree
-	 */
-	void exitNline(Asm6502Parser.NlineContext ctx);
-	/**
 	 * Enter a parse tree produced by {@link Asm6502Parser#line}.
 	 * @param ctx the parse tree
 	 */

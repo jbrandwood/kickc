@@ -21,11 +21,10 @@ public class Asm6502Parser extends Parser {
 		T__9=10, MNEMONIC=11, NUMINT=12, BININTEGER=13, DECINTEGER=14, HEXINTEGER=15, 
 		NAME=16, WS=17;
 	public static final int
-		RULE_file = 0, RULE_lineSeq = 1, RULE_nline = 2, RULE_line = 3, RULE_label = 4, 
-		RULE_comment = 5, RULE_instruction = 6, RULE_paramMode = 7, RULE_param = 8;
+		RULE_file = 0, RULE_line = 1, RULE_label = 2, RULE_comment = 3, RULE_instruction = 4, 
+		RULE_paramMode = 5, RULE_param = 6;
 	public static final String[] ruleNames = {
-		"file", "lineSeq", "nline", "line", "label", "comment", "instruction", 
-		"paramMode", "param"
+		"file", "line", "label", "comment", "instruction", "paramMode", "param"
 	};
 
 	private static final String[] _LITERAL_NAMES = {
@@ -86,8 +85,11 @@ public class Asm6502Parser extends Parser {
 		_interp = new ParserATNSimulator(this,_ATN,_decisionToDFA,_sharedContextCache);
 	}
 	public static class FileContext extends ParserRuleContext {
-		public LineSeqContext lineSeq() {
-			return getRuleContext(LineSeqContext.class,0);
+		public List<LineContext> line() {
+			return getRuleContexts(LineContext.class);
+		}
+		public LineContext line(int i) {
+			return getRuleContext(LineContext.class,i);
 		}
 		public TerminalNode EOF() { return getToken(Asm6502Parser.EOF, 0); }
 		public FileContext(ParserRuleContext parent, int invokingState) {
@@ -112,126 +114,30 @@ public class Asm6502Parser extends Parser {
 	public final FileContext file() throws RecognitionException {
 		FileContext _localctx = new FileContext(_ctx, getState());
 		enterRule(_localctx, 0, RULE_file);
-		try {
-			enterOuterAlt(_localctx, 1);
-			{
-			setState(18);
-			lineSeq();
-			setState(19);
-			match(EOF);
-			}
-		}
-		catch (RecognitionException re) {
-			_localctx.exception = re;
-			_errHandler.reportError(this, re);
-			_errHandler.recover(this, re);
-		}
-		finally {
-			exitRule();
-		}
-		return _localctx;
-	}
-
-	public static class LineSeqContext extends ParserRuleContext {
-		public LineContext line() {
-			return getRuleContext(LineContext.class,0);
-		}
-		public List<NlineContext> nline() {
-			return getRuleContexts(NlineContext.class);
-		}
-		public NlineContext nline(int i) {
-			return getRuleContext(NlineContext.class,i);
-		}
-		public LineSeqContext(ParserRuleContext parent, int invokingState) {
-			super(parent, invokingState);
-		}
-		@Override public int getRuleIndex() { return RULE_lineSeq; }
-		@Override
-		public void enterRule(ParseTreeListener listener) {
-			if ( listener instanceof Asm6502Listener ) ((Asm6502Listener)listener).enterLineSeq(this);
-		}
-		@Override
-		public void exitRule(ParseTreeListener listener) {
-			if ( listener instanceof Asm6502Listener ) ((Asm6502Listener)listener).exitLineSeq(this);
-		}
-		@Override
-		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof Asm6502Visitor ) return ((Asm6502Visitor<? extends T>)visitor).visitLineSeq(this);
-			else return visitor.visitChildren(this);
-		}
-	}
-
-	public final LineSeqContext lineSeq() throws RecognitionException {
-		LineSeqContext _localctx = new LineSeqContext(_ctx, getState());
-		enterRule(_localctx, 2, RULE_lineSeq);
 		int _la;
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(21);
+			setState(14);
 			line();
-			{
-			setState(25);
+			setState(19);
 			_errHandler.sync(this);
 			_la = _input.LA(1);
 			while (_la==T__0) {
 				{
 				{
-				setState(22);
-				nline();
+				setState(15);
+				match(T__0);
+				setState(16);
+				line();
 				}
 				}
-				setState(27);
+				setState(21);
 				_errHandler.sync(this);
 				_la = _input.LA(1);
 			}
-			}
-			}
-		}
-		catch (RecognitionException re) {
-			_localctx.exception = re;
-			_errHandler.reportError(this, re);
-			_errHandler.recover(this, re);
-		}
-		finally {
-			exitRule();
-		}
-		return _localctx;
-	}
-
-	public static class NlineContext extends ParserRuleContext {
-		public LineContext line() {
-			return getRuleContext(LineContext.class,0);
-		}
-		public NlineContext(ParserRuleContext parent, int invokingState) {
-			super(parent, invokingState);
-		}
-		@Override public int getRuleIndex() { return RULE_nline; }
-		@Override
-		public void enterRule(ParseTreeListener listener) {
-			if ( listener instanceof Asm6502Listener ) ((Asm6502Listener)listener).enterNline(this);
-		}
-		@Override
-		public void exitRule(ParseTreeListener listener) {
-			if ( listener instanceof Asm6502Listener ) ((Asm6502Listener)listener).exitNline(this);
-		}
-		@Override
-		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof Asm6502Visitor ) return ((Asm6502Visitor<? extends T>)visitor).visitNline(this);
-			else return visitor.visitChildren(this);
-		}
-	}
-
-	public final NlineContext nline() throws RecognitionException {
-		NlineContext _localctx = new NlineContext(_ctx, getState());
-		enterRule(_localctx, 4, RULE_nline);
-		try {
-			enterOuterAlt(_localctx, 1);
-			{
-			setState(28);
-			match(T__0);
-			setState(29);
-			line();
+			setState(22);
+			match(EOF);
 			}
 		}
 		catch (RecognitionException re) {
@@ -276,37 +182,37 @@ public class Asm6502Parser extends Parser {
 
 	public final LineContext line() throws RecognitionException {
 		LineContext _localctx = new LineContext(_ctx, getState());
-		enterRule(_localctx, 6, RULE_line);
+		enterRule(_localctx, 2, RULE_line);
 		int _la;
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(32);
+			setState(25);
 			_errHandler.sync(this);
 			_la = _input.LA(1);
 			if (_la==NAME) {
 				{
-				setState(31);
+				setState(24);
 				label();
 				}
 			}
 
-			setState(35);
+			setState(28);
 			_errHandler.sync(this);
 			_la = _input.LA(1);
 			if (_la==MNEMONIC) {
 				{
-				setState(34);
+				setState(27);
 				instruction();
 				}
 			}
 
-			setState(38);
+			setState(31);
 			_errHandler.sync(this);
 			_la = _input.LA(1);
 			if (_la==T__2) {
 				{
-				setState(37);
+				setState(30);
 				comment();
 				}
 			}
@@ -347,13 +253,13 @@ public class Asm6502Parser extends Parser {
 
 	public final LabelContext label() throws RecognitionException {
 		LabelContext _localctx = new LabelContext(_ctx, getState());
-		enterRule(_localctx, 8, RULE_label);
+		enterRule(_localctx, 4, RULE_label);
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(40);
+			setState(33);
 			match(NAME);
-			setState(41);
+			setState(34);
 			match(T__1);
 			}
 		}
@@ -390,26 +296,26 @@ public class Asm6502Parser extends Parser {
 
 	public final CommentContext comment() throws RecognitionException {
 		CommentContext _localctx = new CommentContext(_ctx, getState());
-		enterRule(_localctx, 10, RULE_comment);
+		enterRule(_localctx, 6, RULE_comment);
 		try {
 			int _alt;
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(43);
+			setState(36);
 			match(T__2);
-			setState(47);
+			setState(40);
 			_errHandler.sync(this);
 			_alt = getInterpreter().adaptivePredict(_input,4,_ctx);
 			while ( _alt!=1 && _alt!=org.antlr.v4.runtime.atn.ATN.INVALID_ALT_NUMBER ) {
 				if ( _alt==1+1 ) {
 					{
 					{
-					setState(44);
+					setState(37);
 					matchWildcard();
 					}
 					} 
 				}
-				setState(49);
+				setState(42);
 				_errHandler.sync(this);
 				_alt = getInterpreter().adaptivePredict(_input,4,_ctx);
 			}
@@ -452,19 +358,19 @@ public class Asm6502Parser extends Parser {
 
 	public final InstructionContext instruction() throws RecognitionException {
 		InstructionContext _localctx = new InstructionContext(_ctx, getState());
-		enterRule(_localctx, 12, RULE_instruction);
+		enterRule(_localctx, 8, RULE_instruction);
 		int _la;
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(50);
+			setState(43);
 			match(MNEMONIC);
-			setState(52);
+			setState(45);
 			_errHandler.sync(this);
 			_la = _input.LA(1);
 			if ((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << T__3) | (1L << T__6) | (1L << T__8) | (1L << NUMINT) | (1L << NAME))) != 0)) {
 				{
-				setState(51);
+				setState(44);
 				paramMode();
 				}
 			}
@@ -629,16 +535,16 @@ public class Asm6502Parser extends Parser {
 
 	public final ParamModeContext paramMode() throws RecognitionException {
 		ParamModeContext _localctx = new ParamModeContext(_ctx, getState());
-		enterRule(_localctx, 14, RULE_paramMode);
+		enterRule(_localctx, 10, RULE_paramMode);
 		try {
-			setState(77);
+			setState(70);
 			_errHandler.sync(this);
 			switch ( getInterpreter().adaptivePredict(_input,6,_ctx) ) {
 			case 1:
 				_localctx = new ModeAbsContext(_localctx);
 				enterOuterAlt(_localctx, 1);
 				{
-				setState(54);
+				setState(47);
 				param();
 				}
 				break;
@@ -646,9 +552,9 @@ public class Asm6502Parser extends Parser {
 				_localctx = new ModeImmContext(_localctx);
 				enterOuterAlt(_localctx, 2);
 				{
-				setState(55);
+				setState(48);
 				match(T__3);
-				setState(56);
+				setState(49);
 				param();
 				}
 				break;
@@ -656,9 +562,9 @@ public class Asm6502Parser extends Parser {
 				_localctx = new ModeAbsXContext(_localctx);
 				enterOuterAlt(_localctx, 3);
 				{
-				setState(57);
+				setState(50);
 				param();
-				setState(58);
+				setState(51);
 				match(T__4);
 				}
 				break;
@@ -666,9 +572,9 @@ public class Asm6502Parser extends Parser {
 				_localctx = new ModeAbsYContext(_localctx);
 				enterOuterAlt(_localctx, 4);
 				{
-				setState(60);
+				setState(53);
 				param();
-				setState(61);
+				setState(54);
 				match(T__5);
 				}
 				break;
@@ -676,13 +582,13 @@ public class Asm6502Parser extends Parser {
 				_localctx = new ModeIndYContext(_localctx);
 				enterOuterAlt(_localctx, 5);
 				{
-				setState(63);
+				setState(56);
 				match(T__6);
-				setState(64);
+				setState(57);
 				param();
-				setState(65);
+				setState(58);
 				match(T__7);
-				setState(66);
+				setState(59);
 				match(T__5);
 				}
 				break;
@@ -690,13 +596,13 @@ public class Asm6502Parser extends Parser {
 				_localctx = new ModeIndXContext(_localctx);
 				enterOuterAlt(_localctx, 6);
 				{
-				setState(68);
+				setState(61);
 				match(T__6);
-				setState(69);
+				setState(62);
 				param();
-				setState(70);
+				setState(63);
 				match(T__4);
-				setState(71);
+				setState(64);
 				match(T__7);
 				}
 				break;
@@ -704,11 +610,11 @@ public class Asm6502Parser extends Parser {
 				_localctx = new ModeIndContext(_localctx);
 				enterOuterAlt(_localctx, 7);
 				{
-				setState(73);
+				setState(66);
 				match(T__6);
-				setState(74);
+				setState(67);
 				param();
-				setState(75);
+				setState(68);
 				match(T__7);
 				}
 				break;
@@ -790,16 +696,16 @@ public class Asm6502Parser extends Parser {
 
 	public final ParamContext param() throws RecognitionException {
 		ParamContext _localctx = new ParamContext(_ctx, getState());
-		enterRule(_localctx, 16, RULE_param);
+		enterRule(_localctx, 12, RULE_param);
 		try {
-			setState(84);
+			setState(77);
 			_errHandler.sync(this);
 			switch (_input.LA(1)) {
 			case NAME:
 				_localctx = new ParamLabelContext(_localctx);
 				enterOuterAlt(_localctx, 1);
 				{
-				setState(79);
+				setState(72);
 				match(NAME);
 				}
 				break;
@@ -807,11 +713,11 @@ public class Asm6502Parser extends Parser {
 				_localctx = new ParamReplaceContext(_localctx);
 				enterOuterAlt(_localctx, 2);
 				{
-				setState(80);
+				setState(73);
 				match(T__8);
-				setState(81);
+				setState(74);
 				match(NAME);
-				setState(82);
+				setState(75);
 				match(T__9);
 				}
 				break;
@@ -819,7 +725,7 @@ public class Asm6502Parser extends Parser {
 				_localctx = new ParamIntContext(_localctx);
 				enterOuterAlt(_localctx, 3);
 				{
-				setState(83);
+				setState(76);
 				match(NUMINT);
 				}
 				break;
@@ -839,29 +745,27 @@ public class Asm6502Parser extends Parser {
 	}
 
 	public static final String _serializedATN =
-		"\3\u608b\ua72a\u8133\ub9ed\u417c\u3be7\u7786\u5964\3\23Y\4\2\t\2\4\3\t"+
-		"\3\4\4\t\4\4\5\t\5\4\6\t\6\4\7\t\7\4\b\t\b\4\t\t\t\4\n\t\n\3\2\3\2\3\2"+
-		"\3\3\3\3\7\3\32\n\3\f\3\16\3\35\13\3\3\4\3\4\3\4\3\5\5\5#\n\5\3\5\5\5"+
-		"&\n\5\3\5\5\5)\n\5\3\6\3\6\3\6\3\7\3\7\7\7\60\n\7\f\7\16\7\63\13\7\3\b"+
-		"\3\b\5\b\67\n\b\3\t\3\t\3\t\3\t\3\t\3\t\3\t\3\t\3\t\3\t\3\t\3\t\3\t\3"+
-		"\t\3\t\3\t\3\t\3\t\3\t\3\t\3\t\3\t\3\t\5\tP\n\t\3\n\3\n\3\n\3\n\3\n\5"+
-		"\nW\n\n\3\n\3\61\2\13\2\4\6\b\n\f\16\20\22\2\2\2]\2\24\3\2\2\2\4\27\3"+
-		"\2\2\2\6\36\3\2\2\2\b\"\3\2\2\2\n*\3\2\2\2\f-\3\2\2\2\16\64\3\2\2\2\20"+
-		"O\3\2\2\2\22V\3\2\2\2\24\25\5\4\3\2\25\26\7\2\2\3\26\3\3\2\2\2\27\33\5"+
-		"\b\5\2\30\32\5\6\4\2\31\30\3\2\2\2\32\35\3\2\2\2\33\31\3\2\2\2\33\34\3"+
-		"\2\2\2\34\5\3\2\2\2\35\33\3\2\2\2\36\37\7\3\2\2\37 \5\b\5\2 \7\3\2\2\2"+
-		"!#\5\n\6\2\"!\3\2\2\2\"#\3\2\2\2#%\3\2\2\2$&\5\16\b\2%$\3\2\2\2%&\3\2"+
-		"\2\2&(\3\2\2\2\')\5\f\7\2(\'\3\2\2\2()\3\2\2\2)\t\3\2\2\2*+\7\22\2\2+"+
-		",\7\4\2\2,\13\3\2\2\2-\61\7\5\2\2.\60\13\2\2\2/.\3\2\2\2\60\63\3\2\2\2"+
-		"\61\62\3\2\2\2\61/\3\2\2\2\62\r\3\2\2\2\63\61\3\2\2\2\64\66\7\r\2\2\65"+
-		"\67\5\20\t\2\66\65\3\2\2\2\66\67\3\2\2\2\67\17\3\2\2\28P\5\22\n\29:\7"+
-		"\6\2\2:P\5\22\n\2;<\5\22\n\2<=\7\7\2\2=P\3\2\2\2>?\5\22\n\2?@\7\b\2\2"+
-		"@P\3\2\2\2AB\7\t\2\2BC\5\22\n\2CD\7\n\2\2DE\7\b\2\2EP\3\2\2\2FG\7\t\2"+
-		"\2GH\5\22\n\2HI\7\7\2\2IJ\7\n\2\2JP\3\2\2\2KL\7\t\2\2LM\5\22\n\2MN\7\n"+
-		"\2\2NP\3\2\2\2O8\3\2\2\2O9\3\2\2\2O;\3\2\2\2O>\3\2\2\2OA\3\2\2\2OF\3\2"+
-		"\2\2OK\3\2\2\2P\21\3\2\2\2QW\7\22\2\2RS\7\13\2\2ST\7\22\2\2TW\7\f\2\2"+
-		"UW\7\16\2\2VQ\3\2\2\2VR\3\2\2\2VU\3\2\2\2W\23\3\2\2\2\n\33\"%(\61\66O"+
-		"V";
+		"\3\u608b\ua72a\u8133\ub9ed\u417c\u3be7\u7786\u5964\3\23R\4\2\t\2\4\3\t"+
+		"\3\4\4\t\4\4\5\t\5\4\6\t\6\4\7\t\7\4\b\t\b\3\2\3\2\3\2\7\2\24\n\2\f\2"+
+		"\16\2\27\13\2\3\2\3\2\3\3\5\3\34\n\3\3\3\5\3\37\n\3\3\3\5\3\"\n\3\3\4"+
+		"\3\4\3\4\3\5\3\5\7\5)\n\5\f\5\16\5,\13\5\3\6\3\6\5\6\60\n\6\3\7\3\7\3"+
+		"\7\3\7\3\7\3\7\3\7\3\7\3\7\3\7\3\7\3\7\3\7\3\7\3\7\3\7\3\7\3\7\3\7\3\7"+
+		"\3\7\3\7\3\7\5\7I\n\7\3\b\3\b\3\b\3\b\3\b\5\bP\n\b\3\b\3*\2\t\2\4\6\b"+
+		"\n\f\16\2\2\2X\2\20\3\2\2\2\4\33\3\2\2\2\6#\3\2\2\2\b&\3\2\2\2\n-\3\2"+
+		"\2\2\fH\3\2\2\2\16O\3\2\2\2\20\25\5\4\3\2\21\22\7\3\2\2\22\24\5\4\3\2"+
+		"\23\21\3\2\2\2\24\27\3\2\2\2\25\23\3\2\2\2\25\26\3\2\2\2\26\30\3\2\2\2"+
+		"\27\25\3\2\2\2\30\31\7\2\2\3\31\3\3\2\2\2\32\34\5\6\4\2\33\32\3\2\2\2"+
+		"\33\34\3\2\2\2\34\36\3\2\2\2\35\37\5\n\6\2\36\35\3\2\2\2\36\37\3\2\2\2"+
+		"\37!\3\2\2\2 \"\5\b\5\2! \3\2\2\2!\"\3\2\2\2\"\5\3\2\2\2#$\7\22\2\2$%"+
+		"\7\4\2\2%\7\3\2\2\2&*\7\5\2\2\')\13\2\2\2(\'\3\2\2\2),\3\2\2\2*+\3\2\2"+
+		"\2*(\3\2\2\2+\t\3\2\2\2,*\3\2\2\2-/\7\r\2\2.\60\5\f\7\2/.\3\2\2\2/\60"+
+		"\3\2\2\2\60\13\3\2\2\2\61I\5\16\b\2\62\63\7\6\2\2\63I\5\16\b\2\64\65\5"+
+		"\16\b\2\65\66\7\7\2\2\66I\3\2\2\2\678\5\16\b\289\7\b\2\29I\3\2\2\2:;\7"+
+		"\t\2\2;<\5\16\b\2<=\7\n\2\2=>\7\b\2\2>I\3\2\2\2?@\7\t\2\2@A\5\16\b\2A"+
+		"B\7\7\2\2BC\7\n\2\2CI\3\2\2\2DE\7\t\2\2EF\5\16\b\2FG\7\n\2\2GI\3\2\2\2"+
+		"H\61\3\2\2\2H\62\3\2\2\2H\64\3\2\2\2H\67\3\2\2\2H:\3\2\2\2H?\3\2\2\2H"+
+		"D\3\2\2\2I\r\3\2\2\2JP\7\22\2\2KL\7\13\2\2LM\7\22\2\2MP\7\f\2\2NP\7\16"+
+		"\2\2OJ\3\2\2\2OK\3\2\2\2ON\3\2\2\2P\17\3\2\2\2\n\25\33\36!*/HO";
 	public static final ATN _ATN =
 		new ATNDeserializer().deserialize(_serializedATN.toCharArray());
 	static {

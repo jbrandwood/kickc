@@ -68,8 +68,10 @@ public class Main {
       pass3RegisterAllocation.allocate();
 
       Pass4CodeGeneration pass4CodeGeneration = new Pass4CodeGeneration(controlFlowGraph, symbolTable);
-
       AsmProgram asmProgram = pass4CodeGeneration.generate();
+      Pass5NextJumpElimination pass5NextJumpElimination = new Pass5NextJumpElimination(asmProgram);
+      pass5NextJumpElimination.optimize();
+
 
       System.out.println("SYMBOLS");
       System.out.println(symbolTable.toString());

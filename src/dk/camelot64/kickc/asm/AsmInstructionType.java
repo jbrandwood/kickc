@@ -11,6 +11,8 @@ public class AsmInstructionType {
 
    private double cycles;
 
+   private boolean jump;
+
    public AsmInstructionType(int opcode, String mnemnonic, AsmAddressingMode addressingMode, double cycles) {
       this.opcode = opcode;
       this.mnemnonic = mnemnonic;
@@ -36,6 +38,18 @@ public class AsmInstructionType {
 
    public String getAsm(String parameter) {
       return addressingMode.getAsm(mnemnonic, parameter);
+   }
+
+   /**
+    * Tells if the instruction is a jump or a branch (and the parameter is therefore a label or destination address)
+    * @return true if the instruction is a jump/branch
+    */
+   public boolean isJump() {
+      return jump;
+   }
+
+   void setJump(boolean jump) {
+      this.jump = jump;
    }
 
 }

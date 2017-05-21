@@ -15,6 +15,14 @@ public class AsmInstruction implements AsmLine {
       this.invocationCountEstimate = invocationCountEstimate;
    }
 
+   public String getParameter() {
+      return parameter;
+   }
+
+   public AsmInstructionType getType() {
+      return type;
+   }
+
    @Override
    public int getLineBytes() {
       return type.getBytes();

@@ -50,7 +50,7 @@ public class Pass4CodeGeneration {
          asm.addComment(statement + "  //  " + asmFragment.getSignature());
          asmFragment.generate(asm);
       } else if (statement instanceof StatementConditionalJump) {
-         AsmFragment asmFragment = new AsmFragment((StatementConditionalJump) statement, symbols, graph, block);
+         AsmFragment asmFragment = new AsmFragment((StatementConditionalJump) statement, block, symbols, graph);
          asm.addComment(statement + "  //  " + asmFragment.getSignature());
          asmFragment.generate(asm);
       } else {

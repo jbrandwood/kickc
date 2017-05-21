@@ -9,6 +9,10 @@ public class AsmLabel implements AsmLine {
       this.label = label;
    }
 
+   public String getLabel() {
+      return label;
+   }
+
    @Override
    public int getLineBytes() {
       return 0;

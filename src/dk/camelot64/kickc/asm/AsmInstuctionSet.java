@@ -322,7 +322,20 @@ public class AsmInstuctionSet {
       add(0xfd, "SBC", abx, 4.5);
       add(0xfe, "INC", abx, 7.0);
       add(0xff, "ISC", abx, 7.0);
-
+      for (AsmInstructionType instruction : instructions) {
+         switch(instruction.getMnemnonic()) {
+            case "jmp":
+            case "beq":
+            case "bne":
+            case "bcc":
+            case "bcs":
+            case "bvc":
+            case "bvs":
+            case "bmi":
+            case "bpl":
+               instruction.setJump(true);
+         }
+      }
    }
 
    public AsmInstructionType getType(String mnemonic, AsmAddressingMode addressingMode) {

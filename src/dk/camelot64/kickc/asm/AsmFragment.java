@@ -32,7 +32,7 @@ public class AsmFragment {
     */
    private String signature;
 
-   public AsmFragment(StatementConditionalJump conditionalJump, SymbolTable symbols, ControlFlowGraph graph, ControlFlowBlock block) {
+   public AsmFragment(StatementConditionalJump conditionalJump, ControlFlowBlock block, SymbolTable symbols, ControlFlowGraph graph) {
       this.bindings = new HashMap<>();
       this.symbols = symbols;
       StringBuilder signature = new StringBuilder();

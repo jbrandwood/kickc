@@ -4,9 +4,7 @@ import dk.camelot64.kickc.asm.AsmProgram;
 import dk.camelot64.kickc.icl.*;
 import dk.camelot64.kickc.parser.KickCLexer;
 import dk.camelot64.kickc.parser.KickCParser;
-import org.antlr.v4.runtime.CharStream;
-import org.antlr.v4.runtime.CharStreams;
-import org.antlr.v4.runtime.CommonTokenStream;
+import org.antlr.v4.runtime.*;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -15,11 +13,18 @@ import java.util.List;
 /** Test my KickC Grammar */
 public class Main {
    public static void main(String[] args) throws IOException {
-      CharStream input = CharStreams.fromFileName("src/dk/camelot64/kickc/test/fib.kc");
+      final String fileName = "src/dk/camelot64/kickc/test/fib2.kc";
+      final CharStream input = CharStreams.fromFileName(fileName);
       System.out.println(input.toString());
       KickCLexer lexer = new KickCLexer(input);
       KickCParser parser = new KickCParser(new CommonTokenStream(lexer));
       parser.setBuildParseTree(true);
+      parser.addErrorListener(new BaseErrorListener() {
+         @Override
+         public void syntaxError(Recognizer<?, ?> recognizer, Object offendingSymbol, int line, int charPositionInLine, String msg, RecognitionException e) {
+            throw new RuntimeException("Error parsing  file "+fileName+"\n - Line: "+line+"\n - Message: "+msg);
+         }
+      });
       KickCParser.FileContext file = parser.file();
       Pass1GenerateStatementSequence pass1GenerateStatementSequence = new Pass1GenerateStatementSequence();
       pass1GenerateStatementSequence.generate(file);

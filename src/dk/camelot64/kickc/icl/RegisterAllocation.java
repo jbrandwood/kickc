@@ -36,7 +36,7 @@ public class RegisterAllocation {
 
    /** The register type. */
    public enum RegisterType {
-      ZP_BYTE, ZP_BOOL, REG_X_BYTE
+      ZP_BYTE, ZP_BOOL, REG_Y_BYTE, REG_X_BYTE
    };
 
    /** A zero page address used as a register for a single byte variable. */
@@ -136,8 +136,32 @@ public class RegisterAllocation {
       }
    }
 
+   /** The Y register. */
+   public static class RegisterYByte implements Register {
+      @Override
+      public RegisterType getType() {
+         return RegisterType.REG_Y_BYTE;
+      }
+
+      @Override
+      public String toString() {
+         return "reg byte y";
+      }
+
+      @Override
+      public boolean equals(Object obj) {
+         if (this == obj) return true;
+         if (obj == null || getClass() != obj.getClass()) return false;
+         return true;
+      }
+   }
+
    public static Register getRegisterX() {
       return new RegisterXByte();
+   }
+
+   public static Register getRegisterY() {
+      return new RegisterYByte();
    }
 
    @Override

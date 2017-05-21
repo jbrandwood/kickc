@@ -32,7 +32,7 @@ public class AsmFragment {
     */
    private String signature;
 
-   public AsmFragment(StatementConditionalJump conditionalJump, SymbolTable symbols) {
+   public AsmFragment(StatementConditionalJump conditionalJump, SymbolTable symbols, ControlFlowGraph graph, ControlFlowBlock block) {
       this.bindings = new HashMap<>();
       this.symbols = symbols;
       StringBuilder signature = new StringBuilder();
@@ -48,7 +48,13 @@ public class AsmFragment {
          signature.append(bind(conditionalJump.getRValue2()));
       }
       signature.append("_then_");
-      signature.append(bind(conditionalJump.getDestination()));
+      Label destination = conditionalJump.getDestination();
+      ControlFlowBlock destinationBlock = graph.getBlock(destination);
+      String destinationLabel = destination.getName();
+      if(destinationBlock.hasPhiStatements()) {
+         destinationLabel = destination.getName()+"_from_"+block.getLabel().getName();
+      }
+      signature.append(bind(new Label(destinationLabel, false)));
       setSignature(signature.toString());
    }
 
@@ -170,6 +176,10 @@ public class AsmFragment {
             return name;
          } else if (RegisterAllocation.RegisterType.REG_X_BYTE.equals(register.getType())) {
             String name = "xby";
+            bindings.put(name, value);
+            return name;
+         } else if (RegisterAllocation.RegisterType.REG_Y_BYTE.equals(register.getType())) {
+            String name = "yby";
             bindings.put(name, value);
             return name;
          } else {

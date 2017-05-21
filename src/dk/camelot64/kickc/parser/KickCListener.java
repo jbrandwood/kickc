@@ -88,6 +88,18 @@ public interface KickCListener extends ParseTreeListener {
 	 */
 	void exitStmtWhile(KickCParser.StmtWhileContext ctx);
 	/**
+	 * Enter a parse tree produced by the {@code stmtDoWhile}
+	 * labeled alternative in {@link KickCParser#stmt}.
+	 * @param ctx the parse tree
+	 */
+	void enterStmtDoWhile(KickCParser.StmtDoWhileContext ctx);
+	/**
+	 * Exit a parse tree produced by the {@code stmtDoWhile}
+	 * labeled alternative in {@link KickCParser#stmt}.
+	 * @param ctx the parse tree
+	 */
+	void exitStmtDoWhile(KickCParser.StmtDoWhileContext ctx);
+	/**
 	 * Enter a parse tree produced by the {@code exprBinary}
 	 * labeled alternative in {@link KickCParser#expr}.
 	 * @param ctx the parse tree

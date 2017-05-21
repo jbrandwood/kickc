@@ -58,6 +58,13 @@ public interface KickCVisitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitStmtWhile(KickCParser.StmtWhileContext ctx);
 	/**
+	 * Visit a parse tree produced by the {@code stmtDoWhile}
+	 * labeled alternative in {@link KickCParser#stmt}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitStmtDoWhile(KickCParser.StmtDoWhileContext ctx);
+	/**
 	 * Visit a parse tree produced by the {@code exprBinary}
 	 * labeled alternative in {@link KickCParser#expr}.
 	 * @param ctx the parse tree

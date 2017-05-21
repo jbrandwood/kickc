@@ -104,4 +104,12 @@ public class ControlFlowBlock {
       return label.hashCode();
    }
 
+   public boolean hasPhiStatements() {
+      if(statements.size()>0) {
+         if(statements.get(0) instanceof StatementPhi) {
+            return true;
+         }
+      }
+      return false;
+   }
 }

@@ -98,6 +98,18 @@ public class Pass1GenerateStatementSequence extends KickCBaseVisitor<RValue> {
    }
 
    @Override
+   public RValue visitStmtDoWhile(KickCParser.StmtDoWhileContext ctx) {
+      Label beginJumpLabel = symbolTable.newIntermediateJumpLabel();
+      StatementJumpTarget beginJumpTarget = new StatementJumpTarget(beginJumpLabel);
+      sequence.addStatement(beginJumpTarget);
+      this.visit(ctx.stmt());
+      RValue rValue = this.visit(ctx.expr());
+      Statement doJmpStmt = new StatementConditionalJump(rValue, beginJumpLabel);
+      sequence.addStatement(doJmpStmt);
+      return null;
+   }
+
+   @Override
    public RValue visitStmtAssignment(KickCParser.StmtAssignmentContext ctx) {
       if(ctx.TYPE()!=null) {
          symbolTable.newVariableDeclaration(ctx.NAME().getText(), ctx.TYPE().getText());

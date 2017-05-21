@@ -2,8 +2,6 @@ package dk.camelot64.kickc.icl;
 
 import dk.camelot64.kickc.asm.*;
 
-import java.util.List;
-
 /**
  * Code Generation of 6502 Assembler from ICL/SSA Control Flow Graph
  */
@@ -29,7 +27,7 @@ public class Pass4CodeGeneration {
          // Generate exit
          ControlFlowBlock defaultSuccessor = block.getDefaultSuccessor();
          if (defaultSuccessor != null) {
-            if(defaultSuccessor.getStatements().size()>0 && defaultSuccessor.getStatements().get(0) instanceof StatementPhi) {
+            if(defaultSuccessor.hasPhiStatements()) {
                genBlockPhiTransition(asm, block, defaultSuccessor);
             }
             asm.addInstruction("JMP", AsmAddressingMode.ABS, defaultSuccessor.getLabel().getName().replace('@', 'B'));
@@ -41,18 +39,18 @@ public class Pass4CodeGeneration {
    private void genStatements(AsmProgram asm, ControlFlowBlock block) {
       for (Statement statement : block.getStatements()) {
          if (!(statement instanceof StatementPhi)) {
-            genStatement(asm, statement);
+            genStatement(asm, statement, block);
          }
       }
    }
 
-   private void genStatement(AsmProgram asm, Statement statement) {
+   private void genStatement(AsmProgram asm, Statement statement, ControlFlowBlock block) {
       if (statement instanceof StatementAssignment) {
          AsmFragment asmFragment = new AsmFragment((StatementAssignment) statement, symbols);
          asm.addComment(statement + "  //  " + asmFragment.getSignature());
          asmFragment.generate(asm);
       } else if (statement instanceof StatementConditionalJump) {
-         AsmFragment asmFragment = new AsmFragment((StatementConditionalJump) statement, symbols);
+         AsmFragment asmFragment = new AsmFragment((StatementConditionalJump) statement, symbols, graph, block);
          asm.addComment(statement + "  //  " + asmFragment.getSignature());
          asmFragment.generate(asm);
       } else {
@@ -61,8 +59,7 @@ public class Pass4CodeGeneration {
    }
 
    private void genBlockEntryPoints(AsmProgram asm, ControlFlowBlock block) {
-      List<Statement> statements = block.getStatements();
-      if (statements.size() > 0 && (statements.get(0) instanceof StatementPhi)) {
+      if(block.hasPhiStatements()) {
          for (ControlFlowBlock predecessor : block.getPredecessors()) {
             if(block.equals(predecessor.getConditionalSuccessor())) {
                genBlockPhiTransition(asm, predecessor, block);

@@ -19,4 +19,30 @@ public class AsmProgram {
    public void addLine(AsmLine line) {
       lines.add(line);
    }
+
+   public void addComment(String comment) {
+      addLine(new AsmComment(comment));
+   }
+
+   public void addLabel(String label) {
+      addLine(new AsmLabel(label));
+   }
+
+   public void addInstruction(String mnemonic, AsmAddressingMode addressingMode, String parameter) {
+      AsmInstructionType instructionType = AsmInstuctionSet.getInstructionType(mnemonic, addressingMode, parameter);
+      addLine(new AsmInstruction(instructionType, parameter, 1));
+   }
+
+   @Override
+   public String toString() {
+      StringBuffer out = new StringBuffer();
+      for (AsmLine line : lines) {
+         if(line instanceof AsmComment || line instanceof AsmInstruction) {
+            out.append("  ");
+         }
+         out.append(line.getAsm()+"\n");
+      }
+      return out.toString();
+   }
+
 }

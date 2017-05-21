@@ -11,8 +11,6 @@ import java.io.InputStream;
 import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 /**
  * Code Generation Fragment that can handle loading of fragment file and binding of values / registers
@@ -233,19 +231,19 @@ public class AsmFragment {
     *
     * @param asm The assembler sequence to generate into.
     */
-   public void generateAsm(AsmSequence asm) {
+   public void generate(AsmProgram asm) {
       String signature = this.getSignature();
       ClassLoader classLoader = this.getClass().getClassLoader();
       final URL fragmentResource = classLoader.getResource("dk/camelot64/kickc/asm/fragment/" + signature + ".asm");
       if (fragmentResource == null) {
          System.out.println("Fragment not found " + fragmentResource);
-         asm.addAsm("  // Fragment not found: " + signature);
+         asm.addComment("Fragment not found: " + signature);
          return;
       }
 
       try {
          InputStream fragmentStream = fragmentResource.openStream();
-         Asm6502Lexer lexer = new Asm6502Lexer(new ANTLRInputStream(fragmentStream));
+         Asm6502Lexer lexer = new Asm6502Lexer(CharStreams.fromStream(fragmentStream));
          Asm6502Parser parser = new Asm6502Parser(new CommonTokenStream(lexer));
          parser.addErrorListener(new BaseErrorListener() {
             @Override
@@ -255,11 +253,8 @@ public class AsmFragment {
          });
          parser.setBuildParseTree(true);
          Asm6502Parser.FileContext file = parser.file();
-         AsmSequenceGenerator asmSequenceGenerator = new AsmSequenceGenerator(fragmentResource);
+         AsmSequenceGenerator asmSequenceGenerator = new AsmSequenceGenerator(fragmentResource, asm);
          asmSequenceGenerator.generate(file);
-         for (AsmLine asmLine : asmSequenceGenerator.program.getLines()) {
-            asm.addAsm("  "+asmLine.getAsm());
-         }
          fragmentStream.close();
       } catch (IOException e) {
          throw new RuntimeException("Error reading code fragment " + fragmentResource);
@@ -308,7 +303,7 @@ public class AsmFragment {
          Asm6502Parser.ParamModeContext paramModeCtx = ctx.paramMode();
          AsmInstruction instruction;
          if(paramModeCtx==null) {
-            AsmInstructionType type = AsmInstuctionSet.getInstructionType(ctx.MNEMONIC().getText(), AsmAddressingMode.NON);
+            AsmInstructionType type = AsmInstuctionSet.getInstructionType(ctx.MNEMONIC().getText(), AsmAddressingMode.NON, null);
             instruction = new AsmInstruction(type, null, 1);
          } else {
             instruction = (AsmInstruction) this.visit(paramModeCtx);
@@ -360,7 +355,7 @@ public class AsmFragment {
          Asm6502Parser.InstructionContext instructionCtx = (Asm6502Parser.InstructionContext) ctx.getParent();
          String mnemonic = instructionCtx.MNEMONIC().getSymbol().getText();
          String parameter = (String) this.visit(paramCtx);
-         AsmInstructionType type = AsmInstuctionSet.getInstructionType(mnemonic, addressingMode);
+         AsmInstructionType type = AsmInstuctionSet.getInstructionType(mnemonic, addressingMode, parameter);
          return new AsmInstruction(type, parameter, 1);
       }
 

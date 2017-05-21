@@ -32,4 +32,5 @@ public class AsmComment implements AsmLine {
    public String getAsm() {
       return "// "+comment;
    }
+
 }

@@ -19,7 +19,7 @@ public class NumberParser {
             return parseDecInt(literal);
          }
       } else {
-         throw new RuntimeException("Not Implemented: non-integer parsing");
+         throw new NumberFormatException("Not Implemented: non-integer parsing. "+literal);
       }
    }
 

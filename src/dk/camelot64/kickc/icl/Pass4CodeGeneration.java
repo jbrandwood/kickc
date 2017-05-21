@@ -1,7 +1,6 @@
 package dk.camelot64.kickc.icl;
 
-import dk.camelot64.kickc.asm.AsmFragment;
-import dk.camelot64.kickc.asm.AsmSequence;
+import dk.camelot64.kickc.asm.*;
 
 import java.util.List;
 
@@ -18,13 +17,13 @@ public class Pass4CodeGeneration {
       this.symbols = symbols;
    }
 
-   public AsmSequence generate() {
-      AsmSequence asm = new AsmSequence();
+   public AsmProgram generate() {
+      AsmProgram asm = new AsmProgram();
       for (ControlFlowBlock block : graph.getAllBlocks()) {
          // Generate entry points (if needed)
          genBlockEntryPoints(asm, block);
          // Generate label
-         genAsmLabel(asm, block.getLabel());
+         asm.addLabel(block.getLabel().getName().replace('@', 'B'));
          // Generate statements
          genStatements(asm, block);
          // Generate exit
@@ -33,13 +32,13 @@ public class Pass4CodeGeneration {
             if(defaultSuccessor.getStatements().size()>0 && defaultSuccessor.getStatements().get(0) instanceof StatementPhi) {
                genBlockPhiTransition(asm, block, defaultSuccessor);
             }
-            genAsmJump(asm, defaultSuccessor.getLabel().getName());
+            asm.addInstruction("JMP", AsmAddressingMode.ABS, defaultSuccessor.getLabel().getName().replace('@', 'B'));
          }
       }
       return asm;
    }
 
-   private void genStatements(AsmSequence asm, ControlFlowBlock block) {
+   private void genStatements(AsmProgram asm, ControlFlowBlock block) {
       for (Statement statement : block.getStatements()) {
          if (!(statement instanceof StatementPhi)) {
             genStatement(asm, statement);
@@ -47,34 +46,34 @@ public class Pass4CodeGeneration {
       }
    }
 
-   private void genStatement(AsmSequence asm, Statement statement) {
+   private void genStatement(AsmProgram asm, Statement statement) {
       if (statement instanceof StatementAssignment) {
          AsmFragment asmFragment = new AsmFragment((StatementAssignment) statement, symbols);
-         asm.addAsm("  // " + statement + "  //  " + asmFragment.getSignature());
-         asmFragment.generateAsm(asm);
+         asm.addComment(statement + "  //  " + asmFragment.getSignature());
+         asmFragment.generate(asm);
       } else if (statement instanceof StatementConditionalJump) {
          AsmFragment asmFragment = new AsmFragment((StatementConditionalJump) statement, symbols);
-         asm.addAsm("  // " + statement + "  //  " + asmFragment.getSignature());
-         asmFragment.generateAsm(asm);
+         asm.addComment(statement + "  //  " + asmFragment.getSignature());
+         asmFragment.generate(asm);
       } else {
          throw new RuntimeException("Statement not supported "+statement);
       }
    }
 
-   private void genBlockEntryPoints(AsmSequence asm, ControlFlowBlock block) {
+   private void genBlockEntryPoints(AsmProgram asm, ControlFlowBlock block) {
       List<Statement> statements = block.getStatements();
       if (statements.size() > 0 && (statements.get(0) instanceof StatementPhi)) {
          for (ControlFlowBlock predecessor : block.getPredecessors()) {
             if(block.equals(predecessor.getConditionalSuccessor())) {
                genBlockPhiTransition(asm, predecessor, block);
-               genAsmJump(asm, block.getLabel().getName());
+               asm.addInstruction("JMP", AsmAddressingMode.ABS, block.getLabel().getName().replace('@', 'B'));
             }
          }
       }
    }
 
-   private void genBlockPhiTransition(AsmSequence asm, ControlFlowBlock fromBlock, ControlFlowBlock toBlock) {
-      genAsmLabel(asm, toBlock.getLabel().getName() + "_from_" + fromBlock.getLabel().getName());
+   private void genBlockPhiTransition(AsmProgram asm, ControlFlowBlock fromBlock, ControlFlowBlock toBlock) {
+      asm.addLabel((toBlock.getLabel().getName() + "_from_" + fromBlock.getLabel().getName()).replace('@', 'B'));
       for (Statement statement : toBlock.getStatements()) {
          if (!(statement instanceof StatementPhi)) {
             // No more phi statements to handle
@@ -98,27 +97,15 @@ public class Pass4CodeGeneration {
       }
    }
 
-   private void genAsmMove(AsmSequence asm, LValue lValue, RValue rValue) {
+   private void genAsmMove(AsmProgram asm, LValue lValue, RValue rValue) {
       if(getRegister(lValue).equals(getRegister(rValue))) {
          // Do not move from register to itself
-         asm.addAsm("  // " + lValue + " = " + rValue + "  // register copy "  );
+         asm.addComment(lValue + " = " + rValue + "  // register copy "  );
          return;
       }
       AsmFragment asmFragment = new AsmFragment(lValue, rValue, symbols);
-      asm.addAsm("  // " + lValue + " = " + rValue + "  // " + asmFragment.getSignature());
-      asmFragment.generateAsm(asm);
-   }
-
-   private void genAsmLabel(AsmSequence asm, Label label) {
-      genAsmLabel(asm, label.getName());
-   }
-
-   private void genAsmLabel(AsmSequence asm, String label) {
-      asm.addAsm(label.replace('@', 'B') + ":");
-   }
-
-   private void genAsmJump(AsmSequence asm, String label) {
-      asm.addAsm("  jmp " + label.replace('@', 'B'));
+      asm.addComment(lValue + " = " + rValue + "  // " + asmFragment.getSignature());
+      asmFragment.generate(asm);
    }
 
 

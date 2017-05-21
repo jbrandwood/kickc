@@ -1,5 +1,7 @@
 package dk.camelot64.kickc.asm;
 
+import dk.camelot64.kickc.icl.NumberParser;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -10,14 +12,37 @@ public class AsmInstuctionSet {
 
    private static AsmInstuctionSet set = new AsmInstuctionSet();
 
-   public static AsmInstructionType getInstructionType(String mnemonic, AsmAddressingMode mode) {
-      AsmInstructionType type = set.getType(mnemonic, mode);
-      if(type==null && AsmAddressingMode.ABS.equals(mode)) {
+   public static AsmInstructionType getInstructionType(String mnemonic, AsmAddressingMode mode, String parameter) {
+      AsmInstructionType type = null;
+      if (AsmAddressingMode.ABS.equals(mode) && isZp(parameter)) {
+         type = set.getType(mnemonic, AsmAddressingMode.ZP);
+      }
+      if (AsmAddressingMode.ABX.equals(mode) && isZp(parameter)) {
+         type = set.getType(mnemonic, AsmAddressingMode.ZPX);
+      }
+      if (AsmAddressingMode.ABY.equals(mode) && isZp(parameter)) {
+         type = set.getType(mnemonic, AsmAddressingMode.ZPY);
+      }
+      if (type == null) {
+         type = set.getType(mnemonic, mode);
+      }
+      if (type == null && AsmAddressingMode.ABS.equals(mode)) {
          type = set.getType(mnemonic, AsmAddressingMode.REL);
       }
       return type;
    }
 
+   private static boolean isZp(String parameter) {
+      Number number = null;
+      if(parameter!=null) {
+         try {
+            number = NumberParser.parseLiteral(parameter);
+         } catch (NumberFormatException e) {
+            // ignore
+         }
+      }
+      return (number != null && number.intValue()<256 && number.intValue()>=0);
+   }
 
 
    private List<AsmInstructionType> instructions;
@@ -302,7 +327,7 @@ public class AsmInstuctionSet {
 
    public AsmInstructionType getType(String mnemonic, AsmAddressingMode addressingMode) {
       for (AsmInstructionType candidate : instructions) {
-         if(candidate.getMnemnonic().equals(mnemonic.toLowerCase()) && candidate.getAddressingMode().equals(addressingMode)) {
+         if (candidate.getMnemnonic().equals(mnemonic.toLowerCase()) && candidate.getAddressingMode().equals(addressingMode)) {
             return candidate;
          }
       }

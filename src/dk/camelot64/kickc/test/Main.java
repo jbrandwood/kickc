@@ -1,7 +1,7 @@
 package dk.camelot64.kickc.test;
 
+import dk.camelot64.kickc.asm.AsmProgram;
 import dk.camelot64.kickc.icl.*;
-import dk.camelot64.kickc.asm.AsmSequence;
 import dk.camelot64.kickc.parser.KickCLexer;
 import dk.camelot64.kickc.parser.KickCParser;
 import org.antlr.v4.runtime.CharStream;
@@ -64,14 +64,14 @@ public class Main {
 
       Pass4CodeGeneration pass4CodeGeneration = new Pass4CodeGeneration(controlFlowGraph, symbolTable);
 
-      AsmSequence asmSequence = pass4CodeGeneration.generate();
+      AsmProgram asmProgram = pass4CodeGeneration.generate();
 
       System.out.println("SYMBOLS");
       System.out.println(symbolTable.toString());
       System.out.println("CONTROL FLOW GRAPH");
       System.out.println(controlFlowGraph.toString());
       System.out.println("ASSEMBLER");
-      System.out.println(asmSequence.toString());
+      System.out.println(asmProgram.toString());
    }
 
 }

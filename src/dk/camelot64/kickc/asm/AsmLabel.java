@@ -31,6 +31,6 @@ public class AsmLabel implements AsmLine {
 
    @Override
    public String getAsm() {
-      return ":"+label;
+      return label+":";
    }
 }

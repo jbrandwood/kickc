@@ -36,6 +36,12 @@ public class SymbolTable {
       return symbol;
    }
 
+   public VariableUnversioned newVariableDeclaration(String name, SymbolType type) {
+      VariableUnversioned symbol = new VariableUnversioned(name, type);
+      addSymbol(symbol);
+      return symbol;
+   }
+
    public VariableUnversioned newVariableDeclaration(String name, String type) {
       SymbolType symbolType = SymbolType.get(type);
       VariableUnversioned symbol = new VariableUnversioned(name, symbolType);

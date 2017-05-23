@@ -5,7 +5,7 @@ import dk.camelot64.kickc.parser.KickCParser;
 import org.antlr.v4.runtime.tree.TerminalNode;
 
 /** Generates program SSA form by visiting the ANTLR4 parse tree*/
-public class Pass1GenerateStatementSequence extends KickCBaseVisitor<RValue> {
+public class Pass1GenerateStatementSequence extends KickCBaseVisitor<Object> {
 
    private SymbolTable symbolTable;
    private StatementSequence sequence;
@@ -20,14 +20,13 @@ public class Pass1GenerateStatementSequence extends KickCBaseVisitor<RValue> {
    }
 
    @Override
-   public RValue visitFile(KickCParser.FileContext ctx) {
+   public Void visitFile(KickCParser.FileContext ctx) {
       this.visit(ctx.stmtSeq());
       return null;
    }
 
-
    @Override
-   public RValue visitStmtSeq(KickCParser.StmtSeqContext ctx) {
+   public Void visitStmtSeq(KickCParser.StmtSeqContext ctx) {
       for(int i=0; i<ctx.getChildCount(); i++) {
          this.visit(ctx.stmt(i));
       }
@@ -35,20 +34,20 @@ public class Pass1GenerateStatementSequence extends KickCBaseVisitor<RValue> {
    }
 
    @Override
-   public RValue visitStmtBlock(KickCParser.StmtBlockContext ctx) {
+   public Void visitStmtBlock(KickCParser.StmtBlockContext ctx) {
       this.visit(ctx.stmtSeq());
       return null;
    }
 
    @Override
-   public RValue visitStmtExpr(KickCParser.StmtExprContext ctx) {
+   public Void visitStmtExpr(KickCParser.StmtExprContext ctx) {
       this.visit(ctx.expr());
       return null;
    }
 
    @Override
-   public RValue visitStmtIfElse(KickCParser.StmtIfElseContext ctx) {
-      RValue rValue = this.visit(ctx.expr());
+   public Void visitStmtIfElse(KickCParser.StmtIfElseContext ctx) {
+      RValue rValue = (RValue) this.visit(ctx.expr());
       Label ifJumpLabel = symbolTable.newIntermediateJumpLabel();
       Label elseJumpLabel = symbolTable.newIntermediateJumpLabel();
       Statement ifJmpStmt = new StatementConditionalJump(rValue, ifJumpLabel);
@@ -76,13 +75,13 @@ public class Pass1GenerateStatementSequence extends KickCBaseVisitor<RValue> {
    }
 
    @Override
-   public RValue visitStmtWhile(KickCParser.StmtWhileContext ctx) {
+   public Void visitStmtWhile(KickCParser.StmtWhileContext ctx) {
       Label beginJumpLabel = symbolTable.newIntermediateJumpLabel();
       Label doJumpLabel = symbolTable.newIntermediateJumpLabel();
       Label endJumpLabel = symbolTable.newIntermediateJumpLabel();
       StatementJumpTarget beginJumpTarget = new StatementJumpTarget(beginJumpLabel);
       sequence.addStatement(beginJumpTarget);
-      RValue rValue = this.visit(ctx.expr());
+      RValue rValue = (RValue) this.visit(ctx.expr());
       Statement doJmpStmt = new StatementConditionalJump(rValue, doJumpLabel);
       sequence.addStatement(doJmpStmt);
       Statement endJmpStmt = new StatementJump(endJumpLabel);
@@ -98,29 +97,110 @@ public class Pass1GenerateStatementSequence extends KickCBaseVisitor<RValue> {
    }
 
    @Override
-   public RValue visitStmtDoWhile(KickCParser.StmtDoWhileContext ctx) {
+   public Void visitStmtDoWhile(KickCParser.StmtDoWhileContext ctx) {
       Label beginJumpLabel = symbolTable.newIntermediateJumpLabel();
       StatementJumpTarget beginJumpTarget = new StatementJumpTarget(beginJumpLabel);
       sequence.addStatement(beginJumpTarget);
       this.visit(ctx.stmt());
-      RValue rValue = this.visit(ctx.expr());
+      RValue rValue = (RValue) this.visit(ctx.expr());
       Statement doJmpStmt = new StatementConditionalJump(rValue, beginJumpLabel);
       sequence.addStatement(doJmpStmt);
       return null;
    }
 
    @Override
-   public RValue visitStmtAssignment(KickCParser.StmtAssignmentContext ctx) {
-      if(ctx.TYPE()!=null) {
-         symbolTable.newVariableDeclaration(ctx.NAME().getText(), ctx.TYPE().getText());
+   public Void visitStmtFunction(KickCParser.StmtFunctionContext ctx) {
+      throw new RuntimeException("Not implemented");
+   }
+
+   @Override
+   public Void visitStmtReturn(KickCParser.StmtReturnContext ctx) {
+      throw new RuntimeException("Not implemented");
+   }
+
+   @Override
+   public Void visitStmtDeclaration(KickCParser.StmtDeclarationContext ctx) {
+      if(ctx.getChild(0).getText().equals("const")) {
+         System.out.println("Const!"+ctx.getText());
       }
-      if(ctx.expr()!=null) {
-         RValue rValue = this.visit(ctx.expr());
-         VariableUnversioned variable = symbolTable.newVariableUsage(ctx.NAME().getText());
-         Statement stmt = new StatementAssignment(variable, rValue);
+      SymbolType type = (SymbolType)visit(ctx.typeDecl());
+      VariableUnversioned lValue = symbolTable.newVariableDeclaration(ctx.NAME().getText(), type);
+      if(ctx.initializer()!=null) {
+         RValue rValue = (RValue) visit(ctx.initializer());
+         Statement stmt = new StatementAssignment(lValue, rValue);
          sequence.addStatement(stmt);
       }
       return null;
+   }
+
+   @Override
+   public Void visitStmtAssignment(KickCParser.StmtAssignmentContext ctx) {
+      LValue lValue = (LValue) visit(ctx.lvalue());
+      RValue rValue = (RValue) this.visit(ctx.expr());
+      Statement stmt = new StatementAssignment(lValue, rValue);
+      sequence.addStatement(stmt);
+      return null;
+   }
+
+   @Override
+   public LValue visitLvalueName(KickCParser.LvalueNameContext ctx) {
+      return symbolTable.newVariableUsage(ctx.NAME().getText());
+   }
+
+   @Override
+   public LValue visitLvaluePar(KickCParser.LvalueParContext ctx) {
+      return (LValue) visit(ctx.lvalue());
+   }
+
+   @Override
+   public LValue visitLvaluePtr(KickCParser.LvaluePtrContext ctx) {
+      throw new RuntimeException("Not implemented");
+   }
+
+   @Override
+   public LValue visitLvalueArray(KickCParser.LvalueArrayContext ctx) {
+      throw new RuntimeException("Not implemented");
+   }
+
+   @Override
+   public RValue visitInitExpr(KickCParser.InitExprContext ctx) {
+      return (RValue) visit(ctx.expr());
+   }
+
+   @Override
+   public RValue visitInitList(KickCParser.InitListContext ctx) {
+      throw new RuntimeException("Not implemented");
+   }
+
+   @Override
+   public SymbolType visitTypeSimple(KickCParser.TypeSimpleContext ctx) {
+      return SymbolType.get(ctx.getText());
+   }
+
+   @Override
+   public SymbolType visitTypePtr(KickCParser.TypePtrContext ctx) {
+      throw new RuntimeException("Not implemented");
+   }
+
+   @Override
+   public SymbolType visitTypeArray(KickCParser.TypeArrayContext ctx) {
+      throw new RuntimeException("Not implemented");
+   }
+
+   @Override
+   public RValue visitExprCast(KickCParser.ExprCastContext ctx) {
+      System.out.println("Cast type ignored!");
+      return (RValue) visit(ctx.expr());
+   }
+
+   @Override
+   public Object visitExprCall(KickCParser.ExprCallContext ctx) {
+      throw new RuntimeException("Not implemented");
+   }
+
+   @Override
+   public Object visitExprArray(KickCParser.ExprArrayContext ctx) {
+      throw new RuntimeException("Not implemented");
    }
 
    @Override
@@ -147,8 +227,8 @@ public class Pass1GenerateStatementSequence extends KickCBaseVisitor<RValue> {
 
    @Override
    public RValue visitExprBinary(KickCParser.ExprBinaryContext ctx) {
-      RValue left = this.visit(ctx.expr(0));
-      RValue right = this.visit(ctx.expr(1));
+      RValue left = (RValue) this.visit(ctx.expr(0));
+      RValue right = (RValue) this.visit(ctx.expr(1));
       String op = ((TerminalNode)ctx.getChild(1)).getSymbol().getText();
       Operator operator = new Operator(op);
       VariableIntermediate tmpVar = symbolTable.newIntermediateAssignment();
@@ -159,7 +239,7 @@ public class Pass1GenerateStatementSequence extends KickCBaseVisitor<RValue> {
 
    @Override
    public RValue visitExprUnary(KickCParser.ExprUnaryContext ctx) {
-      RValue child = this.visit(ctx.expr());
+      RValue child = (RValue) this.visit(ctx.expr());
       String op = ((TerminalNode)ctx.getChild(0)).getSymbol().getText();
       Operator operator = new Operator(op);
       VariableIntermediate tmpVar = symbolTable.newIntermediateAssignment();
@@ -170,7 +250,7 @@ public class Pass1GenerateStatementSequence extends KickCBaseVisitor<RValue> {
 
    @Override
    public RValue visitExprPar(KickCParser.ExprParContext ctx) {
-      return this.visit(ctx.expr());
+      return (RValue) this.visit(ctx.expr());
    }
 
    @Override

@@ -43,7 +43,7 @@ public class SymbolTable {
    }
 
    public VariableUnversioned newVariableDeclaration(String name, String type) {
-      SymbolType symbolType = SymbolType.get(type);
+      SymbolType symbolType = SymbolTypeBasic.get(type);
       VariableUnversioned symbol = new VariableUnversioned(name, symbolType);
       addSymbol(symbol);
       return symbol;
@@ -55,7 +55,7 @@ public class SymbolTable {
 
    public VariableIntermediate newIntermediateAssignment() {
       String name = "$"+intermediateVarCount++;
-      VariableIntermediate symbol = new VariableIntermediate(name, SymbolType.VAR);
+      VariableIntermediate symbol = new VariableIntermediate(name, SymbolTypeBasic.VAR);
       addSymbol(symbol);
       return symbol;
    }

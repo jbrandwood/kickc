@@ -22,7 +22,7 @@ public class Label implements Symbol {
    }
 
    public SymbolType getType() {
-      return SymbolType.LABEL;
+      return SymbolTypeBasic.LABEL;
    }
 
    @Override

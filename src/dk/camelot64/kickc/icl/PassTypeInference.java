@@ -10,7 +10,7 @@ public class PassTypeInference {
          if (statement instanceof StatementAssignment) {
             StatementAssignment assignment = (StatementAssignment) statement;
             Variable symbol = (Variable) assignment.getLValue();
-            if (SymbolType.VAR.equals(symbol.getType())) {
+            if (SymbolTypeBasic.VAR.equals(symbol.getType())) {
                // Unresolved symbol - perform inference
                Operator operator = assignment.getOperator();
                if (operator == null || assignment.getRValue1() == null) {
@@ -46,37 +46,40 @@ public class PassTypeInference {
          case "||":
          case "and":
          case "or":
-            return SymbolType.BOOLEAN;
+            return SymbolTypeBasic.BOOLEAN;
          case "+":
          case "-":
          case "*":
          case "/":
-            if (type1.equals(SymbolType.WORD) || type2.equals(SymbolType.WORD)) {
-               return SymbolType.WORD;
+            if (type1.equals(SymbolTypeBasic.WORD) || type2.equals(SymbolTypeBasic.WORD)) {
+               return SymbolTypeBasic.WORD;
             } else {
-               return SymbolType.BYTE;
+               return SymbolTypeBasic.BYTE;
             }
          default:
-            return SymbolType.VAR;
+            throw new RuntimeException("Type inference case not handled "+type1+" "+operator+" "+type2);
       }
    }
 
    public static SymbolType inferType(RValue rValue) {
-      SymbolType type = SymbolType.VAR;
+      SymbolType type = null;
       if (rValue instanceof Symbol) {
          Symbol rSymbol = (Symbol) rValue;
          type = rSymbol.getType();
       } else if (rValue instanceof ConstantInteger) {
          ConstantInteger rInt = (ConstantInteger) rValue;
          if (rInt.getNumber() < 256) {
-            type = SymbolType.BYTE;
+            type = SymbolTypeBasic.BYTE;
          } else {
-            type = SymbolType.WORD;
+            type = SymbolTypeBasic.WORD;
          }
       } else if (rValue instanceof ConstantString) {
-         type = SymbolType.STRING;
+         type = SymbolTypeBasic.STRING;
       } else if (rValue instanceof ConstantBool) {
-         type = SymbolType.BOOLEAN;
+         type = SymbolTypeBasic.BOOLEAN;
+      }
+      if(type==null) {
+         throw new RuntimeException("Cannot infer type for "+rValue);
       }
       return type;
    }

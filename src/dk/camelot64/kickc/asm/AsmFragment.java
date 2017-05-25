@@ -187,7 +187,7 @@ public class AsmFragment {
          }
       } else if (value instanceof ConstantInteger) {
          ConstantInteger intValue = (ConstantInteger) value;
-         if (intValue.getType().equals(SymbolType.BYTE)) {
+         if (intValue.getType().equals(SymbolTypeBasic.BYTE)) {
             String name = "coby" + nextConstByteIdx++;
             bindings.put(name, value);
             return name;
@@ -223,7 +223,7 @@ public class AsmFragment {
          }
       } else if (boundValue instanceof ConstantInteger) {
          ConstantInteger boundInt = (ConstantInteger) boundValue;
-         if (boundInt.getType().equals(SymbolType.BYTE)) {
+         if (boundInt.getType().equals(SymbolTypeBasic.BYTE)) {
             bound = Integer.toString(boundInt.getNumber());
          } else {
             throw new RuntimeException("Bound Value Type not implemented " + boundValue);

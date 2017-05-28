@@ -18,7 +18,8 @@ public class PassTypeInference {
                   if (operator == null || assignment.getRValue1() == null) {
                      // Copy operation or Unary operation
                      RValue rValue = assignment.getRValue2();
-                     SymbolType type = inferType(rValue);
+                     SymbolType subType = inferType(rValue);
+                     SymbolType type = inferType(operator, subType);
                      symbol.setInferredType(type);
                   } else {
                      // Binary operation
@@ -30,6 +31,23 @@ public class PassTypeInference {
                }
             }
          }
+      }
+   }
+
+   private SymbolType inferType(Operator operator, SymbolType subType) {
+      if(operator==null) {
+         return subType;
+      }
+      String op = operator.getOperator();
+      switch (op) {
+         case "*":
+            if(subType instanceof SymbolTypePointer) {
+               return ((SymbolTypePointer) subType).getElementType();
+            } else {
+               throw new RuntimeException("Type error: Dereferencing a non-pointer "+subType);
+            }
+         default:
+            return subType;
       }
    }
 
@@ -55,7 +73,15 @@ public class PassTypeInference {
             if (type1 instanceof SymbolTypePointer && (type2.equals(SymbolTypeBasic.BYTE) || type2.equals(SymbolTypeBasic.WORD))) {
                return new SymbolTypePointer(((SymbolTypePointer) type1).getElementType());
             }
+            if (type1 instanceof SymbolTypePointer && type2 instanceof SymbolTypePointer) {
+               SymbolType elmType1 = ((SymbolTypePointer) type1).getElementType();
+               SymbolType elmType2 = ((SymbolTypePointer) type2).getElementType();
+               return inferType(elmType1, operator, elmType2);
+            }
          case "*":
+            if(type1==null && type2 instanceof SymbolTypePointer) {
+               return ((SymbolTypePointer) type2).getElementType();
+            }
          case "/":
             if (SymbolTypeBasic.WORD.equals(type1) || SymbolTypeBasic.WORD.equals(type2)) {
                return SymbolTypeBasic.WORD;

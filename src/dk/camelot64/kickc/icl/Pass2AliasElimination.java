@@ -5,7 +5,7 @@ import java.util.Iterator;
 import java.util.Map;
 
 /** Compiler Pass eliminating alias assignments */
-public class Pass2AliasElimination extends Pass2Optimization {
+public class Pass2AliasElimination extends Pass2SsaOptimization {
 
    public Pass2AliasElimination(ControlFlowGraph graph, SymbolTable symbolTable) {
       super(graph, symbolTable);

@@ -165,7 +165,7 @@ public class Pass1GenerateStatementSequence extends KickCBaseVisitor<Object> {
       VariableIntermediate tmpVar = symbolTable.newIntermediateAssignment();
       Statement stmt = new StatementAssignment(tmpVar, lval, operator, index);
       sequence.addStatement(stmt);
-      return new PointerDereference(tmpVar);
+      return new PointerDereferenceVariable(tmpVar);
    }
 
    @Override
@@ -218,7 +218,10 @@ public class Pass1GenerateStatementSequence extends KickCBaseVisitor<Object> {
       VariableIntermediate tmpVar = symbolTable.newIntermediateAssignment();
       Statement stmt = new StatementAssignment(tmpVar, array, operator, index);
       sequence.addStatement(stmt);
-      return new PointerDereference(tmpVar);
+      VariableIntermediate tmpVar2 = symbolTable.newIntermediateAssignment();
+      Statement stmt2 = new StatementAssignment(tmpVar2, null, new Operator("*"), tmpVar );
+      sequence.addStatement(stmt2);
+      return tmpVar2;
    }
 
    @Override

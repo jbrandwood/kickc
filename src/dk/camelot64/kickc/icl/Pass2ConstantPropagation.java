@@ -4,7 +4,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 /** Compiler Pass propagating constants in expressions eliminating constant variables */
-public class Pass2ConstantPropagation extends Pass2Optimization {
+public class Pass2ConstantPropagation extends Pass2SsaOptimization {
 
    public Pass2ConstantPropagation(ControlFlowGraph graph, SymbolTable symbolTable) {
       super(graph, symbolTable);
@@ -47,7 +47,9 @@ public class Pass2ConstantPropagation extends Pass2Optimization {
                   } else {
                      // Constant unary expression
                      Constant constant = calculateUnary(assignment.getOperator(), (Constant) assignment.getRValue2());
-                     constants.put(variable, constant);
+                     if(constant!=null) {
+                        constants.put(variable, constant);
+                     }
                   }
                } else if (assignment.getRValue1() instanceof Constant && assignment.getRValue2() instanceof Constant) {
                   // Constant binary expression
@@ -140,6 +142,9 @@ public class Pass2ConstantPropagation extends Pass2Optimization {
          }
          case "+": {
             return c;
+         }
+         case "*": { // pointer dereference
+            return null;
          }
          default:
             throw new RuntimeException("Unhandled Unary Operator " + operator.getOperator());

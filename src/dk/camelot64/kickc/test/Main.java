@@ -13,7 +13,7 @@ import java.util.List;
 /** Test my KickC Grammar */
 public class Main {
    public static void main(String[] args) throws IOException {
-      final String fileName = "src/dk/camelot64/kickc/test/mem.kc";
+      final String fileName = "src/dk/camelot64/kickc/test/fibmem.kc";
       final CharStream input = CharStreams.fromFileName(fileName);
       System.out.println(input.toString());
       KickCLexer lexer = new KickCLexer(input);
@@ -42,7 +42,7 @@ public class Main {
             new Pass1GenerateSingleStaticAssignmentForm(symbolTable, controlFlowGraph);
       pass1GenerateSingleStaticAssignmentForm.generate();
 
-      List<Pass2Optimization> optimizations = new ArrayList<>();
+      List<Pass2SsaOptimization> optimizations = new ArrayList<>();
       optimizations.add(new Pass2CullEmptyBlocks(controlFlowGraph, symbolTable));
       optimizations.add(new Pass2ConstantPropagation(controlFlowGraph, symbolTable));
       optimizations.add(new Pass2AliasElimination(controlFlowGraph, symbolTable));
@@ -53,14 +53,14 @@ public class Main {
       System.out.println("INITIAL CONTROL FLOW GRAPH");
       System.out.println(controlFlowGraph.toString());
 
-      boolean optimized = true;
-      while (optimized) {
-         optimized = false;
-         for (Pass2Optimization optimization : optimizations) {
+      boolean ssaOptimized = true;
+      while (ssaOptimized) {
+         ssaOptimized = false;
+         for (Pass2SsaOptimization optimization : optimizations) {
             boolean stepOptimized = optimization.optimize();
             if (stepOptimized) {
                System.out.println("Succesful optimization "+optimization);
-               optimized = true;
+               ssaOptimized = true;
                System.out.println("CONTROL FLOW GRAPH");
                System.out.println(controlFlowGraph.toString());
             }
@@ -73,7 +73,10 @@ public class Main {
       Pass4CodeGeneration pass4CodeGeneration = new Pass4CodeGeneration(controlFlowGraph, symbolTable);
       AsmProgram asmProgram = pass4CodeGeneration.generate();
       Pass5NextJumpElimination pass5NextJumpElimination = new Pass5NextJumpElimination(asmProgram);
-      pass5NextJumpElimination.optimize();
+      boolean asmOptimized = true;
+      while(asmOptimized) {
+         asmOptimized = pass5NextJumpElimination.optimize();
+      }
 
 
       System.out.println("SYMBOLS");

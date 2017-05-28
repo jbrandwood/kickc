@@ -3,7 +3,7 @@ package dk.camelot64.kickc.icl;
 import java.util.*;
 
 /** Pass that culls empty control flow blocks from the program */
-public class Pass2CullEmptyBlocks extends Pass2Optimization {
+public class Pass2CullEmptyBlocks extends Pass2SsaOptimization {
 
    public Pass2CullEmptyBlocks(ControlFlowGraph graph, SymbolTable symbolTable) {
       super(graph, symbolTable);

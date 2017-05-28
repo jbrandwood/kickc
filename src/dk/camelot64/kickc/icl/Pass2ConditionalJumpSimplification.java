@@ -1,14 +1,13 @@
 package dk.camelot64.kickc.icl;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 /**
  * Compiler Pass simplifying conditional jumps that are simple comparisons
  */
-public class Pass2ConditionalJumpSimplification extends Pass2Optimization {
+public class Pass2ConditionalJumpSimplification extends Pass2SsaOptimization {
 
    private Map<Variable, List<Statement>> allUsages;
 

@@ -101,6 +101,8 @@ public class AsmFragment {
    private static String getOperatorFragmentName(Operator operator) {
       String op = operator.getOperator();
       switch (op) {
+         case "*":
+            return "_star_";
          case "+":
             return "_plus_";
          case "-":
@@ -198,8 +200,8 @@ public class AsmFragment {
             bindings.put(name, value);
             return name;
          }
-      } else if (value instanceof PointerDereference) {
-         PointerDereference deref = (PointerDereference) value;
+      } else if (value instanceof PointerDereferenceVariable) {
+         PointerDereferenceVariable deref = (PointerDereferenceVariable) value;
          Variable pointer = deref.getPointer();
          RegisterAllocation.Register register = symbols.getRegister(pointer);
          if (RegisterAllocation.RegisterType.ZP_PTR_BYTE.equals(register.getType())) {
@@ -207,13 +209,21 @@ public class AsmFragment {
             bindings.put(name, value);
             return name;
          }
+      } else if (value instanceof PointerDereferenceConstant) {
+         PointerDereferenceConstant deref = (PointerDereferenceConstant) value;
+         Constant pointer = deref.getPointer();
+         if(pointer instanceof ConstantInteger) {
+            String name = "coptr"+ nextConstByteIdx++;
+            bindings.put(name, value);
+            return name;
+         }
       } else if (value instanceof ConstantInteger) {
          ConstantInteger intValue = (ConstantInteger) value;
-         if (intValue.getType().equals(SymbolTypeBasic.BYTE)) {
+         if (SymbolTypeBasic.BYTE.equals(intValue.getType())) {
             String name = "coby" + nextConstByteIdx++;
             bindings.put(name, value);
             return name;
-         } else if (intValue.getType().equals(SymbolTypeBasic.WORD)) {
+         } else if (SymbolTypeBasic.WORD.equals(intValue.getType())) {
             String name = "cowo" + nextConstByteIdx++;
             bindings.put(name, value);
             return name;
@@ -234,6 +244,9 @@ public class AsmFragment {
     */
    public String getBoundValue(String name) {
       Value boundValue = getBinding(name);
+      if(boundValue==null) {
+         throw new RuntimeException("Binding not found in fragment '" + name+"'");
+      }
       String bound;
       if (boundValue instanceof Variable) {
          RegisterAllocation.Register register = symbols.getRegister((Variable) boundValue);
@@ -246,12 +259,21 @@ public class AsmFragment {
          } else {
             throw new RuntimeException("Register Type not implemented " + register);
          }
-      } else if(boundValue instanceof PointerDereference) {
-         PointerDereference deref = (PointerDereference) boundValue;
+      } else if(boundValue instanceof PointerDereferenceVariable) {
+         PointerDereferenceVariable deref = (PointerDereferenceVariable) boundValue;
          Variable pointer = deref.getPointer();
          RegisterAllocation.Register register = symbols.getRegister(pointer);
          if(register instanceof RegisterAllocation.RegisterZpPointerByte) {
             bound = Integer.toString(((RegisterAllocation.RegisterZpPointerByte) register).getZp());
+         } else {
+            throw new RuntimeException("Bound Value Type not implemented " + boundValue);
+         }
+      } else if(boundValue instanceof PointerDereferenceConstant) {
+         PointerDereferenceConstant deref = (PointerDereferenceConstant) boundValue;
+         Constant pointer = deref.getPointer();
+         if (pointer instanceof ConstantInteger) {
+            ConstantInteger intPointer = (ConstantInteger) pointer;
+            bound = Integer.toString(intPointer.getNumber());
          } else {
             throw new RuntimeException("Bound Value Type not implemented " + boundValue);
          }

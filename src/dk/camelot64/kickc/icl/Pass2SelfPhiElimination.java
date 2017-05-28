@@ -1,11 +1,9 @@
 package dk.camelot64.kickc.icl;
 
-import java.util.HashMap;
 import java.util.Iterator;
-import java.util.Map;
 
 /** Compiler Pass eliminating phi self assignments  */
-public class Pass2SelfPhiElimination extends Pass2Optimization{
+public class Pass2SelfPhiElimination extends Pass2SsaOptimization {
 
    public Pass2SelfPhiElimination(ControlFlowGraph graph, SymbolTable symbolTable) {
       super(graph, symbolTable);

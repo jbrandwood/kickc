@@ -10,23 +10,20 @@ import java.util.Iterator;
 import java.util.List;
 
 /** Optimize assembler code by removing jumps to labels immediately following the jump */
-public class Pass5NextJumpElimination {
-
-   private AsmProgram program;
+public class Pass5NextJumpElimination extends Pass5AsmOptimization {
 
    public Pass5NextJumpElimination(AsmProgram program) {
-      this.program = program;
+      super(program);
    }
 
    public boolean optimize() {
-      List<AsmLine> remove = new ArrayList<>();
+      List<AsmLine> removeLines = new ArrayList<>();
       AsmInstruction candidate = null;
-      for (AsmLine line : program.getLines()) {
+      for (AsmLine line : getProgram().getLines()) {
          if(candidate!=null) {
             if(line instanceof AsmLabel) {
                if(((AsmLabel) line).getLabel().equals(candidate.getParameter())) {
-                  remove.add(candidate);
-                  candidate = null;
+                  removeLines.add(candidate);
                }
             }
          }
@@ -38,13 +35,7 @@ public class Pass5NextJumpElimination {
             }
          }
       }
-      for (Iterator<AsmLine> iterator = program.getLines().iterator(); iterator.hasNext(); ) {
-         AsmLine line = iterator.next();
-         if (remove.contains(line)) {
-            System.out.println("Removing jump to next instruction "+line.getAsm());
-            iterator.remove();
-         }
-      }
-      return remove.size()>0;
+      remove(removeLines);
+      return removeLines.size()>0;
    }
 }

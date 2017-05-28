@@ -28,7 +28,7 @@ public class RegisterAllocation {
    }
 
    /** A register used for storing a single variable. */
-   public interface Register {
+   public interface Register extends Value {
 
       RegisterType getType();
 

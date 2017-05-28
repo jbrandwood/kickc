@@ -6,13 +6,12 @@ import dk.camelot64.kickc.asm.AsmLine;
 import dk.camelot64.kickc.asm.AsmProgram;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
 /** Optimize assembler code by removing jumps to labels immediately following the jump */
-public class Pass5NextJumpElimination extends Pass5AsmOptimization {
+public class Pass4NextJumpElimination extends Pass4AsmOptimization {
 
-   public Pass5NextJumpElimination(AsmProgram program) {
+   public Pass4NextJumpElimination(AsmProgram program) {
       super(program);
    }
 

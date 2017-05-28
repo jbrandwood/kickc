@@ -69,10 +69,10 @@ public class Main {
 
       Pass3RegisterAllocation pass3RegisterAllocation = new Pass3RegisterAllocation(controlFlowGraph, symbolTable);
       pass3RegisterAllocation.allocate();
+      Pass3CodeGeneration pass3CodeGeneration = new Pass3CodeGeneration(controlFlowGraph, symbolTable);
+      AsmProgram asmProgram = pass3CodeGeneration.generate();
 
-      Pass4CodeGeneration pass4CodeGeneration = new Pass4CodeGeneration(controlFlowGraph, symbolTable);
-      AsmProgram asmProgram = pass4CodeGeneration.generate();
-      Pass5NextJumpElimination pass5NextJumpElimination = new Pass5NextJumpElimination(asmProgram);
+      Pass4NextJumpElimination pass5NextJumpElimination = new Pass4NextJumpElimination(asmProgram);
       boolean asmOptimized = true;
       while(asmOptimized) {
          asmOptimized = pass5NextJumpElimination.optimize();

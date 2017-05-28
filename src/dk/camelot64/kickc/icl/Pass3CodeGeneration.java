@@ -5,12 +5,12 @@ import dk.camelot64.kickc.asm.*;
 /**
  * Code Generation of 6502 Assembler from ICL/SSA Control Flow Graph
  */
-public class Pass4CodeGeneration {
+public class Pass3CodeGeneration {
 
    private ControlFlowGraph graph;
    private SymbolTable symbols;
 
-   public Pass4CodeGeneration(ControlFlowGraph graph, SymbolTable symbols) {
+   public Pass3CodeGeneration(ControlFlowGraph graph, SymbolTable symbols) {
       this.graph = graph;
       this.symbols = symbols;
    }

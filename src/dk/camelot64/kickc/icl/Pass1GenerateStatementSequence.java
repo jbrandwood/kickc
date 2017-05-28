@@ -154,7 +154,12 @@ public class Pass1GenerateStatementSequence extends KickCBaseVisitor<Object> {
 
    @Override
    public LValue visitLvaluePtr(KickCParser.LvaluePtrContext ctx) {
-      throw new RuntimeException("Not implemented");
+      LValue lval = (LValue) visit(ctx.lvalue());
+      if(lval instanceof Variable) {
+         return new PointerDereferenceVariable((Variable) lval);
+      }  else {
+         throw new RuntimeException("Not implemented");
+      }
    }
 
    @Override
@@ -185,7 +190,8 @@ public class Pass1GenerateStatementSequence extends KickCBaseVisitor<Object> {
 
    @Override
    public SymbolType visitTypePtr(KickCParser.TypePtrContext ctx) {
-      throw new RuntimeException("Not implemented");
+      SymbolType elementType = (SymbolType) visit(ctx.typeDecl());
+      return new SymbolTypePointer(elementType);
    }
 
    @Override

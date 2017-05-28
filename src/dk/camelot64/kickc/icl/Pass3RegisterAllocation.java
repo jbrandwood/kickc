@@ -31,6 +31,9 @@ public class Pass3RegisterAllocation {
       allocation.allocate(symbols.getVariable("i#3"), RegisterAllocation.getRegisterX());
       allocation.allocate(symbols.getVariable("n1#1"), RegisterAllocation.getRegisterY());
       allocation.allocate(symbols.getVariable("n1#2"), RegisterAllocation.getRegisterY());
+      allocation.allocate(symbols.getVariable("ptr#1"), new RegisterAllocation.RegisterZpPointerByte(2));
+      allocation.allocate(symbols.getVariable("ptr#2"), new RegisterAllocation.RegisterZpPointerByte(2));
+      allocation.allocate(symbols.getVariable("ptr#3"), new RegisterAllocation.RegisterZpPointerByte(2));
       symbols.setAllocation(allocation);
    }
 

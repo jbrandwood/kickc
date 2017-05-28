@@ -40,15 +40,6 @@ public class Pass1GenerateSingleStaticAssignmentForm {
                   VariableUnversioned assignedSymbol = (VariableUnversioned) lValue;
                   VariableVersion version = symbols.createVersion(assignedSymbol);
                   assignment.setLValue(version);
-               } else if(lValue instanceof PointerDereferenceVariable) {
-                  PointerDereferenceVariable deref = (PointerDereferenceVariable) lValue;
-                  Variable pointer = deref.getPointer();
-                  if(pointer instanceof VariableUnversioned) {
-                     // Assignment to a non-versioned non-intermediary variable
-                     VariableUnversioned assignedSymbol = (VariableUnversioned) pointer;
-                     VariableVersion version = symbols.createVersion(assignedSymbol);
-                     deref.setPointerVariable(version);
-                  }
                }
             }
          }
@@ -82,6 +73,13 @@ public class Pass1GenerateSingleStaticAssignmentForm {
                if (lValue instanceof VariableVersion) {
                   VariableVersion versioned = (VariableVersion) lValue;
                   blockVersions.put(versioned.getVersionOf(), versioned);
+               } else if(lValue instanceof PointerDereferenceVariable) {
+                  PointerDereferenceVariable deref = (PointerDereferenceVariable) lValue;
+                  Variable pointer = deref.getPointer();
+                  VariableVersion version = findOrCreateVersion(pointer, blockVersions, blockNewPhis);
+                  if (version != null) {
+                     deref.setPointerVariable(version);
+                  }
                }
             }
          }

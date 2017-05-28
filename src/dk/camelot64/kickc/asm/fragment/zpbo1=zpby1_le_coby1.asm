@@ -5,4 +5,4 @@ beq !t+
 !f: lda #0
 jmp !d+
 !t: lda #$ff
-!d: sta {zpbo1
+!d: sta {zpbo1}

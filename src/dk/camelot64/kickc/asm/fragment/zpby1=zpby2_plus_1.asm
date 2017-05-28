@@ -1,4 +1,4 @@
-lda {zpby1}
+lda {zpby2}
 clc
 adc #1
-sta {zpby2}
+sta {zpby1}

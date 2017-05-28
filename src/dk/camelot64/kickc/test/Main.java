@@ -13,7 +13,7 @@ import java.util.List;
 /** Test my KickC Grammar */
 public class Main {
    public static void main(String[] args) throws IOException {
-      final String fileName = "src/dk/camelot64/kickc/test/memptr.kc";
+      final String fileName = "src/dk/camelot64/kickc/test/bresenham.kc";
       final CharStream input = CharStreams.fromFileName(fileName);
       System.out.println(input.toString());
       KickCLexer lexer = new KickCLexer(input);
@@ -77,7 +77,6 @@ public class Main {
       while(asmOptimized) {
          asmOptimized = pass5NextJumpElimination.optimize();
       }
-
 
       System.out.println("SYMBOLS");
       System.out.println(symbolTable.toString());

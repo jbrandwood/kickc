@@ -104,6 +104,13 @@ public class Pass2ConstantPropagation extends Pass2SsaOptimization {
                return new ConstantDouble(getDouble(c1) * getDouble(c2));
             }
          }
+         case "/": {
+            if (c1 instanceof ConstantInteger && c2 instanceof ConstantInteger) {
+               return new ConstantInteger(getInteger(c1) / getInteger(c2));
+            } else {
+               return new ConstantDouble(getDouble(c1) / getDouble(c2));
+            }
+         }
          default:
             throw new RuntimeException("Unhandled Binary Operator " + operator.getOperator());
       }

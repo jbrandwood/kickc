@@ -9,21 +9,24 @@ public class PassTypeInference {
       for (Statement statement : sequence.getStatements()) {
          if (statement instanceof StatementAssignment) {
             StatementAssignment assignment = (StatementAssignment) statement;
-            Variable symbol = (Variable) assignment.getLValue();
-            if (SymbolTypeBasic.VAR.equals(symbol.getType())) {
-               // Unresolved symbol - perform inference
-               Operator operator = assignment.getOperator();
-               if (operator == null || assignment.getRValue1() == null) {
-                  // Copy operation or Unary operation
-                  RValue rValue = assignment.getRValue2();
-                  SymbolType type = inferType(rValue);
-                  symbol.setInferredType(type);
-               } else {
-                  // Binary operation
-                  SymbolType type1 = inferType(assignment.getRValue1());
-                  SymbolType type2 = inferType(assignment.getRValue2());
-                  SymbolType type = inferType(type1, operator, type2);
-                  symbol.setInferredType(type);
+            LValue lValue = assignment.getLValue();
+            if (lValue instanceof Variable) {
+               Variable symbol = (Variable) lValue;
+               if (SymbolTypeBasic.VAR.equals(symbol.getType())) {
+                  // Unresolved symbol - perform inference
+                  Operator operator = assignment.getOperator();
+                  if (operator == null || assignment.getRValue1() == null) {
+                     // Copy operation or Unary operation
+                     RValue rValue = assignment.getRValue2();
+                     SymbolType type = inferType(rValue);
+                     symbol.setInferredType(type);
+                  } else {
+                     // Binary operation
+                     SymbolType type1 = inferType(assignment.getRValue1());
+                     SymbolType type2 = inferType(assignment.getRValue2());
+                     SymbolType type = inferType(type1, operator, type2);
+                     symbol.setInferredType(type);
+                  }
                }
             }
          }
@@ -49,15 +52,18 @@ public class PassTypeInference {
             return SymbolTypeBasic.BOOLEAN;
          case "+":
          case "-":
+            if (type1 instanceof SymbolTypePointer && (type2.equals(SymbolTypeBasic.BYTE) || type2.equals(SymbolTypeBasic.WORD))) {
+               return new SymbolTypePointer(((SymbolTypePointer) type1).getElementType());
+            }
          case "*":
          case "/":
-            if (type1.equals(SymbolTypeBasic.WORD) || type2.equals(SymbolTypeBasic.WORD)) {
+            if (SymbolTypeBasic.WORD.equals(type1) || SymbolTypeBasic.WORD.equals(type2)) {
                return SymbolTypeBasic.WORD;
-            } else {
+            } else if (SymbolTypeBasic.BYTE.equals(type1) && SymbolTypeBasic.BYTE.equals(type2)) {
                return SymbolTypeBasic.BYTE;
             }
          default:
-            throw new RuntimeException("Type inference case not handled "+type1+" "+operator+" "+type2);
+            throw new RuntimeException("Type inference case not handled " + type1 + " " + operator + " " + type2);
       }
    }
 
@@ -78,8 +84,8 @@ public class PassTypeInference {
       } else if (rValue instanceof ConstantBool) {
          type = SymbolTypeBasic.BOOLEAN;
       }
-      if(type==null) {
-         throw new RuntimeException("Cannot infer type for "+rValue);
+      if (type == null) {
+         throw new RuntimeException("Cannot infer type for " + rValue);
       }
       return type;
    }

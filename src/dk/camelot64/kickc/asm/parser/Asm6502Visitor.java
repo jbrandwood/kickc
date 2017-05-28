@@ -90,24 +90,38 @@ public interface Asm6502Visitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitModeInd(Asm6502Parser.ModeIndContext ctx);
 	/**
-	 * Visit a parse tree produced by the {@code paramLabel}
-	 * labeled alternative in {@link Asm6502Parser#param}.
+	 * Visit a parse tree produced by the {@code exprInt}
+	 * labeled alternative in {@link Asm6502Parser#expr}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
-	T visitParamLabel(Asm6502Parser.ParamLabelContext ctx);
+	T visitExprInt(Asm6502Parser.ExprIntContext ctx);
 	/**
-	 * Visit a parse tree produced by the {@code paramReplace}
-	 * labeled alternative in {@link Asm6502Parser#param}.
+	 * Visit a parse tree produced by the {@code exprLabel}
+	 * labeled alternative in {@link Asm6502Parser#expr}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
-	T visitParamReplace(Asm6502Parser.ParamReplaceContext ctx);
+	T visitExprLabel(Asm6502Parser.ExprLabelContext ctx);
 	/**
-	 * Visit a parse tree produced by the {@code paramInt}
-	 * labeled alternative in {@link Asm6502Parser#param}.
+	 * Visit a parse tree produced by the {@code exprBinary}
+	 * labeled alternative in {@link Asm6502Parser#expr}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
-	T visitParamInt(Asm6502Parser.ParamIntContext ctx);
+	T visitExprBinary(Asm6502Parser.ExprBinaryContext ctx);
+	/**
+	 * Visit a parse tree produced by the {@code exprUnary}
+	 * labeled alternative in {@link Asm6502Parser#expr}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitExprUnary(Asm6502Parser.ExprUnaryContext ctx);
+	/**
+	 * Visit a parse tree produced by the {@code exprReplace}
+	 * labeled alternative in {@link Asm6502Parser#expr}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitExprReplace(Asm6502Parser.ExprReplaceContext ctx);
 }

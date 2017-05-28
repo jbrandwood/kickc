@@ -50,6 +50,9 @@ public class Main {
       optimizations.add(new Pass2SelfPhiElimination(controlFlowGraph, symbolTable));
       optimizations.add(new Pass2ConditionalJumpSimplification(controlFlowGraph, symbolTable));
 
+      System.out.println("INITIAL CONTROL FLOW GRAPH");
+      System.out.println(controlFlowGraph.toString());
+
       boolean optimized = true;
       while (optimized) {
          optimized = false;
@@ -58,8 +61,8 @@ public class Main {
             if (stepOptimized) {
                System.out.println("Succesful optimization "+optimization);
                optimized = true;
-               //System.out.println("CONTROL FLOW GRAPH");
-               //System.out.println(controlFlowGraph.toString());
+               System.out.println("CONTROL FLOW GRAPH");
+               System.out.println(controlFlowGraph.toString());
             }
          }
       }

@@ -142,39 +142,63 @@ public interface Asm6502Listener extends ParseTreeListener {
 	 */
 	void exitModeInd(Asm6502Parser.ModeIndContext ctx);
 	/**
-	 * Enter a parse tree produced by the {@code paramLabel}
-	 * labeled alternative in {@link Asm6502Parser#param}.
+	 * Enter a parse tree produced by the {@code exprInt}
+	 * labeled alternative in {@link Asm6502Parser#expr}.
 	 * @param ctx the parse tree
 	 */
-	void enterParamLabel(Asm6502Parser.ParamLabelContext ctx);
+	void enterExprInt(Asm6502Parser.ExprIntContext ctx);
 	/**
-	 * Exit a parse tree produced by the {@code paramLabel}
-	 * labeled alternative in {@link Asm6502Parser#param}.
+	 * Exit a parse tree produced by the {@code exprInt}
+	 * labeled alternative in {@link Asm6502Parser#expr}.
 	 * @param ctx the parse tree
 	 */
-	void exitParamLabel(Asm6502Parser.ParamLabelContext ctx);
+	void exitExprInt(Asm6502Parser.ExprIntContext ctx);
 	/**
-	 * Enter a parse tree produced by the {@code paramReplace}
-	 * labeled alternative in {@link Asm6502Parser#param}.
+	 * Enter a parse tree produced by the {@code exprLabel}
+	 * labeled alternative in {@link Asm6502Parser#expr}.
 	 * @param ctx the parse tree
 	 */
-	void enterParamReplace(Asm6502Parser.ParamReplaceContext ctx);
+	void enterExprLabel(Asm6502Parser.ExprLabelContext ctx);
 	/**
-	 * Exit a parse tree produced by the {@code paramReplace}
-	 * labeled alternative in {@link Asm6502Parser#param}.
+	 * Exit a parse tree produced by the {@code exprLabel}
+	 * labeled alternative in {@link Asm6502Parser#expr}.
 	 * @param ctx the parse tree
 	 */
-	void exitParamReplace(Asm6502Parser.ParamReplaceContext ctx);
+	void exitExprLabel(Asm6502Parser.ExprLabelContext ctx);
 	/**
-	 * Enter a parse tree produced by the {@code paramInt}
-	 * labeled alternative in {@link Asm6502Parser#param}.
+	 * Enter a parse tree produced by the {@code exprBinary}
+	 * labeled alternative in {@link Asm6502Parser#expr}.
 	 * @param ctx the parse tree
 	 */
-	void enterParamInt(Asm6502Parser.ParamIntContext ctx);
+	void enterExprBinary(Asm6502Parser.ExprBinaryContext ctx);
 	/**
-	 * Exit a parse tree produced by the {@code paramInt}
-	 * labeled alternative in {@link Asm6502Parser#param}.
+	 * Exit a parse tree produced by the {@code exprBinary}
+	 * labeled alternative in {@link Asm6502Parser#expr}.
 	 * @param ctx the parse tree
 	 */
-	void exitParamInt(Asm6502Parser.ParamIntContext ctx);
+	void exitExprBinary(Asm6502Parser.ExprBinaryContext ctx);
+	/**
+	 * Enter a parse tree produced by the {@code exprUnary}
+	 * labeled alternative in {@link Asm6502Parser#expr}.
+	 * @param ctx the parse tree
+	 */
+	void enterExprUnary(Asm6502Parser.ExprUnaryContext ctx);
+	/**
+	 * Exit a parse tree produced by the {@code exprUnary}
+	 * labeled alternative in {@link Asm6502Parser#expr}.
+	 * @param ctx the parse tree
+	 */
+	void exitExprUnary(Asm6502Parser.ExprUnaryContext ctx);
+	/**
+	 * Enter a parse tree produced by the {@code exprReplace}
+	 * labeled alternative in {@link Asm6502Parser#expr}.
+	 * @param ctx the parse tree
+	 */
+	void enterExprReplace(Asm6502Parser.ExprReplaceContext ctx);
+	/**
+	 * Exit a parse tree produced by the {@code exprReplace}
+	 * labeled alternative in {@link Asm6502Parser#expr}.
+	 * @param ctx the parse tree
+	 */
+	void exitExprReplace(Asm6502Parser.ExprReplaceContext ctx);
 }

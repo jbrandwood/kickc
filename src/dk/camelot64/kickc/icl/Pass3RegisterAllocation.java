@@ -20,8 +20,12 @@ public class Pass3RegisterAllocation {
                allocation.allocate(var, new RegisterAllocation.RegisterZpByte(currentZp++));
             } else if(var.getType().equals(SymbolTypeBasic.BOOLEAN))  {
                allocation.allocate(var, new RegisterAllocation.RegisterZpBool(currentZp++));
+            } else if(var.getType() instanceof SymbolTypePointer) {
+               allocation.allocate(var, new RegisterAllocation.RegisterZpPointerByte(currentZp));
+               currentZp = currentZp +2;
             }
       }
+      allocation.allocate(symbols.getVariable("i#0"), RegisterAllocation.getRegisterX());
       allocation.allocate(symbols.getVariable("i#1"), RegisterAllocation.getRegisterX());
       allocation.allocate(symbols.getVariable("i#2"), RegisterAllocation.getRegisterX());
       allocation.allocate(symbols.getVariable("i#3"), RegisterAllocation.getRegisterX());

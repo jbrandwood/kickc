@@ -1,18 +1,13 @@
 package dk.camelot64.kickc.icl;
 
 /** A fixed size array of another type */
-public class SymbolTypeArray implements SymbolType {
+public class SymbolTypeArray extends SymbolTypePointer {
 
-   private SymbolType elementType;
    private int size;
 
    public SymbolTypeArray(SymbolType elementType, int size) {
-      this.elementType = elementType;
+      super(elementType);
       this.size = size;
-   }
-
-   public SymbolType getElementType() {
-      return elementType;
    }
 
    public int getSize() {
@@ -21,6 +16,6 @@ public class SymbolTypeArray implements SymbolType {
 
    @Override
    public String getTypeName() {
-      return elementType.getTypeName()+"["+size+"]";
+      return getElementType().getTypeName()+"["+size+"]";
    }
 }

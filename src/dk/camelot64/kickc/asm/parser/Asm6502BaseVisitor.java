@@ -101,19 +101,33 @@ public class Asm6502BaseVisitor<T> extends AbstractParseTreeVisitor<T> implement
 	 * <p>The default implementation returns the result of calling
 	 * {@link #visitChildren} on {@code ctx}.</p>
 	 */
-	@Override public T visitParamLabel(Asm6502Parser.ParamLabelContext ctx) { return visitChildren(ctx); }
+	@Override public T visitExprInt(Asm6502Parser.ExprIntContext ctx) { return visitChildren(ctx); }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation returns the result of calling
 	 * {@link #visitChildren} on {@code ctx}.</p>
 	 */
-	@Override public T visitParamReplace(Asm6502Parser.ParamReplaceContext ctx) { return visitChildren(ctx); }
+	@Override public T visitExprLabel(Asm6502Parser.ExprLabelContext ctx) { return visitChildren(ctx); }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation returns the result of calling
 	 * {@link #visitChildren} on {@code ctx}.</p>
 	 */
-	@Override public T visitParamInt(Asm6502Parser.ParamIntContext ctx) { return visitChildren(ctx); }
+	@Override public T visitExprBinary(Asm6502Parser.ExprBinaryContext ctx) { return visitChildren(ctx); }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation returns the result of calling
+	 * {@link #visitChildren} on {@code ctx}.</p>
+	 */
+	@Override public T visitExprUnary(Asm6502Parser.ExprUnaryContext ctx) { return visitChildren(ctx); }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation returns the result of calling
+	 * {@link #visitChildren} on {@code ctx}.</p>
+	 */
+	@Override public T visitExprReplace(Asm6502Parser.ExprReplaceContext ctx) { return visitChildren(ctx); }
 }

@@ -22,19 +22,22 @@ instruction
     ;
 
 paramMode
-    : param #modeAbs
-    | '#' param #modeImm
-    | param ',x' #modeAbsX
-    | param ',y' #modeAbsY
-    | '(' param ')' ',y' #modeIndY
-    | '(' param ',x' ')'  #modeIndX
-    | '(' param ')'  #modeInd
+    : expr #modeAbs
+    | '#' expr #modeImm
+    | expr ',x' #modeAbsX
+    | expr ',y' #modeAbsY
+    | '(' expr ')' ',y' #modeIndY
+    | '(' expr ',x' ')'  #modeIndX
+    | '(' expr ')'  #modeInd
     ;
 
-param
-    : NAME #paramLabel
-    | '{' NAME '}' #paramReplace
-    | NUMINT #paramInt
+expr
+    : ('+' | '-' | '<' | '>') expr #exprUnary
+    | expr ('*' | '/' ) expr #exprBinary
+    | expr ( '+' | '-')  expr #exprBinary
+    | NAME #exprLabel
+    | '{' NAME '}' #exprReplace
+    | NUMINT #exprInt
     ;
 
 MNEMONIC: [A-Za-z][A-Za-z][A-Za-z];

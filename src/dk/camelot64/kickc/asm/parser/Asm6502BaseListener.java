@@ -160,37 +160,61 @@ public class Asm6502BaseListener implements Asm6502Listener {
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterParamLabel(Asm6502Parser.ParamLabelContext ctx) { }
+	@Override public void enterExprInt(Asm6502Parser.ExprIntContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void exitParamLabel(Asm6502Parser.ParamLabelContext ctx) { }
+	@Override public void exitExprInt(Asm6502Parser.ExprIntContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterParamReplace(Asm6502Parser.ParamReplaceContext ctx) { }
+	@Override public void enterExprLabel(Asm6502Parser.ExprLabelContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void exitParamReplace(Asm6502Parser.ParamReplaceContext ctx) { }
+	@Override public void exitExprLabel(Asm6502Parser.ExprLabelContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterParamInt(Asm6502Parser.ParamIntContext ctx) { }
+	@Override public void enterExprBinary(Asm6502Parser.ExprBinaryContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void exitParamInt(Asm6502Parser.ParamIntContext ctx) { }
+	@Override public void exitExprBinary(Asm6502Parser.ExprBinaryContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void enterExprUnary(Asm6502Parser.ExprUnaryContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitExprUnary(Asm6502Parser.ExprUnaryContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void enterExprReplace(Asm6502Parser.ExprReplaceContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitExprReplace(Asm6502Parser.ExprReplaceContext ctx) { }
 
 	/**
 	 * {@inheritDoc}

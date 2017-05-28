@@ -159,7 +159,13 @@ public class Pass1GenerateStatementSequence extends KickCBaseVisitor<Object> {
 
    @Override
    public LValue visitLvalueArray(KickCParser.LvalueArrayContext ctx) {
-      throw new RuntimeException("Not implemented");
+      LValue lval = (LValue) visit(ctx.lvalue());
+      RValue index = (RValue) visit(ctx.expr());
+      Operator operator = new Operator("+");
+      VariableIntermediate tmpVar = symbolTable.newIntermediateAssignment();
+      Statement stmt = new StatementAssignment(tmpVar, lval, operator, index);
+      sequence.addStatement(stmt);
+      return new PointerDereference(tmpVar);
    }
 
    @Override
@@ -205,8 +211,14 @@ public class Pass1GenerateStatementSequence extends KickCBaseVisitor<Object> {
    }
 
    @Override
-   public Object visitExprArray(KickCParser.ExprArrayContext ctx) {
-      throw new RuntimeException("Not implemented");
+   public RValue visitExprArray(KickCParser.ExprArrayContext ctx) {
+      RValue array = (LValue) visit(ctx.expr(0));
+      RValue index = (RValue) visit(ctx.expr(1));
+      Operator operator = new Operator("+");
+      VariableIntermediate tmpVar = symbolTable.newIntermediateAssignment();
+      Statement stmt = new StatementAssignment(tmpVar, array, operator, index);
+      sequence.addStatement(stmt);
+      return new PointerDereference(tmpVar);
    }
 
    @Override

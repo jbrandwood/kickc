@@ -41,7 +41,7 @@ public abstract class Variable implements Symbol, RValue, LValue  {
 
    @Override
    public String toString() {
-      return "("+type.getTypeName() + (inferredType ?"*":"") + ") "+name;
+      return "("+type.getTypeName() + (inferredType ?"~":"") + ") "+name;
    }
 
    @Override

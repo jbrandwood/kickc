@@ -36,8 +36,8 @@ public class RegisterAllocation {
 
    /** The register type. */
    public enum RegisterType {
-      ZP_BYTE, ZP_BOOL, REG_Y_BYTE, REG_X_BYTE
-   };
+      ZP_BYTE, ZP_BOOL, REG_Y_BYTE, REG_X_BYTE, ZP_PTR_BYTE
+   }
 
    /** A zero page address used as a register for a single byte variable. */
    public static class RegisterZpByte implements Register {
@@ -66,9 +66,7 @@ public class RegisterAllocation {
       public boolean equals(Object o) {
          if (this == o) return true;
          if (o == null || getClass() != o.getClass()) return false;
-
          RegisterZpByte that = (RegisterZpByte) o;
-
          return zp == that.zp;
       }
 
@@ -104,9 +102,7 @@ public class RegisterAllocation {
       public boolean equals(Object o) {
          if (this == o) return true;
          if (o == null || getClass() != o.getClass()) return false;
-
          RegisterZpBool that = (RegisterZpBool) o;
-
          return zp == that.zp;
       }
 
@@ -115,6 +111,43 @@ public class RegisterAllocation {
          return zp;
       }
    }
+
+   /** A zro page address pair used as a register containing a pointer to a byte. */
+   public static class RegisterZpPointerByte implements Register {
+      private int zp;
+
+      public RegisterZpPointerByte(int zp) {
+         this.zp = zp;
+      }
+
+      @Override
+      public RegisterType getType() {
+         return RegisterType.ZP_PTR_BYTE;
+      }
+
+      @Override
+      public String toString() {
+         return "zp ptrbyte:"+zp;
+      }
+
+      @Override
+      public boolean equals(Object o) {
+         if (this == o) return true;
+         if (o == null || getClass() != o.getClass()) return false;
+         RegisterZpPointerByte that = (RegisterZpPointerByte) o;
+         return zp == that.zp;
+      }
+
+      @Override
+      public int hashCode() {
+         return zp;
+      }
+
+      public int getZp() {
+         return zp;
+      }
+   }
+
 
    /** The X register. */
    public static class RegisterXByte implements Register {

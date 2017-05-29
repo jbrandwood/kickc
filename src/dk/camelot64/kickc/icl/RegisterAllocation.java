@@ -36,7 +36,7 @@ public class RegisterAllocation {
 
    /** The register type. */
    public enum RegisterType {
-      ZP_BYTE, ZP_BOOL, REG_Y_BYTE, REG_X_BYTE, ZP_PTR_BYTE
+      ZP_BYTE, ZP_BOOL, REG_Y_BYTE, REG_X_BYTE, ZP_PTR_BYTE, ZP_WORD
    }
 
    /** A zero page address used as a register for a single byte variable. */
@@ -75,6 +75,44 @@ public class RegisterAllocation {
          return zp;
       }
    }
+
+   /** Two zero page addresses used as a register for a single word variable. */
+   public static class RegisterZpWord implements Register {
+
+      private int zp;
+
+      public RegisterZpWord(int zp) {
+         this.zp = zp;
+      }
+
+      public int getZp() {
+         return zp;
+      }
+
+      @Override
+      public RegisterType getType() {
+         return  RegisterType.ZP_WORD;
+      }
+
+      @Override
+      public String toString() {
+         return "zp word :"+zp;
+      }
+
+      @Override
+      public boolean equals(Object o) {
+         if (this == o) return true;
+         if (o == null || getClass() != o.getClass()) return false;
+         RegisterZpWord that = (RegisterZpWord) o;
+         return zp == that.zp;
+      }
+
+      @Override
+      public int hashCode() {
+         return zp;
+      }
+   }
+
 
    /** A zero page address used as a register for a boolean variable. */
    public static class RegisterZpBool implements Register {
@@ -127,7 +165,7 @@ public class RegisterAllocation {
 
       @Override
       public String toString() {
-         return "zp ptrbyte:"+zp;
+         return "zp ptr byte:"+zp;
       }
 
       @Override

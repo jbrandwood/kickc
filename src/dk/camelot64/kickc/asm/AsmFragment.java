@@ -139,29 +139,12 @@ public class AsmFragment {
       this.signature = signature;
    }
 
-   /**
-    * Zero page byte register name indexing.
-    */
+   /** Zero page register name indexing. */
    private int nextZpByteIdx = 1;
-
-   /**
-    * Zero page bool register name indexing.
-    */
+   private int nextZpWordIdx = 1;
    private int nextZpBoolIdx = 1;
-
-   /**
-    * Zero page ptr register name indexing.
-    */
    private int nextZpPtrIdx = 1;
-
-   /**
-    * Constant byte indexing.
-    */
    private int nextConstByteIdx = 1;
-
-   /**
-    * Label indexing.
-    */
    private int nextLabelIdx = 1;
 
    /**
@@ -192,6 +175,10 @@ public class AsmFragment {
             String name = "zpby" + nextZpByteIdx++;
             bindings.put(name, value);
             return name;
+         } else if (RegisterAllocation.RegisterType.ZP_WORD.equals(register.getType())) {
+               String name = "zpwo" + nextZpWordIdx++;
+               bindings.put(name, value);
+               return name;
          } else if (RegisterAllocation.RegisterType.ZP_BOOL.equals(register.getType())) {
             String name = "zpbo" + nextZpBoolIdx++;
             bindings.put(name, value);
@@ -259,6 +246,8 @@ public class AsmFragment {
          RegisterAllocation.Register register = (RegisterAllocation.Register) boundValue;
          if (register instanceof RegisterAllocation.RegisterZpByte) {
             bound = Integer.toString(((RegisterAllocation.RegisterZpByte) register).getZp());
+         } else if (register instanceof RegisterAllocation.RegisterZpWord) {
+            bound = Integer.toString(((RegisterAllocation.RegisterZpWord) register).getZp());
          } else if (register instanceof RegisterAllocation.RegisterZpBool) {
             bound = Integer.toString(((RegisterAllocation.RegisterZpBool) register).getZp());
          } else if (register instanceof RegisterAllocation.RegisterZpPointerByte) {

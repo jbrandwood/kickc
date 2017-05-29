@@ -30,17 +30,12 @@ public class Pass3RegisterAllocation {
                throw new RuntimeException("Unhandled variable type "+var);
             }
       }
-      /*
       allocation.allocate(symbols.getVariable("i#0"), RegisterAllocation.getRegisterX());
       allocation.allocate(symbols.getVariable("i#1"), RegisterAllocation.getRegisterX());
       allocation.allocate(symbols.getVariable("i#2"), RegisterAllocation.getRegisterX());
       allocation.allocate(symbols.getVariable("i#3"), RegisterAllocation.getRegisterX());
       allocation.allocate(symbols.getVariable("n1#1"), RegisterAllocation.getRegisterY());
       allocation.allocate(symbols.getVariable("n1#2"), RegisterAllocation.getRegisterY());
-      allocation.allocate(symbols.getVariable("ptr#1"), new RegisterAllocation.RegisterZpPointerByte(2));
-      allocation.allocate(symbols.getVariable("ptr#2"), new RegisterAllocation.RegisterZpPointerByte(2));
-      allocation.allocate(symbols.getVariable("ptr#3"), new RegisterAllocation.RegisterZpPointerByte(2));
-      */
       allocation.allocate(symbols.getVariable("e#2"), new RegisterAllocation.RegisterZpByte(128));
       allocation.allocate(symbols.getVariable("e#3"), new RegisterAllocation.RegisterZpByte(128));
       allocation.allocate(symbols.getVariable("e#4"), new RegisterAllocation.RegisterZpByte(128));
@@ -58,6 +53,9 @@ public class Pass3RegisterAllocation {
       allocation.allocate(symbols.getVariable("cursor#3"), new RegisterAllocation.RegisterZpPointerByte(133));
       allocation.allocate(symbols.getVariable("cursor#4"), new RegisterAllocation.RegisterZpPointerByte(133));
       allocation.allocate(symbols.getVariable("cursor#5"), new RegisterAllocation.RegisterZpPointerByte(133));
+      allocation.allocate(symbols.getVariable("ptr#1"), new RegisterAllocation.RegisterZpPointerByte(135));
+      allocation.allocate(symbols.getVariable("ptr#2"), new RegisterAllocation.RegisterZpPointerByte(135));
+      allocation.allocate(symbols.getVariable("ptr#3"), new RegisterAllocation.RegisterZpPointerByte(135));
       symbols.setAllocation(allocation);
    }
 

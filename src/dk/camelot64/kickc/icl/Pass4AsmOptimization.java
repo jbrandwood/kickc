@@ -9,13 +9,20 @@ import java.util.List;
 /** Optimization performed on Assembler Code (Asm Code).
  * Optimizations are performed repeatedly until none of them yield any result
  **/
-public class Pass4AsmOptimization {
+public abstract class Pass4AsmOptimization {
 
    private AsmProgram program;
 
    public Pass4AsmOptimization(AsmProgram program) {
       this.program = program;
    }
+
+   /**
+    * Attempt to perform optimization.
+    *
+    * @return true if an optimization was performed. false if no optimization was possible.
+    */
+   public abstract boolean optimize();
 
    public AsmProgram getProgram() {
       return program;

@@ -13,7 +13,7 @@ import java.util.List;
 /** Test my KickC Grammar */
 public class Main {
    public static void main(String[] args) throws IOException {
-      final String fileName = "src/dk/camelot64/kickc/test/bresenhamarr.kc";
+      final String fileName = "src/dk/camelot64/kickc/test/bresenham.kc";
       final CharStream input = CharStreams.fromFileName(fileName);
       System.out.println(input.toString());
       KickCLexer lexer = new KickCLexer(input);
@@ -59,7 +59,7 @@ public class Main {
          for (Pass2SsaOptimization optimization : optimizations) {
             boolean stepOptimized = optimization.optimize();
             if (stepOptimized) {
-               System.out.println("Succesful optimization "+optimization);
+               System.out.println("Succesful SSA optimization "+optimization);
                ssaOptimized = true;
                System.out.println("CONTROL FLOW GRAPH");
                System.out.println(controlFlowGraph.toString());
@@ -72,10 +72,24 @@ public class Main {
       Pass3CodeGeneration pass3CodeGeneration = new Pass3CodeGeneration(controlFlowGraph, symbolTable);
       AsmProgram asmProgram = pass3CodeGeneration.generate();
 
-      Pass4NextJumpElimination pass5NextJumpElimination = new Pass4NextJumpElimination(asmProgram);
+      System.out.println("INITIAL ASM");
+      System.out.println(asmProgram.toString());
+
+      List<Pass4AsmOptimization> pass4Optimizations = new ArrayList<>();
+      pass4Optimizations.add(new Pass4NextJumpElimination(asmProgram));
+      pass4Optimizations.add(new Pass4UnnecesaryLoadElimination(asmProgram));
       boolean asmOptimized = true;
       while(asmOptimized) {
-         asmOptimized = pass5NextJumpElimination.optimize();
+         asmOptimized = false;
+         for (Pass4AsmOptimization optimization : pass4Optimizations) {
+            boolean stepOtimized = optimization.optimize();
+            if(stepOtimized) {
+               System.out.println("Succesful ASM optimization "+optimization);
+               asmOptimized = true;
+               System.out.println("ASSEMBLER");
+               System.out.println(asmProgram.toString());
+            }
+         }
       }
 
       System.out.println("SYMBOLS");

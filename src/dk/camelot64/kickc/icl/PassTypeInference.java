@@ -78,16 +78,32 @@ public class PassTypeInference {
                SymbolType elmType2 = ((SymbolTypePointer) type2).getElementType();
                return inferType(elmType1, operator, elmType2);
             }
+            if (SymbolTypeBasic.WORD.equals(type1) || SymbolTypeBasic.WORD.equals(type2)) {
+               return SymbolTypeBasic.WORD;
+            } else if (SymbolTypeBasic.BYTE.equals(type1) && SymbolTypeBasic.BYTE.equals(type2)) {
+               return SymbolTypeBasic.BYTE;
+            }
+            throw new RuntimeException("Type inference case not handled " + type1 + " " + operator + " " + type2);
          case "*":
             if(type1==null && type2 instanceof SymbolTypePointer) {
                return ((SymbolTypePointer) type2).getElementType();
             }
+            throw new RuntimeException("Type inference case not handled " + type1 + " " + operator + " " + type2);
          case "/":
             if (SymbolTypeBasic.WORD.equals(type1) || SymbolTypeBasic.WORD.equals(type2)) {
                return SymbolTypeBasic.WORD;
             } else if (SymbolTypeBasic.BYTE.equals(type1) && SymbolTypeBasic.BYTE.equals(type2)) {
                return SymbolTypeBasic.BYTE;
             }
+            throw new RuntimeException("Type inference case not handled " + type1 + " " + operator + " " + type2);
+         case "<<":
+         case ">>":
+            if (SymbolTypeBasic.WORD.equals(type1)) {
+               return SymbolTypeBasic.WORD;
+            } else if (SymbolTypeBasic.BYTE.equals(type1)) {
+               return SymbolTypeBasic.BYTE;
+            }
+            throw new RuntimeException("Type inference case not handled " + type1 + " " + operator + " " + type2);
          default:
             throw new RuntimeException("Type inference case not handled " + type1 + " " + operator + " " + type2);
       }

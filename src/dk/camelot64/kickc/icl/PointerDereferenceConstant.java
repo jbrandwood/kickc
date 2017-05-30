@@ -1,7 +1,7 @@
 package dk.camelot64.kickc.icl;
 
 /** A dereferenced constant pointer */
-public class PointerDereferenceConstant implements LValue {
+public class PointerDereferenceConstant implements PointerDereference {
 
    private Constant pointer;
 

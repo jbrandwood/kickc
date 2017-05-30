@@ -34,6 +34,8 @@ public class Pass3RegisterAllocation {
       allocation.allocate(symbols.getVariable("i#1"), RegisterAllocation.getRegisterX());
       allocation.allocate(symbols.getVariable("i#2"), RegisterAllocation.getRegisterX());
       allocation.allocate(symbols.getVariable("i#3"), RegisterAllocation.getRegisterX());
+      allocation.allocate(symbols.getVariable("i#4"), RegisterAllocation.getRegisterX());
+      allocation.allocate(symbols.getVariable("i#5"), RegisterAllocation.getRegisterX());
       allocation.allocate(symbols.getVariable("n1#1"), RegisterAllocation.getRegisterY());
       allocation.allocate(symbols.getVariable("n1#2"), RegisterAllocation.getRegisterY());
       allocation.allocate(symbols.getVariable("e#2"), new RegisterAllocation.RegisterZpByte(128));
@@ -56,6 +58,11 @@ public class Pass3RegisterAllocation {
       allocation.allocate(symbols.getVariable("ptr#1"), new RegisterAllocation.RegisterZpPointerByte(135));
       allocation.allocate(symbols.getVariable("ptr#2"), new RegisterAllocation.RegisterZpPointerByte(135));
       allocation.allocate(symbols.getVariable("ptr#3"), new RegisterAllocation.RegisterZpPointerByte(135));
+      allocation.allocate(symbols.getVariable("v#1"), new RegisterAllocation.RegisterZpByte(137));
+      allocation.allocate(symbols.getVariable("v#2"), new RegisterAllocation.RegisterZpByte(137));
+      allocation.allocate(symbols.getVariable("v#3"), new RegisterAllocation.RegisterZpByte(137));
+      allocation.allocate(symbols.getVariable("v#4"), new RegisterAllocation.RegisterZpByte(137));
+      allocation.allocate(symbols.getVariable("v#5"), new RegisterAllocation.RegisterZpByte(137));
       symbols.setAllocation(allocation);
    }
 

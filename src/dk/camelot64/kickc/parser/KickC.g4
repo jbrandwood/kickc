@@ -51,6 +51,7 @@ expr
     | '(' typeDecl ')' expr #exprCast
     | expr '[' expr ']' #exprArray
     | ('+' | '-' | 'not' | '!' | '&' | '*') expr #exprUnary
+    | expr ('>>' | '<<' ) expr #exprBinary
     | expr ('*' | '/' ) expr #exprBinary
     | expr ( '+' | '-')  expr #exprBinary
     | expr ( '==' | '!=' | '<>' | '<' | '<=' | '=<' | '>=' | '=>' | '>' ) expr #exprBinary

@@ -1,5 +1,7 @@
 package dk.camelot64.kickc.asm;
 
+import dk.camelot64.kickc.asm.parser.AsmClobber;
+
 /** The instructions of the 6502 assembler instruction set */
 public class AsmInstructionType {
 
@@ -13,11 +15,14 @@ public class AsmInstructionType {
 
    private boolean jump;
 
+   private AsmClobber clobber;
+
    public AsmInstructionType(int opcode, String mnemnonic, AsmAddressingMode addressingMode, double cycles) {
       this.opcode = opcode;
       this.mnemnonic = mnemnonic;
       this.addressingMode = addressingMode;
       this.cycles = cycles;
+      this.clobber = new AsmClobber();
    }
 
    public String getMnemnonic() {
@@ -52,4 +57,7 @@ public class AsmInstructionType {
       this.jump = jump;
    }
 
+   public AsmClobber getClobber() {
+      return clobber;
+   }
 }

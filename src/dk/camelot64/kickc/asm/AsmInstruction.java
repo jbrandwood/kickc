@@ -43,11 +43,9 @@ public class AsmInstruction implements AsmLine {
       return getInvocationCountEstimate()*getLineCycles();
    }
 
-
    @Override
    public String getAsm() {
       return type.getAsm(parameter);
    }
-
 
 }

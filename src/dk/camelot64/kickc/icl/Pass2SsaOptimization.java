@@ -66,18 +66,25 @@ public abstract class Pass2SsaOptimization {
                assignment.setRValue2(getAlias(aliases, assignment.getRValue2()));
             }
             // Handle pointer dereference in LValue
-            if (lValue instanceof PointerDereferenceVariable) {
-               PointerDereferenceVariable deref = (PointerDereferenceVariable) lValue;
-               Variable pointer = deref.getPointer();
+            if (lValue instanceof PointerDereferenceSimple) {
+               PointerDereferenceSimple deref = (PointerDereferenceSimple) lValue;
+               RValue pointer = deref.getPointer();
                if (getAlias(aliases, pointer) != null) {
                   RValue alias = getAlias(aliases, pointer);
-                  if (alias instanceof Variable) {
-                     deref.setPointerVariable((Variable) alias);
-                  } else if (alias instanceof Constant) {
-                     assignment.setLValue(new PointerDereferenceConstant((Constant) alias));
-                  } else {
-                     throw new RuntimeException("Error replacing LValue variable " + lValue + " with " + alias);
-                  }
+                  deref.setPointer(alias);
+               }
+            }
+            if (lValue instanceof PointerDereferenceIndexed) {
+               PointerDereferenceIndexed deref = (PointerDereferenceIndexed) lValue;
+               RValue pointer = deref.getPointer();
+               if (getAlias(aliases, pointer) != null) {
+                  RValue alias = getAlias(aliases, pointer);
+                  deref.setPointer( alias);
+               }
+               RValue index = deref.getIndex();
+               if (getAlias(aliases, index) != null) {
+                  RValue alias = getAlias(aliases, index);
+                  deref.setIndex(alias);
                }
             }
             return null;

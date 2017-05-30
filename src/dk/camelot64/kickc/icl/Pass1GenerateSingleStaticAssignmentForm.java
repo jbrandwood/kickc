@@ -73,12 +73,24 @@ public class Pass1GenerateSingleStaticAssignmentForm {
                if (lValue instanceof VariableVersion) {
                   VariableVersion versioned = (VariableVersion) lValue;
                   blockVersions.put(versioned.getVersionOf(), versioned);
-               } else if(lValue instanceof PointerDereferenceVariable) {
-                  PointerDereferenceVariable deref = (PointerDereferenceVariable) lValue;
-                  Variable pointer = deref.getPointer();
+               } else if(lValue instanceof PointerDereferenceSimple) {
+                  PointerDereferenceSimple deref = (PointerDereferenceSimple) lValue;
+                  RValue pointer = deref.getPointer();
                   VariableVersion version = findOrCreateVersion(pointer, blockVersions, blockNewPhis);
                   if (version != null) {
-                     deref.setPointerVariable(version);
+                     deref.setPointer(version);
+                  }
+               } else if(lValue instanceof PointerDereferenceIndexed) {
+                  PointerDereferenceIndexed deref = (PointerDereferenceIndexed) lValue;
+                  RValue pointer = deref.getPointer();
+                  VariableVersion version = findOrCreateVersion(pointer, blockVersions, blockNewPhis);
+                  if (version != null) {
+                     deref.setPointer(version);
+                  }
+                  RValue index = deref.getIndex();
+                  VariableVersion iVersion = findOrCreateVersion(index, blockVersions, blockNewPhis);
+                  if (iVersion != null) {
+                     deref.setIndex(iVersion);
                   }
                }
             }

@@ -166,11 +166,22 @@ public class AsmFragment {
    public String bind(Value value) {
       if (value instanceof Variable) {
          value = symbols.getRegister((Variable) value);
-      } else if (value instanceof PointerDereferenceVariable) {
-         PointerDereferenceVariable deref = (PointerDereferenceVariable) value;
-         Variable pointer = deref.getPointer();
-         RegisterAllocation.Register register = symbols.getRegister(pointer);
-         value = new PointerDereferenceRegisterZpByte((RegisterAllocation.RegisterZpPointerByte) register);
+      } else if (value instanceof PointerDereferenceSimple) {
+         PointerDereferenceSimple deref = (PointerDereferenceSimple) value;
+         RValue pointer = deref.getPointer();
+         if(pointer instanceof Variable) {
+            Variable pointerVar = (Variable) pointer;
+            RegisterAllocation.Register register = symbols.getRegister(pointerVar);
+            value = new PointerDereferenceRegisterZpByte((RegisterAllocation.RegisterZpPointerByte) register);
+         }
+      } else if (value instanceof PointerDereferenceIndexed) {
+         PointerDereferenceIndexed deref = (PointerDereferenceIndexed) value;
+         String compositeName =
+               "ptr_"
+               + bind(deref.getPointer())
+               + "_"
+               + bind(deref.getIndex());
+         return compositeName;
       }
 
       // Find value if it is already bound
@@ -201,6 +212,10 @@ public class AsmFragment {
             String name = "yby";
             bindings.put(name, value);
             return name;
+         } else if (RegisterAllocation.RegisterType.REG_A_BYTE.equals(register.getType())) {
+            String name = "aby";
+            bindings.put(name, value);
+            return name;
          } else if (RegisterAllocation.RegisterType.ZP_PTR_BYTE.equals(register.getType())) {
             String name = "zpptrby" + nextZpPtrIdx++;
             bindings.put(name, value);
@@ -213,13 +228,16 @@ public class AsmFragment {
             bindings.put(name, value);
             return name;
          }
-      } else if (value instanceof PointerDereferenceConstant) {
-         PointerDereferenceConstant deref = (PointerDereferenceConstant) value;
-         Constant pointer = deref.getPointer();
-         if (pointer instanceof ConstantInteger) {
-            String name = "coptr" + nextConstByteIdx++;
-            bindings.put(name, value);
-            return name;
+      } else if (value instanceof PointerDereferenceSimple) {
+         PointerDereferenceSimple deref = (PointerDereferenceSimple) value;
+         RValue pointer = deref.getPointer();
+         if(pointer instanceof Constant) {
+            Constant pointerConst = (Constant) pointer;
+            if (pointerConst instanceof ConstantInteger) {
+               String name = "coptr" + nextConstByteIdx++;
+               bindings.put(name, value);
+               return name;
+            }
          }
       } else if (value instanceof ConstantInteger) {
          ConstantInteger intValue = (ConstantInteger) value;
@@ -269,12 +287,17 @@ public class AsmFragment {
          PointerDereferenceRegisterZpByte deref = (PointerDereferenceRegisterZpByte) boundValue;
          RegisterAllocation.RegisterZpPointerByte register = deref.getPointerRegister();
          bound = Integer.toString(register.getZp());
-      } else if (boundValue instanceof PointerDereferenceConstant) {
-         PointerDereferenceConstant deref = (PointerDereferenceConstant) boundValue;
-         Constant pointer = deref.getPointer();
-         if (pointer instanceof ConstantInteger) {
-            ConstantInteger intPointer = (ConstantInteger) pointer;
-            bound = Integer.toString(intPointer.getNumber());
+      } else if (boundValue instanceof PointerDereferenceSimple) {
+         PointerDereferenceSimple deref = (PointerDereferenceSimple) boundValue;
+         RValue pointer = deref.getPointer();
+         if(pointer instanceof Constant) {
+            Constant pointerConst = (Constant) pointer;
+            if (pointerConst instanceof ConstantInteger) {
+               ConstantInteger intPointer = (ConstantInteger) pointerConst;
+               bound = Integer.toString(intPointer.getNumber());
+            } else {
+               throw new RuntimeException("Bound Value Type not implemented " + boundValue);
+            }
          } else {
             throw new RuntimeException("Bound Value Type not implemented " + boundValue);
          }

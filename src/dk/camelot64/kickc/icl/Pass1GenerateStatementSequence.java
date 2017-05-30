@@ -156,7 +156,7 @@ public class Pass1GenerateStatementSequence extends KickCBaseVisitor<Object> {
    public LValue visitLvaluePtr(KickCParser.LvaluePtrContext ctx) {
       LValue lval = (LValue) visit(ctx.lvalue());
       if(lval instanceof Variable) {
-         return new PointerDereferenceVariable((Variable) lval);
+         return new PointerDereferenceSimple((Variable) lval);
       }  else {
          throw new RuntimeException("Not implemented");
       }
@@ -166,11 +166,7 @@ public class Pass1GenerateStatementSequence extends KickCBaseVisitor<Object> {
    public LValue visitLvalueArray(KickCParser.LvalueArrayContext ctx) {
       LValue lval = (LValue) visit(ctx.lvalue());
       RValue index = (RValue) visit(ctx.expr());
-      Operator operator = new Operator("+");
-      VariableIntermediate tmpVar = symbolTable.newIntermediateAssignment();
-      Statement stmt = new StatementAssignment(tmpVar, lval, operator, index);
-      sequence.addStatement(stmt);
-      return new PointerDereferenceVariable(tmpVar);
+      return new PointerDereferenceIndexed((Variable) lval, (Variable)index);
    }
 
    @Override

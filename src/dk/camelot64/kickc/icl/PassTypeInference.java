@@ -88,6 +88,11 @@ public class PassTypeInference {
             if(type1==null && type2 instanceof SymbolTypePointer) {
                return ((SymbolTypePointer) type2).getElementType();
             }
+            if (SymbolTypeBasic.WORD.equals(type1) || SymbolTypeBasic.WORD.equals(type2)) {
+               return SymbolTypeBasic.WORD;
+            } else if (SymbolTypeBasic.BYTE.equals(type1) && SymbolTypeBasic.BYTE.equals(type2)) {
+               return SymbolTypeBasic.BYTE;
+            }
             throw new RuntimeException("Type inference case not handled " + type1 + " " + operator + " " + type2);
          case "/":
             if (SymbolTypeBasic.WORD.equals(type1) || SymbolTypeBasic.WORD.equals(type2)) {

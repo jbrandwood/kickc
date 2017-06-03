@@ -63,8 +63,10 @@ public class Pass3RegisterAllocation {
       allocation.allocate(symbols.getVariable("v#3"), new RegisterAllocation.RegisterAByte());
       allocation.allocate(symbols.getVariable("v#4"), new RegisterAllocation.RegisterAByte());
       allocation.allocate(symbols.getVariable("v#5"), new RegisterAllocation.RegisterAByte());
-      allocation.allocate(symbols.getVariable("$0"), new RegisterAllocation.RegisterAByte());
-
+      //allocation.allocate(symbols.getVariable("$0"), new RegisterAllocation.RegisterAByte());
+      //allocation.allocate(symbols.getVariable("$1"), new RegisterAllocation.RegisterAByte());
+      //allocation.allocate(symbols.getVariable("$2"), new RegisterAllocation.RegisterAByte());
+      //allocation.allocate(symbols.getVariable("$3"), new RegisterAllocation.RegisterAByte());
       symbols.setAllocation(allocation);
    }
 

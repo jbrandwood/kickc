@@ -12,8 +12,7 @@ public class Pass2ConstantPropagation extends Pass2SsaOptimization {
 
    /**
     * Propagate constants, replacing variables with constants where possible.
-    * @return true if no more constant propagation is possible. (no constant propagation was performed)
-    * false if more constant propagation might be possible. (signalling another call)
+    * @return true optimization was performed. false if no optimization was possible.
     */
    @Override
    public boolean optimize() {

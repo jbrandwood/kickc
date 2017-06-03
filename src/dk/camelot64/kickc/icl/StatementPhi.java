@@ -58,6 +58,9 @@ public class StatementPhi implements Statement {
    }
 
    public void setLValue(Variable lValue) {
+      if(!(lValue instanceof VariableVersion)) {
+         throw new RuntimeException("Error modifying phi-statement lValue "+this.lValue+". Attempt to set to non-versioned variable "+lValue);
+      }
       this.lValue = (VariableVersion) lValue;
    }
 

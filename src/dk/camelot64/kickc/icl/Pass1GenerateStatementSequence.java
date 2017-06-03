@@ -166,7 +166,7 @@ public class Pass1GenerateStatementSequence extends KickCBaseVisitor<Object> {
    public LValue visitLvalueArray(KickCParser.LvalueArrayContext ctx) {
       LValue lval = (LValue) visit(ctx.lvalue());
       RValue index = (RValue) visit(ctx.expr());
-      return new PointerDereferenceIndexed((Variable) lval, (Variable)index);
+      return new PointerDereferenceIndexed(lval, index);
    }
 
    @Override

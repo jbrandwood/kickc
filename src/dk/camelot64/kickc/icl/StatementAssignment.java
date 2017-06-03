@@ -76,4 +76,7 @@ public class StatementAssignment implements Statement {
                   rValue2 ;
    }
 
+   public void setOperator(Operator operator) {
+      this.operator = operator;
+   }
 }

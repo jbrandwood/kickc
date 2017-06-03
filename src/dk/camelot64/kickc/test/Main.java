@@ -13,7 +13,7 @@ import java.util.List;
 /** Test my KickC Grammar */
 public class Main {
    public static void main(String[] args) throws IOException {
-      final String fileName = "src/dk/camelot64/kickc/test/bresenhamarr.kc";
+      final String fileName = "src/dk/camelot64/kickc/test/fibmem.kc";
       final CharStream input = CharStreams.fromFileName(fileName);
       System.out.println(input.toString());
       KickCLexer lexer = new KickCLexer(input);
@@ -45,6 +45,7 @@ public class Main {
       List<Pass2SsaOptimization> optimizations = new ArrayList<>();
       optimizations.add(new Pass2CullEmptyBlocks(controlFlowGraph, symbolTable));
       optimizations.add(new Pass2ConstantPropagation(controlFlowGraph, symbolTable));
+      optimizations.add(new Pass2ConstantAdditionElimination(controlFlowGraph, symbolTable));
       optimizations.add(new Pass2AliasElimination(controlFlowGraph, symbolTable));
       optimizations.add(new Pass2RedundantPhiElimination(controlFlowGraph, symbolTable));
       optimizations.add(new Pass2SelfPhiElimination(controlFlowGraph, symbolTable));

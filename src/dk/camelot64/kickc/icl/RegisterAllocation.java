@@ -36,7 +36,7 @@ public class RegisterAllocation {
 
    /** The register type. */
    public enum RegisterType {
-      ZP_BYTE, ZP_BOOL, REG_A_BYTE, REG_Y_BYTE, REG_X_BYTE, ZP_PTR_BYTE, ZP_WORD
+      ZP_BYTE, ZP_BOOL, REG_A_BYTE, REG_ALU_BYTE, REG_Y_BYTE, REG_X_BYTE, ZP_PTR_BYTE, ZP_WORD
    }
 
    /** A zero page address used as a register for a single byte variable. */
@@ -247,6 +247,26 @@ public class RegisterAllocation {
       }
    }
 
+   /** The special ALU register. */
+   public static class RegisterALUByte implements Register {
+      @Override
+      public RegisterType getType() {
+         return RegisterType.REG_ALU_BYTE;
+      }
+
+      @Override
+      public String toString() {
+         return "reg byte alu";
+      }
+
+      @Override
+      public boolean equals(Object obj) {
+         if (this == obj) return true;
+         if (obj == null || getClass() != obj.getClass()) return false;
+         return true;
+      }
+   }
+
    public static Register getRegisterX() {
       return new RegisterXByte();
    }
@@ -257,6 +277,10 @@ public class RegisterAllocation {
 
    public static Register getRegisterA() {
       return new RegisterAByte();
+   }
+
+   public static Register getRegisterALU() {
+      return new RegisterALUByte();
    }
 
    @Override

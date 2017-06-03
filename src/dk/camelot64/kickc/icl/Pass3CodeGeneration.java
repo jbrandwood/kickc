@@ -2,6 +2,8 @@ package dk.camelot64.kickc.icl;
 
 import dk.camelot64.kickc.asm.*;
 
+import java.util.Iterator;
+
 /**
  * Code Generation of 6502 Assembler from ICL/SSA Control Flow Graph
  */
@@ -27,7 +29,7 @@ public class Pass3CodeGeneration {
          // Generate exit
          ControlFlowBlock defaultSuccessor = block.getDefaultSuccessor();
          if (defaultSuccessor != null) {
-            if(defaultSuccessor.hasPhiStatements()) {
+            if (defaultSuccessor.hasPhiStatements()) {
                genBlockPhiTransition(asm, block, defaultSuccessor);
             }
             asm.addInstruction("JMP", AsmAddressingMode.ABS, defaultSuccessor.getLabel().getName().replace('@', 'B'));
@@ -37,31 +39,50 @@ public class Pass3CodeGeneration {
    }
 
    private void genStatements(AsmProgram asm, ControlFlowBlock block) {
-      for (Statement statement : block.getStatements()) {
+      Iterator<Statement> statementsIt = block.getStatements().iterator();
+      while (statementsIt.hasNext()) {
+         Statement statement = statementsIt.next();
          if (!(statement instanceof StatementPhi)) {
-            genStatement(asm, statement, block);
+            if (statement instanceof StatementAssignment) {
+               StatementAssignment assignment = (StatementAssignment) statement;
+               LValue lValue = assignment.getLValue();
+               boolean isAlu = false;
+               if (lValue instanceof Variable) {
+                  RegisterAllocation.Register lValRegister = symbols.getRegister((Variable) lValue);
+                  if (lValRegister.getType().equals(RegisterAllocation.RegisterType.REG_ALU_BYTE)) {
+                     asm.addComment(statement + "  //  ALU");
+                     StatementAssignment assignmentAlu = assignment;
+                     statement = statementsIt.next();
+                     if (!(statement instanceof StatementAssignment)) {
+                        throw new RuntimeException("Error! ALU statement must be followed immidiately by assignment using the ALU. " + statement);
+                     }
+                     assignment = (StatementAssignment) statement;
+                     AsmFragment asmFragment = new AsmFragment(assignment, assignmentAlu, symbols);
+                     asm.addComment(statement + "  //  " + asmFragment.getSignature());
+                     asmFragment.generate(asm);
+                     isAlu = true;
+                  }
+               }
+               if (!isAlu) {
+                  AsmFragment asmFragment = new AsmFragment(assignment, symbols);
+                  asm.addComment(statement + "  //  " + asmFragment.getSignature());
+                  asmFragment.generate(asm);
+               }
+            } else if (statement instanceof StatementConditionalJump) {
+               AsmFragment asmFragment = new AsmFragment((StatementConditionalJump) statement, block, symbols, graph);
+               asm.addComment(statement + "  //  " + asmFragment.getSignature());
+               asmFragment.generate(asm);
+            } else {
+               throw new RuntimeException("Statement not supported " + statement);
+            }
          }
       }
    }
 
-   private void genStatement(AsmProgram asm, Statement statement, ControlFlowBlock block) {
-      if (statement instanceof StatementAssignment) {
-         AsmFragment asmFragment = new AsmFragment((StatementAssignment) statement, symbols);
-         asm.addComment(statement + "  //  " + asmFragment.getSignature());
-         asmFragment.generate(asm);
-      } else if (statement instanceof StatementConditionalJump) {
-         AsmFragment asmFragment = new AsmFragment((StatementConditionalJump) statement, block, symbols, graph);
-         asm.addComment(statement + "  //  " + asmFragment.getSignature());
-         asmFragment.generate(asm);
-      } else {
-         throw new RuntimeException("Statement not supported "+statement);
-      }
-   }
-
    private void genBlockEntryPoints(AsmProgram asm, ControlFlowBlock block) {
-      if(block.hasPhiStatements()) {
+      if (block.hasPhiStatements()) {
          for (ControlFlowBlock predecessor : block.getPredecessors()) {
-            if(block.equals(predecessor.getConditionalSuccessor())) {
+            if (block.equals(predecessor.getConditionalSuccessor())) {
                genBlockPhiTransition(asm, predecessor, block);
                asm.addInstruction("JMP", AsmAddressingMode.ABS, block.getLabel().getName().replace('@', 'B'));
             }
@@ -87,7 +108,7 @@ public class Pass3CodeGeneration {
    }
 
    private RegisterAllocation.Register getRegister(RValue rValue) {
-      if(rValue instanceof Variable) {
+      if (rValue instanceof Variable) {
          return symbols.getRegister((Variable) rValue);
       } else {
          return null;
@@ -95,9 +116,9 @@ public class Pass3CodeGeneration {
    }
 
    private void genAsmMove(AsmProgram asm, LValue lValue, RValue rValue) {
-      if(getRegister(lValue).equals(getRegister(rValue))) {
+      if (getRegister(lValue).equals(getRegister(rValue))) {
          // Do not move from register to itself
-         asm.addComment(lValue + " = " + rValue + "  // register copy "  );
+         asm.addComment(lValue + " = " + rValue + "  // register copy ");
          return;
       }
       AsmFragment asmFragment = new AsmFragment(lValue, rValue, symbols);

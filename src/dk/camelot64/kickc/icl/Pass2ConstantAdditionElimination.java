@@ -21,26 +21,41 @@ public class Pass2ConstantAdditionElimination extends Pass2SsaOptimization {
       for (ControlFlowBlock block : getGraph().getAllBlocks()) {
          for (Statement statement : block.getStatements()) {
             if (statement instanceof StatementAssignment) {
-               boolean subOpt = false;
                StatementAssignment assignment = (StatementAssignment) statement;
+               if(assignment.getLValue() instanceof PointerDereferenceIndexed) {
+                  optimized |= optimizePointerDereferenceIndexed(assignment);
+               }
                Operator operator = assignment.getOperator();
                if (operator != null) {
                   switch (operator.getOperator()) {
                      case "+":
-                        subOpt = optimizePlus(assignment);
+                        optimized |= optimizePlus(assignment);
                         break;
                      case "*idx":
-                        subOpt = optimizeArrayDeref(assignment);
+                        optimized |= optimizeArrayDeref(assignment);
                         break;
                   }
-               }
-               if (subOpt) {
-                  optimized = true;
                }
             }
          }
       }
       return optimized;
+   }
+
+   private boolean optimizePointerDereferenceIndexed(StatementAssignment assignment) {
+      PointerDereferenceIndexed pointerDereferenceIndexed = (PointerDereferenceIndexed) assignment.getLValue();
+      if(pointerDereferenceIndexed.getPointer() instanceof ConstantInteger && pointerDereferenceIndexed.getIndex() instanceof Variable) {
+         Variable variable = (Variable) pointerDereferenceIndexed.getIndex();
+         ConstantInteger consolidated = consolidateSubConstants(variable);
+         if (consolidated != null) {
+            ConstantInteger ptrConstant = (ConstantInteger) pointerDereferenceIndexed.getPointer();
+            int newPtr = ptrConstant.getNumber() + consolidated.getNumber();
+            pointerDereferenceIndexed.setPointer(new ConstantInteger(newPtr));
+            System.out.println("Consolidated assigned array index constant in assignment " + assignment.getLValue());
+            return true;
+         }
+      }
+      return false;
    }
 
    private boolean optimizeArrayDeref(StatementAssignment assignment) {
@@ -51,7 +66,7 @@ public class Pass2ConstantAdditionElimination extends Pass2SsaOptimization {
             ConstantInteger ptrConstant = (ConstantInteger) assignment.getRValue1();
             int newPtr = ptrConstant.getNumber() + consolidated.getNumber();
                assignment.setRValue1(new ConstantInteger(newPtr));
-            System.out.println("Consolidated constant in assignment " + assignment.getLValue());
+            System.out.println("Consolidated referenced array index constant in assignment " + assignment.getLValue());
             return true;
          }
       }

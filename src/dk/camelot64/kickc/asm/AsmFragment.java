@@ -35,27 +35,8 @@ public class AsmFragment {
    public AsmFragment(StatementConditionalJump conditionalJump, ControlFlowBlock block, SymbolTable symbols, ControlFlowGraph graph) {
       this.bindings = new HashMap<>();
       this.symbols = symbols;
-      StringBuilder signature = new StringBuilder();
-      if (conditionalJump.getRValue1() != null) {
-         signature.append(bind(conditionalJump.getRValue1()));
-      }
-      if (conditionalJump.getOperator() != null) {
-         signature.append(getOperatorFragmentName(conditionalJump.getOperator()));
-      }
-      if (conditionalJump.getRValue2() instanceof ConstantInteger && ((ConstantInteger) conditionalJump.getRValue2()).getNumber() == 0) {
-         signature.append("0");
-      } else {
-         signature.append(bind(conditionalJump.getRValue2()));
-      }
-      signature.append("_then_");
-      Label destination = conditionalJump.getDestination();
-      ControlFlowBlock destinationBlock = graph.getBlock(destination);
-      String destinationLabel = destination.getName();
-      if (destinationBlock.hasPhiStatements()) {
-         destinationLabel = destination.getName() + "_from_" + block.getLabel().getName();
-      }
-      signature.append(bind(new Label(destinationLabel, false)));
-      setSignature(signature.toString());
+      String conditionalJumpSignature = conditionalJumpSignature(conditionalJump, block, graph);
+      setSignature(conditionalJumpSignature);
    }
 
    public AsmFragment(StatementAssignment assignment, SymbolTable symbols) {
@@ -70,10 +51,42 @@ public class AsmFragment {
       setSignature(assignmentSignature(lValue, null, null, rValue));
    }
 
+   public AsmFragment(StatementAssignment assignment, StatementAssignment assignmentAlu, SymbolTable symbols) {
+      this.bindings = new HashMap<>();
+      this.symbols = symbols;
+      setSignature(assignmentWithAluSignature(assignment, assignmentAlu));
+
+   }
+
+   private String assignmentWithAluSignature(StatementAssignment assignment, StatementAssignment assignmentAlu) {
+      RValue assignmentRValue2 = assignment.getRValue2();
+      RegisterAllocation.Register rVal2Register = symbols.getRegister((Variable) assignmentRValue2);
+      if(!rVal2Register.getType().equals(RegisterAllocation.RegisterType.REG_ALU_BYTE)) {
+         throw new RuntimeException("Error! ALU register only allowed as rValue2. "+assignment);
+      }
+      StringBuilder signature = new StringBuilder();
+      signature.append(bind(assignment.getLValue()));
+      signature.append("=");
+      if (assignment.getRValue1() != null) {
+         signature.append(bind(assignment.getRValue1()));
+      }
+      if (assignment.getOperator() != null) {
+         signature.append(getOperatorFragmentName(assignment.getOperator()));
+      }
+      signature.append(assignmentRightSideSignature(assignmentAlu.getRValue1(), assignmentAlu.getOperator(), assignmentAlu.getRValue2()));
+      return signature.toString();
+   }
+
    private String assignmentSignature(LValue lValue, RValue rValue1, Operator operator, RValue rValue2) {
       StringBuilder signature = new StringBuilder();
       signature.append(bind(lValue));
       signature.append("=");
+      signature.append(assignmentRightSideSignature(rValue1, operator, rValue2));
+      return signature.toString();
+   }
+
+   private String assignmentRightSideSignature(RValue rValue1, Operator operator, RValue rValue2) {
+      StringBuilder signature = new StringBuilder();
       if (rValue1 != null) {
          signature.append(bind(rValue1));
       }
@@ -101,6 +114,30 @@ public class AsmFragment {
       } else {
          signature.append(bind(rValue2));
       }
+      return signature.toString();
+   }
+
+   private String conditionalJumpSignature(StatementConditionalJump conditionalJump, ControlFlowBlock block, ControlFlowGraph graph) {
+      StringBuilder signature = new StringBuilder();
+      if (conditionalJump.getRValue1() != null) {
+         signature.append(bind(conditionalJump.getRValue1()));
+      }
+      if (conditionalJump.getOperator() != null) {
+         signature.append(getOperatorFragmentName(conditionalJump.getOperator()));
+      }
+      if (conditionalJump.getRValue2() instanceof ConstantInteger && ((ConstantInteger) conditionalJump.getRValue2()).getNumber() == 0) {
+         signature.append("0");
+      } else {
+         signature.append(bind(conditionalJump.getRValue2()));
+      }
+      signature.append("_then_");
+      Label destination = conditionalJump.getDestination();
+      ControlFlowBlock destinationBlock = graph.getBlock(destination);
+      String destinationLabel = destination.getName();
+      if (destinationBlock.hasPhiStatements()) {
+         destinationLabel = destination.getName() + "_from_" + block.getLabel().getName();
+      }
+      signature.append(bind(new Label(destinationLabel, false)));
       return signature.toString();
    }
 

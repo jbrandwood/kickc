@@ -109,6 +109,8 @@ public class AsmFragment {
       switch (op) {
          case "*":
             return "_star_";
+         case "*idx":
+            return "_staridx_";
          case "+":
             return "_plus_";
          case "-":

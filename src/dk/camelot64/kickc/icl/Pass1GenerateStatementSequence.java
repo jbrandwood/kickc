@@ -216,14 +216,11 @@ public class Pass1GenerateStatementSequence extends KickCBaseVisitor<Object> {
    public RValue visitExprArray(KickCParser.ExprArrayContext ctx) {
       RValue array = (LValue) visit(ctx.expr(0));
       RValue index = (RValue) visit(ctx.expr(1));
-      Operator operator = new Operator("+");
+      Operator operator = new Operator("*idx");
       VariableIntermediate tmpVar = symbolTable.newIntermediateAssignment();
       Statement stmt = new StatementAssignment(tmpVar, array, operator, index);
       sequence.addStatement(stmt);
-      VariableIntermediate tmpVar2 = symbolTable.newIntermediateAssignment();
-      Statement stmt2 = new StatementAssignment(tmpVar2, null, new Operator("*"), tmpVar );
-      sequence.addStatement(stmt2);
-      return tmpVar2;
+      return tmpVar;
    }
 
    @Override

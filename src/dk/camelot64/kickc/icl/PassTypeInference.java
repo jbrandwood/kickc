@@ -94,6 +94,11 @@ public class PassTypeInference {
                return SymbolTypeBasic.BYTE;
             }
             throw new RuntimeException("Type inference case not handled " + type1 + " " + operator + " " + type2);
+         case "*idx":
+            if(type1 instanceof SymbolTypePointer) {
+               return ((SymbolTypePointer) type1).getElementType();
+            }
+            throw new RuntimeException("Type inference case not handled " + type1 + " " + operator + " " + type2);
          case "/":
             if (SymbolTypeBasic.WORD.equals(type1) || SymbolTypeBasic.WORD.equals(type2)) {
                return SymbolTypeBasic.WORD;

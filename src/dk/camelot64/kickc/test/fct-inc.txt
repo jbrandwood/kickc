@@ -1,0 +1,143 @@
+byte i = 5;
+a = inc(3);
+a = inc(a);
+a = a + i;
+
+byte inc(byte a) {
+ i = i + 1;
+ return a + i;
+}
+
+// Not committed to a specific parameter transfer style (non SSA)
+@BEGIN:
+    (byte) i := 5
+    (byte) a := call INC 3
+    (byte) a := call INC a
+    (byte) a := a + i
+    to: @END
+INC:
+    (byte) param INC.a
+    (byte) i := i + 1
+    (byte§) $1 := INC.a + i
+    return (byte) $1
+    to: @RETURN
+
+// Variable/Register parameter/return transfer (non SSA)
+@BEGIN:
+    (byte) i := 5
+    (byte) INC.a := 3
+    (byte) a := call INC
+    to: @1
+@1:
+    (byte) INC.a := a
+    (byte) a := call INC
+    to: @2
+@2:
+    (byte§) a := a + i
+    to: @END
+INC:
+    (byte) param INC.a
+    (byte) i := i + 1
+    (byte§) $1 := INC.a + i
+    (byte)return $1
+    to: @RETURN
+
+// Variable/Register parameter/return transfer (SSA)
+@BEGIN:
+    (byte)  i#0 := 5
+    (byte)  INC.a#0 := 3
+            call INC
+    (byte)  a#0 := INC.return#0
+    (byte)  i#3 := INC.i#1
+    to: @1
+@1:
+    (byte)  i#2 = phi( @BEGIN/i#3)
+    (byte§) a#1 := phi(@BEGIN/a#0)
+    (byte)  INC.a#1 := a#1
+            call INC
+    (byte)  a#1 := INC.return#0
+    (byte)  i#4 := INC.i#1
+    to @2
+@2:
+    (byte) i#1 = phi( @1/i#4)
+    (byte) a#2 = phi( @1/a#1)
+    (byte§) $2 := a#2 + i#1
+    (byte§) a#2 := $2
+    to: @END
+INC: from @BEGIN @1
+    (byte)  param INC.a
+    (byte)  INC.a#2  = phi( @BEGIN/INC.a#0 @1/INC.a#1)
+    (byte)  INC.i#0  = phi( @BEGIN/i#0 @1/i#2)
+    (byte)  INC.i#1 := INC.i#0 + INC.1#0;
+    (byte§) $1 := INC.a#2 + INC.i#1;
+    (byte)  INC.return#0 := $1
+    (byte)  return INC.return#0
+    to: @RETURN
+
+// Variable/Register parameter/return transfer (SSA) optimized
+@BEGIN:
+            call INC
+    to: @1
+@1:
+            call INC
+    to @2
+@2:
+    (byte§) a#2 := INC.return#0 + INC.i#1
+    to: @END
+INC: from @BEGIN @1
+    (byte)  INC.a#2  = phi( @BEGIN/3 @1/INC.return#0)
+    (byte)  INC.i#0  = phi( @BEGIN/5 @1/INC.i#1)
+    (byte)  INC.i#1 := INC.i#0 + 1;
+    (byte)  INC.return#0 := INC.a#2 + INC.i#1
+    to: @RETURN
+
+// Inline call (non SSA)
+@BEGIN:
+    (byte) i := 5
+    to: INC@1
+INC@1:
+    (byte) INC.a := 3
+    (byte) i := i + 1
+    (byte§) $2 := INC.a + i
+    (byte) a := (byte) $2
+    to: INC@2
+INC@2:
+    (byte) INC.a := a
+    (byte) i := i + 1
+    (byte§) $3 := INC.a + i
+    (byte) a := (byte) $3
+    to: @1
+@1:
+    (byte) a := a + i;
+    to: @END
+
+// Inline call (SSA)
+@BEGIN:
+    (byte) i#0 := 5
+    to: INC@1
+INC@1:
+    (byte) i#5 := phi(@BEGIN/i#0)
+    (byte) INC.a#0 := 3
+    (byte) i#1 := i#5 + 1
+    (byte§) $2 := INC.a#0 + i#1
+    (byte) a#0 := (byte) $2
+    to: INC@2
+INC@2:
+    (byte) i#4 := phi(INC@2/i#1)
+    (byte) a#4 := phi(INC@1/a#0)
+    (byte) INC.a#1 := a#4
+    (byte) i#2 := i#4 + 1
+    (byte§) $3 := INC.a#1 + i#2
+    (byte) a#1 := (byte) $3
+    to: @1
+@1:
+    (byte) i#3 := phi(INC@2/i#2)
+    (byte) a#3 := phi(INC@2/a#1)
+    (byte) a#2 := a#3 + i#3;
+    to: @END
+
+// Inline call (SSA) - optimized
+@BEGIN:
+    (byte) i#3 := 7
+    (byte) a#2 := 23;
+    to: @END

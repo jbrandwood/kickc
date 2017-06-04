@@ -153,7 +153,7 @@ public class Pass1GenerateSingleStaticAssignmentForm {
                         previousSymbol = predecessorMap.get(unversioned);
                      }
                         if (previousSymbol == null) {
-                           // No previous symbol found in predecessor block. Look in new a phi functions.
+                           // No previous symbol found in predecessor block. Look in new phi functions.
                            Map<VariableUnversioned, VariableVersion> predecessorNewPhis = newPhis.get(predecessor);
                            if (predecessorNewPhis == null) {
                               predecessorNewPhis = new HashMap<>();

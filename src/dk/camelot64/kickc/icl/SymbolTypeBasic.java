@@ -6,7 +6,9 @@ public enum SymbolTypeBasic implements SymbolType {
    WORD("word"),
    STRING("string"),
    BOOLEAN("boolean"),
+   // A label
    LABEL("label"),
+   // Unresolved type. Will be infered later
    VAR("var");
 
    private String typeName;

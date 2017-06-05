@@ -13,7 +13,7 @@ import java.util.List;
 /** Test my KickC Grammar */
 public class Main {
    public static void main(String[] args) throws IOException {
-      final String fileName = "src/dk/camelot64/kickc/test/selfassign.kc";
+      final String fileName = "src/dk/camelot64/kickc/test/callsum.kc";
       final CharStream input = CharStreams.fromFileName(fileName);
       System.out.println(input.toString());
       KickCLexer lexer = new KickCLexer(input);
@@ -29,11 +29,13 @@ public class Main {
       Pass1GenerateStatementSequence pass1GenerateStatementSequence = new Pass1GenerateStatementSequence();
       pass1GenerateStatementSequence.generate(file);
       StatementSequence statementSequence = pass1GenerateStatementSequence.getSequence();
-      SymbolTable symbolTable = pass1GenerateStatementSequence.getSymbols();
+      SymbolTable symbolTable = pass1GenerateStatementSequence.getProgramSymbols();
       new PassTypeInference().inferTypes(statementSequence, symbolTable);
 
       System.out.println("PROGRAM");
       System.out.println(statementSequence.toString());
+      System.out.println("SYMBOLS");
+      System.out.println(symbolTable.getSymbolTableContents());
 
       Pass1GenerateControlFlowGraph pass1GenerateControlFlowGraph = new Pass1GenerateControlFlowGraph(symbolTable);
       ControlFlowGraph controlFlowGraph = pass1GenerateControlFlowGraph.generate(statementSequence);

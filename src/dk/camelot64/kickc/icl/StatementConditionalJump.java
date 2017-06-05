@@ -72,7 +72,7 @@ public class StatementConditionalJump implements Statement {
       }
       out.append(rValue2);
       out.append(") goto ");
-      out.append(destination.getName());
+      out.append(destination.getLocalName());
       return out.toString();
    }
 

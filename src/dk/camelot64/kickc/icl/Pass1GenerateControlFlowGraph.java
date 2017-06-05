@@ -1,8 +1,6 @@
 package dk.camelot64.kickc.icl;
 
-import java.util.ArrayList;
 import java.util.LinkedHashMap;
-import java.util.List;
 import java.util.Map;
 
 /** Pass that generates a control flow graph for the program */
@@ -20,13 +18,13 @@ public class Pass1GenerateControlFlowGraph {
    }
 
    public ControlFlowGraph generate(StatementSequence sequence) {
-      this.firstBlock = getOrCreateBlock(symbolTable.newNamedJumpLabel(BEGIN_BLOCK_NAME));
+      this.firstBlock = getOrCreateBlock(symbolTable.addLabel(BEGIN_BLOCK_NAME));
       ControlFlowBlock currentBlock = this.firstBlock;
-      sequence.addStatement(new StatementJumpTarget(symbolTable.newNamedJumpLabel(END_BLOCK_NAME)));
+      sequence.addStatement(new StatementLabel(symbolTable.addLabel(END_BLOCK_NAME)));
       for (Statement statement : sequence.getStatements()) {
-         if(statement instanceof StatementJumpTarget) {
-            StatementJumpTarget statementJumpTarget = (StatementJumpTarget) statement;
-            ControlFlowBlock nextBlock = getOrCreateBlock(statementJumpTarget.getLabel());
+         if(statement instanceof StatementLabel) {
+            StatementLabel statementLabel = (StatementLabel) statement;
+            ControlFlowBlock nextBlock = getOrCreateBlock(statementLabel.getLabel());
             currentBlock.setDefaultSuccessor(nextBlock);
             nextBlock.addPredecessor(currentBlock);
             currentBlock = nextBlock;
@@ -35,13 +33,13 @@ public class Pass1GenerateControlFlowGraph {
             ControlFlowBlock jmpBlock = getOrCreateBlock(statementJump.getDestination());
             currentBlock.setDefaultSuccessor(jmpBlock);
             jmpBlock.addPredecessor(currentBlock);
-            ControlFlowBlock nextBlock = getOrCreateBlock(symbolTable.newIntermediateJumpLabel());
+            ControlFlowBlock nextBlock = getOrCreateBlock(symbolTable.addLabelIntermediate());
             currentBlock = nextBlock;
          }  else if(statement instanceof StatementConditionalJump) {
             currentBlock.addStatement(statement);
             StatementConditionalJump statementConditionalJump = (StatementConditionalJump) statement;
             ControlFlowBlock jmpBlock = getOrCreateBlock(statementConditionalJump.getDestination());
-            ControlFlowBlock nextBlock = getOrCreateBlock(symbolTable.newIntermediateJumpLabel());
+            ControlFlowBlock nextBlock = getOrCreateBlock(symbolTable.addLabelIntermediate());
             currentBlock.setDefaultSuccessor(nextBlock);
             currentBlock.setConditionalSuccessor(jmpBlock);
             nextBlock.addPredecessor(currentBlock);

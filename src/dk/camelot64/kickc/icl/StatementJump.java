@@ -20,7 +20,7 @@ public class StatementJump implements Statement {
 
    @Override
    public String toString() {
-      return "goto "+destination.getName();
+      return "goto "+destination.getLocalName();
    }
 
    public void setDestination(Label destination) {

@@ -30,6 +30,14 @@ public class PassTypeInference {
                   }
                }
             }
+         } else if(statement instanceof StatementCallLValue) {
+            StatementCallLValue callLValue = (StatementCallLValue) statement;
+            LValue lValue = callLValue.getLValue();
+            if(lValue instanceof Variable) {
+               Label label = callLValue.getCallLabel();
+               Procedure procedure = symbols.getProcedure(label.getLocalName());
+               ((Variable) lValue).setInferredType(procedure.getReturnType());
+            }
          }
       }
    }

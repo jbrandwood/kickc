@@ -1,20 +1,34 @@
 package dk.camelot64.kickc.icl;
 
-/** A Symbol (variable, jump label, etc.) */
+/** A jump label */
 public class Label implements Symbol {
 
    /** The name of the label. */
    private String name;
 
+   /** The name of the containing scope */
+   private SymbolTable scope;
+
    private boolean intermediate;
 
-   public Label(String name, boolean intermediate) {
+   public Label(String name, SymbolTable scope, boolean intermediate) {
       this.name = name;
+      this.scope = scope;
       this.intermediate = intermediate;
    }
 
-   public String getName() {
+   public String getLocalName() {
       return name;
+   }
+
+   @Override
+   public SymbolTable getScope() {
+      return scope;
+   }
+
+   @Override
+   public String getFullName() {
+      return SymbolTable.getFullName(this);
    }
 
    public boolean isIntermediate() {
@@ -25,27 +39,32 @@ public class Label implements Symbol {
       return SymbolTypeBasic.LABEL;
    }
 
-   @Override
-   public String toString() {
-      return "("+getType().getTypeName() + ") "+name;
+   public String getTypedName() {
+      return "("+getType().getTypeName() + ") "+getFullName();
    }
 
    @Override
    public boolean equals(Object o) {
-      if (this == o) {
-         return true;
-      }
-      if (o == null || getClass() != o.getClass()) {
-         return false;
-      }
+      if (this == o) return true;
+      if (o == null || getClass() != o.getClass()) return false;
 
-      Label that = (Label) o;
+      Label label = (Label) o;
 
-      return name.equals(that.name);
+      if (intermediate != label.intermediate) return false;
+      if (!name.equals(label.name)) return false;
+      return scope != null ? scope.equals(label.scope) : label.scope == null;
    }
 
    @Override
    public int hashCode() {
-      return name.hashCode();
+      int result = name.hashCode();
+      result = 31 * result + (scope != null ? scope.hashCode() : 0);
+      result = 31 * result + (intermediate ? 1 : 0);
+      return result;
+   }
+
+   @Override
+   public String toString() {
+      return getTypedName();
    }
 }

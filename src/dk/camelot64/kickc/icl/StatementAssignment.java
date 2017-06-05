@@ -8,7 +8,7 @@ package dk.camelot64.kickc.icl;
  * <br>
  * <i> lValue := rValue1 &lt;operator&gt; rValue2 </i>
  */
-public class StatementAssignment implements Statement {
+public class StatementAssignment implements StatementLValue {
 
    /** The variable being assigned a value by the statement. */
    private LValue lValue;

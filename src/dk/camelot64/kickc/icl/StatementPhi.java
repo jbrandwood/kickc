@@ -9,7 +9,7 @@ import java.util.List;
  * <br>
  * <i> X<sub>i</sub> := phi(X<sub>j</sub>, X<sub>k</sub>, ...) </i>
  */
-public class StatementPhi implements Statement {
+public class StatementPhi implements StatementLValue {
 
    /** The versioned variable being assigned a value by the statement. */
    private VariableVersion lValue;
@@ -57,13 +57,13 @@ public class StatementPhi implements Statement {
       return lValue;
    }
 
-   public void setLValue(Variable lValue) {
+   @Override
+   public void setLValue(LValue lValue) {
       if(!(lValue instanceof VariableVersion)) {
          throw new RuntimeException("Error modifying phi-statement lValue "+this.lValue+". Attempt to set to non-versioned variable "+lValue);
       }
       this.lValue = (VariableVersion) lValue;
    }
-
 
    public void addPreviousVersion(ControlFlowBlock block, VariableVersion symbol) {
       previousVersions.add(new PreviousSymbol(block, symbol));
@@ -78,7 +78,7 @@ public class StatementPhi implements Statement {
       StringBuilder out = new StringBuilder();
       out.append(lValue + " ← " + "phi(");
       for (PreviousSymbol previousSymbol : previousVersions) {
-         out.append(" "+previousSymbol.getBlock().getLabel().getName()+"/"+previousSymbol.getRValue());
+         out.append(" "+previousSymbol.getBlock().getLabel().getLocalName()+"/"+previousSymbol.getRValue());
       }
       out.append(" )");
       return out.toString();

@@ -3,8 +3,15 @@ package dk.camelot64.kickc.icl;
 /** A Symbol (variable, jump label, etc.) */
 public interface Symbol extends Value {
 
-   public String getName();
+   String getLocalName();
 
-   public SymbolType getType();
+   String getFullName();
+
+   String getTypedName();
+
+   SymbolType getType();
+
+   SymbolTable getScope();
+
 
 }

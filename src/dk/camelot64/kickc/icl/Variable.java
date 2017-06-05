@@ -1,25 +1,49 @@
 package dk.camelot64.kickc.icl;
 
-/** A Symbol (variable, jump label, etc.) */
-public abstract class Variable implements Symbol, RValue, LValue  {
+/**
+ * A Symbol (variable, jump label, etc.)
+ */
+public abstract class Variable implements Symbol, RValue, LValue {
 
-   /** The name of the symbol. */
+   /**
+    * The name of the symbol.
+    */
    private String name;
 
-   /** The type of the symbol. VAR means tha type is unknown, and has not been inferred yet. */
+   /**
+    * Scope
+    */
+   private SymbolTable scope;
+
+   /**
+    * The type of the symbol. VAR means tha type is unknown, and has not been inferred yet.
+    */
    private SymbolType type;
 
-   /** true if the symbol type is infered (not declared) */
+   /**
+    * true if the symbol type is infered (not declared)
+    */
    private boolean inferredType;
 
-   public Variable(String name, SymbolType type) {
+   public Variable(String name, SymbolTable scope, SymbolType type) {
       this.name = name;
+      this.scope = scope;
       this.type = type;
       this.inferredType = false;
    }
 
-   public String getName() {
+   public String getLocalName() {
       return name;
+   }
+
+   @Override
+   public String getFullName() {
+      return SymbolTable.getFullName(this);
+   }
+
+   @Override
+   public String getTypedName() {
+      return "(" + type.getTypeName() + (inferredType ? "~" : "") + ") " + getFullName();
    }
 
    public SymbolType getType() {
@@ -40,23 +64,33 @@ public abstract class Variable implements Symbol, RValue, LValue  {
    public abstract boolean isIntermediate();
 
    @Override
-   public String toString() {
-      return "("+type.getTypeName() + (inferredType ?"~":"") + ") "+name;
-   }
-
-   @Override
    public boolean equals(Object o) {
       if (this == o) return true;
       if (o == null || getClass() != o.getClass()) return false;
-      Variable symbol = (Variable) o;
-      if (!name.equals(symbol.name)) return false;
-      return type == symbol.type;
+
+      Variable variable = (Variable) o;
+
+      if (inferredType != variable.inferredType) return false;
+      if (!name.equals(variable.name)) return false;
+      if (scope != null ? !scope.equals(variable.scope) : variable.scope != null) return false;
+      return type.equals(variable.type);
    }
 
    @Override
    public int hashCode() {
       int result = name.hashCode();
+      result = 31 * result + (scope != null ? scope.hashCode() : 0);
+      result = 31 * result + type.hashCode();
+      result = 31 * result + (inferredType ? 1 : 0);
       return result;
    }
 
+   @Override
+   public String toString() {
+      return getTypedName();
+   }
+
+   public SymbolTable getScope() {
+      return scope;
+   }
 }

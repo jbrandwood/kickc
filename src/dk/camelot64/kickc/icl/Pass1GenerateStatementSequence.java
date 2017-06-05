@@ -4,15 +4,32 @@ import dk.camelot64.kickc.parser.KickCBaseVisitor;
 import dk.camelot64.kickc.parser.KickCParser;
 import org.antlr.v4.runtime.tree.TerminalNode;
 
-/** Generates program SSA form by visiting the ANTLR4 parse tree*/
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Stack;
+
+/**
+ * Generates program SSA form by visiting the ANTLR4 parse tree
+ */
 public class Pass1GenerateStatementSequence extends KickCBaseVisitor<Object> {
 
-   private SymbolTable symbolTable;
+   private SymbolTable programSymbols;
+   private Stack<SymbolTable> symbolsStack;
    private StatementSequence sequence;
 
    public Pass1GenerateStatementSequence() {
-      this.symbolTable = new SymbolTable();
+      this.programSymbols = new SymbolTable();
+      this.symbolsStack = new Stack<>();
+      symbolsStack.push(programSymbols);
       this.sequence = new StatementSequence();
+   }
+
+   public SymbolTable getProgramSymbols() {
+      return programSymbols;
+   }
+
+   private SymbolTable getCurrentSymbols() {
+      return symbolsStack.peek();
    }
 
    public void generate(KickCParser.FileContext file) {
@@ -27,7 +44,7 @@ public class Pass1GenerateStatementSequence extends KickCBaseVisitor<Object> {
 
    @Override
    public Void visitStmtSeq(KickCParser.StmtSeqContext ctx) {
-      for(int i=0; i<ctx.getChildCount(); i++) {
+      for (int i = 0; i < ctx.getChildCount(); i++) {
          this.visit(ctx.stmt(i));
       }
       return null;
@@ -48,27 +65,27 @@ public class Pass1GenerateStatementSequence extends KickCBaseVisitor<Object> {
    @Override
    public Void visitStmtIfElse(KickCParser.StmtIfElseContext ctx) {
       RValue rValue = (RValue) this.visit(ctx.expr());
-      Label ifJumpLabel = symbolTable.newIntermediateJumpLabel();
-      Label elseJumpLabel = symbolTable.newIntermediateJumpLabel();
+      Label ifJumpLabel = getCurrentSymbols().addLabelIntermediate();
+      Label elseJumpLabel = getCurrentSymbols().addLabelIntermediate();
       Statement ifJmpStmt = new StatementConditionalJump(rValue, ifJumpLabel);
       sequence.addStatement(ifJmpStmt);
       Statement elseJmpStmt = new StatementJump(elseJumpLabel);
       sequence.addStatement(elseJmpStmt);
-      StatementJumpTarget ifJumpTarget = new StatementJumpTarget(ifJumpLabel);
+      StatementLabel ifJumpTarget = new StatementLabel(ifJumpLabel);
       sequence.addStatement(ifJumpTarget);
       this.visit(ctx.stmt(0));
       KickCParser.StmtContext elseStmt = ctx.stmt(1);
-      if(elseStmt!=null) {
-         Label endJumpLabel = symbolTable.newIntermediateJumpLabel();
+      if (elseStmt != null) {
+         Label endJumpLabel = getCurrentSymbols().addLabelIntermediate();
          Statement endJmpStmt = new StatementJump(endJumpLabel);
          sequence.addStatement(endJmpStmt);
-         StatementJumpTarget elseJumpTarget = new StatementJumpTarget(elseJumpLabel);
+         StatementLabel elseJumpTarget = new StatementLabel(elseJumpLabel);
          sequence.addStatement(elseJumpTarget);
          this.visit(elseStmt);
-         StatementJumpTarget endJumpTarget = new StatementJumpTarget(endJumpLabel);
+         StatementLabel endJumpTarget = new StatementLabel(endJumpLabel);
          sequence.addStatement(endJumpTarget);
-      }  else {
-         StatementJumpTarget elseJumpTarget = new StatementJumpTarget(elseJumpLabel);
+      } else {
+         StatementLabel elseJumpTarget = new StatementLabel(elseJumpLabel);
          sequence.addStatement(elseJumpTarget);
       }
       return null;
@@ -76,30 +93,30 @@ public class Pass1GenerateStatementSequence extends KickCBaseVisitor<Object> {
 
    @Override
    public Void visitStmtWhile(KickCParser.StmtWhileContext ctx) {
-      Label beginJumpLabel = symbolTable.newIntermediateJumpLabel();
-      Label doJumpLabel = symbolTable.newIntermediateJumpLabel();
-      Label endJumpLabel = symbolTable.newIntermediateJumpLabel();
-      StatementJumpTarget beginJumpTarget = new StatementJumpTarget(beginJumpLabel);
+      Label beginJumpLabel = getCurrentSymbols().addLabelIntermediate();
+      Label doJumpLabel = getCurrentSymbols().addLabelIntermediate();
+      Label endJumpLabel = getCurrentSymbols().addLabelIntermediate();
+      StatementLabel beginJumpTarget = new StatementLabel(beginJumpLabel);
       sequence.addStatement(beginJumpTarget);
       RValue rValue = (RValue) this.visit(ctx.expr());
       Statement doJmpStmt = new StatementConditionalJump(rValue, doJumpLabel);
       sequence.addStatement(doJmpStmt);
       Statement endJmpStmt = new StatementJump(endJumpLabel);
       sequence.addStatement(endJmpStmt);
-      StatementJumpTarget doJumpTarget = new StatementJumpTarget(doJumpLabel);
+      StatementLabel doJumpTarget = new StatementLabel(doJumpLabel);
       sequence.addStatement(doJumpTarget);
       this.visit(ctx.stmt());
       Statement beginJmpStmt = new StatementJump(beginJumpLabel);
       sequence.addStatement(beginJmpStmt);
-      StatementJumpTarget endJumpTarget = new StatementJumpTarget(endJumpLabel);
+      StatementLabel endJumpTarget = new StatementLabel(endJumpLabel);
       sequence.addStatement(endJumpTarget);
       return null;
    }
 
    @Override
    public Void visitStmtDoWhile(KickCParser.StmtDoWhileContext ctx) {
-      Label beginJumpLabel = symbolTable.newIntermediateJumpLabel();
-      StatementJumpTarget beginJumpTarget = new StatementJumpTarget(beginJumpLabel);
+      Label beginJumpLabel = getCurrentSymbols().addLabelIntermediate();
+      StatementLabel beginJumpTarget = new StatementLabel(beginJumpLabel);
       sequence.addStatement(beginJumpTarget);
       this.visit(ctx.stmt());
       RValue rValue = (RValue) this.visit(ctx.expr());
@@ -110,22 +127,55 @@ public class Pass1GenerateStatementSequence extends KickCBaseVisitor<Object> {
 
    @Override
    public Void visitStmtFunction(KickCParser.StmtFunctionContext ctx) {
-      throw new RuntimeException("Not implemented");
+      SymbolType type = (SymbolType) visit(ctx.typeDecl());
+      String name = ctx.NAME().getText();
+      Procedure procedure = getCurrentSymbols().addProcedure(name, type);
+      symbolsStack.push(procedure);
+      List<Variable> parameterList = (List<Variable>) this.visit(ctx.parameterListDecl());
+      procedure.setParameters(parameterList);
+      sequence.addStatement(new StatementProcedure(procedure));
+      this.visit(ctx.stmtSeq());
+      symbolsStack.pop();
+      return null;
+   }
+
+   @Override
+   public List<Variable> visitParameterListDecl(KickCParser.ParameterListDeclContext ctx) {
+      ArrayList<Variable> parameterDecls = new ArrayList<>();
+      for (KickCParser.ParameterDeclContext parameterDeclCtx: ctx.parameterDecl()) {
+         Variable parameterDecl = (Variable) this.visit(parameterDeclCtx);
+         parameterDecls.add(parameterDecl);
+      }
+      return parameterDecls;
+   }
+
+   @Override
+   public Variable visitParameterDecl(KickCParser.ParameterDeclContext ctx) {
+      SymbolType type = (SymbolType) this.visit(ctx.typeDecl());
+      VariableUnversioned param = new VariableUnversioned(ctx.NAME().getText(), getCurrentSymbols(), type);
+      return param;
    }
 
    @Override
    public Void visitStmtReturn(KickCParser.StmtReturnContext ctx) {
-      throw new RuntimeException("Not implemented");
+      KickCParser.ExprContext exprCtx = ctx.expr();
+      RValue rValue = null;
+      if (exprCtx != null) {
+         rValue = (RValue) this.visit(exprCtx);
+      }
+      Statement stmt = new StatementReturn(rValue);
+      sequence.addStatement(stmt);
+      return null;
    }
 
    @Override
    public Void visitStmtDeclaration(KickCParser.StmtDeclarationContext ctx) {
-      if(ctx.getChild(0).getText().equals("const")) {
-         System.out.println("Const!"+ctx.getText());
+      if (ctx.getChild(0).getText().equals("const")) {
+         System.out.println("Const!" + ctx.getText());
       }
-      SymbolType type = (SymbolType)visit(ctx.typeDecl());
-      VariableUnversioned lValue = symbolTable.newVariableDeclaration(ctx.NAME().getText(), type);
-      if(ctx.initializer()!=null) {
+      SymbolType type = (SymbolType) visit(ctx.typeDecl());
+      VariableUnversioned lValue = getCurrentSymbols().addVariable(ctx.NAME().getText(), type);
+      if (ctx.initializer() != null) {
          RValue rValue = (RValue) visit(ctx.initializer());
          Statement stmt = new StatementAssignment(lValue, rValue);
          sequence.addStatement(stmt);
@@ -144,7 +194,7 @@ public class Pass1GenerateStatementSequence extends KickCBaseVisitor<Object> {
 
    @Override
    public LValue visitLvalueName(KickCParser.LvalueNameContext ctx) {
-      return symbolTable.newVariableUsage(ctx.NAME().getText());
+      return getCurrentSymbols().getVariable(ctx.NAME().getText());
    }
 
    @Override
@@ -155,9 +205,9 @@ public class Pass1GenerateStatementSequence extends KickCBaseVisitor<Object> {
    @Override
    public LValue visitLvaluePtr(KickCParser.LvaluePtrContext ctx) {
       LValue lval = (LValue) visit(ctx.lvalue());
-      if(lval instanceof Variable) {
+      if (lval instanceof Variable) {
          return new PointerDereferenceSimple((Variable) lval);
-      }  else {
+      } else {
          throw new RuntimeException("Not implemented");
       }
    }
@@ -194,10 +244,10 @@ public class Pass1GenerateStatementSequence extends KickCBaseVisitor<Object> {
    public SymbolType visitTypeArray(KickCParser.TypeArrayContext ctx) {
       SymbolType elementType = (SymbolType) visit(ctx.typeDecl());
       Constant size = ParseTreeConstantEvaluator.evaluate(ctx.expr());
-      if(size instanceof ConstantInteger) {
+      if (size instanceof ConstantInteger) {
          return new SymbolTypeArray(elementType, ((ConstantInteger) size).getNumber());
       } else {
-         throw new RuntimeException("Array size not a constant integer "+ctx.getText());
+         throw new RuntimeException("Array size not a constant integer " + ctx.getText());
       }
    }
 
@@ -209,7 +259,21 @@ public class Pass1GenerateStatementSequence extends KickCBaseVisitor<Object> {
 
    @Override
    public Object visitExprCall(KickCParser.ExprCallContext ctx) {
-      throw new RuntimeException("Not implemented");
+      Label label = new Label(ctx.NAME().getText(), getCurrentSymbols(), false);
+      List<RValue> parameters = (List<RValue>) this.visit(ctx.parameterList());
+      VariableIntermediate tmpVar = getCurrentSymbols().addVariableIntermediate();
+      sequence.addStatement(new StatementCallLValue(tmpVar, label, parameters));
+      return tmpVar;
+   }
+
+   @Override
+   public List<RValue> visitParameterList(KickCParser.ParameterListContext ctx) {
+      List<RValue> parameters = new ArrayList<>();
+      for (KickCParser.ExprContext exprContext : ctx.expr()) {
+         RValue param = (RValue) this.visit(exprContext);
+         parameters.add(param);
+      }
+      return parameters;
    }
 
    @Override
@@ -217,7 +281,7 @@ public class Pass1GenerateStatementSequence extends KickCBaseVisitor<Object> {
       RValue array = (LValue) visit(ctx.expr(0));
       RValue index = (RValue) visit(ctx.expr(1));
       Operator operator = new Operator("*idx");
-      VariableIntermediate tmpVar = symbolTable.newIntermediateAssignment();
+      VariableIntermediate tmpVar = getCurrentSymbols().addVariableIntermediate();
       Statement stmt = new StatementAssignment(tmpVar, array, operator, index);
       sequence.addStatement(stmt);
       return tmpVar;
@@ -226,7 +290,7 @@ public class Pass1GenerateStatementSequence extends KickCBaseVisitor<Object> {
    @Override
    public RValue visitExprNumber(KickCParser.ExprNumberContext ctx) {
       Number number = NumberParser.parseLiteral(ctx.getText());
-      if(number instanceof Integer)  {
+      if (number instanceof Integer) {
          return new ConstantInteger((Integer) number);
       } else {
          return new ConstantDouble((Double) number);
@@ -244,14 +308,13 @@ public class Pass1GenerateStatementSequence extends KickCBaseVisitor<Object> {
       return new ConstantBool(Boolean.valueOf(bool));
    }
 
-
    @Override
    public RValue visitExprBinary(KickCParser.ExprBinaryContext ctx) {
       RValue left = (RValue) this.visit(ctx.expr(0));
       RValue right = (RValue) this.visit(ctx.expr(1));
-      String op = ((TerminalNode)ctx.getChild(1)).getSymbol().getText();
+      String op = ((TerminalNode) ctx.getChild(1)).getSymbol().getText();
       Operator operator = new Operator(op);
-      VariableIntermediate tmpVar = symbolTable.newIntermediateAssignment();
+      VariableIntermediate tmpVar = getCurrentSymbols().addVariableIntermediate();
       Statement stmt = new StatementAssignment(tmpVar, left, operator, right);
       sequence.addStatement(stmt);
       return tmpVar;
@@ -260,9 +323,9 @@ public class Pass1GenerateStatementSequence extends KickCBaseVisitor<Object> {
    @Override
    public RValue visitExprUnary(KickCParser.ExprUnaryContext ctx) {
       RValue child = (RValue) this.visit(ctx.expr());
-      String op = ((TerminalNode)ctx.getChild(0)).getSymbol().getText();
+      String op = ((TerminalNode) ctx.getChild(0)).getSymbol().getText();
       Operator operator = new Operator(op);
-      VariableIntermediate tmpVar = symbolTable.newIntermediateAssignment();
+      VariableIntermediate tmpVar = getCurrentSymbols().addVariableIntermediate();
       Statement stmt = new StatementAssignment(tmpVar, operator, child);
       sequence.addStatement(stmt);
       return tmpVar;
@@ -275,15 +338,11 @@ public class Pass1GenerateStatementSequence extends KickCBaseVisitor<Object> {
 
    @Override
    public RValue visitExprId(KickCParser.ExprIdContext ctx) {
-      return symbolTable.newVariableUsage(ctx.NAME().getText());
+      return getCurrentSymbols().getVariable(ctx.NAME().getText());
    }
 
    public StatementSequence getSequence() {
       return sequence;
-   }
-
-   public SymbolTable getSymbols() {
-      return this.symbolTable;
    }
 
 }

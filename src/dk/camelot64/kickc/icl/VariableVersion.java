@@ -6,7 +6,7 @@ public class VariableVersion extends Variable {
    private VariableUnversioned versionOf;
 
    public VariableVersion(VariableUnversioned versionOf, int version) {
-      super(versionOf.getName()+"#"+version, versionOf.getType());
+      super(versionOf.getLocalName()+"#"+version, versionOf.getScope(), versionOf.getType());
       this.versionOf = versionOf;
    }
 

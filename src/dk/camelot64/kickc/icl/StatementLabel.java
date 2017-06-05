@@ -3,11 +3,11 @@ package dk.camelot64.kickc.icl;
 /**
  * Single Static Assignment Form Statement Jump target.
  */
-public class StatementJumpTarget implements Statement {
+public class StatementLabel implements Statement {
 
    private Label label;
 
-   public StatementJumpTarget(Label label) {
+   public StatementLabel(Label label) {
       this.label = label;
    }
 
@@ -17,7 +17,7 @@ public class StatementJumpTarget implements Statement {
 
    @Override
    public String toString() {
-      return label+":";
+      return label.getFullName()+":";
    }
 
 

@@ -1,90 +1,146 @@
 package dk.camelot64.kickc.icl;
 
-import sun.jvm.hotspot.debugger.cdbg.Sym;
-
 import java.util.*;
 
 /**
  * Manages symbols (variables, labels)
  */
-public class SymbolTable {
+public class SymbolTable implements Symbol {
 
+   private String name;
+   private SymbolType type;
    private Map<String, Symbol> symbols;
    private int intermediateVarCount = 0;
    private int intermediateLabelCount = 1;
    private RegisterAllocation allocation;
+   private SymbolTable parentScope;
+
+   public SymbolTable(String name, SymbolType type, SymbolTable parentScope) {
+      this.name = name;
+      this.type = type;
+      this.parentScope = parentScope;
+      this.symbols = new LinkedHashMap<>();
+   }
 
    public SymbolTable() {
+      this.name = "";
+      this.type = new SymbolTypeProgram();
+      this.parentScope = null;
       this.symbols = new LinkedHashMap<>();
+   }
+
+   @Override
+   public String getLocalName() {
+      return name;
+   }
+
+   @Override
+   public String getFullName() {
+      return getFullName(this);
+   }
+
+   public static String getFullName(Symbol symbol) {
+      if(symbol.getScope()!=null) {
+         String scopeName = symbol.getScope().getFullName();
+         if(scopeName.length()>0) {
+            return scopeName+"::"+symbol.getLocalName();
+         }
+      }
+      return symbol.getLocalName();
+   }
+
+
+   @Override
+   public SymbolTable getScope() {
+      return parentScope;
+   }
+
+   @Override
+   public String getTypedName() {
+      return "(" + getType().getTypeName() + ") " + getFullName();
+   }
+
+   @Override
+   public SymbolType getType() {
+      return type;
+   }
+
+   public Symbol add(Symbol symbol) {
+      if (symbols.get(symbol.getLocalName()) != null) {
+         throw new RuntimeException("Symbol already declared " + symbol.getLocalName());
+      }
+      symbols.put(symbol.getLocalName(), symbol);
+      return symbol;
+   }
+
+   public void remove(Symbol symbol) {
+      symbols.remove(symbol.getLocalName());
+   }
+
+   public VariableUnversioned addVariable(String name, SymbolType type) {
+      VariableUnversioned symbol = new VariableUnversioned(name, this, type);
+      add(symbol);
+      return symbol;
+   }
+
+   public VariableIntermediate addVariableIntermediate() {
+      String name = "$" + intermediateVarCount++;
+      VariableIntermediate symbol = new VariableIntermediate(name, this, SymbolTypeBasic.VAR);
+      add(symbol);
+      return symbol;
+   }
+
+   public Variable getVariable(String name) {
+      return (Variable) symbols.get(name);
    }
 
    public Collection<Variable> getAllVariables() {
       Collection<Variable> vars = new ArrayList<>();
       for (Symbol symbol : symbols.values()) {
-         if(symbol instanceof Variable) {
+         if (symbol instanceof Variable) {
             vars.add((Variable) symbol);
          }
       }
       return vars;
    }
 
-   private Symbol addSymbol(Symbol symbol) {
-      if(symbols.get(symbol.getName())!=null) {
-         throw new RuntimeException("Symbol already declared "+symbol.getName());
+   public Label addLabel(String name) {
+      Label symbol = new Label(name, this, false);
+      add(symbol);
+      return symbol;
+   }
+
+   public Label addLabelIntermediate() {
+      String name = "@" + intermediateLabelCount++;
+      Label symbol = new Label(name, this, true);
+      add(symbol);
+      return symbol;
+   }
+
+
+   public Procedure addProcedure(String name, SymbolType type) {
+      Symbol symbol = symbols.get(name);
+      if (symbol != null) {
+         throw new RuntimeException("Error! Symbol already defined " + symbol);
       }
-      symbols.put(symbol.getName(), symbol);
-      return symbol;
+      Procedure procedure = new Procedure(name, type, this);
+      add(procedure);
+      return procedure;
    }
 
-   public VariableUnversioned newVariableDeclaration(String name, SymbolType type) {
-      VariableUnversioned symbol = new VariableUnversioned(name, type);
-      addSymbol(symbol);
-      return symbol;
-   }
-
-   public VariableUnversioned newVariableDeclaration(String name, String type) {
-      SymbolType symbolType = SymbolTypeBasic.get(type);
-      VariableUnversioned symbol = new VariableUnversioned(name, symbolType);
-      addSymbol(symbol);
-      return symbol;
-   }
-
-   public VariableUnversioned newVariableUsage(String name) {
-      return (VariableUnversioned) symbols.get(name);
-   }
-
-   public VariableIntermediate newIntermediateAssignment() {
-      String name = "$"+intermediateVarCount++;
-      VariableIntermediate symbol = new VariableIntermediate(name, SymbolTypeBasic.VAR);
-      addSymbol(symbol);
-      return symbol;
-   }
-
-   public Label newNamedJumpLabel(String name) {
-      Label symbol = new Label(name, false);
-      addSymbol(symbol);
-      return symbol;
-   }
-
-   public Label newIntermediateJumpLabel() {
-      String name = "@"+   intermediateLabelCount++;
-      Label symbol = new Label(name, true);
-      addSymbol(symbol);
-      return symbol;
-   }
-
-   public void remove(Symbol symbol) {
-      symbols.remove(symbol.getName());
+   public Procedure getProcedure(String name) {
+      Symbol symbol = symbols.get(name);
+      if (symbol != null && symbol instanceof Procedure) {
+         return (Procedure) symbol;
+      } else {
+         return null;
+      }
    }
 
    public VariableVersion createVersion(VariableUnversioned symbol) {
       VariableVersion version = new VariableVersion(symbol, symbol.getNextVersionNumber());
-      symbols.put(version.getName(), version);
+      symbols.put(version.getLocalName(), version);
       return version;
-   }
-
-   public Variable getVariable(String name) {
-      return (Variable) symbols.get(name);
    }
 
    public void setAllocation(RegisterAllocation allocation) {
@@ -93,30 +149,33 @@ public class SymbolTable {
 
    public RegisterAllocation.Register getRegister(Variable variable) {
       RegisterAllocation.Register register = null;
-      if(allocation!=null) {
+      if (allocation != null) {
          register = allocation.getRegister(variable);
       }
       return register;
    }
 
-   @Override
-   public String toString() {
-      StringBuffer out = new StringBuffer();
+   public String getSymbolTableContents() {
+      StringBuilder res = new StringBuilder();
       Set<String> names = symbols.keySet();
       List<String> sortedNames = new ArrayList<>(names);
       Collections.sort(sortedNames);
       for (String name : sortedNames) {
          Symbol symbol = symbols.get(name);
-         out.append(symbol.toString());
-         if(symbol instanceof Variable) {
+         if (symbol instanceof SymbolTable) {
+            res.append(((SymbolTable) symbol).getSymbolTableContents());
+         } else {
+            res.append(symbol.toString());
+         }
+         if (symbol instanceof Variable) {
             RegisterAllocation.Register register = getRegister((Variable) symbol);
-            if(register!=null) {
-               out.append(" "+register);
+            if (register != null) {
+               res.append(" " + register);
             }
          }
-         out.append("\n");
+         res.append("\n");
       }
-      return out.toString();
+      return res.toString();
    }
 
 }

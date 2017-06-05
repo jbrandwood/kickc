@@ -1,17 +1,23 @@
 package dk.camelot64.kickc.icl;
 
-/** A Symbol (variable, jump label, etc.) */
+/**
+ * A Symbol (variable, jump label, etc.)
+ */
 public class VariableUnversioned extends Variable {
 
-   /** The number of the next version */
+   /**
+    * The number of the next version
+    */
    private Integer nextVersionNumber;
 
-   public VariableUnversioned(String name, SymbolType type) {
-      super(name, type);
-         this.nextVersionNumber = 0;
+   public VariableUnversioned(String name, SymbolTable scope, SymbolType type) {
+      super(name, scope, type);
+      this.nextVersionNumber = 0;
    }
 
-   /** Get the version number of the next version. (if anyone versions the symbol). */
+   /**
+    * Get the version number of the next version. (if anyone versions the symbol).
+    */
    int getNextVersionNumber() {
       return nextVersionNumber++;
    }

@@ -27,8 +27,8 @@ public class ControlFlowGraphBaseVisitor<T> {
          return visitConditionalJump((StatementConditionalJump) statement);
       } else if(statement instanceof StatementJump) {
          return visitJump((StatementJump) statement);
-      } else if(statement instanceof StatementJumpTarget) {
-         return visitJumpTarget((StatementJumpTarget) statement);
+      } else if(statement instanceof StatementLabel) {
+         return visitJumpTarget((StatementLabel) statement);
       } else if(statement instanceof StatementPhi) {
          return visitPhi((StatementPhi) statement);
       } else {
@@ -48,7 +48,7 @@ public class ControlFlowGraphBaseVisitor<T> {
       return null;
    }
 
-   public T visitJumpTarget(StatementJumpTarget jumpTarget) {
+   public T visitJumpTarget(StatementLabel jumpTarget) {
       return null;
    }
 

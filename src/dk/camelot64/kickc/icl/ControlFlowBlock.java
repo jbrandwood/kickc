@@ -72,11 +72,11 @@ public class ControlFlowBlock {
    @Override
    public String toString() {
       StringBuffer out = new StringBuffer();
-      out.append(label.getName() + ":" );
+      out.append(label.getLocalName() + ":" );
       if(predecessors.size()>0) {
          out.append(" from");
          for (ControlFlowBlock predecessor : predecessors) {
-            out.append(" " + predecessor.getLabel().getName());
+            out.append(" " + predecessor.getLabel().getLocalName());
          }
       }
       out.append("\n");
@@ -85,7 +85,7 @@ public class ControlFlowBlock {
       }
       if(defaultSuccessor!=null) {
          out.append("  to:");
-         out.append(defaultSuccessor.getLabel().getName());
+         out.append(defaultSuccessor.getLabel().getLocalName());
       }
       out.append("\n");
       return out.toString();

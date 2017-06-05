@@ -133,11 +133,11 @@ public class AsmFragment {
       signature.append("_then_");
       Label destination = conditionalJump.getDestination();
       ControlFlowBlock destinationBlock = graph.getBlock(destination);
-      String destinationLabel = destination.getName();
+      String destinationLabel = destination.getLocalName();
       if (destinationBlock.hasPhiStatements()) {
-         destinationLabel = destination.getName() + "_from_" + block.getLabel().getName();
+         destinationLabel = destination.getLocalName() + "_from_" + block.getLabel().getLocalName();
       }
-      signature.append(bind(new Label(destinationLabel, false)));
+      signature.append(bind(new Label(destinationLabel, destination.getScope(),false)));
       return signature.toString();
    }
 
@@ -348,7 +348,7 @@ public class AsmFragment {
             bound = Integer.toString(boundInt.getNumber());
          }
       } else if (boundValue instanceof Label) {
-         bound = ((Label) boundValue).getName().replace('@', 'B');
+         bound = ((Label) boundValue).getLocalName().replace('@', 'B');
       } else {
          throw new RuntimeException("Bound Value Type not implemented " + boundValue);
       }

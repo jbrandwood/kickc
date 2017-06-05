@@ -20,7 +20,7 @@ public class StatementSequence {
    public String toString() {
       StringBuffer out = new StringBuffer();
       for (Statement statement : statements) {
-         if(!(statement instanceof StatementJumpTarget)) {
+         if(!(statement instanceof StatementLabel)) {
              out.append("  ");
          }
          out.append(statement.toString()+"\n");

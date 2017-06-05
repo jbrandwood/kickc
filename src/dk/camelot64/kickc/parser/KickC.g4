@@ -18,7 +18,7 @@ stmt
     | 'if' '(' expr ')' stmt ( 'else' stmt )? #stmtIfElse
     | 'while' '(' expr ')' stmt  #stmtWhile
     | 'do' stmt 'while' '(' expr ')' #stmtDoWhile
-    | 'return' expr ';' #stmtReturn
+    | 'return' expr? ';' #stmtReturn
     ;
 
 parameterListDecl

@@ -1,11 +1,11 @@
 package dk.camelot64.kickc.icl;
 
 /** Procedure declaration in SSA */
-public class StatementProcedure implements Statement {
+public class StatementProcedureEnd implements Statement {
 
    private Procedure procedure;
 
-   public StatementProcedure(Procedure procedure) {
+   public StatementProcedureEnd(Procedure procedure) {
       this.procedure = procedure;
    }
 
@@ -15,7 +15,7 @@ public class StatementProcedure implements Statement {
 
    @Override
    public String toString() {
-      return "proc "+procedure.toString()+":";
+      return "endproc // "+procedure.getLocalName()+"()";
    }
 
 }

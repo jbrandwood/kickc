@@ -10,9 +10,9 @@ import java.util.Iterator;
 public class Pass3CodeGeneration {
 
    private ControlFlowGraph graph;
-   private SymbolTable symbols;
+   private Scope symbols;
 
-   public Pass3CodeGeneration(ControlFlowGraph graph, SymbolTable symbols) {
+   public Pass3CodeGeneration(ControlFlowGraph graph, Scope symbols) {
       this.graph = graph;
       this.symbols = symbols;
    }

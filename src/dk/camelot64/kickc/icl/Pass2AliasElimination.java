@@ -5,8 +5,8 @@ import java.util.*;
 /** Compiler Pass eliminating alias assignments */
 public class Pass2AliasElimination extends Pass2SsaOptimization {
 
-   public Pass2AliasElimination(ControlFlowGraph graph, SymbolTable symbolTable) {
-      super(graph, symbolTable);
+   public Pass2AliasElimination(ControlFlowGraph graph, Scope scope) {
+      super(graph, scope);
    }
 
 

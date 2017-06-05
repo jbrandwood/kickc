@@ -20,7 +20,7 @@ public class AsmFragment {
    /**
     * The symbol table.
     */
-   private SymbolTable symbols;
+   private Scope symbols;
 
    /**
     * Binding of named values in the fragment to values (constants, variables, ...) .
@@ -32,26 +32,26 @@ public class AsmFragment {
     */
    private String signature;
 
-   public AsmFragment(StatementConditionalJump conditionalJump, ControlFlowBlock block, SymbolTable symbols, ControlFlowGraph graph) {
+   public AsmFragment(StatementConditionalJump conditionalJump, ControlFlowBlock block, Scope symbols, ControlFlowGraph graph) {
       this.bindings = new HashMap<>();
       this.symbols = symbols;
       String conditionalJumpSignature = conditionalJumpSignature(conditionalJump, block, graph);
       setSignature(conditionalJumpSignature);
    }
 
-   public AsmFragment(StatementAssignment assignment, SymbolTable symbols) {
+   public AsmFragment(StatementAssignment assignment, Scope symbols) {
       this.bindings = new HashMap<>();
       this.symbols = symbols;
       setSignature(assignmentSignature(assignment.getLValue(), assignment.getRValue1(), assignment.getOperator(), assignment.getRValue2()));
    }
 
-   public AsmFragment(LValue lValue, RValue rValue, SymbolTable symbols) {
+   public AsmFragment(LValue lValue, RValue rValue, Scope symbols) {
       this.bindings = new HashMap<>();
       this.symbols = symbols;
       setSignature(assignmentSignature(lValue, null, null, rValue));
    }
 
-   public AsmFragment(StatementAssignment assignment, StatementAssignment assignmentAlu, SymbolTable symbols) {
+   public AsmFragment(StatementAssignment assignment, StatementAssignment assignmentAlu, Scope symbols) {
       this.bindings = new HashMap<>();
       this.symbols = symbols;
       setSignature(assignmentWithAluSignature(assignment, assignmentAlu));

@@ -3,12 +3,12 @@ package dk.camelot64.kickc.icl;
 import java.util.List;
 
 /** Symbol describing a procedure/function */
-public class Procedure extends SymbolTable {
+public class Procedure extends Scope {
 
    private final SymbolType returnType;
    private List<Variable> parameters;
 
-   public Procedure(String name, SymbolType returnType, SymbolTable parentScope) {
+   public Procedure(String name, SymbolType returnType, Scope parentScope) {
       super(name, new SymbolTypeProcedure(returnType), parentScope);
       this.returnType = returnType;
    }

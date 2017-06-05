@@ -10,10 +10,10 @@ import java.util.Map;
  */
 public class Pass1GenerateSingleStaticAssignmentForm {
 
-   private SymbolTable symbols;
+   private Scope symbols;
    private ControlFlowGraph controlFlowGraph;
 
-   public Pass1GenerateSingleStaticAssignmentForm(SymbolTable symbols, ControlFlowGraph controlFlowGraph) {
+   public Pass1GenerateSingleStaticAssignmentForm(Scope symbols, ControlFlowGraph controlFlowGraph) {
       this.symbols = symbols;
       this.controlFlowGraph = controlFlowGraph;
    }

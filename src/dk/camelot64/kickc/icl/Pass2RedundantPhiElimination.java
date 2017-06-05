@@ -6,8 +6,8 @@ import java.util.Map;
 /** Compiler Pass eliminating redundant phi functions */
 public class Pass2RedundantPhiElimination extends Pass2SsaOptimization {
 
-   public Pass2RedundantPhiElimination(ControlFlowGraph graph, SymbolTable symbolTable) {
-      super(graph, symbolTable);
+   public Pass2RedundantPhiElimination(ControlFlowGraph graph, Scope scope) {
+      super(graph, scope);
    }
 
    /**

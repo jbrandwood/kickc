@@ -5,7 +5,7 @@ package dk.camelot64.kickc.icl;
  */
 public class VariableIntermediate extends Variable {
 
-   public VariableIntermediate(String name, SymbolTable scope, SymbolType type) {
+   public VariableIntermediate(String name, Scope scope, SymbolType type) {
       super(name, scope, type);
    }
 

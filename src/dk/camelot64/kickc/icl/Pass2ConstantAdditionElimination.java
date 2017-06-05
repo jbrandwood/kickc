@@ -5,8 +5,8 @@ package dk.camelot64.kickc.icl;
  */
 public class Pass2ConstantAdditionElimination extends Pass2SsaOptimization {
 
-   public Pass2ConstantAdditionElimination(ControlFlowGraph graph, SymbolTable symbolTable) {
-      super(graph, symbolTable);
+   public Pass2ConstantAdditionElimination(ControlFlowGraph graph, Scope scope) {
+      super(graph, scope);
    }
 
    /**

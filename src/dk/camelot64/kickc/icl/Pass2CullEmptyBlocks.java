@@ -5,8 +5,8 @@ import java.util.*;
 /** Pass that culls empty control flow blocks from the program */
 public class Pass2CullEmptyBlocks extends Pass2SsaOptimization {
 
-   public Pass2CullEmptyBlocks(ControlFlowGraph graph, SymbolTable symbolTable) {
-      super(graph, symbolTable);
+   public Pass2CullEmptyBlocks(ControlFlowGraph graph, Scope scope) {
+      super(graph, scope);
    }
 
    @Override

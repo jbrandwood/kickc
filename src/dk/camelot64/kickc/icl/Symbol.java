@@ -11,7 +11,7 @@ public interface Symbol extends Value {
 
    SymbolType getType();
 
-   SymbolTable getScope();
+   Scope getScope();
 
 
 }

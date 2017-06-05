@@ -5,7 +5,7 @@ import java.util.*;
 /**
  * Manages symbols (variables, labels)
  */
-public class SymbolTable implements Symbol {
+public class Scope implements Symbol {
 
    private String name;
    private SymbolType type;
@@ -13,16 +13,16 @@ public class SymbolTable implements Symbol {
    private int intermediateVarCount = 0;
    private int intermediateLabelCount = 1;
    private RegisterAllocation allocation;
-   private SymbolTable parentScope;
+   private Scope parentScope;
 
-   public SymbolTable(String name, SymbolType type, SymbolTable parentScope) {
+   public Scope(String name, SymbolType type, Scope parentScope) {
       this.name = name;
       this.type = type;
       this.parentScope = parentScope;
       this.symbols = new LinkedHashMap<>();
    }
 
-   public SymbolTable() {
+   public Scope() {
       this.name = "";
       this.type = new SymbolTypeProgram();
       this.parentScope = null;
@@ -51,7 +51,7 @@ public class SymbolTable implements Symbol {
 
 
    @Override
-   public SymbolTable getScope() {
+   public Scope getScope() {
       return parentScope;
    }
 
@@ -162,8 +162,8 @@ public class SymbolTable implements Symbol {
       Collections.sort(sortedNames);
       for (String name : sortedNames) {
          Symbol symbol = symbols.get(name);
-         if (symbol instanceof SymbolTable) {
-            res.append(((SymbolTable) symbol).getSymbolTableContents());
+         if (symbol instanceof Scope) {
+            res.append(((Scope) symbol).getSymbolTableContents());
          } else {
             res.append(symbol.toString());
          }

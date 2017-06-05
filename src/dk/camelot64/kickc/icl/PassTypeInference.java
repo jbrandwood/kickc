@@ -5,7 +5,7 @@ package dk.camelot64.kickc.icl;
  */
 public class PassTypeInference {
 
-   public void inferTypes(StatementSequence sequence, SymbolTable symbols) {
+   public void inferTypes(StatementSequence sequence, Scope symbols) {
       for (Statement statement : sequence.getStatements()) {
          if (statement instanceof StatementAssignment) {
             StatementAssignment assignment = (StatementAssignment) statement;

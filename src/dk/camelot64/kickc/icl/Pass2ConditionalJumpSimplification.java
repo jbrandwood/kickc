@@ -11,8 +11,8 @@ public class Pass2ConditionalJumpSimplification extends Pass2SsaOptimization {
 
    private Map<Variable, List<Statement>> allUsages;
 
-   public Pass2ConditionalJumpSimplification(ControlFlowGraph graph, SymbolTable symbolTable) {
-      super(graph, symbolTable);
+   public Pass2ConditionalJumpSimplification(ControlFlowGraph graph, Scope scope) {
+      super(graph, scope);
    }
 
    /**

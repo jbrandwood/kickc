@@ -4,9 +4,9 @@ package dk.camelot64.kickc.icl;
 public class Pass3RegisterAllocation {
 
    private ControlFlowGraph graph;
-   private SymbolTable symbols;
+   private Scope symbols;
 
-   public Pass3RegisterAllocation(ControlFlowGraph graph, SymbolTable symbols) {
+   public Pass3RegisterAllocation(ControlFlowGraph graph, Scope symbols) {
       this.graph = graph;
       this.symbols = symbols;
    }

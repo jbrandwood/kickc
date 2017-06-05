@@ -13,22 +13,22 @@ import java.util.Stack;
  */
 public class Pass1GenerateStatementSequence extends KickCBaseVisitor<Object> {
 
-   private SymbolTable programSymbols;
-   private Stack<SymbolTable> symbolsStack;
+   private Scope programSymbols;
+   private Stack<Scope> symbolsStack;
    private StatementSequence sequence;
 
    public Pass1GenerateStatementSequence() {
-      this.programSymbols = new SymbolTable();
+      this.programSymbols = new Scope();
       this.symbolsStack = new Stack<>();
       symbolsStack.push(programSymbols);
       this.sequence = new StatementSequence();
    }
 
-   public SymbolTable getProgramSymbols() {
+   public Scope getProgramSymbols() {
       return programSymbols;
    }
 
-   private SymbolTable getCurrentSymbols() {
+   private Scope getCurrentSymbols() {
       return symbolsStack.peek();
    }
 
@@ -133,9 +133,10 @@ public class Pass1GenerateStatementSequence extends KickCBaseVisitor<Object> {
       symbolsStack.push(procedure);
       List<Variable> parameterList = (List<Variable>) this.visit(ctx.parameterListDecl());
       procedure.setParameters(parameterList);
-      sequence.addStatement(new StatementProcedure(procedure));
+      sequence.addStatement(new StatementProcedureBegin(procedure));
       this.visit(ctx.stmtSeq());
       symbolsStack.pop();
+      sequence.addStatement(new StatementProcedureEnd(procedure));
       return null;
    }
 

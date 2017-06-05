@@ -6,8 +6,8 @@ import java.util.Map;
 /** Compiler Pass propagating constants in expressions eliminating constant variables */
 public class Pass2ConstantPropagation extends Pass2SsaOptimization {
 
-   public Pass2ConstantPropagation(ControlFlowGraph graph, SymbolTable symbolTable) {
-      super(graph, symbolTable);
+   public Pass2ConstantPropagation(ControlFlowGraph graph, Scope scope) {
+      super(graph, scope);
    }
 
    /**

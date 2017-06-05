@@ -7,11 +7,11 @@ public class Label implements Symbol {
    private String name;
 
    /** The name of the containing scope */
-   private SymbolTable scope;
+   private Scope scope;
 
    private boolean intermediate;
 
-   public Label(String name, SymbolTable scope, boolean intermediate) {
+   public Label(String name, Scope scope, boolean intermediate) {
       this.name = name;
       this.scope = scope;
       this.intermediate = intermediate;
@@ -22,13 +22,13 @@ public class Label implements Symbol {
    }
 
    @Override
-   public SymbolTable getScope() {
+   public Scope getScope() {
       return scope;
    }
 
    @Override
    public String getFullName() {
-      return SymbolTable.getFullName(this);
+      return Scope.getFullName(this);
    }
 
    public boolean isIntermediate() {

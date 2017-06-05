@@ -9,19 +9,19 @@ import java.util.*;
 public abstract class Pass2SsaOptimization {
 
    private ControlFlowGraph graph;
-   private SymbolTable symbolTable;
+   private Scope scope;
 
-   public Pass2SsaOptimization(ControlFlowGraph graph, SymbolTable symbolTable) {
+   public Pass2SsaOptimization(ControlFlowGraph graph, Scope scope) {
       this.graph = graph;
-      this.symbolTable = symbolTable;
+      this.scope = scope;
    }
 
    public ControlFlowGraph getGraph() {
       return graph;
    }
 
-   public SymbolTable getSymbols() {
-      return symbolTable;
+   public Scope getSymbols() {
+      return scope;
    }
 
    /**
@@ -226,7 +226,7 @@ public abstract class Pass2SsaOptimization {
     */
    public void deleteSymbols(Collection<? extends LValue> variables) {
       for (LValue variable : variables) {
-         symbolTable.remove((Symbol) variable);
+         scope.remove((Symbol) variable);
       }
    }
 

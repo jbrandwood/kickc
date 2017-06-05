@@ -13,7 +13,7 @@ public abstract class Variable implements Symbol, RValue, LValue {
    /**
     * Scope
     */
-   private SymbolTable scope;
+   private Scope scope;
 
    /**
     * The type of the symbol. VAR means tha type is unknown, and has not been inferred yet.
@@ -25,7 +25,7 @@ public abstract class Variable implements Symbol, RValue, LValue {
     */
    private boolean inferredType;
 
-   public Variable(String name, SymbolTable scope, SymbolType type) {
+   public Variable(String name, Scope scope, SymbolType type) {
       this.name = name;
       this.scope = scope;
       this.type = type;
@@ -38,7 +38,7 @@ public abstract class Variable implements Symbol, RValue, LValue {
 
    @Override
    public String getFullName() {
-      return SymbolTable.getFullName(this);
+      return Scope.getFullName(this);
    }
 
    @Override
@@ -90,7 +90,7 @@ public abstract class Variable implements Symbol, RValue, LValue {
       return getTypedName();
    }
 
-   public SymbolTable getScope() {
+   public Scope getScope() {
       return scope;
    }
 }

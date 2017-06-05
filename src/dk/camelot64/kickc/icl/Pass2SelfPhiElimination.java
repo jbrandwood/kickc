@@ -5,8 +5,8 @@ import java.util.Iterator;
 /** Compiler Pass eliminating phi self assignments  */
 public class Pass2SelfPhiElimination extends Pass2SsaOptimization {
 
-   public Pass2SelfPhiElimination(ControlFlowGraph graph, SymbolTable symbolTable) {
-      super(graph, symbolTable);
+   public Pass2SelfPhiElimination(ControlFlowGraph graph, Scope scope) {
+      super(graph, scope);
    }
 
    /**

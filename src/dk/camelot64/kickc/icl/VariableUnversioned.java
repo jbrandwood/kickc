@@ -10,7 +10,7 @@ public class VariableUnversioned extends Variable {
     */
    private Integer nextVersionNumber;
 
-   public VariableUnversioned(String name, SymbolTable scope, SymbolType type) {
+   public VariableUnversioned(String name, Scope scope, SymbolType type) {
       super(name, scope, type);
       this.nextVersionNumber = 0;
    }

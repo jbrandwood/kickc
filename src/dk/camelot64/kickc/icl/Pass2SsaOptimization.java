@@ -168,9 +168,9 @@ public abstract class Pass2SsaOptimization {
          @Override
          public Void visitPhi(StatementPhi phi) {
             for (StatementPhi.PreviousSymbol previousSymbol : phi.getPreviousVersions()) {
-               Label replacement = getReplacement(replacements, previousSymbol.getBlock().getLabel());
+               Label replacement = getReplacement(replacements, previousSymbol.getBlock());
                if (replacement != null) {
-                  previousSymbol.setBlock(graph.getBlock(replacement));
+                  previousSymbol.setBlock(replacement);
                }
             }
             return null;

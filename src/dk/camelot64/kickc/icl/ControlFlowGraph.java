@@ -1,6 +1,8 @@
 package dk.camelot64.kickc.icl;
 
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 import java.util.Map;
 
 /** The control flow graph of the program.
@@ -28,7 +30,7 @@ public class ControlFlowGraph {
    public String toString() {
       StringBuffer out = new StringBuffer();
       for (ControlFlowBlock block : blocks.values()) {
-         out.append(block.toString());
+         out.append(block.toString(this));
       }
       return out.toString();
    }
@@ -59,4 +61,27 @@ public class ControlFlowGraph {
       return null;
    }
 
+   public ControlFlowBlock getDefaultSuccessor(ControlFlowBlock block) {
+      if(block.getDefaultSuccessor()!=null) {
+         return blocks.get(block.getDefaultSuccessor());
+      } else {
+         return null;
+      }
+   }
+
+   public List<ControlFlowBlock> getPredecessors(ControlFlowBlock block) {
+      ArrayList<ControlFlowBlock> predecessorBlocks = new ArrayList<>();
+      for (ControlFlowBlock other : getAllBlocks()) {
+         if(block.getLabel().equals(other.getDefaultSuccessor())) {
+            predecessorBlocks.add(other);
+         }
+         if(block.getLabel().equals(other.getConditionalSuccessor())) {
+            predecessorBlocks.add(other);
+         }
+         if(block.getLabel().equals(other.getCallSuccessor())) {
+            predecessorBlocks.add(other);
+         }
+      }
+      return predecessorBlocks;
+   }
 }

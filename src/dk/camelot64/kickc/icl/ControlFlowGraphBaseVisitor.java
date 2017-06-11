@@ -20,7 +20,7 @@ public class ControlFlowGraphBaseVisitor<T> {
       return null;
    }
 
-   public T visitStatement(Statement statement) {
+   public Object visitStatement(Statement statement) {
       if(statement instanceof StatementAssignment) {
          return visitAssignment((StatementAssignment) statement);
       } else if(statement instanceof StatementConditionalJump) {
@@ -31,9 +31,29 @@ public class ControlFlowGraphBaseVisitor<T> {
          return visitJumpTarget((StatementLabel) statement);
       } else if(statement instanceof StatementPhi) {
          return visitPhi((StatementPhi) statement);
+      } else if(statement instanceof StatementCallLValue) {
+         return visitCallLValue((StatementCallLValue) statement);
+      } else if(statement instanceof StatementReturn) {
+         return visitReturn((StatementReturn) statement);
+      } else if(statement instanceof StatementProcedureBegin) {
+         return visitProcedureBegin((StatementProcedureBegin) statement);
+      } else if(statement instanceof StatementProcedureEnd) {
+         return visitProcedureEnd((StatementProcedureEnd) statement);
       } else {
          throw new RuntimeException("Unhandled statement type "+statement);
       }
+   }
+
+   public T visitProcedureBegin(StatementProcedureBegin statement) {
+      return null;
+   }
+
+   public T visitProcedureEnd(StatementProcedureEnd statement) {
+      return null;
+   }
+
+   public T visitReturn(StatementReturn aReturn) {
+      return null;
    }
 
    public T visitAssignment(StatementAssignment assignment) {
@@ -53,6 +73,10 @@ public class ControlFlowGraphBaseVisitor<T> {
    }
 
    public T visitPhi(StatementPhi phi) {
+      return null;
+   }
+
+   public T visitCallLValue(StatementCallLValue callLValue) {
       return null;
    }
 

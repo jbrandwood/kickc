@@ -18,29 +18,23 @@ public class Pass2CullEmptyBlocks extends Pass2SsaOptimization {
             remove.add(block);
          }
       }
-      for (ControlFlowBlock block : remove) {
-         ControlFlowBlock successor = block.getDefaultSuccessor();
-         for (ControlFlowBlock predecessor : block.getPredecessors()) {
-            replace.put(block.getLabel(), predecessor.getLabel());
-            if (block.equals(predecessor.getDefaultSuccessor())) {
-               predecessor.setDefaultSuccessor(successor);
-               if (successor != null) {
-                  successor.addPredecessor(predecessor);
-               }
+      for (ControlFlowBlock removeBlock : remove) {
+         ControlFlowBlock successor = getGraph().getDefaultSuccessor(removeBlock);
+         for (ControlFlowBlock predecessor : getGraph().getPredecessors(removeBlock)) {
+            replace.put(removeBlock.getLabel(), predecessor.getLabel());
+            if (removeBlock.getLabel().equals(predecessor.getDefaultSuccessor())) {
+               predecessor.setDefaultSuccessor(successor.getLabel());
             }
-            if (block.equals(predecessor.getConditionalSuccessor())) {
-               predecessor.setConditionalSuccessor(successor);
-               if (successor != null) {
-                  successor.addPredecessor(predecessor);
-               }
+            if (removeBlock.getLabel().equals(predecessor.getConditionalSuccessor())) {
+               predecessor.setConditionalSuccessor(successor.getLabel());
+            }
+            if (removeBlock.getLabel().equals(predecessor.getCallSuccessor())) {
+               predecessor.setCallSuccessor(successor.getLabel());
             }
          }
-         if (successor != null && block.getLabel().isIntermediate()) {
-            successor.removePredecessor(block);
-         }
-         getGraph().getAllBlocks().remove(block);
-         getSymbols().remove(block.getLabel());
-         System.out.println("Culled Empty Block " + block.getLabel());
+         getGraph().getAllBlocks().remove(removeBlock);
+         getSymbols().remove(removeBlock.getLabel());
+         System.out.println("Culled Empty Block " + removeBlock.getLabel());
       }
       replaceLabels(replace);
       return remove.size()>0;

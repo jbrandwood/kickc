@@ -125,6 +125,7 @@ public class Scope implements Symbol {
       }
       Procedure procedure = new Procedure(name, type, this);
       add(procedure);
+      procedure.addVariable("return", type);
       return procedure;
    }
 

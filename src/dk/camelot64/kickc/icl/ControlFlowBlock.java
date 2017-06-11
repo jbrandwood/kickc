@@ -4,23 +4,23 @@ import java.util.ArrayList;
 import java.util.List;
 
 /** A named/labelled sequence of SSA statements connected to other basic blocks.
- * The connections defines the control flow of the program. */
+ * The connections defines the control flow of the program.
+ * The block only knows its own successors. To find predecessor blocks access to the entire graph is needed.*/
 public class ControlFlowBlock {
 
    private Label label;
 
-   private List<ControlFlowBlock> predecessors;
-
    private List<Statement> statements;
 
-   private ControlFlowBlock defaultSuccessor;
+   private Label defaultSuccessor;
 
-   private ControlFlowBlock conditionalSuccessor;
+   private Label conditionalSuccessor;
+
+   private Label callSuccessor;
 
    public ControlFlowBlock(Label label) {
       this.label = label;
       this.statements = new ArrayList<>();
-      this.predecessors = new ArrayList<>();
       this.defaultSuccessor = null;
       this.conditionalSuccessor = null;
    }
@@ -33,32 +33,28 @@ public class ControlFlowBlock {
       this.statements.add(statement);
    }
 
-   public void addPredecessor(ControlFlowBlock block) {
-      this.predecessors.add(block);
-   }
-
-   public void setDefaultSuccessor(ControlFlowBlock defaultSuccessor) {
+   public void setDefaultSuccessor(Label defaultSuccessor) {
       this.defaultSuccessor = defaultSuccessor;
    }
 
-   public ControlFlowBlock getDefaultSuccessor() {
+   public Label getDefaultSuccessor() {
       return defaultSuccessor;
    }
 
-   public ControlFlowBlock getConditionalSuccessor() {
+   public Label getConditionalSuccessor() {
       return conditionalSuccessor;
    }
 
-   public List<ControlFlowBlock> getPredecessors() {
-      return predecessors;
-   }
-
-   public void setConditionalSuccessor(ControlFlowBlock conditionalSuccessor) {
+   public void setConditionalSuccessor(Label conditionalSuccessor) {
       this.conditionalSuccessor = conditionalSuccessor;
    }
 
-   public void removePredecessor(ControlFlowBlock block) {
-      predecessors.remove(block);
+   public Label getCallSuccessor() {
+      return callSuccessor;
+   }
+
+   public void setCallSuccessor(Label callSuccessor) {
+      this.callSuccessor = callSuccessor;
    }
 
    public List<Statement> getStatements() {
@@ -71,13 +67,22 @@ public class ControlFlowBlock {
 
    @Override
    public String toString() {
+      return toString(null);
+   }
+
+   public String toString(ControlFlowGraph graph) {
       StringBuffer out = new StringBuffer();
       out.append(label.getLocalName() + ":" );
-      if(predecessors.size()>0) {
-         out.append(" from");
-         for (ControlFlowBlock predecessor : predecessors) {
-            out.append(" " + predecessor.getLabel().getLocalName());
+      out.append(" from");
+      if(graph!=null) {
+         List<ControlFlowBlock> predecessors = graph.getPredecessors(this);
+         if(predecessors.size()>0) {
+            for (ControlFlowBlock predecessor : predecessors) {
+               out.append(" " + predecessor.getLabel().getLocalName());
+            }
          }
+      } else {
+         out.append(" @UNKNOWN");
       }
       out.append("\n");
       for (Statement statement : statements) {
@@ -85,7 +90,7 @@ public class ControlFlowBlock {
       }
       if(defaultSuccessor!=null) {
          out.append("  to:");
-         out.append(defaultSuccessor.getLabel().getLocalName());
+         out.append(defaultSuccessor.getLocalName());
          out.append("\n");
       }
       return out.toString();
@@ -112,4 +117,5 @@ public class ControlFlowBlock {
       }
       return false;
    }
+
 }

@@ -42,14 +42,24 @@ public class Main {
       System.out.println("INITIAL CONTROL FLOW GRAPH");
       System.out.println(controlFlowGraph.toString());
 
-
-
-
-      if(1==1) return;
+      Pass1ProcedureCallParameters pass1ProcedureCallParameters = new Pass1ProcedureCallParameters(programScope, controlFlowGraph);
+      controlFlowGraph = pass1ProcedureCallParameters.generate();
+      System.out.println("CONTROL FLOW GRAPH WITH ASSIGNMENT CALL");
+      System.out.println(controlFlowGraph.toString());
 
       Pass1GenerateSingleStaticAssignmentForm pass1GenerateSingleStaticAssignmentForm =
             new Pass1GenerateSingleStaticAssignmentForm(programScope, controlFlowGraph);
       pass1GenerateSingleStaticAssignmentForm.generate();
+
+      System.out.println("CONTROL FLOW GRAPH SSA");
+      System.out.println(controlFlowGraph.toString());
+
+      //Pass1ProcedureCallsReturnValue pass1ProcedureCallsReturnValue = new Pass1ProcedureCallsReturnValue(programScope, controlFlowGraph);
+      //controlFlowGraph = pass1ProcedureCallsReturnValue.generate();
+      //System.out.println("CONTROL FLOW GRAPH WITH ASSIGNMENT CALL & RETURN");
+      //System.out.println(controlFlowGraph.toString());
+
+      if(1==1) return;
 
       List<Pass2SsaOptimization> optimizations = new ArrayList<>();
       optimizations.add(new Pass2CullEmptyBlocks(controlFlowGraph, programScope));

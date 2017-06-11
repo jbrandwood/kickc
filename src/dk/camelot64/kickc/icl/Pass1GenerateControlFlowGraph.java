@@ -28,15 +28,13 @@ public class Pass1GenerateControlFlowGraph {
          if(statement instanceof StatementLabel) {
             StatementLabel statementLabel = (StatementLabel) statement;
             ControlFlowBlock nextBlock = getOrCreateBlock(statementLabel.getLabel());
-            currentBlock.setDefaultSuccessor(nextBlock);
-            nextBlock.addPredecessor(currentBlock);
+            currentBlock.setDefaultSuccessor(nextBlock.getLabel());
             blockStack.pop();
             blockStack.push(nextBlock);
          }  else if(statement instanceof StatementJump) {
             StatementJump statementJump = (StatementJump) statement;
             ControlFlowBlock jmpBlock = getOrCreateBlock(statementJump.getDestination());
-            currentBlock.setDefaultSuccessor(jmpBlock);
-            jmpBlock.addPredecessor(currentBlock);
+            currentBlock.setDefaultSuccessor(jmpBlock.getLabel());
             ControlFlowBlock nextBlock = getOrCreateBlock(scope.addLabelIntermediate());
             blockStack.pop();
             blockStack.push(nextBlock);
@@ -45,28 +43,30 @@ public class Pass1GenerateControlFlowGraph {
             StatementConditionalJump statementConditionalJump = (StatementConditionalJump) statement;
             ControlFlowBlock jmpBlock = getOrCreateBlock(statementConditionalJump.getDestination());
             ControlFlowBlock nextBlock = getOrCreateBlock(scope.addLabelIntermediate());
-            currentBlock.setDefaultSuccessor(nextBlock);
-            currentBlock.setConditionalSuccessor(jmpBlock);
-            nextBlock.addPredecessor(currentBlock);
-            jmpBlock.addPredecessor(currentBlock);
+            currentBlock.setDefaultSuccessor(nextBlock.getLabel());
+            currentBlock.setConditionalSuccessor(jmpBlock.getLabel());
             blockStack.pop();
             blockStack.push(nextBlock);
          }  else if(statement instanceof StatementProcedureBegin) {
             // Procedure strategy implemented is currently variable-based transfer of parameters/return values
-            StatementProcedureBegin procedure = (StatementProcedureBegin) statement;
-            procedure.setStrategy(StatementProcedureBegin.Strategy.PASS_BY_REGISTER);
-            Label procedureLabel = procedure.getProcedure().getLabel();
+            StatementProcedureBegin procedureBegin = (StatementProcedureBegin) statement;
+            procedureBegin.setStrategy(StatementProcedureBegin.Strategy.PASS_BY_REGISTER);
+            Label procedureLabel = procedureBegin.getProcedure().getLabel();
             ControlFlowBlock procBlock = getOrCreateBlock(procedureLabel);
             blockStack.push(procBlock);
          }  else if(statement instanceof StatementProcedureEnd) {
             // Procedure strategy implemented is currently variable-based transfer of parameters/return values
-            currentBlock.setDefaultSuccessor(new ControlFlowBlock(new Label("@RETURN", scope, false)));
+            currentBlock.setDefaultSuccessor(new Label("@RETURN", scope, false));
             ControlFlowBlock nextBlock = getOrCreateBlock(scope.addLabelIntermediate());
             blockStack.pop();
-            ControlFlowBlock  prevBlock = blockStack.pop();
-            prevBlock.setDefaultSuccessor(nextBlock);
-            nextBlock.addPredecessor(prevBlock);
+            ControlFlowBlock prevBlock = blockStack.pop();
+            prevBlock.setDefaultSuccessor(nextBlock.getLabel());
             blockStack.push(nextBlock);
+         }  else if(statement instanceof StatementReturn) {
+            // Procedure strategy implemented is currently variable-based transfer of parameters/return values
+            StatementReturn aReturn = (StatementReturn) statement;
+            currentBlock.addStatement(aReturn);
+            // TODO: Make all returns exit through the same exit-block!
          } else {
             currentBlock.addStatement(statement);
          }

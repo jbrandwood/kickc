@@ -27,7 +27,7 @@ public class Pass3CodeGeneration {
          // Generate statements
          genStatements(asm, block);
          // Generate exit
-         ControlFlowBlock defaultSuccessor = block.getDefaultSuccessor();
+         ControlFlowBlock defaultSuccessor = graph.getDefaultSuccessor(block);
          if (defaultSuccessor != null) {
             if (defaultSuccessor.hasPhiStatements()) {
                genBlockPhiTransition(asm, block, defaultSuccessor);
@@ -81,8 +81,8 @@ public class Pass3CodeGeneration {
 
    private void genBlockEntryPoints(AsmProgram asm, ControlFlowBlock block) {
       if (block.hasPhiStatements()) {
-         for (ControlFlowBlock predecessor : block.getPredecessors()) {
-            if (block.equals(predecessor.getConditionalSuccessor())) {
+         for (ControlFlowBlock predecessor : graph.getPredecessors(block)) {
+            if (block.getLabel().equals(predecessor.getConditionalSuccessor())) {
                genBlockPhiTransition(asm, predecessor, block);
                asm.addInstruction("JMP", AsmAddressingMode.ABS, block.getLabel().getLocalName().replace('@', 'B'));
             }

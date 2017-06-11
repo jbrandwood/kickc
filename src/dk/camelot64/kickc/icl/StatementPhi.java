@@ -27,15 +27,15 @@ public class StatementPhi implements StatementLValue {
     * Which value is chosen depends on which block transition was made.
     */
    public static class PreviousSymbol {
-      private ControlFlowBlock block;
+      private Label block;
       private RValue rValue;
 
-      public PreviousSymbol(ControlFlowBlock block, RValue rValue) {
+      public PreviousSymbol(Label block, RValue rValue) {
          this.block = block;
          this.rValue = rValue;
       }
 
-      public ControlFlowBlock getBlock() {
+      public Label getBlock() {
          return block;
       }
 
@@ -43,12 +43,11 @@ public class StatementPhi implements StatementLValue {
          return rValue;
       }
 
-
       public void setRValue(RValue RValue) {
          this.rValue = RValue;
       }
 
-      public void setBlock(ControlFlowBlock block) {
+      public void setBlock(Label block) {
          this.block = block;
       }
    }
@@ -65,8 +64,8 @@ public class StatementPhi implements StatementLValue {
       this.lValue = (VariableVersion) lValue;
    }
 
-   public void addPreviousVersion(ControlFlowBlock block, VariableVersion symbol) {
-      previousVersions.add(new PreviousSymbol(block, symbol));
+   public void addPreviousVersion(Label block, RValue rValue) {
+      previousVersions.add(new PreviousSymbol(block, rValue));
    }
 
    public List<PreviousSymbol> getPreviousVersions() {
@@ -78,7 +77,7 @@ public class StatementPhi implements StatementLValue {
       StringBuilder out = new StringBuilder();
       out.append(lValue + " ← " + "phi(");
       for (PreviousSymbol previousSymbol : previousVersions) {
-         out.append(" "+previousSymbol.getBlock().getLabel().getLocalName()+"/"+previousSymbol.getRValue());
+         out.append(" "+previousSymbol.getBlock().getLocalName()+"/"+previousSymbol.getRValue());
       }
       out.append(" )");
       return out.toString();

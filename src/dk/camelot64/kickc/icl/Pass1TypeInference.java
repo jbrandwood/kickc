@@ -47,6 +47,9 @@ public class Pass1TypeInference {
                String procedureName = call.getProcedureName();
                Procedure procedure = scopes.peek().getProcedure(procedureName);
                call.setProcedure(procedure);
+               if(procedure.getParameters().size()!=call.getParameters().size()) {
+                  throw new RuntimeException("Wrong number of parameters in call. Expected " +procedure.getParameters().size()+". "+statement.toString());
+               }
                ((Variable) lValue).setInferredType(procedure.getReturnType());
             }
          }

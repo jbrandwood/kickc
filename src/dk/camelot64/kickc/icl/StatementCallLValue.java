@@ -14,11 +14,13 @@ public class StatementCallLValue implements StatementLValue {
    private String procedureName;
    private List<RValue> parameters;
    private Procedure procedure;
+   private boolean parametersByAssignment;
 
    public StatementCallLValue(LValue lValue, String  procedureName, List<RValue> parameters) {
       this.lValue = lValue;
       this.procedureName = procedureName;
       this.parameters = parameters;
+      this.parametersByAssignment = false;
    }
 
    public LValue getLValue() {
@@ -53,6 +55,14 @@ public class StatementCallLValue implements StatementLValue {
       return parameters.get(idx);
    }
 
+   public boolean isParametersByAssignment() {
+      return parametersByAssignment;
+   }
+
+   public void setParametersByAssignment(boolean parametersByAssignment) {
+      this.parametersByAssignment = parametersByAssignment;
+   }
+
    @Override
    public String toString() {
       StringBuilder res = new StringBuilder();
@@ -64,10 +74,20 @@ public class StatementCallLValue implements StatementLValue {
       }  else {
          res.append(procedureName + " ");
       }
-      for (RValue parameter : parameters) {
-         res.append(parameter+" ");
+      if(parameters!=null) {
+         for (RValue parameter : parameters) {
+            res.append(parameter + " ");
+         }
+      }
+      if(parametersByAssignment) {
+         res.append("param-assignment");
       }
       return res.toString();
+   }
+
+   public void clearParameters() {
+      this.parameters = null;
+      this.parametersByAssignment = true;
    }
 
 }

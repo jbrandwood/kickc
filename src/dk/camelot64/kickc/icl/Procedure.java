@@ -21,7 +21,7 @@ public class Procedure extends Scope {
    }
 
    public Label getLabel() {
-      return new Label(getLocalName(), this, false);
+      return new Label(getFullName(), getScope(), false);
    }
 
    public SymbolType getReturnType() {

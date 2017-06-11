@@ -86,8 +86,8 @@ public class ControlFlowBlock {
       if(defaultSuccessor!=null) {
          out.append("  to:");
          out.append(defaultSuccessor.getLabel().getLocalName());
+         out.append("\n");
       }
-      out.append("\n");
       return out.toString();
    }
 

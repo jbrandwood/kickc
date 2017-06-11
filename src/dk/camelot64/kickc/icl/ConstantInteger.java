@@ -16,7 +16,7 @@ public class ConstantInteger implements Constant {
    }
 
    public SymbolType getType() {
-      return PassTypeInference.inferType(this);
+      return Pass1TypeInference.inferType(this);
    }
 
    @Override

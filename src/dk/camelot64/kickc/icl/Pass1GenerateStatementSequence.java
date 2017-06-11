@@ -13,23 +13,23 @@ import java.util.Stack;
  */
 public class Pass1GenerateStatementSequence extends KickCBaseVisitor<Object> {
 
-   private Scope programSymbols;
-   private Stack<Scope> symbolsStack;
+   private Scope programScope;
+   private Stack<Scope> scopeStack;
    private StatementSequence sequence;
 
    public Pass1GenerateStatementSequence() {
-      this.programSymbols = new Scope();
-      this.symbolsStack = new Stack<>();
-      symbolsStack.push(programSymbols);
+      this.programScope = new Scope();
+      this.scopeStack = new Stack<>();
+      scopeStack.push(programScope);
       this.sequence = new StatementSequence();
    }
 
-   public Scope getProgramSymbols() {
-      return programSymbols;
+   public Scope getProgramScope() {
+      return programScope;
    }
 
    private Scope getCurrentSymbols() {
-      return symbolsStack.peek();
+      return scopeStack.peek();
    }
 
    public void generate(KickCParser.FileContext file) {
@@ -130,12 +130,15 @@ public class Pass1GenerateStatementSequence extends KickCBaseVisitor<Object> {
       SymbolType type = (SymbolType) visit(ctx.typeDecl());
       String name = ctx.NAME().getText();
       Procedure procedure = getCurrentSymbols().addProcedure(name, type);
-      symbolsStack.push(procedure);
-      List<Variable> parameterList = (List<Variable>) this.visit(ctx.parameterListDecl());
+      scopeStack.push(procedure);
+      List<Variable> parameterList = new ArrayList<>();
+      if(ctx.parameterListDecl()!=null) {
+         parameterList = (List<Variable>) this.visit(ctx.parameterListDecl());
+      }
       procedure.setParameters(parameterList);
       sequence.addStatement(new StatementProcedureBegin(procedure));
       this.visit(ctx.stmtSeq());
-      symbolsStack.pop();
+      scopeStack.pop();
       sequence.addStatement(new StatementProcedureEnd(procedure));
       return null;
    }
@@ -260,10 +263,9 @@ public class Pass1GenerateStatementSequence extends KickCBaseVisitor<Object> {
 
    @Override
    public Object visitExprCall(KickCParser.ExprCallContext ctx) {
-      Label label = new Label(ctx.NAME().getText(), getCurrentSymbols(), false);
       List<RValue> parameters = (List<RValue>) this.visit(ctx.parameterList());
       VariableIntermediate tmpVar = getCurrentSymbols().addVariableIntermediate();
-      sequence.addStatement(new StatementCallLValue(tmpVar, label, parameters));
+      sequence.addStatement(new StatementCallLValue(tmpVar, ctx.NAME().getText(), parameters));
       return tmpVar;
    }
 

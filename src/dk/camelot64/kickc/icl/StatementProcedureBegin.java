@@ -5,12 +5,27 @@ public class StatementProcedureBegin implements Statement {
 
    private Procedure procedure;
 
+   private Strategy strategy;
+
+   public static enum Strategy {
+      PASS_BY_REGISTER,
+      INLINE
+   }
+
    public StatementProcedureBegin(Procedure procedure) {
       this.procedure = procedure;
    }
 
    public Procedure getProcedure() {
       return procedure;
+   }
+
+   public Strategy getStrategy() {
+      return strategy;
+   }
+
+   public void setStrategy(Strategy strategy) {
+      this.strategy = strategy;
    }
 
    @Override

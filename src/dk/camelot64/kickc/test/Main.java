@@ -29,32 +29,37 @@ public class Main {
       Pass1GenerateStatementSequence pass1GenerateStatementSequence = new Pass1GenerateStatementSequence();
       pass1GenerateStatementSequence.generate(file);
       StatementSequence statementSequence = pass1GenerateStatementSequence.getSequence();
-      Scope scope = pass1GenerateStatementSequence.getProgramSymbols();
-      new PassTypeInference().inferTypes(statementSequence, scope);
+      Scope programScope = pass1GenerateStatementSequence.getProgramScope();
+      new Pass1TypeInference().inferTypes(statementSequence, programScope);
 
       System.out.println("PROGRAM");
       System.out.println(statementSequence.toString());
       System.out.println("SYMBOLS");
-      System.out.println(scope.getSymbolTableContents());
+      System.out.println(programScope.getSymbolTableContents());
 
-      Pass1GenerateControlFlowGraph pass1GenerateControlFlowGraph = new Pass1GenerateControlFlowGraph(scope);
+      Pass1GenerateControlFlowGraph pass1GenerateControlFlowGraph = new Pass1GenerateControlFlowGraph(programScope);
       ControlFlowGraph controlFlowGraph = pass1GenerateControlFlowGraph.generate(statementSequence);
+      System.out.println("INITIAL CONTROL FLOW GRAPH");
+      System.out.println(controlFlowGraph.toString());
+
+
+
+
+      if(1==1) return;
 
       Pass1GenerateSingleStaticAssignmentForm pass1GenerateSingleStaticAssignmentForm =
-            new Pass1GenerateSingleStaticAssignmentForm(scope, controlFlowGraph);
+            new Pass1GenerateSingleStaticAssignmentForm(programScope, controlFlowGraph);
       pass1GenerateSingleStaticAssignmentForm.generate();
 
       List<Pass2SsaOptimization> optimizations = new ArrayList<>();
-      optimizations.add(new Pass2CullEmptyBlocks(controlFlowGraph, scope));
-      optimizations.add(new Pass2ConstantPropagation(controlFlowGraph, scope));
-      optimizations.add(new Pass2ConstantAdditionElimination(controlFlowGraph, scope));
-      optimizations.add(new Pass2AliasElimination(controlFlowGraph, scope));
-      optimizations.add(new Pass2RedundantPhiElimination(controlFlowGraph, scope));
-      optimizations.add(new Pass2SelfPhiElimination(controlFlowGraph, scope));
-      optimizations.add(new Pass2ConditionalJumpSimplification(controlFlowGraph, scope));
+      optimizations.add(new Pass2CullEmptyBlocks(controlFlowGraph, programScope));
+      optimizations.add(new Pass2ConstantPropagation(controlFlowGraph, programScope));
+      optimizations.add(new Pass2ConstantAdditionElimination(controlFlowGraph, programScope));
+      optimizations.add(new Pass2AliasElimination(controlFlowGraph, programScope));
+      optimizations.add(new Pass2RedundantPhiElimination(controlFlowGraph, programScope));
+      optimizations.add(new Pass2SelfPhiElimination(controlFlowGraph, programScope));
+      optimizations.add(new Pass2ConditionalJumpSimplification(controlFlowGraph, programScope));
 
-      System.out.println("INITIAL CONTROL FLOW GRAPH");
-      System.out.println(controlFlowGraph.toString());
 
       boolean ssaOptimized = true;
       while (ssaOptimized) {
@@ -70,9 +75,9 @@ public class Main {
          }
       }
 
-      Pass3RegisterAllocation pass3RegisterAllocation = new Pass3RegisterAllocation(controlFlowGraph, scope);
+      Pass3RegisterAllocation pass3RegisterAllocation = new Pass3RegisterAllocation(controlFlowGraph, programScope);
       pass3RegisterAllocation.allocate();
-      Pass3CodeGeneration pass3CodeGeneration = new Pass3CodeGeneration(controlFlowGraph, scope);
+      Pass3CodeGeneration pass3CodeGeneration = new Pass3CodeGeneration(controlFlowGraph, programScope);
       AsmProgram asmProgram = pass3CodeGeneration.generate();
 
       System.out.println("INITIAL ASM");
@@ -96,7 +101,7 @@ public class Main {
       }
 
       System.out.println("SYMBOLS");
-      System.out.println(scope.toString());
+      System.out.println(programScope.toString());
       System.out.println("CONTROL FLOW GRAPH");
       System.out.println(controlFlowGraph.toString());
       System.out.println("ASSEMBLER");

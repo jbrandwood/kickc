@@ -11,12 +11,13 @@ public class StatementCallLValue implements StatementLValue {
 
    /** The variable being assigned a value by the call. */
    private LValue lValue;
-   private Label callLabel;
+   private String procedureName;
    private List<RValue> parameters;
+   private Procedure procedure;
 
-   public StatementCallLValue(LValue lValue, Label callLabel, List<RValue> parameters) {
+   public StatementCallLValue(LValue lValue, String  procedureName, List<RValue> parameters) {
       this.lValue = lValue;
-      this.callLabel = callLabel;
+      this.procedureName = procedureName;
       this.parameters = parameters;
    }
 
@@ -28,8 +29,16 @@ public class StatementCallLValue implements StatementLValue {
       this.lValue = lValue;
    }
 
-   public Label getCallLabel() {
-      return callLabel;
+   public String getProcedureName() {
+      return procedureName;
+   }
+
+   public Procedure getProcedure() {
+      return procedure;
+   }
+
+   public void setProcedure(Procedure procedure) {
+      this.procedure = procedure;
    }
 
    public List<RValue> getParameters() {
@@ -50,7 +59,11 @@ public class StatementCallLValue implements StatementLValue {
       res.append(lValue);
       res.append(" ← ");
       res.append("call ");
-      res.append(callLabel+" ");
+      if(procedure!=null) {
+         res.append(procedure.getFullName()+ " ");
+      }  else {
+         res.append(procedureName + " ");
+      }
       for (RValue parameter : parameters) {
          res.append(parameter+" ");
       }

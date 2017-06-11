@@ -28,7 +28,7 @@ public class ControlFlowGraph {
    public String toString() {
       StringBuffer out = new StringBuffer();
       for (ControlFlowBlock block : blocks.values()) {
-         out.append(block);
+         out.append(block.toString());
       }
       return out.toString();
    }

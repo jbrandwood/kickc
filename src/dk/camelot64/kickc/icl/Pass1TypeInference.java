@@ -1,13 +1,23 @@
 package dk.camelot64.kickc.icl;
 
-/**
- * Pass through the SSA statements inferring types of unresolved variables.
- */
-public class PassTypeInference {
+import java.util.Stack;
 
-   public void inferTypes(StatementSequence sequence, Scope symbols) {
+/**
+ * Pass through the generated statements inferring types of unresolved variables.
+ * Also updates procedure calls to point to the actual procedure called.
+ */
+public class Pass1TypeInference {
+
+   public void inferTypes(StatementSequence sequence, Scope programScope) {
+      Stack<Scope> scopes = new Stack<>();
+      scopes.add(programScope);
       for (Statement statement : sequence.getStatements()) {
-         if (statement instanceof StatementAssignment) {
+         if(statement instanceof StatementProcedureBegin) {
+                StatementProcedureBegin procedureBegin = (StatementProcedureBegin) statement;
+                scopes.push(procedureBegin.getProcedure());
+         }  else if(statement instanceof StatementProcedureEnd) {
+            scopes.pop();
+         } else if (statement instanceof StatementAssignment) {
             StatementAssignment assignment = (StatementAssignment) statement;
             LValue lValue = assignment.getLValue();
             if (lValue instanceof Variable) {
@@ -31,11 +41,12 @@ public class PassTypeInference {
                }
             }
          } else if(statement instanceof StatementCallLValue) {
-            StatementCallLValue callLValue = (StatementCallLValue) statement;
-            LValue lValue = callLValue.getLValue();
+            StatementCallLValue call = (StatementCallLValue) statement;
+            LValue lValue = call.getLValue();
             if(lValue instanceof Variable) {
-               Label label = callLValue.getCallLabel();
-               Procedure procedure = symbols.getProcedure(label.getLocalName());
+               String procedureName = call.getProcedureName();
+               Procedure procedure = scopes.peek().getProcedure(procedureName);
+               call.setProcedure(procedure);
                ((Variable) lValue).setInferredType(procedure.getReturnType());
             }
          }

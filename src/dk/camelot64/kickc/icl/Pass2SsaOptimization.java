@@ -106,14 +106,23 @@ public abstract class Pass2SsaOptimization {
             if (getAlias(aliases, aReturn.getValue()) != null) {
                aReturn.setValue(getAlias(aliases, aReturn.getValue()));
             }
+            return null;
          }
 
          @Override
-         public Void visitCallLValue(StatementCallLValue callLValue) {
-
-            for (RValue parameter: callLValue.getParameters()) {
-
+         public Void visitCallLValue(StatementCall call) {
+            if(call.getParameters()!=null) {
+               List<RValue> newParams = new ArrayList<>();
+               for (RValue parameter : call.getParameters()) {
+                  RValue newParam = parameter;
+                  if (getAlias(aliases, parameter) != null) {
+                     newParam = getAlias(aliases, parameter);
+                  }
+                  newParams.add(newParam);
+               }
+               call.setParameters(newParams);
             }
+            return null;
          }
 
          @Override

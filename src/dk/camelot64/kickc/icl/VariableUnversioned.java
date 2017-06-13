@@ -31,4 +31,10 @@ public class VariableUnversioned extends Variable {
    public boolean isIntermediate() {
       return false;
    }
+
+   public VariableVersion createVersion() {
+         VariableVersion version = new VariableVersion(this, this.getNextVersionNumber());
+         getScope().add(version);
+         return version;
+   }
 }

@@ -93,4 +93,14 @@ public abstract class Variable implements Symbol, RValue, LValue {
    public Scope getScope() {
       return scope;
    }
+
+   @Override
+   public int getScopeDepth() {
+      if(scope==null) {
+         return 0;
+      } else {
+         return scope.getScopeDepth()+1;
+      }
+   }
+
 }

@@ -47,6 +47,10 @@ public class StatementCall implements StatementLValue {
       return parameters;
    }
 
+   public void setParameters(List<RValue> parameters) {
+      this.parameters = parameters;
+   }
+
    public int getNumParameters() {
       return parameters.size();
    }

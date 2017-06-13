@@ -22,6 +22,10 @@ public class StatementPhi implements StatementLValue {
       this.previousVersions = new ArrayList<>();
    }
 
+   public PreviousSymbol getPreviousVersion(int i) {
+      return previousVersions.get(i);
+   }
+
    /**
     * A previous version of the rValue that the phi function might take its value from.
     * Which value is chosen depends on which block transition was made.

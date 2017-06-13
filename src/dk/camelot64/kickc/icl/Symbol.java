@@ -13,5 +13,5 @@ public interface Symbol extends Value {
 
    Scope getScope();
 
-
+   int getScopeDepth();
 }

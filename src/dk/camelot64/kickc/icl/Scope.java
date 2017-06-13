@@ -40,10 +40,10 @@ public class Scope implements Symbol {
    }
 
    public static String getFullName(Symbol symbol) {
-      if(symbol.getScope()!=null) {
+      if (symbol.getScope() != null) {
          String scopeName = symbol.getScope().getFullName();
-         if(scopeName.length()>0) {
-            return scopeName+"::"+symbol.getLocalName();
+         if (scopeName.length() > 0) {
+            return scopeName + "::" + symbol.getLocalName();
          }
       }
       return symbol.getLocalName();
@@ -63,6 +63,15 @@ public class Scope implements Symbol {
    @Override
    public SymbolType getType() {
       return type;
+   }
+
+   @Override
+   public int getScopeDepth() {
+      if (parentScope == null) {
+         return 0;
+      } else {
+         return parentScope.getScopeDepth() + 1;
+      }
    }
 
    public Symbol add(Symbol symbol) {
@@ -90,9 +99,27 @@ public class Scope implements Symbol {
       return symbol;
    }
 
-   public Variable getVariable(String name) {
-      return (Variable) symbols.get(name);
+   public Symbol getSymbol(String name) {
+      int pos = name.indexOf("::");
+      if (pos >= 0) {
+         String scopeName = name.substring(0, pos);
+         String rest = name.substring(pos + 2);
+         Symbol scopeSym = symbols.get(scopeName);
+         if (scopeSym instanceof Scope) {
+            return ((Scope) scopeSym).getSymbol(rest);
+         } else {
+            throw new RuntimeException("Error looking up symbol " + name);
+         }
+      } else {
+         return symbols.get(name);
+      }
    }
+
+
+   public Variable getVariable(String name) {
+      return (Variable) getSymbol(name);
+   }
+
 
    public Collection<Variable> getAllVariables() {
       Collection<Variable> vars = new ArrayList<>();
@@ -140,14 +167,13 @@ public class Scope implements Symbol {
       }
    }
 
-   public VariableVersion createVersion(VariableUnversioned symbol) {
-      VariableVersion version = new VariableVersion(symbol, symbol.getNextVersionNumber());
-      symbols.put(version.getLocalName(), version);
-      return version;
-   }
-
    public void setAllocation(RegisterAllocation allocation) {
       this.allocation = allocation;
+      for (Symbol symbol : symbols.values()) {
+         if(symbol instanceof Scope) {
+            ((Scope) symbol).setAllocation(allocation);
+         }
+      }
    }
 
    public RegisterAllocation.Register getRegister(Variable variable) {

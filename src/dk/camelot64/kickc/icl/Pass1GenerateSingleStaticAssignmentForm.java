@@ -40,7 +40,7 @@ public class Pass1GenerateSingleStaticAssignmentForm {
                if (lValue instanceof VariableUnversioned) {
                   // Assignment to a non-versioned non-intermediary variable
                   VariableUnversioned assignedSymbol = (VariableUnversioned) lValue;
-                  VariableVersion version = symbols.createVersion(assignedSymbol);
+                  VariableVersion version = assignedSymbol.createVersion();
                   assignment.setLValue(version);
                }
             } else if(statement instanceof StatementCall) {
@@ -49,7 +49,7 @@ public class Pass1GenerateSingleStaticAssignmentForm {
                if (lValue instanceof VariableUnversioned) {
                   // Assignment to a non-versioned non-intermediary variable
                   VariableUnversioned assignedSymbol = (VariableUnversioned) lValue;
-                  VariableVersion version = symbols.createVersion(assignedSymbol);
+                  VariableVersion version = assignedSymbol.createVersion();
                   call.setLValue(version);
                }
             }
@@ -149,7 +149,7 @@ public class Pass1GenerateSingleStaticAssignmentForm {
          }
          if (version == null) {
             // create a new phi function
-            version = symbols.createVersion(rSymbol);
+            version = rSymbol.createVersion();
             blockNewPhis.put(rSymbol, version);
          }
       }
@@ -189,7 +189,7 @@ public class Pass1GenerateSingleStaticAssignmentForm {
                         previousSymbol = predecessorNewPhis.get(unversioned);
                         if (previousSymbol == null) {
                            // No previous symbol found in predecessor block. Add a new phi function to the predecessor.
-                           previousSymbol = symbols.createVersion(unversioned);
+                           previousSymbol = unversioned.createVersion();
                            predecessorNewPhis.put(unversioned, previousSymbol);
                         }
                      }

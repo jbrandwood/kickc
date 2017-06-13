@@ -111,7 +111,7 @@ public class Main {
       }
 
       System.out.println("SYMBOLS");
-      System.out.println(programScope.toString());
+      System.out.println(programScope.getSymbolTableContents());
       System.out.println("CONTROL FLOW GRAPH");
       System.out.println(controlFlowGraph.toString());
       System.out.println("ASSEMBLER");

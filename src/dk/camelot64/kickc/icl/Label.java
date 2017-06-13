@@ -27,6 +27,15 @@ public class Label implements Symbol {
    }
 
    @Override
+   public int getScopeDepth() {
+      if(scope==null) {
+         return 0;
+      } else {
+         return scope.getScopeDepth()+1;
+      }
+   }
+
+   @Override
    public String getFullName() {
       return Scope.getFullName(this);
    }

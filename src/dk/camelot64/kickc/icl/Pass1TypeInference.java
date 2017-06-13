@@ -40,8 +40,8 @@ public class Pass1TypeInference {
                   }
                }
             }
-         } else if(statement instanceof StatementCallLValue) {
-            StatementCallLValue call = (StatementCallLValue) statement;
+         } else if(statement instanceof StatementCall) {
+            StatementCall call = (StatementCall) statement;
             LValue lValue = call.getLValue();
             if(lValue instanceof Variable) {
                String procedureName = call.getProcedureName();

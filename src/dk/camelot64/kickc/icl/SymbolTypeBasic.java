@@ -8,6 +8,8 @@ public enum SymbolTypeBasic implements SymbolType {
    BOOLEAN("boolean"),
    // A label
    LABEL("label"),
+   // Void type.
+   VOID("void"),
    // Unresolved type. Will be infered later
    VAR("var");
 

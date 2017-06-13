@@ -7,16 +7,16 @@ import java.util.List;
  * <br>
  * <i> X<sub>i</sub> := call label param1 param2 param3 ... </i>
  */
-public class StatementCallLValue implements StatementLValue {
+public class StatementCall implements StatementLValue {
 
-   /** The variable being assigned a value by the call. */
+   /** The variable being assigned a value by the call. Can be null. */
    private LValue lValue;
    private String procedureName;
    private List<RValue> parameters;
    private Procedure procedure;
    private boolean parametersByAssignment;
 
-   public StatementCallLValue(LValue lValue, String  procedureName, List<RValue> parameters) {
+   public StatementCall(LValue lValue, String  procedureName, List<RValue> parameters) {
       this.lValue = lValue;
       this.procedureName = procedureName;
       this.parameters = parameters;
@@ -66,8 +66,10 @@ public class StatementCallLValue implements StatementLValue {
    @Override
    public String toString() {
       StringBuilder res = new StringBuilder();
-      res.append(lValue);
-      res.append(" ← ");
+      if(lValue!=null) {
+         res.append(lValue);
+         res.append(" ← ");
+      }
       res.append("call ");
       if(procedure!=null) {
          res.append(procedure.getFullName()+ " ");

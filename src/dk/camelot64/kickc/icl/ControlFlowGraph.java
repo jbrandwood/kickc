@@ -69,6 +69,15 @@ public class ControlFlowGraph {
       }
    }
 
+   public ControlFlowBlock getCallSuccessor(ControlFlowBlock block) {
+      if(block.getCallSuccessor()!=null) {
+         return blocks.get(block.getCallSuccessor());
+      } else {
+         return null;
+      }
+   }
+
+
    public List<ControlFlowBlock> getPredecessors(ControlFlowBlock block) {
       ArrayList<ControlFlowBlock> predecessorBlocks = new ArrayList<>();
       for (ControlFlowBlock other : getAllBlocks()) {

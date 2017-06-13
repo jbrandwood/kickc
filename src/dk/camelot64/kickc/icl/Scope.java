@@ -117,6 +117,9 @@ public class Scope implements Symbol {
       return symbol;
    }
 
+   public Label getLabel(String name) {
+      return (Label) symbols.get(name);
+   }
 
    public Procedure addProcedure(String name, SymbolType type) {
       Symbol symbol = symbols.get(name);
@@ -125,7 +128,6 @@ public class Scope implements Symbol {
       }
       Procedure procedure = new Procedure(name, type, this);
       add(procedure);
-      procedure.addVariable("return", type);
       return procedure;
    }
 

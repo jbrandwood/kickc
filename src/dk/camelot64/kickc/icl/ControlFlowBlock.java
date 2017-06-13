@@ -72,13 +72,13 @@ public class ControlFlowBlock {
 
    public String toString(ControlFlowGraph graph) {
       StringBuffer out = new StringBuffer();
-      out.append(label.getLocalName() + ":" );
+      out.append(label.getFullName() + ":" );
       out.append(" from");
       if(graph!=null) {
          List<ControlFlowBlock> predecessors = graph.getPredecessors(this);
          if(predecessors.size()>0) {
             for (ControlFlowBlock predecessor : predecessors) {
-               out.append(" " + predecessor.getLabel().getLocalName());
+               out.append(" " + predecessor.getLabel().getFullName());
             }
          }
       } else {
@@ -90,7 +90,7 @@ public class ControlFlowBlock {
       }
       if(defaultSuccessor!=null) {
          out.append("  to:");
-         out.append(defaultSuccessor.getLocalName());
+         out.append(defaultSuccessor.getFullName());
          out.append("\n");
       }
       return out.toString();

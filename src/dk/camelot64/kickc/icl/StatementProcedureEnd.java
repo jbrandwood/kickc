@@ -15,7 +15,7 @@ public class StatementProcedureEnd implements Statement {
 
    @Override
    public String toString() {
-      return "endproc // "+procedure.getLocalName()+"()";
+      return "endproc // "+procedure.getFullName()+"()";
    }
 
 }

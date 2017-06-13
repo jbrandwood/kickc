@@ -207,4 +207,7 @@ public class Scope implements Symbol {
       return res.toString();
    }
 
+   public Collection<Symbol> getSymbols() {
+      return symbols.values();
+   }
 }

@@ -1,10 +1,13 @@
 package dk.camelot64.kickc.icl;
 
-/** Register Allocation for variables */
+/**
+ * Register Allocation for variables
+ */
 public class Pass3RegisterAllocation {
 
    private ControlFlowGraph graph;
    private Scope symbols;
+   int currentZp = 2;
 
    public Pass3RegisterAllocation(ControlFlowGraph graph, Scope symbols) {
       this.graph = graph;
@@ -13,23 +16,7 @@ public class Pass3RegisterAllocation {
 
    public void allocate() {
       RegisterAllocation allocation = new RegisterAllocation();
-      int currentZp = 2;
-      for (Variable var : symbols.getAllVariables()) {
-         if(var instanceof VariableIntermediate || var instanceof VariableVersion)
-            if(var.getType().equals(SymbolTypeBasic.BYTE)) {
-               allocation.allocate(var, new RegisterAllocation.RegisterZpByte(currentZp++));
-            } else if(var.getType().equals(SymbolTypeBasic.WORD)) {
-               allocation.allocate(var, new RegisterAllocation.RegisterZpWord(currentZp));
-               currentZp = currentZp +2;
-            } else if(var.getType().equals(SymbolTypeBasic.BOOLEAN))  {
-               allocation.allocate(var, new RegisterAllocation.RegisterZpBool(currentZp++));
-            } else if(var.getType() instanceof SymbolTypePointer) {
-               allocation.allocate(var, new RegisterAllocation.RegisterZpPointerByte(currentZp));
-               currentZp = currentZp +2;
-            } else {
-               throw new RuntimeException("Unhandled variable type "+var);
-            }
-      }
+      performAllocation(symbols, allocation);
       allocation.allocate(symbols.getVariable("i#0"), RegisterAllocation.getRegisterX());
       allocation.allocate(symbols.getVariable("i#1"), RegisterAllocation.getRegisterX());
       allocation.allocate(symbols.getVariable("i#2"), RegisterAllocation.getRegisterX());
@@ -71,10 +58,33 @@ public class Pass3RegisterAllocation {
       allocation.allocate(symbols.getVariable("$4"), new RegisterAllocation.RegisterAByte());
       allocation.allocate(symbols.getVariable("$6"), new RegisterAllocation.RegisterALUByte());
       allocation.allocate(symbols.getVariable("$7"), new RegisterAllocation.RegisterAByte());
-      allocation.allocate(symbols.getVariable("inc::a#2"), new RegisterAllocation.RegisterAByte());
-      allocation.allocate(symbols.getVariable("bv#0"), new RegisterAllocation.RegisterAByte());
+      //allocation.allocate(symbols.getVariable("inc::a#2"), new RegisterAllocation.RegisterAByte());
+      //allocation.allocate(symbols.getVariable("bv#0"), new RegisterAllocation.RegisterAByte());
       symbols.setAllocation(allocation);
 
+   }
+
+   private void performAllocation(Scope scope, RegisterAllocation allocation) {
+      for (Symbol symbol : scope.getSymbols()) {
+         if (symbol instanceof Scope) {
+            performAllocation((Scope) symbol, allocation);
+         } else if (symbol instanceof VariableIntermediate || symbol instanceof VariableVersion) {
+            Variable var = (Variable) symbol;
+            if (symbol.getType().equals(SymbolTypeBasic.BYTE)) {
+               allocation.allocate(var, new RegisterAllocation.RegisterZpByte(currentZp++));
+            } else if (symbol.getType().equals(SymbolTypeBasic.WORD)) {
+               allocation.allocate(var, new RegisterAllocation.RegisterZpWord(currentZp));
+               currentZp = currentZp + 2;
+            } else if (symbol.getType().equals(SymbolTypeBasic.BOOLEAN)) {
+               allocation.allocate(var, new RegisterAllocation.RegisterZpBool(currentZp++));
+            } else if (symbol.getType() instanceof SymbolTypePointer) {
+               allocation.allocate(var, new RegisterAllocation.RegisterZpPointerByte(currentZp));
+               currentZp = currentZp + 2;
+            } else {
+               throw new RuntimeException("Unhandled variable type " + symbol);
+            }
+         }
+      }
    }
 
 }

@@ -19,7 +19,7 @@ public class Pass1ProcedureCallParameters extends ControlFlowGraphCopyVisitor {
    }
 
    @Override
-   public StatementCallLValue visitCallLValue(StatementCallLValue origCall) {
+   public StatementCall visitCallLValue(StatementCall origCall) {
       // Procedure strategy implemented is currently variable-based transfer of parameters/return values
       // Generate parameter passing assignments
       Procedure procedure = origCall.getProcedure();
@@ -32,7 +32,7 @@ public class Pass1ProcedureCallParameters extends ControlFlowGraphCopyVisitor {
       }
       String procedureName = origCall.getProcedureName();
       Variable procReturnVar = procedure.getVariable("return");
-      StatementCallLValue copyCall = new StatementCallLValue(procReturnVar, procedureName, null);
+      StatementCall copyCall = new StatementCall(procReturnVar, procedureName, null);
       copyCall.setParametersByAssignment(true);
       copyCall.setProcedure(procedure);
       addStatementToCurrentBlock(copyCall);

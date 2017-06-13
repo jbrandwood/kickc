@@ -13,7 +13,7 @@ import java.util.List;
 /** Test my KickC Grammar */
 public class Main {
    public static void main(String[] args) throws IOException {
-      final String fileName = "src/dk/camelot64/kickc/test/callsum.kc";
+      final String fileName = "src/dk/camelot64/kickc/test/callmin.kc";
       final CharStream input = CharStreams.fromFileName(fileName);
       System.out.println(input.toString());
       KickCLexer lexer = new KickCLexer(input);
@@ -54,12 +54,12 @@ public class Main {
       System.out.println("CONTROL FLOW GRAPH SSA");
       System.out.println(controlFlowGraph.toString());
 
-      //Pass1ProcedureCallsReturnValue pass1ProcedureCallsReturnValue = new Pass1ProcedureCallsReturnValue(programScope, controlFlowGraph);
-      //controlFlowGraph = pass1ProcedureCallsReturnValue.generate();
-      //System.out.println("CONTROL FLOW GRAPH WITH ASSIGNMENT CALL & RETURN");
-      //System.out.println(controlFlowGraph.toString());
+      Pass1ProcedureCallsReturnValue pass1ProcedureCallsReturnValue = new Pass1ProcedureCallsReturnValue(programScope, controlFlowGraph);
+      controlFlowGraph = pass1ProcedureCallsReturnValue.generate();
+      System.out.println("CONTROL FLOW GRAPH WITH ASSIGNMENT CALL & RETURN");
+      System.out.println(controlFlowGraph.toString());
 
-      if(1==1) return;
+      //if(1==1) return;
 
       List<Pass2SsaOptimization> optimizations = new ArrayList<>();
       optimizations.add(new Pass2CullEmptyBlocks(controlFlowGraph, programScope));

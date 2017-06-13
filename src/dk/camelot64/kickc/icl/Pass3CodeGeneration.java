@@ -23,7 +23,7 @@ public class Pass3CodeGeneration {
          // Generate entry points (if needed)
          genBlockEntryPoints(asm, block);
          // Generate label
-         asm.addLabel(block.getLabel().getLocalName().replace('@', 'B'));
+         asm.addLabel(block.getLabel().getFullName().replace('@', 'B'));
          // Generate statements
          genStatements(asm, block);
          // Generate exit
@@ -32,7 +32,7 @@ public class Pass3CodeGeneration {
             if (defaultSuccessor.hasPhiStatements()) {
                genBlockPhiTransition(asm, block, defaultSuccessor);
             }
-            asm.addInstruction("JMP", AsmAddressingMode.ABS, defaultSuccessor.getLabel().getLocalName().replace('@', 'B'));
+            asm.addInstruction("JMP", AsmAddressingMode.ABS, defaultSuccessor.getLabel().getFullName().replace('@', 'B'));
          }
       }
       return asm;
@@ -72,6 +72,15 @@ public class Pass3CodeGeneration {
                AsmFragment asmFragment = new AsmFragment((StatementConditionalJump) statement, block, symbols, graph);
                asm.addComment(statement + "  //  " + asmFragment.getSignature());
                asmFragment.generate(asm);
+            } else if (statement instanceof StatementCall) {
+               StatementCall call = (StatementCall) statement;
+               ControlFlowBlock callSuccessor = graph.getCallSuccessor(block);
+               if (callSuccessor != null && callSuccessor.hasPhiStatements()) {
+                     genBlockPhiTransition(asm, block, callSuccessor);
+               }
+               asm.addInstruction("jsr", AsmAddressingMode.ABS, call.getProcedure().getFullName());
+            } else if (statement instanceof StatementReturn) {
+               asm.addInstruction("rts", AsmAddressingMode.NON, null);
             } else {
                throw new RuntimeException("Statement not supported " + statement);
             }
@@ -84,14 +93,14 @@ public class Pass3CodeGeneration {
          for (ControlFlowBlock predecessor : graph.getPredecessors(block)) {
             if (block.getLabel().equals(predecessor.getConditionalSuccessor())) {
                genBlockPhiTransition(asm, predecessor, block);
-               asm.addInstruction("JMP", AsmAddressingMode.ABS, block.getLabel().getLocalName().replace('@', 'B'));
+               asm.addInstruction("JMP", AsmAddressingMode.ABS, block.getLabel().getFullName().replace('@', 'B'));
             }
          }
       }
    }
 
    private void genBlockPhiTransition(AsmProgram asm, ControlFlowBlock fromBlock, ControlFlowBlock toBlock) {
-      asm.addLabel((toBlock.getLabel().getLocalName() + "_from_" + fromBlock.getLabel().getLocalName()).replace('@', 'B'));
+      asm.addLabel((toBlock.getLabel().getFullName() + "_from_" + fromBlock.getLabel().getLocalName()).replace('@', 'B'));
       for (Statement statement : toBlock.getStatements()) {
          if (!(statement instanceof StatementPhi)) {
             // No more phi statements to handle
@@ -99,7 +108,7 @@ public class Pass3CodeGeneration {
          }
          StatementPhi phi = (StatementPhi) statement;
          for (StatementPhi.PreviousSymbol previousSymbol : phi.getPreviousVersions()) {
-            if (previousSymbol.getBlock().equals(fromBlock)) {
+            if (previousSymbol.getBlock().equals(fromBlock.getLabel())) {
                genAsmMove(asm, phi.getLValue(), previousSymbol.getRValue());
                break;
             }

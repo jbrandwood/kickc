@@ -16,6 +16,10 @@ public class StatementReturn implements Statement {
       return value;
    }
 
+   public void setValue(RValue value) {
+      this.value = value;
+   }
+
    @Override
    public String toString() {
       return "return "+(value==null?"":value);

@@ -77,7 +77,7 @@ public class StatementPhi implements StatementLValue {
       StringBuilder out = new StringBuilder();
       out.append(lValue + " ← " + "phi(");
       for (PreviousSymbol previousSymbol : previousVersions) {
-         out.append(" "+previousSymbol.getBlock().getLocalName()+"/"+previousSymbol.getRValue());
+         out.append(" "+previousSymbol.getBlock().getFullName()+"/"+previousSymbol.getRValue());
       }
       out.append(" )");
       return out.toString();

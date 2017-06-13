@@ -43,8 +43,8 @@ public class Pass1GenerateSingleStaticAssignmentForm {
                   VariableVersion version = symbols.createVersion(assignedSymbol);
                   assignment.setLValue(version);
                }
-            } else if(statement instanceof StatementCallLValue) {
-               StatementCallLValue call = (StatementCallLValue) statement;
+            } else if(statement instanceof StatementCall) {
+               StatementCall call = (StatementCall) statement;
                LValue lValue = call.getLValue();
                if (lValue instanceof VariableUnversioned) {
                   // Assignment to a non-versioned non-intermediary variable
@@ -67,6 +67,16 @@ public class Pass1GenerateSingleStaticAssignmentForm {
          // New phi functions introduced in the block to create versions of variables.
          Map<VariableUnversioned, VariableVersion> blockNewPhis = new HashMap<>();
          for (Statement statement : block.getStatements()) {
+            if(statement instanceof StatementReturn) {
+               StatementReturn statementReturn = (StatementReturn) statement;
+               {
+                  VariableVersion version = findOrCreateVersion(statementReturn.getValue(), blockVersions, blockNewPhis);
+                  if (version != null) {
+                     statementReturn.setValue(version);
+                  }
+               }
+
+            }
             if (statement instanceof StatementAssignment) {
                StatementAssignment assignment = (StatementAssignment) statement;
                {
@@ -234,8 +244,8 @@ public class Pass1GenerateSingleStaticAssignmentForm {
                   symbolMap.put(label, blockMap);
                }
                blockMap.put(unversioned, versioned);
-            } else if (statement instanceof StatementCallLValue) {
-               StatementCallLValue call = (StatementCallLValue) statement;
+            } else if (statement instanceof StatementCall) {
+               StatementCall call = (StatementCall) statement;
                LValue lValue = call.getLValue();
                if (lValue instanceof VariableVersion) {
                   VariableVersion versioned = (VariableVersion) lValue;

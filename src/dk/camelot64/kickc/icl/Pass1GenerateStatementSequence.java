@@ -32,6 +32,15 @@ public class Pass1GenerateStatementSequence extends KickCBaseVisitor<Object> {
       return scopeStack.peek();
    }
 
+   private Procedure getCurrentProcedure() {
+      for (Scope scope : scopeStack) {
+         if (scope instanceof Procedure) {
+            return (Procedure) scope;
+         }
+      }
+      return null;
+   }
+
    public void generate(KickCParser.FileContext file) {
       this.visit(file);
    }
@@ -131,13 +140,23 @@ public class Pass1GenerateStatementSequence extends KickCBaseVisitor<Object> {
       String name = ctx.NAME().getText();
       Procedure procedure = getCurrentSymbols().addProcedure(name, type);
       scopeStack.push(procedure);
+      Label procExit = procedure.addLabel("@return");
+      VariableUnversioned returnVar = null;
+      if (!SymbolTypeBasic.VOID.equals(type)) {
+         returnVar = procedure.addVariable("return", type);
+      }
       List<Variable> parameterList = new ArrayList<>();
-      if(ctx.parameterListDecl()!=null) {
+      if (ctx.parameterListDecl() != null) {
          parameterList = (List<Variable>) this.visit(ctx.parameterListDecl());
       }
       procedure.setParameters(parameterList);
       sequence.addStatement(new StatementProcedureBegin(procedure));
       this.visit(ctx.stmtSeq());
+      sequence.addStatement(new StatementLabel(procExit));
+      if(returnVar!=null) {
+         sequence.addStatement(new StatementAssignment(returnVar, returnVar));
+      }
+      sequence.addStatement(new StatementReturn(returnVar));
       scopeStack.pop();
       sequence.addStatement(new StatementProcedureEnd(procedure));
       return null;
@@ -146,7 +165,7 @@ public class Pass1GenerateStatementSequence extends KickCBaseVisitor<Object> {
    @Override
    public List<Variable> visitParameterListDecl(KickCParser.ParameterListDeclContext ctx) {
       ArrayList<Variable> parameterDecls = new ArrayList<>();
-      for (KickCParser.ParameterDeclContext parameterDeclCtx: ctx.parameterDecl()) {
+      for (KickCParser.ParameterDeclContext parameterDeclCtx : ctx.parameterDecl()) {
          Variable parameterDecl = (Variable) this.visit(parameterDeclCtx);
          parameterDecls.add(parameterDecl);
       }
@@ -162,13 +181,16 @@ public class Pass1GenerateStatementSequence extends KickCBaseVisitor<Object> {
 
    @Override
    public Void visitStmtReturn(KickCParser.StmtReturnContext ctx) {
+      Procedure procedure = getCurrentProcedure();
       KickCParser.ExprContext exprCtx = ctx.expr();
       RValue rValue = null;
       if (exprCtx != null) {
          rValue = (RValue) this.visit(exprCtx);
+         Variable returnVar = procedure.getVariable("return");
+         sequence.addStatement(new StatementAssignment(returnVar, rValue));
       }
-      Statement stmt = new StatementReturn(rValue);
-      sequence.addStatement(stmt);
+      Label returnLabel = procedure.getLabel("@return");
+      sequence.addStatement(new StatementJump(returnLabel));
       return null;
    }
 
@@ -265,7 +287,7 @@ public class Pass1GenerateStatementSequence extends KickCBaseVisitor<Object> {
    public Object visitExprCall(KickCParser.ExprCallContext ctx) {
       List<RValue> parameters = (List<RValue>) this.visit(ctx.parameterList());
       VariableIntermediate tmpVar = getCurrentSymbols().addVariableIntermediate();
-      sequence.addStatement(new StatementCallLValue(tmpVar, ctx.NAME().getText(), parameters));
+      sequence.addStatement(new StatementCall(tmpVar, ctx.NAME().getText(), parameters));
       return tmpVar;
    }
 

@@ -102,6 +102,21 @@ public abstract class Pass2SsaOptimization {
          }
 
          @Override
+         public Void visitReturn(StatementReturn aReturn) {
+            if (getAlias(aliases, aReturn.getValue()) != null) {
+               aReturn.setValue(getAlias(aliases, aReturn.getValue()));
+            }
+         }
+
+         @Override
+         public Void visitCallLValue(StatementCallLValue callLValue) {
+
+            for (RValue parameter: callLValue.getParameters()) {
+
+            }
+         }
+
+         @Override
          public Void visitPhi(StatementPhi phi) {
             if (getAlias(aliases, phi.getLValue()) != null) {
                RValue alias = getAlias(aliases, phi.getLValue());

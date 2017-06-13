@@ -21,4 +21,7 @@ public class StatementReturn implements Statement {
       return "return "+(value==null?"":value);
    }
 
+   public void setValue(RValue value) {
+      this.value = value;
+   }
 }

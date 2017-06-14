@@ -104,14 +104,20 @@ public class Scope implements Symbol {
       if (pos >= 0) {
          String scopeName = name.substring(0, pos);
          String rest = name.substring(pos + 2);
-         Symbol scopeSym = symbols.get(scopeName);
+         Symbol scopeSym = getSymbol(scopeName);
          if (scopeSym instanceof Scope) {
             return ((Scope) scopeSym).getSymbol(rest);
          } else {
             throw new RuntimeException("Error looking up symbol " + name);
          }
       } else {
-         return symbols.get(name);
+         Symbol symbol = symbols.get(name);
+         if(symbol==null) {
+            if(parentScope!=null) {
+               symbol = parentScope.getSymbol(name);
+            }
+         }
+         return symbol;
       }
    }
 
@@ -159,7 +165,7 @@ public class Scope implements Symbol {
    }
 
    public Procedure getProcedure(String name) {
-      Symbol symbol = symbols.get(name);
+      Symbol symbol = getSymbol(name);
       if (symbol != null && symbol instanceof Procedure) {
          return (Procedure) symbol;
       } else {

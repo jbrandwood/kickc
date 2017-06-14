@@ -64,7 +64,7 @@ public class Main {
       List<Pass2SsaOptimization> optimizations = new ArrayList<>();
       optimizations.add(new Pass2CullEmptyBlocks(controlFlowGraph, programScope));
       optimizations.add(new Pass2ConstantPropagation(controlFlowGraph, programScope));
-      optimizations.add(new Pass2ConstantAdditionElimination(controlFlowGraph, programScope));
+      //optimizations.add(new Pass2ConstantAdditionElimination(controlFlowGraph, programScope));
       optimizations.add(new Pass2AliasElimination(controlFlowGraph, programScope));
       optimizations.add(new Pass2RedundantPhiElimination(controlFlowGraph, programScope));
       optimizations.add(new Pass2SelfPhiElimination(controlFlowGraph, programScope));

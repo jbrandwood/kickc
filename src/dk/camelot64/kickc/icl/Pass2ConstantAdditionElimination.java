@@ -1,7 +1,14 @@
 package dk.camelot64.kickc.icl;
 
 /**
- * Compiler Pass eliminating several additions of constants by consolidating them to a  single (compile time) constant c1+v+c2 => (c1+c2)+v
+ * Compiler Pass eliminating several additions of constants by consolidating them to a single (compile time) constant c1+v+c2 => (c1+c2)+v
+ *
+ * TODO:
+ * - If sub variable is used in other places consolidation is not allowed!
+ * Example: With only a & b the constants c1 & c2 could be consolidated to b=(c1+c2)+a, a=v. Since c also uses a this is not an option.
+ * a = c1 + v
+ * b = c2 + a
+ * c = a + c3
  */
 public class Pass2ConstantAdditionElimination extends Pass2SsaOptimization {
 

@@ -1,5 +1,8 @@
 package dk.camelot64.kickc.icl;
 
+import java.util.HashMap;
+import java.util.Map;
+
 /**
  * Compiler Pass eliminating several additions of constants by consolidating them to a single (compile time) constant c1+v+c2 => (c1+c2)+v
  *
@@ -11,6 +14,8 @@ package dk.camelot64.kickc.icl;
  * c = a + c3
  */
 public class Pass2ConstantAdditionElimination extends Pass2SsaOptimization {
+
+   private Map<Variable, Integer> usages;
 
    public Pass2ConstantAdditionElimination(ControlFlowGraph graph, Scope scope) {
       super(graph, scope);
@@ -24,6 +29,9 @@ public class Pass2ConstantAdditionElimination extends Pass2SsaOptimization {
    @Override
    public boolean optimize() {
       boolean optimized = false;
+
+      this.usages = countVarUsages();
+
       // Examine all assigments - performing constant consolidation
       for (ControlFlowBlock block : getGraph().getAllBlocks()) {
          for (Statement statement : block.getStatements()) {
@@ -116,6 +124,10 @@ public class Pass2ConstantAdditionElimination extends Pass2SsaOptimization {
     * @return The consolidated constant. Null if no sub-constants were found.
     */
    private ConstantInteger consolidateSubConstants(Variable variable) {
+      if(usages.get(variable)>1) {
+         System.out.println("Multiple usages for variable. Not optimizing sub-constant "+variable);
+         return null;
+      }
       StatementAssignment assignment = getGraph().getAssignment(variable);
       if (assignment != null && assignment.getOperator() != null && "+".equals(assignment.getOperator().getOperator())) {
          if (assignment.getRValue1() instanceof ConstantInteger) {

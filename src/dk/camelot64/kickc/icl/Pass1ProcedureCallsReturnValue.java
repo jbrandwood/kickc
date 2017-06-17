@@ -17,7 +17,7 @@ public class Pass1ProcedureCallsReturnValue extends ControlFlowGraphCopyVisitor 
    }
 
    @Override
-   public StatementCall visitCallLValue(StatementCall origCall) {
+   public StatementCall visitCall(StatementCall origCall) {
       // Procedure strategy implemented is currently variable-based transfer of parameters/return values
       // Generate return value assignment
       Procedure procedure = origCall.getProcedure();

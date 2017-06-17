@@ -32,7 +32,7 @@ public class ControlFlowGraphBaseVisitor<T> {
       } else if(statement instanceof StatementPhi) {
          return visitPhi((StatementPhi) statement);
       } else if(statement instanceof StatementCall) {
-         return visitCallLValue((StatementCall) statement);
+         return visitCall((StatementCall) statement);
       } else if(statement instanceof StatementReturn) {
          return visitReturn((StatementReturn) statement);
       } else if(statement instanceof StatementProcedureBegin) {
@@ -76,7 +76,7 @@ public class ControlFlowGraphBaseVisitor<T> {
       return null;
    }
 
-   public T visitCallLValue(StatementCall callLValue) {
+   public T visitCall(StatementCall callLValue) {
       return null;
    }
 

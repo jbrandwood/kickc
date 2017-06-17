@@ -53,13 +53,16 @@ public class Pass3RegisterAllocation {
       //allocation.allocate(symbols.getVariable("$0"), new RegisterAllocation.RegisterAByte());
       //allocation.allocate(symbols.getVariable("$2"), new RegisterAllocation.RegisterAByte());
       //allocation.allocate(symbols.getVariable("$3"), new RegisterAllocation.RegisterAByte());
-      allocation.allocate(symbols.getVariable("$1"), new RegisterAllocation.RegisterAByte());
-      allocation.allocate(symbols.getVariable("$3"), new RegisterAllocation.RegisterALUByte());
-      allocation.allocate(symbols.getVariable("$4"), new RegisterAllocation.RegisterAByte());
-      allocation.allocate(symbols.getVariable("$6"), new RegisterAllocation.RegisterALUByte());
-      allocation.allocate(symbols.getVariable("$7"), new RegisterAllocation.RegisterAByte());
+      //allocation.allocate(symbols.getVariable("$1"), new RegisterAllocation.RegisterAByte());
+      //allocation.allocate(symbols.getVariable("$3"), new RegisterAllocation.RegisterALUByte());
+      //allocation.allocate(symbols.getVariable("$4"), new RegisterAllocation.RegisterAByte());
+      //allocation.allocate(symbols.getVariable("$6"), new RegisterAllocation.RegisterALUByte());
+      //allocation.allocate(symbols.getVariable("$7"), new RegisterAllocation.RegisterAByte());
       //allocation.allocate(symbols.getVariable("inc::a#2"), new RegisterAllocation.RegisterAByte());
       //allocation.allocate(symbols.getVariable("bv#0"), new RegisterAllocation.RegisterAByte());
+      allocation.allocate(symbols.getVariable("sum::b#0"), new RegisterAllocation.RegisterAByte());
+      allocation.allocate(symbols.getVariable("inc::b#1"), new RegisterAllocation.RegisterAByte());
+      allocation.allocate(symbols.getVariable("a#0"), new RegisterAllocation.RegisterAByte());
       symbols.setAllocation(allocation);
 
    }

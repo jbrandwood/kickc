@@ -110,7 +110,7 @@ public abstract class Pass2SsaOptimization {
          }
 
          @Override
-         public Void visitCallLValue(StatementCall call) {
+         public Void visitCall(StatementCall call) {
             if(call.getParameters()!=null) {
                List<RValue> newParams = new ArrayList<>();
                for (RValue parameter : call.getParameters()) {
@@ -307,6 +307,59 @@ public abstract class Pass2SsaOptimization {
       };
       visitor.visitGraph(getGraph());
 
+      return usages;
+   }
+
+   protected Map<Variable, Integer> countVarUsages() {
+      final HashMap<Variable, Integer> usages = new HashMap<>();
+      ControlFlowGraphBaseVisitor usageVisitor = new ControlFlowGraphBaseVisitor() {
+         private void addUsage(RValue rVal) {
+            if(rVal instanceof Variable) {
+               Variable var = (Variable) rVal;
+               Integer usage = usages.get(var);
+               if (usage == null) {
+                  usage = 0;
+               }
+               usage = usage + 1;
+               usages.put(var, usage);
+            } else if(rVal instanceof PointerDereference) {
+               throw new RuntimeException("Unexpected pointer dereference!");
+            }
+         }
+
+
+         @Override
+         public Object visitAssignment(StatementAssignment assignment) {
+            addUsage(assignment.getRValue1());
+            addUsage(assignment.getRValue2());
+            return null;
+         }
+
+         @Override
+         public Object visitReturn(StatementReturn aReturn) {
+            addUsage(aReturn.getValue());
+            return null;
+         }
+
+         @Override
+         public Object visitCall(StatementCall call) {
+            if(call.getParameters()!=null) {
+               for (RValue param : call.getParameters()) {
+                  addUsage(param);
+               }
+            }
+            return null;
+         }
+
+         @Override
+         public Object visitPhi(StatementPhi phi) {
+            for (StatementPhi.PreviousSymbol previousSymbol : phi.getPreviousVersions()) {
+               addUsage(previousSymbol.getRValue());
+            }
+            return null;
+         }
+      };
+      usageVisitor.visitGraph(getGraph());
       return usages;
    }
 }

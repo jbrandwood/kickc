@@ -45,11 +45,11 @@ public class Pass3RegisterAllocation {
       allocation.allocate(symbols.getVariable("ptr#1"), new RegisterAllocation.RegisterZpPointerByte(135));
       allocation.allocate(symbols.getVariable("ptr#2"), new RegisterAllocation.RegisterZpPointerByte(135));
       allocation.allocate(symbols.getVariable("ptr#3"), new RegisterAllocation.RegisterZpPointerByte(135));
-      allocation.allocate(symbols.getVariable("v#1"), new RegisterAllocation.RegisterAByte());
-      allocation.allocate(symbols.getVariable("v#2"), new RegisterAllocation.RegisterAByte());
-      allocation.allocate(symbols.getVariable("v#3"), new RegisterAllocation.RegisterAByte());
-      allocation.allocate(symbols.getVariable("v#4"), new RegisterAllocation.RegisterAByte());
-      allocation.allocate(symbols.getVariable("v#5"), new RegisterAllocation.RegisterAByte());
+      //allocation.allocate(symbols.getVariable("v#1"), new RegisterAllocation.RegisterAByte());
+      //allocation.allocate(symbols.getVariable("v#2"), new RegisterAllocation.RegisterAByte());
+      //allocation.allocate(symbols.getVariable("v#3"), new RegisterAllocation.RegisterAByte());
+      //allocation.allocate(symbols.getVariable("v#4"), new RegisterAllocation.RegisterAByte());
+      //allocation.allocate(symbols.getVariable("v#5"), new RegisterAllocation.RegisterAByte());
       //allocation.allocate(symbols.getVariable("$0"), new RegisterAllocation.RegisterAByte());
       //allocation.allocate(symbols.getVariable("$2"), new RegisterAllocation.RegisterAByte());
       //allocation.allocate(symbols.getVariable("$3"), new RegisterAllocation.RegisterAByte());
@@ -62,7 +62,8 @@ public class Pass3RegisterAllocation {
       //allocation.allocate(symbols.getVariable("bv#0"), new RegisterAllocation.RegisterAByte());
       allocation.allocate(symbols.getVariable("sum::b#0"), new RegisterAllocation.RegisterAByte());
       allocation.allocate(symbols.getVariable("inc::b#1"), new RegisterAllocation.RegisterAByte());
-      allocation.allocate(symbols.getVariable("a#0"), new RegisterAllocation.RegisterAByte());
+      //allocation.allocate(symbols.getVariable("a#1"), new RegisterAllocation.RegisterAByte());
+      //allocation.allocate(symbols.getVariable("a#0"), new RegisterAllocation.RegisterAByte());
       symbols.setAllocation(allocation);
 
    }

@@ -70,7 +70,6 @@ public class Main {
       optimizations.add(new Pass2SelfPhiElimination(controlFlowGraph, programScope));
       optimizations.add(new Pass2ConditionalJumpSimplification(controlFlowGraph, programScope));
 
-
       boolean ssaOptimized = true;
       while (ssaOptimized) {
          ssaOptimized = false;
@@ -85,6 +84,8 @@ public class Main {
          }
       }
 
+      Pass3BlockSequencePlanner pass3BlockSequencePlanner = new Pass3BlockSequencePlanner(controlFlowGraph, programScope);
+      pass3BlockSequencePlanner.plan();
       Pass3RegisterAllocation pass3RegisterAllocation = new Pass3RegisterAllocation(controlFlowGraph, programScope);
       pass3RegisterAllocation.allocate();
       Pass3CodeGeneration pass3CodeGeneration = new Pass3CodeGeneration(controlFlowGraph, programScope);

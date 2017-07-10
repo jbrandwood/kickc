@@ -12,6 +12,7 @@ public class ControlFlowGraph {
    private Map<Symbol, ControlFlowBlock> blocks;
 
    private ControlFlowBlock firstBlock;
+   private List<ControlFlowBlock> sequence;
 
    public ControlFlowGraph(Map<Symbol, ControlFlowBlock> blocks, ControlFlowBlock firstBlock) {
       this.blocks = blocks;
@@ -77,6 +78,14 @@ public class ControlFlowGraph {
       }
    }
 
+   public ControlFlowBlock getConditionalSuccessor(ControlFlowBlock block) {
+      if(block.getConditionalSuccessor()!=null) {
+         return blocks.get(block.getConditionalSuccessor());
+      } else {
+         return null;
+      }
+   }
+
 
    public List<ControlFlowBlock> getPredecessors(ControlFlowBlock block) {
       ArrayList<ControlFlowBlock> predecessorBlocks = new ArrayList<>();
@@ -93,4 +102,13 @@ public class ControlFlowGraph {
       }
       return predecessorBlocks;
    }
+
+   public void setBlockSequence(List<ControlFlowBlock> sequence) {
+      this.sequence = sequence;
+   }
+
+   public List<ControlFlowBlock> getBlockSequence() {
+      return sequence;
+   }
+
 }

@@ -19,7 +19,7 @@ public class Pass3CodeGeneration {
 
    public AsmProgram generate() {
       AsmProgram asm = new AsmProgram();
-      for (ControlFlowBlock block : graph.getAllBlocks()) {
+      for (ControlFlowBlock block : graph.getBlockSequence()) {
          // Generate entry points (if needed)
          genBlockEntryPoints(asm, block);
          // Generate label

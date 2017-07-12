@@ -127,7 +127,10 @@ public class AsmFragment {
       }
       if (conditionalJump.getRValue2() instanceof ConstantInteger && ((ConstantInteger) conditionalJump.getRValue2()).getNumber() == 0) {
          signature.append("0");
-      } else {
+      } else if (conditionalJump.getRValue2() instanceof ConstantBool) {
+         ConstantBool boolValue = (ConstantBool) conditionalJump.getRValue2();
+         signature.append(boolValue.toString());
+      } else{
          signature.append(bind(conditionalJump.getRValue2()));
       }
       signature.append("_then_");
@@ -135,7 +138,7 @@ public class AsmFragment {
       ControlFlowBlock destinationBlock = graph.getBlock(destination);
       String destinationLabel = destination.getFullName();
       if (destinationBlock.hasPhiStatements()) {
-         destinationLabel = destination.getFullName() + "_from_" + block.getLabel().getFullName();
+         destinationLabel = (destinationBlock.getLabel().getLocalName() + "_from_" + block.getLabel().getLocalName()).replace('@', 'B').replace(':','_');
       }
       signature.append(bind(new Label(destinationLabel, destination.getScope(),false)));
       return signature.toString();
@@ -348,7 +351,7 @@ public class AsmFragment {
             bound = Integer.toString(boundInt.getNumber());
          }
       } else if (boundValue instanceof Label) {
-         bound = ((Label) boundValue).getFullName().replace('@', 'B');
+         bound = ((Label) boundValue).getFullName().replace('@', 'B').replace(':','_');
       } else {
          throw new RuntimeException("Bound Value Type not implemented " + boundValue);
       }

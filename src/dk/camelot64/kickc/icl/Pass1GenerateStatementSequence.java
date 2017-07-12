@@ -151,7 +151,9 @@ public class Pass1GenerateStatementSequence extends KickCBaseVisitor<Object> {
       }
       procedure.setParameters(parameterList);
       sequence.addStatement(new StatementProcedureBegin(procedure));
-      this.visit(ctx.stmtSeq());
+      if(ctx.stmtSeq()!=null) {
+         this.visit(ctx.stmtSeq());
+      }
       sequence.addStatement(new StatementLabel(procExit));
       if(returnVar!=null) {
          sequence.addStatement(new StatementAssignment(returnVar, returnVar));
@@ -285,7 +287,13 @@ public class Pass1GenerateStatementSequence extends KickCBaseVisitor<Object> {
 
    @Override
    public Object visitExprCall(KickCParser.ExprCallContext ctx) {
-      List<RValue> parameters = (List<RValue>) this.visit(ctx.parameterList());
+      List<RValue> parameters;
+      KickCParser.ParameterListContext parameterList = ctx.parameterList();
+      if(parameterList!=null) {
+          parameters = (List<RValue>) this.visit(parameterList);
+      } else {
+         parameters = new ArrayList<>();
+      }
       VariableIntermediate tmpVar = getCurrentSymbols().addVariableIntermediate();
       sequence.addStatement(new StatementCall(tmpVar, ctx.NAME().getText(), parameters));
       return tmpVar;

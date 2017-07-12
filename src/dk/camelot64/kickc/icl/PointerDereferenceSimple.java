@@ -5,7 +5,7 @@ public class PointerDereferenceSimple implements PointerDereference {
 
    private RValue pointer;
 
-   public PointerDereferenceSimple(Variable pointer) {
+   public PointerDereferenceSimple(RValue pointer) {
       this.pointer = pointer;
    }
 

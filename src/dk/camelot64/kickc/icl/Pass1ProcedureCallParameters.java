@@ -38,7 +38,9 @@ public class Pass1ProcedureCallParameters extends ControlFlowGraphCopyVisitor {
       addStatementToCurrentBlock(copyCall);
       getCurrentBlock().setCallSuccessor(procedure.getLabel());
       splitCurrentBlock(scope.addLabelIntermediate());
-      addStatementToCurrentBlock(new StatementAssignment(origCall.getLValue(), procReturnVar));
+      if(!SymbolTypeBasic.VOID.equals(procedure.getReturnType())) {
+         addStatementToCurrentBlock(new StatementAssignment(origCall.getLValue(), procReturnVar));
+      }
       return null;
    }
 

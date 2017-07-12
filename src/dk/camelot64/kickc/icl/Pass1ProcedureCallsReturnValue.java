@@ -28,25 +28,26 @@ public class Pass1ProcedureCallsReturnValue extends ControlFlowGraphCopyVisitor 
       copyCall.setProcedure(procedure);
       addStatementToCurrentBlock(copyCall);
       getCurrentBlock().setCallSuccessor(procedure.getLabel());
-
-      // Find return variable final version
-      Label returnBlockLabel = procedure.getLabel("@return");
-      ControlFlowBlock returnBlock = graph.getBlock(returnBlockLabel);
-      VariableVersion returnVarFinal = null;
-      for (Statement statement : returnBlock.getStatements()) {
-         if (statement instanceof StatementReturn) {
-            StatementReturn statementReturn = (StatementReturn) statement;
-            RValue returnValue = statementReturn.getValue();
-            if (returnValue instanceof VariableVersion) {
-               returnVarFinal = (VariableVersion) returnValue;
+      if(!SymbolTypeBasic.VOID.equals(procedure.getReturnType())) {
+         // Find return variable final version
+         Label returnBlockLabel = procedure.getLabel("@return");
+         ControlFlowBlock returnBlock = graph.getBlock(returnBlockLabel);
+         VariableVersion returnVarFinal = null;
+         for (Statement statement : returnBlock.getStatements()) {
+            if (statement instanceof StatementReturn) {
+               StatementReturn statementReturn = (StatementReturn) statement;
+               RValue returnValue = statementReturn.getValue();
+               if (returnValue instanceof VariableVersion) {
+                  returnVarFinal = (VariableVersion) returnValue;
+               }
             }
          }
+         if (returnVarFinal == null) {
+            throw new RuntimeException("Error! Cannot find final return variable for " + procedure.getFullName());
+         }
+         StatementAssignment returnAssignment = new StatementAssignment(origCall.getLValue(), returnVarFinal);
+         addStatementToCurrentBlock(returnAssignment);
       }
-      if (returnVarFinal == null) {
-         throw new RuntimeException("Error! Cannot find final return variable for " + procedure.getFullName());
-      }
-      StatementAssignment returnAssignment = new StatementAssignment(origCall.getLValue(), returnVarFinal);
-      addStatementToCurrentBlock(returnAssignment);
       return null;
    }
 

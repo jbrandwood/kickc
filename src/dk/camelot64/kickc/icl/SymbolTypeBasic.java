@@ -29,6 +29,7 @@ public enum SymbolTypeBasic implements SymbolType {
          case "word": return WORD;
          case "string": return STRING;
          case "boolean": return BOOLEAN;
+         case "void": return VOID;
       }
       return null;
    }

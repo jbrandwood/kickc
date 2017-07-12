@@ -56,7 +56,9 @@ public class Pass2ConstantPropagation extends Pass2SsaOptimization {
                         assignment.getOperator(),
                         (Constant) assignment.getRValue1(),
                         (Constant) assignment.getRValue2());
-                  constants.put(variable, constant);
+                  if(constant!=null) {
+                     constants.put(variable, constant);
+                  }
                }
             }
             return null;
@@ -109,6 +111,10 @@ public class Pass2ConstantPropagation extends Pass2SsaOptimization {
             } else {
                return new ConstantDouble(getDouble(c1) / getDouble(c2));
             }
+         }
+         case "*idx": {
+            // Cannot be directly propagated
+            return null;
          }
          default:
             throw new RuntimeException("Unhandled Binary Operator " + operator.getOperator());

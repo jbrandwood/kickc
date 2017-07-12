@@ -59,6 +59,14 @@ public class Pass2ConstantAdditionElimination extends Pass2SsaOptimization {
 
    private boolean optimizePointerDereferenceIndexed(StatementAssignment assignment) {
       PointerDereferenceIndexed pointerDereferenceIndexed = (PointerDereferenceIndexed) assignment.getLValue();
+      if(pointerDereferenceIndexed.getPointer() instanceof ConstantInteger && pointerDereferenceIndexed.getIndex() instanceof Constant) {
+         ConstantInteger ptrConstant = (ConstantInteger) pointerDereferenceIndexed.getPointer();
+         ConstantInteger idxConstant = (ConstantInteger) pointerDereferenceIndexed.getIndex();
+         int newPtr = ptrConstant.getNumber() + idxConstant.getNumber();
+         assignment.setLValue(new PointerDereferenceSimple(new ConstantInteger(newPtr)));
+         System.out.println("Consolidated assigned array index constant in assignment " + assignment.getLValue());
+         return true;
+      }
       if(pointerDereferenceIndexed.getPointer() instanceof ConstantInteger && pointerDereferenceIndexed.getIndex() instanceof Variable) {
          Variable variable = (Variable) pointerDereferenceIndexed.getIndex();
          ConstantInteger consolidated = consolidateSubConstants(variable);
@@ -74,13 +82,23 @@ public class Pass2ConstantAdditionElimination extends Pass2SsaOptimization {
    }
 
    private boolean optimizeArrayDeref(StatementAssignment assignment) {
+      if (assignment.getRValue1() instanceof ConstantInteger && assignment.getRValue2() instanceof ConstantInteger) {
+         ConstantInteger ptrConstant = (ConstantInteger) assignment.getRValue1();
+         ConstantInteger idxConstant = (ConstantInteger) assignment.getRValue2();
+         int newPtr = ptrConstant.getNumber() + idxConstant.getNumber();
+         assignment.setRValue1(null);
+         assignment.setOperator(new Operator("*"));
+         assignment.setRValue2(new ConstantInteger(newPtr));
+         System.out.println("Consolidated referenced array index constant in assignment " + assignment.getLValue());
+         return true;
+      }
       if (assignment.getRValue1() instanceof ConstantInteger && assignment.getRValue2() instanceof Variable) {
          Variable variable = (Variable) assignment.getRValue2();
          ConstantInteger consolidated = consolidateSubConstants(variable);
          if (consolidated != null) {
             ConstantInteger ptrConstant = (ConstantInteger) assignment.getRValue1();
             int newPtr = ptrConstant.getNumber() + consolidated.getNumber();
-               assignment.setRValue1(new ConstantInteger(newPtr));
+            assignment.setRValue1(new ConstantInteger(newPtr));
             System.out.println("Consolidated referenced array index constant in assignment " + assignment.getLValue());
             return true;
          }
@@ -124,7 +142,7 @@ public class Pass2ConstantAdditionElimination extends Pass2SsaOptimization {
     * @return The consolidated constant. Null if no sub-constants were found.
     */
    private ConstantInteger consolidateSubConstants(Variable variable) {
-      if(usages.get(variable)>1) {
+      if(getUsages(variable) >1) {
          System.out.println("Multiple usages for variable. Not optimizing sub-constant "+variable);
          return null;
       }
@@ -195,6 +213,12 @@ public class Pass2ConstantAdditionElimination extends Pass2SsaOptimization {
          }
       }
       return null;
+   }
+
+   private Integer getUsages(Variable variable) {
+      Integer useCount = usages.get(variable);
+      if(useCount==null) useCount = 0;
+      return useCount;
    }
 
 }

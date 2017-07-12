@@ -13,7 +13,7 @@ import java.util.List;
 /** Test my KickC Grammar */
 public class Main {
    public static void main(String[] args) throws IOException {
-      final String fileName = "src/dk/camelot64/kickc/test/callsum.kc";
+      final String fileName = "src/dk/camelot64/kickc/test/flipper-rex2.kc";
       final CharStream input = CharStreams.fromFileName(fileName);
       System.out.println(input.toString());
       KickCLexer lexer = new KickCLexer(input);

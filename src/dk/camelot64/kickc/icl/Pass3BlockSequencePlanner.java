@@ -26,7 +26,7 @@ public class Pass3BlockSequencePlanner {
          }
          if(sequence.contains(block)) {
             // already handled - move on
-            break;
+            continue;
          }
          sequence.add(block);
          if(block.getCallSuccessor()!=null) {

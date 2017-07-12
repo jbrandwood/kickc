@@ -94,6 +94,31 @@ public class Pass3RegisterAllocation {
       allocation.allocate(symbols.getVariable("prepare::i#0"), RegisterAllocation.getRegisterX());
       allocation.allocate(symbols.getVariable("prepare::i#1"), RegisterAllocation.getRegisterX());
       allocation.allocate(symbols.getVariable("prepare::i#2"), RegisterAllocation.getRegisterX());
+      allocation.allocate(symbols.getVariable("flip::srcIdx#0"), RegisterAllocation.getRegisterX());
+      allocation.allocate(symbols.getVariable("flip::srcIdx#0"), RegisterAllocation.getRegisterX());
+      allocation.allocate(symbols.getVariable("flip::srcIdx#1"), RegisterAllocation.getRegisterX());
+      allocation.allocate(symbols.getVariable("flip::srcIdx#2"), RegisterAllocation.getRegisterX());
+      allocation.allocate(symbols.getVariable("flip::srcIdx#3"), RegisterAllocation.getRegisterX());
+      allocation.allocate(symbols.getVariable("flip::srcIdx#4"), RegisterAllocation.getRegisterX());
+      allocation.allocate(symbols.getVariable("flip::dstIdx#0"), RegisterAllocation.getRegisterY());
+      allocation.allocate(symbols.getVariable("flip::dstIdx#1"), RegisterAllocation.getRegisterY());
+      allocation.allocate(symbols.getVariable("flip::dstIdx#2"), RegisterAllocation.getRegisterY());
+      allocation.allocate(symbols.getVariable("flip::dstIdx#3"), RegisterAllocation.getRegisterY());
+      allocation.allocate(symbols.getVariable("flip::dstIdx#4"), RegisterAllocation.getRegisterY());
+      allocation.allocate(symbols.getVariable("flip::dstIdx#5"), RegisterAllocation.getRegisterY());
+      allocation.allocate(symbols.getVariable("flip::c#0"), new RegisterAllocation.RegisterZpByte(103));
+      allocation.allocate(symbols.getVariable("flip::c#1"), new RegisterAllocation.RegisterZpByte(103));
+      allocation.allocate(symbols.getVariable("flip::c#2"), new RegisterAllocation.RegisterZpByte(103));
+      allocation.allocate(symbols.getVariable("flip::r#0"), new RegisterAllocation.RegisterZpByte(104));
+      allocation.allocate(symbols.getVariable("flip::r#1"), new RegisterAllocation.RegisterZpByte(104));
+      allocation.allocate(symbols.getVariable("flip::r#2"), new RegisterAllocation.RegisterZpByte(104));
+      allocation.allocate(symbols.getVariable("flip::r#3"), new RegisterAllocation.RegisterZpByte(104));
+      allocation.allocate(symbols.getVariable("flip::r#4"), new RegisterAllocation.RegisterZpByte(104));
+      allocation.allocate(symbols.getVariable("flip::i#0"), RegisterAllocation.getRegisterX());
+      allocation.allocate(symbols.getVariable("flip::i#1"), RegisterAllocation.getRegisterX());
+      allocation.allocate(symbols.getVariable("flip::i#2"), RegisterAllocation.getRegisterX());
+      allocation.allocate(symbols.getVariable("flip::$0"), RegisterAllocation.getRegisterA());
+      allocation.allocate(symbols.getVariable("flip::$8"), RegisterAllocation.getRegisterA());
 
       symbols.setAllocation(allocation);
 

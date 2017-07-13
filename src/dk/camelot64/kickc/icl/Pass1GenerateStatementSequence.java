@@ -2,6 +2,7 @@ package dk.camelot64.kickc.icl;
 
 import dk.camelot64.kickc.parser.KickCBaseVisitor;
 import dk.camelot64.kickc.parser.KickCParser;
+import org.antlr.v4.runtime.ParserRuleContext;
 import org.antlr.v4.runtime.tree.TerminalNode;
 
 import java.util.ArrayList;
@@ -61,7 +62,7 @@ public class Pass1GenerateStatementSequence extends KickCBaseVisitor<Object> {
 
    @Override
    public Void visitStmtBlock(KickCParser.StmtBlockContext ctx) {
-      if(ctx.stmtSeq()!=null) {
+      if (ctx.stmtSeq() != null) {
          this.visit(ctx.stmtSeq());
       }
       return null;
@@ -70,12 +71,14 @@ public class Pass1GenerateStatementSequence extends KickCBaseVisitor<Object> {
    @Override
    public Void visitStmtExpr(KickCParser.StmtExprContext ctx) {
       this.visit(ctx.expr());
+      PostModifierHandler.addPostModifiers(this, ctx.expr());
       return null;
    }
 
    @Override
    public Void visitStmtIfElse(KickCParser.StmtIfElseContext ctx) {
       RValue rValue = (RValue) this.visit(ctx.expr());
+      PostModifierHandler.addPostModifiers(this, ctx.expr());
       Label ifJumpLabel = getCurrentSymbols().addLabelIntermediate();
       Label elseJumpLabel = getCurrentSymbols().addLabelIntermediate();
       Statement ifJmpStmt = new StatementConditionalJump(rValue, ifJumpLabel);
@@ -110,6 +113,7 @@ public class Pass1GenerateStatementSequence extends KickCBaseVisitor<Object> {
       StatementLabel beginJumpTarget = new StatementLabel(beginJumpLabel);
       sequence.addStatement(beginJumpTarget);
       RValue rValue = (RValue) this.visit(ctx.expr());
+      PostModifierHandler.addPostModifiers(this, ctx.expr());
       Statement doJmpStmt = new StatementConditionalJump(rValue, doJumpLabel);
       sequence.addStatement(doJmpStmt);
       Statement endJmpStmt = new StatementJump(endJumpLabel);
@@ -129,10 +133,11 @@ public class Pass1GenerateStatementSequence extends KickCBaseVisitor<Object> {
       Label beginJumpLabel = getCurrentSymbols().addLabelIntermediate();
       StatementLabel beginJumpTarget = new StatementLabel(beginJumpLabel);
       sequence.addStatement(beginJumpTarget);
-      if(ctx.stmt()!=null) {
+      if (ctx.stmt() != null) {
          this.visit(ctx.stmt());
       }
       RValue rValue = (RValue) this.visit(ctx.expr());
+      PostModifierHandler.addPostModifiers(this, ctx.expr());
       Statement doJmpStmt = new StatementConditionalJump(rValue, beginJumpLabel);
       sequence.addStatement(doJmpStmt);
       return null;
@@ -155,11 +160,11 @@ public class Pass1GenerateStatementSequence extends KickCBaseVisitor<Object> {
       }
       procedure.setParameters(parameterList);
       sequence.addStatement(new StatementProcedureBegin(procedure));
-      if(ctx.stmtSeq()!=null) {
+      if (ctx.stmtSeq() != null) {
          this.visit(ctx.stmtSeq());
       }
       sequence.addStatement(new StatementLabel(procExit));
-      if(returnVar!=null) {
+      if (returnVar != null) {
          sequence.addStatement(new StatementAssignment(returnVar, returnVar));
       }
       sequence.addStatement(new StatementReturn(returnVar));
@@ -194,6 +199,7 @@ public class Pass1GenerateStatementSequence extends KickCBaseVisitor<Object> {
          rValue = (RValue) this.visit(exprCtx);
          Variable returnVar = procedure.getVariable("return");
          sequence.addStatement(new StatementAssignment(returnVar, rValue));
+         PostModifierHandler.addPostModifiers(this, exprCtx);
       }
       Label returnLabel = procedure.getLabel("@return");
       sequence.addStatement(new StatementJump(returnLabel));
@@ -211,6 +217,7 @@ public class Pass1GenerateStatementSequence extends KickCBaseVisitor<Object> {
          RValue rValue = (RValue) visit(ctx.initializer());
          Statement stmt = new StatementAssignment(lValue, rValue);
          sequence.addStatement(stmt);
+         PostModifierHandler.addPostModifiers(this, ctx.initializer());
       }
       return null;
    }
@@ -221,6 +228,7 @@ public class Pass1GenerateStatementSequence extends KickCBaseVisitor<Object> {
       RValue rValue = (RValue) this.visit(ctx.expr());
       Statement stmt = new StatementAssignment(lValue, rValue);
       sequence.addStatement(stmt);
+      PostModifierHandler.addPostModifiers(this, ctx);
       return null;
    }
 
@@ -293,8 +301,8 @@ public class Pass1GenerateStatementSequence extends KickCBaseVisitor<Object> {
    public Object visitExprCall(KickCParser.ExprCallContext ctx) {
       List<RValue> parameters;
       KickCParser.ParameterListContext parameterList = ctx.parameterList();
-      if(parameterList!=null) {
-          parameters = (List<RValue>) this.visit(parameterList);
+      if (parameterList != null) {
+         parameters = (List<RValue>) this.visit(parameterList);
       } else {
          parameters = new ArrayList<>();
       }
@@ -371,14 +379,7 @@ public class Pass1GenerateStatementSequence extends KickCBaseVisitor<Object> {
    @Override
    public Object visitExprPostMod(KickCParser.ExprPostModContext ctx) {
       RValue child = (RValue) this.visit(ctx.expr());
-      String op = ((TerminalNode) ctx.getChild(1)).getSymbol().getText();
-      Operator operator = new Operator(op);
-      VariableIntermediate tmpVar = getCurrentSymbols().addVariableIntermediate();
-      Statement stmt1 = new StatementAssignment(tmpVar, child);
-      sequence.addStatement(stmt1);
-      Statement stmt2 = new StatementAssignment((LValue) child, operator, child);
-      sequence.addStatement(stmt2);
-      return tmpVar;
+      return child;
    }
 
    @Override
@@ -395,4 +396,50 @@ public class Pass1GenerateStatementSequence extends KickCBaseVisitor<Object> {
       return sequence;
    }
 
+   private static class PostModifierHandler extends KickCBaseVisitor<Void> {
+
+      private List<PostMod> postMods;
+      private Pass1GenerateStatementSequence mainParser;
+
+      public PostModifierHandler(Pass1GenerateStatementSequence mainParser) {
+         this.mainParser = mainParser;
+         postMods = new ArrayList<>();
+      }
+
+      public List<PostMod> getPostMods() {
+         return postMods;
+      }
+
+      public static void addPostModifiers(Pass1GenerateStatementSequence parser, ParserRuleContext ctx) {
+         PostModifierHandler postModifierHandler = new PostModifierHandler(parser);
+         postModifierHandler.visit(ctx);
+         List<PostMod> postMods = postModifierHandler.getPostMods();
+         for (PostMod mod : postMods) {
+            Statement stmt = new StatementAssignment((LValue) mod.child, mod.operator, mod.child);
+            parser.sequence.addStatement(stmt);
+            System.out.println("Adding postmod "+stmt);
+         }
+      }
+
+      @Override
+      public Void visitExprPostMod(KickCParser.ExprPostModContext ctx) {
+         RValue child = (RValue) mainParser.visit(ctx.expr());
+         String op = ((TerminalNode) ctx.getChild(1)).getSymbol().getText();
+         Operator operator = new Operator(op);
+         PostMod postMod = new PostMod(child, operator);
+         postMods.add(postMod);
+         return null;
+      }
+
+      private static class PostMod {
+         public RValue child;
+         public Operator operator;
+
+         public PostMod(RValue child, Operator operator) {
+            this.child = child;
+            this.operator = operator;
+         }
+      }
+
+   }
 }

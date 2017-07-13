@@ -131,6 +131,7 @@ public class Pass3RegisterAllocation {
       allocation.allocate(symbols.getVariable("flip::i#2"), RegisterAllocation.getRegisterX());
       allocation.allocate(symbols.getVariable("flip::$0"), RegisterAllocation.getRegisterA());
       allocation.allocate(symbols.getVariable("flip::$8"), RegisterAllocation.getRegisterA());
+      allocation.allocate(symbols.getVariable("flip::$4"), RegisterAllocation.getRegisterA());
       allocation.allocate(symbols.getVariable("$1"), RegisterAllocation.getRegisterA());
       allocation.allocate(symbols.getVariable("$3"), RegisterAllocation.getRegisterA());
       allocation.allocate(symbols.getVariable("c#0"), RegisterAllocation.getRegisterX());

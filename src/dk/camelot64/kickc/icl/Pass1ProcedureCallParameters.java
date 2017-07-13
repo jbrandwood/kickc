@@ -40,7 +40,14 @@ public class Pass1ProcedureCallParameters extends ControlFlowGraphCopyVisitor {
       splitCurrentBlock(scope.addLabelIntermediate());
       if(!SymbolTypeBasic.VOID.equals(procedure.getReturnType())) {
          addStatementToCurrentBlock(new StatementAssignment(origCall.getLValue(), procReturnVar));
+      } {
+         // No return type. Remove variable receiving the result.
+         LValue lValue = origCall.getLValue();
+         if(lValue instanceof Variable) {
+            scope.remove((Variable) lValue);
+         }
       }
+
       return null;
    }
 

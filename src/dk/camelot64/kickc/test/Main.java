@@ -10,7 +10,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-/** Test my KickC Grammar */
+/** Perform KickC compilation ans optimization*/
 public class Main {
    public static void main(String[] args) throws IOException {
       final String fileName = "src/dk/camelot64/kickc/test/flipper-rex2.kc";
@@ -30,7 +30,8 @@ public class Main {
       pass1GenerateStatementSequence.generate(file);
       StatementSequence statementSequence = pass1GenerateStatementSequence.getSequence();
       Scope programScope = pass1GenerateStatementSequence.getProgramScope();
-      new Pass1TypeInference().inferTypes(statementSequence, programScope);
+      Pass1TypeInference pass1TypeInference = new Pass1TypeInference();
+      pass1TypeInference.inferTypes(statementSequence, programScope);
 
       System.out.println("PROGRAM");
       System.out.println(statementSequence.toString());
@@ -42,7 +43,8 @@ public class Main {
       System.out.println("INITIAL CONTROL FLOW GRAPH");
       System.out.println(controlFlowGraph.toString());
 
-      Pass1ProcedureCallParameters pass1ProcedureCallParameters = new Pass1ProcedureCallParameters(programScope, controlFlowGraph);
+      Pass1ProcedureCallParameters pass1ProcedureCallParameters =
+            new Pass1ProcedureCallParameters(programScope, controlFlowGraph);
       controlFlowGraph = pass1ProcedureCallParameters.generate();
       System.out.println("CONTROL FLOW GRAPH WITH ASSIGNMENT CALL");
       System.out.println(controlFlowGraph.toString());
@@ -54,12 +56,11 @@ public class Main {
       System.out.println("CONTROL FLOW GRAPH SSA");
       System.out.println(controlFlowGraph.toString());
 
-      Pass1ProcedureCallsReturnValue pass1ProcedureCallsReturnValue = new Pass1ProcedureCallsReturnValue(programScope, controlFlowGraph);
+      Pass1ProcedureCallsReturnValue pass1ProcedureCallsReturnValue =
+            new Pass1ProcedureCallsReturnValue(programScope, controlFlowGraph);
       controlFlowGraph = pass1ProcedureCallsReturnValue.generate();
       System.out.println("CONTROL FLOW GRAPH WITH ASSIGNMENT CALL & RETURN");
       System.out.println(controlFlowGraph.toString());
-
-      //if(1==1) return;
 
       List<Pass2SsaOptimization> optimizations = new ArrayList<>();
       optimizations.add(new Pass2CullEmptyBlocks(controlFlowGraph, programScope));
@@ -70,8 +71,14 @@ public class Main {
       optimizations.add(new Pass2SelfPhiElimination(controlFlowGraph, programScope));
       optimizations.add(new Pass2ConditionalJumpSimplification(controlFlowGraph, programScope));
 
+      List<Pass2SsaAssertion> assertions = new ArrayList<>();
+      assertions.add(new Pass2AssertSymbols(controlFlowGraph, programScope));
+
       boolean ssaOptimized = true;
       while (ssaOptimized) {
+         for (Pass2SsaAssertion assertion : assertions) {
+            assertion.check();
+         }
          ssaOptimized = false;
          for (Pass2SsaOptimization optimization : optimizations) {
             boolean stepOptimized = optimization.optimize();

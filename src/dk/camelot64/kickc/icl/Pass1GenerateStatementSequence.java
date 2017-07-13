@@ -369,6 +369,19 @@ public class Pass1GenerateStatementSequence extends KickCBaseVisitor<Object> {
    }
 
    @Override
+   public Object visitExprPostMod(KickCParser.ExprPostModContext ctx) {
+      RValue child = (RValue) this.visit(ctx.expr());
+      String op = ((TerminalNode) ctx.getChild(1)).getSymbol().getText();
+      Operator operator = new Operator(op);
+      VariableIntermediate tmpVar = getCurrentSymbols().addVariableIntermediate();
+      Statement stmt1 = new StatementAssignment(tmpVar, child);
+      sequence.addStatement(stmt1);
+      Statement stmt2 = new StatementAssignment((LValue) child, operator, child);
+      sequence.addStatement(stmt2);
+      return tmpVar;
+   }
+
+   @Override
    public RValue visitExprPar(KickCParser.ExprParContext ctx) {
       return (RValue) this.visit(ctx.expr());
    }

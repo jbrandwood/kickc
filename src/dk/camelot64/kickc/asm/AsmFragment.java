@@ -153,6 +153,10 @@ public class AsmFragment {
             return "_staridx_";
          case "+":
             return "_plus_";
+         case "++":
+            return "_inc_";
+         case "--":
+            return "_dec_";
          case "-":
             return "_minus_";
          case "==":

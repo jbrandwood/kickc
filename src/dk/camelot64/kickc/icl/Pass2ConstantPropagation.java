@@ -155,6 +155,14 @@ public class Pass2ConstantPropagation extends Pass2SsaOptimization {
          case "+": {
             return c;
          }
+         case "++": {
+            ConstantInteger cInt = (ConstantInteger) c;
+            return new ConstantInteger(cInt.getNumber()+1);
+         }
+         case "--": {
+            ConstantInteger cInt = (ConstantInteger) c;
+            return new ConstantInteger(cInt.getNumber()-1);
+         }
          case "*": { // pointer dereference
             return null;
          }

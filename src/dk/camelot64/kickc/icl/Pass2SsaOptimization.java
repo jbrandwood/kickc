@@ -171,36 +171,51 @@ public abstract class Pass2SsaOptimization {
     * @param replacements Variables that have alias values.
     */
    public void replaceLabels(final Map<Label, Label> replacements) {
-      ControlFlowGraphBaseVisitor<Void> visitor = new ControlFlowGraphBaseVisitor<Void>() {
-
-         @Override
-         public Void visitConditionalJump(StatementConditionalJump conditionalJump) {
-            if (getReplacement(replacements, conditionalJump.getDestination()) != null) {
-               conditionalJump.setDestination(getReplacement(replacements, conditionalJump.getDestination()));
-            }
-            return null;
-         }
-
-         @Override
-         public Void visitJump(StatementJump jump) {
-            if (getReplacement(replacements, jump.getDestination()) != null) {
-               jump.setDestination(getReplacement(replacements, jump.getDestination()));
-            }
-            return null;
-         }
-
-         @Override
-         public Void visitPhi(StatementPhi phi) {
-            for (StatementPhi.PreviousSymbol previousSymbol : phi.getPreviousVersions()) {
-               Label replacement = getReplacement(replacements, previousSymbol.getBlock());
-               if (replacement != null) {
-                  previousSymbol.setBlock(replacement);
-               }
-            }
-            return null;
-         }
-      };
+      ControlFlowGraphBaseVisitor<Void> visitor = getLabelReplaceVisitor(replacements);
       visitor.visitGraph(graph);
+   }
+
+   /**
+    * Replace all usages of a label in statements with another label.
+    *
+    * @param replacements Variables that have alias values.
+    */
+   public void replaceLabels(ControlFlowBlock block, final Map<Label, Label> replacements) {
+      ControlFlowGraphBaseVisitor<Void> visitor = getLabelReplaceVisitor(replacements);
+      visitor.visitBlock(block);
+   }
+
+   /** Creates a visitor that can replace labels. */
+   private ControlFlowGraphBaseVisitor<Void> getLabelReplaceVisitor(final Map<Label, Label> replacements) {
+      return new ControlFlowGraphBaseVisitor<Void>() {
+
+            @Override
+            public Void visitConditionalJump(StatementConditionalJump conditionalJump) {
+               if (getReplacement(replacements, conditionalJump.getDestination()) != null) {
+                  conditionalJump.setDestination(getReplacement(replacements, conditionalJump.getDestination()));
+               }
+               return null;
+            }
+
+            @Override
+            public Void visitJump(StatementJump jump) {
+               if (getReplacement(replacements, jump.getDestination()) != null) {
+                  jump.setDestination(getReplacement(replacements, jump.getDestination()));
+               }
+               return null;
+            }
+
+            @Override
+            public Void visitPhi(StatementPhi phi) {
+               for (StatementPhi.PreviousSymbol previousSymbol : phi.getPreviousVersions()) {
+                  Label replacement = getReplacement(replacements, previousSymbol.getBlock());
+                  if (replacement != null) {
+                     previousSymbol.setBlock(replacement);
+                  }
+               }
+               return null;
+            }
+         };
    }
 
    /**
@@ -244,13 +259,13 @@ public abstract class Pass2SsaOptimization {
    }
 
    /**
-    * Remove variables from the symbol table
+    * Remove symbols from the symbol table
     *
-    * @param variables The variables to remove
+    * @param symbols The symbols to remove
     */
-   public void deleteSymbols(Collection<? extends LValue> variables) {
-      for (LValue variable : variables) {
-         scope.remove((Symbol) variable);
+   public void deleteSymbols(Collection<? extends Symbol> symbols) {
+      for (Symbol symbol : symbols) {
+         symbol.getScope().remove(symbol);
       }
    }
 

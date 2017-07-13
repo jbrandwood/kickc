@@ -61,7 +61,9 @@ public class Pass1GenerateStatementSequence extends KickCBaseVisitor<Object> {
 
    @Override
    public Void visitStmtBlock(KickCParser.StmtBlockContext ctx) {
-      this.visit(ctx.stmtSeq());
+      if(ctx.stmtSeq()!=null) {
+         this.visit(ctx.stmtSeq());
+      }
       return null;
    }
 
@@ -127,7 +129,9 @@ public class Pass1GenerateStatementSequence extends KickCBaseVisitor<Object> {
       Label beginJumpLabel = getCurrentSymbols().addLabelIntermediate();
       StatementLabel beginJumpTarget = new StatementLabel(beginJumpLabel);
       sequence.addStatement(beginJumpTarget);
-      this.visit(ctx.stmt());
+      if(ctx.stmt()!=null) {
+         this.visit(ctx.stmt());
+      }
       RValue rValue = (RValue) this.visit(ctx.expr());
       Statement doJmpStmt = new StatementConditionalJump(rValue, beginJumpLabel);
       sequence.addStatement(doJmpStmt);

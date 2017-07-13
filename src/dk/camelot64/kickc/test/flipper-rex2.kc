@@ -2,10 +2,18 @@ byte[1000] SCREEN = $0400;
 byte[16*16] buffer = $1000;
 byte[16*16] buffer2 = $1100;
 
+byte *RASTER = $d012;
+
 prepare();
 do {
-   plot();
+   byte c = 25;
+   do{
+     do { } while(*RASTER!=254)
+     do { } while(*RASTER!=255)
+     c=c-1;
+   } while(c!=0)
    flip();
+   plot();
 } while(true)
 
 // Prepare buffer
@@ -21,18 +29,18 @@ void prepare() {
 void flip() {
    byte srcIdx = 0;
    byte dstIdx = 15;
-   byte r=0;
+   byte r=16;
    do {
-      byte c = 0;
+      byte c = 16;
       do {
          buffer2[dstIdx] = buffer[srcIdx];
          srcIdx = srcIdx+1;
          dstIdx = dstIdx+16;
-         c=c+1;
-      } while(c<16)
-      r=r+1;
+         c=c-1;
+      } while(c!=0)
       dstIdx = dstIdx-1;
-    } while(r<16)
+      r=r-1;
+     } while(r!=0)
    byte i=0;
    do {
       buffer[i] = buffer2[i];
@@ -43,7 +51,7 @@ void flip() {
 // Plot buffer on screen
 void plot() {
    byte* line = SCREEN+5*40+12;
-   byte y=0;
+   byte y=16;
    byte i=0;
    do {
       byte x=0;
@@ -53,6 +61,6 @@ void plot() {
          i=i+1;
       } while(x<16)
       line = line+40;
-      y=y+1;
-   } while(y<16)
+      y=y-1;
+   } while(y!=0)
 }

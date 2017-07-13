@@ -119,6 +119,13 @@ public class Pass3RegisterAllocation {
       allocation.allocate(symbols.getVariable("flip::i#2"), RegisterAllocation.getRegisterX());
       allocation.allocate(symbols.getVariable("flip::$0"), RegisterAllocation.getRegisterA());
       allocation.allocate(symbols.getVariable("flip::$8"), RegisterAllocation.getRegisterA());
+      allocation.allocate(symbols.getVariable("$1"), RegisterAllocation.getRegisterA());
+      allocation.allocate(symbols.getVariable("$3"), RegisterAllocation.getRegisterA());
+      allocation.allocate(symbols.getVariable("c#0"), RegisterAllocation.getRegisterX());
+      allocation.allocate(symbols.getVariable("c#1"), RegisterAllocation.getRegisterX());
+      allocation.allocate(symbols.getVariable("c#2"), RegisterAllocation.getRegisterX());
+      allocation.allocate(symbols.getVariable("c#3"), RegisterAllocation.getRegisterX());
+      allocation.allocate(symbols.getVariable("c#4"), RegisterAllocation.getRegisterX());
 
       symbols.setAllocation(allocation);
 
@@ -137,6 +144,8 @@ public class Pass3RegisterAllocation {
                currentZp = currentZp + 2;
             } else if (symbol.getType().equals(SymbolTypeBasic.BOOLEAN)) {
                allocation.allocate(var, new RegisterAllocation.RegisterZpBool(currentZp++));
+            } else if (symbol.getType().equals(SymbolTypeBasic.VOID)) {
+               // No need to allocate register for VOID value
             } else if (symbol.getType() instanceof SymbolTypePointer) {
                allocation.allocate(var, new RegisterAllocation.RegisterZpPointerByte(currentZp));
                currentZp = currentZp + 2;

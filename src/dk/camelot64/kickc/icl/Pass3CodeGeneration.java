@@ -2,7 +2,7 @@ package dk.camelot64.kickc.icl;
 
 import dk.camelot64.kickc.asm.*;
 
-import java.util.Iterator;
+import java.util.*;
 
 /**
  * Code Generation of 6502 Assembler from ICL/SSA Control Flow Graph
@@ -107,7 +107,14 @@ public class Pass3CodeGeneration {
             break;
          }
          StatementPhi phi = (StatementPhi) statement;
-         for (StatementPhi.PreviousSymbol previousSymbol : phi.getPreviousVersions()) {
+         List<StatementPhi.PreviousSymbol> previousVersions = new ArrayList<>(phi.getPreviousVersions());
+         Collections.sort(previousVersions, new Comparator<StatementPhi.PreviousSymbol>() {
+            @Override
+            public int compare(StatementPhi.PreviousSymbol o1, StatementPhi.PreviousSymbol o2) {
+               return o1.getBlock().getFullName().compareTo(o2.getBlock().getFullName());
+            }
+         });
+         for (StatementPhi.PreviousSymbol previousSymbol : previousVersions) {
             if (previousSymbol.getBlock().equals(fromBlock.getLabel())) {
                genAsmMove(asm, phi.getLValue(), previousSymbol.getRValue());
                break;

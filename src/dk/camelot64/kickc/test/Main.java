@@ -73,6 +73,7 @@ public class Main {
 
       List<Pass2SsaAssertion> assertions = new ArrayList<>();
       assertions.add(new Pass2AssertSymbols(controlFlowGraph, programScope));
+      assertions.add(new Pass2AssertBlocks(controlFlowGraph, programScope));
 
       boolean ssaOptimized = true;
       while (ssaOptimized) {

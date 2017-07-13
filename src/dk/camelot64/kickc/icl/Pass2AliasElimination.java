@@ -165,6 +165,13 @@ public class Pass2AliasElimination extends Pass2SsaOptimization {
 
       public Variable getKeepVar() {
          Variable keep = null;
+         List<Variable> vars = new ArrayList<>(this.vars);
+         Collections.sort(vars, new Comparator<Variable>() {
+            @Override
+            public int compare(Variable o1, Variable o2) {
+               return o1.getFullName().compareTo(o2.getFullName());
+            }
+         });
          for (Variable var : vars) {
             if (keep == null) {
                keep = var;

@@ -1,9 +1,6 @@
 package dk.camelot64.kickc.icl;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /** The control flow graph of the program.
  * The control flow  graph is a set of connected basic blocks. */
@@ -100,6 +97,12 @@ public class ControlFlowGraph {
             predecessorBlocks.add(other);
          }
       }
+      Collections.sort(predecessorBlocks, new Comparator<ControlFlowBlock>() {
+         @Override
+         public int compare(ControlFlowBlock o1, ControlFlowBlock o2) {
+            return o1.getLabel().getFullName().compareTo(o2.getLabel().getFullName());
+         }
+      });
       return predecessorBlocks;
    }
 

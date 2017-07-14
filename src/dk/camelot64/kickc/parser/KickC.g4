@@ -50,6 +50,7 @@ expr
     | NAME '(' parameterList? ')' #exprCall
     | '(' typeDecl ')' expr #exprCast
     | expr '[' expr ']' #exprArray
+    | ('--' | '++' ) expr #exprPreMod
     | expr ('--' | '++' )#exprPostMod
     | ('+' | '-' | 'not' | '!' | '&' | '*') expr #exprUnary
     | expr ('>>' | '<<' ) expr #exprBinary

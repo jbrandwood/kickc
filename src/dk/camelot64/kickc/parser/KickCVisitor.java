@@ -175,6 +175,13 @@ public interface KickCVisitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitExprCall(KickCParser.ExprCallContext ctx);
 	/**
+	 * Visit a parse tree produced by the {@code exprPreMod}
+	 * labeled alternative in {@link KickCParser#expr}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitExprPreMod(KickCParser.ExprPreModContext ctx);
+	/**
 	 * Visit a parse tree produced by the {@code exprBinary}
 	 * labeled alternative in {@link KickCParser#expr}.
 	 * @param ctx the parse tree

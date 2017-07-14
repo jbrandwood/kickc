@@ -70,15 +70,17 @@ public class Pass1GenerateStatementSequence extends KickCBaseVisitor<Object> {
 
    @Override
    public Void visitStmtExpr(KickCParser.StmtExprContext ctx) {
+      PrePostModifierHandler.addPreModifiers(this, ctx.expr());
       this.visit(ctx.expr());
-      PostModifierHandler.addPostModifiers(this, ctx.expr());
+      PrePostModifierHandler.addPostModifiers(this, ctx.expr());
       return null;
    }
 
    @Override
    public Void visitStmtIfElse(KickCParser.StmtIfElseContext ctx) {
+      PrePostModifierHandler.addPreModifiers(this, ctx.expr());
       RValue rValue = (RValue) this.visit(ctx.expr());
-      PostModifierHandler.addPostModifiers(this, ctx.expr());
+      PrePostModifierHandler.addPostModifiers(this, ctx.expr());
       Label ifJumpLabel = getCurrentSymbols().addLabelIntermediate();
       Label elseJumpLabel = getCurrentSymbols().addLabelIntermediate();
       Statement ifJmpStmt = new StatementConditionalJump(rValue, ifJumpLabel);
@@ -112,8 +114,9 @@ public class Pass1GenerateStatementSequence extends KickCBaseVisitor<Object> {
       Label endJumpLabel = getCurrentSymbols().addLabelIntermediate();
       StatementLabel beginJumpTarget = new StatementLabel(beginJumpLabel);
       sequence.addStatement(beginJumpTarget);
+      PrePostModifierHandler.addPreModifiers(this, ctx.expr());
       RValue rValue = (RValue) this.visit(ctx.expr());
-      PostModifierHandler.addPostModifiers(this, ctx.expr());
+      PrePostModifierHandler.addPostModifiers(this, ctx.expr());
       Statement doJmpStmt = new StatementConditionalJump(rValue, doJumpLabel);
       sequence.addStatement(doJmpStmt);
       Statement endJmpStmt = new StatementJump(endJumpLabel);
@@ -136,8 +139,9 @@ public class Pass1GenerateStatementSequence extends KickCBaseVisitor<Object> {
       if (ctx.stmt() != null) {
          this.visit(ctx.stmt());
       }
+      PrePostModifierHandler.addPreModifiers(this, ctx.expr());
       RValue rValue = (RValue) this.visit(ctx.expr());
-      PostModifierHandler.addPostModifiers(this, ctx.expr());
+      PrePostModifierHandler.addPostModifiers(this, ctx.expr());
       Statement doJmpStmt = new StatementConditionalJump(rValue, beginJumpLabel);
       sequence.addStatement(doJmpStmt);
       return null;
@@ -196,10 +200,11 @@ public class Pass1GenerateStatementSequence extends KickCBaseVisitor<Object> {
       KickCParser.ExprContext exprCtx = ctx.expr();
       RValue rValue = null;
       if (exprCtx != null) {
+         PrePostModifierHandler.addPreModifiers(this, exprCtx);
          rValue = (RValue) this.visit(exprCtx);
          Variable returnVar = procedure.getVariable("return");
          sequence.addStatement(new StatementAssignment(returnVar, rValue));
-         PostModifierHandler.addPostModifiers(this, exprCtx);
+         PrePostModifierHandler.addPostModifiers(this, exprCtx);
       }
       Label returnLabel = procedure.getLabel("@return");
       sequence.addStatement(new StatementJump(returnLabel));
@@ -214,21 +219,23 @@ public class Pass1GenerateStatementSequence extends KickCBaseVisitor<Object> {
       SymbolType type = (SymbolType) visit(ctx.typeDecl());
       VariableUnversioned lValue = getCurrentSymbols().addVariable(ctx.NAME().getText(), type);
       if (ctx.initializer() != null) {
+         PrePostModifierHandler.addPreModifiers(this, ctx.initializer());
          RValue rValue = (RValue) visit(ctx.initializer());
          Statement stmt = new StatementAssignment(lValue, rValue);
          sequence.addStatement(stmt);
-         PostModifierHandler.addPostModifiers(this, ctx.initializer());
+         PrePostModifierHandler.addPostModifiers(this, ctx.initializer());
       }
       return null;
    }
 
    @Override
    public Void visitStmtAssignment(KickCParser.StmtAssignmentContext ctx) {
+      PrePostModifierHandler.addPreModifiers(this, ctx);
       LValue lValue = (LValue) visit(ctx.lvalue());
       RValue rValue = (RValue) this.visit(ctx.expr());
       Statement stmt = new StatementAssignment(lValue, rValue);
       sequence.addStatement(stmt);
-      PostModifierHandler.addPostModifiers(this, ctx);
+      PrePostModifierHandler.addPostModifiers(this, ctx);
       return null;
    }
 
@@ -377,6 +384,12 @@ public class Pass1GenerateStatementSequence extends KickCBaseVisitor<Object> {
    }
 
    @Override
+   public Object visitExprPreMod(KickCParser.ExprPreModContext ctx) {
+      RValue child = (RValue) this.visit(ctx.expr());
+      return child;
+   }
+
+   @Override
    public Object visitExprPostMod(KickCParser.ExprPostModContext ctx) {
       RValue child = (RValue) this.visit(ctx.expr());
       return child;
@@ -396,28 +409,47 @@ public class Pass1GenerateStatementSequence extends KickCBaseVisitor<Object> {
       return sequence;
    }
 
-   private static class PostModifierHandler extends KickCBaseVisitor<Void> {
+   private static class PrePostModifierHandler extends KickCBaseVisitor<Void> {
 
-      private List<PostMod> postMods;
+      private List<PrePostModifier> postMods;
+      private List<PrePostModifier> preMods;
       private Pass1GenerateStatementSequence mainParser;
 
-      public PostModifierHandler(Pass1GenerateStatementSequence mainParser) {
+      public PrePostModifierHandler(Pass1GenerateStatementSequence mainParser) {
          this.mainParser = mainParser;
+         preMods = new ArrayList<>();
          postMods = new ArrayList<>();
       }
 
-      public List<PostMod> getPostMods() {
+      public List<PrePostModifier> getPreMods() {
+         return preMods;
+      }
+
+      public List<PrePostModifier> getPostMods() {
          return postMods;
       }
 
       public static void addPostModifiers(Pass1GenerateStatementSequence parser, ParserRuleContext ctx) {
-         PostModifierHandler postModifierHandler = new PostModifierHandler(parser);
-         postModifierHandler.visit(ctx);
-         List<PostMod> postMods = postModifierHandler.getPostMods();
-         for (PostMod mod : postMods) {
+         PrePostModifierHandler prePostModifierHandler = new PrePostModifierHandler(parser);
+         prePostModifierHandler.visit(ctx);
+         List<PrePostModifier> modifiers = prePostModifierHandler.getPostMods();
+         addModifierStatements(parser, modifiers);
+      }
+
+      public static void addPreModifiers(Pass1GenerateStatementSequence parser, ParserRuleContext ctx) {
+         PrePostModifierHandler modifierHandler = new PrePostModifierHandler(parser);
+         modifierHandler.visit(ctx);
+         List<PrePostModifier> modifiers = modifierHandler.getPreMods();
+         addModifierStatements(parser, modifiers);
+      }
+
+      private static void addModifierStatements(
+            Pass1GenerateStatementSequence parser,
+            List<PrePostModifier> modifiers) {
+         for (PrePostModifier mod : modifiers) {
             Statement stmt = new StatementAssignment((LValue) mod.child, mod.operator, mod.child);
             parser.sequence.addStatement(stmt);
-            System.out.println("Adding postmod "+stmt);
+            System.out.println("Adding pre/post-modifier "+stmt);
          }
       }
 
@@ -426,16 +458,26 @@ public class Pass1GenerateStatementSequence extends KickCBaseVisitor<Object> {
          RValue child = (RValue) mainParser.visit(ctx.expr());
          String op = ((TerminalNode) ctx.getChild(1)).getSymbol().getText();
          Operator operator = new Operator(op);
-         PostMod postMod = new PostMod(child, operator);
-         postMods.add(postMod);
+         PrePostModifier modifier = new PrePostModifier(child, operator);
+         postMods.add(modifier);
          return null;
       }
 
-      private static class PostMod {
+      @Override
+      public Void visitExprPreMod(KickCParser.ExprPreModContext ctx) {
+         RValue child = (RValue) mainParser.visit(ctx.expr());
+         String op = ((TerminalNode) ctx.getChild(0)).getSymbol().getText();
+         Operator operator = new Operator(op);
+         PrePostModifier modifier = new PrePostModifier(child, operator);
+         preMods.add(modifier);
+         return null;
+      }
+
+      private static class PrePostModifier {
          public RValue child;
          public Operator operator;
 
-         public PostMod(RValue child, Operator operator) {
+         public PrePostModifier(RValue child, Operator operator) {
             this.child = child;
             this.operator = operator;
          }

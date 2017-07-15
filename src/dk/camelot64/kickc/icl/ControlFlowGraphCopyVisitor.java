@@ -1,6 +1,7 @@
 package dk.camelot64.kickc.icl;
 
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 
 /**
@@ -16,7 +17,7 @@ public class ControlFlowGraphCopyVisitor extends ControlFlowGraphBaseVisitor<Obj
    /**
     * The copied blocks.
     */
-   private HashMap<Symbol, ControlFlowBlock> copyBlockMap;
+   private LinkedHashMap<Symbol, ControlFlowBlock> copyBlockMap;
 
    /**
     * The current block being copied.
@@ -32,7 +33,7 @@ public class ControlFlowGraphCopyVisitor extends ControlFlowGraphBaseVisitor<Obj
    public ControlFlowGraph visitGraph(ControlFlowGraph origGraph) {
       this.origGraph = origGraph;
       // Copy all blocks
-      this.copyBlockMap = new HashMap<>();
+      this.copyBlockMap = new LinkedHashMap<>();
       for (ControlFlowBlock origBlock : origGraph.getAllBlocks()) {
          ControlFlowBlock copyBlock = visitBlock(origBlock);
          if (copyBlock != null) {

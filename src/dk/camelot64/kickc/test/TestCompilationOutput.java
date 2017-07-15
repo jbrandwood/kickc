@@ -1,7 +1,5 @@
 package dk.camelot64.kickc.test;
 
-import com.sun.org.apache.xpath.internal.SourceTree;
-import com.sun.xml.internal.ws.policy.privateutil.PolicyUtils;
 import dk.camelot64.kickc.Compiler;
 import org.antlr.v4.runtime.CharStream;
 import org.antlr.v4.runtime.CharStreams;
@@ -33,6 +31,7 @@ public class TestCompilationOutput {
    public static void main(String[] args) throws IOException, URISyntaxException {
       TestCompilationOutput tester = new TestCompilationOutput();
       tester.testFile("flipper-rex2");
+      tester.testFile("bresenham");
    }
 
    private void testFile(String fileName) throws IOException, URISyntaxException {

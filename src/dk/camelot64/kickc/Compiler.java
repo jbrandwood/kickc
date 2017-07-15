@@ -114,7 +114,7 @@ public class Compiler {
          for (Pass2SsaOptimization optimization : optimizations) {
             boolean stepOptimized = optimization.optimize();
             if (stepOptimized) {
-               log.append("Succesful SSA optimization "+optimization+"");
+               log.append("Succesful SSA optimization "+optimization.getClass().getSimpleName()+"");
                ssaOptimized = true;
                log.append("CONTROL FLOW GRAPH");
                log.append(controlFlowGraph.toString());
@@ -141,7 +141,7 @@ public class Compiler {
          for (Pass4AsmOptimization optimization : pass4Optimizations) {
             boolean stepOtimized = optimization.optimize();
             if(stepOtimized) {
-               log.append("Succesful ASM optimization "+optimization);
+               log.append("Succesful ASM optimization "+optimization.getClass().getSimpleName());
                asmOptimized = true;
                log.append("ASSEMBLER");
                log.append(asmProgram.toString());

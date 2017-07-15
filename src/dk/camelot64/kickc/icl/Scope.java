@@ -108,7 +108,8 @@ public class Scope implements Symbol {
          if (scopeSym instanceof Scope) {
             return ((Scope) scopeSym).getSymbol(rest);
          } else {
-            throw new RuntimeException("Error looking up symbol " + name);
+            return null;
+            //throw new RuntimeException("Error looking up symbol " + name);
          }
       } else {
          Symbol symbol = symbols.get(name);

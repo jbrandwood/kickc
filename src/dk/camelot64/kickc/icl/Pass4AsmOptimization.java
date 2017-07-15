@@ -1,5 +1,6 @@
 package dk.camelot64.kickc.icl;
 
+import dk.camelot64.kickc.CompileLog;
 import dk.camelot64.kickc.asm.AsmLine;
 import dk.camelot64.kickc.asm.AsmProgram;
 
@@ -11,10 +12,12 @@ import java.util.List;
  **/
 public abstract class Pass4AsmOptimization {
 
+   protected CompileLog log;
    private AsmProgram program;
 
-   public Pass4AsmOptimization(AsmProgram program) {
+   public Pass4AsmOptimization(AsmProgram program, CompileLog log) {
       this.program = program;
+      this.log = log;
    }
 
    /**
@@ -28,11 +31,15 @@ public abstract class Pass4AsmOptimization {
       return program;
    }
 
+   public CompileLog getLog() {
+      return log;
+   }
+
    public void remove(List<AsmLine> remove) {
       for (Iterator<AsmLine> iterator = program.getLines().iterator(); iterator.hasNext(); ) {
          AsmLine line = iterator.next();
          if (remove.contains(line)) {
-            System.out.println("Removing instruction "+line.getAsm());
+            log.append("Removing instruction "+line.getAsm());
             iterator.remove();
          }
       }

@@ -1,5 +1,7 @@
 package dk.camelot64.kickc.icl;
 
+import dk.camelot64.kickc.CompileLog;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -11,8 +13,8 @@ public class Pass2ConditionalJumpSimplification extends Pass2SsaOptimization {
 
    private Map<Variable, List<Statement>> allUsages;
 
-   public Pass2ConditionalJumpSimplification(ControlFlowGraph graph, Scope scope) {
-      super(graph, scope);
+   public Pass2ConditionalJumpSimplification(ControlFlowGraph graph, Scope scope, CompileLog log) {
+      super(graph, scope, log);
    }
 
    /**
@@ -55,7 +57,7 @@ public class Pass2ConditionalJumpSimplification extends Pass2SsaOptimization {
                         conditionalJump.setOperator(conditionAssignment.getOperator());
                         conditionalJump.setRValue2(conditionAssignment.getRValue2());
                         simpleConditionVars.add(conditionVar);
-                        System.out.println("Simple Condition " + conditionVar + " " + conditionalJump);
+                        log.append("Simple Condition " + conditionVar + " " + conditionalJump);
                         break;
                         default:
                      }

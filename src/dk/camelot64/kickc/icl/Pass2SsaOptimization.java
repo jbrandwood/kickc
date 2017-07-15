@@ -1,5 +1,7 @@
 package dk.camelot64.kickc.icl;
 
+import dk.camelot64.kickc.CompileLog;
+
 import java.util.*;
 
 /**
@@ -8,12 +10,18 @@ import java.util.*;
  */
 public abstract class Pass2SsaOptimization {
 
+   protected CompileLog log;
    private ControlFlowGraph graph;
    private Scope scope;
 
-   public Pass2SsaOptimization(ControlFlowGraph graph, Scope scope) {
+   public Pass2SsaOptimization(ControlFlowGraph graph, Scope scope,CompileLog log) {
+      this.log = log;
       this.graph = graph;
       this.scope = scope;
+   }
+
+   public CompileLog getLog() {
+      return log;
    }
 
    public ControlFlowGraph getGraph() {
@@ -270,7 +278,7 @@ public abstract class Pass2SsaOptimization {
    }
 
    public Map<LValue, StatementAssignment> getAllAssignments() {
-      final HashMap<LValue, StatementAssignment> assignments = new HashMap<>();
+      final HashMap<LValue, StatementAssignment> assignments = new LinkedHashMap<>();
       ControlFlowGraphBaseVisitor<Void> visitor = new ControlFlowGraphBaseVisitor<Void>() {
          @Override
          public Void visitAssignment(StatementAssignment assignment) {
@@ -283,7 +291,7 @@ public abstract class Pass2SsaOptimization {
    }
 
    public Map<RValue, List<Statement>> getAllUsages() {
-      final HashMap<RValue, List<Statement>> usages = new HashMap<>();
+      final HashMap<RValue, List<Statement>> usages = new LinkedHashMap<>();
       ControlFlowGraphBaseVisitor<Void> visitor = new ControlFlowGraphBaseVisitor<Void>() {
          @Override
          public Void visitAssignment(StatementAssignment assignment) {
@@ -326,7 +334,7 @@ public abstract class Pass2SsaOptimization {
    }
 
    protected Map<Variable, Integer> countVarUsages() {
-      final HashMap<Variable, Integer> usages = new HashMap<>();
+      final HashMap<Variable, Integer> usages = new LinkedHashMap<>();
       ControlFlowGraphBaseVisitor usageVisitor = new ControlFlowGraphBaseVisitor() {
          private void addUsage(RValue rVal) {
             if(rVal instanceof Variable) {

@@ -90,7 +90,14 @@ public class Pass3CodeGeneration {
 
    private void genBlockEntryPoints(AsmProgram asm, ControlFlowBlock block) {
       if (block.hasPhiStatements()) {
-         for (ControlFlowBlock predecessor : graph.getPredecessors(block)) {
+         List<ControlFlowBlock> predecessors = new ArrayList<>(graph.getPredecessors(block));
+         Collections.sort(predecessors, new Comparator<ControlFlowBlock>() {
+            @Override
+            public int compare(ControlFlowBlock o1, ControlFlowBlock o2) {
+               return o1.getLabel().getFullName().compareTo(o2.getLabel().getFullName());
+            }
+         });
+         for (ControlFlowBlock predecessor : predecessors) {
             if (block.getLabel().equals(predecessor.getConditionalSuccessor())) {
                genBlockPhiTransition(asm, predecessor, block);
                asm.addInstruction("JMP", AsmAddressingMode.ABS, block.getLabel().getFullName().replace('@', 'B').replace(':','_'));

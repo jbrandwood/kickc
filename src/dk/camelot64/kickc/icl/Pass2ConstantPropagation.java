@@ -1,13 +1,16 @@
 package dk.camelot64.kickc.icl;
 
+import dk.camelot64.kickc.CompileLog;
+
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 /** Compiler Pass propagating constants in expressions eliminating constant variables */
 public class Pass2ConstantPropagation extends Pass2SsaOptimization {
 
-   public Pass2ConstantPropagation(ControlFlowGraph graph, Scope scope) {
-      super(graph, scope);
+   public Pass2ConstantPropagation(ControlFlowGraph graph, Scope scope, CompileLog log) {
+      super(graph, scope, log);
    }
 
    /**
@@ -19,7 +22,7 @@ public class Pass2ConstantPropagation extends Pass2SsaOptimization {
       final Map<Variable, Constant> constants = findConstantVariables();
       for (Variable constantVar : constants.keySet()) {
          Constant constantValue = constants.get(constantVar);
-         System.out.println("Constant " + constantVar + " " + constantValue);
+         log.append("Constant " + constantVar + " " + constantValue);
       }
       removeAssignments(constants.keySet());
       deleteSymbols(constants.keySet());
@@ -32,7 +35,7 @@ public class Pass2ConstantPropagation extends Pass2SsaOptimization {
     * @return Map from Variable to the Constant value
     */
    private Map<Variable, Constant> findConstantVariables() {
-      final Map<Variable, Constant> constants = new HashMap<>();
+      final Map<Variable, Constant> constants = new LinkedHashMap<>();
       ControlFlowGraphBaseVisitor<Void> visitor = new ControlFlowGraphBaseVisitor<Void>() {
          @Override
          public Void visitAssignment(StatementAssignment assignment) {

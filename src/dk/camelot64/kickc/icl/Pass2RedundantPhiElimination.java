@@ -1,13 +1,16 @@
 package dk.camelot64.kickc.icl;
 
+import dk.camelot64.kickc.CompileLog;
+
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 /** Compiler Pass eliminating redundant phi functions */
 public class Pass2RedundantPhiElimination extends Pass2SsaOptimization {
 
-   public Pass2RedundantPhiElimination(ControlFlowGraph graph, Scope scope) {
-      super(graph, scope);
+   public Pass2RedundantPhiElimination(ControlFlowGraph graph, Scope scope, CompileLog log) {
+      super(graph, scope, log);
    }
 
    /**
@@ -21,7 +24,7 @@ public class Pass2RedundantPhiElimination extends Pass2SsaOptimization {
       replaceVariables(aliases);
       for (Variable var : aliases.keySet()) {
          RValue alias = aliases.get(var);
-         System.out.println("Redundant Phi " + var + " " + alias);
+         log.append("Redundant Phi " + var + " " + alias);
       }
       return aliases.size()>0;
    }
@@ -31,7 +34,7 @@ public class Pass2RedundantPhiElimination extends Pass2SsaOptimization {
     * @return Map from (phi) Variable to the previous value
     */
    private Map<Variable, RValue> findRedundantPhis() {
-      final Map<Variable, RValue> aliases = new HashMap<>();
+      final Map<Variable, RValue> aliases = new LinkedHashMap<>();
       ControlFlowGraphBaseVisitor<Void> visitor = new ControlFlowGraphBaseVisitor<Void>() {
          @Override
          public Void visitPhi(StatementPhi phi) {

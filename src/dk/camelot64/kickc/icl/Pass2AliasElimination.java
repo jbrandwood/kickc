@@ -1,5 +1,7 @@
 package dk.camelot64.kickc.icl;
 
+import dk.camelot64.kickc.CompileLog;
+
 import java.util.*;
 
 /**
@@ -7,8 +9,8 @@ import java.util.*;
  */
 public class Pass2AliasElimination extends Pass2SsaOptimization {
 
-   public Pass2AliasElimination(ControlFlowGraph graph, Scope scope) {
-      super(graph, scope);
+   public Pass2AliasElimination(ControlFlowGraph graph, Scope scope, CompileLog log) {
+      super(graph, scope, log);
    }
 
 
@@ -28,7 +30,7 @@ public class Pass2AliasElimination extends Pass2SsaOptimization {
          for (Variable var : aliasSet.getEliminateVars()) {
             str.append(var + " ");
          }
-         System.out.println("Alias " + str);
+         log.append("Alias " + str);
       }
       return (aliases.size() > 0);
    }
@@ -81,7 +83,7 @@ public class Pass2AliasElimination extends Pass2SsaOptimization {
       }
 
       public Map<Variable, Variable> getReplacements() {
-         HashMap<Variable, Variable> replacements = new HashMap<>();
+         HashMap<Variable, Variable> replacements = new LinkedHashMap<>();
          for (AliasSet aliasSet : aliases) {
             Variable keepVar = aliasSet.getKeepVar();
             for (Variable var : aliasSet.getEliminateVars()) {
@@ -232,7 +234,7 @@ public class Pass2AliasElimination extends Pass2SsaOptimization {
                   for (StatementPhi.PreviousSymbol previousSymbol : phi.getPreviousVersions()) {
                      RValue phiRValue = previousSymbol.getRValue();
                      if (aliasSet.contains(phiRValue)) {
-                        System.out.println("Alias candidate removed " + phiRValue);
+                        log.append("Alias candidate removed " + phiRValue);
                         aliasSet.remove(phiRValue);
                         break;
                      }

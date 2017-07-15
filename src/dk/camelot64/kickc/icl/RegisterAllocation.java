@@ -2,6 +2,7 @@ package dk.camelot64.kickc.icl;
 
 
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 /** Register Allocation for Variable Symbols  */
@@ -10,7 +11,7 @@ public class RegisterAllocation {
    private Map<Variable, Register> allocation;
 
    public RegisterAllocation() {
-      this.allocation = new HashMap<>();
+      this.allocation = new LinkedHashMap<>();
    }
 
    /**

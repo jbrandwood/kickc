@@ -3,6 +3,7 @@ package dk.camelot64.kickc.asm.parser;
 import dk.camelot64.kickc.asm.*;
 
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 /**
@@ -16,7 +17,7 @@ public class AsmProgramStaticRegisterValues {
 
    public AsmProgramStaticRegisterValues(AsmProgram program) {
       this.program = program;
-      this.values = new HashMap<>();
+      this.values = new LinkedHashMap<>();
       initValues();
    }
 

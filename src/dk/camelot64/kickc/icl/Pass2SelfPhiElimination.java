@@ -1,12 +1,14 @@
 package dk.camelot64.kickc.icl;
 
+import dk.camelot64.kickc.CompileLog;
+
 import java.util.Iterator;
 
 /** Compiler Pass eliminating phi self assignments  */
 public class Pass2SelfPhiElimination extends Pass2SsaOptimization {
 
-   public Pass2SelfPhiElimination(ControlFlowGraph graph, Scope scope) {
-      super(graph, scope);
+   public Pass2SelfPhiElimination(ControlFlowGraph graph, Scope scope, CompileLog log) {
+      super(graph, scope, log);
    }
 
    /**
@@ -23,7 +25,7 @@ public class Pass2SelfPhiElimination extends Pass2SsaOptimization {
                if (previousSymbol.getRValue().equals(phi.getLValue())) {
                   iterator.remove();
                   optimized[0] = Boolean.TRUE;
-                  System.out.println("Self Phi Eliminated "+phi.getLValue());
+                  log.append("Self Phi Eliminated "+phi.getLValue());
                }
             }
             return null;

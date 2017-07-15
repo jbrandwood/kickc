@@ -1,6 +1,8 @@
 package dk.camelot64.kickc.icl;
 
-import java.util.HashMap;
+import dk.camelot64.kickc.CompileLog;
+
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 /**
@@ -10,10 +12,12 @@ import java.util.Map;
  */
 public class Pass1GenerateSingleStaticAssignmentForm {
 
+   private CompileLog log;
    private Scope symbols;
    private ControlFlowGraph controlFlowGraph;
 
-   public Pass1GenerateSingleStaticAssignmentForm(Scope symbols, ControlFlowGraph controlFlowGraph) {
+   public Pass1GenerateSingleStaticAssignmentForm(CompileLog log, Scope symbols, ControlFlowGraph controlFlowGraph) {
+      this.log = log;
       this.symbols = symbols;
       this.controlFlowGraph = controlFlowGraph;
    }
@@ -23,7 +27,7 @@ public class Pass1GenerateSingleStaticAssignmentForm {
       versionAllUses();
       boolean done;
       do {
-         System.out.println("Completing Phi functions...");
+         log.append("Completing Phi functions...");
          done = completePhiFunctions();
       } while (!done);
    }
@@ -63,9 +67,9 @@ public class Pass1GenerateSingleStaticAssignmentForm {
    private void versionAllUses() {
       for (ControlFlowBlock block : controlFlowGraph.getAllBlocks()) {
          // Newest version of variables in the block.
-         Map<VariableUnversioned, VariableVersion> blockVersions = new HashMap<>();
+         Map<VariableUnversioned, VariableVersion> blockVersions = new LinkedHashMap<>();
          // New phi functions introduced in the block to create versions of variables.
-         Map<VariableUnversioned, VariableVersion> blockNewPhis = new HashMap<>();
+         Map<VariableUnversioned, VariableVersion> blockNewPhis = new LinkedHashMap<>();
          for (Statement statement : block.getStatements()) {
             if(statement instanceof StatementReturn) {
                StatementReturn statementReturn = (StatementReturn) statement;
@@ -163,7 +167,7 @@ public class Pass1GenerateSingleStaticAssignmentForm {
     * false if new phis were added, meaning another iteration is needed.
     */
    private boolean completePhiFunctions() {
-      Map<Label, Map<VariableUnversioned, VariableVersion>> newPhis = new HashMap<>();
+      Map<Label, Map<VariableUnversioned, VariableVersion>> newPhis = new LinkedHashMap<>();
       Map<Label, Map<VariableUnversioned, VariableVersion>> symbolMap = buildSymbolMap();
       for (ControlFlowBlock block : this.controlFlowGraph.getAllBlocks()) {
          for (Statement statement : block.getStatements()) {
@@ -183,7 +187,7 @@ public class Pass1GenerateSingleStaticAssignmentForm {
                         // No previous symbol found in predecessor block. Look in new phi functions.
                         Map<VariableUnversioned, VariableVersion> predecessorNewPhis = newPhis.get(predecessorLabel);
                         if (predecessorNewPhis == null) {
-                           predecessorNewPhis = new HashMap<>();
+                           predecessorNewPhis = new LinkedHashMap<>();
                            newPhis.put(predecessorLabel, predecessorNewPhis);
                         }
                         previousSymbol = predecessorNewPhis.get(unversioned);
@@ -216,7 +220,7 @@ public class Pass1GenerateSingleStaticAssignmentForm {
     * Maps Control Flow Block Label -> ( Unversioned Symbol -> Versioned Symbol) for all relevant symbols.
     */
    private Map<Label, Map<VariableUnversioned, VariableVersion>> buildSymbolMap() {
-      Map<Label, Map<VariableUnversioned, VariableVersion>> symbolMap = new HashMap<>();
+      Map<Label, Map<VariableUnversioned, VariableVersion>> symbolMap = new LinkedHashMap<>();
       for (ControlFlowBlock block : this.controlFlowGraph.getAllBlocks()) {
          for (Statement statement : block.getStatements()) {
             if (statement instanceof StatementAssignment) {
@@ -228,7 +232,7 @@ public class Pass1GenerateSingleStaticAssignmentForm {
                   VariableUnversioned unversioned = versioned.getVersionOf();
                   Map<VariableUnversioned, VariableVersion> blockMap = symbolMap.get(label);
                   if (blockMap == null) {
-                     blockMap = new HashMap<>();
+                     blockMap = new LinkedHashMap<>();
                      symbolMap.put(label, blockMap);
                   }
                   blockMap.put(unversioned, versioned);
@@ -240,7 +244,7 @@ public class Pass1GenerateSingleStaticAssignmentForm {
                Label label = block.getLabel();
                Map<VariableUnversioned, VariableVersion> blockMap = symbolMap.get(label);
                if (blockMap == null) {
-                  blockMap = new HashMap<>();
+                  blockMap = new LinkedHashMap<>();
                   symbolMap.put(label, blockMap);
                }
                blockMap.put(unversioned, versioned);
@@ -253,7 +257,7 @@ public class Pass1GenerateSingleStaticAssignmentForm {
                   VariableUnversioned unversioned = versioned.getVersionOf();
                   Map<VariableUnversioned, VariableVersion> blockMap = symbolMap.get(label);
                   if (blockMap == null) {
-                     blockMap = new HashMap<>();
+                     blockMap = new LinkedHashMap<>();
                      symbolMap.put(label, blockMap);
                   }
                   blockMap.put(unversioned, versioned);

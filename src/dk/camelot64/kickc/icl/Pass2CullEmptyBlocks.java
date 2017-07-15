@@ -1,12 +1,14 @@
 package dk.camelot64.kickc.icl;
 
+import dk.camelot64.kickc.CompileLog;
+
 import java.util.*;
 
 /** Pass that culls empty control flow blocks from the program */
 public class Pass2CullEmptyBlocks extends Pass2SsaOptimization {
 
-   public Pass2CullEmptyBlocks(ControlFlowGraph graph, Scope scope) {
-      super(graph, scope);
+   public Pass2CullEmptyBlocks(ControlFlowGraph graph, Scope scope, CompileLog log) {
+      super(graph, scope, log);
    }
 
    @Override
@@ -23,7 +25,7 @@ public class Pass2CullEmptyBlocks extends Pass2SsaOptimization {
          // Replace all jumps (default/conditional/call) to @removeBlock with a jump to the default successor
          final List<ControlFlowBlock> predecessors = getGraph().getPredecessors(removeBlock);
          for (ControlFlowBlock predecessor : predecessors) {
-            Map<Label, Label> replace = new HashMap<>();
+            Map<Label, Label> replace = new LinkedHashMap<>();
             replace.put(removeBlock.getLabel(), successor.getLabel());
             if (removeBlock.getLabel().equals(predecessor.getDefaultSuccessor())) {
                predecessor.setDefaultSuccessor(successor.getLabel());
@@ -61,7 +63,7 @@ public class Pass2CullEmptyBlocks extends Pass2SsaOptimization {
          phiFixVisitor.visitBlock(successor);
          getGraph().getAllBlocks().remove(removeBlock);
          getSymbols().remove(removeBlock.getLabel());
-         System.out.println("Culled Empty Block " + removeBlock.getLabel());
+         log.append("Culled Empty Block " + removeBlock.getLabel());
       }
       return remove.size()>0;
    }

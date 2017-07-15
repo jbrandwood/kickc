@@ -1,5 +1,6 @@
 package dk.camelot64.kickc.icl;
 
+import dk.camelot64.kickc.CompileLog;
 import dk.camelot64.kickc.asm.AsmInstruction;
 import dk.camelot64.kickc.asm.AsmLabel;
 import dk.camelot64.kickc.asm.AsmLine;
@@ -11,8 +12,8 @@ import java.util.List;
 /** Optimize assembler code by removing jumps to labels immediately following the jump */
 public class Pass4NextJumpElimination extends Pass4AsmOptimization {
 
-   public Pass4NextJumpElimination(AsmProgram program) {
-      super(program);
+   public Pass4NextJumpElimination(AsmProgram program, CompileLog log) {
+      super(program, log);
    }
 
    public boolean optimize() {

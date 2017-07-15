@@ -1,5 +1,7 @@
 package dk.camelot64.kickc.test;
 
+import com.sun.org.apache.xpath.internal.SourceTree;
+import com.sun.xml.internal.ws.policy.privateutil.PolicyUtils;
 import dk.camelot64.kickc.Compiler;
 import org.antlr.v4.runtime.CharStream;
 import org.antlr.v4.runtime.CharStreams;
@@ -34,13 +36,15 @@ public class TestCompilationOutput {
    }
 
    private void testFile(String fileName) throws IOException, URISyntaxException {
-      String InputPath = testPath + fileName + ".kc";
-      CharStream input = CharStreams.fromFileName(InputPath);
+      String inputPath = testPath + fileName + ".kc";
+      System.out.println("Testing output for "+inputPath);
+      CharStream input = CharStreams.fromFileName(inputPath);
       Compiler compiler = new Compiler();
       Compiler.CompilationResult output = compiler.compile(input);
+      assertOutput(fileName, ".asm", output.getAsmProgram().toString());
       assertOutput(fileName, ".sym", output.getSymbols().getSymbolTableContents());
       assertOutput(fileName, ".cfg", output.getGraph().toString());
-      assertOutput(fileName, ".asm", output.getAsmProgram().toString());
+      assertOutput(fileName, ".log", output.getLog().toString());
    }
 
    private void assertOutput(
@@ -48,7 +52,14 @@ public class TestCompilationOutput {
          String extension,
          String outputString) throws IOException, URISyntaxException {
       // Read reference file
-      List<String> refLines = loadReferenceLines(fileName, extension);
+      List<String> refLines = null;
+      try {
+         refLines = loadReferenceLines(fileName, extension);
+      } catch (Exception e) {
+         writeOutputFile(fileName, extension, outputString);
+         System.out.println("Error loading reference."+e.getMessage());
+         return;
+      }
       // Split output into outLines
       List<String> outLines = getOutLines(outputString);
       for (int i = 0; i < outLines.size(); i++) {

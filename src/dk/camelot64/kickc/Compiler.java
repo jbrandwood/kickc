@@ -1,4 +1,4 @@
-package dk.camelot64.kickc.test;
+package dk.camelot64.kickc;
 
 import dk.camelot64.kickc.asm.AsmProgram;
 import dk.camelot64.kickc.icl.*;
@@ -10,11 +10,34 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-/** Perform KickC compilation ans optimization*/
-public class Main {
-   public static void main(String[] args) throws IOException {
-      final String fileName = "src/dk/camelot64/kickc/test/flipper-rex2.kc";
-      final CharStream input = CharStreams.fromFileName(fileName);
+/** Perform KickC compilation and optimizations*/
+public class Compiler {
+
+   public static class CompilationResult {
+      private AsmProgram asmProgram;
+      private ControlFlowGraph graph;
+      private Scope symbols;
+
+      public CompilationResult(AsmProgram asmProgram, ControlFlowGraph graph, Scope symbols) {
+         this.asmProgram = asmProgram;
+         this.graph = graph;
+         this.symbols = symbols;
+      }
+
+      public AsmProgram getAsmProgram() {
+         return asmProgram;
+      }
+
+      public ControlFlowGraph getGraph() {
+         return graph;
+      }
+
+      public Scope getSymbols() {
+         return symbols;
+      }
+   }
+
+   public CompilationResult compile(final CharStream input) throws IOException {
       System.out.println(input.toString());
       KickCLexer lexer = new KickCLexer(input);
       KickCParser parser = new KickCParser(new CommonTokenStream(lexer));
@@ -22,7 +45,7 @@ public class Main {
       parser.addErrorListener(new BaseErrorListener() {
          @Override
          public void syntaxError(Recognizer<?, ?> recognizer, Object offendingSymbol, int line, int charPositionInLine, String msg, RecognitionException e) {
-            throw new RuntimeException("Error parsing  file "+fileName+"\n - Line: "+line+"\n - Message: "+msg);
+            throw new RuntimeException("Error parsing  file "+input.getSourceName()+"\n - Line: "+line+"\n - Message: "+msg);
          }
       });
       KickCParser.FileContext file = parser.file();
@@ -119,12 +142,7 @@ public class Main {
          }
       }
 
-      System.out.println("SYMBOLS");
-      System.out.println(programScope.getSymbolTableContents());
-      System.out.println("CONTROL FLOW GRAPH");
-      System.out.println(controlFlowGraph.toString());
-      System.out.println("ASSEMBLER");
-      System.out.println(asmProgram.toString());
+      return new CompilationResult(asmProgram, controlFlowGraph, programScope);
    }
 
 }

@@ -33,16 +33,25 @@ public class AsmProgram {
       addLine(new AsmInstruction(instructionType, parameter, 1));
    }
 
-   @Override
-   public String toString() {
+   public String toString(boolean comments) {
       StringBuffer out = new StringBuffer();
       for (AsmLine line : lines) {
+         if(line instanceof AsmComment && !comments) {
+            if(!((AsmComment) line).getComment().contains("Fragment")) {
+               continue;
+            }
+         }
          if(line instanceof AsmComment || line instanceof AsmInstruction) {
             out.append("  ");
          }
          out.append(line.getAsm()+"\n");
       }
       return out.toString();
+   }
+
+   @Override
+   public String toString() {
+      return toString(true);
    }
 
 }

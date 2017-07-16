@@ -8,6 +8,10 @@ public class AsmComment implements AsmLine {
       this.comment = comment;
    }
 
+   public String getComment() {
+      return comment;
+   }
+
    @Override
    public int getLineBytes() {
       return 0;

@@ -40,7 +40,7 @@ public class TestCompilationOutput {
       CharStream input = CharStreams.fromFileName(inputPath);
       Compiler compiler = new Compiler();
       Compiler.CompilationResult output = compiler.compile(input);
-      assertOutput(fileName, ".asm", output.getAsmProgram().toString());
+      assertOutput(fileName, ".asm", output.getAsmProgram().toString(false));
       assertOutput(fileName, ".sym", output.getSymbols().getSymbolTableContents());
       assertOutput(fileName, ".cfg", output.getGraph().toString());
       assertOutput(fileName, ".log", output.getLog().toString());

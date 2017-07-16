@@ -12,6 +12,7 @@ public class CompileLog {
    public void append(String msg) {
       log.append(msg);
       log.append("\n");
+      //System.out.printf(msg+"\n");
    }
 
    public StringBuilder getLog() {

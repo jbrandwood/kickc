@@ -62,7 +62,7 @@ public class Pass2CullEmptyBlocks extends Pass2SsaOptimization {
          };
          phiFixVisitor.visitBlock(successor);
          getGraph().getAllBlocks().remove(removeBlock);
-         getSymbols().remove(removeBlock.getLabel());
+         removeBlock.getLabel().getScope().remove(removeBlock.getLabel());
          log.append("Culled Empty Block " + removeBlock.getLabel());
       }
       return remove.size()>0;

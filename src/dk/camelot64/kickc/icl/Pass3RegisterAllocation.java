@@ -139,13 +139,13 @@ public class Pass3RegisterAllocation {
       allocation.allocate(symbols.getVariable("flip::$0"), RegisterAllocation.getRegisterA());
       allocation.allocate(symbols.getVariable("flip::$8"), RegisterAllocation.getRegisterA());
       allocation.allocate(symbols.getVariable("flip::$4"), RegisterAllocation.getRegisterA());
-      allocation.allocate(symbols.getVariable("$1"), RegisterAllocation.getRegisterA());
-      allocation.allocate(symbols.getVariable("$3"), RegisterAllocation.getRegisterA());
-      allocation.allocate(symbols.getVariable("c#0"), RegisterAllocation.getRegisterX());
-      allocation.allocate(symbols.getVariable("c#1"), RegisterAllocation.getRegisterX());
-      allocation.allocate(symbols.getVariable("c#2"), RegisterAllocation.getRegisterX());
-      allocation.allocate(symbols.getVariable("c#3"), RegisterAllocation.getRegisterX());
-      allocation.allocate(symbols.getVariable("c#4"), RegisterAllocation.getRegisterX());
+      allocation.allocate(symbols.getVariable("main::$1"), RegisterAllocation.getRegisterA());
+      allocation.allocate(symbols.getVariable("main::$3"), RegisterAllocation.getRegisterA());
+      allocation.allocate(symbols.getVariable("main::c#0"), RegisterAllocation.getRegisterX());
+      allocation.allocate(symbols.getVariable("main::c#1"), RegisterAllocation.getRegisterX());
+      allocation.allocate(symbols.getVariable("main::c#2"), RegisterAllocation.getRegisterX());
+      allocation.allocate(symbols.getVariable("main::c#3"), RegisterAllocation.getRegisterX());
+      allocation.allocate(symbols.getVariable("main::c#4"), RegisterAllocation.getRegisterX());
       symbols.setAllocation(allocation);
 
    }

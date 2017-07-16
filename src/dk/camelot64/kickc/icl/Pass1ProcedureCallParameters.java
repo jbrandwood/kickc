@@ -44,7 +44,8 @@ public class Pass1ProcedureCallParameters extends ControlFlowGraphCopyVisitor {
          // No return type. Remove variable receiving the result.
          LValue lValue = origCall.getLValue();
          if(lValue instanceof Variable) {
-            scope.remove((Variable) lValue);
+            Variable lVar = (Variable) lValue;
+            lVar.getScope().remove(lVar);
          }
       }
 

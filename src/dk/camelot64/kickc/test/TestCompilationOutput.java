@@ -30,9 +30,9 @@ public class TestCompilationOutput {
 
    public static void main(String[] args) throws IOException, URISyntaxException {
       TestCompilationOutput tester = new TestCompilationOutput();
-      tester.testFile("fibmem");
-      //tester.testFile("flipper-rex2");
-      //tester.testFile("bresenham");
+      //tester.testFile("fibmem");
+      tester.testFile("flipper-rex2");
+      tester.testFile("bresenham");
       //tester.testFile("unused");
    }
 

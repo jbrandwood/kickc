@@ -70,12 +70,13 @@ public class Pass3RegisterAllocation {
       //allocation.allocate(symbols.getVariable("a#0"), new RegisterAllocation.RegisterAByte());
 
       // Register allocation for fibmem.kc
+      /*
       allocation.allocate(symbols.getVariable("i#1"), RegisterAllocation.getRegisterX());
       allocation.allocate(symbols.getVariable("i#2"), RegisterAllocation.getRegisterX());
       allocation.allocate(symbols.getVariable("$1"), new RegisterAllocation.RegisterAByte());
       allocation.allocate(symbols.getVariable("$3"), new RegisterAllocation.RegisterALUByte());
       //allocation.allocate(symbols.getVariable("$4"), new RegisterAllocation.RegisterAByte());
-
+      */
 
       // Registers for postinc.kc
       /*
@@ -96,7 +97,6 @@ public class Pass3RegisterAllocation {
       */
 
       // Optimal Registers for flipper-rex2.kc
-      /*
       allocation.allocate(symbols.getVariable("plot::i#0"), RegisterAllocation.getRegisterX());
       allocation.allocate(symbols.getVariable("plot::i#1"), RegisterAllocation.getRegisterX());
       allocation.allocate(symbols.getVariable("plot::i#2"), RegisterAllocation.getRegisterX());
@@ -152,7 +152,6 @@ public class Pass3RegisterAllocation {
       allocation.allocate(symbols.getVariable("main::c#2"), RegisterAllocation.getRegisterX());
       allocation.allocate(symbols.getVariable("main::c#3"), RegisterAllocation.getRegisterX());
       allocation.allocate(symbols.getVariable("main::c#4"), RegisterAllocation.getRegisterX());
-      */
 
 
       symbols.setAllocation(allocation);

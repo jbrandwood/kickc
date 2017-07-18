@@ -1,4 +1,6 @@
-package dk.camelot64.kickc.icl;
+package dk.camelot64.kickc.passes;
+
+import dk.camelot64.kickc.icl.*;
 
 import java.util.Stack;
 
@@ -148,11 +150,7 @@ public class Pass1TypeInference {
          type = rSymbol.getType();
       } else if (rValue instanceof ConstantInteger) {
          ConstantInteger rInt = (ConstantInteger) rValue;
-         if (rInt.getNumber() < 256) {
-            type = SymbolTypeBasic.BYTE;
-         } else {
-            type = SymbolTypeBasic.WORD;
-         }
+         return rInt.getType();
       } else if (rValue instanceof ConstantString) {
          type = SymbolTypeBasic.STRING;
       } else if (rValue instanceof ConstantBool) {

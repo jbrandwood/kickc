@@ -1,4 +1,4 @@
-package dk.camelot64.kickc.icl;
+package dk.camelot64.kickc;
 
 /** Parser for converting literal numbers to the corresponding Java Integer/Double */
 public class NumberParser {

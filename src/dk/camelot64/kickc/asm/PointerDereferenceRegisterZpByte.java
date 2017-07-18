@@ -1,4 +1,7 @@
-package dk.camelot64.kickc.icl;
+package dk.camelot64.kickc.asm;
+
+import dk.camelot64.kickc.icl.PointerDereference;
+import dk.camelot64.kickc.icl.RegisterAllocation;
 
 /** A dereferenced ZP pointer to a byte */
 public class PointerDereferenceRegisterZpByte implements PointerDereference {

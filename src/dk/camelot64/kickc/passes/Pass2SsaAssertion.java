@@ -1,4 +1,7 @@
-package dk.camelot64.kickc.icl;
+package dk.camelot64.kickc.passes;
+
+import dk.camelot64.kickc.icl.ControlFlowGraph;
+import dk.camelot64.kickc.icl.Scope;
 
 /** Assertion checking that a pass 2 representation of the program is consistent */
 public abstract class Pass2SsaAssertion {

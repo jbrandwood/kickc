@@ -16,7 +16,13 @@ public class ConstantInteger implements Constant {
    }
 
    public SymbolType getType() {
-      return Pass1TypeInference.inferType(this);
+      SymbolType type;
+      if (getNumber() < 256) {
+         type = SymbolTypeBasic.BYTE;
+      } else {
+         type = SymbolTypeBasic.WORD;
+      }
+      return type;
    }
 
    @Override

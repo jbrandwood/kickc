@@ -4,9 +4,9 @@ import dk.camelot64.kickc.asm.AsmProgram;
 import dk.camelot64.kickc.icl.*;
 import dk.camelot64.kickc.parser.KickCLexer;
 import dk.camelot64.kickc.parser.KickCParser;
+import dk.camelot64.kickc.passes.*;
 import org.antlr.v4.runtime.*;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 

@@ -1,4 +1,8 @@
-package dk.camelot64.kickc.icl;
+package dk.camelot64.kickc.passes;
+
+import dk.camelot64.kickc.icl.ControlFlowBlock;
+import dk.camelot64.kickc.icl.ControlFlowGraph;
+import dk.camelot64.kickc.icl.Scope;
 
 import java.util.ArrayList;
 import java.util.List;

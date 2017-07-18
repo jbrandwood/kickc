@@ -1,4 +1,6 @@
-package dk.camelot64.kickc.icl;
+package dk.camelot64.kickc.passes;
+
+import dk.camelot64.kickc.icl.*;
 
 /** Assert that all referenced blocks exist in the program */
 public class Pass2AssertBlocks extends Pass2SsaAssertion {

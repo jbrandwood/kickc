@@ -1,6 +1,6 @@
 package dk.camelot64.kickc.asm;
 
-import dk.camelot64.kickc.icl.NumberParser;
+import dk.camelot64.kickc.NumberParser;
 
 import java.util.ArrayList;
 import java.util.Arrays;

@@ -1,5 +1,6 @@
 package dk.camelot64.kickc.asm;
 
+import dk.camelot64.kickc.NumberParser;
 import dk.camelot64.kickc.asm.parser.Asm6502BaseVisitor;
 import dk.camelot64.kickc.asm.parser.Asm6502Lexer;
 import dk.camelot64.kickc.asm.parser.Asm6502Parser;
@@ -9,7 +10,6 @@ import org.antlr.v4.runtime.*;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
-import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
 

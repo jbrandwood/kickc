@@ -1,7 +1,6 @@
 Features
 - Move the main code into a main() function, and disallow code outside functions. The main function per default has no parameters and exits with RTS.
 - Add a for loop for(init;condition;increment) {stmt} -> { init; do { stmt; increment } while (condition) }
-- Implement Register Allocation (that utilize real registers - and non-zeropage memory)
 - Add Fixed Point number types
 - Add imports
 - Add structs
@@ -13,8 +12,26 @@ Features
 - Add an export keyword ensuring that a function is generated even if it is never called. Maybe export can be handled by generating a call that can be used as stub.
 - Add inline ASM (maybe?)
 - Handle long branches
+- Allow complex array expressions in lValues eg. (SCREEN+$100)[idx]
 + Create a proper main function for the compiler
 + Add ++/-- incrementing/decrementing operators.
+
+Register Allocation
+- Matrix Phi operation (instead of separate statements)
+- Safe-Copy based SSA deconstruction
+  - Optimize phi transitions by ensuring that identical phi-transitions with regards to register allocation are collected into a single transition.
+  - Optimize by finding optimal sequence for multiple phi assignments in entry-segments.
+- Phi Lifting
+- Interval Analysis (variable liveness intervals)
+- PhiLifting & PhiMemCoalesce (http://compilers.cs.ucla.edu/fernando/projects/soc/reports/short_tech.pdf)
+- ComputeLoopNestDepth(b) - Assign loop nesting levels to blocks.
+- ComputeRegisterPreference(v), ComputeWeight(v)
+- CalculateClobbering(i)
+  - Maybe support several fragements for the same operation with different cost and clobbering profiles.
+- Register types: A, X, Y, ZP, (memory).
+  - Maybe register preference should also incorporate the types of operations that can be effectively performed with the register? (Maybe based on fragment cost?)
+- Implement a register allocation (coloring) algorithm using by liveness intervals, preferences, weights & clobbering information.
+  - Optimize register allocation by combining with knowledge of ASM program cost (bytes/cycles) and different ASM fragments with different clobbering.
 
 Process/Code Structure Improvement
 - Make each phase return a separate object graph (allowing for keeeping the history in memory & performing rollbacks)
@@ -31,10 +48,8 @@ Testing
 + Test the ASM program output resulting from compiling specific KC program input.
 
 Optimizations
-- Optimize phi transitions by ensuring that identical phi-transitions with regards to register allocation are collected into a single transition.
-- Optimize register allocation by combining with knowledge of ASM program cost (bytes/cycles) and different ASM fragments with different clobbering.
-- Optimize by finding optimal sequence for multiple phi assignments in entry-segments.
 - Optimize by allowing resequencing of statements and phi assignemtns in a final phase. Perhaps by converting phi statements to "normal" statements and using some optimization step.
+- This phase could also help simplify LDA xx, CMP#0, BNE by expressing these in a language where CMP can be eliminated before.
 
 Usages
 - Implement library for memory allocation in main memory

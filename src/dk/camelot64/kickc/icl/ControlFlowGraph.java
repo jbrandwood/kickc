@@ -7,7 +7,6 @@ import java.util.*;
 public class ControlFlowGraph {
 
    private Map<Symbol, ControlFlowBlock> blocks;
-
    private ControlFlowBlock firstBlock;
    private List<ControlFlowBlock> sequence;
 

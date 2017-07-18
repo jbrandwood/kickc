@@ -1,4 +1,6 @@
-package dk.camelot64.kickc.icl;
+package dk.camelot64.kickc.passes;
+
+import dk.camelot64.kickc.icl.*;
 
 /** Pass that modifies a control flow graph to call procedures by passing return value through registers */
 public class Pass1ProcedureCallsReturnValue extends ControlFlowGraphCopyVisitor {

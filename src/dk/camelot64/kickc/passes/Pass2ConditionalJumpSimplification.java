@@ -1,6 +1,7 @@
-package dk.camelot64.kickc.icl;
+package dk.camelot64.kickc.passes;
 
 import dk.camelot64.kickc.CompileLog;
+import dk.camelot64.kickc.icl.*;
 
 import java.util.ArrayList;
 import java.util.List;

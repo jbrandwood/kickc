@@ -1,6 +1,8 @@
-package dk.camelot64.kickc.icl;
+package dk.camelot64.kickc.passes;
 
 import dk.camelot64.kickc.CompileLog;
+import dk.camelot64.kickc.NumberParser;
+import dk.camelot64.kickc.icl.*;
 import dk.camelot64.kickc.parser.KickCBaseVisitor;
 import dk.camelot64.kickc.parser.KickCParser;
 import org.antlr.v4.runtime.ParserRuleContext;

@@ -49,7 +49,7 @@ public class ControlFlowGraph {
          for (Statement statement : block.getStatements()) {
             if(statement instanceof StatementAssignment) {
                StatementAssignment assignment = (StatementAssignment) statement;
-               if(assignment.getLValue().equals(variable)) {
+               if(assignment.getlValue().equals(variable)) {
                   return assignment;
                }
             }

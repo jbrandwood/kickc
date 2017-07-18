@@ -1,5 +1,9 @@
 package dk.camelot64.kickc.icl;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 /** A jump label */
 public class Label implements Symbol {
 
@@ -17,6 +21,16 @@ public class Label implements Symbol {
       this.intermediate = intermediate;
    }
 
+   @JsonCreator
+   public Label(
+         @JsonProperty("name") String name,
+         @JsonProperty("intermediate") boolean intermediate) {
+      this.name = name;
+      this.scope = null;
+      this.intermediate = intermediate;
+   }
+
+   @Override
    public String getLocalName() {
       return name;
    }
@@ -24,6 +38,11 @@ public class Label implements Symbol {
    @Override
    public Scope getScope() {
       return scope;
+   }
+
+   @Override
+   public void setScope(Scope scope) {
+      this.scope = scope;
    }
 
    @Override
@@ -44,6 +63,7 @@ public class Label implements Symbol {
       return intermediate;
    }
 
+   @JsonIgnore
    public SymbolType getType() {
       return SymbolTypeBasic.LABEL;
    }
@@ -61,13 +81,12 @@ public class Label implements Symbol {
 
       if (intermediate != label.intermediate) return false;
       if (!name.equals(label.name)) return false;
-      return scope != null ? scope.equals(label.scope) : label.scope == null;
+      return getFullName().equals(label.getFullName());
    }
 
    @Override
    public int hashCode() {
-      int result = name.hashCode();
-      result = 31 * result + (scope != null ? scope.hashCode() : 0);
+      int result = getFullName().hashCode();
       result = 31 * result + (intermediate ? 1 : 0);
       return result;
    }

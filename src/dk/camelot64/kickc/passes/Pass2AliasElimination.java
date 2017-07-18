@@ -48,15 +48,15 @@ public class Pass2AliasElimination extends Pass2SsaOptimization {
             Statement statement = iterator.next();
             if (statement instanceof StatementAssignment) {
                StatementAssignment assignment = (StatementAssignment) statement;
-               AliasSet aliasSet = aliases.findAliasSet(assignment.getLValue());
+               AliasSet aliasSet = aliases.findAliasSet(assignment.getlValue());
                if (aliasSet != null) {
-                  if ((assignment.getRValue1() == null) && (assignment.getOperator() == null) && aliasSet.contains(assignment.getRValue2())) {
+                  if ((assignment.getrValue1() == null) && (assignment.getOperator() == null) && aliasSet.contains(assignment.getrValue2())) {
                      iterator.remove();
                   }
                }
             } else if (statement instanceof StatementPhi) {
                StatementPhi phi = (StatementPhi) statement;
-               AliasSet aliasSet = aliases.findAliasSet(phi.getLValue());
+               AliasSet aliasSet = aliases.findAliasSet(phi.getlValue());
                if (aliasSet != null) {
                   if (phi.getPreviousVersions().size() == 1 && aliasSet.contains(phi.getPreviousVersion(0).getRValue())) {
                      iterator.remove();
@@ -241,7 +241,7 @@ public class Pass2AliasElimination extends Pass2SsaOptimization {
                      }
                   }
                }
-               if (aliasSet.contains(phi.getLValue())) {
+               if (aliasSet.contains(phi.getlValue())) {
                   lMatch[0] = true;
                }
                return null;
@@ -261,11 +261,11 @@ public class Pass2AliasElimination extends Pass2SsaOptimization {
       ControlFlowGraphBaseVisitor<Void> visitor = new ControlFlowGraphBaseVisitor<Void>() {
          @Override
          public Void visitAssignment(StatementAssignment assignment) {
-            if (assignment.getLValue() instanceof VariableVersion || assignment.getLValue() instanceof VariableIntermediate) {
-               Variable variable = (Variable) assignment.getLValue();
-               if (assignment.getRValue1() == null && assignment.getOperator() == null && assignment.getRValue2() instanceof Variable) {
+            if (assignment.getlValue() instanceof VariableVersion || assignment.getlValue() instanceof VariableIntermediate) {
+               Variable variable = (Variable) assignment.getlValue();
+               if (assignment.getrValue1() == null && assignment.getOperator() == null && assignment.getrValue2() instanceof Variable) {
                   // Alias assignment
-                  Variable alias = (Variable) assignment.getRValue2();
+                  Variable alias = (Variable) assignment.getrValue2();
                   aliases.add(variable, alias);
                }
             }
@@ -277,7 +277,7 @@ public class Pass2AliasElimination extends Pass2SsaOptimization {
             if (phi.getPreviousVersions().size() == 1) {
                StatementPhi.PreviousSymbol previousSymbol = phi.getPreviousVersions().get(0);
                if (previousSymbol.getRValue() instanceof Variable) {
-                  VariableVersion variable = phi.getLValue();
+                  VariableVersion variable = phi.getlValue();
                   Variable alias = (Variable) previousSymbol.getRValue();
                   aliases.add(variable, alias);
                }

@@ -1,21 +1,28 @@
 package dk.camelot64.kickc.icl;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 /** Basic Symbol Types */
-public enum SymbolTypeBasic implements SymbolType {
-   BYTE("byte"),
-   WORD("word"),
-   STRING("string"),
-   BOOLEAN("boolean"),
+public class SymbolTypeBasic implements SymbolType {
+
+   public static final SymbolTypeBasic BYTE = new SymbolTypeBasic("byte");
+   public static final SymbolTypeBasic WORD = new SymbolTypeBasic("word");
+   public static final SymbolTypeBasic STRING = new SymbolTypeBasic("string");
+   public static final SymbolTypeBasic BOOLEAN = new SymbolTypeBasic("boolean");
    // A label
-   LABEL("label"),
+   public static final SymbolTypeBasic LABEL = new SymbolTypeBasic("label");
    // Void type.
-   VOID("void"),
+   public static final SymbolTypeBasic VOID = new SymbolTypeBasic("void");
    // Unresolved type. Will be infered later
-   VAR("var");
+   public static final SymbolTypeBasic VAR = new SymbolTypeBasic("var");
 
    private String typeName;
 
-   SymbolTypeBasic(String typeName) {
+   @JsonCreator
+   SymbolTypeBasic(
+         @JsonProperty("typeName") String typeName) {
       this.typeName = typeName;
    }
 
@@ -34,5 +41,22 @@ public enum SymbolTypeBasic implements SymbolType {
       return null;
    }
 
+   @Override
+   public boolean equals(Object o) {
+      if (this == o) {
+         return true;
+      }
+      if (o == null || getClass() != o.getClass()) {
+         return false;
+      }
 
+      SymbolTypeBasic that = (SymbolTypeBasic) o;
+
+      return typeName != null ? typeName.equals(that.typeName) : that.typeName == null;
+   }
+
+   @Override
+   public int hashCode() {
+      return typeName != null ? typeName.hashCode() : 0;
+   }
 }

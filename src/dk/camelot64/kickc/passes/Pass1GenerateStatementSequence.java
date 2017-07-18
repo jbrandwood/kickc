@@ -18,19 +18,19 @@ import java.util.Stack;
 public class Pass1GenerateStatementSequence extends KickCBaseVisitor<Object> {
 
    private CompileLog log;
-   private Scope programScope;
+   private ProgramScope programScope;
    private Stack<Scope> scopeStack;
    private StatementSequence sequence;
 
    public Pass1GenerateStatementSequence(CompileLog log) {
       this.log = log;
-      this.programScope = new Scope();
+      this.programScope = new ProgramScope();
       this.scopeStack = new Stack<>();
       scopeStack.push(programScope);
       this.sequence = new StatementSequence();
    }
 
-   public Scope getProgramScope() {
+   public ProgramScope getProgramScope() {
       return programScope;
    }
 

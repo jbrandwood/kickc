@@ -23,11 +23,11 @@ public class StatementCall implements StatementLValue {
       this.parametersByAssignment = false;
    }
 
-   public LValue getLValue() {
+   public LValue getlValue() {
       return lValue;
    }
 
-   public void setLValue(LValue lValue) {
+   public void setlValue(LValue lValue) {
       this.lValue = lValue;
    }
 

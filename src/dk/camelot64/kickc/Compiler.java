@@ -66,7 +66,7 @@ public class Compiler {
          Pass1GenerateStatementSequence pass1GenerateStatementSequence = new Pass1GenerateStatementSequence(log);
          pass1GenerateStatementSequence.generate(file);
          StatementSequence statementSequence = pass1GenerateStatementSequence.getSequence();
-         Scope programScope = pass1GenerateStatementSequence.getProgramScope();
+         ProgramScope programScope = pass1GenerateStatementSequence.getProgramScope();
          Pass1TypeInference pass1TypeInference = new Pass1TypeInference();
          pass1TypeInference.inferTypes(statementSequence, programScope);
 

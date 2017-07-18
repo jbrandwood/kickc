@@ -1,5 +1,9 @@
 package dk.camelot64.kickc.icl;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonPropertyOrder;
+
 /**
  * Single Static Assignment Form Statement.
  * Intermediate form used for compiler optimization.
@@ -8,11 +12,11 @@ package dk.camelot64.kickc.icl;
  * <br>
  * <i> lValue := rValue1 &lt;operator&gt; rValue2 </i>
  */
+@JsonPropertyOrder({"lValue", "rValue1", "operator", "rValue2"})
 public class StatementAssignment implements StatementLValue {
 
    /** The variable being assigned a value by the statement. */
    private LValue lValue;
-
    private RValue rValue1;
    private Operator operator;
    private RValue rValue2;
@@ -24,7 +28,12 @@ public class StatementAssignment implements StatementLValue {
       this.rValue2 = rValue2;
    }
 
-   public StatementAssignment(LValue lValue, RValue rValue1, Operator operator, RValue rValue2) {
+   @JsonCreator
+   public StatementAssignment(
+         @JsonProperty("lValue1") LValue lValue,
+         @JsonProperty("rValue1") RValue rValue1,
+         @JsonProperty("operator") Operator operator,
+         @JsonProperty("rValue2") RValue rValue2) {
       this.lValue = lValue;
       this.rValue1 = rValue1;
       this.operator = operator;
@@ -38,19 +47,19 @@ public class StatementAssignment implements StatementLValue {
       this.rValue2 = rValue2;
    }
 
-   public LValue getLValue() {
+   public LValue getlValue() {
       return lValue;
    }
 
-   public void setLValue(LValue lValue) {
+   public void setlValue(LValue lValue) {
       this.lValue = lValue;
    }
 
-   public RValue getRValue1() {
+   public RValue getrValue1() {
       return rValue1;
    }
 
-   public void setRValue1(RValue rValue1) {
+   public void setrValue1(RValue rValue1) {
       this.rValue1 = rValue1;
    }
 
@@ -58,11 +67,11 @@ public class StatementAssignment implements StatementLValue {
       return operator;
    }
 
-   public RValue getRValue2() {
+   public RValue getrValue2() {
       return rValue2;
    }
 
-   public void setRValue2(RValue rValue2) {
+   public void setrValue2(RValue rValue2) {
       this.rValue2 = rValue2;
    }
 

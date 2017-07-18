@@ -59,20 +59,20 @@ public abstract class Pass2SsaOptimization {
       ControlFlowGraphBaseVisitor<Void> visitor = new ControlFlowGraphBaseVisitor<Void>() {
          @Override
          public Void visitAssignment(StatementAssignment assignment) {
-            LValue lValue = assignment.getLValue();
+            LValue lValue = assignment.getlValue();
             if (getAlias(aliases, lValue) != null) {
                RValue alias = getAlias(aliases, lValue);
                if (alias instanceof LValue) {
-                  assignment.setLValue((LValue) alias);
+                  assignment.setlValue((LValue) alias);
                } else {
                   throw new RuntimeException("Error replacing LValue variable " + lValue + " with " + alias);
                }
             }
-            if (getAlias(aliases, assignment.getRValue1()) != null) {
-               assignment.setRValue1(getAlias(aliases, assignment.getRValue1()));
+            if (getAlias(aliases, assignment.getrValue1()) != null) {
+               assignment.setrValue1(getAlias(aliases, assignment.getrValue1()));
             }
-            if (getAlias(aliases, assignment.getRValue2()) != null) {
-               assignment.setRValue2(getAlias(aliases, assignment.getRValue2()));
+            if (getAlias(aliases, assignment.getrValue2()) != null) {
+               assignment.setrValue2(getAlias(aliases, assignment.getrValue2()));
             }
             // Handle pointer dereference in LValue
             if (lValue instanceof PointerDereferenceSimple) {
@@ -136,10 +136,10 @@ public abstract class Pass2SsaOptimization {
 
          @Override
          public Void visitPhi(StatementPhi phi) {
-            if (getAlias(aliases, phi.getLValue()) != null) {
-               RValue alias = getAlias(aliases, phi.getLValue());
+            if (getAlias(aliases, phi.getlValue()) != null) {
+               RValue alias = getAlias(aliases, phi.getlValue());
                if (alias instanceof LValue) {
-                  phi.setLValue((Variable) alias);
+                  phi.setlValue((Variable) alias);
                }
             }
             for (Iterator<StatementPhi.PreviousSymbol> iterator = phi.getPreviousVersions().iterator(); iterator.hasNext(); ) {
@@ -254,12 +254,12 @@ public abstract class Pass2SsaOptimization {
             Statement statement = iterator.next();
             if (statement instanceof StatementAssignment) {
                StatementAssignment assignment = (StatementAssignment) statement;
-               if (variables.contains(assignment.getLValue())) {
+               if (variables.contains(assignment.getlValue())) {
                   iterator.remove();
                }
             } else if (statement instanceof StatementPhi) {
                StatementPhi phi = (StatementPhi) statement;
-               if (variables.contains(phi.getLValue())) {
+               if (variables.contains(phi.getlValue())) {
                   iterator.remove();
                }
             }
@@ -283,7 +283,7 @@ public abstract class Pass2SsaOptimization {
       ControlFlowGraphBaseVisitor<Void> visitor = new ControlFlowGraphBaseVisitor<Void>() {
          @Override
          public Void visitAssignment(StatementAssignment assignment) {
-            assignments.put(assignment.getLValue(), assignment);
+            assignments.put(assignment.getlValue(), assignment);
             return null;
          }
       };
@@ -296,8 +296,8 @@ public abstract class Pass2SsaOptimization {
       ControlFlowGraphBaseVisitor<Void> visitor = new ControlFlowGraphBaseVisitor<Void>() {
          @Override
          public Void visitAssignment(StatementAssignment assignment) {
-            addUsage(assignment.getRValue1(), assignment);
-            addUsage(assignment.getRValue2(), assignment);
+            addUsage(assignment.getrValue1(), assignment);
+            addUsage(assignment.getrValue2(), assignment);
             return null;
          }
 
@@ -354,8 +354,8 @@ public abstract class Pass2SsaOptimization {
 
          @Override
          public Object visitAssignment(StatementAssignment assignment) {
-            addUsage(assignment.getRValue1());
-            addUsage(assignment.getRValue2());
+            addUsage(assignment.getrValue1());
+            addUsage(assignment.getrValue2());
             return null;
          }
 

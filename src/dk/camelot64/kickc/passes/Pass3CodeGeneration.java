@@ -11,9 +11,9 @@ import java.util.*;
 public class Pass3CodeGeneration {
 
    private ControlFlowGraph graph;
-   private Scope symbols;
+   private ProgramScope symbols;
 
-   public Pass3CodeGeneration(ControlFlowGraph graph, Scope symbols) {
+   public Pass3CodeGeneration(ControlFlowGraph graph, ProgramScope symbols) {
       this.graph = graph;
       this.symbols = symbols;
    }
@@ -46,7 +46,7 @@ public class Pass3CodeGeneration {
          if (!(statement instanceof StatementPhi)) {
             if (statement instanceof StatementAssignment) {
                StatementAssignment assignment = (StatementAssignment) statement;
-               LValue lValue = assignment.getLValue();
+               LValue lValue = assignment.getlValue();
                boolean isAlu = false;
                if (lValue instanceof Variable) {
                   RegisterAllocation.Register lValRegister = symbols.getRegister((Variable) lValue);
@@ -124,7 +124,7 @@ public class Pass3CodeGeneration {
          });
          for (StatementPhi.PreviousSymbol previousSymbol : previousVersions) {
             if (previousSymbol.getBlock().equals(fromBlock.getLabel())) {
-               genAsmMove(asm, phi.getLValue(), previousSymbol.getRValue());
+               genAsmMove(asm, phi.getlValue(), previousSymbol.getRValue());
                break;
             }
          }

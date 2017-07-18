@@ -5,8 +5,8 @@ package dk.camelot64.kickc.icl;
  */
 public interface StatementLValue extends  Statement {
 
-   LValue getLValue();
+   LValue getlValue();
 
-   void setLValue(LValue lValue);
+   void setlValue(LValue lValue);
 
 }

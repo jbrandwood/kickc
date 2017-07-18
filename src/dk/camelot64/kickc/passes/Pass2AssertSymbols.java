@@ -44,7 +44,7 @@ public class Pass2AssertSymbols extends Pass2SsaAssertion {
 
    private HashSet<Symbol> getAllSymbols(Scope symbols) {
       HashSet<Symbol> allSymbols = new HashSet<>();
-      for (Symbol symbol : symbols.getSymbols()) {
+      for (Symbol symbol : symbols.getAllSymbols()) {
          allSymbols.add(symbol);
          if(symbol instanceof Scope) {
             HashSet<Symbol> subSymbols = getAllSymbols((Scope) symbol);
@@ -110,9 +110,9 @@ public class Pass2AssertSymbols extends Pass2SsaAssertion {
 
       @Override
       public Void visitAssignment(StatementAssignment assignment) {
-         addSymbol(assignment.getLValue());
-         addSymbol(assignment.getRValue1());
-         addSymbol(assignment.getRValue2());
+         addSymbol(assignment.getlValue());
+         addSymbol(assignment.getrValue1());
+         addSymbol(assignment.getrValue2());
          return super.visitAssignment(assignment);
       }
 
@@ -130,7 +130,7 @@ public class Pass2AssertSymbols extends Pass2SsaAssertion {
 
       @Override
       public Void visitCall(StatementCall callLValue) {
-         addSymbol(callLValue.getLValue());
+         addSymbol(callLValue.getlValue());
          addSymbol(callLValue.getProcedure());
          if(callLValue.getParameters()!=null) {
             for (RValue param : callLValue.getParameters()) {
@@ -142,7 +142,7 @@ public class Pass2AssertSymbols extends Pass2SsaAssertion {
 
       @Override
       public Void visitPhi(StatementPhi phi) {
-         addSymbol(phi.getLValue());
+         addSymbol(phi.getlValue());
          for (StatementPhi.PreviousSymbol previousSymbol : phi.getPreviousVersions()) {
             addSymbol(previousSymbol.getRValue());
          }

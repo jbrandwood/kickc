@@ -1,6 +1,7 @@
 package dk.camelot64.kickc.test;
 
 import dk.camelot64.kickc.Compiler;
+import junit.framework.TestCase;
 import org.antlr.v4.runtime.CharStream;
 import org.antlr.v4.runtime.CharStreams;
 
@@ -16,7 +17,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /** Compile a number of source files and compare the resulting assembler with expected output*/
-public class TestCompilationOutput {
+public class TestCompilationOutput extends TestCase {
 
    private Path tempDir;
    private String testPath;
@@ -28,12 +29,14 @@ public class TestCompilationOutput {
       tempDir = Files.createTempDirectory("kickc-output");
    }
 
-   public static void main(String[] args) throws IOException, URISyntaxException {
+   public void testFlipper() throws IOException, URISyntaxException {
       TestCompilationOutput tester = new TestCompilationOutput();
-      //tester.testFile("fibmem");
       tester.testFile("flipper-rex2");
+   }
+
+   public void testBresenham() throws IOException, URISyntaxException {
+      TestCompilationOutput tester = new TestCompilationOutput();
       tester.testFile("bresenham");
-      //tester.testFile("unused");
    }
 
    private void testFile(String fileName) throws IOException, URISyntaxException {

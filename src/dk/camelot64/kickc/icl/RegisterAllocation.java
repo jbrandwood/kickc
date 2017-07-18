@@ -8,7 +8,7 @@ import java.util.Map;
 /** Register Allocation for Variable Symbols  */
 public class RegisterAllocation {
 
-   private Map<Variable, Register> allocation;
+   private Map<String, Register> allocation;
 
    public RegisterAllocation() {
       this.allocation = new LinkedHashMap<>();
@@ -21,11 +21,18 @@ public class RegisterAllocation {
     * @return The allocated register.
     */
    public Register getRegister(Variable variable) {
-      return allocation.get(variable);
+      return allocation.get(variable.getFullName());
    }
 
+   public Register getRegister(String varFullName) {
+      return allocation.get(varFullName);
+   }
+
+
    public void allocate(Variable variable, Register register) {
-      allocation.put(variable, register);
+      if(variable!=null) {
+         allocation.put(variable.getFullName(), register);
+      }
    }
 
    /** A register used for storing a single variable. */
@@ -287,9 +294,9 @@ public class RegisterAllocation {
    @Override
    public String toString() {
       StringBuffer out = new StringBuffer();
-      for (Variable variable : allocation.keySet()) {
-         Register register = getRegister(variable);
-         out.append(variable+" : "+register+"\n");
+      for (String varName: allocation.keySet()) {
+         Register register = getRegister(varName);
+         out.append(varName+" : "+register+"\n");
       }
       return out.toString();
    }

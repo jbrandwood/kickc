@@ -26,10 +26,10 @@ public class Pass2SelfPhiElimination extends Pass2SsaOptimization {
          public Void visitPhi(StatementPhi phi) {
             for (Iterator<StatementPhi.PreviousSymbol> iterator = phi.getPreviousVersions().iterator(); iterator.hasNext(); ) {
                StatementPhi.PreviousSymbol previousSymbol = iterator.next();
-               if (previousSymbol.getRValue().equals(phi.getLValue())) {
+               if (previousSymbol.getRValue().equals(phi.getlValue())) {
                   iterator.remove();
                   optimized[0] = Boolean.TRUE;
-                  log.append("Self Phi Eliminated "+phi.getLValue());
+                  log.append("Self Phi Eliminated "+phi.getlValue());
                }
             }
             return null;

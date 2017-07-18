@@ -56,12 +56,12 @@ public class StatementPhi implements StatementLValue {
       }
    }
 
-   public VariableVersion getLValue() {
+   public VariableVersion getlValue() {
       return lValue;
    }
 
    @Override
-   public void setLValue(LValue lValue) {
+   public void setlValue(LValue lValue) {
       if(!(lValue instanceof VariableVersion)) {
          throw new RuntimeException("Error modifying phi-statement lValue "+this.lValue+". Attempt to set to non-versioned variable "+lValue);
       }

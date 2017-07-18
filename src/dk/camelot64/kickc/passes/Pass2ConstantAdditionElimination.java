@@ -39,7 +39,7 @@ public class Pass2ConstantAdditionElimination extends Pass2SsaOptimization {
          for (Statement statement : block.getStatements()) {
             if (statement instanceof StatementAssignment) {
                StatementAssignment assignment = (StatementAssignment) statement;
-               if(assignment.getLValue() instanceof PointerDereferenceIndexed) {
+               if(assignment.getlValue() instanceof PointerDereferenceIndexed) {
                   optimized |= optimizePointerDereferenceIndexed(assignment);
                }
                Operator operator = assignment.getOperator();
@@ -60,13 +60,13 @@ public class Pass2ConstantAdditionElimination extends Pass2SsaOptimization {
    }
 
    private boolean optimizePointerDereferenceIndexed(StatementAssignment assignment) {
-      PointerDereferenceIndexed pointerDereferenceIndexed = (PointerDereferenceIndexed) assignment.getLValue();
+      PointerDereferenceIndexed pointerDereferenceIndexed = (PointerDereferenceIndexed) assignment.getlValue();
       if(pointerDereferenceIndexed.getPointer() instanceof ConstantInteger && pointerDereferenceIndexed.getIndex() instanceof Constant) {
          ConstantInteger ptrConstant = (ConstantInteger) pointerDereferenceIndexed.getPointer();
          ConstantInteger idxConstant = (ConstantInteger) pointerDereferenceIndexed.getIndex();
          int newPtr = ptrConstant.getNumber() + idxConstant.getNumber();
-         assignment.setLValue(new PointerDereferenceSimple(new ConstantInteger(newPtr)));
-         log.append("Consolidated assigned array index constant in assignment " + assignment.getLValue());
+         assignment.setlValue(new PointerDereferenceSimple(new ConstantInteger(newPtr)));
+         log.append("Consolidated assigned array index constant in assignment " + assignment.getlValue());
          return true;
       }
       if(pointerDereferenceIndexed.getPointer() instanceof ConstantInteger && pointerDereferenceIndexed.getIndex() instanceof Variable) {
@@ -76,7 +76,7 @@ public class Pass2ConstantAdditionElimination extends Pass2SsaOptimization {
             ConstantInteger ptrConstant = (ConstantInteger) pointerDereferenceIndexed.getPointer();
             int newPtr = ptrConstant.getNumber() + consolidated.getNumber();
             pointerDereferenceIndexed.setPointer(new ConstantInteger(newPtr));
-            log.append("Consolidated assigned array index constant in assignment " + assignment.getLValue());
+            log.append("Consolidated assigned array index constant in assignment " + assignment.getlValue());
             return true;
          }
       }
@@ -84,24 +84,24 @@ public class Pass2ConstantAdditionElimination extends Pass2SsaOptimization {
    }
 
    private boolean optimizeArrayDeref(StatementAssignment assignment) {
-      if (assignment.getRValue1() instanceof ConstantInteger && assignment.getRValue2() instanceof ConstantInteger) {
-         ConstantInteger ptrConstant = (ConstantInteger) assignment.getRValue1();
-         ConstantInteger idxConstant = (ConstantInteger) assignment.getRValue2();
+      if (assignment.getrValue1() instanceof ConstantInteger && assignment.getrValue2() instanceof ConstantInteger) {
+         ConstantInteger ptrConstant = (ConstantInteger) assignment.getrValue1();
+         ConstantInteger idxConstant = (ConstantInteger) assignment.getrValue2();
          int newPtr = ptrConstant.getNumber() + idxConstant.getNumber();
-         assignment.setRValue1(null);
+         assignment.setrValue1(null);
          assignment.setOperator(new Operator("*"));
-         assignment.setRValue2(new ConstantInteger(newPtr));
-         log.append("Consolidated referenced array index constant in assignment " + assignment.getLValue());
+         assignment.setrValue2(new ConstantInteger(newPtr));
+         log.append("Consolidated referenced array index constant in assignment " + assignment.getlValue());
          return true;
       }
-      if (assignment.getRValue1() instanceof ConstantInteger && assignment.getRValue2() instanceof Variable) {
-         Variable variable = (Variable) assignment.getRValue2();
+      if (assignment.getrValue1() instanceof ConstantInteger && assignment.getrValue2() instanceof Variable) {
+         Variable variable = (Variable) assignment.getrValue2();
          ConstantInteger consolidated = consolidateSubConstants(variable);
          if (consolidated != null) {
-            ConstantInteger ptrConstant = (ConstantInteger) assignment.getRValue1();
+            ConstantInteger ptrConstant = (ConstantInteger) assignment.getrValue1();
             int newPtr = ptrConstant.getNumber() + consolidated.getNumber();
-            assignment.setRValue1(new ConstantInteger(newPtr));
-            log.append("Consolidated referenced array index constant in assignment " + assignment.getLValue());
+            assignment.setrValue1(new ConstantInteger(newPtr));
+            log.append("Consolidated referenced array index constant in assignment " + assignment.getlValue());
             return true;
          }
       }
@@ -109,28 +109,28 @@ public class Pass2ConstantAdditionElimination extends Pass2SsaOptimization {
    }
 
    private boolean optimizePlus(StatementAssignment assignment) {
-      if (assignment.getRValue1() instanceof ConstantInteger && assignment.getRValue2() instanceof Variable) {
-         Variable variable = (Variable) assignment.getRValue2();
+      if (assignment.getrValue1() instanceof ConstantInteger && assignment.getrValue2() instanceof Variable) {
+         Variable variable = (Variable) assignment.getrValue2();
          ConstantInteger consolidated = consolidateSubConstants(variable);
          if (consolidated != null) {
-            ConstantInteger const1 = (ConstantInteger) assignment.getRValue1();
-            assignment.setRValue1(new ConstantInteger(const1.getNumber() + consolidated.getNumber()));
-            log.append("Consolidated constant in assignment " + assignment.getLValue());
+            ConstantInteger const1 = (ConstantInteger) assignment.getrValue1();
+            assignment.setrValue1(new ConstantInteger(const1.getNumber() + consolidated.getNumber()));
+            log.append("Consolidated constant in assignment " + assignment.getlValue());
             return true;
          }
-      } else if (assignment.getRValue1() instanceof Variable && assignment.getRValue2() instanceof ConstantInteger) {
-         Variable variable = (Variable) assignment.getRValue1();
+      } else if (assignment.getrValue1() instanceof Variable && assignment.getrValue2() instanceof ConstantInteger) {
+         Variable variable = (Variable) assignment.getrValue1();
          ConstantInteger consolidated = consolidateSubConstants(variable);
          if (consolidated != null) {
-            ConstantInteger const2 = (ConstantInteger) assignment.getRValue2();
+            ConstantInteger const2 = (ConstantInteger) assignment.getrValue2();
             int newNumber = const2.getNumber() + consolidated.getNumber();
             if (newNumber < 0) {
-               assignment.setRValue2(new ConstantInteger(-newNumber));
+               assignment.setrValue2(new ConstantInteger(-newNumber));
                assignment.setOperator(new Operator("-"));
             } else {
-               assignment.setRValue2(new ConstantInteger(newNumber));
+               assignment.setrValue2(new ConstantInteger(newNumber));
             }
-            log.append("Consolidated constant in assignment " + assignment.getLValue());
+            log.append("Consolidated constant in assignment " + assignment.getlValue());
             return true;
          }
       }
@@ -150,25 +150,25 @@ public class Pass2ConstantAdditionElimination extends Pass2SsaOptimization {
       }
       StatementAssignment assignment = getGraph().getAssignment(variable);
       if (assignment != null && assignment.getOperator() != null && "+".equals(assignment.getOperator().getOperator())) {
-         if (assignment.getRValue1() instanceof ConstantInteger) {
-            ConstantInteger constant = (ConstantInteger) assignment.getRValue1();
-            assignment.setRValue1(null);
+         if (assignment.getrValue1() instanceof ConstantInteger) {
+            ConstantInteger constant = (ConstantInteger) assignment.getrValue1();
+            assignment.setrValue1(null);
             assignment.setOperator(null);
             return constant;
-         } else if (assignment.getRValue2() instanceof ConstantInteger) {
-            ConstantInteger constant = (ConstantInteger) assignment.getRValue2();
-            assignment.setRValue2(assignment.getRValue1());
+         } else if (assignment.getrValue2() instanceof ConstantInteger) {
+            ConstantInteger constant = (ConstantInteger) assignment.getrValue2();
+            assignment.setrValue2(assignment.getrValue1());
             assignment.setOperator(null);
-            assignment.setRValue1(null);
+            assignment.setrValue1(null);
             return constant;
          } else {
             ConstantInteger const1 = null;
-            if (assignment.getRValue1() instanceof Variable) {
-               const1 = consolidateSubConstants((Variable) assignment.getRValue1());
+            if (assignment.getrValue1() instanceof Variable) {
+               const1 = consolidateSubConstants((Variable) assignment.getrValue1());
             }
             ConstantInteger const2 = null;
-            if (assignment.getRValue2() instanceof Variable) {
-               const2 = consolidateSubConstants((Variable) assignment.getRValue2());
+            if (assignment.getrValue2() instanceof Variable) {
+               const2 = consolidateSubConstants((Variable) assignment.getrValue2());
             }
             ConstantInteger result = null;
             if (const1 != null) {
@@ -183,24 +183,24 @@ public class Pass2ConstantAdditionElimination extends Pass2SsaOptimization {
          }
       }
       if (assignment != null && assignment.getOperator() != null && "-".equals(assignment.getOperator().getOperator())) {
-         if (assignment.getRValue1() instanceof ConstantInteger) {
-            ConstantInteger constant = (ConstantInteger) assignment.getRValue1();
-            assignment.setRValue1(null);
+         if (assignment.getrValue1() instanceof ConstantInteger) {
+            ConstantInteger constant = (ConstantInteger) assignment.getrValue1();
+            assignment.setrValue1(null);
             return constant;
-         } else if (assignment.getRValue2() instanceof ConstantInteger) {
-            ConstantInteger constant = (ConstantInteger) assignment.getRValue2();
-            assignment.setRValue2(assignment.getRValue1());
+         } else if (assignment.getrValue2() instanceof ConstantInteger) {
+            ConstantInteger constant = (ConstantInteger) assignment.getrValue2();
+            assignment.setrValue2(assignment.getrValue1());
             assignment.setOperator(null);
-            assignment.setRValue1(null);
+            assignment.setrValue1(null);
             return new ConstantInteger(-constant.getNumber());
          } else {
             ConstantInteger const1 = null;
-            if (assignment.getRValue1() instanceof Variable) {
-               const1 = consolidateSubConstants((Variable) assignment.getRValue1());
+            if (assignment.getrValue1() instanceof Variable) {
+               const1 = consolidateSubConstants((Variable) assignment.getrValue1());
             }
             ConstantInteger const2 = null;
-            if (assignment.getRValue2() instanceof Variable) {
-               const2 = consolidateSubConstants((Variable) assignment.getRValue2());
+            if (assignment.getrValue2() instanceof Variable) {
+               const2 = consolidateSubConstants((Variable) assignment.getrValue2());
             }
             ConstantInteger result = null;
             if (const1 != null) {

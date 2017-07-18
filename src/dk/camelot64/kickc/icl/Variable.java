@@ -1,5 +1,7 @@
 package dk.camelot64.kickc.icl;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 /**
  * A Symbol (variable, jump label, etc.)
  */
@@ -13,6 +15,7 @@ public abstract class Variable implements Symbol, RValue, LValue {
    /**
     * Scope
     */
+   @JsonIgnore
    private Scope scope;
 
    /**
@@ -32,6 +35,7 @@ public abstract class Variable implements Symbol, RValue, LValue {
       this.inferredType = false;
    }
 
+   @Override
    public String getLocalName() {
       return name;
    }
@@ -42,6 +46,7 @@ public abstract class Variable implements Symbol, RValue, LValue {
    }
 
    @Override
+   @JsonIgnore
    public String getTypedName() {
       return "(" + type.getTypeName() + (inferredType ? "~" : "") + ") " + getFullName();
    }
@@ -50,7 +55,7 @@ public abstract class Variable implements Symbol, RValue, LValue {
       return type;
    }
 
-   public void setInferredType(SymbolType type) {
+   public void setTypeInferred(SymbolType type) {
       this.type = type;
       this.inferredType = true;
    }
@@ -59,27 +64,42 @@ public abstract class Variable implements Symbol, RValue, LValue {
       return inferredType;
    }
 
+   public void setInferredType(boolean inferredType) {
+      this.inferredType = inferredType;
+   }
+
+   public void setScope(Scope scope) {
+      this.scope = scope;
+   }
+
+   public void setType(SymbolType type) {
+      this.type = type;
+   }
+
+   public void setName(String name) {
+      this.name = name;
+   }
+
+   @JsonIgnore
    public abstract boolean isVersioned();
 
+   @JsonIgnore
    public abstract boolean isIntermediate();
 
    @Override
    public boolean equals(Object o) {
       if (this == o) return true;
       if (o == null || getClass() != o.getClass()) return false;
-
       Variable variable = (Variable) o;
-
       if (inferredType != variable.inferredType) return false;
       if (!name.equals(variable.name)) return false;
-      if (scope != null ? !scope.equals(variable.scope) : variable.scope != null) return false;
+      if (!getFullName().equals(variable.getFullName())) return false;
       return type.equals(variable.type);
    }
 
    @Override
    public int hashCode() {
-      int result = name.hashCode();
-      result = 31 * result + (scope != null ? scope.hashCode() : 0);
+      int result = getFullName().hashCode();
       result = 31 * result + type.hashCode();
       result = 31 * result + (inferredType ? 1 : 0);
       return result;

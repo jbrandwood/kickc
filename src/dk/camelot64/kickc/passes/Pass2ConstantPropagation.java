@@ -39,26 +39,26 @@ public class Pass2ConstantPropagation extends Pass2SsaOptimization {
       ControlFlowGraphBaseVisitor<Void> visitor = new ControlFlowGraphBaseVisitor<Void>() {
          @Override
          public Void visitAssignment(StatementAssignment assignment) {
-            if (assignment.getLValue() instanceof VariableVersion || assignment.getLValue() instanceof VariableIntermediate) {
-               Variable variable = (Variable) assignment.getLValue();
-               if (assignment.getRValue1() == null && assignment.getRValue2() instanceof Constant) {
+            if (assignment.getlValue() instanceof VariableVersion || assignment.getlValue() instanceof VariableIntermediate) {
+               Variable variable = (Variable) assignment.getlValue();
+               if (assignment.getrValue1() == null && assignment.getrValue2() instanceof Constant) {
                   if (assignment.getOperator() == null) {
                      // Constant assignment
-                     Constant constant = (Constant) assignment.getRValue2();
+                     Constant constant = (Constant) assignment.getrValue2();
                      constants.put(variable, constant);
                   } else {
                      // Constant unary expression
-                     Constant constant = calculateUnary(assignment.getOperator(), (Constant) assignment.getRValue2());
+                     Constant constant = calculateUnary(assignment.getOperator(), (Constant) assignment.getrValue2());
                      if(constant!=null) {
                         constants.put(variable, constant);
                      }
                   }
-               } else if (assignment.getRValue1() instanceof Constant && assignment.getRValue2() instanceof Constant) {
+               } else if (assignment.getrValue1() instanceof Constant && assignment.getrValue2() instanceof Constant) {
                   // Constant binary expression
                   Constant constant = calculateBinary(
                         assignment.getOperator(),
-                        (Constant) assignment.getRValue1(),
-                        (Constant) assignment.getRValue2());
+                        (Constant) assignment.getrValue1(),
+                        (Constant) assignment.getrValue2());
                   if(constant!=null) {
                      constants.put(variable, constant);
                   }
@@ -72,7 +72,7 @@ public class Pass2ConstantPropagation extends Pass2SsaOptimization {
             if (phi.getPreviousVersions().size() == 1) {
                StatementPhi.PreviousSymbol previousSymbol = phi.getPreviousVersions().get(0);
                if (previousSymbol.getRValue() instanceof Constant) {
-                  VariableVersion variable = phi.getLValue();
+                  VariableVersion variable = phi.getlValue();
                   Constant constant = (Constant) previousSymbol.getRValue();
                   constants.put(variable, constant);
                }

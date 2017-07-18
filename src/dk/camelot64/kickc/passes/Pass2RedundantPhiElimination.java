@@ -51,7 +51,7 @@ public class Pass2RedundantPhiElimination extends Pass2SsaOptimization {
                }
             }
             if(found) {
-               VariableVersion variable = phi.getLValue();
+               VariableVersion variable = phi.getlValue();
                if(phiRValue==null) {phiRValue = VOID;}
                aliases.put(variable, phiRValue);
             }

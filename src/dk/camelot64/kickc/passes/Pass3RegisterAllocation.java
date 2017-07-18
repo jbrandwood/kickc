@@ -8,10 +8,10 @@ import dk.camelot64.kickc.icl.*;
 public class Pass3RegisterAllocation {
 
    private ControlFlowGraph graph;
-   private Scope symbols;
+   private ProgramScope symbols;
    int currentZp = 2;
 
-   public Pass3RegisterAllocation(ControlFlowGraph graph, Scope symbols) {
+   public Pass3RegisterAllocation(ControlFlowGraph graph, ProgramScope symbols) {
       this.graph = graph;
       this.symbols = symbols;
    }
@@ -159,7 +159,7 @@ public class Pass3RegisterAllocation {
    }
 
    private void performAllocation(Scope scope, RegisterAllocation allocation) {
-      for (Symbol symbol : scope.getSymbols()) {
+      for (Symbol symbol : scope.getAllSymbols()) {
          if (symbol instanceof Scope) {
             performAllocation((Scope) symbol, allocation);
          } else if (symbol instanceof VariableIntermediate || symbol instanceof VariableVersion) {

@@ -1,32 +1,52 @@
 package dk.camelot64.kickc.icl;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import java.util.*;
 
 /**
  * Manages symbols (variables, labels)
  */
-public class Scope implements Symbol {
+public abstract class Scope implements Symbol {
 
    private String name;
-   private SymbolType type;
-   private Map<String, Symbol> symbols;
+   private HashMap<String, Symbol> symbols;
    private int intermediateVarCount = 0;
    private int intermediateLabelCount = 1;
-   private RegisterAllocation allocation;
+   @JsonIgnore
    private Scope parentScope;
 
-   public Scope(String name, SymbolType type, Scope parentScope) {
+   public Scope(String name, Scope parentScope) {
       this.name = name;
-      this.type = type;
       this.parentScope = parentScope;
       this.symbols = new LinkedHashMap<>();
    }
 
+   @JsonCreator
+   public Scope(
+         @JsonProperty("name")  String name,
+         @JsonProperty("symbols") HashMap<String, Symbol> symbols,
+         @JsonProperty("intermediateVarCount") int intermediateVarCount,
+         @JsonProperty("intermediateLabelCount") int intermediateLabelCount) {
+      this.name = name;
+      this.symbols = symbols;
+      this.intermediateVarCount = intermediateVarCount;
+      this.intermediateLabelCount = intermediateLabelCount;
+      for (Symbol symbol : symbols.values()) {
+         symbol.setScope(this);
+      }
+   }
+
    public Scope() {
       this.name = "";
-      this.type = new SymbolTypeProgram();
       this.parentScope = null;
       this.symbols = new LinkedHashMap<>();
+   }
+
+   public HashMap<String, Symbol> getSymbols() {
+      return symbols;
    }
 
    @Override
@@ -51,21 +71,23 @@ public class Scope implements Symbol {
 
 
    @Override
+   @JsonIgnore
    public Scope getScope() {
       return parentScope;
    }
 
    @Override
+   @JsonIgnore
    public String getTypedName() {
       return "(" + getType().getTypeName() + ") " + getFullName();
    }
 
    @Override
-   public SymbolType getType() {
-      return type;
-   }
+   @JsonIgnore
+   public abstract SymbolType getType();
 
    @Override
+   @JsonIgnore
    public int getScopeDepth() {
       if (parentScope == null) {
          return 0;
@@ -127,7 +149,7 @@ public class Scope implements Symbol {
       return (Variable) getSymbol(name);
    }
 
-
+   @JsonIgnore
    public Collection<Variable> getAllVariables() {
       Collection<Variable> vars = new ArrayList<>();
       for (Symbol symbol : symbols.values()) {
@@ -174,28 +196,15 @@ public class Scope implements Symbol {
       }
    }
 
-   public void setAllocation(RegisterAllocation allocation) {
-      this.allocation = allocation;
-      for (Symbol symbol : symbols.values()) {
-         if(symbol instanceof Scope) {
-            ((Scope) symbol).setAllocation(allocation);
-         }
-      }
-   }
+   abstract RegisterAllocation getAllocation();
 
-   public RegisterAllocation.Register getRegister(Variable variable) {
-      RegisterAllocation.Register register = null;
-      if (allocation != null) {
-         register = allocation.getRegister(variable);
-      }
-      return register;
-   }
-
+   @JsonIgnore
    public String getSymbolTableContents() {
       StringBuilder res = new StringBuilder();
       Set<String> names = symbols.keySet();
       List<String> sortedNames = new ArrayList<>(names);
       Collections.sort(sortedNames);
+      RegisterAllocation allocation = getAllocation();
       for (String name : sortedNames) {
          Symbol symbol = symbols.get(name);
          if (symbol instanceof Scope) {
@@ -203,8 +212,8 @@ public class Scope implements Symbol {
          } else {
             res.append(symbol.toString());
          }
-         if (symbol instanceof Variable) {
-            RegisterAllocation.Register register = getRegister((Variable) symbol);
+         if (symbol instanceof Variable && allocation!=null) {
+            RegisterAllocation.Register register = allocation.getRegister((Variable) symbol);
             if (register != null) {
                res.append(" " + register);
             }
@@ -214,7 +223,47 @@ public class Scope implements Symbol {
       return res.toString();
    }
 
-   public Collection<Symbol> getSymbols() {
+   @JsonIgnore
+   public Collection<Symbol> getAllSymbols() {
       return symbols.values();
+   }
+
+   @Override
+   public void setScope(Scope scope) {
+      this.parentScope = scope;
+   }
+
+   @Override
+   public boolean equals(Object o) {
+      if (this == o) {
+         return true;
+      }
+      if (o == null || getClass() != o.getClass()) {
+         return false;
+      }
+
+      Scope scope = (Scope) o;
+
+      if (intermediateVarCount != scope.intermediateVarCount) {
+         return false;
+      }
+      if (intermediateLabelCount != scope.intermediateLabelCount) {
+         return false;
+      }
+      if (!name.equals(scope.name)) {
+         return false;
+      }
+      if (!symbols.equals(scope.symbols)) {
+         return false;
+      }
+      return true;
+   }
+
+   @Override
+   public int hashCode() {
+      int result = name.hashCode();
+      result = 31 * result + intermediateVarCount;
+      result = 31 * result + intermediateLabelCount;
+      return result;
    }
 }

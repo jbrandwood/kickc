@@ -1,6 +1,5 @@
 package dk.camelot64.kickc.icl;
 
-import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 
@@ -116,7 +115,7 @@ public class ControlFlowGraphCopyVisitor extends ControlFlowGraphBaseVisitor<Obj
 
    @Override
    public StatementPhi visitPhi(StatementPhi phi) {
-      VariableVersion lValue = phi.getLValue();
+      VariableVersion lValue = phi.getlValue();
       StatementPhi copyPhi = new StatementPhi(lValue);
       for (StatementPhi.PreviousSymbol origPreviousVersion : phi.getPreviousVersions()) {
          RValue rValue = origPreviousVersion.getRValue();
@@ -128,10 +127,10 @@ public class ControlFlowGraphCopyVisitor extends ControlFlowGraphBaseVisitor<Obj
 
    @Override
    public StatementAssignment visitAssignment(StatementAssignment origAssignment) {
-      LValue lValue = origAssignment.getLValue();
-      RValue rValue1 = origAssignment.getRValue1();
+      LValue lValue = origAssignment.getlValue();
+      RValue rValue1 = origAssignment.getrValue1();
       Operator operator = origAssignment.getOperator();
-      RValue rValue2 = origAssignment.getRValue2();
+      RValue rValue2 = origAssignment.getrValue2();
       return new StatementAssignment(lValue, rValue1, operator, rValue2);
    }
 
@@ -158,7 +157,7 @@ public class ControlFlowGraphCopyVisitor extends ControlFlowGraphBaseVisitor<Obj
 
    @Override
    public StatementCall visitCall(StatementCall callLValue) {
-      LValue lValue = callLValue.getLValue();
+      LValue lValue = callLValue.getlValue();
       String procedureName = callLValue.getProcedureName();
       List<RValue> parameters = callLValue.getParameters();
       return new StatementCall(lValue, procedureName, parameters);

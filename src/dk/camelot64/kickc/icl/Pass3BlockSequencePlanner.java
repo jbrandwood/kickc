@@ -17,6 +17,10 @@ public class Pass3BlockSequencePlanner {
 
    public void plan() {
       Stack<ControlFlowBlock> todo = new Stack<>();
+      ControlFlowBlock mainBlock = controlFlowGraph.getMainBlock();
+      if (mainBlock != null) {
+         todo.push(mainBlock);
+      }
       todo.push(controlFlowGraph.getFirstBlock());
       List<ControlFlowBlock> sequence = new ArrayList<>();
       while(!todo.empty()){

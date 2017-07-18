@@ -114,4 +114,13 @@ public class ControlFlowGraph {
       return sequence;
    }
 
+   public ControlFlowBlock getMainBlock() {
+      for (ControlFlowBlock block : getAllBlocks()) {
+         Label label = block.getLabel();
+         if(label.getFullName().equals("main")) {
+            return block;
+         }
+      }
+      return null;
+   }
 }

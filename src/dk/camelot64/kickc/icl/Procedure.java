@@ -1,5 +1,6 @@
 package dk.camelot64.kickc.icl;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
@@ -18,7 +19,8 @@ public class Procedure extends Scope {
       this.returnType = returnType;
    }
 
-   public Procedure(
+   @JsonCreator
+   private Procedure(
          @JsonProperty("name") String name,
          @JsonProperty("returntype") SymbolType returnType,
          @JsonProperty("parameterNames") List<String> parameterNames,

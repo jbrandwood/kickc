@@ -15,7 +15,7 @@ public class ProgramScope extends Scope {
    }
 
    @JsonCreator
-   public ProgramScope(
+   private ProgramScope(
          @JsonProperty("name") String name,
          @JsonProperty("symbols") HashMap<String, Symbol> symbols,
          @JsonProperty("intermediateVarCount") int intermediateVarCount,

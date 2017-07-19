@@ -13,9 +13,9 @@ public abstract class Pass2SsaOptimization {
 
    protected CompileLog log;
    private ControlFlowGraph graph;
-   private Scope scope;
+   private ProgramScope scope;
 
-   public Pass2SsaOptimization(ControlFlowGraph graph, Scope scope,CompileLog log) {
+   public Pass2SsaOptimization(ControlFlowGraph graph, ProgramScope scope,CompileLog log) {
       this.log = log;
       this.graph = graph;
       this.scope = scope;
@@ -29,7 +29,7 @@ public abstract class Pass2SsaOptimization {
       return graph;
    }
 
-   public Scope getSymbols() {
+   public ProgramScope getSymbols() {
       return scope;
    }
 
@@ -46,6 +46,16 @@ public abstract class Pass2SsaOptimization {
    public static RValue VOID = new RValue() {
       @Override
       public String toString() {
+         return getAsString();
+      }
+
+      @Override
+      public String getAsTypedString(ProgramScope scope) {
+         return getAsString();
+      }
+
+      @Override
+      public String getAsString() {
          return "VOID";
       }
    };
@@ -55,7 +65,7 @@ public abstract class Pass2SsaOptimization {
     *
     * @param aliases Variables that have alias values.
     */
-   public void replaceVariables(final Map<Variable, ? extends RValue> aliases) {
+   public void replaceVariables(final Map<VariableRef, ? extends RValue> aliases) {
       ControlFlowGraphBaseVisitor<Void> visitor = new ControlFlowGraphBaseVisitor<Void>() {
          @Override
          public Void visitAssignment(StatementAssignment assignment) {
@@ -139,7 +149,7 @@ public abstract class Pass2SsaOptimization {
             if (getAlias(aliases, phi.getlValue()) != null) {
                RValue alias = getAlias(aliases, phi.getlValue());
                if (alias instanceof LValue) {
-                  phi.setlValue((Variable) alias);
+                  phi.setlValue((VariableRef) alias);
                }
             }
             for (Iterator<StatementPhi.PreviousSymbol> iterator = phi.getPreviousVersions().iterator(); iterator.hasNext(); ) {
@@ -166,7 +176,7 @@ public abstract class Pass2SsaOptimization {
     * @param rValue  The RValue to find an alias for
     * @return The alias to use. Null if no alias exists.
     */
-   private static RValue getAlias(Map<Variable, ? extends RValue> aliases, RValue rValue) {
+   private static RValue getAlias(Map<VariableRef, ? extends RValue> aliases, RValue rValue) {
       RValue alias = aliases.get(rValue);
       while (aliases.get(alias) != null) {
          alias = aliases.get(alias);
@@ -278,6 +288,13 @@ public abstract class Pass2SsaOptimization {
       }
    }
 
+   public void deleteVariables(Collection<? extends VariableRef> symbols) {
+      for (VariableRef variableRef : symbols) {
+         Symbol symbol = getSymbols().getSymbol(variableRef.getFullName());
+         symbol.getScope().remove(symbol);
+      }
+   }
+
    public Map<LValue, StatementAssignment> getAllAssignments() {
       final HashMap<LValue, StatementAssignment> assignments = new LinkedHashMap<>();
       ControlFlowGraphBaseVisitor<Void> visitor = new ControlFlowGraphBaseVisitor<Void>() {
@@ -334,12 +351,12 @@ public abstract class Pass2SsaOptimization {
       return usages;
    }
 
-   protected Map<Variable, Integer> countVarUsages() {
-      final HashMap<Variable, Integer> usages = new LinkedHashMap<>();
+   protected Map<VariableRef, Integer> countVarUsages() {
+      final HashMap<VariableRef, Integer> usages = new LinkedHashMap<>();
       ControlFlowGraphBaseVisitor usageVisitor = new ControlFlowGraphBaseVisitor() {
          private void addUsage(RValue rVal) {
-            if(rVal instanceof Variable) {
-               Variable var = (Variable) rVal;
+            if(rVal instanceof VariableRef) {
+               VariableRef var = (VariableRef) rVal;
                Integer usage = usages.get(var);
                if (usage == null) {
                   usage = 0;

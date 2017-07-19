@@ -30,24 +30,27 @@ public class Pass1ProcedureCallParameters extends ControlFlowGraphCopyVisitor {
       for (int i = 0; i < parameterDecls.size(); i++) {
          Variable parameterDecl = parameterDecls.get(i);
          RValue parameterValue = parameterValues.get(i);
-         addStatementToCurrentBlock(new StatementAssignment(parameterDecl, parameterValue));
+         addStatementToCurrentBlock(new StatementAssignment(new VariableRef(parameterDecl), parameterValue));
       }
       String procedureName = origCall.getProcedureName();
       Variable procReturnVar = procedure.getVariable("return");
-      StatementCall copyCall = new StatementCall(procReturnVar, procedureName, null);
+      VariableRef procReturnVarRef = null;
+      if(procReturnVar!=null) {new VariableRef(procReturnVar); }
+      StatementCall copyCall = new StatementCall(procReturnVarRef, procedureName, null);
       copyCall.setParametersByAssignment(true);
       copyCall.setProcedure(procedure);
       addStatementToCurrentBlock(copyCall);
       getCurrentBlock().setCallSuccessor(procedure.getLabel());
       splitCurrentBlock(scope.addLabelIntermediate());
       if(!SymbolTypeBasic.VOID.equals(procedure.getReturnType())) {
-         addStatementToCurrentBlock(new StatementAssignment(origCall.getlValue(), procReturnVar));
+         addStatementToCurrentBlock(new StatementAssignment(origCall.getlValue(), procReturnVarRef));
       } else {
          // No return type. Remove variable receiving the result.
          LValue lValue = origCall.getlValue();
-         if(lValue instanceof Variable) {
-            Variable lVar = (Variable) lValue;
-            lVar.getScope().remove(lVar);
+         if(lValue instanceof VariableRef) {
+            VariableRef lValueRef = (VariableRef) lValue;
+            Variable lValueVar = scope.getVariable(lValueRef);
+            lValueVar.getScope().remove(lValueVar);
          }
       }
 

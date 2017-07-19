@@ -48,8 +48,10 @@ public class Pass3CodeGeneration {
                StatementAssignment assignment = (StatementAssignment) statement;
                LValue lValue = assignment.getlValue();
                boolean isAlu = false;
-               if (lValue instanceof Variable) {
-                  RegisterAllocation.Register lValRegister = symbols.getRegister((Variable) lValue);
+               if (lValue instanceof VariableRef) {
+                  VariableRef lValueRef = (VariableRef) lValue;
+                  Variable lValueVar = symbols.getVariable(lValueRef);
+                  RegisterAllocation.Register lValRegister = symbols.getRegister(lValueVar);
                   if (lValRegister.getType().equals(RegisterAllocation.RegisterType.REG_ALU_BYTE)) {
                      asm.addComment(statement + "  //  ALU");
                      StatementAssignment assignmentAlu = assignment;
@@ -59,19 +61,19 @@ public class Pass3CodeGeneration {
                      }
                      assignment = (StatementAssignment) statement;
                      AsmFragment asmFragment = new AsmFragment(assignment, assignmentAlu, symbols);
-                     asm.addComment(statement + "  //  " + asmFragment.getSignature());
+                     asm.addComment(statement.getAsTypedString(symbols) + "  //  " + asmFragment.getSignature());
                      asmFragment.generate(asm);
                      isAlu = true;
                   }
                }
                if (!isAlu) {
                   AsmFragment asmFragment = new AsmFragment(assignment, symbols);
-                  asm.addComment(statement + "  //  " + asmFragment.getSignature());
+                  asm.addComment(statement.getAsTypedString(symbols) + "  //  " + asmFragment.getSignature());
                   asmFragment.generate(asm);
                }
             } else if (statement instanceof StatementConditionalJump) {
                AsmFragment asmFragment = new AsmFragment((StatementConditionalJump) statement, block, symbols, graph);
-               asm.addComment(statement + "  //  " + asmFragment.getSignature());
+               asm.addComment(statement.getAsTypedString(symbols) + "  //  " + asmFragment.getSignature());
                asmFragment.generate(asm);
             } else if (statement instanceof StatementCall) {
                StatementCall call = (StatementCall) statement;
@@ -132,8 +134,10 @@ public class Pass3CodeGeneration {
    }
 
    private RegisterAllocation.Register getRegister(RValue rValue) {
-      if (rValue instanceof Variable) {
-         return symbols.getRegister((Variable) rValue);
+      if (rValue instanceof VariableRef) {
+         VariableRef rValueRef = (VariableRef) rValue;
+         Variable rValueVar = symbols.getVariable(rValueRef);
+         return symbols.getRegister(rValueVar);
       } else {
          return null;
       }
@@ -142,11 +146,11 @@ public class Pass3CodeGeneration {
    private void genAsmMove(AsmProgram asm, LValue lValue, RValue rValue) {
       if (getRegister(lValue).equals(getRegister(rValue))) {
          // Do not move from register to itself
-         asm.addComment(lValue + " = " + rValue + "  // register copy ");
+         asm.addComment(lValue.getAsTypedString(symbols) + " = " + rValue.getAsTypedString(symbols) + "  // register copy ");
          return;
       }
       AsmFragment asmFragment = new AsmFragment(lValue, rValue, symbols);
-      asm.addComment(lValue + " = " + rValue + "  // " + asmFragment.getSignature());
+      asm.addComment(lValue.getAsTypedString(symbols) + " = " + rValue.getAsTypedString(symbols) + "  // " + asmFragment.getSignature());
       asmFragment.generate(asm);
    }
 

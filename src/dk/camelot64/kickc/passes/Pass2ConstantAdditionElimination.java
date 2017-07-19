@@ -17,9 +17,9 @@ import java.util.Map;
  */
 public class Pass2ConstantAdditionElimination extends Pass2SsaOptimization {
 
-   private Map<Variable, Integer> usages;
+   private Map<VariableRef, Integer> usages;
 
-   public Pass2ConstantAdditionElimination(ControlFlowGraph graph, Scope scope, CompileLog log) {
+   public Pass2ConstantAdditionElimination(ControlFlowGraph graph, ProgramScope scope, CompileLog log) {
       super(graph, scope, log);
    }
 
@@ -69,8 +69,8 @@ public class Pass2ConstantAdditionElimination extends Pass2SsaOptimization {
          log.append("Consolidated assigned array index constant in assignment " + assignment.getlValue());
          return true;
       }
-      if(pointerDereferenceIndexed.getPointer() instanceof ConstantInteger && pointerDereferenceIndexed.getIndex() instanceof Variable) {
-         Variable variable = (Variable) pointerDereferenceIndexed.getIndex();
+      if(pointerDereferenceIndexed.getPointer() instanceof ConstantInteger && pointerDereferenceIndexed.getIndex() instanceof VariableRef) {
+         VariableRef variable = (VariableRef) pointerDereferenceIndexed.getIndex();
          ConstantInteger consolidated = consolidateSubConstants(variable);
          if (consolidated != null) {
             ConstantInteger ptrConstant = (ConstantInteger) pointerDereferenceIndexed.getPointer();
@@ -94,8 +94,8 @@ public class Pass2ConstantAdditionElimination extends Pass2SsaOptimization {
          log.append("Consolidated referenced array index constant in assignment " + assignment.getlValue());
          return true;
       }
-      if (assignment.getrValue1() instanceof ConstantInteger && assignment.getrValue2() instanceof Variable) {
-         Variable variable = (Variable) assignment.getrValue2();
+      if (assignment.getrValue1() instanceof ConstantInteger && assignment.getrValue2() instanceof VariableRef) {
+         VariableRef variable = (VariableRef) assignment.getrValue2();
          ConstantInteger consolidated = consolidateSubConstants(variable);
          if (consolidated != null) {
             ConstantInteger ptrConstant = (ConstantInteger) assignment.getrValue1();
@@ -109,8 +109,8 @@ public class Pass2ConstantAdditionElimination extends Pass2SsaOptimization {
    }
 
    private boolean optimizePlus(StatementAssignment assignment) {
-      if (assignment.getrValue1() instanceof ConstantInteger && assignment.getrValue2() instanceof Variable) {
-         Variable variable = (Variable) assignment.getrValue2();
+      if (assignment.getrValue1() instanceof ConstantInteger && assignment.getrValue2() instanceof VariableRef) {
+         VariableRef variable = (VariableRef) assignment.getrValue2();
          ConstantInteger consolidated = consolidateSubConstants(variable);
          if (consolidated != null) {
             ConstantInteger const1 = (ConstantInteger) assignment.getrValue1();
@@ -118,8 +118,8 @@ public class Pass2ConstantAdditionElimination extends Pass2SsaOptimization {
             log.append("Consolidated constant in assignment " + assignment.getlValue());
             return true;
          }
-      } else if (assignment.getrValue1() instanceof Variable && assignment.getrValue2() instanceof ConstantInteger) {
-         Variable variable = (Variable) assignment.getrValue1();
+      } else if (assignment.getrValue1() instanceof VariableRef && assignment.getrValue2() instanceof ConstantInteger) {
+         VariableRef variable = (VariableRef) assignment.getrValue1();
          ConstantInteger consolidated = consolidateSubConstants(variable);
          if (consolidated != null) {
             ConstantInteger const2 = (ConstantInteger) assignment.getrValue2();
@@ -143,12 +143,13 @@ public class Pass2ConstantAdditionElimination extends Pass2SsaOptimization {
     * @param variable The variable to examine
     * @return The consolidated constant. Null if no sub-constants were found.
     */
-   private ConstantInteger consolidateSubConstants(Variable variable) {
+   private ConstantInteger consolidateSubConstants(VariableRef variable) {
       if(getUsages(variable) >1) {
-         log.append("Multiple usages for variable. Not optimizing sub-constant "+variable);
+         log.append("Multiple usages for variable. Not optimizing sub-constant "+variable.getAsTypedString(getSymbols()));
          return null;
       }
-      StatementAssignment assignment = getGraph().getAssignment(variable);
+      Variable var = getSymbols().getVariable(variable);
+      StatementAssignment assignment = getGraph().getAssignment(var);
       if (assignment != null && assignment.getOperator() != null && "+".equals(assignment.getOperator().getOperator())) {
          if (assignment.getrValue1() instanceof ConstantInteger) {
             ConstantInteger constant = (ConstantInteger) assignment.getrValue1();
@@ -163,12 +164,12 @@ public class Pass2ConstantAdditionElimination extends Pass2SsaOptimization {
             return constant;
          } else {
             ConstantInteger const1 = null;
-            if (assignment.getrValue1() instanceof Variable) {
-               const1 = consolidateSubConstants((Variable) assignment.getrValue1());
+            if (assignment.getrValue1() instanceof VariableRef) {
+               const1 = consolidateSubConstants((VariableRef) assignment.getrValue1());
             }
             ConstantInteger const2 = null;
-            if (assignment.getrValue2() instanceof Variable) {
-               const2 = consolidateSubConstants((Variable) assignment.getrValue2());
+            if (assignment.getrValue2() instanceof VariableRef) {
+               const2 = consolidateSubConstants((VariableRef) assignment.getrValue2());
             }
             ConstantInteger result = null;
             if (const1 != null) {
@@ -195,12 +196,12 @@ public class Pass2ConstantAdditionElimination extends Pass2SsaOptimization {
             return new ConstantInteger(-constant.getNumber());
          } else {
             ConstantInteger const1 = null;
-            if (assignment.getrValue1() instanceof Variable) {
-               const1 = consolidateSubConstants((Variable) assignment.getrValue1());
+            if (assignment.getrValue1() instanceof VariableRef) {
+               const1 = consolidateSubConstants((VariableRef) assignment.getrValue1());
             }
             ConstantInteger const2 = null;
-            if (assignment.getrValue2() instanceof Variable) {
-               const2 = consolidateSubConstants((Variable) assignment.getrValue2());
+            if (assignment.getrValue2() instanceof VariableRef) {
+               const2 = consolidateSubConstants((VariableRef) assignment.getrValue2());
             }
             ConstantInteger result = null;
             if (const1 != null) {
@@ -217,7 +218,7 @@ public class Pass2ConstantAdditionElimination extends Pass2SsaOptimization {
       return null;
    }
 
-   private Integer getUsages(Variable variable) {
+   private Integer getUsages(VariableRef variable) {
       Integer useCount = usages.get(variable);
       if(useCount==null) useCount = 0;
       return useCount;

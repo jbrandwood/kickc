@@ -10,7 +10,7 @@ import java.util.*;
  */
 public class Pass2AliasElimination extends Pass2SsaOptimization {
 
-   public Pass2AliasElimination(ControlFlowGraph graph, Scope scope, CompileLog log) {
+   public Pass2AliasElimination(ControlFlowGraph graph, ProgramScope scope, CompileLog log) {
       super(graph, scope, log);
    }
 
@@ -23,16 +23,16 @@ public class Pass2AliasElimination extends Pass2SsaOptimization {
       final Aliases aliases = findAliases();
       removeAliasAssignments(aliases);
       replaceVariables(aliases.getReplacements());
-      deleteSymbols(aliases.getSymbolsToRemove());
       for (AliasSet aliasSet : aliases.getAliasSets()) {
          StringBuilder str = new StringBuilder();
-         str.append(aliasSet.getKeepVar());
+         str.append(aliasSet.getKeepVar().getAsTypedString(getSymbols()));
          str.append(" = ");
-         for (Variable var : aliasSet.getEliminateVars()) {
-            str.append(var + " ");
+         for (VariableRef var : aliasSet.getEliminateVars()) {
+            str.append(var.getAsTypedString(getSymbols()) + " ");
          }
          log.append("Alias " + str);
       }
+      deleteVariables(aliases.getSymbolsToRemove());
       return (aliases.size() > 0);
    }
 
@@ -75,19 +75,19 @@ public class Pass2AliasElimination extends Pass2SsaOptimization {
          this.aliases = new ArrayList<>();
       }
 
-      public List<Variable> getSymbolsToRemove() {
-         ArrayList<Variable> eliminates = new ArrayList<>();
+      public List<VariableRef> getSymbolsToRemove() {
+         ArrayList<VariableRef> eliminates = new ArrayList<>();
          for (AliasSet alias : aliases) {
             eliminates.addAll(alias.getEliminateVars());
          }
          return eliminates;
       }
 
-      public Map<Variable, Variable> getReplacements() {
-         HashMap<Variable, Variable> replacements = new LinkedHashMap<>();
+      public Map<VariableRef, VariableRef> getReplacements() {
+         HashMap<VariableRef, VariableRef> replacements = new LinkedHashMap<>();
          for (AliasSet aliasSet : aliases) {
-            Variable keepVar = aliasSet.getKeepVar();
-            for (Variable var : aliasSet.getEliminateVars()) {
+            VariableRef keepVar = aliasSet.getKeepVar();
+            for (VariableRef var : aliasSet.getEliminateVars()) {
                if(!var.equals(keepVar)) {
                   replacements.put(var, keepVar);
                }
@@ -100,7 +100,7 @@ public class Pass2AliasElimination extends Pass2SsaOptimization {
          return aliases.size();
       }
 
-      public void add(Variable var1, Variable var2) {
+      public void add(VariableRef var1, VariableRef var2) {
          AliasSet aliasSet1 = findAliasSet(var1);
          AliasSet aliasSet2 = findAliasSet(var2);
          if (aliasSet1 != null) {
@@ -123,7 +123,7 @@ public class Pass2AliasElimination extends Pass2SsaOptimization {
       }
 
       public AliasSet findAliasSet(LValue lValue) {
-         if (lValue instanceof Variable) {
+         if (lValue instanceof VariableRef) {
             for (AliasSet alias : aliases) {
                if (alias.contains(lValue)) {
                   return alias;
@@ -140,25 +140,25 @@ public class Pass2AliasElimination extends Pass2SsaOptimization {
 
    public static class AliasSet {
 
-      private List<Variable> vars;
+      private List<VariableRef> vars;
 
       public AliasSet() {
          this.vars = new ArrayList<>();
       }
 
-      public void add(Variable variable) {
+      public void add(VariableRef variable) {
          vars.add(variable);
       }
 
       public boolean contains(RValue rValue) {
-         if (rValue instanceof Variable) {
+         if (rValue instanceof VariableRef) {
             return vars.contains(rValue);
          } else {
             return false;
          }
       }
 
-      public List<Variable> getVars() {
+      public List<VariableRef> getVars() {
          return vars;
       }
 
@@ -166,22 +166,22 @@ public class Pass2AliasElimination extends Pass2SsaOptimization {
          vars.addAll(aliasSet.getVars());
       }
 
-      public Variable getKeepVar() {
-         Variable keep = null;
-         List<Variable> vars = new ArrayList<>(this.vars);
-         Collections.sort(vars, new Comparator<Variable>() {
+      public VariableRef getKeepVar() {
+         VariableRef keep = null;
+         List<VariableRef> vars = new ArrayList<>(this.vars);
+         Collections.sort(vars, new Comparator<VariableRef>() {
             @Override
-            public int compare(Variable o1, Variable o2) {
+            public int compare(VariableRef o1, VariableRef o2) {
                return o1.getFullName().compareTo(o2.getFullName());
             }
          });
-         for (Variable var : vars) {
+         for (VariableRef var : vars) {
             if (keep == null) {
                keep = var;
             } else {
-               if (var instanceof VariableVersion) {
-                  if (keep instanceof VariableVersion) {
-                     if (var.getScopeDepth() < keep.getScopeDepth()) {
+               if (isVersion(var)) {
+                  if (isVersion(keep)) {
+                     if (getScopeDepth(var) < getScopeDepth(keep)) {
                         keep = var;
                      }
                   } else {
@@ -193,10 +193,23 @@ public class Pass2AliasElimination extends Pass2SsaOptimization {
          return keep;
       }
 
-      public List<Variable> getEliminateVars() {
-         List<Variable> eliminate = new ArrayList<>();
-         Variable keepVar = getKeepVar();
-         for (Variable var : vars) {
+      private int getScopeDepth(VariableRef var) {
+         int depth = 0;
+         char[] chars = var.getFullName().toCharArray();
+         for (char c : chars) {
+            if(c==':') depth++;
+         }
+         return depth/2;
+      }
+
+      private boolean isVersion(VariableRef var) {
+         return var.getFullName().contains("#");
+      }
+
+      public List<VariableRef> getEliminateVars() {
+         List<VariableRef> eliminate = new ArrayList<>();
+         VariableRef keepVar = getKeepVar();
+         for (VariableRef var : vars) {
             if(!var.equals(keepVar)) {
                eliminate.add(var);
             }
@@ -205,7 +218,7 @@ public class Pass2AliasElimination extends Pass2SsaOptimization {
       }
 
       public void remove(RValue rValue) {
-         if(rValue instanceof Variable) {
+         if(rValue instanceof VariableRef) {
             vars.remove(rValue);
          }
       }
@@ -235,7 +248,7 @@ public class Pass2AliasElimination extends Pass2SsaOptimization {
                   for (StatementPhi.PreviousSymbol previousSymbol : phi.getPreviousVersions()) {
                      RValue phiRValue = previousSymbol.getRValue();
                      if (aliasSet.contains(phiRValue)) {
-                        log.append("Alias candidate removed " + phiRValue);
+                        log.append("Alias candidate removed " + phiRValue.getAsTypedString(getSymbols()));
                         aliasSet.remove(phiRValue);
                         break;
                      }
@@ -261,11 +274,11 @@ public class Pass2AliasElimination extends Pass2SsaOptimization {
       ControlFlowGraphBaseVisitor<Void> visitor = new ControlFlowGraphBaseVisitor<Void>() {
          @Override
          public Void visitAssignment(StatementAssignment assignment) {
-            if (assignment.getlValue() instanceof VariableVersion || assignment.getlValue() instanceof VariableIntermediate) {
-               Variable variable = (Variable) assignment.getlValue();
-               if (assignment.getrValue1() == null && assignment.getOperator() == null && assignment.getrValue2() instanceof Variable) {
+            if (assignment.getlValue() instanceof VariableRef) {
+               VariableRef variable = (VariableRef) assignment.getlValue();
+               if (assignment.getrValue1() == null && assignment.getOperator() == null && assignment.getrValue2() instanceof VariableRef) {
                   // Alias assignment
-                  Variable alias = (Variable) assignment.getrValue2();
+                  VariableRef alias = (VariableRef) assignment.getrValue2();
                   aliases.add(variable, alias);
                }
             }
@@ -276,9 +289,9 @@ public class Pass2AliasElimination extends Pass2SsaOptimization {
          public Void visitPhi(StatementPhi phi) {
             if (phi.getPreviousVersions().size() == 1) {
                StatementPhi.PreviousSymbol previousSymbol = phi.getPreviousVersions().get(0);
-               if (previousSymbol.getRValue() instanceof Variable) {
-                  VariableVersion variable = phi.getlValue();
-                  Variable alias = (Variable) previousSymbol.getRValue();
+               if (previousSymbol.getRValue() instanceof VariableRef) {
+                  VariableRef variable = phi.getlValue();
+                  VariableRef alias = (VariableRef) previousSymbol.getRValue();
                   aliases.add(variable, alias);
                }
             }

@@ -16,19 +16,30 @@ public class StatementSequence {
       this.statements.add(statement);
    }
 
-   @Override
-   public String toString() {
+   public List<Statement> getStatements() {
+      return statements;
+   }
+
+   public String getAsTypedString(ProgramScope scope) {
       StringBuffer out = new StringBuffer();
       for (Statement statement : statements) {
          if(!(statement instanceof StatementLabel)) {
-             out.append("  ");
+            out.append("  ");
          }
-         out.append(statement.toString()+"\n");
+         out.append(statement.getAsTypedString(scope)+"\n");
       }
       return out.toString();
    }
 
-   public List<Statement> getStatements() {
-      return statements;
+   public String getAsString() {
+      StringBuffer out = new StringBuffer();
+      for (Statement statement : statements) {
+         if(!(statement instanceof StatementLabel)) {
+            out.append("  ");
+         }
+         out.append(statement.getAsString()+"\n");
+      }
+      return out.toString();
    }
+
 }

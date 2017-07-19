@@ -23,15 +23,6 @@ public class ControlFlowGraph {
       return firstBlock;
    }
 
-   @Override
-   public String toString() {
-      StringBuffer out = new StringBuffer();
-      for (ControlFlowBlock block : blocks.values()) {
-         out.append(block.toString(this));
-      }
-      return out.toString();
-   }
-
    public Collection<ControlFlowBlock> getAllBlocks() {
       return blocks.values();
    }
@@ -122,4 +113,23 @@ public class ControlFlowGraph {
       }
       return null;
    }
+
+   public String getAsTypedString(ProgramScope scope) {
+      StringBuffer out = new StringBuffer();
+      for (ControlFlowBlock block : blocks.values()) {
+         out.append(block.getAsTypedString(this, scope));
+      }
+      return out.toString();
+   }
+
+   public String getAsString() {
+      StringBuffer out = new StringBuffer();
+      for (ControlFlowBlock block : blocks.values()) {
+         out.append(block.getAsString(this));
+      }
+      return out.toString();
+   }
+
+
+
 }

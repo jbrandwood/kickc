@@ -149,6 +149,10 @@ public abstract class Scope implements Symbol {
       return (Variable) getSymbol(name);
    }
 
+   public Variable getVariable(VariableRef variableRef) {
+      return getVariable(variableRef.getFullName());
+   }
+
    @JsonIgnore
    public Collection<Variable> getAllVariables() {
       Collection<Variable> vars = new ArrayList<>();
@@ -210,7 +214,7 @@ public abstract class Scope implements Symbol {
          if (symbol instanceof Scope) {
             res.append(((Scope) symbol).getSymbolTableContents());
          } else {
-            res.append(symbol.toString());
+            res.append(symbol.getTypedName());
          }
          if (symbol instanceof Variable && allocation!=null) {
             RegisterAllocation.Register register = allocation.getRegister((Variable) symbol);
@@ -266,4 +270,5 @@ public abstract class Scope implements Symbol {
       result = 31 * result + intermediateLabelCount;
       return result;
    }
+
 }

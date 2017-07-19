@@ -6,5 +6,8 @@ package dk.camelot64.kickc.icl;
  */
 public interface Statement {
 
+   String getAsTypedString(ProgramScope scope);
+
+   String getAsString();
 
 }

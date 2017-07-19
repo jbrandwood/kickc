@@ -5,7 +5,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 /**
  * A Symbol (variable, jump label, etc.)
  */
-public abstract class Variable implements Symbol, RValue, LValue {
+public abstract class Variable implements Symbol {
 
    /**
     * The name of the symbol.
@@ -105,11 +105,6 @@ public abstract class Variable implements Symbol, RValue, LValue {
       return result;
    }
 
-   @Override
-   public String toString() {
-      return getTypedName();
-   }
-
    public Scope getScope() {
       return scope;
    }
@@ -121,6 +116,21 @@ public abstract class Variable implements Symbol, RValue, LValue {
       } else {
          return scope.getScopeDepth()+1;
       }
+   }
+
+   @Override
+   public String toString() {
+      return getTypedName();
+   }
+
+   @Override
+   public String getAsTypedString(ProgramScope scope) {
+      return getTypedName();
+   }
+
+   @Override
+   public String getAsString() {
+      return getTypedName();
    }
 
 }

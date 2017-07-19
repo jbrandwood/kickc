@@ -118,4 +118,13 @@ public class Procedure extends Scope {
       return getTypedName();
    }
 
+   @Override
+   public String getAsTypedString(ProgramScope scope) {
+      return getTypedName();
+   }
+
+   @Override
+   public String getAsString() {
+      return getTypedName();
+   }
 }

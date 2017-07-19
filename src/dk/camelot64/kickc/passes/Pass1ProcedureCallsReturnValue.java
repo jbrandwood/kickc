@@ -34,13 +34,13 @@ public class Pass1ProcedureCallsReturnValue extends ControlFlowGraphCopyVisitor 
          // Find return variable final version
          Label returnBlockLabel = procedure.getLabel("@return");
          ControlFlowBlock returnBlock = graph.getBlock(returnBlockLabel);
-         VariableVersion returnVarFinal = null;
+         VariableRef returnVarFinal = null;
          for (Statement statement : returnBlock.getStatements()) {
             if (statement instanceof StatementReturn) {
                StatementReturn statementReturn = (StatementReturn) statement;
                RValue returnValue = statementReturn.getValue();
-               if (returnValue instanceof VariableVersion) {
-                  returnVarFinal = (VariableVersion) returnValue;
+               if (returnValue instanceof VariableRef) {
+                  returnVarFinal = (VariableRef) returnValue;
                }
             }
          }

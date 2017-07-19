@@ -22,7 +22,14 @@ public class StatementReturn implements Statement {
 
    @Override
    public String toString() {
-      return "return "+(value==null?"":value);
+      return getAsString();
    }
 
+   @Override
+   public String getAsTypedString(ProgramScope scope) {
+      return "return "+(value==null?"":value.getAsTypedString(scope));   }
+
+   @Override
+   public String getAsString() {
+      return "return "+(value==null?"":value.getAsString());   }
 }

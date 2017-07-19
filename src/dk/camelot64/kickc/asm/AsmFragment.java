@@ -211,13 +211,17 @@ public class AsmFragment {
     * @return The bound name of the value. If the value has already been bound the existing bound name is returned.
     */
    public String bind(Value value) {
+      if(value instanceof VariableRef) {
+        value = symbols.getVariable((VariableRef) value);
+      }
       if (value instanceof Variable) {
          value = symbols.getRegister((Variable) value);
       } else if (value instanceof PointerDereferenceSimple) {
          PointerDereferenceSimple deref = (PointerDereferenceSimple) value;
          RValue pointer = deref.getPointer();
-         if(pointer instanceof Variable) {
-            Variable pointerVar = (Variable) pointer;
+         if(pointer instanceof VariableRef) {
+            VariableRef pointerRef = (VariableRef) pointer;
+            Variable pointerVar = symbols.getVariable(pointerRef);
             RegisterAllocation.Register register = symbols.getRegister(pointerVar);
             value = new PointerDereferenceRegisterZpByte((RegisterAllocation.RegisterZpPointerByte) register);
          }

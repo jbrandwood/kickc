@@ -16,10 +16,10 @@ public class Compiler {
    public static class CompilationResult {
       private AsmProgram asmProgram;
       private ControlFlowGraph graph;
-      private Scope symbols;
+      private ProgramScope symbols;
       private CompileLog log;
 
-      public CompilationResult(AsmProgram asmProgram, ControlFlowGraph graph, Scope symbols, CompileLog log) {
+      public CompilationResult(AsmProgram asmProgram, ControlFlowGraph graph, ProgramScope symbols, CompileLog log) {
          this.asmProgram = asmProgram;
          this.graph = graph;
          this.symbols = symbols;
@@ -34,7 +34,7 @@ public class Compiler {
          return graph;
       }
 
-      public Scope getSymbols() {
+      public ProgramScope getSymbols() {
          return symbols;
       }
 
@@ -67,37 +67,37 @@ public class Compiler {
          pass1GenerateStatementSequence.generate(file);
          StatementSequence statementSequence = pass1GenerateStatementSequence.getSequence();
          ProgramScope programScope = pass1GenerateStatementSequence.getProgramScope();
-         Pass1TypeInference pass1TypeInference = new Pass1TypeInference();
-         pass1TypeInference.inferTypes(statementSequence, programScope);
+         Pass1TypeInference pass1TypeInference = new Pass1TypeInference(programScope);
+         pass1TypeInference.inferTypes(statementSequence);
 
          log.append("PROGRAM");
-         log.append(statementSequence.toString());
+         log.append(statementSequence.getAsTypedString(programScope));
          log.append("SYMBOLS");
          log.append(programScope.getSymbolTableContents());
 
          Pass1GenerateControlFlowGraph pass1GenerateControlFlowGraph = new Pass1GenerateControlFlowGraph(programScope);
          ControlFlowGraph controlFlowGraph = pass1GenerateControlFlowGraph.generate(statementSequence);
          log.append("INITIAL CONTROL FLOW GRAPH");
-         log.append(controlFlowGraph.toString());
+         log.append(controlFlowGraph.getAsTypedString(programScope));
 
          Pass1ProcedureCallParameters pass1ProcedureCallParameters =
                new Pass1ProcedureCallParameters(programScope, controlFlowGraph);
          controlFlowGraph = pass1ProcedureCallParameters.generate();
          log.append("CONTROL FLOW GRAPH WITH ASSIGNMENT CALL");
-         log.append(controlFlowGraph.toString());
+         log.append(controlFlowGraph.getAsTypedString(programScope));
 
          Pass1GenerateSingleStaticAssignmentForm pass1GenerateSingleStaticAssignmentForm =
                new Pass1GenerateSingleStaticAssignmentForm(log, programScope, controlFlowGraph);
          pass1GenerateSingleStaticAssignmentForm.generate();
 
          log.append("CONTROL FLOW GRAPH SSA");
-         log.append(controlFlowGraph.toString());
+         log.append(controlFlowGraph.getAsTypedString(programScope));
 
          Pass1ProcedureCallsReturnValue pass1ProcedureCallsReturnValue =
                new Pass1ProcedureCallsReturnValue(programScope, controlFlowGraph);
          controlFlowGraph = pass1ProcedureCallsReturnValue.generate();
          log.append("CONTROL FLOW GRAPH WITH ASSIGNMENT CALL & RETURN");
-         log.append(controlFlowGraph.toString());
+         log.append(controlFlowGraph.getAsTypedString(programScope));
 
          List<Pass2SsaOptimization> optimizations = new ArrayList<>();
          optimizations.add(new Pass2CullEmptyBlocks(controlFlowGraph, programScope, log));
@@ -124,7 +124,7 @@ public class Compiler {
                   log.append("Succesful SSA optimization " + optimization.getClass().getSimpleName() + "");
                   ssaOptimized = true;
                   log.append("CONTROL FLOW GRAPH");
-                  log.append(controlFlowGraph.toString());
+                  log.append(controlFlowGraph.getAsTypedString(programScope));
                }
             }
          }

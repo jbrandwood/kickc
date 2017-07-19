@@ -1,17 +1,14 @@
 package dk.camelot64.kickc.passes;
 
 import dk.camelot64.kickc.CompileLog;
-import dk.camelot64.kickc.icl.ControlFlowGraph;
-import dk.camelot64.kickc.icl.ControlFlowGraphBaseVisitor;
-import dk.camelot64.kickc.icl.Scope;
-import dk.camelot64.kickc.icl.StatementPhi;
+import dk.camelot64.kickc.icl.*;
 
 import java.util.Iterator;
 
 /** Compiler Pass eliminating phi self assignments  */
 public class Pass2SelfPhiElimination extends Pass2SsaOptimization {
 
-   public Pass2SelfPhiElimination(ControlFlowGraph graph, Scope scope, CompileLog log) {
+   public Pass2SelfPhiElimination(ControlFlowGraph graph, ProgramScope scope, CompileLog log) {
       super(graph, scope, log);
    }
 
@@ -29,7 +26,7 @@ public class Pass2SelfPhiElimination extends Pass2SsaOptimization {
                if (previousSymbol.getRValue().equals(phi.getlValue())) {
                   iterator.remove();
                   optimized[0] = Boolean.TRUE;
-                  log.append("Self Phi Eliminated "+phi.getlValue());
+                  log.append("Self Phi Eliminated "+phi.getlValue().getAsTypedString(getSymbols()));
                }
             }
             return null;

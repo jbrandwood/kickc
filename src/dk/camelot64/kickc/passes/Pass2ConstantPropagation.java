@@ -9,7 +9,7 @@ import java.util.Map;
 /** Compiler Pass propagating constants in expressions eliminating constant variables */
 public class Pass2ConstantPropagation extends Pass2SsaOptimization {
 
-   public Pass2ConstantPropagation(ControlFlowGraph graph, Scope scope, CompileLog log) {
+   public Pass2ConstantPropagation(ControlFlowGraph graph, ProgramScope scope, CompileLog log) {
       super(graph, scope, log);
    }
 
@@ -19,13 +19,13 @@ public class Pass2ConstantPropagation extends Pass2SsaOptimization {
     */
    @Override
    public boolean optimize() {
-      final Map<Variable, Constant> constants = findConstantVariables();
-      for (Variable constantVar : constants.keySet()) {
+      final Map<VariableRef, Constant> constants = findConstantVariables();
+      for (VariableRef constantVar : constants.keySet()) {
          Constant constantValue = constants.get(constantVar);
-         log.append("Constant " + constantVar + " " + constantValue);
+         log.append("Constant " + constantVar.getAsTypedString(getSymbols()) + " " + constantValue.getAsTypedString(getSymbols()));
       }
       removeAssignments(constants.keySet());
-      deleteSymbols(constants.keySet());
+      deleteVariables(constants.keySet());
       replaceVariables(constants);
       return constants.size() > 0;
    }
@@ -34,13 +34,13 @@ public class Pass2ConstantPropagation extends Pass2SsaOptimization {
     * Find variables that have constant values.
     * @return Map from Variable to the Constant value
     */
-   private Map<Variable, Constant> findConstantVariables() {
-      final Map<Variable, Constant> constants = new LinkedHashMap<>();
+   private Map<VariableRef, Constant> findConstantVariables() {
+      final Map<VariableRef, Constant> constants = new LinkedHashMap<>();
       ControlFlowGraphBaseVisitor<Void> visitor = new ControlFlowGraphBaseVisitor<Void>() {
          @Override
          public Void visitAssignment(StatementAssignment assignment) {
-            if (assignment.getlValue() instanceof VariableVersion || assignment.getlValue() instanceof VariableIntermediate) {
-               Variable variable = (Variable) assignment.getlValue();
+            if (assignment.getlValue() instanceof VariableRef ) {
+               VariableRef variable = (VariableRef) assignment.getlValue();
                if (assignment.getrValue1() == null && assignment.getrValue2() instanceof Constant) {
                   if (assignment.getOperator() == null) {
                      // Constant assignment
@@ -72,7 +72,7 @@ public class Pass2ConstantPropagation extends Pass2SsaOptimization {
             if (phi.getPreviousVersions().size() == 1) {
                StatementPhi.PreviousSymbol previousSymbol = phi.getPreviousVersions().get(0);
                if (previousSymbol.getRValue() instanceof Constant) {
-                  VariableVersion variable = phi.getlValue();
+                  VariableRef variable = phi.getlValue();
                   Constant constant = (Constant) previousSymbol.getRValue();
                   constants.put(variable, constant);
                }

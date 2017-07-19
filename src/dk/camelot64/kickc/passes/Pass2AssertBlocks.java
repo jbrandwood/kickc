@@ -5,7 +5,7 @@ import dk.camelot64.kickc.icl.*;
 /** Assert that all referenced blocks exist in the program */
 public class Pass2AssertBlocks extends Pass2SsaAssertion {
 
-   public Pass2AssertBlocks(ControlFlowGraph graph, Scope scope) {
+   public Pass2AssertBlocks(ControlFlowGraph graph, ProgramScope scope) {
       super(graph, scope);
    }
 

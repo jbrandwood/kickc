@@ -44,6 +44,8 @@ public class TestIclJson extends TestCase {
       assertJsonSerialization(scope, json, Scope.class);
    }
 
+
+
    public static void assertJsonSerialization(
          Object object,
          String json,

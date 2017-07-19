@@ -17,8 +17,16 @@ public class StatementLabel implements Statement {
 
    @Override
    public String toString() {
-      return label.getFullName()+":";
+      return getAsString();
    }
 
+   @Override
+   public String getAsTypedString(ProgramScope scope) {
+      return getAsString();
+   }
 
+   @Override
+   public String getAsString() {
+      return label.getFullName() + ":";
+   }
 }

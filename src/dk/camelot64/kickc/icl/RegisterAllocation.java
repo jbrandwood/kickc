@@ -82,6 +82,16 @@ public class RegisterAllocation {
       public int hashCode() {
          return zp;
       }
+
+      @Override
+      public String getAsTypedString(ProgramScope scope) {
+         return toString();
+      }
+
+      @Override
+      public String getAsString() {
+         return toString();
+      }
    }
 
    /** Two zero page addresses used as a register for a single word variable. */
@@ -118,6 +128,16 @@ public class RegisterAllocation {
       @Override
       public int hashCode() {
          return zp;
+      }
+
+      @Override
+      public String getAsTypedString(ProgramScope scope) {
+         return toString();
+      }
+
+      @Override
+      public String getAsString() {
+         return toString();
       }
    }
 
@@ -156,6 +176,16 @@ public class RegisterAllocation {
       public int hashCode() {
          return zp;
       }
+
+      @Override
+      public String getAsTypedString(ProgramScope scope) {
+         return toString();
+      }
+
+      @Override
+      public String getAsString() {
+         return toString();
+      }
    }
 
    /** A zro page address pair used as a register containing a pointer to a byte. */
@@ -192,6 +222,16 @@ public class RegisterAllocation {
       public int getZp() {
          return zp;
       }
+
+      @Override
+      public String getAsTypedString(ProgramScope scope) {
+         return toString();
+      }
+
+      @Override
+      public String getAsString() {
+         return toString();
+      }
    }
 
 
@@ -213,6 +253,16 @@ public class RegisterAllocation {
          if (obj == null || getClass() != obj.getClass()) return false;
          return true;
       }
+
+      @Override
+      public String getAsTypedString(ProgramScope scope) {
+         return toString();
+      }
+
+      @Override
+      public String getAsString() {
+         return toString();
+      }
    }
 
    /** The Y register. */
@@ -232,6 +282,16 @@ public class RegisterAllocation {
          if (this == obj) return true;
          if (obj == null || getClass() != obj.getClass()) return false;
          return true;
+      }
+
+      @Override
+      public String getAsTypedString(ProgramScope scope) {
+         return toString();
+      }
+
+      @Override
+      public String getAsString() {
+         return toString();
       }
    }
 
@@ -253,6 +313,16 @@ public class RegisterAllocation {
          if (obj == null || getClass() != obj.getClass()) return false;
          return true;
       }
+
+      @Override
+      public String getAsTypedString(ProgramScope scope) {
+         return toString();
+      }
+
+      @Override
+      public String getAsString() {
+         return toString();
+      }
    }
 
    /** The special ALU register. */
@@ -272,6 +342,16 @@ public class RegisterAllocation {
          if (this == obj) return true;
          if (obj == null || getClass() != obj.getClass()) return false;
          return true;
+      }
+
+      @Override
+      public String getAsTypedString(ProgramScope scope) {
+         return toString();
+      }
+
+      @Override
+      public String getAsString() {
+         return toString();
       }
    }
 

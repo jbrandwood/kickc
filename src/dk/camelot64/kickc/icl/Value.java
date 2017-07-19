@@ -20,4 +20,9 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo;
       @JsonSubTypes.Type(value = Procedure.class, name = "procedure")
       })
 public interface Value {
+
+      String getAsTypedString(ProgramScope scope);
+
+      String getAsString();
+
 }

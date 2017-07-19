@@ -67,11 +67,21 @@ public class StatementCall implements StatementLValue {
       this.parametersByAssignment = parametersByAssignment;
    }
 
+   public void clearParameters() {
+      this.parameters = null;
+      this.parametersByAssignment = true;
+   }
+
    @Override
    public String toString() {
+      return getAsString();
+   }
+
+   @Override
+   public String getAsTypedString(ProgramScope scope) {
       StringBuilder res = new StringBuilder();
       if(lValue!=null) {
-         res.append(lValue);
+         res.append(lValue.getAsTypedString(scope));
          res.append(" ← ");
       }
       res.append("call ");
@@ -82,7 +92,7 @@ public class StatementCall implements StatementLValue {
       }
       if(parameters!=null) {
          for (RValue parameter : parameters) {
-            res.append(parameter + " ");
+            res.append(parameter.getAsTypedString(scope) + " ");
          }
       }
       if(parametersByAssignment) {
@@ -91,9 +101,27 @@ public class StatementCall implements StatementLValue {
       return res.toString();
    }
 
-   public void clearParameters() {
-      this.parameters = null;
-      this.parametersByAssignment = true;
+   @Override
+   public String getAsString() {
+      StringBuilder res = new StringBuilder();
+      if(lValue!=null) {
+         res.append(lValue.getAsString());
+         res.append(" ← ");
+      }
+      res.append("call ");
+      if(procedure!=null) {
+         res.append(procedure.getFullName()+ " ");
+      }  else {
+         res.append(procedureName + " ");
+      }
+      if(parameters!=null) {
+         for (RValue parameter : parameters) {
+            res.append(parameter.getAsString() + " ");
+         }
+      }
+      if(parametersByAssignment) {
+         res.append("param-assignment");
+      }
+      return res.toString();
    }
-
 }

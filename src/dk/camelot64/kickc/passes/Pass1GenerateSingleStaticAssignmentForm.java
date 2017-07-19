@@ -39,23 +39,18 @@ public class Pass1GenerateSingleStaticAssignmentForm {
    private void versionAllAssignments() {
       for (ControlFlowBlock block : controlFlowGraph.getAllBlocks()) {
          for (Statement statement : block.getStatements()) {
-            if (statement instanceof StatementAssignment) {
-               StatementAssignment assignment = (StatementAssignment) statement;
-               LValue lValue = assignment.getlValue();
-               if (lValue instanceof VariableUnversioned) {
-                  // Assignment to a non-versioned non-intermediary variable
-                  VariableUnversioned assignedSymbol = (VariableUnversioned) lValue;
-                  VariableVersion version = assignedSymbol.createVersion();
-                  assignment.setlValue(version);
-               }
-            } else if(statement instanceof StatementCall) {
-               StatementCall call = (StatementCall) statement;
-               LValue lValue = call.getlValue();
-               if (lValue instanceof VariableUnversioned) {
-                  // Assignment to a non-versioned non-intermediary variable
-                  VariableUnversioned assignedSymbol = (VariableUnversioned) lValue;
-                  VariableVersion version = assignedSymbol.createVersion();
-                  call.setlValue(version);
+            if (statement instanceof StatementLValue) {
+               StatementLValue statementLValue = (StatementLValue) statement;
+               LValue lValue = statementLValue.getlValue();
+               if (lValue instanceof VariableRef) {
+                  VariableRef lValueRef = (VariableRef) lValue;
+                  Variable assignedVar = symbols.getVariable(lValueRef);
+                  if(assignedVar instanceof VariableUnversioned) {
+                     // Assignment to a non-versioned non-intermediary variable
+                     VariableUnversioned assignedSymbol = (VariableUnversioned) assignedVar;
+                     VariableVersion version = assignedSymbol.createVersion();
+                     statementLValue.setlValue(new VariableRef(version));
+                  }
                }
             }
          }
@@ -77,7 +72,7 @@ public class Pass1GenerateSingleStaticAssignmentForm {
                {
                   VariableVersion version = findOrCreateVersion(statementReturn.getValue(), blockVersions, blockNewPhis);
                   if (version != null) {
-                     statementReturn.setValue(version);
+                     statementReturn.setValue(new VariableRef(version));
                   }
                }
 
@@ -87,38 +82,42 @@ public class Pass1GenerateSingleStaticAssignmentForm {
                {
                   VariableVersion version = findOrCreateVersion(assignment.getrValue1(), blockVersions, blockNewPhis);
                   if (version != null) {
-                     assignment.setrValue1(version);
+                     assignment.setrValue1(new VariableRef(version));
                   }
                }
                {
                   VariableVersion version = findOrCreateVersion(assignment.getrValue2(), blockVersions, blockNewPhis);
                   if (version != null) {
-                     assignment.setrValue2(version);
+                     assignment.setrValue2(new VariableRef(version));
                   }
                }
                // Update map of versions encountered in the block
                LValue lValue = assignment.getlValue();
-               if (lValue instanceof VariableVersion) {
-                  VariableVersion versioned = (VariableVersion) lValue;
-                  blockVersions.put(versioned.getVersionOf(), versioned);
+               if (lValue instanceof VariableRef) {
+                  VariableRef lValueRef = (VariableRef) lValue;
+                  Variable variable = symbols.getVariable(lValueRef);
+                  if(variable instanceof VariableVersion) {
+                     VariableVersion versioned = (VariableVersion) variable;
+                     blockVersions.put(versioned.getVersionOf(), versioned);
+                  }
                } else if(lValue instanceof PointerDereferenceSimple) {
                   PointerDereferenceSimple deref = (PointerDereferenceSimple) lValue;
                   RValue pointer = deref.getPointer();
                   VariableVersion version = findOrCreateVersion(pointer, blockVersions, blockNewPhis);
                   if (version != null) {
-                     deref.setPointer(version);
+                     deref.setPointer(new VariableRef(version));
                   }
                } else if(lValue instanceof PointerDereferenceIndexed) {
                   PointerDereferenceIndexed deref = (PointerDereferenceIndexed) lValue;
                   RValue pointer = deref.getPointer();
                   VariableVersion version = findOrCreateVersion(pointer, blockVersions, blockNewPhis);
                   if (version != null) {
-                     deref.setPointer(version);
+                     deref.setPointer(new VariableRef(version));
                   }
                   RValue index = deref.getIndex();
                   VariableVersion iVersion = findOrCreateVersion(index, blockVersions, blockNewPhis);
                   if (iVersion != null) {
-                     deref.setIndex(iVersion);
+                     deref.setIndex(new VariableRef(iVersion));
                   }
                }
             }
@@ -144,18 +143,21 @@ public class Pass1GenerateSingleStaticAssignmentForm {
          Map<VariableUnversioned, VariableVersion> blockVersions,
          Map<VariableUnversioned, VariableVersion> blockNewPhis) {
       VariableVersion version = null;
-      if (rValue instanceof VariableUnversioned) {
-         // rValue needs versioning - look for version in statements
-         VariableUnversioned rSymbol = (VariableUnversioned) rValue;
-         version = blockVersions.get(rSymbol);
-         if (version == null) {
-            // look for version in new phi functions
-            version = blockNewPhis.get(rSymbol);
-         }
-         if (version == null) {
-            // create a new phi function
-            version = rSymbol.createVersion();
-            blockNewPhis.put(rSymbol, version);
+      if (rValue instanceof VariableRef) {
+         Variable rValueVar = symbols.getVariable((VariableRef) rValue);
+         if (rValueVar instanceof VariableUnversioned) {
+            // rValue needs versioning - look for version in statements
+            VariableUnversioned rSymbol = (VariableUnversioned) rValueVar;
+            version = blockVersions.get(rSymbol);
+            if (version == null) {
+               // look for version in new phi functions
+               version = blockNewPhis.get(rSymbol);
+            }
+            if (version == null) {
+               // create a new phi function
+               version = rSymbol.createVersion();
+               blockNewPhis.put(rSymbol, version);
+            }
          }
       }
       return version;
@@ -175,7 +177,8 @@ public class Pass1GenerateSingleStaticAssignmentForm {
             if (statement instanceof StatementPhi) {
                StatementPhi phi = (StatementPhi) statement;
                if (phi.getPreviousVersions().isEmpty()) {
-                  VariableVersion versioned = phi.getlValue();
+                  VariableRef phiLValVarRef = phi.getlValue();
+                  VariableVersion versioned = (VariableVersion) symbols.getVariable(phiLValVarRef);
                   VariableUnversioned unversioned = versioned.getVersionOf();
                   for (ControlFlowBlock predecessor : controlFlowGraph.getPredecessors(block)) {
                      Label predecessorLabel = predecessor.getLabel();
@@ -198,7 +201,7 @@ public class Pass1GenerateSingleStaticAssignmentForm {
                            predecessorNewPhis.put(unversioned, previousSymbol);
                         }
                      }
-                     phi.addPreviousVersion(predecessorLabel, previousSymbol);
+                     phi.addPreviousVersion(predecessorLabel, new VariableRef(previousSymbol));
                   }
                }
             }
@@ -224,50 +227,25 @@ public class Pass1GenerateSingleStaticAssignmentForm {
       Map<Label, Map<VariableUnversioned, VariableVersion>> symbolMap = new LinkedHashMap<>();
       for (ControlFlowBlock block : this.controlFlowGraph.getAllBlocks()) {
          for (Statement statement : block.getStatements()) {
-            if (statement instanceof StatementAssignment) {
-               StatementAssignment assignment = (StatementAssignment) statement;
+            if (statement instanceof StatementLValue) {
+               StatementLValue assignment = (StatementLValue) statement;
                LValue lValue = assignment.getlValue();
-               if (lValue instanceof VariableVersion) {
-                  VariableVersion versioned = (VariableVersion) lValue;
-                  Label label = block.getLabel();
-                  VariableUnversioned unversioned = versioned.getVersionOf();
-                  Map<VariableUnversioned, VariableVersion> blockMap = symbolMap.get(label);
-                  if (blockMap == null) {
-                     blockMap = new LinkedHashMap<>();
-                     symbolMap.put(label, blockMap);
-                  }
-                  blockMap.put(unversioned, versioned);
-               }
-            } else if (statement instanceof StatementPhi) {
-               StatementPhi phi = (StatementPhi) statement;
-               VariableVersion versioned = phi.getlValue();
-               VariableUnversioned unversioned = versioned.getVersionOf();
-               Label label = block.getLabel();
-               Map<VariableUnversioned, VariableVersion> blockMap = symbolMap.get(label);
-               if (blockMap == null) {
-                  blockMap = new LinkedHashMap<>();
-                  symbolMap.put(label, blockMap);
-               }
-               blockMap.put(unversioned, versioned);
-            } else if (statement instanceof StatementCall) {
-               StatementCall call = (StatementCall) statement;
-               LValue lValue = call.getlValue();
-               if (lValue instanceof VariableVersion) {
-                  VariableVersion versioned = (VariableVersion) lValue;
-                  Label label = block.getLabel();
-                  VariableUnversioned unversioned = versioned.getVersionOf();
-                  Map<VariableUnversioned, VariableVersion> blockMap = symbolMap.get(label);
-                  if (blockMap == null) {
-                     blockMap = new LinkedHashMap<>();
-                     symbolMap.put(label, blockMap);
-                  }
-                  blockMap.put(unversioned, versioned);
-               }
-
+               if(lValue instanceof VariableRef) {
+                  Variable lValueVar = symbols.getVariable((VariableRef) lValue);
+                  if (lValueVar instanceof VariableVersion) {
+                     VariableVersion versioned = (VariableVersion) lValueVar;
+                     Label label = block.getLabel();
+                     VariableUnversioned unversioned = versioned.getVersionOf();
+                     Map<VariableUnversioned, VariableVersion> blockMap = symbolMap.get(label);
+                     if (blockMap == null) {
+                        blockMap = new LinkedHashMap<>();
+                        symbolMap.put(label, blockMap);
+                     }
+                     blockMap.put(unversioned, versioned);
+                  }               }
             }
          }
       }
       return symbolMap;
    }
-
 }

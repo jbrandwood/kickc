@@ -28,6 +28,14 @@ public class StatementAssignment implements StatementLValue {
       this.rValue2 = rValue2;
    }
 
+   public StatementAssignment(Variable lValue, Variable rValue2) {
+      this(new VariableRef(lValue), new VariableRef(rValue2));
+   }
+
+   public StatementAssignment(Variable lValue, RValue rValue2) {
+      this(new VariableRef(lValue), rValue2);
+   }
+
    @JsonCreator
    public StatementAssignment(
          @JsonProperty("lValue1") LValue lValue,
@@ -67,6 +75,10 @@ public class StatementAssignment implements StatementLValue {
       return operator;
    }
 
+   public void setOperator(Operator operator) {
+      this.operator = operator;
+   }
+
    public RValue getrValue2() {
       return rValue2;
    }
@@ -77,15 +89,25 @@ public class StatementAssignment implements StatementLValue {
 
    @Override
    public String toString() {
+      return getAsString();
+   }
+
+   @Override
+   public String getAsTypedString(ProgramScope scope) {
       return
-
-                  lValue + " ← " +
-                  (rValue1==null?"":rValue1+" ") +
+            lValue.getAsTypedString(scope) + " ← " +
+                  (rValue1==null?"":rValue1.getAsTypedString(scope)+" ") +
                   (operator==null?"":operator+" ") +
-                  rValue2 ;
+                  rValue2 .getAsTypedString(scope);
    }
 
-   public void setOperator(Operator operator) {
-      this.operator = operator;
+   @Override
+   public String getAsString() {
+      return
+            lValue.getAsString() + " ← " +
+                  (rValue1==null?"":rValue1.getAsString()+" ") +
+                  (operator==null?"":operator+" ") +
+                  rValue2.getAsString() ;
    }
+
 }

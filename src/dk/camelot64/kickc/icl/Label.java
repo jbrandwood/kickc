@@ -68,10 +68,6 @@ public class Label implements Symbol {
       return SymbolTypeBasic.LABEL;
    }
 
-   public String getTypedName() {
-      return "("+getType().getTypeName() + ") "+getFullName();
-   }
-
    @Override
    public boolean equals(Object o) {
       if (this == o) return true;
@@ -93,6 +89,21 @@ public class Label implements Symbol {
 
    @Override
    public String toString() {
+      return getAsString();
+   }
+
+   @Override
+   public String getAsTypedString(ProgramScope scope) {
       return getTypedName();
    }
+
+   @Override
+   public String getAsString() {
+      return getFullName();
+   }
+
+   public String getTypedName() {
+      return "("+getType().getTypeName() + ") "+getFullName();
+   }
+
 }

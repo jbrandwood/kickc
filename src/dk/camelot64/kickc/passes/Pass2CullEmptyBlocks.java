@@ -8,7 +8,7 @@ import java.util.*;
 /** Pass that culls empty control flow blocks from the program */
 public class Pass2CullEmptyBlocks extends Pass2SsaOptimization {
 
-   public Pass2CullEmptyBlocks(ControlFlowGraph graph, Scope scope, CompileLog log) {
+   public Pass2CullEmptyBlocks(ControlFlowGraph graph, ProgramScope scope, CompileLog log) {
       super(graph, scope, log);
    }
 
@@ -64,7 +64,7 @@ public class Pass2CullEmptyBlocks extends Pass2SsaOptimization {
          phiFixVisitor.visitBlock(successor);
          getGraph().getAllBlocks().remove(removeBlock);
          removeBlock.getLabel().getScope().remove(removeBlock.getLabel());
-         log.append("Culled Empty Block " + removeBlock.getLabel());
+         log.append("Culled Empty Block " + removeBlock.getLabel().getTypedName());
       }
       return remove.size()>0;
    }

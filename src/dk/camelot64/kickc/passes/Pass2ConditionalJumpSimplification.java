@@ -14,7 +14,7 @@ public class Pass2ConditionalJumpSimplification extends Pass2SsaOptimization {
 
    private Map<Variable, List<Statement>> allUsages;
 
-   public Pass2ConditionalJumpSimplification(ControlFlowGraph graph, Scope scope, CompileLog log) {
+   public Pass2ConditionalJumpSimplification(ControlFlowGraph graph, ProgramScope scope, CompileLog log) {
       super(graph, scope, log);
    }
 
@@ -25,23 +25,23 @@ public class Pass2ConditionalJumpSimplification extends Pass2SsaOptimization {
    public boolean optimize() {
       final Map<LValue, StatementAssignment> assignments = getAllAssignments();
       final Map<RValue, List<Statement>> usages = getAllUsages();
-      final List<Variable> simpleConditionVars = getSimpleConditions(assignments, usages);
+      final List<VariableRef> simpleConditionVars = getSimpleConditions(assignments, usages);
       removeAssignments(simpleConditionVars);
-      deleteSymbols(simpleConditionVars);
+      deleteVariables(simpleConditionVars);
       return (simpleConditionVars.size()>0);
    }
 
-   private List<Variable>  getSimpleConditions(final Map<LValue, StatementAssignment> assignments, final Map<RValue, List<Statement>> usages) {
+   private List<VariableRef>  getSimpleConditions(final Map<LValue, StatementAssignment> assignments, final Map<RValue, List<Statement>> usages) {
 
-      final List<Variable>  simpleConditionVars = new ArrayList<>();
+      final List<VariableRef>  simpleConditionVars = new ArrayList<>();
 
       ControlFlowGraphBaseVisitor<Void> visitor = new ControlFlowGraphBaseVisitor<Void>() {
          @Override
          public Void visitConditionalJump(StatementConditionalJump conditionalJump) {
             if(conditionalJump.getRValue1()==null && conditionalJump.getOperator()==null) {
                RValue conditionRValue = conditionalJump.getRValue2();
-               if(conditionRValue instanceof Variable && usages.get(conditionRValue).size()==1) {
-                  Variable conditionVar = (Variable) conditionRValue;
+               if(conditionRValue instanceof VariableRef && usages.get(conditionRValue).size()==1) {
+                  VariableRef conditionVar = (VariableRef) conditionRValue;
                   StatementAssignment conditionAssignment = assignments.get(conditionVar);
                   if(conditionAssignment.getOperator()!=null) {
                      switch (conditionAssignment.getOperator().getOperator()) {
@@ -58,7 +58,7 @@ public class Pass2ConditionalJumpSimplification extends Pass2SsaOptimization {
                         conditionalJump.setOperator(conditionAssignment.getOperator());
                         conditionalJump.setRValue2(conditionAssignment.getrValue2());
                         simpleConditionVars.add(conditionVar);
-                        log.append("Simple Condition " + conditionVar + " " + conditionalJump);
+                        log.append("Simple Condition " + conditionVar.getAsTypedString(getSymbols()) + " " + conditionalJump.getAsTypedString(getSymbols()));
                         break;
                         default:
                      }

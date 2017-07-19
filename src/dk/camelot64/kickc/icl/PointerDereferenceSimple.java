@@ -13,12 +13,23 @@ public class PointerDereferenceSimple implements PointerDereference {
       return pointer;
    }
 
-   @Override
-   public String toString() {
-      return "*(" + pointer + ')';
-   }
-
    public void setPointer(RValue pointer) {
       this.pointer = pointer;
    }
+
+   @Override
+   public String toString() {
+      return getAsString();
+   }
+
+   @Override
+   public String getAsTypedString(ProgramScope scope) {
+      return "*(" + pointer.getAsTypedString(scope) + ')';
+   }
+
+   @Override
+   public String getAsString() {
+      return "*(" + pointer.getAsString() + ')';
+   }
+
 }

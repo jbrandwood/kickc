@@ -47,7 +47,7 @@ public class TestCompilationOutput extends TestCase {
       Compiler.CompilationResult output = compiler.compile(input);
       assertOutput(fileName, ".asm", output.getAsmProgram().toString(false));
       assertOutput(fileName, ".sym", output.getSymbols().getSymbolTableContents());
-      assertOutput(fileName, ".cfg", output.getGraph().toString());
+      assertOutput(fileName, ".cfg", output.getGraph().getAsTypedString(output.getSymbols()));
       assertOutput(fileName, ".log", output.getLog().toString());
    }
 

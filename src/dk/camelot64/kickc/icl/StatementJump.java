@@ -18,12 +18,21 @@ public class StatementJump implements Statement {
       return destination;
    }
 
-   @Override
-   public String toString() {
-      return "goto "+destination.getFullName();
-   }
-
    public void setDestination(Label destination) {
       this.destination = destination;
    }
+
+   @Override
+   public String toString() {
+       return getAsString();
+   }
+
+   @Override
+   public String getAsTypedString(ProgramScope scope) {
+      return getAsString();
+   }
+
+   @Override
+   public String getAsString() {
+      return "goto "+destination.getFullName();   }
 }

@@ -115,7 +115,7 @@ public class ControlFlowGraphCopyVisitor extends ControlFlowGraphBaseVisitor<Obj
 
    @Override
    public StatementPhi visitPhi(StatementPhi phi) {
-      VariableVersion lValue = phi.getlValue();
+      VariableRef lValue = phi.getlValue();
       StatementPhi copyPhi = new StatementPhi(lValue);
       for (StatementPhi.PreviousSymbol origPreviousVersion : phi.getPreviousVersions()) {
          RValue rValue = origPreviousVersion.getRValue();

@@ -9,7 +9,7 @@ import java.util.Map;
 /** Compiler Pass eliminating redundant phi functions */
 public class Pass2RedundantPhiElimination extends Pass2SsaOptimization {
 
-   public Pass2RedundantPhiElimination(ControlFlowGraph graph, Scope scope, CompileLog log) {
+   public Pass2RedundantPhiElimination(ControlFlowGraph graph, ProgramScope scope, CompileLog log) {
       super(graph, scope, log);
    }
 
@@ -18,14 +18,14 @@ public class Pass2RedundantPhiElimination extends Pass2SsaOptimization {
     */
    @Override
    public boolean optimize() {
-      final Map<Variable, RValue> aliases = findRedundantPhis();
+      final Map<VariableRef, RValue> aliases = findRedundantPhis();
       removeAssignments(aliases.keySet());
-      deleteSymbols(aliases.keySet());
       replaceVariables(aliases);
-      for (Variable var : aliases.keySet()) {
+      for (VariableRef var : aliases.keySet()) {
          RValue alias = aliases.get(var);
-         log.append("Redundant Phi " + var + " " + alias);
+         log.append("Redundant Phi " + var.getAsTypedString(getSymbols()) + " " + alias.getAsTypedString(getSymbols()));
       }
+      deleteVariables(aliases.keySet());
       return aliases.size()>0;
    }
 
@@ -33,8 +33,8 @@ public class Pass2RedundantPhiElimination extends Pass2SsaOptimization {
     * Find phi variables where all previous symbols are identical.
     * @return Map from (phi) Variable to the previous value
     */
-   private Map<Variable, RValue> findRedundantPhis() {
-      final Map<Variable, RValue> aliases = new LinkedHashMap<>();
+   private Map<VariableRef, RValue> findRedundantPhis() {
+      final Map<VariableRef, RValue> aliases = new LinkedHashMap<>();
       ControlFlowGraphBaseVisitor<Void> visitor = new ControlFlowGraphBaseVisitor<Void>() {
          @Override
          public Void visitPhi(StatementPhi phi) {
@@ -51,7 +51,7 @@ public class Pass2RedundantPhiElimination extends Pass2SsaOptimization {
                }
             }
             if(found) {
-               VariableVersion variable = phi.getlValue();
+               VariableRef variable = phi.getlValue();
                if(phiRValue==null) {phiRValue = VOID;}
                aliases.put(variable, phiRValue);
             }

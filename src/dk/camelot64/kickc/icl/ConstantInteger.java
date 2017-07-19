@@ -27,7 +27,14 @@ public class ConstantInteger implements Constant {
 
    @Override
    public String toString() {
-      return "("+getType().getTypeName()+") "+Integer.toString(number);
+      return getAsString();
    }
 
+   @Override
+   public String getAsTypedString(ProgramScope scope) {
+      return "("+getType().getTypeName()+") "+Integer.toString(number);   }
+
+   @Override
+   public String getAsString() {
+      return Integer.toString(number);   }
 }

@@ -62,15 +62,10 @@ public class ControlFlowBlock {
    }
 
    public void addPhiStatement(VariableVersion newVersion) {
-      statements.add(0, new StatementPhi(newVersion));
+      statements.add(0, new StatementPhi(new VariableRef(newVersion)));
    }
 
-   @Override
-   public String toString() {
-      return toString(null);
-   }
-
-   public String toString(ControlFlowGraph graph) {
+   public String getAsTypedString(ControlFlowGraph graph, ProgramScope scope) {
       StringBuffer out = new StringBuffer();
       out.append(label.getFullName() + ":" );
       out.append(" from");
@@ -86,7 +81,7 @@ public class ControlFlowBlock {
       }
       out.append("\n");
       for (Statement statement : statements) {
-         out.append("  "+statement+"\n");
+         out.append("  "+statement.getAsTypedString(scope)+"\n");
       }
       if(defaultSuccessor!=null) {
          out.append("  to:");
@@ -95,6 +90,33 @@ public class ControlFlowBlock {
       }
       return out.toString();
    }
+
+   public String getAsString(ControlFlowGraph graph) {
+      StringBuffer out = new StringBuffer();
+      out.append(label.getFullName() + ":" );
+      out.append(" from");
+      if(graph!=null) {
+         List<ControlFlowBlock> predecessors = graph.getPredecessors(this);
+         if(predecessors.size()>0) {
+            for (ControlFlowBlock predecessor : predecessors) {
+               out.append(" " + predecessor.getLabel().getFullName());
+            }
+         }
+      } else {
+         out.append(" @UNKNOWN");
+      }
+      out.append("\n");
+      for (Statement statement : statements) {
+         out.append("  "+statement.getAsString()+"\n");
+      }
+      if(defaultSuccessor!=null) {
+         out.append("  to:");
+         out.append(defaultSuccessor.getFullName());
+         out.append("\n");
+      }
+      return out.toString();
+   }
+
 
    @Override
    public boolean equals(Object o) {

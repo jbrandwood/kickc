@@ -70,4 +70,15 @@ public class ProgramScope extends Scope {
       result = 31 * result + (allocation != null ? allocation.hashCode() : 0);
       return result;
    }
+
+   @Override
+   public String getAsTypedString(ProgramScope scope) {
+      return getAsString();
+   }
+
+   @Override
+   public String getAsString() {
+      return "program";
+   }
+
 }

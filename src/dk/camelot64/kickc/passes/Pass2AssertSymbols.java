@@ -7,13 +7,13 @@ import java.util.HashSet;
 /** Asserts that the symbols in the symbol table match exactly the symbols in the program */
 public class Pass2AssertSymbols extends Pass2SsaAssertion {
 
-   public Pass2AssertSymbols(ControlFlowGraph graph, Scope scope) {
+   public Pass2AssertSymbols(ControlFlowGraph graph, ProgramScope scope) {
       super(graph, scope);
    }
 
    @Override
    public void check() throws AssertionFailed {
-      SymbolFinder symbolFinder = new SymbolFinder();
+      SymbolFinder symbolFinder = new SymbolFinder(getSymbols());
       symbolFinder.visitGraph(getGraph());
       HashSet<Symbol> codeSymbols = symbolFinder.getSymbols();
       // Check that all symbols found in the code is also oin the symbol tabel
@@ -56,6 +56,12 @@ public class Pass2AssertSymbols extends Pass2SsaAssertion {
 
    private static class SymbolFinder extends ControlFlowGraphBaseVisitor<Void> {
 
+      private ProgramScope programScope;
+
+      public SymbolFinder(ProgramScope programScope) {
+         this.programScope = programScope;
+      }
+
       private HashSet<Symbol> symbols = new HashSet<>();
 
       public HashSet<Symbol> getSymbols() {
@@ -65,6 +71,8 @@ public class Pass2AssertSymbols extends Pass2SsaAssertion {
       private void addSymbol(Value symbol) {
          if (symbol instanceof Symbol) {
             symbols.add((Symbol) symbol);
+         } else if(symbol instanceof VariableRef) {
+            addSymbol(programScope.getVariable((VariableRef) symbol));
          } else if(symbol instanceof PointerDereferenceIndexed) {
             addSymbol(((PointerDereferenceIndexed) symbol).getPointer());
             addSymbol(((PointerDereferenceIndexed) symbol).getIndex());

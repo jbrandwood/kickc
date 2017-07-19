@@ -1,25 +1,27 @@
 package dk.camelot64.kickc.passes;
 
 import dk.camelot64.kickc.icl.ControlFlowGraph;
+import dk.camelot64.kickc.icl.Program;
+import dk.camelot64.kickc.icl.ProgramScope;
 import dk.camelot64.kickc.icl.Scope;
 
 /** Assertion checking that a pass 2 representation of the program is consistent */
 public abstract class Pass2SsaAssertion {
 
    private ControlFlowGraph graph;
-   private Scope scope;
+   private ProgramScope programScope;
 
-   public Pass2SsaAssertion(ControlFlowGraph graph, Scope scope) {
+   public Pass2SsaAssertion(ControlFlowGraph graph, ProgramScope programScope) {
       this.graph = graph;
-      this.scope = scope;
+      this.programScope = programScope;
    }
 
    public ControlFlowGraph getGraph() {
       return graph;
    }
 
-   public Scope getSymbols() {
-      return scope;
+   public ProgramScope getSymbols() {
+      return programScope;
    }
 
    public abstract void check() throws AssertionFailed;

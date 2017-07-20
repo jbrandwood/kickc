@@ -37,4 +37,10 @@ public class AsmComment implements AsmLine {
       return "// "+comment;
    }
 
+   @Override
+   public String toString() {
+      return getAsm();
+   }
+
+
 }

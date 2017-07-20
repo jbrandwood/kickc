@@ -90,4 +90,9 @@ public class SymbolRef implements Value {
          return fullName.substring(0, lastScopeIdx);
       }
    }
+
+   @Override
+   public String toString() {
+      return getFullName();
+   }
 }

@@ -48,4 +48,9 @@ public class AsmInstruction implements AsmLine {
       return type.getAsm(parameter);
    }
 
+   @Override
+   public String toString() {
+      return getAsm();
+   }
+
 }

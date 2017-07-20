@@ -1,5 +1,9 @@
 package dk.camelot64.kickc.icl;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 /**
  * SSA form constant integer value
  */
@@ -7,7 +11,9 @@ public class ConstantInteger implements Constant {
 
    private Integer number;
 
-   public ConstantInteger(Integer number) {
+   @JsonCreator
+   public ConstantInteger(
+         @JsonProperty("number") Integer number) {
       this.number = number;
    }
 
@@ -15,6 +21,7 @@ public class ConstantInteger implements Constant {
       return number;
    }
 
+   @JsonIgnore
    public SymbolType getType() {
       SymbolType type;
       if (getNumber() < 256) {
@@ -35,6 +42,23 @@ public class ConstantInteger implements Constant {
       return "("+getType().getTypeName()+") "+Integer.toString(number);   }
 
    @Override
+   @JsonIgnore
    public String getAsString() {
-      return Integer.toString(number);   }
+      return Integer.toString(number);
+   }
+
+   @Override
+   public boolean equals(Object o) {
+      if (this == o) return true;
+      if (o == null || getClass() != o.getClass()) return false;
+
+      ConstantInteger that = (ConstantInteger) o;
+
+      return number != null ? number.equals(that.number) : that.number == null;
+   }
+
+   @Override
+   public int hashCode() {
+      return number != null ? number.hashCode() : 0;
+   }
 }

@@ -8,9 +8,9 @@ public class Pass1ProcedureCallsReturnValue extends ControlFlowGraphCopyVisitor 
    private ProgramScope scope;
    private ControlFlowGraph graph;
 
-   public Pass1ProcedureCallsReturnValue(ProgramScope scope, ControlFlowGraph graph) {
-      this.scope = scope;
-      this.graph = graph;
+   public Pass1ProcedureCallsReturnValue(Program program) {
+      this.scope = program.getScope();
+      this.graph = program.getGraph();
    }
 
    public ControlFlowGraph generate() {

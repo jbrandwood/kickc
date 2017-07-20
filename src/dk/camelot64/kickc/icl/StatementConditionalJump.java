@@ -1,5 +1,8 @@
 package dk.camelot64.kickc.icl;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 /**
  * Intermediate Compiler Form Statement with a conditional jump.
  * Intermediate form used for compiler optimization.
@@ -23,7 +26,12 @@ public class StatementConditionalJump implements Statement {
       this.destination = destination;
    }
 
-   public StatementConditionalJump(RValue rValue1, Operator operator, RValue rValue2, LabelRef destination) {
+   @JsonCreator
+   public StatementConditionalJump(
+         @JsonProperty("rValue1") RValue rValue1,
+         @JsonProperty("operator") Operator operator,
+         @JsonProperty("rValue2") RValue rValue2,
+         @JsonProperty("destination") LabelRef destination) {
       this.rValue1 = rValue1;
       this.operator = operator;
       this.rValue2 = rValue2;
@@ -93,5 +101,27 @@ public class StatementConditionalJump implements Statement {
       out.append(") goto ");
       out.append(destination.getFullName());
       return out.toString();
+   }
+
+   @Override
+   public boolean equals(Object o) {
+      if (this == o) return true;
+      if (o == null || getClass() != o.getClass()) return false;
+
+      StatementConditionalJump that = (StatementConditionalJump) o;
+
+      if (rValue1 != null ? !rValue1.equals(that.rValue1) : that.rValue1 != null) return false;
+      if (operator != null ? !operator.equals(that.operator) : that.operator != null) return false;
+      if (rValue2 != null ? !rValue2.equals(that.rValue2) : that.rValue2 != null) return false;
+      return destination.equals(that.destination);
+   }
+
+   @Override
+   public int hashCode() {
+      int result = rValue1 != null ? rValue1.hashCode() : 0;
+      result = 31 * result + (operator != null ? operator.hashCode() : 0);
+      result = 31 * result + (rValue2 != null ? rValue2.hashCode() : 0);
+      result = 31 * result + destination.hashCode();
+      return result;
    }
 }

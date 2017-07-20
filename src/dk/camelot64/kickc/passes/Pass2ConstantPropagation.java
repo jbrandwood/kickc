@@ -9,8 +9,8 @@ import java.util.Map;
 /** Compiler Pass propagating constants in expressions eliminating constant variables */
 public class Pass2ConstantPropagation extends Pass2SsaOptimization {
 
-   public Pass2ConstantPropagation(ControlFlowGraph graph, ProgramScope scope, CompileLog log) {
-      super(graph, scope, log);
+   public Pass2ConstantPropagation(Program program, CompileLog log) {
+      super(program, log);
    }
 
    /**
@@ -71,9 +71,9 @@ public class Pass2ConstantPropagation extends Pass2SsaOptimization {
          public Void visitPhi(StatementPhi phi) {
             if (phi.getPreviousVersions().size() == 1) {
                StatementPhi.PreviousSymbol previousSymbol = phi.getPreviousVersions().get(0);
-               if (previousSymbol.getRValue() instanceof Constant) {
+               if (previousSymbol.getrValue() instanceof Constant) {
                   VariableRef variable = phi.getlValue();
-                  Constant constant = (Constant) previousSymbol.getRValue();
+                  Constant constant = (Constant) previousSymbol.getrValue();
                   constants.put(variable, constant);
                }
             }

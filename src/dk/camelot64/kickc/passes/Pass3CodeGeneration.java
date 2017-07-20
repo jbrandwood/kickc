@@ -13,14 +13,15 @@ public class Pass3CodeGeneration {
    private ControlFlowGraph graph;
    private ProgramScope symbols;
 
-   public Pass3CodeGeneration(ControlFlowGraph graph, ProgramScope symbols) {
-      this.graph = graph;
-      this.symbols = symbols;
+   public Pass3CodeGeneration(Program program) {
+      this.graph = program.getGraph();
+      this.symbols = program.getScope();
    }
 
    public AsmProgram generate() {
       AsmProgram asm = new AsmProgram();
-      for (ControlFlowBlock block : graph.getBlockSequence()) {
+      for (LabelRef blockRef : graph.getSequence()) {
+         ControlFlowBlock block = graph.getBlock(blockRef);
          // Generate entry points (if needed)
          genBlockEntryPoints(asm, block);
          // Generate label
@@ -126,7 +127,7 @@ public class Pass3CodeGeneration {
          });
          for (StatementPhi.PreviousSymbol previousSymbol : previousVersions) {
             if (previousSymbol.getBlock().equals(fromBlock.getLabel())) {
-               genAsmMove(asm, phi.getlValue(), previousSymbol.getRValue());
+               genAsmMove(asm, phi.getlValue(), previousSymbol.getrValue());
                break;
             }
          }

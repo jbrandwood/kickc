@@ -7,12 +7,12 @@ import java.util.List;
 /** Pass that modifies a control flow graph to call procedures by passing parameters through registers */
 public class Pass1ProcedureCallParameters extends ControlFlowGraphCopyVisitor {
 
-   private Scope scope;
+   private ProgramScope scope;
    private ControlFlowGraph graph;
 
-   public Pass1ProcedureCallParameters(Scope scope, ControlFlowGraph graph ) {
-      this.scope = scope;
-      this.graph= graph;
+   public Pass1ProcedureCallParameters(Program program) {
+      this.scope = program.getScope();
+      this.graph = program.getGraph();
    }
 
    public ControlFlowGraph generate() {

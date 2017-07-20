@@ -110,4 +110,25 @@ public class StatementAssignment implements StatementLValue {
                   rValue2.getAsString() ;
    }
 
+   @Override
+   public boolean equals(Object o) {
+      if (this == o) return true;
+      if (o == null || getClass() != o.getClass()) return false;
+
+      StatementAssignment that = (StatementAssignment) o;
+
+      if (!lValue.equals(that.lValue)) return false;
+      if (rValue1 != null ? !rValue1.equals(that.rValue1) : that.rValue1 != null) return false;
+      if (operator != null ? !operator.equals(that.operator) : that.operator != null) return false;
+      return rValue2 != null ? rValue2.equals(that.rValue2) : that.rValue2 == null;
+   }
+
+   @Override
+   public int hashCode() {
+      int result = lValue.hashCode();
+      result = 31 * result + (rValue1 != null ? rValue1.hashCode() : 0);
+      result = 31 * result + (operator != null ? operator.hashCode() : 0);
+      result = 31 * result + (rValue2 != null ? rValue2.hashCode() : 0);
+      return result;
+   }
 }

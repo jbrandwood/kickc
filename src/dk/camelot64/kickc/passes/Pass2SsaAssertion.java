@@ -11,9 +11,9 @@ public abstract class Pass2SsaAssertion {
    private ControlFlowGraph graph;
    private ProgramScope programScope;
 
-   public Pass2SsaAssertion(ControlFlowGraph graph, ProgramScope programScope) {
-      this.graph = graph;
-      this.programScope = programScope;
+   public Pass2SsaAssertion(Program program) {
+      this.graph = program.getGraph();
+      this.programScope = program.getScope();
    }
 
    public ControlFlowGraph getGraph() {

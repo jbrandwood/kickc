@@ -12,7 +12,7 @@ public class Pass1GenerateControlFlowGraph {
    public static final String BEGIN_BLOCK_NAME = "@BEGIN";
    public static final String END_BLOCK_NAME = "@END";
    private Scope scope;
-   private Map<SymbolRef, ControlFlowBlock> blocks;
+   private Map<LabelRef, ControlFlowBlock> blocks;
    private ControlFlowBlock firstBlock;
 
    public Pass1GenerateControlFlowGraph(Scope scope) {
@@ -75,7 +75,7 @@ public class Pass1GenerateControlFlowGraph {
          }
       }
 
-      return new ControlFlowGraph(blocks, firstBlock);
+      return new ControlFlowGraph(blocks, firstBlock.getLabel());
    }
 
    private ControlFlowBlock getOrCreateBlock(LabelRef label) {

@@ -1,8 +1,6 @@
 package dk.camelot64.kickc.passes;
 
-import dk.camelot64.kickc.icl.ControlFlowBlock;
-import dk.camelot64.kickc.icl.ControlFlowGraph;
-import dk.camelot64.kickc.icl.Scope;
+import dk.camelot64.kickc.icl.*;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -11,42 +9,42 @@ import java.util.Stack;
 /** Plan the optimal sequence for the blocks of the control flow graph */
 public class Pass3BlockSequencePlanner {
 
-   private ControlFlowGraph controlFlowGraph;
-   private Scope programScope;
+   private ControlFlowGraph graph;
+   private ProgramScope scope;
 
-   public Pass3BlockSequencePlanner(ControlFlowGraph controlFlowGraph, Scope programScope) {
-      this.controlFlowGraph = controlFlowGraph;
-      this.programScope = programScope;
+   public Pass3BlockSequencePlanner(Program program) {
+      this.graph = program.getGraph();
+      this.scope = program.getScope();
    }
 
    public void plan() {
       Stack<ControlFlowBlock> todo = new Stack<>();
-      ControlFlowBlock mainBlock = controlFlowGraph.getMainBlock();
+      ControlFlowBlock mainBlock = graph.getMainBlock();
       if (mainBlock != null) {
          todo.push(mainBlock);
       }
-      todo.push(controlFlowGraph.getFirstBlock());
-      List<ControlFlowBlock> sequence = new ArrayList<>();
+      todo.push(graph.getFirstBlock());
+      List<LabelRef> sequence = new ArrayList<>();
       while(!todo.empty()){
          ControlFlowBlock block = todo.pop();
          if(block==null) {
             break;
          }
-         if(sequence.contains(block)) {
+         if(sequence.contains(block.getLabel())) {
             // already handled - move on
             continue;
          }
-         sequence.add(block);
+         sequence.add(block.getLabel());
          if(block.getCallSuccessor()!=null) {
-            todo.push(controlFlowGraph.getCallSuccessor(block));
+            todo.push(graph.getCallSuccessor(block));
          }
          if(block.getConditionalSuccessor()!=null) {
-            todo.push(controlFlowGraph.getConditionalSuccessor(block));
+            todo.push(graph.getConditionalSuccessor(block));
          }
-         if(controlFlowGraph.getDefaultSuccessor(block)!=null) {
-            todo.push(controlFlowGraph.getDefaultSuccessor(block));
+         if(graph.getDefaultSuccessor(block)!=null) {
+            todo.push(graph.getDefaultSuccessor(block));
          }
       }
-      controlFlowGraph.setBlockSequence(sequence);
+      graph.setSequence(sequence);
    }
 }

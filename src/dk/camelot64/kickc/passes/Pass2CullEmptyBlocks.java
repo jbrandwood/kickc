@@ -8,8 +8,8 @@ import java.util.*;
 /** Pass that culls empty control flow blocks from the program */
 public class Pass2CullEmptyBlocks extends Pass2SsaOptimization {
 
-   public Pass2CullEmptyBlocks(ControlFlowGraph graph, ProgramScope scope, CompileLog log) {
-      super(graph, scope, log);
+   public Pass2CullEmptyBlocks(Program program, CompileLog log) {
+      super(program, log);
    }
 
    @Override
@@ -46,7 +46,7 @@ public class Pass2CullEmptyBlocks extends Pass2SsaOptimization {
                for (StatementPhi.PreviousSymbol previousSymbol : phi.getPreviousVersions()) {
                   if(previousSymbol.getBlock().equals(removeBlock.getLabel())) {
                      // Found a phi function referencing the remove block - add copies for each predecessor
-                     RValue previousRValue = previousSymbol.getRValue();
+                     RValue previousRValue = previousSymbol.getrValue();
                      for (ControlFlowBlock predecessor : predecessors) {
                         if(previousSymbol!=null) {
                            previousSymbol.setBlock(predecessor.getLabel());

@@ -10,10 +10,14 @@ import java.util.Stack;
  */
 public class Pass1TypeInference {
 
-   private Scope programScope;
+   private ProgramScope programScope;
 
-   public Pass1TypeInference(Scope programScope) {
+   public Pass1TypeInference(ProgramScope programScope) {
       this.programScope = programScope;
+   }
+
+   public ProgramScope getProgramScope() {
+      return programScope;
    }
 
    public void inferTypes(StatementSequence sequence) {

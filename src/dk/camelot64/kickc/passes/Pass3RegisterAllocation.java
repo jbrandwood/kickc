@@ -11,9 +11,9 @@ public class Pass3RegisterAllocation {
    private ProgramScope symbols;
    int currentZp = 2;
 
-   public Pass3RegisterAllocation(ControlFlowGraph graph, ProgramScope symbols) {
-      this.graph = graph;
-      this.symbols = symbols;
+   public Pass3RegisterAllocation(Program program) {
+      this.graph = program.getGraph();
+      this.symbols = program.getScope();
    }
 
    public void allocate() {

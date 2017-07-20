@@ -7,8 +7,8 @@ import java.util.HashSet;
 /** Asserts that the symbols in the symbol table match exactly the symbols in the program */
 public class Pass2AssertSymbols extends Pass2SsaAssertion {
 
-   public Pass2AssertSymbols(ControlFlowGraph graph, ProgramScope scope) {
-      super(graph, scope);
+   public Pass2AssertSymbols(Program program) {
+      super(program);
    }
 
    @Override
@@ -156,7 +156,7 @@ public class Pass2AssertSymbols extends Pass2SsaAssertion {
       public Void visitPhi(StatementPhi phi) {
          addSymbol(phi.getlValue());
          for (StatementPhi.PreviousSymbol previousSymbol : phi.getPreviousVersions()) {
-            addSymbol(previousSymbol.getRValue());
+            addSymbol(previousSymbol.getrValue());
          }
          return super.visitPhi(phi);
       }

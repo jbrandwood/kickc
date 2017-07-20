@@ -16,7 +16,7 @@ public class ControlFlowGraphCopyVisitor extends ControlFlowGraphBaseVisitor<Obj
    /**
     * The copied blocks.
     */
-   private LinkedHashMap<SymbolRef, ControlFlowBlock> copyBlockMap;
+   private LinkedHashMap<LabelRef, ControlFlowBlock> copyBlockMap;
 
    /**
     * The current block being copied.
@@ -40,7 +40,7 @@ public class ControlFlowGraphCopyVisitor extends ControlFlowGraphBaseVisitor<Obj
          }
       }
       ControlFlowBlock copyFirstBlock = copyBlockMap.get(origGraph.getFirstBlock().getLabel());
-      ControlFlowGraph copyGraph = new ControlFlowGraph(copyBlockMap, copyFirstBlock);
+      ControlFlowGraph copyGraph = new ControlFlowGraph(copyBlockMap, copyFirstBlock.getLabel());
       return copyGraph;
    }
 
@@ -118,7 +118,7 @@ public class ControlFlowGraphCopyVisitor extends ControlFlowGraphBaseVisitor<Obj
       VariableRef lValue = phi.getlValue();
       StatementPhi copyPhi = new StatementPhi(lValue);
       for (StatementPhi.PreviousSymbol origPreviousVersion : phi.getPreviousVersions()) {
-         RValue rValue = origPreviousVersion.getRValue();
+         RValue rValue = origPreviousVersion.getrValue();
          LabelRef block = origPreviousVersion.getBlock();
          copyPhi.addPreviousVersion(block, rValue);
       }

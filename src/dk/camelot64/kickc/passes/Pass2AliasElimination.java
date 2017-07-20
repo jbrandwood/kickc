@@ -10,8 +10,8 @@ import java.util.*;
  */
 public class Pass2AliasElimination extends Pass2SsaOptimization {
 
-   public Pass2AliasElimination(ControlFlowGraph graph, ProgramScope scope, CompileLog log) {
-      super(graph, scope, log);
+   public Pass2AliasElimination(Program program, CompileLog log) {
+      super(program, log);
    }
 
 
@@ -58,7 +58,7 @@ public class Pass2AliasElimination extends Pass2SsaOptimization {
                StatementPhi phi = (StatementPhi) statement;
                AliasSet aliasSet = aliases.findAliasSet(phi.getlValue());
                if (aliasSet != null) {
-                  if (phi.getPreviousVersions().size() == 1 && aliasSet.contains(phi.getPreviousVersion(0).getRValue())) {
+                  if (phi.getPreviousVersions().size() == 1 && aliasSet.contains(phi.getPreviousVersion(0).getrValue())) {
                      iterator.remove();
                   }
                }
@@ -233,7 +233,7 @@ public class Pass2AliasElimination extends Pass2SsaOptimization {
             public Void visitPhi(StatementPhi phi) {
                if(lMatch[0]) {
                   for (StatementPhi.PreviousSymbol previousSymbol : phi.getPreviousVersions()) {
-                     RValue phiRValue = previousSymbol.getRValue();
+                     RValue phiRValue = previousSymbol.getrValue();
                      if (aliasSet.contains(phiRValue)) {
                         log.append("Alias candidate removed " + phiRValue.getAsTypedString(getSymbols()));
                         aliasSet.remove(phiRValue);
@@ -276,9 +276,9 @@ public class Pass2AliasElimination extends Pass2SsaOptimization {
          public Void visitPhi(StatementPhi phi) {
             if (phi.getPreviousVersions().size() == 1) {
                StatementPhi.PreviousSymbol previousSymbol = phi.getPreviousVersions().get(0);
-               if (previousSymbol.getRValue() instanceof VariableRef) {
+               if (previousSymbol.getrValue() instanceof VariableRef) {
                   VariableRef variable = phi.getlValue();
-                  VariableRef alias = (VariableRef) previousSymbol.getRValue();
+                  VariableRef alias = (VariableRef) previousSymbol.getrValue();
                   aliases.add(variable, alias);
                }
             }

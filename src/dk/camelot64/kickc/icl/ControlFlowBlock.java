@@ -1,5 +1,8 @@
 package dk.camelot64.kickc.icl;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -23,6 +26,20 @@ public class ControlFlowBlock {
       this.statements = new ArrayList<>();
       this.defaultSuccessor = null;
       this.conditionalSuccessor = null;
+   }
+
+   @JsonCreator
+   public ControlFlowBlock(
+         @JsonProperty("label") LabelRef label,
+         @JsonProperty("statements") List<Statement> statements,
+         @JsonProperty("defaultSuccessor") LabelRef defaultSuccessor,
+         @JsonProperty("conditionalSuccessor") LabelRef conditionalSuccessor,
+         @JsonProperty("callSuccessor") LabelRef callSuccessor) {
+      this.label = label;
+      this.statements = statements;
+      this.defaultSuccessor = defaultSuccessor;
+      this.conditionalSuccessor = conditionalSuccessor;
+      this.callSuccessor = callSuccessor;
    }
 
    public LabelRef getLabel() {
@@ -117,20 +134,6 @@ public class ControlFlowBlock {
       return out.toString();
    }
 
-
-   @Override
-   public boolean equals(Object o) {
-      if (this == o) return true;
-      if (o == null || getClass() != o.getClass()) return false;
-      ControlFlowBlock that = (ControlFlowBlock) o;
-      return label.equals(that.label);
-   }
-
-   @Override
-   public int hashCode() {
-      return label.hashCode();
-   }
-
    public boolean hasPhiStatements() {
       if(statements.size()>0) {
          if(statements.get(0) instanceof StatementPhi) {
@@ -140,4 +143,29 @@ public class ControlFlowBlock {
       return false;
    }
 
+   @Override
+   public boolean equals(Object o) {
+      if (this == o) return true;
+      if (o == null || getClass() != o.getClass()) return false;
+
+      ControlFlowBlock that = (ControlFlowBlock) o;
+
+      if (!label.equals(that.label)) return false;
+      if (statements != null ? !statements.equals(that.statements) : that.statements != null) return false;
+      if (defaultSuccessor != null ? !defaultSuccessor.equals(that.defaultSuccessor) : that.defaultSuccessor != null)
+         return false;
+      if (conditionalSuccessor != null ? !conditionalSuccessor.equals(that.conditionalSuccessor) : that.conditionalSuccessor != null)
+         return false;
+      return callSuccessor != null ? callSuccessor.equals(that.callSuccessor) : that.callSuccessor == null;
+   }
+
+   @Override
+   public int hashCode() {
+      int result = label.hashCode();
+      result = 31 * result + (statements != null ? statements.hashCode() : 0);
+      result = 31 * result + (defaultSuccessor != null ? defaultSuccessor.hashCode() : 0);
+      result = 31 * result + (conditionalSuccessor != null ? conditionalSuccessor.hashCode() : 0);
+      result = 31 * result + (callSuccessor != null ? callSuccessor.hashCode() : 0);
+      return result;
+   }
 }

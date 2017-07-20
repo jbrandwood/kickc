@@ -8,8 +8,8 @@ import java.util.Iterator;
 /** Compiler Pass eliminating phi self assignments  */
 public class Pass2SelfPhiElimination extends Pass2SsaOptimization {
 
-   public Pass2SelfPhiElimination(ControlFlowGraph graph, ProgramScope scope, CompileLog log) {
-      super(graph, scope, log);
+   public Pass2SelfPhiElimination(Program program, CompileLog log) {
+      super(program, log);
    }
 
    /**
@@ -23,7 +23,7 @@ public class Pass2SelfPhiElimination extends Pass2SsaOptimization {
          public Void visitPhi(StatementPhi phi) {
             for (Iterator<StatementPhi.PreviousSymbol> iterator = phi.getPreviousVersions().iterator(); iterator.hasNext(); ) {
                StatementPhi.PreviousSymbol previousSymbol = iterator.next();
-               if (previousSymbol.getRValue().equals(phi.getlValue())) {
+               if (previousSymbol.getrValue().equals(phi.getlValue())) {
                   iterator.remove();
                   optimized[0] = Boolean.TRUE;
                   log.append("Self Phi Eliminated "+phi.getlValue().getAsTypedString(getSymbols()));

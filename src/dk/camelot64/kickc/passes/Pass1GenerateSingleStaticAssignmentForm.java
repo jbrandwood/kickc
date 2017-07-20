@@ -14,13 +14,13 @@ import java.util.Map;
 public class Pass1GenerateSingleStaticAssignmentForm {
 
    private CompileLog log;
-   private Scope symbols;
+   private ProgramScope symbols;
    private ControlFlowGraph controlFlowGraph;
 
-   public Pass1GenerateSingleStaticAssignmentForm(CompileLog log, Scope symbols, ControlFlowGraph controlFlowGraph) {
+   public Pass1GenerateSingleStaticAssignmentForm(CompileLog log, Program program) {
       this.log = log;
-      this.symbols = symbols;
-      this.controlFlowGraph = controlFlowGraph;
+      this.symbols = program.getScope();
+      this.controlFlowGraph = program.getGraph();
    }
 
    public void generate() {

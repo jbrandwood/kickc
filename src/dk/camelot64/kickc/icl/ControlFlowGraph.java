@@ -1,28 +1,44 @@
 package dk.camelot64.kickc.icl;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import java.util.*;
 
 /** The control flow graph of the program.
  * The control flow  graph is a set of connected basic blocks. */
 public class ControlFlowGraph {
 
-   private Map<SymbolRef, ControlFlowBlock> blocks;
-   private ControlFlowBlock firstBlock;
-   private List<ControlFlowBlock> sequence;
+   private Map<LabelRef, ControlFlowBlock> blocks;
+   private LabelRef firstBlockRef;
+   private List<LabelRef> sequence;
 
-   public ControlFlowGraph(Map<SymbolRef, ControlFlowBlock> blocks, ControlFlowBlock firstBlock) {
+   public ControlFlowGraph(Map<LabelRef, ControlFlowBlock> blocks, LabelRef firstBlockRef) {
       this.blocks = blocks;
-      this.firstBlock = firstBlock;
+      this.firstBlockRef = firstBlockRef;
    }
 
-   public ControlFlowBlock getBlock(SymbolRef symbol) {
+   @JsonCreator
+   public ControlFlowGraph(
+         @JsonProperty("blocks") Map<LabelRef, ControlFlowBlock> blocks,
+         @JsonProperty("firstBlockRef") LabelRef firstBlockRef,
+         @JsonProperty("sequence") List<LabelRef> sequence) {
+      this.blocks = blocks;
+      this.firstBlockRef = firstBlockRef;
+      this.sequence = sequence;
+   }
+
+   public ControlFlowBlock getBlock(LabelRef symbol) {
       return blocks.get(symbol);
    }
 
+   @JsonIgnore
    public ControlFlowBlock getFirstBlock() {
-      return firstBlock;
+      return getBlock(firstBlockRef);
    }
 
+   @JsonIgnore
    public Collection<ControlFlowBlock> getAllBlocks() {
       return blocks.values();
    }
@@ -96,14 +112,15 @@ public class ControlFlowGraph {
       return predecessorBlocks;
    }
 
-   public void setBlockSequence(List<ControlFlowBlock> sequence) {
-      this.sequence = sequence;
-   }
-
-   public List<ControlFlowBlock> getBlockSequence() {
+   public List<LabelRef> getSequence() {
       return sequence;
    }
 
+   public void setSequence(List<LabelRef> sequence) {
+      this.sequence = sequence;
+   }
+
+   @JsonIgnore
    public ControlFlowBlock getMainBlock() {
       for (ControlFlowBlock block : getAllBlocks()) {
          LabelRef label = block.getLabel();
@@ -122,6 +139,7 @@ public class ControlFlowGraph {
       return out.toString();
    }
 
+   @JsonIgnore
    public String getAsString() {
       StringBuffer out = new StringBuffer();
       for (ControlFlowBlock block : blocks.values()) {
@@ -131,5 +149,23 @@ public class ControlFlowGraph {
    }
 
 
+   @Override
+   public boolean equals(Object o) {
+      if (this == o) return true;
+      if (o == null || getClass() != o.getClass()) return false;
 
+      ControlFlowGraph that = (ControlFlowGraph) o;
+
+      if (!blocks.equals(that.blocks)) return false;
+      if (!firstBlockRef.equals(that.firstBlockRef)) return false;
+      return sequence != null ? sequence.equals(that.sequence) : that.sequence == null;
+   }
+
+   @Override
+   public int hashCode() {
+      int result = blocks.hashCode();
+      result = 31 * result + firstBlockRef.hashCode();
+      result = 31 * result + (sequence != null ? sequence.hashCode() : 0);
+      return result;
+   }
 }

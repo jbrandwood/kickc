@@ -1,5 +1,8 @@
 package dk.camelot64.kickc.icl;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -22,6 +25,14 @@ public class StatementPhi implements StatementLValue {
       this.previousVersions = new ArrayList<>();
    }
 
+   @JsonCreator
+   StatementPhi(
+         @JsonProperty("lValue") VariableRef lValue,
+         @JsonProperty("previousVersions")  List<PreviousSymbol> previousVersions) {
+      this.lValue = lValue;
+      this.previousVersions = previousVersions;
+   }
+
    public PreviousSymbol getPreviousVersion(int i) {
       return previousVersions.get(i);
    }
@@ -34,7 +45,10 @@ public class StatementPhi implements StatementLValue {
       private LabelRef block;
       private RValue rValue;
 
-      public PreviousSymbol(LabelRef block, RValue rValue) {
+      @JsonCreator
+      public PreviousSymbol(
+            @JsonProperty("block") LabelRef block,
+            @JsonProperty("rValue") RValue rValue) {
          this.block = block;
          this.rValue = rValue;
       }
@@ -43,16 +57,34 @@ public class StatementPhi implements StatementLValue {
          return block;
       }
 
-      public RValue getRValue() {
+      public RValue getrValue() {
          return rValue;
       }
 
-      public void setRValue(RValue RValue) {
+      public void setrValue(RValue RValue) {
          this.rValue = RValue;
       }
 
       public void setBlock(LabelRef block) {
          this.block = block;
+      }
+
+      @Override
+      public boolean equals(Object o) {
+         if (this == o) return true;
+         if (o == null || getClass() != o.getClass()) return false;
+
+         PreviousSymbol that = (PreviousSymbol) o;
+
+         if (!block.equals(that.block)) return false;
+         return rValue.equals(that.rValue);
+      }
+
+      @Override
+      public int hashCode() {
+         int result = block.hashCode();
+         result = 31 * result + rValue.hashCode();
+         return result;
       }
    }
 
@@ -86,7 +118,7 @@ public class StatementPhi implements StatementLValue {
       StringBuilder out = new StringBuilder();
       out.append(lValue.getAsTypedString(scope) + " ← " + "phi(");
       for (PreviousSymbol previousSymbol : previousVersions) {
-         out.append(" "+previousSymbol.getBlock().getFullName()+"/"+previousSymbol.getRValue().getAsTypedString(scope));
+         out.append(" "+previousSymbol.getBlock().getFullName()+"/"+previousSymbol.getrValue().getAsTypedString(scope));
       }
       out.append(" )");
       return out.toString();
@@ -97,9 +129,27 @@ public class StatementPhi implements StatementLValue {
       StringBuilder out = new StringBuilder();
       out.append(lValue + " ← " + "phi(");
       for (PreviousSymbol previousSymbol : previousVersions) {
-         out.append(" "+previousSymbol.getBlock().getFullName()+"/"+previousSymbol.getRValue());
+         out.append(" "+previousSymbol.getBlock().getFullName()+"/"+previousSymbol.getrValue());
       }
       out.append(" )");
       return out.toString();
+   }
+
+   @Override
+   public boolean equals(Object o) {
+      if (this == o) return true;
+      if (o == null || getClass() != o.getClass()) return false;
+
+      StatementPhi that = (StatementPhi) o;
+
+      if (!lValue.equals(that.lValue)) return false;
+      return previousVersions.equals(that.previousVersions);
+   }
+
+   @Override
+   public int hashCode() {
+      int result = lValue.hashCode();
+      result = 31 * result + previousVersions.hashCode();
+      return result;
    }
 }

@@ -15,10 +15,10 @@ public abstract class Pass2SsaOptimization {
    private ControlFlowGraph graph;
    private ProgramScope scope;
 
-   public Pass2SsaOptimization(ControlFlowGraph graph, ProgramScope scope,CompileLog log) {
+   public Pass2SsaOptimization(Program program,CompileLog log) {
       this.log = log;
-      this.graph = graph;
-      this.scope = scope;
+      this.graph = program.getGraph();
+      this.scope = program.getScope();
    }
 
    public CompileLog getLog() {
@@ -154,12 +154,12 @@ public abstract class Pass2SsaOptimization {
             }
             for (Iterator<StatementPhi.PreviousSymbol> iterator = phi.getPreviousVersions().iterator(); iterator.hasNext(); ) {
                StatementPhi.PreviousSymbol previousSymbol = iterator.next();
-               if (getAlias(aliases, previousSymbol.getRValue()) != null) {
-                  RValue alias = getAlias(aliases, previousSymbol.getRValue());
+               if (getAlias(aliases, previousSymbol.getrValue()) != null) {
+                  RValue alias = getAlias(aliases, previousSymbol.getrValue());
                   if (VOID.equals(alias)) {
                      iterator.remove();
                   } else {
-                     previousSymbol.setRValue(alias);
+                     previousSymbol.setrValue(alias);
                   }
                }
             }
@@ -328,7 +328,7 @@ public abstract class Pass2SsaOptimization {
          @Override
          public Void visitPhi(StatementPhi phi) {
             for (StatementPhi.PreviousSymbol previousSymbol : phi.getPreviousVersions()) {
-               addUsage(previousSymbol.getRValue(), phi);
+               addUsage(previousSymbol.getrValue(), phi);
             }
             return null;
          }
@@ -395,7 +395,7 @@ public abstract class Pass2SsaOptimization {
          @Override
          public Object visitPhi(StatementPhi phi) {
             for (StatementPhi.PreviousSymbol previousSymbol : phi.getPreviousVersions()) {
-               addUsage(previousSymbol.getRValue());
+               addUsage(previousSymbol.getrValue());
             }
             return null;
          }

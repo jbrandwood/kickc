@@ -19,8 +19,8 @@ public class Pass2ConstantAdditionElimination extends Pass2SsaOptimization {
 
    private Map<VariableRef, Integer> usages;
 
-   public Pass2ConstantAdditionElimination(ControlFlowGraph graph, ProgramScope scope, CompileLog log) {
-      super(graph, scope, log);
+   public Pass2ConstantAdditionElimination(Program program, CompileLog log) {
+      super(program, log);
    }
 
    /**

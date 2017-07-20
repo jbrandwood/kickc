@@ -12,10 +12,8 @@ import java.util.Map;
  */
 public class Pass2ConditionalJumpSimplification extends Pass2SsaOptimization {
 
-   private Map<Variable, List<Statement>> allUsages;
-
-   public Pass2ConditionalJumpSimplification(ControlFlowGraph graph, ProgramScope scope, CompileLog log) {
-      super(graph, scope, log);
+   public Pass2ConditionalJumpSimplification(Program program, CompileLog log) {
+      super(program, log);
    }
 
    /**

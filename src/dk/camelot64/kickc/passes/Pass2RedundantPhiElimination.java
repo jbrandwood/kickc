@@ -9,8 +9,8 @@ import java.util.Map;
 /** Compiler Pass eliminating redundant phi functions */
 public class Pass2RedundantPhiElimination extends Pass2SsaOptimization {
 
-   public Pass2RedundantPhiElimination(ControlFlowGraph graph, ProgramScope scope, CompileLog log) {
-      super(graph, scope, log);
+   public Pass2RedundantPhiElimination(Program program, CompileLog log) {
+      super(program, log);
    }
 
    /**
@@ -42,9 +42,9 @@ public class Pass2RedundantPhiElimination extends Pass2SsaOptimization {
             RValue phiRValue = null;
             for (StatementPhi.PreviousSymbol previousSymbol : phi.getPreviousVersions()) {
                if(phiRValue==null) {
-                  phiRValue = previousSymbol.getRValue();
+                  phiRValue = previousSymbol.getrValue();
                } else {
-                  if(!phiRValue.equals(previousSymbol.getRValue())) {
+                  if(!phiRValue.equals(previousSymbol.getrValue())) {
                      found = false;
                      break;
                   }

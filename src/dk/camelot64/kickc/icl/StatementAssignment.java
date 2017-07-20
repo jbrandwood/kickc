@@ -29,11 +29,11 @@ public class StatementAssignment implements StatementLValue {
    }
 
    public StatementAssignment(Variable lValue, Variable rValue2) {
-      this(new VariableRef(lValue), new VariableRef(rValue2));
+      this(lValue.getRef(), rValue2.getRef());
    }
 
    public StatementAssignment(Variable lValue, RValue rValue2) {
-      this(new VariableRef(lValue), rValue2);
+      this(lValue.getRef(), rValue2);
    }
 
    @JsonCreator

@@ -134,4 +134,8 @@ public abstract class Variable implements Symbol {
       return getTypedName();
    }
 
+   @JsonIgnore
+   public VariableRef getRef() {
+      return new VariableRef(this);
+   }
 }

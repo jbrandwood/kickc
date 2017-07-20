@@ -31,13 +31,13 @@ public class Pass1ProcedureCallParameters extends ControlFlowGraphCopyVisitor {
       for (int i = 0; i < parameterDecls.size(); i++) {
          Variable parameterDecl = parameterDecls.get(i);
          RValue parameterValue = parameterValues.get(i);
-         addStatementToCurrentBlock(new StatementAssignment(new VariableRef(parameterDecl), parameterValue));
+         addStatementToCurrentBlock(new StatementAssignment(parameterDecl.getRef(), parameterValue));
       }
       String procedureName = origCall.getProcedureName();
       Variable procReturnVar = procedure.getVariable("return");
       VariableRef procReturnVarRef = null;
       if (procReturnVar != null) {
-         procReturnVarRef = new VariableRef(procReturnVar);
+         procReturnVarRef = procReturnVar.getRef();
       }
       StatementCall copyCall = new StatementCall(procReturnVarRef, procedureName, null);
       copyCall.setParametersByAssignment(true);

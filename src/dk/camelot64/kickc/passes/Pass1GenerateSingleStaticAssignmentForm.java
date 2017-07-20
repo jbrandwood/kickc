@@ -49,7 +49,7 @@ public class Pass1GenerateSingleStaticAssignmentForm {
                      // Assignment to a non-versioned non-intermediary variable
                      VariableUnversioned assignedSymbol = (VariableUnversioned) assignedVar;
                      VariableVersion version = assignedSymbol.createVersion();
-                     statementLValue.setlValue(new VariableRef(version));
+                     statementLValue.setlValue(version.getRef());
                   }
                }
             }
@@ -72,7 +72,7 @@ public class Pass1GenerateSingleStaticAssignmentForm {
                {
                   VariableVersion version = findOrCreateVersion(statementReturn.getValue(), blockVersions, blockNewPhis);
                   if (version != null) {
-                     statementReturn.setValue(new VariableRef(version));
+                     statementReturn.setValue(version.getRef());
                   }
                }
 
@@ -82,13 +82,13 @@ public class Pass1GenerateSingleStaticAssignmentForm {
                {
                   VariableVersion version = findOrCreateVersion(assignment.getrValue1(), blockVersions, blockNewPhis);
                   if (version != null) {
-                     assignment.setrValue1(new VariableRef(version));
+                     assignment.setrValue1(version.getRef());
                   }
                }
                {
                   VariableVersion version = findOrCreateVersion(assignment.getrValue2(), blockVersions, blockNewPhis);
                   if (version != null) {
-                     assignment.setrValue2(new VariableRef(version));
+                     assignment.setrValue2(version.getRef());
                   }
                }
                // Update map of versions encountered in the block
@@ -105,19 +105,19 @@ public class Pass1GenerateSingleStaticAssignmentForm {
                   RValue pointer = deref.getPointer();
                   VariableVersion version = findOrCreateVersion(pointer, blockVersions, blockNewPhis);
                   if (version != null) {
-                     deref.setPointer(new VariableRef(version));
+                     deref.setPointer(version.getRef());
                   }
                } else if(lValue instanceof PointerDereferenceIndexed) {
                   PointerDereferenceIndexed deref = (PointerDereferenceIndexed) lValue;
                   RValue pointer = deref.getPointer();
                   VariableVersion version = findOrCreateVersion(pointer, blockVersions, blockNewPhis);
                   if (version != null) {
-                     deref.setPointer(new VariableRef(version));
+                     deref.setPointer(version.getRef());
                   }
                   RValue index = deref.getIndex();
                   VariableVersion iVersion = findOrCreateVersion(index, blockVersions, blockNewPhis);
                   if (iVersion != null) {
-                     deref.setIndex(new VariableRef(iVersion));
+                     deref.setIndex(iVersion.getRef());
                   }
                }
             }
@@ -201,7 +201,7 @@ public class Pass1GenerateSingleStaticAssignmentForm {
                            predecessorNewPhis.put(unversioned, previousSymbol);
                         }
                      }
-                     phi.addPreviousVersion(predecessorLabel, new VariableRef(previousSymbol));
+                     phi.addPreviousVersion(predecessorLabel, previousSymbol.getRef());
                   }
                }
             }

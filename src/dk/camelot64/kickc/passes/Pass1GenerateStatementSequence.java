@@ -177,7 +177,7 @@ public class Pass1GenerateStatementSequence extends KickCBaseVisitor<Object> {
          sequence.addStatement(new StatementAssignment(returnVar, returnVar));
       }
       VariableRef returnVarRef = null;
-      if(returnVar!=null) {new VariableRef(returnVar); }
+      if(returnVar!=null) {returnVarRef = returnVar.getRef();}
       sequence.addStatement(new StatementReturn(returnVarRef));
       scopeStack.pop();
       sequence.addStatement(new StatementProcedureEnd(procedure.getRef()));
@@ -249,7 +249,7 @@ public class Pass1GenerateStatementSequence extends KickCBaseVisitor<Object> {
    @Override
    public LValue visitLvalueName(KickCParser.LvalueNameContext ctx) {
       Variable variable = getCurrentSymbols().getVariable(ctx.NAME().getText());
-      return new VariableRef(variable);
+      return variable.getRef();
    }
 
    @Override
@@ -322,8 +322,9 @@ public class Pass1GenerateStatementSequence extends KickCBaseVisitor<Object> {
          parameters = new ArrayList<>();
       }
       VariableIntermediate tmpVar = getCurrentSymbols().addVariableIntermediate();
-      sequence.addStatement(new StatementCall(new VariableRef(tmpVar), ctx.NAME().getText(), parameters));
-      return tmpVar;
+      VariableRef tmpVarRef = tmpVar.getRef();
+      sequence.addStatement(new StatementCall(tmpVarRef, ctx.NAME().getText(), parameters));
+      return tmpVarRef;
    }
 
    @Override
@@ -342,7 +343,7 @@ public class Pass1GenerateStatementSequence extends KickCBaseVisitor<Object> {
       RValue index = (RValue) visit(ctx.expr(1));
       Operator operator = new Operator("*idx");
       VariableIntermediate tmpVar = getCurrentSymbols().addVariableIntermediate();
-      VariableRef tmpVarRef = new VariableRef(tmpVar);
+      VariableRef tmpVarRef = tmpVar.getRef();
       Statement stmt = new StatementAssignment(tmpVarRef, array, operator, index);
       sequence.addStatement(stmt);
       return tmpVarRef;
@@ -376,7 +377,7 @@ public class Pass1GenerateStatementSequence extends KickCBaseVisitor<Object> {
       String op = ((TerminalNode) ctx.getChild(1)).getSymbol().getText();
       Operator operator = new Operator(op);
       VariableIntermediate tmpVar = getCurrentSymbols().addVariableIntermediate();
-      VariableRef tmpVarRef = new VariableRef(tmpVar);
+      VariableRef tmpVarRef = tmpVar.getRef();
       Statement stmt = new StatementAssignment(tmpVarRef, left, operator, right);
       sequence.addStatement(stmt);
       return tmpVarRef;
@@ -388,7 +389,7 @@ public class Pass1GenerateStatementSequence extends KickCBaseVisitor<Object> {
       String op = ((TerminalNode) ctx.getChild(0)).getSymbol().getText();
       Operator operator = new Operator(op);
       VariableIntermediate tmpVar = getCurrentSymbols().addVariableIntermediate();
-      VariableRef tmpVarRef = new VariableRef(tmpVar);
+      VariableRef tmpVarRef = tmpVar.getRef();
       Statement stmt = new StatementAssignment(tmpVarRef, operator, child);
       sequence.addStatement(stmt);
       return tmpVarRef;
@@ -414,7 +415,7 @@ public class Pass1GenerateStatementSequence extends KickCBaseVisitor<Object> {
    @Override
    public RValue visitExprId(KickCParser.ExprIdContext ctx) {
       Variable variable = getCurrentSymbols().getVariable(ctx.NAME().getText());
-      return new VariableRef(variable);
+      return variable.getRef();
    }
 
    public StatementSequence getSequence() {

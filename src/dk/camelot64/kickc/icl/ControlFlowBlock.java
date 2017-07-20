@@ -62,7 +62,7 @@ public class ControlFlowBlock {
    }
 
    public void addPhiStatement(VariableVersion newVersion) {
-      statements.add(0, new StatementPhi(new VariableRef(newVersion)));
+      statements.add(0, new StatementPhi(newVersion.getRef()));
    }
 
    public String getAsTypedString(ControlFlowGraph graph, ProgramScope scope) {

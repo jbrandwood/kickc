@@ -179,9 +179,9 @@ public class Pass2AliasElimination extends Pass2SsaOptimization {
             if (keep == null) {
                keep = var;
             } else {
-               if (isVersion(var)) {
-                  if (isVersion(keep)) {
-                     if (getScopeDepth(var) < getScopeDepth(keep)) {
+               if (var.isVersion()) {
+                  if (keep.isVersion()) {
+                     if (var.getScopeDepth() < keep.getScopeDepth()) {
                         keep = var;
                      }
                   } else {
@@ -191,19 +191,6 @@ public class Pass2AliasElimination extends Pass2SsaOptimization {
             }
          }
          return keep;
-      }
-
-      private int getScopeDepth(VariableRef var) {
-         int depth = 0;
-         char[] chars = var.getFullName().toCharArray();
-         for (char c : chars) {
-            if(c==':') depth++;
-         }
-         return depth/2;
-      }
-
-      private boolean isVersion(VariableRef var) {
-         return var.getFullName().contains("#");
       }
 
       public List<VariableRef> getEliminateVars() {

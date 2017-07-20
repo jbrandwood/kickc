@@ -8,24 +8,24 @@ import java.util.List;
  * The block only knows its own successors. To find predecessor blocks access to the entire graph is needed.*/
 public class ControlFlowBlock {
 
-   private Label label;
+   private LabelRef label;
 
    private List<Statement> statements;
 
-   private Label defaultSuccessor;
+   private LabelRef defaultSuccessor;
 
-   private Label conditionalSuccessor;
+   private LabelRef conditionalSuccessor;
 
-   private Label callSuccessor;
+   private LabelRef callSuccessor;
 
-   public ControlFlowBlock(Label label) {
+   public ControlFlowBlock(LabelRef label) {
       this.label = label;
       this.statements = new ArrayList<>();
       this.defaultSuccessor = null;
       this.conditionalSuccessor = null;
    }
 
-   public Label getLabel() {
+   public LabelRef getLabel() {
       return label;
    }
 
@@ -33,27 +33,27 @@ public class ControlFlowBlock {
       this.statements.add(statement);
    }
 
-   public void setDefaultSuccessor(Label defaultSuccessor) {
+   public void setDefaultSuccessor(LabelRef defaultSuccessor) {
       this.defaultSuccessor = defaultSuccessor;
    }
 
-   public Label getDefaultSuccessor() {
+   public LabelRef getDefaultSuccessor() {
       return defaultSuccessor;
    }
 
-   public Label getConditionalSuccessor() {
+   public LabelRef getConditionalSuccessor() {
       return conditionalSuccessor;
    }
 
-   public void setConditionalSuccessor(Label conditionalSuccessor) {
+   public void setConditionalSuccessor(LabelRef conditionalSuccessor) {
       this.conditionalSuccessor = conditionalSuccessor;
    }
 
-   public Label getCallSuccessor() {
+   public LabelRef getCallSuccessor() {
       return callSuccessor;
    }
 
-   public void setCallSuccessor(Label callSuccessor) {
+   public void setCallSuccessor(LabelRef callSuccessor) {
       this.callSuccessor = callSuccessor;
    }
 

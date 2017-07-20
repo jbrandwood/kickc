@@ -121,6 +121,10 @@ public abstract class Scope implements Symbol {
       return symbol;
    }
 
+   public Symbol getSymbol(SymbolRef symbolRef) {
+      return getSymbol(symbolRef.getFullName());
+   }
+
    public Symbol getSymbol(String name) {
       int pos = name.indexOf("::");
       if (pos >= 0) {
@@ -179,6 +183,10 @@ public abstract class Scope implements Symbol {
 
    public Label getLabel(String name) {
       return (Label) symbols.get(name);
+   }
+
+   public Label getLabel(LabelRef labelRef) {
+      return (Label) symbols.get(labelRef);
    }
 
    public Procedure addProcedure(String name, SymbolType type) {

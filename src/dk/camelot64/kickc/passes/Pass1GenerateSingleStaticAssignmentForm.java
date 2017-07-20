@@ -170,8 +170,8 @@ public class Pass1GenerateSingleStaticAssignmentForm {
     * false if new phis were added, meaning another iteration is needed.
     */
    private boolean completePhiFunctions() {
-      Map<Label, Map<VariableUnversioned, VariableVersion>> newPhis = new LinkedHashMap<>();
-      Map<Label, Map<VariableUnversioned, VariableVersion>> symbolMap = buildSymbolMap();
+      Map<LabelRef, Map<VariableUnversioned, VariableVersion>> newPhis = new LinkedHashMap<>();
+      Map<LabelRef, Map<VariableUnversioned, VariableVersion>> symbolMap = buildSymbolMap();
       for (ControlFlowBlock block : this.controlFlowGraph.getAllBlocks()) {
          for (Statement statement : block.getStatements()) {
             if (statement instanceof StatementPhi) {
@@ -181,7 +181,7 @@ public class Pass1GenerateSingleStaticAssignmentForm {
                   VariableVersion versioned = (VariableVersion) symbols.getVariable(phiLValVarRef);
                   VariableUnversioned unversioned = versioned.getVersionOf();
                   for (ControlFlowBlock predecessor : controlFlowGraph.getPredecessors(block)) {
-                     Label predecessorLabel = predecessor.getLabel();
+                     LabelRef predecessorLabel = predecessor.getLabel();
                      Map<VariableUnversioned, VariableVersion> predecessorMap = symbolMap.get(predecessorLabel);
                      VariableVersion previousSymbol = null;
                      if (predecessorMap != null) {
@@ -223,8 +223,8 @@ public class Pass1GenerateSingleStaticAssignmentForm {
     * Builds a map of all which versions each symbol has in each block.
     * Maps Control Flow Block Label -> ( Unversioned Symbol -> Versioned Symbol) for all relevant symbols.
     */
-   private Map<Label, Map<VariableUnversioned, VariableVersion>> buildSymbolMap() {
-      Map<Label, Map<VariableUnversioned, VariableVersion>> symbolMap = new LinkedHashMap<>();
+   private Map<LabelRef, Map<VariableUnversioned, VariableVersion>> buildSymbolMap() {
+      Map<LabelRef, Map<VariableUnversioned, VariableVersion>> symbolMap = new LinkedHashMap<>();
       for (ControlFlowBlock block : this.controlFlowGraph.getAllBlocks()) {
          for (Statement statement : block.getStatements()) {
             if (statement instanceof StatementLValue) {
@@ -234,7 +234,7 @@ public class Pass1GenerateSingleStaticAssignmentForm {
                   Variable lValueVar = symbols.getVariable((VariableRef) lValue);
                   if (lValueVar instanceof VariableVersion) {
                      VariableVersion versioned = (VariableVersion) lValueVar;
-                     Label label = block.getLabel();
+                     LabelRef label = block.getLabel();
                      VariableUnversioned unversioned = versioned.getVersionOf();
                      Map<VariableUnversioned, VariableVersion> blockMap = symbolMap.get(label);
                      if (blockMap == null) {

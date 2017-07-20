@@ -5,13 +5,13 @@ package dk.camelot64.kickc.icl;
  */
 public class StatementLabel implements Statement {
 
-   private Label label;
+   private LabelRef label;
 
-   public StatementLabel(Label label) {
+   public StatementLabel(LabelRef label) {
       this.label = label;
    }
 
-   public Label getLabel() {
+   public LabelRef getLabel() {
       return label;
    }
 

@@ -8,17 +8,17 @@ package dk.camelot64.kickc.icl;
  */
 public class StatementJump implements Statement {
 
-   private Label destination;
+   private LabelRef destination;
 
-   public StatementJump(Label destination) {
+   public StatementJump(LabelRef destination) {
       this.destination = destination;
    }
 
-   public Label getDestination() {
+   public LabelRef getDestination() {
       return destination;
    }
 
-   public void setDestination(Label destination) {
+   public void setDestination(LabelRef destination) {
       this.destination = destination;
    }
 
@@ -34,5 +34,7 @@ public class StatementJump implements Statement {
 
    @Override
    public String getAsString() {
-      return "goto "+destination.getFullName();   }
+      return "goto "+destination.getFullName();
+   }
+
 }

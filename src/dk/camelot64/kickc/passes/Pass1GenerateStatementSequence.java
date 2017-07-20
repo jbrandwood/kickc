@@ -88,25 +88,25 @@ public class Pass1GenerateStatementSequence extends KickCBaseVisitor<Object> {
       PrePostModifierHandler.addPostModifiers(this, ctx.expr());
       Label ifJumpLabel = getCurrentSymbols().addLabelIntermediate();
       Label elseJumpLabel = getCurrentSymbols().addLabelIntermediate();
-      Statement ifJmpStmt = new StatementConditionalJump(rValue, ifJumpLabel);
+      Statement ifJmpStmt = new StatementConditionalJump(rValue, ifJumpLabel.getRef());
       sequence.addStatement(ifJmpStmt);
-      Statement elseJmpStmt = new StatementJump(elseJumpLabel);
+      Statement elseJmpStmt = new StatementJump(elseJumpLabel.getRef());
       sequence.addStatement(elseJmpStmt);
-      StatementLabel ifJumpTarget = new StatementLabel(ifJumpLabel);
+      StatementLabel ifJumpTarget = new StatementLabel(ifJumpLabel.getRef());
       sequence.addStatement(ifJumpTarget);
       this.visit(ctx.stmt(0));
       KickCParser.StmtContext elseStmt = ctx.stmt(1);
       if (elseStmt != null) {
          Label endJumpLabel = getCurrentSymbols().addLabelIntermediate();
-         Statement endJmpStmt = new StatementJump(endJumpLabel);
+         Statement endJmpStmt = new StatementJump(endJumpLabel.getRef());
          sequence.addStatement(endJmpStmt);
-         StatementLabel elseJumpTarget = new StatementLabel(elseJumpLabel);
+         StatementLabel elseJumpTarget = new StatementLabel(elseJumpLabel.getRef());
          sequence.addStatement(elseJumpTarget);
          this.visit(elseStmt);
-         StatementLabel endJumpTarget = new StatementLabel(endJumpLabel);
+         StatementLabel endJumpTarget = new StatementLabel(endJumpLabel.getRef());
          sequence.addStatement(endJumpTarget);
       } else {
-         StatementLabel elseJumpTarget = new StatementLabel(elseJumpLabel);
+         StatementLabel elseJumpTarget = new StatementLabel(elseJumpLabel.getRef());
          sequence.addStatement(elseJumpTarget);
       }
       return null;
@@ -117,21 +117,21 @@ public class Pass1GenerateStatementSequence extends KickCBaseVisitor<Object> {
       Label beginJumpLabel = getCurrentSymbols().addLabelIntermediate();
       Label doJumpLabel = getCurrentSymbols().addLabelIntermediate();
       Label endJumpLabel = getCurrentSymbols().addLabelIntermediate();
-      StatementLabel beginJumpTarget = new StatementLabel(beginJumpLabel);
+      StatementLabel beginJumpTarget = new StatementLabel(beginJumpLabel.getRef());
       sequence.addStatement(beginJumpTarget);
       PrePostModifierHandler.addPreModifiers(this, ctx.expr());
       RValue rValue = (RValue) this.visit(ctx.expr());
       PrePostModifierHandler.addPostModifiers(this, ctx.expr());
-      Statement doJmpStmt = new StatementConditionalJump(rValue, doJumpLabel);
+      Statement doJmpStmt = new StatementConditionalJump(rValue, doJumpLabel.getRef());
       sequence.addStatement(doJmpStmt);
-      Statement endJmpStmt = new StatementJump(endJumpLabel);
+      Statement endJmpStmt = new StatementJump(endJumpLabel.getRef());
       sequence.addStatement(endJmpStmt);
-      StatementLabel doJumpTarget = new StatementLabel(doJumpLabel);
+      StatementLabel doJumpTarget = new StatementLabel(doJumpLabel.getRef());
       sequence.addStatement(doJumpTarget);
       this.visit(ctx.stmt());
-      Statement beginJmpStmt = new StatementJump(beginJumpLabel);
+      Statement beginJmpStmt = new StatementJump(beginJumpLabel.getRef());
       sequence.addStatement(beginJmpStmt);
-      StatementLabel endJumpTarget = new StatementLabel(endJumpLabel);
+      StatementLabel endJumpTarget = new StatementLabel(endJumpLabel.getRef());
       sequence.addStatement(endJumpTarget);
       return null;
    }
@@ -139,7 +139,7 @@ public class Pass1GenerateStatementSequence extends KickCBaseVisitor<Object> {
    @Override
    public Void visitStmtDoWhile(KickCParser.StmtDoWhileContext ctx) {
       Label beginJumpLabel = getCurrentSymbols().addLabelIntermediate();
-      StatementLabel beginJumpTarget = new StatementLabel(beginJumpLabel);
+      StatementLabel beginJumpTarget = new StatementLabel(beginJumpLabel.getRef());
       sequence.addStatement(beginJumpTarget);
       if (ctx.stmt() != null) {
          this.visit(ctx.stmt());
@@ -147,7 +147,7 @@ public class Pass1GenerateStatementSequence extends KickCBaseVisitor<Object> {
       PrePostModifierHandler.addPreModifiers(this, ctx.expr());
       RValue rValue = (RValue) this.visit(ctx.expr());
       PrePostModifierHandler.addPostModifiers(this, ctx.expr());
-      Statement doJmpStmt = new StatementConditionalJump(rValue, beginJumpLabel);
+      Statement doJmpStmt = new StatementConditionalJump(rValue, beginJumpLabel.getRef());
       sequence.addStatement(doJmpStmt);
       return null;
    }
@@ -168,11 +168,11 @@ public class Pass1GenerateStatementSequence extends KickCBaseVisitor<Object> {
          parameterList = (List<Variable>) this.visit(ctx.parameterListDecl());
       }
       procedure.setParameters(parameterList);
-      sequence.addStatement(new StatementProcedureBegin(procedure));
+      sequence.addStatement(new StatementProcedureBegin(procedure.getRef()));
       if (ctx.stmtSeq() != null) {
          this.visit(ctx.stmtSeq());
       }
-      sequence.addStatement(new StatementLabel(procExit));
+      sequence.addStatement(new StatementLabel(procExit.getRef()));
       if (returnVar != null) {
          sequence.addStatement(new StatementAssignment(returnVar, returnVar));
       }
@@ -180,7 +180,7 @@ public class Pass1GenerateStatementSequence extends KickCBaseVisitor<Object> {
       if(returnVar!=null) {new VariableRef(returnVar); }
       sequence.addStatement(new StatementReturn(returnVarRef));
       scopeStack.pop();
-      sequence.addStatement(new StatementProcedureEnd(procedure));
+      sequence.addStatement(new StatementProcedureEnd(procedure.getRef()));
       return null;
    }
 
@@ -214,7 +214,7 @@ public class Pass1GenerateStatementSequence extends KickCBaseVisitor<Object> {
          PrePostModifierHandler.addPostModifiers(this, exprCtx);
       }
       Label returnLabel = procedure.getLabel("@return");
-      sequence.addStatement(new StatementJump(returnLabel));
+      sequence.addStatement(new StatementJump(returnLabel.getRef()));
       return null;
    }
 
@@ -261,7 +261,7 @@ public class Pass1GenerateStatementSequence extends KickCBaseVisitor<Object> {
    public LValue visitLvaluePtr(KickCParser.LvaluePtrContext ctx) {
       LValue lval = (LValue) visit(ctx.lvalue());
       if (lval instanceof VariableRef) {
-         return new PointerDereferenceSimple((VariableRef) lval);
+         return new PointerDereferenceSimple(lval);
       } else {
          throw new RuntimeException("Not implemented");
       }

@@ -12,8 +12,8 @@ public class StatementCall implements StatementLValue {
    /** The variable being assigned a value by the call. Can be null. */
    private LValue lValue;
    private String procedureName;
+   private ProcedureRef procedure;
    private List<RValue> parameters;
-   private Procedure procedure;
    private boolean parametersByAssignment;
 
    public StatementCall(LValue lValue, String  procedureName, List<RValue> parameters) {
@@ -35,11 +35,11 @@ public class StatementCall implements StatementLValue {
       return procedureName;
    }
 
-   public Procedure getProcedure() {
+   public ProcedureRef getProcedure() {
       return procedure;
    }
 
-   public void setProcedure(Procedure procedure) {
+   public void setProcedure(ProcedureRef procedure) {
       this.procedure = procedure;
    }
 

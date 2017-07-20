@@ -129,6 +129,7 @@ public abstract class Variable implements Symbol {
    }
 
    @Override
+   @JsonIgnore
    public String getAsString() {
       return getTypedName();
    }

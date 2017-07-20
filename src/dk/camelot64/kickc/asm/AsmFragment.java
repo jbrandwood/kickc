@@ -135,13 +135,14 @@ public class AsmFragment {
          signature.append(bind(conditionalJump.getRValue2()));
       }
       signature.append("_then_");
-      Label destination = conditionalJump.getDestination();
+      LabelRef destination = conditionalJump.getDestination();
       ControlFlowBlock destinationBlock = graph.getBlock(destination);
       String destinationLabel = destination.getFullName();
       if (destinationBlock.hasPhiStatements()) {
          destinationLabel = (destinationBlock.getLabel().getLocalName() + "_from_" + block.getLabel().getLocalName()).replace('@', 'B').replace(':','_');
       }
-      signature.append(bind(new Label(destinationLabel, destination.getScope(),false)));
+      Symbol destSymbol = symbols.getSymbol(destination);
+      signature.append(bind(new Label(destinationLabel, destSymbol.getScope(),false)));
       return signature.toString();
    }
 

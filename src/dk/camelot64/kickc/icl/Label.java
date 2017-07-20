@@ -98,6 +98,7 @@ public class Label implements Symbol {
    }
 
    @Override
+   @JsonIgnore
    public String getAsString() {
       return getFullName();
    }
@@ -106,4 +107,8 @@ public class Label implements Symbol {
       return "("+getType().getTypeName() + ") "+getFullName();
    }
 
+   @JsonIgnore
+   public LabelRef getRef() {
+      return new LabelRef(this);
+   }
 }

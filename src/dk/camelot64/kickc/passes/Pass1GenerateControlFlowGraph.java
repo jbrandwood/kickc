@@ -12,7 +12,7 @@ public class Pass1GenerateControlFlowGraph {
    public static final String BEGIN_BLOCK_NAME = "@BEGIN";
    public static final String END_BLOCK_NAME = "@END";
    private Scope scope;
-   private Map<Symbol, ControlFlowBlock> blocks;
+   private Map<SymbolRef, ControlFlowBlock> blocks;
    private ControlFlowBlock firstBlock;
 
    public Pass1GenerateControlFlowGraph(Scope scope) {
@@ -21,10 +21,10 @@ public class Pass1GenerateControlFlowGraph {
    }
 
    public ControlFlowGraph generate(StatementSequence sequence) {
-      this.firstBlock = getOrCreateBlock(scope.addLabel(BEGIN_BLOCK_NAME));
+      this.firstBlock = getOrCreateBlock(scope.addLabel(BEGIN_BLOCK_NAME).getRef());
       Stack<ControlFlowBlock> blockStack = new Stack<>();
       blockStack.push(firstBlock);
-      sequence.addStatement(new StatementLabel(scope.addLabel(END_BLOCK_NAME)));
+      sequence.addStatement(new StatementLabel(scope.addLabel(END_BLOCK_NAME).getRef()));
       for (Statement statement : sequence.getStatements()) {
          ControlFlowBlock currentBlock = blockStack.peek();
          if(statement instanceof StatementLabel) {
@@ -37,14 +37,14 @@ public class Pass1GenerateControlFlowGraph {
             StatementJump statementJump = (StatementJump) statement;
             ControlFlowBlock jmpBlock = getOrCreateBlock(statementJump.getDestination());
             currentBlock.setDefaultSuccessor(jmpBlock.getLabel());
-            ControlFlowBlock nextBlock = getOrCreateBlock(scope.addLabelIntermediate());
+            ControlFlowBlock nextBlock = getOrCreateBlock(scope.addLabelIntermediate().getRef());
             blockStack.pop();
             blockStack.push(nextBlock);
          }  else if(statement instanceof StatementConditionalJump) {
             currentBlock.addStatement(statement);
             StatementConditionalJump statementConditionalJump = (StatementConditionalJump) statement;
             ControlFlowBlock jmpBlock = getOrCreateBlock(statementConditionalJump.getDestination());
-            ControlFlowBlock nextBlock = getOrCreateBlock(scope.addLabelIntermediate());
+            ControlFlowBlock nextBlock = getOrCreateBlock(scope.addLabelIntermediate().getRef());
             currentBlock.setDefaultSuccessor(nextBlock.getLabel());
             currentBlock.setConditionalSuccessor(jmpBlock.getLabel());
             blockStack.pop();
@@ -53,13 +53,14 @@ public class Pass1GenerateControlFlowGraph {
             // Procedure strategy implemented is currently variable-based transfer of parameters/return values
             StatementProcedureBegin procedureBegin = (StatementProcedureBegin) statement;
             procedureBegin.setStrategy(StatementProcedureBegin.Strategy.PASS_BY_REGISTER);
-            Label procedureLabel = procedureBegin.getProcedure().getLabel();
-            ControlFlowBlock procBlock = getOrCreateBlock(procedureLabel);
+            ProcedureRef procedureRef = procedureBegin.getProcedure();
+            LabelRef procedureLabelRef = procedureRef.getLabelRef();
+            ControlFlowBlock procBlock = getOrCreateBlock(procedureLabelRef);
             blockStack.push(procBlock);
          }  else if(statement instanceof StatementProcedureEnd) {
             // Procedure strategy implemented is currently variable-based transfer of parameters/return values
-            currentBlock.setDefaultSuccessor(new Label("@RETURN", scope, false));
-            ControlFlowBlock nextBlock = getOrCreateBlock(scope.addLabelIntermediate());
+            currentBlock.setDefaultSuccessor(new Label("@RETURN", scope, false).getRef());
+            ControlFlowBlock nextBlock = getOrCreateBlock(scope.addLabelIntermediate().getRef());
             blockStack.pop();
             ControlFlowBlock prevBlock = blockStack.pop();
             prevBlock.setDefaultSuccessor(nextBlock.getLabel());
@@ -77,7 +78,7 @@ public class Pass1GenerateControlFlowGraph {
       return new ControlFlowGraph(blocks, firstBlock);
    }
 
-   private ControlFlowBlock getOrCreateBlock(Label label) {
+   private ControlFlowBlock getOrCreateBlock(LabelRef label) {
       ControlFlowBlock block = blocks.get(label);
       if(block==null) {
          block = new ControlFlowBlock(label);

@@ -26,7 +26,7 @@ public class Pass2CullEmptyBlocks extends Pass2SsaOptimization {
          // Replace all jumps (default/conditional/call) to @removeBlock with a jump to the default successor
          final List<ControlFlowBlock> predecessors = getGraph().getPredecessors(removeBlock);
          for (ControlFlowBlock predecessor : predecessors) {
-            Map<Label, Label> replace = new LinkedHashMap<>();
+            Map<LabelRef, LabelRef> replace = new LinkedHashMap<>();
             replace.put(removeBlock.getLabel(), successor.getLabel());
             if (removeBlock.getLabel().equals(predecessor.getDefaultSuccessor())) {
                predecessor.setDefaultSuccessor(successor.getLabel());
@@ -63,8 +63,10 @@ public class Pass2CullEmptyBlocks extends Pass2SsaOptimization {
          };
          phiFixVisitor.visitBlock(successor);
          getGraph().getAllBlocks().remove(removeBlock);
-         removeBlock.getLabel().getScope().remove(removeBlock.getLabel());
-         log.append("Culled Empty Block " + removeBlock.getLabel().getTypedName());
+         LabelRef removeBlockLabelRef = removeBlock.getLabel();
+         Label removeBlockLabel = (Label) getSymbols().getSymbol(removeBlockLabelRef);
+         removeBlockLabel.getScope().remove(removeBlockLabel);
+         log.append("Culled Empty Block " + removeBlockLabel.getTypedName());
       }
       return remove.size()>0;
    }

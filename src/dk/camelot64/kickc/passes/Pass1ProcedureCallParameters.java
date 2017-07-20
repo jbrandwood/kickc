@@ -24,7 +24,8 @@ public class Pass1ProcedureCallParameters extends ControlFlowGraphCopyVisitor {
    public StatementCall visitCall(StatementCall origCall) {
       // Procedure strategy implemented is currently variable-based transfer of parameters/return values
       // Generate parameter passing assignments
-      Procedure procedure = origCall.getProcedure();
+      ProcedureRef procedureRef = origCall.getProcedure();
+      Procedure procedure = (Procedure) scope.getSymbol(procedureRef);
       List<Variable> parameterDecls = procedure.getParameters();
       List<RValue> parameterValues = origCall.getParameters();
       for (int i = 0; i < parameterDecls.size(); i++) {
@@ -35,13 +36,15 @@ public class Pass1ProcedureCallParameters extends ControlFlowGraphCopyVisitor {
       String procedureName = origCall.getProcedureName();
       Variable procReturnVar = procedure.getVariable("return");
       VariableRef procReturnVarRef = null;
-      if(procReturnVar!=null) {new VariableRef(procReturnVar); }
+      if (procReturnVar != null) {
+         procReturnVarRef = new VariableRef(procReturnVar);
+      }
       StatementCall copyCall = new StatementCall(procReturnVarRef, procedureName, null);
       copyCall.setParametersByAssignment(true);
-      copyCall.setProcedure(procedure);
+      copyCall.setProcedure(procedureRef);
       addStatementToCurrentBlock(copyCall);
-      getCurrentBlock().setCallSuccessor(procedure.getLabel());
-      splitCurrentBlock(scope.addLabelIntermediate());
+      getCurrentBlock().setCallSuccessor(procedure.getLabel().getRef());
+      splitCurrentBlock(scope.addLabelIntermediate().getRef());
       if(!SymbolTypeBasic.VOID.equals(procedure.getReturnType())) {
          addStatementToCurrentBlock(new StatementAssignment(origCall.getlValue(), procReturnVarRef));
       } else {

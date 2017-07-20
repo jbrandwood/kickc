@@ -71,8 +71,8 @@ public class Pass2AssertSymbols extends Pass2SsaAssertion {
       private void addSymbol(Value symbol) {
          if (symbol instanceof Symbol) {
             symbols.add((Symbol) symbol);
-         } else if(symbol instanceof VariableRef) {
-            addSymbol(programScope.getVariable((VariableRef) symbol));
+         } else if(symbol instanceof SymbolRef) {
+            addSymbol(programScope.getSymbol((SymbolRef) symbol));
          } else if(symbol instanceof PointerDereferenceIndexed) {
             addSymbol(((PointerDereferenceIndexed) symbol).getPointer());
             addSymbol(((PointerDereferenceIndexed) symbol).getIndex());
@@ -92,13 +92,17 @@ public class Pass2AssertSymbols extends Pass2SsaAssertion {
 
       @Override
       public Void visitProcedureBegin(StatementProcedureBegin statement) {
-         symbols.add(statement.getProcedure());
+         ProcedureRef procedureRef = statement.getProcedure();
+         Procedure procedure = (Procedure) programScope.getSymbol(procedureRef);
+         symbols.add(procedure);
          return super.visitProcedureBegin(statement);
       }
 
       @Override
       public Void visitProcedureEnd(StatementProcedureEnd statement) {
-         symbols.add(statement.getProcedure());
+         ProcedureRef procedureRef = statement.getProcedure();
+         Procedure procedure = (Procedure) programScope.getSymbol(procedureRef);
+         symbols.add(procedure);
          return super.visitProcedureEnd(statement);
       }
 

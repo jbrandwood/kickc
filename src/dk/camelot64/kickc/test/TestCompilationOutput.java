@@ -61,8 +61,7 @@ public class TestCompilationOutput extends TestCase {
          refLines = loadReferenceLines(fileName, extension);
       } catch (Exception e) {
          writeOutputFile(fileName, extension, outputString);
-         System.out.println("Error loading reference."+e.getMessage());
-         return;
+         fail("Error loading reference."+e.getMessage());
       }
       // Split output into outLines
       List<String> outLines = getOutLines(outputString);
@@ -71,14 +70,12 @@ public class TestCompilationOutput extends TestCase {
          if(refLines.size()>i) {
             String refLine = refLines.get(i);
             if(!outLine.equals(refLine)) {
-               System.out.println(
+               writeOutputFile(fileName, extension, outputString);
+               fail(
                      "Output does not match reference on line "+i+"\n"+
                            "Reference: "+refLine+"\n"+
                            "Output:    "+outLine
                );
-               writeOutputFile(fileName, extension, outputString);
-               System.out.println();
-               return;
             }
          }
       }

@@ -14,16 +14,16 @@ public class StatementConditionalJump implements Statement {
    private RValue rValue1;
    private Operator operator;
    private RValue rValue2;
-   private Label destination;
+   private LabelRef destination;
 
-   public StatementConditionalJump(RValue condition, Label destination) {
+   public StatementConditionalJump(RValue condition, LabelRef destination) {
       this.rValue1 = null;
       this.operator = null;
       this.rValue2 = condition;
       this.destination = destination;
    }
 
-   public StatementConditionalJump(RValue rValue1, Operator operator, RValue rValue2, Label destination) {
+   public StatementConditionalJump(RValue rValue1, Operator operator, RValue rValue2, LabelRef destination) {
       this.rValue1 = rValue1;
       this.operator = operator;
       this.rValue2 = rValue2;
@@ -42,7 +42,7 @@ public class StatementConditionalJump implements Statement {
       return rValue2;
    }
 
-   public Label getDestination() {
+   public LabelRef getDestination() {
       return destination;
    }
 
@@ -58,7 +58,7 @@ public class StatementConditionalJump implements Statement {
       this.rValue2 = rValue2;
    }
 
-   public void setDestination(Label destination) {
+   public void setDestination(LabelRef destination) {
       this.destination = destination;
    }
 

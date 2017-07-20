@@ -23,7 +23,7 @@ public class Pass2AssertBlocks extends Pass2SsaAssertion {
          this.graph = graph;
       }
 
-      private void assertBlock(Label blockLabel) throws AssertionFailed {
+      private void assertBlock(LabelRef blockLabel) throws AssertionFailed {
          if (blockLabel == null) {
             return;
          }
@@ -53,7 +53,9 @@ public class Pass2AssertBlocks extends Pass2SsaAssertion {
 
       @Override
       public Void visitCall(StatementCall callLValue) {
-         assertBlock(callLValue.getProcedure().getLabel());
+         ProcedureRef procedure = callLValue.getProcedure();
+         LabelRef procLabelRef = procedure.getLabelRef();
+         assertBlock(procLabelRef);
          return super.visitCall(callLValue);
       }
 

@@ -5,10 +5,10 @@ import dk.camelot64.kickc.icl.*;
 /** Pass that modifies a control flow graph to call procedures by passing return value through registers */
 public class Pass1ProcedureCallsReturnValue extends ControlFlowGraphCopyVisitor {
 
-   private Scope scope;
+   private ProgramScope scope;
    private ControlFlowGraph graph;
 
-   public Pass1ProcedureCallsReturnValue(Scope scope, ControlFlowGraph graph) {
+   public Pass1ProcedureCallsReturnValue(ProgramScope scope, ControlFlowGraph graph) {
       this.scope = scope;
       this.graph = graph;
    }
@@ -22,18 +22,19 @@ public class Pass1ProcedureCallsReturnValue extends ControlFlowGraphCopyVisitor 
    public StatementCall visitCall(StatementCall origCall) {
       // Procedure strategy implemented is currently variable-based transfer of parameters/return values
       // Generate return value assignment
-      Procedure procedure = origCall.getProcedure();
+      ProcedureRef procedureRef = origCall.getProcedure();
+      Procedure procedure = (Procedure) scope.getSymbol(procedureRef);
 
       String procedureName = origCall.getProcedureName();
       StatementCall copyCall = new StatementCall(null, procedureName, null);
       copyCall.setParametersByAssignment(true);
-      copyCall.setProcedure(procedure);
+      copyCall.setProcedure(procedureRef);
       addStatementToCurrentBlock(copyCall);
-      getCurrentBlock().setCallSuccessor(procedure.getLabel());
+      getCurrentBlock().setCallSuccessor(procedure.getLabel().getRef());
       if(!SymbolTypeBasic.VOID.equals(procedure.getReturnType())) {
          // Find return variable final version
          Label returnBlockLabel = procedure.getLabel("@return");
-         ControlFlowBlock returnBlock = graph.getBlock(returnBlockLabel);
+         ControlFlowBlock returnBlock = graph.getBlock(returnBlockLabel.getRef());
          VariableRef returnVarFinal = null;
          for (Statement statement : returnBlock.getStatements()) {
             if (statement instanceof StatementReturn) {

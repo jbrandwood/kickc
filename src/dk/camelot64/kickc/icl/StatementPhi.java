@@ -31,15 +31,15 @@ public class StatementPhi implements StatementLValue {
     * Which value is chosen depends on which block transition was made.
     */
    public static class PreviousSymbol {
-      private Label block;
+      private LabelRef block;
       private RValue rValue;
 
-      public PreviousSymbol(Label block, RValue rValue) {
+      public PreviousSymbol(LabelRef block, RValue rValue) {
          this.block = block;
          this.rValue = rValue;
       }
 
-      public Label getBlock() {
+      public LabelRef getBlock() {
          return block;
       }
 
@@ -51,7 +51,7 @@ public class StatementPhi implements StatementLValue {
          this.rValue = RValue;
       }
 
-      public void setBlock(Label block) {
+      public void setBlock(LabelRef block) {
          this.block = block;
       }
    }
@@ -68,7 +68,7 @@ public class StatementPhi implements StatementLValue {
       this.lValue = (VariableRef) lValue;
    }
 
-   public void addPreviousVersion(Label block, RValue rValue) {
+   public void addPreviousVersion(LabelRef block, RValue rValue) {
       previousVersions.add(new PreviousSymbol(block, rValue));
    }
 

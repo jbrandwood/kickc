@@ -22,7 +22,9 @@ public class Pass1TypeInference {
       for (Statement statement : sequence.getStatements()) {
          if(statement instanceof StatementProcedureBegin) {
                 StatementProcedureBegin procedureBegin = (StatementProcedureBegin) statement;
-                scopes.push(procedureBegin.getProcedure());
+            ProcedureRef procedureRef = procedureBegin.getProcedure();
+            Procedure procedure = (Procedure) programScope.getSymbol(procedureRef);
+            scopes.push(procedure);
          }  else if(statement instanceof StatementProcedureEnd) {
             scopes.pop();
          } else if (statement instanceof StatementAssignment) {
@@ -54,7 +56,7 @@ public class Pass1TypeInference {
             if(lValue instanceof VariableRef) {
                String procedureName = call.getProcedureName();
                Procedure procedure = scopes.peek().getProcedure(procedureName);
-               call.setProcedure(procedure);
+               call.setProcedure(procedure.getRef());
                if(procedure.getParameters().size()!=call.getParameters().size()) {
                   throw new RuntimeException("Wrong number of parameters in call. Expected " +procedure.getParameters().size()+". "+statement.toString());
                }

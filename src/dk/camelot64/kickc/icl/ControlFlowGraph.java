@@ -6,16 +6,16 @@ import java.util.*;
  * The control flow  graph is a set of connected basic blocks. */
 public class ControlFlowGraph {
 
-   private Map<Symbol, ControlFlowBlock> blocks;
+   private Map<SymbolRef, ControlFlowBlock> blocks;
    private ControlFlowBlock firstBlock;
    private List<ControlFlowBlock> sequence;
 
-   public ControlFlowGraph(Map<Symbol, ControlFlowBlock> blocks, ControlFlowBlock firstBlock) {
+   public ControlFlowGraph(Map<SymbolRef, ControlFlowBlock> blocks, ControlFlowBlock firstBlock) {
       this.blocks = blocks;
       this.firstBlock = firstBlock;
    }
 
-   public ControlFlowBlock getBlock(Symbol symbol) {
+   public ControlFlowBlock getBlock(SymbolRef symbol) {
       return blocks.get(symbol);
    }
 
@@ -106,7 +106,7 @@ public class ControlFlowGraph {
 
    public ControlFlowBlock getMainBlock() {
       for (ControlFlowBlock block : getAllBlocks()) {
-         Label label = block.getLabel();
+         LabelRef label = block.getLabel();
          if(label.getFullName().equals("main")) {
             return block;
          }

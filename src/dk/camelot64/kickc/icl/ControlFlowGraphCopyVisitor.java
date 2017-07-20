@@ -16,7 +16,7 @@ public class ControlFlowGraphCopyVisitor extends ControlFlowGraphBaseVisitor<Obj
    /**
     * The copied blocks.
     */
-   private LinkedHashMap<Symbol, ControlFlowBlock> copyBlockMap;
+   private LinkedHashMap<SymbolRef, ControlFlowBlock> copyBlockMap;
 
    /**
     * The current block being copied.
@@ -46,7 +46,7 @@ public class ControlFlowGraphCopyVisitor extends ControlFlowGraphBaseVisitor<Obj
 
    @Override
    public ControlFlowBlock visitBlock(ControlFlowBlock origBlock) {
-      Label label = origBlock.getLabel();
+      LabelRef label = origBlock.getLabel();
       ControlFlowBlock copyBlock = new ControlFlowBlock(label);
       this.origBlock = origBlock;
       this.copyBlock = copyBlock;
@@ -91,7 +91,7 @@ public class ControlFlowGraphCopyVisitor extends ControlFlowGraphBaseVisitor<Obj
     * @param label The label to use for the new block
     * @return The new block.
     */
-   protected ControlFlowBlock splitCurrentBlock(Label label) {
+   protected ControlFlowBlock splitCurrentBlock(LabelRef label) {
       ControlFlowBlock newBlock = new ControlFlowBlock(label);
       this.copyBlock.setDefaultSuccessor(newBlock.getLabel());
       this.copyBlockMap.put(this.copyBlock.getLabel(), this.copyBlock);
@@ -119,7 +119,7 @@ public class ControlFlowGraphCopyVisitor extends ControlFlowGraphBaseVisitor<Obj
       StatementPhi copyPhi = new StatementPhi(lValue);
       for (StatementPhi.PreviousSymbol origPreviousVersion : phi.getPreviousVersions()) {
          RValue rValue = origPreviousVersion.getRValue();
-         Label block = origPreviousVersion.getBlock();
+         LabelRef block = origPreviousVersion.getBlock();
          copyPhi.addPreviousVersion(block, rValue);
       }
       return copyPhi;
@@ -139,19 +139,19 @@ public class ControlFlowGraphCopyVisitor extends ControlFlowGraphBaseVisitor<Obj
       RValue rValue1 = origConditionalJump.getRValue1();
       Operator operator = origConditionalJump.getOperator();
       RValue rValue2 = origConditionalJump.getRValue2();
-      Label destination = origConditionalJump.getDestination();
+      LabelRef destination = origConditionalJump.getDestination();
       return new StatementConditionalJump(rValue1, operator, rValue2, destination);
    }
 
    @Override
    public StatementJump visitJump(StatementJump origJump) {
-      Label destination = origJump.getDestination();
+      LabelRef destination = origJump.getDestination();
       return new StatementJump(destination);
    }
 
    @Override
    public StatementLabel visitJumpTarget(StatementLabel origJump) {
-      Label label = origJump.getLabel();
+      LabelRef label = origJump.getLabel();
       return new StatementLabel(label);
    }
 

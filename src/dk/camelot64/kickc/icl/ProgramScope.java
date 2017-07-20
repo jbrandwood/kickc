@@ -1,6 +1,7 @@
 package dk.camelot64.kickc.icl;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import java.util.HashMap;
@@ -77,6 +78,7 @@ public class ProgramScope extends Scope {
    }
 
    @Override
+   @JsonIgnore
    public String getAsString() {
       return "program";
    }

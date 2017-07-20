@@ -189,7 +189,7 @@ public abstract class Pass2SsaOptimization {
     *
     * @param replacements Variables that have alias values.
     */
-   public void replaceLabels(final Map<Label, Label> replacements) {
+   public void replaceLabels(final Map<LabelRef, LabelRef> replacements) {
       ControlFlowGraphBaseVisitor<Void> visitor = getLabelReplaceVisitor(replacements);
       visitor.visitGraph(graph);
    }
@@ -199,13 +199,13 @@ public abstract class Pass2SsaOptimization {
     *
     * @param replacements Variables that have alias values.
     */
-   public void replaceLabels(ControlFlowBlock block, final Map<Label, Label> replacements) {
+   public void replaceLabels(ControlFlowBlock block, final Map<LabelRef, LabelRef> replacements) {
       ControlFlowGraphBaseVisitor<Void> visitor = getLabelReplaceVisitor(replacements);
       visitor.visitBlock(block);
    }
 
    /** Creates a visitor that can replace labels. */
-   private ControlFlowGraphBaseVisitor<Void> getLabelReplaceVisitor(final Map<Label, Label> replacements) {
+   private ControlFlowGraphBaseVisitor<Void> getLabelReplaceVisitor(final Map<LabelRef, LabelRef> replacements) {
       return new ControlFlowGraphBaseVisitor<Void>() {
 
             @Override
@@ -227,7 +227,7 @@ public abstract class Pass2SsaOptimization {
             @Override
             public Void visitPhi(StatementPhi phi) {
                for (StatementPhi.PreviousSymbol previousSymbol : phi.getPreviousVersions()) {
-                  Label replacement = getReplacement(replacements, previousSymbol.getBlock());
+                  LabelRef replacement = getReplacement(replacements, previousSymbol.getBlock());
                   if (replacement != null) {
                      previousSymbol.setBlock(replacement);
                   }
@@ -244,8 +244,8 @@ public abstract class Pass2SsaOptimization {
     * @param label        The label to find a replacement for
     * @return The alias to use. Null if no replacement exists.
     */
-   private static Label getReplacement(Map<Label, Label> replacements, Label label) {
-      Label replacement = replacements.get(label);
+   private static LabelRef getReplacement(Map<LabelRef, LabelRef> replacements, LabelRef label) {
+      LabelRef replacement = replacements.get(label);
       while (replacements.get(replacement) != null) {
          replacement = replacements.get(replacement);
       }

@@ -124,7 +124,13 @@ public class Procedure extends Scope {
    }
 
    @Override
+   @JsonIgnore
    public String getAsString() {
       return getTypedName();
+   }
+
+   @JsonIgnore
+   public ProcedureRef getRef() {
+      return new ProcedureRef(this.getFullName());
    }
 }

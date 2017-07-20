@@ -3,13 +3,13 @@ package dk.camelot64.kickc.icl;
 /** Procedure declaration in SSA */
 public class StatementProcedureEnd implements Statement {
 
-   private Procedure procedure;
+   private ProcedureRef procedure;
 
-   public StatementProcedureEnd(Procedure procedure) {
+   public StatementProcedureEnd(ProcedureRef procedure) {
       this.procedure = procedure;
    }
 
-   public Procedure getProcedure() {
+   public ProcedureRef getProcedure() {
       return procedure;
    }
 

@@ -3,7 +3,7 @@ package dk.camelot64.kickc.icl;
 /** Procedure declaration in SSA */
 public class StatementProcedureBegin implements Statement {
 
-   private Procedure procedure;
+   private ProcedureRef procedure;
 
    private Strategy strategy;
 
@@ -12,11 +12,11 @@ public class StatementProcedureBegin implements Statement {
       INLINE
    }
 
-   public StatementProcedureBegin(Procedure procedure) {
+   public StatementProcedureBegin(ProcedureRef procedure) {
       this.procedure = procedure;
    }
 
-   public Procedure getProcedure() {
+   public ProcedureRef getProcedure() {
       return procedure;
    }
 

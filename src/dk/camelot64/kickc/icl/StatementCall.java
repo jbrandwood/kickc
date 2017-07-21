@@ -1,5 +1,9 @@
 package dk.camelot64.kickc.icl;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import java.util.List;
 
 /**
@@ -16,11 +20,26 @@ public class StatementCall implements StatementLValue {
    private List<RValue> parameters;
    private boolean parametersByAssignment;
 
-   public StatementCall(LValue lValue, String  procedureName, List<RValue> parameters) {
+   public StatementCall(
+         LValue lValue, String  procedureName, List<RValue> parameters) {
       this.lValue = lValue;
       this.procedureName = procedureName;
       this.parameters = parameters;
       this.parametersByAssignment = false;
+   }
+
+   @JsonCreator
+   StatementCall(
+         @JsonProperty("lValue") LValue lValue,
+         @JsonProperty("procedureName") String procedureName,
+         @JsonProperty("procedure") ProcedureRef procedure,
+         @JsonProperty("parameters") List<RValue> parameters,
+         @JsonProperty("parametersByAssignment") boolean parametersByAssignment) {
+      this.lValue = lValue;
+      this.procedureName = procedureName;
+      this.procedure = procedure;
+      this.parameters = parameters;
+      this.parametersByAssignment = parametersByAssignment;
    }
 
    public LValue getlValue() {
@@ -51,6 +70,7 @@ public class StatementCall implements StatementLValue {
       this.parameters = parameters;
    }
 
+   @JsonIgnore
    public int getNumParameters() {
       return parameters.size();
    }
@@ -123,5 +143,29 @@ public class StatementCall implements StatementLValue {
          res.append("param-assignment");
       }
       return res.toString();
+   }
+
+   @Override
+   public boolean equals(Object o) {
+      if (this == o) return true;
+      if (o == null || getClass() != o.getClass()) return false;
+
+      StatementCall that = (StatementCall) o;
+
+      if (parametersByAssignment != that.parametersByAssignment) return false;
+      if (lValue != null ? !lValue.equals(that.lValue) : that.lValue != null) return false;
+      if (!procedureName.equals(that.procedureName)) return false;
+      if (procedure != null ? !procedure.equals(that.procedure) : that.procedure != null) return false;
+      return parameters != null ? parameters.equals(that.parameters) : that.parameters == null;
+   }
+
+   @Override
+   public int hashCode() {
+      int result = lValue != null ? lValue.hashCode() : 0;
+      result = 31 * result + procedureName.hashCode();
+      result = 31 * result + (procedure != null ? procedure.hashCode() : 0);
+      result = 31 * result + (parameters != null ? parameters.hashCode() : 0);
+      result = 31 * result + (parametersByAssignment ? 1 : 0);
+      return result;
    }
 }

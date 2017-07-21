@@ -6,7 +6,7 @@ main:
 main__B2_from_main:
   ldx #25
   jmp main__B2
-main__B2_from_B12:
+main__B2_from_B11:
   ldx #25
 main__B2_from_B6:
 main__B2:
@@ -24,10 +24,10 @@ main__B6:
   bne main__B2_from_B6
 main__B7:
   jsr flip
-main__B11:
+main__B10:
   jsr plot
-main__B12:
-  jmp main__B2_from_B12
+main__B11:
+  jmp main__B2_from_B11
 main__Breturn:
   rts
 plot:

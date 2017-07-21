@@ -67,7 +67,7 @@ public class Pass1GenerateControlFlowGraph {
          }  else if(statement instanceof StatementProcedureEnd) {
             // Procedure strategy implemented is currently variable-based transfer of parameters/return values
             currentBlock.setDefaultSuccessor(new Label("@RETURN", scope, false).getRef());
-            ControlFlowBlock nextBlock = getOrCreateBlock(currentBlockScope.addLabelIntermediate().getRef());
+            ControlFlowBlock nextBlock = getOrCreateBlock(scope.addLabelIntermediate().getRef());
             blockStack.pop();
             ControlFlowBlock prevBlock = blockStack.pop();
             prevBlock.setDefaultSuccessor(nextBlock.getLabel());

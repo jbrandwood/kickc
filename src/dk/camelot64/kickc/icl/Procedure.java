@@ -61,7 +61,7 @@ public class Procedure extends Scope {
    public List<Variable> getParameters() {
       ArrayList<Variable> parameters = new ArrayList<>();
       for (String name : parameterNames) {
-         parameters.add(getScope().getVariable(name));
+         parameters.add(this.getVariable(name));
       }
       return parameters;
    }
@@ -132,5 +132,25 @@ public class Procedure extends Scope {
    @JsonIgnore
    public ProcedureRef getRef() {
       return new ProcedureRef(this.getFullName());
+   }
+
+   @Override
+   public boolean equals(Object o) {
+      if (this == o) return true;
+      if (o == null || getClass() != o.getClass()) return false;
+      if (!super.equals(o)) return false;
+
+      Procedure procedure = (Procedure) o;
+
+      if (returnType != null ? !returnType.equals(procedure.returnType) : procedure.returnType != null) return false;
+      return parameterNames != null ? parameterNames.equals(procedure.parameterNames) : procedure.parameterNames == null;
+   }
+
+   @Override
+   public int hashCode() {
+      int result = super.hashCode();
+      result = 31 * result + (returnType != null ? returnType.hashCode() : 0);
+      result = 31 * result + (parameterNames != null ? parameterNames.hashCode() : 0);
+      return result;
    }
 }

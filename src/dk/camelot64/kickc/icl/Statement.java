@@ -16,7 +16,7 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo;
       @JsonSubTypes.Type(value = StatementJump.class, name = "jump"),
       @JsonSubTypes.Type(value = StatementLabel.class, name = "label"),
       @JsonSubTypes.Type(value = StatementCall.class, name = "call"),
-      @JsonSubTypes.Type(value = StatementCall.class, name = "return"),
+      @JsonSubTypes.Type(value = StatementReturn.class, name = "return"),
       @JsonSubTypes.Type(value = StatementProcedureBegin.class, name = "procbegin"),
       @JsonSubTypes.Type(value = StatementProcedureEnd.class, name = "procend")
 })

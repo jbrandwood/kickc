@@ -39,19 +39,28 @@ public class TestCompilationOutput extends TestCase {
       tester.testFile("bresenham");
    }
 
+   public void testSumMin() throws IOException, URISyntaxException {
+      TestCompilationOutput tester = new TestCompilationOutput();
+      tester.testFile("summin");
+   }
+
    private void testFile(String fileName) throws IOException, URISyntaxException {
       String inputPath = testPath + fileName + ".kc";
       System.out.println("Testing output for "+inputPath);
       CharStream input = CharStreams.fromFileName(inputPath);
       Compiler compiler = new Compiler();
       Compiler.CompilationResult output = compiler.compile(input);
-      assertOutput(fileName, ".asm", output.getAsmProgram().toString(false));
-      assertOutput(fileName, ".sym", output.getSymbols().getSymbolTableContents());
-      assertOutput(fileName, ".cfg", output.getGraph().getAsTypedString(output.getSymbols()));
-      assertOutput(fileName, ".log", output.getLog().toString());
+      boolean success = true;
+      success &= testOutput(fileName, ".asm", output.getAsmProgram().toString(false));
+      success &= testOutput(fileName, ".sym", output.getSymbols().getSymbolTableContents());
+      success &= testOutput(fileName, ".cfg", output.getGraph().getAsTypedString(output.getSymbols()));
+      success &= testOutput(fileName, ".log", output.getLog().toString());
+      if(!success) {
+         fail("Output does not match reference!");
+      }
    }
 
-   private void assertOutput(
+   private boolean testOutput(
          String fileName,
          String extension,
          String outputString) throws IOException, URISyntaxException {
@@ -61,7 +70,8 @@ public class TestCompilationOutput extends TestCase {
          refLines = loadReferenceLines(fileName, extension);
       } catch (Exception e) {
          writeOutputFile(fileName, extension, outputString);
-         fail("Error loading reference."+e.getMessage());
+         System.out.println("Reference file not found "+refPath+fileName+extension);
+         return false;
       }
       // Split output into outLines
       List<String> outLines = getOutLines(outputString);
@@ -71,14 +81,16 @@ public class TestCompilationOutput extends TestCase {
             String refLine = refLines.get(i);
             if(!outLine.equals(refLine)) {
                writeOutputFile(fileName, extension, outputString);
-               fail(
+               System.out.println(
                      "Output does not match reference on line "+i+"\n"+
                            "Reference: "+refLine+"\n"+
                            "Output:    "+outLine
                );
+               return false;
             }
          }
       }
+      return true;
    }
 
    private List<String> getOutLines(String outputString) throws IOException {

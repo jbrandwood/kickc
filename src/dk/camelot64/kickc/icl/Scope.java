@@ -186,7 +186,7 @@ public abstract class Scope implements Symbol {
    }
 
    public Label getLabel(LabelRef labelRef) {
-      return (Label) symbols.get(labelRef);
+      return (Label) getSymbol(labelRef);
    }
 
    public Procedure addProcedure(String name, SymbolType type) {
@@ -206,6 +206,10 @@ public abstract class Scope implements Symbol {
       } else {
          return null;
       }
+   }
+
+   public Procedure getProcedure(ProcedureRef ref) {
+         return (Procedure) getSymbol(ref);
    }
 
    abstract RegisterAllocation getAllocation();

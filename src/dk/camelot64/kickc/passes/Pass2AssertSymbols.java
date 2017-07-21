@@ -93,7 +93,7 @@ public class Pass2AssertSymbols extends Pass2SsaAssertion {
       @Override
       public Void visitProcedureBegin(StatementProcedureBegin statement) {
          ProcedureRef procedureRef = statement.getProcedure();
-         Procedure procedure = (Procedure) programScope.getSymbol(procedureRef);
+         Procedure procedure = programScope.getProcedure(procedureRef);
          symbols.add(procedure);
          return super.visitProcedureBegin(statement);
       }
@@ -101,7 +101,7 @@ public class Pass2AssertSymbols extends Pass2SsaAssertion {
       @Override
       public Void visitProcedureEnd(StatementProcedureEnd statement) {
          ProcedureRef procedureRef = statement.getProcedure();
-         Procedure procedure = (Procedure) programScope.getSymbol(procedureRef);
+         Procedure procedure = programScope.getProcedure(procedureRef);
          symbols.add(procedure);
          return super.visitProcedureEnd(statement);
       }

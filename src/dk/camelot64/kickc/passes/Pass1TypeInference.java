@@ -27,7 +27,7 @@ public class Pass1TypeInference {
          if(statement instanceof StatementProcedureBegin) {
                 StatementProcedureBegin procedureBegin = (StatementProcedureBegin) statement;
             ProcedureRef procedureRef = procedureBegin.getProcedure();
-            Procedure procedure = (Procedure) programScope.getSymbol(procedureRef);
+            Procedure procedure = programScope.getProcedure(procedureRef);
             scopes.push(procedure);
          }  else if(statement instanceof StatementProcedureEnd) {
             scopes.pop();

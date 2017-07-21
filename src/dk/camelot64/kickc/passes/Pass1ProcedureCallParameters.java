@@ -25,7 +25,7 @@ public class Pass1ProcedureCallParameters extends ControlFlowGraphCopyVisitor {
       // Procedure strategy implemented is currently variable-based transfer of parameters/return values
       // Generate parameter passing assignments
       ProcedureRef procedureRef = origCall.getProcedure();
-      Procedure procedure = (Procedure) scope.getSymbol(procedureRef);
+      Procedure procedure = scope.getProcedure(procedureRef);
       List<Variable> parameterDecls = procedure.getParameters();
       List<RValue> parameterValues = origCall.getParameters();
       for (int i = 0; i < parameterDecls.size(); i++) {

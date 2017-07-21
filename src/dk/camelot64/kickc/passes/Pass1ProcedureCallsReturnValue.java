@@ -23,8 +23,7 @@ public class Pass1ProcedureCallsReturnValue extends ControlFlowGraphCopyVisitor 
       // Procedure strategy implemented is currently variable-based transfer of parameters/return values
       // Generate return value assignment
       ProcedureRef procedureRef = origCall.getProcedure();
-      Procedure procedure = (Procedure) scope.getSymbol(procedureRef);
-
+      Procedure procedure = scope.getProcedure(procedureRef);
       String procedureName = origCall.getProcedureName();
       StatementCall copyCall = new StatementCall(null, procedureName, null);
       copyCall.setParametersByAssignment(true);

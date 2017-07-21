@@ -17,7 +17,7 @@ public class StatementPhi implements StatementLValue {
    /** The versioned variable being assigned a value by the statement. */
    private VariableRef lValue;
 
-   /** The previous version of the rValue from predeccesor control blocks. */
+   /** The previous version of the rValue from predecessor control blocks. */
    private List<PreviousSymbol> previousVersions;
 
    public StatementPhi(VariableRef lValue) {

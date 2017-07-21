@@ -230,44 +230,44 @@ INITIAL CONTROL FLOW GRAPH
   (byte[256]) buffer2 ← (word) 4352
   (byte*) RASTER ← (word) 53266
   (void~) $0 ← call main 
-  to:@5
+  to:main::@9
 main: from
   (void~) main::$0 ← call prepare 
   to:main::@1
-main::@1: from @3 main
+main::@1: from main main::@7
   (byte) main::c ← (byte) 25
   to:main::@2
-main::@2: from @2 main::@1
+main::@2: from main::@1 main::@6
   to:main::@3
 main::@3: from main::@2 main::@3
   (byte~) main::$1 ← * (byte*) RASTER
   (boolean~) main::$2 ← (byte~) main::$1 != (byte) 254
   if((boolean~) main::$2) goto main::@3
-  to:@1
-@1: from main::@3
+  to:main::@5
+main::@5: from main::@3
   to:main::@4
-main::@4: from @1 main::@4
+main::@4: from main::@4 main::@5
   (byte~) main::$3 ← * (byte*) RASTER
   (boolean~) main::$4 ← (byte~) main::$3 != (byte) 255
   if((boolean~) main::$4) goto main::@4
-  to:@2
-@2: from main::@4
+  to:main::@6
+main::@6: from main::@4
   (byte) main::c ← -- (byte) main::c
   (boolean~) main::$5 ← (byte) main::c != (byte) 0
   if((boolean~) main::$5) goto main::@2
-  to:@3
-@3: from @2
+  to:main::@7
+main::@7: from main::@6
   (void~) main::$6 ← call flip 
   (void~) main::$7 ← call plot 
   if(true) goto main::@1
-  to:@4
-@4: from @3
+  to:main::@8
+main::@8: from main::@7
   to:main::@return
-main::@return: from @4
+main::@return: from main::@8
   return 
   to:@RETURN
-@5: from @BEGIN
-  to:@7
+main::@9: from @BEGIN
+  to:prepare::@3
 prepare: from
   (byte) prepare::i ← (byte) 0
   to:prepare::@1
@@ -276,20 +276,20 @@ prepare::@1: from prepare prepare::@1
   (byte) prepare::i ← ++ (byte) prepare::i
   (boolean~) prepare::$0 ← (byte) prepare::i != (byte) 0
   if((boolean~) prepare::$0) goto prepare::@1
-  to:@6
-@6: from prepare::@1
+  to:prepare::@2
+prepare::@2: from prepare::@1
   to:prepare::@return
-prepare::@return: from @6
+prepare::@return: from prepare::@2
   return 
   to:@RETURN
-@7: from @5
-  to:@11
+prepare::@3: from main::@9
+  to:flip::@7
 flip: from
   (byte) flip::srcIdx ← (byte) 0
   (byte) flip::dstIdx ← (byte) 15
   (byte) flip::r ← (byte) 16
   to:flip::@1
-flip::@1: from @8 flip
+flip::@1: from flip flip::@4
   (byte) flip::c ← (byte) 16
   to:flip::@2
 flip::@2: from flip::@1 flip::@2
@@ -301,30 +301,30 @@ flip::@2: from flip::@1 flip::@2
   (byte) flip::c ← -- (byte) flip::c
   (boolean~) flip::$2 ← (byte) flip::c != (byte) 0
   if((boolean~) flip::$2) goto flip::@2
-  to:@8
-@8: from flip::@2
+  to:flip::@4
+flip::@4: from flip::@2
   (byte) flip::dstIdx ← -- (byte) flip::dstIdx
   (byte) flip::r ← -- (byte) flip::r
   (boolean~) flip::$3 ← (byte) flip::r != (byte) 0
   if((boolean~) flip::$3) goto flip::@1
-  to:@9
-@9: from @8
+  to:flip::@5
+flip::@5: from flip::@4
   (byte) flip::i ← (byte) 0
   to:flip::@3
-flip::@3: from @9 flip::@3
+flip::@3: from flip::@3 flip::@5
   (byte~) flip::$4 ← (byte[256]) buffer2 *idx (byte) flip::i
   *((byte[256]) buffer1 + (byte) flip::i) ← (byte~) flip::$4
   (byte) flip::i ← ++ (byte) flip::i
   (boolean~) flip::$5 ← (byte) flip::i != (byte) 0
   if((boolean~) flip::$5) goto flip::@3
-  to:@10
-@10: from flip::@3
+  to:flip::@6
+flip::@6: from flip::@3
   to:flip::@return
-flip::@return: from @10
+flip::@return: from flip::@6
   return 
   to:@RETURN
-@11: from @7
-  to:@14
+flip::@7: from prepare::@3
+  to:plot::@5
 plot: from
   (byte~) plot::$0 ← (byte) 5 * (byte) 40
   (byte*~) plot::$1 ← (byte[1000]) SCREEN + (byte~) plot::$0
@@ -333,7 +333,7 @@ plot: from
   (byte) plot::y ← (byte) 16
   (byte) plot::i ← (byte) 0
   to:plot::@1
-plot::@1: from @12 plot
+plot::@1: from plot plot::@3
   (byte) plot::x ← (byte) 0
   to:plot::@2
 plot::@2: from plot::@1 plot::@2
@@ -343,22 +343,22 @@ plot::@2: from plot::@1 plot::@2
   (byte) plot::x ← ++ (byte) plot::x
   (boolean~) plot::$4 ← (byte) plot::x < (byte) 16
   if((boolean~) plot::$4) goto plot::@2
-  to:@12
-@12: from plot::@2
+  to:plot::@3
+plot::@3: from plot::@2
   (byte*~) plot::$5 ← (byte*) plot::line + (byte) 40
   (byte*) plot::line ← (byte*~) plot::$5
   (byte) plot::y ← -- (byte) plot::y
   (boolean~) plot::$6 ← (byte) plot::y != (byte) 0
   if((boolean~) plot::$6) goto plot::@1
-  to:@13
-@13: from @12
+  to:plot::@4
+plot::@4: from plot::@3
   to:plot::@return
-plot::@return: from @13
+plot::@return: from plot::@4
   return 
   to:@RETURN
-@14: from @11
+plot::@5: from flip::@7
   to:@END
-@END: from @14
+@END: from plot::@5
 
 CONTROL FLOW GRAPH WITH ASSIGNMENT CALL
 @BEGIN: from
@@ -367,52 +367,52 @@ CONTROL FLOW GRAPH WITH ASSIGNMENT CALL
   (byte[256]) buffer2 ← (word) 4352
   (byte*) RASTER ← (word) 53266
   call main param-assignment
-  to:@15
-@15: from @BEGIN
-  to:@5
+  to:@1
+@1: from @BEGIN
+  to:main::@9
 main: from @BEGIN
   call prepare param-assignment
-  to:@16
-@16: from main
+  to:main::@10
+main::@10: from main
   to:main::@1
-main::@1: from @16 @18
+main::@1: from main::@10 main::@12
   (byte) main::c ← (byte) 25
   to:main::@2
-main::@2: from @2 main::@1
+main::@2: from main::@1 main::@6
   to:main::@3
 main::@3: from main::@2 main::@3
   (byte~) main::$1 ← * (byte*) RASTER
   (boolean~) main::$2 ← (byte~) main::$1 != (byte) 254
   if((boolean~) main::$2) goto main::@3
-  to:@1
-@1: from main::@3
+  to:main::@5
+main::@5: from main::@3
   to:main::@4
-main::@4: from @1 main::@4
+main::@4: from main::@4 main::@5
   (byte~) main::$3 ← * (byte*) RASTER
   (boolean~) main::$4 ← (byte~) main::$3 != (byte) 255
   if((boolean~) main::$4) goto main::@4
-  to:@2
-@2: from main::@4
+  to:main::@6
+main::@6: from main::@4
   (byte) main::c ← -- (byte) main::c
   (boolean~) main::$5 ← (byte) main::c != (byte) 0
   if((boolean~) main::$5) goto main::@2
-  to:@3
-@3: from @2
+  to:main::@7
+main::@7: from main::@6
   call flip param-assignment
-  to:@17
-@17: from @3
+  to:main::@11
+main::@11: from main::@7
   call plot param-assignment
-  to:@18
-@18: from @17
+  to:main::@12
+main::@12: from main::@11
   if(true) goto main::@1
-  to:@4
-@4: from @18
+  to:main::@8
+main::@8: from main::@12
   to:main::@return
-main::@return: from @4
+main::@return: from main::@8
   return 
   to:@RETURN
-@5: from @15
-  to:@7
+main::@9: from @1
+  to:prepare::@3
 prepare: from main
   (byte) prepare::i ← (byte) 0
   to:prepare::@1
@@ -421,20 +421,20 @@ prepare::@1: from prepare prepare::@1
   (byte) prepare::i ← ++ (byte) prepare::i
   (boolean~) prepare::$0 ← (byte) prepare::i != (byte) 0
   if((boolean~) prepare::$0) goto prepare::@1
-  to:@6
-@6: from prepare::@1
+  to:prepare::@2
+prepare::@2: from prepare::@1
   to:prepare::@return
-prepare::@return: from @6
+prepare::@return: from prepare::@2
   return 
   to:@RETURN
-@7: from @5
-  to:@11
-flip: from @3
+prepare::@3: from main::@9
+  to:flip::@7
+flip: from main::@7
   (byte) flip::srcIdx ← (byte) 0
   (byte) flip::dstIdx ← (byte) 15
   (byte) flip::r ← (byte) 16
   to:flip::@1
-flip::@1: from @8 flip
+flip::@1: from flip flip::@4
   (byte) flip::c ← (byte) 16
   to:flip::@2
 flip::@2: from flip::@1 flip::@2
@@ -446,31 +446,31 @@ flip::@2: from flip::@1 flip::@2
   (byte) flip::c ← -- (byte) flip::c
   (boolean~) flip::$2 ← (byte) flip::c != (byte) 0
   if((boolean~) flip::$2) goto flip::@2
-  to:@8
-@8: from flip::@2
+  to:flip::@4
+flip::@4: from flip::@2
   (byte) flip::dstIdx ← -- (byte) flip::dstIdx
   (byte) flip::r ← -- (byte) flip::r
   (boolean~) flip::$3 ← (byte) flip::r != (byte) 0
   if((boolean~) flip::$3) goto flip::@1
-  to:@9
-@9: from @8
+  to:flip::@5
+flip::@5: from flip::@4
   (byte) flip::i ← (byte) 0
   to:flip::@3
-flip::@3: from @9 flip::@3
+flip::@3: from flip::@3 flip::@5
   (byte~) flip::$4 ← (byte[256]) buffer2 *idx (byte) flip::i
   *((byte[256]) buffer1 + (byte) flip::i) ← (byte~) flip::$4
   (byte) flip::i ← ++ (byte) flip::i
   (boolean~) flip::$5 ← (byte) flip::i != (byte) 0
   if((boolean~) flip::$5) goto flip::@3
-  to:@10
-@10: from flip::@3
+  to:flip::@6
+flip::@6: from flip::@3
   to:flip::@return
-flip::@return: from @10
+flip::@return: from flip::@6
   return 
   to:@RETURN
-@11: from @7
-  to:@14
-plot: from @17
+flip::@7: from prepare::@3
+  to:plot::@5
+plot: from main::@11
   (byte~) plot::$0 ← (byte) 5 * (byte) 40
   (byte*~) plot::$1 ← (byte[1000]) SCREEN + (byte~) plot::$0
   (byte*~) plot::$2 ← (byte*~) plot::$1 + (byte) 12
@@ -478,7 +478,7 @@ plot: from @17
   (byte) plot::y ← (byte) 16
   (byte) plot::i ← (byte) 0
   to:plot::@1
-plot::@1: from @12 plot
+plot::@1: from plot plot::@3
   (byte) plot::x ← (byte) 0
   to:plot::@2
 plot::@2: from plot::@1 plot::@2
@@ -488,22 +488,22 @@ plot::@2: from plot::@1 plot::@2
   (byte) plot::x ← ++ (byte) plot::x
   (boolean~) plot::$4 ← (byte) plot::x < (byte) 16
   if((boolean~) plot::$4) goto plot::@2
-  to:@12
-@12: from plot::@2
+  to:plot::@3
+plot::@3: from plot::@2
   (byte*~) plot::$5 ← (byte*) plot::line + (byte) 40
   (byte*) plot::line ← (byte*~) plot::$5
   (byte) plot::y ← -- (byte) plot::y
   (boolean~) plot::$6 ← (byte) plot::y != (byte) 0
   if((boolean~) plot::$6) goto plot::@1
-  to:@13
-@13: from @12
+  to:plot::@4
+plot::@4: from plot::@3
   to:plot::@return
-plot::@return: from @13
+plot::@return: from plot::@4
   return 
   to:@RETURN
-@14: from @11
+plot::@5: from flip::@7
   to:@END
-@END: from @14
+@END: from plot::@5
 
 Completing Phi functions...
 Completing Phi functions...
@@ -524,35 +524,35 @@ CONTROL FLOW GRAPH SSA
   (byte[256]) buffer2#0 ← (word) 4352
   (byte*) RASTER#0 ← (word) 53266
   call main param-assignment
-  to:@15
-@15: from @BEGIN
-  to:@5
+  to:@1
+@1: from @BEGIN
+  to:main::@9
 main: from @BEGIN
   (byte[256]) buffer2#16 ← phi( @BEGIN/(byte[256]) buffer2#0 )
   (byte[1000]) SCREEN#12 ← phi( @BEGIN/(byte[1000]) SCREEN#0 )
   (byte*) RASTER#9 ← phi( @BEGIN/(byte*) RASTER#0 )
   (byte[256]) buffer1#9 ← phi( @BEGIN/(byte[256]) buffer1#0 )
   call prepare param-assignment
-  to:@16
-@16: from main
+  to:main::@10
+main::@10: from main
   (byte[256]) buffer2#14 ← phi( main/(byte[256]) buffer2#16 )
   (byte[256]) buffer1#22 ← phi( main/(byte[256]) buffer1#9 )
   (byte[1000]) SCREEN#10 ← phi( main/(byte[1000]) SCREEN#12 )
   (byte*) RASTER#7 ← phi( main/(byte*) RASTER#9 )
   to:main::@1
-main::@1: from @16 @18
-  (byte[256]) buffer1#21 ← phi( @16/(byte[256]) buffer1#22 @18/(byte[256]) buffer1#23 )
-  (byte[256]) buffer2#13 ← phi( @16/(byte[256]) buffer2#14 @18/(byte[256]) buffer2#15 )
-  (byte[1000]) SCREEN#9 ← phi( @16/(byte[1000]) SCREEN#10 @18/(byte[1000]) SCREEN#11 )
-  (byte*) RASTER#6 ← phi( @16/(byte*) RASTER#7 @18/(byte*) RASTER#8 )
+main::@1: from main::@10 main::@12
+  (byte[256]) buffer1#21 ← phi( main::@10/(byte[256]) buffer1#22 main::@12/(byte[256]) buffer1#23 )
+  (byte[256]) buffer2#13 ← phi( main::@10/(byte[256]) buffer2#14 main::@12/(byte[256]) buffer2#15 )
+  (byte[1000]) SCREEN#9 ← phi( main::@10/(byte[1000]) SCREEN#10 main::@12/(byte[1000]) SCREEN#11 )
+  (byte*) RASTER#5 ← phi( main::@10/(byte*) RASTER#7 main::@12/(byte*) RASTER#8 )
   (byte) main::c#0 ← (byte) 25
   to:main::@2
-main::@2: from @2 main::@1
-  (byte[256]) buffer2#12 ← phi( @2/(byte[256]) buffer2#8 main::@1/(byte[256]) buffer2#13 )
-  (byte[256]) buffer1#20 ← phi( @2/(byte[256]) buffer1#16 main::@1/(byte[256]) buffer1#21 )
-  (byte[1000]) SCREEN#8 ← phi( @2/(byte[1000]) SCREEN#4 main::@1/(byte[1000]) SCREEN#9 )
-  (byte) main::c#6 ← phi( @2/(byte) main::c#1 main::@1/(byte) main::c#0 )
-  (byte*) RASTER#3 ← phi( @2/(byte*) RASTER#5 main::@1/(byte*) RASTER#6 )
+main::@2: from main::@1 main::@6
+  (byte[256]) buffer2#12 ← phi( main::@1/(byte[256]) buffer2#13 main::@6/(byte[256]) buffer2#8 )
+  (byte[256]) buffer1#20 ← phi( main::@1/(byte[256]) buffer1#21 main::@6/(byte[256]) buffer1#16 )
+  (byte[1000]) SCREEN#8 ← phi( main::@1/(byte[1000]) SCREEN#9 main::@6/(byte[1000]) SCREEN#4 )
+  (byte) main::c#6 ← phi( main::@1/(byte) main::c#0 main::@6/(byte) main::c#1 )
+  (byte*) RASTER#3 ← phi( main::@1/(byte*) RASTER#5 main::@6/(byte*) RASTER#6 )
   to:main::@3
 main::@3: from main::@2 main::@3
   (byte[256]) buffer1#19 ← phi( main::@2/(byte[256]) buffer1#20 main::@3/(byte[256]) buffer1#19 )
@@ -563,62 +563,62 @@ main::@3: from main::@2 main::@3
   (byte~) main::$1 ← * (byte*) RASTER#1
   (boolean~) main::$2 ← (byte~) main::$1 != (byte) 254
   if((boolean~) main::$2) goto main::@3
-  to:@1
-@1: from main::@3
+  to:main::@5
+main::@5: from main::@3
   (byte[256]) buffer2#10 ← phi( main::@3/(byte[256]) buffer2#11 )
   (byte[256]) buffer1#18 ← phi( main::@3/(byte[256]) buffer1#19 )
   (byte[1000]) SCREEN#6 ← phi( main::@3/(byte[1000]) SCREEN#7 )
   (byte) main::c#4 ← phi( main::@3/(byte) main::c#5 )
   (byte*) RASTER#4 ← phi( main::@3/(byte*) RASTER#1 )
   to:main::@4
-main::@4: from @1 main::@4
-  (byte[256]) buffer1#17 ← phi( @1/(byte[256]) buffer1#18 main::@4/(byte[256]) buffer1#17 )
-  (byte[256]) buffer2#9 ← phi( @1/(byte[256]) buffer2#10 main::@4/(byte[256]) buffer2#9 )
-  (byte[1000]) SCREEN#5 ← phi( @1/(byte[1000]) SCREEN#6 main::@4/(byte[1000]) SCREEN#5 )
-  (byte) main::c#3 ← phi( @1/(byte) main::c#4 main::@4/(byte) main::c#3 )
-  (byte*) RASTER#2 ← phi( @1/(byte*) RASTER#4 main::@4/(byte*) RASTER#2 )
+main::@4: from main::@4 main::@5
+  (byte[256]) buffer1#17 ← phi( main::@4/(byte[256]) buffer1#17 main::@5/(byte[256]) buffer1#18 )
+  (byte[256]) buffer2#9 ← phi( main::@4/(byte[256]) buffer2#9 main::@5/(byte[256]) buffer2#10 )
+  (byte[1000]) SCREEN#5 ← phi( main::@4/(byte[1000]) SCREEN#5 main::@5/(byte[1000]) SCREEN#6 )
+  (byte) main::c#3 ← phi( main::@4/(byte) main::c#3 main::@5/(byte) main::c#4 )
+  (byte*) RASTER#2 ← phi( main::@4/(byte*) RASTER#2 main::@5/(byte*) RASTER#4 )
   (byte~) main::$3 ← * (byte*) RASTER#2
   (boolean~) main::$4 ← (byte~) main::$3 != (byte) 255
   if((boolean~) main::$4) goto main::@4
-  to:@2
-@2: from main::@4
+  to:main::@6
+main::@6: from main::@4
   (byte[256]) buffer2#8 ← phi( main::@4/(byte[256]) buffer2#9 )
   (byte[256]) buffer1#16 ← phi( main::@4/(byte[256]) buffer1#17 )
   (byte[1000]) SCREEN#4 ← phi( main::@4/(byte[1000]) SCREEN#5 )
-  (byte*) RASTER#5 ← phi( main::@4/(byte*) RASTER#2 )
+  (byte*) RASTER#6 ← phi( main::@4/(byte*) RASTER#2 )
   (byte) main::c#2 ← phi( main::@4/(byte) main::c#3 )
   (byte) main::c#1 ← -- (byte) main::c#2
   (boolean~) main::$5 ← (byte) main::c#1 != (byte) 0
   if((boolean~) main::$5) goto main::@2
-  to:@3
-@3: from @2
-  (byte*) RASTER#11 ← phi( @2/(byte*) RASTER#5 )
-  (byte[256]) buffer1#14 ← phi( @2/(byte[256]) buffer1#16 )
-  (byte[256]) buffer2#7 ← phi( @2/(byte[256]) buffer2#8 )
-  (byte[1000]) SCREEN#3 ← phi( @2/(byte[1000]) SCREEN#4 )
+  to:main::@7
+main::@7: from main::@6
+  (byte*) RASTER#11 ← phi( main::@6/(byte*) RASTER#6 )
+  (byte[256]) buffer1#14 ← phi( main::@6/(byte[256]) buffer1#16 )
+  (byte[256]) buffer2#7 ← phi( main::@6/(byte[256]) buffer2#8 )
+  (byte[1000]) SCREEN#3 ← phi( main::@6/(byte[1000]) SCREEN#4 )
   call flip param-assignment
-  to:@17
-@17: from @3
-  (byte[256]) buffer2#17 ← phi( @3/(byte[256]) buffer2#7 )
-  (byte*) RASTER#10 ← phi( @3/(byte*) RASTER#11 )
-  (byte[256]) buffer1#15 ← phi( @3/(byte[256]) buffer1#14 )
-  (byte[1000]) SCREEN#2 ← phi( @3/(byte[1000]) SCREEN#3 )
+  to:main::@11
+main::@11: from main::@7
+  (byte[256]) buffer2#17 ← phi( main::@7/(byte[256]) buffer2#7 )
+  (byte*) RASTER#10 ← phi( main::@7/(byte*) RASTER#11 )
+  (byte[256]) buffer1#15 ← phi( main::@7/(byte[256]) buffer1#14 )
+  (byte[1000]) SCREEN#2 ← phi( main::@7/(byte[1000]) SCREEN#3 )
   call plot param-assignment
-  to:@18
-@18: from @17
-  (byte[256]) buffer2#15 ← phi( @17/(byte[256]) buffer2#17 )
-  (byte[256]) buffer1#23 ← phi( @17/(byte[256]) buffer1#15 )
-  (byte[1000]) SCREEN#11 ← phi( @17/(byte[1000]) SCREEN#2 )
-  (byte*) RASTER#8 ← phi( @17/(byte*) RASTER#10 )
+  to:main::@12
+main::@12: from main::@11
+  (byte[256]) buffer2#15 ← phi( main::@11/(byte[256]) buffer2#17 )
+  (byte[256]) buffer1#23 ← phi( main::@11/(byte[256]) buffer1#15 )
+  (byte[1000]) SCREEN#11 ← phi( main::@11/(byte[1000]) SCREEN#2 )
+  (byte*) RASTER#8 ← phi( main::@11/(byte*) RASTER#10 )
   if(true) goto main::@1
-  to:@4
-@4: from @18
+  to:main::@8
+main::@8: from main::@12
   to:main::@return
-main::@return: from @4
+main::@return: from main::@8
   return 
   to:@RETURN
-@5: from @15
-  to:@7
+main::@9: from @1
+  to:prepare::@3
 prepare: from main
   (byte[256]) buffer1#5 ← phi( main/(byte[256]) buffer1#9 )
   (byte) prepare::i#0 ← (byte) 0
@@ -630,27 +630,27 @@ prepare::@1: from prepare prepare::@1
   (byte) prepare::i#1 ← ++ (byte) prepare::i#2
   (boolean~) prepare::$0 ← (byte) prepare::i#1 != (byte) 0
   if((boolean~) prepare::$0) goto prepare::@1
-  to:@6
-@6: from prepare::@1
+  to:prepare::@2
+prepare::@2: from prepare::@1
   to:prepare::@return
-prepare::@return: from @6
+prepare::@return: from prepare::@2
   return 
   to:@RETURN
-@7: from @5
-  to:@11
-flip: from @3
-  (byte[256]) buffer2#6 ← phi( @3/(byte[256]) buffer2#7 )
-  (byte[256]) buffer1#11 ← phi( @3/(byte[256]) buffer1#14 )
+prepare::@3: from main::@9
+  to:flip::@7
+flip: from main::@7
+  (byte[256]) buffer2#5 ← phi( main::@7/(byte[256]) buffer2#7 )
+  (byte[256]) buffer1#10 ← phi( main::@7/(byte[256]) buffer1#14 )
   (byte) flip::srcIdx#0 ← (byte) 0
   (byte) flip::dstIdx#0 ← (byte) 15
   (byte) flip::r#0 ← (byte) 16
   to:flip::@1
-flip::@1: from @8 flip
-  (byte) flip::r#4 ← phi( @8/(byte) flip::r#1 flip/(byte) flip::r#0 )
-  (byte[256]) buffer1#6 ← phi( @8/(byte[256]) buffer1#10 flip/(byte[256]) buffer1#11 )
-  (byte) flip::srcIdx#3 ← phi( @8/(byte) flip::srcIdx#4 flip/(byte) flip::srcIdx#0 )
-  (byte[256]) buffer2#3 ← phi( @8/(byte[256]) buffer2#5 flip/(byte[256]) buffer2#6 )
-  (byte) flip::dstIdx#5 ← phi( @8/(byte) flip::dstIdx#2 flip/(byte) flip::dstIdx#0 )
+flip::@1: from flip flip::@4
+  (byte) flip::r#4 ← phi( flip/(byte) flip::r#0 flip::@4/(byte) flip::r#1 )
+  (byte[256]) buffer1#6 ← phi( flip/(byte[256]) buffer1#10 flip::@4/(byte[256]) buffer1#11 )
+  (byte) flip::srcIdx#3 ← phi( flip/(byte) flip::srcIdx#0 flip::@4/(byte) flip::srcIdx#4 )
+  (byte[256]) buffer2#3 ← phi( flip/(byte[256]) buffer2#5 flip::@4/(byte[256]) buffer2#6 )
+  (byte) flip::dstIdx#5 ← phi( flip/(byte) flip::dstIdx#0 flip::@4/(byte) flip::dstIdx#2 )
   (byte) flip::c#0 ← (byte) 16
   to:flip::@2
 flip::@2: from flip::@1 flip::@2
@@ -668,43 +668,43 @@ flip::@2: from flip::@1 flip::@2
   (byte) flip::c#1 ← -- (byte) flip::c#2
   (boolean~) flip::$2 ← (byte) flip::c#1 != (byte) 0
   if((boolean~) flip::$2) goto flip::@2
-  to:@8
-@8: from flip::@2
-  (byte[256]) buffer2#5 ← phi( flip::@2/(byte[256]) buffer2#1 )
+  to:flip::@4
+flip::@4: from flip::@2
+  (byte[256]) buffer2#6 ← phi( flip::@2/(byte[256]) buffer2#1 )
   (byte) flip::srcIdx#4 ← phi( flip::@2/(byte) flip::srcIdx#1 )
-  (byte[256]) buffer1#10 ← phi( flip::@2/(byte[256]) buffer1#2 )
+  (byte[256]) buffer1#11 ← phi( flip::@2/(byte[256]) buffer1#2 )
   (byte) flip::r#2 ← phi( flip::@2/(byte) flip::r#3 )
   (byte) flip::dstIdx#4 ← phi( flip::@2/(byte) flip::dstIdx#1 )
   (byte) flip::dstIdx#2 ← -- (byte) flip::dstIdx#4
   (byte) flip::r#1 ← -- (byte) flip::r#2
   (boolean~) flip::$3 ← (byte) flip::r#1 != (byte) 0
   if((boolean~) flip::$3) goto flip::@1
-  to:@9
-@9: from @8
-  (byte[256]) buffer2#4 ← phi( @8/(byte[256]) buffer2#5 )
-  (byte[256]) buffer1#7 ← phi( @8/(byte[256]) buffer1#10 )
+  to:flip::@5
+flip::@5: from flip::@4
+  (byte[256]) buffer2#4 ← phi( flip::@4/(byte[256]) buffer2#6 )
+  (byte[256]) buffer1#7 ← phi( flip::@4/(byte[256]) buffer1#11 )
   (byte) flip::i#0 ← (byte) 0
   to:flip::@3
-flip::@3: from @9 flip::@3
-  (byte[256]) buffer1#3 ← phi( @9/(byte[256]) buffer1#7 flip::@3/(byte[256]) buffer1#3 )
-  (byte) flip::i#2 ← phi( @9/(byte) flip::i#0 flip::@3/(byte) flip::i#1 )
-  (byte[256]) buffer2#2 ← phi( @9/(byte[256]) buffer2#4 flip::@3/(byte[256]) buffer2#2 )
+flip::@3: from flip::@3 flip::@5
+  (byte[256]) buffer1#3 ← phi( flip::@3/(byte[256]) buffer1#3 flip::@5/(byte[256]) buffer1#7 )
+  (byte) flip::i#2 ← phi( flip::@3/(byte) flip::i#1 flip::@5/(byte) flip::i#0 )
+  (byte[256]) buffer2#2 ← phi( flip::@3/(byte[256]) buffer2#2 flip::@5/(byte[256]) buffer2#4 )
   (byte~) flip::$4 ← (byte[256]) buffer2#2 *idx (byte) flip::i#2
   *((byte[256]) buffer1#3 + (byte) flip::i#2) ← (byte~) flip::$4
   (byte) flip::i#1 ← ++ (byte) flip::i#2
   (boolean~) flip::$5 ← (byte) flip::i#1 != (byte) 0
   if((boolean~) flip::$5) goto flip::@3
-  to:@10
-@10: from flip::@3
+  to:flip::@6
+flip::@6: from flip::@3
   to:flip::@return
-flip::@return: from @10
+flip::@return: from flip::@6
   return 
   to:@RETURN
-@11: from @7
-  to:@14
-plot: from @17
-  (byte[256]) buffer1#13 ← phi( @17/(byte[256]) buffer1#15 )
-  (byte[1000]) SCREEN#1 ← phi( @17/(byte[1000]) SCREEN#2 )
+flip::@7: from prepare::@3
+  to:plot::@5
+plot: from main::@11
+  (byte[256]) buffer1#12 ← phi( main::@11/(byte[256]) buffer1#15 )
+  (byte[1000]) SCREEN#1 ← phi( main::@11/(byte[1000]) SCREEN#2 )
   (byte~) plot::$0 ← (byte) 5 * (byte) 40
   (byte*~) plot::$1 ← (byte[1000]) SCREEN#1 + (byte~) plot::$0
   (byte*~) plot::$2 ← (byte*~) plot::$1 + (byte) 12
@@ -712,11 +712,11 @@ plot: from @17
   (byte) plot::y#0 ← (byte) 16
   (byte) plot::i#0 ← (byte) 0
   to:plot::@1
-plot::@1: from @12 plot
-  (byte) plot::y#4 ← phi( @12/(byte) plot::y#1 plot/(byte) plot::y#0 )
-  (byte[256]) buffer1#8 ← phi( @12/(byte[256]) buffer1#12 plot/(byte[256]) buffer1#13 )
-  (byte) plot::i#3 ← phi( @12/(byte) plot::i#4 plot/(byte) plot::i#0 )
-  (byte*) plot::line#4 ← phi( @12/(byte*) plot::line#1 plot/(byte*) plot::line#0 )
+plot::@1: from plot plot::@3
+  (byte) plot::y#4 ← phi( plot/(byte) plot::y#0 plot::@3/(byte) plot::y#1 )
+  (byte[256]) buffer1#8 ← phi( plot/(byte[256]) buffer1#12 plot::@3/(byte[256]) buffer1#13 )
+  (byte) plot::i#3 ← phi( plot/(byte) plot::i#0 plot::@3/(byte) plot::i#4 )
+  (byte*) plot::line#4 ← phi( plot/(byte*) plot::line#0 plot::@3/(byte*) plot::line#1 )
   (byte) plot::x#0 ← (byte) 0
   to:plot::@2
 plot::@2: from plot::@1 plot::@2
@@ -731,10 +731,10 @@ plot::@2: from plot::@1 plot::@2
   (byte) plot::x#1 ← ++ (byte) plot::x#2
   (boolean~) plot::$4 ← (byte) plot::x#1 < (byte) 16
   if((boolean~) plot::$4) goto plot::@2
-  to:@12
-@12: from plot::@2
+  to:plot::@3
+plot::@3: from plot::@2
   (byte) plot::i#4 ← phi( plot::@2/(byte) plot::i#1 )
-  (byte[256]) buffer1#12 ← phi( plot::@2/(byte[256]) buffer1#4 )
+  (byte[256]) buffer1#13 ← phi( plot::@2/(byte[256]) buffer1#4 )
   (byte) plot::y#2 ← phi( plot::@2/(byte) plot::y#3 )
   (byte*) plot::line#3 ← phi( plot::@2/(byte*) plot::line#2 )
   (byte*~) plot::$5 ← (byte*) plot::line#3 + (byte) 40
@@ -742,15 +742,15 @@ plot::@2: from plot::@1 plot::@2
   (byte) plot::y#1 ← -- (byte) plot::y#2
   (boolean~) plot::$6 ← (byte) plot::y#1 != (byte) 0
   if((boolean~) plot::$6) goto plot::@1
-  to:@13
-@13: from @12
+  to:plot::@4
+plot::@4: from plot::@3
   to:plot::@return
-plot::@return: from @13
+plot::@return: from plot::@4
   return 
   to:@RETURN
-@14: from @11
+plot::@5: from flip::@7
   to:@END
-@END: from @14
+@END: from plot::@5
 
 CONTROL FLOW GRAPH WITH ASSIGNMENT CALL & RETURN
 @BEGIN: from
@@ -759,35 +759,35 @@ CONTROL FLOW GRAPH WITH ASSIGNMENT CALL & RETURN
   (byte[256]) buffer2#0 ← (word) 4352
   (byte*) RASTER#0 ← (word) 53266
   call main param-assignment
-  to:@15
-@15: from @BEGIN
-  to:@5
+  to:@1
+@1: from @BEGIN
+  to:main::@9
 main: from @BEGIN
   (byte[256]) buffer2#16 ← phi( @BEGIN/(byte[256]) buffer2#0 )
   (byte[1000]) SCREEN#12 ← phi( @BEGIN/(byte[1000]) SCREEN#0 )
   (byte*) RASTER#9 ← phi( @BEGIN/(byte*) RASTER#0 )
   (byte[256]) buffer1#9 ← phi( @BEGIN/(byte[256]) buffer1#0 )
   call prepare param-assignment
-  to:@16
-@16: from main
+  to:main::@10
+main::@10: from main
   (byte[256]) buffer2#14 ← phi( main/(byte[256]) buffer2#16 )
   (byte[256]) buffer1#22 ← phi( main/(byte[256]) buffer1#9 )
   (byte[1000]) SCREEN#10 ← phi( main/(byte[1000]) SCREEN#12 )
   (byte*) RASTER#7 ← phi( main/(byte*) RASTER#9 )
   to:main::@1
-main::@1: from @16 @18
-  (byte[256]) buffer1#21 ← phi( @16/(byte[256]) buffer1#22 @18/(byte[256]) buffer1#23 )
-  (byte[256]) buffer2#13 ← phi( @16/(byte[256]) buffer2#14 @18/(byte[256]) buffer2#15 )
-  (byte[1000]) SCREEN#9 ← phi( @16/(byte[1000]) SCREEN#10 @18/(byte[1000]) SCREEN#11 )
-  (byte*) RASTER#6 ← phi( @16/(byte*) RASTER#7 @18/(byte*) RASTER#8 )
+main::@1: from main::@10 main::@12
+  (byte[256]) buffer1#21 ← phi( main::@10/(byte[256]) buffer1#22 main::@12/(byte[256]) buffer1#23 )
+  (byte[256]) buffer2#13 ← phi( main::@10/(byte[256]) buffer2#14 main::@12/(byte[256]) buffer2#15 )
+  (byte[1000]) SCREEN#9 ← phi( main::@10/(byte[1000]) SCREEN#10 main::@12/(byte[1000]) SCREEN#11 )
+  (byte*) RASTER#5 ← phi( main::@10/(byte*) RASTER#7 main::@12/(byte*) RASTER#8 )
   (byte) main::c#0 ← (byte) 25
   to:main::@2
-main::@2: from @2 main::@1
-  (byte[256]) buffer2#12 ← phi( @2/(byte[256]) buffer2#8 main::@1/(byte[256]) buffer2#13 )
-  (byte[256]) buffer1#20 ← phi( @2/(byte[256]) buffer1#16 main::@1/(byte[256]) buffer1#21 )
-  (byte[1000]) SCREEN#8 ← phi( @2/(byte[1000]) SCREEN#4 main::@1/(byte[1000]) SCREEN#9 )
-  (byte) main::c#6 ← phi( @2/(byte) main::c#1 main::@1/(byte) main::c#0 )
-  (byte*) RASTER#3 ← phi( @2/(byte*) RASTER#5 main::@1/(byte*) RASTER#6 )
+main::@2: from main::@1 main::@6
+  (byte[256]) buffer2#12 ← phi( main::@1/(byte[256]) buffer2#13 main::@6/(byte[256]) buffer2#8 )
+  (byte[256]) buffer1#20 ← phi( main::@1/(byte[256]) buffer1#21 main::@6/(byte[256]) buffer1#16 )
+  (byte[1000]) SCREEN#8 ← phi( main::@1/(byte[1000]) SCREEN#9 main::@6/(byte[1000]) SCREEN#4 )
+  (byte) main::c#6 ← phi( main::@1/(byte) main::c#0 main::@6/(byte) main::c#1 )
+  (byte*) RASTER#3 ← phi( main::@1/(byte*) RASTER#5 main::@6/(byte*) RASTER#6 )
   to:main::@3
 main::@3: from main::@2 main::@3
   (byte[256]) buffer1#19 ← phi( main::@2/(byte[256]) buffer1#20 main::@3/(byte[256]) buffer1#19 )
@@ -798,62 +798,62 @@ main::@3: from main::@2 main::@3
   (byte~) main::$1 ← * (byte*) RASTER#1
   (boolean~) main::$2 ← (byte~) main::$1 != (byte) 254
   if((boolean~) main::$2) goto main::@3
-  to:@1
-@1: from main::@3
+  to:main::@5
+main::@5: from main::@3
   (byte[256]) buffer2#10 ← phi( main::@3/(byte[256]) buffer2#11 )
   (byte[256]) buffer1#18 ← phi( main::@3/(byte[256]) buffer1#19 )
   (byte[1000]) SCREEN#6 ← phi( main::@3/(byte[1000]) SCREEN#7 )
   (byte) main::c#4 ← phi( main::@3/(byte) main::c#5 )
   (byte*) RASTER#4 ← phi( main::@3/(byte*) RASTER#1 )
   to:main::@4
-main::@4: from @1 main::@4
-  (byte[256]) buffer1#17 ← phi( @1/(byte[256]) buffer1#18 main::@4/(byte[256]) buffer1#17 )
-  (byte[256]) buffer2#9 ← phi( @1/(byte[256]) buffer2#10 main::@4/(byte[256]) buffer2#9 )
-  (byte[1000]) SCREEN#5 ← phi( @1/(byte[1000]) SCREEN#6 main::@4/(byte[1000]) SCREEN#5 )
-  (byte) main::c#3 ← phi( @1/(byte) main::c#4 main::@4/(byte) main::c#3 )
-  (byte*) RASTER#2 ← phi( @1/(byte*) RASTER#4 main::@4/(byte*) RASTER#2 )
+main::@4: from main::@4 main::@5
+  (byte[256]) buffer1#17 ← phi( main::@4/(byte[256]) buffer1#17 main::@5/(byte[256]) buffer1#18 )
+  (byte[256]) buffer2#9 ← phi( main::@4/(byte[256]) buffer2#9 main::@5/(byte[256]) buffer2#10 )
+  (byte[1000]) SCREEN#5 ← phi( main::@4/(byte[1000]) SCREEN#5 main::@5/(byte[1000]) SCREEN#6 )
+  (byte) main::c#3 ← phi( main::@4/(byte) main::c#3 main::@5/(byte) main::c#4 )
+  (byte*) RASTER#2 ← phi( main::@4/(byte*) RASTER#2 main::@5/(byte*) RASTER#4 )
   (byte~) main::$3 ← * (byte*) RASTER#2
   (boolean~) main::$4 ← (byte~) main::$3 != (byte) 255
   if((boolean~) main::$4) goto main::@4
-  to:@2
-@2: from main::@4
+  to:main::@6
+main::@6: from main::@4
   (byte[256]) buffer2#8 ← phi( main::@4/(byte[256]) buffer2#9 )
   (byte[256]) buffer1#16 ← phi( main::@4/(byte[256]) buffer1#17 )
   (byte[1000]) SCREEN#4 ← phi( main::@4/(byte[1000]) SCREEN#5 )
-  (byte*) RASTER#5 ← phi( main::@4/(byte*) RASTER#2 )
+  (byte*) RASTER#6 ← phi( main::@4/(byte*) RASTER#2 )
   (byte) main::c#2 ← phi( main::@4/(byte) main::c#3 )
   (byte) main::c#1 ← -- (byte) main::c#2
   (boolean~) main::$5 ← (byte) main::c#1 != (byte) 0
   if((boolean~) main::$5) goto main::@2
-  to:@3
-@3: from @2
-  (byte*) RASTER#11 ← phi( @2/(byte*) RASTER#5 )
-  (byte[256]) buffer1#14 ← phi( @2/(byte[256]) buffer1#16 )
-  (byte[256]) buffer2#7 ← phi( @2/(byte[256]) buffer2#8 )
-  (byte[1000]) SCREEN#3 ← phi( @2/(byte[1000]) SCREEN#4 )
+  to:main::@7
+main::@7: from main::@6
+  (byte*) RASTER#11 ← phi( main::@6/(byte*) RASTER#6 )
+  (byte[256]) buffer1#14 ← phi( main::@6/(byte[256]) buffer1#16 )
+  (byte[256]) buffer2#7 ← phi( main::@6/(byte[256]) buffer2#8 )
+  (byte[1000]) SCREEN#3 ← phi( main::@6/(byte[1000]) SCREEN#4 )
   call flip param-assignment
-  to:@17
-@17: from @3
-  (byte[256]) buffer2#17 ← phi( @3/(byte[256]) buffer2#7 )
-  (byte*) RASTER#10 ← phi( @3/(byte*) RASTER#11 )
-  (byte[256]) buffer1#15 ← phi( @3/(byte[256]) buffer1#14 )
-  (byte[1000]) SCREEN#2 ← phi( @3/(byte[1000]) SCREEN#3 )
+  to:main::@11
+main::@11: from main::@7
+  (byte[256]) buffer2#17 ← phi( main::@7/(byte[256]) buffer2#7 )
+  (byte*) RASTER#10 ← phi( main::@7/(byte*) RASTER#11 )
+  (byte[256]) buffer1#15 ← phi( main::@7/(byte[256]) buffer1#14 )
+  (byte[1000]) SCREEN#2 ← phi( main::@7/(byte[1000]) SCREEN#3 )
   call plot param-assignment
-  to:@18
-@18: from @17
-  (byte[256]) buffer2#15 ← phi( @17/(byte[256]) buffer2#17 )
-  (byte[256]) buffer1#23 ← phi( @17/(byte[256]) buffer1#15 )
-  (byte[1000]) SCREEN#11 ← phi( @17/(byte[1000]) SCREEN#2 )
-  (byte*) RASTER#8 ← phi( @17/(byte*) RASTER#10 )
+  to:main::@12
+main::@12: from main::@11
+  (byte[256]) buffer2#15 ← phi( main::@11/(byte[256]) buffer2#17 )
+  (byte[256]) buffer1#23 ← phi( main::@11/(byte[256]) buffer1#15 )
+  (byte[1000]) SCREEN#11 ← phi( main::@11/(byte[1000]) SCREEN#2 )
+  (byte*) RASTER#8 ← phi( main::@11/(byte*) RASTER#10 )
   if(true) goto main::@1
-  to:@4
-@4: from @18
+  to:main::@8
+main::@8: from main::@12
   to:main::@return
-main::@return: from @4
+main::@return: from main::@8
   return 
   to:@RETURN
-@5: from @15
-  to:@7
+main::@9: from @1
+  to:prepare::@3
 prepare: from main
   (byte[256]) buffer1#5 ← phi( main/(byte[256]) buffer1#9 )
   (byte) prepare::i#0 ← (byte) 0
@@ -865,27 +865,27 @@ prepare::@1: from prepare prepare::@1
   (byte) prepare::i#1 ← ++ (byte) prepare::i#2
   (boolean~) prepare::$0 ← (byte) prepare::i#1 != (byte) 0
   if((boolean~) prepare::$0) goto prepare::@1
-  to:@6
-@6: from prepare::@1
+  to:prepare::@2
+prepare::@2: from prepare::@1
   to:prepare::@return
-prepare::@return: from @6
+prepare::@return: from prepare::@2
   return 
   to:@RETURN
-@7: from @5
-  to:@11
-flip: from @3
-  (byte[256]) buffer2#6 ← phi( @3/(byte[256]) buffer2#7 )
-  (byte[256]) buffer1#11 ← phi( @3/(byte[256]) buffer1#14 )
+prepare::@3: from main::@9
+  to:flip::@7
+flip: from main::@7
+  (byte[256]) buffer2#5 ← phi( main::@7/(byte[256]) buffer2#7 )
+  (byte[256]) buffer1#10 ← phi( main::@7/(byte[256]) buffer1#14 )
   (byte) flip::srcIdx#0 ← (byte) 0
   (byte) flip::dstIdx#0 ← (byte) 15
   (byte) flip::r#0 ← (byte) 16
   to:flip::@1
-flip::@1: from @8 flip
-  (byte) flip::r#4 ← phi( @8/(byte) flip::r#1 flip/(byte) flip::r#0 )
-  (byte[256]) buffer1#6 ← phi( @8/(byte[256]) buffer1#10 flip/(byte[256]) buffer1#11 )
-  (byte) flip::srcIdx#3 ← phi( @8/(byte) flip::srcIdx#4 flip/(byte) flip::srcIdx#0 )
-  (byte[256]) buffer2#3 ← phi( @8/(byte[256]) buffer2#5 flip/(byte[256]) buffer2#6 )
-  (byte) flip::dstIdx#5 ← phi( @8/(byte) flip::dstIdx#2 flip/(byte) flip::dstIdx#0 )
+flip::@1: from flip flip::@4
+  (byte) flip::r#4 ← phi( flip/(byte) flip::r#0 flip::@4/(byte) flip::r#1 )
+  (byte[256]) buffer1#6 ← phi( flip/(byte[256]) buffer1#10 flip::@4/(byte[256]) buffer1#11 )
+  (byte) flip::srcIdx#3 ← phi( flip/(byte) flip::srcIdx#0 flip::@4/(byte) flip::srcIdx#4 )
+  (byte[256]) buffer2#3 ← phi( flip/(byte[256]) buffer2#5 flip::@4/(byte[256]) buffer2#6 )
+  (byte) flip::dstIdx#5 ← phi( flip/(byte) flip::dstIdx#0 flip::@4/(byte) flip::dstIdx#2 )
   (byte) flip::c#0 ← (byte) 16
   to:flip::@2
 flip::@2: from flip::@1 flip::@2
@@ -903,43 +903,43 @@ flip::@2: from flip::@1 flip::@2
   (byte) flip::c#1 ← -- (byte) flip::c#2
   (boolean~) flip::$2 ← (byte) flip::c#1 != (byte) 0
   if((boolean~) flip::$2) goto flip::@2
-  to:@8
-@8: from flip::@2
-  (byte[256]) buffer2#5 ← phi( flip::@2/(byte[256]) buffer2#1 )
+  to:flip::@4
+flip::@4: from flip::@2
+  (byte[256]) buffer2#6 ← phi( flip::@2/(byte[256]) buffer2#1 )
   (byte) flip::srcIdx#4 ← phi( flip::@2/(byte) flip::srcIdx#1 )
-  (byte[256]) buffer1#10 ← phi( flip::@2/(byte[256]) buffer1#2 )
+  (byte[256]) buffer1#11 ← phi( flip::@2/(byte[256]) buffer1#2 )
   (byte) flip::r#2 ← phi( flip::@2/(byte) flip::r#3 )
   (byte) flip::dstIdx#4 ← phi( flip::@2/(byte) flip::dstIdx#1 )
   (byte) flip::dstIdx#2 ← -- (byte) flip::dstIdx#4
   (byte) flip::r#1 ← -- (byte) flip::r#2
   (boolean~) flip::$3 ← (byte) flip::r#1 != (byte) 0
   if((boolean~) flip::$3) goto flip::@1
-  to:@9
-@9: from @8
-  (byte[256]) buffer2#4 ← phi( @8/(byte[256]) buffer2#5 )
-  (byte[256]) buffer1#7 ← phi( @8/(byte[256]) buffer1#10 )
+  to:flip::@5
+flip::@5: from flip::@4
+  (byte[256]) buffer2#4 ← phi( flip::@4/(byte[256]) buffer2#6 )
+  (byte[256]) buffer1#7 ← phi( flip::@4/(byte[256]) buffer1#11 )
   (byte) flip::i#0 ← (byte) 0
   to:flip::@3
-flip::@3: from @9 flip::@3
-  (byte[256]) buffer1#3 ← phi( @9/(byte[256]) buffer1#7 flip::@3/(byte[256]) buffer1#3 )
-  (byte) flip::i#2 ← phi( @9/(byte) flip::i#0 flip::@3/(byte) flip::i#1 )
-  (byte[256]) buffer2#2 ← phi( @9/(byte[256]) buffer2#4 flip::@3/(byte[256]) buffer2#2 )
+flip::@3: from flip::@3 flip::@5
+  (byte[256]) buffer1#3 ← phi( flip::@3/(byte[256]) buffer1#3 flip::@5/(byte[256]) buffer1#7 )
+  (byte) flip::i#2 ← phi( flip::@3/(byte) flip::i#1 flip::@5/(byte) flip::i#0 )
+  (byte[256]) buffer2#2 ← phi( flip::@3/(byte[256]) buffer2#2 flip::@5/(byte[256]) buffer2#4 )
   (byte~) flip::$4 ← (byte[256]) buffer2#2 *idx (byte) flip::i#2
   *((byte[256]) buffer1#3 + (byte) flip::i#2) ← (byte~) flip::$4
   (byte) flip::i#1 ← ++ (byte) flip::i#2
   (boolean~) flip::$5 ← (byte) flip::i#1 != (byte) 0
   if((boolean~) flip::$5) goto flip::@3
-  to:@10
-@10: from flip::@3
+  to:flip::@6
+flip::@6: from flip::@3
   to:flip::@return
-flip::@return: from @10
+flip::@return: from flip::@6
   return 
   to:@RETURN
-@11: from @7
-  to:@14
-plot: from @17
-  (byte[256]) buffer1#13 ← phi( @17/(byte[256]) buffer1#15 )
-  (byte[1000]) SCREEN#1 ← phi( @17/(byte[1000]) SCREEN#2 )
+flip::@7: from prepare::@3
+  to:plot::@5
+plot: from main::@11
+  (byte[256]) buffer1#12 ← phi( main::@11/(byte[256]) buffer1#15 )
+  (byte[1000]) SCREEN#1 ← phi( main::@11/(byte[1000]) SCREEN#2 )
   (byte~) plot::$0 ← (byte) 5 * (byte) 40
   (byte*~) plot::$1 ← (byte[1000]) SCREEN#1 + (byte~) plot::$0
   (byte*~) plot::$2 ← (byte*~) plot::$1 + (byte) 12
@@ -947,11 +947,11 @@ plot: from @17
   (byte) plot::y#0 ← (byte) 16
   (byte) plot::i#0 ← (byte) 0
   to:plot::@1
-plot::@1: from @12 plot
-  (byte) plot::y#4 ← phi( @12/(byte) plot::y#1 plot/(byte) plot::y#0 )
-  (byte[256]) buffer1#8 ← phi( @12/(byte[256]) buffer1#12 plot/(byte[256]) buffer1#13 )
-  (byte) plot::i#3 ← phi( @12/(byte) plot::i#4 plot/(byte) plot::i#0 )
-  (byte*) plot::line#4 ← phi( @12/(byte*) plot::line#1 plot/(byte*) plot::line#0 )
+plot::@1: from plot plot::@3
+  (byte) plot::y#4 ← phi( plot/(byte) plot::y#0 plot::@3/(byte) plot::y#1 )
+  (byte[256]) buffer1#8 ← phi( plot/(byte[256]) buffer1#12 plot::@3/(byte[256]) buffer1#13 )
+  (byte) plot::i#3 ← phi( plot/(byte) plot::i#0 plot::@3/(byte) plot::i#4 )
+  (byte*) plot::line#4 ← phi( plot/(byte*) plot::line#0 plot::@3/(byte*) plot::line#1 )
   (byte) plot::x#0 ← (byte) 0
   to:plot::@2
 plot::@2: from plot::@1 plot::@2
@@ -966,10 +966,10 @@ plot::@2: from plot::@1 plot::@2
   (byte) plot::x#1 ← ++ (byte) plot::x#2
   (boolean~) plot::$4 ← (byte) plot::x#1 < (byte) 16
   if((boolean~) plot::$4) goto plot::@2
-  to:@12
-@12: from plot::@2
+  to:plot::@3
+plot::@3: from plot::@2
   (byte) plot::i#4 ← phi( plot::@2/(byte) plot::i#1 )
-  (byte[256]) buffer1#12 ← phi( plot::@2/(byte[256]) buffer1#4 )
+  (byte[256]) buffer1#13 ← phi( plot::@2/(byte[256]) buffer1#4 )
   (byte) plot::y#2 ← phi( plot::@2/(byte) plot::y#3 )
   (byte*) plot::line#3 ← phi( plot::@2/(byte*) plot::line#2 )
   (byte*~) plot::$5 ← (byte*) plot::line#3 + (byte) 40
@@ -977,25 +977,25 @@ plot::@2: from plot::@1 plot::@2
   (byte) plot::y#1 ← -- (byte) plot::y#2
   (boolean~) plot::$6 ← (byte) plot::y#1 != (byte) 0
   if((boolean~) plot::$6) goto plot::@1
-  to:@13
-@13: from @12
+  to:plot::@4
+plot::@4: from plot::@3
   to:plot::@return
-plot::@return: from @13
+plot::@return: from plot::@4
   return 
   to:@RETURN
-@14: from @11
+plot::@5: from flip::@7
   to:@END
-@END: from @14
+@END: from plot::@5
 
-Culled Empty Block (label) @15
-Culled Empty Block (label) @4
-Culled Empty Block (label) @5
-Culled Empty Block (label) @6
-Culled Empty Block (label) @7
-Culled Empty Block (label) @10
-Culled Empty Block (label) @11
-Culled Empty Block (label) @13
-Culled Empty Block (label) @14
+Culled Empty Block (label) @1
+Culled Empty Block (label) main::@8
+Culled Empty Block (label) main::@9
+Culled Empty Block (label) prepare::@2
+Culled Empty Block (label) prepare::@3
+Culled Empty Block (label) flip::@6
+Culled Empty Block (label) flip::@7
+Culled Empty Block (label) plot::@4
+Culled Empty Block (label) plot::@5
 Succesful SSA optimization Pass2CullEmptyBlocks
 CONTROL FLOW GRAPH
 @BEGIN: from
@@ -1011,26 +1011,26 @@ main: from @BEGIN
   (byte*) RASTER#9 ← phi( @BEGIN/(byte*) RASTER#0 )
   (byte[256]) buffer1#9 ← phi( @BEGIN/(byte[256]) buffer1#0 )
   call prepare param-assignment
-  to:@16
-@16: from main
+  to:main::@10
+main::@10: from main
   (byte[256]) buffer2#14 ← phi( main/(byte[256]) buffer2#16 )
   (byte[256]) buffer1#22 ← phi( main/(byte[256]) buffer1#9 )
   (byte[1000]) SCREEN#10 ← phi( main/(byte[1000]) SCREEN#12 )
   (byte*) RASTER#7 ← phi( main/(byte*) RASTER#9 )
   to:main::@1
-main::@1: from @16 @18
-  (byte[256]) buffer1#21 ← phi( @16/(byte[256]) buffer1#22 @18/(byte[256]) buffer1#23 )
-  (byte[256]) buffer2#13 ← phi( @16/(byte[256]) buffer2#14 @18/(byte[256]) buffer2#15 )
-  (byte[1000]) SCREEN#9 ← phi( @16/(byte[1000]) SCREEN#10 @18/(byte[1000]) SCREEN#11 )
-  (byte*) RASTER#6 ← phi( @16/(byte*) RASTER#7 @18/(byte*) RASTER#8 )
+main::@1: from main::@10 main::@12
+  (byte[256]) buffer1#21 ← phi( main::@10/(byte[256]) buffer1#22 main::@12/(byte[256]) buffer1#23 )
+  (byte[256]) buffer2#13 ← phi( main::@10/(byte[256]) buffer2#14 main::@12/(byte[256]) buffer2#15 )
+  (byte[1000]) SCREEN#9 ← phi( main::@10/(byte[1000]) SCREEN#10 main::@12/(byte[1000]) SCREEN#11 )
+  (byte*) RASTER#5 ← phi( main::@10/(byte*) RASTER#7 main::@12/(byte*) RASTER#8 )
   (byte) main::c#0 ← (byte) 25
   to:main::@2
-main::@2: from @2 main::@1
-  (byte[256]) buffer2#12 ← phi( @2/(byte[256]) buffer2#8 main::@1/(byte[256]) buffer2#13 )
-  (byte[256]) buffer1#20 ← phi( @2/(byte[256]) buffer1#16 main::@1/(byte[256]) buffer1#21 )
-  (byte[1000]) SCREEN#8 ← phi( @2/(byte[1000]) SCREEN#4 main::@1/(byte[1000]) SCREEN#9 )
-  (byte) main::c#6 ← phi( @2/(byte) main::c#1 main::@1/(byte) main::c#0 )
-  (byte*) RASTER#3 ← phi( @2/(byte*) RASTER#5 main::@1/(byte*) RASTER#6 )
+main::@2: from main::@1 main::@6
+  (byte[256]) buffer2#12 ← phi( main::@1/(byte[256]) buffer2#13 main::@6/(byte[256]) buffer2#8 )
+  (byte[256]) buffer1#20 ← phi( main::@1/(byte[256]) buffer1#21 main::@6/(byte[256]) buffer1#16 )
+  (byte[1000]) SCREEN#8 ← phi( main::@1/(byte[1000]) SCREEN#9 main::@6/(byte[1000]) SCREEN#4 )
+  (byte) main::c#6 ← phi( main::@1/(byte) main::c#0 main::@6/(byte) main::c#1 )
+  (byte*) RASTER#3 ← phi( main::@1/(byte*) RASTER#5 main::@6/(byte*) RASTER#6 )
   to:main::@3
 main::@3: from main::@2 main::@3
   (byte[256]) buffer1#19 ← phi( main::@2/(byte[256]) buffer1#20 main::@3/(byte[256]) buffer1#19 )
@@ -1041,56 +1041,56 @@ main::@3: from main::@2 main::@3
   (byte~) main::$1 ← * (byte*) RASTER#1
   (boolean~) main::$2 ← (byte~) main::$1 != (byte) 254
   if((boolean~) main::$2) goto main::@3
-  to:@1
-@1: from main::@3
+  to:main::@5
+main::@5: from main::@3
   (byte[256]) buffer2#10 ← phi( main::@3/(byte[256]) buffer2#11 )
   (byte[256]) buffer1#18 ← phi( main::@3/(byte[256]) buffer1#19 )
   (byte[1000]) SCREEN#6 ← phi( main::@3/(byte[1000]) SCREEN#7 )
   (byte) main::c#4 ← phi( main::@3/(byte) main::c#5 )
   (byte*) RASTER#4 ← phi( main::@3/(byte*) RASTER#1 )
   to:main::@4
-main::@4: from @1 main::@4
-  (byte[256]) buffer1#17 ← phi( @1/(byte[256]) buffer1#18 main::@4/(byte[256]) buffer1#17 )
-  (byte[256]) buffer2#9 ← phi( @1/(byte[256]) buffer2#10 main::@4/(byte[256]) buffer2#9 )
-  (byte[1000]) SCREEN#5 ← phi( @1/(byte[1000]) SCREEN#6 main::@4/(byte[1000]) SCREEN#5 )
-  (byte) main::c#3 ← phi( @1/(byte) main::c#4 main::@4/(byte) main::c#3 )
-  (byte*) RASTER#2 ← phi( @1/(byte*) RASTER#4 main::@4/(byte*) RASTER#2 )
+main::@4: from main::@4 main::@5
+  (byte[256]) buffer1#17 ← phi( main::@4/(byte[256]) buffer1#17 main::@5/(byte[256]) buffer1#18 )
+  (byte[256]) buffer2#9 ← phi( main::@4/(byte[256]) buffer2#9 main::@5/(byte[256]) buffer2#10 )
+  (byte[1000]) SCREEN#5 ← phi( main::@4/(byte[1000]) SCREEN#5 main::@5/(byte[1000]) SCREEN#6 )
+  (byte) main::c#3 ← phi( main::@4/(byte) main::c#3 main::@5/(byte) main::c#4 )
+  (byte*) RASTER#2 ← phi( main::@4/(byte*) RASTER#2 main::@5/(byte*) RASTER#4 )
   (byte~) main::$3 ← * (byte*) RASTER#2
   (boolean~) main::$4 ← (byte~) main::$3 != (byte) 255
   if((boolean~) main::$4) goto main::@4
-  to:@2
-@2: from main::@4
+  to:main::@6
+main::@6: from main::@4
   (byte[256]) buffer2#8 ← phi( main::@4/(byte[256]) buffer2#9 )
   (byte[256]) buffer1#16 ← phi( main::@4/(byte[256]) buffer1#17 )
   (byte[1000]) SCREEN#4 ← phi( main::@4/(byte[1000]) SCREEN#5 )
-  (byte*) RASTER#5 ← phi( main::@4/(byte*) RASTER#2 )
+  (byte*) RASTER#6 ← phi( main::@4/(byte*) RASTER#2 )
   (byte) main::c#2 ← phi( main::@4/(byte) main::c#3 )
   (byte) main::c#1 ← -- (byte) main::c#2
   (boolean~) main::$5 ← (byte) main::c#1 != (byte) 0
   if((boolean~) main::$5) goto main::@2
-  to:@3
-@3: from @2
-  (byte*) RASTER#11 ← phi( @2/(byte*) RASTER#5 )
-  (byte[256]) buffer1#14 ← phi( @2/(byte[256]) buffer1#16 )
-  (byte[256]) buffer2#7 ← phi( @2/(byte[256]) buffer2#8 )
-  (byte[1000]) SCREEN#3 ← phi( @2/(byte[1000]) SCREEN#4 )
+  to:main::@7
+main::@7: from main::@6
+  (byte*) RASTER#11 ← phi( main::@6/(byte*) RASTER#6 )
+  (byte[256]) buffer1#14 ← phi( main::@6/(byte[256]) buffer1#16 )
+  (byte[256]) buffer2#7 ← phi( main::@6/(byte[256]) buffer2#8 )
+  (byte[1000]) SCREEN#3 ← phi( main::@6/(byte[1000]) SCREEN#4 )
   call flip param-assignment
-  to:@17
-@17: from @3
-  (byte[256]) buffer2#17 ← phi( @3/(byte[256]) buffer2#7 )
-  (byte*) RASTER#10 ← phi( @3/(byte*) RASTER#11 )
-  (byte[256]) buffer1#15 ← phi( @3/(byte[256]) buffer1#14 )
-  (byte[1000]) SCREEN#2 ← phi( @3/(byte[1000]) SCREEN#3 )
+  to:main::@11
+main::@11: from main::@7
+  (byte[256]) buffer2#17 ← phi( main::@7/(byte[256]) buffer2#7 )
+  (byte*) RASTER#10 ← phi( main::@7/(byte*) RASTER#11 )
+  (byte[256]) buffer1#15 ← phi( main::@7/(byte[256]) buffer1#14 )
+  (byte[1000]) SCREEN#2 ← phi( main::@7/(byte[1000]) SCREEN#3 )
   call plot param-assignment
-  to:@18
-@18: from @17
-  (byte[256]) buffer2#15 ← phi( @17/(byte[256]) buffer2#17 )
-  (byte[256]) buffer1#23 ← phi( @17/(byte[256]) buffer1#15 )
-  (byte[1000]) SCREEN#11 ← phi( @17/(byte[1000]) SCREEN#2 )
-  (byte*) RASTER#8 ← phi( @17/(byte*) RASTER#10 )
+  to:main::@12
+main::@12: from main::@11
+  (byte[256]) buffer2#15 ← phi( main::@11/(byte[256]) buffer2#17 )
+  (byte[256]) buffer1#23 ← phi( main::@11/(byte[256]) buffer1#15 )
+  (byte[1000]) SCREEN#11 ← phi( main::@11/(byte[1000]) SCREEN#2 )
+  (byte*) RASTER#8 ← phi( main::@11/(byte*) RASTER#10 )
   if(true) goto main::@1
   to:main::@return
-main::@return: from @18
+main::@return: from main::@12
   return 
   to:@RETURN
 prepare: from main
@@ -1108,19 +1108,19 @@ prepare::@1: from prepare prepare::@1
 prepare::@return: from prepare::@1
   return 
   to:@RETURN
-flip: from @3
-  (byte[256]) buffer2#6 ← phi( @3/(byte[256]) buffer2#7 )
-  (byte[256]) buffer1#11 ← phi( @3/(byte[256]) buffer1#14 )
+flip: from main::@7
+  (byte[256]) buffer2#5 ← phi( main::@7/(byte[256]) buffer2#7 )
+  (byte[256]) buffer1#10 ← phi( main::@7/(byte[256]) buffer1#14 )
   (byte) flip::srcIdx#0 ← (byte) 0
   (byte) flip::dstIdx#0 ← (byte) 15
   (byte) flip::r#0 ← (byte) 16
   to:flip::@1
-flip::@1: from @8 flip
-  (byte) flip::r#4 ← phi( @8/(byte) flip::r#1 flip/(byte) flip::r#0 )
-  (byte[256]) buffer1#6 ← phi( @8/(byte[256]) buffer1#10 flip/(byte[256]) buffer1#11 )
-  (byte) flip::srcIdx#3 ← phi( @8/(byte) flip::srcIdx#4 flip/(byte) flip::srcIdx#0 )
-  (byte[256]) buffer2#3 ← phi( @8/(byte[256]) buffer2#5 flip/(byte[256]) buffer2#6 )
-  (byte) flip::dstIdx#5 ← phi( @8/(byte) flip::dstIdx#2 flip/(byte) flip::dstIdx#0 )
+flip::@1: from flip flip::@4
+  (byte) flip::r#4 ← phi( flip/(byte) flip::r#0 flip::@4/(byte) flip::r#1 )
+  (byte[256]) buffer1#6 ← phi( flip/(byte[256]) buffer1#10 flip::@4/(byte[256]) buffer1#11 )
+  (byte) flip::srcIdx#3 ← phi( flip/(byte) flip::srcIdx#0 flip::@4/(byte) flip::srcIdx#4 )
+  (byte[256]) buffer2#3 ← phi( flip/(byte[256]) buffer2#5 flip::@4/(byte[256]) buffer2#6 )
+  (byte) flip::dstIdx#5 ← phi( flip/(byte) flip::dstIdx#0 flip::@4/(byte) flip::dstIdx#2 )
   (byte) flip::c#0 ← (byte) 16
   to:flip::@2
 flip::@2: from flip::@1 flip::@2
@@ -1138,27 +1138,27 @@ flip::@2: from flip::@1 flip::@2
   (byte) flip::c#1 ← -- (byte) flip::c#2
   (boolean~) flip::$2 ← (byte) flip::c#1 != (byte) 0
   if((boolean~) flip::$2) goto flip::@2
-  to:@8
-@8: from flip::@2
-  (byte[256]) buffer2#5 ← phi( flip::@2/(byte[256]) buffer2#1 )
+  to:flip::@4
+flip::@4: from flip::@2
+  (byte[256]) buffer2#6 ← phi( flip::@2/(byte[256]) buffer2#1 )
   (byte) flip::srcIdx#4 ← phi( flip::@2/(byte) flip::srcIdx#1 )
-  (byte[256]) buffer1#10 ← phi( flip::@2/(byte[256]) buffer1#2 )
+  (byte[256]) buffer1#11 ← phi( flip::@2/(byte[256]) buffer1#2 )
   (byte) flip::r#2 ← phi( flip::@2/(byte) flip::r#3 )
   (byte) flip::dstIdx#4 ← phi( flip::@2/(byte) flip::dstIdx#1 )
   (byte) flip::dstIdx#2 ← -- (byte) flip::dstIdx#4
   (byte) flip::r#1 ← -- (byte) flip::r#2
   (boolean~) flip::$3 ← (byte) flip::r#1 != (byte) 0
   if((boolean~) flip::$3) goto flip::@1
-  to:@9
-@9: from @8
-  (byte[256]) buffer2#4 ← phi( @8/(byte[256]) buffer2#5 )
-  (byte[256]) buffer1#7 ← phi( @8/(byte[256]) buffer1#10 )
+  to:flip::@5
+flip::@5: from flip::@4
+  (byte[256]) buffer2#4 ← phi( flip::@4/(byte[256]) buffer2#6 )
+  (byte[256]) buffer1#7 ← phi( flip::@4/(byte[256]) buffer1#11 )
   (byte) flip::i#0 ← (byte) 0
   to:flip::@3
-flip::@3: from @9 flip::@3
-  (byte[256]) buffer1#3 ← phi( @9/(byte[256]) buffer1#7 flip::@3/(byte[256]) buffer1#3 )
-  (byte) flip::i#2 ← phi( @9/(byte) flip::i#0 flip::@3/(byte) flip::i#1 )
-  (byte[256]) buffer2#2 ← phi( @9/(byte[256]) buffer2#4 flip::@3/(byte[256]) buffer2#2 )
+flip::@3: from flip::@3 flip::@5
+  (byte[256]) buffer1#3 ← phi( flip::@3/(byte[256]) buffer1#3 flip::@5/(byte[256]) buffer1#7 )
+  (byte) flip::i#2 ← phi( flip::@3/(byte) flip::i#1 flip::@5/(byte) flip::i#0 )
+  (byte[256]) buffer2#2 ← phi( flip::@3/(byte[256]) buffer2#2 flip::@5/(byte[256]) buffer2#4 )
   (byte~) flip::$4 ← (byte[256]) buffer2#2 *idx (byte) flip::i#2
   *((byte[256]) buffer1#3 + (byte) flip::i#2) ← (byte~) flip::$4
   (byte) flip::i#1 ← ++ (byte) flip::i#2
@@ -1168,9 +1168,9 @@ flip::@3: from @9 flip::@3
 flip::@return: from flip::@3
   return 
   to:@RETURN
-plot: from @17
-  (byte[256]) buffer1#13 ← phi( @17/(byte[256]) buffer1#15 )
-  (byte[1000]) SCREEN#1 ← phi( @17/(byte[1000]) SCREEN#2 )
+plot: from main::@11
+  (byte[256]) buffer1#12 ← phi( main::@11/(byte[256]) buffer1#15 )
+  (byte[1000]) SCREEN#1 ← phi( main::@11/(byte[1000]) SCREEN#2 )
   (byte~) plot::$0 ← (byte) 5 * (byte) 40
   (byte*~) plot::$1 ← (byte[1000]) SCREEN#1 + (byte~) plot::$0
   (byte*~) plot::$2 ← (byte*~) plot::$1 + (byte) 12
@@ -1178,11 +1178,11 @@ plot: from @17
   (byte) plot::y#0 ← (byte) 16
   (byte) plot::i#0 ← (byte) 0
   to:plot::@1
-plot::@1: from @12 plot
-  (byte) plot::y#4 ← phi( @12/(byte) plot::y#1 plot/(byte) plot::y#0 )
-  (byte[256]) buffer1#8 ← phi( @12/(byte[256]) buffer1#12 plot/(byte[256]) buffer1#13 )
-  (byte) plot::i#3 ← phi( @12/(byte) plot::i#4 plot/(byte) plot::i#0 )
-  (byte*) plot::line#4 ← phi( @12/(byte*) plot::line#1 plot/(byte*) plot::line#0 )
+plot::@1: from plot plot::@3
+  (byte) plot::y#4 ← phi( plot/(byte) plot::y#0 plot::@3/(byte) plot::y#1 )
+  (byte[256]) buffer1#8 ← phi( plot/(byte[256]) buffer1#12 plot::@3/(byte[256]) buffer1#13 )
+  (byte) plot::i#3 ← phi( plot/(byte) plot::i#0 plot::@3/(byte) plot::i#4 )
+  (byte*) plot::line#4 ← phi( plot/(byte*) plot::line#0 plot::@3/(byte*) plot::line#1 )
   (byte) plot::x#0 ← (byte) 0
   to:plot::@2
 plot::@2: from plot::@1 plot::@2
@@ -1197,10 +1197,10 @@ plot::@2: from plot::@1 plot::@2
   (byte) plot::x#1 ← ++ (byte) plot::x#2
   (boolean~) plot::$4 ← (byte) plot::x#1 < (byte) 16
   if((boolean~) plot::$4) goto plot::@2
-  to:@12
-@12: from plot::@2
+  to:plot::@3
+plot::@3: from plot::@2
   (byte) plot::i#4 ← phi( plot::@2/(byte) plot::i#1 )
-  (byte[256]) buffer1#12 ← phi( plot::@2/(byte[256]) buffer1#4 )
+  (byte[256]) buffer1#13 ← phi( plot::@2/(byte[256]) buffer1#4 )
   (byte) plot::y#2 ← phi( plot::@2/(byte) plot::y#3 )
   (byte*) plot::line#3 ← phi( plot::@2/(byte*) plot::line#2 )
   (byte*~) plot::$5 ← (byte*) plot::line#3 + (byte) 40
@@ -1209,7 +1209,7 @@ plot::@2: from plot::@1 plot::@2
   (boolean~) plot::$6 ← (byte) plot::y#1 != (byte) 0
   if((boolean~) plot::$6) goto plot::@1
   to:plot::@return
-plot::@return: from @12
+plot::@return: from plot::@3
   return 
   to:@RETURN
 @END: from @BEGIN
@@ -1240,25 +1240,25 @@ main: from @BEGIN
   (byte*) RASTER#9 ← phi( @BEGIN/(word) 53266 )
   (byte[256]) buffer1#9 ← phi( @BEGIN/(word) 4096 )
   call prepare param-assignment
-  to:@16
-@16: from main
+  to:main::@10
+main::@10: from main
   (byte[256]) buffer2#14 ← phi( main/(byte[256]) buffer2#16 )
   (byte[256]) buffer1#22 ← phi( main/(byte[256]) buffer1#9 )
   (byte[1000]) SCREEN#10 ← phi( main/(byte[1000]) SCREEN#12 )
   (byte*) RASTER#7 ← phi( main/(byte*) RASTER#9 )
   to:main::@1
-main::@1: from @16 @18
-  (byte[256]) buffer1#21 ← phi( @16/(byte[256]) buffer1#22 @18/(byte[256]) buffer1#23 )
-  (byte[256]) buffer2#13 ← phi( @16/(byte[256]) buffer2#14 @18/(byte[256]) buffer2#15 )
-  (byte[1000]) SCREEN#9 ← phi( @16/(byte[1000]) SCREEN#10 @18/(byte[1000]) SCREEN#11 )
-  (byte*) RASTER#6 ← phi( @16/(byte*) RASTER#7 @18/(byte*) RASTER#8 )
+main::@1: from main::@10 main::@12
+  (byte[256]) buffer1#21 ← phi( main::@10/(byte[256]) buffer1#22 main::@12/(byte[256]) buffer1#23 )
+  (byte[256]) buffer2#13 ← phi( main::@10/(byte[256]) buffer2#14 main::@12/(byte[256]) buffer2#15 )
+  (byte[1000]) SCREEN#9 ← phi( main::@10/(byte[1000]) SCREEN#10 main::@12/(byte[1000]) SCREEN#11 )
+  (byte*) RASTER#5 ← phi( main::@10/(byte*) RASTER#7 main::@12/(byte*) RASTER#8 )
   to:main::@2
-main::@2: from @2 main::@1
-  (byte[256]) buffer2#12 ← phi( @2/(byte[256]) buffer2#8 main::@1/(byte[256]) buffer2#13 )
-  (byte[256]) buffer1#20 ← phi( @2/(byte[256]) buffer1#16 main::@1/(byte[256]) buffer1#21 )
-  (byte[1000]) SCREEN#8 ← phi( @2/(byte[1000]) SCREEN#4 main::@1/(byte[1000]) SCREEN#9 )
-  (byte) main::c#6 ← phi( @2/(byte) main::c#1 main::@1/(byte) 25 )
-  (byte*) RASTER#3 ← phi( @2/(byte*) RASTER#5 main::@1/(byte*) RASTER#6 )
+main::@2: from main::@1 main::@6
+  (byte[256]) buffer2#12 ← phi( main::@1/(byte[256]) buffer2#13 main::@6/(byte[256]) buffer2#8 )
+  (byte[256]) buffer1#20 ← phi( main::@1/(byte[256]) buffer1#21 main::@6/(byte[256]) buffer1#16 )
+  (byte[1000]) SCREEN#8 ← phi( main::@1/(byte[1000]) SCREEN#9 main::@6/(byte[1000]) SCREEN#4 )
+  (byte) main::c#6 ← phi( main::@1/(byte) 25 main::@6/(byte) main::c#1 )
+  (byte*) RASTER#3 ← phi( main::@1/(byte*) RASTER#5 main::@6/(byte*) RASTER#6 )
   to:main::@3
 main::@3: from main::@2 main::@3
   (byte[256]) buffer1#19 ← phi( main::@2/(byte[256]) buffer1#20 main::@3/(byte[256]) buffer1#19 )
@@ -1269,56 +1269,56 @@ main::@3: from main::@2 main::@3
   (byte~) main::$1 ← * (byte*) RASTER#1
   (boolean~) main::$2 ← (byte~) main::$1 != (byte) 254
   if((boolean~) main::$2) goto main::@3
-  to:@1
-@1: from main::@3
+  to:main::@5
+main::@5: from main::@3
   (byte[256]) buffer2#10 ← phi( main::@3/(byte[256]) buffer2#11 )
   (byte[256]) buffer1#18 ← phi( main::@3/(byte[256]) buffer1#19 )
   (byte[1000]) SCREEN#6 ← phi( main::@3/(byte[1000]) SCREEN#7 )
   (byte) main::c#4 ← phi( main::@3/(byte) main::c#5 )
   (byte*) RASTER#4 ← phi( main::@3/(byte*) RASTER#1 )
   to:main::@4
-main::@4: from @1 main::@4
-  (byte[256]) buffer1#17 ← phi( @1/(byte[256]) buffer1#18 main::@4/(byte[256]) buffer1#17 )
-  (byte[256]) buffer2#9 ← phi( @1/(byte[256]) buffer2#10 main::@4/(byte[256]) buffer2#9 )
-  (byte[1000]) SCREEN#5 ← phi( @1/(byte[1000]) SCREEN#6 main::@4/(byte[1000]) SCREEN#5 )
-  (byte) main::c#3 ← phi( @1/(byte) main::c#4 main::@4/(byte) main::c#3 )
-  (byte*) RASTER#2 ← phi( @1/(byte*) RASTER#4 main::@4/(byte*) RASTER#2 )
+main::@4: from main::@4 main::@5
+  (byte[256]) buffer1#17 ← phi( main::@4/(byte[256]) buffer1#17 main::@5/(byte[256]) buffer1#18 )
+  (byte[256]) buffer2#9 ← phi( main::@4/(byte[256]) buffer2#9 main::@5/(byte[256]) buffer2#10 )
+  (byte[1000]) SCREEN#5 ← phi( main::@4/(byte[1000]) SCREEN#5 main::@5/(byte[1000]) SCREEN#6 )
+  (byte) main::c#3 ← phi( main::@4/(byte) main::c#3 main::@5/(byte) main::c#4 )
+  (byte*) RASTER#2 ← phi( main::@4/(byte*) RASTER#2 main::@5/(byte*) RASTER#4 )
   (byte~) main::$3 ← * (byte*) RASTER#2
   (boolean~) main::$4 ← (byte~) main::$3 != (byte) 255
   if((boolean~) main::$4) goto main::@4
-  to:@2
-@2: from main::@4
+  to:main::@6
+main::@6: from main::@4
   (byte[256]) buffer2#8 ← phi( main::@4/(byte[256]) buffer2#9 )
   (byte[256]) buffer1#16 ← phi( main::@4/(byte[256]) buffer1#17 )
   (byte[1000]) SCREEN#4 ← phi( main::@4/(byte[1000]) SCREEN#5 )
-  (byte*) RASTER#5 ← phi( main::@4/(byte*) RASTER#2 )
+  (byte*) RASTER#6 ← phi( main::@4/(byte*) RASTER#2 )
   (byte) main::c#2 ← phi( main::@4/(byte) main::c#3 )
   (byte) main::c#1 ← -- (byte) main::c#2
   (boolean~) main::$5 ← (byte) main::c#1 != (byte) 0
   if((boolean~) main::$5) goto main::@2
-  to:@3
-@3: from @2
-  (byte*) RASTER#11 ← phi( @2/(byte*) RASTER#5 )
-  (byte[256]) buffer1#14 ← phi( @2/(byte[256]) buffer1#16 )
-  (byte[256]) buffer2#7 ← phi( @2/(byte[256]) buffer2#8 )
-  (byte[1000]) SCREEN#3 ← phi( @2/(byte[1000]) SCREEN#4 )
+  to:main::@7
+main::@7: from main::@6
+  (byte*) RASTER#11 ← phi( main::@6/(byte*) RASTER#6 )
+  (byte[256]) buffer1#14 ← phi( main::@6/(byte[256]) buffer1#16 )
+  (byte[256]) buffer2#7 ← phi( main::@6/(byte[256]) buffer2#8 )
+  (byte[1000]) SCREEN#3 ← phi( main::@6/(byte[1000]) SCREEN#4 )
   call flip param-assignment
-  to:@17
-@17: from @3
-  (byte[256]) buffer2#17 ← phi( @3/(byte[256]) buffer2#7 )
-  (byte*) RASTER#10 ← phi( @3/(byte*) RASTER#11 )
-  (byte[256]) buffer1#15 ← phi( @3/(byte[256]) buffer1#14 )
-  (byte[1000]) SCREEN#2 ← phi( @3/(byte[1000]) SCREEN#3 )
+  to:main::@11
+main::@11: from main::@7
+  (byte[256]) buffer2#17 ← phi( main::@7/(byte[256]) buffer2#7 )
+  (byte*) RASTER#10 ← phi( main::@7/(byte*) RASTER#11 )
+  (byte[256]) buffer1#15 ← phi( main::@7/(byte[256]) buffer1#14 )
+  (byte[1000]) SCREEN#2 ← phi( main::@7/(byte[1000]) SCREEN#3 )
   call plot param-assignment
-  to:@18
-@18: from @17
-  (byte[256]) buffer2#15 ← phi( @17/(byte[256]) buffer2#17 )
-  (byte[256]) buffer1#23 ← phi( @17/(byte[256]) buffer1#15 )
-  (byte[1000]) SCREEN#11 ← phi( @17/(byte[1000]) SCREEN#2 )
-  (byte*) RASTER#8 ← phi( @17/(byte*) RASTER#10 )
+  to:main::@12
+main::@12: from main::@11
+  (byte[256]) buffer2#15 ← phi( main::@11/(byte[256]) buffer2#17 )
+  (byte[256]) buffer1#23 ← phi( main::@11/(byte[256]) buffer1#15 )
+  (byte[1000]) SCREEN#11 ← phi( main::@11/(byte[1000]) SCREEN#2 )
+  (byte*) RASTER#8 ← phi( main::@11/(byte*) RASTER#10 )
   if(true) goto main::@1
   to:main::@return
-main::@return: from @18
+main::@return: from main::@12
   return 
   to:@RETURN
 prepare: from main
@@ -1335,16 +1335,16 @@ prepare::@1: from prepare prepare::@1
 prepare::@return: from prepare::@1
   return 
   to:@RETURN
-flip: from @3
-  (byte[256]) buffer2#6 ← phi( @3/(byte[256]) buffer2#7 )
-  (byte[256]) buffer1#11 ← phi( @3/(byte[256]) buffer1#14 )
+flip: from main::@7
+  (byte[256]) buffer2#5 ← phi( main::@7/(byte[256]) buffer2#7 )
+  (byte[256]) buffer1#10 ← phi( main::@7/(byte[256]) buffer1#14 )
   to:flip::@1
-flip::@1: from @8 flip
-  (byte) flip::r#4 ← phi( @8/(byte) flip::r#1 flip/(byte) 16 )
-  (byte[256]) buffer1#6 ← phi( @8/(byte[256]) buffer1#10 flip/(byte[256]) buffer1#11 )
-  (byte) flip::srcIdx#3 ← phi( @8/(byte) flip::srcIdx#4 flip/(byte) 0 )
-  (byte[256]) buffer2#3 ← phi( @8/(byte[256]) buffer2#5 flip/(byte[256]) buffer2#6 )
-  (byte) flip::dstIdx#5 ← phi( @8/(byte) flip::dstIdx#2 flip/(byte) 15 )
+flip::@1: from flip flip::@4
+  (byte) flip::r#4 ← phi( flip/(byte) 16 flip::@4/(byte) flip::r#1 )
+  (byte[256]) buffer1#6 ← phi( flip/(byte[256]) buffer1#10 flip::@4/(byte[256]) buffer1#11 )
+  (byte) flip::srcIdx#3 ← phi( flip/(byte) 0 flip::@4/(byte) flip::srcIdx#4 )
+  (byte[256]) buffer2#3 ← phi( flip/(byte[256]) buffer2#5 flip::@4/(byte[256]) buffer2#6 )
+  (byte) flip::dstIdx#5 ← phi( flip/(byte) 15 flip::@4/(byte) flip::dstIdx#2 )
   to:flip::@2
 flip::@2: from flip::@1 flip::@2
   (byte) flip::r#3 ← phi( flip::@1/(byte) flip::r#4 flip::@2/(byte) flip::r#3 )
@@ -1361,26 +1361,26 @@ flip::@2: from flip::@1 flip::@2
   (byte) flip::c#1 ← -- (byte) flip::c#2
   (boolean~) flip::$2 ← (byte) flip::c#1 != (byte) 0
   if((boolean~) flip::$2) goto flip::@2
-  to:@8
-@8: from flip::@2
-  (byte[256]) buffer2#5 ← phi( flip::@2/(byte[256]) buffer2#1 )
+  to:flip::@4
+flip::@4: from flip::@2
+  (byte[256]) buffer2#6 ← phi( flip::@2/(byte[256]) buffer2#1 )
   (byte) flip::srcIdx#4 ← phi( flip::@2/(byte) flip::srcIdx#1 )
-  (byte[256]) buffer1#10 ← phi( flip::@2/(byte[256]) buffer1#2 )
+  (byte[256]) buffer1#11 ← phi( flip::@2/(byte[256]) buffer1#2 )
   (byte) flip::r#2 ← phi( flip::@2/(byte) flip::r#3 )
   (byte) flip::dstIdx#4 ← phi( flip::@2/(byte) flip::dstIdx#1 )
   (byte) flip::dstIdx#2 ← -- (byte) flip::dstIdx#4
   (byte) flip::r#1 ← -- (byte) flip::r#2
   (boolean~) flip::$3 ← (byte) flip::r#1 != (byte) 0
   if((boolean~) flip::$3) goto flip::@1
-  to:@9
-@9: from @8
-  (byte[256]) buffer2#4 ← phi( @8/(byte[256]) buffer2#5 )
-  (byte[256]) buffer1#7 ← phi( @8/(byte[256]) buffer1#10 )
+  to:flip::@5
+flip::@5: from flip::@4
+  (byte[256]) buffer2#4 ← phi( flip::@4/(byte[256]) buffer2#6 )
+  (byte[256]) buffer1#7 ← phi( flip::@4/(byte[256]) buffer1#11 )
   to:flip::@3
-flip::@3: from @9 flip::@3
-  (byte[256]) buffer1#3 ← phi( @9/(byte[256]) buffer1#7 flip::@3/(byte[256]) buffer1#3 )
-  (byte) flip::i#2 ← phi( @9/(byte) 0 flip::@3/(byte) flip::i#1 )
-  (byte[256]) buffer2#2 ← phi( @9/(byte[256]) buffer2#4 flip::@3/(byte[256]) buffer2#2 )
+flip::@3: from flip::@3 flip::@5
+  (byte[256]) buffer1#3 ← phi( flip::@3/(byte[256]) buffer1#3 flip::@5/(byte[256]) buffer1#7 )
+  (byte) flip::i#2 ← phi( flip::@3/(byte) flip::i#1 flip::@5/(byte) 0 )
+  (byte[256]) buffer2#2 ← phi( flip::@3/(byte[256]) buffer2#2 flip::@5/(byte[256]) buffer2#4 )
   (byte~) flip::$4 ← (byte[256]) buffer2#2 *idx (byte) flip::i#2
   *((byte[256]) buffer1#3 + (byte) flip::i#2) ← (byte~) flip::$4
   (byte) flip::i#1 ← ++ (byte) flip::i#2
@@ -1390,18 +1390,18 @@ flip::@3: from @9 flip::@3
 flip::@return: from flip::@3
   return 
   to:@RETURN
-plot: from @17
-  (byte[256]) buffer1#13 ← phi( @17/(byte[256]) buffer1#15 )
-  (byte[1000]) SCREEN#1 ← phi( @17/(byte[1000]) SCREEN#2 )
+plot: from main::@11
+  (byte[256]) buffer1#12 ← phi( main::@11/(byte[256]) buffer1#15 )
+  (byte[1000]) SCREEN#1 ← phi( main::@11/(byte[1000]) SCREEN#2 )
   (byte*~) plot::$1 ← (byte[1000]) SCREEN#1 + (byte) 200
   (byte*~) plot::$2 ← (byte*~) plot::$1 + (byte) 12
   (byte*) plot::line#0 ← (byte*~) plot::$2
   to:plot::@1
-plot::@1: from @12 plot
-  (byte) plot::y#4 ← phi( @12/(byte) plot::y#1 plot/(byte) 16 )
-  (byte[256]) buffer1#8 ← phi( @12/(byte[256]) buffer1#12 plot/(byte[256]) buffer1#13 )
-  (byte) plot::i#3 ← phi( @12/(byte) plot::i#4 plot/(byte) 0 )
-  (byte*) plot::line#4 ← phi( @12/(byte*) plot::line#1 plot/(byte*) plot::line#0 )
+plot::@1: from plot plot::@3
+  (byte) plot::y#4 ← phi( plot/(byte) 16 plot::@3/(byte) plot::y#1 )
+  (byte[256]) buffer1#8 ← phi( plot/(byte[256]) buffer1#12 plot::@3/(byte[256]) buffer1#13 )
+  (byte) plot::i#3 ← phi( plot/(byte) 0 plot::@3/(byte) plot::i#4 )
+  (byte*) plot::line#4 ← phi( plot/(byte*) plot::line#0 plot::@3/(byte*) plot::line#1 )
   to:plot::@2
 plot::@2: from plot::@1 plot::@2
   (byte) plot::y#3 ← phi( plot::@1/(byte) plot::y#4 plot::@2/(byte) plot::y#3 )
@@ -1415,10 +1415,10 @@ plot::@2: from plot::@1 plot::@2
   (byte) plot::x#1 ← ++ (byte) plot::x#2
   (boolean~) plot::$4 ← (byte) plot::x#1 < (byte) 16
   if((boolean~) plot::$4) goto plot::@2
-  to:@12
-@12: from plot::@2
+  to:plot::@3
+plot::@3: from plot::@2
   (byte) plot::i#4 ← phi( plot::@2/(byte) plot::i#1 )
-  (byte[256]) buffer1#12 ← phi( plot::@2/(byte[256]) buffer1#4 )
+  (byte[256]) buffer1#13 ← phi( plot::@2/(byte[256]) buffer1#4 )
   (byte) plot::y#2 ← phi( plot::@2/(byte) plot::y#3 )
   (byte*) plot::line#3 ← phi( plot::@2/(byte*) plot::line#2 )
   (byte*~) plot::$5 ← (byte*) plot::line#3 + (byte) 40
@@ -1427,7 +1427,7 @@ plot::@2: from plot::@1 plot::@2
   (boolean~) plot::$6 ← (byte) plot::y#1 != (byte) 0
   if((boolean~) plot::$6) goto plot::@1
   to:plot::@return
-plot::@return: from @12
+plot::@return: from plot::@3
   return 
   to:@RETURN
 @END: from @BEGIN
@@ -1441,19 +1441,19 @@ Alias (byte[256]) buffer1#18 = (byte[256]) buffer1#19
 Alias (byte[1000]) SCREEN#6 = (byte[1000]) SCREEN#7 
 Alias (byte) main::c#4 = (byte) main::c#5 
 Alias (byte*) RASTER#1 = (byte*) RASTER#4 
-Alias (byte[256]) buffer2#15 = (byte[256]) buffer2#8 (byte[256]) buffer2#9 (byte[256]) buffer2#7 (byte[256]) buffer2#17 (byte[256]) buffer2#6 
-Alias (byte[256]) buffer1#11 = (byte[256]) buffer1#16 (byte[256]) buffer1#17 (byte[256]) buffer1#14 (byte[256]) buffer1#15 (byte[256]) buffer1#23 (byte[256]) buffer1#13 
+Alias (byte[256]) buffer2#15 = (byte[256]) buffer2#8 (byte[256]) buffer2#9 (byte[256]) buffer2#7 (byte[256]) buffer2#17 (byte[256]) buffer2#5 
+Alias (byte[256]) buffer1#10 = (byte[256]) buffer1#16 (byte[256]) buffer1#17 (byte[256]) buffer1#14 (byte[256]) buffer1#15 (byte[256]) buffer1#23 (byte[256]) buffer1#12 
 Alias (byte[1000]) SCREEN#1 = (byte[1000]) SCREEN#4 (byte[1000]) SCREEN#5 (byte[1000]) SCREEN#3 (byte[1000]) SCREEN#2 (byte[1000]) SCREEN#11 
-Alias (byte*) RASTER#10 = (byte*) RASTER#5 (byte*) RASTER#2 (byte*) RASTER#11 (byte*) RASTER#8 
+Alias (byte*) RASTER#10 = (byte*) RASTER#6 (byte*) RASTER#2 (byte*) RASTER#11 (byte*) RASTER#8 
 Alias (byte) main::c#2 = (byte) main::c#3 
 Alias (byte) flip::dstIdx#1 = (byte~) flip::$1 (byte) flip::dstIdx#4 
-Alias (byte[256]) buffer2#1 = (byte[256]) buffer2#5 (byte[256]) buffer2#4 
+Alias (byte[256]) buffer2#1 = (byte[256]) buffer2#6 (byte[256]) buffer2#4 
 Alias (byte) flip::srcIdx#1 = (byte) flip::srcIdx#4 
-Alias (byte[256]) buffer1#10 = (byte[256]) buffer1#2 (byte[256]) buffer1#7 
+Alias (byte[256]) buffer1#11 = (byte[256]) buffer1#2 (byte[256]) buffer1#7 
 Alias (byte) flip::r#2 = (byte) flip::r#3 
 Alias (byte*) plot::line#0 = (byte*~) plot::$2 
 Alias (byte) plot::i#1 = (byte) plot::i#4 
-Alias (byte[256]) buffer1#12 = (byte[256]) buffer1#4 
+Alias (byte[256]) buffer1#13 = (byte[256]) buffer1#4 
 Alias (byte) plot::y#2 = (byte) plot::y#3 
 Alias (byte*) plot::line#2 = (byte*) plot::line#3 
 Alias (byte*) plot::line#1 = (byte*~) plot::$5 
@@ -1468,21 +1468,21 @@ main: from @BEGIN
   (byte*) RASTER#7 ← phi( @BEGIN/(word) 53266 )
   (byte[256]) buffer1#22 ← phi( @BEGIN/(word) 4096 )
   call prepare param-assignment
-  to:@16
-@16: from main
+  to:main::@10
+main::@10: from main
   to:main::@1
-main::@1: from @16 @18
-  (byte[256]) buffer1#21 ← phi( @16/(byte[256]) buffer1#22 @18/(byte[256]) buffer1#11 )
-  (byte[256]) buffer2#13 ← phi( @16/(byte[256]) buffer2#14 @18/(byte[256]) buffer2#15 )
-  (byte[1000]) SCREEN#9 ← phi( @16/(byte[1000]) SCREEN#10 @18/(byte[1000]) SCREEN#1 )
-  (byte*) RASTER#6 ← phi( @16/(byte*) RASTER#7 @18/(byte*) RASTER#10 )
+main::@1: from main::@10 main::@12
+  (byte[256]) buffer1#21 ← phi( main::@10/(byte[256]) buffer1#22 main::@12/(byte[256]) buffer1#10 )
+  (byte[256]) buffer2#13 ← phi( main::@10/(byte[256]) buffer2#14 main::@12/(byte[256]) buffer2#15 )
+  (byte[1000]) SCREEN#9 ← phi( main::@10/(byte[1000]) SCREEN#10 main::@12/(byte[1000]) SCREEN#1 )
+  (byte*) RASTER#5 ← phi( main::@10/(byte*) RASTER#7 main::@12/(byte*) RASTER#10 )
   to:main::@2
-main::@2: from @2 main::@1
-  (byte[256]) buffer2#12 ← phi( @2/(byte[256]) buffer2#15 main::@1/(byte[256]) buffer2#13 )
-  (byte[256]) buffer1#20 ← phi( @2/(byte[256]) buffer1#11 main::@1/(byte[256]) buffer1#21 )
-  (byte[1000]) SCREEN#8 ← phi( @2/(byte[1000]) SCREEN#1 main::@1/(byte[1000]) SCREEN#9 )
-  (byte) main::c#6 ← phi( @2/(byte) main::c#1 main::@1/(byte) 25 )
-  (byte*) RASTER#3 ← phi( @2/(byte*) RASTER#10 main::@1/(byte*) RASTER#6 )
+main::@2: from main::@1 main::@6
+  (byte[256]) buffer2#12 ← phi( main::@1/(byte[256]) buffer2#13 main::@6/(byte[256]) buffer2#15 )
+  (byte[256]) buffer1#20 ← phi( main::@1/(byte[256]) buffer1#21 main::@6/(byte[256]) buffer1#10 )
+  (byte[1000]) SCREEN#8 ← phi( main::@1/(byte[1000]) SCREEN#9 main::@6/(byte[1000]) SCREEN#1 )
+  (byte) main::c#6 ← phi( main::@1/(byte) 25 main::@6/(byte) main::c#1 )
+  (byte*) RASTER#3 ← phi( main::@1/(byte*) RASTER#5 main::@6/(byte*) RASTER#10 )
   to:main::@3
 main::@3: from main::@2 main::@3
   (byte[256]) buffer1#18 ← phi( main::@2/(byte[256]) buffer1#20 main::@3/(byte[256]) buffer1#18 )
@@ -1493,34 +1493,34 @@ main::@3: from main::@2 main::@3
   (byte~) main::$1 ← * (byte*) RASTER#1
   (boolean~) main::$2 ← (byte~) main::$1 != (byte) 254
   if((boolean~) main::$2) goto main::@3
-  to:@1
-@1: from main::@3
+  to:main::@5
+main::@5: from main::@3
   to:main::@4
-main::@4: from @1 main::@4
-  (byte[256]) buffer1#11 ← phi( @1/(byte[256]) buffer1#18 main::@4/(byte[256]) buffer1#11 )
-  (byte[256]) buffer2#15 ← phi( @1/(byte[256]) buffer2#10 main::@4/(byte[256]) buffer2#15 )
-  (byte[1000]) SCREEN#1 ← phi( @1/(byte[1000]) SCREEN#6 main::@4/(byte[1000]) SCREEN#1 )
-  (byte) main::c#2 ← phi( @1/(byte) main::c#4 main::@4/(byte) main::c#2 )
-  (byte*) RASTER#10 ← phi( @1/(byte*) RASTER#1 main::@4/(byte*) RASTER#10 )
+main::@4: from main::@4 main::@5
+  (byte[256]) buffer1#10 ← phi( main::@4/(byte[256]) buffer1#10 main::@5/(byte[256]) buffer1#18 )
+  (byte[256]) buffer2#15 ← phi( main::@4/(byte[256]) buffer2#15 main::@5/(byte[256]) buffer2#10 )
+  (byte[1000]) SCREEN#1 ← phi( main::@4/(byte[1000]) SCREEN#1 main::@5/(byte[1000]) SCREEN#6 )
+  (byte) main::c#2 ← phi( main::@4/(byte) main::c#2 main::@5/(byte) main::c#4 )
+  (byte*) RASTER#10 ← phi( main::@4/(byte*) RASTER#10 main::@5/(byte*) RASTER#1 )
   (byte~) main::$3 ← * (byte*) RASTER#10
   (boolean~) main::$4 ← (byte~) main::$3 != (byte) 255
   if((boolean~) main::$4) goto main::@4
-  to:@2
-@2: from main::@4
+  to:main::@6
+main::@6: from main::@4
   (byte) main::c#1 ← -- (byte) main::c#2
   (boolean~) main::$5 ← (byte) main::c#1 != (byte) 0
   if((boolean~) main::$5) goto main::@2
-  to:@3
-@3: from @2
+  to:main::@7
+main::@7: from main::@6
   call flip param-assignment
-  to:@17
-@17: from @3
+  to:main::@11
+main::@11: from main::@7
   call plot param-assignment
-  to:@18
-@18: from @17
+  to:main::@12
+main::@12: from main::@11
   if(true) goto main::@1
   to:main::@return
-main::@return: from @18
+main::@return: from main::@12
   return 
   to:@RETURN
 prepare: from main
@@ -1536,14 +1536,14 @@ prepare::@1: from prepare prepare::@1
 prepare::@return: from prepare::@1
   return 
   to:@RETURN
-flip: from @3
+flip: from main::@7
   to:flip::@1
-flip::@1: from @8 flip
-  (byte) flip::r#4 ← phi( @8/(byte) flip::r#1 flip/(byte) 16 )
-  (byte[256]) buffer1#6 ← phi( @8/(byte[256]) buffer1#10 flip/(byte[256]) buffer1#11 )
-  (byte) flip::srcIdx#3 ← phi( @8/(byte) flip::srcIdx#1 flip/(byte) 0 )
-  (byte[256]) buffer2#3 ← phi( @8/(byte[256]) buffer2#1 flip/(byte[256]) buffer2#15 )
-  (byte) flip::dstIdx#5 ← phi( @8/(byte) flip::dstIdx#2 flip/(byte) 15 )
+flip::@1: from flip flip::@4
+  (byte) flip::r#4 ← phi( flip/(byte) 16 flip::@4/(byte) flip::r#1 )
+  (byte[256]) buffer1#6 ← phi( flip/(byte[256]) buffer1#10 flip::@4/(byte[256]) buffer1#11 )
+  (byte) flip::srcIdx#3 ← phi( flip/(byte) 0 flip::@4/(byte) flip::srcIdx#1 )
+  (byte[256]) buffer2#3 ← phi( flip/(byte[256]) buffer2#15 flip::@4/(byte[256]) buffer2#1 )
+  (byte) flip::dstIdx#5 ← phi( flip/(byte) 15 flip::@4/(byte) flip::dstIdx#2 )
   to:flip::@2
 flip::@2: from flip::@1 flip::@2
   (byte) flip::r#2 ← phi( flip::@1/(byte) flip::r#4 flip::@2/(byte) flip::r#2 )
@@ -1551,27 +1551,27 @@ flip::@2: from flip::@1 flip::@2
   (byte) flip::dstIdx#3 ← phi( flip::@1/(byte) flip::dstIdx#5 flip::@2/(byte) flip::dstIdx#1 )
   (byte[256]) buffer2#1 ← phi( flip::@1/(byte[256]) buffer2#3 flip::@2/(byte[256]) buffer2#1 )
   (byte) flip::srcIdx#2 ← phi( flip::@1/(byte) flip::srcIdx#3 flip::@2/(byte) flip::srcIdx#1 )
-  (byte[256]) buffer1#10 ← phi( flip::@1/(byte[256]) buffer1#6 flip::@2/(byte[256]) buffer1#10 )
-  (byte~) flip::$0 ← (byte[256]) buffer1#10 *idx (byte) flip::srcIdx#2
+  (byte[256]) buffer1#11 ← phi( flip::@1/(byte[256]) buffer1#6 flip::@2/(byte[256]) buffer1#11 )
+  (byte~) flip::$0 ← (byte[256]) buffer1#11 *idx (byte) flip::srcIdx#2
   *((byte[256]) buffer2#1 + (byte) flip::dstIdx#3) ← (byte~) flip::$0
   (byte) flip::srcIdx#1 ← ++ (byte) flip::srcIdx#2
   (byte) flip::dstIdx#1 ← (byte) flip::dstIdx#3 + (byte) 16
   (byte) flip::c#1 ← -- (byte) flip::c#2
   (boolean~) flip::$2 ← (byte) flip::c#1 != (byte) 0
   if((boolean~) flip::$2) goto flip::@2
-  to:@8
-@8: from flip::@2
+  to:flip::@4
+flip::@4: from flip::@2
   (byte) flip::dstIdx#2 ← -- (byte) flip::dstIdx#1
   (byte) flip::r#1 ← -- (byte) flip::r#2
   (boolean~) flip::$3 ← (byte) flip::r#1 != (byte) 0
   if((boolean~) flip::$3) goto flip::@1
-  to:@9
-@9: from @8
+  to:flip::@5
+flip::@5: from flip::@4
   to:flip::@3
-flip::@3: from @9 flip::@3
-  (byte[256]) buffer1#3 ← phi( @9/(byte[256]) buffer1#10 flip::@3/(byte[256]) buffer1#3 )
-  (byte) flip::i#2 ← phi( @9/(byte) 0 flip::@3/(byte) flip::i#1 )
-  (byte[256]) buffer2#2 ← phi( @9/(byte[256]) buffer2#1 flip::@3/(byte[256]) buffer2#2 )
+flip::@3: from flip::@3 flip::@5
+  (byte[256]) buffer1#3 ← phi( flip::@3/(byte[256]) buffer1#3 flip::@5/(byte[256]) buffer1#11 )
+  (byte) flip::i#2 ← phi( flip::@3/(byte) flip::i#1 flip::@5/(byte) 0 )
+  (byte[256]) buffer2#2 ← phi( flip::@3/(byte[256]) buffer2#2 flip::@5/(byte[256]) buffer2#1 )
   (byte~) flip::$4 ← (byte[256]) buffer2#2 *idx (byte) flip::i#2
   *((byte[256]) buffer1#3 + (byte) flip::i#2) ← (byte~) flip::$4
   (byte) flip::i#1 ← ++ (byte) flip::i#2
@@ -1581,36 +1581,36 @@ flip::@3: from @9 flip::@3
 flip::@return: from flip::@3
   return 
   to:@RETURN
-plot: from @17
+plot: from main::@11
   (byte*~) plot::$1 ← (byte[1000]) SCREEN#1 + (byte) 200
   (byte*) plot::line#0 ← (byte*~) plot::$1 + (byte) 12
   to:plot::@1
-plot::@1: from @12 plot
-  (byte) plot::y#4 ← phi( @12/(byte) plot::y#1 plot/(byte) 16 )
-  (byte[256]) buffer1#8 ← phi( @12/(byte[256]) buffer1#12 plot/(byte[256]) buffer1#11 )
-  (byte) plot::i#3 ← phi( @12/(byte) plot::i#1 plot/(byte) 0 )
-  (byte*) plot::line#4 ← phi( @12/(byte*) plot::line#1 plot/(byte*) plot::line#0 )
+plot::@1: from plot plot::@3
+  (byte) plot::y#4 ← phi( plot/(byte) 16 plot::@3/(byte) plot::y#1 )
+  (byte[256]) buffer1#8 ← phi( plot/(byte[256]) buffer1#10 plot::@3/(byte[256]) buffer1#13 )
+  (byte) plot::i#3 ← phi( plot/(byte) 0 plot::@3/(byte) plot::i#1 )
+  (byte*) plot::line#4 ← phi( plot/(byte*) plot::line#0 plot::@3/(byte*) plot::line#1 )
   to:plot::@2
 plot::@2: from plot::@1 plot::@2
   (byte) plot::y#2 ← phi( plot::@1/(byte) plot::y#4 plot::@2/(byte) plot::y#2 )
   (byte) plot::x#2 ← phi( plot::@1/(byte) 0 plot::@2/(byte) plot::x#1 )
   (byte*) plot::line#2 ← phi( plot::@1/(byte*) plot::line#4 plot::@2/(byte*) plot::line#2 )
   (byte) plot::i#2 ← phi( plot::@1/(byte) plot::i#3 plot::@2/(byte) plot::i#1 )
-  (byte[256]) buffer1#12 ← phi( plot::@1/(byte[256]) buffer1#8 plot::@2/(byte[256]) buffer1#12 )
-  (byte~) plot::$3 ← (byte[256]) buffer1#12 *idx (byte) plot::i#2
+  (byte[256]) buffer1#13 ← phi( plot::@1/(byte[256]) buffer1#8 plot::@2/(byte[256]) buffer1#13 )
+  (byte~) plot::$3 ← (byte[256]) buffer1#13 *idx (byte) plot::i#2
   *((byte*) plot::line#2 + (byte) plot::x#2) ← (byte~) plot::$3
   (byte) plot::i#1 ← ++ (byte) plot::i#2
   (byte) plot::x#1 ← ++ (byte) plot::x#2
   (boolean~) plot::$4 ← (byte) plot::x#1 < (byte) 16
   if((boolean~) plot::$4) goto plot::@2
-  to:@12
-@12: from plot::@2
+  to:plot::@3
+plot::@3: from plot::@2
   (byte*) plot::line#1 ← (byte*) plot::line#2 + (byte) 40
   (byte) plot::y#1 ← -- (byte) plot::y#2
   (boolean~) plot::$6 ← (byte) plot::y#1 != (byte) 0
   if((boolean~) plot::$6) goto plot::@1
   to:plot::@return
-plot::@return: from @12
+plot::@return: from plot::@3
   return 
   to:@RETURN
 @END: from @BEGIN
@@ -1626,21 +1626,21 @@ CONTROL FLOW GRAPH
   to:@END
 main: from @BEGIN
   call prepare param-assignment
-  to:@16
-@16: from main
+  to:main::@10
+main::@10: from main
   to:main::@1
-main::@1: from @16 @18
-  (byte[256]) buffer1#21 ← phi( @16/(word) 4096 @18/(byte[256]) buffer1#11 )
-  (byte[256]) buffer2#13 ← phi( @16/(word) 4352 @18/(byte[256]) buffer2#15 )
-  (byte[1000]) SCREEN#9 ← phi( @16/(word) 1024 @18/(byte[1000]) SCREEN#1 )
-  (byte*) RASTER#6 ← phi( @16/(word) 53266 @18/(byte*) RASTER#10 )
+main::@1: from main::@10 main::@12
+  (byte[256]) buffer1#21 ← phi( main::@10/(word) 4096 main::@12/(byte[256]) buffer1#10 )
+  (byte[256]) buffer2#13 ← phi( main::@10/(word) 4352 main::@12/(byte[256]) buffer2#15 )
+  (byte[1000]) SCREEN#9 ← phi( main::@10/(word) 1024 main::@12/(byte[1000]) SCREEN#1 )
+  (byte*) RASTER#5 ← phi( main::@10/(word) 53266 main::@12/(byte*) RASTER#10 )
   to:main::@2
-main::@2: from @2 main::@1
-  (byte[256]) buffer2#12 ← phi( @2/(byte[256]) buffer2#15 main::@1/(byte[256]) buffer2#13 )
-  (byte[256]) buffer1#20 ← phi( @2/(byte[256]) buffer1#11 main::@1/(byte[256]) buffer1#21 )
-  (byte[1000]) SCREEN#8 ← phi( @2/(byte[1000]) SCREEN#1 main::@1/(byte[1000]) SCREEN#9 )
-  (byte) main::c#6 ← phi( @2/(byte) main::c#1 main::@1/(byte) 25 )
-  (byte*) RASTER#3 ← phi( @2/(byte*) RASTER#10 main::@1/(byte*) RASTER#6 )
+main::@2: from main::@1 main::@6
+  (byte[256]) buffer2#12 ← phi( main::@1/(byte[256]) buffer2#13 main::@6/(byte[256]) buffer2#15 )
+  (byte[256]) buffer1#20 ← phi( main::@1/(byte[256]) buffer1#21 main::@6/(byte[256]) buffer1#10 )
+  (byte[1000]) SCREEN#8 ← phi( main::@1/(byte[1000]) SCREEN#9 main::@6/(byte[1000]) SCREEN#1 )
+  (byte) main::c#6 ← phi( main::@1/(byte) 25 main::@6/(byte) main::c#1 )
+  (byte*) RASTER#3 ← phi( main::@1/(byte*) RASTER#5 main::@6/(byte*) RASTER#10 )
   to:main::@3
 main::@3: from main::@2 main::@3
   (byte[256]) buffer1#18 ← phi( main::@2/(byte[256]) buffer1#20 main::@3/(byte[256]) buffer1#18 )
@@ -1651,34 +1651,34 @@ main::@3: from main::@2 main::@3
   (byte~) main::$1 ← * (byte*) RASTER#1
   (boolean~) main::$2 ← (byte~) main::$1 != (byte) 254
   if((boolean~) main::$2) goto main::@3
-  to:@1
-@1: from main::@3
+  to:main::@5
+main::@5: from main::@3
   to:main::@4
-main::@4: from @1 main::@4
-  (byte[256]) buffer1#11 ← phi( @1/(byte[256]) buffer1#18 main::@4/(byte[256]) buffer1#11 )
-  (byte[256]) buffer2#15 ← phi( @1/(byte[256]) buffer2#10 main::@4/(byte[256]) buffer2#15 )
-  (byte[1000]) SCREEN#1 ← phi( @1/(byte[1000]) SCREEN#6 main::@4/(byte[1000]) SCREEN#1 )
-  (byte) main::c#2 ← phi( @1/(byte) main::c#4 main::@4/(byte) main::c#2 )
-  (byte*) RASTER#10 ← phi( @1/(byte*) RASTER#1 main::@4/(byte*) RASTER#10 )
+main::@4: from main::@4 main::@5
+  (byte[256]) buffer1#10 ← phi( main::@4/(byte[256]) buffer1#10 main::@5/(byte[256]) buffer1#18 )
+  (byte[256]) buffer2#15 ← phi( main::@4/(byte[256]) buffer2#15 main::@5/(byte[256]) buffer2#10 )
+  (byte[1000]) SCREEN#1 ← phi( main::@4/(byte[1000]) SCREEN#1 main::@5/(byte[1000]) SCREEN#6 )
+  (byte) main::c#2 ← phi( main::@4/(byte) main::c#2 main::@5/(byte) main::c#4 )
+  (byte*) RASTER#10 ← phi( main::@4/(byte*) RASTER#10 main::@5/(byte*) RASTER#1 )
   (byte~) main::$3 ← * (byte*) RASTER#10
   (boolean~) main::$4 ← (byte~) main::$3 != (byte) 255
   if((boolean~) main::$4) goto main::@4
-  to:@2
-@2: from main::@4
+  to:main::@6
+main::@6: from main::@4
   (byte) main::c#1 ← -- (byte) main::c#2
   (boolean~) main::$5 ← (byte) main::c#1 != (byte) 0
   if((boolean~) main::$5) goto main::@2
-  to:@3
-@3: from @2
+  to:main::@7
+main::@7: from main::@6
   call flip param-assignment
-  to:@17
-@17: from @3
+  to:main::@11
+main::@11: from main::@7
   call plot param-assignment
-  to:@18
-@18: from @17
+  to:main::@12
+main::@12: from main::@11
   if(true) goto main::@1
   to:main::@return
-main::@return: from @18
+main::@return: from main::@12
   return 
   to:@RETURN
 prepare: from main
@@ -1694,14 +1694,14 @@ prepare::@1: from prepare prepare::@1
 prepare::@return: from prepare::@1
   return 
   to:@RETURN
-flip: from @3
+flip: from main::@7
   to:flip::@1
-flip::@1: from @8 flip
-  (byte) flip::r#4 ← phi( @8/(byte) flip::r#1 flip/(byte) 16 )
-  (byte[256]) buffer1#6 ← phi( @8/(byte[256]) buffer1#10 flip/(byte[256]) buffer1#11 )
-  (byte) flip::srcIdx#3 ← phi( @8/(byte) flip::srcIdx#1 flip/(byte) 0 )
-  (byte[256]) buffer2#3 ← phi( @8/(byte[256]) buffer2#1 flip/(byte[256]) buffer2#15 )
-  (byte) flip::dstIdx#5 ← phi( @8/(byte) flip::dstIdx#2 flip/(byte) 15 )
+flip::@1: from flip flip::@4
+  (byte) flip::r#4 ← phi( flip/(byte) 16 flip::@4/(byte) flip::r#1 )
+  (byte[256]) buffer1#6 ← phi( flip/(byte[256]) buffer1#10 flip::@4/(byte[256]) buffer1#11 )
+  (byte) flip::srcIdx#3 ← phi( flip/(byte) 0 flip::@4/(byte) flip::srcIdx#1 )
+  (byte[256]) buffer2#3 ← phi( flip/(byte[256]) buffer2#15 flip::@4/(byte[256]) buffer2#1 )
+  (byte) flip::dstIdx#5 ← phi( flip/(byte) 15 flip::@4/(byte) flip::dstIdx#2 )
   to:flip::@2
 flip::@2: from flip::@1 flip::@2
   (byte) flip::r#2 ← phi( flip::@1/(byte) flip::r#4 flip::@2/(byte) flip::r#2 )
@@ -1709,27 +1709,27 @@ flip::@2: from flip::@1 flip::@2
   (byte) flip::dstIdx#3 ← phi( flip::@1/(byte) flip::dstIdx#5 flip::@2/(byte) flip::dstIdx#1 )
   (byte[256]) buffer2#1 ← phi( flip::@1/(byte[256]) buffer2#3 flip::@2/(byte[256]) buffer2#1 )
   (byte) flip::srcIdx#2 ← phi( flip::@1/(byte) flip::srcIdx#3 flip::@2/(byte) flip::srcIdx#1 )
-  (byte[256]) buffer1#10 ← phi( flip::@1/(byte[256]) buffer1#6 flip::@2/(byte[256]) buffer1#10 )
-  (byte~) flip::$0 ← (byte[256]) buffer1#10 *idx (byte) flip::srcIdx#2
+  (byte[256]) buffer1#11 ← phi( flip::@1/(byte[256]) buffer1#6 flip::@2/(byte[256]) buffer1#11 )
+  (byte~) flip::$0 ← (byte[256]) buffer1#11 *idx (byte) flip::srcIdx#2
   *((byte[256]) buffer2#1 + (byte) flip::dstIdx#3) ← (byte~) flip::$0
   (byte) flip::srcIdx#1 ← ++ (byte) flip::srcIdx#2
   (byte) flip::dstIdx#1 ← (byte) flip::dstIdx#3 + (byte) 16
   (byte) flip::c#1 ← -- (byte) flip::c#2
   (boolean~) flip::$2 ← (byte) flip::c#1 != (byte) 0
   if((boolean~) flip::$2) goto flip::@2
-  to:@8
-@8: from flip::@2
+  to:flip::@4
+flip::@4: from flip::@2
   (byte) flip::dstIdx#2 ← -- (byte) flip::dstIdx#1
   (byte) flip::r#1 ← -- (byte) flip::r#2
   (boolean~) flip::$3 ← (byte) flip::r#1 != (byte) 0
   if((boolean~) flip::$3) goto flip::@1
-  to:@9
-@9: from @8
+  to:flip::@5
+flip::@5: from flip::@4
   to:flip::@3
-flip::@3: from @9 flip::@3
-  (byte[256]) buffer1#3 ← phi( @9/(byte[256]) buffer1#10 flip::@3/(byte[256]) buffer1#3 )
-  (byte) flip::i#2 ← phi( @9/(byte) 0 flip::@3/(byte) flip::i#1 )
-  (byte[256]) buffer2#2 ← phi( @9/(byte[256]) buffer2#1 flip::@3/(byte[256]) buffer2#2 )
+flip::@3: from flip::@3 flip::@5
+  (byte[256]) buffer1#3 ← phi( flip::@3/(byte[256]) buffer1#3 flip::@5/(byte[256]) buffer1#11 )
+  (byte) flip::i#2 ← phi( flip::@3/(byte) flip::i#1 flip::@5/(byte) 0 )
+  (byte[256]) buffer2#2 ← phi( flip::@3/(byte[256]) buffer2#2 flip::@5/(byte[256]) buffer2#1 )
   (byte~) flip::$4 ← (byte[256]) buffer2#2 *idx (byte) flip::i#2
   *((byte[256]) buffer1#3 + (byte) flip::i#2) ← (byte~) flip::$4
   (byte) flip::i#1 ← ++ (byte) flip::i#2
@@ -1739,36 +1739,36 @@ flip::@3: from @9 flip::@3
 flip::@return: from flip::@3
   return 
   to:@RETURN
-plot: from @17
+plot: from main::@11
   (byte*~) plot::$1 ← (byte[1000]) SCREEN#1 + (byte) 200
   (byte*) plot::line#0 ← (byte*~) plot::$1 + (byte) 12
   to:plot::@1
-plot::@1: from @12 plot
-  (byte) plot::y#4 ← phi( @12/(byte) plot::y#1 plot/(byte) 16 )
-  (byte[256]) buffer1#8 ← phi( @12/(byte[256]) buffer1#12 plot/(byte[256]) buffer1#11 )
-  (byte) plot::i#3 ← phi( @12/(byte) plot::i#1 plot/(byte) 0 )
-  (byte*) plot::line#4 ← phi( @12/(byte*) plot::line#1 plot/(byte*) plot::line#0 )
+plot::@1: from plot plot::@3
+  (byte) plot::y#4 ← phi( plot/(byte) 16 plot::@3/(byte) plot::y#1 )
+  (byte[256]) buffer1#8 ← phi( plot/(byte[256]) buffer1#10 plot::@3/(byte[256]) buffer1#13 )
+  (byte) plot::i#3 ← phi( plot/(byte) 0 plot::@3/(byte) plot::i#1 )
+  (byte*) plot::line#4 ← phi( plot/(byte*) plot::line#0 plot::@3/(byte*) plot::line#1 )
   to:plot::@2
 plot::@2: from plot::@1 plot::@2
   (byte) plot::y#2 ← phi( plot::@1/(byte) plot::y#4 plot::@2/(byte) plot::y#2 )
   (byte) plot::x#2 ← phi( plot::@1/(byte) 0 plot::@2/(byte) plot::x#1 )
   (byte*) plot::line#2 ← phi( plot::@1/(byte*) plot::line#4 plot::@2/(byte*) plot::line#2 )
   (byte) plot::i#2 ← phi( plot::@1/(byte) plot::i#3 plot::@2/(byte) plot::i#1 )
-  (byte[256]) buffer1#12 ← phi( plot::@1/(byte[256]) buffer1#8 plot::@2/(byte[256]) buffer1#12 )
-  (byte~) plot::$3 ← (byte[256]) buffer1#12 *idx (byte) plot::i#2
+  (byte[256]) buffer1#13 ← phi( plot::@1/(byte[256]) buffer1#8 plot::@2/(byte[256]) buffer1#13 )
+  (byte~) plot::$3 ← (byte[256]) buffer1#13 *idx (byte) plot::i#2
   *((byte*) plot::line#2 + (byte) plot::x#2) ← (byte~) plot::$3
   (byte) plot::i#1 ← ++ (byte) plot::i#2
   (byte) plot::x#1 ← ++ (byte) plot::x#2
   (boolean~) plot::$4 ← (byte) plot::x#1 < (byte) 16
   if((boolean~) plot::$4) goto plot::@2
-  to:@12
-@12: from plot::@2
+  to:plot::@3
+plot::@3: from plot::@2
   (byte*) plot::line#1 ← (byte*) plot::line#2 + (byte) 40
   (byte) plot::y#1 ← -- (byte) plot::y#2
   (boolean~) plot::$6 ← (byte) plot::y#1 != (byte) 0
   if((boolean~) plot::$6) goto plot::@1
   to:plot::@return
-plot::@return: from @12
+plot::@return: from plot::@3
   return 
   to:@RETURN
 @END: from @BEGIN
@@ -1778,7 +1778,7 @@ Self Phi Eliminated (byte[256]) buffer2#10
 Self Phi Eliminated (byte[1000]) SCREEN#6
 Self Phi Eliminated (byte) main::c#4
 Self Phi Eliminated (byte*) RASTER#1
-Self Phi Eliminated (byte[256]) buffer1#11
+Self Phi Eliminated (byte[256]) buffer1#10
 Self Phi Eliminated (byte[256]) buffer2#15
 Self Phi Eliminated (byte[1000]) SCREEN#1
 Self Phi Eliminated (byte) main::c#2
@@ -1786,12 +1786,12 @@ Self Phi Eliminated (byte*) RASTER#10
 Self Phi Eliminated (byte[256]) buffer1#1
 Self Phi Eliminated (byte) flip::r#2
 Self Phi Eliminated (byte[256]) buffer2#1
-Self Phi Eliminated (byte[256]) buffer1#10
+Self Phi Eliminated (byte[256]) buffer1#11
 Self Phi Eliminated (byte[256]) buffer1#3
 Self Phi Eliminated (byte[256]) buffer2#2
 Self Phi Eliminated (byte) plot::y#2
 Self Phi Eliminated (byte*) plot::line#2
-Self Phi Eliminated (byte[256]) buffer1#12
+Self Phi Eliminated (byte[256]) buffer1#13
 Succesful SSA optimization Pass2SelfPhiElimination
 CONTROL FLOW GRAPH
 @BEGIN: from
@@ -1799,21 +1799,21 @@ CONTROL FLOW GRAPH
   to:@END
 main: from @BEGIN
   call prepare param-assignment
-  to:@16
-@16: from main
+  to:main::@10
+main::@10: from main
   to:main::@1
-main::@1: from @16 @18
-  (byte[256]) buffer1#21 ← phi( @16/(word) 4096 @18/(byte[256]) buffer1#11 )
-  (byte[256]) buffer2#13 ← phi( @16/(word) 4352 @18/(byte[256]) buffer2#15 )
-  (byte[1000]) SCREEN#9 ← phi( @16/(word) 1024 @18/(byte[1000]) SCREEN#1 )
-  (byte*) RASTER#6 ← phi( @16/(word) 53266 @18/(byte*) RASTER#10 )
+main::@1: from main::@10 main::@12
+  (byte[256]) buffer1#21 ← phi( main::@10/(word) 4096 main::@12/(byte[256]) buffer1#10 )
+  (byte[256]) buffer2#13 ← phi( main::@10/(word) 4352 main::@12/(byte[256]) buffer2#15 )
+  (byte[1000]) SCREEN#9 ← phi( main::@10/(word) 1024 main::@12/(byte[1000]) SCREEN#1 )
+  (byte*) RASTER#5 ← phi( main::@10/(word) 53266 main::@12/(byte*) RASTER#10 )
   to:main::@2
-main::@2: from @2 main::@1
-  (byte[256]) buffer2#12 ← phi( @2/(byte[256]) buffer2#15 main::@1/(byte[256]) buffer2#13 )
-  (byte[256]) buffer1#20 ← phi( @2/(byte[256]) buffer1#11 main::@1/(byte[256]) buffer1#21 )
-  (byte[1000]) SCREEN#8 ← phi( @2/(byte[1000]) SCREEN#1 main::@1/(byte[1000]) SCREEN#9 )
-  (byte) main::c#6 ← phi( @2/(byte) main::c#1 main::@1/(byte) 25 )
-  (byte*) RASTER#3 ← phi( @2/(byte*) RASTER#10 main::@1/(byte*) RASTER#6 )
+main::@2: from main::@1 main::@6
+  (byte[256]) buffer2#12 ← phi( main::@1/(byte[256]) buffer2#13 main::@6/(byte[256]) buffer2#15 )
+  (byte[256]) buffer1#20 ← phi( main::@1/(byte[256]) buffer1#21 main::@6/(byte[256]) buffer1#10 )
+  (byte[1000]) SCREEN#8 ← phi( main::@1/(byte[1000]) SCREEN#9 main::@6/(byte[1000]) SCREEN#1 )
+  (byte) main::c#6 ← phi( main::@1/(byte) 25 main::@6/(byte) main::c#1 )
+  (byte*) RASTER#3 ← phi( main::@1/(byte*) RASTER#5 main::@6/(byte*) RASTER#10 )
   to:main::@3
 main::@3: from main::@2 main::@3
   (byte[256]) buffer1#18 ← phi( main::@2/(byte[256]) buffer1#20 )
@@ -1824,34 +1824,34 @@ main::@3: from main::@2 main::@3
   (byte~) main::$1 ← * (byte*) RASTER#1
   (boolean~) main::$2 ← (byte~) main::$1 != (byte) 254
   if((boolean~) main::$2) goto main::@3
-  to:@1
-@1: from main::@3
+  to:main::@5
+main::@5: from main::@3
   to:main::@4
-main::@4: from @1 main::@4
-  (byte[256]) buffer1#11 ← phi( @1/(byte[256]) buffer1#18 )
-  (byte[256]) buffer2#15 ← phi( @1/(byte[256]) buffer2#10 )
-  (byte[1000]) SCREEN#1 ← phi( @1/(byte[1000]) SCREEN#6 )
-  (byte) main::c#2 ← phi( @1/(byte) main::c#4 )
-  (byte*) RASTER#10 ← phi( @1/(byte*) RASTER#1 )
+main::@4: from main::@4 main::@5
+  (byte[256]) buffer1#10 ← phi( main::@5/(byte[256]) buffer1#18 )
+  (byte[256]) buffer2#15 ← phi( main::@5/(byte[256]) buffer2#10 )
+  (byte[1000]) SCREEN#1 ← phi( main::@5/(byte[1000]) SCREEN#6 )
+  (byte) main::c#2 ← phi( main::@5/(byte) main::c#4 )
+  (byte*) RASTER#10 ← phi( main::@5/(byte*) RASTER#1 )
   (byte~) main::$3 ← * (byte*) RASTER#10
   (boolean~) main::$4 ← (byte~) main::$3 != (byte) 255
   if((boolean~) main::$4) goto main::@4
-  to:@2
-@2: from main::@4
+  to:main::@6
+main::@6: from main::@4
   (byte) main::c#1 ← -- (byte) main::c#2
   (boolean~) main::$5 ← (byte) main::c#1 != (byte) 0
   if((boolean~) main::$5) goto main::@2
-  to:@3
-@3: from @2
+  to:main::@7
+main::@7: from main::@6
   call flip param-assignment
-  to:@17
-@17: from @3
+  to:main::@11
+main::@11: from main::@7
   call plot param-assignment
-  to:@18
-@18: from @17
+  to:main::@12
+main::@12: from main::@11
   if(true) goto main::@1
   to:main::@return
-main::@return: from @18
+main::@return: from main::@12
   return 
   to:@RETURN
 prepare: from main
@@ -1867,14 +1867,14 @@ prepare::@1: from prepare prepare::@1
 prepare::@return: from prepare::@1
   return 
   to:@RETURN
-flip: from @3
+flip: from main::@7
   to:flip::@1
-flip::@1: from @8 flip
-  (byte) flip::r#4 ← phi( @8/(byte) flip::r#1 flip/(byte) 16 )
-  (byte[256]) buffer1#6 ← phi( @8/(byte[256]) buffer1#10 flip/(byte[256]) buffer1#11 )
-  (byte) flip::srcIdx#3 ← phi( @8/(byte) flip::srcIdx#1 flip/(byte) 0 )
-  (byte[256]) buffer2#3 ← phi( @8/(byte[256]) buffer2#1 flip/(byte[256]) buffer2#15 )
-  (byte) flip::dstIdx#5 ← phi( @8/(byte) flip::dstIdx#2 flip/(byte) 15 )
+flip::@1: from flip flip::@4
+  (byte) flip::r#4 ← phi( flip/(byte) 16 flip::@4/(byte) flip::r#1 )
+  (byte[256]) buffer1#6 ← phi( flip/(byte[256]) buffer1#10 flip::@4/(byte[256]) buffer1#11 )
+  (byte) flip::srcIdx#3 ← phi( flip/(byte) 0 flip::@4/(byte) flip::srcIdx#1 )
+  (byte[256]) buffer2#3 ← phi( flip/(byte[256]) buffer2#15 flip::@4/(byte[256]) buffer2#1 )
+  (byte) flip::dstIdx#5 ← phi( flip/(byte) 15 flip::@4/(byte) flip::dstIdx#2 )
   to:flip::@2
 flip::@2: from flip::@1 flip::@2
   (byte) flip::r#2 ← phi( flip::@1/(byte) flip::r#4 )
@@ -1882,27 +1882,27 @@ flip::@2: from flip::@1 flip::@2
   (byte) flip::dstIdx#3 ← phi( flip::@1/(byte) flip::dstIdx#5 flip::@2/(byte) flip::dstIdx#1 )
   (byte[256]) buffer2#1 ← phi( flip::@1/(byte[256]) buffer2#3 )
   (byte) flip::srcIdx#2 ← phi( flip::@1/(byte) flip::srcIdx#3 flip::@2/(byte) flip::srcIdx#1 )
-  (byte[256]) buffer1#10 ← phi( flip::@1/(byte[256]) buffer1#6 )
-  (byte~) flip::$0 ← (byte[256]) buffer1#10 *idx (byte) flip::srcIdx#2
+  (byte[256]) buffer1#11 ← phi( flip::@1/(byte[256]) buffer1#6 )
+  (byte~) flip::$0 ← (byte[256]) buffer1#11 *idx (byte) flip::srcIdx#2
   *((byte[256]) buffer2#1 + (byte) flip::dstIdx#3) ← (byte~) flip::$0
   (byte) flip::srcIdx#1 ← ++ (byte) flip::srcIdx#2
   (byte) flip::dstIdx#1 ← (byte) flip::dstIdx#3 + (byte) 16
   (byte) flip::c#1 ← -- (byte) flip::c#2
   (boolean~) flip::$2 ← (byte) flip::c#1 != (byte) 0
   if((boolean~) flip::$2) goto flip::@2
-  to:@8
-@8: from flip::@2
+  to:flip::@4
+flip::@4: from flip::@2
   (byte) flip::dstIdx#2 ← -- (byte) flip::dstIdx#1
   (byte) flip::r#1 ← -- (byte) flip::r#2
   (boolean~) flip::$3 ← (byte) flip::r#1 != (byte) 0
   if((boolean~) flip::$3) goto flip::@1
-  to:@9
-@9: from @8
+  to:flip::@5
+flip::@5: from flip::@4
   to:flip::@3
-flip::@3: from @9 flip::@3
-  (byte[256]) buffer1#3 ← phi( @9/(byte[256]) buffer1#10 )
-  (byte) flip::i#2 ← phi( @9/(byte) 0 flip::@3/(byte) flip::i#1 )
-  (byte[256]) buffer2#2 ← phi( @9/(byte[256]) buffer2#1 )
+flip::@3: from flip::@3 flip::@5
+  (byte[256]) buffer1#3 ← phi( flip::@5/(byte[256]) buffer1#11 )
+  (byte) flip::i#2 ← phi( flip::@3/(byte) flip::i#1 flip::@5/(byte) 0 )
+  (byte[256]) buffer2#2 ← phi( flip::@5/(byte[256]) buffer2#1 )
   (byte~) flip::$4 ← (byte[256]) buffer2#2 *idx (byte) flip::i#2
   *((byte[256]) buffer1#3 + (byte) flip::i#2) ← (byte~) flip::$4
   (byte) flip::i#1 ← ++ (byte) flip::i#2
@@ -1912,36 +1912,36 @@ flip::@3: from @9 flip::@3
 flip::@return: from flip::@3
   return 
   to:@RETURN
-plot: from @17
+plot: from main::@11
   (byte*~) plot::$1 ← (byte[1000]) SCREEN#1 + (byte) 200
   (byte*) plot::line#0 ← (byte*~) plot::$1 + (byte) 12
   to:plot::@1
-plot::@1: from @12 plot
-  (byte) plot::y#4 ← phi( @12/(byte) plot::y#1 plot/(byte) 16 )
-  (byte[256]) buffer1#8 ← phi( @12/(byte[256]) buffer1#12 plot/(byte[256]) buffer1#11 )
-  (byte) plot::i#3 ← phi( @12/(byte) plot::i#1 plot/(byte) 0 )
-  (byte*) plot::line#4 ← phi( @12/(byte*) plot::line#1 plot/(byte*) plot::line#0 )
+plot::@1: from plot plot::@3
+  (byte) plot::y#4 ← phi( plot/(byte) 16 plot::@3/(byte) plot::y#1 )
+  (byte[256]) buffer1#8 ← phi( plot/(byte[256]) buffer1#10 plot::@3/(byte[256]) buffer1#13 )
+  (byte) plot::i#3 ← phi( plot/(byte) 0 plot::@3/(byte) plot::i#1 )
+  (byte*) plot::line#4 ← phi( plot/(byte*) plot::line#0 plot::@3/(byte*) plot::line#1 )
   to:plot::@2
 plot::@2: from plot::@1 plot::@2
   (byte) plot::y#2 ← phi( plot::@1/(byte) plot::y#4 )
   (byte) plot::x#2 ← phi( plot::@1/(byte) 0 plot::@2/(byte) plot::x#1 )
   (byte*) plot::line#2 ← phi( plot::@1/(byte*) plot::line#4 )
   (byte) plot::i#2 ← phi( plot::@1/(byte) plot::i#3 plot::@2/(byte) plot::i#1 )
-  (byte[256]) buffer1#12 ← phi( plot::@1/(byte[256]) buffer1#8 )
-  (byte~) plot::$3 ← (byte[256]) buffer1#12 *idx (byte) plot::i#2
+  (byte[256]) buffer1#13 ← phi( plot::@1/(byte[256]) buffer1#8 )
+  (byte~) plot::$3 ← (byte[256]) buffer1#13 *idx (byte) plot::i#2
   *((byte*) plot::line#2 + (byte) plot::x#2) ← (byte~) plot::$3
   (byte) plot::i#1 ← ++ (byte) plot::i#2
   (byte) plot::x#1 ← ++ (byte) plot::x#2
   (boolean~) plot::$4 ← (byte) plot::x#1 < (byte) 16
   if((boolean~) plot::$4) goto plot::@2
-  to:@12
-@12: from plot::@2
+  to:plot::@3
+plot::@3: from plot::@2
   (byte*) plot::line#1 ← (byte*) plot::line#2 + (byte) 40
   (byte) plot::y#1 ← -- (byte) plot::y#2
   (boolean~) plot::$6 ← (byte) plot::y#1 != (byte) 0
   if((boolean~) plot::$6) goto plot::@1
   to:plot::@return
-plot::@return: from @12
+plot::@return: from plot::@3
   return 
   to:@RETURN
 @END: from @BEGIN
@@ -1962,21 +1962,21 @@ CONTROL FLOW GRAPH
   to:@END
 main: from @BEGIN
   call prepare param-assignment
-  to:@16
-@16: from main
+  to:main::@10
+main::@10: from main
   to:main::@1
-main::@1: from @16 @18
-  (byte[256]) buffer1#21 ← phi( @16/(word) 4096 @18/(byte[256]) buffer1#11 )
-  (byte[256]) buffer2#13 ← phi( @16/(word) 4352 @18/(byte[256]) buffer2#15 )
-  (byte[1000]) SCREEN#9 ← phi( @16/(word) 1024 @18/(byte[1000]) SCREEN#1 )
-  (byte*) RASTER#6 ← phi( @16/(word) 53266 @18/(byte*) RASTER#10 )
+main::@1: from main::@10 main::@12
+  (byte[256]) buffer1#21 ← phi( main::@10/(word) 4096 main::@12/(byte[256]) buffer1#10 )
+  (byte[256]) buffer2#13 ← phi( main::@10/(word) 4352 main::@12/(byte[256]) buffer2#15 )
+  (byte[1000]) SCREEN#9 ← phi( main::@10/(word) 1024 main::@12/(byte[1000]) SCREEN#1 )
+  (byte*) RASTER#5 ← phi( main::@10/(word) 53266 main::@12/(byte*) RASTER#10 )
   to:main::@2
-main::@2: from @2 main::@1
-  (byte[256]) buffer2#12 ← phi( @2/(byte[256]) buffer2#15 main::@1/(byte[256]) buffer2#13 )
-  (byte[256]) buffer1#20 ← phi( @2/(byte[256]) buffer1#11 main::@1/(byte[256]) buffer1#21 )
-  (byte[1000]) SCREEN#8 ← phi( @2/(byte[1000]) SCREEN#1 main::@1/(byte[1000]) SCREEN#9 )
-  (byte) main::c#6 ← phi( @2/(byte) main::c#1 main::@1/(byte) 25 )
-  (byte*) RASTER#3 ← phi( @2/(byte*) RASTER#10 main::@1/(byte*) RASTER#6 )
+main::@2: from main::@1 main::@6
+  (byte[256]) buffer2#12 ← phi( main::@1/(byte[256]) buffer2#13 main::@6/(byte[256]) buffer2#15 )
+  (byte[256]) buffer1#20 ← phi( main::@1/(byte[256]) buffer1#21 main::@6/(byte[256]) buffer1#10 )
+  (byte[1000]) SCREEN#8 ← phi( main::@1/(byte[1000]) SCREEN#9 main::@6/(byte[1000]) SCREEN#1 )
+  (byte) main::c#6 ← phi( main::@1/(byte) 25 main::@6/(byte) main::c#1 )
+  (byte*) RASTER#3 ← phi( main::@1/(byte*) RASTER#5 main::@6/(byte*) RASTER#10 )
   to:main::@3
 main::@3: from main::@2 main::@3
   (byte[256]) buffer1#18 ← phi( main::@2/(byte[256]) buffer1#20 )
@@ -1986,32 +1986,32 @@ main::@3: from main::@2 main::@3
   (byte*) RASTER#1 ← phi( main::@2/(byte*) RASTER#3 )
   (byte~) main::$1 ← * (byte*) RASTER#1
   if((byte~) main::$1!=(byte) 254) goto main::@3
-  to:@1
-@1: from main::@3
+  to:main::@5
+main::@5: from main::@3
   to:main::@4
-main::@4: from @1 main::@4
-  (byte[256]) buffer1#11 ← phi( @1/(byte[256]) buffer1#18 )
-  (byte[256]) buffer2#15 ← phi( @1/(byte[256]) buffer2#10 )
-  (byte[1000]) SCREEN#1 ← phi( @1/(byte[1000]) SCREEN#6 )
-  (byte) main::c#2 ← phi( @1/(byte) main::c#4 )
-  (byte*) RASTER#10 ← phi( @1/(byte*) RASTER#1 )
+main::@4: from main::@4 main::@5
+  (byte[256]) buffer1#10 ← phi( main::@5/(byte[256]) buffer1#18 )
+  (byte[256]) buffer2#15 ← phi( main::@5/(byte[256]) buffer2#10 )
+  (byte[1000]) SCREEN#1 ← phi( main::@5/(byte[1000]) SCREEN#6 )
+  (byte) main::c#2 ← phi( main::@5/(byte) main::c#4 )
+  (byte*) RASTER#10 ← phi( main::@5/(byte*) RASTER#1 )
   (byte~) main::$3 ← * (byte*) RASTER#10
   if((byte~) main::$3!=(byte) 255) goto main::@4
-  to:@2
-@2: from main::@4
+  to:main::@6
+main::@6: from main::@4
   (byte) main::c#1 ← -- (byte) main::c#2
   if((byte) main::c#1!=(byte) 0) goto main::@2
-  to:@3
-@3: from @2
+  to:main::@7
+main::@7: from main::@6
   call flip param-assignment
-  to:@17
-@17: from @3
+  to:main::@11
+main::@11: from main::@7
   call plot param-assignment
-  to:@18
-@18: from @17
+  to:main::@12
+main::@12: from main::@11
   if(true) goto main::@1
   to:main::@return
-main::@return: from @18
+main::@return: from main::@12
   return 
   to:@RETURN
 prepare: from main
@@ -2026,14 +2026,14 @@ prepare::@1: from prepare prepare::@1
 prepare::@return: from prepare::@1
   return 
   to:@RETURN
-flip: from @3
+flip: from main::@7
   to:flip::@1
-flip::@1: from @8 flip
-  (byte) flip::r#4 ← phi( @8/(byte) flip::r#1 flip/(byte) 16 )
-  (byte[256]) buffer1#6 ← phi( @8/(byte[256]) buffer1#10 flip/(byte[256]) buffer1#11 )
-  (byte) flip::srcIdx#3 ← phi( @8/(byte) flip::srcIdx#1 flip/(byte) 0 )
-  (byte[256]) buffer2#3 ← phi( @8/(byte[256]) buffer2#1 flip/(byte[256]) buffer2#15 )
-  (byte) flip::dstIdx#5 ← phi( @8/(byte) flip::dstIdx#2 flip/(byte) 15 )
+flip::@1: from flip flip::@4
+  (byte) flip::r#4 ← phi( flip/(byte) 16 flip::@4/(byte) flip::r#1 )
+  (byte[256]) buffer1#6 ← phi( flip/(byte[256]) buffer1#10 flip::@4/(byte[256]) buffer1#11 )
+  (byte) flip::srcIdx#3 ← phi( flip/(byte) 0 flip::@4/(byte) flip::srcIdx#1 )
+  (byte[256]) buffer2#3 ← phi( flip/(byte[256]) buffer2#15 flip::@4/(byte[256]) buffer2#1 )
+  (byte) flip::dstIdx#5 ← phi( flip/(byte) 15 flip::@4/(byte) flip::dstIdx#2 )
   to:flip::@2
 flip::@2: from flip::@1 flip::@2
   (byte) flip::r#2 ← phi( flip::@1/(byte) flip::r#4 )
@@ -2041,25 +2041,25 @@ flip::@2: from flip::@1 flip::@2
   (byte) flip::dstIdx#3 ← phi( flip::@1/(byte) flip::dstIdx#5 flip::@2/(byte) flip::dstIdx#1 )
   (byte[256]) buffer2#1 ← phi( flip::@1/(byte[256]) buffer2#3 )
   (byte) flip::srcIdx#2 ← phi( flip::@1/(byte) flip::srcIdx#3 flip::@2/(byte) flip::srcIdx#1 )
-  (byte[256]) buffer1#10 ← phi( flip::@1/(byte[256]) buffer1#6 )
-  (byte~) flip::$0 ← (byte[256]) buffer1#10 *idx (byte) flip::srcIdx#2
+  (byte[256]) buffer1#11 ← phi( flip::@1/(byte[256]) buffer1#6 )
+  (byte~) flip::$0 ← (byte[256]) buffer1#11 *idx (byte) flip::srcIdx#2
   *((byte[256]) buffer2#1 + (byte) flip::dstIdx#3) ← (byte~) flip::$0
   (byte) flip::srcIdx#1 ← ++ (byte) flip::srcIdx#2
   (byte) flip::dstIdx#1 ← (byte) flip::dstIdx#3 + (byte) 16
   (byte) flip::c#1 ← -- (byte) flip::c#2
   if((byte) flip::c#1!=(byte) 0) goto flip::@2
-  to:@8
-@8: from flip::@2
+  to:flip::@4
+flip::@4: from flip::@2
   (byte) flip::dstIdx#2 ← -- (byte) flip::dstIdx#1
   (byte) flip::r#1 ← -- (byte) flip::r#2
   if((byte) flip::r#1!=(byte) 0) goto flip::@1
-  to:@9
-@9: from @8
+  to:flip::@5
+flip::@5: from flip::@4
   to:flip::@3
-flip::@3: from @9 flip::@3
-  (byte[256]) buffer1#3 ← phi( @9/(byte[256]) buffer1#10 )
-  (byte) flip::i#2 ← phi( @9/(byte) 0 flip::@3/(byte) flip::i#1 )
-  (byte[256]) buffer2#2 ← phi( @9/(byte[256]) buffer2#1 )
+flip::@3: from flip::@3 flip::@5
+  (byte[256]) buffer1#3 ← phi( flip::@5/(byte[256]) buffer1#11 )
+  (byte) flip::i#2 ← phi( flip::@3/(byte) flip::i#1 flip::@5/(byte) 0 )
+  (byte[256]) buffer2#2 ← phi( flip::@5/(byte[256]) buffer2#1 )
   (byte~) flip::$4 ← (byte[256]) buffer2#2 *idx (byte) flip::i#2
   *((byte[256]) buffer1#3 + (byte) flip::i#2) ← (byte~) flip::$4
   (byte) flip::i#1 ← ++ (byte) flip::i#2
@@ -2068,41 +2068,41 @@ flip::@3: from @9 flip::@3
 flip::@return: from flip::@3
   return 
   to:@RETURN
-plot: from @17
+plot: from main::@11
   (byte*~) plot::$1 ← (byte[1000]) SCREEN#1 + (byte) 200
   (byte*) plot::line#0 ← (byte*~) plot::$1 + (byte) 12
   to:plot::@1
-plot::@1: from @12 plot
-  (byte) plot::y#4 ← phi( @12/(byte) plot::y#1 plot/(byte) 16 )
-  (byte[256]) buffer1#8 ← phi( @12/(byte[256]) buffer1#12 plot/(byte[256]) buffer1#11 )
-  (byte) plot::i#3 ← phi( @12/(byte) plot::i#1 plot/(byte) 0 )
-  (byte*) plot::line#4 ← phi( @12/(byte*) plot::line#1 plot/(byte*) plot::line#0 )
+plot::@1: from plot plot::@3
+  (byte) plot::y#4 ← phi( plot/(byte) 16 plot::@3/(byte) plot::y#1 )
+  (byte[256]) buffer1#8 ← phi( plot/(byte[256]) buffer1#10 plot::@3/(byte[256]) buffer1#13 )
+  (byte) plot::i#3 ← phi( plot/(byte) 0 plot::@3/(byte) plot::i#1 )
+  (byte*) plot::line#4 ← phi( plot/(byte*) plot::line#0 plot::@3/(byte*) plot::line#1 )
   to:plot::@2
 plot::@2: from plot::@1 plot::@2
   (byte) plot::y#2 ← phi( plot::@1/(byte) plot::y#4 )
   (byte) plot::x#2 ← phi( plot::@1/(byte) 0 plot::@2/(byte) plot::x#1 )
   (byte*) plot::line#2 ← phi( plot::@1/(byte*) plot::line#4 )
   (byte) plot::i#2 ← phi( plot::@1/(byte) plot::i#3 plot::@2/(byte) plot::i#1 )
-  (byte[256]) buffer1#12 ← phi( plot::@1/(byte[256]) buffer1#8 )
-  (byte~) plot::$3 ← (byte[256]) buffer1#12 *idx (byte) plot::i#2
+  (byte[256]) buffer1#13 ← phi( plot::@1/(byte[256]) buffer1#8 )
+  (byte~) plot::$3 ← (byte[256]) buffer1#13 *idx (byte) plot::i#2
   *((byte*) plot::line#2 + (byte) plot::x#2) ← (byte~) plot::$3
   (byte) plot::i#1 ← ++ (byte) plot::i#2
   (byte) plot::x#1 ← ++ (byte) plot::x#2
   if((byte) plot::x#1<(byte) 16) goto plot::@2
-  to:@12
-@12: from plot::@2
+  to:plot::@3
+plot::@3: from plot::@2
   (byte*) plot::line#1 ← (byte*) plot::line#2 + (byte) 40
   (byte) plot::y#1 ← -- (byte) plot::y#2
   if((byte) plot::y#1!=(byte) 0) goto plot::@1
   to:plot::@return
-plot::@return: from @12
+plot::@return: from plot::@3
   return 
   to:@RETURN
 @END: from @BEGIN
 
-Culled Empty Block (label) @16
-Culled Empty Block (label) @1
-Culled Empty Block (label) @9
+Culled Empty Block (label) main::@10
+Culled Empty Block (label) main::@5
+Culled Empty Block (label) flip::@5
 Succesful SSA optimization Pass2CullEmptyBlocks
 CONTROL FLOW GRAPH
 @BEGIN: from
@@ -2111,18 +2111,18 @@ CONTROL FLOW GRAPH
 main: from @BEGIN
   call prepare param-assignment
   to:main::@1
-main::@1: from @18 main
-  (byte[256]) buffer1#21 ← phi( main/(word) 4096 @18/(byte[256]) buffer1#11 )
-  (byte[256]) buffer2#13 ← phi( main/(word) 4352 @18/(byte[256]) buffer2#15 )
-  (byte[1000]) SCREEN#9 ← phi( main/(word) 1024 @18/(byte[1000]) SCREEN#1 )
-  (byte*) RASTER#6 ← phi( main/(word) 53266 @18/(byte*) RASTER#10 )
+main::@1: from main main::@12
+  (byte[256]) buffer1#21 ← phi( main/(word) 4096 main::@12/(byte[256]) buffer1#10 )
+  (byte[256]) buffer2#13 ← phi( main/(word) 4352 main::@12/(byte[256]) buffer2#15 )
+  (byte[1000]) SCREEN#9 ← phi( main/(word) 1024 main::@12/(byte[1000]) SCREEN#1 )
+  (byte*) RASTER#5 ← phi( main/(word) 53266 main::@12/(byte*) RASTER#10 )
   to:main::@2
-main::@2: from @2 main::@1
-  (byte[256]) buffer2#12 ← phi( @2/(byte[256]) buffer2#15 main::@1/(byte[256]) buffer2#13 )
-  (byte[256]) buffer1#20 ← phi( @2/(byte[256]) buffer1#11 main::@1/(byte[256]) buffer1#21 )
-  (byte[1000]) SCREEN#8 ← phi( @2/(byte[1000]) SCREEN#1 main::@1/(byte[1000]) SCREEN#9 )
-  (byte) main::c#6 ← phi( @2/(byte) main::c#1 main::@1/(byte) 25 )
-  (byte*) RASTER#3 ← phi( @2/(byte*) RASTER#10 main::@1/(byte*) RASTER#6 )
+main::@2: from main::@1 main::@6
+  (byte[256]) buffer2#12 ← phi( main::@1/(byte[256]) buffer2#13 main::@6/(byte[256]) buffer2#15 )
+  (byte[256]) buffer1#20 ← phi( main::@1/(byte[256]) buffer1#21 main::@6/(byte[256]) buffer1#10 )
+  (byte[1000]) SCREEN#8 ← phi( main::@1/(byte[1000]) SCREEN#9 main::@6/(byte[1000]) SCREEN#1 )
+  (byte) main::c#6 ← phi( main::@1/(byte) 25 main::@6/(byte) main::c#1 )
+  (byte*) RASTER#3 ← phi( main::@1/(byte*) RASTER#5 main::@6/(byte*) RASTER#10 )
   to:main::@3
 main::@3: from main::@2 main::@3
   (byte[256]) buffer1#18 ← phi( main::@2/(byte[256]) buffer1#20 )
@@ -2134,28 +2134,28 @@ main::@3: from main::@2 main::@3
   if((byte~) main::$1!=(byte) 254) goto main::@3
   to:main::@4
 main::@4: from main::@3 main::@4
-  (byte[256]) buffer1#11 ← phi( main::@3/(byte[256]) buffer1#18 )
+  (byte[256]) buffer1#10 ← phi( main::@3/(byte[256]) buffer1#18 )
   (byte[256]) buffer2#15 ← phi( main::@3/(byte[256]) buffer2#10 )
   (byte[1000]) SCREEN#1 ← phi( main::@3/(byte[1000]) SCREEN#6 )
   (byte) main::c#2 ← phi( main::@3/(byte) main::c#4 )
   (byte*) RASTER#10 ← phi( main::@3/(byte*) RASTER#1 )
   (byte~) main::$3 ← * (byte*) RASTER#10
   if((byte~) main::$3!=(byte) 255) goto main::@4
-  to:@2
-@2: from main::@4
+  to:main::@6
+main::@6: from main::@4
   (byte) main::c#1 ← -- (byte) main::c#2
   if((byte) main::c#1!=(byte) 0) goto main::@2
-  to:@3
-@3: from @2
+  to:main::@7
+main::@7: from main::@6
   call flip param-assignment
-  to:@17
-@17: from @3
+  to:main::@11
+main::@11: from main::@7
   call plot param-assignment
-  to:@18
-@18: from @17
+  to:main::@12
+main::@12: from main::@11
   if(true) goto main::@1
   to:main::@return
-main::@return: from @18
+main::@return: from main::@12
   return 
   to:@RETURN
 prepare: from main
@@ -2170,14 +2170,14 @@ prepare::@1: from prepare prepare::@1
 prepare::@return: from prepare::@1
   return 
   to:@RETURN
-flip: from @3
+flip: from main::@7
   to:flip::@1
-flip::@1: from @8 flip
-  (byte) flip::r#4 ← phi( @8/(byte) flip::r#1 flip/(byte) 16 )
-  (byte[256]) buffer1#6 ← phi( @8/(byte[256]) buffer1#10 flip/(byte[256]) buffer1#11 )
-  (byte) flip::srcIdx#3 ← phi( @8/(byte) flip::srcIdx#1 flip/(byte) 0 )
-  (byte[256]) buffer2#3 ← phi( @8/(byte[256]) buffer2#1 flip/(byte[256]) buffer2#15 )
-  (byte) flip::dstIdx#5 ← phi( @8/(byte) flip::dstIdx#2 flip/(byte) 15 )
+flip::@1: from flip flip::@4
+  (byte) flip::r#4 ← phi( flip/(byte) 16 flip::@4/(byte) flip::r#1 )
+  (byte[256]) buffer1#6 ← phi( flip/(byte[256]) buffer1#10 flip::@4/(byte[256]) buffer1#11 )
+  (byte) flip::srcIdx#3 ← phi( flip/(byte) 0 flip::@4/(byte) flip::srcIdx#1 )
+  (byte[256]) buffer2#3 ← phi( flip/(byte[256]) buffer2#15 flip::@4/(byte[256]) buffer2#1 )
+  (byte) flip::dstIdx#5 ← phi( flip/(byte) 15 flip::@4/(byte) flip::dstIdx#2 )
   to:flip::@2
 flip::@2: from flip::@1 flip::@2
   (byte) flip::r#2 ← phi( flip::@1/(byte) flip::r#4 )
@@ -2185,23 +2185,23 @@ flip::@2: from flip::@1 flip::@2
   (byte) flip::dstIdx#3 ← phi( flip::@1/(byte) flip::dstIdx#5 flip::@2/(byte) flip::dstIdx#1 )
   (byte[256]) buffer2#1 ← phi( flip::@1/(byte[256]) buffer2#3 )
   (byte) flip::srcIdx#2 ← phi( flip::@1/(byte) flip::srcIdx#3 flip::@2/(byte) flip::srcIdx#1 )
-  (byte[256]) buffer1#10 ← phi( flip::@1/(byte[256]) buffer1#6 )
-  (byte~) flip::$0 ← (byte[256]) buffer1#10 *idx (byte) flip::srcIdx#2
+  (byte[256]) buffer1#11 ← phi( flip::@1/(byte[256]) buffer1#6 )
+  (byte~) flip::$0 ← (byte[256]) buffer1#11 *idx (byte) flip::srcIdx#2
   *((byte[256]) buffer2#1 + (byte) flip::dstIdx#3) ← (byte~) flip::$0
   (byte) flip::srcIdx#1 ← ++ (byte) flip::srcIdx#2
   (byte) flip::dstIdx#1 ← (byte) flip::dstIdx#3 + (byte) 16
   (byte) flip::c#1 ← -- (byte) flip::c#2
   if((byte) flip::c#1!=(byte) 0) goto flip::@2
-  to:@8
-@8: from flip::@2
+  to:flip::@4
+flip::@4: from flip::@2
   (byte) flip::dstIdx#2 ← -- (byte) flip::dstIdx#1
   (byte) flip::r#1 ← -- (byte) flip::r#2
   if((byte) flip::r#1!=(byte) 0) goto flip::@1
   to:flip::@3
-flip::@3: from @8 flip::@3
-  (byte[256]) buffer1#3 ← phi( @8/(byte[256]) buffer1#10 )
-  (byte) flip::i#2 ← phi( @8/(byte) 0 flip::@3/(byte) flip::i#1 )
-  (byte[256]) buffer2#2 ← phi( @8/(byte[256]) buffer2#1 )
+flip::@3: from flip::@3 flip::@4
+  (byte[256]) buffer1#3 ← phi( flip::@4/(byte[256]) buffer1#11 )
+  (byte) flip::i#2 ← phi( flip::@3/(byte) flip::i#1 flip::@4/(byte) 0 )
+  (byte[256]) buffer2#2 ← phi( flip::@4/(byte[256]) buffer2#1 )
   (byte~) flip::$4 ← (byte[256]) buffer2#2 *idx (byte) flip::i#2
   *((byte[256]) buffer1#3 + (byte) flip::i#2) ← (byte~) flip::$4
   (byte) flip::i#1 ← ++ (byte) flip::i#2
@@ -2210,34 +2210,34 @@ flip::@3: from @8 flip::@3
 flip::@return: from flip::@3
   return 
   to:@RETURN
-plot: from @17
+plot: from main::@11
   (byte*~) plot::$1 ← (byte[1000]) SCREEN#1 + (byte) 200
   (byte*) plot::line#0 ← (byte*~) plot::$1 + (byte) 12
   to:plot::@1
-plot::@1: from @12 plot
-  (byte) plot::y#4 ← phi( @12/(byte) plot::y#1 plot/(byte) 16 )
-  (byte[256]) buffer1#8 ← phi( @12/(byte[256]) buffer1#12 plot/(byte[256]) buffer1#11 )
-  (byte) plot::i#3 ← phi( @12/(byte) plot::i#1 plot/(byte) 0 )
-  (byte*) plot::line#4 ← phi( @12/(byte*) plot::line#1 plot/(byte*) plot::line#0 )
+plot::@1: from plot plot::@3
+  (byte) plot::y#4 ← phi( plot/(byte) 16 plot::@3/(byte) plot::y#1 )
+  (byte[256]) buffer1#8 ← phi( plot/(byte[256]) buffer1#10 plot::@3/(byte[256]) buffer1#13 )
+  (byte) plot::i#3 ← phi( plot/(byte) 0 plot::@3/(byte) plot::i#1 )
+  (byte*) plot::line#4 ← phi( plot/(byte*) plot::line#0 plot::@3/(byte*) plot::line#1 )
   to:plot::@2
 plot::@2: from plot::@1 plot::@2
   (byte) plot::y#2 ← phi( plot::@1/(byte) plot::y#4 )
   (byte) plot::x#2 ← phi( plot::@1/(byte) 0 plot::@2/(byte) plot::x#1 )
   (byte*) plot::line#2 ← phi( plot::@1/(byte*) plot::line#4 )
   (byte) plot::i#2 ← phi( plot::@1/(byte) plot::i#3 plot::@2/(byte) plot::i#1 )
-  (byte[256]) buffer1#12 ← phi( plot::@1/(byte[256]) buffer1#8 )
-  (byte~) plot::$3 ← (byte[256]) buffer1#12 *idx (byte) plot::i#2
+  (byte[256]) buffer1#13 ← phi( plot::@1/(byte[256]) buffer1#8 )
+  (byte~) plot::$3 ← (byte[256]) buffer1#13 *idx (byte) plot::i#2
   *((byte*) plot::line#2 + (byte) plot::x#2) ← (byte~) plot::$3
   (byte) plot::i#1 ← ++ (byte) plot::i#2
   (byte) plot::x#1 ← ++ (byte) plot::x#2
   if((byte) plot::x#1<(byte) 16) goto plot::@2
-  to:@12
-@12: from plot::@2
+  to:plot::@3
+plot::@3: from plot::@2
   (byte*) plot::line#1 ← (byte*) plot::line#2 + (byte) 40
   (byte) plot::y#1 ← -- (byte) plot::y#2
   if((byte) plot::y#1!=(byte) 0) goto plot::@1
   to:plot::@return
-plot::@return: from @12
+plot::@return: from plot::@3
   return 
   to:@RETURN
 @END: from @BEGIN
@@ -2251,18 +2251,18 @@ CONTROL FLOW GRAPH
 main: from @BEGIN
   call prepare param-assignment
   to:main::@1
-main::@1: from @18 main
-  (byte[256]) buffer1#21 ← phi( main/(word) 4096 @18/(byte[256]) buffer1#11 )
-  (byte[256]) buffer2#13 ← phi( main/(word) 4352 @18/(byte[256]) buffer2#15 )
-  (byte[1000]) SCREEN#9 ← phi( main/(word) 1024 @18/(byte[1000]) SCREEN#1 )
-  (byte*) RASTER#6 ← phi( main/(word) 53266 @18/(byte*) RASTER#10 )
+main::@1: from main main::@12
+  (byte[256]) buffer1#21 ← phi( main/(word) 4096 main::@12/(byte[256]) buffer1#10 )
+  (byte[256]) buffer2#13 ← phi( main/(word) 4352 main::@12/(byte[256]) buffer2#15 )
+  (byte[1000]) SCREEN#9 ← phi( main/(word) 1024 main::@12/(byte[1000]) SCREEN#1 )
+  (byte*) RASTER#5 ← phi( main/(word) 53266 main::@12/(byte*) RASTER#10 )
   to:main::@2
-main::@2: from @2 main::@1
-  (byte[256]) buffer2#12 ← phi( @2/(byte[256]) buffer2#15 main::@1/(byte[256]) buffer2#13 )
-  (byte[256]) buffer1#20 ← phi( @2/(byte[256]) buffer1#11 main::@1/(byte[256]) buffer1#21 )
-  (byte[1000]) SCREEN#8 ← phi( @2/(byte[1000]) SCREEN#1 main::@1/(byte[1000]) SCREEN#9 )
-  (byte) main::c#6 ← phi( @2/(byte) main::c#1 main::@1/(byte) 25 )
-  (byte*) RASTER#3 ← phi( @2/(byte*) RASTER#10 main::@1/(byte*) RASTER#6 )
+main::@2: from main::@1 main::@6
+  (byte[256]) buffer2#12 ← phi( main::@1/(byte[256]) buffer2#13 main::@6/(byte[256]) buffer2#15 )
+  (byte[256]) buffer1#20 ← phi( main::@1/(byte[256]) buffer1#21 main::@6/(byte[256]) buffer1#10 )
+  (byte[1000]) SCREEN#8 ← phi( main::@1/(byte[1000]) SCREEN#9 main::@6/(byte[1000]) SCREEN#1 )
+  (byte) main::c#6 ← phi( main::@1/(byte) 25 main::@6/(byte) main::c#1 )
+  (byte*) RASTER#3 ← phi( main::@1/(byte*) RASTER#5 main::@6/(byte*) RASTER#10 )
   to:main::@3
 main::@3: from main::@2 main::@3
   (byte[256]) buffer1#18 ← phi( main::@2/(byte[256]) buffer1#20 )
@@ -2274,28 +2274,28 @@ main::@3: from main::@2 main::@3
   if((byte~) main::$1!=(byte) 254) goto main::@3
   to:main::@4
 main::@4: from main::@3 main::@4
-  (byte[256]) buffer1#11 ← phi( main::@3/(byte[256]) buffer1#18 )
+  (byte[256]) buffer1#10 ← phi( main::@3/(byte[256]) buffer1#18 )
   (byte[256]) buffer2#15 ← phi( main::@3/(byte[256]) buffer2#10 )
   (byte[1000]) SCREEN#1 ← phi( main::@3/(byte[1000]) SCREEN#6 )
   (byte) main::c#2 ← phi( main::@3/(byte) main::c#4 )
   (byte*) RASTER#10 ← phi( main::@3/(byte*) RASTER#1 )
   (byte~) main::$3 ← * (byte*) RASTER#10
   if((byte~) main::$3!=(byte) 255) goto main::@4
-  to:@2
-@2: from main::@4
+  to:main::@6
+main::@6: from main::@4
   (byte) main::c#1 ← -- (byte) main::c#2
   if((byte) main::c#1!=(byte) 0) goto main::@2
-  to:@3
-@3: from @2
+  to:main::@7
+main::@7: from main::@6
   call flip param-assignment
-  to:@17
-@17: from @3
+  to:main::@11
+main::@11: from main::@7
   call plot param-assignment
-  to:@18
-@18: from @17
+  to:main::@12
+main::@12: from main::@11
   if(true) goto main::@1
   to:main::@return
-main::@return: from @18
+main::@return: from main::@12
   return 
   to:@RETURN
 prepare: from main
@@ -2309,14 +2309,14 @@ prepare::@1: from prepare prepare::@1
 prepare::@return: from prepare::@1
   return 
   to:@RETURN
-flip: from @3
+flip: from main::@7
   to:flip::@1
-flip::@1: from @8 flip
-  (byte) flip::r#4 ← phi( @8/(byte) flip::r#1 flip/(byte) 16 )
-  (byte[256]) buffer1#6 ← phi( @8/(byte[256]) buffer1#10 flip/(byte[256]) buffer1#11 )
-  (byte) flip::srcIdx#3 ← phi( @8/(byte) flip::srcIdx#1 flip/(byte) 0 )
-  (byte[256]) buffer2#3 ← phi( @8/(byte[256]) buffer2#1 flip/(byte[256]) buffer2#15 )
-  (byte) flip::dstIdx#5 ← phi( @8/(byte) flip::dstIdx#2 flip/(byte) 15 )
+flip::@1: from flip flip::@4
+  (byte) flip::r#4 ← phi( flip/(byte) 16 flip::@4/(byte) flip::r#1 )
+  (byte[256]) buffer1#6 ← phi( flip/(byte[256]) buffer1#10 flip::@4/(byte[256]) buffer1#11 )
+  (byte) flip::srcIdx#3 ← phi( flip/(byte) 0 flip::@4/(byte) flip::srcIdx#1 )
+  (byte[256]) buffer2#3 ← phi( flip/(byte[256]) buffer2#15 flip::@4/(byte[256]) buffer2#1 )
+  (byte) flip::dstIdx#5 ← phi( flip/(byte) 15 flip::@4/(byte) flip::dstIdx#2 )
   to:flip::@2
 flip::@2: from flip::@1 flip::@2
   (byte) flip::r#2 ← phi( flip::@1/(byte) flip::r#4 )
@@ -2324,23 +2324,23 @@ flip::@2: from flip::@1 flip::@2
   (byte) flip::dstIdx#3 ← phi( flip::@1/(byte) flip::dstIdx#5 flip::@2/(byte) flip::dstIdx#1 )
   (byte[256]) buffer2#1 ← phi( flip::@1/(byte[256]) buffer2#3 )
   (byte) flip::srcIdx#2 ← phi( flip::@1/(byte) flip::srcIdx#3 flip::@2/(byte) flip::srcIdx#1 )
-  (byte[256]) buffer1#10 ← phi( flip::@1/(byte[256]) buffer1#6 )
-  (byte~) flip::$0 ← (byte[256]) buffer1#10 *idx (byte) flip::srcIdx#2
+  (byte[256]) buffer1#11 ← phi( flip::@1/(byte[256]) buffer1#6 )
+  (byte~) flip::$0 ← (byte[256]) buffer1#11 *idx (byte) flip::srcIdx#2
   *((byte[256]) buffer2#1 + (byte) flip::dstIdx#3) ← (byte~) flip::$0
   (byte) flip::srcIdx#1 ← ++ (byte) flip::srcIdx#2
   (byte) flip::dstIdx#1 ← (byte) flip::dstIdx#3 + (byte) 16
   (byte) flip::c#1 ← -- (byte) flip::c#2
   if((byte) flip::c#1!=(byte) 0) goto flip::@2
-  to:@8
-@8: from flip::@2
+  to:flip::@4
+flip::@4: from flip::@2
   (byte) flip::dstIdx#2 ← -- (byte) flip::dstIdx#1
   (byte) flip::r#1 ← -- (byte) flip::r#2
   if((byte) flip::r#1!=(byte) 0) goto flip::@1
   to:flip::@3
-flip::@3: from @8 flip::@3
-  (byte[256]) buffer1#3 ← phi( @8/(byte[256]) buffer1#10 )
-  (byte) flip::i#2 ← phi( @8/(byte) 0 flip::@3/(byte) flip::i#1 )
-  (byte[256]) buffer2#2 ← phi( @8/(byte[256]) buffer2#1 )
+flip::@3: from flip::@3 flip::@4
+  (byte[256]) buffer1#3 ← phi( flip::@4/(byte[256]) buffer1#11 )
+  (byte) flip::i#2 ← phi( flip::@3/(byte) flip::i#1 flip::@4/(byte) 0 )
+  (byte[256]) buffer2#2 ← phi( flip::@4/(byte[256]) buffer2#1 )
   (byte~) flip::$4 ← (byte[256]) buffer2#2 *idx (byte) flip::i#2
   *((byte[256]) buffer1#3 + (byte) flip::i#2) ← (byte~) flip::$4
   (byte) flip::i#1 ← ++ (byte) flip::i#2
@@ -2349,51 +2349,51 @@ flip::@3: from @8 flip::@3
 flip::@return: from flip::@3
   return 
   to:@RETURN
-plot: from @17
+plot: from main::@11
   (byte*~) plot::$1 ← (byte[1000]) SCREEN#1 + (byte) 200
   (byte*) plot::line#0 ← (byte*~) plot::$1 + (byte) 12
   to:plot::@1
-plot::@1: from @12 plot
-  (byte) plot::y#4 ← phi( @12/(byte) plot::y#1 plot/(byte) 16 )
-  (byte[256]) buffer1#8 ← phi( @12/(byte[256]) buffer1#12 plot/(byte[256]) buffer1#11 )
-  (byte) plot::i#3 ← phi( @12/(byte) plot::i#1 plot/(byte) 0 )
-  (byte*) plot::line#4 ← phi( @12/(byte*) plot::line#1 plot/(byte*) plot::line#0 )
+plot::@1: from plot plot::@3
+  (byte) plot::y#4 ← phi( plot/(byte) 16 plot::@3/(byte) plot::y#1 )
+  (byte[256]) buffer1#8 ← phi( plot/(byte[256]) buffer1#10 plot::@3/(byte[256]) buffer1#13 )
+  (byte) plot::i#3 ← phi( plot/(byte) 0 plot::@3/(byte) plot::i#1 )
+  (byte*) plot::line#4 ← phi( plot/(byte*) plot::line#0 plot::@3/(byte*) plot::line#1 )
   to:plot::@2
 plot::@2: from plot::@1 plot::@2
   (byte) plot::y#2 ← phi( plot::@1/(byte) plot::y#4 )
   (byte) plot::x#2 ← phi( plot::@1/(byte) 0 plot::@2/(byte) plot::x#1 )
   (byte*) plot::line#2 ← phi( plot::@1/(byte*) plot::line#4 )
   (byte) plot::i#2 ← phi( plot::@1/(byte) plot::i#3 plot::@2/(byte) plot::i#1 )
-  (byte[256]) buffer1#12 ← phi( plot::@1/(byte[256]) buffer1#8 )
-  (byte~) plot::$3 ← (byte[256]) buffer1#12 *idx (byte) plot::i#2
+  (byte[256]) buffer1#13 ← phi( plot::@1/(byte[256]) buffer1#8 )
+  (byte~) plot::$3 ← (byte[256]) buffer1#13 *idx (byte) plot::i#2
   *((byte*) plot::line#2 + (byte) plot::x#2) ← (byte~) plot::$3
   (byte) plot::i#1 ← ++ (byte) plot::i#2
   (byte) plot::x#1 ← ++ (byte) plot::x#2
   if((byte) plot::x#1<(byte) 16) goto plot::@2
-  to:@12
-@12: from plot::@2
+  to:plot::@3
+plot::@3: from plot::@2
   (byte*) plot::line#1 ← (byte*) plot::line#2 + (byte) 40
   (byte) plot::y#1 ← -- (byte) plot::y#2
   if((byte) plot::y#1!=(byte) 0) goto plot::@1
   to:plot::@return
-plot::@return: from @12
+plot::@return: from plot::@3
   return 
   to:@RETURN
 @END: from @BEGIN
 
 Multiple usages for variable. Not optimizing sub-constant (byte) prepare::i#2
 Multiple usages for variable. Not optimizing sub-constant (byte[1000]) SCREEN#1
-Alias (byte[256]) buffer1#11 = (byte[256]) buffer1#18 (byte[256]) buffer1#20 
+Alias (byte[256]) buffer1#10 = (byte[256]) buffer1#18 (byte[256]) buffer1#20 
 Alias (byte[256]) buffer2#10 = (byte[256]) buffer2#12 (byte[256]) buffer2#15 
 Alias (byte[1000]) SCREEN#1 = (byte[1000]) SCREEN#6 (byte[1000]) SCREEN#8 
 Alias (byte) main::c#2 = (byte) main::c#4 (byte) main::c#6 
 Alias (byte*) RASTER#1 = (byte*) RASTER#3 (byte*) RASTER#10 
 Alias (byte) flip::r#2 = (byte) flip::r#4 
 Alias (byte[256]) buffer2#1 = (byte[256]) buffer2#3 (byte[256]) buffer2#2 
-Alias (byte[256]) buffer1#10 = (byte[256]) buffer1#6 (byte[256]) buffer1#3 
+Alias (byte[256]) buffer1#11 = (byte[256]) buffer1#6 (byte[256]) buffer1#3 
 Alias (byte) plot::y#2 = (byte) plot::y#4 
 Alias (byte*) plot::line#2 = (byte*) plot::line#4 
-Alias (byte[256]) buffer1#12 = (byte[256]) buffer1#8 
+Alias (byte[256]) buffer1#13 = (byte[256]) buffer1#8 
 Succesful SSA optimization Pass2AliasElimination
 CONTROL FLOW GRAPH
 @BEGIN: from
@@ -2402,18 +2402,18 @@ CONTROL FLOW GRAPH
 main: from @BEGIN
   call prepare param-assignment
   to:main::@1
-main::@1: from @18 main
-  (byte[256]) buffer1#21 ← phi( main/(word) 4096 @18/(byte[256]) buffer1#11 )
-  (byte[256]) buffer2#13 ← phi( main/(word) 4352 @18/(byte[256]) buffer2#10 )
-  (byte[1000]) SCREEN#9 ← phi( main/(word) 1024 @18/(byte[1000]) SCREEN#1 )
-  (byte*) RASTER#6 ← phi( main/(word) 53266 @18/(byte*) RASTER#1 )
+main::@1: from main main::@12
+  (byte[256]) buffer1#21 ← phi( main/(word) 4096 main::@12/(byte[256]) buffer1#10 )
+  (byte[256]) buffer2#13 ← phi( main/(word) 4352 main::@12/(byte[256]) buffer2#10 )
+  (byte[1000]) SCREEN#9 ← phi( main/(word) 1024 main::@12/(byte[1000]) SCREEN#1 )
+  (byte*) RASTER#5 ← phi( main/(word) 53266 main::@12/(byte*) RASTER#1 )
   to:main::@2
-main::@2: from @2 main::@1
-  (byte[256]) buffer2#10 ← phi( @2/(byte[256]) buffer2#10 main::@1/(byte[256]) buffer2#13 )
-  (byte[256]) buffer1#11 ← phi( @2/(byte[256]) buffer1#11 main::@1/(byte[256]) buffer1#21 )
-  (byte[1000]) SCREEN#1 ← phi( @2/(byte[1000]) SCREEN#1 main::@1/(byte[1000]) SCREEN#9 )
-  (byte) main::c#2 ← phi( @2/(byte) main::c#1 main::@1/(byte) 25 )
-  (byte*) RASTER#1 ← phi( @2/(byte*) RASTER#1 main::@1/(byte*) RASTER#6 )
+main::@2: from main::@1 main::@6
+  (byte[256]) buffer2#10 ← phi( main::@1/(byte[256]) buffer2#13 main::@6/(byte[256]) buffer2#10 )
+  (byte[256]) buffer1#10 ← phi( main::@1/(byte[256]) buffer1#21 main::@6/(byte[256]) buffer1#10 )
+  (byte[1000]) SCREEN#1 ← phi( main::@1/(byte[1000]) SCREEN#9 main::@6/(byte[1000]) SCREEN#1 )
+  (byte) main::c#2 ← phi( main::@1/(byte) 25 main::@6/(byte) main::c#1 )
+  (byte*) RASTER#1 ← phi( main::@1/(byte*) RASTER#5 main::@6/(byte*) RASTER#1 )
   to:main::@3
 main::@3: from main::@2 main::@3
   (byte~) main::$1 ← * (byte*) RASTER#1
@@ -2422,21 +2422,21 @@ main::@3: from main::@2 main::@3
 main::@4: from main::@3 main::@4
   (byte~) main::$3 ← * (byte*) RASTER#1
   if((byte~) main::$3!=(byte) 255) goto main::@4
-  to:@2
-@2: from main::@4
+  to:main::@6
+main::@6: from main::@4
   (byte) main::c#1 ← -- (byte) main::c#2
   if((byte) main::c#1!=(byte) 0) goto main::@2
-  to:@3
-@3: from @2
+  to:main::@7
+main::@7: from main::@6
   call flip param-assignment
-  to:@17
-@17: from @3
+  to:main::@11
+main::@11: from main::@7
   call plot param-assignment
-  to:@18
-@18: from @17
+  to:main::@12
+main::@12: from main::@11
   if(true) goto main::@1
   to:main::@return
-main::@return: from @18
+main::@return: from main::@12
   return 
   to:@RETURN
 prepare: from main
@@ -2450,77 +2450,77 @@ prepare::@1: from prepare prepare::@1
 prepare::@return: from prepare::@1
   return 
   to:@RETURN
-flip: from @3
+flip: from main::@7
   to:flip::@1
-flip::@1: from @8 flip
-  (byte) flip::r#2 ← phi( @8/(byte) flip::r#1 flip/(byte) 16 )
-  (byte[256]) buffer1#10 ← phi( @8/(byte[256]) buffer1#10 flip/(byte[256]) buffer1#11 )
-  (byte) flip::srcIdx#3 ← phi( @8/(byte) flip::srcIdx#1 flip/(byte) 0 )
-  (byte[256]) buffer2#1 ← phi( @8/(byte[256]) buffer2#1 flip/(byte[256]) buffer2#10 )
-  (byte) flip::dstIdx#5 ← phi( @8/(byte) flip::dstIdx#2 flip/(byte) 15 )
+flip::@1: from flip flip::@4
+  (byte) flip::r#2 ← phi( flip/(byte) 16 flip::@4/(byte) flip::r#1 )
+  (byte[256]) buffer1#11 ← phi( flip/(byte[256]) buffer1#10 flip::@4/(byte[256]) buffer1#11 )
+  (byte) flip::srcIdx#3 ← phi( flip/(byte) 0 flip::@4/(byte) flip::srcIdx#1 )
+  (byte[256]) buffer2#1 ← phi( flip/(byte[256]) buffer2#10 flip::@4/(byte[256]) buffer2#1 )
+  (byte) flip::dstIdx#5 ← phi( flip/(byte) 15 flip::@4/(byte) flip::dstIdx#2 )
   to:flip::@2
 flip::@2: from flip::@1 flip::@2
   (byte) flip::c#2 ← phi( flip::@1/(byte) 16 flip::@2/(byte) flip::c#1 )
   (byte) flip::dstIdx#3 ← phi( flip::@1/(byte) flip::dstIdx#5 flip::@2/(byte) flip::dstIdx#1 )
   (byte) flip::srcIdx#2 ← phi( flip::@1/(byte) flip::srcIdx#3 flip::@2/(byte) flip::srcIdx#1 )
-  (byte~) flip::$0 ← (byte[256]) buffer1#10 *idx (byte) flip::srcIdx#2
+  (byte~) flip::$0 ← (byte[256]) buffer1#11 *idx (byte) flip::srcIdx#2
   *((byte[256]) buffer2#1 + (byte) flip::dstIdx#3) ← (byte~) flip::$0
   (byte) flip::srcIdx#1 ← ++ (byte) flip::srcIdx#2
   (byte) flip::dstIdx#1 ← (byte) flip::dstIdx#3 + (byte) 16
   (byte) flip::c#1 ← -- (byte) flip::c#2
   if((byte) flip::c#1!=(byte) 0) goto flip::@2
-  to:@8
-@8: from flip::@2
+  to:flip::@4
+flip::@4: from flip::@2
   (byte) flip::dstIdx#2 ← -- (byte) flip::dstIdx#1
   (byte) flip::r#1 ← -- (byte) flip::r#2
   if((byte) flip::r#1!=(byte) 0) goto flip::@1
   to:flip::@3
-flip::@3: from @8 flip::@3
-  (byte) flip::i#2 ← phi( @8/(byte) 0 flip::@3/(byte) flip::i#1 )
+flip::@3: from flip::@3 flip::@4
+  (byte) flip::i#2 ← phi( flip::@3/(byte) flip::i#1 flip::@4/(byte) 0 )
   (byte~) flip::$4 ← (byte[256]) buffer2#1 *idx (byte) flip::i#2
-  *((byte[256]) buffer1#10 + (byte) flip::i#2) ← (byte~) flip::$4
+  *((byte[256]) buffer1#11 + (byte) flip::i#2) ← (byte~) flip::$4
   (byte) flip::i#1 ← ++ (byte) flip::i#2
   if((byte) flip::i#1!=(byte) 0) goto flip::@3
   to:flip::@return
 flip::@return: from flip::@3
   return 
   to:@RETURN
-plot: from @17
+plot: from main::@11
   (byte*~) plot::$1 ← (byte[1000]) SCREEN#1 + (byte) 200
   (byte*) plot::line#0 ← (byte*~) plot::$1 + (byte) 12
   to:plot::@1
-plot::@1: from @12 plot
-  (byte) plot::y#2 ← phi( @12/(byte) plot::y#1 plot/(byte) 16 )
-  (byte[256]) buffer1#12 ← phi( @12/(byte[256]) buffer1#12 plot/(byte[256]) buffer1#11 )
-  (byte) plot::i#3 ← phi( @12/(byte) plot::i#1 plot/(byte) 0 )
-  (byte*) plot::line#2 ← phi( @12/(byte*) plot::line#1 plot/(byte*) plot::line#0 )
+plot::@1: from plot plot::@3
+  (byte) plot::y#2 ← phi( plot/(byte) 16 plot::@3/(byte) plot::y#1 )
+  (byte[256]) buffer1#13 ← phi( plot/(byte[256]) buffer1#10 plot::@3/(byte[256]) buffer1#13 )
+  (byte) plot::i#3 ← phi( plot/(byte) 0 plot::@3/(byte) plot::i#1 )
+  (byte*) plot::line#2 ← phi( plot/(byte*) plot::line#0 plot::@3/(byte*) plot::line#1 )
   to:plot::@2
 plot::@2: from plot::@1 plot::@2
   (byte) plot::x#2 ← phi( plot::@1/(byte) 0 plot::@2/(byte) plot::x#1 )
   (byte) plot::i#2 ← phi( plot::@1/(byte) plot::i#3 plot::@2/(byte) plot::i#1 )
-  (byte~) plot::$3 ← (byte[256]) buffer1#12 *idx (byte) plot::i#2
+  (byte~) plot::$3 ← (byte[256]) buffer1#13 *idx (byte) plot::i#2
   *((byte*) plot::line#2 + (byte) plot::x#2) ← (byte~) plot::$3
   (byte) plot::i#1 ← ++ (byte) plot::i#2
   (byte) plot::x#1 ← ++ (byte) plot::x#2
   if((byte) plot::x#1<(byte) 16) goto plot::@2
-  to:@12
-@12: from plot::@2
+  to:plot::@3
+plot::@3: from plot::@2
   (byte*) plot::line#1 ← (byte*) plot::line#2 + (byte) 40
   (byte) plot::y#1 ← -- (byte) plot::y#2
   if((byte) plot::y#1!=(byte) 0) goto plot::@1
   to:plot::@return
-plot::@return: from @12
+plot::@return: from plot::@3
   return 
   to:@RETURN
 @END: from @BEGIN
 
 Self Phi Eliminated (byte[256]) buffer2#10
-Self Phi Eliminated (byte[256]) buffer1#11
+Self Phi Eliminated (byte[256]) buffer1#10
 Self Phi Eliminated (byte[1000]) SCREEN#1
 Self Phi Eliminated (byte*) RASTER#1
-Self Phi Eliminated (byte[256]) buffer1#10
+Self Phi Eliminated (byte[256]) buffer1#11
 Self Phi Eliminated (byte[256]) buffer2#1
-Self Phi Eliminated (byte[256]) buffer1#12
+Self Phi Eliminated (byte[256]) buffer1#13
 Succesful SSA optimization Pass2SelfPhiElimination
 CONTROL FLOW GRAPH
 @BEGIN: from
@@ -2529,18 +2529,18 @@ CONTROL FLOW GRAPH
 main: from @BEGIN
   call prepare param-assignment
   to:main::@1
-main::@1: from @18 main
-  (byte[256]) buffer1#21 ← phi( main/(word) 4096 @18/(byte[256]) buffer1#11 )
-  (byte[256]) buffer2#13 ← phi( main/(word) 4352 @18/(byte[256]) buffer2#10 )
-  (byte[1000]) SCREEN#9 ← phi( main/(word) 1024 @18/(byte[1000]) SCREEN#1 )
-  (byte*) RASTER#6 ← phi( main/(word) 53266 @18/(byte*) RASTER#1 )
+main::@1: from main main::@12
+  (byte[256]) buffer1#21 ← phi( main/(word) 4096 main::@12/(byte[256]) buffer1#10 )
+  (byte[256]) buffer2#13 ← phi( main/(word) 4352 main::@12/(byte[256]) buffer2#10 )
+  (byte[1000]) SCREEN#9 ← phi( main/(word) 1024 main::@12/(byte[1000]) SCREEN#1 )
+  (byte*) RASTER#5 ← phi( main/(word) 53266 main::@12/(byte*) RASTER#1 )
   to:main::@2
-main::@2: from @2 main::@1
+main::@2: from main::@1 main::@6
   (byte[256]) buffer2#10 ← phi( main::@1/(byte[256]) buffer2#13 )
-  (byte[256]) buffer1#11 ← phi( main::@1/(byte[256]) buffer1#21 )
+  (byte[256]) buffer1#10 ← phi( main::@1/(byte[256]) buffer1#21 )
   (byte[1000]) SCREEN#1 ← phi( main::@1/(byte[1000]) SCREEN#9 )
-  (byte) main::c#2 ← phi( @2/(byte) main::c#1 main::@1/(byte) 25 )
-  (byte*) RASTER#1 ← phi( main::@1/(byte*) RASTER#6 )
+  (byte) main::c#2 ← phi( main::@1/(byte) 25 main::@6/(byte) main::c#1 )
+  (byte*) RASTER#1 ← phi( main::@1/(byte*) RASTER#5 )
   to:main::@3
 main::@3: from main::@2 main::@3
   (byte~) main::$1 ← * (byte*) RASTER#1
@@ -2549,21 +2549,21 @@ main::@3: from main::@2 main::@3
 main::@4: from main::@3 main::@4
   (byte~) main::$3 ← * (byte*) RASTER#1
   if((byte~) main::$3!=(byte) 255) goto main::@4
-  to:@2
-@2: from main::@4
+  to:main::@6
+main::@6: from main::@4
   (byte) main::c#1 ← -- (byte) main::c#2
   if((byte) main::c#1!=(byte) 0) goto main::@2
-  to:@3
-@3: from @2
+  to:main::@7
+main::@7: from main::@6
   call flip param-assignment
-  to:@17
-@17: from @3
+  to:main::@11
+main::@11: from main::@7
   call plot param-assignment
-  to:@18
-@18: from @17
+  to:main::@12
+main::@12: from main::@11
   if(true) goto main::@1
   to:main::@return
-main::@return: from @18
+main::@return: from main::@12
   return 
   to:@RETURN
 prepare: from main
@@ -2577,66 +2577,66 @@ prepare::@1: from prepare prepare::@1
 prepare::@return: from prepare::@1
   return 
   to:@RETURN
-flip: from @3
+flip: from main::@7
   to:flip::@1
-flip::@1: from @8 flip
-  (byte) flip::r#2 ← phi( @8/(byte) flip::r#1 flip/(byte) 16 )
-  (byte[256]) buffer1#10 ← phi( flip/(byte[256]) buffer1#11 )
-  (byte) flip::srcIdx#3 ← phi( @8/(byte) flip::srcIdx#1 flip/(byte) 0 )
+flip::@1: from flip flip::@4
+  (byte) flip::r#2 ← phi( flip/(byte) 16 flip::@4/(byte) flip::r#1 )
+  (byte[256]) buffer1#11 ← phi( flip/(byte[256]) buffer1#10 )
+  (byte) flip::srcIdx#3 ← phi( flip/(byte) 0 flip::@4/(byte) flip::srcIdx#1 )
   (byte[256]) buffer2#1 ← phi( flip/(byte[256]) buffer2#10 )
-  (byte) flip::dstIdx#5 ← phi( @8/(byte) flip::dstIdx#2 flip/(byte) 15 )
+  (byte) flip::dstIdx#5 ← phi( flip/(byte) 15 flip::@4/(byte) flip::dstIdx#2 )
   to:flip::@2
 flip::@2: from flip::@1 flip::@2
   (byte) flip::c#2 ← phi( flip::@1/(byte) 16 flip::@2/(byte) flip::c#1 )
   (byte) flip::dstIdx#3 ← phi( flip::@1/(byte) flip::dstIdx#5 flip::@2/(byte) flip::dstIdx#1 )
   (byte) flip::srcIdx#2 ← phi( flip::@1/(byte) flip::srcIdx#3 flip::@2/(byte) flip::srcIdx#1 )
-  (byte~) flip::$0 ← (byte[256]) buffer1#10 *idx (byte) flip::srcIdx#2
+  (byte~) flip::$0 ← (byte[256]) buffer1#11 *idx (byte) flip::srcIdx#2
   *((byte[256]) buffer2#1 + (byte) flip::dstIdx#3) ← (byte~) flip::$0
   (byte) flip::srcIdx#1 ← ++ (byte) flip::srcIdx#2
   (byte) flip::dstIdx#1 ← (byte) flip::dstIdx#3 + (byte) 16
   (byte) flip::c#1 ← -- (byte) flip::c#2
   if((byte) flip::c#1!=(byte) 0) goto flip::@2
-  to:@8
-@8: from flip::@2
+  to:flip::@4
+flip::@4: from flip::@2
   (byte) flip::dstIdx#2 ← -- (byte) flip::dstIdx#1
   (byte) flip::r#1 ← -- (byte) flip::r#2
   if((byte) flip::r#1!=(byte) 0) goto flip::@1
   to:flip::@3
-flip::@3: from @8 flip::@3
-  (byte) flip::i#2 ← phi( @8/(byte) 0 flip::@3/(byte) flip::i#1 )
+flip::@3: from flip::@3 flip::@4
+  (byte) flip::i#2 ← phi( flip::@3/(byte) flip::i#1 flip::@4/(byte) 0 )
   (byte~) flip::$4 ← (byte[256]) buffer2#1 *idx (byte) flip::i#2
-  *((byte[256]) buffer1#10 + (byte) flip::i#2) ← (byte~) flip::$4
+  *((byte[256]) buffer1#11 + (byte) flip::i#2) ← (byte~) flip::$4
   (byte) flip::i#1 ← ++ (byte) flip::i#2
   if((byte) flip::i#1!=(byte) 0) goto flip::@3
   to:flip::@return
 flip::@return: from flip::@3
   return 
   to:@RETURN
-plot: from @17
+plot: from main::@11
   (byte*~) plot::$1 ← (byte[1000]) SCREEN#1 + (byte) 200
   (byte*) plot::line#0 ← (byte*~) plot::$1 + (byte) 12
   to:plot::@1
-plot::@1: from @12 plot
-  (byte) plot::y#2 ← phi( @12/(byte) plot::y#1 plot/(byte) 16 )
-  (byte[256]) buffer1#12 ← phi( plot/(byte[256]) buffer1#11 )
-  (byte) plot::i#3 ← phi( @12/(byte) plot::i#1 plot/(byte) 0 )
-  (byte*) plot::line#2 ← phi( @12/(byte*) plot::line#1 plot/(byte*) plot::line#0 )
+plot::@1: from plot plot::@3
+  (byte) plot::y#2 ← phi( plot/(byte) 16 plot::@3/(byte) plot::y#1 )
+  (byte[256]) buffer1#13 ← phi( plot/(byte[256]) buffer1#10 )
+  (byte) plot::i#3 ← phi( plot/(byte) 0 plot::@3/(byte) plot::i#1 )
+  (byte*) plot::line#2 ← phi( plot/(byte*) plot::line#0 plot::@3/(byte*) plot::line#1 )
   to:plot::@2
 plot::@2: from plot::@1 plot::@2
   (byte) plot::x#2 ← phi( plot::@1/(byte) 0 plot::@2/(byte) plot::x#1 )
   (byte) plot::i#2 ← phi( plot::@1/(byte) plot::i#3 plot::@2/(byte) plot::i#1 )
-  (byte~) plot::$3 ← (byte[256]) buffer1#12 *idx (byte) plot::i#2
+  (byte~) plot::$3 ← (byte[256]) buffer1#13 *idx (byte) plot::i#2
   *((byte*) plot::line#2 + (byte) plot::x#2) ← (byte~) plot::$3
   (byte) plot::i#1 ← ++ (byte) plot::i#2
   (byte) plot::x#1 ← ++ (byte) plot::x#2
   if((byte) plot::x#1<(byte) 16) goto plot::@2
-  to:@12
-@12: from plot::@2
+  to:plot::@3
+plot::@3: from plot::@2
   (byte*) plot::line#1 ← (byte*) plot::line#2 + (byte) 40
   (byte) plot::y#1 ← -- (byte) plot::y#2
   if((byte) plot::y#1!=(byte) 0) goto plot::@1
   to:plot::@return
-plot::@return: from @12
+plot::@return: from plot::@3
   return 
   to:@RETURN
 @END: from @BEGIN
@@ -2644,9 +2644,9 @@ plot::@return: from @12
 Multiple usages for variable. Not optimizing sub-constant (byte) prepare::i#2
 Multiple usages for variable. Not optimizing sub-constant (byte[1000]) SCREEN#1
 Alias (byte[256]) buffer2#1 = (byte[256]) buffer2#10 (byte[256]) buffer2#13 
-Alias (byte[256]) buffer1#10 = (byte[256]) buffer1#11 (byte[256]) buffer1#21 (byte[256]) buffer1#12 
+Alias (byte[256]) buffer1#10 = (byte[256]) buffer1#21 (byte[256]) buffer1#11 (byte[256]) buffer1#13 
 Alias (byte[1000]) SCREEN#1 = (byte[1000]) SCREEN#9 
-Alias (byte*) RASTER#1 = (byte*) RASTER#6 
+Alias (byte*) RASTER#1 = (byte*) RASTER#5 
 Succesful SSA optimization Pass2AliasElimination
 CONTROL FLOW GRAPH
 @BEGIN: from
@@ -2655,14 +2655,14 @@ CONTROL FLOW GRAPH
 main: from @BEGIN
   call prepare param-assignment
   to:main::@1
-main::@1: from @18 main
-  (byte[256]) buffer1#10 ← phi( main/(word) 4096 @18/(byte[256]) buffer1#10 )
-  (byte[256]) buffer2#1 ← phi( main/(word) 4352 @18/(byte[256]) buffer2#1 )
-  (byte[1000]) SCREEN#1 ← phi( main/(word) 1024 @18/(byte[1000]) SCREEN#1 )
-  (byte*) RASTER#1 ← phi( main/(word) 53266 @18/(byte*) RASTER#1 )
+main::@1: from main main::@12
+  (byte[256]) buffer1#10 ← phi( main/(word) 4096 main::@12/(byte[256]) buffer1#10 )
+  (byte[256]) buffer2#1 ← phi( main/(word) 4352 main::@12/(byte[256]) buffer2#1 )
+  (byte[1000]) SCREEN#1 ← phi( main/(word) 1024 main::@12/(byte[1000]) SCREEN#1 )
+  (byte*) RASTER#1 ← phi( main/(word) 53266 main::@12/(byte*) RASTER#1 )
   to:main::@2
-main::@2: from @2 main::@1
-  (byte) main::c#2 ← phi( @2/(byte) main::c#1 main::@1/(byte) 25 )
+main::@2: from main::@1 main::@6
+  (byte) main::c#2 ← phi( main::@1/(byte) 25 main::@6/(byte) main::c#1 )
   to:main::@3
 main::@3: from main::@2 main::@3
   (byte~) main::$1 ← * (byte*) RASTER#1
@@ -2671,21 +2671,21 @@ main::@3: from main::@2 main::@3
 main::@4: from main::@3 main::@4
   (byte~) main::$3 ← * (byte*) RASTER#1
   if((byte~) main::$3!=(byte) 255) goto main::@4
-  to:@2
-@2: from main::@4
+  to:main::@6
+main::@6: from main::@4
   (byte) main::c#1 ← -- (byte) main::c#2
   if((byte) main::c#1!=(byte) 0) goto main::@2
-  to:@3
-@3: from @2
+  to:main::@7
+main::@7: from main::@6
   call flip param-assignment
-  to:@17
-@17: from @3
+  to:main::@11
+main::@11: from main::@7
   call plot param-assignment
-  to:@18
-@18: from @17
+  to:main::@12
+main::@12: from main::@11
   if(true) goto main::@1
   to:main::@return
-main::@return: from @18
+main::@return: from main::@12
   return 
   to:@RETURN
 prepare: from main
@@ -2699,12 +2699,12 @@ prepare::@1: from prepare prepare::@1
 prepare::@return: from prepare::@1
   return 
   to:@RETURN
-flip: from @3
+flip: from main::@7
   to:flip::@1
-flip::@1: from @8 flip
-  (byte) flip::r#2 ← phi( @8/(byte) flip::r#1 flip/(byte) 16 )
-  (byte) flip::srcIdx#3 ← phi( @8/(byte) flip::srcIdx#1 flip/(byte) 0 )
-  (byte) flip::dstIdx#5 ← phi( @8/(byte) flip::dstIdx#2 flip/(byte) 15 )
+flip::@1: from flip flip::@4
+  (byte) flip::r#2 ← phi( flip/(byte) 16 flip::@4/(byte) flip::r#1 )
+  (byte) flip::srcIdx#3 ← phi( flip/(byte) 0 flip::@4/(byte) flip::srcIdx#1 )
+  (byte) flip::dstIdx#5 ← phi( flip/(byte) 15 flip::@4/(byte) flip::dstIdx#2 )
   to:flip::@2
 flip::@2: from flip::@1 flip::@2
   (byte) flip::c#2 ← phi( flip::@1/(byte) 16 flip::@2/(byte) flip::c#1 )
@@ -2716,14 +2716,14 @@ flip::@2: from flip::@1 flip::@2
   (byte) flip::dstIdx#1 ← (byte) flip::dstIdx#3 + (byte) 16
   (byte) flip::c#1 ← -- (byte) flip::c#2
   if((byte) flip::c#1!=(byte) 0) goto flip::@2
-  to:@8
-@8: from flip::@2
+  to:flip::@4
+flip::@4: from flip::@2
   (byte) flip::dstIdx#2 ← -- (byte) flip::dstIdx#1
   (byte) flip::r#1 ← -- (byte) flip::r#2
   if((byte) flip::r#1!=(byte) 0) goto flip::@1
   to:flip::@3
-flip::@3: from @8 flip::@3
-  (byte) flip::i#2 ← phi( @8/(byte) 0 flip::@3/(byte) flip::i#1 )
+flip::@3: from flip::@3 flip::@4
+  (byte) flip::i#2 ← phi( flip::@3/(byte) flip::i#1 flip::@4/(byte) 0 )
   (byte~) flip::$4 ← (byte[256]) buffer2#1 *idx (byte) flip::i#2
   *((byte[256]) buffer1#10 + (byte) flip::i#2) ← (byte~) flip::$4
   (byte) flip::i#1 ← ++ (byte) flip::i#2
@@ -2732,14 +2732,14 @@ flip::@3: from @8 flip::@3
 flip::@return: from flip::@3
   return 
   to:@RETURN
-plot: from @17
+plot: from main::@11
   (byte*~) plot::$1 ← (byte[1000]) SCREEN#1 + (byte) 200
   (byte*) plot::line#0 ← (byte*~) plot::$1 + (byte) 12
   to:plot::@1
-plot::@1: from @12 plot
-  (byte) plot::y#2 ← phi( @12/(byte) plot::y#1 plot/(byte) 16 )
-  (byte) plot::i#3 ← phi( @12/(byte) plot::i#1 plot/(byte) 0 )
-  (byte*) plot::line#2 ← phi( @12/(byte*) plot::line#1 plot/(byte*) plot::line#0 )
+plot::@1: from plot plot::@3
+  (byte) plot::y#2 ← phi( plot/(byte) 16 plot::@3/(byte) plot::y#1 )
+  (byte) plot::i#3 ← phi( plot/(byte) 0 plot::@3/(byte) plot::i#1 )
+  (byte*) plot::line#2 ← phi( plot/(byte*) plot::line#0 plot::@3/(byte*) plot::line#1 )
   to:plot::@2
 plot::@2: from plot::@1 plot::@2
   (byte) plot::x#2 ← phi( plot::@1/(byte) 0 plot::@2/(byte) plot::x#1 )
@@ -2749,13 +2749,13 @@ plot::@2: from plot::@1 plot::@2
   (byte) plot::i#1 ← ++ (byte) plot::i#2
   (byte) plot::x#1 ← ++ (byte) plot::x#2
   if((byte) plot::x#1<(byte) 16) goto plot::@2
-  to:@12
-@12: from plot::@2
+  to:plot::@3
+plot::@3: from plot::@2
   (byte*) plot::line#1 ← (byte*) plot::line#2 + (byte) 40
   (byte) plot::y#1 ← -- (byte) plot::y#2
   if((byte) plot::y#1!=(byte) 0) goto plot::@1
   to:plot::@return
-plot::@return: from @12
+plot::@return: from plot::@3
   return 
   to:@RETURN
 @END: from @BEGIN
@@ -2772,14 +2772,14 @@ CONTROL FLOW GRAPH
 main: from @BEGIN
   call prepare param-assignment
   to:main::@1
-main::@1: from @18 main
+main::@1: from main main::@12
   (byte[256]) buffer1#10 ← phi( main/(word) 4096 )
   (byte[256]) buffer2#1 ← phi( main/(word) 4352 )
   (byte[1000]) SCREEN#1 ← phi( main/(word) 1024 )
   (byte*) RASTER#1 ← phi( main/(word) 53266 )
   to:main::@2
-main::@2: from @2 main::@1
-  (byte) main::c#2 ← phi( @2/(byte) main::c#1 main::@1/(byte) 25 )
+main::@2: from main::@1 main::@6
+  (byte) main::c#2 ← phi( main::@1/(byte) 25 main::@6/(byte) main::c#1 )
   to:main::@3
 main::@3: from main::@2 main::@3
   (byte~) main::$1 ← * (byte*) RASTER#1
@@ -2788,21 +2788,21 @@ main::@3: from main::@2 main::@3
 main::@4: from main::@3 main::@4
   (byte~) main::$3 ← * (byte*) RASTER#1
   if((byte~) main::$3!=(byte) 255) goto main::@4
-  to:@2
-@2: from main::@4
+  to:main::@6
+main::@6: from main::@4
   (byte) main::c#1 ← -- (byte) main::c#2
   if((byte) main::c#1!=(byte) 0) goto main::@2
-  to:@3
-@3: from @2
+  to:main::@7
+main::@7: from main::@6
   call flip param-assignment
-  to:@17
-@17: from @3
+  to:main::@11
+main::@11: from main::@7
   call plot param-assignment
-  to:@18
-@18: from @17
+  to:main::@12
+main::@12: from main::@11
   if(true) goto main::@1
   to:main::@return
-main::@return: from @18
+main::@return: from main::@12
   return 
   to:@RETURN
 prepare: from main
@@ -2816,12 +2816,12 @@ prepare::@1: from prepare prepare::@1
 prepare::@return: from prepare::@1
   return 
   to:@RETURN
-flip: from @3
+flip: from main::@7
   to:flip::@1
-flip::@1: from @8 flip
-  (byte) flip::r#2 ← phi( @8/(byte) flip::r#1 flip/(byte) 16 )
-  (byte) flip::srcIdx#3 ← phi( @8/(byte) flip::srcIdx#1 flip/(byte) 0 )
-  (byte) flip::dstIdx#5 ← phi( @8/(byte) flip::dstIdx#2 flip/(byte) 15 )
+flip::@1: from flip flip::@4
+  (byte) flip::r#2 ← phi( flip/(byte) 16 flip::@4/(byte) flip::r#1 )
+  (byte) flip::srcIdx#3 ← phi( flip/(byte) 0 flip::@4/(byte) flip::srcIdx#1 )
+  (byte) flip::dstIdx#5 ← phi( flip/(byte) 15 flip::@4/(byte) flip::dstIdx#2 )
   to:flip::@2
 flip::@2: from flip::@1 flip::@2
   (byte) flip::c#2 ← phi( flip::@1/(byte) 16 flip::@2/(byte) flip::c#1 )
@@ -2833,14 +2833,14 @@ flip::@2: from flip::@1 flip::@2
   (byte) flip::dstIdx#1 ← (byte) flip::dstIdx#3 + (byte) 16
   (byte) flip::c#1 ← -- (byte) flip::c#2
   if((byte) flip::c#1!=(byte) 0) goto flip::@2
-  to:@8
-@8: from flip::@2
+  to:flip::@4
+flip::@4: from flip::@2
   (byte) flip::dstIdx#2 ← -- (byte) flip::dstIdx#1
   (byte) flip::r#1 ← -- (byte) flip::r#2
   if((byte) flip::r#1!=(byte) 0) goto flip::@1
   to:flip::@3
-flip::@3: from @8 flip::@3
-  (byte) flip::i#2 ← phi( @8/(byte) 0 flip::@3/(byte) flip::i#1 )
+flip::@3: from flip::@3 flip::@4
+  (byte) flip::i#2 ← phi( flip::@3/(byte) flip::i#1 flip::@4/(byte) 0 )
   (byte~) flip::$4 ← (byte[256]) buffer2#1 *idx (byte) flip::i#2
   *((byte[256]) buffer1#10 + (byte) flip::i#2) ← (byte~) flip::$4
   (byte) flip::i#1 ← ++ (byte) flip::i#2
@@ -2849,14 +2849,14 @@ flip::@3: from @8 flip::@3
 flip::@return: from flip::@3
   return 
   to:@RETURN
-plot: from @17
+plot: from main::@11
   (byte*~) plot::$1 ← (byte[1000]) SCREEN#1 + (byte) 200
   (byte*) plot::line#0 ← (byte*~) plot::$1 + (byte) 12
   to:plot::@1
-plot::@1: from @12 plot
-  (byte) plot::y#2 ← phi( @12/(byte) plot::y#1 plot/(byte) 16 )
-  (byte) plot::i#3 ← phi( @12/(byte) plot::i#1 plot/(byte) 0 )
-  (byte*) plot::line#2 ← phi( @12/(byte*) plot::line#1 plot/(byte*) plot::line#0 )
+plot::@1: from plot plot::@3
+  (byte) plot::y#2 ← phi( plot/(byte) 16 plot::@3/(byte) plot::y#1 )
+  (byte) plot::i#3 ← phi( plot/(byte) 0 plot::@3/(byte) plot::i#1 )
+  (byte*) plot::line#2 ← phi( plot/(byte*) plot::line#0 plot::@3/(byte*) plot::line#1 )
   to:plot::@2
 plot::@2: from plot::@1 plot::@2
   (byte) plot::x#2 ← phi( plot::@1/(byte) 0 plot::@2/(byte) plot::x#1 )
@@ -2866,13 +2866,13 @@ plot::@2: from plot::@1 plot::@2
   (byte) plot::i#1 ← ++ (byte) plot::i#2
   (byte) plot::x#1 ← ++ (byte) plot::x#2
   if((byte) plot::x#1<(byte) 16) goto plot::@2
-  to:@12
-@12: from plot::@2
+  to:plot::@3
+plot::@3: from plot::@2
   (byte*) plot::line#1 ← (byte*) plot::line#2 + (byte) 40
   (byte) plot::y#1 ← -- (byte) plot::y#2
   if((byte) plot::y#1!=(byte) 0) goto plot::@1
   to:plot::@return
-plot::@return: from @12
+plot::@return: from plot::@3
   return 
   to:@RETURN
 @END: from @BEGIN
@@ -2889,10 +2889,10 @@ CONTROL FLOW GRAPH
 main: from @BEGIN
   call prepare param-assignment
   to:main::@1
-main::@1: from @18 main
+main::@1: from main main::@12
   to:main::@2
-main::@2: from @2 main::@1
-  (byte) main::c#2 ← phi( @2/(byte) main::c#1 main::@1/(byte) 25 )
+main::@2: from main::@1 main::@6
+  (byte) main::c#2 ← phi( main::@1/(byte) 25 main::@6/(byte) main::c#1 )
   to:main::@3
 main::@3: from main::@2 main::@3
   (byte~) main::$1 ← * (word) 53266
@@ -2901,21 +2901,21 @@ main::@3: from main::@2 main::@3
 main::@4: from main::@3 main::@4
   (byte~) main::$3 ← * (word) 53266
   if((byte~) main::$3!=(byte) 255) goto main::@4
-  to:@2
-@2: from main::@4
+  to:main::@6
+main::@6: from main::@4
   (byte) main::c#1 ← -- (byte) main::c#2
   if((byte) main::c#1!=(byte) 0) goto main::@2
-  to:@3
-@3: from @2
+  to:main::@7
+main::@7: from main::@6
   call flip param-assignment
-  to:@17
-@17: from @3
+  to:main::@11
+main::@11: from main::@7
   call plot param-assignment
-  to:@18
-@18: from @17
+  to:main::@12
+main::@12: from main::@11
   if(true) goto main::@1
   to:main::@return
-main::@return: from @18
+main::@return: from main::@12
   return 
   to:@RETURN
 prepare: from main
@@ -2929,12 +2929,12 @@ prepare::@1: from prepare prepare::@1
 prepare::@return: from prepare::@1
   return 
   to:@RETURN
-flip: from @3
+flip: from main::@7
   to:flip::@1
-flip::@1: from @8 flip
-  (byte) flip::r#2 ← phi( @8/(byte) flip::r#1 flip/(byte) 16 )
-  (byte) flip::srcIdx#3 ← phi( @8/(byte) flip::srcIdx#1 flip/(byte) 0 )
-  (byte) flip::dstIdx#5 ← phi( @8/(byte) flip::dstIdx#2 flip/(byte) 15 )
+flip::@1: from flip flip::@4
+  (byte) flip::r#2 ← phi( flip/(byte) 16 flip::@4/(byte) flip::r#1 )
+  (byte) flip::srcIdx#3 ← phi( flip/(byte) 0 flip::@4/(byte) flip::srcIdx#1 )
+  (byte) flip::dstIdx#5 ← phi( flip/(byte) 15 flip::@4/(byte) flip::dstIdx#2 )
   to:flip::@2
 flip::@2: from flip::@1 flip::@2
   (byte) flip::c#2 ← phi( flip::@1/(byte) 16 flip::@2/(byte) flip::c#1 )
@@ -2946,14 +2946,14 @@ flip::@2: from flip::@1 flip::@2
   (byte) flip::dstIdx#1 ← (byte) flip::dstIdx#3 + (byte) 16
   (byte) flip::c#1 ← -- (byte) flip::c#2
   if((byte) flip::c#1!=(byte) 0) goto flip::@2
-  to:@8
-@8: from flip::@2
+  to:flip::@4
+flip::@4: from flip::@2
   (byte) flip::dstIdx#2 ← -- (byte) flip::dstIdx#1
   (byte) flip::r#1 ← -- (byte) flip::r#2
   if((byte) flip::r#1!=(byte) 0) goto flip::@1
   to:flip::@3
-flip::@3: from @8 flip::@3
-  (byte) flip::i#2 ← phi( @8/(byte) 0 flip::@3/(byte) flip::i#1 )
+flip::@3: from flip::@3 flip::@4
+  (byte) flip::i#2 ← phi( flip::@3/(byte) flip::i#1 flip::@4/(byte) 0 )
   (byte~) flip::$4 ← (word) 4352 *idx (byte) flip::i#2
   *((word) 4096 + (byte) flip::i#2) ← (byte~) flip::$4
   (byte) flip::i#1 ← ++ (byte) flip::i#2
@@ -2962,14 +2962,14 @@ flip::@3: from @8 flip::@3
 flip::@return: from flip::@3
   return 
   to:@RETURN
-plot: from @17
+plot: from main::@11
   (byte*~) plot::$1 ← (word) 1024 + (byte) 200
   (byte*) plot::line#0 ← (byte*~) plot::$1 + (byte) 12
   to:plot::@1
-plot::@1: from @12 plot
-  (byte) plot::y#2 ← phi( @12/(byte) plot::y#1 plot/(byte) 16 )
-  (byte) plot::i#3 ← phi( @12/(byte) plot::i#1 plot/(byte) 0 )
-  (byte*) plot::line#2 ← phi( @12/(byte*) plot::line#1 plot/(byte*) plot::line#0 )
+plot::@1: from plot plot::@3
+  (byte) plot::y#2 ← phi( plot/(byte) 16 plot::@3/(byte) plot::y#1 )
+  (byte) plot::i#3 ← phi( plot/(byte) 0 plot::@3/(byte) plot::i#1 )
+  (byte*) plot::line#2 ← phi( plot/(byte*) plot::line#0 plot::@3/(byte*) plot::line#1 )
   to:plot::@2
 plot::@2: from plot::@1 plot::@2
   (byte) plot::x#2 ← phi( plot::@1/(byte) 0 plot::@2/(byte) plot::x#1 )
@@ -2979,13 +2979,13 @@ plot::@2: from plot::@1 plot::@2
   (byte) plot::i#1 ← ++ (byte) plot::i#2
   (byte) plot::x#1 ← ++ (byte) plot::x#2
   if((byte) plot::x#1<(byte) 16) goto plot::@2
-  to:@12
-@12: from plot::@2
+  to:plot::@3
+plot::@3: from plot::@2
   (byte*) plot::line#1 ← (byte*) plot::line#2 + (byte) 40
   (byte) plot::y#1 ← -- (byte) plot::y#2
   if((byte) plot::y#1!=(byte) 0) goto plot::@1
   to:plot::@return
-plot::@return: from @12
+plot::@return: from plot::@3
   return 
   to:@RETURN
 @END: from @BEGIN
@@ -3004,8 +3004,8 @@ CONTROL FLOW GRAPH
 main: from @BEGIN
   call prepare param-assignment
   to:main::@2
-main::@2: from @18 @2 main
-  (byte) main::c#2 ← phi( @2/(byte) main::c#1 @18/(byte) 25 main/(byte) 25 )
+main::@2: from main main::@12 main::@6
+  (byte) main::c#2 ← phi( main/(byte) 25 main::@6/(byte) main::c#1 main::@12/(byte) 25 )
   to:main::@3
 main::@3: from main::@2 main::@3
   (byte~) main::$1 ← * (word) 53266
@@ -3014,21 +3014,21 @@ main::@3: from main::@2 main::@3
 main::@4: from main::@3 main::@4
   (byte~) main::$3 ← * (word) 53266
   if((byte~) main::$3!=(byte) 255) goto main::@4
-  to:@2
-@2: from main::@4
+  to:main::@6
+main::@6: from main::@4
   (byte) main::c#1 ← -- (byte) main::c#2
   if((byte) main::c#1!=(byte) 0) goto main::@2
-  to:@3
-@3: from @2
+  to:main::@7
+main::@7: from main::@6
   call flip param-assignment
-  to:@17
-@17: from @3
+  to:main::@11
+main::@11: from main::@7
   call plot param-assignment
-  to:@18
-@18: from @17
+  to:main::@12
+main::@12: from main::@11
   if(true) goto main::@2
   to:main::@return
-main::@return: from @18
+main::@return: from main::@12
   return 
   to:@RETURN
 prepare: from main
@@ -3042,12 +3042,12 @@ prepare::@1: from prepare prepare::@1
 prepare::@return: from prepare::@1
   return 
   to:@RETURN
-flip: from @3
+flip: from main::@7
   to:flip::@1
-flip::@1: from @8 flip
-  (byte) flip::r#2 ← phi( @8/(byte) flip::r#1 flip/(byte) 16 )
-  (byte) flip::srcIdx#3 ← phi( @8/(byte) flip::srcIdx#1 flip/(byte) 0 )
-  (byte) flip::dstIdx#5 ← phi( @8/(byte) flip::dstIdx#2 flip/(byte) 15 )
+flip::@1: from flip flip::@4
+  (byte) flip::r#2 ← phi( flip/(byte) 16 flip::@4/(byte) flip::r#1 )
+  (byte) flip::srcIdx#3 ← phi( flip/(byte) 0 flip::@4/(byte) flip::srcIdx#1 )
+  (byte) flip::dstIdx#5 ← phi( flip/(byte) 15 flip::@4/(byte) flip::dstIdx#2 )
   to:flip::@2
 flip::@2: from flip::@1 flip::@2
   (byte) flip::c#2 ← phi( flip::@1/(byte) 16 flip::@2/(byte) flip::c#1 )
@@ -3059,14 +3059,14 @@ flip::@2: from flip::@1 flip::@2
   (byte) flip::dstIdx#1 ← (byte) flip::dstIdx#3 + (byte) 16
   (byte) flip::c#1 ← -- (byte) flip::c#2
   if((byte) flip::c#1!=(byte) 0) goto flip::@2
-  to:@8
-@8: from flip::@2
+  to:flip::@4
+flip::@4: from flip::@2
   (byte) flip::dstIdx#2 ← -- (byte) flip::dstIdx#1
   (byte) flip::r#1 ← -- (byte) flip::r#2
   if((byte) flip::r#1!=(byte) 0) goto flip::@1
   to:flip::@3
-flip::@3: from @8 flip::@3
-  (byte) flip::i#2 ← phi( @8/(byte) 0 flip::@3/(byte) flip::i#1 )
+flip::@3: from flip::@3 flip::@4
+  (byte) flip::i#2 ← phi( flip::@3/(byte) flip::i#1 flip::@4/(byte) 0 )
   (byte~) flip::$4 ← (word) 4352 *idx (byte) flip::i#2
   *((word) 4096 + (byte) flip::i#2) ← (byte~) flip::$4
   (byte) flip::i#1 ← ++ (byte) flip::i#2
@@ -3075,14 +3075,14 @@ flip::@3: from @8 flip::@3
 flip::@return: from flip::@3
   return 
   to:@RETURN
-plot: from @17
+plot: from main::@11
   (byte*~) plot::$1 ← (word) 1024 + (byte) 200
   (byte*) plot::line#0 ← (byte*~) plot::$1 + (byte) 12
   to:plot::@1
-plot::@1: from @12 plot
-  (byte) plot::y#2 ← phi( @12/(byte) plot::y#1 plot/(byte) 16 )
-  (byte) plot::i#3 ← phi( @12/(byte) plot::i#1 plot/(byte) 0 )
-  (byte*) plot::line#2 ← phi( @12/(byte*) plot::line#1 plot/(byte*) plot::line#0 )
+plot::@1: from plot plot::@3
+  (byte) plot::y#2 ← phi( plot/(byte) 16 plot::@3/(byte) plot::y#1 )
+  (byte) plot::i#3 ← phi( plot/(byte) 0 plot::@3/(byte) plot::i#1 )
+  (byte*) plot::line#2 ← phi( plot/(byte*) plot::line#0 plot::@3/(byte*) plot::line#1 )
   to:plot::@2
 plot::@2: from plot::@1 plot::@2
   (byte) plot::x#2 ← phi( plot::@1/(byte) 0 plot::@2/(byte) plot::x#1 )
@@ -3092,13 +3092,13 @@ plot::@2: from plot::@1 plot::@2
   (byte) plot::i#1 ← ++ (byte) plot::i#2
   (byte) plot::x#1 ← ++ (byte) plot::x#2
   if((byte) plot::x#1<(byte) 16) goto plot::@2
-  to:@12
-@12: from plot::@2
+  to:plot::@3
+plot::@3: from plot::@2
   (byte*) plot::line#1 ← (byte*) plot::line#2 + (byte) 40
   (byte) plot::y#1 ← -- (byte) plot::y#2
   if((byte) plot::y#1!=(byte) 0) goto plot::@1
   to:plot::@return
-plot::@return: from @12
+plot::@return: from plot::@3
   return 
   to:@RETURN
 @END: from @BEGIN
@@ -3112,8 +3112,8 @@ CONTROL FLOW GRAPH
 main: from @BEGIN
   call prepare param-assignment
   to:main::@2
-main::@2: from @18 @2 main
-  (byte) main::c#2 ← phi( @2/(byte) main::c#1 @18/(byte) 25 main/(byte) 25 )
+main::@2: from main main::@12 main::@6
+  (byte) main::c#2 ← phi( main/(byte) 25 main::@6/(byte) main::c#1 main::@12/(byte) 25 )
   to:main::@3
 main::@3: from main::@2 main::@3
   (byte~) main::$1 ← * (word) 53266
@@ -3122,21 +3122,21 @@ main::@3: from main::@2 main::@3
 main::@4: from main::@3 main::@4
   (byte~) main::$3 ← * (word) 53266
   if((byte~) main::$3!=(byte) 255) goto main::@4
-  to:@2
-@2: from main::@4
+  to:main::@6
+main::@6: from main::@4
   (byte) main::c#1 ← -- (byte) main::c#2
   if((byte) main::c#1!=(byte) 0) goto main::@2
-  to:@3
-@3: from @2
+  to:main::@7
+main::@7: from main::@6
   call flip param-assignment
-  to:@17
-@17: from @3
+  to:main::@11
+main::@11: from main::@7
   call plot param-assignment
-  to:@18
-@18: from @17
+  to:main::@12
+main::@12: from main::@11
   if(true) goto main::@2
   to:main::@return
-main::@return: from @18
+main::@return: from main::@12
   return 
   to:@RETURN
 prepare: from main
@@ -3150,12 +3150,12 @@ prepare::@1: from prepare prepare::@1
 prepare::@return: from prepare::@1
   return 
   to:@RETURN
-flip: from @3
+flip: from main::@7
   to:flip::@1
-flip::@1: from @8 flip
-  (byte) flip::r#2 ← phi( @8/(byte) flip::r#1 flip/(byte) 16 )
-  (byte) flip::srcIdx#3 ← phi( @8/(byte) flip::srcIdx#1 flip/(byte) 0 )
-  (byte) flip::dstIdx#5 ← phi( @8/(byte) flip::dstIdx#2 flip/(byte) 15 )
+flip::@1: from flip flip::@4
+  (byte) flip::r#2 ← phi( flip/(byte) 16 flip::@4/(byte) flip::r#1 )
+  (byte) flip::srcIdx#3 ← phi( flip/(byte) 0 flip::@4/(byte) flip::srcIdx#1 )
+  (byte) flip::dstIdx#5 ← phi( flip/(byte) 15 flip::@4/(byte) flip::dstIdx#2 )
   to:flip::@2
 flip::@2: from flip::@1 flip::@2
   (byte) flip::c#2 ← phi( flip::@1/(byte) 16 flip::@2/(byte) flip::c#1 )
@@ -3167,14 +3167,14 @@ flip::@2: from flip::@1 flip::@2
   (byte) flip::dstIdx#1 ← (byte) flip::dstIdx#3 + (byte) 16
   (byte) flip::c#1 ← -- (byte) flip::c#2
   if((byte) flip::c#1!=(byte) 0) goto flip::@2
-  to:@8
-@8: from flip::@2
+  to:flip::@4
+flip::@4: from flip::@2
   (byte) flip::dstIdx#2 ← -- (byte) flip::dstIdx#1
   (byte) flip::r#1 ← -- (byte) flip::r#2
   if((byte) flip::r#1!=(byte) 0) goto flip::@1
   to:flip::@3
-flip::@3: from @8 flip::@3
-  (byte) flip::i#2 ← phi( @8/(byte) 0 flip::@3/(byte) flip::i#1 )
+flip::@3: from flip::@3 flip::@4
+  (byte) flip::i#2 ← phi( flip::@3/(byte) flip::i#1 flip::@4/(byte) 0 )
   (byte~) flip::$4 ← (word) 4352 *idx (byte) flip::i#2
   *((word) 4096 + (byte) flip::i#2) ← (byte~) flip::$4
   (byte) flip::i#1 ← ++ (byte) flip::i#2
@@ -3183,13 +3183,13 @@ flip::@3: from @8 flip::@3
 flip::@return: from flip::@3
   return 
   to:@RETURN
-plot: from @17
+plot: from main::@11
   (byte*) plot::line#0 ← (word) 1224 + (byte) 12
   to:plot::@1
-plot::@1: from @12 plot
-  (byte) plot::y#2 ← phi( @12/(byte) plot::y#1 plot/(byte) 16 )
-  (byte) plot::i#3 ← phi( @12/(byte) plot::i#1 plot/(byte) 0 )
-  (byte*) plot::line#2 ← phi( @12/(byte*) plot::line#1 plot/(byte*) plot::line#0 )
+plot::@1: from plot plot::@3
+  (byte) plot::y#2 ← phi( plot/(byte) 16 plot::@3/(byte) plot::y#1 )
+  (byte) plot::i#3 ← phi( plot/(byte) 0 plot::@3/(byte) plot::i#1 )
+  (byte*) plot::line#2 ← phi( plot/(byte*) plot::line#0 plot::@3/(byte*) plot::line#1 )
   to:plot::@2
 plot::@2: from plot::@1 plot::@2
   (byte) plot::x#2 ← phi( plot::@1/(byte) 0 plot::@2/(byte) plot::x#1 )
@@ -3199,13 +3199,13 @@ plot::@2: from plot::@1 plot::@2
   (byte) plot::i#1 ← ++ (byte) plot::i#2
   (byte) plot::x#1 ← ++ (byte) plot::x#2
   if((byte) plot::x#1<(byte) 16) goto plot::@2
-  to:@12
-@12: from plot::@2
+  to:plot::@3
+plot::@3: from plot::@2
   (byte*) plot::line#1 ← (byte*) plot::line#2 + (byte) 40
   (byte) plot::y#1 ← -- (byte) plot::y#2
   if((byte) plot::y#1!=(byte) 0) goto plot::@1
   to:plot::@return
-plot::@return: from @12
+plot::@return: from plot::@3
   return 
   to:@RETURN
 @END: from @BEGIN
@@ -3224,8 +3224,8 @@ CONTROL FLOW GRAPH
 main: from @BEGIN
   call prepare param-assignment
   to:main::@2
-main::@2: from @18 @2 main
-  (byte) main::c#2 ← phi( @2/(byte) main::c#1 @18/(byte) 25 main/(byte) 25 )
+main::@2: from main main::@12 main::@6
+  (byte) main::c#2 ← phi( main/(byte) 25 main::@6/(byte) main::c#1 main::@12/(byte) 25 )
   to:main::@3
 main::@3: from main::@2 main::@3
   (byte~) main::$1 ← * (word) 53266
@@ -3234,21 +3234,21 @@ main::@3: from main::@2 main::@3
 main::@4: from main::@3 main::@4
   (byte~) main::$3 ← * (word) 53266
   if((byte~) main::$3!=(byte) 255) goto main::@4
-  to:@2
-@2: from main::@4
+  to:main::@6
+main::@6: from main::@4
   (byte) main::c#1 ← -- (byte) main::c#2
   if((byte) main::c#1!=(byte) 0) goto main::@2
-  to:@3
-@3: from @2
+  to:main::@7
+main::@7: from main::@6
   call flip param-assignment
-  to:@17
-@17: from @3
+  to:main::@11
+main::@11: from main::@7
   call plot param-assignment
-  to:@18
-@18: from @17
+  to:main::@12
+main::@12: from main::@11
   if(true) goto main::@2
   to:main::@return
-main::@return: from @18
+main::@return: from main::@12
   return 
   to:@RETURN
 prepare: from main
@@ -3262,12 +3262,12 @@ prepare::@1: from prepare prepare::@1
 prepare::@return: from prepare::@1
   return 
   to:@RETURN
-flip: from @3
+flip: from main::@7
   to:flip::@1
-flip::@1: from @8 flip
-  (byte) flip::r#2 ← phi( @8/(byte) flip::r#1 flip/(byte) 16 )
-  (byte) flip::srcIdx#3 ← phi( @8/(byte) flip::srcIdx#1 flip/(byte) 0 )
-  (byte) flip::dstIdx#5 ← phi( @8/(byte) flip::dstIdx#2 flip/(byte) 15 )
+flip::@1: from flip flip::@4
+  (byte) flip::r#2 ← phi( flip/(byte) 16 flip::@4/(byte) flip::r#1 )
+  (byte) flip::srcIdx#3 ← phi( flip/(byte) 0 flip::@4/(byte) flip::srcIdx#1 )
+  (byte) flip::dstIdx#5 ← phi( flip/(byte) 15 flip::@4/(byte) flip::dstIdx#2 )
   to:flip::@2
 flip::@2: from flip::@1 flip::@2
   (byte) flip::c#2 ← phi( flip::@1/(byte) 16 flip::@2/(byte) flip::c#1 )
@@ -3279,14 +3279,14 @@ flip::@2: from flip::@1 flip::@2
   (byte) flip::dstIdx#1 ← (byte) flip::dstIdx#3 + (byte) 16
   (byte) flip::c#1 ← -- (byte) flip::c#2
   if((byte) flip::c#1!=(byte) 0) goto flip::@2
-  to:@8
-@8: from flip::@2
+  to:flip::@4
+flip::@4: from flip::@2
   (byte) flip::dstIdx#2 ← -- (byte) flip::dstIdx#1
   (byte) flip::r#1 ← -- (byte) flip::r#2
   if((byte) flip::r#1!=(byte) 0) goto flip::@1
   to:flip::@3
-flip::@3: from @8 flip::@3
-  (byte) flip::i#2 ← phi( @8/(byte) 0 flip::@3/(byte) flip::i#1 )
+flip::@3: from flip::@3 flip::@4
+  (byte) flip::i#2 ← phi( flip::@3/(byte) flip::i#1 flip::@4/(byte) 0 )
   (byte~) flip::$4 ← (word) 4352 *idx (byte) flip::i#2
   *((word) 4096 + (byte) flip::i#2) ← (byte~) flip::$4
   (byte) flip::i#1 ← ++ (byte) flip::i#2
@@ -3295,12 +3295,12 @@ flip::@3: from @8 flip::@3
 flip::@return: from flip::@3
   return 
   to:@RETURN
-plot: from @17
+plot: from main::@11
   to:plot::@1
-plot::@1: from @12 plot
-  (byte) plot::y#2 ← phi( @12/(byte) plot::y#1 plot/(byte) 16 )
-  (byte) plot::i#3 ← phi( @12/(byte) plot::i#1 plot/(byte) 0 )
-  (byte*) plot::line#2 ← phi( @12/(byte*) plot::line#1 plot/(word) 1236 )
+plot::@1: from plot plot::@3
+  (byte) plot::y#2 ← phi( plot/(byte) 16 plot::@3/(byte) plot::y#1 )
+  (byte) plot::i#3 ← phi( plot/(byte) 0 plot::@3/(byte) plot::i#1 )
+  (byte*) plot::line#2 ← phi( plot/(word) 1236 plot::@3/(byte*) plot::line#1 )
   to:plot::@2
 plot::@2: from plot::@1 plot::@2
   (byte) plot::x#2 ← phi( plot::@1/(byte) 0 plot::@2/(byte) plot::x#1 )
@@ -3310,13 +3310,13 @@ plot::@2: from plot::@1 plot::@2
   (byte) plot::i#1 ← ++ (byte) plot::i#2
   (byte) plot::x#1 ← ++ (byte) plot::x#2
   if((byte) plot::x#1<(byte) 16) goto plot::@2
-  to:@12
-@12: from plot::@2
+  to:plot::@3
+plot::@3: from plot::@2
   (byte*) plot::line#1 ← (byte*) plot::line#2 + (byte) 40
   (byte) plot::y#1 ← -- (byte) plot::y#2
   if((byte) plot::y#1!=(byte) 0) goto plot::@1
   to:plot::@return
-plot::@return: from @12
+plot::@return: from plot::@3
   return 
   to:@RETURN
 @END: from @BEGIN
@@ -3342,11 +3342,11 @@ main__B2_from_main:
   // (byte) main::c#2 = (byte) 25  // xby=coby1
   ldx #25
   jmp main__B2
-main__B2_from_B18:
+main__B2_from_B12:
   // (byte) main::c#2 = (byte) 25  // xby=coby1
   ldx #25
   jmp main__B2
-main__B2_from_B2:
+main__B2_from_B6:
   // (byte) main::c#2 = (byte) main::c#1  // register copy 
   jmp main__B2
 main__B2:
@@ -3364,23 +3364,23 @@ main__B4:
   // if((byte~) main::$3!=(byte) 255) goto main::@4  //  aby_neq_coby1_then_la1
   cmp #255
   bne main__main__B4
-  jmp B2
-B2:
+  jmp main__B6
+main__B6:
   // (byte) main::c#1 ← -- (byte) main::c#2  //  xby=_dec_xby
   dex
   // if((byte) main::c#1!=(byte) 0) goto main::@2  //  xby_neq_0_then_la1
   cpx #0
-  bne main__B2_from_B2
-  jmp B3
-B3:
+  bne main__B2_from_B6
+  jmp main__B7
+main__B7:
   jsr flip
-  jmp B17
-B17:
+  jmp main__B11
+main__B11:
   jsr plot
-  jmp B18
-B18:
+  jmp main__B12
+main__B12:
   // if(true) goto main::@2  //  true_then_la1
-  jmp main__B2_from_B18
+  jmp main__B2_from_B12
   jmp main__Breturn
 main__Breturn:
   rts
@@ -3397,7 +3397,7 @@ plot__B1_from_plot:
   lda #>1236
   sta 101+1
   jmp plot__B1
-plot__B1_from_B12:
+plot__B1_from_B3:
   // (byte) plot::y#2 = (byte) plot::y#1  // register copy 
   // (byte) plot::i#3 = (byte) plot::i#1  // register copy 
   // (byte*) plot::line#2 = (byte*) plot::line#1  // register copy 
@@ -3424,8 +3424,8 @@ plot__B2:
   // if((byte) plot::x#1<(byte) 16) goto plot::@2  //  yby_lt_coby1_then_la1
   cpy #16
   bcc plot__B2_from_B2
-  jmp B12
-B12:
+  jmp plot__B3
+plot__B3:
   // (byte*) plot::line#1 ← (byte*) plot::line#2 + (byte) 40  //  zpptrby1=zpptrby1_plus_coby1
   lda 101
   clc
@@ -3438,7 +3438,7 @@ B12:
   dec 100
   // if((byte) plot::y#1!=(byte) 0) goto plot::@1  //  zpby1_neq_0_then_la1
   lda 100
-  bne plot__B1_from_B12
+  bne plot__B1_from_B3
   jmp plot__Breturn
 plot__Breturn:
   rts
@@ -3452,7 +3452,7 @@ flip__B1_from_flip:
   // (byte) flip::dstIdx#5 = (byte) 15  // yby=coby1
   ldy #15
   jmp flip__B1
-flip__B1_from_B8:
+flip__B1_from_B4:
   // (byte) flip::r#2 = (byte) flip::r#1  // register copy 
   // (byte) flip::srcIdx#3 = (byte) flip::srcIdx#1  // register copy 
   // (byte) flip::dstIdx#5 = (byte) flip::dstIdx#2  // register copy 
@@ -3487,16 +3487,16 @@ flip__B2:
   // if((byte) flip::c#1!=(byte) 0) goto flip::@2  //  zpby1_neq_0_then_la1
   lda 103
   bne flip__B2_from_B2
-  jmp B8
-B8:
+  jmp flip__B4
+flip__B4:
   // (byte) flip::dstIdx#2 ← -- (byte) flip::dstIdx#1  //  yby=_dec_yby
   dey
   // (byte) flip::r#1 ← -- (byte) flip::r#2  //  zpby1=_dec_zpby1
   dec 104
   // if((byte) flip::r#1!=(byte) 0) goto flip::@1  //  zpby1_neq_0_then_la1
   lda 104
-  bne flip__B1_from_B8
-flip__B3_from_B8:
+  bne flip__B1_from_B4
+flip__B3_from_B4:
   // (byte) flip::i#2 = (byte) 0  // xby=coby1
   ldx #0
   jmp flip__B3
@@ -3541,18 +3541,18 @@ Removing instruction jmp BEND
 Removing instruction jmp main__B2
 Removing instruction jmp main__B3
 Removing instruction jmp main__B4
-Removing instruction jmp B2
-Removing instruction jmp B3
-Removing instruction jmp B17
-Removing instruction jmp B18
+Removing instruction jmp main__B6
+Removing instruction jmp main__B7
+Removing instruction jmp main__B11
+Removing instruction jmp main__B12
 Removing instruction jmp main__Breturn
 Removing instruction jmp plot__B1
 Removing instruction jmp plot__B2
-Removing instruction jmp B12
+Removing instruction jmp plot__B3
 Removing instruction jmp plot__Breturn
 Removing instruction jmp flip__B1
 Removing instruction jmp flip__B2
-Removing instruction jmp B8
+Removing instruction jmp flip__B4
 Removing instruction jmp flip__B3
 Removing instruction jmp flip__Breturn
 Removing instruction jmp prepare__B1
@@ -3568,11 +3568,11 @@ main__B2_from_main:
   // (byte) main::c#2 = (byte) 25  // xby=coby1
   ldx #25
   jmp main__B2
-main__B2_from_B18:
+main__B2_from_B12:
   // (byte) main::c#2 = (byte) 25  // xby=coby1
   ldx #25
   jmp main__B2
-main__B2_from_B2:
+main__B2_from_B6:
   // (byte) main::c#2 = (byte) main::c#1  // register copy 
 main__B2:
 main__B3:
@@ -3587,19 +3587,19 @@ main__B4:
   // if((byte~) main::$3!=(byte) 255) goto main::@4  //  aby_neq_coby1_then_la1
   cmp #255
   bne main__main__B4
-B2:
+main__B6:
   // (byte) main::c#1 ← -- (byte) main::c#2  //  xby=_dec_xby
   dex
   // if((byte) main::c#1!=(byte) 0) goto main::@2  //  xby_neq_0_then_la1
   cpx #0
-  bne main__B2_from_B2
-B3:
+  bne main__B2_from_B6
+main__B7:
   jsr flip
-B17:
+main__B11:
   jsr plot
-B18:
+main__B12:
   // if(true) goto main::@2  //  true_then_la1
-  jmp main__B2_from_B18
+  jmp main__B2_from_B12
 main__Breturn:
   rts
 plot:
@@ -3615,7 +3615,7 @@ plot__B1_from_plot:
   lda #>1236
   sta 101+1
   jmp plot__B1
-plot__B1_from_B12:
+plot__B1_from_B3:
   // (byte) plot::y#2 = (byte) plot::y#1  // register copy 
   // (byte) plot::i#3 = (byte) plot::i#1  // register copy 
   // (byte*) plot::line#2 = (byte*) plot::line#1  // register copy 
@@ -3640,7 +3640,7 @@ plot__B2:
   // if((byte) plot::x#1<(byte) 16) goto plot::@2  //  yby_lt_coby1_then_la1
   cpy #16
   bcc plot__B2_from_B2
-B12:
+plot__B3:
   // (byte*) plot::line#1 ← (byte*) plot::line#2 + (byte) 40  //  zpptrby1=zpptrby1_plus_coby1
   lda 101
   clc
@@ -3653,7 +3653,7 @@ B12:
   dec 100
   // if((byte) plot::y#1!=(byte) 0) goto plot::@1  //  zpby1_neq_0_then_la1
   lda 100
-  bne plot__B1_from_B12
+  bne plot__B1_from_B3
 plot__Breturn:
   rts
 flip:
@@ -3666,7 +3666,7 @@ flip__B1_from_flip:
   // (byte) flip::dstIdx#5 = (byte) 15  // yby=coby1
   ldy #15
   jmp flip__B1
-flip__B1_from_B8:
+flip__B1_from_B4:
   // (byte) flip::r#2 = (byte) flip::r#1  // register copy 
   // (byte) flip::srcIdx#3 = (byte) flip::srcIdx#1  // register copy 
   // (byte) flip::dstIdx#5 = (byte) flip::dstIdx#2  // register copy 
@@ -3699,15 +3699,15 @@ flip__B2:
   // if((byte) flip::c#1!=(byte) 0) goto flip::@2  //  zpby1_neq_0_then_la1
   lda 103
   bne flip__B2_from_B2
-B8:
+flip__B4:
   // (byte) flip::dstIdx#2 ← -- (byte) flip::dstIdx#1  //  yby=_dec_yby
   dey
   // (byte) flip::r#1 ← -- (byte) flip::r#2  //  zpby1=_dec_zpby1
   dec 104
   // if((byte) flip::r#1!=(byte) 0) goto flip::@1  //  zpby1_neq_0_then_la1
   lda 104
-  bne flip__B1_from_B8
-flip__B3_from_B8:
+  bne flip__B1_from_B4
+flip__B3_from_B4:
   // (byte) flip::i#2 = (byte) 0  // xby=coby1
   ldx #0
   jmp flip__B3
@@ -3762,10 +3762,10 @@ main__B2_from_main:
   // (byte) main::c#2 = (byte) 25  // xby=coby1
   ldx #25
   jmp main__B2
-main__B2_from_B18:
+main__B2_from_B12:
   // (byte) main::c#2 = (byte) 25  // xby=coby1
   ldx #25
-main__B2_from_B2:
+main__B2_from_B6:
   // (byte) main::c#2 = (byte) main::c#1  // register copy 
 main__B2:
 main__B3:
@@ -3780,19 +3780,19 @@ main__B4:
   // if((byte~) main::$3!=(byte) 255) goto main::@4  //  aby_neq_coby1_then_la1
   cmp #255
   bne main__main__B4
-B2:
+main__B6:
   // (byte) main::c#1 ← -- (byte) main::c#2  //  xby=_dec_xby
   dex
   // if((byte) main::c#1!=(byte) 0) goto main::@2  //  xby_neq_0_then_la1
   cpx #0
-  bne main__B2_from_B2
-B3:
+  bne main__B2_from_B6
+main__B7:
   jsr flip
-B17:
+main__B11:
   jsr plot
-B18:
+main__B12:
   // if(true) goto main::@2  //  true_then_la1
-  jmp main__B2_from_B18
+  jmp main__B2_from_B12
 main__Breturn:
   rts
 plot:
@@ -3807,7 +3807,7 @@ plot__B1_from_plot:
   sta 101
   lda #>1236
   sta 101+1
-plot__B1_from_B12:
+plot__B1_from_B3:
   // (byte) plot::y#2 = (byte) plot::y#1  // register copy 
   // (byte) plot::i#3 = (byte) plot::i#1  // register copy 
   // (byte*) plot::line#2 = (byte*) plot::line#1  // register copy 
@@ -3831,7 +3831,7 @@ plot__B2:
   // if((byte) plot::x#1<(byte) 16) goto plot::@2  //  yby_lt_coby1_then_la1
   cpy #16
   bcc plot__B2_from_B2
-B12:
+plot__B3:
   // (byte*) plot::line#1 ← (byte*) plot::line#2 + (byte) 40  //  zpptrby1=zpptrby1_plus_coby1
   lda 101
   clc
@@ -3844,7 +3844,7 @@ B12:
   dec 100
   // if((byte) plot::y#1!=(byte) 0) goto plot::@1  //  zpby1_neq_0_then_la1
   lda 100
-  bne plot__B1_from_B12
+  bne plot__B1_from_B3
 plot__Breturn:
   rts
 flip:
@@ -3856,7 +3856,7 @@ flip__B1_from_flip:
   ldx #0
   // (byte) flip::dstIdx#5 = (byte) 15  // yby=coby1
   ldy #15
-flip__B1_from_B8:
+flip__B1_from_B4:
   // (byte) flip::r#2 = (byte) flip::r#1  // register copy 
   // (byte) flip::srcIdx#3 = (byte) flip::srcIdx#1  // register copy 
   // (byte) flip::dstIdx#5 = (byte) flip::dstIdx#2  // register copy 
@@ -3888,15 +3888,15 @@ flip__B2:
   // if((byte) flip::c#1!=(byte) 0) goto flip::@2  //  zpby1_neq_0_then_la1
   lda 103
   bne flip__B2_from_B2
-B8:
+flip__B4:
   // (byte) flip::dstIdx#2 ← -- (byte) flip::dstIdx#1  //  yby=_dec_yby
   dey
   // (byte) flip::r#1 ← -- (byte) flip::r#2  //  zpby1=_dec_zpby1
   dec 104
   // if((byte) flip::r#1!=(byte) 0) goto flip::@1  //  zpby1_neq_0_then_la1
   lda 104
-  bne flip__B1_from_B8
-flip__B3_from_B8:
+  bne flip__B1_from_B4
+flip__B3_from_B4:
   // (byte) flip::i#2 = (byte) 0  // xby=coby1
   ldx #0
 flip__B3_from_B3:
@@ -3932,12 +3932,6 @@ prepare__Breturn:
   rts
 
 FINAL SYMBOL TABLE
-(label) @12
-(label) @17
-(label) @18
-(label) @2
-(label) @3
-(label) @8
 (label) @BEGIN
 (label) @END
 (byte*) RASTER
@@ -3950,6 +3944,7 @@ FINAL SYMBOL TABLE
 (label) flip::@1
 (label) flip::@2
 (label) flip::@3
+(label) flip::@4
 (label) flip::@return
 (byte) flip::c
 (byte) flip::c#1 zp byte:103
@@ -3973,9 +3968,13 @@ FINAL SYMBOL TABLE
 (void()) main()
 (byte~) main::$1 reg byte a
 (byte~) main::$3 reg byte a
+(label) main::@11
+(label) main::@12
 (label) main::@2
 (label) main::@3
 (label) main::@4
+(label) main::@6
+(label) main::@7
 (label) main::@return
 (byte) main::c
 (byte) main::c#1 reg byte x
@@ -3985,6 +3984,7 @@ FINAL SYMBOL TABLE
 (byte~) plot::$3 reg byte a
 (label) plot::@1
 (label) plot::@2
+(label) plot::@3
 (label) plot::@return
 (byte) plot::i
 (byte) plot::i#1 reg byte x
@@ -4018,10 +4018,10 @@ main__B2_from_main:
   // (byte) main::c#2 = (byte) 25  // xby=coby1
   ldx #25
   jmp main__B2
-main__B2_from_B18:
+main__B2_from_B12:
   // (byte) main::c#2 = (byte) 25  // xby=coby1
   ldx #25
-main__B2_from_B2:
+main__B2_from_B6:
   // (byte) main::c#2 = (byte) main::c#1  // register copy 
 main__B2:
 main__B3:
@@ -4036,19 +4036,19 @@ main__B4:
   // if((byte~) main::$3!=(byte) 255) goto main::@4  //  aby_neq_coby1_then_la1
   cmp #255
   bne main__main__B4
-B2:
+main__B6:
   // (byte) main::c#1 ← -- (byte) main::c#2  //  xby=_dec_xby
   dex
   // if((byte) main::c#1!=(byte) 0) goto main::@2  //  xby_neq_0_then_la1
   cpx #0
-  bne main__B2_from_B2
-B3:
+  bne main__B2_from_B6
+main__B7:
   jsr flip
-B17:
+main__B11:
   jsr plot
-B18:
+main__B12:
   // if(true) goto main::@2  //  true_then_la1
-  jmp main__B2_from_B18
+  jmp main__B2_from_B12
 main__Breturn:
   rts
 plot:
@@ -4063,7 +4063,7 @@ plot__B1_from_plot:
   sta 101
   lda #>1236
   sta 101+1
-plot__B1_from_B12:
+plot__B1_from_B3:
   // (byte) plot::y#2 = (byte) plot::y#1  // register copy 
   // (byte) plot::i#3 = (byte) plot::i#1  // register copy 
   // (byte*) plot::line#2 = (byte*) plot::line#1  // register copy 
@@ -4087,7 +4087,7 @@ plot__B2:
   // if((byte) plot::x#1<(byte) 16) goto plot::@2  //  yby_lt_coby1_then_la1
   cpy #16
   bcc plot__B2_from_B2
-B12:
+plot__B3:
   // (byte*) plot::line#1 ← (byte*) plot::line#2 + (byte) 40  //  zpptrby1=zpptrby1_plus_coby1
   lda 101
   clc
@@ -4100,7 +4100,7 @@ B12:
   dec 100
   // if((byte) plot::y#1!=(byte) 0) goto plot::@1  //  zpby1_neq_0_then_la1
   lda 100
-  bne plot__B1_from_B12
+  bne plot__B1_from_B3
 plot__Breturn:
   rts
 flip:
@@ -4112,7 +4112,7 @@ flip__B1_from_flip:
   ldx #0
   // (byte) flip::dstIdx#5 = (byte) 15  // yby=coby1
   ldy #15
-flip__B1_from_B8:
+flip__B1_from_B4:
   // (byte) flip::r#2 = (byte) flip::r#1  // register copy 
   // (byte) flip::srcIdx#3 = (byte) flip::srcIdx#1  // register copy 
   // (byte) flip::dstIdx#5 = (byte) flip::dstIdx#2  // register copy 
@@ -4144,15 +4144,15 @@ flip__B2:
   // if((byte) flip::c#1!=(byte) 0) goto flip::@2  //  zpby1_neq_0_then_la1
   lda 103
   bne flip__B2_from_B2
-B8:
+flip__B4:
   // (byte) flip::dstIdx#2 ← -- (byte) flip::dstIdx#1  //  yby=_dec_yby
   dey
   // (byte) flip::r#1 ← -- (byte) flip::r#2  //  zpby1=_dec_zpby1
   dec 104
   // if((byte) flip::r#1!=(byte) 0) goto flip::@1  //  zpby1_neq_0_then_la1
   lda 104
-  bne flip__B1_from_B8
-flip__B3_from_B8:
+  bne flip__B1_from_B4
+flip__B3_from_B4:
   // (byte) flip::i#2 = (byte) 0  // xby=coby1
   ldx #0
 flip__B3_from_B3:

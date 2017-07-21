@@ -6,9 +6,9 @@ main:
 main__B2_from_main:
   ldx #25
   jmp main__B2
-main__B2_from_B18:
+main__B2_from_B12:
   ldx #25
-main__B2_from_B2:
+main__B2_from_B6:
 main__B2:
 main__B3:
   lda 53266
@@ -18,16 +18,16 @@ main__B4:
   lda 53266
   cmp #255
   bne main__main__B4
-B2:
+main__B6:
   dex
   cpx #0
-  bne main__B2_from_B2
-B3:
+  bne main__B2_from_B6
+main__B7:
   jsr flip
-B17:
+main__B11:
   jsr plot
-B18:
-  jmp main__B2_from_B18
+main__B12:
+  jmp main__B2_from_B12
 main__Breturn:
   rts
 plot:
@@ -39,7 +39,7 @@ plot__B1_from_plot:
   sta 101
   lda #>1236
   sta 101+1
-plot__B1_from_B12:
+plot__B1_from_B3:
 plot__B1:
 plot__B2_from_B1:
   ldy #0
@@ -51,7 +51,7 @@ plot__B2:
   iny
   cpy #16
   bcc plot__B2_from_B2
-B12:
+plot__B3:
   lda 101
   clc
   adc #40
@@ -61,7 +61,7 @@ B12:
 !:
   dec 100
   lda 100
-  bne plot__B1_from_B12
+  bne plot__B1_from_B3
 plot__Breturn:
   rts
 flip:
@@ -70,7 +70,7 @@ flip__B1_from_flip:
   sta 104
   ldx #0
   ldy #15
-flip__B1_from_B8:
+flip__B1_from_B4:
 flip__B1:
 flip__B2_from_B1:
   lda #16
@@ -87,12 +87,12 @@ flip__B2:
   dec 103
   lda 103
   bne flip__B2_from_B2
-B8:
+flip__B4:
   dey
   dec 104
   lda 104
-  bne flip__B1_from_B8
-flip__B3_from_B8:
+  bne flip__B1_from_B4
+flip__B3_from_B4:
   ldx #0
 flip__B3_from_B3:
 flip__B3:

@@ -27,6 +27,13 @@ public class Pass1GenerateControlFlowGraph {
       sequence.addStatement(new StatementLabel(scope.addLabel(END_BLOCK_NAME).getRef()));
       for (Statement statement : sequence.getStatements()) {
          ControlFlowBlock currentBlock = blockStack.peek();
+         Symbol currentBlockLabel = scope.getSymbol(currentBlock.getLabel());
+         Scope currentBlockScope;
+         if(currentBlockLabel instanceof Procedure) {
+            currentBlockScope = (Scope) currentBlockLabel;
+         }  else {
+            currentBlockScope = currentBlockLabel.getScope();
+         }
          if(statement instanceof StatementLabel) {
             StatementLabel statementLabel = (StatementLabel) statement;
             ControlFlowBlock nextBlock = getOrCreateBlock(statementLabel.getLabel());
@@ -37,14 +44,14 @@ public class Pass1GenerateControlFlowGraph {
             StatementJump statementJump = (StatementJump) statement;
             ControlFlowBlock jmpBlock = getOrCreateBlock(statementJump.getDestination());
             currentBlock.setDefaultSuccessor(jmpBlock.getLabel());
-            ControlFlowBlock nextBlock = getOrCreateBlock(scope.addLabelIntermediate().getRef());
+            ControlFlowBlock nextBlock = getOrCreateBlock(currentBlockScope.addLabelIntermediate().getRef());
             blockStack.pop();
             blockStack.push(nextBlock);
          }  else if(statement instanceof StatementConditionalJump) {
             currentBlock.addStatement(statement);
             StatementConditionalJump statementConditionalJump = (StatementConditionalJump) statement;
             ControlFlowBlock jmpBlock = getOrCreateBlock(statementConditionalJump.getDestination());
-            ControlFlowBlock nextBlock = getOrCreateBlock(scope.addLabelIntermediate().getRef());
+            ControlFlowBlock nextBlock = getOrCreateBlock(currentBlockScope.addLabelIntermediate().getRef());
             currentBlock.setDefaultSuccessor(nextBlock.getLabel());
             currentBlock.setConditionalSuccessor(jmpBlock.getLabel());
             blockStack.pop();
@@ -60,7 +67,7 @@ public class Pass1GenerateControlFlowGraph {
          }  else if(statement instanceof StatementProcedureEnd) {
             // Procedure strategy implemented is currently variable-based transfer of parameters/return values
             currentBlock.setDefaultSuccessor(new Label("@RETURN", scope, false).getRef());
-            ControlFlowBlock nextBlock = getOrCreateBlock(scope.addLabelIntermediate().getRef());
+            ControlFlowBlock nextBlock = getOrCreateBlock(currentBlockScope.addLabelIntermediate().getRef());
             blockStack.pop();
             ControlFlowBlock prevBlock = blockStack.pop();
             prevBlock.setDefaultSuccessor(nextBlock.getLabel());

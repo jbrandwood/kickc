@@ -39,6 +39,16 @@ public class TestCompilationOutput extends TestCase {
       tester.testFile("bresenham");
    }
 
+   public void testMinus() throws IOException, URISyntaxException {
+      TestCompilationOutput tester = new TestCompilationOutput();
+      tester.testFile("minus");
+   }
+
+   public void testLoopMin() throws IOException, URISyntaxException {
+      TestCompilationOutput tester = new TestCompilationOutput();
+      tester.testFile("loopmin");
+   }
+
    public void testSumMin() throws IOException, URISyntaxException {
       TestCompilationOutput tester = new TestCompilationOutput();
       tester.testFile("summin");

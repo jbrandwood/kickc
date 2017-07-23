@@ -14,13 +14,13 @@ B1_from_BBEGIN:
 B1_from_B3:
   lda 18
   sta 14
-  lda 15
+  lda 17
   sta 13
   lda 2
   sta 12
-  lda 16
+  lda 15
   sta 10
-  lda 16+1
+  lda 15+1
   sta 10+1
 B1:
   ldy #0
@@ -47,12 +47,12 @@ B1:
 B3_from_B1:
   lda 14
   sta 18
-  lda 3
-  sta 16
-  lda 3+1
-  sta 16+1
   lda 5
+  sta 17
+  lda 3
   sta 15
+  lda 3+1
+  sta 15+1
 B3:
   lda 2
   cmp #40
@@ -77,10 +77,10 @@ B2:
 B3_from_B2:
   lda 6
   sta 18
-  lda 7
-  sta 16
-  lda 7+1
-  sta 16+1
   lda 9
+  sta 17
+  lda 7
   sta 15
+  lda 7+1
+  sta 15+1
   jmp B3

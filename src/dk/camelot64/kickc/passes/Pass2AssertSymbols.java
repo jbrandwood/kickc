@@ -153,12 +153,14 @@ public class Pass2AssertSymbols extends Pass2SsaAssertion {
       }
 
       @Override
-      public Void visitPhi(StatementPhi phi) {
-         addSymbol(phi.getlValue());
-         for (StatementPhi.PreviousSymbol previousSymbol : phi.getPreviousVersions()) {
-            addSymbol(previousSymbol.getrValue());
+      public Void visitPhiBlock(StatementPhiBlock phi) {
+         for (StatementPhiBlock.PhiVariable phiVariable : phi.getPhiVariables()) {
+            addSymbol(phiVariable.getVariable());
+            for (StatementPhiBlock.PhiRValue phiRValue : phiVariable.getValues()) {
+               addSymbol(phiRValue.getrValue());
+            }
          }
-         return super.visitPhi(phi);
+         return super.visitPhiBlock(phi);
       }
    }
 }

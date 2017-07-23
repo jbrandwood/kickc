@@ -31,7 +31,7 @@ public class Pass3CodeGeneration {
          // Generate exit
          ControlFlowBlock defaultSuccessor = graph.getDefaultSuccessor(block);
          if (defaultSuccessor != null) {
-            if (defaultSuccessor.hasPhiStatements()) {
+            if (defaultSuccessor.hasPhiBlock()) {
                genBlockPhiTransition(asm, block, defaultSuccessor);
             }
             asm.addInstruction("JMP", AsmAddressingMode.ABS, defaultSuccessor.getLabel().getFullName().replace('@', 'B').replace(':','_'));
@@ -44,7 +44,7 @@ public class Pass3CodeGeneration {
       Iterator<Statement> statementsIt = block.getStatements().iterator();
       while (statementsIt.hasNext()) {
          Statement statement = statementsIt.next();
-         if (!(statement instanceof StatementPhi)) {
+         if (!(statement instanceof StatementPhiBlock)) {
             if (statement instanceof StatementAssignment) {
                StatementAssignment assignment = (StatementAssignment) statement;
                LValue lValue = assignment.getlValue();
@@ -58,7 +58,7 @@ public class Pass3CodeGeneration {
                      StatementAssignment assignmentAlu = assignment;
                      statement = statementsIt.next();
                      if (!(statement instanceof StatementAssignment)) {
-                        throw new RuntimeException("Error! ALU statement must be followed immidiately by assignment using the ALU. " + statement);
+                        throw new RuntimeException("Error! ALU statement must be followed immediately by assignment using the ALU. " + statement);
                      }
                      assignment = (StatementAssignment) statement;
                      AsmFragment asmFragment = new AsmFragment(assignment, assignmentAlu, symbols);
@@ -79,7 +79,7 @@ public class Pass3CodeGeneration {
             } else if (statement instanceof StatementCall) {
                StatementCall call = (StatementCall) statement;
                ControlFlowBlock callSuccessor = graph.getCallSuccessor(block);
-               if (callSuccessor != null && callSuccessor.hasPhiStatements()) {
+               if (callSuccessor != null && callSuccessor.hasPhiBlock()) {
                      genBlockPhiTransition(asm, block, callSuccessor);
                }
                asm.addInstruction("jsr", AsmAddressingMode.ABS, call.getProcedure().getFullName());
@@ -93,7 +93,7 @@ public class Pass3CodeGeneration {
    }
 
    private void genBlockEntryPoints(AsmProgram asm, ControlFlowBlock block) {
-      if (block.hasPhiStatements()) {
+      if (block.hasPhiBlock()) {
          List<ControlFlowBlock> predecessors = new ArrayList<>(graph.getPredecessors(block));
          Collections.sort(predecessors, new Comparator<ControlFlowBlock>() {
             @Override
@@ -111,24 +111,24 @@ public class Pass3CodeGeneration {
    }
 
    private void genBlockPhiTransition(AsmProgram asm, ControlFlowBlock fromBlock, ControlFlowBlock toBlock) {
-      asm.addLabel((toBlock.getLabel().getFullName() + "_from_" + fromBlock.getLabel().getLocalName()).replace('@', 'B').replace(':','_'));
-      for (Statement statement : toBlock.getStatements()) {
-         if (!(statement instanceof StatementPhi)) {
-            // No more phi statements to handle
-            break;
-         }
-         StatementPhi phi = (StatementPhi) statement;
-         List<StatementPhi.PreviousSymbol> previousVersions = new ArrayList<>(phi.getPreviousVersions());
-         Collections.sort(previousVersions, new Comparator<StatementPhi.PreviousSymbol>() {
-            @Override
-            public int compare(StatementPhi.PreviousSymbol o1, StatementPhi.PreviousSymbol o2) {
-               return o1.getBlock().getFullName().compareTo(o2.getBlock().getFullName());
-            }
-         });
-         for (StatementPhi.PreviousSymbol previousSymbol : previousVersions) {
-            if (previousSymbol.getBlock().equals(fromBlock.getLabel())) {
-               genAsmMove(asm, phi.getlValue(), previousSymbol.getrValue());
-               break;
+      asm.addLabel((toBlock.getLabel().getFullName() + "_from_" + fromBlock.getLabel().getLocalName()).replace('@', 'B').replace(':', '_'));
+      if (toBlock.hasPhiBlock()) {
+         StatementPhiBlock phiBlock = toBlock.getPhiBlock();
+         List<StatementPhiBlock.PhiVariable> phiVariables = new ArrayList<>(phiBlock.getPhiVariables());
+         Collections.reverse(phiVariables);
+         for (StatementPhiBlock.PhiVariable phiVariable : phiVariables) {
+            List<StatementPhiBlock.PhiRValue> phiRValues = phiVariable.getValues();
+            Collections.sort(phiRValues, new Comparator<StatementPhiBlock.PhiRValue>() {
+               @Override
+               public int compare(StatementPhiBlock.PhiRValue o1, StatementPhiBlock.PhiRValue o2) {
+                  return o1.getPredecessor().getFullName().compareTo(o2.getPredecessor().getFullName());
+               }
+            });
+            for (StatementPhiBlock.PhiRValue phiRValue : phiRValues) {
+               if (phiRValue.getPredecessor().equals(fromBlock.getLabel())) {
+                  genAsmMove(asm, phiVariable.getVariable(), phiRValue.getrValue());
+                  break;
+               }
             }
          }
       }

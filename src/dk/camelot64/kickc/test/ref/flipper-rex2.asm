@@ -34,11 +34,11 @@ plot:
 plot__B1_from_plot:
   lda #16
   sta 100
-  ldx #0
   lda #<1236
   sta 101
   lda #>1236
   sta 101+1
+  ldx #0
 plot__B1_from_B3:
 plot__B1:
 plot__B2_from_B1:
@@ -68,8 +68,8 @@ flip:
 flip__B1_from_flip:
   lda #16
   sta 104
-  ldx #0
   ldy #15
+  ldx #0
 flip__B1_from_B4:
 flip__B1:
 flip__B2_from_B1:

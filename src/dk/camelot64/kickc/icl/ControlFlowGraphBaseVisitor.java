@@ -29,10 +29,10 @@ public class ControlFlowGraphBaseVisitor<T> {
          return visitJump((StatementJump) statement);
       } else if(statement instanceof StatementLabel) {
          return visitJumpTarget((StatementLabel) statement);
-      } else if(statement instanceof StatementPhi) {
-         return visitPhi((StatementPhi) statement);
       } else if(statement instanceof StatementCall) {
          return visitCall((StatementCall) statement);
+      } else if(statement instanceof StatementPhiBlock) {
+         return visitPhiBlock((StatementPhiBlock) statement);
       } else if(statement instanceof StatementReturn) {
          return visitReturn((StatementReturn) statement);
       } else if(statement instanceof StatementProcedureBegin) {
@@ -72,7 +72,7 @@ public class ControlFlowGraphBaseVisitor<T> {
       return null;
    }
 
-   public T visitPhi(StatementPhi phi) {
+   public T visitPhiBlock(StatementPhiBlock phi) {
       return null;
    }
 

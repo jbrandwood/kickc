@@ -1,6 +1,7 @@
 package dk.camelot64.kickc.icl;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import java.util.ArrayList;
@@ -78,10 +79,6 @@ public class ControlFlowBlock {
       return statements;
    }
 
-   public void addPhiStatement(VariableVersion newVersion) {
-      statements.add(0, new StatementPhi(newVersion.getRef()));
-   }
-
    public String getAsTypedString(ControlFlowGraph graph, ProgramScope scope) {
       StringBuffer out = new StringBuffer();
       out.append(label.getFullName() + ":" );
@@ -134,15 +131,6 @@ public class ControlFlowBlock {
       return out.toString();
    }
 
-   public boolean hasPhiStatements() {
-      if(statements.size()>0) {
-         if(statements.get(0) instanceof StatementPhi) {
-            return true;
-         }
-      }
-      return false;
-   }
-
    @Override
    public boolean equals(Object o) {
       if (this == o) return true;
@@ -168,4 +156,32 @@ public class ControlFlowBlock {
       result = 31 * result + (callSuccessor != null ? callSuccessor.hashCode() : 0);
       return result;
    }
+
+   /**
+    * Get the phi block for the block. If the phi block has not yet been created it is created.
+    * @return
+    */
+   @JsonIgnore
+   public StatementPhiBlock getPhiBlock() {
+      StatementPhiBlock phiBlock = null;
+      if(statements.size()>0 && statements.get(0) instanceof StatementPhiBlock) {
+         phiBlock = (StatementPhiBlock) statements.get(0);
+      }
+      if(phiBlock==null) {
+         phiBlock = new StatementPhiBlock();
+         statements.add(0, phiBlock);
+      }
+      return phiBlock;
+   }
+
+   public boolean hasPhiBlock() {
+      if(statements.size()>0) {
+         if(statements.get(0) instanceof StatementPhiBlock) {
+            return true;
+         }
+      }
+      return false;
+   }
+
+
 }

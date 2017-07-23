@@ -145,26 +145,31 @@ public abstract class Pass2SsaOptimization {
          }
 
          @Override
-         public Void visitPhi(StatementPhi phi) {
-            if (getAlias(aliases, phi.getlValue()) != null) {
-               RValue alias = getAlias(aliases, phi.getlValue());
-               if (alias instanceof LValue) {
-                  phi.setlValue((VariableRef) alias);
+         public Void visitPhiBlock(StatementPhiBlock phi) {
+            for (StatementPhiBlock.PhiVariable phiVariable : phi.getPhiVariables()) {
+               if (getAlias(aliases, phiVariable.getVariable()) != null) {
+                  RValue alias = getAlias(aliases, phiVariable.getVariable());
+                  if (alias instanceof LValue) {
+                     phiVariable.setVariable((VariableRef) alias);
+                  }
                }
-            }
-            for (Iterator<StatementPhi.PreviousSymbol> iterator = phi.getPreviousVersions().iterator(); iterator.hasNext(); ) {
-               StatementPhi.PreviousSymbol previousSymbol = iterator.next();
-               if (getAlias(aliases, previousSymbol.getrValue()) != null) {
-                  RValue alias = getAlias(aliases, previousSymbol.getrValue());
-                  if (VOID.equals(alias)) {
-                     iterator.remove();
-                  } else {
-                     previousSymbol.setrValue(alias);
+               List<StatementPhiBlock.PhiRValue> phirValues = phiVariable.getValues();
+               Iterator<StatementPhiBlock.PhiRValue> it = phirValues.iterator();
+               while (it.hasNext()) {
+                  StatementPhiBlock.PhiRValue phirValue = it.next();
+                  if (getAlias(aliases, phirValue.getrValue()) != null) {
+                     RValue alias = getAlias(aliases, phirValue.getrValue());
+                     if (VOID.equals(alias)) {
+                        it.remove();
+                     } else {
+                        phirValue.setrValue(alias);
+                     }
                   }
                }
             }
             return null;
          }
+
       };
       visitor.visitGraph(graph);
    }
@@ -189,16 +194,6 @@ public abstract class Pass2SsaOptimization {
     *
     * @param replacements Variables that have alias values.
     */
-   public void replaceLabels(final Map<LabelRef, LabelRef> replacements) {
-      ControlFlowGraphBaseVisitor<Void> visitor = getLabelReplaceVisitor(replacements);
-      visitor.visitGraph(graph);
-   }
-
-   /**
-    * Replace all usages of a label in statements with another label.
-    *
-    * @param replacements Variables that have alias values.
-    */
    public void replaceLabels(ControlFlowBlock block, final Map<LabelRef, LabelRef> replacements) {
       ControlFlowGraphBaseVisitor<Void> visitor = getLabelReplaceVisitor(replacements);
       visitor.visitBlock(block);
@@ -208,33 +203,34 @@ public abstract class Pass2SsaOptimization {
    private ControlFlowGraphBaseVisitor<Void> getLabelReplaceVisitor(final Map<LabelRef, LabelRef> replacements) {
       return new ControlFlowGraphBaseVisitor<Void>() {
 
-            @Override
-            public Void visitConditionalJump(StatementConditionalJump conditionalJump) {
-               if (getReplacement(replacements, conditionalJump.getDestination()) != null) {
-                  conditionalJump.setDestination(getReplacement(replacements, conditionalJump.getDestination()));
-               }
-               return null;
+         @Override
+         public Void visitConditionalJump(StatementConditionalJump conditionalJump) {
+            if (getReplacement(replacements, conditionalJump.getDestination()) != null) {
+               conditionalJump.setDestination(getReplacement(replacements, conditionalJump.getDestination()));
             }
+            return null;
+         }
 
-            @Override
-            public Void visitJump(StatementJump jump) {
-               if (getReplacement(replacements, jump.getDestination()) != null) {
-                  jump.setDestination(getReplacement(replacements, jump.getDestination()));
-               }
-               return null;
+         @Override
+         public Void visitJump(StatementJump jump) {
+            if (getReplacement(replacements, jump.getDestination()) != null) {
+               jump.setDestination(getReplacement(replacements, jump.getDestination()));
             }
+            return null;
+         }
 
-            @Override
-            public Void visitPhi(StatementPhi phi) {
-               for (StatementPhi.PreviousSymbol previousSymbol : phi.getPreviousVersions()) {
-                  LabelRef replacement = getReplacement(replacements, previousSymbol.getBlock());
-                  if (replacement != null) {
-                     previousSymbol.setBlock(replacement);
+         @Override
+         public Void visitPhiBlock(StatementPhiBlock phi) {
+            for (StatementPhiBlock.PhiVariable phiVariable : phi.getPhiVariables()) {
+               for (StatementPhiBlock.PhiRValue phiRValue : phiVariable.getValues()) {
+                  if (getReplacement(replacements, phiRValue.getPredecessor()) != null) {
+                     phiRValue.setPredecessor(getReplacement(replacements, phiRValue.getPredecessor()));
                   }
                }
-               return null;
             }
-         };
+            return null;
+         }
+      };
    }
 
    /**
@@ -267,9 +263,16 @@ public abstract class Pass2SsaOptimization {
                if (variables.contains(assignment.getlValue())) {
                   iterator.remove();
                }
-            } else if (statement instanceof StatementPhi) {
-               StatementPhi phi = (StatementPhi) statement;
-               if (variables.contains(phi.getlValue())) {
+            } else if (statement instanceof StatementPhiBlock) {
+               StatementPhiBlock phiBlock = (StatementPhiBlock) statement;
+               Iterator<StatementPhiBlock.PhiVariable> variableIterator = phiBlock.getPhiVariables().iterator();
+               while (variableIterator.hasNext()) {
+                  StatementPhiBlock.PhiVariable phiVariable = variableIterator.next();
+                  if(variables.contains(phiVariable.getVariable())) {
+                     variableIterator.remove();
+                  }
+               }
+               if(phiBlock.getPhiVariables().size()==0) {
                   iterator.remove();
                }
             }
@@ -326,9 +329,11 @@ public abstract class Pass2SsaOptimization {
          }
 
          @Override
-         public Void visitPhi(StatementPhi phi) {
-            for (StatementPhi.PreviousSymbol previousSymbol : phi.getPreviousVersions()) {
-               addUsage(previousSymbol.getrValue(), phi);
+         public Void visitPhiBlock(StatementPhiBlock phi) {
+            for (StatementPhiBlock.PhiVariable phiVariable : phi.getPhiVariables()) {
+               for (StatementPhiBlock.PhiRValue phiRValue : phiVariable.getValues()) {
+                  addUsage(phiRValue.getrValue(), phi);
+               }
             }
             return null;
          }
@@ -393,12 +398,15 @@ public abstract class Pass2SsaOptimization {
          }
 
          @Override
-         public Object visitPhi(StatementPhi phi) {
-            for (StatementPhi.PreviousSymbol previousSymbol : phi.getPreviousVersions()) {
-               addUsage(previousSymbol.getrValue());
+         public Void visitPhiBlock(StatementPhiBlock phi) {
+            for (StatementPhiBlock.PhiVariable phiVariable : phi.getPhiVariables()) {
+               for (StatementPhiBlock.PhiRValue phiRValue : phiVariable.getValues()) {
+                  addUsage(phiRValue.getrValue());
+               }
             }
             return null;
          }
+
       };
       usageVisitor.visitGraph(getGraph());
       return usages;

@@ -2,6 +2,7 @@ package dk.camelot64.kickc.passes;
 
 import dk.camelot64.kickc.CompileLog;
 import dk.camelot64.kickc.icl.*;
+import javafx.scene.input.InputMethodTextRun;
 
 import java.util.*;
 
@@ -54,13 +55,20 @@ public class Pass2AliasElimination extends Pass2SsaOptimization {
                      iterator.remove();
                   }
                }
-            } else if (statement instanceof StatementPhi) {
-               StatementPhi phi = (StatementPhi) statement;
-               AliasSet aliasSet = aliases.findAliasSet(phi.getlValue());
-               if (aliasSet != null) {
-                  if (phi.getPreviousVersions().size() == 1 && aliasSet.contains(phi.getPreviousVersion(0).getrValue())) {
-                     iterator.remove();
+            } else if (statement instanceof StatementPhiBlock) {
+               StatementPhiBlock phiBlock = (StatementPhiBlock) statement;
+               Iterator<StatementPhiBlock.PhiVariable> variableIterator = phiBlock.getPhiVariables().iterator();
+               while (variableIterator.hasNext()) {
+                  StatementPhiBlock.PhiVariable phiVariable = variableIterator.next();
+                  AliasSet aliasSet = aliases.findAliasSet(phiVariable.getVariable());
+                  if (aliasSet != null) {
+                     if (phiVariable.getValues().size() == 1 && aliasSet.contains(phiVariable.getValues().get(0).getrValue())) {
+                        variableIterator.remove();
+                     }
                   }
+               }
+               if(phiBlock.getPhiVariables().size()==0) {
+                  iterator.remove();
                }
             }
          }
@@ -222,32 +230,28 @@ public class Pass2AliasElimination extends Pass2SsaOptimization {
    // Remove all candidates that are used after assignment in phi blocks
    private void cleanupCandidates(Aliases candidates) {
       for (final AliasSet aliasSet : candidates.aliases) {
-         final Boolean[] lMatch = {false};
-         ControlFlowGraphBaseVisitor<Void> candidateEliminator = new ControlFlowGraphBaseVisitor<Void>() {
-            @Override
-            public Void visitBlock(ControlFlowBlock block) {
-               lMatch[0] = false;
-               return super.visitBlock(block);
-            }
-            @Override
-            public Void visitPhi(StatementPhi phi) {
-               if(lMatch[0]) {
-                  for (StatementPhi.PreviousSymbol previousSymbol : phi.getPreviousVersions()) {
-                     RValue phiRValue = previousSymbol.getrValue();
-                     if (aliasSet.contains(phiRValue)) {
-                        log.append("Alias candidate removed " + phiRValue.getAsTypedString(getSymbols()));
-                        aliasSet.remove(phiRValue);
-                        break;
+         for (ControlFlowBlock block : getGraph().getAllBlocks()) {
+            if(block.hasPhiBlock()) {
+               StatementPhiBlock phi = block.getPhiBlock();
+               boolean lMatch = false;
+               for (StatementPhiBlock.PhiVariable phiVariable : phi.getPhiVariables()) {
+                  if(lMatch) {
+                     for (StatementPhiBlock.PhiRValue phiRValue : phiVariable.getValues()) {
+                        RValue rValue = phiRValue.getrValue();
+                        if (aliasSet.contains(rValue)) {
+                           log.append("Alias candidate removed " + rValue.getAsTypedString(getSymbols()));
+                           aliasSet.remove(rValue);
+                           break;
+                        }
+                     }
+                  } else {
+                     if (aliasSet.contains(phiVariable.getVariable())) {
+                        lMatch = true;
                      }
                   }
                }
-               if (aliasSet.contains(phi.getlValue())) {
-                  lMatch[0] = true;
-               }
-               return null;
             }
-         };
-         candidateEliminator.visitGraph(getGraph());
+         }
       }
    }
 
@@ -273,13 +277,15 @@ public class Pass2AliasElimination extends Pass2SsaOptimization {
          }
 
          @Override
-         public Void visitPhi(StatementPhi phi) {
-            if (phi.getPreviousVersions().size() == 1) {
-               StatementPhi.PreviousSymbol previousSymbol = phi.getPreviousVersions().get(0);
-               if (previousSymbol.getrValue() instanceof VariableRef) {
-                  VariableRef variable = phi.getlValue();
-                  VariableRef alias = (VariableRef) previousSymbol.getrValue();
-                  aliases.add(variable, alias);
+         public Void visitPhiBlock(StatementPhiBlock phi) {
+            for (StatementPhiBlock.PhiVariable phiVariable : phi.getPhiVariables()) {
+               if(phiVariable.getValues().size()==1) {
+                  StatementPhiBlock.PhiRValue phiRValue = phiVariable.getValues().get(0);
+                  if (phiRValue.getrValue() instanceof VariableRef) {
+                     VariableRef variable = phiVariable.getVariable();
+                     VariableRef alias = (VariableRef) phiRValue.getrValue();
+                     aliases.add(variable, alias);
+                  }
                }
             }
             return null;

@@ -36,27 +36,31 @@ public class Pass2RedundantPhiElimination extends Pass2SsaOptimization {
    private Map<VariableRef, RValue> findRedundantPhis() {
       final Map<VariableRef, RValue> aliases = new LinkedHashMap<>();
       ControlFlowGraphBaseVisitor<Void> visitor = new ControlFlowGraphBaseVisitor<Void>() {
+
          @Override
-         public Void visitPhi(StatementPhi phi) {
-            boolean found = true;
-            RValue phiRValue = null;
-            for (StatementPhi.PreviousSymbol previousSymbol : phi.getPreviousVersions()) {
-               if(phiRValue==null) {
-                  phiRValue = previousSymbol.getrValue();
-               } else {
-                  if(!phiRValue.equals(previousSymbol.getrValue())) {
-                     found = false;
-                     break;
+         public Void visitPhiBlock(StatementPhiBlock phi) {
+            for (StatementPhiBlock.PhiVariable phiVariable : phi.getPhiVariables()) {
+               boolean found = true;
+               RValue rValue = null;
+               for (StatementPhiBlock.PhiRValue phiRValue : phiVariable.getValues()) {
+                  if(rValue==null) {
+                     rValue = phiRValue.getrValue();
+                  } else {
+                     if(!rValue.equals(phiRValue.getrValue())) {
+                        found = false;
+                        break;
+                     }
                   }
                }
-            }
-            if(found) {
-               VariableRef variable = phi.getlValue();
-               if(phiRValue==null) {phiRValue = VOID;}
-               aliases.put(variable, phiRValue);
+               if(found) {
+                  VariableRef variable = phiVariable.getVariable();
+                  if(rValue==null) {rValue = VOID;}
+                  aliases.put(variable, rValue);
+               }
             }
             return null;
          }
+
       };
       visitor.visitGraph(getGraph());
       return aliases;

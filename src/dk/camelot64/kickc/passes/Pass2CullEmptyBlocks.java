@@ -42,20 +42,22 @@ public class Pass2CullEmptyBlocks extends Pass2SsaOptimization {
          // In all phi functions of a successor blocks make a copy of the phi assignment for each predecessor
          ControlFlowGraphBaseVisitor<Void> phiFixVisitor = new ControlFlowGraphBaseVisitor<Void>() {
             @Override
-            public Void visitPhi(StatementPhi phi) {
-               for (StatementPhi.PreviousSymbol previousSymbol : phi.getPreviousVersions()) {
-                  if(previousSymbol.getBlock().equals(removeBlock.getLabel())) {
-                     // Found a phi function referencing the remove block - add copies for each predecessor
-                     RValue previousRValue = previousSymbol.getrValue();
-                     for (ControlFlowBlock predecessor : predecessors) {
-                        if(previousSymbol!=null) {
-                           previousSymbol.setBlock(predecessor.getLabel());
-                           previousSymbol = null;
-                        } else {
-                           phi.addPreviousVersion(predecessor.getLabel(), previousRValue);
+            public Void visitPhiBlock(StatementPhiBlock phi) {
+               for (StatementPhiBlock.PhiVariable phiVariable : phi.getPhiVariables()) {
+                  for (StatementPhiBlock.PhiRValue phiRValue : phiVariable.getValues()) {
+                     if(phiRValue.getPredecessor().equals(removeBlock.getLabel())) {
+                        // Found a phi function referencing the remove block - add copies for each predecessor
+                        RValue previousRValue = phiRValue.getrValue();
+                        for (ControlFlowBlock predecessor : predecessors) {
+                           if(phiRValue!=null) {
+                              phiRValue.setPredecessor(predecessor.getLabel());
+                              phiRValue = null;
+                           } else {
+                              phiVariable.setrValue(predecessor.getLabel(), previousRValue);
+                           }
                         }
+                        break;
                      }
-                     break;
                   }
                }
                return null;

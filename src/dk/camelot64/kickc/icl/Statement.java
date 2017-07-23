@@ -11,7 +11,7 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo;
 @JsonTypeInfo(use = JsonTypeInfo.Id.NAME, include = JsonTypeInfo.As.PROPERTY, property = "@type")
 @JsonSubTypes({
       @JsonSubTypes.Type(value = StatementAssignment.class, name = "assign"),
-      @JsonSubTypes.Type(value = StatementPhi.class, name = "phi"),
+      @JsonSubTypes.Type(value = StatementPhiBlock.class, name = "phiblock"),
       @JsonSubTypes.Type(value = StatementConditionalJump.class, name = "cond"),
       @JsonSubTypes.Type(value = StatementJump.class, name = "jump"),
       @JsonSubTypes.Type(value = StatementLabel.class, name = "label"),

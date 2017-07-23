@@ -68,17 +68,21 @@ public class Pass2ConstantPropagation extends Pass2SsaOptimization {
          }
 
          @Override
-         public Void visitPhi(StatementPhi phi) {
-            if (phi.getPreviousVersions().size() == 1) {
-               StatementPhi.PreviousSymbol previousSymbol = phi.getPreviousVersions().get(0);
-               if (previousSymbol.getrValue() instanceof Constant) {
-                  VariableRef variable = phi.getlValue();
-                  Constant constant = (Constant) previousSymbol.getrValue();
-                  constants.put(variable, constant);
+         public Void visitPhiBlock(StatementPhiBlock phi) {
+            for (StatementPhiBlock.PhiVariable phiVariable : phi.getPhiVariables()) {
+               if(phiVariable.getValues().size()==1) {
+                  StatementPhiBlock.PhiRValue phiRValue = phiVariable.getValues().get(0);
+                  if (phiRValue.getrValue() instanceof Constant) {
+                     VariableRef variable = phiVariable.getVariable();
+                     Constant constant = (Constant) phiRValue.getrValue();
+                     constants.put(variable, constant);
+                  }
                }
             }
             return null;
          }
+
+
       };
       visitor.visitGraph(getGraph());
       return constants;

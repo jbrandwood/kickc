@@ -20,13 +20,16 @@ public class Pass2SelfPhiElimination extends Pass2SsaOptimization {
       final Boolean[] optimized = {Boolean.FALSE};
       ControlFlowGraphBaseVisitor<Void> visitor = new ControlFlowGraphBaseVisitor<Void>() {
          @Override
-         public Void visitPhi(StatementPhi phi) {
-            for (Iterator<StatementPhi.PreviousSymbol> iterator = phi.getPreviousVersions().iterator(); iterator.hasNext(); ) {
-               StatementPhi.PreviousSymbol previousSymbol = iterator.next();
-               if (previousSymbol.getrValue().equals(phi.getlValue())) {
-                  iterator.remove();
-                  optimized[0] = Boolean.TRUE;
-                  log.append("Self Phi Eliminated "+phi.getlValue().getAsTypedString(getSymbols()));
+         public Void visitPhiBlock(StatementPhiBlock phi) {
+            for (StatementPhiBlock.PhiVariable phiVariable : phi.getPhiVariables()) {
+               Iterator<StatementPhiBlock.PhiRValue> iterator = phiVariable.getValues().iterator();
+               while (iterator.hasNext()) {
+                  StatementPhiBlock.PhiRValue phiRValue = iterator.next();
+                  if (phiRValue.getrValue().equals(phiVariable.getVariable())) {
+                     iterator.remove();
+                     optimized[0] = Boolean.TRUE;
+                     log.append("Self Phi Eliminated "+phiVariable.getVariable().getAsTypedString(getSymbols()));
+                  }
                }
             }
             return null;

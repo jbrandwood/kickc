@@ -60,11 +60,13 @@ public class Pass2AssertBlocks extends Pass2SsaAssertion {
       }
 
       @Override
-      public Void visitPhi(StatementPhi phi) {
-         for (StatementPhi.PreviousSymbol previousSymbol : phi.getPreviousVersions()) {
-            assertBlock(previousSymbol.getBlock());
+      public Void visitPhiBlock(StatementPhiBlock phi) {
+         for (StatementPhiBlock.PhiVariable phiVariable : phi.getPhiVariables()) {
+            for (StatementPhiBlock.PhiRValue phiRValue : phiVariable.getValues()) {
+               assertBlock(phiRValue.getPredecessor());
+            }
          }
-         return super.visitPhi(phi);
+         return super.visitPhiBlock(phi);
       }
 
       @Override

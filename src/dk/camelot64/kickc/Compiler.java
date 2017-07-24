@@ -49,8 +49,8 @@ public class Compiler {
          KickCParser.FileContext file = pass0ParseInput(input, log);
          Program program = pass1GenerateSSA(file, log);
          pass2OptimizeSSA(program, log);
-         AsmProgram asmProgram = pass3GenerateAsm(program, log);
-         pass4OptimizeAsm(asmProgram, log);
+         AsmProgram asmProgram = pass4GenerateAsm(program, log);
+         pass5OptimizeAsm(asmProgram, log);
 
          log.append("FINAL SYMBOL TABLE");
          log.append(program.getScope().getSymbolTableContents());
@@ -64,16 +64,16 @@ public class Compiler {
       }
    }
 
-   public void pass4OptimizeAsm(AsmProgram asmProgram, CompileLog log) {
-      List<Pass4AsmOptimization> pass4Optimizations = new ArrayList<>();
-      pass4Optimizations.add(new Pass4NextJumpElimination(asmProgram, log));
-      pass4Optimizations.add(new Pass4UnnecesaryLoadElimination(asmProgram, log));
+   public void pass5OptimizeAsm(AsmProgram asmProgram, CompileLog log) {
+      List<Pass5AsmOptimization> pass4Optimizations = new ArrayList<>();
+      pass4Optimizations.add(new Pass5NextJumpElimination(asmProgram, log));
+      pass4Optimizations.add(new Pass5UnnecesaryLoadElimination(asmProgram, log));
       boolean asmOptimized = true;
       while (asmOptimized) {
          asmOptimized = false;
-         for (Pass4AsmOptimization optimization : pass4Optimizations) {
-            boolean stepOtimized = optimization.optimize();
-            if (stepOtimized) {
+         for (Pass5AsmOptimization optimization : pass4Optimizations) {
+            boolean stepOptimized = optimization.optimize();
+            if (stepOptimized) {
                log.append("Succesful ASM optimization " + optimization.getClass().getSimpleName());
                asmOptimized = true;
                log.append("ASSEMBLER");
@@ -83,13 +83,13 @@ public class Compiler {
       }
    }
 
-   public  AsmProgram pass3GenerateAsm(Program program, CompileLog log) {
-      Pass3BlockSequencePlanner pass3BlockSequencePlanner = new Pass3BlockSequencePlanner(program);
-      pass3BlockSequencePlanner.plan();
-      Pass3RegisterAllocation pass3RegisterAllocation = new Pass3RegisterAllocation(program);
-      pass3RegisterAllocation.allocate();
-      Pass3CodeGeneration pass3CodeGeneration = new Pass3CodeGeneration(program);
-      AsmProgram asmProgram = pass3CodeGeneration.generate();
+   public  AsmProgram pass4GenerateAsm(Program program, CompileLog log) {
+      Pass4BlockSequencePlanner pass4BlockSequencePlanner = new Pass4BlockSequencePlanner(program);
+      pass4BlockSequencePlanner.plan();
+      Pass4RegisterAllocation pass4RegisterAllocation = new Pass4RegisterAllocation(program);
+      pass4RegisterAllocation.allocate();
+      Pass4CodeGeneration pass4CodeGeneration = new Pass4CodeGeneration(program);
+      AsmProgram asmProgram = pass4CodeGeneration.generate();
 
       log.append("INITIAL ASM");
       log.append(asmProgram.toString());

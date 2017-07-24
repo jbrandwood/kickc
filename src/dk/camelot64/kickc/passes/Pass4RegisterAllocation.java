@@ -5,13 +5,13 @@ import dk.camelot64.kickc.icl.*;
 /**
  * Register Allocation for variables
  */
-public class Pass3RegisterAllocation {
+public class Pass4RegisterAllocation {
 
    private ControlFlowGraph graph;
    private ProgramScope symbols;
    int currentZp = 2;
 
-   public Pass3RegisterAllocation(Program program) {
+   public Pass4RegisterAllocation(Program program) {
       this.graph = program.getGraph();
       this.symbols = program.getScope();
    }

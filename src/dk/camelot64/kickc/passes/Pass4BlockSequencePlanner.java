@@ -7,12 +7,12 @@ import java.util.List;
 import java.util.Stack;
 
 /** Plan the optimal sequence for the blocks of the control flow graph */
-public class Pass3BlockSequencePlanner {
+public class Pass4BlockSequencePlanner {
 
    private ControlFlowGraph graph;
    private ProgramScope scope;
 
-   public Pass3BlockSequencePlanner(Program program) {
+   public Pass4BlockSequencePlanner(Program program) {
       this.graph = program.getGraph();
       this.scope = program.getScope();
    }

@@ -8,9 +8,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 /** Maps out register values entering all instructions. Removes unnecessary loads / clears / sets */
-public class Pass4UnnecesaryLoadElimination extends Pass4AsmOptimization {
+public class Pass5UnnecesaryLoadElimination extends Pass5AsmOptimization {
 
-   public Pass4UnnecesaryLoadElimination(AsmProgram program, CompileLog log) {
+   public Pass5UnnecesaryLoadElimination(AsmProgram program, CompileLog log) {
       super(program, log);
    }
 

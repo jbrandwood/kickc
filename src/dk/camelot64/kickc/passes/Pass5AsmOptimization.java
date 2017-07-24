@@ -10,12 +10,12 @@ import java.util.List;
 /** Optimization performed on Assembler Code (Asm Code).
  * Optimizations are performed repeatedly until none of them yield any result
  **/
-public abstract class Pass4AsmOptimization {
+public abstract class Pass5AsmOptimization {
 
    protected CompileLog log;
    private AsmProgram program;
 
-   public Pass4AsmOptimization(AsmProgram program, CompileLog log) {
+   public Pass5AsmOptimization(AsmProgram program, CompileLog log) {
       this.program = program;
       this.log = log;
    }

@@ -153,6 +153,7 @@ public class Compiler {
          Pass1EliminateEmptyBlocks pass1EliminateEmptyBlocks = new Pass1EliminateEmptyBlocks(program, log);
          boolean blockEliminated = pass1EliminateEmptyBlocks.eliminate();
          if(blockEliminated) {
+            log.append("CONTROL FLOW GRAPH");
             log.append(program.getGraph().toString(program.getScope()));
          }
 

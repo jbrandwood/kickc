@@ -149,6 +149,55 @@ INITIAL CONTROL FLOW GRAPH
   to:@END
 @END: from @6
 
+Removing empty block @4
+Removing empty block @5
+Removing empty block @6
+@BEGIN: from
+  (byte) STAR ← (byte) 81
+  (byte[1000]) SCREEN ← (word) 1024
+  (byte) x0 ← (byte) 0
+  (byte) y0 ← (byte) 0
+  (byte) x1 ← (byte) 39
+  (byte) y1 ← (byte) 24
+  (byte~) $0 ← (byte) x1 - (byte) x0
+  (byte) xd ← (byte~) $0
+  (byte~) $1 ← (byte) y1 - (byte) y0
+  (byte) yd ← (byte~) $1
+  (byte) x ← (byte) x0
+  (byte) y ← (byte) y0
+  (byte~) $2 ← (byte) yd / (byte) 2
+  (byte) e ← (byte~) $2
+  (byte~) $3 ← (byte) y * (byte) 40
+  (byte*~) $4 ← (byte[1000]) SCREEN + (byte~) $3
+  (byte*~) $5 ← (byte*~) $4 + (byte) x
+  (byte*) cursor ← (byte*~) $5
+  to:@1
+@1: from @3 @BEGIN
+  *((byte*) cursor) ← (byte) STAR
+  (byte~) $6 ← (byte) x + (byte) 1
+  (byte) x ← (byte~) $6
+  (byte*~) $7 ← (byte*) cursor + (byte) 1
+  (byte*) cursor ← (byte*~) $7
+  (byte~) $8 ← (byte) e + (byte) yd
+  (byte) e ← (byte~) $8
+  (boolean~) $9 ← (byte) xd < (byte) e
+  if((boolean~) $9) goto @2
+  to:@3
+@2: from @1
+  (byte~) $10 ← (byte) y + (byte) 1
+  (byte) y ← (byte~) $10
+  (byte*~) $11 ← (byte*) cursor + (byte) 40
+  (byte*) cursor ← (byte*~) $11
+  (byte~) $12 ← (byte) e - (byte) xd
+  (byte) e ← (byte~) $12
+  to:@3
+@3: from @1 @2
+  (byte~) $13 ← (byte) x1 + (byte) 1
+  (boolean~) $14 ← (byte) x < (byte~) $13
+  if((boolean~) $14) goto @1
+  to:@END
+@END: from @3
+
 CONTROL FLOW GRAPH WITH ASSIGNMENT CALL
 @BEGIN: from
   (byte) STAR ← (byte) 81
@@ -180,8 +229,8 @@ CONTROL FLOW GRAPH WITH ASSIGNMENT CALL
   (byte) e ← (byte~) $8
   (boolean~) $9 ← (byte) xd < (byte) e
   if((boolean~) $9) goto @2
-  to:@4
-@2: from @1 @5
+  to:@3
+@2: from @1
   (byte~) $10 ← (byte) y + (byte) 1
   (byte) y ← (byte~) $10
   (byte*~) $11 ← (byte*) cursor + (byte) 40
@@ -189,20 +238,13 @@ CONTROL FLOW GRAPH WITH ASSIGNMENT CALL
   (byte~) $12 ← (byte) e - (byte) xd
   (byte) e ← (byte~) $12
   to:@3
-@4: from @1
-  to:@3
-@3: from @2 @4
+@3: from @1 @2
   (byte~) $13 ← (byte) x1 + (byte) 1
   (boolean~) $14 ← (byte) x < (byte~) $13
   if((boolean~) $14) goto @1
-  to:@6
-@5: from
-  to:@2
-@6: from @3
   to:@END
-@END: from @6
+@END: from @3
 
-Completing Phi functions...
 Completing Phi functions...
 Completing Phi functions...
 Completing Phi functions...
@@ -228,8 +270,8 @@ CONTROL FLOW GRAPH SSA
   (byte*) cursor#0 ← (byte*~) $5
   to:@1
 @1: from @3 @BEGIN
-  (byte) x1#4 ← phi( @3/(byte) x1#1 @BEGIN/(byte) x1#0 )
-  (byte) y#3 ← phi( @3/(byte) y#5 @BEGIN/(byte) y#0 )
+  (byte) x1#2 ← phi( @3/(byte) x1#1 @BEGIN/(byte) x1#0 )
+  (byte) y#3 ← phi( @3/(byte) y#4 @BEGIN/(byte) y#0 )
   (byte) xd#1 ← phi( @3/(byte) xd#3 @BEGIN/(byte) xd#0 )
   (byte) yd#1 ← phi( @3/(byte) yd#2 @BEGIN/(byte) yd#0 )
   (byte) e#3 ← phi( @3/(byte) e#5 @BEGIN/(byte) e#0 )
@@ -245,16 +287,16 @@ CONTROL FLOW GRAPH SSA
   (byte) e#1 ← (byte~) $8
   (boolean~) $9 ← (byte) xd#1 < (byte) e#1
   if((boolean~) $9) goto @2
-  to:@4
-@2: from @1 @5
-  (byte) yd#3 ← phi( @1/(byte) yd#1 @5/(byte) yd#5 )
-  (byte) STAR#3 ← phi( @1/(byte) STAR#1 @5/(byte) STAR#5 )
-  (byte) x#4 ← phi( @1/(byte) x#1 @5/(byte) x#6 )
-  (byte) x1#2 ← phi( @1/(byte) x1#4 @5/(byte) x1#5 )
-  (byte) xd#2 ← phi( @1/(byte) xd#1 @5/(byte) xd#4 )
-  (byte) e#4 ← phi( @1/(byte) e#1 @5/(byte) e#6 )
-  (byte*) cursor#4 ← phi( @1/(byte*) cursor#1 @5/(byte*) cursor#6 )
-  (byte) y#2 ← phi( @1/(byte) y#3 @5/(byte) y#4 )
+  to:@3
+@2: from @1
+  (byte) yd#3 ← phi( @1/(byte) yd#1 )
+  (byte) STAR#3 ← phi( @1/(byte) STAR#1 )
+  (byte) x#4 ← phi( @1/(byte) x#1 )
+  (byte) x1#3 ← phi( @1/(byte) x1#2 )
+  (byte) xd#2 ← phi( @1/(byte) xd#1 )
+  (byte) e#4 ← phi( @1/(byte) e#1 )
+  (byte*) cursor#4 ← phi( @1/(byte*) cursor#1 )
+  (byte) y#2 ← phi( @1/(byte) y#3 )
   (byte~) $10 ← (byte) y#2 + (byte) 1
   (byte) y#1 ← (byte~) $10
   (byte*~) $11 ← (byte*) cursor#4 + (byte) 40
@@ -262,42 +304,20 @@ CONTROL FLOW GRAPH SSA
   (byte~) $12 ← (byte) e#4 - (byte) xd#2
   (byte) e#2 ← (byte~) $12
   to:@3
-@4: from @1
-  (byte) y#6 ← phi( @1/(byte) y#3 )
-  (byte) xd#5 ← phi( @1/(byte) xd#1 )
-  (byte) yd#4 ← phi( @1/(byte) yd#1 )
-  (byte) e#7 ← phi( @1/(byte) e#1 )
-  (byte*) cursor#7 ← phi( @1/(byte*) cursor#1 )
-  (byte) STAR#4 ← phi( @1/(byte) STAR#1 )
-  (byte) x#5 ← phi( @1/(byte) x#1 )
-  (byte) x1#3 ← phi( @1/(byte) x1#4 )
-  to:@3
-@3: from @2 @4
-  (byte) y#5 ← phi( @2/(byte) y#1 @4/(byte) y#6 )
-  (byte) xd#3 ← phi( @2/(byte) xd#2 @4/(byte) xd#5 )
-  (byte) yd#2 ← phi( @2/(byte) yd#3 @4/(byte) yd#4 )
-  (byte) e#5 ← phi( @2/(byte) e#2 @4/(byte) e#7 )
-  (byte*) cursor#5 ← phi( @2/(byte*) cursor#2 @4/(byte*) cursor#7 )
-  (byte) STAR#2 ← phi( @2/(byte) STAR#3 @4/(byte) STAR#4 )
-  (byte) x#3 ← phi( @2/(byte) x#4 @4/(byte) x#5 )
-  (byte) x1#1 ← phi( @2/(byte) x1#2 @4/(byte) x1#3 )
+@3: from @1 @2
+  (byte) y#4 ← phi( @1/(byte) y#3 @2/(byte) y#1 )
+  (byte) xd#3 ← phi( @1/(byte) xd#1 @2/(byte) xd#2 )
+  (byte) yd#2 ← phi( @1/(byte) yd#1 @2/(byte) yd#3 )
+  (byte) e#5 ← phi( @1/(byte) e#1 @2/(byte) e#2 )
+  (byte*) cursor#5 ← phi( @1/(byte*) cursor#1 @2/(byte*) cursor#2 )
+  (byte) STAR#2 ← phi( @1/(byte) STAR#1 @2/(byte) STAR#3 )
+  (byte) x#3 ← phi( @1/(byte) x#1 @2/(byte) x#4 )
+  (byte) x1#1 ← phi( @1/(byte) x1#2 @2/(byte) x1#3 )
   (byte~) $13 ← (byte) x1#1 + (byte) 1
   (boolean~) $14 ← (byte) x#3 < (byte~) $13
   if((boolean~) $14) goto @1
-  to:@6
-@5: from
-  (byte) yd#5 ← phi( )
-  (byte) STAR#5 ← phi( )
-  (byte) x#6 ← phi( )
-  (byte) x1#5 ← phi( )
-  (byte) xd#4 ← phi( )
-  (byte) e#6 ← phi( )
-  (byte*) cursor#6 ← phi( )
-  (byte) y#4 ← phi( )
-  to:@2
-@6: from @3
   to:@END
-@END: from @6
+@END: from @3
 
 CONTROL FLOW GRAPH WITH ASSIGNMENT CALL & RETURN
 @BEGIN: from
@@ -321,8 +341,8 @@ CONTROL FLOW GRAPH WITH ASSIGNMENT CALL & RETURN
   (byte*) cursor#0 ← (byte*~) $5
   to:@1
 @1: from @3 @BEGIN
-  (byte) x1#4 ← phi( @3/(byte) x1#1 @BEGIN/(byte) x1#0 )
-  (byte) y#3 ← phi( @3/(byte) y#5 @BEGIN/(byte) y#0 )
+  (byte) x1#2 ← phi( @3/(byte) x1#1 @BEGIN/(byte) x1#0 )
+  (byte) y#3 ← phi( @3/(byte) y#4 @BEGIN/(byte) y#0 )
   (byte) xd#1 ← phi( @3/(byte) xd#3 @BEGIN/(byte) xd#0 )
   (byte) yd#1 ← phi( @3/(byte) yd#2 @BEGIN/(byte) yd#0 )
   (byte) e#3 ← phi( @3/(byte) e#5 @BEGIN/(byte) e#0 )
@@ -338,16 +358,16 @@ CONTROL FLOW GRAPH WITH ASSIGNMENT CALL & RETURN
   (byte) e#1 ← (byte~) $8
   (boolean~) $9 ← (byte) xd#1 < (byte) e#1
   if((boolean~) $9) goto @2
-  to:@4
-@2: from @1 @5
-  (byte) yd#3 ← phi( @1/(byte) yd#1 @5/(byte) yd#5 )
-  (byte) STAR#3 ← phi( @1/(byte) STAR#1 @5/(byte) STAR#5 )
-  (byte) x#4 ← phi( @1/(byte) x#1 @5/(byte) x#6 )
-  (byte) x1#2 ← phi( @1/(byte) x1#4 @5/(byte) x1#5 )
-  (byte) xd#2 ← phi( @1/(byte) xd#1 @5/(byte) xd#4 )
-  (byte) e#4 ← phi( @1/(byte) e#1 @5/(byte) e#6 )
-  (byte*) cursor#4 ← phi( @1/(byte*) cursor#1 @5/(byte*) cursor#6 )
-  (byte) y#2 ← phi( @1/(byte) y#3 @5/(byte) y#4 )
+  to:@3
+@2: from @1
+  (byte) yd#3 ← phi( @1/(byte) yd#1 )
+  (byte) STAR#3 ← phi( @1/(byte) STAR#1 )
+  (byte) x#4 ← phi( @1/(byte) x#1 )
+  (byte) x1#3 ← phi( @1/(byte) x1#2 )
+  (byte) xd#2 ← phi( @1/(byte) xd#1 )
+  (byte) e#4 ← phi( @1/(byte) e#1 )
+  (byte*) cursor#4 ← phi( @1/(byte*) cursor#1 )
+  (byte) y#2 ← phi( @1/(byte) y#3 )
   (byte~) $10 ← (byte) y#2 + (byte) 1
   (byte) y#1 ← (byte~) $10
   (byte*~) $11 ← (byte*) cursor#4 + (byte) 40
@@ -355,134 +375,19 @@ CONTROL FLOW GRAPH WITH ASSIGNMENT CALL & RETURN
   (byte~) $12 ← (byte) e#4 - (byte) xd#2
   (byte) e#2 ← (byte~) $12
   to:@3
-@4: from @1
-  (byte) y#6 ← phi( @1/(byte) y#3 )
-  (byte) xd#5 ← phi( @1/(byte) xd#1 )
-  (byte) yd#4 ← phi( @1/(byte) yd#1 )
-  (byte) e#7 ← phi( @1/(byte) e#1 )
-  (byte*) cursor#7 ← phi( @1/(byte*) cursor#1 )
-  (byte) STAR#4 ← phi( @1/(byte) STAR#1 )
-  (byte) x#5 ← phi( @1/(byte) x#1 )
-  (byte) x1#3 ← phi( @1/(byte) x1#4 )
-  to:@3
-@3: from @2 @4
-  (byte) y#5 ← phi( @2/(byte) y#1 @4/(byte) y#6 )
-  (byte) xd#3 ← phi( @2/(byte) xd#2 @4/(byte) xd#5 )
-  (byte) yd#2 ← phi( @2/(byte) yd#3 @4/(byte) yd#4 )
-  (byte) e#5 ← phi( @2/(byte) e#2 @4/(byte) e#7 )
-  (byte*) cursor#5 ← phi( @2/(byte*) cursor#2 @4/(byte*) cursor#7 )
-  (byte) STAR#2 ← phi( @2/(byte) STAR#3 @4/(byte) STAR#4 )
-  (byte) x#3 ← phi( @2/(byte) x#4 @4/(byte) x#5 )
-  (byte) x1#1 ← phi( @2/(byte) x1#2 @4/(byte) x1#3 )
-  (byte~) $13 ← (byte) x1#1 + (byte) 1
-  (boolean~) $14 ← (byte) x#3 < (byte~) $13
-  if((boolean~) $14) goto @1
-  to:@6
-@5: from
-  (byte) yd#5 ← phi( )
-  (byte) STAR#5 ← phi( )
-  (byte) x#6 ← phi( )
-  (byte) x1#5 ← phi( )
-  (byte) xd#4 ← phi( )
-  (byte) e#6 ← phi( )
-  (byte*) cursor#6 ← phi( )
-  (byte) y#4 ← phi( )
-  to:@2
-@6: from @3
-  to:@END
-@END: from @6
-
-Culled Empty Block (label) @6
-Succesful SSA optimization Pass2CullEmptyBlocks
-CONTROL FLOW GRAPH
-@BEGIN: from
-  (byte) STAR#0 ← (byte) 81
-  (byte[1000]) SCREEN#0 ← (word) 1024
-  (byte) x0#0 ← (byte) 0
-  (byte) y0#0 ← (byte) 0
-  (byte) x1#0 ← (byte) 39
-  (byte) y1#0 ← (byte) 24
-  (byte~) $0 ← (byte) x1#0 - (byte) x0#0
-  (byte) xd#0 ← (byte~) $0
-  (byte~) $1 ← (byte) y1#0 - (byte) y0#0
-  (byte) yd#0 ← (byte~) $1
-  (byte) x#0 ← (byte) x0#0
-  (byte) y#0 ← (byte) y0#0
-  (byte~) $2 ← (byte) yd#0 / (byte) 2
-  (byte) e#0 ← (byte~) $2
-  (byte~) $3 ← (byte) y#0 * (byte) 40
-  (byte*~) $4 ← (byte[1000]) SCREEN#0 + (byte~) $3
-  (byte*~) $5 ← (byte*~) $4 + (byte) x#0
-  (byte*) cursor#0 ← (byte*~) $5
-  to:@1
-@1: from @3 @BEGIN
-  (byte) x1#4 ← phi( @3/(byte) x1#1 @BEGIN/(byte) x1#0 )
-  (byte) y#3 ← phi( @3/(byte) y#5 @BEGIN/(byte) y#0 )
-  (byte) xd#1 ← phi( @3/(byte) xd#3 @BEGIN/(byte) xd#0 )
-  (byte) yd#1 ← phi( @3/(byte) yd#2 @BEGIN/(byte) yd#0 )
-  (byte) e#3 ← phi( @3/(byte) e#5 @BEGIN/(byte) e#0 )
-  (byte) x#2 ← phi( @3/(byte) x#3 @BEGIN/(byte) x#0 )
-  (byte*) cursor#3 ← phi( @3/(byte*) cursor#5 @BEGIN/(byte*) cursor#0 )
-  (byte) STAR#1 ← phi( @3/(byte) STAR#2 @BEGIN/(byte) STAR#0 )
-  *((byte*) cursor#3) ← (byte) STAR#1
-  (byte~) $6 ← (byte) x#2 + (byte) 1
-  (byte) x#1 ← (byte~) $6
-  (byte*~) $7 ← (byte*) cursor#3 + (byte) 1
-  (byte*) cursor#1 ← (byte*~) $7
-  (byte~) $8 ← (byte) e#3 + (byte) yd#1
-  (byte) e#1 ← (byte~) $8
-  (boolean~) $9 ← (byte) xd#1 < (byte) e#1
-  if((boolean~) $9) goto @2
-  to:@4
-@2: from @1 @5
-  (byte) yd#3 ← phi( @1/(byte) yd#1 @5/(byte) yd#5 )
-  (byte) STAR#3 ← phi( @1/(byte) STAR#1 @5/(byte) STAR#5 )
-  (byte) x#4 ← phi( @1/(byte) x#1 @5/(byte) x#6 )
-  (byte) x1#2 ← phi( @1/(byte) x1#4 @5/(byte) x1#5 )
-  (byte) xd#2 ← phi( @1/(byte) xd#1 @5/(byte) xd#4 )
-  (byte) e#4 ← phi( @1/(byte) e#1 @5/(byte) e#6 )
-  (byte*) cursor#4 ← phi( @1/(byte*) cursor#1 @5/(byte*) cursor#6 )
-  (byte) y#2 ← phi( @1/(byte) y#3 @5/(byte) y#4 )
-  (byte~) $10 ← (byte) y#2 + (byte) 1
-  (byte) y#1 ← (byte~) $10
-  (byte*~) $11 ← (byte*) cursor#4 + (byte) 40
-  (byte*) cursor#2 ← (byte*~) $11
-  (byte~) $12 ← (byte) e#4 - (byte) xd#2
-  (byte) e#2 ← (byte~) $12
-  to:@3
-@4: from @1
-  (byte) y#6 ← phi( @1/(byte) y#3 )
-  (byte) xd#5 ← phi( @1/(byte) xd#1 )
-  (byte) yd#4 ← phi( @1/(byte) yd#1 )
-  (byte) e#7 ← phi( @1/(byte) e#1 )
-  (byte*) cursor#7 ← phi( @1/(byte*) cursor#1 )
-  (byte) STAR#4 ← phi( @1/(byte) STAR#1 )
-  (byte) x#5 ← phi( @1/(byte) x#1 )
-  (byte) x1#3 ← phi( @1/(byte) x1#4 )
-  to:@3
-@3: from @2 @4
-  (byte) y#5 ← phi( @2/(byte) y#1 @4/(byte) y#6 )
-  (byte) xd#3 ← phi( @2/(byte) xd#2 @4/(byte) xd#5 )
-  (byte) yd#2 ← phi( @2/(byte) yd#3 @4/(byte) yd#4 )
-  (byte) e#5 ← phi( @2/(byte) e#2 @4/(byte) e#7 )
-  (byte*) cursor#5 ← phi( @2/(byte*) cursor#2 @4/(byte*) cursor#7 )
-  (byte) STAR#2 ← phi( @2/(byte) STAR#3 @4/(byte) STAR#4 )
-  (byte) x#3 ← phi( @2/(byte) x#4 @4/(byte) x#5 )
-  (byte) x1#1 ← phi( @2/(byte) x1#2 @4/(byte) x1#3 )
+@3: from @1 @2
+  (byte) y#4 ← phi( @1/(byte) y#3 @2/(byte) y#1 )
+  (byte) xd#3 ← phi( @1/(byte) xd#1 @2/(byte) xd#2 )
+  (byte) yd#2 ← phi( @1/(byte) yd#1 @2/(byte) yd#3 )
+  (byte) e#5 ← phi( @1/(byte) e#1 @2/(byte) e#2 )
+  (byte*) cursor#5 ← phi( @1/(byte*) cursor#1 @2/(byte*) cursor#2 )
+  (byte) STAR#2 ← phi( @1/(byte) STAR#1 @2/(byte) STAR#3 )
+  (byte) x#3 ← phi( @1/(byte) x#1 @2/(byte) x#4 )
+  (byte) x1#1 ← phi( @1/(byte) x1#2 @2/(byte) x1#3 )
   (byte~) $13 ← (byte) x1#1 + (byte) 1
   (boolean~) $14 ← (byte) x#3 < (byte~) $13
   if((boolean~) $14) goto @1
   to:@END
-@5: from
-  (byte) yd#5 ← phi( )
-  (byte) STAR#5 ← phi( )
-  (byte) x#6 ← phi( )
-  (byte) x1#5 ← phi( )
-  (byte) xd#4 ← phi( )
-  (byte) e#6 ← phi( )
-  (byte*) cursor#6 ← phi( )
-  (byte) y#4 ← phi( )
-  to:@2
 @END: from @3
 
 Constant (byte) STAR#0 (byte) 81
@@ -508,8 +413,8 @@ CONTROL FLOW GRAPH
   (byte*) cursor#0 ← (byte*~) $5
   to:@1
 @1: from @3 @BEGIN
-  (byte) x1#4 ← phi( @3/(byte) x1#1 @BEGIN/(byte) 39 )
-  (byte) y#3 ← phi( @3/(byte) y#5 @BEGIN/(byte) y#0 )
+  (byte) x1#2 ← phi( @3/(byte) x1#1 @BEGIN/(byte) 39 )
+  (byte) y#3 ← phi( @3/(byte) y#4 @BEGIN/(byte) y#0 )
   (byte) xd#1 ← phi( @3/(byte) xd#3 @BEGIN/(byte) xd#0 )
   (byte) yd#1 ← phi( @3/(byte) yd#2 @BEGIN/(byte) yd#0 )
   (byte) e#3 ← phi( @3/(byte) e#5 @BEGIN/(byte) e#0 )
@@ -525,16 +430,16 @@ CONTROL FLOW GRAPH
   (byte) e#1 ← (byte~) $8
   (boolean~) $9 ← (byte) xd#1 < (byte) e#1
   if((boolean~) $9) goto @2
-  to:@4
-@2: from @1 @5
-  (byte) yd#3 ← phi( @1/(byte) yd#1 @5/(byte) yd#5 )
-  (byte) STAR#3 ← phi( @1/(byte) STAR#1 @5/(byte) STAR#5 )
-  (byte) x#4 ← phi( @1/(byte) x#1 @5/(byte) x#6 )
-  (byte) x1#2 ← phi( @1/(byte) x1#4 @5/(byte) x1#5 )
-  (byte) xd#2 ← phi( @1/(byte) xd#1 @5/(byte) xd#4 )
-  (byte) e#4 ← phi( @1/(byte) e#1 @5/(byte) e#6 )
-  (byte*) cursor#4 ← phi( @1/(byte*) cursor#1 @5/(byte*) cursor#6 )
-  (byte) y#2 ← phi( @1/(byte) y#3 @5/(byte) y#4 )
+  to:@3
+@2: from @1
+  (byte) yd#3 ← phi( @1/(byte) yd#1 )
+  (byte) STAR#3 ← phi( @1/(byte) STAR#1 )
+  (byte) x#4 ← phi( @1/(byte) x#1 )
+  (byte) x1#3 ← phi( @1/(byte) x1#2 )
+  (byte) xd#2 ← phi( @1/(byte) xd#1 )
+  (byte) e#4 ← phi( @1/(byte) e#1 )
+  (byte*) cursor#4 ← phi( @1/(byte*) cursor#1 )
+  (byte) y#2 ← phi( @1/(byte) y#3 )
   (byte~) $10 ← (byte) y#2 + (byte) 1
   (byte) y#1 ← (byte~) $10
   (byte*~) $11 ← (byte*) cursor#4 + (byte) 40
@@ -542,39 +447,19 @@ CONTROL FLOW GRAPH
   (byte~) $12 ← (byte) e#4 - (byte) xd#2
   (byte) e#2 ← (byte~) $12
   to:@3
-@4: from @1
-  (byte) y#6 ← phi( @1/(byte) y#3 )
-  (byte) xd#5 ← phi( @1/(byte) xd#1 )
-  (byte) yd#4 ← phi( @1/(byte) yd#1 )
-  (byte) e#7 ← phi( @1/(byte) e#1 )
-  (byte*) cursor#7 ← phi( @1/(byte*) cursor#1 )
-  (byte) STAR#4 ← phi( @1/(byte) STAR#1 )
-  (byte) x#5 ← phi( @1/(byte) x#1 )
-  (byte) x1#3 ← phi( @1/(byte) x1#4 )
-  to:@3
-@3: from @2 @4
-  (byte) y#5 ← phi( @2/(byte) y#1 @4/(byte) y#6 )
-  (byte) xd#3 ← phi( @2/(byte) xd#2 @4/(byte) xd#5 )
-  (byte) yd#2 ← phi( @2/(byte) yd#3 @4/(byte) yd#4 )
-  (byte) e#5 ← phi( @2/(byte) e#2 @4/(byte) e#7 )
-  (byte*) cursor#5 ← phi( @2/(byte*) cursor#2 @4/(byte*) cursor#7 )
-  (byte) STAR#2 ← phi( @2/(byte) STAR#3 @4/(byte) STAR#4 )
-  (byte) x#3 ← phi( @2/(byte) x#4 @4/(byte) x#5 )
-  (byte) x1#1 ← phi( @2/(byte) x1#2 @4/(byte) x1#3 )
+@3: from @1 @2
+  (byte) y#4 ← phi( @1/(byte) y#3 @2/(byte) y#1 )
+  (byte) xd#3 ← phi( @1/(byte) xd#1 @2/(byte) xd#2 )
+  (byte) yd#2 ← phi( @1/(byte) yd#1 @2/(byte) yd#3 )
+  (byte) e#5 ← phi( @1/(byte) e#1 @2/(byte) e#2 )
+  (byte*) cursor#5 ← phi( @1/(byte*) cursor#1 @2/(byte*) cursor#2 )
+  (byte) STAR#2 ← phi( @1/(byte) STAR#1 @2/(byte) STAR#3 )
+  (byte) x#3 ← phi( @1/(byte) x#1 @2/(byte) x#4 )
+  (byte) x1#1 ← phi( @1/(byte) x1#2 @2/(byte) x1#3 )
   (byte~) $13 ← (byte) x1#1 + (byte) 1
   (boolean~) $14 ← (byte) x#3 < (byte~) $13
   if((boolean~) $14) goto @1
   to:@END
-@5: from
-  (byte) yd#5 ← phi( )
-  (byte) STAR#5 ← phi( )
-  (byte) x#6 ← phi( )
-  (byte) x1#5 ← phi( )
-  (byte) xd#4 ← phi( )
-  (byte) e#6 ← phi( )
-  (byte*) cursor#6 ← phi( )
-  (byte) y#4 ← phi( )
-  to:@2
 @END: from @3
 
 Multiple usages for variable. Not optimizing sub-constant (byte) x1#1
@@ -582,17 +467,17 @@ Alias (byte) xd#0 = (byte~) $0
 Alias (byte) yd#0 = (byte~) $1 
 Alias (byte) e#0 = (byte~) $2 
 Alias (byte*) cursor#0 = (byte*~) $5 
-Alias (byte) x#1 = (byte~) $6 (byte) x#5 
-Alias (byte*) cursor#1 = (byte*~) $7 (byte*) cursor#7 
-Alias (byte) e#1 = (byte~) $8 (byte) e#7 
+Alias (byte) x#1 = (byte~) $6 (byte) x#4 
+Alias (byte*) cursor#1 = (byte*~) $7 (byte*) cursor#4 
+Alias (byte) e#1 = (byte~) $8 (byte) e#4 
+Alias (byte) y#2 = (byte) y#3 
+Alias (byte) xd#1 = (byte) xd#2 
+Alias (byte) x1#2 = (byte) x1#3 
+Alias (byte) STAR#1 = (byte) STAR#3 
+Alias (byte) yd#1 = (byte) yd#3 
 Alias (byte) y#1 = (byte~) $10 
 Alias (byte*) cursor#2 = (byte*~) $11 
 Alias (byte) e#2 = (byte~) $12 
-Alias (byte) x1#3 = (byte) x1#4 
-Alias (byte) STAR#1 = (byte) STAR#4 
-Alias (byte) yd#1 = (byte) yd#4 
-Alias (byte) xd#1 = (byte) xd#5 
-Alias (byte) y#3 = (byte) y#6 
 Succesful SSA optimization Pass2AliasElimination
 CONTROL FLOW GRAPH
 @BEGIN: from
@@ -606,8 +491,8 @@ CONTROL FLOW GRAPH
   (byte*) cursor#0 ← (byte*~) $4 + (byte) x#0
   to:@1
 @1: from @3 @BEGIN
-  (byte) x1#3 ← phi( @3/(byte) x1#1 @BEGIN/(byte) 39 )
-  (byte) y#3 ← phi( @3/(byte) y#5 @BEGIN/(byte) y#0 )
+  (byte) x1#2 ← phi( @3/(byte) x1#1 @BEGIN/(byte) 39 )
+  (byte) y#2 ← phi( @3/(byte) y#4 @BEGIN/(byte) y#0 )
   (byte) xd#1 ← phi( @3/(byte) xd#3 @BEGIN/(byte) xd#0 )
   (byte) yd#1 ← phi( @3/(byte) yd#2 @BEGIN/(byte) yd#0 )
   (byte) e#3 ← phi( @3/(byte) e#5 @BEGIN/(byte) e#0 )
@@ -620,55 +505,32 @@ CONTROL FLOW GRAPH
   (byte) e#1 ← (byte) e#3 + (byte) yd#1
   (boolean~) $9 ← (byte) xd#1 < (byte) e#1
   if((boolean~) $9) goto @2
-  to:@4
-@2: from @1 @5
-  (byte) yd#3 ← phi( @1/(byte) yd#1 @5/(byte) yd#5 )
-  (byte) STAR#3 ← phi( @1/(byte) STAR#1 @5/(byte) STAR#5 )
-  (byte) x#4 ← phi( @1/(byte) x#1 @5/(byte) x#6 )
-  (byte) x1#2 ← phi( @1/(byte) x1#3 @5/(byte) x1#5 )
-  (byte) xd#2 ← phi( @1/(byte) xd#1 @5/(byte) xd#4 )
-  (byte) e#4 ← phi( @1/(byte) e#1 @5/(byte) e#6 )
-  (byte*) cursor#4 ← phi( @1/(byte*) cursor#1 @5/(byte*) cursor#6 )
-  (byte) y#2 ← phi( @1/(byte) y#3 @5/(byte) y#4 )
+  to:@3
+@2: from @1
   (byte) y#1 ← (byte) y#2 + (byte) 1
-  (byte*) cursor#2 ← (byte*) cursor#4 + (byte) 40
-  (byte) e#2 ← (byte) e#4 - (byte) xd#2
+  (byte*) cursor#2 ← (byte*) cursor#1 + (byte) 40
+  (byte) e#2 ← (byte) e#1 - (byte) xd#1
   to:@3
-@4: from @1
-  to:@3
-@3: from @2 @4
-  (byte) y#5 ← phi( @2/(byte) y#1 @4/(byte) y#3 )
-  (byte) xd#3 ← phi( @2/(byte) xd#2 @4/(byte) xd#1 )
-  (byte) yd#2 ← phi( @2/(byte) yd#3 @4/(byte) yd#1 )
-  (byte) e#5 ← phi( @2/(byte) e#2 @4/(byte) e#1 )
-  (byte*) cursor#5 ← phi( @2/(byte*) cursor#2 @4/(byte*) cursor#1 )
-  (byte) STAR#2 ← phi( @2/(byte) STAR#3 @4/(byte) STAR#1 )
-  (byte) x#3 ← phi( @2/(byte) x#4 @4/(byte) x#1 )
-  (byte) x1#1 ← phi( @2/(byte) x1#2 @4/(byte) x1#3 )
+@3: from @1 @2
+  (byte) y#4 ← phi( @1/(byte) y#2 @2/(byte) y#1 )
+  (byte) xd#3 ← phi( @1/(byte) xd#1 @2/(byte) xd#1 )
+  (byte) yd#2 ← phi( @1/(byte) yd#1 @2/(byte) yd#1 )
+  (byte) e#5 ← phi( @1/(byte) e#1 @2/(byte) e#2 )
+  (byte*) cursor#5 ← phi( @1/(byte*) cursor#1 @2/(byte*) cursor#2 )
+  (byte) STAR#2 ← phi( @1/(byte) STAR#1 @2/(byte) STAR#1 )
+  (byte) x#3 ← phi( @1/(byte) x#1 @2/(byte) x#1 )
+  (byte) x1#1 ← phi( @1/(byte) x1#2 @2/(byte) x1#2 )
   (byte~) $13 ← (byte) x1#1 + (byte) 1
   (boolean~) $14 ← (byte) x#3 < (byte~) $13
   if((boolean~) $14) goto @1
   to:@END
-@5: from
-  (byte) yd#5 ← phi( )
-  (byte) STAR#5 ← phi( )
-  (byte) x#6 ← phi( )
-  (byte) x1#5 ← phi( )
-  (byte) xd#4 ← phi( )
-  (byte) e#6 ← phi( )
-  (byte*) cursor#6 ← phi( )
-  (byte) y#4 ← phi( )
-  to:@2
 @END: from @3
 
-Redundant Phi (byte) y#4 VOID
-Redundant Phi (byte*) cursor#6 VOID
-Redundant Phi (byte) e#6 VOID
-Redundant Phi (byte) xd#4 VOID
-Redundant Phi (byte) x1#5 VOID
-Redundant Phi (byte) x#6 VOID
-Redundant Phi (byte) STAR#5 VOID
-Redundant Phi (byte) yd#5 VOID
+Redundant Phi (byte) x1#1 (byte) x1#2
+Redundant Phi (byte) x#3 (byte) x#1
+Redundant Phi (byte) STAR#2 (byte) STAR#1
+Redundant Phi (byte) yd#2 (byte) yd#1
+Redundant Phi (byte) xd#3 (byte) xd#1
 Succesful SSA optimization Pass2RedundantPhiElimination
 CONTROL FLOW GRAPH
 @BEGIN: from
@@ -682,55 +544,85 @@ CONTROL FLOW GRAPH
   (byte*) cursor#0 ← (byte*~) $4 + (byte) x#0
   to:@1
 @1: from @3 @BEGIN
-  (byte) x1#3 ← phi( @3/(byte) x1#1 @BEGIN/(byte) 39 )
-  (byte) y#3 ← phi( @3/(byte) y#5 @BEGIN/(byte) y#0 )
-  (byte) xd#1 ← phi( @3/(byte) xd#3 @BEGIN/(byte) xd#0 )
-  (byte) yd#1 ← phi( @3/(byte) yd#2 @BEGIN/(byte) yd#0 )
+  (byte) x1#2 ← phi( @3/(byte) x1#2 @BEGIN/(byte) 39 )
+  (byte) y#2 ← phi( @3/(byte) y#4 @BEGIN/(byte) y#0 )
+  (byte) xd#1 ← phi( @3/(byte) xd#1 @BEGIN/(byte) xd#0 )
+  (byte) yd#1 ← phi( @3/(byte) yd#1 @BEGIN/(byte) yd#0 )
   (byte) e#3 ← phi( @3/(byte) e#5 @BEGIN/(byte) e#0 )
-  (byte) x#2 ← phi( @3/(byte) x#3 @BEGIN/(byte) x#0 )
+  (byte) x#2 ← phi( @3/(byte) x#1 @BEGIN/(byte) x#0 )
   (byte*) cursor#3 ← phi( @3/(byte*) cursor#5 @BEGIN/(byte*) cursor#0 )
-  (byte) STAR#1 ← phi( @3/(byte) STAR#2 @BEGIN/(byte) 81 )
+  (byte) STAR#1 ← phi( @3/(byte) STAR#1 @BEGIN/(byte) 81 )
   *((byte*) cursor#3) ← (byte) STAR#1
   (byte) x#1 ← (byte) x#2 + (byte) 1
   (byte*) cursor#1 ← (byte*) cursor#3 + (byte) 1
   (byte) e#1 ← (byte) e#3 + (byte) yd#1
   (boolean~) $9 ← (byte) xd#1 < (byte) e#1
   if((boolean~) $9) goto @2
-  to:@4
-@2: from @1 @5
-  (byte) yd#3 ← phi( @1/(byte) yd#1 )
-  (byte) STAR#3 ← phi( @1/(byte) STAR#1 )
-  (byte) x#4 ← phi( @1/(byte) x#1 )
-  (byte) x1#2 ← phi( @1/(byte) x1#3 )
-  (byte) xd#2 ← phi( @1/(byte) xd#1 )
-  (byte) e#4 ← phi( @1/(byte) e#1 )
-  (byte*) cursor#4 ← phi( @1/(byte*) cursor#1 )
-  (byte) y#2 ← phi( @1/(byte) y#3 )
+  to:@3
+@2: from @1
   (byte) y#1 ← (byte) y#2 + (byte) 1
-  (byte*) cursor#2 ← (byte*) cursor#4 + (byte) 40
-  (byte) e#2 ← (byte) e#4 - (byte) xd#2
+  (byte*) cursor#2 ← (byte*) cursor#1 + (byte) 40
+  (byte) e#2 ← (byte) e#1 - (byte) xd#1
   to:@3
-@4: from @1
-  to:@3
-@3: from @2 @4
-  (byte) y#5 ← phi( @2/(byte) y#1 @4/(byte) y#3 )
-  (byte) xd#3 ← phi( @2/(byte) xd#2 @4/(byte) xd#1 )
-  (byte) yd#2 ← phi( @2/(byte) yd#3 @4/(byte) yd#1 )
-  (byte) e#5 ← phi( @2/(byte) e#2 @4/(byte) e#1 )
-  (byte*) cursor#5 ← phi( @2/(byte*) cursor#2 @4/(byte*) cursor#1 )
-  (byte) STAR#2 ← phi( @2/(byte) STAR#3 @4/(byte) STAR#1 )
-  (byte) x#3 ← phi( @2/(byte) x#4 @4/(byte) x#1 )
-  (byte) x1#1 ← phi( @2/(byte) x1#2 @4/(byte) x1#3 )
-  (byte~) $13 ← (byte) x1#1 + (byte) 1
-  (boolean~) $14 ← (byte) x#3 < (byte~) $13
+@3: from @1 @2
+  (byte) y#4 ← phi( @1/(byte) y#2 @2/(byte) y#1 )
+  (byte) e#5 ← phi( @1/(byte) e#1 @2/(byte) e#2 )
+  (byte*) cursor#5 ← phi( @1/(byte*) cursor#1 @2/(byte*) cursor#2 )
+  (byte~) $13 ← (byte) x1#2 + (byte) 1
+  (boolean~) $14 ← (byte) x#1 < (byte~) $13
   if((boolean~) $14) goto @1
   to:@END
-@5: from
-  to:@2
+@END: from @3
+
+Self Phi Eliminated (byte) STAR#1
+Self Phi Eliminated (byte) yd#1
+Self Phi Eliminated (byte) xd#1
+Self Phi Eliminated (byte) x1#2
+Succesful SSA optimization Pass2SelfPhiElimination
+CONTROL FLOW GRAPH
+@BEGIN: from
+  (byte) xd#0 ← (byte) 39 - (byte) 0
+  (byte) yd#0 ← (byte) 24 - (byte) 0
+  (byte) x#0 ← (byte) 0
+  (byte) y#0 ← (byte) 0
+  (byte) e#0 ← (byte) yd#0 / (byte) 2
+  (byte~) $3 ← (byte) y#0 * (byte) 40
+  (byte*~) $4 ← (word) 1024 + (byte~) $3
+  (byte*) cursor#0 ← (byte*~) $4 + (byte) x#0
+  to:@1
+@1: from @3 @BEGIN
+  (byte) x1#2 ← phi( @BEGIN/(byte) 39 )
+  (byte) y#2 ← phi( @3/(byte) y#4 @BEGIN/(byte) y#0 )
+  (byte) xd#1 ← phi( @BEGIN/(byte) xd#0 )
+  (byte) yd#1 ← phi( @BEGIN/(byte) yd#0 )
+  (byte) e#3 ← phi( @3/(byte) e#5 @BEGIN/(byte) e#0 )
+  (byte) x#2 ← phi( @3/(byte) x#1 @BEGIN/(byte) x#0 )
+  (byte*) cursor#3 ← phi( @3/(byte*) cursor#5 @BEGIN/(byte*) cursor#0 )
+  (byte) STAR#1 ← phi( @BEGIN/(byte) 81 )
+  *((byte*) cursor#3) ← (byte) STAR#1
+  (byte) x#1 ← (byte) x#2 + (byte) 1
+  (byte*) cursor#1 ← (byte*) cursor#3 + (byte) 1
+  (byte) e#1 ← (byte) e#3 + (byte) yd#1
+  (boolean~) $9 ← (byte) xd#1 < (byte) e#1
+  if((boolean~) $9) goto @2
+  to:@3
+@2: from @1
+  (byte) y#1 ← (byte) y#2 + (byte) 1
+  (byte*) cursor#2 ← (byte*) cursor#1 + (byte) 40
+  (byte) e#2 ← (byte) e#1 - (byte) xd#1
+  to:@3
+@3: from @1 @2
+  (byte) y#4 ← phi( @1/(byte) y#2 @2/(byte) y#1 )
+  (byte) e#5 ← phi( @1/(byte) e#1 @2/(byte) e#2 )
+  (byte*) cursor#5 ← phi( @1/(byte*) cursor#1 @2/(byte*) cursor#2 )
+  (byte~) $13 ← (byte) x1#2 + (byte) 1
+  (boolean~) $14 ← (byte) x#1 < (byte~) $13
+  if((boolean~) $14) goto @1
+  to:@END
 @END: from @3
 
 Simple Condition (boolean~) $9 if((byte) xd#1<(byte) e#1) goto @2
-Simple Condition (boolean~) $14 if((byte) x#3<(byte~) $13) goto @1
+Simple Condition (boolean~) $14 if((byte) x#1<(byte~) $13) goto @1
 Succesful SSA optimization Pass2ConditionalJumpSimplification
 CONTROL FLOW GRAPH
 @BEGIN: from
@@ -744,273 +636,12 @@ CONTROL FLOW GRAPH
   (byte*) cursor#0 ← (byte*~) $4 + (byte) x#0
   to:@1
 @1: from @3 @BEGIN
-  (byte) x1#3 ← phi( @3/(byte) x1#1 @BEGIN/(byte) 39 )
-  (byte) y#3 ← phi( @3/(byte) y#5 @BEGIN/(byte) y#0 )
-  (byte) xd#1 ← phi( @3/(byte) xd#3 @BEGIN/(byte) xd#0 )
-  (byte) yd#1 ← phi( @3/(byte) yd#2 @BEGIN/(byte) yd#0 )
-  (byte) e#3 ← phi( @3/(byte) e#5 @BEGIN/(byte) e#0 )
-  (byte) x#2 ← phi( @3/(byte) x#3 @BEGIN/(byte) x#0 )
-  (byte*) cursor#3 ← phi( @3/(byte*) cursor#5 @BEGIN/(byte*) cursor#0 )
-  (byte) STAR#1 ← phi( @3/(byte) STAR#2 @BEGIN/(byte) 81 )
-  *((byte*) cursor#3) ← (byte) STAR#1
-  (byte) x#1 ← (byte) x#2 + (byte) 1
-  (byte*) cursor#1 ← (byte*) cursor#3 + (byte) 1
-  (byte) e#1 ← (byte) e#3 + (byte) yd#1
-  if((byte) xd#1<(byte) e#1) goto @2
-  to:@4
-@2: from @1 @5
-  (byte) yd#3 ← phi( @1/(byte) yd#1 )
-  (byte) STAR#3 ← phi( @1/(byte) STAR#1 )
-  (byte) x#4 ← phi( @1/(byte) x#1 )
-  (byte) x1#2 ← phi( @1/(byte) x1#3 )
-  (byte) xd#2 ← phi( @1/(byte) xd#1 )
-  (byte) e#4 ← phi( @1/(byte) e#1 )
-  (byte*) cursor#4 ← phi( @1/(byte*) cursor#1 )
-  (byte) y#2 ← phi( @1/(byte) y#3 )
-  (byte) y#1 ← (byte) y#2 + (byte) 1
-  (byte*) cursor#2 ← (byte*) cursor#4 + (byte) 40
-  (byte) e#2 ← (byte) e#4 - (byte) xd#2
-  to:@3
-@4: from @1
-  to:@3
-@3: from @2 @4
-  (byte) y#5 ← phi( @2/(byte) y#1 @4/(byte) y#3 )
-  (byte) xd#3 ← phi( @2/(byte) xd#2 @4/(byte) xd#1 )
-  (byte) yd#2 ← phi( @2/(byte) yd#3 @4/(byte) yd#1 )
-  (byte) e#5 ← phi( @2/(byte) e#2 @4/(byte) e#1 )
-  (byte*) cursor#5 ← phi( @2/(byte*) cursor#2 @4/(byte*) cursor#1 )
-  (byte) STAR#2 ← phi( @2/(byte) STAR#3 @4/(byte) STAR#1 )
-  (byte) x#3 ← phi( @2/(byte) x#4 @4/(byte) x#1 )
-  (byte) x1#1 ← phi( @2/(byte) x1#2 @4/(byte) x1#3 )
-  (byte~) $13 ← (byte) x1#1 + (byte) 1
-  if((byte) x#3<(byte~) $13) goto @1
-  to:@END
-@5: from
-  to:@2
-@END: from @3
-
-Culled Empty Block (label) @4
-Culled Empty Block (label) @5
-Succesful SSA optimization Pass2CullEmptyBlocks
-CONTROL FLOW GRAPH
-@BEGIN: from
-  (byte) xd#0 ← (byte) 39 - (byte) 0
-  (byte) yd#0 ← (byte) 24 - (byte) 0
-  (byte) x#0 ← (byte) 0
-  (byte) y#0 ← (byte) 0
-  (byte) e#0 ← (byte) yd#0 / (byte) 2
-  (byte~) $3 ← (byte) y#0 * (byte) 40
-  (byte*~) $4 ← (word) 1024 + (byte~) $3
-  (byte*) cursor#0 ← (byte*~) $4 + (byte) x#0
-  to:@1
-@1: from @3 @BEGIN
-  (byte) x1#3 ← phi( @3/(byte) x1#1 @BEGIN/(byte) 39 )
-  (byte) y#3 ← phi( @3/(byte) y#5 @BEGIN/(byte) y#0 )
-  (byte) xd#1 ← phi( @3/(byte) xd#3 @BEGIN/(byte) xd#0 )
-  (byte) yd#1 ← phi( @3/(byte) yd#2 @BEGIN/(byte) yd#0 )
-  (byte) e#3 ← phi( @3/(byte) e#5 @BEGIN/(byte) e#0 )
-  (byte) x#2 ← phi( @3/(byte) x#3 @BEGIN/(byte) x#0 )
-  (byte*) cursor#3 ← phi( @3/(byte*) cursor#5 @BEGIN/(byte*) cursor#0 )
-  (byte) STAR#1 ← phi( @3/(byte) STAR#2 @BEGIN/(byte) 81 )
-  *((byte*) cursor#3) ← (byte) STAR#1
-  (byte) x#1 ← (byte) x#2 + (byte) 1
-  (byte*) cursor#1 ← (byte*) cursor#3 + (byte) 1
-  (byte) e#1 ← (byte) e#3 + (byte) yd#1
-  if((byte) xd#1<(byte) e#1) goto @2
-  to:@3
-@2: from @1
-  (byte) yd#3 ← phi( @1/(byte) yd#1 )
-  (byte) STAR#3 ← phi( @1/(byte) STAR#1 )
-  (byte) x#4 ← phi( @1/(byte) x#1 )
-  (byte) x1#2 ← phi( @1/(byte) x1#3 )
-  (byte) xd#2 ← phi( @1/(byte) xd#1 )
-  (byte) e#4 ← phi( @1/(byte) e#1 )
-  (byte*) cursor#4 ← phi( @1/(byte*) cursor#1 )
-  (byte) y#2 ← phi( @1/(byte) y#3 )
-  (byte) y#1 ← (byte) y#2 + (byte) 1
-  (byte*) cursor#2 ← (byte*) cursor#4 + (byte) 40
-  (byte) e#2 ← (byte) e#4 - (byte) xd#2
-  to:@3
-@3: from @1 @2
-  (byte) y#5 ← phi( @2/(byte) y#1 @1/(byte) y#3 )
-  (byte) xd#3 ← phi( @2/(byte) xd#2 @1/(byte) xd#1 )
-  (byte) yd#2 ← phi( @2/(byte) yd#3 @1/(byte) yd#1 )
-  (byte) e#5 ← phi( @2/(byte) e#2 @1/(byte) e#1 )
-  (byte*) cursor#5 ← phi( @2/(byte*) cursor#2 @1/(byte*) cursor#1 )
-  (byte) STAR#2 ← phi( @2/(byte) STAR#3 @1/(byte) STAR#1 )
-  (byte) x#3 ← phi( @2/(byte) x#4 @1/(byte) x#1 )
-  (byte) x1#1 ← phi( @2/(byte) x1#2 @1/(byte) x1#3 )
-  (byte~) $13 ← (byte) x1#1 + (byte) 1
-  if((byte) x#3<(byte~) $13) goto @1
-  to:@END
-@END: from @3
-
-Constant (byte) xd#0 (byte) 39
-Constant (byte) yd#0 (byte) 24
-Constant (byte) x#0 (byte) 0
-Constant (byte) y#0 (byte) 0
-Succesful SSA optimization Pass2ConstantPropagation
-CONTROL FLOW GRAPH
-@BEGIN: from
-  (byte) e#0 ← (byte) 24 / (byte) 2
-  (byte~) $3 ← (byte) 0 * (byte) 40
-  (byte*~) $4 ← (word) 1024 + (byte~) $3
-  (byte*) cursor#0 ← (byte*~) $4 + (byte) 0
-  to:@1
-@1: from @3 @BEGIN
-  (byte) x1#3 ← phi( @3/(byte) x1#1 @BEGIN/(byte) 39 )
-  (byte) y#3 ← phi( @3/(byte) y#5 @BEGIN/(byte) 0 )
-  (byte) xd#1 ← phi( @3/(byte) xd#3 @BEGIN/(byte) 39 )
-  (byte) yd#1 ← phi( @3/(byte) yd#2 @BEGIN/(byte) 24 )
-  (byte) e#3 ← phi( @3/(byte) e#5 @BEGIN/(byte) e#0 )
-  (byte) x#2 ← phi( @3/(byte) x#3 @BEGIN/(byte) 0 )
-  (byte*) cursor#3 ← phi( @3/(byte*) cursor#5 @BEGIN/(byte*) cursor#0 )
-  (byte) STAR#1 ← phi( @3/(byte) STAR#2 @BEGIN/(byte) 81 )
-  *((byte*) cursor#3) ← (byte) STAR#1
-  (byte) x#1 ← (byte) x#2 + (byte) 1
-  (byte*) cursor#1 ← (byte*) cursor#3 + (byte) 1
-  (byte) e#1 ← (byte) e#3 + (byte) yd#1
-  if((byte) xd#1<(byte) e#1) goto @2
-  to:@3
-@2: from @1
-  (byte) yd#3 ← phi( @1/(byte) yd#1 )
-  (byte) STAR#3 ← phi( @1/(byte) STAR#1 )
-  (byte) x#4 ← phi( @1/(byte) x#1 )
-  (byte) x1#2 ← phi( @1/(byte) x1#3 )
-  (byte) xd#2 ← phi( @1/(byte) xd#1 )
-  (byte) e#4 ← phi( @1/(byte) e#1 )
-  (byte*) cursor#4 ← phi( @1/(byte*) cursor#1 )
-  (byte) y#2 ← phi( @1/(byte) y#3 )
-  (byte) y#1 ← (byte) y#2 + (byte) 1
-  (byte*) cursor#2 ← (byte*) cursor#4 + (byte) 40
-  (byte) e#2 ← (byte) e#4 - (byte) xd#2
-  to:@3
-@3: from @1 @2
-  (byte) y#5 ← phi( @2/(byte) y#1 @1/(byte) y#3 )
-  (byte) xd#3 ← phi( @2/(byte) xd#2 @1/(byte) xd#1 )
-  (byte) yd#2 ← phi( @2/(byte) yd#3 @1/(byte) yd#1 )
-  (byte) e#5 ← phi( @2/(byte) e#2 @1/(byte) e#1 )
-  (byte*) cursor#5 ← phi( @2/(byte*) cursor#2 @1/(byte*) cursor#1 )
-  (byte) STAR#2 ← phi( @2/(byte) STAR#3 @1/(byte) STAR#1 )
-  (byte) x#3 ← phi( @2/(byte) x#4 @1/(byte) x#1 )
-  (byte) x1#1 ← phi( @2/(byte) x1#2 @1/(byte) x1#3 )
-  (byte~) $13 ← (byte) x1#1 + (byte) 1
-  if((byte) x#3<(byte~) $13) goto @1
-  to:@END
-@END: from @3
-
-Multiple usages for variable. Not optimizing sub-constant (byte) x1#1
-Alias (byte) y#2 = (byte) y#3 
-Alias (byte*) cursor#1 = (byte*) cursor#4 
-Alias (byte) e#1 = (byte) e#4 
-Alias (byte) xd#1 = (byte) xd#2 
-Alias (byte) x1#2 = (byte) x1#3 
-Alias (byte) x#1 = (byte) x#4 
-Alias (byte) STAR#1 = (byte) STAR#3 
-Alias (byte) yd#1 = (byte) yd#3 
-Succesful SSA optimization Pass2AliasElimination
-CONTROL FLOW GRAPH
-@BEGIN: from
-  (byte) e#0 ← (byte) 24 / (byte) 2
-  (byte~) $3 ← (byte) 0 * (byte) 40
-  (byte*~) $4 ← (word) 1024 + (byte~) $3
-  (byte*) cursor#0 ← (byte*~) $4 + (byte) 0
-  to:@1
-@1: from @3 @BEGIN
-  (byte) x1#2 ← phi( @3/(byte) x1#1 @BEGIN/(byte) 39 )
-  (byte) y#2 ← phi( @3/(byte) y#5 @BEGIN/(byte) 0 )
-  (byte) xd#1 ← phi( @3/(byte) xd#3 @BEGIN/(byte) 39 )
-  (byte) yd#1 ← phi( @3/(byte) yd#2 @BEGIN/(byte) 24 )
-  (byte) e#3 ← phi( @3/(byte) e#5 @BEGIN/(byte) e#0 )
-  (byte) x#2 ← phi( @3/(byte) x#3 @BEGIN/(byte) 0 )
-  (byte*) cursor#3 ← phi( @3/(byte*) cursor#5 @BEGIN/(byte*) cursor#0 )
-  (byte) STAR#1 ← phi( @3/(byte) STAR#2 @BEGIN/(byte) 81 )
-  *((byte*) cursor#3) ← (byte) STAR#1
-  (byte) x#1 ← (byte) x#2 + (byte) 1
-  (byte*) cursor#1 ← (byte*) cursor#3 + (byte) 1
-  (byte) e#1 ← (byte) e#3 + (byte) yd#1
-  if((byte) xd#1<(byte) e#1) goto @2
-  to:@3
-@2: from @1
-  (byte) y#1 ← (byte) y#2 + (byte) 1
-  (byte*) cursor#2 ← (byte*) cursor#1 + (byte) 40
-  (byte) e#2 ← (byte) e#1 - (byte) xd#1
-  to:@3
-@3: from @1 @2
-  (byte) y#5 ← phi( @2/(byte) y#1 @1/(byte) y#2 )
-  (byte) xd#3 ← phi( @2/(byte) xd#1 @1/(byte) xd#1 )
-  (byte) yd#2 ← phi( @2/(byte) yd#1 @1/(byte) yd#1 )
-  (byte) e#5 ← phi( @2/(byte) e#2 @1/(byte) e#1 )
-  (byte*) cursor#5 ← phi( @2/(byte*) cursor#2 @1/(byte*) cursor#1 )
-  (byte) STAR#2 ← phi( @2/(byte) STAR#1 @1/(byte) STAR#1 )
-  (byte) x#3 ← phi( @2/(byte) x#1 @1/(byte) x#1 )
-  (byte) x1#1 ← phi( @2/(byte) x1#2 @1/(byte) x1#2 )
-  (byte~) $13 ← (byte) x1#1 + (byte) 1
-  if((byte) x#3<(byte~) $13) goto @1
-  to:@END
-@END: from @3
-
-Redundant Phi (byte) x1#1 (byte) x1#2
-Redundant Phi (byte) x#3 (byte) x#1
-Redundant Phi (byte) STAR#2 (byte) STAR#1
-Redundant Phi (byte) yd#2 (byte) yd#1
-Redundant Phi (byte) xd#3 (byte) xd#1
-Succesful SSA optimization Pass2RedundantPhiElimination
-CONTROL FLOW GRAPH
-@BEGIN: from
-  (byte) e#0 ← (byte) 24 / (byte) 2
-  (byte~) $3 ← (byte) 0 * (byte) 40
-  (byte*~) $4 ← (word) 1024 + (byte~) $3
-  (byte*) cursor#0 ← (byte*~) $4 + (byte) 0
-  to:@1
-@1: from @3 @BEGIN
-  (byte) x1#2 ← phi( @3/(byte) x1#2 @BEGIN/(byte) 39 )
-  (byte) y#2 ← phi( @3/(byte) y#5 @BEGIN/(byte) 0 )
-  (byte) xd#1 ← phi( @3/(byte) xd#1 @BEGIN/(byte) 39 )
-  (byte) yd#1 ← phi( @3/(byte) yd#1 @BEGIN/(byte) 24 )
-  (byte) e#3 ← phi( @3/(byte) e#5 @BEGIN/(byte) e#0 )
-  (byte) x#2 ← phi( @3/(byte) x#1 @BEGIN/(byte) 0 )
-  (byte*) cursor#3 ← phi( @3/(byte*) cursor#5 @BEGIN/(byte*) cursor#0 )
-  (byte) STAR#1 ← phi( @3/(byte) STAR#1 @BEGIN/(byte) 81 )
-  *((byte*) cursor#3) ← (byte) STAR#1
-  (byte) x#1 ← (byte) x#2 + (byte) 1
-  (byte*) cursor#1 ← (byte*) cursor#3 + (byte) 1
-  (byte) e#1 ← (byte) e#3 + (byte) yd#1
-  if((byte) xd#1<(byte) e#1) goto @2
-  to:@3
-@2: from @1
-  (byte) y#1 ← (byte) y#2 + (byte) 1
-  (byte*) cursor#2 ← (byte*) cursor#1 + (byte) 40
-  (byte) e#2 ← (byte) e#1 - (byte) xd#1
-  to:@3
-@3: from @1 @2
-  (byte) y#5 ← phi( @2/(byte) y#1 @1/(byte) y#2 )
-  (byte) e#5 ← phi( @2/(byte) e#2 @1/(byte) e#1 )
-  (byte*) cursor#5 ← phi( @2/(byte*) cursor#2 @1/(byte*) cursor#1 )
-  (byte~) $13 ← (byte) x1#2 + (byte) 1
-  if((byte) x#1<(byte~) $13) goto @1
-  to:@END
-@END: from @3
-
-Self Phi Eliminated (byte) STAR#1
-Self Phi Eliminated (byte) yd#1
-Self Phi Eliminated (byte) xd#1
-Self Phi Eliminated (byte) x1#2
-Succesful SSA optimization Pass2SelfPhiElimination
-CONTROL FLOW GRAPH
-@BEGIN: from
-  (byte) e#0 ← (byte) 24 / (byte) 2
-  (byte~) $3 ← (byte) 0 * (byte) 40
-  (byte*~) $4 ← (word) 1024 + (byte~) $3
-  (byte*) cursor#0 ← (byte*~) $4 + (byte) 0
-  to:@1
-@1: from @3 @BEGIN
   (byte) x1#2 ← phi( @BEGIN/(byte) 39 )
-  (byte) y#2 ← phi( @3/(byte) y#5 @BEGIN/(byte) 0 )
-  (byte) xd#1 ← phi( @BEGIN/(byte) 39 )
-  (byte) yd#1 ← phi( @BEGIN/(byte) 24 )
+  (byte) y#2 ← phi( @3/(byte) y#4 @BEGIN/(byte) y#0 )
+  (byte) xd#1 ← phi( @BEGIN/(byte) xd#0 )
+  (byte) yd#1 ← phi( @BEGIN/(byte) yd#0 )
   (byte) e#3 ← phi( @3/(byte) e#5 @BEGIN/(byte) e#0 )
-  (byte) x#2 ← phi( @3/(byte) x#1 @BEGIN/(byte) 0 )
+  (byte) x#2 ← phi( @3/(byte) x#1 @BEGIN/(byte) x#0 )
   (byte*) cursor#3 ← phi( @3/(byte*) cursor#5 @BEGIN/(byte*) cursor#0 )
   (byte) STAR#1 ← phi( @BEGIN/(byte) 81 )
   *((byte*) cursor#3) ← (byte) STAR#1
@@ -1025,46 +656,50 @@ CONTROL FLOW GRAPH
   (byte) e#2 ← (byte) e#1 - (byte) xd#1
   to:@3
 @3: from @1 @2
-  (byte) y#5 ← phi( @2/(byte) y#1 @1/(byte) y#2 )
-  (byte) e#5 ← phi( @2/(byte) e#2 @1/(byte) e#1 )
-  (byte*) cursor#5 ← phi( @2/(byte*) cursor#2 @1/(byte*) cursor#1 )
+  (byte) y#4 ← phi( @1/(byte) y#2 @2/(byte) y#1 )
+  (byte) e#5 ← phi( @1/(byte) e#1 @2/(byte) e#2 )
+  (byte*) cursor#5 ← phi( @1/(byte*) cursor#1 @2/(byte*) cursor#2 )
   (byte~) $13 ← (byte) x1#2 + (byte) 1
   if((byte) x#1<(byte~) $13) goto @1
   to:@END
 @END: from @3
 
-Constant (byte) e#0 (byte) 12
-Constant (byte~) $3 (byte) 0
+Constant (byte) xd#0 (byte) 39
+Constant (byte) yd#0 (byte) 24
+Constant (byte) x#0 (byte) 0
+Constant (byte) y#0 (byte) 0
 Constant (byte) STAR#1 (byte) 81
-Constant (byte) yd#1 (byte) 24
-Constant (byte) xd#1 (byte) 39
 Constant (byte) x1#2 (byte) 39
 Succesful SSA optimization Pass2ConstantPropagation
 CONTROL FLOW GRAPH
 @BEGIN: from
-  (byte*~) $4 ← (word) 1024 + (byte) 0
+  (byte) e#0 ← (byte) 24 / (byte) 2
+  (byte~) $3 ← (byte) 0 * (byte) 40
+  (byte*~) $4 ← (word) 1024 + (byte~) $3
   (byte*) cursor#0 ← (byte*~) $4 + (byte) 0
   to:@1
 @1: from @3 @BEGIN
-  (byte) y#2 ← phi( @3/(byte) y#5 @BEGIN/(byte) 0 )
-  (byte) e#3 ← phi( @3/(byte) e#5 @BEGIN/(byte) 12 )
+  (byte) y#2 ← phi( @3/(byte) y#4 @BEGIN/(byte) 0 )
+  (byte) xd#1 ← phi( @BEGIN/(byte) 39 )
+  (byte) yd#1 ← phi( @BEGIN/(byte) 24 )
+  (byte) e#3 ← phi( @3/(byte) e#5 @BEGIN/(byte) e#0 )
   (byte) x#2 ← phi( @3/(byte) x#1 @BEGIN/(byte) 0 )
   (byte*) cursor#3 ← phi( @3/(byte*) cursor#5 @BEGIN/(byte*) cursor#0 )
   *((byte*) cursor#3) ← (byte) 81
   (byte) x#1 ← (byte) x#2 + (byte) 1
   (byte*) cursor#1 ← (byte*) cursor#3 + (byte) 1
-  (byte) e#1 ← (byte) e#3 + (byte) 24
-  if((byte) 39<(byte) e#1) goto @2
+  (byte) e#1 ← (byte) e#3 + (byte) yd#1
+  if((byte) xd#1<(byte) e#1) goto @2
   to:@3
 @2: from @1
   (byte) y#1 ← (byte) y#2 + (byte) 1
   (byte*) cursor#2 ← (byte*) cursor#1 + (byte) 40
-  (byte) e#2 ← (byte) e#1 - (byte) 39
+  (byte) e#2 ← (byte) e#1 - (byte) xd#1
   to:@3
 @3: from @1 @2
-  (byte) y#5 ← phi( @2/(byte) y#1 @1/(byte) y#2 )
-  (byte) e#5 ← phi( @2/(byte) e#2 @1/(byte) e#1 )
-  (byte*) cursor#5 ← phi( @2/(byte*) cursor#2 @1/(byte*) cursor#1 )
+  (byte) y#4 ← phi( @1/(byte) y#2 @2/(byte) y#1 )
+  (byte) e#5 ← phi( @1/(byte) e#1 @2/(byte) e#2 )
+  (byte*) cursor#5 ← phi( @1/(byte*) cursor#1 @2/(byte*) cursor#2 )
   (byte~) $13 ← (byte) 39 + (byte) 1
   if((byte) x#1<(byte~) $13) goto @1
   to:@END
@@ -1072,15 +707,52 @@ CONTROL FLOW GRAPH
 
 Multiple usages for variable. Not optimizing sub-constant (byte) y#2
 Multiple usages for variable. Not optimizing sub-constant (byte*) cursor#1
-Constant (byte*~) $4 (word) 1024
+Redundant Phi (byte) yd#1 (byte) 24
+Redundant Phi (byte) xd#1 (byte) 39
+Succesful SSA optimization Pass2RedundantPhiElimination
+CONTROL FLOW GRAPH
+@BEGIN: from
+  (byte) e#0 ← (byte) 24 / (byte) 2
+  (byte~) $3 ← (byte) 0 * (byte) 40
+  (byte*~) $4 ← (word) 1024 + (byte~) $3
+  (byte*) cursor#0 ← (byte*~) $4 + (byte) 0
+  to:@1
+@1: from @3 @BEGIN
+  (byte) y#2 ← phi( @3/(byte) y#4 @BEGIN/(byte) 0 )
+  (byte) e#3 ← phi( @3/(byte) e#5 @BEGIN/(byte) e#0 )
+  (byte) x#2 ← phi( @3/(byte) x#1 @BEGIN/(byte) 0 )
+  (byte*) cursor#3 ← phi( @3/(byte*) cursor#5 @BEGIN/(byte*) cursor#0 )
+  *((byte*) cursor#3) ← (byte) 81
+  (byte) x#1 ← (byte) x#2 + (byte) 1
+  (byte*) cursor#1 ← (byte*) cursor#3 + (byte) 1
+  (byte) e#1 ← (byte) e#3 + (byte) 24
+  if((byte) 39<(byte) e#1) goto @2
+  to:@3
+@2: from @1
+  (byte) y#1 ← (byte) y#2 + (byte) 1
+  (byte*) cursor#2 ← (byte*) cursor#1 + (byte) 40
+  (byte) e#2 ← (byte) e#1 - (byte) 39
+  to:@3
+@3: from @1 @2
+  (byte) y#4 ← phi( @1/(byte) y#2 @2/(byte) y#1 )
+  (byte) e#5 ← phi( @1/(byte) e#1 @2/(byte) e#2 )
+  (byte*) cursor#5 ← phi( @1/(byte*) cursor#1 @2/(byte*) cursor#2 )
+  (byte~) $13 ← (byte) 39 + (byte) 1
+  if((byte) x#1<(byte~) $13) goto @1
+  to:@END
+@END: from @3
+
+Constant (byte) e#0 (byte) 12
+Constant (byte~) $3 (byte) 0
 Constant (byte~) $13 (byte) 40
 Succesful SSA optimization Pass2ConstantPropagation
 CONTROL FLOW GRAPH
 @BEGIN: from
-  (byte*) cursor#0 ← (word) 1024 + (byte) 0
+  (byte*~) $4 ← (word) 1024 + (byte) 0
+  (byte*) cursor#0 ← (byte*~) $4 + (byte) 0
   to:@1
 @1: from @3 @BEGIN
-  (byte) y#2 ← phi( @3/(byte) y#5 @BEGIN/(byte) 0 )
+  (byte) y#2 ← phi( @3/(byte) y#4 @BEGIN/(byte) 0 )
   (byte) e#3 ← phi( @3/(byte) e#5 @BEGIN/(byte) 12 )
   (byte) x#2 ← phi( @3/(byte) x#1 @BEGIN/(byte) 0 )
   (byte*) cursor#3 ← phi( @3/(byte*) cursor#5 @BEGIN/(byte*) cursor#0 )
@@ -1096,9 +768,41 @@ CONTROL FLOW GRAPH
   (byte) e#2 ← (byte) e#1 - (byte) 39
   to:@3
 @3: from @1 @2
-  (byte) y#5 ← phi( @2/(byte) y#1 @1/(byte) y#2 )
-  (byte) e#5 ← phi( @2/(byte) e#2 @1/(byte) e#1 )
-  (byte*) cursor#5 ← phi( @2/(byte*) cursor#2 @1/(byte*) cursor#1 )
+  (byte) y#4 ← phi( @1/(byte) y#2 @2/(byte) y#1 )
+  (byte) e#5 ← phi( @1/(byte) e#1 @2/(byte) e#2 )
+  (byte*) cursor#5 ← phi( @1/(byte*) cursor#1 @2/(byte*) cursor#2 )
+  if((byte) x#1<(byte) 40) goto @1
+  to:@END
+@END: from @3
+
+Multiple usages for variable. Not optimizing sub-constant (byte) y#2
+Multiple usages for variable. Not optimizing sub-constant (byte*) cursor#1
+Constant (byte*~) $4 (word) 1024
+Succesful SSA optimization Pass2ConstantPropagation
+CONTROL FLOW GRAPH
+@BEGIN: from
+  (byte*) cursor#0 ← (word) 1024 + (byte) 0
+  to:@1
+@1: from @3 @BEGIN
+  (byte) y#2 ← phi( @3/(byte) y#4 @BEGIN/(byte) 0 )
+  (byte) e#3 ← phi( @3/(byte) e#5 @BEGIN/(byte) 12 )
+  (byte) x#2 ← phi( @3/(byte) x#1 @BEGIN/(byte) 0 )
+  (byte*) cursor#3 ← phi( @3/(byte*) cursor#5 @BEGIN/(byte*) cursor#0 )
+  *((byte*) cursor#3) ← (byte) 81
+  (byte) x#1 ← (byte) x#2 + (byte) 1
+  (byte*) cursor#1 ← (byte*) cursor#3 + (byte) 1
+  (byte) e#1 ← (byte) e#3 + (byte) 24
+  if((byte) 39<(byte) e#1) goto @2
+  to:@3
+@2: from @1
+  (byte) y#1 ← (byte) y#2 + (byte) 1
+  (byte*) cursor#2 ← (byte*) cursor#1 + (byte) 40
+  (byte) e#2 ← (byte) e#1 - (byte) 39
+  to:@3
+@3: from @1 @2
+  (byte) y#4 ← phi( @1/(byte) y#2 @2/(byte) y#1 )
+  (byte) e#5 ← phi( @1/(byte) e#1 @2/(byte) e#2 )
+  (byte*) cursor#5 ← phi( @1/(byte*) cursor#1 @2/(byte*) cursor#2 )
   if((byte) x#1<(byte) 40) goto @1
   to:@END
 @END: from @3
@@ -1111,7 +815,7 @@ CONTROL FLOW GRAPH
 @BEGIN: from
   to:@1
 @1: from @3 @BEGIN
-  (byte) y#2 ← phi( @3/(byte) y#5 @BEGIN/(byte) 0 )
+  (byte) y#2 ← phi( @3/(byte) y#4 @BEGIN/(byte) 0 )
   (byte) e#3 ← phi( @3/(byte) e#5 @BEGIN/(byte) 12 )
   (byte) x#2 ← phi( @3/(byte) x#1 @BEGIN/(byte) 0 )
   (byte*) cursor#3 ← phi( @3/(byte*) cursor#5 @BEGIN/(word) 1024 )
@@ -1127,9 +831,9 @@ CONTROL FLOW GRAPH
   (byte) e#2 ← (byte) e#1 - (byte) 39
   to:@3
 @3: from @1 @2
-  (byte) y#5 ← phi( @2/(byte) y#1 @1/(byte) y#2 )
-  (byte) e#5 ← phi( @2/(byte) e#2 @1/(byte) e#1 )
-  (byte*) cursor#5 ← phi( @2/(byte*) cursor#2 @1/(byte*) cursor#1 )
+  (byte) y#4 ← phi( @1/(byte) y#2 @2/(byte) y#1 )
+  (byte) e#5 ← phi( @1/(byte) e#1 @2/(byte) e#2 )
+  (byte*) cursor#5 ← phi( @1/(byte*) cursor#1 @2/(byte*) cursor#2 )
   if((byte) x#1<(byte) 40) goto @1
   to:@END
 @END: from @3
@@ -1157,7 +861,7 @@ B1_from_BBEGIN:
   sta 10+1
   jmp B1
 B1_from_B3:
-  // (byte) y#2 = (byte) y#5  // zpby1=zpby2
+  // (byte) y#2 = (byte) y#4  // zpby1=zpby2
   lda 18
   sta 14
   // (byte) e#3 = (byte) e#5  // zpby1=zpby2
@@ -1200,7 +904,7 @@ B1:
   cmp 5
   bcc B2
 B3_from_B1:
-  // (byte) y#5 = (byte) y#2  // zpby1=zpby2
+  // (byte) y#4 = (byte) y#2  // zpby1=zpby2
   lda 14
   sta 18
   // (byte) e#5 = (byte) e#1  // zpby1=zpby2
@@ -1239,7 +943,7 @@ B2:
   sbc #39
   sta 9
 B3_from_B2:
-  // (byte) y#5 = (byte) y#1  // zpby1=zpby2
+  // (byte) y#4 = (byte) y#1  // zpby1=zpby2
   lda 6
   sta 18
   // (byte) e#5 = (byte) e#2  // zpby1=zpby2
@@ -1275,7 +979,7 @@ B1_from_BBEGIN:
   sta 10+1
   jmp B1
 B1_from_B3:
-  // (byte) y#2 = (byte) y#5  // zpby1=zpby2
+  // (byte) y#2 = (byte) y#4  // zpby1=zpby2
   lda 18
   sta 14
   // (byte) e#3 = (byte) e#5  // zpby1=zpby2
@@ -1317,7 +1021,7 @@ B1:
   cmp 5
   bcc B2
 B3_from_B1:
-  // (byte) y#5 = (byte) y#2  // zpby1=zpby2
+  // (byte) y#4 = (byte) y#2  // zpby1=zpby2
   lda 14
   sta 18
   // (byte) e#5 = (byte) e#1  // zpby1=zpby2
@@ -1354,7 +1058,7 @@ B2:
   sbc #39
   sta 9
 B3_from_B2:
-  // (byte) y#5 = (byte) y#1  // zpby1=zpby2
+  // (byte) y#4 = (byte) y#1  // zpby1=zpby2
   lda 6
   sta 18
   // (byte) e#5 = (byte) e#2  // zpby1=zpby2
@@ -1394,7 +1098,7 @@ FINAL SYMBOL TABLE
 (byte) y
 (byte) y#1 zp byte:6
 (byte) y#2 zp byte:14
-(byte) y#5 zp byte:18
+(byte) y#4 zp byte:18
 (byte) y0
 (byte) y1
 (byte) yd
@@ -1418,7 +1122,7 @@ B1_from_BBEGIN:
   sta 10+1
   jmp B1
 B1_from_B3:
-  // (byte) y#2 = (byte) y#5  // zpby1=zpby2
+  // (byte) y#2 = (byte) y#4  // zpby1=zpby2
   lda 18
   sta 14
   // (byte) e#3 = (byte) e#5  // zpby1=zpby2
@@ -1460,7 +1164,7 @@ B1:
   cmp 5
   bcc B2
 B3_from_B1:
-  // (byte) y#5 = (byte) y#2  // zpby1=zpby2
+  // (byte) y#4 = (byte) y#2  // zpby1=zpby2
   lda 14
   sta 18
   // (byte) e#5 = (byte) e#1  // zpby1=zpby2
@@ -1497,7 +1201,7 @@ B2:
   sbc #39
   sta 9
 B3_from_B2:
-  // (byte) y#5 = (byte) y#1  // zpby1=zpby2
+  // (byte) y#4 = (byte) y#1  // zpby1=zpby2
   lda 6
   sta 18
   // (byte) e#5 = (byte) e#2  // zpby1=zpby2

@@ -3,17 +3,17 @@ BBEGIN:
 BEND:
 main:
   jsr prepare
-main__B2_from_main:
+main__B3_from_main:
   ldx #25
-  jmp main__B2
-main__B2_from_B11:
+  jmp main__B3
+main__B3_from_B11:
   ldx #25
-main__B2_from_B6:
-main__B2:
+main__B3_from_B3:
+main__B3_from_B6:
 main__B3:
   lda 53266
   cmp #254
-  bne main__main__B3
+  bne main__B3_from_B3
 main__B4:
   lda 53266
   cmp #255
@@ -21,13 +21,13 @@ main__B4:
 main__B6:
   dex
   cpx #0
-  bne main__B2_from_B6
+  bne main__B3_from_B6
 main__B7:
   jsr flip
 main__B10:
   jsr plot
 main__B11:
-  jmp main__B2_from_B11
+  jmp main__B3_from_B11
 main__Breturn:
   rts
 plot:

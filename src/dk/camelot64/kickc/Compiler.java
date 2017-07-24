@@ -150,7 +150,13 @@ public class Compiler {
          log.append("INITIAL CONTROL FLOW GRAPH");
          log.append(program.getGraph().toString(program.getScope()));
 
-         Pass1ProcedureCallParameters pass1ProcedureCallParameters =
+         Pass1EliminateEmptyBlocks pass1EliminateEmptyBlocks = new Pass1EliminateEmptyBlocks(program, log);
+         boolean blockEliminated = pass1EliminateEmptyBlocks.eliminate();
+         if(blockEliminated) {
+            log.append(program.getGraph().toString(program.getScope()));
+         }
+
+      Pass1ProcedureCallParameters pass1ProcedureCallParameters =
                new Pass1ProcedureCallParameters(program);
          program.setGraph(pass1ProcedureCallParameters.generate());
          log.append("CONTROL FLOW GRAPH WITH ASSIGNMENT CALL");

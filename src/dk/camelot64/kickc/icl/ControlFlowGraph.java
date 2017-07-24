@@ -43,6 +43,10 @@ public class ControlFlowGraph {
       return blocks.values();
    }
 
+   public void remove(LabelRef label) {
+      blocks.remove(label);
+   }
+
    /** Get the assignment of the passed variable.
     *
      * @param variable The variable to find the assignment for

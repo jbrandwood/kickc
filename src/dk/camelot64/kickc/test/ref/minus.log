@@ -44,6 +44,22 @@ INITIAL CONTROL FLOW GRAPH
   to:@END
 @END: from @2
 
+Removing empty block @2
+@BEGIN: from
+  (byte[16]) p ← (word) 4352
+  (byte) i ← (byte) 5
+  to:@1
+@1: from @1 @BEGIN
+  (byte~) $0 ← (byte) 2 + (byte) i
+  (byte~) $1 ← (byte~) $0 + (byte) 2
+  *((byte[16]) p + (byte) i) ← (byte~) $1
+  (byte~) $2 ← (byte) i + (byte) 1
+  (byte) i ← (byte~) $2
+  (boolean~) $3 ← (byte) i < (byte) 10
+  if((boolean~) $3) goto @1
+  to:@END
+@END: from @1
+
 CONTROL FLOW GRAPH WITH ASSIGNMENT CALL
 @BEGIN: from
   (byte[16]) p ← (word) 4352
@@ -57,10 +73,8 @@ CONTROL FLOW GRAPH WITH ASSIGNMENT CALL
   (byte) i ← (byte~) $2
   (boolean~) $3 ← (byte) i < (byte) 10
   if((boolean~) $3) goto @1
-  to:@2
-@2: from @1
   to:@END
-@END: from @2
+@END: from @1
 
 Completing Phi functions...
 CONTROL FLOW GRAPH SSA
@@ -78,34 +92,10 @@ CONTROL FLOW GRAPH SSA
   (byte) i#1 ← (byte~) $2
   (boolean~) $3 ← (byte) i#1 < (byte) 10
   if((boolean~) $3) goto @1
-  to:@2
-@2: from @1
   to:@END
-@END: from @2
+@END: from @1
 
 CONTROL FLOW GRAPH WITH ASSIGNMENT CALL & RETURN
-@BEGIN: from
-  (byte[16]) p#0 ← (word) 4352
-  (byte) i#0 ← (byte) 5
-  to:@1
-@1: from @1 @BEGIN
-  (byte[16]) p#1 ← phi( @1/(byte[16]) p#1 @BEGIN/(byte[16]) p#0 )
-  (byte) i#2 ← phi( @1/(byte) i#1 @BEGIN/(byte) i#0 )
-  (byte~) $0 ← (byte) 2 + (byte) i#2
-  (byte~) $1 ← (byte~) $0 + (byte) 2
-  *((byte[16]) p#1 + (byte) i#2) ← (byte~) $1
-  (byte~) $2 ← (byte) i#2 + (byte) 1
-  (byte) i#1 ← (byte~) $2
-  (boolean~) $3 ← (byte) i#1 < (byte) 10
-  if((boolean~) $3) goto @1
-  to:@2
-@2: from @1
-  to:@END
-@END: from @2
-
-Culled Empty Block (label) @2
-Succesful SSA optimization Pass2CullEmptyBlocks
-CONTROL FLOW GRAPH
 @BEGIN: from
   (byte[16]) p#0 ← (word) 4352
   (byte) i#0 ← (byte) 5

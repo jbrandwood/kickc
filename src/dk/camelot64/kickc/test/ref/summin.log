@@ -52,6 +52,24 @@ sum::@1: from
   to:@END
 @END: from @1
 
+Removing empty block sum::@1
+Removing empty block @1
+@BEGIN: from
+  (byte~) $0 ← call sum (byte) 1 (byte) 2 
+  (byte) s1 ← (byte~) $0
+  (byte~) $1 ← call sum (byte) 9 (byte) 13 
+  (byte) s2 ← (byte~) $1
+  to:@END
+sum: from
+  (byte~) sum::$0 ← (byte) sum::a + (byte) sum::b
+  (byte) sum::return ← (byte~) sum::$0
+  to:sum::@return
+sum::@return: from sum
+  (byte) sum::return ← (byte) sum::return
+  return (byte) sum::return
+  to:@RETURN
+@END: from @BEGIN
+
 CONTROL FLOW GRAPH WITH ASSIGNMENT CALL
 @BEGIN: from
   (byte) sum::a ← (byte) 1
@@ -68,22 +86,17 @@ CONTROL FLOW GRAPH WITH ASSIGNMENT CALL
 @3: from @2
   (byte~) $1 ← (byte) sum::return
   (byte) s2 ← (byte~) $1
-  to:@1
+  to:@END
 sum: from @2 @BEGIN
   (byte~) sum::$0 ← (byte) sum::a + (byte) sum::b
   (byte) sum::return ← (byte~) sum::$0
   to:sum::@return
-sum::@return: from sum sum::@1
+sum::@return: from sum
   (byte) sum::return ← (byte) sum::return
   return (byte) sum::return
   to:@RETURN
-sum::@1: from
-  to:sum::@return
-@1: from @3
-  to:@END
-@END: from @1
+@END: from @3
 
-Completing Phi functions...
 Completing Phi functions...
 CONTROL FLOW GRAPH SSA
 @BEGIN: from
@@ -103,24 +116,19 @@ CONTROL FLOW GRAPH SSA
   (byte) sum::return#5 ← phi( @2/(byte) sum::return#1 )
   (byte~) $1 ← (byte) sum::return#5
   (byte) s2#0 ← (byte~) $1
-  to:@1
+  to:@END
 sum: from @2 @BEGIN
   (byte) sum::b#2 ← phi( @2/(byte) sum::b#1 @BEGIN/(byte) sum::b#0 )
   (byte) sum::a#2 ← phi( @2/(byte) sum::a#1 @BEGIN/(byte) sum::a#0 )
   (byte~) sum::$0 ← (byte) sum::a#2 + (byte) sum::b#2
   (byte) sum::return#2 ← (byte~) sum::$0
   to:sum::@return
-sum::@return: from sum sum::@1
-  (byte) sum::return#6 ← phi( sum/(byte) sum::return#2 sum::@1/(byte) sum::return#7 )
+sum::@return: from sum
+  (byte) sum::return#6 ← phi( sum/(byte) sum::return#2 )
   (byte) sum::return#3 ← (byte) sum::return#6
   return (byte) sum::return#3
   to:@RETURN
-sum::@1: from
-  (byte) sum::return#7 ← phi( )
-  to:sum::@return
-@1: from @3
-  to:@END
-@END: from @1
+@END: from @3
 
 CONTROL FLOW GRAPH WITH ASSIGNMENT CALL & RETURN
 @BEGIN: from
@@ -142,47 +150,6 @@ CONTROL FLOW GRAPH WITH ASSIGNMENT CALL & RETURN
   (byte) sum::return#5 ← phi( @2/(byte) sum::return#1 )
   (byte~) $1 ← (byte) sum::return#5
   (byte) s2#0 ← (byte~) $1
-  to:@1
-sum: from @2 @BEGIN
-  (byte) sum::b#2 ← phi( @2/(byte) sum::b#1 @BEGIN/(byte) sum::b#0 )
-  (byte) sum::a#2 ← phi( @2/(byte) sum::a#1 @BEGIN/(byte) sum::a#0 )
-  (byte~) sum::$0 ← (byte) sum::a#2 + (byte) sum::b#2
-  (byte) sum::return#2 ← (byte~) sum::$0
-  to:sum::@return
-sum::@return: from sum sum::@1
-  (byte) sum::return#6 ← phi( sum/(byte) sum::return#2 sum::@1/(byte) sum::return#7 )
-  (byte) sum::return#3 ← (byte) sum::return#6
-  return (byte) sum::return#3
-  to:@RETURN
-sum::@1: from
-  (byte) sum::return#7 ← phi( )
-  to:sum::@return
-@1: from @3
-  to:@END
-@END: from @1
-
-Culled Empty Block (label) @1
-Succesful SSA optimization Pass2CullEmptyBlocks
-CONTROL FLOW GRAPH
-@BEGIN: from
-  (byte) sum::a#0 ← (byte) 1
-  (byte) sum::b#0 ← (byte) 2
-  call sum param-assignment
-  (byte) sum::return#0 ← (byte) sum::return#3
-  to:@2
-@2: from @BEGIN
-  (byte) sum::return#4 ← phi( @BEGIN/(byte) sum::return#0 )
-  (byte~) $0 ← (byte) sum::return#4
-  (byte) s1#0 ← (byte~) $0
-  (byte) sum::a#1 ← (byte) 9
-  (byte) sum::b#1 ← (byte) 13
-  call sum param-assignment
-  (byte) sum::return#1 ← (byte) sum::return#3
-  to:@3
-@3: from @2
-  (byte) sum::return#5 ← phi( @2/(byte) sum::return#1 )
-  (byte~) $1 ← (byte) sum::return#5
-  (byte) s2#0 ← (byte~) $1
   to:@END
 sum: from @2 @BEGIN
   (byte) sum::b#2 ← phi( @2/(byte) sum::b#1 @BEGIN/(byte) sum::b#0 )
@@ -190,14 +157,11 @@ sum: from @2 @BEGIN
   (byte~) sum::$0 ← (byte) sum::a#2 + (byte) sum::b#2
   (byte) sum::return#2 ← (byte~) sum::$0
   to:sum::@return
-sum::@return: from sum sum::@1
-  (byte) sum::return#6 ← phi( sum/(byte) sum::return#2 sum::@1/(byte) sum::return#7 )
+sum::@return: from sum
+  (byte) sum::return#6 ← phi( sum/(byte) sum::return#2 )
   (byte) sum::return#3 ← (byte) sum::return#6
   return (byte) sum::return#3
   to:@RETURN
-sum::@1: from
-  (byte) sum::return#7 ← phi( )
-  to:sum::@return
 @END: from @3
 
 Constant (byte) sum::a#0 (byte) 1
@@ -228,18 +192,14 @@ sum: from @2 @BEGIN
   (byte~) sum::$0 ← (byte) sum::a#2 + (byte) sum::b#2
   (byte) sum::return#2 ← (byte~) sum::$0
   to:sum::@return
-sum::@return: from sum sum::@1
-  (byte) sum::return#6 ← phi( sum/(byte) sum::return#2 sum::@1/(byte) sum::return#7 )
+sum::@return: from sum
+  (byte) sum::return#6 ← phi( sum/(byte) sum::return#2 )
   (byte) sum::return#3 ← (byte) sum::return#6
   return (byte) sum::return#3
   to:@RETURN
-sum::@1: from
-  (byte) sum::return#7 ← phi( )
-  to:sum::@return
 @END: from @3
 
-Alias (byte) s1#0 = (byte) sum::return#0 (byte) sum::return#3 (byte) sum::return#4 (byte~) $0 (byte) sum::return#1 (byte) sum::return#5 (byte~) $1 (byte) s2#0 (byte) sum::return#6 
-Alias (byte) sum::return#2 = (byte~) sum::$0 
+Alias (byte) s1#0 = (byte) sum::return#0 (byte) sum::return#3 (byte) sum::return#4 (byte~) $0 (byte) sum::return#1 (byte) sum::return#5 (byte~) $1 (byte) s2#0 (byte) sum::return#2 (byte~) sum::$0 (byte) sum::return#6 
 Succesful SSA optimization Pass2AliasElimination
 CONTROL FLOW GRAPH
 @BEGIN: from
@@ -253,64 +213,15 @@ CONTROL FLOW GRAPH
 sum: from @2 @BEGIN
   (byte) sum::b#2 ← phi( @2/(byte) 13 @BEGIN/(byte) 2 )
   (byte) sum::a#2 ← phi( @2/(byte) 9 @BEGIN/(byte) 1 )
-  (byte) sum::return#2 ← (byte) sum::a#2 + (byte) sum::b#2
+  (byte) s1#0 ← (byte) sum::a#2 + (byte) sum::b#2
   to:sum::@return
-sum::@return: from sum sum::@1
-  (byte) s1#0 ← phi( sum/(byte) sum::return#2 sum::@1/(byte) sum::return#7 )
+sum::@return: from sum
   return (byte) s1#0
   to:@RETURN
-sum::@1: from
-  (byte) sum::return#7 ← phi( )
-  to:sum::@return
-@END: from @3
-
-Redundant Phi (byte) sum::return#7 VOID
-Succesful SSA optimization Pass2RedundantPhiElimination
-CONTROL FLOW GRAPH
-@BEGIN: from
-  call sum param-assignment
-  to:@2
-@2: from @BEGIN
-  call sum param-assignment
-  to:@3
-@3: from @2
-  to:@END
-sum: from @2 @BEGIN
-  (byte) sum::b#2 ← phi( @2/(byte) 13 @BEGIN/(byte) 2 )
-  (byte) sum::a#2 ← phi( @2/(byte) 9 @BEGIN/(byte) 1 )
-  (byte) sum::return#2 ← (byte) sum::a#2 + (byte) sum::b#2
-  to:sum::@return
-sum::@return: from sum sum::@1
-  (byte) s1#0 ← phi( sum/(byte) sum::return#2 )
-  return (byte) s1#0
-  to:@RETURN
-sum::@1: from
-  to:sum::@return
 @END: from @3
 
 Culled Empty Block (label) @3
-Culled Empty Block (label) sum::@1
 Succesful SSA optimization Pass2CullEmptyBlocks
-CONTROL FLOW GRAPH
-@BEGIN: from
-  call sum param-assignment
-  to:@2
-@2: from @BEGIN
-  call sum param-assignment
-  to:@END
-sum: from @2 @BEGIN
-  (byte) sum::b#2 ← phi( @2/(byte) 13 @BEGIN/(byte) 2 )
-  (byte) sum::a#2 ← phi( @2/(byte) 9 @BEGIN/(byte) 1 )
-  (byte) sum::return#2 ← (byte) sum::a#2 + (byte) sum::b#2
-  to:sum::@return
-sum::@return: from sum
-  (byte) s1#0 ← phi( sum/(byte) sum::return#2 )
-  return (byte) s1#0
-  to:@RETURN
-@END: from @2
-
-Alias (byte) s1#0 = (byte) sum::return#2 
-Succesful SSA optimization Pass2AliasElimination
 CONTROL FLOW GRAPH
 @BEGIN: from
   call sum param-assignment

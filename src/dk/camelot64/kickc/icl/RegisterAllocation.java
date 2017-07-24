@@ -84,14 +84,10 @@ public class RegisterAllocation {
       }
 
       @Override
-      public String getAsTypedString(ProgramScope scope) {
+      public String toString(ProgramScope scope) {
          return toString();
       }
 
-      @Override
-      public String getAsString() {
-         return toString();
-      }
    }
 
    /** Two zero page addresses used as a register for a single word variable. */
@@ -131,14 +127,10 @@ public class RegisterAllocation {
       }
 
       @Override
-      public String getAsTypedString(ProgramScope scope) {
+      public String toString(ProgramScope scope) {
          return toString();
       }
 
-      @Override
-      public String getAsString() {
-         return toString();
-      }
    }
 
 
@@ -178,14 +170,10 @@ public class RegisterAllocation {
       }
 
       @Override
-      public String getAsTypedString(ProgramScope scope) {
+      public String toString(ProgramScope scope) {
          return toString();
       }
 
-      @Override
-      public String getAsString() {
-         return toString();
-      }
    }
 
    /** A zro page address pair used as a register containing a pointer to a byte. */
@@ -224,14 +212,10 @@ public class RegisterAllocation {
       }
 
       @Override
-      public String getAsTypedString(ProgramScope scope) {
+      public String toString(ProgramScope scope) {
          return toString();
       }
 
-      @Override
-      public String getAsString() {
-         return toString();
-      }
    }
 
 
@@ -255,14 +239,10 @@ public class RegisterAllocation {
       }
 
       @Override
-      public String getAsTypedString(ProgramScope scope) {
+      public String toString(ProgramScope scope) {
          return toString();
       }
 
-      @Override
-      public String getAsString() {
-         return toString();
-      }
    }
 
    /** The Y register. */
@@ -285,14 +265,10 @@ public class RegisterAllocation {
       }
 
       @Override
-      public String getAsTypedString(ProgramScope scope) {
+      public String toString(ProgramScope scope) {
          return toString();
       }
 
-      @Override
-      public String getAsString() {
-         return toString();
-      }
    }
 
    /** The A register. */
@@ -315,14 +291,10 @@ public class RegisterAllocation {
       }
 
       @Override
-      public String getAsTypedString(ProgramScope scope) {
+      public String toString(ProgramScope scope) {
          return toString();
       }
 
-      @Override
-      public String getAsString() {
-         return toString();
-      }
    }
 
    /** The special ALU register. */
@@ -345,14 +317,10 @@ public class RegisterAllocation {
       }
 
       @Override
-      public String getAsTypedString(ProgramScope scope) {
+      public String toString(ProgramScope scope) {
          return toString();
       }
 
-      @Override
-      public String getAsString() {
-         return toString();
-      }
    }
 
    public static Register getRegisterX() {

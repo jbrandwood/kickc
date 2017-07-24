@@ -28,7 +28,7 @@ public class Pass2SelfPhiElimination extends Pass2SsaOptimization {
                   if (phiRValue.getrValue().equals(phiVariable.getVariable())) {
                      iterator.remove();
                      optimized[0] = Boolean.TRUE;
-                     log.append("Self Phi Eliminated "+phiVariable.getVariable().getAsTypedString(getSymbols()));
+                     log.append("Self Phi Eliminated "+phiVariable.getVariable().toString(getSymbols()));
                   }
                }
             }

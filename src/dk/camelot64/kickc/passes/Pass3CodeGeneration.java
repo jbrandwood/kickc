@@ -62,19 +62,19 @@ public class Pass3CodeGeneration {
                      }
                      assignment = (StatementAssignment) statement;
                      AsmFragment asmFragment = new AsmFragment(assignment, assignmentAlu, symbols);
-                     asm.addComment(statement.getAsTypedString(symbols) + "  //  " + asmFragment.getSignature());
+                     asm.addComment(statement.toString(symbols) + "  //  " + asmFragment.getSignature());
                      asmFragment.generate(asm);
                      isAlu = true;
                   }
                }
                if (!isAlu) {
                   AsmFragment asmFragment = new AsmFragment(assignment, symbols);
-                  asm.addComment(statement.getAsTypedString(symbols) + "  //  " + asmFragment.getSignature());
+                  asm.addComment(statement.toString(symbols) + "  //  " + asmFragment.getSignature());
                   asmFragment.generate(asm);
                }
             } else if (statement instanceof StatementConditionalJump) {
                AsmFragment asmFragment = new AsmFragment((StatementConditionalJump) statement, block, symbols, graph);
-               asm.addComment(statement.getAsTypedString(symbols) + "  //  " + asmFragment.getSignature());
+               asm.addComment(statement.toString(symbols) + "  //  " + asmFragment.getSignature());
                asmFragment.generate(asm);
             } else if (statement instanceof StatementCall) {
                StatementCall call = (StatementCall) statement;
@@ -147,11 +147,11 @@ public class Pass3CodeGeneration {
    private void genAsmMove(AsmProgram asm, LValue lValue, RValue rValue) {
       if (getRegister(lValue).equals(getRegister(rValue))) {
          // Do not move from register to itself
-         asm.addComment(lValue.getAsTypedString(symbols) + " = " + rValue.getAsTypedString(symbols) + "  // register copy ");
+         asm.addComment(lValue.toString(symbols) + " = " + rValue.toString(symbols) + "  // register copy ");
          return;
       }
       AsmFragment asmFragment = new AsmFragment(lValue, rValue, symbols);
-      asm.addComment(lValue.getAsTypedString(symbols) + " = " + rValue.getAsTypedString(symbols) + "  // " + asmFragment.getSignature());
+      asm.addComment(lValue.toString(symbols) + " = " + rValue.toString(symbols) + "  // " + asmFragment.getSignature());
       asmFragment.generate(asm);
    }
 

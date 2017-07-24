@@ -30,7 +30,7 @@ public class Pass1GenerateSingleStaticAssignmentForm {
       do {
          log.append("Completing Phi functions...");
          done = completePhiFunctions();
-         //log.append(this.controlFlowGraph.getAsTypedString(symbols));
+         //log.append(this.controlFlowGraph.toString(symbols));
       } while (!done);
    }
 

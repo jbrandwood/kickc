@@ -17,16 +17,16 @@ public class ConstantDouble implements Constant {
 
    @Override
    public String toString() {
-      return getAsString();
+      return toString(null);
    }
 
    @Override
-   public String getAsTypedString(ProgramScope scope) {
-      return "(" + SymbolTypeBasic.VOID.getTypeName() + ") " + Double.toString(number);
+   public String toString(ProgramScope scope) {
+      if(scope==null) {
+         return Double.toString(number);
+      }  else {
+         return "(" + SymbolTypeBasic.VOID.getTypeName() + ") " + Double.toString(number);
+      }
    }
 
-   @Override
-   public String getAsString() {
-      return Double.toString(number);
-   }
 }

@@ -72,14 +72,14 @@ public class ProgramScope extends Scope {
       return result;
    }
 
-   @Override
-   public String getAsTypedString(ProgramScope scope) {
-      return getAsString();
+   @JsonIgnore
+   public String getSymbolTableContents() {
+      return getSymbolTableContents(this);
    }
 
+
    @Override
-   @JsonIgnore
-   public String getAsString() {
+   public String toString(ProgramScope scope) {
       return "program";
    }
 

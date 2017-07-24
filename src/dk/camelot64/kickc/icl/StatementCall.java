@@ -94,14 +94,14 @@ public class StatementCall implements StatementLValue {
 
    @Override
    public String toString() {
-      return getAsString();
+      return toString(null);
    }
 
    @Override
-   public String getAsTypedString(ProgramScope scope) {
+   public String toString(ProgramScope scope) {
       StringBuilder res = new StringBuilder();
       if(lValue!=null) {
-         res.append(lValue.getAsTypedString(scope));
+         res.append(lValue.toString(scope));
          res.append(" ← ");
       }
       res.append("call ");
@@ -112,31 +112,7 @@ public class StatementCall implements StatementLValue {
       }
       if(parameters!=null) {
          for (RValue parameter : parameters) {
-            res.append(parameter.getAsTypedString(scope) + " ");
-         }
-      }
-      if(parametersByAssignment) {
-         res.append("param-assignment");
-      }
-      return res.toString();
-   }
-
-   @Override
-   public String getAsString() {
-      StringBuilder res = new StringBuilder();
-      if(lValue!=null) {
-         res.append(lValue.getAsString());
-         res.append(" ← ");
-      }
-      res.append("call ");
-      if(procedure!=null) {
-         res.append(procedure.getFullName()+ " ");
-      }  else {
-         res.append(procedureName + " ");
-      }
-      if(parameters!=null) {
-         for (RValue parameter : parameters) {
-            res.append(parameter.getAsString() + " ");
+            res.append(parameter.toString(scope) + " ");
          }
       }
       if(parametersByAssignment) {

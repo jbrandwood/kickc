@@ -1,6 +1,5 @@
 package dk.camelot64.kickc.icl;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 
@@ -22,9 +21,6 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo;
 })
 public interface Statement {
 
-   String getAsTypedString(ProgramScope scope);
-
-   @JsonIgnore
-   String getAsString();
+   String toString(ProgramScope scope);
 
 }

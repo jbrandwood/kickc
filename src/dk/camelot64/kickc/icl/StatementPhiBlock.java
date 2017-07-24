@@ -70,43 +70,19 @@ public class StatementPhiBlock implements Statement {
    }
 
    @Override
-   public String getAsTypedString(ProgramScope scope) {
+   public String toString(ProgramScope scope) {
       StringBuilder s = new StringBuilder();
       List<PhiVariable> variables = new ArrayList<>(phiVariables);
       Collections.reverse(variables);
       for (PhiVariable phiVariable : variables) {
-         s.append(phiVariable.getVariable().getAsTypedString(scope));
+         s.append(phiVariable.getVariable().toString(scope));
          s.append(" ← phi(");
          for (PhiRValue phiRValue : phiVariable.getValues()) {
             s.append(" ");
-            s.append(phiRValue.getPredecessor().getAsString());
+            s.append(phiRValue.getPredecessor().toString(null));
             s.append("/");
             RValue rValue = phiRValue.getrValue();
-            s.append(rValue==null?"null":rValue.getAsTypedString(scope));
-         }
-         s.append(" )\n  ");
-      }
-      if(s.length()>0) {
-         return s.toString().substring(0, s.length() - 3);
-      } else {
-         return s.toString();
-      }
-   }
-
-   @Override
-   public String getAsString() {
-      StringBuilder s = new StringBuilder();
-      List<PhiVariable> variables = new ArrayList<>(phiVariables);
-      Collections.reverse(variables);
-      for (PhiVariable phiVariable : variables) {
-         s.append(phiVariable.getVariable().getAsString());
-         s.append(" ← phi(");
-         for (PhiRValue phiRValue : phiVariable.getValues()) {
-            s.append(" ");
-            s.append(phiRValue.getPredecessor().getAsString());
-            s.append("/");
-            RValue rValue = phiRValue.getrValue();
-            s.append(rValue==null?"null":rValue.getAsString());
+            s.append(rValue==null?"null":rValue.toString(scope));
          }
          s.append(" )\n  ");
       }

@@ -40,14 +40,12 @@ public class SymbolRef implements Value {
    }
 
    @Override
-   public String getAsTypedString(ProgramScope scope) {
-      return scope.getSymbol(fullName).getTypedName();
-   }
-
-   @Override
-   @JsonIgnore
-   public String getAsString() {
-      return fullName;
+   public String toString(ProgramScope scope) {
+      if (scope == null) {
+         return fullName;
+      } else {
+         return scope.getSymbol(fullName).toString(scope);
+      }
    }
 
    @JsonIgnore

@@ -122,7 +122,7 @@ public class Compiler {
                log.append("Succesful SSA optimization " + optimization.getClass().getSimpleName() + "");
                ssaOptimized = true;
                log.append("CONTROL FLOW GRAPH");
-               log.append(program.getGraph().getAsTypedString(program.getScope()));
+               log.append(program.getGraph().toString(program.getScope()));
             }
          }
       }
@@ -138,7 +138,7 @@ public class Compiler {
       pass1TypeInference.inferTypes(statementSequence);
 
       log.append("PROGRAM");
-         log.append(statementSequence.getAsTypedString(programScope));
+         log.append(statementSequence.toString(programScope));
          log.append("SYMBOLS");
          log.append(programScope.getSymbolTableContents());
 
@@ -148,26 +148,26 @@ public class Compiler {
          Program program = new Program(programScope, controlFlowGraph);
 
          log.append("INITIAL CONTROL FLOW GRAPH");
-         log.append(program.getGraph().getAsTypedString(program.getScope()));
+         log.append(program.getGraph().toString(program.getScope()));
 
          Pass1ProcedureCallParameters pass1ProcedureCallParameters =
                new Pass1ProcedureCallParameters(program);
          program.setGraph(pass1ProcedureCallParameters.generate());
          log.append("CONTROL FLOW GRAPH WITH ASSIGNMENT CALL");
-         log.append(program.getGraph().getAsTypedString(program.getScope()));
+         log.append(program.getGraph().toString(program.getScope()));
 
          Pass1GenerateSingleStaticAssignmentForm pass1GenerateSingleStaticAssignmentForm =
                new Pass1GenerateSingleStaticAssignmentForm(log, program);
          pass1GenerateSingleStaticAssignmentForm.generate();
 
          log.append("CONTROL FLOW GRAPH SSA");
-         log.append(program.getGraph().getAsTypedString(program.getScope()));
+         log.append(program.getGraph().toString(program.getScope()));
 
          Pass1ProcedureCallsReturnValue pass1ProcedureCallsReturnValue =
                new Pass1ProcedureCallsReturnValue(program);
          program.setGraph(pass1ProcedureCallsReturnValue.generate());
          log.append("CONTROL FLOW GRAPH WITH ASSIGNMENT CALL & RETURN");
-         log.append(program.getGraph().getAsTypedString(program.getScope()));
+         log.append(program.getGraph().toString(program.getScope()));
       return program;
    }
 

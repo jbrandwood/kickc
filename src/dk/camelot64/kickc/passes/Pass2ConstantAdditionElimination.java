@@ -145,7 +145,7 @@ public class Pass2ConstantAdditionElimination extends Pass2SsaOptimization {
     */
    private ConstantInteger consolidateSubConstants(VariableRef variable) {
       if(getUsages(variable) >1) {
-         log.append("Multiple usages for variable. Not optimizing sub-constant "+variable.getAsTypedString(getSymbols()));
+         log.append("Multiple usages for variable. Not optimizing sub-constant "+variable.toString(getSymbols()));
          return null;
       }
       Variable var = getSymbols().getVariable(variable);

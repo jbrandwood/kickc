@@ -72,32 +72,18 @@ public class StatementConditionalJump implements Statement {
 
    @Override
    public String toString() {
-      return getAsString();
+      return toString(null);
    }
 
    @Override
-   public String getAsTypedString(ProgramScope scope) {
+   public String toString(ProgramScope scope) {
       StringBuilder out = new StringBuilder();
       out.append("if(");
       if(rValue1!=null) {
-         out.append(rValue1.getAsTypedString(scope));
+         out.append(rValue1.toString(scope));
          out.append(operator.getOperator());
       }
-      out.append(rValue2.getAsTypedString(scope));
-      out.append(") goto ");
-      out.append(destination.getFullName());
-      return out.toString();
-   }
-
-   @Override
-   public String getAsString() {
-      StringBuilder out = new StringBuilder();
-      out.append("if(");
-      if(rValue1!=null) {
-         out.append(rValue1.getAsString());
-         out.append(operator.getOperator());
-      }
-      out.append(rValue2.getAsString());
+      out.append(rValue2.toString(scope));
       out.append(") goto ");
       out.append(destination.getFullName());
       return out.toString();

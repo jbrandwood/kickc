@@ -89,25 +89,16 @@ public class StatementAssignment implements StatementLValue {
 
    @Override
    public String toString() {
-      return getAsString();
+      return toString(null);
    }
 
    @Override
-   public String getAsTypedString(ProgramScope scope) {
+   public String toString(ProgramScope scope) {
       return
-            lValue.getAsTypedString(scope) + " ← " +
-                  (rValue1==null?"":rValue1.getAsTypedString(scope)+" ") +
+            lValue.toString(scope) + " ← " +
+                  (rValue1==null?"":rValue1.toString(scope)+" ") +
                   (operator==null?"":operator+" ") +
-                  rValue2 .getAsTypedString(scope);
-   }
-
-   @Override
-   public String getAsString() {
-      return
-            lValue.getAsString() + " ← " +
-                  (rValue1==null?"":rValue1.getAsString()+" ") +
-                  (operator==null?"":operator+" ") +
-                  rValue2.getAsString() ;
+                  rValue2.toString(scope);
    }
 
    @Override

@@ -11,9 +11,6 @@ public interface Symbol extends Value {
    @JsonIgnore
    String getFullName();
 
-   @JsonIgnore
-   String getTypedName();
-
    SymbolType getType();
 
    @JsonIgnore

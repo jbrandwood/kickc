@@ -78,12 +78,6 @@ public abstract class Scope implements Symbol {
 
    @Override
    @JsonIgnore
-   public String getTypedName() {
-      return "(" + getType().getTypeName() + ") " + getFullName();
-   }
-
-   @Override
-   @JsonIgnore
    public abstract SymbolType getType();
 
    @Override
@@ -147,7 +141,6 @@ public abstract class Scope implements Symbol {
          return symbol;
       }
    }
-
 
    public Variable getVariable(String name) {
       return (Variable) getSymbol(name);
@@ -215,7 +208,7 @@ public abstract class Scope implements Symbol {
    abstract RegisterAllocation getAllocation();
 
    @JsonIgnore
-   public String getSymbolTableContents() {
+   public String getSymbolTableContents(ProgramScope scope) {
       StringBuilder res = new StringBuilder();
       Set<String> names = symbols.keySet();
       List<String> sortedNames = new ArrayList<>(names);
@@ -224,9 +217,9 @@ public abstract class Scope implements Symbol {
       for (String name : sortedNames) {
          Symbol symbol = symbols.get(name);
          if (symbol instanceof Scope) {
-            res.append(((Scope) symbol).getSymbolTableContents());
+            res.append(((Scope) symbol).getSymbolTableContents(scope));
          } else {
-            res.append(symbol.getTypedName());
+            res.append(symbol.toString(scope));
          }
          if (symbol instanceof Variable && allocation!=null) {
             RegisterAllocation.Register register = allocation.getRegister((Variable) symbol);

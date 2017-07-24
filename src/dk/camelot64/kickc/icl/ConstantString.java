@@ -13,15 +13,16 @@ public class ConstantString implements Constant {
 
    @Override
    public String toString() {
-       return getAsString();
+       return toString(null);
    }
 
    @Override
-   public String getAsTypedString(ProgramScope scope) {
-      return "("+SymbolTypeBasic.STRING.getTypeName()+") "+"\\"+value+"\\";   }
-
-   @Override
-   public String getAsString() {
-      return "\\"+value+"\\";
+   public String toString(ProgramScope scope) {
+      if (scope == null) {
+         return "\\" + value + "\\";
+      } else {
+         return "(" + SymbolTypeBasic.STRING.getTypeName() + ") " + "\\" + value + "\\";
+      }
    }
+
 }

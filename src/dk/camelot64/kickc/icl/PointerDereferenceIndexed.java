@@ -30,16 +30,12 @@ public class PointerDereferenceIndexed implements PointerDereference {
 
    @Override
    public String toString() {
-      return getAsString();
+      return toString(null);
    }
 
    @Override
-   public String getAsTypedString(ProgramScope scope) {
-      return "*(" + pointer.getAsTypedString(scope) + " + " +index.getAsTypedString(scope) + ')';
+   public String toString(ProgramScope scope) {
+      return "*(" + pointer.toString(scope) + " + " +index.toString(scope) + ')';
    }
 
-   @Override
-   public String getAsString() {
-      return "*(" + pointer.getAsString() + " + " +index.getAsString() + ')';
-   }
 }

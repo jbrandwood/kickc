@@ -26,16 +26,13 @@ public class StatementReturn implements Statement {
 
    @Override
    public String toString() {
-      return getAsString();
+      return toString(null);
    }
 
    @Override
-   public String getAsTypedString(ProgramScope scope) {
-      return "return "+(value==null?"":value.getAsTypedString(scope));   }
-
-   @Override
-   public String getAsString() {
-      return "return "+(value==null?"":value.getAsString());   }
+   public String toString(ProgramScope scope) {
+      return "return " + (value == null ? "" : value.toString(scope));
+   }
 
    @Override
    public boolean equals(Object o) {

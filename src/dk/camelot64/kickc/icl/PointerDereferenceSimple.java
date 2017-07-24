@@ -19,17 +19,12 @@ public class PointerDereferenceSimple implements PointerDereference {
 
    @Override
    public String toString() {
-      return getAsString();
+      return toString(null);
    }
 
    @Override
-   public String getAsTypedString(ProgramScope scope) {
-      return "*(" + pointer.getAsTypedString(scope) + ')';
-   }
-
-   @Override
-   public String getAsString() {
-      return "*(" + pointer.getAsString() + ')';
+   public String toString(ProgramScope scope) {
+      return "*(" + pointer.toString(scope) + ')';
    }
 
 }

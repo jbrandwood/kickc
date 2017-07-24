@@ -13,17 +13,17 @@ public class ConstantBool implements Constant {
 
    @Override
    public String toString() {
-      return getAsString();
+      return toString(null);
    }
 
    @Override
-   public String getAsTypedString(ProgramScope scope) {
-      return //"("+SymbolTypeBasic.BOOLEAN.getTypeName()+") "+
-            Boolean.toString(value);
+   public String toString(ProgramScope scope) {
+      if(scope==null) {
+         return Boolean.toString(value);
+      }  else {
+         return //"("+SymbolTypeBasic.BOOLEAN.getTypeName()+") "+
+               Boolean.toString(value);
+      }
    }
 
-   @Override
-   public String getAsString() {
-      return Boolean.toString(value);
-   }
 }

@@ -131,23 +131,13 @@ public class ControlFlowGraph {
       return null;
    }
 
-   public String getAsTypedString(ProgramScope scope) {
+   public String toString(ProgramScope scope) {
       StringBuffer out = new StringBuffer();
       for (ControlFlowBlock block : blocks.values()) {
-         out.append(block.getAsTypedString(this, scope));
+         out.append(block.toString(this, scope));
       }
       return out.toString();
    }
-
-   @JsonIgnore
-   public String getAsString() {
-      StringBuffer out = new StringBuffer();
-      for (ControlFlowBlock block : blocks.values()) {
-         out.append(block.getAsString(this));
-      }
-      return out.toString();
-   }
-
 
    @Override
    public boolean equals(Object o) {

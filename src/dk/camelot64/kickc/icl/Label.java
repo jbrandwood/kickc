@@ -89,22 +89,16 @@ public class Label implements Symbol {
 
    @Override
    public String toString() {
-      return getAsString();
+      return toString(null);
    }
 
    @Override
-   public String getAsTypedString(ProgramScope scope) {
-      return getTypedName();
-   }
-
-   @Override
-   @JsonIgnore
-   public String getAsString() {
-      return getFullName();
-   }
-
-   public String getTypedName() {
-      return "("+getType().getTypeName() + ") "+getFullName();
+   public String toString(ProgramScope scope) {
+      if(scope==null) {
+         return getFullName();
+      }  else {
+         return "("+getType().getTypeName() + ") "+getFullName();
+      }
    }
 
    @JsonIgnore

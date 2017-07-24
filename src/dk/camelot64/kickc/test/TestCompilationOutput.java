@@ -63,7 +63,7 @@ public class TestCompilationOutput extends TestCase {
       boolean success = true;
       success &= testOutput(fileName, ".asm", output.getAsmProgram().toString(false));
       success &= testOutput(fileName, ".sym", output.getSymbols().getSymbolTableContents());
-      success &= testOutput(fileName, ".cfg", output.getGraph().getAsTypedString(output.getSymbols()));
+      success &= testOutput(fileName, ".cfg", output.getGraph().toString(output.getSymbols()));
       success &= testOutput(fileName, ".log", output.getLog().toString());
       if(!success) {
          fail("Output does not match reference!");

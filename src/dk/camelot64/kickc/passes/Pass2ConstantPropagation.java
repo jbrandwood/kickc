@@ -22,7 +22,7 @@ public class Pass2ConstantPropagation extends Pass2SsaOptimization {
       final Map<VariableRef, Constant> constants = findConstantVariables();
       for (VariableRef constantVar : constants.keySet()) {
          Constant constantValue = constants.get(constantVar);
-         log.append("Constant " + constantVar.getAsTypedString(getSymbols()) + " " + constantValue.getAsTypedString(getSymbols()));
+         log.append("Constant " + constantVar.toString(getSymbols()) + " " + constantValue.toString(getSymbols()));
       }
       removeAssignments(constants.keySet());
       deleteVariables(constants.keySet());

@@ -23,7 +23,7 @@ public class Pass2RedundantPhiElimination extends Pass2SsaOptimization {
       replaceVariables(aliases);
       for (VariableRef var : aliases.keySet()) {
          RValue alias = aliases.get(var);
-         log.append("Redundant Phi " + var.getAsTypedString(getSymbols()) + " " + alias.getAsTypedString(getSymbols()));
+         log.append("Redundant Phi " + var.toString(getSymbols()) + " " + alias.toString(getSymbols()));
       }
       deleteVariables(aliases.keySet());
       return aliases.size()>0;

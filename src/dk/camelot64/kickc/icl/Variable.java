@@ -45,12 +45,6 @@ public abstract class Variable implements Symbol {
       return Scope.getFullName(this);
    }
 
-   @Override
-   @JsonIgnore
-   public String getTypedName() {
-      return "(" + type.getTypeName() + (inferredType ? "~" : "") + ") " + getFullName();
-   }
-
    public SymbolType getType() {
       return type;
    }
@@ -120,18 +114,12 @@ public abstract class Variable implements Symbol {
 
    @Override
    public String toString() {
-      return getTypedName();
+      return toString(null);
    }
 
    @Override
-   public String getAsTypedString(ProgramScope scope) {
-      return getTypedName();
-   }
-
-   @Override
-   @JsonIgnore
-   public String getAsString() {
-      return getTypedName();
+   public String toString(ProgramScope scope) {
+      return "(" + type.getTypeName() + (inferredType ? "~" : "") + ") " + getFullName();
    }
 
    @JsonIgnore

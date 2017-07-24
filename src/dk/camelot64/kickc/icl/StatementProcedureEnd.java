@@ -15,15 +15,11 @@ public class StatementProcedureEnd implements Statement {
 
    @Override
    public String toString() {
-      return getAsString();
+      return toString(null);
    }
 
    @Override
-   public String getAsTypedString(ProgramScope scope) {
-      return getAsString();
+   public String toString(ProgramScope scope) {
+      return "endproc // "+procedure.getFullName()+"()";
    }
-
-   @Override
-   public String getAsString() {
-      return "endproc // "+procedure.getFullName()+"()";   }
 }

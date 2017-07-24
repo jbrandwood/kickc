@@ -24,16 +24,11 @@ public class StatementJump implements Statement {
 
    @Override
    public String toString() {
-       return getAsString();
+       return toString(null);
    }
 
    @Override
-   public String getAsTypedString(ProgramScope scope) {
-      return getAsString();
-   }
-
-   @Override
-   public String getAsString() {
+   public String toString(ProgramScope scope) {
       return "goto "+destination.getFullName();
    }
 

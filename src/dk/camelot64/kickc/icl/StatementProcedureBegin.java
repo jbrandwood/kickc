@@ -30,16 +30,12 @@ public class StatementProcedureBegin implements Statement {
 
    @Override
    public String toString() {
-      return getAsString();
+      return toString(null);
    }
 
    @Override
-   public String getAsTypedString(ProgramScope scope) {
-      return "proc " + procedure.getAsTypedString(scope);
+   public String toString(ProgramScope scope) {
+      return "proc " + procedure.toString(scope);
    }
 
-   @Override
-   public String getAsString() {
-      return "proc " + procedure.getAsString();
-   }
 }

@@ -23,16 +23,12 @@ public class PointerDereferenceRegisterZpByte implements PointerDereference {
 
    @Override
    public String toString() {
-      return getAsString();
+      return toString(null);
    }
 
    @Override
-   public String getAsTypedString(ProgramScope scope) {
-      return getAsString();
+   public String toString(ProgramScope scope) {
+      return "*(" + pointer.toString(scope) + ')';
    }
 
-   @Override
-   public String getAsString() {
-      return "*(" + pointer.toString() + ')';
-   }
 }

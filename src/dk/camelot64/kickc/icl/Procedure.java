@@ -71,29 +71,11 @@ public class Procedure extends Scope {
       return super.getFullName();
    }
 
-   @Override
-   public String getTypedName() {
+   public String getSymbolTableContents(ProgramScope scope) {
       StringBuilder res = new StringBuilder();
-      res.append("("+getType().getTypeName() + ") ");
-      res.append(getFullName());
-      res.append("(");
-      boolean first = true;
-      if(parameterNames !=null) {
-         for (Variable parameter : getParameters()) {
-            if (!first) res.append(" , ");
-            first = false;
-            res.append(parameter.getTypedName());
-         }
-      }
-      res.append(")");
-      return res.toString();
-   }
-
-   public String getSymbolTableContents() {
-      StringBuilder res = new StringBuilder();
-      res.append(getTypedName());
+      res.append(toString(scope));
       res.append("\n");
-      res.append(super.getSymbolTableContents());
+      res.append(super.getSymbolTableContents(scope));
       return res.toString();
    }
 
@@ -101,8 +83,6 @@ public class Procedure extends Scope {
    public SymbolType getType() {
       return new SymbolTypeProcedure(returnType);
    }
-
-
 
    @Override
    RegisterAllocation getAllocation() {
@@ -115,18 +95,25 @@ public class Procedure extends Scope {
 
    @Override
    public String toString() {
-      return getTypedName();
+      return toString(null);
    }
 
    @Override
-   public String getAsTypedString(ProgramScope scope) {
-      return getTypedName();
-   }
-
-   @Override
-   @JsonIgnore
-   public String getAsString() {
-      return getTypedName();
+   public String toString(ProgramScope scope) {
+      StringBuilder res = new StringBuilder();
+      res.append("("+getType().getTypeName() + ") ");
+      res.append(getFullName());
+      res.append("(");
+      boolean first = true;
+      if(parameterNames !=null) {
+         for (Variable parameter : getParameters()) {
+            if (!first) res.append(" , ");
+            first = false;
+            res.append(parameter.toString(scope));
+         }
+      }
+      res.append(")");
+      return res.toString();
    }
 
    @JsonIgnore

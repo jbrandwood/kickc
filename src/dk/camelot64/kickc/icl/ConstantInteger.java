@@ -34,17 +34,16 @@ public class ConstantInteger implements Constant {
 
    @Override
    public String toString() {
-      return getAsString();
+      return toString(null);
    }
 
    @Override
-   public String getAsTypedString(ProgramScope scope) {
-      return "("+getType().getTypeName()+") "+Integer.toString(number);   }
-
-   @Override
-   @JsonIgnore
-   public String getAsString() {
-      return Integer.toString(number);
+   public String toString(ProgramScope scope) {
+      if (scope == null) {
+         return Integer.toString(number);
+      } else {
+         return "(" + getType().getTypeName() + ") " + Integer.toString(number);
+      }
    }
 
    @Override

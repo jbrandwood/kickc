@@ -2,7 +2,6 @@ package dk.camelot64.kickc.passes;
 
 import dk.camelot64.kickc.CompileLog;
 import dk.camelot64.kickc.icl.*;
-import javafx.scene.input.InputMethodTextRun;
 
 import java.util.*;
 
@@ -26,10 +25,10 @@ public class Pass2AliasElimination extends Pass2SsaOptimization {
       replaceVariables(aliases.getReplacements());
       for (AliasSet aliasSet : aliases.getAliasSets()) {
          StringBuilder str = new StringBuilder();
-         str.append(aliasSet.getKeepVar().getAsTypedString(getSymbols()));
+         str.append(aliasSet.getKeepVar().toString(getSymbols()));
          str.append(" = ");
          for (VariableRef var : aliasSet.getEliminateVars()) {
-            str.append(var.getAsTypedString(getSymbols()) + " ");
+            str.append(var.toString(getSymbols()) + " ");
          }
          log.append("Alias " + str);
       }
@@ -239,7 +238,7 @@ public class Pass2AliasElimination extends Pass2SsaOptimization {
                      for (StatementPhiBlock.PhiRValue phiRValue : phiVariable.getValues()) {
                         RValue rValue = phiRValue.getrValue();
                         if (aliasSet.contains(rValue)) {
-                           log.append("Alias candidate removed " + rValue.getAsTypedString(getSymbols()));
+                           log.append("Alias candidate removed " + rValue.toString(getSymbols()));
                            aliasSet.remove(rValue);
                            break;
                         }

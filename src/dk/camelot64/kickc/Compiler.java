@@ -49,6 +49,7 @@ public class Compiler {
          KickCParser.FileContext file = pass0ParseInput(input, log);
          Program program = pass1GenerateSSA(file, log);
          pass2OptimizeSSA(program, log);
+         pass3IntervalAnalysis(program, log);
          AsmProgram asmProgram = pass4GenerateAsm(program, log);
          pass5OptimizeAsm(asmProgram, log);
 
@@ -84,8 +85,6 @@ public class Compiler {
    }
 
    public  AsmProgram pass4GenerateAsm(Program program, CompileLog log) {
-      Pass4BlockSequencePlanner pass4BlockSequencePlanner = new Pass4BlockSequencePlanner(program);
-      pass4BlockSequencePlanner.plan();
       Pass4RegisterAllocation pass4RegisterAllocation = new Pass4RegisterAllocation(program);
       pass4RegisterAllocation.allocate();
       Pass4CodeGeneration pass4CodeGeneration = new Pass4CodeGeneration(program);
@@ -94,6 +93,28 @@ public class Compiler {
       log.append("INITIAL ASM");
       log.append(asmProgram.toString());
       return asmProgram;
+   }
+
+
+   private void pass3IntervalAnalysis(Program program, CompileLog log) {
+
+      Pass3BlockSequencePlanner pass3BlockSequencePlanner = new Pass3BlockSequencePlanner(program, log);
+      pass3BlockSequencePlanner.plan();
+
+      //Pass3PhiLifting pass3PhiLifting = new Pass3PhiLifting(program, log);
+      //pass3PhiLifting.perform();
+
+      log.append("CONTROL FLOW GRAPH - PHI LIFTED");
+      log.append(program.getGraph().toString(program.getScope()));
+
+      Pass3IdentifyAliveRanges pass3IdentifyAliveRanges = new Pass3IdentifyAliveRanges(program, log);
+      pass3IdentifyAliveRanges.findLiveRanges();
+
+      log.append("CONTROL FLOW GRAPH - LIVE RANGES");
+      log.append(program.getGraph().toString(program.getScope()));
+      log.append("SYMBOLS - LIVE RANGES");
+      log.append(program.getScope().getSymbolTableContents());
+
    }
 
    public  void pass2OptimizeSSA(Program program, CompileLog log) {

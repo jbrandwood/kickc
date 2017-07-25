@@ -3309,6 +3309,296 @@ Multiple usages for variable. Not optimizing sub-constant (byte) flip::srcIdx#2
 Multiple usages for variable. Not optimizing sub-constant (byte) flip::i#2
 Multiple usages for variable. Not optimizing sub-constant (byte) flip::i#2
 Multiple usages for variable. Not optimizing sub-constant (byte) plot::i#2
+Block Sequence Planned @BEGIN @END main main::@3 main::@4 main::@6 main::@7 main::@10 main::@11 main::@return plot plot::@1 plot::@2 plot::@3 plot::@return flip flip::@1 flip::@2 flip::@4 flip::@3 flip::@return prepare prepare::@1 prepare::@return 
+CONTROL FLOW GRAPH - PHI LIFTED
+@BEGIN: from
+  call main param-assignment
+  to:@END
+@END: from @BEGIN
+main: from @BEGIN
+  call prepare param-assignment
+  to:main::@3
+main::@3: from main main::@11 main::@3 main::@6
+  (byte) main::c#2 ← phi( main/(byte) 25 main::@6/(byte) main::c#1 main::@11/(byte) 25 )
+  (byte~) main::$1 ← * (word) 53266
+  if((byte~) main::$1!=(byte) 254) goto main::@3
+  to:main::@4
+main::@4: from main::@3 main::@4
+  (byte~) main::$3 ← * (word) 53266
+  if((byte~) main::$3!=(byte) 255) goto main::@4
+  to:main::@6
+main::@6: from main::@4
+  (byte) main::c#1 ← -- (byte) main::c#2
+  if((byte) main::c#1!=(byte) 0) goto main::@3
+  to:main::@7
+main::@7: from main::@6
+  call flip param-assignment
+  to:main::@10
+main::@10: from main::@7
+  call plot param-assignment
+  to:main::@11
+main::@11: from main::@10
+  if(true) goto main::@3
+  to:main::@return
+main::@return: from main::@11
+  return 
+  to:@RETURN
+plot: from main::@10
+  to:plot::@1
+plot::@1: from plot plot::@3
+  (byte) plot::y#2 ← phi( plot/(byte) 16 plot::@3/(byte) plot::y#1 )
+  (byte*) plot::line#2 ← phi( plot/(word) 1236 plot::@3/(byte*) plot::line#1 )
+  (byte) plot::i#3 ← phi( plot/(byte) 0 plot::@3/(byte) plot::i#1 )
+  to:plot::@2
+plot::@2: from plot::@1 plot::@2
+  (byte) plot::x#2 ← phi( plot::@1/(byte) 0 plot::@2/(byte) plot::x#1 )
+  (byte) plot::i#2 ← phi( plot::@1/(byte) plot::i#3 plot::@2/(byte) plot::i#1 )
+  (byte~) plot::$3 ← (word) 4096 *idx (byte) plot::i#2
+  *((byte*) plot::line#2 + (byte) plot::x#2) ← (byte~) plot::$3
+  (byte) plot::i#1 ← ++ (byte) plot::i#2
+  (byte) plot::x#1 ← ++ (byte) plot::x#2
+  if((byte) plot::x#1<(byte) 16) goto plot::@2
+  to:plot::@3
+plot::@3: from plot::@2
+  (byte*) plot::line#1 ← (byte*) plot::line#2 + (byte) 40
+  (byte) plot::y#1 ← -- (byte) plot::y#2
+  if((byte) plot::y#1!=(byte) 0) goto plot::@1
+  to:plot::@return
+plot::@return: from plot::@3
+  return 
+  to:@RETURN
+flip: from main::@7
+  to:flip::@1
+flip::@1: from flip flip::@4
+  (byte) flip::r#2 ← phi( flip/(byte) 16 flip::@4/(byte) flip::r#1 )
+  (byte) flip::dstIdx#5 ← phi( flip/(byte) 15 flip::@4/(byte) flip::dstIdx#2 )
+  (byte) flip::srcIdx#3 ← phi( flip/(byte) 0 flip::@4/(byte) flip::srcIdx#1 )
+  to:flip::@2
+flip::@2: from flip::@1 flip::@2
+  (byte) flip::c#2 ← phi( flip::@1/(byte) 16 flip::@2/(byte) flip::c#1 )
+  (byte) flip::dstIdx#3 ← phi( flip::@1/(byte) flip::dstIdx#5 flip::@2/(byte) flip::dstIdx#1 )
+  (byte) flip::srcIdx#2 ← phi( flip::@1/(byte) flip::srcIdx#3 flip::@2/(byte) flip::srcIdx#1 )
+  (byte~) flip::$0 ← (word) 4096 *idx (byte) flip::srcIdx#2
+  *((word) 4352 + (byte) flip::dstIdx#3) ← (byte~) flip::$0
+  (byte) flip::srcIdx#1 ← ++ (byte) flip::srcIdx#2
+  (byte) flip::dstIdx#1 ← (byte) flip::dstIdx#3 + (byte) 16
+  (byte) flip::c#1 ← -- (byte) flip::c#2
+  if((byte) flip::c#1!=(byte) 0) goto flip::@2
+  to:flip::@4
+flip::@4: from flip::@2
+  (byte) flip::dstIdx#2 ← -- (byte) flip::dstIdx#1
+  (byte) flip::r#1 ← -- (byte) flip::r#2
+  if((byte) flip::r#1!=(byte) 0) goto flip::@1
+  to:flip::@3
+flip::@3: from flip::@3 flip::@4
+  (byte) flip::i#2 ← phi( flip::@3/(byte) flip::i#1 flip::@4/(byte) 0 )
+  (byte~) flip::$4 ← (word) 4352 *idx (byte) flip::i#2
+  *((word) 4096 + (byte) flip::i#2) ← (byte~) flip::$4
+  (byte) flip::i#1 ← ++ (byte) flip::i#2
+  if((byte) flip::i#1!=(byte) 0) goto flip::@3
+  to:flip::@return
+flip::@return: from flip::@3
+  return 
+  to:@RETURN
+prepare: from main
+  to:prepare::@1
+prepare::@1: from prepare prepare::@1
+  (byte) prepare::i#2 ← phi( prepare/(byte) 0 prepare::@1/(byte) prepare::i#1 )
+  *((word) 4096 + (byte) prepare::i#2) ← (byte) prepare::i#2
+  (byte) prepare::i#1 ← ++ (byte) prepare::i#2
+  if((byte) prepare::i#1!=(byte) 0) goto prepare::@1
+  to:prepare::@return
+prepare::@return: from prepare::@1
+  return 
+  to:@RETURN
+
+Propagating live ranges...
+Propagating live ranges...
+Propagating live ranges...
+Propagating live ranges...
+Propagating live ranges...
+Propagating live ranges...
+Propagating live ranges...
+Propagating live ranges...
+Propagating live ranges...
+CONTROL FLOW GRAPH - LIVE RANGES
+@BEGIN: from
+  [0] call main param-assignment [ ]
+  to:@END
+@END: from @BEGIN
+main: from @BEGIN
+  [1] call prepare param-assignment [ ]
+  to:main::@3
+main::@3: from main main::@11 main::@3 main::@6
+  [2] (byte) main::c#2 ← phi( main/(byte) 25 main::@6/(byte) main::c#1 main::@11/(byte) 25 ) [ main::c#2 ]
+  [3] (byte~) main::$1 ← * (word) 53266 [ main::$1 main::c#2 ]
+  [4] if((byte~) main::$1!=(byte) 254) goto main::@3 [ main::c#2 ]
+  to:main::@4
+main::@4: from main::@3 main::@4
+  [5] (byte~) main::$3 ← * (word) 53266 [ main::$3 main::c#2 ]
+  [6] if((byte~) main::$3!=(byte) 255) goto main::@4 [ main::c#2 ]
+  to:main::@6
+main::@6: from main::@4
+  [7] (byte) main::c#1 ← -- (byte) main::c#2 [ main::c#1 ]
+  [8] if((byte) main::c#1!=(byte) 0) goto main::@3 [ main::c#1 ]
+  to:main::@7
+main::@7: from main::@6
+  [9] call flip param-assignment [ ]
+  to:main::@10
+main::@10: from main::@7
+  [10] call plot param-assignment [ ]
+  to:main::@11
+main::@11: from main::@10
+  [11] if(true) goto main::@3 [ ]
+  to:main::@return
+main::@return: from main::@11
+  [12] return  [ ]
+  to:@RETURN
+plot: from main::@10
+  to:plot::@1
+plot::@1: from plot plot::@3
+  [13] (byte) plot::y#2 ← phi( plot/(byte) 16 plot::@3/(byte) plot::y#1 ) [ plot::i#3 plot::line#2 plot::y#2 ]
+  [13] (byte*) plot::line#2 ← phi( plot/(word) 1236 plot::@3/(byte*) plot::line#1 ) [ plot::i#3 plot::line#2 plot::y#2 ]
+  [13] (byte) plot::i#3 ← phi( plot/(byte) 0 plot::@3/(byte) plot::i#1 ) [ plot::i#3 plot::line#2 plot::y#2 ]
+  to:plot::@2
+plot::@2: from plot::@1 plot::@2
+  [14] (byte) plot::x#2 ← phi( plot::@1/(byte) 0 plot::@2/(byte) plot::x#1 ) [ plot::i#2 plot::line#2 plot::x#2 plot::y#2 ]
+  [14] (byte) plot::i#2 ← phi( plot::@1/(byte) plot::i#3 plot::@2/(byte) plot::i#1 ) [ plot::i#2 plot::line#2 plot::x#2 plot::y#2 ]
+  [15] (byte~) plot::$3 ← (word) 4096 *idx (byte) plot::i#2 [ plot::i#2 plot::line#2 plot::x#2 plot::$3 plot::y#2 ]
+  [16] *((byte*) plot::line#2 + (byte) plot::x#2) ← (byte~) plot::$3 [ plot::i#2 plot::line#2 plot::x#2 plot::y#2 ]
+  [17] (byte) plot::i#1 ← ++ (byte) plot::i#2 [ plot::i#1 plot::line#2 plot::x#2 plot::y#2 ]
+  [18] (byte) plot::x#1 ← ++ (byte) plot::x#2 [ plot::i#1 plot::x#1 plot::line#2 plot::y#2 ]
+  [19] if((byte) plot::x#1<(byte) 16) goto plot::@2 [ plot::i#1 plot::x#1 plot::line#2 plot::y#2 ]
+  to:plot::@3
+plot::@3: from plot::@2
+  [20] (byte*) plot::line#1 ← (byte*) plot::line#2 + (byte) 40 [ plot::i#1 plot::line#1 plot::y#2 ]
+  [21] (byte) plot::y#1 ← -- (byte) plot::y#2 [ plot::i#1 plot::line#1 plot::y#1 ]
+  [22] if((byte) plot::y#1!=(byte) 0) goto plot::@1 [ plot::i#1 plot::line#1 plot::y#1 ]
+  to:plot::@return
+plot::@return: from plot::@3
+  [23] return  [ ]
+  to:@RETURN
+flip: from main::@7
+  to:flip::@1
+flip::@1: from flip flip::@4
+  [24] (byte) flip::r#2 ← phi( flip/(byte) 16 flip::@4/(byte) flip::r#1 ) [ flip::srcIdx#3 flip::dstIdx#5 flip::r#2 ]
+  [24] (byte) flip::dstIdx#5 ← phi( flip/(byte) 15 flip::@4/(byte) flip::dstIdx#2 ) [ flip::srcIdx#3 flip::dstIdx#5 flip::r#2 ]
+  [24] (byte) flip::srcIdx#3 ← phi( flip/(byte) 0 flip::@4/(byte) flip::srcIdx#1 ) [ flip::srcIdx#3 flip::dstIdx#5 flip::r#2 ]
+  to:flip::@2
+flip::@2: from flip::@1 flip::@2
+  [25] (byte) flip::c#2 ← phi( flip::@1/(byte) 16 flip::@2/(byte) flip::c#1 ) [ flip::srcIdx#2 flip::dstIdx#3 flip::c#2 flip::r#2 ]
+  [25] (byte) flip::dstIdx#3 ← phi( flip::@1/(byte) flip::dstIdx#5 flip::@2/(byte) flip::dstIdx#1 ) [ flip::srcIdx#2 flip::dstIdx#3 flip::c#2 flip::r#2 ]
+  [25] (byte) flip::srcIdx#2 ← phi( flip::@1/(byte) flip::srcIdx#3 flip::@2/(byte) flip::srcIdx#1 ) [ flip::srcIdx#2 flip::dstIdx#3 flip::c#2 flip::r#2 ]
+  [26] (byte~) flip::$0 ← (word) 4096 *idx (byte) flip::srcIdx#2 [ flip::srcIdx#2 flip::dstIdx#3 flip::$0 flip::c#2 flip::r#2 ]
+  [27] *((word) 4352 + (byte) flip::dstIdx#3) ← (byte~) flip::$0 [ flip::srcIdx#2 flip::dstIdx#3 flip::c#2 flip::r#2 ]
+  [28] (byte) flip::srcIdx#1 ← ++ (byte) flip::srcIdx#2 [ flip::srcIdx#1 flip::dstIdx#3 flip::c#2 flip::r#2 ]
+  [29] (byte) flip::dstIdx#1 ← (byte) flip::dstIdx#3 + (byte) 16 [ flip::srcIdx#1 flip::dstIdx#1 flip::c#2 flip::r#2 ]
+  [30] (byte) flip::c#1 ← -- (byte) flip::c#2 [ flip::srcIdx#1 flip::dstIdx#1 flip::c#1 flip::r#2 ]
+  [31] if((byte) flip::c#1!=(byte) 0) goto flip::@2 [ flip::srcIdx#1 flip::dstIdx#1 flip::c#1 flip::r#2 ]
+  to:flip::@4
+flip::@4: from flip::@2
+  [32] (byte) flip::dstIdx#2 ← -- (byte) flip::dstIdx#1 [ flip::srcIdx#1 flip::dstIdx#2 flip::r#2 ]
+  [33] (byte) flip::r#1 ← -- (byte) flip::r#2 [ flip::srcIdx#1 flip::dstIdx#2 flip::r#1 ]
+  [34] if((byte) flip::r#1!=(byte) 0) goto flip::@1 [ flip::srcIdx#1 flip::dstIdx#2 flip::r#1 ]
+  to:flip::@3
+flip::@3: from flip::@3 flip::@4
+  [35] (byte) flip::i#2 ← phi( flip::@3/(byte) flip::i#1 flip::@4/(byte) 0 ) [ flip::i#2 ]
+  [36] (byte~) flip::$4 ← (word) 4352 *idx (byte) flip::i#2 [ flip::i#2 flip::$4 ]
+  [37] *((word) 4096 + (byte) flip::i#2) ← (byte~) flip::$4 [ flip::i#2 ]
+  [38] (byte) flip::i#1 ← ++ (byte) flip::i#2 [ flip::i#1 ]
+  [39] if((byte) flip::i#1!=(byte) 0) goto flip::@3 [ flip::i#1 ]
+  to:flip::@return
+flip::@return: from flip::@3
+  [40] return  [ ]
+  to:@RETURN
+prepare: from main
+  to:prepare::@1
+prepare::@1: from prepare prepare::@1
+  [41] (byte) prepare::i#2 ← phi( prepare/(byte) 0 prepare::@1/(byte) prepare::i#1 ) [ prepare::i#2 ]
+  [42] *((word) 4096 + (byte) prepare::i#2) ← (byte) prepare::i#2 [ prepare::i#2 ]
+  [43] (byte) prepare::i#1 ← ++ (byte) prepare::i#2 [ prepare::i#1 ]
+  [44] if((byte) prepare::i#1!=(byte) 0) goto prepare::@1 [ prepare::i#1 ]
+  to:prepare::@return
+prepare::@return: from prepare::@1
+  [45] return  [ ]
+  to:@RETURN
+
+SYMBOLS - LIVE RANGES
+(label) @BEGIN
+(label) @END
+(byte*) RASTER
+(byte[1000]) SCREEN
+(byte[256]) buffer1
+(byte[256]) buffer2
+(void()) flip()
+(byte~) flip::$0
+(byte~) flip::$4
+(label) flip::@1
+(label) flip::@2
+(label) flip::@3
+(label) flip::@4
+(label) flip::@return
+(byte) flip::c
+(byte) flip::c#1
+(byte) flip::c#2
+(byte) flip::dstIdx
+(byte) flip::dstIdx#1
+(byte) flip::dstIdx#2
+(byte) flip::dstIdx#3
+(byte) flip::dstIdx#5
+(byte) flip::i
+(byte) flip::i#1
+(byte) flip::i#2
+(byte) flip::r
+(byte) flip::r#1
+(byte) flip::r#2
+(byte) flip::srcIdx
+(byte) flip::srcIdx#1
+(byte) flip::srcIdx#2
+(byte) flip::srcIdx#3
+
+(void()) main()
+(byte~) main::$1
+(byte~) main::$3
+(label) main::@10
+(label) main::@11
+(label) main::@3
+(label) main::@4
+(label) main::@6
+(label) main::@7
+(label) main::@return
+(byte) main::c
+(byte) main::c#1
+(byte) main::c#2
+
+(void()) plot()
+(byte~) plot::$3
+(label) plot::@1
+(label) plot::@2
+(label) plot::@3
+(label) plot::@return
+(byte) plot::i
+(byte) plot::i#1
+(byte) plot::i#2
+(byte) plot::i#3
+(byte*) plot::line
+(byte*) plot::line#1
+(byte*) plot::line#2
+(byte) plot::x
+(byte) plot::x#1
+(byte) plot::x#2
+(byte) plot::y
+(byte) plot::y#1
+(byte) plot::y#2
+
+(void()) prepare()
+(label) prepare::@1
+(label) prepare::@return
+(byte) prepare::i
+(byte) prepare::i#1
+(byte) prepare::i#2
+
+
 INITIAL ASM
 BBEGIN:
   jsr main
@@ -3330,23 +3620,23 @@ main__B3_from_B6:
   // (byte) main::c#2 = (byte) main::c#1  // register copy 
   jmp main__B3
 main__B3:
-  // (byte~) main::$1 ← * (word) 53266  //  aby=_star_cowo1
+  // [3] (byte~) main::$1 ← * (word) 53266 [ main::$1 main::c#2 ]  //  aby=_star_cowo1
   lda 53266
-  // if((byte~) main::$1!=(byte) 254) goto main::@3  //  aby_neq_coby1_then_la1
+  // [4] if((byte~) main::$1!=(byte) 254) goto main::@3 [ main::c#2 ]  //  aby_neq_coby1_then_la1
   cmp #254
   bne main__B3_from_B3
   jmp main__B4
 main__B4:
-  // (byte~) main::$3 ← * (word) 53266  //  aby=_star_cowo1
+  // [5] (byte~) main::$3 ← * (word) 53266 [ main::$3 main::c#2 ]  //  aby=_star_cowo1
   lda 53266
-  // if((byte~) main::$3!=(byte) 255) goto main::@4  //  aby_neq_coby1_then_la1
+  // [6] if((byte~) main::$3!=(byte) 255) goto main::@4 [ main::c#2 ]  //  aby_neq_coby1_then_la1
   cmp #255
   bne main__main__B4
   jmp main__B6
 main__B6:
-  // (byte) main::c#1 ← -- (byte) main::c#2  //  xby=_dec_xby
+  // [7] (byte) main::c#1 ← -- (byte) main::c#2 [ main::c#1 ]  //  xby=_dec_xby
   dex
-  // if((byte) main::c#1!=(byte) 0) goto main::@3  //  xby_neq_0_then_la1
+  // [8] if((byte) main::c#1!=(byte) 0) goto main::@3 [ main::c#1 ]  //  xby_neq_0_then_la1
   cpx #0
   bne main__B3_from_B6
   jmp main__B7
@@ -3357,7 +3647,7 @@ main__B10:
   jsr plot
   jmp main__B11
 main__B11:
-  // if(true) goto main::@3  //  true_then_la1
+  // [11] if(true) goto main::@3 [ ]  //  true_then_la1
   jmp main__B3_from_B11
   jmp main__Breturn
 main__Breturn:
@@ -3391,20 +3681,20 @@ plot__B2_from_B2:
   // (byte) plot::i#2 = (byte) plot::i#1  // register copy 
   jmp plot__B2
 plot__B2:
-  // (byte~) plot::$3 ← (word) 4096 *idx (byte) plot::i#2  //  aby=cowo1_staridx_xby
+  // [15] (byte~) plot::$3 ← (word) 4096 *idx (byte) plot::i#2 [ plot::i#2 plot::line#2 plot::x#2 plot::$3 plot::y#2 ]  //  aby=cowo1_staridx_xby
   lda 4096,x
-  // *((byte*) plot::line#2 + (byte) plot::x#2) ← (byte~) plot::$3  //  ptr_zpptrby1_yby=aby
+  // [16] *((byte*) plot::line#2 + (byte) plot::x#2) ← (byte~) plot::$3 [ plot::i#2 plot::line#2 plot::x#2 plot::y#2 ]  //  ptr_zpptrby1_yby=aby
   sta (101),y
-  // (byte) plot::i#1 ← ++ (byte) plot::i#2  //  xby=_inc_xby
+  // [17] (byte) plot::i#1 ← ++ (byte) plot::i#2 [ plot::i#1 plot::line#2 plot::x#2 plot::y#2 ]  //  xby=_inc_xby
   inx
-  // (byte) plot::x#1 ← ++ (byte) plot::x#2  //  yby=_inc_yby
+  // [18] (byte) plot::x#1 ← ++ (byte) plot::x#2 [ plot::i#1 plot::x#1 plot::line#2 plot::y#2 ]  //  yby=_inc_yby
   iny
-  // if((byte) plot::x#1<(byte) 16) goto plot::@2  //  yby_lt_coby1_then_la1
+  // [19] if((byte) plot::x#1<(byte) 16) goto plot::@2 [ plot::i#1 plot::x#1 plot::line#2 plot::y#2 ]  //  yby_lt_coby1_then_la1
   cpy #16
   bcc plot__B2_from_B2
   jmp plot__B3
 plot__B3:
-  // (byte*) plot::line#1 ← (byte*) plot::line#2 + (byte) 40  //  zpptrby1=zpptrby1_plus_coby1
+  // [20] (byte*) plot::line#1 ← (byte*) plot::line#2 + (byte) 40 [ plot::i#1 plot::line#1 plot::y#2 ]  //  zpptrby1=zpptrby1_plus_coby1
   lda 101
   clc
   adc #40
@@ -3412,9 +3702,9 @@ plot__B3:
   bcc !+
   inc 101+1
 !:
-  // (byte) plot::y#1 ← -- (byte) plot::y#2  //  zpby1=_dec_zpby1
+  // [21] (byte) plot::y#1 ← -- (byte) plot::y#2 [ plot::i#1 plot::line#1 plot::y#1 ]  //  zpby1=_dec_zpby1
   dec 100
-  // if((byte) plot::y#1!=(byte) 0) goto plot::@1  //  zpby1_neq_0_then_la1
+  // [22] if((byte) plot::y#1!=(byte) 0) goto plot::@1 [ plot::i#1 plot::line#1 plot::y#1 ]  //  zpby1_neq_0_then_la1
   lda 100
   bne plot__B1_from_B3
   jmp plot__Breturn
@@ -3449,29 +3739,29 @@ flip__B2_from_B2:
   // (byte) flip::srcIdx#2 = (byte) flip::srcIdx#1  // register copy 
   jmp flip__B2
 flip__B2:
-  // (byte~) flip::$0 ← (word) 4096 *idx (byte) flip::srcIdx#2  //  aby=cowo1_staridx_xby
+  // [26] (byte~) flip::$0 ← (word) 4096 *idx (byte) flip::srcIdx#2 [ flip::srcIdx#2 flip::dstIdx#3 flip::$0 flip::c#2 flip::r#2 ]  //  aby=cowo1_staridx_xby
   lda 4096,x
-  // *((word) 4352 + (byte) flip::dstIdx#3) ← (byte~) flip::$0  //  ptr_cowo1_yby=aby
+  // [27] *((word) 4352 + (byte) flip::dstIdx#3) ← (byte~) flip::$0 [ flip::srcIdx#2 flip::dstIdx#3 flip::c#2 flip::r#2 ]  //  ptr_cowo1_yby=aby
   sta 4352,y
-  // (byte) flip::srcIdx#1 ← ++ (byte) flip::srcIdx#2  //  xby=_inc_xby
+  // [28] (byte) flip::srcIdx#1 ← ++ (byte) flip::srcIdx#2 [ flip::srcIdx#1 flip::dstIdx#3 flip::c#2 flip::r#2 ]  //  xby=_inc_xby
   inx
-  // (byte) flip::dstIdx#1 ← (byte) flip::dstIdx#3 + (byte) 16  //  yby=yby_plus_coby1
+  // [29] (byte) flip::dstIdx#1 ← (byte) flip::dstIdx#3 + (byte) 16 [ flip::srcIdx#1 flip::dstIdx#1 flip::c#2 flip::r#2 ]  //  yby=yby_plus_coby1
   tya
   clc
   adc #16
   tay
-  // (byte) flip::c#1 ← -- (byte) flip::c#2  //  zpby1=_dec_zpby1
+  // [30] (byte) flip::c#1 ← -- (byte) flip::c#2 [ flip::srcIdx#1 flip::dstIdx#1 flip::c#1 flip::r#2 ]  //  zpby1=_dec_zpby1
   dec 103
-  // if((byte) flip::c#1!=(byte) 0) goto flip::@2  //  zpby1_neq_0_then_la1
+  // [31] if((byte) flip::c#1!=(byte) 0) goto flip::@2 [ flip::srcIdx#1 flip::dstIdx#1 flip::c#1 flip::r#2 ]  //  zpby1_neq_0_then_la1
   lda 103
   bne flip__B2_from_B2
   jmp flip__B4
 flip__B4:
-  // (byte) flip::dstIdx#2 ← -- (byte) flip::dstIdx#1  //  yby=_dec_yby
+  // [32] (byte) flip::dstIdx#2 ← -- (byte) flip::dstIdx#1 [ flip::srcIdx#1 flip::dstIdx#2 flip::r#2 ]  //  yby=_dec_yby
   dey
-  // (byte) flip::r#1 ← -- (byte) flip::r#2  //  zpby1=_dec_zpby1
+  // [33] (byte) flip::r#1 ← -- (byte) flip::r#2 [ flip::srcIdx#1 flip::dstIdx#2 flip::r#1 ]  //  zpby1=_dec_zpby1
   dec 104
-  // if((byte) flip::r#1!=(byte) 0) goto flip::@1  //  zpby1_neq_0_then_la1
+  // [34] if((byte) flip::r#1!=(byte) 0) goto flip::@1 [ flip::srcIdx#1 flip::dstIdx#2 flip::r#1 ]  //  zpby1_neq_0_then_la1
   lda 104
   bne flip__B1_from_B4
 flip__B3_from_B4:
@@ -3482,13 +3772,13 @@ flip__B3_from_B3:
   // (byte) flip::i#2 = (byte) flip::i#1  // register copy 
   jmp flip__B3
 flip__B3:
-  // (byte~) flip::$4 ← (word) 4352 *idx (byte) flip::i#2  //  aby=cowo1_staridx_xby
+  // [36] (byte~) flip::$4 ← (word) 4352 *idx (byte) flip::i#2 [ flip::i#2 flip::$4 ]  //  aby=cowo1_staridx_xby
   lda 4352,x
-  // *((word) 4096 + (byte) flip::i#2) ← (byte~) flip::$4  //  ptr_cowo1_xby=aby
+  // [37] *((word) 4096 + (byte) flip::i#2) ← (byte~) flip::$4 [ flip::i#2 ]  //  ptr_cowo1_xby=aby
   sta 4096,x
-  // (byte) flip::i#1 ← ++ (byte) flip::i#2  //  xby=_inc_xby
+  // [38] (byte) flip::i#1 ← ++ (byte) flip::i#2 [ flip::i#1 ]  //  xby=_inc_xby
   inx
-  // if((byte) flip::i#1!=(byte) 0) goto flip::@3  //  xby_neq_0_then_la1
+  // [39] if((byte) flip::i#1!=(byte) 0) goto flip::@3 [ flip::i#1 ]  //  xby_neq_0_then_la1
   cpx #0
   bne flip__B3_from_B3
   jmp flip__Breturn
@@ -3503,12 +3793,12 @@ prepare__B1_from_B1:
   // (byte) prepare::i#2 = (byte) prepare::i#1  // register copy 
   jmp prepare__B1
 prepare__B1:
-  // *((word) 4096 + (byte) prepare::i#2) ← (byte) prepare::i#2  //  ptr_cowo1_xby=xby
+  // [42] *((word) 4096 + (byte) prepare::i#2) ← (byte) prepare::i#2 [ prepare::i#2 ]  //  ptr_cowo1_xby=xby
   txa
   sta 4096,x
-  // (byte) prepare::i#1 ← ++ (byte) prepare::i#2  //  xby=_inc_xby
+  // [43] (byte) prepare::i#1 ← ++ (byte) prepare::i#2 [ prepare::i#1 ]  //  xby=_inc_xby
   inx
-  // if((byte) prepare::i#1!=(byte) 0) goto prepare::@1  //  xby_neq_0_then_la1
+  // [44] if((byte) prepare::i#1!=(byte) 0) goto prepare::@1 [ prepare::i#1 ]  //  xby_neq_0_then_la1
   cpx #0
   bne prepare__B1_from_B1
   jmp prepare__Breturn
@@ -3534,7 +3824,7 @@ Removing instruction jmp flip__B3
 Removing instruction jmp flip__Breturn
 Removing instruction jmp prepare__B1
 Removing instruction jmp prepare__Breturn
-Succesful ASM optimization Pass4NextJumpElimination
+Succesful ASM optimization Pass5NextJumpElimination
 ASSEMBLER
 BBEGIN:
   jsr main
@@ -3554,21 +3844,21 @@ main__B3_from_B3:
 main__B3_from_B6:
   // (byte) main::c#2 = (byte) main::c#1  // register copy 
 main__B3:
-  // (byte~) main::$1 ← * (word) 53266  //  aby=_star_cowo1
+  // [3] (byte~) main::$1 ← * (word) 53266 [ main::$1 main::c#2 ]  //  aby=_star_cowo1
   lda 53266
-  // if((byte~) main::$1!=(byte) 254) goto main::@3  //  aby_neq_coby1_then_la1
+  // [4] if((byte~) main::$1!=(byte) 254) goto main::@3 [ main::c#2 ]  //  aby_neq_coby1_then_la1
   cmp #254
   bne main__B3_from_B3
 main__B4:
-  // (byte~) main::$3 ← * (word) 53266  //  aby=_star_cowo1
+  // [5] (byte~) main::$3 ← * (word) 53266 [ main::$3 main::c#2 ]  //  aby=_star_cowo1
   lda 53266
-  // if((byte~) main::$3!=(byte) 255) goto main::@4  //  aby_neq_coby1_then_la1
+  // [6] if((byte~) main::$3!=(byte) 255) goto main::@4 [ main::c#2 ]  //  aby_neq_coby1_then_la1
   cmp #255
   bne main__main__B4
 main__B6:
-  // (byte) main::c#1 ← -- (byte) main::c#2  //  xby=_dec_xby
+  // [7] (byte) main::c#1 ← -- (byte) main::c#2 [ main::c#1 ]  //  xby=_dec_xby
   dex
-  // if((byte) main::c#1!=(byte) 0) goto main::@3  //  xby_neq_0_then_la1
+  // [8] if((byte) main::c#1!=(byte) 0) goto main::@3 [ main::c#1 ]  //  xby_neq_0_then_la1
   cpx #0
   bne main__B3_from_B6
 main__B7:
@@ -3576,7 +3866,7 @@ main__B7:
 main__B10:
   jsr plot
 main__B11:
-  // if(true) goto main::@3  //  true_then_la1
+  // [11] if(true) goto main::@3 [ ]  //  true_then_la1
   jmp main__B3_from_B11
 main__Breturn:
   rts
@@ -3607,19 +3897,19 @@ plot__B2_from_B2:
   // (byte) plot::x#2 = (byte) plot::x#1  // register copy 
   // (byte) plot::i#2 = (byte) plot::i#1  // register copy 
 plot__B2:
-  // (byte~) plot::$3 ← (word) 4096 *idx (byte) plot::i#2  //  aby=cowo1_staridx_xby
+  // [15] (byte~) plot::$3 ← (word) 4096 *idx (byte) plot::i#2 [ plot::i#2 plot::line#2 plot::x#2 plot::$3 plot::y#2 ]  //  aby=cowo1_staridx_xby
   lda 4096,x
-  // *((byte*) plot::line#2 + (byte) plot::x#2) ← (byte~) plot::$3  //  ptr_zpptrby1_yby=aby
+  // [16] *((byte*) plot::line#2 + (byte) plot::x#2) ← (byte~) plot::$3 [ plot::i#2 plot::line#2 plot::x#2 plot::y#2 ]  //  ptr_zpptrby1_yby=aby
   sta (101),y
-  // (byte) plot::i#1 ← ++ (byte) plot::i#2  //  xby=_inc_xby
+  // [17] (byte) plot::i#1 ← ++ (byte) plot::i#2 [ plot::i#1 plot::line#2 plot::x#2 plot::y#2 ]  //  xby=_inc_xby
   inx
-  // (byte) plot::x#1 ← ++ (byte) plot::x#2  //  yby=_inc_yby
+  // [18] (byte) plot::x#1 ← ++ (byte) plot::x#2 [ plot::i#1 plot::x#1 plot::line#2 plot::y#2 ]  //  yby=_inc_yby
   iny
-  // if((byte) plot::x#1<(byte) 16) goto plot::@2  //  yby_lt_coby1_then_la1
+  // [19] if((byte) plot::x#1<(byte) 16) goto plot::@2 [ plot::i#1 plot::x#1 plot::line#2 plot::y#2 ]  //  yby_lt_coby1_then_la1
   cpy #16
   bcc plot__B2_from_B2
 plot__B3:
-  // (byte*) plot::line#1 ← (byte*) plot::line#2 + (byte) 40  //  zpptrby1=zpptrby1_plus_coby1
+  // [20] (byte*) plot::line#1 ← (byte*) plot::line#2 + (byte) 40 [ plot::i#1 plot::line#1 plot::y#2 ]  //  zpptrby1=zpptrby1_plus_coby1
   lda 101
   clc
   adc #40
@@ -3627,9 +3917,9 @@ plot__B3:
   bcc !+
   inc 101+1
 !:
-  // (byte) plot::y#1 ← -- (byte) plot::y#2  //  zpby1=_dec_zpby1
+  // [21] (byte) plot::y#1 ← -- (byte) plot::y#2 [ plot::i#1 plot::line#1 plot::y#1 ]  //  zpby1=_dec_zpby1
   dec 100
-  // if((byte) plot::y#1!=(byte) 0) goto plot::@1  //  zpby1_neq_0_then_la1
+  // [22] if((byte) plot::y#1!=(byte) 0) goto plot::@1 [ plot::i#1 plot::line#1 plot::y#1 ]  //  zpby1_neq_0_then_la1
   lda 100
   bne plot__B1_from_B3
 plot__Breturn:
@@ -3661,28 +3951,28 @@ flip__B2_from_B2:
   // (byte) flip::dstIdx#3 = (byte) flip::dstIdx#1  // register copy 
   // (byte) flip::srcIdx#2 = (byte) flip::srcIdx#1  // register copy 
 flip__B2:
-  // (byte~) flip::$0 ← (word) 4096 *idx (byte) flip::srcIdx#2  //  aby=cowo1_staridx_xby
+  // [26] (byte~) flip::$0 ← (word) 4096 *idx (byte) flip::srcIdx#2 [ flip::srcIdx#2 flip::dstIdx#3 flip::$0 flip::c#2 flip::r#2 ]  //  aby=cowo1_staridx_xby
   lda 4096,x
-  // *((word) 4352 + (byte) flip::dstIdx#3) ← (byte~) flip::$0  //  ptr_cowo1_yby=aby
+  // [27] *((word) 4352 + (byte) flip::dstIdx#3) ← (byte~) flip::$0 [ flip::srcIdx#2 flip::dstIdx#3 flip::c#2 flip::r#2 ]  //  ptr_cowo1_yby=aby
   sta 4352,y
-  // (byte) flip::srcIdx#1 ← ++ (byte) flip::srcIdx#2  //  xby=_inc_xby
+  // [28] (byte) flip::srcIdx#1 ← ++ (byte) flip::srcIdx#2 [ flip::srcIdx#1 flip::dstIdx#3 flip::c#2 flip::r#2 ]  //  xby=_inc_xby
   inx
-  // (byte) flip::dstIdx#1 ← (byte) flip::dstIdx#3 + (byte) 16  //  yby=yby_plus_coby1
+  // [29] (byte) flip::dstIdx#1 ← (byte) flip::dstIdx#3 + (byte) 16 [ flip::srcIdx#1 flip::dstIdx#1 flip::c#2 flip::r#2 ]  //  yby=yby_plus_coby1
   tya
   clc
   adc #16
   tay
-  // (byte) flip::c#1 ← -- (byte) flip::c#2  //  zpby1=_dec_zpby1
+  // [30] (byte) flip::c#1 ← -- (byte) flip::c#2 [ flip::srcIdx#1 flip::dstIdx#1 flip::c#1 flip::r#2 ]  //  zpby1=_dec_zpby1
   dec 103
-  // if((byte) flip::c#1!=(byte) 0) goto flip::@2  //  zpby1_neq_0_then_la1
+  // [31] if((byte) flip::c#1!=(byte) 0) goto flip::@2 [ flip::srcIdx#1 flip::dstIdx#1 flip::c#1 flip::r#2 ]  //  zpby1_neq_0_then_la1
   lda 103
   bne flip__B2_from_B2
 flip__B4:
-  // (byte) flip::dstIdx#2 ← -- (byte) flip::dstIdx#1  //  yby=_dec_yby
+  // [32] (byte) flip::dstIdx#2 ← -- (byte) flip::dstIdx#1 [ flip::srcIdx#1 flip::dstIdx#2 flip::r#2 ]  //  yby=_dec_yby
   dey
-  // (byte) flip::r#1 ← -- (byte) flip::r#2  //  zpby1=_dec_zpby1
+  // [33] (byte) flip::r#1 ← -- (byte) flip::r#2 [ flip::srcIdx#1 flip::dstIdx#2 flip::r#1 ]  //  zpby1=_dec_zpby1
   dec 104
-  // if((byte) flip::r#1!=(byte) 0) goto flip::@1  //  zpby1_neq_0_then_la1
+  // [34] if((byte) flip::r#1!=(byte) 0) goto flip::@1 [ flip::srcIdx#1 flip::dstIdx#2 flip::r#1 ]  //  zpby1_neq_0_then_la1
   lda 104
   bne flip__B1_from_B4
 flip__B3_from_B4:
@@ -3692,13 +3982,13 @@ flip__B3_from_B4:
 flip__B3_from_B3:
   // (byte) flip::i#2 = (byte) flip::i#1  // register copy 
 flip__B3:
-  // (byte~) flip::$4 ← (word) 4352 *idx (byte) flip::i#2  //  aby=cowo1_staridx_xby
+  // [36] (byte~) flip::$4 ← (word) 4352 *idx (byte) flip::i#2 [ flip::i#2 flip::$4 ]  //  aby=cowo1_staridx_xby
   lda 4352,x
-  // *((word) 4096 + (byte) flip::i#2) ← (byte~) flip::$4  //  ptr_cowo1_xby=aby
+  // [37] *((word) 4096 + (byte) flip::i#2) ← (byte~) flip::$4 [ flip::i#2 ]  //  ptr_cowo1_xby=aby
   sta 4096,x
-  // (byte) flip::i#1 ← ++ (byte) flip::i#2  //  xby=_inc_xby
+  // [38] (byte) flip::i#1 ← ++ (byte) flip::i#2 [ flip::i#1 ]  //  xby=_inc_xby
   inx
-  // if((byte) flip::i#1!=(byte) 0) goto flip::@3  //  xby_neq_0_then_la1
+  // [39] if((byte) flip::i#1!=(byte) 0) goto flip::@3 [ flip::i#1 ]  //  xby_neq_0_then_la1
   cpx #0
   bne flip__B3_from_B3
 flip__Breturn:
@@ -3711,12 +4001,12 @@ prepare__B1_from_prepare:
 prepare__B1_from_B1:
   // (byte) prepare::i#2 = (byte) prepare::i#1  // register copy 
 prepare__B1:
-  // *((word) 4096 + (byte) prepare::i#2) ← (byte) prepare::i#2  //  ptr_cowo1_xby=xby
+  // [42] *((word) 4096 + (byte) prepare::i#2) ← (byte) prepare::i#2 [ prepare::i#2 ]  //  ptr_cowo1_xby=xby
   txa
   sta 4096,x
-  // (byte) prepare::i#1 ← ++ (byte) prepare::i#2  //  xby=_inc_xby
+  // [43] (byte) prepare::i#1 ← ++ (byte) prepare::i#2 [ prepare::i#1 ]  //  xby=_inc_xby
   inx
-  // if((byte) prepare::i#1!=(byte) 0) goto prepare::@1  //  xby_neq_0_then_la1
+  // [44] if((byte) prepare::i#1!=(byte) 0) goto prepare::@1 [ prepare::i#1 ]  //  xby_neq_0_then_la1
   cpx #0
   bne prepare__B1_from_B1
 prepare__Breturn:
@@ -3729,7 +4019,7 @@ Removing instruction jmp flip__B1
 Removing instruction jmp flip__B2
 Removing instruction jmp flip__B3
 Removing instruction jmp prepare__B1
-Succesful ASM optimization Pass4NextJumpElimination
+Succesful ASM optimization Pass5NextJumpElimination
 ASSEMBLER
 BBEGIN:
   jsr main
@@ -3748,21 +4038,21 @@ main__B3_from_B3:
 main__B3_from_B6:
   // (byte) main::c#2 = (byte) main::c#1  // register copy 
 main__B3:
-  // (byte~) main::$1 ← * (word) 53266  //  aby=_star_cowo1
+  // [3] (byte~) main::$1 ← * (word) 53266 [ main::$1 main::c#2 ]  //  aby=_star_cowo1
   lda 53266
-  // if((byte~) main::$1!=(byte) 254) goto main::@3  //  aby_neq_coby1_then_la1
+  // [4] if((byte~) main::$1!=(byte) 254) goto main::@3 [ main::c#2 ]  //  aby_neq_coby1_then_la1
   cmp #254
   bne main__B3_from_B3
 main__B4:
-  // (byte~) main::$3 ← * (word) 53266  //  aby=_star_cowo1
+  // [5] (byte~) main::$3 ← * (word) 53266 [ main::$3 main::c#2 ]  //  aby=_star_cowo1
   lda 53266
-  // if((byte~) main::$3!=(byte) 255) goto main::@4  //  aby_neq_coby1_then_la1
+  // [6] if((byte~) main::$3!=(byte) 255) goto main::@4 [ main::c#2 ]  //  aby_neq_coby1_then_la1
   cmp #255
   bne main__main__B4
 main__B6:
-  // (byte) main::c#1 ← -- (byte) main::c#2  //  xby=_dec_xby
+  // [7] (byte) main::c#1 ← -- (byte) main::c#2 [ main::c#1 ]  //  xby=_dec_xby
   dex
-  // if((byte) main::c#1!=(byte) 0) goto main::@3  //  xby_neq_0_then_la1
+  // [8] if((byte) main::c#1!=(byte) 0) goto main::@3 [ main::c#1 ]  //  xby_neq_0_then_la1
   cpx #0
   bne main__B3_from_B6
 main__B7:
@@ -3770,7 +4060,7 @@ main__B7:
 main__B10:
   jsr plot
 main__B11:
-  // if(true) goto main::@3  //  true_then_la1
+  // [11] if(true) goto main::@3 [ ]  //  true_then_la1
   jmp main__B3_from_B11
 main__Breturn:
   rts
@@ -3799,19 +4089,19 @@ plot__B2_from_B2:
   // (byte) plot::x#2 = (byte) plot::x#1  // register copy 
   // (byte) plot::i#2 = (byte) plot::i#1  // register copy 
 plot__B2:
-  // (byte~) plot::$3 ← (word) 4096 *idx (byte) plot::i#2  //  aby=cowo1_staridx_xby
+  // [15] (byte~) plot::$3 ← (word) 4096 *idx (byte) plot::i#2 [ plot::i#2 plot::line#2 plot::x#2 plot::$3 plot::y#2 ]  //  aby=cowo1_staridx_xby
   lda 4096,x
-  // *((byte*) plot::line#2 + (byte) plot::x#2) ← (byte~) plot::$3  //  ptr_zpptrby1_yby=aby
+  // [16] *((byte*) plot::line#2 + (byte) plot::x#2) ← (byte~) plot::$3 [ plot::i#2 plot::line#2 plot::x#2 plot::y#2 ]  //  ptr_zpptrby1_yby=aby
   sta (101),y
-  // (byte) plot::i#1 ← ++ (byte) plot::i#2  //  xby=_inc_xby
+  // [17] (byte) plot::i#1 ← ++ (byte) plot::i#2 [ plot::i#1 plot::line#2 plot::x#2 plot::y#2 ]  //  xby=_inc_xby
   inx
-  // (byte) plot::x#1 ← ++ (byte) plot::x#2  //  yby=_inc_yby
+  // [18] (byte) plot::x#1 ← ++ (byte) plot::x#2 [ plot::i#1 plot::x#1 plot::line#2 plot::y#2 ]  //  yby=_inc_yby
   iny
-  // if((byte) plot::x#1<(byte) 16) goto plot::@2  //  yby_lt_coby1_then_la1
+  // [19] if((byte) plot::x#1<(byte) 16) goto plot::@2 [ plot::i#1 plot::x#1 plot::line#2 plot::y#2 ]  //  yby_lt_coby1_then_la1
   cpy #16
   bcc plot__B2_from_B2
 plot__B3:
-  // (byte*) plot::line#1 ← (byte*) plot::line#2 + (byte) 40  //  zpptrby1=zpptrby1_plus_coby1
+  // [20] (byte*) plot::line#1 ← (byte*) plot::line#2 + (byte) 40 [ plot::i#1 plot::line#1 plot::y#2 ]  //  zpptrby1=zpptrby1_plus_coby1
   lda 101
   clc
   adc #40
@@ -3819,9 +4109,9 @@ plot__B3:
   bcc !+
   inc 101+1
 !:
-  // (byte) plot::y#1 ← -- (byte) plot::y#2  //  zpby1=_dec_zpby1
+  // [21] (byte) plot::y#1 ← -- (byte) plot::y#2 [ plot::i#1 plot::line#1 plot::y#1 ]  //  zpby1=_dec_zpby1
   dec 100
-  // if((byte) plot::y#1!=(byte) 0) goto plot::@1  //  zpby1_neq_0_then_la1
+  // [22] if((byte) plot::y#1!=(byte) 0) goto plot::@1 [ plot::i#1 plot::line#1 plot::y#1 ]  //  zpby1_neq_0_then_la1
   lda 100
   bne plot__B1_from_B3
 plot__Breturn:
@@ -3851,28 +4141,28 @@ flip__B2_from_B2:
   // (byte) flip::dstIdx#3 = (byte) flip::dstIdx#1  // register copy 
   // (byte) flip::srcIdx#2 = (byte) flip::srcIdx#1  // register copy 
 flip__B2:
-  // (byte~) flip::$0 ← (word) 4096 *idx (byte) flip::srcIdx#2  //  aby=cowo1_staridx_xby
+  // [26] (byte~) flip::$0 ← (word) 4096 *idx (byte) flip::srcIdx#2 [ flip::srcIdx#2 flip::dstIdx#3 flip::$0 flip::c#2 flip::r#2 ]  //  aby=cowo1_staridx_xby
   lda 4096,x
-  // *((word) 4352 + (byte) flip::dstIdx#3) ← (byte~) flip::$0  //  ptr_cowo1_yby=aby
+  // [27] *((word) 4352 + (byte) flip::dstIdx#3) ← (byte~) flip::$0 [ flip::srcIdx#2 flip::dstIdx#3 flip::c#2 flip::r#2 ]  //  ptr_cowo1_yby=aby
   sta 4352,y
-  // (byte) flip::srcIdx#1 ← ++ (byte) flip::srcIdx#2  //  xby=_inc_xby
+  // [28] (byte) flip::srcIdx#1 ← ++ (byte) flip::srcIdx#2 [ flip::srcIdx#1 flip::dstIdx#3 flip::c#2 flip::r#2 ]  //  xby=_inc_xby
   inx
-  // (byte) flip::dstIdx#1 ← (byte) flip::dstIdx#3 + (byte) 16  //  yby=yby_plus_coby1
+  // [29] (byte) flip::dstIdx#1 ← (byte) flip::dstIdx#3 + (byte) 16 [ flip::srcIdx#1 flip::dstIdx#1 flip::c#2 flip::r#2 ]  //  yby=yby_plus_coby1
   tya
   clc
   adc #16
   tay
-  // (byte) flip::c#1 ← -- (byte) flip::c#2  //  zpby1=_dec_zpby1
+  // [30] (byte) flip::c#1 ← -- (byte) flip::c#2 [ flip::srcIdx#1 flip::dstIdx#1 flip::c#1 flip::r#2 ]  //  zpby1=_dec_zpby1
   dec 103
-  // if((byte) flip::c#1!=(byte) 0) goto flip::@2  //  zpby1_neq_0_then_la1
+  // [31] if((byte) flip::c#1!=(byte) 0) goto flip::@2 [ flip::srcIdx#1 flip::dstIdx#1 flip::c#1 flip::r#2 ]  //  zpby1_neq_0_then_la1
   lda 103
   bne flip__B2_from_B2
 flip__B4:
-  // (byte) flip::dstIdx#2 ← -- (byte) flip::dstIdx#1  //  yby=_dec_yby
+  // [32] (byte) flip::dstIdx#2 ← -- (byte) flip::dstIdx#1 [ flip::srcIdx#1 flip::dstIdx#2 flip::r#2 ]  //  yby=_dec_yby
   dey
-  // (byte) flip::r#1 ← -- (byte) flip::r#2  //  zpby1=_dec_zpby1
+  // [33] (byte) flip::r#1 ← -- (byte) flip::r#2 [ flip::srcIdx#1 flip::dstIdx#2 flip::r#1 ]  //  zpby1=_dec_zpby1
   dec 104
-  // if((byte) flip::r#1!=(byte) 0) goto flip::@1  //  zpby1_neq_0_then_la1
+  // [34] if((byte) flip::r#1!=(byte) 0) goto flip::@1 [ flip::srcIdx#1 flip::dstIdx#2 flip::r#1 ]  //  zpby1_neq_0_then_la1
   lda 104
   bne flip__B1_from_B4
 flip__B3_from_B4:
@@ -3881,13 +4171,13 @@ flip__B3_from_B4:
 flip__B3_from_B3:
   // (byte) flip::i#2 = (byte) flip::i#1  // register copy 
 flip__B3:
-  // (byte~) flip::$4 ← (word) 4352 *idx (byte) flip::i#2  //  aby=cowo1_staridx_xby
+  // [36] (byte~) flip::$4 ← (word) 4352 *idx (byte) flip::i#2 [ flip::i#2 flip::$4 ]  //  aby=cowo1_staridx_xby
   lda 4352,x
-  // *((word) 4096 + (byte) flip::i#2) ← (byte~) flip::$4  //  ptr_cowo1_xby=aby
+  // [37] *((word) 4096 + (byte) flip::i#2) ← (byte~) flip::$4 [ flip::i#2 ]  //  ptr_cowo1_xby=aby
   sta 4096,x
-  // (byte) flip::i#1 ← ++ (byte) flip::i#2  //  xby=_inc_xby
+  // [38] (byte) flip::i#1 ← ++ (byte) flip::i#2 [ flip::i#1 ]  //  xby=_inc_xby
   inx
-  // if((byte) flip::i#1!=(byte) 0) goto flip::@3  //  xby_neq_0_then_la1
+  // [39] if((byte) flip::i#1!=(byte) 0) goto flip::@3 [ flip::i#1 ]  //  xby_neq_0_then_la1
   cpx #0
   bne flip__B3_from_B3
 flip__Breturn:
@@ -3899,19 +4189,19 @@ prepare__B1_from_prepare:
 prepare__B1_from_B1:
   // (byte) prepare::i#2 = (byte) prepare::i#1  // register copy 
 prepare__B1:
-  // *((word) 4096 + (byte) prepare::i#2) ← (byte) prepare::i#2  //  ptr_cowo1_xby=xby
+  // [42] *((word) 4096 + (byte) prepare::i#2) ← (byte) prepare::i#2 [ prepare::i#2 ]  //  ptr_cowo1_xby=xby
   txa
   sta 4096,x
-  // (byte) prepare::i#1 ← ++ (byte) prepare::i#2  //  xby=_inc_xby
+  // [43] (byte) prepare::i#1 ← ++ (byte) prepare::i#2 [ prepare::i#1 ]  //  xby=_inc_xby
   inx
-  // if((byte) prepare::i#1!=(byte) 0) goto prepare::@1  //  xby_neq_0_then_la1
+  // [44] if((byte) prepare::i#1!=(byte) 0) goto prepare::@1 [ prepare::i#1 ]  //  xby_neq_0_then_la1
   cpx #0
   bne prepare__B1_from_B1
 prepare__Breturn:
   rts
 
 Removing instruction jmp main__B3
-Succesful ASM optimization Pass4NextJumpElimination
+Succesful ASM optimization Pass5NextJumpElimination
 ASSEMBLER
 BBEGIN:
   jsr main
@@ -3929,21 +4219,21 @@ main__B3_from_B3:
 main__B3_from_B6:
   // (byte) main::c#2 = (byte) main::c#1  // register copy 
 main__B3:
-  // (byte~) main::$1 ← * (word) 53266  //  aby=_star_cowo1
+  // [3] (byte~) main::$1 ← * (word) 53266 [ main::$1 main::c#2 ]  //  aby=_star_cowo1
   lda 53266
-  // if((byte~) main::$1!=(byte) 254) goto main::@3  //  aby_neq_coby1_then_la1
+  // [4] if((byte~) main::$1!=(byte) 254) goto main::@3 [ main::c#2 ]  //  aby_neq_coby1_then_la1
   cmp #254
   bne main__B3_from_B3
 main__B4:
-  // (byte~) main::$3 ← * (word) 53266  //  aby=_star_cowo1
+  // [5] (byte~) main::$3 ← * (word) 53266 [ main::$3 main::c#2 ]  //  aby=_star_cowo1
   lda 53266
-  // if((byte~) main::$3!=(byte) 255) goto main::@4  //  aby_neq_coby1_then_la1
+  // [6] if((byte~) main::$3!=(byte) 255) goto main::@4 [ main::c#2 ]  //  aby_neq_coby1_then_la1
   cmp #255
   bne main__main__B4
 main__B6:
-  // (byte) main::c#1 ← -- (byte) main::c#2  //  xby=_dec_xby
+  // [7] (byte) main::c#1 ← -- (byte) main::c#2 [ main::c#1 ]  //  xby=_dec_xby
   dex
-  // if((byte) main::c#1!=(byte) 0) goto main::@3  //  xby_neq_0_then_la1
+  // [8] if((byte) main::c#1!=(byte) 0) goto main::@3 [ main::c#1 ]  //  xby_neq_0_then_la1
   cpx #0
   bne main__B3_from_B6
 main__B7:
@@ -3951,7 +4241,7 @@ main__B7:
 main__B10:
   jsr plot
 main__B11:
-  // if(true) goto main::@3  //  true_then_la1
+  // [11] if(true) goto main::@3 [ ]  //  true_then_la1
   jmp main__B3_from_B11
 main__Breturn:
   rts
@@ -3980,19 +4270,19 @@ plot__B2_from_B2:
   // (byte) plot::x#2 = (byte) plot::x#1  // register copy 
   // (byte) plot::i#2 = (byte) plot::i#1  // register copy 
 plot__B2:
-  // (byte~) plot::$3 ← (word) 4096 *idx (byte) plot::i#2  //  aby=cowo1_staridx_xby
+  // [15] (byte~) plot::$3 ← (word) 4096 *idx (byte) plot::i#2 [ plot::i#2 plot::line#2 plot::x#2 plot::$3 plot::y#2 ]  //  aby=cowo1_staridx_xby
   lda 4096,x
-  // *((byte*) plot::line#2 + (byte) plot::x#2) ← (byte~) plot::$3  //  ptr_zpptrby1_yby=aby
+  // [16] *((byte*) plot::line#2 + (byte) plot::x#2) ← (byte~) plot::$3 [ plot::i#2 plot::line#2 plot::x#2 plot::y#2 ]  //  ptr_zpptrby1_yby=aby
   sta (101),y
-  // (byte) plot::i#1 ← ++ (byte) plot::i#2  //  xby=_inc_xby
+  // [17] (byte) plot::i#1 ← ++ (byte) plot::i#2 [ plot::i#1 plot::line#2 plot::x#2 plot::y#2 ]  //  xby=_inc_xby
   inx
-  // (byte) plot::x#1 ← ++ (byte) plot::x#2  //  yby=_inc_yby
+  // [18] (byte) plot::x#1 ← ++ (byte) plot::x#2 [ plot::i#1 plot::x#1 plot::line#2 plot::y#2 ]  //  yby=_inc_yby
   iny
-  // if((byte) plot::x#1<(byte) 16) goto plot::@2  //  yby_lt_coby1_then_la1
+  // [19] if((byte) plot::x#1<(byte) 16) goto plot::@2 [ plot::i#1 plot::x#1 plot::line#2 plot::y#2 ]  //  yby_lt_coby1_then_la1
   cpy #16
   bcc plot__B2_from_B2
 plot__B3:
-  // (byte*) plot::line#1 ← (byte*) plot::line#2 + (byte) 40  //  zpptrby1=zpptrby1_plus_coby1
+  // [20] (byte*) plot::line#1 ← (byte*) plot::line#2 + (byte) 40 [ plot::i#1 plot::line#1 plot::y#2 ]  //  zpptrby1=zpptrby1_plus_coby1
   lda 101
   clc
   adc #40
@@ -4000,9 +4290,9 @@ plot__B3:
   bcc !+
   inc 101+1
 !:
-  // (byte) plot::y#1 ← -- (byte) plot::y#2  //  zpby1=_dec_zpby1
+  // [21] (byte) plot::y#1 ← -- (byte) plot::y#2 [ plot::i#1 plot::line#1 plot::y#1 ]  //  zpby1=_dec_zpby1
   dec 100
-  // if((byte) plot::y#1!=(byte) 0) goto plot::@1  //  zpby1_neq_0_then_la1
+  // [22] if((byte) plot::y#1!=(byte) 0) goto plot::@1 [ plot::i#1 plot::line#1 plot::y#1 ]  //  zpby1_neq_0_then_la1
   lda 100
   bne plot__B1_from_B3
 plot__Breturn:
@@ -4032,28 +4322,28 @@ flip__B2_from_B2:
   // (byte) flip::dstIdx#3 = (byte) flip::dstIdx#1  // register copy 
   // (byte) flip::srcIdx#2 = (byte) flip::srcIdx#1  // register copy 
 flip__B2:
-  // (byte~) flip::$0 ← (word) 4096 *idx (byte) flip::srcIdx#2  //  aby=cowo1_staridx_xby
+  // [26] (byte~) flip::$0 ← (word) 4096 *idx (byte) flip::srcIdx#2 [ flip::srcIdx#2 flip::dstIdx#3 flip::$0 flip::c#2 flip::r#2 ]  //  aby=cowo1_staridx_xby
   lda 4096,x
-  // *((word) 4352 + (byte) flip::dstIdx#3) ← (byte~) flip::$0  //  ptr_cowo1_yby=aby
+  // [27] *((word) 4352 + (byte) flip::dstIdx#3) ← (byte~) flip::$0 [ flip::srcIdx#2 flip::dstIdx#3 flip::c#2 flip::r#2 ]  //  ptr_cowo1_yby=aby
   sta 4352,y
-  // (byte) flip::srcIdx#1 ← ++ (byte) flip::srcIdx#2  //  xby=_inc_xby
+  // [28] (byte) flip::srcIdx#1 ← ++ (byte) flip::srcIdx#2 [ flip::srcIdx#1 flip::dstIdx#3 flip::c#2 flip::r#2 ]  //  xby=_inc_xby
   inx
-  // (byte) flip::dstIdx#1 ← (byte) flip::dstIdx#3 + (byte) 16  //  yby=yby_plus_coby1
+  // [29] (byte) flip::dstIdx#1 ← (byte) flip::dstIdx#3 + (byte) 16 [ flip::srcIdx#1 flip::dstIdx#1 flip::c#2 flip::r#2 ]  //  yby=yby_plus_coby1
   tya
   clc
   adc #16
   tay
-  // (byte) flip::c#1 ← -- (byte) flip::c#2  //  zpby1=_dec_zpby1
+  // [30] (byte) flip::c#1 ← -- (byte) flip::c#2 [ flip::srcIdx#1 flip::dstIdx#1 flip::c#1 flip::r#2 ]  //  zpby1=_dec_zpby1
   dec 103
-  // if((byte) flip::c#1!=(byte) 0) goto flip::@2  //  zpby1_neq_0_then_la1
+  // [31] if((byte) flip::c#1!=(byte) 0) goto flip::@2 [ flip::srcIdx#1 flip::dstIdx#1 flip::c#1 flip::r#2 ]  //  zpby1_neq_0_then_la1
   lda 103
   bne flip__B2_from_B2
 flip__B4:
-  // (byte) flip::dstIdx#2 ← -- (byte) flip::dstIdx#1  //  yby=_dec_yby
+  // [32] (byte) flip::dstIdx#2 ← -- (byte) flip::dstIdx#1 [ flip::srcIdx#1 flip::dstIdx#2 flip::r#2 ]  //  yby=_dec_yby
   dey
-  // (byte) flip::r#1 ← -- (byte) flip::r#2  //  zpby1=_dec_zpby1
+  // [33] (byte) flip::r#1 ← -- (byte) flip::r#2 [ flip::srcIdx#1 flip::dstIdx#2 flip::r#1 ]  //  zpby1=_dec_zpby1
   dec 104
-  // if((byte) flip::r#1!=(byte) 0) goto flip::@1  //  zpby1_neq_0_then_la1
+  // [34] if((byte) flip::r#1!=(byte) 0) goto flip::@1 [ flip::srcIdx#1 flip::dstIdx#2 flip::r#1 ]  //  zpby1_neq_0_then_la1
   lda 104
   bne flip__B1_from_B4
 flip__B3_from_B4:
@@ -4062,13 +4352,13 @@ flip__B3_from_B4:
 flip__B3_from_B3:
   // (byte) flip::i#2 = (byte) flip::i#1  // register copy 
 flip__B3:
-  // (byte~) flip::$4 ← (word) 4352 *idx (byte) flip::i#2  //  aby=cowo1_staridx_xby
+  // [36] (byte~) flip::$4 ← (word) 4352 *idx (byte) flip::i#2 [ flip::i#2 flip::$4 ]  //  aby=cowo1_staridx_xby
   lda 4352,x
-  // *((word) 4096 + (byte) flip::i#2) ← (byte~) flip::$4  //  ptr_cowo1_xby=aby
+  // [37] *((word) 4096 + (byte) flip::i#2) ← (byte~) flip::$4 [ flip::i#2 ]  //  ptr_cowo1_xby=aby
   sta 4096,x
-  // (byte) flip::i#1 ← ++ (byte) flip::i#2  //  xby=_inc_xby
+  // [38] (byte) flip::i#1 ← ++ (byte) flip::i#2 [ flip::i#1 ]  //  xby=_inc_xby
   inx
-  // if((byte) flip::i#1!=(byte) 0) goto flip::@3  //  xby_neq_0_then_la1
+  // [39] if((byte) flip::i#1!=(byte) 0) goto flip::@3 [ flip::i#1 ]  //  xby_neq_0_then_la1
   cpx #0
   bne flip__B3_from_B3
 flip__Breturn:
@@ -4080,12 +4370,12 @@ prepare__B1_from_prepare:
 prepare__B1_from_B1:
   // (byte) prepare::i#2 = (byte) prepare::i#1  // register copy 
 prepare__B1:
-  // *((word) 4096 + (byte) prepare::i#2) ← (byte) prepare::i#2  //  ptr_cowo1_xby=xby
+  // [42] *((word) 4096 + (byte) prepare::i#2) ← (byte) prepare::i#2 [ prepare::i#2 ]  //  ptr_cowo1_xby=xby
   txa
   sta 4096,x
-  // (byte) prepare::i#1 ← ++ (byte) prepare::i#2  //  xby=_inc_xby
+  // [43] (byte) prepare::i#1 ← ++ (byte) prepare::i#2 [ prepare::i#1 ]  //  xby=_inc_xby
   inx
-  // if((byte) prepare::i#1!=(byte) 0) goto prepare::@1  //  xby_neq_0_then_la1
+  // [44] if((byte) prepare::i#1!=(byte) 0) goto prepare::@1 [ prepare::i#1 ]  //  xby_neq_0_then_la1
   cpx #0
   bne prepare__B1_from_B1
 prepare__Breturn:
@@ -4184,21 +4474,21 @@ main__B3_from_B3:
 main__B3_from_B6:
   // (byte) main::c#2 = (byte) main::c#1  // register copy 
 main__B3:
-  // (byte~) main::$1 ← * (word) 53266  //  aby=_star_cowo1
+  // [3] (byte~) main::$1 ← * (word) 53266 [ main::$1 main::c#2 ]  //  aby=_star_cowo1
   lda 53266
-  // if((byte~) main::$1!=(byte) 254) goto main::@3  //  aby_neq_coby1_then_la1
+  // [4] if((byte~) main::$1!=(byte) 254) goto main::@3 [ main::c#2 ]  //  aby_neq_coby1_then_la1
   cmp #254
   bne main__B3_from_B3
 main__B4:
-  // (byte~) main::$3 ← * (word) 53266  //  aby=_star_cowo1
+  // [5] (byte~) main::$3 ← * (word) 53266 [ main::$3 main::c#2 ]  //  aby=_star_cowo1
   lda 53266
-  // if((byte~) main::$3!=(byte) 255) goto main::@4  //  aby_neq_coby1_then_la1
+  // [6] if((byte~) main::$3!=(byte) 255) goto main::@4 [ main::c#2 ]  //  aby_neq_coby1_then_la1
   cmp #255
   bne main__main__B4
 main__B6:
-  // (byte) main::c#1 ← -- (byte) main::c#2  //  xby=_dec_xby
+  // [7] (byte) main::c#1 ← -- (byte) main::c#2 [ main::c#1 ]  //  xby=_dec_xby
   dex
-  // if((byte) main::c#1!=(byte) 0) goto main::@3  //  xby_neq_0_then_la1
+  // [8] if((byte) main::c#1!=(byte) 0) goto main::@3 [ main::c#1 ]  //  xby_neq_0_then_la1
   cpx #0
   bne main__B3_from_B6
 main__B7:
@@ -4206,7 +4496,7 @@ main__B7:
 main__B10:
   jsr plot
 main__B11:
-  // if(true) goto main::@3  //  true_then_la1
+  // [11] if(true) goto main::@3 [ ]  //  true_then_la1
   jmp main__B3_from_B11
 main__Breturn:
   rts
@@ -4235,19 +4525,19 @@ plot__B2_from_B2:
   // (byte) plot::x#2 = (byte) plot::x#1  // register copy 
   // (byte) plot::i#2 = (byte) plot::i#1  // register copy 
 plot__B2:
-  // (byte~) plot::$3 ← (word) 4096 *idx (byte) plot::i#2  //  aby=cowo1_staridx_xby
+  // [15] (byte~) plot::$3 ← (word) 4096 *idx (byte) plot::i#2 [ plot::i#2 plot::line#2 plot::x#2 plot::$3 plot::y#2 ]  //  aby=cowo1_staridx_xby
   lda 4096,x
-  // *((byte*) plot::line#2 + (byte) plot::x#2) ← (byte~) plot::$3  //  ptr_zpptrby1_yby=aby
+  // [16] *((byte*) plot::line#2 + (byte) plot::x#2) ← (byte~) plot::$3 [ plot::i#2 plot::line#2 plot::x#2 plot::y#2 ]  //  ptr_zpptrby1_yby=aby
   sta (101),y
-  // (byte) plot::i#1 ← ++ (byte) plot::i#2  //  xby=_inc_xby
+  // [17] (byte) plot::i#1 ← ++ (byte) plot::i#2 [ plot::i#1 plot::line#2 plot::x#2 plot::y#2 ]  //  xby=_inc_xby
   inx
-  // (byte) plot::x#1 ← ++ (byte) plot::x#2  //  yby=_inc_yby
+  // [18] (byte) plot::x#1 ← ++ (byte) plot::x#2 [ plot::i#1 plot::x#1 plot::line#2 plot::y#2 ]  //  yby=_inc_yby
   iny
-  // if((byte) plot::x#1<(byte) 16) goto plot::@2  //  yby_lt_coby1_then_la1
+  // [19] if((byte) plot::x#1<(byte) 16) goto plot::@2 [ plot::i#1 plot::x#1 plot::line#2 plot::y#2 ]  //  yby_lt_coby1_then_la1
   cpy #16
   bcc plot__B2_from_B2
 plot__B3:
-  // (byte*) plot::line#1 ← (byte*) plot::line#2 + (byte) 40  //  zpptrby1=zpptrby1_plus_coby1
+  // [20] (byte*) plot::line#1 ← (byte*) plot::line#2 + (byte) 40 [ plot::i#1 plot::line#1 plot::y#2 ]  //  zpptrby1=zpptrby1_plus_coby1
   lda 101
   clc
   adc #40
@@ -4255,9 +4545,9 @@ plot__B3:
   bcc !+
   inc 101+1
 !:
-  // (byte) plot::y#1 ← -- (byte) plot::y#2  //  zpby1=_dec_zpby1
+  // [21] (byte) plot::y#1 ← -- (byte) plot::y#2 [ plot::i#1 plot::line#1 plot::y#1 ]  //  zpby1=_dec_zpby1
   dec 100
-  // if((byte) plot::y#1!=(byte) 0) goto plot::@1  //  zpby1_neq_0_then_la1
+  // [22] if((byte) plot::y#1!=(byte) 0) goto plot::@1 [ plot::i#1 plot::line#1 plot::y#1 ]  //  zpby1_neq_0_then_la1
   lda 100
   bne plot__B1_from_B3
 plot__Breturn:
@@ -4287,28 +4577,28 @@ flip__B2_from_B2:
   // (byte) flip::dstIdx#3 = (byte) flip::dstIdx#1  // register copy 
   // (byte) flip::srcIdx#2 = (byte) flip::srcIdx#1  // register copy 
 flip__B2:
-  // (byte~) flip::$0 ← (word) 4096 *idx (byte) flip::srcIdx#2  //  aby=cowo1_staridx_xby
+  // [26] (byte~) flip::$0 ← (word) 4096 *idx (byte) flip::srcIdx#2 [ flip::srcIdx#2 flip::dstIdx#3 flip::$0 flip::c#2 flip::r#2 ]  //  aby=cowo1_staridx_xby
   lda 4096,x
-  // *((word) 4352 + (byte) flip::dstIdx#3) ← (byte~) flip::$0  //  ptr_cowo1_yby=aby
+  // [27] *((word) 4352 + (byte) flip::dstIdx#3) ← (byte~) flip::$0 [ flip::srcIdx#2 flip::dstIdx#3 flip::c#2 flip::r#2 ]  //  ptr_cowo1_yby=aby
   sta 4352,y
-  // (byte) flip::srcIdx#1 ← ++ (byte) flip::srcIdx#2  //  xby=_inc_xby
+  // [28] (byte) flip::srcIdx#1 ← ++ (byte) flip::srcIdx#2 [ flip::srcIdx#1 flip::dstIdx#3 flip::c#2 flip::r#2 ]  //  xby=_inc_xby
   inx
-  // (byte) flip::dstIdx#1 ← (byte) flip::dstIdx#3 + (byte) 16  //  yby=yby_plus_coby1
+  // [29] (byte) flip::dstIdx#1 ← (byte) flip::dstIdx#3 + (byte) 16 [ flip::srcIdx#1 flip::dstIdx#1 flip::c#2 flip::r#2 ]  //  yby=yby_plus_coby1
   tya
   clc
   adc #16
   tay
-  // (byte) flip::c#1 ← -- (byte) flip::c#2  //  zpby1=_dec_zpby1
+  // [30] (byte) flip::c#1 ← -- (byte) flip::c#2 [ flip::srcIdx#1 flip::dstIdx#1 flip::c#1 flip::r#2 ]  //  zpby1=_dec_zpby1
   dec 103
-  // if((byte) flip::c#1!=(byte) 0) goto flip::@2  //  zpby1_neq_0_then_la1
+  // [31] if((byte) flip::c#1!=(byte) 0) goto flip::@2 [ flip::srcIdx#1 flip::dstIdx#1 flip::c#1 flip::r#2 ]  //  zpby1_neq_0_then_la1
   lda 103
   bne flip__B2_from_B2
 flip__B4:
-  // (byte) flip::dstIdx#2 ← -- (byte) flip::dstIdx#1  //  yby=_dec_yby
+  // [32] (byte) flip::dstIdx#2 ← -- (byte) flip::dstIdx#1 [ flip::srcIdx#1 flip::dstIdx#2 flip::r#2 ]  //  yby=_dec_yby
   dey
-  // (byte) flip::r#1 ← -- (byte) flip::r#2  //  zpby1=_dec_zpby1
+  // [33] (byte) flip::r#1 ← -- (byte) flip::r#2 [ flip::srcIdx#1 flip::dstIdx#2 flip::r#1 ]  //  zpby1=_dec_zpby1
   dec 104
-  // if((byte) flip::r#1!=(byte) 0) goto flip::@1  //  zpby1_neq_0_then_la1
+  // [34] if((byte) flip::r#1!=(byte) 0) goto flip::@1 [ flip::srcIdx#1 flip::dstIdx#2 flip::r#1 ]  //  zpby1_neq_0_then_la1
   lda 104
   bne flip__B1_from_B4
 flip__B3_from_B4:
@@ -4317,13 +4607,13 @@ flip__B3_from_B4:
 flip__B3_from_B3:
   // (byte) flip::i#2 = (byte) flip::i#1  // register copy 
 flip__B3:
-  // (byte~) flip::$4 ← (word) 4352 *idx (byte) flip::i#2  //  aby=cowo1_staridx_xby
+  // [36] (byte~) flip::$4 ← (word) 4352 *idx (byte) flip::i#2 [ flip::i#2 flip::$4 ]  //  aby=cowo1_staridx_xby
   lda 4352,x
-  // *((word) 4096 + (byte) flip::i#2) ← (byte~) flip::$4  //  ptr_cowo1_xby=aby
+  // [37] *((word) 4096 + (byte) flip::i#2) ← (byte~) flip::$4 [ flip::i#2 ]  //  ptr_cowo1_xby=aby
   sta 4096,x
-  // (byte) flip::i#1 ← ++ (byte) flip::i#2  //  xby=_inc_xby
+  // [38] (byte) flip::i#1 ← ++ (byte) flip::i#2 [ flip::i#1 ]  //  xby=_inc_xby
   inx
-  // if((byte) flip::i#1!=(byte) 0) goto flip::@3  //  xby_neq_0_then_la1
+  // [39] if((byte) flip::i#1!=(byte) 0) goto flip::@3 [ flip::i#1 ]  //  xby_neq_0_then_la1
   cpx #0
   bne flip__B3_from_B3
 flip__Breturn:
@@ -4335,12 +4625,12 @@ prepare__B1_from_prepare:
 prepare__B1_from_B1:
   // (byte) prepare::i#2 = (byte) prepare::i#1  // register copy 
 prepare__B1:
-  // *((word) 4096 + (byte) prepare::i#2) ← (byte) prepare::i#2  //  ptr_cowo1_xby=xby
+  // [42] *((word) 4096 + (byte) prepare::i#2) ← (byte) prepare::i#2 [ prepare::i#2 ]  //  ptr_cowo1_xby=xby
   txa
   sta 4096,x
-  // (byte) prepare::i#1 ← ++ (byte) prepare::i#2  //  xby=_inc_xby
+  // [43] (byte) prepare::i#1 ← ++ (byte) prepare::i#2 [ prepare::i#1 ]  //  xby=_inc_xby
   inx
-  // if((byte) prepare::i#1!=(byte) 0) goto prepare::@1  //  xby_neq_0_then_la1
+  // [44] if((byte) prepare::i#1!=(byte) 0) goto prepare::@1 [ prepare::i#1 ]  //  xby_neq_0_then_la1
   cpx #0
   bne prepare__B1_from_B1
 prepare__Breturn:

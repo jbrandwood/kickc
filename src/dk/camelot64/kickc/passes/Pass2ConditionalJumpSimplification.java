@@ -36,8 +36,8 @@ public class Pass2ConditionalJumpSimplification extends Pass2SsaOptimization {
       ControlFlowGraphBaseVisitor<Void> visitor = new ControlFlowGraphBaseVisitor<Void>() {
          @Override
          public Void visitConditionalJump(StatementConditionalJump conditionalJump) {
-            if(conditionalJump.getRValue1()==null && conditionalJump.getOperator()==null) {
-               RValue conditionRValue = conditionalJump.getRValue2();
+            if(conditionalJump.getrValue1()==null && conditionalJump.getOperator()==null) {
+               RValue conditionRValue = conditionalJump.getrValue2();
                if(conditionRValue instanceof VariableRef && usages.get(conditionRValue).size()==1) {
                   VariableRef conditionVar = (VariableRef) conditionRValue;
                   StatementAssignment conditionAssignment = assignments.get(conditionVar);
@@ -52,9 +52,9 @@ public class Pass2ConditionalJumpSimplification extends Pass2SsaOptimization {
                         case "=<":
                         case ">=":
                         case "=>":
-                        conditionalJump.setRValue1(conditionAssignment.getrValue1());
+                        conditionalJump.setrValue1(conditionAssignment.getrValue1());
                         conditionalJump.setOperator(conditionAssignment.getOperator());
-                        conditionalJump.setRValue2(conditionAssignment.getrValue2());
+                        conditionalJump.setrValue2(conditionAssignment.getrValue2());
                         simpleConditionVars.add(conditionVar);
                         log.append("Simple Condition " + conditionVar.toString(getSymbols()) + " " + conditionalJump.toString(getSymbols()));
                         break;

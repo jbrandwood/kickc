@@ -1,11 +1,14 @@
 package dk.camelot64.kickc.icl;
 
-/** Procedure declaration in SSA */
-public class StatementProcedureEnd implements Statement {
+/**
+ * Procedure declaration in SSA
+ */
+public class StatementProcedureEnd extends StatementBase {
 
    private ProcedureRef procedure;
 
    public StatementProcedureEnd(ProcedureRef procedure) {
+      super(null);
       this.procedure = procedure;
    }
 
@@ -14,12 +17,7 @@ public class StatementProcedureEnd implements Statement {
    }
 
    @Override
-   public String toString() {
-      return toString(null);
-   }
-
-   @Override
    public String toString(ProgramScope scope) {
-      return "endproc // "+procedure.getFullName()+"()";
+      return super.idxString() + "endproc // " + procedure.getFullName() + "()"+super.aliveString(scope);
    }
 }

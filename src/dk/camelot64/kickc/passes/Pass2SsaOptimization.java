@@ -107,11 +107,11 @@ public abstract class Pass2SsaOptimization {
 
          @Override
          public Void visitConditionalJump(StatementConditionalJump conditionalJump) {
-            if (getAlias(aliases, conditionalJump.getRValue1()) != null) {
-               conditionalJump.setRValue1(getAlias(aliases, conditionalJump.getRValue1()));
+            if (getAlias(aliases, conditionalJump.getrValue1()) != null) {
+               conditionalJump.setrValue1(getAlias(aliases, conditionalJump.getrValue1()));
             }
-            if (getAlias(aliases, conditionalJump.getRValue2()) != null) {
-               conditionalJump.setRValue2(getAlias(aliases, conditionalJump.getRValue2()));
+            if (getAlias(aliases, conditionalJump.getrValue2()) != null) {
+               conditionalJump.setrValue2(getAlias(aliases, conditionalJump.getrValue2()));
             }
             return null;
          }
@@ -319,8 +319,8 @@ public abstract class Pass2SsaOptimization {
 
          @Override
          public Void visitConditionalJump(StatementConditionalJump conditionalJump) {
-            addUsage(conditionalJump.getRValue1(), conditionalJump);
-            addUsage(conditionalJump.getRValue2(), conditionalJump);
+            addUsage(conditionalJump.getrValue1(), conditionalJump);
+            addUsage(conditionalJump.getrValue2(), conditionalJump);
             return null;
          }
 

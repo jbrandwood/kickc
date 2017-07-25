@@ -40,7 +40,15 @@ public class ControlFlowGraph {
 
    @JsonIgnore
    public Collection<ControlFlowBlock> getAllBlocks() {
-      return blocks.values();
+      if(sequence!=null) {
+         ArrayList<ControlFlowBlock> blocks = new ArrayList<>();
+         for (LabelRef labelRef : sequence) {
+            blocks.add(getBlock(labelRef));
+         }
+         return blocks;
+      } else {
+         return blocks.values();
+      }
    }
 
    public void remove(LabelRef label) {
@@ -137,7 +145,7 @@ public class ControlFlowGraph {
 
    public String toString(ProgramScope scope) {
       StringBuffer out = new StringBuffer();
-      for (ControlFlowBlock block : blocks.values()) {
+      for (ControlFlowBlock block : getAllBlocks()) {
          out.append(block.toString(this, scope));
       }
       return out.toString();

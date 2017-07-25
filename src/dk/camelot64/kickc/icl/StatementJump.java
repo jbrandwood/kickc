@@ -6,11 +6,12 @@ package dk.camelot64.kickc.icl;
  * <br>
  * <i> goto XX </i>
  */
-public class StatementJump implements Statement {
+public class StatementJump extends StatementBase {
 
    private LabelRef destination;
 
    public StatementJump(LabelRef destination) {
+      super(null);
       this.destination = destination;
    }
 
@@ -23,13 +24,8 @@ public class StatementJump implements Statement {
    }
 
    @Override
-   public String toString() {
-       return toString(null);
-   }
-
-   @Override
    public String toString(ProgramScope scope) {
-      return "goto "+destination.getFullName();
+      return super.idxString() + "goto " + destination.getFullName()+ super.aliveString(scope);
    }
 
 }

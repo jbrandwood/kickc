@@ -12,7 +12,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
  * The condition may be a single boolean variable, or a comparison between two variables (==, &lt;&gt;, &lt;, &gt;, &lt;=, &gt;= )
  *
  */
-public class StatementConditionalJump implements Statement {
+public class StatementConditionalJump extends StatementBase {
 
    private RValue rValue1;
    private Operator operator;
@@ -20,10 +20,19 @@ public class StatementConditionalJump implements Statement {
    private LabelRef destination;
 
    public StatementConditionalJump(RValue condition, LabelRef destination) {
+      super(null);
       this.rValue1 = null;
       this.operator = null;
       this.rValue2 = condition;
       this.destination = destination;
+   }
+
+   public StatementConditionalJump(
+         RValue rValue1,
+         Operator operator,
+         RValue rValue2,
+         LabelRef destination) {
+      this(rValue1, operator, rValue2, destination, null);
    }
 
    @JsonCreator
@@ -31,14 +40,16 @@ public class StatementConditionalJump implements Statement {
          @JsonProperty("rValue1") RValue rValue1,
          @JsonProperty("operator") Operator operator,
          @JsonProperty("rValue2") RValue rValue2,
-         @JsonProperty("destination") LabelRef destination) {
+         @JsonProperty("destination") LabelRef destination,
+         @JsonProperty("index") Integer index) {
+      super(index);
       this.rValue1 = rValue1;
       this.operator = operator;
       this.rValue2 = rValue2;
       this.destination = destination;
    }
 
-   public RValue getRValue1() {
+   public RValue getrValue1() {
       return rValue1;
    }
 
@@ -46,7 +57,7 @@ public class StatementConditionalJump implements Statement {
       return operator;
    }
 
-   public RValue getRValue2() {
+   public RValue getrValue2() {
       return rValue2;
    }
 
@@ -54,7 +65,7 @@ public class StatementConditionalJump implements Statement {
       return destination;
    }
 
-   public void setRValue1(RValue rValue1) {
+   public void setrValue1(RValue rValue1) {
       this.rValue1 = rValue1;
    }
 
@@ -62,7 +73,7 @@ public class StatementConditionalJump implements Statement {
       this.operator = operator;
    }
 
-   public void setRValue2(RValue rValue2) {
+   public void setrValue2(RValue rValue2) {
       this.rValue2 = rValue2;
    }
 
@@ -71,13 +82,9 @@ public class StatementConditionalJump implements Statement {
    }
 
    @Override
-   public String toString() {
-      return toString(null);
-   }
-
-   @Override
    public String toString(ProgramScope scope) {
       StringBuilder out = new StringBuilder();
+      out.append(super.idxString());
       out.append("if(");
       if(rValue1!=null) {
          out.append(rValue1.toString(scope));
@@ -86,6 +93,7 @@ public class StatementConditionalJump implements Statement {
       out.append(rValue2.toString(scope));
       out.append(") goto ");
       out.append(destination.getFullName());
+      out.append(super.aliveString(scope));
       return out.toString();
    }
 
@@ -93,6 +101,7 @@ public class StatementConditionalJump implements Statement {
    public boolean equals(Object o) {
       if (this == o) return true;
       if (o == null || getClass() != o.getClass()) return false;
+      if (!super.equals(o)) return false;
 
       StatementConditionalJump that = (StatementConditionalJump) o;
 
@@ -104,7 +113,8 @@ public class StatementConditionalJump implements Statement {
 
    @Override
    public int hashCode() {
-      int result = rValue1 != null ? rValue1.hashCode() : 0;
+      int result = super.hashCode();
+      result = 31 * result + (rValue1 != null ? rValue1.hashCode() : 0);
       result = 31 * result + (operator != null ? operator.hashCode() : 0);
       result = 31 * result + (rValue2 != null ? rValue2.hashCode() : 0);
       result = 31 * result + destination.hashCode();

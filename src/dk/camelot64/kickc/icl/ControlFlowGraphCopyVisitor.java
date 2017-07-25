@@ -137,9 +137,9 @@ public class ControlFlowGraphCopyVisitor extends ControlFlowGraphBaseVisitor<Obj
 
    @Override
    public StatementConditionalJump visitConditionalJump(StatementConditionalJump origConditionalJump) {
-      RValue rValue1 = origConditionalJump.getRValue1();
+      RValue rValue1 = origConditionalJump.getrValue1();
       Operator operator = origConditionalJump.getOperator();
-      RValue rValue2 = origConditionalJump.getRValue2();
+      RValue rValue2 = origConditionalJump.getrValue2();
       LabelRef destination = origConditionalJump.getDestination();
       return new StatementConditionalJump(rValue1, operator, rValue2, destination);
    }

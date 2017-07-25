@@ -240,6 +240,58 @@ sum::@return: from sum
   to:@RETURN
 @END: from @2
 
+Block Sequence Planned @BEGIN @2 @END sum sum::@return 
+CONTROL FLOW GRAPH - PHI LIFTED
+@BEGIN: from
+  call sum param-assignment
+  to:@2
+@2: from @BEGIN
+  call sum param-assignment
+  to:@END
+@END: from @2
+sum: from @2 @BEGIN
+  (byte) sum::b#2 ← phi( @2/(byte) 13 @BEGIN/(byte) 2 )
+  (byte) sum::a#2 ← phi( @2/(byte) 9 @BEGIN/(byte) 1 )
+  (byte) s1#0 ← (byte) sum::a#2 + (byte) sum::b#2
+  to:sum::@return
+sum::@return: from sum
+  return (byte) s1#0
+  to:@RETURN
+
+Propagating live ranges...
+CONTROL FLOW GRAPH - LIVE RANGES
+@BEGIN: from
+  [0] call sum param-assignment [ ]
+  to:@2
+@2: from @BEGIN
+  [1] call sum param-assignment [ ]
+  to:@END
+@END: from @2
+sum: from @2 @BEGIN
+  [2] (byte) sum::b#2 ← phi( @2/(byte) 13 @BEGIN/(byte) 2 ) [ sum::a#2 sum::b#2 ]
+  [2] (byte) sum::a#2 ← phi( @2/(byte) 9 @BEGIN/(byte) 1 ) [ sum::a#2 sum::b#2 ]
+  [3] (byte) s1#0 ← (byte) sum::a#2 + (byte) sum::b#2 [ s1#0 ]
+  to:sum::@return
+sum::@return: from sum
+  [4] return (byte) s1#0 [ ]
+  to:@RETURN
+
+SYMBOLS - LIVE RANGES
+(label) @2
+(label) @BEGIN
+(label) @END
+(byte) s1
+(byte) s1#0
+(byte) s2
+(byte()) sum((byte) sum::a , (byte) sum::b)
+(label) sum::@return
+(byte) sum::a
+(byte) sum::a#2
+(byte) sum::b
+(byte) sum::b#2
+(byte) sum::return
+
+
 INITIAL ASM
 BBEGIN:
 sum_from_BBEGIN:
@@ -263,7 +315,7 @@ sum_from_B2:
   jmp BEND
 BEND:
 sum:
-  // (byte) s1#0 ← (byte) sum::a#2 + (byte) sum::b#2  //  zpby1=zpby2_plus_zpby3
+  // [3] (byte) s1#0 ← (byte) sum::a#2 + (byte) sum::b#2 [ s1#0 ]  //  zpby1=zpby2_plus_zpby3
   lda 2
   clc
   adc 3
@@ -275,7 +327,7 @@ sum__Breturn:
 Removing instruction jmp B2
 Removing instruction jmp BEND
 Removing instruction jmp sum__Breturn
-Succesful ASM optimization Pass4NextJumpElimination
+Succesful ASM optimization Pass5NextJumpElimination
 ASSEMBLER
 BBEGIN:
 sum_from_BBEGIN:
@@ -297,7 +349,7 @@ sum_from_B2:
   jsr sum
 BEND:
 sum:
-  // (byte) s1#0 ← (byte) sum::a#2 + (byte) sum::b#2  //  zpby1=zpby2_plus_zpby3
+  // [3] (byte) s1#0 ← (byte) sum::a#2 + (byte) sum::b#2 [ s1#0 ]  //  zpby1=zpby2_plus_zpby3
   lda 2
   clc
   adc 3
@@ -342,7 +394,7 @@ sum_from_B2:
   jsr sum
 BEND:
 sum:
-  // (byte) s1#0 ← (byte) sum::a#2 + (byte) sum::b#2  //  zpby1=zpby2_plus_zpby3
+  // [3] (byte) s1#0 ← (byte) sum::a#2 + (byte) sum::b#2 [ s1#0 ]  //  zpby1=zpby2_plus_zpby3
   lda 2
   clc
   adc 3

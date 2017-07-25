@@ -10,7 +10,7 @@ import java.util.*;
  * The Phi Block initializing the necessary SSA-variables of a predecessor.
  * The phi predecessor initializes a number of variables with different values depending on which predecessor control flow enters from.
  */
-public class StatementPhiBlock implements Statement {
+public class StatementPhiBlock extends StatementBase {
 
    /**
     * Maps each phi-varible of the predecessor to a map from a predecessor predecessor to the rvalue of the variable.
@@ -19,23 +19,16 @@ public class StatementPhiBlock implements Statement {
 
    @JsonCreator
    public StatementPhiBlock(
-         @JsonProperty("phiVariables") List<PhiVariable> phiVariables) {
+         @JsonProperty("phiVariables") List<PhiVariable> phiVariables,
+         @JsonProperty("index") Integer index) {
+      super(index);
       this.phiVariables = phiVariables;
    }
 
    public StatementPhiBlock() {
+      super(null);
       this.phiVariables = new ArrayList<>();
    }
-
-   /**
-    * Get the ordered predecessor blocks where control can enter the predecessor.
-    *
-    * @return the predecessor blocks
-    */
-   //public List<LabelRef> getPredecessors() {
-   //   return predecessors;
-   //}
-
 
    /**
     * Get the variables defined by the phi predecessor.
@@ -75,6 +68,7 @@ public class StatementPhiBlock implements Statement {
       List<PhiVariable> variables = new ArrayList<>(phiVariables);
       Collections.reverse(variables);
       for (PhiVariable phiVariable : variables) {
+         s.append(super.idxString());
          s.append(phiVariable.getVariable().toString(scope));
          s.append(" ← phi(");
          for (PhiRValue phiRValue : phiVariable.getValues()) {
@@ -84,7 +78,9 @@ public class StatementPhiBlock implements Statement {
             RValue rValue = phiRValue.getrValue();
             s.append(rValue==null?"null":rValue.toString(scope));
          }
-         s.append(" )\n  ");
+         s.append(" )");
+         s.append(super.aliveString(scope));
+         s.append("\n  ");
       }
       if(s.length()>0) {
          return s.toString().substring(0, s.length() - 3);
@@ -108,15 +104,18 @@ public class StatementPhiBlock implements Statement {
    public boolean equals(Object o) {
       if (this == o) return true;
       if (o == null || getClass() != o.getClass()) return false;
+      if (!super.equals(o)) return false;
 
       StatementPhiBlock phiBlock = (StatementPhiBlock) o;
 
-      return phiVariables != null ? phiVariables.equals(phiBlock.phiVariables) : phiBlock.phiVariables == null;
+      return phiVariables.equals(phiBlock.phiVariables);
    }
 
    @Override
    public int hashCode() {
-      return phiVariables != null ? phiVariables.hashCode() : 0;
+      int result = super.hashCode();
+      result = 31 * result + phiVariables.hashCode();
+      return result;
    }
 
    /**

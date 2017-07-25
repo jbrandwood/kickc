@@ -120,19 +120,19 @@ public class AsmFragment {
 
    private String conditionalJumpSignature(StatementConditionalJump conditionalJump, ControlFlowBlock block, ControlFlowGraph graph) {
       StringBuilder signature = new StringBuilder();
-      if (conditionalJump.getRValue1() != null) {
-         signature.append(bind(conditionalJump.getRValue1()));
+      if (conditionalJump.getrValue1() != null) {
+         signature.append(bind(conditionalJump.getrValue1()));
       }
       if (conditionalJump.getOperator() != null) {
          signature.append(getOperatorFragmentName(conditionalJump.getOperator()));
       }
-      if (conditionalJump.getRValue2() instanceof ConstantInteger && ((ConstantInteger) conditionalJump.getRValue2()).getNumber() == 0) {
+      if (conditionalJump.getrValue2() instanceof ConstantInteger && ((ConstantInteger) conditionalJump.getrValue2()).getNumber() == 0) {
          signature.append("0");
-      } else if (conditionalJump.getRValue2() instanceof ConstantBool) {
-         ConstantBool boolValue = (ConstantBool) conditionalJump.getRValue2();
+      } else if (conditionalJump.getrValue2() instanceof ConstantBool) {
+         ConstantBool boolValue = (ConstantBool) conditionalJump.getrValue2();
          signature.append(boolValue.toString());
       } else{
-         signature.append(bind(conditionalJump.getRValue2()));
+         signature.append(bind(conditionalJump.getrValue2()));
       }
       signature.append("_then_");
       LabelRef destination = conditionalJump.getDestination();

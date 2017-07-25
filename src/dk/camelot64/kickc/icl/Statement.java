@@ -23,4 +23,9 @@ public interface Statement {
 
    String toString(ProgramScope scope);
 
+   /** Set the index of the statement. Indexes are used during live range analysis. */
+   void setIndex(Integer idx);
+
+   /** Get the index of the statement. Indexes are used during live range analysis. */
+   Integer getIndex();
 }

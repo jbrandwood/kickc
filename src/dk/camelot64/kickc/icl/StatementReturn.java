@@ -6,13 +6,23 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 /**
  * Return Statement inside procedure in Single Static Assignment Form.
  */
-public class StatementReturn implements Statement {
+public class StatementReturn extends StatementBase {
 
-   /** Return value. May be null if not returning a value. */
+   /**
+    * Return value. May be null if not returning a value.
+    */
    private RValue value;
 
+   public StatementReturn(RValue value) {
+      super(null);
+      this.value = value;
+   }
+
    @JsonCreator
-   public StatementReturn( @JsonProperty("value") RValue value) {
+   StatementReturn(
+         @JsonProperty("value") RValue value,
+         @JsonProperty("index") Integer index) {
+      super(index);
       this.value = value;
    }
 
@@ -25,19 +35,15 @@ public class StatementReturn implements Statement {
    }
 
    @Override
-   public String toString() {
-      return toString(null);
-   }
-
-   @Override
    public String toString(ProgramScope scope) {
-      return "return " + (value == null ? "" : value.toString(scope));
+      return super.idxString() + "return " + (value == null ? "" : value.toString(scope)) + super.aliveString(scope);
    }
 
    @Override
    public boolean equals(Object o) {
       if (this == o) return true;
       if (o == null || getClass() != o.getClass()) return false;
+      if (!super.equals(o)) return false;
 
       StatementReturn that = (StatementReturn) o;
 
@@ -46,6 +52,8 @@ public class StatementReturn implements Statement {
 
    @Override
    public int hashCode() {
-      return value != null ? value.hashCode() : 0;
+      int result = super.hashCode();
+      result = 31 * result + (value != null ? value.hashCode() : 0);
+      return result;
    }
 }

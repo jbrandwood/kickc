@@ -1,5 +1,6 @@
 package dk.camelot64.kickc.passes;
 
+import dk.camelot64.kickc.CompileLog;
 import dk.camelot64.kickc.icl.*;
 
 import java.util.ArrayList;
@@ -7,14 +8,16 @@ import java.util.List;
 import java.util.Stack;
 
 /** Plan the optimal sequence for the blocks of the control flow graph */
-public class Pass4BlockSequencePlanner {
+public class Pass3BlockSequencePlanner {
 
    private ControlFlowGraph graph;
    private ProgramScope scope;
+   private CompileLog log;
 
-   public Pass4BlockSequencePlanner(Program program) {
+   public Pass3BlockSequencePlanner(Program program, CompileLog log) {
       this.graph = program.getGraph();
       this.scope = program.getScope();
+      this.log = log;
    }
 
    public void plan() {
@@ -46,5 +49,14 @@ public class Pass4BlockSequencePlanner {
          }
       }
       graph.setSequence(sequence);
+
+      StringBuilder entry = new StringBuilder();
+      entry.append("Block Sequence Planned ");
+      for (LabelRef labelRef : sequence) {
+         entry.append(labelRef.getFullName() + " ");
+
+      }
+      log.append(entry.toString());
+
    }
 }

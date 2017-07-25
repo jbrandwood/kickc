@@ -114,8 +114,8 @@ public class Pass2AssertSymbols extends Pass2SsaAssertion {
 
       @Override
       public Void visitConditionalJump(StatementConditionalJump conditionalJump) {
-         addSymbol(conditionalJump.getRValue1());
-         addSymbol(conditionalJump.getRValue2());
+         addSymbol(conditionalJump.getrValue1());
+         addSymbol(conditionalJump.getrValue2());
          addSymbol(conditionalJump.getDestination());
          return super.visitConditionalJump(conditionalJump);
       }

@@ -1,7 +1,7 @@
 package dk.camelot64.kickc.icl;
 
 /** Procedure declaration in SSA */
-public class StatementProcedureBegin implements Statement {
+public class StatementProcedureBegin extends StatementBase {
 
    private ProcedureRef procedure;
 
@@ -13,6 +13,7 @@ public class StatementProcedureBegin implements Statement {
    }
 
    public StatementProcedureBegin(ProcedureRef procedure) {
+      super(null);
       this.procedure = procedure;
    }
 
@@ -29,13 +30,8 @@ public class StatementProcedureBegin implements Statement {
    }
 
    @Override
-   public String toString() {
-      return toString(null);
-   }
-
-   @Override
    public String toString(ProgramScope scope) {
-      return "proc " + procedure.toString(scope);
+      return super.idxString() + "proc " + procedure.toString(scope) + super.aliveString(scope);
    }
 
 }

@@ -11,17 +11,19 @@ import java.util.List;
  * <br>
  * <i> X<sub>i</sub> := call label param1 param2 param3 ... </i>
  */
-public class StatementCall implements StatementLValue {
+public class StatementCall extends StatementBase implements StatementLValue {
 
-   /** The variable being assigned a value by the call. Can be null. */
+   /**
+    * The variable being assigned a value by the call. Can be null.
+    */
    private LValue lValue;
    private String procedureName;
    private ProcedureRef procedure;
    private List<RValue> parameters;
    private boolean parametersByAssignment;
 
-   public StatementCall(
-         LValue lValue, String  procedureName, List<RValue> parameters) {
+   public StatementCall(LValue lValue, String procedureName, List<RValue> parameters) {
+      super(null);
       this.lValue = lValue;
       this.procedureName = procedureName;
       this.parameters = parameters;
@@ -34,7 +36,9 @@ public class StatementCall implements StatementLValue {
          @JsonProperty("procedureName") String procedureName,
          @JsonProperty("procedure") ProcedureRef procedure,
          @JsonProperty("parameters") List<RValue> parameters,
-         @JsonProperty("parametersByAssignment") boolean parametersByAssignment) {
+         @JsonProperty("parametersByAssignment") boolean parametersByAssignment,
+         @JsonProperty("index") Integer index) {
+      super(index);
       this.lValue = lValue;
       this.procedureName = procedureName;
       this.procedure = procedure;
@@ -93,31 +97,28 @@ public class StatementCall implements StatementLValue {
    }
 
    @Override
-   public String toString() {
-      return toString(null);
-   }
-
-   @Override
    public String toString(ProgramScope scope) {
       StringBuilder res = new StringBuilder();
-      if(lValue!=null) {
+      res.append(super.idxString());
+      if (lValue != null) {
          res.append(lValue.toString(scope));
          res.append(" ← ");
       }
       res.append("call ");
-      if(procedure!=null) {
-         res.append(procedure.getFullName()+ " ");
-      }  else {
+      if (procedure != null) {
+         res.append(procedure.getFullName() + " ");
+      } else {
          res.append(procedureName + " ");
       }
-      if(parameters!=null) {
+      if (parameters != null) {
          for (RValue parameter : parameters) {
             res.append(parameter.toString(scope) + " ");
          }
       }
-      if(parametersByAssignment) {
+      if (parametersByAssignment) {
          res.append("param-assignment");
       }
+      res.append(super.aliveString(scope));
       return res.toString();
    }
 
@@ -125,6 +126,7 @@ public class StatementCall implements StatementLValue {
    public boolean equals(Object o) {
       if (this == o) return true;
       if (o == null || getClass() != o.getClass()) return false;
+      if (!super.equals(o)) return false;
 
       StatementCall that = (StatementCall) o;
 
@@ -137,7 +139,8 @@ public class StatementCall implements StatementLValue {
 
    @Override
    public int hashCode() {
-      int result = lValue != null ? lValue.hashCode() : 0;
+      int result = super.hashCode();
+      result = 31 * result + (lValue != null ? lValue.hashCode() : 0);
       result = 31 * result + procedureName.hashCode();
       result = 31 * result + (procedure != null ? procedure.hashCode() : 0);
       result = 31 * result + (parameters != null ? parameters.hashCode() : 0);

@@ -33,6 +33,10 @@ public class ControlFlowGraph {
       return blocks.get(symbol);
    }
 
+   public void addBlock(ControlFlowBlock block) {
+      blocks.put(block.getLabel(), block);
+   }
+
    @JsonIgnore
    public ControlFlowBlock getFirstBlock() {
       return getBlock(firstBlockRef);
@@ -170,4 +174,5 @@ public class ControlFlowGraph {
       result = 31 * result + (sequence != null ? sequence.hashCode() : 0);
       return result;
    }
+
 }

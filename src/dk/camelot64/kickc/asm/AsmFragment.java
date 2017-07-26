@@ -137,9 +137,11 @@ public class AsmFragment {
       signature.append("_then_");
       LabelRef destination = conditionalJump.getDestination();
       ControlFlowBlock destinationBlock = graph.getBlock(destination);
-      String destinationLabel = destination.getFullName();
+      String destinationLabel;
       if (destinationBlock.hasPhiBlock()) {
          destinationLabel = (destinationBlock.getLabel().getLocalName() + "_from_" + block.getLabel().getLocalName()).replace('@', 'B').replace(':','_');
+      } else {
+         destinationLabel = destination.getLocalName();
       }
       Symbol destSymbol = symbols.getSymbol(destination);
       signature.append(bind(new Label(destinationLabel, destSymbol.getScope(),false)));

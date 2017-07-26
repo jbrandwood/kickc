@@ -3,9 +3,7 @@ package dk.camelot64.kickc.passes;
 import dk.camelot64.kickc.CompileLog;
 import dk.camelot64.kickc.icl.*;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Stack;
+import java.util.*;
 
 /** Plan the optimal sequence for the blocks of the control flow graph */
 public class Pass3BlockSequencePlanner {
@@ -21,15 +19,14 @@ public class Pass3BlockSequencePlanner {
    }
 
    public void plan() {
-      Stack<ControlFlowBlock> todo = new Stack<>();
       ControlFlowBlock mainBlock = graph.getMainBlock();
       if (mainBlock != null) {
-         todo.push(mainBlock);
+         pushTodo(mainBlock);
       }
-      todo.push(graph.getFirstBlock());
+      pushTodo(graph.getFirstBlock());
       List<LabelRef> sequence = new ArrayList<>();
-      while(!todo.empty()){
-         ControlFlowBlock block = todo.pop();
+      while(hasTodo()){
+         ControlFlowBlock block = popTodo();
          if(block==null) {
             break;
          }
@@ -39,14 +36,15 @@ public class Pass3BlockSequencePlanner {
          }
          sequence.add(block.getLabel());
          if(block.getCallSuccessor()!=null) {
-            todo.push(graph.getCallSuccessor(block));
+            pushTodo(graph.getCallSuccessor(block));
          }
          if(block.getConditionalSuccessor()!=null) {
-            todo.push(graph.getConditionalSuccessor(block));
+            pushTodo(graph.getConditionalSuccessor(block));
          }
          if(graph.getDefaultSuccessor(block)!=null) {
-            todo.push(graph.getDefaultSuccessor(block));
+            pushTodo(graph.getDefaultSuccessor(block));
          }
+
       }
       graph.setSequence(sequence);
 
@@ -57,6 +55,53 @@ public class Pass3BlockSequencePlanner {
 
       }
       log.append(entry.toString());
-
    }
+
+
+   Deque<ScopeTodo> todoScopes = new ArrayDeque<>();
+
+   void pushTodo(ControlFlowBlock block) {
+      LabelRef blockRef = block.getLabel();
+      Scope blockScope = this.scope.getSymbol(blockRef).getScope();
+      for (ScopeTodo todoScope : todoScopes) {
+         if(todoScope.scope.equals(blockScope)) {
+            todoScope.addTodo(block);
+            return;
+         }
+      }
+      ScopeTodo newScopeTodo = new ScopeTodo(blockScope);
+      todoScopes.push(newScopeTodo);
+      newScopeTodo.addTodo(block);
+   }
+   
+   boolean hasTodo() {
+      return !todoScopes.isEmpty();
+   }
+
+   ControlFlowBlock popTodo() {
+      ScopeTodo scopeTodo = todoScopes.peek();
+      ControlFlowBlock block = scopeTodo.todo.pop();
+      if(scopeTodo.todo.isEmpty()) {
+         todoScopes.pop();
+      }
+      return block;
+   }
+
+   private static class ScopeTodo {
+      
+      Scope scope;
+      
+      Stack<ControlFlowBlock> todo;
+
+      public ScopeTodo(Scope scope) {
+         this.scope = scope;
+         this.todo = new Stack<>();
+      }
+
+      public void addTodo(ControlFlowBlock block) {
+         todo.push(block);
+      }
+   }
+   
+   
 }

@@ -101,19 +101,20 @@ public class Compiler {
       Pass3BlockSequencePlanner pass3BlockSequencePlanner = new Pass3BlockSequencePlanner(program, log);
       pass3BlockSequencePlanner.plan();
 
-      //Pass3PhiLifting pass3PhiLifting = new Pass3PhiLifting(program, log);
-      //pass3PhiLifting.perform();
+      Pass3PhiLifting pass3PhiLifting = new Pass3PhiLifting(program, log);
+      pass3PhiLifting.perform();
+      pass3BlockSequencePlanner.plan();
 
       log.append("CONTROL FLOW GRAPH - PHI LIFTED");
       log.append(program.getGraph().toString(program.getScope()));
+      pass2AssertSSA(program, log);
 
       Pass3IdentifyAliveRanges pass3IdentifyAliveRanges = new Pass3IdentifyAliveRanges(program, log);
       pass3IdentifyAliveRanges.findLiveRanges();
 
       log.append("CONTROL FLOW GRAPH - LIVE RANGES");
       log.append(program.getGraph().toString(program.getScope()));
-      log.append("SYMBOLS - LIVE RANGES");
-      log.append(program.getScope().getSymbolTableContents());
+      pass2AssertSSA(program, log);
 
    }
 
@@ -127,15 +128,9 @@ public class Compiler {
       optimizations.add(new Pass2SelfPhiElimination(program, log));
       optimizations.add(new Pass2ConditionalJumpSimplification(program, log));
 
-      List<Pass2SsaAssertion> assertions = new ArrayList<>();
-      assertions.add(new Pass2AssertSymbols(program));
-      assertions.add(new Pass2AssertBlocks(program));
-
       boolean ssaOptimized = true;
       while (ssaOptimized) {
-         for (Pass2SsaAssertion assertion : assertions) {
-            assertion.check();
-         }
+         pass2AssertSSA(program, log);
          ssaOptimized = false;
          for (Pass2SsaOptimization optimization : optimizations) {
             boolean stepOptimized = optimization.optimize();
@@ -146,6 +141,15 @@ public class Compiler {
                log.append(program.getGraph().toString(program.getScope()));
             }
          }
+      }
+   }
+
+   public void pass2AssertSSA(Program program, CompileLog log) {
+      List<Pass2SsaAssertion> assertions = new ArrayList<>();
+      assertions.add(new Pass2AssertSymbols(program));
+      assertions.add(new Pass2AssertBlocks(program));
+      for (Pass2SsaAssertion assertion : assertions) {
+         assertion.check();
       }
    }
 

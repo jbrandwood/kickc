@@ -110,6 +110,37 @@ public class LiveRange {
    }
 
    /**
+    * Determines if this live range overlaps another live range
+    * @param other The other live range
+    * @return true if there is an overlap
+    */
+   public boolean overlaps(LiveRange other) {
+      if(this.getMaxIndex()==-1 || other.getMaxIndex()==-1) {
+         return false;
+      }
+      int maxIdx = getMaxIndex();
+      for(int i=0;i<=maxIdx; i++) {
+         if(contains(i) && other.contains(i)) {
+            return true;
+         }
+      }
+      return false;
+   }
+
+   /**
+    * Adds another live range to this one - extending this live range to include the other one.
+    * @param other The live range to add
+    */
+   public void add(LiveRange other) {
+      int otherMaxIndex = other.getMaxIndex();
+      for(int i=0;i<=otherMaxIndex; i++) {
+         if(other.contains(i)) {
+            add(i);
+         }
+      }
+   }
+
+   /**
     * Determines if the live range contains a statement
     * @param statement The statement to examine
     * @return true if the live range contains the statement
@@ -134,6 +165,17 @@ public class LiveRange {
          }
       }
       return false;
+   }
+
+   /**
+    * Get the maximal index contained in the live range
+    * @return The max index. -1 if the range is empty.
+    */
+   int getMaxIndex() {
+      if(intervals.isEmpty()) {
+         return -1;
+      }
+      return intervals.get(intervals.size()-1).lastStatementIdx;
    }
 
 

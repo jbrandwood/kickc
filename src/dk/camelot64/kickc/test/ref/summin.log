@@ -241,8 +241,47 @@ sum::@return: from sum
 @END: from @2
 
 Block Sequence Planned @BEGIN @2 @END sum sum::@return 
+Block Sequence Planned @BEGIN @2 @END sum sum::@return 
+CONTROL FLOW GRAPH - PHI LIFTED
+@BEGIN: from
+  call sum param-assignment
+  to:@2
+@2: from @BEGIN
+  call sum param-assignment
+  to:@END
+@END: from @2
+sum: from @2 @BEGIN
+  (byte) sum::b#2 ← phi( @2/(byte) 13 @BEGIN/(byte) 2 )
+  (byte) sum::a#2 ← phi( @2/(byte) 9 @BEGIN/(byte) 1 )
+  (byte) s1#0 ← (byte) sum::a#2 + (byte) sum::b#2
+  to:sum::@return
+sum::@return: from sum
+  return (byte) s1#0
+  to:@RETURN
+
 Propagating live ranges...
 CONTROL FLOW GRAPH - LIVE RANGES
+@BEGIN: from
+  [0] call sum param-assignment [ ]
+  to:@2
+@2: from @BEGIN
+  [1] call sum param-assignment [ ]
+  to:@END
+@END: from @2
+sum: from @2 @BEGIN
+  [2] (byte) sum::b#2 ← phi( @2/(byte) 13 @BEGIN/(byte) 2 ) [ sum::a#2 sum::b#2 ]
+  [2] (byte) sum::a#2 ← phi( @2/(byte) 9 @BEGIN/(byte) 1 ) [ sum::a#2 sum::b#2 ]
+  [3] (byte) s1#0 ← (byte) sum::a#2 + (byte) sum::b#2 [ s1#0 ]
+  to:sum::@return
+sum::@return: from sum
+  [4] return (byte) s1#0 [ ]
+  to:@RETURN
+
+Created 2 initial phi equivalence classes
+Coalesced down to 2 phi equivalence classes
+Block Sequence Planned @BEGIN @2 @END sum sum::@return 
+Propagating live ranges...
+CONTROL FLOW GRAPH - PHI MEM COALESCED
 @BEGIN: from
   [0] call sum param-assignment [ ]
   to:@2

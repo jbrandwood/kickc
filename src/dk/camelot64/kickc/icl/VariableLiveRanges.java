@@ -44,4 +44,13 @@ public class VariableLiveRanges {
       return aliveVars;
    }
 
+   /**
+    * Get the alive range of a variable
+    * @param variable The variable reference
+    * @return The alive range for the variable
+    */
+   public LiveRange getLiveRange(VariableRef variable) {
+      return liveRanges.get(variable);
+   }
+
 }

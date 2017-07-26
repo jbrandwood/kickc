@@ -85,8 +85,10 @@ public class Compiler {
    }
 
    public  AsmProgram pass4GenerateAsm(Program program, CompileLog log) {
-      Pass4RegisterAllocation pass4RegisterAllocation = new Pass4RegisterAllocation(program);
-      pass4RegisterAllocation.allocate();
+
+      Pass4ZeroPageAllocationLiveRange pass4ZeroPageAllocationLiveRange = new Pass4ZeroPageAllocationLiveRange(program, log);
+      pass4ZeroPageAllocationLiveRange.allocate();
+
       Pass4CodeGeneration pass4CodeGeneration = new Pass4CodeGeneration(program);
       AsmProgram asmProgram = pass4CodeGeneration.generate();
 

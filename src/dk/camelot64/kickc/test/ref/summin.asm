@@ -17,6 +17,6 @@ sum:
   lda 2
   clc
   adc 3
-  sta 4
+  sta 2
 sum__Breturn:
   rts

@@ -12,13 +12,11 @@ import java.util.*;
 public abstract class Pass2SsaOptimization {
 
    protected CompileLog log;
-   private ControlFlowGraph graph;
-   private ProgramScope scope;
+   private Program program;
 
    public Pass2SsaOptimization(Program program,CompileLog log) {
+      this.program = program;
       this.log = log;
-      this.graph = program.getGraph();
-      this.scope = program.getScope();
    }
 
    public CompileLog getLog() {
@@ -26,11 +24,15 @@ public abstract class Pass2SsaOptimization {
    }
 
    public ControlFlowGraph getGraph() {
-      return graph;
+      return program.getGraph();
    }
 
    public ProgramScope getSymbols() {
-      return scope;
+      return program.getScope();
+   }
+
+   public Program getProgram() {
+      return program;
    }
 
    /**
@@ -167,7 +169,7 @@ public abstract class Pass2SsaOptimization {
          }
 
       };
-      visitor.visitGraph(graph);
+      visitor.visitGraph(getGraph());
    }
 
    /**
@@ -251,7 +253,7 @@ public abstract class Pass2SsaOptimization {
     * @param variables The variables to eliminate
     */
    public void removeAssignments(Collection<? extends LValue> variables) {
-      for (ControlFlowBlock block : graph.getAllBlocks()) {
+      for (ControlFlowBlock block : getGraph().getAllBlocks()) {
          for (Iterator<Statement> iterator = block.getStatements().iterator(); iterator.hasNext(); ) {
             Statement statement = iterator.next();
             if (statement instanceof StatementAssignment) {

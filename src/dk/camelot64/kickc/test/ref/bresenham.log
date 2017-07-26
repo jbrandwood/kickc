@@ -985,60 +985,63 @@ CONTROL FLOW GRAPH - PHI MEM COALESCED
   [10] (byte) e#2 ← (byte) e#1 - (byte) 39 [ x#1 cursor#2 e#2 y#1 ]
   to:@3
 
+Initial phi equivalence classes
+[ cursor#3 cursor#5 cursor#1 cursor#2 ]
+[ x#2 x#1 ]
+[ e#3 e#5 e#1 e#2 ]
+[ y#2 y#4 y#1 ]
+Copy Coalesced equivalence classes
+[ cursor#3 cursor#5 cursor#1 cursor#2 ]
+[ x#2 x#1 ]
+[ e#3 e#5 e#1 e#2 ]
+[ y#2 y#4 y#1 ]
+Complete equivalence classes
+[ cursor#3 cursor#5 cursor#1 cursor#2 ]
+[ x#2 x#1 ]
+[ e#3 e#5 e#1 e#2 ]
+[ y#2 y#4 y#1 ]
+Allocated zp ptr byte:2 to [ cursor#3 cursor#5 cursor#1 cursor#2 ]
+Allocated zp byte:4 to [ x#2 x#1 ]
+Allocated zp byte:5 to [ e#3 e#5 e#1 e#2 ]
+Allocated zp byte:6 to [ y#2 y#4 y#1 ]
 INITIAL ASM
 BBEGIN:
 B1_from_BBEGIN:
   // (byte) y#2 = (byte) 0  // zpby1=coby1
   lda #0
-  sta 14
+  sta 6
   // (byte) e#3 = (byte) 12  // zpby1=coby1
   lda #12
-  sta 13
+  sta 5
   // (byte) x#2 = (byte) 0  // zpby1=coby1
   lda #0
-  sta 12
+  sta 4
   // (byte*) cursor#3 = (word) 1024  // zpptrby1=cowo1
   lda #<1024
-  sta 10
+  sta 2
   lda #>1024
-  sta 10+1
+  sta 2+1
   jmp B1
 B1_from_B3:
-  // (byte) y#2 = (byte) y#4  // zpby1=zpby2
-  lda 18
-  sta 14
-  // (byte) e#3 = (byte) e#5  // zpby1=zpby2
-  lda 17
-  sta 13
-  // (byte) x#2 = (byte) x#1  // zpby1=zpby2
-  lda 2
-  sta 12
-  // (byte*) cursor#3 = (byte*) cursor#5  // zpptrby1=zpptrby2
-  lda 15
-  sta 10
-  lda 15+1
-  sta 10+1
+  // (byte) y#2 = (byte) y#4  // register copy 
+  // (byte) e#3 = (byte) e#5  // register copy 
+  // (byte) x#2 = (byte) x#1  // register copy 
+  // (byte*) cursor#3 = (byte*) cursor#5  // register copy 
   jmp B1
 B1:
   // [1] *((byte*) cursor#3) ← (byte) 81 [ cursor#3 x#2 e#3 y#2 ]  //  zpiby1=coby1
   ldy #0
   lda #81
-  sta (10),y
-  // [2] (byte) x#1 ← (byte) x#2 + (byte) 1 [ x#1 cursor#3 e#3 y#2 ]  //  zpby1=zpby2_plus_1
-  lda 12
-  clc
-  adc #1
-  sta 2
-  // [3] (byte*) cursor#1 ← (byte*) cursor#3 + (byte) 1 [ x#1 e#3 cursor#1 y#2 ]  //  zpptrby1=zpptrby2_plus_1
-  lda 10
-  clc
-  adc #1
-  sta 3
-  lda 10+1
-  adc #0
-  sta 3+1
-  // [4] (byte) e#1 ← (byte) e#3 + (byte) 24 [ x#1 e#1 cursor#1 y#2 ]  //  zpby1=zpby2_plus_coby1
-  lda 13
+  sta (2),y
+  // [2] (byte) x#1 ← (byte) x#2 + (byte) 1 [ x#1 cursor#3 e#3 y#2 ]  //  zpby1=zpby1_plus_1
+  inc 4
+  // [3] (byte*) cursor#1 ← (byte*) cursor#3 + (byte) 1 [ x#1 e#3 cursor#1 y#2 ]  //  zpptrby1=zpptrby1_plus_1
+  inc 2
+  bne !+
+  inc 2+1
+!:
+  // [4] (byte) e#1 ← (byte) e#3 + (byte) 24 [ x#1 e#1 cursor#1 y#2 ]  //  zpby1=zpby1_plus_coby1
+  lda 5
   clc
   adc #24
   sta 5
@@ -1047,56 +1050,37 @@ B1:
   cmp 5
   bcc B2
 B3_from_B1:
-  // (byte) y#4 = (byte) y#2  // zpby1=zpby2
-  lda 14
-  sta 18
-  // (byte) e#5 = (byte) e#1  // zpby1=zpby2
-  lda 5
-  sta 17
-  // (byte*) cursor#5 = (byte*) cursor#1  // zpptrby1=zpptrby2
-  lda 3
-  sta 15
-  lda 3+1
-  sta 15+1
+  // (byte) y#4 = (byte) y#2  // register copy 
+  // (byte) e#5 = (byte) e#1  // register copy 
+  // (byte*) cursor#5 = (byte*) cursor#1  // register copy 
   jmp B3
 B3:
   // [7] if((byte) x#1<(byte) 40) goto @1 [ cursor#5 x#1 e#5 y#4 ]  //  zpby1_lt_coby1_then_la1
-  lda 2
+  lda 4
   cmp #40
   bcc B1_from_B3
   jmp BEND
 BEND:
 B2:
-  // [8] (byte) y#1 ← (byte) y#2 + (byte) 1 [ x#1 e#1 cursor#1 y#1 ]  //  zpby1=zpby2_plus_1
-  lda 14
+  // [8] (byte) y#1 ← (byte) y#2 + (byte) 1 [ x#1 e#1 cursor#1 y#1 ]  //  zpby1=zpby1_plus_1
+  inc 6
+  // [9] (byte*) cursor#2 ← (byte*) cursor#1 + (byte) 40 [ x#1 e#1 cursor#2 y#1 ]  //  zpptrby1=zpptrby1_plus_coby1
+  lda 2
   clc
-  adc #1
-  sta 6
-  // [9] (byte*) cursor#2 ← (byte*) cursor#1 + (byte) 40 [ x#1 e#1 cursor#2 y#1 ]  //  zpptrby1=zpptrby2_plus_coby1
-  lda #40
-  clc
-  adc 3
-  sta 7
-  lda #0
-  adc 3+1
-  sta 7+1
-  // [10] (byte) e#2 ← (byte) e#1 - (byte) 39 [ x#1 cursor#2 e#2 y#1 ]  //  zpby1=zpby2_minus_coby1
+  adc #40
+  sta 2
+  bcc !+
+  inc 2+1
+!:
+  // [10] (byte) e#2 ← (byte) e#1 - (byte) 39 [ x#1 cursor#2 e#2 y#1 ]  //  zpby1=zpby1_minus_coby1
   lda 5
   sec
   sbc #39
-  sta 9
+  sta 5
 B3_from_B2:
-  // (byte) y#4 = (byte) y#1  // zpby1=zpby2
-  lda 6
-  sta 18
-  // (byte) e#5 = (byte) e#2  // zpby1=zpby2
-  lda 9
-  sta 17
-  // (byte*) cursor#5 = (byte*) cursor#2  // zpptrby1=zpptrby2
-  lda 7
-  sta 15
-  lda 7+1
-  sta 15+1
+  // (byte) y#4 = (byte) y#1  // register copy 
+  // (byte) e#5 = (byte) e#2  // register copy 
+  // (byte*) cursor#5 = (byte*) cursor#2  // register copy 
   jmp B3
 
 Removing instruction jmp B1
@@ -1108,54 +1092,38 @@ BBEGIN:
 B1_from_BBEGIN:
   // (byte) y#2 = (byte) 0  // zpby1=coby1
   lda #0
-  sta 14
+  sta 6
   // (byte) e#3 = (byte) 12  // zpby1=coby1
   lda #12
-  sta 13
+  sta 5
   // (byte) x#2 = (byte) 0  // zpby1=coby1
   lda #0
-  sta 12
+  sta 4
   // (byte*) cursor#3 = (word) 1024  // zpptrby1=cowo1
   lda #<1024
-  sta 10
+  sta 2
   lda #>1024
-  sta 10+1
+  sta 2+1
   jmp B1
 B1_from_B3:
-  // (byte) y#2 = (byte) y#4  // zpby1=zpby2
-  lda 18
-  sta 14
-  // (byte) e#3 = (byte) e#5  // zpby1=zpby2
-  lda 17
-  sta 13
-  // (byte) x#2 = (byte) x#1  // zpby1=zpby2
-  lda 2
-  sta 12
-  // (byte*) cursor#3 = (byte*) cursor#5  // zpptrby1=zpptrby2
-  lda 15
-  sta 10
-  lda 15+1
-  sta 10+1
+  // (byte) y#2 = (byte) y#4  // register copy 
+  // (byte) e#3 = (byte) e#5  // register copy 
+  // (byte) x#2 = (byte) x#1  // register copy 
+  // (byte*) cursor#3 = (byte*) cursor#5  // register copy 
 B1:
   // [1] *((byte*) cursor#3) ← (byte) 81 [ cursor#3 x#2 e#3 y#2 ]  //  zpiby1=coby1
   ldy #0
   lda #81
-  sta (10),y
-  // [2] (byte) x#1 ← (byte) x#2 + (byte) 1 [ x#1 cursor#3 e#3 y#2 ]  //  zpby1=zpby2_plus_1
-  lda 12
-  clc
-  adc #1
-  sta 2
-  // [3] (byte*) cursor#1 ← (byte*) cursor#3 + (byte) 1 [ x#1 e#3 cursor#1 y#2 ]  //  zpptrby1=zpptrby2_plus_1
-  lda 10
-  clc
-  adc #1
-  sta 3
-  lda 10+1
-  adc #0
-  sta 3+1
-  // [4] (byte) e#1 ← (byte) e#3 + (byte) 24 [ x#1 e#1 cursor#1 y#2 ]  //  zpby1=zpby2_plus_coby1
-  lda 13
+  sta (2),y
+  // [2] (byte) x#1 ← (byte) x#2 + (byte) 1 [ x#1 cursor#3 e#3 y#2 ]  //  zpby1=zpby1_plus_1
+  inc 4
+  // [3] (byte*) cursor#1 ← (byte*) cursor#3 + (byte) 1 [ x#1 e#3 cursor#1 y#2 ]  //  zpptrby1=zpptrby1_plus_1
+  inc 2
+  bne !+
+  inc 2+1
+!:
+  // [4] (byte) e#1 ← (byte) e#3 + (byte) 24 [ x#1 e#1 cursor#1 y#2 ]  //  zpby1=zpby1_plus_coby1
+  lda 5
   clc
   adc #24
   sta 5
@@ -1164,54 +1132,112 @@ B1:
   cmp 5
   bcc B2
 B3_from_B1:
-  // (byte) y#4 = (byte) y#2  // zpby1=zpby2
-  lda 14
-  sta 18
-  // (byte) e#5 = (byte) e#1  // zpby1=zpby2
-  lda 5
-  sta 17
-  // (byte*) cursor#5 = (byte*) cursor#1  // zpptrby1=zpptrby2
-  lda 3
-  sta 15
-  lda 3+1
-  sta 15+1
+  // (byte) y#4 = (byte) y#2  // register copy 
+  // (byte) e#5 = (byte) e#1  // register copy 
+  // (byte*) cursor#5 = (byte*) cursor#1  // register copy 
 B3:
   // [7] if((byte) x#1<(byte) 40) goto @1 [ cursor#5 x#1 e#5 y#4 ]  //  zpby1_lt_coby1_then_la1
-  lda 2
+  lda 4
   cmp #40
   bcc B1_from_B3
 BEND:
 B2:
-  // [8] (byte) y#1 ← (byte) y#2 + (byte) 1 [ x#1 e#1 cursor#1 y#1 ]  //  zpby1=zpby2_plus_1
-  lda 14
+  // [8] (byte) y#1 ← (byte) y#2 + (byte) 1 [ x#1 e#1 cursor#1 y#1 ]  //  zpby1=zpby1_plus_1
+  inc 6
+  // [9] (byte*) cursor#2 ← (byte*) cursor#1 + (byte) 40 [ x#1 e#1 cursor#2 y#1 ]  //  zpptrby1=zpptrby1_plus_coby1
+  lda 2
   clc
-  adc #1
-  sta 6
-  // [9] (byte*) cursor#2 ← (byte*) cursor#1 + (byte) 40 [ x#1 e#1 cursor#2 y#1 ]  //  zpptrby1=zpptrby2_plus_coby1
-  lda #40
-  clc
-  adc 3
-  sta 7
-  lda #0
-  adc 3+1
-  sta 7+1
-  // [10] (byte) e#2 ← (byte) e#1 - (byte) 39 [ x#1 cursor#2 e#2 y#1 ]  //  zpby1=zpby2_minus_coby1
+  adc #40
+  sta 2
+  bcc !+
+  inc 2+1
+!:
+  // [10] (byte) e#2 ← (byte) e#1 - (byte) 39 [ x#1 cursor#2 e#2 y#1 ]  //  zpby1=zpby1_minus_coby1
   lda 5
   sec
   sbc #39
-  sta 9
+  sta 5
 B3_from_B2:
-  // (byte) y#4 = (byte) y#1  // zpby1=zpby2
-  lda 6
-  sta 18
-  // (byte) e#5 = (byte) e#2  // zpby1=zpby2
-  lda 9
-  sta 17
-  // (byte*) cursor#5 = (byte*) cursor#2  // zpptrby1=zpptrby2
-  lda 7
-  sta 15
-  lda 7+1
-  sta 15+1
+  // (byte) y#4 = (byte) y#1  // register copy 
+  // (byte) e#5 = (byte) e#2  // register copy 
+  // (byte*) cursor#5 = (byte*) cursor#2  // register copy 
+  jmp B3
+
+Removing instruction jmp B1
+Succesful ASM optimization Pass5NextJumpElimination
+ASSEMBLER
+BBEGIN:
+B1_from_BBEGIN:
+  // (byte) y#2 = (byte) 0  // zpby1=coby1
+  lda #0
+  sta 6
+  // (byte) e#3 = (byte) 12  // zpby1=coby1
+  lda #12
+  sta 5
+  // (byte) x#2 = (byte) 0  // zpby1=coby1
+  lda #0
+  sta 4
+  // (byte*) cursor#3 = (word) 1024  // zpptrby1=cowo1
+  lda #<1024
+  sta 2
+  lda #>1024
+  sta 2+1
+B1_from_B3:
+  // (byte) y#2 = (byte) y#4  // register copy 
+  // (byte) e#3 = (byte) e#5  // register copy 
+  // (byte) x#2 = (byte) x#1  // register copy 
+  // (byte*) cursor#3 = (byte*) cursor#5  // register copy 
+B1:
+  // [1] *((byte*) cursor#3) ← (byte) 81 [ cursor#3 x#2 e#3 y#2 ]  //  zpiby1=coby1
+  ldy #0
+  lda #81
+  sta (2),y
+  // [2] (byte) x#1 ← (byte) x#2 + (byte) 1 [ x#1 cursor#3 e#3 y#2 ]  //  zpby1=zpby1_plus_1
+  inc 4
+  // [3] (byte*) cursor#1 ← (byte*) cursor#3 + (byte) 1 [ x#1 e#3 cursor#1 y#2 ]  //  zpptrby1=zpptrby1_plus_1
+  inc 2
+  bne !+
+  inc 2+1
+!:
+  // [4] (byte) e#1 ← (byte) e#3 + (byte) 24 [ x#1 e#1 cursor#1 y#2 ]  //  zpby1=zpby1_plus_coby1
+  lda 5
+  clc
+  adc #24
+  sta 5
+  // [5] if((byte) 39<(byte) e#1) goto @2 [ x#1 e#1 cursor#1 y#2 ]  //  coby1_lt_zpby1_then_la1
+  lda #39
+  cmp 5
+  bcc B2
+B3_from_B1:
+  // (byte) y#4 = (byte) y#2  // register copy 
+  // (byte) e#5 = (byte) e#1  // register copy 
+  // (byte*) cursor#5 = (byte*) cursor#1  // register copy 
+B3:
+  // [7] if((byte) x#1<(byte) 40) goto @1 [ cursor#5 x#1 e#5 y#4 ]  //  zpby1_lt_coby1_then_la1
+  lda 4
+  cmp #40
+  bcc B1_from_B3
+BEND:
+B2:
+  // [8] (byte) y#1 ← (byte) y#2 + (byte) 1 [ x#1 e#1 cursor#1 y#1 ]  //  zpby1=zpby1_plus_1
+  inc 6
+  // [9] (byte*) cursor#2 ← (byte*) cursor#1 + (byte) 40 [ x#1 e#1 cursor#2 y#1 ]  //  zpptrby1=zpptrby1_plus_coby1
+  lda 2
+  clc
+  adc #40
+  sta 2
+  bcc !+
+  inc 2+1
+!:
+  // [10] (byte) e#2 ← (byte) e#1 - (byte) 39 [ x#1 cursor#2 e#2 y#1 ]  //  zpby1=zpby1_minus_coby1
+  lda 5
+  sec
+  sbc #39
+  sta 5
+B3_from_B2:
+  // (byte) y#4 = (byte) y#1  // register copy 
+  // (byte) e#5 = (byte) e#2  // register copy 
+  // (byte*) cursor#5 = (byte*) cursor#2  // register copy 
   jmp B3
 
 FINAL SYMBOL TABLE
@@ -1223,25 +1249,25 @@ FINAL SYMBOL TABLE
 (byte[1000]) SCREEN
 (byte) STAR
 (byte*) cursor
-(byte*) cursor#1 zp ptr byte:3
-(byte*) cursor#2 zp ptr byte:7
-(byte*) cursor#3 zp ptr byte:10
-(byte*) cursor#5 zp ptr byte:15
+(byte*) cursor#1 zp ptr byte:2
+(byte*) cursor#2 zp ptr byte:2
+(byte*) cursor#3 zp ptr byte:2
+(byte*) cursor#5 zp ptr byte:2
 (byte) e
 (byte) e#1 zp byte:5
-(byte) e#2 zp byte:9
-(byte) e#3 zp byte:13
-(byte) e#5 zp byte:17
+(byte) e#2 zp byte:5
+(byte) e#3 zp byte:5
+(byte) e#5 zp byte:5
 (byte) x
-(byte) x#1 zp byte:2
-(byte) x#2 zp byte:12
+(byte) x#1 zp byte:4
+(byte) x#2 zp byte:4
 (byte) x0
 (byte) x1
 (byte) xd
 (byte) y
 (byte) y#1 zp byte:6
-(byte) y#2 zp byte:14
-(byte) y#4 zp byte:18
+(byte) y#2 zp byte:6
+(byte) y#4 zp byte:6
 (byte) y0
 (byte) y1
 (byte) yd
@@ -1251,54 +1277,37 @@ BBEGIN:
 B1_from_BBEGIN:
   // (byte) y#2 = (byte) 0  // zpby1=coby1
   lda #0
-  sta 14
+  sta 6
   // (byte) e#3 = (byte) 12  // zpby1=coby1
   lda #12
-  sta 13
+  sta 5
   // (byte) x#2 = (byte) 0  // zpby1=coby1
   lda #0
-  sta 12
+  sta 4
   // (byte*) cursor#3 = (word) 1024  // zpptrby1=cowo1
   lda #<1024
-  sta 10
+  sta 2
   lda #>1024
-  sta 10+1
-  jmp B1
+  sta 2+1
 B1_from_B3:
-  // (byte) y#2 = (byte) y#4  // zpby1=zpby2
-  lda 18
-  sta 14
-  // (byte) e#3 = (byte) e#5  // zpby1=zpby2
-  lda 17
-  sta 13
-  // (byte) x#2 = (byte) x#1  // zpby1=zpby2
-  lda 2
-  sta 12
-  // (byte*) cursor#3 = (byte*) cursor#5  // zpptrby1=zpptrby2
-  lda 15
-  sta 10
-  lda 15+1
-  sta 10+1
+  // (byte) y#2 = (byte) y#4  // register copy 
+  // (byte) e#3 = (byte) e#5  // register copy 
+  // (byte) x#2 = (byte) x#1  // register copy 
+  // (byte*) cursor#3 = (byte*) cursor#5  // register copy 
 B1:
   // [1] *((byte*) cursor#3) ← (byte) 81 [ cursor#3 x#2 e#3 y#2 ]  //  zpiby1=coby1
   ldy #0
   lda #81
-  sta (10),y
-  // [2] (byte) x#1 ← (byte) x#2 + (byte) 1 [ x#1 cursor#3 e#3 y#2 ]  //  zpby1=zpby2_plus_1
-  lda 12
-  clc
-  adc #1
-  sta 2
-  // [3] (byte*) cursor#1 ← (byte*) cursor#3 + (byte) 1 [ x#1 e#3 cursor#1 y#2 ]  //  zpptrby1=zpptrby2_plus_1
-  lda 10
-  clc
-  adc #1
-  sta 3
-  lda 10+1
-  adc #0
-  sta 3+1
-  // [4] (byte) e#1 ← (byte) e#3 + (byte) 24 [ x#1 e#1 cursor#1 y#2 ]  //  zpby1=zpby2_plus_coby1
-  lda 13
+  sta (2),y
+  // [2] (byte) x#1 ← (byte) x#2 + (byte) 1 [ x#1 cursor#3 e#3 y#2 ]  //  zpby1=zpby1_plus_1
+  inc 4
+  // [3] (byte*) cursor#1 ← (byte*) cursor#3 + (byte) 1 [ x#1 e#3 cursor#1 y#2 ]  //  zpptrby1=zpptrby1_plus_1
+  inc 2
+  bne !+
+  inc 2+1
+!:
+  // [4] (byte) e#1 ← (byte) e#3 + (byte) 24 [ x#1 e#1 cursor#1 y#2 ]  //  zpby1=zpby1_plus_coby1
+  lda 5
   clc
   adc #24
   sta 5
@@ -1307,53 +1316,34 @@ B1:
   cmp 5
   bcc B2
 B3_from_B1:
-  // (byte) y#4 = (byte) y#2  // zpby1=zpby2
-  lda 14
-  sta 18
-  // (byte) e#5 = (byte) e#1  // zpby1=zpby2
-  lda 5
-  sta 17
-  // (byte*) cursor#5 = (byte*) cursor#1  // zpptrby1=zpptrby2
-  lda 3
-  sta 15
-  lda 3+1
-  sta 15+1
+  // (byte) y#4 = (byte) y#2  // register copy 
+  // (byte) e#5 = (byte) e#1  // register copy 
+  // (byte*) cursor#5 = (byte*) cursor#1  // register copy 
 B3:
   // [7] if((byte) x#1<(byte) 40) goto @1 [ cursor#5 x#1 e#5 y#4 ]  //  zpby1_lt_coby1_then_la1
-  lda 2
+  lda 4
   cmp #40
   bcc B1_from_B3
 BEND:
 B2:
-  // [8] (byte) y#1 ← (byte) y#2 + (byte) 1 [ x#1 e#1 cursor#1 y#1 ]  //  zpby1=zpby2_plus_1
-  lda 14
+  // [8] (byte) y#1 ← (byte) y#2 + (byte) 1 [ x#1 e#1 cursor#1 y#1 ]  //  zpby1=zpby1_plus_1
+  inc 6
+  // [9] (byte*) cursor#2 ← (byte*) cursor#1 + (byte) 40 [ x#1 e#1 cursor#2 y#1 ]  //  zpptrby1=zpptrby1_plus_coby1
+  lda 2
   clc
-  adc #1
-  sta 6
-  // [9] (byte*) cursor#2 ← (byte*) cursor#1 + (byte) 40 [ x#1 e#1 cursor#2 y#1 ]  //  zpptrby1=zpptrby2_plus_coby1
-  lda #40
-  clc
-  adc 3
-  sta 7
-  lda #0
-  adc 3+1
-  sta 7+1
-  // [10] (byte) e#2 ← (byte) e#1 - (byte) 39 [ x#1 cursor#2 e#2 y#1 ]  //  zpby1=zpby2_minus_coby1
+  adc #40
+  sta 2
+  bcc !+
+  inc 2+1
+!:
+  // [10] (byte) e#2 ← (byte) e#1 - (byte) 39 [ x#1 cursor#2 e#2 y#1 ]  //  zpby1=zpby1_minus_coby1
   lda 5
   sec
   sbc #39
-  sta 9
+  sta 5
 B3_from_B2:
-  // (byte) y#4 = (byte) y#1  // zpby1=zpby2
-  lda 6
-  sta 18
-  // (byte) e#5 = (byte) e#2  // zpby1=zpby2
-  lda 9
-  sta 17
-  // (byte*) cursor#5 = (byte*) cursor#2  // zpptrby1=zpptrby2
-  lda 7
-  sta 15
-  lda 7+1
-  sta 15+1
+  // (byte) y#4 = (byte) y#1  // register copy 
+  // (byte) e#5 = (byte) e#2  // register copy 
+  // (byte*) cursor#5 = (byte*) cursor#2  // register copy 
   jmp B3
 

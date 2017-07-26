@@ -148,6 +148,10 @@ public class Compiler {
       List<Pass2SsaAssertion> assertions = new ArrayList<>();
       assertions.add(new Pass2AssertSymbols(program));
       assertions.add(new Pass2AssertBlocks(program));
+      assertions.add(new Pass2AssertNoCallParameters(program));
+      assertions.add(new Pass2AssertNoCallLvalues(program));
+      assertions.add(new Pass2AssertNoProcs(program));
+      assertions.add(new Pass2AssertNoLabels(program));
       for (Pass2SsaAssertion assertion : assertions) {
          assertion.check();
       }

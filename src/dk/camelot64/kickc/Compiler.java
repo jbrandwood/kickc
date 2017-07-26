@@ -112,6 +112,7 @@ public class Compiler {
       Pass3IdentifyAliveRanges pass3IdentifyAliveRanges = new Pass3IdentifyAliveRanges(program, log);
       pass3IdentifyAliveRanges.findLiveRanges();
 
+
       log.append("CONTROL FLOW GRAPH - LIVE RANGES");
       log.append(program.getGraph().toString(program.getScope()));
       pass2AssertSSA(program, log);

@@ -17,7 +17,7 @@ main__B3:
 main__B4:
   lda 53266
   cmp #255
-  bne main__main__B4
+  bne main__B4
 main__B6:
   dex
   cpx #0

@@ -101,13 +101,13 @@ public class Compiler {
       Pass3BlockSequencePlanner pass3BlockSequencePlanner = new Pass3BlockSequencePlanner(program, log);
       pass3BlockSequencePlanner.plan();
 
-      Pass3PhiLifting pass3PhiLifting = new Pass3PhiLifting(program, log);
-      pass3PhiLifting.perform();
-      pass3BlockSequencePlanner.plan();
+      //Pass3PhiLifting pass3PhiLifting = new Pass3PhiLifting(program, log);
+      //pass3PhiLifting.perform();
+      //pass3BlockSequencePlanner.plan();
 
-      log.append("CONTROL FLOW GRAPH - PHI LIFTED");
-      log.append(program.getGraph().toString(program.getScope()));
-      pass2AssertSSA(program, log);
+      //log.append("CONTROL FLOW GRAPH - PHI LIFTED");
+      //log.append(program.getGraph().toString(program.getScope()));
+      //pass2AssertSSA(program, log);
 
       Pass3IdentifyAliveRanges pass3IdentifyAliveRanges = new Pass3IdentifyAliveRanges(program, log);
       pass3IdentifyAliveRanges.findLiveRanges();

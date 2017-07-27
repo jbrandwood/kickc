@@ -11,7 +11,7 @@ public class ProgramScope extends Scope {
 
    private RegisterAllocation allocation;
 
-   private VariableLiveRanges liveRanges;
+   private LiveRangeVariables liveRanges;
 
    public ProgramScope() {
       super("", null);
@@ -50,11 +50,11 @@ public class ProgramScope extends Scope {
       return allocation;
    }
 
-   public void setLiveRanges(VariableLiveRanges liveRanges) {
+   public void setLiveRanges(LiveRangeVariables liveRanges) {
       this.liveRanges = liveRanges;
    }
 
-   public VariableLiveRanges getLiveRanges() {
+   public LiveRangeVariables getLiveRanges() {
       return liveRanges;
    }
 

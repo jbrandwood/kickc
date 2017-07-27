@@ -49,7 +49,7 @@ public abstract class StatementBase implements Statement {
       if(scope==null || scope.getLiveRanges()==null) {
          return "";
       }
-      VariableLiveRanges liveRanges = scope.getLiveRanges();
+      LiveRangeVariables liveRanges = scope.getLiveRanges();
       List<VariableRef> alive = liveRanges.getAlive(this);
       StringBuilder str = new StringBuilder();
       str.append(" [ ");

@@ -7,6 +7,7 @@ import java.util.Set;
 
 /** A set of natural loops in a control flow graph.
  * <p>For definitions and more see http://www.cs.colostate.edu/~cs553/ClassNotes/lecture09-control-dominators.ppt.pdf
+ * <p>Created by {@link dk.camelot64.kickc.passes.Pass3LoopAnalysis}
  * */
 public class NaturalLoopSet {
 

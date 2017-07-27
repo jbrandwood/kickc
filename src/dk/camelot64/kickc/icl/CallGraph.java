@@ -3,7 +3,9 @@ package dk.camelot64.kickc.icl;
 import java.util.ArrayList;
 import java.util.List;
 
-/** The call graph for the entire control flow graph, */
+/** The call graph for the entire control flow graph.
+ * Created by {@link dk.camelot64.kickc.passes.Pass3CallGraphAnalysis}
+ * */
 public class CallGraph {
 
    private List<CallBlock> callBlocks;

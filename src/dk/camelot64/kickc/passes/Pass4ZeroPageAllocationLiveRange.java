@@ -82,11 +82,11 @@ public class Pass4ZeroPageAllocationLiveRange {
       }
 
       private void addToEquivalenceClassSet(VariableRef lValVar, List<VariableRef> preferences) {
-         VariableLiveRanges variableLiveRanges = program.getScope().getLiveRanges();
+         LiveRangeVariables liveRangeVariables = program.getScope().getLiveRanges();
          LiveRangeEquivalenceClass lValEquivalenceClass =
                liveRangeEquivalenceClassSet.getEquivalenceClass(lValVar);
          if(lValEquivalenceClass==null) {
-            LiveRange lValLiveRange = variableLiveRanges.getLiveRange(lValVar);
+            LiveRange lValLiveRange = liveRangeVariables.getLiveRange(lValVar);
             // Variable in need of an equivalence class - Look through preferences
             LiveRangeEquivalenceClass chosen = null;
             for (VariableRef preference : preferences) {

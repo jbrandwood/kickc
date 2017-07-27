@@ -23,7 +23,7 @@ public class Pass3LiveRangesAnalysis {
 
    public void findLiveRanges() {
       generateStatementIndexes();
-      VariableLiveRanges liveRanges = initializeLiveRanges();
+      LiveRangeVariables liveRanges = initializeLiveRanges();
       program.getScope().setLiveRanges(liveRanges);
       //log.append("CONTROL FLOW GRAPH - LIVE RANGES");
       //log.append(program.getGraph().toString(program.getScope()));
@@ -57,7 +57,7 @@ public class Pass3LiveRangesAnalysis {
     *
     * @return The initial live ranges.
     */
-   private VariableLiveRanges initializeLiveRanges() {
+   private LiveRangeVariables initializeLiveRanges() {
       LiveRangeInitializer liveRangeInitializer = new LiveRangeInitializer(program);
       return liveRangeInitializer.initialize();
    }
@@ -65,7 +65,7 @@ public class Pass3LiveRangesAnalysis {
    private static class LiveRangeInitializer extends ControlFlowGraphBaseVisitor<Void> {
 
       private final Program program;
-      private VariableLiveRanges liveRanges;
+      private LiveRangeVariables liveRanges;
 
       /**
        * Contains the previous statement through the iteration of each block. null if this statement is the first in the block.
@@ -78,10 +78,10 @@ public class Pass3LiveRangesAnalysis {
 
       public LiveRangeInitializer(Program program) {
          this.program = program;
-         this.liveRanges = new VariableLiveRanges();
+         this.liveRanges = new LiveRangeVariables();
       }
 
-      public VariableLiveRanges initialize() {
+      public LiveRangeVariables initialize() {
          this.visitGraph(program.getGraph());
          return liveRanges;
       }
@@ -195,7 +195,7 @@ public class Pass3LiveRangesAnalysis {
     *
     * @return true if any propagation was done. (and more propagation is necessary to complete the live ranges)
     */
-   private boolean propagateLiveRanges(VariableLiveRanges liveRanges) {
+   private boolean propagateLiveRanges(LiveRangeVariables liveRanges) {
       LiveRangePropagator liveRangePropagator = new LiveRangePropagator(program, liveRanges);
       return liveRangePropagator.propagate();
    }
@@ -210,7 +210,7 @@ public class Pass3LiveRangesAnalysis {
       /**
        * The variable live ranges being propagated.
        */
-      private VariableLiveRanges liveRanges;
+      private LiveRangeVariables liveRanges;
 
       /**
        * Has anything been modified.
@@ -227,7 +227,7 @@ public class Pass3LiveRangesAnalysis {
        */
       private ControlFlowBlock currentBlock;
 
-      public LiveRangePropagator(Program program, VariableLiveRanges liveRanges) {
+      public LiveRangePropagator(Program program, LiveRangeVariables liveRanges) {
          this.program = program;
          this.liveRanges = liveRanges;
          this.modified = false;

@@ -4,12 +4,14 @@ import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 
-/** Live ranges for all variables. */
-public class VariableLiveRanges {
+/** Live ranges for all variables.
+ * Created by  * Created by {@link dk.camelot64.kickc.passes.Pass3CallGraphAnalysis}
+ */
+public class LiveRangeVariables {
 
    private LinkedHashMap<VariableRef, LiveRange> liveRanges;
 
-   public VariableLiveRanges() {
+   public LiveRangeVariables() {
       this.liveRanges = new LinkedHashMap<>();
    }
 

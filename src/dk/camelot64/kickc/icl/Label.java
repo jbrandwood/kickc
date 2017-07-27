@@ -10,7 +10,7 @@ public class Label implements Symbol {
    /** The name of the label. */
    private String name;
 
-   /** The name of the containing scope */
+   /** The containing scope */
    private Scope scope;
 
    private boolean intermediate;

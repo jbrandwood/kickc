@@ -1,15 +1,17 @@
 package dk.camelot64.kickc.icl;
 
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.LinkedHashSet;
 import java.util.List;
 
-/** The call graph for the entire control flow graph.
+/**
+ * The call graph for the entire control flow graph.
  * Created by {@link dk.camelot64.kickc.passes.Pass3CallGraphAnalysis}
- * */
+ */
 public class CallGraph {
 
    private List<CallBlock> callBlocks;
-
 
    public CallGraph() {
       this.callBlocks = new ArrayList<>();
@@ -17,19 +19,50 @@ public class CallGraph {
 
    /**
     * Get the call block for a specific scope. Create it if it does not already exist.
+    *
     * @param scopeLabel The label for the scope.
     * @return The call block for the scope
     */
    public CallBlock getOrCreateCallBlock(LabelRef scopeLabel) {
-      for (CallBlock callBlock : callBlocks) {
-         if(callBlock.getScopeLabel().equals(scopeLabel)) {
-            return callBlock;
-         }
-      }
+      CallBlock callBlock = getCallBlock(scopeLabel);
+      if (callBlock != null) return callBlock;
       // Not found - create it
       CallBlock newCallBlock = new CallBlock(scopeLabel);
       callBlocks.add(newCallBlock);
       return newCallBlock;
+   }
+
+   /**
+    * Get the call block for a specific scope.
+    *
+    * @param scopeLabel The label for the scope.
+    * @return The call block for the scope. Null if the call block does not exist (no calls are made from it).
+    */
+   private CallBlock getCallBlock(LabelRef scopeLabel) {
+      for (CallBlock callBlock : callBlocks) {
+         if (callBlock.getScopeLabel().equals(scopeLabel)) {
+            return callBlock;
+         }
+      }
+      return null;
+   }
+
+   public CallBlock getFirstCallBlock() {
+      return getOrCreateCallBlock(new LabelRef(""));
+   }
+
+   /**
+    * Get sub call blocks called from a specific call block.
+    * @param block The block to find subs for
+    * @return The sub call blocks called from the passed block
+    */
+   public Collection<CallBlock> getCalledBlocks(CallBlock block) {
+      Collection<LabelRef> calledLabels = block.getCalledBlocks();
+      LinkedHashSet<CallBlock> called = new LinkedHashSet<>();
+      for (LabelRef calledLabel : calledLabels) {
+         called.add(getOrCreateCallBlock(calledLabel));
+      }
+      return called;
    }
 
    @Override
@@ -41,10 +74,14 @@ public class CallGraph {
       return out.toString();
    }
 
-   /** A block in the call graph, matching a scope in the program. */
+   /**
+    * A block in the call graph, matching a scope in the program.
+    */
    public static class CallBlock {
 
-      /** The label of the scope. (Program scope has label "" and procedure scopes have their respective labels). */
+      /**
+       * The label of the scope. (Program scope has label "" and procedure scopes have their respective labels).
+       */
       private LabelRef scopeLabel;
 
       private List<Call> calls;
@@ -62,6 +99,20 @@ public class CallGraph {
          this.calls.add(new Call(procedureLabel, statementCall));
       }
 
+      /**
+       * Get all call blocks called from this one.
+       *
+       * @return The scope labels of all call blocks called from this one.
+       */
+      public Collection<LabelRef> getCalledBlocks() {
+         LinkedHashSet<LabelRef> called = new LinkedHashSet<>();
+         for (Call call : calls) {
+            called.add(call.getProcedure());
+         }
+         return called;
+
+      }
+
       @Override
       public String toString() {
          StringBuilder out = new StringBuilder();
@@ -72,18 +123,32 @@ public class CallGraph {
          return out.toString();
       }
 
-      /** A single call in the call block. */
+      /**
+       * A single call found in the call block.
+       */
       public static class Call {
 
-         /** Statement index of the call statement, */
+         /**
+          * Statement index of the call statement,
+          */
          private Integer callStatementIdx;
 
-         /** The label of the called procedure. */
+         /**
+          * The label of the called procedure.
+          */
          private LabelRef procedure;
 
          public Call(LabelRef procedure, StatementCall statementCall) {
             this.callStatementIdx = statementCall.getIndex();
             this.procedure = procedure;
+         }
+
+         public LabelRef getProcedure() {
+            return procedure;
+         }
+
+         public Integer getCallStatementIdx() {
+            return callStatementIdx;
          }
 
          @Override
@@ -92,6 +157,7 @@ public class CallGraph {
             out.append(callStatementIdx).append(":").append(procedure);
             return out.toString();
          }
+
       }
 
    }

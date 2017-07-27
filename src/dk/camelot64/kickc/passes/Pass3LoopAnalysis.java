@@ -95,6 +95,7 @@ public class Pass3LoopAnalysis {
             }
          }
       }
+
       program.getGraph().setLoops(loopSet);
    }
 

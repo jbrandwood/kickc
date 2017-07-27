@@ -12,9 +12,14 @@ public class ControlFlowGraph {
 
    private Map<LabelRef, ControlFlowBlock> blocks;
    private LabelRef firstBlockRef;
+
+   /** Sequence of blocks used when generating ASM */
    private List<LabelRef> sequence;
+   /** Information about dominators of all blocks*/
    private DominatorsGraph dominators;
+   /** Information about loops. */
    private NaturalLoopSet loopSet;
+   /** Information about calls. */
    private CallGraph callGraph;
 
    public ControlFlowGraph(Map<LabelRef, ControlFlowBlock> blocks, LabelRef firstBlockRef) {

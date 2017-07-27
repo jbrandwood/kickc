@@ -141,6 +141,11 @@ public class Compiler {
       log.append("NATURAL LOOPS");
       log.append(program.getGraph().getLoopSet().toString());
 
+      Pass3LoopDepthAnalysis pass3LoopDepthAnalysis = new Pass3LoopDepthAnalysis(program, log);
+      pass3LoopDepthAnalysis.findLoopDepths();
+      log.append("NATURAL LOOPS WITH DEPTH");
+      log.append(program.getGraph().getLoopSet().toString());
+
    }
 
    public  void pass2OptimizeSSA(Program program, CompileLog log) {

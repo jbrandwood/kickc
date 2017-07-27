@@ -29,6 +29,7 @@ public class Pass4ZeroPageAllocationLiveRange {
       for (LiveRangeEquivalenceClass liveRangeEquivalenceClass : liveRangeEquivalenceClassSet.getEquivalenceClasses()) {
          log.append(liveRangeEquivalenceClass.toString());
       }
+
       // Coalesce over copy assignments
       EquivalenceClassCopyCoalescer equivalenceClassCopyCoalescer = new EquivalenceClassCopyCoalescer(liveRangeEquivalenceClassSet);
       equivalenceClassCopyCoalescer.visitGraph(program.getGraph());

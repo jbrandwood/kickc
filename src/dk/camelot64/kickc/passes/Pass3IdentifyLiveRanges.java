@@ -11,12 +11,12 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-public class Pass3IdentifyAliveRanges {
+public class Pass3IdentifyLiveRanges {
 
    private final Program program;
    private final CompileLog log;
 
-   public Pass3IdentifyAliveRanges(Program program, CompileLog log) {
+   public Pass3IdentifyLiveRanges(Program program, CompileLog log) {
       this.program = program;
       this.log = log;
    }

@@ -6,15 +6,7 @@ import org.antlr.v4.runtime.CharStream;
 import org.antlr.v4.runtime.CharStreams;
 
 import java.io.*;
-import java.net.URI;
 import java.net.URISyntaxException;
-import java.net.URL;
-import java.nio.charset.Charset;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * Compile a number of source files and compare the resulting assembler with expected output
@@ -64,8 +56,8 @@ public class TestCompilationOutput extends TestCase {
       Compiler.CompilationResult output = compiler.compile(input);
       boolean success = true;
       success &= helper.testOutput(fileName, ".asm", output.getAsmProgram().toString(false));
-      success &= helper.testOutput(fileName, ".sym", output.getSymbols().getSymbolTableContents());
-      success &= helper.testOutput(fileName, ".cfg", output.getGraph().toString(output.getSymbols()));
+      success &= helper.testOutput(fileName, ".sym", output.getScope().getSymbolTableContents());
+      success &= helper.testOutput(fileName, ".cfg", output.getGraph().toString(output.getScope()));
       success &= helper.testOutput(fileName, ".log", output.getLog().toString());
       if (!success) {
          fail("Output does not match reference!");

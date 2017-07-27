@@ -16,13 +16,13 @@ public class Compiler {
    public static class CompilationResult {
       private AsmProgram asmProgram;
       private ControlFlowGraph graph;
-      private ProgramScope symbols;
+      private ProgramScope scope;
       private CompileLog log;
 
-      public CompilationResult(AsmProgram asmProgram, ControlFlowGraph graph, ProgramScope symbols, CompileLog log) {
+      public CompilationResult(AsmProgram asmProgram, ControlFlowGraph graph, ProgramScope scope, CompileLog log) {
          this.asmProgram = asmProgram;
          this.graph = graph;
-         this.symbols = symbols;
+         this.scope = scope;
          this.log = log;
       }
 
@@ -34,8 +34,8 @@ public class Compiler {
          return graph;
       }
 
-      public ProgramScope getSymbols() {
-         return symbols;
+      public ProgramScope getScope() {
+         return scope;
       }
 
       public CompileLog getLog() {
@@ -49,7 +49,7 @@ public class Compiler {
          KickCParser.FileContext file = pass0ParseInput(input, log);
          Program program = pass1GenerateSSA(file, log);
          pass2OptimizeSSA(program, log);
-         pass3IntervalAnalysis(program, log);
+         pass3LiveRangeAnalysis(program, log);
          AsmProgram asmProgram = pass4GenerateAsm(program, log);
          pass5OptimizeAsm(asmProgram, log);
 
@@ -98,7 +98,7 @@ public class Compiler {
    }
 
 
-   private void pass3IntervalAnalysis(Program program, CompileLog log) {
+   private void pass3LiveRangeAnalysis(Program program, CompileLog log) {
 
       Pass3BlockSequencePlanner pass3BlockSequencePlanner = new Pass3BlockSequencePlanner(program, log);
       pass3BlockSequencePlanner.plan();
@@ -110,8 +110,8 @@ public class Compiler {
       log.append(program.getGraph().toString(program.getScope()));
       pass2AssertSSA(program, log);
 
-      Pass3IdentifyAliveRanges pass3IdentifyAliveRanges = new Pass3IdentifyAliveRanges(program, log);
-      pass3IdentifyAliveRanges.findLiveRanges();
+      Pass3IdentifyLiveRanges pass3IdentifyLiveRanges = new Pass3IdentifyLiveRanges(program, log);
+      pass3IdentifyLiveRanges.findLiveRanges();
       log.append("CONTROL FLOW GRAPH - LIVE RANGES");
       log.append(program.getGraph().toString(program.getScope()));
       pass2AssertSSA(program, log);
@@ -121,10 +121,13 @@ public class Compiler {
       Pass2CullEmptyBlocks cullEmptyBlocks = new Pass2CullEmptyBlocks(program, log);
       cullEmptyBlocks.optimize();
       pass3BlockSequencePlanner.plan();
-      pass3IdentifyAliveRanges.findLiveRanges();
+      pass3IdentifyLiveRanges.findLiveRanges();
       log.append("CONTROL FLOW GRAPH - PHI MEM COALESCED");
       log.append(program.getGraph().toString(program.getScope()));
       pass2AssertSSA(program, log);
+
+      Pass3LoopAnalysis pass3LoopAnalysis = new Pass3LoopAnalysis(program, log);
+      pass3LoopAnalysis.detectLoops();
 
    }
 

@@ -66,7 +66,7 @@ public class LiveRange {
    private Integer getIndex(Statement statement) {
       Integer index = statement.getIndex();
       if (index == null) {
-         throw new RuntimeException("Statement index not defined! Live Ranges only work after defining statement indexes (Pass3IdentifyLiveRanges.generateStatementIndexes).");
+         throw new RuntimeException("Statement index not defined! Live Ranges only work after defining statement indexes (Pass3LiveRangesAnalysis.generateStatementIndexes).");
       }
       return index;
    }

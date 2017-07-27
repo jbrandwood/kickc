@@ -13,6 +13,8 @@ public class ControlFlowGraph {
    private Map<LabelRef, ControlFlowBlock> blocks;
    private LabelRef firstBlockRef;
    private List<LabelRef> sequence;
+   private DominatorsGraph dominators;
+   private NaturalLoopSet loopSet;
 
    public ControlFlowGraph(Map<LabelRef, ControlFlowBlock> blocks, LabelRef firstBlockRef) {
       this.blocks = blocks;
@@ -173,6 +175,22 @@ public class ControlFlowGraph {
       result = 31 * result + firstBlockRef.hashCode();
       result = 31 * result + (sequence != null ? sequence.hashCode() : 0);
       return result;
+   }
+
+   public void setDominators(DominatorsGraph dominators) {
+      this.dominators = dominators;
+   }
+
+   public DominatorsGraph getDominators() {
+      return dominators;
+   }
+
+   public void setLoops(NaturalLoopSet loopSet) {
+      this.loopSet = loopSet;
+   }
+
+   public NaturalLoopSet getLoopSet() {
+      return loopSet;
    }
 
 }

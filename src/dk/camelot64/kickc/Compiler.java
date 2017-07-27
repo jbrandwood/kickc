@@ -110,8 +110,8 @@ public class Compiler {
       log.append(program.getGraph().toString(program.getScope()));
       pass2AssertSSA(program, log);
 
-      Pass3IdentifyLiveRanges pass3IdentifyLiveRanges = new Pass3IdentifyLiveRanges(program, log);
-      pass3IdentifyLiveRanges.findLiveRanges();
+      Pass3LiveRangesAnalysis pass3LiveRangesAnalysis = new Pass3LiveRangesAnalysis(program, log);
+      pass3LiveRangesAnalysis.findLiveRanges();
       log.append("CONTROL FLOW GRAPH - LIVE RANGES");
       log.append(program.getGraph().toString(program.getScope()));
       pass2AssertSSA(program, log);
@@ -121,13 +121,20 @@ public class Compiler {
       Pass2CullEmptyBlocks cullEmptyBlocks = new Pass2CullEmptyBlocks(program, log);
       cullEmptyBlocks.optimize();
       pass3BlockSequencePlanner.plan();
-      pass3IdentifyLiveRanges.findLiveRanges();
+      pass3LiveRangesAnalysis.findLiveRanges();
       log.append("CONTROL FLOW GRAPH - PHI MEM COALESCED");
       log.append(program.getGraph().toString(program.getScope()));
       pass2AssertSSA(program, log);
 
+      Pass3DominatorsAnalysis pass3DominatorsAnalysis = new Pass3DominatorsAnalysis(program, log);
+      pass3DominatorsAnalysis.findDominators();
+      log.append("DOMINATORS");
+      log.append(program.getGraph().getDominators().toString());
+
       Pass3LoopAnalysis pass3LoopAnalysis = new Pass3LoopAnalysis(program, log);
-      pass3LoopAnalysis.detectLoops();
+      pass3LoopAnalysis.findLoops();
+      log.append("NATURAL LOOPS");
+      log.append(program.getGraph().getLoopSet().toString());
 
    }
 

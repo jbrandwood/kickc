@@ -5,6 +5,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 /** A KickC Intermediate Compiler Language (ICL) Program */
 public class Program {
+
    /** The main scope. */
    private ProgramScope scope;
    /** The control flow graph. */

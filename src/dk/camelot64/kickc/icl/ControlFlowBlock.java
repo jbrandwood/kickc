@@ -5,6 +5,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 /** A named/labelled sequence of SSA statements connected to other basic blocks.
@@ -158,4 +159,22 @@ public class ControlFlowBlock {
    }
 
 
+   /** Get all successors of the block
+    *
+    * @return All successors
+    */
+   @JsonIgnore
+   public Collection<LabelRef> getSuccessors() {
+      List<LabelRef> successors = new ArrayList<>();
+      if(defaultSuccessor!=null) {
+         successors.add(defaultSuccessor);
+      }
+      if(conditionalSuccessor!=null) {
+         successors.add(conditionalSuccessor);
+      }
+      if(callSuccessor!=null) {
+         successors.add(callSuccessor);
+      }
+      return successors;
+   }
 }

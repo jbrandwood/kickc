@@ -126,6 +126,11 @@ public class Compiler {
       log.append(program.getGraph().toString(program.getScope()));
       pass2AssertSSA(program, log);
 
+      Pass3CallGraphAnalysis pass3CallGraphAnalysis = new Pass3CallGraphAnalysis(program, log);
+      pass3CallGraphAnalysis.findCallGraph();
+      log.append("CALL GRAPH");
+      log.append(program.getGraph().getCallGraph().toString());
+
       Pass3DominatorsAnalysis pass3DominatorsAnalysis = new Pass3DominatorsAnalysis(program, log);
       pass3DominatorsAnalysis.findDominators();
       log.append("DOMINATORS");

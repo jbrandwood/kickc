@@ -15,6 +15,7 @@ public class ControlFlowGraph {
    private List<LabelRef> sequence;
    private DominatorsGraph dominators;
    private NaturalLoopSet loopSet;
+   private CallGraph callGraph;
 
    public ControlFlowGraph(Map<LabelRef, ControlFlowBlock> blocks, LabelRef firstBlockRef) {
       this.blocks = blocks;
@@ -191,6 +192,14 @@ public class ControlFlowGraph {
 
    public NaturalLoopSet getLoopSet() {
       return loopSet;
+   }
+
+   public CallGraph getCallGraph() {
+      return callGraph;
+   }
+
+   public void setCallGraph(CallGraph callGraph) {
+      this.callGraph = callGraph;
    }
 
 }

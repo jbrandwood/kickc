@@ -53,6 +53,12 @@ public class TestCompilationOutput extends TestCase {
       tester.testFile("loopsplit");
    }
 
+   public void testLoopNest() throws IOException, URISyntaxException {
+      TestCompilationOutput tester = new TestCompilationOutput();
+      tester.testFile("loopnest");
+   }
+
+
    private void testFile(String fileName) throws IOException, URISyntaxException {
       String inputPath = testPath + fileName + ".kc";
       System.out.println("Testing output for " + inputPath);

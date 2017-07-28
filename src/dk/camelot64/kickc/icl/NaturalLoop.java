@@ -25,6 +25,9 @@ public class NaturalLoop {
     */
    private Set<LabelRef> blocks;
 
+   /** The loop nesting depth of the loop. Calculated by {@link dk.camelot64.kickc.passes.Pass3LoopDepthAnalysis}. */
+   private Integer depth;
+
    /**
     * Create a new natural loop.
     * The loop is not filled with all blocks from the start, but only holds the head & tail.
@@ -72,6 +75,9 @@ public class NaturalLoop {
       } else {
          out.append("null");
       }
+      if(depth!=null) {
+         out.append(" depth: "+depth);
+      }
       return out.toString();
    }
 
@@ -104,6 +110,14 @@ public class NaturalLoop {
     */
    public void addBlocks(Set<LabelRef> blocks) {
       this.blocks.addAll(blocks);
+   }
+
+   public Integer getDepth() {
+      return depth;
+   }
+
+   public void setDepth(Integer depth) {
+      this.depth = depth;
    }
 
    @Override

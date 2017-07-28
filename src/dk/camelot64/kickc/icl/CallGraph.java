@@ -47,8 +47,8 @@ public class CallGraph {
       return null;
    }
 
-   public CallBlock getFirstCallBlock() {
-      return getOrCreateCallBlock(new LabelRef(""));
+   public LabelRef getFirstCallBlock() {
+      return new LabelRef("");
    }
 
    /**
@@ -63,6 +63,21 @@ public class CallGraph {
          called.add(getOrCreateCallBlock(calledLabel));
       }
       return called;
+   }
+
+   /**
+    * Get all call blocks that call a specific call block
+    * @param scopeLabel The label of scope (the call block)
+    * @return The scope labels of call blocks that call the passed block
+    */
+   public Collection<LabelRef> getCallingBlocks(LabelRef scopeLabel) {
+      ArrayList<LabelRef> callingBlocks = new ArrayList<>();
+      for (CallBlock callBlock : callBlocks) {
+         if(callBlock.getCalledBlocks().contains(scopeLabel)) {
+            callingBlocks.add(callBlock.getScopeLabel());
+         }
+      }
+      return callingBlocks;
    }
 
    @Override
@@ -110,7 +125,6 @@ public class CallGraph {
             called.add(call.getProcedure());
          }
          return called;
-
       }
 
       @Override
@@ -121,6 +135,29 @@ public class CallGraph {
             out.append(call.toString()).append(" ");
          }
          return out.toString();
+      }
+
+      /**
+       * Get all calls
+       * @return The calls
+       */
+      public List<Call> getCalls() {
+         return calls;
+      }
+
+      /**
+       * Get all calls to a specific call block
+       * @param scope The scope label of the block
+       * @return All calls to the passed scope
+       */
+      public Collection<Call> getCalls(LabelRef scope) {
+         ArrayList<Call> callsToScope = new ArrayList<>();
+         for (Call call : calls) {
+            if(call.getProcedure().equals(scope)) {
+               callsToScope.add(call);
+            }
+         }
+         return callsToScope;
       }
 
       /**

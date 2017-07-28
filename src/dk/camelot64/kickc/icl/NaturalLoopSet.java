@@ -1,9 +1,6 @@
 package dk.camelot64.kickc.icl;
 
-import java.util.ArrayList;
-import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 /** A set of natural loops in a control flow graph.
  * <p>For definitions and more see http://www.cs.colostate.edu/~cs553/ClassNotes/lecture09-control-dominators.ppt.pdf
@@ -72,10 +69,31 @@ public class NaturalLoopSet {
    }
 
    /**
+    * Get all loops containing a specific control flow graph block
+    *
+    * @param block The block to look for
+    * @return All loops containing the block
+    */
+   public Collection<NaturalLoop> getLoopsContainingBlock(LabelRef block) {
+      ArrayList<NaturalLoop> containing = new ArrayList<>();
+      for (NaturalLoop loop : loops) {
+         for (LabelRef loopBlock : loop.getBlocks()) {
+            if(block.equals(loopBlock)) {
+               containing.add(loop);
+               break;
+            }
+         }
+      }
+      return containing;
+   }
+
+
+   /**
     * Remove a loop from the set
     * @param loop The loop to remove
     */
    public void remove(NaturalLoop loop) {
       this.loops.remove(loop);
    }
+
 }

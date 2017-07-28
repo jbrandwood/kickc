@@ -155,6 +155,41 @@ public class ControlFlowGraph {
       return null;
    }
 
+   public void setDominators(DominatorsGraph dominators) {
+      this.dominators = dominators;
+   }
+
+   public DominatorsGraph getDominators() {
+      return dominators;
+   }
+
+   public void setLoops(NaturalLoopSet loopSet) {
+      this.loopSet = loopSet;
+   }
+
+   public NaturalLoopSet getLoopSet() {
+      return loopSet;
+   }
+
+   public CallGraph getCallGraph() {
+      return callGraph;
+   }
+
+   public void setCallGraph(CallGraph callGraph) {
+      this.callGraph = callGraph;
+   }
+
+   public ControlFlowBlock getBlockFromStatementIdx(int statementIdx) {
+      for (ControlFlowBlock block : getAllBlocks()) {
+         for (Statement statement : block.getStatements()) {
+            if(statementIdx==statement.getIndex()) {
+               return block;
+            }
+         }
+      }
+      return null;
+   }
+
    public String toString(ProgramScope scope) {
       StringBuffer out = new StringBuffer();
       for (ControlFlowBlock block : getAllBlocks()) {
@@ -181,30 +216,6 @@ public class ControlFlowGraph {
       result = 31 * result + firstBlockRef.hashCode();
       result = 31 * result + (sequence != null ? sequence.hashCode() : 0);
       return result;
-   }
-
-   public void setDominators(DominatorsGraph dominators) {
-      this.dominators = dominators;
-   }
-
-   public DominatorsGraph getDominators() {
-      return dominators;
-   }
-
-   public void setLoops(NaturalLoopSet loopSet) {
-      this.loopSet = loopSet;
-   }
-
-   public NaturalLoopSet getLoopSet() {
-      return loopSet;
-   }
-
-   public CallGraph getCallGraph() {
-      return callGraph;
-   }
-
-   public void setCallGraph(CallGraph callGraph) {
-      this.callGraph = callGraph;
    }
 
 }

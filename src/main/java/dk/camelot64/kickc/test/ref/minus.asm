@@ -7,10 +7,8 @@ B1:
   lda 2
   clc
   adc #4
-  sta 3
-  lda 3
-  ldy 2
-  sta 4352,y
+  ldx 2
+  sta 4352,x
   inc 2
   lda 2
   cmp #10

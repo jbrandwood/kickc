@@ -15,10 +15,11 @@ sum_from_B2:
   sta 2
   jsr sum
 B3:
+  lda 2
+  sta 5
   lda 4
   clc
-  adc 2
-  sta 4
+  adc 5
 BEND:
 sum:
   lda 2

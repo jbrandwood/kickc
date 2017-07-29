@@ -45,6 +45,6 @@ B2:
   lda 5
   sec
   sbc #39
-  sta 5
 B3_from_B2:
+  sta 5
   jmp B3

@@ -5,28 +5,33 @@ import dk.camelot64.kickc.icl.*;
 /**
  * Register Allocation for variables
  */
-public class Pass4RegisterAllocationTrivial {
+public class Pass4CustomRegisters {
 
-   private ControlFlowGraph graph;
-   private ProgramScope symbols;
-   int currentZp = 2;
 
-   public Pass4RegisterAllocationTrivial(Program program) {
-      this.graph = program.getGraph();
-      this.symbols = program.getScope();
+   private Program program;
+
+   public Pass4CustomRegisters(Program program) {
+      this.program = program;
    }
 
    public void allocate() {
-      RegisterAllocation allocation = new RegisterAllocation();
-      performAllocation(symbols, allocation);
+      RegisterAllocation allocation = program.getScope().getAllocation();
+
+      // Register allocation for loopnest.kc
+      allocation.allocate(new VariableRef("nest2::j#2"), RegisterAllocation.getRegisterX());
+      allocation.allocate(new VariableRef("nest2::j#1"), RegisterAllocation.getRegisterX());
+      allocation.allocate(new VariableRef("nest2::i#2"), RegisterAllocation.getRegisterY());
+      allocation.allocate(new VariableRef("nest2::i#1"), RegisterAllocation.getRegisterY());
+
 
       // Register allocation for fibmem.kc
+      /*
       allocation.allocate(new VariableRef("i#1"), RegisterAllocation.getRegisterX());
       allocation.allocate(new VariableRef("i#2"), RegisterAllocation.getRegisterX());
       allocation.allocate(new VariableRef("$1"), new RegisterAllocation.RegisterAByte());
       allocation.allocate(new VariableRef("$3"), new RegisterAllocation.RegisterALUByte());
       allocation.allocate(new VariableRef("$4"), new RegisterAllocation.RegisterAByte());
-
+      */
 
       // Registers for postinc.kc
       /*
@@ -105,10 +110,10 @@ public class Pass4RegisterAllocationTrivial {
       allocation.allocate(new VariableRef("main::c#4"), RegisterAllocation.getRegisterX());
       */
 
-      symbols.setAllocation(allocation);
 
    }
 
+   int currentZp = 2;
    private void performAllocation(Scope scope, RegisterAllocation allocation) {
       for (Symbol symbol : scope.getAllSymbols()) {
          if (symbol instanceof Scope) {

@@ -1,3 +1,3 @@
 lda {zpby2}
-ldy {zpby1}
-sta {cowo1},y
+ldx {zpby1}
+sta {cowo1},x

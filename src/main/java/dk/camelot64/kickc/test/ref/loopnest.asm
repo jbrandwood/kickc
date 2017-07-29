@@ -18,12 +18,16 @@ nest:
 nest__B1_from_nest:
   lda #100
   sta 3
+  jmp nest__B1
 nest__B1_from_B1:
+  sta 3
 nest__B1:
   lda 3
   sta 1024
-  dec 3
   lda 3
+  sec
+  sbc #1
+  cmp #0
   bne nest__B1_from_B1
 nest__Breturn:
   rts

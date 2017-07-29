@@ -8,19 +8,17 @@ B1_from_BBEGIN:
   sta 2
 B1_from_B1:
 B1:
-  ldy 2
-  lda 4352,y
+  ldx 2
+  lda 4352,x
   sta 3
-  ldy 2
-  lda 4353,y
-  sta 4
-  lda 3
+  ldx 2
+  lda 4353,x
   clc
-  adc 4
+  adc 3
   sta 3
   lda 3
-  ldy 2
-  sta 4354,y
+  ldx 2
+  sta 4354,x
   inc 2
   lda 2
   cmp #15

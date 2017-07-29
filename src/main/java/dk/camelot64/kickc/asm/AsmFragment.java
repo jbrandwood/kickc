@@ -323,7 +323,7 @@ public class AsmFragment {
    public String getBoundValue(String name) {
       Value boundValue = getBinding(name);
       if (boundValue == null) {
-         throw new RuntimeException("Binding not found in fragment '" + name + "'");
+         throw new RuntimeException("Binding '" + name + "' not found in fragment "+ signature + ".asm");
       }
       String bound;
       if (boundValue instanceof RegisterAllocation.Register) {
@@ -382,9 +382,7 @@ public class AsmFragment {
       ClassLoader classLoader = this.getClass().getClassLoader();
       final URL fragmentResource = classLoader.getResource("dk/camelot64/kickc/asm/fragment/" + signature + ".asm");
       if (fragmentResource == null) {
-         System.out.println("Fragment not found " + fragmentResource);
-         asm.addComment("Fragment not found: " + signature);
-         return;
+         throw new RuntimeException("Fragment not found " + signature+".asm");
       }
 
       try {

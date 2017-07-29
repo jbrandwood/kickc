@@ -69,4 +69,32 @@ public class AsmClobber {
    public void setClobberV(boolean clobberV) {
       this.clobberV = clobberV;
    }
+
+   /**
+    * Adds clobber.
+    * Effective updates so this clobber also clobbers anything added
+    * @param clobber The clobber to add
+    */
+   public void add(AsmClobber clobber) {
+      clobberA |= clobber.clobberA;
+      clobberX |= clobber.clobberX;
+      clobberY |= clobber.clobberY;
+      clobberC |= clobber.clobberC;
+      clobberN |= clobber.clobberN;
+      clobberZ |= clobber.clobberZ;
+      clobberV |= clobber.clobberV;
+   }
+
+   @Override
+   public String toString() {
+      return
+            (clobberA?"A":"") +
+            (clobberX?"X":"") +
+            (clobberY?"Y":"") +
+            (clobberC?"C":"") +
+            (clobberN?"N":"") +
+            (clobberZ?"Z":"") +
+            (clobberV?"V":"") ;
+
+   }
 }

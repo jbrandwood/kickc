@@ -14,14 +14,12 @@ main__B3_from_B3:
 main__B3_from_B6:
 main__B3:
   lda 53266
-  sta 5
-  lda 5
   cmp #254
   bne main__B3_from_B3
 main__B4:
   lda 53266
-  sta 5
-  lda 5
+  sta 15
+  lda 15
   cmp #255
   bne main__B4
 main__B6:
@@ -39,29 +37,29 @@ main__Breturn:
 plot:
 plot__B1_from_plot:
   lda #16
-  sta 2
+  sta 5
   lda #<1236
   sta 3
   lda #>1236
   sta 3+1
   lda #0
-  sta 5
+  sta 6
 plot__B1_from_B3:
 plot__B1:
 plot__B2_from_B1:
   lda #0
-  sta 6
+  sta 7
 plot__B2_from_B2:
 plot__B2:
-  ldy 5
-  lda 4096,y
-  sta 7
-  lda 7
-  ldy 6
+  ldx 6
+  lda 4096,x
+  sta 16
+  lda 16
+  ldy 7
   sta (3),y
-  inc 5
   inc 6
-  lda 6
+  inc 7
+  lda 7
   cmp #16
   bcc plot__B2_from_B2
 plot__B3:
@@ -72,72 +70,72 @@ plot__B3:
   bcc !+
   inc 3+1
 !:
-  dec 2
-  lda 2
+  dec 5
+  lda 5
   bne plot__B1_from_B3
 plot__Breturn:
   rts
 flip:
 flip__B1_from_flip:
   lda #16
-  sta 2
+  sta 8
   lda #15
-  sta 6
+  sta 10
   lda #0
-  sta 5
+  sta 9
 flip__B1_from_B4:
 flip__B1:
 flip__B2_from_B1:
   lda #16
-  sta 7
+  sta 11
 flip__B2_from_B2:
 flip__B2:
-  ldy 5
-  lda 4096,y
-  sta 8
-  lda 8
-  ldy 6
-  sta 4352,y
-  inc 5
-  lda 6
+  ldx 9
+  lda 4096,x
+  sta 17
+  lda 17
+  ldx 10
+  sta 4352,x
+  inc 9
+  lda 10
   clc
   adc #16
-  sta 6
-  dec 7
-  lda 7
+  sta 10
+  dec 11
+  lda 11
   bne flip__B2_from_B2
 flip__B4:
-  dec 6
-  dec 2
-  lda 2
+  dec 10
+  dec 8
+  lda 8
   bne flip__B1_from_B4
 flip__B3_from_B4:
   lda #0
-  sta 2
+  sta 12
 flip__B3_from_B3:
 flip__B3:
-  ldy 2
-  lda 4352,y
-  sta 5
-  lda 5
-  ldy 2
-  sta 4096,y
-  inc 2
-  lda 2
+  ldx 12
+  lda 4352,x
+  sta 18
+  lda 18
+  ldx 12
+  sta 4096,x
+  inc 12
+  lda 12
   bne flip__B3_from_B3
 flip__Breturn:
   rts
 prepare:
 prepare__B1_from_prepare:
   lda #0
-  sta 2
+  sta 13
 prepare__B1_from_B1:
 prepare__B1:
-  ldy 2
-  tya
-  sta 4096,y
-  inc 2
-  lda 2
+  ldx 13
+  txa
+  sta 4096,x
+  inc 13
+  lda 13
   bne prepare__B1_from_B1
 prepare__Breturn:
   rts

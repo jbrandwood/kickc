@@ -1,0 +1,2 @@
+asl
+sta {zpby1}

@@ -1,6 +1,8 @@
 package dk.camelot64.kickc.passes;
 
 import dk.camelot64.kickc.CompileLog;
+import dk.camelot64.kickc.asm.AsmProgram;
+import dk.camelot64.kickc.asm.parser.AsmClobber;
 import dk.camelot64.kickc.icl.*;
 
 import java.util.Collection;
@@ -24,7 +26,9 @@ public class Pass3RegisterUplifting {
       return log;
    }
 
-   /** Uplift one variable */
+   /**
+    * Uplift one variable
+    */
    public void uplift() {
 
       VariableRegisterWeights variableRegisterWeights = program.getScope().getVariableRegisterWeights();
@@ -33,21 +37,21 @@ public class Pass3RegisterUplifting {
       Variable maxVar = null;
 
       Collection<Variable> allVars = program.getScope().getAllVariables(true);
+      RegisterAllocation allocation = program.getScope().getAllocation();
+
       for (Variable variable : allVars) {
-         Double w = variableRegisterWeights.getWeight(variable.getRef());
-         if(w!=null && w>maxWeight) {
-            maxWeight = w;
-            maxVar = variable;
+         RegisterAllocation.Register currentRegister = allocation.getRegister(variable.getRef());
+         if (currentRegister!=null && currentRegister.isZp()) {
+            Double w = variableRegisterWeights.getWeight(variable.getRef());
+            if (w != null && w > maxWeight) {
+               maxWeight = w;
+               maxVar = variable;
+            }
          }
       }
       // Found max variable!
-      log.append("Attempting uplift of variable "+maxVar);
-
-
-
-
-
-
+      log.append("Uplifting of variable " + maxVar + " to A");
+      allocation.allocate(maxVar.getRef(), new RegisterAllocation.RegisterAByte());
 
    }
 

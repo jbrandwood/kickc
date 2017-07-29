@@ -20,8 +20,7 @@ public class Pass4CodeGeneration {
 
    public AsmProgram generate() {
       AsmProgram asm = new AsmProgram();
-      for (LabelRef blockRef : graph.getSequence()) {
-         ControlFlowBlock block = graph.getBlock(blockRef);
+      for (ControlFlowBlock block : graph.getAllBlocks()) {
          // Generate entry points (if needed)
          genBlockEntryPoints(asm, block);
          // Generate label
@@ -52,16 +51,17 @@ public class Pass4CodeGeneration {
    /**
     * Generate ASM code for a single statement
     *
-    * @param asm          The ASM program to generate into
-    * @param block        The block containing the statement
-    * @param statementsIt The iterator giving access to the next statement
-    * @param statement    The statement to generate ASM code for
+    * @param asm       The ASM program to generate into
+    * @param block     The block containing the statement
+    * @param statement The statement to generate ASM code for
+    * @param aluState  State of the special ALU register. Used to generate composite fragments when two consecutive statements can be executed effectively.
+    *                  For example ADC $1100,x combines two statements $0 = $1100 staridx X, A = A+$0 .
     */
-   public void generateStatementAsm(AsmProgram asm, ControlFlowBlock block, Statement statement, AsmCodegenAluState asmCodeAsmCodegenAluState) {
+   public void generateStatementAsm(AsmProgram asm, ControlFlowBlock block, Statement statement, AsmCodegenAluState aluState) {
 
       // IF the previous statement was added to the ALU register - generate the composite ASM fragment
-      if (asmCodeAsmCodegenAluState.hasAluAssignment()) {
-         StatementAssignment assignmentAlu = asmCodeAsmCodegenAluState.getAluAssignment();
+      if (aluState.hasAluAssignment()) {
+         StatementAssignment assignmentAlu = aluState.getAluAssignment();
          if (!(statement instanceof StatementAssignment)) {
             throw new RuntimeException("Error! ALU statement must be followed immediately by assignment using the ALU. " + statement);
          }
@@ -69,7 +69,7 @@ public class Pass4CodeGeneration {
          AsmFragment asmFragment = new AsmFragment(assignment, assignmentAlu, symbols);
          asm.addComment(statement.toString(symbols) + "  //  " + asmFragment.getSignature());
          asmFragment.generate(asm);
-         asmCodeAsmCodegenAluState.clear();
+         aluState.clear();
          return;
       }
 
@@ -85,7 +85,7 @@ public class Pass4CodeGeneration {
                if (lValRegister.getType().equals(RegisterAllocation.RegisterType.REG_ALU_BYTE)) {
                   asm.addComment(statement + "  //  ALU");
                   StatementAssignment assignmentAlu = assignment;
-                  asmCodeAsmCodegenAluState.setAluAssignment(assignmentAlu);
+                  aluState.setAluAssignment(assignmentAlu);
                   isAlu = true;
                }
             }

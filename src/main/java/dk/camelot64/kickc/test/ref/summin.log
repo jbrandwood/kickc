@@ -390,10 +390,32 @@ zp byte:3 [ sum::b#2 ]
 zp byte:4 [ s1#0 s3#0 ]
 zp byte:5 [ s2#0 ]
 
-Coalescing zero page register [ zp byte:2 [ sum::a#2 sum::return#0 ] ] with [ zp byte:5 [ s2#0 ] ]
 Re-allocated ZP register from zp byte:2 to zp byte:2
 Re-allocated ZP register from zp byte:3 to zp byte:3
 Re-allocated ZP register from zp byte:4 to zp byte:4
+Re-allocated ZP register from zp byte:5 to zp byte:5
+Uplifting of variable (byte) s3#0 to A
+REGISTER UPLIFTING
+(byte) s1
+(byte) s1#0 zp byte:4 0.5714285714285714
+(byte) s2
+(byte) s2#0 zp byte:5 4.0
+(byte) s3
+(byte) s3#0 reg byte a Infinity
+(byte()) sum((byte) sum::a , (byte) sum::b)
+(byte) sum::a
+(byte) sum::a#2 zp byte:2 2.0
+(byte) sum::b
+(byte) sum::b#2 zp byte:3 2.0
+(byte) sum::return
+(byte) sum::return#0 zp byte:2 1.2000000000000002
+
+zp byte:2 [ sum::a#2 sum::return#0 ]
+zp byte:3 [ sum::b#2 ]
+zp byte:4 [ s1#0 s3#0 ]
+zp byte:5 [ s2#0 ]
+
+Coalescing zero page register [ zp byte:2 [ sum::a#2 sum::return#0 ] ] with [ zp byte:5 [ s2#0 ] ]
 INITIAL ASM
 BBEGIN:
 sum_from_BBEGIN:
@@ -419,12 +441,13 @@ sum_from_B2:
   jsr sum
   jmp B3
 B3:
-  // (byte) s2#0 = (byte) sum::return#0  // register copy zp byte:2
-  // [4] (byte) s3#0 ← (byte) s1#0 + (byte) s2#0 [ ]  //  zpby1=zpby1_plus_zpby2
+  // [3] (byte) s2#0 ← (byte) sum::return#0 [ s1#0 s2#0 ]  //  zpby1=zpby2
+  lda 2
+  sta 5
+  // [4] (byte) s3#0 ← (byte) s1#0 + (byte) s2#0 [ ]  //  aby=zpby1_plus_zpby2
   lda 4
   clc
-  adc 2
-  sta 4
+  adc 5
   jmp BEND
 BEND:
 sum:
@@ -465,12 +488,13 @@ sum_from_B2:
   sta 2
   jsr sum
 B3:
-  // (byte) s2#0 = (byte) sum::return#0  // register copy zp byte:2
-  // [4] (byte) s3#0 ← (byte) s1#0 + (byte) s2#0 [ ]  //  zpby1=zpby1_plus_zpby2
+  // [3] (byte) s2#0 ← (byte) sum::return#0 [ s1#0 s2#0 ]  //  zpby1=zpby2
+  lda 2
+  sta 5
+  // [4] (byte) s3#0 ← (byte) s1#0 + (byte) s2#0 [ ]  //  aby=zpby1_plus_zpby2
   lda 4
   clc
-  adc 2
-  sta 4
+  adc 5
 BEND:
 sum:
   // [6] (byte) sum::return#0 ← (byte) sum::a#2 + (byte) sum::b#2 [ sum::return#0 s1#0 ]  //  zpby1=zpby1_plus_zpby2
@@ -489,9 +513,9 @@ FINAL SYMBOL TABLE
 (byte) s1
 (byte) s1#0 zp byte:4 0.5714285714285714
 (byte) s2
-(byte) s2#0 zp byte:2 4.0
+(byte) s2#0 zp byte:5 4.0
 (byte) s3
-(byte) s3#0 zp byte:4 Infinity
+(byte) s3#0 reg byte a Infinity
 (byte()) sum((byte) sum::a , (byte) sum::b)
 (label) sum::@return
 (byte) sum::a
@@ -528,12 +552,13 @@ sum_from_B2:
   sta 2
   jsr sum
 B3:
-  // (byte) s2#0 = (byte) sum::return#0  // register copy zp byte:2
-  // [4] (byte) s3#0 ← (byte) s1#0 + (byte) s2#0 [ ]  //  zpby1=zpby1_plus_zpby2
+  // [3] (byte) s2#0 ← (byte) sum::return#0 [ s1#0 s2#0 ]  //  zpby1=zpby2
+  lda 2
+  sta 5
+  // [4] (byte) s3#0 ← (byte) s1#0 + (byte) s2#0 [ ]  //  aby=zpby1_plus_zpby2
   lda 4
   clc
-  adc 2
-  sta 4
+  adc 5
 BEND:
 sum:
   // [6] (byte) sum::return#0 ← (byte) sum::a#2 + (byte) sum::b#2 [ sum::return#0 s1#0 ]  //  zpby1=zpby1_plus_zpby2

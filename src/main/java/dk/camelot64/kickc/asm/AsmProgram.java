@@ -1,5 +1,7 @@
 package dk.camelot64.kickc.asm;
 
+import dk.camelot64.kickc.asm.parser.AsmClobber;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -54,4 +56,19 @@ public class AsmProgram {
       return toString(true);
    }
 
+   /**
+    * Get the CPU registers clobbered by the instructions of the fragment
+    * @return The clobbered registers
+    */
+   public AsmClobber getClobber() {
+      AsmClobber clobber = new AsmClobber();
+      for (AsmLine line : lines) {
+         if(line instanceof AsmInstruction) {
+            AsmInstructionType instructionType = ((AsmInstruction) line).getType();
+            AsmClobber lineClobber = instructionType.getClobber();
+            clobber.add(lineClobber);
+         }
+      }
+      return clobber;
+   }
 }

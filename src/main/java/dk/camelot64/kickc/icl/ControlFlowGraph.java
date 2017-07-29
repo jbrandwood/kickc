@@ -72,10 +72,7 @@ public class ControlFlowGraph {
      * @param variable The variable to find the assignment for
     * @return The assignment. null if the variable is not assigned. The variable is assigned by a Phi-statement instead.
     */
-   public StatementAssignment getAssignment(Variable variable) {
-      if(variable instanceof VariableUnversioned) {
-         throw new RuntimeException("Error attempting to get assignment of unversioned variable, which is not guaranteed to be unique "+variable);
-      }
+   public StatementAssignment getAssignment(VariableRef variable) {
       for (ControlFlowBlock block : getAllBlocks()) {
          for (Statement statement : block.getStatements()) {
             if(statement instanceof StatementAssignment) {

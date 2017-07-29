@@ -149,7 +149,7 @@ public class Pass2ConstantAdditionElimination extends Pass2SsaOptimization {
          return null;
       }
       Variable var = getSymbols().getVariable(variable);
-      StatementAssignment assignment = getGraph().getAssignment(var);
+      StatementAssignment assignment = getGraph().getAssignment(variable);
       if (assignment != null && assignment.getOperator() != null && "+".equals(assignment.getOperator().getOperator())) {
          if (assignment.getrValue1() instanceof ConstantInteger) {
             ConstantInteger constant = (ConstantInteger) assignment.getrValue1();

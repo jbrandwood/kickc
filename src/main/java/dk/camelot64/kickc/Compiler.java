@@ -144,8 +144,14 @@ public class Compiler {
       log.append("\nVARIABLE REGISTER WEIGHTS");
       log.append(program.getScope().getSymbolTableContents(Variable.class));
 
+      //new Pass3RegisterUplifting(program, log).uplift();
+      //log.append("REGISTER UPLIFTING");
+      //log.append(program.getScope().getSymbolTableContents(Variable.class));
+
       new Pass3ZeroPageCoalesce(program, log).allocate();
       new Pass3RegistersFinalize(program, log).allocate();
+
+      //new Pass4RegisterAllocationTrivial(program).allocate();
 
 
    }

@@ -706,8 +706,79 @@ CONTROL FLOW GRAPH
   to:@END
 @END: from @3
 
+Consolidated constant in assignment cursor#0
 Multiple usages for variable. Not optimizing sub-constant (byte) y#2
 Multiple usages for variable. Not optimizing sub-constant (byte*) cursor#1
+Succesful SSA optimization Pass2ConstantAdditionElimination
+CONTROL FLOW GRAPH
+@BEGIN: from
+  (byte) e#0 ← (byte) 24 / (byte) 2
+  (byte~) $3 ← (byte) 0 * (byte) 40
+  (byte*~) $4 ← (byte~) $3
+  (byte*) cursor#0 ← (byte*~) $4 + (word) 1024
+  to:@1
+@1: from @3 @BEGIN
+  (byte) y#2 ← phi( @3/(byte) y#4 @BEGIN/(byte) 0 )
+  (byte) xd#1 ← phi( @BEGIN/(byte) 39 )
+  (byte) yd#1 ← phi( @BEGIN/(byte) 24 )
+  (byte) e#3 ← phi( @3/(byte) e#5 @BEGIN/(byte) e#0 )
+  (byte) x#2 ← phi( @3/(byte) x#1 @BEGIN/(byte) 0 )
+  (byte*) cursor#3 ← phi( @3/(byte*) cursor#5 @BEGIN/(byte*) cursor#0 )
+  *((byte*) cursor#3) ← (byte) 81
+  (byte) x#1 ← (byte) x#2 + (byte) 1
+  (byte*) cursor#1 ← (byte*) cursor#3 + (byte) 1
+  (byte) e#1 ← (byte) e#3 + (byte) yd#1
+  if((byte) xd#1<(byte) e#1) goto @2
+  to:@3
+@2: from @1
+  (byte) y#1 ← (byte) y#2 + (byte) 1
+  (byte*) cursor#2 ← (byte*) cursor#1 + (byte) 40
+  (byte) e#2 ← (byte) e#1 - (byte) xd#1
+  to:@3
+@3: from @1 @2
+  (byte) y#4 ← phi( @1/(byte) y#2 @2/(byte) y#1 )
+  (byte) e#5 ← phi( @1/(byte) e#1 @2/(byte) e#2 )
+  (byte*) cursor#5 ← phi( @1/(byte*) cursor#1 @2/(byte*) cursor#2 )
+  (byte~) $13 ← (byte) 39 + (byte) 1
+  if((byte) x#1<(byte~) $13) goto @1
+  to:@END
+@END: from @3
+
+Alias (byte~) $3 = (byte*~) $4 
+Succesful SSA optimization Pass2AliasElimination
+CONTROL FLOW GRAPH
+@BEGIN: from
+  (byte) e#0 ← (byte) 24 / (byte) 2
+  (byte~) $3 ← (byte) 0 * (byte) 40
+  (byte*) cursor#0 ← (byte~) $3 + (word) 1024
+  to:@1
+@1: from @3 @BEGIN
+  (byte) y#2 ← phi( @3/(byte) y#4 @BEGIN/(byte) 0 )
+  (byte) xd#1 ← phi( @BEGIN/(byte) 39 )
+  (byte) yd#1 ← phi( @BEGIN/(byte) 24 )
+  (byte) e#3 ← phi( @3/(byte) e#5 @BEGIN/(byte) e#0 )
+  (byte) x#2 ← phi( @3/(byte) x#1 @BEGIN/(byte) 0 )
+  (byte*) cursor#3 ← phi( @3/(byte*) cursor#5 @BEGIN/(byte*) cursor#0 )
+  *((byte*) cursor#3) ← (byte) 81
+  (byte) x#1 ← (byte) x#2 + (byte) 1
+  (byte*) cursor#1 ← (byte*) cursor#3 + (byte) 1
+  (byte) e#1 ← (byte) e#3 + (byte) yd#1
+  if((byte) xd#1<(byte) e#1) goto @2
+  to:@3
+@2: from @1
+  (byte) y#1 ← (byte) y#2 + (byte) 1
+  (byte*) cursor#2 ← (byte*) cursor#1 + (byte) 40
+  (byte) e#2 ← (byte) e#1 - (byte) xd#1
+  to:@3
+@3: from @1 @2
+  (byte) y#4 ← phi( @1/(byte) y#2 @2/(byte) y#1 )
+  (byte) e#5 ← phi( @1/(byte) e#1 @2/(byte) e#2 )
+  (byte*) cursor#5 ← phi( @1/(byte*) cursor#1 @2/(byte*) cursor#2 )
+  (byte~) $13 ← (byte) 39 + (byte) 1
+  if((byte) x#1<(byte~) $13) goto @1
+  to:@END
+@END: from @3
+
 Redundant Phi (byte) yd#1 (byte) 24
 Redundant Phi (byte) xd#1 (byte) 39
 Succesful SSA optimization Pass2RedundantPhiElimination
@@ -715,8 +786,7 @@ CONTROL FLOW GRAPH
 @BEGIN: from
   (byte) e#0 ← (byte) 24 / (byte) 2
   (byte~) $3 ← (byte) 0 * (byte) 40
-  (byte*~) $4 ← (word) 1024 + (byte~) $3
-  (byte*) cursor#0 ← (byte*~) $4 + (byte) 0
+  (byte*) cursor#0 ← (byte~) $3 + (word) 1024
   to:@1
 @1: from @3 @BEGIN
   (byte) y#2 ← phi( @3/(byte) y#4 @BEGIN/(byte) 0 )
@@ -749,40 +819,7 @@ Constant (byte~) $13 (byte) 40
 Succesful SSA optimization Pass2ConstantPropagation
 CONTROL FLOW GRAPH
 @BEGIN: from
-  (byte*~) $4 ← (word) 1024 + (byte) 0
-  (byte*) cursor#0 ← (byte*~) $4 + (byte) 0
-  to:@1
-@1: from @3 @BEGIN
-  (byte) y#2 ← phi( @3/(byte) y#4 @BEGIN/(byte) 0 )
-  (byte) e#3 ← phi( @3/(byte) e#5 @BEGIN/(byte) 12 )
-  (byte) x#2 ← phi( @3/(byte) x#1 @BEGIN/(byte) 0 )
-  (byte*) cursor#3 ← phi( @3/(byte*) cursor#5 @BEGIN/(byte*) cursor#0 )
-  *((byte*) cursor#3) ← (byte) 81
-  (byte) x#1 ← (byte) x#2 + (byte) 1
-  (byte*) cursor#1 ← (byte*) cursor#3 + (byte) 1
-  (byte) e#1 ← (byte) e#3 + (byte) 24
-  if((byte) 39<(byte) e#1) goto @2
-  to:@3
-@2: from @1
-  (byte) y#1 ← (byte) y#2 + (byte) 1
-  (byte*) cursor#2 ← (byte*) cursor#1 + (byte) 40
-  (byte) e#2 ← (byte) e#1 - (byte) 39
-  to:@3
-@3: from @1 @2
-  (byte) y#4 ← phi( @1/(byte) y#2 @2/(byte) y#1 )
-  (byte) e#5 ← phi( @1/(byte) e#1 @2/(byte) e#2 )
-  (byte*) cursor#5 ← phi( @1/(byte*) cursor#1 @2/(byte*) cursor#2 )
-  if((byte) x#1<(byte) 40) goto @1
-  to:@END
-@END: from @3
-
-Multiple usages for variable. Not optimizing sub-constant (byte) y#2
-Multiple usages for variable. Not optimizing sub-constant (byte*) cursor#1
-Constant (byte*~) $4 (word) 1024
-Succesful SSA optimization Pass2ConstantPropagation
-CONTROL FLOW GRAPH
-@BEGIN: from
-  (byte*) cursor#0 ← (word) 1024 + (byte) 0
+  (byte*) cursor#0 ← (byte) 0 + (word) 1024
   to:@1
 @1: from @3 @BEGIN
   (byte) y#2 ← phi( @3/(byte) y#4 @BEGIN/(byte) 0 )

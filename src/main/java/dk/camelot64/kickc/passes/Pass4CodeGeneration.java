@@ -25,7 +25,7 @@ public class Pass4CodeGeneration {
          // Generate entry points (if needed)
          genBlockEntryPoints(asm, block);
          // Generate label
-         asm.addLabel(block.getLabel().getFullName().replace('@', 'B').replace(':','_'));
+         asm.addLabel(block.getLabel().getFullName().replace('@', 'B').replace(':', '_'));
          // Generate statements
          genStatements(asm, block);
          // Generate exit
@@ -34,7 +34,7 @@ public class Pass4CodeGeneration {
             if (defaultSuccessor.hasPhiBlock()) {
                genBlockPhiTransition(asm, block, defaultSuccessor);
             }
-            asm.addInstruction("JMP", AsmAddressingMode.ABS, defaultSuccessor.getLabel().getFullName().replace('@', 'B').replace(':','_'));
+            asm.addInstruction("JMP", AsmAddressingMode.ABS, defaultSuccessor.getLabel().getFullName().replace('@', 'B').replace(':', '_'));
          }
       }
       return asm;
@@ -42,59 +42,106 @@ public class Pass4CodeGeneration {
 
    private void genStatements(AsmProgram asm, ControlFlowBlock block) {
       Iterator<Statement> statementsIt = block.getStatements().iterator();
+      AsmCodegenAluState aluState = new AsmCodegenAluState();
       while (statementsIt.hasNext()) {
          Statement statement = statementsIt.next();
-         if (!(statement instanceof StatementPhiBlock)) {
-            if (statement instanceof StatementAssignment) {
-               StatementAssignment assignment = (StatementAssignment) statement;
-               LValue lValue = assignment.getlValue();
-               boolean isAlu = false;
-               if (lValue instanceof VariableRef) {
-                  VariableRef lValueRef = (VariableRef) lValue;
-                  Variable lValueVar = symbols.getVariable(lValueRef);
-                  RegisterAllocation.Register lValRegister = symbols.getRegister(lValueVar);
-                  if (lValRegister.getType().equals(RegisterAllocation.RegisterType.REG_ALU_BYTE)) {
-                     asm.addComment(statement + "  //  ALU");
-                     StatementAssignment assignmentAlu = assignment;
-                     statement = statementsIt.next();
-                     if (!(statement instanceof StatementAssignment)) {
-                        throw new RuntimeException("Error! ALU statement must be followed immediately by assignment using the ALU. " + statement);
-                     }
-                     assignment = (StatementAssignment) statement;
-                     AsmFragment asmFragment = new AsmFragment(assignment, assignmentAlu, symbols);
-                     asm.addComment(statement.toString(symbols) + "  //  " + asmFragment.getSignature());
-                     asmFragment.generate(asm);
-                     isAlu = true;
-                  }
+         generateStatementAsm(asm, block, statement, aluState);
+      }
+   }
+
+   /**
+    * Generate ASM code for a single statement
+    *
+    * @param asm          The ASM program to generate into
+    * @param block        The block containing the statement
+    * @param statementsIt The iterator giving access to the next statement
+    * @param statement    The statement to generate ASM code for
+    */
+   public void generateStatementAsm(AsmProgram asm, ControlFlowBlock block, Statement statement, AsmCodegenAluState asmCodeAsmCodegenAluState) {
+
+      // IF the previous statement was added to the ALU register - generate the composite ASM fragment
+      if (asmCodeAsmCodegenAluState.hasAluAssignment()) {
+         StatementAssignment assignmentAlu = asmCodeAsmCodegenAluState.getAluAssignment();
+         if (!(statement instanceof StatementAssignment)) {
+            throw new RuntimeException("Error! ALU statement must be followed immediately by assignment using the ALU. " + statement);
+         }
+         StatementAssignment assignment = (StatementAssignment) statement;
+         AsmFragment asmFragment = new AsmFragment(assignment, assignmentAlu, symbols);
+         asm.addComment(statement.toString(symbols) + "  //  " + asmFragment.getSignature());
+         asmFragment.generate(asm);
+         asmCodeAsmCodegenAluState.clear();
+         return;
+      }
+
+      if (!(statement instanceof StatementPhiBlock)) {
+         if (statement instanceof StatementAssignment) {
+            StatementAssignment assignment = (StatementAssignment) statement;
+            LValue lValue = assignment.getlValue();
+            boolean isAlu = false;
+            if (lValue instanceof VariableRef) {
+               VariableRef lValueRef = (VariableRef) lValue;
+               Variable lValueVar = symbols.getVariable(lValueRef);
+               RegisterAllocation.Register lValRegister = symbols.getRegister(lValueVar);
+               if (lValRegister.getType().equals(RegisterAllocation.RegisterType.REG_ALU_BYTE)) {
+                  asm.addComment(statement + "  //  ALU");
+                  StatementAssignment assignmentAlu = assignment;
+                  asmCodeAsmCodegenAluState.setAluAssignment(assignmentAlu);
+                  isAlu = true;
                }
-               if (!isAlu) {
-                  if(assignment.getOperator()==null && assignment.getrValue1()==null && isRegisterCopy(lValue, assignment.getrValue2())) {
-                        asm.addComment(lValue.toString(symbols) + " = " + assignment.getrValue2().toString(symbols) + "  // register copy "+getRegister(lValue));
-                  } else {
-                     AsmFragment asmFragment = new AsmFragment(assignment, symbols);
-                     asm.addComment(statement.toString(symbols) + "  //  " + asmFragment.getSignature());
-                     asmFragment.generate(asm);
-                  }
-               }
-            } else if (statement instanceof StatementConditionalJump) {
-               AsmFragment asmFragment = new AsmFragment((StatementConditionalJump) statement, block, symbols, graph);
-               asm.addComment(statement.toString(symbols) + "  //  " + asmFragment.getSignature());
-               asmFragment.generate(asm);
-            } else if (statement instanceof StatementCall) {
-               StatementCall call = (StatementCall) statement;
-               ControlFlowBlock callSuccessor = graph.getCallSuccessor(block);
-               if (callSuccessor != null && callSuccessor.hasPhiBlock()) {
-                     genBlockPhiTransition(asm, block, callSuccessor);
-               }
-               asm.addInstruction("jsr", AsmAddressingMode.ABS, call.getProcedure().getFullName());
-            } else if (statement instanceof StatementReturn) {
-               asm.addInstruction("rts", AsmAddressingMode.NON, null);
-            } else {
-               throw new RuntimeException("Statement not supported " + statement);
             }
+            if (!isAlu) {
+               if (assignment.getOperator() == null && assignment.getrValue1() == null && isRegisterCopy(lValue, assignment.getrValue2())) {
+                  asm.addComment(lValue.toString(symbols) + " = " + assignment.getrValue2().toString(symbols) + "  // register copy " + getRegister(lValue));
+               } else {
+                  AsmFragment asmFragment = new AsmFragment(assignment, symbols);
+                  asm.addComment(statement.toString(symbols) + "  //  " + asmFragment.getSignature());
+                  asmFragment.generate(asm);
+               }
+            }
+         } else if (statement instanceof StatementConditionalJump) {
+            AsmFragment asmFragment = new AsmFragment((StatementConditionalJump) statement, block, symbols, graph);
+            asm.addComment(statement.toString(symbols) + "  //  " + asmFragment.getSignature());
+            asmFragment.generate(asm);
+         } else if (statement instanceof StatementCall) {
+            StatementCall call = (StatementCall) statement;
+            ControlFlowBlock callSuccessor = graph.getCallSuccessor(block);
+            if (callSuccessor != null && callSuccessor.hasPhiBlock()) {
+               genBlockPhiTransition(asm, block, callSuccessor);
+            }
+            asm.addInstruction("jsr", AsmAddressingMode.ABS, call.getProcedure().getFullName());
+         } else if (statement instanceof StatementReturn) {
+            asm.addInstruction("rts", AsmAddressingMode.NON, null);
+         } else {
+            throw new RuntimeException("Statement not supported " + statement);
          }
       }
    }
+
+
+   /**
+    * Contains previous assignment added to the ALU register between calls to generateStatementAsm
+    */
+   public static class AsmCodegenAluState {
+
+      private StatementAssignment aluAssignment;
+
+      public void setAluAssignment(StatementAssignment aluAssignment) {
+         this.aluAssignment = aluAssignment;
+      }
+
+      public StatementAssignment getAluAssignment() {
+         return aluAssignment;
+      }
+
+      public boolean hasAluAssignment() {
+         return aluAssignment != null;
+      }
+
+      public void clear() {
+         aluAssignment = null;
+      }
+   }
+
 
    private void genBlockEntryPoints(AsmProgram asm, ControlFlowBlock block) {
       if (block.hasPhiBlock()) {
@@ -108,7 +155,7 @@ public class Pass4CodeGeneration {
          for (ControlFlowBlock predecessor : predecessors) {
             if (block.getLabel().equals(predecessor.getConditionalSuccessor())) {
                genBlockPhiTransition(asm, predecessor, block);
-               asm.addInstruction("JMP", AsmAddressingMode.ABS, block.getLabel().getFullName().replace('@', 'B').replace(':','_'));
+               asm.addInstruction("JMP", AsmAddressingMode.ABS, block.getLabel().getFullName().replace('@', 'B').replace(':', '_'));
             }
          }
       }
@@ -150,7 +197,7 @@ public class Pass4CodeGeneration {
 
    private void genAsmMove(AsmProgram asm, LValue lValue, RValue rValue) {
       if (isRegisterCopy(lValue, rValue)) {
-         asm.addComment(lValue.toString(symbols) + " = " + rValue.toString(symbols) + "  // register copy "+getRegister(lValue));
+         asm.addComment(lValue.toString(symbols) + " = " + rValue.toString(symbols) + "  // register copy " + getRegister(lValue));
       } else {
          AsmFragment asmFragment = new AsmFragment(lValue, rValue, symbols);
          asm.addComment(lValue.toString(symbols) + " = " + rValue.toString(symbols) + "  // " + asmFragment.getSignature());

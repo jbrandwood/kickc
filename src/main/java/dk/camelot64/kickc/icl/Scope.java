@@ -151,12 +151,17 @@ public abstract class Scope implements Symbol {
    }
 
    @JsonIgnore
-   public Collection<Variable> getAllVariables() {
+   public Collection<Variable> getAllVariables(boolean includeSubScopes) {
       Collection<Variable> vars = new ArrayList<>();
       for (Symbol symbol : symbols.values()) {
          if (symbol instanceof Variable) {
             vars.add((Variable) symbol);
          }
+         if(includeSubScopes && symbol instanceof Scope) {
+            Scope subScope = (Scope) symbol;
+            vars.addAll(subScope.getAllVariables(true));
+         }
+
       }
       return vars;
    }

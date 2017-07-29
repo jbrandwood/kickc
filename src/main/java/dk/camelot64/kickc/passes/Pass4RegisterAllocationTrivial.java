@@ -21,13 +21,12 @@ public class Pass4RegisterAllocationTrivial {
       performAllocation(symbols, allocation);
 
       // Register allocation for fibmem.kc
-      /*
       allocation.allocate(new VariableRef("i#1"), RegisterAllocation.getRegisterX());
       allocation.allocate(new VariableRef("i#2"), RegisterAllocation.getRegisterX());
       allocation.allocate(new VariableRef("$1"), new RegisterAllocation.RegisterAByte());
       allocation.allocate(new VariableRef("$3"), new RegisterAllocation.RegisterALUByte());
-      //allocation.allocate(new VariableRef("$4"), new RegisterAllocation.RegisterAByte());
-      */
+      allocation.allocate(new VariableRef("$4"), new RegisterAllocation.RegisterAByte());
+
 
       // Registers for postinc.kc
       /*

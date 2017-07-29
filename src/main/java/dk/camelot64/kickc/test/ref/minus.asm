@@ -4,13 +4,9 @@ B1_from_BBEGIN:
   sta 2
 B1_from_B1:
 B1:
-  lda #2
+  lda 2
   clc
-  adc 2
-  sta 3
-  lda 3
-  clc
-  adc #2
+  adc #4
   sta 3
   lda 3
   ldy 2

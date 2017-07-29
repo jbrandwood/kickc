@@ -61,7 +61,9 @@ public class AsmFragment {
 
    private String assignmentWithAluSignature(StatementAssignment assignment, StatementAssignment assignmentAlu) {
       RValue assignmentRValue2 = assignment.getrValue2();
-      RegisterAllocation.Register rVal2Register = symbols.getRegister((Variable) assignmentRValue2);
+      Variable assignmentVar = symbols.getVariable((VariableRef) assignmentRValue2);
+
+      RegisterAllocation.Register rVal2Register = symbols.getRegister(assignmentVar);
       if(!rVal2Register.getType().equals(RegisterAllocation.RegisterType.REG_ALU_BYTE)) {
          throw new RuntimeException("Error! ALU register only allowed as rValue2. "+assignment);
       }

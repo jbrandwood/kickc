@@ -20,9 +20,9 @@ public class Pass2AssertNoCallLvalues extends Pass2SsaAssertion {
       ControlFlowGraphBaseVisitor<Void> checkCalls = new ControlFlowGraphBaseVisitor<Void>() {
 
          @Override
-         public Void visitCall(StatementCall callLValue) {
-            if(callLValue.getlValue()!=null) {
-               throw new AssertionFailed("No call lValue allowed! "+callLValue);
+         public Void visitCall(StatementCall call) {
+            if(call.getlValue()!=null) {
+               throw new AssertionFailed("No call lValue allowed! "+ call);
             }
             return null;
          }

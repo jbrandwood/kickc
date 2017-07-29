@@ -147,15 +147,15 @@ public class Pass3LiveRangesAnalysis {
       }
 
       @Override
-      public Void visitCall(StatementCall callLValue) {
-         if (callLValue.getlValue() instanceof PointerDereferenceIndexed) {
-            addInitialLiveRange(((PointerDereferenceIndexed) callLValue.getlValue()).getPointer());
-            addInitialLiveRange(((PointerDereferenceIndexed) callLValue.getlValue()).getIndex());
-         } else if (callLValue.getlValue() instanceof PointerDereferenceSimple) {
-            addInitialLiveRange(((PointerDereferenceSimple) callLValue.getlValue()).getPointer());
+      public Void visitCall(StatementCall call) {
+         if (call.getlValue() instanceof PointerDereferenceIndexed) {
+            addInitialLiveRange(((PointerDereferenceIndexed) call.getlValue()).getPointer());
+            addInitialLiveRange(((PointerDereferenceIndexed) call.getlValue()).getIndex());
+         } else if (call.getlValue() instanceof PointerDereferenceSimple) {
+            addInitialLiveRange(((PointerDereferenceSimple) call.getlValue()).getPointer());
          }
-         if (callLValue.getParameters() != null) {
-            for (RValue parameter : callLValue.getParameters()) {
+         if (call.getParameters() != null) {
+            for (RValue parameter : call.getParameters()) {
                addInitialLiveRange(parameter);
             }
          }
@@ -287,19 +287,41 @@ public class Pass3LiveRangesAnalysis {
          }
       }
 
+      /**
+       * Get the statement executed just before entering a specific block
+       *
+       * @param block The block to find the previous statement for
+       * @return The statement executed just before entering the block.
+       * If there are several predecessor blocks multiple statements are returned.
+       */
       private ArrayList<Statement> getPreviousStatements(ControlFlowBlock block) {
          ArrayList<Statement> statements = new ArrayList<>();
          List<ControlFlowBlock> predecessors = program.getGraph().getPredecessors(block);
          for (ControlFlowBlock predecessor : predecessors) {
-            List<Statement> predecessorStatements = predecessor.getStatements();
-            if (predecessorStatements.size() == 0) {
-               // Predecessor has no statements - go further back!
-               statements.addAll(getPreviousStatements(predecessor));
-            } else {
-               // Add last statement from predecessor
-               Statement predecessorLastStatement = predecessorStatements.get(predecessorStatements.size() - 1);
-               statements.add(predecessorLastStatement);
-            }
+            ArrayList<Statement> lastStatements = getLastStatements(predecessor);
+
+
+            statements.addAll(lastStatements);
+         }
+         return statements;
+      }
+
+      /**
+       * Get the last statement executed in a specific block.
+       * If the block is empty the last statement of the previous block is returned.
+       * @param block The block to examine
+       * @return The last statement of the block (or the last statement of previous blocks if the block is empty)
+       */
+      private ArrayList<Statement> getLastStatements(ControlFlowBlock block) {
+         ArrayList<Statement> statements = new ArrayList<>();
+         List<Statement> blockStatements = block.getStatements();
+         if (blockStatements.size() == 0) {
+            // Block has no statements - go further back!
+            statements.addAll(getPreviousStatements(block));
+         } else {
+            // Add last statement from block
+            Statement predecessorLastStatement = blockStatements.get(blockStatements.size() - 1);
+            statements.add(predecessorLastStatement);
          }
          return statements;
       }
@@ -315,47 +337,48 @@ public class Pass3LiveRangesAnalysis {
       }
 
       @Override
-      public Void visitCall(StatementCall callLValue) {
-         if (callLValue.getlValue() != null) {
-            propagate(callLValue, getPreviousStatements(), Arrays.asList(callLValue.getlValue()));
-         }
+      public Void visitCall(StatementCall call) {
+         propagate(call, getPreviousStatements(), null);
+         // Also propagate back through all statements of the procedure
+         ProcedureRef procedure = call.getProcedure();
+         LabelRef procedureReturnBlock = procedure.getReturnBlock();
+         ControlFlowBlock returnBlock = program.getGraph().getBlock(procedureReturnBlock);
+         propagate(call, getLastStatements(returnBlock), null);
          return null;
       }
 
       @Override
       public Void visitAssignment(StatementAssignment assignment) {
-         if (assignment.getlValue() != null) {
-            propagate(assignment, getPreviousStatements(), Arrays.asList(assignment.getlValue()));
-         }
+         propagate(assignment, getPreviousStatements(), Arrays.asList(assignment.getlValue()));
          return null;
       }
 
       @Override
       public Void visitConditionalJump(StatementConditionalJump conditionalJump) {
-         propagate(conditionalJump, getPreviousStatements(), new ArrayList<LValue>());
+         propagate(conditionalJump, getPreviousStatements(), null);
          return null;
       }
 
       @Override
       public Void visitJump(StatementJump jump) {
-         propagate(jump, getPreviousStatements(), new ArrayList<LValue>());
+         propagate(jump, getPreviousStatements(), null);
          return null;
       }
 
       @Override
       public Void visitReturn(StatementReturn aReturn) {
-         propagate(aReturn, getPreviousStatements(), new ArrayList<LValue>());
+         propagate(aReturn, getPreviousStatements(), null);
          return null;
       }
 
       @Override
-      public Void visitProcedureBegin(StatementProcedureBegin statement) {
-         throw new RuntimeException("Statement not supported during live range propagation. Should be eliminated in earlier phase. " + statement);
+      public Void visitProcedureBegin(StatementProcedureBegin procedureBegin) {
+         throw new RuntimeException("Statement not supported during live range propagation. Should be eliminated in earlier phase. " + procedureBegin);
       }
 
       @Override
-      public Void visitProcedureEnd(StatementProcedureEnd statement) {
-         throw new RuntimeException("Statement not supported during live range propagation. Should be eliminated in earlier phase. " + statement);
+      public Void visitProcedureEnd(StatementProcedureEnd procedureEnd) {
+         throw new RuntimeException("Statement not supported during live range propagation. Should be eliminated in earlier phase. " + procedureEnd);
       }
 
       @Override

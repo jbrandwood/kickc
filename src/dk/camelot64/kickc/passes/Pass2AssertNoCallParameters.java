@@ -18,10 +18,10 @@ public class Pass2AssertNoCallParameters extends Pass2SsaAssertion {
       ControlFlowGraphBaseVisitor<Void> checkCalls = new ControlFlowGraphBaseVisitor<Void>() {
 
          @Override
-         public Void visitCall(StatementCall callLValue) {
-            List<RValue> parameters = callLValue.getParameters();
+         public Void visitCall(StatementCall call) {
+            List<RValue> parameters = call.getParameters();
             if(parameters!=null && parameters.size()>0) {
-               throw new AssertionFailed("No call parameters allowed! "+callLValue);
+               throw new AssertionFailed("No call parameters allowed! "+ call);
             }
             return null;
          }

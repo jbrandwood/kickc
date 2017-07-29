@@ -15,13 +15,13 @@ public class Pass2AssertNoProcs extends Pass2SsaAssertion {
       ControlFlowGraphBaseVisitor<Void> checkCalls = new ControlFlowGraphBaseVisitor<Void>() {
 
          @Override
-         public Void visitProcedureBegin(StatementProcedureBegin statement) {
-            throw new AssertionFailed("No proc statements allowed! "+statement);
+         public Void visitProcedureBegin(StatementProcedureBegin procedureBegin) {
+            throw new AssertionFailed("No proc statements allowed! "+ procedureBegin);
          }
 
          @Override
-         public Void visitProcedureEnd(StatementProcedureEnd statement) {
-            throw new AssertionFailed("No proc statements allowed! "+statement);
+         public Void visitProcedureEnd(StatementProcedureEnd procedureEnd) {
+            throw new AssertionFailed("No proc statements allowed! "+ procedureEnd);
          }
       };
       checkCalls.visitGraph(getGraph());

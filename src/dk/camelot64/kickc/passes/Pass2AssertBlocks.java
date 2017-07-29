@@ -71,11 +71,11 @@ public class Pass2AssertBlocks extends Pass2SsaAssertion {
       }
 
       @Override
-      public Void visitCall(StatementCall callLValue) {
-         ProcedureRef procedure = callLValue.getProcedure();
+      public Void visitCall(StatementCall call) {
+         ProcedureRef procedure = call.getProcedure();
          LabelRef procLabelRef = procedure.getLabelRef();
          assertBlock(procLabelRef);
-         return super.visitCall(callLValue);
+         return super.visitCall(call);
       }
 
       @Override

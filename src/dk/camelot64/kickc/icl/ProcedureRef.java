@@ -12,8 +12,21 @@ public class ProcedureRef extends SymbolRef {
       super(fullName);
    }
 
+   /**
+    * Get the label of the block where the procedure code starts
+    * @return The label of the code block
+    */
    @JsonIgnore
    public LabelRef getLabelRef() {
       return new LabelRef(getFullName());
+   }
+
+   /**
+    * Get the label of the block containing the final procedure return
+    * @return The label of the code block
+    */
+   @JsonIgnore
+   public LabelRef getReturnBlock() {
+      return new LabelRef(getFullName()+"::@return");
    }
 }

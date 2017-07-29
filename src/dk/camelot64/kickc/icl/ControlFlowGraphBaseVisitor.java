@@ -44,11 +44,11 @@ public class ControlFlowGraphBaseVisitor<T> {
       }
    }
 
-   public T visitProcedureBegin(StatementProcedureBegin statement) {
+   public T visitProcedureBegin(StatementProcedureBegin procedureBegin) {
       return null;
    }
 
-   public T visitProcedureEnd(StatementProcedureEnd statement) {
+   public T visitProcedureEnd(StatementProcedureEnd procedureEnd) {
       return null;
    }
 
@@ -76,7 +76,7 @@ public class ControlFlowGraphBaseVisitor<T> {
       return null;
    }
 
-   public T visitCall(StatementCall callLValue) {
+   public T visitCall(StatementCall call) {
       return null;
    }
 

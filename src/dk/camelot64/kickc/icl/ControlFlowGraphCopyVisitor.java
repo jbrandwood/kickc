@@ -157,10 +157,10 @@ public class ControlFlowGraphCopyVisitor extends ControlFlowGraphBaseVisitor<Obj
    }
 
    @Override
-   public StatementCall visitCall(StatementCall callLValue) {
-      LValue lValue = callLValue.getlValue();
-      String procedureName = callLValue.getProcedureName();
-      List<RValue> parameters = callLValue.getParameters();
+   public StatementCall visitCall(StatementCall origCall) {
+      LValue lValue = origCall.getlValue();
+      String procedureName = origCall.getProcedureName();
+      List<RValue> parameters = origCall.getParameters();
       return new StatementCall(lValue, procedureName, parameters);
    }
 

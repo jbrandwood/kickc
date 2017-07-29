@@ -91,19 +91,19 @@ public class Pass2AssertSymbols extends Pass2SsaAssertion {
       }
 
       @Override
-      public Void visitProcedureBegin(StatementProcedureBegin statement) {
-         ProcedureRef procedureRef = statement.getProcedure();
+      public Void visitProcedureBegin(StatementProcedureBegin procedureBegin) {
+         ProcedureRef procedureRef = procedureBegin.getProcedure();
          Procedure procedure = programScope.getProcedure(procedureRef);
          symbols.add(procedure);
-         return super.visitProcedureBegin(statement);
+         return super.visitProcedureBegin(procedureBegin);
       }
 
       @Override
-      public Void visitProcedureEnd(StatementProcedureEnd statement) {
-         ProcedureRef procedureRef = statement.getProcedure();
+      public Void visitProcedureEnd(StatementProcedureEnd procedureEnd) {
+         ProcedureRef procedureRef = procedureEnd.getProcedure();
          Procedure procedure = programScope.getProcedure(procedureRef);
          symbols.add(procedure);
-         return super.visitProcedureEnd(statement);
+         return super.visitProcedureEnd(procedureEnd);
       }
 
       @Override
@@ -141,15 +141,15 @@ public class Pass2AssertSymbols extends Pass2SsaAssertion {
       }
 
       @Override
-      public Void visitCall(StatementCall callLValue) {
-         addSymbol(callLValue.getlValue());
-         addSymbol(callLValue.getProcedure());
-         if(callLValue.getParameters()!=null) {
-            for (RValue param : callLValue.getParameters()) {
+      public Void visitCall(StatementCall call) {
+         addSymbol(call.getlValue());
+         addSymbol(call.getProcedure());
+         if(call.getParameters()!=null) {
+            for (RValue param : call.getParameters()) {
                addSymbol(param);
             }
          }
-         return super.visitCall(callLValue);
+         return super.visitCall(call);
       }
 
       @Override

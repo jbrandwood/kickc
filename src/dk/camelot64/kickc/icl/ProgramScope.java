@@ -11,7 +11,9 @@ public class ProgramScope extends Scope {
 
    private RegisterAllocation allocation;
 
-   private LiveRangeVariables liveRanges;
+   private LiveRangeVariables liveRangeVariables;
+
+   private LiveRangeEquivalenceClassSet liveRangeEquivalenceClassSet;
 
    public ProgramScope() {
       super("", null);
@@ -50,12 +52,20 @@ public class ProgramScope extends Scope {
       return allocation;
    }
 
-   public void setLiveRanges(LiveRangeVariables liveRanges) {
-      this.liveRanges = liveRanges;
+   public void setLiveRangeVariables(LiveRangeVariables liveRangeVariables) {
+      this.liveRangeVariables = liveRangeVariables;
    }
 
-   public LiveRangeVariables getLiveRanges() {
-      return liveRanges;
+   public LiveRangeVariables getLiveRangeVariables() {
+      return liveRangeVariables;
+   }
+
+   public void setLiveRangeEquivalenceClassSet(LiveRangeEquivalenceClassSet liveRangeEquivalenceClassSet) {
+      this.liveRangeEquivalenceClassSet = liveRangeEquivalenceClassSet;
+   }
+
+   public LiveRangeEquivalenceClassSet getLiveRangeEquivalenceClassSet() {
+      return liveRangeEquivalenceClassSet;
    }
 
    @Override
@@ -87,6 +97,19 @@ public class ProgramScope extends Scope {
       return getSymbolTableContents(this);
    }
 
+   @Override
+   public String getSymbolTableContents(ProgramScope scope) {
+      StringBuilder out = new StringBuilder();
+      out.append(super.getSymbolTableContents(scope));
+      if(liveRangeEquivalenceClassSet!=null) {
+         out.append("\n");
+         for (LiveRangeEquivalenceClass liveRangeEquivalenceClass : liveRangeEquivalenceClassSet.getEquivalenceClasses()) {
+            out.append(liveRangeEquivalenceClass);
+            out.append("\n");
+         }
+      }
+      return out.toString();
+   }
 
    @Override
    public String toString(ProgramScope scope) {

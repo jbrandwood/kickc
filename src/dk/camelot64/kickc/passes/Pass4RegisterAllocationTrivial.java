@@ -48,6 +48,7 @@ public class Pass4RegisterAllocationTrivial {
       */
 
       // Optimal Registers for flipper-rex2.kc
+      /*
       allocation.allocate(new VariableRef("plot::i#0"), RegisterAllocation.getRegisterX());
       allocation.allocate(new VariableRef("plot::i#1"), RegisterAllocation.getRegisterX());
       allocation.allocate(new VariableRef("plot::i#2"), RegisterAllocation.getRegisterX());
@@ -103,6 +104,7 @@ public class Pass4RegisterAllocationTrivial {
       allocation.allocate(new VariableRef("main::c#2"), RegisterAllocation.getRegisterX());
       allocation.allocate(new VariableRef("main::c#3"), RegisterAllocation.getRegisterX());
       allocation.allocate(new VariableRef("main::c#4"), RegisterAllocation.getRegisterX());
+      */
 
       symbols.setAllocation(allocation);
 

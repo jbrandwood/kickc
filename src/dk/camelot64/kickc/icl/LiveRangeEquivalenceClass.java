@@ -15,12 +15,24 @@ public class LiveRangeEquivalenceClass {
    private List<VariableRef> variables;
 
    /** The combined live range of the variables. */
-   private LiveRange classLiveRange;
+   private LiveRange liveRange;
+
+   /** A register allocated to hold all variables of the equivalence class. (null if no register is currently allocated) */
+   private RegisterAllocation.Register register;
 
    public LiveRangeEquivalenceClass(Program program) {
       this.program = program;
       this.variables = new ArrayList<>();
-      this.classLiveRange = new LiveRange();
+      this.liveRange = new LiveRange();
+      this.register = null;
+   }
+
+   public RegisterAllocation.Register getRegister() {
+      return register;
+   }
+
+   public void setRegister(RegisterAllocation.Register register) {
+      this.register = register;
    }
 
    /**
@@ -32,12 +44,12 @@ public class LiveRangeEquivalenceClass {
       if(variables.contains(variable)) {
          return;
       }
-      LiveRangeVariables liveRanges = program.getScope().getLiveRanges();
+      LiveRangeVariables liveRanges = program.getScope().getLiveRangeVariables();
       LiveRange varLiveRange = liveRanges.getLiveRange(variable);
-      if (classLiveRange.overlaps(varLiveRange)) {
+      if (liveRange.overlaps(varLiveRange)) {
          throw new RuntimeException("Compilation error! Variable live range overlaps live range equivalence class live range. " + variable);
       }
-      classLiveRange.add(varLiveRange);
+      liveRange.add(varLiveRange);
       variables.add(variable);
    }
 
@@ -52,12 +64,12 @@ public class LiveRangeEquivalenceClass {
    }
 
    public LiveRange getLiveRange() {
-      return classLiveRange;
+      return liveRange;
    }
 
    public void addAll(LiveRangeEquivalenceClass other) {
       variables.addAll(other.variables);
-      classLiveRange.add(other.classLiveRange);
+      liveRange.add(other.liveRange);
    }
 
    @Override
@@ -78,6 +90,9 @@ public class LiveRangeEquivalenceClass {
    @Override
    public String toString() {
       StringBuilder s = new StringBuilder();
+      if(register!=null) {
+         s.append(register.toString()).append(" ");
+      }
       s.append("[ ");
       for (VariableRef variable : variables) {
          s.append(variable.toString());

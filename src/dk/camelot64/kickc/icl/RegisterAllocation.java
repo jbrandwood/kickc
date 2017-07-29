@@ -1,7 +1,6 @@
 package dk.camelot64.kickc.icl;
 
 
-import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
@@ -40,6 +39,8 @@ public class RegisterAllocation {
 
       RegisterType getType();
 
+      boolean isZp();
+
    }
 
    /** The register type. */
@@ -63,6 +64,11 @@ public class RegisterAllocation {
       @Override
       public RegisterType getType() {
          return  RegisterType.ZP_BYTE;
+      }
+
+      @Override
+      public boolean isZp() {
+         return true;
       }
 
       @Override
@@ -109,6 +115,11 @@ public class RegisterAllocation {
       }
 
       @Override
+      public boolean isZp() {
+         return true;
+      }
+
+      @Override
       public String toString() {
          return "zp word :"+zp;
       }
@@ -152,6 +163,11 @@ public class RegisterAllocation {
       }
 
       @Override
+      public boolean isZp() {
+         return true;
+      }
+
+      @Override
       public String toString() {
          return "zp bool:"+zp;
       }
@@ -187,6 +203,11 @@ public class RegisterAllocation {
       @Override
       public RegisterType getType() {
          return RegisterType.ZP_PTR_BYTE;
+      }
+
+      @Override
+      public boolean isZp() {
+         return true;
       }
 
       @Override
@@ -227,6 +248,11 @@ public class RegisterAllocation {
       }
 
       @Override
+      public boolean isZp() {
+         return false;
+      }
+
+      @Override
       public String toString() {
          return "reg byte x";
       }
@@ -250,6 +276,11 @@ public class RegisterAllocation {
       @Override
       public RegisterType getType() {
          return RegisterType.REG_Y_BYTE;
+      }
+
+      @Override
+      public boolean isZp() {
+         return false;
       }
 
       @Override
@@ -279,6 +310,11 @@ public class RegisterAllocation {
       }
 
       @Override
+      public boolean isZp() {
+         return false;
+      }
+
+      @Override
       public String toString() {
          return "reg byte a";
       }
@@ -302,6 +338,11 @@ public class RegisterAllocation {
       @Override
       public RegisterType getType() {
          return RegisterType.REG_ALU_BYTE;
+      }
+
+      @Override
+      public boolean isZp() {
+         return false;
       }
 
       @Override

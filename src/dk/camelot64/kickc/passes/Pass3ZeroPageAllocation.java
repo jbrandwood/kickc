@@ -9,12 +9,12 @@ import java.util.List;
 /**
  * Zero Page Register Allocation for variables based on live ranges and phi equivalence classes.
  */
-public class Pass4ZeroPageAllocationLiveRange {
+public class Pass3ZeroPageAllocation {
 
    private Program program;
    private CompileLog log;
 
-   public Pass4ZeroPageAllocationLiveRange(Program program, CompileLog log) {
+   public Pass3ZeroPageAllocation(Program program, CompileLog log) {
       this.program = program;
       this.log = log;
    }
@@ -51,16 +51,16 @@ public class Pass4ZeroPageAllocationLiveRange {
       for (LiveRangeEquivalenceClass liveRangeEquivalenceClass : liveRangeEquivalenceClassSet.getEquivalenceClasses()) {
          List<VariableRef> variables = liveRangeEquivalenceClass.getVariables();
          Variable firstVar = program.getScope().getVariable(variables.get(0));
-         RegisterAllocation.Register zpRegister = allocateNewRegister(firstVar.getType());
-         for (VariableRef variable : variables) {
-            allocation.allocate(variable, zpRegister);
-         }
-         log.append("Allocated "+zpRegister+" to "+liveRangeEquivalenceClass);
+         RegisterAllocation.Register zpRegister = allocateNewRegisterZp(firstVar.getType());
+         liveRangeEquivalenceClass.setRegister(zpRegister);
+         log.append("Allocated " + zpRegister + " to " + liveRangeEquivalenceClass);
       }
-      program.getScope().setAllocation(allocation);
+      program.getScope().setLiveRangeEquivalenceClassSet(liveRangeEquivalenceClassSet);
    }
 
-   /** Add all variables to a non-overlapping equivalence or create a new one. */
+   /**
+    * Add all variables to a non-overlapping equivalence or create a new one.
+    */
    private class EquivalenceClassAdder extends ControlFlowGraphBaseVisitor<Void> {
 
       private LiveRangeEquivalenceClassSet liveRangeEquivalenceClassSet;
@@ -82,10 +82,10 @@ public class Pass4ZeroPageAllocationLiveRange {
       }
 
       private void addToEquivalenceClassSet(VariableRef lValVar, List<VariableRef> preferences) {
-         LiveRangeVariables liveRangeVariables = program.getScope().getLiveRanges();
+         LiveRangeVariables liveRangeVariables = program.getScope().getLiveRangeVariables();
          LiveRangeEquivalenceClass lValEquivalenceClass =
                liveRangeEquivalenceClassSet.getEquivalenceClass(lValVar);
-         if(lValEquivalenceClass==null) {
+         if (lValEquivalenceClass == null) {
             LiveRange lValLiveRange = liveRangeVariables.getLiveRange(lValVar);
             // Variable in need of an equivalence class - Look through preferences
             LiveRangeEquivalenceClass chosen = null;
@@ -104,37 +104,24 @@ public class Pass4ZeroPageAllocationLiveRange {
                }
             }
             if (chosen == null) {
-               // No preference usable - look through all others
-               for (LiveRangeEquivalenceClass potentialEquivalenceClass : liveRangeEquivalenceClassSet.getEquivalenceClasses()) {
-                  VariableRef potentialVariableRef = potentialEquivalenceClass.getVariables().get(0);
-                  Variable potentialVariable = program.getScope().getVariable(potentialVariableRef);
-                  Variable lValVariable = program.getScope().getVariable(lValVar);
-                  if (lValVariable.getType().equals(potentialVariable.getType())) {
-                     if (!lValLiveRange.overlaps(potentialEquivalenceClass.getLiveRange())) {
-                        chosen = potentialEquivalenceClass;
-                        chosen.addVariable(lValVar);
-                        break;
-                     }
-                  }
-               }
-            }
-            if(chosen==null) {
-               // No other equivalence class is usable - create a new one
+               // No preference usable - create a new one
                chosen = liveRangeEquivalenceClassSet.getOrCreateEquivalenceClass(lValVar);
             }
-            log.append("Added variable "+lValVar+" to zero page equivalence class "+chosen);
+            log.append("Added variable " + lValVar + " to zero page equivalence class " + chosen);
          }
       }
 
       private void addPreference(List<VariableRef> preferences, RValue rValue) {
-         if(rValue instanceof VariableRef) {
+         if (rValue instanceof VariableRef) {
             preferences.add((VariableRef) rValue);
          }
       }
 
    }
 
-   /** Coalesce equivalence classes when they do not overlap based on all copy assignments to variables. */
+   /**
+    * Coalesce equivalence classes when they do not overlap based on all copy assignments to variables.
+    */
    private class EquivalenceClassCopyCoalescer extends ControlFlowGraphBaseVisitor<Void> {
 
       private LiveRangeEquivalenceClassSet liveRangeEquivalenceClassSet;
@@ -153,11 +140,11 @@ public class Pass4ZeroPageAllocationLiveRange {
                VariableRef assignVar = (VariableRef) assignment.getrValue2();
                LiveRangeEquivalenceClass assignVarEquivalenceClass = liveRangeEquivalenceClassSet.getOrCreateEquivalenceClass(assignVar);
                if (lValEquivalenceClass.equals(assignVarEquivalenceClass)) {
-                  log.append("Coalesced (already) " + assignment+" in "+lValEquivalenceClass);
+                  log.append("Coalesced (already) " + assignment + " in " + lValEquivalenceClass);
                } else if (!lValEquivalenceClass.getLiveRange().overlaps(assignVarEquivalenceClass.getLiveRange())) {
                   lValEquivalenceClass.addAll(assignVarEquivalenceClass);
                   liveRangeEquivalenceClassSet.remove(assignVarEquivalenceClass);
-                  log.append("Coalesced " + assignment+" into "+lValEquivalenceClass);
+                  log.append("Coalesced " + assignment + " into " + lValEquivalenceClass);
                } else {
                   log.append("Not coalescing " + assignment);
                }
@@ -168,16 +155,19 @@ public class Pass4ZeroPageAllocationLiveRange {
 
    }
 
-   /** The current zero page used to create new registers when needed. */
+   /**
+    * The current zero page used to create new registers when needed.
+    */
    private int currentZp = 2;
 
    /**
     * Create a new register for a specific variable type.
+    *
     * @param varType The variable type to create a register for.
-    *            The register type created uses one or more zero page locations based on the variable type
+    *                The register type created uses one or more zero page locations based on the variable type
     * @return The new zeropage register
     */
-   private RegisterAllocation.Register allocateNewRegister(SymbolType varType) {
+   private RegisterAllocation.Register allocateNewRegisterZp(SymbolType varType) {
       if (varType.equals(SymbolTypeBasic.BYTE)) {
          return new RegisterAllocation.RegisterZpByte(currentZp++);
       } else if (varType.equals(SymbolTypeBasic.WORD)) {

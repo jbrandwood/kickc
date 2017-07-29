@@ -24,18 +24,18 @@ public class Pass3LiveRangesAnalysis {
    public void findLiveRanges() {
       generateStatementIndexes();
       LiveRangeVariables liveRanges = initializeLiveRanges();
-      program.getScope().setLiveRanges(liveRanges);
+      program.getScope().setLiveRangeVariables(liveRanges);
       //log.append("CONTROL FLOW GRAPH - LIVE RANGES");
       //log.append(program.getGraph().toString(program.getScope()));
       boolean propagating;
       do {
          propagating = propagateLiveRanges(liveRanges);
-         program.getScope().setLiveRanges(liveRanges);
+         program.getScope().setLiveRangeVariables(liveRanges);
          log.append("Propagating live ranges...");
          //log.append("CONTROL FLOW GRAPH - LIVE RANGES");
          //log.append(program.getGraph().toString(program.getScope()));
       } while (propagating);
-      program.getScope().setLiveRanges(liveRanges);
+      program.getScope().setLiveRangeVariables(liveRanges);
    }
 
 

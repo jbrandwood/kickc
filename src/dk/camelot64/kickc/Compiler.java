@@ -49,7 +49,7 @@ public class Compiler {
          KickCParser.FileContext file = pass0ParseInput(input, log);
          Program program = pass1GenerateSSA(file, log);
          pass2OptimizeSSA(program, log);
-         pass3LiveRangeAnalysis(program, log);
+         pass3RegisterAllocation(program, log);
          AsmProgram asmProgram = pass4GenerateAsm(program, log);
          pass5OptimizeAsm(asmProgram, log);
 
@@ -66,13 +66,13 @@ public class Compiler {
    }
 
    public void pass5OptimizeAsm(AsmProgram asmProgram, CompileLog log) {
-      List<Pass5AsmOptimization> pass4Optimizations = new ArrayList<>();
-      pass4Optimizations.add(new Pass5NextJumpElimination(asmProgram, log));
-      pass4Optimizations.add(new Pass5UnnecesaryLoadElimination(asmProgram, log));
+      List<Pass5AsmOptimization> pass5Optimizations = new ArrayList<>();
+      pass5Optimizations.add(new Pass5NextJumpElimination(asmProgram, log));
+      pass5Optimizations.add(new Pass5UnnecesaryLoadElimination(asmProgram, log));
       boolean asmOptimized = true;
       while (asmOptimized) {
          asmOptimized = false;
-         for (Pass5AsmOptimization optimization : pass4Optimizations) {
+         for (Pass5AsmOptimization optimization : pass5Optimizations) {
             boolean stepOptimized = optimization.optimize();
             if (stepOptimized) {
                log.append("Succesful ASM optimization " + optimization.getClass().getSimpleName());
@@ -86,9 +86,6 @@ public class Compiler {
 
    public  AsmProgram pass4GenerateAsm(Program program, CompileLog log) {
 
-      Pass4ZeroPageAllocationLiveRange pass4ZeroPageAllocationLiveRange = new Pass4ZeroPageAllocationLiveRange(program, log);
-      pass4ZeroPageAllocationLiveRange.allocate();
-
       Pass4CodeGeneration pass4CodeGeneration = new Pass4CodeGeneration(program);
       AsmProgram asmProgram = pass4CodeGeneration.generate();
 
@@ -98,53 +95,52 @@ public class Compiler {
    }
 
 
-   private void pass3LiveRangeAnalysis(Program program, CompileLog log) {
+   private void pass3RegisterAllocation(Program program, CompileLog log) {
 
       Pass3BlockSequencePlanner pass3BlockSequencePlanner = new Pass3BlockSequencePlanner(program, log);
       pass3BlockSequencePlanner.plan();
 
-      Pass3PhiLifting pass3PhiLifting = new Pass3PhiLifting(program, log);
-      pass3PhiLifting.perform();
+      new Pass3PhiLifting(program, log).perform();
       pass3BlockSequencePlanner.plan();
       log.append("CONTROL FLOW GRAPH - PHI LIFTED");
       log.append(program.getGraph().toString(program.getScope()));
       pass2AssertSSA(program, log);
 
-      Pass3LiveRangesAnalysis pass3LiveRangesAnalysis = new Pass3LiveRangesAnalysis(program, log);
-      pass3LiveRangesAnalysis.findLiveRanges();
+      new Pass3LiveRangesAnalysis(program, log).findLiveRanges();
       log.append("CONTROL FLOW GRAPH - LIVE RANGES");
       log.append(program.getGraph().toString(program.getScope()));
       pass2AssertSSA(program, log);
 
-      Pass3PhiMemCoalesce pass3PhiMemCoalesce = new Pass3PhiMemCoalesce(program, log);
-      pass3PhiMemCoalesce.optimize();
-      Pass2CullEmptyBlocks cullEmptyBlocks = new Pass2CullEmptyBlocks(program, log);
-      cullEmptyBlocks.optimize();
+      new Pass3PhiMemCoalesce(program, log).optimize();
+      new Pass2CullEmptyBlocks(program, log).optimize();
       pass3BlockSequencePlanner.plan();
-      pass3LiveRangesAnalysis.findLiveRanges();
+      new Pass3LiveRangesAnalysis(program, log).findLiveRanges();
       log.append("CONTROL FLOW GRAPH - PHI MEM COALESCED");
       log.append(program.getGraph().toString(program.getScope()));
       pass2AssertSSA(program, log);
 
-      Pass3CallGraphAnalysis pass3CallGraphAnalysis = new Pass3CallGraphAnalysis(program, log);
-      pass3CallGraphAnalysis.findCallGraph();
+      new Pass3CallGraphAnalysis(program, log).findCallGraph();
       log.append("CALL GRAPH");
       log.append(program.getGraph().getCallGraph().toString());
 
-      Pass3DominatorsAnalysis pass3DominatorsAnalysis = new Pass3DominatorsAnalysis(program, log);
-      pass3DominatorsAnalysis.findDominators();
+      new Pass3DominatorsAnalysis(program, log).findDominators();
       log.append("DOMINATORS");
       log.append(program.getGraph().getDominators().toString());
 
-      Pass3LoopAnalysis pass3LoopAnalysis = new Pass3LoopAnalysis(program, log);
-      pass3LoopAnalysis.findLoops();
+      new Pass3LoopAnalysis(program, log).findLoops();
       log.append("NATURAL LOOPS");
       log.append(program.getGraph().getLoopSet().toString());
 
-      Pass3LoopDepthAnalysis pass3LoopDepthAnalysis = new Pass3LoopDepthAnalysis(program, log);
-      pass3LoopDepthAnalysis.findLoopDepths();
+      new Pass3LoopDepthAnalysis(program, log).findLoopDepths();
       log.append("NATURAL LOOPS WITH DEPTH");
       log.append(program.getGraph().getLoopSet().toString());
+
+      new Pass3ZeroPageAllocation(program, log).allocate();
+      new Pass3ZeroPageCoalesce(program, log).allocate();
+      new Pass3RegistersFinalize(program, log).allocate();
+
+
+
 
    }
 

@@ -10,10 +10,9 @@ import java.util.HashMap;
 public class ProgramScope extends Scope {
 
    private RegisterAllocation allocation;
-
    private LiveRangeVariables liveRangeVariables;
-
    private LiveRangeEquivalenceClassSet liveRangeEquivalenceClassSet;
+   private VariableRegisterWeights variableRegisterWeights;
 
    public ProgramScope() {
       super("", null);
@@ -42,13 +41,13 @@ public class ProgramScope extends Scope {
    public RegisterAllocation.Register getRegister(Variable variable) {
       RegisterAllocation.Register register = null;
       if (allocation != null) {
-         register = allocation.getRegister(variable);
+         register = allocation.getRegister(variable.getRef());
       }
       return register;
    }
 
    @Override
-   RegisterAllocation getAllocation() {
+   public RegisterAllocation getAllocation() {
       return allocation;
    }
 
@@ -94,13 +93,18 @@ public class ProgramScope extends Scope {
 
    @JsonIgnore
    public String getSymbolTableContents() {
-      return getSymbolTableContents(this);
+      return getSymbolTableContents(this, null);
+   }
+
+   @JsonIgnore
+   public String getSymbolTableContents(Class symbolClass) {
+      return getSymbolTableContents(this, symbolClass);
    }
 
    @Override
-   public String getSymbolTableContents(ProgramScope scope) {
+   public String getSymbolTableContents(ProgramScope scope, Class symbolClass) {
       StringBuilder out = new StringBuilder();
-      out.append(super.getSymbolTableContents(scope));
+      out.append(super.getSymbolTableContents(scope, symbolClass));
       if(liveRangeEquivalenceClassSet!=null) {
          out.append("\n");
          for (LiveRangeEquivalenceClass liveRangeEquivalenceClass : liveRangeEquivalenceClassSet.getEquivalenceClasses()) {
@@ -116,4 +120,11 @@ public class ProgramScope extends Scope {
       return "program";
    }
 
+   public void setVariableRegisterWeights(VariableRegisterWeights variableRegisterWeights) {
+      this.variableRegisterWeights = variableRegisterWeights;
+   }
+
+   public VariableRegisterWeights getVariableRegisterWeights() {
+      return variableRegisterWeights;
+   }
 }

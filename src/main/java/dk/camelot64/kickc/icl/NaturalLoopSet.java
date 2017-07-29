@@ -96,4 +96,13 @@ public class NaturalLoopSet {
       this.loops.remove(loop);
    }
 
+   public int getMaxLoopDepth(LabelRef block) {
+      int maxDepth = 0;
+      for (NaturalLoop loop : getLoopsContainingBlock(block)) {
+         if(loop.getDepth()>maxDepth) {
+            maxDepth = loop.getDepth();
+         }
+      }
+      return maxDepth;
+   }
 }

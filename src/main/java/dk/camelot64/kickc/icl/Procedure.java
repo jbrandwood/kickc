@@ -71,11 +71,11 @@ public class Procedure extends Scope {
       return super.getFullName();
    }
 
-   public String getSymbolTableContents(ProgramScope scope) {
+   public String getSymbolTableContents(ProgramScope scope, Class symbolClass) {
       StringBuilder res = new StringBuilder();
       res.append(toString(scope));
       res.append("\n");
-      res.append(super.getSymbolTableContents(scope));
+      res.append(super.getSymbolTableContents(scope, symbolClass));
       return res.toString();
    }
 
@@ -85,9 +85,20 @@ public class Procedure extends Scope {
    }
 
    @Override
-   RegisterAllocation getAllocation() {
+   @JsonIgnore
+   public RegisterAllocation getAllocation() {
       if(getScope()!=null) {
          return getScope().getAllocation();
+      } else {
+         return null;
+      }
+   }
+
+   @Override
+   @JsonIgnore
+   public VariableRegisterWeights getVariableRegisterWeights() {
+      if(getScope()!=null) {
+         return getScope().getVariableRegisterWeights();
       } else {
          return null;
       }

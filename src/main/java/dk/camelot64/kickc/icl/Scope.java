@@ -205,29 +205,40 @@ public abstract class Scope implements Symbol {
          return (Procedure) getSymbol(ref);
    }
 
-   abstract RegisterAllocation getAllocation();
+   public abstract RegisterAllocation getAllocation();
+
+   public abstract VariableRegisterWeights getVariableRegisterWeights();
 
    @JsonIgnore
-   public String getSymbolTableContents(ProgramScope scope) {
+   public String getSymbolTableContents(ProgramScope scope, Class symbolClass) {
       StringBuilder res = new StringBuilder();
       Set<String> names = symbols.keySet();
       List<String> sortedNames = new ArrayList<>(names);
       Collections.sort(sortedNames);
       RegisterAllocation allocation = getAllocation();
+      VariableRegisterWeights registerWeights = getVariableRegisterWeights();
       for (String name : sortedNames) {
          Symbol symbol = symbols.get(name);
          if (symbol instanceof Scope) {
-            res.append(((Scope) symbol).getSymbolTableContents(scope));
+            res.append(((Scope) symbol).getSymbolTableContents(scope, symbolClass));
          } else {
-            res.append(symbol.toString(scope));
-         }
-         if (symbol instanceof Variable && allocation!=null) {
-            RegisterAllocation.Register register = allocation.getRegister((Variable) symbol);
-            if (register != null) {
-               res.append(" " + register);
+            if (symbolClass == null || symbolClass.isInstance(symbol)) {
+               res.append(symbol.toString(scope));
+               if (symbol instanceof Variable && allocation != null) {
+                  RegisterAllocation.Register register = allocation.getRegister(((Variable) symbol).getRef());
+                  if (register != null) {
+                     res.append(" " + register);
+                  }
+               }
+               if (symbol instanceof Variable && registerWeights != null) {
+                  Double weight = registerWeights.getWeight(((Variable) symbol).getRef());
+                  if (weight != null) {
+                     res.append(" " + weight);
+                  }
+               }
+               res.append("\n");
             }
          }
-         res.append("\n");
       }
       return res.toString();
    }

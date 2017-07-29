@@ -19,10 +19,6 @@ public class RegisterAllocation {
     * @param variable The variable
     * @return The allocated register.
     */
-   public Register getRegister(Variable variable) {
-      return allocation.get(variable.getRef());
-   }
-
    public Register getRegister(VariableRef ref) {
       return allocation.get(ref);
    }

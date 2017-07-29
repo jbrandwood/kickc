@@ -47,6 +47,15 @@ public class LiveRange {
       public int getLastStatementIdx() {
          return lastStatementIdx;
       }
+
+      /** Get the number of statements in the live interval.
+       *
+       * @return The number of statements in the live interval.
+       */
+      public int size() {
+         return lastStatementIdx-firstStatementIdx+1;
+      }
+
    }
 
    public LiveRange() {
@@ -70,6 +79,19 @@ public class LiveRange {
       }
       return index;
    }
+
+   /** Get the number of statements in the live range.
+    *
+    * @return The number of statements in the live range.
+    */
+   public int size() {
+      int s = 0;
+      for (LiveInterval interval : intervals) {
+         s += interval.size();
+      }
+      return s;
+   }
+
 
    /**
     * Add an index to the live range

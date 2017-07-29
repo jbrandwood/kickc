@@ -31,6 +31,18 @@ public class LiveRangeVariables {
    }
 
    /**
+    * Add an empty alive range for a variable
+    * @param variable The variable
+    */
+   public void addEmptyAlive(VariableRef variable) {
+      LiveRange liveRange = liveRanges.get(variable);
+      if (liveRange == null) {
+         liveRange = new LiveRange();
+         liveRanges.put(variable, liveRange);
+      }
+   }
+
+   /**
     * Get all variables alive at a specific statement
     * @param statement The statement
     * @return List of all live variables.

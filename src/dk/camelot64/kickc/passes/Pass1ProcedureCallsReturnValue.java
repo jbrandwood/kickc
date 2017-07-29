@@ -53,5 +53,10 @@ public class Pass1ProcedureCallsReturnValue extends ControlFlowGraphCopyVisitor 
       return null;
    }
 
+   @Override
+   public StatementReturn visitReturn(StatementReturn origReturn) {
+      addStatementToCurrentBlock(new StatementReturn(null));
+      return null;
+   }
 }
 

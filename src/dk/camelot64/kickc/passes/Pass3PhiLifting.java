@@ -10,6 +10,9 @@ import java.util.Map;
 
 /**
  * Perform PhiLifting to greatly reduce overlapping of alive intervals for variables.
+ *
+ * After phi lifting it is guaranteed that variables in different phi blocks are in different live range equivalence classes.
+ * <p>
  * PhiLifting introduces a large number of new virtual variables (one for each rvalue in phi-functions).
  * Most of these are eliminated again by the PhiMemCoalesce pass.
  * <p>

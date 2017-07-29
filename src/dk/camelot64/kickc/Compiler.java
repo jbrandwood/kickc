@@ -10,7 +10,9 @@ import org.antlr.v4.runtime.*;
 import java.util.ArrayList;
 import java.util.List;
 
-/** Perform KickC compilation and optimizations*/
+/**
+ * Perform KickC compilation and optimizations
+ */
 public class Compiler {
 
    public static class CompilationResult {
@@ -84,7 +86,7 @@ public class Compiler {
       }
    }
 
-   public  AsmProgram pass4GenerateAsm(Program program, CompileLog log) {
+   public AsmProgram pass4GenerateAsm(Program program, CompileLog log) {
 
       Pass4CodeGeneration pass4CodeGeneration = new Pass4CodeGeneration(program);
       AsmProgram asmProgram = pass4CodeGeneration.generate();
@@ -97,11 +99,11 @@ public class Compiler {
 
    private void pass3RegisterAllocation(Program program, CompileLog log) {
 
-      Pass3BlockSequencePlanner pass3BlockSequencePlanner = new Pass3BlockSequencePlanner(program, log);
-      pass3BlockSequencePlanner.plan();
+      new Pass3BlockSequencePlanner(program, log).plan();
 
+      // Phi lifting ensures that all variables in phi-blocks are in different live range equivalence classes
       new Pass3PhiLifting(program, log).perform();
-      pass3BlockSequencePlanner.plan();
+      new Pass3BlockSequencePlanner(program, log).plan();
       log.append("CONTROL FLOW GRAPH - PHI LIFTED");
       log.append(program.getGraph().toString(program.getScope()));
       pass2AssertSSA(program, log);
@@ -111,9 +113,10 @@ public class Compiler {
       log.append(program.getGraph().toString(program.getScope()));
       pass2AssertSSA(program, log);
 
+      // Phi mem coalesce removes as many variables introduced by phi lifting as possible - as long as their live ranges do not overlap
       new Pass3PhiMemCoalesce(program, log).optimize();
       new Pass2CullEmptyBlocks(program, log).optimize();
-      pass3BlockSequencePlanner.plan();
+      new Pass3BlockSequencePlanner(program, log).plan();
       new Pass3LiveRangesAnalysis(program, log).findLiveRanges();
       log.append("CONTROL FLOW GRAPH - PHI MEM COALESCED");
       log.append(program.getGraph().toString(program.getScope()));
@@ -136,15 +139,17 @@ public class Compiler {
       log.append(program.getGraph().getLoopSet().toString());
 
       new Pass3ZeroPageAllocation(program, log).allocate();
+
+      new Pass3VariableRegisterWeightAnalysis(program, log).findWeights();
+
+
       new Pass3ZeroPageCoalesce(program, log).allocate();
       new Pass3RegistersFinalize(program, log).allocate();
 
 
-
-
    }
 
-   public  void pass2OptimizeSSA(Program program, CompileLog log) {
+   public void pass2OptimizeSSA(Program program, CompileLog log) {
       List<Pass2SsaOptimization> optimizations = new ArrayList<>();
       optimizations.add(new Pass2CullEmptyBlocks(program, log));
       optimizations.add(new Pass2ConstantPropagation(program, log));
@@ -176,6 +181,7 @@ public class Compiler {
       assertions.add(new Pass2AssertBlocks(program));
       assertions.add(new Pass2AssertNoCallParameters(program));
       assertions.add(new Pass2AssertNoCallLvalues(program));
+      assertions.add(new Pass2AssertNoReturnValues(program));
       assertions.add(new Pass2AssertNoProcs(program));
       assertions.add(new Pass2AssertNoLabels(program));
       for (Pass2SsaAssertion assertion : assertions) {
@@ -183,57 +189,57 @@ public class Compiler {
       }
    }
 
-   public  Program pass1GenerateSSA(KickCParser.FileContext file, CompileLog log) {
+   public Program pass1GenerateSSA(KickCParser.FileContext file, CompileLog log) {
       Pass1GenerateStatementSequence pass1GenerateStatementSequence1 = new Pass1GenerateStatementSequence(log);
       pass1GenerateStatementSequence1.generate(file);
       Pass1GenerateStatementSequence pass1GenerateStatementSequence = pass1GenerateStatementSequence1;
-         StatementSequence statementSequence = pass1GenerateStatementSequence.getSequence();
-         ProgramScope programScope = pass1GenerateStatementSequence.getProgramScope();
+      StatementSequence statementSequence = pass1GenerateStatementSequence.getSequence();
+      ProgramScope programScope = pass1GenerateStatementSequence.getProgramScope();
       Pass1TypeInference pass1TypeInference = new Pass1TypeInference(programScope);
       pass1TypeInference.inferTypes(statementSequence);
 
       log.append("PROGRAM");
-         log.append(statementSequence.toString(programScope));
-         log.append("SYMBOLS");
-         log.append(programScope.getSymbolTableContents());
+      log.append(statementSequence.toString(programScope));
+      log.append("SYMBOLS");
+      log.append(programScope.getSymbolTableContents());
 
-         Pass1GenerateControlFlowGraph pass1GenerateControlFlowGraph = new Pass1GenerateControlFlowGraph(programScope);
-         ControlFlowGraph controlFlowGraph = pass1GenerateControlFlowGraph.generate(statementSequence);
+      Pass1GenerateControlFlowGraph pass1GenerateControlFlowGraph = new Pass1GenerateControlFlowGraph(programScope);
+      ControlFlowGraph controlFlowGraph = pass1GenerateControlFlowGraph.generate(statementSequence);
 
-         Program program = new Program(programScope, controlFlowGraph);
+      Program program = new Program(programScope, controlFlowGraph);
 
-         log.append("INITIAL CONTROL FLOW GRAPH");
+      log.append("INITIAL CONTROL FLOW GRAPH");
+      log.append(program.getGraph().toString(program.getScope()));
+
+      Pass1EliminateEmptyBlocks pass1EliminateEmptyBlocks = new Pass1EliminateEmptyBlocks(program, log);
+      boolean blockEliminated = pass1EliminateEmptyBlocks.eliminate();
+      if (blockEliminated) {
+         log.append("CONTROL FLOW GRAPH");
          log.append(program.getGraph().toString(program.getScope()));
-
-         Pass1EliminateEmptyBlocks pass1EliminateEmptyBlocks = new Pass1EliminateEmptyBlocks(program, log);
-         boolean blockEliminated = pass1EliminateEmptyBlocks.eliminate();
-         if(blockEliminated) {
-            log.append("CONTROL FLOW GRAPH");
-            log.append(program.getGraph().toString(program.getScope()));
-         }
+      }
 
       Pass1ProcedureCallParameters pass1ProcedureCallParameters =
-               new Pass1ProcedureCallParameters(program);
-         program.setGraph(pass1ProcedureCallParameters.generate());
-         log.append("CONTROL FLOW GRAPH WITH ASSIGNMENT CALL");
-         log.append(program.getGraph().toString(program.getScope()));
+            new Pass1ProcedureCallParameters(program);
+      program.setGraph(pass1ProcedureCallParameters.generate());
+      log.append("CONTROL FLOW GRAPH WITH ASSIGNMENT CALL");
+      log.append(program.getGraph().toString(program.getScope()));
 
-         Pass1GenerateSingleStaticAssignmentForm pass1GenerateSingleStaticAssignmentForm =
-               new Pass1GenerateSingleStaticAssignmentForm(log, program);
-         pass1GenerateSingleStaticAssignmentForm.generate();
+      Pass1GenerateSingleStaticAssignmentForm pass1GenerateSingleStaticAssignmentForm =
+            new Pass1GenerateSingleStaticAssignmentForm(log, program);
+      pass1GenerateSingleStaticAssignmentForm.generate();
 
-         log.append("CONTROL FLOW GRAPH SSA");
-         log.append(program.getGraph().toString(program.getScope()));
+      log.append("CONTROL FLOW GRAPH SSA");
+      log.append(program.getGraph().toString(program.getScope()));
 
-         Pass1ProcedureCallsReturnValue pass1ProcedureCallsReturnValue =
-               new Pass1ProcedureCallsReturnValue(program);
-         program.setGraph(pass1ProcedureCallsReturnValue.generate());
-         log.append("CONTROL FLOW GRAPH WITH ASSIGNMENT CALL & RETURN");
-         log.append(program.getGraph().toString(program.getScope()));
+      Pass1ProcedureCallsReturnValue pass1ProcedureCallsReturnValue =
+            new Pass1ProcedureCallsReturnValue(program);
+      program.setGraph(pass1ProcedureCallsReturnValue.generate());
+      log.append("CONTROL FLOW GRAPH WITH ASSIGNMENT CALL & RETURN");
+      log.append(program.getGraph().toString(program.getScope()));
       return program;
    }
 
-   public  KickCParser.FileContext pass0ParseInput(final CharStream input, CompileLog log) {
+   public KickCParser.FileContext pass0ParseInput(final CharStream input, CompileLog log) {
       log.append(input.toString());
       KickCLexer lexer = new KickCLexer(input);
       KickCParser parser = new KickCParser(new CommonTokenStream(lexer));

@@ -22,11 +22,14 @@ public class Pass3LiveRangesAnalysis {
    }
 
    public void findLiveRanges() {
+
       generateStatementIndexes();
+
       LiveRangeVariables liveRanges = initializeLiveRanges();
       program.getScope().setLiveRangeVariables(liveRanges);
       //log.append("CONTROL FLOW GRAPH - LIVE RANGES");
       //log.append(program.getGraph().toString(program.getScope()));
+
       boolean propagating;
       do {
          propagating = propagateLiveRanges(liveRanges);
@@ -35,6 +38,7 @@ public class Pass3LiveRangesAnalysis {
          //log.append("CONTROL FLOW GRAPH - LIVE RANGES");
          //log.append(program.getGraph().toString(program.getScope()));
       } while (propagating);
+
       program.getScope().setLiveRangeVariables(liveRanges);
    }
 
@@ -164,7 +168,9 @@ public class Pass3LiveRangesAnalysis {
 
       @Override
       public Void visitReturn(StatementReturn aReturn) {
-         addInitialLiveRange(aReturn.getValue());
+         if (aReturn.getValue() != null) {
+            addInitialLiveRange(aReturn.getValue());
+         }
          return null;
       }
 
@@ -196,7 +202,7 @@ public class Pass3LiveRangesAnalysis {
     * @return true if any propagation was done. (and more propagation is necessary to complete the live ranges)
     */
    private boolean propagateLiveRanges(LiveRangeVariables liveRanges) {
-      LiveRangePropagator liveRangePropagator = new LiveRangePropagator(program, liveRanges);
+      LiveRangePropagator liveRangePropagator = new LiveRangePropagator(program, liveRanges, log);
       return liveRangePropagator.propagate();
    }
 
@@ -211,6 +217,7 @@ public class Pass3LiveRangesAnalysis {
        * The variable live ranges being propagated.
        */
       private LiveRangeVariables liveRanges;
+      private CompileLog log;
 
       /**
        * Has anything been modified.
@@ -227,9 +234,10 @@ public class Pass3LiveRangesAnalysis {
        */
       private ControlFlowBlock currentBlock;
 
-      public LiveRangePropagator(Program program, LiveRangeVariables liveRanges) {
+      public LiveRangePropagator(Program program, LiveRangeVariables liveRanges, CompileLog log) {
          this.program = program;
          this.liveRanges = liveRanges;
+         this.log = log;
          this.modified = false;
       }
 
@@ -275,6 +283,22 @@ public class Pass3LiveRangesAnalysis {
                modified |= liveRanges.addAlive(var, prev);
             }
          }
+
+         // If any lValues do not have a live range (they are never used) - create an empty live range for them
+         if (defined != null) {
+            for (LValue lValue : defined) {
+               if(lValue instanceof VariableRef) {
+                  LiveRange lValLiveRange = liveRanges.getLiveRange((VariableRef) lValue);
+                  if(lValLiveRange==null) {
+                     liveRanges.addEmptyAlive((VariableRef)lValue);
+                     log.append("Adding empty live range for unused variable "+lValue);
+                  }
+               }
+
+            }
+         }
+
+
       }
 
       private List<Statement> getPreviousStatements() {
@@ -309,6 +333,7 @@ public class Pass3LiveRangesAnalysis {
       /**
        * Get the last statement executed in a specific block.
        * If the block is empty the last statement of the previous block is returned.
+       *
        * @param block The block to examine
        * @return The last statement of the block (or the last statement of previous blocks if the block is empty)
        */

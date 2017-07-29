@@ -269,7 +269,11 @@ public class Pass2AliasElimination extends Pass2SsaOptimization {
                if (assignment.getrValue1() == null && assignment.getOperator() == null && assignment.getrValue2() instanceof VariableRef) {
                   // Alias assignment
                   VariableRef alias = (VariableRef) assignment.getrValue2();
-                  aliases.add(variable, alias);
+                  if(variable.getScopeNames().equals(alias.getScopeNames())){
+                     aliases.add(variable, alias);
+                  } else {
+                     log.append("Not aliassing across scopes: "+variable+" "+alias);
+                  }
                }
             }
             return null;
@@ -283,7 +287,11 @@ public class Pass2AliasElimination extends Pass2SsaOptimization {
                   if (phiRValue.getrValue() instanceof VariableRef) {
                      VariableRef variable = phiVariable.getVariable();
                      VariableRef alias = (VariableRef) phiRValue.getrValue();
-                     aliases.add(variable, alias);
+                     if(variable.getScopeNames().equals(alias.getScopeNames())){
+                        aliases.add(variable, alias);
+                     } else {
+                        log.append("Not aliassing across scopes: "+variable+" "+alias);
+                     }
                   }
                }
             }

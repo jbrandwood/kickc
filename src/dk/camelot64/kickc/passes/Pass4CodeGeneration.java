@@ -68,9 +68,13 @@ public class Pass4CodeGeneration {
                   }
                }
                if (!isAlu) {
-                  AsmFragment asmFragment = new AsmFragment(assignment, symbols);
-                  asm.addComment(statement.toString(symbols) + "  //  " + asmFragment.getSignature());
-                  asmFragment.generate(asm);
+                  if(assignment.getOperator()==null && assignment.getrValue1()==null && isRegisterCopy(lValue, assignment.getrValue2())) {
+                        asm.addComment(lValue.toString(symbols) + " = " + assignment.getrValue2().toString(symbols) + "  // register copy "+getRegister(lValue));
+                  } else {
+                     AsmFragment asmFragment = new AsmFragment(assignment, symbols);
+                     asm.addComment(statement.toString(symbols) + "  //  " + asmFragment.getSignature());
+                     asmFragment.generate(asm);
+                  }
                }
             } else if (statement instanceof StatementConditionalJump) {
                AsmFragment asmFragment = new AsmFragment((StatementConditionalJump) statement, block, symbols, graph);
@@ -145,14 +149,20 @@ public class Pass4CodeGeneration {
    }
 
    private void genAsmMove(AsmProgram asm, LValue lValue, RValue rValue) {
-      if (getRegister(lValue).equals(getRegister(rValue))) {
-         // Do not move from register to itself
-         asm.addComment(lValue.toString(symbols) + " = " + rValue.toString(symbols) + "  // register copy ");
-         return;
+      if (isRegisterCopy(lValue, rValue)) {
+         asm.addComment(lValue.toString(symbols) + " = " + rValue.toString(symbols) + "  // register copy "+getRegister(lValue));
+      } else {
+         AsmFragment asmFragment = new AsmFragment(lValue, rValue, symbols);
+         asm.addComment(lValue.toString(symbols) + " = " + rValue.toString(symbols) + "  // " + asmFragment.getSignature());
+         asmFragment.generate(asm);
       }
-      AsmFragment asmFragment = new AsmFragment(lValue, rValue, symbols);
-      asm.addComment(lValue.toString(symbols) + " = " + rValue.toString(symbols) + "  // " + asmFragment.getSignature());
-      asmFragment.generate(asm);
+   }
+
+   private boolean isRegisterCopy(LValue lValue, RValue rValue) {
+      return
+            getRegister(lValue) != null &&
+                  getRegister(rValue) != null &&
+                  getRegister(lValue).equals(getRegister(rValue));
    }
 
 

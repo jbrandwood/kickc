@@ -1,0 +1,555 @@
+byte i=10;
+byte s=0;
+do {
+  if(i>5) {
+    s=s+i;
+  }
+  i--;
+} while (i>0)
+Adding pre/post-modifier (byte) i ← -- (byte) i
+PROGRAM
+  (byte) i ← (byte) 10
+  (byte) s ← (byte) 0
+@1:
+  (boolean~) $0 ← (byte) i > (byte) 5
+  if((boolean~) $0) goto @2
+  goto @3
+@2:
+  (byte~) $1 ← (byte) s + (byte) i
+  (byte) s ← (byte~) $1
+@3:
+  (byte) i ← -- (byte) i
+  (boolean~) $2 ← (byte) i > (byte) 0
+  if((boolean~) $2) goto @1
+
+SYMBOLS
+(boolean~) $0
+(byte~) $1
+(boolean~) $2
+(label) @1
+(label) @2
+(label) @3
+(byte) i
+(byte) s
+
+INITIAL CONTROL FLOW GRAPH
+@BEGIN: from
+  (byte) i ← (byte) 10
+  (byte) s ← (byte) 0
+  to:@1
+@1: from @3 @BEGIN
+  (boolean~) $0 ← (byte) i > (byte) 5
+  if((boolean~) $0) goto @2
+  to:@4
+@2: from @1 @5
+  (byte~) $1 ← (byte) s + (byte) i
+  (byte) s ← (byte~) $1
+  to:@3
+@4: from @1
+  to:@3
+@3: from @2 @4
+  (byte) i ← -- (byte) i
+  (boolean~) $2 ← (byte) i > (byte) 0
+  if((boolean~) $2) goto @1
+  to:@6
+@5: from
+  to:@2
+@6: from @3
+  to:@END
+@END: from @6
+
+Removing empty block @4
+Removing empty block @5
+Removing empty block @6
+CONTROL FLOW GRAPH
+@BEGIN: from
+  (byte) i ← (byte) 10
+  (byte) s ← (byte) 0
+  to:@1
+@1: from @3 @BEGIN
+  (boolean~) $0 ← (byte) i > (byte) 5
+  if((boolean~) $0) goto @2
+  to:@3
+@2: from @1
+  (byte~) $1 ← (byte) s + (byte) i
+  (byte) s ← (byte~) $1
+  to:@3
+@3: from @1 @2
+  (byte) i ← -- (byte) i
+  (boolean~) $2 ← (byte) i > (byte) 0
+  if((boolean~) $2) goto @1
+  to:@END
+@END: from @3
+
+CONTROL FLOW GRAPH WITH ASSIGNMENT CALL
+@BEGIN: from
+  (byte) i ← (byte) 10
+  (byte) s ← (byte) 0
+  to:@1
+@1: from @3 @BEGIN
+  (boolean~) $0 ← (byte) i > (byte) 5
+  if((boolean~) $0) goto @2
+  to:@3
+@2: from @1
+  (byte~) $1 ← (byte) s + (byte) i
+  (byte) s ← (byte~) $1
+  to:@3
+@3: from @1 @2
+  (byte) i ← -- (byte) i
+  (boolean~) $2 ← (byte) i > (byte) 0
+  if((boolean~) $2) goto @1
+  to:@END
+@END: from @3
+
+Completing Phi functions...
+Completing Phi functions...
+Completing Phi functions...
+CONTROL FLOW GRAPH SSA
+@BEGIN: from
+  (byte) i#0 ← (byte) 10
+  (byte) s#0 ← (byte) 0
+  to:@1
+@1: from @3 @BEGIN
+  (byte) s#3 ← phi( @3/(byte) s#4 @BEGIN/(byte) s#0 )
+  (byte) i#2 ← phi( @3/(byte) i#1 @BEGIN/(byte) i#0 )
+  (boolean~) $0 ← (byte) i#2 > (byte) 5
+  if((boolean~) $0) goto @2
+  to:@3
+@2: from @1
+  (byte) i#3 ← phi( @1/(byte) i#2 )
+  (byte) s#2 ← phi( @1/(byte) s#3 )
+  (byte~) $1 ← (byte) s#2 + (byte) i#3
+  (byte) s#1 ← (byte~) $1
+  to:@3
+@3: from @1 @2
+  (byte) s#4 ← phi( @1/(byte) s#3 @2/(byte) s#1 )
+  (byte) i#4 ← phi( @1/(byte) i#2 @2/(byte) i#3 )
+  (byte) i#1 ← -- (byte) i#4
+  (boolean~) $2 ← (byte) i#1 > (byte) 0
+  if((boolean~) $2) goto @1
+  to:@END
+@END: from @3
+
+CONTROL FLOW GRAPH WITH ASSIGNMENT CALL & RETURN
+@BEGIN: from
+  (byte) i#0 ← (byte) 10
+  (byte) s#0 ← (byte) 0
+  to:@1
+@1: from @3 @BEGIN
+  (byte) s#3 ← phi( @3/(byte) s#4 @BEGIN/(byte) s#0 )
+  (byte) i#2 ← phi( @3/(byte) i#1 @BEGIN/(byte) i#0 )
+  (boolean~) $0 ← (byte) i#2 > (byte) 5
+  if((boolean~) $0) goto @2
+  to:@3
+@2: from @1
+  (byte) i#3 ← phi( @1/(byte) i#2 )
+  (byte) s#2 ← phi( @1/(byte) s#3 )
+  (byte~) $1 ← (byte) s#2 + (byte) i#3
+  (byte) s#1 ← (byte~) $1
+  to:@3
+@3: from @1 @2
+  (byte) s#4 ← phi( @1/(byte) s#3 @2/(byte) s#1 )
+  (byte) i#4 ← phi( @1/(byte) i#2 @2/(byte) i#3 )
+  (byte) i#1 ← -- (byte) i#4
+  (boolean~) $2 ← (byte) i#1 > (byte) 0
+  if((boolean~) $2) goto @1
+  to:@END
+@END: from @3
+
+Constant (byte) i#0 (byte) 10
+Constant (byte) s#0 (byte) 0
+Succesful SSA optimization Pass2ConstantPropagation
+CONTROL FLOW GRAPH
+@BEGIN: from
+  to:@1
+@1: from @3 @BEGIN
+  (byte) s#3 ← phi( @3/(byte) s#4 @BEGIN/(byte) 0 )
+  (byte) i#2 ← phi( @3/(byte) i#1 @BEGIN/(byte) 10 )
+  (boolean~) $0 ← (byte) i#2 > (byte) 5
+  if((boolean~) $0) goto @2
+  to:@3
+@2: from @1
+  (byte) i#3 ← phi( @1/(byte) i#2 )
+  (byte) s#2 ← phi( @1/(byte) s#3 )
+  (byte~) $1 ← (byte) s#2 + (byte) i#3
+  (byte) s#1 ← (byte~) $1
+  to:@3
+@3: from @1 @2
+  (byte) s#4 ← phi( @1/(byte) s#3 @2/(byte) s#1 )
+  (byte) i#4 ← phi( @1/(byte) i#2 @2/(byte) i#3 )
+  (byte) i#1 ← -- (byte) i#4
+  (boolean~) $2 ← (byte) i#1 > (byte) 0
+  if((boolean~) $2) goto @1
+  to:@END
+@END: from @3
+
+Alias (byte) s#2 = (byte) s#3 
+Alias (byte) i#2 = (byte) i#3 
+Alias (byte) s#1 = (byte~) $1 
+Succesful SSA optimization Pass2AliasElimination
+CONTROL FLOW GRAPH
+@BEGIN: from
+  to:@1
+@1: from @3 @BEGIN
+  (byte) s#2 ← phi( @3/(byte) s#4 @BEGIN/(byte) 0 )
+  (byte) i#2 ← phi( @3/(byte) i#1 @BEGIN/(byte) 10 )
+  (boolean~) $0 ← (byte) i#2 > (byte) 5
+  if((boolean~) $0) goto @2
+  to:@3
+@2: from @1
+  (byte) s#1 ← (byte) s#2 + (byte) i#2
+  to:@3
+@3: from @1 @2
+  (byte) s#4 ← phi( @1/(byte) s#2 @2/(byte) s#1 )
+  (byte) i#4 ← phi( @1/(byte) i#2 @2/(byte) i#2 )
+  (byte) i#1 ← -- (byte) i#4
+  (boolean~) $2 ← (byte) i#1 > (byte) 0
+  if((boolean~) $2) goto @1
+  to:@END
+@END: from @3
+
+Redundant Phi (byte) i#4 (byte) i#2
+Succesful SSA optimization Pass2RedundantPhiElimination
+CONTROL FLOW GRAPH
+@BEGIN: from
+  to:@1
+@1: from @3 @BEGIN
+  (byte) s#2 ← phi( @3/(byte) s#4 @BEGIN/(byte) 0 )
+  (byte) i#2 ← phi( @3/(byte) i#1 @BEGIN/(byte) 10 )
+  (boolean~) $0 ← (byte) i#2 > (byte) 5
+  if((boolean~) $0) goto @2
+  to:@3
+@2: from @1
+  (byte) s#1 ← (byte) s#2 + (byte) i#2
+  to:@3
+@3: from @1 @2
+  (byte) s#4 ← phi( @1/(byte) s#2 @2/(byte) s#1 )
+  (byte) i#1 ← -- (byte) i#2
+  (boolean~) $2 ← (byte) i#1 > (byte) 0
+  if((boolean~) $2) goto @1
+  to:@END
+@END: from @3
+
+Simple Condition (boolean~) $0 if((byte) i#2>(byte) 5) goto @2
+Simple Condition (boolean~) $2 if((byte) i#1>(byte) 0) goto @1
+Succesful SSA optimization Pass2ConditionalJumpSimplification
+CONTROL FLOW GRAPH
+@BEGIN: from
+  to:@1
+@1: from @3 @BEGIN
+  (byte) s#2 ← phi( @3/(byte) s#4 @BEGIN/(byte) 0 )
+  (byte) i#2 ← phi( @3/(byte) i#1 @BEGIN/(byte) 10 )
+  if((byte) i#2>(byte) 5) goto @2
+  to:@3
+@2: from @1
+  (byte) s#1 ← (byte) s#2 + (byte) i#2
+  to:@3
+@3: from @1 @2
+  (byte) s#4 ← phi( @1/(byte) s#2 @2/(byte) s#1 )
+  (byte) i#1 ← -- (byte) i#2
+  if((byte) i#1>(byte) 0) goto @1
+  to:@END
+@END: from @3
+
+Block Sequence Planned @BEGIN @1 @3 @END @2 
+Added new block during phi lifting @7(between @3 and @1)
+Added new block during phi lifting @8(between @1 and @3)
+Block Sequence Planned @BEGIN @1 @8 @3 @END @7 @2 
+CONTROL FLOW GRAPH - PHI LIFTED
+@BEGIN: from
+  to:@1
+@1: from @7 @BEGIN
+  (byte) s#2 ← phi( @7/(byte~) s#5 @BEGIN/(byte) 0 )
+  (byte) i#2 ← phi( @7/(byte~) i#5 @BEGIN/(byte) 10 )
+  if((byte) i#2>(byte) 5) goto @2
+  to:@8
+@8: from @1
+  (byte~) s#6 ← (byte) s#2
+  to:@3
+@3: from @2 @8
+  (byte) s#4 ← phi( @8/(byte~) s#6 @2/(byte~) s#7 )
+  (byte) i#1 ← -- (byte) i#2
+  if((byte) i#1>(byte) 0) goto @7
+  to:@END
+@END: from @3
+@7: from @3
+  (byte~) i#5 ← (byte) i#1
+  (byte~) s#5 ← (byte) s#4
+  to:@1
+@2: from @1
+  (byte) s#1 ← (byte) s#2 + (byte) i#2
+  (byte~) s#7 ← (byte) s#1
+  to:@3
+
+Propagating live ranges...
+Propagating live ranges...
+Propagating live ranges...
+Propagating live ranges...
+CONTROL FLOW GRAPH - LIVE RANGES
+@BEGIN: from
+  to:@1
+@1: from @7 @BEGIN
+  [0] (byte) s#2 ← phi( @7/(byte~) s#5 @BEGIN/(byte) 0 ) [ i#2 s#2 ]
+  [0] (byte) i#2 ← phi( @7/(byte~) i#5 @BEGIN/(byte) 10 ) [ i#2 s#2 ]
+  [1] if((byte) i#2>(byte) 5) goto @2 [ i#2 s#2 ]
+  to:@8
+@8: from @1
+  [2] (byte~) s#6 ← (byte) s#2 [ i#2 s#6 ]
+  to:@3
+@3: from @2 @8
+  [3] (byte) s#4 ← phi( @8/(byte~) s#6 @2/(byte~) s#7 ) [ i#2 s#4 ]
+  [4] (byte) i#1 ← -- (byte) i#2 [ i#1 s#4 ]
+  [5] if((byte) i#1>(byte) 0) goto @7 [ i#1 s#4 ]
+  to:@END
+@END: from @3
+@7: from @3
+  [6] (byte~) i#5 ← (byte) i#1 [ i#5 s#4 ]
+  [7] (byte~) s#5 ← (byte) s#4 [ i#5 s#5 ]
+  to:@1
+@2: from @1
+  [8] (byte) s#1 ← (byte) s#2 + (byte) i#2 [ i#2 s#1 ]
+  [9] (byte~) s#7 ← (byte) s#1 [ i#2 s#7 ]
+  to:@3
+
+Created 3 initial phi equivalence classes
+Coalesced [2] s#6 ← s#2
+Coalesced [6] i#5 ← i#1
+Coalesced (already) [7] s#5 ← s#4
+Coalesced [9] s#7 ← s#1
+Coalesced down to 2 phi equivalence classes
+Culled Empty Block (label) @8
+Culled Empty Block (label) @7
+Block Sequence Planned @BEGIN @1 @3 @END @2 
+Propagating live ranges...
+Propagating live ranges...
+Propagating live ranges...
+CONTROL FLOW GRAPH - PHI MEM COALESCED
+@BEGIN: from
+  to:@1
+@1: from @3 @BEGIN
+  [0] (byte) s#2 ← phi( @3/(byte) s#4 @BEGIN/(byte) 0 ) [ i#2 s#2 ]
+  [0] (byte) i#2 ← phi( @3/(byte) i#1 @BEGIN/(byte) 10 ) [ i#2 s#2 ]
+  [1] if((byte) i#2>(byte) 5) goto @2 [ i#2 s#2 ]
+  to:@3
+@3: from @1 @2
+  [2] (byte) s#4 ← phi( @1/(byte) s#2 @2/(byte) s#1 ) [ s#4 i#2 ]
+  [3] (byte) i#1 ← -- (byte) i#2 [ i#1 s#4 ]
+  [4] if((byte) i#1>(byte) 0) goto @1 [ i#1 s#4 ]
+  to:@END
+@END: from @3
+@2: from @1
+  [5] (byte) s#1 ← (byte) s#2 + (byte) i#2 [ i#2 s#1 ]
+  to:@3
+
+CALL GRAPH
+
+DOMINATORS
+@BEGIN dominated by  @BEGIN 
+@1 dominated by  @1 @BEGIN 
+@3 dominated by  @1 @BEGIN @3 
+@END dominated by  @1 @BEGIN @3 @END 
+@2 dominated by  @1 @BEGIN @2 
+
+Found back edge: Loop head: @1 tails: @3 blocks: null
+Populated: Loop head: @1 tails: @3 blocks: @3 @1 @2 
+NATURAL LOOPS
+Loop head: @1 tails: @3 blocks: @3 @1 @2 
+
+Found 1 loops in scope []
+  Loop head: @1 tails: @3 blocks: @3 @1 @2 
+NATURAL LOOPS WITH DEPTH
+Loop head: @1 tails: @3 blocks: @3 @1 @2  depth: 1
+
+Initial phi equivalence classes
+[ i#2 i#1 ]
+[ s#2 s#4 s#1 ]
+Copy Coalesced equivalence classes
+[ i#2 i#1 ]
+[ s#2 s#4 s#1 ]
+Complete equivalence classes
+[ i#2 i#1 ]
+[ s#2 s#4 s#1 ]
+Allocated zp byte:2 to zp byte:2 [ i#2 i#1 ]
+Allocated zp byte:3 to zp byte:3 [ s#2 s#4 s#1 ]
+Re-allocated ZP register from zp byte:2 to zp byte:2
+Re-allocated ZP register from zp byte:3 to zp byte:3
+INITIAL ASM
+BBEGIN:
+B1_from_BBEGIN:
+  // (byte) s#2 = (byte) 0  // zpby1=coby1
+  lda #0
+  sta 3
+  // (byte) i#2 = (byte) 10  // zpby1=coby1
+  lda #10
+  sta 2
+  jmp B1
+B1_from_B3:
+  // (byte) s#2 = (byte) s#4  // register copy zp byte:3
+  // (byte) i#2 = (byte) i#1  // register copy zp byte:2
+  jmp B1
+B1:
+  // [1] if((byte) i#2>(byte) 5) goto @2 [ i#2 s#2 ]  //  zpby1_gt_coby1_then_la1
+  lda 2
+  cmp #5
+  beq !+
+  bcs B2
+!:
+B3_from_B1:
+  // (byte) s#4 = (byte) s#2  // register copy zp byte:3
+  jmp B3
+B3:
+  // [3] (byte) i#1 ← -- (byte) i#2 [ i#1 s#4 ]  //  zpby1=_dec_zpby1
+  dec 2
+  // [4] if((byte) i#1>(byte) 0) goto @1 [ i#1 s#4 ]  //  zpby1_gt_0_then_la1
+  lda 2
+  bne B1_from_B3
+  jmp BEND
+BEND:
+B2:
+  // [5] (byte) s#1 ← (byte) s#2 + (byte) i#2 [ i#2 s#1 ]  //  zpby1=zpby1_plus_zpby2
+  lda 3
+  clc
+  adc 2
+  sta 3
+B3_from_B2:
+  // (byte) s#4 = (byte) s#1  // register copy zp byte:3
+  jmp B3
+
+Removing instruction jmp B1
+Removing instruction jmp B3
+Removing instruction jmp BEND
+Succesful ASM optimization Pass5NextJumpElimination
+ASSEMBLER
+BBEGIN:
+B1_from_BBEGIN:
+  // (byte) s#2 = (byte) 0  // zpby1=coby1
+  lda #0
+  sta 3
+  // (byte) i#2 = (byte) 10  // zpby1=coby1
+  lda #10
+  sta 2
+  jmp B1
+B1_from_B3:
+  // (byte) s#2 = (byte) s#4  // register copy zp byte:3
+  // (byte) i#2 = (byte) i#1  // register copy zp byte:2
+B1:
+  // [1] if((byte) i#2>(byte) 5) goto @2 [ i#2 s#2 ]  //  zpby1_gt_coby1_then_la1
+  lda 2
+  cmp #5
+  beq !+
+  bcs B2
+!:
+B3_from_B1:
+  // (byte) s#4 = (byte) s#2  // register copy zp byte:3
+B3:
+  // [3] (byte) i#1 ← -- (byte) i#2 [ i#1 s#4 ]  //  zpby1=_dec_zpby1
+  dec 2
+  // [4] if((byte) i#1>(byte) 0) goto @1 [ i#1 s#4 ]  //  zpby1_gt_0_then_la1
+  lda 2
+  bne B1_from_B3
+BEND:
+B2:
+  // [5] (byte) s#1 ← (byte) s#2 + (byte) i#2 [ i#2 s#1 ]  //  zpby1=zpby1_plus_zpby2
+  lda 3
+  clc
+  adc 2
+  sta 3
+B3_from_B2:
+  // (byte) s#4 = (byte) s#1  // register copy zp byte:3
+  jmp B3
+
+Removing instruction jmp B1
+Succesful ASM optimization Pass5NextJumpElimination
+ASSEMBLER
+BBEGIN:
+B1_from_BBEGIN:
+  // (byte) s#2 = (byte) 0  // zpby1=coby1
+  lda #0
+  sta 3
+  // (byte) i#2 = (byte) 10  // zpby1=coby1
+  lda #10
+  sta 2
+B1_from_B3:
+  // (byte) s#2 = (byte) s#4  // register copy zp byte:3
+  // (byte) i#2 = (byte) i#1  // register copy zp byte:2
+B1:
+  // [1] if((byte) i#2>(byte) 5) goto @2 [ i#2 s#2 ]  //  zpby1_gt_coby1_then_la1
+  lda 2
+  cmp #5
+  beq !+
+  bcs B2
+!:
+B3_from_B1:
+  // (byte) s#4 = (byte) s#2  // register copy zp byte:3
+B3:
+  // [3] (byte) i#1 ← -- (byte) i#2 [ i#1 s#4 ]  //  zpby1=_dec_zpby1
+  dec 2
+  // [4] if((byte) i#1>(byte) 0) goto @1 [ i#1 s#4 ]  //  zpby1_gt_0_then_la1
+  lda 2
+  bne B1_from_B3
+BEND:
+B2:
+  // [5] (byte) s#1 ← (byte) s#2 + (byte) i#2 [ i#2 s#1 ]  //  zpby1=zpby1_plus_zpby2
+  lda 3
+  clc
+  adc 2
+  sta 3
+B3_from_B2:
+  // (byte) s#4 = (byte) s#1  // register copy zp byte:3
+  jmp B3
+
+FINAL SYMBOL TABLE
+(label) @1
+(label) @2
+(label) @3
+(label) @BEGIN
+(label) @END
+(byte) i
+(byte) i#1 zp byte:2
+(byte) i#2 zp byte:2
+(byte) s
+(byte) s#1 zp byte:3
+(byte) s#2 zp byte:3
+(byte) s#4 zp byte:3
+
+zp byte:2 [ i#2 i#1 ]
+zp byte:3 [ s#2 s#4 s#1 ]
+
+FINAL CODE
+BBEGIN:
+B1_from_BBEGIN:
+  // (byte) s#2 = (byte) 0  // zpby1=coby1
+  lda #0
+  sta 3
+  // (byte) i#2 = (byte) 10  // zpby1=coby1
+  lda #10
+  sta 2
+B1_from_B3:
+  // (byte) s#2 = (byte) s#4  // register copy zp byte:3
+  // (byte) i#2 = (byte) i#1  // register copy zp byte:2
+B1:
+  // [1] if((byte) i#2>(byte) 5) goto @2 [ i#2 s#2 ]  //  zpby1_gt_coby1_then_la1
+  lda 2
+  cmp #5
+  beq !+
+  bcs B2
+!:
+B3_from_B1:
+  // (byte) s#4 = (byte) s#2  // register copy zp byte:3
+B3:
+  // [3] (byte) i#1 ← -- (byte) i#2 [ i#1 s#4 ]  //  zpby1=_dec_zpby1
+  dec 2
+  // [4] if((byte) i#1>(byte) 0) goto @1 [ i#1 s#4 ]  //  zpby1_gt_0_then_la1
+  lda 2
+  bne B1_from_B3
+BEND:
+B2:
+  // [5] (byte) s#1 ← (byte) s#2 + (byte) i#2 [ i#2 s#1 ]  //  zpby1=zpby1_plus_zpby2
+  lda 3
+  clc
+  adc 2
+  sta 3
+B3_from_B2:
+  // (byte) s#4 = (byte) s#1  // register copy zp byte:3
+  jmp B3
+

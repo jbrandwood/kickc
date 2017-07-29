@@ -1,2 +1,0 @@
-clc
-adc #{coby1}

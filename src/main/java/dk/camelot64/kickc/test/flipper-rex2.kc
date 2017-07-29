@@ -1,0 +1,61 @@
+byte[1000] SCREEN = $0400;
+byte[16*16] buffer1 = $1000;
+byte[16*16] buffer2 = $1100;
+byte *RASTER = $d012;
+
+main();
+
+void main() {
+  prepare();
+  do {
+     byte c = 25;
+     do{
+       do { } while(*RASTER!=254)
+       do { } while(*RASTER!=255)
+       c--;
+     } while(c!=0)
+     flip();
+     plot();
+  } while(true)
+}
+
+// Prepare buffer
+void prepare() {
+   byte i=0;
+   do {
+      buffer1[i] = i;
+   } while (++i!=0)
+}
+
+// Flip buffer
+void flip() {
+   byte srcIdx = 0;
+   byte dstIdx = 15;
+   byte r=16;
+   do {
+      byte c = 16;
+      do {
+         buffer2[dstIdx] = buffer1[srcIdx++];
+         dstIdx = dstIdx+16;
+      } while(--c!=0)
+      dstIdx--;
+     } while(--r!=0)
+   byte i=0;
+   do {
+      buffer1[i] = buffer2[i];
+   } while (++i!=0)
+}
+
+// Plot buffer on screen
+void plot() {
+   byte* line = SCREEN+5*40+12;
+   byte y=16;
+   byte i=0;
+   do {
+      byte x=0;
+      do {
+         line[x] = buffer1[i++];
+      } while(++x<16)
+      line = line+40;
+   } while(--y!=0)
+}

@@ -1,0 +1,2 @@
+clc
+adc #{coby1}

@@ -1,0 +1,2443 @@
+// Test all types of pointers
+
+main();
+
+void main() {
+  lvalue();
+  rvalue();
+  rvaluevar();
+  lvaluevar();
+}
+
+void lvalue() {
+
+  // A constant pointer
+  byte[1024] SCREEN = $0400;
+
+  // LValue constant pointer dereference
+  *SCREEN = 1;
+
+  // LValue constant array constant indexing
+  SCREEN[1] = 2;
+
+  // LValue constant array variable indexing
+  byte i=2;
+  while(i<10) {
+    SCREEN[i++] = 3;
+  }
+}
+
+void rvalue() {
+
+  // A constant pointer
+  byte[1024] SCREEN = $0400;
+
+  // RValue constant pointer
+  byte b = *SCREEN;
+
+  // RValue constant array pointer constant index
+  b = SCREEN[1];
+
+  // RValue constant array variable index
+  byte i=2;
+  while(i<10) {
+    b = SCREEN[i++];
+  }
+}
+
+void lvaluevar() {
+  byte *screen = $0400;
+
+  // LValue Variable pointer dereference
+  byte b=4;
+  byte i=2;
+  while(i<10) {
+    *screen = b;
+    screen++;
+    i++;
+  }
+
+}
+
+void rvaluevar() {
+  byte *screen = $0400;
+
+  // RValue Variable pointer dereference
+  byte b;
+  byte i=2;
+  while(i<10) {
+    b = *screen;
+    screen++;
+    i++;
+  }
+
+}
+
+
+Adding pre/post-modifier (byte) lvalue::i ← ++ (byte) lvalue::i
+Adding pre/post-modifier (byte) rvalue::i ← ++ (byte) rvalue::i
+Adding pre/post-modifier (byte*) lvaluevar::screen ← ++ (byte*) lvaluevar::screen
+Adding pre/post-modifier (byte) lvaluevar::i ← ++ (byte) lvaluevar::i
+Adding pre/post-modifier (byte*) rvaluevar::screen ← ++ (byte*) rvaluevar::screen
+Adding pre/post-modifier (byte) rvaluevar::i ← ++ (byte) rvaluevar::i
+PROGRAM
+  (void~) $0 ← call main 
+  proc (void()) main()
+  (void~) main::$0 ← call lvalue 
+  (void~) main::$1 ← call rvalue 
+  (void~) main::$2 ← call rvaluevar 
+  (void~) main::$3 ← call lvaluevar 
+main::@return:
+  return 
+  endproc // main()
+  proc (void()) lvalue()
+  (byte[1024]) lvalue::SCREEN ← (word) 1024
+  *((byte[1024]) lvalue::SCREEN) ← (byte) 1
+  *((byte[1024]) lvalue::SCREEN + (byte) 1) ← (byte) 2
+  (byte) lvalue::i ← (byte) 2
+lvalue::@1:
+  (boolean~) lvalue::$0 ← (byte) lvalue::i < (byte) 10
+  if((boolean~) lvalue::$0) goto lvalue::@2
+  goto lvalue::@3
+lvalue::@2:
+  *((byte[1024]) lvalue::SCREEN + (byte) lvalue::i) ← (byte) 3
+  (byte) lvalue::i ← ++ (byte) lvalue::i
+  goto lvalue::@1
+lvalue::@3:
+lvalue::@return:
+  return 
+  endproc // lvalue()
+  proc (void()) rvalue()
+  (byte[1024]) rvalue::SCREEN ← (word) 1024
+  (byte~) rvalue::$0 ← * (byte[1024]) rvalue::SCREEN
+  (byte) rvalue::b ← (byte~) rvalue::$0
+  (byte~) rvalue::$1 ← (byte[1024]) rvalue::SCREEN *idx (byte) 1
+  (byte) rvalue::b ← (byte~) rvalue::$1
+  (byte) rvalue::i ← (byte) 2
+rvalue::@1:
+  (boolean~) rvalue::$2 ← (byte) rvalue::i < (byte) 10
+  if((boolean~) rvalue::$2) goto rvalue::@2
+  goto rvalue::@3
+rvalue::@2:
+  (byte~) rvalue::$3 ← (byte[1024]) rvalue::SCREEN *idx (byte) rvalue::i
+  (byte) rvalue::b ← (byte~) rvalue::$3
+  (byte) rvalue::i ← ++ (byte) rvalue::i
+  goto rvalue::@1
+rvalue::@3:
+rvalue::@return:
+  return 
+  endproc // rvalue()
+  proc (void()) lvaluevar()
+  (byte*) lvaluevar::screen ← (word) 1024
+  (byte) lvaluevar::b ← (byte) 4
+  (byte) lvaluevar::i ← (byte) 2
+lvaluevar::@1:
+  (boolean~) lvaluevar::$0 ← (byte) lvaluevar::i < (byte) 10
+  if((boolean~) lvaluevar::$0) goto lvaluevar::@2
+  goto lvaluevar::@3
+lvaluevar::@2:
+  *((byte*) lvaluevar::screen) ← (byte) lvaluevar::b
+  (byte*) lvaluevar::screen ← ++ (byte*) lvaluevar::screen
+  (byte) lvaluevar::i ← ++ (byte) lvaluevar::i
+  goto lvaluevar::@1
+lvaluevar::@3:
+lvaluevar::@return:
+  return 
+  endproc // lvaluevar()
+  proc (void()) rvaluevar()
+  (byte*) rvaluevar::screen ← (word) 1024
+  (byte) rvaluevar::i ← (byte) 2
+rvaluevar::@1:
+  (boolean~) rvaluevar::$0 ← (byte) rvaluevar::i < (byte) 10
+  if((boolean~) rvaluevar::$0) goto rvaluevar::@2
+  goto rvaluevar::@3
+rvaluevar::@2:
+  (byte~) rvaluevar::$1 ← * (byte*) rvaluevar::screen
+  (byte) rvaluevar::b ← (byte~) rvaluevar::$1
+  (byte*) rvaluevar::screen ← ++ (byte*) rvaluevar::screen
+  (byte) rvaluevar::i ← ++ (byte) rvaluevar::i
+  goto rvaluevar::@1
+rvaluevar::@3:
+rvaluevar::@return:
+  return 
+  endproc // rvaluevar()
+
+SYMBOLS
+(void~) $0
+(void()) lvalue()
+(boolean~) lvalue::$0
+(label) lvalue::@1
+(label) lvalue::@2
+(label) lvalue::@3
+(label) lvalue::@return
+(byte[1024]) lvalue::SCREEN
+(byte) lvalue::i
+(void()) lvaluevar()
+(boolean~) lvaluevar::$0
+(label) lvaluevar::@1
+(label) lvaluevar::@2
+(label) lvaluevar::@3
+(label) lvaluevar::@return
+(byte) lvaluevar::b
+(byte) lvaluevar::i
+(byte*) lvaluevar::screen
+(void()) main()
+(void~) main::$0
+(void~) main::$1
+(void~) main::$2
+(void~) main::$3
+(label) main::@return
+(void()) rvalue()
+(byte~) rvalue::$0
+(byte~) rvalue::$1
+(boolean~) rvalue::$2
+(byte~) rvalue::$3
+(label) rvalue::@1
+(label) rvalue::@2
+(label) rvalue::@3
+(label) rvalue::@return
+(byte[1024]) rvalue::SCREEN
+(byte) rvalue::b
+(byte) rvalue::i
+(void()) rvaluevar()
+(boolean~) rvaluevar::$0
+(byte~) rvaluevar::$1
+(label) rvaluevar::@1
+(label) rvaluevar::@2
+(label) rvaluevar::@3
+(label) rvaluevar::@return
+(byte) rvaluevar::b
+(byte) rvaluevar::i
+(byte*) rvaluevar::screen
+
+INITIAL CONTROL FLOW GRAPH
+@BEGIN: from
+  (void~) $0 ← call main 
+  to:@1
+main: from
+  (void~) main::$0 ← call lvalue 
+  (void~) main::$1 ← call rvalue 
+  (void~) main::$2 ← call rvaluevar 
+  (void~) main::$3 ← call lvaluevar 
+  to:main::@return
+main::@return: from main
+  return 
+  to:@RETURN
+@1: from @BEGIN
+  to:@2
+lvalue: from
+  (byte[1024]) lvalue::SCREEN ← (word) 1024
+  *((byte[1024]) lvalue::SCREEN) ← (byte) 1
+  *((byte[1024]) lvalue::SCREEN + (byte) 1) ← (byte) 2
+  (byte) lvalue::i ← (byte) 2
+  to:lvalue::@1
+lvalue::@1: from lvalue lvalue::@2
+  (boolean~) lvalue::$0 ← (byte) lvalue::i < (byte) 10
+  if((boolean~) lvalue::$0) goto lvalue::@2
+  to:lvalue::@4
+lvalue::@2: from lvalue::@1 lvalue::@5
+  *((byte[1024]) lvalue::SCREEN + (byte) lvalue::i) ← (byte) 3
+  (byte) lvalue::i ← ++ (byte) lvalue::i
+  to:lvalue::@1
+lvalue::@4: from lvalue::@1
+  to:lvalue::@3
+lvalue::@3: from lvalue::@4 lvalue::@6
+  to:lvalue::@return
+lvalue::@5: from
+  to:lvalue::@2
+lvalue::@6: from
+  to:lvalue::@3
+lvalue::@return: from lvalue::@3
+  return 
+  to:@RETURN
+@2: from @1
+  to:@3
+rvalue: from
+  (byte[1024]) rvalue::SCREEN ← (word) 1024
+  (byte~) rvalue::$0 ← * (byte[1024]) rvalue::SCREEN
+  (byte) rvalue::b ← (byte~) rvalue::$0
+  (byte~) rvalue::$1 ← (byte[1024]) rvalue::SCREEN *idx (byte) 1
+  (byte) rvalue::b ← (byte~) rvalue::$1
+  (byte) rvalue::i ← (byte) 2
+  to:rvalue::@1
+rvalue::@1: from rvalue rvalue::@2
+  (boolean~) rvalue::$2 ← (byte) rvalue::i < (byte) 10
+  if((boolean~) rvalue::$2) goto rvalue::@2
+  to:rvalue::@4
+rvalue::@2: from rvalue::@1 rvalue::@5
+  (byte~) rvalue::$3 ← (byte[1024]) rvalue::SCREEN *idx (byte) rvalue::i
+  (byte) rvalue::b ← (byte~) rvalue::$3
+  (byte) rvalue::i ← ++ (byte) rvalue::i
+  to:rvalue::@1
+rvalue::@4: from rvalue::@1
+  to:rvalue::@3
+rvalue::@3: from rvalue::@4 rvalue::@6
+  to:rvalue::@return
+rvalue::@5: from
+  to:rvalue::@2
+rvalue::@6: from
+  to:rvalue::@3
+rvalue::@return: from rvalue::@3
+  return 
+  to:@RETURN
+@3: from @2
+  to:@4
+lvaluevar: from
+  (byte*) lvaluevar::screen ← (word) 1024
+  (byte) lvaluevar::b ← (byte) 4
+  (byte) lvaluevar::i ← (byte) 2
+  to:lvaluevar::@1
+lvaluevar::@1: from lvaluevar lvaluevar::@2
+  (boolean~) lvaluevar::$0 ← (byte) lvaluevar::i < (byte) 10
+  if((boolean~) lvaluevar::$0) goto lvaluevar::@2
+  to:lvaluevar::@4
+lvaluevar::@2: from lvaluevar::@1 lvaluevar::@5
+  *((byte*) lvaluevar::screen) ← (byte) lvaluevar::b
+  (byte*) lvaluevar::screen ← ++ (byte*) lvaluevar::screen
+  (byte) lvaluevar::i ← ++ (byte) lvaluevar::i
+  to:lvaluevar::@1
+lvaluevar::@4: from lvaluevar::@1
+  to:lvaluevar::@3
+lvaluevar::@3: from lvaluevar::@4 lvaluevar::@6
+  to:lvaluevar::@return
+lvaluevar::@5: from
+  to:lvaluevar::@2
+lvaluevar::@6: from
+  to:lvaluevar::@3
+lvaluevar::@return: from lvaluevar::@3
+  return 
+  to:@RETURN
+@4: from @3
+  to:@5
+rvaluevar: from
+  (byte*) rvaluevar::screen ← (word) 1024
+  (byte) rvaluevar::i ← (byte) 2
+  to:rvaluevar::@1
+rvaluevar::@1: from rvaluevar rvaluevar::@2
+  (boolean~) rvaluevar::$0 ← (byte) rvaluevar::i < (byte) 10
+  if((boolean~) rvaluevar::$0) goto rvaluevar::@2
+  to:rvaluevar::@4
+rvaluevar::@2: from rvaluevar::@1 rvaluevar::@5
+  (byte~) rvaluevar::$1 ← * (byte*) rvaluevar::screen
+  (byte) rvaluevar::b ← (byte~) rvaluevar::$1
+  (byte*) rvaluevar::screen ← ++ (byte*) rvaluevar::screen
+  (byte) rvaluevar::i ← ++ (byte) rvaluevar::i
+  to:rvaluevar::@1
+rvaluevar::@4: from rvaluevar::@1
+  to:rvaluevar::@3
+rvaluevar::@3: from rvaluevar::@4 rvaluevar::@6
+  to:rvaluevar::@return
+rvaluevar::@5: from
+  to:rvaluevar::@2
+rvaluevar::@6: from
+  to:rvaluevar::@3
+rvaluevar::@return: from rvaluevar::@3
+  return 
+  to:@RETURN
+@5: from @4
+  to:@END
+@END: from @5
+
+Removing empty block @1
+Removing empty block lvalue::@4
+Removing empty block lvalue::@3
+Removing empty block lvalue::@5
+Removing empty block lvalue::@6
+Removing empty block @2
+Removing empty block rvalue::@4
+Removing empty block rvalue::@3
+Removing empty block rvalue::@5
+Removing empty block rvalue::@6
+Removing empty block @3
+Removing empty block lvaluevar::@4
+Removing empty block lvaluevar::@3
+Removing empty block lvaluevar::@5
+Removing empty block lvaluevar::@6
+Removing empty block @4
+Removing empty block rvaluevar::@4
+Removing empty block rvaluevar::@3
+Removing empty block rvaluevar::@5
+Removing empty block rvaluevar::@6
+Removing empty block @5
+CONTROL FLOW GRAPH
+@BEGIN: from
+  (void~) $0 ← call main 
+  to:@END
+main: from
+  (void~) main::$0 ← call lvalue 
+  (void~) main::$1 ← call rvalue 
+  (void~) main::$2 ← call rvaluevar 
+  (void~) main::$3 ← call lvaluevar 
+  to:main::@return
+main::@return: from main
+  return 
+  to:@RETURN
+lvalue: from
+  (byte[1024]) lvalue::SCREEN ← (word) 1024
+  *((byte[1024]) lvalue::SCREEN) ← (byte) 1
+  *((byte[1024]) lvalue::SCREEN + (byte) 1) ← (byte) 2
+  (byte) lvalue::i ← (byte) 2
+  to:lvalue::@1
+lvalue::@1: from lvalue lvalue::@2
+  (boolean~) lvalue::$0 ← (byte) lvalue::i < (byte) 10
+  if((boolean~) lvalue::$0) goto lvalue::@2
+  to:lvalue::@return
+lvalue::@2: from lvalue::@1
+  *((byte[1024]) lvalue::SCREEN + (byte) lvalue::i) ← (byte) 3
+  (byte) lvalue::i ← ++ (byte) lvalue::i
+  to:lvalue::@1
+lvalue::@return: from lvalue::@1
+  return 
+  to:@RETURN
+rvalue: from
+  (byte[1024]) rvalue::SCREEN ← (word) 1024
+  (byte~) rvalue::$0 ← * (byte[1024]) rvalue::SCREEN
+  (byte) rvalue::b ← (byte~) rvalue::$0
+  (byte~) rvalue::$1 ← (byte[1024]) rvalue::SCREEN *idx (byte) 1
+  (byte) rvalue::b ← (byte~) rvalue::$1
+  (byte) rvalue::i ← (byte) 2
+  to:rvalue::@1
+rvalue::@1: from rvalue rvalue::@2
+  (boolean~) rvalue::$2 ← (byte) rvalue::i < (byte) 10
+  if((boolean~) rvalue::$2) goto rvalue::@2
+  to:rvalue::@return
+rvalue::@2: from rvalue::@1
+  (byte~) rvalue::$3 ← (byte[1024]) rvalue::SCREEN *idx (byte) rvalue::i
+  (byte) rvalue::b ← (byte~) rvalue::$3
+  (byte) rvalue::i ← ++ (byte) rvalue::i
+  to:rvalue::@1
+rvalue::@return: from rvalue::@1
+  return 
+  to:@RETURN
+lvaluevar: from
+  (byte*) lvaluevar::screen ← (word) 1024
+  (byte) lvaluevar::b ← (byte) 4
+  (byte) lvaluevar::i ← (byte) 2
+  to:lvaluevar::@1
+lvaluevar::@1: from lvaluevar lvaluevar::@2
+  (boolean~) lvaluevar::$0 ← (byte) lvaluevar::i < (byte) 10
+  if((boolean~) lvaluevar::$0) goto lvaluevar::@2
+  to:lvaluevar::@return
+lvaluevar::@2: from lvaluevar::@1
+  *((byte*) lvaluevar::screen) ← (byte) lvaluevar::b
+  (byte*) lvaluevar::screen ← ++ (byte*) lvaluevar::screen
+  (byte) lvaluevar::i ← ++ (byte) lvaluevar::i
+  to:lvaluevar::@1
+lvaluevar::@return: from lvaluevar::@1
+  return 
+  to:@RETURN
+rvaluevar: from
+  (byte*) rvaluevar::screen ← (word) 1024
+  (byte) rvaluevar::i ← (byte) 2
+  to:rvaluevar::@1
+rvaluevar::@1: from rvaluevar rvaluevar::@2
+  (boolean~) rvaluevar::$0 ← (byte) rvaluevar::i < (byte) 10
+  if((boolean~) rvaluevar::$0) goto rvaluevar::@2
+  to:rvaluevar::@return
+rvaluevar::@2: from rvaluevar::@1
+  (byte~) rvaluevar::$1 ← * (byte*) rvaluevar::screen
+  (byte) rvaluevar::b ← (byte~) rvaluevar::$1
+  (byte*) rvaluevar::screen ← ++ (byte*) rvaluevar::screen
+  (byte) rvaluevar::i ← ++ (byte) rvaluevar::i
+  to:rvaluevar::@1
+rvaluevar::@return: from rvaluevar::@1
+  return 
+  to:@RETURN
+@END: from @BEGIN
+
+CONTROL FLOW GRAPH WITH ASSIGNMENT CALL
+@BEGIN: from
+  call main param-assignment
+  to:@6
+@6: from @BEGIN
+  to:@END
+main: from @BEGIN
+  call lvalue param-assignment
+  to:main::@1
+main::@1: from main
+  call rvalue param-assignment
+  to:main::@2
+main::@2: from main::@1
+  call rvaluevar param-assignment
+  to:main::@3
+main::@3: from main::@2
+  call lvaluevar param-assignment
+  to:main::@4
+main::@4: from main::@3
+  to:main::@return
+main::@return: from main::@4
+  return 
+  to:@RETURN
+lvalue: from main
+  (byte[1024]) lvalue::SCREEN ← (word) 1024
+  *((byte[1024]) lvalue::SCREEN) ← (byte) 1
+  *((byte[1024]) lvalue::SCREEN + (byte) 1) ← (byte) 2
+  (byte) lvalue::i ← (byte) 2
+  to:lvalue::@1
+lvalue::@1: from lvalue lvalue::@2
+  (boolean~) lvalue::$0 ← (byte) lvalue::i < (byte) 10
+  if((boolean~) lvalue::$0) goto lvalue::@2
+  to:lvalue::@return
+lvalue::@2: from lvalue::@1
+  *((byte[1024]) lvalue::SCREEN + (byte) lvalue::i) ← (byte) 3
+  (byte) lvalue::i ← ++ (byte) lvalue::i
+  to:lvalue::@1
+lvalue::@return: from lvalue::@1
+  return 
+  to:@RETURN
+rvalue: from main::@1
+  (byte[1024]) rvalue::SCREEN ← (word) 1024
+  (byte~) rvalue::$0 ← * (byte[1024]) rvalue::SCREEN
+  (byte) rvalue::b ← (byte~) rvalue::$0
+  (byte~) rvalue::$1 ← (byte[1024]) rvalue::SCREEN *idx (byte) 1
+  (byte) rvalue::b ← (byte~) rvalue::$1
+  (byte) rvalue::i ← (byte) 2
+  to:rvalue::@1
+rvalue::@1: from rvalue rvalue::@2
+  (boolean~) rvalue::$2 ← (byte) rvalue::i < (byte) 10
+  if((boolean~) rvalue::$2) goto rvalue::@2
+  to:rvalue::@return
+rvalue::@2: from rvalue::@1
+  (byte~) rvalue::$3 ← (byte[1024]) rvalue::SCREEN *idx (byte) rvalue::i
+  (byte) rvalue::b ← (byte~) rvalue::$3
+  (byte) rvalue::i ← ++ (byte) rvalue::i
+  to:rvalue::@1
+rvalue::@return: from rvalue::@1
+  return 
+  to:@RETURN
+lvaluevar: from main::@3
+  (byte*) lvaluevar::screen ← (word) 1024
+  (byte) lvaluevar::b ← (byte) 4
+  (byte) lvaluevar::i ← (byte) 2
+  to:lvaluevar::@1
+lvaluevar::@1: from lvaluevar lvaluevar::@2
+  (boolean~) lvaluevar::$0 ← (byte) lvaluevar::i < (byte) 10
+  if((boolean~) lvaluevar::$0) goto lvaluevar::@2
+  to:lvaluevar::@return
+lvaluevar::@2: from lvaluevar::@1
+  *((byte*) lvaluevar::screen) ← (byte) lvaluevar::b
+  (byte*) lvaluevar::screen ← ++ (byte*) lvaluevar::screen
+  (byte) lvaluevar::i ← ++ (byte) lvaluevar::i
+  to:lvaluevar::@1
+lvaluevar::@return: from lvaluevar::@1
+  return 
+  to:@RETURN
+rvaluevar: from main::@2
+  (byte*) rvaluevar::screen ← (word) 1024
+  (byte) rvaluevar::i ← (byte) 2
+  to:rvaluevar::@1
+rvaluevar::@1: from rvaluevar rvaluevar::@2
+  (boolean~) rvaluevar::$0 ← (byte) rvaluevar::i < (byte) 10
+  if((boolean~) rvaluevar::$0) goto rvaluevar::@2
+  to:rvaluevar::@return
+rvaluevar::@2: from rvaluevar::@1
+  (byte~) rvaluevar::$1 ← * (byte*) rvaluevar::screen
+  (byte) rvaluevar::b ← (byte~) rvaluevar::$1
+  (byte*) rvaluevar::screen ← ++ (byte*) rvaluevar::screen
+  (byte) rvaluevar::i ← ++ (byte) rvaluevar::i
+  to:rvaluevar::@1
+rvaluevar::@return: from rvaluevar::@1
+  return 
+  to:@RETURN
+@END: from @6
+
+Completing Phi functions...
+Completing Phi functions...
+CONTROL FLOW GRAPH SSA
+@BEGIN: from
+  call main param-assignment
+  to:@6
+@6: from @BEGIN
+  to:@END
+main: from @BEGIN
+  call lvalue param-assignment
+  to:main::@1
+main::@1: from main
+  call rvalue param-assignment
+  to:main::@2
+main::@2: from main::@1
+  call rvaluevar param-assignment
+  to:main::@3
+main::@3: from main::@2
+  call lvaluevar param-assignment
+  to:main::@4
+main::@4: from main::@3
+  to:main::@return
+main::@return: from main::@4
+  return 
+  to:@RETURN
+lvalue: from main
+  (byte[1024]) lvalue::SCREEN#0 ← (word) 1024
+  *((byte[1024]) lvalue::SCREEN#0) ← (byte) 1
+  *((byte[1024]) lvalue::SCREEN#0 + (byte) 1) ← (byte) 2
+  (byte) lvalue::i#0 ← (byte) 2
+  to:lvalue::@1
+lvalue::@1: from lvalue lvalue::@2
+  (byte[1024]) lvalue::SCREEN#2 ← phi( lvalue/(byte[1024]) lvalue::SCREEN#0 lvalue::@2/(byte[1024]) lvalue::SCREEN#1 )
+  (byte) lvalue::i#2 ← phi( lvalue/(byte) lvalue::i#0 lvalue::@2/(byte) lvalue::i#1 )
+  (boolean~) lvalue::$0 ← (byte) lvalue::i#2 < (byte) 10
+  if((boolean~) lvalue::$0) goto lvalue::@2
+  to:lvalue::@return
+lvalue::@2: from lvalue::@1
+  (byte) lvalue::i#3 ← phi( lvalue::@1/(byte) lvalue::i#2 )
+  (byte[1024]) lvalue::SCREEN#1 ← phi( lvalue::@1/(byte[1024]) lvalue::SCREEN#2 )
+  *((byte[1024]) lvalue::SCREEN#1 + (byte) lvalue::i#3) ← (byte) 3
+  (byte) lvalue::i#1 ← ++ (byte) lvalue::i#3
+  to:lvalue::@1
+lvalue::@return: from lvalue::@1
+  return 
+  to:@RETURN
+rvalue: from main::@1
+  (byte[1024]) rvalue::SCREEN#0 ← (word) 1024
+  (byte~) rvalue::$0 ← * (byte[1024]) rvalue::SCREEN#0
+  (byte) rvalue::b#0 ← (byte~) rvalue::$0
+  (byte~) rvalue::$1 ← (byte[1024]) rvalue::SCREEN#0 *idx (byte) 1
+  (byte) rvalue::b#1 ← (byte~) rvalue::$1
+  (byte) rvalue::i#0 ← (byte) 2
+  to:rvalue::@1
+rvalue::@1: from rvalue rvalue::@2
+  (byte[1024]) rvalue::SCREEN#2 ← phi( rvalue/(byte[1024]) rvalue::SCREEN#0 rvalue::@2/(byte[1024]) rvalue::SCREEN#1 )
+  (byte) rvalue::i#2 ← phi( rvalue/(byte) rvalue::i#0 rvalue::@2/(byte) rvalue::i#1 )
+  (boolean~) rvalue::$2 ← (byte) rvalue::i#2 < (byte) 10
+  if((boolean~) rvalue::$2) goto rvalue::@2
+  to:rvalue::@return
+rvalue::@2: from rvalue::@1
+  (byte) rvalue::i#3 ← phi( rvalue::@1/(byte) rvalue::i#2 )
+  (byte[1024]) rvalue::SCREEN#1 ← phi( rvalue::@1/(byte[1024]) rvalue::SCREEN#2 )
+  (byte~) rvalue::$3 ← (byte[1024]) rvalue::SCREEN#1 *idx (byte) rvalue::i#3
+  (byte) rvalue::b#2 ← (byte~) rvalue::$3
+  (byte) rvalue::i#1 ← ++ (byte) rvalue::i#3
+  to:rvalue::@1
+rvalue::@return: from rvalue::@1
+  return 
+  to:@RETURN
+lvaluevar: from main::@3
+  (byte*) lvaluevar::screen#0 ← (word) 1024
+  (byte) lvaluevar::b#0 ← (byte) 4
+  (byte) lvaluevar::i#0 ← (byte) 2
+  to:lvaluevar::@1
+lvaluevar::@1: from lvaluevar lvaluevar::@2
+  (byte*) lvaluevar::screen#3 ← phi( lvaluevar/(byte*) lvaluevar::screen#0 lvaluevar::@2/(byte*) lvaluevar::screen#1 )
+  (byte) lvaluevar::b#2 ← phi( lvaluevar/(byte) lvaluevar::b#0 lvaluevar::@2/(byte) lvaluevar::b#1 )
+  (byte) lvaluevar::i#2 ← phi( lvaluevar/(byte) lvaluevar::i#0 lvaluevar::@2/(byte) lvaluevar::i#1 )
+  (boolean~) lvaluevar::$0 ← (byte) lvaluevar::i#2 < (byte) 10
+  if((boolean~) lvaluevar::$0) goto lvaluevar::@2
+  to:lvaluevar::@return
+lvaluevar::@2: from lvaluevar::@1
+  (byte) lvaluevar::i#3 ← phi( lvaluevar::@1/(byte) lvaluevar::i#2 )
+  (byte*) lvaluevar::screen#2 ← phi( lvaluevar::@1/(byte*) lvaluevar::screen#3 )
+  (byte) lvaluevar::b#1 ← phi( lvaluevar::@1/(byte) lvaluevar::b#2 )
+  *((byte*) lvaluevar::screen#2) ← (byte) lvaluevar::b#1
+  (byte*) lvaluevar::screen#1 ← ++ (byte*) lvaluevar::screen#2
+  (byte) lvaluevar::i#1 ← ++ (byte) lvaluevar::i#3
+  to:lvaluevar::@1
+lvaluevar::@return: from lvaluevar::@1
+  return 
+  to:@RETURN
+rvaluevar: from main::@2
+  (byte*) rvaluevar::screen#0 ← (word) 1024
+  (byte) rvaluevar::i#0 ← (byte) 2
+  to:rvaluevar::@1
+rvaluevar::@1: from rvaluevar rvaluevar::@2
+  (byte*) rvaluevar::screen#3 ← phi( rvaluevar/(byte*) rvaluevar::screen#0 rvaluevar::@2/(byte*) rvaluevar::screen#1 )
+  (byte) rvaluevar::i#2 ← phi( rvaluevar/(byte) rvaluevar::i#0 rvaluevar::@2/(byte) rvaluevar::i#1 )
+  (boolean~) rvaluevar::$0 ← (byte) rvaluevar::i#2 < (byte) 10
+  if((boolean~) rvaluevar::$0) goto rvaluevar::@2
+  to:rvaluevar::@return
+rvaluevar::@2: from rvaluevar::@1
+  (byte) rvaluevar::i#3 ← phi( rvaluevar::@1/(byte) rvaluevar::i#2 )
+  (byte*) rvaluevar::screen#2 ← phi( rvaluevar::@1/(byte*) rvaluevar::screen#3 )
+  (byte~) rvaluevar::$1 ← * (byte*) rvaluevar::screen#2
+  (byte) rvaluevar::b#0 ← (byte~) rvaluevar::$1
+  (byte*) rvaluevar::screen#1 ← ++ (byte*) rvaluevar::screen#2
+  (byte) rvaluevar::i#1 ← ++ (byte) rvaluevar::i#3
+  to:rvaluevar::@1
+rvaluevar::@return: from rvaluevar::@1
+  return 
+  to:@RETURN
+@END: from @6
+
+CONTROL FLOW GRAPH WITH ASSIGNMENT CALL & RETURN
+@BEGIN: from
+  call main param-assignment
+  to:@6
+@6: from @BEGIN
+  to:@END
+main: from @BEGIN
+  call lvalue param-assignment
+  to:main::@1
+main::@1: from main
+  call rvalue param-assignment
+  to:main::@2
+main::@2: from main::@1
+  call rvaluevar param-assignment
+  to:main::@3
+main::@3: from main::@2
+  call lvaluevar param-assignment
+  to:main::@4
+main::@4: from main::@3
+  to:main::@return
+main::@return: from main::@4
+  return 
+  to:@RETURN
+lvalue: from main
+  (byte[1024]) lvalue::SCREEN#0 ← (word) 1024
+  *((byte[1024]) lvalue::SCREEN#0) ← (byte) 1
+  *((byte[1024]) lvalue::SCREEN#0 + (byte) 1) ← (byte) 2
+  (byte) lvalue::i#0 ← (byte) 2
+  to:lvalue::@1
+lvalue::@1: from lvalue lvalue::@2
+  (byte[1024]) lvalue::SCREEN#2 ← phi( lvalue/(byte[1024]) lvalue::SCREEN#0 lvalue::@2/(byte[1024]) lvalue::SCREEN#1 )
+  (byte) lvalue::i#2 ← phi( lvalue/(byte) lvalue::i#0 lvalue::@2/(byte) lvalue::i#1 )
+  (boolean~) lvalue::$0 ← (byte) lvalue::i#2 < (byte) 10
+  if((boolean~) lvalue::$0) goto lvalue::@2
+  to:lvalue::@return
+lvalue::@2: from lvalue::@1
+  (byte) lvalue::i#3 ← phi( lvalue::@1/(byte) lvalue::i#2 )
+  (byte[1024]) lvalue::SCREEN#1 ← phi( lvalue::@1/(byte[1024]) lvalue::SCREEN#2 )
+  *((byte[1024]) lvalue::SCREEN#1 + (byte) lvalue::i#3) ← (byte) 3
+  (byte) lvalue::i#1 ← ++ (byte) lvalue::i#3
+  to:lvalue::@1
+lvalue::@return: from lvalue::@1
+  return 
+  to:@RETURN
+rvalue: from main::@1
+  (byte[1024]) rvalue::SCREEN#0 ← (word) 1024
+  (byte~) rvalue::$0 ← * (byte[1024]) rvalue::SCREEN#0
+  (byte) rvalue::b#0 ← (byte~) rvalue::$0
+  (byte~) rvalue::$1 ← (byte[1024]) rvalue::SCREEN#0 *idx (byte) 1
+  (byte) rvalue::b#1 ← (byte~) rvalue::$1
+  (byte) rvalue::i#0 ← (byte) 2
+  to:rvalue::@1
+rvalue::@1: from rvalue rvalue::@2
+  (byte[1024]) rvalue::SCREEN#2 ← phi( rvalue/(byte[1024]) rvalue::SCREEN#0 rvalue::@2/(byte[1024]) rvalue::SCREEN#1 )
+  (byte) rvalue::i#2 ← phi( rvalue/(byte) rvalue::i#0 rvalue::@2/(byte) rvalue::i#1 )
+  (boolean~) rvalue::$2 ← (byte) rvalue::i#2 < (byte) 10
+  if((boolean~) rvalue::$2) goto rvalue::@2
+  to:rvalue::@return
+rvalue::@2: from rvalue::@1
+  (byte) rvalue::i#3 ← phi( rvalue::@1/(byte) rvalue::i#2 )
+  (byte[1024]) rvalue::SCREEN#1 ← phi( rvalue::@1/(byte[1024]) rvalue::SCREEN#2 )
+  (byte~) rvalue::$3 ← (byte[1024]) rvalue::SCREEN#1 *idx (byte) rvalue::i#3
+  (byte) rvalue::b#2 ← (byte~) rvalue::$3
+  (byte) rvalue::i#1 ← ++ (byte) rvalue::i#3
+  to:rvalue::@1
+rvalue::@return: from rvalue::@1
+  return 
+  to:@RETURN
+lvaluevar: from main::@3
+  (byte*) lvaluevar::screen#0 ← (word) 1024
+  (byte) lvaluevar::b#0 ← (byte) 4
+  (byte) lvaluevar::i#0 ← (byte) 2
+  to:lvaluevar::@1
+lvaluevar::@1: from lvaluevar lvaluevar::@2
+  (byte*) lvaluevar::screen#3 ← phi( lvaluevar/(byte*) lvaluevar::screen#0 lvaluevar::@2/(byte*) lvaluevar::screen#1 )
+  (byte) lvaluevar::b#2 ← phi( lvaluevar/(byte) lvaluevar::b#0 lvaluevar::@2/(byte) lvaluevar::b#1 )
+  (byte) lvaluevar::i#2 ← phi( lvaluevar/(byte) lvaluevar::i#0 lvaluevar::@2/(byte) lvaluevar::i#1 )
+  (boolean~) lvaluevar::$0 ← (byte) lvaluevar::i#2 < (byte) 10
+  if((boolean~) lvaluevar::$0) goto lvaluevar::@2
+  to:lvaluevar::@return
+lvaluevar::@2: from lvaluevar::@1
+  (byte) lvaluevar::i#3 ← phi( lvaluevar::@1/(byte) lvaluevar::i#2 )
+  (byte*) lvaluevar::screen#2 ← phi( lvaluevar::@1/(byte*) lvaluevar::screen#3 )
+  (byte) lvaluevar::b#1 ← phi( lvaluevar::@1/(byte) lvaluevar::b#2 )
+  *((byte*) lvaluevar::screen#2) ← (byte) lvaluevar::b#1
+  (byte*) lvaluevar::screen#1 ← ++ (byte*) lvaluevar::screen#2
+  (byte) lvaluevar::i#1 ← ++ (byte) lvaluevar::i#3
+  to:lvaluevar::@1
+lvaluevar::@return: from lvaluevar::@1
+  return 
+  to:@RETURN
+rvaluevar: from main::@2
+  (byte*) rvaluevar::screen#0 ← (word) 1024
+  (byte) rvaluevar::i#0 ← (byte) 2
+  to:rvaluevar::@1
+rvaluevar::@1: from rvaluevar rvaluevar::@2
+  (byte*) rvaluevar::screen#3 ← phi( rvaluevar/(byte*) rvaluevar::screen#0 rvaluevar::@2/(byte*) rvaluevar::screen#1 )
+  (byte) rvaluevar::i#2 ← phi( rvaluevar/(byte) rvaluevar::i#0 rvaluevar::@2/(byte) rvaluevar::i#1 )
+  (boolean~) rvaluevar::$0 ← (byte) rvaluevar::i#2 < (byte) 10
+  if((boolean~) rvaluevar::$0) goto rvaluevar::@2
+  to:rvaluevar::@return
+rvaluevar::@2: from rvaluevar::@1
+  (byte) rvaluevar::i#3 ← phi( rvaluevar::@1/(byte) rvaluevar::i#2 )
+  (byte*) rvaluevar::screen#2 ← phi( rvaluevar::@1/(byte*) rvaluevar::screen#3 )
+  (byte~) rvaluevar::$1 ← * (byte*) rvaluevar::screen#2
+  (byte) rvaluevar::b#0 ← (byte~) rvaluevar::$1
+  (byte*) rvaluevar::screen#1 ← ++ (byte*) rvaluevar::screen#2
+  (byte) rvaluevar::i#1 ← ++ (byte) rvaluevar::i#3
+  to:rvaluevar::@1
+rvaluevar::@return: from rvaluevar::@1
+  return 
+  to:@RETURN
+@END: from @6
+
+Culled Empty Block (label) @6
+Culled Empty Block (label) main::@4
+Succesful SSA optimization Pass2CullEmptyBlocks
+CONTROL FLOW GRAPH
+@BEGIN: from
+  call main param-assignment
+  to:@END
+main: from @BEGIN
+  call lvalue param-assignment
+  to:main::@1
+main::@1: from main
+  call rvalue param-assignment
+  to:main::@2
+main::@2: from main::@1
+  call rvaluevar param-assignment
+  to:main::@3
+main::@3: from main::@2
+  call lvaluevar param-assignment
+  to:main::@return
+main::@return: from main::@3
+  return 
+  to:@RETURN
+lvalue: from main
+  (byte[1024]) lvalue::SCREEN#0 ← (word) 1024
+  *((byte[1024]) lvalue::SCREEN#0) ← (byte) 1
+  *((byte[1024]) lvalue::SCREEN#0 + (byte) 1) ← (byte) 2
+  (byte) lvalue::i#0 ← (byte) 2
+  to:lvalue::@1
+lvalue::@1: from lvalue lvalue::@2
+  (byte[1024]) lvalue::SCREEN#2 ← phi( lvalue/(byte[1024]) lvalue::SCREEN#0 lvalue::@2/(byte[1024]) lvalue::SCREEN#1 )
+  (byte) lvalue::i#2 ← phi( lvalue/(byte) lvalue::i#0 lvalue::@2/(byte) lvalue::i#1 )
+  (boolean~) lvalue::$0 ← (byte) lvalue::i#2 < (byte) 10
+  if((boolean~) lvalue::$0) goto lvalue::@2
+  to:lvalue::@return
+lvalue::@2: from lvalue::@1
+  (byte) lvalue::i#3 ← phi( lvalue::@1/(byte) lvalue::i#2 )
+  (byte[1024]) lvalue::SCREEN#1 ← phi( lvalue::@1/(byte[1024]) lvalue::SCREEN#2 )
+  *((byte[1024]) lvalue::SCREEN#1 + (byte) lvalue::i#3) ← (byte) 3
+  (byte) lvalue::i#1 ← ++ (byte) lvalue::i#3
+  to:lvalue::@1
+lvalue::@return: from lvalue::@1
+  return 
+  to:@RETURN
+rvalue: from main::@1
+  (byte[1024]) rvalue::SCREEN#0 ← (word) 1024
+  (byte~) rvalue::$0 ← * (byte[1024]) rvalue::SCREEN#0
+  (byte) rvalue::b#0 ← (byte~) rvalue::$0
+  (byte~) rvalue::$1 ← (byte[1024]) rvalue::SCREEN#0 *idx (byte) 1
+  (byte) rvalue::b#1 ← (byte~) rvalue::$1
+  (byte) rvalue::i#0 ← (byte) 2
+  to:rvalue::@1
+rvalue::@1: from rvalue rvalue::@2
+  (byte[1024]) rvalue::SCREEN#2 ← phi( rvalue/(byte[1024]) rvalue::SCREEN#0 rvalue::@2/(byte[1024]) rvalue::SCREEN#1 )
+  (byte) rvalue::i#2 ← phi( rvalue/(byte) rvalue::i#0 rvalue::@2/(byte) rvalue::i#1 )
+  (boolean~) rvalue::$2 ← (byte) rvalue::i#2 < (byte) 10
+  if((boolean~) rvalue::$2) goto rvalue::@2
+  to:rvalue::@return
+rvalue::@2: from rvalue::@1
+  (byte) rvalue::i#3 ← phi( rvalue::@1/(byte) rvalue::i#2 )
+  (byte[1024]) rvalue::SCREEN#1 ← phi( rvalue::@1/(byte[1024]) rvalue::SCREEN#2 )
+  (byte~) rvalue::$3 ← (byte[1024]) rvalue::SCREEN#1 *idx (byte) rvalue::i#3
+  (byte) rvalue::b#2 ← (byte~) rvalue::$3
+  (byte) rvalue::i#1 ← ++ (byte) rvalue::i#3
+  to:rvalue::@1
+rvalue::@return: from rvalue::@1
+  return 
+  to:@RETURN
+lvaluevar: from main::@3
+  (byte*) lvaluevar::screen#0 ← (word) 1024
+  (byte) lvaluevar::b#0 ← (byte) 4
+  (byte) lvaluevar::i#0 ← (byte) 2
+  to:lvaluevar::@1
+lvaluevar::@1: from lvaluevar lvaluevar::@2
+  (byte*) lvaluevar::screen#3 ← phi( lvaluevar/(byte*) lvaluevar::screen#0 lvaluevar::@2/(byte*) lvaluevar::screen#1 )
+  (byte) lvaluevar::b#2 ← phi( lvaluevar/(byte) lvaluevar::b#0 lvaluevar::@2/(byte) lvaluevar::b#1 )
+  (byte) lvaluevar::i#2 ← phi( lvaluevar/(byte) lvaluevar::i#0 lvaluevar::@2/(byte) lvaluevar::i#1 )
+  (boolean~) lvaluevar::$0 ← (byte) lvaluevar::i#2 < (byte) 10
+  if((boolean~) lvaluevar::$0) goto lvaluevar::@2
+  to:lvaluevar::@return
+lvaluevar::@2: from lvaluevar::@1
+  (byte) lvaluevar::i#3 ← phi( lvaluevar::@1/(byte) lvaluevar::i#2 )
+  (byte*) lvaluevar::screen#2 ← phi( lvaluevar::@1/(byte*) lvaluevar::screen#3 )
+  (byte) lvaluevar::b#1 ← phi( lvaluevar::@1/(byte) lvaluevar::b#2 )
+  *((byte*) lvaluevar::screen#2) ← (byte) lvaluevar::b#1
+  (byte*) lvaluevar::screen#1 ← ++ (byte*) lvaluevar::screen#2
+  (byte) lvaluevar::i#1 ← ++ (byte) lvaluevar::i#3
+  to:lvaluevar::@1
+lvaluevar::@return: from lvaluevar::@1
+  return 
+  to:@RETURN
+rvaluevar: from main::@2
+  (byte*) rvaluevar::screen#0 ← (word) 1024
+  (byte) rvaluevar::i#0 ← (byte) 2
+  to:rvaluevar::@1
+rvaluevar::@1: from rvaluevar rvaluevar::@2
+  (byte*) rvaluevar::screen#3 ← phi( rvaluevar/(byte*) rvaluevar::screen#0 rvaluevar::@2/(byte*) rvaluevar::screen#1 )
+  (byte) rvaluevar::i#2 ← phi( rvaluevar/(byte) rvaluevar::i#0 rvaluevar::@2/(byte) rvaluevar::i#1 )
+  (boolean~) rvaluevar::$0 ← (byte) rvaluevar::i#2 < (byte) 10
+  if((boolean~) rvaluevar::$0) goto rvaluevar::@2
+  to:rvaluevar::@return
+rvaluevar::@2: from rvaluevar::@1
+  (byte) rvaluevar::i#3 ← phi( rvaluevar::@1/(byte) rvaluevar::i#2 )
+  (byte*) rvaluevar::screen#2 ← phi( rvaluevar::@1/(byte*) rvaluevar::screen#3 )
+  (byte~) rvaluevar::$1 ← * (byte*) rvaluevar::screen#2
+  (byte) rvaluevar::b#0 ← (byte~) rvaluevar::$1
+  (byte*) rvaluevar::screen#1 ← ++ (byte*) rvaluevar::screen#2
+  (byte) rvaluevar::i#1 ← ++ (byte) rvaluevar::i#3
+  to:rvaluevar::@1
+rvaluevar::@return: from rvaluevar::@1
+  return 
+  to:@RETURN
+@END: from @BEGIN
+
+Constant (byte[1024]) lvalue::SCREEN#0 (word) 1024
+Constant (byte) lvalue::i#0 (byte) 2
+Constant (byte[1024]) rvalue::SCREEN#0 (word) 1024
+Constant (byte) rvalue::i#0 (byte) 2
+Constant (byte*) lvaluevar::screen#0 (word) 1024
+Constant (byte) lvaluevar::b#0 (byte) 4
+Constant (byte) lvaluevar::i#0 (byte) 2
+Constant (byte*) rvaluevar::screen#0 (word) 1024
+Constant (byte) rvaluevar::i#0 (byte) 2
+Succesful SSA optimization Pass2ConstantPropagation
+CONTROL FLOW GRAPH
+@BEGIN: from
+  call main param-assignment
+  to:@END
+main: from @BEGIN
+  call lvalue param-assignment
+  to:main::@1
+main::@1: from main
+  call rvalue param-assignment
+  to:main::@2
+main::@2: from main::@1
+  call rvaluevar param-assignment
+  to:main::@3
+main::@3: from main::@2
+  call lvaluevar param-assignment
+  to:main::@return
+main::@return: from main::@3
+  return 
+  to:@RETURN
+lvalue: from main
+  *((word) 1024) ← (byte) 1
+  *((word) 1024 + (byte) 1) ← (byte) 2
+  to:lvalue::@1
+lvalue::@1: from lvalue lvalue::@2
+  (byte[1024]) lvalue::SCREEN#2 ← phi( lvalue/(word) 1024 lvalue::@2/(byte[1024]) lvalue::SCREEN#1 )
+  (byte) lvalue::i#2 ← phi( lvalue/(byte) 2 lvalue::@2/(byte) lvalue::i#1 )
+  (boolean~) lvalue::$0 ← (byte) lvalue::i#2 < (byte) 10
+  if((boolean~) lvalue::$0) goto lvalue::@2
+  to:lvalue::@return
+lvalue::@2: from lvalue::@1
+  (byte) lvalue::i#3 ← phi( lvalue::@1/(byte) lvalue::i#2 )
+  (byte[1024]) lvalue::SCREEN#1 ← phi( lvalue::@1/(byte[1024]) lvalue::SCREEN#2 )
+  *((byte[1024]) lvalue::SCREEN#1 + (byte) lvalue::i#3) ← (byte) 3
+  (byte) lvalue::i#1 ← ++ (byte) lvalue::i#3
+  to:lvalue::@1
+lvalue::@return: from lvalue::@1
+  return 
+  to:@RETURN
+rvalue: from main::@1
+  (byte~) rvalue::$0 ← * (word) 1024
+  (byte) rvalue::b#0 ← (byte~) rvalue::$0
+  (byte~) rvalue::$1 ← (word) 1024 *idx (byte) 1
+  (byte) rvalue::b#1 ← (byte~) rvalue::$1
+  to:rvalue::@1
+rvalue::@1: from rvalue rvalue::@2
+  (byte[1024]) rvalue::SCREEN#2 ← phi( rvalue/(word) 1024 rvalue::@2/(byte[1024]) rvalue::SCREEN#1 )
+  (byte) rvalue::i#2 ← phi( rvalue/(byte) 2 rvalue::@2/(byte) rvalue::i#1 )
+  (boolean~) rvalue::$2 ← (byte) rvalue::i#2 < (byte) 10
+  if((boolean~) rvalue::$2) goto rvalue::@2
+  to:rvalue::@return
+rvalue::@2: from rvalue::@1
+  (byte) rvalue::i#3 ← phi( rvalue::@1/(byte) rvalue::i#2 )
+  (byte[1024]) rvalue::SCREEN#1 ← phi( rvalue::@1/(byte[1024]) rvalue::SCREEN#2 )
+  (byte~) rvalue::$3 ← (byte[1024]) rvalue::SCREEN#1 *idx (byte) rvalue::i#3
+  (byte) rvalue::b#2 ← (byte~) rvalue::$3
+  (byte) rvalue::i#1 ← ++ (byte) rvalue::i#3
+  to:rvalue::@1
+rvalue::@return: from rvalue::@1
+  return 
+  to:@RETURN
+lvaluevar: from main::@3
+  to:lvaluevar::@1
+lvaluevar::@1: from lvaluevar lvaluevar::@2
+  (byte*) lvaluevar::screen#3 ← phi( lvaluevar/(word) 1024 lvaluevar::@2/(byte*) lvaluevar::screen#1 )
+  (byte) lvaluevar::b#2 ← phi( lvaluevar/(byte) 4 lvaluevar::@2/(byte) lvaluevar::b#1 )
+  (byte) lvaluevar::i#2 ← phi( lvaluevar/(byte) 2 lvaluevar::@2/(byte) lvaluevar::i#1 )
+  (boolean~) lvaluevar::$0 ← (byte) lvaluevar::i#2 < (byte) 10
+  if((boolean~) lvaluevar::$0) goto lvaluevar::@2
+  to:lvaluevar::@return
+lvaluevar::@2: from lvaluevar::@1
+  (byte) lvaluevar::i#3 ← phi( lvaluevar::@1/(byte) lvaluevar::i#2 )
+  (byte*) lvaluevar::screen#2 ← phi( lvaluevar::@1/(byte*) lvaluevar::screen#3 )
+  (byte) lvaluevar::b#1 ← phi( lvaluevar::@1/(byte) lvaluevar::b#2 )
+  *((byte*) lvaluevar::screen#2) ← (byte) lvaluevar::b#1
+  (byte*) lvaluevar::screen#1 ← ++ (byte*) lvaluevar::screen#2
+  (byte) lvaluevar::i#1 ← ++ (byte) lvaluevar::i#3
+  to:lvaluevar::@1
+lvaluevar::@return: from lvaluevar::@1
+  return 
+  to:@RETURN
+rvaluevar: from main::@2
+  to:rvaluevar::@1
+rvaluevar::@1: from rvaluevar rvaluevar::@2
+  (byte*) rvaluevar::screen#3 ← phi( rvaluevar/(word) 1024 rvaluevar::@2/(byte*) rvaluevar::screen#1 )
+  (byte) rvaluevar::i#2 ← phi( rvaluevar/(byte) 2 rvaluevar::@2/(byte) rvaluevar::i#1 )
+  (boolean~) rvaluevar::$0 ← (byte) rvaluevar::i#2 < (byte) 10
+  if((boolean~) rvaluevar::$0) goto rvaluevar::@2
+  to:rvaluevar::@return
+rvaluevar::@2: from rvaluevar::@1
+  (byte) rvaluevar::i#3 ← phi( rvaluevar::@1/(byte) rvaluevar::i#2 )
+  (byte*) rvaluevar::screen#2 ← phi( rvaluevar::@1/(byte*) rvaluevar::screen#3 )
+  (byte~) rvaluevar::$1 ← * (byte*) rvaluevar::screen#2
+  (byte) rvaluevar::b#0 ← (byte~) rvaluevar::$1
+  (byte*) rvaluevar::screen#1 ← ++ (byte*) rvaluevar::screen#2
+  (byte) rvaluevar::i#1 ← ++ (byte) rvaluevar::i#3
+  to:rvaluevar::@1
+rvaluevar::@return: from rvaluevar::@1
+  return 
+  to:@RETURN
+@END: from @BEGIN
+
+Consolidated assigned array index constant in assignment *(1025)
+Consolidated referenced array index constant in assignment rvalue::$1
+Succesful SSA optimization Pass2ConstantAdditionElimination
+CONTROL FLOW GRAPH
+@BEGIN: from
+  call main param-assignment
+  to:@END
+main: from @BEGIN
+  call lvalue param-assignment
+  to:main::@1
+main::@1: from main
+  call rvalue param-assignment
+  to:main::@2
+main::@2: from main::@1
+  call rvaluevar param-assignment
+  to:main::@3
+main::@3: from main::@2
+  call lvaluevar param-assignment
+  to:main::@return
+main::@return: from main::@3
+  return 
+  to:@RETURN
+lvalue: from main
+  *((word) 1024) ← (byte) 1
+  *((word) 1025) ← (byte) 2
+  to:lvalue::@1
+lvalue::@1: from lvalue lvalue::@2
+  (byte[1024]) lvalue::SCREEN#2 ← phi( lvalue/(word) 1024 lvalue::@2/(byte[1024]) lvalue::SCREEN#1 )
+  (byte) lvalue::i#2 ← phi( lvalue/(byte) 2 lvalue::@2/(byte) lvalue::i#1 )
+  (boolean~) lvalue::$0 ← (byte) lvalue::i#2 < (byte) 10
+  if((boolean~) lvalue::$0) goto lvalue::@2
+  to:lvalue::@return
+lvalue::@2: from lvalue::@1
+  (byte) lvalue::i#3 ← phi( lvalue::@1/(byte) lvalue::i#2 )
+  (byte[1024]) lvalue::SCREEN#1 ← phi( lvalue::@1/(byte[1024]) lvalue::SCREEN#2 )
+  *((byte[1024]) lvalue::SCREEN#1 + (byte) lvalue::i#3) ← (byte) 3
+  (byte) lvalue::i#1 ← ++ (byte) lvalue::i#3
+  to:lvalue::@1
+lvalue::@return: from lvalue::@1
+  return 
+  to:@RETURN
+rvalue: from main::@1
+  (byte~) rvalue::$0 ← * (word) 1024
+  (byte) rvalue::b#0 ← (byte~) rvalue::$0
+  (byte~) rvalue::$1 ← * (word) 1025
+  (byte) rvalue::b#1 ← (byte~) rvalue::$1
+  to:rvalue::@1
+rvalue::@1: from rvalue rvalue::@2
+  (byte[1024]) rvalue::SCREEN#2 ← phi( rvalue/(word) 1024 rvalue::@2/(byte[1024]) rvalue::SCREEN#1 )
+  (byte) rvalue::i#2 ← phi( rvalue/(byte) 2 rvalue::@2/(byte) rvalue::i#1 )
+  (boolean~) rvalue::$2 ← (byte) rvalue::i#2 < (byte) 10
+  if((boolean~) rvalue::$2) goto rvalue::@2
+  to:rvalue::@return
+rvalue::@2: from rvalue::@1
+  (byte) rvalue::i#3 ← phi( rvalue::@1/(byte) rvalue::i#2 )
+  (byte[1024]) rvalue::SCREEN#1 ← phi( rvalue::@1/(byte[1024]) rvalue::SCREEN#2 )
+  (byte~) rvalue::$3 ← (byte[1024]) rvalue::SCREEN#1 *idx (byte) rvalue::i#3
+  (byte) rvalue::b#2 ← (byte~) rvalue::$3
+  (byte) rvalue::i#1 ← ++ (byte) rvalue::i#3
+  to:rvalue::@1
+rvalue::@return: from rvalue::@1
+  return 
+  to:@RETURN
+lvaluevar: from main::@3
+  to:lvaluevar::@1
+lvaluevar::@1: from lvaluevar lvaluevar::@2
+  (byte*) lvaluevar::screen#3 ← phi( lvaluevar/(word) 1024 lvaluevar::@2/(byte*) lvaluevar::screen#1 )
+  (byte) lvaluevar::b#2 ← phi( lvaluevar/(byte) 4 lvaluevar::@2/(byte) lvaluevar::b#1 )
+  (byte) lvaluevar::i#2 ← phi( lvaluevar/(byte) 2 lvaluevar::@2/(byte) lvaluevar::i#1 )
+  (boolean~) lvaluevar::$0 ← (byte) lvaluevar::i#2 < (byte) 10
+  if((boolean~) lvaluevar::$0) goto lvaluevar::@2
+  to:lvaluevar::@return
+lvaluevar::@2: from lvaluevar::@1
+  (byte) lvaluevar::i#3 ← phi( lvaluevar::@1/(byte) lvaluevar::i#2 )
+  (byte*) lvaluevar::screen#2 ← phi( lvaluevar::@1/(byte*) lvaluevar::screen#3 )
+  (byte) lvaluevar::b#1 ← phi( lvaluevar::@1/(byte) lvaluevar::b#2 )
+  *((byte*) lvaluevar::screen#2) ← (byte) lvaluevar::b#1
+  (byte*) lvaluevar::screen#1 ← ++ (byte*) lvaluevar::screen#2
+  (byte) lvaluevar::i#1 ← ++ (byte) lvaluevar::i#3
+  to:lvaluevar::@1
+lvaluevar::@return: from lvaluevar::@1
+  return 
+  to:@RETURN
+rvaluevar: from main::@2
+  to:rvaluevar::@1
+rvaluevar::@1: from rvaluevar rvaluevar::@2
+  (byte*) rvaluevar::screen#3 ← phi( rvaluevar/(word) 1024 rvaluevar::@2/(byte*) rvaluevar::screen#1 )
+  (byte) rvaluevar::i#2 ← phi( rvaluevar/(byte) 2 rvaluevar::@2/(byte) rvaluevar::i#1 )
+  (boolean~) rvaluevar::$0 ← (byte) rvaluevar::i#2 < (byte) 10
+  if((boolean~) rvaluevar::$0) goto rvaluevar::@2
+  to:rvaluevar::@return
+rvaluevar::@2: from rvaluevar::@1
+  (byte) rvaluevar::i#3 ← phi( rvaluevar::@1/(byte) rvaluevar::i#2 )
+  (byte*) rvaluevar::screen#2 ← phi( rvaluevar::@1/(byte*) rvaluevar::screen#3 )
+  (byte~) rvaluevar::$1 ← * (byte*) rvaluevar::screen#2
+  (byte) rvaluevar::b#0 ← (byte~) rvaluevar::$1
+  (byte*) rvaluevar::screen#1 ← ++ (byte*) rvaluevar::screen#2
+  (byte) rvaluevar::i#1 ← ++ (byte) rvaluevar::i#3
+  to:rvaluevar::@1
+rvaluevar::@return: from rvaluevar::@1
+  return 
+  to:@RETURN
+@END: from @BEGIN
+
+Alias (byte[1024]) lvalue::SCREEN#1 = (byte[1024]) lvalue::SCREEN#2 
+Alias (byte) lvalue::i#2 = (byte) lvalue::i#3 
+Alias (byte) rvalue::b#0 = (byte~) rvalue::$0 
+Alias (byte) rvalue::b#1 = (byte~) rvalue::$1 
+Alias (byte[1024]) rvalue::SCREEN#1 = (byte[1024]) rvalue::SCREEN#2 
+Alias (byte) rvalue::i#2 = (byte) rvalue::i#3 
+Alias (byte) rvalue::b#2 = (byte~) rvalue::$3 
+Alias (byte) lvaluevar::b#1 = (byte) lvaluevar::b#2 
+Alias (byte*) lvaluevar::screen#2 = (byte*) lvaluevar::screen#3 
+Alias (byte) lvaluevar::i#2 = (byte) lvaluevar::i#3 
+Alias (byte*) rvaluevar::screen#2 = (byte*) rvaluevar::screen#3 
+Alias (byte) rvaluevar::i#2 = (byte) rvaluevar::i#3 
+Alias (byte) rvaluevar::b#0 = (byte~) rvaluevar::$1 
+Succesful SSA optimization Pass2AliasElimination
+CONTROL FLOW GRAPH
+@BEGIN: from
+  call main param-assignment
+  to:@END
+main: from @BEGIN
+  call lvalue param-assignment
+  to:main::@1
+main::@1: from main
+  call rvalue param-assignment
+  to:main::@2
+main::@2: from main::@1
+  call rvaluevar param-assignment
+  to:main::@3
+main::@3: from main::@2
+  call lvaluevar param-assignment
+  to:main::@return
+main::@return: from main::@3
+  return 
+  to:@RETURN
+lvalue: from main
+  *((word) 1024) ← (byte) 1
+  *((word) 1025) ← (byte) 2
+  to:lvalue::@1
+lvalue::@1: from lvalue lvalue::@2
+  (byte[1024]) lvalue::SCREEN#1 ← phi( lvalue/(word) 1024 lvalue::@2/(byte[1024]) lvalue::SCREEN#1 )
+  (byte) lvalue::i#2 ← phi( lvalue/(byte) 2 lvalue::@2/(byte) lvalue::i#1 )
+  (boolean~) lvalue::$0 ← (byte) lvalue::i#2 < (byte) 10
+  if((boolean~) lvalue::$0) goto lvalue::@2
+  to:lvalue::@return
+lvalue::@2: from lvalue::@1
+  *((byte[1024]) lvalue::SCREEN#1 + (byte) lvalue::i#2) ← (byte) 3
+  (byte) lvalue::i#1 ← ++ (byte) lvalue::i#2
+  to:lvalue::@1
+lvalue::@return: from lvalue::@1
+  return 
+  to:@RETURN
+rvalue: from main::@1
+  (byte) rvalue::b#0 ← * (word) 1024
+  (byte) rvalue::b#1 ← * (word) 1025
+  to:rvalue::@1
+rvalue::@1: from rvalue rvalue::@2
+  (byte[1024]) rvalue::SCREEN#1 ← phi( rvalue/(word) 1024 rvalue::@2/(byte[1024]) rvalue::SCREEN#1 )
+  (byte) rvalue::i#2 ← phi( rvalue/(byte) 2 rvalue::@2/(byte) rvalue::i#1 )
+  (boolean~) rvalue::$2 ← (byte) rvalue::i#2 < (byte) 10
+  if((boolean~) rvalue::$2) goto rvalue::@2
+  to:rvalue::@return
+rvalue::@2: from rvalue::@1
+  (byte) rvalue::b#2 ← (byte[1024]) rvalue::SCREEN#1 *idx (byte) rvalue::i#2
+  (byte) rvalue::i#1 ← ++ (byte) rvalue::i#2
+  to:rvalue::@1
+rvalue::@return: from rvalue::@1
+  return 
+  to:@RETURN
+lvaluevar: from main::@3
+  to:lvaluevar::@1
+lvaluevar::@1: from lvaluevar lvaluevar::@2
+  (byte*) lvaluevar::screen#2 ← phi( lvaluevar/(word) 1024 lvaluevar::@2/(byte*) lvaluevar::screen#1 )
+  (byte) lvaluevar::b#1 ← phi( lvaluevar/(byte) 4 lvaluevar::@2/(byte) lvaluevar::b#1 )
+  (byte) lvaluevar::i#2 ← phi( lvaluevar/(byte) 2 lvaluevar::@2/(byte) lvaluevar::i#1 )
+  (boolean~) lvaluevar::$0 ← (byte) lvaluevar::i#2 < (byte) 10
+  if((boolean~) lvaluevar::$0) goto lvaluevar::@2
+  to:lvaluevar::@return
+lvaluevar::@2: from lvaluevar::@1
+  *((byte*) lvaluevar::screen#2) ← (byte) lvaluevar::b#1
+  (byte*) lvaluevar::screen#1 ← ++ (byte*) lvaluevar::screen#2
+  (byte) lvaluevar::i#1 ← ++ (byte) lvaluevar::i#2
+  to:lvaluevar::@1
+lvaluevar::@return: from lvaluevar::@1
+  return 
+  to:@RETURN
+rvaluevar: from main::@2
+  to:rvaluevar::@1
+rvaluevar::@1: from rvaluevar rvaluevar::@2
+  (byte*) rvaluevar::screen#2 ← phi( rvaluevar/(word) 1024 rvaluevar::@2/(byte*) rvaluevar::screen#1 )
+  (byte) rvaluevar::i#2 ← phi( rvaluevar/(byte) 2 rvaluevar::@2/(byte) rvaluevar::i#1 )
+  (boolean~) rvaluevar::$0 ← (byte) rvaluevar::i#2 < (byte) 10
+  if((boolean~) rvaluevar::$0) goto rvaluevar::@2
+  to:rvaluevar::@return
+rvaluevar::@2: from rvaluevar::@1
+  (byte) rvaluevar::b#0 ← * (byte*) rvaluevar::screen#2
+  (byte*) rvaluevar::screen#1 ← ++ (byte*) rvaluevar::screen#2
+  (byte) rvaluevar::i#1 ← ++ (byte) rvaluevar::i#2
+  to:rvaluevar::@1
+rvaluevar::@return: from rvaluevar::@1
+  return 
+  to:@RETURN
+@END: from @BEGIN
+
+Self Phi Eliminated (byte[1024]) lvalue::SCREEN#1
+Self Phi Eliminated (byte[1024]) rvalue::SCREEN#1
+Self Phi Eliminated (byte) lvaluevar::b#1
+Succesful SSA optimization Pass2SelfPhiElimination
+CONTROL FLOW GRAPH
+@BEGIN: from
+  call main param-assignment
+  to:@END
+main: from @BEGIN
+  call lvalue param-assignment
+  to:main::@1
+main::@1: from main
+  call rvalue param-assignment
+  to:main::@2
+main::@2: from main::@1
+  call rvaluevar param-assignment
+  to:main::@3
+main::@3: from main::@2
+  call lvaluevar param-assignment
+  to:main::@return
+main::@return: from main::@3
+  return 
+  to:@RETURN
+lvalue: from main
+  *((word) 1024) ← (byte) 1
+  *((word) 1025) ← (byte) 2
+  to:lvalue::@1
+lvalue::@1: from lvalue lvalue::@2
+  (byte[1024]) lvalue::SCREEN#1 ← phi( lvalue/(word) 1024 )
+  (byte) lvalue::i#2 ← phi( lvalue/(byte) 2 lvalue::@2/(byte) lvalue::i#1 )
+  (boolean~) lvalue::$0 ← (byte) lvalue::i#2 < (byte) 10
+  if((boolean~) lvalue::$0) goto lvalue::@2
+  to:lvalue::@return
+lvalue::@2: from lvalue::@1
+  *((byte[1024]) lvalue::SCREEN#1 + (byte) lvalue::i#2) ← (byte) 3
+  (byte) lvalue::i#1 ← ++ (byte) lvalue::i#2
+  to:lvalue::@1
+lvalue::@return: from lvalue::@1
+  return 
+  to:@RETURN
+rvalue: from main::@1
+  (byte) rvalue::b#0 ← * (word) 1024
+  (byte) rvalue::b#1 ← * (word) 1025
+  to:rvalue::@1
+rvalue::@1: from rvalue rvalue::@2
+  (byte[1024]) rvalue::SCREEN#1 ← phi( rvalue/(word) 1024 )
+  (byte) rvalue::i#2 ← phi( rvalue/(byte) 2 rvalue::@2/(byte) rvalue::i#1 )
+  (boolean~) rvalue::$2 ← (byte) rvalue::i#2 < (byte) 10
+  if((boolean~) rvalue::$2) goto rvalue::@2
+  to:rvalue::@return
+rvalue::@2: from rvalue::@1
+  (byte) rvalue::b#2 ← (byte[1024]) rvalue::SCREEN#1 *idx (byte) rvalue::i#2
+  (byte) rvalue::i#1 ← ++ (byte) rvalue::i#2
+  to:rvalue::@1
+rvalue::@return: from rvalue::@1
+  return 
+  to:@RETURN
+lvaluevar: from main::@3
+  to:lvaluevar::@1
+lvaluevar::@1: from lvaluevar lvaluevar::@2
+  (byte*) lvaluevar::screen#2 ← phi( lvaluevar/(word) 1024 lvaluevar::@2/(byte*) lvaluevar::screen#1 )
+  (byte) lvaluevar::b#1 ← phi( lvaluevar/(byte) 4 )
+  (byte) lvaluevar::i#2 ← phi( lvaluevar/(byte) 2 lvaluevar::@2/(byte) lvaluevar::i#1 )
+  (boolean~) lvaluevar::$0 ← (byte) lvaluevar::i#2 < (byte) 10
+  if((boolean~) lvaluevar::$0) goto lvaluevar::@2
+  to:lvaluevar::@return
+lvaluevar::@2: from lvaluevar::@1
+  *((byte*) lvaluevar::screen#2) ← (byte) lvaluevar::b#1
+  (byte*) lvaluevar::screen#1 ← ++ (byte*) lvaluevar::screen#2
+  (byte) lvaluevar::i#1 ← ++ (byte) lvaluevar::i#2
+  to:lvaluevar::@1
+lvaluevar::@return: from lvaluevar::@1
+  return 
+  to:@RETURN
+rvaluevar: from main::@2
+  to:rvaluevar::@1
+rvaluevar::@1: from rvaluevar rvaluevar::@2
+  (byte*) rvaluevar::screen#2 ← phi( rvaluevar/(word) 1024 rvaluevar::@2/(byte*) rvaluevar::screen#1 )
+  (byte) rvaluevar::i#2 ← phi( rvaluevar/(byte) 2 rvaluevar::@2/(byte) rvaluevar::i#1 )
+  (boolean~) rvaluevar::$0 ← (byte) rvaluevar::i#2 < (byte) 10
+  if((boolean~) rvaluevar::$0) goto rvaluevar::@2
+  to:rvaluevar::@return
+rvaluevar::@2: from rvaluevar::@1
+  (byte) rvaluevar::b#0 ← * (byte*) rvaluevar::screen#2
+  (byte*) rvaluevar::screen#1 ← ++ (byte*) rvaluevar::screen#2
+  (byte) rvaluevar::i#1 ← ++ (byte) rvaluevar::i#2
+  to:rvaluevar::@1
+rvaluevar::@return: from rvaluevar::@1
+  return 
+  to:@RETURN
+@END: from @BEGIN
+
+Simple Condition (boolean~) lvalue::$0 if((byte) lvalue::i#2<(byte) 10) goto lvalue::@2
+Simple Condition (boolean~) rvalue::$2 if((byte) rvalue::i#2<(byte) 10) goto rvalue::@2
+Simple Condition (boolean~) lvaluevar::$0 if((byte) lvaluevar::i#2<(byte) 10) goto lvaluevar::@2
+Simple Condition (boolean~) rvaluevar::$0 if((byte) rvaluevar::i#2<(byte) 10) goto rvaluevar::@2
+Succesful SSA optimization Pass2ConditionalJumpSimplification
+CONTROL FLOW GRAPH
+@BEGIN: from
+  call main param-assignment
+  to:@END
+main: from @BEGIN
+  call lvalue param-assignment
+  to:main::@1
+main::@1: from main
+  call rvalue param-assignment
+  to:main::@2
+main::@2: from main::@1
+  call rvaluevar param-assignment
+  to:main::@3
+main::@3: from main::@2
+  call lvaluevar param-assignment
+  to:main::@return
+main::@return: from main::@3
+  return 
+  to:@RETURN
+lvalue: from main
+  *((word) 1024) ← (byte) 1
+  *((word) 1025) ← (byte) 2
+  to:lvalue::@1
+lvalue::@1: from lvalue lvalue::@2
+  (byte[1024]) lvalue::SCREEN#1 ← phi( lvalue/(word) 1024 )
+  (byte) lvalue::i#2 ← phi( lvalue/(byte) 2 lvalue::@2/(byte) lvalue::i#1 )
+  if((byte) lvalue::i#2<(byte) 10) goto lvalue::@2
+  to:lvalue::@return
+lvalue::@2: from lvalue::@1
+  *((byte[1024]) lvalue::SCREEN#1 + (byte) lvalue::i#2) ← (byte) 3
+  (byte) lvalue::i#1 ← ++ (byte) lvalue::i#2
+  to:lvalue::@1
+lvalue::@return: from lvalue::@1
+  return 
+  to:@RETURN
+rvalue: from main::@1
+  (byte) rvalue::b#0 ← * (word) 1024
+  (byte) rvalue::b#1 ← * (word) 1025
+  to:rvalue::@1
+rvalue::@1: from rvalue rvalue::@2
+  (byte[1024]) rvalue::SCREEN#1 ← phi( rvalue/(word) 1024 )
+  (byte) rvalue::i#2 ← phi( rvalue/(byte) 2 rvalue::@2/(byte) rvalue::i#1 )
+  if((byte) rvalue::i#2<(byte) 10) goto rvalue::@2
+  to:rvalue::@return
+rvalue::@2: from rvalue::@1
+  (byte) rvalue::b#2 ← (byte[1024]) rvalue::SCREEN#1 *idx (byte) rvalue::i#2
+  (byte) rvalue::i#1 ← ++ (byte) rvalue::i#2
+  to:rvalue::@1
+rvalue::@return: from rvalue::@1
+  return 
+  to:@RETURN
+lvaluevar: from main::@3
+  to:lvaluevar::@1
+lvaluevar::@1: from lvaluevar lvaluevar::@2
+  (byte*) lvaluevar::screen#2 ← phi( lvaluevar/(word) 1024 lvaluevar::@2/(byte*) lvaluevar::screen#1 )
+  (byte) lvaluevar::b#1 ← phi( lvaluevar/(byte) 4 )
+  (byte) lvaluevar::i#2 ← phi( lvaluevar/(byte) 2 lvaluevar::@2/(byte) lvaluevar::i#1 )
+  if((byte) lvaluevar::i#2<(byte) 10) goto lvaluevar::@2
+  to:lvaluevar::@return
+lvaluevar::@2: from lvaluevar::@1
+  *((byte*) lvaluevar::screen#2) ← (byte) lvaluevar::b#1
+  (byte*) lvaluevar::screen#1 ← ++ (byte*) lvaluevar::screen#2
+  (byte) lvaluevar::i#1 ← ++ (byte) lvaluevar::i#2
+  to:lvaluevar::@1
+lvaluevar::@return: from lvaluevar::@1
+  return 
+  to:@RETURN
+rvaluevar: from main::@2
+  to:rvaluevar::@1
+rvaluevar::@1: from rvaluevar rvaluevar::@2
+  (byte*) rvaluevar::screen#2 ← phi( rvaluevar/(word) 1024 rvaluevar::@2/(byte*) rvaluevar::screen#1 )
+  (byte) rvaluevar::i#2 ← phi( rvaluevar/(byte) 2 rvaluevar::@2/(byte) rvaluevar::i#1 )
+  if((byte) rvaluevar::i#2<(byte) 10) goto rvaluevar::@2
+  to:rvaluevar::@return
+rvaluevar::@2: from rvaluevar::@1
+  (byte) rvaluevar::b#0 ← * (byte*) rvaluevar::screen#2
+  (byte*) rvaluevar::screen#1 ← ++ (byte*) rvaluevar::screen#2
+  (byte) rvaluevar::i#1 ← ++ (byte) rvaluevar::i#2
+  to:rvaluevar::@1
+rvaluevar::@return: from rvaluevar::@1
+  return 
+  to:@RETURN
+@END: from @BEGIN
+
+Constant (byte[1024]) lvalue::SCREEN#1 (word) 1024
+Constant (byte[1024]) rvalue::SCREEN#1 (word) 1024
+Constant (byte) lvaluevar::b#1 (byte) 4
+Succesful SSA optimization Pass2ConstantPropagation
+CONTROL FLOW GRAPH
+@BEGIN: from
+  call main param-assignment
+  to:@END
+main: from @BEGIN
+  call lvalue param-assignment
+  to:main::@1
+main::@1: from main
+  call rvalue param-assignment
+  to:main::@2
+main::@2: from main::@1
+  call rvaluevar param-assignment
+  to:main::@3
+main::@3: from main::@2
+  call lvaluevar param-assignment
+  to:main::@return
+main::@return: from main::@3
+  return 
+  to:@RETURN
+lvalue: from main
+  *((word) 1024) ← (byte) 1
+  *((word) 1025) ← (byte) 2
+  to:lvalue::@1
+lvalue::@1: from lvalue lvalue::@2
+  (byte) lvalue::i#2 ← phi( lvalue/(byte) 2 lvalue::@2/(byte) lvalue::i#1 )
+  if((byte) lvalue::i#2<(byte) 10) goto lvalue::@2
+  to:lvalue::@return
+lvalue::@2: from lvalue::@1
+  *((word) 1024 + (byte) lvalue::i#2) ← (byte) 3
+  (byte) lvalue::i#1 ← ++ (byte) lvalue::i#2
+  to:lvalue::@1
+lvalue::@return: from lvalue::@1
+  return 
+  to:@RETURN
+rvalue: from main::@1
+  (byte) rvalue::b#0 ← * (word) 1024
+  (byte) rvalue::b#1 ← * (word) 1025
+  to:rvalue::@1
+rvalue::@1: from rvalue rvalue::@2
+  (byte) rvalue::i#2 ← phi( rvalue/(byte) 2 rvalue::@2/(byte) rvalue::i#1 )
+  if((byte) rvalue::i#2<(byte) 10) goto rvalue::@2
+  to:rvalue::@return
+rvalue::@2: from rvalue::@1
+  (byte) rvalue::b#2 ← (word) 1024 *idx (byte) rvalue::i#2
+  (byte) rvalue::i#1 ← ++ (byte) rvalue::i#2
+  to:rvalue::@1
+rvalue::@return: from rvalue::@1
+  return 
+  to:@RETURN
+lvaluevar: from main::@3
+  to:lvaluevar::@1
+lvaluevar::@1: from lvaluevar lvaluevar::@2
+  (byte*) lvaluevar::screen#2 ← phi( lvaluevar/(word) 1024 lvaluevar::@2/(byte*) lvaluevar::screen#1 )
+  (byte) lvaluevar::i#2 ← phi( lvaluevar/(byte) 2 lvaluevar::@2/(byte) lvaluevar::i#1 )
+  if((byte) lvaluevar::i#2<(byte) 10) goto lvaluevar::@2
+  to:lvaluevar::@return
+lvaluevar::@2: from lvaluevar::@1
+  *((byte*) lvaluevar::screen#2) ← (byte) 4
+  (byte*) lvaluevar::screen#1 ← ++ (byte*) lvaluevar::screen#2
+  (byte) lvaluevar::i#1 ← ++ (byte) lvaluevar::i#2
+  to:lvaluevar::@1
+lvaluevar::@return: from lvaluevar::@1
+  return 
+  to:@RETURN
+rvaluevar: from main::@2
+  to:rvaluevar::@1
+rvaluevar::@1: from rvaluevar rvaluevar::@2
+  (byte*) rvaluevar::screen#2 ← phi( rvaluevar/(word) 1024 rvaluevar::@2/(byte*) rvaluevar::screen#1 )
+  (byte) rvaluevar::i#2 ← phi( rvaluevar/(byte) 2 rvaluevar::@2/(byte) rvaluevar::i#1 )
+  if((byte) rvaluevar::i#2<(byte) 10) goto rvaluevar::@2
+  to:rvaluevar::@return
+rvaluevar::@2: from rvaluevar::@1
+  (byte) rvaluevar::b#0 ← * (byte*) rvaluevar::screen#2
+  (byte*) rvaluevar::screen#1 ← ++ (byte*) rvaluevar::screen#2
+  (byte) rvaluevar::i#1 ← ++ (byte) rvaluevar::i#2
+  to:rvaluevar::@1
+rvaluevar::@return: from rvaluevar::@1
+  return 
+  to:@RETURN
+@END: from @BEGIN
+
+Multiple usages for variable. Not optimizing sub-constant (byte) rvalue::i#2
+Multiple usages for variable. Not optimizing sub-constant (byte) rvalue::i#2
+Block Sequence Planned @BEGIN @END main main::@1 main::@2 main::@3 main::@return lvaluevar lvaluevar::@1 lvaluevar::@return lvaluevar::@2 rvaluevar rvaluevar::@1 rvaluevar::@return rvaluevar::@2 rvalue rvalue::@1 rvalue::@return rvalue::@2 lvalue lvalue::@1 lvalue::@return lvalue::@2 
+Block Sequence Planned @BEGIN @END main main::@1 main::@2 main::@3 main::@return lvaluevar lvaluevar::@1 lvaluevar::@return lvaluevar::@2 rvaluevar rvaluevar::@1 rvaluevar::@return rvaluevar::@2 rvalue rvalue::@1 rvalue::@return rvalue::@2 lvalue lvalue::@1 lvalue::@return lvalue::@2 
+CONTROL FLOW GRAPH - PHI LIFTED
+@BEGIN: from
+  call main param-assignment
+  to:@END
+@END: from @BEGIN
+main: from @BEGIN
+  call lvalue param-assignment
+  to:main::@1
+main::@1: from main
+  call rvalue param-assignment
+  to:main::@2
+main::@2: from main::@1
+  call rvaluevar param-assignment
+  to:main::@3
+main::@3: from main::@2
+  call lvaluevar param-assignment
+  to:main::@return
+main::@return: from main::@3
+  return 
+  to:@RETURN
+lvaluevar: from main::@3
+  to:lvaluevar::@1
+lvaluevar::@1: from lvaluevar lvaluevar::@2
+  (byte*) lvaluevar::screen#2 ← phi( lvaluevar/(word) 1024 lvaluevar::@2/(byte*~) lvaluevar::screen#4 )
+  (byte) lvaluevar::i#2 ← phi( lvaluevar/(byte) 2 lvaluevar::@2/(byte~) lvaluevar::i#4 )
+  if((byte) lvaluevar::i#2<(byte) 10) goto lvaluevar::@2
+  to:lvaluevar::@return
+lvaluevar::@return: from lvaluevar::@1
+  return 
+  to:@RETURN
+lvaluevar::@2: from lvaluevar::@1
+  *((byte*) lvaluevar::screen#2) ← (byte) 4
+  (byte*) lvaluevar::screen#1 ← ++ (byte*) lvaluevar::screen#2
+  (byte) lvaluevar::i#1 ← ++ (byte) lvaluevar::i#2
+  (byte~) lvaluevar::i#4 ← (byte) lvaluevar::i#1
+  (byte*~) lvaluevar::screen#4 ← (byte*) lvaluevar::screen#1
+  to:lvaluevar::@1
+rvaluevar: from main::@2
+  to:rvaluevar::@1
+rvaluevar::@1: from rvaluevar rvaluevar::@2
+  (byte*) rvaluevar::screen#2 ← phi( rvaluevar/(word) 1024 rvaluevar::@2/(byte*~) rvaluevar::screen#4 )
+  (byte) rvaluevar::i#2 ← phi( rvaluevar/(byte) 2 rvaluevar::@2/(byte~) rvaluevar::i#4 )
+  if((byte) rvaluevar::i#2<(byte) 10) goto rvaluevar::@2
+  to:rvaluevar::@return
+rvaluevar::@return: from rvaluevar::@1
+  return 
+  to:@RETURN
+rvaluevar::@2: from rvaluevar::@1
+  (byte) rvaluevar::b#0 ← * (byte*) rvaluevar::screen#2
+  (byte*) rvaluevar::screen#1 ← ++ (byte*) rvaluevar::screen#2
+  (byte) rvaluevar::i#1 ← ++ (byte) rvaluevar::i#2
+  (byte~) rvaluevar::i#4 ← (byte) rvaluevar::i#1
+  (byte*~) rvaluevar::screen#4 ← (byte*) rvaluevar::screen#1
+  to:rvaluevar::@1
+rvalue: from main::@1
+  (byte) rvalue::b#0 ← * (word) 1024
+  (byte) rvalue::b#1 ← * (word) 1025
+  to:rvalue::@1
+rvalue::@1: from rvalue rvalue::@2
+  (byte) rvalue::i#2 ← phi( rvalue/(byte) 2 rvalue::@2/(byte~) rvalue::i#4 )
+  if((byte) rvalue::i#2<(byte) 10) goto rvalue::@2
+  to:rvalue::@return
+rvalue::@return: from rvalue::@1
+  return 
+  to:@RETURN
+rvalue::@2: from rvalue::@1
+  (byte) rvalue::b#2 ← (word) 1024 *idx (byte) rvalue::i#2
+  (byte) rvalue::i#1 ← ++ (byte) rvalue::i#2
+  (byte~) rvalue::i#4 ← (byte) rvalue::i#1
+  to:rvalue::@1
+lvalue: from main
+  *((word) 1024) ← (byte) 1
+  *((word) 1025) ← (byte) 2
+  to:lvalue::@1
+lvalue::@1: from lvalue lvalue::@2
+  (byte) lvalue::i#2 ← phi( lvalue/(byte) 2 lvalue::@2/(byte~) lvalue::i#4 )
+  if((byte) lvalue::i#2<(byte) 10) goto lvalue::@2
+  to:lvalue::@return
+lvalue::@return: from lvalue::@1
+  return 
+  to:@RETURN
+lvalue::@2: from lvalue::@1
+  *((word) 1024 + (byte) lvalue::i#2) ← (byte) 3
+  (byte) lvalue::i#1 ← ++ (byte) lvalue::i#2
+  (byte~) lvalue::i#4 ← (byte) lvalue::i#1
+  to:lvalue::@1
+
+Adding empty live range for unused variable rvaluevar::b#0
+Adding empty live range for unused variable rvalue::b#0
+Adding empty live range for unused variable rvalue::b#1
+Adding empty live range for unused variable rvalue::b#2
+Propagating live ranges...
+Propagating live ranges...
+Propagating live ranges...
+CONTROL FLOW GRAPH - LIVE RANGES
+@BEGIN: from
+  [0] call main param-assignment [ ]
+  to:@END
+@END: from @BEGIN
+main: from @BEGIN
+  [1] call lvalue param-assignment [ ]
+  to:main::@1
+main::@1: from main
+  [2] call rvalue param-assignment [ ]
+  to:main::@2
+main::@2: from main::@1
+  [3] call rvaluevar param-assignment [ ]
+  to:main::@3
+main::@3: from main::@2
+  [4] call lvaluevar param-assignment [ ]
+  to:main::@return
+main::@return: from main::@3
+  [5] return  [ ]
+  to:@RETURN
+lvaluevar: from main::@3
+  to:lvaluevar::@1
+lvaluevar::@1: from lvaluevar lvaluevar::@2
+  [6] (byte*) lvaluevar::screen#2 ← phi( lvaluevar/(word) 1024 lvaluevar::@2/(byte*~) lvaluevar::screen#4 ) [ lvaluevar::i#2 lvaluevar::screen#2 ]
+  [6] (byte) lvaluevar::i#2 ← phi( lvaluevar/(byte) 2 lvaluevar::@2/(byte~) lvaluevar::i#4 ) [ lvaluevar::i#2 lvaluevar::screen#2 ]
+  [7] if((byte) lvaluevar::i#2<(byte) 10) goto lvaluevar::@2 [ lvaluevar::i#2 lvaluevar::screen#2 ]
+  to:lvaluevar::@return
+lvaluevar::@return: from lvaluevar::@1
+  [8] return  [ ]
+  to:@RETURN
+lvaluevar::@2: from lvaluevar::@1
+  [9] *((byte*) lvaluevar::screen#2) ← (byte) 4 [ lvaluevar::i#2 lvaluevar::screen#2 ]
+  [10] (byte*) lvaluevar::screen#1 ← ++ (byte*) lvaluevar::screen#2 [ lvaluevar::i#2 lvaluevar::screen#1 ]
+  [11] (byte) lvaluevar::i#1 ← ++ (byte) lvaluevar::i#2 [ lvaluevar::i#1 lvaluevar::screen#1 ]
+  [12] (byte~) lvaluevar::i#4 ← (byte) lvaluevar::i#1 [ lvaluevar::i#4 lvaluevar::screen#1 ]
+  [13] (byte*~) lvaluevar::screen#4 ← (byte*) lvaluevar::screen#1 [ lvaluevar::i#4 lvaluevar::screen#4 ]
+  to:lvaluevar::@1
+rvaluevar: from main::@2
+  to:rvaluevar::@1
+rvaluevar::@1: from rvaluevar rvaluevar::@2
+  [14] (byte*) rvaluevar::screen#2 ← phi( rvaluevar/(word) 1024 rvaluevar::@2/(byte*~) rvaluevar::screen#4 ) [ rvaluevar::i#2 rvaluevar::screen#2 ]
+  [14] (byte) rvaluevar::i#2 ← phi( rvaluevar/(byte) 2 rvaluevar::@2/(byte~) rvaluevar::i#4 ) [ rvaluevar::i#2 rvaluevar::screen#2 ]
+  [15] if((byte) rvaluevar::i#2<(byte) 10) goto rvaluevar::@2 [ rvaluevar::i#2 rvaluevar::screen#2 ]
+  to:rvaluevar::@return
+rvaluevar::@return: from rvaluevar::@1
+  [16] return  [ ]
+  to:@RETURN
+rvaluevar::@2: from rvaluevar::@1
+  [17] (byte) rvaluevar::b#0 ← * (byte*) rvaluevar::screen#2 [ rvaluevar::i#2 rvaluevar::screen#2 ]
+  [18] (byte*) rvaluevar::screen#1 ← ++ (byte*) rvaluevar::screen#2 [ rvaluevar::i#2 rvaluevar::screen#1 ]
+  [19] (byte) rvaluevar::i#1 ← ++ (byte) rvaluevar::i#2 [ rvaluevar::i#1 rvaluevar::screen#1 ]
+  [20] (byte~) rvaluevar::i#4 ← (byte) rvaluevar::i#1 [ rvaluevar::i#4 rvaluevar::screen#1 ]
+  [21] (byte*~) rvaluevar::screen#4 ← (byte*) rvaluevar::screen#1 [ rvaluevar::i#4 rvaluevar::screen#4 ]
+  to:rvaluevar::@1
+rvalue: from main::@1
+  [22] (byte) rvalue::b#0 ← * (word) 1024 [ ]
+  [23] (byte) rvalue::b#1 ← * (word) 1025 [ ]
+  to:rvalue::@1
+rvalue::@1: from rvalue rvalue::@2
+  [24] (byte) rvalue::i#2 ← phi( rvalue/(byte) 2 rvalue::@2/(byte~) rvalue::i#4 ) [ rvalue::i#2 ]
+  [25] if((byte) rvalue::i#2<(byte) 10) goto rvalue::@2 [ rvalue::i#2 ]
+  to:rvalue::@return
+rvalue::@return: from rvalue::@1
+  [26] return  [ ]
+  to:@RETURN
+rvalue::@2: from rvalue::@1
+  [27] (byte) rvalue::b#2 ← (word) 1024 *idx (byte) rvalue::i#2 [ rvalue::i#2 ]
+  [28] (byte) rvalue::i#1 ← ++ (byte) rvalue::i#2 [ rvalue::i#1 ]
+  [29] (byte~) rvalue::i#4 ← (byte) rvalue::i#1 [ rvalue::i#4 ]
+  to:rvalue::@1
+lvalue: from main
+  [30] *((word) 1024) ← (byte) 1 [ ]
+  [31] *((word) 1025) ← (byte) 2 [ ]
+  to:lvalue::@1
+lvalue::@1: from lvalue lvalue::@2
+  [32] (byte) lvalue::i#2 ← phi( lvalue/(byte) 2 lvalue::@2/(byte~) lvalue::i#4 ) [ lvalue::i#2 ]
+  [33] if((byte) lvalue::i#2<(byte) 10) goto lvalue::@2 [ lvalue::i#2 ]
+  to:lvalue::@return
+lvalue::@return: from lvalue::@1
+  [34] return  [ ]
+  to:@RETURN
+lvalue::@2: from lvalue::@1
+  [35] *((word) 1024 + (byte) lvalue::i#2) ← (byte) 3 [ lvalue::i#2 ]
+  [36] (byte) lvalue::i#1 ← ++ (byte) lvalue::i#2 [ lvalue::i#1 ]
+  [37] (byte~) lvalue::i#4 ← (byte) lvalue::i#1 [ lvalue::i#4 ]
+  to:lvalue::@1
+
+Created 6 initial phi equivalence classes
+Coalesced [12] lvaluevar::i#4 ← lvaluevar::i#1
+Coalesced [13] lvaluevar::screen#4 ← lvaluevar::screen#1
+Coalesced [20] rvaluevar::i#4 ← rvaluevar::i#1
+Coalesced [21] rvaluevar::screen#4 ← rvaluevar::screen#1
+Coalesced [29] rvalue::i#4 ← rvalue::i#1
+Coalesced [37] lvalue::i#4 ← lvalue::i#1
+Coalesced down to 6 phi equivalence classes
+Block Sequence Planned @BEGIN @END main main::@1 main::@2 main::@3 main::@return lvaluevar lvaluevar::@1 lvaluevar::@return lvaluevar::@2 rvaluevar rvaluevar::@1 rvaluevar::@return rvaluevar::@2 rvalue rvalue::@1 rvalue::@return rvalue::@2 lvalue lvalue::@1 lvalue::@return lvalue::@2 
+Adding empty live range for unused variable rvaluevar::b#0
+Adding empty live range for unused variable rvalue::b#0
+Adding empty live range for unused variable rvalue::b#1
+Adding empty live range for unused variable rvalue::b#2
+Propagating live ranges...
+Propagating live ranges...
+Propagating live ranges...
+CONTROL FLOW GRAPH - PHI MEM COALESCED
+@BEGIN: from
+  [0] call main param-assignment [ ]
+  to:@END
+@END: from @BEGIN
+main: from @BEGIN
+  [1] call lvalue param-assignment [ ]
+  to:main::@1
+main::@1: from main
+  [2] call rvalue param-assignment [ ]
+  to:main::@2
+main::@2: from main::@1
+  [3] call rvaluevar param-assignment [ ]
+  to:main::@3
+main::@3: from main::@2
+  [4] call lvaluevar param-assignment [ ]
+  to:main::@return
+main::@return: from main::@3
+  [5] return  [ ]
+  to:@RETURN
+lvaluevar: from main::@3
+  to:lvaluevar::@1
+lvaluevar::@1: from lvaluevar lvaluevar::@2
+  [6] (byte*) lvaluevar::screen#2 ← phi( lvaluevar/(word) 1024 lvaluevar::@2/(byte*) lvaluevar::screen#1 ) [ lvaluevar::i#2 lvaluevar::screen#2 ]
+  [6] (byte) lvaluevar::i#2 ← phi( lvaluevar/(byte) 2 lvaluevar::@2/(byte) lvaluevar::i#1 ) [ lvaluevar::i#2 lvaluevar::screen#2 ]
+  [7] if((byte) lvaluevar::i#2<(byte) 10) goto lvaluevar::@2 [ lvaluevar::i#2 lvaluevar::screen#2 ]
+  to:lvaluevar::@return
+lvaluevar::@return: from lvaluevar::@1
+  [8] return  [ ]
+  to:@RETURN
+lvaluevar::@2: from lvaluevar::@1
+  [9] *((byte*) lvaluevar::screen#2) ← (byte) 4 [ lvaluevar::i#2 lvaluevar::screen#2 ]
+  [10] (byte*) lvaluevar::screen#1 ← ++ (byte*) lvaluevar::screen#2 [ lvaluevar::screen#1 lvaluevar::i#2 ]
+  [11] (byte) lvaluevar::i#1 ← ++ (byte) lvaluevar::i#2 [ lvaluevar::i#1 lvaluevar::screen#1 ]
+  to:lvaluevar::@1
+rvaluevar: from main::@2
+  to:rvaluevar::@1
+rvaluevar::@1: from rvaluevar rvaluevar::@2
+  [12] (byte*) rvaluevar::screen#2 ← phi( rvaluevar/(word) 1024 rvaluevar::@2/(byte*) rvaluevar::screen#1 ) [ rvaluevar::i#2 rvaluevar::screen#2 ]
+  [12] (byte) rvaluevar::i#2 ← phi( rvaluevar/(byte) 2 rvaluevar::@2/(byte) rvaluevar::i#1 ) [ rvaluevar::i#2 rvaluevar::screen#2 ]
+  [13] if((byte) rvaluevar::i#2<(byte) 10) goto rvaluevar::@2 [ rvaluevar::i#2 rvaluevar::screen#2 ]
+  to:rvaluevar::@return
+rvaluevar::@return: from rvaluevar::@1
+  [14] return  [ ]
+  to:@RETURN
+rvaluevar::@2: from rvaluevar::@1
+  [15] (byte) rvaluevar::b#0 ← * (byte*) rvaluevar::screen#2 [ rvaluevar::i#2 rvaluevar::screen#2 ]
+  [16] (byte*) rvaluevar::screen#1 ← ++ (byte*) rvaluevar::screen#2 [ rvaluevar::screen#1 rvaluevar::i#2 ]
+  [17] (byte) rvaluevar::i#1 ← ++ (byte) rvaluevar::i#2 [ rvaluevar::i#1 rvaluevar::screen#1 ]
+  to:rvaluevar::@1
+rvalue: from main::@1
+  [18] (byte) rvalue::b#0 ← * (word) 1024 [ ]
+  [19] (byte) rvalue::b#1 ← * (word) 1025 [ ]
+  to:rvalue::@1
+rvalue::@1: from rvalue rvalue::@2
+  [20] (byte) rvalue::i#2 ← phi( rvalue/(byte) 2 rvalue::@2/(byte) rvalue::i#1 ) [ rvalue::i#2 ]
+  [21] if((byte) rvalue::i#2<(byte) 10) goto rvalue::@2 [ rvalue::i#2 ]
+  to:rvalue::@return
+rvalue::@return: from rvalue::@1
+  [22] return  [ ]
+  to:@RETURN
+rvalue::@2: from rvalue::@1
+  [23] (byte) rvalue::b#2 ← (word) 1024 *idx (byte) rvalue::i#2 [ rvalue::i#2 ]
+  [24] (byte) rvalue::i#1 ← ++ (byte) rvalue::i#2 [ rvalue::i#1 ]
+  to:rvalue::@1
+lvalue: from main
+  [25] *((word) 1024) ← (byte) 1 [ ]
+  [26] *((word) 1025) ← (byte) 2 [ ]
+  to:lvalue::@1
+lvalue::@1: from lvalue lvalue::@2
+  [27] (byte) lvalue::i#2 ← phi( lvalue/(byte) 2 lvalue::@2/(byte) lvalue::i#1 ) [ lvalue::i#2 ]
+  [28] if((byte) lvalue::i#2<(byte) 10) goto lvalue::@2 [ lvalue::i#2 ]
+  to:lvalue::@return
+lvalue::@return: from lvalue::@1
+  [29] return  [ ]
+  to:@RETURN
+lvalue::@2: from lvalue::@1
+  [30] *((word) 1024 + (byte) lvalue::i#2) ← (byte) 3 [ lvalue::i#2 ]
+  [31] (byte) lvalue::i#1 ← ++ (byte) lvalue::i#2 [ lvalue::i#1 ]
+  to:lvalue::@1
+
+CALL GRAPH
+Calls in [] to 0:main 
+Calls in [main] to 1:lvalue 2:rvalue 3:rvaluevar 4:lvaluevar 
+
+DOMINATORS
+@BEGIN dominated by  @BEGIN 
+@END dominated by  @BEGIN @END 
+main dominated by  @BEGIN main 
+main::@1 dominated by  @BEGIN main::@1 main 
+main::@2 dominated by  @BEGIN main::@2 main::@1 main 
+main::@3 dominated by  @BEGIN main::@2 main::@1 main::@3 main 
+main::@return dominated by  @BEGIN main::@2 main::@1 main::@3 main main::@return 
+lvaluevar dominated by  @BEGIN main::@2 main::@1 main::@3 main lvaluevar 
+lvaluevar::@1 dominated by  @BEGIN main::@2 main::@1 main::@3 main lvaluevar::@1 lvaluevar 
+lvaluevar::@return dominated by  @BEGIN main::@2 main::@1 main::@3 main lvaluevar::@1 lvaluevar::@return lvaluevar 
+lvaluevar::@2 dominated by  @BEGIN main::@2 main::@1 main::@3 main lvaluevar::@2 lvaluevar::@1 lvaluevar 
+rvaluevar dominated by  rvaluevar @BEGIN main::@2 main::@1 main 
+rvaluevar::@1 dominated by  rvaluevar @BEGIN main::@2 main::@1 main rvaluevar::@1 
+rvaluevar::@return dominated by  rvaluevar @BEGIN rvaluevar::@return main::@2 main::@1 main rvaluevar::@1 
+rvaluevar::@2 dominated by  rvaluevar @BEGIN main::@2 main::@1 main rvaluevar::@2 rvaluevar::@1 
+rvalue dominated by  @BEGIN main::@1 rvalue main 
+rvalue::@1 dominated by  @BEGIN main::@1 rvalue::@1 rvalue main 
+rvalue::@return dominated by  @BEGIN main::@1 rvalue::@1 rvalue main rvalue::@return 
+rvalue::@2 dominated by  @BEGIN main::@1 rvalue::@1 rvalue rvalue::@2 main 
+lvalue dominated by  @BEGIN main lvalue 
+lvalue::@1 dominated by  @BEGIN lvalue::@1 main lvalue 
+lvalue::@return dominated by  @BEGIN lvalue::@return lvalue::@1 main lvalue 
+lvalue::@2 dominated by  @BEGIN lvalue::@1 lvalue::@2 main lvalue 
+
+Found back edge: Loop head: lvaluevar::@1 tails: lvaluevar::@2 blocks: null
+Found back edge: Loop head: rvaluevar::@1 tails: rvaluevar::@2 blocks: null
+Found back edge: Loop head: rvalue::@1 tails: rvalue::@2 blocks: null
+Found back edge: Loop head: lvalue::@1 tails: lvalue::@2 blocks: null
+Populated: Loop head: lvaluevar::@1 tails: lvaluevar::@2 blocks: lvaluevar::@2 lvaluevar::@1 
+Populated: Loop head: rvaluevar::@1 tails: rvaluevar::@2 blocks: rvaluevar::@2 rvaluevar::@1 
+Populated: Loop head: rvalue::@1 tails: rvalue::@2 blocks: rvalue::@2 rvalue::@1 
+Populated: Loop head: lvalue::@1 tails: lvalue::@2 blocks: lvalue::@2 lvalue::@1 
+NATURAL LOOPS
+Loop head: lvaluevar::@1 tails: lvaluevar::@2 blocks: lvaluevar::@2 lvaluevar::@1 
+Loop head: rvaluevar::@1 tails: rvaluevar::@2 blocks: rvaluevar::@2 rvaluevar::@1 
+Loop head: rvalue::@1 tails: rvalue::@2 blocks: rvalue::@2 rvalue::@1 
+Loop head: lvalue::@1 tails: lvalue::@2 blocks: lvalue::@2 lvalue::@1 
+
+Found 0 loops in scope []
+Found 0 loops in scope [main]
+Found 1 loops in scope [lvalue]
+  Loop head: lvalue::@1 tails: lvalue::@2 blocks: lvalue::@2 lvalue::@1 
+Found 1 loops in scope [rvalue]
+  Loop head: rvalue::@1 tails: rvalue::@2 blocks: rvalue::@2 rvalue::@1 
+Found 1 loops in scope [rvaluevar]
+  Loop head: rvaluevar::@1 tails: rvaluevar::@2 blocks: rvaluevar::@2 rvaluevar::@1 
+Found 1 loops in scope [lvaluevar]
+  Loop head: lvaluevar::@1 tails: lvaluevar::@2 blocks: lvaluevar::@2 lvaluevar::@1 
+NATURAL LOOPS WITH DEPTH
+Loop head: lvaluevar::@1 tails: lvaluevar::@2 blocks: lvaluevar::@2 lvaluevar::@1  depth: 1
+Loop head: rvaluevar::@1 tails: rvaluevar::@2 blocks: rvaluevar::@2 rvaluevar::@1  depth: 1
+Loop head: rvalue::@1 tails: rvalue::@2 blocks: rvalue::@2 rvalue::@1  depth: 1
+Loop head: lvalue::@1 tails: lvalue::@2 blocks: lvalue::@2 lvalue::@1  depth: 1
+
+Initial phi equivalence classes
+[ lvaluevar::i#2 lvaluevar::i#1 ]
+[ lvaluevar::screen#2 lvaluevar::screen#1 ]
+[ rvaluevar::i#2 rvaluevar::i#1 ]
+[ rvaluevar::screen#2 rvaluevar::screen#1 ]
+[ rvalue::i#2 rvalue::i#1 ]
+[ lvalue::i#2 lvalue::i#1 ]
+Copy Coalesced equivalence classes
+[ lvaluevar::i#2 lvaluevar::i#1 ]
+[ lvaluevar::screen#2 lvaluevar::screen#1 ]
+[ rvaluevar::i#2 rvaluevar::i#1 ]
+[ rvaluevar::screen#2 rvaluevar::screen#1 ]
+[ rvalue::i#2 rvalue::i#1 ]
+[ lvalue::i#2 lvalue::i#1 ]
+Added variable rvaluevar::b#0 to zero page equivalence class [ rvaluevar::b#0 ]
+Added variable rvalue::b#0 to zero page equivalence class [ rvalue::b#0 ]
+Added variable rvalue::b#1 to zero page equivalence class [ rvalue::b#1 ]
+Added variable rvalue::b#2 to zero page equivalence class [ rvalue::i#2 rvalue::i#1 rvalue::b#2 ]
+Complete equivalence classes
+[ lvaluevar::i#2 lvaluevar::i#1 ]
+[ lvaluevar::screen#2 lvaluevar::screen#1 ]
+[ rvaluevar::i#2 rvaluevar::i#1 ]
+[ rvaluevar::screen#2 rvaluevar::screen#1 ]
+[ rvalue::i#2 rvalue::i#1 rvalue::b#2 ]
+[ lvalue::i#2 lvalue::i#1 ]
+[ rvaluevar::b#0 ]
+[ rvalue::b#0 ]
+[ rvalue::b#1 ]
+Allocated zp byte:2 to zp byte:2 [ lvaluevar::i#2 lvaluevar::i#1 ]
+Allocated zp ptr byte:3 to zp ptr byte:3 [ lvaluevar::screen#2 lvaluevar::screen#1 ]
+Allocated zp byte:5 to zp byte:5 [ rvaluevar::i#2 rvaluevar::i#1 ]
+Allocated zp ptr byte:6 to zp ptr byte:6 [ rvaluevar::screen#2 rvaluevar::screen#1 ]
+Allocated zp byte:8 to zp byte:8 [ rvalue::i#2 rvalue::i#1 rvalue::b#2 ]
+Allocated zp byte:9 to zp byte:9 [ lvalue::i#2 lvalue::i#1 ]
+Allocated zp byte:10 to zp byte:10 [ rvaluevar::b#0 ]
+Allocated zp byte:11 to zp byte:11 [ rvalue::b#0 ]
+Allocated zp byte:12 to zp byte:12 [ rvalue::b#1 ]
+
+VARIABLE REGISTER WEIGHTS
+(void()) lvalue()
+(byte[1024]) lvalue::SCREEN
+(byte) lvalue::i
+(byte) lvalue::i#1 22.0
+(byte) lvalue::i#2 14.666666666666666
+(void()) lvaluevar()
+(byte) lvaluevar::b
+(byte) lvaluevar::i
+(byte) lvaluevar::i#1 22.0
+(byte) lvaluevar::i#2 8.25
+(byte*) lvaluevar::screen
+(byte*) lvaluevar::screen#1 11.0
+(byte*) lvaluevar::screen#2 11.0
+(void()) main()
+(void()) rvalue()
+(byte[1024]) rvalue::SCREEN
+(byte) rvalue::b
+(byte) rvalue::b#0 Infinity
+(byte) rvalue::b#1 Infinity
+(byte) rvalue::b#2 Infinity
+(byte) rvalue::i
+(byte) rvalue::i#1 22.0
+(byte) rvalue::i#2 14.666666666666666
+(void()) rvaluevar()
+(byte) rvaluevar::b
+(byte) rvaluevar::b#0 Infinity
+(byte) rvaluevar::i
+(byte) rvaluevar::i#1 22.0
+(byte) rvaluevar::i#2 8.25
+(byte*) rvaluevar::screen
+(byte*) rvaluevar::screen#1 11.0
+(byte*) rvaluevar::screen#2 11.0
+
+zp byte:2 [ lvaluevar::i#2 lvaluevar::i#1 ]
+zp ptr byte:3 [ lvaluevar::screen#2 lvaluevar::screen#1 ]
+zp byte:5 [ rvaluevar::i#2 rvaluevar::i#1 ]
+zp ptr byte:6 [ rvaluevar::screen#2 rvaluevar::screen#1 ]
+zp byte:8 [ rvalue::i#2 rvalue::i#1 rvalue::b#2 ]
+zp byte:9 [ lvalue::i#2 lvalue::i#1 ]
+zp byte:10 [ rvaluevar::b#0 ]
+zp byte:11 [ rvalue::b#0 ]
+zp byte:12 [ rvalue::b#1 ]
+
+Re-allocated ZP register from zp byte:2 to zp byte:2
+Re-allocated ZP register from zp ptr byte:3 to zp ptr byte:3
+Re-allocated ZP register from zp byte:5 to zp byte:5
+Re-allocated ZP register from zp ptr byte:6 to zp ptr byte:6
+Re-allocated ZP register from zp byte:8 to zp byte:8
+Re-allocated ZP register from zp byte:9 to zp byte:9
+Re-allocated ZP register from zp byte:10 to zp byte:10
+Re-allocated ZP register from zp byte:11 to zp byte:11
+Re-allocated ZP register from zp byte:12 to zp byte:12
+Uplifting of variable (byte) rvalue::b#0 to A
+REGISTER UPLIFTING
+(void()) lvalue()
+(byte[1024]) lvalue::SCREEN
+(byte) lvalue::i
+(byte) lvalue::i#1 zp byte:9 22.0
+(byte) lvalue::i#2 zp byte:9 14.666666666666666
+(void()) lvaluevar()
+(byte) lvaluevar::b
+(byte) lvaluevar::i
+(byte) lvaluevar::i#1 zp byte:2 22.0
+(byte) lvaluevar::i#2 zp byte:2 8.25
+(byte*) lvaluevar::screen
+(byte*) lvaluevar::screen#1 zp ptr byte:3 11.0
+(byte*) lvaluevar::screen#2 zp ptr byte:3 11.0
+(void()) main()
+(void()) rvalue()
+(byte[1024]) rvalue::SCREEN
+(byte) rvalue::b
+(byte) rvalue::b#0 reg byte a Infinity
+(byte) rvalue::b#1 zp byte:12 Infinity
+(byte) rvalue::b#2 zp byte:8 Infinity
+(byte) rvalue::i
+(byte) rvalue::i#1 zp byte:8 22.0
+(byte) rvalue::i#2 zp byte:8 14.666666666666666
+(void()) rvaluevar()
+(byte) rvaluevar::b
+(byte) rvaluevar::b#0 zp byte:10 Infinity
+(byte) rvaluevar::i
+(byte) rvaluevar::i#1 zp byte:5 22.0
+(byte) rvaluevar::i#2 zp byte:5 8.25
+(byte*) rvaluevar::screen
+(byte*) rvaluevar::screen#1 zp ptr byte:6 11.0
+(byte*) rvaluevar::screen#2 zp ptr byte:6 11.0
+
+zp byte:2 [ lvaluevar::i#2 lvaluevar::i#1 ]
+zp ptr byte:3 [ lvaluevar::screen#2 lvaluevar::screen#1 ]
+zp byte:5 [ rvaluevar::i#2 rvaluevar::i#1 ]
+zp ptr byte:6 [ rvaluevar::screen#2 rvaluevar::screen#1 ]
+zp byte:8 [ rvalue::i#2 rvalue::i#1 rvalue::b#2 ]
+zp byte:9 [ lvalue::i#2 lvalue::i#1 ]
+zp byte:10 [ rvaluevar::b#0 ]
+zp byte:11 [ rvalue::b#0 ]
+zp byte:12 [ rvalue::b#1 ]
+
+Coalescing zero page register [ zp byte:2 [ lvaluevar::i#2 lvaluevar::i#1 ] ] with [ zp byte:5 [ rvaluevar::i#2 rvaluevar::i#1 ] ]
+Coalescing zero page register [ zp byte:2 [ lvaluevar::i#2 lvaluevar::i#1 rvaluevar::i#2 rvaluevar::i#1 ] ] with [ zp byte:8 [ rvalue::i#2 rvalue::i#1 rvalue::b#2 ] ]
+Coalescing zero page register [ zp byte:2 [ lvaluevar::i#2 lvaluevar::i#1 rvaluevar::i#2 rvaluevar::i#1 rvalue::i#2 rvalue::i#1 rvalue::b#2 ] ] with [ zp byte:9 [ lvalue::i#2 lvalue::i#1 ] ]
+Coalescing zero page register [ zp byte:2 [ lvaluevar::i#2 lvaluevar::i#1 rvaluevar::i#2 rvaluevar::i#1 rvalue::i#2 rvalue::i#1 rvalue::b#2 lvalue::i#2 lvalue::i#1 ] ] with [ zp byte:10 [ rvaluevar::b#0 ] ]
+Coalescing zero page register [ zp byte:2 [ lvaluevar::i#2 lvaluevar::i#1 rvaluevar::i#2 rvaluevar::i#1 rvalue::i#2 rvalue::i#1 rvalue::b#2 lvalue::i#2 lvalue::i#1 rvaluevar::b#0 ] ] with [ zp byte:11 [ rvalue::b#0 ] ]
+Coalescing zero page register [ zp byte:2 [ lvaluevar::i#2 lvaluevar::i#1 rvaluevar::i#2 rvaluevar::i#1 rvalue::i#2 rvalue::i#1 rvalue::b#2 lvalue::i#2 lvalue::i#1 rvaluevar::b#0 rvalue::b#0 ] ] with [ zp byte:12 [ rvalue::b#1 ] ]
+Coalescing zero page register [ zp ptr byte:3 [ lvaluevar::screen#2 lvaluevar::screen#1 ] ] with [ zp ptr byte:6 [ rvaluevar::screen#2 rvaluevar::screen#1 ] ]
+INITIAL ASM
+BBEGIN:
+  jsr main
+  jmp BEND
+BEND:
+main:
+  jsr lvalue
+  jmp main__B1
+main__B1:
+  jsr rvalue
+  jmp main__B2
+main__B2:
+  jsr rvaluevar
+  jmp main__B3
+main__B3:
+  jsr lvaluevar
+  jmp main__Breturn
+main__Breturn:
+  rts
+lvaluevar:
+lvaluevar__B1_from_lvaluevar:
+  // (byte*) lvaluevar::screen#2 = (word) 1024  // zpptrby1=cowo1
+  lda #<1024
+  sta 3
+  lda #>1024
+  sta 3+1
+  // (byte) lvaluevar::i#2 = (byte) 2  // zpby1=coby1
+  lda #2
+  sta 2
+  jmp lvaluevar__B1
+lvaluevar__B1:
+  // [7] if((byte) lvaluevar::i#2<(byte) 10) goto lvaluevar::@2 [ lvaluevar::i#2 lvaluevar::screen#2 ]  //  zpby1_lt_coby1_then_la1
+  lda 2
+  cmp #10
+  bcc lvaluevar__B2
+  jmp lvaluevar__Breturn
+lvaluevar__Breturn:
+  rts
+lvaluevar__B2:
+  // [9] *((byte*) lvaluevar::screen#2) ← (byte) 4 [ lvaluevar::i#2 lvaluevar::screen#2 ]  //  zpiby1=coby1
+  ldy #0
+  lda #4
+  sta (3),y
+  // [10] (byte*) lvaluevar::screen#1 ← ++ (byte*) lvaluevar::screen#2 [ lvaluevar::screen#1 lvaluevar::i#2 ]  //  zpptrby1=_inc_zpptrby1
+  inc 3
+  bne !+
+  inc 3+1
+!:
+  // [11] (byte) lvaluevar::i#1 ← ++ (byte) lvaluevar::i#2 [ lvaluevar::i#1 lvaluevar::screen#1 ]  //  zpby1=_inc_zpby1
+  inc 2
+lvaluevar__B1_from_B2:
+  // (byte*) lvaluevar::screen#2 = (byte*) lvaluevar::screen#1  // register copy zp ptr byte:3
+  // (byte) lvaluevar::i#2 = (byte) lvaluevar::i#1  // register copy zp byte:2
+  jmp lvaluevar__B1
+rvaluevar:
+rvaluevar__B1_from_rvaluevar:
+  // (byte*) rvaluevar::screen#2 = (word) 1024  // zpptrby1=cowo1
+  lda #<1024
+  sta 6
+  lda #>1024
+  sta 6+1
+  // (byte) rvaluevar::i#2 = (byte) 2  // zpby1=coby1
+  lda #2
+  sta 5
+  jmp rvaluevar__B1
+rvaluevar__B1:
+  // [13] if((byte) rvaluevar::i#2<(byte) 10) goto rvaluevar::@2 [ rvaluevar::i#2 rvaluevar::screen#2 ]  //  zpby1_lt_coby1_then_la1
+  lda 5
+  cmp #10
+  bcc rvaluevar__B2
+  jmp rvaluevar__Breturn
+rvaluevar__Breturn:
+  rts
+rvaluevar__B2:
+  // [15] (byte) rvaluevar::b#0 ← * (byte*) rvaluevar::screen#2 [ rvaluevar::i#2 rvaluevar::screen#2 ]  //  zpby1=_star_zpptrby1
+  ldy #0
+  lda (6),y
+  sta 10
+  // [16] (byte*) rvaluevar::screen#1 ← ++ (byte*) rvaluevar::screen#2 [ rvaluevar::screen#1 rvaluevar::i#2 ]  //  zpptrby1=_inc_zpptrby1
+  inc 6
+  bne !+
+  inc 6+1
+!:
+  // [17] (byte) rvaluevar::i#1 ← ++ (byte) rvaluevar::i#2 [ rvaluevar::i#1 rvaluevar::screen#1 ]  //  zpby1=_inc_zpby1
+  inc 5
+rvaluevar__B1_from_B2:
+  // (byte*) rvaluevar::screen#2 = (byte*) rvaluevar::screen#1  // register copy zp ptr byte:6
+  // (byte) rvaluevar::i#2 = (byte) rvaluevar::i#1  // register copy zp byte:5
+  jmp rvaluevar__B1
+rvalue:
+  // [18] (byte) rvalue::b#0 ← * (word) 1024 [ ]  //  aby=_star_cowo1
+  lda 1024
+  // [19] (byte) rvalue::b#1 ← * (word) 1025 [ ]  //  zpby1=_star_cowo1
+  lda 1025
+  sta 12
+rvalue__B1_from_rvalue:
+  // (byte) rvalue::i#2 = (byte) 2  // zpby1=coby1
+  lda #2
+  sta 8
+  jmp rvalue__B1
+rvalue__B1:
+  // [21] if((byte) rvalue::i#2<(byte) 10) goto rvalue::@2 [ rvalue::i#2 ]  //  zpby1_lt_coby1_then_la1
+  lda 8
+  cmp #10
+  bcc rvalue__B2
+  jmp rvalue__Breturn
+rvalue__Breturn:
+  rts
+rvalue__B2:
+  // [23] (byte) rvalue::b#2 ← (word) 1024 *idx (byte) rvalue::i#2 [ rvalue::i#2 ]  //  zpby1=cowo1_staridx_zpby1
+  ldx 8
+  lda 1024,x
+  sta 8
+  // [24] (byte) rvalue::i#1 ← ++ (byte) rvalue::i#2 [ rvalue::i#1 ]  //  zpby1=_inc_zpby1
+  inc 8
+rvalue__B1_from_B2:
+  // (byte) rvalue::i#2 = (byte) rvalue::i#1  // register copy zp byte:8
+  jmp rvalue__B1
+lvalue:
+  // [25] *((word) 1024) ← (byte) 1 [ ]  //  coptr1=coby2
+  lda #1
+  sta 1024
+  // [26] *((word) 1025) ← (byte) 2 [ ]  //  coptr1=coby2
+  lda #2
+  sta 1025
+lvalue__B1_from_lvalue:
+  // (byte) lvalue::i#2 = (byte) 2  // zpby1=coby1
+  lda #2
+  sta 9
+  jmp lvalue__B1
+lvalue__B1:
+  // [28] if((byte) lvalue::i#2<(byte) 10) goto lvalue::@2 [ lvalue::i#2 ]  //  zpby1_lt_coby1_then_la1
+  lda 9
+  cmp #10
+  bcc lvalue__B2
+  jmp lvalue__Breturn
+lvalue__Breturn:
+  rts
+lvalue__B2:
+  // [30] *((word) 1024 + (byte) lvalue::i#2) ← (byte) 3 [ lvalue::i#2 ]  //  ptr_cowo1_zpby1=coby2
+  lda #3
+  ldx 9
+  sta 1024,x
+  // [31] (byte) lvalue::i#1 ← ++ (byte) lvalue::i#2 [ lvalue::i#1 ]  //  zpby1=_inc_zpby1
+  inc 9
+lvalue__B1_from_B2:
+  // (byte) lvalue::i#2 = (byte) lvalue::i#1  // register copy zp byte:9
+  jmp lvalue__B1
+
+Removing instruction jmp BEND
+Removing instruction jmp main__B1
+Removing instruction jmp main__B2
+Removing instruction jmp main__B3
+Removing instruction jmp main__Breturn
+Removing instruction jmp lvaluevar__B1
+Removing instruction jmp lvaluevar__Breturn
+Removing instruction jmp rvaluevar__B1
+Removing instruction jmp rvaluevar__Breturn
+Removing instruction jmp rvalue__B1
+Removing instruction jmp rvalue__Breturn
+Removing instruction jmp lvalue__B1
+Removing instruction jmp lvalue__Breturn
+Succesful ASM optimization Pass5NextJumpElimination
+ASSEMBLER
+BBEGIN:
+  jsr main
+BEND:
+main:
+  jsr lvalue
+main__B1:
+  jsr rvalue
+main__B2:
+  jsr rvaluevar
+main__B3:
+  jsr lvaluevar
+main__Breturn:
+  rts
+lvaluevar:
+lvaluevar__B1_from_lvaluevar:
+  // (byte*) lvaluevar::screen#2 = (word) 1024  // zpptrby1=cowo1
+  lda #<1024
+  sta 3
+  lda #>1024
+  sta 3+1
+  // (byte) lvaluevar::i#2 = (byte) 2  // zpby1=coby1
+  lda #2
+  sta 2
+lvaluevar__B1:
+  // [7] if((byte) lvaluevar::i#2<(byte) 10) goto lvaluevar::@2 [ lvaluevar::i#2 lvaluevar::screen#2 ]  //  zpby1_lt_coby1_then_la1
+  lda 2
+  cmp #10
+  bcc lvaluevar__B2
+lvaluevar__Breturn:
+  rts
+lvaluevar__B2:
+  // [9] *((byte*) lvaluevar::screen#2) ← (byte) 4 [ lvaluevar::i#2 lvaluevar::screen#2 ]  //  zpiby1=coby1
+  ldy #0
+  lda #4
+  sta (3),y
+  // [10] (byte*) lvaluevar::screen#1 ← ++ (byte*) lvaluevar::screen#2 [ lvaluevar::screen#1 lvaluevar::i#2 ]  //  zpptrby1=_inc_zpptrby1
+  inc 3
+  bne !+
+  inc 3+1
+!:
+  // [11] (byte) lvaluevar::i#1 ← ++ (byte) lvaluevar::i#2 [ lvaluevar::i#1 lvaluevar::screen#1 ]  //  zpby1=_inc_zpby1
+  inc 2
+lvaluevar__B1_from_B2:
+  // (byte*) lvaluevar::screen#2 = (byte*) lvaluevar::screen#1  // register copy zp ptr byte:3
+  // (byte) lvaluevar::i#2 = (byte) lvaluevar::i#1  // register copy zp byte:2
+  jmp lvaluevar__B1
+rvaluevar:
+rvaluevar__B1_from_rvaluevar:
+  // (byte*) rvaluevar::screen#2 = (word) 1024  // zpptrby1=cowo1
+  lda #<1024
+  sta 6
+  lda #>1024
+  sta 6+1
+  // (byte) rvaluevar::i#2 = (byte) 2  // zpby1=coby1
+  lda #2
+  sta 5
+rvaluevar__B1:
+  // [13] if((byte) rvaluevar::i#2<(byte) 10) goto rvaluevar::@2 [ rvaluevar::i#2 rvaluevar::screen#2 ]  //  zpby1_lt_coby1_then_la1
+  lda 5
+  cmp #10
+  bcc rvaluevar__B2
+rvaluevar__Breturn:
+  rts
+rvaluevar__B2:
+  // [15] (byte) rvaluevar::b#0 ← * (byte*) rvaluevar::screen#2 [ rvaluevar::i#2 rvaluevar::screen#2 ]  //  zpby1=_star_zpptrby1
+  ldy #0
+  lda (6),y
+  sta 10
+  // [16] (byte*) rvaluevar::screen#1 ← ++ (byte*) rvaluevar::screen#2 [ rvaluevar::screen#1 rvaluevar::i#2 ]  //  zpptrby1=_inc_zpptrby1
+  inc 6
+  bne !+
+  inc 6+1
+!:
+  // [17] (byte) rvaluevar::i#1 ← ++ (byte) rvaluevar::i#2 [ rvaluevar::i#1 rvaluevar::screen#1 ]  //  zpby1=_inc_zpby1
+  inc 5
+rvaluevar__B1_from_B2:
+  // (byte*) rvaluevar::screen#2 = (byte*) rvaluevar::screen#1  // register copy zp ptr byte:6
+  // (byte) rvaluevar::i#2 = (byte) rvaluevar::i#1  // register copy zp byte:5
+  jmp rvaluevar__B1
+rvalue:
+  // [18] (byte) rvalue::b#0 ← * (word) 1024 [ ]  //  aby=_star_cowo1
+  lda 1024
+  // [19] (byte) rvalue::b#1 ← * (word) 1025 [ ]  //  zpby1=_star_cowo1
+  lda 1025
+  sta 12
+rvalue__B1_from_rvalue:
+  // (byte) rvalue::i#2 = (byte) 2  // zpby1=coby1
+  lda #2
+  sta 8
+rvalue__B1:
+  // [21] if((byte) rvalue::i#2<(byte) 10) goto rvalue::@2 [ rvalue::i#2 ]  //  zpby1_lt_coby1_then_la1
+  lda 8
+  cmp #10
+  bcc rvalue__B2
+rvalue__Breturn:
+  rts
+rvalue__B2:
+  // [23] (byte) rvalue::b#2 ← (word) 1024 *idx (byte) rvalue::i#2 [ rvalue::i#2 ]  //  zpby1=cowo1_staridx_zpby1
+  ldx 8
+  lda 1024,x
+  sta 8
+  // [24] (byte) rvalue::i#1 ← ++ (byte) rvalue::i#2 [ rvalue::i#1 ]  //  zpby1=_inc_zpby1
+  inc 8
+rvalue__B1_from_B2:
+  // (byte) rvalue::i#2 = (byte) rvalue::i#1  // register copy zp byte:8
+  jmp rvalue__B1
+lvalue:
+  // [25] *((word) 1024) ← (byte) 1 [ ]  //  coptr1=coby2
+  lda #1
+  sta 1024
+  // [26] *((word) 1025) ← (byte) 2 [ ]  //  coptr1=coby2
+  lda #2
+  sta 1025
+lvalue__B1_from_lvalue:
+  // (byte) lvalue::i#2 = (byte) 2  // zpby1=coby1
+  lda #2
+  sta 9
+lvalue__B1:
+  // [28] if((byte) lvalue::i#2<(byte) 10) goto lvalue::@2 [ lvalue::i#2 ]  //  zpby1_lt_coby1_then_la1
+  lda 9
+  cmp #10
+  bcc lvalue__B2
+lvalue__Breturn:
+  rts
+lvalue__B2:
+  // [30] *((word) 1024 + (byte) lvalue::i#2) ← (byte) 3 [ lvalue::i#2 ]  //  ptr_cowo1_zpby1=coby2
+  lda #3
+  ldx 9
+  sta 1024,x
+  // [31] (byte) lvalue::i#1 ← ++ (byte) lvalue::i#2 [ lvalue::i#1 ]  //  zpby1=_inc_zpby1
+  inc 9
+lvalue__B1_from_B2:
+  // (byte) lvalue::i#2 = (byte) lvalue::i#1  // register copy zp byte:9
+  jmp lvalue__B1
+
+FINAL SYMBOL TABLE
+(label) @BEGIN
+(label) @END
+(void()) lvalue()
+(label) lvalue::@1
+(label) lvalue::@2
+(label) lvalue::@return
+(byte[1024]) lvalue::SCREEN
+(byte) lvalue::i
+(byte) lvalue::i#1 zp byte:9 22.0
+(byte) lvalue::i#2 zp byte:9 14.666666666666666
+(void()) lvaluevar()
+(label) lvaluevar::@1
+(label) lvaluevar::@2
+(label) lvaluevar::@return
+(byte) lvaluevar::b
+(byte) lvaluevar::i
+(byte) lvaluevar::i#1 zp byte:2 22.0
+(byte) lvaluevar::i#2 zp byte:2 8.25
+(byte*) lvaluevar::screen
+(byte*) lvaluevar::screen#1 zp ptr byte:3 11.0
+(byte*) lvaluevar::screen#2 zp ptr byte:3 11.0
+(void()) main()
+(label) main::@1
+(label) main::@2
+(label) main::@3
+(label) main::@return
+(void()) rvalue()
+(label) rvalue::@1
+(label) rvalue::@2
+(label) rvalue::@return
+(byte[1024]) rvalue::SCREEN
+(byte) rvalue::b
+(byte) rvalue::b#0 reg byte a Infinity
+(byte) rvalue::b#1 zp byte:12 Infinity
+(byte) rvalue::b#2 zp byte:8 Infinity
+(byte) rvalue::i
+(byte) rvalue::i#1 zp byte:8 22.0
+(byte) rvalue::i#2 zp byte:8 14.666666666666666
+(void()) rvaluevar()
+(label) rvaluevar::@1
+(label) rvaluevar::@2
+(label) rvaluevar::@return
+(byte) rvaluevar::b
+(byte) rvaluevar::b#0 zp byte:10 Infinity
+(byte) rvaluevar::i
+(byte) rvaluevar::i#1 zp byte:5 22.0
+(byte) rvaluevar::i#2 zp byte:5 8.25
+(byte*) rvaluevar::screen
+(byte*) rvaluevar::screen#1 zp ptr byte:6 11.0
+(byte*) rvaluevar::screen#2 zp ptr byte:6 11.0
+
+zp byte:2 [ lvaluevar::i#2 lvaluevar::i#1 rvaluevar::i#2 rvaluevar::i#1 rvalue::i#2 rvalue::i#1 rvalue::b#2 lvalue::i#2 lvalue::i#1 rvaluevar::b#0 rvalue::b#0 rvalue::b#1 ]
+zp ptr byte:3 [ lvaluevar::screen#2 lvaluevar::screen#1 rvaluevar::screen#2 rvaluevar::screen#1 ]
+
+FINAL CODE
+BBEGIN:
+  jsr main
+BEND:
+main:
+  jsr lvalue
+main__B1:
+  jsr rvalue
+main__B2:
+  jsr rvaluevar
+main__B3:
+  jsr lvaluevar
+main__Breturn:
+  rts
+lvaluevar:
+lvaluevar__B1_from_lvaluevar:
+  // (byte*) lvaluevar::screen#2 = (word) 1024  // zpptrby1=cowo1
+  lda #<1024
+  sta 3
+  lda #>1024
+  sta 3+1
+  // (byte) lvaluevar::i#2 = (byte) 2  // zpby1=coby1
+  lda #2
+  sta 2
+lvaluevar__B1:
+  // [7] if((byte) lvaluevar::i#2<(byte) 10) goto lvaluevar::@2 [ lvaluevar::i#2 lvaluevar::screen#2 ]  //  zpby1_lt_coby1_then_la1
+  lda 2
+  cmp #10
+  bcc lvaluevar__B2
+lvaluevar__Breturn:
+  rts
+lvaluevar__B2:
+  // [9] *((byte*) lvaluevar::screen#2) ← (byte) 4 [ lvaluevar::i#2 lvaluevar::screen#2 ]  //  zpiby1=coby1
+  ldy #0
+  lda #4
+  sta (3),y
+  // [10] (byte*) lvaluevar::screen#1 ← ++ (byte*) lvaluevar::screen#2 [ lvaluevar::screen#1 lvaluevar::i#2 ]  //  zpptrby1=_inc_zpptrby1
+  inc 3
+  bne !+
+  inc 3+1
+!:
+  // [11] (byte) lvaluevar::i#1 ← ++ (byte) lvaluevar::i#2 [ lvaluevar::i#1 lvaluevar::screen#1 ]  //  zpby1=_inc_zpby1
+  inc 2
+lvaluevar__B1_from_B2:
+  // (byte*) lvaluevar::screen#2 = (byte*) lvaluevar::screen#1  // register copy zp ptr byte:3
+  // (byte) lvaluevar::i#2 = (byte) lvaluevar::i#1  // register copy zp byte:2
+  jmp lvaluevar__B1
+rvaluevar:
+rvaluevar__B1_from_rvaluevar:
+  // (byte*) rvaluevar::screen#2 = (word) 1024  // zpptrby1=cowo1
+  lda #<1024
+  sta 6
+  lda #>1024
+  sta 6+1
+  // (byte) rvaluevar::i#2 = (byte) 2  // zpby1=coby1
+  lda #2
+  sta 5
+rvaluevar__B1:
+  // [13] if((byte) rvaluevar::i#2<(byte) 10) goto rvaluevar::@2 [ rvaluevar::i#2 rvaluevar::screen#2 ]  //  zpby1_lt_coby1_then_la1
+  lda 5
+  cmp #10
+  bcc rvaluevar__B2
+rvaluevar__Breturn:
+  rts
+rvaluevar__B2:
+  // [15] (byte) rvaluevar::b#0 ← * (byte*) rvaluevar::screen#2 [ rvaluevar::i#2 rvaluevar::screen#2 ]  //  zpby1=_star_zpptrby1
+  ldy #0
+  lda (6),y
+  sta 10
+  // [16] (byte*) rvaluevar::screen#1 ← ++ (byte*) rvaluevar::screen#2 [ rvaluevar::screen#1 rvaluevar::i#2 ]  //  zpptrby1=_inc_zpptrby1
+  inc 6
+  bne !+
+  inc 6+1
+!:
+  // [17] (byte) rvaluevar::i#1 ← ++ (byte) rvaluevar::i#2 [ rvaluevar::i#1 rvaluevar::screen#1 ]  //  zpby1=_inc_zpby1
+  inc 5
+rvaluevar__B1_from_B2:
+  // (byte*) rvaluevar::screen#2 = (byte*) rvaluevar::screen#1  // register copy zp ptr byte:6
+  // (byte) rvaluevar::i#2 = (byte) rvaluevar::i#1  // register copy zp byte:5
+  jmp rvaluevar__B1
+rvalue:
+  // [18] (byte) rvalue::b#0 ← * (word) 1024 [ ]  //  aby=_star_cowo1
+  lda 1024
+  // [19] (byte) rvalue::b#1 ← * (word) 1025 [ ]  //  zpby1=_star_cowo1
+  lda 1025
+  sta 12
+rvalue__B1_from_rvalue:
+  // (byte) rvalue::i#2 = (byte) 2  // zpby1=coby1
+  lda #2
+  sta 8
+rvalue__B1:
+  // [21] if((byte) rvalue::i#2<(byte) 10) goto rvalue::@2 [ rvalue::i#2 ]  //  zpby1_lt_coby1_then_la1
+  lda 8
+  cmp #10
+  bcc rvalue__B2
+rvalue__Breturn:
+  rts
+rvalue__B2:
+  // [23] (byte) rvalue::b#2 ← (word) 1024 *idx (byte) rvalue::i#2 [ rvalue::i#2 ]  //  zpby1=cowo1_staridx_zpby1
+  ldx 8
+  lda 1024,x
+  sta 8
+  // [24] (byte) rvalue::i#1 ← ++ (byte) rvalue::i#2 [ rvalue::i#1 ]  //  zpby1=_inc_zpby1
+  inc 8
+rvalue__B1_from_B2:
+  // (byte) rvalue::i#2 = (byte) rvalue::i#1  // register copy zp byte:8
+  jmp rvalue__B1
+lvalue:
+  // [25] *((word) 1024) ← (byte) 1 [ ]  //  coptr1=coby2
+  lda #1
+  sta 1024
+  // [26] *((word) 1025) ← (byte) 2 [ ]  //  coptr1=coby2
+  lda #2
+  sta 1025
+lvalue__B1_from_lvalue:
+  // (byte) lvalue::i#2 = (byte) 2  // zpby1=coby1
+  lda #2
+  sta 9
+lvalue__B1:
+  // [28] if((byte) lvalue::i#2<(byte) 10) goto lvalue::@2 [ lvalue::i#2 ]  //  zpby1_lt_coby1_then_la1
+  lda 9
+  cmp #10
+  bcc lvalue__B2
+lvalue__Breturn:
+  rts
+lvalue__B2:
+  // [30] *((word) 1024 + (byte) lvalue::i#2) ← (byte) 3 [ lvalue::i#2 ]  //  ptr_cowo1_zpby1=coby2
+  lda #3
+  ldx 9
+  sta 1024,x
+  // [31] (byte) lvalue::i#1 ← ++ (byte) lvalue::i#2 [ lvalue::i#1 ]  //  zpby1=_inc_zpby1
+  inc 9
+lvalue__B1_from_B2:
+  // (byte) lvalue::i#2 = (byte) lvalue::i#1  // register copy zp byte:9
+  jmp lvalue__B1
+

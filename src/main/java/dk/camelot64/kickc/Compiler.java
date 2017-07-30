@@ -156,7 +156,7 @@ public class Compiler {
       new Pass3ZeroPageCoalesce(program, log).allocate();
       new Pass3AssertNoCpuClobber(program, log).check();
 
-      //new Pass4CustomRegisters(program).allocate();
+      //new Pass3CustomRegisters(program).allocate();
       //new Pass3AssertNoCpuClobber(program, log).check();
 
    }

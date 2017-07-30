@@ -67,6 +67,11 @@ public class TestCompilationOutput extends TestCase {
       tester.testFile("fibmem");
    }
 
+   public void testPtrTest() throws IOException, URISyntaxException {
+      TestCompilationOutput tester = new TestCompilationOutput();
+      tester.testFile("ptrtest");
+   }
+
 
 
    private void testFile(String fileName) throws IOException, URISyntaxException {

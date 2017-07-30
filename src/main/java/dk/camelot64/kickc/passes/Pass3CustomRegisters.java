@@ -5,12 +5,12 @@ import dk.camelot64.kickc.icl.*;
 /**
  * Register Allocation for variables
  */
-public class Pass4CustomRegisters {
+public class Pass3CustomRegisters {
 
 
    private Program program;
 
-   public Pass4CustomRegisters(Program program) {
+   public Pass3CustomRegisters(Program program) {
       this.program = program;
    }
 

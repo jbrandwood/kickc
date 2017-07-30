@@ -2,7 +2,7 @@ package dk.camelot64.kickc.passes;
 
 import dk.camelot64.kickc.CompileLog;
 import dk.camelot64.kickc.asm.*;
-import dk.camelot64.kickc.asm.parser.AsmProgramStaticRegisterValues;
+import dk.camelot64.kickc.asm.AsmProgramStaticRegisterValues;
 
 import java.util.ArrayList;
 import java.util.List;

@@ -28,7 +28,7 @@ public class Pass3AssertNoCpuClobber {
       return log;
    }
 
-   /** Uplift one variable */
+   /** Check that no statement clobbers a CPU register used by an alive variable */
    public void check() {
       LiveRangeVariables liveRangeVariables = program.getScope().getLiveRangeVariables();
       RegisterAllocation allocation = program.getScope().getAllocation();

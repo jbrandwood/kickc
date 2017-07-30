@@ -1,6 +1,7 @@
-package dk.camelot64.kickc.asm.parser;
+package dk.camelot64.kickc.asm;
 
 import dk.camelot64.kickc.asm.*;
+import dk.camelot64.kickc.asm.parser.AsmClobber;
 
 import java.util.HashMap;
 import java.util.LinkedHashMap;

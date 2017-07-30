@@ -50,8 +50,10 @@ public class Pass3RegisterUplifting {
          }
       }
       // Found max variable!
-      log.append("Uplifting of variable " + maxVar + " to A");
-      allocation.allocate(maxVar.getRef(), new RegisterAllocation.RegisterAByte());
+      if(maxVar!=null) {
+         log.append("Uplifting of variable " + maxVar + " to A");
+         allocation.allocate(maxVar.getRef(), new RegisterAllocation.RegisterAByte());
+      }
 
    }
 

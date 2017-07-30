@@ -23,56 +23,63 @@ public class TestCompilationOutput extends TestCase {
    }
 
    public void testFlipper() throws IOException, URISyntaxException {
-      TestCompilationOutput tester = new TestCompilationOutput();
-      tester.testFile("flipper-rex2");
+      compileAndCompare("flipper-rex2");
    }
 
    public void testBresenham() throws IOException, URISyntaxException {
-      TestCompilationOutput tester = new TestCompilationOutput();
-      tester.testFile("bresenham");
+      compileAndCompare("bresenham");
    }
 
    public void testMinus() throws IOException, URISyntaxException {
-      TestCompilationOutput tester = new TestCompilationOutput();
-      tester.testFile("minus");
+      compileAndCompare("minus");
    }
 
    public void testLoopMin() throws IOException, URISyntaxException {
-      TestCompilationOutput tester = new TestCompilationOutput();
-      tester.testFile("loopmin");
+      compileAndCompare("loopmin");
    }
 
    public void testSumMin() throws IOException, URISyntaxException {
-      TestCompilationOutput tester = new TestCompilationOutput();
-      tester.testFile("summin");
+      compileAndCompare("summin");
    }
 
    public void testLoopSplit() throws IOException, URISyntaxException {
-      TestCompilationOutput tester = new TestCompilationOutput();
-      tester.testFile("loopsplit");
+      compileAndCompare("loopsplit");
    }
 
    public void testLoopNest() throws IOException, URISyntaxException {
-      TestCompilationOutput tester = new TestCompilationOutput();
-      tester.testFile("loopnest");
+      compileAndCompare("loopnest");
    }
 
    public void testLoopNest2() throws IOException, URISyntaxException {
-      TestCompilationOutput tester = new TestCompilationOutput();
-      tester.testFile("loopnest2");
+      compileAndCompare("loopnest2");
    }
 
    public void testFibMem() throws IOException, URISyntaxException {
-      TestCompilationOutput tester = new TestCompilationOutput();
-      tester.testFile("fibmem");
+      compileAndCompare("fibmem");
    }
 
    public void testPtrTest() throws IOException, URISyntaxException {
-      TestCompilationOutput tester = new TestCompilationOutput();
-      tester.testFile("ptrtest");
+      compileAndCompare("ptrtest");
+   }
+
+   public void testUseGlobal() throws IOException, URISyntaxException {
+      compileAndCompare("useglobal");
+   }
+
+   public void testUseUninitialized() throws IOException, URISyntaxException {
+      String filename = "useuninitialized";
+      compileAndCompare(filename);
+   }
+
+   public void testUseUndeclared() throws IOException, URISyntaxException {
+      compileAndCompare("useundeclared");
    }
 
 
+   private void compileAndCompare(String filename) throws IOException, URISyntaxException {
+      TestCompilationOutput tester = new TestCompilationOutput();
+      tester.testFile(filename);
+   }
 
    private void testFile(String fileName) throws IOException, URISyntaxException {
       String inputPath = testPath + fileName + ".kc";

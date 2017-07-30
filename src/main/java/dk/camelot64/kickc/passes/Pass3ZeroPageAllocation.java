@@ -178,7 +178,7 @@ public class Pass3ZeroPageAllocation {
       } else if (varType.equals(SymbolTypeBasic.BOOLEAN)) {
          return new RegisterAllocation.RegisterZpBool(currentZp++);
       } else if (varType.equals(SymbolTypeBasic.VOID)) {
-         // No need to allocate register for VOID value
+         // No need to setRegister register for VOID value
          return null;
       } else if (varType instanceof SymbolTypePointer) {
          RegisterAllocation.RegisterZpPointerByte registerZpPointerByte =

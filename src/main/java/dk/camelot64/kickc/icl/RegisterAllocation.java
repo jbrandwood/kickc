@@ -24,7 +24,7 @@ public class RegisterAllocation {
    }
 
 
-   public void allocate(VariableRef variable, Register register) {
+   public void setRegister(VariableRef variable, Register register) {
       if(variable!=null) {
          allocation.put(variable, register);
       }

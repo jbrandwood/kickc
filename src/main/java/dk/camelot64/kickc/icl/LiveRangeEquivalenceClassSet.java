@@ -61,4 +61,16 @@ public class LiveRangeEquivalenceClassSet {
       equivalenceClasses.remove(equivalenceClass);
    }
 
+   public RegisterAllocation createRegisterAllocation() {
+      RegisterAllocation allocation = new RegisterAllocation();
+      for (LiveRangeEquivalenceClass equivalenceClass : getEquivalenceClasses()) {
+         RegisterAllocation.Register register = equivalenceClass.getRegister();
+         for (VariableRef variable : equivalenceClass.getVariables()) {
+            allocation.setRegister(variable, register);
+         }
+      }
+      return allocation;
+   }
+
+
 }

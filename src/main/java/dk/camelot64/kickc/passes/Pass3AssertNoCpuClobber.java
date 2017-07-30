@@ -30,11 +30,19 @@ public class Pass3AssertNoCpuClobber {
 
    /** Check that no statement clobbers a CPU register used by an alive variable */
    public void check() {
-      LiveRangeVariables liveRangeVariables = program.getScope().getLiveRangeVariables();
+      if(hasClobberProblem()) {
+         throw new RuntimeException("CLOBBER ERROR! See log for more info.");
+      }
+   }
+
+   /**
+    * Determines whether any statement in the program clobbers a CPU register used by an alive variable
+    * @return true if there is a clobber problem in the program
+    */
+   public boolean hasClobberProblem() {
       RegisterAllocation allocation = program.getScope().getAllocation();
-
+      LiveRangeVariables liveRangeVariables = program.getScope().getLiveRangeVariables();
       boolean error = false;
-
       for (ControlFlowBlock block : program.getGraph().getAllBlocks()) {
          for (Statement statement : block.getStatements()) {
 
@@ -66,11 +74,7 @@ public class Pass3AssertNoCpuClobber {
             }
          }
       }
-
-      if(error) {
-         throw new RuntimeException("CLOBBER ERROR! See log for more info.");
-      }
-
+      return error;
    }
 
 
@@ -132,6 +136,5 @@ public class Pass3AssertNoCpuClobber {
       codegen.generateStatementAsm(asm, block, statement, new Pass4CodeGeneration.AsmCodegenAluState());
       return asm;
    }
-
 
 }

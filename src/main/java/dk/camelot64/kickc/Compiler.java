@@ -145,7 +145,6 @@ public class Compiler {
       log.append(program.getScope().getSymbolTableContents(Variable.class));
 
       new Pass3RegistersFinalize(program, log).allocate();
-
       new Pass3AssertNoCpuClobber(program, log).check();
 
       new Pass3RegisterUplifting(program, log).uplift();
@@ -156,7 +155,7 @@ public class Compiler {
       new Pass3ZeroPageCoalesce(program, log).allocate();
       new Pass3AssertNoCpuClobber(program, log).check();
 
-      //new Pass3CustomRegisters(program).allocate();
+      //new Pass3CustomRegisters(program).setRegister();
       //new Pass3AssertNoCpuClobber(program, log).check();
 
    }

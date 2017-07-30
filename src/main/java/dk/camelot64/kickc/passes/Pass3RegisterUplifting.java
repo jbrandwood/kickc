@@ -5,7 +5,10 @@ import dk.camelot64.kickc.asm.AsmProgram;
 import dk.camelot64.kickc.asm.parser.AsmClobber;
 import dk.camelot64.kickc.icl.*;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
+import java.util.List;
 
 /*** Uplift one variable into the A register - and check if the program still works */
 public class Pass3RegisterUplifting {
@@ -30,31 +33,56 @@ public class Pass3RegisterUplifting {
     * Uplift one variable
     */
    public void uplift() {
-
       VariableRegisterWeights variableRegisterWeights = program.getScope().getVariableRegisterWeights();
+      LiveRangeEquivalenceClassSet equivalenceClassSet = program.getScope().getLiveRangeEquivalenceClassSet();
 
       double maxWeight = 0.0;
-      Variable maxVar = null;
+      LiveRangeEquivalenceClass maxEquivalenceClass = null;
 
-      Collection<Variable> allVars = program.getScope().getAllVariables(true);
-      RegisterAllocation allocation = program.getScope().getAllocation();
-
-      for (Variable variable : allVars) {
-         RegisterAllocation.Register currentRegister = allocation.getRegister(variable.getRef());
-         if (currentRegister!=null && currentRegister.isZp()) {
-            Double w = variableRegisterWeights.getWeight(variable.getRef());
-            if (w != null && w > maxWeight) {
-               maxWeight = w;
-               maxVar = variable;
-            }
+      // Find the live range equivalence class with the highest total weight
+      for (LiveRangeEquivalenceClass equivalenceClass : equivalenceClassSet.getEquivalenceClasses()) {
+         double totalWeight = 0.0;
+         List<VariableRef> vars = equivalenceClass.getVariables();
+         for (VariableRef var : vars) {
+            Double varWeight = variableRegisterWeights.getWeight(var);
+            totalWeight += varWeight;
+         }
+         if (maxWeight < totalWeight) {
+            maxEquivalenceClass = equivalenceClass;
+            maxWeight = totalWeight;
          }
       }
-      // Found max variable!
-      if(maxVar!=null) {
-         log.append("Uplifting of variable " + maxVar + " to A");
-         allocation.allocate(maxVar.getRef(), new RegisterAllocation.RegisterAByte());
+
+      if (maxEquivalenceClass != null) {
+         log.append("Uplifting max weight " + maxWeight + " live range equivalence class " + maxEquivalenceClass);
+         // Try the A register first
+         List<RegisterAllocation.Register> registers =
+               Arrays.asList(
+                     RegisterAllocation.getRegisterA(),
+                     RegisterAllocation.getRegisterX(),
+                     RegisterAllocation.getRegisterY());
+         for (RegisterAllocation.Register register : registers) {
+            attemptUplift(maxEquivalenceClass, register);
+         }
       }
 
+      RegisterAllocation allocation = program.getScope().getLiveRangeEquivalenceClassSet().createRegisterAllocation();
+      program.getScope().setAllocation(allocation);
+
+   }
+
+   private void attemptUplift(LiveRangeEquivalenceClass equivalenceClass, RegisterAllocation.Register register) {
+      RegisterAllocation allocation = program.getScope().getLiveRangeEquivalenceClassSet().createRegisterAllocation();
+      for (VariableRef var : equivalenceClass.getVariables()) {
+         allocation.setRegister(var, register);
+      }
+      program.getScope().setAllocation(allocation);
+      Pass3AssertNoCpuClobber clobber = new Pass3AssertNoCpuClobber(program, log);
+      if (clobber.hasClobberProblem()) {
+         log.append("Uplift to " + register + " resulted in clobber.");
+      } else {
+         log.append("Uplift to " + register + " succesfull.");
+      }
    }
 
 

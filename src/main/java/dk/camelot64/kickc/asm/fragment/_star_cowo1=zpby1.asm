@@ -1,2 +1,2 @@
 lda {zpby1}
-sta {coptr1}
+sta {cowo1}

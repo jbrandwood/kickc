@@ -223,21 +223,10 @@ public class AsmFragment {
          value = symbols.getRegister((Variable) value);
       } else if (value instanceof PointerDereferenceSimple) {
          PointerDereferenceSimple deref = (PointerDereferenceSimple) value;
-         RValue pointer = deref.getPointer();
-         if(pointer instanceof VariableRef) {
-            VariableRef pointerRef = (VariableRef) pointer;
-            Variable pointerVar = symbols.getVariable(pointerRef);
-            RegisterAllocation.Register register = symbols.getRegister(pointerVar);
-            value = new PointerDereferenceRegisterZpByte((RegisterAllocation.RegisterZpPointerByte) register);
-         }
+         return "_star_" + bind(deref.getPointer());
       } else if (value instanceof PointerDereferenceIndexed) {
          PointerDereferenceIndexed deref = (PointerDereferenceIndexed) value;
-         String compositeName =
-               "ptr_"
-               + bind(deref.getPointer())
-               + "_"
-               + bind(deref.getIndex());
-         return compositeName;
+         return bind(deref.getPointer()) + "_staridx_" + bind(deref.getIndex());
       }
 
       // Find value if it is already bound
@@ -276,24 +265,6 @@ public class AsmFragment {
             String name = "zpptrby" + nextZpPtrIdx++;
             bindings.put(name, value);
             return name;
-         }
-      } else if (value instanceof PointerDereferenceRegisterZpByte) {
-         RegisterAllocation.Register register = ((PointerDereferenceRegisterZpByte) value).getPointerRegister();
-         if (RegisterAllocation.RegisterType.ZP_PTR_BYTE.equals(register.getType())) {
-            String name = "zpiby" + nextZpPtrIdx++;
-            bindings.put(name, value);
-            return name;
-         }
-      } else if (value instanceof PointerDereferenceSimple) {
-         PointerDereferenceSimple deref = (PointerDereferenceSimple) value;
-         RValue pointer = deref.getPointer();
-         if(pointer instanceof Constant) {
-            Constant pointerConst = (Constant) pointer;
-            if (pointerConst instanceof ConstantInteger) {
-               String name = "coptr" + nextConstByteIdx++;
-               bindings.put(name, value);
-               return name;
-            }
          }
       } else if (value instanceof ConstantInteger) {
          ConstantInteger intValue = (ConstantInteger) value;
@@ -339,10 +310,6 @@ public class AsmFragment {
          } else {
             throw new RuntimeException("Register Type not implemented " + register);
          }
-      } else if (boundValue instanceof PointerDereferenceRegisterZpByte) {
-         PointerDereferenceRegisterZpByte deref = (PointerDereferenceRegisterZpByte) boundValue;
-         RegisterAllocation.RegisterZpPointerByte register = deref.getPointerRegister();
-         bound = Integer.toString(register.getZp());
       } else if (boundValue instanceof PointerDereferenceSimple) {
          PointerDereferenceSimple deref = (PointerDereferenceSimple) boundValue;
          RValue pointer = deref.getPointer();

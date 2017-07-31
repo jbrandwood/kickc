@@ -17,8 +17,8 @@ B1:
   lda 3
   clc
   adc 4
-  sta 3
-  lda 3
+  sta 5
+  lda 5
   ldx 2
   sta 4354,x
   inc 2

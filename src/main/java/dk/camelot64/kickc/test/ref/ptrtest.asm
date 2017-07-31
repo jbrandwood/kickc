@@ -78,7 +78,7 @@ rvalue__Breturn:
 rvalue__B2:
   ldx 8
   lda 1024,x
-  sta 8
+  sta 13
   inc 8
 rvalue__B1_from_B2:
   jmp rvalue__B1

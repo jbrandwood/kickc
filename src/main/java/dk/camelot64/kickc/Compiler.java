@@ -32,7 +32,7 @@ public class Compiler {
 
          return program;
       } catch (Exception e) {
-         System.out.println(log.getLog());
+         //System.out.println(log.getLog());
          throw e;
       }
    }

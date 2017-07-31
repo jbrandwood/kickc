@@ -413,6 +413,10 @@ public class Pass1GenerateStatementSequence extends KickCBaseVisitor<Object> {
    @Override
    public RValue visitExprId(KickCParser.ExprIdContext ctx) {
       Variable variable = getCurrentSymbols().getVariable(ctx.NAME().getText());
+      if(variable == null) {
+         program.getLog().append("ERROR! Line "+ctx.getStart().getLine()+". Unknown variable "+ctx.NAME().getText());
+         throw new CompileError("ERROR! Line "+ctx.getStart().getLine()+". Unknown variable "+ctx.NAME().getText());
+      }
       return variable.getRef();
    }
 

@@ -60,10 +60,8 @@ public class AsmFragment {
    }
 
    private String assignmentWithAluSignature(StatementAssignment assignment, StatementAssignment assignmentAlu) {
-      RValue assignmentRValue2 = assignment.getrValue2();
-      Variable assignmentVar = program.getScope().getVariable((VariableRef) assignmentRValue2);
-
-      RegisterAllocation.Register rVal2Register = program.getRegister(assignmentVar);
+      VariableRef assignmentRValue2 = (VariableRef) assignment.getrValue2();
+      RegisterAllocation.Register rVal2Register = program.getAllocation().getRegister(assignmentRValue2);
       if(!rVal2Register.getType().equals(RegisterAllocation.RegisterType.REG_ALU_BYTE)) {
          throw new RuntimeException("Error! ALU register only allowed as rValue2. "+assignment);
       }
@@ -220,7 +218,7 @@ public class AsmFragment {
         value = program.getScope().getVariable((VariableRef) value);
       }
       if (value instanceof Variable) {
-         value = program.getRegister((Variable) value);
+         value = program.getAllocation().getRegister(((Variable) value).getRef());
       } else if (value instanceof PointerDereferenceSimple) {
          PointerDereferenceSimple deref = (PointerDereferenceSimple) value;
          return "_star_" + bind(deref.getPointer());

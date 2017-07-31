@@ -1,6 +1,7 @@
 package dk.camelot64.kickc.test;
 
 import dk.camelot64.kickc.Compiler;
+import dk.camelot64.kickc.icl.CompileError;
 import dk.camelot64.kickc.icl.Program;
 import junit.framework.TestCase;
 import org.antlr.v4.runtime.CharStream;
@@ -73,7 +74,13 @@ public class TestCompilationOutput extends TestCase {
    }
 
    public void testUseUndeclared() throws IOException, URISyntaxException {
-      compileAndCompare("useundeclared");
+      try {
+         compileAndCompare("useundeclared");
+      } catch (CompileError e) {
+         // expecting error!
+         return;
+      }
+      fail("Expected compile error.");
    }
 
 

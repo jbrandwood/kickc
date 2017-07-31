@@ -105,14 +105,6 @@ public class Program {
       return allocation;
    }
 
-   public RegisterAllocation.Register getRegister(Variable variable) {
-      RegisterAllocation.Register register = null;
-      if (allocation != null) {
-         register = allocation.getRegister(variable.getRef());
-      }
-      return register;
-   }
-
    public void setLiveRangeVariables(LiveRangeVariables liveRangeVariables) {
       this.liveRangeVariables = liveRangeVariables;
    }

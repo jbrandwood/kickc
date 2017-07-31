@@ -44,7 +44,7 @@ public class LiveRangeEquivalenceClass {
       if(variables.contains(variable)) {
          return;
       }
-      LiveRangeVariables liveRanges = program.getScope().getLiveRangeVariables();
+      LiveRangeVariables liveRanges = program.getLiveRangeVariables();
       LiveRange varLiveRange = liveRanges.getLiveRange(variable);
       if (liveRange.overlaps(varLiveRange)) {
          throw new RuntimeException("Compilation error! Variable live range overlaps live range equivalence class live range. " + variable);

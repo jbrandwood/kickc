@@ -118,7 +118,7 @@ public abstract class Variable implements Symbol {
    }
 
    @Override
-   public String toString(ProgramScope scope) {
+   public String toString(Program program) {
       return "(" + type.getTypeName() + (inferredType ? "~" : "") + ") " + getFullName();
    }
 

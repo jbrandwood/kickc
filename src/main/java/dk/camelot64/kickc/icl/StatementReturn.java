@@ -35,8 +35,8 @@ public class StatementReturn extends StatementBase {
    }
 
    @Override
-   public String toString(ProgramScope scope) {
-      return super.idxString() + "return " + (value == null ? "" : value.toString(scope)) + super.aliveString(scope);
+   public String toString(Program program) {
+      return super.idxString() + "return " + (value == null ? "" : value.toString(program)) + super.aliveString(program);
    }
 
    @Override

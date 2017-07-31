@@ -15,12 +15,6 @@ public class ControlFlowGraph {
 
    /** Sequence of blocks used when generating ASM */
    private List<LabelRef> sequence;
-   /** Information about dominators of all blocks*/
-   private DominatorsGraph dominators;
-   /** Information about loops. */
-   private NaturalLoopSet loopSet;
-   /** Information about calls. */
-   private CallGraph callGraph;
 
    public ControlFlowGraph(Map<LabelRef, ControlFlowBlock> blocks, LabelRef firstBlockRef) {
       this.blocks = blocks;
@@ -152,29 +146,7 @@ public class ControlFlowGraph {
       return null;
    }
 
-   public void setDominators(DominatorsGraph dominators) {
-      this.dominators = dominators;
-   }
 
-   public DominatorsGraph getDominators() {
-      return dominators;
-   }
-
-   public void setLoops(NaturalLoopSet loopSet) {
-      this.loopSet = loopSet;
-   }
-
-   public NaturalLoopSet getLoopSet() {
-      return loopSet;
-   }
-
-   public CallGraph getCallGraph() {
-      return callGraph;
-   }
-
-   public void setCallGraph(CallGraph callGraph) {
-      this.callGraph = callGraph;
-   }
 
    public ControlFlowBlock getBlockFromStatementIdx(int statementIdx) {
       for (ControlFlowBlock block : getAllBlocks()) {
@@ -187,10 +159,15 @@ public class ControlFlowGraph {
       return null;
    }
 
-   public String toString(ProgramScope scope) {
+   @Override
+   public String toString() {
+      return toString(null);
+   }
+
+   public String toString(Program program) {
       StringBuffer out = new StringBuffer();
       for (ControlFlowBlock block : getAllBlocks()) {
-         out.append(block.toString(this, scope));
+         out.append(block.toString(program));
       }
       return out.toString();
    }

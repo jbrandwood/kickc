@@ -19,8 +19,8 @@ public class Pass2ConstantAdditionElimination extends Pass2SsaOptimization {
 
    private Map<VariableRef, Integer> usages;
 
-   public Pass2ConstantAdditionElimination(Program program, CompileLog log) {
-      super(program, log);
+   public Pass2ConstantAdditionElimination(Program program) {
+      super(program);
    }
 
    /**
@@ -66,7 +66,7 @@ public class Pass2ConstantAdditionElimination extends Pass2SsaOptimization {
          ConstantInteger idxConstant = (ConstantInteger) pointerDereferenceIndexed.getIndex();
          int newPtr = ptrConstant.getNumber() + idxConstant.getNumber();
          assignment.setlValue(new PointerDereferenceSimple(new ConstantInteger(newPtr)));
-         log.append("Consolidated assigned array index constant in assignment " + assignment.getlValue());
+         getLog().append("Consolidated assigned array index constant in assignment " + assignment.getlValue());
          return true;
       }
       if(pointerDereferenceIndexed.getPointer() instanceof ConstantInteger && pointerDereferenceIndexed.getIndex() instanceof VariableRef) {
@@ -76,7 +76,7 @@ public class Pass2ConstantAdditionElimination extends Pass2SsaOptimization {
             ConstantInteger ptrConstant = (ConstantInteger) pointerDereferenceIndexed.getPointer();
             int newPtr = ptrConstant.getNumber() + consolidated.getNumber();
             pointerDereferenceIndexed.setPointer(new ConstantInteger(newPtr));
-            log.append("Consolidated assigned array index constant in assignment " + assignment.getlValue());
+            getLog().append("Consolidated assigned array index constant in assignment " + assignment.getlValue());
             return true;
          }
       }
@@ -91,7 +91,7 @@ public class Pass2ConstantAdditionElimination extends Pass2SsaOptimization {
          assignment.setrValue1(null);
          assignment.setOperator(new Operator("*"));
          assignment.setrValue2(new ConstantInteger(newPtr));
-         log.append("Consolidated referenced array index constant in assignment " + assignment.getlValue());
+         getLog().append("Consolidated referenced array index constant in assignment " + assignment.getlValue());
          return true;
       }
       if (assignment.getrValue1() instanceof ConstantInteger && assignment.getrValue2() instanceof VariableRef) {
@@ -101,7 +101,7 @@ public class Pass2ConstantAdditionElimination extends Pass2SsaOptimization {
             ConstantInteger ptrConstant = (ConstantInteger) assignment.getrValue1();
             int newPtr = ptrConstant.getNumber() + consolidated.getNumber();
             assignment.setrValue1(new ConstantInteger(newPtr));
-            log.append("Consolidated referenced array index constant in assignment " + assignment.getlValue());
+            getLog().append("Consolidated referenced array index constant in assignment " + assignment.getlValue());
             return true;
          }
       }
@@ -115,7 +115,7 @@ public class Pass2ConstantAdditionElimination extends Pass2SsaOptimization {
          if (consolidated != null) {
             ConstantInteger const1 = (ConstantInteger) assignment.getrValue1();
             assignment.setrValue1(new ConstantInteger(const1.getNumber() + consolidated.getNumber()));
-            log.append("Consolidated constant in assignment " + assignment.getlValue());
+            getLog().append("Consolidated constant in assignment " + assignment.getlValue());
             return true;
          }
       } else if (assignment.getrValue1() instanceof VariableRef && assignment.getrValue2() instanceof ConstantInteger) {
@@ -130,7 +130,7 @@ public class Pass2ConstantAdditionElimination extends Pass2SsaOptimization {
             } else {
                assignment.setrValue2(new ConstantInteger(newNumber));
             }
-            log.append("Consolidated constant in assignment " + assignment.getlValue());
+            getLog().append("Consolidated constant in assignment " + assignment.getlValue());
             return true;
          }
       }
@@ -145,7 +145,7 @@ public class Pass2ConstantAdditionElimination extends Pass2SsaOptimization {
     */
    private ConstantInteger consolidateSubConstants(VariableRef variable) {
       if(getUsages(variable) >1) {
-         log.append("Multiple usages for variable. Not optimizing sub-constant "+variable.toString(getSymbols()));
+         getLog().append("Multiple usages for variable. Not optimizing sub-constant "+variable.toString(getProgram()));
          return null;
       }
       Variable var = getSymbols().getVariable(variable);

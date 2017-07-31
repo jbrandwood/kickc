@@ -1,6 +1,7 @@
 package dk.camelot64.kickc.test;
 
 import dk.camelot64.kickc.Compiler;
+import dk.camelot64.kickc.icl.Program;
 import junit.framework.TestCase;
 import org.antlr.v4.runtime.CharStream;
 import org.antlr.v4.runtime.CharStreams;
@@ -86,12 +87,12 @@ public class TestCompilationOutput extends TestCase {
       System.out.println("Testing output for " + inputPath);
       CharStream input = CharStreams.fromFileName(inputPath);
       Compiler compiler = new Compiler();
-      Compiler.CompilationResult output = compiler.compile(input);
+      Program program = compiler.compile(input);
       boolean success = true;
-      success &= helper.testOutput(fileName, ".asm", output.getAsmProgram().toString(false));
-      success &= helper.testOutput(fileName, ".sym", output.getScope().getSymbolTableContents());
-      success &= helper.testOutput(fileName, ".cfg", output.getGraph().toString(output.getScope()));
-      success &= helper.testOutput(fileName, ".log", output.getLog().toString());
+      success &= helper.testOutput(fileName, ".asm", program.getAsm().toString(false));
+      success &= helper.testOutput(fileName, ".sym", program.getScope().getSymbolTableContents(program));
+      success &= helper.testOutput(fileName, ".cfg", program.getGraph().toString(program));
+      success &= helper.testOutput(fileName, ".log", program.getLog().toString());
       if (!success) {
          fail("Output does not match reference!");
       }

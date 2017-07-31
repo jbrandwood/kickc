@@ -9,8 +9,8 @@ import java.util.Map;
 /** Compiler Pass eliminating redundant phi functions */
 public class Pass2RedundantPhiElimination extends Pass2SsaOptimization {
 
-   public Pass2RedundantPhiElimination(Program program, CompileLog log) {
-      super(program, log);
+   public Pass2RedundantPhiElimination(Program program) {
+      super(program);
    }
 
    /**
@@ -23,7 +23,7 @@ public class Pass2RedundantPhiElimination extends Pass2SsaOptimization {
       replaceVariables(aliases);
       for (VariableRef var : aliases.keySet()) {
          RValue alias = aliases.get(var);
-         log.append("Redundant Phi " + var.toString(getSymbols()) + " " + alias.toString(getSymbols()));
+         getLog().append("Redundant Phi " + var.toString(getProgram()) + " " + alias.toString(getProgram()));
       }
       deleteVariables(aliases.keySet());
       return aliases.size()>0;

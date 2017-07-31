@@ -63,23 +63,23 @@ public class StatementPhiBlock extends StatementBase {
    }
 
    @Override
-   public String toString(ProgramScope scope) {
+   public String toString(Program program) {
       StringBuilder s = new StringBuilder();
       List<PhiVariable> variables = new ArrayList<>(phiVariables);
       Collections.reverse(variables);
       for (PhiVariable phiVariable : variables) {
          s.append(super.idxString());
-         s.append(phiVariable.getVariable().toString(scope));
+         s.append(phiVariable.getVariable().toString(program));
          s.append(" ← phi(");
          for (PhiRValue phiRValue : phiVariable.getValues()) {
             s.append(" ");
             s.append(phiRValue.getPredecessor().toString(null));
             s.append("/");
             RValue rValue = phiRValue.getrValue();
-            s.append(rValue==null?"null":rValue.toString(scope));
+            s.append(rValue==null?"null":rValue.toString(program));
          }
          s.append(" )");
-         s.append(super.aliveString(scope));
+         s.append(super.aliveString(program));
          s.append("\n  ");
       }
       if(s.length()>0) {

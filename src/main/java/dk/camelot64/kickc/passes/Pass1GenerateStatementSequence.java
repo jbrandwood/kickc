@@ -17,21 +17,19 @@ import java.util.Stack;
  */
 public class Pass1GenerateStatementSequence extends KickCBaseVisitor<Object> {
 
-   private CompileLog log;
-   private ProgramScope programScope;
+   private Program program;
    private Stack<Scope> scopeStack;
    private StatementSequence sequence;
 
    public Pass1GenerateStatementSequence(CompileLog log) {
-      this.log = log;
-      this.programScope = new ProgramScope();
+      this.program = new Program(new ProgramScope(), log);
       this.scopeStack = new Stack<>();
-      scopeStack.push(programScope);
+      scopeStack.push(program.getScope());
       this.sequence = new StatementSequence();
    }
 
    public ProgramScope getProgramScope() {
-      return programScope;
+      return program.getScope();
    }
 
    private Scope getCurrentSymbols() {
@@ -221,7 +219,7 @@ public class Pass1GenerateStatementSequence extends KickCBaseVisitor<Object> {
    @Override
    public Void visitStmtDeclaration(KickCParser.StmtDeclarationContext ctx) {
       if (ctx.getChild(0).getText().equals("const")) {
-         log.append("Const!" + ctx.getText());
+         program.getLog().append("Const!" + ctx.getText());
       }
       SymbolType type = (SymbolType) visit(ctx.typeDecl());
       VariableUnversioned lValue = getCurrentSymbols().addVariable(ctx.NAME().getText(), type);
@@ -308,7 +306,7 @@ public class Pass1GenerateStatementSequence extends KickCBaseVisitor<Object> {
 
    @Override
    public RValue visitExprCast(KickCParser.ExprCastContext ctx) {
-      log.append("Cast type ignored!");
+      program.getLog().append("Cast type ignored!");
       return (RValue) visit(ctx.expr());
    }
 
@@ -462,7 +460,7 @@ public class Pass1GenerateStatementSequence extends KickCBaseVisitor<Object> {
          for (PrePostModifier mod : modifiers) {
             Statement stmt = new StatementAssignment((LValue) mod.child, mod.operator, mod.child);
             parser.sequence.addStatement(stmt);
-            parser.log.append("Adding pre/post-modifier "+stmt.toString(parser.programScope));
+            parser.program.getLog().append("Adding pre/post-modifier "+stmt.toString(parser.program));
          }
       }
 

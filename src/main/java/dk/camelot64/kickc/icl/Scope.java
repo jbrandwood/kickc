@@ -210,25 +210,22 @@ public abstract class Scope implements Symbol {
          return (Procedure) getSymbol(ref);
    }
 
-   public abstract RegisterAllocation getAllocation();
-
-   public abstract VariableRegisterWeights getVariableRegisterWeights();
-
    @JsonIgnore
-   public String getSymbolTableContents(ProgramScope scope, Class symbolClass) {
+   public String getSymbolTableContents(Program program, Class symbolClass) {
+      ProgramScope scope = program.getScope();
+      RegisterAllocation allocation = program.getAllocation();
+      VariableRegisterWeights registerWeights = program.getVariableRegisterWeights();
       StringBuilder res = new StringBuilder();
       Set<String> names = symbols.keySet();
       List<String> sortedNames = new ArrayList<>(names);
       Collections.sort(sortedNames);
-      RegisterAllocation allocation = getAllocation();
-      VariableRegisterWeights registerWeights = getVariableRegisterWeights();
       for (String name : sortedNames) {
          Symbol symbol = symbols.get(name);
          if (symbol instanceof Scope) {
-            res.append(((Scope) symbol).getSymbolTableContents(scope, symbolClass));
+            res.append(((Scope) symbol).getSymbolTableContents(program, symbolClass));
          } else {
             if (symbolClass == null || symbolClass.isInstance(symbol)) {
-               res.append(symbol.toString(scope));
+               res.append(symbol.toString(program));
                if (symbol instanceof Variable && allocation != null) {
                   RegisterAllocation.Register register = allocation.getRegister(((Variable) symbol).getRef());
                   if (register != null) {

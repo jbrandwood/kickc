@@ -23,8 +23,8 @@ public class PointerDereferenceSimple implements PointerDereference {
    }
 
    @Override
-   public String toString(ProgramScope scope) {
-      return "*(" + pointer.toString(scope) + ')';
+   public String toString(Program program) {
+      return "*(" + pointer.toString(program) + ')';
    }
 
 }

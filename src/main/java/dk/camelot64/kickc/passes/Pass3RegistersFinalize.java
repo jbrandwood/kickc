@@ -1,27 +1,22 @@
 package dk.camelot64.kickc.passes;
 
-import dk.camelot64.kickc.CompileLog;
 import dk.camelot64.kickc.icl.*;
 
 /**
  * Move register allocation from equivalence classes to RegisterAllocation.
  * Also rebase zero page registers.
  */
-public class Pass3RegistersFinalize {
+public class Pass3RegistersFinalize extends Pass2Base {
 
-   private Program program;
-   private CompileLog log;
-
-   public Pass3RegistersFinalize(Program program, CompileLog log) {
-      this.program = program;
-      this.log = log;
+   public Pass3RegistersFinalize(Program program) {
+      super(program);
    }
 
    public void allocate() {
-      LiveRangeEquivalenceClassSet liveRangeEquivalenceClassSet = program.getScope().getLiveRangeEquivalenceClassSet();
+      LiveRangeEquivalenceClassSet liveRangeEquivalenceClassSet = getProgram().getLiveRangeEquivalenceClassSet();
       reallocateZp(liveRangeEquivalenceClassSet);
       RegisterAllocation allocation = liveRangeEquivalenceClassSet.createRegisterAllocation();
-      program.getScope().setAllocation(allocation);
+      getProgram().setAllocation(allocation);
    }
 
    /**
@@ -35,11 +30,11 @@ public class Pass3RegistersFinalize {
          if(register.isZp()) {
             String before = register.toString();
             VariableRef variable = equivalenceClass.getVariables().get(0);
-            Variable symbol = program.getScope().getVariable(variable);
+            Variable symbol = getProgram().getScope().getVariable(variable);
             register = allocateNewRegisterZp(symbol.getType());
             equivalenceClass.setRegister(register);
             if(!before.equals(register.toString())) {
-               log.append("Re-allocated ZP register from " + before + " to " + register.toString());
+               getLog().append("Re-allocated ZP register from " + before + " to " + register.toString());
             }
          }
       }

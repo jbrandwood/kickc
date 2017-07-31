@@ -11,16 +11,14 @@ import java.util.*;
  */
 public abstract class Pass2SsaOptimization {
 
-   protected CompileLog log;
    private Program program;
 
-   public Pass2SsaOptimization(Program program,CompileLog log) {
+   public Pass2SsaOptimization(Program program) {
       this.program = program;
-      this.log = log;
    }
 
    public CompileLog getLog() {
-      return log;
+      return program.getLog();
    }
 
    public ControlFlowGraph getGraph() {
@@ -52,7 +50,7 @@ public abstract class Pass2SsaOptimization {
       }
 
       @Override
-      public String toString(ProgramScope scope) {
+      public String toString(Program program) {
          return "VOID";
       }
 

@@ -10,17 +10,24 @@ import java.util.*;
  */
 public class Pass4CodeGeneration {
 
-   private ControlFlowGraph graph;
-   private ProgramScope symbols;
+
+   private Program program;
 
    public Pass4CodeGeneration(Program program) {
-      this.graph = program.getGraph();
-      this.symbols = program.getScope();
+      this.program = program;
    }
 
-   public AsmProgram generate() {
+   ControlFlowGraph getGraph() {
+      return program.getGraph();
+   }
+
+   ProgramScope getScope() {
+      return program.getScope();
+   }
+
+   public void generate() {
       AsmProgram asm = new AsmProgram();
-      for (ControlFlowBlock block : graph.getAllBlocks()) {
+      for (ControlFlowBlock block : getGraph().getAllBlocks()) {
          // Generate entry points (if needed)
          genBlockEntryPoints(asm, block);
          // Generate label
@@ -28,7 +35,7 @@ public class Pass4CodeGeneration {
          // Generate statements
          genStatements(asm, block);
          // Generate exit
-         ControlFlowBlock defaultSuccessor = graph.getDefaultSuccessor(block);
+         ControlFlowBlock defaultSuccessor = getGraph().getDefaultSuccessor(block);
          if (defaultSuccessor != null) {
             if (defaultSuccessor.hasPhiBlock()) {
                genBlockPhiTransition(asm, block, defaultSuccessor);
@@ -36,7 +43,7 @@ public class Pass4CodeGeneration {
             asm.addInstruction("JMP", AsmAddressingMode.ABS, defaultSuccessor.getLabel().getFullName().replace('@', 'B').replace(':', '_'));
          }
       }
-      return asm;
+      program.setAsm(asm);
    }
 
    private void genStatements(AsmProgram asm, ControlFlowBlock block) {
@@ -66,8 +73,8 @@ public class Pass4CodeGeneration {
             throw new RuntimeException("Error! ALU statement must be followed immediately by assignment using the ALU. " + statement);
          }
          StatementAssignment assignment = (StatementAssignment) statement;
-         AsmFragment asmFragment = new AsmFragment(assignment, assignmentAlu, symbols);
-         asm.addComment(statement.toString(symbols) + "  //  " + asmFragment.getSignature());
+         AsmFragment asmFragment = new AsmFragment(assignment, assignmentAlu, program);
+         asm.addComment(statement.toString(program) + "  //  " + asmFragment.getSignature());
          asmFragment.generate(asm);
          aluState.clear();
          return;
@@ -80,8 +87,8 @@ public class Pass4CodeGeneration {
             boolean isAlu = false;
             if (lValue instanceof VariableRef) {
                VariableRef lValueRef = (VariableRef) lValue;
-               Variable lValueVar = symbols.getVariable(lValueRef);
-               RegisterAllocation.Register lValRegister = symbols.getRegister(lValueVar);
+               Variable lValueVar = getScope().getVariable(lValueRef);
+               RegisterAllocation.Register lValRegister = program.getRegister(lValueVar);
                if (lValRegister.getType().equals(RegisterAllocation.RegisterType.REG_ALU_BYTE)) {
                   asm.addComment(statement + "  //  ALU");
                   StatementAssignment assignmentAlu = assignment;
@@ -91,20 +98,20 @@ public class Pass4CodeGeneration {
             }
             if (!isAlu) {
                if (assignment.getOperator() == null && assignment.getrValue1() == null && isRegisterCopy(lValue, assignment.getrValue2())) {
-                  asm.addComment(lValue.toString(symbols) + " = " + assignment.getrValue2().toString(symbols) + "  // register copy " + getRegister(lValue));
+                  asm.addComment(lValue.toString(program) + " = " + assignment.getrValue2().toString(program) + "  // register copy " + getRegister(lValue));
                } else {
-                  AsmFragment asmFragment = new AsmFragment(assignment, symbols);
-                  asm.addComment(statement.toString(symbols) + "  //  " + asmFragment.getSignature());
+                  AsmFragment asmFragment = new AsmFragment(assignment, program);
+                  asm.addComment(statement.toString(program) + "  //  " + asmFragment.getSignature());
                   asmFragment.generate(asm);
                }
             }
          } else if (statement instanceof StatementConditionalJump) {
-            AsmFragment asmFragment = new AsmFragment((StatementConditionalJump) statement, block, symbols, graph);
-            asm.addComment(statement.toString(symbols) + "  //  " + asmFragment.getSignature());
+            AsmFragment asmFragment = new AsmFragment((StatementConditionalJump) statement, block, program, getGraph());
+            asm.addComment(statement.toString(program) + "  //  " + asmFragment.getSignature());
             asmFragment.generate(asm);
          } else if (statement instanceof StatementCall) {
             StatementCall call = (StatementCall) statement;
-            ControlFlowBlock callSuccessor = graph.getCallSuccessor(block);
+            ControlFlowBlock callSuccessor = getGraph().getCallSuccessor(block);
             if (callSuccessor != null && callSuccessor.hasPhiBlock()) {
                genBlockPhiTransition(asm, block, callSuccessor);
             }
@@ -145,7 +152,7 @@ public class Pass4CodeGeneration {
 
    private void genBlockEntryPoints(AsmProgram asm, ControlFlowBlock block) {
       if (block.hasPhiBlock()) {
-         List<ControlFlowBlock> predecessors = new ArrayList<>(graph.getPredecessors(block));
+         List<ControlFlowBlock> predecessors = new ArrayList<>(getGraph().getPredecessors(block));
          Collections.sort(predecessors, new Comparator<ControlFlowBlock>() {
             @Override
             public int compare(ControlFlowBlock o1, ControlFlowBlock o2) {
@@ -188,8 +195,8 @@ public class Pass4CodeGeneration {
    private RegisterAllocation.Register getRegister(RValue rValue) {
       if (rValue instanceof VariableRef) {
          VariableRef rValueRef = (VariableRef) rValue;
-         Variable rValueVar = symbols.getVariable(rValueRef);
-         return symbols.getRegister(rValueVar);
+         Variable rValueVar = getScope().getVariable(rValueRef);
+         return program.getRegister(rValueVar);
       } else {
          return null;
       }
@@ -197,10 +204,10 @@ public class Pass4CodeGeneration {
 
    private void genAsmMove(AsmProgram asm, LValue lValue, RValue rValue) {
       if (isRegisterCopy(lValue, rValue)) {
-         asm.addComment(lValue.toString(symbols) + " = " + rValue.toString(symbols) + "  // register copy " + getRegister(lValue));
+         asm.addComment(lValue.toString(program) + " = " + rValue.toString(program) + "  // register copy " + getRegister(lValue));
       } else {
-         AsmFragment asmFragment = new AsmFragment(lValue, rValue, symbols);
-         asm.addComment(lValue.toString(symbols) + " = " + rValue.toString(symbols) + "  // " + asmFragment.getSignature());
+         AsmFragment asmFragment = new AsmFragment(lValue, rValue, program);
+         asm.addComment(lValue.toString(program) + " = " + rValue.toString(program) + "  // " + asmFragment.getSignature());
          asmFragment.generate(asm);
       }
    }

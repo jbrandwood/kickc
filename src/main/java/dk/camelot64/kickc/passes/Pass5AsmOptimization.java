@@ -3,6 +3,7 @@ package dk.camelot64.kickc.passes;
 import dk.camelot64.kickc.CompileLog;
 import dk.camelot64.kickc.asm.AsmLine;
 import dk.camelot64.kickc.asm.AsmProgram;
+import dk.camelot64.kickc.icl.Program;
 
 import java.util.Iterator;
 import java.util.List;
@@ -13,9 +14,9 @@ import java.util.List;
 public abstract class Pass5AsmOptimization {
 
    protected CompileLog log;
-   private AsmProgram program;
+   private Program program;
 
-   public Pass5AsmOptimization(AsmProgram program, CompileLog log) {
+   public Pass5AsmOptimization(Program program, CompileLog log) {
       this.program = program;
       this.log = log;
    }
@@ -27,8 +28,8 @@ public abstract class Pass5AsmOptimization {
     */
    public abstract boolean optimize();
 
-   public AsmProgram getProgram() {
-      return program;
+   public AsmProgram getAsmProgram() {
+      return program.getAsm();
    }
 
    public CompileLog getLog() {
@@ -36,7 +37,7 @@ public abstract class Pass5AsmOptimization {
    }
 
    public void remove(List<AsmLine> remove) {
-      for (Iterator<AsmLine> iterator = program.getLines().iterator(); iterator.hasNext(); ) {
+      for (Iterator<AsmLine> iterator = getAsmProgram().getLines().iterator(); iterator.hasNext(); ) {
          AsmLine line = iterator.next();
          if (remove.contains(line)) {
             log.append("Removing instruction "+line.getAsm());

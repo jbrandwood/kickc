@@ -13,14 +13,13 @@ import java.util.List;
 public class Pass1EliminateEmptyBlocks {
 
    private Program program;
-   private CompileLog log;
 
-   public Pass1EliminateEmptyBlocks(Program program, CompileLog log) {
+   public Pass1EliminateEmptyBlocks(Program program) {
       this.program = program;
-      this.log = log;
    }
 
    public boolean eliminate() {
+      CompileLog log = program.getLog();
       ControlFlowGraph graph = program.getGraph();
       Collection<ControlFlowBlock> blocks = graph.getAllBlocks();
       List<LabelRef> removeList = new ArrayList<>();

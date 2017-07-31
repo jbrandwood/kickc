@@ -15,7 +15,7 @@ public class Pass3CustomRegisters {
    }
 
    public void allocate() {
-      RegisterAllocation allocation = program.getScope().getAllocation();
+      RegisterAllocation allocation = program.getAllocation();
 
       // Register allocation for loopnest.kc
       allocation.setRegister(new VariableRef("nest2::j#2"), RegisterAllocation.getRegisterX());

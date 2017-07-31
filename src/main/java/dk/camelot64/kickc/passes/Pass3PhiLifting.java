@@ -22,11 +22,8 @@ public class Pass3PhiLifting {
 
    private final Program program;
 
-   private final CompileLog log;
-
-   public Pass3PhiLifting(Program program, CompileLog log) {
+   public Pass3PhiLifting(Program program) {
       this.program = program;
-      this.log = log;
    }
 
    public void perform() {
@@ -80,7 +77,7 @@ public class Pass3PhiLifting {
                            if(block.getLabel().equals(predecessorBlock.getDefaultSuccessor())) {
                               predecessorBlock.setDefaultSuccessor(newBlock.getLabel());
                            }
-                           log.append("Added new block during phi lifting "+newBlock.getLabel() + "(between "+predecessorRef+" and "+block.getLabel()+")");
+                           program.getLog().append("Added new block during phi lifting "+newBlock.getLabel() + "(between "+predecessorRef+" and "+block.getLabel()+")");
                         }  else {
                            newBlock = graph.getBlock(newBlockRef);
                         }

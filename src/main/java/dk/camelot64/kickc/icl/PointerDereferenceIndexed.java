@@ -34,8 +34,8 @@ public class PointerDereferenceIndexed implements PointerDereference {
    }
 
    @Override
-   public String toString(ProgramScope scope) {
-      return "*(" + pointer.toString(scope) + " + " +index.toString(scope) + ')';
+   public String toString(Program program) {
+      return "*(" + pointer.toString(program) + " + " +index.toString(program) + ')';
    }
 
 }

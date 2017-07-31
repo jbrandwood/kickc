@@ -80,7 +80,8 @@ public class ControlFlowBlock {
       return statements;
    }
 
-   public String toString(ControlFlowGraph graph, ProgramScope scope) {
+   public String toString(Program program) {
+      ControlFlowGraph graph = program.getGraph();
       StringBuffer out = new StringBuffer();
       out.append(label.getFullName() + ":" );
       out.append(" from");
@@ -96,7 +97,7 @@ public class ControlFlowBlock {
       }
       out.append("\n");
       for (Statement statement : statements) {
-         out.append("  "+statement.toString(scope)+"\n");
+         out.append("  "+statement.toString(program)+"\n");
       }
       if(defaultSuccessor!=null) {
          out.append("  to:");

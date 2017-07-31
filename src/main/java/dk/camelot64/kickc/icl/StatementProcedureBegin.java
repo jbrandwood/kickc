@@ -30,8 +30,8 @@ public class StatementProcedureBegin extends StatementBase {
    }
 
    @Override
-   public String toString(ProgramScope scope) {
-      return super.idxString() + "proc " + procedure.toString(scope) + super.aliveString(scope);
+   public String toString(Program program) {
+      return super.idxString() + "proc " + procedure.toString(program) + super.aliveString(program);
    }
 
 }

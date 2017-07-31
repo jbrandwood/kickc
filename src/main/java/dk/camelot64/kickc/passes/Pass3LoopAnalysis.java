@@ -11,22 +11,10 @@ import java.util.*;
  * <p>
  * See http://www.cs.colostate.edu/~cs553/ClassNotes/lecture09-control-dominators.ppt.pdf
  */
-public class Pass3LoopAnalysis {
+public class Pass3LoopAnalysis extends Pass2Base {
 
-   private Program program;
-   private CompileLog log;
-
-   public Pass3LoopAnalysis(Program program, CompileLog log) {
-      this.program = program;
-      this.log = log;
-   }
-
-   public Program getProgram() {
-      return program;
-   }
-
-   public CompileLog getLog() {
-      return log;
+   public Pass3LoopAnalysis(Program program) {
+      super(program);
    }
 
    /**
@@ -36,8 +24,8 @@ public class Pass3LoopAnalysis {
     * See http://www.cs.colostate.edu/~cs553/ClassNotes/lecture09-control-dominators.ppt.pdf
     */
    public void findLoops() {
-      DominatorsGraph dominators = program.getGraph().getDominators();
-      Collection<ControlFlowBlock> blocks = program.getGraph().getAllBlocks();
+      DominatorsGraph dominators = getProgram().getDominators();
+      Collection<ControlFlowBlock> blocks = getGraph().getAllBlocks();
 
       // Look through graph for natural loop back edges
       NaturalLoopSet loopSet = new NaturalLoopSet();
@@ -47,7 +35,7 @@ public class Pass3LoopAnalysis {
             if (blockDominators.contains(successor)) {
                // Found a loop back edge!
                NaturalLoop loop = new NaturalLoop(successor, block.getLabel());
-               log.append("Found back edge: "+loop.toString());
+               getLog().append("Found back edge: "+loop.toString());
                loopSet.addLoop(loop);
             }
          }
@@ -64,8 +52,8 @@ public class Pass3LoopAnalysis {
             if(block.equals(loop.getHead())) {
                continue;
             }
-            ControlFlowBlock controlFlowBlock = program.getGraph().getBlock(block);
-            List<ControlFlowBlock> predecessors = program.getGraph().getPredecessors(controlFlowBlock);
+            ControlFlowBlock controlFlowBlock = getGraph().getBlock(block);
+            List<ControlFlowBlock> predecessors = getGraph().getPredecessors(controlFlowBlock);
             for (ControlFlowBlock predecessor : predecessors) {
                if(!loopBlocks.contains(predecessor.getLabel()) && !todo.contains(predecessor.getLabel())) {
                   todo.add(predecessor.getLabel());
@@ -73,7 +61,7 @@ public class Pass3LoopAnalysis {
             }
          }
          loop.setBlocks(loopBlocks);
-         log.append("Populated: "+loop.toString());
+         getLog().append("Populated: "+loop.toString());
       }
 
       // Coalesce loops that are neither nested, nor disjoint
@@ -91,12 +79,12 @@ public class Pass3LoopAnalysis {
                loop.addTails(other.getTails());
                loop.addBlocks(other.getBlocks());
                loopSet.remove(other);
-               log.append("Coalesced: "+loop.toString()) ;
+               getLog().append("Coalesced: "+loop.toString()) ;
             }
          }
       }
 
-      program.getGraph().setLoops(loopSet);
+      getProgram().setLoops(loopSet);
    }
 
 

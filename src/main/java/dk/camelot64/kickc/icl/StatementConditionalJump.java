@@ -82,18 +82,18 @@ public class StatementConditionalJump extends StatementBase {
    }
 
    @Override
-   public String toString(ProgramScope scope) {
+   public String toString(Program program) {
       StringBuilder out = new StringBuilder();
       out.append(super.idxString());
       out.append("if(");
       if(rValue1!=null) {
-         out.append(rValue1.toString(scope));
+         out.append(rValue1.toString(program));
          out.append(operator.getOperator());
       }
-      out.append(rValue2.toString(scope));
+      out.append(rValue2.toString(program));
       out.append(") goto ");
       out.append(destination.getFullName());
-      out.append(super.aliveString(scope));
+      out.append(super.aliveString(program));
       return out.toString();
    }
 

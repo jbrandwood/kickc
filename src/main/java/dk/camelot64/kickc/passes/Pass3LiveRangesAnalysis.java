@@ -4,21 +4,16 @@ package dk.camelot64.kickc.passes;
  * Identify the alive intervals for all variables. Add the intervals to the ProgramScope.
  */
 
-import dk.camelot64.kickc.CompileLog;
 import dk.camelot64.kickc.icl.*;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-public class Pass3LiveRangesAnalysis {
+public class Pass3LiveRangesAnalysis extends Pass2Base {
 
-   private final Program program;
-   private final CompileLog log;
-
-   public Pass3LiveRangesAnalysis(Program program, CompileLog log) {
-      this.program = program;
-      this.log = log;
+   public Pass3LiveRangesAnalysis(Program program) {
+      super(program);
    }
 
    public void findLiveRanges() {
@@ -26,20 +21,20 @@ public class Pass3LiveRangesAnalysis {
       generateStatementIndexes();
 
       LiveRangeVariables liveRanges = initializeLiveRanges();
-      program.getScope().setLiveRangeVariables(liveRanges);
+      getProgram().setLiveRangeVariables(liveRanges);
       //log.append("CONTROL FLOW GRAPH - LIVE RANGES");
       //log.append(program.getGraph().toString(program.getScope()));
 
       boolean propagating;
       do {
          propagating = propagateLiveRanges(liveRanges);
-         program.getScope().setLiveRangeVariables(liveRanges);
-         log.append("Propagating live ranges...");
+         getProgram().setLiveRangeVariables(liveRanges);
+         getLog().append("Propagating live ranges...");
          //log.append("CONTROL FLOW GRAPH - LIVE RANGES");
          //log.append(program.getGraph().toString(program.getScope()));
       } while (propagating);
 
-      program.getScope().setLiveRangeVariables(liveRanges);
+      getProgram().setLiveRangeVariables(liveRanges);
    }
 
 
@@ -48,7 +43,7 @@ public class Pass3LiveRangesAnalysis {
     */
    private void generateStatementIndexes() {
       int currentIdx = 0;
-      for (ControlFlowBlock block : program.getGraph().getAllBlocks()) {
+      for (ControlFlowBlock block : getProgram().getGraph().getAllBlocks()) {
          for (Statement statement : block.getStatements()) {
             statement.setIndex(currentIdx++);
          }
@@ -62,7 +57,7 @@ public class Pass3LiveRangesAnalysis {
     * @return The initial live ranges.
     */
    private LiveRangeVariables initializeLiveRanges() {
-      LiveRangeInitializer liveRangeInitializer = new LiveRangeInitializer(program);
+      LiveRangeInitializer liveRangeInitializer = new LiveRangeInitializer(getProgram());
       return liveRangeInitializer.initialize();
    }
 
@@ -202,7 +197,7 @@ public class Pass3LiveRangesAnalysis {
     * @return true if any propagation was done. (and more propagation is necessary to complete the live ranges)
     */
    private boolean propagateLiveRanges(LiveRangeVariables liveRanges) {
-      LiveRangePropagator liveRangePropagator = new LiveRangePropagator(program, liveRanges, log);
+      LiveRangePropagator liveRangePropagator = new LiveRangePropagator(getProgram(), liveRanges);
       return liveRangePropagator.propagate();
    }
 
@@ -217,7 +212,6 @@ public class Pass3LiveRangesAnalysis {
        * The variable live ranges being propagated.
        */
       private LiveRangeVariables liveRanges;
-      private CompileLog log;
 
       /**
        * Has anything been modified.
@@ -234,10 +228,9 @@ public class Pass3LiveRangesAnalysis {
        */
       private ControlFlowBlock currentBlock;
 
-      public LiveRangePropagator(Program program, LiveRangeVariables liveRanges, CompileLog log) {
+      public LiveRangePropagator(Program program, LiveRangeVariables liveRanges) {
          this.program = program;
          this.liveRanges = liveRanges;
-         this.log = log;
          this.modified = false;
       }
 
@@ -291,7 +284,7 @@ public class Pass3LiveRangesAnalysis {
                   LiveRange lValLiveRange = liveRanges.getLiveRange((VariableRef) lValue);
                   if(lValLiveRange==null) {
                      liveRanges.addEmptyAlive((VariableRef)lValue);
-                     log.append("Adding empty live range for unused variable "+lValue);
+                     program.getLog().append("Adding empty live range for unused variable "+lValue);
                   }
                }
 

@@ -5,6 +5,7 @@ import dk.camelot64.kickc.asm.AsmInstruction;
 import dk.camelot64.kickc.asm.AsmLabel;
 import dk.camelot64.kickc.asm.AsmLine;
 import dk.camelot64.kickc.asm.AsmProgram;
+import dk.camelot64.kickc.icl.Program;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -12,14 +13,14 @@ import java.util.List;
 /** Optimize assembler code by removing jumps to labels immediately following the jump */
 public class Pass5NextJumpElimination extends Pass5AsmOptimization {
 
-   public Pass5NextJumpElimination(AsmProgram program, CompileLog log) {
+   public Pass5NextJumpElimination(Program program, CompileLog log) {
       super(program, log);
    }
 
    public boolean optimize() {
       List<AsmLine> removeLines = new ArrayList<>();
       AsmInstruction candidate = null;
-      for (AsmLine line : getProgram().getLines()) {
+      for (AsmLine line : getAsmProgram().getLines()) {
          if(candidate!=null) {
             if(line instanceof AsmLabel) {
                if(((AsmLabel) line).getLabel().equals(candidate.getParameter())) {

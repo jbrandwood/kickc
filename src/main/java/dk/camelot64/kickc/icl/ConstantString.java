@@ -17,8 +17,8 @@ public class ConstantString implements Constant {
    }
 
    @Override
-   public String toString(ProgramScope scope) {
-      if (scope == null) {
+   public String toString(Program program) {
+      if (program == null) {
          return "\\" + value + "\\";
       } else {
          return "(" + SymbolTypeBasic.STRING.getTypeName() + ") " + "\\" + value + "\\";

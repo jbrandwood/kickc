@@ -23,8 +23,8 @@ import java.util.Map;
  */
 public class Pass3PhiMemCoalesce extends Pass2SsaOptimization {
 
-   public Pass3PhiMemCoalesce(Program program, CompileLog log) {
-      super(program, log);
+   public Pass3PhiMemCoalesce(Program program) {
+      super(program);
    }
 
    @Override
@@ -32,13 +32,13 @@ public class Pass3PhiMemCoalesce extends Pass2SsaOptimization {
       EquivalenceClassPhiInitializer equivalenceClassPhiInitializer = new EquivalenceClassPhiInitializer(getProgram());
       equivalenceClassPhiInitializer.visitGraph(getGraph());
       LiveRangeEquivalenceClassSet phiEquivalenceClasses = equivalenceClassPhiInitializer.getPhiEquivalenceClasses();
-      log.append("Created " + phiEquivalenceClasses.size() + " initial phi equivalence classes");
+      getLog().append("Created " + phiEquivalenceClasses.size() + " initial phi equivalence classes");
       PhiMemCoalescer phiMemCoalescer = new PhiMemCoalescer(phiEquivalenceClasses);
       phiMemCoalescer.visitGraph(getGraph());
       removeAssignments(phiMemCoalescer.getRemove());
       replaceVariables(phiMemCoalescer.getReplace());
       deleteVariables(phiMemCoalescer.getRemove());
-      log.append("Coalesced down to " + phiEquivalenceClasses.size() + " phi equivalence classes");
+      getLog().append("Coalesced down to " + phiEquivalenceClasses.size() + " phi equivalence classes");
       return false;
    }
 
@@ -75,15 +75,15 @@ public class Pass3PhiMemCoalesce extends Pass2SsaOptimization {
                if (lValEquivalenceClass.equals(assignVarEquivalenceClass)) {
                   remove.add((VariableRef) assignment.getlValue());
                   replace.put((VariableRef) assignment.getlValue(), assignVar);
-                  log.append("Coalesced (already) " + assignment);
+                  getLog().append("Coalesced (already) " + assignment);
                } else if (!lValEquivalenceClass.getLiveRange().overlaps(assignVarEquivalenceClass.getLiveRange())) {
                   lValEquivalenceClass.addAll(assignVarEquivalenceClass);
                   phiEquivalenceClassSet.remove(assignVarEquivalenceClass);
                   remove.add((VariableRef) assignment.getlValue());
                   replace.put((VariableRef) assignment.getlValue(), assignVar);
-                  log.append("Coalesced " + assignment);
+                  getLog().append("Coalesced " + assignment);
                } else {
-                  log.append("Not coalescing " + assignment);
+                  getLog().append("Not coalescing " + assignment);
                }
             }
          }

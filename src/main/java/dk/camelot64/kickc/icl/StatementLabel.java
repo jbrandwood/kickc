@@ -17,8 +17,8 @@ public class StatementLabel extends StatementBase {
    }
 
    @Override
-   public String toString(ProgramScope scope) {
-      return super.idxString() + label.getFullName() + ":"+super.aliveString(scope);
+   public String toString(Program program) {
+      return super.idxString() + label.getFullName() + ":"+super.aliveString(program);
    }
 
 }

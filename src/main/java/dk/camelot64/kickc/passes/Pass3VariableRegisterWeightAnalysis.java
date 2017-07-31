@@ -1,6 +1,5 @@
 package dk.camelot64.kickc.passes;
 
-import dk.camelot64.kickc.CompileLog;
 import dk.camelot64.kickc.icl.*;
 
 /**
@@ -12,25 +11,14 @@ import dk.camelot64.kickc.icl.*;
  * <p>
  * Based on ComputeWeight from http://compilers.cs.ucla.edu/fernando/projects/soc/reports/short_tech.pdf
  */
-public class Pass3VariableRegisterWeightAnalysis {
+public class Pass3VariableRegisterWeightAnalysis extends Pass2Base {
 
-   private Program program;
-   private CompileLog log;
    private NaturalLoopSet loopSet;
    private VariableRegisterWeights variableRegisterWeights;
    private LiveRangeVariables liveRangeVariables;
 
-   public Pass3VariableRegisterWeightAnalysis(Program program, CompileLog log) {
-      this.program = program;
-      this.log = log;
-   }
-
-   public Program getProgram() {
-      return program;
-   }
-
-   public CompileLog getLog() {
-      return log;
+   public Pass3VariableRegisterWeightAnalysis(Program program) {
+      super(program);
    }
 
    /**
@@ -39,10 +27,10 @@ public class Pass3VariableRegisterWeightAnalysis {
    public void findWeights() {
 
       variableRegisterWeights = new VariableRegisterWeights();
-      loopSet = program.getGraph().getLoopSet();
-      liveRangeVariables = program.getScope().getLiveRangeVariables();
+      loopSet = getProgram().getLoopSet();
+      liveRangeVariables = getProgram().getLiveRangeVariables();
 
-      for (ControlFlowBlock block : program.getGraph().getAllBlocks()) {
+      for (ControlFlowBlock block : getProgram().getGraph().getAllBlocks()) {
          for (Statement statement : block.getStatements()) {
             if (statement instanceof StatementPhiBlock) {
                for (StatementPhiBlock.PhiVariable phiVariable : ((StatementPhiBlock) statement).getPhiVariables()) {
@@ -84,7 +72,7 @@ public class Pass3VariableRegisterWeightAnalysis {
          }
       }
 
-      program.getScope().setVariableRegisterWeights(variableRegisterWeights);
+      getProgram().setVariableRegisterWeights(variableRegisterWeights);
 
    }
 

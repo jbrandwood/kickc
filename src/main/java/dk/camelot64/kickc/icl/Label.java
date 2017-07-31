@@ -93,8 +93,8 @@ public class Label implements Symbol {
    }
 
    @Override
-   public String toString(ProgramScope scope) {
-      if(scope==null) {
+   public String toString(Program program) {
+      if(program ==null) {
          return getFullName();
       }  else {
          return "("+getType().getTypeName() + ") "+getFullName();

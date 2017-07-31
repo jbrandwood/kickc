@@ -24,8 +24,8 @@ public class StatementJump extends StatementBase {
    }
 
    @Override
-   public String toString(ProgramScope scope) {
-      return super.idxString() + "goto " + destination.getFullName()+ super.aliveString(scope);
+   public String toString(Program program) {
+      return super.idxString() + "goto " + destination.getFullName()+ super.aliveString(program);
    }
 
 }

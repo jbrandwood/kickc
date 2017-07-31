@@ -1,6 +1,5 @@
 package dk.camelot64.kickc.passes;
 
-import dk.camelot64.kickc.CompileLog;
 import dk.camelot64.kickc.icl.*;
 
 import java.util.ArrayList;
@@ -9,53 +8,49 @@ import java.util.List;
 /**
  * Zero Page Register Allocation for variables based on live ranges and phi equivalence classes.
  */
-public class Pass3ZeroPageAllocation {
+public class Pass3ZeroPageAllocation extends Pass2Base {
 
-   private Program program;
-   private CompileLog log;
-
-   public Pass3ZeroPageAllocation(Program program, CompileLog log) {
-      this.program = program;
-      this.log = log;
+   public Pass3ZeroPageAllocation(Program program) {
+      super(program);
    }
 
    public void allocate() {
 
       // Initial equivalence classes from phi statements
-      Pass3PhiMemCoalesce.EquivalenceClassPhiInitializer equivalenceClassPhiInitializer = new Pass3PhiMemCoalesce.EquivalenceClassPhiInitializer(program);
-      equivalenceClassPhiInitializer.visitGraph(program.getGraph());
+      Pass3PhiMemCoalesce.EquivalenceClassPhiInitializer equivalenceClassPhiInitializer = new Pass3PhiMemCoalesce.EquivalenceClassPhiInitializer(getProgram());
+      equivalenceClassPhiInitializer.visitGraph(getGraph());
       LiveRangeEquivalenceClassSet liveRangeEquivalenceClassSet = equivalenceClassPhiInitializer.getPhiEquivalenceClasses();
-      log.append("Initial phi equivalence classes");
+      getLog().append("Initial phi equivalence classes");
       for (LiveRangeEquivalenceClass liveRangeEquivalenceClass : liveRangeEquivalenceClassSet.getEquivalenceClasses()) {
-         log.append(liveRangeEquivalenceClass.toString());
+         getLog().append(liveRangeEquivalenceClass.toString());
       }
 
       // Coalesce over copy assignments
       //EquivalenceClassCopyCoalescer equivalenceClassCopyCoalescer = new EquivalenceClassCopyCoalescer(liveRangeEquivalenceClassSet);
-      //equivalenceClassCopyCoalescer.visitGraph(program.getGraph());
-      //log.append("Copy Coalesced equivalence classes");
+      //equivalenceClassCopyCoalescer.visitGraph(getGraph());
+      //getLog().append("Copy Coalesced equivalence classes");
       //for (LiveRangeEquivalenceClass liveRangeEquivalenceClass : liveRangeEquivalenceClassSet.getEquivalenceClasses()) {
-      //   log.append(liveRangeEquivalenceClass.toString());
+      //   getLog().append(liveRangeEquivalenceClass.toString());
       //}
 
       // Add all other variables one by one to an available equivalence class - or create a new one
       EquivalenceClassAdder equivalenceClassAdder = new EquivalenceClassAdder(liveRangeEquivalenceClassSet);
-      equivalenceClassAdder.visitGraph(program.getGraph());
-      log.append("Complete equivalence classes");
+      equivalenceClassAdder.visitGraph(getGraph());
+      getLog().append("Complete equivalence classes");
       for (LiveRangeEquivalenceClass liveRangeEquivalenceClass : liveRangeEquivalenceClassSet.getEquivalenceClasses()) {
-         log.append(liveRangeEquivalenceClass.toString());
+         getLog().append(liveRangeEquivalenceClass.toString());
       }
 
       // Allocate zeropage registers to equivalence classes
       RegisterAllocation allocation = new RegisterAllocation();
       for (LiveRangeEquivalenceClass liveRangeEquivalenceClass : liveRangeEquivalenceClassSet.getEquivalenceClasses()) {
          List<VariableRef> variables = liveRangeEquivalenceClass.getVariables();
-         Variable firstVar = program.getScope().getVariable(variables.get(0));
+         Variable firstVar = getProgram().getScope().getVariable(variables.get(0));
          RegisterAllocation.Register zpRegister = allocateNewRegisterZp(firstVar.getType());
          liveRangeEquivalenceClass.setRegister(zpRegister);
-         log.append("Allocated " + zpRegister + " to " + liveRangeEquivalenceClass);
+         getLog().append("Allocated " + zpRegister + " to " + liveRangeEquivalenceClass);
       }
-      program.getScope().setLiveRangeEquivalenceClassSet(liveRangeEquivalenceClassSet);
+      getProgram().setLiveRangeEquivalenceClassSet(liveRangeEquivalenceClassSet);
    }
 
    /**
@@ -82,7 +77,7 @@ public class Pass3ZeroPageAllocation {
       }
 
       private void addToEquivalenceClassSet(VariableRef lValVar, List<VariableRef> preferences) {
-         LiveRangeVariables liveRangeVariables = program.getScope().getLiveRangeVariables();
+         LiveRangeVariables liveRangeVariables = getProgram().getLiveRangeVariables();
          LiveRangeEquivalenceClass lValEquivalenceClass =
                liveRangeEquivalenceClassSet.getEquivalenceClass(lValVar);
          if (lValEquivalenceClass == null) {
@@ -92,8 +87,8 @@ public class Pass3ZeroPageAllocation {
             for (VariableRef preference : preferences) {
                LiveRangeEquivalenceClass preferenceEquivalenceClass = liveRangeEquivalenceClassSet.getEquivalenceClass(preference);
                if (preferenceEquivalenceClass != null) {
-                  Variable potentialVariable = program.getScope().getVariable(preference);
-                  Variable lValVariable = program.getScope().getVariable(lValVar);
+                  Variable potentialVariable = getProgram().getScope().getVariable(preference);
+                  Variable lValVariable = getProgram().getScope().getVariable(lValVar);
                   if (lValVariable.getType().equals(potentialVariable.getType())) {
                      if (!lValLiveRange.overlaps(preferenceEquivalenceClass.getLiveRange())) {
                         chosen = preferenceEquivalenceClass;
@@ -107,7 +102,7 @@ public class Pass3ZeroPageAllocation {
                // No preference usable - create a new one
                chosen = liveRangeEquivalenceClassSet.getOrCreateEquivalenceClass(lValVar);
             }
-            log.append("Added variable " + lValVar + " to zero page equivalence class " + chosen);
+            getLog().append("Added variable " + lValVar + " to zero page equivalence class " + chosen);
          }
       }
 
@@ -140,13 +135,13 @@ public class Pass3ZeroPageAllocation {
                VariableRef assignVar = (VariableRef) assignment.getrValue2();
                LiveRangeEquivalenceClass assignVarEquivalenceClass = liveRangeEquivalenceClassSet.getOrCreateEquivalenceClass(assignVar);
                if (lValEquivalenceClass.equals(assignVarEquivalenceClass)) {
-                  log.append("Coalesced (already) " + assignment + " in " + lValEquivalenceClass);
+                  getLog().append("Coalesced (already) " + assignment + " in " + lValEquivalenceClass);
                } else if (!lValEquivalenceClass.getLiveRange().overlaps(assignVarEquivalenceClass.getLiveRange())) {
                   lValEquivalenceClass.addAll(assignVarEquivalenceClass);
                   liveRangeEquivalenceClassSet.remove(assignVarEquivalenceClass);
-                  log.append("Coalesced " + assignment + " into " + lValEquivalenceClass);
+                  getLog().append("Coalesced " + assignment + " into " + lValEquivalenceClass);
                } else {
-                  log.append("Not coalescing " + assignment);
+                  getLog().append("Not coalescing " + assignment);
                }
             }
          }

@@ -20,13 +20,13 @@ public class StatementSequence {
       return statements;
    }
 
-   public String toString(ProgramScope scope) {
+   public String toString(Program program) {
       StringBuffer out = new StringBuffer();
       for (Statement statement : statements) {
          if(!(statement instanceof StatementLabel)) {
             out.append("  ");
          }
-         out.append(statement.toString(scope)+"\n");
+         out.append(statement.toString(program)+"\n");
       }
       return out.toString();
    }

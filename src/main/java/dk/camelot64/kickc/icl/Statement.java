@@ -21,7 +21,7 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo;
 })
 public interface Statement {
 
-   String toString(ProgramScope scope);
+   String toString(Program program);
 
    /** Set the index of the statement. Indexes are used during live range analysis. */
    void setIndex(Integer idx);

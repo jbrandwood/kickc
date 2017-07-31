@@ -21,8 +21,8 @@ public class ConstantDouble implements Constant {
    }
 
    @Override
-   public String toString(ProgramScope scope) {
-      if(scope==null) {
+   public String toString(Program program) {
+      if(program ==null) {
          return Double.toString(number);
       }  else {
          return "(" + SymbolTypeBasic.VOID.getTypeName() + ") " + Double.toString(number);

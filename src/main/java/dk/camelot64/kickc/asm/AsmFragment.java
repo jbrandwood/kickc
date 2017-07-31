@@ -21,7 +21,7 @@ public class AsmFragment {
    /**
     * The symbol table.
     */
-   private ProgramScope symbols;
+   private Program program;
 
    /**
     * Binding of named values in the fragment to values (constants, variables, ...) .
@@ -33,37 +33,37 @@ public class AsmFragment {
     */
    private String signature;
 
-   public AsmFragment(StatementConditionalJump conditionalJump, ControlFlowBlock block, ProgramScope symbols, ControlFlowGraph graph) {
+   public AsmFragment(StatementConditionalJump conditionalJump, ControlFlowBlock block, Program program, ControlFlowGraph graph) {
       this.bindings = new LinkedHashMap<>();
-      this.symbols = symbols;
+      this.program = program;
       String conditionalJumpSignature = conditionalJumpSignature(conditionalJump, block, graph);
       setSignature(conditionalJumpSignature);
    }
 
-   public AsmFragment(StatementAssignment assignment, ProgramScope symbols) {
+   public AsmFragment(StatementAssignment assignment, Program program ) {
       this.bindings = new LinkedHashMap<>();
-      this.symbols = symbols;
+      this.program = program;
       setSignature(assignmentSignature(assignment.getlValue(), assignment.getrValue1(), assignment.getOperator(), assignment.getrValue2()));
    }
 
-   public AsmFragment(LValue lValue, RValue rValue, ProgramScope symbols) {
+   public AsmFragment(LValue lValue, RValue rValue, Program program) {
       this.bindings = new LinkedHashMap<>();
-      this.symbols = symbols;
+      this.program = program;
       setSignature(assignmentSignature(lValue, null, null, rValue));
    }
 
-   public AsmFragment(StatementAssignment assignment, StatementAssignment assignmentAlu, ProgramScope symbols) {
+   public AsmFragment(StatementAssignment assignment, StatementAssignment assignmentAlu, Program program) {
       this.bindings = new LinkedHashMap<>();
-      this.symbols = symbols;
+      this.program = program;
       setSignature(assignmentWithAluSignature(assignment, assignmentAlu));
 
    }
 
    private String assignmentWithAluSignature(StatementAssignment assignment, StatementAssignment assignmentAlu) {
       RValue assignmentRValue2 = assignment.getrValue2();
-      Variable assignmentVar = symbols.getVariable((VariableRef) assignmentRValue2);
+      Variable assignmentVar = program.getScope().getVariable((VariableRef) assignmentRValue2);
 
-      RegisterAllocation.Register rVal2Register = symbols.getRegister(assignmentVar);
+      RegisterAllocation.Register rVal2Register = program.getRegister(assignmentVar);
       if(!rVal2Register.getType().equals(RegisterAllocation.RegisterType.REG_ALU_BYTE)) {
          throw new RuntimeException("Error! ALU register only allowed as rValue2. "+assignment);
       }
@@ -145,7 +145,7 @@ public class AsmFragment {
       } else {
          destinationLabel = destination.getLocalName();
       }
-      Symbol destSymbol = symbols.getSymbol(destination);
+      Symbol destSymbol = program.getScope().getSymbol(destination);
       signature.append(bind(new Label(destinationLabel, destSymbol.getScope(),false)));
       return signature.toString();
    }
@@ -217,10 +217,10 @@ public class AsmFragment {
     */
    public String bind(Value value) {
       if(value instanceof VariableRef) {
-        value = symbols.getVariable((VariableRef) value);
+        value = program.getScope().getVariable((VariableRef) value);
       }
       if (value instanceof Variable) {
-         value = symbols.getRegister((Variable) value);
+         value = program.getRegister((Variable) value);
       } else if (value instanceof PointerDereferenceSimple) {
          PointerDereferenceSimple deref = (PointerDereferenceSimple) value;
          return "_star_" + bind(deref.getPointer());

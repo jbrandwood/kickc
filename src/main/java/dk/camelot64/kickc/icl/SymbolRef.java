@@ -40,11 +40,11 @@ public class SymbolRef implements Value {
    }
 
    @Override
-   public String toString(ProgramScope scope) {
-      if (scope == null) {
+   public String toString(Program program) {
+      if (program == null) {
          return fullName;
       } else {
-         return scope.getSymbol(fullName).toString(scope);
+         return program.getScope().getSymbol(fullName).toString(program);
       }
    }
 

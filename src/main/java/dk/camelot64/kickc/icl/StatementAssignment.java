@@ -94,14 +94,14 @@ public class StatementAssignment extends StatementBase implements StatementLValu
    }
 
    @Override
-   public String toString(ProgramScope scope) {
+   public String toString(Program program) {
       return
             super.idxString() +
-            lValue.toString(scope) + " ← " +
-                  (rValue1==null?"":rValue1.toString(scope)+" ") +
+            lValue.toString(program) + " ← " +
+                  (rValue1==null?"":rValue1.toString(program)+" ") +
                   (operator==null?"":operator+" ") +
-                  rValue2.toString(scope) +
-            super.aliveString(scope);
+                  rValue2.toString(program) +
+            super.aliveString(program);
    }
 
    @Override

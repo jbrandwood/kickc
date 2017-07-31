@@ -24,6 +24,6 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo;
       })
 public interface Value {
 
-      String toString(ProgramScope scope);
+      String toString(Program program);
 
 }

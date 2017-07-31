@@ -38,8 +38,8 @@ public class ConstantInteger implements Constant {
    }
 
    @Override
-   public String toString(ProgramScope scope) {
-      if (scope == null) {
+   public String toString(Program program) {
+      if (program == null) {
          return Integer.toString(number);
       } else {
          return "(" + getType().getTypeName() + ") " + Integer.toString(number);

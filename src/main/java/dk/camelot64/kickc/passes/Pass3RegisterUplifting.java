@@ -1,40 +1,23 @@
 package dk.camelot64.kickc.passes;
 
-import dk.camelot64.kickc.CompileLog;
-import dk.camelot64.kickc.asm.AsmProgram;
-import dk.camelot64.kickc.asm.parser.AsmClobber;
 import dk.camelot64.kickc.icl.*;
 
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.List;
 
 /*** Uplift one variable into the A register - and check if the program still works */
-public class Pass3RegisterUplifting {
+public class Pass3RegisterUplifting extends Pass2Base {
 
-   private Program program;
-   private CompileLog log;
-
-   public Pass3RegisterUplifting(Program program, CompileLog log) {
-      this.program = program;
-      this.log = log;
-   }
-
-   public Program getProgram() {
-      return program;
-   }
-
-   public CompileLog getLog() {
-      return log;
+   public Pass3RegisterUplifting(Program program) {
+      super(program);
    }
 
    /**
     * Uplift one variable
     */
    public void uplift() {
-      VariableRegisterWeights variableRegisterWeights = program.getScope().getVariableRegisterWeights();
-      LiveRangeEquivalenceClassSet equivalenceClassSet = program.getScope().getLiveRangeEquivalenceClassSet();
+      VariableRegisterWeights variableRegisterWeights = getProgram().getVariableRegisterWeights();
+      LiveRangeEquivalenceClassSet equivalenceClassSet = getProgram().getLiveRangeEquivalenceClassSet();
 
       double maxWeight = 0.0;
       LiveRangeEquivalenceClass maxEquivalenceClass = null;
@@ -54,7 +37,7 @@ public class Pass3RegisterUplifting {
       }
 
       if (maxEquivalenceClass != null) {
-         log.append("Uplifting max weight " + maxWeight + " live range equivalence class " + maxEquivalenceClass);
+         getLog().append("Uplifting max weight " + maxWeight + " live range equivalence class " + maxEquivalenceClass);
          // Try the A register first
          List<RegisterAllocation.Register> registers =
                Arrays.asList(
@@ -66,22 +49,22 @@ public class Pass3RegisterUplifting {
          }
       }
 
-      RegisterAllocation allocation = program.getScope().getLiveRangeEquivalenceClassSet().createRegisterAllocation();
-      program.getScope().setAllocation(allocation);
+      RegisterAllocation allocation = getProgram().getLiveRangeEquivalenceClassSet().createRegisterAllocation();
+      getProgram().setAllocation(allocation);
 
    }
 
    private void attemptUplift(LiveRangeEquivalenceClass equivalenceClass, RegisterAllocation.Register register) {
-      RegisterAllocation allocation = program.getScope().getLiveRangeEquivalenceClassSet().createRegisterAllocation();
+      RegisterAllocation allocation = getProgram().getLiveRangeEquivalenceClassSet().createRegisterAllocation();
       for (VariableRef var : equivalenceClass.getVariables()) {
          allocation.setRegister(var, register);
       }
-      program.getScope().setAllocation(allocation);
-      Pass3AssertNoCpuClobber clobber = new Pass3AssertNoCpuClobber(program, log);
+      getProgram().setAllocation(allocation);
+      Pass3AssertNoCpuClobber clobber = new Pass3AssertNoCpuClobber(getProgram());
       if (clobber.hasClobberProblem(false, register)) {
-         log.append("Uplift to " + register + " resulted in clobber.");
+         getLog().append("Uplift to " + register + " resulted in clobber.");
       } else {
-         log.append("Uplift to " + register + " succesfull.");
+         getLog().append("Uplift to " + register + " succesfull.");
       }
    }
 

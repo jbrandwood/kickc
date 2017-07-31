@@ -10,8 +10,8 @@ import java.util.*;
  */
 public class Pass2AliasElimination extends Pass2SsaOptimization {
 
-   public Pass2AliasElimination(Program program, CompileLog log) {
-      super(program, log);
+   public Pass2AliasElimination(Program program) {
+      super(program);
    }
 
 
@@ -25,12 +25,12 @@ public class Pass2AliasElimination extends Pass2SsaOptimization {
       replaceVariables(aliases.getReplacements());
       for (AliasSet aliasSet : aliases.getAliasSets()) {
          StringBuilder str = new StringBuilder();
-         str.append(aliasSet.getKeepVar().toString(getSymbols()));
+         str.append(aliasSet.getKeepVar().toString(getProgram()));
          str.append(" = ");
          for (VariableRef var : aliasSet.getEliminateVars()) {
-            str.append(var.toString(getSymbols()) + " ");
+            str.append(var.toString(getProgram()) + " ");
          }
-         log.append("Alias " + str);
+         getLog().append("Alias " + str);
       }
       deleteVariables(aliases.getSymbolsToRemove());
       return (aliases.size() > 0);
@@ -238,7 +238,7 @@ public class Pass2AliasElimination extends Pass2SsaOptimization {
                      for (StatementPhiBlock.PhiRValue phiRValue : phiVariable.getValues()) {
                         RValue rValue = phiRValue.getrValue();
                         if (aliasSet.contains(rValue)) {
-                           log.append("Alias candidate removed " + rValue.toString(getSymbols()));
+                           getLog().append("Alias candidate removed " + rValue.toString(getProgram()));
                            aliasSet.remove(rValue);
                            break;
                         }
@@ -272,7 +272,7 @@ public class Pass2AliasElimination extends Pass2SsaOptimization {
                   if(variable.getScopeNames().equals(alias.getScopeNames())){
                      aliases.add(variable, alias);
                   } else {
-                     log.append("Not aliassing across scopes: "+variable+" "+alias);
+                     getLog().append("Not aliassing across scopes: "+variable+" "+alias);
                   }
                }
             }
@@ -290,7 +290,7 @@ public class Pass2AliasElimination extends Pass2SsaOptimization {
                      if(variable.getScopeNames().equals(alias.getScopeNames())){
                         aliases.add(variable, alias);
                      } else {
-                        log.append("Not aliassing across scopes: "+variable+" "+alias);
+                        getLog().append("Not aliassing across scopes: "+variable+" "+alias);
                      }
                   }
                }

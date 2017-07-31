@@ -4,29 +4,18 @@ import dk.camelot64.kickc.CompileLog;
 import dk.camelot64.kickc.icl.*;
 
 /** Finds the call graph for the control flow graph - identifies all calls in all scopes and creates a graph from these. */
-public class Pass3CallGraphAnalysis {
+public class Pass3CallGraphAnalysis extends Pass2Base {
 
-   private Program program;
-   private CompileLog log;
 
-   public Pass3CallGraphAnalysis(Program program, CompileLog log) {
-      this.program = program;
-      this.log = log;
-   }
-
-   public Program getProgram() {
-      return program;
-   }
-
-   public CompileLog getLog() {
-      return log;
+   public Pass3CallGraphAnalysis(Program program) {
+      super(program);
    }
 
    public void findCallGraph() {
       CallGraph callGraph = new CallGraph();
 
-      for (ControlFlowBlock block : program.getGraph().getAllBlocks()) {
-         LabelRef scopeRef = getScopeRef(block, program);
+      for (ControlFlowBlock block : getGraph().getAllBlocks()) {
+         LabelRef scopeRef = getScopeRef(block, getProgram());
          for (Statement statement : block.getStatements()) {
             if(statement instanceof StatementCall) {
                ProcedureRef procedure = ((StatementCall) statement).getProcedure();
@@ -36,7 +25,7 @@ public class Pass3CallGraphAnalysis {
             }
          }
       }
-      program.getGraph().setCallGraph(callGraph);
+      getProgram().setCallGraph(callGraph);
    }
 
    /**

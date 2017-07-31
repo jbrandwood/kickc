@@ -71,11 +71,11 @@ public class Procedure extends Scope {
       return super.getFullName();
    }
 
-   public String getSymbolTableContents(ProgramScope scope, Class symbolClass) {
+   public String getSymbolTableContents(Program program, Class symbolClass) {
       StringBuilder res = new StringBuilder();
-      res.append(toString(scope));
+      res.append(toString(program));
       res.append("\n");
-      res.append(super.getSymbolTableContents(scope, symbolClass));
+      res.append(super.getSymbolTableContents(program, symbolClass));
       return res.toString();
    }
 
@@ -85,32 +85,12 @@ public class Procedure extends Scope {
    }
 
    @Override
-   @JsonIgnore
-   public RegisterAllocation getAllocation() {
-      if(getScope()!=null) {
-         return getScope().getAllocation();
-      } else {
-         return null;
-      }
-   }
-
-   @Override
-   @JsonIgnore
-   public VariableRegisterWeights getVariableRegisterWeights() {
-      if(getScope()!=null) {
-         return getScope().getVariableRegisterWeights();
-      } else {
-         return null;
-      }
-   }
-
-   @Override
    public String toString() {
       return toString(null);
    }
 
    @Override
-   public String toString(ProgramScope scope) {
+   public String toString(Program program) {
       StringBuilder res = new StringBuilder();
       res.append("("+getType().getTypeName() + ") ");
       res.append(getFullName());
@@ -120,7 +100,7 @@ public class Procedure extends Scope {
          for (Variable parameter : getParameters()) {
             if (!first) res.append(" , ");
             first = false;
-            res.append(parameter.toString(scope));
+            res.append(parameter.toString(program));
          }
       }
       res.append(")");

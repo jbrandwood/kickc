@@ -9,8 +9,8 @@ import java.util.Map;
 /** Compiler Pass propagating constants in expressions eliminating constant variables */
 public class Pass2ConstantPropagation extends Pass2SsaOptimization {
 
-   public Pass2ConstantPropagation(Program program, CompileLog log) {
-      super(program, log);
+   public Pass2ConstantPropagation(Program program) {
+      super(program);
    }
 
    /**
@@ -22,7 +22,7 @@ public class Pass2ConstantPropagation extends Pass2SsaOptimization {
       final Map<VariableRef, Constant> constants = findConstantVariables();
       for (VariableRef constantVar : constants.keySet()) {
          Constant constantValue = constants.get(constantVar);
-         log.append("Constant " + constantVar.toString(getSymbols()) + " " + constantValue.toString(getSymbols()));
+         getLog().append("Constant " + constantVar.toString(getProgram()) + " " + constantValue.toString(getProgram()));
       }
       removeAssignments(constants.keySet());
       deleteVariables(constants.keySet());

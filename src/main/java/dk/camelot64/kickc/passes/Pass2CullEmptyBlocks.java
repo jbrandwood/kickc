@@ -8,8 +8,8 @@ import java.util.*;
 /** Pass that culls empty control flow blocks from the program */
 public class Pass2CullEmptyBlocks extends Pass2SsaOptimization {
 
-   public Pass2CullEmptyBlocks(Program program, CompileLog log) {
-      super(program, log);
+   public Pass2CullEmptyBlocks(Program program) {
+      super(program);
    }
 
    @Override
@@ -68,7 +68,7 @@ public class Pass2CullEmptyBlocks extends Pass2SsaOptimization {
          LabelRef removeBlockLabelRef = removeBlock.getLabel();
          Label removeBlockLabel = getSymbols().getLabel(removeBlockLabelRef);
          removeBlockLabel.getScope().remove(removeBlockLabel);
-         log.append("Culled Empty Block " + removeBlockLabel.toString(getSymbols()));
+         getLog().append("Culled Empty Block " + removeBlockLabel.toString(getProgram()));
       }
       return remove.size()>0;
    }

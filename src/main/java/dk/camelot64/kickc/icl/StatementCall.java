@@ -97,11 +97,11 @@ public class StatementCall extends StatementBase implements StatementLValue {
    }
 
    @Override
-   public String toString(ProgramScope scope) {
+   public String toString(Program program) {
       StringBuilder res = new StringBuilder();
       res.append(super.idxString());
       if (lValue != null) {
-         res.append(lValue.toString(scope));
+         res.append(lValue.toString(program));
          res.append(" ← ");
       }
       res.append("call ");
@@ -112,13 +112,13 @@ public class StatementCall extends StatementBase implements StatementLValue {
       }
       if (parameters != null) {
          for (RValue parameter : parameters) {
-            res.append(parameter.toString(scope) + " ");
+            res.append(parameter.toString(program) + " ");
          }
       }
       if (parametersByAssignment) {
          res.append("param-assignment");
       }
-      res.append(super.aliveString(scope));
+      res.append(super.aliveString(program));
       return res.toString();
    }
 

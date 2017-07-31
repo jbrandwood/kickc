@@ -7,22 +7,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 /** Finds the dominators for the control flow graph. */
-public class Pass3DominatorsAnalysis {
+public class Pass3DominatorsAnalysis extends Pass2Base {
 
-   private Program program;
-   private CompileLog log;
-
-   public Pass3DominatorsAnalysis(Program program, CompileLog log) {
-      this.program = program;
-      this.log = log;
-   }
-
-   public Program getProgram() {
-      return program;
-   }
-
-   public CompileLog getLog() {
-      return log;
+   public Pass3DominatorsAnalysis(Program program) {
+      super(program);
    }
 
    /**
@@ -38,14 +26,14 @@ public class Pass3DominatorsAnalysis {
       DominatorsGraph dominatorsGraph = new DominatorsGraph();
 
       // Initialize dominators: Dom[first]={first}, Dom[block]={all}
-      LabelRef firstBlock = program.getGraph().getFirstBlock().getLabel();
+      LabelRef firstBlock = getGraph().getFirstBlock().getLabel();
       DominatorsBlock firstDominators = dominatorsGraph.addDominators(firstBlock);
       firstDominators.add(firstBlock);
       List<LabelRef> allBlocks = new ArrayList<>();
-      for (ControlFlowBlock block : program.getGraph().getAllBlocks()) {
+      for (ControlFlowBlock block : getGraph().getAllBlocks()) {
          allBlocks.add(block.getLabel());
       }
-      for (ControlFlowBlock block : program.getGraph().getAllBlocks()) {
+      for (ControlFlowBlock block : getGraph().getAllBlocks()) {
          if (!block.getLabel().equals(firstBlock)) {
             DominatorsBlock dominatorsBlock = dominatorsGraph.addDominators(block.getLabel());
             dominatorsBlock.addAll(allBlocks);
@@ -58,9 +46,9 @@ public class Pass3DominatorsAnalysis {
       boolean change = false;
       do {
          change = false;
-         for (ControlFlowBlock block : program.getGraph().getAllBlocks()) {
+         for (ControlFlowBlock block : getGraph().getAllBlocks()) {
             if (!block.getLabel().equals(firstBlock)) {
-               List<ControlFlowBlock> predecessors = program.getGraph().getPredecessors(block);
+               List<ControlFlowBlock> predecessors = getGraph().getPredecessors(block);
                DominatorsBlock newDominators = new DominatorsBlock();
                newDominators.addAll(allBlocks);
                for (ControlFlowBlock predecessor : predecessors) {
@@ -77,7 +65,7 @@ public class Pass3DominatorsAnalysis {
          }
 
       } while (change);
-      program.getGraph().setDominators(dominatorsGraph);
+      getProgram().setDominators(dominatorsGraph);
    }
 
 

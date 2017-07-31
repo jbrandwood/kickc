@@ -12,8 +12,8 @@ import java.util.Map;
  */
 public class Pass2ConditionalJumpSimplification extends Pass2SsaOptimization {
 
-   public Pass2ConditionalJumpSimplification(Program program, CompileLog log) {
-      super(program, log);
+   public Pass2ConditionalJumpSimplification(Program program) {
+      super(program);
    }
 
    /**
@@ -56,7 +56,7 @@ public class Pass2ConditionalJumpSimplification extends Pass2SsaOptimization {
                         conditionalJump.setOperator(conditionAssignment.getOperator());
                         conditionalJump.setrValue2(conditionAssignment.getrValue2());
                         simpleConditionVars.add(conditionVar);
-                        log.append("Simple Condition " + conditionVar.toString(getSymbols()) + " " + conditionalJump.toString(getSymbols()));
+                        getLog().append("Simple Condition " + conditionVar.toString(getProgram()) + " " + conditionalJump.toString(getProgram()));
                         break;
                         default:
                      }

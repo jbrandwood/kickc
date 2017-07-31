@@ -45,11 +45,11 @@ public abstract class StatementBase implements Statement {
       return toString(null);
    }
 
-   public String aliveString(ProgramScope scope) {
-      if(scope==null || scope.getLiveRangeVariables()==null) {
+   public String aliveString(Program program) {
+      if(program==null || program.getLiveRangeVariables()==null) {
          return "";
       }
-      LiveRangeVariables liveRanges = scope.getLiveRangeVariables();
+      LiveRangeVariables liveRanges = program.getLiveRangeVariables();
       List<VariableRef> alive = liveRanges.getAlive(this);
       StringBuilder str = new StringBuilder();
       str.append(" [ ");

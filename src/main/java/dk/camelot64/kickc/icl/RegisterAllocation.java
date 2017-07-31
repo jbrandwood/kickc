@@ -86,7 +86,7 @@ public class RegisterAllocation {
       }
 
       @Override
-      public String toString(ProgramScope scope) {
+      public String toString(Program program) {
          return toString();
       }
 
@@ -134,7 +134,7 @@ public class RegisterAllocation {
       }
 
       @Override
-      public String toString(ProgramScope scope) {
+      public String toString(Program program) {
          return toString();
       }
 
@@ -182,7 +182,7 @@ public class RegisterAllocation {
       }
 
       @Override
-      public String toString(ProgramScope scope) {
+      public String toString(Program program) {
          return toString();
       }
 
@@ -229,7 +229,7 @@ public class RegisterAllocation {
       }
 
       @Override
-      public String toString(ProgramScope scope) {
+      public String toString(Program program) {
          return toString();
       }
 
@@ -261,7 +261,7 @@ public class RegisterAllocation {
       }
 
       @Override
-      public String toString(ProgramScope scope) {
+      public String toString(Program program) {
          return toString();
       }
 
@@ -292,7 +292,7 @@ public class RegisterAllocation {
       }
 
       @Override
-      public String toString(ProgramScope scope) {
+      public String toString(Program program) {
          return toString();
       }
 
@@ -323,7 +323,7 @@ public class RegisterAllocation {
       }
 
       @Override
-      public String toString(ProgramScope scope) {
+      public String toString(Program program) {
          return toString();
       }
 
@@ -354,7 +354,7 @@ public class RegisterAllocation {
       }
 
       @Override
-      public String toString(ProgramScope scope) {
+      public String toString(Program program) {
          return toString();
       }
 

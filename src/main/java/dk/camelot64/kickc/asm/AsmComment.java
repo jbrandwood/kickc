@@ -2,7 +2,10 @@ package dk.camelot64.kickc.asm;
 
 /** An assember comment */
 public class AsmComment implements AsmLine {
+
    private String comment;
+
+   private int index;
 
    public AsmComment(String comment) {
       this.comment = comment;
@@ -23,18 +26,18 @@ public class AsmComment implements AsmLine {
    }
 
    @Override
-   public int getInvocationCountEstimate() {
-      return 0;
-   }
-
-   @Override
-   public double getEstimatedTotalCycles() {
-      return 0;
-   }
-
-   @Override
    public String getAsm() {
       return "// "+comment;
+   }
+
+   @Override
+   public int getIndex() {
+      return index;
+   }
+
+   @Override
+   public void setIndex(int index) {
+      this.index = index;
    }
 
    @Override

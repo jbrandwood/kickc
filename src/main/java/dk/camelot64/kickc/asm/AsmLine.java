@@ -7,10 +7,9 @@ public interface AsmLine {
 
    public double getLineCycles();
 
-   public int getInvocationCountEstimate();
-
-   public double getEstimatedTotalCycles();
-
    public String getAsm();
 
+   public int getIndex();
+
+   void setIndex(int index);
 }

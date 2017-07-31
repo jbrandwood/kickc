@@ -7,12 +7,11 @@ public class AsmInstruction implements AsmLine {
 
    private String parameter;
 
-   private int invocationCountEstimate;
+   private int index;
 
-   public AsmInstruction(AsmInstructionType type, String parameter, int invocationCountEstimate) {
+   public AsmInstruction(AsmInstructionType type, String parameter) {
       this.type = type;
       this.parameter = parameter;
-      this.invocationCountEstimate = invocationCountEstimate;
    }
 
    public String getParameter() {
@@ -34,16 +33,6 @@ public class AsmInstruction implements AsmLine {
    }
 
    @Override
-   public int getInvocationCountEstimate() {
-      return invocationCountEstimate;
-   }
-
-   @Override
-   public double getEstimatedTotalCycles() {
-      return getInvocationCountEstimate()*getLineCycles();
-   }
-
-   @Override
    public String getAsm() {
       return type.getAsm(parameter);
    }
@@ -53,4 +42,13 @@ public class AsmInstruction implements AsmLine {
       return getAsm();
    }
 
+   @Override
+   public int getIndex() {
+      return index;
+   }
+
+   @Override
+   public void setIndex(int index) {
+      this.index = index;
+   }
 }

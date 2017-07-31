@@ -5,6 +5,8 @@ public class AsmLabel implements AsmLine {
 
    private String label;
 
+   private int index;
+
    public AsmLabel(String label) {
       this.label = label;
    }
@@ -24,18 +26,18 @@ public class AsmLabel implements AsmLine {
    }
 
    @Override
-   public int getInvocationCountEstimate() {
-      return 0;
-   }
-
-   @Override
-   public double getEstimatedTotalCycles() {
-      return 0;
-   }
-
-   @Override
    public String getAsm() {
       return label+":";
+   }
+
+   @Override
+   public int getIndex() {
+      return index;
+   }
+
+   @Override
+   public void setIndex(int index) {
+      this.index = index;
    }
 
    @Override

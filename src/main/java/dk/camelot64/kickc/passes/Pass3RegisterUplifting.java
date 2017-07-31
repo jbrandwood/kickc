@@ -78,7 +78,7 @@ public class Pass3RegisterUplifting {
       }
       program.getScope().setAllocation(allocation);
       Pass3AssertNoCpuClobber clobber = new Pass3AssertNoCpuClobber(program, log);
-      if (clobber.hasClobberProblem()) {
+      if (clobber.hasClobberProblem(false, register)) {
          log.append("Uplift to " + register + " resulted in clobber.");
       } else {
          log.append("Uplift to " + register + " succesfull.");

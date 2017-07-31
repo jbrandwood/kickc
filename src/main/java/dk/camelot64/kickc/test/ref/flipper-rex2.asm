@@ -14,6 +14,8 @@ main__B3_from_B3:
 main__B3_from_B6:
 main__B3:
   lda 53266
+  sta 14
+  lda 14
   cmp #254
   bne main__B3_from_B3
 main__B4:

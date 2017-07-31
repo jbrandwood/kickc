@@ -353,22 +353,23 @@ NATURAL LOOPS WITH DEPTH
 Initial phi equivalence classes
 [ sum::a#2 ]
 [ sum::b#2 ]
-Copy Coalesced equivalence classes
-[ sum::a#2 ]
-[ sum::b#2 ]
 Added variable s1#0 to zero page equivalence class [ s1#0 ]
 Added variable s2#0 to zero page equivalence class [ s2#0 ]
-Added variable s3#0 to zero page equivalence class [ s1#0 s3#0 ]
-Added variable sum::return#0 to zero page equivalence class [ sum::a#2 sum::return#0 ]
+Added variable s3#0 to zero page equivalence class [ s3#0 ]
+Added variable sum::return#0 to zero page equivalence class [ sum::return#0 ]
 Complete equivalence classes
-[ sum::a#2 sum::return#0 ]
+[ sum::a#2 ]
 [ sum::b#2 ]
-[ s1#0 s3#0 ]
+[ s1#0 ]
 [ s2#0 ]
-Allocated zp byte:2 to zp byte:2 [ sum::a#2 sum::return#0 ]
+[ s3#0 ]
+[ sum::return#0 ]
+Allocated zp byte:2 to zp byte:2 [ sum::a#2 ]
 Allocated zp byte:3 to zp byte:3 [ sum::b#2 ]
-Allocated zp byte:4 to zp byte:4 [ s1#0 s3#0 ]
+Allocated zp byte:4 to zp byte:4 [ s1#0 ]
 Allocated zp byte:5 to zp byte:5 [ s2#0 ]
+Allocated zp byte:6 to zp byte:6 [ s3#0 ]
+Allocated zp byte:7 to zp byte:7 [ sum::return#0 ]
 
 VARIABLE REGISTER WEIGHTS
 (byte) s1
@@ -385,37 +386,45 @@ VARIABLE REGISTER WEIGHTS
 (byte) sum::return
 (byte) sum::return#0 1.2000000000000002
 
-zp byte:2 [ sum::a#2 sum::return#0 ]
+zp byte:2 [ sum::a#2 ]
 zp byte:3 [ sum::b#2 ]
-zp byte:4 [ s1#0 s3#0 ]
+zp byte:4 [ s1#0 ]
 zp byte:5 [ s2#0 ]
+zp byte:6 [ s3#0 ]
+zp byte:7 [ sum::return#0 ]
 
-Re-allocated ZP register from zp byte:2 to zp byte:2
-Re-allocated ZP register from zp byte:3 to zp byte:3
-Re-allocated ZP register from zp byte:4 to zp byte:4
-Re-allocated ZP register from zp byte:5 to zp byte:5
-Uplifting of variable (byte) s3#0 to A
+Uplifting max weight Infinity live range equivalence class zp byte:6 [ s3#0 ]
+Register Cycles: reg byte a 0
+Uplift to reg byte a succesfull.
+Register Cycles: reg byte x 0
+Uplift to reg byte x succesfull.
+Register Cycles: reg byte y 0
+Uplift to reg byte y succesfull.
 REGISTER UPLIFTING
 (byte) s1
 (byte) s1#0 zp byte:4 0.5714285714285714
 (byte) s2
 (byte) s2#0 zp byte:5 4.0
 (byte) s3
-(byte) s3#0 reg byte a Infinity
+(byte) s3#0 zp byte:6 Infinity
 (byte()) sum((byte) sum::a , (byte) sum::b)
 (byte) sum::a
 (byte) sum::a#2 zp byte:2 2.0
 (byte) sum::b
 (byte) sum::b#2 zp byte:3 2.0
 (byte) sum::return
-(byte) sum::return#0 zp byte:2 1.2000000000000002
+(byte) sum::return#0 zp byte:7 1.2000000000000002
 
-zp byte:2 [ sum::a#2 sum::return#0 ]
+zp byte:2 [ sum::a#2 ]
 zp byte:3 [ sum::b#2 ]
-zp byte:4 [ s1#0 s3#0 ]
+zp byte:4 [ s1#0 ]
 zp byte:5 [ s2#0 ]
+zp byte:6 [ s3#0 ]
+zp byte:7 [ sum::return#0 ]
 
-Coalescing zero page register [ zp byte:2 [ sum::a#2 sum::return#0 ] ] with [ zp byte:5 [ s2#0 ] ]
+Coalescing zero page register [ zp byte:2 [ sum::a#2 ] ] with [ zp byte:5 [ s2#0 ] ]
+Coalescing zero page register [ zp byte:2 [ sum::a#2 s2#0 ] ] with [ zp byte:6 [ s3#0 ] ]
+Coalescing zero page register [ zp byte:2 [ sum::a#2 s2#0 s3#0 ] ] with [ zp byte:7 [ sum::return#0 ] ]
 INITIAL ASM
 BBEGIN:
 sum_from_BBEGIN:
@@ -429,7 +438,7 @@ sum_from_BBEGIN:
   jmp B2
 B2:
   // [1] (byte) s1#0 ← (byte) sum::return#0 [ sum::return#0 s1#0 ]  //  zpby1=zpby2
-  lda 2
+  lda 7
   sta 4
 sum_from_B2:
   // (byte) sum::b#2 = (byte) 13  // zpby1=coby1
@@ -442,20 +451,21 @@ sum_from_B2:
   jmp B3
 B3:
   // [3] (byte) s2#0 ← (byte) sum::return#0 [ s1#0 s2#0 ]  //  zpby1=zpby2
-  lda 2
+  lda 7
   sta 5
-  // [4] (byte) s3#0 ← (byte) s1#0 + (byte) s2#0 [ ]  //  aby=zpby1_plus_zpby2
+  // [4] (byte) s3#0 ← (byte) s1#0 + (byte) s2#0 [ ]  //  zpby1=zpby2_plus_zpby3
   lda 4
   clc
   adc 5
+  sta 6
   jmp BEND
 BEND:
 sum:
-  // [6] (byte) sum::return#0 ← (byte) sum::a#2 + (byte) sum::b#2 [ sum::return#0 s1#0 ]  //  zpby1=zpby1_plus_zpby2
+  // [6] (byte) sum::return#0 ← (byte) sum::a#2 + (byte) sum::b#2 [ sum::return#0 s1#0 ]  //  zpby1=zpby2_plus_zpby3
   lda 2
   clc
   adc 3
-  sta 2
+  sta 7
   jmp sum__Breturn
 sum__Breturn:
   rts
@@ -477,7 +487,7 @@ sum_from_BBEGIN:
   jsr sum
 B2:
   // [1] (byte) s1#0 ← (byte) sum::return#0 [ sum::return#0 s1#0 ]  //  zpby1=zpby2
-  lda 2
+  lda 7
   sta 4
 sum_from_B2:
   // (byte) sum::b#2 = (byte) 13  // zpby1=coby1
@@ -489,19 +499,20 @@ sum_from_B2:
   jsr sum
 B3:
   // [3] (byte) s2#0 ← (byte) sum::return#0 [ s1#0 s2#0 ]  //  zpby1=zpby2
-  lda 2
+  lda 7
   sta 5
-  // [4] (byte) s3#0 ← (byte) s1#0 + (byte) s2#0 [ ]  //  aby=zpby1_plus_zpby2
+  // [4] (byte) s3#0 ← (byte) s1#0 + (byte) s2#0 [ ]  //  zpby1=zpby2_plus_zpby3
   lda 4
   clc
   adc 5
+  sta 6
 BEND:
 sum:
-  // [6] (byte) sum::return#0 ← (byte) sum::a#2 + (byte) sum::b#2 [ sum::return#0 s1#0 ]  //  zpby1=zpby1_plus_zpby2
+  // [6] (byte) sum::return#0 ← (byte) sum::a#2 + (byte) sum::b#2 [ sum::return#0 s1#0 ]  //  zpby1=zpby2_plus_zpby3
   lda 2
   clc
   adc 3
-  sta 2
+  sta 7
 sum__Breturn:
   rts
 
@@ -515,7 +526,7 @@ FINAL SYMBOL TABLE
 (byte) s2
 (byte) s2#0 zp byte:5 4.0
 (byte) s3
-(byte) s3#0 reg byte a Infinity
+(byte) s3#0 zp byte:6 Infinity
 (byte()) sum((byte) sum::a , (byte) sum::b)
 (label) sum::@return
 (byte) sum::a
@@ -523,11 +534,11 @@ FINAL SYMBOL TABLE
 (byte) sum::b
 (byte) sum::b#2 zp byte:3 2.0
 (byte) sum::return
-(byte) sum::return#0 zp byte:2 1.2000000000000002
+(byte) sum::return#0 zp byte:7 1.2000000000000002
 
-zp byte:2 [ sum::a#2 sum::return#0 s2#0 ]
+zp byte:2 [ sum::a#2 s2#0 s3#0 sum::return#0 ]
 zp byte:3 [ sum::b#2 ]
-zp byte:4 [ s1#0 s3#0 ]
+zp byte:4 [ s1#0 ]
 
 FINAL CODE
 BBEGIN:
@@ -541,7 +552,7 @@ sum_from_BBEGIN:
   jsr sum
 B2:
   // [1] (byte) s1#0 ← (byte) sum::return#0 [ sum::return#0 s1#0 ]  //  zpby1=zpby2
-  lda 2
+  lda 7
   sta 4
 sum_from_B2:
   // (byte) sum::b#2 = (byte) 13  // zpby1=coby1
@@ -553,19 +564,20 @@ sum_from_B2:
   jsr sum
 B3:
   // [3] (byte) s2#0 ← (byte) sum::return#0 [ s1#0 s2#0 ]  //  zpby1=zpby2
-  lda 2
+  lda 7
   sta 5
-  // [4] (byte) s3#0 ← (byte) s1#0 + (byte) s2#0 [ ]  //  aby=zpby1_plus_zpby2
+  // [4] (byte) s3#0 ← (byte) s1#0 + (byte) s2#0 [ ]  //  zpby1=zpby2_plus_zpby3
   lda 4
   clc
   adc 5
+  sta 6
 BEND:
 sum:
-  // [6] (byte) sum::return#0 ← (byte) sum::a#2 + (byte) sum::b#2 [ sum::return#0 s1#0 ]  //  zpby1=zpby1_plus_zpby2
+  // [6] (byte) sum::return#0 ← (byte) sum::a#2 + (byte) sum::b#2 [ sum::return#0 s1#0 ]  //  zpby1=zpby2_plus_zpby3
   lda 2
   clc
   adc 3
-  sta 2
+  sta 7
 sum__Breturn:
   rts
 

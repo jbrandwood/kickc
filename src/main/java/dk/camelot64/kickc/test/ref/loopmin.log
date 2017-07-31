@@ -363,9 +363,6 @@ Loop head: @1 tails: @3 blocks: @3 @1 @2  depth: 1
 Initial phi equivalence classes
 [ i#2 i#1 ]
 [ s#2 s#4 s#1 ]
-Copy Coalesced equivalence classes
-[ i#2 i#1 ]
-[ s#2 s#4 s#1 ]
 Complete equivalence classes
 [ i#2 i#1 ]
 [ s#2 s#4 s#1 ]
@@ -384,15 +381,18 @@ VARIABLE REGISTER WEIGHTS
 zp byte:2 [ i#2 i#1 ]
 zp byte:3 [ s#2 s#4 s#1 ]
 
-Re-allocated ZP register from zp byte:2 to zp byte:2
-Re-allocated ZP register from zp byte:3 to zp byte:3
-Uplifting of variable (byte) s#1 to A
+Uplifting max weight 49.5 live range equivalence class zp byte:3 [ s#2 s#4 s#1 ]
+Uplift to reg byte a resulted in clobber.
+Register Cycles: reg byte x 28
+Uplift to reg byte x succesfull.
+Register Cycles: reg byte y 28
+Uplift to reg byte y succesfull.
 REGISTER UPLIFTING
 (byte) i
 (byte) i#1 zp byte:2 16.5
 (byte) i#2 zp byte:2 11.0
 (byte) s
-(byte) s#1 reg byte a 22.0
+(byte) s#1 zp byte:3 22.0
 (byte) s#2 zp byte:3 16.5
 (byte) s#4 zp byte:3 11.0
 
@@ -432,13 +432,13 @@ B3:
   jmp BEND
 BEND:
 B2:
-  // [5] (byte) s#1 ← (byte) s#2 + (byte) i#2 [ i#2 s#1 ]  //  aby=zpby1_plus_zpby2
+  // [5] (byte) s#1 ← (byte) s#2 + (byte) i#2 [ i#2 s#1 ]  //  zpby1=zpby1_plus_zpby2
   lda 3
   clc
   adc 2
-B3_from_B2:
-  // (byte) s#4 = (byte) s#1  // zpby1=aby
   sta 3
+B3_from_B2:
+  // (byte) s#4 = (byte) s#1  // register copy zp byte:3
   jmp B3
 
 Removing instruction jmp B1
@@ -475,13 +475,13 @@ B3:
   bne B1_from_B3
 BEND:
 B2:
-  // [5] (byte) s#1 ← (byte) s#2 + (byte) i#2 [ i#2 s#1 ]  //  aby=zpby1_plus_zpby2
+  // [5] (byte) s#1 ← (byte) s#2 + (byte) i#2 [ i#2 s#1 ]  //  zpby1=zpby1_plus_zpby2
   lda 3
   clc
   adc 2
-B3_from_B2:
-  // (byte) s#4 = (byte) s#1  // zpby1=aby
   sta 3
+B3_from_B2:
+  // (byte) s#4 = (byte) s#1  // register copy zp byte:3
   jmp B3
 
 Removing instruction jmp B1
@@ -515,13 +515,13 @@ B3:
   bne B1_from_B3
 BEND:
 B2:
-  // [5] (byte) s#1 ← (byte) s#2 + (byte) i#2 [ i#2 s#1 ]  //  aby=zpby1_plus_zpby2
+  // [5] (byte) s#1 ← (byte) s#2 + (byte) i#2 [ i#2 s#1 ]  //  zpby1=zpby1_plus_zpby2
   lda 3
   clc
   adc 2
-B3_from_B2:
-  // (byte) s#4 = (byte) s#1  // zpby1=aby
   sta 3
+B3_from_B2:
+  // (byte) s#4 = (byte) s#1  // register copy zp byte:3
   jmp B3
 
 FINAL SYMBOL TABLE
@@ -534,7 +534,7 @@ FINAL SYMBOL TABLE
 (byte) i#1 zp byte:2 16.5
 (byte) i#2 zp byte:2 11.0
 (byte) s
-(byte) s#1 reg byte a 22.0
+(byte) s#1 zp byte:3 22.0
 (byte) s#2 zp byte:3 16.5
 (byte) s#4 zp byte:3 11.0
 
@@ -570,12 +570,12 @@ B3:
   bne B1_from_B3
 BEND:
 B2:
-  // [5] (byte) s#1 ← (byte) s#2 + (byte) i#2 [ i#2 s#1 ]  //  aby=zpby1_plus_zpby2
+  // [5] (byte) s#1 ← (byte) s#2 + (byte) i#2 [ i#2 s#1 ]  //  zpby1=zpby1_plus_zpby2
   lda 3
   clc
   adc 2
-B3_from_B2:
-  // (byte) s#4 = (byte) s#1  // zpby1=aby
   sta 3
+B3_from_B2:
+  // (byte) s#4 = (byte) s#1  // register copy zp byte:3
   jmp B3
 

@@ -6,7 +6,7 @@ sum_from_BBEGIN:
   sta 2
   jsr sum
 B2:
-  lda 2
+  lda 7
   sta 4
 sum_from_B2:
   lda #13
@@ -15,16 +15,17 @@ sum_from_B2:
   sta 2
   jsr sum
 B3:
-  lda 2
+  lda 7
   sta 5
   lda 4
   clc
   adc 5
+  sta 6
 BEND:
 sum:
   lda 2
   clc
   adc 3
-  sta 2
+  sta 7
 sum__Breturn:
   rts

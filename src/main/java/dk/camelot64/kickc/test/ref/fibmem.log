@@ -417,18 +417,18 @@ Loop head: @1 tails: @1 blocks: @1  depth: 1
 
 Initial phi equivalence classes
 [ i#2 i#1 ]
-Copy Coalesced equivalence classes
-[ i#2 i#1 ]
 Added variable $1 to zero page equivalence class [ $1 ]
 Added variable $3 to zero page equivalence class [ $3 ]
-Added variable $4 to zero page equivalence class [ $1 $4 ]
+Added variable $4 to zero page equivalence class [ $4 ]
 Complete equivalence classes
 [ i#2 i#1 ]
-[ $1 $4 ]
+[ $1 ]
 [ $3 ]
+[ $4 ]
 Allocated zp byte:2 to zp byte:2 [ i#2 i#1 ]
-Allocated zp byte:3 to zp byte:3 [ $1 $4 ]
+Allocated zp byte:3 to zp byte:3 [ $1 ]
 Allocated zp byte:4 to zp byte:4 [ $3 ]
+Allocated zp byte:5 to zp byte:5 [ $4 ]
 
 VARIABLE REGISTER WEIGHTS
 (byte~) $1 11.0
@@ -440,26 +440,31 @@ VARIABLE REGISTER WEIGHTS
 (byte) i#2 11.0
 
 zp byte:2 [ i#2 i#1 ]
-zp byte:3 [ $1 $4 ]
+zp byte:3 [ $1 ]
 zp byte:4 [ $3 ]
+zp byte:5 [ $4 ]
 
-Re-allocated ZP register from zp byte:2 to zp byte:2
-Re-allocated ZP register from zp byte:3 to zp byte:3
-Re-allocated ZP register from zp byte:4 to zp byte:4
-Uplifting of variable (byte~) $3 to A
+Uplifting max weight 27.5 live range equivalence class zp byte:2 [ i#2 i#1 ]
+Uplift to reg byte a resulted in clobber.
+Register Cycles: reg byte x 39
+Uplift to reg byte x succesfull.
+Register Cycles: reg byte y 39
+Uplift to reg byte y succesfull.
 REGISTER UPLIFTING
 (byte~) $1 zp byte:3 11.0
-(byte~) $3 reg byte a 22.0
-(byte~) $4 zp byte:3 22.0
+(byte~) $3 zp byte:4 22.0
+(byte~) $4 zp byte:5 22.0
 (byte[15]) fibs
 (byte) i
 (byte) i#1 zp byte:2 16.5
 (byte) i#2 zp byte:2 11.0
 
 zp byte:2 [ i#2 i#1 ]
-zp byte:3 [ $1 $4 ]
+zp byte:3 [ $1 ]
 zp byte:4 [ $3 ]
+zp byte:5 [ $4 ]
 
+Coalescing zero page register [ zp byte:3 [ $1 ] ] with [ zp byte:5 [ $4 ] ]
 INITIAL ASM
 BBEGIN:
   // [0] *((word) 4352) ← (byte) 0 [ ]  //  _star_cowo1=coby2
@@ -481,15 +486,17 @@ B1:
   ldx 2
   lda 4352,x
   sta 3
-  // [4] (byte~) $3 ← (word) 4353 *idx (byte) i#2 [ i#2 $1 $3 ]  //  aby=cowo1_staridx_zpby1
+  // [4] (byte~) $3 ← (word) 4353 *idx (byte) i#2 [ i#2 $1 $3 ]  //  zpby1=cowo1_staridx_zpby2
   ldx 2
   lda 4353,x
-  // [5] (byte~) $4 ← (byte~) $1 + (byte~) $3 [ i#2 $4 ]  //  zpby1=zpby1_plus_aby
-  clc
-  adc 3
-  sta 3
-  // [6] *((word) 4354 + (byte) i#2) ← (byte~) $4 [ i#2 ]  //  cowo1_staridx_zpby1=zpby2
+  sta 4
+  // [5] (byte~) $4 ← (byte~) $1 + (byte~) $3 [ i#2 $4 ]  //  zpby1=zpby2_plus_zpby3
   lda 3
+  clc
+  adc 4
+  sta 5
+  // [6] *((word) 4354 + (byte) i#2) ← (byte~) $4 [ i#2 ]  //  cowo1_staridx_zpby1=zpby2
+  lda 5
   ldx 2
   sta 4354,x
   // [7] (byte) i#1 ← (byte) i#2 + (byte) 1 [ i#1 ]  //  zpby1=zpby1_plus_1
@@ -524,15 +531,17 @@ B1:
   ldx 2
   lda 4352,x
   sta 3
-  // [4] (byte~) $3 ← (word) 4353 *idx (byte) i#2 [ i#2 $1 $3 ]  //  aby=cowo1_staridx_zpby1
+  // [4] (byte~) $3 ← (word) 4353 *idx (byte) i#2 [ i#2 $1 $3 ]  //  zpby1=cowo1_staridx_zpby2
   ldx 2
   lda 4353,x
-  // [5] (byte~) $4 ← (byte~) $1 + (byte~) $3 [ i#2 $4 ]  //  zpby1=zpby1_plus_aby
-  clc
-  adc 3
-  sta 3
-  // [6] *((word) 4354 + (byte) i#2) ← (byte~) $4 [ i#2 ]  //  cowo1_staridx_zpby1=zpby2
+  sta 4
+  // [5] (byte~) $4 ← (byte~) $1 + (byte~) $3 [ i#2 $4 ]  //  zpby1=zpby2_plus_zpby3
   lda 3
+  clc
+  adc 4
+  sta 5
+  // [6] *((word) 4354 + (byte) i#2) ← (byte~) $4 [ i#2 ]  //  cowo1_staridx_zpby1=zpby2
+  lda 5
   ldx 2
   sta 4354,x
   // [7] (byte) i#1 ← (byte) i#2 + (byte) 1 [ i#1 ]  //  zpby1=zpby1_plus_1
@@ -564,15 +573,17 @@ B1:
   ldx 2
   lda 4352,x
   sta 3
-  // [4] (byte~) $3 ← (word) 4353 *idx (byte) i#2 [ i#2 $1 $3 ]  //  aby=cowo1_staridx_zpby1
+  // [4] (byte~) $3 ← (word) 4353 *idx (byte) i#2 [ i#2 $1 $3 ]  //  zpby1=cowo1_staridx_zpby2
   ldx 2
   lda 4353,x
-  // [5] (byte~) $4 ← (byte~) $1 + (byte~) $3 [ i#2 $4 ]  //  zpby1=zpby1_plus_aby
-  clc
-  adc 3
-  sta 3
-  // [6] *((word) 4354 + (byte) i#2) ← (byte~) $4 [ i#2 ]  //  cowo1_staridx_zpby1=zpby2
+  sta 4
+  // [5] (byte~) $4 ← (byte~) $1 + (byte~) $3 [ i#2 $4 ]  //  zpby1=zpby2_plus_zpby3
   lda 3
+  clc
+  adc 4
+  sta 5
+  // [6] *((word) 4354 + (byte) i#2) ← (byte~) $4 [ i#2 ]  //  cowo1_staridx_zpby1=zpby2
+  lda 5
   ldx 2
   sta 4354,x
   // [7] (byte) i#1 ← (byte) i#2 + (byte) 1 [ i#1 ]  //  zpby1=zpby1_plus_1
@@ -585,8 +596,8 @@ BEND:
 
 FINAL SYMBOL TABLE
 (byte~) $1 zp byte:3 11.0
-(byte~) $3 reg byte a 22.0
-(byte~) $4 zp byte:3 22.0
+(byte~) $3 zp byte:4 22.0
+(byte~) $4 zp byte:5 22.0
 (label) @1
 (label) @BEGIN
 (label) @END
@@ -618,15 +629,17 @@ B1:
   ldx 2
   lda 4352,x
   sta 3
-  // [4] (byte~) $3 ← (word) 4353 *idx (byte) i#2 [ i#2 $1 $3 ]  //  aby=cowo1_staridx_zpby1
+  // [4] (byte~) $3 ← (word) 4353 *idx (byte) i#2 [ i#2 $1 $3 ]  //  zpby1=cowo1_staridx_zpby2
   ldx 2
   lda 4353,x
-  // [5] (byte~) $4 ← (byte~) $1 + (byte~) $3 [ i#2 $4 ]  //  zpby1=zpby1_plus_aby
-  clc
-  adc 3
-  sta 3
-  // [6] *((word) 4354 + (byte) i#2) ← (byte~) $4 [ i#2 ]  //  cowo1_staridx_zpby1=zpby2
+  sta 4
+  // [5] (byte~) $4 ← (byte~) $1 + (byte~) $3 [ i#2 $4 ]  //  zpby1=zpby2_plus_zpby3
   lda 3
+  clc
+  adc 4
+  sta 5
+  // [6] *((word) 4354 + (byte) i#2) ← (byte~) $4 [ i#2 ]  //  cowo1_staridx_zpby1=zpby2
+  lda 5
   ldx 2
   sta 4354,x
   // [7] (byte) i#1 ← (byte) i#2 + (byte) 1 [ i#1 ]  //  zpby1=zpby1_plus_1

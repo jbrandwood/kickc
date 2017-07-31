@@ -292,8 +292,6 @@ Loop head: @1 tails: @1 blocks: @1  depth: 1
 
 Initial phi equivalence classes
 [ i#2 i#1 ]
-Copy Coalesced equivalence classes
-[ i#2 i#1 ]
 Added variable $1 to zero page equivalence class [ $1 ]
 Complete equivalence classes
 [ i#2 i#1 ]
@@ -311,11 +309,14 @@ VARIABLE REGISTER WEIGHTS
 zp byte:2 [ i#2 i#1 ]
 zp byte:3 [ $1 ]
 
-Re-allocated ZP register from zp byte:2 to zp byte:2
-Re-allocated ZP register from zp byte:3 to zp byte:3
-Uplifting of variable (byte~) $1 to A
+Uplifting max weight 31.166666666666664 live range equivalence class zp byte:2 [ i#2 i#1 ]
+Uplift to reg byte a resulted in clobber.
+Register Cycles: reg byte x 23
+Uplift to reg byte x succesfull.
+Register Cycles: reg byte y 23
+Uplift to reg byte y succesfull.
 REGISTER UPLIFTING
-(byte~) $1 reg byte a 22.0
+(byte~) $1 zp byte:3 22.0
 (byte) i
 (byte) i#1 zp byte:2 16.5
 (byte) i#2 zp byte:2 14.666666666666666
@@ -335,11 +336,13 @@ B1_from_B1:
   // (byte) i#2 = (byte) i#1  // register copy zp byte:2
   jmp B1
 B1:
-  // [1] (byte~) $1 ← (byte) i#2 + (byte) 4 [ i#2 $1 ]  //  aby=zpby1_plus_coby1
+  // [1] (byte~) $1 ← (byte) i#2 + (byte) 4 [ i#2 $1 ]  //  zpby1=zpby2_plus_coby1
   lda 2
   clc
   adc #4
-  // [2] *((word) 4352 + (byte) i#2) ← (byte~) $1 [ i#2 ]  //  cowo1_staridx_zpby1=aby
+  sta 3
+  // [2] *((word) 4352 + (byte) i#2) ← (byte~) $1 [ i#2 ]  //  cowo1_staridx_zpby1=zpby2
+  lda 3
   ldx 2
   sta 4352,x
   // [3] (byte) i#1 ← (byte) i#2 + (byte) 1 [ i#1 ]  //  zpby1=zpby1_plus_1
@@ -364,11 +367,13 @@ B1_from_BBEGIN:
 B1_from_B1:
   // (byte) i#2 = (byte) i#1  // register copy zp byte:2
 B1:
-  // [1] (byte~) $1 ← (byte) i#2 + (byte) 4 [ i#2 $1 ]  //  aby=zpby1_plus_coby1
+  // [1] (byte~) $1 ← (byte) i#2 + (byte) 4 [ i#2 $1 ]  //  zpby1=zpby2_plus_coby1
   lda 2
   clc
   adc #4
-  // [2] *((word) 4352 + (byte) i#2) ← (byte~) $1 [ i#2 ]  //  cowo1_staridx_zpby1=aby
+  sta 3
+  // [2] *((word) 4352 + (byte) i#2) ← (byte~) $1 [ i#2 ]  //  cowo1_staridx_zpby1=zpby2
+  lda 3
   ldx 2
   sta 4352,x
   // [3] (byte) i#1 ← (byte) i#2 + (byte) 1 [ i#1 ]  //  zpby1=zpby1_plus_1
@@ -390,11 +395,13 @@ B1_from_BBEGIN:
 B1_from_B1:
   // (byte) i#2 = (byte) i#1  // register copy zp byte:2
 B1:
-  // [1] (byte~) $1 ← (byte) i#2 + (byte) 4 [ i#2 $1 ]  //  aby=zpby1_plus_coby1
+  // [1] (byte~) $1 ← (byte) i#2 + (byte) 4 [ i#2 $1 ]  //  zpby1=zpby2_plus_coby1
   lda 2
   clc
   adc #4
-  // [2] *((word) 4352 + (byte) i#2) ← (byte~) $1 [ i#2 ]  //  cowo1_staridx_zpby1=aby
+  sta 3
+  // [2] *((word) 4352 + (byte) i#2) ← (byte~) $1 [ i#2 ]  //  cowo1_staridx_zpby1=zpby2
+  lda 3
   ldx 2
   sta 4352,x
   // [3] (byte) i#1 ← (byte) i#2 + (byte) 1 [ i#1 ]  //  zpby1=zpby1_plus_1
@@ -406,7 +413,7 @@ B1:
 BEND:
 
 FINAL SYMBOL TABLE
-(byte~) $1 reg byte a 22.0
+(byte~) $1 zp byte:3 22.0
 (label) @1
 (label) @BEGIN
 (label) @END
@@ -427,11 +434,13 @@ B1_from_BBEGIN:
 B1_from_B1:
   // (byte) i#2 = (byte) i#1  // register copy zp byte:2
 B1:
-  // [1] (byte~) $1 ← (byte) i#2 + (byte) 4 [ i#2 $1 ]  //  aby=zpby1_plus_coby1
+  // [1] (byte~) $1 ← (byte) i#2 + (byte) 4 [ i#2 $1 ]  //  zpby1=zpby2_plus_coby1
   lda 2
   clc
   adc #4
-  // [2] *((word) 4352 + (byte) i#2) ← (byte~) $1 [ i#2 ]  //  cowo1_staridx_zpby1=aby
+  sta 3
+  // [2] *((word) 4352 + (byte) i#2) ← (byte~) $1 [ i#2 ]  //  cowo1_staridx_zpby1=zpby2
+  lda 3
   ldx 2
   sta 4352,x
   // [3] (byte) i#1 ← (byte) i#2 + (byte) 1 [ i#1 ]  //  zpby1=zpby1_plus_1

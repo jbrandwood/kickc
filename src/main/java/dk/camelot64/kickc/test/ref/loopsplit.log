@@ -516,9 +516,6 @@ Loop head: main::@1 tails: main::@5 main::@4 blocks: main::@5 main::@2 main::@1 
 Initial phi equivalence classes
 [ main::i#2 main::i#1 ]
 [ main::s#3 main::s#1 main::s#2 ]
-Copy Coalesced equivalence classes
-[ main::i#2 main::i#1 ]
-[ main::s#3 main::s#1 main::s#2 ]
 Complete equivalence classes
 [ main::i#2 main::i#1 ]
 [ main::s#3 main::s#1 main::s#2 ]
@@ -538,14 +535,17 @@ VARIABLE REGISTER WEIGHTS
 zp byte:2 [ main::i#2 main::i#1 ]
 zp byte:3 [ main::s#3 main::s#1 main::s#2 ]
 
-Re-allocated ZP register from zp byte:2 to zp byte:2
-Re-allocated ZP register from zp byte:3 to zp byte:3
-Uplifting of variable (byte) main::i#2 to A
+Uplifting max weight 55.0 live range equivalence class zp byte:3 [ main::s#3 main::s#1 main::s#2 ]
+Uplift to reg byte a resulted in clobber.
+Register Cycles: reg byte x 23
+Uplift to reg byte x succesfull.
+Register Cycles: reg byte y 23
+Uplift to reg byte y succesfull.
 REGISTER UPLIFTING
 (void()) main()
 (byte) main::i
 (byte) main::i#1 zp byte:2 11.0
-(byte) main::i#2 reg byte a 33.0
+(byte) main::i#2 zp byte:2 33.0
 (byte) main::s
 (byte) main::s#1 zp byte:3 22.0
 (byte) main::s#2 zp byte:3 22.0
@@ -564,12 +564,12 @@ main__B1_from_main:
   // (byte) main::s#3 = (byte) 0  // zpby1=coby1
   lda #0
   sta 3
-  // (byte) main::i#2 = (byte) 100  // aby=coby1
+  // (byte) main::i#2 = (byte) 100  // zpby1=coby1
   lda #100
+  sta 2
   jmp main__B1
 main__B1:
-  // [2] (byte) main::i#1 ← -- (byte) main::i#2 [ main::i#1 main::s#3 ]  //  zpby1=_dec_aby
-  sta 2
+  // [2] (byte) main::i#1 ← -- (byte) main::i#2 [ main::i#1 main::s#3 ]  //  zpby1=_dec_zpby1
   dec 2
   // [3] if((byte) main::i#1>(byte) 0) goto main::@2 [ main::i#1 main::s#3 ]  //  zpby1_gt_0_then_la1
   lda 2
@@ -590,16 +590,14 @@ main__B5:
   dec 3
 main__B1_from_B5:
   // (byte) main::s#3 = (byte) main::s#2  // register copy zp byte:3
-  // (byte) main::i#2 = (byte) main::i#1  // aby=zpby1
-  lda 2
+  // (byte) main::i#2 = (byte) main::i#1  // register copy zp byte:2
   jmp main__B1
 main__B4:
   // [7] (byte) main::s#1 ← ++ (byte) main::s#3 [ main::i#1 main::s#1 ]  //  zpby1=_inc_zpby1
   inc 3
 main__B1_from_B4:
   // (byte) main::s#3 = (byte) main::s#1  // register copy zp byte:3
-  // (byte) main::i#2 = (byte) main::i#1  // aby=zpby1
-  lda 2
+  // (byte) main::i#2 = (byte) main::i#1  // register copy zp byte:2
   jmp main__B1
 
 Removing instruction jmp BEND
@@ -616,11 +614,11 @@ main__B1_from_main:
   // (byte) main::s#3 = (byte) 0  // zpby1=coby1
   lda #0
   sta 3
-  // (byte) main::i#2 = (byte) 100  // aby=coby1
+  // (byte) main::i#2 = (byte) 100  // zpby1=coby1
   lda #100
-main__B1:
-  // [2] (byte) main::i#1 ← -- (byte) main::i#2 [ main::i#1 main::s#3 ]  //  zpby1=_dec_aby
   sta 2
+main__B1:
+  // [2] (byte) main::i#1 ← -- (byte) main::i#2 [ main::i#1 main::s#3 ]  //  zpby1=_dec_zpby1
   dec 2
   // [3] if((byte) main::i#1>(byte) 0) goto main::@2 [ main::i#1 main::s#3 ]  //  zpby1_gt_0_then_la1
   lda 2
@@ -639,16 +637,14 @@ main__B5:
   dec 3
 main__B1_from_B5:
   // (byte) main::s#3 = (byte) main::s#2  // register copy zp byte:3
-  // (byte) main::i#2 = (byte) main::i#1  // aby=zpby1
-  lda 2
+  // (byte) main::i#2 = (byte) main::i#1  // register copy zp byte:2
   jmp main__B1
 main__B4:
   // [7] (byte) main::s#1 ← ++ (byte) main::s#3 [ main::i#1 main::s#1 ]  //  zpby1=_inc_zpby1
   inc 3
 main__B1_from_B4:
   // (byte) main::s#3 = (byte) main::s#1  // register copy zp byte:3
-  // (byte) main::i#2 = (byte) main::i#1  // aby=zpby1
-  lda 2
+  // (byte) main::i#2 = (byte) main::i#1  // register copy zp byte:2
   jmp main__B1
 
 FINAL SYMBOL TABLE
@@ -662,7 +658,7 @@ FINAL SYMBOL TABLE
 (label) main::@return
 (byte) main::i
 (byte) main::i#1 zp byte:2 11.0
-(byte) main::i#2 reg byte a 33.0
+(byte) main::i#2 zp byte:2 33.0
 (byte) main::s
 (byte) main::s#1 zp byte:3 22.0
 (byte) main::s#2 zp byte:3 22.0
@@ -680,11 +676,11 @@ main__B1_from_main:
   // (byte) main::s#3 = (byte) 0  // zpby1=coby1
   lda #0
   sta 3
-  // (byte) main::i#2 = (byte) 100  // aby=coby1
+  // (byte) main::i#2 = (byte) 100  // zpby1=coby1
   lda #100
-main__B1:
-  // [2] (byte) main::i#1 ← -- (byte) main::i#2 [ main::i#1 main::s#3 ]  //  zpby1=_dec_aby
   sta 2
+main__B1:
+  // [2] (byte) main::i#1 ← -- (byte) main::i#2 [ main::i#1 main::s#3 ]  //  zpby1=_dec_zpby1
   dec 2
   // [3] if((byte) main::i#1>(byte) 0) goto main::@2 [ main::i#1 main::s#3 ]  //  zpby1_gt_0_then_la1
   lda 2
@@ -703,15 +699,13 @@ main__B5:
   dec 3
 main__B1_from_B5:
   // (byte) main::s#3 = (byte) main::s#2  // register copy zp byte:3
-  // (byte) main::i#2 = (byte) main::i#1  // aby=zpby1
-  lda 2
+  // (byte) main::i#2 = (byte) main::i#1  // register copy zp byte:2
   jmp main__B1
 main__B4:
   // [7] (byte) main::s#1 ← ++ (byte) main::s#3 [ main::i#1 main::s#1 ]  //  zpby1=_inc_zpby1
   inc 3
 main__B1_from_B4:
   // (byte) main::s#3 = (byte) main::s#1  // register copy zp byte:3
-  // (byte) main::i#2 = (byte) main::i#1  // aby=zpby1
-  lda 2
+  // (byte) main::i#2 = (byte) main::i#1  // register copy zp byte:2
   jmp main__B1
 

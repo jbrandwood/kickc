@@ -31,12 +31,12 @@ public class Pass3ZeroPageAllocation {
       }
 
       // Coalesce over copy assignments
-      EquivalenceClassCopyCoalescer equivalenceClassCopyCoalescer = new EquivalenceClassCopyCoalescer(liveRangeEquivalenceClassSet);
-      equivalenceClassCopyCoalescer.visitGraph(program.getGraph());
-      log.append("Copy Coalesced equivalence classes");
-      for (LiveRangeEquivalenceClass liveRangeEquivalenceClass : liveRangeEquivalenceClassSet.getEquivalenceClasses()) {
-         log.append(liveRangeEquivalenceClass.toString());
-      }
+      //EquivalenceClassCopyCoalescer equivalenceClassCopyCoalescer = new EquivalenceClassCopyCoalescer(liveRangeEquivalenceClassSet);
+      //equivalenceClassCopyCoalescer.visitGraph(program.getGraph());
+      //log.append("Copy Coalesced equivalence classes");
+      //for (LiveRangeEquivalenceClass liveRangeEquivalenceClass : liveRangeEquivalenceClassSet.getEquivalenceClasses()) {
+      //   log.append(liveRangeEquivalenceClass.toString());
+      //}
 
       // Add all other variables one by one to an available equivalence class - or create a new one
       EquivalenceClassAdder equivalenceClassAdder = new EquivalenceClassAdder(liveRangeEquivalenceClassSet);
@@ -74,8 +74,8 @@ public class Pass3ZeroPageAllocation {
          if (assignment.getlValue() instanceof VariableRef) {
             VariableRef lValVar = (VariableRef) assignment.getlValue();
             List<VariableRef> preferences = new ArrayList<>();
-            addPreference(preferences, assignment.getrValue1());
-            addPreference(preferences, assignment.getrValue2());
+            //addPreference(preferences, assignment.getrValue1());
+            //addPreference(preferences, assignment.getrValue2());
             addToEquivalenceClassSet(lValVar, preferences);
          }
          return null;

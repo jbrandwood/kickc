@@ -734,9 +734,10 @@ VARIABLE REGISTER WEIGHTS
 zp byte:2 [ main::i#2 main::i#1 ]
 zp byte:3 [ nest::j#2 nest::j#1 ]
 
-Re-allocated ZP register from zp byte:2 to zp byte:2
-Re-allocated ZP register from zp byte:3 to zp byte:3
-Uplifting of variable (byte) nest::j#1 to A
+Uplifting max weight 303.0 live range equivalence class zp byte:3 [ nest::j#2 nest::j#1 ]
+Uplift to reg byte a succesfull.
+Uplift to reg byte x succesfull.
+Uplift to reg byte y succesfull.
 REGISTER UPLIFTING
 (byte*) SCREEN
 (void()) main()
@@ -745,7 +746,7 @@ REGISTER UPLIFTING
 (byte) main::i#2 zp byte:2 3.142857142857143
 (void()) nest()
 (byte) nest::j
-(byte) nest::j#1 reg byte a 151.5
+(byte) nest::j#1 zp byte:3 151.5
 (byte) nest::j#2 zp byte:3 151.5
 
 zp byte:2 [ main::i#2 main::i#1 ]
@@ -784,19 +785,16 @@ nest__B1_from_nest:
   sta 3
   jmp nest__B1
 nest__B1_from_B1:
-  // (byte) nest::j#2 = (byte) nest::j#1  // zpby1=aby
-  sta 3
+  // (byte) nest::j#2 = (byte) nest::j#1  // register copy zp byte:3
   jmp nest__B1
 nest__B1:
   // [7] *((word) 1024) ← (byte) nest::j#2 [ main::i#2 nest::j#2 ]  //  _star_cowo1=zpby1
   lda 3
   sta 1024
-  // [8] (byte) nest::j#1 ← -- (byte) nest::j#2 [ main::i#2 nest::j#1 ]  //  aby=_dec_zpby1
+  // [8] (byte) nest::j#1 ← -- (byte) nest::j#2 [ main::i#2 nest::j#1 ]  //  zpby1=_dec_zpby1
+  dec 3
+  // [9] if((byte) nest::j#1>(byte) 0) goto nest::@1 [ main::i#2 nest::j#1 ]  //  zpby1_gt_0_then_la1
   lda 3
-  sec
-  sbc #1
-  // [9] if((byte) nest::j#1>(byte) 0) goto nest::@1 [ main::i#2 nest::j#1 ]  //  aby_gt_0_then_la1
-  cmp #0
   bne nest__B1_from_B1
   jmp nest__Breturn
 nest__Breturn:
@@ -838,23 +836,21 @@ nest__B1_from_nest:
   sta 3
   jmp nest__B1
 nest__B1_from_B1:
-  // (byte) nest::j#2 = (byte) nest::j#1  // zpby1=aby
-  sta 3
+  // (byte) nest::j#2 = (byte) nest::j#1  // register copy zp byte:3
 nest__B1:
   // [7] *((word) 1024) ← (byte) nest::j#2 [ main::i#2 nest::j#2 ]  //  _star_cowo1=zpby1
   lda 3
   sta 1024
-  // [8] (byte) nest::j#1 ← -- (byte) nest::j#2 [ main::i#2 nest::j#1 ]  //  aby=_dec_zpby1
+  // [8] (byte) nest::j#1 ← -- (byte) nest::j#2 [ main::i#2 nest::j#1 ]  //  zpby1=_dec_zpby1
+  dec 3
+  // [9] if((byte) nest::j#1>(byte) 0) goto nest::@1 [ main::i#2 nest::j#1 ]  //  zpby1_gt_0_then_la1
   lda 3
-  sec
-  sbc #1
-  // [9] if((byte) nest::j#1>(byte) 0) goto nest::@1 [ main::i#2 nest::j#1 ]  //  aby_gt_0_then_la1
-  cmp #0
   bne nest__B1_from_B1
 nest__Breturn:
   rts
 
 Removing instruction jmp main__B1
+Removing instruction jmp nest__B1
 Succesful ASM optimization Pass5NextJumpElimination
 ASSEMBLER
 BBEGIN:
@@ -882,20 +878,16 @@ nest__B1_from_nest:
   // (byte) nest::j#2 = (byte) 100  // zpby1=coby1
   lda #100
   sta 3
-  jmp nest__B1
 nest__B1_from_B1:
-  // (byte) nest::j#2 = (byte) nest::j#1  // zpby1=aby
-  sta 3
+  // (byte) nest::j#2 = (byte) nest::j#1  // register copy zp byte:3
 nest__B1:
   // [7] *((word) 1024) ← (byte) nest::j#2 [ main::i#2 nest::j#2 ]  //  _star_cowo1=zpby1
   lda 3
   sta 1024
-  // [8] (byte) nest::j#1 ← -- (byte) nest::j#2 [ main::i#2 nest::j#1 ]  //  aby=_dec_zpby1
+  // [8] (byte) nest::j#1 ← -- (byte) nest::j#2 [ main::i#2 nest::j#1 ]  //  zpby1=_dec_zpby1
+  dec 3
+  // [9] if((byte) nest::j#1>(byte) 0) goto nest::@1 [ main::i#2 nest::j#1 ]  //  zpby1_gt_0_then_la1
   lda 3
-  sec
-  sbc #1
-  // [9] if((byte) nest::j#1>(byte) 0) goto nest::@1 [ main::i#2 nest::j#1 ]  //  aby_gt_0_then_la1
-  cmp #0
   bne nest__B1_from_B1
 nest__Breturn:
   rts
@@ -915,7 +907,7 @@ FINAL SYMBOL TABLE
 (label) nest::@1
 (label) nest::@return
 (byte) nest::j
-(byte) nest::j#1 reg byte a 151.5
+(byte) nest::j#1 zp byte:3 151.5
 (byte) nest::j#2 zp byte:3 151.5
 
 zp byte:2 [ main::i#2 main::i#1 ]
@@ -947,20 +939,16 @@ nest__B1_from_nest:
   // (byte) nest::j#2 = (byte) 100  // zpby1=coby1
   lda #100
   sta 3
-  jmp nest__B1
 nest__B1_from_B1:
-  // (byte) nest::j#2 = (byte) nest::j#1  // zpby1=aby
-  sta 3
+  // (byte) nest::j#2 = (byte) nest::j#1  // register copy zp byte:3
 nest__B1:
   // [7] *((word) 1024) ← (byte) nest::j#2 [ main::i#2 nest::j#2 ]  //  _star_cowo1=zpby1
   lda 3
   sta 1024
-  // [8] (byte) nest::j#1 ← -- (byte) nest::j#2 [ main::i#2 nest::j#1 ]  //  aby=_dec_zpby1
+  // [8] (byte) nest::j#1 ← -- (byte) nest::j#2 [ main::i#2 nest::j#1 ]  //  zpby1=_dec_zpby1
+  dec 3
+  // [9] if((byte) nest::j#1>(byte) 0) goto nest::@1 [ main::i#2 nest::j#1 ]  //  zpby1_gt_0_then_la1
   lda 3
-  sec
-  sbc #1
-  // [9] if((byte) nest::j#1>(byte) 0) goto nest::@1 [ main::i#2 nest::j#1 ]  //  aby_gt_0_then_la1
-  cmp #0
   bne nest__B1_from_B1
 nest__Breturn:
   rts

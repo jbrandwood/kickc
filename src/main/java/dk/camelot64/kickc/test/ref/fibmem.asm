@@ -13,8 +13,10 @@ B1:
   sta 3
   ldx 2
   lda 4353,x
+  sta 4
+  lda 3
   clc
-  adc 3
+  adc 4
   sta 3
   lda 3
   ldx 2

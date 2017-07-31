@@ -20,6 +20,7 @@ B3:
   lda 4
   clc
   adc 5
+  sta 4
 BEND:
 sum:
   lda 2

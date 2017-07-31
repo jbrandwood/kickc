@@ -21,6 +21,6 @@ B2:
   lda 3
   clc
   adc 2
-B3_from_B2:
   sta 3
+B3_from_B2:
   jmp B3

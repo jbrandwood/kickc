@@ -54,16 +54,12 @@ nest2__B1:
 nest2__B2_from_B1:
   lda #100
   sta 7
-  jmp nest2__B2
 nest2__B2_from_B2:
-  sta 7
 nest2__B2:
   lda 7
   sta 1024
+  dec 7
   lda 7
-  sec
-  sbc #1
-  cmp #0
   bne nest2__B2_from_B2
 nest2__B3:
   dec 6

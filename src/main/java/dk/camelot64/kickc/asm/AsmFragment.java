@@ -415,7 +415,7 @@ public class AsmFragment {
          AsmInstruction instruction;
          if (paramModeCtx == null) {
             AsmInstructionType type = AsmInstuctionSet.getInstructionType(ctx.MNEMONIC().getText(), AsmAddressingMode.NON, null);
-            instruction = new AsmInstruction(type, null, 1);
+            instruction = new AsmInstruction(type, null);
          } else {
             instruction = (AsmInstruction) this.visit(paramModeCtx);
          }
@@ -467,7 +467,7 @@ public class AsmFragment {
          String mnemonic = instructionCtx.MNEMONIC().getSymbol().getText();
          String parameter = (String) this.visit(exprCtx);
          AsmInstructionType type = AsmInstuctionSet.getInstructionType(mnemonic, addressingMode, parameter);
-         return new AsmInstruction(type, parameter, 1);
+         return new AsmInstruction(type, parameter);
       }
 
 

@@ -10,8 +10,11 @@ public class AsmProgram {
 
    private List<AsmLine> lines;
 
+   private int nextIndex;
+
    public AsmProgram() {
       this.lines = new ArrayList<>();
+      this.nextIndex = 0;
    }
 
    public List<AsmLine> getLines() {
@@ -19,6 +22,7 @@ public class AsmProgram {
    }
 
    public void addLine(AsmLine line) {
+      line.setIndex(nextIndex++);
       lines.add(line);
    }
 
@@ -32,7 +36,7 @@ public class AsmProgram {
 
    public void addInstruction(String mnemonic, AsmAddressingMode addressingMode, String parameter) {
       AsmInstructionType instructionType = AsmInstuctionSet.getInstructionType(mnemonic, addressingMode, parameter);
-      addLine(new AsmInstruction(instructionType, parameter, 1));
+      addLine(new AsmInstruction(instructionType, parameter));
    }
 
    public String toString(boolean comments) {

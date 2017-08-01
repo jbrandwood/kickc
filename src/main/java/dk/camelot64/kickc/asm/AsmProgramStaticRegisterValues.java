@@ -28,74 +28,81 @@ public class AsmProgramStaticRegisterValues {
 
    private void initValues() {
       AsmRegisterValues current = new AsmRegisterValues();
-      for (AsmLine line : program.getLines()) {
-         if (line instanceof AsmLabel) {
-            current = new AsmRegisterValues();
-         } else if (line instanceof AsmInstruction) {
-            AsmInstruction instruction = (AsmInstruction) line;
-            values.put(instruction, current);
-            current = new AsmRegisterValues(current);
-            AsmInstructionType instructionType = instruction.getType();
-            AsmClobber clobber = instructionType.getClobber();
-            if (clobber.isClobberA()) {
-               current.setA(null);
-            }
-            if (clobber.isClobberX()) {
-               current.setX(null);
-            }
-            if (clobber.isClobberY()) {
-               current.setY(null);
-            }
-            if (clobber.isClobberC()) {
-               current.setC(null);
-            }
-            if (clobber.isClobberN()) {
-               current.setN(null);
-            }
-            if (clobber.isClobberV()) {
-               current.setV(null);
-            }
-            if (clobber.isClobberZ()) {
-               current.setZ(null);
-            }
-            if (instructionType.getMnemnonic().equals("lda") && instructionType.getAddressingMode().equals(AsmAddressingMode.IMM)) {
-               try {
-                  int immValue = Integer.parseInt(instruction.getParameter());
-                  current.setZ(immValue == 0);
-                  current.setN(immValue > 127);
-                  current.setA(immValue);
-               } catch (NumberFormatException e) {
-                  // ignore
-               }
-            }
-            if (instructionType.getMnemnonic().equals("ldx") && instructionType.getAddressingMode().equals(AsmAddressingMode.IMM)) {
-               try {
-                  int immValue = Integer.parseInt(instruction.getParameter());
-                  current.setZ(immValue == 0);
-                  current.setN(immValue > 127);
-                  current.setX(immValue);
-               } catch (NumberFormatException e) {
-                  // ignore
-               }
-            }
-            if (instructionType.getMnemnonic().equals("ldy") && instructionType.getAddressingMode().equals(AsmAddressingMode.IMM)) {
-               try {
-                  int immValue = Integer.parseInt(instruction.getParameter());
-                  current.setZ(immValue == 0);
-                  current.setN(immValue > 127);
-                  current.setY(immValue);
-               } catch (NumberFormatException e) {
-                  // ignore
-               }
-            }
-            if (instructionType.getMnemnonic().equals("sec")) {
-               current.setC(Boolean.TRUE);
-            }
-            if (instructionType.getMnemnonic().equals("clc")) {
-               current.setC(Boolean.FALSE);
-            }
+      for (AsmSegment segment : program.getSegments()) {
+         for (AsmLine line : segment.getLines()) {
+            current = updateStaticRegisterValues(current, line);
          }
       }
+   }
+
+   private AsmRegisterValues updateStaticRegisterValues(AsmRegisterValues current, AsmLine line) {
+      if (line instanceof AsmLabel) {
+         current = new AsmRegisterValues();
+      } else if (line instanceof AsmInstruction) {
+         AsmInstruction instruction = (AsmInstruction) line;
+         values.put(instruction, current);
+         current = new AsmRegisterValues(current);
+         AsmInstructionType instructionType = instruction.getType();
+         AsmClobber clobber = instructionType.getClobber();
+         if (clobber.isClobberA()) {
+            current.setA(null);
+         }
+         if (clobber.isClobberX()) {
+            current.setX(null);
+         }
+         if (clobber.isClobberY()) {
+            current.setY(null);
+         }
+         if (clobber.isClobberC()) {
+            current.setC(null);
+         }
+         if (clobber.isClobberN()) {
+            current.setN(null);
+         }
+         if (clobber.isClobberV()) {
+            current.setV(null);
+         }
+         if (clobber.isClobberZ()) {
+            current.setZ(null);
+         }
+         if (instructionType.getMnemnonic().equals("lda") && instructionType.getAddressingMode().equals(AsmAddressingMode.IMM)) {
+            try {
+               int immValue = Integer.parseInt(instruction.getParameter());
+               current.setZ(immValue == 0);
+               current.setN(immValue > 127);
+               current.setA(immValue);
+            } catch (NumberFormatException e) {
+               // ignore
+            }
+         }
+         if (instructionType.getMnemnonic().equals("ldx") && instructionType.getAddressingMode().equals(AsmAddressingMode.IMM)) {
+            try {
+               int immValue = Integer.parseInt(instruction.getParameter());
+               current.setZ(immValue == 0);
+               current.setN(immValue > 127);
+               current.setX(immValue);
+            } catch (NumberFormatException e) {
+               // ignore
+            }
+         }
+         if (instructionType.getMnemnonic().equals("ldy") && instructionType.getAddressingMode().equals(AsmAddressingMode.IMM)) {
+            try {
+               int immValue = Integer.parseInt(instruction.getParameter());
+               current.setZ(immValue == 0);
+               current.setN(immValue > 127);
+               current.setY(immValue);
+            } catch (NumberFormatException e) {
+               // ignore
+            }
+         }
+         if (instructionType.getMnemnonic().equals("sec")) {
+            current.setC(Boolean.TRUE);
+         }
+         if (instructionType.getMnemnonic().equals("clc")) {
+            current.setC(Boolean.FALSE);
+         }
+      }
+      return current;
    }
 
    /**

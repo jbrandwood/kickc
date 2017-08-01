@@ -1947,153 +1947,194 @@ Coalescing zero page register [ zp byte:2 [ lvaluevar::i#2 lvaluevar::i#1 rvalue
 Coalescing zero page register [ zp byte:2 [ lvaluevar::i#2 lvaluevar::i#1 rvaluevar::i#2 rvaluevar::i#1 rvalue::i#2 rvalue::i#1 lvalue::i#2 lvalue::i#1 rvaluevar::b#0 rvalue::b#0 rvalue::b#1 ] ] with [ zp byte:13 [ rvalue::b#2 ] ]
 Coalescing zero page register [ zp ptr byte:3 [ lvaluevar::screen#2 lvaluevar::screen#1 ] ] with [ zp ptr byte:6 [ rvaluevar::screen#2 rvaluevar::screen#1 ] ]
 INITIAL ASM
+//SEG0 @BEGIN
 BBEGIN:
+//SEG1 [0] call main param-assignment [ ]
   jsr main
   jmp BEND
+//SEG2 @END
 BEND:
+//SEG3 main
 main:
+//SEG4 [1] call lvalue param-assignment [ ]
   jsr lvalue
   jmp main__B1
+//SEG5 main::@1
 main__B1:
+//SEG6 [2] call rvalue param-assignment [ ]
   jsr rvalue
   jmp main__B2
+//SEG7 main::@2
 main__B2:
+//SEG8 [3] call rvaluevar param-assignment [ ]
   jsr rvaluevar
   jmp main__B3
+//SEG9 main::@3
 main__B3:
+//SEG10 [4] call lvaluevar param-assignment [ ]
   jsr lvaluevar
   jmp main__Breturn
+//SEG11 main::@return
 main__Breturn:
+//SEG12 [5] return  [ ]
   rts
+//SEG13 lvaluevar
 lvaluevar:
+//SEG14 [6] phi from lvaluevar to lvaluevar::@1
 lvaluevar__B1_from_lvaluevar:
-  // (byte*) lvaluevar::screen#2 = (word) 1024  // zpptrby1=cowo1
+//SEG15 [6] phi (byte*) lvaluevar::screen#2 = (word) 1024 -- zpptrby1=cowo1 
   lda #<1024
   sta 3
   lda #>1024
   sta 3+1
-  // (byte) lvaluevar::i#2 = (byte) 2  // zpby1=coby1
+//SEG16 [6] phi (byte) lvaluevar::i#2 = (byte) 2 -- zpby1=coby1 
   lda #2
   sta 2
   jmp lvaluevar__B1
+//SEG17 lvaluevar::@1
 lvaluevar__B1:
-  // [7] if((byte) lvaluevar::i#2<(byte) 10) goto lvaluevar::@2 [ lvaluevar::i#2 lvaluevar::screen#2 ]  //  zpby1_lt_coby1_then_la1
+//SEG18 [7] if((byte) lvaluevar::i#2<(byte) 10) goto lvaluevar::@2 [ lvaluevar::i#2 lvaluevar::screen#2 ] -- zpby1_lt_coby1_then_la1 
   lda 2
   cmp #10
   bcc lvaluevar__B2
   jmp lvaluevar__Breturn
+//SEG19 lvaluevar::@return
 lvaluevar__Breturn:
+//SEG20 [8] return  [ ]
   rts
+//SEG21 lvaluevar::@2
 lvaluevar__B2:
-  // [9] *((byte*) lvaluevar::screen#2) ← (byte) 4 [ lvaluevar::i#2 lvaluevar::screen#2 ]  //  _star_zpptrby1=coby1
+//SEG22 [9] *((byte*) lvaluevar::screen#2) ← (byte) 4 [ lvaluevar::i#2 lvaluevar::screen#2 ] -- _star_zpptrby1=coby1 
   ldy #0
   lda #4
   sta (3),y
-  // [10] (byte*) lvaluevar::screen#1 ← ++ (byte*) lvaluevar::screen#2 [ lvaluevar::screen#1 lvaluevar::i#2 ]  //  zpptrby1=_inc_zpptrby1
+//SEG23 [10] (byte*) lvaluevar::screen#1 ← ++ (byte*) lvaluevar::screen#2 [ lvaluevar::screen#1 lvaluevar::i#2 ] -- zpptrby1=_inc_zpptrby1 
   inc 3
   bne !+
   inc 3+1
 !:
-  // [11] (byte) lvaluevar::i#1 ← ++ (byte) lvaluevar::i#2 [ lvaluevar::i#1 lvaluevar::screen#1 ]  //  zpby1=_inc_zpby1
+//SEG24 [11] (byte) lvaluevar::i#1 ← ++ (byte) lvaluevar::i#2 [ lvaluevar::i#1 lvaluevar::screen#1 ] -- zpby1=_inc_zpby1 
   inc 2
+//SEG25 [6] phi from lvaluevar::@2 to lvaluevar::@1
 lvaluevar__B1_from_B2:
-  // (byte*) lvaluevar::screen#2 = (byte*) lvaluevar::screen#1  // register copy zp ptr byte:3
-  // (byte) lvaluevar::i#2 = (byte) lvaluevar::i#1  // register copy zp byte:2
+//SEG26 [6] phi (byte*) lvaluevar::screen#2 = (byte*) lvaluevar::screen#1 -- register_copy 
+//SEG27 [6] phi (byte) lvaluevar::i#2 = (byte) lvaluevar::i#1 -- register_copy 
   jmp lvaluevar__B1
+//SEG28 rvaluevar
 rvaluevar:
+//SEG29 [12] phi from rvaluevar to rvaluevar::@1
 rvaluevar__B1_from_rvaluevar:
-  // (byte*) rvaluevar::screen#2 = (word) 1024  // zpptrby1=cowo1
+//SEG30 [12] phi (byte*) rvaluevar::screen#2 = (word) 1024 -- zpptrby1=cowo1 
   lda #<1024
   sta 6
   lda #>1024
   sta 6+1
-  // (byte) rvaluevar::i#2 = (byte) 2  // zpby1=coby1
+//SEG31 [12] phi (byte) rvaluevar::i#2 = (byte) 2 -- zpby1=coby1 
   lda #2
   sta 5
   jmp rvaluevar__B1
+//SEG32 rvaluevar::@1
 rvaluevar__B1:
-  // [13] if((byte) rvaluevar::i#2<(byte) 10) goto rvaluevar::@2 [ rvaluevar::i#2 rvaluevar::screen#2 ]  //  zpby1_lt_coby1_then_la1
+//SEG33 [13] if((byte) rvaluevar::i#2<(byte) 10) goto rvaluevar::@2 [ rvaluevar::i#2 rvaluevar::screen#2 ] -- zpby1_lt_coby1_then_la1 
   lda 5
   cmp #10
   bcc rvaluevar__B2
   jmp rvaluevar__Breturn
+//SEG34 rvaluevar::@return
 rvaluevar__Breturn:
+//SEG35 [14] return  [ ]
   rts
+//SEG36 rvaluevar::@2
 rvaluevar__B2:
-  // [15] (byte) rvaluevar::b#0 ← * (byte*) rvaluevar::screen#2 [ rvaluevar::i#2 rvaluevar::screen#2 ]  //  zpby1=_star_zpptrby1
+//SEG37 [15] (byte) rvaluevar::b#0 ← * (byte*) rvaluevar::screen#2 [ rvaluevar::i#2 rvaluevar::screen#2 ] -- zpby1=_star_zpptrby1 
   ldy #0
   lda (6),y
   sta 10
-  // [16] (byte*) rvaluevar::screen#1 ← ++ (byte*) rvaluevar::screen#2 [ rvaluevar::screen#1 rvaluevar::i#2 ]  //  zpptrby1=_inc_zpptrby1
+//SEG38 [16] (byte*) rvaluevar::screen#1 ← ++ (byte*) rvaluevar::screen#2 [ rvaluevar::screen#1 rvaluevar::i#2 ] -- zpptrby1=_inc_zpptrby1 
   inc 6
   bne !+
   inc 6+1
 !:
-  // [17] (byte) rvaluevar::i#1 ← ++ (byte) rvaluevar::i#2 [ rvaluevar::i#1 rvaluevar::screen#1 ]  //  zpby1=_inc_zpby1
+//SEG39 [17] (byte) rvaluevar::i#1 ← ++ (byte) rvaluevar::i#2 [ rvaluevar::i#1 rvaluevar::screen#1 ] -- zpby1=_inc_zpby1 
   inc 5
+//SEG40 [12] phi from rvaluevar::@2 to rvaluevar::@1
 rvaluevar__B1_from_B2:
-  // (byte*) rvaluevar::screen#2 = (byte*) rvaluevar::screen#1  // register copy zp ptr byte:6
-  // (byte) rvaluevar::i#2 = (byte) rvaluevar::i#1  // register copy zp byte:5
+//SEG41 [12] phi (byte*) rvaluevar::screen#2 = (byte*) rvaluevar::screen#1 -- register_copy 
+//SEG42 [12] phi (byte) rvaluevar::i#2 = (byte) rvaluevar::i#1 -- register_copy 
   jmp rvaluevar__B1
+//SEG43 rvalue
 rvalue:
-  // [18] (byte) rvalue::b#0 ← * (word) 1024 [ ]  //  zpby1=_star_cowo1
+//SEG44 [18] (byte) rvalue::b#0 ← * (word) 1024 [ ] -- zpby1=_star_cowo1 
   lda 1024
   sta 11
-  // [19] (byte) rvalue::b#1 ← * (word) 1025 [ ]  //  zpby1=_star_cowo1
+//SEG45 [19] (byte) rvalue::b#1 ← * (word) 1025 [ ] -- zpby1=_star_cowo1 
   lda 1025
   sta 12
+//SEG46 [20] phi from rvalue to rvalue::@1
 rvalue__B1_from_rvalue:
-  // (byte) rvalue::i#2 = (byte) 2  // zpby1=coby1
+//SEG47 [20] phi (byte) rvalue::i#2 = (byte) 2 -- zpby1=coby1 
   lda #2
   sta 8
   jmp rvalue__B1
+//SEG48 rvalue::@1
 rvalue__B1:
-  // [21] if((byte) rvalue::i#2<(byte) 10) goto rvalue::@2 [ rvalue::i#2 ]  //  zpby1_lt_coby1_then_la1
+//SEG49 [21] if((byte) rvalue::i#2<(byte) 10) goto rvalue::@2 [ rvalue::i#2 ] -- zpby1_lt_coby1_then_la1 
   lda 8
   cmp #10
   bcc rvalue__B2
   jmp rvalue__Breturn
+//SEG50 rvalue::@return
 rvalue__Breturn:
+//SEG51 [22] return  [ ]
   rts
+//SEG52 rvalue::@2
 rvalue__B2:
-  // [23] (byte) rvalue::b#2 ← (word) 1024 *idx (byte) rvalue::i#2 [ rvalue::i#2 ]  //  zpby1=cowo1_staridx_zpby2
+//SEG53 [23] (byte) rvalue::b#2 ← (word) 1024 *idx (byte) rvalue::i#2 [ rvalue::i#2 ] -- zpby1=cowo1_staridx_zpby2 
   ldx 8
   lda 1024,x
   sta 13
-  // [24] (byte) rvalue::i#1 ← ++ (byte) rvalue::i#2 [ rvalue::i#1 ]  //  zpby1=_inc_zpby1
+//SEG54 [24] (byte) rvalue::i#1 ← ++ (byte) rvalue::i#2 [ rvalue::i#1 ] -- zpby1=_inc_zpby1 
   inc 8
+//SEG55 [20] phi from rvalue::@2 to rvalue::@1
 rvalue__B1_from_B2:
-  // (byte) rvalue::i#2 = (byte) rvalue::i#1  // register copy zp byte:8
+//SEG56 [20] phi (byte) rvalue::i#2 = (byte) rvalue::i#1 -- register_copy 
   jmp rvalue__B1
+//SEG57 lvalue
 lvalue:
-  // [25] *((word) 1024) ← (byte) 1 [ ]  //  _star_cowo1=coby2
+//SEG58 [25] *((word) 1024) ← (byte) 1 [ ] -- _star_cowo1=coby2 
   lda #1
   sta 1024
-  // [26] *((word) 1025) ← (byte) 2 [ ]  //  _star_cowo1=coby2
+//SEG59 [26] *((word) 1025) ← (byte) 2 [ ] -- _star_cowo1=coby2 
   lda #2
   sta 1025
+//SEG60 [27] phi from lvalue to lvalue::@1
 lvalue__B1_from_lvalue:
-  // (byte) lvalue::i#2 = (byte) 2  // zpby1=coby1
+//SEG61 [27] phi (byte) lvalue::i#2 = (byte) 2 -- zpby1=coby1 
   lda #2
   sta 9
   jmp lvalue__B1
+//SEG62 lvalue::@1
 lvalue__B1:
-  // [28] if((byte) lvalue::i#2<(byte) 10) goto lvalue::@2 [ lvalue::i#2 ]  //  zpby1_lt_coby1_then_la1
+//SEG63 [28] if((byte) lvalue::i#2<(byte) 10) goto lvalue::@2 [ lvalue::i#2 ] -- zpby1_lt_coby1_then_la1 
   lda 9
   cmp #10
   bcc lvalue__B2
   jmp lvalue__Breturn
+//SEG64 lvalue::@return
 lvalue__Breturn:
+//SEG65 [29] return  [ ]
   rts
+//SEG66 lvalue::@2
 lvalue__B2:
-  // [30] *((word) 1024 + (byte) lvalue::i#2) ← (byte) 3 [ lvalue::i#2 ]  //  cowo1_staridx_zpby1=coby2
+//SEG67 [30] *((word) 1024 + (byte) lvalue::i#2) ← (byte) 3 [ lvalue::i#2 ] -- cowo1_staridx_zpby1=coby2 
   lda #3
   ldx 9
   sta 1024,x
-  // [31] (byte) lvalue::i#1 ← ++ (byte) lvalue::i#2 [ lvalue::i#1 ]  //  zpby1=_inc_zpby1
+//SEG68 [31] (byte) lvalue::i#1 ← ++ (byte) lvalue::i#2 [ lvalue::i#1 ] -- zpby1=_inc_zpby1 
   inc 9
+//SEG69 [27] phi from lvalue::@2 to lvalue::@1
 lvalue__B1_from_B2:
-  // (byte) lvalue::i#2 = (byte) lvalue::i#1  // register copy zp byte:9
+//SEG70 [27] phi (byte) lvalue::i#2 = (byte) lvalue::i#1 -- register_copy 
   jmp lvalue__B1
 
 Removing instruction jmp BEND
@@ -2111,140 +2152,181 @@ Removing instruction jmp lvalue__B1
 Removing instruction jmp lvalue__Breturn
 Succesful ASM optimization Pass5NextJumpElimination
 ASSEMBLER
+//SEG0 @BEGIN
 BBEGIN:
+//SEG1 [0] call main param-assignment [ ]
   jsr main
+//SEG2 @END
 BEND:
+//SEG3 main
 main:
+//SEG4 [1] call lvalue param-assignment [ ]
   jsr lvalue
+//SEG5 main::@1
 main__B1:
+//SEG6 [2] call rvalue param-assignment [ ]
   jsr rvalue
+//SEG7 main::@2
 main__B2:
+//SEG8 [3] call rvaluevar param-assignment [ ]
   jsr rvaluevar
+//SEG9 main::@3
 main__B3:
+//SEG10 [4] call lvaluevar param-assignment [ ]
   jsr lvaluevar
+//SEG11 main::@return
 main__Breturn:
+//SEG12 [5] return  [ ]
   rts
+//SEG13 lvaluevar
 lvaluevar:
+//SEG14 [6] phi from lvaluevar to lvaluevar::@1
 lvaluevar__B1_from_lvaluevar:
-  // (byte*) lvaluevar::screen#2 = (word) 1024  // zpptrby1=cowo1
+//SEG15 [6] phi (byte*) lvaluevar::screen#2 = (word) 1024 -- zpptrby1=cowo1 
   lda #<1024
   sta 3
   lda #>1024
   sta 3+1
-  // (byte) lvaluevar::i#2 = (byte) 2  // zpby1=coby1
+//SEG16 [6] phi (byte) lvaluevar::i#2 = (byte) 2 -- zpby1=coby1 
   lda #2
   sta 2
+//SEG17 lvaluevar::@1
 lvaluevar__B1:
-  // [7] if((byte) lvaluevar::i#2<(byte) 10) goto lvaluevar::@2 [ lvaluevar::i#2 lvaluevar::screen#2 ]  //  zpby1_lt_coby1_then_la1
+//SEG18 [7] if((byte) lvaluevar::i#2<(byte) 10) goto lvaluevar::@2 [ lvaluevar::i#2 lvaluevar::screen#2 ] -- zpby1_lt_coby1_then_la1 
   lda 2
   cmp #10
   bcc lvaluevar__B2
+//SEG19 lvaluevar::@return
 lvaluevar__Breturn:
+//SEG20 [8] return  [ ]
   rts
+//SEG21 lvaluevar::@2
 lvaluevar__B2:
-  // [9] *((byte*) lvaluevar::screen#2) ← (byte) 4 [ lvaluevar::i#2 lvaluevar::screen#2 ]  //  _star_zpptrby1=coby1
+//SEG22 [9] *((byte*) lvaluevar::screen#2) ← (byte) 4 [ lvaluevar::i#2 lvaluevar::screen#2 ] -- _star_zpptrby1=coby1 
   ldy #0
   lda #4
   sta (3),y
-  // [10] (byte*) lvaluevar::screen#1 ← ++ (byte*) lvaluevar::screen#2 [ lvaluevar::screen#1 lvaluevar::i#2 ]  //  zpptrby1=_inc_zpptrby1
+//SEG23 [10] (byte*) lvaluevar::screen#1 ← ++ (byte*) lvaluevar::screen#2 [ lvaluevar::screen#1 lvaluevar::i#2 ] -- zpptrby1=_inc_zpptrby1 
   inc 3
   bne !+
   inc 3+1
 !:
-  // [11] (byte) lvaluevar::i#1 ← ++ (byte) lvaluevar::i#2 [ lvaluevar::i#1 lvaluevar::screen#1 ]  //  zpby1=_inc_zpby1
+//SEG24 [11] (byte) lvaluevar::i#1 ← ++ (byte) lvaluevar::i#2 [ lvaluevar::i#1 lvaluevar::screen#1 ] -- zpby1=_inc_zpby1 
   inc 2
+//SEG25 [6] phi from lvaluevar::@2 to lvaluevar::@1
 lvaluevar__B1_from_B2:
-  // (byte*) lvaluevar::screen#2 = (byte*) lvaluevar::screen#1  // register copy zp ptr byte:3
-  // (byte) lvaluevar::i#2 = (byte) lvaluevar::i#1  // register copy zp byte:2
+//SEG26 [6] phi (byte*) lvaluevar::screen#2 = (byte*) lvaluevar::screen#1 -- register_copy 
+//SEG27 [6] phi (byte) lvaluevar::i#2 = (byte) lvaluevar::i#1 -- register_copy 
   jmp lvaluevar__B1
+//SEG28 rvaluevar
 rvaluevar:
+//SEG29 [12] phi from rvaluevar to rvaluevar::@1
 rvaluevar__B1_from_rvaluevar:
-  // (byte*) rvaluevar::screen#2 = (word) 1024  // zpptrby1=cowo1
+//SEG30 [12] phi (byte*) rvaluevar::screen#2 = (word) 1024 -- zpptrby1=cowo1 
   lda #<1024
   sta 6
   lda #>1024
   sta 6+1
-  // (byte) rvaluevar::i#2 = (byte) 2  // zpby1=coby1
+//SEG31 [12] phi (byte) rvaluevar::i#2 = (byte) 2 -- zpby1=coby1 
   lda #2
   sta 5
+//SEG32 rvaluevar::@1
 rvaluevar__B1:
-  // [13] if((byte) rvaluevar::i#2<(byte) 10) goto rvaluevar::@2 [ rvaluevar::i#2 rvaluevar::screen#2 ]  //  zpby1_lt_coby1_then_la1
+//SEG33 [13] if((byte) rvaluevar::i#2<(byte) 10) goto rvaluevar::@2 [ rvaluevar::i#2 rvaluevar::screen#2 ] -- zpby1_lt_coby1_then_la1 
   lda 5
   cmp #10
   bcc rvaluevar__B2
+//SEG34 rvaluevar::@return
 rvaluevar__Breturn:
+//SEG35 [14] return  [ ]
   rts
+//SEG36 rvaluevar::@2
 rvaluevar__B2:
-  // [15] (byte) rvaluevar::b#0 ← * (byte*) rvaluevar::screen#2 [ rvaluevar::i#2 rvaluevar::screen#2 ]  //  zpby1=_star_zpptrby1
+//SEG37 [15] (byte) rvaluevar::b#0 ← * (byte*) rvaluevar::screen#2 [ rvaluevar::i#2 rvaluevar::screen#2 ] -- zpby1=_star_zpptrby1 
   ldy #0
   lda (6),y
   sta 10
-  // [16] (byte*) rvaluevar::screen#1 ← ++ (byte*) rvaluevar::screen#2 [ rvaluevar::screen#1 rvaluevar::i#2 ]  //  zpptrby1=_inc_zpptrby1
+//SEG38 [16] (byte*) rvaluevar::screen#1 ← ++ (byte*) rvaluevar::screen#2 [ rvaluevar::screen#1 rvaluevar::i#2 ] -- zpptrby1=_inc_zpptrby1 
   inc 6
   bne !+
   inc 6+1
 !:
-  // [17] (byte) rvaluevar::i#1 ← ++ (byte) rvaluevar::i#2 [ rvaluevar::i#1 rvaluevar::screen#1 ]  //  zpby1=_inc_zpby1
+//SEG39 [17] (byte) rvaluevar::i#1 ← ++ (byte) rvaluevar::i#2 [ rvaluevar::i#1 rvaluevar::screen#1 ] -- zpby1=_inc_zpby1 
   inc 5
+//SEG40 [12] phi from rvaluevar::@2 to rvaluevar::@1
 rvaluevar__B1_from_B2:
-  // (byte*) rvaluevar::screen#2 = (byte*) rvaluevar::screen#1  // register copy zp ptr byte:6
-  // (byte) rvaluevar::i#2 = (byte) rvaluevar::i#1  // register copy zp byte:5
+//SEG41 [12] phi (byte*) rvaluevar::screen#2 = (byte*) rvaluevar::screen#1 -- register_copy 
+//SEG42 [12] phi (byte) rvaluevar::i#2 = (byte) rvaluevar::i#1 -- register_copy 
   jmp rvaluevar__B1
+//SEG43 rvalue
 rvalue:
-  // [18] (byte) rvalue::b#0 ← * (word) 1024 [ ]  //  zpby1=_star_cowo1
+//SEG44 [18] (byte) rvalue::b#0 ← * (word) 1024 [ ] -- zpby1=_star_cowo1 
   lda 1024
   sta 11
-  // [19] (byte) rvalue::b#1 ← * (word) 1025 [ ]  //  zpby1=_star_cowo1
+//SEG45 [19] (byte) rvalue::b#1 ← * (word) 1025 [ ] -- zpby1=_star_cowo1 
   lda 1025
   sta 12
+//SEG46 [20] phi from rvalue to rvalue::@1
 rvalue__B1_from_rvalue:
-  // (byte) rvalue::i#2 = (byte) 2  // zpby1=coby1
+//SEG47 [20] phi (byte) rvalue::i#2 = (byte) 2 -- zpby1=coby1 
   lda #2
   sta 8
+//SEG48 rvalue::@1
 rvalue__B1:
-  // [21] if((byte) rvalue::i#2<(byte) 10) goto rvalue::@2 [ rvalue::i#2 ]  //  zpby1_lt_coby1_then_la1
+//SEG49 [21] if((byte) rvalue::i#2<(byte) 10) goto rvalue::@2 [ rvalue::i#2 ] -- zpby1_lt_coby1_then_la1 
   lda 8
   cmp #10
   bcc rvalue__B2
+//SEG50 rvalue::@return
 rvalue__Breturn:
+//SEG51 [22] return  [ ]
   rts
+//SEG52 rvalue::@2
 rvalue__B2:
-  // [23] (byte) rvalue::b#2 ← (word) 1024 *idx (byte) rvalue::i#2 [ rvalue::i#2 ]  //  zpby1=cowo1_staridx_zpby2
+//SEG53 [23] (byte) rvalue::b#2 ← (word) 1024 *idx (byte) rvalue::i#2 [ rvalue::i#2 ] -- zpby1=cowo1_staridx_zpby2 
   ldx 8
   lda 1024,x
   sta 13
-  // [24] (byte) rvalue::i#1 ← ++ (byte) rvalue::i#2 [ rvalue::i#1 ]  //  zpby1=_inc_zpby1
+//SEG54 [24] (byte) rvalue::i#1 ← ++ (byte) rvalue::i#2 [ rvalue::i#1 ] -- zpby1=_inc_zpby1 
   inc 8
+//SEG55 [20] phi from rvalue::@2 to rvalue::@1
 rvalue__B1_from_B2:
-  // (byte) rvalue::i#2 = (byte) rvalue::i#1  // register copy zp byte:8
+//SEG56 [20] phi (byte) rvalue::i#2 = (byte) rvalue::i#1 -- register_copy 
   jmp rvalue__B1
+//SEG57 lvalue
 lvalue:
-  // [25] *((word) 1024) ← (byte) 1 [ ]  //  _star_cowo1=coby2
+//SEG58 [25] *((word) 1024) ← (byte) 1 [ ] -- _star_cowo1=coby2 
   lda #1
   sta 1024
-  // [26] *((word) 1025) ← (byte) 2 [ ]  //  _star_cowo1=coby2
+//SEG59 [26] *((word) 1025) ← (byte) 2 [ ] -- _star_cowo1=coby2 
   lda #2
   sta 1025
+//SEG60 [27] phi from lvalue to lvalue::@1
 lvalue__B1_from_lvalue:
-  // (byte) lvalue::i#2 = (byte) 2  // zpby1=coby1
+//SEG61 [27] phi (byte) lvalue::i#2 = (byte) 2 -- zpby1=coby1 
   lda #2
   sta 9
+//SEG62 lvalue::@1
 lvalue__B1:
-  // [28] if((byte) lvalue::i#2<(byte) 10) goto lvalue::@2 [ lvalue::i#2 ]  //  zpby1_lt_coby1_then_la1
+//SEG63 [28] if((byte) lvalue::i#2<(byte) 10) goto lvalue::@2 [ lvalue::i#2 ] -- zpby1_lt_coby1_then_la1 
   lda 9
   cmp #10
   bcc lvalue__B2
+//SEG64 lvalue::@return
 lvalue__Breturn:
+//SEG65 [29] return  [ ]
   rts
+//SEG66 lvalue::@2
 lvalue__B2:
-  // [30] *((word) 1024 + (byte) lvalue::i#2) ← (byte) 3 [ lvalue::i#2 ]  //  cowo1_staridx_zpby1=coby2
+//SEG67 [30] *((word) 1024 + (byte) lvalue::i#2) ← (byte) 3 [ lvalue::i#2 ] -- cowo1_staridx_zpby1=coby2 
   lda #3
   ldx 9
   sta 1024,x
-  // [31] (byte) lvalue::i#1 ← ++ (byte) lvalue::i#2 [ lvalue::i#1 ]  //  zpby1=_inc_zpby1
+//SEG68 [31] (byte) lvalue::i#1 ← ++ (byte) lvalue::i#2 [ lvalue::i#1 ] -- zpby1=_inc_zpby1 
   inc 9
+//SEG69 [27] phi from lvalue::@2 to lvalue::@1
 lvalue__B1_from_B2:
-  // (byte) lvalue::i#2 = (byte) lvalue::i#1  // register copy zp byte:9
+//SEG70 [27] phi (byte) lvalue::i#2 = (byte) lvalue::i#1 -- register_copy 
   jmp lvalue__B1
 
 FINAL SYMBOL TABLE
@@ -2303,139 +2385,180 @@ zp byte:2 [ lvaluevar::i#2 lvaluevar::i#1 rvaluevar::i#2 rvaluevar::i#1 rvalue::
 zp ptr byte:3 [ lvaluevar::screen#2 lvaluevar::screen#1 rvaluevar::screen#2 rvaluevar::screen#1 ]
 
 FINAL CODE
+//SEG0 @BEGIN
 BBEGIN:
+//SEG1 [0] call main param-assignment [ ]
   jsr main
+//SEG2 @END
 BEND:
+//SEG3 main
 main:
+//SEG4 [1] call lvalue param-assignment [ ]
   jsr lvalue
+//SEG5 main::@1
 main__B1:
+//SEG6 [2] call rvalue param-assignment [ ]
   jsr rvalue
+//SEG7 main::@2
 main__B2:
+//SEG8 [3] call rvaluevar param-assignment [ ]
   jsr rvaluevar
+//SEG9 main::@3
 main__B3:
+//SEG10 [4] call lvaluevar param-assignment [ ]
   jsr lvaluevar
+//SEG11 main::@return
 main__Breturn:
+//SEG12 [5] return  [ ]
   rts
+//SEG13 lvaluevar
 lvaluevar:
+//SEG14 [6] phi from lvaluevar to lvaluevar::@1
 lvaluevar__B1_from_lvaluevar:
-  // (byte*) lvaluevar::screen#2 = (word) 1024  // zpptrby1=cowo1
+//SEG15 [6] phi (byte*) lvaluevar::screen#2 = (word) 1024 -- zpptrby1=cowo1 
   lda #<1024
   sta 3
   lda #>1024
   sta 3+1
-  // (byte) lvaluevar::i#2 = (byte) 2  // zpby1=coby1
+//SEG16 [6] phi (byte) lvaluevar::i#2 = (byte) 2 -- zpby1=coby1 
   lda #2
   sta 2
+//SEG17 lvaluevar::@1
 lvaluevar__B1:
-  // [7] if((byte) lvaluevar::i#2<(byte) 10) goto lvaluevar::@2 [ lvaluevar::i#2 lvaluevar::screen#2 ]  //  zpby1_lt_coby1_then_la1
+//SEG18 [7] if((byte) lvaluevar::i#2<(byte) 10) goto lvaluevar::@2 [ lvaluevar::i#2 lvaluevar::screen#2 ] -- zpby1_lt_coby1_then_la1 
   lda 2
   cmp #10
   bcc lvaluevar__B2
+//SEG19 lvaluevar::@return
 lvaluevar__Breturn:
+//SEG20 [8] return  [ ]
   rts
+//SEG21 lvaluevar::@2
 lvaluevar__B2:
-  // [9] *((byte*) lvaluevar::screen#2) ← (byte) 4 [ lvaluevar::i#2 lvaluevar::screen#2 ]  //  _star_zpptrby1=coby1
+//SEG22 [9] *((byte*) lvaluevar::screen#2) ← (byte) 4 [ lvaluevar::i#2 lvaluevar::screen#2 ] -- _star_zpptrby1=coby1 
   ldy #0
   lda #4
   sta (3),y
-  // [10] (byte*) lvaluevar::screen#1 ← ++ (byte*) lvaluevar::screen#2 [ lvaluevar::screen#1 lvaluevar::i#2 ]  //  zpptrby1=_inc_zpptrby1
+//SEG23 [10] (byte*) lvaluevar::screen#1 ← ++ (byte*) lvaluevar::screen#2 [ lvaluevar::screen#1 lvaluevar::i#2 ] -- zpptrby1=_inc_zpptrby1 
   inc 3
   bne !+
   inc 3+1
 !:
-  // [11] (byte) lvaluevar::i#1 ← ++ (byte) lvaluevar::i#2 [ lvaluevar::i#1 lvaluevar::screen#1 ]  //  zpby1=_inc_zpby1
+//SEG24 [11] (byte) lvaluevar::i#1 ← ++ (byte) lvaluevar::i#2 [ lvaluevar::i#1 lvaluevar::screen#1 ] -- zpby1=_inc_zpby1 
   inc 2
+//SEG25 [6] phi from lvaluevar::@2 to lvaluevar::@1
 lvaluevar__B1_from_B2:
-  // (byte*) lvaluevar::screen#2 = (byte*) lvaluevar::screen#1  // register copy zp ptr byte:3
-  // (byte) lvaluevar::i#2 = (byte) lvaluevar::i#1  // register copy zp byte:2
+//SEG26 [6] phi (byte*) lvaluevar::screen#2 = (byte*) lvaluevar::screen#1 -- register_copy 
+//SEG27 [6] phi (byte) lvaluevar::i#2 = (byte) lvaluevar::i#1 -- register_copy 
   jmp lvaluevar__B1
+//SEG28 rvaluevar
 rvaluevar:
+//SEG29 [12] phi from rvaluevar to rvaluevar::@1
 rvaluevar__B1_from_rvaluevar:
-  // (byte*) rvaluevar::screen#2 = (word) 1024  // zpptrby1=cowo1
+//SEG30 [12] phi (byte*) rvaluevar::screen#2 = (word) 1024 -- zpptrby1=cowo1 
   lda #<1024
   sta 6
   lda #>1024
   sta 6+1
-  // (byte) rvaluevar::i#2 = (byte) 2  // zpby1=coby1
+//SEG31 [12] phi (byte) rvaluevar::i#2 = (byte) 2 -- zpby1=coby1 
   lda #2
   sta 5
+//SEG32 rvaluevar::@1
 rvaluevar__B1:
-  // [13] if((byte) rvaluevar::i#2<(byte) 10) goto rvaluevar::@2 [ rvaluevar::i#2 rvaluevar::screen#2 ]  //  zpby1_lt_coby1_then_la1
+//SEG33 [13] if((byte) rvaluevar::i#2<(byte) 10) goto rvaluevar::@2 [ rvaluevar::i#2 rvaluevar::screen#2 ] -- zpby1_lt_coby1_then_la1 
   lda 5
   cmp #10
   bcc rvaluevar__B2
+//SEG34 rvaluevar::@return
 rvaluevar__Breturn:
+//SEG35 [14] return  [ ]
   rts
+//SEG36 rvaluevar::@2
 rvaluevar__B2:
-  // [15] (byte) rvaluevar::b#0 ← * (byte*) rvaluevar::screen#2 [ rvaluevar::i#2 rvaluevar::screen#2 ]  //  zpby1=_star_zpptrby1
+//SEG37 [15] (byte) rvaluevar::b#0 ← * (byte*) rvaluevar::screen#2 [ rvaluevar::i#2 rvaluevar::screen#2 ] -- zpby1=_star_zpptrby1 
   ldy #0
   lda (6),y
   sta 10
-  // [16] (byte*) rvaluevar::screen#1 ← ++ (byte*) rvaluevar::screen#2 [ rvaluevar::screen#1 rvaluevar::i#2 ]  //  zpptrby1=_inc_zpptrby1
+//SEG38 [16] (byte*) rvaluevar::screen#1 ← ++ (byte*) rvaluevar::screen#2 [ rvaluevar::screen#1 rvaluevar::i#2 ] -- zpptrby1=_inc_zpptrby1 
   inc 6
   bne !+
   inc 6+1
 !:
-  // [17] (byte) rvaluevar::i#1 ← ++ (byte) rvaluevar::i#2 [ rvaluevar::i#1 rvaluevar::screen#1 ]  //  zpby1=_inc_zpby1
+//SEG39 [17] (byte) rvaluevar::i#1 ← ++ (byte) rvaluevar::i#2 [ rvaluevar::i#1 rvaluevar::screen#1 ] -- zpby1=_inc_zpby1 
   inc 5
+//SEG40 [12] phi from rvaluevar::@2 to rvaluevar::@1
 rvaluevar__B1_from_B2:
-  // (byte*) rvaluevar::screen#2 = (byte*) rvaluevar::screen#1  // register copy zp ptr byte:6
-  // (byte) rvaluevar::i#2 = (byte) rvaluevar::i#1  // register copy zp byte:5
+//SEG41 [12] phi (byte*) rvaluevar::screen#2 = (byte*) rvaluevar::screen#1 -- register_copy 
+//SEG42 [12] phi (byte) rvaluevar::i#2 = (byte) rvaluevar::i#1 -- register_copy 
   jmp rvaluevar__B1
+//SEG43 rvalue
 rvalue:
-  // [18] (byte) rvalue::b#0 ← * (word) 1024 [ ]  //  zpby1=_star_cowo1
+//SEG44 [18] (byte) rvalue::b#0 ← * (word) 1024 [ ] -- zpby1=_star_cowo1 
   lda 1024
   sta 11
-  // [19] (byte) rvalue::b#1 ← * (word) 1025 [ ]  //  zpby1=_star_cowo1
+//SEG45 [19] (byte) rvalue::b#1 ← * (word) 1025 [ ] -- zpby1=_star_cowo1 
   lda 1025
   sta 12
+//SEG46 [20] phi from rvalue to rvalue::@1
 rvalue__B1_from_rvalue:
-  // (byte) rvalue::i#2 = (byte) 2  // zpby1=coby1
+//SEG47 [20] phi (byte) rvalue::i#2 = (byte) 2 -- zpby1=coby1 
   lda #2
   sta 8
+//SEG48 rvalue::@1
 rvalue__B1:
-  // [21] if((byte) rvalue::i#2<(byte) 10) goto rvalue::@2 [ rvalue::i#2 ]  //  zpby1_lt_coby1_then_la1
+//SEG49 [21] if((byte) rvalue::i#2<(byte) 10) goto rvalue::@2 [ rvalue::i#2 ] -- zpby1_lt_coby1_then_la1 
   lda 8
   cmp #10
   bcc rvalue__B2
+//SEG50 rvalue::@return
 rvalue__Breturn:
+//SEG51 [22] return  [ ]
   rts
+//SEG52 rvalue::@2
 rvalue__B2:
-  // [23] (byte) rvalue::b#2 ← (word) 1024 *idx (byte) rvalue::i#2 [ rvalue::i#2 ]  //  zpby1=cowo1_staridx_zpby2
+//SEG53 [23] (byte) rvalue::b#2 ← (word) 1024 *idx (byte) rvalue::i#2 [ rvalue::i#2 ] -- zpby1=cowo1_staridx_zpby2 
   ldx 8
   lda 1024,x
   sta 13
-  // [24] (byte) rvalue::i#1 ← ++ (byte) rvalue::i#2 [ rvalue::i#1 ]  //  zpby1=_inc_zpby1
+//SEG54 [24] (byte) rvalue::i#1 ← ++ (byte) rvalue::i#2 [ rvalue::i#1 ] -- zpby1=_inc_zpby1 
   inc 8
+//SEG55 [20] phi from rvalue::@2 to rvalue::@1
 rvalue__B1_from_B2:
-  // (byte) rvalue::i#2 = (byte) rvalue::i#1  // register copy zp byte:8
+//SEG56 [20] phi (byte) rvalue::i#2 = (byte) rvalue::i#1 -- register_copy 
   jmp rvalue__B1
+//SEG57 lvalue
 lvalue:
-  // [25] *((word) 1024) ← (byte) 1 [ ]  //  _star_cowo1=coby2
+//SEG58 [25] *((word) 1024) ← (byte) 1 [ ] -- _star_cowo1=coby2 
   lda #1
   sta 1024
-  // [26] *((word) 1025) ← (byte) 2 [ ]  //  _star_cowo1=coby2
+//SEG59 [26] *((word) 1025) ← (byte) 2 [ ] -- _star_cowo1=coby2 
   lda #2
   sta 1025
+//SEG60 [27] phi from lvalue to lvalue::@1
 lvalue__B1_from_lvalue:
-  // (byte) lvalue::i#2 = (byte) 2  // zpby1=coby1
+//SEG61 [27] phi (byte) lvalue::i#2 = (byte) 2 -- zpby1=coby1 
   lda #2
   sta 9
+//SEG62 lvalue::@1
 lvalue__B1:
-  // [28] if((byte) lvalue::i#2<(byte) 10) goto lvalue::@2 [ lvalue::i#2 ]  //  zpby1_lt_coby1_then_la1
+//SEG63 [28] if((byte) lvalue::i#2<(byte) 10) goto lvalue::@2 [ lvalue::i#2 ] -- zpby1_lt_coby1_then_la1 
   lda 9
   cmp #10
   bcc lvalue__B2
+//SEG64 lvalue::@return
 lvalue__Breturn:
+//SEG65 [29] return  [ ]
   rts
+//SEG66 lvalue::@2
 lvalue__B2:
-  // [30] *((word) 1024 + (byte) lvalue::i#2) ← (byte) 3 [ lvalue::i#2 ]  //  cowo1_staridx_zpby1=coby2
+//SEG67 [30] *((word) 1024 + (byte) lvalue::i#2) ← (byte) 3 [ lvalue::i#2 ] -- cowo1_staridx_zpby1=coby2 
   lda #3
   ldx 9
   sta 1024,x
-  // [31] (byte) lvalue::i#1 ← ++ (byte) lvalue::i#2 [ lvalue::i#1 ]  //  zpby1=_inc_zpby1
+//SEG68 [31] (byte) lvalue::i#1 ← ++ (byte) lvalue::i#2 [ lvalue::i#1 ] -- zpby1=_inc_zpby1 
   inc 9
+//SEG69 [27] phi from lvalue::@2 to lvalue::@1
 lvalue__B1_from_B2:
-  // (byte) lvalue::i#2 = (byte) lvalue::i#1  // register copy zp byte:9
+//SEG70 [27] phi (byte) lvalue::i#2 = (byte) lvalue::i#1 -- register_copy 
   jmp lvalue__B1
 

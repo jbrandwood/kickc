@@ -25,7 +25,7 @@ public class Program {
    /** Information about loops. */
    private NaturalLoopSet loopSet;
 
-   /** The register allocation for the vairalbes used during ASM code generation. */
+   /** The register allocation for the variables used during ASM code generation. */
    private RegisterAllocation allocation;
    /** The live ranges of all variables. */
    private LiveRangeVariables liveRangeVariables;

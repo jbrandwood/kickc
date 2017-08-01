@@ -54,7 +54,7 @@ public class Pass3AssertNoCpuClobber extends Pass2Base {
                   continue;
                }
                if(aliveVarRegister.equals(register)) {
-                  registerCycles += countCycles(asm);
+                  registerCycles += asm.getCycles();
                }
                if(assignedVars.contains(aliveVar)) {
                   // No need to register that is assigned by the statement - it will be clobbered
@@ -75,17 +75,6 @@ public class Pass3AssertNoCpuClobber extends Pass2Base {
          getLog().append("Register Cycles: "+register+" "+registerCycles);
       }
       return clobberProblem;
-   }
-
-   private int countCycles(AsmProgram asm) {
-      int instructionCycles = 0;
-      for (AsmLine asmLine : asm.getLines()) {
-         if(asmLine instanceof AsmInstruction) {
-            double lineCycles = ((AsmInstruction) asmLine).getType().getCycles();
-            instructionCycles += lineCycles;
-         }
-      }
-      return instructionCycles;
    }
 
 

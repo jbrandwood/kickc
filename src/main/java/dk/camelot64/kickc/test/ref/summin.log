@@ -426,48 +426,59 @@ Coalescing zero page register [ zp byte:2 [ sum::a#2 ] ] with [ zp byte:5 [ s2#0
 Coalescing zero page register [ zp byte:2 [ sum::a#2 s2#0 ] ] with [ zp byte:6 [ s3#0 ] ]
 Coalescing zero page register [ zp byte:2 [ sum::a#2 s2#0 s3#0 ] ] with [ zp byte:7 [ sum::return#0 ] ]
 INITIAL ASM
+//SEG0 @BEGIN
 BBEGIN:
+//SEG1 [0] call sum param-assignment [ sum::return#0 s1#0 ]
+//SEG2 [5] phi from @BEGIN to sum
 sum_from_BBEGIN:
-  // (byte) sum::b#2 = (byte) 2  // zpby1=coby1
+//SEG3 [5] phi (byte) sum::b#2 = (byte) 2 -- zpby1=coby1 
   lda #2
   sta 3
-  // (byte) sum::a#2 = (byte) 1  // zpby1=coby1
+//SEG4 [5] phi (byte) sum::a#2 = (byte) 1 -- zpby1=coby1 
   lda #1
   sta 2
   jsr sum
   jmp B2
+//SEG5 @2
 B2:
-  // [1] (byte) s1#0 ← (byte) sum::return#0 [ sum::return#0 s1#0 ]  //  zpby1=zpby2
+//SEG6 [1] (byte) s1#0 ← (byte) sum::return#0 [ sum::return#0 s1#0 ] -- zpby1=zpby2 
   lda 7
   sta 4
+//SEG7 [2] call sum param-assignment [ sum::return#0 s1#0 ]
+//SEG8 [5] phi from @2 to sum
 sum_from_B2:
-  // (byte) sum::b#2 = (byte) 13  // zpby1=coby1
+//SEG9 [5] phi (byte) sum::b#2 = (byte) 13 -- zpby1=coby1 
   lda #13
   sta 3
-  // (byte) sum::a#2 = (byte) 9  // zpby1=coby1
+//SEG10 [5] phi (byte) sum::a#2 = (byte) 9 -- zpby1=coby1 
   lda #9
   sta 2
   jsr sum
   jmp B3
+//SEG11 @3
 B3:
-  // [3] (byte) s2#0 ← (byte) sum::return#0 [ s1#0 s2#0 ]  //  zpby1=zpby2
+//SEG12 [3] (byte) s2#0 ← (byte) sum::return#0 [ s1#0 s2#0 ] -- zpby1=zpby2 
   lda 7
   sta 5
-  // [4] (byte) s3#0 ← (byte) s1#0 + (byte) s2#0 [ ]  //  zpby1=zpby2_plus_zpby3
+//SEG13 [4] (byte) s3#0 ← (byte) s1#0 + (byte) s2#0 [ ] -- zpby1=zpby2_plus_zpby3 
   lda 4
   clc
   adc 5
   sta 6
   jmp BEND
+//SEG14 @END
 BEND:
+//SEG15 sum
 sum:
-  // [6] (byte) sum::return#0 ← (byte) sum::a#2 + (byte) sum::b#2 [ sum::return#0 s1#0 ]  //  zpby1=zpby2_plus_zpby3
+//SEG16 [6] (byte) sum::return#0 ← (byte) sum::a#2 + (byte) sum::b#2 [ sum::return#0 s1#0 ] -- zpby1=zpby2_plus_zpby3 
   lda 2
   clc
   adc 3
   sta 7
   jmp sum__Breturn
+//SEG17 sum::@return
 sum__Breturn:
+//SEG18 [7] return  [ sum::return#0 s1#0 ]
   rts
 
 Removing instruction jmp B2
@@ -476,44 +487,55 @@ Removing instruction jmp BEND
 Removing instruction jmp sum__Breturn
 Succesful ASM optimization Pass5NextJumpElimination
 ASSEMBLER
+//SEG0 @BEGIN
 BBEGIN:
+//SEG1 [0] call sum param-assignment [ sum::return#0 s1#0 ]
+//SEG2 [5] phi from @BEGIN to sum
 sum_from_BBEGIN:
-  // (byte) sum::b#2 = (byte) 2  // zpby1=coby1
+//SEG3 [5] phi (byte) sum::b#2 = (byte) 2 -- zpby1=coby1 
   lda #2
   sta 3
-  // (byte) sum::a#2 = (byte) 1  // zpby1=coby1
+//SEG4 [5] phi (byte) sum::a#2 = (byte) 1 -- zpby1=coby1 
   lda #1
   sta 2
   jsr sum
+//SEG5 @2
 B2:
-  // [1] (byte) s1#0 ← (byte) sum::return#0 [ sum::return#0 s1#0 ]  //  zpby1=zpby2
+//SEG6 [1] (byte) s1#0 ← (byte) sum::return#0 [ sum::return#0 s1#0 ] -- zpby1=zpby2 
   lda 7
   sta 4
+//SEG7 [2] call sum param-assignment [ sum::return#0 s1#0 ]
+//SEG8 [5] phi from @2 to sum
 sum_from_B2:
-  // (byte) sum::b#2 = (byte) 13  // zpby1=coby1
+//SEG9 [5] phi (byte) sum::b#2 = (byte) 13 -- zpby1=coby1 
   lda #13
   sta 3
-  // (byte) sum::a#2 = (byte) 9  // zpby1=coby1
+//SEG10 [5] phi (byte) sum::a#2 = (byte) 9 -- zpby1=coby1 
   lda #9
   sta 2
   jsr sum
+//SEG11 @3
 B3:
-  // [3] (byte) s2#0 ← (byte) sum::return#0 [ s1#0 s2#0 ]  //  zpby1=zpby2
+//SEG12 [3] (byte) s2#0 ← (byte) sum::return#0 [ s1#0 s2#0 ] -- zpby1=zpby2 
   lda 7
   sta 5
-  // [4] (byte) s3#0 ← (byte) s1#0 + (byte) s2#0 [ ]  //  zpby1=zpby2_plus_zpby3
+//SEG13 [4] (byte) s3#0 ← (byte) s1#0 + (byte) s2#0 [ ] -- zpby1=zpby2_plus_zpby3 
   lda 4
   clc
   adc 5
   sta 6
+//SEG14 @END
 BEND:
+//SEG15 sum
 sum:
-  // [6] (byte) sum::return#0 ← (byte) sum::a#2 + (byte) sum::b#2 [ sum::return#0 s1#0 ]  //  zpby1=zpby2_plus_zpby3
+//SEG16 [6] (byte) sum::return#0 ← (byte) sum::a#2 + (byte) sum::b#2 [ sum::return#0 s1#0 ] -- zpby1=zpby2_plus_zpby3 
   lda 2
   clc
   adc 3
   sta 7
+//SEG17 sum::@return
 sum__Breturn:
+//SEG18 [7] return  [ sum::return#0 s1#0 ]
   rts
 
 FINAL SYMBOL TABLE
@@ -541,43 +563,54 @@ zp byte:3 [ sum::b#2 ]
 zp byte:4 [ s1#0 ]
 
 FINAL CODE
+//SEG0 @BEGIN
 BBEGIN:
+//SEG1 [0] call sum param-assignment [ sum::return#0 s1#0 ]
+//SEG2 [5] phi from @BEGIN to sum
 sum_from_BBEGIN:
-  // (byte) sum::b#2 = (byte) 2  // zpby1=coby1
+//SEG3 [5] phi (byte) sum::b#2 = (byte) 2 -- zpby1=coby1 
   lda #2
   sta 3
-  // (byte) sum::a#2 = (byte) 1  // zpby1=coby1
+//SEG4 [5] phi (byte) sum::a#2 = (byte) 1 -- zpby1=coby1 
   lda #1
   sta 2
   jsr sum
+//SEG5 @2
 B2:
-  // [1] (byte) s1#0 ← (byte) sum::return#0 [ sum::return#0 s1#0 ]  //  zpby1=zpby2
+//SEG6 [1] (byte) s1#0 ← (byte) sum::return#0 [ sum::return#0 s1#0 ] -- zpby1=zpby2 
   lda 7
   sta 4
+//SEG7 [2] call sum param-assignment [ sum::return#0 s1#0 ]
+//SEG8 [5] phi from @2 to sum
 sum_from_B2:
-  // (byte) sum::b#2 = (byte) 13  // zpby1=coby1
+//SEG9 [5] phi (byte) sum::b#2 = (byte) 13 -- zpby1=coby1 
   lda #13
   sta 3
-  // (byte) sum::a#2 = (byte) 9  // zpby1=coby1
+//SEG10 [5] phi (byte) sum::a#2 = (byte) 9 -- zpby1=coby1 
   lda #9
   sta 2
   jsr sum
+//SEG11 @3
 B3:
-  // [3] (byte) s2#0 ← (byte) sum::return#0 [ s1#0 s2#0 ]  //  zpby1=zpby2
+//SEG12 [3] (byte) s2#0 ← (byte) sum::return#0 [ s1#0 s2#0 ] -- zpby1=zpby2 
   lda 7
   sta 5
-  // [4] (byte) s3#0 ← (byte) s1#0 + (byte) s2#0 [ ]  //  zpby1=zpby2_plus_zpby3
+//SEG13 [4] (byte) s3#0 ← (byte) s1#0 + (byte) s2#0 [ ] -- zpby1=zpby2_plus_zpby3 
   lda 4
   clc
   adc 5
   sta 6
+//SEG14 @END
 BEND:
+//SEG15 sum
 sum:
-  // [6] (byte) sum::return#0 ← (byte) sum::a#2 + (byte) sum::b#2 [ sum::return#0 s1#0 ]  //  zpby1=zpby2_plus_zpby3
+//SEG16 [6] (byte) sum::return#0 ← (byte) sum::a#2 + (byte) sum::b#2 [ sum::return#0 s1#0 ] -- zpby1=zpby2_plus_zpby3 
   lda 2
   clc
   adc 3
   sta 7
+//SEG17 sum::@return
 sum__Breturn:
+//SEG18 [7] return  [ sum::return#0 s1#0 ]
   rts
 

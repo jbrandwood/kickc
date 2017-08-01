@@ -31,6 +31,7 @@ public class Pass4CodeGeneration {
          // Generate entry points (if needed)
          genBlockEntryPoints(asm, block);
          // Generate label
+         asm.startSegment(null, block.getLabel().getFullName());
          asm.addLabel(block.getLabel().getFullName().replace('@', 'B').replace(':', '_'));
          // Generate statements
          genStatements(asm, block);
@@ -51,7 +52,9 @@ public class Pass4CodeGeneration {
       AsmCodegenAluState aluState = new AsmCodegenAluState();
       while (statementsIt.hasNext()) {
          Statement statement = statementsIt.next();
-         generateStatementAsm(asm, block, statement, aluState);
+         if(!(statement instanceof StatementPhiBlock)) {
+            generateStatementAsm(asm, block, statement, aluState);
+         }
       }
    }
 
@@ -66,6 +69,8 @@ public class Pass4CodeGeneration {
     */
    public void generateStatementAsm(AsmProgram asm, ControlFlowBlock block, Statement statement, AsmCodegenAluState aluState) {
 
+      asm.startSegment(statement.getIndex(), statement.toString(program));
+
       // IF the previous statement was added to the ALU register - generate the composite ASM fragment
       if (aluState.hasAluAssignment()) {
          StatementAssignment assignmentAlu = aluState.getAluAssignment();
@@ -74,7 +79,7 @@ public class Pass4CodeGeneration {
          }
          StatementAssignment assignment = (StatementAssignment) statement;
          AsmFragment asmFragment = new AsmFragment(assignment, assignmentAlu, program);
-         asm.addComment(statement.toString(program) + "  //  " + asmFragment.getSignature());
+         asm.getCurrentSegment().setFragment(asmFragment.getSignature());
          asmFragment.generate(asm);
          aluState.clear();
          return;
@@ -100,13 +105,13 @@ public class Pass4CodeGeneration {
                   asm.addComment(lValue.toString(program) + " = " + assignment.getrValue2().toString(program) + "  // register copy " + getRegister(lValue));
                } else {
                   AsmFragment asmFragment = new AsmFragment(assignment, program);
-                  asm.addComment(statement.toString(program) + "  //  " + asmFragment.getSignature());
+                  asm.getCurrentSegment().setFragment(asmFragment.getSignature());
                   asmFragment.generate(asm);
                }
             }
          } else if (statement instanceof StatementConditionalJump) {
             AsmFragment asmFragment = new AsmFragment((StatementConditionalJump) statement, block, program, getGraph());
-            asm.addComment(statement.toString(program) + "  //  " + asmFragment.getSignature());
+            asm.getCurrentSegment().setFragment(asmFragment.getSignature());
             asmFragment.generate(asm);
          } else if (statement instanceof StatementCall) {
             StatementCall call = (StatementCall) statement;
@@ -168,6 +173,8 @@ public class Pass4CodeGeneration {
    }
 
    private void genBlockPhiTransition(AsmProgram asm, ControlFlowBlock fromBlock, ControlFlowBlock toBlock) {
+      Statement toFirstStatement = toBlock.getStatements().get(0);
+      asm.startSegment(toFirstStatement.getIndex(), "["+toFirstStatement.getIndex()+"]"+" phi from " + fromBlock.getLabel().getFullName()+" to "+toBlock.getLabel().getFullName());
       asm.addLabel((toBlock.getLabel().getFullName() + "_from_" + fromBlock.getLabel().getLocalName()).replace('@', 'B').replace(':', '_'));
       if (toBlock.hasPhiBlock()) {
          StatementPhiBlock phiBlock = toBlock.getPhiBlock();
@@ -183,7 +190,7 @@ public class Pass4CodeGeneration {
             });
             for (StatementPhiBlock.PhiRValue phiRValue : phiRValues) {
                if (phiRValue.getPredecessor().equals(fromBlock.getLabel())) {
-                  genAsmMove(asm, phiVariable.getVariable(), phiRValue.getrValue());
+                  genAsmMove(asm, phiVariable.getVariable(), phiRValue.getrValue(), phiBlock);
                   break;
                }
             }
@@ -200,12 +207,13 @@ public class Pass4CodeGeneration {
       }
    }
 
-   private void genAsmMove(AsmProgram asm, LValue lValue, RValue rValue) {
+   private void genAsmMove(AsmProgram asm, LValue lValue, RValue rValue, Statement statement) {
+      asm.startSegment(statement.getIndex(), "["+statement.getIndex() + "] phi " +lValue.toString(program) + " = " + rValue.toString(program));
       if (isRegisterCopy(lValue, rValue)) {
-         asm.addComment(lValue.toString(program) + " = " + rValue.toString(program) + "  // register copy " + getRegister(lValue));
+         asm.getCurrentSegment().setFragment("register_copy");
       } else {
          AsmFragment asmFragment = new AsmFragment(lValue, rValue, program);
-         asm.addComment(lValue.toString(program) + " = " + rValue.toString(program) + "  // " + asmFragment.getSignature());
+         asm.getCurrentSegment().setFragment(asmFragment.getSignature());
          asmFragment.generate(asm);
       }
    }

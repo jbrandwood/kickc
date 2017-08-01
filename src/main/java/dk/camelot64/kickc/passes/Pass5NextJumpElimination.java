@@ -1,16 +1,15 @@
 package dk.camelot64.kickc.passes;
 
 import dk.camelot64.kickc.CompileLog;
-import dk.camelot64.kickc.asm.AsmInstruction;
-import dk.camelot64.kickc.asm.AsmLabel;
-import dk.camelot64.kickc.asm.AsmLine;
-import dk.camelot64.kickc.asm.AsmProgram;
+import dk.camelot64.kickc.asm.*;
 import dk.camelot64.kickc.icl.Program;
 
 import java.util.ArrayList;
 import java.util.List;
 
-/** Optimize assembler code by removing jumps to labels immediately following the jump */
+/**
+ * Optimize assembler code by removing jumps to labels immediately following the jump
+ */
 public class Pass5NextJumpElimination extends Pass5AsmOptimization {
 
    public Pass5NextJumpElimination(Program program, CompileLog log) {
@@ -20,23 +19,26 @@ public class Pass5NextJumpElimination extends Pass5AsmOptimization {
    public boolean optimize() {
       List<AsmLine> removeLines = new ArrayList<>();
       AsmInstruction candidate = null;
-      for (AsmLine line : getAsmProgram().getLines()) {
-         if(candidate!=null) {
-            if(line instanceof AsmLabel) {
-               if(((AsmLabel) line).getLabel().equals(candidate.getParameter())) {
-                  removeLines.add(candidate);
+      for (AsmSegment segment : getAsmProgram().getSegments()) {
+         for (AsmLine line : segment.getLines()) {
+            if (candidate != null) {
+               if (line instanceof AsmLabel) {
+                  if (((AsmLabel) line).getLabel().equals(candidate.getParameter())) {
+                     removeLines.add(candidate);
+                  }
+               }
+            }
+            if (line instanceof AsmInstruction) {
+               candidate = null;
+               AsmInstruction instruction = (AsmInstruction) line;
+               if (instruction.getType().isJump()) {
+                  candidate = instruction;
                }
             }
          }
-         if(line instanceof AsmInstruction) {
-            candidate = null;
-            AsmInstruction instruction = (AsmInstruction) line;
-            if(instruction.getType().isJump()) {
-               candidate = instruction;
-            }
-         }
+
       }
       remove(removeLines);
-      return removeLines.size()>0;
+      return removeLines.size() > 0;
    }
 }

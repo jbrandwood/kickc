@@ -22,7 +22,6 @@ public class Compiler {
          Program program = pass1GenerateSSA(file, log);
          pass2OptimizeSSA(program);
          pass3RegisterAllocation(program);
-         pass4GenerateAsm(program);
          pass5OptimizeAsm(program);
 
          log.append("FINAL SYMBOL TABLE");
@@ -55,15 +54,6 @@ public class Compiler {
             }
          }
       }
-   }
-
-   public void pass4GenerateAsm(Program program) {
-
-      Pass4CodeGeneration pass4CodeGeneration = new Pass4CodeGeneration(program);
-      pass4CodeGeneration.generate();
-
-      program.getLog().append("INITIAL ASM");
-      program.getLog().append(program.getAsm().toString());
    }
 
 
@@ -108,21 +98,28 @@ public class Compiler {
       program.getLog().append("NATURAL LOOPS WITH DEPTH");
       program.getLog().append(program.getLoopSet().toString());
 
-      new Pass3ZeroPageAllocation(program).allocate();
-
       new Pass3VariableRegisterWeightAnalysis(program).findWeights();
       program.getLog().append("\nVARIABLE REGISTER WEIGHTS");
       program.getLog().append(program.getScope().getSymbolTableContents(program ,Variable.class));
 
+      new Pass3ZeroPageAllocation(program).allocate();
       new Pass3RegistersFinalize(program).allocate();
-      new Pass3AssertNoCpuClobber(program).check();
 
+      // Initial Code generation
+      new Pass3CodeGeneration(program).generate();
+      new Pass3AssertNoCpuClobber(program).check();
+      program.getLog().append("INITIAL ASM");
+      program.getLog().append(program.getAsm().toString());
+
+      // Register allocation optimization
       new Pass3RegisterUplifting(program).uplift();
       program.getLog().append("REGISTER UPLIFTING");
       program.getLog().append(program.getScope().getSymbolTableContents(program, Variable.class));
       new Pass3AssertNoCpuClobber(program).check();
 
+      // Final register coalesce and code generation
       new Pass3ZeroPageCoalesce(program).allocate();
+      new Pass3CodeGeneration(program).generate();
       new Pass3AssertNoCpuClobber(program).check();
 
       //new Pass3CustomRegisters(program).setRegister();

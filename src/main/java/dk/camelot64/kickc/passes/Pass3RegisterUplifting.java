@@ -60,8 +60,9 @@ public class Pass3RegisterUplifting extends Pass2Base {
          allocation.setRegister(var, register);
       }
       getProgram().setAllocation(allocation);
+      new Pass3CodeGeneration(getProgram()).generate();
       Pass3AssertNoCpuClobber clobber = new Pass3AssertNoCpuClobber(getProgram());
-      if (clobber.hasClobberProblem(false, register)) {
+      if (clobber.hasClobberProblem(false)) {
          getLog().append("Uplift to " + register + " resulted in clobber.");
       } else {
          getLog().append("Uplift to " + register + " succesfull.");

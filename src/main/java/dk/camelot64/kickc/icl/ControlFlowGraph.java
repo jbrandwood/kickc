@@ -192,4 +192,20 @@ public class ControlFlowGraph {
       return result;
    }
 
+   /**
+    * Get a statement from its statement index
+    * @param statementIdx The statement index
+    * @return The statement
+    */
+   public Statement getStatementByIndex(int statementIdx) {
+      for (ControlFlowBlock block : getAllBlocks()) {
+         for (Statement statement : block.getStatements()) {
+            if(statementIdx==statement.getIndex()) {
+               return statement;
+            }
+         }
+      }
+      return null;
+   }
+
 }

@@ -121,4 +121,18 @@ public class AsmProgram {
    }
 
 
+   /**
+    * Get all segments representing a specific ICL statement
+    * @param statementIndex The statement index
+    * @return The ASM segments representing the statement
+    * */
+   public Collection<AsmSegment> getSegmentsByStatementIndex(int statementIndex) {
+      List<AsmSegment> statementSegments = new ArrayList<>();
+      for (AsmSegment segment : segments) {
+         if(segment.getStatementIdx()!=null && segment.getStatementIdx()==statementIndex) {
+            statementSegments.add(segment);
+         }
+      }
+      return statementSegments;
+   }
 }

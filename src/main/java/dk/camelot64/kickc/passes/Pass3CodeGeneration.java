@@ -8,12 +8,12 @@ import java.util.*;
 /**
  * Code Generation of 6502 Assembler from ICL/SSA Control Flow Graph
  */
-public class Pass4CodeGeneration {
+public class Pass3CodeGeneration {
 
 
    private Program program;
 
-   public Pass4CodeGeneration(Program program) {
+   public Pass3CodeGeneration(Program program) {
       this.program = program;
    }
 

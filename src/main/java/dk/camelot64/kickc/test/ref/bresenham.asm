@@ -1,10 +1,8 @@
 BBEGIN:
 B1_from_BBEGIN:
   lda #0
-  sta 6
-  lda #12
   sta 5
-  lda #0
+  ldx #12
   sta 4
   lda #<1024
   sta 2
@@ -20,13 +18,12 @@ B1:
   bne !+
   inc 2+1
 !:
-  lda 5
+  txa
   clc
   adc #24
-  sta 5
-  lda #39
-  cmp 5
-  bcc B2
+  tax
+  cpx #39
+  bcs B2
 B3_from_B1:
 B3:
   lda 4
@@ -34,7 +31,7 @@ B3:
   bcc B1_from_B3
 BEND:
 B2:
-  inc 6
+  inc 5
   lda 2
   clc
   adc #40
@@ -42,9 +39,9 @@ B2:
   bcc !+
   inc 2+1
 !:
-  lda 5
+  txa
   sec
   sbc #39
-  sta 5
+  tax
 B3_from_B2:
   jmp B3

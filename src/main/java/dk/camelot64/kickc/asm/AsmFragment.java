@@ -347,7 +347,7 @@ public class AsmFragment {
       ClassLoader classLoader = this.getClass().getClassLoader();
       final URL fragmentResource = classLoader.getResource("dk/camelot64/kickc/asm/fragment/" + signature + ".asm");
       if (fragmentResource == null) {
-         throw new RuntimeException("Fragment not found " + signature+".asm");
+         throw new UnknownFragmentException(signature);
       }
 
       try {
@@ -465,6 +465,9 @@ public class AsmFragment {
          String mnemonic = instructionCtx.MNEMONIC().getSymbol().getText();
          String parameter = (String) this.visit(exprCtx);
          AsmInstructionType type = AsmInstuctionSet.getInstructionType(mnemonic, addressingMode, parameter);
+         if(type==null) {
+            throw new RuntimeException("Error in "+signature+".asm line "+ctx.getStart().getLine()+" - Instruction type unknown "+mnemonic+" "+addressingMode+" "+parameter);
+         }
          return new AsmInstruction(type, parameter);
       }
 
@@ -500,4 +503,17 @@ public class AsmFragment {
    }
 
 
+   public static class UnknownFragmentException extends RuntimeException {
+
+      private String fragmentSignature;
+
+      public UnknownFragmentException(String signature) {
+         super("Fragment not found " + signature+".asm");
+         this.fragmentSignature = signature;
+      }
+
+      public String getFragmentSignature() {
+         return fragmentSignature;
+      }
+   }
 }

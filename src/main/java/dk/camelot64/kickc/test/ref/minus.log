@@ -340,20 +340,26 @@ B1:
 //SEG10 @END
 BEND:
 
-Uplifting max weight 31.166666666666664 live range equivalence class zp byte:2 [ i#2 i#1 ]
-Uplift to reg byte a resulted in clobber.
-Uplift to reg byte x succesfull.
-Uplift to reg byte y succesfull.
-REGISTER UPLIFTING
-(byte~) $1 zp byte:3 22.0
-(byte) i
-(byte) i#1 zp byte:2 16.5
-(byte) i#2 zp byte:2 14.666666666666666
-(byte[16]) p
+REGISTER UPLIFT SCOPES
+Uplift Scope [] 31.17: zp byte:2 [ i#2 i#1 ] 22: zp byte:3 [ $1 ] 
 
-zp byte:2 [ i#2 i#1 ]
-zp byte:3 [ $1 ]
-
+Uplift attempt [] 35 allocation: zp byte:2 [ i#2 i#1 ] zp byte:3 [ $1 ] 
+Uplift attempt [] clobber allocation: reg byte a [ i#2 i#1 ] zp byte:3 [ $1 ] 
+Uplift attempt [] 27 allocation: reg byte x [ i#2 i#1 ] zp byte:3 [ $1 ] 
+Uplift attempt [] 28 allocation: reg byte y [ i#2 i#1 ] zp byte:3 [ $1 ] 
+Uplift attempt [] 31 allocation: zp byte:2 [ i#2 i#1 ] reg byte a [ $1 ] 
+Uplift attempt [] clobber allocation: reg byte a [ i#2 i#1 ] reg byte a [ $1 ] 
+Uplift attempt [] 23 allocation: reg byte x [ i#2 i#1 ] reg byte a [ $1 ] 
+Uplift attempt [] 24 allocation: reg byte y [ i#2 i#1 ] reg byte a [ $1 ] 
+Uplift attempt [] 33 allocation: zp byte:2 [ i#2 i#1 ] reg byte x [ $1 ] 
+Uplift attempt [] clobber allocation: reg byte a [ i#2 i#1 ] reg byte x [ $1 ] 
+Uplift attempt [] clobber allocation: reg byte x [ i#2 i#1 ] reg byte x [ $1 ] 
+Uplift attempt [] 26 allocation: reg byte y [ i#2 i#1 ] reg byte x [ $1 ] 
+Uplift attempt [] 34 allocation: zp byte:2 [ i#2 i#1 ] reg byte y [ $1 ] 
+Uplift attempt [] clobber allocation: reg byte a [ i#2 i#1 ] reg byte y [ $1 ] 
+Uplift attempt [] 25 allocation: reg byte x [ i#2 i#1 ] reg byte y [ $1 ] 
+Uplift attempt [] clobber allocation: reg byte y [ i#2 i#1 ] reg byte y [ $1 ] 
+Uplifting [] best 23 combination reg byte x [ i#2 i#1 ] reg byte a [ $1 ] 
 Removing instruction jmp B1
 Removing instruction jmp BEND
 Succesful ASM optimization Pass5NextJumpElimination
@@ -362,29 +368,24 @@ ASSEMBLER
 BBEGIN:
 //SEG1 [0] phi from @BEGIN to @1
 B1_from_BBEGIN:
-//SEG2 [0] phi (byte) i#2 = (byte) 5 -- zpby1=coby1 
-  lda #5
-  sta 2
+//SEG2 [0] phi (byte) i#2 = (byte) 5 -- xby=coby1 
+  ldx #5
   jmp B1
 //SEG3 [0] phi from @1 to @1
 B1_from_B1:
 //SEG4 [0] phi (byte) i#2 = (byte) i#1 -- register_copy 
 //SEG5 @1
 B1:
-//SEG6 [1] (byte~) $1 ← (byte) i#2 + (byte) 4 [ i#2 $1 ] -- zpby1=zpby2_plus_coby1 
-  lda 2
+//SEG6 [1] (byte~) $1 ← (byte) i#2 + (byte) 4 [ i#2 $1 ] -- aby=xby_plus_coby1 
+  txa
   clc
   adc #4
-  sta 3
-//SEG7 [2] *((word) 4352 + (byte) i#2) ← (byte~) $1 [ i#2 ] -- cowo1_staridx_zpby1=zpby2 
-  lda 3
-  ldx 2
+//SEG7 [2] *((word) 4352 + (byte) i#2) ← (byte~) $1 [ i#2 ] -- cowo1_staridx_xby=aby 
   sta 4352,x
-//SEG8 [3] (byte) i#1 ← (byte) i#2 + (byte) 1 [ i#1 ] -- zpby1=zpby1_plus_1 
-  inc 2
-//SEG9 [4] if((byte) i#1<(byte) 10) goto @1 [ i#1 ] -- zpby1_lt_coby1_then_la1 
-  lda 2
-  cmp #10
+//SEG8 [3] (byte) i#1 ← (byte) i#2 + (byte) 1 [ i#1 ] -- xby=xby_plus_1 
+  inx
+//SEG9 [4] if((byte) i#1<(byte) 10) goto @1 [ i#1 ] -- xby_lt_coby1_then_la1 
+  cpx #10
   bcc B1_from_B1
 //SEG10 @END
 BEND:
@@ -396,72 +397,62 @@ ASSEMBLER
 BBEGIN:
 //SEG1 [0] phi from @BEGIN to @1
 B1_from_BBEGIN:
-//SEG2 [0] phi (byte) i#2 = (byte) 5 -- zpby1=coby1 
-  lda #5
-  sta 2
+//SEG2 [0] phi (byte) i#2 = (byte) 5 -- xby=coby1 
+  ldx #5
 //SEG3 [0] phi from @1 to @1
 B1_from_B1:
 //SEG4 [0] phi (byte) i#2 = (byte) i#1 -- register_copy 
 //SEG5 @1
 B1:
-//SEG6 [1] (byte~) $1 ← (byte) i#2 + (byte) 4 [ i#2 $1 ] -- zpby1=zpby2_plus_coby1 
-  lda 2
+//SEG6 [1] (byte~) $1 ← (byte) i#2 + (byte) 4 [ i#2 $1 ] -- aby=xby_plus_coby1 
+  txa
   clc
   adc #4
-  sta 3
-//SEG7 [2] *((word) 4352 + (byte) i#2) ← (byte~) $1 [ i#2 ] -- cowo1_staridx_zpby1=zpby2 
-  lda 3
-  ldx 2
+//SEG7 [2] *((word) 4352 + (byte) i#2) ← (byte~) $1 [ i#2 ] -- cowo1_staridx_xby=aby 
   sta 4352,x
-//SEG8 [3] (byte) i#1 ← (byte) i#2 + (byte) 1 [ i#1 ] -- zpby1=zpby1_plus_1 
-  inc 2
-//SEG9 [4] if((byte) i#1<(byte) 10) goto @1 [ i#1 ] -- zpby1_lt_coby1_then_la1 
-  lda 2
-  cmp #10
+//SEG8 [3] (byte) i#1 ← (byte) i#2 + (byte) 1 [ i#1 ] -- xby=xby_plus_1 
+  inx
+//SEG9 [4] if((byte) i#1<(byte) 10) goto @1 [ i#1 ] -- xby_lt_coby1_then_la1 
+  cpx #10
   bcc B1_from_B1
 //SEG10 @END
 BEND:
 
 FINAL SYMBOL TABLE
-(byte~) $1 zp byte:3 22.0
+(byte~) $1 reg byte a 22.0
 (label) @1
 (label) @BEGIN
 (label) @END
 (byte) i
-(byte) i#1 zp byte:2 16.5
-(byte) i#2 zp byte:2 14.666666666666666
+(byte) i#1 reg byte x 16.5
+(byte) i#2 reg byte x 14.666666666666666
 (byte[16]) p
 
-zp byte:2 [ i#2 i#1 ]
-zp byte:3 [ $1 ]
+reg byte x [ i#2 i#1 ]
+reg byte a [ $1 ]
 
 FINAL CODE
 //SEG0 @BEGIN
 BBEGIN:
 //SEG1 [0] phi from @BEGIN to @1
 B1_from_BBEGIN:
-//SEG2 [0] phi (byte) i#2 = (byte) 5 -- zpby1=coby1 
-  lda #5
-  sta 2
+//SEG2 [0] phi (byte) i#2 = (byte) 5 -- xby=coby1 
+  ldx #5
 //SEG3 [0] phi from @1 to @1
 B1_from_B1:
 //SEG4 [0] phi (byte) i#2 = (byte) i#1 -- register_copy 
 //SEG5 @1
 B1:
-//SEG6 [1] (byte~) $1 ← (byte) i#2 + (byte) 4 [ i#2 $1 ] -- zpby1=zpby2_plus_coby1 
-  lda 2
+//SEG6 [1] (byte~) $1 ← (byte) i#2 + (byte) 4 [ i#2 $1 ] -- aby=xby_plus_coby1 
+  txa
   clc
   adc #4
-  sta 3
-//SEG7 [2] *((word) 4352 + (byte) i#2) ← (byte~) $1 [ i#2 ] -- cowo1_staridx_zpby1=zpby2 
-  lda 3
-  ldx 2
+//SEG7 [2] *((word) 4352 + (byte) i#2) ← (byte~) $1 [ i#2 ] -- cowo1_staridx_xby=aby 
   sta 4352,x
-//SEG8 [3] (byte) i#1 ← (byte) i#2 + (byte) 1 [ i#1 ] -- zpby1=zpby1_plus_1 
-  inc 2
-//SEG9 [4] if((byte) i#1<(byte) 10) goto @1 [ i#1 ] -- zpby1_lt_coby1_then_la1 
-  lda 2
-  cmp #10
+//SEG8 [3] (byte) i#1 ← (byte) i#2 + (byte) 1 [ i#1 ] -- xby=xby_plus_1 
+  inx
+//SEG9 [4] if((byte) i#1<(byte) 10) goto @1 [ i#1 ] -- xby_lt_coby1_then_la1 
+  cpx #10
   bcc B1_from_B1
 //SEG10 @END
 BEND:

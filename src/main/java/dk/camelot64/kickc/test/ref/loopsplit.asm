@@ -3,27 +3,24 @@ BBEGIN:
 BEND:
 main:
 main__B1_from_main:
-  lda #0
-  sta 3
-  lda #100
-  sta 2
+  ldy #0
+  ldx #100
 main__B1:
-  dec 2
-  lda 2
+  dex
+  cpx #0
   bne main__B2
 main__Breturn:
   rts
 main__B2:
-  lda 2
-  cmp #50
+  cpx #50
   beq !+
   bcs main__B4
 !:
 main__B5:
-  dec 3
+  dey
 main__B1_from_B5:
   jmp main__B1
 main__B4:
-  inc 3
+  iny
 main__B1_from_B4:
   jmp main__B1

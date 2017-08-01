@@ -89,8 +89,12 @@ public class LiveRangeEquivalenceClass {
 
    @Override
    public String toString() {
+      return toString(true);
+   }
+
+   public String toString(boolean includeRegister) {
       StringBuilder s = new StringBuilder();
-      if(register!=null) {
+      if(includeRegister && register!=null) {
          s.append(register.toString()).append(" ");
       }
       s.append("[ ");

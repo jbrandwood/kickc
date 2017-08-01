@@ -33,6 +33,7 @@ public class Program {
    private LiveRangeEquivalenceClassSet liveRangeEquivalenceClassSet;
    /** The register weight of all variables describing how much the variable would theoretically gain from being in a register */
    private VariableRegisterWeights variableRegisterWeights;
+   private RegisterUpliftProgram registerUpliftProgram;
 
    @JsonCreator
    public Program(
@@ -127,6 +128,14 @@ public class Program {
 
    public VariableRegisterWeights getVariableRegisterWeights() {
       return variableRegisterWeights;
+   }
+
+   public void setRegisterUpliftProgram(RegisterUpliftProgram registerUpliftProgram) {
+      this.registerUpliftProgram = registerUpliftProgram;
+   }
+
+   public RegisterUpliftProgram getRegisterUpliftProgram() {
+      return registerUpliftProgram;
    }
 
    public CompileLog getLog() {

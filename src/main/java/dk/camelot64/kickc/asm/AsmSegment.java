@@ -106,7 +106,10 @@ public class AsmSegment {
       AsmClobber clobber = new AsmClobber();
       for (AsmLine line : lines) {
          if (line instanceof AsmInstruction) {
-            clobber.add(((AsmInstruction) line).getType().getClobber());
+            AsmInstruction asmInstruction = (AsmInstruction) line;
+            AsmInstructionType asmInstructionType = asmInstruction.getType();
+            AsmClobber asmClobber = asmInstructionType.getClobber();
+            clobber.add(asmClobber);
          }
       }
       return clobber;

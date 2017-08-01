@@ -53,6 +53,11 @@ public class Procedure extends Scope {
       return new Label(getFullName(), getScope(), false);
    }
 
+   @Override
+   public LabelRef getScopeLabelRef() {
+      return getLabel().getRef();
+   }
+
    public SymbolType getReturnType() {
       return returnType;
    }

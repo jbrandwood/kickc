@@ -1,6 +1,7 @@
 package dk.camelot64.kickc.icl;
 
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -33,4 +34,15 @@ public class VariableRegisterWeights {
    public Double getWeight(VariableRef variable) {
       return registerWeights.get(variable);
    }
+
+   public double getTotalWeight(LiveRangeEquivalenceClass equivalenceClass) {
+      double totalWeight = 0.0;
+      List<VariableRef> vars = equivalenceClass.getVariables();
+      for (VariableRef var : vars) {
+         Double varWeight = getWeight(var);
+         totalWeight += varWeight;
+      }
+      return totalWeight;
+   }
+
 }

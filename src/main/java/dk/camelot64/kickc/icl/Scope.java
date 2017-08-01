@@ -69,6 +69,11 @@ public abstract class Scope implements Symbol {
       return symbol.getLocalName();
    }
 
+   /**
+    * Get the label ref representing the scope itself
+    * @return The label reference
+    */
+   public abstract LabelRef getScopeLabelRef();
 
    @Override
    @JsonIgnore
@@ -165,6 +170,27 @@ public abstract class Scope implements Symbol {
       }
       return vars;
    }
+
+   /**
+    * Get all scopes contained in the scope. This does not include this scope itself.
+    * @param includeSubScopes Include sub-scopes og sub-scopes
+    * @return The scopes
+    */
+   @JsonIgnore
+   public Collection<Scope> getAllScopes(boolean includeSubScopes) {
+      Collection<Scope> scopes = new ArrayList<>();
+      for (Symbol symbol : symbols.values()) {
+         if (symbol instanceof Scope) {
+            scopes.add((Scope) symbol);
+            if(includeSubScopes) {
+               Scope subScope = (Scope) symbol;
+               scopes.addAll(subScope.getAllScopes(true));
+            }
+         }
+      }
+      return scopes;
+   }
+
 
    public Label addLabel(String name) {
       Label symbol = new Label(name, this, false);

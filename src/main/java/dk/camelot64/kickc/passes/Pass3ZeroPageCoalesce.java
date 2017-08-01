@@ -15,7 +15,6 @@ public class Pass3ZeroPageCoalesce extends Pass2Base {
 
    public void allocate() {
       LiveRangeEquivalenceClassSet liveRangeEquivalenceClassSet = getProgram().getLiveRangeEquivalenceClassSet();
-
       boolean change;
       do {
          change = coalesce(liveRangeEquivalenceClassSet);

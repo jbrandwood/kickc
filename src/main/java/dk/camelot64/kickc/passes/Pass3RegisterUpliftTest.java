@@ -6,15 +6,13 @@ import java.util.Arrays;
 import java.util.List;
 
 /*** Uplift one variable into the A register - and check if the program still works */
-public class Pass3RegisterUplifting extends Pass2Base {
+public class Pass3RegisterUpliftTest extends Pass2Base {
 
-   public Pass3RegisterUplifting(Program program) {
+   public Pass3RegisterUpliftTest(Program program) {
       super(program);
    }
 
-   /**
-    * Uplift one variable
-    */
+   /** Uplift variables to registers */
    public void uplift() {
       VariableRegisterWeights variableRegisterWeights = getProgram().getVariableRegisterWeights();
       LiveRangeEquivalenceClassSet equivalenceClassSet = getProgram().getLiveRangeEquivalenceClassSet();

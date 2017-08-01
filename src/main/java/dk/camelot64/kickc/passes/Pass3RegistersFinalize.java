@@ -12,9 +12,11 @@ public class Pass3RegistersFinalize extends Pass2Base {
       super(program);
    }
 
-   public void allocate() {
+   public void allocate(boolean reallocZp) {
       LiveRangeEquivalenceClassSet liveRangeEquivalenceClassSet = getProgram().getLiveRangeEquivalenceClassSet();
-      reallocateZp(liveRangeEquivalenceClassSet);
+      if(reallocZp) {
+         reallocateZp(liveRangeEquivalenceClassSet);
+      }
       RegisterAllocation allocation = liveRangeEquivalenceClassSet.createRegisterAllocation();
       getProgram().setAllocation(allocation);
    }

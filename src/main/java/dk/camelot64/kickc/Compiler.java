@@ -1,13 +1,13 @@
 package dk.camelot64.kickc;
 
+import dk.camelot64.kickc.asm.AsmFragment;
 import dk.camelot64.kickc.icl.*;
 import dk.camelot64.kickc.parser.KickCLexer;
 import dk.camelot64.kickc.parser.KickCParser;
 import dk.camelot64.kickc.passes.*;
 import org.antlr.v4.runtime.*;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 /**
  * Perform KickC compilation and optimizations
@@ -103,7 +103,7 @@ public class Compiler {
       program.getLog().append(program.getScope().getSymbolTableContents(program ,Variable.class));
 
       new Pass3ZeroPageAllocation(program).allocate();
-      new Pass3RegistersFinalize(program).allocate();
+      new Pass3RegistersFinalize(program).allocate(false);
 
       // Initial Code generation
       new Pass3CodeGeneration(program).generate();
@@ -111,14 +111,70 @@ public class Compiler {
       program.getLog().append("INITIAL ASM");
       program.getLog().append(program.getAsm().toString());
 
-      // Register allocation optimization
-      new Pass3RegisterUplifting(program).uplift();
-      program.getLog().append("REGISTER UPLIFTING");
-      program.getLog().append(program.getScope().getSymbolTableContents(program, Variable.class));
-      new Pass3AssertNoCpuClobber(program).check();
+      // Find register uplift scopes
+      new Pass3RegisterUpliftScopeAnalysis(program).findScopes();
+      program.getLog().append("REGISTER UPLIFT SCOPES");
+      program.getLog().append(program.getRegisterUpliftProgram().toString((program.getVariableRegisterWeights())));
+
+      // Test uplift combinations to find the best one.
+      Set<String> unknownFragments = new LinkedHashSet<>();
+      for (RegisterUpliftScope upliftScope : program.getRegisterUpliftProgram().getRegisterUpliftScopes()) {
+         int bestScore = Integer.MAX_VALUE;
+         RegisterUpliftScope.Combination bestCombination = null;
+
+         Iterator<RegisterUpliftScope.Combination> combinationIterator = upliftScope.geCombinationIterator();
+         while (combinationIterator.hasNext()) {
+            RegisterUpliftScope.Combination combination = combinationIterator.next();
+            // Reset register allocation to original zero page allocation
+            new Pass3RegistersFinalize(program).allocate(false);
+            // Apply the uplift combination
+            combination.allocate(program.getAllocation());
+            // Generate ASM
+            try {
+               new Pass3CodeGeneration(program).generate();
+            } catch (AsmFragment.UnknownFragmentException e) {
+               unknownFragments.add(e.getFragmentSignature());
+               StringBuilder msg = new StringBuilder();
+               msg.append("Uplift attempt [" + upliftScope.getScopeRef() + "] ");
+               msg.append("missing fragment "+e.getFragmentSignature());
+               program.getLog().append(msg.toString());
+               continue;
+            }
+            // If no clobber - Find value of the resulting allocation
+            boolean hasClobberProblem = new Pass3AssertNoCpuClobber(program).hasClobberProblem(false);
+            int combinationScore = program.getAsm().getBytes();
+            StringBuilder msg = new StringBuilder();
+            msg.append("Uplift attempt [" + upliftScope.getScopeRef() + "] ");
+            if(hasClobberProblem) {
+               msg.append("clobber");
+            } else {
+               msg.append(combinationScore);
+            }
+            msg.append(" allocation: ").append(combination.toString());
+            program.getLog().append(msg.toString());
+            if(!hasClobberProblem) {
+               if(combinationScore<bestScore) {
+                  bestScore = combinationScore;
+                  bestCombination = combination;
+               }
+            }
+         }
+         // Save the best combination in the equivalence class
+         bestCombination.store(program.getLiveRangeEquivalenceClassSet());
+         program.getLog().append("Uplifting ["+upliftScope.getScopeRef()+"] best "+bestScore+" combination "+bestCombination.toString());
+      }
+
+      if(unknownFragments.size()>0) {
+      program.getLog().append("MISSING FRAGMENTS");
+      for (String unknownFragment : unknownFragments) {
+         program.getLog().append("  "+unknownFragment);
+      }
+      }
+
 
       // Final register coalesce and code generation
       new Pass3ZeroPageCoalesce(program).allocate();
+      new Pass3RegistersFinalize(program).allocate(true);
       new Pass3CodeGeneration(program).generate();
       new Pass3AssertNoCpuClobber(program).check();
 

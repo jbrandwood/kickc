@@ -45,4 +45,12 @@ public class VariableRegisterWeights {
       return totalWeight;
    }
 
+   public double getTotalWeights(RegisterUpliftScope upliftScope) {
+      double totalWeight = 0.0;
+      for (LiveRangeEquivalenceClass equivalenceClass : upliftScope.getEquivalenceClasses()) {
+         totalWeight += getTotalWeight(equivalenceClass);
+      }
+      return totalWeight;
+   }
+
 }

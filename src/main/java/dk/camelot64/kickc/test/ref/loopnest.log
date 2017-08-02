@@ -794,22 +794,22 @@ nest__Breturn:
   rts
 
 REGISTER UPLIFT SCOPES
-Uplift Scope [main] 19.64: zp byte:2 [ main::i#2 main::i#1 ] 
 Uplift Scope [nest] 303: zp byte:3 [ nest::j#2 nest::j#1 ] 
+Uplift Scope [main] 19.64: zp byte:2 [ main::i#2 main::i#1 ] 
 Uplift Scope [] 
 
-Uplift attempt [main] 57 allocation: zp byte:2 [ main::i#2 main::i#1 ] 
-Uplift attempt [main] clobber allocation: reg byte a [ main::i#2 main::i#1 ] 
-Uplift attempt [main] 54 allocation: reg byte x [ main::i#2 main::i#1 ] 
-Uplift attempt [main] 54 allocation: reg byte y [ main::i#2 main::i#1 ] 
-Uplifting [main] best 54 combination reg byte x [ main::i#2 main::i#1 ] 
-Uplift attempt [nest] 54 allocation: zp byte:3 [ nest::j#2 nest::j#1 ] 
-Uplift attempt [nest] 51 allocation: reg byte a [ nest::j#2 nest::j#1 ] 
-Uplift attempt [nest] clobber allocation: reg byte x [ nest::j#2 nest::j#1 ] 
-Uplift attempt [nest] 49 allocation: reg byte y [ nest::j#2 nest::j#1 ] 
-Uplifting [nest] best 49 combination reg byte y [ nest::j#2 nest::j#1 ] 
-Uplift attempt [] 49 allocation: 
-Uplifting [] best 49 combination 
+Uplift attempt [nest] 3506 allocation: zp byte:3 [ nest::j#2 nest::j#1 ] 
+Uplift attempt [nest] 2706 allocation: reg byte a [ nest::j#2 nest::j#1 ] 
+Uplift attempt [nest] 2506 allocation: reg byte x [ nest::j#2 nest::j#1 ] 
+Uplift attempt [nest] 2506 allocation: reg byte y [ nest::j#2 nest::j#1 ] 
+Uplifting [nest] best 2506 combination reg byte x [ nest::j#2 nest::j#1 ] 
+Uplift attempt [main] 2506 allocation: zp byte:2 [ main::i#2 main::i#1 ] 
+Uplift attempt [main] 2456 allocation: reg byte a [ main::i#2 main::i#1 ] 
+Uplift attempt [main] clobber allocation: reg byte x [ main::i#2 main::i#1 ] 
+Uplift attempt [main] 2436 allocation: reg byte y [ main::i#2 main::i#1 ] 
+Uplifting [main] best 2436 combination reg byte y [ main::i#2 main::i#1 ] 
+Uplift attempt [] 2436 allocation: 
+Uplifting [] best 2436 combination 
 Removing instruction jmp BEND
 Removing instruction jmp main__B1
 Removing instruction jmp main__B3
@@ -828,8 +828,8 @@ BEND:
 main:
 //SEG4 [1] phi from main to main::@1
 main__B1_from_main:
-//SEG5 [1] phi (byte) main::i#2 = (byte) 100 -- xby=coby1 
-  ldx #100
+//SEG5 [1] phi (byte) main::i#2 = (byte) 100 -- yby=coby1 
+  ldy #100
   jmp main__B1
 //SEG6 [1] phi from main::@3 to main::@1
 main__B1_from_B3:
@@ -840,10 +840,10 @@ main__B1:
   jsr nest
 //SEG10 main::@3
 main__B3:
-//SEG11 [3] (byte) main::i#1 ← -- (byte) main::i#2 [ main::i#1 ] -- xby=_dec_xby 
-  dex
-//SEG12 [4] if((byte) main::i#1>(byte) 0) goto main::@1 [ main::i#1 ] -- xby_gt_0_then_la1 
-  cpx #0
+//SEG11 [3] (byte) main::i#1 ← -- (byte) main::i#2 [ main::i#1 ] -- yby=_dec_yby 
+  dey
+//SEG12 [4] if((byte) main::i#1>(byte) 0) goto main::@1 [ main::i#1 ] -- yby_gt_0_then_la1 
+  cpy #0
   bne main__B1_from_B3
 //SEG13 main::@return
 main__Breturn:
@@ -853,20 +853,20 @@ main__Breturn:
 nest:
 //SEG16 [6] phi from nest to nest::@1
 nest__B1_from_nest:
-//SEG17 [6] phi (byte) nest::j#2 = (byte) 100 -- yby=coby1 
-  ldy #100
+//SEG17 [6] phi (byte) nest::j#2 = (byte) 100 -- xby=coby1 
+  ldx #100
   jmp nest__B1
 //SEG18 [6] phi from nest::@1 to nest::@1
 nest__B1_from_B1:
 //SEG19 [6] phi (byte) nest::j#2 = (byte) nest::j#1 -- register_copy 
 //SEG20 nest::@1
 nest__B1:
-//SEG21 [7] *((word) 1024) ← (byte) nest::j#2 [ main::i#2 nest::j#2 ] -- _star_cowo1=yby 
-  sty 1024
-//SEG22 [8] (byte) nest::j#1 ← -- (byte) nest::j#2 [ main::i#2 nest::j#1 ] -- yby=_dec_yby 
-  dey
-//SEG23 [9] if((byte) nest::j#1>(byte) 0) goto nest::@1 [ main::i#2 nest::j#1 ] -- yby_gt_0_then_la1 
-  cpy #0
+//SEG21 [7] *((word) 1024) ← (byte) nest::j#2 [ main::i#2 nest::j#2 ] -- _star_cowo1=xby 
+  stx 1024
+//SEG22 [8] (byte) nest::j#1 ← -- (byte) nest::j#2 [ main::i#2 nest::j#1 ] -- xby=_dec_xby 
+  dex
+//SEG23 [9] if((byte) nest::j#1>(byte) 0) goto nest::@1 [ main::i#2 nest::j#1 ] -- xby_gt_0_then_la1 
+  cpx #0
   bne nest__B1_from_B1
 //SEG24 nest::@return
 nest__Breturn:
@@ -887,8 +887,8 @@ BEND:
 main:
 //SEG4 [1] phi from main to main::@1
 main__B1_from_main:
-//SEG5 [1] phi (byte) main::i#2 = (byte) 100 -- xby=coby1 
-  ldx #100
+//SEG5 [1] phi (byte) main::i#2 = (byte) 100 -- yby=coby1 
+  ldy #100
 //SEG6 [1] phi from main::@3 to main::@1
 main__B1_from_B3:
 //SEG7 [1] phi (byte) main::i#2 = (byte) main::i#1 -- register_copy 
@@ -898,10 +898,10 @@ main__B1:
   jsr nest
 //SEG10 main::@3
 main__B3:
-//SEG11 [3] (byte) main::i#1 ← -- (byte) main::i#2 [ main::i#1 ] -- xby=_dec_xby 
-  dex
-//SEG12 [4] if((byte) main::i#1>(byte) 0) goto main::@1 [ main::i#1 ] -- xby_gt_0_then_la1 
-  cpx #0
+//SEG11 [3] (byte) main::i#1 ← -- (byte) main::i#2 [ main::i#1 ] -- yby=_dec_yby 
+  dey
+//SEG12 [4] if((byte) main::i#1>(byte) 0) goto main::@1 [ main::i#1 ] -- yby_gt_0_then_la1 
+  cpy #0
   bne main__B1_from_B3
 //SEG13 main::@return
 main__Breturn:
@@ -911,19 +911,19 @@ main__Breturn:
 nest:
 //SEG16 [6] phi from nest to nest::@1
 nest__B1_from_nest:
-//SEG17 [6] phi (byte) nest::j#2 = (byte) 100 -- yby=coby1 
-  ldy #100
+//SEG17 [6] phi (byte) nest::j#2 = (byte) 100 -- xby=coby1 
+  ldx #100
 //SEG18 [6] phi from nest::@1 to nest::@1
 nest__B1_from_B1:
 //SEG19 [6] phi (byte) nest::j#2 = (byte) nest::j#1 -- register_copy 
 //SEG20 nest::@1
 nest__B1:
-//SEG21 [7] *((word) 1024) ← (byte) nest::j#2 [ main::i#2 nest::j#2 ] -- _star_cowo1=yby 
-  sty 1024
-//SEG22 [8] (byte) nest::j#1 ← -- (byte) nest::j#2 [ main::i#2 nest::j#1 ] -- yby=_dec_yby 
-  dey
-//SEG23 [9] if((byte) nest::j#1>(byte) 0) goto nest::@1 [ main::i#2 nest::j#1 ] -- yby_gt_0_then_la1 
-  cpy #0
+//SEG21 [7] *((word) 1024) ← (byte) nest::j#2 [ main::i#2 nest::j#2 ] -- _star_cowo1=xby 
+  stx 1024
+//SEG22 [8] (byte) nest::j#1 ← -- (byte) nest::j#2 [ main::i#2 nest::j#1 ] -- xby=_dec_xby 
+  dex
+//SEG23 [9] if((byte) nest::j#1>(byte) 0) goto nest::@1 [ main::i#2 nest::j#1 ] -- xby_gt_0_then_la1 
+  cpx #0
   bne nest__B1_from_B1
 //SEG24 nest::@return
 nest__Breturn:
@@ -939,17 +939,17 @@ FINAL SYMBOL TABLE
 (label) main::@3
 (label) main::@return
 (byte) main::i
-(byte) main::i#1 reg byte x 16.5
-(byte) main::i#2 reg byte x 3.142857142857143
+(byte) main::i#1 reg byte y 16.5
+(byte) main::i#2 reg byte y 3.142857142857143
 (void()) nest()
 (label) nest::@1
 (label) nest::@return
 (byte) nest::j
-(byte) nest::j#1 reg byte y 151.5
-(byte) nest::j#2 reg byte y 151.5
+(byte) nest::j#1 reg byte x 151.5
+(byte) nest::j#2 reg byte x 151.5
 
-reg byte x [ main::i#2 main::i#1 ]
-reg byte y [ nest::j#2 nest::j#1 ]
+reg byte y [ main::i#2 main::i#1 ]
+reg byte x [ nest::j#2 nest::j#1 ]
 
 FINAL CODE
 //SEG0 @BEGIN
@@ -962,8 +962,8 @@ BEND:
 main:
 //SEG4 [1] phi from main to main::@1
 main__B1_from_main:
-//SEG5 [1] phi (byte) main::i#2 = (byte) 100 -- xby=coby1 
-  ldx #100
+//SEG5 [1] phi (byte) main::i#2 = (byte) 100 -- yby=coby1 
+  ldy #100
 //SEG6 [1] phi from main::@3 to main::@1
 main__B1_from_B3:
 //SEG7 [1] phi (byte) main::i#2 = (byte) main::i#1 -- register_copy 
@@ -973,10 +973,10 @@ main__B1:
   jsr nest
 //SEG10 main::@3
 main__B3:
-//SEG11 [3] (byte) main::i#1 ← -- (byte) main::i#2 [ main::i#1 ] -- xby=_dec_xby 
-  dex
-//SEG12 [4] if((byte) main::i#1>(byte) 0) goto main::@1 [ main::i#1 ] -- xby_gt_0_then_la1 
-  cpx #0
+//SEG11 [3] (byte) main::i#1 ← -- (byte) main::i#2 [ main::i#1 ] -- yby=_dec_yby 
+  dey
+//SEG12 [4] if((byte) main::i#1>(byte) 0) goto main::@1 [ main::i#1 ] -- yby_gt_0_then_la1 
+  cpy #0
   bne main__B1_from_B3
 //SEG13 main::@return
 main__Breturn:
@@ -986,19 +986,19 @@ main__Breturn:
 nest:
 //SEG16 [6] phi from nest to nest::@1
 nest__B1_from_nest:
-//SEG17 [6] phi (byte) nest::j#2 = (byte) 100 -- yby=coby1 
-  ldy #100
+//SEG17 [6] phi (byte) nest::j#2 = (byte) 100 -- xby=coby1 
+  ldx #100
 //SEG18 [6] phi from nest::@1 to nest::@1
 nest__B1_from_B1:
 //SEG19 [6] phi (byte) nest::j#2 = (byte) nest::j#1 -- register_copy 
 //SEG20 nest::@1
 nest__B1:
-//SEG21 [7] *((word) 1024) ← (byte) nest::j#2 [ main::i#2 nest::j#2 ] -- _star_cowo1=yby 
-  sty 1024
-//SEG22 [8] (byte) nest::j#1 ← -- (byte) nest::j#2 [ main::i#2 nest::j#1 ] -- yby=_dec_yby 
-  dey
-//SEG23 [9] if((byte) nest::j#1>(byte) 0) goto nest::@1 [ main::i#2 nest::j#1 ] -- yby_gt_0_then_la1 
-  cpy #0
+//SEG21 [7] *((word) 1024) ← (byte) nest::j#2 [ main::i#2 nest::j#2 ] -- _star_cowo1=xby 
+  stx 1024
+//SEG22 [8] (byte) nest::j#1 ← -- (byte) nest::j#2 [ main::i#2 nest::j#1 ] -- xby=_dec_xby 
+  dex
+//SEG23 [9] if((byte) nest::j#1>(byte) 0) goto nest::@1 [ main::i#2 nest::j#1 ] -- xby_gt_0_then_la1 
+  cpx #0
   bne nest__B1_from_B1
 //SEG24 nest::@return
 nest__Breturn:

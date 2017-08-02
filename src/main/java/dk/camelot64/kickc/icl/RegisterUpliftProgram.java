@@ -2,20 +2,25 @@ package dk.camelot64.kickc.icl;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 
 /**
  * Information about register uplift at the program level
  */
 public class RegisterUpliftProgram {
 
-   private Collection<RegisterUpliftScope> registerUpliftScopes;
+   private List<RegisterUpliftScope> registerUpliftScopes;
 
    public RegisterUpliftProgram() {
       this.registerUpliftScopes = new ArrayList<>();
    }
 
-   public Collection<RegisterUpliftScope> getRegisterUpliftScopes() {
+   public List<RegisterUpliftScope> getRegisterUpliftScopes() {
       return registerUpliftScopes;
+   }
+
+   public void setRegisterUpliftScopes(List<RegisterUpliftScope> registerUpliftScopes) {
+      this.registerUpliftScopes = registerUpliftScopes;
    }
 
    public RegisterUpliftScope addRegisterUpliftScope(LabelRef scopeRef) {

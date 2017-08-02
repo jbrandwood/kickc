@@ -40,6 +40,17 @@ public class Pass3RegisterUpliftScopeAnalysis extends Pass2Base {
          });
          registerUpliftScope.setEquivalenceClasses(equivalenceClasses);
       }
+
+
+      List<RegisterUpliftScope> upliftScopes = registerUpliftProgram.getRegisterUpliftScopes();
+      Collections.sort(upliftScopes, new Comparator<RegisterUpliftScope>() {
+         @Override
+         public int compare(RegisterUpliftScope o1, RegisterUpliftScope o2) {
+            return Double.compare(registerWeights.getTotalWeights(o2),registerWeights.getTotalWeights(o1));
+         }
+      });
+      registerUpliftProgram.setRegisterUpliftScopes(upliftScopes);
+
       getProgram().setRegisterUpliftProgram(registerUpliftProgram);
    }
 

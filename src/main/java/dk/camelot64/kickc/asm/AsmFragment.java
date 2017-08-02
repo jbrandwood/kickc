@@ -40,7 +40,7 @@ public class AsmFragment {
       setSignature(conditionalJumpSignature);
    }
 
-   public AsmFragment(StatementAssignment assignment, Program program ) {
+   public AsmFragment(StatementAssignment assignment, Program program) {
       this.bindings = new LinkedHashMap<>();
       this.program = program;
       setSignature(assignmentSignature(assignment.getlValue(), assignment.getrValue1(), assignment.getOperator(), assignment.getrValue2()));
@@ -60,10 +60,13 @@ public class AsmFragment {
    }
 
    private String assignmentWithAluSignature(StatementAssignment assignment, StatementAssignment assignmentAlu) {
+      if (!(assignment.getrValue2() instanceof VariableRef)) {
+         throw new AluNotApplicableException("Error! ALU register only allowed as rValue2. " + assignment);
+      }
       VariableRef assignmentRValue2 = (VariableRef) assignment.getrValue2();
       RegisterAllocation.Register rVal2Register = program.getAllocation().getRegister(assignmentRValue2);
-      if(!rVal2Register.getType().equals(RegisterAllocation.RegisterType.REG_ALU_BYTE)) {
-         throw new RuntimeException("Error! ALU register only allowed as rValue2. "+assignment);
+      if (!rVal2Register.getType().equals(RegisterAllocation.RegisterType.REG_ALU_BYTE)) {
+         throw new AluNotApplicableException("Error! ALU register only allowed as rValue2. " + assignment);
       }
       StringBuilder signature = new StringBuilder();
       signature.append(bind(assignment.getlValue()));
@@ -98,13 +101,13 @@ public class AsmFragment {
             rValue2 instanceof ConstantInteger &&
                   ((ConstantInteger) rValue2).getNumber() == 2 &&
                   operator != null &&
-                  (operator.getOperator().equals(">>")|| operator.getOperator().equals("<<"))) {
+                  (operator.getOperator().equals(">>") || operator.getOperator().equals("<<"))) {
          signature.append("2");
       } else if (
             rValue2 instanceof ConstantInteger &&
                   ((ConstantInteger) rValue2).getNumber() == 1 &&
                   operator != null &&
-                  (operator.getOperator().equals("-") || operator.getOperator().equals("+")|| operator.getOperator().equals(">>")|| operator.getOperator().equals("<<"))) {
+                  (operator.getOperator().equals("-") || operator.getOperator().equals("+") || operator.getOperator().equals(">>") || operator.getOperator().equals("<<"))) {
          signature.append("1");
       } else if (
             rValue2 instanceof ConstantInteger &&
@@ -131,7 +134,7 @@ public class AsmFragment {
       } else if (conditionalJump.getrValue2() instanceof ConstantBool) {
          ConstantBool boolValue = (ConstantBool) conditionalJump.getrValue2();
          signature.append(boolValue.toString());
-      } else{
+      } else {
          signature.append(bind(conditionalJump.getrValue2()));
       }
       signature.append("_then_");
@@ -139,12 +142,12 @@ public class AsmFragment {
       ControlFlowBlock destinationBlock = graph.getBlock(destination);
       String destinationLabel;
       if (destinationBlock.hasPhiBlock()) {
-         destinationLabel = (destinationBlock.getLabel().getLocalName() + "_from_" + block.getLabel().getLocalName()).replace('@', 'B').replace(':','_');
+         destinationLabel = (destinationBlock.getLabel().getLocalName() + "_from_" + block.getLabel().getLocalName()).replace('@', 'B').replace(':', '_');
       } else {
          destinationLabel = destination.getLocalName();
       }
       Symbol destSymbol = program.getScope().getSymbol(destination);
-      signature.append(bind(new Label(destinationLabel, destSymbol.getScope(),false)));
+      signature.append(bind(new Label(destinationLabel, destSymbol.getScope(), false)));
       return signature.toString();
    }
 
@@ -199,7 +202,9 @@ public class AsmFragment {
       this.signature = signature;
    }
 
-   /** Zero page register name indexing. */
+   /**
+    * Zero page register name indexing.
+    */
    private int nextZpByteIdx = 1;
    private int nextZpWordIdx = 1;
    private int nextZpBoolIdx = 1;
@@ -214,8 +219,8 @@ public class AsmFragment {
     * @return The bound name of the value. If the value has already been bound the existing bound name is returned.
     */
    public String bind(Value value) {
-      if(value instanceof VariableRef) {
-        value = program.getScope().getVariable((VariableRef) value);
+      if (value instanceof VariableRef) {
+         value = program.getScope().getVariable((VariableRef) value);
       }
       if (value instanceof Variable) {
          value = program.getAllocation().getRegister(((Variable) value).getRef());
@@ -240,9 +245,9 @@ public class AsmFragment {
             bindings.put(name, value);
             return name;
          } else if (RegisterAllocation.RegisterType.ZP_WORD.equals(register.getType())) {
-               String name = "zpwo" + nextZpWordIdx++;
-               bindings.put(name, value);
-               return name;
+            String name = "zpwo" + nextZpWordIdx++;
+            bindings.put(name, value);
+            return name;
          } else if (RegisterAllocation.RegisterType.ZP_BOOL.equals(register.getType())) {
             String name = "zpbo" + nextZpBoolIdx++;
             bindings.put(name, value);
@@ -263,6 +268,8 @@ public class AsmFragment {
             String name = "zpptrby" + nextZpPtrIdx++;
             bindings.put(name, value);
             return name;
+         } else if (RegisterAllocation.RegisterType.REG_ALU_BYTE.equals(register.getType())) {
+            throw new AluNotApplicableException();
          }
       } else if (value instanceof ConstantInteger) {
          ConstantInteger intValue = (ConstantInteger) value;
@@ -292,7 +299,7 @@ public class AsmFragment {
    public String getBoundValue(String name) {
       Value boundValue = getBinding(name);
       if (boundValue == null) {
-         throw new RuntimeException("Binding '" + name + "' not found in fragment "+ signature + ".asm");
+         throw new RuntimeException("Binding '" + name + "' not found in fragment " + signature + ".asm");
       }
       String bound;
       if (boundValue instanceof RegisterAllocation.Register) {
@@ -311,7 +318,7 @@ public class AsmFragment {
       } else if (boundValue instanceof PointerDereferenceSimple) {
          PointerDereferenceSimple deref = (PointerDereferenceSimple) boundValue;
          RValue pointer = deref.getPointer();
-         if(pointer instanceof Constant) {
+         if (pointer instanceof Constant) {
             Constant pointerConst = (Constant) pointer;
             if (pointerConst instanceof ConstantInteger) {
                ConstantInteger intPointer = (ConstantInteger) pointerConst;
@@ -330,7 +337,7 @@ public class AsmFragment {
             bound = Integer.toString(boundInt.getNumber());
          }
       } else if (boundValue instanceof Label) {
-         bound = ((Label) boundValue).getFullName().replace('@', 'B').replace(':','_');
+         bound = ((Label) boundValue).getFullName().replace('@', 'B').replace(':', '_');
       } else {
          throw new RuntimeException("Bound Value Type not implemented " + boundValue);
       }
@@ -465,8 +472,8 @@ public class AsmFragment {
          String mnemonic = instructionCtx.MNEMONIC().getSymbol().getText();
          String parameter = (String) this.visit(exprCtx);
          AsmInstructionType type = AsmInstuctionSet.getInstructionType(mnemonic, addressingMode, parameter);
-         if(type==null) {
-            throw new RuntimeException("Error in "+signature+".asm line "+ctx.getStart().getLine()+" - Instruction type unknown "+mnemonic+" "+addressingMode+" "+parameter);
+         if (type == null) {
+            throw new RuntimeException("Error in " + signature + ".asm line " + ctx.getStart().getLine() + " - Instruction type unknown " + mnemonic + " " + addressingMode + " " + parameter);
          }
          return new AsmInstruction(type, parameter);
       }
@@ -508,7 +515,7 @@ public class AsmFragment {
       private String fragmentSignature;
 
       public UnknownFragmentException(String signature) {
-         super("Fragment not found " + signature+".asm");
+         super("Fragment not found " + signature + ".asm");
          this.fragmentSignature = signature;
       }
 
@@ -516,4 +523,16 @@ public class AsmFragment {
          return fragmentSignature;
       }
    }
+
+   public static class AluNotApplicableException extends RuntimeException {
+
+      public AluNotApplicableException() {
+         super("ALU register not appicable.");
+      }
+
+      public AluNotApplicableException(String message) {
+         super(message);
+      }
+   }
+
 }

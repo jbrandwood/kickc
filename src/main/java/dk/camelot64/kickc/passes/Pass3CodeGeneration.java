@@ -75,7 +75,7 @@ public class Pass3CodeGeneration {
       if (aluState.hasAluAssignment()) {
          StatementAssignment assignmentAlu = aluState.getAluAssignment();
          if (!(statement instanceof StatementAssignment)) {
-            throw new RuntimeException("Error! ALU statement must be followed immediately by assignment using the ALU. " + statement);
+            throw new AsmFragment.AluNotApplicableException();
          }
          StatementAssignment assignment = (StatementAssignment) statement;
          AsmFragment asmFragment = new AsmFragment(assignment, assignmentAlu, program);

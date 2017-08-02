@@ -153,7 +153,7 @@ public class RegisterUpliftScope {
          for (LiveRangeEquivalenceClass equivalenceClass : equivalenceClasses) {
             RegisterAllocation.Register defaultReegister = equivalenceClass.getRegister();
             if (defaultReegister.getType().equals(RegisterAllocation.RegisterType.ZP_BYTE)) {
-               numIterations = numIterations << 2;
+               numIterations = numIterations *5;
 
             }
          }
@@ -167,16 +167,17 @@ public class RegisterUpliftScope {
          for (LiveRangeEquivalenceClass equivalenceClass : equivalenceClasses) {
             RegisterAllocation.Register defaultReegister = equivalenceClass.getRegister();
             if (defaultReegister.getType().equals(RegisterAllocation.RegisterType.ZP_BYTE)) {
-               int registerIdx = (combinationIdRest % 4);
+               int registerIdx = (combinationIdRest % 5);
                List<RegisterAllocation.Register> potentialRegisters =
                      Arrays.asList(
                            defaultReegister,
                            RegisterAllocation.getRegisterA(),
                            RegisterAllocation.getRegisterX(),
-                           RegisterAllocation.getRegisterY());
+                           RegisterAllocation.getRegisterY(),
+                           RegisterAllocation.getRegisterALU());
                RegisterAllocation.Register register = potentialRegisters.get(registerIdx);
                combination.setRegister(equivalenceClass, register);
-               combinationIdRest = combinationIdRest >> 2;
+               combinationIdRest = (int) Math.floor(combinationIdRest / 5);
             } else {
                combination.setRegister(equivalenceClass, defaultReegister);
             }

@@ -94,6 +94,12 @@ public class Compiler {
                msg.append("missing fragment " + e.getFragmentSignature());
                program.getLog().append(msg.toString());
                continue;
+            } catch (AsmFragment.AluNotApplicableException e) {
+               StringBuilder msg = new StringBuilder();
+               msg.append("Uplift attempt [" + upliftScope.getScopeRef() + "] ");
+               msg.append("alu not applicable");
+               program.getLog().append(msg.toString());
+               continue;
             }
             // If no clobber - Find value of the resulting allocation
             boolean hasClobberProblem = new Pass3AssertNoCpuClobber(program).hasClobberProblem(false);

@@ -58,7 +58,6 @@ rvaluevar__B1_from_B2:
   jmp rvaluevar__B1
 rvalue:
   lda 1024
-  lda 1025
 rvalue__B1_from_rvalue:
   ldx #2
 rvalue__B1:

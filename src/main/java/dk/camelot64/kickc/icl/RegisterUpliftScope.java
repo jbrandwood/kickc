@@ -143,6 +143,23 @@ public class RegisterUpliftScope {
          this.nextIterationId = 0;
       }
 
+
+      /**
+       * Examine the control flow graph to determine which registers could be usable for
+       * optimizing the variables in a specific live range equivalence class.
+       *
+       * The optimizer will only test combinations with these registers
+       *
+       * @param equivalenceClass The equivalence class
+       * @return The registers to try to optimize the variables of the equivalence class into
+       */
+      public List<RegisterAllocation.Register> getPotentialRegisters(LiveRangeEquivalenceClass equivalenceClass) {
+         // TODO!!
+
+      }
+
+
+
       @Override
       public boolean hasNext() {
          return nextIterationId < getNumIterations();

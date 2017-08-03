@@ -71,88 +71,15 @@ public class Compiler {
       program.getLog().append("REGISTER UPLIFT SCOPES");
       program.getLog().append(program.getRegisterUpliftProgram().toString((program.getVariableRegisterWeights())));
 
-      // Test uplift combinations to find the best one.
-      Set<String> unknownFragments = new LinkedHashSet<>();
-      for (RegisterUpliftScope upliftScope : program.getRegisterUpliftProgram().getRegisterUpliftScopes()) {
-         int bestScore = Integer.MAX_VALUE;
-         RegisterUpliftScope.Combination bestCombination = null;
+      // Attempt uplifting registers through a lot of combinations
+      new Pass3RegisterUpliftCombinations(program).performUplift();
 
-         Iterator<RegisterUpliftScope.Combination> combinationIterator = upliftScope.geCombinationIterator();
-         while (combinationIterator.hasNext()) {
-            RegisterUpliftScope.Combination combination = combinationIterator.next();
-            // Reset register allocation to original zero page allocation
-            new Pass3RegistersFinalize(program).allocate(false);
-            // Apply the uplift combination
-            combination.allocate(program.getAllocation());
-            // Generate ASM
-            try {
-               new Pass3CodeGeneration(program).generate();
-            } catch (AsmFragment.UnknownFragmentException e) {
-               unknownFragments.add(e.getFragmentSignature());
-               StringBuilder msg = new StringBuilder();
-               msg.append("Uplift attempt [" + upliftScope.getScopeRef() + "] ");
-               msg.append("missing fragment " + e.getFragmentSignature());
-               program.getLog().append(msg.toString());
-               continue;
-            } catch (AsmFragment.AluNotApplicableException e) {
-               StringBuilder msg = new StringBuilder();
-               msg.append("Uplift attempt [" + upliftScope.getScopeRef() + "] ");
-               msg.append("alu not applicable");
-               program.getLog().append(msg.toString());
-               continue;
-            }
-            // If no clobber - Find value of the resulting allocation
-            boolean hasClobberProblem = new Pass3AssertNoCpuClobber(program).hasClobberProblem(false);
-            int combinationScore = getAsmScore(program);
-            StringBuilder msg = new StringBuilder();
-            msg.append("Uplift attempt [" + upliftScope.getScopeRef() + "] ");
-            if (hasClobberProblem) {
-               msg.append("clobber");
-            } else {
-               msg.append(combinationScore);
-            }
-            msg.append(" allocation: ").append(combination.toString());
-            program.getLog().append(msg.toString());
-            if (!hasClobberProblem) {
-               if (combinationScore < bestScore) {
-                  bestScore = combinationScore;
-                  bestCombination = combination;
-               }
-            }
-         }
-         // Save the best combination in the equivalence class
-         bestCombination.store(program.getLiveRangeEquivalenceClassSet());
-         program.getLog().append("Uplifting [" + upliftScope.getScopeRef() + "] best " + bestScore + " combination " + bestCombination.toString());
-      }
 
-      if (unknownFragments.size() > 0) {
-         program.getLog().append("MISSING FRAGMENTS");
-         for (String unknownFragment : unknownFragments) {
-            program.getLog().append("  " + unknownFragment);
-         }
-      }
 
       // Final register coalesce and code generation
       new Pass3ZeroPageCoalesce(program).allocate();
       new Pass3RegistersFinalize(program).allocate(true);
 
-   }
-
-   private int getAsmScore(Program program) {
-      int score = 0;
-      AsmProgram asm = program.getAsm();
-      ControlFlowGraph graph = program.getGraph();
-      NaturalLoopSet loopSet = program.getLoopSet();
-      for (AsmSegment asmSegment : asm.getSegments()) {
-         double asmSegmentCycles = asmSegment.getCycles();
-         if (asmSegmentCycles > 0) {
-            Integer statementIdx = asmSegment.getStatementIdx();
-            ControlFlowBlock block = graph.getBlockFromStatementIdx(statementIdx);
-            int maxLoopDepth = loopSet.getMaxLoopDepth(block.getLabel());
-            score += asmSegmentCycles * Math.pow(10, maxLoopDepth);
-         }
-      }
-      return score;
    }
 
    private void pass3Analysis(Program program) {
@@ -210,8 +137,6 @@ public class Compiler {
       program.getLog().append(program.getAsm().toString());
 
    }
-
-
 
    public void pass2OptimizeSSA(Program program) {
       List<Pass2SsaOptimization> optimizations = new ArrayList<>();

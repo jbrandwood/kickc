@@ -131,7 +131,7 @@ public class Pass3RegisterUpliftPotentialRegisterAnalysis extends Pass2Base {
          AsmProgram asm = new AsmProgram();
          asm.startSegment(statement.getIndex(), statement.toString(getProgram()));
          Pass3CodeGeneration.AsmCodegenAluState aluState = new Pass3CodeGeneration.AsmCodegenAluState();
-         (new Pass3CodeGeneration(getProgram())).generateStatementAsm(asm, block, statement, aluState);
+         (new Pass3CodeGeneration(getProgram())).generateStatementAsm(asm, block, statement, aluState, false);
          AsmClobber clobber = asm.getClobber();
          Collection<RegisterAllocation.Register> clobberRegisters = Pass3AssertNoCpuClobber.getClobberRegisters(clobber);
          Iterator<RegisterAllocation.Register> alwaysClobberIt = alwaysClobbered.iterator();

@@ -43,10 +43,32 @@ public class Pass3AssertNoCpuClobber extends Pass2Base {
             // Find the registered clobbered by the ASM asmSegment
             AsmClobber asmSegmentClobber = asmSegment.getClobber();
             Collection<RegisterAllocation.Register> clobberRegisters = getClobberRegisters(asmSegmentClobber);
+            // Find vars assigned to in the statement
+            Collection<VariableRef> assignedVars = Pass3RegisterUpliftPotentialRegisterAnalysis.getAssignedVars(statement);
+            // Two assigned vars cannot use same register
+            if(assignedVars.size()>1) {
+               for (VariableRef assignedVar1 : assignedVars) {
+                  for (VariableRef assignedVar2 : assignedVars) {
+                     if (assignedVar1.equals(assignedVar2)) {
+                        // Same variable - not relevant
+                        continue;
+                     }
+                     RegisterAllocation.Register register1 = allocation.getRegister(assignedVar1);
+                     RegisterAllocation.Register register2 = allocation.getRegister(assignedVar2);
+                     if (register1.equals(register2)) {
+                        if (verbose) {
+                           getLog().append("Two assigned variables " + assignedVar1 + " and " + assignedVar2 + " clobbered by use of same register " + register1 + " in statement " + statement);
+                           getLog().append(asm.toString(false));
+                        }
+                        clobberProblem = true;
+                     }
+                  }
+               }
+            }
+
             // Find alive variables
             List<VariableRef> aliveVars = new ArrayList<>(liveRangeVariables.getAlive(statement));
-            // Find vars assignedVars to
-            Collection<VariableRef> assignedVars = Pass3RegisterUpliftPotentialRegisterAnalysis.getAssignedVars(statement);
+            // Non-assigned alive variables must not be clobbered
             for (VariableRef aliveVar : aliveVars) {
                RegisterAllocation.Register aliveVarRegister = allocation.getRegister(aliveVar);
                if (aliveVarRegister.isZp()) {
@@ -74,7 +96,7 @@ public class Pass3AssertNoCpuClobber extends Pass2Base {
    /**
     * Get all CPU registers clobbered by the ASM generated from a specific statement in the program
     *
-    * @param asm The assembler to check
+    * @param clobber The clobber
     * @return The clobbered CPU registers
     */
    public static Collection<RegisterAllocation.Register> getClobberRegisters(AsmClobber clobber) {

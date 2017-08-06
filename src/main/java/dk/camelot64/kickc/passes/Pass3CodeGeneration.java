@@ -53,7 +53,7 @@ public class Pass3CodeGeneration {
       while (statementsIt.hasNext()) {
          Statement statement = statementsIt.next();
          if(!(statement instanceof StatementPhiBlock)) {
-            generateStatementAsm(asm, block, statement, aluState);
+            generateStatementAsm(asm, block, statement, aluState, true);
          }
       }
    }
@@ -67,7 +67,7 @@ public class Pass3CodeGeneration {
     * @param aluState  State of the special ALU register. Used to generate composite fragments when two consecutive statements can be executed effectively.
     *                  For example ADC $1100,x combines two statements $0 = $1100 staridx X, A = A+$0 .
     */
-   public void generateStatementAsm(AsmProgram asm, ControlFlowBlock block, Statement statement, AsmCodegenAluState aluState) {
+   public void generateStatementAsm(AsmProgram asm, ControlFlowBlock block, Statement statement, AsmCodegenAluState aluState, boolean genCallPhiEntry) {
 
       asm.startSegment(statement.getIndex(), statement.toString(program));
 
@@ -115,9 +115,11 @@ public class Pass3CodeGeneration {
             asmFragment.generate(asm);
          } else if (statement instanceof StatementCall) {
             StatementCall call = (StatementCall) statement;
-            ControlFlowBlock callSuccessor = getGraph().getCallSuccessor(block);
-            if (callSuccessor != null && callSuccessor.hasPhiBlock()) {
-               genBlockPhiTransition(asm, block, callSuccessor);
+            if (genCallPhiEntry) {
+               ControlFlowBlock callSuccessor = getGraph().getCallSuccessor(block);
+               if (callSuccessor != null && callSuccessor.hasPhiBlock()) {
+                  genBlockPhiTransition(asm, block, callSuccessor);
+               }
             }
             asm.addInstruction("jsr", AsmAddressingMode.ABS, call.getProcedure().getFullName());
          } else if (statement instanceof StatementReturn) {

@@ -13,11 +13,9 @@ public class RegisterPotentials {
       this.potentials = new LinkedHashMap<>();
    }
 
-
    public List<RegisterAllocation.Register> getPotentialRegisters(LiveRangeEquivalenceClass equivalenceClass) {
       return potentials.get(equivalenceClass);
    }
-
 
    public void setPotentialRegisters(LiveRangeEquivalenceClass equivalenceClass, List<RegisterAllocation.Register> registers) {
       potentials.put(equivalenceClass, new ArrayList<>(registers));
@@ -47,5 +45,12 @@ public class RegisterPotentials {
          out.append("\n");
       }
       return out.toString();
+   }
+
+   public void addPotentialRegister(LiveRangeEquivalenceClass equivalenceClass, RegisterAllocation.Register register) {
+      List<RegisterAllocation.Register> registers = potentials.get(equivalenceClass);
+      if (!registers.contains(register)) {
+         registers.add(register);
+      }
    }
 }

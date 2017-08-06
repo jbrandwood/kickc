@@ -18,15 +18,21 @@ public class Pass3RegisterUpliftPotentialRegisterAnalysis extends Pass2Base {
       super(program);
    }
 
-   /*** For each statement - try out all potential register combinations and examine the clobber */
-   public void findPotentialRegisters() {
+   /***
+    * For each statement - try out all potential register combinations and examine the clobber
+    *
+    * @return true if the potential registers of the program was changed. Menas that another call might refine them further
+    */
+   public boolean findPotentialRegisters() {
 
+      boolean modified = false;
       LiveRangeEquivalenceClassSet liveRangeEquivalenceClassSet = getProgram().getLiveRangeEquivalenceClassSet();
 
       RegisterPotentials registerPotentials = getProgram().getRegisterPotentials();
 
       // Initialize potential registers for all live range equilavence classes
       if (registerPotentials == null) {
+         modified = true;
          registerPotentials = new RegisterPotentials();
          for (LiveRangeEquivalenceClass equivalenceClass : liveRangeEquivalenceClassSet.getEquivalenceClasses()) {
             RegisterAllocation.Register defaultRegister = equivalenceClass.getRegister();
@@ -96,6 +102,7 @@ public class Pass3RegisterUpliftPotentialRegisterAnalysis extends Pass2Base {
                      StringBuilder msg = new StringBuilder();
                      msg.append("Removing always clobbered register " + clobberedRegister + " as potential for " + aliveClass);
                      getLog().append(msg.toString());
+                     modified = true;
                   }
                }
             }
@@ -104,10 +111,12 @@ public class Pass3RegisterUpliftPotentialRegisterAnalysis extends Pass2Base {
 
       getProgram().setRegisterPotentials(registerPotentials);
 
+      return modified;
+
    }
 
    /**
-    * Find the registers clobbered by all regsiter allocation combinations.
+    * Find the registers clobbered by all register allocation combinations.
     * For each combination generate the ASM and examine the clobber of all alive variables.
     *
     * @param block        The block containins the statement
@@ -116,6 +125,8 @@ public class Pass3RegisterUpliftPotentialRegisterAnalysis extends Pass2Base {
     * @return A set with registers that are clobbered by all different register assignments in the combination
     */
    private Set<RegisterAllocation.Register> findAlwaysClobberedRegisters(ControlFlowBlock block, Statement statement, RegisterCombinationIterator combinations) {
+
+      // Initially assume all registers are always clobbered
       Set<RegisterAllocation.Register> alwaysClobbered = new LinkedHashSet<>();
       alwaysClobbered.add(RegisterAllocation.getRegisterA());
       alwaysClobbered.add(RegisterAllocation.getRegisterX());

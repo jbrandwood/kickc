@@ -65,9 +65,16 @@ public class Compiler {
    private void pass4RegisterAllocation(Program program) {
 
       // Find potential registers for each live range equivalence class - based on clobbering of fragments
-      new Pass3RegisterUpliftPotentialRegisterAnalysis(program).findPotentialRegisters();
+      boolean change;
+      do {
+         change = new Pass3RegisterUpliftPotentialRegisterAnalysis(program).findPotentialRegisters();
+      }  while (change);
+      new Pass3RegisterUpliftPotentialAluAnalysis(program).findPotentialAlu();
       program.getLog().append("REGISTER UPLIFT POTENTIAL REGISTERS");
       program.getLog().append(program.getRegisterPotentials().toString());
+
+
+
 
       // Find register uplift scopes
       new Pass3RegisterUpliftScopeAnalysis(program).findScopes();

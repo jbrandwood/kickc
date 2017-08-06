@@ -4,16 +4,18 @@ sum_from_BBEGIN:
   lda #1
   jsr sum
 B2:
-  ldx 2
+  stx 2
 sum_from_B2:
   lda #13
   lda #9
   jsr sum
 B3:
-  lda 2
+  txa
+  clc
+  adc 2
 BEND:
 sum:
   asl
-  sta 2
+  tax
 sum__Breturn:
   rts

@@ -419,7 +419,7 @@ public class AsmFragment {
          Asm6502Parser.ParamModeContext paramModeCtx = ctx.paramMode();
          AsmInstruction instruction;
          if (paramModeCtx == null) {
-            AsmInstructionType type = AsmInstuctionSet.getInstructionType(ctx.MNEMONIC().getText(), AsmAddressingMode.NON, null);
+            AsmInstructionType type = AsmInstructionSet.getInstructionType(ctx.MNEMONIC().getText(), AsmAddressingMode.NON, null);
             instruction = new AsmInstruction(type, null);
          } else {
             instruction = (AsmInstruction) this.visit(paramModeCtx);
@@ -471,7 +471,7 @@ public class AsmFragment {
          Asm6502Parser.InstructionContext instructionCtx = (Asm6502Parser.InstructionContext) ctx.getParent();
          String mnemonic = instructionCtx.MNEMONIC().getSymbol().getText();
          String parameter = (String) this.visit(exprCtx);
-         AsmInstructionType type = AsmInstuctionSet.getInstructionType(mnemonic, addressingMode, parameter);
+         AsmInstructionType type = AsmInstructionSet.getInstructionType(mnemonic, addressingMode, parameter);
          if (type == null) {
             throw new RuntimeException("Error in " + signature + ".asm line " + ctx.getStart().getLine() + " - Instruction type unknown " + mnemonic + " " + addressingMode + " " + parameter);
          }

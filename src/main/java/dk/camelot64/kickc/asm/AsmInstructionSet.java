@@ -9,9 +9,9 @@ import java.util.List;
 /**
  * The set of all 6502 assembler instructions
  */
-public class AsmInstuctionSet {
+public class AsmInstructionSet {
 
-   private static AsmInstuctionSet set = new AsmInstuctionSet();
+   private static AsmInstructionSet set = new AsmInstructionSet();
 
    public static AsmInstructionType getInstructionType(String mnemonic, AsmAddressingMode mode, String parameter) {
       AsmInstructionType type = null;
@@ -52,7 +52,7 @@ public class AsmInstuctionSet {
       instructions.add(new AsmInstructionType(opcode, mnemonic, addressingmMode, cycles));
    }
 
-   public AsmInstuctionSet() {
+   public AsmInstructionSet() {
       this.instructions = new ArrayList<>();
       AsmAddressingMode non = AsmAddressingMode.NON;
       AsmAddressingMode zp = AsmAddressingMode.ZP;

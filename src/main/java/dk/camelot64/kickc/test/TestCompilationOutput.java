@@ -64,6 +64,10 @@ public class TestCompilationOutput extends TestCase {
       compileAndCompare("ptrtest");
    }
 
+   public void testPtrTestMin() throws IOException, URISyntaxException {
+      compileAndCompare("ptrtestmin");
+   }
+
    public void testUseGlobal() throws IOException, URISyntaxException {
       compileAndCompare("useglobal");
    }

@@ -8,8 +8,10 @@ B1_from_BBEGIN:
 B1_from_B1:
 B1:
   lda 4352,x
+  sta 2
+  lda 4353,x
   clc
-  adc 4353,x
+  adc 2
   sta 4354,x
   inx
   cpx #15

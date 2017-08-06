@@ -33,6 +33,9 @@ public class Program {
    private LiveRangeEquivalenceClassSet liveRangeEquivalenceClassSet;
    /** The register weight of all variables describing how much the variable would theoretically gain from being in a register */
    private VariableRegisterWeights variableRegisterWeights;
+   /** Registers potentially usable as allocation for each live range equivalence class. */
+   private RegisterPotentials registerPotentials;
+   /** Separation of live range equivalence classes into scopes - used for register uplift */
    private RegisterUpliftProgram registerUpliftProgram;
 
    @JsonCreator
@@ -128,6 +131,14 @@ public class Program {
 
    public VariableRegisterWeights getVariableRegisterWeights() {
       return variableRegisterWeights;
+   }
+
+   public void setRegisterPotentials(RegisterPotentials registerPotentials) {
+      this.registerPotentials = registerPotentials;
+   }
+
+   public RegisterPotentials getRegisterPotentials() {
+      return registerPotentials;
    }
 
    public void setRegisterUpliftProgram(RegisterUpliftProgram registerUpliftProgram) {

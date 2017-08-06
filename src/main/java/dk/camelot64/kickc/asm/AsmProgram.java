@@ -60,7 +60,7 @@ public class AsmProgram {
    }
 
    public void addInstruction(String mnemonic, AsmAddressingMode addressingMode, String parameter) {
-      AsmInstructionType instructionType = AsmInstuctionSet.getInstructionType(mnemonic, addressingMode, parameter);
+      AsmInstructionType instructionType = AsmInstructionSet.getInstructionType(mnemonic, addressingMode, parameter);
       addLine(new AsmInstruction(instructionType, parameter));
    }
 

@@ -46,7 +46,7 @@ public class Pass3AssertNoCpuClobber extends Pass2Base {
             // Find alive variables
             List<VariableRef> aliveVars = new ArrayList<>(liveRangeVariables.getAlive(statement));
             // Find vars assignedVars to
-            Collection<VariableRef> assignedVars = getAssignedVars(statement);
+            Collection<VariableRef> assignedVars = Pass3RegisterUpliftPotentialRegisterAnalysis.getAssignedVars(statement);
             for (VariableRef aliveVar : aliveVars) {
                RegisterAllocation.Register aliveVarRegister = allocation.getRegister(aliveVar);
                if (aliveVarRegister.isZp()) {
@@ -71,36 +71,13 @@ public class Pass3AssertNoCpuClobber extends Pass2Base {
       return clobberProblem;
    }
 
-
-   /**
-    * Get the variables assigned to by a specific statement
-    *
-    * @param statement The statement
-    * @return The variables assigned by the statement
-    */
-   private Collection<VariableRef> getAssignedVars(Statement statement) {
-      List<VariableRef> assignedVars = new ArrayList<>();
-      if (statement instanceof StatementAssignment) {
-         StatementAssignment assignment = (StatementAssignment) statement;
-         if (assignment.getlValue() instanceof VariableRef) {
-            assignedVars.add((VariableRef) assignment.getlValue());
-         }
-      } else if (statement instanceof StatementPhiBlock) {
-         StatementPhiBlock phi = (StatementPhiBlock) statement;
-         for (StatementPhiBlock.PhiVariable phiVariable : phi.getPhiVariables()) {
-            assignedVars.add(phiVariable.getVariable());
-         }
-      }
-      return assignedVars;
-   }
-
    /**
     * Get all CPU registers clobbered by the ASM generated from a specific statement in the program
     *
     * @param asm The assembler to check
     * @return The clobbered CPU registers
     */
-   private Collection<RegisterAllocation.Register> getClobberRegisters(AsmClobber clobber) {
+   public static Collection<RegisterAllocation.Register> getClobberRegisters(AsmClobber clobber) {
       List<RegisterAllocation.Register> clobberRegisters = new ArrayList<>();
       if (clobber.isClobberA()) {
          clobberRegisters.add(RegisterAllocation.getRegisterA());

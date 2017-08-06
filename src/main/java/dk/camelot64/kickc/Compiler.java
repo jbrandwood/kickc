@@ -1,8 +1,5 @@
 package dk.camelot64.kickc;
 
-import dk.camelot64.kickc.asm.AsmFragment;
-import dk.camelot64.kickc.asm.AsmProgram;
-import dk.camelot64.kickc.asm.AsmSegment;
 import dk.camelot64.kickc.icl.*;
 import dk.camelot64.kickc.parser.KickCLexer;
 import dk.camelot64.kickc.parser.KickCParser;
@@ -66,6 +63,12 @@ public class Compiler {
    }
 
    private void pass4RegisterAllocation(Program program) {
+
+      // Find potential registers for each live range equivalence class - based on clobbering of fragments
+      new Pass3RegisterUpliftPotentialRegisterAnalysis(program).findPotentialRegisters();
+      program.getLog().append("REGISTER UPLIFT POTENTIAL REGISTERS");
+      program.getLog().append(program.getRegisterPotentials().toString());
+
       // Find register uplift scopes
       new Pass3RegisterUpliftScopeAnalysis(program).findScopes();
       program.getLog().append("REGISTER UPLIFT SCOPES");
@@ -73,8 +76,6 @@ public class Compiler {
 
       // Attempt uplifting registers through a lot of combinations
       new Pass3RegisterUpliftCombinations(program).performUplift();
-
-
 
       // Final register coalesce and code generation
       new Pass3ZeroPageCoalesce(program).allocate();

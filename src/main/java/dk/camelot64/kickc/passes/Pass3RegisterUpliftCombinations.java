@@ -24,11 +24,11 @@ public class Pass3RegisterUpliftCombinations extends Pass2Base {
       List<RegisterUpliftScope> registerUpliftScopes = getProgram().getRegisterUpliftProgram().getRegisterUpliftScopes();
       for (RegisterUpliftScope upliftScope : registerUpliftScopes) {
          int bestScore = Integer.MAX_VALUE;
-         RegisterUpliftScope.Combination bestCombination = null;
+         RegisterCombination bestCombination = null;
 
-         Iterator<RegisterUpliftScope.Combination> combinationIterator = upliftScope.geCombinationIterator();
+         Iterator<RegisterCombination> combinationIterator = upliftScope.geCombinationIterator(getProgram().getRegisterPotentials());
          while (combinationIterator.hasNext()) {
-            RegisterUpliftScope.Combination combination = combinationIterator.next();
+            RegisterCombination combination = combinationIterator.next();
             // Reset register allocation to original zero page allocation
             new Pass3RegistersFinalize(getProgram()).allocate(false);
             // Apply the uplift combination
@@ -41,12 +41,14 @@ public class Pass3RegisterUpliftCombinations extends Pass2Base {
                StringBuilder msg = new StringBuilder();
                msg.append("Uplift attempt [" + upliftScope.getScopeRef() + "] ");
                msg.append("missing fragment " + e.getFragmentSignature());
+               msg.append(" allocation: ").append(combination.toString());
                getLog().append(msg.toString());
                continue;
             } catch (AsmFragment.AluNotApplicableException e) {
                StringBuilder msg = new StringBuilder();
                msg.append("Uplift attempt [" + upliftScope.getScopeRef() + "] ");
                msg.append("alu not applicable");
+               msg.append(" allocation: ").append(combination.toString());
                getLog().append(msg.toString());
                continue;
             }

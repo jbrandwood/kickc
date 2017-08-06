@@ -116,7 +116,7 @@ public class Pass3RegisterUpliftPotentialRegisterAnalysis extends Pass2Base {
     * @return A set with registers that are clobbered by all different register assignments in the combination
     */
    private Set<RegisterAllocation.Register> findAlwaysClobberedRegisters(ControlFlowBlock block, Statement statement, RegisterCombinationIterator combinations) {
-      Set<RegisterAllocation.Register> alwaysClobbered = new HashSet<>();
+      Set<RegisterAllocation.Register> alwaysClobbered = new LinkedHashSet<>();
       alwaysClobbered.add(RegisterAllocation.getRegisterA());
       alwaysClobbered.add(RegisterAllocation.getRegisterX());
       alwaysClobbered.add(RegisterAllocation.getRegisterY());

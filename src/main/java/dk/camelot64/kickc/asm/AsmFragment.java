@@ -10,6 +10,7 @@ import org.antlr.v4.runtime.*;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
@@ -344,6 +345,9 @@ public class AsmFragment {
       return bound;
    }
 
+   /** Cache for fragment files. Maps signature to the parsed file. */
+   private static Map<String, Asm6502Parser.FileContext> fragmentFileCache = new HashMap<>();
+
    /**
     * Generate assembler code for the assembler fragment.
     *
@@ -351,46 +355,48 @@ public class AsmFragment {
     */
    public void generate(AsmProgram asm) {
       String signature = this.getSignature();
-      ClassLoader classLoader = this.getClass().getClassLoader();
-      final URL fragmentResource = classLoader.getResource("dk/camelot64/kickc/asm/fragment/" + signature + ".asm");
-      if (fragmentResource == null) {
-         throw new UnknownFragmentException(signature);
+      Asm6502Parser.FileContext fragmentFile = fragmentFileCache.get(signature);
+      if(fragmentFile==null) {
+         ClassLoader classLoader = this.getClass().getClassLoader();
+         final URL fragmentResource = classLoader.getResource("dk/camelot64/kickc/asm/fragment/" + signature + ".asm");
+         if (fragmentResource == null) {
+            throw new UnknownFragmentException(signature);
+         }
+
+         try {
+            InputStream fragmentStream = fragmentResource.openStream();
+            Asm6502Lexer lexer = new Asm6502Lexer(CharStreams.fromStream(fragmentStream));
+            Asm6502Parser parser = new Asm6502Parser(new CommonTokenStream(lexer));
+            parser.addErrorListener(new BaseErrorListener() {
+               @Override
+               public void syntaxError(Recognizer<?, ?> recognizer, Object offendingSymbol, int line, int charPositionInLine, String msg, RecognitionException e) {
+                  throw new RuntimeException("Error parsing fragment fragmentFile " + fragmentResource + "\n - Line: " + line + "\n - Message: " + msg);
+               }
+            });
+            parser.setBuildParseTree(true);
+            fragmentFile = parser.file();
+            fragmentStream.close();
+            fragmentFileCache.put(signature, fragmentFile);
+         } catch (IOException e) {
+            throw new RuntimeException("Error reading code fragment " + fragmentResource);
+         }
       }
 
-      try {
-         InputStream fragmentStream = fragmentResource.openStream();
-         Asm6502Lexer lexer = new Asm6502Lexer(CharStreams.fromStream(fragmentStream));
-         Asm6502Parser parser = new Asm6502Parser(new CommonTokenStream(lexer));
-         parser.addErrorListener(new BaseErrorListener() {
-            @Override
-            public void syntaxError(Recognizer<?, ?> recognizer, Object offendingSymbol, int line, int charPositionInLine, String msg, RecognitionException e) {
-               throw new RuntimeException("Error parsing fragment file " + fragmentResource + "\n - Line: " + line + "\n - Message: " + msg);
-            }
-         });
-         parser.setBuildParseTree(true);
-         Asm6502Parser.FileContext file = parser.file();
-         AsmSequenceGenerator asmSequenceGenerator = new AsmSequenceGenerator(fragmentResource, asm);
-         asmSequenceGenerator.generate(file);
-         fragmentStream.close();
-      } catch (IOException e) {
-         throw new RuntimeException("Error reading code fragment " + fragmentResource);
-      }
+      AsmSequenceGenerator asmSequenceGenerator = new AsmSequenceGenerator(signature, this, asm);
+      asmSequenceGenerator.generate(fragmentFile);
 
    }
 
-   private class AsmSequenceGenerator extends Asm6502BaseVisitor {
+   private static class AsmSequenceGenerator extends Asm6502BaseVisitor {
 
-      private URL fragmentResource;
+      private String signature;
       private AsmProgram program;
+      private AsmFragment bindings;
 
-      public AsmSequenceGenerator(URL fragmentResource, AsmProgram program) {
-         this.fragmentResource = fragmentResource;
+      public AsmSequenceGenerator(String signature, AsmFragment bindings, AsmProgram program) {
+         this.signature = signature;
+         this.bindings = bindings;
          this.program = program;
-      }
-
-      public AsmSequenceGenerator(URL fragmentResource) {
-         this.fragmentResource = fragmentResource;
-         this.program = new AsmProgram();
       }
 
       public AsmProgram getProgram() {
@@ -427,7 +433,7 @@ public class AsmFragment {
          if (instruction != null) {
             program.addLine(instruction);
          } else {
-            throw new RuntimeException("Error parsing ASM fragment line in " + fragmentResource.toString() + "\n - Line: " + ctx.getText());
+            throw new RuntimeException("Error parsing ASM fragment line in dk/camelot64/kickc/asm/fragment/" + signature + ".asm\n - Line: " + ctx.getText());
          }
          return null;
       }
@@ -505,7 +511,7 @@ public class AsmFragment {
       @Override
       public Object visitExprReplace(Asm6502Parser.ExprReplaceContext ctx) {
          String replaceName = ctx.NAME().getSymbol().getText();
-         return AsmFragment.this.getBoundValue(replaceName);
+         return bindings.getBoundValue(replaceName);
       }
    }
 

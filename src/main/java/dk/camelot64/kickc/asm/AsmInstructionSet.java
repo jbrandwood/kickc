@@ -2,9 +2,7 @@ package dk.camelot64.kickc.asm;
 
 import dk.camelot64.kickc.NumberParser;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+import java.util.*;
 
 /**
  * The set of all 6502 assembler instructions
@@ -48,12 +46,18 @@ public class AsmInstructionSet {
 
    private List<AsmInstructionType> instructions;
 
+   /** Maps mnemonic_addressingmMode to  the instruction type */
+   private Map<String, AsmInstructionType> instructionsMap;
+
    private void add(int opcode, String mnemonic, AsmAddressingMode addressingmMode, double cycles) {
-      instructions.add(new AsmInstructionType(opcode, mnemonic, addressingmMode, cycles));
+      AsmInstructionType instructionType = new AsmInstructionType(opcode, mnemonic, addressingmMode, cycles);
+      instructions.add(instructionType);
+      instructionsMap.put(mnemonic+"_"+addressingmMode.getName(), instructionType);
    }
 
    public AsmInstructionSet() {
       this.instructions = new ArrayList<>();
+      this.instructionsMap = new HashMap<>();
       AsmAddressingMode non = AsmAddressingMode.NON;
       AsmAddressingMode zp = AsmAddressingMode.ZP;
       AsmAddressingMode zpx = AsmAddressingMode.ZPX;
@@ -369,12 +373,8 @@ public class AsmInstructionSet {
    }
 
    public AsmInstructionType getType(String mnemonic, AsmAddressingMode addressingMode) {
-      for (AsmInstructionType candidate : instructions) {
-         if (candidate.getMnemnonic().equals(mnemonic.toLowerCase()) && candidate.getAddressingMode().equals(addressingMode)) {
-            return candidate;
-         }
-      }
-      return null;
+      String key = mnemonic.toLowerCase()+"_"+addressingMode.getName();
+      return instructionsMap.get(key);
    }
 
 }

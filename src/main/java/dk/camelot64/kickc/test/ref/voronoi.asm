@@ -70,20 +70,25 @@ render__B1_from_render:
 render__B1_from_B3:
 render__B1:
 render__B2_from_B1:
-  ldy #0
+  lda #0
+  sta 7
 render__B2_from_B5:
 render__B2:
-  sty 10
+  lda 7
+  sta 10
   lda 2
   sta 11
   jsr findcol
 render__B5:
   lda 9
+  ldy 7
   sta (3),y
   lda #230
+  ldy 7
   sta (5),y
-  iny
-  cpy #40
+  inc 7
+  lda 7
+  cmp #40
   bcc render__B2_from_B5
 render__B3:
   lda 5
@@ -110,8 +115,7 @@ findcol:
 findcol__B1_from_findcol:
   lda #0
   sta 9
-  lda #255
-  sta 7
+  ldy #255
   ldx #0
 findcol__B1_from_B13:
 findcol__B1:
@@ -145,9 +149,8 @@ findcol__B10:
   sta 8
 findcol__B11_from_B10:
 findcol__B11:
-  lda 8
-  cmp 7
-  bcc findcol__B12
+  cpy 8
+  bcs findcol__B12
 findcol__B13_from_B11:
 findcol__B13:
   inx
@@ -163,8 +166,7 @@ findcol__Breturn:
 findcol__B12:
   lda 4608,x
   sta 9
-  lda 8
-  sta 7
+  ldy 8
 findcol__B13_from_B12:
   jmp findcol__B13
 findcol__B9:

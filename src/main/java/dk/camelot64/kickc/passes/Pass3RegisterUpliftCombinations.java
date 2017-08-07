@@ -28,6 +28,9 @@ public class Pass3RegisterUpliftCombinations extends Pass2Base {
          int countCombinations = 0;
          while (combinationIterator.hasNext() && countCombinations<maxCombinations) {
             countCombinations++;
+            if(countCombinations%10000==0) {
+               getLog().append("Uplift attempts ["+upliftScope.getScopeRef()+"] "+countCombinations+"/"+combinationIterator.getNumIterations()+" (limiting to "+maxCombinations+")");
+            }
             RegisterCombination combination = combinationIterator.next();
             // Reset register allocation to original zero page allocation
             new Pass3RegistersFinalize(getProgram()).allocate(false);
@@ -38,32 +41,32 @@ public class Pass3RegisterUpliftCombinations extends Pass2Base {
                new Pass3CodeGeneration(getProgram()).generate();
             } catch (AsmFragment.UnknownFragmentException e) {
                unknownFragments.add(e.getFragmentSignature());
-               StringBuilder msg = new StringBuilder();
-               msg.append("Uplift attempt [" + upliftScope.getScopeRef() + "] ");
-               msg.append("missing fragment " + e.getFragmentSignature());
-               msg.append(" allocation: ").append(combination.toString());
-               getLog().append(msg.toString());
+               //StringBuilder msg = new StringBuilder();
+               //msg.append("Uplift attempt [" + upliftScope.getScopeRef() + "] ");
+               //msg.append("missing fragment " + e.getFragmentSignature());
+               //msg.append(" allocation: ").append(combination.toString());
+               //getLog().append(msg.toString());
                continue;
             } catch (AsmFragment.AluNotApplicableException e) {
-               StringBuilder msg = new StringBuilder();
-               msg.append("Uplift attempt [" + upliftScope.getScopeRef() + "] ");
-               msg.append("alu not applicable");
-               msg.append(" allocation: ").append(combination.toString());
-               getLog().append(msg.toString());
+               //StringBuilder msg = new StringBuilder();
+               //msg.append("Uplift attempt [" + upliftScope.getScopeRef() + "] ");
+               //msg.append("alu not applicable");
+               //msg.append(" allocation: ").append(combination.toString());
+               //getLog().append(msg.toString());
                continue;
             }
             // If no clobber - Find value of the resulting allocation
             boolean hasClobberProblem = new Pass3AssertNoCpuClobber(getProgram()).hasClobberProblem(false);
             int combinationScore = getAsmScore(getProgram());
             StringBuilder msg = new StringBuilder();
-            msg.append("Uplift attempt [" + upliftScope.getScopeRef() + "] ");
-            if (hasClobberProblem) {
-               msg.append("clobber");
-            } else {
-               msg.append(combinationScore);
-            }
-            msg.append(" allocation: ").append(combination.toString());
-            getLog().append(msg.toString());
+            //msg.append("Uplift attempt [" + upliftScope.getScopeRef() + "] ");
+            //if (hasClobberProblem) {
+            //   msg.append("clobber");
+            //} else {
+            //   msg.append(combinationScore);
+            //}
+            //msg.append(" allocation: ").append(combination.toString());
+            //getLog().append(msg.toString());
             if (!hasClobberProblem) {
                if (combinationScore < bestScore) {
                   bestScore = combinationScore;

@@ -45,32 +45,32 @@ public class Pass3RegisterUpliftRemains extends Pass2Base {
                   new Pass3CodeGeneration(getProgram()).generate();
                } catch (AsmFragment.UnknownFragmentException e) {
                   unknownFragments.add(e.getFragmentSignature());
-                  StringBuilder msg = new StringBuilder();
-                  msg.append("Uplift remains attempt [" + equivalenceClass + "] ");
-                  msg.append("missing fragment " + e.getFragmentSignature());
-                  msg.append(" allocation: ").append(combination.toString());
-                  getLog().append(msg.toString());
+                  //StringBuilder msg = new StringBuilder();
+                  //msg.append("Uplift remains attempt [" + equivalenceClass + "] ");
+                  //msg.append("missing fragment " + e.getFragmentSignature());
+                  //msg.append(" allocation: ").append(combination.toString());
+                  //getLog().append(msg.toString());
                   continue;
                } catch (AsmFragment.AluNotApplicableException e) {
-                  StringBuilder msg = new StringBuilder();
-                  msg.append("Uplift remains attempt [" + equivalenceClass + "] ");
-                  msg.append("alu not applicable");
-                  msg.append(" allocation: ").append(combination.toString());
-                  getLog().append(msg.toString());
+                  //StringBuilder msg = new StringBuilder();
+                  //msg.append("Uplift remains attempt [" + equivalenceClass + "] ");
+                  //msg.append("alu not applicable");
+                  //msg.append(" allocation: ").append(combination.toString());
+                  //getLog().append(msg.toString());
                   continue;
                }
                // If no clobber - Find value of the resulting allocation
                boolean hasClobberProblem = new Pass3AssertNoCpuClobber(getProgram()).hasClobberProblem(false);
                int combinationScore = getAsmScore(getProgram());
-               StringBuilder msg = new StringBuilder();
-               msg.append("Uplift remains attempt [" + equivalenceClass + "] ");
-               if (hasClobberProblem) {
-                  msg.append("clobber");
-               } else {
-                  msg.append(combinationScore);
-               }
-               msg.append(" allocation: ").append(combination.toString());
-               getLog().append(msg.toString());
+               //StringBuilder msg = new StringBuilder();
+               //msg.append("Uplift remains attempt [" + equivalenceClass + "] ");
+               //if (hasClobberProblem) {
+               //   msg.append("clobber");
+               //} else {
+               //   msg.append(combinationScore);
+               //}
+               //msg.append(" allocation: ").append(combination.toString());
+               //getLog().append(msg.toString());
                if (!hasClobberProblem) {
                   if (combinationScore < bestScore) {
                      bestScore = combinationScore;
@@ -79,8 +79,10 @@ public class Pass3RegisterUpliftRemains extends Pass2Base {
                }
             }
             // Save the best combination in the equivalence class
-            bestCombination.store(equivalenceClassSet);
-            getLog().append("Uplifting remains [" + equivalenceClass + "] best " + bestScore + " combination " + bestCombination.toString());
+            if(!bestCombination.getRegister(equivalenceClass).isZp()) {
+               bestCombination.store(equivalenceClassSet);
+               getLog().append("Uplifting remains [" + equivalenceClass + "] best " + bestScore + " combination " + bestCombination.toString());
+            }
 
          }
       }

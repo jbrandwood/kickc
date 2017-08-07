@@ -19,6 +19,10 @@ public class RegisterCombination {
       allocation.put(equivalenceClass, register);
    }
 
+   public RegisterAllocation.Register getRegister(LiveRangeEquivalenceClass equivalenceClass) {
+      return allocation.get(equivalenceClass);
+   }
+
    /**
     * Allocate the registers of the combination into the programs register allocation
     */

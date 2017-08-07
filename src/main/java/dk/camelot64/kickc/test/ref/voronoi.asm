@@ -75,12 +75,12 @@ render__B2_from_B1:
 render__B2_from_B5:
 render__B2:
   lda 7
-  sta 10
-  lda 2
   sta 11
+  lda 2
+  sta 12
   jsr findcol
 render__B5:
-  lda 9
+  lda 10
   ldy 7
   sta (3),y
   lda #230
@@ -114,80 +114,75 @@ render__Breturn:
 findcol:
 findcol__B1_from_findcol:
   lda #0
-  sta 9
-  ldy #255
-  ldx #0
+  sta 10
+  lda #255
+  sta 8
+  ldy #0
 findcol__B1_from_B13:
 findcol__B1:
-  lda 4096,x
-  sta 8
-  lda 4352,x
-  sta 12
-  lda 10
-  cmp 8
+  lda 4096,y
+  ldx 4352,y
+  cmp 11
   beq findcol__B2
 findcol__B3:
-  lda 10
-  cmp 8
-  bcc findcol__B6
+  cmp 11
+  bcs findcol__B6
 findcol__B7:
-  lda 10
+  eor #255
   sec
-  sbc 8
-  sta 8
+  adc 11
+  sta 9
 findcol__B8_from_B7:
 findcol__B8:
-  lda 11
-  cmp 12
-  bcc findcol__B9
+  cpx 12
+  bcs findcol__B9
 findcol__B10:
-  lda 11
+  stx 255
+  lda 12
   sec
-  sbc 12
+  sbc 255
   clc
-  adc 8
-  sta 8
+  adc 9
+  tax
 findcol__B11_from_B10:
 findcol__B11:
-  cpy 8
-  bcs findcol__B12
+  cpx 8
+  bcc findcol__B12
 findcol__B13_from_B11:
 findcol__B13:
-  inx
-  cpx #6
+  iny
+  cpy #6
   bcc findcol__B1_from_B13
 findcol__Breturn_from_B13:
   jmp findcol__Breturn
 findcol__Breturn_from_B2:
   lda #0
-  sta 9
+  sta 10
 findcol__Breturn:
   rts
 findcol__B12:
-  lda 4608,x
-  sta 9
-  ldy 8
+  lda 4608,y
+  sta 10
+  stx 8
 findcol__B13_from_B12:
   jmp findcol__B13
 findcol__B9:
-  lda 12
+  txa
   sec
-  sbc 11
+  sbc 12
   clc
-  adc 8
-  sta 8
+  adc 9
+  tax
 findcol__B11_from_B9:
   jmp findcol__B11
 findcol__B6:
-  lda 8
   sec
-  sbc 10
-  sta 8
+  sbc 11
+  sta 9
 findcol__B8_from_B6:
   jmp findcol__B8
 findcol__B2:
-  lda 11
-  cmp 12
+  cpx 12
   beq findcol__Breturn_from_B2
   jmp findcol__B3
 addpoint:

@@ -21,6 +21,7 @@ void main() {
   addpoint(3, 34, 2, 4);
   addpoint(4, 21, 17, 5);
   addpoint(5, 31, 22, 7);
+  initscreen();
   do {
     render();
     animate();
@@ -60,20 +61,25 @@ void addpoint(byte idx, byte x, byte y, byte c) {
   COLS[idx] = c;
 }
 
+void initscreen() {
+  byte* screen = SCREEN;
+  do {
+    *screen = FILL;
+  } while(++screen<$0800)
+
+}
+
 void render() {
-  byte* chrline = SCREEN;
   byte* colline = COLORS;
   byte y=0;
   do {
-  byte x=0;
+    byte x=0;
     do {
       byte col = findcol(x, y);
       colline[x] = col;
-      chrline[x] = FILL;
     } while(++x < 40)
-    chrline = chrline+40;
     colline = colline+40;
-    } while(++y < 25)
+  } while(++y < 25)
 }
 
 byte findcol(byte x, byte y) {

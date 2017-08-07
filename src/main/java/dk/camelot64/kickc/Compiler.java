@@ -79,7 +79,7 @@ public class Compiler {
       program.getLog().append(program.getRegisterUpliftProgram().toString((program.getVariableRegisterWeights())));
 
       // Attempt uplifting registers through a lot of combinations
-      new Pass3RegisterUpliftCombinations(program).performUplift(30_000);
+      new Pass3RegisterUpliftCombinations(program).performUplift(10_000);
 
       // Attempt uplifting registers one at a time to catch remaining potential not realized by combination search
       new Pass3RegisterUpliftRemains(program).performUplift();

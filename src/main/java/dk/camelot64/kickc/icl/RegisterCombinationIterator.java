@@ -28,7 +28,7 @@ public class RegisterCombinationIterator implements Iterator<RegisterCombination
       return nextIterationId < getNumIterations();
    }
 
-   private int getNumIterations() {
+   public int getNumIterations() {
       int numIterations = 1;
       for (LiveRangeEquivalenceClass equivalenceClass : equivalenceClasses) {
          List<RegisterAllocation.Register> registers = registerPotentials.getPotentialRegisters(equivalenceClass);

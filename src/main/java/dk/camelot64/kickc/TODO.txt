@@ -1,10 +1,14 @@
 Features
 - Move the main code into a main() function, and disallow code outside functions. The main function per default has no parameters and exits with RTS.
 - Add a for loop for(init;condition;increment) {stmt} -> { init; do { stmt; increment } while (condition) }
-- Add Fixed Point number types
+- Add for loop for(byte i: 1..100) { } and for(byte i : 100..0) {}  (plus maybe .+. and .-. to make the inc/dec unambiguous)
+- Add signed bytes
+- Add signed words
+- Add Fixed Point number types fixed[8.8], fixed[16.8] - maybe even fixed[24.4]
 - Add imports
 - Add structs
-- Let { stmt } introduce a new anonymous scope.
+- Add possibility of declaring in-program data - just like .byte/.fill in KickAss.
+- Let { stmt } introduce a new anonymous scope. (But not when optimizing)
 - Add preprocessing / find a way to allow some functions to run at compile time
 - Implement inline compilation of functions (and a mechanism for choosing which methods / calls to inline)
 - Add ability to call ASM code from KC.
@@ -13,27 +17,47 @@ Features
 - Add inline ASM (maybe?)
 - Handle long branches
 - Allow complex array expressions in lValues eg. (SCREEN+$100)[idx]
+- Optimize loops by unrolling them somewhat
+- Optimize loops with Strength reduction (https://en.wikipedia.org/wiki/Strength_reduction)
 + Create a proper main function for the compiler
 + Add ++/-- incrementing/decrementing operators.
 
+Assembler Improvements
+- Make generated ASM human readable. Use hex-numbers, add labels for constants and zp-variables.
+- Eliminate unnecessary labels in ASM
+- Eliminate CPX from DEX, CPX #0, BNE la1
+- Eliminate LDA from DEC $2, LDA $2, BNE la1
+- Eliminate LDA from STA $11, LDA $11
+- Optimize by allowing resequencing of ASM (statements and phi assignments) in a final phase.
+
+Known Problems
+- Procedures that modify variables outside their scope doew not work. Outer vars must be transfered in/out like parameters/return values to get it working.
+- Alive vars are propagated backward through procedures (correctly). However they are then propagated back through ALL calls to the procedure incorrectly. They should only be alive at calls where they are alive after the call. In summin.kc s1#0 is incirrectly backpropagated through the first call, where it is not alive.
+
 Register Allocation
+- Limit number of combinations tested
+- Equivalences not tested through combinaitons should be tested individually afterwards.
+- Allow user to limit number of combinations tested
 - Safe-Copy based SSA deconstruction
+  - Reuse phi-transitions that are identical
   - Optimize phi transitions by ensuring that identical phi-transitions with regards to register allocation are collected into a single transition.
   - Optimize by finding optimal sequence for multiple phi assignments in entry-segments.
-- Interval Analysis (variable liveness intervals)
-- ComputeLoopNestDepth(b) - Assign loop nesting levels to blocks.
-- ComputeRegisterPreference(v), ComputeWeight(v)
-- CalculateClobbering(i)
-  - Maybe support several fragements for the same operation with different cost and clobbering profiles.
-- Register types: A, X, Y, ZP, (memory).
-  - Maybe register preference should also incorporate the types of operations that can be effectively performed with the register? (Maybe based on fragment cost?)
-- Implement a register allocation (coloring) algorithm using by liveness intervals, preferences, weights & clobbering information.
-  - Optimize register allocation by combining with knowledge of ASM program cost (bytes/cycles) and different ASM fragments with different clobbering.
+  - Avoid clobbering alive vars
+- Maybe support several fragements for the same operation with different cost and clobbering profiles.
+- Add memory registers (if we need to free some ZP)
 + Matrix Phi operation (instead of separate statements)
 + Phi Lifting
 + PhiLifting & PhiMemCoalesce (http://compilers.cs.ucla.edu/fernando/projects/soc/reports/short_tech.pdf)
++ Interval Analysis (variable liveness intervals)
++ ComputeLoopNestDepth(b) - Assign loop nesting levels to blocks.
++ ComputeRegisterPreference(v), ComputeWeight(v)
++ CalculateClobbering(i)
++ Register types: A, X, Y, ZP, (memory).
++ Implement a register allocation (coloring) algorithm using by liveness intervals, preferences, weights & clobbering information.
+  + Optimize register allocation by combining with knowledge of ASM program cost (bytes/cycles) and different ASM fragments with different clobbering.
 
 Process/Code Structure Improvement
+- Eliminate copy visitor
 - Refactor Expression Operator Implementation & Evaluation into one class per operator
 - Improve error messages to give better context
 - Offer to compile resulting ASM with KickAssembler
@@ -46,10 +70,6 @@ Testing
 - Emulate/Run the ASM for a specific KC program compiled. Compare the emulated ASM output to output calculated by executing directly on the KC tree.
 - Add assert statements to the language. Create KC programs that test the compiler by compiling, running and testing assertions.
 + Test the ASM program output resulting from compiling specific KC program input.
-
-Optimizations
-- Optimize by allowing resequencing of statements and phi assignemtns in a final phase. Perhaps by converting phi statements to "normal" statements and using some optimization step.
-- This phase could also help simplify LDA xx, CMP#0, BNE by expressing these in a language where CMP can be eliminated before.
 
 Usages
 - Implement library for memory allocation in main memory

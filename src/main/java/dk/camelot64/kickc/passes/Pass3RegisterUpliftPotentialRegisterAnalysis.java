@@ -1,5 +1,6 @@
 package dk.camelot64.kickc.passes;
 
+import dk.camelot64.kickc.asm.AsmFragment;
 import dk.camelot64.kickc.asm.AsmProgram;
 import dk.camelot64.kickc.asm.parser.AsmClobber;
 import dk.camelot64.kickc.icl.*;
@@ -132,6 +133,8 @@ public class Pass3RegisterUpliftPotentialRegisterAnalysis extends Pass2Base {
       alwaysClobbered.add(RegisterAllocation.getRegisterX());
       alwaysClobbered.add(RegisterAllocation.getRegisterY());
 
+      Set<String> unknownFragments = new LinkedHashSet<>();
+
       while (combinations.hasNext()) {
          RegisterCombination combination = combinations.next();
          // Reset register allocation to original zero page allocation
@@ -142,7 +145,17 @@ public class Pass3RegisterUpliftPotentialRegisterAnalysis extends Pass2Base {
          AsmProgram asm = new AsmProgram();
          asm.startSegment(statement.getIndex(), statement.toString(getProgram()));
          Pass3CodeGeneration.AsmCodegenAluState aluState = new Pass3CodeGeneration.AsmCodegenAluState();
-         (new Pass3CodeGeneration(getProgram())).generateStatementAsm(asm, block, statement, aluState, false);
+         try {
+            (new Pass3CodeGeneration(getProgram())).generateStatementAsm(asm, block, statement, aluState, false);
+         } catch (AsmFragment.UnknownFragmentException e) {
+            unknownFragments.add(e.getFragmentSignature());
+            StringBuilder msg = new StringBuilder();
+            msg.append("Potential register analysis " + statement );
+            msg.append(" missing fragment " + e.getFragmentSignature());
+            msg.append(" allocation: ").append(combination.toString());
+            getLog().append(msg.toString());
+            continue;
+         }
          AsmClobber clobber = asm.getClobber();
          Collection<RegisterAllocation.Register> clobberRegisters = Pass3AssertNoCpuClobber.getClobberRegisters(clobber);
          Iterator<RegisterAllocation.Register> alwaysClobberIt = alwaysClobbered.iterator();
@@ -157,6 +170,15 @@ public class Pass3RegisterUpliftPotentialRegisterAnalysis extends Pass2Base {
             break;
          }
       }
+
+      if (unknownFragments.size() > 0) {
+         getLog().append("MISSING FRAGMENTS");
+         for (String unknownFragment : unknownFragments) {
+            getLog().append("  " + unknownFragment);
+         }
+         //throw new RuntimeException("Missing fragments!");
+      }
+
       return alwaysClobbered;
    }
 

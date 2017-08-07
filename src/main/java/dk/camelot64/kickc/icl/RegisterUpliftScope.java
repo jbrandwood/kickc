@@ -56,7 +56,7 @@ public class RegisterUpliftScope {
     * @param registerPotentials The potential registers to use for each live range equivalence class
     * @return Iterator of all combinations
     */
-   public Iterator<RegisterCombination> geCombinationIterator(RegisterPotentials registerPotentials) {
+   public RegisterCombinationIterator getCombinationIterator(RegisterPotentials registerPotentials) {
       return new RegisterCombinationIterator(equivalenceClasses, registerPotentials);
    }
 

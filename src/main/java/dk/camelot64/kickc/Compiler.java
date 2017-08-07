@@ -73,16 +73,16 @@ public class Compiler {
       program.getLog().append("REGISTER UPLIFT POTENTIAL REGISTERS");
       program.getLog().append(program.getRegisterPotentials().toString());
 
-
-
-
       // Find register uplift scopes
       new Pass3RegisterUpliftScopeAnalysis(program).findScopes();
       program.getLog().append("REGISTER UPLIFT SCOPES");
       program.getLog().append(program.getRegisterUpliftProgram().toString((program.getVariableRegisterWeights())));
 
       // Attempt uplifting registers through a lot of combinations
-      new Pass3RegisterUpliftCombinations(program).performUplift();
+      new Pass3RegisterUpliftCombinations(program).performUplift(10_000);
+
+      // Attempt uplifting registers one at a time to catch remaining potential not realized by combination search
+      new Pass3RegisterUpliftRemains(program).performUplift();
 
       // Final register coalesce and code generation
       new Pass3ZeroPageCoalesce(program).allocate();

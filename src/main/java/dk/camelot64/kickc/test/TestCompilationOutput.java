@@ -24,6 +24,10 @@ public class TestCompilationOutput extends TestCase {
       helper = new ReferenceHelper("dk/camelot64/kickc/test/ref/");
    }
 
+   public void testVoronoi() throws IOException, URISyntaxException {
+      compileAndCompare("voronoi");
+   }
+
    public void testFlipper() throws IOException, URISyntaxException {
       compileAndCompare("flipper-rex2");
    }

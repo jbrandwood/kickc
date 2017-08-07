@@ -5,7 +5,6 @@ import dk.camelot64.kickc.asm.AsmProgram;
 import dk.camelot64.kickc.asm.AsmSegment;
 import dk.camelot64.kickc.icl.*;
 
-import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
@@ -17,8 +16,7 @@ public class Pass3RegisterUpliftCombinations extends Pass2Base {
       super(program);
    }
 
-
-   public void performUplift() {
+   public void performUplift(int maxCombinations) {
       // Test uplift combinations to find the best one.
       Set<String> unknownFragments = new LinkedHashSet<>();
       List<RegisterUpliftScope> registerUpliftScopes = getProgram().getRegisterUpliftProgram().getRegisterUpliftScopes();
@@ -26,8 +24,10 @@ public class Pass3RegisterUpliftCombinations extends Pass2Base {
          int bestScore = Integer.MAX_VALUE;
          RegisterCombination bestCombination = null;
 
-         Iterator<RegisterCombination> combinationIterator = upliftScope.geCombinationIterator(getProgram().getRegisterPotentials());
-         while (combinationIterator.hasNext()) {
+         RegisterCombinationIterator combinationIterator = upliftScope.getCombinationIterator(getProgram().getRegisterPotentials());
+         int countCombinations = 0;
+         while (combinationIterator.hasNext() && countCombinations<maxCombinations) {
+            countCombinations++;
             RegisterCombination combination = combinationIterator.next();
             // Reset register allocation to original zero page allocation
             new Pass3RegistersFinalize(getProgram()).allocate(false);
@@ -74,6 +74,11 @@ public class Pass3RegisterUpliftCombinations extends Pass2Base {
          // Save the best combination in the equivalence class
          bestCombination.store(getProgram().getLiveRangeEquivalenceClassSet());
          getLog().append("Uplifting [" + upliftScope.getScopeRef() + "] best " + bestScore + " combination " + bestCombination.toString());
+
+         if(combinationIterator.hasNext()) {
+            getLog().append("Limited combination testing to "+countCombinations+" combinations of "+combinationIterator.getNumIterations()+" possible.");
+         }
+
       }
 
       if (unknownFragments.size() > 0) {
@@ -83,7 +88,9 @@ public class Pass3RegisterUpliftCombinations extends Pass2Base {
          }
       }
 
+
    }
+
    private int getAsmScore(Program program) {
       int score = 0;
       AsmProgram asm = program.getAsm();

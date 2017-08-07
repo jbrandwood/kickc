@@ -1,0 +1,82 @@
+// The screen
+byte *SCREEN = $0400;
+byte *COLORS = $D800;
+
+byte FILL = 230;
+
+// The total number of voronoi points
+byte numpoints = 6;
+
+// Points to create the Voronoi from
+byte[$100] XPOS = $1000;
+byte[$100] YPOS = $1100;
+byte[$100] COLS = $1200;
+
+main();
+
+void main() {
+  addpoint(0, 5, 5, 1);
+  addpoint(1, 15, 8, 2);
+  addpoint(2, 6, 14, 3);
+  addpoint(3, 34, 2, 4);
+  addpoint(4, 21, 17, 5);
+  addpoint(5, 31, 22, 7);
+  do {
+    render();
+  } while(true)
+}
+
+void addpoint(byte idx, byte x, byte y, byte c) {
+  XPOS[idx] = x;
+  YPOS[idx] = y;
+  COLS[idx] = c;
+}
+
+void render() {
+  byte* chrline = SCREEN;
+  byte* colline = COLORS;
+  byte y=0;
+  do {
+  byte x=0;
+    do {
+      byte col = findcol(x, y);
+      colline[x] = col;
+      chrline[x] = FILL;
+    } while(++x < 40)
+    chrline = chrline+40;
+    colline = colline+40;
+    } while(++y < 25)
+}
+
+byte findcol(byte x, byte y) {
+  byte mindiff = 255;
+  byte mincol = 0;
+  byte i=0;
+  do {
+     byte xp = XPOS[i];
+     byte yp = YPOS[i];
+     if(x==xp) {
+       if(y==yp) {
+         return 0;
+       }
+     }
+     byte diff;
+     if(x<xp) {
+       diff = xp-x;
+     } else {
+       diff = x-xp;
+     }
+     if(y<yp) {
+       diff = diff + (yp-y);
+     } else {
+       diff = diff + (y-yp);
+     }
+     if(diff<mindiff) {
+       mindiff=diff;
+       mincol = COLS[i];
+     }
+  } while(++i<numpoints)
+  return mincol;
+}
+
+

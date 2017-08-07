@@ -84,17 +84,17 @@ public class AsmFragmentManager {
       }
       if(signature.contains("_lt_xby_then_")) {
          int pos = signature.indexOf("_lt_xby_then_");
-         String subSignature = "xby_gte_"+signature.substring(0, pos)+"_then_"+signature.substring(pos+13);
+         String subSignature = "xby_ge_"+signature.substring(0, pos)+"_then_"+signature.substring(pos+13);
          return loadOrSynthesizeFragment(subSignature);
       }
       if(signature.contains("_lt_yby_then_")) {
          int pos = signature.indexOf("_lt_yby_then_");
-         String subSignature = "yby_gte_"+signature.substring(0, pos)+"_then_"+signature.substring(pos+13);
+         String subSignature = "yby_ge_"+signature.substring(0, pos)+"_then_"+signature.substring(pos+13);
          return loadOrSynthesizeFragment(subSignature);
       }
       if(signature.contains("_lt_aby_then_")) {
          int pos = signature.indexOf("_lt_aby_then_");
-         String subSignature = "aby_gte_"+signature.substring(0, pos)+"_then_"+signature.substring(pos+13);
+         String subSignature = "aby_ge_"+signature.substring(0, pos)+"_then_"+signature.substring(pos+13);
          return loadOrSynthesizeFragment(subSignature);
       }
 

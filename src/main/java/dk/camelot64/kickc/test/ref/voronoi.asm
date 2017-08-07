@@ -52,9 +52,84 @@ addpoint_from_B7:
 main__B1:
   jsr render
 main__B9:
+  jsr animate
+main__B10:
   jmp main__B1
 main__Breturn:
   rts
+animate:
+  lda 4096
+  clc
+  adc #1
+  sta 4096
+  lda 4096
+  cmp #40
+  beq animate__B1
+animate__B2:
+  lda 4352
+  clc
+  adc #1
+  sta 4352
+  lda 4352
+  cmp #25
+  beq animate__B3
+animate__B4:
+  ldx 4097
+  dex
+  stx 4097
+  lda 4097
+  cmp #255
+  beq animate__B5
+animate__B6:
+  lda 4354
+  clc
+  adc #1
+  sta 4354
+  lda 4354
+  cmp #25
+  beq animate__B7
+animate__B8:
+  ldx 4355
+  dex
+  stx 4355
+  lda 4355
+  cmp #255
+  beq animate__B9
+animate__Breturn:
+  rts
+animate__B9:
+  lda #25
+  sta 4355
+  lda 4099
+  clc
+  adc #7
+  sta 4099
+  lda 4099
+  cmp #40
+  bcs animate__B11
+  jmp animate__Breturn
+animate__B11:
+  lda 4099
+  sec
+  sbc #40
+  sta 4099
+  jmp animate__Breturn
+animate__B7:
+  lda #0
+  sta 4354
+  jmp animate__B8
+animate__B5:
+  lda #40
+  sta 4097
+  jmp animate__B6
+animate__B3:
+  lda #0
+  sta 4352
+  jmp animate__B4
+animate__B1:
+  lda #0
+  sta 4096
+  jmp animate__B2
 render:
 render__B1_from_render:
   lda #<1024

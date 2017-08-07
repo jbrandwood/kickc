@@ -74,14 +74,14 @@ public class Pass3RegisterUpliftCombinations extends Pass2Base {
                }
             }
          }
-         // Save the best combination in the equivalence class
-         bestCombination.store(getProgram().getLiveRangeEquivalenceClassSet());
-         getLog().append("Uplifting [" + upliftScope.getScopeRef() + "] best " + bestScore + " combination " + bestCombination.toString());
-
+         if(bestCombination!=null) {
+            // Save the best combination in the equivalence class
+            bestCombination.store(getProgram().getLiveRangeEquivalenceClassSet());
+            getLog().append("Uplifting [" + upliftScope.getScopeRef() + "] best " + bestScore + " combination " + bestCombination.toString());
+         }
          if(combinationIterator.hasNext()) {
             getLog().append("Limited combination testing to "+countCombinations+" combinations of "+combinationIterator.getNumIterations()+" possible.");
          }
-
       }
 
       if (unknownFragments.size() > 0) {

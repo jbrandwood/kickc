@@ -141,8 +141,10 @@ public class Pass3LiveRangesAnalysis extends Pass2Base {
                   if(currentBlock.getLabel().equals(predecessor.getCallSuccessor())) {
                      // Add to last statement before call in predecessor
                      StatementCall callStatement = (StatementCall) predecessorStatements.get(predecessorStatements.size() - 1);
-                     Statement predecessorLastStatementBeforeCall = predecessorStatements.get(predecessorStatements.size() - 2);
-                     liveRanges.addAlive((VariableRef) phiRValue.getrValue(), predecessorLastStatementBeforeCall);
+                     if(predecessorStatements.size()>1) {
+                        Statement predecessorLastStatementBeforeCall = predecessorStatements.get(predecessorStatements.size() - 2);
+                        liveRanges.addAlive((VariableRef) phiRValue.getrValue(), predecessorLastStatementBeforeCall);
+                     }
                   }  else {
                      // Add to last statement of predecessor
                      Statement predecessorLastStatement = predecessorStatements.get(predecessorStatements.size() - 1);

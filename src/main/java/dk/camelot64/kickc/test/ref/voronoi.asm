@@ -5,48 +5,44 @@ main:
 addpoint_from_main:
   lda #1
   sta 2
-  ldx #5
-  ldy #0
+  ldy #5
+  lda #0
+  sta 8
   lda #5
   jsr addpoint
 main__B3:
 addpoint_from_B3:
   lda #2
   sta 2
-  ldx #8
-  ldy #1
+  ldy #8
   lda #15
   jsr addpoint
 main__B4:
 addpoint_from_B4:
   lda #3
   sta 2
-  ldx #14
-  ldy #2
+  ldy #14
   lda #6
   jsr addpoint
 main__B5:
 addpoint_from_B5:
   lda #4
   sta 2
-  ldx #2
-  ldy #3
+  ldy #2
   lda #34
   jsr addpoint
 main__B6:
 addpoint_from_B6:
   lda #5
   sta 2
-  ldx #17
-  ldy #4
+  ldy #17
   lda #21
   jsr addpoint
 main__B7:
 addpoint_from_B7:
   lda #7
   sta 2
-  ldx #22
-  ldy #5
+  ldy #22
   lda #31
   jsr addpoint
 main__B8:
@@ -148,9 +144,9 @@ render__B2_from_B1:
 render__B2_from_B5:
 render__B2:
   lda 5
-  sta 8
-  lda 2
   sta 9
+  lda 2
+  sta 10
   jsr findcol
 render__B5:
   tya
@@ -185,28 +181,28 @@ findcol__B1:
   lda 4096,x
   sta 7
   lda 4352,x
-  sta 10
-  lda 8
+  sta 11
+  lda 9
   cmp 7
   beq findcol__B2
 findcol__B3:
-  lda 8
+  lda 9
   cmp 7
   bcc findcol__B6
 findcol__B7:
-  lda 8
+  lda 9
   sec
   sbc 7
   sta 7
 findcol__B8_from_B7:
 findcol__B8:
-  lda 9
-  cmp 10
+  lda 10
+  cmp 11
   bcc findcol__B9
 findcol__B10:
-  lda 9
+  lda 10
   sec
-  sbc 10
+  sbc 11
   clc
   adc 7
 findcol__B11_from_B10:
@@ -216,7 +212,7 @@ findcol__B11:
 findcol__B13_from_B11:
 findcol__B13:
   inx
-  cpx #6
+  cpx 8
   bcc findcol__B1_from_B13
 findcol__Breturn_from_B13:
   jmp findcol__Breturn
@@ -230,9 +226,9 @@ findcol__B12:
 findcol__B13_from_B12:
   jmp findcol__B13
 findcol__B9:
-  lda 10
+  lda 11
   sec
-  sbc 9
+  sbc 10
   clc
   adc 7
 findcol__B11_from_B9:
@@ -240,13 +236,13 @@ findcol__B11_from_B9:
 findcol__B6:
   lda 7
   sec
-  sbc 8
+  sbc 9
   sta 7
 findcol__B8_from_B6:
   jmp findcol__B8
 findcol__B2:
-  lda 9
-  cmp 10
+  lda 10
+  cmp 11
   beq findcol__Breturn_from_B2
   jmp findcol__B3
 initscreen:
@@ -275,10 +271,14 @@ initscreen__B1:
 initscreen__Breturn:
   rts
 addpoint:
-  sta 4096,y
-  txa
+  ldx 8
+  sta 4096,x
+  tya
+  ldy 8
   sta 4352,y
   lda 2
-  sta 4608,y
+  ldx 8
+  sta 4608,x
+  inc 8
 addpoint__Breturn:
   rts

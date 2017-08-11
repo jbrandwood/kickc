@@ -108,6 +108,10 @@ public class ControlFlowGraphCopyVisitor extends ControlFlowGraphBaseVisitor<Obj
       return copyBlock;
    }
 
+   public ControlFlowBlock getOrigBlock() {
+      return origBlock;
+   }
+
    @Override
    public Statement visitStatement(Statement statement) {
       return (Statement) super.visitStatement(statement);

@@ -191,7 +191,10 @@ public class CallGraph {
          @Override
          public String toString() {
             StringBuilder out = new StringBuilder();
-            out.append(callStatementIdx).append(":").append(procedure);
+            if(callStatementIdx!=null) {
+               out.append(callStatementIdx).append(":");
+            }
+            out.append(procedure);
             return out.toString();
          }
 

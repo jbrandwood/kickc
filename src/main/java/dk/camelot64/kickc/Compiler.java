@@ -217,9 +217,13 @@ public class Compiler {
          log.append(program.getGraph().toString(program));
       }
 
+      (new Pass1ModifiedVarsAnalysis(program)).findModifiedVars();
+      log.append("PROCEDURE MODIFY VARIABLE ANALYSIS");
+      log.append(program.getProcedureModifiedVars().toString(program));
+
       Pass1ProcedureCallParameters pass1ProcedureCallParameters =
             new Pass1ProcedureCallParameters(program);
-      program.setGraph(pass1ProcedureCallParameters.generate());
+      pass1ProcedureCallParameters.generate();
       log.append("CONTROL FLOW GRAPH WITH ASSIGNMENT CALL");
       log.append(program.getGraph().toString(program));
 

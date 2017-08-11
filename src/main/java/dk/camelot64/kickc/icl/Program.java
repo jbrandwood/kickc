@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import dk.camelot64.kickc.CompileLog;
 import dk.camelot64.kickc.asm.AsmProgram;
+import dk.camelot64.kickc.passes.Pass1ModifiedVarsAnalysis;
 
 /** A KickC Intermediate Compiler Language (ICL) Program */
 public class Program {
@@ -18,6 +19,8 @@ public class Program {
    /** The log containing information about the compilation process. */
    private CompileLog log;
 
+   /** Variables modified inside procedures. */
+   private ProcedureModifiedVars procedureModifiedVars;
    /** Information about calls. */
    private CallGraph callGraph;
    /** Information about dominators of all blocks*/
@@ -68,6 +71,15 @@ public class Program {
    public void setGraph(ControlFlowGraph graph) {
       this.graph = graph;
    }
+
+   public void setProcedureModifiedVars(ProcedureModifiedVars procedureModifiedVars) {
+      this.procedureModifiedVars = procedureModifiedVars;
+   }
+
+   public ProcedureModifiedVars getProcedureModifiedVars() {
+      return procedureModifiedVars;
+   }
+
 
    public AsmProgram getAsm() {
       return asm;

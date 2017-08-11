@@ -2,22 +2,27 @@ package dk.camelot64.kickc.passes;
 
 import dk.camelot64.kickc.icl.*;
 
+import java.util.ArrayList;
+import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Set;
 
 /** Pass that modifies a control flow graph to call procedures by passing parameters through registers */
 public class Pass1ProcedureCallParameters extends ControlFlowGraphCopyVisitor {
 
-   private ProgramScope scope;
-   private ControlFlowGraph graph;
+   private Program program;
 
    public Pass1ProcedureCallParameters(Program program) {
-      this.scope = program.getScope();
-      this.graph = program.getGraph();
+      this.program = program;
    }
 
-   public ControlFlowGraph generate() {
-      ControlFlowGraph generated = visitGraph(graph);
-      return generated;
+   public void generate() {
+      ControlFlowGraph generated = visitGraph(program.getGraph());
+      program.setGraph(generated);
+   }
+
+   private ProgramScope getScope() {
+      return program.getScope();
    }
 
    @Override
@@ -25,7 +30,7 @@ public class Pass1ProcedureCallParameters extends ControlFlowGraphCopyVisitor {
       // Procedure strategy implemented is currently variable-based transfer of parameters/return values
       // Generate parameter passing assignments
       ProcedureRef procedureRef = origCall.getProcedure();
-      Procedure procedure = scope.getProcedure(procedureRef);
+      Procedure procedure = getScope().getProcedure(procedureRef);
       List<Variable> parameterDecls = procedure.getParameters();
       List<RValue> parameterValues = origCall.getParameters();
       for (int i = 0; i < parameterDecls.size(); i++) {
@@ -44,7 +49,7 @@ public class Pass1ProcedureCallParameters extends ControlFlowGraphCopyVisitor {
       copyCall.setProcedure(procedureRef);
       addStatementToCurrentBlock(copyCall);
       getCurrentBlock().setCallSuccessor(procedure.getLabel().getRef());
-      Symbol currentBlockSymbol = scope.getSymbol(getCurrentBlock().getLabel());
+      Symbol currentBlockSymbol = getScope().getSymbol(getCurrentBlock().getLabel());
       Scope currentBlockScope;
       if(currentBlockSymbol instanceof Procedure) {
          currentBlockScope = (Scope) currentBlockSymbol;
@@ -59,13 +64,31 @@ public class Pass1ProcedureCallParameters extends ControlFlowGraphCopyVisitor {
          LValue lValue = origCall.getlValue();
          if(lValue instanceof VariableRef) {
             VariableRef lValueRef = (VariableRef) lValue;
-            Variable lValueVar = scope.getVariable(lValueRef);
+            Variable lValueVar = getScope().getVariable(lValueRef);
             lValueVar.getScope().remove(lValueVar);
          }
       }
-
+      // Add self-assignments for all variables modified in the procedure
+      Set<VariableRef> modifiedVars = program.getProcedureModifiedVars().getModifiedVars(procedure.getRef());
+      for (VariableRef modifiedVar : modifiedVars) {
+         addStatementToCurrentBlock(new StatementAssignment(modifiedVar, modifiedVar));
+      }
       return null;
    }
+
+   @Override
+   public StatementReturn visitReturn(StatementReturn origReturn) {
+      ControlFlowBlock currentBlock = getCurrentBlock();
+      String currentProcName = currentBlock.getLabel().getScopeNames();
+      Procedure procedure = program.getScope().getProcedure(currentProcName);
+      // Add self-assignments for all variables modified in the procedure
+      Set<VariableRef> modifiedVars = program.getProcedureModifiedVars().getModifiedVars(procedure.getRef());
+      for (VariableRef modifiedVar : modifiedVars) {
+         addStatementToCurrentBlock(new StatementAssignment(modifiedVar, modifiedVar));
+      }
+      return super.visitReturn(origReturn);
+   }
+
 
 
 }

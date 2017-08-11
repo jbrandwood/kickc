@@ -93,4 +93,13 @@ public class SymbolRef implements Value {
    public String toString() {
       return getFullName();
    }
+
+   public String getFullNameUnversioned() {
+      if(isVersion()) {
+         return fullName.substring(0, fullName.indexOf("#"));
+      }  else {
+         return fullName;
+      }
+
+   }
 }

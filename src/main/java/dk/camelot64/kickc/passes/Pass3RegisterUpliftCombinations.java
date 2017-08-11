@@ -94,7 +94,7 @@ public class Pass3RegisterUpliftCombinations extends Pass2Base {
 
    }
 
-   private int getAsmScore(Program program) {
+   public static int getAsmScore(Program program) {
       int score = 0;
       AsmProgram asm = program.getAsm();
       ControlFlowGraph graph = program.getGraph();
@@ -103,8 +103,11 @@ public class Pass3RegisterUpliftCombinations extends Pass2Base {
          double asmSegmentCycles = asmSegment.getCycles();
          if (asmSegmentCycles > 0) {
             Integer statementIdx = asmSegment.getStatementIdx();
-            ControlFlowBlock block = graph.getBlockFromStatementIdx(statementIdx);
-            int maxLoopDepth = loopSet.getMaxLoopDepth(block.getLabel());
+            int maxLoopDepth=1;
+            if(statementIdx!=null) {
+               ControlFlowBlock block = graph.getBlockFromStatementIdx(statementIdx);
+               maxLoopDepth = loopSet.getMaxLoopDepth(block.getLabel());
+            }
             score += asmSegmentCycles * Math.pow(10, maxLoopDepth);
          }
       }

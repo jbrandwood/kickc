@@ -2,19 +2,24 @@ package dk.camelot64.kickc.passes;
 
 import dk.camelot64.kickc.icl.*;
 
-/** Pass that modifies a control flow graph to call procedures by passing return value through registers */
+import java.util.HashSet;
+import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.Set;
+
+/**
+ * Pass that modifies a control flow graph to call procedures by passing return value through registers
+ */
 public class Pass1ProcedureCallsReturnValue extends ControlFlowGraphCopyVisitor {
 
-   private ProgramScope scope;
-   private ControlFlowGraph graph;
+   private Program program;
 
    public Pass1ProcedureCallsReturnValue(Program program) {
-      this.scope = program.getScope();
-      this.graph = program.getGraph();
+      this.program = program;
    }
 
    public ControlFlowGraph generate() {
-      ControlFlowGraph generated = visitGraph(graph);
+      ControlFlowGraph generated = visitGraph(program.getGraph());
       return generated;
    }
 
@@ -23,17 +28,17 @@ public class Pass1ProcedureCallsReturnValue extends ControlFlowGraphCopyVisitor 
       // Procedure strategy implemented is currently variable-based transfer of parameters/return values
       // Generate return value assignment
       ProcedureRef procedureRef = origCall.getProcedure();
-      Procedure procedure = scope.getProcedure(procedureRef);
+      Procedure procedure = program.getScope().getProcedure(procedureRef);
       String procedureName = origCall.getProcedureName();
       StatementCall copyCall = new StatementCall(null, procedureName, null);
       copyCall.setParametersByAssignment(true);
       copyCall.setProcedure(procedureRef);
       addStatementToCurrentBlock(copyCall);
       getCurrentBlock().setCallSuccessor(procedure.getLabel().getRef());
-      if(!SymbolTypeBasic.VOID.equals(procedure.getReturnType())) {
+      if (!SymbolTypeBasic.VOID.equals(procedure.getReturnType())) {
          // Find return variable final version
          Label returnBlockLabel = procedure.getLabel("@return");
-         ControlFlowBlock returnBlock = graph.getBlock(returnBlockLabel.getRef());
+         ControlFlowBlock returnBlock = program.getGraph().getBlock(returnBlockLabel.getRef());
          VariableRef returnVarFinal = null;
          for (Statement statement : returnBlock.getStatements()) {
             if (statement instanceof StatementReturn) {
@@ -50,7 +55,48 @@ public class Pass1ProcedureCallsReturnValue extends ControlFlowGraphCopyVisitor 
          StatementAssignment returnAssignment = new StatementAssignment(origCall.getlValue(), returnVarFinal);
          addStatementToCurrentBlock(returnAssignment);
       }
+
+      // Patch versions of rValues in assignments for vars modified in the call
+      LabelRef successor = getOrigBlock().getDefaultSuccessor();
+      ControlFlowBlock successorBlock = program.getGraph().getBlock(successor);
+      Set<VariableRef> modifiedVars = program.getProcedureModifiedVars().getModifiedVars(procedure.getRef());
+      for (Statement statement : successorBlock.getStatements()) {
+         if (statement instanceof StatementPhiBlock) {
+            StatementPhiBlock phiBlock = (StatementPhiBlock) statement;
+            for (StatementPhiBlock.PhiVariable phiVariable : phiBlock.getPhiVariables()) {
+               VariableRef phiVar = phiVariable.getVariable();
+               VariableRef unversionedVar = new VariableRef(phiVar.getFullNameUnversioned());
+               if (modifiedVars.contains(unversionedVar)) {
+                  for (StatementPhiBlock.PhiRValue phiRValue : phiVariable.getValues()) {
+                     if (phiRValue.getPredecessor().equals(getOrigBlock().getLabel())) {
+                        VariableRef procReturnVersion = findReturnVersion(procedure, unversionedVar);
+                        phiRValue.setrValue(procReturnVersion);
+                     }
+                  }
+               }
+            }
+         }
+      }
+
       return null;
+   }
+
+   private VariableRef findReturnVersion(Procedure procedure, VariableRef assignedVar) {
+      String unversionedName = assignedVar.getFullNameUnversioned();
+      LabelRef returnBlock = new LabelRef(procedure.getScopeLabelRef().getFullName() + "::@return");
+      ControlFlowBlock block = program.getGraph().getBlock(returnBlock);
+      for (Statement statement : block.getStatements()) {
+         if (statement instanceof StatementAssignment) {
+            StatementAssignment assignment = (StatementAssignment) statement;
+            if (assignment.getlValue() instanceof VariableRef) {
+               VariableRef lValue = (VariableRef) assignment.getlValue();
+               if (lValue.getFullNameUnversioned().equals(unversionedName)) {
+                  return lValue;
+               }
+            }
+         }
+      }
+      throw new RuntimeException("Variable " + assignedVar + "modified by procedure " + procedure + " not found in @return block " + block.getLabel());
    }
 
    @Override

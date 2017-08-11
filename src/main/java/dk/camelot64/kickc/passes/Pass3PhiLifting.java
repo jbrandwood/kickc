@@ -1,6 +1,5 @@
 package dk.camelot64.kickc.passes;
 
-import dk.camelot64.kickc.CompileLog;
 import dk.camelot64.kickc.icl.*;
 
 import java.util.Collection;
@@ -85,6 +84,9 @@ public class Pass3PhiLifting {
                         newBlockStatements.add(newAssignment);
                         phiRValue.setrValue(newVar.getRef());
                         phiRValue.setPredecessor(newBlock.getLabel());
+                     } else if(block.getLabel().equals(predecessorBlock.getCallSuccessor())) {
+                        predecessorBlock.addStatementBeforeLast(newAssignment);
+                        phiRValue.setrValue(newVar.getRef());
                      } else {
                         predecessorBlock.addStatement(newAssignment);
                         phiRValue.setrValue(newVar.getRef());

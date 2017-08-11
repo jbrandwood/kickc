@@ -79,6 +79,8 @@ sum::@return: from sum
   to:@RETURN
 @END: from @BEGIN
 
+PROCEDURE MODIFY VARIABLE ANALYSIS
+
 CONTROL FLOW GRAPH WITH ASSIGNMENT CALL
 @BEGIN: from
   (byte) sum::a ← (byte) 1
@@ -282,10 +284,10 @@ Propagating live ranges...
 Propagating live ranges...
 CONTROL FLOW GRAPH - LIVE RANGES
 @BEGIN: from
-  [0] call sum param-assignment [ sum::return#0 s1#0 ]
+  [0] call sum param-assignment [ sum::return#0 ]
   to:@2
 @2: from @BEGIN
-  [1] (byte) s1#0 ← (byte) sum::return#0 [ sum::return#0 s1#0 ]
+  [1] (byte) s1#0 ← (byte) sum::return#0 [ s1#0 ]
   [2] call sum param-assignment [ sum::return#0 s1#0 ]
   to:@3
 @3: from @2
@@ -313,10 +315,10 @@ Propagating live ranges...
 Propagating live ranges...
 CONTROL FLOW GRAPH - PHI MEM COALESCED
 @BEGIN: from
-  [0] call sum param-assignment [ sum::return#0 s1#0 ]
+  [0] call sum param-assignment [ sum::return#0 ]
   to:@2
 @2: from @BEGIN
-  [1] (byte) s1#0 ← (byte) sum::return#0 [ sum::return#0 s1#0 ]
+  [1] (byte) s1#0 ← (byte) sum::return#0 [ s1#0 ]
   [2] call sum param-assignment [ sum::return#0 s1#0 ]
   to:@3
 @3: from @2
@@ -353,7 +355,7 @@ NATURAL LOOPS WITH DEPTH
 
 VARIABLE REGISTER WEIGHTS
 (byte) s1
-(byte) s1#0 0.5714285714285714
+(byte) s1#0 0.6666666666666666
 (byte) s2
 (byte) s2#0 4.0
 (byte) s3
@@ -364,7 +366,7 @@ VARIABLE REGISTER WEIGHTS
 (byte) sum::b
 (byte) sum::b#2 2.0
 (byte) sum::return
-(byte) sum::return#0 1.2000000000000002
+(byte) sum::return#0 1.5
 
 Initial phi equivalence classes
 [ sum::a#2 ]
@@ -389,7 +391,7 @@ Allocated zp byte:7 to zp byte:7 [ sum::return#0 ]
 INITIAL ASM
 //SEG0 @BEGIN
 BBEGIN:
-//SEG1 [0] call sum param-assignment [ sum::return#0 s1#0 ]
+//SEG1 [0] call sum param-assignment [ sum::return#0 ]
 //SEG2 [5] phi from @BEGIN to sum
 sum_from_BBEGIN:
 //SEG3 [5] phi (byte) sum::b#2 = (byte) 2 -- zpby1=coby1 
@@ -402,7 +404,7 @@ sum_from_BBEGIN:
   jmp B2
 //SEG5 @2
 B2:
-//SEG6 [1] (byte) s1#0 ← (byte) sum::return#0 [ sum::return#0 s1#0 ] -- zpby1=zpby2 
+//SEG6 [1] (byte) s1#0 ← (byte) sum::return#0 [ s1#0 ] -- zpby1=zpby2 
   lda 7
   sta 4
 //SEG7 [2] call sum param-assignment [ sum::return#0 s1#0 ]
@@ -451,8 +453,8 @@ Potential registers zp byte:6 [ s3#0 ] : zp byte:6 , reg byte a , reg byte x , r
 Potential registers zp byte:7 [ sum::return#0 ] : zp byte:7 , reg byte a , reg byte x , reg byte y , 
 
 REGISTER UPLIFT SCOPES
-Uplift Scope [] ∞: zp byte:6 [ s3#0 ] 4: zp byte:5 [ s2#0 ] 0.57: zp byte:4 [ s1#0 ] 
-Uplift Scope [sum] 2: zp byte:2 [ sum::a#2 ] 2: zp byte:3 [ sum::b#2 ] 1.2: zp byte:7 [ sum::return#0 ] 
+Uplift Scope [] ∞: zp byte:6 [ s3#0 ] 4: zp byte:5 [ s2#0 ] 0.67: zp byte:4 [ s1#0 ] 
+Uplift Scope [sum] 2: zp byte:2 [ sum::a#2 ] 2: zp byte:3 [ sum::b#2 ] 1.5: zp byte:7 [ sum::return#0 ] 
 
 Uplifting [] best 75 combination reg byte a [ s3#0 ] reg byte a [ s2#0 ] zp byte:4 [ s1#0 ] 
 Uplifting [sum] best 54 combination reg byte x [ sum::a#2 ] reg byte a [ sum::b#2 ] reg byte a [ sum::return#0 ] 
@@ -465,7 +467,7 @@ Succesful ASM optimization Pass5NextJumpElimination
 ASSEMBLER
 //SEG0 @BEGIN
 BBEGIN:
-//SEG1 [0] call sum param-assignment [ sum::return#0 s1#0 ]
+//SEG1 [0] call sum param-assignment [ sum::return#0 ]
 //SEG2 [5] phi from @BEGIN to sum
 sum_from_BBEGIN:
 //SEG3 [5] phi (byte) sum::b#2 = (byte) 2 -- aby=coby1 
@@ -475,7 +477,7 @@ sum_from_BBEGIN:
   jsr sum
 //SEG5 @2
 B2:
-//SEG6 [1] (byte) s1#0 ← (byte) sum::return#0 [ sum::return#0 s1#0 ] -- zpby1=aby 
+//SEG6 [1] (byte) s1#0 ← (byte) sum::return#0 [ s1#0 ] -- zpby1=aby 
   sta 2
 //SEG7 [2] call sum param-assignment [ sum::return#0 s1#0 ]
 //SEG8 [5] phi from @2 to sum
@@ -511,7 +513,7 @@ FINAL SYMBOL TABLE
 (label) @BEGIN
 (label) @END
 (byte) s1
-(byte) s1#0 zp byte:2 0.5714285714285714
+(byte) s1#0 zp byte:2 0.6666666666666666
 (byte) s2
 (byte) s2#0 reg byte a 4.0
 (byte) s3
@@ -523,7 +525,7 @@ FINAL SYMBOL TABLE
 (byte) sum::b
 (byte) sum::b#2 reg byte a 2.0
 (byte) sum::return
-(byte) sum::return#0 reg byte a 1.2000000000000002
+(byte) sum::return#0 reg byte a 1.5
 
 reg byte x [ sum::a#2 ]
 reg byte a [ sum::b#2 ]
@@ -535,7 +537,7 @@ reg byte a [ sum::return#0 ]
 FINAL CODE
 //SEG0 @BEGIN
 BBEGIN:
-//SEG1 [0] call sum param-assignment [ sum::return#0 s1#0 ]
+//SEG1 [0] call sum param-assignment [ sum::return#0 ]
 //SEG2 [5] phi from @BEGIN to sum
 sum_from_BBEGIN:
 //SEG3 [5] phi (byte) sum::b#2 = (byte) 2 -- aby=coby1 
@@ -545,7 +547,7 @@ sum_from_BBEGIN:
   jsr sum
 //SEG5 @2
 B2:
-//SEG6 [1] (byte) s1#0 ← (byte) sum::return#0 [ sum::return#0 s1#0 ] -- zpby1=aby 
+//SEG6 [1] (byte) s1#0 ← (byte) sum::return#0 [ s1#0 ] -- zpby1=aby 
   sta 2
 //SEG7 [2] call sum param-assignment [ sum::return#0 s1#0 ]
 //SEG8 [5] phi from @2 to sum

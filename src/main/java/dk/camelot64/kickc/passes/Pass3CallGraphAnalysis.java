@@ -1,6 +1,5 @@
 package dk.camelot64.kickc.passes;
 
-import dk.camelot64.kickc.CompileLog;
 import dk.camelot64.kickc.icl.*;
 
 /** Finds the call graph for the control flow graph - identifies all calls in all scopes and creates a graph from these. */
@@ -13,7 +12,6 @@ public class Pass3CallGraphAnalysis extends Pass2Base {
 
    public void findCallGraph() {
       CallGraph callGraph = new CallGraph();
-
       for (ControlFlowBlock block : getGraph().getAllBlocks()) {
          LabelRef scopeRef = getScopeRef(block, getProgram());
          for (Statement statement : block.getStatements()) {

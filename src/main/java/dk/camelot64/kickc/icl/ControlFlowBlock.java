@@ -52,6 +52,10 @@ public class ControlFlowBlock {
       this.statements.add(statement);
    }
 
+   public void addStatementBeforeLast(Statement statement) {
+      this.statements.add(statements.size()-1, statement);
+   }
+
    public void setDefaultSuccessor(LabelRef defaultSuccessor) {
       this.defaultSuccessor = defaultSuccessor;
    }
@@ -178,4 +182,5 @@ public class ControlFlowBlock {
       }
       return successors;
    }
+
 }

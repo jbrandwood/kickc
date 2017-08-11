@@ -22,16 +22,16 @@ public class Pass3LiveRangesAnalysis extends Pass2Base {
 
       LiveRangeVariables liveRanges = initializeLiveRanges();
       getProgram().setLiveRangeVariables(liveRanges);
-      //log.append("CONTROL FLOW GRAPH - LIVE RANGES");
-      //log.append(program.getGraph().toString(program.getScope()));
+      //getLog().append("CONTROL FLOW GRAPH - LIVE RANGES");
+      //getLog().append(getProgram().getGraph().toString(getProgram()));
 
       boolean propagating;
       do {
          propagating = propagateLiveRanges(liveRanges);
          getProgram().setLiveRangeVariables(liveRanges);
          getLog().append("Propagating live ranges...");
-         //log.append("CONTROL FLOW GRAPH - LIVE RANGES");
-         //log.append(program.getGraph().toString(program.getScope()));
+         //getLog().append("CONTROL FLOW GRAPH - LIVE RANGES");
+         //getLog().append(getProgram().getGraph().toString(getProgram()));
       } while (propagating);
 
       getProgram().setLiveRangeVariables(liveRanges);
@@ -137,8 +137,17 @@ public class Pass3LiveRangesAnalysis extends Pass2Base {
                   LabelRef predecessorRef = phiRValue.getPredecessor();
                   ControlFlowBlock predecessor = program.getGraph().getBlock(predecessorRef);
                   List<Statement> predecessorStatements = predecessor.getStatements();
-                  Statement predecessorLastStatement = predecessorStatements.get(predecessorStatements.size() - 1);
-                  liveRanges.addAlive((VariableRef) phiRValue.getrValue(), predecessorLastStatement);
+                  // Is this block a procedure called from the predecessor?
+                  if(currentBlock.getLabel().equals(predecessor.getCallSuccessor())) {
+                     // Add to last statement before call in predecessor
+                     StatementCall callStatement = (StatementCall) predecessorStatements.get(predecessorStatements.size() - 1);
+                     Statement predecessorLastStatementBeforeCall = predecessorStatements.get(predecessorStatements.size() - 2);
+                     liveRanges.addAlive((VariableRef) phiRValue.getrValue(), predecessorLastStatementBeforeCall);
+                  }  else {
+                     // Add to last statement of predecessor
+                     Statement predecessorLastStatement = predecessorStatements.get(predecessorStatements.size() - 1);
+                     liveRanges.addAlive((VariableRef) phiRValue.getrValue(), predecessorLastStatement);
+                  }
                }
             }
          }
@@ -315,10 +324,18 @@ public class Pass3LiveRangesAnalysis extends Pass2Base {
          ArrayList<Statement> statements = new ArrayList<>();
          List<ControlFlowBlock> predecessors = program.getGraph().getPredecessors(block);
          for (ControlFlowBlock predecessor : predecessors) {
-            ArrayList<Statement> lastStatements = getLastStatements(predecessor);
-
-
-            statements.addAll(lastStatements);
+            // If this block is a procedure called from the predecessor - the last statement is the one before the call
+            if(block.getLabel().equals(predecessor.getCallSuccessor())) {
+               List<Statement> predecessorStatements = predecessor.getStatements();
+               StatementCall call = (StatementCall) predecessorStatements.get(predecessorStatements.size() - 1);
+               if(predecessorStatements.size()>1) {
+                  Statement lastBeforeCall = predecessorStatements.get(predecessorStatements.size() - 2);
+                  statements.add(lastBeforeCall);
+               }
+            }  else {
+               ArrayList<Statement> lastStatements = getLastStatements(predecessor);
+               statements.addAll(lastStatements);
+            }
          }
          return statements;
       }
@@ -356,8 +373,9 @@ public class Pass3LiveRangesAnalysis extends Pass2Base {
 
       @Override
       public Void visitCall(StatementCall call) {
-         propagate(call, getPreviousStatements(), null);
-         // Also propagate back through all statements of the procedure
+         // Do not propagate directly to previous statement
+         //propagate(call, getPreviousStatements(), null);
+         // Instead propagate back through all statements of the procedure
          ProcedureRef procedure = call.getProcedure();
          LabelRef procedureReturnBlock = procedure.getReturnBlock();
          ControlFlowBlock returnBlock = program.getGraph().getBlock(procedureReturnBlock);

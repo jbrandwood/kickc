@@ -191,6 +191,16 @@ public abstract class Scope implements Symbol {
       return scopes;
    }
 
+   public Collection<Procedure> getAllProcedures(boolean includeSubScopes) {
+      Collection<Procedure> procedures = new ArrayList<>();
+      for (Scope scope : getAllScopes(includeSubScopes)) {
+         if(scope instanceof Procedure) {
+            procedures.add((Procedure) scope);
+         }
+      }
+      return procedures;
+   }
+
 
    public Label addLabel(String name) {
       Label symbol = new Label(name, this, false);

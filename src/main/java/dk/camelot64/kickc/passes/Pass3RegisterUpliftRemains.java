@@ -61,7 +61,7 @@ public class Pass3RegisterUpliftRemains extends Pass2Base {
                }
                // If no clobber - Find value of the resulting allocation
                boolean hasClobberProblem = new Pass3AssertNoCpuClobber(getProgram()).hasClobberProblem(false);
-               int combinationScore = getAsmScore(getProgram());
+               int combinationScore = Pass3RegisterUpliftCombinations.getAsmScore(getProgram());
                //StringBuilder msg = new StringBuilder();
                //msg.append("Uplift remains attempt [" + equivalenceClass + "] ");
                //if (hasClobberProblem) {
@@ -95,23 +95,6 @@ public class Pass3RegisterUpliftRemains extends Pass2Base {
       }
 
 
-   }
-
-   private int getAsmScore(Program program) {
-      int score = 0;
-      AsmProgram asm = program.getAsm();
-      ControlFlowGraph graph = program.getGraph();
-      NaturalLoopSet loopSet = program.getLoopSet();
-      for (AsmSegment asmSegment : asm.getSegments()) {
-         double asmSegmentCycles = asmSegment.getCycles();
-         if (asmSegmentCycles > 0) {
-            Integer statementIdx = asmSegment.getStatementIdx();
-            ControlFlowBlock block = graph.getBlockFromStatementIdx(statementIdx);
-            int maxLoopDepth = loopSet.getMaxLoopDepth(block.getLabel());
-            score += asmSegmentCycles * Math.pow(10, maxLoopDepth);
-         }
-      }
-      return score;
    }
 
 }

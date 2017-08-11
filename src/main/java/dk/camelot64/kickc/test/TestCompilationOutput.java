@@ -80,6 +80,10 @@ public class TestCompilationOutput extends TestCase {
       compileAndCompare("modglobal");
    }
 
+   public void testModGlobalMin() throws IOException, URISyntaxException {
+      compileAndCompare("modglobalmin");
+   }
+
    public void testUseUninitialized() throws IOException, URISyntaxException {
       String filename = "useuninitialized";
       compileAndCompare(filename);

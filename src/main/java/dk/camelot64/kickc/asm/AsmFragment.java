@@ -137,7 +137,7 @@ public class AsmFragment {
       ControlFlowBlock destinationBlock = graph.getBlock(destination);
       String destinationLabel;
       if (destinationBlock.hasPhiBlock()) {
-         destinationLabel = (destinationBlock.getLabel().getLocalName() + "_from_" + block.getLabel().getLocalName()).replace('@', 'B').replace(':', '_');
+         destinationLabel = (destinationBlock.getLabel().getLocalName() + "_from_" + block.getLabel().getLocalName()).replace('@', 'b').replace(':', '_');
       } else {
          destinationLabel = destination.getLocalName();
       }
@@ -332,7 +332,7 @@ public class AsmFragment {
             bound = String.format("$%x", boundInt.getNumber());
          }
       } else if (boundValue instanceof Label) {
-         bound = ((Label) boundValue).getFullName().replace('@', 'B').replace(':', '_');
+         bound = ((Label) boundValue).getLocalName().replace('@', 'b').replace(':', '_');
       } else {
          throw new RuntimeException("Bound Value Type not implemented " + boundValue);
       }

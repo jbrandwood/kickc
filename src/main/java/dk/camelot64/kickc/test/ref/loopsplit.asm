@@ -1,26 +1,27 @@
-BBEGIN:
+bbegin:
   jsr main
-BEND:
-main:
-main__B1_from_main:
-  ldy #$0
-  ldx #$64
-main__B1:
-  dex
-  cpx #$0
-  bne main__B2
-main__Breturn:
-  rts
-main__B2:
+bend:
+main: {
+  b1_from_main:
+    ldy #$0
+    ldx #$64
+  b1:
+    dex
+    cpx #$0
+    bne b2
+  breturn:
+    rts
+}
+b2:
   cpx #$32
   beq !+
-  bcs main__B4
+  bcs b4
 !:
-main__B5:
+b5:
   dey
-main__B1_from_B5:
-  jmp main__B1
-main__B4:
+b1_from_b5:
+  jmp b1
+b4:
   iny
-main__B1_from_B4:
-  jmp main__B1
+b1_from_b4:
+  jmp b1

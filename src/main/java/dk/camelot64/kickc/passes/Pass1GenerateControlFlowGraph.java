@@ -9,8 +9,8 @@ import java.util.Stack;
 /** Pass that generates a control flow graph for the program */
 public class Pass1GenerateControlFlowGraph {
 
-   public static final String BEGIN_BLOCK_NAME = "@BEGIN";
-   public static final String END_BLOCK_NAME = "@END";
+   public static final String BEGIN_BLOCK_NAME = "@begin";
+   public static final String END_BLOCK_NAME = "@end";
    private Scope scope;
    private Map<LabelRef, ControlFlowBlock> blocks;
    private ControlFlowBlock firstBlock;
@@ -66,7 +66,7 @@ public class Pass1GenerateControlFlowGraph {
             blockStack.push(procBlock);
          }  else if(statement instanceof StatementProcedureEnd) {
             // Procedure strategy implemented is currently variable-based transfer of parameters/return values
-            currentBlock.setDefaultSuccessor(new Label("@RETURN", scope, false).getRef());
+            currentBlock.setDefaultSuccessor(new Label("@return", scope, false).getRef());
             ControlFlowBlock nextBlock = getOrCreateBlock(scope.addLabelIntermediate().getRef());
             blockStack.pop();
             ControlFlowBlock prevBlock = blockStack.pop();

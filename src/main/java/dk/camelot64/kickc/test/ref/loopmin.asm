@@ -1,22 +1,22 @@
-BBEGIN:
-B1_from_BBEGIN:
+bbegin:
+b1_from_bbegin:
   lda #$0
   ldx #$a
-B1_from_B3:
-B1:
+b1_from_b3:
+b1:
   cpx #$5
   beq !+
-  bcs B2
+  bcs b2
 !:
-B3_from_B1:
-B3:
+b3_from_b1:
+b3:
   dex
   cpx #$0
-  bne B1_from_B3
-BEND:
-B2:
+  bne b1_from_b3
+bend:
+b2:
   stx $ff
   clc
   adc $ff
-B3_from_B2:
-  jmp B3
+b3_from_b2:
+  jmp b3

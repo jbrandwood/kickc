@@ -115,10 +115,10 @@ public class AsmSegment {
       return clobber;
    }
 
-   public String toString(boolean comments) {
+   public String toString(AsmProgram.AsmPrintState printState) {
       StringBuffer out = new StringBuffer();
-      if (comments) {
-         out.append("//SEG").append(getIndex());
+      if (printState.isComments()) {
+         out.append(printState.getIndent()).append("//SEG").append(getIndex());
          if (source != null) {
             out.append(" ").append(source);
          }
@@ -129,22 +129,30 @@ public class AsmSegment {
          out.append("\n");
       }
       for (AsmLine line : lines) {
-         if (line instanceof AsmComment && !comments) {
+         if (line instanceof AsmComment && !printState.isComments()) {
             if (!((AsmComment) line).getComment().contains("Fragment")) {
                continue;
             }
          }
-         if (line instanceof AsmComment || line instanceof AsmInstruction) {
+         if(line instanceof AsmProcEnd) {
+            printState.decIndent();
+         }
+         out.append(printState.getIndent());
+         if (line instanceof AsmComment || line instanceof AsmInstruction ) {
             out.append("  ");
          }
          out.append(line.getAsm() + "\n");
+         if(line instanceof AsmProcBegin) {
+            printState.incIndent();
+         }
+
       }
       return out.toString();
    }
 
    @Override
    public String toString() {
-      return toString(true);
+      return toString(new AsmProgram.AsmPrintState(true));
    }
 
 }

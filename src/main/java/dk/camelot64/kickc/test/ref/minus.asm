@@ -1,13 +1,13 @@
-BBEGIN:
-B1_from_BBEGIN:
+bbegin:
+b1_from_bbegin:
   ldx #$5
-B1_from_B1:
-B1:
+b1_from_b1:
+b1:
   txa
   clc
   adc #$4
   sta $1100,x
   inx
   cpx #$a
-  bcc B1_from_B1
-BEND:
+  bcc b1_from_b1
+bend:

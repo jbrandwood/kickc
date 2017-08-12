@@ -1,8 +1,9 @@
-BBEGIN:
+bbegin:
   jsr main
-BEND:
-main:
-  lda #$1
-  sta $400
-main__Breturn:
-  rts
+bend:
+main: {
+    lda #$1
+    sta $400
+  breturn:
+    rts
+}

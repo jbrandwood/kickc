@@ -1,5 +1,5 @@
-BBEGIN:
-B1_from_BBEGIN:
+bbegin:
+b1_from_bbegin:
   lda #$0
   sta $5
   ldx #$c
@@ -9,8 +9,8 @@ B1_from_BBEGIN:
   sta $2
   lda #>$400
   sta $2+$1
-B1_from_B3:
-B1:
+b1_from_b3:
+b1:
   ldy #$0
   lda #$51
   sta ($2),y
@@ -24,14 +24,14 @@ B1:
   adc #$18
   tax
   cpx #$27
-  bcs B2
-B3_from_B1:
-B3:
+  bcs b2
+b3_from_b1:
+b3:
   lda $4
   cmp #$28
-  bcc B1_from_B3
-BEND:
-B2:
+  bcc b1_from_b3
+bend:
+b2:
   inc $5
   lda $2
   clc
@@ -44,5 +44,5 @@ B2:
   sec
   sbc #$27
   tax
-B3_from_B2:
-  jmp B3
+b3_from_b2:
+  jmp b3

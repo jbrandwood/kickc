@@ -1,31 +1,32 @@
-BBEGIN:
-sum_from_BBEGIN:
+bbegin:
+sum_from_bbegin:
   lda #$2
   ldy #$1
   jsr sum
-B2:
+b2:
   sta $2
-sum_from_B2:
+sum_from_b2:
   lda #$4
   ldy #$3
   jsr sum
-B3:
+b3:
   tax
-sum_from_B3:
+sum_from_b3:
   lda #$d
   ldy #$9
   jsr sum
-B4:
+b4:
   sta $3
   txa
   clc
   adc $2
   clc
   adc $3
-BEND:
-sum:
-  sty $ff
-  clc
-  adc $ff
-sum__Breturn:
-  rts
+bend:
+sum: {
+    sty $ff
+    clc
+    adc $ff
+  breturn:
+    rts
+}

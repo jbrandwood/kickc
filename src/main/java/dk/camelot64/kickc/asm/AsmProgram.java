@@ -59,6 +59,14 @@ public class AsmProgram {
       addLine(new AsmLabel(label));
    }
 
+   public void addProcBegin(String label) {
+      addLine(new AsmProcBegin(label));
+   }
+
+   public void addProcEnd() {
+      addLine(new AsmProcEnd());
+   }
+
    public void addInstruction(String mnemonic, AsmAddressingMode addressingMode, String parameter) {
       AsmInstructionType instructionType = AsmInstructionSet.getInstructionType(mnemonic, addressingMode, parameter);
       addLine(new AsmInstruction(instructionType, parameter));
@@ -108,12 +116,44 @@ public class AsmProgram {
    }
 
    public String toString(boolean comments) {
+      return toString(new AsmPrintState(comments));
+   }
+
+   public String toString(AsmPrintState printState) {
       StringBuilder out = new StringBuilder();
       for (AsmSegment segment : segments) {
-         out.append(segment.toString(comments));
+         out.append(segment.toString(printState));
       }
       return out.toString();
    }
+
+   static class AsmPrintState {
+      boolean comments;
+      String indent;
+
+      public AsmPrintState(boolean comments) {
+         this.comments = comments;
+         this.indent = "";
+      }
+
+      public boolean isComments() {
+         return comments;
+      }
+
+      public void incIndent() {
+         this.indent = this.indent + "  ";
+      }
+
+      public void decIndent() {
+         this.indent = this.indent.substring(0, this.indent.length()-2);
+      }
+
+      public String getIndent() {
+         return indent;
+      }
+
+   }
+
 
    @Override
    public String toString() {
@@ -135,4 +175,5 @@ public class AsmProgram {
       }
       return statementSegments;
    }
+
 }

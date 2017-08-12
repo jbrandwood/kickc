@@ -38,6 +38,10 @@ public class AsmProgramStaticRegisterValues {
    private AsmRegisterValues updateStaticRegisterValues(AsmRegisterValues current, AsmLine line) {
       if (line instanceof AsmLabel) {
          current = new AsmRegisterValues();
+      } else if (line instanceof AsmProcBegin) {
+         current = new AsmRegisterValues();
+      } else if (line instanceof AsmProcEnd) {
+         current = new AsmRegisterValues();
       } else if (line instanceof AsmInstruction) {
          AsmInstruction instruction = (AsmInstruction) line;
          values.put(instruction, current);

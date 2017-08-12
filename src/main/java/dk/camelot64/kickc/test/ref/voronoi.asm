@@ -1,101 +1,103 @@
-BBEGIN:
+bbegin:
   jsr main
-BEND:
-main:
-addpoint_from_main:
-  lda #$1
-  sta $2
-  ldy #$5
-  lda #$0
-  sta $8
-  lda #$5
-  jsr addpoint
-main__B3:
-addpoint_from_B3:
-  lda #$2
-  sta $2
-  ldy #$8
-  lda #$f
-  jsr addpoint
-main__B4:
-addpoint_from_B4:
-  lda #$3
-  sta $2
-  ldy #$e
-  lda #$6
-  jsr addpoint
-main__B5:
-addpoint_from_B5:
-  lda #$4
-  sta $2
-  ldy #$2
-  lda #$22
-  jsr addpoint
-main__B6:
-addpoint_from_B6:
-  lda #$5
-  sta $2
-  ldy #$11
-  lda #$15
-  jsr addpoint
-main__B7:
-addpoint_from_B7:
-  lda #$7
-  sta $2
-  ldy #$16
-  lda #$1f
-  jsr addpoint
-main__B8:
-  jsr initscreen
-main__B1:
-  jsr render
-main__B10:
-  jsr animate
-main__B11:
-  jmp main__B1
-main__Breturn:
-  rts
-animate:
-  lda $1000
-  clc
-  adc #$1
-  sta $1000
-  lda $1000
-  cmp #$28
-  beq animate__B1
-animate__B2:
-  lda $1100
-  clc
-  adc #$1
-  sta $1100
-  lda $1100
-  cmp #$19
-  beq animate__B3
-animate__B4:
-  ldx $1001
-  dex
-  stx $1001
-  lda $1001
-  cmp #$ff
-  beq animate__B5
-animate__B6:
-  lda $1102
-  clc
-  adc #$1
-  sta $1102
-  lda $1102
-  cmp #$19
-  beq animate__B7
-animate__B8:
-  ldx $1103
-  dex
-  stx $1103
-  lda $1103
-  cmp #$ff
-  beq animate__B9
-animate__Breturn:
-  rts
-animate__B9:
+bend:
+main: {
+  addpoint_from_main:
+    lda #$1
+    sta $2
+    ldy #$5
+    lda #$0
+    sta $8
+    lda #$5
+    jsr addpoint
+  b3:
+  addpoint_from_b3:
+    lda #$2
+    sta $2
+    ldy #$8
+    lda #$f
+    jsr addpoint
+  b4:
+  addpoint_from_b4:
+    lda #$3
+    sta $2
+    ldy #$e
+    lda #$6
+    jsr addpoint
+  b5:
+  addpoint_from_b5:
+    lda #$4
+    sta $2
+    ldy #$2
+    lda #$22
+    jsr addpoint
+  b6:
+  addpoint_from_b6:
+    lda #$5
+    sta $2
+    ldy #$11
+    lda #$15
+    jsr addpoint
+  b7:
+  addpoint_from_b7:
+    lda #$7
+    sta $2
+    ldy #$16
+    lda #$1f
+    jsr addpoint
+  b8:
+    jsr initscreen
+  b1:
+    jsr render
+  b10:
+    jsr animate
+  b11:
+    jmp b1
+  breturn:
+    rts
+}
+animate: {
+    lda $1000
+    clc
+    adc #$1
+    sta $1000
+    lda $1000
+    cmp #$28
+    beq b1
+  b2:
+    lda $1100
+    clc
+    adc #$1
+    sta $1100
+    lda $1100
+    cmp #$19
+    beq b3
+  b4:
+    ldx $1001
+    dex
+    stx $1001
+    lda $1001
+    cmp #$ff
+    beq b5
+  b6:
+    lda $1102
+    clc
+    adc #$1
+    sta $1102
+    lda $1102
+    cmp #$19
+    beq b7
+  b8:
+    ldx $1103
+    dex
+    stx $1103
+    lda $1103
+    cmp #$ff
+    beq b9
+  breturn:
+    rts
+}
+b9:
   lda #$19
   sta $1103
   lda $1003
@@ -104,181 +106,185 @@ animate__B9:
   sta $1003
   lda $1003
   cmp #$28
-  bcs animate__B11
-  jmp animate__Breturn
-animate__B11:
+  bcs b11
+  jmp breturn
+b11:
   lda $1003
   sec
   sbc #$28
   sta $1003
-  jmp animate__Breturn
-animate__B7:
+  jmp breturn
+b7:
   lda #$0
   sta $1102
-  jmp animate__B8
-animate__B5:
+  jmp b8
+b5:
   lda #$28
   sta $1001
-  jmp animate__B6
-animate__B3:
+  jmp b6
+b3:
   lda #$0
   sta $1100
-  jmp animate__B4
-animate__B1:
+  jmp b4
+b1:
   lda #$0
   sta $1000
-  jmp animate__B2
-render:
-render__B1_from_render:
-  lda #<$d800
-  sta $3
-  lda #>$d800
-  sta $3+$1
-  lda #$0
-  sta $2
-render__B1_from_B3:
-render__B1:
-render__B2_from_B1:
-  lda #$0
-  sta $5
-render__B2_from_B5:
-render__B2:
-  lda $5
-  sta $9
-  lda $2
-  sta $a
-  jsr findcol
-render__B5:
-  tya
-  ldy $5
-  sta ($3),y
-  inc $5
-  lda $5
-  cmp #$28
-  bcc render__B2_from_B5
-render__B3:
-  lda $3
-  clc
-  adc #$28
-  sta $3
-  bcc !+
-  inc $3+$1
-!:
-  inc $2
-  lda $2
-  cmp #$19
-  bcc render__B1_from_B3
-render__Breturn:
-  rts
-findcol:
-findcol__B1_from_findcol:
-  ldy #$0
-  lda #$ff
-  sta $6
-  ldx #$0
-findcol__B1_from_B13:
-findcol__B1:
-  lda $1000,x
-  sta $7
-  lda $1100,x
-  sta $b
-  lda $9
-  cmp $7
-  beq findcol__B2
-findcol__B3:
-  lda $9
-  cmp $7
-  bcc findcol__B6
-findcol__B7:
-  lda $9
-  sec
-  sbc $7
-  sta $7
-findcol__B8_from_B7:
-findcol__B8:
-  lda $a
-  cmp $b
-  bcc findcol__B9
-findcol__B10:
-  lda $a
-  sec
-  sbc $b
-  clc
-  adc $7
-findcol__B11_from_B10:
-findcol__B11:
-  cmp $6
-  bcc findcol__B12
-findcol__B13_from_B11:
-findcol__B13:
-  inx
-  cpx $8
-  bcc findcol__B1_from_B13
-findcol__Breturn_from_B13:
-  jmp findcol__Breturn
-findcol__Breturn_from_B2:
-  ldy #$0
-findcol__Breturn:
-  rts
-findcol__B12:
+  jmp b2
+render: {
+  b1_from_render:
+    lda #<$d800
+    sta $3
+    lda #>$d800
+    sta $3+$1
+    lda #$0
+    sta $2
+  b1_from_b3:
+  b1:
+  b2_from_b1:
+    lda #$0
+    sta $5
+  b2_from_b5:
+  b2:
+    lda $5
+    sta $9
+    lda $2
+    sta $a
+    jsr findcol
+  b5:
+    tya
+    ldy $5
+    sta ($3),y
+    inc $5
+    lda $5
+    cmp #$28
+    bcc b2_from_b5
+  b3:
+    lda $3
+    clc
+    adc #$28
+    sta $3
+    bcc !+
+    inc $3+$1
+  !:
+    inc $2
+    lda $2
+    cmp #$19
+    bcc b1_from_b3
+  breturn:
+    rts
+}
+findcol: {
+  b1_from_findcol:
+    ldy #$0
+    lda #$ff
+    sta $6
+    ldx #$0
+  b1_from_b13:
+  b1:
+    lda $1000,x
+    sta $7
+    lda $1100,x
+    sta $b
+    lda $9
+    cmp $7
+    beq b2
+  b3:
+    lda $9
+    cmp $7
+    bcc b6
+  b7:
+    lda $9
+    sec
+    sbc $7
+    sta $7
+  b8_from_b7:
+  b8:
+    lda $a
+    cmp $b
+    bcc b9
+  b10:
+    lda $a
+    sec
+    sbc $b
+    clc
+    adc $7
+  b11_from_b10:
+  b11:
+    cmp $6
+    bcc b12
+  b13_from_b11:
+  b13:
+    inx
+    cpx $8
+    bcc b1_from_b13
+  breturn_from_b13:
+    jmp breturn
+  breturn_from_b2:
+    ldy #$0
+  breturn:
+    rts
+}
+b12:
   ldy $1200,x
   sta $6
-findcol__B13_from_B12:
-  jmp findcol__B13
-findcol__B9:
+b13_from_b12:
+  jmp b13
+b9:
   lda $b
   sec
   sbc $a
   clc
   adc $7
-findcol__B11_from_B9:
-  jmp findcol__B11
-findcol__B6:
+b11_from_b9:
+  jmp b11
+b6:
   lda $7
   sec
   sbc $9
   sta $7
-findcol__B8_from_B6:
-  jmp findcol__B8
-findcol__B2:
+b8_from_b6:
+  jmp b8
+b2:
   lda $a
   cmp $b
-  beq findcol__Breturn_from_B2
-  jmp findcol__B3
-initscreen:
-initscreen__B1_from_initscreen:
-  lda #<$400
-  sta $3
-  lda #>$400
-  sta $3+$1
-initscreen__B1_from_B1:
-initscreen__B1:
-  ldy #$0
-  lda #$e6
-  sta ($3),y
-  inc $3
-  bne !+
-  inc $3+$1
-!:
-  lda $3+$1
-  cmp #>$7e8
-  bcc initscreen__B1_from_B1
-  bne !+
-  lda $3
-  cmp #<$7e8
-  bcc initscreen__B1_from_B1
-!:
-initscreen__Breturn:
-  rts
-addpoint:
-  ldx $8
-  sta $1000,x
-  tya
-  ldy $8
-  sta $1100,y
-  lda $2
-  ldx $8
-  sta $1200,x
-  inc $8
-addpoint__Breturn:
-  rts
+  beq breturn_from_b2
+  jmp b3
+initscreen: {
+  b1_from_initscreen:
+    lda #<$400
+    sta $3
+    lda #>$400
+    sta $3+$1
+  b1_from_b1:
+  b1:
+    ldy #$0
+    lda #$e6
+    sta ($3),y
+    inc $3
+    bne !+
+    inc $3+$1
+  !:
+    lda $3+$1
+    cmp #>$7e8
+    bcc b1_from_b1
+    bne !+
+    lda $3
+    cmp #<$7e8
+    bcc b1_from_b1
+  !:
+  breturn:
+    rts
+}
+addpoint: {
+    ldx $8
+    sta $1000,x
+    tya
+    ldy $8
+    sta $1100,y
+    lda $2
+    ldx $8
+    sta $1200,x
+    inc $8
+  breturn:
+    rts
+}

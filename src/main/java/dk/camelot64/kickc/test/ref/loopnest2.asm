@@ -1,66 +1,69 @@
-BBEGIN:
+bbegin:
   jsr main
-BEND:
-main:
-main__B1_from_main:
-  lda #$64
-  sta $2
-main__B1_from_B3:
-main__B1:
-main__B2_from_B1:
-  lda #$64
-  sta $3
-main__B2_from_B5:
-main__B2:
-  jsr nest1
-main__B5:
-  dec $3
-  lda $3
-  bne main__B2_from_B5
-main__B3:
-  dec $2
-  lda $2
-  bne main__B1_from_B3
-main__Breturn:
-  rts
-nest1:
-nest1__B1_from_nest1:
-  lda #$64
-  sta $4
-nest1__B1_from_B3:
-nest1__B1:
-nest1__B2_from_B1:
-  lda #$64
-nest1__B2_from_B5:
-nest1__B2:
-  jsr nest2
-nest1__B5:
-  sec
-  sbc #$1
-  cmp #$0
-  bne nest1__B2_from_B5
-nest1__B3:
-  dec $4
-  lda $4
-  bne nest1__B1_from_B3
-nest1__Breturn:
-  rts
-nest2:
-nest2__B1_from_nest2:
-  ldx #$64
-nest2__B1_from_B3:
-nest2__B1:
-nest2__B2_from_B1:
-  ldy #$64
-nest2__B2_from_B2:
-nest2__B2:
-  sty $400
-  dey
-  cpy #$0
-  bne nest2__B2_from_B2
-nest2__B3:
-  dex
-  cpx #$0
-  bne nest2__B1_from_B3
-nest2__Breturn:
-  rts
+bend:
+main: {
+  b1_from_main:
+    lda #$64
+    sta $2
+  b1_from_b3:
+  b1:
+  b2_from_b1:
+    lda #$64
+    sta $3
+  b2_from_b5:
+  b2:
+    jsr nest1
+  b5:
+    dec $3
+    lda $3
+    bne b2_from_b5
+  b3:
+    dec $2
+    lda $2
+    bne b1_from_b3
+  breturn:
+    rts
+}
+nest1: {
+  b1_from_nest1:
+    lda #$64
+    sta $4
+  b1_from_b3:
+  b1:
+  b2_from_b1:
+    lda #$64
+  b2_from_b5:
+  b2:
+    jsr nest2
+  b5:
+    sec
+    sbc #$1
+    cmp #$0
+    bne b2_from_b5
+  b3:
+    dec $4
+    lda $4
+    bne b1_from_b3
+  breturn:
+    rts
+}
+nest2: {
+  b1_from_nest2:
+    ldx #$64
+  b1_from_b3:
+  b1:
+  b2_from_b1:
+    ldy #$64
+  b2_from_b2:
+  b2:
+    sty $400
+    dey
+    cpy #$0
+    bne b2_from_b2
+  b3:
+    dex
+    cpx #$0
+    bne b1_from_b3
+  breturn:
+    rts
+}

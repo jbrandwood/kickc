@@ -32,7 +32,11 @@ public class Pass3CodeGeneration {
          genBlockEntryPoints(asm, block);
          // Generate label
          asm.startSegment(null, block.getLabel().getFullName());
-         asm.addLabel(block.getLabel().getFullName().replace('@', 'B').replace(':', '_'));
+         if(block.isProcedureEntry(program)) {
+            asm.addProcBegin(block.getLabel().getFullName().replace('@', 'b').replace(':', '_'));
+         }else {
+            asm.addLabel(block.getLabel().getLocalName().replace('@', 'b').replace(':', '_'));
+         }
          // Generate statements
          genStatements(asm, block);
          // Generate exit
@@ -41,7 +45,10 @@ public class Pass3CodeGeneration {
             if (defaultSuccessor.hasPhiBlock()) {
                genBlockPhiTransition(asm, block, defaultSuccessor);
             }
-            asm.addInstruction("JMP", AsmAddressingMode.ABS, defaultSuccessor.getLabel().getFullName().replace('@', 'B').replace(':', '_'));
+            asm.addInstruction("JMP", AsmAddressingMode.ABS, defaultSuccessor.getLabel().getLocalName().replace('@', 'b').replace(':', '_'));
+         }
+         if(block.isProcedureExit(program)) {
+            asm.addProcEnd();
          }
       }
       program.setAsm(asm);
@@ -168,7 +175,7 @@ public class Pass3CodeGeneration {
          for (ControlFlowBlock predecessor : predecessors) {
             if (block.getLabel().equals(predecessor.getConditionalSuccessor())) {
                genBlockPhiTransition(asm, predecessor, block);
-               asm.addInstruction("JMP", AsmAddressingMode.ABS, block.getLabel().getFullName().replace('@', 'B').replace(':', '_'));
+               asm.addInstruction("JMP", AsmAddressingMode.ABS, block.getLabel().getLocalName().replace('@', 'b').replace(':', '_'));
             }
          }
       }
@@ -177,7 +184,7 @@ public class Pass3CodeGeneration {
    private void genBlockPhiTransition(AsmProgram asm, ControlFlowBlock fromBlock, ControlFlowBlock toBlock) {
       Statement toFirstStatement = toBlock.getStatements().get(0);
       asm.startSegment(toFirstStatement.getIndex(), "["+toFirstStatement.getIndex()+"]"+" phi from " + fromBlock.getLabel().getFullName()+" to "+toBlock.getLabel().getFullName());
-      asm.addLabel((toBlock.getLabel().getFullName() + "_from_" + fromBlock.getLabel().getLocalName()).replace('@', 'B').replace(':', '_'));
+      asm.addLabel((toBlock.getLabel().getLocalName() + "_from_" + fromBlock.getLabel().getLocalName()).replace('@', 'b').replace(':', '_'));
       if (toBlock.hasPhiBlock()) {
          StatementPhiBlock phiBlock = toBlock.getPhiBlock();
          List<StatementPhiBlock.PhiVariable> phiVariables = new ArrayList<>(phiBlock.getPhiVariables());

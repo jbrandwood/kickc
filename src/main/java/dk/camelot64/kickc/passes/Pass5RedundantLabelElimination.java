@@ -11,9 +11,9 @@ import java.util.Set;
 /**
  * Optimize assembler code by removing all unused labels
  */
-public class Pass6RedundantLabelElimination extends Pass6AsmOptimization {
+public class Pass5RedundantLabelElimination extends Pass5AsmOptimization {
 
-   public Pass6RedundantLabelElimination(Program program) {
+   public Pass5RedundantLabelElimination(Program program) {
       super(program);
    }
 

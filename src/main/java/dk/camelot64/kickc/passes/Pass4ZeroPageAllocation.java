@@ -8,9 +8,9 @@ import java.util.List;
 /**
  * Zero Page Register Allocation for variables based on live ranges and phi equivalence classes.
  */
-public class Pass3ZeroPageAllocation extends Pass2Base {
+public class Pass4ZeroPageAllocation extends Pass2Base {
 
-   public Pass3ZeroPageAllocation(Program program) {
+   public Pass4ZeroPageAllocation(Program program) {
       super(program);
    }
 

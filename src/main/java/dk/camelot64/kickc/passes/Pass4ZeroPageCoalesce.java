@@ -6,10 +6,10 @@ import dk.camelot64.kickc.icl.*;
  * Coalesces zero page registers where their live ranges do not overlap.
  * A final step done after all other register optimizations and before ASM generation.
  */
-public class Pass3ZeroPageCoalesce extends Pass2Base {
+public class Pass4ZeroPageCoalesce extends Pass2Base {
 
 
-   public Pass3ZeroPageCoalesce(Program program) {
+   public Pass4ZeroPageCoalesce(Program program) {
       super(program);
    }
 

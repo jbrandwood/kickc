@@ -10,9 +10,9 @@ import java.util.List;
 import java.util.Set;
 
 /*** Find the variable equivalence classes to attempt to uplift in each scope */
-public class Pass3RegisterUpliftCombinations extends Pass2Base {
+public class Pass4RegisterUpliftCombinations extends Pass2Base {
 
-   public Pass3RegisterUpliftCombinations(Program program) {
+   public Pass4RegisterUpliftCombinations(Program program) {
       super(program);
    }
 
@@ -33,12 +33,12 @@ public class Pass3RegisterUpliftCombinations extends Pass2Base {
             }
             RegisterCombination combination = combinationIterator.next();
             // Reset register allocation to original zero page allocation
-            new Pass3RegistersFinalize(getProgram()).allocate(false);
+            new Pass4RegistersFinalize(getProgram()).allocate(false);
             // Apply the uplift combination
             combination.allocate(getProgram().getAllocation());
             // Generate ASM
             try {
-               new Pass3CodeGeneration(getProgram()).generate();
+               new Pass4CodeGeneration(getProgram()).generate();
             } catch (AsmFragment.UnknownFragmentException e) {
                unknownFragments.add(e.getFragmentSignature());
                //StringBuilder msg = new StringBuilder();
@@ -56,7 +56,7 @@ public class Pass3RegisterUpliftCombinations extends Pass2Base {
                continue;
             }
             // If no clobber - Find value of the resulting allocation
-            boolean hasClobberProblem = new Pass3AssertNoCpuClobber(getProgram()).hasClobberProblem(false);
+            boolean hasClobberProblem = new Pass4AssertNoCpuClobber(getProgram()).hasClobberProblem(false);
             int combinationScore = getAsmScore(getProgram());
             StringBuilder msg = new StringBuilder();
             //msg.append("Uplift attempt [" + upliftScope.getScopeRef() + "] ");

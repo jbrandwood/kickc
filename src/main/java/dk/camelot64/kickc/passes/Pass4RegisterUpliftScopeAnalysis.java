@@ -5,9 +5,9 @@ import dk.camelot64.kickc.icl.*;
 import java.util.*;
 
 /*** Find the variable equivalence classes to attempt to uplift in each scope */
-public class Pass3RegisterUpliftScopeAnalysis extends Pass2Base {
+public class Pass4RegisterUpliftScopeAnalysis extends Pass2Base {
 
-   public Pass3RegisterUpliftScopeAnalysis(Program program) {
+   public Pass4RegisterUpliftScopeAnalysis(Program program) {
       super(program);
    }
 

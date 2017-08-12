@@ -9,9 +9,9 @@ import java.util.List;
 /**
  * Maps out register values entering all instructions. Removes unnecessary loads / clears / sets
  */
-public class Pass6UnnecesaryLoadElimination extends Pass6AsmOptimization {
+public class Pass5UnnecesaryLoadElimination extends Pass5AsmOptimization {
 
-   public Pass6UnnecesaryLoadElimination(Program program) {
+   public Pass5UnnecesaryLoadElimination(Program program) {
       super(program);
    }
 

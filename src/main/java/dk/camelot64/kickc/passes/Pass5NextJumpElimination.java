@@ -9,9 +9,9 @@ import java.util.List;
 /**
  * Optimize assembler code by removing jumps to labels immediately following the jump
  */
-public class Pass6NextJumpElimination extends Pass6AsmOptimization {
+public class Pass5NextJumpElimination extends Pass5AsmOptimization {
 
-   public Pass6NextJumpElimination(Program program) {
+   public Pass5NextJumpElimination(Program program) {
       super(program);
    }
 

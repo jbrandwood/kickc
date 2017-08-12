@@ -1,6 +1,5 @@
 package dk.camelot64.kickc.passes;
 
-import dk.camelot64.kickc.CompileLog;
 import dk.camelot64.kickc.asm.*;
 import dk.camelot64.kickc.icl.Program;
 
@@ -12,9 +11,9 @@ import java.util.Set;
 /**
  * Optimize assembler code by removing all unused labels
  */
-public class Pass6UnusedLabelElimination extends Pass6AsmOptimization {
+public class Pass5UnusedLabelElimination extends Pass5AsmOptimization {
 
-   public Pass6UnusedLabelElimination(Program program) {
+   public Pass5UnusedLabelElimination(Program program) {
       super(program);
    }
 

@@ -1,16 +1,14 @@
 package dk.camelot64.kickc.passes;
 
 import dk.camelot64.kickc.asm.AsmFragment;
-import dk.camelot64.kickc.asm.AsmProgram;
-import dk.camelot64.kickc.asm.AsmSegment;
 import dk.camelot64.kickc.icl.*;
 
 import java.util.*;
 
 /*** For eac non-uplifted equivalence class attempt to put it in a register */
-public class Pass3RegisterUpliftRemains extends Pass2Base {
+public class Pass4RegisterUpliftRemains extends Pass2Base {
 
-   public Pass3RegisterUpliftRemains(Program program) {
+   public Pass4RegisterUpliftRemains(Program program) {
       super(program);
    }
 
@@ -37,12 +35,12 @@ public class Pass3RegisterUpliftRemains extends Pass2Base {
             while (combinationIterator.hasNext()) {
                RegisterCombination combination = combinationIterator.next();
                // Reset register allocation to original zero page allocation
-               new Pass3RegistersFinalize(getProgram()).allocate(false);
+               new Pass4RegistersFinalize(getProgram()).allocate(false);
                // Apply the uplift combination
                combination.allocate(getProgram().getAllocation());
                // Generate ASM
                try {
-                  new Pass3CodeGeneration(getProgram()).generate();
+                  new Pass4CodeGeneration(getProgram()).generate();
                } catch (AsmFragment.UnknownFragmentException e) {
                   unknownFragments.add(e.getFragmentSignature());
                   //StringBuilder msg = new StringBuilder();
@@ -60,8 +58,8 @@ public class Pass3RegisterUpliftRemains extends Pass2Base {
                   continue;
                }
                // If no clobber - Find value of the resulting allocation
-               boolean hasClobberProblem = new Pass3AssertNoCpuClobber(getProgram()).hasClobberProblem(false);
-               int combinationScore = Pass3RegisterUpliftCombinations.getAsmScore(getProgram());
+               boolean hasClobberProblem = new Pass4AssertNoCpuClobber(getProgram()).hasClobberProblem(false);
+               int combinationScore = Pass4RegisterUpliftCombinations.getAsmScore(getProgram());
                //StringBuilder msg = new StringBuilder();
                //msg.append("Uplift remains attempt [" + equivalenceClass + "] ");
                //if (hasClobberProblem) {

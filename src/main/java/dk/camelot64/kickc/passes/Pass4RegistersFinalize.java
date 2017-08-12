@@ -6,9 +6,9 @@ import dk.camelot64.kickc.icl.*;
  * Move register allocation from equivalence classes to RegisterAllocation.
  * Also rebase zero page registers.
  */
-public class Pass3RegistersFinalize extends Pass2Base {
+public class Pass4RegistersFinalize extends Pass2Base {
 
-   public Pass3RegistersFinalize(Program program) {
+   public Pass4RegistersFinalize(Program program) {
       super(program);
    }
 

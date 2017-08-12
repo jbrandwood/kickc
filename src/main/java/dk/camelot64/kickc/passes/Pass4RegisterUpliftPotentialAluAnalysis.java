@@ -5,11 +5,11 @@ import dk.camelot64.kickc.icl.*;
 /***
  * Find equivalence classes that could be assigned to the special ALU register.
  */
-public class Pass3RegisterUpliftPotentialAluAnalysis extends Pass2Base {
+public class Pass4RegisterUpliftPotentialAluAnalysis extends Pass2Base {
 
    private LiveRangeEquivalenceClassSet liveRangeEquivalenceClassSet;
 
-   public Pass3RegisterUpliftPotentialAluAnalysis(Program program) {
+   public Pass4RegisterUpliftPotentialAluAnalysis(Program program) {
       super(program);
    }
 

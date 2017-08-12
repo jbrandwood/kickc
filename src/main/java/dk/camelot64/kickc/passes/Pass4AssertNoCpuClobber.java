@@ -10,9 +10,9 @@ import java.util.Collection;
 import java.util.List;
 
 /*** Ensures that no statement clobbers a CPU register used by an alive variable - and that assigning statements clobber the CPU registers they assign to */
-public class Pass3AssertNoCpuClobber extends Pass2Base {
+public class Pass4AssertNoCpuClobber extends Pass2Base {
 
-   public Pass3AssertNoCpuClobber(Program program) {
+   public Pass4AssertNoCpuClobber(Program program) {
       super(program);
    }
 
@@ -44,7 +44,7 @@ public class Pass3AssertNoCpuClobber extends Pass2Base {
             AsmClobber asmSegmentClobber = asmSegment.getClobber();
             Collection<RegisterAllocation.Register> clobberRegisters = getClobberRegisters(asmSegmentClobber);
             // Find vars assigned to in the statement
-            Collection<VariableRef> assignedVars = Pass3RegisterUpliftPotentialRegisterAnalysis.getAssignedVars(statement);
+            Collection<VariableRef> assignedVars = Pass4RegisterUpliftPotentialRegisterAnalysis.getAssignedVars(statement);
             // Two assigned vars cannot use same register
             if(assignedVars.size()>1) {
                for (VariableRef assignedVar1 : assignedVars) {

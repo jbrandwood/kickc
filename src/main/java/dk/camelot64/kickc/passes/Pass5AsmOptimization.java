@@ -14,11 +14,11 @@ import java.util.List;
  * Optimization performed on Assembler Code (Asm Code).
  * Optimizations are performed repeatedly until none of them yield any result
  **/
-public abstract class Pass6AsmOptimization {
+public abstract class Pass5AsmOptimization {
 
    private Program program;
 
-   public Pass6AsmOptimization(Program program) {
+   public Pass5AsmOptimization(Program program) {
       this.program = program;
    }
 

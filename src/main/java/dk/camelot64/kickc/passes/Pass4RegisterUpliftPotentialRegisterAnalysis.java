@@ -13,9 +13,9 @@ import java.util.*;
  * in the statement - except the variable assigned by the statement.
  *
  * */
-public class Pass3RegisterUpliftPotentialRegisterAnalysis extends Pass2Base {
+public class Pass4RegisterUpliftPotentialRegisterAnalysis extends Pass2Base {
 
-   public Pass3RegisterUpliftPotentialRegisterAnalysis(Program program) {
+   public Pass4RegisterUpliftPotentialRegisterAnalysis(Program program) {
       super(program);
    }
 
@@ -138,15 +138,15 @@ public class Pass3RegisterUpliftPotentialRegisterAnalysis extends Pass2Base {
       while (combinations.hasNext()) {
          RegisterCombination combination = combinations.next();
          // Reset register allocation to original zero page allocation
-         new Pass3RegistersFinalize(getProgram()).allocate(false);
+         new Pass4RegistersFinalize(getProgram()).allocate(false);
          // Apply the combination
          combination.allocate(getProgram().getAllocation());
          // Generate ASM
          AsmProgram asm = new AsmProgram();
          asm.startSegment(statement.getIndex(), statement.toString(getProgram()));
-         Pass3CodeGeneration.AsmCodegenAluState aluState = new Pass3CodeGeneration.AsmCodegenAluState();
+         Pass4CodeGeneration.AsmCodegenAluState aluState = new Pass4CodeGeneration.AsmCodegenAluState();
          try {
-            (new Pass3CodeGeneration(getProgram())).generateStatementAsm(asm, block, statement, aluState, false);
+            (new Pass4CodeGeneration(getProgram())).generateStatementAsm(asm, block, statement, aluState, false);
          } catch (AsmFragment.UnknownFragmentException e) {
             unknownFragments.add(e.getFragmentSignature());
             StringBuilder msg = new StringBuilder();
@@ -157,7 +157,7 @@ public class Pass3RegisterUpliftPotentialRegisterAnalysis extends Pass2Base {
             continue;
          }
          AsmClobber clobber = asm.getClobber();
-         Collection<RegisterAllocation.Register> clobberRegisters = Pass3AssertNoCpuClobber.getClobberRegisters(clobber);
+         Collection<RegisterAllocation.Register> clobberRegisters = Pass4AssertNoCpuClobber.getClobberRegisters(clobber);
          Iterator<RegisterAllocation.Register> alwaysClobberIt = alwaysClobbered.iterator();
          while (alwaysClobberIt.hasNext()) {
             RegisterAllocation.Register alwaysClobberRegister = alwaysClobberIt.next();

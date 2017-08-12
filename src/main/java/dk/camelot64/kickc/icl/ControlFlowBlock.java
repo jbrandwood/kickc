@@ -13,18 +13,27 @@ import java.util.List;
  * The block only knows its own successors. To find predecessor blocks access to the entire graph is needed.*/
 public class ControlFlowBlock {
 
+   /** The label representing the block. */
    private LabelRef label;
 
+   /** The scope that the block is a part of. */
+   private ScopeRef scope;
+
+   /** The statements of the block. */
    private List<Statement> statements;
 
+   /** The default successor that control flows to when exiting the block. */
    private LabelRef defaultSuccessor;
 
+   /** The conditional successor of the block. If the last statement is a conditional jump this is the block that control flows to if the condition is met. */
    private LabelRef conditionalSuccessor;
 
+   /** If the last statement of the block is a call this is the block containing the start of the called procedure. When the procedure returns control moves on to the default successor. */
    private LabelRef callSuccessor;
 
-   public ControlFlowBlock(LabelRef label) {
+   public ControlFlowBlock(LabelRef label, ScopeRef scope) {
       this.label = label;
+      this.scope = scope;
       this.statements = new ArrayList<>();
       this.defaultSuccessor = null;
       this.conditionalSuccessor = null;
@@ -33,11 +42,13 @@ public class ControlFlowBlock {
    @JsonCreator
    public ControlFlowBlock(
          @JsonProperty("label") LabelRef label,
+         @JsonProperty("scope") ScopeRef scope,
          @JsonProperty("statements") List<Statement> statements,
          @JsonProperty("defaultSuccessor") LabelRef defaultSuccessor,
          @JsonProperty("conditionalSuccessor") LabelRef conditionalSuccessor,
          @JsonProperty("callSuccessor") LabelRef callSuccessor) {
       this.label = label;
+      this.scope = scope;
       this.statements = statements;
       this.defaultSuccessor = defaultSuccessor;
       this.conditionalSuccessor = conditionalSuccessor;
@@ -46,6 +57,10 @@ public class ControlFlowBlock {
 
    public LabelRef getLabel() {
       return label;
+   }
+
+   public ScopeRef getScope() {
+      return scope;
    }
 
    public void addStatement(Statement statement) {
@@ -84,7 +99,6 @@ public class ControlFlowBlock {
       return statements;
    }
 
-
    /**
     * Is the block the entry of a procedure, ie. the first block of the code of the procedure.
     * @return true if this is the entry of a procedure
@@ -108,6 +122,7 @@ public class ControlFlowBlock {
       ControlFlowGraph graph = program.getGraph();
       StringBuffer out = new StringBuffer();
       out.append(label.getFullName() + ":");
+      out.append(" scope:["+scope.getFullName()+"] ");
       out.append(" from");
       if (graph != null) {
          List<ControlFlowBlock> predecessors = graph.getPredecessors(this);

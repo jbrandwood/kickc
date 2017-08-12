@@ -59,12 +59,12 @@ public class AsmProgram {
       addLine(new AsmLabel(label));
    }
 
-   public void addProcBegin(String label) {
-      addLine(new AsmProcBegin(label));
+   public void addScopeBegin(String label) {
+      addLine(new AsmScopeBegin(label));
    }
 
-   public void addProcEnd() {
-      addLine(new AsmProcEnd());
+   public void addScopeEnd() {
+      addLine(new AsmScopeEnd());
    }
 
    public void addInstruction(String mnemonic, AsmAddressingMode addressingMode, String parameter) {

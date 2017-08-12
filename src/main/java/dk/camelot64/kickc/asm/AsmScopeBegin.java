@@ -1,13 +1,13 @@
 package dk.camelot64.kickc.asm;
 
-/** A procedure - representing a label and a scope beginning*/
-public class AsmProcBegin implements AsmLine {
+/** The beginning of a named scope (typically a procedure) */
+public class AsmScopeBegin implements AsmLine {
 
    private String label;
 
    private int index;
 
-   public AsmProcBegin(String label) {
+   public AsmScopeBegin(String label) {
       this.label = label;
    }
 

@@ -23,7 +23,7 @@ public class RegisterUpliftProgram {
       this.registerUpliftScopes = registerUpliftScopes;
    }
 
-   public RegisterUpliftScope addRegisterUpliftScope(LabelRef scopeRef) {
+   public RegisterUpliftScope addRegisterUpliftScope(ScopeRef scopeRef) {
       RegisterUpliftScope registerUpliftScope = new RegisterUpliftScope(scopeRef);
       registerUpliftScopes.add(registerUpliftScope);
       return registerUpliftScope;

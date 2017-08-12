@@ -49,11 +49,6 @@ public class ProgramScope extends Scope {
    }
 
    @Override
-   public LabelRef getScopeLabelRef() {
-      return new LabelRef("");
-   }
-
-   @Override
    public String toString(Program program) {
       return "program";
    }

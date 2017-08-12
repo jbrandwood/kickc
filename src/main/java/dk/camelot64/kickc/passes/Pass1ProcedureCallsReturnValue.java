@@ -37,7 +37,7 @@ public class Pass1ProcedureCallsReturnValue extends ControlFlowGraphCopyVisitor 
       getCurrentBlock().setCallSuccessor(procedure.getLabel().getRef());
       if (!SymbolTypeBasic.VOID.equals(procedure.getReturnType())) {
          // Find return variable final version
-         Label returnBlockLabel = procedure.getLabel("@return");
+         Label returnBlockLabel = procedure.getLabel(SymbolRef.PROCEXIT_BLOCK_NAME);
          ControlFlowBlock returnBlock = program.getGraph().getBlock(returnBlockLabel.getRef());
          VariableRef returnVarFinal = null;
          for (Statement statement : returnBlock.getStatements()) {
@@ -83,7 +83,7 @@ public class Pass1ProcedureCallsReturnValue extends ControlFlowGraphCopyVisitor 
 
    private VariableRef findReturnVersion(Procedure procedure, VariableRef assignedVar) {
       String unversionedName = assignedVar.getFullNameUnversioned();
-      LabelRef returnBlock = new LabelRef(procedure.getScopeLabelRef().getFullName() + "::@return");
+      LabelRef returnBlock = new LabelRef(procedure.getRef().getFullName() + "::@return");
       ControlFlowBlock block = program.getGraph().getBlock(returnBlock);
       for (Statement statement : block.getStatements()) {
          if (statement instanceof StatementAssignment) {

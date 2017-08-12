@@ -9,9 +9,9 @@ main: {
     bcc b2
   breturn:
     rts
+  b2:
+    lda $400,x
+    inx
+  b1_from_b2:
+    jmp b1
 }
-b2:
-  lda $400,x
-  inx
-b1_from_b2:
-  jmp b1

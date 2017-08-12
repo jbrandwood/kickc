@@ -18,7 +18,7 @@ public class Pass2AssertSymbols extends Pass2SsaAssertion {
       HashSet<Symbol> codeSymbols = symbolFinder.getSymbols();
       // Check that all symbols found in the code is also oin the symbol tabel
       for (Symbol codeSymbol : codeSymbols) {
-         if(codeSymbol.getFullName().equals("@return")) continue;
+         if(codeSymbol.getFullName().equals(SymbolRef.PROCEXIT_BLOCK_NAME)) continue;
          Symbol tableSymbol = getSymbols().getSymbol(codeSymbol.getFullName());
          if(tableSymbol==null) {
             throw new AssertionFailed("Compile process error. Symbol found in code, but not in symbol table. "+codeSymbol.getFullName());

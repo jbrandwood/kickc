@@ -45,7 +45,7 @@ public class Pass2AssertBlocks extends Pass2SsaAssertion {
          if (blockLabel == null) {
             return;
          }
-         if (blockLabel.getFullName().equals("@return")) {
+         if (blockLabel.getFullName().equals(SymbolRef.PROCEXIT_BLOCK_NAME)) {
             return;
          }
          seenBlocks.add(blockLabel);

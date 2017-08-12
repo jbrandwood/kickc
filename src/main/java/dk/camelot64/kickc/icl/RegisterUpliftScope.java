@@ -8,14 +8,14 @@ import java.util.*;
 public class RegisterUpliftScope {
 
    /** The scope. */
-   private LabelRef scopeRef;
+   private ScopeRef scopeRef;
 
    /**
     * Live Range Equivalence Classes in the scope sorted by total variable register weight.
     */
    private List<LiveRangeEquivalenceClass> equivalenceClasses;
 
-   public RegisterUpliftScope(LabelRef scopeRef) {
+   public RegisterUpliftScope(ScopeRef scopeRef) {
       this.scopeRef = scopeRef;
       this.equivalenceClasses = new ArrayList<>();
    }
@@ -24,7 +24,7 @@ public class RegisterUpliftScope {
       this.equivalenceClasses = equivalenceClasses;
    }
 
-   public LabelRef getScopeRef() {
+   public ScopeRef getScopeRef() {
       return scopeRef;
    }
 

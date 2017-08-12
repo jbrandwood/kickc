@@ -69,11 +69,9 @@ public abstract class Scope implements Symbol {
       return symbol.getLocalName();
    }
 
-   /**
-    * Get the label ref representing the scope itself
-    * @return The label reference
-    */
-   public abstract LabelRef getScopeLabelRef();
+   public ScopeRef getRef() {
+      return new ScopeRef(this);
+   }
 
    @Override
    @JsonIgnore
@@ -241,6 +239,16 @@ public abstract class Scope implements Symbol {
          return null;
       }
    }
+
+   public Scope getScope(ScopeRef scopeRef) {
+      Symbol symbol = getSymbol(scopeRef);
+      if(symbol instanceof Scope) {
+         return (Scope) symbol;
+      } else {
+         return null;
+      }
+   }
+
 
    public Procedure getProcedure(ProcedureRef ref) {
          return (Procedure) getSymbol(ref);

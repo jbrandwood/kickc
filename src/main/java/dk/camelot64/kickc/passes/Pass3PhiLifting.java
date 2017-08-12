@@ -63,7 +63,7 @@ public class Pass3PhiLifting {
                            LabelRef currentBlockLabel = block.getLabel();
                            Scope currentScope = programScope.getSymbol(currentBlockLabel).getScope();
                            Label newBlockLabel = currentScope.addLabelIntermediate();
-                           newBlock = new ControlFlowBlock(newBlockLabel.getRef());
+                           newBlock = new ControlFlowBlock(newBlockLabel.getRef(), currentScope.getRef());
                            graph.addBlock(newBlock);
                            newBlock.setDefaultSuccessor(block.getLabel());
                            newBlocks.put(predecessorRef, newBlock.getLabel());

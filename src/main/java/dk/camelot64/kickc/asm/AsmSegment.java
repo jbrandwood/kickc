@@ -134,7 +134,7 @@ public class AsmSegment {
                continue;
             }
          }
-         if(line instanceof AsmProcEnd) {
+         if(line instanceof AsmScopeEnd) {
             printState.decIndent();
          }
          out.append(printState.getIndent());
@@ -142,10 +142,9 @@ public class AsmSegment {
             out.append("  ");
          }
          out.append(line.getAsm() + "\n");
-         if(line instanceof AsmProcBegin) {
+         if(line instanceof AsmScopeBegin) {
             printState.incIndent();
          }
-
       }
       return out.toString();
    }

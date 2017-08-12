@@ -1,9 +1,7 @@
 package dk.camelot64.kickc.asm;
 
-import dk.camelot64.kickc.asm.*;
 import dk.camelot64.kickc.asm.parser.AsmClobber;
 
-import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
@@ -38,9 +36,9 @@ public class AsmProgramStaticRegisterValues {
    private AsmRegisterValues updateStaticRegisterValues(AsmRegisterValues current, AsmLine line) {
       if (line instanceof AsmLabel) {
          current = new AsmRegisterValues();
-      } else if (line instanceof AsmProcBegin) {
+      } else if (line instanceof AsmScopeBegin) {
          current = new AsmRegisterValues();
-      } else if (line instanceof AsmProcEnd) {
+      } else if (line instanceof AsmScopeEnd) {
          current = new AsmRegisterValues();
       } else if (line instanceof AsmInstruction) {
          AsmInstruction instruction = (AsmInstruction) line;

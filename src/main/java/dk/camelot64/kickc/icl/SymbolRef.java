@@ -1,10 +1,13 @@
 package dk.camelot64.kickc.icl;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import dk.camelot64.kickc.passes.Pass1GenerateControlFlowGraph;
 
 /** A reference to a symbol (variable, procedure or label) */
 public class SymbolRef implements Value {
+
+   public static final String BEGIN_BLOCK_NAME = "@begin";
+   public static final String END_BLOCK_NAME = "@end";
+   public static final String PROCEXIT_BLOCK_NAME = "@return";
 
    /** The full name of the variable. Allowing lookup in the symbol table. */
    private String fullName;
@@ -67,14 +70,14 @@ public class SymbolRef implements Value {
    @JsonIgnore
    public boolean isIntermediate() {
       if(
-            fullName.contains(Pass1GenerateControlFlowGraph.BEGIN_BLOCK_NAME) ||
-                  fullName.contains(Pass1GenerateControlFlowGraph.END_BLOCK_NAME) ) return false;
+            fullName.contains(BEGIN_BLOCK_NAME) ||
+                  fullName.contains(END_BLOCK_NAME) ) return false;
       return fullName.contains("$") || fullName.contains("@");
    }
 
    @JsonIgnore
    public boolean isProcExit() {
-      return fullName.endsWith("@return");
+      return fullName.endsWith(PROCEXIT_BLOCK_NAME);
    }
 
    @JsonIgnore

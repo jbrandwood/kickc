@@ -30,7 +30,7 @@ public class Pass1ModifiedVarsAnalysis {
     */
    public Set<VariableRef> getModifiedVars(Procedure procedure) {
       Set<VariableRef> modified = new LinkedHashSet<>();
-      LabelRef procScope = procedure.getScopeLabelRef();
+      ScopeRef procScope = procedure.getRef();
       List<ControlFlowBlock> procBlocks = program.getGraph().getScopeBlocks(procScope);
       for (ControlFlowBlock block : procBlocks) {
          for (Statement statement : block.getStatements()) {

@@ -24,7 +24,7 @@ public class Pass1EliminateEmptyBlocks {
       Collection<ControlFlowBlock> blocks = graph.getAllBlocks();
       List<LabelRef> removeList = new ArrayList<>();
       for (ControlFlowBlock block : blocks) {
-         if(block.getLabel().getFullName().equals(Pass1GenerateControlFlowGraph.END_BLOCK_NAME)) {
+         if(block.getLabel().getFullName().equals(SymbolRef.END_BLOCK_NAME)) {
             continue;
          }
          if (block.getStatements().isEmpty()) {

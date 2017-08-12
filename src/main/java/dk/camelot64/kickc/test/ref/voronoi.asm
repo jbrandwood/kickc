@@ -96,40 +96,40 @@ animate: {
     beq b9
   breturn:
     rts
+  b9:
+    lda #$19
+    sta $1103
+    lda $1003
+    clc
+    adc #$7
+    sta $1003
+    lda $1003
+    cmp #$28
+    bcs b11
+    jmp breturn
+  b11:
+    lda $1003
+    sec
+    sbc #$28
+    sta $1003
+    jmp breturn
+  b7:
+    lda #$0
+    sta $1102
+    jmp b8
+  b5:
+    lda #$28
+    sta $1001
+    jmp b6
+  b3:
+    lda #$0
+    sta $1100
+    jmp b4
+  b1:
+    lda #$0
+    sta $1000
+    jmp b2
 }
-b9:
-  lda #$19
-  sta $1103
-  lda $1003
-  clc
-  adc #$7
-  sta $1003
-  lda $1003
-  cmp #$28
-  bcs b11
-  jmp breturn
-b11:
-  lda $1003
-  sec
-  sbc #$28
-  sta $1003
-  jmp breturn
-b7:
-  lda #$0
-  sta $1102
-  jmp b8
-b5:
-  lda #$28
-  sta $1001
-  jmp b6
-b3:
-  lda #$0
-  sta $1100
-  jmp b4
-b1:
-  lda #$0
-  sta $1000
-  jmp b2
 render: {
   b1_from_render:
     lda #<$d800
@@ -223,32 +223,32 @@ findcol: {
     ldy #$0
   breturn:
     rts
+  b12:
+    ldy $1200,x
+    sta $6
+  b13_from_b12:
+    jmp b13
+  b9:
+    lda $b
+    sec
+    sbc $a
+    clc
+    adc $7
+  b11_from_b9:
+    jmp b11
+  b6:
+    lda $7
+    sec
+    sbc $9
+    sta $7
+  b8_from_b6:
+    jmp b8
+  b2:
+    lda $a
+    cmp $b
+    beq breturn_from_b2
+    jmp b3
 }
-b12:
-  ldy $1200,x
-  sta $6
-b13_from_b12:
-  jmp b13
-b9:
-  lda $b
-  sec
-  sbc $a
-  clc
-  adc $7
-b11_from_b9:
-  jmp b11
-b6:
-  lda $7
-  sec
-  sbc $9
-  sta $7
-b8_from_b6:
-  jmp b8
-b2:
-  lda $a
-  cmp $b
-  beq breturn_from_b2
-  jmp b3
 initscreen: {
   b1_from_initscreen:
     lda #<$400

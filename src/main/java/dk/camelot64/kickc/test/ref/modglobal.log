@@ -60,69 +60,69 @@ SYMBOLS
 (label) main::@return
 
 INITIAL CONTROL FLOW GRAPH
-@begin: from
+@begin: scope:[]  from
   (byte) cnt ← (byte) 0
   (byte) cnt2 ← (byte) 0
   (byte[256]) SCREEN ← (word) 1024
   (void~) $0 ← call main 
   to:@1
-main: from
+main: scope:[main]  from
   (byte~) main::$0 ← call inccnt 
   *((byte[256]) SCREEN + (byte) 0) ← (byte~) main::$0
   (byte) cnt ← ++ (byte) cnt
   (byte~) main::$1 ← call inccnt 
   *((byte[256]) SCREEN + (byte) 1) ← (byte~) main::$1
   to:main::@return
-main::@return: from main
+main::@return: scope:[main]  from main
   return 
   to:@return
-@1: from @begin
+@1: scope:[]  from @begin
   to:@2
-inccnt: from
+inccnt: scope:[inccnt]  from
   (byte) cnt ← ++ (byte) cnt
   (byte) cnt2 ← ++ (byte) cnt2
   (byte) inccnt::return ← (byte) cnt
   to:inccnt::@return
-inccnt::@return: from inccnt inccnt::@1
+inccnt::@return: scope:[inccnt]  from inccnt inccnt::@1
   (byte) inccnt::return ← (byte) inccnt::return
   return (byte) inccnt::return
   to:@return
-inccnt::@1: from
+inccnt::@1: scope:[inccnt]  from
   to:inccnt::@return
-@2: from @1
+@2: scope:[]  from @1
   to:@end
-@end: from @2
+@end: scope:[]  from @2
 
 Removing empty block @1
 Removing empty block inccnt::@1
 Removing empty block @2
 CONTROL FLOW GRAPH
-@begin: from
+@begin: scope:[]  from
   (byte) cnt ← (byte) 0
   (byte) cnt2 ← (byte) 0
   (byte[256]) SCREEN ← (word) 1024
   (void~) $0 ← call main 
   to:@end
-main: from
+main: scope:[main]  from
   (byte~) main::$0 ← call inccnt 
   *((byte[256]) SCREEN + (byte) 0) ← (byte~) main::$0
   (byte) cnt ← ++ (byte) cnt
   (byte~) main::$1 ← call inccnt 
   *((byte[256]) SCREEN + (byte) 1) ← (byte~) main::$1
   to:main::@return
-main::@return: from main
+main::@return: scope:[main]  from main
   return 
   to:@return
-inccnt: from
+inccnt: scope:[inccnt]  from
   (byte) cnt ← ++ (byte) cnt
   (byte) cnt2 ← ++ (byte) cnt2
   (byte) inccnt::return ← (byte) cnt
   to:inccnt::@return
-inccnt::@return: from inccnt
+inccnt::@return: scope:[inccnt]  from inccnt
   (byte) inccnt::return ← (byte) inccnt::return
   return (byte) inccnt::return
   to:@return
-@end: from @begin
+@end: scope:[]  from @begin
 
 PROCEDURE MODIFY VARIABLE ANALYSIS
 main modifies cnt
@@ -131,20 +131,20 @@ inccnt modifies cnt
 inccnt modifies cnt2
 
 CONTROL FLOW GRAPH WITH ASSIGNMENT CALL
-@begin: from
+@begin: scope:[]  from
   (byte) cnt ← (byte) 0
   (byte) cnt2 ← (byte) 0
   (byte[256]) SCREEN ← (word) 1024
   call main param-assignment
   to:@3
-@3: from @begin
+@3: scope:[]  from @begin
   (byte) cnt ← (byte) cnt
   (byte) cnt2 ← (byte) cnt2
   to:@end
-main: from @begin
+main: scope:[main]  from @begin
   (byte) inccnt::return ← call inccnt param-assignment
   to:main::@1
-main::@1: from main
+main::@1: scope:[main]  from main
   (byte~) main::$0 ← (byte) inccnt::return
   (byte) cnt ← (byte) cnt
   (byte) cnt2 ← (byte) cnt2
@@ -152,52 +152,52 @@ main::@1: from main
   (byte) cnt ← ++ (byte) cnt
   (byte) inccnt::return ← call inccnt param-assignment
   to:main::@2
-main::@2: from main::@1
+main::@2: scope:[main]  from main::@1
   (byte~) main::$1 ← (byte) inccnt::return
   (byte) cnt ← (byte) cnt
   (byte) cnt2 ← (byte) cnt2
   *((byte[256]) SCREEN + (byte) 1) ← (byte~) main::$1
   to:main::@return
-main::@return: from main::@2
+main::@return: scope:[main]  from main::@2
   (byte) cnt ← (byte) cnt
   (byte) cnt2 ← (byte) cnt2
   return 
   to:@return
-inccnt: from main main::@1
+inccnt: scope:[inccnt]  from main main::@1
   (byte) cnt ← ++ (byte) cnt
   (byte) cnt2 ← ++ (byte) cnt2
   (byte) inccnt::return ← (byte) cnt
   to:inccnt::@return
-inccnt::@return: from inccnt
+inccnt::@return: scope:[inccnt]  from inccnt
   (byte) inccnt::return ← (byte) inccnt::return
   (byte) cnt ← (byte) cnt
   (byte) cnt2 ← (byte) cnt2
   return (byte) inccnt::return
   to:@return
-@end: from @3
+@end: scope:[]  from @3
 
 Completing Phi functions...
 Completing Phi functions...
 CONTROL FLOW GRAPH SSA
-@begin: from
+@begin: scope:[]  from
   (byte) cnt#0 ← (byte) 0
   (byte) cnt2#0 ← (byte) 0
   (byte[256]) SCREEN#0 ← (word) 1024
   call main param-assignment
   to:@3
-@3: from @begin
+@3: scope:[]  from @begin
   (byte) cnt2#7 ← phi( @begin/(byte) cnt2#0 )
   (byte) cnt#8 ← phi( @begin/(byte) cnt#0 )
   (byte) cnt#1 ← (byte) cnt#8
   (byte) cnt2#1 ← (byte) cnt2#7
   to:@end
-main: from @begin
+main: scope:[main]  from @begin
   (byte[256]) SCREEN#3 ← phi( @begin/(byte[256]) SCREEN#0 )
   (byte) cnt2#13 ← phi( @begin/(byte) cnt2#0 )
   (byte) cnt#14 ← phi( @begin/(byte) cnt#0 )
   (byte) inccnt::return#0 ← call inccnt param-assignment
   to:main::@1
-main::@1: from main
+main::@1: scope:[main]  from main
   (byte[256]) SCREEN#1 ← phi( main/(byte[256]) SCREEN#3 )
   (byte) cnt2#8 ← phi( main/(byte) cnt2#13 )
   (byte) cnt#9 ← phi( main/(byte) cnt#14 )
@@ -209,7 +209,7 @@ main::@1: from main
   (byte) cnt#3 ← ++ (byte) cnt#2
   (byte) inccnt::return#1 ← call inccnt param-assignment
   to:main::@2
-main::@2: from main::@1
+main::@2: scope:[main]  from main::@1
   (byte[256]) SCREEN#2 ← phi( main::@1/(byte[256]) SCREEN#1 )
   (byte) cnt2#9 ← phi( main::@1/(byte) cnt2#2 )
   (byte) cnt#10 ← phi( main::@1/(byte) cnt#3 )
@@ -219,21 +219,21 @@ main::@2: from main::@1
   (byte) cnt2#3 ← (byte) cnt2#9
   *((byte[256]) SCREEN#2 + (byte) 1) ← (byte~) main::$1
   to:main::@return
-main::@return: from main::@2
+main::@return: scope:[main]  from main::@2
   (byte) cnt2#10 ← phi( main::@2/(byte) cnt2#3 )
   (byte) cnt#11 ← phi( main::@2/(byte) cnt#4 )
   (byte) cnt#5 ← (byte) cnt#11
   (byte) cnt2#4 ← (byte) cnt2#10
   return 
   to:@return
-inccnt: from main main::@1
+inccnt: scope:[inccnt]  from main main::@1
   (byte) cnt2#11 ← phi( main/(byte) cnt2#13 main::@1/(byte) cnt2#2 )
   (byte) cnt#12 ← phi( main/(byte) cnt#14 main::@1/(byte) cnt#3 )
   (byte) cnt#6 ← ++ (byte) cnt#12
   (byte) cnt2#5 ← ++ (byte) cnt2#11
   (byte) inccnt::return#2 ← (byte) cnt#6
   to:inccnt::@return
-inccnt::@return: from inccnt
+inccnt::@return: scope:[inccnt]  from inccnt
   (byte) cnt2#12 ← phi( inccnt/(byte) cnt2#5 )
   (byte) cnt#13 ← phi( inccnt/(byte) cnt#6 )
   (byte) inccnt::return#6 ← phi( inccnt/(byte) inccnt::return#2 )
@@ -242,29 +242,29 @@ inccnt::@return: from inccnt
   (byte) cnt2#6 ← (byte) cnt2#12
   return (byte) inccnt::return#3
   to:@return
-@end: from @3
+@end: scope:[]  from @3
 
 CONTROL FLOW GRAPH WITH ASSIGNMENT CALL & RETURN
-@begin: from
+@begin: scope:[]  from
   (byte) cnt#0 ← (byte) 0
   (byte) cnt2#0 ← (byte) 0
   (byte[256]) SCREEN#0 ← (word) 1024
   call main param-assignment
   to:@3
-@3: from @begin
+@3: scope:[]  from @begin
   (byte) cnt2#7 ← phi( @begin/(byte) cnt2#4 )
   (byte) cnt#8 ← phi( @begin/(byte) cnt#5 )
   (byte) cnt#1 ← (byte) cnt#8
   (byte) cnt2#1 ← (byte) cnt2#7
   to:@end
-main: from @begin
+main: scope:[main]  from @begin
   (byte[256]) SCREEN#3 ← phi( @begin/(byte[256]) SCREEN#0 )
   (byte) cnt2#13 ← phi( @begin/(byte) cnt2#0 )
   (byte) cnt#14 ← phi( @begin/(byte) cnt#0 )
   call inccnt param-assignment
   (byte) inccnt::return#0 ← (byte) inccnt::return#3
   to:main::@1
-main::@1: from main
+main::@1: scope:[main]  from main
   (byte[256]) SCREEN#1 ← phi( main/(byte[256]) SCREEN#3 )
   (byte) cnt2#8 ← phi( main/(byte) cnt2#6 )
   (byte) cnt#9 ← phi( main/(byte) cnt#7 )
@@ -277,7 +277,7 @@ main::@1: from main
   call inccnt param-assignment
   (byte) inccnt::return#1 ← (byte) inccnt::return#3
   to:main::@2
-main::@2: from main::@1
+main::@2: scope:[main]  from main::@1
   (byte[256]) SCREEN#2 ← phi( main::@1/(byte[256]) SCREEN#1 )
   (byte) cnt2#9 ← phi( main::@1/(byte) cnt2#6 )
   (byte) cnt#10 ← phi( main::@1/(byte) cnt#7 )
@@ -287,21 +287,21 @@ main::@2: from main::@1
   (byte) cnt2#3 ← (byte) cnt2#9
   *((byte[256]) SCREEN#2 + (byte) 1) ← (byte~) main::$1
   to:main::@return
-main::@return: from main::@2
+main::@return: scope:[main]  from main::@2
   (byte) cnt2#10 ← phi( main::@2/(byte) cnt2#3 )
   (byte) cnt#11 ← phi( main::@2/(byte) cnt#4 )
   (byte) cnt#5 ← (byte) cnt#11
   (byte) cnt2#4 ← (byte) cnt2#10
   return 
   to:@return
-inccnt: from main main::@1
+inccnt: scope:[inccnt]  from main main::@1
   (byte) cnt2#11 ← phi( main/(byte) cnt2#13 main::@1/(byte) cnt2#2 )
   (byte) cnt#12 ← phi( main/(byte) cnt#14 main::@1/(byte) cnt#3 )
   (byte) cnt#6 ← ++ (byte) cnt#12
   (byte) cnt2#5 ← ++ (byte) cnt2#11
   (byte) inccnt::return#2 ← (byte) cnt#6
   to:inccnt::@return
-inccnt::@return: from inccnt
+inccnt::@return: scope:[inccnt]  from inccnt
   (byte) cnt2#12 ← phi( inccnt/(byte) cnt2#5 )
   (byte) cnt#13 ← phi( inccnt/(byte) cnt#6 )
   (byte) inccnt::return#6 ← phi( inccnt/(byte) inccnt::return#2 )
@@ -310,30 +310,30 @@ inccnt::@return: from inccnt
   (byte) cnt2#6 ← (byte) cnt2#12
   return 
   to:@return
-@end: from @3
+@end: scope:[]  from @3
 
 Constant (byte) cnt#0 (byte) 0
 Constant (byte) cnt2#0 (byte) 0
 Constant (byte[256]) SCREEN#0 (word) 1024
 Succesful SSA optimization Pass2ConstantPropagation
 CONTROL FLOW GRAPH
-@begin: from
+@begin: scope:[]  from
   call main param-assignment
   to:@3
-@3: from @begin
+@3: scope:[]  from @begin
   (byte) cnt2#7 ← phi( @begin/(byte) cnt2#4 )
   (byte) cnt#8 ← phi( @begin/(byte) cnt#5 )
   (byte) cnt#1 ← (byte) cnt#8
   (byte) cnt2#1 ← (byte) cnt2#7
   to:@end
-main: from @begin
+main: scope:[main]  from @begin
   (byte[256]) SCREEN#3 ← phi( @begin/(word) 1024 )
   (byte) cnt2#13 ← phi( @begin/(byte) 0 )
   (byte) cnt#14 ← phi( @begin/(byte) 0 )
   call inccnt param-assignment
   (byte) inccnt::return#0 ← (byte) inccnt::return#3
   to:main::@1
-main::@1: from main
+main::@1: scope:[main]  from main
   (byte[256]) SCREEN#1 ← phi( main/(byte[256]) SCREEN#3 )
   (byte) cnt2#8 ← phi( main/(byte) cnt2#6 )
   (byte) cnt#9 ← phi( main/(byte) cnt#7 )
@@ -346,7 +346,7 @@ main::@1: from main
   call inccnt param-assignment
   (byte) inccnt::return#1 ← (byte) inccnt::return#3
   to:main::@2
-main::@2: from main::@1
+main::@2: scope:[main]  from main::@1
   (byte[256]) SCREEN#2 ← phi( main::@1/(byte[256]) SCREEN#1 )
   (byte) cnt2#9 ← phi( main::@1/(byte) cnt2#6 )
   (byte) cnt#10 ← phi( main::@1/(byte) cnt#7 )
@@ -356,21 +356,21 @@ main::@2: from main::@1
   (byte) cnt2#3 ← (byte) cnt2#9
   *((byte[256]) SCREEN#2 + (byte) 1) ← (byte~) main::$1
   to:main::@return
-main::@return: from main::@2
+main::@return: scope:[main]  from main::@2
   (byte) cnt2#10 ← phi( main::@2/(byte) cnt2#3 )
   (byte) cnt#11 ← phi( main::@2/(byte) cnt#4 )
   (byte) cnt#5 ← (byte) cnt#11
   (byte) cnt2#4 ← (byte) cnt2#10
   return 
   to:@return
-inccnt: from main main::@1
+inccnt: scope:[inccnt]  from main main::@1
   (byte) cnt2#11 ← phi( main/(byte) cnt2#13 main::@1/(byte) cnt2#2 )
   (byte) cnt#12 ← phi( main/(byte) cnt#14 main::@1/(byte) cnt#3 )
   (byte) cnt#6 ← ++ (byte) cnt#12
   (byte) cnt2#5 ← ++ (byte) cnt2#11
   (byte) inccnt::return#2 ← (byte) cnt#6
   to:inccnt::@return
-inccnt::@return: from inccnt
+inccnt::@return: scope:[inccnt]  from inccnt
   (byte) cnt2#12 ← phi( inccnt/(byte) cnt2#5 )
   (byte) cnt#13 ← phi( inccnt/(byte) cnt#6 )
   (byte) inccnt::return#6 ← phi( inccnt/(byte) inccnt::return#2 )
@@ -379,7 +379,7 @@ inccnt::@return: from inccnt
   (byte) cnt2#6 ← (byte) cnt2#12
   return 
   to:@return
-@end: from @3
+@end: scope:[]  from @3
 
 Not aliassing across scopes: main::$0 inccnt::return#4
 Not aliassing across scopes: main::$1 inccnt::return#5
@@ -390,148 +390,148 @@ Alias (byte) inccnt::return#0 = (byte) inccnt::return#3 (byte) inccnt::return#4 
 Alias (byte[256]) SCREEN#1 = (byte[256]) SCREEN#3 (byte[256]) SCREEN#2 
 Succesful SSA optimization Pass2AliasElimination
 CONTROL FLOW GRAPH
-@begin: from
+@begin: scope:[]  from
   call main param-assignment
   to:@3
-@3: from @begin
+@3: scope:[]  from @begin
   to:@end
-main: from @begin
+main: scope:[main]  from @begin
   (byte[256]) SCREEN#1 ← phi( @begin/(word) 1024 )
   (byte) cnt2#13 ← phi( @begin/(byte) 0 )
   (byte) cnt#14 ← phi( @begin/(byte) 0 )
   call inccnt param-assignment
   to:main::@1
-main::@1: from main
+main::@1: scope:[main]  from main
   (byte~) main::$0 ← (byte) inccnt::return#0
   *((byte[256]) SCREEN#1 + (byte) 0) ← (byte~) main::$0
   (byte) cnt#3 ← ++ (byte) cnt#1
   call inccnt param-assignment
   to:main::@2
-main::@2: from main::@1
+main::@2: scope:[main]  from main::@1
   (byte~) main::$1 ← (byte) inccnt::return#0
   *((byte[256]) SCREEN#1 + (byte) 1) ← (byte~) main::$1
   to:main::@return
-main::@return: from main::@2
+main::@return: scope:[main]  from main::@2
   return 
   to:@return
-inccnt: from main main::@1
+inccnt: scope:[inccnt]  from main main::@1
   (byte) cnt2#11 ← phi( main/(byte) cnt2#13 main::@1/(byte) cnt2#1 )
   (byte) cnt#12 ← phi( main/(byte) cnt#14 main::@1/(byte) cnt#3 )
   (byte) cnt#1 ← ++ (byte) cnt#12
   (byte) cnt2#1 ← ++ (byte) cnt2#11
   (byte) inccnt::return#0 ← (byte) cnt#1
   to:inccnt::@return
-inccnt::@return: from inccnt
+inccnt::@return: scope:[inccnt]  from inccnt
   return 
   to:@return
-@end: from @3
+@end: scope:[]  from @3
 
 Redundant Phi (byte) cnt#14 (byte) 0
 Redundant Phi (byte) cnt2#13 (byte) 0
 Redundant Phi (byte[256]) SCREEN#1 (word) 1024
 Succesful SSA optimization Pass2RedundantPhiElimination
 CONTROL FLOW GRAPH
-@begin: from
+@begin: scope:[]  from
   call main param-assignment
   to:@3
-@3: from @begin
+@3: scope:[]  from @begin
   to:@end
-main: from @begin
+main: scope:[main]  from @begin
   call inccnt param-assignment
   to:main::@1
-main::@1: from main
+main::@1: scope:[main]  from main
   (byte~) main::$0 ← (byte) inccnt::return#0
   *((word) 1024 + (byte) 0) ← (byte~) main::$0
   (byte) cnt#3 ← ++ (byte) cnt#1
   call inccnt param-assignment
   to:main::@2
-main::@2: from main::@1
+main::@2: scope:[main]  from main::@1
   (byte~) main::$1 ← (byte) inccnt::return#0
   *((word) 1024 + (byte) 1) ← (byte~) main::$1
   to:main::@return
-main::@return: from main::@2
+main::@return: scope:[main]  from main::@2
   return 
   to:@return
-inccnt: from main main::@1
+inccnt: scope:[inccnt]  from main main::@1
   (byte) cnt2#11 ← phi( main/(byte) 0 main::@1/(byte) cnt2#1 )
   (byte) cnt#12 ← phi( main/(byte) 0 main::@1/(byte) cnt#3 )
   (byte) cnt#1 ← ++ (byte) cnt#12
   (byte) cnt2#1 ← ++ (byte) cnt2#11
   (byte) inccnt::return#0 ← (byte) cnt#1
   to:inccnt::@return
-inccnt::@return: from inccnt
+inccnt::@return: scope:[inccnt]  from inccnt
   return 
   to:@return
-@end: from @3
+@end: scope:[]  from @3
 
 Culled Empty Block (label) @3
 Succesful SSA optimization Pass2CullEmptyBlocks
 CONTROL FLOW GRAPH
-@begin: from
+@begin: scope:[]  from
   call main param-assignment
   to:@end
-main: from @begin
+main: scope:[main]  from @begin
   call inccnt param-assignment
   to:main::@1
-main::@1: from main
+main::@1: scope:[main]  from main
   (byte~) main::$0 ← (byte) inccnt::return#0
   *((word) 1024 + (byte) 0) ← (byte~) main::$0
   (byte) cnt#3 ← ++ (byte) cnt#1
   call inccnt param-assignment
   to:main::@2
-main::@2: from main::@1
+main::@2: scope:[main]  from main::@1
   (byte~) main::$1 ← (byte) inccnt::return#0
   *((word) 1024 + (byte) 1) ← (byte~) main::$1
   to:main::@return
-main::@return: from main::@2
+main::@return: scope:[main]  from main::@2
   return 
   to:@return
-inccnt: from main main::@1
+inccnt: scope:[inccnt]  from main main::@1
   (byte) cnt2#11 ← phi( main/(byte) 0 main::@1/(byte) cnt2#1 )
   (byte) cnt#12 ← phi( main/(byte) 0 main::@1/(byte) cnt#3 )
   (byte) cnt#1 ← ++ (byte) cnt#12
   (byte) cnt2#1 ← ++ (byte) cnt2#11
   (byte) inccnt::return#0 ← (byte) cnt#1
   to:inccnt::@return
-inccnt::@return: from inccnt
+inccnt::@return: scope:[inccnt]  from inccnt
   return 
   to:@return
-@end: from @begin
+@end: scope:[]  from @begin
 
 Consolidated assigned array index constant in assignment *(1024)
 Consolidated assigned array index constant in assignment *(1025)
 Succesful SSA optimization Pass2ConstantAdditionElimination
 CONTROL FLOW GRAPH
-@begin: from
+@begin: scope:[]  from
   call main param-assignment
   to:@end
-main: from @begin
+main: scope:[main]  from @begin
   call inccnt param-assignment
   to:main::@1
-main::@1: from main
+main::@1: scope:[main]  from main
   (byte~) main::$0 ← (byte) inccnt::return#0
   *((word) 1024) ← (byte~) main::$0
   (byte) cnt#3 ← ++ (byte) cnt#1
   call inccnt param-assignment
   to:main::@2
-main::@2: from main::@1
+main::@2: scope:[main]  from main::@1
   (byte~) main::$1 ← (byte) inccnt::return#0
   *((word) 1025) ← (byte~) main::$1
   to:main::@return
-main::@return: from main::@2
+main::@return: scope:[main]  from main::@2
   return 
   to:@return
-inccnt: from main main::@1
+inccnt: scope:[inccnt]  from main main::@1
   (byte) cnt2#11 ← phi( main/(byte) 0 main::@1/(byte) cnt2#1 )
   (byte) cnt#12 ← phi( main/(byte) 0 main::@1/(byte) cnt#3 )
   (byte) cnt#1 ← ++ (byte) cnt#12
   (byte) cnt2#1 ← ++ (byte) cnt2#11
   (byte) inccnt::return#0 ← (byte) cnt#1
   to:inccnt::@return
-inccnt::@return: from inccnt
+inccnt::@return: scope:[inccnt]  from inccnt
   return 
   to:@return
-@end: from @begin
+@end: scope:[]  from @begin
 
 Not aliassing across scopes: main::$0 inccnt::return#0
 Not aliassing across scopes: main::$1 inccnt::return#0
@@ -542,14 +542,14 @@ Not aliassing across scopes: inccnt::return#0 cnt#1
 Block Sequence Planned @begin @end main main::@1 main::@2 main::@return inccnt inccnt::@return 
 Block Sequence Planned @begin @end main main::@1 main::@2 main::@return inccnt inccnt::@return 
 CONTROL FLOW GRAPH - PHI LIFTED
-@begin: from
+@begin: scope:[]  from
   call main param-assignment
   to:@end
-@end: from @begin
-main: from @begin
+@end: scope:[]  from @begin
+main: scope:[main]  from @begin
   call inccnt param-assignment
   to:main::@1
-main::@1: from main
+main::@1: scope:[main]  from main
   (byte~) main::$0 ← (byte) inccnt::return#0
   *((word) 1024) ← (byte~) main::$0
   (byte) cnt#3 ← ++ (byte) cnt#1
@@ -557,21 +557,21 @@ main::@1: from main
   (byte~) cnt2#14 ← (byte) cnt2#1
   call inccnt param-assignment
   to:main::@2
-main::@2: from main::@1
+main::@2: scope:[main]  from main::@1
   (byte~) main::$1 ← (byte) inccnt::return#0
   *((word) 1025) ← (byte~) main::$1
   to:main::@return
-main::@return: from main::@2
+main::@return: scope:[main]  from main::@2
   return 
   to:@return
-inccnt: from main main::@1
+inccnt: scope:[inccnt]  from main main::@1
   (byte) cnt2#11 ← phi( main/(byte) 0 main::@1/(byte~) cnt2#14 )
   (byte) cnt#12 ← phi( main/(byte) 0 main::@1/(byte~) cnt#15 )
   (byte) cnt#1 ← ++ (byte) cnt#12
   (byte) cnt2#1 ← ++ (byte) cnt2#11
   (byte) inccnt::return#0 ← (byte) cnt#1
   to:inccnt::@return
-inccnt::@return: from inccnt
+inccnt::@return: scope:[inccnt]  from inccnt
   return 
   to:@return
 
@@ -583,14 +583,14 @@ Propagating live ranges...
 Propagating live ranges...
 Propagating live ranges...
 CONTROL FLOW GRAPH - LIVE RANGES
-@begin: from
+@begin: scope:[]  from
   [0] call main param-assignment [ ]
   to:@end
-@end: from @begin
-main: from @begin
+@end: scope:[]  from @begin
+main: scope:[main]  from @begin
   [1] call inccnt param-assignment [ inccnt::return#0 cnt#1 cnt2#1 ]
   to:main::@1
-main::@1: from main
+main::@1: scope:[main]  from main
   [2] (byte~) main::$0 ← (byte) inccnt::return#0 [ main::$0 cnt#1 cnt2#1 ]
   [3] *((word) 1024) ← (byte~) main::$0 [ cnt#1 cnt2#1 ]
   [4] (byte) cnt#3 ← ++ (byte) cnt#1 [ cnt#3 cnt2#1 ]
@@ -598,21 +598,21 @@ main::@1: from main
   [6] (byte~) cnt2#14 ← (byte) cnt2#1 [ cnt#15 cnt2#14 ]
   [7] call inccnt param-assignment [ inccnt::return#0 ]
   to:main::@2
-main::@2: from main::@1
+main::@2: scope:[main]  from main::@1
   [8] (byte~) main::$1 ← (byte) inccnt::return#0 [ main::$1 ]
   [9] *((word) 1025) ← (byte~) main::$1 [ ]
   to:main::@return
-main::@return: from main::@2
+main::@return: scope:[main]  from main::@2
   [10] return  [ ]
   to:@return
-inccnt: from main main::@1
+inccnt: scope:[inccnt]  from main main::@1
   [11] (byte) cnt2#11 ← phi( main/(byte) 0 main::@1/(byte~) cnt2#14 ) [ cnt#12 cnt2#11 ]
   [11] (byte) cnt#12 ← phi( main/(byte) 0 main::@1/(byte~) cnt#15 ) [ cnt#12 cnt2#11 ]
   [12] (byte) cnt#1 ← ++ (byte) cnt#12 [ cnt#1 cnt2#11 ]
   [13] (byte) cnt2#1 ← ++ (byte) cnt2#11 [ cnt#1 cnt2#1 ]
   [14] (byte) inccnt::return#0 ← (byte) cnt#1 [ inccnt::return#0 cnt#1 cnt2#1 ]
   to:inccnt::@return
-inccnt::@return: from inccnt
+inccnt::@return: scope:[inccnt]  from inccnt
   [15] return  [ inccnt::return#0 cnt#1 cnt2#1 ]
   to:@return
 
@@ -628,34 +628,34 @@ Propagating live ranges...
 Propagating live ranges...
 Propagating live ranges...
 CONTROL FLOW GRAPH - PHI MEM COALESCED
-@begin: from
+@begin: scope:[]  from
   [0] call main param-assignment [ ]
   to:@end
-@end: from @begin
-main: from @begin
+@end: scope:[]  from @begin
+main: scope:[main]  from @begin
   [1] call inccnt param-assignment [ inccnt::return#0 cnt#1 cnt2#1 ]
   to:main::@1
-main::@1: from main
+main::@1: scope:[main]  from main
   [2] (byte~) main::$0 ← (byte) inccnt::return#0 [ main::$0 cnt#1 cnt2#1 ]
   [3] *((word) 1024) ← (byte~) main::$0 [ cnt#1 cnt2#1 ]
   [4] (byte) cnt#3 ← ++ (byte) cnt#1 [ cnt#3 cnt2#1 ]
   [5] call inccnt param-assignment [ inccnt::return#0 ]
   to:main::@2
-main::@2: from main::@1
+main::@2: scope:[main]  from main::@1
   [6] (byte~) main::$1 ← (byte) inccnt::return#0 [ main::$1 ]
   [7] *((word) 1025) ← (byte~) main::$1 [ ]
   to:main::@return
-main::@return: from main::@2
+main::@return: scope:[main]  from main::@2
   [8] return  [ ]
   to:@return
-inccnt: from main main::@1
+inccnt: scope:[inccnt]  from main main::@1
   [9] (byte) cnt2#11 ← phi( main/(byte) 0 main::@1/(byte) cnt2#1 ) [ cnt#12 cnt2#11 ]
   [9] (byte) cnt#12 ← phi( main/(byte) 0 main::@1/(byte) cnt#3 ) [ cnt#12 cnt2#11 ]
   [10] (byte) cnt#1 ← ++ (byte) cnt#12 [ cnt#1 cnt2#11 ]
   [11] (byte) cnt2#1 ← ++ (byte) cnt2#11 [ cnt#1 cnt2#1 ]
   [12] (byte) inccnt::return#0 ← (byte) cnt#1 [ inccnt::return#0 cnt#1 cnt2#1 ]
   to:inccnt::@return
-inccnt::@return: from inccnt
+inccnt::@return: scope:[inccnt]  from inccnt
   [13] return  [ inccnt::return#0 cnt#1 cnt2#1 ]
   to:@return
 

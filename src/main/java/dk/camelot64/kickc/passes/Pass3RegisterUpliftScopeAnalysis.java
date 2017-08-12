@@ -21,14 +21,14 @@ public class Pass3RegisterUpliftScopeAnalysis extends Pass2Base {
       Collection<Scope> allScopes = getProgram().getScope().getAllScopes(true);
       allScopes.add(getSymbols());
       for (Scope scope : allScopes) {
-         LabelRef scopeLabel = scope.getScopeLabelRef();
-         RegisterUpliftScope registerUpliftScope = registerUpliftProgram.addRegisterUpliftScope(scopeLabel);
+         ScopeRef scopeRef = scope.getRef();
+         RegisterUpliftScope registerUpliftScope = registerUpliftProgram.addRegisterUpliftScope(scopeRef);
 
          // Find live range equivalence classes for the scope
          List<LiveRangeEquivalenceClass> equivalenceClasses = new ArrayList<>();
          for (LiveRangeEquivalenceClass equivalenceClass : equivalenceClassSet.getEquivalenceClasses()) {
             VariableRef variableRef = equivalenceClass.getVariables().get(0);
-            if (variableRef.getScopeNames().equals(scopeLabel.getFullName())) {
+            if (variableRef.getScopeNames().equals(scopeRef.getFullName())) {
                equivalenceClasses.add(equivalenceClass);
             }
          }

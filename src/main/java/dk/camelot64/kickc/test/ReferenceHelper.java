@@ -58,6 +58,14 @@ public class ReferenceHelper {
                );
                return false;
             }
+         } else {
+            writeOutputFile(fileName, extension, outputString);
+            System.out.println(
+                  "Output does not match reference on line "+i+"\n"+
+                        "Reference: <EOF>\n"+
+                        "Output:    "+outLine
+            );
+            return false;
          }
       }
       return true;

@@ -43,7 +43,7 @@ SYMBOLS
 (byte) sum::return
 
 INITIAL CONTROL FLOW GRAPH
-@begin: from
+@begin: scope:[]  from
   (byte~) $0 ← call sum (byte) 1 (byte) 2 
   (byte) s1 ← (byte~) $0
   (byte~) $1 ← call sum (byte) 3 (byte) 4 
@@ -54,24 +54,24 @@ INITIAL CONTROL FLOW GRAPH
   (byte~) $4 ← (byte~) $3 + (byte) s3
   (byte) s4 ← (byte~) $4
   to:@1
-sum: from
+sum: scope:[sum]  from
   (byte~) sum::$0 ← (byte) sum::a + (byte) sum::b
   (byte) sum::return ← (byte~) sum::$0
   to:sum::@return
-sum::@return: from sum sum::@1
+sum::@return: scope:[sum]  from sum sum::@1
   (byte) sum::return ← (byte) sum::return
   return (byte) sum::return
   to:@return
-sum::@1: from
+sum::@1: scope:[sum]  from
   to:sum::@return
-@1: from @begin
+@1: scope:[]  from @begin
   to:@end
-@end: from @1
+@end: scope:[]  from @1
 
 Removing empty block sum::@1
 Removing empty block @1
 CONTROL FLOW GRAPH
-@begin: from
+@begin: scope:[]  from
   (byte~) $0 ← call sum (byte) 1 (byte) 2 
   (byte) s1 ← (byte~) $0
   (byte~) $1 ← call sum (byte) 3 (byte) 4 
@@ -82,64 +82,64 @@ CONTROL FLOW GRAPH
   (byte~) $4 ← (byte~) $3 + (byte) s3
   (byte) s4 ← (byte~) $4
   to:@end
-sum: from
+sum: scope:[sum]  from
   (byte~) sum::$0 ← (byte) sum::a + (byte) sum::b
   (byte) sum::return ← (byte~) sum::$0
   to:sum::@return
-sum::@return: from sum
+sum::@return: scope:[sum]  from sum
   (byte) sum::return ← (byte) sum::return
   return (byte) sum::return
   to:@return
-@end: from @begin
+@end: scope:[]  from @begin
 
 PROCEDURE MODIFY VARIABLE ANALYSIS
 
 CONTROL FLOW GRAPH WITH ASSIGNMENT CALL
-@begin: from
+@begin: scope:[]  from
   (byte) sum::a ← (byte) 1
   (byte) sum::b ← (byte) 2
   (byte) sum::return ← call sum param-assignment
   to:@2
-@2: from @begin
+@2: scope:[]  from @begin
   (byte~) $0 ← (byte) sum::return
   (byte) s1 ← (byte~) $0
   (byte) sum::a ← (byte) 3
   (byte) sum::b ← (byte) 4
   (byte) sum::return ← call sum param-assignment
   to:@3
-@3: from @2
+@3: scope:[]  from @2
   (byte~) $1 ← (byte) sum::return
   (byte) s2 ← (byte~) $1
   (byte) sum::a ← (byte) 9
   (byte) sum::b ← (byte) 13
   (byte) sum::return ← call sum param-assignment
   to:@4
-@4: from @3
+@4: scope:[]  from @3
   (byte~) $2 ← (byte) sum::return
   (byte) s3 ← (byte~) $2
   (byte~) $3 ← (byte) s1 + (byte) s2
   (byte~) $4 ← (byte~) $3 + (byte) s3
   (byte) s4 ← (byte~) $4
   to:@end
-sum: from @2 @3 @begin
+sum: scope:[sum]  from @2 @3 @begin
   (byte~) sum::$0 ← (byte) sum::a + (byte) sum::b
   (byte) sum::return ← (byte~) sum::$0
   to:sum::@return
-sum::@return: from sum
+sum::@return: scope:[sum]  from sum
   (byte) sum::return ← (byte) sum::return
   return (byte) sum::return
   to:@return
-@end: from @4
+@end: scope:[]  from @4
 
 Completing Phi functions...
 Completing Phi functions...
 CONTROL FLOW GRAPH SSA
-@begin: from
+@begin: scope:[]  from
   (byte) sum::a#0 ← (byte) 1
   (byte) sum::b#0 ← (byte) 2
   (byte) sum::return#0 ← call sum param-assignment
   to:@2
-@2: from @begin
+@2: scope:[]  from @begin
   (byte) sum::return#5 ← phi( @begin/(byte) sum::return#0 )
   (byte~) $0 ← (byte) sum::return#5
   (byte) s1#0 ← (byte~) $0
@@ -147,7 +147,7 @@ CONTROL FLOW GRAPH SSA
   (byte) sum::b#1 ← (byte) 4
   (byte) sum::return#1 ← call sum param-assignment
   to:@3
-@3: from @2
+@3: scope:[]  from @2
   (byte) s1#2 ← phi( @2/(byte) s1#0 )
   (byte) sum::return#6 ← phi( @2/(byte) sum::return#1 )
   (byte~) $1 ← (byte) sum::return#6
@@ -156,7 +156,7 @@ CONTROL FLOW GRAPH SSA
   (byte) sum::b#2 ← (byte) 13
   (byte) sum::return#2 ← call sum param-assignment
   to:@4
-@4: from @3
+@4: scope:[]  from @3
   (byte) s2#1 ← phi( @3/(byte) s2#0 )
   (byte) s1#1 ← phi( @3/(byte) s1#2 )
   (byte) sum::return#7 ← phi( @3/(byte) sum::return#2 )
@@ -166,27 +166,27 @@ CONTROL FLOW GRAPH SSA
   (byte~) $4 ← (byte~) $3 + (byte) s3#0
   (byte) s4#0 ← (byte~) $4
   to:@end
-sum: from @2 @3 @begin
+sum: scope:[sum]  from @2 @3 @begin
   (byte) sum::b#3 ← phi( @2/(byte) sum::b#1 @3/(byte) sum::b#2 @begin/(byte) sum::b#0 )
   (byte) sum::a#3 ← phi( @2/(byte) sum::a#1 @3/(byte) sum::a#2 @begin/(byte) sum::a#0 )
   (byte~) sum::$0 ← (byte) sum::a#3 + (byte) sum::b#3
   (byte) sum::return#3 ← (byte~) sum::$0
   to:sum::@return
-sum::@return: from sum
+sum::@return: scope:[sum]  from sum
   (byte) sum::return#8 ← phi( sum/(byte) sum::return#3 )
   (byte) sum::return#4 ← (byte) sum::return#8
   return (byte) sum::return#4
   to:@return
-@end: from @4
+@end: scope:[]  from @4
 
 CONTROL FLOW GRAPH WITH ASSIGNMENT CALL & RETURN
-@begin: from
+@begin: scope:[]  from
   (byte) sum::a#0 ← (byte) 1
   (byte) sum::b#0 ← (byte) 2
   call sum param-assignment
   (byte) sum::return#0 ← (byte) sum::return#4
   to:@2
-@2: from @begin
+@2: scope:[]  from @begin
   (byte) sum::return#5 ← phi( @begin/(byte) sum::return#0 )
   (byte~) $0 ← (byte) sum::return#5
   (byte) s1#0 ← (byte~) $0
@@ -195,7 +195,7 @@ CONTROL FLOW GRAPH WITH ASSIGNMENT CALL & RETURN
   call sum param-assignment
   (byte) sum::return#1 ← (byte) sum::return#4
   to:@3
-@3: from @2
+@3: scope:[]  from @2
   (byte) s1#2 ← phi( @2/(byte) s1#0 )
   (byte) sum::return#6 ← phi( @2/(byte) sum::return#1 )
   (byte~) $1 ← (byte) sum::return#6
@@ -205,7 +205,7 @@ CONTROL FLOW GRAPH WITH ASSIGNMENT CALL & RETURN
   call sum param-assignment
   (byte) sum::return#2 ← (byte) sum::return#4
   to:@4
-@4: from @3
+@4: scope:[]  from @3
   (byte) s2#1 ← phi( @3/(byte) s2#0 )
   (byte) s1#1 ← phi( @3/(byte) s1#2 )
   (byte) sum::return#7 ← phi( @3/(byte) sum::return#2 )
@@ -215,18 +215,18 @@ CONTROL FLOW GRAPH WITH ASSIGNMENT CALL & RETURN
   (byte~) $4 ← (byte~) $3 + (byte) s3#0
   (byte) s4#0 ← (byte~) $4
   to:@end
-sum: from @2 @3 @begin
+sum: scope:[sum]  from @2 @3 @begin
   (byte) sum::b#3 ← phi( @2/(byte) sum::b#1 @3/(byte) sum::b#2 @begin/(byte) sum::b#0 )
   (byte) sum::a#3 ← phi( @2/(byte) sum::a#1 @3/(byte) sum::a#2 @begin/(byte) sum::a#0 )
   (byte~) sum::$0 ← (byte) sum::a#3 + (byte) sum::b#3
   (byte) sum::return#3 ← (byte~) sum::$0
   to:sum::@return
-sum::@return: from sum
+sum::@return: scope:[sum]  from sum
   (byte) sum::return#8 ← phi( sum/(byte) sum::return#3 )
   (byte) sum::return#4 ← (byte) sum::return#8
   return 
   to:@return
-@end: from @4
+@end: scope:[]  from @4
 
 Constant (byte) sum::a#0 (byte) 1
 Constant (byte) sum::b#0 (byte) 2
@@ -236,18 +236,18 @@ Constant (byte) sum::a#2 (byte) 9
 Constant (byte) sum::b#2 (byte) 13
 Succesful SSA optimization Pass2ConstantPropagation
 CONTROL FLOW GRAPH
-@begin: from
+@begin: scope:[]  from
   call sum param-assignment
   (byte) sum::return#0 ← (byte) sum::return#4
   to:@2
-@2: from @begin
+@2: scope:[]  from @begin
   (byte) sum::return#5 ← phi( @begin/(byte) sum::return#0 )
   (byte~) $0 ← (byte) sum::return#5
   (byte) s1#0 ← (byte~) $0
   call sum param-assignment
   (byte) sum::return#1 ← (byte) sum::return#4
   to:@3
-@3: from @2
+@3: scope:[]  from @2
   (byte) s1#2 ← phi( @2/(byte) s1#0 )
   (byte) sum::return#6 ← phi( @2/(byte) sum::return#1 )
   (byte~) $1 ← (byte) sum::return#6
@@ -255,7 +255,7 @@ CONTROL FLOW GRAPH
   call sum param-assignment
   (byte) sum::return#2 ← (byte) sum::return#4
   to:@4
-@4: from @3
+@4: scope:[]  from @3
   (byte) s2#1 ← phi( @3/(byte) s2#0 )
   (byte) s1#1 ← phi( @3/(byte) s1#2 )
   (byte) sum::return#7 ← phi( @3/(byte) sum::return#2 )
@@ -265,18 +265,18 @@ CONTROL FLOW GRAPH
   (byte~) $4 ← (byte~) $3 + (byte) s3#0
   (byte) s4#0 ← (byte~) $4
   to:@end
-sum: from @2 @3 @begin
+sum: scope:[sum]  from @2 @3 @begin
   (byte) sum::b#3 ← phi( @2/(byte) 4 @3/(byte) 13 @begin/(byte) 2 )
   (byte) sum::a#3 ← phi( @2/(byte) 3 @3/(byte) 9 @begin/(byte) 1 )
   (byte~) sum::$0 ← (byte) sum::a#3 + (byte) sum::b#3
   (byte) sum::return#3 ← (byte~) sum::$0
   to:sum::@return
-sum::@return: from sum
+sum::@return: scope:[sum]  from sum
   (byte) sum::return#8 ← phi( sum/(byte) sum::return#3 )
   (byte) sum::return#4 ← (byte) sum::return#8
   return 
   to:@return
-@end: from @4
+@end: scope:[]  from @4
 
 Not aliassing across scopes: $0 sum::return#5
 Not aliassing across scopes: $1 sum::return#6
@@ -288,31 +288,31 @@ Alias (byte) s3#0 = (byte~) $2
 Alias (byte) s4#0 = (byte~) $4 
 Succesful SSA optimization Pass2AliasElimination
 CONTROL FLOW GRAPH
-@begin: from
+@begin: scope:[]  from
   call sum param-assignment
   to:@2
-@2: from @begin
+@2: scope:[]  from @begin
   (byte) s1#0 ← (byte) sum::return#0
   call sum param-assignment
   to:@3
-@3: from @2
+@3: scope:[]  from @2
   (byte) s2#0 ← (byte) sum::return#0
   call sum param-assignment
   to:@4
-@4: from @3
+@4: scope:[]  from @3
   (byte) s3#0 ← (byte) sum::return#0
   (byte~) $3 ← (byte) s1#0 + (byte) s2#0
   (byte) s4#0 ← (byte~) $3 + (byte) s3#0
   to:@end
-sum: from @2 @3 @begin
+sum: scope:[sum]  from @2 @3 @begin
   (byte) sum::b#3 ← phi( @2/(byte) 4 @3/(byte) 13 @begin/(byte) 2 )
   (byte) sum::a#3 ← phi( @2/(byte) 3 @3/(byte) 9 @begin/(byte) 1 )
   (byte) sum::return#0 ← (byte) sum::a#3 + (byte) sum::b#3
   to:sum::@return
-sum::@return: from sum
+sum::@return: scope:[sum]  from sum
   return 
   to:@return
-@end: from @4
+@end: scope:[]  from @4
 
 Not aliassing across scopes: s1#0 sum::return#0
 Not aliassing across scopes: s2#0 sum::return#0
@@ -320,29 +320,29 @@ Not aliassing across scopes: s3#0 sum::return#0
 Block Sequence Planned @begin @2 @3 @4 @end sum sum::@return 
 Block Sequence Planned @begin @2 @3 @4 @end sum sum::@return 
 CONTROL FLOW GRAPH - PHI LIFTED
-@begin: from
+@begin: scope:[]  from
   call sum param-assignment
   to:@2
-@2: from @begin
+@2: scope:[]  from @begin
   (byte) s1#0 ← (byte) sum::return#0
   call sum param-assignment
   to:@3
-@3: from @2
+@3: scope:[]  from @2
   (byte) s2#0 ← (byte) sum::return#0
   call sum param-assignment
   to:@4
-@4: from @3
+@4: scope:[]  from @3
   (byte) s3#0 ← (byte) sum::return#0
   (byte~) $3 ← (byte) s1#0 + (byte) s2#0
   (byte) s4#0 ← (byte~) $3 + (byte) s3#0
   to:@end
-@end: from @4
-sum: from @2 @3 @begin
+@end: scope:[]  from @4
+sum: scope:[sum]  from @2 @3 @begin
   (byte) sum::b#3 ← phi( @2/(byte) 4 @3/(byte) 13 @begin/(byte) 2 )
   (byte) sum::a#3 ← phi( @2/(byte) 3 @3/(byte) 9 @begin/(byte) 1 )
   (byte) sum::return#0 ← (byte) sum::a#3 + (byte) sum::b#3
   to:sum::@return
-sum::@return: from sum
+sum::@return: scope:[sum]  from sum
   return 
   to:@return
 
@@ -362,29 +362,29 @@ Propagated s1#0 through call [4] call sum param-assignment
 Propagated s2#0 through call [4] call sum param-assignment
 Propagating live ranges...
 CONTROL FLOW GRAPH - LIVE RANGES
-@begin: from
+@begin: scope:[]  from
   [0] call sum param-assignment [ sum::return#0 ]
   to:@2
-@2: from @begin
+@2: scope:[]  from @begin
   [1] (byte) s1#0 ← (byte) sum::return#0 [ s1#0 ]
   [2] call sum param-assignment [ sum::return#0 s1#0 ]
   to:@3
-@3: from @2
+@3: scope:[]  from @2
   [3] (byte) s2#0 ← (byte) sum::return#0 [ s1#0 s2#0 ]
   [4] call sum param-assignment [ sum::return#0 s1#0 s2#0 ]
   to:@4
-@4: from @3
+@4: scope:[]  from @3
   [5] (byte) s3#0 ← (byte) sum::return#0 [ s1#0 s2#0 s3#0 ]
   [6] (byte~) $3 ← (byte) s1#0 + (byte) s2#0 [ $3 s3#0 ]
   [7] (byte) s4#0 ← (byte~) $3 + (byte) s3#0 [ ]
   to:@end
-@end: from @4
-sum: from @2 @3 @begin
+@end: scope:[]  from @4
+sum: scope:[sum]  from @2 @3 @begin
   [8] (byte) sum::b#3 ← phi( @2/(byte) 4 @3/(byte) 13 @begin/(byte) 2 ) [ s1#0 s2#0 sum::a#3 sum::b#3 ]
   [8] (byte) sum::a#3 ← phi( @2/(byte) 3 @3/(byte) 9 @begin/(byte) 1 ) [ s1#0 s2#0 sum::a#3 sum::b#3 ]
   [9] (byte) sum::return#0 ← (byte) sum::a#3 + (byte) sum::b#3 [ sum::return#0 s1#0 s2#0 ]
   to:sum::@return
-sum::@return: from sum
+sum::@return: scope:[sum]  from sum
   [10] return  [ sum::return#0 s1#0 s2#0 ]
   to:@return
 
@@ -407,29 +407,29 @@ Propagated s1#0 through call [4] call sum param-assignment
 Propagated s2#0 through call [4] call sum param-assignment
 Propagating live ranges...
 CONTROL FLOW GRAPH - PHI MEM COALESCED
-@begin: from
+@begin: scope:[]  from
   [0] call sum param-assignment [ sum::return#0 ]
   to:@2
-@2: from @begin
+@2: scope:[]  from @begin
   [1] (byte) s1#0 ← (byte) sum::return#0 [ s1#0 ]
   [2] call sum param-assignment [ sum::return#0 s1#0 ]
   to:@3
-@3: from @2
+@3: scope:[]  from @2
   [3] (byte) s2#0 ← (byte) sum::return#0 [ s1#0 s2#0 ]
   [4] call sum param-assignment [ sum::return#0 s1#0 s2#0 ]
   to:@4
-@4: from @3
+@4: scope:[]  from @3
   [5] (byte) s3#0 ← (byte) sum::return#0 [ s1#0 s2#0 s3#0 ]
   [6] (byte~) $3 ← (byte) s1#0 + (byte) s2#0 [ $3 s3#0 ]
   [7] (byte) s4#0 ← (byte~) $3 + (byte) s3#0 [ ]
   to:@end
-@end: from @4
-sum: from @2 @3 @begin
+@end: scope:[]  from @4
+sum: scope:[sum]  from @2 @3 @begin
   [8] (byte) sum::b#3 ← phi( @2/(byte) 4 @3/(byte) 13 @begin/(byte) 2 ) [ s1#0 s2#0 sum::a#3 sum::b#3 ]
   [8] (byte) sum::a#3 ← phi( @2/(byte) 3 @3/(byte) 9 @begin/(byte) 1 ) [ s1#0 s2#0 sum::a#3 sum::b#3 ]
   [9] (byte) sum::return#0 ← (byte) sum::a#3 + (byte) sum::b#3 [ sum::return#0 s1#0 s2#0 ]
   to:sum::@return
-sum::@return: from sum
+sum::@return: scope:[sum]  from sum
   [10] return  [ sum::return#0 s1#0 s2#0 ]
   to:@return
 

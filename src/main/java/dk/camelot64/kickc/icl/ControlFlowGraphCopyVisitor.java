@@ -47,7 +47,7 @@ public class ControlFlowGraphCopyVisitor extends ControlFlowGraphBaseVisitor<Obj
    @Override
    public ControlFlowBlock visitBlock(ControlFlowBlock origBlock) {
       LabelRef label = origBlock.getLabel();
-      ControlFlowBlock copyBlock = new ControlFlowBlock(label);
+      ControlFlowBlock copyBlock = new ControlFlowBlock(label, origBlock.getScope());
       this.origBlock = origBlock;
       this.copyBlock = copyBlock;
       // Handle statements
@@ -92,7 +92,7 @@ public class ControlFlowGraphCopyVisitor extends ControlFlowGraphBaseVisitor<Obj
     * @return The new block.
     */
    protected ControlFlowBlock splitCurrentBlock(LabelRef label) {
-      ControlFlowBlock newBlock = new ControlFlowBlock(label);
+      ControlFlowBlock newBlock = new ControlFlowBlock(label, origBlock.getScope());
       this.copyBlock.setDefaultSuccessor(newBlock.getLabel());
       this.copyBlockMap.put(this.copyBlock.getLabel(), this.copyBlock);
       this.copyBlock = newBlock;

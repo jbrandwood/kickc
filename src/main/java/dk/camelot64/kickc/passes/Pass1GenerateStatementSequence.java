@@ -156,7 +156,7 @@ public class Pass1GenerateStatementSequence extends KickCBaseVisitor<Object> {
       String name = ctx.NAME().getText();
       Procedure procedure = getCurrentSymbols().addProcedure(name, type);
       scopeStack.push(procedure);
-      Label procExit = procedure.addLabel("@return");
+      Label procExit = procedure.addLabel(SymbolRef.PROCEXIT_BLOCK_NAME);
       VariableUnversioned returnVar = null;
       if (!SymbolTypeBasic.VOID.equals(type)) {
          returnVar = procedure.addVariable("return", type);
@@ -211,7 +211,7 @@ public class Pass1GenerateStatementSequence extends KickCBaseVisitor<Object> {
          sequence.addStatement(new StatementAssignment(returnVar, rValue));
          PrePostModifierHandler.addPostModifiers(this, exprCtx);
       }
-      Label returnLabel = procedure.getLabel("@return");
+      Label returnLabel = procedure.getLabel(SymbolRef.PROCEXIT_BLOCK_NAME);
       sequence.addStatement(new StatementJump(returnLabel.getRef()));
       return null;
    }

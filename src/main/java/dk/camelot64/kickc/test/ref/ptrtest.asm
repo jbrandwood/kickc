@@ -24,18 +24,18 @@ lvaluevar: {
     bcc b2
   breturn:
     rts
+  b2:
+    ldy #$0
+    lda #$4
+    sta ($2),y
+    inc $2
+    bne !+
+    inc $2+$1
+  !:
+    inx
+  b1_from_b2:
+    jmp b1
 }
-b2:
-  ldy #$0
-  lda #$4
-  sta ($2),y
-  inc $2
-  bne !+
-  inc $2+$1
-!:
-  inx
-b1_from_b2:
-  jmp b1
 rvaluevar: {
   b1_from_rvaluevar:
     lda #<$400
@@ -48,17 +48,17 @@ rvaluevar: {
     bcc b2
   breturn:
     rts
+  b2:
+    ldy #$0
+    lda ($2),y
+    inc $2
+    bne !+
+    inc $2+$1
+  !:
+    inx
+  b1_from_b2:
+    jmp b1
 }
-b2:
-  ldy #$0
-  lda ($2),y
-  inc $2
-  bne !+
-  inc $2+$1
-!:
-  inx
-b1_from_b2:
-  jmp b1
 rvalue: {
     lda $400
     lda $401
@@ -69,12 +69,12 @@ rvalue: {
     bcc b2
   breturn:
     rts
+  b2:
+    lda $400,x
+    inx
+  b1_from_b2:
+    jmp b1
 }
-b2:
-  lda $400,x
-  inx
-b1_from_b2:
-  jmp b1
 lvalue: {
     lda #$1
     sta $400
@@ -87,10 +87,10 @@ lvalue: {
     bcc b2
   breturn:
     rts
+  b2:
+    lda #$3
+    sta $400,x
+    inx
+  b1_from_b2:
+    jmp b1
 }
-b2:
-  lda #$3
-  sta $400,x
-  inx
-b1_from_b2:
-  jmp b1

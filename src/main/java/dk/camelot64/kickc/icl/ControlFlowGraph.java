@@ -210,14 +210,13 @@ public class ControlFlowGraph {
 
    /**
     * Get all blocks stat are part of the execution of a specific scope. (mostly a procedure)
-    * @param scopeLabel The label of the scope to find blocks for
+    * @param scope The scope to find blocks for
     * @return All blocks that are part of the execution of the scope
     */
-   public List<ControlFlowBlock> getScopeBlocks(LabelRef scopeLabel) {
+   public List<ControlFlowBlock> getScopeBlocks(ScopeRef scope) {
       ArrayList<ControlFlowBlock> scopeBlocks = new ArrayList<>();
       for (ControlFlowBlock block : getAllBlocks()) {
-
-         if(block.getLabel().getFullName().equals(scopeLabel.getFullName()) || block.getLabel().getScopeNames().equals(scopeLabel.getFullName())) {
+         if(block.getScope().equals(scope)) {
             scopeBlocks.add(block);
          }
       }

@@ -1,11 +1,11 @@
 package dk.camelot64.kickc.asm;
 
-/** The end of a procedure (scope)  */
-public class AsmProcEnd implements AsmLine {
+/** The end of a scope  */
+public class AsmScopeEnd implements AsmLine {
 
    private int index;
 
-   public AsmProcEnd() {
+   public AsmScopeEnd() {
    }
 
    @Override

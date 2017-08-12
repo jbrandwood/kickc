@@ -27,14 +27,21 @@ public class Pass3CodeGeneration {
 
    public void generate() {
       AsmProgram asm = new AsmProgram();
+      ScopeRef currentScope = ScopeRef.ROOT;
       for (ControlFlowBlock block : getGraph().getAllBlocks()) {
+         if (!block.getScope().equals(currentScope)) {
+            if (!ScopeRef.ROOT.equals(currentScope)) {
+               asm.addScopeEnd();
+            }
+            currentScope = block.getScope();
+            asm.startSegment(null, block.getLabel().getFullName());
+            asm.addScopeBegin(block.getLabel().getFullName().replace('@', 'b').replace(':', '_'));
+         }
          // Generate entry points (if needed)
          genBlockEntryPoints(asm, block);
-         // Generate label
-         asm.startSegment(null, block.getLabel().getFullName());
-         if(block.isProcedureEntry(program)) {
-            asm.addProcBegin(block.getLabel().getFullName().replace('@', 'b').replace(':', '_'));
-         }else {
+         if (!block.isProcedureEntry(program)) {
+            // Generate label
+            asm.startSegment(null, block.getLabel().getFullName());
             asm.addLabel(block.getLabel().getLocalName().replace('@', 'b').replace(':', '_'));
          }
          // Generate statements
@@ -47,9 +54,9 @@ public class Pass3CodeGeneration {
             }
             asm.addInstruction("JMP", AsmAddressingMode.ABS, defaultSuccessor.getLabel().getLocalName().replace('@', 'b').replace(':', '_'));
          }
-         if(block.isProcedureExit(program)) {
-            asm.addProcEnd();
-         }
+      }
+      if (!ScopeRef.ROOT.equals(currentScope)) {
+         asm.addScopeEnd();
       }
       program.setAsm(asm);
    }
@@ -59,7 +66,7 @@ public class Pass3CodeGeneration {
       AsmCodegenAluState aluState = new AsmCodegenAluState();
       while (statementsIt.hasNext()) {
          Statement statement = statementsIt.next();
-         if(!(statement instanceof StatementPhiBlock)) {
+         if (!(statement instanceof StatementPhiBlock)) {
             generateStatementAsm(asm, block, statement, aluState, true);
          }
       }
@@ -183,7 +190,7 @@ public class Pass3CodeGeneration {
 
    private void genBlockPhiTransition(AsmProgram asm, ControlFlowBlock fromBlock, ControlFlowBlock toBlock) {
       Statement toFirstStatement = toBlock.getStatements().get(0);
-      asm.startSegment(toFirstStatement.getIndex(), "["+toFirstStatement.getIndex()+"]"+" phi from " + fromBlock.getLabel().getFullName()+" to "+toBlock.getLabel().getFullName());
+      asm.startSegment(toFirstStatement.getIndex(), "[" + toFirstStatement.getIndex() + "]" + " phi from " + fromBlock.getLabel().getFullName() + " to " + toBlock.getLabel().getFullName());
       asm.addLabel((toBlock.getLabel().getLocalName() + "_from_" + fromBlock.getLabel().getLocalName()).replace('@', 'b').replace(':', '_'));
       if (toBlock.hasPhiBlock()) {
          StatementPhiBlock phiBlock = toBlock.getPhiBlock();
@@ -217,7 +224,7 @@ public class Pass3CodeGeneration {
    }
 
    private void genAsmMove(AsmProgram asm, LValue lValue, RValue rValue, Statement statement) {
-      asm.startSegment(statement.getIndex(), "["+statement.getIndex() + "] phi " +lValue.toString(program) + " = " + rValue.toString(program));
+      asm.startSegment(statement.getIndex(), "[" + statement.getIndex() + "] phi " + lValue.toString(program) + " = " + rValue.toString(program));
       if (isRegisterCopy(lValue, rValue)) {
          asm.getCurrentSegment().setFragment("register_copy");
       } else {

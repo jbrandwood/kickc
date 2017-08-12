@@ -58,151 +58,151 @@ SYMBOLS
 (byte) nest::j
 
 INITIAL CONTROL FLOW GRAPH
-@begin: from
+@begin: scope:[]  from
   (byte*) SCREEN ← (word) 1024
   (void~) $0 ← call main 
   to:@1
-main: from
+main: scope:[main]  from
   (byte) main::i ← (byte) 100
   to:main::@1
-main::@1: from main main::@1
+main::@1: scope:[main]  from main main::@1
   (void~) main::$0 ← call nest 
   (byte) main::i ← -- (byte) main::i
   (boolean~) main::$1 ← (byte) main::i > (byte) 0
   if((boolean~) main::$1) goto main::@1
   to:main::@2
-main::@2: from main::@1
+main::@2: scope:[main]  from main::@1
   to:main::@return
-main::@return: from main::@2
+main::@return: scope:[main]  from main::@2
   return 
   to:@return
-@1: from @begin
+@1: scope:[]  from @begin
   to:@2
-nest: from
+nest: scope:[nest]  from
   (byte) nest::j ← (byte) 100
   to:nest::@1
-nest::@1: from nest nest::@1
+nest::@1: scope:[nest]  from nest nest::@1
   *((byte*) SCREEN) ← (byte) nest::j
   (byte) nest::j ← -- (byte) nest::j
   (boolean~) nest::$0 ← (byte) nest::j > (byte) 0
   if((boolean~) nest::$0) goto nest::@1
   to:nest::@2
-nest::@2: from nest::@1
+nest::@2: scope:[nest]  from nest::@1
   to:nest::@return
-nest::@return: from nest::@2
+nest::@return: scope:[nest]  from nest::@2
   return 
   to:@return
-@2: from @1
+@2: scope:[]  from @1
   to:@end
-@end: from @2
+@end: scope:[]  from @2
 
 Removing empty block main::@2
 Removing empty block @1
 Removing empty block nest::@2
 Removing empty block @2
 CONTROL FLOW GRAPH
-@begin: from
+@begin: scope:[]  from
   (byte*) SCREEN ← (word) 1024
   (void~) $0 ← call main 
   to:@end
-main: from
+main: scope:[main]  from
   (byte) main::i ← (byte) 100
   to:main::@1
-main::@1: from main main::@1
+main::@1: scope:[main]  from main main::@1
   (void~) main::$0 ← call nest 
   (byte) main::i ← -- (byte) main::i
   (boolean~) main::$1 ← (byte) main::i > (byte) 0
   if((boolean~) main::$1) goto main::@1
   to:main::@return
-main::@return: from main::@1
+main::@return: scope:[main]  from main::@1
   return 
   to:@return
-nest: from
+nest: scope:[nest]  from
   (byte) nest::j ← (byte) 100
   to:nest::@1
-nest::@1: from nest nest::@1
+nest::@1: scope:[nest]  from nest nest::@1
   *((byte*) SCREEN) ← (byte) nest::j
   (byte) nest::j ← -- (byte) nest::j
   (boolean~) nest::$0 ← (byte) nest::j > (byte) 0
   if((boolean~) nest::$0) goto nest::@1
   to:nest::@return
-nest::@return: from nest::@1
+nest::@return: scope:[nest]  from nest::@1
   return 
   to:@return
-@end: from @begin
+@end: scope:[]  from @begin
 
 PROCEDURE MODIFY VARIABLE ANALYSIS
 
 CONTROL FLOW GRAPH WITH ASSIGNMENT CALL
-@begin: from
+@begin: scope:[]  from
   (byte*) SCREEN ← (word) 1024
   call main param-assignment
   to:@3
-@3: from @begin
+@3: scope:[]  from @begin
   to:@end
-main: from @begin
+main: scope:[main]  from @begin
   (byte) main::i ← (byte) 100
   to:main::@1
-main::@1: from main main::@3
+main::@1: scope:[main]  from main main::@3
   call nest param-assignment
   to:main::@3
-main::@3: from main::@1
+main::@3: scope:[main]  from main::@1
   (byte) main::i ← -- (byte) main::i
   (boolean~) main::$1 ← (byte) main::i > (byte) 0
   if((boolean~) main::$1) goto main::@1
   to:main::@return
-main::@return: from main::@3
+main::@return: scope:[main]  from main::@3
   return 
   to:@return
-nest: from main::@1
+nest: scope:[nest]  from main::@1
   (byte) nest::j ← (byte) 100
   to:nest::@1
-nest::@1: from nest nest::@1
+nest::@1: scope:[nest]  from nest nest::@1
   *((byte*) SCREEN) ← (byte) nest::j
   (byte) nest::j ← -- (byte) nest::j
   (boolean~) nest::$0 ← (byte) nest::j > (byte) 0
   if((boolean~) nest::$0) goto nest::@1
   to:nest::@return
-nest::@return: from nest::@1
+nest::@return: scope:[nest]  from nest::@1
   return 
   to:@return
-@end: from @3
+@end: scope:[]  from @3
 
 Completing Phi functions...
 Completing Phi functions...
 Completing Phi functions...
 Completing Phi functions...
 CONTROL FLOW GRAPH SSA
-@begin: from
+@begin: scope:[]  from
   (byte*) SCREEN#0 ← (word) 1024
   call main param-assignment
   to:@3
-@3: from @begin
+@3: scope:[]  from @begin
   to:@end
-main: from @begin
+main: scope:[main]  from @begin
   (byte*) SCREEN#4 ← phi( @begin/(byte*) SCREEN#0 )
   (byte) main::i#0 ← (byte) 100
   to:main::@1
-main::@1: from main main::@3
+main::@1: scope:[main]  from main main::@3
   (byte*) SCREEN#3 ← phi( main/(byte*) SCREEN#4 main::@3/(byte*) SCREEN#5 )
   (byte) main::i#3 ← phi( main/(byte) main::i#0 main::@3/(byte) main::i#1 )
   call nest param-assignment
   to:main::@3
-main::@3: from main::@1
+main::@3: scope:[main]  from main::@1
   (byte*) SCREEN#5 ← phi( main::@1/(byte*) SCREEN#3 )
   (byte) main::i#2 ← phi( main::@1/(byte) main::i#3 )
   (byte) main::i#1 ← -- (byte) main::i#2
   (boolean~) main::$1 ← (byte) main::i#1 > (byte) 0
   if((boolean~) main::$1) goto main::@1
   to:main::@return
-main::@return: from main::@3
+main::@return: scope:[main]  from main::@3
   return 
   to:@return
-nest: from main::@1
+nest: scope:[nest]  from main::@1
   (byte*) SCREEN#2 ← phi( main::@1/(byte*) SCREEN#3 )
   (byte) nest::j#0 ← (byte) 100
   to:nest::@1
-nest::@1: from nest nest::@1
+nest::@1: scope:[nest]  from nest nest::@1
   (byte*) SCREEN#1 ← phi( nest/(byte*) SCREEN#2 nest::@1/(byte*) SCREEN#1 )
   (byte) nest::j#2 ← phi( nest/(byte) nest::j#0 nest::@1/(byte) nest::j#1 )
   *((byte*) SCREEN#1) ← (byte) nest::j#2
@@ -210,42 +210,42 @@ nest::@1: from nest nest::@1
   (boolean~) nest::$0 ← (byte) nest::j#1 > (byte) 0
   if((boolean~) nest::$0) goto nest::@1
   to:nest::@return
-nest::@return: from nest::@1
+nest::@return: scope:[nest]  from nest::@1
   return 
   to:@return
-@end: from @3
+@end: scope:[]  from @3
 
 CONTROL FLOW GRAPH WITH ASSIGNMENT CALL & RETURN
-@begin: from
+@begin: scope:[]  from
   (byte*) SCREEN#0 ← (word) 1024
   call main param-assignment
   to:@3
-@3: from @begin
+@3: scope:[]  from @begin
   to:@end
-main: from @begin
+main: scope:[main]  from @begin
   (byte*) SCREEN#4 ← phi( @begin/(byte*) SCREEN#0 )
   (byte) main::i#0 ← (byte) 100
   to:main::@1
-main::@1: from main main::@3
+main::@1: scope:[main]  from main main::@3
   (byte*) SCREEN#3 ← phi( main/(byte*) SCREEN#4 main::@3/(byte*) SCREEN#5 )
   (byte) main::i#3 ← phi( main/(byte) main::i#0 main::@3/(byte) main::i#1 )
   call nest param-assignment
   to:main::@3
-main::@3: from main::@1
+main::@3: scope:[main]  from main::@1
   (byte*) SCREEN#5 ← phi( main::@1/(byte*) SCREEN#3 )
   (byte) main::i#2 ← phi( main::@1/(byte) main::i#3 )
   (byte) main::i#1 ← -- (byte) main::i#2
   (boolean~) main::$1 ← (byte) main::i#1 > (byte) 0
   if((boolean~) main::$1) goto main::@1
   to:main::@return
-main::@return: from main::@3
+main::@return: scope:[main]  from main::@3
   return 
   to:@return
-nest: from main::@1
+nest: scope:[nest]  from main::@1
   (byte*) SCREEN#2 ← phi( main::@1/(byte*) SCREEN#3 )
   (byte) nest::j#0 ← (byte) 100
   to:nest::@1
-nest::@1: from nest nest::@1
+nest::@1: scope:[nest]  from nest nest::@1
   (byte*) SCREEN#1 ← phi( nest/(byte*) SCREEN#2 nest::@1/(byte*) SCREEN#1 )
   (byte) nest::j#2 ← phi( nest/(byte) nest::j#0 nest::@1/(byte) nest::j#1 )
   *((byte*) SCREEN#1) ← (byte) nest::j#2
@@ -253,42 +253,42 @@ nest::@1: from nest nest::@1
   (boolean~) nest::$0 ← (byte) nest::j#1 > (byte) 0
   if((boolean~) nest::$0) goto nest::@1
   to:nest::@return
-nest::@return: from nest::@1
+nest::@return: scope:[nest]  from nest::@1
   return 
   to:@return
-@end: from @3
+@end: scope:[]  from @3
 
 Culled Empty Block (label) @3
 Succesful SSA optimization Pass2CullEmptyBlocks
 CONTROL FLOW GRAPH
-@begin: from
+@begin: scope:[]  from
   (byte*) SCREEN#0 ← (word) 1024
   call main param-assignment
   to:@end
-main: from @begin
+main: scope:[main]  from @begin
   (byte*) SCREEN#4 ← phi( @begin/(byte*) SCREEN#0 )
   (byte) main::i#0 ← (byte) 100
   to:main::@1
-main::@1: from main main::@3
+main::@1: scope:[main]  from main main::@3
   (byte*) SCREEN#3 ← phi( main/(byte*) SCREEN#4 main::@3/(byte*) SCREEN#5 )
   (byte) main::i#3 ← phi( main/(byte) main::i#0 main::@3/(byte) main::i#1 )
   call nest param-assignment
   to:main::@3
-main::@3: from main::@1
+main::@3: scope:[main]  from main::@1
   (byte*) SCREEN#5 ← phi( main::@1/(byte*) SCREEN#3 )
   (byte) main::i#2 ← phi( main::@1/(byte) main::i#3 )
   (byte) main::i#1 ← -- (byte) main::i#2
   (boolean~) main::$1 ← (byte) main::i#1 > (byte) 0
   if((boolean~) main::$1) goto main::@1
   to:main::@return
-main::@return: from main::@3
+main::@return: scope:[main]  from main::@3
   return 
   to:@return
-nest: from main::@1
+nest: scope:[nest]  from main::@1
   (byte*) SCREEN#2 ← phi( main::@1/(byte*) SCREEN#3 )
   (byte) nest::j#0 ← (byte) 100
   to:nest::@1
-nest::@1: from nest nest::@1
+nest::@1: scope:[nest]  from nest nest::@1
   (byte*) SCREEN#1 ← phi( nest/(byte*) SCREEN#2 nest::@1/(byte*) SCREEN#1 )
   (byte) nest::j#2 ← phi( nest/(byte) nest::j#0 nest::@1/(byte) nest::j#1 )
   *((byte*) SCREEN#1) ← (byte) nest::j#2
@@ -296,41 +296,41 @@ nest::@1: from nest nest::@1
   (boolean~) nest::$0 ← (byte) nest::j#1 > (byte) 0
   if((boolean~) nest::$0) goto nest::@1
   to:nest::@return
-nest::@return: from nest::@1
+nest::@return: scope:[nest]  from nest::@1
   return 
   to:@return
-@end: from @begin
+@end: scope:[]  from @begin
 
 Constant (byte*) SCREEN#0 (word) 1024
 Constant (byte) main::i#0 (byte) 100
 Constant (byte) nest::j#0 (byte) 100
 Succesful SSA optimization Pass2ConstantPropagation
 CONTROL FLOW GRAPH
-@begin: from
+@begin: scope:[]  from
   call main param-assignment
   to:@end
-main: from @begin
+main: scope:[main]  from @begin
   (byte*) SCREEN#4 ← phi( @begin/(word) 1024 )
   to:main::@1
-main::@1: from main main::@3
+main::@1: scope:[main]  from main main::@3
   (byte*) SCREEN#3 ← phi( main/(byte*) SCREEN#4 main::@3/(byte*) SCREEN#5 )
   (byte) main::i#3 ← phi( main/(byte) 100 main::@3/(byte) main::i#1 )
   call nest param-assignment
   to:main::@3
-main::@3: from main::@1
+main::@3: scope:[main]  from main::@1
   (byte*) SCREEN#5 ← phi( main::@1/(byte*) SCREEN#3 )
   (byte) main::i#2 ← phi( main::@1/(byte) main::i#3 )
   (byte) main::i#1 ← -- (byte) main::i#2
   (boolean~) main::$1 ← (byte) main::i#1 > (byte) 0
   if((boolean~) main::$1) goto main::@1
   to:main::@return
-main::@return: from main::@3
+main::@return: scope:[main]  from main::@3
   return 
   to:@return
-nest: from main::@1
+nest: scope:[nest]  from main::@1
   (byte*) SCREEN#2 ← phi( main::@1/(byte*) SCREEN#3 )
   to:nest::@1
-nest::@1: from nest nest::@1
+nest::@1: scope:[nest]  from nest nest::@1
   (byte*) SCREEN#1 ← phi( nest/(byte*) SCREEN#2 nest::@1/(byte*) SCREEN#1 )
   (byte) nest::j#2 ← phi( nest/(byte) 100 nest::@1/(byte) nest::j#1 )
   *((byte*) SCREEN#1) ← (byte) nest::j#2
@@ -338,37 +338,37 @@ nest::@1: from nest nest::@1
   (boolean~) nest::$0 ← (byte) nest::j#1 > (byte) 0
   if((boolean~) nest::$0) goto nest::@1
   to:nest::@return
-nest::@return: from nest::@1
+nest::@return: scope:[nest]  from nest::@1
   return 
   to:@return
-@end: from @begin
+@end: scope:[]  from @begin
 
 Alias (byte) main::i#2 = (byte) main::i#3 
 Alias (byte*) SCREEN#2 = (byte*) SCREEN#5 (byte*) SCREEN#3 
 Succesful SSA optimization Pass2AliasElimination
 CONTROL FLOW GRAPH
-@begin: from
+@begin: scope:[]  from
   call main param-assignment
   to:@end
-main: from @begin
+main: scope:[main]  from @begin
   (byte*) SCREEN#4 ← phi( @begin/(word) 1024 )
   to:main::@1
-main::@1: from main main::@3
+main::@1: scope:[main]  from main main::@3
   (byte*) SCREEN#2 ← phi( main/(byte*) SCREEN#4 main::@3/(byte*) SCREEN#2 )
   (byte) main::i#2 ← phi( main/(byte) 100 main::@3/(byte) main::i#1 )
   call nest param-assignment
   to:main::@3
-main::@3: from main::@1
+main::@3: scope:[main]  from main::@1
   (byte) main::i#1 ← -- (byte) main::i#2
   (boolean~) main::$1 ← (byte) main::i#1 > (byte) 0
   if((boolean~) main::$1) goto main::@1
   to:main::@return
-main::@return: from main::@3
+main::@return: scope:[main]  from main::@3
   return 
   to:@return
-nest: from main::@1
+nest: scope:[nest]  from main::@1
   to:nest::@1
-nest::@1: from nest nest::@1
+nest::@1: scope:[nest]  from nest nest::@1
   (byte*) SCREEN#1 ← phi( nest/(byte*) SCREEN#2 nest::@1/(byte*) SCREEN#1 )
   (byte) nest::j#2 ← phi( nest/(byte) 100 nest::@1/(byte) nest::j#1 )
   *((byte*) SCREEN#1) ← (byte) nest::j#2
@@ -376,35 +376,35 @@ nest::@1: from nest nest::@1
   (boolean~) nest::$0 ← (byte) nest::j#1 > (byte) 0
   if((boolean~) nest::$0) goto nest::@1
   to:nest::@return
-nest::@return: from nest::@1
+nest::@return: scope:[nest]  from nest::@1
   return 
   to:@return
-@end: from @begin
+@end: scope:[]  from @begin
 
 Redundant Phi (byte*) SCREEN#4 (word) 1024
 Succesful SSA optimization Pass2RedundantPhiElimination
 CONTROL FLOW GRAPH
-@begin: from
+@begin: scope:[]  from
   call main param-assignment
   to:@end
-main: from @begin
+main: scope:[main]  from @begin
   to:main::@1
-main::@1: from main main::@3
+main::@1: scope:[main]  from main main::@3
   (byte*) SCREEN#2 ← phi( main/(word) 1024 main::@3/(byte*) SCREEN#2 )
   (byte) main::i#2 ← phi( main/(byte) 100 main::@3/(byte) main::i#1 )
   call nest param-assignment
   to:main::@3
-main::@3: from main::@1
+main::@3: scope:[main]  from main::@1
   (byte) main::i#1 ← -- (byte) main::i#2
   (boolean~) main::$1 ← (byte) main::i#1 > (byte) 0
   if((boolean~) main::$1) goto main::@1
   to:main::@return
-main::@return: from main::@3
+main::@return: scope:[main]  from main::@3
   return 
   to:@return
-nest: from main::@1
+nest: scope:[nest]  from main::@1
   to:nest::@1
-nest::@1: from nest nest::@1
+nest::@1: scope:[nest]  from nest nest::@1
   (byte*) SCREEN#1 ← phi( nest/(byte*) SCREEN#2 nest::@1/(byte*) SCREEN#1 )
   (byte) nest::j#2 ← phi( nest/(byte) 100 nest::@1/(byte) nest::j#1 )
   *((byte*) SCREEN#1) ← (byte) nest::j#2
@@ -412,36 +412,36 @@ nest::@1: from nest nest::@1
   (boolean~) nest::$0 ← (byte) nest::j#1 > (byte) 0
   if((boolean~) nest::$0) goto nest::@1
   to:nest::@return
-nest::@return: from nest::@1
+nest::@return: scope:[nest]  from nest::@1
   return 
   to:@return
-@end: from @begin
+@end: scope:[]  from @begin
 
 Self Phi Eliminated (byte*) SCREEN#2
 Self Phi Eliminated (byte*) SCREEN#1
 Succesful SSA optimization Pass2SelfPhiElimination
 CONTROL FLOW GRAPH
-@begin: from
+@begin: scope:[]  from
   call main param-assignment
   to:@end
-main: from @begin
+main: scope:[main]  from @begin
   to:main::@1
-main::@1: from main main::@3
+main::@1: scope:[main]  from main main::@3
   (byte*) SCREEN#2 ← phi( main/(word) 1024 )
   (byte) main::i#2 ← phi( main/(byte) 100 main::@3/(byte) main::i#1 )
   call nest param-assignment
   to:main::@3
-main::@3: from main::@1
+main::@3: scope:[main]  from main::@1
   (byte) main::i#1 ← -- (byte) main::i#2
   (boolean~) main::$1 ← (byte) main::i#1 > (byte) 0
   if((boolean~) main::$1) goto main::@1
   to:main::@return
-main::@return: from main::@3
+main::@return: scope:[main]  from main::@3
   return 
   to:@return
-nest: from main::@1
+nest: scope:[nest]  from main::@1
   to:nest::@1
-nest::@1: from nest nest::@1
+nest::@1: scope:[nest]  from nest nest::@1
   (byte*) SCREEN#1 ← phi( nest/(byte*) SCREEN#2 )
   (byte) nest::j#2 ← phi( nest/(byte) 100 nest::@1/(byte) nest::j#1 )
   *((byte*) SCREEN#1) ← (byte) nest::j#2
@@ -449,148 +449,148 @@ nest::@1: from nest nest::@1
   (boolean~) nest::$0 ← (byte) nest::j#1 > (byte) 0
   if((boolean~) nest::$0) goto nest::@1
   to:nest::@return
-nest::@return: from nest::@1
+nest::@return: scope:[nest]  from nest::@1
   return 
   to:@return
-@end: from @begin
+@end: scope:[]  from @begin
 
 Simple Condition (boolean~) main::$1 if((byte) main::i#1>(byte) 0) goto main::@1
 Simple Condition (boolean~) nest::$0 if((byte) nest::j#1>(byte) 0) goto nest::@1
 Succesful SSA optimization Pass2ConditionalJumpSimplification
 CONTROL FLOW GRAPH
-@begin: from
+@begin: scope:[]  from
   call main param-assignment
   to:@end
-main: from @begin
+main: scope:[main]  from @begin
   to:main::@1
-main::@1: from main main::@3
+main::@1: scope:[main]  from main main::@3
   (byte*) SCREEN#2 ← phi( main/(word) 1024 )
   (byte) main::i#2 ← phi( main/(byte) 100 main::@3/(byte) main::i#1 )
   call nest param-assignment
   to:main::@3
-main::@3: from main::@1
+main::@3: scope:[main]  from main::@1
   (byte) main::i#1 ← -- (byte) main::i#2
   if((byte) main::i#1>(byte) 0) goto main::@1
   to:main::@return
-main::@return: from main::@3
+main::@return: scope:[main]  from main::@3
   return 
   to:@return
-nest: from main::@1
+nest: scope:[nest]  from main::@1
   to:nest::@1
-nest::@1: from nest nest::@1
+nest::@1: scope:[nest]  from nest nest::@1
   (byte*) SCREEN#1 ← phi( nest/(byte*) SCREEN#2 )
   (byte) nest::j#2 ← phi( nest/(byte) 100 nest::@1/(byte) nest::j#1 )
   *((byte*) SCREEN#1) ← (byte) nest::j#2
   (byte) nest::j#1 ← -- (byte) nest::j#2
   if((byte) nest::j#1>(byte) 0) goto nest::@1
   to:nest::@return
-nest::@return: from nest::@1
+nest::@return: scope:[nest]  from nest::@1
   return 
   to:@return
-@end: from @begin
+@end: scope:[]  from @begin
 
 Constant (byte*) SCREEN#2 (word) 1024
 Succesful SSA optimization Pass2ConstantPropagation
 CONTROL FLOW GRAPH
-@begin: from
+@begin: scope:[]  from
   call main param-assignment
   to:@end
-main: from @begin
+main: scope:[main]  from @begin
   to:main::@1
-main::@1: from main main::@3
+main::@1: scope:[main]  from main main::@3
   (byte) main::i#2 ← phi( main/(byte) 100 main::@3/(byte) main::i#1 )
   call nest param-assignment
   to:main::@3
-main::@3: from main::@1
+main::@3: scope:[main]  from main::@1
   (byte) main::i#1 ← -- (byte) main::i#2
   if((byte) main::i#1>(byte) 0) goto main::@1
   to:main::@return
-main::@return: from main::@3
+main::@return: scope:[main]  from main::@3
   return 
   to:@return
-nest: from main::@1
+nest: scope:[nest]  from main::@1
   to:nest::@1
-nest::@1: from nest nest::@1
+nest::@1: scope:[nest]  from nest nest::@1
   (byte*) SCREEN#1 ← phi( nest/(word) 1024 )
   (byte) nest::j#2 ← phi( nest/(byte) 100 nest::@1/(byte) nest::j#1 )
   *((byte*) SCREEN#1) ← (byte) nest::j#2
   (byte) nest::j#1 ← -- (byte) nest::j#2
   if((byte) nest::j#1>(byte) 0) goto nest::@1
   to:nest::@return
-nest::@return: from nest::@1
+nest::@return: scope:[nest]  from nest::@1
   return 
   to:@return
-@end: from @begin
+@end: scope:[]  from @begin
 
 Redundant Phi (byte*) SCREEN#1 (word) 1024
 Succesful SSA optimization Pass2RedundantPhiElimination
 CONTROL FLOW GRAPH
-@begin: from
+@begin: scope:[]  from
   call main param-assignment
   to:@end
-main: from @begin
+main: scope:[main]  from @begin
   to:main::@1
-main::@1: from main main::@3
+main::@1: scope:[main]  from main main::@3
   (byte) main::i#2 ← phi( main/(byte) 100 main::@3/(byte) main::i#1 )
   call nest param-assignment
   to:main::@3
-main::@3: from main::@1
+main::@3: scope:[main]  from main::@1
   (byte) main::i#1 ← -- (byte) main::i#2
   if((byte) main::i#1>(byte) 0) goto main::@1
   to:main::@return
-main::@return: from main::@3
+main::@return: scope:[main]  from main::@3
   return 
   to:@return
-nest: from main::@1
+nest: scope:[nest]  from main::@1
   to:nest::@1
-nest::@1: from nest nest::@1
+nest::@1: scope:[nest]  from nest nest::@1
   (byte) nest::j#2 ← phi( nest/(byte) 100 nest::@1/(byte) nest::j#1 )
   *((word) 1024) ← (byte) nest::j#2
   (byte) nest::j#1 ← -- (byte) nest::j#2
   if((byte) nest::j#1>(byte) 0) goto nest::@1
   to:nest::@return
-nest::@return: from nest::@1
+nest::@return: scope:[nest]  from nest::@1
   return 
   to:@return
-@end: from @begin
+@end: scope:[]  from @begin
 
 Block Sequence Planned @begin @end main main::@1 main::@3 main::@return nest nest::@1 nest::@return 
 Added new block during phi lifting main::@4(between main::@3 and main::@1)
 Added new block during phi lifting nest::@3(between nest::@1 and nest::@1)
 Block Sequence Planned @begin @end main main::@1 main::@3 main::@return main::@4 nest nest::@1 nest::@return nest::@3 
 CONTROL FLOW GRAPH - PHI LIFTED
-@begin: from
+@begin: scope:[]  from
   call main param-assignment
   to:@end
-@end: from @begin
-main: from @begin
+@end: scope:[]  from @begin
+main: scope:[main]  from @begin
   to:main::@1
-main::@1: from main main::@4
+main::@1: scope:[main]  from main main::@4
   (byte) main::i#2 ← phi( main/(byte) 100 main::@4/(byte~) main::i#4 )
   call nest param-assignment
   to:main::@3
-main::@3: from main::@1
+main::@3: scope:[main]  from main::@1
   (byte) main::i#1 ← -- (byte) main::i#2
   if((byte) main::i#1>(byte) 0) goto main::@4
   to:main::@return
-main::@return: from main::@3
+main::@return: scope:[main]  from main::@3
   return 
   to:@return
-main::@4: from main::@3
+main::@4: scope:[main]  from main::@3
   (byte~) main::i#4 ← (byte) main::i#1
   to:main::@1
-nest: from main::@1
+nest: scope:[nest]  from main::@1
   to:nest::@1
-nest::@1: from nest nest::@3
+nest::@1: scope:[nest]  from nest nest::@3
   (byte) nest::j#2 ← phi( nest/(byte) 100 nest::@3/(byte~) nest::j#3 )
   *((word) 1024) ← (byte) nest::j#2
   (byte) nest::j#1 ← -- (byte) nest::j#2
   if((byte) nest::j#1>(byte) 0) goto nest::@3
   to:nest::@return
-nest::@return: from nest::@1
+nest::@return: scope:[nest]  from nest::@1
   return 
   to:@return
-nest::@3: from nest::@1
+nest::@3: scope:[nest]  from nest::@1
   (byte~) nest::j#3 ← (byte) nest::j#1
   to:nest::@1
 
@@ -603,38 +603,38 @@ Propagating live ranges...
 Propagated main::i#2 through call [2] call nest param-assignment
 Propagating live ranges...
 CONTROL FLOW GRAPH - LIVE RANGES
-@begin: from
+@begin: scope:[]  from
   [0] call main param-assignment [ ]
   to:@end
-@end: from @begin
-main: from @begin
+@end: scope:[]  from @begin
+main: scope:[main]  from @begin
   to:main::@1
-main::@1: from main main::@4
+main::@1: scope:[main]  from main main::@4
   [1] (byte) main::i#2 ← phi( main/(byte) 100 main::@4/(byte~) main::i#4 ) [ main::i#2 ]
   [2] call nest param-assignment [ main::i#2 ]
   to:main::@3
-main::@3: from main::@1
+main::@3: scope:[main]  from main::@1
   [3] (byte) main::i#1 ← -- (byte) main::i#2 [ main::i#1 ]
   [4] if((byte) main::i#1>(byte) 0) goto main::@4 [ main::i#1 ]
   to:main::@return
-main::@return: from main::@3
+main::@return: scope:[main]  from main::@3
   [5] return  [ ]
   to:@return
-main::@4: from main::@3
+main::@4: scope:[main]  from main::@3
   [6] (byte~) main::i#4 ← (byte) main::i#1 [ main::i#4 ]
   to:main::@1
-nest: from main::@1
+nest: scope:[nest]  from main::@1
   to:nest::@1
-nest::@1: from nest nest::@3
+nest::@1: scope:[nest]  from nest nest::@3
   [7] (byte) nest::j#2 ← phi( nest/(byte) 100 nest::@3/(byte~) nest::j#3 ) [ main::i#2 nest::j#2 ]
   [8] *((word) 1024) ← (byte) nest::j#2 [ main::i#2 nest::j#2 ]
   [9] (byte) nest::j#1 ← -- (byte) nest::j#2 [ main::i#2 nest::j#1 ]
   [10] if((byte) nest::j#1>(byte) 0) goto nest::@3 [ main::i#2 nest::j#1 ]
   to:nest::@return
-nest::@return: from nest::@1
+nest::@return: scope:[nest]  from nest::@1
   [11] return  [ main::i#2 ]
   to:@return
-nest::@3: from nest::@1
+nest::@3: scope:[nest]  from nest::@1
   [12] (byte~) nest::j#3 ← (byte) nest::j#1 [ main::i#2 nest::j#3 ]
   to:nest::@1
 
@@ -654,32 +654,32 @@ Propagating live ranges...
 Propagated main::i#2 through call [2] call nest param-assignment
 Propagating live ranges...
 CONTROL FLOW GRAPH - PHI MEM COALESCED
-@begin: from
+@begin: scope:[]  from
   [0] call main param-assignment [ ]
   to:@end
-@end: from @begin
-main: from @begin
+@end: scope:[]  from @begin
+main: scope:[main]  from @begin
   to:main::@1
-main::@1: from main main::@3
+main::@1: scope:[main]  from main main::@3
   [1] (byte) main::i#2 ← phi( main/(byte) 100 main::@3/(byte) main::i#1 ) [ main::i#2 ]
   [2] call nest param-assignment [ main::i#2 ]
   to:main::@3
-main::@3: from main::@1
+main::@3: scope:[main]  from main::@1
   [3] (byte) main::i#1 ← -- (byte) main::i#2 [ main::i#1 ]
   [4] if((byte) main::i#1>(byte) 0) goto main::@1 [ main::i#1 ]
   to:main::@return
-main::@return: from main::@3
+main::@return: scope:[main]  from main::@3
   [5] return  [ ]
   to:@return
-nest: from main::@1
+nest: scope:[nest]  from main::@1
   to:nest::@1
-nest::@1: from nest nest::@1
+nest::@1: scope:[nest]  from nest nest::@1
   [6] (byte) nest::j#2 ← phi( nest/(byte) 100 nest::@1/(byte) nest::j#1 ) [ main::i#2 nest::j#2 ]
   [7] *((word) 1024) ← (byte) nest::j#2 [ main::i#2 nest::j#2 ]
   [8] (byte) nest::j#1 ← -- (byte) nest::j#2 [ main::i#2 nest::j#1 ]
   [9] if((byte) nest::j#1>(byte) 0) goto nest::@1 [ main::i#2 nest::j#1 ]
   to:nest::@return
-nest::@return: from nest::@1
+nest::@return: scope:[nest]  from nest::@1
   [10] return  [ main::i#2 ]
   to:@return
 

@@ -3,16 +3,16 @@ BBEGIN:
 BEND:
 main:
 main__B1_from_main:
-  ldy #0
-  ldx #100
+  ldy #$0
+  ldx #$64
 main__B1:
   dex
-  cpx #0
+  cpx #$0
   bne main__B2
 main__Breturn:
   rts
 main__B2:
-  cpx #50
+  cpx #$32
   beq !+
   bcs main__B4
 !:

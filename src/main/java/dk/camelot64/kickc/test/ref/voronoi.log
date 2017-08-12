@@ -66,7 +66,7 @@ void initscreen() {
   byte* screen = SCREEN;
   do {
     *screen = FILL;
-  } while(++screen<$0800)
+  } while(++screen<SCREEN+$03e8)
 }
 
 void render() {
@@ -223,8 +223,9 @@ addpoint::@return:
 initscreen::@1:
   *((byte*) initscreen::screen) ← (byte) FILL
   (byte*) initscreen::screen ← ++ (byte*) initscreen::screen
-  (boolean~) initscreen::$0 ← (byte*) initscreen::screen < (word) 2048
-  if((boolean~) initscreen::$0) goto initscreen::@1
+  (byte*~) initscreen::$0 ← (byte*) SCREEN + (word) 1000
+  (boolean~) initscreen::$1 ← (byte*) initscreen::screen < (byte*~) initscreen::$0
+  if((boolean~) initscreen::$1) goto initscreen::@1
 initscreen::@return:
   return 
   endproc // initscreen()
@@ -404,7 +405,8 @@ SYMBOLS
 (byte) findcol::y
 (byte) findcol::yp
 (void()) initscreen()
-(boolean~) initscreen::$0
+(byte*~) initscreen::$0
+(boolean~) initscreen::$1
 (label) initscreen::@1
 (label) initscreen::@return
 (byte*) initscreen::screen
@@ -582,8 +584,9 @@ initscreen: from
 initscreen::@1: from initscreen initscreen::@1
   *((byte*) initscreen::screen) ← (byte) FILL
   (byte*) initscreen::screen ← ++ (byte*) initscreen::screen
-  (boolean~) initscreen::$0 ← (byte*) initscreen::screen < (word) 2048
-  if((boolean~) initscreen::$0) goto initscreen::@1
+  (byte*~) initscreen::$0 ← (byte*) SCREEN + (word) 1000
+  (boolean~) initscreen::$1 ← (byte*) initscreen::screen < (byte*~) initscreen::$0
+  if((boolean~) initscreen::$1) goto initscreen::@1
   to:initscreen::@2
 initscreen::@2: from initscreen::@1
   to:initscreen::@return
@@ -872,8 +875,9 @@ initscreen: from
 initscreen::@1: from initscreen initscreen::@1
   *((byte*) initscreen::screen) ← (byte) FILL
   (byte*) initscreen::screen ← ++ (byte*) initscreen::screen
-  (boolean~) initscreen::$0 ← (byte*) initscreen::screen < (word) 2048
-  if((boolean~) initscreen::$0) goto initscreen::@1
+  (byte*~) initscreen::$0 ← (byte*) SCREEN + (word) 1000
+  (boolean~) initscreen::$1 ← (byte*) initscreen::screen < (byte*~) initscreen::$0
+  if((boolean~) initscreen::$1) goto initscreen::@1
   to:initscreen::@return
 initscreen::@return: from initscreen::@1
   return 
@@ -1135,8 +1139,9 @@ initscreen: from main::@8
 initscreen::@1: from initscreen initscreen::@1
   *((byte*) initscreen::screen) ← (byte) FILL
   (byte*) initscreen::screen ← ++ (byte*) initscreen::screen
-  (boolean~) initscreen::$0 ← (byte*) initscreen::screen < (word) 2048
-  if((boolean~) initscreen::$0) goto initscreen::@1
+  (byte*~) initscreen::$0 ← (byte*) SCREEN + (word) 1000
+  (boolean~) initscreen::$1 ← (byte*) initscreen::screen < (byte*~) initscreen::$0
+  if((boolean~) initscreen::$1) goto initscreen::@1
   to:initscreen::@return
 initscreen::@return: from initscreen::@1
   return 
@@ -1272,7 +1277,7 @@ CONTROL FLOW GRAPH SSA
 main: from @BEGIN
   (byte*) COLORS#12 ← phi( @BEGIN/(byte*) COLORS#0 )
   (byte) FILL#9 ← phi( @BEGIN/(byte) FILL#0 )
-  (byte*) SCREEN#8 ← phi( @BEGIN/(byte*) SCREEN#0 )
+  (byte*) SCREEN#9 ← phi( @BEGIN/(byte*) SCREEN#0 )
   (byte[256]) COLS#3 ← phi( @BEGIN/(byte[256]) COLS#0 )
   (byte[256]) YPOS#13 ← phi( @BEGIN/(byte[256]) YPOS#0 )
   (byte[256]) XPOS#13 ← phi( @BEGIN/(byte[256]) XPOS#0 )
@@ -1285,7 +1290,7 @@ main: from @BEGIN
 main::@3: from main
   (byte*) COLORS#11 ← phi( main/(byte*) COLORS#12 )
   (byte) FILL#8 ← phi( main/(byte) FILL#9 )
-  (byte*) SCREEN#7 ← phi( main/(byte*) SCREEN#8 )
+  (byte*) SCREEN#8 ← phi( main/(byte*) SCREEN#9 )
   (byte[256]) COLS#4 ← phi( main/(byte[256]) COLS#3 )
   (byte[256]) YPOS#14 ← phi( main/(byte[256]) YPOS#13 )
   (byte[256]) XPOS#14 ← phi( main/(byte[256]) XPOS#13 )
@@ -1299,7 +1304,7 @@ main::@3: from main
 main::@4: from main::@3
   (byte*) COLORS#10 ← phi( main::@3/(byte*) COLORS#11 )
   (byte) FILL#7 ← phi( main::@3/(byte) FILL#8 )
-  (byte*) SCREEN#6 ← phi( main::@3/(byte*) SCREEN#7 )
+  (byte*) SCREEN#7 ← phi( main::@3/(byte*) SCREEN#8 )
   (byte[256]) COLS#5 ← phi( main::@3/(byte[256]) COLS#4 )
   (byte[256]) YPOS#15 ← phi( main::@3/(byte[256]) YPOS#14 )
   (byte[256]) XPOS#15 ← phi( main::@3/(byte[256]) XPOS#14 )
@@ -1313,7 +1318,7 @@ main::@4: from main::@3
 main::@5: from main::@4
   (byte*) COLORS#9 ← phi( main::@4/(byte*) COLORS#10 )
   (byte) FILL#6 ← phi( main::@4/(byte) FILL#7 )
-  (byte*) SCREEN#5 ← phi( main::@4/(byte*) SCREEN#6 )
+  (byte*) SCREEN#6 ← phi( main::@4/(byte*) SCREEN#7 )
   (byte[256]) COLS#6 ← phi( main::@4/(byte[256]) COLS#5 )
   (byte[256]) YPOS#16 ← phi( main::@4/(byte[256]) YPOS#15 )
   (byte[256]) XPOS#16 ← phi( main::@4/(byte[256]) XPOS#15 )
@@ -1327,7 +1332,7 @@ main::@5: from main::@4
 main::@6: from main::@5
   (byte*) COLORS#8 ← phi( main::@5/(byte*) COLORS#9 )
   (byte) FILL#5 ← phi( main::@5/(byte) FILL#6 )
-  (byte*) SCREEN#4 ← phi( main::@5/(byte*) SCREEN#5 )
+  (byte*) SCREEN#5 ← phi( main::@5/(byte*) SCREEN#6 )
   (byte[256]) COLS#7 ← phi( main::@5/(byte[256]) COLS#6 )
   (byte[256]) YPOS#17 ← phi( main::@5/(byte[256]) YPOS#16 )
   (byte[256]) XPOS#17 ← phi( main::@5/(byte[256]) XPOS#16 )
@@ -1341,7 +1346,7 @@ main::@6: from main::@5
 main::@7: from main::@6
   (byte*) COLORS#7 ← phi( main::@6/(byte*) COLORS#8 )
   (byte) FILL#4 ← phi( main::@6/(byte) FILL#5 )
-  (byte*) SCREEN#3 ← phi( main::@6/(byte*) SCREEN#4 )
+  (byte*) SCREEN#4 ← phi( main::@6/(byte*) SCREEN#5 )
   (byte[256]) COLS#8 ← phi( main::@6/(byte[256]) COLS#7 )
   (byte[256]) YPOS#18 ← phi( main::@6/(byte[256]) YPOS#17 )
   (byte[256]) XPOS#18 ← phi( main::@6/(byte[256]) XPOS#17 )
@@ -1358,7 +1363,7 @@ main::@8: from main::@7
   (byte[256]) XPOS#33 ← phi( main::@7/(byte[256]) XPOS#18 )
   (byte*) COLORS#5 ← phi( main::@7/(byte*) COLORS#7 )
   (byte) FILL#3 ← phi( main::@7/(byte) FILL#4 )
-  (byte*) SCREEN#2 ← phi( main::@7/(byte*) SCREEN#3 )
+  (byte*) SCREEN#3 ← phi( main::@7/(byte*) SCREEN#4 )
   (byte) numpoints#17 ← phi( main::@7/(byte) numpoints#6 )
   (byte) numpoints#7 ← (byte) numpoints#17
   call initscreen param-assignment
@@ -1509,16 +1514,18 @@ addpoint::@return: from addpoint
   to:@RETURN
 initscreen: from main::@8
   (byte) FILL#2 ← phi( main::@8/(byte) FILL#3 )
-  (byte*) SCREEN#1 ← phi( main::@8/(byte*) SCREEN#2 )
+  (byte*) SCREEN#1 ← phi( main::@8/(byte*) SCREEN#3 )
   (byte*) initscreen::screen#0 ← (byte*) SCREEN#1
   to:initscreen::@1
 initscreen::@1: from initscreen initscreen::@1
+  (byte*) SCREEN#2 ← phi( initscreen/(byte*) SCREEN#1 initscreen::@1/(byte*) SCREEN#2 )
   (byte*) initscreen::screen#2 ← phi( initscreen/(byte*) initscreen::screen#0 initscreen::@1/(byte*) initscreen::screen#1 )
   (byte) FILL#1 ← phi( initscreen/(byte) FILL#2 initscreen::@1/(byte) FILL#1 )
   *((byte*) initscreen::screen#2) ← (byte) FILL#1
   (byte*) initscreen::screen#1 ← ++ (byte*) initscreen::screen#2
-  (boolean~) initscreen::$0 ← (byte*) initscreen::screen#1 < (word) 2048
-  if((boolean~) initscreen::$0) goto initscreen::@1
+  (byte*~) initscreen::$0 ← (byte*) SCREEN#2 + (word) 1000
+  (boolean~) initscreen::$1 ← (byte*) initscreen::screen#1 < (byte*~) initscreen::$0
+  if((boolean~) initscreen::$1) goto initscreen::@1
   to:initscreen::@return
 initscreen::@return: from initscreen::@1
   return 
@@ -1793,7 +1800,7 @@ CONTROL FLOW GRAPH WITH ASSIGNMENT CALL & RETURN
 main: from @BEGIN
   (byte*) COLORS#12 ← phi( @BEGIN/(byte*) COLORS#0 )
   (byte) FILL#9 ← phi( @BEGIN/(byte) FILL#0 )
-  (byte*) SCREEN#8 ← phi( @BEGIN/(byte*) SCREEN#0 )
+  (byte*) SCREEN#9 ← phi( @BEGIN/(byte*) SCREEN#0 )
   (byte[256]) COLS#3 ← phi( @BEGIN/(byte[256]) COLS#0 )
   (byte[256]) YPOS#13 ← phi( @BEGIN/(byte[256]) YPOS#0 )
   (byte[256]) XPOS#13 ← phi( @BEGIN/(byte[256]) XPOS#0 )
@@ -1806,7 +1813,7 @@ main: from @BEGIN
 main::@3: from main
   (byte*) COLORS#11 ← phi( main/(byte*) COLORS#12 )
   (byte) FILL#8 ← phi( main/(byte) FILL#9 )
-  (byte*) SCREEN#7 ← phi( main/(byte*) SCREEN#8 )
+  (byte*) SCREEN#8 ← phi( main/(byte*) SCREEN#9 )
   (byte[256]) COLS#4 ← phi( main/(byte[256]) COLS#3 )
   (byte[256]) YPOS#14 ← phi( main/(byte[256]) YPOS#13 )
   (byte[256]) XPOS#14 ← phi( main/(byte[256]) XPOS#13 )
@@ -1820,7 +1827,7 @@ main::@3: from main
 main::@4: from main::@3
   (byte*) COLORS#10 ← phi( main::@3/(byte*) COLORS#11 )
   (byte) FILL#7 ← phi( main::@3/(byte) FILL#8 )
-  (byte*) SCREEN#6 ← phi( main::@3/(byte*) SCREEN#7 )
+  (byte*) SCREEN#7 ← phi( main::@3/(byte*) SCREEN#8 )
   (byte[256]) COLS#5 ← phi( main::@3/(byte[256]) COLS#4 )
   (byte[256]) YPOS#15 ← phi( main::@3/(byte[256]) YPOS#14 )
   (byte[256]) XPOS#15 ← phi( main::@3/(byte[256]) XPOS#14 )
@@ -1834,7 +1841,7 @@ main::@4: from main::@3
 main::@5: from main::@4
   (byte*) COLORS#9 ← phi( main::@4/(byte*) COLORS#10 )
   (byte) FILL#6 ← phi( main::@4/(byte) FILL#7 )
-  (byte*) SCREEN#5 ← phi( main::@4/(byte*) SCREEN#6 )
+  (byte*) SCREEN#6 ← phi( main::@4/(byte*) SCREEN#7 )
   (byte[256]) COLS#6 ← phi( main::@4/(byte[256]) COLS#5 )
   (byte[256]) YPOS#16 ← phi( main::@4/(byte[256]) YPOS#15 )
   (byte[256]) XPOS#16 ← phi( main::@4/(byte[256]) XPOS#15 )
@@ -1848,7 +1855,7 @@ main::@5: from main::@4
 main::@6: from main::@5
   (byte*) COLORS#8 ← phi( main::@5/(byte*) COLORS#9 )
   (byte) FILL#5 ← phi( main::@5/(byte) FILL#6 )
-  (byte*) SCREEN#4 ← phi( main::@5/(byte*) SCREEN#5 )
+  (byte*) SCREEN#5 ← phi( main::@5/(byte*) SCREEN#6 )
   (byte[256]) COLS#7 ← phi( main::@5/(byte[256]) COLS#6 )
   (byte[256]) YPOS#17 ← phi( main::@5/(byte[256]) YPOS#16 )
   (byte[256]) XPOS#17 ← phi( main::@5/(byte[256]) XPOS#16 )
@@ -1862,7 +1869,7 @@ main::@6: from main::@5
 main::@7: from main::@6
   (byte*) COLORS#7 ← phi( main::@6/(byte*) COLORS#8 )
   (byte) FILL#4 ← phi( main::@6/(byte) FILL#5 )
-  (byte*) SCREEN#3 ← phi( main::@6/(byte*) SCREEN#4 )
+  (byte*) SCREEN#4 ← phi( main::@6/(byte*) SCREEN#5 )
   (byte[256]) COLS#8 ← phi( main::@6/(byte[256]) COLS#7 )
   (byte[256]) YPOS#18 ← phi( main::@6/(byte[256]) YPOS#17 )
   (byte[256]) XPOS#18 ← phi( main::@6/(byte[256]) XPOS#17 )
@@ -1879,7 +1886,7 @@ main::@8: from main::@7
   (byte[256]) XPOS#33 ← phi( main::@7/(byte[256]) XPOS#18 )
   (byte*) COLORS#5 ← phi( main::@7/(byte*) COLORS#7 )
   (byte) FILL#3 ← phi( main::@7/(byte) FILL#4 )
-  (byte*) SCREEN#2 ← phi( main::@7/(byte*) SCREEN#3 )
+  (byte*) SCREEN#3 ← phi( main::@7/(byte*) SCREEN#4 )
   (byte) numpoints#17 ← phi( main::@7/(byte) numpoints#10 )
   (byte) numpoints#7 ← (byte) numpoints#17
   call initscreen param-assignment
@@ -2030,16 +2037,18 @@ addpoint::@return: from addpoint
   to:@RETURN
 initscreen: from main::@8
   (byte) FILL#2 ← phi( main::@8/(byte) FILL#3 )
-  (byte*) SCREEN#1 ← phi( main::@8/(byte*) SCREEN#2 )
+  (byte*) SCREEN#1 ← phi( main::@8/(byte*) SCREEN#3 )
   (byte*) initscreen::screen#0 ← (byte*) SCREEN#1
   to:initscreen::@1
 initscreen::@1: from initscreen initscreen::@1
+  (byte*) SCREEN#2 ← phi( initscreen/(byte*) SCREEN#1 initscreen::@1/(byte*) SCREEN#2 )
   (byte*) initscreen::screen#2 ← phi( initscreen/(byte*) initscreen::screen#0 initscreen::@1/(byte*) initscreen::screen#1 )
   (byte) FILL#1 ← phi( initscreen/(byte) FILL#2 initscreen::@1/(byte) FILL#1 )
   *((byte*) initscreen::screen#2) ← (byte) FILL#1
   (byte*) initscreen::screen#1 ← ++ (byte*) initscreen::screen#2
-  (boolean~) initscreen::$0 ← (byte*) initscreen::screen#1 < (word) 2048
-  if((boolean~) initscreen::$0) goto initscreen::@1
+  (byte*~) initscreen::$0 ← (byte*) SCREEN#2 + (word) 1000
+  (boolean~) initscreen::$1 ← (byte*) initscreen::screen#1 < (byte*~) initscreen::$0
+  if((boolean~) initscreen::$1) goto initscreen::@1
   to:initscreen::@return
 initscreen::@return: from initscreen::@1
   return 
@@ -2340,7 +2349,7 @@ CONTROL FLOW GRAPH
 main: from @BEGIN
   (byte*) COLORS#12 ← phi( @BEGIN/(word) 55296 )
   (byte) FILL#9 ← phi( @BEGIN/(byte) 230 )
-  (byte*) SCREEN#8 ← phi( @BEGIN/(word) 1024 )
+  (byte*) SCREEN#9 ← phi( @BEGIN/(word) 1024 )
   (byte[256]) COLS#3 ← phi( @BEGIN/(word) 4608 )
   (byte[256]) YPOS#13 ← phi( @BEGIN/(word) 4352 )
   (byte[256]) XPOS#13 ← phi( @BEGIN/(word) 4096 )
@@ -2350,7 +2359,7 @@ main: from @BEGIN
 main::@3: from main
   (byte*) COLORS#11 ← phi( main/(byte*) COLORS#12 )
   (byte) FILL#8 ← phi( main/(byte) FILL#9 )
-  (byte*) SCREEN#7 ← phi( main/(byte*) SCREEN#8 )
+  (byte*) SCREEN#8 ← phi( main/(byte*) SCREEN#9 )
   (byte[256]) COLS#4 ← phi( main/(byte[256]) COLS#3 )
   (byte[256]) YPOS#14 ← phi( main/(byte[256]) YPOS#13 )
   (byte[256]) XPOS#14 ← phi( main/(byte[256]) XPOS#13 )
@@ -2361,7 +2370,7 @@ main::@3: from main
 main::@4: from main::@3
   (byte*) COLORS#10 ← phi( main::@3/(byte*) COLORS#11 )
   (byte) FILL#7 ← phi( main::@3/(byte) FILL#8 )
-  (byte*) SCREEN#6 ← phi( main::@3/(byte*) SCREEN#7 )
+  (byte*) SCREEN#7 ← phi( main::@3/(byte*) SCREEN#8 )
   (byte[256]) COLS#5 ← phi( main::@3/(byte[256]) COLS#4 )
   (byte[256]) YPOS#15 ← phi( main::@3/(byte[256]) YPOS#14 )
   (byte[256]) XPOS#15 ← phi( main::@3/(byte[256]) XPOS#14 )
@@ -2372,7 +2381,7 @@ main::@4: from main::@3
 main::@5: from main::@4
   (byte*) COLORS#9 ← phi( main::@4/(byte*) COLORS#10 )
   (byte) FILL#6 ← phi( main::@4/(byte) FILL#7 )
-  (byte*) SCREEN#5 ← phi( main::@4/(byte*) SCREEN#6 )
+  (byte*) SCREEN#6 ← phi( main::@4/(byte*) SCREEN#7 )
   (byte[256]) COLS#6 ← phi( main::@4/(byte[256]) COLS#5 )
   (byte[256]) YPOS#16 ← phi( main::@4/(byte[256]) YPOS#15 )
   (byte[256]) XPOS#16 ← phi( main::@4/(byte[256]) XPOS#15 )
@@ -2383,7 +2392,7 @@ main::@5: from main::@4
 main::@6: from main::@5
   (byte*) COLORS#8 ← phi( main::@5/(byte*) COLORS#9 )
   (byte) FILL#5 ← phi( main::@5/(byte) FILL#6 )
-  (byte*) SCREEN#4 ← phi( main::@5/(byte*) SCREEN#5 )
+  (byte*) SCREEN#5 ← phi( main::@5/(byte*) SCREEN#6 )
   (byte[256]) COLS#7 ← phi( main::@5/(byte[256]) COLS#6 )
   (byte[256]) YPOS#17 ← phi( main::@5/(byte[256]) YPOS#16 )
   (byte[256]) XPOS#17 ← phi( main::@5/(byte[256]) XPOS#16 )
@@ -2394,7 +2403,7 @@ main::@6: from main::@5
 main::@7: from main::@6
   (byte*) COLORS#7 ← phi( main::@6/(byte*) COLORS#8 )
   (byte) FILL#4 ← phi( main::@6/(byte) FILL#5 )
-  (byte*) SCREEN#3 ← phi( main::@6/(byte*) SCREEN#4 )
+  (byte*) SCREEN#4 ← phi( main::@6/(byte*) SCREEN#5 )
   (byte[256]) COLS#8 ← phi( main::@6/(byte[256]) COLS#7 )
   (byte[256]) YPOS#18 ← phi( main::@6/(byte[256]) YPOS#17 )
   (byte[256]) XPOS#18 ← phi( main::@6/(byte[256]) XPOS#17 )
@@ -2408,7 +2417,7 @@ main::@8: from main::@7
   (byte[256]) XPOS#33 ← phi( main::@7/(byte[256]) XPOS#18 )
   (byte*) COLORS#5 ← phi( main::@7/(byte*) COLORS#7 )
   (byte) FILL#3 ← phi( main::@7/(byte) FILL#4 )
-  (byte*) SCREEN#2 ← phi( main::@7/(byte*) SCREEN#3 )
+  (byte*) SCREEN#3 ← phi( main::@7/(byte*) SCREEN#4 )
   (byte) numpoints#17 ← phi( main::@7/(byte) numpoints#10 )
   (byte) numpoints#7 ← (byte) numpoints#17
   call initscreen param-assignment
@@ -2559,16 +2568,18 @@ addpoint::@return: from addpoint
   to:@RETURN
 initscreen: from main::@8
   (byte) FILL#2 ← phi( main::@8/(byte) FILL#3 )
-  (byte*) SCREEN#1 ← phi( main::@8/(byte*) SCREEN#2 )
+  (byte*) SCREEN#1 ← phi( main::@8/(byte*) SCREEN#3 )
   (byte*) initscreen::screen#0 ← (byte*) SCREEN#1
   to:initscreen::@1
 initscreen::@1: from initscreen initscreen::@1
+  (byte*) SCREEN#2 ← phi( initscreen/(byte*) SCREEN#1 initscreen::@1/(byte*) SCREEN#2 )
   (byte*) initscreen::screen#2 ← phi( initscreen/(byte*) initscreen::screen#0 initscreen::@1/(byte*) initscreen::screen#1 )
   (byte) FILL#1 ← phi( initscreen/(byte) FILL#2 initscreen::@1/(byte) FILL#1 )
   *((byte*) initscreen::screen#2) ← (byte) FILL#1
   (byte*) initscreen::screen#1 ← ++ (byte*) initscreen::screen#2
-  (boolean~) initscreen::$0 ← (byte*) initscreen::screen#1 < (word) 2048
-  if((boolean~) initscreen::$0) goto initscreen::@1
+  (byte*~) initscreen::$0 ← (byte*) SCREEN#2 + (word) 1000
+  (boolean~) initscreen::$1 ← (byte*) initscreen::screen#1 < (byte*~) initscreen::$0
+  if((boolean~) initscreen::$1) goto initscreen::@1
   to:initscreen::@return
 initscreen::@return: from initscreen::@1
   return 
@@ -2820,6 +2831,7 @@ findcol::@27: from findcol::@13
   to:findcol::@return
 @END: from @7
 
+Multiple usages for variable. Not optimizing sub-constant (byte*) SCREEN#2
 Not aliassing across scopes: initscreen::screen#0 SCREEN#1
 Not aliassing across scopes: render::colline#0 COLORS#1
 Not aliassing across scopes: findcol::x#0 render::x#2
@@ -2830,7 +2842,7 @@ Alias (byte) numpoints#10 = (byte) numpoints#12 (byte) numpoints#2 (byte) numpoi
 Alias (byte[256]) XPOS#13 = (byte[256]) XPOS#14 (byte[256]) XPOS#15 (byte[256]) XPOS#16 (byte[256]) XPOS#17 (byte[256]) XPOS#18 (byte[256]) XPOS#33 (byte[256]) XPOS#28 
 Alias (byte[256]) YPOS#13 = (byte[256]) YPOS#14 (byte[256]) YPOS#15 (byte[256]) YPOS#16 (byte[256]) YPOS#17 (byte[256]) YPOS#18 (byte[256]) YPOS#35 (byte[256]) YPOS#31 
 Alias (byte[256]) COLS#27 = (byte[256]) COLS#4 (byte[256]) COLS#3 (byte[256]) COLS#5 (byte[256]) COLS#6 (byte[256]) COLS#7 (byte[256]) COLS#8 (byte[256]) COLS#28 
-Alias (byte*) SCREEN#1 = (byte*) SCREEN#7 (byte*) SCREEN#8 (byte*) SCREEN#6 (byte*) SCREEN#5 (byte*) SCREEN#4 (byte*) SCREEN#3 (byte*) SCREEN#2 
+Alias (byte*) SCREEN#1 = (byte*) SCREEN#8 (byte*) SCREEN#9 (byte*) SCREEN#7 (byte*) SCREEN#6 (byte*) SCREEN#5 (byte*) SCREEN#4 (byte*) SCREEN#3 
 Alias (byte) FILL#2 = (byte) FILL#8 (byte) FILL#9 (byte) FILL#7 (byte) FILL#6 (byte) FILL#5 (byte) FILL#4 (byte) FILL#3 
 Alias (byte*) COLORS#10 = (byte*) COLORS#11 (byte*) COLORS#12 (byte*) COLORS#9 (byte*) COLORS#8 (byte*) COLORS#7 (byte*) COLORS#5 (byte*) COLORS#4 
 Alias (byte[256]) XPOS#1 = (byte[256]) XPOS#9 (byte[256]) XPOS#21 (byte[256]) XPOS#27 (byte[256]) XPOS#2 (byte[256]) XPOS#34 
@@ -3055,12 +3067,14 @@ initscreen: from main::@8
   (byte*) initscreen::screen#0 ← (byte*) SCREEN#1
   to:initscreen::@1
 initscreen::@1: from initscreen initscreen::@1
+  (byte*) SCREEN#2 ← phi( initscreen/(byte*) SCREEN#1 initscreen::@1/(byte*) SCREEN#2 )
   (byte*) initscreen::screen#2 ← phi( initscreen/(byte*) initscreen::screen#0 initscreen::@1/(byte*) initscreen::screen#1 )
   (byte) FILL#1 ← phi( initscreen/(byte) FILL#2 initscreen::@1/(byte) FILL#1 )
   *((byte*) initscreen::screen#2) ← (byte) FILL#1
   (byte*) initscreen::screen#1 ← ++ (byte*) initscreen::screen#2
-  (boolean~) initscreen::$0 ← (byte*) initscreen::screen#1 < (word) 2048
-  if((boolean~) initscreen::$0) goto initscreen::@1
+  (byte*~) initscreen::$0 ← (byte*) SCREEN#2 + (word) 1000
+  (boolean~) initscreen::$1 ← (byte*) initscreen::screen#1 < (byte*~) initscreen::$0
+  if((boolean~) initscreen::$1) goto initscreen::@1
   to:initscreen::@return
 initscreen::@return: from initscreen::@1
   return 
@@ -3398,12 +3412,14 @@ initscreen: from main::@8
   (byte*) initscreen::screen#0 ← (word) 1024
   to:initscreen::@1
 initscreen::@1: from initscreen initscreen::@1
+  (byte*) SCREEN#2 ← phi( initscreen/(word) 1024 initscreen::@1/(byte*) SCREEN#2 )
   (byte*) initscreen::screen#2 ← phi( initscreen/(byte*) initscreen::screen#0 initscreen::@1/(byte*) initscreen::screen#1 )
   (byte) FILL#1 ← phi( initscreen/(byte) 230 initscreen::@1/(byte) FILL#1 )
   *((byte*) initscreen::screen#2) ← (byte) FILL#1
   (byte*) initscreen::screen#1 ← ++ (byte*) initscreen::screen#2
-  (boolean~) initscreen::$0 ← (byte*) initscreen::screen#1 < (word) 2048
-  if((boolean~) initscreen::$0) goto initscreen::@1
+  (byte*~) initscreen::$0 ← (byte*) SCREEN#2 + (word) 1000
+  (boolean~) initscreen::$1 ← (byte*) initscreen::screen#1 < (byte*~) initscreen::$0
+  if((boolean~) initscreen::$1) goto initscreen::@1
   to:initscreen::@return
 initscreen::@return: from initscreen::@1
   return 
@@ -3522,6 +3538,7 @@ Self Phi Eliminated (byte) numpoints#1
 Self Phi Eliminated (byte[256]) YPOS#10
 Self Phi Eliminated (byte[256]) COLS#23
 Self Phi Eliminated (byte) FILL#1
+Self Phi Eliminated (byte*) SCREEN#2
 Self Phi Eliminated (byte) render::y#2
 Self Phi Eliminated (byte*) render::colline#2
 Self Phi Eliminated (byte[256]) XPOS#19
@@ -3667,12 +3684,14 @@ initscreen: from main::@8
   (byte*) initscreen::screen#0 ← (word) 1024
   to:initscreen::@1
 initscreen::@1: from initscreen initscreen::@1
+  (byte*) SCREEN#2 ← phi( initscreen/(word) 1024 )
   (byte*) initscreen::screen#2 ← phi( initscreen/(byte*) initscreen::screen#0 initscreen::@1/(byte*) initscreen::screen#1 )
   (byte) FILL#1 ← phi( initscreen/(byte) 230 )
   *((byte*) initscreen::screen#2) ← (byte) FILL#1
   (byte*) initscreen::screen#1 ← ++ (byte*) initscreen::screen#2
-  (boolean~) initscreen::$0 ← (byte*) initscreen::screen#1 < (word) 2048
-  if((boolean~) initscreen::$0) goto initscreen::@1
+  (byte*~) initscreen::$0 ← (byte*) SCREEN#2 + (word) 1000
+  (boolean~) initscreen::$1 ← (byte*) initscreen::screen#1 < (byte*~) initscreen::$0
+  if((boolean~) initscreen::$1) goto initscreen::@1
   to:initscreen::@return
 initscreen::@return: from initscreen::@1
   return 
@@ -3791,7 +3810,7 @@ Simple Condition (boolean~) animate::$11 if((byte~) animate::$10==(byte) 255) go
 Simple Condition (boolean~) animate::$15 if((byte~) animate::$14==(byte) 25) goto animate::@7
 Simple Condition (boolean~) animate::$19 if((byte~) animate::$18==(byte) 255) goto animate::@9
 Simple Condition (boolean~) animate::$23 if((byte~) animate::$22>=(byte) 40) goto animate::@11
-Simple Condition (boolean~) initscreen::$0 if((byte*) initscreen::screen#1<(word) 2048) goto initscreen::@1
+Simple Condition (boolean~) initscreen::$1 if((byte*) initscreen::screen#1<(byte*~) initscreen::$0) goto initscreen::@1
 Simple Condition (boolean~) render::$1 if((byte) render::x#1<(byte) 40) goto render::@2
 Simple Condition (boolean~) render::$3 if((byte) render::y#1<(byte) 25) goto render::@1
 Simple Condition (boolean~) findcol::$2 if((byte) findcol::x#1==(byte) findcol::xp#0) goto findcol::@2
@@ -3927,11 +3946,13 @@ initscreen: from main::@8
   (byte*) initscreen::screen#0 ← (word) 1024
   to:initscreen::@1
 initscreen::@1: from initscreen initscreen::@1
+  (byte*) SCREEN#2 ← phi( initscreen/(word) 1024 )
   (byte*) initscreen::screen#2 ← phi( initscreen/(byte*) initscreen::screen#0 initscreen::@1/(byte*) initscreen::screen#1 )
   (byte) FILL#1 ← phi( initscreen/(byte) 230 )
   *((byte*) initscreen::screen#2) ← (byte) FILL#1
   (byte*) initscreen::screen#1 ← ++ (byte*) initscreen::screen#2
-  if((byte*) initscreen::screen#1<(word) 2048) goto initscreen::@1
+  (byte*~) initscreen::$0 ← (byte*) SCREEN#2 + (word) 1000
+  if((byte*) initscreen::screen#1<(byte*~) initscreen::$0) goto initscreen::@1
   to:initscreen::@return
 initscreen::@return: from initscreen::@1
   return 
@@ -4163,11 +4184,13 @@ initscreen: from main::@8
   (byte*) initscreen::screen#0 ← (word) 1024
   to:initscreen::@1
 initscreen::@1: from initscreen initscreen::@1
+  (byte*) SCREEN#2 ← phi( initscreen/(word) 1024 )
   (byte*) initscreen::screen#2 ← phi( initscreen/(byte*) initscreen::screen#0 initscreen::@1/(byte*) initscreen::screen#1 )
   (byte) FILL#1 ← phi( initscreen/(byte) 230 )
   *((byte*) initscreen::screen#2) ← (byte) FILL#1
   (byte*) initscreen::screen#1 ← ++ (byte*) initscreen::screen#2
-  if((byte*) initscreen::screen#1<(word) 2048) goto initscreen::@1
+  (byte*~) initscreen::$0 ← (byte*) SCREEN#2 + (word) 1000
+  if((byte*) initscreen::screen#1<(byte*~) initscreen::$0) goto initscreen::@1
   to:initscreen::@return
 initscreen::@return: from initscreen::@1
   return 
@@ -4274,6 +4297,7 @@ Constant (byte[256]) YPOS#10 (word) 4352
 Constant (byte[256]) COLS#23 (word) 4608
 Constant (byte*) initscreen::screen#0 (word) 1024
 Constant (byte) FILL#1 (byte) 230
+Constant (byte*) SCREEN#2 (word) 1024
 Succesful SSA optimization Pass2ConstantPropagation
 CONTROL FLOW GRAPH
 @BEGIN: from
@@ -4395,7 +4419,8 @@ initscreen::@1: from initscreen initscreen::@1
   (byte*) initscreen::screen#2 ← phi( initscreen/(word) 1024 initscreen::@1/(byte*) initscreen::screen#1 )
   *((byte*) initscreen::screen#2) ← (byte) 230
   (byte*) initscreen::screen#1 ← ++ (byte*) initscreen::screen#2
-  if((byte*) initscreen::screen#1<(word) 2048) goto initscreen::@1
+  (byte*~) initscreen::$0 ← (word) 1024 + (word) 1000
+  if((byte*) initscreen::screen#1<(byte*~) initscreen::$0) goto initscreen::@1
   to:initscreen::@return
 initscreen::@return: from initscreen::@1
   return 
@@ -4642,7 +4667,8 @@ initscreen::@1: from initscreen initscreen::@1
   (byte*) initscreen::screen#2 ← phi( initscreen/(word) 1024 initscreen::@1/(byte*) initscreen::screen#1 )
   *((byte*) initscreen::screen#2) ← (byte) 230
   (byte*) initscreen::screen#1 ← ++ (byte*) initscreen::screen#2
-  if((byte*) initscreen::screen#1<(word) 2048) goto initscreen::@1
+  (byte*~) initscreen::$0 ← (word) 1024 + (word) 1000
+  if((byte*) initscreen::screen#1<(byte*~) initscreen::$0) goto initscreen::@1
   to:initscreen::@return
 initscreen::@return: from initscreen::@1
   return 
@@ -4875,7 +4901,8 @@ initscreen::@1: from initscreen initscreen::@1
   (byte*) initscreen::screen#2 ← phi( initscreen/(word) 1024 initscreen::@1/(byte*) initscreen::screen#1 )
   *((byte*) initscreen::screen#2) ← (byte) 230
   (byte*) initscreen::screen#1 ← ++ (byte*) initscreen::screen#2
-  if((byte*) initscreen::screen#1<(word) 2048) goto initscreen::@1
+  (byte*~) initscreen::$0 ← (word) 1024 + (word) 1000
+  if((byte*) initscreen::screen#1<(byte*~) initscreen::$0) goto initscreen::@1
   to:initscreen::@return
 initscreen::@return: from initscreen::@1
   return 
@@ -5088,7 +5115,8 @@ initscreen::@1: from initscreen initscreen::@1
   (byte*) initscreen::screen#2 ← phi( initscreen/(word) 1024 initscreen::@1/(byte*) initscreen::screen#1 )
   *((byte*) initscreen::screen#2) ← (byte) 230
   (byte*) initscreen::screen#1 ← ++ (byte*) initscreen::screen#2
-  if((byte*) initscreen::screen#1<(word) 2048) goto initscreen::@1
+  (byte*~) initscreen::$0 ← (word) 1024 + (word) 1000
+  if((byte*) initscreen::screen#1<(byte*~) initscreen::$0) goto initscreen::@1
   to:initscreen::@return
 initscreen::@return: from initscreen::@1
   return 
@@ -5177,6 +5205,7 @@ findcol::@13: from findcol::@11 findcol::@12
   to:findcol::@return
 @END: from @BEGIN
 
+Constant (byte*~) initscreen::$0 (word) 2024
 Constant (byte*) render::colline#0 (word) 55296
 Constant (byte[256]) XPOS#19 (word) 4096
 Constant (byte[256]) YPOS#19 (word) 4352
@@ -5301,7 +5330,7 @@ initscreen::@1: from initscreen initscreen::@1
   (byte*) initscreen::screen#2 ← phi( initscreen/(word) 1024 initscreen::@1/(byte*) initscreen::screen#1 )
   *((byte*) initscreen::screen#2) ← (byte) 230
   (byte*) initscreen::screen#1 ← ++ (byte*) initscreen::screen#2
-  if((byte*) initscreen::screen#1<(word) 2048) goto initscreen::@1
+  if((byte*) initscreen::screen#1<(word) 2024) goto initscreen::@1
   to:initscreen::@return
 initscreen::@return: from initscreen::@1
   return 
@@ -5513,7 +5542,7 @@ initscreen::@1: from initscreen initscreen::@1
   (byte*) initscreen::screen#2 ← phi( initscreen/(word) 1024 initscreen::@1/(byte*) initscreen::screen#1 )
   *((byte*) initscreen::screen#2) ← (byte) 230
   (byte*) initscreen::screen#1 ← ++ (byte*) initscreen::screen#2
-  if((byte*) initscreen::screen#1<(word) 2048) goto initscreen::@1
+  if((byte*) initscreen::screen#1<(word) 2024) goto initscreen::@1
   to:initscreen::@return
 initscreen::@return: from initscreen::@1
   return 
@@ -5825,7 +5854,7 @@ initscreen::@1: from initscreen initscreen::@3
   (byte*) initscreen::screen#2 ← phi( initscreen/(word) 1024 initscreen::@3/(byte*~) initscreen::screen#3 )
   *((byte*) initscreen::screen#2) ← (byte) 230
   (byte*) initscreen::screen#1 ← ++ (byte*) initscreen::screen#2
-  if((byte*) initscreen::screen#1<(word) 2048) goto initscreen::@3
+  if((byte*) initscreen::screen#1<(word) 2024) goto initscreen::@3
   to:initscreen::@return
 initscreen::@return: from initscreen::@1
   return 
@@ -6123,7 +6152,7 @@ initscreen::@1: from initscreen initscreen::@3
   [106] (byte*) initscreen::screen#2 ← phi( initscreen/(word) 1024 initscreen::@3/(byte*~) initscreen::screen#3 ) [ initscreen::screen#2 ]
   [107] *((byte*) initscreen::screen#2) ← (byte) 230 [ initscreen::screen#2 ]
   [108] (byte*) initscreen::screen#1 ← ++ (byte*) initscreen::screen#2 [ initscreen::screen#1 ]
-  [109] if((byte*) initscreen::screen#1<(word) 2048) goto initscreen::@3 [ initscreen::screen#1 ]
+  [109] if((byte*) initscreen::screen#1<(word) 2024) goto initscreen::@3 [ initscreen::screen#1 ]
   to:initscreen::@return
 initscreen::@return: from initscreen::@1
   [110] return  [ ]
@@ -6402,7 +6431,7 @@ initscreen::@1: from initscreen initscreen::@1
   [87] (byte*) initscreen::screen#2 ← phi( initscreen/(word) 1024 initscreen::@1/(byte*) initscreen::screen#1 ) [ initscreen::screen#2 ]
   [88] *((byte*) initscreen::screen#2) ← (byte) 230 [ initscreen::screen#2 ]
   [89] (byte*) initscreen::screen#1 ← ++ (byte*) initscreen::screen#2 [ initscreen::screen#1 ]
-  [90] if((byte*) initscreen::screen#1<(word) 2048) goto initscreen::@1 [ initscreen::screen#1 ]
+  [90] if((byte*) initscreen::screen#1<(word) 2024) goto initscreen::@1 [ initscreen::screen#1 ]
   to:initscreen::@return
 initscreen::@return: from initscreen::@1
   [91] return  [ ]
@@ -6737,17 +6766,17 @@ main:
 //SEG5 [92] phi from main to addpoint
 addpoint_from_main:
 //SEG6 [92] phi (byte) addpoint::c#6 = (byte) 1 -- zpby1=coby1 
-  lda #1
-  sta 16
+  lda #$1
+  sta $10
 //SEG7 [92] phi (byte) addpoint::y#6 = (byte) 5 -- zpby1=coby1 
-  lda #5
-  sta 15
+  lda #$5
+  sta $f
 //SEG8 [92] phi (byte) numpoints#19 = (byte) 0 -- zpby1=coby1 
-  lda #0
-  sta 14
+  lda #$0
+  sta $e
 //SEG9 [92] phi (byte) addpoint::x#6 = (byte) 5 -- zpby1=coby1 
-  lda #5
-  sta 13
+  lda #$5
+  sta $d
   jsr addpoint
   jmp main__B3
 //SEG10 main::@3
@@ -6756,15 +6785,15 @@ main__B3:
 //SEG12 [92] phi from main::@3 to addpoint
 addpoint_from_B3:
 //SEG13 [92] phi (byte) addpoint::c#6 = (byte) 2 -- zpby1=coby1 
-  lda #2
-  sta 16
+  lda #$2
+  sta $10
 //SEG14 [92] phi (byte) addpoint::y#6 = (byte) 8 -- zpby1=coby1 
-  lda #8
-  sta 15
+  lda #$8
+  sta $f
 //SEG15 [92] phi (byte) numpoints#19 = (byte) numpoints#1 -- register_copy 
 //SEG16 [92] phi (byte) addpoint::x#6 = (byte) 15 -- zpby1=coby1 
-  lda #15
-  sta 13
+  lda #$f
+  sta $d
   jsr addpoint
   jmp main__B4
 //SEG17 main::@4
@@ -6773,15 +6802,15 @@ main__B4:
 //SEG19 [92] phi from main::@4 to addpoint
 addpoint_from_B4:
 //SEG20 [92] phi (byte) addpoint::c#6 = (byte) 3 -- zpby1=coby1 
-  lda #3
-  sta 16
+  lda #$3
+  sta $10
 //SEG21 [92] phi (byte) addpoint::y#6 = (byte) 14 -- zpby1=coby1 
-  lda #14
-  sta 15
+  lda #$e
+  sta $f
 //SEG22 [92] phi (byte) numpoints#19 = (byte) numpoints#1 -- register_copy 
 //SEG23 [92] phi (byte) addpoint::x#6 = (byte) 6 -- zpby1=coby1 
-  lda #6
-  sta 13
+  lda #$6
+  sta $d
   jsr addpoint
   jmp main__B5
 //SEG24 main::@5
@@ -6790,15 +6819,15 @@ main__B5:
 //SEG26 [92] phi from main::@5 to addpoint
 addpoint_from_B5:
 //SEG27 [92] phi (byte) addpoint::c#6 = (byte) 4 -- zpby1=coby1 
-  lda #4
-  sta 16
+  lda #$4
+  sta $10
 //SEG28 [92] phi (byte) addpoint::y#6 = (byte) 2 -- zpby1=coby1 
-  lda #2
-  sta 15
+  lda #$2
+  sta $f
 //SEG29 [92] phi (byte) numpoints#19 = (byte) numpoints#1 -- register_copy 
 //SEG30 [92] phi (byte) addpoint::x#6 = (byte) 34 -- zpby1=coby1 
-  lda #34
-  sta 13
+  lda #$22
+  sta $d
   jsr addpoint
   jmp main__B6
 //SEG31 main::@6
@@ -6807,15 +6836,15 @@ main__B6:
 //SEG33 [92] phi from main::@6 to addpoint
 addpoint_from_B6:
 //SEG34 [92] phi (byte) addpoint::c#6 = (byte) 5 -- zpby1=coby1 
-  lda #5
-  sta 16
+  lda #$5
+  sta $10
 //SEG35 [92] phi (byte) addpoint::y#6 = (byte) 17 -- zpby1=coby1 
-  lda #17
-  sta 15
+  lda #$11
+  sta $f
 //SEG36 [92] phi (byte) numpoints#19 = (byte) numpoints#1 -- register_copy 
 //SEG37 [92] phi (byte) addpoint::x#6 = (byte) 21 -- zpby1=coby1 
-  lda #21
-  sta 13
+  lda #$15
+  sta $d
   jsr addpoint
   jmp main__B7
 //SEG38 main::@7
@@ -6824,15 +6853,15 @@ main__B7:
 //SEG40 [92] phi from main::@7 to addpoint
 addpoint_from_B7:
 //SEG41 [92] phi (byte) addpoint::c#6 = (byte) 7 -- zpby1=coby1 
-  lda #7
-  sta 16
+  lda #$7
+  sta $10
 //SEG42 [92] phi (byte) addpoint::y#6 = (byte) 22 -- zpby1=coby1 
-  lda #22
-  sta 15
+  lda #$16
+  sta $f
 //SEG43 [92] phi (byte) numpoints#19 = (byte) numpoints#1 -- register_copy 
 //SEG44 [92] phi (byte) addpoint::x#6 = (byte) 31 -- zpby1=coby1 
-  lda #31
-  sta 13
+  lda #$1f
+  sta $d
   jsr addpoint
   jmp main__B8
 //SEG45 main::@8
@@ -6862,106 +6891,106 @@ main__Breturn:
 //SEG55 animate
 animate:
 //SEG56 [12] (byte~) animate::$0 ← * (word) 4096 [ animate::$0 ] -- zpby1=_star_cowo1 
-  lda 4096
-  sta 17
+  lda $1000
+  sta $11
 //SEG57 [13] (byte~) animate::$1 ← (byte~) animate::$0 + (byte) 1 [ animate::$1 ] -- zpby1=zpby2_plus_1 
-  lda 17
+  lda $11
   clc
-  adc #1
-  sta 18
+  adc #$1
+  sta $12
 //SEG58 [14] *((word) 4096) ← (byte~) animate::$1 [ ] -- _star_cowo1=zpby1 
-  lda 18
-  sta 4096
+  lda $12
+  sta $1000
 //SEG59 [15] (byte~) animate::$2 ← * (word) 4096 [ animate::$2 ] -- zpby1=_star_cowo1 
-  lda 4096
-  sta 19
+  lda $1000
+  sta $13
 //SEG60 [16] if((byte~) animate::$2==(byte) 40) goto animate::@1 [ ] -- zpby1_eq_coby1_then_la1 
-  lda 19
-  cmp #40
+  lda $13
+  cmp #$28
   beq animate__B1
   jmp animate__B2
 //SEG61 animate::@2
 animate__B2:
 //SEG62 [17] (byte~) animate::$4 ← * (word) 4352 [ animate::$4 ] -- zpby1=_star_cowo1 
-  lda 4352
-  sta 20
+  lda $1100
+  sta $14
 //SEG63 [18] (byte~) animate::$5 ← (byte~) animate::$4 + (byte) 1 [ animate::$5 ] -- zpby1=zpby2_plus_1 
-  lda 20
+  lda $14
   clc
-  adc #1
-  sta 21
+  adc #$1
+  sta $15
 //SEG64 [19] *((word) 4352) ← (byte~) animate::$5 [ ] -- _star_cowo1=zpby1 
-  lda 21
-  sta 4352
+  lda $15
+  sta $1100
 //SEG65 [20] (byte~) animate::$6 ← * (word) 4352 [ animate::$6 ] -- zpby1=_star_cowo1 
-  lda 4352
-  sta 22
+  lda $1100
+  sta $16
 //SEG66 [21] if((byte~) animate::$6==(byte) 25) goto animate::@3 [ ] -- zpby1_eq_coby1_then_la1 
-  lda 22
-  cmp #25
+  lda $16
+  cmp #$19
   beq animate__B3
   jmp animate__B4
 //SEG67 animate::@4
 animate__B4:
 //SEG68 [22] (byte~) animate::$8 ← * (word) 4097 [ animate::$8 ] -- zpby1=_star_cowo1 
-  lda 4097
-  sta 23
+  lda $1001
+  sta $17
 //SEG69 [23] (byte~) animate::$9 ← (byte~) animate::$8 - (byte) 1 [ animate::$9 ] -- zpby1=zpby2_minus_1 
-  lda 23
+  lda $17
   sec
-  sbc #1
-  sta 24
+  sbc #$1
+  sta $18
 //SEG70 [24] *((word) 4097) ← (byte~) animate::$9 [ ] -- _star_cowo1=zpby1 
-  lda 24
-  sta 4097
+  lda $18
+  sta $1001
 //SEG71 [25] (byte~) animate::$10 ← * (word) 4097 [ animate::$10 ] -- zpby1=_star_cowo1 
-  lda 4097
-  sta 25
+  lda $1001
+  sta $19
 //SEG72 [26] if((byte~) animate::$10==(byte) 255) goto animate::@5 [ ] -- zpby1_eq_coby1_then_la1 
-  lda 25
-  cmp #255
+  lda $19
+  cmp #$ff
   beq animate__B5
   jmp animate__B6
 //SEG73 animate::@6
 animate__B6:
 //SEG74 [27] (byte~) animate::$12 ← * (word) 4354 [ animate::$12 ] -- zpby1=_star_cowo1 
-  lda 4354
-  sta 26
+  lda $1102
+  sta $1a
 //SEG75 [28] (byte~) animate::$13 ← (byte~) animate::$12 + (byte) 1 [ animate::$13 ] -- zpby1=zpby2_plus_1 
-  lda 26
+  lda $1a
   clc
-  adc #1
-  sta 27
+  adc #$1
+  sta $1b
 //SEG76 [29] *((word) 4354) ← (byte~) animate::$13 [ ] -- _star_cowo1=zpby1 
-  lda 27
-  sta 4354
+  lda $1b
+  sta $1102
 //SEG77 [30] (byte~) animate::$14 ← * (word) 4354 [ animate::$14 ] -- zpby1=_star_cowo1 
-  lda 4354
-  sta 28
+  lda $1102
+  sta $1c
 //SEG78 [31] if((byte~) animate::$14==(byte) 25) goto animate::@7 [ ] -- zpby1_eq_coby1_then_la1 
-  lda 28
-  cmp #25
+  lda $1c
+  cmp #$19
   beq animate__B7
   jmp animate__B8
 //SEG79 animate::@8
 animate__B8:
 //SEG80 [32] (byte~) animate::$16 ← * (word) 4355 [ animate::$16 ] -- zpby1=_star_cowo1 
-  lda 4355
-  sta 29
+  lda $1103
+  sta $1d
 //SEG81 [33] (byte~) animate::$17 ← (byte~) animate::$16 - (byte) 1 [ animate::$17 ] -- zpby1=zpby2_minus_1 
-  lda 29
+  lda $1d
   sec
-  sbc #1
-  sta 30
+  sbc #$1
+  sta $1e
 //SEG82 [34] *((word) 4355) ← (byte~) animate::$17 [ ] -- _star_cowo1=zpby1 
-  lda 30
-  sta 4355
+  lda $1e
+  sta $1103
 //SEG83 [35] (byte~) animate::$18 ← * (word) 4355 [ animate::$18 ] -- zpby1=_star_cowo1 
-  lda 4355
-  sta 31
+  lda $1103
+  sta $1f
 //SEG84 [36] if((byte~) animate::$18==(byte) 255) goto animate::@9 [ ] -- zpby1_eq_coby1_then_la1 
-  lda 31
-  cmp #255
+  lda $1f
+  cmp #$ff
   beq animate__B9
   jmp animate__Breturn
 //SEG85 animate::@return
@@ -6971,77 +7000,77 @@ animate__Breturn:
 //SEG87 animate::@9
 animate__B9:
 //SEG88 [38] *((word) 4355) ← (byte) 25 [ ] -- _star_cowo1=coby2 
-  lda #25
-  sta 4355
+  lda #$19
+  sta $1103
 //SEG89 [39] (byte~) animate::$20 ← * (word) 4099 [ animate::$20 ] -- zpby1=_star_cowo1 
-  lda 4099
-  sta 32
+  lda $1003
+  sta $20
 //SEG90 [40] (byte~) animate::$21 ← (byte~) animate::$20 + (byte) 7 [ animate::$21 ] -- zpby1=zpby2_plus_coby1 
-  lda 32
+  lda $20
   clc
-  adc #7
-  sta 33
+  adc #$7
+  sta $21
 //SEG91 [41] *((word) 4099) ← (byte~) animate::$21 [ ] -- _star_cowo1=zpby1 
-  lda 33
-  sta 4099
+  lda $21
+  sta $1003
 //SEG92 [42] (byte~) animate::$22 ← * (word) 4099 [ animate::$22 ] -- zpby1=_star_cowo1 
-  lda 4099
-  sta 34
+  lda $1003
+  sta $22
 //SEG93 [43] if((byte~) animate::$22>=(byte) 40) goto animate::@11 [ ] -- zpby1_ge_coby1_then_la1 
-  lda 34
-  cmp #40
+  lda $22
+  cmp #$28
   bcs animate__B11
   jmp animate__Breturn
 //SEG94 animate::@11
 animate__B11:
 //SEG95 [44] (byte~) animate::$24 ← * (word) 4099 [ animate::$24 ] -- zpby1=_star_cowo1 
-  lda 4099
-  sta 35
+  lda $1003
+  sta $23
 //SEG96 [45] (byte~) animate::$25 ← (byte~) animate::$24 - (byte) 40 [ animate::$25 ] -- zpby1=zpby2_minus_coby1 
-  lda 35
+  lda $23
   sec
-  sbc #40
-  sta 36
+  sbc #$28
+  sta $24
 //SEG97 [46] *((word) 4099) ← (byte~) animate::$25 [ ] -- _star_cowo1=zpby1 
-  lda 36
-  sta 4099
+  lda $24
+  sta $1003
   jmp animate__Breturn
 //SEG98 animate::@7
 animate__B7:
 //SEG99 [47] *((word) 4354) ← (byte) 0 [ ] -- _star_cowo1=coby2 
-  lda #0
-  sta 4354
+  lda #$0
+  sta $1102
   jmp animate__B8
 //SEG100 animate::@5
 animate__B5:
 //SEG101 [48] *((word) 4097) ← (byte) 40 [ ] -- _star_cowo1=coby2 
-  lda #40
-  sta 4097
+  lda #$28
+  sta $1001
   jmp animate__B6
 //SEG102 animate::@3
 animate__B3:
 //SEG103 [49] *((word) 4352) ← (byte) 0 [ ] -- _star_cowo1=coby2 
-  lda #0
-  sta 4352
+  lda #$0
+  sta $1100
   jmp animate__B4
 //SEG104 animate::@1
 animate__B1:
 //SEG105 [50] *((word) 4096) ← (byte) 0 [ ] -- _star_cowo1=coby2 
-  lda #0
-  sta 4096
+  lda #$0
+  sta $1000
   jmp animate__B2
 //SEG106 render
 render:
 //SEG107 [51] phi from render to render::@1
 render__B1_from_render:
 //SEG108 [51] phi (byte*) render::colline#2 = (word) 55296 -- zpptrby1=cowo1 
-  lda #<55296
-  sta 3
-  lda #>55296
-  sta 3+1
+  lda #<$d800
+  sta $3
+  lda #>$d800
+  sta $3+$1
 //SEG109 [51] phi (byte) render::y#2 = (byte) 0 -- zpby1=coby1 
-  lda #0
-  sta 2
+  lda #$0
+  sta $2
   jmp render__B1
 //SEG110 [51] phi from render::@3 to render::@1
 render__B1_from_B3:
@@ -7053,8 +7082,8 @@ render__B1:
 //SEG114 [52] phi from render::@1 to render::@2
 render__B2_from_B1:
 //SEG115 [52] phi (byte) render::x#2 = (byte) 0 -- zpby1=coby1 
-  lda #0
-  sta 5
+  lda #$0
+  sta $5
   jmp render__B2
 //SEG116 [52] phi from render::@5 to render::@2
 render__B2_from_B5:
@@ -7063,45 +7092,45 @@ render__B2_from_B5:
 //SEG118 render::@2
 render__B2:
 //SEG119 [53] (byte) findcol::x#0 ← (byte) render::x#2 [ render::x#2 render::y#2 render::colline#2 ] -- zpby1=zpby2 
-  lda 5
-  sta 37
+  lda $5
+  sta $25
 //SEG120 [54] (byte) findcol::y#0 ← (byte) render::y#2 [ render::x#2 render::y#2 render::colline#2 ] -- zpby1=zpby2 
-  lda 2
-  sta 38
+  lda $2
+  sta $26
 //SEG121 [55] call findcol param-assignment [ render::x#2 render::y#2 findcol::return#0 render::colline#2 ]
   jsr findcol
   jmp render__B5
 //SEG122 render::@5
 render__B5:
 //SEG123 [56] (byte) render::col#0 ← (byte) findcol::return#0 [ render::x#2 render::y#2 render::colline#2 render::col#0 ] -- zpby1=zpby2 
-  lda 10
-  sta 39
+  lda $a
+  sta $27
 //SEG124 [57] *((byte*) render::colline#2 + (byte) render::x#2) ← (byte) render::col#0 [ render::x#2 render::y#2 render::colline#2 ] -- zpptrby1_staridx_zpby1=zpby2 
-  lda 39
-  ldy 5
-  sta (3),y
+  lda $27
+  ldy $5
+  sta ($3),y
 //SEG125 [58] (byte) render::x#1 ← ++ (byte) render::x#2 [ render::x#1 render::y#2 render::colline#2 ] -- zpby1=_inc_zpby1 
-  inc 5
+  inc $5
 //SEG126 [59] if((byte) render::x#1<(byte) 40) goto render::@2 [ render::x#1 render::y#2 render::colline#2 ] -- zpby1_lt_coby1_then_la1 
-  lda 5
-  cmp #40
+  lda $5
+  cmp #$28
   bcc render__B2_from_B5
   jmp render__B3
 //SEG127 render::@3
 render__B3:
 //SEG128 [60] (byte*) render::colline#1 ← (byte*) render::colline#2 + (byte) 40 [ render::colline#1 render::y#2 ] -- zpptrby1=zpptrby1_plus_coby1 
-  lda 3
+  lda $3
   clc
-  adc #40
-  sta 3
+  adc #$28
+  sta $3
   bcc !+
-  inc 3+1
+  inc $3+$1
 !:
 //SEG129 [61] (byte) render::y#1 ← ++ (byte) render::y#2 [ render::y#1 render::colline#1 ] -- zpby1=_inc_zpby1 
-  inc 2
+  inc $2
 //SEG130 [62] if((byte) render::y#1<(byte) 25) goto render::@1 [ render::y#1 render::colline#1 ] -- zpby1_lt_coby1_then_la1 
-  lda 2
-  cmp #25
+  lda $2
+  cmp #$19
   bcc render__B1_from_B3
   jmp render__Breturn
 //SEG131 render::@return
@@ -7113,14 +7142,14 @@ findcol:
 //SEG134 [64] phi from findcol to findcol::@1
 findcol__B1_from_findcol:
 //SEG135 [64] phi (byte) findcol::mincol#11 = (byte) 0 -- zpby1=coby1 
-  lda #0
-  sta 10
+  lda #$0
+  sta $a
 //SEG136 [64] phi (byte) findcol::mindiff#10 = (byte) 255 -- zpby1=coby1 
-  lda #255
-  sta 7
+  lda #$ff
+  sta $7
 //SEG137 [64] phi (byte) findcol::i#12 = (byte) 0 -- zpby1=coby1 
-  lda #0
-  sta 6
+  lda #$0
+  sta $6
   jmp findcol__B1
 //SEG138 [64] phi from findcol::@13 to findcol::@1
 findcol__B1_from_B13:
@@ -7131,32 +7160,32 @@ findcol__B1_from_B13:
 //SEG142 findcol::@1
 findcol__B1:
 //SEG143 [65] (byte) findcol::xp#0 ← (word) 4096 *idx (byte) findcol::i#12 [ render::x#2 render::y#2 render::colline#2 findcol::i#12 findcol::x#0 findcol::xp#0 findcol::y#0 findcol::mindiff#10 findcol::mincol#11 numpoints#1 ] -- zpby1=cowo1_staridx_zpby2 
-  ldx 6
-  lda 4096,x
-  sta 40
+  ldx $6
+  lda $1000,x
+  sta $28
 //SEG144 [66] (byte) findcol::yp#0 ← (word) 4352 *idx (byte) findcol::i#12 [ render::x#2 render::y#2 render::colline#2 findcol::i#12 findcol::x#0 findcol::xp#0 findcol::y#0 findcol::yp#0 findcol::mindiff#10 findcol::mincol#11 numpoints#1 ] -- zpby1=cowo1_staridx_zpby2 
-  ldx 6
-  lda 4352,x
-  sta 41
+  ldx $6
+  lda $1100,x
+  sta $29
 //SEG145 [67] if((byte) findcol::x#0==(byte) findcol::xp#0) goto findcol::@2 [ render::x#2 render::y#2 render::colline#2 findcol::i#12 findcol::x#0 findcol::xp#0 findcol::y#0 findcol::yp#0 findcol::mindiff#10 findcol::mincol#11 numpoints#1 ] -- zpby1_eq_zpby2_then_la1 
-  lda 37
-  cmp 40
+  lda $25
+  cmp $28
   beq findcol__B2
   jmp findcol__B3
 //SEG146 findcol::@3
 findcol__B3:
 //SEG147 [68] if((byte) findcol::x#0<(byte) findcol::xp#0) goto findcol::@6 [ render::x#2 render::y#2 render::colline#2 findcol::i#12 findcol::x#0 findcol::xp#0 findcol::y#0 findcol::yp#0 findcol::mindiff#10 findcol::mincol#11 numpoints#1 ] -- zpby1_lt_zpby2_then_la1 
-  lda 37
-  cmp 40
+  lda $25
+  cmp $28
   bcc findcol__B6
   jmp findcol__B7
 //SEG148 findcol::@7
 findcol__B7:
 //SEG149 [69] (byte) findcol::diff#1 ← (byte) findcol::x#0 - (byte) findcol::xp#0 [ render::x#2 render::y#2 render::colline#2 findcol::i#12 findcol::x#0 findcol::diff#1 findcol::y#0 findcol::yp#0 findcol::mindiff#10 findcol::mincol#11 numpoints#1 ] -- zpby1=zpby2_minus_zpby3 
-  lda 37
+  lda $25
   sec
-  sbc 40
-  sta 8
+  sbc $28
+  sta $8
 //SEG150 [70] phi from findcol::@7 to findcol::@8
 findcol__B8_from_B7:
 //SEG151 [70] phi (byte) findcol::diff#4 = (byte) findcol::diff#1 -- register_copy 
@@ -7164,22 +7193,22 @@ findcol__B8_from_B7:
 //SEG152 findcol::@8
 findcol__B8:
 //SEG153 [71] if((byte) findcol::y#0<(byte) findcol::yp#0) goto findcol::@9 [ render::x#2 render::y#2 render::colline#2 findcol::i#12 findcol::x#0 findcol::y#0 findcol::yp#0 findcol::diff#4 findcol::mindiff#10 findcol::mincol#11 numpoints#1 ] -- zpby1_lt_zpby2_then_la1 
-  lda 38
-  cmp 41
+  lda $26
+  cmp $29
   bcc findcol__B9
   jmp findcol__B10
 //SEG154 findcol::@10
 findcol__B10:
 //SEG155 [72] (byte~) findcol::$10 ← (byte) findcol::y#0 - (byte) findcol::yp#0 [ render::x#2 render::y#2 render::colline#2 findcol::i#12 findcol::x#0 findcol::y#0 findcol::diff#4 findcol::$10 findcol::mindiff#10 findcol::mincol#11 numpoints#1 ] -- zpby1=zpby2_minus_zpby3 
-  lda 38
+  lda $26
   sec
-  sbc 41
-  sta 42
+  sbc $29
+  sta $2a
 //SEG156 [73] (byte) findcol::diff#3 ← (byte) findcol::diff#4 + (byte~) findcol::$10 [ render::x#2 render::y#2 render::colline#2 findcol::i#12 findcol::x#0 findcol::y#0 findcol::diff#3 findcol::mindiff#10 findcol::mincol#11 numpoints#1 ] -- zpby1=zpby2_plus_zpby3 
-  lda 8
+  lda $8
   clc
-  adc 42
-  sta 9
+  adc $2a
+  sta $9
 //SEG157 [74] phi from findcol::@10 to findcol::@11
 findcol__B11_from_B10:
 //SEG158 [74] phi (byte) findcol::diff#6 = (byte) findcol::diff#3 -- register_copy 
@@ -7187,8 +7216,8 @@ findcol__B11_from_B10:
 //SEG159 findcol::@11
 findcol__B11:
 //SEG160 [75] if((byte) findcol::diff#6<(byte) findcol::mindiff#10) goto findcol::@12 [ render::x#2 render::y#2 render::colline#2 findcol::i#12 findcol::x#0 findcol::y#0 findcol::diff#6 findcol::mindiff#10 findcol::mincol#11 numpoints#1 ] -- zpby1_lt_zpby2_then_la1 
-  lda 9
-  cmp 7
+  lda $9
+  cmp $7
   bcc findcol__B12
 //SEG161 [76] phi from findcol::@11 to findcol::@13
 findcol__B13_from_B11:
@@ -7198,10 +7227,10 @@ findcol__B13_from_B11:
 //SEG164 findcol::@13
 findcol__B13:
 //SEG165 [77] (byte) findcol::i#1 ← ++ (byte) findcol::i#12 [ render::x#2 render::y#2 render::colline#2 findcol::i#1 findcol::mindiff#11 findcol::mincol#2 findcol::x#0 findcol::y#0 numpoints#1 ] -- zpby1=_inc_zpby1 
-  inc 6
+  inc $6
 //SEG166 [78] if((byte) findcol::i#1<(byte) numpoints#1) goto findcol::@1 [ render::x#2 render::y#2 render::colline#2 findcol::i#1 findcol::mindiff#11 findcol::mincol#2 findcol::x#0 findcol::y#0 numpoints#1 ] -- zpby1_lt_zpby2_then_la1 
-  lda 6
-  cmp 14
+  lda $6
+  cmp $e
   bcc findcol__B1_from_B13
 //SEG167 [79] phi from findcol::@13 to findcol::@return
 findcol__Breturn_from_B13:
@@ -7210,8 +7239,8 @@ findcol__Breturn_from_B13:
 //SEG169 [79] phi from findcol::@2 to findcol::@return
 findcol__Breturn_from_B2:
 //SEG170 [79] phi (byte) findcol::return#0 = (byte) 0 -- zpby1=coby1 
-  lda #0
-  sta 10
+  lda #$0
+  sta $a
   jmp findcol__Breturn
 //SEG171 findcol::@return
 findcol__Breturn:
@@ -7220,12 +7249,12 @@ findcol__Breturn:
 //SEG173 findcol::@12
 findcol__B12:
 //SEG174 [81] (byte) findcol::mincol#1 ← (word) 4608 *idx (byte) findcol::i#12 [ render::x#2 render::y#2 render::colline#2 findcol::i#12 findcol::x#0 findcol::y#0 findcol::diff#6 findcol::mincol#1 numpoints#1 ] -- zpby1=cowo1_staridx_zpby2 
-  ldx 6
-  lda 4608,x
-  sta 10
+  ldx $6
+  lda $1200,x
+  sta $a
 //SEG175 [82] (byte~) findcol::diff#13 ← (byte) findcol::diff#6 [ render::x#2 render::y#2 render::colline#2 findcol::i#12 findcol::x#0 findcol::y#0 findcol::mincol#1 findcol::diff#13 numpoints#1 ] -- zpby1=zpby2 
-  lda 9
-  sta 7
+  lda $9
+  sta $7
 //SEG176 [76] phi from findcol::@12 to findcol::@13
 findcol__B13_from_B12:
 //SEG177 [76] phi (byte) findcol::mindiff#11 = (byte~) findcol::diff#13 -- register_copy 
@@ -7234,15 +7263,15 @@ findcol__B13_from_B12:
 //SEG179 findcol::@9
 findcol__B9:
 //SEG180 [83] (byte~) findcol::$8 ← (byte) findcol::yp#0 - (byte) findcol::y#0 [ render::x#2 render::y#2 render::colline#2 findcol::i#12 findcol::x#0 findcol::y#0 findcol::diff#4 findcol::mindiff#10 findcol::mincol#11 numpoints#1 findcol::$8 ] -- zpby1=zpby2_minus_zpby3 
-  lda 41
+  lda $29
   sec
-  sbc 38
-  sta 43
+  sbc $26
+  sta $2b
 //SEG181 [84] (byte) findcol::diff#2 ← (byte) findcol::diff#4 + (byte~) findcol::$8 [ render::x#2 render::y#2 render::colline#2 findcol::i#12 findcol::x#0 findcol::y#0 findcol::diff#2 findcol::mindiff#10 findcol::mincol#11 numpoints#1 ] -- zpby1=zpby2_plus_zpby3 
-  lda 8
+  lda $8
   clc
-  adc 43
-  sta 9
+  adc $2b
+  sta $9
 //SEG182 [74] phi from findcol::@9 to findcol::@11
 findcol__B11_from_B9:
 //SEG183 [74] phi (byte) findcol::diff#6 = (byte) findcol::diff#2 -- register_copy 
@@ -7250,10 +7279,10 @@ findcol__B11_from_B9:
 //SEG184 findcol::@6
 findcol__B6:
 //SEG185 [85] (byte) findcol::diff#0 ← (byte) findcol::xp#0 - (byte) findcol::x#0 [ render::x#2 render::y#2 render::colline#2 findcol::i#12 findcol::x#0 findcol::diff#0 findcol::y#0 findcol::yp#0 findcol::mindiff#10 findcol::mincol#11 numpoints#1 ] -- zpby1=zpby2_minus_zpby3 
-  lda 40
+  lda $28
   sec
-  sbc 37
-  sta 8
+  sbc $25
+  sta $8
 //SEG186 [70] phi from findcol::@6 to findcol::@8
 findcol__B8_from_B6:
 //SEG187 [70] phi (byte) findcol::diff#4 = (byte) findcol::diff#0 -- register_copy 
@@ -7261,8 +7290,8 @@ findcol__B8_from_B6:
 //SEG188 findcol::@2
 findcol__B2:
 //SEG189 [86] if((byte) findcol::y#0==(byte) findcol::yp#0) goto findcol::@return [ render::x#2 render::y#2 render::colline#2 findcol::i#12 findcol::x#0 findcol::xp#0 findcol::y#0 findcol::yp#0 findcol::mindiff#10 findcol::mincol#11 numpoints#1 ] -- zpby1_eq_zpby2_then_la1 
-  lda 38
-  cmp 41
+  lda $26
+  cmp $29
   beq findcol__Breturn_from_B2
   jmp findcol__B3
 //SEG190 initscreen
@@ -7270,10 +7299,10 @@ initscreen:
 //SEG191 [87] phi from initscreen to initscreen::@1
 initscreen__B1_from_initscreen:
 //SEG192 [87] phi (byte*) initscreen::screen#2 = (word) 1024 -- zpptrby1=cowo1 
-  lda #<1024
-  sta 11
-  lda #>1024
-  sta 11+1
+  lda #<$400
+  sta $b
+  lda #>$400
+  sta $b+$1
   jmp initscreen__B1
 //SEG193 [87] phi from initscreen::@1 to initscreen::@1
 initscreen__B1_from_B1:
@@ -7282,21 +7311,21 @@ initscreen__B1_from_B1:
 //SEG195 initscreen::@1
 initscreen__B1:
 //SEG196 [88] *((byte*) initscreen::screen#2) ← (byte) 230 [ initscreen::screen#2 ] -- _star_zpptrby1=coby1 
-  ldy #0
-  lda #230
-  sta (11),y
+  ldy #$0
+  lda #$e6
+  sta ($b),y
 //SEG197 [89] (byte*) initscreen::screen#1 ← ++ (byte*) initscreen::screen#2 [ initscreen::screen#1 ] -- zpptrby1=_inc_zpptrby1 
-  inc 11
+  inc $b
   bne !+
-  inc 11+1
+  inc $b+$1
 !:
-//SEG198 [90] if((byte*) initscreen::screen#1<(word) 2048) goto initscreen::@1 [ initscreen::screen#1 ] -- zpptrby1_lt_cowo1_then_la1 
-  lda 11+1
-  cmp #>2048
+//SEG198 [90] if((byte*) initscreen::screen#1<(word) 2024) goto initscreen::@1 [ initscreen::screen#1 ] -- zpptrby1_lt_cowo1_then_la1 
+  lda $b+$1
+  cmp #>$7e8
   bcc initscreen__B1_from_B1
   bne !+
-  lda 11
-  cmp #<2048
+  lda $b
+  cmp #<$7e8
   bcc initscreen__B1_from_B1
 !:
   jmp initscreen__Breturn
@@ -7307,19 +7336,19 @@ initscreen__Breturn:
 //SEG201 addpoint
 addpoint:
 //SEG202 [93] *((word) 4096 + (byte) numpoints#19) ← (byte) addpoint::x#6 [ numpoints#19 addpoint::y#6 addpoint::c#6 ] -- cowo1_staridx_zpby1=zpby2 
-  lda 13
-  ldx 14
-  sta 4096,x
+  lda $d
+  ldx $e
+  sta $1000,x
 //SEG203 [94] *((word) 4352 + (byte) numpoints#19) ← (byte) addpoint::y#6 [ numpoints#19 addpoint::c#6 ] -- cowo1_staridx_zpby1=zpby2 
-  lda 15
-  ldx 14
-  sta 4352,x
+  lda $f
+  ldx $e
+  sta $1100,x
 //SEG204 [95] *((word) 4608 + (byte) numpoints#19) ← (byte) addpoint::c#6 [ numpoints#19 ] -- cowo1_staridx_zpby1=zpby2 
-  lda 16
-  ldx 14
-  sta 4608,x
+  lda $10
+  ldx $e
+  sta $1200,x
 //SEG205 [96] (byte) numpoints#1 ← ++ (byte) numpoints#19 [ ] -- zpby1=_inc_zpby1 
-  inc 14
+  inc $e
   jmp addpoint__Breturn
 //SEG206 addpoint::@return
 addpoint__Breturn:
@@ -7349,7 +7378,7 @@ Removing always clobbered register reg byte a as potential for zp byte:8 [ findc
 Statement [83] (byte~) findcol::$8 ← (byte) findcol::yp#0 - (byte) findcol::y#0 [ render::x#2 render::y#2 render::colline#2 findcol::i#12 findcol::x#0 findcol::y#0 findcol::diff#4 findcol::mindiff#10 findcol::mincol#11 numpoints#1 findcol::$8 ] always clobbers reg byte a 
 Statement [85] (byte) findcol::diff#0 ← (byte) findcol::xp#0 - (byte) findcol::x#0 [ render::x#2 render::y#2 render::colline#2 findcol::i#12 findcol::x#0 findcol::diff#0 findcol::y#0 findcol::yp#0 findcol::mindiff#10 findcol::mincol#11 numpoints#1 ] always clobbers reg byte a 
 Statement [88] *((byte*) initscreen::screen#2) ← (byte) 230 [ initscreen::screen#2 ] always clobbers reg byte a reg byte y 
-Statement [90] if((byte*) initscreen::screen#1<(word) 2048) goto initscreen::@1 [ initscreen::screen#1 ] always clobbers reg byte a 
+Statement [90] if((byte*) initscreen::screen#1<(word) 2024) goto initscreen::@1 [ initscreen::screen#1 ] always clobbers reg byte a 
 Statement [38] *((word) 4355) ← (byte) 25 [ ] always clobbers reg byte a 
 Statement [40] (byte~) animate::$21 ← (byte~) animate::$20 + (byte) 7 [ animate::$21 ] always clobbers reg byte a 
 Statement [45] (byte~) animate::$25 ← (byte~) animate::$24 - (byte) 40 [ animate::$25 ] always clobbers reg byte a 
@@ -7363,7 +7392,7 @@ Statement [72] (byte~) findcol::$10 ← (byte) findcol::y#0 - (byte) findcol::yp
 Statement [83] (byte~) findcol::$8 ← (byte) findcol::yp#0 - (byte) findcol::y#0 [ render::x#2 render::y#2 render::colline#2 findcol::i#12 findcol::x#0 findcol::y#0 findcol::diff#4 findcol::mindiff#10 findcol::mincol#11 numpoints#1 findcol::$8 ] always clobbers reg byte a 
 Statement [85] (byte) findcol::diff#0 ← (byte) findcol::xp#0 - (byte) findcol::x#0 [ render::x#2 render::y#2 render::colline#2 findcol::i#12 findcol::x#0 findcol::diff#0 findcol::y#0 findcol::yp#0 findcol::mindiff#10 findcol::mincol#11 numpoints#1 ] always clobbers reg byte a 
 Statement [88] *((byte*) initscreen::screen#2) ← (byte) 230 [ initscreen::screen#2 ] always clobbers reg byte a reg byte y 
-Statement [90] if((byte*) initscreen::screen#1<(word) 2048) goto initscreen::@1 [ initscreen::screen#1 ] always clobbers reg byte a 
+Statement [90] if((byte*) initscreen::screen#1<(word) 2024) goto initscreen::@1 [ initscreen::screen#1 ] always clobbers reg byte a 
 Equivalence Class zp byte:17 [ animate::$0 ] has ALU potential.
 Equivalence Class zp byte:20 [ animate::$4 ] has ALU potential.
 Equivalence Class zp byte:26 [ animate::$12 ] has ALU potential.
@@ -7502,15 +7531,15 @@ main:
 //SEG5 [92] phi from main to addpoint
 addpoint_from_main:
 //SEG6 [92] phi (byte) addpoint::c#6 = (byte) 1 -- zpby1=coby1 
-  lda #1
-  sta 2
+  lda #$1
+  sta $2
 //SEG7 [92] phi (byte) addpoint::y#6 = (byte) 5 -- yby=coby1 
-  ldy #5
+  ldy #$5
 //SEG8 [92] phi (byte) numpoints#19 = (byte) 0 -- zpby1=coby1 
-  lda #0
-  sta 8
+  lda #$0
+  sta $8
 //SEG9 [92] phi (byte) addpoint::x#6 = (byte) 5 -- aby=coby1 
-  lda #5
+  lda #$5
   jsr addpoint
 //SEG10 main::@3
 main__B3:
@@ -7518,13 +7547,13 @@ main__B3:
 //SEG12 [92] phi from main::@3 to addpoint
 addpoint_from_B3:
 //SEG13 [92] phi (byte) addpoint::c#6 = (byte) 2 -- zpby1=coby1 
-  lda #2
-  sta 2
+  lda #$2
+  sta $2
 //SEG14 [92] phi (byte) addpoint::y#6 = (byte) 8 -- yby=coby1 
-  ldy #8
+  ldy #$8
 //SEG15 [92] phi (byte) numpoints#19 = (byte) numpoints#1 -- register_copy 
 //SEG16 [92] phi (byte) addpoint::x#6 = (byte) 15 -- aby=coby1 
-  lda #15
+  lda #$f
   jsr addpoint
 //SEG17 main::@4
 main__B4:
@@ -7532,13 +7561,13 @@ main__B4:
 //SEG19 [92] phi from main::@4 to addpoint
 addpoint_from_B4:
 //SEG20 [92] phi (byte) addpoint::c#6 = (byte) 3 -- zpby1=coby1 
-  lda #3
-  sta 2
+  lda #$3
+  sta $2
 //SEG21 [92] phi (byte) addpoint::y#6 = (byte) 14 -- yby=coby1 
-  ldy #14
+  ldy #$e
 //SEG22 [92] phi (byte) numpoints#19 = (byte) numpoints#1 -- register_copy 
 //SEG23 [92] phi (byte) addpoint::x#6 = (byte) 6 -- aby=coby1 
-  lda #6
+  lda #$6
   jsr addpoint
 //SEG24 main::@5
 main__B5:
@@ -7546,13 +7575,13 @@ main__B5:
 //SEG26 [92] phi from main::@5 to addpoint
 addpoint_from_B5:
 //SEG27 [92] phi (byte) addpoint::c#6 = (byte) 4 -- zpby1=coby1 
-  lda #4
-  sta 2
+  lda #$4
+  sta $2
 //SEG28 [92] phi (byte) addpoint::y#6 = (byte) 2 -- yby=coby1 
-  ldy #2
+  ldy #$2
 //SEG29 [92] phi (byte) numpoints#19 = (byte) numpoints#1 -- register_copy 
 //SEG30 [92] phi (byte) addpoint::x#6 = (byte) 34 -- aby=coby1 
-  lda #34
+  lda #$22
   jsr addpoint
 //SEG31 main::@6
 main__B6:
@@ -7560,13 +7589,13 @@ main__B6:
 //SEG33 [92] phi from main::@6 to addpoint
 addpoint_from_B6:
 //SEG34 [92] phi (byte) addpoint::c#6 = (byte) 5 -- zpby1=coby1 
-  lda #5
-  sta 2
+  lda #$5
+  sta $2
 //SEG35 [92] phi (byte) addpoint::y#6 = (byte) 17 -- yby=coby1 
-  ldy #17
+  ldy #$11
 //SEG36 [92] phi (byte) numpoints#19 = (byte) numpoints#1 -- register_copy 
 //SEG37 [92] phi (byte) addpoint::x#6 = (byte) 21 -- aby=coby1 
-  lda #21
+  lda #$15
   jsr addpoint
 //SEG38 main::@7
 main__B7:
@@ -7574,13 +7603,13 @@ main__B7:
 //SEG40 [92] phi from main::@7 to addpoint
 addpoint_from_B7:
 //SEG41 [92] phi (byte) addpoint::c#6 = (byte) 7 -- zpby1=coby1 
-  lda #7
-  sta 2
+  lda #$7
+  sta $2
 //SEG42 [92] phi (byte) addpoint::y#6 = (byte) 22 -- yby=coby1 
-  ldy #22
+  ldy #$16
 //SEG43 [92] phi (byte) numpoints#19 = (byte) numpoints#1 -- register_copy 
 //SEG44 [92] phi (byte) addpoint::x#6 = (byte) 31 -- aby=coby1 
-  lda #31
+  lda #$1f
   jsr addpoint
 //SEG45 main::@8
 main__B8:
@@ -7605,70 +7634,70 @@ main__Breturn:
 //SEG55 animate
 animate:
 //SEG56 [12] (byte~) animate::$0 ← * (word) 4096 [ animate::$0 ] -- aby=_star_cowo1 
-  lda 4096
+  lda $1000
 //SEG57 [13] (byte~) animate::$1 ← (byte~) animate::$0 + (byte) 1 [ animate::$1 ] -- aby=aby_plus_1 
   clc
-  adc #1
+  adc #$1
 //SEG58 [14] *((word) 4096) ← (byte~) animate::$1 [ ] -- _star_cowo1=aby 
-  sta 4096
+  sta $1000
 //SEG59 [15] (byte~) animate::$2 ← * (word) 4096 [ animate::$2 ] -- aby=_star_cowo1 
-  lda 4096
+  lda $1000
 //SEG60 [16] if((byte~) animate::$2==(byte) 40) goto animate::@1 [ ] -- aby_eq_coby1_then_la1 
-  cmp #40
+  cmp #$28
   beq animate__B1
 //SEG61 animate::@2
 animate__B2:
 //SEG62 [17] (byte~) animate::$4 ← * (word) 4352 [ animate::$4 ] -- aby=_star_cowo1 
-  lda 4352
+  lda $1100
 //SEG63 [18] (byte~) animate::$5 ← (byte~) animate::$4 + (byte) 1 [ animate::$5 ] -- aby=aby_plus_1 
   clc
-  adc #1
+  adc #$1
 //SEG64 [19] *((word) 4352) ← (byte~) animate::$5 [ ] -- _star_cowo1=aby 
-  sta 4352
+  sta $1100
 //SEG65 [20] (byte~) animate::$6 ← * (word) 4352 [ animate::$6 ] -- aby=_star_cowo1 
-  lda 4352
+  lda $1100
 //SEG66 [21] if((byte~) animate::$6==(byte) 25) goto animate::@3 [ ] -- aby_eq_coby1_then_la1 
-  cmp #25
+  cmp #$19
   beq animate__B3
 //SEG67 animate::@4
 animate__B4:
 //SEG68 [22] (byte~) animate::$8 ← * (word) 4097 [ animate::$8 ] -- xby=_star_cowo1 
-  ldx 4097
+  ldx $1001
 //SEG69 [23] (byte~) animate::$9 ← (byte~) animate::$8 - (byte) 1 [ animate::$9 ] -- xby=xby_minus_1 
   dex
 //SEG70 [24] *((word) 4097) ← (byte~) animate::$9 [ ] -- _star_cowo1=xby 
-  stx 4097
+  stx $1001
 //SEG71 [25] (byte~) animate::$10 ← * (word) 4097 [ animate::$10 ] -- aby=_star_cowo1 
-  lda 4097
+  lda $1001
 //SEG72 [26] if((byte~) animate::$10==(byte) 255) goto animate::@5 [ ] -- aby_eq_coby1_then_la1 
-  cmp #255
+  cmp #$ff
   beq animate__B5
 //SEG73 animate::@6
 animate__B6:
 //SEG74 [27] (byte~) animate::$12 ← * (word) 4354 [ animate::$12 ] -- aby=_star_cowo1 
-  lda 4354
+  lda $1102
 //SEG75 [28] (byte~) animate::$13 ← (byte~) animate::$12 + (byte) 1 [ animate::$13 ] -- aby=aby_plus_1 
   clc
-  adc #1
+  adc #$1
 //SEG76 [29] *((word) 4354) ← (byte~) animate::$13 [ ] -- _star_cowo1=aby 
-  sta 4354
+  sta $1102
 //SEG77 [30] (byte~) animate::$14 ← * (word) 4354 [ animate::$14 ] -- aby=_star_cowo1 
-  lda 4354
+  lda $1102
 //SEG78 [31] if((byte~) animate::$14==(byte) 25) goto animate::@7 [ ] -- aby_eq_coby1_then_la1 
-  cmp #25
+  cmp #$19
   beq animate__B7
 //SEG79 animate::@8
 animate__B8:
 //SEG80 [32] (byte~) animate::$16 ← * (word) 4355 [ animate::$16 ] -- xby=_star_cowo1 
-  ldx 4355
+  ldx $1103
 //SEG81 [33] (byte~) animate::$17 ← (byte~) animate::$16 - (byte) 1 [ animate::$17 ] -- xby=xby_minus_1 
   dex
 //SEG82 [34] *((word) 4355) ← (byte~) animate::$17 [ ] -- _star_cowo1=xby 
-  stx 4355
+  stx $1103
 //SEG83 [35] (byte~) animate::$18 ← * (word) 4355 [ animate::$18 ] -- aby=_star_cowo1 
-  lda 4355
+  lda $1103
 //SEG84 [36] if((byte~) animate::$18==(byte) 255) goto animate::@9 [ ] -- aby_eq_coby1_then_la1 
-  cmp #255
+  cmp #$ff
   beq animate__B9
 //SEG85 animate::@return
 animate__Breturn:
@@ -7677,67 +7706,67 @@ animate__Breturn:
 //SEG87 animate::@9
 animate__B9:
 //SEG88 [38] *((word) 4355) ← (byte) 25 [ ] -- _star_cowo1=coby2 
-  lda #25
-  sta 4355
+  lda #$19
+  sta $1103
 //SEG89 [39] (byte~) animate::$20 ← * (word) 4099 [ animate::$20 ] -- aby=_star_cowo1 
-  lda 4099
+  lda $1003
 //SEG90 [40] (byte~) animate::$21 ← (byte~) animate::$20 + (byte) 7 [ animate::$21 ] -- aby=aby_plus_coby1 
   clc
-  adc #7
+  adc #$7
 //SEG91 [41] *((word) 4099) ← (byte~) animate::$21 [ ] -- _star_cowo1=aby 
-  sta 4099
+  sta $1003
 //SEG92 [42] (byte~) animate::$22 ← * (word) 4099 [ animate::$22 ] -- aby=_star_cowo1 
-  lda 4099
+  lda $1003
 //SEG93 [43] if((byte~) animate::$22>=(byte) 40) goto animate::@11 [ ] -- aby_ge_coby1_then_la1 
-  cmp #40
+  cmp #$28
   bcs animate__B11
   jmp animate__Breturn
 //SEG94 animate::@11
 animate__B11:
 //SEG95 [44] (byte~) animate::$24 ← * (word) 4099 [ animate::$24 ] -- aby=_star_cowo1 
-  lda 4099
+  lda $1003
 //SEG96 [45] (byte~) animate::$25 ← (byte~) animate::$24 - (byte) 40 [ animate::$25 ] -- aby=aby_minus_coby1 
   sec
-  sbc #40
+  sbc #$28
 //SEG97 [46] *((word) 4099) ← (byte~) animate::$25 [ ] -- _star_cowo1=aby 
-  sta 4099
+  sta $1003
   jmp animate__Breturn
 //SEG98 animate::@7
 animate__B7:
 //SEG99 [47] *((word) 4354) ← (byte) 0 [ ] -- _star_cowo1=coby2 
-  lda #0
-  sta 4354
+  lda #$0
+  sta $1102
   jmp animate__B8
 //SEG100 animate::@5
 animate__B5:
 //SEG101 [48] *((word) 4097) ← (byte) 40 [ ] -- _star_cowo1=coby2 
-  lda #40
-  sta 4097
+  lda #$28
+  sta $1001
   jmp animate__B6
 //SEG102 animate::@3
 animate__B3:
 //SEG103 [49] *((word) 4352) ← (byte) 0 [ ] -- _star_cowo1=coby2 
-  lda #0
-  sta 4352
+  lda #$0
+  sta $1100
   jmp animate__B4
 //SEG104 animate::@1
 animate__B1:
 //SEG105 [50] *((word) 4096) ← (byte) 0 [ ] -- _star_cowo1=coby2 
-  lda #0
-  sta 4096
+  lda #$0
+  sta $1000
   jmp animate__B2
 //SEG106 render
 render:
 //SEG107 [51] phi from render to render::@1
 render__B1_from_render:
 //SEG108 [51] phi (byte*) render::colline#2 = (word) 55296 -- zpptrby1=cowo1 
-  lda #<55296
-  sta 3
-  lda #>55296
-  sta 3+1
+  lda #<$d800
+  sta $3
+  lda #>$d800
+  sta $3+$1
 //SEG109 [51] phi (byte) render::y#2 = (byte) 0 -- zpby1=coby1 
-  lda #0
-  sta 2
+  lda #$0
+  sta $2
   jmp render__B1
 //SEG110 [51] phi from render::@3 to render::@1
 render__B1_from_B3:
@@ -7748,8 +7777,8 @@ render__B1:
 //SEG114 [52] phi from render::@1 to render::@2
 render__B2_from_B1:
 //SEG115 [52] phi (byte) render::x#2 = (byte) 0 -- zpby1=coby1 
-  lda #0
-  sta 5
+  lda #$0
+  sta $5
   jmp render__B2
 //SEG116 [52] phi from render::@5 to render::@2
 render__B2_from_B5:
@@ -7757,11 +7786,11 @@ render__B2_from_B5:
 //SEG118 render::@2
 render__B2:
 //SEG119 [53] (byte) findcol::x#0 ← (byte) render::x#2 [ render::x#2 render::y#2 render::colline#2 ] -- zpby1=zpby2 
-  lda 5
-  sta 9
+  lda $5
+  sta $9
 //SEG120 [54] (byte) findcol::y#0 ← (byte) render::y#2 [ render::x#2 render::y#2 render::colline#2 ] -- zpby1=zpby2 
-  lda 2
-  sta 10
+  lda $2
+  sta $a
 //SEG121 [55] call findcol param-assignment [ render::x#2 render::y#2 findcol::return#0 render::colline#2 ]
   jsr findcol
 //SEG122 render::@5
@@ -7769,29 +7798,29 @@ render__B5:
 //SEG123 [56] (byte) render::col#0 ← (byte) findcol::return#0 [ render::x#2 render::y#2 render::colline#2 render::col#0 ] -- aby=yby 
   tya
 //SEG124 [57] *((byte*) render::colline#2 + (byte) render::x#2) ← (byte) render::col#0 [ render::x#2 render::y#2 render::colline#2 ] -- zpptrby1_staridx_zpby1=aby 
-  ldy 5
-  sta (3),y
+  ldy $5
+  sta ($3),y
 //SEG125 [58] (byte) render::x#1 ← ++ (byte) render::x#2 [ render::x#1 render::y#2 render::colline#2 ] -- zpby1=_inc_zpby1 
-  inc 5
+  inc $5
 //SEG126 [59] if((byte) render::x#1<(byte) 40) goto render::@2 [ render::x#1 render::y#2 render::colline#2 ] -- zpby1_lt_coby1_then_la1 
-  lda 5
-  cmp #40
+  lda $5
+  cmp #$28
   bcc render__B2_from_B5
 //SEG127 render::@3
 render__B3:
 //SEG128 [60] (byte*) render::colline#1 ← (byte*) render::colline#2 + (byte) 40 [ render::colline#1 render::y#2 ] -- zpptrby1=zpptrby1_plus_coby1 
-  lda 3
+  lda $3
   clc
-  adc #40
-  sta 3
+  adc #$28
+  sta $3
   bcc !+
-  inc 3+1
+  inc $3+$1
 !:
 //SEG129 [61] (byte) render::y#1 ← ++ (byte) render::y#2 [ render::y#1 render::colline#1 ] -- zpby1=_inc_zpby1 
-  inc 2
+  inc $2
 //SEG130 [62] if((byte) render::y#1<(byte) 25) goto render::@1 [ render::y#1 render::colline#1 ] -- zpby1_lt_coby1_then_la1 
-  lda 2
-  cmp #25
+  lda $2
+  cmp #$19
   bcc render__B1_from_B3
 //SEG131 render::@return
 render__Breturn:
@@ -7802,12 +7831,12 @@ findcol:
 //SEG134 [64] phi from findcol to findcol::@1
 findcol__B1_from_findcol:
 //SEG135 [64] phi (byte) findcol::mincol#11 = (byte) 0 -- yby=coby1 
-  ldy #0
+  ldy #$0
 //SEG136 [64] phi (byte) findcol::mindiff#10 = (byte) 255 -- zpby1=coby1 
-  lda #255
-  sta 6
+  lda #$ff
+  sta $6
 //SEG137 [64] phi (byte) findcol::i#12 = (byte) 0 -- xby=coby1 
-  ldx #0
+  ldx #$0
   jmp findcol__B1
 //SEG138 [64] phi from findcol::@13 to findcol::@1
 findcol__B1_from_B13:
@@ -7817,53 +7846,53 @@ findcol__B1_from_B13:
 //SEG142 findcol::@1
 findcol__B1:
 //SEG143 [65] (byte) findcol::xp#0 ← (word) 4096 *idx (byte) findcol::i#12 [ render::x#2 render::y#2 render::colline#2 findcol::i#12 findcol::x#0 findcol::xp#0 findcol::y#0 findcol::mindiff#10 findcol::mincol#11 numpoints#1 ] -- zpby1=cowo1_staridx_xby 
-  lda 4096,x
-  sta 7
+  lda $1000,x
+  sta $7
 //SEG144 [66] (byte) findcol::yp#0 ← (word) 4352 *idx (byte) findcol::i#12 [ render::x#2 render::y#2 render::colline#2 findcol::i#12 findcol::x#0 findcol::xp#0 findcol::y#0 findcol::yp#0 findcol::mindiff#10 findcol::mincol#11 numpoints#1 ] -- zpby1=cowo1_staridx_xby 
-  lda 4352,x
-  sta 11
+  lda $1100,x
+  sta $b
 //SEG145 [67] if((byte) findcol::x#0==(byte) findcol::xp#0) goto findcol::@2 [ render::x#2 render::y#2 render::colline#2 findcol::i#12 findcol::x#0 findcol::xp#0 findcol::y#0 findcol::yp#0 findcol::mindiff#10 findcol::mincol#11 numpoints#1 ] -- zpby1_eq_zpby2_then_la1 
-  lda 9
-  cmp 7
+  lda $9
+  cmp $7
   beq findcol__B2
 //SEG146 findcol::@3
 findcol__B3:
 //SEG147 [68] if((byte) findcol::x#0<(byte) findcol::xp#0) goto findcol::@6 [ render::x#2 render::y#2 render::colline#2 findcol::i#12 findcol::x#0 findcol::xp#0 findcol::y#0 findcol::yp#0 findcol::mindiff#10 findcol::mincol#11 numpoints#1 ] -- zpby1_lt_zpby2_then_la1 
-  lda 9
-  cmp 7
+  lda $9
+  cmp $7
   bcc findcol__B6
 //SEG148 findcol::@7
 findcol__B7:
 //SEG149 [69] (byte) findcol::diff#1 ← (byte) findcol::x#0 - (byte) findcol::xp#0 [ render::x#2 render::y#2 render::colline#2 findcol::i#12 findcol::x#0 findcol::diff#1 findcol::y#0 findcol::yp#0 findcol::mindiff#10 findcol::mincol#11 numpoints#1 ] -- zpby1=zpby2_minus_zpby1 
-  lda 9
+  lda $9
   sec
-  sbc 7
-  sta 7
+  sbc $7
+  sta $7
 //SEG150 [70] phi from findcol::@7 to findcol::@8
 findcol__B8_from_B7:
 //SEG151 [70] phi (byte) findcol::diff#4 = (byte) findcol::diff#1 -- register_copy 
 //SEG152 findcol::@8
 findcol__B8:
 //SEG153 [71] if((byte) findcol::y#0<(byte) findcol::yp#0) goto findcol::@9 [ render::x#2 render::y#2 render::colline#2 findcol::i#12 findcol::x#0 findcol::y#0 findcol::yp#0 findcol::diff#4 findcol::mindiff#10 findcol::mincol#11 numpoints#1 ] -- zpby1_lt_zpby2_then_la1 
-  lda 10
-  cmp 11
+  lda $a
+  cmp $b
   bcc findcol__B9
 //SEG154 findcol::@10
 findcol__B10:
 //SEG155 [72] (byte~) findcol::$10 ← (byte) findcol::y#0 - (byte) findcol::yp#0 [ render::x#2 render::y#2 render::colline#2 findcol::i#12 findcol::x#0 findcol::y#0 findcol::diff#4 findcol::$10 findcol::mindiff#10 findcol::mincol#11 numpoints#1 ] -- aby=zpby1_minus_zpby2 
-  lda 10
+  lda $a
   sec
-  sbc 11
+  sbc $b
 //SEG156 [73] (byte) findcol::diff#3 ← (byte) findcol::diff#4 + (byte~) findcol::$10 [ render::x#2 render::y#2 render::colline#2 findcol::i#12 findcol::x#0 findcol::y#0 findcol::diff#3 findcol::mindiff#10 findcol::mincol#11 numpoints#1 ] -- aby=zpby1_plus_aby 
   clc
-  adc 7
+  adc $7
 //SEG157 [74] phi from findcol::@10 to findcol::@11
 findcol__B11_from_B10:
 //SEG158 [74] phi (byte) findcol::diff#6 = (byte) findcol::diff#3 -- register_copy 
 //SEG159 findcol::@11
 findcol__B11:
 //SEG160 [75] if((byte) findcol::diff#6<(byte) findcol::mindiff#10) goto findcol::@12 [ render::x#2 render::y#2 render::colline#2 findcol::i#12 findcol::x#0 findcol::y#0 findcol::diff#6 findcol::mindiff#10 findcol::mincol#11 numpoints#1 ] -- aby_lt_zpby1_then_la1 
-  cmp 6
+  cmp $6
   bcc findcol__B12
 //SEG161 [76] phi from findcol::@11 to findcol::@13
 findcol__B13_from_B11:
@@ -7874,7 +7903,7 @@ findcol__B13:
 //SEG165 [77] (byte) findcol::i#1 ← ++ (byte) findcol::i#12 [ render::x#2 render::y#2 render::colline#2 findcol::i#1 findcol::mindiff#11 findcol::mincol#2 findcol::x#0 findcol::y#0 numpoints#1 ] -- xby=_inc_xby 
   inx
 //SEG166 [78] if((byte) findcol::i#1<(byte) numpoints#1) goto findcol::@1 [ render::x#2 render::y#2 render::colline#2 findcol::i#1 findcol::mindiff#11 findcol::mincol#2 findcol::x#0 findcol::y#0 numpoints#1 ] -- xby_lt_zpby1_then_la1 
-  cpx 8
+  cpx $8
   bcc findcol__B1_from_B13
 //SEG167 [79] phi from findcol::@13 to findcol::@return
 findcol__Breturn_from_B13:
@@ -7883,7 +7912,7 @@ findcol__Breturn_from_B13:
 //SEG169 [79] phi from findcol::@2 to findcol::@return
 findcol__Breturn_from_B2:
 //SEG170 [79] phi (byte) findcol::return#0 = (byte) 0 -- yby=coby1 
-  ldy #0
+  ldy #$0
 //SEG171 findcol::@return
 findcol__Breturn:
 //SEG172 [80] return  [ render::x#2 render::y#2 findcol::return#0 render::colline#2 ]
@@ -7891,9 +7920,9 @@ findcol__Breturn:
 //SEG173 findcol::@12
 findcol__B12:
 //SEG174 [81] (byte) findcol::mincol#1 ← (word) 4608 *idx (byte) findcol::i#12 [ render::x#2 render::y#2 render::colline#2 findcol::i#12 findcol::x#0 findcol::y#0 findcol::diff#6 findcol::mincol#1 numpoints#1 ] -- yby=cowo1_staridx_xby 
-  ldy 4608,x
+  ldy $1200,x
 //SEG175 [82] (byte~) findcol::diff#13 ← (byte) findcol::diff#6 [ render::x#2 render::y#2 render::colline#2 findcol::i#12 findcol::x#0 findcol::y#0 findcol::mincol#1 findcol::diff#13 numpoints#1 ] -- zpby1=aby 
-  sta 6
+  sta $6
 //SEG176 [76] phi from findcol::@12 to findcol::@13
 findcol__B13_from_B12:
 //SEG177 [76] phi (byte) findcol::mindiff#11 = (byte~) findcol::diff#13 -- register_copy 
@@ -7902,12 +7931,12 @@ findcol__B13_from_B12:
 //SEG179 findcol::@9
 findcol__B9:
 //SEG180 [83] (byte~) findcol::$8 ← (byte) findcol::yp#0 - (byte) findcol::y#0 [ render::x#2 render::y#2 render::colline#2 findcol::i#12 findcol::x#0 findcol::y#0 findcol::diff#4 findcol::mindiff#10 findcol::mincol#11 numpoints#1 findcol::$8 ] -- aby=zpby1_minus_zpby2 
-  lda 11
+  lda $b
   sec
-  sbc 10
+  sbc $a
 //SEG181 [84] (byte) findcol::diff#2 ← (byte) findcol::diff#4 + (byte~) findcol::$8 [ render::x#2 render::y#2 render::colline#2 findcol::i#12 findcol::x#0 findcol::y#0 findcol::diff#2 findcol::mindiff#10 findcol::mincol#11 numpoints#1 ] -- aby=zpby1_plus_aby 
   clc
-  adc 7
+  adc $7
 //SEG182 [74] phi from findcol::@9 to findcol::@11
 findcol__B11_from_B9:
 //SEG183 [74] phi (byte) findcol::diff#6 = (byte) findcol::diff#2 -- register_copy 
@@ -7915,10 +7944,10 @@ findcol__B11_from_B9:
 //SEG184 findcol::@6
 findcol__B6:
 //SEG185 [85] (byte) findcol::diff#0 ← (byte) findcol::xp#0 - (byte) findcol::x#0 [ render::x#2 render::y#2 render::colline#2 findcol::i#12 findcol::x#0 findcol::diff#0 findcol::y#0 findcol::yp#0 findcol::mindiff#10 findcol::mincol#11 numpoints#1 ] -- zpby1=zpby1_minus_zpby2 
-  lda 7
+  lda $7
   sec
-  sbc 9
-  sta 7
+  sbc $9
+  sta $7
 //SEG186 [70] phi from findcol::@6 to findcol::@8
 findcol__B8_from_B6:
 //SEG187 [70] phi (byte) findcol::diff#4 = (byte) findcol::diff#0 -- register_copy 
@@ -7926,8 +7955,8 @@ findcol__B8_from_B6:
 //SEG188 findcol::@2
 findcol__B2:
 //SEG189 [86] if((byte) findcol::y#0==(byte) findcol::yp#0) goto findcol::@return [ render::x#2 render::y#2 render::colline#2 findcol::i#12 findcol::x#0 findcol::xp#0 findcol::y#0 findcol::yp#0 findcol::mindiff#10 findcol::mincol#11 numpoints#1 ] -- zpby1_eq_zpby2_then_la1 
-  lda 10
-  cmp 11
+  lda $a
+  cmp $b
   beq findcol__Breturn_from_B2
   jmp findcol__B3
 //SEG190 initscreen
@@ -7935,10 +7964,10 @@ initscreen:
 //SEG191 [87] phi from initscreen to initscreen::@1
 initscreen__B1_from_initscreen:
 //SEG192 [87] phi (byte*) initscreen::screen#2 = (word) 1024 -- zpptrby1=cowo1 
-  lda #<1024
-  sta 3
-  lda #>1024
-  sta 3+1
+  lda #<$400
+  sta $3
+  lda #>$400
+  sta $3+$1
   jmp initscreen__B1
 //SEG193 [87] phi from initscreen::@1 to initscreen::@1
 initscreen__B1_from_B1:
@@ -7946,21 +7975,21 @@ initscreen__B1_from_B1:
 //SEG195 initscreen::@1
 initscreen__B1:
 //SEG196 [88] *((byte*) initscreen::screen#2) ← (byte) 230 [ initscreen::screen#2 ] -- _star_zpptrby1=coby1 
-  ldy #0
-  lda #230
-  sta (3),y
+  ldy #$0
+  lda #$e6
+  sta ($3),y
 //SEG197 [89] (byte*) initscreen::screen#1 ← ++ (byte*) initscreen::screen#2 [ initscreen::screen#1 ] -- zpptrby1=_inc_zpptrby1 
-  inc 3
+  inc $3
   bne !+
-  inc 3+1
+  inc $3+$1
 !:
-//SEG198 [90] if((byte*) initscreen::screen#1<(word) 2048) goto initscreen::@1 [ initscreen::screen#1 ] -- zpptrby1_lt_cowo1_then_la1 
-  lda 3+1
-  cmp #>2048
+//SEG198 [90] if((byte*) initscreen::screen#1<(word) 2024) goto initscreen::@1 [ initscreen::screen#1 ] -- zpptrby1_lt_cowo1_then_la1 
+  lda $3+$1
+  cmp #>$7e8
   bcc initscreen__B1_from_B1
   bne !+
-  lda 3
-  cmp #<2048
+  lda $3
+  cmp #<$7e8
   bcc initscreen__B1_from_B1
 !:
 //SEG199 initscreen::@return
@@ -7970,18 +7999,18 @@ initscreen__Breturn:
 //SEG201 addpoint
 addpoint:
 //SEG202 [93] *((word) 4096 + (byte) numpoints#19) ← (byte) addpoint::x#6 [ numpoints#19 addpoint::y#6 addpoint::c#6 ] -- cowo1_staridx_zpby1=aby 
-  ldx 8
-  sta 4096,x
+  ldx $8
+  sta $1000,x
 //SEG203 [94] *((word) 4352 + (byte) numpoints#19) ← (byte) addpoint::y#6 [ numpoints#19 addpoint::c#6 ] -- cowo1_staridx_zpby1=yby 
   tya
-  ldy 8
-  sta 4352,y
+  ldy $8
+  sta $1100,y
 //SEG204 [95] *((word) 4608 + (byte) numpoints#19) ← (byte) addpoint::c#6 [ numpoints#19 ] -- cowo1_staridx_zpby1=zpby2 
-  lda 2
-  ldx 8
-  sta 4608,x
+  lda $2
+  ldx $8
+  sta $1200,x
 //SEG205 [96] (byte) numpoints#1 ← ++ (byte) numpoints#19 [ ] -- zpby1=_inc_zpby1 
-  inc 8
+  inc $8
 //SEG206 addpoint::@return
 addpoint__Breturn:
 //SEG207 [97] return  [ ]
@@ -8005,15 +8034,15 @@ main:
 //SEG5 [92] phi from main to addpoint
 addpoint_from_main:
 //SEG6 [92] phi (byte) addpoint::c#6 = (byte) 1 -- zpby1=coby1 
-  lda #1
-  sta 2
+  lda #$1
+  sta $2
 //SEG7 [92] phi (byte) addpoint::y#6 = (byte) 5 -- yby=coby1 
-  ldy #5
+  ldy #$5
 //SEG8 [92] phi (byte) numpoints#19 = (byte) 0 -- zpby1=coby1 
-  lda #0
-  sta 8
+  lda #$0
+  sta $8
 //SEG9 [92] phi (byte) addpoint::x#6 = (byte) 5 -- aby=coby1 
-  lda #5
+  lda #$5
   jsr addpoint
 //SEG10 main::@3
 main__B3:
@@ -8021,13 +8050,13 @@ main__B3:
 //SEG12 [92] phi from main::@3 to addpoint
 addpoint_from_B3:
 //SEG13 [92] phi (byte) addpoint::c#6 = (byte) 2 -- zpby1=coby1 
-  lda #2
-  sta 2
+  lda #$2
+  sta $2
 //SEG14 [92] phi (byte) addpoint::y#6 = (byte) 8 -- yby=coby1 
-  ldy #8
+  ldy #$8
 //SEG15 [92] phi (byte) numpoints#19 = (byte) numpoints#1 -- register_copy 
 //SEG16 [92] phi (byte) addpoint::x#6 = (byte) 15 -- aby=coby1 
-  lda #15
+  lda #$f
   jsr addpoint
 //SEG17 main::@4
 main__B4:
@@ -8035,13 +8064,13 @@ main__B4:
 //SEG19 [92] phi from main::@4 to addpoint
 addpoint_from_B4:
 //SEG20 [92] phi (byte) addpoint::c#6 = (byte) 3 -- zpby1=coby1 
-  lda #3
-  sta 2
+  lda #$3
+  sta $2
 //SEG21 [92] phi (byte) addpoint::y#6 = (byte) 14 -- yby=coby1 
-  ldy #14
+  ldy #$e
 //SEG22 [92] phi (byte) numpoints#19 = (byte) numpoints#1 -- register_copy 
 //SEG23 [92] phi (byte) addpoint::x#6 = (byte) 6 -- aby=coby1 
-  lda #6
+  lda #$6
   jsr addpoint
 //SEG24 main::@5
 main__B5:
@@ -8049,13 +8078,13 @@ main__B5:
 //SEG26 [92] phi from main::@5 to addpoint
 addpoint_from_B5:
 //SEG27 [92] phi (byte) addpoint::c#6 = (byte) 4 -- zpby1=coby1 
-  lda #4
-  sta 2
+  lda #$4
+  sta $2
 //SEG28 [92] phi (byte) addpoint::y#6 = (byte) 2 -- yby=coby1 
-  ldy #2
+  ldy #$2
 //SEG29 [92] phi (byte) numpoints#19 = (byte) numpoints#1 -- register_copy 
 //SEG30 [92] phi (byte) addpoint::x#6 = (byte) 34 -- aby=coby1 
-  lda #34
+  lda #$22
   jsr addpoint
 //SEG31 main::@6
 main__B6:
@@ -8063,13 +8092,13 @@ main__B6:
 //SEG33 [92] phi from main::@6 to addpoint
 addpoint_from_B6:
 //SEG34 [92] phi (byte) addpoint::c#6 = (byte) 5 -- zpby1=coby1 
-  lda #5
-  sta 2
+  lda #$5
+  sta $2
 //SEG35 [92] phi (byte) addpoint::y#6 = (byte) 17 -- yby=coby1 
-  ldy #17
+  ldy #$11
 //SEG36 [92] phi (byte) numpoints#19 = (byte) numpoints#1 -- register_copy 
 //SEG37 [92] phi (byte) addpoint::x#6 = (byte) 21 -- aby=coby1 
-  lda #21
+  lda #$15
   jsr addpoint
 //SEG38 main::@7
 main__B7:
@@ -8077,13 +8106,13 @@ main__B7:
 //SEG40 [92] phi from main::@7 to addpoint
 addpoint_from_B7:
 //SEG41 [92] phi (byte) addpoint::c#6 = (byte) 7 -- zpby1=coby1 
-  lda #7
-  sta 2
+  lda #$7
+  sta $2
 //SEG42 [92] phi (byte) addpoint::y#6 = (byte) 22 -- yby=coby1 
-  ldy #22
+  ldy #$16
 //SEG43 [92] phi (byte) numpoints#19 = (byte) numpoints#1 -- register_copy 
 //SEG44 [92] phi (byte) addpoint::x#6 = (byte) 31 -- aby=coby1 
-  lda #31
+  lda #$1f
   jsr addpoint
 //SEG45 main::@8
 main__B8:
@@ -8108,70 +8137,70 @@ main__Breturn:
 //SEG55 animate
 animate:
 //SEG56 [12] (byte~) animate::$0 ← * (word) 4096 [ animate::$0 ] -- aby=_star_cowo1 
-  lda 4096
+  lda $1000
 //SEG57 [13] (byte~) animate::$1 ← (byte~) animate::$0 + (byte) 1 [ animate::$1 ] -- aby=aby_plus_1 
   clc
-  adc #1
+  adc #$1
 //SEG58 [14] *((word) 4096) ← (byte~) animate::$1 [ ] -- _star_cowo1=aby 
-  sta 4096
+  sta $1000
 //SEG59 [15] (byte~) animate::$2 ← * (word) 4096 [ animate::$2 ] -- aby=_star_cowo1 
-  lda 4096
+  lda $1000
 //SEG60 [16] if((byte~) animate::$2==(byte) 40) goto animate::@1 [ ] -- aby_eq_coby1_then_la1 
-  cmp #40
+  cmp #$28
   beq animate__B1
 //SEG61 animate::@2
 animate__B2:
 //SEG62 [17] (byte~) animate::$4 ← * (word) 4352 [ animate::$4 ] -- aby=_star_cowo1 
-  lda 4352
+  lda $1100
 //SEG63 [18] (byte~) animate::$5 ← (byte~) animate::$4 + (byte) 1 [ animate::$5 ] -- aby=aby_plus_1 
   clc
-  adc #1
+  adc #$1
 //SEG64 [19] *((word) 4352) ← (byte~) animate::$5 [ ] -- _star_cowo1=aby 
-  sta 4352
+  sta $1100
 //SEG65 [20] (byte~) animate::$6 ← * (word) 4352 [ animate::$6 ] -- aby=_star_cowo1 
-  lda 4352
+  lda $1100
 //SEG66 [21] if((byte~) animate::$6==(byte) 25) goto animate::@3 [ ] -- aby_eq_coby1_then_la1 
-  cmp #25
+  cmp #$19
   beq animate__B3
 //SEG67 animate::@4
 animate__B4:
 //SEG68 [22] (byte~) animate::$8 ← * (word) 4097 [ animate::$8 ] -- xby=_star_cowo1 
-  ldx 4097
+  ldx $1001
 //SEG69 [23] (byte~) animate::$9 ← (byte~) animate::$8 - (byte) 1 [ animate::$9 ] -- xby=xby_minus_1 
   dex
 //SEG70 [24] *((word) 4097) ← (byte~) animate::$9 [ ] -- _star_cowo1=xby 
-  stx 4097
+  stx $1001
 //SEG71 [25] (byte~) animate::$10 ← * (word) 4097 [ animate::$10 ] -- aby=_star_cowo1 
-  lda 4097
+  lda $1001
 //SEG72 [26] if((byte~) animate::$10==(byte) 255) goto animate::@5 [ ] -- aby_eq_coby1_then_la1 
-  cmp #255
+  cmp #$ff
   beq animate__B5
 //SEG73 animate::@6
 animate__B6:
 //SEG74 [27] (byte~) animate::$12 ← * (word) 4354 [ animate::$12 ] -- aby=_star_cowo1 
-  lda 4354
+  lda $1102
 //SEG75 [28] (byte~) animate::$13 ← (byte~) animate::$12 + (byte) 1 [ animate::$13 ] -- aby=aby_plus_1 
   clc
-  adc #1
+  adc #$1
 //SEG76 [29] *((word) 4354) ← (byte~) animate::$13 [ ] -- _star_cowo1=aby 
-  sta 4354
+  sta $1102
 //SEG77 [30] (byte~) animate::$14 ← * (word) 4354 [ animate::$14 ] -- aby=_star_cowo1 
-  lda 4354
+  lda $1102
 //SEG78 [31] if((byte~) animate::$14==(byte) 25) goto animate::@7 [ ] -- aby_eq_coby1_then_la1 
-  cmp #25
+  cmp #$19
   beq animate__B7
 //SEG79 animate::@8
 animate__B8:
 //SEG80 [32] (byte~) animate::$16 ← * (word) 4355 [ animate::$16 ] -- xby=_star_cowo1 
-  ldx 4355
+  ldx $1103
 //SEG81 [33] (byte~) animate::$17 ← (byte~) animate::$16 - (byte) 1 [ animate::$17 ] -- xby=xby_minus_1 
   dex
 //SEG82 [34] *((word) 4355) ← (byte~) animate::$17 [ ] -- _star_cowo1=xby 
-  stx 4355
+  stx $1103
 //SEG83 [35] (byte~) animate::$18 ← * (word) 4355 [ animate::$18 ] -- aby=_star_cowo1 
-  lda 4355
+  lda $1103
 //SEG84 [36] if((byte~) animate::$18==(byte) 255) goto animate::@9 [ ] -- aby_eq_coby1_then_la1 
-  cmp #255
+  cmp #$ff
   beq animate__B9
 //SEG85 animate::@return
 animate__Breturn:
@@ -8180,67 +8209,67 @@ animate__Breturn:
 //SEG87 animate::@9
 animate__B9:
 //SEG88 [38] *((word) 4355) ← (byte) 25 [ ] -- _star_cowo1=coby2 
-  lda #25
-  sta 4355
+  lda #$19
+  sta $1103
 //SEG89 [39] (byte~) animate::$20 ← * (word) 4099 [ animate::$20 ] -- aby=_star_cowo1 
-  lda 4099
+  lda $1003
 //SEG90 [40] (byte~) animate::$21 ← (byte~) animate::$20 + (byte) 7 [ animate::$21 ] -- aby=aby_plus_coby1 
   clc
-  adc #7
+  adc #$7
 //SEG91 [41] *((word) 4099) ← (byte~) animate::$21 [ ] -- _star_cowo1=aby 
-  sta 4099
+  sta $1003
 //SEG92 [42] (byte~) animate::$22 ← * (word) 4099 [ animate::$22 ] -- aby=_star_cowo1 
-  lda 4099
+  lda $1003
 //SEG93 [43] if((byte~) animate::$22>=(byte) 40) goto animate::@11 [ ] -- aby_ge_coby1_then_la1 
-  cmp #40
+  cmp #$28
   bcs animate__B11
   jmp animate__Breturn
 //SEG94 animate::@11
 animate__B11:
 //SEG95 [44] (byte~) animate::$24 ← * (word) 4099 [ animate::$24 ] -- aby=_star_cowo1 
-  lda 4099
+  lda $1003
 //SEG96 [45] (byte~) animate::$25 ← (byte~) animate::$24 - (byte) 40 [ animate::$25 ] -- aby=aby_minus_coby1 
   sec
-  sbc #40
+  sbc #$28
 //SEG97 [46] *((word) 4099) ← (byte~) animate::$25 [ ] -- _star_cowo1=aby 
-  sta 4099
+  sta $1003
   jmp animate__Breturn
 //SEG98 animate::@7
 animate__B7:
 //SEG99 [47] *((word) 4354) ← (byte) 0 [ ] -- _star_cowo1=coby2 
-  lda #0
-  sta 4354
+  lda #$0
+  sta $1102
   jmp animate__B8
 //SEG100 animate::@5
 animate__B5:
 //SEG101 [48] *((word) 4097) ← (byte) 40 [ ] -- _star_cowo1=coby2 
-  lda #40
-  sta 4097
+  lda #$28
+  sta $1001
   jmp animate__B6
 //SEG102 animate::@3
 animate__B3:
 //SEG103 [49] *((word) 4352) ← (byte) 0 [ ] -- _star_cowo1=coby2 
-  lda #0
-  sta 4352
+  lda #$0
+  sta $1100
   jmp animate__B4
 //SEG104 animate::@1
 animate__B1:
 //SEG105 [50] *((word) 4096) ← (byte) 0 [ ] -- _star_cowo1=coby2 
-  lda #0
-  sta 4096
+  lda #$0
+  sta $1000
   jmp animate__B2
 //SEG106 render
 render:
 //SEG107 [51] phi from render to render::@1
 render__B1_from_render:
 //SEG108 [51] phi (byte*) render::colline#2 = (word) 55296 -- zpptrby1=cowo1 
-  lda #<55296
-  sta 3
-  lda #>55296
-  sta 3+1
+  lda #<$d800
+  sta $3
+  lda #>$d800
+  sta $3+$1
 //SEG109 [51] phi (byte) render::y#2 = (byte) 0 -- zpby1=coby1 
-  lda #0
-  sta 2
+  lda #$0
+  sta $2
 //SEG110 [51] phi from render::@3 to render::@1
 render__B1_from_B3:
 //SEG111 [51] phi (byte*) render::colline#2 = (byte*) render::colline#1 -- register_copy 
@@ -8250,19 +8279,19 @@ render__B1:
 //SEG114 [52] phi from render::@1 to render::@2
 render__B2_from_B1:
 //SEG115 [52] phi (byte) render::x#2 = (byte) 0 -- zpby1=coby1 
-  lda #0
-  sta 5
+  lda #$0
+  sta $5
 //SEG116 [52] phi from render::@5 to render::@2
 render__B2_from_B5:
 //SEG117 [52] phi (byte) render::x#2 = (byte) render::x#1 -- register_copy 
 //SEG118 render::@2
 render__B2:
 //SEG119 [53] (byte) findcol::x#0 ← (byte) render::x#2 [ render::x#2 render::y#2 render::colline#2 ] -- zpby1=zpby2 
-  lda 5
-  sta 9
+  lda $5
+  sta $9
 //SEG120 [54] (byte) findcol::y#0 ← (byte) render::y#2 [ render::x#2 render::y#2 render::colline#2 ] -- zpby1=zpby2 
-  lda 2
-  sta 10
+  lda $2
+  sta $a
 //SEG121 [55] call findcol param-assignment [ render::x#2 render::y#2 findcol::return#0 render::colline#2 ]
   jsr findcol
 //SEG122 render::@5
@@ -8270,29 +8299,29 @@ render__B5:
 //SEG123 [56] (byte) render::col#0 ← (byte) findcol::return#0 [ render::x#2 render::y#2 render::colline#2 render::col#0 ] -- aby=yby 
   tya
 //SEG124 [57] *((byte*) render::colline#2 + (byte) render::x#2) ← (byte) render::col#0 [ render::x#2 render::y#2 render::colline#2 ] -- zpptrby1_staridx_zpby1=aby 
-  ldy 5
-  sta (3),y
+  ldy $5
+  sta ($3),y
 //SEG125 [58] (byte) render::x#1 ← ++ (byte) render::x#2 [ render::x#1 render::y#2 render::colline#2 ] -- zpby1=_inc_zpby1 
-  inc 5
+  inc $5
 //SEG126 [59] if((byte) render::x#1<(byte) 40) goto render::@2 [ render::x#1 render::y#2 render::colline#2 ] -- zpby1_lt_coby1_then_la1 
-  lda 5
-  cmp #40
+  lda $5
+  cmp #$28
   bcc render__B2_from_B5
 //SEG127 render::@3
 render__B3:
 //SEG128 [60] (byte*) render::colline#1 ← (byte*) render::colline#2 + (byte) 40 [ render::colline#1 render::y#2 ] -- zpptrby1=zpptrby1_plus_coby1 
-  lda 3
+  lda $3
   clc
-  adc #40
-  sta 3
+  adc #$28
+  sta $3
   bcc !+
-  inc 3+1
+  inc $3+$1
 !:
 //SEG129 [61] (byte) render::y#1 ← ++ (byte) render::y#2 [ render::y#1 render::colline#1 ] -- zpby1=_inc_zpby1 
-  inc 2
+  inc $2
 //SEG130 [62] if((byte) render::y#1<(byte) 25) goto render::@1 [ render::y#1 render::colline#1 ] -- zpby1_lt_coby1_then_la1 
-  lda 2
-  cmp #25
+  lda $2
+  cmp #$19
   bcc render__B1_from_B3
 //SEG131 render::@return
 render__Breturn:
@@ -8303,12 +8332,12 @@ findcol:
 //SEG134 [64] phi from findcol to findcol::@1
 findcol__B1_from_findcol:
 //SEG135 [64] phi (byte) findcol::mincol#11 = (byte) 0 -- yby=coby1 
-  ldy #0
+  ldy #$0
 //SEG136 [64] phi (byte) findcol::mindiff#10 = (byte) 255 -- zpby1=coby1 
-  lda #255
-  sta 6
+  lda #$ff
+  sta $6
 //SEG137 [64] phi (byte) findcol::i#12 = (byte) 0 -- xby=coby1 
-  ldx #0
+  ldx #$0
 //SEG138 [64] phi from findcol::@13 to findcol::@1
 findcol__B1_from_B13:
 //SEG139 [64] phi (byte) findcol::mincol#11 = (byte) findcol::mincol#2 -- register_copy 
@@ -8317,53 +8346,53 @@ findcol__B1_from_B13:
 //SEG142 findcol::@1
 findcol__B1:
 //SEG143 [65] (byte) findcol::xp#0 ← (word) 4096 *idx (byte) findcol::i#12 [ render::x#2 render::y#2 render::colline#2 findcol::i#12 findcol::x#0 findcol::xp#0 findcol::y#0 findcol::mindiff#10 findcol::mincol#11 numpoints#1 ] -- zpby1=cowo1_staridx_xby 
-  lda 4096,x
-  sta 7
+  lda $1000,x
+  sta $7
 //SEG144 [66] (byte) findcol::yp#0 ← (word) 4352 *idx (byte) findcol::i#12 [ render::x#2 render::y#2 render::colline#2 findcol::i#12 findcol::x#0 findcol::xp#0 findcol::y#0 findcol::yp#0 findcol::mindiff#10 findcol::mincol#11 numpoints#1 ] -- zpby1=cowo1_staridx_xby 
-  lda 4352,x
-  sta 11
+  lda $1100,x
+  sta $b
 //SEG145 [67] if((byte) findcol::x#0==(byte) findcol::xp#0) goto findcol::@2 [ render::x#2 render::y#2 render::colline#2 findcol::i#12 findcol::x#0 findcol::xp#0 findcol::y#0 findcol::yp#0 findcol::mindiff#10 findcol::mincol#11 numpoints#1 ] -- zpby1_eq_zpby2_then_la1 
-  lda 9
-  cmp 7
+  lda $9
+  cmp $7
   beq findcol__B2
 //SEG146 findcol::@3
 findcol__B3:
 //SEG147 [68] if((byte) findcol::x#0<(byte) findcol::xp#0) goto findcol::@6 [ render::x#2 render::y#2 render::colline#2 findcol::i#12 findcol::x#0 findcol::xp#0 findcol::y#0 findcol::yp#0 findcol::mindiff#10 findcol::mincol#11 numpoints#1 ] -- zpby1_lt_zpby2_then_la1 
-  lda 9
-  cmp 7
+  lda $9
+  cmp $7
   bcc findcol__B6
 //SEG148 findcol::@7
 findcol__B7:
 //SEG149 [69] (byte) findcol::diff#1 ← (byte) findcol::x#0 - (byte) findcol::xp#0 [ render::x#2 render::y#2 render::colline#2 findcol::i#12 findcol::x#0 findcol::diff#1 findcol::y#0 findcol::yp#0 findcol::mindiff#10 findcol::mincol#11 numpoints#1 ] -- zpby1=zpby2_minus_zpby1 
-  lda 9
+  lda $9
   sec
-  sbc 7
-  sta 7
+  sbc $7
+  sta $7
 //SEG150 [70] phi from findcol::@7 to findcol::@8
 findcol__B8_from_B7:
 //SEG151 [70] phi (byte) findcol::diff#4 = (byte) findcol::diff#1 -- register_copy 
 //SEG152 findcol::@8
 findcol__B8:
 //SEG153 [71] if((byte) findcol::y#0<(byte) findcol::yp#0) goto findcol::@9 [ render::x#2 render::y#2 render::colline#2 findcol::i#12 findcol::x#0 findcol::y#0 findcol::yp#0 findcol::diff#4 findcol::mindiff#10 findcol::mincol#11 numpoints#1 ] -- zpby1_lt_zpby2_then_la1 
-  lda 10
-  cmp 11
+  lda $a
+  cmp $b
   bcc findcol__B9
 //SEG154 findcol::@10
 findcol__B10:
 //SEG155 [72] (byte~) findcol::$10 ← (byte) findcol::y#0 - (byte) findcol::yp#0 [ render::x#2 render::y#2 render::colline#2 findcol::i#12 findcol::x#0 findcol::y#0 findcol::diff#4 findcol::$10 findcol::mindiff#10 findcol::mincol#11 numpoints#1 ] -- aby=zpby1_minus_zpby2 
-  lda 10
+  lda $a
   sec
-  sbc 11
+  sbc $b
 //SEG156 [73] (byte) findcol::diff#3 ← (byte) findcol::diff#4 + (byte~) findcol::$10 [ render::x#2 render::y#2 render::colline#2 findcol::i#12 findcol::x#0 findcol::y#0 findcol::diff#3 findcol::mindiff#10 findcol::mincol#11 numpoints#1 ] -- aby=zpby1_plus_aby 
   clc
-  adc 7
+  adc $7
 //SEG157 [74] phi from findcol::@10 to findcol::@11
 findcol__B11_from_B10:
 //SEG158 [74] phi (byte) findcol::diff#6 = (byte) findcol::diff#3 -- register_copy 
 //SEG159 findcol::@11
 findcol__B11:
 //SEG160 [75] if((byte) findcol::diff#6<(byte) findcol::mindiff#10) goto findcol::@12 [ render::x#2 render::y#2 render::colline#2 findcol::i#12 findcol::x#0 findcol::y#0 findcol::diff#6 findcol::mindiff#10 findcol::mincol#11 numpoints#1 ] -- aby_lt_zpby1_then_la1 
-  cmp 6
+  cmp $6
   bcc findcol__B12
 //SEG161 [76] phi from findcol::@11 to findcol::@13
 findcol__B13_from_B11:
@@ -8374,7 +8403,7 @@ findcol__B13:
 //SEG165 [77] (byte) findcol::i#1 ← ++ (byte) findcol::i#12 [ render::x#2 render::y#2 render::colline#2 findcol::i#1 findcol::mindiff#11 findcol::mincol#2 findcol::x#0 findcol::y#0 numpoints#1 ] -- xby=_inc_xby 
   inx
 //SEG166 [78] if((byte) findcol::i#1<(byte) numpoints#1) goto findcol::@1 [ render::x#2 render::y#2 render::colline#2 findcol::i#1 findcol::mindiff#11 findcol::mincol#2 findcol::x#0 findcol::y#0 numpoints#1 ] -- xby_lt_zpby1_then_la1 
-  cpx 8
+  cpx $8
   bcc findcol__B1_from_B13
 //SEG167 [79] phi from findcol::@13 to findcol::@return
 findcol__Breturn_from_B13:
@@ -8383,7 +8412,7 @@ findcol__Breturn_from_B13:
 //SEG169 [79] phi from findcol::@2 to findcol::@return
 findcol__Breturn_from_B2:
 //SEG170 [79] phi (byte) findcol::return#0 = (byte) 0 -- yby=coby1 
-  ldy #0
+  ldy #$0
 //SEG171 findcol::@return
 findcol__Breturn:
 //SEG172 [80] return  [ render::x#2 render::y#2 findcol::return#0 render::colline#2 ]
@@ -8391,9 +8420,9 @@ findcol__Breturn:
 //SEG173 findcol::@12
 findcol__B12:
 //SEG174 [81] (byte) findcol::mincol#1 ← (word) 4608 *idx (byte) findcol::i#12 [ render::x#2 render::y#2 render::colline#2 findcol::i#12 findcol::x#0 findcol::y#0 findcol::diff#6 findcol::mincol#1 numpoints#1 ] -- yby=cowo1_staridx_xby 
-  ldy 4608,x
+  ldy $1200,x
 //SEG175 [82] (byte~) findcol::diff#13 ← (byte) findcol::diff#6 [ render::x#2 render::y#2 render::colline#2 findcol::i#12 findcol::x#0 findcol::y#0 findcol::mincol#1 findcol::diff#13 numpoints#1 ] -- zpby1=aby 
-  sta 6
+  sta $6
 //SEG176 [76] phi from findcol::@12 to findcol::@13
 findcol__B13_from_B12:
 //SEG177 [76] phi (byte) findcol::mindiff#11 = (byte~) findcol::diff#13 -- register_copy 
@@ -8402,12 +8431,12 @@ findcol__B13_from_B12:
 //SEG179 findcol::@9
 findcol__B9:
 //SEG180 [83] (byte~) findcol::$8 ← (byte) findcol::yp#0 - (byte) findcol::y#0 [ render::x#2 render::y#2 render::colline#2 findcol::i#12 findcol::x#0 findcol::y#0 findcol::diff#4 findcol::mindiff#10 findcol::mincol#11 numpoints#1 findcol::$8 ] -- aby=zpby1_minus_zpby2 
-  lda 11
+  lda $b
   sec
-  sbc 10
+  sbc $a
 //SEG181 [84] (byte) findcol::diff#2 ← (byte) findcol::diff#4 + (byte~) findcol::$8 [ render::x#2 render::y#2 render::colline#2 findcol::i#12 findcol::x#0 findcol::y#0 findcol::diff#2 findcol::mindiff#10 findcol::mincol#11 numpoints#1 ] -- aby=zpby1_plus_aby 
   clc
-  adc 7
+  adc $7
 //SEG182 [74] phi from findcol::@9 to findcol::@11
 findcol__B11_from_B9:
 //SEG183 [74] phi (byte) findcol::diff#6 = (byte) findcol::diff#2 -- register_copy 
@@ -8415,10 +8444,10 @@ findcol__B11_from_B9:
 //SEG184 findcol::@6
 findcol__B6:
 //SEG185 [85] (byte) findcol::diff#0 ← (byte) findcol::xp#0 - (byte) findcol::x#0 [ render::x#2 render::y#2 render::colline#2 findcol::i#12 findcol::x#0 findcol::diff#0 findcol::y#0 findcol::yp#0 findcol::mindiff#10 findcol::mincol#11 numpoints#1 ] -- zpby1=zpby1_minus_zpby2 
-  lda 7
+  lda $7
   sec
-  sbc 9
-  sta 7
+  sbc $9
+  sta $7
 //SEG186 [70] phi from findcol::@6 to findcol::@8
 findcol__B8_from_B6:
 //SEG187 [70] phi (byte) findcol::diff#4 = (byte) findcol::diff#0 -- register_copy 
@@ -8426,8 +8455,8 @@ findcol__B8_from_B6:
 //SEG188 findcol::@2
 findcol__B2:
 //SEG189 [86] if((byte) findcol::y#0==(byte) findcol::yp#0) goto findcol::@return [ render::x#2 render::y#2 render::colline#2 findcol::i#12 findcol::x#0 findcol::xp#0 findcol::y#0 findcol::yp#0 findcol::mindiff#10 findcol::mincol#11 numpoints#1 ] -- zpby1_eq_zpby2_then_la1 
-  lda 10
-  cmp 11
+  lda $a
+  cmp $b
   beq findcol__Breturn_from_B2
   jmp findcol__B3
 //SEG190 initscreen
@@ -8435,31 +8464,31 @@ initscreen:
 //SEG191 [87] phi from initscreen to initscreen::@1
 initscreen__B1_from_initscreen:
 //SEG192 [87] phi (byte*) initscreen::screen#2 = (word) 1024 -- zpptrby1=cowo1 
-  lda #<1024
-  sta 3
-  lda #>1024
-  sta 3+1
+  lda #<$400
+  sta $3
+  lda #>$400
+  sta $3+$1
 //SEG193 [87] phi from initscreen::@1 to initscreen::@1
 initscreen__B1_from_B1:
 //SEG194 [87] phi (byte*) initscreen::screen#2 = (byte*) initscreen::screen#1 -- register_copy 
 //SEG195 initscreen::@1
 initscreen__B1:
 //SEG196 [88] *((byte*) initscreen::screen#2) ← (byte) 230 [ initscreen::screen#2 ] -- _star_zpptrby1=coby1 
-  ldy #0
-  lda #230
-  sta (3),y
+  ldy #$0
+  lda #$e6
+  sta ($3),y
 //SEG197 [89] (byte*) initscreen::screen#1 ← ++ (byte*) initscreen::screen#2 [ initscreen::screen#1 ] -- zpptrby1=_inc_zpptrby1 
-  inc 3
+  inc $3
   bne !+
-  inc 3+1
+  inc $3+$1
 !:
-//SEG198 [90] if((byte*) initscreen::screen#1<(word) 2048) goto initscreen::@1 [ initscreen::screen#1 ] -- zpptrby1_lt_cowo1_then_la1 
-  lda 3+1
-  cmp #>2048
+//SEG198 [90] if((byte*) initscreen::screen#1<(word) 2024) goto initscreen::@1 [ initscreen::screen#1 ] -- zpptrby1_lt_cowo1_then_la1 
+  lda $3+$1
+  cmp #>$7e8
   bcc initscreen__B1_from_B1
   bne !+
-  lda 3
-  cmp #<2048
+  lda $3
+  cmp #<$7e8
   bcc initscreen__B1_from_B1
 !:
 //SEG199 initscreen::@return
@@ -8469,18 +8498,18 @@ initscreen__Breturn:
 //SEG201 addpoint
 addpoint:
 //SEG202 [93] *((word) 4096 + (byte) numpoints#19) ← (byte) addpoint::x#6 [ numpoints#19 addpoint::y#6 addpoint::c#6 ] -- cowo1_staridx_zpby1=aby 
-  ldx 8
-  sta 4096,x
+  ldx $8
+  sta $1000,x
 //SEG203 [94] *((word) 4352 + (byte) numpoints#19) ← (byte) addpoint::y#6 [ numpoints#19 addpoint::c#6 ] -- cowo1_staridx_zpby1=yby 
   tya
-  ldy 8
-  sta 4352,y
+  ldy $8
+  sta $1100,y
 //SEG204 [95] *((word) 4608 + (byte) numpoints#19) ← (byte) addpoint::c#6 [ numpoints#19 ] -- cowo1_staridx_zpby1=zpby2 
-  lda 2
-  ldx 8
-  sta 4608,x
+  lda $2
+  ldx $8
+  sta $1200,x
 //SEG205 [96] (byte) numpoints#1 ← ++ (byte) numpoints#19 [ ] -- zpby1=_inc_zpby1 
-  inc 8
+  inc $8
 //SEG206 addpoint::@return
 addpoint__Breturn:
 //SEG207 [97] return  [ ]
@@ -8667,15 +8696,15 @@ main:
 //SEG5 [92] phi from main to addpoint
 addpoint_from_main:
 //SEG6 [92] phi (byte) addpoint::c#6 = (byte) 1 -- zpby1=coby1 
-  lda #1
-  sta 2
+  lda #$1
+  sta $2
 //SEG7 [92] phi (byte) addpoint::y#6 = (byte) 5 -- yby=coby1 
-  ldy #5
+  ldy #$5
 //SEG8 [92] phi (byte) numpoints#19 = (byte) 0 -- zpby1=coby1 
-  lda #0
-  sta 8
+  lda #$0
+  sta $8
 //SEG9 [92] phi (byte) addpoint::x#6 = (byte) 5 -- aby=coby1 
-  lda #5
+  lda #$5
   jsr addpoint
 //SEG10 main::@3
 main__B3:
@@ -8683,13 +8712,13 @@ main__B3:
 //SEG12 [92] phi from main::@3 to addpoint
 addpoint_from_B3:
 //SEG13 [92] phi (byte) addpoint::c#6 = (byte) 2 -- zpby1=coby1 
-  lda #2
-  sta 2
+  lda #$2
+  sta $2
 //SEG14 [92] phi (byte) addpoint::y#6 = (byte) 8 -- yby=coby1 
-  ldy #8
+  ldy #$8
 //SEG15 [92] phi (byte) numpoints#19 = (byte) numpoints#1 -- register_copy 
 //SEG16 [92] phi (byte) addpoint::x#6 = (byte) 15 -- aby=coby1 
-  lda #15
+  lda #$f
   jsr addpoint
 //SEG17 main::@4
 main__B4:
@@ -8697,13 +8726,13 @@ main__B4:
 //SEG19 [92] phi from main::@4 to addpoint
 addpoint_from_B4:
 //SEG20 [92] phi (byte) addpoint::c#6 = (byte) 3 -- zpby1=coby1 
-  lda #3
-  sta 2
+  lda #$3
+  sta $2
 //SEG21 [92] phi (byte) addpoint::y#6 = (byte) 14 -- yby=coby1 
-  ldy #14
+  ldy #$e
 //SEG22 [92] phi (byte) numpoints#19 = (byte) numpoints#1 -- register_copy 
 //SEG23 [92] phi (byte) addpoint::x#6 = (byte) 6 -- aby=coby1 
-  lda #6
+  lda #$6
   jsr addpoint
 //SEG24 main::@5
 main__B5:
@@ -8711,13 +8740,13 @@ main__B5:
 //SEG26 [92] phi from main::@5 to addpoint
 addpoint_from_B5:
 //SEG27 [92] phi (byte) addpoint::c#6 = (byte) 4 -- zpby1=coby1 
-  lda #4
-  sta 2
+  lda #$4
+  sta $2
 //SEG28 [92] phi (byte) addpoint::y#6 = (byte) 2 -- yby=coby1 
-  ldy #2
+  ldy #$2
 //SEG29 [92] phi (byte) numpoints#19 = (byte) numpoints#1 -- register_copy 
 //SEG30 [92] phi (byte) addpoint::x#6 = (byte) 34 -- aby=coby1 
-  lda #34
+  lda #$22
   jsr addpoint
 //SEG31 main::@6
 main__B6:
@@ -8725,13 +8754,13 @@ main__B6:
 //SEG33 [92] phi from main::@6 to addpoint
 addpoint_from_B6:
 //SEG34 [92] phi (byte) addpoint::c#6 = (byte) 5 -- zpby1=coby1 
-  lda #5
-  sta 2
+  lda #$5
+  sta $2
 //SEG35 [92] phi (byte) addpoint::y#6 = (byte) 17 -- yby=coby1 
-  ldy #17
+  ldy #$11
 //SEG36 [92] phi (byte) numpoints#19 = (byte) numpoints#1 -- register_copy 
 //SEG37 [92] phi (byte) addpoint::x#6 = (byte) 21 -- aby=coby1 
-  lda #21
+  lda #$15
   jsr addpoint
 //SEG38 main::@7
 main__B7:
@@ -8739,13 +8768,13 @@ main__B7:
 //SEG40 [92] phi from main::@7 to addpoint
 addpoint_from_B7:
 //SEG41 [92] phi (byte) addpoint::c#6 = (byte) 7 -- zpby1=coby1 
-  lda #7
-  sta 2
+  lda #$7
+  sta $2
 //SEG42 [92] phi (byte) addpoint::y#6 = (byte) 22 -- yby=coby1 
-  ldy #22
+  ldy #$16
 //SEG43 [92] phi (byte) numpoints#19 = (byte) numpoints#1 -- register_copy 
 //SEG44 [92] phi (byte) addpoint::x#6 = (byte) 31 -- aby=coby1 
-  lda #31
+  lda #$1f
   jsr addpoint
 //SEG45 main::@8
 main__B8:
@@ -8770,70 +8799,70 @@ main__Breturn:
 //SEG55 animate
 animate:
 //SEG56 [12] (byte~) animate::$0 ← * (word) 4096 [ animate::$0 ] -- aby=_star_cowo1 
-  lda 4096
+  lda $1000
 //SEG57 [13] (byte~) animate::$1 ← (byte~) animate::$0 + (byte) 1 [ animate::$1 ] -- aby=aby_plus_1 
   clc
-  adc #1
+  adc #$1
 //SEG58 [14] *((word) 4096) ← (byte~) animate::$1 [ ] -- _star_cowo1=aby 
-  sta 4096
+  sta $1000
 //SEG59 [15] (byte~) animate::$2 ← * (word) 4096 [ animate::$2 ] -- aby=_star_cowo1 
-  lda 4096
+  lda $1000
 //SEG60 [16] if((byte~) animate::$2==(byte) 40) goto animate::@1 [ ] -- aby_eq_coby1_then_la1 
-  cmp #40
+  cmp #$28
   beq animate__B1
 //SEG61 animate::@2
 animate__B2:
 //SEG62 [17] (byte~) animate::$4 ← * (word) 4352 [ animate::$4 ] -- aby=_star_cowo1 
-  lda 4352
+  lda $1100
 //SEG63 [18] (byte~) animate::$5 ← (byte~) animate::$4 + (byte) 1 [ animate::$5 ] -- aby=aby_plus_1 
   clc
-  adc #1
+  adc #$1
 //SEG64 [19] *((word) 4352) ← (byte~) animate::$5 [ ] -- _star_cowo1=aby 
-  sta 4352
+  sta $1100
 //SEG65 [20] (byte~) animate::$6 ← * (word) 4352 [ animate::$6 ] -- aby=_star_cowo1 
-  lda 4352
+  lda $1100
 //SEG66 [21] if((byte~) animate::$6==(byte) 25) goto animate::@3 [ ] -- aby_eq_coby1_then_la1 
-  cmp #25
+  cmp #$19
   beq animate__B3
 //SEG67 animate::@4
 animate__B4:
 //SEG68 [22] (byte~) animate::$8 ← * (word) 4097 [ animate::$8 ] -- xby=_star_cowo1 
-  ldx 4097
+  ldx $1001
 //SEG69 [23] (byte~) animate::$9 ← (byte~) animate::$8 - (byte) 1 [ animate::$9 ] -- xby=xby_minus_1 
   dex
 //SEG70 [24] *((word) 4097) ← (byte~) animate::$9 [ ] -- _star_cowo1=xby 
-  stx 4097
+  stx $1001
 //SEG71 [25] (byte~) animate::$10 ← * (word) 4097 [ animate::$10 ] -- aby=_star_cowo1 
-  lda 4097
+  lda $1001
 //SEG72 [26] if((byte~) animate::$10==(byte) 255) goto animate::@5 [ ] -- aby_eq_coby1_then_la1 
-  cmp #255
+  cmp #$ff
   beq animate__B5
 //SEG73 animate::@6
 animate__B6:
 //SEG74 [27] (byte~) animate::$12 ← * (word) 4354 [ animate::$12 ] -- aby=_star_cowo1 
-  lda 4354
+  lda $1102
 //SEG75 [28] (byte~) animate::$13 ← (byte~) animate::$12 + (byte) 1 [ animate::$13 ] -- aby=aby_plus_1 
   clc
-  adc #1
+  adc #$1
 //SEG76 [29] *((word) 4354) ← (byte~) animate::$13 [ ] -- _star_cowo1=aby 
-  sta 4354
+  sta $1102
 //SEG77 [30] (byte~) animate::$14 ← * (word) 4354 [ animate::$14 ] -- aby=_star_cowo1 
-  lda 4354
+  lda $1102
 //SEG78 [31] if((byte~) animate::$14==(byte) 25) goto animate::@7 [ ] -- aby_eq_coby1_then_la1 
-  cmp #25
+  cmp #$19
   beq animate__B7
 //SEG79 animate::@8
 animate__B8:
 //SEG80 [32] (byte~) animate::$16 ← * (word) 4355 [ animate::$16 ] -- xby=_star_cowo1 
-  ldx 4355
+  ldx $1103
 //SEG81 [33] (byte~) animate::$17 ← (byte~) animate::$16 - (byte) 1 [ animate::$17 ] -- xby=xby_minus_1 
   dex
 //SEG82 [34] *((word) 4355) ← (byte~) animate::$17 [ ] -- _star_cowo1=xby 
-  stx 4355
+  stx $1103
 //SEG83 [35] (byte~) animate::$18 ← * (word) 4355 [ animate::$18 ] -- aby=_star_cowo1 
-  lda 4355
+  lda $1103
 //SEG84 [36] if((byte~) animate::$18==(byte) 255) goto animate::@9 [ ] -- aby_eq_coby1_then_la1 
-  cmp #255
+  cmp #$ff
   beq animate__B9
 //SEG85 animate::@return
 animate__Breturn:
@@ -8842,67 +8871,67 @@ animate__Breturn:
 //SEG87 animate::@9
 animate__B9:
 //SEG88 [38] *((word) 4355) ← (byte) 25 [ ] -- _star_cowo1=coby2 
-  lda #25
-  sta 4355
+  lda #$19
+  sta $1103
 //SEG89 [39] (byte~) animate::$20 ← * (word) 4099 [ animate::$20 ] -- aby=_star_cowo1 
-  lda 4099
+  lda $1003
 //SEG90 [40] (byte~) animate::$21 ← (byte~) animate::$20 + (byte) 7 [ animate::$21 ] -- aby=aby_plus_coby1 
   clc
-  adc #7
+  adc #$7
 //SEG91 [41] *((word) 4099) ← (byte~) animate::$21 [ ] -- _star_cowo1=aby 
-  sta 4099
+  sta $1003
 //SEG92 [42] (byte~) animate::$22 ← * (word) 4099 [ animate::$22 ] -- aby=_star_cowo1 
-  lda 4099
+  lda $1003
 //SEG93 [43] if((byte~) animate::$22>=(byte) 40) goto animate::@11 [ ] -- aby_ge_coby1_then_la1 
-  cmp #40
+  cmp #$28
   bcs animate__B11
   jmp animate__Breturn
 //SEG94 animate::@11
 animate__B11:
 //SEG95 [44] (byte~) animate::$24 ← * (word) 4099 [ animate::$24 ] -- aby=_star_cowo1 
-  lda 4099
+  lda $1003
 //SEG96 [45] (byte~) animate::$25 ← (byte~) animate::$24 - (byte) 40 [ animate::$25 ] -- aby=aby_minus_coby1 
   sec
-  sbc #40
+  sbc #$28
 //SEG97 [46] *((word) 4099) ← (byte~) animate::$25 [ ] -- _star_cowo1=aby 
-  sta 4099
+  sta $1003
   jmp animate__Breturn
 //SEG98 animate::@7
 animate__B7:
 //SEG99 [47] *((word) 4354) ← (byte) 0 [ ] -- _star_cowo1=coby2 
-  lda #0
-  sta 4354
+  lda #$0
+  sta $1102
   jmp animate__B8
 //SEG100 animate::@5
 animate__B5:
 //SEG101 [48] *((word) 4097) ← (byte) 40 [ ] -- _star_cowo1=coby2 
-  lda #40
-  sta 4097
+  lda #$28
+  sta $1001
   jmp animate__B6
 //SEG102 animate::@3
 animate__B3:
 //SEG103 [49] *((word) 4352) ← (byte) 0 [ ] -- _star_cowo1=coby2 
-  lda #0
-  sta 4352
+  lda #$0
+  sta $1100
   jmp animate__B4
 //SEG104 animate::@1
 animate__B1:
 //SEG105 [50] *((word) 4096) ← (byte) 0 [ ] -- _star_cowo1=coby2 
-  lda #0
-  sta 4096
+  lda #$0
+  sta $1000
   jmp animate__B2
 //SEG106 render
 render:
 //SEG107 [51] phi from render to render::@1
 render__B1_from_render:
 //SEG108 [51] phi (byte*) render::colline#2 = (word) 55296 -- zpptrby1=cowo1 
-  lda #<55296
-  sta 3
-  lda #>55296
-  sta 3+1
+  lda #<$d800
+  sta $3
+  lda #>$d800
+  sta $3+$1
 //SEG109 [51] phi (byte) render::y#2 = (byte) 0 -- zpby1=coby1 
-  lda #0
-  sta 2
+  lda #$0
+  sta $2
 //SEG110 [51] phi from render::@3 to render::@1
 render__B1_from_B3:
 //SEG111 [51] phi (byte*) render::colline#2 = (byte*) render::colline#1 -- register_copy 
@@ -8912,19 +8941,19 @@ render__B1:
 //SEG114 [52] phi from render::@1 to render::@2
 render__B2_from_B1:
 //SEG115 [52] phi (byte) render::x#2 = (byte) 0 -- zpby1=coby1 
-  lda #0
-  sta 5
+  lda #$0
+  sta $5
 //SEG116 [52] phi from render::@5 to render::@2
 render__B2_from_B5:
 //SEG117 [52] phi (byte) render::x#2 = (byte) render::x#1 -- register_copy 
 //SEG118 render::@2
 render__B2:
 //SEG119 [53] (byte) findcol::x#0 ← (byte) render::x#2 [ render::x#2 render::y#2 render::colline#2 ] -- zpby1=zpby2 
-  lda 5
-  sta 9
+  lda $5
+  sta $9
 //SEG120 [54] (byte) findcol::y#0 ← (byte) render::y#2 [ render::x#2 render::y#2 render::colline#2 ] -- zpby1=zpby2 
-  lda 2
-  sta 10
+  lda $2
+  sta $a
 //SEG121 [55] call findcol param-assignment [ render::x#2 render::y#2 findcol::return#0 render::colline#2 ]
   jsr findcol
 //SEG122 render::@5
@@ -8932,29 +8961,29 @@ render__B5:
 //SEG123 [56] (byte) render::col#0 ← (byte) findcol::return#0 [ render::x#2 render::y#2 render::colline#2 render::col#0 ] -- aby=yby 
   tya
 //SEG124 [57] *((byte*) render::colline#2 + (byte) render::x#2) ← (byte) render::col#0 [ render::x#2 render::y#2 render::colline#2 ] -- zpptrby1_staridx_zpby1=aby 
-  ldy 5
-  sta (3),y
+  ldy $5
+  sta ($3),y
 //SEG125 [58] (byte) render::x#1 ← ++ (byte) render::x#2 [ render::x#1 render::y#2 render::colline#2 ] -- zpby1=_inc_zpby1 
-  inc 5
+  inc $5
 //SEG126 [59] if((byte) render::x#1<(byte) 40) goto render::@2 [ render::x#1 render::y#2 render::colline#2 ] -- zpby1_lt_coby1_then_la1 
-  lda 5
-  cmp #40
+  lda $5
+  cmp #$28
   bcc render__B2_from_B5
 //SEG127 render::@3
 render__B3:
 //SEG128 [60] (byte*) render::colline#1 ← (byte*) render::colline#2 + (byte) 40 [ render::colline#1 render::y#2 ] -- zpptrby1=zpptrby1_plus_coby1 
-  lda 3
+  lda $3
   clc
-  adc #40
-  sta 3
+  adc #$28
+  sta $3
   bcc !+
-  inc 3+1
+  inc $3+$1
 !:
 //SEG129 [61] (byte) render::y#1 ← ++ (byte) render::y#2 [ render::y#1 render::colline#1 ] -- zpby1=_inc_zpby1 
-  inc 2
+  inc $2
 //SEG130 [62] if((byte) render::y#1<(byte) 25) goto render::@1 [ render::y#1 render::colline#1 ] -- zpby1_lt_coby1_then_la1 
-  lda 2
-  cmp #25
+  lda $2
+  cmp #$19
   bcc render__B1_from_B3
 //SEG131 render::@return
 render__Breturn:
@@ -8965,12 +8994,12 @@ findcol:
 //SEG134 [64] phi from findcol to findcol::@1
 findcol__B1_from_findcol:
 //SEG135 [64] phi (byte) findcol::mincol#11 = (byte) 0 -- yby=coby1 
-  ldy #0
+  ldy #$0
 //SEG136 [64] phi (byte) findcol::mindiff#10 = (byte) 255 -- zpby1=coby1 
-  lda #255
-  sta 6
+  lda #$ff
+  sta $6
 //SEG137 [64] phi (byte) findcol::i#12 = (byte) 0 -- xby=coby1 
-  ldx #0
+  ldx #$0
 //SEG138 [64] phi from findcol::@13 to findcol::@1
 findcol__B1_from_B13:
 //SEG139 [64] phi (byte) findcol::mincol#11 = (byte) findcol::mincol#2 -- register_copy 
@@ -8979,53 +9008,53 @@ findcol__B1_from_B13:
 //SEG142 findcol::@1
 findcol__B1:
 //SEG143 [65] (byte) findcol::xp#0 ← (word) 4096 *idx (byte) findcol::i#12 [ render::x#2 render::y#2 render::colline#2 findcol::i#12 findcol::x#0 findcol::xp#0 findcol::y#0 findcol::mindiff#10 findcol::mincol#11 numpoints#1 ] -- zpby1=cowo1_staridx_xby 
-  lda 4096,x
-  sta 7
+  lda $1000,x
+  sta $7
 //SEG144 [66] (byte) findcol::yp#0 ← (word) 4352 *idx (byte) findcol::i#12 [ render::x#2 render::y#2 render::colline#2 findcol::i#12 findcol::x#0 findcol::xp#0 findcol::y#0 findcol::yp#0 findcol::mindiff#10 findcol::mincol#11 numpoints#1 ] -- zpby1=cowo1_staridx_xby 
-  lda 4352,x
-  sta 11
+  lda $1100,x
+  sta $b
 //SEG145 [67] if((byte) findcol::x#0==(byte) findcol::xp#0) goto findcol::@2 [ render::x#2 render::y#2 render::colline#2 findcol::i#12 findcol::x#0 findcol::xp#0 findcol::y#0 findcol::yp#0 findcol::mindiff#10 findcol::mincol#11 numpoints#1 ] -- zpby1_eq_zpby2_then_la1 
-  lda 9
-  cmp 7
+  lda $9
+  cmp $7
   beq findcol__B2
 //SEG146 findcol::@3
 findcol__B3:
 //SEG147 [68] if((byte) findcol::x#0<(byte) findcol::xp#0) goto findcol::@6 [ render::x#2 render::y#2 render::colline#2 findcol::i#12 findcol::x#0 findcol::xp#0 findcol::y#0 findcol::yp#0 findcol::mindiff#10 findcol::mincol#11 numpoints#1 ] -- zpby1_lt_zpby2_then_la1 
-  lda 9
-  cmp 7
+  lda $9
+  cmp $7
   bcc findcol__B6
 //SEG148 findcol::@7
 findcol__B7:
 //SEG149 [69] (byte) findcol::diff#1 ← (byte) findcol::x#0 - (byte) findcol::xp#0 [ render::x#2 render::y#2 render::colline#2 findcol::i#12 findcol::x#0 findcol::diff#1 findcol::y#0 findcol::yp#0 findcol::mindiff#10 findcol::mincol#11 numpoints#1 ] -- zpby1=zpby2_minus_zpby1 
-  lda 9
+  lda $9
   sec
-  sbc 7
-  sta 7
+  sbc $7
+  sta $7
 //SEG150 [70] phi from findcol::@7 to findcol::@8
 findcol__B8_from_B7:
 //SEG151 [70] phi (byte) findcol::diff#4 = (byte) findcol::diff#1 -- register_copy 
 //SEG152 findcol::@8
 findcol__B8:
 //SEG153 [71] if((byte) findcol::y#0<(byte) findcol::yp#0) goto findcol::@9 [ render::x#2 render::y#2 render::colline#2 findcol::i#12 findcol::x#0 findcol::y#0 findcol::yp#0 findcol::diff#4 findcol::mindiff#10 findcol::mincol#11 numpoints#1 ] -- zpby1_lt_zpby2_then_la1 
-  lda 10
-  cmp 11
+  lda $a
+  cmp $b
   bcc findcol__B9
 //SEG154 findcol::@10
 findcol__B10:
 //SEG155 [72] (byte~) findcol::$10 ← (byte) findcol::y#0 - (byte) findcol::yp#0 [ render::x#2 render::y#2 render::colline#2 findcol::i#12 findcol::x#0 findcol::y#0 findcol::diff#4 findcol::$10 findcol::mindiff#10 findcol::mincol#11 numpoints#1 ] -- aby=zpby1_minus_zpby2 
-  lda 10
+  lda $a
   sec
-  sbc 11
+  sbc $b
 //SEG156 [73] (byte) findcol::diff#3 ← (byte) findcol::diff#4 + (byte~) findcol::$10 [ render::x#2 render::y#2 render::colline#2 findcol::i#12 findcol::x#0 findcol::y#0 findcol::diff#3 findcol::mindiff#10 findcol::mincol#11 numpoints#1 ] -- aby=zpby1_plus_aby 
   clc
-  adc 7
+  adc $7
 //SEG157 [74] phi from findcol::@10 to findcol::@11
 findcol__B11_from_B10:
 //SEG158 [74] phi (byte) findcol::diff#6 = (byte) findcol::diff#3 -- register_copy 
 //SEG159 findcol::@11
 findcol__B11:
 //SEG160 [75] if((byte) findcol::diff#6<(byte) findcol::mindiff#10) goto findcol::@12 [ render::x#2 render::y#2 render::colline#2 findcol::i#12 findcol::x#0 findcol::y#0 findcol::diff#6 findcol::mindiff#10 findcol::mincol#11 numpoints#1 ] -- aby_lt_zpby1_then_la1 
-  cmp 6
+  cmp $6
   bcc findcol__B12
 //SEG161 [76] phi from findcol::@11 to findcol::@13
 findcol__B13_from_B11:
@@ -9036,7 +9065,7 @@ findcol__B13:
 //SEG165 [77] (byte) findcol::i#1 ← ++ (byte) findcol::i#12 [ render::x#2 render::y#2 render::colline#2 findcol::i#1 findcol::mindiff#11 findcol::mincol#2 findcol::x#0 findcol::y#0 numpoints#1 ] -- xby=_inc_xby 
   inx
 //SEG166 [78] if((byte) findcol::i#1<(byte) numpoints#1) goto findcol::@1 [ render::x#2 render::y#2 render::colline#2 findcol::i#1 findcol::mindiff#11 findcol::mincol#2 findcol::x#0 findcol::y#0 numpoints#1 ] -- xby_lt_zpby1_then_la1 
-  cpx 8
+  cpx $8
   bcc findcol__B1_from_B13
 //SEG167 [79] phi from findcol::@13 to findcol::@return
 findcol__Breturn_from_B13:
@@ -9045,7 +9074,7 @@ findcol__Breturn_from_B13:
 //SEG169 [79] phi from findcol::@2 to findcol::@return
 findcol__Breturn_from_B2:
 //SEG170 [79] phi (byte) findcol::return#0 = (byte) 0 -- yby=coby1 
-  ldy #0
+  ldy #$0
 //SEG171 findcol::@return
 findcol__Breturn:
 //SEG172 [80] return  [ render::x#2 render::y#2 findcol::return#0 render::colline#2 ]
@@ -9053,9 +9082,9 @@ findcol__Breturn:
 //SEG173 findcol::@12
 findcol__B12:
 //SEG174 [81] (byte) findcol::mincol#1 ← (word) 4608 *idx (byte) findcol::i#12 [ render::x#2 render::y#2 render::colline#2 findcol::i#12 findcol::x#0 findcol::y#0 findcol::diff#6 findcol::mincol#1 numpoints#1 ] -- yby=cowo1_staridx_xby 
-  ldy 4608,x
+  ldy $1200,x
 //SEG175 [82] (byte~) findcol::diff#13 ← (byte) findcol::diff#6 [ render::x#2 render::y#2 render::colline#2 findcol::i#12 findcol::x#0 findcol::y#0 findcol::mincol#1 findcol::diff#13 numpoints#1 ] -- zpby1=aby 
-  sta 6
+  sta $6
 //SEG176 [76] phi from findcol::@12 to findcol::@13
 findcol__B13_from_B12:
 //SEG177 [76] phi (byte) findcol::mindiff#11 = (byte~) findcol::diff#13 -- register_copy 
@@ -9064,12 +9093,12 @@ findcol__B13_from_B12:
 //SEG179 findcol::@9
 findcol__B9:
 //SEG180 [83] (byte~) findcol::$8 ← (byte) findcol::yp#0 - (byte) findcol::y#0 [ render::x#2 render::y#2 render::colline#2 findcol::i#12 findcol::x#0 findcol::y#0 findcol::diff#4 findcol::mindiff#10 findcol::mincol#11 numpoints#1 findcol::$8 ] -- aby=zpby1_minus_zpby2 
-  lda 11
+  lda $b
   sec
-  sbc 10
+  sbc $a
 //SEG181 [84] (byte) findcol::diff#2 ← (byte) findcol::diff#4 + (byte~) findcol::$8 [ render::x#2 render::y#2 render::colline#2 findcol::i#12 findcol::x#0 findcol::y#0 findcol::diff#2 findcol::mindiff#10 findcol::mincol#11 numpoints#1 ] -- aby=zpby1_plus_aby 
   clc
-  adc 7
+  adc $7
 //SEG182 [74] phi from findcol::@9 to findcol::@11
 findcol__B11_from_B9:
 //SEG183 [74] phi (byte) findcol::diff#6 = (byte) findcol::diff#2 -- register_copy 
@@ -9077,10 +9106,10 @@ findcol__B11_from_B9:
 //SEG184 findcol::@6
 findcol__B6:
 //SEG185 [85] (byte) findcol::diff#0 ← (byte) findcol::xp#0 - (byte) findcol::x#0 [ render::x#2 render::y#2 render::colline#2 findcol::i#12 findcol::x#0 findcol::diff#0 findcol::y#0 findcol::yp#0 findcol::mindiff#10 findcol::mincol#11 numpoints#1 ] -- zpby1=zpby1_minus_zpby2 
-  lda 7
+  lda $7
   sec
-  sbc 9
-  sta 7
+  sbc $9
+  sta $7
 //SEG186 [70] phi from findcol::@6 to findcol::@8
 findcol__B8_from_B6:
 //SEG187 [70] phi (byte) findcol::diff#4 = (byte) findcol::diff#0 -- register_copy 
@@ -9088,8 +9117,8 @@ findcol__B8_from_B6:
 //SEG188 findcol::@2
 findcol__B2:
 //SEG189 [86] if((byte) findcol::y#0==(byte) findcol::yp#0) goto findcol::@return [ render::x#2 render::y#2 render::colline#2 findcol::i#12 findcol::x#0 findcol::xp#0 findcol::y#0 findcol::yp#0 findcol::mindiff#10 findcol::mincol#11 numpoints#1 ] -- zpby1_eq_zpby2_then_la1 
-  lda 10
-  cmp 11
+  lda $a
+  cmp $b
   beq findcol__Breturn_from_B2
   jmp findcol__B3
 //SEG190 initscreen
@@ -9097,31 +9126,31 @@ initscreen:
 //SEG191 [87] phi from initscreen to initscreen::@1
 initscreen__B1_from_initscreen:
 //SEG192 [87] phi (byte*) initscreen::screen#2 = (word) 1024 -- zpptrby1=cowo1 
-  lda #<1024
-  sta 3
-  lda #>1024
-  sta 3+1
+  lda #<$400
+  sta $3
+  lda #>$400
+  sta $3+$1
 //SEG193 [87] phi from initscreen::@1 to initscreen::@1
 initscreen__B1_from_B1:
 //SEG194 [87] phi (byte*) initscreen::screen#2 = (byte*) initscreen::screen#1 -- register_copy 
 //SEG195 initscreen::@1
 initscreen__B1:
 //SEG196 [88] *((byte*) initscreen::screen#2) ← (byte) 230 [ initscreen::screen#2 ] -- _star_zpptrby1=coby1 
-  ldy #0
-  lda #230
-  sta (3),y
+  ldy #$0
+  lda #$e6
+  sta ($3),y
 //SEG197 [89] (byte*) initscreen::screen#1 ← ++ (byte*) initscreen::screen#2 [ initscreen::screen#1 ] -- zpptrby1=_inc_zpptrby1 
-  inc 3
+  inc $3
   bne !+
-  inc 3+1
+  inc $3+$1
 !:
-//SEG198 [90] if((byte*) initscreen::screen#1<(word) 2048) goto initscreen::@1 [ initscreen::screen#1 ] -- zpptrby1_lt_cowo1_then_la1 
-  lda 3+1
-  cmp #>2048
+//SEG198 [90] if((byte*) initscreen::screen#1<(word) 2024) goto initscreen::@1 [ initscreen::screen#1 ] -- zpptrby1_lt_cowo1_then_la1 
+  lda $3+$1
+  cmp #>$7e8
   bcc initscreen__B1_from_B1
   bne !+
-  lda 3
-  cmp #<2048
+  lda $3
+  cmp #<$7e8
   bcc initscreen__B1_from_B1
 !:
 //SEG199 initscreen::@return
@@ -9131,18 +9160,18 @@ initscreen__Breturn:
 //SEG201 addpoint
 addpoint:
 //SEG202 [93] *((word) 4096 + (byte) numpoints#19) ← (byte) addpoint::x#6 [ numpoints#19 addpoint::y#6 addpoint::c#6 ] -- cowo1_staridx_zpby1=aby 
-  ldx 8
-  sta 4096,x
+  ldx $8
+  sta $1000,x
 //SEG203 [94] *((word) 4352 + (byte) numpoints#19) ← (byte) addpoint::y#6 [ numpoints#19 addpoint::c#6 ] -- cowo1_staridx_zpby1=yby 
   tya
-  ldy 8
-  sta 4352,y
+  ldy $8
+  sta $1100,y
 //SEG204 [95] *((word) 4608 + (byte) numpoints#19) ← (byte) addpoint::c#6 [ numpoints#19 ] -- cowo1_staridx_zpby1=zpby2 
-  lda 2
-  ldx 8
-  sta 4608,x
+  lda $2
+  ldx $8
+  sta $1200,x
 //SEG205 [96] (byte) numpoints#1 ← ++ (byte) numpoints#19 [ ] -- zpby1=_inc_zpby1 
-  inc 8
+  inc $8
 //SEG206 addpoint::@return
 addpoint__Breturn:
 //SEG207 [97] return  [ ]

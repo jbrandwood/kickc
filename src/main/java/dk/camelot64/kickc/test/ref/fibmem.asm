@@ -1,17 +1,21 @@
 BBEGIN:
-  lda #0
-  sta 4352
-  lda #1
-  sta 4353
-B1_from_BBEGIN:
-  ldx #0
-B1_from_B1:
-B1:
-  lda 4352,x
-  clc
-  adc 4353,x
-  sta 4354,x
-  inx
-  cpx #15
-  bcc B1_from_B1
+  jsr main
 BEND:
+main:
+  lda #$0
+  sta $1100
+  lda #$1
+  sta $1101
+main__B1_from_main:
+  ldx #$0
+main__B1_from_B1:
+main__B1:
+  lda $1100,x
+  clc
+  adc $1101,x
+  sta $1102,x
+  inx
+  cpx #$f
+  bcc main__B1_from_B1
+main__Breturn:
+  rts

@@ -300,13 +300,13 @@ public class AsmFragment {
       if (boundValue instanceof RegisterAllocation.Register) {
          RegisterAllocation.Register register = (RegisterAllocation.Register) boundValue;
          if (register instanceof RegisterAllocation.RegisterZpByte) {
-            bound = Integer.toString(((RegisterAllocation.RegisterZpByte) register).getZp());
+            bound = String.format("$%x", ((RegisterAllocation.RegisterZpByte) register).getZp());
          } else if (register instanceof RegisterAllocation.RegisterZpWord) {
-            bound = Integer.toString(((RegisterAllocation.RegisterZpWord) register).getZp());
+            bound = String.format("$%x", ((RegisterAllocation.RegisterZpWord) register).getZp());
          } else if (register instanceof RegisterAllocation.RegisterZpBool) {
-            bound = Integer.toString(((RegisterAllocation.RegisterZpBool) register).getZp());
+            bound = String.format("$%x", ((RegisterAllocation.RegisterZpBool) register).getZp());
          } else if (register instanceof RegisterAllocation.RegisterZpPointerByte) {
-            bound = Integer.toString(((RegisterAllocation.RegisterZpPointerByte) register).getZp());
+            bound = String.format("$%x", ((RegisterAllocation.RegisterZpPointerByte) register).getZp());
          } else {
             throw new RuntimeException("Register Type not implemented " + register);
          }
@@ -317,7 +317,7 @@ public class AsmFragment {
             Constant pointerConst = (Constant) pointer;
             if (pointerConst instanceof ConstantInteger) {
                ConstantInteger intPointer = (ConstantInteger) pointerConst;
-               bound = Integer.toString(intPointer.getNumber());
+               bound = String.format("$%x", intPointer.getNumber());
             } else {
                throw new RuntimeException("Bound Value Type not implemented " + boundValue);
             }
@@ -327,9 +327,9 @@ public class AsmFragment {
       } else if (boundValue instanceof ConstantInteger) {
          ConstantInteger boundInt = (ConstantInteger) boundValue;
          if (boundInt.getType().equals(SymbolTypeBasic.BYTE)) {
-            bound = Integer.toString(boundInt.getNumber());
+            bound = String.format("$%x", boundInt.getNumber());
          } else {
-            bound = Integer.toString(boundInt.getNumber());
+            bound = String.format("$%x", boundInt.getNumber());
          }
       } else if (boundValue instanceof Label) {
          bound = ((Label) boundValue).getFullName().replace('@', 'B').replace(':', '_');
@@ -449,7 +449,6 @@ public class AsmFragment {
          return new AsmInstruction(type, parameter);
       }
 
-
       @Override
       public Object visitExprBinary(Asm6502Parser.ExprBinaryContext ctx) {
          Object left = this.visit(ctx.expr(0));
@@ -465,7 +464,8 @@ public class AsmFragment {
 
       @Override
       public Object visitExprInt(Asm6502Parser.ExprIntContext ctx) {
-         return NumberParser.parseLiteral(ctx.NUMINT().getText()).toString();
+         Number number = NumberParser.parseLiteral(ctx.NUMINT().getText());
+         return String.format("$%x", number);
       }
 
       @Override

@@ -1,6 +1,7 @@
 byte s1=sum(1,2);
-byte s2=sum(9,13);
-byte s3=s1+s2;
+byte s2=sum(3,4);
+byte s3=sum(9,13);
+byte s4=s1+s2+s3;
 byte sum(byte a, byte b) {
   return a+b;
 }
@@ -8,10 +9,13 @@ byte sum(byte a, byte b) {
 PROGRAM
   (byte~) $0 ← call sum (byte) 1 (byte) 2 
   (byte) s1 ← (byte~) $0
-  (byte~) $1 ← call sum (byte) 9 (byte) 13 
+  (byte~) $1 ← call sum (byte) 3 (byte) 4 
   (byte) s2 ← (byte~) $1
-  (byte~) $2 ← (byte) s1 + (byte) s2
+  (byte~) $2 ← call sum (byte) 9 (byte) 13 
   (byte) s3 ← (byte~) $2
+  (byte~) $3 ← (byte) s1 + (byte) s2
+  (byte~) $4 ← (byte~) $3 + (byte) s3
+  (byte) s4 ← (byte~) $4
   proc (byte()) sum((byte) sum::a , (byte) sum::b)
   (byte~) sum::$0 ← (byte) sum::a + (byte) sum::b
   (byte) sum::return ← (byte~) sum::$0
@@ -25,9 +29,12 @@ SYMBOLS
 (byte~) $0
 (byte~) $1
 (byte~) $2
+(byte~) $3
+(byte~) $4
 (byte) s1
 (byte) s2
 (byte) s3
+(byte) s4
 (byte()) sum((byte) sum::a , (byte) sum::b)
 (byte~) sum::$0
 (label) sum::@return
@@ -39,10 +46,13 @@ INITIAL CONTROL FLOW GRAPH
 @BEGIN: from
   (byte~) $0 ← call sum (byte) 1 (byte) 2 
   (byte) s1 ← (byte~) $0
-  (byte~) $1 ← call sum (byte) 9 (byte) 13 
+  (byte~) $1 ← call sum (byte) 3 (byte) 4 
   (byte) s2 ← (byte~) $1
-  (byte~) $2 ← (byte) s1 + (byte) s2
+  (byte~) $2 ← call sum (byte) 9 (byte) 13 
   (byte) s3 ← (byte~) $2
+  (byte~) $3 ← (byte) s1 + (byte) s2
+  (byte~) $4 ← (byte~) $3 + (byte) s3
+  (byte) s4 ← (byte~) $4
   to:@1
 sum: from
   (byte~) sum::$0 ← (byte) sum::a + (byte) sum::b
@@ -64,10 +74,13 @@ CONTROL FLOW GRAPH
 @BEGIN: from
   (byte~) $0 ← call sum (byte) 1 (byte) 2 
   (byte) s1 ← (byte~) $0
-  (byte~) $1 ← call sum (byte) 9 (byte) 13 
+  (byte~) $1 ← call sum (byte) 3 (byte) 4 
   (byte) s2 ← (byte~) $1
-  (byte~) $2 ← (byte) s1 + (byte) s2
+  (byte~) $2 ← call sum (byte) 9 (byte) 13 
   (byte) s3 ← (byte~) $2
+  (byte~) $3 ← (byte) s1 + (byte) s2
+  (byte~) $4 ← (byte~) $3 + (byte) s3
+  (byte) s4 ← (byte~) $4
   to:@END
 sum: from
   (byte~) sum::$0 ← (byte) sum::a + (byte) sum::b
@@ -90,17 +103,25 @@ CONTROL FLOW GRAPH WITH ASSIGNMENT CALL
 @2: from @BEGIN
   (byte~) $0 ← (byte) sum::return
   (byte) s1 ← (byte~) $0
-  (byte) sum::a ← (byte) 9
-  (byte) sum::b ← (byte) 13
+  (byte) sum::a ← (byte) 3
+  (byte) sum::b ← (byte) 4
   (byte) sum::return ← call sum param-assignment
   to:@3
 @3: from @2
   (byte~) $1 ← (byte) sum::return
   (byte) s2 ← (byte~) $1
-  (byte~) $2 ← (byte) s1 + (byte) s2
+  (byte) sum::a ← (byte) 9
+  (byte) sum::b ← (byte) 13
+  (byte) sum::return ← call sum param-assignment
+  to:@4
+@4: from @3
+  (byte~) $2 ← (byte) sum::return
   (byte) s3 ← (byte~) $2
+  (byte~) $3 ← (byte) s1 + (byte) s2
+  (byte~) $4 ← (byte~) $3 + (byte) s3
+  (byte) s4 ← (byte~) $4
   to:@END
-sum: from @2 @BEGIN
+sum: from @2 @3 @BEGIN
   (byte~) sum::$0 ← (byte) sum::a + (byte) sum::b
   (byte) sum::return ← (byte~) sum::$0
   to:sum::@return
@@ -108,8 +129,9 @@ sum::@return: from sum
   (byte) sum::return ← (byte) sum::return
   return (byte) sum::return
   to:@RETURN
-@END: from @3
+@END: from @4
 
+Completing Phi functions...
 Completing Phi functions...
 CONTROL FLOW GRAPH SSA
 @BEGIN: from
@@ -118,115 +140,152 @@ CONTROL FLOW GRAPH SSA
   (byte) sum::return#0 ← call sum param-assignment
   to:@2
 @2: from @BEGIN
-  (byte) sum::return#4 ← phi( @BEGIN/(byte) sum::return#0 )
-  (byte~) $0 ← (byte) sum::return#4
+  (byte) sum::return#5 ← phi( @BEGIN/(byte) sum::return#0 )
+  (byte~) $0 ← (byte) sum::return#5
   (byte) s1#0 ← (byte~) $0
-  (byte) sum::a#1 ← (byte) 9
-  (byte) sum::b#1 ← (byte) 13
+  (byte) sum::a#1 ← (byte) 3
+  (byte) sum::b#1 ← (byte) 4
   (byte) sum::return#1 ← call sum param-assignment
   to:@3
 @3: from @2
-  (byte) s1#1 ← phi( @2/(byte) s1#0 )
-  (byte) sum::return#5 ← phi( @2/(byte) sum::return#1 )
-  (byte~) $1 ← (byte) sum::return#5
+  (byte) s1#2 ← phi( @2/(byte) s1#0 )
+  (byte) sum::return#6 ← phi( @2/(byte) sum::return#1 )
+  (byte~) $1 ← (byte) sum::return#6
   (byte) s2#0 ← (byte~) $1
-  (byte~) $2 ← (byte) s1#1 + (byte) s2#0
+  (byte) sum::a#2 ← (byte) 9
+  (byte) sum::b#2 ← (byte) 13
+  (byte) sum::return#2 ← call sum param-assignment
+  to:@4
+@4: from @3
+  (byte) s2#1 ← phi( @3/(byte) s2#0 )
+  (byte) s1#1 ← phi( @3/(byte) s1#2 )
+  (byte) sum::return#7 ← phi( @3/(byte) sum::return#2 )
+  (byte~) $2 ← (byte) sum::return#7
   (byte) s3#0 ← (byte~) $2
+  (byte~) $3 ← (byte) s1#1 + (byte) s2#1
+  (byte~) $4 ← (byte~) $3 + (byte) s3#0
+  (byte) s4#0 ← (byte~) $4
   to:@END
-sum: from @2 @BEGIN
-  (byte) sum::b#2 ← phi( @2/(byte) sum::b#1 @BEGIN/(byte) sum::b#0 )
-  (byte) sum::a#2 ← phi( @2/(byte) sum::a#1 @BEGIN/(byte) sum::a#0 )
-  (byte~) sum::$0 ← (byte) sum::a#2 + (byte) sum::b#2
-  (byte) sum::return#2 ← (byte~) sum::$0
+sum: from @2 @3 @BEGIN
+  (byte) sum::b#3 ← phi( @2/(byte) sum::b#1 @3/(byte) sum::b#2 @BEGIN/(byte) sum::b#0 )
+  (byte) sum::a#3 ← phi( @2/(byte) sum::a#1 @3/(byte) sum::a#2 @BEGIN/(byte) sum::a#0 )
+  (byte~) sum::$0 ← (byte) sum::a#3 + (byte) sum::b#3
+  (byte) sum::return#3 ← (byte~) sum::$0
   to:sum::@return
 sum::@return: from sum
-  (byte) sum::return#6 ← phi( sum/(byte) sum::return#2 )
-  (byte) sum::return#3 ← (byte) sum::return#6
-  return (byte) sum::return#3
+  (byte) sum::return#8 ← phi( sum/(byte) sum::return#3 )
+  (byte) sum::return#4 ← (byte) sum::return#8
+  return (byte) sum::return#4
   to:@RETURN
-@END: from @3
+@END: from @4
 
 CONTROL FLOW GRAPH WITH ASSIGNMENT CALL & RETURN
 @BEGIN: from
   (byte) sum::a#0 ← (byte) 1
   (byte) sum::b#0 ← (byte) 2
   call sum param-assignment
-  (byte) sum::return#0 ← (byte) sum::return#3
+  (byte) sum::return#0 ← (byte) sum::return#4
   to:@2
 @2: from @BEGIN
-  (byte) sum::return#4 ← phi( @BEGIN/(byte) sum::return#0 )
-  (byte~) $0 ← (byte) sum::return#4
+  (byte) sum::return#5 ← phi( @BEGIN/(byte) sum::return#0 )
+  (byte~) $0 ← (byte) sum::return#5
   (byte) s1#0 ← (byte~) $0
-  (byte) sum::a#1 ← (byte) 9
-  (byte) sum::b#1 ← (byte) 13
+  (byte) sum::a#1 ← (byte) 3
+  (byte) sum::b#1 ← (byte) 4
   call sum param-assignment
-  (byte) sum::return#1 ← (byte) sum::return#3
+  (byte) sum::return#1 ← (byte) sum::return#4
   to:@3
 @3: from @2
-  (byte) s1#1 ← phi( @2/(byte) s1#0 )
-  (byte) sum::return#5 ← phi( @2/(byte) sum::return#1 )
-  (byte~) $1 ← (byte) sum::return#5
+  (byte) s1#2 ← phi( @2/(byte) s1#0 )
+  (byte) sum::return#6 ← phi( @2/(byte) sum::return#1 )
+  (byte~) $1 ← (byte) sum::return#6
   (byte) s2#0 ← (byte~) $1
-  (byte~) $2 ← (byte) s1#1 + (byte) s2#0
+  (byte) sum::a#2 ← (byte) 9
+  (byte) sum::b#2 ← (byte) 13
+  call sum param-assignment
+  (byte) sum::return#2 ← (byte) sum::return#4
+  to:@4
+@4: from @3
+  (byte) s2#1 ← phi( @3/(byte) s2#0 )
+  (byte) s1#1 ← phi( @3/(byte) s1#2 )
+  (byte) sum::return#7 ← phi( @3/(byte) sum::return#2 )
+  (byte~) $2 ← (byte) sum::return#7
   (byte) s3#0 ← (byte~) $2
+  (byte~) $3 ← (byte) s1#1 + (byte) s2#1
+  (byte~) $4 ← (byte~) $3 + (byte) s3#0
+  (byte) s4#0 ← (byte~) $4
   to:@END
-sum: from @2 @BEGIN
-  (byte) sum::b#2 ← phi( @2/(byte) sum::b#1 @BEGIN/(byte) sum::b#0 )
-  (byte) sum::a#2 ← phi( @2/(byte) sum::a#1 @BEGIN/(byte) sum::a#0 )
-  (byte~) sum::$0 ← (byte) sum::a#2 + (byte) sum::b#2
-  (byte) sum::return#2 ← (byte~) sum::$0
+sum: from @2 @3 @BEGIN
+  (byte) sum::b#3 ← phi( @2/(byte) sum::b#1 @3/(byte) sum::b#2 @BEGIN/(byte) sum::b#0 )
+  (byte) sum::a#3 ← phi( @2/(byte) sum::a#1 @3/(byte) sum::a#2 @BEGIN/(byte) sum::a#0 )
+  (byte~) sum::$0 ← (byte) sum::a#3 + (byte) sum::b#3
+  (byte) sum::return#3 ← (byte~) sum::$0
   to:sum::@return
 sum::@return: from sum
-  (byte) sum::return#6 ← phi( sum/(byte) sum::return#2 )
-  (byte) sum::return#3 ← (byte) sum::return#6
+  (byte) sum::return#8 ← phi( sum/(byte) sum::return#3 )
+  (byte) sum::return#4 ← (byte) sum::return#8
   return 
   to:@RETURN
-@END: from @3
+@END: from @4
 
 Constant (byte) sum::a#0 (byte) 1
 Constant (byte) sum::b#0 (byte) 2
-Constant (byte) sum::a#1 (byte) 9
-Constant (byte) sum::b#1 (byte) 13
+Constant (byte) sum::a#1 (byte) 3
+Constant (byte) sum::b#1 (byte) 4
+Constant (byte) sum::a#2 (byte) 9
+Constant (byte) sum::b#2 (byte) 13
 Succesful SSA optimization Pass2ConstantPropagation
 CONTROL FLOW GRAPH
 @BEGIN: from
   call sum param-assignment
-  (byte) sum::return#0 ← (byte) sum::return#3
+  (byte) sum::return#0 ← (byte) sum::return#4
   to:@2
 @2: from @BEGIN
-  (byte) sum::return#4 ← phi( @BEGIN/(byte) sum::return#0 )
-  (byte~) $0 ← (byte) sum::return#4
+  (byte) sum::return#5 ← phi( @BEGIN/(byte) sum::return#0 )
+  (byte~) $0 ← (byte) sum::return#5
   (byte) s1#0 ← (byte~) $0
   call sum param-assignment
-  (byte) sum::return#1 ← (byte) sum::return#3
+  (byte) sum::return#1 ← (byte) sum::return#4
   to:@3
 @3: from @2
-  (byte) s1#1 ← phi( @2/(byte) s1#0 )
-  (byte) sum::return#5 ← phi( @2/(byte) sum::return#1 )
-  (byte~) $1 ← (byte) sum::return#5
+  (byte) s1#2 ← phi( @2/(byte) s1#0 )
+  (byte) sum::return#6 ← phi( @2/(byte) sum::return#1 )
+  (byte~) $1 ← (byte) sum::return#6
   (byte) s2#0 ← (byte~) $1
-  (byte~) $2 ← (byte) s1#1 + (byte) s2#0
+  call sum param-assignment
+  (byte) sum::return#2 ← (byte) sum::return#4
+  to:@4
+@4: from @3
+  (byte) s2#1 ← phi( @3/(byte) s2#0 )
+  (byte) s1#1 ← phi( @3/(byte) s1#2 )
+  (byte) sum::return#7 ← phi( @3/(byte) sum::return#2 )
+  (byte~) $2 ← (byte) sum::return#7
   (byte) s3#0 ← (byte~) $2
+  (byte~) $3 ← (byte) s1#1 + (byte) s2#1
+  (byte~) $4 ← (byte~) $3 + (byte) s3#0
+  (byte) s4#0 ← (byte~) $4
   to:@END
-sum: from @2 @BEGIN
-  (byte) sum::b#2 ← phi( @2/(byte) 13 @BEGIN/(byte) 2 )
-  (byte) sum::a#2 ← phi( @2/(byte) 9 @BEGIN/(byte) 1 )
-  (byte~) sum::$0 ← (byte) sum::a#2 + (byte) sum::b#2
-  (byte) sum::return#2 ← (byte~) sum::$0
+sum: from @2 @3 @BEGIN
+  (byte) sum::b#3 ← phi( @2/(byte) 4 @3/(byte) 13 @BEGIN/(byte) 2 )
+  (byte) sum::a#3 ← phi( @2/(byte) 3 @3/(byte) 9 @BEGIN/(byte) 1 )
+  (byte~) sum::$0 ← (byte) sum::a#3 + (byte) sum::b#3
+  (byte) sum::return#3 ← (byte~) sum::$0
   to:sum::@return
 sum::@return: from sum
-  (byte) sum::return#6 ← phi( sum/(byte) sum::return#2 )
-  (byte) sum::return#3 ← (byte) sum::return#6
+  (byte) sum::return#8 ← phi( sum/(byte) sum::return#3 )
+  (byte) sum::return#4 ← (byte) sum::return#8
   return 
   to:@RETURN
-@END: from @3
+@END: from @4
 
-Not aliassing across scopes: $0 sum::return#4
-Not aliassing across scopes: $1 sum::return#5
-Alias (byte) sum::return#0 = (byte) sum::return#3 (byte) sum::return#4 (byte) sum::return#1 (byte) sum::return#5 (byte) sum::return#2 (byte~) sum::$0 (byte) sum::return#6 
-Alias (byte) s1#0 = (byte~) $0 (byte) s1#1 
-Alias (byte) s2#0 = (byte~) $1 
+Not aliassing across scopes: $0 sum::return#5
+Not aliassing across scopes: $1 sum::return#6
+Not aliassing across scopes: $2 sum::return#7
+Alias (byte) sum::return#0 = (byte) sum::return#4 (byte) sum::return#5 (byte) sum::return#1 (byte) sum::return#6 (byte) sum::return#2 (byte) sum::return#7 (byte) sum::return#3 (byte~) sum::$0 (byte) sum::return#8 
+Alias (byte) s1#0 = (byte~) $0 (byte) s1#2 (byte) s1#1 
+Alias (byte) s2#0 = (byte~) $1 (byte) s2#1 
 Alias (byte) s3#0 = (byte~) $2 
+Alias (byte) s4#0 = (byte~) $4 
 Succesful SSA optimization Pass2AliasElimination
 CONTROL FLOW GRAPH
 @BEGIN: from
@@ -238,22 +297,28 @@ CONTROL FLOW GRAPH
   to:@3
 @3: from @2
   (byte) s2#0 ← (byte) sum::return#0
-  (byte) s3#0 ← (byte) s1#0 + (byte) s2#0
+  call sum param-assignment
+  to:@4
+@4: from @3
+  (byte) s3#0 ← (byte) sum::return#0
+  (byte~) $3 ← (byte) s1#0 + (byte) s2#0
+  (byte) s4#0 ← (byte~) $3 + (byte) s3#0
   to:@END
-sum: from @2 @BEGIN
-  (byte) sum::b#2 ← phi( @2/(byte) 13 @BEGIN/(byte) 2 )
-  (byte) sum::a#2 ← phi( @2/(byte) 9 @BEGIN/(byte) 1 )
-  (byte) sum::return#0 ← (byte) sum::a#2 + (byte) sum::b#2
+sum: from @2 @3 @BEGIN
+  (byte) sum::b#3 ← phi( @2/(byte) 4 @3/(byte) 13 @BEGIN/(byte) 2 )
+  (byte) sum::a#3 ← phi( @2/(byte) 3 @3/(byte) 9 @BEGIN/(byte) 1 )
+  (byte) sum::return#0 ← (byte) sum::a#3 + (byte) sum::b#3
   to:sum::@return
 sum::@return: from sum
   return 
   to:@RETURN
-@END: from @3
+@END: from @4
 
 Not aliassing across scopes: s1#0 sum::return#0
 Not aliassing across scopes: s2#0 sum::return#0
-Block Sequence Planned @BEGIN @2 @3 @END sum sum::@return 
-Block Sequence Planned @BEGIN @2 @3 @END sum sum::@return 
+Not aliassing across scopes: s3#0 sum::return#0
+Block Sequence Planned @BEGIN @2 @3 @4 @END sum sum::@return 
+Block Sequence Planned @BEGIN @2 @3 @4 @END sum sum::@return 
 CONTROL FLOW GRAPH - PHI LIFTED
 @BEGIN: from
   call sum param-assignment
@@ -264,23 +329,37 @@ CONTROL FLOW GRAPH - PHI LIFTED
   to:@3
 @3: from @2
   (byte) s2#0 ← (byte) sum::return#0
-  (byte) s3#0 ← (byte) s1#0 + (byte) s2#0
+  call sum param-assignment
+  to:@4
+@4: from @3
+  (byte) s3#0 ← (byte) sum::return#0
+  (byte~) $3 ← (byte) s1#0 + (byte) s2#0
+  (byte) s4#0 ← (byte~) $3 + (byte) s3#0
   to:@END
-@END: from @3
-sum: from @2 @BEGIN
-  (byte) sum::b#2 ← phi( @2/(byte) 13 @BEGIN/(byte) 2 )
-  (byte) sum::a#2 ← phi( @2/(byte) 9 @BEGIN/(byte) 1 )
-  (byte) sum::return#0 ← (byte) sum::a#2 + (byte) sum::b#2
+@END: from @4
+sum: from @2 @3 @BEGIN
+  (byte) sum::b#3 ← phi( @2/(byte) 4 @3/(byte) 13 @BEGIN/(byte) 2 )
+  (byte) sum::a#3 ← phi( @2/(byte) 3 @3/(byte) 9 @BEGIN/(byte) 1 )
+  (byte) sum::return#0 ← (byte) sum::a#3 + (byte) sum::b#3
   to:sum::@return
 sum::@return: from sum
   return 
   to:@RETURN
 
-Adding empty live range for unused variable s3#0
+Adding empty live range for unused variable s4#0
 Propagating live ranges...
 Propagating live ranges...
 Propagating live ranges...
+Propagated s1#0 through call [4] call sum param-assignment
+Propagated s2#0 through call [4] call sum param-assignment
 Propagating live ranges...
+Propagated s1#0 through call [2] call sum param-assignment
+Propagated s1#0 through call [4] call sum param-assignment
+Propagated s2#0 through call [4] call sum param-assignment
+Propagating live ranges...
+Propagated s1#0 through call [2] call sum param-assignment
+Propagated s1#0 through call [4] call sum param-assignment
+Propagated s2#0 through call [4] call sum param-assignment
 Propagating live ranges...
 CONTROL FLOW GRAPH - LIVE RANGES
 @BEGIN: from
@@ -292,26 +371,40 @@ CONTROL FLOW GRAPH - LIVE RANGES
   to:@3
 @3: from @2
   [3] (byte) s2#0 ← (byte) sum::return#0 [ s1#0 s2#0 ]
-  [4] (byte) s3#0 ← (byte) s1#0 + (byte) s2#0 [ ]
+  [4] call sum param-assignment [ sum::return#0 s1#0 s2#0 ]
+  to:@4
+@4: from @3
+  [5] (byte) s3#0 ← (byte) sum::return#0 [ s1#0 s2#0 s3#0 ]
+  [6] (byte~) $3 ← (byte) s1#0 + (byte) s2#0 [ $3 s3#0 ]
+  [7] (byte) s4#0 ← (byte~) $3 + (byte) s3#0 [ ]
   to:@END
-@END: from @3
-sum: from @2 @BEGIN
-  [5] (byte) sum::b#2 ← phi( @2/(byte) 13 @BEGIN/(byte) 2 ) [ s1#0 sum::a#2 sum::b#2 ]
-  [5] (byte) sum::a#2 ← phi( @2/(byte) 9 @BEGIN/(byte) 1 ) [ s1#0 sum::a#2 sum::b#2 ]
-  [6] (byte) sum::return#0 ← (byte) sum::a#2 + (byte) sum::b#2 [ sum::return#0 s1#0 ]
+@END: from @4
+sum: from @2 @3 @BEGIN
+  [8] (byte) sum::b#3 ← phi( @2/(byte) 4 @3/(byte) 13 @BEGIN/(byte) 2 ) [ s1#0 s2#0 sum::a#3 sum::b#3 ]
+  [8] (byte) sum::a#3 ← phi( @2/(byte) 3 @3/(byte) 9 @BEGIN/(byte) 1 ) [ s1#0 s2#0 sum::a#3 sum::b#3 ]
+  [9] (byte) sum::return#0 ← (byte) sum::a#3 + (byte) sum::b#3 [ sum::return#0 s1#0 s2#0 ]
   to:sum::@return
 sum::@return: from sum
-  [7] return  [ sum::return#0 s1#0 ]
+  [10] return  [ sum::return#0 s1#0 s2#0 ]
   to:@RETURN
 
 Created 2 initial phi equivalence classes
 Coalesced down to 2 phi equivalence classes
-Block Sequence Planned @BEGIN @2 @3 @END sum sum::@return 
-Adding empty live range for unused variable s3#0
+Block Sequence Planned @BEGIN @2 @3 @4 @END sum sum::@return 
+Adding empty live range for unused variable s4#0
 Propagating live ranges...
 Propagating live ranges...
 Propagating live ranges...
+Propagated s1#0 through call [4] call sum param-assignment
+Propagated s2#0 through call [4] call sum param-assignment
 Propagating live ranges...
+Propagated s1#0 through call [2] call sum param-assignment
+Propagated s1#0 through call [4] call sum param-assignment
+Propagated s2#0 through call [4] call sum param-assignment
+Propagating live ranges...
+Propagated s1#0 through call [2] call sum param-assignment
+Propagated s1#0 through call [4] call sum param-assignment
+Propagated s2#0 through call [4] call sum param-assignment
 Propagating live ranges...
 CONTROL FLOW GRAPH - PHI MEM COALESCED
 @BEGIN: from
@@ -323,26 +416,32 @@ CONTROL FLOW GRAPH - PHI MEM COALESCED
   to:@3
 @3: from @2
   [3] (byte) s2#0 ← (byte) sum::return#0 [ s1#0 s2#0 ]
-  [4] (byte) s3#0 ← (byte) s1#0 + (byte) s2#0 [ ]
+  [4] call sum param-assignment [ sum::return#0 s1#0 s2#0 ]
+  to:@4
+@4: from @3
+  [5] (byte) s3#0 ← (byte) sum::return#0 [ s1#0 s2#0 s3#0 ]
+  [6] (byte~) $3 ← (byte) s1#0 + (byte) s2#0 [ $3 s3#0 ]
+  [7] (byte) s4#0 ← (byte~) $3 + (byte) s3#0 [ ]
   to:@END
-@END: from @3
-sum: from @2 @BEGIN
-  [5] (byte) sum::b#2 ← phi( @2/(byte) 13 @BEGIN/(byte) 2 ) [ s1#0 sum::a#2 sum::b#2 ]
-  [5] (byte) sum::a#2 ← phi( @2/(byte) 9 @BEGIN/(byte) 1 ) [ s1#0 sum::a#2 sum::b#2 ]
-  [6] (byte) sum::return#0 ← (byte) sum::a#2 + (byte) sum::b#2 [ sum::return#0 s1#0 ]
+@END: from @4
+sum: from @2 @3 @BEGIN
+  [8] (byte) sum::b#3 ← phi( @2/(byte) 4 @3/(byte) 13 @BEGIN/(byte) 2 ) [ s1#0 s2#0 sum::a#3 sum::b#3 ]
+  [8] (byte) sum::a#3 ← phi( @2/(byte) 3 @3/(byte) 9 @BEGIN/(byte) 1 ) [ s1#0 s2#0 sum::a#3 sum::b#3 ]
+  [9] (byte) sum::return#0 ← (byte) sum::a#3 + (byte) sum::b#3 [ sum::return#0 s1#0 s2#0 ]
   to:sum::@return
 sum::@return: from sum
-  [7] return  [ sum::return#0 s1#0 ]
+  [10] return  [ sum::return#0 s1#0 s2#0 ]
   to:@RETURN
 
 CALL GRAPH
-Calls in [] to 0:sum 2:sum 
+Calls in [] to 0:sum 2:sum 4:sum 
 
 DOMINATORS
 @BEGIN dominated by  @BEGIN 
 @2 dominated by  @BEGIN @2 
 @3 dominated by  @BEGIN @2 @3 
-@END dominated by  @BEGIN @2 @3 @END 
+@4 dominated by  @BEGIN @2 @3 @4 
+@END dominated by  @BEGIN @2 @3 @4 @END 
 sum dominated by  @BEGIN sum 
 sum::@return dominated by  @BEGIN sum::@return sum 
 
@@ -354,50 +453,59 @@ NATURAL LOOPS WITH DEPTH
 
 
 VARIABLE REGISTER WEIGHTS
+(byte~) $3 4.0
 (byte) s1
-(byte) s1#0 0.6666666666666666
+(byte) s1#0 0.5
 (byte) s2
-(byte) s2#0 4.0
+(byte) s2#0 0.6666666666666666
 (byte) s3
-(byte) s3#0 Infinity
+(byte) s3#0 2.0
+(byte) s4
+(byte) s4#0 Infinity
 (byte()) sum((byte) sum::a , (byte) sum::b)
 (byte) sum::a
-(byte) sum::a#2 2.0
+(byte) sum::a#3 2.0
 (byte) sum::b
-(byte) sum::b#2 2.0
+(byte) sum::b#3 2.0
 (byte) sum::return
-(byte) sum::return#0 1.5
+(byte) sum::return#0 1.6
 
 Initial phi equivalence classes
-[ sum::a#2 ]
-[ sum::b#2 ]
+[ sum::a#3 ]
+[ sum::b#3 ]
 Added variable s1#0 to zero page equivalence class [ s1#0 ]
 Added variable s2#0 to zero page equivalence class [ s2#0 ]
 Added variable s3#0 to zero page equivalence class [ s3#0 ]
+Added variable $3 to zero page equivalence class [ $3 ]
+Added variable s4#0 to zero page equivalence class [ s4#0 ]
 Added variable sum::return#0 to zero page equivalence class [ sum::return#0 ]
 Complete equivalence classes
-[ sum::a#2 ]
-[ sum::b#2 ]
+[ sum::a#3 ]
+[ sum::b#3 ]
 [ s1#0 ]
 [ s2#0 ]
 [ s3#0 ]
+[ $3 ]
+[ s4#0 ]
 [ sum::return#0 ]
-Allocated zp byte:2 to zp byte:2 [ sum::a#2 ]
-Allocated zp byte:3 to zp byte:3 [ sum::b#2 ]
+Allocated zp byte:2 to zp byte:2 [ sum::a#3 ]
+Allocated zp byte:3 to zp byte:3 [ sum::b#3 ]
 Allocated zp byte:4 to zp byte:4 [ s1#0 ]
 Allocated zp byte:5 to zp byte:5 [ s2#0 ]
 Allocated zp byte:6 to zp byte:6 [ s3#0 ]
-Allocated zp byte:7 to zp byte:7 [ sum::return#0 ]
+Allocated zp byte:7 to zp byte:7 [ $3 ]
+Allocated zp byte:8 to zp byte:8 [ s4#0 ]
+Allocated zp byte:9 to zp byte:9 [ sum::return#0 ]
 INITIAL ASM
 //SEG0 @BEGIN
 BBEGIN:
 //SEG1 [0] call sum param-assignment [ sum::return#0 ]
-//SEG2 [5] phi from @BEGIN to sum
+//SEG2 [8] phi from @BEGIN to sum
 sum_from_BBEGIN:
-//SEG3 [5] phi (byte) sum::b#2 = (byte) 2 -- zpby1=coby1 
+//SEG3 [8] phi (byte) sum::b#3 = (byte) 2 -- zpby1=coby1 
   lda #2
   sta 3
-//SEG4 [5] phi (byte) sum::a#2 = (byte) 1 -- zpby1=coby1 
+//SEG4 [8] phi (byte) sum::a#3 = (byte) 1 -- zpby1=coby1 
   lda #1
   sta 2
   jsr sum
@@ -405,62 +513,87 @@ sum_from_BBEGIN:
 //SEG5 @2
 B2:
 //SEG6 [1] (byte) s1#0 ← (byte) sum::return#0 [ s1#0 ] -- zpby1=zpby2 
-  lda 7
+  lda 9
   sta 4
 //SEG7 [2] call sum param-assignment [ sum::return#0 s1#0 ]
-//SEG8 [5] phi from @2 to sum
+//SEG8 [8] phi from @2 to sum
 sum_from_B2:
-//SEG9 [5] phi (byte) sum::b#2 = (byte) 13 -- zpby1=coby1 
-  lda #13
+//SEG9 [8] phi (byte) sum::b#3 = (byte) 4 -- zpby1=coby1 
+  lda #4
   sta 3
-//SEG10 [5] phi (byte) sum::a#2 = (byte) 9 -- zpby1=coby1 
-  lda #9
+//SEG10 [8] phi (byte) sum::a#3 = (byte) 3 -- zpby1=coby1 
+  lda #3
   sta 2
   jsr sum
   jmp B3
 //SEG11 @3
 B3:
 //SEG12 [3] (byte) s2#0 ← (byte) sum::return#0 [ s1#0 s2#0 ] -- zpby1=zpby2 
-  lda 7
+  lda 9
   sta 5
-//SEG13 [4] (byte) s3#0 ← (byte) s1#0 + (byte) s2#0 [ ] -- zpby1=zpby2_plus_zpby3 
+//SEG13 [4] call sum param-assignment [ sum::return#0 s1#0 s2#0 ]
+//SEG14 [8] phi from @3 to sum
+sum_from_B3:
+//SEG15 [8] phi (byte) sum::b#3 = (byte) 13 -- zpby1=coby1 
+  lda #13
+  sta 3
+//SEG16 [8] phi (byte) sum::a#3 = (byte) 9 -- zpby1=coby1 
+  lda #9
+  sta 2
+  jsr sum
+  jmp B4
+//SEG17 @4
+B4:
+//SEG18 [5] (byte) s3#0 ← (byte) sum::return#0 [ s1#0 s2#0 s3#0 ] -- zpby1=zpby2 
+  lda 9
+  sta 6
+//SEG19 [6] (byte~) $3 ← (byte) s1#0 + (byte) s2#0 [ $3 s3#0 ] -- zpby1=zpby2_plus_zpby3 
   lda 4
   clc
   adc 5
-  sta 6
+  sta 7
+//SEG20 [7] (byte) s4#0 ← (byte~) $3 + (byte) s3#0 [ ] -- zpby1=zpby2_plus_zpby3 
+  lda 7
+  clc
+  adc 6
+  sta 8
   jmp BEND
-//SEG14 @END
+//SEG21 @END
 BEND:
-//SEG15 sum
+//SEG22 sum
 sum:
-//SEG16 [6] (byte) sum::return#0 ← (byte) sum::a#2 + (byte) sum::b#2 [ sum::return#0 s1#0 ] -- zpby1=zpby2_plus_zpby3 
+//SEG23 [9] (byte) sum::return#0 ← (byte) sum::a#3 + (byte) sum::b#3 [ sum::return#0 s1#0 s2#0 ] -- zpby1=zpby2_plus_zpby3 
   lda 2
   clc
   adc 3
-  sta 7
+  sta 9
   jmp sum__Breturn
-//SEG17 sum::@return
+//SEG24 sum::@return
 sum__Breturn:
-//SEG18 [7] return  [ sum::return#0 s1#0 ]
+//SEG25 [10] return  [ sum::return#0 s1#0 s2#0 ]
   rts
 
 REGISTER UPLIFT POTENTIAL REGISTERS
-Potential registers zp byte:2 [ sum::a#2 ] : zp byte:2 , reg byte a , reg byte x , reg byte y , 
-Potential registers zp byte:3 [ sum::b#2 ] : zp byte:3 , reg byte a , reg byte x , reg byte y , 
+Potential registers zp byte:2 [ sum::a#3 ] : zp byte:2 , reg byte a , reg byte x , reg byte y , 
+Potential registers zp byte:3 [ sum::b#3 ] : zp byte:3 , reg byte a , reg byte x , reg byte y , 
 Potential registers zp byte:4 [ s1#0 ] : zp byte:4 , reg byte a , reg byte x , reg byte y , 
 Potential registers zp byte:5 [ s2#0 ] : zp byte:5 , reg byte a , reg byte x , reg byte y , 
 Potential registers zp byte:6 [ s3#0 ] : zp byte:6 , reg byte a , reg byte x , reg byte y , 
-Potential registers zp byte:7 [ sum::return#0 ] : zp byte:7 , reg byte a , reg byte x , reg byte y , 
+Potential registers zp byte:7 [ $3 ] : zp byte:7 , reg byte a , reg byte x , reg byte y , 
+Potential registers zp byte:8 [ s4#0 ] : zp byte:8 , reg byte a , reg byte x , reg byte y , 
+Potential registers zp byte:9 [ sum::return#0 ] : zp byte:9 , reg byte a , reg byte x , reg byte y , 
 
 REGISTER UPLIFT SCOPES
-Uplift Scope [] ∞: zp byte:6 [ s3#0 ] 4: zp byte:5 [ s2#0 ] 0.67: zp byte:4 [ s1#0 ] 
-Uplift Scope [sum] 2: zp byte:2 [ sum::a#2 ] 2: zp byte:3 [ sum::b#2 ] 1.5: zp byte:7 [ sum::return#0 ] 
+Uplift Scope [] ∞: zp byte:8 [ s4#0 ] 4: zp byte:7 [ $3 ] 2: zp byte:6 [ s3#0 ] 0.67: zp byte:5 [ s2#0 ] 0.5: zp byte:4 [ s1#0 ] 
+Uplift Scope [sum] 2: zp byte:2 [ sum::a#3 ] 2: zp byte:3 [ sum::b#3 ] 1.6: zp byte:9 [ sum::return#0 ] 
 
-Uplifting [] best 75 combination reg byte a [ s3#0 ] reg byte a [ s2#0 ] zp byte:4 [ s1#0 ] 
-Uplifting [sum] best 54 combination reg byte x [ sum::a#2 ] reg byte a [ sum::b#2 ] reg byte a [ sum::return#0 ] 
+Uplifting [] best 107 combination reg byte a [ s4#0 ] reg byte a [ $3 ] zp byte:6 [ s3#0 ] reg byte x [ s2#0 ] zp byte:4 [ s1#0 ] 
+Uplifting [sum] best 79 combination reg byte y [ sum::a#3 ] reg byte a [ sum::b#3 ] reg byte a [ sum::return#0 ] 
 Re-allocated ZP register from zp byte:4 to zp byte:2
+Re-allocated ZP register from zp byte:6 to zp byte:3
 Removing instruction jmp B2
 Removing instruction jmp B3
+Removing instruction jmp B4
 Removing instruction jmp BEND
 Removing instruction jmp sum__Breturn
 Succesful ASM optimization Pass5NextJumpElimination
@@ -468,112 +601,150 @@ ASSEMBLER
 //SEG0 @BEGIN
 BBEGIN:
 //SEG1 [0] call sum param-assignment [ sum::return#0 ]
-//SEG2 [5] phi from @BEGIN to sum
+//SEG2 [8] phi from @BEGIN to sum
 sum_from_BBEGIN:
-//SEG3 [5] phi (byte) sum::b#2 = (byte) 2 -- aby=coby1 
+//SEG3 [8] phi (byte) sum::b#3 = (byte) 2 -- aby=coby1 
   lda #2
-//SEG4 [5] phi (byte) sum::a#2 = (byte) 1 -- xby=coby1 
-  ldx #1
+//SEG4 [8] phi (byte) sum::a#3 = (byte) 1 -- yby=coby1 
+  ldy #1
   jsr sum
 //SEG5 @2
 B2:
 //SEG6 [1] (byte) s1#0 ← (byte) sum::return#0 [ s1#0 ] -- zpby1=aby 
   sta 2
 //SEG7 [2] call sum param-assignment [ sum::return#0 s1#0 ]
-//SEG8 [5] phi from @2 to sum
+//SEG8 [8] phi from @2 to sum
 sum_from_B2:
-//SEG9 [5] phi (byte) sum::b#2 = (byte) 13 -- aby=coby1 
-  lda #13
-//SEG10 [5] phi (byte) sum::a#2 = (byte) 9 -- xby=coby1 
-  ldx #9
+//SEG9 [8] phi (byte) sum::b#3 = (byte) 4 -- aby=coby1 
+  lda #4
+//SEG10 [8] phi (byte) sum::a#3 = (byte) 3 -- yby=coby1 
+  ldy #3
   jsr sum
 //SEG11 @3
 B3:
-//SEG12 [3] (byte) s2#0 ← (byte) sum::return#0 [ s1#0 s2#0 ]
-  // (byte) s2#0 = (byte) sum::return#0  // register copy reg byte a
-//SEG13 [4] (byte) s3#0 ← (byte) s1#0 + (byte) s2#0 [ ] -- aby=zpby1_plus_aby 
+//SEG12 [3] (byte) s2#0 ← (byte) sum::return#0 [ s1#0 s2#0 ] -- xby=aby 
+  tax
+//SEG13 [4] call sum param-assignment [ sum::return#0 s1#0 s2#0 ]
+//SEG14 [8] phi from @3 to sum
+sum_from_B3:
+//SEG15 [8] phi (byte) sum::b#3 = (byte) 13 -- aby=coby1 
+  lda #13
+//SEG16 [8] phi (byte) sum::a#3 = (byte) 9 -- yby=coby1 
+  ldy #9
+  jsr sum
+//SEG17 @4
+B4:
+//SEG18 [5] (byte) s3#0 ← (byte) sum::return#0 [ s1#0 s2#0 s3#0 ] -- zpby1=aby 
+  sta 3
+//SEG19 [6] (byte~) $3 ← (byte) s1#0 + (byte) s2#0 [ $3 s3#0 ] -- aby=zpby1_plus_xby 
+  txa
   clc
   adc 2
-//SEG14 @END
+//SEG20 [7] (byte) s4#0 ← (byte~) $3 + (byte) s3#0 [ ] -- aby=aby_plus_zpby1 
+  clc
+  adc 3
+//SEG21 @END
 BEND:
-//SEG15 sum
+//SEG22 sum
 sum:
-//SEG16 [6] (byte) sum::return#0 ← (byte) sum::a#2 + (byte) sum::b#2 [ sum::return#0 s1#0 ] -- aby=xby_plus_aby 
-  stx 255
+//SEG23 [9] (byte) sum::return#0 ← (byte) sum::a#3 + (byte) sum::b#3 [ sum::return#0 s1#0 s2#0 ] -- aby=yby_plus_aby 
+  sty 255
   clc
   adc 255
-//SEG17 sum::@return
+//SEG24 sum::@return
 sum__Breturn:
-//SEG18 [7] return  [ sum::return#0 s1#0 ]
+//SEG25 [10] return  [ sum::return#0 s1#0 s2#0 ]
   rts
 
 FINAL SYMBOL TABLE
+(byte~) $3 reg byte a 4.0
 (label) @2
 (label) @3
+(label) @4
 (label) @BEGIN
 (label) @END
 (byte) s1
-(byte) s1#0 zp byte:2 0.6666666666666666
+(byte) s1#0 zp byte:2 0.5
 (byte) s2
-(byte) s2#0 reg byte a 4.0
+(byte) s2#0 reg byte x 0.6666666666666666
 (byte) s3
-(byte) s3#0 reg byte a Infinity
+(byte) s3#0 zp byte:3 2.0
+(byte) s4
+(byte) s4#0 reg byte a Infinity
 (byte()) sum((byte) sum::a , (byte) sum::b)
 (label) sum::@return
 (byte) sum::a
-(byte) sum::a#2 reg byte x 2.0
+(byte) sum::a#3 reg byte y 2.0
 (byte) sum::b
-(byte) sum::b#2 reg byte a 2.0
+(byte) sum::b#3 reg byte a 2.0
 (byte) sum::return
-(byte) sum::return#0 reg byte a 1.5
+(byte) sum::return#0 reg byte a 1.6
 
-reg byte x [ sum::a#2 ]
-reg byte a [ sum::b#2 ]
+reg byte y [ sum::a#3 ]
+reg byte a [ sum::b#3 ]
 zp byte:2 [ s1#0 ]
-reg byte a [ s2#0 ]
-reg byte a [ s3#0 ]
+reg byte x [ s2#0 ]
+zp byte:3 [ s3#0 ]
+reg byte a [ $3 ]
+reg byte a [ s4#0 ]
 reg byte a [ sum::return#0 ]
 
 FINAL CODE
 //SEG0 @BEGIN
 BBEGIN:
 //SEG1 [0] call sum param-assignment [ sum::return#0 ]
-//SEG2 [5] phi from @BEGIN to sum
+//SEG2 [8] phi from @BEGIN to sum
 sum_from_BBEGIN:
-//SEG3 [5] phi (byte) sum::b#2 = (byte) 2 -- aby=coby1 
+//SEG3 [8] phi (byte) sum::b#3 = (byte) 2 -- aby=coby1 
   lda #2
-//SEG4 [5] phi (byte) sum::a#2 = (byte) 1 -- xby=coby1 
-  ldx #1
+//SEG4 [8] phi (byte) sum::a#3 = (byte) 1 -- yby=coby1 
+  ldy #1
   jsr sum
 //SEG5 @2
 B2:
 //SEG6 [1] (byte) s1#0 ← (byte) sum::return#0 [ s1#0 ] -- zpby1=aby 
   sta 2
 //SEG7 [2] call sum param-assignment [ sum::return#0 s1#0 ]
-//SEG8 [5] phi from @2 to sum
+//SEG8 [8] phi from @2 to sum
 sum_from_B2:
-//SEG9 [5] phi (byte) sum::b#2 = (byte) 13 -- aby=coby1 
-  lda #13
-//SEG10 [5] phi (byte) sum::a#2 = (byte) 9 -- xby=coby1 
-  ldx #9
+//SEG9 [8] phi (byte) sum::b#3 = (byte) 4 -- aby=coby1 
+  lda #4
+//SEG10 [8] phi (byte) sum::a#3 = (byte) 3 -- yby=coby1 
+  ldy #3
   jsr sum
 //SEG11 @3
 B3:
-//SEG12 [3] (byte) s2#0 ← (byte) sum::return#0 [ s1#0 s2#0 ]
-  // (byte) s2#0 = (byte) sum::return#0  // register copy reg byte a
-//SEG13 [4] (byte) s3#0 ← (byte) s1#0 + (byte) s2#0 [ ] -- aby=zpby1_plus_aby 
+//SEG12 [3] (byte) s2#0 ← (byte) sum::return#0 [ s1#0 s2#0 ] -- xby=aby 
+  tax
+//SEG13 [4] call sum param-assignment [ sum::return#0 s1#0 s2#0 ]
+//SEG14 [8] phi from @3 to sum
+sum_from_B3:
+//SEG15 [8] phi (byte) sum::b#3 = (byte) 13 -- aby=coby1 
+  lda #13
+//SEG16 [8] phi (byte) sum::a#3 = (byte) 9 -- yby=coby1 
+  ldy #9
+  jsr sum
+//SEG17 @4
+B4:
+//SEG18 [5] (byte) s3#0 ← (byte) sum::return#0 [ s1#0 s2#0 s3#0 ] -- zpby1=aby 
+  sta 3
+//SEG19 [6] (byte~) $3 ← (byte) s1#0 + (byte) s2#0 [ $3 s3#0 ] -- aby=zpby1_plus_xby 
+  txa
   clc
   adc 2
-//SEG14 @END
+//SEG20 [7] (byte) s4#0 ← (byte~) $3 + (byte) s3#0 [ ] -- aby=aby_plus_zpby1 
+  clc
+  adc 3
+//SEG21 @END
 BEND:
-//SEG15 sum
+//SEG22 sum
 sum:
-//SEG16 [6] (byte) sum::return#0 ← (byte) sum::a#2 + (byte) sum::b#2 [ sum::return#0 s1#0 ] -- aby=xby_plus_aby 
-  stx 255
+//SEG23 [9] (byte) sum::return#0 ← (byte) sum::a#3 + (byte) sum::b#3 [ sum::return#0 s1#0 s2#0 ] -- aby=yby_plus_aby 
+  sty 255
   clc
   adc 255
-//SEG17 sum::@return
+//SEG24 sum::@return
 sum__Breturn:
-//SEG18 [7] return  [ sum::return#0 s1#0 ]
+//SEG25 [10] return  [ sum::return#0 s1#0 s2#0 ]
   rts
 

@@ -138,14 +138,14 @@ public class Pass3LiveRangesAnalysis extends Pass2Base {
                   ControlFlowBlock predecessor = program.getGraph().getBlock(predecessorRef);
                   List<Statement> predecessorStatements = predecessor.getStatements();
                   // Is this block a procedure called from the predecessor?
-                  if(currentBlock.getLabel().equals(predecessor.getCallSuccessor())) {
+                  if (currentBlock.getLabel().equals(predecessor.getCallSuccessor())) {
                      // Add to last statement before call in predecessor
                      StatementCall callStatement = (StatementCall) predecessorStatements.get(predecessorStatements.size() - 1);
-                     if(predecessorStatements.size()>1) {
+                     if (predecessorStatements.size() > 1) {
                         Statement predecessorLastStatementBeforeCall = predecessorStatements.get(predecessorStatements.size() - 2);
                         liveRanges.addAlive((VariableRef) phiRValue.getrValue(), predecessorLastStatementBeforeCall);
                      }
-                  }  else {
+                  } else {
                      // Add to last statement of predecessor
                      Statement predecessorLastStatement = predecessorStatements.get(predecessorStatements.size() - 1);
                      liveRanges.addAlive((VariableRef) phiRValue.getrValue(), predecessorLastStatement);
@@ -271,7 +271,80 @@ public class Pass3LiveRangesAnalysis extends Pass2Base {
        * @param previous  The previous statement
        * @param defined   The lValues assigned in the current statement (will not be propagated)
        */
-      private void propagate(Statement statement, List<Statement> previous, List<? extends LValue> defined) {
+      private void propagate(Statement statement, List<PreviousStatement> previous, List<? extends LValue> defined) {
+         List<VariableRef> alive = getAliveNotDefined(statement, defined);
+
+         // Add all non-defined alive vars to all previous statement
+         for (VariableRef var : alive) {
+            for (PreviousStatement prev : previous) {
+               if(prev.isCaller()) {
+                  // Special handling of propagation back to calls
+                  // Only propagate vars also alive on the call itself
+                  // And propagate them back to the statement prior to the call itself
+                  StatementCall call = (StatementCall) prev.getStatement();
+                  List<VariableRef> callAlive = liveRanges.getAlive(call);
+                  if (callAlive.contains(var)) {
+                     ControlFlowBlock callBlock = program.getGraph().getBlockFromStatementIdx(call.getIndex());
+                     List<Statement> callBlockStatements = callBlock.getStatements();
+                     Statement lastBeforeCall = callBlockStatements.get(callBlockStatements.size() - 2);
+                     modified |= liveRanges.addAlive(var, lastBeforeCall);
+                     program.getLog().append("Propagated " + var + " through call " + call);
+                  }
+               } else {
+                  modified |= liveRanges.addAlive(var, prev.getStatement());
+               }
+            }
+         }
+         ensureDefined(defined);
+      }
+
+      /**
+       * Propagate live ranges back from a pricedure to the statements previous to the call og the procedure.
+       * <p>
+       * Only variables also alive after the call are propagated further backward.
+       *
+       * @param procBlock The block starting the procedure
+       * @param phi       The phi statement at the start of the current block
+       * @param defined   The variables defined by the phi statement
+       */
+      private void propagateCall(ControlFlowBlock procBlock, StatementPhiBlock phi, List<VariableRef> defined) {
+         List<VariableRef> alive = getAliveNotDefined(phi, defined);
+         if (alive.size() > 0) {
+            // Go back through each call
+            for (ControlFlowBlock predecessor : program.getGraph().getPredecessors(procBlock)) {
+               // If this block is a procedure called from the predecessor - the last statement is the one before the call
+               if (procBlock.getLabel().equals(predecessor.getCallSuccessor())) {
+                  List<Statement> predecessorStatements = predecessor.getStatements();
+                  StatementCall call = (StatementCall) predecessorStatements.get(predecessorStatements.size() - 1);
+                  if (predecessorStatements.size() > 1) {
+                     Statement lastBeforeCall = predecessorStatements.get(predecessorStatements.size() - 2);
+
+                     List<VariableRef> callAlive = liveRanges.getAlive(call);
+                     // Add all non-defined alive vars to all previous statement
+                     for (VariableRef var : alive) {
+                        // Only add the variables that are alive on the actual call (and thereby used after the call)
+                        if (callAlive.contains(var)) {
+                           modified |= liveRanges.addAlive(var, lastBeforeCall);
+                           program.getLog().append("Propagated " + var + " through call " + call);
+                        }
+                     }
+
+                  }
+               }
+            }
+         }
+         ensureDefined(defined);
+      }
+
+
+      /**
+       * Get the variables that are alive at a specific statemtn and not defined by the statement itself
+       *
+       * @param statement The statement
+       * @param defined   The variables defined by the statement
+       * @return
+       */
+      private List<VariableRef> getAliveNotDefined(Statement statement, List<? extends LValue> defined) {
          List<VariableRef> alive = liveRanges.getAlive(statement);
          if (defined != null) {
             for (LValue lValue : defined) {
@@ -281,37 +354,56 @@ public class Pass3LiveRangesAnalysis extends Pass2Base {
                }
             }
          }
-         // Add all non-defined alive vars to all previous statement
-         for (VariableRef var : alive) {
-            for (Statement prev : previous) {
-               modified |= liveRanges.addAlive(var, prev);
-            }
-         }
+         return alive;
+      }
 
-         // If any lValues do not have a live range (they are never used) - create an empty live range for them
+
+      /**
+       * If any lValues do not have a live range (they are never used) - create an empty live range for them
+       */
+      private void ensureDefined(List<? extends LValue> defined) {
          if (defined != null) {
             for (LValue lValue : defined) {
-               if(lValue instanceof VariableRef) {
+               if (lValue instanceof VariableRef) {
                   LiveRange lValLiveRange = liveRanges.getLiveRange((VariableRef) lValue);
-                  if(lValLiveRange==null) {
-                     liveRanges.addEmptyAlive((VariableRef)lValue);
-                     program.getLog().append("Adding empty live range for unused variable "+lValue);
+                  if (lValLiveRange == null) {
+                     liveRanges.addEmptyAlive((VariableRef) lValue);
+                     program.getLog().append("Adding empty live range for unused variable " + lValue);
                   }
                }
 
             }
          }
-
-
       }
 
-      private List<Statement> getPreviousStatements() {
+      private static class PreviousStatement {
+         /** The statement */
+         private Statement statement;
+         /** true if the statement is in a block that is a caller of the current block. false if the statement is a direct predecessor statement. */
+         private boolean caller;
+
+         public PreviousStatement(Statement statement, boolean caller) {
+            this.statement = statement;
+            this.caller = caller;
+         }
+
+         public Statement getStatement() {
+            return statement;
+         }
+
+         public boolean isCaller() {
+            return caller;
+         }
+      }
+
+
+      private List<PreviousStatement> getPreviousStatements() {
          if (previousStatement != null) {
             // Inside a block
-            return Arrays.asList(previousStatement);
+            return Arrays.asList(new PreviousStatement(previousStatement, false));
          } else {
             // At start of block - add last statement of all previous blocks
-            return getPreviousStatements(this.currentBlock);
+            return getPreviousStatements(this.currentBlock, false);
          }
       }
 
@@ -322,22 +414,13 @@ public class Pass3LiveRangesAnalysis extends Pass2Base {
        * @return The statement executed just before entering the block.
        * If there are several predecessor blocks multiple statements are returned.
        */
-      private ArrayList<Statement> getPreviousStatements(ControlFlowBlock block) {
-         ArrayList<Statement> statements = new ArrayList<>();
+      private ArrayList<PreviousStatement> getPreviousStatements(ControlFlowBlock block, boolean isCaller) {
+         ArrayList<PreviousStatement> statements = new ArrayList<>();
          List<ControlFlowBlock> predecessors = program.getGraph().getPredecessors(block);
          for (ControlFlowBlock predecessor : predecessors) {
-            // If this block is a procedure called from the predecessor - the last statement is the one before the call
-            if(block.getLabel().equals(predecessor.getCallSuccessor())) {
-               List<Statement> predecessorStatements = predecessor.getStatements();
-               StatementCall call = (StatementCall) predecessorStatements.get(predecessorStatements.size() - 1);
-               if(predecessorStatements.size()>1) {
-                  Statement lastBeforeCall = predecessorStatements.get(predecessorStatements.size() - 2);
-                  statements.add(lastBeforeCall);
-               }
-            }  else {
-               ArrayList<Statement> lastStatements = getLastStatements(predecessor);
-               statements.addAll(lastStatements);
-            }
+            boolean isSubCaller = block.getLabel().equals(predecessor.getCallSuccessor());
+            ArrayList<PreviousStatement> lastStatements = getLastStatements(predecessor, isCaller||isSubCaller);
+            statements.addAll(lastStatements);
          }
          return statements;
       }
@@ -347,18 +430,19 @@ public class Pass3LiveRangesAnalysis extends Pass2Base {
        * If the block is empty the last statement of the previous block is returned.
        *
        * @param block The block to examine
+       * @param  isCaller true if this block is a caller of the block we are finding previous statements for
        * @return The last statement of the block (or the last statement of previous blocks if the block is empty)
        */
-      private ArrayList<Statement> getLastStatements(ControlFlowBlock block) {
-         ArrayList<Statement> statements = new ArrayList<>();
+      private ArrayList<PreviousStatement> getLastStatements(ControlFlowBlock block, boolean isCaller) {
+         ArrayList<PreviousStatement> statements = new ArrayList<>();
          List<Statement> blockStatements = block.getStatements();
          if (blockStatements.size() == 0) {
             // Block has no statements - go further back!
-            statements.addAll(getPreviousStatements(block));
+            statements.addAll(getPreviousStatements(block, isCaller));
          } else {
             // Add last statement from block
             Statement predecessorLastStatement = blockStatements.get(blockStatements.size() - 1);
-            statements.add(predecessorLastStatement);
+            statements.add(new PreviousStatement(predecessorLastStatement, isCaller));
          }
          return statements;
       }
@@ -381,7 +465,7 @@ public class Pass3LiveRangesAnalysis extends Pass2Base {
          ProcedureRef procedure = call.getProcedure();
          LabelRef procedureReturnBlock = procedure.getReturnBlock();
          ControlFlowBlock returnBlock = program.getGraph().getBlock(procedureReturnBlock);
-         propagate(call, getLastStatements(returnBlock), null);
+         propagate(call, getLastStatements(returnBlock, false), null);
          return null;
       }
 

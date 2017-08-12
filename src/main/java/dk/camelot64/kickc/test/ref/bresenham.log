@@ -1201,7 +1201,7 @@ Re-allocated ZP register from zp byte:6 to zp byte:5
 Removing instruction jmp b1
 Removing instruction jmp b3
 Removing instruction jmp bend
-Succesful ASM optimization Pass5NextJumpElimination
+Succesful ASM optimization Pass6NextJumpElimination
 ASSEMBLER
 //SEG0 @begin
 bbegin:
@@ -1285,13 +1285,16 @@ b3_from_b2:
 //SEG31 [6] phi (byte*) cursor#5 = (byte*) cursor#2 -- register_copy 
   jmp b3
 
-Removing instruction jmp b1
-Succesful ASM optimization Pass5NextJumpElimination
+Replacing label b1_from_b3 with b1
+Removing instruction b1_from_bbegin:
+Removing instruction b1_from_b3:
+Removing instruction b3_from_b1:
+Removing instruction bend:
+Succesful ASM optimization Pass6RedundantLabelElimination
 ASSEMBLER
 //SEG0 @begin
 bbegin:
 //SEG1 [0] phi from @begin to @1
-b1_from_bbegin:
 //SEG2 [0] phi (byte) y#2 = (byte) 0 -- zpby1=coby1 
   lda #$0
   sta $5
@@ -1305,8 +1308,8 @@ b1_from_bbegin:
   sta $2
   lda #>$400
   sta $2+$1
+  jmp b1
 //SEG6 [0] phi from @3 to @1
-b1_from_b3:
 //SEG7 [0] phi (byte) y#2 = (byte) y#4 -- register_copy 
 //SEG8 [0] phi (byte) e#3 = (byte) e#5 -- register_copy 
 //SEG9 [0] phi (byte) x#2 = (byte) x#1 -- register_copy 
@@ -1333,7 +1336,6 @@ b1:
   cpx #$27
   bcs b2
 //SEG17 [6] phi from @1 to @3
-b3_from_b1:
 //SEG18 [6] phi (byte) y#4 = (byte) y#2 -- register_copy 
 //SEG19 [6] phi (byte) e#5 = (byte) e#1 -- register_copy 
 //SEG20 [6] phi (byte*) cursor#5 = (byte*) cursor#1 -- register_copy 
@@ -1342,9 +1344,8 @@ b3:
 //SEG22 [7] if((byte) x#1<(byte) 40) goto @1 [ cursor#5 x#1 e#5 y#4 ] -- zpby1_lt_coby1_then_la1 
   lda $4
   cmp #$28
-  bcc b1_from_b3
+  bcc b1
 //SEG23 @end
-bend:
 //SEG24 @2
 b2:
 //SEG25 [8] (byte) y#1 ← (byte) y#2 + (byte) 1 [ x#1 e#1 cursor#1 y#1 ] -- zpby1=zpby1_plus_1 
@@ -1364,6 +1365,164 @@ b2:
   tax
 //SEG28 [6] phi from @2 to @3
 b3_from_b2:
+//SEG29 [6] phi (byte) y#4 = (byte) y#1 -- register_copy 
+//SEG30 [6] phi (byte) e#5 = (byte) e#2 -- register_copy 
+//SEG31 [6] phi (byte*) cursor#5 = (byte*) cursor#2 -- register_copy 
+  jmp b3
+
+Removing instruction bbegin:
+Removing instruction b3_from_b2:
+Succesful ASM optimization Pass6UnusedLabelElimination
+ASSEMBLER
+//SEG0 @begin
+//SEG1 [0] phi from @begin to @1
+//SEG2 [0] phi (byte) y#2 = (byte) 0 -- zpby1=coby1 
+  lda #$0
+  sta $5
+//SEG3 [0] phi (byte) e#3 = (byte) 12 -- xby=coby1 
+  ldx #$c
+//SEG4 [0] phi (byte) x#2 = (byte) 0 -- zpby1=coby1 
+  lda #$0
+  sta $4
+//SEG5 [0] phi (byte*) cursor#3 = (word) 1024 -- zpptrby1=cowo1 
+  lda #<$400
+  sta $2
+  lda #>$400
+  sta $2+$1
+  jmp b1
+//SEG6 [0] phi from @3 to @1
+//SEG7 [0] phi (byte) y#2 = (byte) y#4 -- register_copy 
+//SEG8 [0] phi (byte) e#3 = (byte) e#5 -- register_copy 
+//SEG9 [0] phi (byte) x#2 = (byte) x#1 -- register_copy 
+//SEG10 [0] phi (byte*) cursor#3 = (byte*) cursor#5 -- register_copy 
+//SEG11 @1
+b1:
+//SEG12 [1] *((byte*) cursor#3) ← (byte) 81 [ cursor#3 x#2 e#3 y#2 ] -- _star_zpptrby1=coby1 
+  ldy #$0
+  lda #$51
+  sta ($2),y
+//SEG13 [2] (byte) x#1 ← (byte) x#2 + (byte) 1 [ x#1 cursor#3 e#3 y#2 ] -- zpby1=zpby1_plus_1 
+  inc $4
+//SEG14 [3] (byte*) cursor#1 ← (byte*) cursor#3 + (byte) 1 [ x#1 e#3 cursor#1 y#2 ] -- zpptrby1=zpptrby1_plus_1 
+  inc $2
+  bne !+
+  inc $2+$1
+!:
+//SEG15 [4] (byte) e#1 ← (byte) e#3 + (byte) 24 [ x#1 e#1 cursor#1 y#2 ] -- xby=xby_plus_coby1 
+  txa
+  clc
+  adc #$18
+  tax
+//SEG16 [5] if((byte) 39<(byte) e#1) goto @2 [ x#1 e#1 cursor#1 y#2 ] -- coby1_lt_xby_then_la1 
+  cpx #$27
+  bcs b2
+//SEG17 [6] phi from @1 to @3
+//SEG18 [6] phi (byte) y#4 = (byte) y#2 -- register_copy 
+//SEG19 [6] phi (byte) e#5 = (byte) e#1 -- register_copy 
+//SEG20 [6] phi (byte*) cursor#5 = (byte*) cursor#1 -- register_copy 
+//SEG21 @3
+b3:
+//SEG22 [7] if((byte) x#1<(byte) 40) goto @1 [ cursor#5 x#1 e#5 y#4 ] -- zpby1_lt_coby1_then_la1 
+  lda $4
+  cmp #$28
+  bcc b1
+//SEG23 @end
+//SEG24 @2
+b2:
+//SEG25 [8] (byte) y#1 ← (byte) y#2 + (byte) 1 [ x#1 e#1 cursor#1 y#1 ] -- zpby1=zpby1_plus_1 
+  inc $5
+//SEG26 [9] (byte*) cursor#2 ← (byte*) cursor#1 + (byte) 40 [ x#1 e#1 cursor#2 y#1 ] -- zpptrby1=zpptrby1_plus_coby1 
+  lda $2
+  clc
+  adc #$28
+  sta $2
+  bcc !+
+  inc $2+$1
+!:
+//SEG27 [10] (byte) e#2 ← (byte) e#1 - (byte) 39 [ x#1 cursor#2 e#2 y#1 ] -- xby=xby_minus_coby1 
+  txa
+  sec
+  sbc #$27
+  tax
+//SEG28 [6] phi from @2 to @3
+//SEG29 [6] phi (byte) y#4 = (byte) y#1 -- register_copy 
+//SEG30 [6] phi (byte) e#5 = (byte) e#2 -- register_copy 
+//SEG31 [6] phi (byte*) cursor#5 = (byte*) cursor#2 -- register_copy 
+  jmp b3
+
+Removing instruction jmp b1
+Succesful ASM optimization Pass6NextJumpElimination
+ASSEMBLER
+//SEG0 @begin
+//SEG1 [0] phi from @begin to @1
+//SEG2 [0] phi (byte) y#2 = (byte) 0 -- zpby1=coby1 
+  lda #$0
+  sta $5
+//SEG3 [0] phi (byte) e#3 = (byte) 12 -- xby=coby1 
+  ldx #$c
+//SEG4 [0] phi (byte) x#2 = (byte) 0 -- zpby1=coby1 
+  lda #$0
+  sta $4
+//SEG5 [0] phi (byte*) cursor#3 = (word) 1024 -- zpptrby1=cowo1 
+  lda #<$400
+  sta $2
+  lda #>$400
+  sta $2+$1
+//SEG6 [0] phi from @3 to @1
+//SEG7 [0] phi (byte) y#2 = (byte) y#4 -- register_copy 
+//SEG8 [0] phi (byte) e#3 = (byte) e#5 -- register_copy 
+//SEG9 [0] phi (byte) x#2 = (byte) x#1 -- register_copy 
+//SEG10 [0] phi (byte*) cursor#3 = (byte*) cursor#5 -- register_copy 
+//SEG11 @1
+b1:
+//SEG12 [1] *((byte*) cursor#3) ← (byte) 81 [ cursor#3 x#2 e#3 y#2 ] -- _star_zpptrby1=coby1 
+  ldy #$0
+  lda #$51
+  sta ($2),y
+//SEG13 [2] (byte) x#1 ← (byte) x#2 + (byte) 1 [ x#1 cursor#3 e#3 y#2 ] -- zpby1=zpby1_plus_1 
+  inc $4
+//SEG14 [3] (byte*) cursor#1 ← (byte*) cursor#3 + (byte) 1 [ x#1 e#3 cursor#1 y#2 ] -- zpptrby1=zpptrby1_plus_1 
+  inc $2
+  bne !+
+  inc $2+$1
+!:
+//SEG15 [4] (byte) e#1 ← (byte) e#3 + (byte) 24 [ x#1 e#1 cursor#1 y#2 ] -- xby=xby_plus_coby1 
+  txa
+  clc
+  adc #$18
+  tax
+//SEG16 [5] if((byte) 39<(byte) e#1) goto @2 [ x#1 e#1 cursor#1 y#2 ] -- coby1_lt_xby_then_la1 
+  cpx #$27
+  bcs b2
+//SEG17 [6] phi from @1 to @3
+//SEG18 [6] phi (byte) y#4 = (byte) y#2 -- register_copy 
+//SEG19 [6] phi (byte) e#5 = (byte) e#1 -- register_copy 
+//SEG20 [6] phi (byte*) cursor#5 = (byte*) cursor#1 -- register_copy 
+//SEG21 @3
+b3:
+//SEG22 [7] if((byte) x#1<(byte) 40) goto @1 [ cursor#5 x#1 e#5 y#4 ] -- zpby1_lt_coby1_then_la1 
+  lda $4
+  cmp #$28
+  bcc b1
+//SEG23 @end
+//SEG24 @2
+b2:
+//SEG25 [8] (byte) y#1 ← (byte) y#2 + (byte) 1 [ x#1 e#1 cursor#1 y#1 ] -- zpby1=zpby1_plus_1 
+  inc $5
+//SEG26 [9] (byte*) cursor#2 ← (byte*) cursor#1 + (byte) 40 [ x#1 e#1 cursor#2 y#1 ] -- zpptrby1=zpptrby1_plus_coby1 
+  lda $2
+  clc
+  adc #$28
+  sta $2
+  bcc !+
+  inc $2+$1
+!:
+//SEG27 [10] (byte) e#2 ← (byte) e#1 - (byte) 39 [ x#1 cursor#2 e#2 y#1 ] -- xby=xby_minus_coby1 
+  txa
+  sec
+  sbc #$27
+  tax
+//SEG28 [6] phi from @2 to @3
 //SEG29 [6] phi (byte) y#4 = (byte) y#1 -- register_copy 
 //SEG30 [6] phi (byte) e#5 = (byte) e#2 -- register_copy 
 //SEG31 [6] phi (byte*) cursor#5 = (byte*) cursor#2 -- register_copy 
@@ -1408,9 +1567,7 @@ zp byte:5 [ y#2 y#4 y#1 ]
 
 FINAL CODE
 //SEG0 @begin
-bbegin:
 //SEG1 [0] phi from @begin to @1
-b1_from_bbegin:
 //SEG2 [0] phi (byte) y#2 = (byte) 0 -- zpby1=coby1 
   lda #$0
   sta $5
@@ -1425,7 +1582,6 @@ b1_from_bbegin:
   lda #>$400
   sta $2+$1
 //SEG6 [0] phi from @3 to @1
-b1_from_b3:
 //SEG7 [0] phi (byte) y#2 = (byte) y#4 -- register_copy 
 //SEG8 [0] phi (byte) e#3 = (byte) e#5 -- register_copy 
 //SEG9 [0] phi (byte) x#2 = (byte) x#1 -- register_copy 
@@ -1452,7 +1608,6 @@ b1:
   cpx #$27
   bcs b2
 //SEG17 [6] phi from @1 to @3
-b3_from_b1:
 //SEG18 [6] phi (byte) y#4 = (byte) y#2 -- register_copy 
 //SEG19 [6] phi (byte) e#5 = (byte) e#1 -- register_copy 
 //SEG20 [6] phi (byte*) cursor#5 = (byte*) cursor#1 -- register_copy 
@@ -1461,9 +1616,8 @@ b3:
 //SEG22 [7] if((byte) x#1<(byte) 40) goto @1 [ cursor#5 x#1 e#5 y#4 ] -- zpby1_lt_coby1_then_la1 
   lda $4
   cmp #$28
-  bcc b1_from_b3
+  bcc b1
 //SEG23 @end
-bend:
 //SEG24 @2
 b2:
 //SEG25 [8] (byte) y#1 ← (byte) y#2 + (byte) 1 [ x#1 e#1 cursor#1 y#1 ] -- zpby1=zpby1_plus_1 
@@ -1482,7 +1636,6 @@ b2:
   sbc #$27
   tax
 //SEG28 [6] phi from @2 to @3
-b3_from_b2:
 //SEG29 [6] phi (byte) y#4 = (byte) y#1 -- register_copy 
 //SEG30 [6] phi (byte) e#5 = (byte) e#2 -- register_copy 
 //SEG31 [6] phi (byte*) cursor#5 = (byte*) cursor#2 -- register_copy 

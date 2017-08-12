@@ -14,14 +14,12 @@ import java.util.List;
  * Optimization performed on Assembler Code (Asm Code).
  * Optimizations are performed repeatedly until none of them yield any result
  **/
-public abstract class Pass5AsmOptimization {
+public abstract class Pass6AsmOptimization {
 
-   protected CompileLog log;
    private Program program;
 
-   public Pass5AsmOptimization(Program program, CompileLog log) {
+   public Pass6AsmOptimization(Program program) {
       this.program = program;
-      this.log = log;
    }
 
    /**
@@ -36,7 +34,7 @@ public abstract class Pass5AsmOptimization {
    }
 
    public CompileLog getLog() {
-      return log;
+      return program.getLog();
    }
 
    public void remove(List<AsmLine> remove) {
@@ -45,7 +43,7 @@ public abstract class Pass5AsmOptimization {
          for (Iterator<AsmLine> iterator = segment.getLines().iterator(); iterator.hasNext(); ) {
             AsmLine line = iterator.next();
             if (remove.contains(line)) {
-               log.append("Removing instruction " + line.getAsm());
+               getLog().append("Removing instruction " + line.getAsm());
                iterator.remove();
             }
          }

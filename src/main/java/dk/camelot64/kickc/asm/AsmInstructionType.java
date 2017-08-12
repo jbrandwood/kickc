@@ -46,7 +46,8 @@ public class AsmInstructionType {
    }
 
    /**
-    * Tells if the instruction is a jump or a branch (and the parameter is therefore a label or destination address)
+    * Tells if the instruction is a jump or a branch (and the parameter is therefore a label or destination address).
+    *
     * @return true if the instruction is a jump/branch
     */
    public boolean isJump() {

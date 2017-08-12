@@ -1,8 +1,6 @@
 package dk.camelot64.kickc.passes;
 
-import dk.camelot64.kickc.CompileLog;
 import dk.camelot64.kickc.asm.*;
-import dk.camelot64.kickc.asm.AsmProgramStaticRegisterValues;
 import dk.camelot64.kickc.icl.Program;
 
 import java.util.ArrayList;
@@ -11,10 +9,10 @@ import java.util.List;
 /**
  * Maps out register values entering all instructions. Removes unnecessary loads / clears / sets
  */
-public class Pass5UnnecesaryLoadElimination extends Pass5AsmOptimization {
+public class Pass6UnnecesaryLoadElimination extends Pass6AsmOptimization {
 
-   public Pass5UnnecesaryLoadElimination(Program program, CompileLog log) {
-      super(program, log);
+   public Pass6UnnecesaryLoadElimination(Program program) {
+      super(program);
    }
 
    @Override

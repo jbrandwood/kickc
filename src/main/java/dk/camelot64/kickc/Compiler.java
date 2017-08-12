@@ -38,14 +38,16 @@ public class Compiler {
    }
 
    public void pass6OptimizeAsm(Program program) {
-      CompileLog log = program.getLog();
-      List<Pass5AsmOptimization> pass5Optimizations = new ArrayList<>();
-      pass5Optimizations.add(new Pass5NextJumpElimination(program, log));
-      pass5Optimizations.add(new Pass5UnnecesaryLoadElimination(program, log));
+      List<Pass6AsmOptimization> pass6Optimizations = new ArrayList<>();
+      pass6Optimizations.add(new Pass6NextJumpElimination(program));
+      pass6Optimizations.add(new Pass6UnnecesaryLoadElimination(program));
+      pass6Optimizations.add(new Pass6RedundantLabelElimination(program));
+      pass6Optimizations.add(new Pass6UnusedLabelElimination(program));
       boolean asmOptimized = true;
+      CompileLog log = program.getLog();
       while (asmOptimized) {
          asmOptimized = false;
-         for (Pass5AsmOptimization optimization : pass5Optimizations) {
+         for (Pass6AsmOptimization optimization : pass6Optimizations) {
             boolean stepOptimized = optimization.optimize();
             if (stepOptimized) {
                log.append("Succesful ASM optimization " + optimization.getClass().getSimpleName());

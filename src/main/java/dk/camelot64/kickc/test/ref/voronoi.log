@@ -7523,7 +7523,7 @@ Removing instruction jmp breturn
 Removing instruction jmp b1
 Removing instruction jmp breturn
 Removing instruction jmp breturn
-Succesful ASM optimization Pass5NextJumpElimination
+Succesful ASM optimization Pass6NextJumpElimination
 ASSEMBLER
 //SEG0 @begin
 bbegin:
@@ -8028,11 +8028,25 @@ addpoint: {
     rts
 }
 
-Removing instruction jmp b1
-Removing instruction jmp b2
-Removing instruction jmp b1
-Removing instruction jmp b1
-Succesful ASM optimization Pass5NextJumpElimination
+Replacing label b2_from_b5 with b2
+Replacing label b1_from_b3 with b1
+Replacing label b1_from_b13 with b1
+Replacing label b1_from_b1 with b1
+Replacing label b1_from_b1 with b1
+Removing instruction addpoint_from_b3:
+Removing instruction addpoint_from_b4:
+Removing instruction addpoint_from_b5:
+Removing instruction addpoint_from_b6:
+Removing instruction addpoint_from_b7:
+Removing instruction b1_from_b3:
+Removing instruction b2_from_b1:
+Removing instruction b2_from_b5:
+Removing instruction b1_from_b13:
+Removing instruction b8_from_b7:
+Removing instruction b11_from_b10:
+Removing instruction b13_from_b11:
+Removing instruction b1_from_b1:
+Succesful ASM optimization Pass6RedundantLabelElimination
 ASSEMBLER
 //SEG0 @begin
 bbegin:
@@ -8060,7 +8074,6 @@ main: {
   b3:
   //SEG11 [2] call addpoint param-assignment [ ]
   //SEG12 [92] phi from main::@3 to addpoint
-  addpoint_from_b3:
   //SEG13 [92] phi (byte) addpoint::c#6 = (byte) 2 -- zpby1=coby1 
     lda #$2
     sta $2
@@ -8074,7 +8087,6 @@ main: {
   b4:
   //SEG18 [3] call addpoint param-assignment [ ]
   //SEG19 [92] phi from main::@4 to addpoint
-  addpoint_from_b4:
   //SEG20 [92] phi (byte) addpoint::c#6 = (byte) 3 -- zpby1=coby1 
     lda #$3
     sta $2
@@ -8088,7 +8100,6 @@ main: {
   b5:
   //SEG25 [4] call addpoint param-assignment [ ]
   //SEG26 [92] phi from main::@5 to addpoint
-  addpoint_from_b5:
   //SEG27 [92] phi (byte) addpoint::c#6 = (byte) 4 -- zpby1=coby1 
     lda #$4
     sta $2
@@ -8102,7 +8113,6 @@ main: {
   b6:
   //SEG32 [5] call addpoint param-assignment [ ]
   //SEG33 [92] phi from main::@6 to addpoint
-  addpoint_from_b6:
   //SEG34 [92] phi (byte) addpoint::c#6 = (byte) 5 -- zpby1=coby1 
     lda #$5
     sta $2
@@ -8116,7 +8126,6 @@ main: {
   b7:
   //SEG39 [6] call addpoint param-assignment [ ]
   //SEG40 [92] phi from main::@7 to addpoint
-  addpoint_from_b7:
   //SEG41 [92] phi (byte) addpoint::c#6 = (byte) 7 -- zpby1=coby1 
     lda #$7
     sta $2
@@ -8284,19 +8293,18 @@ render: {
   //SEG109 [51] phi (byte) render::y#2 = (byte) 0 -- zpby1=coby1 
     lda #$0
     sta $2
+    jmp b1
   //SEG110 [51] phi from render::@3 to render::@1
-  b1_from_b3:
   //SEG111 [51] phi (byte*) render::colline#2 = (byte*) render::colline#1 -- register_copy 
   //SEG112 [51] phi (byte) render::y#2 = (byte) render::y#1 -- register_copy 
   //SEG113 render::@1
   b1:
   //SEG114 [52] phi from render::@1 to render::@2
-  b2_from_b1:
   //SEG115 [52] phi (byte) render::x#2 = (byte) 0 -- zpby1=coby1 
     lda #$0
     sta $5
+    jmp b2
   //SEG116 [52] phi from render::@5 to render::@2
-  b2_from_b5:
   //SEG117 [52] phi (byte) render::x#2 = (byte) render::x#1 -- register_copy 
   //SEG118 render::@2
   b2:
@@ -8320,7 +8328,7 @@ render: {
   //SEG126 [59] if((byte) render::x#1<(byte) 40) goto render::@2 [ render::x#1 render::y#2 render::colline#2 ] -- zpby1_lt_coby1_then_la1 
     lda $5
     cmp #$28
-    bcc b2_from_b5
+    bcc b2
   //SEG127 render::@3
   b3:
   //SEG128 [60] (byte*) render::colline#1 ← (byte*) render::colline#2 + (byte) 40 [ render::colline#1 render::y#2 ] -- zpptrby1=zpptrby1_plus_coby1 
@@ -8336,7 +8344,7 @@ render: {
   //SEG130 [62] if((byte) render::y#1<(byte) 25) goto render::@1 [ render::y#1 render::colline#1 ] -- zpby1_lt_coby1_then_la1 
     lda $2
     cmp #$19
-    bcc b1_from_b3
+    bcc b1
   //SEG131 render::@return
   breturn:
   //SEG132 [63] return  [ ]
@@ -8353,8 +8361,8 @@ findcol: {
     sta $6
   //SEG137 [64] phi (byte) findcol::i#12 = (byte) 0 -- xby=coby1 
     ldx #$0
+    jmp b1
   //SEG138 [64] phi from findcol::@13 to findcol::@1
-  b1_from_b13:
   //SEG139 [64] phi (byte) findcol::mincol#11 = (byte) findcol::mincol#2 -- register_copy 
   //SEG140 [64] phi (byte) findcol::mindiff#10 = (byte) findcol::mindiff#11 -- register_copy 
   //SEG141 [64] phi (byte) findcol::i#12 = (byte) findcol::i#1 -- register_copy 
@@ -8384,7 +8392,6 @@ findcol: {
     sbc $7
     sta $7
   //SEG150 [70] phi from findcol::@7 to findcol::@8
-  b8_from_b7:
   //SEG151 [70] phi (byte) findcol::diff#4 = (byte) findcol::diff#1 -- register_copy 
   //SEG152 findcol::@8
   b8:
@@ -8402,7 +8409,6 @@ findcol: {
     clc
     adc $7
   //SEG157 [74] phi from findcol::@10 to findcol::@11
-  b11_from_b10:
   //SEG158 [74] phi (byte) findcol::diff#6 = (byte) findcol::diff#3 -- register_copy 
   //SEG159 findcol::@11
   b11:
@@ -8410,7 +8416,6 @@ findcol: {
     cmp $6
     bcc b12
   //SEG161 [76] phi from findcol::@11 to findcol::@13
-  b13_from_b11:
   //SEG162 [76] phi (byte) findcol::mindiff#11 = (byte) findcol::mindiff#10 -- register_copy 
   //SEG163 [76] phi (byte) findcol::mincol#2 = (byte) findcol::mincol#11 -- register_copy 
   //SEG164 findcol::@13
@@ -8419,7 +8424,7 @@ findcol: {
     inx
   //SEG166 [78] if((byte) findcol::i#1<(byte) numpoints#1) goto findcol::@1 [ render::x#2 render::y#2 render::colline#2 findcol::i#1 findcol::mindiff#11 findcol::mincol#2 findcol::x#0 findcol::y#0 numpoints#1 ] -- xby_lt_zpby1_then_la1 
     cpx $8
-    bcc b1_from_b13
+    bcc b1
   //SEG167 [79] phi from findcol::@13 to findcol::@return
   breturn_from_b13:
   //SEG168 [79] phi (byte) findcol::return#0 = (byte) findcol::mincol#2 -- register_copy 
@@ -8484,8 +8489,8 @@ initscreen: {
     sta $3
     lda #>$400
     sta $3+$1
+    jmp b1
   //SEG193 [87] phi from initscreen::@1 to initscreen::@1
-  b1_from_b1:
   //SEG194 [87] phi (byte*) initscreen::screen#2 = (byte*) initscreen::screen#1 -- register_copy 
   //SEG195 initscreen::@1
   b1:
@@ -8501,11 +8506,11 @@ initscreen: {
   //SEG198 [90] if((byte*) initscreen::screen#1<(word) 2024) goto initscreen::@1 [ initscreen::screen#1 ] -- zpptrby1_lt_cowo1_then_la1 
     lda $3+$1
     cmp #>$7e8
-    bcc b1_from_b1
+    bcc b1
     bne !+
     lda $3
     cmp #<$7e8
-    bcc b1_from_b1
+    bcc b1
   !:
   //SEG199 initscreen::@return
   breturn:
@@ -8529,6 +8534,964 @@ addpoint: {
     inc $8
   //SEG206 addpoint::@return
   breturn:
+  //SEG207 [97] return  [ ]
+    rts
+}
+
+Removing instruction bbegin:
+Removing instruction bend:
+Removing instruction addpoint_from_main:
+Removing instruction b3:
+Removing instruction b4:
+Removing instruction b5:
+Removing instruction b6:
+Removing instruction b7:
+Removing instruction b8:
+Removing instruction b10:
+Removing instruction b11:
+Removing instruction breturn:
+Removing instruction b1_from_render:
+Removing instruction b5:
+Removing instruction b3:
+Removing instruction breturn:
+Removing instruction b1_from_findcol:
+Removing instruction b7:
+Removing instruction b10:
+Removing instruction breturn_from_b13:
+Removing instruction b13_from_b12:
+Removing instruction b11_from_b9:
+Removing instruction b8_from_b6:
+Removing instruction b1_from_initscreen:
+Removing instruction breturn:
+Removing instruction breturn:
+Succesful ASM optimization Pass6UnusedLabelElimination
+ASSEMBLER
+//SEG0 @begin
+//SEG1 [0] call main param-assignment [ ]
+  jsr main
+//SEG2 @end
+//SEG3 main
+main: {
+  //SEG4 [1] call addpoint param-assignment [ ]
+  //SEG5 [92] phi from main to addpoint
+  //SEG6 [92] phi (byte) addpoint::c#6 = (byte) 1 -- zpby1=coby1 
+    lda #$1
+    sta $2
+  //SEG7 [92] phi (byte) addpoint::y#6 = (byte) 5 -- yby=coby1 
+    ldy #$5
+  //SEG8 [92] phi (byte) numpoints#19 = (byte) 0 -- zpby1=coby1 
+    lda #$0
+    sta $8
+  //SEG9 [92] phi (byte) addpoint::x#6 = (byte) 5 -- aby=coby1 
+    lda #$5
+    jsr addpoint
+  //SEG10 main::@3
+  //SEG11 [2] call addpoint param-assignment [ ]
+  //SEG12 [92] phi from main::@3 to addpoint
+  //SEG13 [92] phi (byte) addpoint::c#6 = (byte) 2 -- zpby1=coby1 
+    lda #$2
+    sta $2
+  //SEG14 [92] phi (byte) addpoint::y#6 = (byte) 8 -- yby=coby1 
+    ldy #$8
+  //SEG15 [92] phi (byte) numpoints#19 = (byte) numpoints#1 -- register_copy 
+  //SEG16 [92] phi (byte) addpoint::x#6 = (byte) 15 -- aby=coby1 
+    lda #$f
+    jsr addpoint
+  //SEG17 main::@4
+  //SEG18 [3] call addpoint param-assignment [ ]
+  //SEG19 [92] phi from main::@4 to addpoint
+  //SEG20 [92] phi (byte) addpoint::c#6 = (byte) 3 -- zpby1=coby1 
+    lda #$3
+    sta $2
+  //SEG21 [92] phi (byte) addpoint::y#6 = (byte) 14 -- yby=coby1 
+    ldy #$e
+  //SEG22 [92] phi (byte) numpoints#19 = (byte) numpoints#1 -- register_copy 
+  //SEG23 [92] phi (byte) addpoint::x#6 = (byte) 6 -- aby=coby1 
+    lda #$6
+    jsr addpoint
+  //SEG24 main::@5
+  //SEG25 [4] call addpoint param-assignment [ ]
+  //SEG26 [92] phi from main::@5 to addpoint
+  //SEG27 [92] phi (byte) addpoint::c#6 = (byte) 4 -- zpby1=coby1 
+    lda #$4
+    sta $2
+  //SEG28 [92] phi (byte) addpoint::y#6 = (byte) 2 -- yby=coby1 
+    ldy #$2
+  //SEG29 [92] phi (byte) numpoints#19 = (byte) numpoints#1 -- register_copy 
+  //SEG30 [92] phi (byte) addpoint::x#6 = (byte) 34 -- aby=coby1 
+    lda #$22
+    jsr addpoint
+  //SEG31 main::@6
+  //SEG32 [5] call addpoint param-assignment [ ]
+  //SEG33 [92] phi from main::@6 to addpoint
+  //SEG34 [92] phi (byte) addpoint::c#6 = (byte) 5 -- zpby1=coby1 
+    lda #$5
+    sta $2
+  //SEG35 [92] phi (byte) addpoint::y#6 = (byte) 17 -- yby=coby1 
+    ldy #$11
+  //SEG36 [92] phi (byte) numpoints#19 = (byte) numpoints#1 -- register_copy 
+  //SEG37 [92] phi (byte) addpoint::x#6 = (byte) 21 -- aby=coby1 
+    lda #$15
+    jsr addpoint
+  //SEG38 main::@7
+  //SEG39 [6] call addpoint param-assignment [ ]
+  //SEG40 [92] phi from main::@7 to addpoint
+  //SEG41 [92] phi (byte) addpoint::c#6 = (byte) 7 -- zpby1=coby1 
+    lda #$7
+    sta $2
+  //SEG42 [92] phi (byte) addpoint::y#6 = (byte) 22 -- yby=coby1 
+    ldy #$16
+  //SEG43 [92] phi (byte) numpoints#19 = (byte) numpoints#1 -- register_copy 
+  //SEG44 [92] phi (byte) addpoint::x#6 = (byte) 31 -- aby=coby1 
+    lda #$1f
+    jsr addpoint
+  //SEG45 main::@8
+  //SEG46 [7] call initscreen param-assignment [ ]
+    jsr initscreen
+  //SEG47 main::@1
+  b1:
+  //SEG48 [8] call render param-assignment [ ]
+    jsr render
+  //SEG49 main::@10
+  //SEG50 [9] call animate param-assignment [ ]
+    jsr animate
+  //SEG51 main::@11
+  //SEG52 [10] if(true) goto main::@1 [ ] -- true_then_la1 
+    jmp b1
+  //SEG53 main::@return
+  //SEG54 [11] return  [ ]
+    rts
+}
+//SEG55 animate
+animate: {
+  //SEG56 [12] (byte~) animate::$0 ← * (word) 4096 [ animate::$0 ] -- aby=_star_cowo1 
+    lda $1000
+  //SEG57 [13] (byte~) animate::$1 ← (byte~) animate::$0 + (byte) 1 [ animate::$1 ] -- aby=aby_plus_1 
+    clc
+    adc #$1
+  //SEG58 [14] *((word) 4096) ← (byte~) animate::$1 [ ] -- _star_cowo1=aby 
+    sta $1000
+  //SEG59 [15] (byte~) animate::$2 ← * (word) 4096 [ animate::$2 ] -- aby=_star_cowo1 
+    lda $1000
+  //SEG60 [16] if((byte~) animate::$2==(byte) 40) goto animate::@1 [ ] -- aby_eq_coby1_then_la1 
+    cmp #$28
+    beq b1
+  //SEG61 animate::@2
+  b2:
+  //SEG62 [17] (byte~) animate::$4 ← * (word) 4352 [ animate::$4 ] -- aby=_star_cowo1 
+    lda $1100
+  //SEG63 [18] (byte~) animate::$5 ← (byte~) animate::$4 + (byte) 1 [ animate::$5 ] -- aby=aby_plus_1 
+    clc
+    adc #$1
+  //SEG64 [19] *((word) 4352) ← (byte~) animate::$5 [ ] -- _star_cowo1=aby 
+    sta $1100
+  //SEG65 [20] (byte~) animate::$6 ← * (word) 4352 [ animate::$6 ] -- aby=_star_cowo1 
+    lda $1100
+  //SEG66 [21] if((byte~) animate::$6==(byte) 25) goto animate::@3 [ ] -- aby_eq_coby1_then_la1 
+    cmp #$19
+    beq b3
+  //SEG67 animate::@4
+  b4:
+  //SEG68 [22] (byte~) animate::$8 ← * (word) 4097 [ animate::$8 ] -- xby=_star_cowo1 
+    ldx $1001
+  //SEG69 [23] (byte~) animate::$9 ← (byte~) animate::$8 - (byte) 1 [ animate::$9 ] -- xby=xby_minus_1 
+    dex
+  //SEG70 [24] *((word) 4097) ← (byte~) animate::$9 [ ] -- _star_cowo1=xby 
+    stx $1001
+  //SEG71 [25] (byte~) animate::$10 ← * (word) 4097 [ animate::$10 ] -- aby=_star_cowo1 
+    lda $1001
+  //SEG72 [26] if((byte~) animate::$10==(byte) 255) goto animate::@5 [ ] -- aby_eq_coby1_then_la1 
+    cmp #$ff
+    beq b5
+  //SEG73 animate::@6
+  b6:
+  //SEG74 [27] (byte~) animate::$12 ← * (word) 4354 [ animate::$12 ] -- aby=_star_cowo1 
+    lda $1102
+  //SEG75 [28] (byte~) animate::$13 ← (byte~) animate::$12 + (byte) 1 [ animate::$13 ] -- aby=aby_plus_1 
+    clc
+    adc #$1
+  //SEG76 [29] *((word) 4354) ← (byte~) animate::$13 [ ] -- _star_cowo1=aby 
+    sta $1102
+  //SEG77 [30] (byte~) animate::$14 ← * (word) 4354 [ animate::$14 ] -- aby=_star_cowo1 
+    lda $1102
+  //SEG78 [31] if((byte~) animate::$14==(byte) 25) goto animate::@7 [ ] -- aby_eq_coby1_then_la1 
+    cmp #$19
+    beq b7
+  //SEG79 animate::@8
+  b8:
+  //SEG80 [32] (byte~) animate::$16 ← * (word) 4355 [ animate::$16 ] -- xby=_star_cowo1 
+    ldx $1103
+  //SEG81 [33] (byte~) animate::$17 ← (byte~) animate::$16 - (byte) 1 [ animate::$17 ] -- xby=xby_minus_1 
+    dex
+  //SEG82 [34] *((word) 4355) ← (byte~) animate::$17 [ ] -- _star_cowo1=xby 
+    stx $1103
+  //SEG83 [35] (byte~) animate::$18 ← * (word) 4355 [ animate::$18 ] -- aby=_star_cowo1 
+    lda $1103
+  //SEG84 [36] if((byte~) animate::$18==(byte) 255) goto animate::@9 [ ] -- aby_eq_coby1_then_la1 
+    cmp #$ff
+    beq b9
+  //SEG85 animate::@return
+  breturn:
+  //SEG86 [37] return  [ ]
+    rts
+  //SEG87 animate::@9
+  b9:
+  //SEG88 [38] *((word) 4355) ← (byte) 25 [ ] -- _star_cowo1=coby2 
+    lda #$19
+    sta $1103
+  //SEG89 [39] (byte~) animate::$20 ← * (word) 4099 [ animate::$20 ] -- aby=_star_cowo1 
+    lda $1003
+  //SEG90 [40] (byte~) animate::$21 ← (byte~) animate::$20 + (byte) 7 [ animate::$21 ] -- aby=aby_plus_coby1 
+    clc
+    adc #$7
+  //SEG91 [41] *((word) 4099) ← (byte~) animate::$21 [ ] -- _star_cowo1=aby 
+    sta $1003
+  //SEG92 [42] (byte~) animate::$22 ← * (word) 4099 [ animate::$22 ] -- aby=_star_cowo1 
+    lda $1003
+  //SEG93 [43] if((byte~) animate::$22>=(byte) 40) goto animate::@11 [ ] -- aby_ge_coby1_then_la1 
+    cmp #$28
+    bcs b11
+    jmp breturn
+  //SEG94 animate::@11
+  b11:
+  //SEG95 [44] (byte~) animate::$24 ← * (word) 4099 [ animate::$24 ] -- aby=_star_cowo1 
+    lda $1003
+  //SEG96 [45] (byte~) animate::$25 ← (byte~) animate::$24 - (byte) 40 [ animate::$25 ] -- aby=aby_minus_coby1 
+    sec
+    sbc #$28
+  //SEG97 [46] *((word) 4099) ← (byte~) animate::$25 [ ] -- _star_cowo1=aby 
+    sta $1003
+    jmp breturn
+  //SEG98 animate::@7
+  b7:
+  //SEG99 [47] *((word) 4354) ← (byte) 0 [ ] -- _star_cowo1=coby2 
+    lda #$0
+    sta $1102
+    jmp b8
+  //SEG100 animate::@5
+  b5:
+  //SEG101 [48] *((word) 4097) ← (byte) 40 [ ] -- _star_cowo1=coby2 
+    lda #$28
+    sta $1001
+    jmp b6
+  //SEG102 animate::@3
+  b3:
+  //SEG103 [49] *((word) 4352) ← (byte) 0 [ ] -- _star_cowo1=coby2 
+    lda #$0
+    sta $1100
+    jmp b4
+  //SEG104 animate::@1
+  b1:
+  //SEG105 [50] *((word) 4096) ← (byte) 0 [ ] -- _star_cowo1=coby2 
+    lda #$0
+    sta $1000
+    jmp b2
+}
+//SEG106 render
+render: {
+  //SEG107 [51] phi from render to render::@1
+  //SEG108 [51] phi (byte*) render::colline#2 = (word) 55296 -- zpptrby1=cowo1 
+    lda #<$d800
+    sta $3
+    lda #>$d800
+    sta $3+$1
+  //SEG109 [51] phi (byte) render::y#2 = (byte) 0 -- zpby1=coby1 
+    lda #$0
+    sta $2
+    jmp b1
+  //SEG110 [51] phi from render::@3 to render::@1
+  //SEG111 [51] phi (byte*) render::colline#2 = (byte*) render::colline#1 -- register_copy 
+  //SEG112 [51] phi (byte) render::y#2 = (byte) render::y#1 -- register_copy 
+  //SEG113 render::@1
+  b1:
+  //SEG114 [52] phi from render::@1 to render::@2
+  //SEG115 [52] phi (byte) render::x#2 = (byte) 0 -- zpby1=coby1 
+    lda #$0
+    sta $5
+    jmp b2
+  //SEG116 [52] phi from render::@5 to render::@2
+  //SEG117 [52] phi (byte) render::x#2 = (byte) render::x#1 -- register_copy 
+  //SEG118 render::@2
+  b2:
+  //SEG119 [53] (byte) findcol::x#0 ← (byte) render::x#2 [ render::x#2 render::y#2 render::colline#2 ] -- zpby1=zpby2 
+    lda $5
+    sta $9
+  //SEG120 [54] (byte) findcol::y#0 ← (byte) render::y#2 [ render::x#2 render::y#2 render::colline#2 ] -- zpby1=zpby2 
+    lda $2
+    sta $a
+  //SEG121 [55] call findcol param-assignment [ render::x#2 render::y#2 findcol::return#0 render::colline#2 ]
+    jsr findcol
+  //SEG122 render::@5
+  //SEG123 [56] (byte) render::col#0 ← (byte) findcol::return#0 [ render::x#2 render::y#2 render::colline#2 render::col#0 ] -- aby=yby 
+    tya
+  //SEG124 [57] *((byte*) render::colline#2 + (byte) render::x#2) ← (byte) render::col#0 [ render::x#2 render::y#2 render::colline#2 ] -- zpptrby1_staridx_zpby1=aby 
+    ldy $5
+    sta ($3),y
+  //SEG125 [58] (byte) render::x#1 ← ++ (byte) render::x#2 [ render::x#1 render::y#2 render::colline#2 ] -- zpby1=_inc_zpby1 
+    inc $5
+  //SEG126 [59] if((byte) render::x#1<(byte) 40) goto render::@2 [ render::x#1 render::y#2 render::colline#2 ] -- zpby1_lt_coby1_then_la1 
+    lda $5
+    cmp #$28
+    bcc b2
+  //SEG127 render::@3
+  //SEG128 [60] (byte*) render::colline#1 ← (byte*) render::colline#2 + (byte) 40 [ render::colline#1 render::y#2 ] -- zpptrby1=zpptrby1_plus_coby1 
+    lda $3
+    clc
+    adc #$28
+    sta $3
+    bcc !+
+    inc $3+$1
+  !:
+  //SEG129 [61] (byte) render::y#1 ← ++ (byte) render::y#2 [ render::y#1 render::colline#1 ] -- zpby1=_inc_zpby1 
+    inc $2
+  //SEG130 [62] if((byte) render::y#1<(byte) 25) goto render::@1 [ render::y#1 render::colline#1 ] -- zpby1_lt_coby1_then_la1 
+    lda $2
+    cmp #$19
+    bcc b1
+  //SEG131 render::@return
+  //SEG132 [63] return  [ ]
+    rts
+}
+//SEG133 findcol
+findcol: {
+  //SEG134 [64] phi from findcol to findcol::@1
+  //SEG135 [64] phi (byte) findcol::mincol#11 = (byte) 0 -- yby=coby1 
+    ldy #$0
+  //SEG136 [64] phi (byte) findcol::mindiff#10 = (byte) 255 -- zpby1=coby1 
+    lda #$ff
+    sta $6
+  //SEG137 [64] phi (byte) findcol::i#12 = (byte) 0 -- xby=coby1 
+    ldx #$0
+    jmp b1
+  //SEG138 [64] phi from findcol::@13 to findcol::@1
+  //SEG139 [64] phi (byte) findcol::mincol#11 = (byte) findcol::mincol#2 -- register_copy 
+  //SEG140 [64] phi (byte) findcol::mindiff#10 = (byte) findcol::mindiff#11 -- register_copy 
+  //SEG141 [64] phi (byte) findcol::i#12 = (byte) findcol::i#1 -- register_copy 
+  //SEG142 findcol::@1
+  b1:
+  //SEG143 [65] (byte) findcol::xp#0 ← (word) 4096 *idx (byte) findcol::i#12 [ render::x#2 render::y#2 render::colline#2 findcol::i#12 findcol::x#0 findcol::xp#0 findcol::y#0 findcol::mindiff#10 findcol::mincol#11 numpoints#1 ] -- zpby1=cowo1_staridx_xby 
+    lda $1000,x
+    sta $7
+  //SEG144 [66] (byte) findcol::yp#0 ← (word) 4352 *idx (byte) findcol::i#12 [ render::x#2 render::y#2 render::colline#2 findcol::i#12 findcol::x#0 findcol::xp#0 findcol::y#0 findcol::yp#0 findcol::mindiff#10 findcol::mincol#11 numpoints#1 ] -- zpby1=cowo1_staridx_xby 
+    lda $1100,x
+    sta $b
+  //SEG145 [67] if((byte) findcol::x#0==(byte) findcol::xp#0) goto findcol::@2 [ render::x#2 render::y#2 render::colline#2 findcol::i#12 findcol::x#0 findcol::xp#0 findcol::y#0 findcol::yp#0 findcol::mindiff#10 findcol::mincol#11 numpoints#1 ] -- zpby1_eq_zpby2_then_la1 
+    lda $9
+    cmp $7
+    beq b2
+  //SEG146 findcol::@3
+  b3:
+  //SEG147 [68] if((byte) findcol::x#0<(byte) findcol::xp#0) goto findcol::@6 [ render::x#2 render::y#2 render::colline#2 findcol::i#12 findcol::x#0 findcol::xp#0 findcol::y#0 findcol::yp#0 findcol::mindiff#10 findcol::mincol#11 numpoints#1 ] -- zpby1_lt_zpby2_then_la1 
+    lda $9
+    cmp $7
+    bcc b6
+  //SEG148 findcol::@7
+  //SEG149 [69] (byte) findcol::diff#1 ← (byte) findcol::x#0 - (byte) findcol::xp#0 [ render::x#2 render::y#2 render::colline#2 findcol::i#12 findcol::x#0 findcol::diff#1 findcol::y#0 findcol::yp#0 findcol::mindiff#10 findcol::mincol#11 numpoints#1 ] -- zpby1=zpby2_minus_zpby1 
+    lda $9
+    sec
+    sbc $7
+    sta $7
+  //SEG150 [70] phi from findcol::@7 to findcol::@8
+  //SEG151 [70] phi (byte) findcol::diff#4 = (byte) findcol::diff#1 -- register_copy 
+  //SEG152 findcol::@8
+  b8:
+  //SEG153 [71] if((byte) findcol::y#0<(byte) findcol::yp#0) goto findcol::@9 [ render::x#2 render::y#2 render::colline#2 findcol::i#12 findcol::x#0 findcol::y#0 findcol::yp#0 findcol::diff#4 findcol::mindiff#10 findcol::mincol#11 numpoints#1 ] -- zpby1_lt_zpby2_then_la1 
+    lda $a
+    cmp $b
+    bcc b9
+  //SEG154 findcol::@10
+  //SEG155 [72] (byte~) findcol::$10 ← (byte) findcol::y#0 - (byte) findcol::yp#0 [ render::x#2 render::y#2 render::colline#2 findcol::i#12 findcol::x#0 findcol::y#0 findcol::diff#4 findcol::$10 findcol::mindiff#10 findcol::mincol#11 numpoints#1 ] -- aby=zpby1_minus_zpby2 
+    lda $a
+    sec
+    sbc $b
+  //SEG156 [73] (byte) findcol::diff#3 ← (byte) findcol::diff#4 + (byte~) findcol::$10 [ render::x#2 render::y#2 render::colline#2 findcol::i#12 findcol::x#0 findcol::y#0 findcol::diff#3 findcol::mindiff#10 findcol::mincol#11 numpoints#1 ] -- aby=zpby1_plus_aby 
+    clc
+    adc $7
+  //SEG157 [74] phi from findcol::@10 to findcol::@11
+  //SEG158 [74] phi (byte) findcol::diff#6 = (byte) findcol::diff#3 -- register_copy 
+  //SEG159 findcol::@11
+  b11:
+  //SEG160 [75] if((byte) findcol::diff#6<(byte) findcol::mindiff#10) goto findcol::@12 [ render::x#2 render::y#2 render::colline#2 findcol::i#12 findcol::x#0 findcol::y#0 findcol::diff#6 findcol::mindiff#10 findcol::mincol#11 numpoints#1 ] -- aby_lt_zpby1_then_la1 
+    cmp $6
+    bcc b12
+  //SEG161 [76] phi from findcol::@11 to findcol::@13
+  //SEG162 [76] phi (byte) findcol::mindiff#11 = (byte) findcol::mindiff#10 -- register_copy 
+  //SEG163 [76] phi (byte) findcol::mincol#2 = (byte) findcol::mincol#11 -- register_copy 
+  //SEG164 findcol::@13
+  b13:
+  //SEG165 [77] (byte) findcol::i#1 ← ++ (byte) findcol::i#12 [ render::x#2 render::y#2 render::colline#2 findcol::i#1 findcol::mindiff#11 findcol::mincol#2 findcol::x#0 findcol::y#0 numpoints#1 ] -- xby=_inc_xby 
+    inx
+  //SEG166 [78] if((byte) findcol::i#1<(byte) numpoints#1) goto findcol::@1 [ render::x#2 render::y#2 render::colline#2 findcol::i#1 findcol::mindiff#11 findcol::mincol#2 findcol::x#0 findcol::y#0 numpoints#1 ] -- xby_lt_zpby1_then_la1 
+    cpx $8
+    bcc b1
+  //SEG167 [79] phi from findcol::@13 to findcol::@return
+  //SEG168 [79] phi (byte) findcol::return#0 = (byte) findcol::mincol#2 -- register_copy 
+    jmp breturn
+  //SEG169 [79] phi from findcol::@2 to findcol::@return
+  breturn_from_b2:
+  //SEG170 [79] phi (byte) findcol::return#0 = (byte) 0 -- yby=coby1 
+    ldy #$0
+  //SEG171 findcol::@return
+  breturn:
+  //SEG172 [80] return  [ render::x#2 render::y#2 findcol::return#0 render::colline#2 ]
+    rts
+  //SEG173 findcol::@12
+  b12:
+  //SEG174 [81] (byte) findcol::mincol#1 ← (word) 4608 *idx (byte) findcol::i#12 [ render::x#2 render::y#2 render::colline#2 findcol::i#12 findcol::x#0 findcol::y#0 findcol::diff#6 findcol::mincol#1 numpoints#1 ] -- yby=cowo1_staridx_xby 
+    ldy $1200,x
+  //SEG175 [82] (byte~) findcol::diff#13 ← (byte) findcol::diff#6 [ render::x#2 render::y#2 render::colline#2 findcol::i#12 findcol::x#0 findcol::y#0 findcol::mincol#1 findcol::diff#13 numpoints#1 ] -- zpby1=aby 
+    sta $6
+  //SEG176 [76] phi from findcol::@12 to findcol::@13
+  //SEG177 [76] phi (byte) findcol::mindiff#11 = (byte~) findcol::diff#13 -- register_copy 
+  //SEG178 [76] phi (byte) findcol::mincol#2 = (byte) findcol::mincol#1 -- register_copy 
+    jmp b13
+  //SEG179 findcol::@9
+  b9:
+  //SEG180 [83] (byte~) findcol::$8 ← (byte) findcol::yp#0 - (byte) findcol::y#0 [ render::x#2 render::y#2 render::colline#2 findcol::i#12 findcol::x#0 findcol::y#0 findcol::diff#4 findcol::mindiff#10 findcol::mincol#11 numpoints#1 findcol::$8 ] -- aby=zpby1_minus_zpby2 
+    lda $b
+    sec
+    sbc $a
+  //SEG181 [84] (byte) findcol::diff#2 ← (byte) findcol::diff#4 + (byte~) findcol::$8 [ render::x#2 render::y#2 render::colline#2 findcol::i#12 findcol::x#0 findcol::y#0 findcol::diff#2 findcol::mindiff#10 findcol::mincol#11 numpoints#1 ] -- aby=zpby1_plus_aby 
+    clc
+    adc $7
+  //SEG182 [74] phi from findcol::@9 to findcol::@11
+  //SEG183 [74] phi (byte) findcol::diff#6 = (byte) findcol::diff#2 -- register_copy 
+    jmp b11
+  //SEG184 findcol::@6
+  b6:
+  //SEG185 [85] (byte) findcol::diff#0 ← (byte) findcol::xp#0 - (byte) findcol::x#0 [ render::x#2 render::y#2 render::colline#2 findcol::i#12 findcol::x#0 findcol::diff#0 findcol::y#0 findcol::yp#0 findcol::mindiff#10 findcol::mincol#11 numpoints#1 ] -- zpby1=zpby1_minus_zpby2 
+    lda $7
+    sec
+    sbc $9
+    sta $7
+  //SEG186 [70] phi from findcol::@6 to findcol::@8
+  //SEG187 [70] phi (byte) findcol::diff#4 = (byte) findcol::diff#0 -- register_copy 
+    jmp b8
+  //SEG188 findcol::@2
+  b2:
+  //SEG189 [86] if((byte) findcol::y#0==(byte) findcol::yp#0) goto findcol::@return [ render::x#2 render::y#2 render::colline#2 findcol::i#12 findcol::x#0 findcol::xp#0 findcol::y#0 findcol::yp#0 findcol::mindiff#10 findcol::mincol#11 numpoints#1 ] -- zpby1_eq_zpby2_then_la1 
+    lda $a
+    cmp $b
+    beq breturn_from_b2
+    jmp b3
+}
+//SEG190 initscreen
+initscreen: {
+  //SEG191 [87] phi from initscreen to initscreen::@1
+  //SEG192 [87] phi (byte*) initscreen::screen#2 = (word) 1024 -- zpptrby1=cowo1 
+    lda #<$400
+    sta $3
+    lda #>$400
+    sta $3+$1
+    jmp b1
+  //SEG193 [87] phi from initscreen::@1 to initscreen::@1
+  //SEG194 [87] phi (byte*) initscreen::screen#2 = (byte*) initscreen::screen#1 -- register_copy 
+  //SEG195 initscreen::@1
+  b1:
+  //SEG196 [88] *((byte*) initscreen::screen#2) ← (byte) 230 [ initscreen::screen#2 ] -- _star_zpptrby1=coby1 
+    ldy #$0
+    lda #$e6
+    sta ($3),y
+  //SEG197 [89] (byte*) initscreen::screen#1 ← ++ (byte*) initscreen::screen#2 [ initscreen::screen#1 ] -- zpptrby1=_inc_zpptrby1 
+    inc $3
+    bne !+
+    inc $3+$1
+  !:
+  //SEG198 [90] if((byte*) initscreen::screen#1<(word) 2024) goto initscreen::@1 [ initscreen::screen#1 ] -- zpptrby1_lt_cowo1_then_la1 
+    lda $3+$1
+    cmp #>$7e8
+    bcc b1
+    bne !+
+    lda $3
+    cmp #<$7e8
+    bcc b1
+  !:
+  //SEG199 initscreen::@return
+  //SEG200 [91] return  [ ]
+    rts
+}
+//SEG201 addpoint
+addpoint: {
+  //SEG202 [93] *((word) 4096 + (byte) numpoints#19) ← (byte) addpoint::x#6 [ numpoints#19 addpoint::y#6 addpoint::c#6 ] -- cowo1_staridx_zpby1=aby 
+    ldx $8
+    sta $1000,x
+  //SEG203 [94] *((word) 4352 + (byte) numpoints#19) ← (byte) addpoint::y#6 [ numpoints#19 addpoint::c#6 ] -- cowo1_staridx_zpby1=yby 
+    tya
+    ldy $8
+    sta $1100,y
+  //SEG204 [95] *((word) 4608 + (byte) numpoints#19) ← (byte) addpoint::c#6 [ numpoints#19 ] -- cowo1_staridx_zpby1=zpby2 
+    lda $2
+    ldx $8
+    sta $1200,x
+  //SEG205 [96] (byte) numpoints#1 ← ++ (byte) numpoints#19 [ ] -- zpby1=_inc_zpby1 
+    inc $8
+  //SEG206 addpoint::@return
+  //SEG207 [97] return  [ ]
+    rts
+}
+
+Removing instruction jmp b1
+Removing instruction jmp b2
+Removing instruction jmp b1
+Removing instruction jmp b1
+Succesful ASM optimization Pass6NextJumpElimination
+ASSEMBLER
+//SEG0 @begin
+//SEG1 [0] call main param-assignment [ ]
+  jsr main
+//SEG2 @end
+//SEG3 main
+main: {
+  //SEG4 [1] call addpoint param-assignment [ ]
+  //SEG5 [92] phi from main to addpoint
+  //SEG6 [92] phi (byte) addpoint::c#6 = (byte) 1 -- zpby1=coby1 
+    lda #$1
+    sta $2
+  //SEG7 [92] phi (byte) addpoint::y#6 = (byte) 5 -- yby=coby1 
+    ldy #$5
+  //SEG8 [92] phi (byte) numpoints#19 = (byte) 0 -- zpby1=coby1 
+    lda #$0
+    sta $8
+  //SEG9 [92] phi (byte) addpoint::x#6 = (byte) 5 -- aby=coby1 
+    lda #$5
+    jsr addpoint
+  //SEG10 main::@3
+  //SEG11 [2] call addpoint param-assignment [ ]
+  //SEG12 [92] phi from main::@3 to addpoint
+  //SEG13 [92] phi (byte) addpoint::c#6 = (byte) 2 -- zpby1=coby1 
+    lda #$2
+    sta $2
+  //SEG14 [92] phi (byte) addpoint::y#6 = (byte) 8 -- yby=coby1 
+    ldy #$8
+  //SEG15 [92] phi (byte) numpoints#19 = (byte) numpoints#1 -- register_copy 
+  //SEG16 [92] phi (byte) addpoint::x#6 = (byte) 15 -- aby=coby1 
+    lda #$f
+    jsr addpoint
+  //SEG17 main::@4
+  //SEG18 [3] call addpoint param-assignment [ ]
+  //SEG19 [92] phi from main::@4 to addpoint
+  //SEG20 [92] phi (byte) addpoint::c#6 = (byte) 3 -- zpby1=coby1 
+    lda #$3
+    sta $2
+  //SEG21 [92] phi (byte) addpoint::y#6 = (byte) 14 -- yby=coby1 
+    ldy #$e
+  //SEG22 [92] phi (byte) numpoints#19 = (byte) numpoints#1 -- register_copy 
+  //SEG23 [92] phi (byte) addpoint::x#6 = (byte) 6 -- aby=coby1 
+    lda #$6
+    jsr addpoint
+  //SEG24 main::@5
+  //SEG25 [4] call addpoint param-assignment [ ]
+  //SEG26 [92] phi from main::@5 to addpoint
+  //SEG27 [92] phi (byte) addpoint::c#6 = (byte) 4 -- zpby1=coby1 
+    lda #$4
+    sta $2
+  //SEG28 [92] phi (byte) addpoint::y#6 = (byte) 2 -- yby=coby1 
+    ldy #$2
+  //SEG29 [92] phi (byte) numpoints#19 = (byte) numpoints#1 -- register_copy 
+  //SEG30 [92] phi (byte) addpoint::x#6 = (byte) 34 -- aby=coby1 
+    lda #$22
+    jsr addpoint
+  //SEG31 main::@6
+  //SEG32 [5] call addpoint param-assignment [ ]
+  //SEG33 [92] phi from main::@6 to addpoint
+  //SEG34 [92] phi (byte) addpoint::c#6 = (byte) 5 -- zpby1=coby1 
+    lda #$5
+    sta $2
+  //SEG35 [92] phi (byte) addpoint::y#6 = (byte) 17 -- yby=coby1 
+    ldy #$11
+  //SEG36 [92] phi (byte) numpoints#19 = (byte) numpoints#1 -- register_copy 
+  //SEG37 [92] phi (byte) addpoint::x#6 = (byte) 21 -- aby=coby1 
+    lda #$15
+    jsr addpoint
+  //SEG38 main::@7
+  //SEG39 [6] call addpoint param-assignment [ ]
+  //SEG40 [92] phi from main::@7 to addpoint
+  //SEG41 [92] phi (byte) addpoint::c#6 = (byte) 7 -- zpby1=coby1 
+    lda #$7
+    sta $2
+  //SEG42 [92] phi (byte) addpoint::y#6 = (byte) 22 -- yby=coby1 
+    ldy #$16
+  //SEG43 [92] phi (byte) numpoints#19 = (byte) numpoints#1 -- register_copy 
+  //SEG44 [92] phi (byte) addpoint::x#6 = (byte) 31 -- aby=coby1 
+    lda #$1f
+    jsr addpoint
+  //SEG45 main::@8
+  //SEG46 [7] call initscreen param-assignment [ ]
+    jsr initscreen
+  //SEG47 main::@1
+  b1:
+  //SEG48 [8] call render param-assignment [ ]
+    jsr render
+  //SEG49 main::@10
+  //SEG50 [9] call animate param-assignment [ ]
+    jsr animate
+  //SEG51 main::@11
+  //SEG52 [10] if(true) goto main::@1 [ ] -- true_then_la1 
+    jmp b1
+  //SEG53 main::@return
+  //SEG54 [11] return  [ ]
+    rts
+}
+//SEG55 animate
+animate: {
+  //SEG56 [12] (byte~) animate::$0 ← * (word) 4096 [ animate::$0 ] -- aby=_star_cowo1 
+    lda $1000
+  //SEG57 [13] (byte~) animate::$1 ← (byte~) animate::$0 + (byte) 1 [ animate::$1 ] -- aby=aby_plus_1 
+    clc
+    adc #$1
+  //SEG58 [14] *((word) 4096) ← (byte~) animate::$1 [ ] -- _star_cowo1=aby 
+    sta $1000
+  //SEG59 [15] (byte~) animate::$2 ← * (word) 4096 [ animate::$2 ] -- aby=_star_cowo1 
+    lda $1000
+  //SEG60 [16] if((byte~) animate::$2==(byte) 40) goto animate::@1 [ ] -- aby_eq_coby1_then_la1 
+    cmp #$28
+    beq b1
+  //SEG61 animate::@2
+  b2:
+  //SEG62 [17] (byte~) animate::$4 ← * (word) 4352 [ animate::$4 ] -- aby=_star_cowo1 
+    lda $1100
+  //SEG63 [18] (byte~) animate::$5 ← (byte~) animate::$4 + (byte) 1 [ animate::$5 ] -- aby=aby_plus_1 
+    clc
+    adc #$1
+  //SEG64 [19] *((word) 4352) ← (byte~) animate::$5 [ ] -- _star_cowo1=aby 
+    sta $1100
+  //SEG65 [20] (byte~) animate::$6 ← * (word) 4352 [ animate::$6 ] -- aby=_star_cowo1 
+    lda $1100
+  //SEG66 [21] if((byte~) animate::$6==(byte) 25) goto animate::@3 [ ] -- aby_eq_coby1_then_la1 
+    cmp #$19
+    beq b3
+  //SEG67 animate::@4
+  b4:
+  //SEG68 [22] (byte~) animate::$8 ← * (word) 4097 [ animate::$8 ] -- xby=_star_cowo1 
+    ldx $1001
+  //SEG69 [23] (byte~) animate::$9 ← (byte~) animate::$8 - (byte) 1 [ animate::$9 ] -- xby=xby_minus_1 
+    dex
+  //SEG70 [24] *((word) 4097) ← (byte~) animate::$9 [ ] -- _star_cowo1=xby 
+    stx $1001
+  //SEG71 [25] (byte~) animate::$10 ← * (word) 4097 [ animate::$10 ] -- aby=_star_cowo1 
+    lda $1001
+  //SEG72 [26] if((byte~) animate::$10==(byte) 255) goto animate::@5 [ ] -- aby_eq_coby1_then_la1 
+    cmp #$ff
+    beq b5
+  //SEG73 animate::@6
+  b6:
+  //SEG74 [27] (byte~) animate::$12 ← * (word) 4354 [ animate::$12 ] -- aby=_star_cowo1 
+    lda $1102
+  //SEG75 [28] (byte~) animate::$13 ← (byte~) animate::$12 + (byte) 1 [ animate::$13 ] -- aby=aby_plus_1 
+    clc
+    adc #$1
+  //SEG76 [29] *((word) 4354) ← (byte~) animate::$13 [ ] -- _star_cowo1=aby 
+    sta $1102
+  //SEG77 [30] (byte~) animate::$14 ← * (word) 4354 [ animate::$14 ] -- aby=_star_cowo1 
+    lda $1102
+  //SEG78 [31] if((byte~) animate::$14==(byte) 25) goto animate::@7 [ ] -- aby_eq_coby1_then_la1 
+    cmp #$19
+    beq b7
+  //SEG79 animate::@8
+  b8:
+  //SEG80 [32] (byte~) animate::$16 ← * (word) 4355 [ animate::$16 ] -- xby=_star_cowo1 
+    ldx $1103
+  //SEG81 [33] (byte~) animate::$17 ← (byte~) animate::$16 - (byte) 1 [ animate::$17 ] -- xby=xby_minus_1 
+    dex
+  //SEG82 [34] *((word) 4355) ← (byte~) animate::$17 [ ] -- _star_cowo1=xby 
+    stx $1103
+  //SEG83 [35] (byte~) animate::$18 ← * (word) 4355 [ animate::$18 ] -- aby=_star_cowo1 
+    lda $1103
+  //SEG84 [36] if((byte~) animate::$18==(byte) 255) goto animate::@9 [ ] -- aby_eq_coby1_then_la1 
+    cmp #$ff
+    beq b9
+  //SEG85 animate::@return
+  breturn:
+  //SEG86 [37] return  [ ]
+    rts
+  //SEG87 animate::@9
+  b9:
+  //SEG88 [38] *((word) 4355) ← (byte) 25 [ ] -- _star_cowo1=coby2 
+    lda #$19
+    sta $1103
+  //SEG89 [39] (byte~) animate::$20 ← * (word) 4099 [ animate::$20 ] -- aby=_star_cowo1 
+    lda $1003
+  //SEG90 [40] (byte~) animate::$21 ← (byte~) animate::$20 + (byte) 7 [ animate::$21 ] -- aby=aby_plus_coby1 
+    clc
+    adc #$7
+  //SEG91 [41] *((word) 4099) ← (byte~) animate::$21 [ ] -- _star_cowo1=aby 
+    sta $1003
+  //SEG92 [42] (byte~) animate::$22 ← * (word) 4099 [ animate::$22 ] -- aby=_star_cowo1 
+    lda $1003
+  //SEG93 [43] if((byte~) animate::$22>=(byte) 40) goto animate::@11 [ ] -- aby_ge_coby1_then_la1 
+    cmp #$28
+    bcs b11
+    jmp breturn
+  //SEG94 animate::@11
+  b11:
+  //SEG95 [44] (byte~) animate::$24 ← * (word) 4099 [ animate::$24 ] -- aby=_star_cowo1 
+    lda $1003
+  //SEG96 [45] (byte~) animate::$25 ← (byte~) animate::$24 - (byte) 40 [ animate::$25 ] -- aby=aby_minus_coby1 
+    sec
+    sbc #$28
+  //SEG97 [46] *((word) 4099) ← (byte~) animate::$25 [ ] -- _star_cowo1=aby 
+    sta $1003
+    jmp breturn
+  //SEG98 animate::@7
+  b7:
+  //SEG99 [47] *((word) 4354) ← (byte) 0 [ ] -- _star_cowo1=coby2 
+    lda #$0
+    sta $1102
+    jmp b8
+  //SEG100 animate::@5
+  b5:
+  //SEG101 [48] *((word) 4097) ← (byte) 40 [ ] -- _star_cowo1=coby2 
+    lda #$28
+    sta $1001
+    jmp b6
+  //SEG102 animate::@3
+  b3:
+  //SEG103 [49] *((word) 4352) ← (byte) 0 [ ] -- _star_cowo1=coby2 
+    lda #$0
+    sta $1100
+    jmp b4
+  //SEG104 animate::@1
+  b1:
+  //SEG105 [50] *((word) 4096) ← (byte) 0 [ ] -- _star_cowo1=coby2 
+    lda #$0
+    sta $1000
+    jmp b2
+}
+//SEG106 render
+render: {
+  //SEG107 [51] phi from render to render::@1
+  //SEG108 [51] phi (byte*) render::colline#2 = (word) 55296 -- zpptrby1=cowo1 
+    lda #<$d800
+    sta $3
+    lda #>$d800
+    sta $3+$1
+  //SEG109 [51] phi (byte) render::y#2 = (byte) 0 -- zpby1=coby1 
+    lda #$0
+    sta $2
+  //SEG110 [51] phi from render::@3 to render::@1
+  //SEG111 [51] phi (byte*) render::colline#2 = (byte*) render::colline#1 -- register_copy 
+  //SEG112 [51] phi (byte) render::y#2 = (byte) render::y#1 -- register_copy 
+  //SEG113 render::@1
+  b1:
+  //SEG114 [52] phi from render::@1 to render::@2
+  //SEG115 [52] phi (byte) render::x#2 = (byte) 0 -- zpby1=coby1 
+    lda #$0
+    sta $5
+  //SEG116 [52] phi from render::@5 to render::@2
+  //SEG117 [52] phi (byte) render::x#2 = (byte) render::x#1 -- register_copy 
+  //SEG118 render::@2
+  b2:
+  //SEG119 [53] (byte) findcol::x#0 ← (byte) render::x#2 [ render::x#2 render::y#2 render::colline#2 ] -- zpby1=zpby2 
+    lda $5
+    sta $9
+  //SEG120 [54] (byte) findcol::y#0 ← (byte) render::y#2 [ render::x#2 render::y#2 render::colline#2 ] -- zpby1=zpby2 
+    lda $2
+    sta $a
+  //SEG121 [55] call findcol param-assignment [ render::x#2 render::y#2 findcol::return#0 render::colline#2 ]
+    jsr findcol
+  //SEG122 render::@5
+  //SEG123 [56] (byte) render::col#0 ← (byte) findcol::return#0 [ render::x#2 render::y#2 render::colline#2 render::col#0 ] -- aby=yby 
+    tya
+  //SEG124 [57] *((byte*) render::colline#2 + (byte) render::x#2) ← (byte) render::col#0 [ render::x#2 render::y#2 render::colline#2 ] -- zpptrby1_staridx_zpby1=aby 
+    ldy $5
+    sta ($3),y
+  //SEG125 [58] (byte) render::x#1 ← ++ (byte) render::x#2 [ render::x#1 render::y#2 render::colline#2 ] -- zpby1=_inc_zpby1 
+    inc $5
+  //SEG126 [59] if((byte) render::x#1<(byte) 40) goto render::@2 [ render::x#1 render::y#2 render::colline#2 ] -- zpby1_lt_coby1_then_la1 
+    lda $5
+    cmp #$28
+    bcc b2
+  //SEG127 render::@3
+  //SEG128 [60] (byte*) render::colline#1 ← (byte*) render::colline#2 + (byte) 40 [ render::colline#1 render::y#2 ] -- zpptrby1=zpptrby1_plus_coby1 
+    lda $3
+    clc
+    adc #$28
+    sta $3
+    bcc !+
+    inc $3+$1
+  !:
+  //SEG129 [61] (byte) render::y#1 ← ++ (byte) render::y#2 [ render::y#1 render::colline#1 ] -- zpby1=_inc_zpby1 
+    inc $2
+  //SEG130 [62] if((byte) render::y#1<(byte) 25) goto render::@1 [ render::y#1 render::colline#1 ] -- zpby1_lt_coby1_then_la1 
+    lda $2
+    cmp #$19
+    bcc b1
+  //SEG131 render::@return
+  //SEG132 [63] return  [ ]
+    rts
+}
+//SEG133 findcol
+findcol: {
+  //SEG134 [64] phi from findcol to findcol::@1
+  //SEG135 [64] phi (byte) findcol::mincol#11 = (byte) 0 -- yby=coby1 
+    ldy #$0
+  //SEG136 [64] phi (byte) findcol::mindiff#10 = (byte) 255 -- zpby1=coby1 
+    lda #$ff
+    sta $6
+  //SEG137 [64] phi (byte) findcol::i#12 = (byte) 0 -- xby=coby1 
+    ldx #$0
+  //SEG138 [64] phi from findcol::@13 to findcol::@1
+  //SEG139 [64] phi (byte) findcol::mincol#11 = (byte) findcol::mincol#2 -- register_copy 
+  //SEG140 [64] phi (byte) findcol::mindiff#10 = (byte) findcol::mindiff#11 -- register_copy 
+  //SEG141 [64] phi (byte) findcol::i#12 = (byte) findcol::i#1 -- register_copy 
+  //SEG142 findcol::@1
+  b1:
+  //SEG143 [65] (byte) findcol::xp#0 ← (word) 4096 *idx (byte) findcol::i#12 [ render::x#2 render::y#2 render::colline#2 findcol::i#12 findcol::x#0 findcol::xp#0 findcol::y#0 findcol::mindiff#10 findcol::mincol#11 numpoints#1 ] -- zpby1=cowo1_staridx_xby 
+    lda $1000,x
+    sta $7
+  //SEG144 [66] (byte) findcol::yp#0 ← (word) 4352 *idx (byte) findcol::i#12 [ render::x#2 render::y#2 render::colline#2 findcol::i#12 findcol::x#0 findcol::xp#0 findcol::y#0 findcol::yp#0 findcol::mindiff#10 findcol::mincol#11 numpoints#1 ] -- zpby1=cowo1_staridx_xby 
+    lda $1100,x
+    sta $b
+  //SEG145 [67] if((byte) findcol::x#0==(byte) findcol::xp#0) goto findcol::@2 [ render::x#2 render::y#2 render::colline#2 findcol::i#12 findcol::x#0 findcol::xp#0 findcol::y#0 findcol::yp#0 findcol::mindiff#10 findcol::mincol#11 numpoints#1 ] -- zpby1_eq_zpby2_then_la1 
+    lda $9
+    cmp $7
+    beq b2
+  //SEG146 findcol::@3
+  b3:
+  //SEG147 [68] if((byte) findcol::x#0<(byte) findcol::xp#0) goto findcol::@6 [ render::x#2 render::y#2 render::colline#2 findcol::i#12 findcol::x#0 findcol::xp#0 findcol::y#0 findcol::yp#0 findcol::mindiff#10 findcol::mincol#11 numpoints#1 ] -- zpby1_lt_zpby2_then_la1 
+    lda $9
+    cmp $7
+    bcc b6
+  //SEG148 findcol::@7
+  //SEG149 [69] (byte) findcol::diff#1 ← (byte) findcol::x#0 - (byte) findcol::xp#0 [ render::x#2 render::y#2 render::colline#2 findcol::i#12 findcol::x#0 findcol::diff#1 findcol::y#0 findcol::yp#0 findcol::mindiff#10 findcol::mincol#11 numpoints#1 ] -- zpby1=zpby2_minus_zpby1 
+    lda $9
+    sec
+    sbc $7
+    sta $7
+  //SEG150 [70] phi from findcol::@7 to findcol::@8
+  //SEG151 [70] phi (byte) findcol::diff#4 = (byte) findcol::diff#1 -- register_copy 
+  //SEG152 findcol::@8
+  b8:
+  //SEG153 [71] if((byte) findcol::y#0<(byte) findcol::yp#0) goto findcol::@9 [ render::x#2 render::y#2 render::colline#2 findcol::i#12 findcol::x#0 findcol::y#0 findcol::yp#0 findcol::diff#4 findcol::mindiff#10 findcol::mincol#11 numpoints#1 ] -- zpby1_lt_zpby2_then_la1 
+    lda $a
+    cmp $b
+    bcc b9
+  //SEG154 findcol::@10
+  //SEG155 [72] (byte~) findcol::$10 ← (byte) findcol::y#0 - (byte) findcol::yp#0 [ render::x#2 render::y#2 render::colline#2 findcol::i#12 findcol::x#0 findcol::y#0 findcol::diff#4 findcol::$10 findcol::mindiff#10 findcol::mincol#11 numpoints#1 ] -- aby=zpby1_minus_zpby2 
+    lda $a
+    sec
+    sbc $b
+  //SEG156 [73] (byte) findcol::diff#3 ← (byte) findcol::diff#4 + (byte~) findcol::$10 [ render::x#2 render::y#2 render::colline#2 findcol::i#12 findcol::x#0 findcol::y#0 findcol::diff#3 findcol::mindiff#10 findcol::mincol#11 numpoints#1 ] -- aby=zpby1_plus_aby 
+    clc
+    adc $7
+  //SEG157 [74] phi from findcol::@10 to findcol::@11
+  //SEG158 [74] phi (byte) findcol::diff#6 = (byte) findcol::diff#3 -- register_copy 
+  //SEG159 findcol::@11
+  b11:
+  //SEG160 [75] if((byte) findcol::diff#6<(byte) findcol::mindiff#10) goto findcol::@12 [ render::x#2 render::y#2 render::colline#2 findcol::i#12 findcol::x#0 findcol::y#0 findcol::diff#6 findcol::mindiff#10 findcol::mincol#11 numpoints#1 ] -- aby_lt_zpby1_then_la1 
+    cmp $6
+    bcc b12
+  //SEG161 [76] phi from findcol::@11 to findcol::@13
+  //SEG162 [76] phi (byte) findcol::mindiff#11 = (byte) findcol::mindiff#10 -- register_copy 
+  //SEG163 [76] phi (byte) findcol::mincol#2 = (byte) findcol::mincol#11 -- register_copy 
+  //SEG164 findcol::@13
+  b13:
+  //SEG165 [77] (byte) findcol::i#1 ← ++ (byte) findcol::i#12 [ render::x#2 render::y#2 render::colline#2 findcol::i#1 findcol::mindiff#11 findcol::mincol#2 findcol::x#0 findcol::y#0 numpoints#1 ] -- xby=_inc_xby 
+    inx
+  //SEG166 [78] if((byte) findcol::i#1<(byte) numpoints#1) goto findcol::@1 [ render::x#2 render::y#2 render::colline#2 findcol::i#1 findcol::mindiff#11 findcol::mincol#2 findcol::x#0 findcol::y#0 numpoints#1 ] -- xby_lt_zpby1_then_la1 
+    cpx $8
+    bcc b1
+  //SEG167 [79] phi from findcol::@13 to findcol::@return
+  //SEG168 [79] phi (byte) findcol::return#0 = (byte) findcol::mincol#2 -- register_copy 
+    jmp breturn
+  //SEG169 [79] phi from findcol::@2 to findcol::@return
+  breturn_from_b2:
+  //SEG170 [79] phi (byte) findcol::return#0 = (byte) 0 -- yby=coby1 
+    ldy #$0
+  //SEG171 findcol::@return
+  breturn:
+  //SEG172 [80] return  [ render::x#2 render::y#2 findcol::return#0 render::colline#2 ]
+    rts
+  //SEG173 findcol::@12
+  b12:
+  //SEG174 [81] (byte) findcol::mincol#1 ← (word) 4608 *idx (byte) findcol::i#12 [ render::x#2 render::y#2 render::colline#2 findcol::i#12 findcol::x#0 findcol::y#0 findcol::diff#6 findcol::mincol#1 numpoints#1 ] -- yby=cowo1_staridx_xby 
+    ldy $1200,x
+  //SEG175 [82] (byte~) findcol::diff#13 ← (byte) findcol::diff#6 [ render::x#2 render::y#2 render::colline#2 findcol::i#12 findcol::x#0 findcol::y#0 findcol::mincol#1 findcol::diff#13 numpoints#1 ] -- zpby1=aby 
+    sta $6
+  //SEG176 [76] phi from findcol::@12 to findcol::@13
+  //SEG177 [76] phi (byte) findcol::mindiff#11 = (byte~) findcol::diff#13 -- register_copy 
+  //SEG178 [76] phi (byte) findcol::mincol#2 = (byte) findcol::mincol#1 -- register_copy 
+    jmp b13
+  //SEG179 findcol::@9
+  b9:
+  //SEG180 [83] (byte~) findcol::$8 ← (byte) findcol::yp#0 - (byte) findcol::y#0 [ render::x#2 render::y#2 render::colline#2 findcol::i#12 findcol::x#0 findcol::y#0 findcol::diff#4 findcol::mindiff#10 findcol::mincol#11 numpoints#1 findcol::$8 ] -- aby=zpby1_minus_zpby2 
+    lda $b
+    sec
+    sbc $a
+  //SEG181 [84] (byte) findcol::diff#2 ← (byte) findcol::diff#4 + (byte~) findcol::$8 [ render::x#2 render::y#2 render::colline#2 findcol::i#12 findcol::x#0 findcol::y#0 findcol::diff#2 findcol::mindiff#10 findcol::mincol#11 numpoints#1 ] -- aby=zpby1_plus_aby 
+    clc
+    adc $7
+  //SEG182 [74] phi from findcol::@9 to findcol::@11
+  //SEG183 [74] phi (byte) findcol::diff#6 = (byte) findcol::diff#2 -- register_copy 
+    jmp b11
+  //SEG184 findcol::@6
+  b6:
+  //SEG185 [85] (byte) findcol::diff#0 ← (byte) findcol::xp#0 - (byte) findcol::x#0 [ render::x#2 render::y#2 render::colline#2 findcol::i#12 findcol::x#0 findcol::diff#0 findcol::y#0 findcol::yp#0 findcol::mindiff#10 findcol::mincol#11 numpoints#1 ] -- zpby1=zpby1_minus_zpby2 
+    lda $7
+    sec
+    sbc $9
+    sta $7
+  //SEG186 [70] phi from findcol::@6 to findcol::@8
+  //SEG187 [70] phi (byte) findcol::diff#4 = (byte) findcol::diff#0 -- register_copy 
+    jmp b8
+  //SEG188 findcol::@2
+  b2:
+  //SEG189 [86] if((byte) findcol::y#0==(byte) findcol::yp#0) goto findcol::@return [ render::x#2 render::y#2 render::colline#2 findcol::i#12 findcol::x#0 findcol::xp#0 findcol::y#0 findcol::yp#0 findcol::mindiff#10 findcol::mincol#11 numpoints#1 ] -- zpby1_eq_zpby2_then_la1 
+    lda $a
+    cmp $b
+    beq breturn_from_b2
+    jmp b3
+}
+//SEG190 initscreen
+initscreen: {
+  //SEG191 [87] phi from initscreen to initscreen::@1
+  //SEG192 [87] phi (byte*) initscreen::screen#2 = (word) 1024 -- zpptrby1=cowo1 
+    lda #<$400
+    sta $3
+    lda #>$400
+    sta $3+$1
+  //SEG193 [87] phi from initscreen::@1 to initscreen::@1
+  //SEG194 [87] phi (byte*) initscreen::screen#2 = (byte*) initscreen::screen#1 -- register_copy 
+  //SEG195 initscreen::@1
+  b1:
+  //SEG196 [88] *((byte*) initscreen::screen#2) ← (byte) 230 [ initscreen::screen#2 ] -- _star_zpptrby1=coby1 
+    ldy #$0
+    lda #$e6
+    sta ($3),y
+  //SEG197 [89] (byte*) initscreen::screen#1 ← ++ (byte*) initscreen::screen#2 [ initscreen::screen#1 ] -- zpptrby1=_inc_zpptrby1 
+    inc $3
+    bne !+
+    inc $3+$1
+  !:
+  //SEG198 [90] if((byte*) initscreen::screen#1<(word) 2024) goto initscreen::@1 [ initscreen::screen#1 ] -- zpptrby1_lt_cowo1_then_la1 
+    lda $3+$1
+    cmp #>$7e8
+    bcc b1
+    bne !+
+    lda $3
+    cmp #<$7e8
+    bcc b1
+  !:
+  //SEG199 initscreen::@return
+  //SEG200 [91] return  [ ]
+    rts
+}
+//SEG201 addpoint
+addpoint: {
+  //SEG202 [93] *((word) 4096 + (byte) numpoints#19) ← (byte) addpoint::x#6 [ numpoints#19 addpoint::y#6 addpoint::c#6 ] -- cowo1_staridx_zpby1=aby 
+    ldx $8
+    sta $1000,x
+  //SEG203 [94] *((word) 4352 + (byte) numpoints#19) ← (byte) addpoint::y#6 [ numpoints#19 addpoint::c#6 ] -- cowo1_staridx_zpby1=yby 
+    tya
+    ldy $8
+    sta $1100,y
+  //SEG204 [95] *((word) 4608 + (byte) numpoints#19) ← (byte) addpoint::c#6 [ numpoints#19 ] -- cowo1_staridx_zpby1=zpby2 
+    lda $2
+    ldx $8
+    sta $1200,x
+  //SEG205 [96] (byte) numpoints#1 ← ++ (byte) numpoints#19 [ ] -- zpby1=_inc_zpby1 
+    inc $8
+  //SEG206 addpoint::@return
   //SEG207 [97] return  [ ]
     rts
 }
@@ -8703,16 +9666,13 @@ reg byte a [ findcol::$8 ]
 
 FINAL CODE
 //SEG0 @begin
-bbegin:
 //SEG1 [0] call main param-assignment [ ]
   jsr main
 //SEG2 @end
-bend:
 //SEG3 main
 main: {
   //SEG4 [1] call addpoint param-assignment [ ]
   //SEG5 [92] phi from main to addpoint
-  addpoint_from_main:
   //SEG6 [92] phi (byte) addpoint::c#6 = (byte) 1 -- zpby1=coby1 
     lda #$1
     sta $2
@@ -8725,10 +9685,8 @@ main: {
     lda #$5
     jsr addpoint
   //SEG10 main::@3
-  b3:
   //SEG11 [2] call addpoint param-assignment [ ]
   //SEG12 [92] phi from main::@3 to addpoint
-  addpoint_from_b3:
   //SEG13 [92] phi (byte) addpoint::c#6 = (byte) 2 -- zpby1=coby1 
     lda #$2
     sta $2
@@ -8739,10 +9697,8 @@ main: {
     lda #$f
     jsr addpoint
   //SEG17 main::@4
-  b4:
   //SEG18 [3] call addpoint param-assignment [ ]
   //SEG19 [92] phi from main::@4 to addpoint
-  addpoint_from_b4:
   //SEG20 [92] phi (byte) addpoint::c#6 = (byte) 3 -- zpby1=coby1 
     lda #$3
     sta $2
@@ -8753,10 +9709,8 @@ main: {
     lda #$6
     jsr addpoint
   //SEG24 main::@5
-  b5:
   //SEG25 [4] call addpoint param-assignment [ ]
   //SEG26 [92] phi from main::@5 to addpoint
-  addpoint_from_b5:
   //SEG27 [92] phi (byte) addpoint::c#6 = (byte) 4 -- zpby1=coby1 
     lda #$4
     sta $2
@@ -8767,10 +9721,8 @@ main: {
     lda #$22
     jsr addpoint
   //SEG31 main::@6
-  b6:
   //SEG32 [5] call addpoint param-assignment [ ]
   //SEG33 [92] phi from main::@6 to addpoint
-  addpoint_from_b6:
   //SEG34 [92] phi (byte) addpoint::c#6 = (byte) 5 -- zpby1=coby1 
     lda #$5
     sta $2
@@ -8781,10 +9733,8 @@ main: {
     lda #$15
     jsr addpoint
   //SEG38 main::@7
-  b7:
   //SEG39 [6] call addpoint param-assignment [ ]
   //SEG40 [92] phi from main::@7 to addpoint
-  addpoint_from_b7:
   //SEG41 [92] phi (byte) addpoint::c#6 = (byte) 7 -- zpby1=coby1 
     lda #$7
     sta $2
@@ -8795,7 +9745,6 @@ main: {
     lda #$1f
     jsr addpoint
   //SEG45 main::@8
-  b8:
   //SEG46 [7] call initscreen param-assignment [ ]
     jsr initscreen
   //SEG47 main::@1
@@ -8803,15 +9752,12 @@ main: {
   //SEG48 [8] call render param-assignment [ ]
     jsr render
   //SEG49 main::@10
-  b10:
   //SEG50 [9] call animate param-assignment [ ]
     jsr animate
   //SEG51 main::@11
-  b11:
   //SEG52 [10] if(true) goto main::@1 [ ] -- true_then_la1 
     jmp b1
   //SEG53 main::@return
-  breturn:
   //SEG54 [11] return  [ ]
     rts
 }
@@ -8943,7 +9889,6 @@ animate: {
 //SEG106 render
 render: {
   //SEG107 [51] phi from render to render::@1
-  b1_from_render:
   //SEG108 [51] phi (byte*) render::colline#2 = (word) 55296 -- zpptrby1=cowo1 
     lda #<$d800
     sta $3
@@ -8953,18 +9898,15 @@ render: {
     lda #$0
     sta $2
   //SEG110 [51] phi from render::@3 to render::@1
-  b1_from_b3:
   //SEG111 [51] phi (byte*) render::colline#2 = (byte*) render::colline#1 -- register_copy 
   //SEG112 [51] phi (byte) render::y#2 = (byte) render::y#1 -- register_copy 
   //SEG113 render::@1
   b1:
   //SEG114 [52] phi from render::@1 to render::@2
-  b2_from_b1:
   //SEG115 [52] phi (byte) render::x#2 = (byte) 0 -- zpby1=coby1 
     lda #$0
     sta $5
   //SEG116 [52] phi from render::@5 to render::@2
-  b2_from_b5:
   //SEG117 [52] phi (byte) render::x#2 = (byte) render::x#1 -- register_copy 
   //SEG118 render::@2
   b2:
@@ -8977,7 +9919,6 @@ render: {
   //SEG121 [55] call findcol param-assignment [ render::x#2 render::y#2 findcol::return#0 render::colline#2 ]
     jsr findcol
   //SEG122 render::@5
-  b5:
   //SEG123 [56] (byte) render::col#0 ← (byte) findcol::return#0 [ render::x#2 render::y#2 render::colline#2 render::col#0 ] -- aby=yby 
     tya
   //SEG124 [57] *((byte*) render::colline#2 + (byte) render::x#2) ← (byte) render::col#0 [ render::x#2 render::y#2 render::colline#2 ] -- zpptrby1_staridx_zpby1=aby 
@@ -8988,9 +9929,8 @@ render: {
   //SEG126 [59] if((byte) render::x#1<(byte) 40) goto render::@2 [ render::x#1 render::y#2 render::colline#2 ] -- zpby1_lt_coby1_then_la1 
     lda $5
     cmp #$28
-    bcc b2_from_b5
+    bcc b2
   //SEG127 render::@3
-  b3:
   //SEG128 [60] (byte*) render::colline#1 ← (byte*) render::colline#2 + (byte) 40 [ render::colline#1 render::y#2 ] -- zpptrby1=zpptrby1_plus_coby1 
     lda $3
     clc
@@ -9004,16 +9944,14 @@ render: {
   //SEG130 [62] if((byte) render::y#1<(byte) 25) goto render::@1 [ render::y#1 render::colline#1 ] -- zpby1_lt_coby1_then_la1 
     lda $2
     cmp #$19
-    bcc b1_from_b3
+    bcc b1
   //SEG131 render::@return
-  breturn:
   //SEG132 [63] return  [ ]
     rts
 }
 //SEG133 findcol
 findcol: {
   //SEG134 [64] phi from findcol to findcol::@1
-  b1_from_findcol:
   //SEG135 [64] phi (byte) findcol::mincol#11 = (byte) 0 -- yby=coby1 
     ldy #$0
   //SEG136 [64] phi (byte) findcol::mindiff#10 = (byte) 255 -- zpby1=coby1 
@@ -9022,7 +9960,6 @@ findcol: {
   //SEG137 [64] phi (byte) findcol::i#12 = (byte) 0 -- xby=coby1 
     ldx #$0
   //SEG138 [64] phi from findcol::@13 to findcol::@1
-  b1_from_b13:
   //SEG139 [64] phi (byte) findcol::mincol#11 = (byte) findcol::mincol#2 -- register_copy 
   //SEG140 [64] phi (byte) findcol::mindiff#10 = (byte) findcol::mindiff#11 -- register_copy 
   //SEG141 [64] phi (byte) findcol::i#12 = (byte) findcol::i#1 -- register_copy 
@@ -9045,14 +9982,12 @@ findcol: {
     cmp $7
     bcc b6
   //SEG148 findcol::@7
-  b7:
   //SEG149 [69] (byte) findcol::diff#1 ← (byte) findcol::x#0 - (byte) findcol::xp#0 [ render::x#2 render::y#2 render::colline#2 findcol::i#12 findcol::x#0 findcol::diff#1 findcol::y#0 findcol::yp#0 findcol::mindiff#10 findcol::mincol#11 numpoints#1 ] -- zpby1=zpby2_minus_zpby1 
     lda $9
     sec
     sbc $7
     sta $7
   //SEG150 [70] phi from findcol::@7 to findcol::@8
-  b8_from_b7:
   //SEG151 [70] phi (byte) findcol::diff#4 = (byte) findcol::diff#1 -- register_copy 
   //SEG152 findcol::@8
   b8:
@@ -9061,7 +9996,6 @@ findcol: {
     cmp $b
     bcc b9
   //SEG154 findcol::@10
-  b10:
   //SEG155 [72] (byte~) findcol::$10 ← (byte) findcol::y#0 - (byte) findcol::yp#0 [ render::x#2 render::y#2 render::colline#2 findcol::i#12 findcol::x#0 findcol::y#0 findcol::diff#4 findcol::$10 findcol::mindiff#10 findcol::mincol#11 numpoints#1 ] -- aby=zpby1_minus_zpby2 
     lda $a
     sec
@@ -9070,7 +10004,6 @@ findcol: {
     clc
     adc $7
   //SEG157 [74] phi from findcol::@10 to findcol::@11
-  b11_from_b10:
   //SEG158 [74] phi (byte) findcol::diff#6 = (byte) findcol::diff#3 -- register_copy 
   //SEG159 findcol::@11
   b11:
@@ -9078,7 +10011,6 @@ findcol: {
     cmp $6
     bcc b12
   //SEG161 [76] phi from findcol::@11 to findcol::@13
-  b13_from_b11:
   //SEG162 [76] phi (byte) findcol::mindiff#11 = (byte) findcol::mindiff#10 -- register_copy 
   //SEG163 [76] phi (byte) findcol::mincol#2 = (byte) findcol::mincol#11 -- register_copy 
   //SEG164 findcol::@13
@@ -9087,9 +10019,8 @@ findcol: {
     inx
   //SEG166 [78] if((byte) findcol::i#1<(byte) numpoints#1) goto findcol::@1 [ render::x#2 render::y#2 render::colline#2 findcol::i#1 findcol::mindiff#11 findcol::mincol#2 findcol::x#0 findcol::y#0 numpoints#1 ] -- xby_lt_zpby1_then_la1 
     cpx $8
-    bcc b1_from_b13
+    bcc b1
   //SEG167 [79] phi from findcol::@13 to findcol::@return
-  breturn_from_b13:
   //SEG168 [79] phi (byte) findcol::return#0 = (byte) findcol::mincol#2 -- register_copy 
     jmp breturn
   //SEG169 [79] phi from findcol::@2 to findcol::@return
@@ -9107,7 +10038,6 @@ findcol: {
   //SEG175 [82] (byte~) findcol::diff#13 ← (byte) findcol::diff#6 [ render::x#2 render::y#2 render::colline#2 findcol::i#12 findcol::x#0 findcol::y#0 findcol::mincol#1 findcol::diff#13 numpoints#1 ] -- zpby1=aby 
     sta $6
   //SEG176 [76] phi from findcol::@12 to findcol::@13
-  b13_from_b12:
   //SEG177 [76] phi (byte) findcol::mindiff#11 = (byte~) findcol::diff#13 -- register_copy 
   //SEG178 [76] phi (byte) findcol::mincol#2 = (byte) findcol::mincol#1 -- register_copy 
     jmp b13
@@ -9121,7 +10051,6 @@ findcol: {
     clc
     adc $7
   //SEG182 [74] phi from findcol::@9 to findcol::@11
-  b11_from_b9:
   //SEG183 [74] phi (byte) findcol::diff#6 = (byte) findcol::diff#2 -- register_copy 
     jmp b11
   //SEG184 findcol::@6
@@ -9132,7 +10061,6 @@ findcol: {
     sbc $9
     sta $7
   //SEG186 [70] phi from findcol::@6 to findcol::@8
-  b8_from_b6:
   //SEG187 [70] phi (byte) findcol::diff#4 = (byte) findcol::diff#0 -- register_copy 
     jmp b8
   //SEG188 findcol::@2
@@ -9146,14 +10074,12 @@ findcol: {
 //SEG190 initscreen
 initscreen: {
   //SEG191 [87] phi from initscreen to initscreen::@1
-  b1_from_initscreen:
   //SEG192 [87] phi (byte*) initscreen::screen#2 = (word) 1024 -- zpptrby1=cowo1 
     lda #<$400
     sta $3
     lda #>$400
     sta $3+$1
   //SEG193 [87] phi from initscreen::@1 to initscreen::@1
-  b1_from_b1:
   //SEG194 [87] phi (byte*) initscreen::screen#2 = (byte*) initscreen::screen#1 -- register_copy 
   //SEG195 initscreen::@1
   b1:
@@ -9169,14 +10095,13 @@ initscreen: {
   //SEG198 [90] if((byte*) initscreen::screen#1<(word) 2024) goto initscreen::@1 [ initscreen::screen#1 ] -- zpptrby1_lt_cowo1_then_la1 
     lda $3+$1
     cmp #>$7e8
-    bcc b1_from_b1
+    bcc b1
     bne !+
     lda $3
     cmp #<$7e8
-    bcc b1_from_b1
+    bcc b1
   !:
   //SEG199 initscreen::@return
-  breturn:
   //SEG200 [91] return  [ ]
     rts
 }
@@ -9196,7 +10121,6 @@ addpoint: {
   //SEG205 [96] (byte) numpoints#1 ← ++ (byte) numpoints#19 [ ] -- zpby1=_inc_zpby1 
     inc $8
   //SEG206 addpoint::@return
-  breturn:
   //SEG207 [97] return  [ ]
     rts
 }

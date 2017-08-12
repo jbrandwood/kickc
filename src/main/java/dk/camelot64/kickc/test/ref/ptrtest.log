@@ -2129,7 +2129,7 @@ Removing instruction jmp b1
 Removing instruction jmp breturn
 Removing instruction jmp b1
 Removing instruction jmp breturn
-Succesful ASM optimization Pass5NextJumpElimination
+Succesful ASM optimization Pass6NextJumpElimination
 ASSEMBLER
 //SEG0 @begin
 bbegin:
@@ -2299,6 +2299,176 @@ lvalue: {
     jmp b1
 }
 
+Removing instruction bbegin:
+Removing instruction bend:
+Removing instruction b1:
+Removing instruction b2:
+Removing instruction b3:
+Removing instruction breturn:
+Removing instruction b1_from_lvaluevar:
+Removing instruction breturn:
+Removing instruction b1_from_b2:
+Removing instruction b1_from_rvaluevar:
+Removing instruction breturn:
+Removing instruction b1_from_b2:
+Removing instruction b1_from_rvalue:
+Removing instruction breturn:
+Removing instruction b1_from_b2:
+Removing instruction b1_from_lvalue:
+Removing instruction breturn:
+Removing instruction b1_from_b2:
+Succesful ASM optimization Pass6UnusedLabelElimination
+ASSEMBLER
+//SEG0 @begin
+//SEG1 [0] call main param-assignment [ ]
+  jsr main
+//SEG2 @end
+//SEG3 main
+main: {
+  //SEG4 [1] call lvalue param-assignment [ ]
+    jsr lvalue
+  //SEG5 main::@1
+  //SEG6 [2] call rvalue param-assignment [ ]
+    jsr rvalue
+  //SEG7 main::@2
+  //SEG8 [3] call rvaluevar param-assignment [ ]
+    jsr rvaluevar
+  //SEG9 main::@3
+  //SEG10 [4] call lvaluevar param-assignment [ ]
+    jsr lvaluevar
+  //SEG11 main::@return
+  //SEG12 [5] return  [ ]
+    rts
+}
+//SEG13 lvaluevar
+lvaluevar: {
+  //SEG14 [6] phi from lvaluevar to lvaluevar::@1
+  //SEG15 [6] phi (byte*) lvaluevar::screen#2 = (word) 1024 -- zpptrby1=cowo1 
+    lda #<$400
+    sta $2
+    lda #>$400
+    sta $2+$1
+  //SEG16 [6] phi (byte) lvaluevar::i#2 = (byte) 2 -- xby=coby1 
+    ldx #$2
+  //SEG17 lvaluevar::@1
+  b1:
+  //SEG18 [7] if((byte) lvaluevar::i#2<(byte) 10) goto lvaluevar::@2 [ lvaluevar::i#2 lvaluevar::screen#2 ] -- xby_lt_coby1_then_la1 
+    cpx #$a
+    bcc b2
+  //SEG19 lvaluevar::@return
+  //SEG20 [8] return  [ ]
+    rts
+  //SEG21 lvaluevar::@2
+  b2:
+  //SEG22 [9] *((byte*) lvaluevar::screen#2) ← (byte) 4 [ lvaluevar::i#2 lvaluevar::screen#2 ] -- _star_zpptrby1=coby1 
+    ldy #$0
+    lda #$4
+    sta ($2),y
+  //SEG23 [10] (byte*) lvaluevar::screen#1 ← ++ (byte*) lvaluevar::screen#2 [ lvaluevar::screen#1 lvaluevar::i#2 ] -- zpptrby1=_inc_zpptrby1 
+    inc $2
+    bne !+
+    inc $2+$1
+  !:
+  //SEG24 [11] (byte) lvaluevar::i#1 ← ++ (byte) lvaluevar::i#2 [ lvaluevar::i#1 lvaluevar::screen#1 ] -- xby=_inc_xby 
+    inx
+  //SEG25 [6] phi from lvaluevar::@2 to lvaluevar::@1
+  //SEG26 [6] phi (byte*) lvaluevar::screen#2 = (byte*) lvaluevar::screen#1 -- register_copy 
+  //SEG27 [6] phi (byte) lvaluevar::i#2 = (byte) lvaluevar::i#1 -- register_copy 
+    jmp b1
+}
+//SEG28 rvaluevar
+rvaluevar: {
+  //SEG29 [12] phi from rvaluevar to rvaluevar::@1
+  //SEG30 [12] phi (byte*) rvaluevar::screen#2 = (word) 1024 -- zpptrby1=cowo1 
+    lda #<$400
+    sta $2
+    lda #>$400
+    sta $2+$1
+  //SEG31 [12] phi (byte) rvaluevar::i#2 = (byte) 2 -- xby=coby1 
+    ldx #$2
+  //SEG32 rvaluevar::@1
+  b1:
+  //SEG33 [13] if((byte) rvaluevar::i#2<(byte) 10) goto rvaluevar::@2 [ rvaluevar::i#2 rvaluevar::screen#2 ] -- xby_lt_coby1_then_la1 
+    cpx #$a
+    bcc b2
+  //SEG34 rvaluevar::@return
+  //SEG35 [14] return  [ ]
+    rts
+  //SEG36 rvaluevar::@2
+  b2:
+  //SEG37 [15] (byte) rvaluevar::b#0 ← * (byte*) rvaluevar::screen#2 [ rvaluevar::i#2 rvaluevar::screen#2 ] -- aby=_star_zpptrby1 
+    ldy #$0
+    lda ($2),y
+  //SEG38 [16] (byte*) rvaluevar::screen#1 ← ++ (byte*) rvaluevar::screen#2 [ rvaluevar::screen#1 rvaluevar::i#2 ] -- zpptrby1=_inc_zpptrby1 
+    inc $2
+    bne !+
+    inc $2+$1
+  !:
+  //SEG39 [17] (byte) rvaluevar::i#1 ← ++ (byte) rvaluevar::i#2 [ rvaluevar::i#1 rvaluevar::screen#1 ] -- xby=_inc_xby 
+    inx
+  //SEG40 [12] phi from rvaluevar::@2 to rvaluevar::@1
+  //SEG41 [12] phi (byte*) rvaluevar::screen#2 = (byte*) rvaluevar::screen#1 -- register_copy 
+  //SEG42 [12] phi (byte) rvaluevar::i#2 = (byte) rvaluevar::i#1 -- register_copy 
+    jmp b1
+}
+//SEG43 rvalue
+rvalue: {
+  //SEG44 [18] (byte) rvalue::b#0 ← * (word) 1024 [ ] -- aby=_star_cowo1 
+    lda $400
+  //SEG45 [19] (byte) rvalue::b#1 ← * (word) 1025 [ ] -- aby=_star_cowo1 
+    lda $401
+  //SEG46 [20] phi from rvalue to rvalue::@1
+  //SEG47 [20] phi (byte) rvalue::i#2 = (byte) 2 -- xby=coby1 
+    ldx #$2
+  //SEG48 rvalue::@1
+  b1:
+  //SEG49 [21] if((byte) rvalue::i#2<(byte) 10) goto rvalue::@2 [ rvalue::i#2 ] -- xby_lt_coby1_then_la1 
+    cpx #$a
+    bcc b2
+  //SEG50 rvalue::@return
+  //SEG51 [22] return  [ ]
+    rts
+  //SEG52 rvalue::@2
+  b2:
+  //SEG53 [23] (byte) rvalue::b#2 ← (word) 1024 *idx (byte) rvalue::i#2 [ rvalue::i#2 ] -- aby=cowo1_staridx_xby 
+    lda $400,x
+  //SEG54 [24] (byte) rvalue::i#1 ← ++ (byte) rvalue::i#2 [ rvalue::i#1 ] -- xby=_inc_xby 
+    inx
+  //SEG55 [20] phi from rvalue::@2 to rvalue::@1
+  //SEG56 [20] phi (byte) rvalue::i#2 = (byte) rvalue::i#1 -- register_copy 
+    jmp b1
+}
+//SEG57 lvalue
+lvalue: {
+  //SEG58 [25] *((word) 1024) ← (byte) 1 [ ] -- _star_cowo1=coby2 
+    lda #$1
+    sta $400
+  //SEG59 [26] *((word) 1025) ← (byte) 2 [ ] -- _star_cowo1=coby2 
+    lda #$2
+    sta $401
+  //SEG60 [27] phi from lvalue to lvalue::@1
+  //SEG61 [27] phi (byte) lvalue::i#2 = (byte) 2 -- xby=coby1 
+    ldx #$2
+  //SEG62 lvalue::@1
+  b1:
+  //SEG63 [28] if((byte) lvalue::i#2<(byte) 10) goto lvalue::@2 [ lvalue::i#2 ] -- xby_lt_coby1_then_la1 
+    cpx #$a
+    bcc b2
+  //SEG64 lvalue::@return
+  //SEG65 [29] return  [ ]
+    rts
+  //SEG66 lvalue::@2
+  b2:
+  //SEG67 [30] *((word) 1024 + (byte) lvalue::i#2) ← (byte) 3 [ lvalue::i#2 ] -- cowo1_staridx_xby=coby2 
+    lda #$3
+    sta $400,x
+  //SEG68 [31] (byte) lvalue::i#1 ← ++ (byte) lvalue::i#2 [ lvalue::i#1 ] -- xby=_inc_xby 
+    inx
+  //SEG69 [27] phi from lvalue::@2 to lvalue::@1
+  //SEG70 [27] phi (byte) lvalue::i#2 = (byte) lvalue::i#1 -- register_copy 
+    jmp b1
+}
+
 FINAL SYMBOL TABLE
 (label) @begin
 (label) @end
@@ -2363,36 +2533,29 @@ reg byte a [ rvalue::b#2 ]
 
 FINAL CODE
 //SEG0 @begin
-bbegin:
 //SEG1 [0] call main param-assignment [ ]
   jsr main
 //SEG2 @end
-bend:
 //SEG3 main
 main: {
   //SEG4 [1] call lvalue param-assignment [ ]
     jsr lvalue
   //SEG5 main::@1
-  b1:
   //SEG6 [2] call rvalue param-assignment [ ]
     jsr rvalue
   //SEG7 main::@2
-  b2:
   //SEG8 [3] call rvaluevar param-assignment [ ]
     jsr rvaluevar
   //SEG9 main::@3
-  b3:
   //SEG10 [4] call lvaluevar param-assignment [ ]
     jsr lvaluevar
   //SEG11 main::@return
-  breturn:
   //SEG12 [5] return  [ ]
     rts
 }
 //SEG13 lvaluevar
 lvaluevar: {
   //SEG14 [6] phi from lvaluevar to lvaluevar::@1
-  b1_from_lvaluevar:
   //SEG15 [6] phi (byte*) lvaluevar::screen#2 = (word) 1024 -- zpptrby1=cowo1 
     lda #<$400
     sta $2
@@ -2406,7 +2569,6 @@ lvaluevar: {
     cpx #$a
     bcc b2
   //SEG19 lvaluevar::@return
-  breturn:
   //SEG20 [8] return  [ ]
     rts
   //SEG21 lvaluevar::@2
@@ -2423,7 +2585,6 @@ lvaluevar: {
   //SEG24 [11] (byte) lvaluevar::i#1 ← ++ (byte) lvaluevar::i#2 [ lvaluevar::i#1 lvaluevar::screen#1 ] -- xby=_inc_xby 
     inx
   //SEG25 [6] phi from lvaluevar::@2 to lvaluevar::@1
-  b1_from_b2:
   //SEG26 [6] phi (byte*) lvaluevar::screen#2 = (byte*) lvaluevar::screen#1 -- register_copy 
   //SEG27 [6] phi (byte) lvaluevar::i#2 = (byte) lvaluevar::i#1 -- register_copy 
     jmp b1
@@ -2431,7 +2592,6 @@ lvaluevar: {
 //SEG28 rvaluevar
 rvaluevar: {
   //SEG29 [12] phi from rvaluevar to rvaluevar::@1
-  b1_from_rvaluevar:
   //SEG30 [12] phi (byte*) rvaluevar::screen#2 = (word) 1024 -- zpptrby1=cowo1 
     lda #<$400
     sta $2
@@ -2445,7 +2605,6 @@ rvaluevar: {
     cpx #$a
     bcc b2
   //SEG34 rvaluevar::@return
-  breturn:
   //SEG35 [14] return  [ ]
     rts
   //SEG36 rvaluevar::@2
@@ -2461,7 +2620,6 @@ rvaluevar: {
   //SEG39 [17] (byte) rvaluevar::i#1 ← ++ (byte) rvaluevar::i#2 [ rvaluevar::i#1 rvaluevar::screen#1 ] -- xby=_inc_xby 
     inx
   //SEG40 [12] phi from rvaluevar::@2 to rvaluevar::@1
-  b1_from_b2:
   //SEG41 [12] phi (byte*) rvaluevar::screen#2 = (byte*) rvaluevar::screen#1 -- register_copy 
   //SEG42 [12] phi (byte) rvaluevar::i#2 = (byte) rvaluevar::i#1 -- register_copy 
     jmp b1
@@ -2473,7 +2631,6 @@ rvalue: {
   //SEG45 [19] (byte) rvalue::b#1 ← * (word) 1025 [ ] -- aby=_star_cowo1 
     lda $401
   //SEG46 [20] phi from rvalue to rvalue::@1
-  b1_from_rvalue:
   //SEG47 [20] phi (byte) rvalue::i#2 = (byte) 2 -- xby=coby1 
     ldx #$2
   //SEG48 rvalue::@1
@@ -2482,7 +2639,6 @@ rvalue: {
     cpx #$a
     bcc b2
   //SEG50 rvalue::@return
-  breturn:
   //SEG51 [22] return  [ ]
     rts
   //SEG52 rvalue::@2
@@ -2492,7 +2648,6 @@ rvalue: {
   //SEG54 [24] (byte) rvalue::i#1 ← ++ (byte) rvalue::i#2 [ rvalue::i#1 ] -- xby=_inc_xby 
     inx
   //SEG55 [20] phi from rvalue::@2 to rvalue::@1
-  b1_from_b2:
   //SEG56 [20] phi (byte) rvalue::i#2 = (byte) rvalue::i#1 -- register_copy 
     jmp b1
 }
@@ -2505,7 +2660,6 @@ lvalue: {
     lda #$2
     sta $401
   //SEG60 [27] phi from lvalue to lvalue::@1
-  b1_from_lvalue:
   //SEG61 [27] phi (byte) lvalue::i#2 = (byte) 2 -- xby=coby1 
     ldx #$2
   //SEG62 lvalue::@1
@@ -2514,7 +2668,6 @@ lvalue: {
     cpx #$a
     bcc b2
   //SEG64 lvalue::@return
-  breturn:
   //SEG65 [29] return  [ ]
     rts
   //SEG66 lvalue::@2
@@ -2525,7 +2678,6 @@ lvalue: {
   //SEG68 [31] (byte) lvalue::i#1 ← ++ (byte) lvalue::i#2 [ lvalue::i#1 ] -- xby=_inc_xby 
     inx
   //SEG69 [27] phi from lvalue::@2 to lvalue::@1
-  b1_from_b2:
   //SEG70 [27] phi (byte) lvalue::i#2 = (byte) lvalue::i#1 -- register_copy 
     jmp b1
 }

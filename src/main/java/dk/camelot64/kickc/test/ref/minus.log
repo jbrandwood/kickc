@@ -355,7 +355,7 @@ Uplift Scope [] 31.17: zp byte:2 [ i#2 i#1 ] 22: zp byte:3 [ $1 ]
 Uplifting [] best 285 combination reg byte x [ i#2 i#1 ] reg byte a [ $1 ] 
 Removing instruction jmp b1
 Removing instruction jmp bend
-Succesful ASM optimization Pass5NextJumpElimination
+Succesful ASM optimization Pass6NextJumpElimination
 ASSEMBLER
 //SEG0 @begin
 bbegin:
@@ -383,17 +383,18 @@ b1:
 //SEG10 @end
 bend:
 
-Removing instruction jmp b1
-Succesful ASM optimization Pass5NextJumpElimination
+Replacing label b1_from_b1 with b1
+Removing instruction b1_from_bbegin:
+Removing instruction b1_from_b1:
+Succesful ASM optimization Pass6RedundantLabelElimination
 ASSEMBLER
 //SEG0 @begin
 bbegin:
 //SEG1 [0] phi from @begin to @1
-b1_from_bbegin:
 //SEG2 [0] phi (byte) i#2 = (byte) 5 -- xby=coby1 
   ldx #$5
+  jmp b1
 //SEG3 [0] phi from @1 to @1
-b1_from_b1:
 //SEG4 [0] phi (byte) i#2 = (byte) i#1 -- register_copy 
 //SEG5 @1
 b1:
@@ -407,9 +408,59 @@ b1:
   inx
 //SEG9 [4] if((byte) i#1<(byte) 10) goto @1 [ i#1 ] -- xby_lt_coby1_then_la1 
   cpx #$a
-  bcc b1_from_b1
+  bcc b1
 //SEG10 @end
 bend:
+
+Removing instruction bbegin:
+Removing instruction bend:
+Succesful ASM optimization Pass6UnusedLabelElimination
+ASSEMBLER
+//SEG0 @begin
+//SEG1 [0] phi from @begin to @1
+//SEG2 [0] phi (byte) i#2 = (byte) 5 -- xby=coby1 
+  ldx #$5
+  jmp b1
+//SEG3 [0] phi from @1 to @1
+//SEG4 [0] phi (byte) i#2 = (byte) i#1 -- register_copy 
+//SEG5 @1
+b1:
+//SEG6 [1] (byte~) $1 ← (byte) i#2 + (byte) 4 [ i#2 $1 ] -- aby=xby_plus_coby1 
+  txa
+  clc
+  adc #$4
+//SEG7 [2] *((word) 4352 + (byte) i#2) ← (byte~) $1 [ i#2 ] -- cowo1_staridx_xby=aby 
+  sta $1100,x
+//SEG8 [3] (byte) i#1 ← (byte) i#2 + (byte) 1 [ i#1 ] -- xby=xby_plus_1 
+  inx
+//SEG9 [4] if((byte) i#1<(byte) 10) goto @1 [ i#1 ] -- xby_lt_coby1_then_la1 
+  cpx #$a
+  bcc b1
+//SEG10 @end
+
+Removing instruction jmp b1
+Succesful ASM optimization Pass6NextJumpElimination
+ASSEMBLER
+//SEG0 @begin
+//SEG1 [0] phi from @begin to @1
+//SEG2 [0] phi (byte) i#2 = (byte) 5 -- xby=coby1 
+  ldx #$5
+//SEG3 [0] phi from @1 to @1
+//SEG4 [0] phi (byte) i#2 = (byte) i#1 -- register_copy 
+//SEG5 @1
+b1:
+//SEG6 [1] (byte~) $1 ← (byte) i#2 + (byte) 4 [ i#2 $1 ] -- aby=xby_plus_coby1 
+  txa
+  clc
+  adc #$4
+//SEG7 [2] *((word) 4352 + (byte) i#2) ← (byte~) $1 [ i#2 ] -- cowo1_staridx_xby=aby 
+  sta $1100,x
+//SEG8 [3] (byte) i#1 ← (byte) i#2 + (byte) 1 [ i#1 ] -- xby=xby_plus_1 
+  inx
+//SEG9 [4] if((byte) i#1<(byte) 10) goto @1 [ i#1 ] -- xby_lt_coby1_then_la1 
+  cpx #$a
+  bcc b1
+//SEG10 @end
 
 FINAL SYMBOL TABLE
 (byte~) $1 reg byte a 22.0
@@ -426,13 +477,10 @@ reg byte a [ $1 ]
 
 FINAL CODE
 //SEG0 @begin
-bbegin:
 //SEG1 [0] phi from @begin to @1
-b1_from_bbegin:
 //SEG2 [0] phi (byte) i#2 = (byte) 5 -- xby=coby1 
   ldx #$5
 //SEG3 [0] phi from @1 to @1
-b1_from_b1:
 //SEG4 [0] phi (byte) i#2 = (byte) i#1 -- register_copy 
 //SEG5 @1
 b1:
@@ -446,7 +494,6 @@ b1:
   inx
 //SEG9 [4] if((byte) i#1<(byte) 10) goto @1 [ i#1 ] -- xby_lt_coby1_then_la1 
   cpx #$a
-  bcc b1_from_b1
+  bcc b1
 //SEG10 @end
-bend:
 

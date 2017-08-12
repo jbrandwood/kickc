@@ -51,4 +51,8 @@ public class AsmInstruction implements AsmLine {
    public void setIndex(int index) {
       this.index = index;
    }
+
+   public void setParameter(String parameter) {
+      this.parameter = parameter;
+   }
 }

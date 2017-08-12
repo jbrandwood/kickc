@@ -442,7 +442,7 @@ Uplifting [] best 405 combination reg byte a [ s#2 s#4 s#1 ] reg byte x [ i#2 i#
 Removing instruction jmp b1
 Removing instruction jmp b3
 Removing instruction jmp bend
-Succesful ASM optimization Pass5NextJumpElimination
+Succesful ASM optimization Pass6NextJumpElimination
 ASSEMBLER
 //SEG0 @begin
 bbegin:
@@ -487,19 +487,22 @@ b3_from_b2:
 //SEG18 [2] phi (byte) s#4 = (byte) s#1 -- register_copy 
   jmp b3
 
-Removing instruction jmp b1
-Succesful ASM optimization Pass5NextJumpElimination
+Replacing label b1_from_b3 with b1
+Removing instruction b1_from_bbegin:
+Removing instruction b1_from_b3:
+Removing instruction b3_from_b1:
+Removing instruction bend:
+Succesful ASM optimization Pass6RedundantLabelElimination
 ASSEMBLER
 //SEG0 @begin
 bbegin:
 //SEG1 [0] phi from @begin to @1
-b1_from_bbegin:
 //SEG2 [0] phi (byte) s#2 = (byte) 0 -- aby=coby1 
   lda #$0
 //SEG3 [0] phi (byte) i#2 = (byte) 10 -- xby=coby1 
   ldx #$a
+  jmp b1
 //SEG4 [0] phi from @3 to @1
-b1_from_b3:
 //SEG5 [0] phi (byte) s#2 = (byte) s#4 -- register_copy 
 //SEG6 [0] phi (byte) i#2 = (byte) i#1 -- register_copy 
 //SEG7 @1
@@ -510,7 +513,6 @@ b1:
   bcs b2
 !:
 //SEG9 [2] phi from @1 to @3
-b3_from_b1:
 //SEG10 [2] phi (byte) s#4 = (byte) s#2 -- register_copy 
 //SEG11 @3
 b3:
@@ -518,9 +520,8 @@ b3:
   dex
 //SEG13 [4] if((byte) i#1>(byte) 0) goto @1 [ i#1 s#4 ] -- xby_gt_0_then_la1 
   cpx #$0
-  bne b1_from_b3
+  bne b1
 //SEG14 @end
-bend:
 //SEG15 @2
 b2:
 //SEG16 [5] (byte) s#1 ← (byte) s#2 + (byte) i#2 [ i#2 s#1 ] -- aby=aby_plus_xby 
@@ -529,6 +530,86 @@ b2:
   adc $ff
 //SEG17 [2] phi from @2 to @3
 b3_from_b2:
+//SEG18 [2] phi (byte) s#4 = (byte) s#1 -- register_copy 
+  jmp b3
+
+Removing instruction bbegin:
+Removing instruction b3_from_b2:
+Succesful ASM optimization Pass6UnusedLabelElimination
+ASSEMBLER
+//SEG0 @begin
+//SEG1 [0] phi from @begin to @1
+//SEG2 [0] phi (byte) s#2 = (byte) 0 -- aby=coby1 
+  lda #$0
+//SEG3 [0] phi (byte) i#2 = (byte) 10 -- xby=coby1 
+  ldx #$a
+  jmp b1
+//SEG4 [0] phi from @3 to @1
+//SEG5 [0] phi (byte) s#2 = (byte) s#4 -- register_copy 
+//SEG6 [0] phi (byte) i#2 = (byte) i#1 -- register_copy 
+//SEG7 @1
+b1:
+//SEG8 [1] if((byte) i#2>(byte) 5) goto @2 [ i#2 s#2 ] -- xby_gt_coby1_then_la1 
+  cpx #$5
+  beq !+
+  bcs b2
+!:
+//SEG9 [2] phi from @1 to @3
+//SEG10 [2] phi (byte) s#4 = (byte) s#2 -- register_copy 
+//SEG11 @3
+b3:
+//SEG12 [3] (byte) i#1 ← -- (byte) i#2 [ i#1 s#4 ] -- xby=_dec_xby 
+  dex
+//SEG13 [4] if((byte) i#1>(byte) 0) goto @1 [ i#1 s#4 ] -- xby_gt_0_then_la1 
+  cpx #$0
+  bne b1
+//SEG14 @end
+//SEG15 @2
+b2:
+//SEG16 [5] (byte) s#1 ← (byte) s#2 + (byte) i#2 [ i#2 s#1 ] -- aby=aby_plus_xby 
+  stx $ff
+  clc
+  adc $ff
+//SEG17 [2] phi from @2 to @3
+//SEG18 [2] phi (byte) s#4 = (byte) s#1 -- register_copy 
+  jmp b3
+
+Removing instruction jmp b1
+Succesful ASM optimization Pass6NextJumpElimination
+ASSEMBLER
+//SEG0 @begin
+//SEG1 [0] phi from @begin to @1
+//SEG2 [0] phi (byte) s#2 = (byte) 0 -- aby=coby1 
+  lda #$0
+//SEG3 [0] phi (byte) i#2 = (byte) 10 -- xby=coby1 
+  ldx #$a
+//SEG4 [0] phi from @3 to @1
+//SEG5 [0] phi (byte) s#2 = (byte) s#4 -- register_copy 
+//SEG6 [0] phi (byte) i#2 = (byte) i#1 -- register_copy 
+//SEG7 @1
+b1:
+//SEG8 [1] if((byte) i#2>(byte) 5) goto @2 [ i#2 s#2 ] -- xby_gt_coby1_then_la1 
+  cpx #$5
+  beq !+
+  bcs b2
+!:
+//SEG9 [2] phi from @1 to @3
+//SEG10 [2] phi (byte) s#4 = (byte) s#2 -- register_copy 
+//SEG11 @3
+b3:
+//SEG12 [3] (byte) i#1 ← -- (byte) i#2 [ i#1 s#4 ] -- xby=_dec_xby 
+  dex
+//SEG13 [4] if((byte) i#1>(byte) 0) goto @1 [ i#1 s#4 ] -- xby_gt_0_then_la1 
+  cpx #$0
+  bne b1
+//SEG14 @end
+//SEG15 @2
+b2:
+//SEG16 [5] (byte) s#1 ← (byte) s#2 + (byte) i#2 [ i#2 s#1 ] -- aby=aby_plus_xby 
+  stx $ff
+  clc
+  adc $ff
+//SEG17 [2] phi from @2 to @3
 //SEG18 [2] phi (byte) s#4 = (byte) s#1 -- register_copy 
   jmp b3
 
@@ -551,15 +632,12 @@ reg byte a [ s#2 s#4 s#1 ]
 
 FINAL CODE
 //SEG0 @begin
-bbegin:
 //SEG1 [0] phi from @begin to @1
-b1_from_bbegin:
 //SEG2 [0] phi (byte) s#2 = (byte) 0 -- aby=coby1 
   lda #$0
 //SEG3 [0] phi (byte) i#2 = (byte) 10 -- xby=coby1 
   ldx #$a
 //SEG4 [0] phi from @3 to @1
-b1_from_b3:
 //SEG5 [0] phi (byte) s#2 = (byte) s#4 -- register_copy 
 //SEG6 [0] phi (byte) i#2 = (byte) i#1 -- register_copy 
 //SEG7 @1
@@ -570,7 +648,6 @@ b1:
   bcs b2
 !:
 //SEG9 [2] phi from @1 to @3
-b3_from_b1:
 //SEG10 [2] phi (byte) s#4 = (byte) s#2 -- register_copy 
 //SEG11 @3
 b3:
@@ -578,9 +655,8 @@ b3:
   dex
 //SEG13 [4] if((byte) i#1>(byte) 0) goto @1 [ i#1 s#4 ] -- xby_gt_0_then_la1 
   cpx #$0
-  bne b1_from_b3
+  bne b1
 //SEG14 @end
-bend:
 //SEG15 @2
 b2:
 //SEG16 [5] (byte) s#1 ← (byte) s#2 + (byte) i#2 [ i#2 s#1 ] -- aby=aby_plus_xby 
@@ -588,7 +664,6 @@ b2:
   clc
   adc $ff
 //SEG17 [2] phi from @2 to @3
-b3_from_b2:
 //SEG18 [2] phi (byte) s#4 = (byte) s#1 -- register_copy 
   jmp b3
 

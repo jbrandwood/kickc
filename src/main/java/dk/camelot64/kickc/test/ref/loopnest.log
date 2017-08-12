@@ -820,7 +820,7 @@ Removing instruction jmp b3
 Removing instruction jmp breturn
 Removing instruction jmp b1
 Removing instruction jmp breturn
-Succesful ASM optimization Pass5NextJumpElimination
+Succesful ASM optimization Pass6NextJumpElimination
 ASSEMBLER
 //SEG0 @begin
 bbegin:
@@ -879,9 +879,11 @@ nest: {
     rts
 }
 
-Removing instruction jmp b1
-Removing instruction jmp b1
-Succesful ASM optimization Pass5NextJumpElimination
+Replacing label b1_from_b3 with b1
+Replacing label b1_from_b1 with b1
+Removing instruction b1_from_b3:
+Removing instruction b1_from_b1:
+Succesful ASM optimization Pass6RedundantLabelElimination
 ASSEMBLER
 //SEG0 @begin
 bbegin:
@@ -895,8 +897,8 @@ main: {
   b1_from_main:
   //SEG5 [1] phi (byte) main::i#2 = (byte) 100 -- yby=coby1 
     ldy #$64
+    jmp b1
   //SEG6 [1] phi from main::@3 to main::@1
-  b1_from_b3:
   //SEG7 [1] phi (byte) main::i#2 = (byte) main::i#1 -- register_copy 
   //SEG8 main::@1
   b1:
@@ -908,7 +910,7 @@ main: {
     dey
   //SEG12 [4] if((byte) main::i#1>(byte) 0) goto main::@1 [ main::i#1 ] -- yby_gt_0_then_la1 
     cpy #$0
-    bne b1_from_b3
+    bne b1
   //SEG13 main::@return
   breturn:
   //SEG14 [5] return  [ ]
@@ -920,8 +922,8 @@ nest: {
   b1_from_nest:
   //SEG17 [6] phi (byte) nest::j#2 = (byte) 100 -- xby=coby1 
     ldx #$64
+    jmp b1
   //SEG18 [6] phi from nest::@1 to nest::@1
-  b1_from_b1:
   //SEG19 [6] phi (byte) nest::j#2 = (byte) nest::j#1 -- register_copy 
   //SEG20 nest::@1
   b1:
@@ -931,9 +933,116 @@ nest: {
     dex
   //SEG23 [9] if((byte) nest::j#1>(byte) 0) goto nest::@1 [ main::i#2 nest::j#1 ] -- xby_gt_0_then_la1 
     cpx #$0
-    bne b1_from_b1
+    bne b1
   //SEG24 nest::@return
   breturn:
+  //SEG25 [10] return  [ main::i#2 ]
+    rts
+}
+
+Removing instruction bbegin:
+Removing instruction bend:
+Removing instruction b1_from_main:
+Removing instruction b3:
+Removing instruction breturn:
+Removing instruction b1_from_nest:
+Removing instruction breturn:
+Succesful ASM optimization Pass6UnusedLabelElimination
+ASSEMBLER
+//SEG0 @begin
+//SEG1 [0] call main param-assignment [ ]
+  jsr main
+//SEG2 @end
+//SEG3 main
+main: {
+  //SEG4 [1] phi from main to main::@1
+  //SEG5 [1] phi (byte) main::i#2 = (byte) 100 -- yby=coby1 
+    ldy #$64
+    jmp b1
+  //SEG6 [1] phi from main::@3 to main::@1
+  //SEG7 [1] phi (byte) main::i#2 = (byte) main::i#1 -- register_copy 
+  //SEG8 main::@1
+  b1:
+  //SEG9 [2] call nest param-assignment [ main::i#2 ]
+    jsr nest
+  //SEG10 main::@3
+  //SEG11 [3] (byte) main::i#1 ← -- (byte) main::i#2 [ main::i#1 ] -- yby=_dec_yby 
+    dey
+  //SEG12 [4] if((byte) main::i#1>(byte) 0) goto main::@1 [ main::i#1 ] -- yby_gt_0_then_la1 
+    cpy #$0
+    bne b1
+  //SEG13 main::@return
+  //SEG14 [5] return  [ ]
+    rts
+}
+//SEG15 nest
+nest: {
+  //SEG16 [6] phi from nest to nest::@1
+  //SEG17 [6] phi (byte) nest::j#2 = (byte) 100 -- xby=coby1 
+    ldx #$64
+    jmp b1
+  //SEG18 [6] phi from nest::@1 to nest::@1
+  //SEG19 [6] phi (byte) nest::j#2 = (byte) nest::j#1 -- register_copy 
+  //SEG20 nest::@1
+  b1:
+  //SEG21 [7] *((word) 1024) ← (byte) nest::j#2 [ main::i#2 nest::j#2 ] -- _star_cowo1=xby 
+    stx $400
+  //SEG22 [8] (byte) nest::j#1 ← -- (byte) nest::j#2 [ main::i#2 nest::j#1 ] -- xby=_dec_xby 
+    dex
+  //SEG23 [9] if((byte) nest::j#1>(byte) 0) goto nest::@1 [ main::i#2 nest::j#1 ] -- xby_gt_0_then_la1 
+    cpx #$0
+    bne b1
+  //SEG24 nest::@return
+  //SEG25 [10] return  [ main::i#2 ]
+    rts
+}
+
+Removing instruction jmp b1
+Removing instruction jmp b1
+Succesful ASM optimization Pass6NextJumpElimination
+ASSEMBLER
+//SEG0 @begin
+//SEG1 [0] call main param-assignment [ ]
+  jsr main
+//SEG2 @end
+//SEG3 main
+main: {
+  //SEG4 [1] phi from main to main::@1
+  //SEG5 [1] phi (byte) main::i#2 = (byte) 100 -- yby=coby1 
+    ldy #$64
+  //SEG6 [1] phi from main::@3 to main::@1
+  //SEG7 [1] phi (byte) main::i#2 = (byte) main::i#1 -- register_copy 
+  //SEG8 main::@1
+  b1:
+  //SEG9 [2] call nest param-assignment [ main::i#2 ]
+    jsr nest
+  //SEG10 main::@3
+  //SEG11 [3] (byte) main::i#1 ← -- (byte) main::i#2 [ main::i#1 ] -- yby=_dec_yby 
+    dey
+  //SEG12 [4] if((byte) main::i#1>(byte) 0) goto main::@1 [ main::i#1 ] -- yby_gt_0_then_la1 
+    cpy #$0
+    bne b1
+  //SEG13 main::@return
+  //SEG14 [5] return  [ ]
+    rts
+}
+//SEG15 nest
+nest: {
+  //SEG16 [6] phi from nest to nest::@1
+  //SEG17 [6] phi (byte) nest::j#2 = (byte) 100 -- xby=coby1 
+    ldx #$64
+  //SEG18 [6] phi from nest::@1 to nest::@1
+  //SEG19 [6] phi (byte) nest::j#2 = (byte) nest::j#1 -- register_copy 
+  //SEG20 nest::@1
+  b1:
+  //SEG21 [7] *((word) 1024) ← (byte) nest::j#2 [ main::i#2 nest::j#2 ] -- _star_cowo1=xby 
+    stx $400
+  //SEG22 [8] (byte) nest::j#1 ← -- (byte) nest::j#2 [ main::i#2 nest::j#1 ] -- xby=_dec_xby 
+    dex
+  //SEG23 [9] if((byte) nest::j#1>(byte) 0) goto nest::@1 [ main::i#2 nest::j#1 ] -- xby_gt_0_then_la1 
+    cpx #$0
+    bne b1
+  //SEG24 nest::@return
   //SEG25 [10] return  [ main::i#2 ]
     rts
 }
@@ -961,44 +1070,36 @@ reg byte x [ nest::j#2 nest::j#1 ]
 
 FINAL CODE
 //SEG0 @begin
-bbegin:
 //SEG1 [0] call main param-assignment [ ]
   jsr main
 //SEG2 @end
-bend:
 //SEG3 main
 main: {
   //SEG4 [1] phi from main to main::@1
-  b1_from_main:
   //SEG5 [1] phi (byte) main::i#2 = (byte) 100 -- yby=coby1 
     ldy #$64
   //SEG6 [1] phi from main::@3 to main::@1
-  b1_from_b3:
   //SEG7 [1] phi (byte) main::i#2 = (byte) main::i#1 -- register_copy 
   //SEG8 main::@1
   b1:
   //SEG9 [2] call nest param-assignment [ main::i#2 ]
     jsr nest
   //SEG10 main::@3
-  b3:
   //SEG11 [3] (byte) main::i#1 ← -- (byte) main::i#2 [ main::i#1 ] -- yby=_dec_yby 
     dey
   //SEG12 [4] if((byte) main::i#1>(byte) 0) goto main::@1 [ main::i#1 ] -- yby_gt_0_then_la1 
     cpy #$0
-    bne b1_from_b3
+    bne b1
   //SEG13 main::@return
-  breturn:
   //SEG14 [5] return  [ ]
     rts
 }
 //SEG15 nest
 nest: {
   //SEG16 [6] phi from nest to nest::@1
-  b1_from_nest:
   //SEG17 [6] phi (byte) nest::j#2 = (byte) 100 -- xby=coby1 
     ldx #$64
   //SEG18 [6] phi from nest::@1 to nest::@1
-  b1_from_b1:
   //SEG19 [6] phi (byte) nest::j#2 = (byte) nest::j#1 -- register_copy 
   //SEG20 nest::@1
   b1:
@@ -1008,9 +1109,8 @@ nest: {
     dex
   //SEG23 [9] if((byte) nest::j#1>(byte) 0) goto nest::@1 [ main::i#2 nest::j#1 ] -- xby_gt_0_then_la1 
     cpx #$0
-    bne b1_from_b1
+    bne b1
   //SEG24 nest::@return
-  breturn:
   //SEG25 [10] return  [ main::i#2 ]
     rts
 }

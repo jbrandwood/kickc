@@ -1,6 +1,5 @@
 package dk.camelot64.kickc.passes;
 
-import dk.camelot64.kickc.CompileLog;
 import dk.camelot64.kickc.asm.*;
 import dk.camelot64.kickc.icl.Program;
 
@@ -10,10 +9,10 @@ import java.util.List;
 /**
  * Optimize assembler code by removing jumps to labels immediately following the jump
  */
-public class Pass5NextJumpElimination extends Pass5AsmOptimization {
+public class Pass6NextJumpElimination extends Pass6AsmOptimization {
 
-   public Pass5NextJumpElimination(Program program, CompileLog log) {
-      super(program, log);
+   public Pass6NextJumpElimination(Program program) {
+      super(program);
    }
 
    public boolean optimize() {
@@ -31,7 +30,7 @@ public class Pass5NextJumpElimination extends Pass5AsmOptimization {
             if (line instanceof AsmInstruction) {
                candidate = null;
                AsmInstruction instruction = (AsmInstruction) line;
-               if (instruction.getType().isJump()) {
+               if (instruction.getType().isJump() && !instruction.getType().getMnemnonic().equals("jsr")) {
                   candidate = instruction;
                }
             }

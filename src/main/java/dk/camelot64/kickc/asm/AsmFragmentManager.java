@@ -1,6 +1,5 @@
 package dk.camelot64.kickc.asm;
 
-import dk.camelot64.kickc.CompileLog;
 import dk.camelot64.kickc.asm.parser.Asm6502Lexer;
 import dk.camelot64.kickc.asm.parser.Asm6502Parser;
 import org.antlr.v4.runtime.*;
@@ -10,6 +9,8 @@ import java.io.InputStream;
 import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * Provides fragments from their signature.
@@ -82,23 +83,34 @@ public class AsmFragmentManager {
             return result;
          }
       }
-      if(signature.contains("_lt_xby_then_")) {
-         int pos = signature.indexOf("_lt_xby_then_");
-         String subSignature = "xby_ge_"+signature.substring(0, pos)+"_then_"+signature.substring(pos+13);
-         return loadOrSynthesizeFragment(subSignature);
-      }
-      if(signature.contains("_lt_yby_then_")) {
-         int pos = signature.indexOf("_lt_yby_then_");
-         String subSignature = "yby_ge_"+signature.substring(0, pos)+"_then_"+signature.substring(pos+13);
-         return loadOrSynthesizeFragment(subSignature);
-      }
-      if(signature.contains("_lt_aby_then_")) {
-         int pos = signature.indexOf("_lt_aby_then_");
-         String subSignature = "aby_ge_"+signature.substring(0, pos)+"_then_"+signature.substring(pos+13);
-         return loadOrSynthesizeFragment(subSignature);
+
+      String sigNew = signature;
+      sigNew = regexpRewriteSignature(sigNew, "(.*)_ge_aby_then_(.*)", "aby_lt_$1_then_$2");
+      sigNew = regexpRewriteSignature(sigNew, "(.*)_ge_xby_then_(.*)", "xby_lt_$1_then_$2");
+      sigNew = regexpRewriteSignature(sigNew, "(.*)_ge_yby_then_(.*)", "yby_lt_$1_then_$2");
+      sigNew = regexpRewriteSignature(sigNew, "(.*)_gt_aby_then_(.*)", "aby_le_$1_then_$2");
+      sigNew = regexpRewriteSignature(sigNew, "(.*)_gt_xby_then_(.*)", "xby_le_$1_then_$2");
+      sigNew = regexpRewriteSignature(sigNew, "(.*)_gt_yby_then_(.*)", "yby_le_$1_then_$2");
+      sigNew = regexpRewriteSignature(sigNew, "(.*)_neq_aby_then_(.*)", "aby_neq_$1_then_$2");
+      sigNew = regexpRewriteSignature(sigNew, "(.*)_neq_xby_then_(.*)", "xby_neq_$1_then_$2");
+      sigNew = regexpRewriteSignature(sigNew, "(.*)_neq_yby_then_(.*)", "yby_neq_$1_then_$2");
+      if(!signature.equals(sigNew)) {
+         return loadFragment(sigNew);
       }
 
       return null;
+
+   }
+
+   private static String regexpRewriteSignature(String signature, String match, String replace) {
+      Pattern p = Pattern.compile(match);
+      Matcher m = p.matcher(signature);
+      String output = signature;
+      if (m.find()) {
+         // replace first number with "number" and second number with the first
+         output = m.replaceAll(replace);
+      }
+      return output;
    }
 
 

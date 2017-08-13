@@ -9,12 +9,11 @@ main: {
     rts
   b2:
     cpx #$32
-    beq !+
-    bcs b4
-  !:
-    dey
+    bcc b4
+    beq b4
+    iny
     jmp b1
   b4:
-    iny
+    dey
     jmp b1
 }

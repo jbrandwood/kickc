@@ -83,18 +83,18 @@ public class Pass1GenerateStatementSequence extends KickCBaseVisitor<Object> {
    public Void visitStmtIfElse(KickCParser.StmtIfElseContext ctx) {
       PrePostModifierHandler.addPreModifiers(this, ctx.expr());
       RValue rValue = (RValue) this.visit(ctx.expr());
+      VariableRef notExprVar = getCurrentSymbols().addVariableIntermediate().getRef();
+      sequence.addStatement(new StatementAssignment(notExprVar, null, new Operator("!"), rValue));
       PrePostModifierHandler.addPostModifiers(this, ctx.expr());
-      Label ifJumpLabel = getCurrentSymbols().addLabelIntermediate();
+
       Label elseJumpLabel = getCurrentSymbols().addLabelIntermediate();
-      Statement ifJmpStmt = new StatementConditionalJump(rValue, ifJumpLabel.getRef());
+      Statement ifJmpStmt = new StatementConditionalJump(notExprVar, elseJumpLabel.getRef());
       sequence.addStatement(ifJmpStmt);
-      Statement elseJmpStmt = new StatementJump(elseJumpLabel.getRef());
-      sequence.addStatement(elseJmpStmt);
-      StatementLabel ifJumpTarget = new StatementLabel(ifJumpLabel.getRef());
-      sequence.addStatement(ifJumpTarget);
       this.visit(ctx.stmt(0));
+
       KickCParser.StmtContext elseStmt = ctx.stmt(1);
       if (elseStmt != null) {
+         // There is an else statement - add the else part and any needed labels/jumps
          Label endJumpLabel = getCurrentSymbols().addLabelIntermediate();
          Statement endJmpStmt = new StatementJump(endJumpLabel.getRef());
          sequence.addStatement(endJmpStmt);
@@ -104,6 +104,7 @@ public class Pass1GenerateStatementSequence extends KickCBaseVisitor<Object> {
          StatementLabel endJumpTarget = new StatementLabel(endJumpLabel.getRef());
          sequence.addStatement(endJumpTarget);
       } else {
+         // No else statement - just add the label
          StatementLabel elseJumpTarget = new StatementLabel(elseJumpLabel.getRef());
          sequence.addStatement(elseJumpTarget);
       }

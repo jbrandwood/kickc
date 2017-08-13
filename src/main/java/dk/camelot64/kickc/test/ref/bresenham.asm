@@ -21,12 +21,7 @@ b1:
   adc #$18
   tax
   cpx #$27
-  bcs b2
-b3:
-  lda $4
-  cmp #$28
-  bcc b1
-b2:
+  bcc b2
   inc $5
   lda $2
   clc
@@ -39,4 +34,7 @@ b2:
   sec
   sbc #$27
   tax
-  jmp b3
+b2:
+  lda $4
+  cmp #$28
+  bcc b1

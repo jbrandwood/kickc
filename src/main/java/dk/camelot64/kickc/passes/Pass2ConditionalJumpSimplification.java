@@ -68,8 +68,6 @@ public class Pass2ConditionalJumpSimplification extends Pass2SsaOptimization {
       };
       visitor.visitGraph(getGraph());
       return simpleConditionVars;
-
-
    }
 
 

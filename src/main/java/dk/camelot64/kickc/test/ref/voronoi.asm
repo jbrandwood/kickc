@@ -46,40 +46,45 @@ animate: {
     sta $1000
     lda $1000
     cmp #$28
-    beq b1
-  b2:
+    bne b1
+    lda #$0
+    sta $1000
+  b1:
     lda $1100
     clc
     adc #$1
     sta $1100
     lda $1100
     cmp #$19
-    beq b3
-  b4:
+    bne b2
+    lda #$0
+    sta $1100
+  b2:
     ldx $1001
     dex
     stx $1001
     lda $1001
     cmp #$ff
-    beq b5
-  b6:
+    bne b3
+    lda #$28
+    sta $1001
+  b3:
     lda $1102
     clc
     adc #$1
     sta $1102
     lda $1102
     cmp #$19
-    beq b7
-  b8:
+    bne b4
+    lda #$0
+    sta $1102
+  b4:
     ldx $1103
     dex
     stx $1103
     lda $1103
     cmp #$ff
-    beq b9
-  breturn:
-    rts
-  b9:
+    bne breturn
     lda #$19
     sta $1103
     lda $1003
@@ -88,30 +93,13 @@ animate: {
     sta $1003
     lda $1003
     cmp #$28
-    bcs b11
-    jmp breturn
-  b11:
+    bcc breturn
     lda $1003
     sec
     sbc #$28
     sta $1003
-    jmp breturn
-  b7:
-    lda #$0
-    sta $1102
-    jmp b8
-  b5:
-    lda #$28
-    sta $1001
-    jmp b6
-  b3:
-    lda #$0
-    sta $1100
-    jmp b4
-  b1:
-    lda #$0
-    sta $1000
-    jmp b2
+  breturn:
+    rts
 }
 render: {
     lda #<$d800
@@ -161,58 +149,58 @@ findcol: {
     sta $b
     lda $9
     cmp $7
-    beq b2
-  b3:
-    lda $9
-    cmp $7
-    bcc b6
-    lda $9
-    sec
-    sbc $7
-    sta $7
-  b8:
+    bne b2
     lda $a
     cmp $b
-    bcc b9
-    lda $a
-    sec
-    sbc $b
-    clc
-    adc $7
-  b11:
-    cmp $6
-    bcc b12
-  b13:
-    inx
-    cpx $8
-    bcc b1
-    jmp breturn
-  breturn_from_b2:
+    bne b2
     ldy #$0
   breturn:
     rts
-  b12:
-    ldy $1200,x
-    sta $6
-    jmp b13
-  b9:
+  b2:
+    lda $9
+    cmp $7
+    bcs b4
+    lda $7
+    sec
+    sbc $9
+    sta $7
+  b5:
+    lda $a
+    cmp $b
+    bcs b6
     lda $b
     sec
     sbc $a
     clc
     adc $7
-    jmp b11
-  b6:
-    lda $7
-    sec
-    sbc $9
-    sta $7
+  b7:
+    cmp $6
+    bcs b21
+    ldy $1200,x
+  b8:
+    inx
+    cpx $8
+    bcc b19
+    jmp breturn
+  b19:
+    sta $6
+    jmp b1
+  b21:
+    lda $6
     jmp b8
-  b2:
+  b6:
     lda $a
-    cmp $b
-    beq breturn_from_b2
-    jmp b3
+    sec
+    sbc $b
+    clc
+    adc $7
+    jmp b7
+  b4:
+    lda $9
+    sec
+    sbc $7
+    sta $7
+    jmp b5
 }
 initscreen: {
     lda #<$400

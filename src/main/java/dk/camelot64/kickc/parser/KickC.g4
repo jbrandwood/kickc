@@ -18,7 +18,17 @@ stmt
     | 'if' '(' expr ')' stmt ( 'else' stmt )? #stmtIfElse
     | 'while' '(' expr ')' stmt  #stmtWhile
     | 'do' stmt 'while' '(' expr ')' #stmtDoWhile
+    | 'for' '(' forDeclaration? forIteration ')' stmt  #stmtFor
     | 'return' expr? ';' #stmtReturn
+    ;
+
+forDeclaration
+    : typeDecl? NAME ('=' initializer)? #forDecl
+    ;
+
+forIteration
+    : ';' expr ';' expr? # forClassic
+    | ':' expr ( '..' | '.+.' | '.-.' ) expr #forRange
     ;
 
 parameterListDecl

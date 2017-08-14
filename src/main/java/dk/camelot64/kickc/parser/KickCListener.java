@@ -1,4 +1,4 @@
-// Generated from C:/c64/src/kickc/src/dk/camelot64/kickc/parser\KickC.g4 by ANTLR 4.7
+// Generated from /Users/jespergravgaard/c64/src/kickc/src/main/java/dk/camelot64/kickc/parser/KickC.g4 by ANTLR 4.7
 package dk.camelot64.kickc.parser;
 import org.antlr.v4.runtime.tree.ParseTreeListener;
 
@@ -124,6 +124,18 @@ public interface KickCListener extends ParseTreeListener {
 	 */
 	void exitStmtDoWhile(KickCParser.StmtDoWhileContext ctx);
 	/**
+	 * Enter a parse tree produced by the {@code stmtFor}
+	 * labeled alternative in {@link KickCParser#stmt}.
+	 * @param ctx the parse tree
+	 */
+	void enterStmtFor(KickCParser.StmtForContext ctx);
+	/**
+	 * Exit a parse tree produced by the {@code stmtFor}
+	 * labeled alternative in {@link KickCParser#stmt}.
+	 * @param ctx the parse tree
+	 */
+	void exitStmtFor(KickCParser.StmtForContext ctx);
+	/**
 	 * Enter a parse tree produced by the {@code stmtReturn}
 	 * labeled alternative in {@link KickCParser#stmt}.
 	 * @param ctx the parse tree
@@ -135,6 +147,42 @@ public interface KickCListener extends ParseTreeListener {
 	 * @param ctx the parse tree
 	 */
 	void exitStmtReturn(KickCParser.StmtReturnContext ctx);
+	/**
+	 * Enter a parse tree produced by the {@code forDecl}
+	 * labeled alternative in {@link KickCParser#forDeclaration}.
+	 * @param ctx the parse tree
+	 */
+	void enterForDecl(KickCParser.ForDeclContext ctx);
+	/**
+	 * Exit a parse tree produced by the {@code forDecl}
+	 * labeled alternative in {@link KickCParser#forDeclaration}.
+	 * @param ctx the parse tree
+	 */
+	void exitForDecl(KickCParser.ForDeclContext ctx);
+	/**
+	 * Enter a parse tree produced by the {@code forClassic}
+	 * labeled alternative in {@link KickCParser#forIteration}.
+	 * @param ctx the parse tree
+	 */
+	void enterForClassic(KickCParser.ForClassicContext ctx);
+	/**
+	 * Exit a parse tree produced by the {@code forClassic}
+	 * labeled alternative in {@link KickCParser#forIteration}.
+	 * @param ctx the parse tree
+	 */
+	void exitForClassic(KickCParser.ForClassicContext ctx);
+	/**
+	 * Enter a parse tree produced by the {@code forRange}
+	 * labeled alternative in {@link KickCParser#forIteration}.
+	 * @param ctx the parse tree
+	 */
+	void enterForRange(KickCParser.ForRangeContext ctx);
+	/**
+	 * Exit a parse tree produced by the {@code forRange}
+	 * labeled alternative in {@link KickCParser#forIteration}.
+	 * @param ctx the parse tree
+	 */
+	void exitForRange(KickCParser.ForRangeContext ctx);
 	/**
 	 * Enter a parse tree produced by {@link KickCParser#parameterListDecl}.
 	 * @param ctx the parse tree

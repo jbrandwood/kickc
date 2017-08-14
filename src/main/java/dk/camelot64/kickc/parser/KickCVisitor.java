@@ -1,4 +1,4 @@
-// Generated from C:/c64/src/kickc/src/dk/camelot64/kickc/parser\KickC.g4 by ANTLR 4.7
+// Generated from /Users/jespergravgaard/c64/src/kickc/src/main/java/dk/camelot64/kickc/parser/KickC.g4 by ANTLR 4.7
 package dk.camelot64.kickc.parser;
 import org.antlr.v4.runtime.tree.ParseTreeVisitor;
 
@@ -79,12 +79,40 @@ public interface KickCVisitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitStmtDoWhile(KickCParser.StmtDoWhileContext ctx);
 	/**
+	 * Visit a parse tree produced by the {@code stmtFor}
+	 * labeled alternative in {@link KickCParser#stmt}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitStmtFor(KickCParser.StmtForContext ctx);
+	/**
 	 * Visit a parse tree produced by the {@code stmtReturn}
 	 * labeled alternative in {@link KickCParser#stmt}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
 	T visitStmtReturn(KickCParser.StmtReturnContext ctx);
+	/**
+	 * Visit a parse tree produced by the {@code forDecl}
+	 * labeled alternative in {@link KickCParser#forDeclaration}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitForDecl(KickCParser.ForDeclContext ctx);
+	/**
+	 * Visit a parse tree produced by the {@code forClassic}
+	 * labeled alternative in {@link KickCParser#forIteration}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitForClassic(KickCParser.ForClassicContext ctx);
+	/**
+	 * Visit a parse tree produced by the {@code forRange}
+	 * labeled alternative in {@link KickCParser#forIteration}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitForRange(KickCParser.ForRangeContext ctx);
 	/**
 	 * Visit a parse tree produced by {@link KickCParser#parameterListDecl}.
 	 * @param ctx the parse tree

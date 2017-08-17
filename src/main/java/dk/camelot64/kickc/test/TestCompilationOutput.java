@@ -88,6 +88,14 @@ public class TestCompilationOutput extends TestCase {
       compileAndCompare("ifmin");
    }
 
+   public void testForClassicMin() throws IOException, URISyntaxException {
+      compileAndCompare("forclassicmin");
+   }
+
+   public void testForRangeMin() throws IOException, URISyntaxException {
+      compileAndCompare("forrangemin");
+   }
+
    public void testUseUninitialized() throws IOException, URISyntaxException {
       String filename = "useuninitialized";
       compileAndCompare(filename);

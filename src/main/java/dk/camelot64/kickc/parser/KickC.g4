@@ -28,7 +28,7 @@ forDeclaration
 
 forIteration
     : ';' expr ';' expr? # forClassic
-    | ':' expr ( '..' | '.+.' | '.-.' ) expr #forRange
+    | ':' expr ( '..' | '.++.' | '.--.' ) expr #forRange
     ;
 
 parameterListDecl

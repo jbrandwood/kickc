@@ -152,6 +152,118 @@ public class Pass1GenerateStatementSequence extends KickCBaseVisitor<Object> {
    }
 
    @Override
+   public Object visitStmtFor(KickCParser.StmtForContext ctx) {
+      this.visit(ctx.forIteration());
+      return null;
+   }
+
+   @Override
+   public Object visitForDecl(KickCParser.ForDeclContext ctx) {
+      return super.visitForDecl(ctx);
+   }
+
+   @Override
+   public Object visitForClassic(KickCParser.ForClassicContext ctx) {
+      KickCParser.StmtForContext stmtForCtx = (KickCParser.StmtForContext) ctx.getParent();
+      KickCParser.ForDeclContext forDeclCtx = (KickCParser.ForDeclContext) stmtForCtx.forDeclaration();
+      // Create and assign declared loop variable
+      String varName = forDeclCtx.NAME().getText();
+      Variable lValue;
+      if(forDeclCtx.typeDecl()!=null) {
+         SymbolType type = (SymbolType) visit(forDeclCtx.typeDecl());
+         lValue = getCurrentSymbols().addVariable(varName, type);
+      } else {
+         lValue = getCurrentSymbols().getVariable(varName);
+      }
+      KickCParser.InitializerContext initializer = forDeclCtx.initializer();
+      if (initializer != null) {
+         addInitialAssignment(initializer, lValue);
+      }
+      // Add label
+      Label repeatLabel = getCurrentSymbols().addLabelIntermediate();
+      StatementLabel repeatTarget = new StatementLabel(repeatLabel.getRef());
+      sequence.addStatement(repeatTarget);
+      // Add body
+      if (stmtForCtx.stmt() != null) {
+         this.visit(stmtForCtx.stmt());
+      }
+      // Add increment
+      PrePostModifierHandler.addPreModifiers(this, ctx.expr(1));
+      this.visit(ctx.expr(1));
+      PrePostModifierHandler.addPostModifiers(this, ctx.expr(1));
+      // Add condition
+      PrePostModifierHandler.addPreModifiers(this, ctx.expr(0));
+      RValue rValue = (RValue) this.visit(ctx.expr(0));
+      PrePostModifierHandler.addPostModifiers(this, ctx.expr(0));
+      // Add jump if condition was met
+      Statement doJmpStmt = new StatementConditionalJump(rValue, repeatLabel.getRef());
+      sequence.addStatement(doJmpStmt);
+      return null;
+   }
+
+   @Override
+   public Object visitForRange(KickCParser.ForRangeContext ctx) {
+      KickCParser.StmtForContext stmtForCtx = (KickCParser.StmtForContext) ctx.getParent();
+      KickCParser.ForDeclContext forDeclCtx = (KickCParser.ForDeclContext) stmtForCtx.forDeclaration();
+      // Create declared loop variable
+      String varName = forDeclCtx.NAME().getText();
+      Variable lValue;
+      if(forDeclCtx.typeDecl()!=null) {
+         SymbolType type = (SymbolType) visit(forDeclCtx.typeDecl());
+         lValue = getCurrentSymbols().addVariable(varName, type);
+      } else {
+         lValue = getCurrentSymbols().getVariable(varName);
+      }
+      String rangeOp = ((TerminalNode) ctx.getChild(2)).getSymbol().getText();
+      KickCParser.ExprContext rangeFirstCtx = ctx.expr(0);
+      KickCParser.ExprContext rangeLastCtx = ctx.expr(1);
+      // If iteration direction is not explicit - find it automatically by evaluating first/last as constants
+      if(rangeOp.equals("..")) {
+         ConstantInteger rangeFirst = (ConstantInteger) ParseTreeConstantEvaluator.evaluate(rangeFirstCtx);
+         ConstantInteger rangeLast = (ConstantInteger) ParseTreeConstantEvaluator.evaluate(rangeLastCtx);
+         if(rangeFirst.getNumber()<rangeLast.getNumber()) {
+            rangeOp = ".++.";
+         } else {
+            rangeOp = ".--.";
+         }
+      }
+      // Assign loop variable with first value
+      PrePostModifierHandler.addPreModifiers(this, rangeFirstCtx);
+      RValue rValue = (RValue) visit(rangeFirstCtx);
+      Statement stmtInit = new StatementAssignment(lValue, rValue);
+      sequence.addStatement(stmtInit);
+      PrePostModifierHandler.addPostModifiers(this, rangeFirstCtx);
+      // Add label
+      Label repeatLabel = getCurrentSymbols().addLabelIntermediate();
+      StatementLabel repeatTarget = new StatementLabel(repeatLabel.getRef());
+      sequence.addStatement(repeatTarget);
+      // Add body
+      if (stmtForCtx.stmt() != null) {
+         this.visit(stmtForCtx.stmt());
+      }
+      // Add increment
+      if(rangeOp.equals(".--.")) {
+         Statement stmtInc = new StatementAssignment(lValue.getRef(), new Operator("--"), lValue.getRef());
+         sequence.addStatement(stmtInc);
+      }  else {
+         Statement stmtInc = new StatementAssignment(lValue.getRef(), new Operator("++"), lValue.getRef());
+         sequence.addStatement(stmtInc);
+      }
+      // Add condition
+      PrePostModifierHandler.addPreModifiers(this, rangeLastCtx);
+      RValue rValueLast = (RValue) this.visit(rangeLastCtx);
+      PrePostModifierHandler.addPostModifiers(this, rangeLastCtx);
+      VariableIntermediate tmpVar = getCurrentSymbols().addVariableIntermediate();
+      VariableRef tmpVarRef = tmpVar.getRef();
+      Statement stmtTmpVar = new StatementAssignment(tmpVarRef, lValue.getRef(), new Operator("!="), rValueLast);
+      sequence.addStatement(stmtTmpVar);
+      // Add jump if condition was met
+      Statement doJmpStmt = new StatementConditionalJump(tmpVarRef, repeatLabel.getRef());
+      sequence.addStatement(doJmpStmt);
+      return null;
+   }
+
+   @Override
    public Void visitStmtFunction(KickCParser.StmtFunctionContext ctx) {
       SymbolType type = (SymbolType) visit(ctx.typeDecl());
       String name = ctx.NAME().getText();
@@ -223,15 +335,21 @@ public class Pass1GenerateStatementSequence extends KickCBaseVisitor<Object> {
          program.getLog().append("Const!" + ctx.getText());
       }
       SymbolType type = (SymbolType) visit(ctx.typeDecl());
-      VariableUnversioned lValue = getCurrentSymbols().addVariable(ctx.NAME().getText(), type);
-      if (ctx.initializer() != null) {
-         PrePostModifierHandler.addPreModifiers(this, ctx.initializer());
-         RValue rValue = (RValue) visit(ctx.initializer());
-         Statement stmt = new StatementAssignment(lValue, rValue);
-         sequence.addStatement(stmt);
-         PrePostModifierHandler.addPostModifiers(this, ctx.initializer());
+      String varName = ctx.NAME().getText();
+      KickCParser.InitializerContext initializer = ctx.initializer();
+      VariableUnversioned lValue = getCurrentSymbols().addVariable(varName, type);
+      if (initializer != null) {
+         addInitialAssignment(initializer, lValue);
       }
       return null;
+   }
+
+   private void addInitialAssignment(KickCParser.InitializerContext initializer, Variable lValue) {
+      PrePostModifierHandler.addPreModifiers(this, initializer);
+      RValue rValue = (RValue) visit(initializer);
+      Statement stmt = new StatementAssignment(lValue, rValue);
+      sequence.addStatement(stmt);
+      PrePostModifierHandler.addPostModifiers(this, initializer);
    }
 
    @Override

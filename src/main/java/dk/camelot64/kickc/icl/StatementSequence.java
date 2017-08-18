@@ -23,7 +23,7 @@ public class StatementSequence {
    public String toString(Program program) {
       StringBuffer out = new StringBuffer();
       for (Statement statement : statements) {
-         if(!(statement instanceof StatementLabel) ) { //&& !(statement instanceof StatementProcedureBegin) && !(statement instanceof StatementProcedureEnd)) {
+         if(!(statement instanceof StatementLabel) && !(statement instanceof StatementProcedureBegin) && !(statement instanceof StatementProcedureEnd)) {
             out.append("  ");
          }
          out.append(statement.toString(program)+"\n");

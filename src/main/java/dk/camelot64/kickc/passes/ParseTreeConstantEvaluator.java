@@ -51,17 +51,17 @@ public class ParseTreeConstantEvaluator extends KickCBaseVisitor<Constant> {
 
    @Override
    public Constant visitExprCall(KickCParser.ExprCallContext ctx) {
-      throw new RuntimeException("Not implemented!");
+      throw new NotConstantException();
    }
 
    @Override
    public Constant visitExprArray(KickCParser.ExprArrayContext ctx) {
-      throw new RuntimeException("Not implemented!");
+      throw new NotConstantException();
    }
 
    @Override
    public Constant visitExprId(KickCParser.ExprIdContext ctx) {
-      throw new RuntimeException("Not implemented!");
+      throw new NotConstantException();
    }
 
    @Override
@@ -71,7 +71,7 @@ public class ParseTreeConstantEvaluator extends KickCBaseVisitor<Constant> {
 
    @Override
    public Constant visitInitList(KickCParser.InitListContext ctx) {
-      throw new RuntimeException("Not implemented!");
+      throw new NotConstantException();
    }
 
    @Override
@@ -90,4 +90,15 @@ public class ParseTreeConstantEvaluator extends KickCBaseVisitor<Constant> {
       Operator operator = new Operator(op);
       return Pass2ConstantPropagation.calculateBinary(operator, left, right);
    }
+
+
+
+   /** Thrown if the expression is not a constant. */
+   public static class NotConstantException extends RuntimeException {
+
+      public NotConstantException() {
+      }
+
+   }
+
 }

@@ -1,17 +1,18 @@
   jsr main
 main: {
-    ldx #$64
+    ldx #$0
   b1:
-    lda #$0
-  b2:
+    txa
     sta $400,x
-    clc
-    adc #$1
-    sta $ff
-    cpx $ff
-    bne b2
-    dex
-    cpx #$1
+    inx
+    cpx #$0
     bne b1
+    ldx #$64
+  b2:
+    txa
+    sta $500,x
+    dex
+    cpx #$ff
+    bne b2
     rts
 }

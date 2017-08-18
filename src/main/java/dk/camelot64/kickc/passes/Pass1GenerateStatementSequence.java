@@ -214,25 +214,15 @@ public class Pass1GenerateStatementSequence extends KickCBaseVisitor<Object> {
       } else {
          lValue = getCurrentSymbols().getVariable(varName);
       }
-      String rangeOp = ((TerminalNode) ctx.getChild(2)).getSymbol().getText();
       KickCParser.ExprContext rangeFirstCtx = ctx.expr(0);
       KickCParser.ExprContext rangeLastCtx = ctx.expr(1);
-      // If iteration direction is not explicit - find it automatically by evaluating first/last as constants
-      if(rangeOp.equals("..")) {
-         ConstantInteger rangeFirst = (ConstantInteger) ParseTreeConstantEvaluator.evaluate(rangeFirstCtx);
-         ConstantInteger rangeLast = (ConstantInteger) ParseTreeConstantEvaluator.evaluate(rangeLastCtx);
-         if(rangeFirst.getNumber()<rangeLast.getNumber()) {
-            rangeOp = ".++.";
-         } else {
-            rangeOp = ".--.";
-         }
-      }
+      // Find the iteration first/last & direction by evaluating first/last as constants
+      ConstantInteger rangeFirst = (ConstantInteger) ParseTreeConstantEvaluator.evaluate(rangeFirstCtx);
+      ConstantInteger rangeLast = (ConstantInteger) ParseTreeConstantEvaluator.evaluate(rangeLastCtx);
       // Assign loop variable with first value
-      PrePostModifierHandler.addPreModifiers(this, rangeFirstCtx);
       RValue rValue = (RValue) visit(rangeFirstCtx);
       Statement stmtInit = new StatementAssignment(lValue, rValue);
       sequence.addStatement(stmtInit);
-      PrePostModifierHandler.addPostModifiers(this, rangeFirstCtx);
       // Add label
       Label repeatLabel = getCurrentSymbols().addLabelIntermediate();
       StatementLabel repeatTarget = new StatementLabel(repeatLabel.getRef());
@@ -242,20 +232,29 @@ public class Pass1GenerateStatementSequence extends KickCBaseVisitor<Object> {
          this.visit(stmtForCtx.stmt());
       }
       // Add increment
-      if(rangeOp.equals(".--.")) {
+      ConstantInteger beyondLastVal;
+      if(rangeFirst.getNumber()>rangeLast.getNumber()) {
          Statement stmtInc = new StatementAssignment(lValue.getRef(), new Operator("--"), lValue.getRef());
          sequence.addStatement(stmtInc);
+         if(rangeLast.getNumber()==0) {
+            beyondLastVal = new ConstantInteger(255);
+         } else {
+            beyondLastVal = new ConstantInteger(rangeLast.getNumber()-1);
+         }
       }  else {
          Statement stmtInc = new StatementAssignment(lValue.getRef(), new Operator("++"), lValue.getRef());
          sequence.addStatement(stmtInc);
+         if(rangeLast.getNumber()==255) {
+            beyondLastVal = new ConstantInteger(0);
+         } else {
+            beyondLastVal = new ConstantInteger(rangeLast.getNumber()+1);
+         }
       }
-      // Add condition
-      PrePostModifierHandler.addPreModifiers(this, rangeLastCtx);
-      RValue rValueLast = (RValue) this.visit(rangeLastCtx);
-      PrePostModifierHandler.addPostModifiers(this, rangeLastCtx);
+
+      // Add condition i<last+1 or i<last-1
       VariableIntermediate tmpVar = getCurrentSymbols().addVariableIntermediate();
       VariableRef tmpVarRef = tmpVar.getRef();
-      Statement stmtTmpVar = new StatementAssignment(tmpVarRef, lValue.getRef(), new Operator("!="), rValueLast);
+      Statement stmtTmpVar = new StatementAssignment(tmpVarRef, lValue.getRef(), new Operator("!="), beyondLastVal);
       sequence.addStatement(stmtTmpVar);
       // Add jump if condition was met
       Statement doJmpStmt = new StatementConditionalJump(tmpVarRef, repeatLabel.getRef());

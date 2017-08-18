@@ -8,74 +8,60 @@ main();
 void main() {
   prepare();
   do {
-     byte c = 25;
-     do{
-       do { } while(*RASTER!=254)
-       do { } while(*RASTER!=255)
-       c--;
-     } while(c!=0)
-     flip();
-     plot();
+    for( byte c : 25..1) {
+      do { } while(*RASTER!=254)
+      do { } while(*RASTER!=255)
+    }
+    flip();
+    plot();
   } while(true)
 }
 
 // Prepare buffer
 void prepare() {
-   byte i=0;
-   do {
+   for( byte i : 0..255) {
       buffer1[i] = i;
-   } while (++i!=0)
+   }
 }
 
 // Flip buffer
 void flip() {
    byte srcIdx = 0;
    byte dstIdx = 15;
-   byte r=16;
-   do {
-      byte c = 16;
-      do {
+   for( byte r : 16..1) {
+      for( byte c : 16..1) {
          buffer2[dstIdx] = buffer1[srcIdx++];
          dstIdx = dstIdx+16;
-      } while(--c!=0)
+      }
       dstIdx--;
-     } while(--r!=0)
-   byte i=0;
-   do {
+     }
+   for(byte i : 0..255) {
       buffer1[i] = buffer2[i];
-   } while (++i!=0)
+   }
 }
 
 // Plot buffer on screen
 void plot() {
    byte* line = SCREEN+5*40+12;
-   byte y=16;
    byte i=0;
-   do {
-      byte x=0;
-      do {
-         line[x] = buffer1[i++];
-      } while(++x<16)
-      line = line+40;
-   } while(--y!=0)
+   for(byte y : 16..1) {
+     for(byte x=0; x<16; x++ ) {
+       line[x] = buffer1[i++];
+     }
+     line = line+40;
+   }
 }
-Adding pre/post-modifier (byte) main::c ← -- (byte) main::c
-Adding pre/post-modifier (byte) prepare::i ← ++ (byte) prepare::i
 Adding pre/post-modifier (byte) flip::srcIdx ← ++ (byte) flip::srcIdx
-Adding pre/post-modifier (byte) flip::c ← -- (byte) flip::c
 Adding pre/post-modifier (byte) flip::dstIdx ← -- (byte) flip::dstIdx
-Adding pre/post-modifier (byte) flip::r ← -- (byte) flip::r
-Adding pre/post-modifier (byte) flip::i ← ++ (byte) flip::i
 Adding pre/post-modifier (byte) plot::i ← ++ (byte) plot::i
 Adding pre/post-modifier (byte) plot::x ← ++ (byte) plot::x
-Adding pre/post-modifier (byte) plot::y ← -- (byte) plot::y
 PROGRAM
   (byte[1000]) SCREEN ← (word) 1024
   (byte[256]) buffer1 ← (word) 4096
   (byte[256]) buffer2 ← (word) 4352
   (byte*) RASTER ← (word) 53266
   (void~) $0 ← call main 
-  proc (void()) main()
+proc (void()) main()
   (void~) main::$0 ← call prepare 
 main::@1:
   (byte) main::c ← (byte) 25
@@ -96,8 +82,8 @@ main::@4:
   if(true) goto main::@1
 main::@return:
   return 
-  endproc // main()
-  proc (void()) prepare()
+endproc // main()
+proc (void()) prepare()
   (byte) prepare::i ← (byte) 0
 prepare::@1:
   *((byte[256]) buffer1 + (byte) prepare::i) ← (byte) prepare::i
@@ -106,8 +92,8 @@ prepare::@1:
   if((boolean~) prepare::$0) goto prepare::@1
 prepare::@return:
   return 
-  endproc // prepare()
-  proc (void()) flip()
+endproc // prepare()
+proc (void()) flip()
   (byte) flip::srcIdx ← (byte) 0
   (byte) flip::dstIdx ← (byte) 15
   (byte) flip::r ← (byte) 16
@@ -135,14 +121,14 @@ flip::@3:
   if((boolean~) flip::$5) goto flip::@3
 flip::@return:
   return 
-  endproc // flip()
-  proc (void()) plot()
+endproc // flip()
+proc (void()) plot()
   (byte~) plot::$0 ← (byte) 5 * (byte) 40
   (byte*~) plot::$1 ← (byte[1000]) SCREEN + (byte~) plot::$0
   (byte*~) plot::$2 ← (byte*~) plot::$1 + (byte) 12
   (byte*) plot::line ← (byte*~) plot::$2
-  (byte) plot::y ← (byte) 16
   (byte) plot::i ← (byte) 0
+  (byte) plot::y ← (byte) 16
 plot::@1:
   (byte) plot::x ← (byte) 0
 plot::@2:
@@ -159,7 +145,7 @@ plot::@2:
   if((boolean~) plot::$6) goto plot::@1
 plot::@return:
   return 
-  endproc // plot()
+endproc // plot()
 
 SYMBOLS
 (void~) $0
@@ -326,8 +312,8 @@ plot: scope:[plot]  from
   (byte*~) plot::$1 ← (byte[1000]) SCREEN + (byte~) plot::$0
   (byte*~) plot::$2 ← (byte*~) plot::$1 + (byte) 12
   (byte*) plot::line ← (byte*~) plot::$2
-  (byte) plot::y ← (byte) 16
   (byte) plot::i ← (byte) 0
+  (byte) plot::y ← (byte) 16
   to:plot::@1
 plot::@1: scope:[plot]  from plot plot::@3
   (byte) plot::x ← (byte) 0
@@ -458,8 +444,8 @@ plot: scope:[plot]  from
   (byte*~) plot::$1 ← (byte[1000]) SCREEN + (byte~) plot::$0
   (byte*~) plot::$2 ← (byte*~) plot::$1 + (byte) 12
   (byte*) plot::line ← (byte*~) plot::$2
-  (byte) plot::y ← (byte) 16
   (byte) plot::i ← (byte) 0
+  (byte) plot::y ← (byte) 16
   to:plot::@1
 plot::@1: scope:[plot]  from plot plot::@3
   (byte) plot::x ← (byte) 0
@@ -587,8 +573,8 @@ plot: scope:[plot]  from main::@10
   (byte*~) plot::$1 ← (byte[1000]) SCREEN + (byte~) plot::$0
   (byte*~) plot::$2 ← (byte*~) plot::$1 + (byte) 12
   (byte*) plot::line ← (byte*~) plot::$2
-  (byte) plot::y ← (byte) 16
   (byte) plot::i ← (byte) 0
+  (byte) plot::y ← (byte) 16
   to:plot::@1
 plot::@1: scope:[plot]  from plot plot::@3
   (byte) plot::x ← (byte) 0
@@ -796,8 +782,8 @@ plot: scope:[plot]  from main::@10
   (byte*~) plot::$1 ← (byte[1000]) SCREEN#1 + (byte~) plot::$0
   (byte*~) plot::$2 ← (byte*~) plot::$1 + (byte) 12
   (byte*) plot::line#0 ← (byte*~) plot::$2
-  (byte) plot::y#0 ← (byte) 16
   (byte) plot::i#0 ← (byte) 0
+  (byte) plot::y#0 ← (byte) 16
   to:plot::@1
 plot::@1: scope:[plot]  from plot plot::@3
   (byte) plot::y#4 ← phi( plot/(byte) plot::y#0 plot::@3/(byte) plot::y#1 )
@@ -1008,8 +994,8 @@ plot: scope:[plot]  from main::@10
   (byte*~) plot::$1 ← (byte[1000]) SCREEN#1 + (byte~) plot::$0
   (byte*~) plot::$2 ← (byte*~) plot::$1 + (byte) 12
   (byte*) plot::line#0 ← (byte*~) plot::$2
-  (byte) plot::y#0 ← (byte) 16
   (byte) plot::i#0 ← (byte) 0
+  (byte) plot::y#0 ← (byte) 16
   to:plot::@1
 plot::@1: scope:[plot]  from plot plot::@3
   (byte) plot::y#4 ← phi( plot/(byte) plot::y#0 plot::@3/(byte) plot::y#1 )
@@ -1220,8 +1206,8 @@ plot: scope:[plot]  from main::@10
   (byte*~) plot::$1 ← (byte[1000]) SCREEN#1 + (byte~) plot::$0
   (byte*~) plot::$2 ← (byte*~) plot::$1 + (byte) 12
   (byte*) plot::line#0 ← (byte*~) plot::$2
-  (byte) plot::y#0 ← (byte) 16
   (byte) plot::i#0 ← (byte) 0
+  (byte) plot::y#0 ← (byte) 16
   to:plot::@1
 plot::@1: scope:[plot]  from plot plot::@3
   (byte) plot::y#4 ← phi( plot/(byte) plot::y#0 plot::@3/(byte) plot::y#1 )
@@ -1271,8 +1257,8 @@ Constant (byte) flip::r#0 (byte) 16
 Constant (byte) flip::c#0 (byte) 16
 Constant (byte) flip::i#0 (byte) 0
 Constant (byte~) plot::$0 (byte) 200
-Constant (byte) plot::y#0 (byte) 16
 Constant (byte) plot::i#0 (byte) 0
+Constant (byte) plot::y#0 (byte) 16
 Constant (byte) plot::x#0 (byte) 0
 Succesful SSA optimization Pass2ConstantPropagation
 CONTROL FLOW GRAPH

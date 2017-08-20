@@ -414,11 +414,15 @@ public class Pass1GenerateStatementSequence extends KickCBaseVisitor<Object> {
    @Override
    public SymbolType visitTypeArray(KickCParser.TypeArrayContext ctx) {
       SymbolType elementType = (SymbolType) visit(ctx.typeDecl());
-      Constant size = ParseTreeConstantEvaluator.evaluate(ctx.expr());
-      if (size instanceof ConstantInteger) {
-         return new SymbolTypeArray(elementType, ((ConstantInteger) size).getNumber());
+      if(ctx.expr()!=null) {
+         Constant size = ParseTreeConstantEvaluator.evaluate(ctx.expr());
+         if (size instanceof ConstantInteger) {
+            return new SymbolTypeArray(elementType, ((ConstantInteger) size).getNumber());
+         } else {
+            throw new RuntimeException("Array size not a constant integer " + ctx.getText());
+         }
       } else {
-         throw new RuntimeException("Array size not a constant integer " + ctx.getText());
+         return new SymbolTypeArray(elementType);
       }
    }
 

@@ -63,30 +63,26 @@ void addpoint(byte x, byte y, byte c) {
 }
 
 void initscreen() {
-  byte* screen = SCREEN;
-  do {
+  for( byte* screen = SCREEN; screen<SCREEN+$03e8; ++screen) {
     *screen = FILL;
-  } while(++screen<SCREEN+$03e8)
+  }
 }
 
 void render() {
   byte* colline = COLORS;
-  byte y=0;
-  do {
-    byte x=0;
-    do {
+  for( byte y : 0.. 24) {
+    for( byte x : 0..39) {
       byte col = findcol(x, y);
       colline[x] = col;
-    } while(++x < 40)
+    }
     colline = colline+40;
-  } while(++y < 25)
+  }
 }
 
 byte findcol(byte x, byte y) {
   byte mindiff = 255;
   byte mincol = 0;
-  byte i=0;
-  do {
+  for( byte i=0; i<numpoints; ++i) {
      byte xp = XPOS[i];
      byte yp = YPOS[i];
      if(x==xp) {
@@ -109,7 +105,7 @@ byte findcol(byte x, byte y) {
        mindiff=diff;
        mincol = COLS[i];
      }
-  } while(++i<numpoints)
+  }
   return mincol;
 }
 

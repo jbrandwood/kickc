@@ -63,30 +63,26 @@ void addpoint(byte x, byte y, byte c) {
 }
 
 void initscreen() {
-  byte* screen = SCREEN;
-  do {
+  for( byte* screen = SCREEN; screen<SCREEN+$03e8; ++screen) {
     *screen = FILL;
-  } while(++screen<SCREEN+$03e8)
+  }
 }
 
 void render() {
   byte* colline = COLORS;
-  byte y=0;
-  do {
-    byte x=0;
-    do {
+  for( byte y : 0.. 24) {
+    for( byte x : 0..39) {
       byte col = findcol(x, y);
       colline[x] = col;
-    } while(++x < 40)
+    }
     colline = colline+40;
-  } while(++y < 25)
+  }
 }
 
 byte findcol(byte x, byte y) {
   byte mindiff = 255;
   byte mincol = 0;
-  byte i=0;
-  do {
+  for( byte i=0; i<numpoints; ++i) {
      byte xp = XPOS[i];
      byte yp = YPOS[i];
      if(x==xp) {
@@ -109,7 +105,7 @@ byte findcol(byte x, byte y) {
        mindiff=diff;
        mincol = COLS[i];
      }
-  } while(++i<numpoints)
+  }
   return mincol;
 }
 
@@ -117,8 +113,6 @@ byte findcol(byte x, byte y) {
 
 Adding pre/post-modifier (byte) numpoints ← ++ (byte) numpoints
 Adding pre/post-modifier (byte*) initscreen::screen ← ++ (byte*) initscreen::screen
-Adding pre/post-modifier (byte) render::x ← ++ (byte) render::x
-Adding pre/post-modifier (byte) render::y ← ++ (byte) render::y
 Adding pre/post-modifier (byte) findcol::i ← ++ (byte) findcol::i
 PROGRAM
   (byte*) SCREEN ← (word) 1024
@@ -233,12 +227,12 @@ render::@2:
   (byte) render::col ← (byte~) render::$0
   *((byte*) render::colline + (byte) render::x) ← (byte) render::col
   (byte) render::x ← ++ (byte) render::x
-  (boolean~) render::$1 ← (byte) render::x < (byte) 40
+  (boolean~) render::$1 ← (byte) render::x != (byte) 40
   if((boolean~) render::$1) goto render::@2
   (byte*~) render::$2 ← (byte*) render::colline + (byte) 40
   (byte*) render::colline ← (byte*~) render::$2
   (byte) render::y ← ++ (byte) render::y
-  (boolean~) render::$3 ← (byte) render::y < (byte) 25
+  (boolean~) render::$3 ← (byte) render::y != (byte) 25
   if((boolean~) render::$3) goto render::@1
 render::@return:
   return 
@@ -578,14 +572,14 @@ render::@2: scope:[render]  from render::@1 render::@2
   (byte) render::col ← (byte~) render::$0
   *((byte*) render::colline + (byte) render::x) ← (byte) render::col
   (byte) render::x ← ++ (byte) render::x
-  (boolean~) render::$1 ← (byte) render::x < (byte) 40
+  (boolean~) render::$1 ← (byte) render::x != (byte) 40
   if((boolean~) render::$1) goto render::@2
   to:render::@3
 render::@3: scope:[render]  from render::@2
   (byte*~) render::$2 ← (byte*) render::colline + (byte) 40
   (byte*) render::colline ← (byte*~) render::$2
   (byte) render::y ← ++ (byte) render::y
-  (boolean~) render::$3 ← (byte) render::y < (byte) 25
+  (boolean~) render::$3 ← (byte) render::y != (byte) 25
   if((boolean~) render::$3) goto render::@1
   to:render::@4
 render::@4: scope:[render]  from render::@3
@@ -835,14 +829,14 @@ render::@2: scope:[render]  from render::@1 render::@2
   (byte) render::col ← (byte~) render::$0
   *((byte*) render::colline + (byte) render::x) ← (byte) render::col
   (byte) render::x ← ++ (byte) render::x
-  (boolean~) render::$1 ← (byte) render::x < (byte) 40
+  (boolean~) render::$1 ← (byte) render::x != (byte) 40
   if((boolean~) render::$1) goto render::@2
   to:render::@3
 render::@3: scope:[render]  from render::@2
   (byte*~) render::$2 ← (byte*) render::colline + (byte) 40
   (byte*) render::colline ← (byte*~) render::$2
   (byte) render::y ← ++ (byte) render::y
-  (boolean~) render::$3 ← (byte) render::y < (byte) 25
+  (boolean~) render::$3 ← (byte) render::y != (byte) 25
   if((boolean~) render::$3) goto render::@1
   to:render::@return
 render::@return: scope:[render]  from render::@3
@@ -1121,14 +1115,14 @@ render::@5: scope:[render]  from render::@2
   (byte) render::col ← (byte~) render::$0
   *((byte*) render::colline + (byte) render::x) ← (byte) render::col
   (byte) render::x ← ++ (byte) render::x
-  (boolean~) render::$1 ← (byte) render::x < (byte) 40
+  (boolean~) render::$1 ← (byte) render::x != (byte) 40
   if((boolean~) render::$1) goto render::@2
   to:render::@3
 render::@3: scope:[render]  from render::@5
   (byte*~) render::$2 ← (byte*) render::colline + (byte) 40
   (byte*) render::colline ← (byte*~) render::$2
   (byte) render::y ← ++ (byte) render::y
-  (boolean~) render::$3 ← (byte) render::y < (byte) 25
+  (boolean~) render::$3 ← (byte) render::y != (byte) 25
   if((boolean~) render::$3) goto render::@1
   to:render::@return
 render::@return: scope:[render]  from render::@3
@@ -1548,7 +1542,7 @@ render::@5: scope:[render]  from render::@2
   (byte) render::col#0 ← (byte~) render::$0
   *((byte*) render::colline#2 + (byte) render::x#3) ← (byte) render::col#0
   (byte) render::x#1 ← ++ (byte) render::x#3
-  (boolean~) render::$1 ← (byte) render::x#1 < (byte) 40
+  (boolean~) render::$1 ← (byte) render::x#1 != (byte) 40
   if((boolean~) render::$1) goto render::@2
   to:render::@3
 render::@3: scope:[render]  from render::@5
@@ -1561,7 +1555,7 @@ render::@3: scope:[render]  from render::@5
   (byte*~) render::$2 ← (byte*) render::colline#3 + (byte) 40
   (byte*) render::colline#1 ← (byte*~) render::$2
   (byte) render::y#1 ← ++ (byte) render::y#3
-  (boolean~) render::$3 ← (byte) render::y#1 < (byte) 25
+  (boolean~) render::$3 ← (byte) render::y#1 != (byte) 25
   if((boolean~) render::$3) goto render::@1
   to:render::@return
 render::@return: scope:[render]  from render::@3
@@ -2100,7 +2094,7 @@ render::@5: scope:[render]  from render::@2
   (byte) render::col#0 ← (byte~) render::$0
   *((byte*) render::colline#2 + (byte) render::x#3) ← (byte) render::col#0
   (byte) render::x#1 ← ++ (byte) render::x#3
-  (boolean~) render::$1 ← (byte) render::x#1 < (byte) 40
+  (boolean~) render::$1 ← (byte) render::x#1 != (byte) 40
   if((boolean~) render::$1) goto render::@2
   to:render::@3
 render::@3: scope:[render]  from render::@5
@@ -2113,7 +2107,7 @@ render::@3: scope:[render]  from render::@5
   (byte*~) render::$2 ← (byte*) render::colline#3 + (byte) 40
   (byte*) render::colline#1 ← (byte*~) render::$2
   (byte) render::y#1 ← ++ (byte) render::y#3
-  (boolean~) render::$3 ← (byte) render::y#1 < (byte) 25
+  (boolean~) render::$3 ← (byte) render::y#1 != (byte) 25
   if((boolean~) render::$3) goto render::@1
   to:render::@return
 render::@return: scope:[render]  from render::@3
@@ -2326,6 +2320,477 @@ findcol::@17: scope:[findcol]  from findcol::@8
   (byte) findcol::return#3 ← (byte) findcol::mincol#2
   to:findcol::@return
 @end: scope:[]  from @7
+
+INITIAL SSA SYMBOL TABLE
+(label) @7
+(label) @begin
+(label) @end
+(byte*) COLORS
+(byte*) COLORS#0
+(byte*) COLORS#1
+(byte*) COLORS#10
+(byte*) COLORS#11
+(byte*) COLORS#12
+(byte*) COLORS#2
+(byte*) COLORS#3
+(byte*) COLORS#4
+(byte*) COLORS#5
+(byte*) COLORS#6
+(byte*) COLORS#7
+(byte*) COLORS#8
+(byte*) COLORS#9
+(byte[256]) COLS
+(byte[256]) COLS#0
+(byte[256]) COLS#1
+(byte[256]) COLS#10
+(byte[256]) COLS#11
+(byte[256]) COLS#12
+(byte[256]) COLS#13
+(byte[256]) COLS#14
+(byte[256]) COLS#15
+(byte[256]) COLS#16
+(byte[256]) COLS#17
+(byte[256]) COLS#18
+(byte[256]) COLS#19
+(byte[256]) COLS#2
+(byte[256]) COLS#20
+(byte[256]) COLS#21
+(byte[256]) COLS#22
+(byte[256]) COLS#23
+(byte[256]) COLS#24
+(byte[256]) COLS#25
+(byte[256]) COLS#26
+(byte[256]) COLS#27
+(byte[256]) COLS#28
+(byte[256]) COLS#29
+(byte[256]) COLS#3
+(byte[256]) COLS#30
+(byte[256]) COLS#4
+(byte[256]) COLS#5
+(byte[256]) COLS#6
+(byte[256]) COLS#7
+(byte[256]) COLS#8
+(byte[256]) COLS#9
+(byte) FILL
+(byte) FILL#0
+(byte) FILL#1
+(byte) FILL#2
+(byte) FILL#3
+(byte) FILL#4
+(byte) FILL#5
+(byte) FILL#6
+(byte) FILL#7
+(byte) FILL#8
+(byte) FILL#9
+(byte*) SCREEN
+(byte*) SCREEN#0
+(byte*) SCREEN#1
+(byte*) SCREEN#2
+(byte*) SCREEN#3
+(byte*) SCREEN#4
+(byte*) SCREEN#5
+(byte*) SCREEN#6
+(byte*) SCREEN#7
+(byte*) SCREEN#8
+(byte*) SCREEN#9
+(byte[256]) XPOS
+(byte[256]) XPOS#0
+(byte[256]) XPOS#1
+(byte[256]) XPOS#10
+(byte[256]) XPOS#11
+(byte[256]) XPOS#12
+(byte[256]) XPOS#13
+(byte[256]) XPOS#14
+(byte[256]) XPOS#15
+(byte[256]) XPOS#16
+(byte[256]) XPOS#17
+(byte[256]) XPOS#18
+(byte[256]) XPOS#19
+(byte[256]) XPOS#2
+(byte[256]) XPOS#20
+(byte[256]) XPOS#21
+(byte[256]) XPOS#22
+(byte[256]) XPOS#23
+(byte[256]) XPOS#24
+(byte[256]) XPOS#25
+(byte[256]) XPOS#26
+(byte[256]) XPOS#27
+(byte[256]) XPOS#28
+(byte[256]) XPOS#29
+(byte[256]) XPOS#3
+(byte[256]) XPOS#30
+(byte[256]) XPOS#31
+(byte[256]) XPOS#32
+(byte[256]) XPOS#33
+(byte[256]) XPOS#34
+(byte[256]) XPOS#35
+(byte[256]) XPOS#36
+(byte[256]) XPOS#37
+(byte[256]) XPOS#38
+(byte[256]) XPOS#39
+(byte[256]) XPOS#4
+(byte[256]) XPOS#40
+(byte[256]) XPOS#41
+(byte[256]) XPOS#5
+(byte[256]) XPOS#6
+(byte[256]) XPOS#7
+(byte[256]) XPOS#8
+(byte[256]) XPOS#9
+(byte[256]) YPOS
+(byte[256]) YPOS#0
+(byte[256]) YPOS#1
+(byte[256]) YPOS#10
+(byte[256]) YPOS#11
+(byte[256]) YPOS#12
+(byte[256]) YPOS#13
+(byte[256]) YPOS#14
+(byte[256]) YPOS#15
+(byte[256]) YPOS#16
+(byte[256]) YPOS#17
+(byte[256]) YPOS#18
+(byte[256]) YPOS#19
+(byte[256]) YPOS#2
+(byte[256]) YPOS#20
+(byte[256]) YPOS#21
+(byte[256]) YPOS#22
+(byte[256]) YPOS#23
+(byte[256]) YPOS#24
+(byte[256]) YPOS#25
+(byte[256]) YPOS#26
+(byte[256]) YPOS#27
+(byte[256]) YPOS#28
+(byte[256]) YPOS#29
+(byte[256]) YPOS#3
+(byte[256]) YPOS#30
+(byte[256]) YPOS#31
+(byte[256]) YPOS#32
+(byte[256]) YPOS#33
+(byte[256]) YPOS#34
+(byte[256]) YPOS#35
+(byte[256]) YPOS#36
+(byte[256]) YPOS#37
+(byte[256]) YPOS#38
+(byte[256]) YPOS#39
+(byte[256]) YPOS#4
+(byte[256]) YPOS#40
+(byte[256]) YPOS#5
+(byte[256]) YPOS#6
+(byte[256]) YPOS#7
+(byte[256]) YPOS#8
+(byte[256]) YPOS#9
+(void()) addpoint((byte) addpoint::x , (byte) addpoint::y , (byte) addpoint::c)
+(label) addpoint::@return
+(byte) addpoint::c
+(byte) addpoint::c#0
+(byte) addpoint::c#1
+(byte) addpoint::c#2
+(byte) addpoint::c#3
+(byte) addpoint::c#4
+(byte) addpoint::c#5
+(byte) addpoint::c#6
+(byte) addpoint::x
+(byte) addpoint::x#0
+(byte) addpoint::x#1
+(byte) addpoint::x#2
+(byte) addpoint::x#3
+(byte) addpoint::x#4
+(byte) addpoint::x#5
+(byte) addpoint::x#6
+(byte) addpoint::y
+(byte) addpoint::y#0
+(byte) addpoint::y#1
+(byte) addpoint::y#2
+(byte) addpoint::y#3
+(byte) addpoint::y#4
+(byte) addpoint::y#5
+(byte) addpoint::y#6
+(void()) animate()
+(byte~) animate::$0
+(byte~) animate::$1
+(byte~) animate::$10
+(byte~) animate::$11
+(byte~) animate::$12
+(boolean~) animate::$13
+(boolean~) animate::$14
+(byte~) animate::$15
+(byte~) animate::$16
+(byte~) animate::$17
+(boolean~) animate::$18
+(boolean~) animate::$19
+(byte~) animate::$2
+(byte~) animate::$20
+(byte~) animate::$21
+(byte~) animate::$22
+(boolean~) animate::$23
+(boolean~) animate::$24
+(byte~) animate::$25
+(byte~) animate::$26
+(byte~) animate::$27
+(boolean~) animate::$28
+(boolean~) animate::$29
+(boolean~) animate::$3
+(byte~) animate::$30
+(byte~) animate::$31
+(boolean~) animate::$4
+(byte~) animate::$5
+(byte~) animate::$6
+(byte~) animate::$7
+(boolean~) animate::$8
+(boolean~) animate::$9
+(label) animate::@1
+(label) animate::@10
+(label) animate::@11
+(label) animate::@12
+(label) animate::@2
+(label) animate::@3
+(label) animate::@4
+(label) animate::@5
+(label) animate::@6
+(label) animate::@7
+(label) animate::@8
+(label) animate::@9
+(label) animate::@return
+(byte()) findcol((byte) findcol::x , (byte) findcol::y)
+(byte~) findcol::$0
+(byte~) findcol::$1
+(boolean~) findcol::$10
+(boolean~) findcol::$11
+(byte~) findcol::$12
+(byte~) findcol::$13
+(byte~) findcol::$14
+(byte~) findcol::$15
+(boolean~) findcol::$16
+(boolean~) findcol::$17
+(byte~) findcol::$18
+(boolean~) findcol::$19
+(boolean~) findcol::$2
+(boolean~) findcol::$3
+(boolean~) findcol::$4
+(boolean~) findcol::$5
+(boolean~) findcol::$6
+(boolean~) findcol::$7
+(byte~) findcol::$8
+(byte~) findcol::$9
+(label) findcol::@1
+(label) findcol::@10
+(label) findcol::@12
+(label) findcol::@14
+(label) findcol::@16
+(label) findcol::@17
+(label) findcol::@2
+(label) findcol::@3
+(label) findcol::@4
+(label) findcol::@5
+(label) findcol::@6
+(label) findcol::@7
+(label) findcol::@8
+(label) findcol::@9
+(label) findcol::@return
+(byte) findcol::diff
+(byte) findcol::diff#0
+(byte) findcol::diff#1
+(byte) findcol::diff#2
+(byte) findcol::diff#3
+(byte) findcol::diff#4
+(byte) findcol::diff#5
+(byte) findcol::diff#6
+(byte) findcol::diff#7
+(byte) findcol::diff#8
+(byte) findcol::i
+(byte) findcol::i#0
+(byte) findcol::i#1
+(byte) findcol::i#10
+(byte) findcol::i#11
+(byte) findcol::i#12
+(byte) findcol::i#13
+(byte) findcol::i#2
+(byte) findcol::i#3
+(byte) findcol::i#4
+(byte) findcol::i#5
+(byte) findcol::i#6
+(byte) findcol::i#7
+(byte) findcol::i#8
+(byte) findcol::i#9
+(byte) findcol::mincol
+(byte) findcol::mincol#0
+(byte) findcol::mincol#1
+(byte) findcol::mincol#10
+(byte) findcol::mincol#11
+(byte) findcol::mincol#12
+(byte) findcol::mincol#13
+(byte) findcol::mincol#2
+(byte) findcol::mincol#3
+(byte) findcol::mincol#4
+(byte) findcol::mincol#5
+(byte) findcol::mincol#6
+(byte) findcol::mincol#7
+(byte) findcol::mincol#8
+(byte) findcol::mincol#9
+(byte) findcol::mindiff
+(byte) findcol::mindiff#0
+(byte) findcol::mindiff#1
+(byte) findcol::mindiff#10
+(byte) findcol::mindiff#11
+(byte) findcol::mindiff#12
+(byte) findcol::mindiff#2
+(byte) findcol::mindiff#3
+(byte) findcol::mindiff#4
+(byte) findcol::mindiff#5
+(byte) findcol::mindiff#6
+(byte) findcol::mindiff#7
+(byte) findcol::mindiff#8
+(byte) findcol::mindiff#9
+(byte) findcol::return
+(byte) findcol::return#0
+(byte) findcol::return#1
+(byte) findcol::return#2
+(byte) findcol::return#3
+(byte) findcol::return#4
+(byte) findcol::return#5
+(byte) findcol::x
+(byte) findcol::x#0
+(byte) findcol::x#1
+(byte) findcol::x#10
+(byte) findcol::x#11
+(byte) findcol::x#12
+(byte) findcol::x#13
+(byte) findcol::x#2
+(byte) findcol::x#3
+(byte) findcol::x#4
+(byte) findcol::x#5
+(byte) findcol::x#6
+(byte) findcol::x#7
+(byte) findcol::x#8
+(byte) findcol::x#9
+(byte) findcol::xp
+(byte) findcol::xp#0
+(byte) findcol::xp#1
+(byte) findcol::xp#2
+(byte) findcol::xp#3
+(byte) findcol::xp#4
+(byte) findcol::xp#5
+(byte) findcol::y
+(byte) findcol::y#0
+(byte) findcol::y#1
+(byte) findcol::y#10
+(byte) findcol::y#11
+(byte) findcol::y#12
+(byte) findcol::y#13
+(byte) findcol::y#2
+(byte) findcol::y#3
+(byte) findcol::y#4
+(byte) findcol::y#5
+(byte) findcol::y#6
+(byte) findcol::y#7
+(byte) findcol::y#8
+(byte) findcol::y#9
+(byte) findcol::yp
+(byte) findcol::yp#0
+(byte) findcol::yp#1
+(byte) findcol::yp#2
+(byte) findcol::yp#3
+(byte) findcol::yp#4
+(byte) findcol::yp#5
+(byte) findcol::yp#6
+(byte) findcol::yp#7
+(byte) findcol::yp#8
+(void()) initscreen()
+(byte*~) initscreen::$0
+(boolean~) initscreen::$1
+(label) initscreen::@1
+(label) initscreen::@return
+(byte*) initscreen::screen
+(byte*) initscreen::screen#0
+(byte*) initscreen::screen#1
+(byte*) initscreen::screen#2
+(void()) main()
+(label) main::@1
+(label) main::@10
+(label) main::@11
+(label) main::@3
+(label) main::@4
+(label) main::@5
+(label) main::@6
+(label) main::@7
+(label) main::@8
+(label) main::@9
+(label) main::@return
+(byte) numpoints
+(byte) numpoints#0
+(byte) numpoints#1
+(byte) numpoints#10
+(byte) numpoints#11
+(byte) numpoints#12
+(byte) numpoints#13
+(byte) numpoints#14
+(byte) numpoints#15
+(byte) numpoints#16
+(byte) numpoints#17
+(byte) numpoints#18
+(byte) numpoints#19
+(byte) numpoints#2
+(byte) numpoints#20
+(byte) numpoints#21
+(byte) numpoints#22
+(byte) numpoints#23
+(byte) numpoints#24
+(byte) numpoints#25
+(byte) numpoints#26
+(byte) numpoints#27
+(byte) numpoints#28
+(byte) numpoints#29
+(byte) numpoints#3
+(byte) numpoints#30
+(byte) numpoints#31
+(byte) numpoints#32
+(byte) numpoints#33
+(byte) numpoints#34
+(byte) numpoints#35
+(byte) numpoints#36
+(byte) numpoints#37
+(byte) numpoints#38
+(byte) numpoints#39
+(byte) numpoints#4
+(byte) numpoints#40
+(byte) numpoints#41
+(byte) numpoints#42
+(byte) numpoints#43
+(byte) numpoints#5
+(byte) numpoints#6
+(byte) numpoints#7
+(byte) numpoints#8
+(byte) numpoints#9
+(void()) render()
+(byte~) render::$0
+(boolean~) render::$1
+(byte*~) render::$2
+(boolean~) render::$3
+(label) render::@1
+(label) render::@2
+(label) render::@3
+(label) render::@5
+(label) render::@return
+(byte) render::col
+(byte) render::col#0
+(byte*) render::colline
+(byte*) render::colline#0
+(byte*) render::colline#1
+(byte*) render::colline#2
+(byte*) render::colline#3
+(byte*) render::colline#4
+(byte*) render::colline#5
+(byte) render::x
+(byte) render::x#0
+(byte) render::x#1
+(byte) render::x#2
+(byte) render::x#3
+(byte) render::y
+(byte) render::y#0
+(byte) render::y#1
+(byte) render::y#2
+(byte) render::y#3
+(byte) render::y#4
+(byte) render::y#5
 
 Culled Empty Block (label) animate::@5
 Culled Empty Block (label) animate::@6
@@ -2651,7 +3116,7 @@ render::@5: scope:[render]  from render::@2
   (byte) render::col#0 ← (byte~) render::$0
   *((byte*) render::colline#2 + (byte) render::x#3) ← (byte) render::col#0
   (byte) render::x#1 ← ++ (byte) render::x#3
-  (boolean~) render::$1 ← (byte) render::x#1 < (byte) 40
+  (boolean~) render::$1 ← (byte) render::x#1 != (byte) 40
   if((boolean~) render::$1) goto render::@2
   to:render::@3
 render::@3: scope:[render]  from render::@5
@@ -2664,7 +3129,7 @@ render::@3: scope:[render]  from render::@5
   (byte*~) render::$2 ← (byte*) render::colline#3 + (byte) 40
   (byte*) render::colline#1 ← (byte*~) render::$2
   (byte) render::y#1 ← ++ (byte) render::y#3
-  (boolean~) render::$3 ← (byte) render::y#1 < (byte) 25
+  (boolean~) render::$3 ← (byte) render::y#1 != (byte) 25
   if((boolean~) render::$3) goto render::@1
   to:render::@return
 render::@return: scope:[render]  from render::@3
@@ -3204,7 +3669,7 @@ render::@5: scope:[render]  from render::@2
   (byte) render::col#0 ← (byte~) render::$0
   *((byte*) render::colline#2 + (byte) render::x#3) ← (byte) render::col#0
   (byte) render::x#1 ← ++ (byte) render::x#3
-  (boolean~) render::$1 ← (byte) render::x#1 < (byte) 40
+  (boolean~) render::$1 ← (byte) render::x#1 != (byte) 40
   if((boolean~) render::$1) goto render::@2
   to:render::@3
 render::@3: scope:[render]  from render::@5
@@ -3217,7 +3682,7 @@ render::@3: scope:[render]  from render::@5
   (byte*~) render::$2 ← (byte*) render::colline#3 + (byte) 40
   (byte*) render::colline#1 ← (byte*~) render::$2
   (byte) render::y#1 ← ++ (byte) render::y#3
-  (boolean~) render::$3 ← (byte) render::y#1 < (byte) 25
+  (boolean~) render::$3 ← (byte) render::y#1 != (byte) 25
   if((boolean~) render::$3) goto render::@1
   to:render::@return
 render::@return: scope:[render]  from render::@3
@@ -3728,7 +4193,7 @@ render::@5: scope:[render]  from render::@2
   (byte) render::col#0 ← (byte~) render::$0
   *((byte*) render::colline#2 + (byte) render::x#3) ← (byte) render::col#0
   (byte) render::x#1 ← ++ (byte) render::x#3
-  (boolean~) render::$1 ← (byte) render::x#1 < (byte) 40
+  (boolean~) render::$1 ← (byte) render::x#1 != (byte) 40
   if((boolean~) render::$1) goto render::@2
   to:render::@3
 render::@3: scope:[render]  from render::@5
@@ -3741,7 +4206,7 @@ render::@3: scope:[render]  from render::@5
   (byte*~) render::$2 ← (byte*) render::colline#3 + (byte) 40
   (byte*) render::colline#1 ← (byte*~) render::$2
   (byte) render::y#1 ← ++ (byte) render::y#3
-  (boolean~) render::$3 ← (byte) render::y#1 < (byte) 25
+  (boolean~) render::$3 ← (byte) render::y#1 != (byte) 25
   if((boolean~) render::$3) goto render::@1
   to:render::@return
 render::@return: scope:[render]  from render::@3
@@ -4220,13 +4685,13 @@ render::@5: scope:[render]  from render::@2
   (byte) render::col#0 ← (byte) findcol::return#0
   *((byte*) render::colline#2 + (byte) render::x#2) ← (byte) render::col#0
   (byte) render::x#1 ← ++ (byte) render::x#2
-  (boolean~) render::$1 ← (byte) render::x#1 < (byte) 40
+  (boolean~) render::$1 ← (byte) render::x#1 != (byte) 40
   if((boolean~) render::$1) goto render::@2
   to:render::@3
 render::@3: scope:[render]  from render::@5
   (byte*) render::colline#1 ← (byte*) render::colline#2 + (byte) 40
   (byte) render::y#1 ← ++ (byte) render::y#2
-  (boolean~) render::$3 ← (byte) render::y#1 < (byte) 25
+  (boolean~) render::$3 ← (byte) render::y#1 != (byte) 25
   if((boolean~) render::$3) goto render::@1
   to:render::@return
 render::@return: scope:[render]  from render::@3
@@ -4567,13 +5032,13 @@ render::@5: scope:[render]  from render::@2
   (byte) render::col#0 ← (byte) findcol::return#0
   *((byte*) render::colline#2 + (byte) render::x#2) ← (byte) render::col#0
   (byte) render::x#1 ← ++ (byte) render::x#2
-  (boolean~) render::$1 ← (byte) render::x#1 < (byte) 40
+  (boolean~) render::$1 ← (byte) render::x#1 != (byte) 40
   if((boolean~) render::$1) goto render::@2
   to:render::@3
 render::@3: scope:[render]  from render::@5
   (byte*) render::colline#1 ← (byte*) render::colline#2 + (byte) 40
   (byte) render::y#1 ← ++ (byte) render::y#2
-  (boolean~) render::$3 ← (byte) render::y#1 < (byte) 25
+  (boolean~) render::$3 ← (byte) render::y#1 != (byte) 25
   if((boolean~) render::$3) goto render::@1
   to:render::@return
 render::@return: scope:[render]  from render::@3
@@ -4841,13 +5306,13 @@ render::@5: scope:[render]  from render::@2
   (byte) render::col#0 ← (byte) findcol::return#0
   *((byte*) render::colline#2 + (byte) render::x#2) ← (byte) render::col#0
   (byte) render::x#1 ← ++ (byte) render::x#2
-  (boolean~) render::$1 ← (byte) render::x#1 < (byte) 40
+  (boolean~) render::$1 ← (byte) render::x#1 != (byte) 40
   if((boolean~) render::$1) goto render::@2
   to:render::@3
 render::@3: scope:[render]  from render::@5
   (byte*) render::colline#1 ← (byte*) render::colline#2 + (byte) 40
   (byte) render::y#1 ← ++ (byte) render::y#2
-  (boolean~) render::$3 ← (byte) render::y#1 < (byte) 25
+  (boolean~) render::$3 ← (byte) render::y#1 != (byte) 25
   if((boolean~) render::$3) goto render::@1
   to:render::@return
 render::@return: scope:[render]  from render::@3
@@ -4931,8 +5396,8 @@ Simple Condition (boolean~) animate::$19 if((byte~) animate::$17!=(byte) 25) got
 Simple Condition (boolean~) animate::$24 if((byte~) animate::$22!=(byte) 255) goto animate::@return
 Simple Condition (boolean~) animate::$29 if((byte~) animate::$27<(byte) 40) goto animate::@return
 Simple Condition (boolean~) initscreen::$1 if((byte*) initscreen::screen#1<(byte*~) initscreen::$0) goto initscreen::@1
-Simple Condition (boolean~) render::$1 if((byte) render::x#1<(byte) 40) goto render::@2
-Simple Condition (boolean~) render::$3 if((byte) render::y#1<(byte) 25) goto render::@1
+Simple Condition (boolean~) render::$1 if((byte) render::x#1!=(byte) 40) goto render::@2
+Simple Condition (boolean~) render::$3 if((byte) render::y#1!=(byte) 25) goto render::@1
 Simple Condition (boolean~) findcol::$3 if((byte) findcol::x#1!=(byte) findcol::xp#0) goto findcol::@2
 Simple Condition (boolean~) findcol::$7 if((byte) findcol::x#1>=(byte) findcol::xp#0) goto findcol::@4
 Simple Condition (boolean~) findcol::$5 if((byte) findcol::y#1!=(byte) findcol::yp#0) goto findcol::@3
@@ -5104,12 +5569,12 @@ render::@5: scope:[render]  from render::@2
   (byte) render::col#0 ← (byte) findcol::return#0
   *((byte*) render::colline#2 + (byte) render::x#2) ← (byte) render::col#0
   (byte) render::x#1 ← ++ (byte) render::x#2
-  if((byte) render::x#1<(byte) 40) goto render::@2
+  if((byte) render::x#1!=(byte) 40) goto render::@2
   to:render::@3
 render::@3: scope:[render]  from render::@5
   (byte*) render::colline#1 ← (byte*) render::colline#2 + (byte) 40
   (byte) render::y#1 ← ++ (byte) render::y#2
-  if((byte) render::y#1<(byte) 25) goto render::@1
+  if((byte) render::y#1!=(byte) 25) goto render::@1
   to:render::@return
 render::@return: scope:[render]  from render::@3
   return 
@@ -5345,12 +5810,12 @@ render::@5: scope:[render]  from render::@2
   (byte) render::col#0 ← (byte) findcol::return#0
   *((byte*) render::colline#2 + (byte) render::x#2) ← (byte) render::col#0
   (byte) render::x#1 ← ++ (byte) render::x#2
-  if((byte) render::x#1<(byte) 40) goto render::@2
+  if((byte) render::x#1!=(byte) 40) goto render::@2
   to:render::@3
 render::@3: scope:[render]  from render::@5
   (byte*) render::colline#1 ← (byte*) render::colline#2 + (byte) 40
   (byte) render::y#1 ← ++ (byte) render::y#2
-  if((byte) render::y#1<(byte) 25) goto render::@1
+  if((byte) render::y#1!=(byte) 25) goto render::@1
   to:render::@return
 render::@return: scope:[render]  from render::@3
   return 
@@ -5575,12 +6040,12 @@ render::@5: scope:[render]  from render::@2
   (byte) render::col#0 ← (byte) findcol::return#0
   *((byte*) render::colline#2 + (byte) render::x#2) ← (byte) render::col#0
   (byte) render::x#1 ← ++ (byte) render::x#2
-  if((byte) render::x#1<(byte) 40) goto render::@2
+  if((byte) render::x#1!=(byte) 40) goto render::@2
   to:render::@3
 render::@3: scope:[render]  from render::@5
   (byte*) render::colline#1 ← (byte*) render::colline#2 + (byte) 40
   (byte) render::y#1 ← ++ (byte) render::y#2
-  if((byte) render::y#1<(byte) 25) goto render::@1
+  if((byte) render::y#1!=(byte) 25) goto render::@1
   to:render::@return
 render::@return: scope:[render]  from render::@3
   return 
@@ -5823,12 +6288,12 @@ render::@5: scope:[render]  from render::@2
   (byte) render::col#0 ← (byte) findcol::return#0
   *((byte*) render::colline#2 + (byte) render::x#2) ← (byte) render::col#0
   (byte) render::x#1 ← ++ (byte) render::x#2
-  if((byte) render::x#1<(byte) 40) goto render::@2
+  if((byte) render::x#1!=(byte) 40) goto render::@2
   to:render::@3
 render::@3: scope:[render]  from render::@5
   (byte*) render::colline#1 ← (byte*) render::colline#2 + (byte) 40
   (byte) render::y#1 ← ++ (byte) render::y#2
-  if((byte) render::y#1<(byte) 25) goto render::@1
+  if((byte) render::y#1!=(byte) 25) goto render::@1
   to:render::@return
 render::@return: scope:[render]  from render::@3
   return 
@@ -6051,12 +6516,12 @@ render::@5: scope:[render]  from render::@2
   (byte) render::col#0 ← (byte) findcol::return#0
   *((byte*) render::colline#2 + (byte) render::x#2) ← (byte) render::col#0
   (byte) render::x#1 ← ++ (byte) render::x#2
-  if((byte) render::x#1<(byte) 40) goto render::@2
+  if((byte) render::x#1!=(byte) 40) goto render::@2
   to:render::@3
 render::@3: scope:[render]  from render::@5
   (byte*) render::colline#1 ← (byte*) render::colline#2 + (byte) 40
   (byte) render::y#1 ← ++ (byte) render::y#2
-  if((byte) render::y#1<(byte) 25) goto render::@1
+  if((byte) render::y#1!=(byte) 25) goto render::@1
   to:render::@return
 render::@return: scope:[render]  from render::@3
   return 
@@ -6265,12 +6730,12 @@ render::@5: scope:[render]  from render::@2
   (byte) render::col#0 ← (byte) findcol::return#0
   *((byte*) render::colline#2 + (byte) render::x#2) ← (byte) render::col#0
   (byte) render::x#1 ← ++ (byte) render::x#2
-  if((byte) render::x#1<(byte) 40) goto render::@2
+  if((byte) render::x#1!=(byte) 40) goto render::@2
   to:render::@3
 render::@3: scope:[render]  from render::@5
   (byte*) render::colline#1 ← (byte*) render::colline#2 + (byte) 40
   (byte) render::y#1 ← ++ (byte) render::y#2
-  if((byte) render::y#1<(byte) 25) goto render::@1
+  if((byte) render::y#1!=(byte) 25) goto render::@1
   to:render::@return
 render::@return: scope:[render]  from render::@3
   return 
@@ -6475,12 +6940,12 @@ render::@5: scope:[render]  from render::@2
   (byte) render::col#0 ← (byte) findcol::return#0
   *((byte*) render::colline#2 + (byte) render::x#2) ← (byte) render::col#0
   (byte) render::x#1 ← ++ (byte) render::x#2
-  if((byte) render::x#1<(byte) 40) goto render::@2
+  if((byte) render::x#1!=(byte) 40) goto render::@2
   to:render::@3
 render::@3: scope:[render]  from render::@5
   (byte*) render::colline#1 ← (byte*) render::colline#2 + (byte) 40
   (byte) render::y#1 ← ++ (byte) render::y#2
-  if((byte) render::y#1<(byte) 25) goto render::@1
+  if((byte) render::y#1!=(byte) 25) goto render::@1
   to:render::@return
 render::@return: scope:[render]  from render::@3
   return 
@@ -6686,12 +7151,12 @@ render::@5: scope:[render]  from render::@2
   (byte) render::col#0 ← (byte) findcol::return#0
   *((byte*) render::colline#2 + (byte) render::x#2) ← (byte) render::col#0
   (byte) render::x#1 ← ++ (byte) render::x#2
-  if((byte) render::x#1<(byte) 40) goto render::@2
+  if((byte) render::x#1!=(byte) 40) goto render::@2
   to:render::@3
 render::@3: scope:[render]  from render::@5
   (byte*) render::colline#1 ← (byte*) render::colline#2 + (byte) 40
   (byte) render::y#1 ← ++ (byte) render::y#2
-  if((byte) render::y#1<(byte) 25) goto render::@1
+  if((byte) render::y#1!=(byte) 25) goto render::@1
   to:render::@return
 render::@return: scope:[render]  from render::@3
   return 
@@ -6755,6 +7220,135 @@ Multiple usages for variable. Not optimizing sub-constant (byte) findcol::i#12
 Not aliassing across scopes: findcol::x#0 render::x#2
 Not aliassing across scopes: findcol::y#0 render::y#2
 Not aliassing across scopes: render::col#0 findcol::return#0
+FINAL SYMBOL TABLE
+(label) @begin
+(label) @end
+(byte*) COLORS
+(byte[256]) COLS
+(byte) FILL
+(byte*) SCREEN
+(byte[256]) XPOS
+(byte[256]) YPOS
+(void()) addpoint((byte) addpoint::x , (byte) addpoint::y , (byte) addpoint::c)
+(label) addpoint::@return
+(byte) addpoint::c
+(byte) addpoint::c#6
+(byte) addpoint::x
+(byte) addpoint::x#6
+(byte) addpoint::y
+(byte) addpoint::y#6
+(void()) animate()
+(byte~) animate::$0
+(byte~) animate::$1
+(byte~) animate::$10
+(byte~) animate::$11
+(byte~) animate::$12
+(byte~) animate::$15
+(byte~) animate::$16
+(byte~) animate::$17
+(byte~) animate::$2
+(byte~) animate::$20
+(byte~) animate::$21
+(byte~) animate::$22
+(byte~) animate::$25
+(byte~) animate::$26
+(byte~) animate::$27
+(byte~) animate::$30
+(byte~) animate::$31
+(byte~) animate::$5
+(byte~) animate::$6
+(byte~) animate::$7
+(label) animate::@1
+(label) animate::@10
+(label) animate::@11
+(label) animate::@12
+(label) animate::@2
+(label) animate::@3
+(label) animate::@4
+(label) animate::@7
+(label) animate::@8
+(label) animate::@9
+(label) animate::@return
+(byte()) findcol((byte) findcol::x , (byte) findcol::y)
+(byte~) findcol::$12
+(byte~) findcol::$14
+(label) findcol::@1
+(label) findcol::@12
+(label) findcol::@14
+(label) findcol::@16
+(label) findcol::@2
+(label) findcol::@4
+(label) findcol::@5
+(label) findcol::@6
+(label) findcol::@7
+(label) findcol::@8
+(label) findcol::@9
+(label) findcol::@return
+(byte) findcol::diff
+(byte) findcol::diff#0
+(byte) findcol::diff#1
+(byte) findcol::diff#2
+(byte) findcol::diff#3
+(byte) findcol::diff#4
+(byte) findcol::diff#6
+(byte) findcol::i
+(byte) findcol::i#1
+(byte) findcol::i#12
+(byte) findcol::mincol
+(byte) findcol::mincol#1
+(byte) findcol::mincol#11
+(byte) findcol::mincol#2
+(byte) findcol::mindiff
+(byte) findcol::mindiff#10
+(byte) findcol::mindiff#11
+(byte) findcol::return
+(byte) findcol::return#0
+(byte) findcol::x
+(byte) findcol::x#0
+(byte) findcol::xp
+(byte) findcol::xp#0
+(byte) findcol::y
+(byte) findcol::y#0
+(byte) findcol::yp
+(byte) findcol::yp#0
+(void()) initscreen()
+(label) initscreen::@1
+(label) initscreen::@return
+(byte*) initscreen::screen
+(byte*) initscreen::screen#1
+(byte*) initscreen::screen#2
+(void()) main()
+(label) main::@1
+(label) main::@10
+(label) main::@11
+(label) main::@3
+(label) main::@4
+(label) main::@5
+(label) main::@6
+(label) main::@7
+(label) main::@8
+(label) main::@return
+(byte) numpoints
+(byte) numpoints#1
+(byte) numpoints#19
+(void()) render()
+(label) render::@1
+(label) render::@2
+(label) render::@3
+(label) render::@5
+(label) render::@return
+(byte) render::col
+(byte) render::col#0
+(byte*) render::colline
+(byte*) render::colline#1
+(byte*) render::colline#2
+(byte) render::x
+(byte) render::x#1
+(byte) render::x#2
+(byte) render::y
+(byte) render::y#1
+(byte) render::y#2
+
 Block Sequence Planned @begin @end main main::@3 main::@4 main::@5 main::@6 main::@7 main::@8 main::@1 main::@10 main::@11 main::@return animate animate::@7 animate::@1 animate::@8 animate::@2 animate::@9 animate::@3 animate::@10 animate::@4 animate::@11 animate::@12 animate::@return render render::@1 render::@2 render::@5 render::@3 render::@return findcol findcol::@1 findcol::@9 findcol::@return findcol::@2 findcol::@12 findcol::@5 findcol::@14 findcol::@7 findcol::@16 findcol::@8 findcol::@6 findcol::@4 initscreen initscreen::@1 initscreen::@return addpoint addpoint::@return 
 Added new block during phi lifting render::@6(between render::@3 and render::@1)
 Added new block during phi lifting render::@7(between render::@5 and render::@2)
@@ -6885,12 +7479,12 @@ render::@5: scope:[render]  from render::@2
   (byte) render::col#0 ← (byte) findcol::return#0
   *((byte*) render::colline#2 + (byte) render::x#2) ← (byte) render::col#0
   (byte) render::x#1 ← ++ (byte) render::x#2
-  if((byte) render::x#1<(byte) 40) goto render::@7
+  if((byte) render::x#1!=(byte) 40) goto render::@7
   to:render::@3
 render::@3: scope:[render]  from render::@5
   (byte*) render::colline#1 ← (byte*) render::colline#2 + (byte) 40
   (byte) render::y#1 ← ++ (byte) render::y#2
-  if((byte) render::y#1<(byte) 25) goto render::@6
+  if((byte) render::y#1!=(byte) 25) goto render::@6
   to:render::@return
 render::@return: scope:[render]  from render::@3
   return 
@@ -7172,12 +7766,12 @@ render::@5: scope:[render]  from render::@2
   [61] (byte) render::col#0 ← (byte) findcol::return#0 [ render::x#2 render::y#2 render::colline#2 render::col#0 ]
   [62] *((byte*) render::colline#2 + (byte) render::x#2) ← (byte) render::col#0 [ render::x#2 render::y#2 render::colline#2 ]
   [63] (byte) render::x#1 ← ++ (byte) render::x#2 [ render::y#2 render::colline#2 render::x#1 ]
-  [64] if((byte) render::x#1<(byte) 40) goto render::@7 [ render::y#2 render::colline#2 render::x#1 ]
+  [64] if((byte) render::x#1!=(byte) 40) goto render::@7 [ render::y#2 render::colline#2 render::x#1 ]
   to:render::@3
 render::@3: scope:[render]  from render::@5
   [65] (byte*) render::colline#1 ← (byte*) render::colline#2 + (byte) 40 [ render::y#2 render::colline#1 ]
   [66] (byte) render::y#1 ← ++ (byte) render::y#2 [ render::y#1 render::colline#1 ]
-  [67] if((byte) render::y#1<(byte) 25) goto render::@6 [ render::y#1 render::colline#1 ]
+  [67] if((byte) render::y#1!=(byte) 25) goto render::@6 [ render::y#1 render::colline#1 ]
   to:render::@return
 render::@return: scope:[render]  from render::@3
   [68] return  [ ]
@@ -7466,12 +8060,12 @@ render::@5: scope:[render]  from render::@2
   [56] (byte) render::col#0 ← (byte) findcol::return#0 [ render::x#2 render::y#2 render::colline#2 render::col#0 ]
   [57] *((byte*) render::colline#2 + (byte) render::x#2) ← (byte) render::col#0 [ render::x#2 render::y#2 render::colline#2 ]
   [58] (byte) render::x#1 ← ++ (byte) render::x#2 [ render::x#1 render::y#2 render::colline#2 ]
-  [59] if((byte) render::x#1<(byte) 40) goto render::@2 [ render::x#1 render::y#2 render::colline#2 ]
+  [59] if((byte) render::x#1!=(byte) 40) goto render::@2 [ render::x#1 render::y#2 render::colline#2 ]
   to:render::@3
 render::@3: scope:[render]  from render::@5
   [60] (byte*) render::colline#1 ← (byte*) render::colline#2 + (byte) 40 [ render::colline#1 render::y#2 ]
   [61] (byte) render::y#1 ← ++ (byte) render::y#2 [ render::y#1 render::colline#1 ]
-  [62] if((byte) render::y#1<(byte) 25) goto render::@1 [ render::y#1 render::colline#1 ]
+  [62] if((byte) render::y#1!=(byte) 25) goto render::@1 [ render::y#1 render::colline#1 ]
   to:render::@return
 render::@return: scope:[render]  from render::@3
   [63] return  [ ]
@@ -7823,46 +8417,46 @@ Complete equivalence classes
 [ findcol::yp#0 ]
 [ findcol::$12 ]
 [ findcol::$14 ]
-Allocated zp byte:2 to zp byte:2 [ render::y#2 render::y#1 ]
-Allocated zp ptr byte:3 to zp ptr byte:3 [ render::colline#2 render::colline#1 ]
-Allocated zp byte:5 to zp byte:5 [ render::x#2 render::x#1 ]
-Allocated zp byte:6 to zp byte:6 [ findcol::i#12 findcol::i#1 ]
-Allocated zp byte:7 to zp byte:7 [ findcol::mindiff#10 findcol::mindiff#13 ]
-Allocated zp byte:8 to zp byte:8 [ findcol::return#0 findcol::mincol#11 findcol::mincol#2 findcol::mincol#1 ]
-Allocated zp byte:9 to zp byte:9 [ findcol::diff#4 findcol::diff#1 findcol::diff#0 ]
-Allocated zp byte:10 to zp byte:10 [ findcol::mindiff#11 findcol::diff#6 findcol::diff#3 findcol::diff#2 findcol::mindiff#14 ]
-Allocated zp ptr byte:11 to zp ptr byte:11 [ initscreen::screen#2 initscreen::screen#1 ]
-Allocated zp byte:13 to zp byte:13 [ addpoint::x#6 ]
-Allocated zp byte:14 to zp byte:14 [ numpoints#19 numpoints#1 ]
-Allocated zp byte:15 to zp byte:15 [ addpoint::y#6 ]
-Allocated zp byte:16 to zp byte:16 [ addpoint::c#6 ]
-Allocated zp byte:17 to zp byte:17 [ animate::$0 ]
-Allocated zp byte:18 to zp byte:18 [ animate::$1 ]
-Allocated zp byte:19 to zp byte:19 [ animate::$2 ]
-Allocated zp byte:20 to zp byte:20 [ animate::$5 ]
-Allocated zp byte:21 to zp byte:21 [ animate::$6 ]
-Allocated zp byte:22 to zp byte:22 [ animate::$7 ]
-Allocated zp byte:23 to zp byte:23 [ animate::$10 ]
-Allocated zp byte:24 to zp byte:24 [ animate::$11 ]
-Allocated zp byte:25 to zp byte:25 [ animate::$12 ]
-Allocated zp byte:26 to zp byte:26 [ animate::$15 ]
-Allocated zp byte:27 to zp byte:27 [ animate::$16 ]
-Allocated zp byte:28 to zp byte:28 [ animate::$17 ]
-Allocated zp byte:29 to zp byte:29 [ animate::$20 ]
-Allocated zp byte:30 to zp byte:30 [ animate::$21 ]
-Allocated zp byte:31 to zp byte:31 [ animate::$22 ]
-Allocated zp byte:32 to zp byte:32 [ animate::$25 ]
-Allocated zp byte:33 to zp byte:33 [ animate::$26 ]
-Allocated zp byte:34 to zp byte:34 [ animate::$27 ]
-Allocated zp byte:35 to zp byte:35 [ animate::$30 ]
-Allocated zp byte:36 to zp byte:36 [ animate::$31 ]
-Allocated zp byte:37 to zp byte:37 [ findcol::x#0 ]
-Allocated zp byte:38 to zp byte:38 [ findcol::y#0 ]
-Allocated zp byte:39 to zp byte:39 [ render::col#0 ]
-Allocated zp byte:40 to zp byte:40 [ findcol::xp#0 ]
-Allocated zp byte:41 to zp byte:41 [ findcol::yp#0 ]
-Allocated zp byte:42 to zp byte:42 [ findcol::$12 ]
-Allocated zp byte:43 to zp byte:43 [ findcol::$14 ]
+Allocated zp byte:2 [ render::y#2 render::y#1 ]
+Allocated zp ptr byte:3 [ render::colline#2 render::colline#1 ]
+Allocated zp byte:5 [ render::x#2 render::x#1 ]
+Allocated zp byte:6 [ findcol::i#12 findcol::i#1 ]
+Allocated zp byte:7 [ findcol::mindiff#10 findcol::mindiff#13 ]
+Allocated zp byte:8 [ findcol::return#0 findcol::mincol#11 findcol::mincol#2 findcol::mincol#1 ]
+Allocated zp byte:9 [ findcol::diff#4 findcol::diff#1 findcol::diff#0 ]
+Allocated zp byte:10 [ findcol::mindiff#11 findcol::diff#6 findcol::diff#3 findcol::diff#2 findcol::mindiff#14 ]
+Allocated zp ptr byte:11 [ initscreen::screen#2 initscreen::screen#1 ]
+Allocated zp byte:13 [ addpoint::x#6 ]
+Allocated zp byte:14 [ numpoints#19 numpoints#1 ]
+Allocated zp byte:15 [ addpoint::y#6 ]
+Allocated zp byte:16 [ addpoint::c#6 ]
+Allocated zp byte:17 [ animate::$0 ]
+Allocated zp byte:18 [ animate::$1 ]
+Allocated zp byte:19 [ animate::$2 ]
+Allocated zp byte:20 [ animate::$5 ]
+Allocated zp byte:21 [ animate::$6 ]
+Allocated zp byte:22 [ animate::$7 ]
+Allocated zp byte:23 [ animate::$10 ]
+Allocated zp byte:24 [ animate::$11 ]
+Allocated zp byte:25 [ animate::$12 ]
+Allocated zp byte:26 [ animate::$15 ]
+Allocated zp byte:27 [ animate::$16 ]
+Allocated zp byte:28 [ animate::$17 ]
+Allocated zp byte:29 [ animate::$20 ]
+Allocated zp byte:30 [ animate::$21 ]
+Allocated zp byte:31 [ animate::$22 ]
+Allocated zp byte:32 [ animate::$25 ]
+Allocated zp byte:33 [ animate::$26 ]
+Allocated zp byte:34 [ animate::$27 ]
+Allocated zp byte:35 [ animate::$30 ]
+Allocated zp byte:36 [ animate::$31 ]
+Allocated zp byte:37 [ findcol::x#0 ]
+Allocated zp byte:38 [ findcol::y#0 ]
+Allocated zp byte:39 [ render::col#0 ]
+Allocated zp byte:40 [ findcol::xp#0 ]
+Allocated zp byte:41 [ findcol::yp#0 ]
+Allocated zp byte:42 [ findcol::$12 ]
+Allocated zp byte:43 [ findcol::$14 ]
 INITIAL ASM
 //SEG0 @begin
 bbegin:
@@ -8224,10 +8818,10 @@ render: {
     sta ($3),y
   //SEG125 [58] (byte) render::x#1 ← ++ (byte) render::x#2 [ render::x#1 render::y#2 render::colline#2 ] -- zpby1=_inc_zpby1 
     inc $5
-  //SEG126 [59] if((byte) render::x#1<(byte) 40) goto render::@2 [ render::x#1 render::y#2 render::colline#2 ] -- zpby1_lt_coby1_then_la1 
+  //SEG126 [59] if((byte) render::x#1!=(byte) 40) goto render::@2 [ render::x#1 render::y#2 render::colline#2 ] -- zpby1_neq_coby1_then_la1 
     lda $5
     cmp #$28
-    bcc b2_from_b5
+    bne b2_from_b5
     jmp b3
   //SEG127 render::@3
   b3:
@@ -8241,10 +8835,10 @@ render: {
   !:
   //SEG129 [61] (byte) render::y#1 ← ++ (byte) render::y#2 [ render::y#1 render::colline#1 ] -- zpby1=_inc_zpby1 
     inc $2
-  //SEG130 [62] if((byte) render::y#1<(byte) 25) goto render::@1 [ render::y#1 render::colline#1 ] -- zpby1_lt_coby1_then_la1 
+  //SEG130 [62] if((byte) render::y#1!=(byte) 25) goto render::@1 [ render::y#1 render::colline#1 ] -- zpby1_neq_coby1_then_la1 
     lda $2
     cmp #$19
-    bcc b1_from_b3
+    bne b1_from_b3
     jmp breturn
   //SEG131 render::@return
   breturn:
@@ -8603,12 +9197,12 @@ Uplifting remains [reg byte a [ animate::$31 ]] best 1720363 combination reg byt
 Coalescing zero page register [ zp byte:2 [ render::y#2 render::y#1 ] ] with [ zp byte:16 [ addpoint::c#6 ] ]
 Coalescing zero page register [ zp ptr byte:3 [ render::colline#2 render::colline#1 ] ] with [ zp ptr byte:11 [ initscreen::screen#2 initscreen::screen#1 ] ]
 Coalescing zero page register [ zp byte:9 [ findcol::diff#4 findcol::diff#1 findcol::diff#0 ] ] with [ zp byte:40 [ findcol::xp#0 ] ]
-Re-allocated ZP register from zp byte:7 to zp byte:6
-Re-allocated ZP register from zp byte:9 to zp byte:7
-Re-allocated ZP register from zp byte:14 to zp byte:8
-Re-allocated ZP register from zp byte:37 to zp byte:9
-Re-allocated ZP register from zp byte:38 to zp byte:10
-Re-allocated ZP register from zp byte:41 to zp byte:11
+Allocated (was zp byte:7) zp byte:6 [ findcol::mindiff#10 findcol::mindiff#13 ]
+Allocated (was zp byte:9) zp byte:7 [ findcol::diff#4 findcol::diff#1 findcol::diff#0 findcol::xp#0 ]
+Allocated (was zp byte:14) zp byte:8 [ numpoints#19 numpoints#1 ]
+Allocated (was zp byte:37) zp byte:9 [ findcol::x#0 ]
+Allocated (was zp byte:38) zp byte:10 [ findcol::y#0 ]
+Allocated (was zp byte:41) zp byte:11 [ findcol::yp#0 ]
 Removing instruction jmp bend
 Removing instruction jmp b3
 Removing instruction jmp b4
@@ -8929,10 +9523,10 @@ render: {
     sta ($3),y
   //SEG125 [58] (byte) render::x#1 ← ++ (byte) render::x#2 [ render::x#1 render::y#2 render::colline#2 ] -- zpby1=_inc_zpby1 
     inc $5
-  //SEG126 [59] if((byte) render::x#1<(byte) 40) goto render::@2 [ render::x#1 render::y#2 render::colline#2 ] -- zpby1_lt_coby1_then_la1 
+  //SEG126 [59] if((byte) render::x#1!=(byte) 40) goto render::@2 [ render::x#1 render::y#2 render::colline#2 ] -- zpby1_neq_coby1_then_la1 
     lda $5
     cmp #$28
-    bcc b2_from_b5
+    bne b2_from_b5
   //SEG127 render::@3
   b3:
   //SEG128 [60] (byte*) render::colline#1 ← (byte*) render::colline#2 + (byte) 40 [ render::colline#1 render::y#2 ] -- zpptrby1=zpptrby1_plus_coby1 
@@ -8945,10 +9539,10 @@ render: {
   !:
   //SEG129 [61] (byte) render::y#1 ← ++ (byte) render::y#2 [ render::y#1 render::colline#1 ] -- zpby1=_inc_zpby1 
     inc $2
-  //SEG130 [62] if((byte) render::y#1<(byte) 25) goto render::@1 [ render::y#1 render::colline#1 ] -- zpby1_lt_coby1_then_la1 
+  //SEG130 [62] if((byte) render::y#1!=(byte) 25) goto render::@1 [ render::y#1 render::colline#1 ] -- zpby1_neq_coby1_then_la1 
     lda $2
     cmp #$19
-    bcc b1_from_b3
+    bne b1_from_b3
   //SEG131 render::@return
   breturn:
   //SEG132 [63] return  [ ]
@@ -9441,10 +10035,10 @@ render: {
     sta ($3),y
   //SEG125 [58] (byte) render::x#1 ← ++ (byte) render::x#2 [ render::x#1 render::y#2 render::colline#2 ] -- zpby1=_inc_zpby1 
     inc $5
-  //SEG126 [59] if((byte) render::x#1<(byte) 40) goto render::@2 [ render::x#1 render::y#2 render::colline#2 ] -- zpby1_lt_coby1_then_la1 
+  //SEG126 [59] if((byte) render::x#1!=(byte) 40) goto render::@2 [ render::x#1 render::y#2 render::colline#2 ] -- zpby1_neq_coby1_then_la1 
     lda $5
     cmp #$28
-    bcc b2
+    bne b2
   //SEG127 render::@3
   b3:
   //SEG128 [60] (byte*) render::colline#1 ← (byte*) render::colline#2 + (byte) 40 [ render::colline#1 render::y#2 ] -- zpptrby1=zpptrby1_plus_coby1 
@@ -9457,10 +10051,10 @@ render: {
   !:
   //SEG129 [61] (byte) render::y#1 ← ++ (byte) render::y#2 [ render::y#1 render::colline#1 ] -- zpby1=_inc_zpby1 
     inc $2
-  //SEG130 [62] if((byte) render::y#1<(byte) 25) goto render::@1 [ render::y#1 render::colline#1 ] -- zpby1_lt_coby1_then_la1 
+  //SEG130 [62] if((byte) render::y#1!=(byte) 25) goto render::@1 [ render::y#1 render::colline#1 ] -- zpby1_neq_coby1_then_la1 
     lda $2
     cmp #$19
-    bcc b1
+    bne b1
   //SEG131 render::@return
   breturn:
   //SEG132 [63] return  [ ]
@@ -9949,10 +10543,10 @@ render: {
     sta ($3),y
   //SEG125 [58] (byte) render::x#1 ← ++ (byte) render::x#2 [ render::x#1 render::y#2 render::colline#2 ] -- zpby1=_inc_zpby1 
     inc $5
-  //SEG126 [59] if((byte) render::x#1<(byte) 40) goto render::@2 [ render::x#1 render::y#2 render::colline#2 ] -- zpby1_lt_coby1_then_la1 
+  //SEG126 [59] if((byte) render::x#1!=(byte) 40) goto render::@2 [ render::x#1 render::y#2 render::colline#2 ] -- zpby1_neq_coby1_then_la1 
     lda $5
     cmp #$28
-    bcc b2
+    bne b2
   //SEG127 render::@3
   //SEG128 [60] (byte*) render::colline#1 ← (byte*) render::colline#2 + (byte) 40 [ render::colline#1 render::y#2 ] -- zpptrby1=zpptrby1_plus_coby1 
     lda $3
@@ -9964,10 +10558,10 @@ render: {
   !:
   //SEG129 [61] (byte) render::y#1 ← ++ (byte) render::y#2 [ render::y#1 render::colline#1 ] -- zpby1=_inc_zpby1 
     inc $2
-  //SEG130 [62] if((byte) render::y#1<(byte) 25) goto render::@1 [ render::y#1 render::colline#1 ] -- zpby1_lt_coby1_then_la1 
+  //SEG130 [62] if((byte) render::y#1!=(byte) 25) goto render::@1 [ render::y#1 render::colline#1 ] -- zpby1_neq_coby1_then_la1 
     lda $2
     cmp #$19
-    bcc b1
+    bne b1
   //SEG131 render::@return
   //SEG132 [63] return  [ ]
     rts
@@ -10406,10 +11000,10 @@ render: {
     sta ($3),y
   //SEG125 [58] (byte) render::x#1 ← ++ (byte) render::x#2 [ render::x#1 render::y#2 render::colline#2 ] -- zpby1=_inc_zpby1 
     inc $5
-  //SEG126 [59] if((byte) render::x#1<(byte) 40) goto render::@2 [ render::x#1 render::y#2 render::colline#2 ] -- zpby1_lt_coby1_then_la1 
+  //SEG126 [59] if((byte) render::x#1!=(byte) 40) goto render::@2 [ render::x#1 render::y#2 render::colline#2 ] -- zpby1_neq_coby1_then_la1 
     lda $5
     cmp #$28
-    bcc b2
+    bne b2
   //SEG127 render::@3
   //SEG128 [60] (byte*) render::colline#1 ← (byte*) render::colline#2 + (byte) 40 [ render::colline#1 render::y#2 ] -- zpptrby1=zpptrby1_plus_coby1 
     lda $3
@@ -10421,10 +11015,10 @@ render: {
   !:
   //SEG129 [61] (byte) render::y#1 ← ++ (byte) render::y#2 [ render::y#1 render::colline#1 ] -- zpby1=_inc_zpby1 
     inc $2
-  //SEG130 [62] if((byte) render::y#1<(byte) 25) goto render::@1 [ render::y#1 render::colline#1 ] -- zpby1_lt_coby1_then_la1 
+  //SEG130 [62] if((byte) render::y#1!=(byte) 25) goto render::@1 [ render::y#1 render::colline#1 ] -- zpby1_neq_coby1_then_la1 
     lda $2
     cmp #$19
-    bcc b1
+    bne b1
   //SEG131 render::@return
   //SEG132 [63] return  [ ]
     rts
@@ -11029,10 +11623,10 @@ render: {
     sta ($3),y
   //SEG125 [58] (byte) render::x#1 ← ++ (byte) render::x#2 [ render::x#1 render::y#2 render::colline#2 ] -- zpby1=_inc_zpby1 
     inc $5
-  //SEG126 [59] if((byte) render::x#1<(byte) 40) goto render::@2 [ render::x#1 render::y#2 render::colline#2 ] -- zpby1_lt_coby1_then_la1 
+  //SEG126 [59] if((byte) render::x#1!=(byte) 40) goto render::@2 [ render::x#1 render::y#2 render::colline#2 ] -- zpby1_neq_coby1_then_la1 
     lda $5
     cmp #$28
-    bcc b2
+    bne b2
   //SEG127 render::@3
   //SEG128 [60] (byte*) render::colline#1 ← (byte*) render::colline#2 + (byte) 40 [ render::colline#1 render::y#2 ] -- zpptrby1=zpptrby1_plus_coby1 
     lda $3
@@ -11044,10 +11638,10 @@ render: {
   !:
   //SEG129 [61] (byte) render::y#1 ← ++ (byte) render::y#2 [ render::y#1 render::colline#1 ] -- zpby1=_inc_zpby1 
     inc $2
-  //SEG130 [62] if((byte) render::y#1<(byte) 25) goto render::@1 [ render::y#1 render::colline#1 ] -- zpby1_lt_coby1_then_la1 
+  //SEG130 [62] if((byte) render::y#1!=(byte) 25) goto render::@1 [ render::y#1 render::colline#1 ] -- zpby1_neq_coby1_then_la1 
     lda $2
     cmp #$19
-    bcc b1
+    bne b1
   //SEG131 render::@return
   //SEG132 [63] return  [ ]
     rts

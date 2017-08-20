@@ -29,14 +29,14 @@ public class Pass4RegistersFinalize extends Pass2Base {
    private void reallocateZp(LiveRangeEquivalenceClassSet liveRangeEquivalenceClassSet) {
       for (LiveRangeEquivalenceClass equivalenceClass : liveRangeEquivalenceClassSet.getEquivalenceClasses()) {
          RegisterAllocation.Register register = equivalenceClass.getRegister();
-         if(register.isZp()) {
-            String before = register.toString();
+         if(register==null || register.isZp()) {
+            String before = register==null?null:register.toString();
             VariableRef variable = equivalenceClass.getVariables().get(0);
             Variable symbol = getProgram().getScope().getVariable(variable);
             register = allocateNewRegisterZp(symbol.getType());
             equivalenceClass.setRegister(register);
-            if(!before.equals(register.toString())) {
-               getLog().append("Re-allocated ZP register from " + before + " to " + register.toString());
+            if(before==null || !before.equals(register.toString())) {
+               getLog().append("Allocated " + (before==null?"":("(was "+before+") ")) + equivalenceClass.toString());
             }
          }
       }

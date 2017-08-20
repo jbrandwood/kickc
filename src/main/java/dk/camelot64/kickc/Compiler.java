@@ -21,6 +21,8 @@ public class Compiler {
          KickCParser.FileContext file = pass0ParseInput(input, log);
          Program program = pass1GenerateSSA(file, log);
          pass2OptimizeSSA(program);
+         log.append("FINAL SYMBOL TABLE");
+         log.append(program.getScope().getSymbolTableContents(program));
          pass3Analysis(program);
          pass4RegisterAllocation(program);
          pass5GenerateAndOptimizeAsm(program);
@@ -110,6 +112,10 @@ public class Compiler {
       program.setGraph(pass1ProcedureCallsReturnValue.generate());
       log.append("CONTROL FLOW GRAPH WITH ASSIGNMENT CALL & RETURN");
       log.append(program.getGraph().toString(program));
+
+      log.append("INITIAL SSA SYMBOL TABLE");
+      log.append(program.getScope().getSymbolTableContents(program));
+
       return program;
    }
 
@@ -204,7 +210,7 @@ public class Compiler {
    private void pass4RegisterAllocation(Program program) {
 
       new Pass4ZeroPageAllocation(program).allocate();
-      new Pass4RegistersFinalize(program).allocate(false);
+      new Pass4RegistersFinalize(program).allocate(true);
 
       // Initial Code generation
       new Pass4CodeGeneration(program).generate();

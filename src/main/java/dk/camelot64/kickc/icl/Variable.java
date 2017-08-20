@@ -2,31 +2,27 @@ package dk.camelot64.kickc.icl;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
-/**
- * A Symbol (variable, jump label, etc.)
- */
+/** A Variable (or a Constant) */
 public abstract class Variable implements Symbol {
 
-   /**
-    * The name of the symbol.
-    */
+   /** The name of the variable. */
    private String name;
 
-   /**
-    * Scope
-    */
+   /** The scope containing the variable */
    @JsonIgnore
    private Scope scope;
 
-   /**
-    * The type of the symbol. VAR means tha type is unknown, and has not been inferred yet.
-    */
+   /** The type of the variable. VAR means tha type is unknown, and has not been inferred yet. */
    private SymbolType type;
 
-   /**
-    * true if the symbol type is infered (not declared)
-    */
+   /** true if the symbol type is infered (not declared) */
    private boolean inferredType;
+
+   /** If the variable is assigned to an ASM register, this contains the register. If null the variable has no no allocation (yet). Constants are never assigned to registers. */
+   private RegisterAllocation.Register allocation;
+
+   /** If the variable is a constant this is the constant value. If null the variable is not considered constant.*/
+   private Constant constant;
 
    public Variable(String name, Scope scope, SymbolType type) {
       this.name = name;
@@ -74,6 +70,26 @@ public abstract class Variable implements Symbol {
       this.name = name;
    }
 
+   public String getName() {
+      return name;
+   }
+
+   public RegisterAllocation.Register getAllocation() {
+      return allocation;
+   }
+
+   public void setAllocation(RegisterAllocation.Register allocation) {
+      this.allocation = allocation;
+   }
+
+   public Constant getConstant() {
+      return constant;
+   }
+
+   public void setConstant(Constant constant) {
+      this.constant = constant;
+   }
+
    @JsonIgnore
    public abstract boolean isVersioned();
 
@@ -86,16 +102,21 @@ public abstract class Variable implements Symbol {
       if (o == null || getClass() != o.getClass()) return false;
       Variable variable = (Variable) o;
       if (inferredType != variable.inferredType) return false;
-      if (!name.equals(variable.name)) return false;
-      if (!getFullName().equals(variable.getFullName())) return false;
-      return type.equals(variable.type);
+      if (name != null ? !name.equals(variable.name) : variable.name != null) return false;
+      if (scope != null ? !scope.equals(variable.scope) : variable.scope != null) return false;
+      if (type != null ? !type.equals(variable.type) : variable.type != null) return false;
+      if (allocation != null ? !allocation.equals(variable.allocation) : variable.allocation != null) return false;
+      return constant != null ? constant.equals(variable.constant) : variable.constant == null;
    }
 
    @Override
    public int hashCode() {
-      int result = getFullName().hashCode();
-      result = 31 * result + type.hashCode();
+      int result = name != null ? name.hashCode() : 0;
+      result = 31 * result + (scope != null ? scope.hashCode() : 0);
+      result = 31 * result + (type != null ? type.hashCode() : 0);
       result = 31 * result + (inferredType ? 1 : 0);
+      result = 31 * result + (allocation != null ? allocation.hashCode() : 0);
+      result = 31 * result + (constant != null ? constant.hashCode() : 0);
       return result;
    }
 

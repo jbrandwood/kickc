@@ -47,7 +47,11 @@ public class RegisterAllocation {
    /** A zero page address used as a register for a single byte variable. */
    public static class RegisterZpByte implements Register {
 
+      /** The ZP address used for the byte. */
       private int zp;
+
+      /** The name used as a label for the register in the ASM code. */
+      private String name;
 
       public RegisterZpByte(int zp) {
          this.zp = zp;

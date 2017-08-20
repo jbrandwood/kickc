@@ -123,7 +123,7 @@ render: {
     inc $5
     lda $5
     cmp #$28
-    bcc b2
+    bne b2
     lda $3
     clc
     adc #$28
@@ -134,7 +134,7 @@ render: {
     inc $2
     lda $2
     cmp #$19
-    bcc b1
+    bne b1
     rts
 }
 findcol: {

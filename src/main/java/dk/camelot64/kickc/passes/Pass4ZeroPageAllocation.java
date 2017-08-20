@@ -25,14 +25,6 @@ public class Pass4ZeroPageAllocation extends Pass2Base {
          getLog().append(liveRangeEquivalenceClass.toString());
       }
 
-      // Coalesce over copy assignments
-      //EquivalenceClassCopyCoalescer equivalenceClassCopyCoalescer = new EquivalenceClassCopyCoalescer(liveRangeEquivalenceClassSet);
-      //equivalenceClassCopyCoalescer.visitGraph(getGraph());
-      //getLog().append("Copy Coalesced equivalence classes");
-      //for (LiveRangeEquivalenceClass liveRangeEquivalenceClass : liveRangeEquivalenceClassSet.getEquivalenceClasses()) {
-      //   getLog().append(liveRangeEquivalenceClass.toString());
-      //}
-
       // Add all other variables one by one to an available equivalence class - or create a new one
       EquivalenceClassAdder equivalenceClassAdder = new EquivalenceClassAdder(liveRangeEquivalenceClassSet);
       equivalenceClassAdder.visitGraph(getGraph());
@@ -42,14 +34,13 @@ public class Pass4ZeroPageAllocation extends Pass2Base {
       }
 
       // Allocate zeropage registers to equivalence classes
-      RegisterAllocation allocation = new RegisterAllocation();
-      for (LiveRangeEquivalenceClass liveRangeEquivalenceClass : liveRangeEquivalenceClassSet.getEquivalenceClasses()) {
-         List<VariableRef> variables = liveRangeEquivalenceClass.getVariables();
-         Variable firstVar = getProgram().getScope().getVariable(variables.get(0));
-         RegisterAllocation.Register zpRegister = allocateNewRegisterZp(firstVar.getType());
-         liveRangeEquivalenceClass.setRegister(zpRegister);
-         getLog().append("Allocated " + zpRegister + " to " + liveRangeEquivalenceClass);
-      }
+   //   for (LiveRangeEquivalenceClass liveRangeEquivalenceClass : liveRangeEquivalenceClassSet.getEquivalenceClasses()) {
+   //      List<VariableRef> variables = liveRangeEquivalenceClass.getVariables();
+   //      Variable firstVar = getProgram().getScope().getVariable(variables.get(0));
+   //      RegisterAllocation.Register zpRegister = allocateNewRegisterZp(firstVar.getType());
+   //      liveRangeEquivalenceClass.setRegister(zpRegister);
+   //      getLog().append("Allocated " + zpRegister + " to " + liveRangeEquivalenceClass);
+   //   }
       getProgram().setLiveRangeEquivalenceClassSet(liveRangeEquivalenceClassSet);
    }
 
@@ -69,8 +60,6 @@ public class Pass4ZeroPageAllocation extends Pass2Base {
          if (assignment.getlValue() instanceof VariableRef) {
             VariableRef lValVar = (VariableRef) assignment.getlValue();
             List<VariableRef> preferences = new ArrayList<>();
-            //addPreference(preferences, assignment.getrValue1());
-            //addPreference(preferences, assignment.getrValue2());
             addToEquivalenceClassSet(lValVar, preferences);
          }
          return null;
@@ -104,48 +93,6 @@ public class Pass4ZeroPageAllocation extends Pass2Base {
             }
             getLog().append("Added variable " + lValVar + " to zero page equivalence class " + chosen);
          }
-      }
-
-      private void addPreference(List<VariableRef> preferences, RValue rValue) {
-         if (rValue instanceof VariableRef) {
-            preferences.add((VariableRef) rValue);
-         }
-      }
-
-   }
-
-   /**
-    * Coalesce equivalence classes when they do not overlap based on all copy assignments to variables.
-    */
-   private class EquivalenceClassCopyCoalescer extends ControlFlowGraphBaseVisitor<Void> {
-
-      private LiveRangeEquivalenceClassSet liveRangeEquivalenceClassSet;
-
-      EquivalenceClassCopyCoalescer(LiveRangeEquivalenceClassSet liveRangeEquivalenceClassSet) {
-         this.liveRangeEquivalenceClassSet = liveRangeEquivalenceClassSet;
-      }
-
-      @Override
-      public Void visitAssignment(StatementAssignment assignment) {
-         if (assignment.getlValue() instanceof VariableRef) {
-            LiveRangeEquivalenceClass lValEquivalenceClass =
-                  liveRangeEquivalenceClassSet.getEquivalenceClass((VariableRef) assignment.getlValue());
-            if (lValEquivalenceClass != null && assignment.getOperator() == null && assignment.getrValue1() == null && assignment.getrValue2() instanceof VariableRef) {
-               // Found copy assignment to a variable in an equivalence class - attempt to coalesce
-               VariableRef assignVar = (VariableRef) assignment.getrValue2();
-               LiveRangeEquivalenceClass assignVarEquivalenceClass = liveRangeEquivalenceClassSet.getOrCreateEquivalenceClass(assignVar);
-               if (lValEquivalenceClass.equals(assignVarEquivalenceClass)) {
-                  getLog().append("Coalesced (already) " + assignment + " in " + lValEquivalenceClass);
-               } else if (!lValEquivalenceClass.getLiveRange().overlaps(assignVarEquivalenceClass.getLiveRange())) {
-                  lValEquivalenceClass.addAll(assignVarEquivalenceClass);
-                  liveRangeEquivalenceClassSet.remove(assignVarEquivalenceClass);
-                  getLog().append("Coalesced " + assignment + " into " + lValEquivalenceClass);
-               } else {
-                  getLog().append("Not coalescing " + assignment);
-               }
-            }
-         }
-         return null;
       }
 
    }

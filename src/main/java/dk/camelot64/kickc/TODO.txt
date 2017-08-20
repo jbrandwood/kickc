@@ -1,7 +1,8 @@
 Features
 - Move the main code into a main() function, and disallow code outside functions. The main function per default has no parameters and exits with RTS.
-- Add a for loop for(init;condition;increment) {stmt} -> { init; do { stmt; increment } while (condition) }
-- Add for loop for(byte i: 1..100) { } and for(byte i : 100..0) {}  (plus maybe .+. and .-. to make the inc/dec unambiguous)
+- Improve locality of block sequence for if(cond) { stmt1; } else { stmt2; } to if(!cond) goto @else stmt1; jmp @end; @else: stmt2; @end:
+- Optimize if/else by swapping if & else if cond is easier to evaluate than !cond.
+- Add literal char syntax ( 'c' == (byte) 3 )
 - Add signed bytes
 - Add signed words
 - Add Fixed Point number types fixed[8.8], fixed[16.8] - maybe even fixed[24.4]
@@ -22,16 +23,23 @@ Features
 + Create a proper main function for the compiler
 + Add ++/-- incrementing/decrementing operators.
 + Optimize if's without else if(expr) { stmt; } -> $1=!expr; if($1) goto @1; stmt; @1:
++ Add a for loop for(init;condition;increment) {stmt} -> { init; do { stmt; increment } while (condition) }
++ Add for loop for(byte i: 1..100) { } and for(byte i : 100..0) {}  (plus maybe .+. and .-. to make the inc/dec unambiguous)
 
 Assembler Improvements
 - Make generated ASM human readable.
   + Use hex-numbers
   - add labels for constants and zp-variables.
-+ Eliminate unnecessary labels in ASM
-- Eliminate CPX from DEX, CPX #0, BNE la1
-- Eliminate LDA from DEC $2, LDA $2, BNE la1
-- Eliminate LDA from STA $11, LDA $11
+- Better ASM static value analysis
+  - Not just constants - but also other values (value of var, value of var1[var2], value of var+4 etc.)
+  - Also analyze back/forward through block entry/exit
+  - Also analyze value of flags (eg. N=N(var1))
+- Eliminate CPX from DEX, CPX #0, BNE la1 (using ASM static value analysis for N flag - it might be worth annotating CPX with the fact that only the N-flag is relevant - or creating a special instruction for setting the N-flag)
+- Eliminate LDA from DEC $2, LDA $2, BNE la1 (using ASM static value analysis for N flag - it might be worth annotating LDA $2 with the fact that only the N-flag is relevant - or creating a special instruction for setting the N-flag)
+- Eliminate LDA from STA $11, LDA $11 (using ASM static value analysis of A-register)
 - Optimize by allowing resequencing of ASM (statements and phi assignments) in a final phase.
+- ASM loop analysis: If all usages of a register has the same value move the assignment out of the loop (if the assignment is simple enough).
++ Eliminate unnecessary labels in ASM
 
 Known Problems
 + Procedures that modify variables outside their scope does not work. Outer vars must be transfered in/out like parameters/return values to get it working.
@@ -45,7 +53,11 @@ Register Allocation
   - Optimize by finding optimal sequence for multiple phi assignments in entry-segments.
   - Avoid clobbering alive vars
 - Maybe support several fragments for the same operation with different cost and clobbering profiles.
-- Add memory registers (if we need to free some ZP)
+- Add memory registers (if we need to free some ZP).
+- Implement fast combination elimination based on live ranges (skipping the ASM-code.)
+  - Improve combination testing by finding live range overlaps and not creating combinations that would create an overlap conflict.
+  - Combinations should be created in a tree-structure instead of just doing all combinations
+  - Example: For equivalence classes a, b, c if a&c have overlapping live ranges they can never have the same register. Therefore the combination iterator should not create combinations where C has the same register as a.
 + Limit number of combinations tested
 + Equivalences not tested through combinaitons should be tested individually afterwards.
 + Matrix Phi operation (instead of separate statements)

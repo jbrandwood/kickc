@@ -256,8 +256,6 @@ public abstract class Scope implements Symbol {
 
    @JsonIgnore
    public String getSymbolTableContents(Program program, Class symbolClass) {
-      ProgramScope scope = program.getScope();
-      RegisterAllocation allocation = program.getAllocation();
       VariableRegisterWeights registerWeights = program.getVariableRegisterWeights();
       StringBuilder res = new StringBuilder();
       Set<String> names = symbols.keySet();
@@ -270,8 +268,8 @@ public abstract class Scope implements Symbol {
          } else {
             if (symbolClass == null || symbolClass.isInstance(symbol)) {
                res.append(symbol.toString(program));
-               if (symbol instanceof Variable && allocation != null) {
-                  RegisterAllocation.Register register = allocation.getRegister(((Variable) symbol).getRef());
+               if (symbol instanceof Variable) {
+                  Registers.Register register = ((Variable) symbol).getAllocation();
                   if (register != null) {
                      res.append(" " + register);
                   }

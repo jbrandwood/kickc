@@ -7,22 +7,22 @@ import java.util.*;
  */
 public class RegisterPotentials {
 
-   private Map<LiveRangeEquivalenceClass, List<RegisterAllocation.Register>> potentials;
+   private Map<LiveRangeEquivalenceClass, List<Registers.Register>> potentials;
 
    public RegisterPotentials() {
       this.potentials = new LinkedHashMap<>();
    }
 
-   public List<RegisterAllocation.Register> getPotentialRegisters(LiveRangeEquivalenceClass equivalenceClass) {
+   public List<Registers.Register> getPotentialRegisters(LiveRangeEquivalenceClass equivalenceClass) {
       return potentials.get(equivalenceClass);
    }
 
-   public void setPotentialRegisters(LiveRangeEquivalenceClass equivalenceClass, List<RegisterAllocation.Register> registers) {
+   public void setPotentialRegisters(LiveRangeEquivalenceClass equivalenceClass, List<Registers.Register> registers) {
       potentials.put(equivalenceClass, new ArrayList<>(registers));
    }
 
-   public void removePotentialRegister(LiveRangeEquivalenceClass equivalenceClass, RegisterAllocation.Register register) {
-      List<RegisterAllocation.Register> registers = potentials.get(equivalenceClass);
+   public void removePotentialRegister(LiveRangeEquivalenceClass equivalenceClass, Registers.Register register) {
+      List<Registers.Register> registers = potentials.get(equivalenceClass);
       registers.remove(register);
    }
 
@@ -37,8 +37,8 @@ public class RegisterPotentials {
          out.append("Potential registers ");
          out.append(liveRangeEquivalenceClass.toString());
          out.append(" : ");
-         List<RegisterAllocation.Register> registers = potentials.get(liveRangeEquivalenceClass);
-         for (RegisterAllocation.Register register : registers) {
+         List<Registers.Register> registers = potentials.get(liveRangeEquivalenceClass);
+         for (Registers.Register register : registers) {
             out.append(register.toString());
             out.append(" , ");
          }
@@ -47,8 +47,8 @@ public class RegisterPotentials {
       return out.toString();
    }
 
-   public void addPotentialRegister(LiveRangeEquivalenceClass equivalenceClass, RegisterAllocation.Register register) {
-      List<RegisterAllocation.Register> registers = potentials.get(equivalenceClass);
+   public void addPotentialRegister(LiveRangeEquivalenceClass equivalenceClass, Registers.Register register) {
+      List<Registers.Register> registers = potentials.get(equivalenceClass);
       if (!registers.contains(register)) {
          registers.add(register);
       }

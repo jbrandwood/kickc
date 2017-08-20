@@ -35,7 +35,7 @@ public class Pass4RegisterUpliftCombinations extends Pass2Base {
             // Reset register allocation to original zero page allocation
             new Pass4RegistersFinalize(getProgram()).allocate(false);
             // Apply the uplift combination
-            combination.allocate(getProgram().getAllocation());
+            combination.allocate(getProgram().getScope());
             // Generate ASM
             try {
                new Pass4CodeGeneration(getProgram()).generate();

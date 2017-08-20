@@ -106,8 +106,8 @@ public class Pass4CodeGeneration {
             boolean isAlu = false;
             if (lValue instanceof VariableRef) {
                VariableRef lValueRef = (VariableRef) lValue;
-               RegisterAllocation.Register lValRegister = program.getAllocation().getRegister(lValueRef);
-               if (lValRegister.getType().equals(RegisterAllocation.RegisterType.REG_ALU_BYTE)) {
+               Registers.Register lValRegister = program.getScope().getVariable(lValueRef).getAllocation();
+               if (lValRegister.getType().equals(Registers.RegisterType.REG_ALU_BYTE)) {
                   asm.addComment(statement + "  //  ALU");
                   StatementAssignment assignmentAlu = assignment;
                   aluState.setAluAssignment(assignmentAlu);
@@ -214,10 +214,10 @@ public class Pass4CodeGeneration {
       }
    }
 
-   private RegisterAllocation.Register getRegister(RValue rValue) {
+   private Registers.Register getRegister(RValue rValue) {
       if (rValue instanceof VariableRef) {
          VariableRef rValueRef = (VariableRef) rValue;
-         return program.getAllocation().getRegister(rValueRef);
+         return program.getScope().getVariable(rValueRef).getAllocation();
       } else {
          return null;
       }

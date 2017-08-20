@@ -61,15 +61,17 @@ public class LiveRangeEquivalenceClassSet {
       equivalenceClasses.remove(equivalenceClass);
    }
 
-   public RegisterAllocation createRegisterAllocation() {
-      RegisterAllocation allocation = new RegisterAllocation();
+   /**
+    * Store the register allocation of the live range equivalence classes into the variables in the symbol table (program scope).
+    */
+   public void storeRegisterAllocation() {
       for (LiveRangeEquivalenceClass equivalenceClass : getEquivalenceClasses()) {
-         RegisterAllocation.Register register = equivalenceClass.getRegister();
+         Registers.Register register = equivalenceClass.getRegister();
          for (VariableRef variable : equivalenceClass.getVariables()) {
-            allocation.setRegister(variable, register);
+            Variable var = program.getScope().getVariable(variable);
+            var.setAllocation(register);
          }
       }
-      return allocation;
    }
 
 

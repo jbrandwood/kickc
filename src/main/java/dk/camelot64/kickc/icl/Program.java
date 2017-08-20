@@ -28,8 +28,6 @@ public class Program {
    /** Information about loops. */
    private NaturalLoopSet loopSet;
 
-   /** The register allocation for the variables used during ASM code generation. */
-   private RegisterAllocation allocation;
    /** The live ranges of all variables. */
    private LiveRangeVariables liveRangeVariables;
    /** Live range equivalence classes containing variables that do not have overlapping live ranges. */
@@ -80,7 +78,6 @@ public class Program {
       return procedureModifiedVars;
    }
 
-
    public AsmProgram getAsm() {
       return asm;
    }
@@ -111,14 +108,6 @@ public class Program {
 
    public NaturalLoopSet getLoopSet() {
       return loopSet;
-   }
-
-   public void setAllocation(RegisterAllocation allocation) {
-      this.allocation = allocation;
-   }
-
-   public RegisterAllocation getAllocation() {
-      return allocation;
    }
 
    public void setLiveRangeVariables(LiveRangeVariables liveRangeVariables) {

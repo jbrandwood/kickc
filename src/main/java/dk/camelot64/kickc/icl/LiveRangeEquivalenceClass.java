@@ -18,7 +18,7 @@ public class LiveRangeEquivalenceClass {
    private LiveRange liveRange;
 
    /** A register allocated to hold all variables of the equivalence class. (null if no register is currently allocated) */
-   private RegisterAllocation.Register register;
+   private Registers.Register register;
 
    public LiveRangeEquivalenceClass(Program program) {
       this.program = program;
@@ -27,11 +27,11 @@ public class LiveRangeEquivalenceClass {
       this.register = null;
    }
 
-   public RegisterAllocation.Register getRegister() {
+   public Registers.Register getRegister() {
       return register;
    }
 
-   public void setRegister(RegisterAllocation.Register register) {
+   public void setRegister(Registers.Register register) {
       this.register = register;
    }
 

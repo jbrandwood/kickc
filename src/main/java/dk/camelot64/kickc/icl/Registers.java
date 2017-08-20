@@ -1,33 +1,28 @@
 package dk.camelot64.kickc.icl;
 
+/** The different registers available for a program  */
+public class Registers {
 
-import java.util.LinkedHashMap;
-import java.util.Map;
 
-/** Register Allocation for Variable Symbols  */
-public class RegisterAllocation {
-
-   private Map<VariableRef, Register> allocation;
-
-   public RegisterAllocation() {
-      this.allocation = new LinkedHashMap<>();
+   public static Register getRegisterX() {
+      return new RegisterXByte();
    }
 
-   /**
-    * Get the register allocated for a specific variable
-    *
-    * @param variable The variable
-    * @return The allocated register.
-    */
-   public Register getRegister(VariableRef ref) {
-      return allocation.get(ref);
+   public static Register getRegisterY() {
+      return new RegisterYByte();
    }
 
+   public static Register getRegisterA() {
+      return new RegisterAByte();
+   }
 
-   public void setRegister(VariableRef variable, Register register) {
-      if(variable!=null) {
-         allocation.put(variable, register);
-      }
+   public static Register getRegisterALU() {
+      return new RegisterALUByte();
+   }
+
+   /** The register type. */
+   public enum RegisterType {
+      ZP_BYTE, ZP_BOOL, REG_A_BYTE, REG_ALU_BYTE, REG_Y_BYTE, REG_X_BYTE, ZP_PTR_BYTE, ZP_WORD
    }
 
    /** A register used for storing a single variable. */
@@ -37,11 +32,6 @@ public class RegisterAllocation {
 
       boolean isZp();
 
-   }
-
-   /** The register type. */
-   public enum RegisterType {
-      ZP_BYTE, ZP_BOOL, REG_A_BYTE, REG_ALU_BYTE, REG_Y_BYTE, REG_X_BYTE, ZP_PTR_BYTE, ZP_WORD
    }
 
    /** A zero page address used as a register for a single byte variable. */
@@ -144,7 +134,6 @@ public class RegisterAllocation {
 
    }
 
-
    /** A zero page address used as a register for a boolean variable. */
    public static class RegisterZpBool implements Register {
       private int zp;
@@ -238,7 +227,6 @@ public class RegisterAllocation {
       }
 
    }
-
 
    /** The X register. */
    public static class RegisterXByte implements Register {
@@ -363,31 +351,4 @@ public class RegisterAllocation {
       }
 
    }
-
-   public static Register getRegisterX() {
-      return new RegisterXByte();
-   }
-
-   public static Register getRegisterY() {
-      return new RegisterYByte();
-   }
-
-   public static Register getRegisterA() {
-      return new RegisterAByte();
-   }
-
-   public static Register getRegisterALU() {
-      return new RegisterALUByte();
-   }
-
-   @Override
-   public String toString() {
-      StringBuffer out = new StringBuffer();
-      for (VariableRef var: allocation.keySet()) {
-         Register register = getRegister(var);
-         out.append(var.toString()+" : "+register.toString()+"\n");
-      }
-      return out.toString();
-   }
-
 }

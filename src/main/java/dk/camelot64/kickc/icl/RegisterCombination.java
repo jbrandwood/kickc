@@ -6,31 +6,32 @@ import java.util.Map;
 /** A combination of register/ZP assignments for a set of equivalence classes  */
 public class RegisterCombination {
 
-   /**
-    * The registers allocated to each equivalence class.
-    */
-   private Map<LiveRangeEquivalenceClass, RegisterAllocation.Register> allocation;
+   /** The registers allocated to each equivalence class. */
+   private Map<LiveRangeEquivalenceClass, Registers.Register> allocation;
+
+
 
    public RegisterCombination() {
       this.allocation = new LinkedHashMap<>();
    }
 
-   void setRegister(LiveRangeEquivalenceClass equivalenceClass, RegisterAllocation.Register register) {
+   void setRegister(LiveRangeEquivalenceClass equivalenceClass, Registers.Register register) {
       allocation.put(equivalenceClass, register);
    }
 
-   public RegisterAllocation.Register getRegister(LiveRangeEquivalenceClass equivalenceClass) {
+   public Registers.Register getRegister(LiveRangeEquivalenceClass equivalenceClass) {
       return allocation.get(equivalenceClass);
    }
 
    /**
     * Allocate the registers of the combination into the programs register allocation
     */
-   public void allocate(RegisterAllocation registerAllocation) {
+   public void allocate(ProgramScope scope) {
       for (LiveRangeEquivalenceClass equivalenceClass : allocation.keySet()) {
-         RegisterAllocation.Register register = allocation.get(equivalenceClass);
+         Registers.Register register = allocation.get(equivalenceClass);
          for (VariableRef variable : equivalenceClass.getVariables()) {
-            registerAllocation.setRegister(variable, register);
+            Variable var = scope.getVariable(variable);
+            var.setAllocation(register);
          }
       }
    }
@@ -42,7 +43,7 @@ public class RegisterCombination {
       for (LiveRangeEquivalenceClass equivalenceClass : allocation.keySet()) {
          VariableRef variable = equivalenceClass.getVariables().get(0);
          LiveRangeEquivalenceClass globalEquivalenceClass = equivalenceClassSet.getEquivalenceClass(variable);
-         RegisterAllocation.Register register = allocation.get(equivalenceClass);
+         Registers.Register register = allocation.get(equivalenceClass);
          globalEquivalenceClass.setRegister(register);
       }
    }
@@ -51,7 +52,7 @@ public class RegisterCombination {
    public String toString() {
       StringBuilder out = new StringBuilder();
       for (LiveRangeEquivalenceClass equivalenceClass : allocation.keySet()) {
-         RegisterAllocation.Register register = allocation.get(equivalenceClass);
+         Registers.Register register = allocation.get(equivalenceClass);
          out.append(register.toString()).append(" ").append(equivalenceClass.toString(false)).append(" ");
       }
       return out.toString();

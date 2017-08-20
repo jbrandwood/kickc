@@ -17,8 +17,7 @@ public class Pass4RegistersFinalize extends Pass2Base {
       if(reallocZp) {
          reallocateZp(liveRangeEquivalenceClassSet);
       }
-      RegisterAllocation allocation = liveRangeEquivalenceClassSet.createRegisterAllocation();
-      getProgram().setAllocation(allocation);
+      liveRangeEquivalenceClassSet.storeRegisterAllocation();
    }
 
    /**
@@ -28,7 +27,7 @@ public class Pass4RegistersFinalize extends Pass2Base {
     */
    private void reallocateZp(LiveRangeEquivalenceClassSet liveRangeEquivalenceClassSet) {
       for (LiveRangeEquivalenceClass equivalenceClass : liveRangeEquivalenceClassSet.getEquivalenceClasses()) {
-         RegisterAllocation.Register register = equivalenceClass.getRegister();
+         Registers.Register register = equivalenceClass.getRegister();
          if(register==null || register.isZp()) {
             String before = register==null?null:register.toString();
             VariableRef variable = equivalenceClass.getVariables().get(0);
@@ -54,22 +53,22 @@ public class Pass4RegistersFinalize extends Pass2Base {
     *                The register type created uses one or more zero page locations based on the variable type
     * @return The new zeropage register
     */
-   private RegisterAllocation.Register allocateNewRegisterZp(SymbolType varType) {
+   private Registers.Register allocateNewRegisterZp(SymbolType varType) {
       if (varType.equals(SymbolTypeBasic.BYTE)) {
-         return new RegisterAllocation.RegisterZpByte(currentZp++);
+         return new Registers.RegisterZpByte(currentZp++);
       } else if (varType.equals(SymbolTypeBasic.WORD)) {
-         RegisterAllocation.RegisterZpWord registerZpWord =
-               new RegisterAllocation.RegisterZpWord(currentZp);
+         Registers.RegisterZpWord registerZpWord =
+               new Registers.RegisterZpWord(currentZp);
          currentZp = currentZp + 2;
          return registerZpWord;
       } else if (varType.equals(SymbolTypeBasic.BOOLEAN)) {
-         return new RegisterAllocation.RegisterZpBool(currentZp++);
+         return new Registers.RegisterZpBool(currentZp++);
       } else if (varType.equals(SymbolTypeBasic.VOID)) {
          // No need to setRegister register for VOID value
          return null;
       } else if (varType instanceof SymbolTypePointer) {
-         RegisterAllocation.RegisterZpPointerByte registerZpPointerByte =
-               new RegisterAllocation.RegisterZpPointerByte(currentZp);
+         Registers.RegisterZpPointerByte registerZpPointerByte =
+               new Registers.RegisterZpPointerByte(currentZp);
          currentZp = currentZp + 2;
          return registerZpPointerByte;
       } else {

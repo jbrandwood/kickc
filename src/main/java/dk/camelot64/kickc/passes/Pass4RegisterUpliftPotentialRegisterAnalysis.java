@@ -36,14 +36,14 @@ public class Pass4RegisterUpliftPotentialRegisterAnalysis extends Pass2Base {
          modified = true;
          registerPotentials = new RegisterPotentials();
          for (LiveRangeEquivalenceClass equivalenceClass : liveRangeEquivalenceClassSet.getEquivalenceClasses()) {
-            RegisterAllocation.Register defaultRegister = equivalenceClass.getRegister();
-            RegisterAllocation.RegisterType registerType = defaultRegister.getType();
-            if (registerType.equals(RegisterAllocation.RegisterType.ZP_BYTE)) {
-               List<RegisterAllocation.Register> potentials = Arrays.asList(
+            Registers.Register defaultRegister = equivalenceClass.getRegister();
+            Registers.RegisterType registerType = defaultRegister.getType();
+            if (registerType.equals(Registers.RegisterType.ZP_BYTE)) {
+               List<Registers.Register> potentials = Arrays.asList(
                      defaultRegister,
-                     RegisterAllocation.getRegisterA(),
-                     RegisterAllocation.getRegisterX(),
-                     RegisterAllocation.getRegisterY());
+                     Registers.getRegisterA(),
+                     Registers.getRegisterX(),
+                     Registers.getRegisterY());
                registerPotentials.setPotentialRegisters(equivalenceClass, potentials);
             } else {
                registerPotentials.setPotentialRegisters(equivalenceClass, Arrays.asList(defaultRegister));
@@ -74,7 +74,7 @@ public class Pass4RegisterUpliftPotentialRegisterAnalysis extends Pass2Base {
 
             // For each combination generate the ASM and examine the clobber of all alive variables
             // Find the registers clobbered by all combinations!
-            Set<RegisterAllocation.Register> alwaysClobbered = findAlwaysClobberedRegisters(block, statement, combinationIterator);
+            Set<Registers.Register> alwaysClobbered = findAlwaysClobberedRegisters(block, statement, combinationIterator);
             if (alwaysClobbered.isEmpty()) {
                // No registers are always clobbered - move on to the next statement
                continue;
@@ -82,7 +82,7 @@ public class Pass4RegisterUpliftPotentialRegisterAnalysis extends Pass2Base {
                StringBuilder msg = new StringBuilder();
                msg.append("Statement ").append(statement.toString(getProgram()));
                msg.append(" always clobbers ");
-               for (RegisterAllocation.Register register : alwaysClobbered) {
+               for (Registers.Register register : alwaysClobbered) {
                   msg.append(register).append(" ");
                }
                getLog().append(msg.toString());
@@ -96,8 +96,8 @@ public class Pass4RegisterUpliftPotentialRegisterAnalysis extends Pass2Base {
                   // Assigned registers are allowed to be be clobbered
                   continue;
                }
-               List<RegisterAllocation.Register> alivePotentialRegisters = registerPotentials.getPotentialRegisters(aliveClass);
-               for (RegisterAllocation.Register clobberedRegister : alwaysClobbered) {
+               List<Registers.Register> alivePotentialRegisters = registerPotentials.getPotentialRegisters(aliveClass);
+               for (Registers.Register clobberedRegister : alwaysClobbered) {
                   if (alivePotentialRegisters.contains(clobberedRegister)) {
                      registerPotentials.removePotentialRegister(aliveClass, clobberedRegister);
                      StringBuilder msg = new StringBuilder();
@@ -125,13 +125,13 @@ public class Pass4RegisterUpliftPotentialRegisterAnalysis extends Pass2Base {
     * @param combinations The regsiter combinations to test
     * @return A set with registers that are clobbered by all different register assignments in the combination
     */
-   private Set<RegisterAllocation.Register> findAlwaysClobberedRegisters(ControlFlowBlock block, Statement statement, RegisterCombinationIterator combinations) {
+   private Set<Registers.Register> findAlwaysClobberedRegisters(ControlFlowBlock block, Statement statement, RegisterCombinationIterator combinations) {
 
       // Initially assume all registers are always clobbered
-      Set<RegisterAllocation.Register> alwaysClobbered = new LinkedHashSet<>();
-      alwaysClobbered.add(RegisterAllocation.getRegisterA());
-      alwaysClobbered.add(RegisterAllocation.getRegisterX());
-      alwaysClobbered.add(RegisterAllocation.getRegisterY());
+      Set<Registers.Register> alwaysClobbered = new LinkedHashSet<>();
+      alwaysClobbered.add(Registers.getRegisterA());
+      alwaysClobbered.add(Registers.getRegisterX());
+      alwaysClobbered.add(Registers.getRegisterY());
 
       Set<String> unknownFragments = new LinkedHashSet<>();
 
@@ -140,7 +140,7 @@ public class Pass4RegisterUpliftPotentialRegisterAnalysis extends Pass2Base {
          // Reset register allocation to original zero page allocation
          new Pass4RegistersFinalize(getProgram()).allocate(false);
          // Apply the combination
-         combination.allocate(getProgram().getAllocation());
+         combination.allocate(getProgram().getScope());
          // Generate ASM
          AsmProgram asm = new AsmProgram();
          asm.startSegment(statement.getIndex(), statement.toString(getProgram()));
@@ -157,10 +157,10 @@ public class Pass4RegisterUpliftPotentialRegisterAnalysis extends Pass2Base {
             continue;
          }
          AsmClobber clobber = asm.getClobber();
-         Collection<RegisterAllocation.Register> clobberRegisters = Pass4AssertNoCpuClobber.getClobberRegisters(clobber);
-         Iterator<RegisterAllocation.Register> alwaysClobberIt = alwaysClobbered.iterator();
+         Collection<Registers.Register> clobberRegisters = Pass4AssertNoCpuClobber.getClobberRegisters(clobber);
+         Iterator<Registers.Register> alwaysClobberIt = alwaysClobbered.iterator();
          while (alwaysClobberIt.hasNext()) {
-            RegisterAllocation.Register alwaysClobberRegister = alwaysClobberIt.next();
+            Registers.Register alwaysClobberRegister = alwaysClobberIt.next();
             if (!clobberRegisters.contains(alwaysClobberRegister)) {
                alwaysClobberIt.remove();
             }

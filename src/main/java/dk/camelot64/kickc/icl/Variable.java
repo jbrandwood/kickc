@@ -19,7 +19,7 @@ public abstract class Variable implements Symbol {
    private boolean inferredType;
 
    /** If the variable is assigned to an ASM register, this contains the register. If null the variable has no no allocation (yet). Constants are never assigned to registers. */
-   private RegisterAllocation.Register allocation;
+   private Registers.Register allocation;
 
    /** If the variable is a constant this is the constant value. If null the variable is not considered constant.*/
    private Constant constant;
@@ -74,11 +74,11 @@ public abstract class Variable implements Symbol {
       return name;
    }
 
-   public RegisterAllocation.Register getAllocation() {
+   public Registers.Register getAllocation() {
       return allocation;
    }
 
-   public void setAllocation(RegisterAllocation.Register allocation) {
+   public void setAllocation(Registers.Register allocation) {
       this.allocation = allocation;
    }
 

@@ -31,7 +31,6 @@ public class Pass4AssertNoCpuClobber extends Pass2Base {
     * @return true if there is a clobber problem in the program
     */
    public boolean hasClobberProblem(boolean verbose) {
-      RegisterAllocation allocation = getProgram().getAllocation();
       LiveRangeVariables liveRangeVariables = getProgram().getLiveRangeVariables();
       AsmProgram asm = getProgram().getAsm();
       boolean clobberProblem = false;
@@ -42,7 +41,7 @@ public class Pass4AssertNoCpuClobber extends Pass2Base {
             Statement statement = getGraph().getStatementByIndex(statementIdx);
             // Find the registered clobbered by the ASM asmSegment
             AsmClobber asmSegmentClobber = asmSegment.getClobber();
-            Collection<RegisterAllocation.Register> clobberRegisters = getClobberRegisters(asmSegmentClobber);
+            Collection<Registers.Register> clobberRegisters = getClobberRegisters(asmSegmentClobber);
             // Find vars assigned to in the statement
             Collection<VariableRef> assignedVars = Pass4RegisterUpliftPotentialRegisterAnalysis.getAssignedVars(statement);
             // Two assigned vars cannot use same register
@@ -53,8 +52,8 @@ public class Pass4AssertNoCpuClobber extends Pass2Base {
                         // Same variable - not relevant
                         continue;
                      }
-                     RegisterAllocation.Register register1 = allocation.getRegister(assignedVar1);
-                     RegisterAllocation.Register register2 = allocation.getRegister(assignedVar2);
+                     Registers.Register register1 = getProgram().getScope().getVariable(assignedVar1).getAllocation();
+                     Registers.Register register2 = getProgram().getScope().getVariable(assignedVar2).getAllocation();
                      if (register1.equals(register2)) {
                         if (verbose) {
                            getLog().append("Two assigned variables " + assignedVar1 + " and " + assignedVar2 + " clobbered by use of same register " + register1 + " in statement " + statement);
@@ -70,7 +69,7 @@ public class Pass4AssertNoCpuClobber extends Pass2Base {
             List<VariableRef> aliveVars = new ArrayList<>(liveRangeVariables.getAlive(statement));
             // Non-assigned alive variables must not be clobbered
             for (VariableRef aliveVar : aliveVars) {
-               RegisterAllocation.Register aliveVarRegister = allocation.getRegister(aliveVar);
+               Registers.Register aliveVarRegister = getProgram().getScope().getVariable(aliveVar).getAllocation();
                if (aliveVarRegister.isZp()) {
                   // No need to check a zp-register - here we are only interested in CPU registers
                   continue;
@@ -99,16 +98,16 @@ public class Pass4AssertNoCpuClobber extends Pass2Base {
     * @param clobber The clobber
     * @return The clobbered CPU registers
     */
-   public static Collection<RegisterAllocation.Register> getClobberRegisters(AsmClobber clobber) {
-      List<RegisterAllocation.Register> clobberRegisters = new ArrayList<>();
+   public static Collection<Registers.Register> getClobberRegisters(AsmClobber clobber) {
+      List<Registers.Register> clobberRegisters = new ArrayList<>();
       if (clobber.isClobberA()) {
-         clobberRegisters.add(RegisterAllocation.getRegisterA());
+         clobberRegisters.add(Registers.getRegisterA());
       }
       if (clobber.isClobberX()) {
-         clobberRegisters.add(RegisterAllocation.getRegisterX());
+         clobberRegisters.add(Registers.getRegisterX());
       }
       if (clobber.isClobberY()) {
-         clobberRegisters.add(RegisterAllocation.getRegisterY());
+         clobberRegisters.add(Registers.getRegisterY());
       }
       return clobberRegisters;
    }

@@ -27,7 +27,7 @@ public class Pass4RegisterUpliftRemains extends Pass2Base {
       Set<String> unknownFragments = new LinkedHashSet<>();
 
       for (LiveRangeEquivalenceClass equivalenceClass : equivalenceClasses) {
-         if (equivalenceClass.getRegister().getType().equals(RegisterAllocation.RegisterType.ZP_BYTE)) {
+         if (equivalenceClass.getRegister().getType().equals(Registers.RegisterType.ZP_BYTE)) {
             int bestScore = Integer.MAX_VALUE;
             RegisterCombination bestCombination = null;
             RegisterCombinationIterator combinationIterator = new RegisterCombinationIterator(Arrays.asList(equivalenceClass), getProgram().getRegisterPotentials());
@@ -37,7 +37,7 @@ public class Pass4RegisterUpliftRemains extends Pass2Base {
                // Reset register allocation to original zero page allocation
                new Pass4RegistersFinalize(getProgram()).allocate(false);
                // Apply the uplift combination
-               combination.allocate(getProgram().getAllocation());
+               combination.allocate(getProgram().getScope());
                // Generate ASM
                try {
                   new Pass4CodeGeneration(getProgram()).generate();

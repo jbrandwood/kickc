@@ -59,8 +59,10 @@ public class AsmFragment {
          throw new AluNotApplicableException("Error! ALU register only allowed as rValue2. " + assignment);
       }
       VariableRef assignmentRValue2 = (VariableRef) assignment.getrValue2();
-      RegisterAllocation.Register rVal2Register = program.getAllocation().getRegister(assignmentRValue2);
-      if (!rVal2Register.getType().equals(RegisterAllocation.RegisterType.REG_ALU_BYTE)) {
+      Variable assignmentRValue2Var = program.getScope().getVariable(assignmentRValue2);
+      Registers.Register rVal2Register = assignmentRValue2Var.getAllocation();
+
+      if (!rVal2Register.getType().equals(Registers.RegisterType.REG_ALU_BYTE)) {
          throw new AluNotApplicableException("Error! ALU register only allowed as rValue2. " + assignment);
       }
       StringBuilder signature = new StringBuilder();
@@ -218,7 +220,7 @@ public class AsmFragment {
          value = program.getScope().getVariable((VariableRef) value);
       }
       if (value instanceof Variable) {
-         value = program.getAllocation().getRegister(((Variable) value).getRef());
+         value = ((Variable) value).getAllocation();
       } else if (value instanceof PointerDereferenceSimple) {
          PointerDereferenceSimple deref = (PointerDereferenceSimple) value;
          return "_star_" + bind(deref.getPointer());
@@ -233,37 +235,37 @@ public class AsmFragment {
             return name;
          }
       }
-      if (value instanceof RegisterAllocation.Register) {
-         RegisterAllocation.Register register = (RegisterAllocation.Register) value;
-         if (RegisterAllocation.RegisterType.ZP_BYTE.equals(register.getType())) {
+      if (value instanceof Registers.Register) {
+         Registers.Register register = (Registers.Register) value;
+         if (Registers.RegisterType.ZP_BYTE.equals(register.getType())) {
             String name = "zpby" + nextZpByteIdx++;
             bindings.put(name, value);
             return name;
-         } else if (RegisterAllocation.RegisterType.ZP_WORD.equals(register.getType())) {
+         } else if (Registers.RegisterType.ZP_WORD.equals(register.getType())) {
             String name = "zpwo" + nextZpWordIdx++;
             bindings.put(name, value);
             return name;
-         } else if (RegisterAllocation.RegisterType.ZP_BOOL.equals(register.getType())) {
+         } else if (Registers.RegisterType.ZP_BOOL.equals(register.getType())) {
             String name = "zpbo" + nextZpBoolIdx++;
             bindings.put(name, value);
             return name;
-         } else if (RegisterAllocation.RegisterType.REG_X_BYTE.equals(register.getType())) {
+         } else if (Registers.RegisterType.REG_X_BYTE.equals(register.getType())) {
             String name = "xby";
             bindings.put(name, value);
             return name;
-         } else if (RegisterAllocation.RegisterType.REG_Y_BYTE.equals(register.getType())) {
+         } else if (Registers.RegisterType.REG_Y_BYTE.equals(register.getType())) {
             String name = "yby";
             bindings.put(name, value);
             return name;
-         } else if (RegisterAllocation.RegisterType.REG_A_BYTE.equals(register.getType())) {
+         } else if (Registers.RegisterType.REG_A_BYTE.equals(register.getType())) {
             String name = "aby";
             bindings.put(name, value);
             return name;
-         } else if (RegisterAllocation.RegisterType.ZP_PTR_BYTE.equals(register.getType())) {
+         } else if (Registers.RegisterType.ZP_PTR_BYTE.equals(register.getType())) {
             String name = "zpptrby" + nextZpPtrIdx++;
             bindings.put(name, value);
             return name;
-         } else if (RegisterAllocation.RegisterType.REG_ALU_BYTE.equals(register.getType())) {
+         } else if (Registers.RegisterType.REG_ALU_BYTE.equals(register.getType())) {
             throw new AluNotApplicableException();
          }
       } else if (value instanceof ConstantInteger) {
@@ -297,16 +299,16 @@ public class AsmFragment {
          throw new RuntimeException("Binding '" + name + "' not found in fragment " + signature + ".asm");
       }
       String bound;
-      if (boundValue instanceof RegisterAllocation.Register) {
-         RegisterAllocation.Register register = (RegisterAllocation.Register) boundValue;
-         if (register instanceof RegisterAllocation.RegisterZpByte) {
-            bound = String.format("$%x", ((RegisterAllocation.RegisterZpByte) register).getZp());
-         } else if (register instanceof RegisterAllocation.RegisterZpWord) {
-            bound = String.format("$%x", ((RegisterAllocation.RegisterZpWord) register).getZp());
-         } else if (register instanceof RegisterAllocation.RegisterZpBool) {
-            bound = String.format("$%x", ((RegisterAllocation.RegisterZpBool) register).getZp());
-         } else if (register instanceof RegisterAllocation.RegisterZpPointerByte) {
-            bound = String.format("$%x", ((RegisterAllocation.RegisterZpPointerByte) register).getZp());
+      if (boundValue instanceof Registers.Register) {
+         Registers.Register register = (Registers.Register) boundValue;
+         if (register instanceof Registers.RegisterZpByte) {
+            bound = String.format("$%x", ((Registers.RegisterZpByte) register).getZp());
+         } else if (register instanceof Registers.RegisterZpWord) {
+            bound = String.format("$%x", ((Registers.RegisterZpWord) register).getZp());
+         } else if (register instanceof Registers.RegisterZpBool) {
+            bound = String.format("$%x", ((Registers.RegisterZpBool) register).getZp());
+         } else if (register instanceof Registers.RegisterZpPointerByte) {
+            bound = String.format("$%x", ((Registers.RegisterZpPointerByte) register).getZp());
          } else {
             throw new RuntimeException("Register Type not implemented " + register);
          }

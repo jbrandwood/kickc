@@ -87,7 +87,7 @@ public class Pass4RegisterUpliftPotentialAluAnalysis extends Pass2Base {
 
    private void hasAluPotential(RegisterPotentials registerPotentials, VariableRef ref) {
       LiveRangeEquivalenceClass potentialAluEquivalenceClass = liveRangeEquivalenceClassSet.getEquivalenceClass(ref);
-      registerPotentials.addPotentialRegister(potentialAluEquivalenceClass, RegisterAllocation.getRegisterALU());
+      registerPotentials.addPotentialRegister(potentialAluEquivalenceClass, Registers.getRegisterALU());
       getLog().append("Equivalence Class "+potentialAluEquivalenceClass+" has ALU potential.");
    }
 

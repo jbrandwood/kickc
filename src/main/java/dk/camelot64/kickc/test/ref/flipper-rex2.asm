@@ -22,42 +22,46 @@ main: {
     rts
 }
 plot: {
+    .label line = 2
+    .label y = 4
     lda #$10
-    sta $4
+    sta y
     lda #<$4d4
-    sta $2
+    sta line
     lda #>$4d4
-    sta $2+$1
+    sta line+$1
     ldx #$0
   b1:
     ldy #$0
   b2:
     lda $1000,x
-    sta ($2),y
+    sta (line),y
     inx
     iny
     cpy #$10
     bcc b2
-    lda $2
+    lda line
     clc
     adc #$28
-    sta $2
+    sta line
     bcc !+
-    inc $2+$1
+    inc line+$1
   !:
-    dec $4
-    lda $4
+    dec y
+    lda y
     bne b1
     rts
 }
 flip: {
+    .label c = 5
+    .label y = 4
     lda #$10
-    sta $4
+    sta plot.y
     ldy #$f
     ldx #$0
   b1:
     lda #$10
-    sta $5
+    sta c
   b2:
     lda $1000,x
     sta $1100,y
@@ -66,12 +70,12 @@ flip: {
     clc
     adc #$10
     tay
-    dec $5
-    lda $5
+    dec c
+    lda c
     bne b2
     dey
-    dec $4
-    lda $4
+    dec plot.y
+    lda plot.y
     bne b1
     ldx #$0
   b3:

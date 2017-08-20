@@ -332,81 +332,85 @@ Added variable $1 to zero page equivalence class [ $1 ]
 Complete equivalence classes
 [ i#2 i#1 ]
 [ $1 ]
-Allocated zp byte:2 [ i#2 i#1 ]
-Allocated zp byte:3 [ $1 ]
+Allocated zp ZP_BYTE:2 i#2 [ i#2 i#1 ]
+Allocated zp ZP_BYTE:3 $1 [ $1 ]
 INITIAL ASM
-//SEG0 @begin
+//SEG0 Global ZP labels
+  .label $1 = 3
+  .label i = 2
+//SEG1 @begin
 bbegin:
-//SEG1 [0] phi from @begin to @1
+//SEG2 [0] phi from @begin to @1
 b1_from_bbegin:
-//SEG2 [0] phi (byte) i#2 = (byte) 5 -- zpby1=coby1 
+//SEG3 [0] phi (byte) i#2 = (byte) 5 -- zpby1=coby1 
   lda #$5
-  sta $2
+  sta i
   jmp b1
-//SEG3 [0] phi from @1 to @1
+//SEG4 [0] phi from @1 to @1
 b1_from_b1:
-//SEG4 [0] phi (byte) i#2 = (byte) i#1 -- register_copy 
+//SEG5 [0] phi (byte) i#2 = (byte) i#1 -- register_copy 
   jmp b1
-//SEG5 @1
+//SEG6 @1
 b1:
-//SEG6 [1] (byte~) $1 ← (byte) i#2 + (byte) 4 [ i#2 $1 ] -- zpby1=zpby2_plus_coby1 
-  lda $2
+//SEG7 [1] (byte~) $1 ← (byte) i#2 + (byte) 4 [ i#2 $1 ] -- zpby1=zpby2_plus_coby1 
+  lda i
   clc
   adc #$4
-  sta $3
-//SEG7 [2] *((word) 4352 + (byte) i#2) ← (byte~) $1 [ i#2 ] -- cowo1_staridx_zpby1=zpby2 
-  lda $3
-  ldx $2
+  sta $1
+//SEG8 [2] *((word) 4352 + (byte) i#2) ← (byte~) $1 [ i#2 ] -- cowo1_staridx_zpby1=zpby2 
+  lda $1
+  ldx i
   sta $1100,x
-//SEG8 [3] (byte) i#1 ← (byte) i#2 + (byte) 1 [ i#1 ] -- zpby1=zpby1_plus_1 
-  inc $2
-//SEG9 [4] if((byte) i#1<(byte) 10) goto @1 [ i#1 ] -- zpby1_lt_coby1_then_la1 
-  lda $2
+//SEG9 [3] (byte) i#1 ← (byte) i#2 + (byte) 1 [ i#1 ] -- zpby1=zpby1_plus_1 
+  inc i
+//SEG10 [4] if((byte) i#1<(byte) 10) goto @1 [ i#1 ] -- zpby1_lt_coby1_then_la1 
+  lda i
   cmp #$a
   bcc b1_from_b1
   jmp bend
-//SEG10 @end
+//SEG11 @end
 bend:
 
 Statement [1] (byte~) $1 ← (byte) i#2 + (byte) 4 [ i#2 $1 ] always clobbers reg byte a 
-Removing always clobbered register reg byte a as potential for zp byte:2 [ i#2 i#1 ]
+Removing always clobbered register reg byte a as potential for zp ZP_BYTE:2 i [ i#2 i#1 ]
 Statement [1] (byte~) $1 ← (byte) i#2 + (byte) 4 [ i#2 $1 ] always clobbers reg byte a 
 REGISTER UPLIFT POTENTIAL REGISTERS
-Potential registers zp byte:2 [ i#2 i#1 ] : zp byte:2 , reg byte x , reg byte y , 
-Potential registers zp byte:3 [ $1 ] : zp byte:3 , reg byte a , reg byte x , reg byte y , 
+Potential registers zp ZP_BYTE:2 i [ i#2 i#1 ] : zp ZP_BYTE:2 i , reg byte x , reg byte y , 
+Potential registers zp ZP_BYTE:3 $1 [ $1 ] : zp ZP_BYTE:3 $1 , reg byte a , reg byte x , reg byte y , 
 
 REGISTER UPLIFT SCOPES
-Uplift Scope [] 31.17: zp byte:2 [ i#2 i#1 ] 22: zp byte:3 [ $1 ] 
+Uplift Scope [] 31.17: zp ZP_BYTE:2 i [ i#2 i#1 ] 22: zp ZP_BYTE:3 $1 [ $1 ] 
 
 Uplifting [] best 285 combination reg byte x [ i#2 i#1 ] reg byte a [ $1 ] 
 Removing instruction jmp b1
 Removing instruction jmp bend
 Succesful ASM optimization Pass5NextJumpElimination
 ASSEMBLER
-//SEG0 @begin
+//SEG0 Global ZP labels
+//SEG1 @begin
 bbegin:
-//SEG1 [0] phi from @begin to @1
+//SEG2 [0] phi from @begin to @1
 b1_from_bbegin:
-//SEG2 [0] phi (byte) i#2 = (byte) 5 -- xby=coby1 
+//SEG3 [0] phi (byte) i#2 = (byte) 5 -- xby=coby1 
   ldx #$5
   jmp b1
-//SEG3 [0] phi from @1 to @1
+//SEG4 [0] phi from @1 to @1
 b1_from_b1:
-//SEG4 [0] phi (byte) i#2 = (byte) i#1 -- register_copy 
-//SEG5 @1
+//SEG5 [0] phi (byte) i#2 = (byte) i#1 -- register_copy 
+//SEG6 @1
 b1:
-//SEG6 [1] (byte~) $1 ← (byte) i#2 + (byte) 4 [ i#2 $1 ] -- aby=xby_plus_coby1 
+//SEG7 [1] (byte~) $1 ← (byte) i#2 + (byte) 4 [ i#2 $1 ] -- aby=xby_plus_coby1 
   txa
   clc
   adc #$4
-//SEG7 [2] *((word) 4352 + (byte) i#2) ← (byte~) $1 [ i#2 ] -- cowo1_staridx_xby=aby 
+//SEG8 [2] *((word) 4352 + (byte) i#2) ← (byte~) $1 [ i#2 ] -- cowo1_staridx_xby=aby 
   sta $1100,x
-//SEG8 [3] (byte) i#1 ← (byte) i#2 + (byte) 1 [ i#1 ] -- xby=xby_plus_1 
+//SEG9 [3] (byte) i#1 ← (byte) i#2 + (byte) 1 [ i#1 ] -- xby=xby_plus_1 
   inx
-//SEG9 [4] if((byte) i#1<(byte) 10) goto @1 [ i#1 ] -- xby_lt_coby1_then_la1 
+//SEG10 [4] if((byte) i#1<(byte) 10) goto @1 [ i#1 ] -- xby_lt_coby1_then_la1 
   cpx #$a
   bcc b1_from_b1
-//SEG10 @end
+//SEG11 @end
 bend:
 
 Replacing label b1_from_b1 with b1
@@ -414,79 +418,82 @@ Removing instruction b1_from_bbegin:
 Removing instruction b1_from_b1:
 Succesful ASM optimization Pass5RedundantLabelElimination
 ASSEMBLER
-//SEG0 @begin
+//SEG0 Global ZP labels
+//SEG1 @begin
 bbegin:
-//SEG1 [0] phi from @begin to @1
-//SEG2 [0] phi (byte) i#2 = (byte) 5 -- xby=coby1 
+//SEG2 [0] phi from @begin to @1
+//SEG3 [0] phi (byte) i#2 = (byte) 5 -- xby=coby1 
   ldx #$5
   jmp b1
-//SEG3 [0] phi from @1 to @1
-//SEG4 [0] phi (byte) i#2 = (byte) i#1 -- register_copy 
-//SEG5 @1
+//SEG4 [0] phi from @1 to @1
+//SEG5 [0] phi (byte) i#2 = (byte) i#1 -- register_copy 
+//SEG6 @1
 b1:
-//SEG6 [1] (byte~) $1 ← (byte) i#2 + (byte) 4 [ i#2 $1 ] -- aby=xby_plus_coby1 
+//SEG7 [1] (byte~) $1 ← (byte) i#2 + (byte) 4 [ i#2 $1 ] -- aby=xby_plus_coby1 
   txa
   clc
   adc #$4
-//SEG7 [2] *((word) 4352 + (byte) i#2) ← (byte~) $1 [ i#2 ] -- cowo1_staridx_xby=aby 
+//SEG8 [2] *((word) 4352 + (byte) i#2) ← (byte~) $1 [ i#2 ] -- cowo1_staridx_xby=aby 
   sta $1100,x
-//SEG8 [3] (byte) i#1 ← (byte) i#2 + (byte) 1 [ i#1 ] -- xby=xby_plus_1 
+//SEG9 [3] (byte) i#1 ← (byte) i#2 + (byte) 1 [ i#1 ] -- xby=xby_plus_1 
   inx
-//SEG9 [4] if((byte) i#1<(byte) 10) goto @1 [ i#1 ] -- xby_lt_coby1_then_la1 
+//SEG10 [4] if((byte) i#1<(byte) 10) goto @1 [ i#1 ] -- xby_lt_coby1_then_la1 
   cpx #$a
   bcc b1
-//SEG10 @end
+//SEG11 @end
 bend:
 
 Removing instruction bbegin:
 Removing instruction bend:
 Succesful ASM optimization Pass5UnusedLabelElimination
 ASSEMBLER
-//SEG0 @begin
-//SEG1 [0] phi from @begin to @1
-//SEG2 [0] phi (byte) i#2 = (byte) 5 -- xby=coby1 
+//SEG0 Global ZP labels
+//SEG1 @begin
+//SEG2 [0] phi from @begin to @1
+//SEG3 [0] phi (byte) i#2 = (byte) 5 -- xby=coby1 
   ldx #$5
   jmp b1
-//SEG3 [0] phi from @1 to @1
-//SEG4 [0] phi (byte) i#2 = (byte) i#1 -- register_copy 
-//SEG5 @1
+//SEG4 [0] phi from @1 to @1
+//SEG5 [0] phi (byte) i#2 = (byte) i#1 -- register_copy 
+//SEG6 @1
 b1:
-//SEG6 [1] (byte~) $1 ← (byte) i#2 + (byte) 4 [ i#2 $1 ] -- aby=xby_plus_coby1 
+//SEG7 [1] (byte~) $1 ← (byte) i#2 + (byte) 4 [ i#2 $1 ] -- aby=xby_plus_coby1 
   txa
   clc
   adc #$4
-//SEG7 [2] *((word) 4352 + (byte) i#2) ← (byte~) $1 [ i#2 ] -- cowo1_staridx_xby=aby 
+//SEG8 [2] *((word) 4352 + (byte) i#2) ← (byte~) $1 [ i#2 ] -- cowo1_staridx_xby=aby 
   sta $1100,x
-//SEG8 [3] (byte) i#1 ← (byte) i#2 + (byte) 1 [ i#1 ] -- xby=xby_plus_1 
+//SEG9 [3] (byte) i#1 ← (byte) i#2 + (byte) 1 [ i#1 ] -- xby=xby_plus_1 
   inx
-//SEG9 [4] if((byte) i#1<(byte) 10) goto @1 [ i#1 ] -- xby_lt_coby1_then_la1 
+//SEG10 [4] if((byte) i#1<(byte) 10) goto @1 [ i#1 ] -- xby_lt_coby1_then_la1 
   cpx #$a
   bcc b1
-//SEG10 @end
+//SEG11 @end
 
 Removing instruction jmp b1
 Succesful ASM optimization Pass5NextJumpElimination
 ASSEMBLER
-//SEG0 @begin
-//SEG1 [0] phi from @begin to @1
-//SEG2 [0] phi (byte) i#2 = (byte) 5 -- xby=coby1 
+//SEG0 Global ZP labels
+//SEG1 @begin
+//SEG2 [0] phi from @begin to @1
+//SEG3 [0] phi (byte) i#2 = (byte) 5 -- xby=coby1 
   ldx #$5
-//SEG3 [0] phi from @1 to @1
-//SEG4 [0] phi (byte) i#2 = (byte) i#1 -- register_copy 
-//SEG5 @1
+//SEG4 [0] phi from @1 to @1
+//SEG5 [0] phi (byte) i#2 = (byte) i#1 -- register_copy 
+//SEG6 @1
 b1:
-//SEG6 [1] (byte~) $1 ← (byte) i#2 + (byte) 4 [ i#2 $1 ] -- aby=xby_plus_coby1 
+//SEG7 [1] (byte~) $1 ← (byte) i#2 + (byte) 4 [ i#2 $1 ] -- aby=xby_plus_coby1 
   txa
   clc
   adc #$4
-//SEG7 [2] *((word) 4352 + (byte) i#2) ← (byte~) $1 [ i#2 ] -- cowo1_staridx_xby=aby 
+//SEG8 [2] *((word) 4352 + (byte) i#2) ← (byte~) $1 [ i#2 ] -- cowo1_staridx_xby=aby 
   sta $1100,x
-//SEG8 [3] (byte) i#1 ← (byte) i#2 + (byte) 1 [ i#1 ] -- xby=xby_plus_1 
+//SEG9 [3] (byte) i#1 ← (byte) i#2 + (byte) 1 [ i#1 ] -- xby=xby_plus_1 
   inx
-//SEG9 [4] if((byte) i#1<(byte) 10) goto @1 [ i#1 ] -- xby_lt_coby1_then_la1 
+//SEG10 [4] if((byte) i#1<(byte) 10) goto @1 [ i#1 ] -- xby_lt_coby1_then_la1 
   cpx #$a
   bcc b1
-//SEG10 @end
+//SEG11 @end
 
 FINAL SYMBOL TABLE
 (byte~) $1 reg byte a 22.0
@@ -502,24 +509,25 @@ reg byte x [ i#2 i#1 ]
 reg byte a [ $1 ]
 
 FINAL CODE
-//SEG0 @begin
-//SEG1 [0] phi from @begin to @1
-//SEG2 [0] phi (byte) i#2 = (byte) 5 -- xby=coby1 
+//SEG0 Global ZP labels
+//SEG1 @begin
+//SEG2 [0] phi from @begin to @1
+//SEG3 [0] phi (byte) i#2 = (byte) 5 -- xby=coby1 
   ldx #$5
-//SEG3 [0] phi from @1 to @1
-//SEG4 [0] phi (byte) i#2 = (byte) i#1 -- register_copy 
-//SEG5 @1
+//SEG4 [0] phi from @1 to @1
+//SEG5 [0] phi (byte) i#2 = (byte) i#1 -- register_copy 
+//SEG6 @1
 b1:
-//SEG6 [1] (byte~) $1 ← (byte) i#2 + (byte) 4 [ i#2 $1 ] -- aby=xby_plus_coby1 
+//SEG7 [1] (byte~) $1 ← (byte) i#2 + (byte) 4 [ i#2 $1 ] -- aby=xby_plus_coby1 
   txa
   clc
   adc #$4
-//SEG7 [2] *((word) 4352 + (byte) i#2) ← (byte~) $1 [ i#2 ] -- cowo1_staridx_xby=aby 
+//SEG8 [2] *((word) 4352 + (byte) i#2) ← (byte~) $1 [ i#2 ] -- cowo1_staridx_xby=aby 
   sta $1100,x
-//SEG8 [3] (byte) i#1 ← (byte) i#2 + (byte) 1 [ i#1 ] -- xby=xby_plus_1 
+//SEG9 [3] (byte) i#1 ← (byte) i#2 + (byte) 1 [ i#1 ] -- xby=xby_plus_1 
   inx
-//SEG9 [4] if((byte) i#1<(byte) 10) goto @1 [ i#1 ] -- xby_lt_coby1_then_la1 
+//SEG10 [4] if((byte) i#1<(byte) 10) goto @1 [ i#1 ] -- xby_lt_coby1_then_la1 
   cpx #$a
   bcc b1
-//SEG10 @end
+//SEG11 @end
 

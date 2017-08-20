@@ -7,10 +7,11 @@ main: {
     rts
 }
 lvaluevar: {
+    .label screen = 2
     lda #<$400
-    sta $2
+    sta screen
     lda #>$400
-    sta $2+$1
+    sta screen+$1
     ldx #$2
   b1:
     cpx #$a
@@ -19,19 +20,20 @@ lvaluevar: {
   b2:
     ldy #$0
     lda #$4
-    sta ($2),y
-    inc $2
+    sta (screen),y
+    inc screen
     bne !+
-    inc $2+$1
+    inc screen+$1
   !:
     inx
     jmp b1
 }
 rvaluevar: {
+    .label screen = 2
     lda #<$400
-    sta $2
+    sta lvaluevar.screen
     lda #>$400
-    sta $2+$1
+    sta lvaluevar.screen+$1
     ldx #$2
   b1:
     cpx #$a
@@ -39,10 +41,10 @@ rvaluevar: {
     rts
   b2:
     ldy #$0
-    lda ($2),y
-    inc $2
+    lda (lvaluevar.screen),y
+    inc lvaluevar.screen
     bne !+
-    inc $2+$1
+    inc lvaluevar.screen+$1
   !:
     inx
     jmp b1

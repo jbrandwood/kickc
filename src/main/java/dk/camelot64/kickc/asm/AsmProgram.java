@@ -72,6 +72,12 @@ public class AsmProgram {
       addLine(new AsmInstruction(instructionType, parameter));
    }
 
+   public void addLabelDecl(String name, int address) {
+      addLine(new AsmLabelDecl(name, address));
+
+   }
+
+
 
    /**
     * Get the number of bytes the segment occupies in memory.

@@ -603,77 +603,81 @@ Complete equivalence classes
 [ cnt#13 cnt#3 ]
 [ cnt#1 ]
 [ cnt#10 ]
-Allocated zp byte:2 [ cnt#13 cnt#3 ]
-Allocated zp byte:3 [ cnt#1 ]
-Allocated zp byte:4 [ cnt#10 ]
+Allocated zp ZP_BYTE:2 cnt#13 [ cnt#13 cnt#3 ]
+Allocated zp ZP_BYTE:3 cnt#1 [ cnt#1 ]
+Allocated zp ZP_BYTE:4 cnt#10 [ cnt#10 ]
 INITIAL ASM
-//SEG0 @begin
+//SEG0 Global ZP labels
+  .label cnt = 3
+  .label cnt#13 = 2
+  .label cnt#10 = 4
+//SEG1 @begin
 bbegin:
-//SEG1 [0] call main param-assignment [ ]
+//SEG2 [0] call main param-assignment [ ]
   jsr main
   jmp bend
-//SEG2 @end
+//SEG3 @end
 bend:
-//SEG3 main
+//SEG4 main
 main: {
-  //SEG4 [1] call inccnt param-assignment [ cnt#10 ]
-  //SEG5 [8] phi from main to inccnt
+  //SEG5 [1] call inccnt param-assignment [ cnt#10 ]
+  //SEG6 [8] phi from main to inccnt
   inccnt_from_main:
-  //SEG6 [8] phi (byte) cnt#13 = (byte) 0 -- zpby1=coby1 
+  //SEG7 [8] phi (byte) cnt#13 = (byte) 0 -- zpby1=coby1 
     lda #$0
-    sta $2
+    sta cnt_13
     jsr inccnt
     jmp b1
-  //SEG7 main::@1
+  //SEG8 main::@1
   b1:
-  //SEG8 [2] *((word) 1024) ← (byte) cnt#10 [ cnt#10 ] -- _star_cowo1=zpby1 
-    lda $4
+  //SEG9 [2] *((word) 1024) ← (byte) cnt#10 [ cnt#10 ] -- _star_cowo1=zpby1 
+    lda cnt_10
     sta $400
-  //SEG9 [3] (byte) cnt#3 ← ++ (byte) cnt#10 [ cnt#3 ] -- zpby1=_inc_zpby2 
-    lda $4
-    sta $2
-    inc $2
-  //SEG10 [4] call inccnt param-assignment [ cnt#10 ]
-  //SEG11 [8] phi from main::@1 to inccnt
+  //SEG10 [3] (byte) cnt#3 ← ++ (byte) cnt#10 [ cnt#3 ] -- zpby1=_inc_zpby2 
+    lda cnt_10
+    sta cnt_13
+    inc cnt_13
+  //SEG11 [4] call inccnt param-assignment [ cnt#10 ]
+  //SEG12 [8] phi from main::@1 to inccnt
   inccnt_from_b1:
-  //SEG12 [8] phi (byte) cnt#13 = (byte) cnt#3 -- register_copy 
+  //SEG13 [8] phi (byte) cnt#13 = (byte) cnt#3 -- register_copy 
     jsr inccnt
     jmp b2
-  //SEG13 main::@2
+  //SEG14 main::@2
   b2:
-  //SEG14 [5] (byte) cnt#1 ← ++ (byte) cnt#10 [ cnt#1 ] -- zpby1=_inc_zpby2 
-    lda $4
-    sta $3
-    inc $3
-  //SEG15 [6] *((word) 1025) ← (byte) cnt#1 [ ] -- _star_cowo1=zpby1 
-    lda $3
+  //SEG15 [5] (byte) cnt#1 ← ++ (byte) cnt#10 [ cnt#1 ] -- zpby1=_inc_zpby2 
+    lda cnt_10
+    sta cnt
+    inc cnt
+  //SEG16 [6] *((word) 1025) ← (byte) cnt#1 [ ] -- _star_cowo1=zpby1 
+    lda cnt
     sta $401
     jmp breturn
-  //SEG16 main::@return
+  //SEG17 main::@return
   breturn:
-  //SEG17 [7] return  [ ]
+  //SEG18 [7] return  [ ]
     rts
 }
-//SEG18 inccnt
+//SEG19 inccnt
 inccnt: {
-  //SEG19 [9] (byte) cnt#10 ← ++ (byte) cnt#13 [ cnt#10 ] -- zpby1=_inc_zpby2 
-    lda $2
-    sta $4
-    inc $4
+  //SEG20 [9] (byte) cnt#10 ← ++ (byte) cnt#13 [ cnt#10 ] -- zpby1=_inc_zpby2 
+    lda cnt_13
+    sta cnt_10
+    inc cnt_10
     jmp breturn
-  //SEG20 inccnt::@return
+  //SEG21 inccnt::@return
   breturn:
-  //SEG21 [10] return  [ cnt#10 ]
+  //SEG22 [10] return  [ cnt#10 ]
     rts
 }
 
 REGISTER UPLIFT POTENTIAL REGISTERS
-Potential registers zp byte:2 [ cnt#13 cnt#3 ] : zp byte:2 , reg byte a , reg byte x , reg byte y , 
-Potential registers zp byte:3 [ cnt#1 ] : zp byte:3 , reg byte a , reg byte x , reg byte y , 
-Potential registers zp byte:4 [ cnt#10 ] : zp byte:4 , reg byte a , reg byte x , reg byte y , 
+Potential registers zp ZP_BYTE:2 cnt#13 [ cnt#13 cnt#3 ] : zp ZP_BYTE:2 cnt#13 , reg byte a , reg byte x , reg byte y , 
+Potential registers zp ZP_BYTE:3 cnt [ cnt#1 ] : zp ZP_BYTE:3 cnt , reg byte a , reg byte x , reg byte y , 
+Potential registers zp ZP_BYTE:4 cnt#10 [ cnt#10 ] : zp ZP_BYTE:4 cnt#10 , reg byte a , reg byte x , reg byte y , 
 
 REGISTER UPLIFT SCOPES
-Uplift Scope [] 8: zp byte:2 [ cnt#13 cnt#3 ] 4: zp byte:3 [ cnt#1 ] 1.6: zp byte:4 [ cnt#10 ] 
+Uplift Scope [] 8: zp ZP_BYTE:2 cnt#13 [ cnt#13 cnt#3 ] 4: zp ZP_BYTE:3 cnt [ cnt#1 ] 1.6: zp ZP_BYTE:4 cnt#10 [ cnt#10 ] 
 Uplift Scope [main] 
 Uplift Scope [inccnt] 
 
@@ -687,49 +691,50 @@ Removing instruction jmp breturn
 Removing instruction jmp breturn
 Succesful ASM optimization Pass5NextJumpElimination
 ASSEMBLER
-//SEG0 @begin
+//SEG0 Global ZP labels
+//SEG1 @begin
 bbegin:
-//SEG1 [0] call main param-assignment [ ]
+//SEG2 [0] call main param-assignment [ ]
   jsr main
-//SEG2 @end
+//SEG3 @end
 bend:
-//SEG3 main
+//SEG4 main
 main: {
-  //SEG4 [1] call inccnt param-assignment [ cnt#10 ]
-  //SEG5 [8] phi from main to inccnt
+  //SEG5 [1] call inccnt param-assignment [ cnt#10 ]
+  //SEG6 [8] phi from main to inccnt
   inccnt_from_main:
-  //SEG6 [8] phi (byte) cnt#13 = (byte) 0 -- xby=coby1 
+  //SEG7 [8] phi (byte) cnt#13 = (byte) 0 -- xby=coby1 
     ldx #$0
     jsr inccnt
-  //SEG7 main::@1
+  //SEG8 main::@1
   b1:
-  //SEG8 [2] *((word) 1024) ← (byte) cnt#10 [ cnt#10 ] -- _star_cowo1=xby 
+  //SEG9 [2] *((word) 1024) ← (byte) cnt#10 [ cnt#10 ] -- _star_cowo1=xby 
     stx $400
-  //SEG9 [3] (byte) cnt#3 ← ++ (byte) cnt#10 [ cnt#3 ] -- xby=_inc_xby 
+  //SEG10 [3] (byte) cnt#3 ← ++ (byte) cnt#10 [ cnt#3 ] -- xby=_inc_xby 
     inx
-  //SEG10 [4] call inccnt param-assignment [ cnt#10 ]
-  //SEG11 [8] phi from main::@1 to inccnt
+  //SEG11 [4] call inccnt param-assignment [ cnt#10 ]
+  //SEG12 [8] phi from main::@1 to inccnt
   inccnt_from_b1:
-  //SEG12 [8] phi (byte) cnt#13 = (byte) cnt#3 -- register_copy 
+  //SEG13 [8] phi (byte) cnt#13 = (byte) cnt#3 -- register_copy 
     jsr inccnt
-  //SEG13 main::@2
+  //SEG14 main::@2
   b2:
-  //SEG14 [5] (byte) cnt#1 ← ++ (byte) cnt#10 [ cnt#1 ] -- xby=_inc_xby 
+  //SEG15 [5] (byte) cnt#1 ← ++ (byte) cnt#10 [ cnt#1 ] -- xby=_inc_xby 
     inx
-  //SEG15 [6] *((word) 1025) ← (byte) cnt#1 [ ] -- _star_cowo1=xby 
+  //SEG16 [6] *((word) 1025) ← (byte) cnt#1 [ ] -- _star_cowo1=xby 
     stx $401
-  //SEG16 main::@return
+  //SEG17 main::@return
   breturn:
-  //SEG17 [7] return  [ ]
+  //SEG18 [7] return  [ ]
     rts
 }
-//SEG18 inccnt
+//SEG19 inccnt
 inccnt: {
-  //SEG19 [9] (byte) cnt#10 ← ++ (byte) cnt#13 [ cnt#10 ] -- xby=_inc_xby 
+  //SEG20 [9] (byte) cnt#10 ← ++ (byte) cnt#13 [ cnt#10 ] -- xby=_inc_xby 
     inx
-  //SEG20 inccnt::@return
+  //SEG21 inccnt::@return
   breturn:
-  //SEG21 [10] return  [ cnt#10 ]
+  //SEG22 [10] return  [ cnt#10 ]
     rts
 }
 
@@ -743,41 +748,42 @@ Removing instruction breturn:
 Removing instruction breturn:
 Succesful ASM optimization Pass5UnusedLabelElimination
 ASSEMBLER
-//SEG0 @begin
-//SEG1 [0] call main param-assignment [ ]
+//SEG0 Global ZP labels
+//SEG1 @begin
+//SEG2 [0] call main param-assignment [ ]
   jsr main
-//SEG2 @end
-//SEG3 main
+//SEG3 @end
+//SEG4 main
 main: {
-  //SEG4 [1] call inccnt param-assignment [ cnt#10 ]
-  //SEG5 [8] phi from main to inccnt
-  //SEG6 [8] phi (byte) cnt#13 = (byte) 0 -- xby=coby1 
+  //SEG5 [1] call inccnt param-assignment [ cnt#10 ]
+  //SEG6 [8] phi from main to inccnt
+  //SEG7 [8] phi (byte) cnt#13 = (byte) 0 -- xby=coby1 
     ldx #$0
     jsr inccnt
-  //SEG7 main::@1
-  //SEG8 [2] *((word) 1024) ← (byte) cnt#10 [ cnt#10 ] -- _star_cowo1=xby 
+  //SEG8 main::@1
+  //SEG9 [2] *((word) 1024) ← (byte) cnt#10 [ cnt#10 ] -- _star_cowo1=xby 
     stx $400
-  //SEG9 [3] (byte) cnt#3 ← ++ (byte) cnt#10 [ cnt#3 ] -- xby=_inc_xby 
+  //SEG10 [3] (byte) cnt#3 ← ++ (byte) cnt#10 [ cnt#3 ] -- xby=_inc_xby 
     inx
-  //SEG10 [4] call inccnt param-assignment [ cnt#10 ]
-  //SEG11 [8] phi from main::@1 to inccnt
-  //SEG12 [8] phi (byte) cnt#13 = (byte) cnt#3 -- register_copy 
+  //SEG11 [4] call inccnt param-assignment [ cnt#10 ]
+  //SEG12 [8] phi from main::@1 to inccnt
+  //SEG13 [8] phi (byte) cnt#13 = (byte) cnt#3 -- register_copy 
     jsr inccnt
-  //SEG13 main::@2
-  //SEG14 [5] (byte) cnt#1 ← ++ (byte) cnt#10 [ cnt#1 ] -- xby=_inc_xby 
+  //SEG14 main::@2
+  //SEG15 [5] (byte) cnt#1 ← ++ (byte) cnt#10 [ cnt#1 ] -- xby=_inc_xby 
     inx
-  //SEG15 [6] *((word) 1025) ← (byte) cnt#1 [ ] -- _star_cowo1=xby 
+  //SEG16 [6] *((word) 1025) ← (byte) cnt#1 [ ] -- _star_cowo1=xby 
     stx $401
-  //SEG16 main::@return
-  //SEG17 [7] return  [ ]
+  //SEG17 main::@return
+  //SEG18 [7] return  [ ]
     rts
 }
-//SEG18 inccnt
+//SEG19 inccnt
 inccnt: {
-  //SEG19 [9] (byte) cnt#10 ← ++ (byte) cnt#13 [ cnt#10 ] -- xby=_inc_xby 
+  //SEG20 [9] (byte) cnt#10 ← ++ (byte) cnt#13 [ cnt#10 ] -- xby=_inc_xby 
     inx
-  //SEG20 inccnt::@return
-  //SEG21 [10] return  [ cnt#10 ]
+  //SEG21 inccnt::@return
+  //SEG22 [10] return  [ cnt#10 ]
     rts
 }
 
@@ -802,41 +808,42 @@ reg byte x [ cnt#1 ]
 reg byte x [ cnt#10 ]
 
 FINAL CODE
-//SEG0 @begin
-//SEG1 [0] call main param-assignment [ ]
+//SEG0 Global ZP labels
+//SEG1 @begin
+//SEG2 [0] call main param-assignment [ ]
   jsr main
-//SEG2 @end
-//SEG3 main
+//SEG3 @end
+//SEG4 main
 main: {
-  //SEG4 [1] call inccnt param-assignment [ cnt#10 ]
-  //SEG5 [8] phi from main to inccnt
-  //SEG6 [8] phi (byte) cnt#13 = (byte) 0 -- xby=coby1 
+  //SEG5 [1] call inccnt param-assignment [ cnt#10 ]
+  //SEG6 [8] phi from main to inccnt
+  //SEG7 [8] phi (byte) cnt#13 = (byte) 0 -- xby=coby1 
     ldx #$0
     jsr inccnt
-  //SEG7 main::@1
-  //SEG8 [2] *((word) 1024) ← (byte) cnt#10 [ cnt#10 ] -- _star_cowo1=xby 
+  //SEG8 main::@1
+  //SEG9 [2] *((word) 1024) ← (byte) cnt#10 [ cnt#10 ] -- _star_cowo1=xby 
     stx $400
-  //SEG9 [3] (byte) cnt#3 ← ++ (byte) cnt#10 [ cnt#3 ] -- xby=_inc_xby 
+  //SEG10 [3] (byte) cnt#3 ← ++ (byte) cnt#10 [ cnt#3 ] -- xby=_inc_xby 
     inx
-  //SEG10 [4] call inccnt param-assignment [ cnt#10 ]
-  //SEG11 [8] phi from main::@1 to inccnt
-  //SEG12 [8] phi (byte) cnt#13 = (byte) cnt#3 -- register_copy 
+  //SEG11 [4] call inccnt param-assignment [ cnt#10 ]
+  //SEG12 [8] phi from main::@1 to inccnt
+  //SEG13 [8] phi (byte) cnt#13 = (byte) cnt#3 -- register_copy 
     jsr inccnt
-  //SEG13 main::@2
-  //SEG14 [5] (byte) cnt#1 ← ++ (byte) cnt#10 [ cnt#1 ] -- xby=_inc_xby 
+  //SEG14 main::@2
+  //SEG15 [5] (byte) cnt#1 ← ++ (byte) cnt#10 [ cnt#1 ] -- xby=_inc_xby 
     inx
-  //SEG15 [6] *((word) 1025) ← (byte) cnt#1 [ ] -- _star_cowo1=xby 
+  //SEG16 [6] *((word) 1025) ← (byte) cnt#1 [ ] -- _star_cowo1=xby 
     stx $401
-  //SEG16 main::@return
-  //SEG17 [7] return  [ ]
+  //SEG17 main::@return
+  //SEG18 [7] return  [ ]
     rts
 }
-//SEG18 inccnt
+//SEG19 inccnt
 inccnt: {
-  //SEG19 [9] (byte) cnt#10 ← ++ (byte) cnt#13 [ cnt#10 ] -- xby=_inc_xby 
+  //SEG20 [9] (byte) cnt#10 ← ++ (byte) cnt#13 [ cnt#10 ] -- xby=_inc_xby 
     inx
-  //SEG20 inccnt::@return
-  //SEG21 [10] return  [ cnt#10 ]
+  //SEG21 inccnt::@return
+  //SEG22 [10] return  [ cnt#10 ]
     rts
 }
 

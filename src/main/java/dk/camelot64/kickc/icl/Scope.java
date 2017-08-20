@@ -241,6 +241,10 @@ public abstract class Scope implements Symbol {
    }
 
    public Scope getScope(ScopeRef scopeRef) {
+      if(scopeRef.getFullName().equals("") && this instanceof ProgramScope) {
+         // Special case for the outer program scope
+         return this;
+      }
       Symbol symbol = getSymbol(scopeRef);
       if(symbol instanceof Scope) {
          return (Scope) symbol;

@@ -24,6 +24,10 @@ public class TestCompilationOutput extends TestCase {
       helper = new ReferenceHelper("dk/camelot64/kickc/test/ref/");
    }
 
+   public void testZpParamMin() throws IOException, URISyntaxException {
+      compileAndCompare("zpparammin");
+   }
+
    public void testInMemArray() throws IOException, URISyntaxException {
       compileAndCompare("inmemarray");
    }

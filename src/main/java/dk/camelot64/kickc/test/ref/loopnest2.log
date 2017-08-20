@@ -2040,187 +2040,197 @@ Complete equivalence classes
 [ nest1::j#2 nest1::j#1 ]
 [ nest2::i#2 nest2::i#1 ]
 [ nest2::j#2 nest2::j#1 ]
-Allocated zp byte:2 [ main::i#2 main::i#1 ]
-Allocated zp byte:3 [ main::j#2 main::j#1 ]
-Allocated zp byte:4 [ nest1::i#2 nest1::i#1 ]
-Allocated zp byte:5 [ nest1::j#2 nest1::j#1 ]
-Allocated zp byte:6 [ nest2::i#2 nest2::i#1 ]
-Allocated zp byte:7 [ nest2::j#2 nest2::j#1 ]
+Allocated zp ZP_BYTE:2 i#2 [ main::i#2 main::i#1 ]
+Allocated zp ZP_BYTE:3 j#2 [ main::j#2 main::j#1 ]
+Allocated zp ZP_BYTE:4 i#2 [ nest1::i#2 nest1::i#1 ]
+Allocated zp ZP_BYTE:5 j#2 [ nest1::j#2 nest1::j#1 ]
+Allocated zp ZP_BYTE:6 i#2 [ nest2::i#2 nest2::i#1 ]
+Allocated zp ZP_BYTE:7 j#2 [ nest2::j#2 nest2::j#1 ]
 INITIAL ASM
-//SEG0 @begin
+//SEG0 Global ZP labels
+//SEG1 @begin
 bbegin:
-//SEG1 [0] call main param-assignment [ ]
+//SEG2 [0] call main param-assignment [ ]
   jsr main
   jmp bend
-//SEG2 @end
+//SEG3 @end
 bend:
-//SEG3 main
+//SEG4 main
 main: {
-  //SEG4 [1] phi from main to main::@1
+    .label j = 3
+    .label i = 2
+  //SEG5 [1] phi from main to main::@1
   b1_from_main:
-  //SEG5 [1] phi (byte) main::i#2 = (byte) 100 -- zpby1=coby1 
+  //SEG6 [1] phi (byte) main::i#2 = (byte) 100 -- zpby1=coby1 
     lda #$64
-    sta $2
+    sta i
     jmp b1
-  //SEG6 [1] phi from main::@3 to main::@1
+  //SEG7 [1] phi from main::@3 to main::@1
   b1_from_b3:
-  //SEG7 [1] phi (byte) main::i#2 = (byte) main::i#1 -- register_copy 
+  //SEG8 [1] phi (byte) main::i#2 = (byte) main::i#1 -- register_copy 
     jmp b1
-  //SEG8 main::@1
+  //SEG9 main::@1
   b1:
-  //SEG9 [2] phi from main::@1 to main::@2
+  //SEG10 [2] phi from main::@1 to main::@2
   b2_from_b1:
-  //SEG10 [2] phi (byte) main::j#2 = (byte) 100 -- zpby1=coby1 
+  //SEG11 [2] phi (byte) main::j#2 = (byte) 100 -- zpby1=coby1 
     lda #$64
-    sta $3
+    sta j
     jmp b2
-  //SEG11 [2] phi from main::@5 to main::@2
+  //SEG12 [2] phi from main::@5 to main::@2
   b2_from_b5:
-  //SEG12 [2] phi (byte) main::j#2 = (byte) main::j#1 -- register_copy 
+  //SEG13 [2] phi (byte) main::j#2 = (byte) main::j#1 -- register_copy 
     jmp b2
-  //SEG13 main::@2
+  //SEG14 main::@2
   b2:
-  //SEG14 [3] call nest1 param-assignment [ main::j#2 main::i#2 ]
+  //SEG15 [3] call nest1 param-assignment [ main::j#2 main::i#2 ]
     jsr nest1
     jmp b5
-  //SEG15 main::@5
+  //SEG16 main::@5
   b5:
-  //SEG16 [4] (byte) main::j#1 ← -- (byte) main::j#2 [ main::j#1 main::i#2 ] -- zpby1=_dec_zpby1 
-    dec $3
-  //SEG17 [5] if((byte) main::j#1>(byte) 0) goto main::@2 [ main::j#1 main::i#2 ] -- zpby1_gt_0_then_la1 
-    lda $3
+  //SEG17 [4] (byte) main::j#1 ← -- (byte) main::j#2 [ main::j#1 main::i#2 ] -- zpby1=_dec_zpby1 
+    dec j
+  //SEG18 [5] if((byte) main::j#1>(byte) 0) goto main::@2 [ main::j#1 main::i#2 ] -- zpby1_gt_0_then_la1 
+    lda j
     bne b2_from_b5
     jmp b3
-  //SEG18 main::@3
+  //SEG19 main::@3
   b3:
-  //SEG19 [6] (byte) main::i#1 ← -- (byte) main::i#2 [ main::i#1 ] -- zpby1=_dec_zpby1 
-    dec $2
-  //SEG20 [7] if((byte) main::i#1>(byte) 0) goto main::@1 [ main::i#1 ] -- zpby1_gt_0_then_la1 
-    lda $2
+  //SEG20 [6] (byte) main::i#1 ← -- (byte) main::i#2 [ main::i#1 ] -- zpby1=_dec_zpby1 
+    dec i
+  //SEG21 [7] if((byte) main::i#1>(byte) 0) goto main::@1 [ main::i#1 ] -- zpby1_gt_0_then_la1 
+    lda i
     bne b1_from_b3
     jmp breturn
-  //SEG21 main::@return
+  //SEG22 main::@return
   breturn:
-  //SEG22 [8] return  [ ]
+  //SEG23 [8] return  [ ]
     rts
 }
-//SEG23 nest1
+//SEG24 nest1
 nest1: {
-  //SEG24 [9] phi from nest1 to nest1::@1
+    .label j = 5
+    .label i = 4
+  //SEG25 [9] phi from nest1 to nest1::@1
   b1_from_nest1:
-  //SEG25 [9] phi (byte) nest1::i#2 = (byte) 100 -- zpby1=coby1 
+  //SEG26 [9] phi (byte) nest1::i#2 = (byte) 100 -- zpby1=coby1 
     lda #$64
-    sta $4
+    sta i
     jmp b1
-  //SEG26 [9] phi from nest1::@3 to nest1::@1
+  //SEG27 [9] phi from nest1::@3 to nest1::@1
   b1_from_b3:
-  //SEG27 [9] phi (byte) nest1::i#2 = (byte) nest1::i#1 -- register_copy 
+  //SEG28 [9] phi (byte) nest1::i#2 = (byte) nest1::i#1 -- register_copy 
     jmp b1
-  //SEG28 nest1::@1
+  //SEG29 nest1::@1
   b1:
-  //SEG29 [10] phi from nest1::@1 to nest1::@2
+  //SEG30 [10] phi from nest1::@1 to nest1::@2
   b2_from_b1:
-  //SEG30 [10] phi (byte) nest1::j#2 = (byte) 100 -- zpby1=coby1 
+  //SEG31 [10] phi (byte) nest1::j#2 = (byte) 100 -- zpby1=coby1 
     lda #$64
-    sta $5
+    sta j
     jmp b2
-  //SEG31 [10] phi from nest1::@5 to nest1::@2
+  //SEG32 [10] phi from nest1::@5 to nest1::@2
   b2_from_b5:
-  //SEG32 [10] phi (byte) nest1::j#2 = (byte) nest1::j#1 -- register_copy 
+  //SEG33 [10] phi (byte) nest1::j#2 = (byte) nest1::j#1 -- register_copy 
     jmp b2
-  //SEG33 nest1::@2
+  //SEG34 nest1::@2
   b2:
-  //SEG34 [11] call nest2 param-assignment [ main::j#2 main::i#2 nest1::j#2 nest1::i#2 ]
+  //SEG35 [11] call nest2 param-assignment [ main::j#2 main::i#2 nest1::j#2 nest1::i#2 ]
     jsr nest2
     jmp b5
-  //SEG35 nest1::@5
+  //SEG36 nest1::@5
   b5:
-  //SEG36 [12] (byte) nest1::j#1 ← -- (byte) nest1::j#2 [ main::j#2 main::i#2 nest1::j#1 nest1::i#2 ] -- zpby1=_dec_zpby1 
-    dec $5
-  //SEG37 [13] if((byte) nest1::j#1>(byte) 0) goto nest1::@2 [ main::j#2 main::i#2 nest1::j#1 nest1::i#2 ] -- zpby1_gt_0_then_la1 
-    lda $5
+  //SEG37 [12] (byte) nest1::j#1 ← -- (byte) nest1::j#2 [ main::j#2 main::i#2 nest1::j#1 nest1::i#2 ] -- zpby1=_dec_zpby1 
+    dec j
+  //SEG38 [13] if((byte) nest1::j#1>(byte) 0) goto nest1::@2 [ main::j#2 main::i#2 nest1::j#1 nest1::i#2 ] -- zpby1_gt_0_then_la1 
+    lda j
     bne b2_from_b5
     jmp b3
-  //SEG38 nest1::@3
+  //SEG39 nest1::@3
   b3:
-  //SEG39 [14] (byte) nest1::i#1 ← -- (byte) nest1::i#2 [ main::j#2 main::i#2 nest1::i#1 ] -- zpby1=_dec_zpby1 
-    dec $4
-  //SEG40 [15] if((byte) nest1::i#1>(byte) 0) goto nest1::@1 [ main::j#2 main::i#2 nest1::i#1 ] -- zpby1_gt_0_then_la1 
-    lda $4
+  //SEG40 [14] (byte) nest1::i#1 ← -- (byte) nest1::i#2 [ main::j#2 main::i#2 nest1::i#1 ] -- zpby1=_dec_zpby1 
+    dec i
+  //SEG41 [15] if((byte) nest1::i#1>(byte) 0) goto nest1::@1 [ main::j#2 main::i#2 nest1::i#1 ] -- zpby1_gt_0_then_la1 
+    lda i
     bne b1_from_b3
     jmp breturn
-  //SEG41 nest1::@return
+  //SEG42 nest1::@return
   breturn:
-  //SEG42 [16] return  [ main::j#2 main::i#2 ]
+  //SEG43 [16] return  [ main::j#2 main::i#2 ]
     rts
 }
-//SEG43 nest2
+//SEG44 nest2
 nest2: {
-  //SEG44 [17] phi from nest2 to nest2::@1
+    .label j = 7
+    .label i = 6
+  //SEG45 [17] phi from nest2 to nest2::@1
   b1_from_nest2:
-  //SEG45 [17] phi (byte) nest2::i#2 = (byte) 100 -- zpby1=coby1 
+  //SEG46 [17] phi (byte) nest2::i#2 = (byte) 100 -- zpby1=coby1 
     lda #$64
-    sta $6
+    sta i
     jmp b1
-  //SEG46 [17] phi from nest2::@3 to nest2::@1
+  //SEG47 [17] phi from nest2::@3 to nest2::@1
   b1_from_b3:
-  //SEG47 [17] phi (byte) nest2::i#2 = (byte) nest2::i#1 -- register_copy 
+  //SEG48 [17] phi (byte) nest2::i#2 = (byte) nest2::i#1 -- register_copy 
     jmp b1
-  //SEG48 nest2::@1
+  //SEG49 nest2::@1
   b1:
-  //SEG49 [18] phi from nest2::@1 to nest2::@2
+  //SEG50 [18] phi from nest2::@1 to nest2::@2
   b2_from_b1:
-  //SEG50 [18] phi (byte) nest2::j#2 = (byte) 100 -- zpby1=coby1 
+  //SEG51 [18] phi (byte) nest2::j#2 = (byte) 100 -- zpby1=coby1 
     lda #$64
-    sta $7
+    sta j
     jmp b2
-  //SEG51 [18] phi from nest2::@2 to nest2::@2
+  //SEG52 [18] phi from nest2::@2 to nest2::@2
   b2_from_b2:
-  //SEG52 [18] phi (byte) nest2::j#2 = (byte) nest2::j#1 -- register_copy 
+  //SEG53 [18] phi (byte) nest2::j#2 = (byte) nest2::j#1 -- register_copy 
     jmp b2
-  //SEG53 nest2::@2
+  //SEG54 nest2::@2
   b2:
-  //SEG54 [19] *((word) 1024) ← (byte) nest2::j#2 [ main::j#2 main::i#2 nest1::j#2 nest1::i#2 nest2::j#2 nest2::i#2 ] -- _star_cowo1=zpby1 
-    lda $7
+  //SEG55 [19] *((word) 1024) ← (byte) nest2::j#2 [ main::j#2 main::i#2 nest1::j#2 nest1::i#2 nest2::j#2 nest2::i#2 ] -- _star_cowo1=zpby1 
+    lda j
     sta $400
-  //SEG55 [20] (byte) nest2::j#1 ← -- (byte) nest2::j#2 [ main::j#2 main::i#2 nest1::j#2 nest1::i#2 nest2::j#1 nest2::i#2 ] -- zpby1=_dec_zpby1 
-    dec $7
-  //SEG56 [21] if((byte) nest2::j#1>(byte) 0) goto nest2::@2 [ main::j#2 main::i#2 nest1::j#2 nest1::i#2 nest2::j#1 nest2::i#2 ] -- zpby1_gt_0_then_la1 
-    lda $7
+  //SEG56 [20] (byte) nest2::j#1 ← -- (byte) nest2::j#2 [ main::j#2 main::i#2 nest1::j#2 nest1::i#2 nest2::j#1 nest2::i#2 ] -- zpby1=_dec_zpby1 
+    dec j
+  //SEG57 [21] if((byte) nest2::j#1>(byte) 0) goto nest2::@2 [ main::j#2 main::i#2 nest1::j#2 nest1::i#2 nest2::j#1 nest2::i#2 ] -- zpby1_gt_0_then_la1 
+    lda j
     bne b2_from_b2
     jmp b3
-  //SEG57 nest2::@3
+  //SEG58 nest2::@3
   b3:
-  //SEG58 [22] (byte) nest2::i#1 ← -- (byte) nest2::i#2 [ main::j#2 main::i#2 nest1::j#2 nest1::i#2 nest2::i#1 ] -- zpby1=_dec_zpby1 
-    dec $6
-  //SEG59 [23] if((byte) nest2::i#1>(byte) 0) goto nest2::@1 [ main::j#2 main::i#2 nest1::j#2 nest1::i#2 nest2::i#1 ] -- zpby1_gt_0_then_la1 
-    lda $6
+  //SEG59 [22] (byte) nest2::i#1 ← -- (byte) nest2::i#2 [ main::j#2 main::i#2 nest1::j#2 nest1::i#2 nest2::i#1 ] -- zpby1=_dec_zpby1 
+    dec i
+  //SEG60 [23] if((byte) nest2::i#1>(byte) 0) goto nest2::@1 [ main::j#2 main::i#2 nest1::j#2 nest1::i#2 nest2::i#1 ] -- zpby1_gt_0_then_la1 
+    lda i
     bne b1_from_b3
     jmp breturn
-  //SEG60 nest2::@return
+  //SEG61 nest2::@return
   breturn:
-  //SEG61 [24] return  [ main::j#2 main::i#2 nest1::j#2 nest1::i#2 ]
+  //SEG62 [24] return  [ main::j#2 main::i#2 nest1::j#2 nest1::i#2 ]
     rts
 }
 
 REGISTER UPLIFT POTENTIAL REGISTERS
-Potential registers zp byte:2 [ main::i#2 main::i#1 ] : zp byte:2 , reg byte a , reg byte x , reg byte y , 
-Potential registers zp byte:3 [ main::j#2 main::j#1 ] : zp byte:3 , reg byte a , reg byte x , reg byte y , 
-Potential registers zp byte:4 [ nest1::i#2 nest1::i#1 ] : zp byte:4 , reg byte a , reg byte x , reg byte y , 
-Potential registers zp byte:5 [ nest1::j#2 nest1::j#1 ] : zp byte:5 , reg byte a , reg byte x , reg byte y , 
-Potential registers zp byte:6 [ nest2::i#2 nest2::i#1 ] : zp byte:6 , reg byte a , reg byte x , reg byte y , 
-Potential registers zp byte:7 [ nest2::j#2 nest2::j#1 ] : zp byte:7 , reg byte a , reg byte x , reg byte y , 
+Potential registers zp ZP_BYTE:2 i [ main::i#2 main::i#1 ] : zp ZP_BYTE:2 i , reg byte a , reg byte x , reg byte y , 
+Potential registers zp ZP_BYTE:3 j [ main::j#2 main::j#1 ] : zp ZP_BYTE:3 j , reg byte a , reg byte x , reg byte y , 
+Potential registers zp ZP_BYTE:4 i [ nest1::i#2 nest1::i#1 ] : zp ZP_BYTE:4 i , reg byte a , reg byte x , reg byte y , 
+Potential registers zp ZP_BYTE:5 j [ nest1::j#2 nest1::j#1 ] : zp ZP_BYTE:5 j , reg byte a , reg byte x , reg byte y , 
+Potential registers zp ZP_BYTE:6 i [ nest2::i#2 nest2::i#1 ] : zp ZP_BYTE:6 i , reg byte a , reg byte x , reg byte y , 
+Potential registers zp ZP_BYTE:7 j [ nest2::j#2 nest2::j#1 ] : zp ZP_BYTE:7 j , reg byte a , reg byte x , reg byte y , 
 
 REGISTER UPLIFT SCOPES
-Uplift Scope [nest2] 3,000,003: zp byte:7 [ nest2::j#2 nest2::j#1 ] 190,001.9: zp byte:6 [ nest2::i#2 nest2::i#1 ] 
-Uplift Scope [nest1] 17,001.7: zp byte:5 [ nest1::j#2 nest1::j#1 ] 1,655.5: zp byte:4 [ nest1::i#2 nest1::i#1 ] 
-Uplift Scope [main] 162.72: zp byte:3 [ main::j#2 main::j#1 ] 17.55: zp byte:2 [ main::i#2 main::i#1 ] 
+Uplift Scope [nest2] 3,000,003: zp ZP_BYTE:7 j [ nest2::j#2 nest2::j#1 ] 190,001.9: zp ZP_BYTE:6 i [ nest2::i#2 nest2::i#1 ] 
+Uplift Scope [nest1] 17,001.7: zp ZP_BYTE:5 j [ nest1::j#2 nest1::j#1 ] 1,655.5: zp ZP_BYTE:4 i [ nest1::i#2 nest1::i#1 ] 
+Uplift Scope [main] 162.72: zp ZP_BYTE:3 j [ main::j#2 main::j#1 ] 17.55: zp ZP_BYTE:2 i [ main::i#2 main::i#1 ] 
 Uplift Scope [] 
 
-Uplifting [nest2] best 23613122 combination reg byte y [ nest2::j#2 nest2::j#1 ] reg byte x [ nest2::i#2 nest2::i#1 ] 
-Uplifting [nest1] best 23563122 combination reg byte a [ nest1::j#2 nest1::j#1 ] zp byte:4 [ nest1::i#2 nest1::i#1 ] 
-Uplifting [main] best 23563122 combination zp byte:3 [ main::j#2 main::j#1 ] zp byte:2 [ main::i#2 main::i#1 ] 
-Uplifting [] best 23563122 combination 
+Uplifting [nest2] best 23646452 combination reg byte y [ nest2::j#2 nest2::j#1 ] reg byte x [ nest2::i#2 nest2::i#1 ] 
+Uplifting [nest1] best 23566452 combination reg byte a [ nest1::j#2 nest1::j#1 ] zp ZP_BYTE:4 i [ nest1::i#2 nest1::i#1 ] 
+Uplifting [main] best 23566452 combination zp ZP_BYTE:3 j [ main::j#2 main::j#1 ] zp ZP_BYTE:2 i [ main::i#2 main::i#1 ] 
+Uplifting [] best 23566452 combination 
+Allocated (was zp ZP_BYTE:2 i) zp ZP_BYTE:2 i#2 [ main::i#2 main::i#1 ]
+Allocated (was zp ZP_BYTE:3 j) zp ZP_BYTE:3 j#2 [ main::j#2 main::j#1 ]
+Allocated (was zp ZP_BYTE:4 i) zp ZP_BYTE:4 i#2 [ nest1::i#2 nest1::i#1 ]
 Removing instruction jmp bend
 Removing instruction jmp b1
 Removing instruction jmp b2
@@ -2238,141 +2248,145 @@ Removing instruction jmp b3
 Removing instruction jmp breturn
 Succesful ASM optimization Pass5NextJumpElimination
 ASSEMBLER
-//SEG0 @begin
+//SEG0 Global ZP labels
+//SEG1 @begin
 bbegin:
-//SEG1 [0] call main param-assignment [ ]
+//SEG2 [0] call main param-assignment [ ]
   jsr main
-//SEG2 @end
+//SEG3 @end
 bend:
-//SEG3 main
+//SEG4 main
 main: {
-  //SEG4 [1] phi from main to main::@1
+    .label j = 3
+    .label i = 2
+  //SEG5 [1] phi from main to main::@1
   b1_from_main:
-  //SEG5 [1] phi (byte) main::i#2 = (byte) 100 -- zpby1=coby1 
+  //SEG6 [1] phi (byte) main::i#2 = (byte) 100 -- zpby1=coby1 
     lda #$64
-    sta $2
+    sta i
     jmp b1
-  //SEG6 [1] phi from main::@3 to main::@1
+  //SEG7 [1] phi from main::@3 to main::@1
   b1_from_b3:
-  //SEG7 [1] phi (byte) main::i#2 = (byte) main::i#1 -- register_copy 
-  //SEG8 main::@1
+  //SEG8 [1] phi (byte) main::i#2 = (byte) main::i#1 -- register_copy 
+  //SEG9 main::@1
   b1:
-  //SEG9 [2] phi from main::@1 to main::@2
+  //SEG10 [2] phi from main::@1 to main::@2
   b2_from_b1:
-  //SEG10 [2] phi (byte) main::j#2 = (byte) 100 -- zpby1=coby1 
+  //SEG11 [2] phi (byte) main::j#2 = (byte) 100 -- zpby1=coby1 
     lda #$64
-    sta $3
+    sta j
     jmp b2
-  //SEG11 [2] phi from main::@5 to main::@2
+  //SEG12 [2] phi from main::@5 to main::@2
   b2_from_b5:
-  //SEG12 [2] phi (byte) main::j#2 = (byte) main::j#1 -- register_copy 
-  //SEG13 main::@2
+  //SEG13 [2] phi (byte) main::j#2 = (byte) main::j#1 -- register_copy 
+  //SEG14 main::@2
   b2:
-  //SEG14 [3] call nest1 param-assignment [ main::j#2 main::i#2 ]
+  //SEG15 [3] call nest1 param-assignment [ main::j#2 main::i#2 ]
     jsr nest1
-  //SEG15 main::@5
+  //SEG16 main::@5
   b5:
-  //SEG16 [4] (byte) main::j#1 ← -- (byte) main::j#2 [ main::j#1 main::i#2 ] -- zpby1=_dec_zpby1 
-    dec $3
-  //SEG17 [5] if((byte) main::j#1>(byte) 0) goto main::@2 [ main::j#1 main::i#2 ] -- zpby1_gt_0_then_la1 
-    lda $3
+  //SEG17 [4] (byte) main::j#1 ← -- (byte) main::j#2 [ main::j#1 main::i#2 ] -- zpby1=_dec_zpby1 
+    dec j
+  //SEG18 [5] if((byte) main::j#1>(byte) 0) goto main::@2 [ main::j#1 main::i#2 ] -- zpby1_gt_0_then_la1 
+    lda j
     bne b2_from_b5
-  //SEG18 main::@3
+  //SEG19 main::@3
   b3:
-  //SEG19 [6] (byte) main::i#1 ← -- (byte) main::i#2 [ main::i#1 ] -- zpby1=_dec_zpby1 
-    dec $2
-  //SEG20 [7] if((byte) main::i#1>(byte) 0) goto main::@1 [ main::i#1 ] -- zpby1_gt_0_then_la1 
-    lda $2
+  //SEG20 [6] (byte) main::i#1 ← -- (byte) main::i#2 [ main::i#1 ] -- zpby1=_dec_zpby1 
+    dec i
+  //SEG21 [7] if((byte) main::i#1>(byte) 0) goto main::@1 [ main::i#1 ] -- zpby1_gt_0_then_la1 
+    lda i
     bne b1_from_b3
-  //SEG21 main::@return
+  //SEG22 main::@return
   breturn:
-  //SEG22 [8] return  [ ]
+  //SEG23 [8] return  [ ]
     rts
 }
-//SEG23 nest1
+//SEG24 nest1
 nest1: {
-  //SEG24 [9] phi from nest1 to nest1::@1
+    .label i = 4
+  //SEG25 [9] phi from nest1 to nest1::@1
   b1_from_nest1:
-  //SEG25 [9] phi (byte) nest1::i#2 = (byte) 100 -- zpby1=coby1 
+  //SEG26 [9] phi (byte) nest1::i#2 = (byte) 100 -- zpby1=coby1 
     lda #$64
-    sta $4
+    sta i
     jmp b1
-  //SEG26 [9] phi from nest1::@3 to nest1::@1
+  //SEG27 [9] phi from nest1::@3 to nest1::@1
   b1_from_b3:
-  //SEG27 [9] phi (byte) nest1::i#2 = (byte) nest1::i#1 -- register_copy 
-  //SEG28 nest1::@1
+  //SEG28 [9] phi (byte) nest1::i#2 = (byte) nest1::i#1 -- register_copy 
+  //SEG29 nest1::@1
   b1:
-  //SEG29 [10] phi from nest1::@1 to nest1::@2
+  //SEG30 [10] phi from nest1::@1 to nest1::@2
   b2_from_b1:
-  //SEG30 [10] phi (byte) nest1::j#2 = (byte) 100 -- aby=coby1 
+  //SEG31 [10] phi (byte) nest1::j#2 = (byte) 100 -- aby=coby1 
     lda #$64
     jmp b2
-  //SEG31 [10] phi from nest1::@5 to nest1::@2
+  //SEG32 [10] phi from nest1::@5 to nest1::@2
   b2_from_b5:
-  //SEG32 [10] phi (byte) nest1::j#2 = (byte) nest1::j#1 -- register_copy 
-  //SEG33 nest1::@2
+  //SEG33 [10] phi (byte) nest1::j#2 = (byte) nest1::j#1 -- register_copy 
+  //SEG34 nest1::@2
   b2:
-  //SEG34 [11] call nest2 param-assignment [ main::j#2 main::i#2 nest1::j#2 nest1::i#2 ]
+  //SEG35 [11] call nest2 param-assignment [ main::j#2 main::i#2 nest1::j#2 nest1::i#2 ]
     jsr nest2
-  //SEG35 nest1::@5
+  //SEG36 nest1::@5
   b5:
-  //SEG36 [12] (byte) nest1::j#1 ← -- (byte) nest1::j#2 [ main::j#2 main::i#2 nest1::j#1 nest1::i#2 ] -- aby=_dec_aby 
+  //SEG37 [12] (byte) nest1::j#1 ← -- (byte) nest1::j#2 [ main::j#2 main::i#2 nest1::j#1 nest1::i#2 ] -- aby=_dec_aby 
     sec
     sbc #$1
-  //SEG37 [13] if((byte) nest1::j#1>(byte) 0) goto nest1::@2 [ main::j#2 main::i#2 nest1::j#1 nest1::i#2 ] -- aby_gt_0_then_la1 
+  //SEG38 [13] if((byte) nest1::j#1>(byte) 0) goto nest1::@2 [ main::j#2 main::i#2 nest1::j#1 nest1::i#2 ] -- aby_gt_0_then_la1 
     cmp #$0
     bne b2_from_b5
-  //SEG38 nest1::@3
+  //SEG39 nest1::@3
   b3:
-  //SEG39 [14] (byte) nest1::i#1 ← -- (byte) nest1::i#2 [ main::j#2 main::i#2 nest1::i#1 ] -- zpby1=_dec_zpby1 
-    dec $4
-  //SEG40 [15] if((byte) nest1::i#1>(byte) 0) goto nest1::@1 [ main::j#2 main::i#2 nest1::i#1 ] -- zpby1_gt_0_then_la1 
-    lda $4
+  //SEG40 [14] (byte) nest1::i#1 ← -- (byte) nest1::i#2 [ main::j#2 main::i#2 nest1::i#1 ] -- zpby1=_dec_zpby1 
+    dec i
+  //SEG41 [15] if((byte) nest1::i#1>(byte) 0) goto nest1::@1 [ main::j#2 main::i#2 nest1::i#1 ] -- zpby1_gt_0_then_la1 
+    lda i
     bne b1_from_b3
-  //SEG41 nest1::@return
+  //SEG42 nest1::@return
   breturn:
-  //SEG42 [16] return  [ main::j#2 main::i#2 ]
+  //SEG43 [16] return  [ main::j#2 main::i#2 ]
     rts
 }
-//SEG43 nest2
+//SEG44 nest2
 nest2: {
-  //SEG44 [17] phi from nest2 to nest2::@1
+  //SEG45 [17] phi from nest2 to nest2::@1
   b1_from_nest2:
-  //SEG45 [17] phi (byte) nest2::i#2 = (byte) 100 -- xby=coby1 
+  //SEG46 [17] phi (byte) nest2::i#2 = (byte) 100 -- xby=coby1 
     ldx #$64
     jmp b1
-  //SEG46 [17] phi from nest2::@3 to nest2::@1
+  //SEG47 [17] phi from nest2::@3 to nest2::@1
   b1_from_b3:
-  //SEG47 [17] phi (byte) nest2::i#2 = (byte) nest2::i#1 -- register_copy 
-  //SEG48 nest2::@1
+  //SEG48 [17] phi (byte) nest2::i#2 = (byte) nest2::i#1 -- register_copy 
+  //SEG49 nest2::@1
   b1:
-  //SEG49 [18] phi from nest2::@1 to nest2::@2
+  //SEG50 [18] phi from nest2::@1 to nest2::@2
   b2_from_b1:
-  //SEG50 [18] phi (byte) nest2::j#2 = (byte) 100 -- yby=coby1 
+  //SEG51 [18] phi (byte) nest2::j#2 = (byte) 100 -- yby=coby1 
     ldy #$64
     jmp b2
-  //SEG51 [18] phi from nest2::@2 to nest2::@2
+  //SEG52 [18] phi from nest2::@2 to nest2::@2
   b2_from_b2:
-  //SEG52 [18] phi (byte) nest2::j#2 = (byte) nest2::j#1 -- register_copy 
-  //SEG53 nest2::@2
+  //SEG53 [18] phi (byte) nest2::j#2 = (byte) nest2::j#1 -- register_copy 
+  //SEG54 nest2::@2
   b2:
-  //SEG54 [19] *((word) 1024) ← (byte) nest2::j#2 [ main::j#2 main::i#2 nest1::j#2 nest1::i#2 nest2::j#2 nest2::i#2 ] -- _star_cowo1=yby 
+  //SEG55 [19] *((word) 1024) ← (byte) nest2::j#2 [ main::j#2 main::i#2 nest1::j#2 nest1::i#2 nest2::j#2 nest2::i#2 ] -- _star_cowo1=yby 
     sty $400
-  //SEG55 [20] (byte) nest2::j#1 ← -- (byte) nest2::j#2 [ main::j#2 main::i#2 nest1::j#2 nest1::i#2 nest2::j#1 nest2::i#2 ] -- yby=_dec_yby 
+  //SEG56 [20] (byte) nest2::j#1 ← -- (byte) nest2::j#2 [ main::j#2 main::i#2 nest1::j#2 nest1::i#2 nest2::j#1 nest2::i#2 ] -- yby=_dec_yby 
     dey
-  //SEG56 [21] if((byte) nest2::j#1>(byte) 0) goto nest2::@2 [ main::j#2 main::i#2 nest1::j#2 nest1::i#2 nest2::j#1 nest2::i#2 ] -- yby_gt_0_then_la1 
+  //SEG57 [21] if((byte) nest2::j#1>(byte) 0) goto nest2::@2 [ main::j#2 main::i#2 nest1::j#2 nest1::i#2 nest2::j#1 nest2::i#2 ] -- yby_gt_0_then_la1 
     cpy #$0
     bne b2_from_b2
-  //SEG57 nest2::@3
+  //SEG58 nest2::@3
   b3:
-  //SEG58 [22] (byte) nest2::i#1 ← -- (byte) nest2::i#2 [ main::j#2 main::i#2 nest1::j#2 nest1::i#2 nest2::i#1 ] -- xby=_dec_xby 
+  //SEG59 [22] (byte) nest2::i#1 ← -- (byte) nest2::i#2 [ main::j#2 main::i#2 nest1::j#2 nest1::i#2 nest2::i#1 ] -- xby=_dec_xby 
     dex
-  //SEG59 [23] if((byte) nest2::i#1>(byte) 0) goto nest2::@1 [ main::j#2 main::i#2 nest1::j#2 nest1::i#2 nest2::i#1 ] -- xby_gt_0_then_la1 
+  //SEG60 [23] if((byte) nest2::i#1>(byte) 0) goto nest2::@1 [ main::j#2 main::i#2 nest1::j#2 nest1::i#2 nest2::i#1 ] -- xby_gt_0_then_la1 
     cpx #$0
     bne b1_from_b3
-  //SEG60 nest2::@return
+  //SEG61 nest2::@return
   breturn:
-  //SEG61 [24] return  [ main::j#2 main::i#2 nest1::j#2 nest1::i#2 ]
+  //SEG62 [24] return  [ main::j#2 main::i#2 nest1::j#2 nest1::i#2 ]
     rts
 }
 
@@ -2393,132 +2407,136 @@ Removing instruction b2_from_b1:
 Removing instruction b2_from_b2:
 Succesful ASM optimization Pass5RedundantLabelElimination
 ASSEMBLER
-//SEG0 @begin
+//SEG0 Global ZP labels
+//SEG1 @begin
 bbegin:
-//SEG1 [0] call main param-assignment [ ]
+//SEG2 [0] call main param-assignment [ ]
   jsr main
-//SEG2 @end
+//SEG3 @end
 bend:
-//SEG3 main
+//SEG4 main
 main: {
-  //SEG4 [1] phi from main to main::@1
+    .label j = 3
+    .label i = 2
+  //SEG5 [1] phi from main to main::@1
   b1_from_main:
-  //SEG5 [1] phi (byte) main::i#2 = (byte) 100 -- zpby1=coby1 
+  //SEG6 [1] phi (byte) main::i#2 = (byte) 100 -- zpby1=coby1 
     lda #$64
-    sta $2
+    sta i
     jmp b1
-  //SEG6 [1] phi from main::@3 to main::@1
-  //SEG7 [1] phi (byte) main::i#2 = (byte) main::i#1 -- register_copy 
-  //SEG8 main::@1
+  //SEG7 [1] phi from main::@3 to main::@1
+  //SEG8 [1] phi (byte) main::i#2 = (byte) main::i#1 -- register_copy 
+  //SEG9 main::@1
   b1:
-  //SEG9 [2] phi from main::@1 to main::@2
-  //SEG10 [2] phi (byte) main::j#2 = (byte) 100 -- zpby1=coby1 
+  //SEG10 [2] phi from main::@1 to main::@2
+  //SEG11 [2] phi (byte) main::j#2 = (byte) 100 -- zpby1=coby1 
     lda #$64
-    sta $3
+    sta j
     jmp b2
-  //SEG11 [2] phi from main::@5 to main::@2
-  //SEG12 [2] phi (byte) main::j#2 = (byte) main::j#1 -- register_copy 
-  //SEG13 main::@2
+  //SEG12 [2] phi from main::@5 to main::@2
+  //SEG13 [2] phi (byte) main::j#2 = (byte) main::j#1 -- register_copy 
+  //SEG14 main::@2
   b2:
-  //SEG14 [3] call nest1 param-assignment [ main::j#2 main::i#2 ]
+  //SEG15 [3] call nest1 param-assignment [ main::j#2 main::i#2 ]
     jsr nest1
-  //SEG15 main::@5
+  //SEG16 main::@5
   b5:
-  //SEG16 [4] (byte) main::j#1 ← -- (byte) main::j#2 [ main::j#1 main::i#2 ] -- zpby1=_dec_zpby1 
-    dec $3
-  //SEG17 [5] if((byte) main::j#1>(byte) 0) goto main::@2 [ main::j#1 main::i#2 ] -- zpby1_gt_0_then_la1 
-    lda $3
+  //SEG17 [4] (byte) main::j#1 ← -- (byte) main::j#2 [ main::j#1 main::i#2 ] -- zpby1=_dec_zpby1 
+    dec j
+  //SEG18 [5] if((byte) main::j#1>(byte) 0) goto main::@2 [ main::j#1 main::i#2 ] -- zpby1_gt_0_then_la1 
+    lda j
     bne b2
-  //SEG18 main::@3
+  //SEG19 main::@3
   b3:
-  //SEG19 [6] (byte) main::i#1 ← -- (byte) main::i#2 [ main::i#1 ] -- zpby1=_dec_zpby1 
-    dec $2
-  //SEG20 [7] if((byte) main::i#1>(byte) 0) goto main::@1 [ main::i#1 ] -- zpby1_gt_0_then_la1 
-    lda $2
+  //SEG20 [6] (byte) main::i#1 ← -- (byte) main::i#2 [ main::i#1 ] -- zpby1=_dec_zpby1 
+    dec i
+  //SEG21 [7] if((byte) main::i#1>(byte) 0) goto main::@1 [ main::i#1 ] -- zpby1_gt_0_then_la1 
+    lda i
     bne b1
-  //SEG21 main::@return
+  //SEG22 main::@return
   breturn:
-  //SEG22 [8] return  [ ]
+  //SEG23 [8] return  [ ]
     rts
 }
-//SEG23 nest1
+//SEG24 nest1
 nest1: {
-  //SEG24 [9] phi from nest1 to nest1::@1
+    .label i = 4
+  //SEG25 [9] phi from nest1 to nest1::@1
   b1_from_nest1:
-  //SEG25 [9] phi (byte) nest1::i#2 = (byte) 100 -- zpby1=coby1 
+  //SEG26 [9] phi (byte) nest1::i#2 = (byte) 100 -- zpby1=coby1 
     lda #$64
-    sta $4
+    sta i
     jmp b1
-  //SEG26 [9] phi from nest1::@3 to nest1::@1
-  //SEG27 [9] phi (byte) nest1::i#2 = (byte) nest1::i#1 -- register_copy 
-  //SEG28 nest1::@1
+  //SEG27 [9] phi from nest1::@3 to nest1::@1
+  //SEG28 [9] phi (byte) nest1::i#2 = (byte) nest1::i#1 -- register_copy 
+  //SEG29 nest1::@1
   b1:
-  //SEG29 [10] phi from nest1::@1 to nest1::@2
-  //SEG30 [10] phi (byte) nest1::j#2 = (byte) 100 -- aby=coby1 
+  //SEG30 [10] phi from nest1::@1 to nest1::@2
+  //SEG31 [10] phi (byte) nest1::j#2 = (byte) 100 -- aby=coby1 
     lda #$64
     jmp b2
-  //SEG31 [10] phi from nest1::@5 to nest1::@2
-  //SEG32 [10] phi (byte) nest1::j#2 = (byte) nest1::j#1 -- register_copy 
-  //SEG33 nest1::@2
+  //SEG32 [10] phi from nest1::@5 to nest1::@2
+  //SEG33 [10] phi (byte) nest1::j#2 = (byte) nest1::j#1 -- register_copy 
+  //SEG34 nest1::@2
   b2:
-  //SEG34 [11] call nest2 param-assignment [ main::j#2 main::i#2 nest1::j#2 nest1::i#2 ]
+  //SEG35 [11] call nest2 param-assignment [ main::j#2 main::i#2 nest1::j#2 nest1::i#2 ]
     jsr nest2
-  //SEG35 nest1::@5
+  //SEG36 nest1::@5
   b5:
-  //SEG36 [12] (byte) nest1::j#1 ← -- (byte) nest1::j#2 [ main::j#2 main::i#2 nest1::j#1 nest1::i#2 ] -- aby=_dec_aby 
+  //SEG37 [12] (byte) nest1::j#1 ← -- (byte) nest1::j#2 [ main::j#2 main::i#2 nest1::j#1 nest1::i#2 ] -- aby=_dec_aby 
     sec
     sbc #$1
-  //SEG37 [13] if((byte) nest1::j#1>(byte) 0) goto nest1::@2 [ main::j#2 main::i#2 nest1::j#1 nest1::i#2 ] -- aby_gt_0_then_la1 
+  //SEG38 [13] if((byte) nest1::j#1>(byte) 0) goto nest1::@2 [ main::j#2 main::i#2 nest1::j#1 nest1::i#2 ] -- aby_gt_0_then_la1 
     cmp #$0
     bne b2
-  //SEG38 nest1::@3
+  //SEG39 nest1::@3
   b3:
-  //SEG39 [14] (byte) nest1::i#1 ← -- (byte) nest1::i#2 [ main::j#2 main::i#2 nest1::i#1 ] -- zpby1=_dec_zpby1 
-    dec $4
-  //SEG40 [15] if((byte) nest1::i#1>(byte) 0) goto nest1::@1 [ main::j#2 main::i#2 nest1::i#1 ] -- zpby1_gt_0_then_la1 
-    lda $4
+  //SEG40 [14] (byte) nest1::i#1 ← -- (byte) nest1::i#2 [ main::j#2 main::i#2 nest1::i#1 ] -- zpby1=_dec_zpby1 
+    dec i
+  //SEG41 [15] if((byte) nest1::i#1>(byte) 0) goto nest1::@1 [ main::j#2 main::i#2 nest1::i#1 ] -- zpby1_gt_0_then_la1 
+    lda i
     bne b1
-  //SEG41 nest1::@return
+  //SEG42 nest1::@return
   breturn:
-  //SEG42 [16] return  [ main::j#2 main::i#2 ]
+  //SEG43 [16] return  [ main::j#2 main::i#2 ]
     rts
 }
-//SEG43 nest2
+//SEG44 nest2
 nest2: {
-  //SEG44 [17] phi from nest2 to nest2::@1
+  //SEG45 [17] phi from nest2 to nest2::@1
   b1_from_nest2:
-  //SEG45 [17] phi (byte) nest2::i#2 = (byte) 100 -- xby=coby1 
+  //SEG46 [17] phi (byte) nest2::i#2 = (byte) 100 -- xby=coby1 
     ldx #$64
     jmp b1
-  //SEG46 [17] phi from nest2::@3 to nest2::@1
-  //SEG47 [17] phi (byte) nest2::i#2 = (byte) nest2::i#1 -- register_copy 
-  //SEG48 nest2::@1
+  //SEG47 [17] phi from nest2::@3 to nest2::@1
+  //SEG48 [17] phi (byte) nest2::i#2 = (byte) nest2::i#1 -- register_copy 
+  //SEG49 nest2::@1
   b1:
-  //SEG49 [18] phi from nest2::@1 to nest2::@2
-  //SEG50 [18] phi (byte) nest2::j#2 = (byte) 100 -- yby=coby1 
+  //SEG50 [18] phi from nest2::@1 to nest2::@2
+  //SEG51 [18] phi (byte) nest2::j#2 = (byte) 100 -- yby=coby1 
     ldy #$64
     jmp b2
-  //SEG51 [18] phi from nest2::@2 to nest2::@2
-  //SEG52 [18] phi (byte) nest2::j#2 = (byte) nest2::j#1 -- register_copy 
-  //SEG53 nest2::@2
+  //SEG52 [18] phi from nest2::@2 to nest2::@2
+  //SEG53 [18] phi (byte) nest2::j#2 = (byte) nest2::j#1 -- register_copy 
+  //SEG54 nest2::@2
   b2:
-  //SEG54 [19] *((word) 1024) ← (byte) nest2::j#2 [ main::j#2 main::i#2 nest1::j#2 nest1::i#2 nest2::j#2 nest2::i#2 ] -- _star_cowo1=yby 
+  //SEG55 [19] *((word) 1024) ← (byte) nest2::j#2 [ main::j#2 main::i#2 nest1::j#2 nest1::i#2 nest2::j#2 nest2::i#2 ] -- _star_cowo1=yby 
     sty $400
-  //SEG55 [20] (byte) nest2::j#1 ← -- (byte) nest2::j#2 [ main::j#2 main::i#2 nest1::j#2 nest1::i#2 nest2::j#1 nest2::i#2 ] -- yby=_dec_yby 
+  //SEG56 [20] (byte) nest2::j#1 ← -- (byte) nest2::j#2 [ main::j#2 main::i#2 nest1::j#2 nest1::i#2 nest2::j#1 nest2::i#2 ] -- yby=_dec_yby 
     dey
-  //SEG56 [21] if((byte) nest2::j#1>(byte) 0) goto nest2::@2 [ main::j#2 main::i#2 nest1::j#2 nest1::i#2 nest2::j#1 nest2::i#2 ] -- yby_gt_0_then_la1 
+  //SEG57 [21] if((byte) nest2::j#1>(byte) 0) goto nest2::@2 [ main::j#2 main::i#2 nest1::j#2 nest1::i#2 nest2::j#1 nest2::i#2 ] -- yby_gt_0_then_la1 
     cpy #$0
     bne b2
-  //SEG57 nest2::@3
+  //SEG58 nest2::@3
   b3:
-  //SEG58 [22] (byte) nest2::i#1 ← -- (byte) nest2::i#2 [ main::j#2 main::i#2 nest1::j#2 nest1::i#2 nest2::i#1 ] -- xby=_dec_xby 
+  //SEG59 [22] (byte) nest2::i#1 ← -- (byte) nest2::i#2 [ main::j#2 main::i#2 nest1::j#2 nest1::i#2 nest2::i#1 ] -- xby=_dec_xby 
     dex
-  //SEG59 [23] if((byte) nest2::i#1>(byte) 0) goto nest2::@1 [ main::j#2 main::i#2 nest1::j#2 nest1::i#2 nest2::i#1 ] -- xby_gt_0_then_la1 
+  //SEG60 [23] if((byte) nest2::i#1>(byte) 0) goto nest2::@1 [ main::j#2 main::i#2 nest1::j#2 nest1::i#2 nest2::i#1 ] -- xby_gt_0_then_la1 
     cpx #$0
     bne b1
-  //SEG60 nest2::@return
+  //SEG61 nest2::@return
   breturn:
-  //SEG61 [24] return  [ main::j#2 main::i#2 nest1::j#2 nest1::i#2 ]
+  //SEG62 [24] return  [ main::j#2 main::i#2 nest1::j#2 nest1::i#2 ]
     rts
 }
 
@@ -2537,119 +2555,123 @@ Removing instruction b3:
 Removing instruction breturn:
 Succesful ASM optimization Pass5UnusedLabelElimination
 ASSEMBLER
-//SEG0 @begin
-//SEG1 [0] call main param-assignment [ ]
+//SEG0 Global ZP labels
+//SEG1 @begin
+//SEG2 [0] call main param-assignment [ ]
   jsr main
-//SEG2 @end
-//SEG3 main
+//SEG3 @end
+//SEG4 main
 main: {
-  //SEG4 [1] phi from main to main::@1
-  //SEG5 [1] phi (byte) main::i#2 = (byte) 100 -- zpby1=coby1 
+    .label j = 3
+    .label i = 2
+  //SEG5 [1] phi from main to main::@1
+  //SEG6 [1] phi (byte) main::i#2 = (byte) 100 -- zpby1=coby1 
     lda #$64
-    sta $2
+    sta i
     jmp b1
-  //SEG6 [1] phi from main::@3 to main::@1
-  //SEG7 [1] phi (byte) main::i#2 = (byte) main::i#1 -- register_copy 
-  //SEG8 main::@1
+  //SEG7 [1] phi from main::@3 to main::@1
+  //SEG8 [1] phi (byte) main::i#2 = (byte) main::i#1 -- register_copy 
+  //SEG9 main::@1
   b1:
-  //SEG9 [2] phi from main::@1 to main::@2
-  //SEG10 [2] phi (byte) main::j#2 = (byte) 100 -- zpby1=coby1 
+  //SEG10 [2] phi from main::@1 to main::@2
+  //SEG11 [2] phi (byte) main::j#2 = (byte) 100 -- zpby1=coby1 
     lda #$64
-    sta $3
+    sta j
     jmp b2
-  //SEG11 [2] phi from main::@5 to main::@2
-  //SEG12 [2] phi (byte) main::j#2 = (byte) main::j#1 -- register_copy 
-  //SEG13 main::@2
+  //SEG12 [2] phi from main::@5 to main::@2
+  //SEG13 [2] phi (byte) main::j#2 = (byte) main::j#1 -- register_copy 
+  //SEG14 main::@2
   b2:
-  //SEG14 [3] call nest1 param-assignment [ main::j#2 main::i#2 ]
+  //SEG15 [3] call nest1 param-assignment [ main::j#2 main::i#2 ]
     jsr nest1
-  //SEG15 main::@5
-  //SEG16 [4] (byte) main::j#1 ← -- (byte) main::j#2 [ main::j#1 main::i#2 ] -- zpby1=_dec_zpby1 
-    dec $3
-  //SEG17 [5] if((byte) main::j#1>(byte) 0) goto main::@2 [ main::j#1 main::i#2 ] -- zpby1_gt_0_then_la1 
-    lda $3
+  //SEG16 main::@5
+  //SEG17 [4] (byte) main::j#1 ← -- (byte) main::j#2 [ main::j#1 main::i#2 ] -- zpby1=_dec_zpby1 
+    dec j
+  //SEG18 [5] if((byte) main::j#1>(byte) 0) goto main::@2 [ main::j#1 main::i#2 ] -- zpby1_gt_0_then_la1 
+    lda j
     bne b2
-  //SEG18 main::@3
-  //SEG19 [6] (byte) main::i#1 ← -- (byte) main::i#2 [ main::i#1 ] -- zpby1=_dec_zpby1 
-    dec $2
-  //SEG20 [7] if((byte) main::i#1>(byte) 0) goto main::@1 [ main::i#1 ] -- zpby1_gt_0_then_la1 
-    lda $2
+  //SEG19 main::@3
+  //SEG20 [6] (byte) main::i#1 ← -- (byte) main::i#2 [ main::i#1 ] -- zpby1=_dec_zpby1 
+    dec i
+  //SEG21 [7] if((byte) main::i#1>(byte) 0) goto main::@1 [ main::i#1 ] -- zpby1_gt_0_then_la1 
+    lda i
     bne b1
-  //SEG21 main::@return
-  //SEG22 [8] return  [ ]
+  //SEG22 main::@return
+  //SEG23 [8] return  [ ]
     rts
 }
-//SEG23 nest1
+//SEG24 nest1
 nest1: {
-  //SEG24 [9] phi from nest1 to nest1::@1
-  //SEG25 [9] phi (byte) nest1::i#2 = (byte) 100 -- zpby1=coby1 
+    .label i = 4
+  //SEG25 [9] phi from nest1 to nest1::@1
+  //SEG26 [9] phi (byte) nest1::i#2 = (byte) 100 -- zpby1=coby1 
     lda #$64
-    sta $4
+    sta i
     jmp b1
-  //SEG26 [9] phi from nest1::@3 to nest1::@1
-  //SEG27 [9] phi (byte) nest1::i#2 = (byte) nest1::i#1 -- register_copy 
-  //SEG28 nest1::@1
+  //SEG27 [9] phi from nest1::@3 to nest1::@1
+  //SEG28 [9] phi (byte) nest1::i#2 = (byte) nest1::i#1 -- register_copy 
+  //SEG29 nest1::@1
   b1:
-  //SEG29 [10] phi from nest1::@1 to nest1::@2
-  //SEG30 [10] phi (byte) nest1::j#2 = (byte) 100 -- aby=coby1 
+  //SEG30 [10] phi from nest1::@1 to nest1::@2
+  //SEG31 [10] phi (byte) nest1::j#2 = (byte) 100 -- aby=coby1 
     lda #$64
     jmp b2
-  //SEG31 [10] phi from nest1::@5 to nest1::@2
-  //SEG32 [10] phi (byte) nest1::j#2 = (byte) nest1::j#1 -- register_copy 
-  //SEG33 nest1::@2
+  //SEG32 [10] phi from nest1::@5 to nest1::@2
+  //SEG33 [10] phi (byte) nest1::j#2 = (byte) nest1::j#1 -- register_copy 
+  //SEG34 nest1::@2
   b2:
-  //SEG34 [11] call nest2 param-assignment [ main::j#2 main::i#2 nest1::j#2 nest1::i#2 ]
+  //SEG35 [11] call nest2 param-assignment [ main::j#2 main::i#2 nest1::j#2 nest1::i#2 ]
     jsr nest2
-  //SEG35 nest1::@5
-  //SEG36 [12] (byte) nest1::j#1 ← -- (byte) nest1::j#2 [ main::j#2 main::i#2 nest1::j#1 nest1::i#2 ] -- aby=_dec_aby 
+  //SEG36 nest1::@5
+  //SEG37 [12] (byte) nest1::j#1 ← -- (byte) nest1::j#2 [ main::j#2 main::i#2 nest1::j#1 nest1::i#2 ] -- aby=_dec_aby 
     sec
     sbc #$1
-  //SEG37 [13] if((byte) nest1::j#1>(byte) 0) goto nest1::@2 [ main::j#2 main::i#2 nest1::j#1 nest1::i#2 ] -- aby_gt_0_then_la1 
+  //SEG38 [13] if((byte) nest1::j#1>(byte) 0) goto nest1::@2 [ main::j#2 main::i#2 nest1::j#1 nest1::i#2 ] -- aby_gt_0_then_la1 
     cmp #$0
     bne b2
-  //SEG38 nest1::@3
-  //SEG39 [14] (byte) nest1::i#1 ← -- (byte) nest1::i#2 [ main::j#2 main::i#2 nest1::i#1 ] -- zpby1=_dec_zpby1 
-    dec $4
-  //SEG40 [15] if((byte) nest1::i#1>(byte) 0) goto nest1::@1 [ main::j#2 main::i#2 nest1::i#1 ] -- zpby1_gt_0_then_la1 
-    lda $4
+  //SEG39 nest1::@3
+  //SEG40 [14] (byte) nest1::i#1 ← -- (byte) nest1::i#2 [ main::j#2 main::i#2 nest1::i#1 ] -- zpby1=_dec_zpby1 
+    dec i
+  //SEG41 [15] if((byte) nest1::i#1>(byte) 0) goto nest1::@1 [ main::j#2 main::i#2 nest1::i#1 ] -- zpby1_gt_0_then_la1 
+    lda i
     bne b1
-  //SEG41 nest1::@return
-  //SEG42 [16] return  [ main::j#2 main::i#2 ]
+  //SEG42 nest1::@return
+  //SEG43 [16] return  [ main::j#2 main::i#2 ]
     rts
 }
-//SEG43 nest2
+//SEG44 nest2
 nest2: {
-  //SEG44 [17] phi from nest2 to nest2::@1
-  //SEG45 [17] phi (byte) nest2::i#2 = (byte) 100 -- xby=coby1 
+  //SEG45 [17] phi from nest2 to nest2::@1
+  //SEG46 [17] phi (byte) nest2::i#2 = (byte) 100 -- xby=coby1 
     ldx #$64
     jmp b1
-  //SEG46 [17] phi from nest2::@3 to nest2::@1
-  //SEG47 [17] phi (byte) nest2::i#2 = (byte) nest2::i#1 -- register_copy 
-  //SEG48 nest2::@1
+  //SEG47 [17] phi from nest2::@3 to nest2::@1
+  //SEG48 [17] phi (byte) nest2::i#2 = (byte) nest2::i#1 -- register_copy 
+  //SEG49 nest2::@1
   b1:
-  //SEG49 [18] phi from nest2::@1 to nest2::@2
-  //SEG50 [18] phi (byte) nest2::j#2 = (byte) 100 -- yby=coby1 
+  //SEG50 [18] phi from nest2::@1 to nest2::@2
+  //SEG51 [18] phi (byte) nest2::j#2 = (byte) 100 -- yby=coby1 
     ldy #$64
     jmp b2
-  //SEG51 [18] phi from nest2::@2 to nest2::@2
-  //SEG52 [18] phi (byte) nest2::j#2 = (byte) nest2::j#1 -- register_copy 
-  //SEG53 nest2::@2
+  //SEG52 [18] phi from nest2::@2 to nest2::@2
+  //SEG53 [18] phi (byte) nest2::j#2 = (byte) nest2::j#1 -- register_copy 
+  //SEG54 nest2::@2
   b2:
-  //SEG54 [19] *((word) 1024) ← (byte) nest2::j#2 [ main::j#2 main::i#2 nest1::j#2 nest1::i#2 nest2::j#2 nest2::i#2 ] -- _star_cowo1=yby 
+  //SEG55 [19] *((word) 1024) ← (byte) nest2::j#2 [ main::j#2 main::i#2 nest1::j#2 nest1::i#2 nest2::j#2 nest2::i#2 ] -- _star_cowo1=yby 
     sty $400
-  //SEG55 [20] (byte) nest2::j#1 ← -- (byte) nest2::j#2 [ main::j#2 main::i#2 nest1::j#2 nest1::i#2 nest2::j#1 nest2::i#2 ] -- yby=_dec_yby 
+  //SEG56 [20] (byte) nest2::j#1 ← -- (byte) nest2::j#2 [ main::j#2 main::i#2 nest1::j#2 nest1::i#2 nest2::j#1 nest2::i#2 ] -- yby=_dec_yby 
     dey
-  //SEG56 [21] if((byte) nest2::j#1>(byte) 0) goto nest2::@2 [ main::j#2 main::i#2 nest1::j#2 nest1::i#2 nest2::j#1 nest2::i#2 ] -- yby_gt_0_then_la1 
+  //SEG57 [21] if((byte) nest2::j#1>(byte) 0) goto nest2::@2 [ main::j#2 main::i#2 nest1::j#2 nest1::i#2 nest2::j#1 nest2::i#2 ] -- yby_gt_0_then_la1 
     cpy #$0
     bne b2
-  //SEG57 nest2::@3
-  //SEG58 [22] (byte) nest2::i#1 ← -- (byte) nest2::i#2 [ main::j#2 main::i#2 nest1::j#2 nest1::i#2 nest2::i#1 ] -- xby=_dec_xby 
+  //SEG58 nest2::@3
+  //SEG59 [22] (byte) nest2::i#1 ← -- (byte) nest2::i#2 [ main::j#2 main::i#2 nest1::j#2 nest1::i#2 nest2::i#1 ] -- xby=_dec_xby 
     dex
-  //SEG59 [23] if((byte) nest2::i#1>(byte) 0) goto nest2::@1 [ main::j#2 main::i#2 nest1::j#2 nest1::i#2 nest2::i#1 ] -- xby_gt_0_then_la1 
+  //SEG60 [23] if((byte) nest2::i#1>(byte) 0) goto nest2::@1 [ main::j#2 main::i#2 nest1::j#2 nest1::i#2 nest2::i#1 ] -- xby_gt_0_then_la1 
     cpx #$0
     bne b1
-  //SEG60 nest2::@return
-  //SEG61 [24] return  [ main::j#2 main::i#2 nest1::j#2 nest1::i#2 ]
+  //SEG61 nest2::@return
+  //SEG62 [24] return  [ main::j#2 main::i#2 nest1::j#2 nest1::i#2 ]
     rts
 }
 
@@ -2661,113 +2683,117 @@ Removing instruction jmp b1
 Removing instruction jmp b2
 Succesful ASM optimization Pass5NextJumpElimination
 ASSEMBLER
-//SEG0 @begin
-//SEG1 [0] call main param-assignment [ ]
+//SEG0 Global ZP labels
+//SEG1 @begin
+//SEG2 [0] call main param-assignment [ ]
   jsr main
-//SEG2 @end
-//SEG3 main
+//SEG3 @end
+//SEG4 main
 main: {
-  //SEG4 [1] phi from main to main::@1
-  //SEG5 [1] phi (byte) main::i#2 = (byte) 100 -- zpby1=coby1 
+    .label j = 3
+    .label i = 2
+  //SEG5 [1] phi from main to main::@1
+  //SEG6 [1] phi (byte) main::i#2 = (byte) 100 -- zpby1=coby1 
     lda #$64
-    sta $2
-  //SEG6 [1] phi from main::@3 to main::@1
-  //SEG7 [1] phi (byte) main::i#2 = (byte) main::i#1 -- register_copy 
-  //SEG8 main::@1
+    sta i
+  //SEG7 [1] phi from main::@3 to main::@1
+  //SEG8 [1] phi (byte) main::i#2 = (byte) main::i#1 -- register_copy 
+  //SEG9 main::@1
   b1:
-  //SEG9 [2] phi from main::@1 to main::@2
-  //SEG10 [2] phi (byte) main::j#2 = (byte) 100 -- zpby1=coby1 
+  //SEG10 [2] phi from main::@1 to main::@2
+  //SEG11 [2] phi (byte) main::j#2 = (byte) 100 -- zpby1=coby1 
     lda #$64
-    sta $3
-  //SEG11 [2] phi from main::@5 to main::@2
-  //SEG12 [2] phi (byte) main::j#2 = (byte) main::j#1 -- register_copy 
-  //SEG13 main::@2
+    sta j
+  //SEG12 [2] phi from main::@5 to main::@2
+  //SEG13 [2] phi (byte) main::j#2 = (byte) main::j#1 -- register_copy 
+  //SEG14 main::@2
   b2:
-  //SEG14 [3] call nest1 param-assignment [ main::j#2 main::i#2 ]
+  //SEG15 [3] call nest1 param-assignment [ main::j#2 main::i#2 ]
     jsr nest1
-  //SEG15 main::@5
-  //SEG16 [4] (byte) main::j#1 ← -- (byte) main::j#2 [ main::j#1 main::i#2 ] -- zpby1=_dec_zpby1 
-    dec $3
-  //SEG17 [5] if((byte) main::j#1>(byte) 0) goto main::@2 [ main::j#1 main::i#2 ] -- zpby1_gt_0_then_la1 
-    lda $3
+  //SEG16 main::@5
+  //SEG17 [4] (byte) main::j#1 ← -- (byte) main::j#2 [ main::j#1 main::i#2 ] -- zpby1=_dec_zpby1 
+    dec j
+  //SEG18 [5] if((byte) main::j#1>(byte) 0) goto main::@2 [ main::j#1 main::i#2 ] -- zpby1_gt_0_then_la1 
+    lda j
     bne b2
-  //SEG18 main::@3
-  //SEG19 [6] (byte) main::i#1 ← -- (byte) main::i#2 [ main::i#1 ] -- zpby1=_dec_zpby1 
-    dec $2
-  //SEG20 [7] if((byte) main::i#1>(byte) 0) goto main::@1 [ main::i#1 ] -- zpby1_gt_0_then_la1 
-    lda $2
+  //SEG19 main::@3
+  //SEG20 [6] (byte) main::i#1 ← -- (byte) main::i#2 [ main::i#1 ] -- zpby1=_dec_zpby1 
+    dec i
+  //SEG21 [7] if((byte) main::i#1>(byte) 0) goto main::@1 [ main::i#1 ] -- zpby1_gt_0_then_la1 
+    lda i
     bne b1
-  //SEG21 main::@return
-  //SEG22 [8] return  [ ]
+  //SEG22 main::@return
+  //SEG23 [8] return  [ ]
     rts
 }
-//SEG23 nest1
+//SEG24 nest1
 nest1: {
-  //SEG24 [9] phi from nest1 to nest1::@1
-  //SEG25 [9] phi (byte) nest1::i#2 = (byte) 100 -- zpby1=coby1 
+    .label i = 4
+  //SEG25 [9] phi from nest1 to nest1::@1
+  //SEG26 [9] phi (byte) nest1::i#2 = (byte) 100 -- zpby1=coby1 
     lda #$64
-    sta $4
-  //SEG26 [9] phi from nest1::@3 to nest1::@1
-  //SEG27 [9] phi (byte) nest1::i#2 = (byte) nest1::i#1 -- register_copy 
-  //SEG28 nest1::@1
+    sta i
+  //SEG27 [9] phi from nest1::@3 to nest1::@1
+  //SEG28 [9] phi (byte) nest1::i#2 = (byte) nest1::i#1 -- register_copy 
+  //SEG29 nest1::@1
   b1:
-  //SEG29 [10] phi from nest1::@1 to nest1::@2
-  //SEG30 [10] phi (byte) nest1::j#2 = (byte) 100 -- aby=coby1 
+  //SEG30 [10] phi from nest1::@1 to nest1::@2
+  //SEG31 [10] phi (byte) nest1::j#2 = (byte) 100 -- aby=coby1 
     lda #$64
-  //SEG31 [10] phi from nest1::@5 to nest1::@2
-  //SEG32 [10] phi (byte) nest1::j#2 = (byte) nest1::j#1 -- register_copy 
-  //SEG33 nest1::@2
+  //SEG32 [10] phi from nest1::@5 to nest1::@2
+  //SEG33 [10] phi (byte) nest1::j#2 = (byte) nest1::j#1 -- register_copy 
+  //SEG34 nest1::@2
   b2:
-  //SEG34 [11] call nest2 param-assignment [ main::j#2 main::i#2 nest1::j#2 nest1::i#2 ]
+  //SEG35 [11] call nest2 param-assignment [ main::j#2 main::i#2 nest1::j#2 nest1::i#2 ]
     jsr nest2
-  //SEG35 nest1::@5
-  //SEG36 [12] (byte) nest1::j#1 ← -- (byte) nest1::j#2 [ main::j#2 main::i#2 nest1::j#1 nest1::i#2 ] -- aby=_dec_aby 
+  //SEG36 nest1::@5
+  //SEG37 [12] (byte) nest1::j#1 ← -- (byte) nest1::j#2 [ main::j#2 main::i#2 nest1::j#1 nest1::i#2 ] -- aby=_dec_aby 
     sec
     sbc #$1
-  //SEG37 [13] if((byte) nest1::j#1>(byte) 0) goto nest1::@2 [ main::j#2 main::i#2 nest1::j#1 nest1::i#2 ] -- aby_gt_0_then_la1 
+  //SEG38 [13] if((byte) nest1::j#1>(byte) 0) goto nest1::@2 [ main::j#2 main::i#2 nest1::j#1 nest1::i#2 ] -- aby_gt_0_then_la1 
     cmp #$0
     bne b2
-  //SEG38 nest1::@3
-  //SEG39 [14] (byte) nest1::i#1 ← -- (byte) nest1::i#2 [ main::j#2 main::i#2 nest1::i#1 ] -- zpby1=_dec_zpby1 
-    dec $4
-  //SEG40 [15] if((byte) nest1::i#1>(byte) 0) goto nest1::@1 [ main::j#2 main::i#2 nest1::i#1 ] -- zpby1_gt_0_then_la1 
-    lda $4
+  //SEG39 nest1::@3
+  //SEG40 [14] (byte) nest1::i#1 ← -- (byte) nest1::i#2 [ main::j#2 main::i#2 nest1::i#1 ] -- zpby1=_dec_zpby1 
+    dec i
+  //SEG41 [15] if((byte) nest1::i#1>(byte) 0) goto nest1::@1 [ main::j#2 main::i#2 nest1::i#1 ] -- zpby1_gt_0_then_la1 
+    lda i
     bne b1
-  //SEG41 nest1::@return
-  //SEG42 [16] return  [ main::j#2 main::i#2 ]
+  //SEG42 nest1::@return
+  //SEG43 [16] return  [ main::j#2 main::i#2 ]
     rts
 }
-//SEG43 nest2
+//SEG44 nest2
 nest2: {
-  //SEG44 [17] phi from nest2 to nest2::@1
-  //SEG45 [17] phi (byte) nest2::i#2 = (byte) 100 -- xby=coby1 
+  //SEG45 [17] phi from nest2 to nest2::@1
+  //SEG46 [17] phi (byte) nest2::i#2 = (byte) 100 -- xby=coby1 
     ldx #$64
-  //SEG46 [17] phi from nest2::@3 to nest2::@1
-  //SEG47 [17] phi (byte) nest2::i#2 = (byte) nest2::i#1 -- register_copy 
-  //SEG48 nest2::@1
+  //SEG47 [17] phi from nest2::@3 to nest2::@1
+  //SEG48 [17] phi (byte) nest2::i#2 = (byte) nest2::i#1 -- register_copy 
+  //SEG49 nest2::@1
   b1:
-  //SEG49 [18] phi from nest2::@1 to nest2::@2
-  //SEG50 [18] phi (byte) nest2::j#2 = (byte) 100 -- yby=coby1 
+  //SEG50 [18] phi from nest2::@1 to nest2::@2
+  //SEG51 [18] phi (byte) nest2::j#2 = (byte) 100 -- yby=coby1 
     ldy #$64
-  //SEG51 [18] phi from nest2::@2 to nest2::@2
-  //SEG52 [18] phi (byte) nest2::j#2 = (byte) nest2::j#1 -- register_copy 
-  //SEG53 nest2::@2
+  //SEG52 [18] phi from nest2::@2 to nest2::@2
+  //SEG53 [18] phi (byte) nest2::j#2 = (byte) nest2::j#1 -- register_copy 
+  //SEG54 nest2::@2
   b2:
-  //SEG54 [19] *((word) 1024) ← (byte) nest2::j#2 [ main::j#2 main::i#2 nest1::j#2 nest1::i#2 nest2::j#2 nest2::i#2 ] -- _star_cowo1=yby 
+  //SEG55 [19] *((word) 1024) ← (byte) nest2::j#2 [ main::j#2 main::i#2 nest1::j#2 nest1::i#2 nest2::j#2 nest2::i#2 ] -- _star_cowo1=yby 
     sty $400
-  //SEG55 [20] (byte) nest2::j#1 ← -- (byte) nest2::j#2 [ main::j#2 main::i#2 nest1::j#2 nest1::i#2 nest2::j#1 nest2::i#2 ] -- yby=_dec_yby 
+  //SEG56 [20] (byte) nest2::j#1 ← -- (byte) nest2::j#2 [ main::j#2 main::i#2 nest1::j#2 nest1::i#2 nest2::j#1 nest2::i#2 ] -- yby=_dec_yby 
     dey
-  //SEG56 [21] if((byte) nest2::j#1>(byte) 0) goto nest2::@2 [ main::j#2 main::i#2 nest1::j#2 nest1::i#2 nest2::j#1 nest2::i#2 ] -- yby_gt_0_then_la1 
+  //SEG57 [21] if((byte) nest2::j#1>(byte) 0) goto nest2::@2 [ main::j#2 main::i#2 nest1::j#2 nest1::i#2 nest2::j#1 nest2::i#2 ] -- yby_gt_0_then_la1 
     cpy #$0
     bne b2
-  //SEG57 nest2::@3
-  //SEG58 [22] (byte) nest2::i#1 ← -- (byte) nest2::i#2 [ main::j#2 main::i#2 nest1::j#2 nest1::i#2 nest2::i#1 ] -- xby=_dec_xby 
+  //SEG58 nest2::@3
+  //SEG59 [22] (byte) nest2::i#1 ← -- (byte) nest2::i#2 [ main::j#2 main::i#2 nest1::j#2 nest1::i#2 nest2::i#1 ] -- xby=_dec_xby 
     dex
-  //SEG59 [23] if((byte) nest2::i#1>(byte) 0) goto nest2::@1 [ main::j#2 main::i#2 nest1::j#2 nest1::i#2 nest2::i#1 ] -- xby_gt_0_then_la1 
+  //SEG60 [23] if((byte) nest2::i#1>(byte) 0) goto nest2::@1 [ main::j#2 main::i#2 nest1::j#2 nest1::i#2 nest2::i#1 ] -- xby_gt_0_then_la1 
     cpx #$0
     bne b1
-  //SEG60 nest2::@return
-  //SEG61 [24] return  [ main::j#2 main::i#2 nest1::j#2 nest1::i#2 ]
+  //SEG61 nest2::@return
+  //SEG62 [24] return  [ main::j#2 main::i#2 nest1::j#2 nest1::i#2 ]
     rts
 }
 
@@ -2782,11 +2808,11 @@ FINAL SYMBOL TABLE
 (label) main::@5
 (label) main::@return
 (byte) main::i
-(byte) main::i#1 zp byte:2 16.5
-(byte) main::i#2 zp byte:2 1.0476190476190477
+(byte) main::i#1 zp ZP_BYTE:2 i 16.5
+(byte) main::i#2 zp ZP_BYTE:2 i 1.0476190476190477
 (byte) main::j
-(byte) main::j#1 zp byte:3 151.5
-(byte) main::j#2 zp byte:3 11.222222222222221
+(byte) main::j#1 zp ZP_BYTE:3 j 151.5
+(byte) main::j#2 zp ZP_BYTE:3 j 11.222222222222221
 (void()) nest1()
 (label) nest1::@1
 (label) nest1::@2
@@ -2794,8 +2820,8 @@ FINAL SYMBOL TABLE
 (label) nest1::@5
 (label) nest1::@return
 (byte) nest1::i
-(byte) nest1::i#1 zp byte:4 1501.5
-(byte) nest1::i#2 zp byte:4 154.0
+(byte) nest1::i#1 zp ZP_BYTE:4 i 1501.5
+(byte) nest1::i#2 zp ZP_BYTE:4 i 154.0
 (byte) nest1::j
 (byte) nest1::j#1 reg byte a 15001.5
 (byte) nest1::j#2 reg byte a 2000.2
@@ -2811,121 +2837,125 @@ FINAL SYMBOL TABLE
 (byte) nest2::j#1 reg byte y 1500001.5
 (byte) nest2::j#2 reg byte y 1500001.5
 
-zp byte:2 [ main::i#2 main::i#1 ]
-zp byte:3 [ main::j#2 main::j#1 ]
-zp byte:4 [ nest1::i#2 nest1::i#1 ]
+zp ZP_BYTE:2 i [ main::i#2 main::i#1 ]
+zp ZP_BYTE:3 j [ main::j#2 main::j#1 ]
+zp ZP_BYTE:4 i [ nest1::i#2 nest1::i#1 ]
 reg byte a [ nest1::j#2 nest1::j#1 ]
 reg byte x [ nest2::i#2 nest2::i#1 ]
 reg byte y [ nest2::j#2 nest2::j#1 ]
 
 FINAL CODE
-//SEG0 @begin
-//SEG1 [0] call main param-assignment [ ]
+//SEG0 Global ZP labels
+//SEG1 @begin
+//SEG2 [0] call main param-assignment [ ]
   jsr main
-//SEG2 @end
-//SEG3 main
+//SEG3 @end
+//SEG4 main
 main: {
-  //SEG4 [1] phi from main to main::@1
-  //SEG5 [1] phi (byte) main::i#2 = (byte) 100 -- zpby1=coby1 
+    .label j = 3
+    .label i = 2
+  //SEG5 [1] phi from main to main::@1
+  //SEG6 [1] phi (byte) main::i#2 = (byte) 100 -- zpby1=coby1 
     lda #$64
-    sta $2
-  //SEG6 [1] phi from main::@3 to main::@1
-  //SEG7 [1] phi (byte) main::i#2 = (byte) main::i#1 -- register_copy 
-  //SEG8 main::@1
+    sta i
+  //SEG7 [1] phi from main::@3 to main::@1
+  //SEG8 [1] phi (byte) main::i#2 = (byte) main::i#1 -- register_copy 
+  //SEG9 main::@1
   b1:
-  //SEG9 [2] phi from main::@1 to main::@2
-  //SEG10 [2] phi (byte) main::j#2 = (byte) 100 -- zpby1=coby1 
+  //SEG10 [2] phi from main::@1 to main::@2
+  //SEG11 [2] phi (byte) main::j#2 = (byte) 100 -- zpby1=coby1 
     lda #$64
-    sta $3
-  //SEG11 [2] phi from main::@5 to main::@2
-  //SEG12 [2] phi (byte) main::j#2 = (byte) main::j#1 -- register_copy 
-  //SEG13 main::@2
+    sta j
+  //SEG12 [2] phi from main::@5 to main::@2
+  //SEG13 [2] phi (byte) main::j#2 = (byte) main::j#1 -- register_copy 
+  //SEG14 main::@2
   b2:
-  //SEG14 [3] call nest1 param-assignment [ main::j#2 main::i#2 ]
+  //SEG15 [3] call nest1 param-assignment [ main::j#2 main::i#2 ]
     jsr nest1
-  //SEG15 main::@5
-  //SEG16 [4] (byte) main::j#1 ← -- (byte) main::j#2 [ main::j#1 main::i#2 ] -- zpby1=_dec_zpby1 
-    dec $3
-  //SEG17 [5] if((byte) main::j#1>(byte) 0) goto main::@2 [ main::j#1 main::i#2 ] -- zpby1_gt_0_then_la1 
-    lda $3
+  //SEG16 main::@5
+  //SEG17 [4] (byte) main::j#1 ← -- (byte) main::j#2 [ main::j#1 main::i#2 ] -- zpby1=_dec_zpby1 
+    dec j
+  //SEG18 [5] if((byte) main::j#1>(byte) 0) goto main::@2 [ main::j#1 main::i#2 ] -- zpby1_gt_0_then_la1 
+    lda j
     bne b2
-  //SEG18 main::@3
-  //SEG19 [6] (byte) main::i#1 ← -- (byte) main::i#2 [ main::i#1 ] -- zpby1=_dec_zpby1 
-    dec $2
-  //SEG20 [7] if((byte) main::i#1>(byte) 0) goto main::@1 [ main::i#1 ] -- zpby1_gt_0_then_la1 
-    lda $2
+  //SEG19 main::@3
+  //SEG20 [6] (byte) main::i#1 ← -- (byte) main::i#2 [ main::i#1 ] -- zpby1=_dec_zpby1 
+    dec i
+  //SEG21 [7] if((byte) main::i#1>(byte) 0) goto main::@1 [ main::i#1 ] -- zpby1_gt_0_then_la1 
+    lda i
     bne b1
-  //SEG21 main::@return
-  //SEG22 [8] return  [ ]
+  //SEG22 main::@return
+  //SEG23 [8] return  [ ]
     rts
 }
-//SEG23 nest1
+//SEG24 nest1
 nest1: {
-  //SEG24 [9] phi from nest1 to nest1::@1
-  //SEG25 [9] phi (byte) nest1::i#2 = (byte) 100 -- zpby1=coby1 
+    .label i = 4
+  //SEG25 [9] phi from nest1 to nest1::@1
+  //SEG26 [9] phi (byte) nest1::i#2 = (byte) 100 -- zpby1=coby1 
     lda #$64
-    sta $4
-  //SEG26 [9] phi from nest1::@3 to nest1::@1
-  //SEG27 [9] phi (byte) nest1::i#2 = (byte) nest1::i#1 -- register_copy 
-  //SEG28 nest1::@1
+    sta i
+  //SEG27 [9] phi from nest1::@3 to nest1::@1
+  //SEG28 [9] phi (byte) nest1::i#2 = (byte) nest1::i#1 -- register_copy 
+  //SEG29 nest1::@1
   b1:
-  //SEG29 [10] phi from nest1::@1 to nest1::@2
-  //SEG30 [10] phi (byte) nest1::j#2 = (byte) 100 -- aby=coby1 
+  //SEG30 [10] phi from nest1::@1 to nest1::@2
+  //SEG31 [10] phi (byte) nest1::j#2 = (byte) 100 -- aby=coby1 
     lda #$64
-  //SEG31 [10] phi from nest1::@5 to nest1::@2
-  //SEG32 [10] phi (byte) nest1::j#2 = (byte) nest1::j#1 -- register_copy 
-  //SEG33 nest1::@2
+  //SEG32 [10] phi from nest1::@5 to nest1::@2
+  //SEG33 [10] phi (byte) nest1::j#2 = (byte) nest1::j#1 -- register_copy 
+  //SEG34 nest1::@2
   b2:
-  //SEG34 [11] call nest2 param-assignment [ main::j#2 main::i#2 nest1::j#2 nest1::i#2 ]
+  //SEG35 [11] call nest2 param-assignment [ main::j#2 main::i#2 nest1::j#2 nest1::i#2 ]
     jsr nest2
-  //SEG35 nest1::@5
-  //SEG36 [12] (byte) nest1::j#1 ← -- (byte) nest1::j#2 [ main::j#2 main::i#2 nest1::j#1 nest1::i#2 ] -- aby=_dec_aby 
+  //SEG36 nest1::@5
+  //SEG37 [12] (byte) nest1::j#1 ← -- (byte) nest1::j#2 [ main::j#2 main::i#2 nest1::j#1 nest1::i#2 ] -- aby=_dec_aby 
     sec
     sbc #$1
-  //SEG37 [13] if((byte) nest1::j#1>(byte) 0) goto nest1::@2 [ main::j#2 main::i#2 nest1::j#1 nest1::i#2 ] -- aby_gt_0_then_la1 
+  //SEG38 [13] if((byte) nest1::j#1>(byte) 0) goto nest1::@2 [ main::j#2 main::i#2 nest1::j#1 nest1::i#2 ] -- aby_gt_0_then_la1 
     cmp #$0
     bne b2
-  //SEG38 nest1::@3
-  //SEG39 [14] (byte) nest1::i#1 ← -- (byte) nest1::i#2 [ main::j#2 main::i#2 nest1::i#1 ] -- zpby1=_dec_zpby1 
-    dec $4
-  //SEG40 [15] if((byte) nest1::i#1>(byte) 0) goto nest1::@1 [ main::j#2 main::i#2 nest1::i#1 ] -- zpby1_gt_0_then_la1 
-    lda $4
+  //SEG39 nest1::@3
+  //SEG40 [14] (byte) nest1::i#1 ← -- (byte) nest1::i#2 [ main::j#2 main::i#2 nest1::i#1 ] -- zpby1=_dec_zpby1 
+    dec i
+  //SEG41 [15] if((byte) nest1::i#1>(byte) 0) goto nest1::@1 [ main::j#2 main::i#2 nest1::i#1 ] -- zpby1_gt_0_then_la1 
+    lda i
     bne b1
-  //SEG41 nest1::@return
-  //SEG42 [16] return  [ main::j#2 main::i#2 ]
+  //SEG42 nest1::@return
+  //SEG43 [16] return  [ main::j#2 main::i#2 ]
     rts
 }
-//SEG43 nest2
+//SEG44 nest2
 nest2: {
-  //SEG44 [17] phi from nest2 to nest2::@1
-  //SEG45 [17] phi (byte) nest2::i#2 = (byte) 100 -- xby=coby1 
+  //SEG45 [17] phi from nest2 to nest2::@1
+  //SEG46 [17] phi (byte) nest2::i#2 = (byte) 100 -- xby=coby1 
     ldx #$64
-  //SEG46 [17] phi from nest2::@3 to nest2::@1
-  //SEG47 [17] phi (byte) nest2::i#2 = (byte) nest2::i#1 -- register_copy 
-  //SEG48 nest2::@1
+  //SEG47 [17] phi from nest2::@3 to nest2::@1
+  //SEG48 [17] phi (byte) nest2::i#2 = (byte) nest2::i#1 -- register_copy 
+  //SEG49 nest2::@1
   b1:
-  //SEG49 [18] phi from nest2::@1 to nest2::@2
-  //SEG50 [18] phi (byte) nest2::j#2 = (byte) 100 -- yby=coby1 
+  //SEG50 [18] phi from nest2::@1 to nest2::@2
+  //SEG51 [18] phi (byte) nest2::j#2 = (byte) 100 -- yby=coby1 
     ldy #$64
-  //SEG51 [18] phi from nest2::@2 to nest2::@2
-  //SEG52 [18] phi (byte) nest2::j#2 = (byte) nest2::j#1 -- register_copy 
-  //SEG53 nest2::@2
+  //SEG52 [18] phi from nest2::@2 to nest2::@2
+  //SEG53 [18] phi (byte) nest2::j#2 = (byte) nest2::j#1 -- register_copy 
+  //SEG54 nest2::@2
   b2:
-  //SEG54 [19] *((word) 1024) ← (byte) nest2::j#2 [ main::j#2 main::i#2 nest1::j#2 nest1::i#2 nest2::j#2 nest2::i#2 ] -- _star_cowo1=yby 
+  //SEG55 [19] *((word) 1024) ← (byte) nest2::j#2 [ main::j#2 main::i#2 nest1::j#2 nest1::i#2 nest2::j#2 nest2::i#2 ] -- _star_cowo1=yby 
     sty $400
-  //SEG55 [20] (byte) nest2::j#1 ← -- (byte) nest2::j#2 [ main::j#2 main::i#2 nest1::j#2 nest1::i#2 nest2::j#1 nest2::i#2 ] -- yby=_dec_yby 
+  //SEG56 [20] (byte) nest2::j#1 ← -- (byte) nest2::j#2 [ main::j#2 main::i#2 nest1::j#2 nest1::i#2 nest2::j#1 nest2::i#2 ] -- yby=_dec_yby 
     dey
-  //SEG56 [21] if((byte) nest2::j#1>(byte) 0) goto nest2::@2 [ main::j#2 main::i#2 nest1::j#2 nest1::i#2 nest2::j#1 nest2::i#2 ] -- yby_gt_0_then_la1 
+  //SEG57 [21] if((byte) nest2::j#1>(byte) 0) goto nest2::@2 [ main::j#2 main::i#2 nest1::j#2 nest1::i#2 nest2::j#1 nest2::i#2 ] -- yby_gt_0_then_la1 
     cpy #$0
     bne b2
-  //SEG57 nest2::@3
-  //SEG58 [22] (byte) nest2::i#1 ← -- (byte) nest2::i#2 [ main::j#2 main::i#2 nest1::j#2 nest1::i#2 nest2::i#1 ] -- xby=_dec_xby 
+  //SEG58 nest2::@3
+  //SEG59 [22] (byte) nest2::i#1 ← -- (byte) nest2::i#2 [ main::j#2 main::i#2 nest1::j#2 nest1::i#2 nest2::i#1 ] -- xby=_dec_xby 
     dex
-  //SEG59 [23] if((byte) nest2::i#1>(byte) 0) goto nest2::@1 [ main::j#2 main::i#2 nest1::j#2 nest1::i#2 nest2::i#1 ] -- xby_gt_0_then_la1 
+  //SEG60 [23] if((byte) nest2::i#1>(byte) 0) goto nest2::@1 [ main::j#2 main::i#2 nest1::j#2 nest1::i#2 nest2::i#1 ] -- xby_gt_0_then_la1 
     cpx #$0
     bne b1
-  //SEG60 nest2::@return
-  //SEG61 [24] return  [ main::j#2 main::i#2 nest1::j#2 nest1::i#2 ]
+  //SEG61 nest2::@return
+  //SEG62 [24] return  [ main::j#2 main::i#2 nest1::j#2 nest1::i#2 ]
     rts
 }
 

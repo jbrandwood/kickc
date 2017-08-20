@@ -18,7 +18,7 @@ public abstract class Variable implements Symbol {
    /** true if the symbol type is infered (not declared) */
    private boolean inferredType;
 
-   /** If the variable is assigned to an ASM register, this contains the register. If null the variable has no no allocation (yet). Constants are never assigned to registers. */
+   /** If the variable is assigned to an ASM register, this contains the register. If null the variable has no allocation (yet). Constants are never assigned to registers. */
    private Registers.Register allocation;
 
    /** If the variable is a constant this is the constant value. If null the variable is not considered constant.*/

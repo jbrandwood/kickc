@@ -28,6 +28,10 @@ public class Pass4CodeGeneration {
    public void generate() {
       AsmProgram asm = new AsmProgram();
       ScopeRef currentScope = ScopeRef.ROOT;
+
+      // Generate global ZP labels
+      asm.startSegment(null, "Global ZP labels");
+      addZpLabels(asm, currentScope);
       for (ControlFlowBlock block : getGraph().getAllBlocks()) {
          if (!block.getScope().equals(currentScope)) {
             if (!ScopeRef.ROOT.equals(currentScope)) {
@@ -36,6 +40,8 @@ public class Pass4CodeGeneration {
             currentScope = block.getScope();
             asm.startSegment(null, block.getLabel().getFullName());
             asm.addScopeBegin(block.getLabel().getFullName().replace('@', 'b').replace(':', '_'));
+            // Add all ZP labels for the scope
+            addZpLabels(asm, currentScope);
          }
          // Generate entry points (if needed)
          genBlockEntryPoints(asm, block);
@@ -59,6 +65,27 @@ public class Pass4CodeGeneration {
          asm.addScopeEnd();
       }
       program.setAsm(asm);
+   }
+
+   /**
+    * Add label declarations for all scope variables assigned to ZP registers
+    * @param asm The ASM program
+    * @param scope The scope
+    */
+   private void addZpLabels(AsmProgram asm, ScopeRef scope) {
+      Collection<Variable> scopeVars = program.getScope().getScope(scope).getAllVariables(false);
+      Set<String> added = new LinkedHashSet<>();
+      for (Variable scopeVar : scopeVars) {
+         Registers.Register register = scopeVar.getAllocation();
+         if(register!=null && register.isZp()) {
+            Registers.RegisterZp registerZp = (Registers.RegisterZp) register;
+            String registerZpName = registerZp.getName();
+            if(registerZpName !=null && !added.contains(registerZpName)) {
+               asm.addLabelDecl(registerZpName, registerZp.getZp());
+               added.add(registerZpName);
+            }
+         }
+      }
    }
 
    private void genStatements(AsmProgram asm, ControlFlowBlock block) {
@@ -228,7 +255,7 @@ public class Pass4CodeGeneration {
       if (isRegisterCopy(lValue, rValue)) {
          asm.getCurrentSegment().setFragment("register_copy");
       } else {
-         AsmFragment asmFragment = new AsmFragment(lValue, rValue, program);
+         AsmFragment asmFragment = new AsmFragment(lValue, rValue, program, statement);
          asm.getCurrentSegment().setFragment(asmFragment.getSignature());
          asmFragment.generate(asm);
       }

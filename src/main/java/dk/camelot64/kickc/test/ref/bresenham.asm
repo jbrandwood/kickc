@@ -1,22 +1,25 @@
   jsr main
 main: {
+    .label x = 4
+    .label cursor = 2
+    .label y = 5
     lda #$0
-    sta $5
+    sta y
     ldx #$c
     lda #$0
-    sta $4
+    sta x
     lda #<$400
-    sta $2
+    sta cursor
     lda #>$400
-    sta $2+$1
+    sta cursor+$1
   b1:
     ldy #$0
     lda #$51
-    sta ($2),y
-    inc $4
-    inc $2
+    sta (cursor),y
+    inc x
+    inc cursor
     bne !+
-    inc $2+$1
+    inc cursor+$1
   !:
     txa
     clc
@@ -24,20 +27,20 @@ main: {
     tax
     cpx #$27
     bcc b2
-    inc $5
-    lda $2
+    inc y
+    lda cursor
     clc
     adc #$28
-    sta $2
+    sta cursor
     bcc !+
-    inc $2+$1
+    inc cursor+$1
   !:
     txa
     sec
     sbc #$27
     tax
   b2:
-    lda $4
+    lda x
     cmp #$28
     bcc b1
     rts

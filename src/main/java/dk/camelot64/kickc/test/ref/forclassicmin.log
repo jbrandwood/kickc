@@ -468,54 +468,56 @@ Initial phi equivalence classes
 [ main::i#2 main::i#1 ]
 Complete equivalence classes
 [ main::i#2 main::i#1 ]
-Allocated zp byte:2 [ main::i#2 main::i#1 ]
+Allocated zp ZP_BYTE:2 i#2 [ main::i#2 main::i#1 ]
 INITIAL ASM
-//SEG0 @begin
+//SEG0 Global ZP labels
+//SEG1 @begin
 bbegin:
   jmp b1
-//SEG1 @1
+//SEG2 @1
 b1:
-//SEG2 [0] call main param-assignment [ ]
+//SEG3 [0] call main param-assignment [ ]
   jsr main
   jmp bend
-//SEG3 @end
+//SEG4 @end
 bend:
-//SEG4 main
+//SEG5 main
 main: {
-  //SEG5 [1] phi from main to main::@1
+    .label i = 2
+  //SEG6 [1] phi from main to main::@1
   b1_from_main:
-  //SEG6 [1] phi (byte) main::i#2 = (byte) 0 -- zpby1=coby1 
+  //SEG7 [1] phi (byte) main::i#2 = (byte) 0 -- zpby1=coby1 
     lda #$0
-    sta $2
+    sta i
     jmp b1
-  //SEG7 [1] phi from main::@1 to main::@1
+  //SEG8 [1] phi from main::@1 to main::@1
   b1_from_b1:
-  //SEG8 [1] phi (byte) main::i#2 = (byte) main::i#1 -- register_copy 
+  //SEG9 [1] phi (byte) main::i#2 = (byte) main::i#1 -- register_copy 
     jmp b1
-  //SEG9 main::@1
+  //SEG10 main::@1
   b1:
-  //SEG10 [2] *((word) 1024 + (byte) main::i#2) ← (byte) main::i#2 [ main::i#2 ] -- cowo1_staridx_zpby1=zpby1 
-    ldx $2
+  //SEG11 [2] *((word) 1024 + (byte) main::i#2) ← (byte) main::i#2 [ main::i#2 ] -- cowo1_staridx_zpby1=zpby1 
+    ldx i
     txa
     sta $400,x
-  //SEG11 [3] (byte) main::i#1 ← ++ (byte) main::i#2 [ main::i#1 ] -- zpby1=_inc_zpby1 
-    inc $2
-  //SEG12 [4] if((byte) main::i#1!=(byte) 100) goto main::@1 [ main::i#1 ] -- zpby1_neq_coby1_then_la1 
-    lda $2
+  //SEG12 [3] (byte) main::i#1 ← ++ (byte) main::i#2 [ main::i#1 ] -- zpby1=_inc_zpby1 
+    inc i
+  //SEG13 [4] if((byte) main::i#1!=(byte) 100) goto main::@1 [ main::i#1 ] -- zpby1_neq_coby1_then_la1 
+    lda i
     cmp #$64
     bne b1_from_b1
     jmp breturn
-  //SEG13 main::@return
+  //SEG14 main::@return
   breturn:
-  //SEG14 [5] return  [ ]
+  //SEG15 [5] return  [ ]
     rts
 }
 
 REGISTER UPLIFT POTENTIAL REGISTERS
-Potential registers zp byte:2 [ main::i#2 main::i#1 ] : zp byte:2 , reg byte a , reg byte x , reg byte y , 
+Potential registers zp ZP_BYTE:2 i [ main::i#2 main::i#1 ] : zp ZP_BYTE:2 i , reg byte a , reg byte x , reg byte y , 
 
 REGISTER UPLIFT SCOPES
-Uplift Scope [main] 38.5: zp byte:2 [ main::i#2 main::i#1 ] 
+Uplift Scope [main] 38.5: zp ZP_BYTE:2 i [ main::i#2 main::i#1 ] 
 Uplift Scope [] 
 
 Uplifting [main] best 290 combination reg byte x [ main::i#2 main::i#1 ] 
@@ -526,37 +528,38 @@ Removing instruction jmp b1
 Removing instruction jmp breturn
 Succesful ASM optimization Pass5NextJumpElimination
 ASSEMBLER
-//SEG0 @begin
+//SEG0 Global ZP labels
+//SEG1 @begin
 bbegin:
-//SEG1 @1
+//SEG2 @1
 b1:
-//SEG2 [0] call main param-assignment [ ]
+//SEG3 [0] call main param-assignment [ ]
   jsr main
-//SEG3 @end
+//SEG4 @end
 bend:
-//SEG4 main
+//SEG5 main
 main: {
-  //SEG5 [1] phi from main to main::@1
+  //SEG6 [1] phi from main to main::@1
   b1_from_main:
-  //SEG6 [1] phi (byte) main::i#2 = (byte) 0 -- xby=coby1 
+  //SEG7 [1] phi (byte) main::i#2 = (byte) 0 -- xby=coby1 
     ldx #$0
     jmp b1
-  //SEG7 [1] phi from main::@1 to main::@1
+  //SEG8 [1] phi from main::@1 to main::@1
   b1_from_b1:
-  //SEG8 [1] phi (byte) main::i#2 = (byte) main::i#1 -- register_copy 
-  //SEG9 main::@1
+  //SEG9 [1] phi (byte) main::i#2 = (byte) main::i#1 -- register_copy 
+  //SEG10 main::@1
   b1:
-  //SEG10 [2] *((word) 1024 + (byte) main::i#2) ← (byte) main::i#2 [ main::i#2 ] -- cowo1_staridx_xby=xby 
+  //SEG11 [2] *((word) 1024 + (byte) main::i#2) ← (byte) main::i#2 [ main::i#2 ] -- cowo1_staridx_xby=xby 
     txa
     sta $400,x
-  //SEG11 [3] (byte) main::i#1 ← ++ (byte) main::i#2 [ main::i#1 ] -- xby=_inc_xby 
+  //SEG12 [3] (byte) main::i#1 ← ++ (byte) main::i#2 [ main::i#1 ] -- xby=_inc_xby 
     inx
-  //SEG12 [4] if((byte) main::i#1!=(byte) 100) goto main::@1 [ main::i#1 ] -- xby_neq_coby1_then_la1 
+  //SEG13 [4] if((byte) main::i#1!=(byte) 100) goto main::@1 [ main::i#1 ] -- xby_neq_coby1_then_la1 
     cpx #$64
     bne b1_from_b1
-  //SEG13 main::@return
+  //SEG14 main::@return
   breturn:
-  //SEG14 [5] return  [ ]
+  //SEG15 [5] return  [ ]
     rts
 }
 
@@ -565,35 +568,36 @@ Removing instruction bbegin:
 Removing instruction b1_from_b1:
 Succesful ASM optimization Pass5RedundantLabelElimination
 ASSEMBLER
-//SEG0 @begin
-//SEG1 @1
+//SEG0 Global ZP labels
+//SEG1 @begin
+//SEG2 @1
 b1:
-//SEG2 [0] call main param-assignment [ ]
+//SEG3 [0] call main param-assignment [ ]
   jsr main
-//SEG3 @end
+//SEG4 @end
 bend:
-//SEG4 main
+//SEG5 main
 main: {
-  //SEG5 [1] phi from main to main::@1
+  //SEG6 [1] phi from main to main::@1
   b1_from_main:
-  //SEG6 [1] phi (byte) main::i#2 = (byte) 0 -- xby=coby1 
+  //SEG7 [1] phi (byte) main::i#2 = (byte) 0 -- xby=coby1 
     ldx #$0
     jmp b1
-  //SEG7 [1] phi from main::@1 to main::@1
-  //SEG8 [1] phi (byte) main::i#2 = (byte) main::i#1 -- register_copy 
-  //SEG9 main::@1
+  //SEG8 [1] phi from main::@1 to main::@1
+  //SEG9 [1] phi (byte) main::i#2 = (byte) main::i#1 -- register_copy 
+  //SEG10 main::@1
   b1:
-  //SEG10 [2] *((word) 1024 + (byte) main::i#2) ← (byte) main::i#2 [ main::i#2 ] -- cowo1_staridx_xby=xby 
+  //SEG11 [2] *((word) 1024 + (byte) main::i#2) ← (byte) main::i#2 [ main::i#2 ] -- cowo1_staridx_xby=xby 
     txa
     sta $400,x
-  //SEG11 [3] (byte) main::i#1 ← ++ (byte) main::i#2 [ main::i#1 ] -- xby=_inc_xby 
+  //SEG12 [3] (byte) main::i#1 ← ++ (byte) main::i#2 [ main::i#1 ] -- xby=_inc_xby 
     inx
-  //SEG12 [4] if((byte) main::i#1!=(byte) 100) goto main::@1 [ main::i#1 ] -- xby_neq_coby1_then_la1 
+  //SEG13 [4] if((byte) main::i#1!=(byte) 100) goto main::@1 [ main::i#1 ] -- xby_neq_coby1_then_la1 
     cpx #$64
     bne b1
-  //SEG13 main::@return
+  //SEG14 main::@return
   breturn:
-  //SEG14 [5] return  [ ]
+  //SEG15 [5] return  [ ]
     rts
 }
 
@@ -603,61 +607,63 @@ Removing instruction b1_from_main:
 Removing instruction breturn:
 Succesful ASM optimization Pass5UnusedLabelElimination
 ASSEMBLER
-//SEG0 @begin
-//SEG1 @1
-//SEG2 [0] call main param-assignment [ ]
+//SEG0 Global ZP labels
+//SEG1 @begin
+//SEG2 @1
+//SEG3 [0] call main param-assignment [ ]
   jsr main
-//SEG3 @end
-//SEG4 main
+//SEG4 @end
+//SEG5 main
 main: {
-  //SEG5 [1] phi from main to main::@1
-  //SEG6 [1] phi (byte) main::i#2 = (byte) 0 -- xby=coby1 
+  //SEG6 [1] phi from main to main::@1
+  //SEG7 [1] phi (byte) main::i#2 = (byte) 0 -- xby=coby1 
     ldx #$0
     jmp b1
-  //SEG7 [1] phi from main::@1 to main::@1
-  //SEG8 [1] phi (byte) main::i#2 = (byte) main::i#1 -- register_copy 
-  //SEG9 main::@1
+  //SEG8 [1] phi from main::@1 to main::@1
+  //SEG9 [1] phi (byte) main::i#2 = (byte) main::i#1 -- register_copy 
+  //SEG10 main::@1
   b1:
-  //SEG10 [2] *((word) 1024 + (byte) main::i#2) ← (byte) main::i#2 [ main::i#2 ] -- cowo1_staridx_xby=xby 
+  //SEG11 [2] *((word) 1024 + (byte) main::i#2) ← (byte) main::i#2 [ main::i#2 ] -- cowo1_staridx_xby=xby 
     txa
     sta $400,x
-  //SEG11 [3] (byte) main::i#1 ← ++ (byte) main::i#2 [ main::i#1 ] -- xby=_inc_xby 
+  //SEG12 [3] (byte) main::i#1 ← ++ (byte) main::i#2 [ main::i#1 ] -- xby=_inc_xby 
     inx
-  //SEG12 [4] if((byte) main::i#1!=(byte) 100) goto main::@1 [ main::i#1 ] -- xby_neq_coby1_then_la1 
+  //SEG13 [4] if((byte) main::i#1!=(byte) 100) goto main::@1 [ main::i#1 ] -- xby_neq_coby1_then_la1 
     cpx #$64
     bne b1
-  //SEG13 main::@return
-  //SEG14 [5] return  [ ]
+  //SEG14 main::@return
+  //SEG15 [5] return  [ ]
     rts
 }
 
 Removing instruction jmp b1
 Succesful ASM optimization Pass5NextJumpElimination
 ASSEMBLER
-//SEG0 @begin
-//SEG1 @1
-//SEG2 [0] call main param-assignment [ ]
+//SEG0 Global ZP labels
+//SEG1 @begin
+//SEG2 @1
+//SEG3 [0] call main param-assignment [ ]
   jsr main
-//SEG3 @end
-//SEG4 main
+//SEG4 @end
+//SEG5 main
 main: {
-  //SEG5 [1] phi from main to main::@1
-  //SEG6 [1] phi (byte) main::i#2 = (byte) 0 -- xby=coby1 
+  //SEG6 [1] phi from main to main::@1
+  //SEG7 [1] phi (byte) main::i#2 = (byte) 0 -- xby=coby1 
     ldx #$0
-  //SEG7 [1] phi from main::@1 to main::@1
-  //SEG8 [1] phi (byte) main::i#2 = (byte) main::i#1 -- register_copy 
-  //SEG9 main::@1
+  //SEG8 [1] phi from main::@1 to main::@1
+  //SEG9 [1] phi (byte) main::i#2 = (byte) main::i#1 -- register_copy 
+  //SEG10 main::@1
   b1:
-  //SEG10 [2] *((word) 1024 + (byte) main::i#2) ← (byte) main::i#2 [ main::i#2 ] -- cowo1_staridx_xby=xby 
+  //SEG11 [2] *((word) 1024 + (byte) main::i#2) ← (byte) main::i#2 [ main::i#2 ] -- cowo1_staridx_xby=xby 
     txa
     sta $400,x
-  //SEG11 [3] (byte) main::i#1 ← ++ (byte) main::i#2 [ main::i#1 ] -- xby=_inc_xby 
+  //SEG12 [3] (byte) main::i#1 ← ++ (byte) main::i#2 [ main::i#1 ] -- xby=_inc_xby 
     inx
-  //SEG12 [4] if((byte) main::i#1!=(byte) 100) goto main::@1 [ main::i#1 ] -- xby_neq_coby1_then_la1 
+  //SEG13 [4] if((byte) main::i#1!=(byte) 100) goto main::@1 [ main::i#1 ] -- xby_neq_coby1_then_la1 
     cpx #$64
     bne b1
-  //SEG13 main::@return
-  //SEG14 [5] return  [ ]
+  //SEG14 main::@return
+  //SEG15 [5] return  [ ]
     rts
 }
 
@@ -676,30 +682,31 @@ FINAL SYMBOL TABLE
 reg byte x [ main::i#2 main::i#1 ]
 
 FINAL CODE
-//SEG0 @begin
-//SEG1 @1
-//SEG2 [0] call main param-assignment [ ]
+//SEG0 Global ZP labels
+//SEG1 @begin
+//SEG2 @1
+//SEG3 [0] call main param-assignment [ ]
   jsr main
-//SEG3 @end
-//SEG4 main
+//SEG4 @end
+//SEG5 main
 main: {
-  //SEG5 [1] phi from main to main::@1
-  //SEG6 [1] phi (byte) main::i#2 = (byte) 0 -- xby=coby1 
+  //SEG6 [1] phi from main to main::@1
+  //SEG7 [1] phi (byte) main::i#2 = (byte) 0 -- xby=coby1 
     ldx #$0
-  //SEG7 [1] phi from main::@1 to main::@1
-  //SEG8 [1] phi (byte) main::i#2 = (byte) main::i#1 -- register_copy 
-  //SEG9 main::@1
+  //SEG8 [1] phi from main::@1 to main::@1
+  //SEG9 [1] phi (byte) main::i#2 = (byte) main::i#1 -- register_copy 
+  //SEG10 main::@1
   b1:
-  //SEG10 [2] *((word) 1024 + (byte) main::i#2) ← (byte) main::i#2 [ main::i#2 ] -- cowo1_staridx_xby=xby 
+  //SEG11 [2] *((word) 1024 + (byte) main::i#2) ← (byte) main::i#2 [ main::i#2 ] -- cowo1_staridx_xby=xby 
     txa
     sta $400,x
-  //SEG11 [3] (byte) main::i#1 ← ++ (byte) main::i#2 [ main::i#1 ] -- xby=_inc_xby 
+  //SEG12 [3] (byte) main::i#1 ← ++ (byte) main::i#2 [ main::i#1 ] -- xby=_inc_xby 
     inx
-  //SEG12 [4] if((byte) main::i#1!=(byte) 100) goto main::@1 [ main::i#1 ] -- xby_neq_coby1_then_la1 
+  //SEG13 [4] if((byte) main::i#1!=(byte) 100) goto main::@1 [ main::i#1 ] -- xby_neq_coby1_then_la1 
     cpx #$64
     bne b1
-  //SEG13 main::@return
-  //SEG14 [5] return  [ ]
+  //SEG14 main::@return
+  //SEG15 [5] return  [ ]
     rts
 }
 

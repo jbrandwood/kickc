@@ -1,7 +1,8 @@
+  .label s1 = 2
   lda #$2
   ldy #$1
   jsr sum
-  sta $2
+  sta s1
   lda #$4
   ldy #$3
   jsr sum
@@ -9,12 +10,13 @@
   lda #$d
   ldy #$9
   jsr sum
-  sta $3
+  tay
   txa
   clc
-  adc $2
+  adc s1
+  sty $ff
   clc
-  adc $3
+  adc $ff
 sum: {
     sty $ff
     clc

@@ -1,34 +1,35 @@
+  .label numpoints = 8
   jsr main
 main: {
     lda #$1
-    sta $2
+    sta render.y
     ldy #$5
     lda #$0
-    sta $8
+    sta numpoints
     lda #$5
     jsr addpoint
     lda #$2
-    sta $2
+    sta render.y
     ldy #$8
     lda #$f
     jsr addpoint
     lda #$3
-    sta $2
+    sta render.y
     ldy #$e
     lda #$6
     jsr addpoint
     lda #$4
-    sta $2
+    sta render.y
     ldy #$2
     lda #$22
     jsr addpoint
     lda #$5
-    sta $2
+    sta render.y
     ldy #$11
     lda #$15
     jsr addpoint
     lda #$7
-    sta $2
+    sta render.y
     ldy #$16
     lda #$1f
     jsr addpoint
@@ -102,138 +103,148 @@ animate: {
     rts
 }
 render: {
+    .label x = 5
+    .label colline = 3
+    .label y = 2
     lda #<$d800
-    sta $3
+    sta colline
     lda #>$d800
-    sta $3+$1
+    sta colline+$1
     lda #$0
-    sta $2
+    sta y
   b1:
     lda #$0
-    sta $5
+    sta x
   b2:
-    lda $5
-    sta $9
-    lda $2
-    sta $a
+    lda x
+    sta findcol.x
+    lda y
+    sta findcol.y
     jsr findcol
     tya
-    ldy $5
-    sta ($3),y
-    inc $5
-    lda $5
+    ldy x
+    sta (colline),y
+    inc x
+    lda x
     cmp #$28
     bne b2
-    lda $3
+    lda colline
     clc
     adc #$28
-    sta $3
+    sta colline
     bcc !+
-    inc $3+$1
+    inc colline+$1
   !:
-    inc $2
-    lda $2
+    inc y
+    lda y
     cmp #$19
     bne b1
     rts
 }
 findcol: {
+    .label x = 9
+    .label y = 10
+    .label diff = 7
+    .label yp = 11
+    .label mindiff = 6
     ldy #$0
     lda #$ff
-    sta $6
+    sta mindiff
     ldx #$0
   b1:
     lda $1000,x
-    sta $7
+    sta diff
     lda $1100,x
-    sta $b
-    lda $9
-    cmp $7
+    sta yp
+    lda x
+    cmp diff
     bne b2
-    lda $a
-    cmp $b
+    lda y
+    cmp yp
     bne b2
     ldy #$0
   breturn:
     rts
   b2:
-    lda $9
-    cmp $7
+    lda x
+    cmp diff
     bcs b4
-    lda $7
+    lda diff
     sec
-    sbc $9
-    sta $7
+    sbc x
+    sta diff
   b5:
-    lda $a
-    cmp $b
+    lda y
+    cmp yp
     bcs b6
-    lda $b
+    lda yp
     sec
-    sbc $a
+    sbc y
     clc
-    adc $7
+    adc diff
   b7:
-    cmp $6
+    cmp mindiff
     bcs b21
     ldy $1200,x
   b8:
     inx
-    cpx $8
+    cpx numpoints
     bcc b19
     jmp breturn
   b19:
-    sta $6
+    sta mindiff
     jmp b1
   b21:
-    lda $6
+    lda mindiff
     jmp b8
   b6:
-    lda $a
+    lda y
     sec
-    sbc $b
+    sbc yp
     clc
-    adc $7
+    adc diff
     jmp b7
   b4:
-    lda $9
+    lda x
     sec
-    sbc $7
-    sta $7
+    sbc diff
+    sta diff
     jmp b5
 }
 initscreen: {
+    .label colline = 3
     lda #<$400
-    sta $3
+    sta render.colline
     lda #>$400
-    sta $3+$1
+    sta render.colline+$1
   b1:
     ldy #$0
     lda #$e6
-    sta ($3),y
-    inc $3
+    sta (render.colline),y
+    inc render.colline
     bne !+
-    inc $3+$1
+    inc render.colline+$1
   !:
-    lda $3+$1
+    lda render.colline+$1
     cmp #>$7e8
     bcc b1
     bne !+
-    lda $3
+    lda render.colline
     cmp #<$7e8
     bcc b1
   !:
     rts
 }
 addpoint: {
-    ldx $8
+    .label y = 2
+    ldx numpoints
     sta $1000,x
     tya
-    ldy $8
+    ldy numpoints
     sta $1100,y
-    lda $2
-    ldx $8
+    lda render.y
+    ldx numpoints
     sta $1200,x
-    inc $8
+    inc numpoints
     rts
 }

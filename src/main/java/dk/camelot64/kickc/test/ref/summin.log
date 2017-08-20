@@ -558,110 +558,118 @@ Complete equivalence classes
 [ $3 ]
 [ s4#0 ]
 [ sum::return#0 ]
-Allocated zp byte:2 [ sum::a#3 ]
-Allocated zp byte:3 [ sum::b#3 ]
-Allocated zp byte:4 [ s1#0 ]
-Allocated zp byte:5 [ s2#0 ]
-Allocated zp byte:6 [ s3#0 ]
-Allocated zp byte:7 [ $3 ]
-Allocated zp byte:8 [ s4#0 ]
-Allocated zp byte:9 [ sum::return#0 ]
+Allocated zp ZP_BYTE:2 a#3 [ sum::a#3 ]
+Allocated zp ZP_BYTE:3 b#3 [ sum::b#3 ]
+Allocated zp ZP_BYTE:4 s1#0 [ s1#0 ]
+Allocated zp ZP_BYTE:5 s2#0 [ s2#0 ]
+Allocated zp ZP_BYTE:6 s3#0 [ s3#0 ]
+Allocated zp ZP_BYTE:7 $3 [ $3 ]
+Allocated zp ZP_BYTE:8 s4#0 [ s4#0 ]
+Allocated zp ZP_BYTE:9 return#0 [ sum::return#0 ]
 INITIAL ASM
-//SEG0 @begin
+//SEG0 Global ZP labels
+  .label $3 = 7
+  .label s1 = 4
+  .label s2 = 5
+  .label s3 = 6
+  .label s4 = 8
+//SEG1 @begin
 bbegin:
-//SEG1 [0] call sum param-assignment [ sum::return#0 ]
-//SEG2 [8] phi from @begin to sum
+//SEG2 [0] call sum param-assignment [ sum::return#0 ]
+//SEG3 [8] phi from @begin to sum
 sum_from_bbegin:
-//SEG3 [8] phi (byte) sum::b#3 = (byte) 2 -- zpby1=coby1 
+//SEG4 [8] phi (byte) sum::b#3 = (byte) 2 -- zpby1=coby1 
   lda #$2
-  sta $3
-//SEG4 [8] phi (byte) sum::a#3 = (byte) 1 -- zpby1=coby1 
+  sta b
+//SEG5 [8] phi (byte) sum::a#3 = (byte) 1 -- zpby1=coby1 
   lda #$1
-  sta $2
+  sta a
   jsr sum
   jmp b2
-//SEG5 @2
+//SEG6 @2
 b2:
-//SEG6 [1] (byte) s1#0 ← (byte) sum::return#0 [ s1#0 ] -- zpby1=zpby2 
-  lda $9
-  sta $4
-//SEG7 [2] call sum param-assignment [ sum::return#0 s1#0 ]
-//SEG8 [8] phi from @2 to sum
+//SEG7 [1] (byte) s1#0 ← (byte) sum::return#0 [ s1#0 ] -- zpby1=zpby2 
+  lda sum.return
+  sta s1
+//SEG8 [2] call sum param-assignment [ sum::return#0 s1#0 ]
+//SEG9 [8] phi from @2 to sum
 sum_from_b2:
-//SEG9 [8] phi (byte) sum::b#3 = (byte) 4 -- zpby1=coby1 
+//SEG10 [8] phi (byte) sum::b#3 = (byte) 4 -- zpby1=coby1 
   lda #$4
-  sta $3
-//SEG10 [8] phi (byte) sum::a#3 = (byte) 3 -- zpby1=coby1 
+  sta b
+//SEG11 [8] phi (byte) sum::a#3 = (byte) 3 -- zpby1=coby1 
   lda #$3
-  sta $2
+  sta a
   jsr sum
   jmp b3
-//SEG11 @3
+//SEG12 @3
 b3:
-//SEG12 [3] (byte) s2#0 ← (byte) sum::return#0 [ s1#0 s2#0 ] -- zpby1=zpby2 
-  lda $9
-  sta $5
-//SEG13 [4] call sum param-assignment [ sum::return#0 s1#0 s2#0 ]
-//SEG14 [8] phi from @3 to sum
+//SEG13 [3] (byte) s2#0 ← (byte) sum::return#0 [ s1#0 s2#0 ] -- zpby1=zpby2 
+  lda sum.return
+  sta s2
+//SEG14 [4] call sum param-assignment [ sum::return#0 s1#0 s2#0 ]
+//SEG15 [8] phi from @3 to sum
 sum_from_b3:
-//SEG15 [8] phi (byte) sum::b#3 = (byte) 13 -- zpby1=coby1 
+//SEG16 [8] phi (byte) sum::b#3 = (byte) 13 -- zpby1=coby1 
   lda #$d
-  sta $3
-//SEG16 [8] phi (byte) sum::a#3 = (byte) 9 -- zpby1=coby1 
+  sta b
+//SEG17 [8] phi (byte) sum::a#3 = (byte) 9 -- zpby1=coby1 
   lda #$9
-  sta $2
+  sta a
   jsr sum
   jmp b4
-//SEG17 @4
+//SEG18 @4
 b4:
-//SEG18 [5] (byte) s3#0 ← (byte) sum::return#0 [ s1#0 s2#0 s3#0 ] -- zpby1=zpby2 
-  lda $9
-  sta $6
-//SEG19 [6] (byte~) $3 ← (byte) s1#0 + (byte) s2#0 [ $3 s3#0 ] -- zpby1=zpby2_plus_zpby3 
-  lda $4
+//SEG19 [5] (byte) s3#0 ← (byte) sum::return#0 [ s1#0 s2#0 s3#0 ] -- zpby1=zpby2 
+  lda sum.return
+  sta s3
+//SEG20 [6] (byte~) $3 ← (byte) s1#0 + (byte) s2#0 [ $3 s3#0 ] -- zpby1=zpby2_plus_zpby3 
+  lda s1
   clc
-  adc $5
-  sta $7
-//SEG20 [7] (byte) s4#0 ← (byte~) $3 + (byte) s3#0 [ ] -- zpby1=zpby2_plus_zpby3 
-  lda $7
+  adc s2
+  sta $3
+//SEG21 [7] (byte) s4#0 ← (byte~) $3 + (byte) s3#0 [ ] -- zpby1=zpby2_plus_zpby3 
+  lda $3
   clc
-  adc $6
-  sta $8
+  adc s3
+  sta s4
   jmp bend
-//SEG21 @end
+//SEG22 @end
 bend:
-//SEG22 sum
+//SEG23 sum
 sum: {
-  //SEG23 [9] (byte) sum::return#0 ← (byte) sum::a#3 + (byte) sum::b#3 [ sum::return#0 s1#0 s2#0 ] -- zpby1=zpby2_plus_zpby3 
-    lda $2
+    .label return = 9
+    .label a = 2
+    .label b = 3
+  //SEG24 [9] (byte) sum::return#0 ← (byte) sum::a#3 + (byte) sum::b#3 [ sum::return#0 s1#0 s2#0 ] -- zpby1=zpby2_plus_zpby3 
+    lda a
     clc
-    adc $3
-    sta $9
+    adc b
+    sta return
     jmp breturn
-  //SEG24 sum::@return
+  //SEG25 sum::@return
   breturn:
-  //SEG25 [10] return  [ sum::return#0 s1#0 s2#0 ]
+  //SEG26 [10] return  [ sum::return#0 s1#0 s2#0 ]
     rts
 }
 
 REGISTER UPLIFT POTENTIAL REGISTERS
-Potential registers zp byte:2 [ sum::a#3 ] : zp byte:2 , reg byte a , reg byte x , reg byte y , 
-Potential registers zp byte:3 [ sum::b#3 ] : zp byte:3 , reg byte a , reg byte x , reg byte y , 
-Potential registers zp byte:4 [ s1#0 ] : zp byte:4 , reg byte a , reg byte x , reg byte y , 
-Potential registers zp byte:5 [ s2#0 ] : zp byte:5 , reg byte a , reg byte x , reg byte y , 
-Potential registers zp byte:6 [ s3#0 ] : zp byte:6 , reg byte a , reg byte x , reg byte y , 
-Potential registers zp byte:7 [ $3 ] : zp byte:7 , reg byte a , reg byte x , reg byte y , 
-Potential registers zp byte:8 [ s4#0 ] : zp byte:8 , reg byte a , reg byte x , reg byte y , 
-Potential registers zp byte:9 [ sum::return#0 ] : zp byte:9 , reg byte a , reg byte x , reg byte y , 
+Potential registers zp ZP_BYTE:2 a [ sum::a#3 ] : zp ZP_BYTE:2 a , reg byte a , reg byte x , reg byte y , 
+Potential registers zp ZP_BYTE:3 b [ sum::b#3 ] : zp ZP_BYTE:3 b , reg byte a , reg byte x , reg byte y , 
+Potential registers zp ZP_BYTE:4 s1 [ s1#0 ] : zp ZP_BYTE:4 s1 , reg byte a , reg byte x , reg byte y , 
+Potential registers zp ZP_BYTE:5 s2 [ s2#0 ] : zp ZP_BYTE:5 s2 , reg byte a , reg byte x , reg byte y , 
+Potential registers zp ZP_BYTE:6 s3 [ s3#0 ] : zp ZP_BYTE:6 s3 , reg byte a , reg byte x , reg byte y , 
+Potential registers zp ZP_BYTE:7 $3 [ $3 ] : zp ZP_BYTE:7 $3 , reg byte a , reg byte x , reg byte y , 
+Potential registers zp ZP_BYTE:8 s4 [ s4#0 ] : zp ZP_BYTE:8 s4 , reg byte a , reg byte x , reg byte y , 
+Potential registers zp ZP_BYTE:9 return [ sum::return#0 ] : zp ZP_BYTE:9 return , reg byte a , reg byte x , reg byte y , 
 
 REGISTER UPLIFT SCOPES
-Uplift Scope [] ∞: zp byte:8 [ s4#0 ] 4: zp byte:7 [ $3 ] 2: zp byte:6 [ s3#0 ] 0.67: zp byte:5 [ s2#0 ] 0.5: zp byte:4 [ s1#0 ] 
-Uplift Scope [sum] 2: zp byte:2 [ sum::a#3 ] 2: zp byte:3 [ sum::b#3 ] 1.6: zp byte:9 [ sum::return#0 ] 
+Uplift Scope [] ∞: zp ZP_BYTE:8 s4 [ s4#0 ] 4: zp ZP_BYTE:7 $3 [ $3 ] 2: zp ZP_BYTE:6 s3 [ s3#0 ] 0.67: zp ZP_BYTE:5 s2 [ s2#0 ] 0.5: zp ZP_BYTE:4 s1 [ s1#0 ] 
+Uplift Scope [sum] 2: zp ZP_BYTE:2 a [ sum::a#3 ] 2: zp ZP_BYTE:3 b [ sum::b#3 ] 1.6: zp ZP_BYTE:9 return [ sum::return#0 ] 
 
-Uplifting [] best 107 combination reg byte a [ s4#0 ] reg byte a [ $3 ] zp byte:6 [ s3#0 ] reg byte x [ s2#0 ] zp byte:4 [ s1#0 ] 
-Uplifting [sum] best 79 combination reg byte y [ sum::a#3 ] reg byte a [ sum::b#3 ] reg byte a [ sum::return#0 ] 
-Allocated (was zp byte:4) zp byte:2 [ s1#0 ]
-Allocated (was zp byte:6) zp byte:3 [ s3#0 ]
+Uplifting [] best 121 combination reg byte a [ s4#0 ] reg byte a [ $3 ] reg byte y [ s3#0 ] reg byte x [ s2#0 ] zp ZP_BYTE:4 s1 [ s1#0 ] 
+Uplifting [sum] best 83 combination reg byte y [ sum::a#3 ] reg byte a [ sum::b#3 ] reg byte a [ sum::return#0 ] 
+Allocated (was zp ZP_BYTE:4 s1) zp ZP_BYTE:2 s1#0 [ s1#0 ]
 Removing instruction jmp b2
 Removing instruction jmp b3
 Removing instruction jmp b4
@@ -669,123 +677,129 @@ Removing instruction jmp bend
 Removing instruction jmp breturn
 Succesful ASM optimization Pass5NextJumpElimination
 ASSEMBLER
-//SEG0 @begin
+//SEG0 Global ZP labels
+  .label s1 = 2
+//SEG1 @begin
 bbegin:
-//SEG1 [0] call sum param-assignment [ sum::return#0 ]
-//SEG2 [8] phi from @begin to sum
+//SEG2 [0] call sum param-assignment [ sum::return#0 ]
+//SEG3 [8] phi from @begin to sum
 sum_from_bbegin:
-//SEG3 [8] phi (byte) sum::b#3 = (byte) 2 -- aby=coby1 
+//SEG4 [8] phi (byte) sum::b#3 = (byte) 2 -- aby=coby1 
   lda #$2
-//SEG4 [8] phi (byte) sum::a#3 = (byte) 1 -- yby=coby1 
+//SEG5 [8] phi (byte) sum::a#3 = (byte) 1 -- yby=coby1 
   ldy #$1
   jsr sum
-//SEG5 @2
+//SEG6 @2
 b2:
-//SEG6 [1] (byte) s1#0 ← (byte) sum::return#0 [ s1#0 ] -- zpby1=aby 
-  sta $2
-//SEG7 [2] call sum param-assignment [ sum::return#0 s1#0 ]
-//SEG8 [8] phi from @2 to sum
+//SEG7 [1] (byte) s1#0 ← (byte) sum::return#0 [ s1#0 ] -- zpby1=aby 
+  sta s1
+//SEG8 [2] call sum param-assignment [ sum::return#0 s1#0 ]
+//SEG9 [8] phi from @2 to sum
 sum_from_b2:
-//SEG9 [8] phi (byte) sum::b#3 = (byte) 4 -- aby=coby1 
+//SEG10 [8] phi (byte) sum::b#3 = (byte) 4 -- aby=coby1 
   lda #$4
-//SEG10 [8] phi (byte) sum::a#3 = (byte) 3 -- yby=coby1 
+//SEG11 [8] phi (byte) sum::a#3 = (byte) 3 -- yby=coby1 
   ldy #$3
   jsr sum
-//SEG11 @3
+//SEG12 @3
 b3:
-//SEG12 [3] (byte) s2#0 ← (byte) sum::return#0 [ s1#0 s2#0 ] -- xby=aby 
+//SEG13 [3] (byte) s2#0 ← (byte) sum::return#0 [ s1#0 s2#0 ] -- xby=aby 
   tax
-//SEG13 [4] call sum param-assignment [ sum::return#0 s1#0 s2#0 ]
-//SEG14 [8] phi from @3 to sum
+//SEG14 [4] call sum param-assignment [ sum::return#0 s1#0 s2#0 ]
+//SEG15 [8] phi from @3 to sum
 sum_from_b3:
-//SEG15 [8] phi (byte) sum::b#3 = (byte) 13 -- aby=coby1 
+//SEG16 [8] phi (byte) sum::b#3 = (byte) 13 -- aby=coby1 
   lda #$d
-//SEG16 [8] phi (byte) sum::a#3 = (byte) 9 -- yby=coby1 
+//SEG17 [8] phi (byte) sum::a#3 = (byte) 9 -- yby=coby1 
   ldy #$9
   jsr sum
-//SEG17 @4
+//SEG18 @4
 b4:
-//SEG18 [5] (byte) s3#0 ← (byte) sum::return#0 [ s1#0 s2#0 s3#0 ] -- zpby1=aby 
-  sta $3
-//SEG19 [6] (byte~) $3 ← (byte) s1#0 + (byte) s2#0 [ $3 s3#0 ] -- aby=zpby1_plus_xby 
+//SEG19 [5] (byte) s3#0 ← (byte) sum::return#0 [ s1#0 s2#0 s3#0 ] -- yby=aby 
+  tay
+//SEG20 [6] (byte~) $3 ← (byte) s1#0 + (byte) s2#0 [ $3 s3#0 ] -- aby=zpby1_plus_xby 
   txa
   clc
-  adc $2
-//SEG20 [7] (byte) s4#0 ← (byte~) $3 + (byte) s3#0 [ ] -- aby=aby_plus_zpby1 
+  adc s1
+//SEG21 [7] (byte) s4#0 ← (byte~) $3 + (byte) s3#0 [ ] -- aby=aby_plus_yby 
+  sty $ff
   clc
-  adc $3
-//SEG21 @end
+  adc $ff
+//SEG22 @end
 bend:
-//SEG22 sum
+//SEG23 sum
 sum: {
-  //SEG23 [9] (byte) sum::return#0 ← (byte) sum::a#3 + (byte) sum::b#3 [ sum::return#0 s1#0 s2#0 ] -- aby=yby_plus_aby 
+  //SEG24 [9] (byte) sum::return#0 ← (byte) sum::a#3 + (byte) sum::b#3 [ sum::return#0 s1#0 s2#0 ] -- aby=yby_plus_aby 
     sty $ff
     clc
     adc $ff
-  //SEG24 sum::@return
+  //SEG25 sum::@return
   breturn:
-  //SEG25 [10] return  [ sum::return#0 s1#0 s2#0 ]
+  //SEG26 [10] return  [ sum::return#0 s1#0 s2#0 ]
     rts
 }
 
 Removing instruction sum_from_bbegin:
 Succesful ASM optimization Pass5RedundantLabelElimination
 ASSEMBLER
-//SEG0 @begin
+//SEG0 Global ZP labels
+  .label s1 = 2
+//SEG1 @begin
 bbegin:
-//SEG1 [0] call sum param-assignment [ sum::return#0 ]
-//SEG2 [8] phi from @begin to sum
-//SEG3 [8] phi (byte) sum::b#3 = (byte) 2 -- aby=coby1 
+//SEG2 [0] call sum param-assignment [ sum::return#0 ]
+//SEG3 [8] phi from @begin to sum
+//SEG4 [8] phi (byte) sum::b#3 = (byte) 2 -- aby=coby1 
   lda #$2
-//SEG4 [8] phi (byte) sum::a#3 = (byte) 1 -- yby=coby1 
+//SEG5 [8] phi (byte) sum::a#3 = (byte) 1 -- yby=coby1 
   ldy #$1
   jsr sum
-//SEG5 @2
+//SEG6 @2
 b2:
-//SEG6 [1] (byte) s1#0 ← (byte) sum::return#0 [ s1#0 ] -- zpby1=aby 
-  sta $2
-//SEG7 [2] call sum param-assignment [ sum::return#0 s1#0 ]
-//SEG8 [8] phi from @2 to sum
+//SEG7 [1] (byte) s1#0 ← (byte) sum::return#0 [ s1#0 ] -- zpby1=aby 
+  sta s1
+//SEG8 [2] call sum param-assignment [ sum::return#0 s1#0 ]
+//SEG9 [8] phi from @2 to sum
 sum_from_b2:
-//SEG9 [8] phi (byte) sum::b#3 = (byte) 4 -- aby=coby1 
+//SEG10 [8] phi (byte) sum::b#3 = (byte) 4 -- aby=coby1 
   lda #$4
-//SEG10 [8] phi (byte) sum::a#3 = (byte) 3 -- yby=coby1 
+//SEG11 [8] phi (byte) sum::a#3 = (byte) 3 -- yby=coby1 
   ldy #$3
   jsr sum
-//SEG11 @3
+//SEG12 @3
 b3:
-//SEG12 [3] (byte) s2#0 ← (byte) sum::return#0 [ s1#0 s2#0 ] -- xby=aby 
+//SEG13 [3] (byte) s2#0 ← (byte) sum::return#0 [ s1#0 s2#0 ] -- xby=aby 
   tax
-//SEG13 [4] call sum param-assignment [ sum::return#0 s1#0 s2#0 ]
-//SEG14 [8] phi from @3 to sum
+//SEG14 [4] call sum param-assignment [ sum::return#0 s1#0 s2#0 ]
+//SEG15 [8] phi from @3 to sum
 sum_from_b3:
-//SEG15 [8] phi (byte) sum::b#3 = (byte) 13 -- aby=coby1 
+//SEG16 [8] phi (byte) sum::b#3 = (byte) 13 -- aby=coby1 
   lda #$d
-//SEG16 [8] phi (byte) sum::a#3 = (byte) 9 -- yby=coby1 
+//SEG17 [8] phi (byte) sum::a#3 = (byte) 9 -- yby=coby1 
   ldy #$9
   jsr sum
-//SEG17 @4
+//SEG18 @4
 b4:
-//SEG18 [5] (byte) s3#0 ← (byte) sum::return#0 [ s1#0 s2#0 s3#0 ] -- zpby1=aby 
-  sta $3
-//SEG19 [6] (byte~) $3 ← (byte) s1#0 + (byte) s2#0 [ $3 s3#0 ] -- aby=zpby1_plus_xby 
+//SEG19 [5] (byte) s3#0 ← (byte) sum::return#0 [ s1#0 s2#0 s3#0 ] -- yby=aby 
+  tay
+//SEG20 [6] (byte~) $3 ← (byte) s1#0 + (byte) s2#0 [ $3 s3#0 ] -- aby=zpby1_plus_xby 
   txa
   clc
-  adc $2
-//SEG20 [7] (byte) s4#0 ← (byte~) $3 + (byte) s3#0 [ ] -- aby=aby_plus_zpby1 
+  adc s1
+//SEG21 [7] (byte) s4#0 ← (byte~) $3 + (byte) s3#0 [ ] -- aby=aby_plus_yby 
+  sty $ff
   clc
-  adc $3
-//SEG21 @end
+  adc $ff
+//SEG22 @end
 bend:
-//SEG22 sum
+//SEG23 sum
 sum: {
-  //SEG23 [9] (byte) sum::return#0 ← (byte) sum::a#3 + (byte) sum::b#3 [ sum::return#0 s1#0 s2#0 ] -- aby=yby_plus_aby 
+  //SEG24 [9] (byte) sum::return#0 ← (byte) sum::a#3 + (byte) sum::b#3 [ sum::return#0 s1#0 s2#0 ] -- aby=yby_plus_aby 
     sty $ff
     clc
     adc $ff
-  //SEG24 sum::@return
+  //SEG25 sum::@return
   breturn:
-  //SEG25 [10] return  [ sum::return#0 s1#0 s2#0 ]
+  //SEG26 [10] return  [ sum::return#0 s1#0 s2#0 ]
     rts
 }
 
@@ -799,53 +813,56 @@ Removing instruction bend:
 Removing instruction breturn:
 Succesful ASM optimization Pass5UnusedLabelElimination
 ASSEMBLER
-//SEG0 @begin
-//SEG1 [0] call sum param-assignment [ sum::return#0 ]
-//SEG2 [8] phi from @begin to sum
-//SEG3 [8] phi (byte) sum::b#3 = (byte) 2 -- aby=coby1 
+//SEG0 Global ZP labels
+  .label s1 = 2
+//SEG1 @begin
+//SEG2 [0] call sum param-assignment [ sum::return#0 ]
+//SEG3 [8] phi from @begin to sum
+//SEG4 [8] phi (byte) sum::b#3 = (byte) 2 -- aby=coby1 
   lda #$2
-//SEG4 [8] phi (byte) sum::a#3 = (byte) 1 -- yby=coby1 
+//SEG5 [8] phi (byte) sum::a#3 = (byte) 1 -- yby=coby1 
   ldy #$1
   jsr sum
-//SEG5 @2
-//SEG6 [1] (byte) s1#0 ← (byte) sum::return#0 [ s1#0 ] -- zpby1=aby 
-  sta $2
-//SEG7 [2] call sum param-assignment [ sum::return#0 s1#0 ]
-//SEG8 [8] phi from @2 to sum
-//SEG9 [8] phi (byte) sum::b#3 = (byte) 4 -- aby=coby1 
+//SEG6 @2
+//SEG7 [1] (byte) s1#0 ← (byte) sum::return#0 [ s1#0 ] -- zpby1=aby 
+  sta s1
+//SEG8 [2] call sum param-assignment [ sum::return#0 s1#0 ]
+//SEG9 [8] phi from @2 to sum
+//SEG10 [8] phi (byte) sum::b#3 = (byte) 4 -- aby=coby1 
   lda #$4
-//SEG10 [8] phi (byte) sum::a#3 = (byte) 3 -- yby=coby1 
+//SEG11 [8] phi (byte) sum::a#3 = (byte) 3 -- yby=coby1 
   ldy #$3
   jsr sum
-//SEG11 @3
-//SEG12 [3] (byte) s2#0 ← (byte) sum::return#0 [ s1#0 s2#0 ] -- xby=aby 
+//SEG12 @3
+//SEG13 [3] (byte) s2#0 ← (byte) sum::return#0 [ s1#0 s2#0 ] -- xby=aby 
   tax
-//SEG13 [4] call sum param-assignment [ sum::return#0 s1#0 s2#0 ]
-//SEG14 [8] phi from @3 to sum
-//SEG15 [8] phi (byte) sum::b#3 = (byte) 13 -- aby=coby1 
+//SEG14 [4] call sum param-assignment [ sum::return#0 s1#0 s2#0 ]
+//SEG15 [8] phi from @3 to sum
+//SEG16 [8] phi (byte) sum::b#3 = (byte) 13 -- aby=coby1 
   lda #$d
-//SEG16 [8] phi (byte) sum::a#3 = (byte) 9 -- yby=coby1 
+//SEG17 [8] phi (byte) sum::a#3 = (byte) 9 -- yby=coby1 
   ldy #$9
   jsr sum
-//SEG17 @4
-//SEG18 [5] (byte) s3#0 ← (byte) sum::return#0 [ s1#0 s2#0 s3#0 ] -- zpby1=aby 
-  sta $3
-//SEG19 [6] (byte~) $3 ← (byte) s1#0 + (byte) s2#0 [ $3 s3#0 ] -- aby=zpby1_plus_xby 
+//SEG18 @4
+//SEG19 [5] (byte) s3#0 ← (byte) sum::return#0 [ s1#0 s2#0 s3#0 ] -- yby=aby 
+  tay
+//SEG20 [6] (byte~) $3 ← (byte) s1#0 + (byte) s2#0 [ $3 s3#0 ] -- aby=zpby1_plus_xby 
   txa
   clc
-  adc $2
-//SEG20 [7] (byte) s4#0 ← (byte~) $3 + (byte) s3#0 [ ] -- aby=aby_plus_zpby1 
+  adc s1
+//SEG21 [7] (byte) s4#0 ← (byte~) $3 + (byte) s3#0 [ ] -- aby=aby_plus_yby 
+  sty $ff
   clc
-  adc $3
-//SEG21 @end
-//SEG22 sum
+  adc $ff
+//SEG22 @end
+//SEG23 sum
 sum: {
-  //SEG23 [9] (byte) sum::return#0 ← (byte) sum::a#3 + (byte) sum::b#3 [ sum::return#0 s1#0 s2#0 ] -- aby=yby_plus_aby 
+  //SEG24 [9] (byte) sum::return#0 ← (byte) sum::a#3 + (byte) sum::b#3 [ sum::return#0 s1#0 s2#0 ] -- aby=yby_plus_aby 
     sty $ff
     clc
     adc $ff
-  //SEG24 sum::@return
-  //SEG25 [10] return  [ sum::return#0 s1#0 s2#0 ]
+  //SEG25 sum::@return
+  //SEG26 [10] return  [ sum::return#0 s1#0 s2#0 ]
     rts
 }
 
@@ -857,11 +874,11 @@ FINAL SYMBOL TABLE
 (label) @begin
 (label) @end
 (byte) s1
-(byte) s1#0 zp byte:2 0.5
+(byte) s1#0 zp ZP_BYTE:2 s1 0.5
 (byte) s2
 (byte) s2#0 reg byte x 0.6666666666666666
 (byte) s3
-(byte) s3#0 zp byte:3 2.0
+(byte) s3#0 reg byte y 2.0
 (byte) s4
 (byte) s4#0 reg byte a Infinity
 (byte()) sum((byte) sum::a , (byte) sum::b)
@@ -875,61 +892,64 @@ FINAL SYMBOL TABLE
 
 reg byte y [ sum::a#3 ]
 reg byte a [ sum::b#3 ]
-zp byte:2 [ s1#0 ]
+zp ZP_BYTE:2 s1 [ s1#0 ]
 reg byte x [ s2#0 ]
-zp byte:3 [ s3#0 ]
+reg byte y [ s3#0 ]
 reg byte a [ $3 ]
 reg byte a [ s4#0 ]
 reg byte a [ sum::return#0 ]
 
 FINAL CODE
-//SEG0 @begin
-//SEG1 [0] call sum param-assignment [ sum::return#0 ]
-//SEG2 [8] phi from @begin to sum
-//SEG3 [8] phi (byte) sum::b#3 = (byte) 2 -- aby=coby1 
+//SEG0 Global ZP labels
+  .label s1 = 2
+//SEG1 @begin
+//SEG2 [0] call sum param-assignment [ sum::return#0 ]
+//SEG3 [8] phi from @begin to sum
+//SEG4 [8] phi (byte) sum::b#3 = (byte) 2 -- aby=coby1 
   lda #$2
-//SEG4 [8] phi (byte) sum::a#3 = (byte) 1 -- yby=coby1 
+//SEG5 [8] phi (byte) sum::a#3 = (byte) 1 -- yby=coby1 
   ldy #$1
   jsr sum
-//SEG5 @2
-//SEG6 [1] (byte) s1#0 ← (byte) sum::return#0 [ s1#0 ] -- zpby1=aby 
-  sta $2
-//SEG7 [2] call sum param-assignment [ sum::return#0 s1#0 ]
-//SEG8 [8] phi from @2 to sum
-//SEG9 [8] phi (byte) sum::b#3 = (byte) 4 -- aby=coby1 
+//SEG6 @2
+//SEG7 [1] (byte) s1#0 ← (byte) sum::return#0 [ s1#0 ] -- zpby1=aby 
+  sta s1
+//SEG8 [2] call sum param-assignment [ sum::return#0 s1#0 ]
+//SEG9 [8] phi from @2 to sum
+//SEG10 [8] phi (byte) sum::b#3 = (byte) 4 -- aby=coby1 
   lda #$4
-//SEG10 [8] phi (byte) sum::a#3 = (byte) 3 -- yby=coby1 
+//SEG11 [8] phi (byte) sum::a#3 = (byte) 3 -- yby=coby1 
   ldy #$3
   jsr sum
-//SEG11 @3
-//SEG12 [3] (byte) s2#0 ← (byte) sum::return#0 [ s1#0 s2#0 ] -- xby=aby 
+//SEG12 @3
+//SEG13 [3] (byte) s2#0 ← (byte) sum::return#0 [ s1#0 s2#0 ] -- xby=aby 
   tax
-//SEG13 [4] call sum param-assignment [ sum::return#0 s1#0 s2#0 ]
-//SEG14 [8] phi from @3 to sum
-//SEG15 [8] phi (byte) sum::b#3 = (byte) 13 -- aby=coby1 
+//SEG14 [4] call sum param-assignment [ sum::return#0 s1#0 s2#0 ]
+//SEG15 [8] phi from @3 to sum
+//SEG16 [8] phi (byte) sum::b#3 = (byte) 13 -- aby=coby1 
   lda #$d
-//SEG16 [8] phi (byte) sum::a#3 = (byte) 9 -- yby=coby1 
+//SEG17 [8] phi (byte) sum::a#3 = (byte) 9 -- yby=coby1 
   ldy #$9
   jsr sum
-//SEG17 @4
-//SEG18 [5] (byte) s3#0 ← (byte) sum::return#0 [ s1#0 s2#0 s3#0 ] -- zpby1=aby 
-  sta $3
-//SEG19 [6] (byte~) $3 ← (byte) s1#0 + (byte) s2#0 [ $3 s3#0 ] -- aby=zpby1_plus_xby 
+//SEG18 @4
+//SEG19 [5] (byte) s3#0 ← (byte) sum::return#0 [ s1#0 s2#0 s3#0 ] -- yby=aby 
+  tay
+//SEG20 [6] (byte~) $3 ← (byte) s1#0 + (byte) s2#0 [ $3 s3#0 ] -- aby=zpby1_plus_xby 
   txa
   clc
-  adc $2
-//SEG20 [7] (byte) s4#0 ← (byte~) $3 + (byte) s3#0 [ ] -- aby=aby_plus_zpby1 
+  adc s1
+//SEG21 [7] (byte) s4#0 ← (byte~) $3 + (byte) s3#0 [ ] -- aby=aby_plus_yby 
+  sty $ff
   clc
-  adc $3
-//SEG21 @end
-//SEG22 sum
+  adc $ff
+//SEG22 @end
+//SEG23 sum
 sum: {
-  //SEG23 [9] (byte) sum::return#0 ← (byte) sum::a#3 + (byte) sum::b#3 [ sum::return#0 s1#0 s2#0 ] -- aby=yby_plus_aby 
+  //SEG24 [9] (byte) sum::return#0 ← (byte) sum::a#3 + (byte) sum::b#3 [ sum::return#0 s1#0 s2#0 ] -- aby=yby_plus_aby 
     sty $ff
     clc
     adc $ff
-  //SEG24 sum::@return
-  //SEG25 [10] return  [ sum::return#0 s1#0 s2#0 ]
+  //SEG25 sum::@return
+  //SEG26 [10] return  [ sum::return#0 s1#0 s2#0 ]
     rts
 }
 

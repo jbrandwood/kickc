@@ -1,23 +1,26 @@
   jsr main
 main: {
+    .label j = 3
+    .label i = 2
     lda #$64
-    sta $2
+    sta i
   b1:
     lda #$64
-    sta $3
+    sta j
   b2:
     jsr nest1
-    dec $3
-    lda $3
+    dec j
+    lda j
     bne b2
-    dec $2
-    lda $2
+    dec i
+    lda i
     bne b1
     rts
 }
 nest1: {
+    .label i = 4
     lda #$64
-    sta $4
+    sta i
   b1:
     lda #$64
   b2:
@@ -26,8 +29,8 @@ nest1: {
     sbc #$1
     cmp #$0
     bne b2
-    dec $4
-    lda $4
+    dec i
+    lda i
     bne b1
     rts
 }

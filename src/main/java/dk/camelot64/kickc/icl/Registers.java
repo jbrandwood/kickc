@@ -34,8 +34,7 @@ public class Registers {
 
    }
 
-   /** A zero page address used as a register for a single byte variable. */
-   public static class RegisterZpByte implements Register {
+   public static abstract class RegisterZp implements Register {
 
       /** The ZP address used for the byte. */
       private int zp;
@@ -43,12 +42,69 @@ public class Registers {
       /** The name used as a label for the register in the ASM code. */
       private String name;
 
-      public RegisterZpByte(int zp) {
+      /** The variable represented by the register. */
+      private Variable variable;
+
+      public RegisterZp(int zp, String name, Variable variable) {
          this.zp = zp;
+         this.name = name;
+         this.variable = variable;
       }
 
       public int getZp() {
          return zp;
+      }
+
+      public String getName() {
+         return name;
+      }
+
+      public Variable getVariable() {
+         return variable;
+      }
+
+      @Override
+      public boolean isZp() {
+         return true;
+      }
+
+      @Override
+      public String toString() {
+         return "zp "+getType().toString()+":"+zp+(name==null?"":(" "+name));
+      }
+
+      @Override
+      public String toString(Program program) {
+         return toString();
+      }
+
+      @Override
+      public boolean equals(Object o) {
+         if (this == o) return true;
+         if (o == null || getClass() != o.getClass()) return false;
+         RegisterZp that = (RegisterZp) o;
+         if (zp != that.zp) return false;
+         return name != null ? name.equals(that.name) : that.name == null;
+      }
+
+      @Override
+      public int hashCode() {
+         int result = zp;
+         result = 31 * result + (name != null ? name.hashCode() : 0);
+         return result;
+      }
+
+      public void setName(String name) {
+         this.name = name;
+      }
+   }
+
+
+   /** A zero page address used as a register for a single byte variable. */
+   public static class RegisterZpByte extends RegisterZp {
+
+      public RegisterZpByte(int zp, String name, Variable variable) {
+         super(zp, name, variable);
       }
 
       @Override
@@ -56,47 +112,14 @@ public class Registers {
          return  RegisterType.ZP_BYTE;
       }
 
-      @Override
-      public boolean isZp() {
-         return true;
-      }
-
-      @Override
-      public String toString() {
-         return "zp byte:"+zp;
-      }
-
-      @Override
-      public boolean equals(Object o) {
-         if (this == o) return true;
-         if (o == null || getClass() != o.getClass()) return false;
-         RegisterZpByte that = (RegisterZpByte) o;
-         return zp == that.zp;
-      }
-
-      @Override
-      public int hashCode() {
-         return zp;
-      }
-
-      @Override
-      public String toString(Program program) {
-         return toString();
-      }
 
    }
 
    /** Two zero page addresses used as a register for a single word variable. */
-   public static class RegisterZpWord implements Register {
+   public static class RegisterZpWord extends  RegisterZp {
 
-      private int zp;
-
-      public RegisterZpWord(int zp) {
-         this.zp = zp;
-      }
-
-      public int getZp() {
-         return zp;
+      public RegisterZpWord(int zp, String name, Variable variable) {
+         super(zp, name, variable);
       }
 
       @Override
@@ -104,46 +127,13 @@ public class Registers {
          return  RegisterType.ZP_WORD;
       }
 
-      @Override
-      public boolean isZp() {
-         return true;
-      }
-
-      @Override
-      public String toString() {
-         return "zp word :"+zp;
-      }
-
-      @Override
-      public boolean equals(Object o) {
-         if (this == o) return true;
-         if (o == null || getClass() != o.getClass()) return false;
-         RegisterZpWord that = (RegisterZpWord) o;
-         return zp == that.zp;
-      }
-
-      @Override
-      public int hashCode() {
-         return zp;
-      }
-
-      @Override
-      public String toString(Program program) {
-         return toString();
-      }
-
    }
 
    /** A zero page address used as a register for a boolean variable. */
-   public static class RegisterZpBool implements Register {
-      private int zp;
+   public static class RegisterZpBool extends  RegisterZp {
 
-      public RegisterZpBool(int zp) {
-         this.zp = zp;
-      }
-
-      public int getZp() {
-         return zp;
+      public RegisterZpBool(int zp, String name, Variable variable) {
+         super(zp, name, variable);
       }
 
       @Override
@@ -151,42 +141,14 @@ public class Registers {
          return  RegisterType.ZP_BOOL;
       }
 
-      @Override
-      public boolean isZp() {
-         return true;
-      }
-
-      @Override
-      public String toString() {
-         return "zp bool:"+zp;
-      }
-
-      @Override
-      public boolean equals(Object o) {
-         if (this == o) return true;
-         if (o == null || getClass() != o.getClass()) return false;
-         RegisterZpBool that = (RegisterZpBool) o;
-         return zp == that.zp;
-      }
-
-      @Override
-      public int hashCode() {
-         return zp;
-      }
-
-      @Override
-      public String toString(Program program) {
-         return toString();
-      }
 
    }
 
    /** A zro page address pair used as a register containing a pointer to a byte. */
-   public static class RegisterZpPointerByte implements Register {
-      private int zp;
+   public static class RegisterZpPointerByte extends  RegisterZp {
 
-      public RegisterZpPointerByte(int zp) {
-         this.zp = zp;
+      public RegisterZpPointerByte(int zp, String name, Variable variable) {
+         super(zp, name, variable);
       }
 
       @Override
@@ -194,39 +156,9 @@ public class Registers {
          return RegisterType.ZP_PTR_BYTE;
       }
 
-      @Override
-      public boolean isZp() {
-         return true;
-      }
-
-      @Override
-      public String toString() {
-         return "zp ptr byte:"+zp;
-      }
-
-      @Override
-      public boolean equals(Object o) {
-         if (this == o) return true;
-         if (o == null || getClass() != o.getClass()) return false;
-         RegisterZpPointerByte that = (RegisterZpPointerByte) o;
-         return zp == that.zp;
-      }
-
-      @Override
-      public int hashCode() {
-         return zp;
-      }
-
-      public int getZp() {
-         return zp;
-      }
-
-      @Override
-      public String toString(Program program) {
-         return toString();
-      }
-
    }
+
+
 
    /** The X register. */
    public static class RegisterXByte implements Register {

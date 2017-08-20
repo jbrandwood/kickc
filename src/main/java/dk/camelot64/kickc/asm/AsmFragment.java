@@ -23,12 +23,16 @@ public class AsmFragment {
     */
    private Map<String, Value> bindings;
 
+   /** The scope containing the fragment. Used when referenginv symbols defined in other scopes. */
+   private ScopeRef scope;
+
    /**
     * The string signature/name of the fragment fragment.
     */
    private String signature;
 
    public AsmFragment(StatementConditionalJump conditionalJump, ControlFlowBlock block, Program program, ControlFlowGraph graph) {
+      this.scope = program.getGraph().getBlockFromStatementIdx(conditionalJump.getIndex()).getScope();
       this.bindings = new LinkedHashMap<>();
       this.program = program;
       String conditionalJumpSignature = conditionalJumpSignature(conditionalJump, block, graph);
@@ -36,18 +40,21 @@ public class AsmFragment {
    }
 
    public AsmFragment(StatementAssignment assignment, Program program) {
+      this.scope = program.getGraph().getBlockFromStatementIdx(assignment.getIndex()).getScope();
       this.bindings = new LinkedHashMap<>();
       this.program = program;
       setSignature(assignmentSignature(assignment.getlValue(), assignment.getrValue1(), assignment.getOperator(), assignment.getrValue2()));
    }
 
-   public AsmFragment(LValue lValue, RValue rValue, Program program) {
+   public AsmFragment(LValue lValue, RValue rValue, Program program, Statement statement) {
+      this.scope = program.getGraph().getBlockFromStatementIdx(statement.getIndex()).getScope();
       this.bindings = new LinkedHashMap<>();
       this.program = program;
       setSignature(assignmentSignature(lValue, null, null, rValue));
    }
 
    public AsmFragment(StatementAssignment assignment, StatementAssignment assignmentAlu, Program program) {
+      this.scope = program.getGraph().getBlockFromStatementIdx(assignment.getIndex()).getScope();
       this.bindings = new LinkedHashMap<>();
       this.program = program;
       setSignature(assignmentWithAluSignature(assignment, assignmentAlu));
@@ -55,6 +62,7 @@ public class AsmFragment {
    }
 
    private String assignmentWithAluSignature(StatementAssignment assignment, StatementAssignment assignmentAlu) {
+      this.scope = program.getGraph().getBlockFromStatementIdx(assignment.getIndex()).getScope();
       if (!(assignment.getrValue2() instanceof VariableRef)) {
          throw new AluNotApplicableException("Error! ALU register only allowed as rValue2. " + assignment);
       }
@@ -301,14 +309,19 @@ public class AsmFragment {
       String bound;
       if (boundValue instanceof Registers.Register) {
          Registers.Register register = (Registers.Register) boundValue;
-         if (register instanceof Registers.RegisterZpByte) {
-            bound = String.format("$%x", ((Registers.RegisterZpByte) register).getZp());
-         } else if (register instanceof Registers.RegisterZpWord) {
-            bound = String.format("$%x", ((Registers.RegisterZpWord) register).getZp());
-         } else if (register instanceof Registers.RegisterZpBool) {
-            bound = String.format("$%x", ((Registers.RegisterZpBool) register).getZp());
-         } else if (register instanceof Registers.RegisterZpPointerByte) {
-            bound = String.format("$%x", ((Registers.RegisterZpPointerByte) register).getZp());
+         if (register instanceof Registers.RegisterZp) {
+            Registers.RegisterZp zpReg = (Registers.RegisterZp) register;
+            if(zpReg.getName()!=null) {
+               Variable variable = zpReg.getVariable();
+               Scope varScope = variable.getScope();
+               if(!varScope.getRef().equals(scope) && varScope.getRef().getFullName().length()>0) {
+                  bound = varScope.getFullName()+"."+zpReg.getName().replace('@', 'b').replace(':', '_').replace("#", "_");
+               }  else {
+                  bound = zpReg.getName().replace('@', 'b').replace(':', '_').replace("#", "_");
+               }
+            }  else {
+               bound = String.format("$%x", zpReg.getZp());
+            }
          } else {
             throw new RuntimeException("Register Type not implemented " + register);
          }

@@ -614,73 +614,76 @@ Initial phi equivalence classes
 Complete equivalence classes
 [ main::i#2 main::i#1 ]
 [ main::s#3 main::s#1 main::s#2 ]
-Allocated zp byte:2 [ main::i#2 main::i#1 ]
-Allocated zp byte:3 [ main::s#3 main::s#1 main::s#2 ]
+Allocated zp ZP_BYTE:2 i#2 [ main::i#2 main::i#1 ]
+Allocated zp ZP_BYTE:3 s#3 [ main::s#3 main::s#1 main::s#2 ]
 INITIAL ASM
-//SEG0 @begin
+//SEG0 Global ZP labels
+//SEG1 @begin
 bbegin:
-//SEG1 [0] call main param-assignment [ ]
+//SEG2 [0] call main param-assignment [ ]
   jsr main
   jmp bend
-//SEG2 @end
+//SEG3 @end
 bend:
-//SEG3 main
+//SEG4 main
 main: {
-  //SEG4 [1] phi from main to main::@1
+    .label i = 2
+    .label s = 3
+  //SEG5 [1] phi from main to main::@1
   b1_from_main:
-  //SEG5 [1] phi (byte) main::s#3 = (byte) 0 -- zpby1=coby1 
+  //SEG6 [1] phi (byte) main::s#3 = (byte) 0 -- zpby1=coby1 
     lda #$0
-    sta $3
-  //SEG6 [1] phi (byte) main::i#2 = (byte) 100 -- zpby1=coby1 
+    sta s
+  //SEG7 [1] phi (byte) main::i#2 = (byte) 100 -- zpby1=coby1 
     lda #$64
-    sta $2
+    sta i
     jmp b1
-  //SEG7 main::@1
+  //SEG8 main::@1
   b1:
-  //SEG8 [2] (byte) main::i#1 ← -- (byte) main::i#2 [ main::i#1 main::s#3 ] -- zpby1=_dec_zpby1 
-    dec $2
-  //SEG9 [3] if((byte) main::i#1>(byte) 0) goto main::@2 [ main::i#1 main::s#3 ] -- zpby1_gt_0_then_la1 
-    lda $2
+  //SEG9 [2] (byte) main::i#1 ← -- (byte) main::i#2 [ main::i#1 main::s#3 ] -- zpby1=_dec_zpby1 
+    dec i
+  //SEG10 [3] if((byte) main::i#1>(byte) 0) goto main::@2 [ main::i#1 main::s#3 ] -- zpby1_gt_0_then_la1 
+    lda i
     bne b2
     jmp breturn
-  //SEG10 main::@return
+  //SEG11 main::@return
   breturn:
-  //SEG11 [4] return  [ ]
+  //SEG12 [4] return  [ ]
     rts
-  //SEG12 main::@2
+  //SEG13 main::@2
   b2:
-  //SEG13 [5] if((byte) main::i#1<=(byte) 50) goto main::@4 [ main::i#1 main::s#3 ] -- zpby1_le_coby1_then_la1 
-    lda $2
+  //SEG14 [5] if((byte) main::i#1<=(byte) 50) goto main::@4 [ main::i#1 main::s#3 ] -- zpby1_le_coby1_then_la1 
+    lda i
     cmp #$32
     bcc b4
     beq b4
     jmp b8
-  //SEG14 main::@8
+  //SEG15 main::@8
   b8:
-  //SEG15 [6] (byte) main::s#2 ← ++ (byte) main::s#3 [ main::i#1 main::s#2 ] -- zpby1=_inc_zpby1 
-    inc $3
-  //SEG16 [1] phi from main::@8 to main::@1
+  //SEG16 [6] (byte) main::s#2 ← ++ (byte) main::s#3 [ main::i#1 main::s#2 ] -- zpby1=_inc_zpby1 
+    inc s
+  //SEG17 [1] phi from main::@8 to main::@1
   b1_from_b8:
-  //SEG17 [1] phi (byte) main::s#3 = (byte) main::s#2 -- register_copy 
-  //SEG18 [1] phi (byte) main::i#2 = (byte) main::i#1 -- register_copy 
+  //SEG18 [1] phi (byte) main::s#3 = (byte) main::s#2 -- register_copy 
+  //SEG19 [1] phi (byte) main::i#2 = (byte) main::i#1 -- register_copy 
     jmp b1
-  //SEG19 main::@4
+  //SEG20 main::@4
   b4:
-  //SEG20 [7] (byte) main::s#1 ← -- (byte) main::s#3 [ main::i#1 main::s#1 ] -- zpby1=_dec_zpby1 
-    dec $3
-  //SEG21 [1] phi from main::@4 to main::@1
+  //SEG21 [7] (byte) main::s#1 ← -- (byte) main::s#3 [ main::i#1 main::s#1 ] -- zpby1=_dec_zpby1 
+    dec s
+  //SEG22 [1] phi from main::@4 to main::@1
   b1_from_b4:
-  //SEG22 [1] phi (byte) main::s#3 = (byte) main::s#1 -- register_copy 
-  //SEG23 [1] phi (byte) main::i#2 = (byte) main::i#1 -- register_copy 
+  //SEG23 [1] phi (byte) main::s#3 = (byte) main::s#1 -- register_copy 
+  //SEG24 [1] phi (byte) main::i#2 = (byte) main::i#1 -- register_copy 
     jmp b1
 }
 
 REGISTER UPLIFT POTENTIAL REGISTERS
-Potential registers zp byte:2 [ main::i#2 main::i#1 ] : zp byte:2 , reg byte a , reg byte x , reg byte y , 
-Potential registers zp byte:3 [ main::s#3 main::s#1 main::s#2 ] : zp byte:3 , reg byte a , reg byte x , reg byte y , 
+Potential registers zp ZP_BYTE:2 i [ main::i#2 main::i#1 ] : zp ZP_BYTE:2 i , reg byte a , reg byte x , reg byte y , 
+Potential registers zp ZP_BYTE:3 s [ main::s#3 main::s#1 main::s#2 ] : zp ZP_BYTE:3 s , reg byte a , reg byte x , reg byte y , 
 
 REGISTER UPLIFT SCOPES
-Uplift Scope [main] 55: zp byte:3 [ main::s#3 main::s#1 main::s#2 ] 44: zp byte:2 [ main::i#2 main::i#1 ] 
+Uplift Scope [main] 55: zp ZP_BYTE:3 s [ main::s#3 main::s#1 main::s#2 ] 44: zp ZP_BYTE:2 i [ main::i#2 main::i#1 ] 
 Uplift Scope [] 
 
 Uplifting [main] best 380 combination reg byte y [ main::s#3 main::s#1 main::s#2 ] reg byte x [ main::i#2 main::i#1 ] 
@@ -691,54 +694,55 @@ Removing instruction jmp breturn
 Removing instruction jmp b8
 Succesful ASM optimization Pass5NextJumpElimination
 ASSEMBLER
-//SEG0 @begin
+//SEG0 Global ZP labels
+//SEG1 @begin
 bbegin:
-//SEG1 [0] call main param-assignment [ ]
+//SEG2 [0] call main param-assignment [ ]
   jsr main
-//SEG2 @end
+//SEG3 @end
 bend:
-//SEG3 main
+//SEG4 main
 main: {
-  //SEG4 [1] phi from main to main::@1
+  //SEG5 [1] phi from main to main::@1
   b1_from_main:
-  //SEG5 [1] phi (byte) main::s#3 = (byte) 0 -- yby=coby1 
+  //SEG6 [1] phi (byte) main::s#3 = (byte) 0 -- yby=coby1 
     ldy #$0
-  //SEG6 [1] phi (byte) main::i#2 = (byte) 100 -- xby=coby1 
+  //SEG7 [1] phi (byte) main::i#2 = (byte) 100 -- xby=coby1 
     ldx #$64
-  //SEG7 main::@1
+  //SEG8 main::@1
   b1:
-  //SEG8 [2] (byte) main::i#1 ← -- (byte) main::i#2 [ main::i#1 main::s#3 ] -- xby=_dec_xby 
+  //SEG9 [2] (byte) main::i#1 ← -- (byte) main::i#2 [ main::i#1 main::s#3 ] -- xby=_dec_xby 
     dex
-  //SEG9 [3] if((byte) main::i#1>(byte) 0) goto main::@2 [ main::i#1 main::s#3 ] -- xby_gt_0_then_la1 
+  //SEG10 [3] if((byte) main::i#1>(byte) 0) goto main::@2 [ main::i#1 main::s#3 ] -- xby_gt_0_then_la1 
     cpx #$0
     bne b2
-  //SEG10 main::@return
+  //SEG11 main::@return
   breturn:
-  //SEG11 [4] return  [ ]
+  //SEG12 [4] return  [ ]
     rts
-  //SEG12 main::@2
+  //SEG13 main::@2
   b2:
-  //SEG13 [5] if((byte) main::i#1<=(byte) 50) goto main::@4 [ main::i#1 main::s#3 ] -- xby_le_coby1_then_la1 
+  //SEG14 [5] if((byte) main::i#1<=(byte) 50) goto main::@4 [ main::i#1 main::s#3 ] -- xby_le_coby1_then_la1 
     cpx #$32
     bcc b4
     beq b4
-  //SEG14 main::@8
+  //SEG15 main::@8
   b8:
-  //SEG15 [6] (byte) main::s#2 ← ++ (byte) main::s#3 [ main::i#1 main::s#2 ] -- yby=_inc_yby 
+  //SEG16 [6] (byte) main::s#2 ← ++ (byte) main::s#3 [ main::i#1 main::s#2 ] -- yby=_inc_yby 
     iny
-  //SEG16 [1] phi from main::@8 to main::@1
+  //SEG17 [1] phi from main::@8 to main::@1
   b1_from_b8:
-  //SEG17 [1] phi (byte) main::s#3 = (byte) main::s#2 -- register_copy 
-  //SEG18 [1] phi (byte) main::i#2 = (byte) main::i#1 -- register_copy 
+  //SEG18 [1] phi (byte) main::s#3 = (byte) main::s#2 -- register_copy 
+  //SEG19 [1] phi (byte) main::i#2 = (byte) main::i#1 -- register_copy 
     jmp b1
-  //SEG19 main::@4
+  //SEG20 main::@4
   b4:
-  //SEG20 [7] (byte) main::s#1 ← -- (byte) main::s#3 [ main::i#1 main::s#1 ] -- yby=_dec_yby 
+  //SEG21 [7] (byte) main::s#1 ← -- (byte) main::s#3 [ main::i#1 main::s#1 ] -- yby=_dec_yby 
     dey
-  //SEG21 [1] phi from main::@4 to main::@1
+  //SEG22 [1] phi from main::@4 to main::@1
   b1_from_b4:
-  //SEG22 [1] phi (byte) main::s#3 = (byte) main::s#1 -- register_copy 
-  //SEG23 [1] phi (byte) main::i#2 = (byte) main::i#1 -- register_copy 
+  //SEG23 [1] phi (byte) main::s#3 = (byte) main::s#1 -- register_copy 
+  //SEG24 [1] phi (byte) main::i#2 = (byte) main::i#1 -- register_copy 
     jmp b1
 }
 
@@ -751,47 +755,48 @@ Removing instruction b1_from_b8:
 Removing instruction b1_from_b4:
 Succesful ASM optimization Pass5UnusedLabelElimination
 ASSEMBLER
-//SEG0 @begin
-//SEG1 [0] call main param-assignment [ ]
+//SEG0 Global ZP labels
+//SEG1 @begin
+//SEG2 [0] call main param-assignment [ ]
   jsr main
-//SEG2 @end
-//SEG3 main
+//SEG3 @end
+//SEG4 main
 main: {
-  //SEG4 [1] phi from main to main::@1
-  //SEG5 [1] phi (byte) main::s#3 = (byte) 0 -- yby=coby1 
+  //SEG5 [1] phi from main to main::@1
+  //SEG6 [1] phi (byte) main::s#3 = (byte) 0 -- yby=coby1 
     ldy #$0
-  //SEG6 [1] phi (byte) main::i#2 = (byte) 100 -- xby=coby1 
+  //SEG7 [1] phi (byte) main::i#2 = (byte) 100 -- xby=coby1 
     ldx #$64
-  //SEG7 main::@1
+  //SEG8 main::@1
   b1:
-  //SEG8 [2] (byte) main::i#1 ← -- (byte) main::i#2 [ main::i#1 main::s#3 ] -- xby=_dec_xby 
+  //SEG9 [2] (byte) main::i#1 ← -- (byte) main::i#2 [ main::i#1 main::s#3 ] -- xby=_dec_xby 
     dex
-  //SEG9 [3] if((byte) main::i#1>(byte) 0) goto main::@2 [ main::i#1 main::s#3 ] -- xby_gt_0_then_la1 
+  //SEG10 [3] if((byte) main::i#1>(byte) 0) goto main::@2 [ main::i#1 main::s#3 ] -- xby_gt_0_then_la1 
     cpx #$0
     bne b2
-  //SEG10 main::@return
-  //SEG11 [4] return  [ ]
+  //SEG11 main::@return
+  //SEG12 [4] return  [ ]
     rts
-  //SEG12 main::@2
+  //SEG13 main::@2
   b2:
-  //SEG13 [5] if((byte) main::i#1<=(byte) 50) goto main::@4 [ main::i#1 main::s#3 ] -- xby_le_coby1_then_la1 
+  //SEG14 [5] if((byte) main::i#1<=(byte) 50) goto main::@4 [ main::i#1 main::s#3 ] -- xby_le_coby1_then_la1 
     cpx #$32
     bcc b4
     beq b4
-  //SEG14 main::@8
-  //SEG15 [6] (byte) main::s#2 ← ++ (byte) main::s#3 [ main::i#1 main::s#2 ] -- yby=_inc_yby 
+  //SEG15 main::@8
+  //SEG16 [6] (byte) main::s#2 ← ++ (byte) main::s#3 [ main::i#1 main::s#2 ] -- yby=_inc_yby 
     iny
-  //SEG16 [1] phi from main::@8 to main::@1
-  //SEG17 [1] phi (byte) main::s#3 = (byte) main::s#2 -- register_copy 
-  //SEG18 [1] phi (byte) main::i#2 = (byte) main::i#1 -- register_copy 
+  //SEG17 [1] phi from main::@8 to main::@1
+  //SEG18 [1] phi (byte) main::s#3 = (byte) main::s#2 -- register_copy 
+  //SEG19 [1] phi (byte) main::i#2 = (byte) main::i#1 -- register_copy 
     jmp b1
-  //SEG19 main::@4
+  //SEG20 main::@4
   b4:
-  //SEG20 [7] (byte) main::s#1 ← -- (byte) main::s#3 [ main::i#1 main::s#1 ] -- yby=_dec_yby 
+  //SEG21 [7] (byte) main::s#1 ← -- (byte) main::s#3 [ main::i#1 main::s#1 ] -- yby=_dec_yby 
     dey
-  //SEG21 [1] phi from main::@4 to main::@1
-  //SEG22 [1] phi (byte) main::s#3 = (byte) main::s#1 -- register_copy 
-  //SEG23 [1] phi (byte) main::i#2 = (byte) main::i#1 -- register_copy 
+  //SEG22 [1] phi from main::@4 to main::@1
+  //SEG23 [1] phi (byte) main::s#3 = (byte) main::s#1 -- register_copy 
+  //SEG24 [1] phi (byte) main::i#2 = (byte) main::i#1 -- register_copy 
     jmp b1
 }
 
@@ -816,47 +821,48 @@ reg byte x [ main::i#2 main::i#1 ]
 reg byte y [ main::s#3 main::s#1 main::s#2 ]
 
 FINAL CODE
-//SEG0 @begin
-//SEG1 [0] call main param-assignment [ ]
+//SEG0 Global ZP labels
+//SEG1 @begin
+//SEG2 [0] call main param-assignment [ ]
   jsr main
-//SEG2 @end
-//SEG3 main
+//SEG3 @end
+//SEG4 main
 main: {
-  //SEG4 [1] phi from main to main::@1
-  //SEG5 [1] phi (byte) main::s#3 = (byte) 0 -- yby=coby1 
+  //SEG5 [1] phi from main to main::@1
+  //SEG6 [1] phi (byte) main::s#3 = (byte) 0 -- yby=coby1 
     ldy #$0
-  //SEG6 [1] phi (byte) main::i#2 = (byte) 100 -- xby=coby1 
+  //SEG7 [1] phi (byte) main::i#2 = (byte) 100 -- xby=coby1 
     ldx #$64
-  //SEG7 main::@1
+  //SEG8 main::@1
   b1:
-  //SEG8 [2] (byte) main::i#1 ← -- (byte) main::i#2 [ main::i#1 main::s#3 ] -- xby=_dec_xby 
+  //SEG9 [2] (byte) main::i#1 ← -- (byte) main::i#2 [ main::i#1 main::s#3 ] -- xby=_dec_xby 
     dex
-  //SEG9 [3] if((byte) main::i#1>(byte) 0) goto main::@2 [ main::i#1 main::s#3 ] -- xby_gt_0_then_la1 
+  //SEG10 [3] if((byte) main::i#1>(byte) 0) goto main::@2 [ main::i#1 main::s#3 ] -- xby_gt_0_then_la1 
     cpx #$0
     bne b2
-  //SEG10 main::@return
-  //SEG11 [4] return  [ ]
+  //SEG11 main::@return
+  //SEG12 [4] return  [ ]
     rts
-  //SEG12 main::@2
+  //SEG13 main::@2
   b2:
-  //SEG13 [5] if((byte) main::i#1<=(byte) 50) goto main::@4 [ main::i#1 main::s#3 ] -- xby_le_coby1_then_la1 
+  //SEG14 [5] if((byte) main::i#1<=(byte) 50) goto main::@4 [ main::i#1 main::s#3 ] -- xby_le_coby1_then_la1 
     cpx #$32
     bcc b4
     beq b4
-  //SEG14 main::@8
-  //SEG15 [6] (byte) main::s#2 ← ++ (byte) main::s#3 [ main::i#1 main::s#2 ] -- yby=_inc_yby 
+  //SEG15 main::@8
+  //SEG16 [6] (byte) main::s#2 ← ++ (byte) main::s#3 [ main::i#1 main::s#2 ] -- yby=_inc_yby 
     iny
-  //SEG16 [1] phi from main::@8 to main::@1
-  //SEG17 [1] phi (byte) main::s#3 = (byte) main::s#2 -- register_copy 
-  //SEG18 [1] phi (byte) main::i#2 = (byte) main::i#1 -- register_copy 
+  //SEG17 [1] phi from main::@8 to main::@1
+  //SEG18 [1] phi (byte) main::s#3 = (byte) main::s#2 -- register_copy 
+  //SEG19 [1] phi (byte) main::i#2 = (byte) main::i#1 -- register_copy 
     jmp b1
-  //SEG19 main::@4
+  //SEG20 main::@4
   b4:
-  //SEG20 [7] (byte) main::s#1 ← -- (byte) main::s#3 [ main::i#1 main::s#1 ] -- yby=_dec_yby 
+  //SEG21 [7] (byte) main::s#1 ← -- (byte) main::s#3 [ main::i#1 main::s#1 ] -- yby=_dec_yby 
     dey
-  //SEG21 [1] phi from main::@4 to main::@1
-  //SEG22 [1] phi (byte) main::s#3 = (byte) main::s#1 -- register_copy 
-  //SEG23 [1] phi (byte) main::i#2 = (byte) main::i#1 -- register_copy 
+  //SEG22 [1] phi from main::@4 to main::@1
+  //SEG23 [1] phi (byte) main::s#3 = (byte) main::s#1 -- register_copy 
+  //SEG24 [1] phi (byte) main::i#2 = (byte) main::i#1 -- register_copy 
     jmp b1
 }
 

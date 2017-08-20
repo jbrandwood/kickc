@@ -209,7 +209,7 @@ public class Compiler {
 
    private void pass4RegisterAllocation(Program program) {
 
-      new Pass4ZeroPageAllocation(program).allocate();
+      new Pass4LiveRangeEquivalenceClassesFinalize(program).allocate();
       new Pass4RegistersFinalize(program).allocate(true);
 
       // Initial Code generation

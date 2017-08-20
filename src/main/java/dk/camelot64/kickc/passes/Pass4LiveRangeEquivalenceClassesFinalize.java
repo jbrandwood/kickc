@@ -6,11 +6,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Zero Page Register Allocation for variables based on live ranges and phi equivalence classes.
+ * Finalize live range equivalence classes ensuring that all variables is in an equivalence class
  */
-public class Pass4ZeroPageAllocation extends Pass2Base {
+public class Pass4LiveRangeEquivalenceClassesFinalize extends Pass2Base {
 
-   public Pass4ZeroPageAllocation(Program program) {
+   public Pass4LiveRangeEquivalenceClassesFinalize(Program program) {
       super(program);
    }
 
@@ -33,14 +33,6 @@ public class Pass4ZeroPageAllocation extends Pass2Base {
          getLog().append(liveRangeEquivalenceClass.toString());
       }
 
-      // Allocate zeropage registers to equivalence classes
-   //   for (LiveRangeEquivalenceClass liveRangeEquivalenceClass : liveRangeEquivalenceClassSet.getEquivalenceClasses()) {
-   //      List<VariableRef> variables = liveRangeEquivalenceClass.getVariables();
-   //      Variable firstVar = getProgram().getScope().getVariable(variables.get(0));
-   //      RegisterAllocation.Register zpRegister = allocateNewRegisterZp(firstVar.getType());
-   //      liveRangeEquivalenceClass.setRegister(zpRegister);
-   //      getLog().append("Allocated " + zpRegister + " to " + liveRangeEquivalenceClass);
-   //   }
       getProgram().setLiveRangeEquivalenceClassSet(liveRangeEquivalenceClassSet);
    }
 
@@ -95,41 +87,6 @@ public class Pass4ZeroPageAllocation extends Pass2Base {
          }
       }
 
-   }
-
-   /**
-    * The current zero page used to create new registers when needed.
-    */
-   private int currentZp = 2;
-
-   /**
-    * Create a new register for a specific variable type.
-    *
-    * @param varType The variable type to create a register for.
-    *                The register type created uses one or more zero page locations based on the variable type
-    * @return The new zeropage register
-    */
-   private RegisterAllocation.Register allocateNewRegisterZp(SymbolType varType) {
-      if (varType.equals(SymbolTypeBasic.BYTE)) {
-         return new RegisterAllocation.RegisterZpByte(currentZp++);
-      } else if (varType.equals(SymbolTypeBasic.WORD)) {
-         RegisterAllocation.RegisterZpWord registerZpWord =
-               new RegisterAllocation.RegisterZpWord(currentZp);
-         currentZp = currentZp + 2;
-         return registerZpWord;
-      } else if (varType.equals(SymbolTypeBasic.BOOLEAN)) {
-         return new RegisterAllocation.RegisterZpBool(currentZp++);
-      } else if (varType.equals(SymbolTypeBasic.VOID)) {
-         // No need to setRegister register for VOID value
-         return null;
-      } else if (varType instanceof SymbolTypePointer) {
-         RegisterAllocation.RegisterZpPointerByte registerZpPointerByte =
-               new RegisterAllocation.RegisterZpPointerByte(currentZp);
-         currentZp = currentZp + 2;
-         return registerZpPointerByte;
-      } else {
-         throw new RuntimeException("Unhandled variable type " + varType);
-      }
    }
 
 }

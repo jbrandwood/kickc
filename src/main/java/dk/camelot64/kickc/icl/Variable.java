@@ -21,6 +21,9 @@ public abstract class Variable implements Symbol {
    /** If the variable is assigned to an ASM register, this contains the register. If null the variable has no allocation (yet). Constants are never assigned to registers. */
    private Registers.Register allocation;
 
+   /** A short name used for the variable in ASM code. If possible variable names of ZP variables are shortened in ASM code. This is possible, when all versions of the var use the same register. */
+   private String asmName;
+
    /** If the variable is a constant this is the constant value. If null the variable is not considered constant.*/
    private Constant constant;
 
@@ -82,6 +85,14 @@ public abstract class Variable implements Symbol {
       this.allocation = allocation;
    }
 
+   public String getAsmName() {
+      return asmName;
+   }
+
+   public void setAsmName(String asmName) {
+      this.asmName = asmName;
+   }
+
    public Constant getConstant() {
       return constant;
    }
@@ -96,29 +107,6 @@ public abstract class Variable implements Symbol {
    @JsonIgnore
    public abstract boolean isIntermediate();
 
-   @Override
-   public boolean equals(Object o) {
-      if (this == o) return true;
-      if (o == null || getClass() != o.getClass()) return false;
-      Variable variable = (Variable) o;
-      if (inferredType != variable.inferredType) return false;
-      if (name != null ? !name.equals(variable.name) : variable.name != null) return false;
-      if (scope != null ? !scope.equals(variable.scope) : variable.scope != null) return false;
-      if (type != null ? !type.equals(variable.type) : variable.type != null) return false;
-      if (allocation != null ? !allocation.equals(variable.allocation) : variable.allocation != null) return false;
-      return constant != null ? constant.equals(variable.constant) : variable.constant == null;
-   }
-
-   @Override
-   public int hashCode() {
-      int result = name != null ? name.hashCode() : 0;
-      result = 31 * result + (scope != null ? scope.hashCode() : 0);
-      result = 31 * result + (type != null ? type.hashCode() : 0);
-      result = 31 * result + (inferredType ? 1 : 0);
-      result = 31 * result + (allocation != null ? allocation.hashCode() : 0);
-      result = 31 * result + (constant != null ? constant.hashCode() : 0);
-      return result;
-   }
 
    public Scope getScope() {
       return scope;
@@ -133,6 +121,37 @@ public abstract class Variable implements Symbol {
       }
    }
 
+   @JsonIgnore
+   public VariableRef getRef() {
+      return new VariableRef(this);
+   }
+
+   @Override
+   public boolean equals(Object o) {
+      if (this == o) return true;
+      if (o == null || getClass() != o.getClass()) return false;
+      Variable variable = (Variable) o;
+      if (inferredType != variable.inferredType) return false;
+      if (name != null ? !name.equals(variable.name) : variable.name != null) return false;
+      if (scope != null ? !scope.equals(variable.scope) : variable.scope != null) return false;
+      if (type != null ? !type.equals(variable.type) : variable.type != null) return false;
+      if (allocation != null ? !allocation.equals(variable.allocation) : variable.allocation != null) return false;
+      if (asmName != null ? !asmName.equals(variable.asmName) : variable.asmName != null) return false;
+      return constant != null ? constant.equals(variable.constant) : variable.constant == null;
+   }
+
+   @Override
+   public int hashCode() {
+      int result = name != null ? name.hashCode() : 0;
+      result = 31 * result + (scope != null ? scope.hashCode() : 0);
+      result = 31 * result + (type != null ? type.hashCode() : 0);
+      result = 31 * result + (inferredType ? 1 : 0);
+      result = 31 * result + (allocation != null ? allocation.hashCode() : 0);
+      result = 31 * result + (asmName != null ? asmName.hashCode() : 0);
+      result = 31 * result + (constant != null ? constant.hashCode() : 0);
+      return result;
+   }
+
    @Override
    public String toString() {
       return toString(null);
@@ -140,11 +159,13 @@ public abstract class Variable implements Symbol {
 
    @Override
    public String toString(Program program) {
-      return "(" + type.getTypeName() + (inferredType ? "~" : "") + ") " + getFullName();
+      String s = new StringBuilder()
+            .append("(")
+            .append(type.getTypeName())
+            .append(inferredType ? "~" : "")
+            .append(") ")
+            .append(getFullName()).toString();
+      return s;
    }
 
-   @JsonIgnore
-   public VariableRef getRef() {
-      return new VariableRef(this);
-   }
 }

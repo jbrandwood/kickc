@@ -56,7 +56,7 @@ public class Pass4CodeGeneration {
          ControlFlowBlock defaultSuccessor = getGraph().getDefaultSuccessor(block);
          if (defaultSuccessor != null) {
             if (defaultSuccessor.hasPhiBlock()) {
-               genBlockPhiTransition(asm, block, defaultSuccessor);
+               genBlockPhiTransition(asm, block, defaultSuccessor, defaultSuccessor.getPhiBlock());
             }
             asm.addInstruction("JMP", AsmAddressingMode.ABS, defaultSuccessor.getLabel().getLocalName().replace('@', 'b').replace(':', '_'));
          }
@@ -79,10 +79,10 @@ public class Pass4CodeGeneration {
          Registers.Register register = scopeVar.getAllocation();
          if(register!=null && register.isZp()) {
             Registers.RegisterZp registerZp = (Registers.RegisterZp) register;
-            String registerZpName = registerZp.getName();
-            if(registerZpName !=null && !added.contains(registerZpName)) {
-               asm.addLabelDecl(registerZpName, registerZp.getZp());
-               added.add(registerZpName);
+            String asmName = scopeVar.getAsmName();
+            if(asmName !=null && !added.contains(asmName)) {
+               asm.addLabelDecl(asmName, registerZp.getZp());
+               added.add(asmName);
             }
          }
       }
@@ -159,7 +159,7 @@ public class Pass4CodeGeneration {
             if (genCallPhiEntry) {
                ControlFlowBlock callSuccessor = getGraph().getCallSuccessor(block);
                if (callSuccessor != null && callSuccessor.hasPhiBlock()) {
-                  genBlockPhiTransition(asm, block, callSuccessor);
+                  genBlockPhiTransition(asm, block, callSuccessor, call);
                }
             }
             asm.addInstruction("jsr", AsmAddressingMode.ABS, call.getProcedure().getFullName());
@@ -208,14 +208,14 @@ public class Pass4CodeGeneration {
          });
          for (ControlFlowBlock predecessor : predecessors) {
             if (block.getLabel().equals(predecessor.getConditionalSuccessor())) {
-               genBlockPhiTransition(asm, predecessor, block);
+               genBlockPhiTransition(asm, predecessor, block, block.getPhiBlock());
                asm.addInstruction("JMP", AsmAddressingMode.ABS, block.getLabel().getLocalName().replace('@', 'b').replace(':', '_'));
             }
          }
       }
    }
 
-   private void genBlockPhiTransition(AsmProgram asm, ControlFlowBlock fromBlock, ControlFlowBlock toBlock) {
+   private void genBlockPhiTransition(AsmProgram asm, ControlFlowBlock fromBlock, ControlFlowBlock toBlock, Statement scopeStatement) {
       Statement toFirstStatement = toBlock.getStatements().get(0);
       asm.startSegment(toFirstStatement.getIndex(), "[" + toFirstStatement.getIndex() + "]" + " phi from " + fromBlock.getLabel().getFullName() + " to " + toBlock.getLabel().getFullName());
       asm.addLabel((toBlock.getLabel().getLocalName() + "_from_" + fromBlock.getLabel().getLocalName()).replace('@', 'b').replace(':', '_'));
@@ -233,7 +233,7 @@ public class Pass4CodeGeneration {
             });
             for (StatementPhiBlock.PhiRValue phiRValue : phiRValues) {
                if (phiRValue.getPredecessor().equals(fromBlock.getLabel())) {
-                  genAsmMove(asm, phiVariable.getVariable(), phiRValue.getrValue(), phiBlock);
+                  genAsmMove(asm, phiVariable.getVariable(), phiRValue.getrValue(), scopeStatement);
                   break;
                }
             }

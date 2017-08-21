@@ -54,9 +54,9 @@ plot: {
 }
 flip: {
     .label c = 5
-    .label y = 4
+    .label r = 4
     lda #$10
-    sta plot.y
+    sta r
     ldy #$f
     ldx #$0
   b1:
@@ -74,8 +74,8 @@ flip: {
     lda c
     bne b2
     dey
-    dec plot.y
-    lda plot.y
+    dec r
+    lda r
     bne b1
     ldx #$0
   b3:

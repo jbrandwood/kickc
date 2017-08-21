@@ -31,9 +31,9 @@ lvaluevar: {
 rvaluevar: {
     .label screen = 2
     lda #<$400
-    sta lvaluevar.screen
+    sta screen
     lda #>$400
-    sta lvaluevar.screen+$1
+    sta screen+$1
     ldx #$2
   b1:
     cpx #$a
@@ -41,10 +41,10 @@ rvaluevar: {
     rts
   b2:
     ldy #$0
-    lda (lvaluevar.screen),y
-    inc lvaluevar.screen
+    lda (screen),y
+    inc screen
     bne !+
-    inc lvaluevar.screen+$1
+    inc screen+$1
   !:
     inx
     jmp b1

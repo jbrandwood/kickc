@@ -2,34 +2,34 @@
   jsr main
 main: {
     lda #$1
-    sta render.y
+    sta addpoint.c
     ldy #$5
     lda #$0
     sta numpoints
     lda #$5
     jsr addpoint
     lda #$2
-    sta render.y
+    sta addpoint.c
     ldy #$8
     lda #$f
     jsr addpoint
     lda #$3
-    sta render.y
+    sta addpoint.c
     ldy #$e
     lda #$6
     jsr addpoint
     lda #$4
-    sta render.y
+    sta addpoint.c
     ldy #$2
     lda #$22
     jsr addpoint
     lda #$5
-    sta render.y
+    sta addpoint.c
     ldy #$11
     lda #$15
     jsr addpoint
     lda #$7
-    sta render.y
+    sta addpoint.c
     ldy #$16
     lda #$1f
     jsr addpoint
@@ -144,8 +144,9 @@ render: {
 findcol: {
     .label x = 9
     .label y = 10
-    .label diff = 7
+    .label xp = 7
     .label yp = 11
+    .label diff = 7
     .label mindiff = 6
     ldy #$0
     lda #$ff
@@ -153,11 +154,11 @@ findcol: {
     ldx #$0
   b1:
     lda $1000,x
-    sta diff
+    sta xp
     lda $1100,x
     sta yp
     lda x
-    cmp diff
+    cmp xp
     bne b2
     lda y
     cmp yp
@@ -167,7 +168,7 @@ findcol: {
     rts
   b2:
     lda x
-    cmp diff
+    cmp xp
     bcs b4
     lda diff
     sec
@@ -212,37 +213,37 @@ findcol: {
     jmp b5
 }
 initscreen: {
-    .label colline = 3
+    .label screen = 3
     lda #<$400
-    sta render.colline
+    sta screen
     lda #>$400
-    sta render.colline+$1
+    sta screen+$1
   b1:
     ldy #$0
     lda #$e6
-    sta (render.colline),y
-    inc render.colline
+    sta (screen),y
+    inc screen
     bne !+
-    inc render.colline+$1
+    inc screen+$1
   !:
-    lda render.colline+$1
+    lda screen+$1
     cmp #>$7e8
     bcc b1
     bne !+
-    lda render.colline
+    lda screen
     cmp #<$7e8
     bcc b1
   !:
     rts
 }
 addpoint: {
-    .label y = 2
+    .label c = 2
     ldx numpoints
     sta $1000,x
     tya
     ldy numpoints
     sta $1100,y
-    lda render.y
+    lda c
     ldx numpoints
     sta $1200,x
     inc numpoints

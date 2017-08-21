@@ -17,7 +17,7 @@ main: {
     tya
     clc
     adc #$2
-    sta sum.c
+    sta sum2.c
     jsr sum2
     sta $428,y
     iny
@@ -32,7 +32,7 @@ sum2: {
     clc
     adc $ff
     clc
-    adc sum.c
+    adc c
     rts
 }
 sum: {

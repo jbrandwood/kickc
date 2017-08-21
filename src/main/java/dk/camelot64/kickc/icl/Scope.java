@@ -273,6 +273,10 @@ public abstract class Scope implements Symbol {
             if (symbolClass == null || symbolClass.isInstance(symbol)) {
                res.append(symbol.toString(program));
                if (symbol instanceof Variable) {
+                  String asmName = ((Variable) symbol).getAsmName();
+                  if(asmName!=null) {
+                     res.append(" "+asmName);
+                  }
                   Registers.Register register = ((Variable) symbol).getAllocation();
                   if (register != null) {
                      res.append(" " + register);

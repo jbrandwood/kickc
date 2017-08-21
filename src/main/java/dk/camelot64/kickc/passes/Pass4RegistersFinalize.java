@@ -2,9 +2,7 @@ package dk.camelot64.kickc.passes;
 
 import dk.camelot64.kickc.icl.*;
 
-import java.util.Collection;
-import java.util.LinkedHashSet;
-import java.util.Set;
+import java.util.*;
 
 /**
  * Move register allocation from equivalence classes to RegisterAllocation.
@@ -23,46 +21,52 @@ public class Pass4RegistersFinalize extends Pass2Base {
       }
       liveRangeEquivalenceClassSet.storeRegisterAllocation();
       if (reallocateZp) {
-         shortenZpRegisterNames(liveRangeEquivalenceClassSet);
+         shortenZpRegisterNames();
       }
    }
 
    /**
     * Shorten register names for ZP registers if possible
-    *
-    * @param equivalenceClassSet
     */
-   private void shortenZpRegisterNames(LiveRangeEquivalenceClassSet equivalenceClassSet) {
+   private void shortenZpRegisterNames() {
       Collection<Scope> allScopes = getProgram().getScope().getAllScopes(true);
       allScopes.add(getProgram().getScope());
       for (Scope scope : allScopes) {
-         Set<String> used = new LinkedHashSet<>();
-         // Find all names without "#"
+         // Create initial short names - and remember the ones without "#"
          for (Variable variable : scope.getAllVariables(false)) {
             if (variable.getAllocation() != null && variable.getAllocation().isZp()) {
-               Registers.RegisterZp regZp = (Registers.RegisterZp) variable.getAllocation();
-               String regZpName = regZp.getName();
-               if (!regZpName.contains("#")) {
-                  used.add(regZpName);
-               }
+               variable.setAsmName(variable.getLocalName());
+            } else {
+               variable.setAsmName(null);
             }
          }
 
-         // For all names with "#" try to shorten
+         // Find short asm names for all variables if possible
+         Map<String, Registers.Register> shortNames = new LinkedHashMap<>();
          for (Variable variable : scope.getAllVariables(false)) {
-            if (variable.getAllocation() != null && variable.getAllocation().isZp()) {
-               Registers.RegisterZp regZp = (Registers.RegisterZp) variable.getAllocation();
-               String regZpName = regZp.getName();
-               if (regZpName.contains("#")) {
-                  regZpName = regZpName.substring(0, regZpName.indexOf("#"));
-                  if (!used.contains(regZpName)) {
-                     regZp.setName(regZpName);
-                     used.add(regZpName);
+            Registers.Register allocation = variable.getAllocation();
+            if (allocation != null && allocation.isZp()) {
+               String asmName = variable.getAsmName();
+               if (asmName.contains("#")) {
+                  String shortName = asmName.substring(0, variable.getAsmName().indexOf("#"));
+                  if (shortNames.get(shortName) == null || shortNames.get(shortName).equals(allocation)) {
+                     // Short name is usable!
+                     variable.setAsmName(shortName);
+                     shortNames.put(shortName, allocation);
+                     continue;
                   }
                }
+               if (shortNames.get(asmName) == null || shortNames.get(asmName).equals(allocation)) {
+                  // Try the full name instead
+                  variable.setAsmName(asmName);
+                  shortNames.put(asmName, allocation);
+                  continue;
+               } else {
+                  // Be unhappy (if tyhis triggers in the future extend with ability to create new names by adding suffixes)
+                  throw new RuntimeException("ASM name already used "+asmName);
+               }
             }
          }
-
       }
    }
 
@@ -95,28 +99,27 @@ public class Pass4RegistersFinalize extends Pass2Base {
    /**
     * Create a new register for a specific variable type.
     *
-    * @param varType The variable type to create a register for.
+    * @param variable The variable to create a register for.
     *                The register type created uses one or more zero page locations based on the variable type
     * @return The new zeropage register
     */
    private Registers.Register allocateNewRegisterZp(Variable variable) {
       SymbolType varType = variable.getType();
-      String name = variable.getLocalName();
       if (varType.equals(SymbolTypeBasic.BYTE)) {
-         return new Registers.RegisterZpByte(currentZp++, name, variable);
+         return new Registers.RegisterZpByte(currentZp++);
       } else if (varType.equals(SymbolTypeBasic.WORD)) {
          Registers.RegisterZpWord registerZpWord =
-               new Registers.RegisterZpWord(currentZp, name, variable);
+               new Registers.RegisterZpWord(currentZp);
          currentZp = currentZp + 2;
          return registerZpWord;
       } else if (varType.equals(SymbolTypeBasic.BOOLEAN)) {
-         return new Registers.RegisterZpBool(currentZp++, name, variable);
+         return new Registers.RegisterZpBool(currentZp++);
       } else if (varType.equals(SymbolTypeBasic.VOID)) {
          // No need to setRegister register for VOID value
          return null;
       } else if (varType instanceof SymbolTypePointer) {
          Registers.RegisterZpPointerByte registerZpPointerByte =
-               new Registers.RegisterZpPointerByte(currentZp, name, variable);
+               new Registers.RegisterZpPointerByte(currentZp);
          currentZp = currentZp + 2;
          return registerZpPointerByte;
       } else {

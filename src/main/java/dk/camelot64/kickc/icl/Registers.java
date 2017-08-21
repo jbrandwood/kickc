@@ -39,28 +39,12 @@ public class Registers {
       /** The ZP address used for the byte. */
       private int zp;
 
-      /** The name used as a label for the register in the ASM code. */
-      private String name;
-
-      /** The variable represented by the register. */
-      private Variable variable;
-
-      public RegisterZp(int zp, String name, Variable variable) {
+      public RegisterZp(int zp) {
          this.zp = zp;
-         this.name = name;
-         this.variable = variable;
       }
 
       public int getZp() {
          return zp;
-      }
-
-      public String getName() {
-         return name;
-      }
-
-      public Variable getVariable() {
-         return variable;
       }
 
       @Override
@@ -70,7 +54,7 @@ public class Registers {
 
       @Override
       public String toString() {
-         return "zp "+getType().toString()+":"+zp+(name==null?"":(" "+name));
+         return "zp "+getType().toString()+":"+zp;
       }
 
       @Override
@@ -82,20 +66,15 @@ public class Registers {
       public boolean equals(Object o) {
          if (this == o) return true;
          if (o == null || getClass() != o.getClass()) return false;
+
          RegisterZp that = (RegisterZp) o;
-         if (zp != that.zp) return false;
-         return name != null ? name.equals(that.name) : that.name == null;
+
+         return zp == that.zp;
       }
 
       @Override
       public int hashCode() {
-         int result = zp;
-         result = 31 * result + (name != null ? name.hashCode() : 0);
-         return result;
-      }
-
-      public void setName(String name) {
-         this.name = name;
+         return zp;
       }
    }
 
@@ -103,8 +82,8 @@ public class Registers {
    /** A zero page address used as a register for a single byte variable. */
    public static class RegisterZpByte extends RegisterZp {
 
-      public RegisterZpByte(int zp, String name, Variable variable) {
-         super(zp, name, variable);
+      public RegisterZpByte(int zp) {
+         super(zp);
       }
 
       @Override
@@ -118,8 +97,8 @@ public class Registers {
    /** Two zero page addresses used as a register for a single word variable. */
    public static class RegisterZpWord extends  RegisterZp {
 
-      public RegisterZpWord(int zp, String name, Variable variable) {
-         super(zp, name, variable);
+      public RegisterZpWord(int zp) {
+         super(zp);
       }
 
       @Override
@@ -132,8 +111,8 @@ public class Registers {
    /** A zero page address used as a register for a boolean variable. */
    public static class RegisterZpBool extends  RegisterZp {
 
-      public RegisterZpBool(int zp, String name, Variable variable) {
-         super(zp, name, variable);
+      public RegisterZpBool(int zp) {
+         super(zp);
       }
 
       @Override
@@ -147,8 +126,8 @@ public class Registers {
    /** A zro page address pair used as a register containing a pointer to a byte. */
    public static class RegisterZpPointerByte extends  RegisterZp {
 
-      public RegisterZpPointerByte(int zp, String name, Variable variable) {
-         super(zp, name, variable);
+      public RegisterZpPointerByte(int zp) {
+         super(zp);
       }
 
       @Override

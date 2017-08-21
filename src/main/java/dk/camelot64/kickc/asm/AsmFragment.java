@@ -23,7 +23,9 @@ public class AsmFragment {
     */
    private Map<String, Value> bindings;
 
-   /** The scope containing the fragment. Used when referenginv symbols defined in other scopes. */
+   /**
+    * The scope containing the fragment. Used when referenginv symbols defined in other scopes.
+    */
    private ScopeRef scope;
 
    /**
@@ -227,9 +229,7 @@ public class AsmFragment {
       if (value instanceof VariableRef) {
          value = program.getScope().getVariable((VariableRef) value);
       }
-      if (value instanceof Variable) {
-         value = ((Variable) value).getAllocation();
-      } else if (value instanceof PointerDereferenceSimple) {
+      if (value instanceof PointerDereferenceSimple) {
          PointerDereferenceSimple deref = (PointerDereferenceSimple) value;
          return "_star_" + bind(deref.getPointer());
       } else if (value instanceof PointerDereferenceIndexed) {
@@ -237,14 +237,21 @@ public class AsmFragment {
          return bind(deref.getPointer()) + "_staridx_" + bind(deref.getIndex());
       }
 
-      // Find value if it is already bound
-      for (String name : bindings.keySet()) {
-         if (value.equals(bindings.get(name))) {
-            return name;
+      if (value instanceof Variable) {
+         Registers.Register register = ((Variable) value).getAllocation();
+
+         // Find value if it is already bound
+         for (String name : bindings.keySet()) {
+            Value bound = bindings.get(name);
+            if(bound instanceof Variable) {
+               Registers.Register boundRegister = ((Variable) bound).getAllocation();
+               if(boundRegister!=null && boundRegister.equals(register)) {
+                  return name;
+               }
+            }
          }
-      }
-      if (value instanceof Registers.Register) {
-         Registers.Register register = (Registers.Register) value;
+
+         // Create a new suitable name
          if (Registers.RegisterType.ZP_BYTE.equals(register.getType())) {
             String name = "zpby" + nextZpByteIdx++;
             bindings.put(name, value);
@@ -307,20 +314,16 @@ public class AsmFragment {
          throw new RuntimeException("Binding '" + name + "' not found in fragment " + signature + ".asm");
       }
       String bound;
-      if (boundValue instanceof Registers.Register) {
-         Registers.Register register = (Registers.Register) boundValue;
-         if (register instanceof Registers.RegisterZp) {
-            Registers.RegisterZp zpReg = (Registers.RegisterZp) register;
-            if(zpReg.getName()!=null) {
-               Variable variable = zpReg.getVariable();
-               Scope varScope = variable.getScope();
-               if(!varScope.getRef().equals(scope) && varScope.getRef().getFullName().length()>0) {
-                  bound = varScope.getFullName()+"."+zpReg.getName().replace('@', 'b').replace(':', '_').replace("#", "_");
-               }  else {
-                  bound = zpReg.getName().replace('@', 'b').replace(':', '_').replace("#", "_");
-               }
-            }  else {
-               bound = String.format("$%x", zpReg.getZp());
+      if (boundValue instanceof Variable) {
+         Variable boundVar = (Variable) boundValue;
+         Registers.Register register = boundVar.getAllocation();
+         if (register != null && register instanceof Registers.RegisterZp) {
+            Scope varScope = boundVar.getScope();
+            String asmName = boundVar.getAsmName() == null ? boundVar.getLocalName() : boundVar.getAsmName();
+            if (!varScope.getRef().equals(scope) && varScope.getRef().getFullName().length() > 0) {
+               bound = varScope.getFullName() + "." + asmName.replace('@', 'b').replace(':', '_').replace("#", "_");
+            } else {
+               bound = asmName.replace('@', 'b').replace(':', '_').replace("#", "_");
             }
          } else {
             throw new RuntimeException("Register Type not implemented " + register);

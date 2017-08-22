@@ -9,13 +9,11 @@ public class RegisterCombination {
    /** The registers allocated to each equivalence class. */
    private Map<LiveRangeEquivalenceClass, Registers.Register> allocation;
 
-
-
    public RegisterCombination() {
       this.allocation = new LinkedHashMap<>();
    }
 
-   void setRegister(LiveRangeEquivalenceClass equivalenceClass, Registers.Register register) {
+   public void setRegister(LiveRangeEquivalenceClass equivalenceClass, Registers.Register register) {
       allocation.put(equivalenceClass, register);
    }
 

@@ -56,9 +56,9 @@ public class Pass4CodeGeneration {
          ControlFlowBlock defaultSuccessor = getGraph().getDefaultSuccessor(block);
          if (defaultSuccessor != null) {
             if (defaultSuccessor.hasPhiBlock()) {
-               genBlockPhiTransition(asm, block, defaultSuccessor, defaultSuccessor.getPhiBlock());
+               genBlockPhiTransition(asm, block, defaultSuccessor, defaultSuccessor.getScope());
             }
-            asm.addInstruction("JMP", AsmAddressingMode.ABS, defaultSuccessor.getLabel().getLocalName().replace('@', 'b').replace(':', '_'));
+            asm.addInstruction("JMP", AsmAddressingMode.ABS, defaultSuccessor.getLabel().getLocalName().replace('@', 'b').replace(':', '_'), false);
          }
       }
       if (!ScopeRef.ROOT.equals(currentScope)) {
@@ -159,12 +159,12 @@ public class Pass4CodeGeneration {
             if (genCallPhiEntry) {
                ControlFlowBlock callSuccessor = getGraph().getCallSuccessor(block);
                if (callSuccessor != null && callSuccessor.hasPhiBlock()) {
-                  genBlockPhiTransition(asm, block, callSuccessor, call);
+                  genBlockPhiTransition(asm, block, callSuccessor, block.getScope());
                }
             }
-            asm.addInstruction("jsr", AsmAddressingMode.ABS, call.getProcedure().getFullName());
+            asm.addInstruction("jsr", AsmAddressingMode.ABS, call.getProcedure().getFullName(), false);
          } else if (statement instanceof StatementReturn) {
-            asm.addInstruction("rts", AsmAddressingMode.NON, null);
+            asm.addInstruction("rts", AsmAddressingMode.NON, null, false);
          } else {
             throw new RuntimeException("Statement not supported " + statement);
          }
@@ -208,14 +208,14 @@ public class Pass4CodeGeneration {
          });
          for (ControlFlowBlock predecessor : predecessors) {
             if (block.getLabel().equals(predecessor.getConditionalSuccessor())) {
-               genBlockPhiTransition(asm, predecessor, block, block.getPhiBlock());
-               asm.addInstruction("JMP", AsmAddressingMode.ABS, block.getLabel().getLocalName().replace('@', 'b').replace(':', '_'));
+               genBlockPhiTransition(asm, predecessor, block, block.getScope());
+               asm.addInstruction("JMP", AsmAddressingMode.ABS, block.getLabel().getLocalName().replace('@', 'b').replace(':', '_'), false);
             }
          }
       }
    }
 
-   private void genBlockPhiTransition(AsmProgram asm, ControlFlowBlock fromBlock, ControlFlowBlock toBlock, Statement scopeStatement) {
+   private void genBlockPhiTransition(AsmProgram asm, ControlFlowBlock fromBlock, ControlFlowBlock toBlock, ScopeRef scope) {
       Statement toFirstStatement = toBlock.getStatements().get(0);
       asm.startSegment(toFirstStatement.getIndex(), "[" + toFirstStatement.getIndex() + "]" + " phi from " + fromBlock.getLabel().getFullName() + " to " + toBlock.getLabel().getFullName());
       asm.addLabel((toBlock.getLabel().getLocalName() + "_from_" + fromBlock.getLabel().getLocalName()).replace('@', 'b').replace(':', '_'));
@@ -233,7 +233,7 @@ public class Pass4CodeGeneration {
             });
             for (StatementPhiBlock.PhiRValue phiRValue : phiRValues) {
                if (phiRValue.getPredecessor().equals(fromBlock.getLabel())) {
-                  genAsmMove(asm, phiVariable.getVariable(), phiRValue.getrValue(), scopeStatement);
+                  genAsmMove(asm, phiVariable.getVariable(), phiRValue.getrValue(), phiBlock, scope);
                   break;
                }
             }
@@ -250,12 +250,12 @@ public class Pass4CodeGeneration {
       }
    }
 
-   private void genAsmMove(AsmProgram asm, LValue lValue, RValue rValue, Statement statement) {
+   private void genAsmMove(AsmProgram asm, LValue lValue, RValue rValue, Statement statement, ScopeRef scope) {
       asm.startSegment(statement.getIndex(), "[" + statement.getIndex() + "] phi " + lValue.toString(program) + " = " + rValue.toString(program));
       if (isRegisterCopy(lValue, rValue)) {
          asm.getCurrentSegment().setFragment("register_copy");
       } else {
-         AsmFragment asmFragment = new AsmFragment(lValue, rValue, program, statement);
+         AsmFragment asmFragment = new AsmFragment(lValue, rValue, program, scope);
          asm.getCurrentSegment().setFragment(asmFragment.getSignature());
          asmFragment.generate(asm);
       }

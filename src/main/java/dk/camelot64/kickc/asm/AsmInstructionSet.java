@@ -11,15 +11,15 @@ public class AsmInstructionSet {
 
    private static AsmInstructionSet set = new AsmInstructionSet();
 
-   public static AsmInstructionType getInstructionType(String mnemonic, AsmAddressingMode mode, String parameter) {
+   public static AsmInstructionType getInstructionType(String mnemonic, AsmAddressingMode mode, String parameter, boolean isZp) {
       AsmInstructionType type = null;
-      if (AsmAddressingMode.ABS.equals(mode) && isZp(parameter)) {
+      if (AsmAddressingMode.ABS.equals(mode) && isZp) {
          type = set.getType(mnemonic, AsmAddressingMode.ZP);
       }
-      if (AsmAddressingMode.ABX.equals(mode) && isZp(parameter)) {
+      if (AsmAddressingMode.ABX.equals(mode) && isZp) {
          type = set.getType(mnemonic, AsmAddressingMode.ZPX);
       }
-      if (AsmAddressingMode.ABY.equals(mode) && isZp(parameter)) {
+      if (AsmAddressingMode.ABY.equals(mode) && isZp) {
          type = set.getType(mnemonic, AsmAddressingMode.ZPY);
       }
       if (type == null) {

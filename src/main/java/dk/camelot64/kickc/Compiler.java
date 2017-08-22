@@ -14,7 +14,6 @@ import java.util.List;
  */
 public class Compiler {
 
-
    public Program compile(final CharStream input) {
       CompileLog log = new CompileLog();
       try {
@@ -234,6 +233,9 @@ public class Compiler {
 
       // Attempt uplifting registers through a lot of combinations
       new Pass4RegisterUpliftCombinations(program).performUplift(10_000);
+
+      //program.getLog().setVerboseUplift(true);
+      //new Pass4RegisterUpliftStatic(program).performUplift();
 
       // Attempt uplifting registers one at a time to catch remaining potential not realized by combination search
       new Pass4RegisterUpliftRemains(program).performUplift();

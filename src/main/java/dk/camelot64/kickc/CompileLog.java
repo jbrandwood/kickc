@@ -3,7 +3,9 @@ package dk.camelot64.kickc;
 /**  Log of actions & results during compile*/
 public class CompileLog {
 
-   StringBuilder log;
+   private StringBuilder log;
+
+   private boolean verboseUplift;
 
    public CompileLog() {
       this.log = new StringBuilder();
@@ -17,6 +19,14 @@ public class CompileLog {
 
    public StringBuilder getLog() {
       return log;
+   }
+
+   public boolean isVerboseUplift() {
+      return verboseUplift;
+   }
+
+   public void setVerboseUplift(boolean verboseUplift) {
+      this.verboseUplift = verboseUplift;
    }
 
    @Override

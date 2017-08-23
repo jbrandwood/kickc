@@ -44,6 +44,10 @@ public class TestCompilationOutput extends TestCase {
       compileAndCompare("bresenham");
    }
 
+   public void testBresenhamArr() throws IOException, URISyntaxException {
+      compileAndCompare("bresenhamarr");
+   }
+
    public void testMinus() throws IOException, URISyntaxException {
       compileAndCompare("minus");
    }

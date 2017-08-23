@@ -10,7 +10,6 @@ import java.util.*;
  */
 public class Pass4CodeGeneration {
 
-
    private Program program;
 
    public Pass4CodeGeneration(Program program) {
@@ -215,6 +214,81 @@ public class Pass4CodeGeneration {
       }
    }
 
+
+   /** Keeps track of the phi transitions into blocks during code generation.
+    * Used to ensure that duplicate transitions are only code generated once.
+    * Maps to-block label to the transition information*/
+   private Map<LabelRef, PhiTransitions> transitions;
+
+   /**
+    * Keeps track of the phi transitions into a single block during code generation.
+    * Used to ensure that duplicate transitions are only code generated once.
+    */
+   public static class PhiTransitions {
+
+      /** Label of the to-block. */
+      private ControlFlowBlock toBlock;
+
+      /** The phi-block of the to-block. */
+      private StatementPhiBlock phiBlock;
+
+      public PhiTransition getTransition(LabelRef fromBlock) {
+         return null;
+      }
+
+
+      /**
+       * A single transition into a to-block.
+       * The transition contains the assignments necessary to enter the to-block from specific from-block(s).
+       * The transition may be shared between multiple from-blocks, if the assignments are identical.
+       */
+      public class PhiTransition {
+
+         private List<ControlFlowBlock> fromBlocks;
+
+         private boolean generated;
+
+         public List<PhiAssignment> getAssignments() {
+            return null;
+         }
+
+         public boolean isGenerated() {
+            return generated;
+         }
+
+         public void setGenerated(boolean generated) {
+            this.generated = generated;
+         }
+
+         /**
+          * Assignment of a single value during a phi transition
+          */
+         public class PhiAssignment {
+
+            private StatementPhiBlock.PhiVariable phiVariable;
+
+            private StatementPhiBlock.PhiRValue phiRValue;
+
+         }
+
+
+      }
+
+   }
+
+
+
+   /**
+    * Generate a phi block transition. The transition performs all necessary assignment operations when moving from one block to another.
+    * The transition can be inserted either at the start of the to-block (used for conditional jumps)
+    * or at the end of the from-block ( used at default block transitions and before JMP/JSR)
+    * @param asm The ASP program to generate the transition into.
+    * @param fromBlock The from-block
+    * @param toBlock The to-block
+    * @param scope The scope where the ASM code is being inserted. Used to ensure that labels inserted in the code reference the right variables.
+    *              If the transition code is inserted in the to-block, this is the scope of the to-block.
+    *              If the transition code is inserted in the from-block this is the scope of the from-block.
+    */
    private void genBlockPhiTransition(AsmProgram asm, ControlFlowBlock fromBlock, ControlFlowBlock toBlock, ScopeRef scope) {
       Statement toFirstStatement = toBlock.getStatements().get(0);
       asm.startSegment(toFirstStatement.getIndex(), "[" + toFirstStatement.getIndex() + "]" + " phi from " + fromBlock.getLabel().getFullName() + " to " + toBlock.getLabel().getFullName());
@@ -250,6 +324,14 @@ public class Pass4CodeGeneration {
       }
    }
 
+   /**
+    * Generate ASM assigning a value (rValue) to a variable (lValue).
+    * @param asm The ASM program to generate into
+    * @param lValue The lValue that should be assigned the value
+    * @param rValue The rValue to assign to the lValue.
+    * @param statement The ICL statement that is the cause of the assignment.
+    * @param scope The scope where the ASM code is being inserted. Used to ensure that labels inserted in the code reference the right variables.
+    */
    private void genAsmMove(AsmProgram asm, LValue lValue, RValue rValue, Statement statement, ScopeRef scope) {
       asm.startSegment(statement.getIndex(), "[" + statement.getIndex() + "] phi " + lValue.toString(program) + " = " + rValue.toString(program));
       if (isRegisterCopy(lValue, rValue)) {

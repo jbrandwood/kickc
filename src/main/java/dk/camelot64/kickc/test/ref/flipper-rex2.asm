@@ -1,8 +1,6 @@
   jsr main
 main: {
     jsr prepare
-    ldx #$19
-    jmp b3
   b3_from_b11:
     ldx #$19
   b3:

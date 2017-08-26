@@ -12,8 +12,9 @@ main: {
     bcc b4
     beq b4
     iny
+  b1_from_b8:
     jmp b1
   b4:
     dey
-    jmp b1
+    jmp b1_from_b8
 }

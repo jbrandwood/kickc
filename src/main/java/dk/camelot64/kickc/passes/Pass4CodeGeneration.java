@@ -55,9 +55,19 @@ public class Pass4CodeGeneration {
          ControlFlowBlock defaultSuccessor = getGraph().getDefaultSuccessor(block);
          if (defaultSuccessor != null) {
             if (defaultSuccessor.hasPhiBlock()) {
-               genBlockPhiTransition(asm, block, defaultSuccessor, defaultSuccessor.getScope());
+               PhiTransitions.PhiTransition transition = getTransitions(defaultSuccessor).getTransition(block);
+               if (!transition.isGenerated()) {
+                  genBlockPhiTransition(asm, block, defaultSuccessor, defaultSuccessor.getScope());
+                  String label = defaultSuccessor.getLabel().getLocalName().replace('@', 'b').replace(':', '_');
+                  asm.addInstruction("JMP", AsmAddressingMode.ABS, label, false);
+               } else {
+                  String label = (defaultSuccessor.getLabel().getLocalName() + "_from_" + block.getLabel().getLocalName()).replace('@', 'b').replace(':', '_');
+                  asm.addInstruction("JMP", AsmAddressingMode.ABS, label, false);
+               }
+            } else {
+               String label = defaultSuccessor.getLabel().getLocalName().replace('@', 'b').replace(':', '_');
+               asm.addInstruction("JMP", AsmAddressingMode.ABS, label, false);
             }
-            asm.addInstruction("JMP", AsmAddressingMode.ABS, defaultSuccessor.getLabel().getLocalName().replace('@', 'b').replace(':', '_'), false);
          }
       }
       if (!ScopeRef.ROOT.equals(currentScope)) {
@@ -159,6 +169,10 @@ public class Pass4CodeGeneration {
             if (genCallPhiEntry) {
                ControlFlowBlock callSuccessor = getGraph().getCallSuccessor(block);
                if (callSuccessor != null && callSuccessor.hasPhiBlock()) {
+                  PhiTransitions.PhiTransition transition = getTransitions(callSuccessor).getTransition(block);
+                  if (transition.isGenerated()) {
+                     throw new RuntimeException("Error! JSR transition already generated. Must modify PhiTransitions code to ensure this does not happen.");
+                  }
                   genBlockPhiTransition(asm, block, callSuccessor, block.getScope());
                }
             }
@@ -246,6 +260,8 @@ public class Pass4CodeGeneration {
             genAsmMove(asm, assignment.getVariable(), assignment.getrValue(), assignment.getPhiBlock(), scope);
          }
          transition.setGenerated(true);
+      } else {
+         program.getLog().append("Already generated transition from "+fromBlock.getLabel()+" to "+toBlock.getLabel()+ " - not generating it again!");
       }
    }
 
@@ -315,13 +331,14 @@ public class Pass4CodeGeneration {
       /**
        * Find the transition from a specific fromBlock.
        * If another transition already has the same assignments it is reused. If not a new transition is created.
+       *
        * @param fromBlock
        * @return
        */
       private PhiTransition findTransition(ControlFlowBlock fromBlock) {
          PhiTransition transition = new PhiTransition(fromBlock);
          for (PhiTransition candidate : transitions.values()) {
-            if(candidate.equalAssignments(transition)) {
+            if (candidate.equalAssignments(transition)) {
                candidate.addFromBlock(fromBlock);
                return candidate;
             }
@@ -409,21 +426,35 @@ public class Pass4CodeGeneration {
 
          /**
           * Determines if another transition has the exact same assignments as this block
+          *
           * @param other The other transition to examine
           * @return true if the assignments are identical
           */
          public boolean equalAssignments(PhiTransition other) {
             List<PhiAssignment> otherAssignments = other.getAssignments();
-            if(assignments.size()!=otherAssignments.size()) {
+            if (assignments.size() != otherAssignments.size()) {
                return false;
             }
             for (int i = 0; i < assignments.size(); i++) {
                PhiAssignment assignment = assignments.get(i);
                PhiAssignment otherAssignment = otherAssignments.get(i);
-               if(!assignment.getVariable().equals(otherAssignment.getVariable())) {
+               ProgramScope scope = program.getScope();
+               if (assignment.getVariable() instanceof VariableRef && otherAssignment.getVariable() instanceof VariableRef) {
+                  Variable var = scope.getVariable((VariableRef) assignment.getVariable());
+                  Variable otherVar = scope.getVariable((VariableRef) otherAssignment.getVariable());
+                  if (!var.getAllocation().equals(otherVar.getAllocation())) {
+                     return false;
+                  }
+               } else if (!assignment.getVariable().equals(otherAssignment.getVariable())) {
                   return false;
                }
-               if(!assignment.getrValue().equals(otherAssignment.getrValue())) {
+               if (assignment.getrValue() instanceof VariableRef && otherAssignment.getrValue() instanceof VariableRef) {
+                  Variable var = scope.getVariable((VariableRef) assignment.getrValue());
+                  Variable otherVar = scope.getVariable((VariableRef) otherAssignment.getrValue());
+                  if (!var.getAllocation().equals(otherVar.getAllocation())) {
+                     return false;
+                  }
+               } else if (!assignment.getrValue().equals(otherAssignment.getrValue())) {
                   return false;
                }
             }
@@ -465,7 +496,6 @@ public class Pass4CodeGeneration {
       }
 
    }
-
 
    private Registers.Register getRegister(RValue rValue) {
       if (rValue instanceof VariableRef) {

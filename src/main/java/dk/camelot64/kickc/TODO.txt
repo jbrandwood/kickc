@@ -30,6 +30,7 @@ Assembler Improvements
 - Make generated ASM human readable.
   + Use hex-numbers
   - add labels for constants and zp-variables.
+- Eliminate chained JMP's (replace by direct JMP) - example: loopsplit.asm
 - Better ASM static value analysis
   - Not just constants - but also other values (value of var, value of var1[var2], value of var+4 etc.)
   - Also analyze back/forward through block entry/exit
@@ -48,8 +49,6 @@ Known Problems
 Register Allocation
 - Allow user to limit number of combinations tested
 - Safe-Copy based SSA deconstruction
-  - Reuse phi-transitions that are identical
-  - Optimize phi transitions by ensuring that identical phi-transitions with regards to register allocation are collected into a single transition.
   - Optimize by finding optimal sequence for multiple phi assignments in entry-segments.
   - Avoid clobbering alive vars
 - Maybe support several fragments for the same operation with different cost and clobbering profiles.
@@ -58,6 +57,8 @@ Register Allocation
   - Improve combination testing by finding live range overlaps and not creating combinations that would create an overlap conflict.
   - Combinations should be created in a tree-structure instead of just doing all combinations
   - Example: For equivalence classes a, b, c if a&c have overlapping live ranges they can never have the same register. Therefore the combination iterator should not create combinations where C has the same register as a.
++ Reuse phi-transitions that are identical
++ Optimize phi transitions by ensuring that identical phi-transitions with regards to register allocation are collected into a single transition.
 + Limit number of combinations tested
 + Equivalences not tested through combinaitons should be tested individually afterwards.
 + Matrix Phi operation (instead of separate statements)

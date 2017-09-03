@@ -135,8 +135,8 @@ public class Compiler {
    public void pass2OptimizeSSA(Program program) {
       List<Pass2SsaOptimization> optimizations = new ArrayList<>();
       optimizations.add(new Pass2CullEmptyBlocks(program));
-      optimizations.add(new Pass2ConstantPropagation(program));
-      optimizations.add(new Pass2ConstantAdditionElimination(program));
+      //optimizations.add(new Pass2ConstantPropagation(program));
+      //optimizations.add(new Pass2ConstantAdditionElimination(program));
       optimizations.add(new Pass2UnaryNotSimplification(program));
       optimizations.add(new Pass2AliasElimination(program));
       optimizations.add(new Pass2RedundantPhiElimination(program));
@@ -170,23 +170,33 @@ public class Compiler {
       program.getLog().append(program.getGraph().toString(program));
       pass2AssertSSA(program);
 
+      new Pass3AddNopBeforeCallOns(program).generate();
+      new Pass3StatementIndices(program).generateStatementIndices();
+
+      new Pass3CallGraphAnalysis(program).findCallGraph();
+      program.getLog().append("CALL GRAPH");
+      program.getLog().append(program.getCallGraph().toString());
+
+      program.getLog().setVerboseLiveRanges(true);
+
       new Pass3LiveRangesAnalysis(program).findLiveRanges();
-      program.getLog().append("CONTROL FLOW GRAPH - LIVE RANGES");
+      program.getLog().append("CONTROL FLOW GRAPH - LIVE RANGES FOUND");
       program.getLog().append(program.getGraph().toString(program));
       pass2AssertSSA(program);
+
+      //program.getLog().setVerboseLiveRanges(false);
 
       // Phi mem coalesce removes as many variables introduced by phi lifting as possible - as long as their live ranges do not overlap
       new Pass3PhiMemCoalesce(program).optimize();
       new Pass2CullEmptyBlocks(program).optimize();
       new Pass3BlockSequencePlanner(program).plan();
+      new Pass3AddNopBeforeCallOns(program).generate();
+      new Pass3StatementIndices(program).generateStatementIndices();
+      new Pass3CallGraphAnalysis(program).findCallGraph();
       new Pass3LiveRangesAnalysis(program).findLiveRanges();
       program.getLog().append("CONTROL FLOW GRAPH - PHI MEM COALESCED");
       program.getLog().append(program.getGraph().toString(program));
       pass2AssertSSA(program);
-
-      new Pass3CallGraphAnalysis(program).findCallGraph();
-      program.getLog().append("CALL GRAPH");
-      program.getLog().append(program.getCallGraph().toString());
 
       new Pass3DominatorsAnalysis(program).findDominators();
       program.getLog().append("DOMINATORS");
@@ -232,13 +242,13 @@ public class Compiler {
       program.getLog().append(program.getRegisterUpliftProgram().toString((program.getVariableRegisterWeights())));
 
       // Attempt uplifting registers through a lot of combinations
+      program.getLog().setVerboseUplift(true);
       new Pass4RegisterUpliftCombinations(program).performUplift(10_000);
 
-      //program.getLog().setVerboseUplift(true);
       //new Pass4RegisterUpliftStatic(program).performUplift();
 
       // Attempt uplifting registers one at a time to catch remaining potential not realized by combination search
-      new Pass4RegisterUpliftRemains(program).performUplift();
+      new Pass4RegisterUpliftRemains(program).performUplift(10_000);
 
       // Final register coalesce and finalization
       new Pass4ZeroPageCoalesce(program).allocate();

@@ -67,6 +67,12 @@ public class StatementPhiBlock extends StatementBase {
       StringBuilder s = new StringBuilder();
       List<PhiVariable> variables = new ArrayList<>(phiVariables);
       Collections.reverse(variables);
+      if(phiVariables.size()==0) {
+         s.append(super.idxString());
+         s.append("phi()");
+         s.append(super.aliveString(program));
+         s.append("\n  ");
+      }
       for (PhiVariable phiVariable : variables) {
          s.append(super.idxString());
          s.append(phiVariable.getVariable().toString(program));

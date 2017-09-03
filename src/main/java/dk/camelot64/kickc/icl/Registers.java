@@ -54,7 +54,7 @@ public class Registers {
 
       @Override
       public String toString() {
-         return "zp "+getType().toString()+":"+zp;
+         return "zp " + getType().toString() + ":" + zp;
       }
 
       @Override
@@ -64,8 +64,12 @@ public class Registers {
 
       @Override
       public boolean equals(Object o) {
-         if (this == o) return true;
-         if (o == null || getClass() != o.getClass()) return false;
+         if (this == o) {
+            return true;
+         }
+         if (o == null || getClass() != o.getClass()) {
+            return false;
+         }
 
          RegisterZp that = (RegisterZp) o;
 
@@ -88,14 +92,14 @@ public class Registers {
 
       @Override
       public RegisterType getType() {
-         return  RegisterType.ZP_BYTE;
+         return RegisterType.ZP_BYTE;
       }
 
 
    }
 
    /** Two zero page addresses used as a register for a single word variable. */
-   public static class RegisterZpWord extends  RegisterZp {
+   public static class RegisterZpWord extends RegisterZp {
 
       public RegisterZpWord(int zp) {
          super(zp);
@@ -103,13 +107,13 @@ public class Registers {
 
       @Override
       public RegisterType getType() {
-         return  RegisterType.ZP_WORD;
+         return RegisterType.ZP_WORD;
       }
 
    }
 
    /** A zero page address used as a register for a boolean variable. */
-   public static class RegisterZpBool extends  RegisterZp {
+   public static class RegisterZpBool extends RegisterZp {
 
       public RegisterZpBool(int zp) {
          super(zp);
@@ -117,14 +121,14 @@ public class Registers {
 
       @Override
       public RegisterType getType() {
-         return  RegisterType.ZP_BOOL;
+         return RegisterType.ZP_BOOL;
       }
 
 
    }
 
    /** A zro page address pair used as a register containing a pointer to a byte. */
-   public static class RegisterZpPointerByte extends  RegisterZp {
+   public static class RegisterZpPointerByte extends RegisterZp {
 
       public RegisterZpPointerByte(int zp) {
          super(zp);
@@ -137,18 +141,48 @@ public class Registers {
 
    }
 
-
-
-   /** The X register. */
-   public static class RegisterXByte implements Register {
+   /** A CPU byte register. */
+   public static abstract class RegisterCpuByte implements Register {
       @Override
-      public RegisterType getType() {
-         return RegisterType.REG_X_BYTE;
-      }
+      public abstract RegisterType getType();
 
       @Override
       public boolean isZp() {
          return false;
+      }
+
+      @Override
+      public abstract String toString();
+
+      @Override
+      public boolean equals(Object obj) {
+         if (this == obj) {
+            return true;
+         }
+         if (obj == null || getClass() != obj.getClass()) {
+            return false;
+         }
+         return true;
+      }
+
+      @Override
+      public int hashCode() {
+         return getType().hashCode();
+      }
+
+      @Override
+      public String toString(Program program) {
+         return toString();
+      }
+
+   }
+
+
+   /** The X register. */
+   public static class RegisterXByte extends RegisterCpuByte {
+      @Override
+      public RegisterType getType() {
+         return RegisterType.REG_X_BYTE;
       }
 
       @Override
@@ -156,30 +190,13 @@ public class Registers {
          return "reg byte x";
       }
 
-      @Override
-      public boolean equals(Object obj) {
-         if (this == obj) return true;
-         if (obj == null || getClass() != obj.getClass()) return false;
-         return true;
-      }
-
-      @Override
-      public String toString(Program program) {
-         return toString();
-      }
-
    }
 
    /** The Y register. */
-   public static class RegisterYByte implements Register {
+   public static class RegisterYByte extends RegisterCpuByte {
       @Override
       public RegisterType getType() {
          return RegisterType.REG_Y_BYTE;
-      }
-
-      @Override
-      public boolean isZp() {
-         return false;
       }
 
       @Override
@@ -187,30 +204,13 @@ public class Registers {
          return "reg byte y";
       }
 
-      @Override
-      public boolean equals(Object obj) {
-         if (this == obj) return true;
-         if (obj == null || getClass() != obj.getClass()) return false;
-         return true;
-      }
-
-      @Override
-      public String toString(Program program) {
-         return toString();
-      }
-
    }
 
-   /** The A register. */
-   public static class RegisterAByte implements Register {
+   /** The Y register. */
+   public static class RegisterAByte extends RegisterCpuByte {
       @Override
       public RegisterType getType() {
          return RegisterType.REG_A_BYTE;
-      }
-
-      @Override
-      public boolean isZp() {
-         return false;
       }
 
       @Override
@@ -218,30 +218,13 @@ public class Registers {
          return "reg byte a";
       }
 
-      @Override
-      public boolean equals(Object obj) {
-         if (this == obj) return true;
-         if (obj == null || getClass() != obj.getClass()) return false;
-         return true;
-      }
-
-      @Override
-      public String toString(Program program) {
-         return toString();
-      }
-
    }
 
    /** The special ALU register. */
-   public static class RegisterALUByte implements Register {
+   public static class RegisterALUByte extends RegisterCpuByte {
       @Override
       public RegisterType getType() {
          return RegisterType.REG_ALU_BYTE;
-      }
-
-      @Override
-      public boolean isZp() {
-         return false;
       }
 
       @Override
@@ -249,17 +232,6 @@ public class Registers {
          return "reg byte alu";
       }
 
-      @Override
-      public boolean equals(Object obj) {
-         if (this == obj) return true;
-         if (obj == null || getClass() != obj.getClass()) return false;
-         return true;
-      }
-
-      @Override
-      public String toString(Program program) {
-         return toString();
-      }
-
    }
+
 }

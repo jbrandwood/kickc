@@ -24,6 +24,10 @@ public class TestCompilationOutput extends TestCase {
       helper = new ReferenceHelper("dk/camelot64/kickc/test/ref/");
    }
 
+   public void testLiveRange() throws IOException, URISyntaxException {
+      compileAndCompare("liverange");
+   }
+
    public void testZpParamMin() throws IOException, URISyntaxException {
       compileAndCompare("zpparammin");
    }

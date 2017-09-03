@@ -91,7 +91,7 @@ public class Pass4CodeGeneration {
             Registers.RegisterZp registerZp = (Registers.RegisterZp) register;
             String asmName = scopeVar.getAsmName();
             if (asmName != null && !added.contains(asmName)) {
-               asm.addLabelDecl(asmName, registerZp.getZp());
+               asm.addLabelDecl(asmName.replace("#","_").replace("$","_"), registerZp.getZp());
                added.add(asmName);
             }
          }
@@ -254,7 +254,6 @@ public class Pass4CodeGeneration {
          for (ControlFlowBlock fBlock : transition.getFromBlocks()) {
             asm.addLabel((toBlock.getLabel().getLocalName() + "_from_" + fBlock.getLabel().getLocalName()).replace('@', 'b').replace(':', '_'));
          }
-
          List<PhiTransitions.PhiTransition.PhiAssignment> assignments = transition.getAssignments();
          for (PhiTransitions.PhiTransition.PhiAssignment assignment : assignments) {
             genAsmMove(asm, assignment.getVariable(), assignment.getrValue(), assignment.getPhiBlock(), scope);
@@ -337,10 +336,14 @@ public class Pass4CodeGeneration {
        */
       private PhiTransition findTransition(ControlFlowBlock fromBlock) {
          PhiTransition transition = new PhiTransition(fromBlock);
-         for (PhiTransition candidate : transitions.values()) {
-            if (candidate.equalAssignments(transition)) {
-               candidate.addFromBlock(fromBlock);
-               return candidate;
+         boolean isCallTransition = toBlock.getLabel().equals(fromBlock.getCallSuccessor());
+         if(!isCallTransition) {
+            // If the transition is not a call - then attempt to join with other equal transition(s)
+            for (PhiTransition candidate : transitions.values()) {
+               if (candidate.equalAssignments(transition)) {
+                  candidate.addFromBlock(fromBlock);
+                  return candidate;
+               }
             }
          }
          return transition;

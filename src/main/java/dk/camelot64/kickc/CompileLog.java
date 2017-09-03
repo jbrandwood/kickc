@@ -5,7 +5,11 @@ public class CompileLog {
 
    private StringBuilder log;
 
+   /** Should register uplift analysis be verbose. */
    private boolean verboseUplift;
+
+   /** Should live range analysis be verbose. */
+   private boolean verboseLiveRanges;
 
    public CompileLog() {
       this.log = new StringBuilder();
@@ -27,6 +31,14 @@ public class CompileLog {
 
    public void setVerboseUplift(boolean verboseUplift) {
       this.verboseUplift = verboseUplift;
+   }
+
+   public boolean isVerboseLiveRanges() {
+      return verboseLiveRanges;
+   }
+
+   public void setVerboseLiveRanges(boolean verboseLiveRanges) {
+      this.verboseLiveRanges = verboseLiveRanges;
    }
 
    @Override

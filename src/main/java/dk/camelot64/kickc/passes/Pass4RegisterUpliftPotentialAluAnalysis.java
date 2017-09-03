@@ -4,6 +4,8 @@ import dk.camelot64.kickc.icl.*;
 
 /***
  * Find equivalence classes that could be assigned to the special ALU register.
+ *
+ * Sets the potential inside the {@link RegisterPotentials} for al variables that has the potential.
  */
 public class Pass4RegisterUpliftPotentialAluAnalysis extends Pass2Base {
 
@@ -39,17 +41,17 @@ public class Pass4RegisterUpliftPotentialAluAnalysis extends Pass2Base {
                      // ALU applicable if the variable is the second lValue and the first lValue is non-null
                      if (assignment.getrValue2().equals(potentialAluVar) && assignment.getrValue1() != null) {
                         // The variable has ALU potential
-                        hasAluPotential(registerPotentials, potentialAluVar);
+                        setHasAluPotential(registerPotentials, potentialAluVar);
                      }
                   } else if (assignment.getOperator()!=null && "+".equals(assignment.getOperator().getOperator())) {
                      // ALU applicable if the variable is one of the two values
                      if (assignment.getrValue2().equals(potentialAluVar) && assignment.getrValue1() != null) {
                         // The variable has ALU potential
-                        hasAluPotential(registerPotentials, potentialAluVar);
+                        setHasAluPotential(registerPotentials, potentialAluVar);
                      }
                      if (assignment.getrValue1().equals(potentialAluVar) && assignment.getrValue2() != null) {
                         // The variable has ALU potential
-                        hasAluPotential(registerPotentials, potentialAluVar);
+                        setHasAluPotential(registerPotentials, potentialAluVar);
                      }
                   }
                }
@@ -85,7 +87,7 @@ public class Pass4RegisterUpliftPotentialAluAnalysis extends Pass2Base {
       return potentialAluVar;
    }
 
-   private void hasAluPotential(RegisterPotentials registerPotentials, VariableRef ref) {
+   private void setHasAluPotential(RegisterPotentials registerPotentials, VariableRef ref) {
       LiveRangeEquivalenceClass potentialAluEquivalenceClass = liveRangeEquivalenceClassSet.getEquivalenceClass(ref);
       registerPotentials.addPotentialRegister(potentialAluEquivalenceClass, Registers.getRegisterALU());
       getLog().append("Equivalence Class "+potentialAluEquivalenceClass+" has ALU potential.");

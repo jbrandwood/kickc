@@ -25,7 +25,9 @@ public class CallGraph {
     */
    public CallBlock getOrCreateCallBlock(LabelRef scopeLabel) {
       CallBlock callBlock = getCallBlock(scopeLabel);
-      if (callBlock != null) return callBlock;
+      if (callBlock != null) {
+         return callBlock;
+      }
       // Not found - create it
       CallBlock newCallBlock = new CallBlock(scopeLabel);
       callBlocks.add(newCallBlock);
@@ -73,7 +75,7 @@ public class CallGraph {
    public Collection<LabelRef> getCallingBlocks(LabelRef scopeLabel) {
       ArrayList<LabelRef> callingBlocks = new ArrayList<>();
       for (CallBlock callBlock : callBlocks) {
-         if(callBlock.getCalledBlocks().contains(scopeLabel)) {
+         if (callBlock.getCalledBlocks().contains(scopeLabel)) {
             callingBlocks.add(callBlock.getScopeLabel());
          }
       }
@@ -87,6 +89,23 @@ public class CallGraph {
          out.append(callBlock.toString()).append("\n");
       }
       return out.toString();
+   }
+
+   /**
+    * Get all calls of a specific procedure
+    * @param label The label of the procedure
+    * @return All calls
+    */
+   public Collection<CallBlock.Call> getCallers(LabelRef label) {
+      Collection<CallBlock.Call> callers = new ArrayList<>();
+      for (CallBlock callBlock : callBlocks) {
+         for (CallBlock.Call call : callBlock.getCalls()) {
+            if (call.getProcedure().equals(label)) {
+               callers.add(call);
+            }
+         }
+      }
+      return callers;
    }
 
    /**
@@ -153,7 +172,7 @@ public class CallGraph {
       public Collection<Call> getCalls(LabelRef scope) {
          ArrayList<Call> callsToScope = new ArrayList<>();
          for (Call call : calls) {
-            if(call.getProcedure().equals(scope)) {
+            if (call.getProcedure().equals(scope)) {
                callsToScope.add(call);
             }
          }
@@ -191,7 +210,7 @@ public class CallGraph {
          @Override
          public String toString() {
             StringBuilder out = new StringBuilder();
-            if(callStatementIdx!=null) {
+            if (callStatementIdx != null) {
                out.append(callStatementIdx).append(":");
             }
             out.append(procedure);

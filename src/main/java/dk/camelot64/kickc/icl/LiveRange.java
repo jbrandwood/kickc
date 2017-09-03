@@ -24,7 +24,7 @@ public class LiveRange {
       private int firstStatementIdx;
 
       /**
-       * The statement index of the las statement where the variable alive when the statement ends.
+       * The statement index of the last statement where the variable alive when the statement ends.
        * <ul><li>
        * If the statement is in the middle of a block:
        * The variable is always used in the following statement for assignment or calculation - but never after.
@@ -75,7 +75,7 @@ public class LiveRange {
    private Integer getIndex(Statement statement) {
       Integer index = statement.getIndex();
       if (index == null) {
-         throw new RuntimeException("Statement index not defined! Live Ranges only work after defining statement indexes (Pass3LiveRangesAnalysis.generateStatementIndexes).");
+         throw new RuntimeException("Statement index not defined! Live Ranges only work after defining statement indexes (Pass3LiveRangesAnalysis.generateStatementIndices).");
       }
       return index;
    }

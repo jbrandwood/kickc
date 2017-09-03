@@ -14,6 +14,20 @@ public class Pass4RegisterUpliftStatic extends Pass2Base {
    public void performUplift() {
 
       RegisterCombination combination = new RegisterCombination();
+      /*
+      // Combination with a live range overlap issue in liverange.kc
+      setRegister(combination, "i#0", Registers.getRegisterX());
+      setRegister(combination, "i#1", Registers.getRegisterX());
+      setRegister(combination, "i#11", Registers.getRegisterX());
+      setRegister(combination, "main::a#0", Registers.getRegisterA());
+      setRegister(combination, "main::a#1", Registers.getRegisterA());
+      setRegister(combination, "main::a#2", Registers.getRegisterA());
+      setRegister(combination, "main::$0", Registers.getRegisterA());
+      setRegister(combination, "main::$2", Registers.getRegisterA());
+      setRegister(combination, "inc::return#0", Registers.getRegisterA());
+      */
+
+      /*
       setRegister(combination, "cnt#12", Registers.getRegisterX());
       setRegister(combination, "cnt2#11", Registers.getRegisterY());
       setRegister(combination, "cnt3#11", new Registers.RegisterZpByte(4));
@@ -21,8 +35,9 @@ public class Pass4RegisterUpliftStatic extends Pass2Base {
       setRegister(combination, "main::$0", Registers.getRegisterA());
       setRegister(combination, "main::$1", Registers.getRegisterA());
       setRegister(combination, "inccnt::return#0", Registers.getRegisterA());
+      */
 
-      boolean success = Pass4RegisterUpliftCombinations.generateAsm(
+      boolean success = Pass4RegisterUpliftCombinations.generateCombinationAsm(
             combination,
             getProgram(),
             new HashSet<String>(),
@@ -38,6 +53,7 @@ public class Pass4RegisterUpliftStatic extends Pass2Base {
             msg.append(" allocation: ").append(combination.toString());
             getLog().append(msg.toString());
          }
+         combination.store(getProgram().getLiveRangeEquivalenceClassSet());
       } else {
          throw new RuntimeException("Static uplift problem.");
       }
@@ -51,6 +67,5 @@ public class Pass4RegisterUpliftStatic extends Pass2Base {
       LiveRangeEquivalenceClass equivalenceClass = equivalenceClassSet.getEquivalenceClass(variableRef);
       combination.setRegister(equivalenceClass, register);
    }
-
 
 }

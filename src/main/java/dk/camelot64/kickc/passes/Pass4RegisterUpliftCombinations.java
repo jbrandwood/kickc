@@ -9,7 +9,7 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 
-/*** Find the variable equivalence classes to attempt to uplift in each scope */
+/*** Attempt to uplift live range equivalence classes to registers (instead of ZP) in each scope */
 public class Pass4RegisterUpliftCombinations extends Pass2Base {
 
    public Pass4RegisterUpliftCombinations(Program program) {
@@ -21,42 +21,13 @@ public class Pass4RegisterUpliftCombinations extends Pass2Base {
       Set<String> unknownFragments = new LinkedHashSet<>();
       List<RegisterUpliftScope> registerUpliftScopes = getProgram().getRegisterUpliftProgram().getRegisterUpliftScopes();
       for (RegisterUpliftScope upliftScope : registerUpliftScopes) {
-         int bestScore = Integer.MAX_VALUE;
-         RegisterCombination bestCombination = null;
-
          RegisterCombinationIterator combinationIterator = upliftScope.getCombinationIterator(getProgram().getRegisterPotentials());
-         int countCombinations = 0;
-         while (combinationIterator.hasNext() && countCombinations < maxCombinations) {
-            countCombinations++;
-            if (countCombinations % 10000 == 0) {
-               getLog().append("Uplift attempts [" + upliftScope.getScopeRef() + "] " + countCombinations + "/" + combinationIterator.getNumIterations() + " (limiting to " + maxCombinations + ")");
-            }
-            RegisterCombination combination = combinationIterator.next();
-            if (!generateAsm(combination, getProgram(), unknownFragments, upliftScope)) {
-               continue;
-            }
-            // If no clobber - Find value of the resulting allocation
-            int combinationScore = getAsmScore(getProgram());
-            if (getLog().isVerboseUplift()) {
-               StringBuilder msg = new StringBuilder();
-               msg.append("Uplift attempt [" + upliftScope.getScopeRef() + "] ");
-               msg.append(combinationScore);
-               msg.append(" allocation: ").append(combination.toString());
-               getLog().append(msg.toString());
-            }
-            if (combinationScore < bestScore) {
-               bestScore = combinationScore;
-               bestCombination = combination;
-            }
-         }
-         if (bestCombination != null) {
-            // Save the best combination in the equivalence class
-            bestCombination.store(getProgram().getLiveRangeEquivalenceClassSet());
-            getLog().append("Uplifting [" + upliftScope.getScopeRef() + "] best " + bestScore + " combination " + bestCombination.toString());
-         }
-         if (combinationIterator.hasNext()) {
-            getLog().append("Limited combination testing to " + countCombinations + " combinations of " + combinationIterator.getNumIterations() + " possible.");
-         }
+         chooseBestUpliftCombination(
+               combinationIterator,
+               maxCombinations,
+               unknownFragments,
+               upliftScope.getScopeRef(),
+               getProgram());
       }
 
       if (unknownFragments.size() > 0) {
@@ -65,17 +36,68 @@ public class Pass4RegisterUpliftCombinations extends Pass2Base {
             getLog().append("  " + unknownFragment);
          }
       }
+   }
 
-
+   /**
+    * Iterate combinations and choose the combination that provides the best ASM score.
+    * Stores the best combination directly in the {@link LiveRangeEquivalenceClassSet}.
+    *
+    * @param combinationIterator The combination iterator used for supplying different register allocations to test
+    * @param maxCombinations The maximal number of combinations to test. It the iterator has more combinations he rest is skipped (and a message logged)
+    * @param unknownFragments Receives any unknown ASM fragments encountered during the combinsation search
+    * @param scope The scope where the variables are being tested. (Only used for logging)
+    * @param program The program to test (used for accessing global data structures)
+    */
+   static void chooseBestUpliftCombination(
+         RegisterCombinationIterator combinationIterator, int maxCombinations,
+         Set<String> unknownFragments,
+         ScopeRef scope,
+         Program program
+   ) {
+      int bestScore = Integer.MAX_VALUE;
+      RegisterCombination bestCombination = null;
+      int countCombinations = 0;
+      while (combinationIterator.hasNext() && countCombinations < maxCombinations) {
+         countCombinations++;
+         if (countCombinations % 10000 == 0) {
+            program.getLog().append("Uplift attempts [" + scope + "] " + countCombinations + "/" + combinationIterator.getNumIterations() + " (limiting to " + maxCombinations + ")");
+         }
+         RegisterCombination combination = combinationIterator.next();
+         if (!generateCombinationAsm(combination, program, unknownFragments, scope)) {
+            continue;
+         }
+         // If no clobber - Find value of the resulting allocation
+         int combinationScore = getAsmScore(program);
+         if (program.getLog().isVerboseUplift()) {
+            StringBuilder msg = new StringBuilder();
+            msg.append("Uplift attempt [" + scope + "] ");
+            msg.append(combinationScore);
+            msg.append(" allocation: ").append(combination.toString());
+            program.getLog().append(msg.toString());
+         }
+         if (combinationScore < bestScore) {
+            bestScore = combinationScore;
+            bestCombination = combination;
+         }
+      }
+      if (bestCombination != null) {
+         // Save the best combination in the equivalence class
+         bestCombination.store(program.getLiveRangeEquivalenceClassSet());
+         program.getLog().append("Uplifting [" + scope + "] best " + bestScore + " combination " + bestCombination.toString());
+      }
+      if (combinationIterator.hasNext()) {
+         program.getLog().append("Limited combination testing to " + countCombinations + " combinations of " + combinationIterator.getNumIterations() + " possible.");
+      }
    }
 
    /**
     * Attempt generate ASM with a specific register combination.
     * The generation may result in failure if
     * <ul>
+    *    <li>The combination has assigned the same register to variables with overlapping live ranges</li>
+    *    <li>The register combination results in clobbering registers containing values that are still alive</li>
     *    <li>some ASM fragments are missing </li>
     *    <li>the ALU register is used in a non-applicable way</li>
-    *    <li>The register combination results in clobbering registers containing values that are still alive</li>
     * </ul>
     *
     * @param combination The register allocation combination
@@ -83,14 +105,27 @@ public class Pass4RegisterUpliftCombinations extends Pass2Base {
     * @param scope The scope where the combination is tested. (Only used for logging)
     * @return true if the generation was successful
     */
-   public static boolean generateAsm(
-         RegisterCombination combination, Program program,
+   public static boolean generateCombinationAsm(
+         RegisterCombination combination,
+         Program program,
          Set<String> unknownFragments,
-         RegisterUpliftScope scope) {
+         ScopeRef scope) {
       // Reset register allocation to original zero page allocation
       new Pass4RegistersFinalize(program).allocate(false);
       // Apply the uplift combination
       combination.allocate(program.getScope());
+      // Check the register allocation for whether a is register being allocated to two variables with overlapping live ranges
+      if(isAllocationOverlapping(program)) {
+         if (program.getLog().isVerboseUplift()) {
+            StringBuilder msg = new StringBuilder();
+            msg.append("Uplift attempt [" + (scope == null ? "" : scope) + "] ");
+            msg.append("overlapping");
+            msg.append(" allocation: ").append(combination.toString());
+            program.getLog().append(msg.toString());
+         }
+
+         return false;
+      }
       // Generate ASM
       try {
          new Pass4CodeGeneration(program).generate();
@@ -98,7 +133,7 @@ public class Pass4RegisterUpliftCombinations extends Pass2Base {
          unknownFragments.add(e.getFragmentSignature());
          if (program.getLog().isVerboseUplift()) {
             StringBuilder msg = new StringBuilder();
-            msg.append("Uplift attempt [" + (scope==null?"":scope.getScopeRef()) + "] ");
+            msg.append("Uplift attempt [" + (scope == null ? "" : scope) + "] ");
             msg.append("missing fragment " + e.getFragmentSignature());
             msg.append(" allocation: ").append(combination.toString());
             program.getLog().append(msg.toString());
@@ -107,7 +142,7 @@ public class Pass4RegisterUpliftCombinations extends Pass2Base {
       } catch (AsmFragment.AluNotApplicableException e) {
          if (program.getLog().isVerboseUplift()) {
             StringBuilder msg = new StringBuilder();
-            msg.append("Uplift attempt [" + (scope==null?"":scope.getScopeRef()) + "] ");
+            msg.append("Uplift attempt [" + (scope == null ? "" : scope) + "] ");
             msg.append("alu not applicable");
             msg.append(" allocation: ").append(combination.toString());
             program.getLog().append(msg.toString());
@@ -118,7 +153,7 @@ public class Pass4RegisterUpliftCombinations extends Pass2Base {
       if (hasClobberProblem) {
          if (program.getLog().isVerboseUplift()) {
             StringBuilder msg = new StringBuilder();
-            msg.append("Uplift attempt [" + (scope==null?"":scope.getScopeRef()) + "] ");
+            msg.append("Uplift attempt [" + (scope == null ? "" : scope) + "] ");
             msg.append("clobber");
             msg.append(" allocation: ").append(combination.toString());
             program.getLog().append(msg.toString());
@@ -128,6 +163,14 @@ public class Pass4RegisterUpliftCombinations extends Pass2Base {
       return true;
    }
 
+   /**
+    * Get the score for the generated ASM program.
+    * Programs that take less cycles to execute have lower scores.
+    * In practice the score is calculated by multiplying cycles of ASM instructions with
+    * an estimate of the invocation count based on the loop depth of the instructions (10^depth).
+    * @param program The program containing the ASM to check
+    * @return The score of the ASM
+    */
    public static int getAsmScore(Program program) {
       int score = 0;
       AsmProgram asm = program.getAsm();
@@ -148,4 +191,35 @@ public class Pass4RegisterUpliftCombinations extends Pass2Base {
       return score;
    }
 
+
+   /**
+    * Check the register allocation for whether a is register being allocated to two variables with overlapping live ranges
+    * @param program The program
+    * @return true if the register allocation contains an overlapping allocation. false otherwise.
+    */
+   private static boolean isAllocationOverlapping(Program program) {
+      LiveRangeVariables liveRangeVariables = program.getLiveRangeVariables();
+      ProgramScope programScope = program.getScope();
+      for (ControlFlowBlock block : program.getGraph().getAllBlocks()) {
+         for (Statement statement : block.getStatements()) {
+            List<VariableRef> alive = liveRangeVariables.getAlive(statement);
+            LinkedHashSet<Registers.Register> usedRegisters = new LinkedHashSet<>();
+            for (VariableRef varRef : alive) {
+               Variable var = programScope.getVariable(varRef);
+               Registers.Register allocation = var.getAllocation();
+               if(usedRegisters.contains(allocation)) {
+                  if (program.getLog().isVerboseUplift()) {
+                     StringBuilder msg = new StringBuilder();
+                     msg.append("Overlap register "+allocation+" in "+statement.toString(program));
+                     program.getLog().append(msg.toString());
+                  }
+                  return true;
+               }
+               usedRegisters.add(allocation);
+            }
+            // TODO: If the statement is inside a method -also check against all variables alive at the calls.
+         }
+      }
+      return false;
+   }
 }

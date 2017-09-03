@@ -319,11 +319,11 @@ public class AsmFragment {
             Scope varScope = boundVar.getScope();
             String asmName = boundVar.getAsmName() == null ? boundVar.getLocalName() : boundVar.getAsmName();
             if (!varScope.getRef().equals(scope) && varScope.getRef().getFullName().length() > 0) {
-               String param = varScope.getFullName() + "." + asmName.replace('@', 'b').replace(':', '_').replace("#", "_");
+               String param = varScope.getFullName() + "." + asmName.replace('@', 'b').replace(':', '_').replace("#", "_").replace("$","_");
                //param = ""+((Registers.RegisterZp) register).getZp();
                return new AsmParameter(param, true);
             } else {
-               String param = asmName.replace('@', 'b').replace(':', '_').replace("#", "_");
+               String param = asmName.replace('@', 'b').replace(':', '_').replace("#", "_").replace("$","_");
                //param = ""+((Registers.RegisterZp) register).getZp();
                return new AsmParameter(param, true);
             }
@@ -355,7 +355,7 @@ public class AsmFragment {
             return new AsmParameter(param, SymbolTypeBasic.BYTE.equals(boundInt.getType()));
          }
       } else if (boundValue instanceof Label) {
-         String param = ((Label) boundValue).getLocalName().replace('@', 'b').replace(':', '_');
+         String param = ((Label) boundValue).getLocalName().replace('@', 'b').replace(':', '_').replace("$","_");
          return new AsmParameter(param, false);
       } else {
          throw new RuntimeException("Bound Value Type not implemented " + boundValue);

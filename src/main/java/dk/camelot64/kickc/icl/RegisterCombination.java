@@ -23,6 +23,7 @@ public class RegisterCombination {
 
    /**
     * Allocate the registers of the combination into the programs register allocation
+    * (does not update the allocation in the equivalence classes).
     */
    public void allocate(ProgramScope scope) {
       for (LiveRangeEquivalenceClass equivalenceClass : allocation.keySet()) {

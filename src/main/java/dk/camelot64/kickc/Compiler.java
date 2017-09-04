@@ -135,8 +135,8 @@ public class Compiler {
    public void pass2OptimizeSSA(Program program) {
       List<Pass2SsaOptimization> optimizations = new ArrayList<>();
       optimizations.add(new Pass2CullEmptyBlocks(program));
-      //optimizations.add(new Pass2ConstantPropagation(program));
-      //optimizations.add(new Pass2ConstantAdditionElimination(program));
+      optimizations.add(new Pass2ConstantPropagation(program));
+      optimizations.add(new Pass2ConstantAdditionElimination(program));
       optimizations.add(new Pass2UnaryNotSimplification(program));
       optimizations.add(new Pass2AliasElimination(program));
       optimizations.add(new Pass2RedundantPhiElimination(program));
@@ -177,7 +177,7 @@ public class Compiler {
       program.getLog().append("CALL GRAPH");
       program.getLog().append(program.getCallGraph().toString());
 
-      program.getLog().setVerboseLiveRanges(true);
+      //program.getLog().setVerboseLiveRanges(true);
 
       new Pass3LiveRangesAnalysis(program).findLiveRanges();
       program.getLog().append("CONTROL FLOW GRAPH - LIVE RANGES FOUND");
@@ -242,7 +242,7 @@ public class Compiler {
       program.getLog().append(program.getRegisterUpliftProgram().toString((program.getVariableRegisterWeights())));
 
       // Attempt uplifting registers through a lot of combinations
-      program.getLog().setVerboseUplift(true);
+      //program.getLog().setVerboseUplift(true);
       new Pass4RegisterUpliftCombinations(program).performUplift(10_000);
 
       //new Pass4RegisterUpliftStatic(program).performUplift();

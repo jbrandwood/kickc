@@ -8,7 +8,6 @@ import dk.camelot64.kickc.icl.ProgramScope;
 /** Base class for a compiler pass */
 public class Pass2Base {
 
-
    private Program program;
 
    public Pass2Base(Program program) {

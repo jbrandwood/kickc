@@ -76,15 +76,27 @@ public class AsmFragmentManager {
          }
       }
       if(signature.startsWith("zpby1=")) {
-         String subSignature = "aby="+signature.substring(6).replace("zpby2", "zpby1");
-         CharStream subCharStream = loadOrSynthesizeFragment(subSignature);
-         if(subCharStream!=null) {
-            CharStream result = CharStreams.fromString(subCharStream.toString().replace("zpby1", "zpby2")+"\nsta {zpby1}\n");
-            return result;
+         if(signature.contains("{zpby2}")) {
+            String subSignature = "aby="+signature.substring(6).replace("zpby2", "zpby1");
+            CharStream subCharStream = loadOrSynthesizeFragment(subSignature);
+            if(subCharStream!=null) {
+               CharStream result = CharStreams.fromString(subCharStream.toString().replace("zpby1", "zpby2")+"\nsta {zpby1}\n");
+               return result;
+            }
+         } else {
+            String subSignature = "aby="+signature.substring(6);
+            CharStream subCharStream = loadOrSynthesizeFragment(subSignature);
+            if(subCharStream!=null) {
+               CharStream result = CharStreams.fromString(subCharStream.toString()+"\nsta {zpby1}\n");
+               return result;
+            }
          }
       }
 
       String sigNew = signature;
+      sigNew = regexpRewriteSignature(sigNew, "(.*)=(.*)_plus_aby", "$1=aby_plus_$2");
+      sigNew = regexpRewriteSignature(sigNew, "(.*)=(.*)_plus_xby", "$1=xby_plus_$2");
+      sigNew = regexpRewriteSignature(sigNew, "(.*)=(.*)_plus_yby", "$1=yby_plus_$2");
       sigNew = regexpRewriteSignature(sigNew, "(.*)_ge_aby_then_(.*)", "aby_lt_$1_then_$2");
       sigNew = regexpRewriteSignature(sigNew, "(.*)_ge_xby_then_(.*)", "xby_lt_$1_then_$2");
       sigNew = regexpRewriteSignature(sigNew, "(.*)_ge_yby_then_(.*)", "yby_lt_$1_then_$2");

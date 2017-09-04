@@ -5,9 +5,7 @@ import dk.camelot64.kickc.asm.AsmProgram;
 import dk.camelot64.kickc.asm.AsmSegment;
 import dk.camelot64.kickc.icl.*;
 
-import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 /*** Attempt to uplift live range equivalence classes to registers (instead of ZP) in each scope */
 public class Pass4RegisterUpliftCombinations extends Pass2Base {
@@ -115,7 +113,7 @@ public class Pass4RegisterUpliftCombinations extends Pass2Base {
       // Apply the uplift combination
       combination.allocate(program.getScope());
       // Check the register allocation for whether a is register being allocated to two variables with overlapping live ranges
-      if(isAllocationOverlapping(program)) {
+      if (isAllocationOverlapping(program)) {
          if (program.getLog().isVerboseUplift()) {
             StringBuilder msg = new StringBuilder();
             msg.append("Uplift attempt [" + (scope == null ? "" : scope) + "] ");
@@ -197,27 +195,64 @@ public class Pass4RegisterUpliftCombinations extends Pass2Base {
     * @param program The program
     * @return true if the register allocation contains an overlapping allocation. false otherwise.
     */
-   private static boolean isAllocationOverlapping(Program program) {
-      LiveRangeVariables liveRangeVariables = program.getLiveRangeVariables();
-      ProgramScope programScope = program.getScope();
+   public static boolean isAllocationOverlapping(Program program) {
       for (ControlFlowBlock block : program.getGraph().getAllBlocks()) {
          for (Statement statement : block.getStatements()) {
-            List<VariableRef> alive = liveRangeVariables.getAlive(statement);
-            LinkedHashSet<Registers.Register> usedRegisters = new LinkedHashSet<>();
-            for (VariableRef varRef : alive) {
-               Variable var = programScope.getVariable(varRef);
-               Registers.Register allocation = var.getAllocation();
-               if(usedRegisters.contains(allocation)) {
-                  if (program.getLog().isVerboseUplift()) {
-                     StringBuilder msg = new StringBuilder();
-                     msg.append("Overlap register "+allocation+" in "+statement.toString(program));
-                     program.getLog().append(msg.toString());
-                  }
-                  return true;
-               }
-               usedRegisters.add(allocation);
+            LinkedHashMap<Registers.Register, LiveRangeEquivalenceClass> usedRegisters = new LinkedHashMap<>();
+            if (isStatementAllocationOverlapping(program, statement, usedRegisters)) {
+               return true;
             }
-            // TODO: If the statement is inside a method -also check against all variables alive at the calls.
+         }
+      }
+      return false;
+   }
+
+   /**
+    * Determine if a statement has an overlapping register allocation
+    *
+    * @param program The program
+    * @param statement The statement to check
+    * @param usedRegisters The used registers. Will be extended with all registers used in the statement.
+    * @return true if there is an overlapping register allocation
+    */
+   private static boolean isStatementAllocationOverlapping(
+         Program program,
+         Statement statement,
+         LinkedHashMap<Registers.Register, LiveRangeEquivalenceClass> usedRegisters) {
+      LiveRangeVariables liveRangeVariables = program.getLiveRangeVariables();
+      ProgramScope programScope = program.getScope();
+      List<VariableRef> alive = liveRangeVariables.getAlive(statement);
+      for (VariableRef varRef : alive) {
+         Variable var = programScope.getVariable(varRef);
+         Registers.Register allocation = var.getAllocation();
+         LiveRangeEquivalenceClass allocationClass = usedRegisters.get(allocation);
+         if (allocationClass != null && !allocationClass.contains(varRef)) {
+            if (program.getLog().isVerboseUplift()) {
+               StringBuilder msg = new StringBuilder();
+               msg.append("Overlap register " + allocation + " in " + statement.toString(program));
+               program.getLog().append(msg.toString());
+            }
+            return true;
+         }
+         LiveRangeEquivalenceClass varClass =
+               program.getLiveRangeEquivalenceClassSet().getEquivalenceClass(varRef);
+         usedRegisters.put(allocation, varClass);
+      }
+
+      // If the statement is inside a method -also check against all variables alive at the exit of the calls.
+      ControlFlowBlock block = program.getGraph().getBlockFromStatementIdx(statement.getIndex());
+      ScopeRef scopeRef = block.getScope();
+      Scope scope = program.getScope().getScope(scopeRef);
+      if (scope instanceof Procedure) {
+         Procedure procedure = (Procedure) scope;
+         Collection<CallGraph.CallBlock.Call> callers =
+               program.getCallGraph().getCallers(procedure.getLabel().getRef());
+         for (CallGraph.CallBlock.Call caller : callers) {
+            StatementCall callStatement =
+                  (StatementCall) program.getGraph().getStatementByIndex(caller.getCallStatementIdx());
+            if (isStatementAllocationOverlapping(program, callStatement, usedRegisters)) {
+               return true;
+            }
          }
       }
       return false;

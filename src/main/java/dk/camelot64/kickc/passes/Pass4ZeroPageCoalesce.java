@@ -36,6 +36,8 @@ public class Pass4ZeroPageCoalesce extends Pass2Base {
                   getLog().append("Coalescing zero page register [ "+myEquivalenceClass+" ] with [ "+otherEquivalenceClass+" ]" );
                   myEquivalenceClass.addAll(otherEquivalenceClass);
                   liveRangeEquivalenceClassSet.remove(otherEquivalenceClass);
+                  // Reset the program register allocation
+                  getProgram().getLiveRangeEquivalenceClassSet().storeRegisterAllocation();
                   return true;
                }
             }
@@ -53,7 +55,15 @@ public class Pass4ZeroPageCoalesce extends Pass2Base {
          // Types match
          if (myEquivalenceClass.getRegister().isZp() && otherEquivalenceClass.getRegister().isZp()) {
             // Both registers are on Zero Page
-            if (!myEquivalenceClass.getLiveRange().overlaps(otherEquivalenceClass.getLiveRange())) {
+
+            // Reset the program register allocation to the one specified in the equivalence class set
+            getProgram().getLiveRangeEquivalenceClassSet().storeRegisterAllocation();
+            // Try out the coalesce to test if it works
+            for (VariableRef var : otherEquivalenceClass.getVariables()) {
+               Variable variable = getProgram().getScope().getVariable(var);
+               variable.setAllocation(myEquivalenceClass.getRegister());
+            }
+            if(!Pass4RegisterUpliftCombinations.isAllocationOverlapping(getProgram())) {
                // Live ranges do not overlap
                // Perform coalesce!
                return true;

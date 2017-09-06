@@ -51,12 +51,13 @@ public class Pass4RegisterUpliftPotentialRegisterAnalysis extends Pass2Base {
          }
       }
 
+      VariableReferenceInfo referenceInfo = new VariableReferenceInfo(getProgram());
       for (ControlFlowBlock block : getProgram().getGraph().getAllBlocks()) {
          for (Statement statement : block.getStatements()) {
 
             // Find all variables referenced/assigned in the statement
-            Set<VariableRef> referencedVars = getReferencedVars(statement);
-            Set<VariableRef> assignedVars = getAssignedVars(statement);
+            Set<VariableRef> referencedVars = new HashSet<>(referenceInfo.getReferenced(statement));
+            Set<VariableRef> assignedVars = new HashSet<>(referenceInfo.getDefined(statement));
 
             // Find referenced/assigned live range equivalence classes
             Set<LiveRangeEquivalenceClass> assignedClasses = new LinkedHashSet<>();
@@ -89,7 +90,7 @@ public class Pass4RegisterUpliftPotentialRegisterAnalysis extends Pass2Base {
             }
 
             // For all non-assigned live variables: remove always clobbered registers from their potential allocation
-            List<VariableRef> aliveVars = getProgram().getLiveRangeVariables().getAlive(statement);
+            Collection<VariableRef> aliveVars = getProgram().getLiveRangeVariables().getAliveEffective(statement);
             for (VariableRef aliveVar : aliveVars) {
                LiveRangeEquivalenceClass aliveClass = liveRangeEquivalenceClassSet.getEquivalenceClass(aliveVar);
                if (assignedClasses.contains(aliveClass)) {

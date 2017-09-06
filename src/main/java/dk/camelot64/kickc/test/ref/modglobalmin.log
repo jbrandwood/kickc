@@ -498,20 +498,64 @@ inccnt::@return: scope:[inccnt]  from inccnt
   return 
   to:@return
 
+Adding NOP phi() at start of main
+CALL GRAPH
+Calls in [] to 0:main 
+Calls in [main] to 2:inccnt 6:inccnt 
+
 Propagating live ranges...
 Propagating live ranges...
-CONTROL FLOW GRAPH - LIVE RANGES
+Propagating live ranges...
+CONTROL FLOW GRAPH - LIVE RANGES FOUND
 @begin: scope:[]  from
   [0] call main param-assignment [ ]
   to:@end
 @end: scope:[]  from @begin
 main: scope:[main]  from @begin
-  [1] call inccnt param-assignment [ cnt#10 ]
+  [1] phi() [ ]
+  [2] call inccnt param-assignment [ cnt#10 ]
   to:main::@1
 main::@1: scope:[main]  from main
-  [2] *((word) 1024) ← (byte) cnt#10 [ cnt#10 ]
-  [3] (byte) cnt#3 ← ++ (byte) cnt#10 [ cnt#3 ]
-  [4] (byte~) cnt#16 ← (byte) cnt#3 [ cnt#16 ]
+  [3] *((word) 1024) ← (byte) cnt#10 [ cnt#10 ]
+  [4] (byte) cnt#3 ← ++ (byte) cnt#10 [ cnt#3 ]
+  [5] (byte~) cnt#16 ← (byte) cnt#3 [ cnt#16 ]
+  [6] call inccnt param-assignment [ cnt#10 ]
+  to:main::@2
+main::@2: scope:[main]  from main::@1
+  [7] (byte) cnt#1 ← ++ (byte) cnt#10 [ cnt#1 ]
+  [8] *((word) 1025) ← (byte) cnt#1 [ ]
+  to:main::@return
+main::@return: scope:[main]  from main::@2
+  [9] return  [ ]
+  to:@return
+inccnt: scope:[inccnt]  from main main::@1
+  [10] (byte) cnt#13 ← phi( main/(byte) 0 main::@1/(byte~) cnt#16 ) [ cnt#13 ]
+  [11] (byte) cnt#10 ← ++ (byte) cnt#13 [ cnt#10 ]
+  to:inccnt::@return
+inccnt::@return: scope:[inccnt]  from inccnt
+  [12] return  [ cnt#10 ]
+  to:@return
+
+Created 1 initial phi equivalence classes
+Coalesced [5] cnt#16 ← cnt#3
+Coalesced down to 1 phi equivalence classes
+Block Sequence Planned @begin @end main main::@1 main::@2 main::@return inccnt inccnt::@return 
+Adding NOP phi() at start of main
+Propagating live ranges...
+Propagating live ranges...
+Propagating live ranges...
+CONTROL FLOW GRAPH - PHI MEM COALESCED
+@begin: scope:[]  from
+  [0] call main param-assignment [ ]
+  to:@end
+@end: scope:[]  from @begin
+main: scope:[main]  from @begin
+  [1] phi() [ ]
+  [2] call inccnt param-assignment [ cnt#10 ]
+  to:main::@1
+main::@1: scope:[main]  from main
+  [3] *((word) 1024) ← (byte) cnt#10 [ cnt#10 ]
+  [4] (byte) cnt#3 ← ++ (byte) cnt#10 [ cnt#3 ]
   [5] call inccnt param-assignment [ cnt#10 ]
   to:main::@2
 main::@2: scope:[main]  from main::@1
@@ -522,50 +566,12 @@ main::@return: scope:[main]  from main::@2
   [8] return  [ ]
   to:@return
 inccnt: scope:[inccnt]  from main main::@1
-  [9] (byte) cnt#13 ← phi( main/(byte) 0 main::@1/(byte~) cnt#16 ) [ cnt#13 ]
+  [9] (byte) cnt#13 ← phi( main/(byte) 0 main::@1/(byte) cnt#3 ) [ cnt#13 ]
   [10] (byte) cnt#10 ← ++ (byte) cnt#13 [ cnt#10 ]
   to:inccnt::@return
 inccnt::@return: scope:[inccnt]  from inccnt
   [11] return  [ cnt#10 ]
   to:@return
-
-Created 1 initial phi equivalence classes
-Coalesced [4] cnt#16 ← cnt#3
-Coalesced down to 1 phi equivalence classes
-Block Sequence Planned @begin @end main main::@1 main::@2 main::@return inccnt inccnt::@return 
-Propagating live ranges...
-Propagating live ranges...
-CONTROL FLOW GRAPH - PHI MEM COALESCED
-@begin: scope:[]  from
-  [0] call main param-assignment [ ]
-  to:@end
-@end: scope:[]  from @begin
-main: scope:[main]  from @begin
-  [1] call inccnt param-assignment [ cnt#10 ]
-  to:main::@1
-main::@1: scope:[main]  from main
-  [2] *((word) 1024) ← (byte) cnt#10 [ cnt#10 ]
-  [3] (byte) cnt#3 ← ++ (byte) cnt#10 [ cnt#3 ]
-  [4] call inccnt param-assignment [ cnt#10 ]
-  to:main::@2
-main::@2: scope:[main]  from main::@1
-  [5] (byte) cnt#1 ← ++ (byte) cnt#10 [ cnt#1 ]
-  [6] *((word) 1025) ← (byte) cnt#1 [ ]
-  to:main::@return
-main::@return: scope:[main]  from main::@2
-  [7] return  [ ]
-  to:@return
-inccnt: scope:[inccnt]  from main main::@1
-  [8] (byte) cnt#13 ← phi( main/(byte) 0 main::@1/(byte) cnt#3 ) [ cnt#13 ]
-  [9] (byte) cnt#10 ← ++ (byte) cnt#13 [ cnt#10 ]
-  to:inccnt::@return
-inccnt::@return: scope:[inccnt]  from inccnt
-  [10] return  [ cnt#10 ]
-  to:@return
-
-CALL GRAPH
-Calls in [] to 0:main 
-Calls in [main] to 1:inccnt 4:inccnt 
 
 DOMINATORS
 @begin dominated by  @begin 
@@ -609,66 +615,68 @@ Allocated zp ZP_BYTE:4 [ cnt#10 ]
 INITIAL ASM
 //SEG0 Global ZP labels
   .label cnt = 3
-  .label cnt#3 = 2
-  .label cnt#10 = 4
-  .label cnt#13 = 2
+  .label cnt_3 = 2
+  .label cnt_10 = 4
+  .label cnt_13 = 2
 //SEG1 @begin
 bbegin:
 //SEG2 [0] call main param-assignment [ ]
+//SEG3 [1] phi from @begin to main
+main_from_bbegin:
   jsr main
   jmp bend
-//SEG3 @end
+//SEG4 @end
 bend:
-//SEG4 main
+//SEG5 main
 main: {
-  //SEG5 [1] call inccnt param-assignment [ cnt#10 ]
-  //SEG6 [8] phi from main to inccnt
+  //SEG6 [2] call inccnt param-assignment [ cnt#10 ]
+  //SEG7 [9] phi from main to inccnt
   inccnt_from_main:
-  //SEG7 [8] phi (byte) cnt#13 = (byte) 0 -- zpby1=coby1 
+  //SEG8 [9] phi (byte) cnt#13 = (byte) 0 -- zpby1=coby1 
     lda #$0
     sta cnt_13
     jsr inccnt
     jmp b1
-  //SEG8 main::@1
+  //SEG9 main::@1
   b1:
-  //SEG9 [2] *((word) 1024) ← (byte) cnt#10 [ cnt#10 ] -- _star_cowo1=zpby1 
+  //SEG10 [3] *((word) 1024) ← (byte) cnt#10 [ cnt#10 ] -- _star_cowo1=zpby1 
     lda cnt_10
     sta $400
-  //SEG10 [3] (byte) cnt#3 ← ++ (byte) cnt#10 [ cnt#3 ] -- zpby1=_inc_zpby2 
+  //SEG11 [4] (byte) cnt#3 ← ++ (byte) cnt#10 [ cnt#3 ] -- zpby1=_inc_zpby2 
     lda cnt_10
     sta cnt_3
     inc cnt_3
-  //SEG11 [4] call inccnt param-assignment [ cnt#10 ]
-  //SEG12 [8] phi from main::@1 to inccnt
+  //SEG12 [5] call inccnt param-assignment [ cnt#10 ]
+  //SEG13 [9] phi from main::@1 to inccnt
   inccnt_from_b1:
-  //SEG13 [8] phi (byte) cnt#13 = (byte) cnt#3 -- register_copy 
+  //SEG14 [9] phi (byte) cnt#13 = (byte) cnt#3 -- register_copy 
     jsr inccnt
     jmp b2
-  //SEG14 main::@2
+  //SEG15 main::@2
   b2:
-  //SEG15 [5] (byte) cnt#1 ← ++ (byte) cnt#10 [ cnt#1 ] -- zpby1=_inc_zpby2 
+  //SEG16 [6] (byte) cnt#1 ← ++ (byte) cnt#10 [ cnt#1 ] -- zpby1=_inc_zpby2 
     lda cnt_10
     sta cnt
     inc cnt
-  //SEG16 [6] *((word) 1025) ← (byte) cnt#1 [ ] -- _star_cowo1=zpby1 
+  //SEG17 [7] *((word) 1025) ← (byte) cnt#1 [ ] -- _star_cowo1=zpby1 
     lda cnt
     sta $401
     jmp breturn
-  //SEG17 main::@return
+  //SEG18 main::@return
   breturn:
-  //SEG18 [7] return  [ ]
+  //SEG19 [8] return  [ ]
     rts
 }
-//SEG19 inccnt
+//SEG20 inccnt
 inccnt: {
-  //SEG20 [9] (byte) cnt#10 ← ++ (byte) cnt#13 [ cnt#10 ] -- zpby1=_inc_zpby2 
+  //SEG21 [10] (byte) cnt#10 ← ++ (byte) cnt#13 [ cnt#10 ] -- zpby1=_inc_zpby2 
     lda cnt_13
     sta cnt_10
     inc cnt_10
     jmp breturn
-  //SEG21 inccnt::@return
+  //SEG22 inccnt::@return
   breturn:
-  //SEG22 [10] return  [ cnt#10 ]
+  //SEG23 [11] return  [ cnt#10 ]
     rts
 }
 
@@ -696,46 +704,99 @@ ASSEMBLER
 //SEG1 @begin
 bbegin:
 //SEG2 [0] call main param-assignment [ ]
+//SEG3 [1] phi from @begin to main
+main_from_bbegin:
   jsr main
-//SEG3 @end
+//SEG4 @end
 bend:
-//SEG4 main
+//SEG5 main
 main: {
-  //SEG5 [1] call inccnt param-assignment [ cnt#10 ]
-  //SEG6 [8] phi from main to inccnt
+  //SEG6 [2] call inccnt param-assignment [ cnt#10 ]
+  //SEG7 [9] phi from main to inccnt
   inccnt_from_main:
-  //SEG7 [8] phi (byte) cnt#13 = (byte) 0 -- xby=coby1 
+  //SEG8 [9] phi (byte) cnt#13 = (byte) 0 -- xby=coby1 
     ldx #$0
     jsr inccnt
-  //SEG8 main::@1
+  //SEG9 main::@1
   b1:
-  //SEG9 [2] *((word) 1024) ← (byte) cnt#10 [ cnt#10 ] -- _star_cowo1=xby 
+  //SEG10 [3] *((word) 1024) ← (byte) cnt#10 [ cnt#10 ] -- _star_cowo1=xby 
     stx $400
-  //SEG10 [3] (byte) cnt#3 ← ++ (byte) cnt#10 [ cnt#3 ] -- xby=_inc_xby 
+  //SEG11 [4] (byte) cnt#3 ← ++ (byte) cnt#10 [ cnt#3 ] -- xby=_inc_xby 
     inx
-  //SEG11 [4] call inccnt param-assignment [ cnt#10 ]
-  //SEG12 [8] phi from main::@1 to inccnt
+  //SEG12 [5] call inccnt param-assignment [ cnt#10 ]
+  //SEG13 [9] phi from main::@1 to inccnt
   inccnt_from_b1:
-  //SEG13 [8] phi (byte) cnt#13 = (byte) cnt#3 -- register_copy 
+  //SEG14 [9] phi (byte) cnt#13 = (byte) cnt#3 -- register_copy 
     jsr inccnt
-  //SEG14 main::@2
+  //SEG15 main::@2
   b2:
-  //SEG15 [5] (byte) cnt#1 ← ++ (byte) cnt#10 [ cnt#1 ] -- xby=_inc_xby 
+  //SEG16 [6] (byte) cnt#1 ← ++ (byte) cnt#10 [ cnt#1 ] -- xby=_inc_xby 
     inx
-  //SEG16 [6] *((word) 1025) ← (byte) cnt#1 [ ] -- _star_cowo1=xby 
+  //SEG17 [7] *((word) 1025) ← (byte) cnt#1 [ ] -- _star_cowo1=xby 
     stx $401
-  //SEG17 main::@return
+  //SEG18 main::@return
   breturn:
-  //SEG18 [7] return  [ ]
+  //SEG19 [8] return  [ ]
     rts
 }
-//SEG19 inccnt
+//SEG20 inccnt
 inccnt: {
-  //SEG20 [9] (byte) cnt#10 ← ++ (byte) cnt#13 [ cnt#10 ] -- xby=_inc_xby 
+  //SEG21 [10] (byte) cnt#10 ← ++ (byte) cnt#13 [ cnt#10 ] -- xby=_inc_xby 
     inx
-  //SEG21 inccnt::@return
+  //SEG22 inccnt::@return
   breturn:
-  //SEG22 [10] return  [ cnt#10 ]
+  //SEG23 [11] return  [ cnt#10 ]
+    rts
+}
+
+Removing instruction main_from_bbegin:
+Succesful ASM optimization Pass5RedundantLabelElimination
+ASSEMBLER
+//SEG0 Global ZP labels
+//SEG1 @begin
+bbegin:
+//SEG2 [0] call main param-assignment [ ]
+//SEG3 [1] phi from @begin to main
+  jsr main
+//SEG4 @end
+bend:
+//SEG5 main
+main: {
+  //SEG6 [2] call inccnt param-assignment [ cnt#10 ]
+  //SEG7 [9] phi from main to inccnt
+  inccnt_from_main:
+  //SEG8 [9] phi (byte) cnt#13 = (byte) 0 -- xby=coby1 
+    ldx #$0
+    jsr inccnt
+  //SEG9 main::@1
+  b1:
+  //SEG10 [3] *((word) 1024) ← (byte) cnt#10 [ cnt#10 ] -- _star_cowo1=xby 
+    stx $400
+  //SEG11 [4] (byte) cnt#3 ← ++ (byte) cnt#10 [ cnt#3 ] -- xby=_inc_xby 
+    inx
+  //SEG12 [5] call inccnt param-assignment [ cnt#10 ]
+  //SEG13 [9] phi from main::@1 to inccnt
+  inccnt_from_b1:
+  //SEG14 [9] phi (byte) cnt#13 = (byte) cnt#3 -- register_copy 
+    jsr inccnt
+  //SEG15 main::@2
+  b2:
+  //SEG16 [6] (byte) cnt#1 ← ++ (byte) cnt#10 [ cnt#1 ] -- xby=_inc_xby 
+    inx
+  //SEG17 [7] *((word) 1025) ← (byte) cnt#1 [ ] -- _star_cowo1=xby 
+    stx $401
+  //SEG18 main::@return
+  breturn:
+  //SEG19 [8] return  [ ]
+    rts
+}
+//SEG20 inccnt
+inccnt: {
+  //SEG21 [10] (byte) cnt#10 ← ++ (byte) cnt#13 [ cnt#10 ] -- xby=_inc_xby 
+    inx
+  //SEG22 inccnt::@return
+  breturn:
+  //SEG23 [11] return  [ cnt#10 ]
     rts
 }
 
@@ -752,39 +813,40 @@ ASSEMBLER
 //SEG0 Global ZP labels
 //SEG1 @begin
 //SEG2 [0] call main param-assignment [ ]
+//SEG3 [1] phi from @begin to main
   jsr main
-//SEG3 @end
-//SEG4 main
+//SEG4 @end
+//SEG5 main
 main: {
-  //SEG5 [1] call inccnt param-assignment [ cnt#10 ]
-  //SEG6 [8] phi from main to inccnt
-  //SEG7 [8] phi (byte) cnt#13 = (byte) 0 -- xby=coby1 
+  //SEG6 [2] call inccnt param-assignment [ cnt#10 ]
+  //SEG7 [9] phi from main to inccnt
+  //SEG8 [9] phi (byte) cnt#13 = (byte) 0 -- xby=coby1 
     ldx #$0
     jsr inccnt
-  //SEG8 main::@1
-  //SEG9 [2] *((word) 1024) ← (byte) cnt#10 [ cnt#10 ] -- _star_cowo1=xby 
+  //SEG9 main::@1
+  //SEG10 [3] *((word) 1024) ← (byte) cnt#10 [ cnt#10 ] -- _star_cowo1=xby 
     stx $400
-  //SEG10 [3] (byte) cnt#3 ← ++ (byte) cnt#10 [ cnt#3 ] -- xby=_inc_xby 
+  //SEG11 [4] (byte) cnt#3 ← ++ (byte) cnt#10 [ cnt#3 ] -- xby=_inc_xby 
     inx
-  //SEG11 [4] call inccnt param-assignment [ cnt#10 ]
-  //SEG12 [8] phi from main::@1 to inccnt
-  //SEG13 [8] phi (byte) cnt#13 = (byte) cnt#3 -- register_copy 
+  //SEG12 [5] call inccnt param-assignment [ cnt#10 ]
+  //SEG13 [9] phi from main::@1 to inccnt
+  //SEG14 [9] phi (byte) cnt#13 = (byte) cnt#3 -- register_copy 
     jsr inccnt
-  //SEG14 main::@2
-  //SEG15 [5] (byte) cnt#1 ← ++ (byte) cnt#10 [ cnt#1 ] -- xby=_inc_xby 
+  //SEG15 main::@2
+  //SEG16 [6] (byte) cnt#1 ← ++ (byte) cnt#10 [ cnt#1 ] -- xby=_inc_xby 
     inx
-  //SEG16 [6] *((word) 1025) ← (byte) cnt#1 [ ] -- _star_cowo1=xby 
+  //SEG17 [7] *((word) 1025) ← (byte) cnt#1 [ ] -- _star_cowo1=xby 
     stx $401
-  //SEG17 main::@return
-  //SEG18 [7] return  [ ]
+  //SEG18 main::@return
+  //SEG19 [8] return  [ ]
     rts
 }
-//SEG19 inccnt
+//SEG20 inccnt
 inccnt: {
-  //SEG20 [9] (byte) cnt#10 ← ++ (byte) cnt#13 [ cnt#10 ] -- xby=_inc_xby 
+  //SEG21 [10] (byte) cnt#10 ← ++ (byte) cnt#13 [ cnt#10 ] -- xby=_inc_xby 
     inx
-  //SEG21 inccnt::@return
-  //SEG22 [10] return  [ cnt#10 ]
+  //SEG22 inccnt::@return
+  //SEG23 [11] return  [ cnt#10 ]
     rts
 }
 
@@ -812,39 +874,40 @@ FINAL CODE
 //SEG0 Global ZP labels
 //SEG1 @begin
 //SEG2 [0] call main param-assignment [ ]
+//SEG3 [1] phi from @begin to main
   jsr main
-//SEG3 @end
-//SEG4 main
+//SEG4 @end
+//SEG5 main
 main: {
-  //SEG5 [1] call inccnt param-assignment [ cnt#10 ]
-  //SEG6 [8] phi from main to inccnt
-  //SEG7 [8] phi (byte) cnt#13 = (byte) 0 -- xby=coby1 
+  //SEG6 [2] call inccnt param-assignment [ cnt#10 ]
+  //SEG7 [9] phi from main to inccnt
+  //SEG8 [9] phi (byte) cnt#13 = (byte) 0 -- xby=coby1 
     ldx #$0
     jsr inccnt
-  //SEG8 main::@1
-  //SEG9 [2] *((word) 1024) ← (byte) cnt#10 [ cnt#10 ] -- _star_cowo1=xby 
+  //SEG9 main::@1
+  //SEG10 [3] *((word) 1024) ← (byte) cnt#10 [ cnt#10 ] -- _star_cowo1=xby 
     stx $400
-  //SEG10 [3] (byte) cnt#3 ← ++ (byte) cnt#10 [ cnt#3 ] -- xby=_inc_xby 
+  //SEG11 [4] (byte) cnt#3 ← ++ (byte) cnt#10 [ cnt#3 ] -- xby=_inc_xby 
     inx
-  //SEG11 [4] call inccnt param-assignment [ cnt#10 ]
-  //SEG12 [8] phi from main::@1 to inccnt
-  //SEG13 [8] phi (byte) cnt#13 = (byte) cnt#3 -- register_copy 
+  //SEG12 [5] call inccnt param-assignment [ cnt#10 ]
+  //SEG13 [9] phi from main::@1 to inccnt
+  //SEG14 [9] phi (byte) cnt#13 = (byte) cnt#3 -- register_copy 
     jsr inccnt
-  //SEG14 main::@2
-  //SEG15 [5] (byte) cnt#1 ← ++ (byte) cnt#10 [ cnt#1 ] -- xby=_inc_xby 
+  //SEG15 main::@2
+  //SEG16 [6] (byte) cnt#1 ← ++ (byte) cnt#10 [ cnt#1 ] -- xby=_inc_xby 
     inx
-  //SEG16 [6] *((word) 1025) ← (byte) cnt#1 [ ] -- _star_cowo1=xby 
+  //SEG17 [7] *((word) 1025) ← (byte) cnt#1 [ ] -- _star_cowo1=xby 
     stx $401
-  //SEG17 main::@return
-  //SEG18 [7] return  [ ]
+  //SEG18 main::@return
+  //SEG19 [8] return  [ ]
     rts
 }
-//SEG19 inccnt
+//SEG20 inccnt
 inccnt: {
-  //SEG20 [9] (byte) cnt#10 ← ++ (byte) cnt#13 [ cnt#10 ] -- xby=_inc_xby 
+  //SEG21 [10] (byte) cnt#10 ← ++ (byte) cnt#13 [ cnt#10 ] -- xby=_inc_xby 
     inx
-  //SEG21 inccnt::@return
-  //SEG22 [10] return  [ cnt#10 ]
+  //SEG22 inccnt::@return
+  //SEG23 [11] return  [ cnt#10 ]
     rts
 }
 

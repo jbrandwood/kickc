@@ -219,9 +219,8 @@ public class Pass4RegisterUpliftCombinations extends Pass2Base {
          Program program,
          Statement statement,
          LinkedHashMap<Registers.Register, LiveRangeEquivalenceClass> usedRegisters) {
-      LiveRangeVariables liveRangeVariables = program.getLiveRangeVariables();
       ProgramScope programScope = program.getScope();
-      List<VariableRef> alive = liveRangeVariables.getAlive(statement);
+      Collection<VariableRef> alive = program.getLiveRangeVariables().getAliveEffective(statement);
       for (VariableRef varRef : alive) {
          Variable var = programScope.getVariable(varRef);
          Registers.Register allocation = var.getAllocation();
@@ -238,23 +237,7 @@ public class Pass4RegisterUpliftCombinations extends Pass2Base {
                program.getLiveRangeEquivalenceClassSet().getEquivalenceClass(varRef);
          usedRegisters.put(allocation, varClass);
       }
-
-      // If the statement is inside a method -also check against all variables alive at the exit of the calls.
-      ControlFlowBlock block = program.getGraph().getBlockFromStatementIdx(statement.getIndex());
-      ScopeRef scopeRef = block.getScope();
-      Scope scope = program.getScope().getScope(scopeRef);
-      if (scope instanceof Procedure) {
-         Procedure procedure = (Procedure) scope;
-         Collection<CallGraph.CallBlock.Call> callers =
-               program.getCallGraph().getCallers(procedure.getLabel().getRef());
-         for (CallGraph.CallBlock.Call caller : callers) {
-            StatementCall callStatement =
-                  (StatementCall) program.getGraph().getStatementByIndex(caller.getCallStatementIdx());
-            if (isStatementAllocationOverlapping(program, callStatement, usedRegisters)) {
-               return true;
-            }
-         }
-      }
       return false;
    }
+
 }

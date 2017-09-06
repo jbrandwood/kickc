@@ -15,7 +15,7 @@ public class Pass3LiveRangesAnalysis extends Pass2Base {
    }
 
    public void findLiveRanges() {
-      LiveRangeVariables liveRanges = new LiveRangeVariables();
+      LiveRangeVariables liveRanges = new LiveRangeVariables(getProgram());
       boolean propagating;
       do {
          propagating = calculateLiveRanges(liveRanges);
@@ -51,11 +51,12 @@ public class Pass3LiveRangesAnalysis extends Pass2Base {
     * @return true if any live ranges was modified. false if no modification was performed (and the propagation is complete)
     */
    private boolean calculateLiveRanges(LiveRangeVariables liveRanges) {
+      VariableReferenceInfo referenceInfo = new VariableReferenceInfo(getProgram());
       boolean modified = false;
       for (ControlFlowBlock block : getProgram().getGraph().getAllBlocks()) {
          for (Statement stmt : block.getStatements()) {
             List<VariableRef> aliveNextStmt = liveRanges.getAlive(stmt);
-            Collection<VariableRef> definedNextStmt = getDefined(stmt);
+            Collection<VariableRef> definedNextStmt = referenceInfo.getDefined(stmt);
             initLiveRange(liveRanges, definedNextStmt);
             Collection<PreviousStatement> previousStmts = getPreviousStatements(stmt);
             for (PreviousStatement previousStmt : previousStmts) {
@@ -76,7 +77,7 @@ public class Pass3LiveRangesAnalysis extends Pass2Base {
                   // Add all vars that are referenced in the method
                   StatementCall call = (StatementCall) stmt;
                   ProcedureRef procedure = call.getProcedure();
-                  Collection<VariableRef> procUsed = getReferenced(procedure.getLabelRef());
+                  Collection<VariableRef> procUsed = referenceInfo.getReferenced(procedure.getLabelRef());
                   // The call statement has no used or defined by itself so only work with the alive vars
                   for (VariableRef aliveVar : aliveNextStmt) {
                      // Add all variables to previous that are not used inside the method
@@ -92,7 +93,7 @@ public class Pass3LiveRangesAnalysis extends Pass2Base {
                   // Add all vars that the method does not use
                   StatementCall call = (StatementCall) stmt;
                   ProcedureRef procedure = call.getProcedure();
-                  Collection<VariableRef> procUsed = getReferenced(procedure.getLabelRef());
+                  Collection<VariableRef> procUsed = referenceInfo.getReferenced(procedure.getLabelRef());
                   // The call statement has no used or defined by itself so only work with the alive vars
                   for (VariableRef aliveVar : aliveNextStmt) {
                      // Add all variables to previous that are not used inside the method
@@ -110,7 +111,7 @@ public class Pass3LiveRangesAnalysis extends Pass2Base {
                   // Add all alive variables to previous that are used inside the method
                   ControlFlowBlock procBlock = getProgram().getGraph().getBlockFromStatementIdx(stmt.getIndex());
                   Procedure procedure = (Procedure) getProgram().getScope().getSymbol(procBlock.getLabel());
-                  Collection<VariableRef> procUsed = getUsed(procedure.getRef().getLabelRef());
+                  Collection<VariableRef> procUsed = referenceInfo.getUsed(procedure.getRef().getLabelRef());
                   // The call statement has no used or defined by itself so only work with the alive vars
                   for (VariableRef aliveVar : aliveNextStmt) {
                      // Add all variables to previous that are used inside the method
@@ -146,7 +147,8 @@ public class Pass3LiveRangesAnalysis extends Pass2Base {
          Statement stmt,
          PreviousStatement previousStmt) {
       boolean modified = false;
-      Collection<VariableRef> usedNextStmt = getUsed(stmt);
+      VariableReferenceInfo referenceInfo = new VariableReferenceInfo(getProgram());
+      Collection<VariableRef> usedNextStmt = referenceInfo.getUsed(stmt);
       if (stmt instanceof StatementPhiBlock) {
          // If current statement is a phi add the used variables to previous based on the phi entries
          StatementPhiBlock phi = (StatementPhiBlock) stmt;
@@ -179,185 +181,6 @@ public class Pass3LiveRangesAnalysis extends Pass2Base {
       return modified;
    }
 
-   /**
-    * Get all variables used or defined inside a block and its successors (including any called method)
-    * @param labelRef The block to examine
-    * @return All used variables
-    */
-   private Collection<VariableRef> getReferenced(LabelRef labelRef) {
-      return getReferenced(labelRef, new ArrayList<LabelRef>());
-   }
-
-   /**
-    * Get all variables used inside a block and its successors (including any called method)
-    * @param labelRef The block to examine
-    * @return All used variables
-    */
-   private Collection<VariableRef> getUsed(LabelRef labelRef) {
-      return getUsed(labelRef, new ArrayList<LabelRef>());
-   }
-
-   /**
-    * Get all variables used inside a block and its successors (including any called method)
-    * @param labelRef The block to examine
-    * @param  visited The blocks already visited during the search. Used to stop infinite recursion
-    * @return All used variables
-    */
-   private Collection<VariableRef> getUsed(LabelRef labelRef, Collection<LabelRef> visited) {
-      if (labelRef == null) {
-         return new ArrayList<>();
-      }
-      if (visited.contains(labelRef)) {
-         return new ArrayList<>();
-      }
-      visited.add(labelRef);
-      ControlFlowBlock block = getProgram().getGraph().getBlock(labelRef);
-      if (block == null) {
-         return new ArrayList<>();
-      }
-      LinkedHashSet<VariableRef> used = new LinkedHashSet<>();
-      for (Statement statement : block.getStatements()) {
-         used.addAll(getUsed(statement));
-         if (statement instanceof StatementCall) {
-            ProcedureRef procedure = ((StatementCall) statement).getProcedure();
-            used.addAll(getUsed(procedure.getLabelRef(), visited));
-         }
-      }
-      used.addAll(getUsed(block.getDefaultSuccessor(), visited));
-      used.addAll(getUsed(block.getConditionalSuccessor(), visited));
-      return used;
-   }
-
-   /**
-    * Get all variables used or defined inside a block and its successors (including any called method)
-    * @param labelRef The block to examine
-    * @param  visited The blocks already visited during the search. Used to stop infinite recursion
-    * @return All used variables
-    */
-   private Collection<VariableRef> getReferenced(LabelRef labelRef, Collection<LabelRef> visited) {
-      if (labelRef == null) {
-         return new ArrayList<>();
-      }
-      if (visited.contains(labelRef)) {
-         return new ArrayList<>();
-      }
-      visited.add(labelRef);
-      ControlFlowBlock block = getProgram().getGraph().getBlock(labelRef);
-      if (block == null) {
-         return new ArrayList<>();
-      }
-      LinkedHashSet<VariableRef> referenced = new LinkedHashSet<>();
-      for (Statement statement : block.getStatements()) {
-         referenced.addAll(getReferenced(statement));
-         if (statement instanceof StatementCall) {
-            ProcedureRef procedure = ((StatementCall) statement).getProcedure();
-            referenced.addAll(getReferenced(procedure.getLabelRef(), visited));
-         }
-      }
-      referenced.addAll(getReferenced(block.getDefaultSuccessor(), visited));
-      referenced.addAll(getReferenced(block.getConditionalSuccessor(), visited));
-      return referenced;
-   }
-
-   /**
-    * Get the variables defined by a statement
-    * @param stmt The statement
-    * @return Variables defined by the statement
-    */
-   private Collection<VariableRef> getDefined(Statement stmt) {
-      if (stmt instanceof StatementAssignment) {
-         StatementAssignment assignment = (StatementAssignment) stmt;
-         LValue lValue = assignment.getlValue();
-         if (lValue instanceof VariableRef) {
-            return Arrays.asList((VariableRef) lValue);
-         }
-      } else if (stmt instanceof StatementPhiBlock) {
-         List<VariableRef> defined = new ArrayList<>();
-         StatementPhiBlock phi = (StatementPhiBlock) stmt;
-         for (StatementPhiBlock.PhiVariable phiVariable : phi.getPhiVariables()) {
-            defined.add(phiVariable.getVariable());
-         }
-         return defined;
-      }
-      return new ArrayList<>();
-   }
-
-   /**
-    * Get the variables used, but not defined, in a statement
-    * @param statement The statement to examine
-    * @return The used variables (not including defined variables)
-    */
-   private Collection<VariableRef> getUsed(Statement statement) {
-      LinkedHashSet<VariableRef> used = new LinkedHashSet<>();
-      used.addAll(getReferenced(statement));
-      used.removeAll(getDefined(statement));
-      return used;
-   }
-
-   /**
-    * Get the variables referenced (used or defined) in a statement
-    * @param statement The statement to examine
-    * @return The referenced variables
-    */
-   private Collection<VariableRef> getReferenced(Statement statement) {
-      LinkedHashSet<VariableRef> referenced = new LinkedHashSet<>();
-      if (statement instanceof StatementPhiBlock) {
-         StatementPhiBlock phiBlock = (StatementPhiBlock) statement;
-         for (StatementPhiBlock.PhiVariable phiVariable : phiBlock.getPhiVariables()) {
-            referenced.add(phiVariable.getVariable());
-            for (StatementPhiBlock.PhiRValue phiRValue : phiVariable.getValues()) {
-               referenced.addAll(getReferenced(phiRValue.getrValue()));
-            }
-         }
-      } else if (statement instanceof StatementAssignment) {
-         StatementAssignment assignment = (StatementAssignment) statement;
-         referenced.addAll(getReferenced(assignment.getlValue()));
-         referenced.addAll(getReferenced(assignment.getrValue1()));
-         referenced.addAll(getReferenced(assignment.getrValue2()));
-      } else if (statement instanceof StatementConditionalJump) {
-         StatementConditionalJump conditionalJump = (StatementConditionalJump) statement;
-         referenced.addAll(getReferenced(conditionalJump.getrValue1()));
-         referenced.addAll(getReferenced(conditionalJump.getrValue2()));
-      } else if (statement instanceof StatementCall) {
-         StatementCall call = (StatementCall) statement;
-         referenced.addAll(getReferenced(call.getlValue()));
-         if (call.getParameters() != null) {
-            for (RValue param : call.getParameters()) {
-               referenced.addAll(getReferenced(param));
-            }
-         }
-      } else if (statement instanceof StatementReturn) {
-         StatementReturn statementReturn = (StatementReturn) statement;
-         referenced.addAll(getReferenced(statementReturn.getValue()));
-      } else {
-         throw new RuntimeException("Unknown statement type " + statement);
-      }
-      return referenced;
-   }
-
-   /**
-    * Get all variables referenced in an rValue
-    * @param rValue The rValue
-    * @return All referenced variables
-    */
-   private Collection<VariableRef> getReferenced(RValue rValue) {
-      if (rValue == null) {
-         return new ArrayList<>();
-      } else if (rValue instanceof Constant) {
-         return new ArrayList<>();
-      } else if (rValue instanceof PointerDereferenceSimple) {
-         return getReferenced(((PointerDereferenceSimple) rValue).getPointer());
-      } else if (rValue instanceof PointerDereferenceIndexed) {
-         Collection<VariableRef> used = new LinkedHashSet<>();
-         used.addAll(getReferenced(((PointerDereferenceIndexed) rValue).getPointer()));
-         used.addAll(getReferenced(((PointerDereferenceIndexed) rValue).getIndex()));
-         return used;
-      } else if (rValue instanceof VariableRef) {
-         return Arrays.asList((VariableRef) rValue);
-      } else {
-         throw new RuntimeException("Unhandled RValue type " + rValue);
-      }
-   }
 
 
    /** A statement just before the current statement. */
@@ -383,7 +206,7 @@ public class Pass3LiveRangesAnalysis extends Pass2Base {
          SKIP_METHOD
       }
 
-      public PreviousStatement(Statement statement, Type type) {
+      PreviousStatement(Statement statement, Type type) {
          this.statement = statement;
          this.type = type;
       }
@@ -456,7 +279,9 @@ public class Pass3LiveRangesAnalysis extends Pass2Base {
             LiveRange lValLiveRange = liveRanges.getLiveRange(variableRef);
             if (lValLiveRange == null) {
                liveRanges.addEmptyAlive(variableRef);
-               getProgram().getLog().append("Adding empty live range for unused variable " + variableRef);
+               if(getProgram().getLog().isVerboseLiveRanges()) {
+                  getProgram().getLog().append("Adding empty live range for unused variable " + variableRef);
+               }
             }
          }
       }

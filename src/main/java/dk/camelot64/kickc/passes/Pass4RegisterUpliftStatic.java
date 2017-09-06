@@ -37,6 +37,17 @@ public class Pass4RegisterUpliftStatic extends Pass2Base {
       setRegister(combination, "inccnt::return#0", Registers.getRegisterA());
       */
 
+      // Good combination for liverange.kc
+      setRegister(combination, "inc::$0", Registers.getRegisterX());
+      setRegister(combination, "main::$0", Registers.getRegisterA());
+      setRegister(combination, "inc::return#0", Registers.getRegisterA());
+      setRegister(combination, "main::a#1", new Registers.RegisterZpByte(2));
+      setRegister(combination, "main::$2", Registers.getRegisterA());
+      setRegister(combination, "main::a#2", Registers.getRegisterA());
+      setRegister(combination, "i#11", Registers.getRegisterX());
+      setRegister(combination, "inc::$0", Registers.getRegisterX());
+
+
       boolean success = Pass4RegisterUpliftCombinations.generateCombinationAsm(
             combination,
             getProgram(),

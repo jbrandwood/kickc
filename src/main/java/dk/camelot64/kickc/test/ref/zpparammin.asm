@@ -8,6 +8,7 @@ main: {
     tya
     clc
     adc #$2
+    sty sum.a
     sta sum.c
     jsr sum
     sta $400,y
@@ -17,6 +18,7 @@ main: {
     tya
     clc
     adc #$2
+    sty sum2.a
     sta sum2.c
     jsr sum2
     sta $428,y
@@ -26,21 +28,21 @@ main: {
     rts
 }
 sum2: {
-    .label c = 2
-    sty $ff
+    .label a = 2
+    .label c = 3
     txa
     clc
-    adc $ff
+    adc a
     clc
     adc c
     rts
 }
 sum: {
-    .label c = 2
-    sty $ff
+    .label a = 2
+    .label c = 3
     txa
     clc
-    adc $ff
+    adc a
     clc
     adc c
     rts

@@ -1,0 +1,1044 @@
+byte i=0;
+
+main();
+
+void main() {
+   byte a=4;
+   a=a+inc();
+   a=a+inc();
+}
+
+byte inc() {
+  i = i+7;
+  return i;
+}
+PROGRAM
+  (byte) i ← (byte) 0
+  (void~) $0 ← call main 
+proc (void()) main()
+  (byte) main::a ← (byte) 4
+  (byte~) main::$0 ← call inc 
+  (byte~) main::$1 ← (byte) main::a + (byte~) main::$0
+  (byte) main::a ← (byte~) main::$1
+  (byte~) main::$2 ← call inc 
+  (byte~) main::$3 ← (byte) main::a + (byte~) main::$2
+  (byte) main::a ← (byte~) main::$3
+main::@return:
+  return 
+endproc // main()
+proc (byte()) inc()
+  (byte~) inc::$0 ← (byte) i + (byte) 7
+  (byte) i ← (byte~) inc::$0
+  (byte) inc::return ← (byte) i
+  goto inc::@return
+inc::@return:
+  (byte) inc::return ← (byte) inc::return
+  return (byte) inc::return
+endproc // inc()
+
+SYMBOLS
+(void~) $0
+(byte) i
+(byte()) inc()
+(byte~) inc::$0
+(label) inc::@return
+(byte) inc::return
+(void()) main()
+(byte~) main::$0
+(byte~) main::$1
+(byte~) main::$2
+(byte~) main::$3
+(label) main::@return
+(byte) main::a
+
+INITIAL CONTROL FLOW GRAPH
+@begin: scope:[]  from
+  (byte) i ← (byte) 0
+  (void~) $0 ← call main 
+  to:@1
+main: scope:[main]  from
+  (byte) main::a ← (byte) 4
+  (byte~) main::$0 ← call inc 
+  (byte~) main::$1 ← (byte) main::a + (byte~) main::$0
+  (byte) main::a ← (byte~) main::$1
+  (byte~) main::$2 ← call inc 
+  (byte~) main::$3 ← (byte) main::a + (byte~) main::$2
+  (byte) main::a ← (byte~) main::$3
+  to:main::@return
+main::@return: scope:[main]  from main
+  return 
+  to:@return
+@1: scope:[]  from @begin
+  to:@2
+inc: scope:[inc]  from
+  (byte~) inc::$0 ← (byte) i + (byte) 7
+  (byte) i ← (byte~) inc::$0
+  (byte) inc::return ← (byte) i
+  to:inc::@return
+inc::@return: scope:[inc]  from inc inc::@1
+  (byte) inc::return ← (byte) inc::return
+  return (byte) inc::return
+  to:@return
+inc::@1: scope:[inc]  from
+  to:inc::@return
+@2: scope:[]  from @1
+  to:@end
+@end: scope:[]  from @2
+
+Removing empty block @1
+Removing empty block inc::@1
+Removing empty block @2
+CONTROL FLOW GRAPH
+@begin: scope:[]  from
+  (byte) i ← (byte) 0
+  (void~) $0 ← call main 
+  to:@end
+main: scope:[main]  from
+  (byte) main::a ← (byte) 4
+  (byte~) main::$0 ← call inc 
+  (byte~) main::$1 ← (byte) main::a + (byte~) main::$0
+  (byte) main::a ← (byte~) main::$1
+  (byte~) main::$2 ← call inc 
+  (byte~) main::$3 ← (byte) main::a + (byte~) main::$2
+  (byte) main::a ← (byte~) main::$3
+  to:main::@return
+main::@return: scope:[main]  from main
+  return 
+  to:@return
+inc: scope:[inc]  from
+  (byte~) inc::$0 ← (byte) i + (byte) 7
+  (byte) i ← (byte~) inc::$0
+  (byte) inc::return ← (byte) i
+  to:inc::@return
+inc::@return: scope:[inc]  from inc
+  (byte) inc::return ← (byte) inc::return
+  return (byte) inc::return
+  to:@return
+@end: scope:[]  from @begin
+
+PROCEDURE MODIFY VARIABLE ANALYSIS
+main modifies i
+inc modifies i
+
+CONTROL FLOW GRAPH WITH ASSIGNMENT CALL
+@begin: scope:[]  from
+  (byte) i ← (byte) 0
+  call main param-assignment
+  to:@3
+@3: scope:[]  from @begin
+  (byte) i ← (byte) i
+  to:@end
+main: scope:[main]  from @begin
+  (byte) main::a ← (byte) 4
+  (byte) inc::return ← call inc param-assignment
+  to:main::@1
+main::@1: scope:[main]  from main
+  (byte~) main::$0 ← (byte) inc::return
+  (byte) i ← (byte) i
+  (byte~) main::$1 ← (byte) main::a + (byte~) main::$0
+  (byte) main::a ← (byte~) main::$1
+  (byte) inc::return ← call inc param-assignment
+  to:main::@2
+main::@2: scope:[main]  from main::@1
+  (byte~) main::$2 ← (byte) inc::return
+  (byte) i ← (byte) i
+  (byte~) main::$3 ← (byte) main::a + (byte~) main::$2
+  (byte) main::a ← (byte~) main::$3
+  to:main::@return
+main::@return: scope:[main]  from main::@2
+  (byte) i ← (byte) i
+  return 
+  to:@return
+inc: scope:[inc]  from main main::@1
+  (byte~) inc::$0 ← (byte) i + (byte) 7
+  (byte) i ← (byte~) inc::$0
+  (byte) inc::return ← (byte) i
+  to:inc::@return
+inc::@return: scope:[inc]  from inc
+  (byte) inc::return ← (byte) inc::return
+  (byte) i ← (byte) i
+  return (byte) inc::return
+  to:@return
+@end: scope:[]  from @3
+
+Completing Phi functions...
+Completing Phi functions...
+CONTROL FLOW GRAPH SSA
+@begin: scope:[]  from
+  (byte) i#0 ← (byte) 0
+  call main param-assignment
+  to:@3
+@3: scope:[]  from @begin
+  (byte) i#7 ← phi( @begin/(byte) i#0 )
+  (byte) i#1 ← (byte) i#7
+  to:@end
+main: scope:[main]  from @begin
+  (byte) i#13 ← phi( @begin/(byte) i#0 )
+  (byte) main::a#0 ← (byte) 4
+  (byte) inc::return#0 ← call inc param-assignment
+  to:main::@1
+main::@1: scope:[main]  from main
+  (byte) main::a#3 ← phi( main/(byte) main::a#0 )
+  (byte) i#8 ← phi( main/(byte) i#13 )
+  (byte) inc::return#4 ← phi( main/(byte) inc::return#0 )
+  (byte~) main::$0 ← (byte) inc::return#4
+  (byte) i#2 ← (byte) i#8
+  (byte~) main::$1 ← (byte) main::a#3 + (byte~) main::$0
+  (byte) main::a#1 ← (byte~) main::$1
+  (byte) inc::return#1 ← call inc param-assignment
+  to:main::@2
+main::@2: scope:[main]  from main::@1
+  (byte) main::a#4 ← phi( main::@1/(byte) main::a#1 )
+  (byte) i#9 ← phi( main::@1/(byte) i#2 )
+  (byte) inc::return#5 ← phi( main::@1/(byte) inc::return#1 )
+  (byte~) main::$2 ← (byte) inc::return#5
+  (byte) i#3 ← (byte) i#9
+  (byte~) main::$3 ← (byte) main::a#4 + (byte~) main::$2
+  (byte) main::a#2 ← (byte~) main::$3
+  to:main::@return
+main::@return: scope:[main]  from main::@2
+  (byte) i#10 ← phi( main::@2/(byte) i#3 )
+  (byte) i#4 ← (byte) i#10
+  return 
+  to:@return
+inc: scope:[inc]  from main main::@1
+  (byte) i#11 ← phi( main/(byte) i#13 main::@1/(byte) i#2 )
+  (byte~) inc::$0 ← (byte) i#11 + (byte) 7
+  (byte) i#5 ← (byte~) inc::$0
+  (byte) inc::return#2 ← (byte) i#5
+  to:inc::@return
+inc::@return: scope:[inc]  from inc
+  (byte) i#12 ← phi( inc/(byte) i#5 )
+  (byte) inc::return#6 ← phi( inc/(byte) inc::return#2 )
+  (byte) inc::return#3 ← (byte) inc::return#6
+  (byte) i#6 ← (byte) i#12
+  return (byte) inc::return#3
+  to:@return
+@end: scope:[]  from @3
+
+CONTROL FLOW GRAPH WITH ASSIGNMENT CALL & RETURN
+@begin: scope:[]  from
+  (byte) i#0 ← (byte) 0
+  call main param-assignment
+  to:@3
+@3: scope:[]  from @begin
+  (byte) i#7 ← phi( @begin/(byte) i#4 )
+  (byte) i#1 ← (byte) i#7
+  to:@end
+main: scope:[main]  from @begin
+  (byte) i#13 ← phi( @begin/(byte) i#0 )
+  (byte) main::a#0 ← (byte) 4
+  call inc param-assignment
+  (byte) inc::return#0 ← (byte) inc::return#3
+  to:main::@1
+main::@1: scope:[main]  from main
+  (byte) main::a#3 ← phi( main/(byte) main::a#0 )
+  (byte) i#8 ← phi( main/(byte) i#6 )
+  (byte) inc::return#4 ← phi( main/(byte) inc::return#0 )
+  (byte~) main::$0 ← (byte) inc::return#4
+  (byte) i#2 ← (byte) i#8
+  (byte~) main::$1 ← (byte) main::a#3 + (byte~) main::$0
+  (byte) main::a#1 ← (byte~) main::$1
+  call inc param-assignment
+  (byte) inc::return#1 ← (byte) inc::return#3
+  to:main::@2
+main::@2: scope:[main]  from main::@1
+  (byte) main::a#4 ← phi( main::@1/(byte) main::a#1 )
+  (byte) i#9 ← phi( main::@1/(byte) i#6 )
+  (byte) inc::return#5 ← phi( main::@1/(byte) inc::return#1 )
+  (byte~) main::$2 ← (byte) inc::return#5
+  (byte) i#3 ← (byte) i#9
+  (byte~) main::$3 ← (byte) main::a#4 + (byte~) main::$2
+  (byte) main::a#2 ← (byte~) main::$3
+  to:main::@return
+main::@return: scope:[main]  from main::@2
+  (byte) i#10 ← phi( main::@2/(byte) i#3 )
+  (byte) i#4 ← (byte) i#10
+  return 
+  to:@return
+inc: scope:[inc]  from main main::@1
+  (byte) i#11 ← phi( main/(byte) i#13 main::@1/(byte) i#2 )
+  (byte~) inc::$0 ← (byte) i#11 + (byte) 7
+  (byte) i#5 ← (byte~) inc::$0
+  (byte) inc::return#2 ← (byte) i#5
+  to:inc::@return
+inc::@return: scope:[inc]  from inc
+  (byte) i#12 ← phi( inc/(byte) i#5 )
+  (byte) inc::return#6 ← phi( inc/(byte) inc::return#2 )
+  (byte) inc::return#3 ← (byte) inc::return#6
+  (byte) i#6 ← (byte) i#12
+  return 
+  to:@return
+@end: scope:[]  from @3
+
+INITIAL SSA SYMBOL TABLE
+(label) @3
+(label) @begin
+(label) @end
+(byte) i
+(byte) i#0
+(byte) i#1
+(byte) i#10
+(byte) i#11
+(byte) i#12
+(byte) i#13
+(byte) i#2
+(byte) i#3
+(byte) i#4
+(byte) i#5
+(byte) i#6
+(byte) i#7
+(byte) i#8
+(byte) i#9
+(byte()) inc()
+(byte~) inc::$0
+(label) inc::@return
+(byte) inc::return
+(byte) inc::return#0
+(byte) inc::return#1
+(byte) inc::return#2
+(byte) inc::return#3
+(byte) inc::return#4
+(byte) inc::return#5
+(byte) inc::return#6
+(void()) main()
+(byte~) main::$0
+(byte~) main::$1
+(byte~) main::$2
+(byte~) main::$3
+(label) main::@1
+(label) main::@2
+(label) main::@return
+(byte) main::a
+(byte) main::a#0
+(byte) main::a#1
+(byte) main::a#2
+(byte) main::a#3
+(byte) main::a#4
+
+Constant (byte) i#0 (byte) 0
+Constant (byte) main::a#0 (byte) 4
+Succesful SSA optimization Pass2ConstantPropagation
+CONTROL FLOW GRAPH
+@begin: scope:[]  from
+  call main param-assignment
+  to:@3
+@3: scope:[]  from @begin
+  (byte) i#7 ← phi( @begin/(byte) i#4 )
+  (byte) i#1 ← (byte) i#7
+  to:@end
+main: scope:[main]  from @begin
+  (byte) i#13 ← phi( @begin/(byte) 0 )
+  call inc param-assignment
+  (byte) inc::return#0 ← (byte) inc::return#3
+  to:main::@1
+main::@1: scope:[main]  from main
+  (byte) main::a#3 ← phi( main/(byte) 4 )
+  (byte) i#8 ← phi( main/(byte) i#6 )
+  (byte) inc::return#4 ← phi( main/(byte) inc::return#0 )
+  (byte~) main::$0 ← (byte) inc::return#4
+  (byte) i#2 ← (byte) i#8
+  (byte~) main::$1 ← (byte) main::a#3 + (byte~) main::$0
+  (byte) main::a#1 ← (byte~) main::$1
+  call inc param-assignment
+  (byte) inc::return#1 ← (byte) inc::return#3
+  to:main::@2
+main::@2: scope:[main]  from main::@1
+  (byte) main::a#4 ← phi( main::@1/(byte) main::a#1 )
+  (byte) i#9 ← phi( main::@1/(byte) i#6 )
+  (byte) inc::return#5 ← phi( main::@1/(byte) inc::return#1 )
+  (byte~) main::$2 ← (byte) inc::return#5
+  (byte) i#3 ← (byte) i#9
+  (byte~) main::$3 ← (byte) main::a#4 + (byte~) main::$2
+  (byte) main::a#2 ← (byte~) main::$3
+  to:main::@return
+main::@return: scope:[main]  from main::@2
+  (byte) i#10 ← phi( main::@2/(byte) i#3 )
+  (byte) i#4 ← (byte) i#10
+  return 
+  to:@return
+inc: scope:[inc]  from main main::@1
+  (byte) i#11 ← phi( main/(byte) i#13 main::@1/(byte) i#2 )
+  (byte~) inc::$0 ← (byte) i#11 + (byte) 7
+  (byte) i#5 ← (byte~) inc::$0
+  (byte) inc::return#2 ← (byte) i#5
+  to:inc::@return
+inc::@return: scope:[inc]  from inc
+  (byte) i#12 ← phi( inc/(byte) i#5 )
+  (byte) inc::return#6 ← phi( inc/(byte) inc::return#2 )
+  (byte) inc::return#3 ← (byte) inc::return#6
+  (byte) i#6 ← (byte) i#12
+  return 
+  to:@return
+@end: scope:[]  from @3
+
+Not aliassing across scopes: main::$0 inc::return#4
+Not aliassing across scopes: main::$2 inc::return#5
+Not aliassing across scopes: i#5 inc::$0
+Not aliassing across scopes: inc::return#2 i#5
+Alias (byte) i#1 = (byte) i#7 (byte) i#4 (byte) i#8 (byte) i#6 (byte) i#2 (byte) i#9 (byte) i#3 (byte) i#10 (byte) i#12 (byte) i#5 
+Alias (byte) inc::return#0 = (byte) inc::return#3 (byte) inc::return#4 (byte) inc::return#1 (byte) inc::return#5 (byte) inc::return#6 (byte) inc::return#2 
+Alias (byte) main::a#1 = (byte~) main::$1 (byte) main::a#4 
+Alias (byte) main::a#2 = (byte~) main::$3 
+Succesful SSA optimization Pass2AliasElimination
+CONTROL FLOW GRAPH
+@begin: scope:[]  from
+  call main param-assignment
+  to:@3
+@3: scope:[]  from @begin
+  to:@end
+main: scope:[main]  from @begin
+  (byte) i#13 ← phi( @begin/(byte) 0 )
+  call inc param-assignment
+  to:main::@1
+main::@1: scope:[main]  from main
+  (byte) main::a#3 ← phi( main/(byte) 4 )
+  (byte~) main::$0 ← (byte) inc::return#0
+  (byte) main::a#1 ← (byte) main::a#3 + (byte~) main::$0
+  call inc param-assignment
+  to:main::@2
+main::@2: scope:[main]  from main::@1
+  (byte~) main::$2 ← (byte) inc::return#0
+  (byte) main::a#2 ← (byte) main::a#1 + (byte~) main::$2
+  to:main::@return
+main::@return: scope:[main]  from main::@2
+  return 
+  to:@return
+inc: scope:[inc]  from main main::@1
+  (byte) i#11 ← phi( main/(byte) i#13 main::@1/(byte) i#1 )
+  (byte~) inc::$0 ← (byte) i#11 + (byte) 7
+  (byte) i#1 ← (byte~) inc::$0
+  (byte) inc::return#0 ← (byte) i#1
+  to:inc::@return
+inc::@return: scope:[inc]  from inc
+  return 
+  to:@return
+@end: scope:[]  from @3
+
+Redundant Phi (byte) i#13 (byte) 0
+Redundant Phi (byte) main::a#3 (byte) 4
+Succesful SSA optimization Pass2RedundantPhiElimination
+CONTROL FLOW GRAPH
+@begin: scope:[]  from
+  call main param-assignment
+  to:@3
+@3: scope:[]  from @begin
+  to:@end
+main: scope:[main]  from @begin
+  call inc param-assignment
+  to:main::@1
+main::@1: scope:[main]  from main
+  (byte~) main::$0 ← (byte) inc::return#0
+  (byte) main::a#1 ← (byte) 4 + (byte~) main::$0
+  call inc param-assignment
+  to:main::@2
+main::@2: scope:[main]  from main::@1
+  (byte~) main::$2 ← (byte) inc::return#0
+  (byte) main::a#2 ← (byte) main::a#1 + (byte~) main::$2
+  to:main::@return
+main::@return: scope:[main]  from main::@2
+  return 
+  to:@return
+inc: scope:[inc]  from main main::@1
+  (byte) i#11 ← phi( main/(byte) 0 main::@1/(byte) i#1 )
+  (byte~) inc::$0 ← (byte) i#11 + (byte) 7
+  (byte) i#1 ← (byte~) inc::$0
+  (byte) inc::return#0 ← (byte) i#1
+  to:inc::@return
+inc::@return: scope:[inc]  from inc
+  return 
+  to:@return
+@end: scope:[]  from @3
+
+Culled Empty Block (label) @3
+Succesful SSA optimization Pass2CullEmptyBlocks
+CONTROL FLOW GRAPH
+@begin: scope:[]  from
+  call main param-assignment
+  to:@end
+main: scope:[main]  from @begin
+  call inc param-assignment
+  to:main::@1
+main::@1: scope:[main]  from main
+  (byte~) main::$0 ← (byte) inc::return#0
+  (byte) main::a#1 ← (byte) 4 + (byte~) main::$0
+  call inc param-assignment
+  to:main::@2
+main::@2: scope:[main]  from main::@1
+  (byte~) main::$2 ← (byte) inc::return#0
+  (byte) main::a#2 ← (byte) main::a#1 + (byte~) main::$2
+  to:main::@return
+main::@return: scope:[main]  from main::@2
+  return 
+  to:@return
+inc: scope:[inc]  from main main::@1
+  (byte) i#11 ← phi( main/(byte) 0 main::@1/(byte) i#1 )
+  (byte~) inc::$0 ← (byte) i#11 + (byte) 7
+  (byte) i#1 ← (byte~) inc::$0
+  (byte) inc::return#0 ← (byte) i#1
+  to:inc::@return
+inc::@return: scope:[inc]  from inc
+  return 
+  to:@return
+@end: scope:[]  from @begin
+
+Not aliassing across scopes: main::$0 inc::return#0
+Not aliassing across scopes: main::$2 inc::return#0
+Not aliassing across scopes: i#1 inc::$0
+Not aliassing across scopes: inc::return#0 i#1
+Not aliassing across scopes: main::$0 inc::return#0
+Not aliassing across scopes: main::$2 inc::return#0
+Not aliassing across scopes: i#1 inc::$0
+Not aliassing across scopes: inc::return#0 i#1
+FINAL SYMBOL TABLE
+(label) @begin
+(label) @end
+(byte) i
+(byte) i#1
+(byte) i#11
+(byte()) inc()
+(byte~) inc::$0
+(label) inc::@return
+(byte) inc::return
+(byte) inc::return#0
+(void()) main()
+(byte~) main::$0
+(byte~) main::$2
+(label) main::@1
+(label) main::@2
+(label) main::@return
+(byte) main::a
+(byte) main::a#1
+(byte) main::a#2
+
+Block Sequence Planned @begin @end main main::@1 main::@2 main::@return inc inc::@return 
+Block Sequence Planned @begin @end main main::@1 main::@2 main::@return inc inc::@return 
+CONTROL FLOW GRAPH - PHI LIFTED
+@begin: scope:[]  from
+  call main param-assignment
+  to:@end
+@end: scope:[]  from @begin
+main: scope:[main]  from @begin
+  call inc param-assignment
+  to:main::@1
+main::@1: scope:[main]  from main
+  (byte~) main::$0 ← (byte) inc::return#0
+  (byte) main::a#1 ← (byte) 4 + (byte~) main::$0
+  (byte~) i#14 ← (byte) i#1
+  call inc param-assignment
+  to:main::@2
+main::@2: scope:[main]  from main::@1
+  (byte~) main::$2 ← (byte) inc::return#0
+  (byte) main::a#2 ← (byte) main::a#1 + (byte~) main::$2
+  to:main::@return
+main::@return: scope:[main]  from main::@2
+  return 
+  to:@return
+inc: scope:[inc]  from main main::@1
+  (byte) i#11 ← phi( main/(byte) 0 main::@1/(byte~) i#14 )
+  (byte~) inc::$0 ← (byte) i#11 + (byte) 7
+  (byte) i#1 ← (byte~) inc::$0
+  (byte) inc::return#0 ← (byte) i#1
+  to:inc::@return
+inc::@return: scope:[inc]  from inc
+  return 
+  to:@return
+
+Adding NOP phi() at start of main
+CALL GRAPH
+Calls in [] to 0:main 
+Calls in [main] to 2:inc 6:inc 
+
+Propagating live ranges...
+Propagating live ranges...
+Propagating live ranges...
+Propagating live ranges...
+Propagating live ranges...
+CONTROL FLOW GRAPH - LIVE RANGES FOUND
+@begin: scope:[]  from
+  [0] call main param-assignment [ ]
+  to:@end
+@end: scope:[]  from @begin
+main: scope:[main]  from @begin
+  [1] phi() [ ]
+  [2] call inc param-assignment [ inc::return#0 i#1 ]
+  to:main::@1
+main::@1: scope:[main]  from main
+  [3] (byte~) main::$0 ← (byte) inc::return#0 [ main::$0 i#1 ]
+  [4] (byte) main::a#1 ← (byte) 4 + (byte~) main::$0 [ main::a#1 i#1 ]
+  [5] (byte~) i#14 ← (byte) i#1 [ main::a#1 i#14 ]
+  [6] call inc param-assignment [ inc::return#0 main::a#1 ]
+  to:main::@2
+main::@2: scope:[main]  from main::@1
+  [7] (byte~) main::$2 ← (byte) inc::return#0 [ main::a#1 main::$2 ]
+  [8] (byte) main::a#2 ← (byte) main::a#1 + (byte~) main::$2 [ ]
+  to:main::@return
+main::@return: scope:[main]  from main::@2
+  [9] return  [ ]
+  to:@return
+inc: scope:[inc]  from main main::@1
+  [10] (byte) i#11 ← phi( main/(byte) 0 main::@1/(byte~) i#14 ) [ i#11 ]
+  [11] (byte~) inc::$0 ← (byte) i#11 + (byte) 7 [ inc::$0 ]
+  [12] (byte) i#1 ← (byte~) inc::$0 [ i#1 ]
+  [13] (byte) inc::return#0 ← (byte) i#1 [ inc::return#0 i#1 ]
+  to:inc::@return
+inc::@return: scope:[inc]  from inc
+  [14] return  [ inc::return#0 i#1 ]
+  to:@return
+
+Created 1 initial phi equivalence classes
+Coalesced [5] i#14 ← i#1
+Coalesced [12] i#1 ← inc::$0
+Coalesced down to 1 phi equivalence classes
+Block Sequence Planned @begin @end main main::@1 main::@2 main::@return inc inc::@return 
+Adding NOP phi() at start of main
+Propagating live ranges...
+Propagating live ranges...
+Propagating live ranges...
+Propagating live ranges...
+Propagating live ranges...
+CONTROL FLOW GRAPH - PHI MEM COALESCED
+@begin: scope:[]  from
+  [0] call main param-assignment [ ]
+  to:@end
+@end: scope:[]  from @begin
+main: scope:[main]  from @begin
+  [1] phi() [ ]
+  [2] call inc param-assignment [ inc::return#0 inc::$0 ]
+  to:main::@1
+main::@1: scope:[main]  from main
+  [3] (byte~) main::$0 ← (byte) inc::return#0 [ main::$0 inc::$0 ]
+  [4] (byte) main::a#1 ← (byte) 4 + (byte~) main::$0 [ main::a#1 inc::$0 ]
+  [5] call inc param-assignment [ inc::return#0 main::a#1 ]
+  to:main::@2
+main::@2: scope:[main]  from main::@1
+  [6] (byte~) main::$2 ← (byte) inc::return#0 [ main::a#1 main::$2 ]
+  [7] (byte) main::a#2 ← (byte) main::a#1 + (byte~) main::$2 [ ]
+  to:main::@return
+main::@return: scope:[main]  from main::@2
+  [8] return  [ ]
+  to:@return
+inc: scope:[inc]  from main main::@1
+  [9] (byte) i#11 ← phi( main/(byte) 0 main::@1/(byte~) inc::$0 ) [ i#11 ]
+  [10] (byte~) inc::$0 ← (byte) i#11 + (byte) 7 [ inc::$0 ]
+  [11] (byte) inc::return#0 ← (byte~) inc::$0 [ inc::return#0 inc::$0 ]
+  to:inc::@return
+inc::@return: scope:[inc]  from inc
+  [12] return  [ inc::return#0 inc::$0 ]
+  to:@return
+
+DOMINATORS
+@begin dominated by  @begin 
+@end dominated by  @end @begin 
+main dominated by  @begin main 
+main::@1 dominated by  @begin main::@1 main 
+main::@2 dominated by  @begin main::@2 main::@1 main 
+main::@return dominated by  main::@return @begin main::@2 main::@1 main 
+inc dominated by  inc @begin main 
+inc::@return dominated by  inc @begin inc::@return main 
+
+NATURAL LOOPS
+
+Found 0 loops in scope []
+Found 0 loops in scope [main]
+Found 0 loops in scope [inc]
+NATURAL LOOPS WITH DEPTH
+
+
+VARIABLE REGISTER WEIGHTS
+(byte) i
+(byte) i#11 4.0
+(byte()) inc()
+(byte~) inc::$0 1.0
+(byte) inc::return
+(byte) inc::return#0 1.5
+(void()) main()
+(byte~) main::$0 4.0
+(byte~) main::$2 4.0
+(byte) main::a
+(byte) main::a#1 1.3333333333333333
+(byte) main::a#2 20.0
+
+Initial phi equivalence classes
+[ i#11 inc::$0 ]
+Added variable main::$0 to zero page equivalence class [ main::$0 ]
+Added variable main::a#1 to zero page equivalence class [ main::a#1 ]
+Added variable main::$2 to zero page equivalence class [ main::$2 ]
+Added variable main::a#2 to zero page equivalence class [ main::a#2 ]
+Added variable inc::return#0 to zero page equivalence class [ inc::return#0 ]
+Complete equivalence classes
+[ i#11 inc::$0 ]
+[ main::$0 ]
+[ main::a#1 ]
+[ main::$2 ]
+[ main::a#2 ]
+[ inc::return#0 ]
+Allocated zp ZP_BYTE:2 [ i#11 inc::$0 ]
+Allocated zp ZP_BYTE:3 [ main::$0 ]
+Allocated zp ZP_BYTE:4 [ main::a#1 ]
+Allocated zp ZP_BYTE:5 [ main::$2 ]
+Allocated zp ZP_BYTE:6 [ main::a#2 ]
+Allocated zp ZP_BYTE:7 [ inc::return#0 ]
+INITIAL ASM
+//SEG0 Global ZP labels
+  .label i = 2
+//SEG1 @begin
+bbegin:
+//SEG2 [0] call main param-assignment [ ]
+//SEG3 [1] phi from @begin to main
+main_from_bbegin:
+  jsr main
+  jmp bend
+//SEG4 @end
+bend:
+//SEG5 main
+main: {
+    .label _0 = 3
+    .label _2 = 5
+    .label a = 4
+    .label a_2 = 6
+  //SEG6 [2] call inc param-assignment [ inc::return#0 inc::$0 ]
+  //SEG7 [9] phi from main to inc
+  inc_from_main:
+  //SEG8 [9] phi (byte) i#11 = (byte) 0 -- zpby1=coby1 
+    lda #$0
+    sta i
+    jsr inc
+    jmp b1
+  //SEG9 main::@1
+  b1:
+  //SEG10 [3] (byte~) main::$0 ← (byte) inc::return#0 [ main::$0 inc::$0 ] -- zpby1=zpby2 
+    lda inc.return
+    sta _0
+  //SEG11 [4] (byte) main::a#1 ← (byte) 4 + (byte~) main::$0 [ main::a#1 inc::$0 ] -- zpby1=coby1_plus_zpby2 
+    lda #$4
+    clc
+    adc _0
+    sta a
+  //SEG12 [5] call inc param-assignment [ inc::return#0 main::a#1 ]
+  //SEG13 [9] phi from main::@1 to inc
+  inc_from_b1:
+  //SEG14 [9] phi (byte) i#11 = (byte~) inc::$0 -- register_copy 
+    jsr inc
+    jmp b2
+  //SEG15 main::@2
+  b2:
+  //SEG16 [6] (byte~) main::$2 ← (byte) inc::return#0 [ main::a#1 main::$2 ] -- zpby1=zpby2 
+    lda inc.return
+    sta _2
+  //SEG17 [7] (byte) main::a#2 ← (byte) main::a#1 + (byte~) main::$2 [ ] -- zpby1=zpby2_plus_zpby3 
+    lda a
+    clc
+    adc _2
+    sta a_2
+    jmp breturn
+  //SEG18 main::@return
+  breturn:
+  //SEG19 [8] return  [ ]
+    rts
+}
+//SEG20 inc
+inc: {
+    .label _0 = 2
+    .label return = 7
+  //SEG21 [10] (byte~) inc::$0 ← (byte) i#11 + (byte) 7 [ inc::$0 ] -- zpby1=zpby1_plus_coby1 
+    lda _0
+    clc
+    adc #$7
+    sta _0
+  //SEG22 [11] (byte) inc::return#0 ← (byte~) inc::$0 [ inc::return#0 inc::$0 ] -- zpby1=zpby2 
+    lda _0
+    sta return
+    jmp breturn
+  //SEG23 inc::@return
+  breturn:
+  //SEG24 [12] return  [ inc::return#0 inc::$0 ]
+    rts
+}
+
+Statement [4] (byte) main::a#1 ← (byte) 4 + (byte~) main::$0 [ main::a#1 inc::$0 ] always clobbers reg byte a 
+Removing always clobbered register reg byte a as potential for zp ZP_BYTE:2 [ i#11 inc::$0 ]
+Statement [10] (byte~) inc::$0 ← (byte) i#11 + (byte) 7 [ inc::$0 ] always clobbers reg byte a 
+Removing always clobbered register reg byte a as potential for zp ZP_BYTE:4 [ main::a#1 ]
+Statement [4] (byte) main::a#1 ← (byte) 4 + (byte~) main::$0 [ main::a#1 inc::$0 ] always clobbers reg byte a 
+Statement [10] (byte~) inc::$0 ← (byte) i#11 + (byte) 7 [ inc::$0 ] always clobbers reg byte a 
+REGISTER UPLIFT POTENTIAL REGISTERS
+Potential registers zp ZP_BYTE:2 [ i#11 inc::$0 ] : zp ZP_BYTE:2 , reg byte x , reg byte y , 
+Potential registers zp ZP_BYTE:3 [ main::$0 ] : zp ZP_BYTE:3 , reg byte a , reg byte x , reg byte y , 
+Potential registers zp ZP_BYTE:4 [ main::a#1 ] : zp ZP_BYTE:4 , reg byte x , reg byte y , 
+Potential registers zp ZP_BYTE:5 [ main::$2 ] : zp ZP_BYTE:5 , reg byte a , reg byte x , reg byte y , 
+Potential registers zp ZP_BYTE:6 [ main::a#2 ] : zp ZP_BYTE:6 , reg byte a , reg byte x , reg byte y , 
+Potential registers zp ZP_BYTE:7 [ inc::return#0 ] : zp ZP_BYTE:7 , reg byte a , reg byte x , reg byte y , 
+
+REGISTER UPLIFT SCOPES
+Uplift Scope [main] 20: zp ZP_BYTE:6 [ main::a#2 ] 4: zp ZP_BYTE:3 [ main::$0 ] 4: zp ZP_BYTE:5 [ main::$2 ] 1.33: zp ZP_BYTE:4 [ main::a#1 ] 
+Uplift Scope [] 5: zp ZP_BYTE:2 [ i#11 inc::$0 ] 
+Uplift Scope [inc] 1.5: zp ZP_BYTE:7 [ inc::return#0 ] 
+
+Uplifting [main] best 84 combination reg byte a [ main::a#2 ] reg byte a [ main::$0 ] reg byte a [ main::$2 ] zp ZP_BYTE:4 [ main::a#1 ] 
+Uplifting [] best 76 combination reg byte x [ i#11 inc::$0 ] 
+Uplifting [inc] best 69 combination reg byte a [ inc::return#0 ] 
+Attempting to uplift remaining variables inzp ZP_BYTE:4 [ main::a#1 ]
+Uplifting [main] best 69 combination zp ZP_BYTE:4 [ main::a#1 ] 
+Allocated (was zp ZP_BYTE:4) zp ZP_BYTE:2 [ main::a#1 ]
+Removing instruction jmp bend
+Removing instruction jmp b1
+Removing instruction jmp b2
+Removing instruction jmp breturn
+Removing instruction jmp breturn
+Succesful ASM optimization Pass5NextJumpElimination
+ASSEMBLER
+//SEG0 Global ZP labels
+//SEG1 @begin
+bbegin:
+//SEG2 [0] call main param-assignment [ ]
+//SEG3 [1] phi from @begin to main
+main_from_bbegin:
+  jsr main
+//SEG4 @end
+bend:
+//SEG5 main
+main: {
+    .label a = 2
+  //SEG6 [2] call inc param-assignment [ inc::return#0 inc::$0 ]
+  //SEG7 [9] phi from main to inc
+  inc_from_main:
+  //SEG8 [9] phi (byte) i#11 = (byte) 0 -- xby=coby1 
+    ldx #$0
+    jsr inc
+  //SEG9 main::@1
+  b1:
+  //SEG10 [3] (byte~) main::$0 ← (byte) inc::return#0 [ main::$0 inc::$0 ]
+    // (byte~) main::$0 = (byte) inc::return#0  // register copy reg byte a
+  //SEG11 [4] (byte) main::a#1 ← (byte) 4 + (byte~) main::$0 [ main::a#1 inc::$0 ] -- zpby1=coby1_plus_aby 
+    clc
+    adc #$4
+    sta a
+  //SEG12 [5] call inc param-assignment [ inc::return#0 main::a#1 ]
+  //SEG13 [9] phi from main::@1 to inc
+  inc_from_b1:
+  //SEG14 [9] phi (byte) i#11 = (byte~) inc::$0 -- register_copy 
+    jsr inc
+  //SEG15 main::@2
+  b2:
+  //SEG16 [6] (byte~) main::$2 ← (byte) inc::return#0 [ main::a#1 main::$2 ]
+    // (byte~) main::$2 = (byte) inc::return#0  // register copy reg byte a
+  //SEG17 [7] (byte) main::a#2 ← (byte) main::a#1 + (byte~) main::$2 [ ] -- aby=zpby1_plus_aby 
+    clc
+    adc a
+  //SEG18 main::@return
+  breturn:
+  //SEG19 [8] return  [ ]
+    rts
+}
+//SEG20 inc
+inc: {
+  //SEG21 [10] (byte~) inc::$0 ← (byte) i#11 + (byte) 7 [ inc::$0 ] -- xby=xby_plus_coby1 
+    txa
+    clc
+    adc #$7
+    tax
+  //SEG22 [11] (byte) inc::return#0 ← (byte~) inc::$0 [ inc::return#0 inc::$0 ] -- aby=xby 
+    txa
+  //SEG23 inc::@return
+  breturn:
+  //SEG24 [12] return  [ inc::return#0 inc::$0 ]
+    rts
+}
+
+Removing instruction main_from_bbegin:
+Succesful ASM optimization Pass5RedundantLabelElimination
+ASSEMBLER
+//SEG0 Global ZP labels
+//SEG1 @begin
+bbegin:
+//SEG2 [0] call main param-assignment [ ]
+//SEG3 [1] phi from @begin to main
+  jsr main
+//SEG4 @end
+bend:
+//SEG5 main
+main: {
+    .label a = 2
+  //SEG6 [2] call inc param-assignment [ inc::return#0 inc::$0 ]
+  //SEG7 [9] phi from main to inc
+  inc_from_main:
+  //SEG8 [9] phi (byte) i#11 = (byte) 0 -- xby=coby1 
+    ldx #$0
+    jsr inc
+  //SEG9 main::@1
+  b1:
+  //SEG10 [3] (byte~) main::$0 ← (byte) inc::return#0 [ main::$0 inc::$0 ]
+    // (byte~) main::$0 = (byte) inc::return#0  // register copy reg byte a
+  //SEG11 [4] (byte) main::a#1 ← (byte) 4 + (byte~) main::$0 [ main::a#1 inc::$0 ] -- zpby1=coby1_plus_aby 
+    clc
+    adc #$4
+    sta a
+  //SEG12 [5] call inc param-assignment [ inc::return#0 main::a#1 ]
+  //SEG13 [9] phi from main::@1 to inc
+  inc_from_b1:
+  //SEG14 [9] phi (byte) i#11 = (byte~) inc::$0 -- register_copy 
+    jsr inc
+  //SEG15 main::@2
+  b2:
+  //SEG16 [6] (byte~) main::$2 ← (byte) inc::return#0 [ main::a#1 main::$2 ]
+    // (byte~) main::$2 = (byte) inc::return#0  // register copy reg byte a
+  //SEG17 [7] (byte) main::a#2 ← (byte) main::a#1 + (byte~) main::$2 [ ] -- aby=zpby1_plus_aby 
+    clc
+    adc a
+  //SEG18 main::@return
+  breturn:
+  //SEG19 [8] return  [ ]
+    rts
+}
+//SEG20 inc
+inc: {
+  //SEG21 [10] (byte~) inc::$0 ← (byte) i#11 + (byte) 7 [ inc::$0 ] -- xby=xby_plus_coby1 
+    txa
+    clc
+    adc #$7
+    tax
+  //SEG22 [11] (byte) inc::return#0 ← (byte~) inc::$0 [ inc::return#0 inc::$0 ] -- aby=xby 
+    txa
+  //SEG23 inc::@return
+  breturn:
+  //SEG24 [12] return  [ inc::return#0 inc::$0 ]
+    rts
+}
+
+Removing instruction bbegin:
+Removing instruction bend:
+Removing instruction inc_from_main:
+Removing instruction b1:
+Removing instruction inc_from_b1:
+Removing instruction b2:
+Removing instruction breturn:
+Removing instruction breturn:
+Succesful ASM optimization Pass5UnusedLabelElimination
+ASSEMBLER
+//SEG0 Global ZP labels
+//SEG1 @begin
+//SEG2 [0] call main param-assignment [ ]
+//SEG3 [1] phi from @begin to main
+  jsr main
+//SEG4 @end
+//SEG5 main
+main: {
+    .label a = 2
+  //SEG6 [2] call inc param-assignment [ inc::return#0 inc::$0 ]
+  //SEG7 [9] phi from main to inc
+  //SEG8 [9] phi (byte) i#11 = (byte) 0 -- xby=coby1 
+    ldx #$0
+    jsr inc
+  //SEG9 main::@1
+  //SEG10 [3] (byte~) main::$0 ← (byte) inc::return#0 [ main::$0 inc::$0 ]
+    // (byte~) main::$0 = (byte) inc::return#0  // register copy reg byte a
+  //SEG11 [4] (byte) main::a#1 ← (byte) 4 + (byte~) main::$0 [ main::a#1 inc::$0 ] -- zpby1=coby1_plus_aby 
+    clc
+    adc #$4
+    sta a
+  //SEG12 [5] call inc param-assignment [ inc::return#0 main::a#1 ]
+  //SEG13 [9] phi from main::@1 to inc
+  //SEG14 [9] phi (byte) i#11 = (byte~) inc::$0 -- register_copy 
+    jsr inc
+  //SEG15 main::@2
+  //SEG16 [6] (byte~) main::$2 ← (byte) inc::return#0 [ main::a#1 main::$2 ]
+    // (byte~) main::$2 = (byte) inc::return#0  // register copy reg byte a
+  //SEG17 [7] (byte) main::a#2 ← (byte) main::a#1 + (byte~) main::$2 [ ] -- aby=zpby1_plus_aby 
+    clc
+    adc a
+  //SEG18 main::@return
+  //SEG19 [8] return  [ ]
+    rts
+}
+//SEG20 inc
+inc: {
+  //SEG21 [10] (byte~) inc::$0 ← (byte) i#11 + (byte) 7 [ inc::$0 ] -- xby=xby_plus_coby1 
+    txa
+    clc
+    adc #$7
+    tax
+  //SEG22 [11] (byte) inc::return#0 ← (byte~) inc::$0 [ inc::return#0 inc::$0 ] -- aby=xby 
+    txa
+  //SEG23 inc::@return
+  //SEG24 [12] return  [ inc::return#0 inc::$0 ]
+    rts
+}
+
+FINAL SYMBOL TABLE
+(label) @begin
+(label) @end
+(byte) i
+(byte) i#11 reg byte x 4.0
+(byte()) inc()
+(byte~) inc::$0 reg byte x 1.0
+(label) inc::@return
+(byte) inc::return
+(byte) inc::return#0 reg byte a 1.5
+(void()) main()
+(byte~) main::$0 reg byte a 4.0
+(byte~) main::$2 reg byte a 4.0
+(label) main::@1
+(label) main::@2
+(label) main::@return
+(byte) main::a
+(byte) main::a#1 a zp ZP_BYTE:2 1.3333333333333333
+(byte) main::a#2 reg byte a 20.0
+
+reg byte x [ i#11 inc::$0 ]
+reg byte a [ main::$0 ]
+zp ZP_BYTE:2 [ main::a#1 ]
+reg byte a [ main::$2 ]
+reg byte a [ main::a#2 ]
+reg byte a [ inc::return#0 ]
+
+FINAL CODE
+//SEG0 Global ZP labels
+//SEG1 @begin
+//SEG2 [0] call main param-assignment [ ]
+//SEG3 [1] phi from @begin to main
+  jsr main
+//SEG4 @end
+//SEG5 main
+main: {
+    .label a = 2
+  //SEG6 [2] call inc param-assignment [ inc::return#0 inc::$0 ]
+  //SEG7 [9] phi from main to inc
+  //SEG8 [9] phi (byte) i#11 = (byte) 0 -- xby=coby1 
+    ldx #$0
+    jsr inc
+  //SEG9 main::@1
+  //SEG10 [3] (byte~) main::$0 ← (byte) inc::return#0 [ main::$0 inc::$0 ]
+    // (byte~) main::$0 = (byte) inc::return#0  // register copy reg byte a
+  //SEG11 [4] (byte) main::a#1 ← (byte) 4 + (byte~) main::$0 [ main::a#1 inc::$0 ] -- zpby1=coby1_plus_aby 
+    clc
+    adc #$4
+    sta a
+  //SEG12 [5] call inc param-assignment [ inc::return#0 main::a#1 ]
+  //SEG13 [9] phi from main::@1 to inc
+  //SEG14 [9] phi (byte) i#11 = (byte~) inc::$0 -- register_copy 
+    jsr inc
+  //SEG15 main::@2
+  //SEG16 [6] (byte~) main::$2 ← (byte) inc::return#0 [ main::a#1 main::$2 ]
+    // (byte~) main::$2 = (byte) inc::return#0  // register copy reg byte a
+  //SEG17 [7] (byte) main::a#2 ← (byte) main::a#1 + (byte~) main::$2 [ ] -- aby=zpby1_plus_aby 
+    clc
+    adc a
+  //SEG18 main::@return
+  //SEG19 [8] return  [ ]
+    rts
+}
+//SEG20 inc
+inc: {
+  //SEG21 [10] (byte~) inc::$0 ← (byte) i#11 + (byte) 7 [ inc::$0 ] -- xby=xby_plus_coby1 
+    txa
+    clc
+    adc #$7
+    tax
+  //SEG22 [11] (byte) inc::return#0 ← (byte~) inc::$0 [ inc::return#0 inc::$0 ] -- aby=xby 
+    txa
+  //SEG23 inc::@return
+  //SEG24 [12] return  [ inc::return#0 inc::$0 ]
+    rts
+}
+

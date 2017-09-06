@@ -31,7 +31,6 @@ public class Pass4AssertNoCpuClobber extends Pass2Base {
     * @return true if there is a clobber problem in the program
     */
    public boolean hasClobberProblem(boolean verbose) {
-      LiveRangeVariables liveRangeVariables = getProgram().getLiveRangeVariables();
       AsmProgram asm = getProgram().getAsm();
       boolean clobberProblem = false;
       for (AsmSegment asmSegment : asm.getSegments()) {
@@ -65,7 +64,7 @@ public class Pass4AssertNoCpuClobber extends Pass2Base {
             }
 
             // Find alive variables
-            List<VariableRef> aliveVars = new ArrayList<>(liveRangeVariables.getAlive(statement));
+            List<VariableRef> aliveVars = new ArrayList<>(getProgram().getLiveRangeVariables().getAliveEffective(statement));
             // Non-assigned alive variables must not be clobbered
             for (VariableRef aliveVar : aliveVars) {
                Registers.Register aliveVarRegister = getProgram().getScope().getVariable(aliveVar).getAllocation();

@@ -26,7 +26,7 @@ public abstract class Scope implements Symbol {
 
    @JsonCreator
    public Scope(
-         @JsonProperty("name")  String name,
+         @JsonProperty("name") String name,
          @JsonProperty("symbols") HashMap<String, Symbol> symbols,
          @JsonProperty("intermediateVarCount") int intermediateVarCount,
          @JsonProperty("intermediateLabelCount") int intermediateLabelCount) {
@@ -136,8 +136,8 @@ public abstract class Scope implements Symbol {
          }
       } else {
          Symbol symbol = symbols.get(name);
-         if(symbol==null) {
-            if(parentScope!=null) {
+         if (symbol == null) {
+            if (parentScope != null) {
                symbol = parentScope.getSymbol(name);
             }
          }
@@ -153,6 +153,14 @@ public abstract class Scope implements Symbol {
       return getVariable(variableRef.getFullName());
    }
 
+   public ConstantVar getConstant(String name) {
+      return (ConstantVar) getSymbol(name);
+   }
+
+   public ConstantVar getConstant(ConstantRef constantRef) {
+      return getConstant(constantRef.getFullName());
+   }
+
    @JsonIgnore
    public Collection<Variable> getAllVariables(boolean includeSubScopes) {
       Collection<Variable> vars = new ArrayList<>();
@@ -160,7 +168,7 @@ public abstract class Scope implements Symbol {
          if (symbol instanceof Variable) {
             vars.add((Variable) symbol);
          }
-         if(includeSubScopes && symbol instanceof Scope) {
+         if (includeSubScopes && symbol instanceof Scope) {
             Scope subScope = (Scope) symbol;
             vars.addAll(subScope.getAllVariables(true));
          }
@@ -180,7 +188,7 @@ public abstract class Scope implements Symbol {
       for (Symbol symbol : symbols.values()) {
          if (symbol instanceof Scope) {
             scopes.add((Scope) symbol);
-            if(includeSubScopes) {
+            if (includeSubScopes) {
                Scope subScope = (Scope) symbol;
                scopes.addAll(subScope.getAllScopes(true));
             }
@@ -192,7 +200,7 @@ public abstract class Scope implements Symbol {
    public Collection<Procedure> getAllProcedures(boolean includeSubScopes) {
       Collection<Procedure> procedures = new ArrayList<>();
       for (Scope scope : getAllScopes(includeSubScopes)) {
-         if(scope instanceof Procedure) {
+         if (scope instanceof Procedure) {
             procedures.add((Procedure) scope);
          }
       }
@@ -241,12 +249,12 @@ public abstract class Scope implements Symbol {
    }
 
    public Scope getScope(ScopeRef scopeRef) {
-      if(scopeRef.getFullName().equals("") && this instanceof ProgramScope) {
+      if (scopeRef.getFullName().equals("") && this instanceof ProgramScope) {
          // Special case for the outer program scope
          return this;
       }
       Symbol symbol = getSymbol(scopeRef);
-      if(symbol instanceof Scope) {
+      if (symbol instanceof Scope) {
          return (Scope) symbol;
       } else {
          return null;
@@ -255,11 +263,11 @@ public abstract class Scope implements Symbol {
 
 
    public Procedure getProcedure(ProcedureRef ref) {
-         return (Procedure) getSymbol(ref);
+      return (Procedure) getSymbol(ref);
    }
 
    @JsonIgnore
-   public String getSymbolTableContents(Program program, Class symbolClass) {
+   public String toString(Program program, Class symbolClass) {
       VariableRegisterWeights registerWeights = program.getVariableRegisterWeights();
       StringBuilder res = new StringBuilder();
       Set<String> names = symbols.keySet();
@@ -268,25 +276,31 @@ public abstract class Scope implements Symbol {
       for (String name : sortedNames) {
          Symbol symbol = symbols.get(name);
          if (symbol instanceof Scope) {
-            res.append(((Scope) symbol).getSymbolTableContents(program, symbolClass));
+            res.append(((Scope) symbol).toString(program, symbolClass));
          } else {
             if (symbolClass == null || symbolClass.isInstance(symbol)) {
                res.append(symbol.toString(program));
                if (symbol instanceof Variable) {
-                  String asmName = ((Variable) symbol).getAsmName();
-                  if(asmName!=null) {
-                     res.append(" "+asmName);
+                  Variable var = (Variable) symbol;
+                  String asmName = var.getAsmName();
+                  if (asmName != null) {
+                     res.append(" " + asmName);
                   }
-                  Registers.Register register = ((Variable) symbol).getAllocation();
+                  Registers.Register register = var.getAllocation();
                   if (register != null) {
                      res.append(" " + register);
                   }
                }
                if (symbol instanceof Variable && registerWeights != null) {
-                  Double weight = registerWeights.getWeight(((Variable) symbol).getRef());
+                  Variable var = (Variable) symbol;
+                  Double weight = registerWeights.getWeight(var.getRef());
                   if (weight != null) {
                      res.append(" " + weight);
                   }
+               }
+               if (symbol instanceof ConstantVar) {
+                  ConstantVar constantVar = (ConstantVar) symbol;
+                  res.append(" = " + constantVar.getValue().toString(program));
                }
                res.append("\n");
             }

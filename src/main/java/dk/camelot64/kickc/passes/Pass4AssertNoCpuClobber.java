@@ -67,7 +67,8 @@ public class Pass4AssertNoCpuClobber extends Pass2Base {
             List<VariableRef> aliveVars = new ArrayList<>(getProgram().getLiveRangeVariables().getAliveEffective(statement));
             // Non-assigned alive variables must not be clobbered
             for (VariableRef aliveVar : aliveVars) {
-               Registers.Register aliveVarRegister = getProgram().getScope().getVariable(aliveVar).getAllocation();
+               Variable variable = getProgram().getScope().getVariable(aliveVar);
+               Registers.Register aliveVarRegister = variable.getAllocation();
                if (aliveVarRegister.isZp()) {
                   // No need to check a zp-register - here we are only interested in CPU registers
                   continue;

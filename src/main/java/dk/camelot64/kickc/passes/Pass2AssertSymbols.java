@@ -28,6 +28,7 @@ public class Pass2AssertSymbols extends Pass2SsaAssertion {
       HashSet<Symbol> tableSymbols = getAllSymbols(getSymbols());
       for (Symbol tableSymbol : tableSymbols) {
          if(tableSymbol instanceof VariableUnversioned) continue;
+         if(tableSymbol instanceof ConstantVar) continue;
          Symbol codeSymbol = null;
          String codeSymbolFullName = tableSymbol.getFullName();
          for (Symbol symbol : codeSymbols) {

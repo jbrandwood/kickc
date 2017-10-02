@@ -33,7 +33,11 @@ public class AsmFragment {
     */
    private String signature;
 
-   public AsmFragment(StatementConditionalJump conditionalJump, ControlFlowBlock block, Program program, ControlFlowGraph graph) {
+   public AsmFragment(
+         StatementConditionalJump conditionalJump,
+         ControlFlowBlock block,
+         Program program,
+         ControlFlowGraph graph) {
       this.scope = program.getGraph().getBlockFromStatementIdx(conditionalJump.getIndex()).getScope();
       this.bindings = new LinkedHashMap<>();
       this.program = program;
@@ -45,7 +49,11 @@ public class AsmFragment {
       this.scope = program.getGraph().getBlockFromStatementIdx(assignment.getIndex()).getScope();
       this.bindings = new LinkedHashMap<>();
       this.program = program;
-      setSignature(assignmentSignature(assignment.getlValue(), assignment.getrValue1(), assignment.getOperator(), assignment.getrValue2()));
+      setSignature(assignmentSignature(
+            assignment.getlValue(),
+            assignment.getrValue1(),
+            assignment.getOperator(),
+            assignment.getrValue2()));
    }
 
    public AsmFragment(LValue lValue, RValue rValue, Program program, ScopeRef scope) {
@@ -84,7 +92,10 @@ public class AsmFragment {
       if (assignment.getOperator() != null) {
          signature.append(getOperatorFragmentName(assignment.getOperator()));
       }
-      signature.append(assignmentRightSideSignature(assignmentAlu.getrValue1(), assignmentAlu.getOperator(), assignmentAlu.getrValue2()));
+      signature.append(assignmentRightSideSignature(
+            assignmentAlu.getrValue1(),
+            assignmentAlu.getOperator(),
+            assignmentAlu.getrValue2()));
       return signature.toString();
    }
 
@@ -114,7 +125,8 @@ public class AsmFragment {
             rValue2 instanceof ConstantInteger &&
                   ((ConstantInteger) rValue2).getNumber() == 1 &&
                   operator != null &&
-                  (operator.getOperator().equals("-") || operator.getOperator().equals("+") || operator.getOperator().equals(">>") || operator.getOperator().equals("<<"))) {
+                  (operator.getOperator().equals("-") || operator.getOperator().equals("+") || operator.getOperator().equals(
+                        ">>") || operator.getOperator().equals("<<"))) {
          signature.append("1");
       } else if (
             rValue2 instanceof ConstantInteger &&
@@ -128,7 +140,10 @@ public class AsmFragment {
       return signature.toString();
    }
 
-   private String conditionalJumpSignature(StatementConditionalJump conditionalJump, ControlFlowBlock block, ControlFlowGraph graph) {
+   private String conditionalJumpSignature(
+         StatementConditionalJump conditionalJump,
+         ControlFlowBlock block,
+         ControlFlowGraph graph) {
       StringBuilder signature = new StringBuilder();
       if (conditionalJump.getrValue1() != null) {
          signature.append(bind(conditionalJump.getrValue1()));
@@ -149,7 +164,9 @@ public class AsmFragment {
       ControlFlowBlock destinationBlock = graph.getBlock(destination);
       String destinationLabel;
       if (destinationBlock.hasPhiBlock()) {
-         destinationLabel = (destinationBlock.getLabel().getLocalName() + "_from_" + block.getLabel().getLocalName()).replace('@', 'b').replace(':', '_');
+         destinationLabel = (destinationBlock.getLabel().getLocalName() + "_from_" + block.getLabel().getLocalName()).replace(
+               '@',
+               'b').replace(':', '_');
       } else {
          destinationLabel = destination.getLocalName();
       }
@@ -237,19 +254,22 @@ public class AsmFragment {
       if (value instanceof VariableRef) {
          value = program.getScope().getVariable((VariableRef) value);
       }
+      if (value instanceof ConstantRef) {
+         value = program.getScope().getConstant((ConstantRef) value);
+      }
       if (value instanceof Variable) {
-         Registers.Register register = ((Variable) value).getAllocation();
+         Variable variable = (Variable) value;
+         Registers.Register register = variable.getAllocation();
          // Find value if it is already bound
          for (String name : bindings.keySet()) {
             Value bound = bindings.get(name);
-            if(bound instanceof Variable) {
+            if (bound instanceof Variable) {
                Registers.Register boundRegister = ((Variable) bound).getAllocation();
-               if(boundRegister!=null && boundRegister.equals(register)) {
+               if (boundRegister != null && boundRegister.equals(register)) {
                   return name;
                }
             }
          }
-
          // Create a new suitable name
          if (Registers.RegisterType.ZP_BYTE.equals(register.getType())) {
             String name = "zpby" + nextZpByteIdx++;
@@ -282,13 +302,31 @@ public class AsmFragment {
          } else if (Registers.RegisterType.REG_ALU_BYTE.equals(register.getType())) {
             throw new AluNotApplicableException();
          }
+      } else if (value instanceof ConstantVar) {
+         ConstantVar constantVar = (ConstantVar) value;
+         SymbolType constType = constantVar.getType();
+         if (SymbolTypeBasic.BYTE.equals(constType)) {
+            String name = "coby" + nextConstByteIdx++;
+            bindings.put(name, constantVar);
+            return name;
+         } else if (SymbolTypeBasic.WORD.equals(constType)) {
+            String name = "cowo" + nextConstByteIdx++;
+            bindings.put(name, constantVar);
+            return name;
+         } else if (constType instanceof SymbolTypePointer && SymbolTypeBasic.BYTE.equals(((SymbolTypePointer) constType).getElementType())) {
+            String name = "cowo" + nextConstByteIdx++;
+            bindings.put(name, constantVar);
+            return name;
+         } else {
+            throw new RuntimeException("Unhandled constant type " + constType);
+         }
       } else if (value instanceof ConstantInteger) {
          ConstantInteger intValue = (ConstantInteger) value;
-         if (SymbolTypeBasic.BYTE.equals(intValue.getType())) {
+         if (SymbolTypeBasic.BYTE.equals(intValue.getType(program.getScope()))) {
             String name = "coby" + nextConstByteIdx++;
             bindings.put(name, value);
             return name;
-         } else if (SymbolTypeBasic.WORD.equals(intValue.getType())) {
+         } else if (SymbolTypeBasic.WORD.equals(intValue.getType(program.getScope()))) {
             String name = "cowo" + nextConstByteIdx++;
             bindings.put(name, value);
             return name;
@@ -316,17 +354,7 @@ public class AsmFragment {
          Variable boundVar = (Variable) boundValue;
          Registers.Register register = boundVar.getAllocation();
          if (register != null && register instanceof Registers.RegisterZp) {
-            Scope varScope = boundVar.getScope();
-            String asmName = boundVar.getAsmName() == null ? boundVar.getLocalName() : boundVar.getAsmName();
-            if (!varScope.getRef().equals(scope) && varScope.getRef().getFullName().length() > 0) {
-               String param = varScope.getFullName() + "." + asmName.replace('@', 'b').replace(':', '_').replace("#", "_").replace("$","_");
-               //param = ""+((Registers.RegisterZp) register).getZp();
-               return new AsmParameter(param, true);
-            } else {
-               String param = asmName.replace('@', 'b').replace(':', '_').replace("#", "_").replace("$","_");
-               //param = ""+((Registers.RegisterZp) register).getZp();
-               return new AsmParameter(param, true);
-            }
+            return new AsmParameter(getAsmParameter(boundVar), true);
          } else {
             throw new RuntimeException("Register Type not implemented " + register);
          }
@@ -338,27 +366,87 @@ public class AsmFragment {
             if (pointerConst instanceof ConstantInteger) {
                ConstantInteger intPointer = (ConstantInteger) pointerConst;
                String param = String.format("$%x", intPointer.getNumber());
-               return new AsmParameter(param, SymbolTypeBasic.BYTE.equals(intPointer.getType()));
+               return new AsmParameter(param, SymbolTypeBasic.BYTE.equals(intPointer.getType(program.getScope())));
             } else {
                throw new RuntimeException("Bound Value Type not implemented " + boundValue);
             }
          } else {
             throw new RuntimeException("Bound Value Type not implemented " + boundValue);
          }
-      } else if (boundValue instanceof ConstantInteger) {
-         ConstantInteger boundInt = (ConstantInteger) boundValue;
-         if (boundInt.getType().equals(SymbolTypeBasic.BYTE)) {
-            String param = String.format("$%x", boundInt.getNumber());
-            return new AsmParameter(param, SymbolTypeBasic.BYTE.equals(boundInt.getType()));
-         } else {
-            String param = String.format("$%x", boundInt.getNumber());
-            return new AsmParameter(param, SymbolTypeBasic.BYTE.equals(boundInt.getType()));
-         }
+      } else if (boundValue instanceof Constant) {
+         Constant boundConst = (Constant) boundValue;
+         return new AsmParameter(toAsm(boundConst), SymbolTypeBasic.BYTE.equals(boundConst.getType(program.getScope())));
       } else if (boundValue instanceof Label) {
-         String param = ((Label) boundValue).getLocalName().replace('@', 'b').replace(':', '_').replace("$","_");
+         String param = ((Label) boundValue).getLocalName().replace('@', 'b').replace(':', '_').replace("$", "_");
          return new AsmParameter(param, false);
       } else {
          throw new RuntimeException("Bound Value Type not implemented " + boundValue);
+      }
+   }
+
+   /**
+    * Get the ASM parameter for a specific bound variable
+    * @param boundVar The variable
+    * @return The ASM parameter to use in the ASM code
+    */
+   private String getAsmParameter(Variable boundVar) {
+      Scope varScope = boundVar.getScope();
+      String asmName = boundVar.getAsmName() == null ? boundVar.getLocalName() : boundVar.getAsmName();
+      return getAsmParameter(varScope, asmName);
+   }
+
+   /**
+    * Get the ASM parameter for a specific bound constant
+    * @param boundVar The constant
+    * @return The ASM parameter to use in the ASM code
+    */
+   private String getAsmParameter(ConstantVar boundVar) {
+      Scope varScope = boundVar.getScope();
+      String asmName = boundVar.getLocalName(); // boundVar.getAsmName() == null ? boundVar.getLocalName() : boundVar.getAsmName();
+      return getAsmParameter(varScope, asmName);
+   }
+
+   /**
+    * Get the ASM parameter for a specific bound constant/ variable
+    * @param varScope The scope containing the var/const
+    * @param asmName The ASM name of the variable (local name or specific ASM name).
+    * @return The ASM parameter to use in the ASM code
+    */
+   private String getAsmParameter(Scope varScope, String asmName) {
+      if (!varScope.getRef().equals(scope) && varScope.getRef().getFullName().length() > 0) {
+         String param = varScope.getFullName() + "." + asmName
+               .replace('@', 'b')
+               .replace(':', '_')
+               .replace("#","_")
+               .replace("$","_");
+         //param = ""+((Registers.RegisterZp) register).getZp();
+         return param;
+      } else {
+         String param = asmName.replace('@', 'b').replace(':', '_').replace("#", "_").replace("$", "_");
+         //param = ""+((Registers.RegisterZp) register).getZp();
+         return param;
+      }
+   }
+
+   /**
+    * Return the ASM code for the constant
+    * @param constant The constant
+    * @return ASM code
+    */
+   private String toAsm(Constant constant) {
+      if (constant instanceof ConstantInteger) {
+         return String.format("$%x", ((ConstantInteger) constant).getNumber());
+      } else if (constant instanceof ConstantVar) {
+         ConstantVar constantVar = (ConstantVar) constant;
+         return getAsmParameter(constantVar);
+      } else if (constant instanceof ConstantUnary) {
+         ConstantUnary unary = (ConstantUnary) constant;
+         return unary.getOperator().toString() + toAsm(unary.getOperand());
+      } else if (constant instanceof ConstantBinary) {
+         ConstantBinary binary = (ConstantBinary) constant;
+         return toAsm(binary.getLeft()) + binary.getOperator().toString() + toAsm(binary.getRight());
+      } else {
+         throw new RuntimeException("Unknown constant type " + constant);
       }
    }
 
@@ -382,7 +470,6 @@ public class AsmFragment {
          return zp;
       }
    }
-
 
 
    /**
@@ -435,7 +522,11 @@ public class AsmFragment {
          Asm6502Parser.ParamModeContext paramModeCtx = ctx.paramMode();
          AsmInstruction instruction;
          if (paramModeCtx == null) {
-            AsmInstructionType type = AsmInstructionSet.getInstructionType(ctx.MNEMONIC().getText(), AsmAddressingMode.NON, null, false);
+            AsmInstructionType type = AsmInstructionSet.getInstructionType(
+                  ctx.MNEMONIC().getText(),
+                  AsmAddressingMode.NON,
+                  null,
+                  false);
             instruction = new AsmInstruction(type, null);
          } else {
             instruction = (AsmInstruction) this.visit(paramModeCtx);
@@ -483,11 +574,18 @@ public class AsmFragment {
          return createAsmInstruction(ctx, ctx.expr(), AsmAddressingMode.IND);
       }
 
-      private AsmInstruction createAsmInstruction(Asm6502Parser.ParamModeContext ctx, Asm6502Parser.ExprContext exprCtx, AsmAddressingMode addressingMode) {
+      private AsmInstruction createAsmInstruction(
+            Asm6502Parser.ParamModeContext ctx,
+            Asm6502Parser.ExprContext exprCtx,
+            AsmAddressingMode addressingMode) {
          Asm6502Parser.InstructionContext instructionCtx = (Asm6502Parser.InstructionContext) ctx.getParent();
          String mnemonic = instructionCtx.MNEMONIC().getSymbol().getText();
          AsmParameter parameter = (AsmParameter) this.visit(exprCtx);
-         AsmInstructionType type = AsmInstructionSet.getInstructionType(mnemonic, addressingMode, parameter.getParam(), parameter.isZp());
+         AsmInstructionType type = AsmInstructionSet.getInstructionType(
+               mnemonic,
+               addressingMode,
+               parameter.getParam(),
+               parameter.isZp());
          if (type == null) {
             throw new RuntimeException("Error in " + signature + ".asm line " + ctx.getStart().getLine() + " - Instruction type unknown " + mnemonic + " " + addressingMode + " " + parameter);
          }

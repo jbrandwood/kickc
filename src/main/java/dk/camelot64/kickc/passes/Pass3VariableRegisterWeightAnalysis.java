@@ -84,6 +84,7 @@ public class Pass3VariableRegisterWeightAnalysis extends Pass2Base {
    }
 
    private double addWeight(VariableRef variable, LabelRef block) {
+      Variable var = getProgram().getScope().getVariable(variable);
       int depth = loopSet.getMaxLoopDepth(block);
       double w = 1.0 + Math.pow(10.0, depth);
       LiveRange liveRange = liveRangeVariables.getLiveRange(variable);

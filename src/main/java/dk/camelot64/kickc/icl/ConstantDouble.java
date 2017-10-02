@@ -3,12 +3,17 @@ package dk.camelot64.kickc.icl;
 /**
  * SSA form constant integer value
  */
-public class ConstantDouble implements Constant {
+public class ConstantDouble implements ConstantValue {
 
    private Double number;
 
    public ConstantDouble(Double number) {
       this.number = number;
+   }
+
+   @Override
+   public SymbolType getType(ProgramScope scope) {
+      return SymbolTypeBasic.DOUBLE;
    }
 
    public Double getNumber() {

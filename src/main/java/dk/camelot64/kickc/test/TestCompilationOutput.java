@@ -24,6 +24,10 @@ public class TestCompilationOutput extends TestCase {
       helper = new ReferenceHelper("dk/camelot64/kickc/test/ref/");
    }
 
+   public void testConstantMin() throws IOException, URISyntaxException {
+      compileAndCompare("constantmin");
+   }
+
    public void testLiveRange() throws IOException, URISyntaxException {
       compileAndCompare("liverange");
    }

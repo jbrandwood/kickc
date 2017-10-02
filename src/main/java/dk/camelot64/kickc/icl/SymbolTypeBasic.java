@@ -11,6 +11,7 @@ public class SymbolTypeBasic implements SymbolType {
    public static final SymbolTypeBasic WORD = new SymbolTypeBasic("word");
    public static final SymbolTypeBasic STRING = new SymbolTypeBasic("string");
    public static final SymbolTypeBasic BOOLEAN = new SymbolTypeBasic("boolean");
+   public static final SymbolTypeBasic DOUBLE = new SymbolTypeBasic("double");
    // A label
    public static final SymbolTypeBasic LABEL = new SymbolTypeBasic("label");
    // Void type.

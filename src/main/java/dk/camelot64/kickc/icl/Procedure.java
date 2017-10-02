@@ -71,11 +71,11 @@ public class Procedure extends Scope {
       return super.getFullName();
    }
 
-   public String getSymbolTableContents(Program program, Class symbolClass) {
+   public String toString(Program program, Class symbolClass) {
       StringBuilder res = new StringBuilder();
       res.append(toString(program));
       res.append("\n");
-      res.append(super.getSymbolTableContents(program, symbolClass));
+      res.append(super.toString(program, symbolClass));
       return res.toString();
    }
 

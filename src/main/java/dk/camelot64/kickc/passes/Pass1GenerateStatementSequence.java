@@ -330,13 +330,13 @@ public class Pass1GenerateStatementSequence extends KickCBaseVisitor<Object> {
 
    @Override
    public Void visitStmtDeclaration(KickCParser.StmtDeclarationContext ctx) {
-      if (ctx.getChild(0).getText().equals("const")) {
-         program.getLog().append("Const!" + ctx.getText());
-      }
       SymbolType type = (SymbolType) visit(ctx.typeDecl());
       String varName = ctx.NAME().getText();
       KickCParser.InitializerContext initializer = ctx.initializer();
       VariableUnversioned lValue = getCurrentSymbols().addVariable(varName, type);
+      if (ctx.getChild(0).getText().equals("const")) {
+         lValue.setDeclaredConstant(true);
+      }
       if (initializer != null) {
          addInitialAssignment(initializer, lValue);
       }

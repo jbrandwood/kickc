@@ -71,7 +71,7 @@ public class Pass1TypeInference {
       }
    }
 
-   private SymbolType inferType(Operator operator, SymbolType subType) {
+   public static SymbolType inferType(Operator operator, SymbolType subType) {
       if(operator==null) {
          return subType;
       }
@@ -88,7 +88,7 @@ public class Pass1TypeInference {
       }
    }
 
-   private SymbolType inferType(SymbolType type1, Operator operator, SymbolType type2) {
+   public static SymbolType inferType(SymbolType type1, Operator operator, SymbolType type2) {
       String op = operator.getOperator();
       switch (op) {
          case "==":
@@ -166,7 +166,7 @@ public class Pass1TypeInference {
          type = rSymbol.getType();
       } else if (rValue instanceof ConstantInteger) {
          ConstantInteger rInt = (ConstantInteger) rValue;
-         return rInt.getType();
+         return rInt.getType(programScope);
       } else if (rValue instanceof ConstantString) {
          type = SymbolTypeBasic.STRING;
       } else if (rValue instanceof ConstantBool) {

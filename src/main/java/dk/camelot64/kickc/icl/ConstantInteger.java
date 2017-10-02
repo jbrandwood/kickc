@@ -4,10 +4,8 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-/**
- * SSA form constant integer value
- */
-public class ConstantInteger implements Constant {
+/** SSA form constant integer value */
+public class ConstantInteger implements ConstantValue {
 
    private Integer number;
 
@@ -22,6 +20,10 @@ public class ConstantInteger implements Constant {
    }
 
    @JsonIgnore
+   public SymbolType getType(ProgramScope scope) {
+      return getType();
+   }
+
    public SymbolType getType() {
       SymbolType type;
       if (getNumber() < 256) {
@@ -42,7 +44,7 @@ public class ConstantInteger implements Constant {
       if (program == null) {
          return Integer.toString(number);
       } else {
-         return "(" + getType().getTypeName() + ") " + Integer.toString(number);
+         return "(" + getType(program.getScope()).getTypeName() + ") " + Integer.toString(number);
       }
    }
 
@@ -50,9 +52,7 @@ public class ConstantInteger implements Constant {
    public boolean equals(Object o) {
       if (this == o) return true;
       if (o == null || getClass() != o.getClass()) return false;
-
       ConstantInteger that = (ConstantInteger) o;
-
       return number != null ? number.equals(that.number) : that.number == null;
    }
 

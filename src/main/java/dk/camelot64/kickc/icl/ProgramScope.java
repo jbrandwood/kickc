@@ -30,14 +30,14 @@ public class ProgramScope extends Scope {
 
    @JsonIgnore
    public String getSymbolTableContents(Program program) {
-      return getSymbolTableContents(program, null);
+      return toString(program, null);
    }
 
    @Override
-   public String getSymbolTableContents(Program program, Class symbolClass) {
+   public String toString(Program program, Class symbolClass) {
       LiveRangeEquivalenceClassSet liveRangeEquivalenceClassSet = program.getLiveRangeEquivalenceClassSet();
       StringBuilder out = new StringBuilder();
-      out.append(super.getSymbolTableContents(program, symbolClass));
+      out.append(super.toString(program, symbolClass));
       if(liveRangeEquivalenceClassSet!=null) {
          out.append("\n");
          for (LiveRangeEquivalenceClass liveRangeEquivalenceClass : liveRangeEquivalenceClassSet.getEquivalenceClasses()) {

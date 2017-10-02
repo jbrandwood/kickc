@@ -135,8 +135,10 @@ public class Compiler {
    public void pass2OptimizeSSA(Program program) {
       List<Pass2SsaOptimization> optimizations = new ArrayList<>();
       optimizations.add(new Pass2CullEmptyBlocks(program));
-      optimizations.add(new Pass2ConstantPropagation(program));
-      optimizations.add(new Pass2ConstantAdditionElimination(program));
+      optimizations.add(new Pass2ConstantIdentification(program));
+
+      //optimizations.add(new Pass2ConstantPropagation(program));
+      //optimizations.add(new Pass2ConstantAdditionElimination(program));
       optimizations.add(new Pass2UnaryNotSimplification(program));
       optimizations.add(new Pass2AliasElimination(program));
       optimizations.add(new Pass2RedundantPhiElimination(program));
@@ -212,7 +214,7 @@ public class Compiler {
 
       new Pass3VariableRegisterWeightAnalysis(program).findWeights();
       program.getLog().append("\nVARIABLE REGISTER WEIGHTS");
-      program.getLog().append(program.getScope().getSymbolTableContents(program, Variable.class));
+      program.getLog().append(program.getScope().toString(program, Variable.class));
 
    }
 

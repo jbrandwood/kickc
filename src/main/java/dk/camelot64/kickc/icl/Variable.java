@@ -24,8 +24,8 @@ public abstract class Variable implements Symbol {
    /** A short name used for the variable in ASM code. If possible variable names of ZP variables are shortened in ASM code. This is possible, when all versions of the var use the same register. */
    private String asmName;
 
-   /** If the variable is a constant this is the constant value. If null the variable is not considered constant.*/
-   private Constant constant;
+   /** Speciies that the variableis declared a constant. It willb replaced by a ConstantVar when possible. */
+   private boolean declaredConstant;
 
    public Variable(String name, Scope scope, SymbolType type) {
       this.name = name;
@@ -93,14 +93,6 @@ public abstract class Variable implements Symbol {
       this.asmName = asmName;
    }
 
-   public Constant getConstant() {
-      return constant;
-   }
-
-   public void setConstant(Constant constant) {
-      this.constant = constant;
-   }
-
    @JsonIgnore
    public abstract boolean isVersioned();
 
@@ -126,30 +118,12 @@ public abstract class Variable implements Symbol {
       return new VariableRef(this);
    }
 
-   @Override
-   public boolean equals(Object o) {
-      if (this == o) return true;
-      if (o == null || getClass() != o.getClass()) return false;
-      Variable variable = (Variable) o;
-      if (inferredType != variable.inferredType) return false;
-      if (name != null ? !name.equals(variable.name) : variable.name != null) return false;
-      if (scope != null ? !scope.equals(variable.scope) : variable.scope != null) return false;
-      if (type != null ? !type.equals(variable.type) : variable.type != null) return false;
-      if (allocation != null ? !allocation.equals(variable.allocation) : variable.allocation != null) return false;
-      if (asmName != null ? !asmName.equals(variable.asmName) : variable.asmName != null) return false;
-      return constant != null ? constant.equals(variable.constant) : variable.constant == null;
+   public boolean isDeclaredConstant() {
+      return declaredConstant;
    }
 
-   @Override
-   public int hashCode() {
-      int result = name != null ? name.hashCode() : 0;
-      result = 31 * result + (scope != null ? scope.hashCode() : 0);
-      result = 31 * result + (type != null ? type.hashCode() : 0);
-      result = 31 * result + (inferredType ? 1 : 0);
-      result = 31 * result + (allocation != null ? allocation.hashCode() : 0);
-      result = 31 * result + (asmName != null ? asmName.hashCode() : 0);
-      result = 31 * result + (constant != null ? constant.hashCode() : 0);
-      return result;
+   public void setDeclaredConstant(boolean declaredConstant) {
+      this.declaredConstant = declaredConstant;
    }
 
    @Override
@@ -168,4 +142,43 @@ public abstract class Variable implements Symbol {
       return s;
    }
 
+   @Override
+   public boolean equals(Object o) {
+      if (this == o) {
+         return true;
+      }
+      if (o == null || getClass() != o.getClass()) {
+         return false;
+      }
+
+      Variable variable = (Variable) o;
+
+      if (inferredType != variable.inferredType) {
+         return false;
+      }
+      if (name != null ? !name.equals(variable.name) : variable.name != null) {
+         return false;
+      }
+      if (scope != null ? !scope.equals(variable.scope) : variable.scope != null) {
+         return false;
+      }
+      if (type != null ? !type.equals(variable.type) : variable.type != null) {
+         return false;
+      }
+      if (allocation != null ? !allocation.equals(variable.allocation) : variable.allocation != null) {
+         return false;
+      }
+      return asmName != null ? asmName.equals(variable.asmName) : variable.asmName == null;
+   }
+
+   @Override
+   public int hashCode() {
+      int result = name != null ? name.hashCode() : 0;
+      result = 31 * result + (scope != null ? scope.hashCode() : 0);
+      result = 31 * result + (type != null ? type.hashCode() : 0);
+      result = 31 * result + (inferredType ? 1 : 0);
+      result = 31 * result + (allocation != null ? allocation.hashCode() : 0);
+      result = 31 * result + (asmName != null ? asmName.hashCode() : 0);
+      return result;
+   }
 }

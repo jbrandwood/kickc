@@ -27,9 +27,7 @@ public class Operator {
    public boolean equals(Object o) {
       if (this == o) return true;
       if (o == null || getClass() != o.getClass()) return false;
-
       Operator operator1 = (Operator) o;
-
       return operator != null ? operator.equals(operator1.operator) : operator1.operator == null;
    }
 

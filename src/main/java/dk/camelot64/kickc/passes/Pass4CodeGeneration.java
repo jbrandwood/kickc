@@ -30,6 +30,7 @@ public class Pass4CodeGeneration {
 
       // Generate global ZP labels
       asm.startSegment(null, "Global ZP labels");
+      addConstants(asm, currentScope);
       addZpLabels(asm, currentScope);
       for (ControlFlowBlock block : getGraph().getAllBlocks()) {
          if (!block.getScope().equals(currentScope)) {
@@ -40,6 +41,7 @@ public class Pass4CodeGeneration {
             asm.startSegment(null, block.getLabel().getFullName());
             asm.addScopeBegin(block.getLabel().getFullName().replace('@', 'b').replace(':', '_'));
             // Add all ZP labels for the scope
+            addConstants(asm, currentScope);
             addZpLabels(asm, currentScope);
          }
          // Generate entry points (if needed)
@@ -74,6 +76,24 @@ public class Pass4CodeGeneration {
          asm.addScopeEnd();
       }
       program.setAsm(asm);
+   }
+
+   /**
+    * Add constant declarations for all scope constants
+    *
+    * @param asm   The ASM program
+    * @param scope The scope
+    */
+   private void addConstants(AsmProgram asm, ScopeRef currentScope) {
+      Collection<ConstantVar> scopeConstants = program.getScope().getScope(currentScope).getAllConstants(false);
+      Set<String> added = new LinkedHashSet<>();
+      for (ConstantVar scopeConstant : scopeConstants) {
+            String asmName = scopeConstant.getLocalName(); // scopeConstant.getAsmName()
+            if (asmName != null && !added.contains(asmName)) {
+               asm.addConstant(asmName.replace("#","_").replace("$","_"), scopeConstant.getValue().toString(program));
+               added.add(asmName);
+            }
+      }
    }
 
    /**

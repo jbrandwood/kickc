@@ -177,6 +177,22 @@ public abstract class Scope implements Symbol {
       return vars;
    }
 
+   public Collection<ConstantVar> getAllConstants(boolean includeSubScopes) {
+      Collection<ConstantVar> vars = new ArrayList<>();
+      for (Symbol symbol : symbols.values()) {
+         if (symbol instanceof ConstantVar) {
+            vars.add((ConstantVar) symbol);
+         }
+         if (includeSubScopes && symbol instanceof Scope) {
+            Scope subScope = (Scope) symbol;
+            vars.addAll(subScope.getAllConstants(true));
+         }
+
+      }
+      return vars;
+   }
+
+
    /**
     * Get all scopes contained in the scope. This does not include this scope itself.
     * @param includeSubScopes Include sub-scopes og sub-scopes

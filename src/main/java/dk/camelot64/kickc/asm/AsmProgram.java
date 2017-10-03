@@ -74,8 +74,16 @@ public class AsmProgram {
 
    public void addLabelDecl(String name, int address) {
       addLine(new AsmLabelDecl(name, address));
-
    }
+
+   /**
+    * Add a constant declararion to the ASM
+    * @param name The name of the constant
+    * @param value The value of the constant
+    */
+    public void addConstant(String name, String value) {
+       addLine(new AsmConstant(name, value));
+    }
 
 
 

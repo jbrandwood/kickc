@@ -81,20 +81,59 @@ public class Pass4CodeGeneration {
    /**
     * Add constant declarations for all scope constants
     *
-    * @param asm   The ASM program
-    * @param scope The scope
+    * @param asm      The ASM program
+    * @param scopeRef The scope
     */
-   private void addConstants(AsmProgram asm, ScopeRef currentScope) {
-      Collection<ConstantVar> scopeConstants = program.getScope().getScope(currentScope).getAllConstants(false);
+   private void addConstants(AsmProgram asm, ScopeRef scopeRef) {
+      Scope scope = program.getScope().getScope(scopeRef);
+      Collection<ConstantVar> scopeConstants = scope.getAllConstants(false);
       Set<String> added = new LinkedHashSet<>();
       for (ConstantVar scopeConstant : scopeConstants) {
-            String asmName = scopeConstant.getLocalName(); // scopeConstant.getAsmName()
-            if (asmName != null && !added.contains(asmName)) {
-               asm.addConstant(asmName.replace("#","_").replace("$","_"), scopeConstant.getValue().toString(program));
-               added.add(asmName);
-            }
+         String asmName = scopeConstant.getLocalName(); // scopeConstant.getAsmName()
+         if (asmName != null && !added.contains(asmName)) {
+            asm.addConstant(asmName.replace("#", "_").replace("$", "_"), getConstantValueAsm(scopeConstant.getValue(), false));
+            added.add(asmName);
+         }
       }
    }
+
+   /**
+    * Get ASM code for a constant value
+    *
+    * @param value The constant value
+    * @param subOperator is this generated inside another operator (needing a parenthesis)
+    *
+    * @return The ASM string representing the constant value
+    */
+   private String getConstantValueAsm(Constant value, boolean subOperator) {
+      if (value instanceof ConstantRef) {
+         value = program.getScope().getConstant((ConstantRef) value);
+      }
+      if (value instanceof ConstantVar) {
+         String asmName = ((ConstantVar) value).getLocalName(); // xxx.getAsmName()
+         return asmName.replace("#", "_").replace("$", "_");
+      } else if (value instanceof ConstantInteger) {
+         return String.format("$%x", ((ConstantInteger) value).getNumber());
+      } else if (value instanceof ConstantUnary) {
+         ConstantUnary unary = (ConstantUnary) value;
+         return
+               (subOperator ? "(" : "") +
+                     unary.getOperator().getOperator() +
+                     getConstantValueAsm(unary.getOperand(), true) +
+                     (subOperator ? ")" : "");
+      } else if (value instanceof ConstantBinary) {
+         ConstantBinary binary = (ConstantBinary) value;
+         return
+               (subOperator ? "(" : "") +
+                     getConstantValueAsm(binary.getLeft(), true) +
+                     binary.getOperator().getOperator() +
+                     getConstantValueAsm(binary.getRight(), true) +
+                     (subOperator ? ")" : "");
+      } else {
+         throw new RuntimeException("Constant type not supported " + value);
+      }
+   }
+
 
    /**
     * Add label declarations for all scope variables assigned to ZP registers
@@ -111,7 +150,7 @@ public class Pass4CodeGeneration {
             Registers.RegisterZp registerZp = (Registers.RegisterZp) register;
             String asmName = scopeVar.getAsmName();
             if (asmName != null && !added.contains(asmName)) {
-               asm.addLabelDecl(asmName.replace("#","_").replace("$","_"), registerZp.getZp());
+               asm.addLabelDecl(asmName.replace("#", "_").replace("$", "_"), registerZp.getZp());
                added.add(asmName);
             }
          }
@@ -280,7 +319,7 @@ public class Pass4CodeGeneration {
          }
          transition.setGenerated(true);
       } else {
-         program.getLog().append("Already generated transition from "+fromBlock.getLabel()+" to "+toBlock.getLabel()+ " - not generating it again!");
+         program.getLog().append("Already generated transition from " + fromBlock.getLabel() + " to " + toBlock.getLabel() + " - not generating it again!");
       }
    }
 
@@ -357,7 +396,7 @@ public class Pass4CodeGeneration {
       private PhiTransition findTransition(ControlFlowBlock fromBlock) {
          PhiTransition transition = new PhiTransition(fromBlock);
          boolean isCallTransition = toBlock.getLabel().equals(fromBlock.getCallSuccessor());
-         if(!isCallTransition) {
+         if (!isCallTransition) {
             // If the transition is not a call - then attempt to join with other equal transition(s)
             for (PhiTransition candidate : transitions.values()) {
                if (candidate.equalAssignments(transition)) {

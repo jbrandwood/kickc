@@ -4,6 +4,7 @@ import dk.camelot64.kickc.NumberParser;
 import dk.camelot64.kickc.asm.parser.Asm6502BaseVisitor;
 import dk.camelot64.kickc.asm.parser.Asm6502Parser;
 import dk.camelot64.kickc.icl.*;
+import dk.camelot64.kickc.passes.Pass1TypeInference;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -331,6 +332,19 @@ public class AsmFragment {
             bindings.put(name, value);
             return name;
          }
+      } else if(value instanceof ConstantValue) {
+         SymbolType type = Pass1TypeInference.inferType(program.getScope(), (ConstantValue) value);
+         if (SymbolTypeBasic.BYTE.equals(type)) {
+            String name = "coby" + nextConstByteIdx++;
+            bindings.put(name, value);
+            return name;
+         } else if (SymbolTypeBasic.WORD.equals(type)) {
+            String name = "cowo" + nextConstByteIdx++;
+            bindings.put(name, value);
+            return name;
+         } else {
+            throw new RuntimeException("Unhandled constant type " + type);
+         }
       } else if (value instanceof Label) {
          String name = "la" + nextLabelIdx++;
          bindings.put(name, value);
@@ -438,6 +452,9 @@ public class AsmFragment {
          return String.format("$%x", ((ConstantInteger) constant).getNumber());
       } else if (constant instanceof ConstantVar) {
          ConstantVar constantVar = (ConstantVar) constant;
+         return getAsmParameter(constantVar);
+      } else if (constant instanceof ConstantRef) {
+         ConstantVar constantVar = program.getScope().getConstant((ConstantRef) constant);
          return getAsmParameter(constantVar);
       } else if (constant instanceof ConstantUnary) {
          ConstantUnary unary = (ConstantUnary) constant;

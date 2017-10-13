@@ -1,6 +1,5 @@
 package dk.camelot64.kickc.passes;
 
-import dk.camelot64.kickc.CompileLog;
 import dk.camelot64.kickc.icl.*;
 
 import java.util.*;
@@ -32,7 +31,7 @@ public class Pass2AliasElimination extends Pass2SsaOptimization {
          }
          getLog().append("Alias " + str);
       }
-      deleteVariables(aliases.getSymbolsToRemove());
+      deleteSymbols(aliases.getSymbolsToRemove());
       return (aliases.size() > 0);
    }
 

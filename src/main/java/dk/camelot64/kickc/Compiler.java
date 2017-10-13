@@ -136,6 +136,7 @@ public class Compiler {
       List<Pass2SsaOptimization> optimizations = new ArrayList<>();
       optimizations.add(new Pass2CullEmptyBlocks(program));
       optimizations.add(new Pass2ConstantIdentification(program));
+      optimizations.add(new Pass2ConstantInlining(program));
 
       //optimizations.add(new Pass2ConstantPropagation(program));
       //optimizations.add(new Pass2ConstantAdditionElimination(program));

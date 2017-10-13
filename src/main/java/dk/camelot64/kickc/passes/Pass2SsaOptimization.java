@@ -61,7 +61,7 @@ public abstract class Pass2SsaOptimization {
     *
     * @param aliases Variables that have alias values.
     */
-   public void replaceVariables(final Map<VariableRef, ? extends RValue> aliases) {
+   public void replaceVariables(final Map<? extends SymbolRef, ? extends RValue> aliases) {
       ControlFlowGraphBaseVisitor<Void> visitor = new ControlFlowGraphBaseVisitor<Void>() {
          @Override
          public Void visitAssignment(StatementAssignment assignment) {
@@ -177,7 +177,7 @@ public abstract class Pass2SsaOptimization {
     * @param rValue  The RValue to find an alias for
     * @return The alias to use. Null if no alias exists.
     */
-   private static RValue getAlias(Map<VariableRef, ? extends RValue> aliases, RValue rValue) {
+   private static RValue getAlias(Map<? extends SymbolRef, ? extends RValue> aliases, RValue rValue) {
       RValue alias = aliases.get(rValue);
       while (aliases.get(alias) != null) {
          alias = aliases.get(alias);
@@ -276,20 +276,9 @@ public abstract class Pass2SsaOptimization {
       }
    }
 
-   /**
-    * Remove symbols from the symbol table
-    *
-    * @param symbols The symbols to remove
-    */
-   public void deleteSymbols(Collection<? extends Symbol> symbols) {
-      for (Symbol symbol : symbols) {
-         symbol.getScope().remove(symbol);
-      }
-   }
-
-   public void deleteVariables(Collection<? extends VariableRef> symbols) {
-      for (VariableRef variableRef : symbols) {
-         Symbol symbol = getSymbols().getSymbol(variableRef.getFullName());
+   public void deleteSymbols(Collection<? extends SymbolRef> symbols) {
+      for (SymbolRef symbolRef : symbols) {
+         Symbol symbol = getSymbols().getSymbol(symbolRef.getFullName());
          symbol.getScope().remove(symbol);
       }
    }

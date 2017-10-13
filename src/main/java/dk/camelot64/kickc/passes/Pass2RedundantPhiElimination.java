@@ -1,6 +1,5 @@
 package dk.camelot64.kickc.passes;
 
-import dk.camelot64.kickc.CompileLog;
 import dk.camelot64.kickc.icl.*;
 
 import java.util.LinkedHashMap;
@@ -25,7 +24,7 @@ public class Pass2RedundantPhiElimination extends Pass2SsaOptimization {
          RValue alias = aliases.get(var);
          getLog().append("Redundant Phi " + var.toString(getProgram()) + " " + alias.toString(getProgram()));
       }
-      deleteVariables(aliases.keySet());
+      deleteSymbols(aliases.keySet());
       return aliases.size()>0;
    }
 

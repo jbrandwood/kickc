@@ -42,13 +42,13 @@ public class Pass1TypeInference {
                   if (operator == null || assignment.getrValue1() == null) {
                      // Copy operation or Unary operation
                      RValue rValue = assignment.getrValue2();
-                     SymbolType subType = inferType(rValue);
+                     SymbolType subType = inferType(programScope, rValue);
                      SymbolType type = inferType(operator, subType);
                      symbol.setTypeInferred(type);
                   } else {
                      // Binary operation
-                     SymbolType type1 = inferType(assignment.getrValue1());
-                     SymbolType type2 = inferType(assignment.getrValue2());
+                     SymbolType type1 = inferType(programScope, assignment.getrValue1());
+                     SymbolType type2 = inferType(programScope, assignment.getrValue2());
                      SymbolType type = inferType(type1, operator, type2);
                      symbol.setTypeInferred(type);
                   }
@@ -156,11 +156,14 @@ public class Pass1TypeInference {
       }
    }
 
-   public SymbolType inferType(RValue rValue) {
+   public static SymbolType inferType(ProgramScope programScope, RValue rValue) {
       SymbolType type = null;
       if (rValue instanceof VariableRef) {
          Variable variable = programScope.getVariable((VariableRef) rValue);
          type = variable.getType();
+      } else if (rValue instanceof ConstantRef) {
+         ConstantVar constVar = programScope.getConstant((ConstantRef) rValue);
+         type = constVar.getType();
       } else if (rValue instanceof Symbol) {
          Symbol rSymbol = (Symbol) rValue;
          type = rSymbol.getType();
@@ -171,6 +174,15 @@ public class Pass1TypeInference {
          type = SymbolTypeBasic.STRING;
       } else if (rValue instanceof ConstantBool) {
          type = SymbolTypeBasic.BOOLEAN;
+      } else if (rValue instanceof ConstantUnary) {
+         ConstantUnary constUnary = (ConstantUnary) rValue;
+         SymbolType subType = inferType(programScope, constUnary.getOperand());
+         return inferType(constUnary.getOperator(), subType);
+      } else if (rValue instanceof ConstantBinary) {
+         ConstantBinary constBin = (ConstantBinary) rValue;
+         SymbolType leftType = inferType(programScope, constBin.getLeft());
+         SymbolType rightType = inferType(programScope, constBin.getRight());
+         return inferType(leftType, constBin.getOperator(), rightType);
       }
       if (type == null) {
          throw new RuntimeException("Cannot infer type for " + rValue);

@@ -1,6 +1,5 @@
 package dk.camelot64.kickc.passes;
 
-import dk.camelot64.kickc.CompileLog;
 import dk.camelot64.kickc.icl.*;
 
 import java.util.ArrayList;
@@ -37,7 +36,7 @@ public class Pass3PhiMemCoalesce extends Pass2SsaOptimization {
       phiMemCoalescer.visitGraph(getGraph());
       removeAssignments(phiMemCoalescer.getRemove());
       replaceVariables(phiMemCoalescer.getReplace());
-      deleteVariables(phiMemCoalescer.getRemove());
+      deleteSymbols(phiMemCoalescer.getRemove());
       getLog().append("Coalesced down to " + phiEquivalenceClasses.size() + " phi equivalence classes");
       return false;
    }

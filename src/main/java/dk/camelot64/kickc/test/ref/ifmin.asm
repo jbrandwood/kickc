@@ -1,10 +1,11 @@
+  .const SCREEN = $400
   jsr main
 main: {
     ldx #$0
   b1:
     cpx #$32
     bcs b2
-    stx $400
+    stx SCREEN
   b2:
     inx
     cpx #$64

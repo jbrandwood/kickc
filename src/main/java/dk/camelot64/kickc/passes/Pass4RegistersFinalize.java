@@ -40,15 +40,19 @@ public class Pass4RegistersFinalize extends Pass2Base {
                variable.setAsmName(null);
             }
          }
+         for (ConstantVar constantVar : scope.getAllConstants(false)) {
+            constantVar.setAsmName(constantVar.getLocalName());
+         }
 
          // Find short asm names for all variables if possible
          Map<String, Registers.Register> shortNames = new LinkedHashMap<>();
+
          for (Variable variable : scope.getAllVariables(false)) {
             Registers.Register allocation = variable.getAllocation();
             if (allocation != null && allocation.isZp()) {
                String asmName = variable.getAsmName();
                if (asmName.contains("#")) {
-                  String shortName = asmName.substring(0, variable.getAsmName().indexOf("#"));
+                  String shortName = asmName.substring(0, asmName.indexOf("#"));
                   if (shortNames.get(shortName) == null || shortNames.get(shortName).equals(allocation)) {
                      // Short name is usable!
                      variable.setAsmName(shortName);
@@ -62,11 +66,36 @@ public class Pass4RegistersFinalize extends Pass2Base {
                   shortNames.put(asmName, allocation);
                   continue;
                } else {
-                  // Be unhappy (if tyhis triggers in the future extend with ability to create new names by adding suffixes)
+                  // Be unhappy (if this triggers in the future extend with ability to create new names by adding suffixes)
                   throw new RuntimeException("ASM name already used "+asmName);
                }
             }
          }
+
+         for (ConstantVar constantVar : scope.getAllConstants(false)) {
+            String asmName = constantVar.getAsmName();
+            Registers.Register allocation = new Registers.RegisterConstant();
+            if (asmName.contains("#")) {
+               String shortName = asmName.substring(0, asmName.indexOf("#"));
+               if (shortNames.get(shortName) == null || shortNames.get(shortName).equals(allocation)) {
+                  // Short name is usable!
+                  constantVar.setAsmName(shortName);
+                  shortNames.put(shortName, allocation);
+                  continue;
+               }
+            }
+            if (shortNames.get(asmName) == null || shortNames.get(asmName).equals(allocation)) {
+               // Try the full name instead
+               constantVar.setAsmName(asmName);
+               shortNames.put(asmName, allocation);
+               continue;
+            } else {
+               // Be unhappy (if this triggers in the future extend with ability to create new names by adding suffixes)
+               throw new RuntimeException("ASM name already used "+asmName);
+            }
+
+         }
+
       }
    }
 

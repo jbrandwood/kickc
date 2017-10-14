@@ -119,7 +119,7 @@ public class AsmFragmentManager {
       Matcher m = p.matcher(signature);
       String output = signature;
       if (m.find()) {
-         // replace first number with "number" and second number with the first
+         // getReplacement first number with "number" and second number with the first
          output = m.replaceAll(replace);
       }
       return output;

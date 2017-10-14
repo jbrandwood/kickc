@@ -124,29 +124,29 @@ main::@return: scope:[main]  from main
   to:@return
 @end: scope:[]  from @begin
 
-Constant (byte*) SCREEN#0 (word) 1024
-Succesful SSA optimization Pass2ConstantPropagation
+Alias (byte*) SCREEN#0 = (byte*) SCREEN#1 
+Succesful SSA optimization Pass2AliasElimination
 CONTROL FLOW GRAPH
 @begin: scope:[]  from
+  (byte*) SCREEN#0 ← (word) 1024
   call main param-assignment
   to:@end
 main: scope:[main]  from @begin
-  (byte*) SCREEN#1 ← phi( @begin/(word) 1024 )
-  *((byte*) SCREEN#1) ← (byte) 1
+  *((byte*) SCREEN#0) ← (byte) 1
   to:main::@return
 main::@return: scope:[main]  from main
   return 
   to:@return
 @end: scope:[]  from @begin
 
-Redundant Phi (byte*) SCREEN#1 (word) 1024
-Succesful SSA optimization Pass2RedundantPhiElimination
+Constant (const byte*) SCREEN#0
+Succesful SSA optimization Pass2ConstantIdentification
 CONTROL FLOW GRAPH
 @begin: scope:[]  from
   call main param-assignment
   to:@end
 main: scope:[main]  from @begin
-  *((word) 1024) ← (byte) 1
+  *((const byte*) SCREEN#0) ← (byte) 1
   to:main::@return
 main::@return: scope:[main]  from main
   return 
@@ -157,6 +157,7 @@ FINAL SYMBOL TABLE
 (label) @begin
 (label) @end
 (byte*) SCREEN
+(const byte*) SCREEN#0 = (word) 1024
 (void()) main()
 (label) main::@return
 
@@ -168,7 +169,7 @@ CONTROL FLOW GRAPH - PHI LIFTED
   to:@end
 @end: scope:[]  from @begin
 main: scope:[main]  from @begin
-  *((word) 1024) ← (byte) 1
+  *((const byte*) SCREEN#0) ← (byte) 1
   to:main::@return
 main::@return: scope:[main]  from main
   return 
@@ -184,7 +185,7 @@ CONTROL FLOW GRAPH - LIVE RANGES FOUND
   to:@end
 @end: scope:[]  from @begin
 main: scope:[main]  from @begin
-  [1] *((word) 1024) ← (byte) 1 [ ]
+  [1] *((const byte*) SCREEN#0) ← (byte) 1 [ ]
   to:main::@return
 main::@return: scope:[main]  from main
   [2] return  [ ]
@@ -200,7 +201,7 @@ CONTROL FLOW GRAPH - PHI MEM COALESCED
   to:@end
 @end: scope:[]  from @begin
 main: scope:[main]  from @begin
-  [1] *((word) 1024) ← (byte) 1 [ ]
+  [1] *((const byte*) SCREEN#0) ← (byte) 1 [ ]
   to:main::@return
 main::@return: scope:[main]  from main
   [2] return  [ ]
@@ -226,7 +227,8 @@ VARIABLE REGISTER WEIGHTS
 Initial phi equivalence classes
 Complete equivalence classes
 INITIAL ASM
-//SEG0 Global ZP labels
+//SEG0 Global Constants & labels
+  .const SCREEN = $400
 //SEG1 @begin
 bbegin:
 //SEG2 [0] call main param-assignment [ ]
@@ -236,9 +238,9 @@ bbegin:
 bend:
 //SEG4 main
 main: {
-  //SEG5 [1] *((word) 1024) ← (byte) 1 [ ] -- _star_cowo1=coby2 
+  //SEG5 [1] *((const byte*) SCREEN#0) ← (byte) 1 [ ] -- _star_cowo1=coby2 
     lda #$1
-    sta $400
+    sta SCREEN
     jmp breturn
   //SEG6 main::@return
   breturn:
@@ -246,8 +248,8 @@ main: {
     rts
 }
 
-Statement [1] *((word) 1024) ← (byte) 1 [ ] always clobbers reg byte a 
-Statement [1] *((word) 1024) ← (byte) 1 [ ] always clobbers reg byte a 
+Statement [1] *((const byte*) SCREEN#0) ← (byte) 1 [ ] always clobbers reg byte a 
+Statement [1] *((const byte*) SCREEN#0) ← (byte) 1 [ ] always clobbers reg byte a 
 REGISTER UPLIFT POTENTIAL REGISTERS
 
 REGISTER UPLIFT SCOPES
@@ -260,7 +262,8 @@ Removing instruction jmp bend
 Removing instruction jmp breturn
 Succesful ASM optimization Pass5NextJumpElimination
 ASSEMBLER
-//SEG0 Global ZP labels
+//SEG0 Global Constants & labels
+  .const SCREEN = $400
 //SEG1 @begin
 bbegin:
 //SEG2 [0] call main param-assignment [ ]
@@ -269,9 +272,9 @@ bbegin:
 bend:
 //SEG4 main
 main: {
-  //SEG5 [1] *((word) 1024) ← (byte) 1 [ ] -- _star_cowo1=coby2 
+  //SEG5 [1] *((const byte*) SCREEN#0) ← (byte) 1 [ ] -- _star_cowo1=coby2 
     lda #$1
-    sta $400
+    sta SCREEN
   //SEG6 main::@return
   breturn:
   //SEG7 [2] return  [ ]
@@ -283,16 +286,17 @@ Removing instruction bend:
 Removing instruction breturn:
 Succesful ASM optimization Pass5UnusedLabelElimination
 ASSEMBLER
-//SEG0 Global ZP labels
+//SEG0 Global Constants & labels
+  .const SCREEN = $400
 //SEG1 @begin
 //SEG2 [0] call main param-assignment [ ]
   jsr main
 //SEG3 @end
 //SEG4 main
 main: {
-  //SEG5 [1] *((word) 1024) ← (byte) 1 [ ] -- _star_cowo1=coby2 
+  //SEG5 [1] *((const byte*) SCREEN#0) ← (byte) 1 [ ] -- _star_cowo1=coby2 
     lda #$1
-    sta $400
+    sta SCREEN
   //SEG6 main::@return
   //SEG7 [2] return  [ ]
     rts
@@ -302,21 +306,23 @@ FINAL SYMBOL TABLE
 (label) @begin
 (label) @end
 (byte*) SCREEN
+(const byte*) SCREEN#0 = (word) 1024
 (void()) main()
 (label) main::@return
 
 
 FINAL CODE
-//SEG0 Global ZP labels
+//SEG0 Global Constants & labels
+  .const SCREEN = $400
 //SEG1 @begin
 //SEG2 [0] call main param-assignment [ ]
   jsr main
 //SEG3 @end
 //SEG4 main
 main: {
-  //SEG5 [1] *((word) 1024) ← (byte) 1 [ ] -- _star_cowo1=coby2 
+  //SEG5 [1] *((const byte*) SCREEN#0) ← (byte) 1 [ ] -- _star_cowo1=coby2 
     lda #$1
-    sta $400
+    sta SCREEN
   //SEG6 main::@return
   //SEG7 [2] return  [ ]
     rts

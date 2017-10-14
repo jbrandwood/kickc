@@ -135,17 +135,26 @@ public class Compiler {
    public void pass2OptimizeSSA(Program program) {
       List<Pass2SsaOptimization> optimizations = new ArrayList<>();
       optimizations.add(new Pass2CullEmptyBlocks(program));
-      optimizations.add(new Pass2ConstantIdentification(program));
-      optimizations.add(new Pass2ConstantInlining(program));
-
-      //optimizations.add(new Pass2ConstantPropagation(program));
-      //optimizations.add(new Pass2ConstantAdditionElimination(program));
       optimizations.add(new Pass2UnaryNotSimplification(program));
       optimizations.add(new Pass2AliasElimination(program));
       optimizations.add(new Pass2RedundantPhiElimination(program));
       optimizations.add(new Pass2SelfPhiElimination(program));
       optimizations.add(new Pass2ConditionalJumpSimplification(program));
+      optimizations.add(new Pass2ConstantIdentification(program));
 
+      pass2OptimizeSSA(program, optimizations);
+
+      // Constant inlining optimizations - as the last step to ensure that constant identification has been completed
+      List<Pass2SsaOptimization> constantOptimizations = new ArrayList<>();
+      constantOptimizations.add(new Pass2ConstantInlining(program));
+      pass2OptimizeSSA(program, constantOptimizations);
+
+      //optimizations.add(new Pass2ConstantPropagation(program));
+      //optimizations.add(new Pass2ConstantAdditionElimination(program));
+
+   }
+
+   private void pass2OptimizeSSA(Program program, List<Pass2SsaOptimization> optimizations) {
       boolean ssaOptimized = true;
       while (ssaOptimized) {
          pass2AssertSSA(program);

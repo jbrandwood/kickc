@@ -138,7 +138,7 @@ public class AsmSegment {
             printState.decIndent();
          }
          out.append(printState.getIndent());
-         if (line instanceof AsmComment || line instanceof AsmInstruction || line instanceof AsmLabelDecl) {
+         if (line instanceof AsmComment || line instanceof AsmInstruction || line instanceof AsmLabelDecl || line instanceof AsmConstant) {
             out.append("  ");
          }
          out.append(line.getAsm() + "\n");

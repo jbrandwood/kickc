@@ -1,24 +1,30 @@
+  .const STAR = $51
+  .const screen = $400
+  .const x1 = $27
+  .const y1 = $18
+  .const xd = x1-$0
+  .const yd = y1-$0
   .label idx = 2
   .label y = 4
   lda #$0
   sta y
-  ldy #$c
+  ldy #yd/$2
   ldx #$0
-  lda #$0
+  lda #$0+($0*$28)
   sta idx
   lda #$0
   sta idx+$1
 b1:
-  lda #<$400
+  lda #<screen
   clc
   adc idx
   sta !s++$1
-  lda #>$400
+  lda #>screen
   adc idx+$1
   sta !s++$2
-  lda #$51
+  lda #STAR
 !s:
-  sta $400
+  sta screen
   inx
   inc idx
   bne !+
@@ -26,9 +32,9 @@ b1:
 !:
   tya
   clc
-  adc #$18
+  adc #yd
   tay
-  cpy #$27
+  cpy #xd
   bcc b2
   inc y
   lda idx
@@ -40,8 +46,8 @@ b1:
 !:
   tya
   sec
-  sbc #$27
+  sbc #xd
   tay
 b2:
-  cpx #$28
+  cpx #x1+$1
   bcc b1

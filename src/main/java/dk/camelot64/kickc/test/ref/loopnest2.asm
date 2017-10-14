@@ -1,3 +1,4 @@
+  .const SCREEN = $400
   jsr main
 main: {
     .label j = 3
@@ -39,7 +40,7 @@ nest2: {
   b1:
     ldy #$64
   b2:
-    sty $400
+    sty SCREEN
     dey
     cpy #$0
     bne b2

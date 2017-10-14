@@ -1,20 +1,26 @@
+  .const STAR = $51
+  .const SCREEN = $400
   jsr main
 main: {
+    .const x1 = $27
+    .const y1 = $18
+    .const xd = x1-$0
+    .const yd = y1-$0
     .label x = 4
     .label cursor = 2
     .label y = 5
     lda #$0
     sta y
-    ldx #$c
+    ldx #yd/$2
     lda #$0
     sta x
-    lda #<$400
+    lda #<(SCREEN+($0*$28))+$0
     sta cursor
-    lda #>$400
+    lda #>(SCREEN+($0*$28))+$0
     sta cursor+$1
   b1:
     ldy #$0
-    lda #$51
+    lda #STAR
     sta (cursor),y
     inc x
     inc cursor
@@ -23,9 +29,9 @@ main: {
   !:
     txa
     clc
-    adc #$18
+    adc #yd
     tax
-    cpx #$27
+    cpx #xd
     bcc b2
     inc y
     lda cursor
@@ -37,11 +43,11 @@ main: {
   !:
     txa
     sec
-    sbc #$27
+    sbc #xd
     tax
   b2:
     lda x
-    cmp #$28
+    cmp #x1+$1
     bcc b1
     rts
 }

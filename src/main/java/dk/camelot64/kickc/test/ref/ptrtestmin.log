@@ -243,33 +243,6 @@ main::@return: scope:[main]  from main::@1
   to:@return
 @end: scope:[]  from @begin
 
-Constant (byte[1024]) main::SCREEN#0 (word) 1024
-Constant (byte) main::i#0 (byte) 2
-Succesful SSA optimization Pass2ConstantPropagation
-CONTROL FLOW GRAPH
-@begin: scope:[]  from
-  call main param-assignment
-  to:@end
-main: scope:[main]  from @begin
-  to:main::@1
-main::@1: scope:[main]  from main main::@2
-  (byte[1024]) main::SCREEN#2 ← phi( main/(word) 1024 main::@2/(byte[1024]) main::SCREEN#1 )
-  (byte) main::i#2 ← phi( main/(byte) 2 main::@2/(byte) main::i#1 )
-  (boolean~) main::$0 ← (byte) main::i#2 < (byte) 10
-  if((boolean~) main::$0) goto main::@2
-  to:main::@return
-main::@2: scope:[main]  from main::@1
-  (byte) main::i#3 ← phi( main::@1/(byte) main::i#2 )
-  (byte[1024]) main::SCREEN#1 ← phi( main::@1/(byte[1024]) main::SCREEN#2 )
-  (byte~) main::$1 ← (byte[1024]) main::SCREEN#1 *idx (byte) main::i#3
-  (byte) main::b#0 ← (byte~) main::$1
-  (byte) main::i#1 ← ++ (byte) main::i#3
-  to:main::@1
-main::@return: scope:[main]  from main::@1
-  return 
-  to:@return
-@end: scope:[]  from @begin
-
 Alias (byte[1024]) main::SCREEN#1 = (byte[1024]) main::SCREEN#2 
 Alias (byte) main::i#2 = (byte) main::i#3 
 Alias (byte) main::b#0 = (byte~) main::$1 
@@ -279,10 +252,12 @@ CONTROL FLOW GRAPH
   call main param-assignment
   to:@end
 main: scope:[main]  from @begin
+  (byte[1024]) main::SCREEN#0 ← (word) 1024
+  (byte) main::i#0 ← (byte) 2
   to:main::@1
 main::@1: scope:[main]  from main main::@2
-  (byte[1024]) main::SCREEN#1 ← phi( main/(word) 1024 main::@2/(byte[1024]) main::SCREEN#1 )
-  (byte) main::i#2 ← phi( main/(byte) 2 main::@2/(byte) main::i#1 )
+  (byte[1024]) main::SCREEN#1 ← phi( main/(byte[1024]) main::SCREEN#0 main::@2/(byte[1024]) main::SCREEN#1 )
+  (byte) main::i#2 ← phi( main/(byte) main::i#0 main::@2/(byte) main::i#1 )
   (boolean~) main::$0 ← (byte) main::i#2 < (byte) 10
   if((boolean~) main::$0) goto main::@2
   to:main::@return
@@ -302,10 +277,12 @@ CONTROL FLOW GRAPH
   call main param-assignment
   to:@end
 main: scope:[main]  from @begin
+  (byte[1024]) main::SCREEN#0 ← (word) 1024
+  (byte) main::i#0 ← (byte) 2
   to:main::@1
 main::@1: scope:[main]  from main main::@2
-  (byte[1024]) main::SCREEN#1 ← phi( main/(word) 1024 )
-  (byte) main::i#2 ← phi( main/(byte) 2 main::@2/(byte) main::i#1 )
+  (byte[1024]) main::SCREEN#1 ← phi( main/(byte[1024]) main::SCREEN#0 )
+  (byte) main::i#2 ← phi( main/(byte) main::i#0 main::@2/(byte) main::i#1 )
   (boolean~) main::$0 ← (byte) main::i#2 < (byte) 10
   if((boolean~) main::$0) goto main::@2
   to:main::@return
@@ -325,10 +302,12 @@ CONTROL FLOW GRAPH
   call main param-assignment
   to:@end
 main: scope:[main]  from @begin
+  (byte[1024]) main::SCREEN#0 ← (word) 1024
+  (byte) main::i#0 ← (byte) 2
   to:main::@1
 main::@1: scope:[main]  from main main::@2
-  (byte[1024]) main::SCREEN#1 ← phi( main/(word) 1024 )
-  (byte) main::i#2 ← phi( main/(byte) 2 main::@2/(byte) main::i#1 )
+  (byte[1024]) main::SCREEN#1 ← phi( main/(byte[1024]) main::SCREEN#0 )
+  (byte) main::i#2 ← phi( main/(byte) main::i#0 main::@2/(byte) main::i#1 )
   if((byte) main::i#2<(byte) 10) goto main::@2
   to:main::@return
 main::@2: scope:[main]  from main::@1
@@ -340,8 +319,52 @@ main::@return: scope:[main]  from main::@1
   to:@return
 @end: scope:[]  from @begin
 
-Constant (byte[1024]) main::SCREEN#1 (word) 1024
-Succesful SSA optimization Pass2ConstantPropagation
+Constant (const byte[1024]) main::SCREEN#0
+Constant (const byte) main::i#0
+Succesful SSA optimization Pass2ConstantIdentification
+CONTROL FLOW GRAPH
+@begin: scope:[]  from
+  call main param-assignment
+  to:@end
+main: scope:[main]  from @begin
+  to:main::@1
+main::@1: scope:[main]  from main main::@2
+  (byte[1024]) main::SCREEN#1 ← phi( main/(const byte[1024]) main::SCREEN#0 )
+  (byte) main::i#2 ← phi( main/(const byte) main::i#0 main::@2/(byte) main::i#1 )
+  if((byte) main::i#2<(byte) 10) goto main::@2
+  to:main::@return
+main::@2: scope:[main]  from main::@1
+  (byte) main::b#0 ← (byte[1024]) main::SCREEN#1 *idx (byte) main::i#2
+  (byte) main::i#1 ← ++ (byte) main::i#2
+  to:main::@1
+main::@return: scope:[main]  from main::@1
+  return 
+  to:@return
+@end: scope:[]  from @begin
+
+Redundant Phi (byte[1024]) main::SCREEN#1 (const byte[1024]) main::SCREEN#0
+Succesful SSA optimization Pass2RedundantPhiElimination
+CONTROL FLOW GRAPH
+@begin: scope:[]  from
+  call main param-assignment
+  to:@end
+main: scope:[main]  from @begin
+  to:main::@1
+main::@1: scope:[main]  from main main::@2
+  (byte) main::i#2 ← phi( main/(const byte) main::i#0 main::@2/(byte) main::i#1 )
+  if((byte) main::i#2<(byte) 10) goto main::@2
+  to:main::@return
+main::@2: scope:[main]  from main::@1
+  (byte) main::b#0 ← (const byte[1024]) main::SCREEN#0 *idx (byte) main::i#2
+  (byte) main::i#1 ← ++ (byte) main::i#2
+  to:main::@1
+main::@return: scope:[main]  from main::@1
+  return 
+  to:@return
+@end: scope:[]  from @begin
+
+Constant inlined main::i#0 = (byte) 2
+Succesful SSA optimization Pass2ConstantInlining
 CONTROL FLOW GRAPH
 @begin: scope:[]  from
   call main param-assignment
@@ -353,7 +376,7 @@ main::@1: scope:[main]  from main main::@2
   if((byte) main::i#2<(byte) 10) goto main::@2
   to:main::@return
 main::@2: scope:[main]  from main::@1
-  (byte) main::b#0 ← (word) 1024 *idx (byte) main::i#2
+  (byte) main::b#0 ← (const byte[1024]) main::SCREEN#0 *idx (byte) main::i#2
   (byte) main::i#1 ← ++ (byte) main::i#2
   to:main::@1
 main::@return: scope:[main]  from main::@1
@@ -361,8 +384,6 @@ main::@return: scope:[main]  from main::@1
   to:@return
 @end: scope:[]  from @begin
 
-Multiple usages for variable. Not optimizing sub-constant (byte) main::i#2
-Multiple usages for variable. Not optimizing sub-constant (byte) main::i#2
 FINAL SYMBOL TABLE
 (label) @begin
 (label) @end
@@ -371,6 +392,7 @@ FINAL SYMBOL TABLE
 (label) main::@2
 (label) main::@return
 (byte[1024]) main::SCREEN
+(const byte[1024]) main::SCREEN#0 = (word) 1024
 (byte) main::b
 (byte) main::b#0
 (byte) main::i
@@ -394,7 +416,7 @@ main::@return: scope:[main]  from main::@1
   return 
   to:@return
 main::@2: scope:[main]  from main::@1
-  (byte) main::b#0 ← (word) 1024 *idx (byte) main::i#2
+  (byte) main::b#0 ← (const byte[1024]) main::SCREEN#0 *idx (byte) main::i#2
   (byte) main::i#1 ← ++ (byte) main::i#2
   (byte~) main::i#4 ← (byte) main::i#1
   to:main::@1
@@ -421,7 +443,7 @@ main::@return: scope:[main]  from main::@1
   [4] return  [ ]
   to:@return
 main::@2: scope:[main]  from main::@1
-  [5] (byte) main::b#0 ← (word) 1024 *idx (byte) main::i#2 [ main::i#2 ]
+  [5] (byte) main::b#0 ← (const byte[1024]) main::SCREEN#0 *idx (byte) main::i#2 [ main::i#2 ]
   [6] (byte) main::i#1 ← ++ (byte) main::i#2 [ main::i#1 ]
   [7] (byte~) main::i#4 ← (byte) main::i#1 [ main::i#4 ]
   to:main::@1
@@ -449,7 +471,7 @@ main::@return: scope:[main]  from main::@1
   [4] return  [ ]
   to:@return
 main::@2: scope:[main]  from main::@1
-  [5] (byte) main::b#0 ← (word) 1024 *idx (byte) main::i#2 [ main::i#2 ]
+  [5] (byte) main::b#0 ← (const byte[1024]) main::SCREEN#0 *idx (byte) main::i#2 [ main::i#2 ]
   [6] (byte) main::i#1 ← ++ (byte) main::i#2 [ main::i#1 ]
   to:main::@1
 
@@ -491,7 +513,7 @@ Complete equivalence classes
 Allocated zp ZP_BYTE:2 [ main::i#2 main::i#1 ]
 Allocated zp ZP_BYTE:3 [ main::b#0 ]
 INITIAL ASM
-//SEG0 Global ZP labels
+//SEG0 Global Constants & labels
 //SEG1 @begin
 bbegin:
 //SEG2 [0] call main param-assignment [ ]
@@ -503,6 +525,7 @@ main_from_bbegin:
 bend:
 //SEG5 main
 main: {
+    .const SCREEN = $400
     .label b = 3
     .label i = 2
   //SEG6 [2] phi from main to main::@1
@@ -524,9 +547,9 @@ main: {
     rts
   //SEG12 main::@2
   b2:
-  //SEG13 [5] (byte) main::b#0 ← (word) 1024 *idx (byte) main::i#2 [ main::i#2 ] -- zpby1=cowo1_staridx_zpby2 
+  //SEG13 [5] (byte) main::b#0 ← (const byte[1024]) main::SCREEN#0 *idx (byte) main::i#2 [ main::i#2 ] -- zpby1=cowo1_staridx_zpby2 
     ldx i
-    lda $400,x
+    lda SCREEN,x
     sta b
   //SEG14 [6] (byte) main::i#1 ← ++ (byte) main::i#2 [ main::i#1 ] -- zpby1=_inc_zpby1 
     inc i
@@ -551,7 +574,7 @@ Removing instruction jmp b1
 Removing instruction jmp breturn
 Succesful ASM optimization Pass5NextJumpElimination
 ASSEMBLER
-//SEG0 Global ZP labels
+//SEG0 Global Constants & labels
 //SEG1 @begin
 bbegin:
 //SEG2 [0] call main param-assignment [ ]
@@ -562,6 +585,7 @@ main_from_bbegin:
 bend:
 //SEG5 main
 main: {
+    .const SCREEN = $400
   //SEG6 [2] phi from main to main::@1
   b1_from_main:
   //SEG7 [2] phi (byte) main::i#2 = (byte) 2 -- xby=coby1 
@@ -577,8 +601,8 @@ main: {
     rts
   //SEG12 main::@2
   b2:
-  //SEG13 [5] (byte) main::b#0 ← (word) 1024 *idx (byte) main::i#2 [ main::i#2 ] -- aby=cowo1_staridx_xby 
-    lda $400,x
+  //SEG13 [5] (byte) main::b#0 ← (const byte[1024]) main::SCREEN#0 *idx (byte) main::i#2 [ main::i#2 ] -- aby=cowo1_staridx_xby 
+    lda SCREEN,x
   //SEG14 [6] (byte) main::i#1 ← ++ (byte) main::i#2 [ main::i#1 ] -- xby=_inc_xby 
     inx
   //SEG15 [2] phi from main::@2 to main::@1
@@ -590,7 +614,7 @@ main: {
 Removing instruction main_from_bbegin:
 Succesful ASM optimization Pass5RedundantLabelElimination
 ASSEMBLER
-//SEG0 Global ZP labels
+//SEG0 Global Constants & labels
 //SEG1 @begin
 bbegin:
 //SEG2 [0] call main param-assignment [ ]
@@ -600,6 +624,7 @@ bbegin:
 bend:
 //SEG5 main
 main: {
+    .const SCREEN = $400
   //SEG6 [2] phi from main to main::@1
   b1_from_main:
   //SEG7 [2] phi (byte) main::i#2 = (byte) 2 -- xby=coby1 
@@ -615,8 +640,8 @@ main: {
     rts
   //SEG12 main::@2
   b2:
-  //SEG13 [5] (byte) main::b#0 ← (word) 1024 *idx (byte) main::i#2 [ main::i#2 ] -- aby=cowo1_staridx_xby 
-    lda $400,x
+  //SEG13 [5] (byte) main::b#0 ← (const byte[1024]) main::SCREEN#0 *idx (byte) main::i#2 [ main::i#2 ] -- aby=cowo1_staridx_xby 
+    lda SCREEN,x
   //SEG14 [6] (byte) main::i#1 ← ++ (byte) main::i#2 [ main::i#1 ] -- xby=_inc_xby 
     inx
   //SEG15 [2] phi from main::@2 to main::@1
@@ -632,7 +657,7 @@ Removing instruction breturn:
 Removing instruction b1_from_b2:
 Succesful ASM optimization Pass5UnusedLabelElimination
 ASSEMBLER
-//SEG0 Global ZP labels
+//SEG0 Global Constants & labels
 //SEG1 @begin
 //SEG2 [0] call main param-assignment [ ]
 //SEG3 [1] phi from @begin to main
@@ -640,6 +665,7 @@ ASSEMBLER
 //SEG4 @end
 //SEG5 main
 main: {
+    .const SCREEN = $400
   //SEG6 [2] phi from main to main::@1
   //SEG7 [2] phi (byte) main::i#2 = (byte) 2 -- xby=coby1 
     ldx #$2
@@ -653,8 +679,8 @@ main: {
     rts
   //SEG12 main::@2
   b2:
-  //SEG13 [5] (byte) main::b#0 ← (word) 1024 *idx (byte) main::i#2 [ main::i#2 ] -- aby=cowo1_staridx_xby 
-    lda $400,x
+  //SEG13 [5] (byte) main::b#0 ← (const byte[1024]) main::SCREEN#0 *idx (byte) main::i#2 [ main::i#2 ] -- aby=cowo1_staridx_xby 
+    lda SCREEN,x
   //SEG14 [6] (byte) main::i#1 ← ++ (byte) main::i#2 [ main::i#1 ] -- xby=_inc_xby 
     inx
   //SEG15 [2] phi from main::@2 to main::@1
@@ -670,6 +696,7 @@ FINAL SYMBOL TABLE
 (label) main::@2
 (label) main::@return
 (byte[1024]) main::SCREEN
+(const byte[1024]) main::SCREEN#0 = (word) 1024
 (byte) main::b
 (byte) main::b#0 reg byte a 110.0
 (byte) main::i
@@ -680,7 +707,7 @@ reg byte x [ main::i#2 main::i#1 ]
 reg byte a [ main::b#0 ]
 
 FINAL CODE
-//SEG0 Global ZP labels
+//SEG0 Global Constants & labels
 //SEG1 @begin
 //SEG2 [0] call main param-assignment [ ]
 //SEG3 [1] phi from @begin to main
@@ -688,6 +715,7 @@ FINAL CODE
 //SEG4 @end
 //SEG5 main
 main: {
+    .const SCREEN = $400
   //SEG6 [2] phi from main to main::@1
   //SEG7 [2] phi (byte) main::i#2 = (byte) 2 -- xby=coby1 
     ldx #$2
@@ -701,8 +729,8 @@ main: {
     rts
   //SEG12 main::@2
   b2:
-  //SEG13 [5] (byte) main::b#0 ← (word) 1024 *idx (byte) main::i#2 [ main::i#2 ] -- aby=cowo1_staridx_xby 
-    lda $400,x
+  //SEG13 [5] (byte) main::b#0 ← (const byte[1024]) main::SCREEN#0 *idx (byte) main::i#2 [ main::i#2 ] -- aby=cowo1_staridx_xby 
+    lda SCREEN,x
   //SEG14 [6] (byte) main::i#1 ← ++ (byte) main::i#2 [ main::i#1 ] -- xby=_inc_xby 
     inx
   //SEG15 [2] phi from main::@2 to main::@1

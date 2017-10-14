@@ -40,21 +40,6 @@ public abstract class Pass2SsaOptimization {
     */
    public abstract boolean optimize();
 
-   /**
-    * Singleton signalling that an RValue is never assigned and can safely be discarded as rvalue in phi-functions.
-    */
-   public static RValue VOID = new RValue() {
-      @Override
-      public String toString() {
-         return toString(null);
-      }
-
-      @Override
-      public String toString(Program program) {
-         return "VOID";
-      }
-
-   };
 
    /**
     * Replace all usages of variables in statements with aliases.
@@ -62,127 +47,8 @@ public abstract class Pass2SsaOptimization {
     * @param aliases Variables that have alias values.
     */
    public void replaceVariables(final Map<? extends SymbolRef, ? extends RValue> aliases) {
-      ControlFlowGraphBaseVisitor<Void> visitor = new ControlFlowGraphBaseVisitor<Void>() {
-         @Override
-         public Void visitAssignment(StatementAssignment assignment) {
-            LValue lValue = assignment.getlValue();
-            if (getAlias(aliases, lValue) != null) {
-               RValue alias = getAlias(aliases, lValue);
-               if (alias instanceof LValue) {
-                  assignment.setlValue((LValue) alias);
-               } else {
-                  throw new RuntimeException("Error replacing LValue variable " + lValue + " with " + alias);
-               }
-            }
-            if (getAlias(aliases, assignment.getrValue1()) != null) {
-               assignment.setrValue1(getAlias(aliases, assignment.getrValue1()));
-            }
-            if (getAlias(aliases, assignment.getrValue2()) != null) {
-               assignment.setrValue2(getAlias(aliases, assignment.getrValue2()));
-            }
-            // Handle pointer dereference in LValue
-            if (lValue instanceof PointerDereferenceSimple) {
-               PointerDereferenceSimple deref = (PointerDereferenceSimple) lValue;
-               RValue pointer = deref.getPointer();
-               if (getAlias(aliases, pointer) != null) {
-                  RValue alias = getAlias(aliases, pointer);
-                  deref.setPointer(alias);
-               }
-            }
-            if (lValue instanceof PointerDereferenceIndexed) {
-               PointerDereferenceIndexed deref = (PointerDereferenceIndexed) lValue;
-               RValue pointer = deref.getPointer();
-               if (getAlias(aliases, pointer) != null) {
-                  RValue alias = getAlias(aliases, pointer);
-                  deref.setPointer( alias);
-               }
-               RValue index = deref.getIndex();
-               if (getAlias(aliases, index) != null) {
-                  RValue alias = getAlias(aliases, index);
-                  deref.setIndex(alias);
-               }
-            }
-            return null;
-         }
-
-         @Override
-         public Void visitConditionalJump(StatementConditionalJump conditionalJump) {
-            if (getAlias(aliases, conditionalJump.getrValue1()) != null) {
-               conditionalJump.setrValue1(getAlias(aliases, conditionalJump.getrValue1()));
-            }
-            if (getAlias(aliases, conditionalJump.getrValue2()) != null) {
-               conditionalJump.setrValue2(getAlias(aliases, conditionalJump.getrValue2()));
-            }
-            return null;
-         }
-
-         @Override
-         public Void visitReturn(StatementReturn aReturn) {
-            if (getAlias(aliases, aReturn.getValue()) != null) {
-               aReturn.setValue(getAlias(aliases, aReturn.getValue()));
-            }
-            return null;
-         }
-
-         @Override
-         public Void visitCall(StatementCall call) {
-            if(call.getParameters()!=null) {
-               List<RValue> newParams = new ArrayList<>();
-               for (RValue parameter : call.getParameters()) {
-                  RValue newParam = parameter;
-                  if (getAlias(aliases, parameter) != null) {
-                     newParam = getAlias(aliases, parameter);
-                  }
-                  newParams.add(newParam);
-               }
-               call.setParameters(newParams);
-            }
-            return null;
-         }
-
-         @Override
-         public Void visitPhiBlock(StatementPhiBlock phi) {
-            for (StatementPhiBlock.PhiVariable phiVariable : phi.getPhiVariables()) {
-               if (getAlias(aliases, phiVariable.getVariable()) != null) {
-                  RValue alias = getAlias(aliases, phiVariable.getVariable());
-                  if (alias instanceof LValue) {
-                     phiVariable.setVariable((VariableRef) alias);
-                  }
-               }
-               List<StatementPhiBlock.PhiRValue> phirValues = phiVariable.getValues();
-               Iterator<StatementPhiBlock.PhiRValue> it = phirValues.iterator();
-               while (it.hasNext()) {
-                  StatementPhiBlock.PhiRValue phirValue = it.next();
-                  if (getAlias(aliases, phirValue.getrValue()) != null) {
-                     RValue alias = getAlias(aliases, phirValue.getrValue());
-                     if (VOID.equals(alias)) {
-                        it.remove();
-                     } else {
-                        phirValue.setrValue(alias);
-                     }
-                  }
-               }
-            }
-            return null;
-         }
-
-      };
-      visitor.visitGraph(getGraph());
-   }
-
-   /**
-    * Get the alias to use for an RValue.
-    *
-    * @param aliases The alias map
-    * @param rValue  The RValue to find an alias for
-    * @return The alias to use. Null if no alias exists.
-    */
-   private static RValue getAlias(Map<? extends SymbolRef, ? extends RValue> aliases, RValue rValue) {
-      RValue alias = aliases.get(rValue);
-      while (aliases.get(alias) != null) {
-         alias = aliases.get(alias);
-      }
-      return alias;
+      VariableReplacer replacer = new VariableReplacer(aliases);
+      replacer.getReplacement(getGraph());
    }
 
    /**
@@ -195,7 +61,7 @@ public abstract class Pass2SsaOptimization {
       visitor.visitBlock(block);
    }
 
-   /** Creates a visitor that can replace labels. */
+   /** Creates a visitor that can getReplacement labels. */
    private ControlFlowGraphBaseVisitor<Void> getLabelReplaceVisitor(final Map<LabelRef, LabelRef> replacements) {
       return new ControlFlowGraphBaseVisitor<Void>() {
 

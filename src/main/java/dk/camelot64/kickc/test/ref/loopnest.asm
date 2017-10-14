@@ -1,3 +1,4 @@
+  .const SCREEN = $400
   jsr main
 main: {
     ldy #$64
@@ -11,7 +12,7 @@ main: {
 nest: {
     ldx #$64
   b1:
-    stx $400
+    stx SCREEN
     dex
     cpx #$0
     bne b1

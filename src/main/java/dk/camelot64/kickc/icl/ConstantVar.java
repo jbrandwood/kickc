@@ -18,6 +18,10 @@ public class ConstantVar implements Constant, Symbol {
    /** The value of the constant. */
    private ConstantValue value;
 
+   /** A short name used for the variable in ASM code. If possible variable names of ZP variables are shortened in ASM code. This is possible, when all versions of the var use the same register. */
+   private String asmName;
+
+
    public ConstantVar(String name, Scope scope, SymbolType type, ConstantValue value) {
       this.name = name;
       this.scope = scope;
@@ -39,6 +43,15 @@ public class ConstantVar implements Constant, Symbol {
    public String getFullName() {
       return Scope.getFullName(this);
    }
+
+   public String getAsmName() {
+      return asmName;
+   }
+
+   public void setAsmName(String asmName) {
+      this.asmName = asmName;
+   }
+
 
    @Override
    public SymbolType getType() {

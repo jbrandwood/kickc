@@ -5,6 +5,7 @@ import dk.camelot64.kickc.asm.parser.Asm6502BaseVisitor;
 import dk.camelot64.kickc.asm.parser.Asm6502Parser;
 import dk.camelot64.kickc.icl.*;
 import dk.camelot64.kickc.passes.Pass1TypeInference;
+import dk.camelot64.kickc.passes.Pass4CodeGeneration;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -342,6 +343,10 @@ public class AsmFragment {
             String name = "cowo" + nextConstByteIdx++;
             bindings.put(name, value);
             return name;
+         } else if (type instanceof SymbolTypePointer) {
+            String name = "cowo" + nextConstByteIdx++;
+            bindings.put(name, value);
+            return name;
          } else {
             throw new RuntimeException("Unhandled constant type " + type);
          }
@@ -354,7 +359,7 @@ public class AsmFragment {
    }
 
    /**
-    * Get the value to replace a bound name with from the fragment signature
+    * Get the value to getReplacement a bound name with from the fragment signature
     *
     * @param name The name of the bound value in the fragment
     * @return The bound value to use in the generated ASM code
@@ -389,7 +394,7 @@ public class AsmFragment {
          }
       } else if (boundValue instanceof Constant) {
          Constant boundConst = (Constant) boundValue;
-         return new AsmParameter(toAsm(boundConst), SymbolTypeBasic.BYTE.equals(boundConst.getType(program.getScope())));
+         return new AsmParameter(Pass4CodeGeneration.getConstantValueAsm(program, boundConst, false), SymbolTypeBasic.BYTE.equals(boundConst.getType(program.getScope())));
       } else if (boundValue instanceof Label) {
          String param = ((Label) boundValue).getLocalName().replace('@', 'b').replace(':', '_').replace("$", "_");
          return new AsmParameter(param, false);
@@ -416,7 +421,7 @@ public class AsmFragment {
     */
    private String getAsmParameter(ConstantVar boundVar) {
       Scope varScope = boundVar.getScope();
-      String asmName = boundVar.getLocalName(); // boundVar.getAsmName() == null ? boundVar.getLocalName() : boundVar.getAsmName();
+      String asmName = boundVar.getAsmName() == null ? boundVar.getLocalName() : boundVar.getAsmName();
       return getAsmParameter(varScope, asmName);
    }
 
@@ -439,31 +444,6 @@ public class AsmFragment {
          String param = asmName.replace('@', 'b').replace(':', '_').replace("#", "_").replace("$", "_");
          //param = ""+((Registers.RegisterZp) register).getZp();
          return param;
-      }
-   }
-
-   /**
-    * Return the ASM code for the constant
-    * @param constant The constant
-    * @return ASM code
-    */
-   private String toAsm(Constant constant) {
-      if (constant instanceof ConstantInteger) {
-         return String.format("$%x", ((ConstantInteger) constant).getNumber());
-      } else if (constant instanceof ConstantVar) {
-         ConstantVar constantVar = (ConstantVar) constant;
-         return getAsmParameter(constantVar);
-      } else if (constant instanceof ConstantRef) {
-         ConstantVar constantVar = program.getScope().getConstant((ConstantRef) constant);
-         return getAsmParameter(constantVar);
-      } else if (constant instanceof ConstantUnary) {
-         ConstantUnary unary = (ConstantUnary) constant;
-         return unary.getOperator().toString() + toAsm(unary.getOperand());
-      } else if (constant instanceof ConstantBinary) {
-         ConstantBinary binary = (ConstantBinary) constant;
-         return toAsm(binary.getLeft()) + binary.getOperator().toString() + toAsm(binary.getRight());
-      } else {
-         throw new RuntimeException("Unknown constant type " + constant);
       }
    }
 

@@ -29,7 +29,7 @@ public class Pass4CodeGeneration {
       ScopeRef currentScope = ScopeRef.ROOT;
 
       // Generate global ZP labels
-      asm.startSegment(null, "Global ZP labels");
+      asm.startSegment(null, "Global Constants & labels");
       addConstants(asm, currentScope);
       addZpLabels(asm, currentScope);
       for (ControlFlowBlock block : getGraph().getAllBlocks()) {
@@ -88,10 +88,10 @@ public class Pass4CodeGeneration {
       Scope scope = program.getScope().getScope(scopeRef);
       Collection<ConstantVar> scopeConstants = scope.getAllConstants(false);
       Set<String> added = new LinkedHashSet<>();
-      for (ConstantVar scopeConstant : scopeConstants) {
-         String asmName = scopeConstant.getLocalName(); // scopeConstant.getAsmName()
+      for (ConstantVar constantVar : scopeConstants) {
+         String asmName = constantVar.getAsmName() == null ? constantVar.getLocalName() : constantVar.getAsmName();
          if (asmName != null && !added.contains(asmName)) {
-            asm.addConstant(asmName.replace("#", "_").replace("$", "_"), getConstantValueAsm(scopeConstant.getValue(), false));
+            asm.addConstant(asmName.replace("#", "_").replace("$", "_"), getConstantValueAsm(program, constantVar.getValue(), false));
             added.add(asmName);
          }
       }
@@ -105,12 +105,13 @@ public class Pass4CodeGeneration {
     *
     * @return The ASM string representing the constant value
     */
-   private String getConstantValueAsm(Constant value, boolean subOperator) {
+   public static String getConstantValueAsm(Program program, Constant value, boolean subOperator) {
       if (value instanceof ConstantRef) {
          value = program.getScope().getConstant((ConstantRef) value);
       }
       if (value instanceof ConstantVar) {
-         String asmName = ((ConstantVar) value).getLocalName(); // xxx.getAsmName()
+         ConstantVar constantVar = (ConstantVar) value;
+         String asmName = constantVar.getAsmName() == null ? constantVar.getLocalName() : constantVar.getAsmName();
          return asmName.replace("#", "_").replace("$", "_");
       } else if (value instanceof ConstantInteger) {
          return String.format("$%x", ((ConstantInteger) value).getNumber());
@@ -119,15 +120,15 @@ public class Pass4CodeGeneration {
          return
                (subOperator ? "(" : "") +
                      unary.getOperator().getOperator() +
-                     getConstantValueAsm(unary.getOperand(), true) +
+                     getConstantValueAsm(program, unary.getOperand(), true) +
                      (subOperator ? ")" : "");
       } else if (value instanceof ConstantBinary) {
          ConstantBinary binary = (ConstantBinary) value;
          return
                (subOperator ? "(" : "") +
-                     getConstantValueAsm(binary.getLeft(), true) +
+                     getConstantValueAsm(program, binary.getLeft(), true) +
                      binary.getOperator().getOperator() +
-                     getConstantValueAsm(binary.getRight(), true) +
+                     getConstantValueAsm(program, binary.getRight(), true) +
                      (subOperator ? ")" : "");
       } else {
          throw new RuntimeException("Constant type not supported " + value);

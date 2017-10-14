@@ -48,7 +48,11 @@ public class SymbolRef implements Value {
       if (program == null) {
          return fullName;
       } else {
-         return program.getScope().getSymbol(fullName).toString(program);
+         try {
+            return program.getScope().getSymbol(fullName).toString(program);
+         } catch (NullPointerException e) {
+            throw e;
+         }
       }
    }
 

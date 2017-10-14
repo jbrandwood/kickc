@@ -1,5 +1,7 @@
 package dk.camelot64.kickc.icl;
 
+import sun.jvm.hotspot.asm.Register;
+
 /** The different registers available for a program  */
 public class Registers {
 
@@ -22,7 +24,7 @@ public class Registers {
 
    /** The register type. */
    public enum RegisterType {
-      ZP_BYTE, ZP_BOOL, REG_A_BYTE, REG_ALU_BYTE, REG_Y_BYTE, REG_X_BYTE, ZP_PTR_BYTE, ZP_WORD
+      ZP_BYTE, ZP_BOOL, REG_A_BYTE, REG_ALU_BYTE, REG_Y_BYTE, REG_X_BYTE, ZP_PTR_BYTE, ZP_WORD, CONSTANT
    }
 
    /** A register used for storing a single variable. */
@@ -232,6 +234,34 @@ public class Registers {
          return "reg byte alu";
       }
 
+   }
+
+   /** Special register used for constants. Has no corresponding CPU register. */
+   public static class RegisterConstant implements Register {
+      @Override
+      public RegisterType getType() {
+         return RegisterType.CONSTANT;
+      }
+
+      @Override
+      public boolean isZp() {
+         return false;
+      }
+
+      @Override
+      public String toString(Program program) {
+         return "const";
+      }
+
+      @Override
+      public int hashCode() {
+         return 31;
+      }
+
+      @Override
+      public boolean equals(Object obj) {
+         return obj instanceof RegisterConstant;
+      }
    }
 
 }

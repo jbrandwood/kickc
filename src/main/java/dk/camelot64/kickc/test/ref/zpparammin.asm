@@ -1,3 +1,5 @@
+  .const SCREEN = $400
+  .const SCREEN2 = $400+$28
   jsr main
 main: {
     ldy #$0
@@ -11,7 +13,7 @@ main: {
     sty sum.a
     sta sum.c
     jsr sum
-    sta $400,y
+    sta SCREEN,y
     tya
     tax
     inx
@@ -21,7 +23,7 @@ main: {
     sty sum2.a
     sta sum2.c
     jsr sum2
-    sta $428,y
+    sta SCREEN2,y
     iny
     cpy #$b
     bne b1

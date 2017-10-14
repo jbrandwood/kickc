@@ -1,6 +1,7 @@
+  .const SCREEN = $400
   jsr main
 main: {
     lda #$1
-    sta $400
+    sta SCREEN
     rts
 }

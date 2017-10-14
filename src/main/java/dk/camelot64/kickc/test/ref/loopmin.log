@@ -179,42 +179,16 @@ INITIAL SSA SYMBOL TABLE
 (byte) s#3
 (byte) s#4
 
-Constant (byte) i#0 (byte) 10
-Constant (byte) s#0 (byte) 0
-Succesful SSA optimization Pass2ConstantPropagation
-CONTROL FLOW GRAPH
-@begin: scope:[]  from
-  to:@1
-@1: scope:[]  from @2 @begin
-  (byte) s#3 ← phi( @2/(byte) s#4 @begin/(byte) 0 )
-  (byte) i#2 ← phi( @2/(byte) i#1 @begin/(byte) 10 )
-  (boolean~) $0 ← (byte) i#2 > (byte) 5
-  (boolean~) $1 ← ! (boolean~) $0
-  if((boolean~) $1) goto @2
-  to:@3
-@2: scope:[]  from @1 @3
-  (byte) s#4 ← phi( @1/(byte) s#3 @3/(byte) s#1 )
-  (byte) i#3 ← phi( @1/(byte) i#2 @3/(byte) i#4 )
-  (byte) i#1 ← -- (byte) i#3
-  (boolean~) $3 ← (byte) i#1 > (byte) 0
-  if((boolean~) $3) goto @1
-  to:@end
-@3: scope:[]  from @1
-  (byte) i#4 ← phi( @1/(byte) i#2 )
-  (byte) s#2 ← phi( @1/(byte) s#3 )
-  (byte~) $2 ← (byte) s#2 + (byte) i#4
-  (byte) s#1 ← (byte~) $2
-  to:@2
-@end: scope:[]  from @2
-
 Inversing boolean not (boolean~) $1 ← (byte) i#2 <= (byte) 5 from (boolean~) $0 ← (byte) i#2 > (byte) 5
 Succesful SSA optimization Pass2UnaryNotSimplification
 CONTROL FLOW GRAPH
 @begin: scope:[]  from
+  (byte) i#0 ← (byte) 10
+  (byte) s#0 ← (byte) 0
   to:@1
 @1: scope:[]  from @2 @begin
-  (byte) s#3 ← phi( @2/(byte) s#4 @begin/(byte) 0 )
-  (byte) i#2 ← phi( @2/(byte) i#1 @begin/(byte) 10 )
+  (byte) s#3 ← phi( @2/(byte) s#4 @begin/(byte) s#0 )
+  (byte) i#2 ← phi( @2/(byte) i#1 @begin/(byte) i#0 )
   (boolean~) $1 ← (byte) i#2 <= (byte) 5
   if((boolean~) $1) goto @2
   to:@3
@@ -239,10 +213,12 @@ Alias (byte) s#1 = (byte~) $2
 Succesful SSA optimization Pass2AliasElimination
 CONTROL FLOW GRAPH
 @begin: scope:[]  from
+  (byte) i#0 ← (byte) 10
+  (byte) s#0 ← (byte) 0
   to:@1
 @1: scope:[]  from @2 @begin
-  (byte) s#2 ← phi( @2/(byte) s#4 @begin/(byte) 0 )
-  (byte) i#2 ← phi( @2/(byte) i#1 @begin/(byte) 10 )
+  (byte) s#2 ← phi( @2/(byte) s#4 @begin/(byte) s#0 )
+  (byte) i#2 ← phi( @2/(byte) i#1 @begin/(byte) i#0 )
   (boolean~) $1 ← (byte) i#2 <= (byte) 5
   if((boolean~) $1) goto @2
   to:@3
@@ -262,10 +238,12 @@ Redundant Phi (byte) i#3 (byte) i#2
 Succesful SSA optimization Pass2RedundantPhiElimination
 CONTROL FLOW GRAPH
 @begin: scope:[]  from
+  (byte) i#0 ← (byte) 10
+  (byte) s#0 ← (byte) 0
   to:@1
 @1: scope:[]  from @2 @begin
-  (byte) s#2 ← phi( @2/(byte) s#4 @begin/(byte) 0 )
-  (byte) i#2 ← phi( @2/(byte) i#1 @begin/(byte) 10 )
+  (byte) s#2 ← phi( @2/(byte) s#4 @begin/(byte) s#0 )
+  (byte) i#2 ← phi( @2/(byte) i#1 @begin/(byte) i#0 )
   (boolean~) $1 ← (byte) i#2 <= (byte) 5
   if((boolean~) $1) goto @2
   to:@3
@@ -283,6 +261,50 @@ CONTROL FLOW GRAPH
 Simple Condition (boolean~) $1 if((byte) i#2<=(byte) 5) goto @2
 Simple Condition (boolean~) $3 if((byte) i#1>(byte) 0) goto @1
 Succesful SSA optimization Pass2ConditionalJumpSimplification
+CONTROL FLOW GRAPH
+@begin: scope:[]  from
+  (byte) i#0 ← (byte) 10
+  (byte) s#0 ← (byte) 0
+  to:@1
+@1: scope:[]  from @2 @begin
+  (byte) s#2 ← phi( @2/(byte) s#4 @begin/(byte) s#0 )
+  (byte) i#2 ← phi( @2/(byte) i#1 @begin/(byte) i#0 )
+  if((byte) i#2<=(byte) 5) goto @2
+  to:@3
+@2: scope:[]  from @1 @3
+  (byte) s#4 ← phi( @1/(byte) s#2 @3/(byte) s#1 )
+  (byte) i#1 ← -- (byte) i#2
+  if((byte) i#1>(byte) 0) goto @1
+  to:@end
+@3: scope:[]  from @1
+  (byte) s#1 ← (byte) s#2 + (byte) i#2
+  to:@2
+@end: scope:[]  from @2
+
+Constant (const byte) i#0
+Constant (const byte) s#0
+Succesful SSA optimization Pass2ConstantIdentification
+CONTROL FLOW GRAPH
+@begin: scope:[]  from
+  to:@1
+@1: scope:[]  from @2 @begin
+  (byte) s#2 ← phi( @2/(byte) s#4 @begin/(const byte) s#0 )
+  (byte) i#2 ← phi( @2/(byte) i#1 @begin/(const byte) i#0 )
+  if((byte) i#2<=(byte) 5) goto @2
+  to:@3
+@2: scope:[]  from @1 @3
+  (byte) s#4 ← phi( @1/(byte) s#2 @3/(byte) s#1 )
+  (byte) i#1 ← -- (byte) i#2
+  if((byte) i#1>(byte) 0) goto @1
+  to:@end
+@3: scope:[]  from @1
+  (byte) s#1 ← (byte) s#2 + (byte) i#2
+  to:@2
+@end: scope:[]  from @2
+
+Constant inlined s#0 = (byte) 0
+Constant inlined i#0 = (byte) 10
+Succesful SSA optimization Pass2ConstantInlining
 CONTROL FLOW GRAPH
 @begin: scope:[]  from
   to:@1
@@ -444,7 +466,7 @@ Complete equivalence classes
 Allocated zp ZP_BYTE:2 [ i#2 i#1 ]
 Allocated zp ZP_BYTE:3 [ s#2 s#4 s#1 ]
 INITIAL ASM
-//SEG0 Global ZP labels
+//SEG0 Global Constants & labels
   .label i = 2
   .label s = 3
 //SEG1 @begin
@@ -508,7 +530,7 @@ Removing instruction jmp b2
 Removing instruction jmp bend
 Succesful ASM optimization Pass5NextJumpElimination
 ASSEMBLER
-//SEG0 Global ZP labels
+//SEG0 Global Constants & labels
 //SEG1 @begin
 bbegin:
 //SEG2 [0] phi from @begin to @1
@@ -557,7 +579,7 @@ Removing instruction b2_from_b1:
 Removing instruction b2_from_b3:
 Succesful ASM optimization Pass5RedundantLabelElimination
 ASSEMBLER
-//SEG0 Global ZP labels
+//SEG0 Global Constants & labels
 //SEG1 @begin
 bbegin:
 //SEG2 [0] phi from @begin to @1
@@ -598,7 +620,7 @@ Removing instruction b3:
 Removing instruction bend:
 Succesful ASM optimization Pass5UnusedLabelElimination
 ASSEMBLER
-//SEG0 Global ZP labels
+//SEG0 Global Constants & labels
 //SEG1 @begin
 //SEG2 [0] phi from @begin to @1
 //SEG3 [0] phi (byte) s#2 = (byte) 0 -- aby=coby1 
@@ -634,7 +656,7 @@ b2:
 Removing instruction jmp b1
 Succesful ASM optimization Pass5NextJumpElimination
 ASSEMBLER
-//SEG0 Global ZP labels
+//SEG0 Global Constants & labels
 //SEG1 @begin
 //SEG2 [0] phi from @begin to @1
 //SEG3 [0] phi (byte) s#2 = (byte) 0 -- aby=coby1 
@@ -684,7 +706,7 @@ reg byte x [ i#2 i#1 ]
 reg byte a [ s#2 s#4 s#1 ]
 
 FINAL CODE
-//SEG0 Global ZP labels
+//SEG0 Global Constants & labels
 //SEG1 @begin
 //SEG2 [0] phi from @begin to @1
 //SEG3 [0] phi (byte) s#2 = (byte) 0 -- aby=coby1 

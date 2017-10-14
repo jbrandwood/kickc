@@ -1,14 +1,18 @@
+  .const SCREEN = $400
+  .const buffer1 = $1000
+  .const buffer2 = $1100
+  .const RASTER = $d012
   jsr main
 main: {
     jsr prepare
   b3_from_b11:
     ldx #$19
   b3:
-    lda $d012
+    lda RASTER
     cmp #$fe
     bne b3
   b4:
-    lda $d012
+    lda RASTER
     cmp #$ff
     bne b4
     dex
@@ -24,15 +28,15 @@ plot: {
     .label y = 4
     lda #$10
     sta y
-    lda #<$4d4
+    lda #<(SCREEN+($5*$28))+$c
     sta line
-    lda #>$4d4
+    lda #>(SCREEN+($5*$28))+$c
     sta line+$1
     ldx #$0
   b1:
     ldy #$0
   b2:
-    lda $1000,x
+    lda buffer1,x
     sta (line),y
     inx
     iny
@@ -61,8 +65,8 @@ flip: {
     lda #$10
     sta c
   b2:
-    lda $1000,x
-    sta $1100,y
+    lda buffer1,x
+    sta buffer2,y
     inx
     tya
     clc
@@ -77,8 +81,8 @@ flip: {
     bne b1
     ldx #$0
   b3:
-    lda $1100,x
-    sta $1000,x
+    lda buffer2,x
+    sta buffer1,x
     inx
     cpx #$0
     bne b3
@@ -88,7 +92,7 @@ prepare: {
     ldx #$0
   b1:
     txa
-    sta $1000,x
+    sta buffer1,x
     inx
     cpx #$0
     bne b1

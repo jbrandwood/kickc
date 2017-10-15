@@ -8,7 +8,7 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * A replacer capable to getReplacement all usages of a variable (or constant var) with a suitable replacement
+ * A replacer capable to alias all usages of a variable (or constant var) with a suitable replacement
  */
 public class VariableReplacer {
 

@@ -7,34 +7,34 @@
   .label numpoints = 8
   jsr main
 main: {
-    lda #$1
+    lda #1
     sta addpoint.c
-    ldy #$5
-    lda #$0
+    ldy #5
+    lda #0
     sta numpoints
-    lda #$5
+    lda #5
     jsr addpoint
-    lda #$2
+    lda #2
     sta addpoint.c
-    ldy #$8
+    ldy #8
     lda #$f
     jsr addpoint
-    lda #$3
+    lda #3
     sta addpoint.c
     ldy #$e
-    lda #$6
+    lda #6
     jsr addpoint
-    lda #$4
+    lda #4
     sta addpoint.c
-    ldy #$2
+    ldy #2
     lda #$22
     jsr addpoint
-    lda #$5
+    lda #5
     sta addpoint.c
     ldy #$11
     lda #$15
     jsr addpoint
-    lda #$7
+    lda #7
     sta addpoint.c
     ldy #$16
     lda #$1f
@@ -47,64 +47,64 @@ main: {
     rts
 }
 animate: {
-    lda XPOS+$0
+    lda XPOS+0
     clc
-    adc #$1
-    sta XPOS+$0
-    lda XPOS+$0
+    adc #1
+    sta XPOS+0
+    lda XPOS+0
     cmp #$28
     bne b1
-    lda #$0
-    sta XPOS+$0
+    lda #0
+    sta XPOS+0
   b1:
-    lda YPOS+$0
+    lda YPOS+0
     clc
-    adc #$1
-    sta YPOS+$0
-    lda YPOS+$0
+    adc #1
+    sta YPOS+0
+    lda YPOS+0
     cmp #$19
     bne b2
-    lda #$0
-    sta YPOS+$0
+    lda #0
+    sta YPOS+0
   b2:
-    ldx XPOS+$1
+    ldx XPOS+1
     dex
-    stx XPOS+$1
-    lda XPOS+$1
+    stx XPOS+1
+    lda XPOS+1
     cmp #$ff
     bne b3
     lda #$28
-    sta XPOS+$1
+    sta XPOS+1
   b3:
-    lda YPOS+$2
+    lda YPOS+2
     clc
-    adc #$1
-    sta YPOS+$2
-    lda YPOS+$2
+    adc #1
+    sta YPOS+2
+    lda YPOS+2
     cmp #$19
     bne b4
-    lda #$0
-    sta YPOS+$2
+    lda #0
+    sta YPOS+2
   b4:
-    ldx YPOS+$3
+    ldx YPOS+3
     dex
-    stx YPOS+$3
-    lda YPOS+$3
+    stx YPOS+3
+    lda YPOS+3
     cmp #$ff
     bne breturn
     lda #$19
-    sta YPOS+$3
-    lda XPOS+$3
+    sta YPOS+3
+    lda XPOS+3
     clc
-    adc #$7
-    sta XPOS+$3
-    lda XPOS+$3
+    adc #7
+    sta XPOS+3
+    lda XPOS+3
     cmp #$28
     bcc breturn
-    lda XPOS+$3
+    lda XPOS+3
     sec
     sbc #$28
-    sta XPOS+$3
+    sta XPOS+3
   breturn:
     rts
 }
@@ -115,11 +115,11 @@ render: {
     lda #<COLORS
     sta colline
     lda #>COLORS
-    sta colline+$1
-    lda #$0
+    sta colline+1
+    lda #0
     sta y
   b1:
-    lda #$0
+    lda #0
     sta x
   b2:
     lda x
@@ -139,7 +139,7 @@ render: {
     adc #$28
     sta colline
     bcc !+
-    inc colline+$1
+    inc colline+1
   !:
     inc y
     lda y
@@ -154,10 +154,10 @@ findcol: {
     .label yp = 11
     .label diff = 7
     .label mindiff = 6
-    ldy #$0
+    ldy #0
     lda #$ff
     sta mindiff
-    ldx #$0
+    ldx #0
   b1:
     lda XPOS,x
     sta xp
@@ -169,7 +169,7 @@ findcol: {
     lda y
     cmp yp
     bne b2
-    ldy #$0
+    ldy #0
   breturn:
     rts
   b2:
@@ -223,16 +223,16 @@ initscreen: {
     lda #<SCREEN
     sta screen
     lda #>SCREEN
-    sta screen+$1
+    sta screen+1
   b1:
-    ldy #$0
+    ldy #0
     lda #FILL
     sta (screen),y
     inc screen
     bne !+
-    inc screen+$1
+    inc screen+1
   !:
-    lda screen+$1
+    lda screen+1
     cmp #>SCREEN+$3e8
     bcc b1
     bne !+

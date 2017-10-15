@@ -1,10 +1,10 @@
   jsr main
 main: {
     .label a = 2
-    ldx #$0
+    ldx #0
     jsr inc
     clc
-    adc #$4
+    adc #4
     sta a
     jsr inc
     clc
@@ -14,7 +14,7 @@ main: {
 inc: {
     txa
     clc
-    adc #$7
+    adc #7
     tax
     txa
     rts

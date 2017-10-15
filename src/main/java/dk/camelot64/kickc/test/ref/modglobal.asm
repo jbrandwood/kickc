@@ -2,15 +2,15 @@
   .label cnt3 = 2
   jsr main
 main: {
-    lda #$0
+    lda #0
     sta cnt3
-    ldy #$0
-    ldx #$0
+    ldy #0
+    ldx #0
     jsr inccnt
-    sta SCREEN+$0
+    sta SCREEN+0
     inx
     jsr inccnt
-    sta SCREEN+$1
+    sta SCREEN+1
     rts
 }
 inccnt: {

@@ -1,10 +1,10 @@
   jsr main
 main: {
-    ldy #$0
+    ldy #0
     ldx #$64
   b1:
     dex
-    cpx #$0
+    cpx #0
     bne b2
     rts
   b2:

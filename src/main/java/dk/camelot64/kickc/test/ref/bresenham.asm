@@ -4,28 +4,27 @@
 main: {
     .const x1 = $27
     .const y1 = $18
-    .const xd = x1-$0
-    .const yd = y1-$0
+    .const xd = x1-4
+    .const yd = y1-4
     .label x = 4
     .label cursor = 2
     .label y = 5
-    lda #$0
+    lda #4
     sta y
-    ldx #yd/$2
-    lda #$0
+    ldx #yd/2
     sta x
-    lda #<SCREEN+$0*$28+$0
+    lda #<SCREEN+4*$28+4
     sta cursor
-    lda #>SCREEN+$0*$28+$0
-    sta cursor+$1
+    lda #>SCREEN+4*$28+4
+    sta cursor+1
   b1:
-    ldy #$0
+    ldy #0
     lda #STAR
     sta (cursor),y
     inc x
     inc cursor
     bne !+
-    inc cursor+$1
+    inc cursor+1
   !:
     txa
     clc
@@ -39,7 +38,7 @@ main: {
     adc #$28
     sta cursor
     bcc !+
-    inc cursor+$1
+    inc cursor+1
   !:
     txa
     sec
@@ -47,7 +46,7 @@ main: {
     tax
   b2:
     lda x
-    cmp #x1+$1
+    cmp #x1+1
     bcc b1
     rts
 }

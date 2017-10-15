@@ -91,51 +91,9 @@ public class Pass4CodeGeneration {
       for (ConstantVar constantVar : scopeConstants) {
          String asmName = constantVar.getAsmName() == null ? constantVar.getLocalName() : constantVar.getAsmName();
          if (asmName != null && !added.contains(asmName)) {
-            asm.addConstant(asmName.replace("#", "_").replace("$", "_"), getConstantValueAsm(program, constantVar.getValue(), 99));
+            asm.addConstant(asmName.replace("#", "_").replace("$", "_"), AsmFragment.getAsmConstant(program, constantVar.getValue(), 99));
             added.add(asmName);
          }
-      }
-   }
-
-   /**
-    * Get ASM code for a constant value
-    *
-    * @param value The constant value
-    * @param precedence The precedence of the outer expression operator. Used to generate perenthesis when needed.
-    *
-    * @return The ASM string representing the constant value
-    */
-   public static String getConstantValueAsm(Program program, Constant value, int precedence) {
-      if (value instanceof ConstantRef) {
-         value = program.getScope().getConstant((ConstantRef) value);
-      }
-      if (value instanceof ConstantVar) {
-         ConstantVar constantVar = (ConstantVar) value;
-         String asmName = constantVar.getAsmName() == null ? constantVar.getLocalName() : constantVar.getAsmName();
-         return asmName.replace("#", "_").replace("$", "_");
-      } else if (value instanceof ConstantInteger) {
-         return String.format("$%x", ((ConstantInteger) value).getNumber());
-      } else if (value instanceof ConstantUnary) {
-         ConstantUnary unary = (ConstantUnary) value;
-         Operator operator = unary.getOperator();
-         boolean parenthesis = operator.getPrecedence()>precedence;
-         return
-               (parenthesis ? "(" : "") +
-                     operator.getOperator() +
-                     getConstantValueAsm(program, unary.getOperand(), operator.getPrecedence()) +
-                     (parenthesis? ")" : "");
-      } else if (value instanceof ConstantBinary) {
-         ConstantBinary binary = (ConstantBinary) value;
-         Operator operator = binary.getOperator();
-         boolean parenthesis = operator.getPrecedence()>precedence;
-         return
-               (parenthesis? "(" : "") +
-                     getConstantValueAsm(program, binary.getLeft(), operator.getPrecedence()) +
-                     operator.getOperator() +
-                     getConstantValueAsm(program, binary.getRight(), operator.getPrecedence()) +
-                     (parenthesis? ")" : "");
-      } else {
-         throw new RuntimeException("Constant type not supported " + value);
       }
    }
 

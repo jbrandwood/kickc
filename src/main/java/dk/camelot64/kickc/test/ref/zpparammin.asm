@@ -2,14 +2,14 @@
   .const SCREEN2 = $400+$28
   jsr main
 main: {
-    ldy #$0
+    ldy #0
   b1:
     tya
     tax
     inx
     tya
     clc
-    adc #$2
+    adc #2
     sty sum.a
     sta sum.c
     jsr sum
@@ -19,7 +19,7 @@ main: {
     inx
     tya
     clc
-    adc #$2
+    adc #2
     sty sum2.a
     sta sum2.c
     jsr sum2

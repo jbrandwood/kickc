@@ -1,7 +1,7 @@
   jsr main
 main: {
     .const SCREEN = $400
-    ldx #$2
+    ldx #2
   b1:
     cpx #$a
     bcc b2

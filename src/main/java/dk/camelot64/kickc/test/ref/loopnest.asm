@@ -5,7 +5,7 @@ main: {
   b1:
     jsr nest
     dey
-    cpy #$0
+    cpy #0
     bne b1
     rts
 }
@@ -14,7 +14,7 @@ nest: {
   b1:
     stx SCREEN
     dex
-    cpx #$0
+    cpx #0
     bne b1
     rts
 }

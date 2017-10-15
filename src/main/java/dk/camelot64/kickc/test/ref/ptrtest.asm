@@ -7,24 +7,24 @@ main: {
     rts
 }
 lvaluevar: {
-    .const b = $4
+    .const b = 4
     .label screen = 2
     lda #<$400
     sta screen
     lda #>$400
-    sta screen+$1
-    ldx #$2
+    sta screen+1
+    ldx #2
   b1:
     cpx #$a
     bcc b2
     rts
   b2:
-    ldy #$0
+    ldy #0
     lda #b
     sta (screen),y
     inc screen
     bne !+
-    inc screen+$1
+    inc screen+1
   !:
     inx
     jmp b1
@@ -34,18 +34,18 @@ rvaluevar: {
     lda #<$400
     sta screen
     lda #>$400
-    sta screen+$1
-    ldx #$2
+    sta screen+1
+    ldx #2
   b1:
     cpx #$a
     bcc b2
     rts
   b2:
-    ldy #$0
+    ldy #0
     lda (screen),y
     inc screen
     bne !+
-    inc screen+$1
+    inc screen+1
   !:
     inx
     jmp b1
@@ -53,8 +53,8 @@ rvaluevar: {
 rvalue: {
     .const SCREEN = $400
     lda SCREEN
-    lda SCREEN+$1
-    ldx #$2
+    lda SCREEN+1
+    ldx #2
   b1:
     cpx #$a
     bcc b2
@@ -66,17 +66,17 @@ rvalue: {
 }
 lvalue: {
     .const SCREEN = $400
-    lda #$1
+    lda #1
     sta SCREEN
-    lda #$2
-    sta SCREEN+$1
-    ldx #$2
+    lda #2
+    sta SCREEN+1
+    ldx #2
   b1:
     cpx #$a
     bcc b2
     rts
   b2:
-    lda #$3
+    lda #3
     sta SCREEN,x
     inx
     jmp b1

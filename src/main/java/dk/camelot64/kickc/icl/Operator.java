@@ -1,8 +1,5 @@
 package dk.camelot64.kickc.icl;
 
-import com.fasterxml.jackson.annotation.JsonCreator;
-import com.fasterxml.jackson.annotation.JsonProperty;
-
 /** An Operator. The operation performed on the rvalues in a Statement. */
 public class Operator {
 
@@ -15,6 +12,7 @@ public class Operator {
    public Operator(String operator, Type type, int precedence) {
       this.operator = operator;
       this.precedence = precedence;
+      this.type = type;
    }
 
    public static Operator getBinary(String op) {

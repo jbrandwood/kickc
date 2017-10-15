@@ -27,8 +27,8 @@ nest1: {
   b2:
     jsr nest2
     sec
-    sbc #$1
-    cmp #$0
+    sbc #1
+    cmp #0
     bne b2
     dec i
     lda i
@@ -42,10 +42,10 @@ nest2: {
   b2:
     sty SCREEN
     dey
-    cpy #$0
+    cpy #0
     bne b2
     dex
-    cpx #$0
+    cpx #0
     bne b1
     rts
 }

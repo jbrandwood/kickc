@@ -1,7 +1,7 @@
-  lda #$0
+  lda #0
   ldx #$a
 b1:
-  cpx #$5
+  cpx #5
   bcc b2
   beq b2
   stx $ff
@@ -9,5 +9,5 @@ b1:
   adc $ff
 b2:
   dex
-  cpx #$0
+  cpx #0
   bne b1

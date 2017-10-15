@@ -5,7 +5,6 @@ import dk.camelot64.kickc.asm.parser.Asm6502BaseVisitor;
 import dk.camelot64.kickc.asm.parser.Asm6502Parser;
 import dk.camelot64.kickc.icl.*;
 import dk.camelot64.kickc.passes.Pass1TypeInference;
-import dk.camelot64.kickc.passes.Pass4CodeGeneration;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -71,6 +70,48 @@ public class AsmFragment {
       this.program = program;
       setSignature(assignmentWithAluSignature(assignment, assignmentAlu));
 
+   }
+
+   /**
+    * Get ASM code for a constant value
+    *
+    * @param value The constant value
+    * @param precedence The precedence of the outer expression operator. Used to generate perenthesis when needed.
+    *
+    * @return The ASM string representing the constant value
+    */
+   public static String getAsmConstant(Program program, Constant value, int precedence) {
+      if (value instanceof ConstantRef) {
+         value = program.getScope().getConstant((ConstantRef) value);
+      }
+      if (value instanceof ConstantVar) {
+         ConstantVar constantVar = (ConstantVar) value;
+         String asmName = constantVar.getAsmName() == null ? constantVar.getLocalName() : constantVar.getAsmName();
+         return asmName.replace("#", "_").replace("$", "_");
+      } else if (value instanceof ConstantInteger) {
+         return getAsmNumber(((ConstantInteger) value).getNumber());
+      } else if (value instanceof ConstantUnary) {
+         ConstantUnary unary = (ConstantUnary) value;
+         Operator operator = unary.getOperator();
+         boolean parenthesis = operator.getPrecedence()>precedence;
+         return
+               (parenthesis ? "(" : "") +
+                     operator.getOperator() +
+                     getAsmConstant(program, unary.getOperand(), operator.getPrecedence()) +
+                     (parenthesis? ")" : "");
+      } else if (value instanceof ConstantBinary) {
+         ConstantBinary binary = (ConstantBinary) value;
+         Operator operator = binary.getOperator();
+         boolean parenthesis = operator.getPrecedence()>precedence;
+         return
+               (parenthesis? "(" : "") +
+                     getAsmConstant(program, binary.getLeft(), operator.getPrecedence()) +
+                     operator.getOperator() +
+                     getAsmConstant(program, binary.getRight(), operator.getPrecedence()) +
+                     (parenthesis? ")" : "");
+      } else {
+         throw new RuntimeException("Constant type not supported " + value);
+      }
    }
 
    private String assignmentWithAluSignature(StatementAssignment assignment, StatementAssignment assignmentAlu) {
@@ -384,7 +425,7 @@ public class AsmFragment {
             Constant pointerConst = (Constant) pointer;
             if (pointerConst instanceof ConstantInteger) {
                ConstantInteger intPointer = (ConstantInteger) pointerConst;
-               String param = String.format("$%x", intPointer.getNumber());
+               String param = getAsmNumber(intPointer.getNumber());
                return new AsmParameter(param, SymbolTypeBasic.BYTE.equals(intPointer.getType(program.getScope())));
             } else {
                throw new RuntimeException("Bound Value Type not implemented " + boundValue);
@@ -394,7 +435,7 @@ public class AsmFragment {
          }
       } else if (boundValue instanceof Constant) {
          Constant boundConst = (Constant) boundValue;
-         String constantValueAsm = Pass4CodeGeneration.getConstantValueAsm(program, boundConst, 99);
+         String constantValueAsm = getAsmConstant(program, boundConst, 99);
          boolean constantValueZp = SymbolTypeBasic.BYTE.equals(boundConst.getType(program.getScope()));
          return new AsmParameter(constantValueAsm, constantValueZp);
       } else if (boundValue instanceof Label) {
@@ -403,6 +444,17 @@ public class AsmFragment {
       } else {
          throw new RuntimeException("Bound Value Type not implemented " + boundValue);
       }
+   }
+
+   public static String getAsmNumber(Number number) {
+      if(number instanceof Integer) {
+         if(number.intValue()>=0 && number.intValue()<=9) {
+            return String.format("%d", number.intValue());
+         } else {
+            return String.format("$%x", number);
+         }
+      }
+      throw new RuntimeException("Unsupported number type "+number);
    }
 
    /**
@@ -612,7 +664,7 @@ public class AsmFragment {
          Number number = NumberParser.parseLiteral(ctx.NUMINT().getText());
          ConstantInteger intVal = new ConstantInteger(number.intValue());
          boolean isZp = SymbolTypeBasic.BYTE.equals(intVal.getType());
-         String param = String.format("$%x", number);
+         String param = getAsmNumber(number);
          return new AsmParameter(param, isZp);
       }
 

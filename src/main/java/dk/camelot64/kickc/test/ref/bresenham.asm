@@ -14,9 +14,9 @@ main: {
     ldx #yd/$2
     lda #$0
     sta x
-    lda #<(SCREEN+($0*$28))+$0
+    lda #<SCREEN+$0*$28+$0
     sta cursor
-    lda #>(SCREEN+($0*$28))+$0
+    lda #>SCREEN+$0*$28+$0
     sta cursor+$1
   b1:
     ldy #$0

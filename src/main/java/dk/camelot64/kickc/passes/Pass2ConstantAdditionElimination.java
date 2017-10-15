@@ -64,7 +64,7 @@ public class Pass2ConstantAdditionElimination extends Pass2SsaOptimization {
       if(pointerDereferenceIndexed.getPointer() instanceof Constant && pointerDereferenceIndexed.getIndex() instanceof Constant) {
          Constant ptrConstant = (Constant) pointerDereferenceIndexed.getPointer();
          Constant idxConstant = (Constant) pointerDereferenceIndexed.getIndex();
-         Constant newPtr = new ConstantBinary(ptrConstant, new Operator("+"), idxConstant);
+         Constant newPtr = new ConstantBinary(ptrConstant, Operator.PLUS, idxConstant);
          assignment.setlValue(new PointerDereferenceSimple(newPtr));
          getLog().append("Consolidated assigned array index constant in assignment " + assignment.getlValue());
          return true;
@@ -74,7 +74,7 @@ public class Pass2ConstantAdditionElimination extends Pass2SsaOptimization {
          Constant consolidated = consolidateSubConstants(variable);
          if (consolidated != null) {
             Constant ptrConstant = (Constant) pointerDereferenceIndexed.getPointer();
-            Constant newPtr = new ConstantBinary(ptrConstant, new Operator("+"), consolidated);
+            Constant newPtr = new ConstantBinary(ptrConstant, Operator.PLUS, consolidated);
             pointerDereferenceIndexed.setPointer(newPtr);
             getLog().append("Consolidated assigned array index constant in assignment " + assignment.getlValue());
             return true;
@@ -87,9 +87,9 @@ public class Pass2ConstantAdditionElimination extends Pass2SsaOptimization {
       if (assignment.getrValue1() instanceof Constant && assignment.getrValue2() instanceof Constant) {
          Constant ptrConstant = (Constant) assignment.getrValue1();
          Constant idxConstant = (Constant) assignment.getrValue2();
-         Constant newPtr = new ConstantBinary(ptrConstant, new Operator("+"), idxConstant);
+         Constant newPtr = new ConstantBinary(ptrConstant, Operator.PLUS, idxConstant);
          assignment.setrValue1(null);
-         assignment.setOperator(new Operator("*"));
+         assignment.setOperator(Operator.STAR);
          assignment.setrValue2(newPtr);
          getLog().append("Consolidated referenced array index constant in assignment " + assignment.getlValue());
          return true;
@@ -99,7 +99,7 @@ public class Pass2ConstantAdditionElimination extends Pass2SsaOptimization {
          Constant consolidated = consolidateSubConstants(variable);
          if (consolidated != null) {
             Constant ptrConstant = (Constant) assignment.getrValue1();
-            Constant newPtr = new ConstantBinary(ptrConstant, new Operator("+"), consolidated);
+            Constant newPtr = new ConstantBinary(ptrConstant, Operator.PLUS, consolidated);
             assignment.setrValue1(newPtr);
             getLog().append("Consolidated referenced array index constant in assignment " + assignment.getlValue());
             return true;
@@ -114,7 +114,7 @@ public class Pass2ConstantAdditionElimination extends Pass2SsaOptimization {
          Constant consolidated = consolidateSubConstants(variable);
          if (consolidated != null) {
             Constant const1 = (Constant) assignment.getrValue1();
-            assignment.setrValue1(new ConstantBinary(const1, new Operator("+"), consolidated));
+            assignment.setrValue1(new ConstantBinary(const1, Operator.PLUS, consolidated));
             getLog().append("Consolidated constant in assignment " + assignment.getlValue());
             return true;
          }
@@ -123,7 +123,7 @@ public class Pass2ConstantAdditionElimination extends Pass2SsaOptimization {
          Constant consolidated = consolidateSubConstants(variable);
          if (consolidated != null) {
             Constant const2 = (Constant) assignment.getrValue2();
-            Constant newNumber = new ConstantBinary(consolidated, new Operator("+"), const2);
+            Constant newNumber = new ConstantBinary(consolidated, Operator.PLUS, const2);
             assignment.setrValue2(newNumber);
             // Handling of negative consolidated numbers?
             getLog().append("Consolidated constant in assignment " + assignment.getlValue());
@@ -170,7 +170,7 @@ public class Pass2ConstantAdditionElimination extends Pass2SsaOptimization {
             if (const1 != null) {
                result = const1;
                if (const2 != null) {
-                  result = new ConstantBinary(const1, new Operator("+"), const2);
+                  result = new ConstantBinary(const1, Operator.PLUS, const2);
                }
             } else if (const2 != null) {
                result = const2;
@@ -188,7 +188,7 @@ public class Pass2ConstantAdditionElimination extends Pass2SsaOptimization {
             assignment.setrValue2(assignment.getrValue1());
             assignment.setOperator(null);
             assignment.setrValue1(null);
-            return new ConstantUnary(new Operator("-"), constant);
+            return new ConstantUnary(Operator.MINUS, constant);
          } else {
             Constant const1 = null;
             if (assignment.getrValue1() instanceof VariableRef) {
@@ -202,7 +202,7 @@ public class Pass2ConstantAdditionElimination extends Pass2SsaOptimization {
             if (const1 != null) {
                result = const1;
                if (const2 != null) {
-                  result = new ConstantBinary(const1, new Operator("-"),const2);
+                  result = new ConstantBinary(const1, Operator.MINUS,const2);
                }
             } else if (const2 != null) {
                result = const2;

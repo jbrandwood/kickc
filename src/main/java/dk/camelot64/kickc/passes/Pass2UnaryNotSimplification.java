@@ -96,7 +96,7 @@ public class Pass2UnaryNotSimplification extends Pass2SsaOptimization {
     */
    private void createInverse(String newOperator, StatementAssignment assignment, StatementAssignment tempAssignment) {
       assignment.setrValue1(tempAssignment.getrValue1());
-      assignment.setOperator(newOperator==null?null:new Operator(newOperator));
+      assignment.setOperator(newOperator==null?null:Operator.getBinary(newOperator));
       assignment.setrValue2(tempAssignment.getrValue2());
       getLog().append("Inversing boolean not "+assignment.toString(getProgram()) +" from "+tempAssignment.toString(getProgram()));
    }

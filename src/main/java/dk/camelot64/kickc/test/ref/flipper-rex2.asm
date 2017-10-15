@@ -28,9 +28,9 @@ plot: {
     .label y = 4
     lda #$10
     sta y
-    lda #<SCREEN+(($5*$28)+$c)
+    lda #<SCREEN+$5*$28+$c
     sta line
-    lda #>SCREEN+(($5*$28)+$c)
+    lda #>SCREEN+$5*$28+$c
     sta line+$1
     ldx #$0
   b1:

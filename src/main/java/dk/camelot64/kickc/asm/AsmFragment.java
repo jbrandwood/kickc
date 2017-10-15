@@ -394,7 +394,9 @@ public class AsmFragment {
          }
       } else if (boundValue instanceof Constant) {
          Constant boundConst = (Constant) boundValue;
-         return new AsmParameter(Pass4CodeGeneration.getConstantValueAsm(program, boundConst, false), SymbolTypeBasic.BYTE.equals(boundConst.getType(program.getScope())));
+         String constantValueAsm = Pass4CodeGeneration.getConstantValueAsm(program, boundConst, 99);
+         boolean constantValueZp = SymbolTypeBasic.BYTE.equals(boundConst.getType(program.getScope()));
+         return new AsmParameter(constantValueAsm, constantValueZp);
       } else if (boundValue instanceof Label) {
          String param = ((Label) boundValue).getLocalName().replace('@', 'b').replace(':', '_').replace("$", "_");
          return new AsmParameter(param, false);

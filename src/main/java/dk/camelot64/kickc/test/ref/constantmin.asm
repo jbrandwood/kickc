@@ -2,7 +2,7 @@
   .const STAR = $51
   .const VIC = $d000
   .const RED = $2
-  .const BGCOL = (VIC+($10*$2))+$1
+  .const BGCOL = VIC+$10*$2+$1
   jsr main
 main: {
     lda #STAR

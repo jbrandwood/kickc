@@ -91,7 +91,7 @@ public class Pass4CodeGeneration {
       for (ConstantVar constantVar : scopeConstants) {
          String asmName = constantVar.getAsmName() == null ? constantVar.getLocalName() : constantVar.getAsmName();
          if (asmName != null && !added.contains(asmName)) {
-            asm.addConstant(asmName.replace("#", "_").replace("$", "_"), getConstantValueAsm(program, constantVar.getValue(), false));
+            asm.addConstant(asmName.replace("#", "_").replace("$", "_"), getConstantValueAsm(program, constantVar.getValue(), 99));
             added.add(asmName);
          }
       }
@@ -101,11 +101,11 @@ public class Pass4CodeGeneration {
     * Get ASM code for a constant value
     *
     * @param value The constant value
-    * @param subOperator is this generated inside another operator (needing a parenthesis)
+    * @param precedence The precedence of the outer expression operator. Used to generate perenthesis when needed.
     *
     * @return The ASM string representing the constant value
     */
-   public static String getConstantValueAsm(Program program, Constant value, boolean subOperator) {
+   public static String getConstantValueAsm(Program program, Constant value, int precedence) {
       if (value instanceof ConstantRef) {
          value = program.getScope().getConstant((ConstantRef) value);
       }
@@ -117,19 +117,23 @@ public class Pass4CodeGeneration {
          return String.format("$%x", ((ConstantInteger) value).getNumber());
       } else if (value instanceof ConstantUnary) {
          ConstantUnary unary = (ConstantUnary) value;
+         Operator operator = unary.getOperator();
+         boolean parenthesis = operator.getPrecedence()>precedence;
          return
-               (subOperator ? "(" : "") +
-                     unary.getOperator().getOperator() +
-                     getConstantValueAsm(program, unary.getOperand(), true) +
-                     (subOperator ? ")" : "");
+               (parenthesis ? "(" : "") +
+                     operator.getOperator() +
+                     getConstantValueAsm(program, unary.getOperand(), operator.getPrecedence()) +
+                     (parenthesis? ")" : "");
       } else if (value instanceof ConstantBinary) {
          ConstantBinary binary = (ConstantBinary) value;
+         Operator operator = binary.getOperator();
+         boolean parenthesis = operator.getPrecedence()>precedence;
          return
-               (subOperator ? "(" : "") +
-                     getConstantValueAsm(program, binary.getLeft(), true) +
-                     binary.getOperator().getOperator() +
-                     getConstantValueAsm(program, binary.getRight(), true) +
-                     (subOperator ? ")" : "");
+               (parenthesis? "(" : "") +
+                     getConstantValueAsm(program, binary.getLeft(), operator.getPrecedence()) +
+                     operator.getOperator() +
+                     getConstantValueAsm(program, binary.getRight(), operator.getPrecedence()) +
+                     (parenthesis? ")" : "");
       } else {
          throw new RuntimeException("Constant type not supported " + value);
       }

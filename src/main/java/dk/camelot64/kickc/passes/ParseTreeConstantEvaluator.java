@@ -78,7 +78,7 @@ public class ParseTreeConstantEvaluator extends KickCBaseVisitor<Constant> {
    public Constant visitExprUnary(KickCParser.ExprUnaryContext ctx) {
       Constant sub = visit(ctx.expr());
       String op = ((TerminalNode)ctx.getChild(0)).getSymbol().getText();
-      Operator operator = new Operator(op);
+      Operator operator = Operator.getUnary(op);
       return calculateUnary(operator, sub);
    }
 
@@ -87,7 +87,7 @@ public class ParseTreeConstantEvaluator extends KickCBaseVisitor<Constant> {
       Constant left = this.visit(ctx.expr(0));
       Constant right = this.visit(ctx.expr(1));
       String op = ((TerminalNode)ctx.getChild(1)).getSymbol().getText();
-      Operator operator = new Operator(op);
+      Operator operator = Operator.getBinary(op);
       return calculateBinary(operator, left, right);
    }
 

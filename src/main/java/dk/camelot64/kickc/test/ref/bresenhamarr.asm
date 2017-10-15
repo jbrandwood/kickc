@@ -10,7 +10,7 @@
   sta y
   ldy #yd/$2
   ldx #$0
-  lda #$0+($0*$28)
+  lda #$0+$0*$28
   sta idx
   lda #$0
   sta idx+$1

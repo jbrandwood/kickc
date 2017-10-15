@@ -84,7 +84,7 @@ public class Pass1GenerateStatementSequence extends KickCBaseVisitor<Object> {
       PrePostModifierHandler.addPreModifiers(this, ctx.expr());
       RValue rValue = (RValue) this.visit(ctx.expr());
       VariableRef notExprVar = getCurrentSymbols().addVariableIntermediate().getRef();
-      sequence.addStatement(new StatementAssignment(notExprVar, null, new Operator("!"), rValue));
+      sequence.addStatement(new StatementAssignment(notExprVar, null, Operator.NOT, rValue));
       PrePostModifierHandler.addPostModifiers(this, ctx.expr());
 
       Label elseJumpLabel = getCurrentSymbols().addLabelIntermediate();
@@ -234,7 +234,7 @@ public class Pass1GenerateStatementSequence extends KickCBaseVisitor<Object> {
       // Add increment
       ConstantInteger beyondLastVal;
       if(rangeFirst.getNumber()>rangeLast.getNumber()) {
-         Statement stmtInc = new StatementAssignment(lValue.getRef(), new Operator("--"), lValue.getRef());
+         Statement stmtInc = new StatementAssignment(lValue.getRef(), Operator.DECREMENT, lValue.getRef());
          sequence.addStatement(stmtInc);
          if(rangeLast.getNumber()==0) {
             beyondLastVal = new ConstantInteger(255);
@@ -242,7 +242,7 @@ public class Pass1GenerateStatementSequence extends KickCBaseVisitor<Object> {
             beyondLastVal = new ConstantInteger(rangeLast.getNumber()-1);
          }
       }  else {
-         Statement stmtInc = new StatementAssignment(lValue.getRef(), new Operator("++"), lValue.getRef());
+         Statement stmtInc = new StatementAssignment(lValue.getRef(), Operator.INCREMENT, lValue.getRef());
          sequence.addStatement(stmtInc);
          if(rangeLast.getNumber()==255) {
             beyondLastVal = new ConstantInteger(0);
@@ -254,7 +254,7 @@ public class Pass1GenerateStatementSequence extends KickCBaseVisitor<Object> {
       // Add condition i<last+1 or i<last-1
       VariableIntermediate tmpVar = getCurrentSymbols().addVariableIntermediate();
       VariableRef tmpVarRef = tmpVar.getRef();
-      Statement stmtTmpVar = new StatementAssignment(tmpVarRef, lValue.getRef(), new Operator("!="), beyondLastVal);
+      Statement stmtTmpVar = new StatementAssignment(tmpVarRef, lValue.getRef(), Operator.NEQ, beyondLastVal);
       sequence.addStatement(stmtTmpVar);
       // Add jump if condition was met
       Statement doJmpStmt = new StatementConditionalJump(tmpVarRef, repeatLabel.getRef());
@@ -461,7 +461,7 @@ public class Pass1GenerateStatementSequence extends KickCBaseVisitor<Object> {
    public RValue visitExprArray(KickCParser.ExprArrayContext ctx) {
       RValue array = (LValue) visit(ctx.expr(0));
       RValue index = (RValue) visit(ctx.expr(1));
-      Operator operator = new Operator("*idx");
+      Operator operator = Operator.STAR_IDX;
       VariableIntermediate tmpVar = getCurrentSymbols().addVariableIntermediate();
       VariableRef tmpVarRef = tmpVar.getRef();
       Statement stmt = new StatementAssignment(tmpVarRef, array, operator, index);
@@ -495,7 +495,7 @@ public class Pass1GenerateStatementSequence extends KickCBaseVisitor<Object> {
       RValue left = (RValue) this.visit(ctx.expr(0));
       RValue right = (RValue) this.visit(ctx.expr(1));
       String op = ((TerminalNode) ctx.getChild(1)).getSymbol().getText();
-      Operator operator = new Operator(op);
+      Operator operator = Operator.getBinary(op);
       VariableIntermediate tmpVar = getCurrentSymbols().addVariableIntermediate();
       VariableRef tmpVarRef = tmpVar.getRef();
       Statement stmt = new StatementAssignment(tmpVarRef, left, operator, right);
@@ -507,7 +507,7 @@ public class Pass1GenerateStatementSequence extends KickCBaseVisitor<Object> {
    public RValue visitExprUnary(KickCParser.ExprUnaryContext ctx) {
       RValue child = (RValue) this.visit(ctx.expr());
       String op = ((TerminalNode) ctx.getChild(0)).getSymbol().getText();
-      Operator operator = new Operator(op);
+      Operator operator = Operator.getUnary(op);
       VariableIntermediate tmpVar = getCurrentSymbols().addVariableIntermediate();
       VariableRef tmpVarRef = tmpVar.getRef();
       Statement stmt = new StatementAssignment(tmpVarRef, operator, child);
@@ -594,7 +594,7 @@ public class Pass1GenerateStatementSequence extends KickCBaseVisitor<Object> {
       public Void visitExprPostMod(KickCParser.ExprPostModContext ctx) {
          RValue child = (RValue) mainParser.visit(ctx.expr());
          String op = ((TerminalNode) ctx.getChild(1)).getSymbol().getText();
-         Operator operator = new Operator(op);
+         Operator operator = Operator.getUnary(op);
          PrePostModifier modifier = new PrePostModifier(child, operator);
          postMods.add(modifier);
          return null;
@@ -604,7 +604,7 @@ public class Pass1GenerateStatementSequence extends KickCBaseVisitor<Object> {
       public Void visitExprPreMod(KickCParser.ExprPreModContext ctx) {
          RValue child = (RValue) mainParser.visit(ctx.expr());
          String op = ((TerminalNode) ctx.getChild(0)).getSymbol().getText();
-         Operator operator = new Operator(op);
+         Operator operator = Operator.getUnary(op);
          PrePostModifier modifier = new PrePostModifier(child, operator);
          preMods.add(modifier);
          return null;

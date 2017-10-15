@@ -450,9 +450,9 @@ nest::@return: scope:[nest]  from nest::@1
   to:@return
 @end: scope:[]  from @begin
 
-Constant (const byte*) SCREEN#0
-Constant (const byte) main::i#0
-Constant (const byte) nest::j#0
+Constant (const byte*) SCREEN#0 = 1024
+Constant (const byte) main::i#0 = 100
+Constant (const byte) nest::j#0 = 100
 Succesful SSA optimization Pass2ConstantIdentification
 CONTROL FLOW GRAPH
 @begin: scope:[]  from
@@ -486,8 +486,8 @@ nest::@return: scope:[nest]  from nest::@1
   to:@return
 @end: scope:[]  from @begin
 
-Alias (byte*) SCREEN#1 = (byte*) SCREEN#2 
-Succesful SSA optimization Pass2AliasElimination
+Constant (const byte*) SCREEN#2 = SCREEN#0
+Succesful SSA optimization Pass2ConstantIdentification
 CONTROL FLOW GRAPH
 @begin: scope:[]  from
   call main param-assignment
@@ -495,7 +495,6 @@ CONTROL FLOW GRAPH
 main: scope:[main]  from @begin
   to:main::@1
 main::@1: scope:[main]  from main main::@3
-  (byte*) SCREEN#1 ← phi( main/(const byte*) SCREEN#0 )
   (byte) main::i#2 ← phi( main/(const byte) main::i#0 main::@3/(byte) main::i#1 )
   call nest param-assignment
   to:main::@3
@@ -509,6 +508,7 @@ main::@return: scope:[main]  from main::@3
 nest: scope:[nest]  from main::@1
   to:nest::@1
 nest::@1: scope:[nest]  from nest nest::@1
+  (byte*) SCREEN#1 ← phi( nest/(const byte*) SCREEN#2 )
   (byte) nest::j#2 ← phi( nest/(const byte) nest::j#0 nest::@1/(byte) nest::j#1 )
   *((byte*) SCREEN#1) ← (byte) nest::j#2
   (byte) nest::j#1 ← -- (byte) nest::j#2
@@ -519,8 +519,8 @@ nest::@return: scope:[nest]  from nest::@1
   to:@return
 @end: scope:[]  from @begin
 
-Redundant Phi (byte*) SCREEN#1 (const byte*) SCREEN#0
-Succesful SSA optimization Pass2RedundantPhiElimination
+Constant (const byte*) SCREEN#1 = SCREEN#2
+Succesful SSA optimization Pass2ConstantIdentification
 CONTROL FLOW GRAPH
 @begin: scope:[]  from
   call main param-assignment
@@ -542,7 +542,7 @@ nest: scope:[nest]  from main::@1
   to:nest::@1
 nest::@1: scope:[nest]  from nest nest::@1
   (byte) nest::j#2 ← phi( nest/(const byte) nest::j#0 nest::@1/(byte) nest::j#1 )
-  *((const byte*) SCREEN#0) ← (byte) nest::j#2
+  *((const byte*) SCREEN#1) ← (byte) nest::j#2
   (byte) nest::j#1 ← -- (byte) nest::j#2
   if((byte) nest::j#1>(byte) 0) goto nest::@1
   to:nest::@return
@@ -551,6 +551,8 @@ nest::@return: scope:[nest]  from nest::@1
   to:@return
 @end: scope:[]  from @begin
 
+Constant inlined SCREEN#2 = (const byte*) SCREEN#0
+Constant inlined SCREEN#1 = (const byte*) SCREEN#0
 Constant inlined main::i#0 = (byte) 100
 Constant inlined nest::j#0 = (byte) 100
 Succesful SSA optimization Pass2ConstantInlining

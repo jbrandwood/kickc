@@ -1,7 +1,5 @@
 package dk.camelot64.kickc.icl;
 
-import sun.jvm.hotspot.asm.Register;
-
 /** The different registers available for a program  */
 public class Registers {
 

@@ -141,16 +141,13 @@ public class Compiler {
       optimizations.add(new Pass2SelfPhiElimination(program));
       optimizations.add(new Pass2ConditionalJumpSimplification(program));
       optimizations.add(new Pass2ConstantIdentification(program));
-
+      optimizations.add(new Pass2ConstantAdditionElimination(program));
       pass2OptimizeSSA(program, optimizations);
 
       // Constant inlining optimizations - as the last step to ensure that constant identification has been completed
       List<Pass2SsaOptimization> constantOptimizations = new ArrayList<>();
       constantOptimizations.add(new Pass2ConstantInlining(program));
       pass2OptimizeSSA(program, constantOptimizations);
-
-      //optimizations.add(new Pass2ConstantPropagation(program));
-      //optimizations.add(new Pass2ConstantAdditionElimination(program));
 
    }
 
@@ -160,12 +157,15 @@ public class Compiler {
          pass2AssertSSA(program);
          ssaOptimized = false;
          for (Pass2SsaOptimization optimization : optimizations) {
-            boolean stepOptimized = optimization.optimize();
-            if (stepOptimized) {
-               program.getLog().append("Succesful SSA optimization " + optimization.getClass().getSimpleName() + "");
-               ssaOptimized = true;
-               program.getLog().append("CONTROL FLOW GRAPH");
-               program.getLog().append(program.getGraph().toString(program));
+            boolean stepOptimized = true;
+            while (stepOptimized) {
+               stepOptimized = optimization.optimize();
+               if (stepOptimized) {
+                  program.getLog().append("Succesful SSA optimization " + optimization.getClass().getSimpleName() + "");
+                  ssaOptimized = true;
+                  program.getLog().append("CONTROL FLOW GRAPH");
+                  program.getLog().append(program.getGraph().toString(program));
+               }
             }
          }
       }

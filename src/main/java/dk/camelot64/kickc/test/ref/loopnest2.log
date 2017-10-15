@@ -1016,13 +1016,13 @@ nest2::@return: scope:[nest2]  from nest2::@3
   to:@return
 @end: scope:[]  from @begin
 
-Constant (const byte*) SCREEN#0
-Constant (const byte) main::i#0
-Constant (const byte) main::j#0
-Constant (const byte) nest1::i#0
-Constant (const byte) nest1::j#0
-Constant (const byte) nest2::i#0
-Constant (const byte) nest2::j#0
+Constant (const byte*) SCREEN#0 = 1024
+Constant (const byte) main::i#0 = 100
+Constant (const byte) main::j#0 = 100
+Constant (const byte) nest1::i#0 = 100
+Constant (const byte) nest1::j#0 = 100
+Constant (const byte) nest2::i#0 = 100
+Constant (const byte) nest2::j#0 = 100
 Succesful SSA optimization Pass2ConstantIdentification
 CONTROL FLOW GRAPH
 @begin: scope:[]  from
@@ -1242,7 +1242,7 @@ nest2::@return: scope:[nest2]  from nest2::@3
   to:@return
 @end: scope:[]  from @begin
 
-Constant (const byte*) SCREEN#10
+Constant (const byte*) SCREEN#10 = SCREEN#0
 Succesful SSA optimization Pass2ConstantIdentification
 CONTROL FLOW GRAPH
 @begin: scope:[]  from
@@ -1310,8 +1310,8 @@ nest2::@return: scope:[nest2]  from nest2::@3
   to:@return
 @end: scope:[]  from @begin
 
-Alias (byte*) SCREEN#1 = (byte*) SCREEN#3 
-Succesful SSA optimization Pass2AliasElimination
+Constant (const byte*) SCREEN#3 = SCREEN#10
+Succesful SSA optimization Pass2ConstantIdentification
 CONTROL FLOW GRAPH
 @begin: scope:[]  from
   call main param-assignment
@@ -1339,7 +1339,6 @@ main::@return: scope:[main]  from main::@3
 nest1: scope:[nest1]  from main::@2
   to:nest1::@1
 nest1::@1: scope:[nest1]  from nest1 nest1::@3
-  (byte*) SCREEN#1 ← phi( nest1/(const byte*) SCREEN#10 )
   (byte) nest1::i#2 ← phi( nest1/(const byte) nest1::i#0 nest1::@3/(byte) nest1::i#1 )
   to:nest1::@2
 nest1::@2: scope:[nest1]  from nest1::@1 nest1::@5
@@ -1361,6 +1360,7 @@ nest2: scope:[nest2]  from nest1::@2
   to:nest2::@1
 nest2::@1: scope:[nest2]  from nest2 nest2::@3
   (byte) nest2::i#2 ← phi( nest2/(const byte) nest2::i#0 nest2::@3/(byte) nest2::i#1 )
+  (byte*) SCREEN#1 ← phi( nest2/(const byte*) SCREEN#3 )
   to:nest2::@2
 nest2::@2: scope:[nest2]  from nest2::@1 nest2::@2
   (byte) nest2::j#2 ← phi( nest2::@1/(const byte) nest2::j#0 nest2::@2/(byte) nest2::j#1 )
@@ -1377,8 +1377,8 @@ nest2::@return: scope:[nest2]  from nest2::@3
   to:@return
 @end: scope:[]  from @begin
 
-Redundant Phi (byte*) SCREEN#1 (const byte*) SCREEN#10
-Succesful SSA optimization Pass2RedundantPhiElimination
+Constant (const byte*) SCREEN#1 = SCREEN#3
+Succesful SSA optimization Pass2ConstantIdentification
 CONTROL FLOW GRAPH
 @begin: scope:[]  from
   call main param-assignment
@@ -1430,7 +1430,7 @@ nest2::@1: scope:[nest2]  from nest2 nest2::@3
   to:nest2::@2
 nest2::@2: scope:[nest2]  from nest2::@1 nest2::@2
   (byte) nest2::j#2 ← phi( nest2::@1/(const byte) nest2::j#0 nest2::@2/(byte) nest2::j#1 )
-  *((const byte*) SCREEN#10) ← (byte) nest2::j#2
+  *((const byte*) SCREEN#1) ← (byte) nest2::j#2
   (byte) nest2::j#1 ← -- (byte) nest2::j#2
   if((byte) nest2::j#1>(byte) 0) goto nest2::@2
   to:nest2::@3
@@ -1446,6 +1446,8 @@ nest2::@return: scope:[nest2]  from nest2::@3
 Constant inlined nest1::i#0 = (byte) 100
 Constant inlined nest1::j#0 = (byte) 100
 Constant inlined nest2::i#0 = (byte) 100
+Constant inlined SCREEN#1 = (const byte*) SCREEN#0
+Constant inlined SCREEN#3 = (const byte*) SCREEN#0
 Constant inlined nest2::j#0 = (byte) 100
 Constant inlined main::j#0 = (byte) 100
 Constant inlined main::i#0 = (byte) 100

@@ -402,12 +402,12 @@ main::@return: scope:[main]  from main::@1
   to:@return
 @end: scope:[]  from @begin
 
-Constant (const byte*) SCREEN#0
-Constant (const byte) STAR#0
-Constant (const byte*) VIC#0
-Constant (const byte) $0
-Constant (const byte) RED#0
-Constant (const byte) main::i#0
+Constant (const byte*) SCREEN#0 = 1024
+Constant (const byte) STAR#0 = 81
+Constant (const byte*) VIC#0 = 53248
+Constant (const byte) $0 = 16*2
+Constant (const byte) RED#0 = 2
+Constant (const byte) main::i#0 = 40
 Succesful SSA optimization Pass2ConstantIdentification
 CONTROL FLOW GRAPH
 @begin: scope:[]  from
@@ -433,33 +433,9 @@ main::@return: scope:[main]  from main::@1
   to:@return
 @end: scope:[]  from @begin
 
-Redundant Phi (byte) STAR#2 (const byte) STAR#0
-Redundant Phi (byte*) SCREEN#2 (const byte*) SCREEN#0
-Succesful SSA optimization Pass2RedundantPhiElimination
-CONTROL FLOW GRAPH
-@begin: scope:[]  from
-  (byte*~) $1 ← (const byte*) VIC#0 + (const byte) $0
-  (byte*) BGCOL#0 ← (byte*~) $1 + (byte) 1
-  call main param-assignment
-  to:@end
-main: scope:[main]  from @begin
-  *((const byte*) SCREEN#0) ← (const byte) STAR#0
-  *((byte*) BGCOL#0) ← (const byte) RED#0
-  to:main::@1
-main::@1: scope:[main]  from main main::@1
-  (byte) main::i#2 ← phi( main/(const byte) main::i#0 main::@1/(byte) main::i#1 )
-  (byte~) main::$0 ← (const byte) STAR#0 + (byte) 1
-  *((const byte*) SCREEN#0 + (byte) main::i#2) ← (byte~) main::$0
-  (byte) main::i#1 ← ++ (byte) main::i#2
-  if((byte) main::i#1!=(byte) 80) goto main::@1
-  to:main::@return
-main::@return: scope:[main]  from main::@1
-  return 
-  to:@return
-@end: scope:[]  from @begin
-
-Constant (const byte*) $1
-Constant (const byte) main::$0
+Constant (const byte*) $1 = VIC#0+$0
+Constant (const byte) STAR#2 = STAR#0
+Constant (const byte*) SCREEN#2 = SCREEN#0
 Succesful SSA optimization Pass2ConstantIdentification
 CONTROL FLOW GRAPH
 @begin: scope:[]  from
@@ -472,7 +448,8 @@ main: scope:[main]  from @begin
   to:main::@1
 main::@1: scope:[main]  from main main::@1
   (byte) main::i#2 ← phi( main/(const byte) main::i#0 main::@1/(byte) main::i#1 )
-  *((const byte*) SCREEN#0 + (byte) main::i#2) ← (const byte) main::$0
+  (byte~) main::$0 ← (const byte) STAR#2 + (byte) 1
+  *((const byte*) SCREEN#2 + (byte) main::i#2) ← (byte~) main::$0
   (byte) main::i#1 ← ++ (byte) main::i#2
   if((byte) main::i#1!=(byte) 80) goto main::@1
   to:main::@return
@@ -481,7 +458,8 @@ main::@return: scope:[main]  from main::@1
   to:@return
 @end: scope:[]  from @begin
 
-Constant (const byte*) BGCOL#0
+Constant (const byte*) BGCOL#0 = $1+1
+Constant (const byte) main::$0 = STAR#2+1
 Succesful SSA optimization Pass2ConstantIdentification
 CONTROL FLOW GRAPH
 @begin: scope:[]  from
@@ -493,7 +471,7 @@ main: scope:[main]  from @begin
   to:main::@1
 main::@1: scope:[main]  from main main::@1
   (byte) main::i#2 ← phi( main/(const byte) main::i#0 main::@1/(byte) main::i#1 )
-  *((const byte*) SCREEN#0 + (byte) main::i#2) ← (const byte) main::$0
+  *((const byte*) SCREEN#2 + (byte) main::i#2) ← (const byte) main::$0
   (byte) main::i#1 ← ++ (byte) main::i#2
   if((byte) main::i#1!=(byte) 80) goto main::@1
   to:main::@return
@@ -502,6 +480,8 @@ main::@return: scope:[main]  from main::@1
   to:@return
 @end: scope:[]  from @begin
 
+Constant inlined SCREEN#2 = (const byte*) SCREEN#0
+Constant inlined STAR#2 = (const byte) STAR#0
 Constant inlined $1 = (const byte*) VIC#0+(byte) 16*(byte) 2
 Constant inlined $0 = (byte) 16*(byte) 2
 Constant inlined main::i#0 = (byte) 40

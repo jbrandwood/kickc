@@ -1,3 +1,4 @@
+  .const SCREEN = $400
   .label cnt3 = 2
   jsr main
 main: {
@@ -6,10 +7,10 @@ main: {
     ldy #$0
     ldx #$0
     jsr inccnt
-    sta $400
+    sta SCREEN+$0
     inx
     jsr inccnt
-    sta $401
+    sta SCREEN+$1
     rts
 }
 inccnt: {

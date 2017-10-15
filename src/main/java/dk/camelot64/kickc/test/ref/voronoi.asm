@@ -1,3 +1,9 @@
+  .const SCREEN = $400
+  .const COLORS = $d800
+  .const FILL = $e6
+  .const XPOS = $1000
+  .const YPOS = $1100
+  .const COLS = $1200
   .label numpoints = 8
   jsr main
 main: {
@@ -41,64 +47,64 @@ main: {
     rts
 }
 animate: {
-    lda $1000
+    lda XPOS+$0
     clc
     adc #$1
-    sta $1000
-    lda $1000
+    sta XPOS+$0
+    lda XPOS+$0
     cmp #$28
     bne b1
     lda #$0
-    sta $1000
+    sta XPOS+$0
   b1:
-    lda $1100
+    lda YPOS+$0
     clc
     adc #$1
-    sta $1100
-    lda $1100
+    sta YPOS+$0
+    lda YPOS+$0
     cmp #$19
     bne b2
     lda #$0
-    sta $1100
+    sta YPOS+$0
   b2:
-    ldx $1001
+    ldx XPOS+$1
     dex
-    stx $1001
-    lda $1001
+    stx XPOS+$1
+    lda XPOS+$1
     cmp #$ff
     bne b3
     lda #$28
-    sta $1001
+    sta XPOS+$1
   b3:
-    lda $1102
+    lda YPOS+$2
     clc
     adc #$1
-    sta $1102
-    lda $1102
+    sta YPOS+$2
+    lda YPOS+$2
     cmp #$19
     bne b4
     lda #$0
-    sta $1102
+    sta YPOS+$2
   b4:
-    ldx $1103
+    ldx YPOS+$3
     dex
-    stx $1103
-    lda $1103
+    stx YPOS+$3
+    lda YPOS+$3
     cmp #$ff
     bne breturn
     lda #$19
-    sta $1103
-    lda $1003
+    sta YPOS+$3
+    lda XPOS+$3
     clc
     adc #$7
-    sta $1003
-    lda $1003
+    sta XPOS+$3
+    lda XPOS+$3
     cmp #$28
     bcc breturn
-    lda $1003
+    lda XPOS+$3
     sec
     sbc #$28
-    sta $1003
+    sta XPOS+$3
   breturn:
     rts
 }
@@ -106,9 +112,9 @@ render: {
     .label x = 5
     .label colline = 3
     .label y = 2
-    lda #<$d800
+    lda #<COLORS
     sta colline
-    lda #>$d800
+    lda #>COLORS
     sta colline+$1
     lda #$0
     sta y
@@ -153,9 +159,9 @@ findcol: {
     sta mindiff
     ldx #$0
   b1:
-    lda $1000,x
+    lda XPOS,x
     sta xp
-    lda $1100,x
+    lda YPOS,x
     sta yp
     lda x
     cmp xp
@@ -186,7 +192,7 @@ findcol: {
   b7:
     cmp mindiff
     bcs b21
-    ldy $1200,x
+    ldy COLS,x
   b8:
     inx
     cpx numpoints
@@ -214,24 +220,24 @@ findcol: {
 }
 initscreen: {
     .label screen = 3
-    lda #<$400
+    lda #<SCREEN
     sta screen
-    lda #>$400
+    lda #>SCREEN
     sta screen+$1
   b1:
     ldy #$0
-    lda #$e6
+    lda #FILL
     sta (screen),y
     inc screen
     bne !+
     inc screen+$1
   !:
     lda screen+$1
-    cmp #>$7e8
+    cmp #>SCREEN+$3e8
     bcc b1
     bne !+
     lda screen
-    cmp #<$7e8
+    cmp #<SCREEN+$3e8
     bcc b1
   !:
     rts
@@ -239,13 +245,13 @@ initscreen: {
 addpoint: {
     .label c = 2
     ldx numpoints
-    sta $1000,x
+    sta XPOS,x
     tya
     ldy numpoints
-    sta $1100,y
+    sta YPOS,y
     lda c
     ldx numpoints
-    sta $1200,x
+    sta COLS,x
     inc numpoints
     rts
 }

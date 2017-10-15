@@ -1,15 +1,16 @@
+  .const fibs = $1100
   jsr main
 main: {
     lda #$0
-    sta $1100
+    sta fibs+$0
     lda #$1
-    sta $1101
+    sta fibs+$1
     ldx #$0
   b1:
-    lda $1100,x
+    lda fibs,x
     clc
-    adc $1101,x
-    sta $1102,x
+    adc fibs+$1,x
+    sta fibs+$2,x
     inx
     cpx #$f
     bcc b1

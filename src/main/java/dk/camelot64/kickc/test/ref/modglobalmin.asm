@@ -1,12 +1,13 @@
+  .const SCREEN = $400
   jsr main
 main: {
     ldx #$0
     jsr inccnt
-    stx $400
+    stx SCREEN+$0
     inx
     jsr inccnt
     inx
-    stx $401
+    stx SCREEN+$1
     rts
 }
 inccnt: {

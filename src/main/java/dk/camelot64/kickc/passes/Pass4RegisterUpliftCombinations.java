@@ -220,7 +220,7 @@ public class Pass4RegisterUpliftCombinations extends Pass2Base {
          Statement statement,
          LinkedHashMap<Registers.Register, LiveRangeEquivalenceClass> usedRegisters) {
       ProgramScope programScope = program.getScope();
-      Collection<VariableRef> alive = program.getLiveRangeVariables().getAliveEffective(statement);
+      Collection<VariableRef> alive = program.getLiveRangeVariablesEffective().getAliveEffective(statement);
       for (VariableRef varRef : alive) {
          Variable var = programScope.getVariable(varRef);
          Registers.Register allocation = var.getAllocation();

@@ -90,7 +90,7 @@ public class Pass4RegisterUpliftPotentialRegisterAnalysis extends Pass2Base {
             }
 
             // For all non-assigned live variables: remove always clobbered registers from their potential allocation
-            Collection<VariableRef> aliveVars = getProgram().getLiveRangeVariables().getAliveEffective(statement);
+            Collection<VariableRef> aliveVars = getProgram().getLiveRangeVariablesEffective().getAliveEffective(statement);
             for (VariableRef aliveVar : aliveVars) {
                LiveRangeEquivalenceClass aliveClass = liveRangeEquivalenceClassSet.getEquivalenceClass(aliveVar);
                if (assignedClasses.contains(aliveClass)) {

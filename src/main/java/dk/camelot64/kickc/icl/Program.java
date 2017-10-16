@@ -32,6 +32,8 @@ public class Program {
    private LiveRangeVariables liveRangeVariables;
    /** Live range equivalence classes containing variables that do not have overlapping live ranges. */
    private LiveRangeEquivalenceClassSet liveRangeEquivalenceClassSet;
+   /** The effective live ranges of all variables. */
+   private LiveRangeVariablesEffective liveRangeVariablesEffective;
    /** The register weight of all variables describing how much the variable would theoretically gain from being in a register */
    private VariableRegisterWeights variableRegisterWeights;
    /** Registers potentially usable as allocation for each live range equivalence class. */
@@ -116,6 +118,14 @@ public class Program {
 
    public LiveRangeVariables getLiveRangeVariables() {
       return liveRangeVariables;
+   }
+
+   public LiveRangeVariablesEffective getLiveRangeVariablesEffective() {
+      return liveRangeVariablesEffective;
+   }
+
+   public void setLiveRangeVariablesEffective(LiveRangeVariablesEffective liveRangeVariablesEffective) {
+      this.liveRangeVariablesEffective = liveRangeVariablesEffective;
    }
 
    public void setLiveRangeEquivalenceClassSet(LiveRangeEquivalenceClassSet liveRangeEquivalenceClassSet) {

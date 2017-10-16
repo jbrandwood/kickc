@@ -1,3 +1,4 @@
+Known Problems
 
 Features
 - Move the main code into a main() function, and disallow code outside functions. The main function per default has no parameters and exits with RTS.
@@ -21,16 +22,9 @@ Features
 - Allow complex array expressions in lValues eg. (SCREEN+$100)[idx]
 - Optimize loops by unrolling them somewhat
 - Optimize loops with Strength reduction (https://en.wikipedia.org/wiki/Strength_reduction)
-+ Create a proper main function for the compiler
-+ Add ++/-- incrementing/decrementing operators.
-+ Optimize if's without else if(expr) { stmt; } -> $1=!expr; if($1) goto @1; stmt; @1:
-+ Add a for loop for(init;condition;increment) {stmt} -> { init; do { stmt; increment } while (condition) }
-+ Add for loop for(byte i: 1..100) { } and for(byte i : 100..0) {}  (plus maybe .+. and .-. to make the inc/dec unambiguous)
 
 Assembler Improvements
-- Make generated ASM human readable.
-  + Use hex-numbers
-  + add labels for constants and zp-variables.
+- Relabel blocks eliminating long labels such as b3_from_b11
 - Eliminate chained JMP's (replace by direct JMP) - example: loopsplit.asm
 - Better ASM static value analysis
   - Not just constants - but also other values (value of var, value of var1[var2], value of var+4 etc.)
@@ -41,11 +35,6 @@ Assembler Improvements
 - Eliminate LDA from STA $11, LDA $11 (using ASM static value analysis of A-register)
 - Optimize by allowing resequencing of ASM (statements and phi assignments) in a final phase.
 - ASM loop analysis: If all usages of a register has the same value move the assignment out of the loop (if the assignment is simple enough).
-+ Eliminate unnecessary labels in ASM
-
-Known Problems
-+ Procedures that modify variables outside their scope does not work. Outer vars must be transfered in/out like parameters/return values to get it working.
-+ Alive vars are propagated backward through procedures (correctly). However they are then propagated back through ALL calls to the procedure incorrectly. They should only be alive at calls where they are alive after the call. In summin.kc s1#0 is incirrectly backpropagated through the first call, where it is not alive.
 
 Register Allocation
 - Allow user to limit number of combinations tested
@@ -58,6 +47,46 @@ Register Allocation
   - Improve combination testing by finding live range overlaps and not creating combinations that would create an overlap conflict.
   - Combinations should be created in a tree-structure instead of just doing all combinations
   - Example: For equivalence classes a, b, c if a&c have overlapping live ranges they can never have the same register. Therefore the combination iterator should not create combinations where C has the same register as a.
+
+Process/Code Structure Improvement
+- Eliminate copy visitor
+- Refactor Expression Operator Implementation & Evaluation into one class per operator
+- Improve error messages to give better context
+- Offer to compile resulting ASM with KickAssembler
++ Implemenent Assertions for the output of different phases (ensuring that the result of the phase is consistent)
++ Make each phase return a separate object graph (allowing for keeeping the history in memory & performing rollbacks)
+
+Testing
+- Implement ICL syntax (printer & parser). Drop the JSON.
+- Test that the parse tree for specific KC syntax is as expected. Use a print function for the parse tree to generate output for comparison.
+- Test the ICL result of a specific phase on a specific ICL input. Create an ICL syntax for parsing directly to ICL and a printer for the syntax.
+- Emulate/Run the ASM for a specific KC program compiled. Compare the emulated ASM output to output calculated by executing directly on the KC tree.
+- Add assert statements to the language. Create KC programs that test the compiler by compiling, running and testing assertions.
+
+Usages
+- Implement library for memory allocation in main memory
+- Implement library for output on the screen (using basic functions)
+
+Real Usage
+- Implement library for fast multiply (mul.asm)
+- Implement spline library (spline.asm)
+- Implement polygon filler for complex polygons.
+- Implement a true type font renderer.
+
+
+Done
++ Test the ASM program output resulting from compiling specific KC program input.
++ Create a proper main function for the compiler
++ Add ++/-- incrementing/decrementing operators.
++ Optimize if's without else if(expr) { stmt; } -> $1=!expr; if($1) goto @1; stmt; @1:
++ Add a for loop for(init;condition;increment) {stmt} -> { init; do { stmt; increment } while (condition) }
++ Add for loop for(byte i: 1..100) { } and for(byte i : 100..0) {}  (plus maybe .+. and .-. to make the inc/dec unambiguous)
++ Eliminate unnecessary labels in ASM
++ Make generated ASM human readable.
+  + Use hex-numbers
+  + add labels for constants and zp-variables.
++ Procedures that modify variables outside their scope does not work. Outer vars must be transfered in/out like parameters/return values to get it working.
++ Alive vars are propagated backward through procedures (correctly). However they are then propagated back through ALL calls to the procedure incorrectly. They should only be alive at calls where they are alive after the call. In summin.kc s1#0 is incirrectly backpropagated through the first call, where it is not alive.
 + Reuse phi-transitions that are identical
 + Optimize phi transitions by ensuring that identical phi-transitions with regards to register allocation are collected into a single transition.
 + Limit number of combinations tested
@@ -72,33 +101,6 @@ Register Allocation
 + Register types: A, X, Y, ZP, (memory).
 + Implement a register allocation (coloring) algorithm using by liveness intervals, preferences, weights & clobbering information.
   + Optimize register allocation by combining with knowledge of ASM program cost (bytes/cycles) and different ASM fragments with different clobbering.
-
-Process/Code Structure Improvement
-- Eliminate copy visitor
-- Refactor Expression Operator Implementation & Evaluation into one class per operator
-- Improve error messages to give better context
-- Offer to compile resulting ASM with KickAssembler
-+ Implemenent Assertions for the output of different phases (ensuring that the result of the phase is consistent)
-+ Make each phase return a separate object graph (allowing for keeeping the history in memory & performing rollbacks)
-
-Testing
-- Test that the parse tree for specific KC syntax is as expected. Use a print function for the parse tree to generate output for comparison.
-- Test the ICL result of a specific phase on a specific ICL input. Create an ICL syntax for parsing directly to ICL and a printer for the syntax.
-- Emulate/Run the ASM for a specific KC program compiled. Compare the emulated ASM output to output calculated by executing directly on the KC tree.
-- Add assert statements to the language. Create KC programs that test the compiler by compiling, running and testing assertions.
-+ Test the ASM program output resulting from compiling specific KC program input.
-
-Usages
-- Implement library for memory allocation in main memory
-- Implement library for output on the screen (using basic functions)
-
-Real Usage
-- Implement library for fast multiply (mul.asm)
-- Implement spline library (spline.asm)
-- Implement polygon filler for complex polygons.
-- Implement a true type font renderer.
-
-New Constant Solution
 + Live range overlap analysis of register combinations inside methods must also look at registers alive at all calls.
 + Examine why temp-vars are used in flipper.
 + Examine why flipper is plotted in a wrong position on the screen.
@@ -112,3 +114,4 @@ New Constant Solution
   + Fix by introducing "effective alive vars" which includes alive vars at all calls to containing methods and using that during clobber check.
 + In loopnest.asm x&y are used in both loops - the outer x&y are clobbered by the inner loop.
 + In voronoi.asm in render() x is clobbered during call to findcol().
++ Optimize getAliveEffective() to improve speed

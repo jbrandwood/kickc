@@ -206,6 +206,7 @@ public class Compiler {
       new Pass3StatementIndices(program).generateStatementIndices();
       new Pass3CallGraphAnalysis(program).findCallGraph();
       new Pass3LiveRangesAnalysis(program).findLiveRanges();
+      new Pass3LiveRangesEffectiveAnalysis(program).findLiveRangesEffective();
       program.getLog().append("CONTROL FLOW GRAPH - PHI MEM COALESCED");
       program.getLog().append(program.getGraph().toString(program));
       pass2AssertSSA(program);

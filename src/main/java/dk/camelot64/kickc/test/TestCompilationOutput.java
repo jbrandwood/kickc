@@ -56,8 +56,8 @@ public class TestCompilationOutput extends TestCase {
       compileAndCompare("bresenhamarr");
    }
 
-   public void testMinus() throws IOException, URISyntaxException {
-      compileAndCompare("minus");
+   public void testIterArray() throws IOException, URISyntaxException {
+      compileAndCompare("iterarray");
    }
 
    public void testLoopMin() throws IOException, URISyntaxException {

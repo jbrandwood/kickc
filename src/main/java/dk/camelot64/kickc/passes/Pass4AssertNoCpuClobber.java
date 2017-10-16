@@ -64,7 +64,7 @@ public class Pass4AssertNoCpuClobber extends Pass2Base {
             }
 
             // Find alive variables
-            List<VariableRef> aliveVars = new ArrayList<>(getProgram().getLiveRangeVariables().getAliveEffective(statement));
+            List<VariableRef> aliveVars = new ArrayList<>(getProgram().getLiveRangeVariablesEffective().getAliveEffective(statement));
             // Non-assigned alive variables must not be clobbered
             for (VariableRef aliveVar : aliveVars) {
                Variable variable = getProgram().getScope().getVariable(aliveVar);

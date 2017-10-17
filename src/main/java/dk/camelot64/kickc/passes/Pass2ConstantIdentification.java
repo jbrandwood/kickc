@@ -117,7 +117,7 @@ public class Pass2ConstantIdentification extends Pass2SsaOptimization {
    }
 
 
-   static ConstantValue createBinary(Constant c1, Operator operator, Constant c2) {
+   static ConstantValue createBinary(ConstantValue c1, Operator operator, ConstantValue c2) {
       switch (operator.getOperator()) {
          case "-":
          case "+":
@@ -132,7 +132,7 @@ public class Pass2ConstantIdentification extends Pass2SsaOptimization {
       }
    }
 
-   static ConstantValue createUnary(Operator operator, Constant c) {
+   static ConstantValue createUnary(Operator operator, ConstantValue c) {
       switch (operator.getOperator()) {
          case "-":
          case "+":

@@ -7,7 +7,7 @@ import dk.camelot64.kickc.parser.KickCParser;
 import org.antlr.v4.runtime.tree.TerminalNode;
 
 /** Capable of evaluating constants directly on the parse tree. */
-public class ParseTreeConstantEvaluator extends KickCBaseVisitor<Constant> {
+public class ParseTreeConstantEvaluator extends KickCBaseVisitor<ConstantValue> {
 
    /**
     * Attempt to evaluate a constant expression.
@@ -15,12 +15,12 @@ public class ParseTreeConstantEvaluator extends KickCBaseVisitor<Constant> {
     * @param expr The expression to evaluate
     * @return The constant value of the expression. null if the expression is not constant.
     */
-   public static Constant evaluate(KickCParser.ExprContext expr) {
+   public static ConstantValue evaluate(KickCParser.ExprContext expr) {
       return (new ParseTreeConstantEvaluator()).visit(expr);
    }
 
    @Override
-   public Constant visitExprNumber(KickCParser.ExprNumberContext ctx) {
+   public ConstantValue visitExprNumber(KickCParser.ExprNumberContext ctx) {
       Number number = NumberParser.parseLiteral(ctx.getText());
       if(number instanceof Integer)  {
          return new ConstantInteger((Integer) number);
@@ -30,62 +30,62 @@ public class ParseTreeConstantEvaluator extends KickCBaseVisitor<Constant> {
    }
 
    @Override
-   public Constant visitExprString(KickCParser.ExprStringContext ctx) {
+   public ConstantValue visitExprString(KickCParser.ExprStringContext ctx) {
       return new ConstantString(ctx.getText());
    }
 
    @Override
-   public Constant visitExprBool(KickCParser.ExprBoolContext ctx) {
+   public ConstantValue visitExprBool(KickCParser.ExprBoolContext ctx) {
       return new ConstantBool(Boolean.getBoolean(ctx.getText()));
    }
 
    @Override
-   public Constant visitExprPar(KickCParser.ExprParContext ctx) {
+   public ConstantValue visitExprPar(KickCParser.ExprParContext ctx) {
       return visit(ctx.expr());
    }
 
    @Override
-   public Constant visitExprCast(KickCParser.ExprCastContext ctx) {
+   public ConstantValue visitExprCast(KickCParser.ExprCastContext ctx) {
       return visit(ctx.expr());
    }
 
    @Override
-   public Constant visitExprCall(KickCParser.ExprCallContext ctx) {
+   public ConstantValue visitExprCall(KickCParser.ExprCallContext ctx) {
       throw new NotConstantException();
    }
 
    @Override
-   public Constant visitExprArray(KickCParser.ExprArrayContext ctx) {
+   public ConstantValue visitExprArray(KickCParser.ExprArrayContext ctx) {
       throw new NotConstantException();
    }
 
    @Override
-   public Constant visitExprId(KickCParser.ExprIdContext ctx) {
+   public ConstantValue visitExprId(KickCParser.ExprIdContext ctx) {
       throw new NotConstantException();
    }
 
    @Override
-   public Constant visitInitExpr(KickCParser.InitExprContext ctx) {
+   public ConstantValue visitInitExpr(KickCParser.InitExprContext ctx) {
       return visit(ctx.expr());
    }
 
    @Override
-   public Constant visitInitList(KickCParser.InitListContext ctx) {
+   public ConstantValue visitInitList(KickCParser.InitListContext ctx) {
       throw new NotConstantException();
    }
 
    @Override
-   public Constant visitExprUnary(KickCParser.ExprUnaryContext ctx) {
-      Constant sub = visit(ctx.expr());
+   public ConstantValue visitExprUnary(KickCParser.ExprUnaryContext ctx) {
+      ConstantValue sub = visit(ctx.expr());
       String op = ((TerminalNode)ctx.getChild(0)).getSymbol().getText();
       Operator operator = Operator.getUnary(op);
       return calculateUnary(operator, sub);
    }
 
    @Override
-   public Constant visitExprBinary(KickCParser.ExprBinaryContext ctx) {
-      Constant left = this.visit(ctx.expr(0));
-      Constant right = this.visit(ctx.expr(1));
+   public ConstantValue visitExprBinary(KickCParser.ExprBinaryContext ctx) {
+      ConstantValue left = this.visit(ctx.expr(0));
+      ConstantValue right = this.visit(ctx.expr(1));
       String op = ((TerminalNode)ctx.getChild(1)).getSymbol().getText();
       Operator operator = Operator.getBinary(op);
       return calculateBinary(operator, left, right);
@@ -97,7 +97,7 @@ public class ParseTreeConstantEvaluator extends KickCBaseVisitor<Constant> {
       }
    }
 
-   static Constant calculateBinary(Operator operator, Constant c1, Constant c2) {
+   static ConstantValue calculateBinary(Operator operator, ConstantValue c1, ConstantValue c2) {
       switch (operator.getOperator()) {
          case "-": {
             if (c1 instanceof ConstantInteger && c2 instanceof ConstantInteger) {
@@ -136,7 +136,7 @@ public class ParseTreeConstantEvaluator extends KickCBaseVisitor<Constant> {
       }
    }
 
-   private static Integer getInteger(Constant constant) {
+   private static Integer getInteger(ConstantValue constant) {
       if (constant instanceof ConstantInteger) {
          return ((ConstantInteger) constant).getNumber();
       } else {
@@ -144,7 +144,7 @@ public class ParseTreeConstantEvaluator extends KickCBaseVisitor<Constant> {
       }
    }
 
-   private static Double getDouble(Constant constant) {
+   private static Double getDouble(ConstantValue constant) {
       if (constant instanceof ConstantDouble) {
          return ((ConstantDouble) constant).getNumber();
       } else if (constant instanceof ConstantInteger) {
@@ -154,7 +154,7 @@ public class ParseTreeConstantEvaluator extends KickCBaseVisitor<Constant> {
       }
    }
 
-   public static Constant calculateUnary(Operator operator, Constant c) {
+   public static ConstantValue calculateUnary(Operator operator, ConstantValue c) {
       switch (operator.getOperator()) {
          case "-": {
             if (c instanceof ConstantInteger) {

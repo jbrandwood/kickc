@@ -3,7 +3,7 @@ package dk.camelot64.kickc.model;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 /** A named constant or a variable that has been inferred to be constant in the symbol table */
-public class ConstantVar implements Constant, Symbol {
+public class ConstantVar implements Symbol {
 
    /** The name of the variable. */
    private String name;
@@ -29,7 +29,6 @@ public class ConstantVar implements Constant, Symbol {
       this.value = value;
    }
 
-   @Override
    public SymbolType getType(ProgramScope scope) {
       return type;
    }

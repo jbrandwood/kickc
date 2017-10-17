@@ -50,8 +50,8 @@ public class VariableReplacer {
          }
       } else if (rValue instanceof ConstantBinary) {
          ConstantBinary constantBinary = (ConstantBinary) rValue;
-         Constant aliasLeft = (Constant) getReplacement(constantBinary.getLeft());
-         Constant aliasRight = (Constant) getReplacement(constantBinary.getRight());
+         ConstantValue aliasLeft = (ConstantValue) getReplacement(constantBinary.getLeft());
+         ConstantValue aliasRight = (ConstantValue) getReplacement(constantBinary.getRight());
          if (aliasLeft != null || aliasRight != null) {
             if (aliasLeft == null) {
                aliasLeft = constantBinary.getLeft();

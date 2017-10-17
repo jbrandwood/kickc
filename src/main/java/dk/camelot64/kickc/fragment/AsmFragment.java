@@ -80,12 +80,9 @@ public class AsmFragment {
     *
     * @return The ASM string representing the constant value
     */
-   public static String getAsmConstant(Program program, Constant value, int precedence) {
+   public static String getAsmConstant(Program program, ConstantValue value, int precedence) {
       if (value instanceof ConstantRef) {
-         value = program.getScope().getConstant((ConstantRef) value);
-      }
-      if (value instanceof ConstantVar) {
-         ConstantVar constantVar = (ConstantVar) value;
+         ConstantVar constantVar = program.getScope().getConstant((ConstantRef) value);
          String asmName = constantVar.getAsmName() == null ? constantVar.getLocalName() : constantVar.getAsmName();
          return asmName.replace("#", "_").replace("$", "_");
       } else if (value instanceof ConstantInteger) {
@@ -421,8 +418,8 @@ public class AsmFragment {
       } else if (boundValue instanceof PointerDereferenceSimple) {
          PointerDereferenceSimple deref = (PointerDereferenceSimple) boundValue;
          RValue pointer = deref.getPointer();
-         if (pointer instanceof Constant) {
-            Constant pointerConst = (Constant) pointer;
+         if (pointer instanceof ConstantValue) {
+            ConstantValue pointerConst = (ConstantValue) pointer;
             if (pointerConst instanceof ConstantInteger) {
                ConstantInteger intPointer = (ConstantInteger) pointerConst;
                String param = getAsmNumber(intPointer.getNumber());
@@ -433,8 +430,13 @@ public class AsmFragment {
          } else {
             throw new RuntimeException("Bound Value Type not implemented " + boundValue);
          }
-      } else if (boundValue instanceof Constant) {
-         Constant boundConst = (Constant) boundValue;
+      } else if (boundValue instanceof ConstantVar) {
+         ConstantVar constantVar = (ConstantVar) boundValue;
+         String constantValueAsm = getAsmConstant(program, constantVar.getRef(), 99);
+         boolean constantValueZp = SymbolTypeBasic.BYTE.equals(constantVar.getType(program.getScope()));
+         return new AsmParameter(constantValueAsm, constantValueZp);
+      } else if (boundValue instanceof ConstantValue) {
+         ConstantValue boundConst = (ConstantValue) boundValue;
          String constantValueAsm = getAsmConstant(program, boundConst, 99);
          boolean constantValueZp = SymbolTypeBasic.BYTE.equals(boundConst.getType(program.getScope()));
          return new AsmParameter(constantValueAsm, constantValueZp);
@@ -442,7 +444,7 @@ public class AsmFragment {
          String param = ((Label) boundValue).getLocalName().replace('@', 'b').replace(':', '_').replace("$", "_");
          return new AsmParameter(param, false);
       } else {
-         throw new RuntimeException("Bound Value Type not implemented " + boundValue);
+          throw new RuntimeException("Bound Value Type not implemented " + boundValue);
       }
    }
 

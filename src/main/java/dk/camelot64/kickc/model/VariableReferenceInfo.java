@@ -179,7 +179,7 @@ public class VariableReferenceInfo {
    private Collection<VariableRef> getReferenced(RValue rValue) {
       if (rValue == null) {
          return new ArrayList<>();
-      } else if (rValue instanceof Constant) {
+      } else if (rValue instanceof ConstantValue) {
          return new ArrayList<>();
       } else if (rValue instanceof PointerDereferenceSimple) {
          return getReferenced(((PointerDereferenceSimple) rValue).getPointer());

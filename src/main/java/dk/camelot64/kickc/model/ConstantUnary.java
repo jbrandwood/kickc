@@ -7,9 +7,9 @@ public class ConstantUnary implements ConstantValue {
    private Operator operator;
 
    /** The constant operand. */
-   private Constant operand;
+   private ConstantValue operand;
 
-   public ConstantUnary(Operator operator, Constant operand) {
+   public ConstantUnary(Operator operator, ConstantValue operand) {
       this.operator = operator;
       this.operand = operand;
    }
@@ -18,7 +18,7 @@ public class ConstantUnary implements ConstantValue {
       return operator;
    }
 
-   public Constant getOperand() {
+   public ConstantValue getOperand() {
       return operand;
    }
 

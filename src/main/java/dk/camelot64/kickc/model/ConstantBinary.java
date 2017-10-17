@@ -4,15 +4,15 @@ package dk.camelot64.kickc.model;
 public class ConstantBinary implements ConstantValue {
 
    /** The left constant operand. */
-   private Constant left;
+   private ConstantValue left;
 
    /** The operator, */
    private Operator operator;
 
    /** The right constant operand. */
-   private Constant right;
+   private ConstantValue right;
 
-   public ConstantBinary(Constant left, Operator operator, Constant right) {
+   public ConstantBinary(ConstantValue left, Operator operator, ConstantValue right) {
       this.left = left;
       this.operator = operator;
       this.right = right;
@@ -22,11 +22,11 @@ public class ConstantBinary implements ConstantValue {
       return operator;
    }
 
-   public Constant getLeft() {
+   public ConstantValue getLeft() {
       return left;
    }
 
-   public Constant getRight() {
+   public ConstantValue getRight() {
       return right;
    }
 

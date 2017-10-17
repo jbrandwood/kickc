@@ -108,7 +108,7 @@ public class Pass3PhiMemCoalesce extends Pass2SsaOptimization {
             VariableRef variable = phiVariable.getVariable();
             LiveRangeEquivalenceClass equivalenceClass = phiEquivalenceClasses.getOrCreateEquivalenceClass(variable);
             for (StatementPhiBlock.PhiRValue phiRValue : phiVariable.getValues()) {
-               if (!(phiRValue.getrValue() instanceof Constant)) {
+               if (!(phiRValue.getrValue() instanceof ConstantValue)) {
                   VariableRef phiRVar = (VariableRef) phiRValue.getrValue();
                   LiveRangeEquivalenceClass rValEquivalenceClass = phiEquivalenceClasses.getOrCreateEquivalenceClass(phiRVar);
                   if(!rValEquivalenceClass.equals(equivalenceClass)) {

@@ -1,6 +1,7 @@
-package dk.camelot64.kickc.asm;
+package dk.camelot64.kickc.fragment;
 
 import dk.camelot64.kickc.NumberParser;
+import dk.camelot64.kickc.asm.*;
 import dk.camelot64.kickc.asm.parser.Asm6502BaseVisitor;
 import dk.camelot64.kickc.asm.parser.Asm6502Parser;
 import dk.camelot64.kickc.icl.*;
@@ -25,7 +26,7 @@ public class AsmFragment {
    private Map<String, Value> bindings;
 
    /**
-    * The scope containing the fragment. Used when referenginv symbols defined in other scopes.
+    * The scope containing the fragment. Used when referencing symbols defined in other scopes.
     */
    private ScopeRef scope;
 
@@ -585,7 +586,7 @@ public class AsmFragment {
          if (instruction != null) {
             program.addLine(instruction);
          } else {
-            throw new RuntimeException("Error parsing ASM fragment line in dk/camelot64/kickc/asm/fragment/" + signature + ".asm\n - Line: " + ctx.getText());
+            throw new RuntimeException("Error parsing ASM fragment line in dk/camelot64/kickc/fragment/asm/" + signature + ".asm\n - Line: " + ctx.getText());
          }
          return null;
       }

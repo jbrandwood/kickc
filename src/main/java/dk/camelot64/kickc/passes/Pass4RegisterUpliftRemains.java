@@ -1,6 +1,5 @@
 package dk.camelot64.kickc.passes;
 
-import dk.camelot64.kickc.asm.AsmFragment;
 import dk.camelot64.kickc.icl.*;
 
 import java.util.*;

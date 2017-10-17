@@ -1,4 +1,4 @@
-package dk.camelot64.kickc.asm;
+package dk.camelot64.kickc.fragment;
 
 import dk.camelot64.kickc.asm.parser.Asm6502Lexer;
 import dk.camelot64.kickc.asm.parser.Asm6502Parser;
@@ -137,7 +137,7 @@ public class AsmFragmentManager {
     */
    private static CharStream loadFragment(String signature) {
       ClassLoader classLoader = AsmFragmentManager.class.getClassLoader();
-      URL fragmentUrl = classLoader.getResource("dk/camelot64/kickc/asm/fragment/" + signature + ".asm");
+      URL fragmentUrl = classLoader.getResource("dk/camelot64/kickc/fragment/asm/" + signature + ".asm");
       if(fragmentUrl==null) {
          return null;
       }

@@ -1,6 +1,6 @@
 package dk.camelot64.kickc.passes;
 
-import dk.camelot64.kickc.icl.*;
+import dk.camelot64.kickc.model.*;
 
 /**
  * Coalesces zero page registers where their live ranges do not overlap.

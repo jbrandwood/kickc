@@ -1,8 +1,8 @@
 package dk.camelot64.kickc.test;
 
 import dk.camelot64.kickc.Compiler;
-import dk.camelot64.kickc.icl.CompileError;
-import dk.camelot64.kickc.icl.Program;
+import dk.camelot64.kickc.model.CompileError;
+import dk.camelot64.kickc.model.Program;
 import junit.framework.TestCase;
 import org.antlr.v4.runtime.CharStream;
 import org.antlr.v4.runtime.CharStreams;

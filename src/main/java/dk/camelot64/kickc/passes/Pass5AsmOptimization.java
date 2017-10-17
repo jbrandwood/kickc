@@ -4,7 +4,7 @@ import dk.camelot64.kickc.CompileLog;
 import dk.camelot64.kickc.asm.AsmLine;
 import dk.camelot64.kickc.asm.AsmProgram;
 import dk.camelot64.kickc.asm.AsmSegment;
-import dk.camelot64.kickc.icl.Program;
+import dk.camelot64.kickc.model.Program;
 
 import java.util.Collection;
 import java.util.Iterator;

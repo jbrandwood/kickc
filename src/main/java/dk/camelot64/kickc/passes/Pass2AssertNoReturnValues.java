@@ -1,8 +1,8 @@
 package dk.camelot64.kickc.passes;
 
-import dk.camelot64.kickc.icl.ControlFlowGraphBaseVisitor;
-import dk.camelot64.kickc.icl.Program;
-import dk.camelot64.kickc.icl.StatementReturn;
+import dk.camelot64.kickc.model.ControlFlowGraphBaseVisitor;
+import dk.camelot64.kickc.model.Program;
+import dk.camelot64.kickc.model.StatementReturn;
 
 /** Asserts that the program does not contain returns with values (as they have been replaced with assignments) */
 public class Pass2AssertNoReturnValues extends Pass2SsaAssertion {

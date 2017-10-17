@@ -1,9 +1,9 @@
 package dk.camelot64.kickc.passes;
 
 import dk.camelot64.kickc.CompileLog;
-import dk.camelot64.kickc.icl.ControlFlowGraph;
-import dk.camelot64.kickc.icl.Program;
-import dk.camelot64.kickc.icl.ProgramScope;
+import dk.camelot64.kickc.model.ControlFlowGraph;
+import dk.camelot64.kickc.model.Program;
+import dk.camelot64.kickc.model.ProgramScope;
 
 /** Base class for a compiler pass */
 public class Pass2Base {

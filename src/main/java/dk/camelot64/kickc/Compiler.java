@@ -1,6 +1,6 @@
 package dk.camelot64.kickc;
 
-import dk.camelot64.kickc.icl.*;
+import dk.camelot64.kickc.model.*;
 import dk.camelot64.kickc.parser.KickCLexer;
 import dk.camelot64.kickc.parser.KickCParser;
 import dk.camelot64.kickc.passes.*;

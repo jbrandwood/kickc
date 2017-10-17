@@ -3,7 +3,7 @@ package dk.camelot64.kickc.passes;
 import dk.camelot64.kickc.fragment.AsmFragment;
 import dk.camelot64.kickc.asm.AsmProgram;
 import dk.camelot64.kickc.asm.parser.AsmClobber;
-import dk.camelot64.kickc.icl.*;
+import dk.camelot64.kickc.model.*;
 
 import java.util.*;
 

@@ -4,8 +4,7 @@ import dk.camelot64.kickc.NumberParser;
 import dk.camelot64.kickc.asm.*;
 import dk.camelot64.kickc.asm.parser.Asm6502BaseVisitor;
 import dk.camelot64.kickc.asm.parser.Asm6502Parser;
-import dk.camelot64.kickc.icl.*;
-import dk.camelot64.kickc.passes.Pass1TypeInference;
+import dk.camelot64.kickc.model.*;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -376,7 +375,7 @@ public class AsmFragment {
             return name;
          }
       } else if(value instanceof ConstantValue) {
-         SymbolType type = Pass1TypeInference.inferType(program.getScope(), (ConstantValue) value);
+         SymbolType type = SymbolTypeInference.inferType(program.getScope(), (ConstantValue) value);
          if (SymbolTypeBasic.BYTE.equals(type)) {
             String name = "coby" + nextConstByteIdx++;
             bindings.put(name, value);

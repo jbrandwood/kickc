@@ -1,11 +1,8 @@
 package dk.camelot64.kickc.passes;
 
-import dk.camelot64.kickc.icl.ControlFlowGraphBaseVisitor;
-import dk.camelot64.kickc.icl.Program;
-import dk.camelot64.kickc.icl.RValue;
-import dk.camelot64.kickc.icl.StatementCall;
-
-import java.util.List;
+import dk.camelot64.kickc.model.ControlFlowGraphBaseVisitor;
+import dk.camelot64.kickc.model.Program;
+import dk.camelot64.kickc.model.StatementCall;
 
 /** Asserts that the program does not contain calls with lValues */
 public class Pass2AssertNoCallLvalues extends Pass2SsaAssertion {

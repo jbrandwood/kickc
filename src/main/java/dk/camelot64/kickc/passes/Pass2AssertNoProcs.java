@@ -1,6 +1,6 @@
 package dk.camelot64.kickc.passes;
 
-import dk.camelot64.kickc.icl.*;
+import dk.camelot64.kickc.model.*;
 
 /** Asserts that the graph contains no proc/endproc statements */
 public class Pass2AssertNoProcs extends Pass2SsaAssertion {

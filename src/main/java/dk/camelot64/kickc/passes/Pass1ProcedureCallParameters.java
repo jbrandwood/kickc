@@ -1,9 +1,7 @@
 package dk.camelot64.kickc.passes;
 
-import dk.camelot64.kickc.icl.*;
+import dk.camelot64.kickc.model.*;
 
-import java.util.ArrayList;
-import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 

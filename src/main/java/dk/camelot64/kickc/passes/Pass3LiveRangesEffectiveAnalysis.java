@@ -3,7 +3,7 @@ package dk.camelot64.kickc.passes;
 /**
  * Find effective alive intervals for all variables in all statements. Add the intervals to the Program.
  */
-import dk.camelot64.kickc.icl.*;
+import dk.camelot64.kickc.model.*;
 
 import java.util.*;
 

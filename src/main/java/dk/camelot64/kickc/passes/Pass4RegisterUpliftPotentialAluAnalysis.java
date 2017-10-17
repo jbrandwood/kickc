@@ -1,6 +1,6 @@
 package dk.camelot64.kickc.passes;
 
-import dk.camelot64.kickc.icl.*;
+import dk.camelot64.kickc.model.*;
 
 /***
  * Find equivalence classes that could be assigned to the special ALU register.

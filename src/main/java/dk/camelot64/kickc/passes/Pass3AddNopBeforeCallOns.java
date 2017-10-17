@@ -5,7 +5,7 @@ package dk.camelot64.kickc.passes;
  * This ensures that the live range propagation can propagate from method out to caller properly.
  */
 
-import dk.camelot64.kickc.icl.*;
+import dk.camelot64.kickc.model.*;
 
 import java.util.List;
 

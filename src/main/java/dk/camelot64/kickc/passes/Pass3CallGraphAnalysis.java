@@ -1,6 +1,6 @@
 package dk.camelot64.kickc.passes;
 
-import dk.camelot64.kickc.icl.*;
+import dk.camelot64.kickc.model.*;
 
 /** Finds the call graph for the control flow graph - identifies all calls in all scopes and creates a graph from these. */
 public class Pass3CallGraphAnalysis extends Pass2Base {

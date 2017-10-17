@@ -85,7 +85,15 @@ public class AsmProgram {
        addLine(new AsmConstant(name, value));
     }
 
-
+   /**
+    * Add a BYTE/WORD/DWORD data declaration tot the ASM
+    * @param label The label of the data
+    * @param type The type of the data
+    * @param asmElements The value of the elements
+    */
+   public void addData(String label, AsmData.Type type, List<String> asmElements) {
+      addLine(new AsmData(label, type, asmElements));
+   }
 
    /**
     * Get the number of bytes the segment occupies in memory.
@@ -174,20 +182,5 @@ public class AsmProgram {
       return toString(true);
    }
 
-
-   /**
-    * Get all segments representing a specific ICL statement
-    * @param statementIndex The statement index
-    * @return The ASM segments representing the statement
-    * */
-   public Collection<AsmSegment> getSegmentsByStatementIndex(int statementIndex) {
-      List<AsmSegment> statementSegments = new ArrayList<>();
-      for (AsmSegment segment : segments) {
-         if(segment.getStatementIdx()!=null && segment.getStatementIdx()==statementIndex) {
-            statementSegments.add(segment);
-         }
-      }
-      return statementSegments;
-   }
 
 }

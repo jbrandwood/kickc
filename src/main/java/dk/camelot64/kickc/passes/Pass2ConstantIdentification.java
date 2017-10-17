@@ -2,10 +2,14 @@ package dk.camelot64.kickc.passes;
 
 import dk.camelot64.kickc.model.*;
 
+import java.util.ArrayList;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 
-/** Compiler Pass propagating constants in expressions eliminating constant variables */
+/**
+ * Compiler Pass propagating constants in expressions eliminating constant variables
+ */
 public class Pass2ConstantIdentification extends Pass2SsaOptimization {
 
    public Pass2ConstantIdentification(Program program) {
@@ -14,6 +18,7 @@ public class Pass2ConstantIdentification extends Pass2SsaOptimization {
 
    /**
     * Propagate constants, replacing variables with constants where possible.
+    *
     * @return true optimization was performed. false if no optimization was possible.
     */
    @Override
@@ -33,7 +38,7 @@ public class Pass2ConstantIdentification extends Pass2SsaOptimization {
          constScope.remove(variable);
          constScope.add(constantVar);
          constAliases.put(constRef, constantVar.getRef());
-         getLog().append("Constant " + constantVar.toString(getProgram()) + " = "+constantVar.getValue());
+         getLog().append("Constant " + constantVar.toString(getProgram()) + " = " + constantVar.getValue());
       }
       // Remove assignments to constants in the code
       removeAssignments(constants.keySet());
@@ -44,6 +49,7 @@ public class Pass2ConstantIdentification extends Pass2SsaOptimization {
 
    /**
     * Find variables that have constant values.
+    *
     * @return Map from Variable to the Constant value
     */
    private Map<VariableRef, ConstantValue> findConstantVariables() {
@@ -74,7 +80,36 @@ public class Pass2ConstantIdentification extends Pass2SsaOptimization {
                   if (constant != null) {
                      constants.put(variable, constant);
                   }
+               } else if (assignment.getrValue2() instanceof ValueArray && assignment.getOperator() == null && assignment.getrValue1() == null) {
+                  ValueArray valueArray = (ValueArray) assignment.getrValue2();
+                  List<RValue> values = valueArray.getList();
+                  boolean allConstant = true;
+                  SymbolType elementType = null;
+                  List<ConstantValue> elements = new ArrayList<>();
+                  for (RValue value : values) {
+                     if (value instanceof ConstantValue) {
+                        ConstantValue constantValue = (ConstantValue) value;
+                        SymbolType type = constantValue.getType(getSymbols());
+                        if (elementType == null) {
+                           elementType = type;
+                        } else {
+                           if (!elementType.equals(type)) {
+                              throw new RuntimeException("Array type mismatch " + elementType + "!=" + type + " " + valueArray.toString(getProgram()));
+                           }
+                        }
+                        elements.add(constantValue);
+                     } else {
+                        allConstant = false;
+                        elementType = null;
+                        break;
+                     }
+                  }
+                  if (allConstant && elementType != null) {
+                     ConstantValue constant = new ConstantArray(elements, elementType);
+                     constants.put(variable, constant);
+                  }
                }
+
             }
             return null;
          }

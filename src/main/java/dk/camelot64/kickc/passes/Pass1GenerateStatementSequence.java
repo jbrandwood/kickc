@@ -397,7 +397,12 @@ public class Pass1GenerateStatementSequence extends KickCBaseVisitor<Object> {
 
    @Override
    public RValue visitInitList(KickCParser.InitListContext ctx) {
-      throw new RuntimeException("Not implemented");
+      List<RValue> initValues = new ArrayList<>();
+      for (KickCParser.InitializerContext initializer : ctx.initializer()) {
+         RValue rValue = (RValue) visit(initializer);
+         initValues.add(rValue);
+      }
+      return new ValueArray(initValues);
    }
 
    @Override

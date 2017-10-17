@@ -33,6 +33,7 @@ public class Pass4CodeGeneration {
       asm.startSegment(null, "Global Constants & labels");
       addConstants(asm, currentScope);
       addZpLabels(asm, currentScope);
+      addData(asm, currentScope);
       for (ControlFlowBlock block : getGraph().getAllBlocks()) {
          if (!block.getScope().equals(currentScope)) {
             if (!ScopeRef.ROOT.equals(currentScope)) {
@@ -44,6 +45,7 @@ public class Pass4CodeGeneration {
             // Add all ZP labels for the scope
             addConstants(asm, currentScope);
             addZpLabels(asm, currentScope);
+            addData(asm, currentScope);
          }
          // Generate entry points (if needed)
          genBlockEntryPoints(asm, block);
@@ -90,13 +92,48 @@ public class Pass4CodeGeneration {
       Collection<ConstantVar> scopeConstants = scope.getAllConstants(false);
       Set<String> added = new LinkedHashSet<>();
       for (ConstantVar constantVar : scopeConstants) {
-         String asmName = constantVar.getAsmName() == null ? constantVar.getLocalName() : constantVar.getAsmName();
-         if (asmName != null && !added.contains(asmName)) {
-            asm.addConstant(asmName.replace("#", "_").replace("$", "_"), AsmFragment.getAsmConstant(program, constantVar.getValue(), 99));
-            added.add(asmName);
+         if(! (constantVar.getValue() instanceof ConstantArray)) {
+            String asmName = constantVar.getAsmName() == null ? constantVar.getLocalName() : constantVar.getAsmName();
+            if (asmName != null && !added.contains(asmName)) {
+               asm.addConstant(asmName.replace("#", "_").replace("$", "_"), AsmFragment.getAsmConstant(program, constantVar.getValue(), 99));
+               added.add(asmName);
+            }
          }
       }
    }
+
+   /**
+    * Add data directives for constants declarations
+    *
+    * @param asm      The ASM program
+    * @param scopeRef The scope
+    */
+   private void addData(AsmProgram asm, ScopeRef scopeRef) {
+      Scope scope = program.getScope().getScope(scopeRef);
+      Collection<ConstantVar> scopeConstants = scope.getAllConstants(false);
+      Set<String> added = new LinkedHashSet<>();
+      for (ConstantVar constantVar : scopeConstants) {
+         if(constantVar.getValue() instanceof ConstantArray) {
+            ConstantArray constantArray = (ConstantArray) constantVar.getValue();
+            String asmName = constantVar.getAsmName() == null ? constantVar.getLocalName() : constantVar.getAsmName();
+            if (asmName != null && !added.contains(asmName)) {
+
+               List<String> asmElements = new ArrayList<>();
+               for (ConstantValue element : constantArray.getElements()) {
+                  String asmElement = AsmFragment.getAsmConstant(program, element, 99);
+                  asmElements.add(asmElement);
+               }
+               if(SymbolTypeBasic.BYTE.equals(constantArray.getElementType())) {
+                  asm.addData(asmName.replace("#", "_").replace("$", "_"), AsmData.Type.BYTE, asmElements);
+                  added.add(asmName);
+               } else {
+                  throw new RuntimeException("Unhandled constant array element type "+constantArray.toString(program));
+               }
+            }
+         }
+      }
+   }
+
 
 
    /**

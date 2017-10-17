@@ -316,6 +316,10 @@ public abstract class Scope implements Symbol {
                }
                if (symbol instanceof ConstantVar) {
                   ConstantVar constantVar = (ConstantVar) symbol;
+                  String asmName = constantVar.getAsmName();
+                  if (asmName != null) {
+                     res.append(" " + asmName);
+                  }
                   res.append(" = " + constantVar.getValue().toString(program));
                }
                res.append("\n");

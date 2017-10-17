@@ -92,7 +92,7 @@ public class Pass4CodeGeneration {
       Collection<ConstantVar> scopeConstants = scope.getAllConstants(false);
       Set<String> added = new LinkedHashSet<>();
       for (ConstantVar constantVar : scopeConstants) {
-         if(! (constantVar.getValue() instanceof ConstantArray)) {
+         if(! (constantVar.getValue() instanceof ConstantArray || constantVar.getValue() instanceof ConstantString)) {
             String asmName = constantVar.getAsmName() == null ? constantVar.getLocalName() : constantVar.getAsmName();
             if (asmName != null && !added.contains(asmName)) {
                asm.addConstant(asmName.replace("#", "_").replace("$", "_"), AsmFragment.getAsmConstant(program, constantVar.getValue(), 99));
@@ -117,19 +117,23 @@ public class Pass4CodeGeneration {
             ConstantArray constantArray = (ConstantArray) constantVar.getValue();
             String asmName = constantVar.getAsmName() == null ? constantVar.getLocalName() : constantVar.getAsmName();
             if (asmName != null && !added.contains(asmName)) {
-
                List<String> asmElements = new ArrayList<>();
                for (ConstantValue element : constantArray.getElements()) {
                   String asmElement = AsmFragment.getAsmConstant(program, element, 99);
                   asmElements.add(asmElement);
                }
                if(SymbolTypeBasic.BYTE.equals(constantArray.getElementType())) {
-                  asm.addData(asmName.replace("#", "_").replace("$", "_"), AsmData.Type.BYTE, asmElements);
+                  asm.addDataNumeric(asmName.replace("#", "_").replace("$", "_"), AsmDataNumeric.Type.BYTE, asmElements);
                   added.add(asmName);
                } else {
                   throw new RuntimeException("Unhandled constant array element type "+constantArray.toString(program));
                }
             }
+         } else if(constantVar.getValue() instanceof ConstantString) {
+            ConstantString constantString = (ConstantString) constantVar.getValue();
+            String asmName = constantVar.getAsmName() == null ? constantVar.getLocalName() : constantVar.getAsmName();
+            asm.addDataString(asmName.replace("#", "_").replace("$", "_"), constantString.getValue());
+            added.add(asmName);
          }
       }
    }

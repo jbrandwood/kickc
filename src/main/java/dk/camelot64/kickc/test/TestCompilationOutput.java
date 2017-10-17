@@ -40,6 +40,10 @@ public class TestCompilationOutput extends TestCase {
       compileAndCompare("inmemarray");
    }
 
+   public void testInMemString() throws IOException, URISyntaxException {
+      compileAndCompare("inmemstring");
+   }
+
    public void testVoronoi() throws IOException, URISyntaxException {
       compileAndCompare("voronoi");
    }

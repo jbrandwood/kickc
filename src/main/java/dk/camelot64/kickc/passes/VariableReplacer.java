@@ -35,6 +35,9 @@ public class VariableReplacer {
       if(rValue instanceof SymbolRef) {
          RValue alias = aliases.get(rValue);
          if(alias!=null) {
+            if(alias.equals(rValue)) {
+               return alias;
+            }
             RValue replacement = getReplacement(alias);
             if(replacement!=null) {
                return replacement;

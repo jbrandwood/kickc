@@ -3,7 +3,7 @@ package dk.camelot64.kickc.asm;
 import java.util.List;
 
 /** A labelled numeric data directive. */
-public class AsmData implements AsmLine {
+public class AsmDataNumeric implements AsmLine {
 
    private String label;
    private Type type;
@@ -25,7 +25,7 @@ public class AsmData implements AsmLine {
 
    }
 
-   public AsmData(String label, Type type, List<String> values) {
+   public AsmDataNumeric(String label, Type type, List<String> values) {
       this.label = label;
       this.type = type;
       this.values = values;

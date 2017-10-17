@@ -486,7 +486,8 @@ public class Pass1GenerateStatementSequence extends KickCBaseVisitor<Object> {
 
    @Override
    public RValue visitExprString(KickCParser.ExprStringContext ctx) {
-      return new ConstantString(ctx.getText());
+      String text = ctx.getText();
+      return new ConstantString(text.substring(1, text.length()-1));
    }
 
    @Override

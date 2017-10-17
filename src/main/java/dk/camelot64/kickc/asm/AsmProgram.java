@@ -91,9 +91,19 @@ public class AsmProgram {
     * @param type The type of the data
     * @param asmElements The value of the elements
     */
-   public void addData(String label, AsmData.Type type, List<String> asmElements) {
-      addLine(new AsmData(label, type, asmElements));
+   public void addDataNumeric(String label, AsmDataNumeric.Type type, List<String> asmElements) {
+      addLine(new AsmDataNumeric(label, type, asmElements));
    }
+
+   /**
+    * Add a string data declaration tot the ASM
+    * @param label The label of the data
+    * @param value The value of the string
+    */
+   public void addDataString(String label, String value) {
+      addLine(new AsmDataString(label, value));
+   }
+
 
    /**
     * Get the number of bytes the segment occupies in memory.

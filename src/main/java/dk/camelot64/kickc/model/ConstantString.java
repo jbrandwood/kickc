@@ -16,6 +16,10 @@ public class ConstantString implements ConstantValue {
       return SymbolTypeBasic.STRING;
    }
 
+   public String getValue() {
+      return value;
+   }
+
    @Override
    public String toString() {
        return toString(null);
@@ -24,9 +28,9 @@ public class ConstantString implements ConstantValue {
    @Override
    public String toString(Program program) {
       if (program == null) {
-         return "\\" + value + "\\";
+         return "\"" + value + "\"";
       } else {
-         return "(" + SymbolTypeBasic.STRING.getTypeName() + ") " + "\\" + value + "\\";
+         return "(" + SymbolTypeBasic.STRING.getTypeName() + ") " + "\"" + value + "\"";
       }
    }
 

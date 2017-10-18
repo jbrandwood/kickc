@@ -600,33 +600,7 @@ main::@return: scope:[main]  from main::@2
 @end: scope:[]  from @begin
 
 Multiple usages for variable. Not optimizing sub-constant (byte) main::j#3
-Culled Empty Block (label) main::@3
-Succesful SSA optimization Pass2CullEmptyBlocks
-CONTROL FLOW GRAPH
-@begin: scope:[]  from
-  call main param-assignment
-  to:@end
-main: scope:[main]  from @begin
-  to:main::@1
-main::@1: scope:[main]  from main main::@2
-  (byte) main::i#2 ← phi( main/(const byte) main::i#0 main::@2/(byte) main::i#1 )
-  (byte) main::j#3 ← phi( main/(const byte) main::j#0 main::@2/(byte) main::j#4 )
-  (byte~) main::$0 ← (const byte[]) TXT#1 *idx (byte) main::j#3
-  *((const byte*) SCREEN#1 + (byte) main::i#2) ← (byte~) main::$0
-  (byte) main::j#1 ← ++ (byte) main::j#3
-  if((byte) main::j#1!=(byte) 8) goto main::@2
-  to:main::@2
-main::@2: scope:[main]  from main::@1 main::@1
-  (byte) main::j#4 ← phi( main::@1/(byte) main::j#1 main::@1/(const byte) main::j#2 )
-  (byte) main::i#1 ← ++ (byte) main::i#2
-  if((byte) main::i#1!=(byte) 101) goto main::@1
-  to:main::@return
-main::@return: scope:[main]  from main::@2
-  return 
-  to:@return
-@end: scope:[]  from @begin
-
-Multiple usages for variable. Not optimizing sub-constant (byte) main::j#3
+Not culling empty block because it shares successor with its predecessor. (label) main::@3
 Multiple usages for variable. Not optimizing sub-constant (byte) main::j#3
 Constant inlined SCREEN#1 = (const byte*) SCREEN#0
 Constant inlined main::j#2 = (byte) 0
@@ -647,12 +621,14 @@ main::@1: scope:[main]  from main main::@2
   *((const byte*) SCREEN#0 + (byte) main::i#2) ← (byte~) main::$0
   (byte) main::j#1 ← ++ (byte) main::j#3
   if((byte) main::j#1!=(byte) 8) goto main::@2
-  to:main::@2
-main::@2: scope:[main]  from main::@1 main::@1
-  (byte) main::j#4 ← phi( main::@1/(byte) main::j#1 main::@1/(byte) 0 )
+  to:main::@3
+main::@2: scope:[main]  from main::@1 main::@3
+  (byte) main::j#4 ← phi( main::@1/(byte) main::j#1 main::@3/(byte) 0 )
   (byte) main::i#1 ← ++ (byte) main::i#2
   if((byte) main::i#1!=(byte) 101) goto main::@1
   to:main::@return
+main::@3: scope:[main]  from main::@1
+  to:main::@2
 main::@return: scope:[main]  from main::@2
   return 
   to:@return
@@ -669,6 +645,7 @@ FINAL SYMBOL TABLE
 (byte~) main::$0
 (label) main::@1
 (label) main::@2
+(label) main::@3
 (label) main::@return
 (byte) main::i
 (byte) main::i#1
@@ -678,10 +655,10 @@ FINAL SYMBOL TABLE
 (byte) main::j#3
 (byte) main::j#4
 
-Block Sequence Planned @begin @end main main::@1 main::@2 main::@return 
+Block Sequence Planned @begin @end main main::@1 main::@3 main::@2 main::@return 
 Added new block during phi lifting main::@5(between main::@2 and main::@1)
 Added new block during phi lifting main::@6(between main::@1 and main::@2)
-Block Sequence Planned @begin @end main main::@1 main::@6 main::@2 main::@return main::@5 
+Block Sequence Planned @begin @end main main::@1 main::@3 main::@2 main::@return main::@5 main::@6 
 CONTROL FLOW GRAPH - PHI LIFTED
 @begin: scope:[]  from
   call main param-assignment
@@ -696,12 +673,11 @@ main::@1: scope:[main]  from main main::@5
   *((const byte*) SCREEN#0 + (byte) main::i#2) ← (byte~) main::$0
   (byte) main::j#1 ← ++ (byte) main::j#3
   if((byte) main::j#1!=(byte) 8) goto main::@6
-  to:main::@6
-main::@6: scope:[main]  from main::@1 main::@1
-  (byte~) main::j#6 ← (byte) main::j#1
+  to:main::@3
+main::@3: scope:[main]  from main::@1
   to:main::@2
-main::@2: scope:[main]  from main::@6
-  (byte) main::j#4 ← phi( main::@6/(byte~) main::j#6 main::@1/(byte) 0 )
+main::@2: scope:[main]  from main::@3 main::@6
+  (byte) main::j#4 ← phi( main::@6/(byte~) main::j#6 main::@3/(byte) 0 )
   (byte) main::i#1 ← ++ (byte) main::i#2
   if((byte) main::i#1!=(byte) 101) goto main::@5
   to:main::@return
@@ -712,12 +688,14 @@ main::@5: scope:[main]  from main::@2
   (byte~) main::j#5 ← (byte) main::j#4
   (byte~) main::i#5 ← (byte) main::i#1
   to:main::@1
+main::@6: scope:[main]  from main::@1
+  (byte~) main::j#6 ← (byte) main::j#1
+  to:main::@2
 
 Adding NOP phi() at start of main
 CALL GRAPH
 Calls in [] to 0:main 
 
-Propagating live ranges...
 Propagating live ranges...
 Propagating live ranges...
 Propagating live ranges...
@@ -738,31 +716,34 @@ main::@1: scope:[main]  from main main::@5
   [4] *((const byte*) SCREEN#0 + (byte) main::i#2) ← (byte~) main::$0 [ main::j#3 main::i#2 ]
   [5] (byte) main::j#1 ← ++ (byte) main::j#3 [ main::i#2 main::j#1 ]
   [6] if((byte) main::j#1!=(byte) 8) goto main::@6 [ main::i#2 main::j#1 ]
-  to:main::@6
-main::@6: scope:[main]  from main::@1 main::@1
-  [7] (byte~) main::j#6 ← (byte) main::j#1 [ main::i#2 main::j#6 ]
+  to:main::@3
+main::@3: scope:[main]  from main::@1
   to:main::@2
-main::@2: scope:[main]  from main::@6
-  [8] (byte) main::j#4 ← phi( main::@6/(byte~) main::j#6 main::@1/(byte) 0 ) [ main::i#2 main::j#4 ]
-  [9] (byte) main::i#1 ← ++ (byte) main::i#2 [ main::j#4 main::i#1 ]
-  [10] if((byte) main::i#1!=(byte) 101) goto main::@5 [ main::j#4 main::i#1 ]
+main::@2: scope:[main]  from main::@3 main::@6
+  [7] (byte) main::j#4 ← phi( main::@6/(byte~) main::j#6 main::@3/(byte) 0 ) [ main::i#2 main::j#4 ]
+  [8] (byte) main::i#1 ← ++ (byte) main::i#2 [ main::j#4 main::i#1 ]
+  [9] if((byte) main::i#1!=(byte) 101) goto main::@5 [ main::j#4 main::i#1 ]
   to:main::@return
 main::@return: scope:[main]  from main::@2
-  [11] return  [ ]
+  [10] return  [ ]
   to:@return
 main::@5: scope:[main]  from main::@2
-  [12] (byte~) main::j#5 ← (byte) main::j#4 [ main::j#5 main::i#1 ]
-  [13] (byte~) main::i#5 ← (byte) main::i#1 [ main::j#5 main::i#5 ]
+  [11] (byte~) main::j#5 ← (byte) main::j#4 [ main::j#5 main::i#1 ]
+  [12] (byte~) main::i#5 ← (byte) main::i#1 [ main::j#5 main::i#5 ]
   to:main::@1
+main::@6: scope:[main]  from main::@1
+  [13] (byte~) main::j#6 ← (byte) main::j#1 [ main::i#2 main::j#6 ]
+  to:main::@2
 
 Created 3 initial phi equivalence classes
-Coalesced [7] main::j#6 ← main::j#1
-Coalesced [12] main::j#5 ← main::j#4
-Coalesced [13] main::i#5 ← main::i#1
+Coalesced [11] main::j#5 ← main::j#4
+Coalesced [12] main::i#5 ← main::i#1
+Coalesced [13] main::j#6 ← main::j#1
 Coalesced down to 2 phi equivalence classes
-Culled Empty Block (label) main::@6
+Culled Empty Block (label) main::@3
 Culled Empty Block (label) main::@5
-Block Sequence Planned @begin @end main main::@1 main::@2 main::@return 
+Not culling empty block because it shares successor with its predecessor. (label) main::@6
+Block Sequence Planned @begin @end main main::@1 main::@2 main::@return main::@6 
 Adding NOP phi() at start of main
 Propagating live ranges...
 Propagating live ranges...
@@ -783,16 +764,18 @@ main::@1: scope:[main]  from main main::@2
   [3] (byte~) main::$0 ← (const byte[]) TXT#0 *idx (byte) main::j#3 [ main::j#3 main::i#2 main::$0 ]
   [4] *((const byte*) SCREEN#0 + (byte) main::i#2) ← (byte~) main::$0 [ main::j#3 main::i#2 ]
   [5] (byte) main::j#1 ← ++ (byte) main::j#3 [ main::i#2 main::j#1 ]
-  [6] if((byte) main::j#1!=(byte) 8) goto main::@2 [ main::i#2 main::j#1 ]
+  [6] if((byte) main::j#1!=(byte) 8) goto main::@6 [ main::i#2 ]
   to:main::@2
-main::@2: scope:[main]  from main::@1 main::@1
-  [7] (byte) main::j#4 ← phi( main::@1/(byte) main::j#1 main::@1/(byte) 0 ) [ main::i#2 main::j#4 ]
+main::@2: scope:[main]  from main::@1 main::@6
+  [7] (byte) main::j#4 ← phi( main::@6/(byte) main::j#1 main::@1/(byte) 0 ) [ main::i#2 main::j#4 ]
   [8] (byte) main::i#1 ← ++ (byte) main::i#2 [ main::j#4 main::i#1 ]
   [9] if((byte) main::i#1!=(byte) 101) goto main::@1 [ main::j#4 main::i#1 ]
   to:main::@return
 main::@return: scope:[main]  from main::@2
   [10] return  [ ]
   to:@return
+main::@6: scope:[main]  from main::@1
+  to:main::@2
 
 DOMINATORS
 @begin dominated by  @begin 
@@ -801,17 +784,18 @@ main dominated by  @begin main
 main::@1 dominated by  @begin main::@1 main 
 main::@2 dominated by  @begin main::@2 main::@1 main 
 main::@return dominated by  main::@return @begin main::@2 main::@1 main 
+main::@6 dominated by  @begin main::@1 main::@6 main 
 
 Found back edge: Loop head: main::@1 tails: main::@2 blocks: null
-Populated: Loop head: main::@1 tails: main::@2 blocks: main::@2 main::@1 
+Populated: Loop head: main::@1 tails: main::@2 blocks: main::@2 main::@1 main::@6 
 NATURAL LOOPS
-Loop head: main::@1 tails: main::@2 blocks: main::@2 main::@1 
+Loop head: main::@1 tails: main::@2 blocks: main::@2 main::@1 main::@6 
 
 Found 0 loops in scope []
 Found 1 loops in scope [main]
-  Loop head: main::@1 tails: main::@2 blocks: main::@2 main::@1 
+  Loop head: main::@1 tails: main::@2 blocks: main::@2 main::@1 main::@6 
 NATURAL LOOPS WITH DEPTH
-Loop head: main::@1 tails: main::@2 blocks: main::@2 main::@1  depth: 1
+Loop head: main::@1 tails: main::@2 blocks: main::@2 main::@1 main::@6  depth: 1
 
 
 VARIABLE REGISTER WEIGHTS
@@ -823,7 +807,7 @@ VARIABLE REGISTER WEIGHTS
 (byte) main::i#1 16.5
 (byte) main::i#2 5.5
 (byte) main::j
-(byte) main::j#1 16.5
+(byte) main::j#1 33.0
 (byte) main::j#3 11.0
 (byte) main::j#4 7.333333333333333
 
@@ -882,31 +866,35 @@ main: {
     sta SCREEN,x
   //SEG15 [5] (byte) main::j#1 ← ++ (byte) main::j#3 [ main::i#2 main::j#1 ] -- zpby1=_inc_zpby1 
     inc j
-  //SEG16 [6] if((byte) main::j#1!=(byte) 8) goto main::@2 [ main::i#2 main::j#1 ] -- zpby1_neq_coby1_then_la1 
+  //SEG16 [6] if((byte) main::j#1!=(byte) 8) goto main::@6 [ main::i#2 ] -- zpby1_neq_coby1_then_la1 
     lda j
     cmp #8
-    bne b2_from_b1
-  //SEG17 [7] phi from main::@1 main::@1 to main::@2
+    bne b6
+  //SEG17 [7] phi from main::@1 to main::@2
   b2_from_b1:
-  b2_from_b1:
-  //SEG18 [7] phi (byte) main::j#4 = (byte) main::j#1 -- register_copy 
-  //SEG19 [7] phi (byte) main::j#4 = (byte) 0 -- zpby1=coby1 
+  //SEG18 [7] phi (byte) main::j#4 = (byte) 0 -- zpby1=coby1 
     lda #0
     sta j
     jmp b2
-  //SEG20 main::@2
+  //SEG19 main::@2
   b2:
-  //SEG21 [8] (byte) main::i#1 ← ++ (byte) main::i#2 [ main::j#4 main::i#1 ] -- zpby1=_inc_zpby1 
+  //SEG20 [8] (byte) main::i#1 ← ++ (byte) main::i#2 [ main::j#4 main::i#1 ] -- zpby1=_inc_zpby1 
     inc i
-  //SEG22 [9] if((byte) main::i#1!=(byte) 101) goto main::@1 [ main::j#4 main::i#1 ] -- zpby1_neq_coby1_then_la1 
+  //SEG21 [9] if((byte) main::i#1!=(byte) 101) goto main::@1 [ main::j#4 main::i#1 ] -- zpby1_neq_coby1_then_la1 
     lda i
     cmp #$65
     bne b1_from_b2
     jmp breturn
-  //SEG23 main::@return
+  //SEG22 main::@return
   breturn:
-  //SEG24 [10] return  [ ]
+  //SEG23 [10] return  [ ]
     rts
+  //SEG24 main::@6
+  b6:
+  //SEG25 [7] phi from main::@6 to main::@2
+  b2_from_b6:
+  //SEG26 [7] phi (byte) main::j#4 = (byte) main::j#1 -- register_copy 
+    jmp b2
 }
 
 REGISTER UPLIFT POTENTIAL REGISTERS
@@ -915,14 +903,13 @@ Potential registers zp ZP_BYTE:3 [ main::i#2 main::i#1 ] : zp ZP_BYTE:3 , reg by
 Potential registers zp ZP_BYTE:4 [ main::$0 ] : zp ZP_BYTE:4 , reg byte a , reg byte x , reg byte y , 
 
 REGISTER UPLIFT SCOPES
-Uplift Scope [main] 34.83: zp ZP_BYTE:2 [ main::j#3 main::j#4 main::j#1 ] 22: zp ZP_BYTE:3 [ main::i#2 main::i#1 ] 22: zp ZP_BYTE:4 [ main::$0 ] 
+Uplift Scope [main] 51.33: zp ZP_BYTE:2 [ main::j#3 main::j#4 main::j#1 ] 22: zp ZP_BYTE:3 [ main::i#2 main::i#1 ] 22: zp ZP_BYTE:4 [ main::$0 ] 
 Uplift Scope [] 
 
-Uplifting [main] best 420 combination reg byte y [ main::j#3 main::j#4 main::j#1 ] reg byte x [ main::i#2 main::i#1 ] reg byte a [ main::$0 ] 
-Uplifting [] best 420 combination 
+Uplifting [main] best 450 combination reg byte y [ main::j#3 main::j#4 main::j#1 ] reg byte x [ main::i#2 main::i#1 ] reg byte a [ main::$0 ] 
+Uplifting [] best 450 combination 
 Removing instruction jmp bend
 Removing instruction jmp b1
-Removing instruction bne b2_from_b1
 Removing instruction jmp b2
 Removing instruction jmp breturn
 Succesful ASM optimization Pass5NextJumpElimination
@@ -959,32 +946,36 @@ main: {
     sta SCREEN,x
   //SEG15 [5] (byte) main::j#1 ← ++ (byte) main::j#3 [ main::i#2 main::j#1 ] -- yby=_inc_yby 
     iny
-  //SEG16 [6] if((byte) main::j#1!=(byte) 8) goto main::@2 [ main::i#2 main::j#1 ] -- yby_neq_coby1_then_la1 
+  //SEG16 [6] if((byte) main::j#1!=(byte) 8) goto main::@6 [ main::i#2 ] -- yby_neq_coby1_then_la1 
     cpy #8
-  //SEG17 [7] phi from main::@1 main::@1 to main::@2
+    bne b6
+  //SEG17 [7] phi from main::@1 to main::@2
   b2_from_b1:
-  b2_from_b1:
-  //SEG18 [7] phi (byte) main::j#4 = (byte) main::j#1 -- register_copy 
-  //SEG19 [7] phi (byte) main::j#4 = (byte) 0 -- yby=coby1 
+  //SEG18 [7] phi (byte) main::j#4 = (byte) 0 -- yby=coby1 
     ldy #0
-  //SEG20 main::@2
+  //SEG19 main::@2
   b2:
-  //SEG21 [8] (byte) main::i#1 ← ++ (byte) main::i#2 [ main::j#4 main::i#1 ] -- xby=_inc_xby 
+  //SEG20 [8] (byte) main::i#1 ← ++ (byte) main::i#2 [ main::j#4 main::i#1 ] -- xby=_inc_xby 
     inx
-  //SEG22 [9] if((byte) main::i#1!=(byte) 101) goto main::@1 [ main::j#4 main::i#1 ] -- xby_neq_coby1_then_la1 
+  //SEG21 [9] if((byte) main::i#1!=(byte) 101) goto main::@1 [ main::j#4 main::i#1 ] -- xby_neq_coby1_then_la1 
     cpx #$65
     bne b1_from_b2
-  //SEG23 main::@return
+  //SEG22 main::@return
   breturn:
-  //SEG24 [10] return  [ ]
+  //SEG23 [10] return  [ ]
     rts
+  //SEG24 main::@6
+  b6:
+  //SEG25 [7] phi from main::@6 to main::@2
+  b2_from_b6:
+  //SEG26 [7] phi (byte) main::j#4 = (byte) main::j#1 -- register_copy 
+    jmp b2
 }
 
 Replacing label b1_from_b2 with b1
 Removing instruction main_from_bbegin:
 Removing instruction b1_from_b2:
-Removing instruction b2_from_b1:
-Removing instruction b2_from_b1:
+Removing instruction b2_from_b6:
 Succesful ASM optimization Pass5RedundantLabelElimination
 ASSEMBLER
 //SEG0 Global Constants & labels
@@ -1017,29 +1008,35 @@ main: {
     sta SCREEN,x
   //SEG15 [5] (byte) main::j#1 ← ++ (byte) main::j#3 [ main::i#2 main::j#1 ] -- yby=_inc_yby 
     iny
-  //SEG16 [6] if((byte) main::j#1!=(byte) 8) goto main::@2 [ main::i#2 main::j#1 ] -- yby_neq_coby1_then_la1 
+  //SEG16 [6] if((byte) main::j#1!=(byte) 8) goto main::@6 [ main::i#2 ] -- yby_neq_coby1_then_la1 
     cpy #8
-  //SEG17 [7] phi from main::@1 main::@1 to main::@2
-  //SEG18 [7] phi (byte) main::j#4 = (byte) main::j#1 -- register_copy 
-  //SEG19 [7] phi (byte) main::j#4 = (byte) 0 -- yby=coby1 
+    bne b6
+  //SEG17 [7] phi from main::@1 to main::@2
+  b2_from_b1:
+  //SEG18 [7] phi (byte) main::j#4 = (byte) 0 -- yby=coby1 
     ldy #0
-  //SEG20 main::@2
+  //SEG19 main::@2
   b2:
-  //SEG21 [8] (byte) main::i#1 ← ++ (byte) main::i#2 [ main::j#4 main::i#1 ] -- xby=_inc_xby 
+  //SEG20 [8] (byte) main::i#1 ← ++ (byte) main::i#2 [ main::j#4 main::i#1 ] -- xby=_inc_xby 
     inx
-  //SEG22 [9] if((byte) main::i#1!=(byte) 101) goto main::@1 [ main::j#4 main::i#1 ] -- xby_neq_coby1_then_la1 
+  //SEG21 [9] if((byte) main::i#1!=(byte) 101) goto main::@1 [ main::j#4 main::i#1 ] -- xby_neq_coby1_then_la1 
     cpx #$65
     bne b1
-  //SEG23 main::@return
+  //SEG22 main::@return
   breturn:
-  //SEG24 [10] return  [ ]
+  //SEG23 [10] return  [ ]
     rts
+  //SEG24 main::@6
+  b6:
+  //SEG25 [7] phi from main::@6 to main::@2
+  //SEG26 [7] phi (byte) main::j#4 = (byte) main::j#1 -- register_copy 
+    jmp b2
 }
 
 Removing instruction bbegin:
 Removing instruction bend:
 Removing instruction b1_from_main:
-Removing instruction b2:
+Removing instruction b2_from_b1:
 Removing instruction breturn:
 Succesful ASM optimization Pass5UnusedLabelElimination
 ASSEMBLER
@@ -1070,21 +1067,27 @@ main: {
     sta SCREEN,x
   //SEG15 [5] (byte) main::j#1 ← ++ (byte) main::j#3 [ main::i#2 main::j#1 ] -- yby=_inc_yby 
     iny
-  //SEG16 [6] if((byte) main::j#1!=(byte) 8) goto main::@2 [ main::i#2 main::j#1 ] -- yby_neq_coby1_then_la1 
+  //SEG16 [6] if((byte) main::j#1!=(byte) 8) goto main::@6 [ main::i#2 ] -- yby_neq_coby1_then_la1 
     cpy #8
-  //SEG17 [7] phi from main::@1 main::@1 to main::@2
-  //SEG18 [7] phi (byte) main::j#4 = (byte) main::j#1 -- register_copy 
-  //SEG19 [7] phi (byte) main::j#4 = (byte) 0 -- yby=coby1 
+    bne b6
+  //SEG17 [7] phi from main::@1 to main::@2
+  //SEG18 [7] phi (byte) main::j#4 = (byte) 0 -- yby=coby1 
     ldy #0
-  //SEG20 main::@2
-  //SEG21 [8] (byte) main::i#1 ← ++ (byte) main::i#2 [ main::j#4 main::i#1 ] -- xby=_inc_xby 
+  //SEG19 main::@2
+  b2:
+  //SEG20 [8] (byte) main::i#1 ← ++ (byte) main::i#2 [ main::j#4 main::i#1 ] -- xby=_inc_xby 
     inx
-  //SEG22 [9] if((byte) main::i#1!=(byte) 101) goto main::@1 [ main::j#4 main::i#1 ] -- xby_neq_coby1_then_la1 
+  //SEG21 [9] if((byte) main::i#1!=(byte) 101) goto main::@1 [ main::j#4 main::i#1 ] -- xby_neq_coby1_then_la1 
     cpx #$65
     bne b1
-  //SEG23 main::@return
-  //SEG24 [10] return  [ ]
+  //SEG22 main::@return
+  //SEG23 [10] return  [ ]
     rts
+  //SEG24 main::@6
+  b6:
+  //SEG25 [7] phi from main::@6 to main::@2
+  //SEG26 [7] phi (byte) main::j#4 = (byte) main::j#1 -- register_copy 
+    jmp b2
 }
 
 Removing instruction jmp b1
@@ -1116,21 +1119,27 @@ main: {
     sta SCREEN,x
   //SEG15 [5] (byte) main::j#1 ← ++ (byte) main::j#3 [ main::i#2 main::j#1 ] -- yby=_inc_yby 
     iny
-  //SEG16 [6] if((byte) main::j#1!=(byte) 8) goto main::@2 [ main::i#2 main::j#1 ] -- yby_neq_coby1_then_la1 
+  //SEG16 [6] if((byte) main::j#1!=(byte) 8) goto main::@6 [ main::i#2 ] -- yby_neq_coby1_then_la1 
     cpy #8
-  //SEG17 [7] phi from main::@1 main::@1 to main::@2
-  //SEG18 [7] phi (byte) main::j#4 = (byte) main::j#1 -- register_copy 
-  //SEG19 [7] phi (byte) main::j#4 = (byte) 0 -- yby=coby1 
+    bne b6
+  //SEG17 [7] phi from main::@1 to main::@2
+  //SEG18 [7] phi (byte) main::j#4 = (byte) 0 -- yby=coby1 
     ldy #0
-  //SEG20 main::@2
-  //SEG21 [8] (byte) main::i#1 ← ++ (byte) main::i#2 [ main::j#4 main::i#1 ] -- xby=_inc_xby 
+  //SEG19 main::@2
+  b2:
+  //SEG20 [8] (byte) main::i#1 ← ++ (byte) main::i#2 [ main::j#4 main::i#1 ] -- xby=_inc_xby 
     inx
-  //SEG22 [9] if((byte) main::i#1!=(byte) 101) goto main::@1 [ main::j#4 main::i#1 ] -- xby_neq_coby1_then_la1 
+  //SEG21 [9] if((byte) main::i#1!=(byte) 101) goto main::@1 [ main::j#4 main::i#1 ] -- xby_neq_coby1_then_la1 
     cpx #$65
     bne b1
-  //SEG23 main::@return
-  //SEG24 [10] return  [ ]
+  //SEG22 main::@return
+  //SEG23 [10] return  [ ]
     rts
+  //SEG24 main::@6
+  b6:
+  //SEG25 [7] phi from main::@6 to main::@2
+  //SEG26 [7] phi (byte) main::j#4 = (byte) main::j#1 -- register_copy 
+    jmp b2
 }
 
 FINAL SYMBOL TABLE
@@ -1144,12 +1153,13 @@ FINAL SYMBOL TABLE
 (byte~) main::$0 reg byte a 22.0
 (label) main::@1
 (label) main::@2
+(label) main::@6
 (label) main::@return
 (byte) main::i
 (byte) main::i#1 reg byte x 16.5
 (byte) main::i#2 reg byte x 5.5
 (byte) main::j
-(byte) main::j#1 reg byte y 16.5
+(byte) main::j#1 reg byte y 33.0
 (byte) main::j#3 reg byte y 11.0
 (byte) main::j#4 reg byte y 7.333333333333333
 
@@ -1184,20 +1194,26 @@ main: {
     sta SCREEN,x
   //SEG15 [5] (byte) main::j#1 ← ++ (byte) main::j#3 [ main::i#2 main::j#1 ] -- yby=_inc_yby 
     iny
-  //SEG16 [6] if((byte) main::j#1!=(byte) 8) goto main::@2 [ main::i#2 main::j#1 ] -- yby_neq_coby1_then_la1 
+  //SEG16 [6] if((byte) main::j#1!=(byte) 8) goto main::@6 [ main::i#2 ] -- yby_neq_coby1_then_la1 
     cpy #8
-  //SEG17 [7] phi from main::@1 main::@1 to main::@2
-  //SEG18 [7] phi (byte) main::j#4 = (byte) main::j#1 -- register_copy 
-  //SEG19 [7] phi (byte) main::j#4 = (byte) 0 -- yby=coby1 
+    bne b6
+  //SEG17 [7] phi from main::@1 to main::@2
+  //SEG18 [7] phi (byte) main::j#4 = (byte) 0 -- yby=coby1 
     ldy #0
-  //SEG20 main::@2
-  //SEG21 [8] (byte) main::i#1 ← ++ (byte) main::i#2 [ main::j#4 main::i#1 ] -- xby=_inc_xby 
+  //SEG19 main::@2
+  b2:
+  //SEG20 [8] (byte) main::i#1 ← ++ (byte) main::i#2 [ main::j#4 main::i#1 ] -- xby=_inc_xby 
     inx
-  //SEG22 [9] if((byte) main::i#1!=(byte) 101) goto main::@1 [ main::j#4 main::i#1 ] -- xby_neq_coby1_then_la1 
+  //SEG21 [9] if((byte) main::i#1!=(byte) 101) goto main::@1 [ main::j#4 main::i#1 ] -- xby_neq_coby1_then_la1 
     cpx #$65
     bne b1
-  //SEG23 main::@return
-  //SEG24 [10] return  [ ]
+  //SEG22 main::@return
+  //SEG23 [10] return  [ ]
     rts
+  //SEG24 main::@6
+  b6:
+  //SEG25 [7] phi from main::@6 to main::@2
+  //SEG26 [7] phi (byte) main::j#4 = (byte) main::j#1 -- register_copy 
+    jmp b2
 }
 

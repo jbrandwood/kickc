@@ -20,21 +20,39 @@ public class Pass2CullEmptyBlocks extends Pass2SsaOptimization {
          }
       }
 
+      List<ControlFlowBlock> dontRemove = new ArrayList<>();
+
       for (final ControlFlowBlock removeBlock : remove) {
          ControlFlowBlock successor = getGraph().getDefaultSuccessor(removeBlock);
+         LabelRef successorRef = successor.getLabel();
          // Replace all jumps (default/conditional/call) to @removeBlock with a jump to the default successor
          final List<ControlFlowBlock> predecessors = getGraph().getPredecessors(removeBlock);
+
+         // If a candidate remove block has a predecessor that has the same successor as the remove block:
+         // Do not remove it - because this will result in problems in distinguishing the default successor and
+         // the conditional successor when generating the phi-block of the successor
+         boolean dontCull = false;
+         for (ControlFlowBlock predecessor : predecessors) {
+            if(successorRef.equals(predecessor.getConditionalSuccessor()) || successorRef.equals(predecessor.getDefaultSuccessor())) {
+               getLog().append("Not culling empty block because it shares successor with its predecessor. "+removeBlock.getLabel().toString(getProgram()));
+               dontCull = true;
+               dontRemove.add(removeBlock);
+            }
+         }
+         if(dontCull)
+            continue;
+
          for (ControlFlowBlock predecessor : predecessors) {
             Map<LabelRef, LabelRef> replace = new LinkedHashMap<>();
-            replace.put(removeBlock.getLabel(), successor.getLabel());
+            replace.put(removeBlock.getLabel(), successorRef);
             if (removeBlock.getLabel().equals(predecessor.getDefaultSuccessor())) {
-               predecessor.setDefaultSuccessor(successor.getLabel());
+               predecessor.setDefaultSuccessor(successorRef);
             }
             if (removeBlock.getLabel().equals(predecessor.getConditionalSuccessor())) {
-               predecessor.setConditionalSuccessor(successor.getLabel());
+               predecessor.setConditionalSuccessor(successorRef);
             }
             if (removeBlock.getLabel().equals(predecessor.getCallSuccessor())) {
-               predecessor.setCallSuccessor(successor.getLabel());
+               predecessor.setCallSuccessor(successorRef);
             }
             replaceLabels(predecessor, replace);
          }
@@ -69,6 +87,7 @@ public class Pass2CullEmptyBlocks extends Pass2SsaOptimization {
          removeBlockLabel.getScope().remove(removeBlockLabel);
          getLog().append("Culled Empty Block " + removeBlockLabel.toString(getProgram()));
       }
+      remove.removeAll(dontRemove);
       return remove.size()>0;
    }
 

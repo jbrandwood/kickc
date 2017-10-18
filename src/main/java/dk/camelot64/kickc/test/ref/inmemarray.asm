@@ -9,11 +9,13 @@ main: {
     sta SCREEN,x
     iny
     cpy #8
-    bne b2
+    bne b6
     ldy #0
   b2:
     inx
     cpx #$65
     bne b1
     rts
+  b6:
+    jmp b2
 }

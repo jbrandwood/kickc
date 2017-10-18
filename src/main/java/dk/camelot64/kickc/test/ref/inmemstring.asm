@@ -14,9 +14,9 @@ main: {
     sta (cursor),y
     inx
     cpx #8
-    bcc b2_from_b1
+    bne b6
     ldx #0
-b2_from_b1:
+  b2:
     inc cursor
     bne !+
     inc cursor+1
@@ -30,4 +30,6 @@ b2_from_b1:
     bcc b1
   !:
     rts
+  b6:
+    jmp b2
 }

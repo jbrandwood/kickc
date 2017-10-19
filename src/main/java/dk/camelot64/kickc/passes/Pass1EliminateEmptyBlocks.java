@@ -43,10 +43,13 @@ public class Pass1EliminateEmptyBlocks {
          }
       }
       for (LabelRef labelRef : removeList) {
-         graph.remove(labelRef);
-         Label label = program.getScope().getLabel(labelRef);
-         label.getScope().remove(label);
-         log.append("Removing empty block "+labelRef);
+         Symbol removeSymbol = program.getScope().getSymbol(labelRef);
+         if(removeSymbol instanceof Label) {
+            Label label = (Label) removeSymbol;
+            graph.remove(labelRef);
+            label.getScope().remove(label);
+            log.append("Removing empty block "+labelRef);
+         }
       }
       return removeList.size()>0;
    }

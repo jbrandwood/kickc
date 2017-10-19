@@ -497,6 +497,11 @@ public class Pass1GenerateStatementSequence extends KickCBaseVisitor<Object> {
    }
 
    @Override
+   public Object visitExprChar(KickCParser.ExprCharContext ctx) {
+      return new ConstantChar(ctx.getText().charAt(1));
+   }
+
+   @Override
    public RValue visitExprBinary(KickCParser.ExprBinaryContext ctx) {
       RValue left = (RValue) this.visit(ctx.expr(0));
       RValue right = (RValue) this.visit(ctx.expr(1));

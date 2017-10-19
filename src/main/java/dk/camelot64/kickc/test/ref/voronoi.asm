@@ -1,44 +1,12 @@
   .const SCREEN = $400
   .const COLORS = $d800
   .const FILL = $e6
-  .const XPOS = $1000
-  .const YPOS = $1100
-  .const COLS = $1200
-  .label numpoints = 8
+  .const numpoints = 6
+  XPOS: .byte 5, $f, 6, $22, $15, $1f
+  YPOS: .byte 5, 8, $e, 2, $11, $16
+  COLS: .byte 1, 2, 3, 4, 5, 7
   jsr main
 main: {
-    lda #1
-    sta addpoint.c
-    ldy #5
-    lda #0
-    sta numpoints
-    lda #5
-    jsr addpoint
-    lda #2
-    sta addpoint.c
-    ldy #8
-    lda #$f
-    jsr addpoint
-    lda #3
-    sta addpoint.c
-    ldy #$e
-    lda #6
-    jsr addpoint
-    lda #4
-    sta addpoint.c
-    ldy #2
-    lda #$22
-    jsr addpoint
-    lda #5
-    sta addpoint.c
-    ldy #$11
-    lda #$15
-    jsr addpoint
-    lda #7
-    sta addpoint.c
-    ldy #$16
-    lda #$1f
-    jsr addpoint
     jsr initscreen
   b1:
     jsr render
@@ -148,10 +116,10 @@ render: {
     rts
 }
 findcol: {
-    .label x = 9
-    .label y = 10
+    .label x = 8
+    .label y = 9
     .label xp = 7
-    .label yp = 11
+    .label yp = 10
     .label diff = 7
     .label mindiff = 6
     ldy #0
@@ -195,7 +163,7 @@ findcol: {
     ldy COLS,x
   b8:
     inx
-    cpx numpoints
+    cpx #numpoints
     bcc b19
     jmp breturn
   b19:
@@ -240,18 +208,5 @@ initscreen: {
     cmp #<SCREEN+$3e8
     bcc b1
   !:
-    rts
-}
-addpoint: {
-    .label c = 2
-    ldx numpoints
-    sta XPOS,x
-    tya
-    ldy numpoints
-    sta YPOS,y
-    lda c
-    ldx numpoints
-    sta COLS,x
-    inc numpoints
     rts
 }

@@ -87,6 +87,8 @@ public class AsmFragment {
          return asmName.replace("#", "_").replace("$", "_");
       } else if (value instanceof ConstantInteger) {
          return getAsmNumber(((ConstantInteger) value).getNumber());
+      } else if (value instanceof ConstantChar) {
+         return "'"+((ConstantChar) value).getValue()+"'";
       } else if (value instanceof ConstantUnary) {
          ConstantUnary unary = (ConstantUnary) value;
          Operator operator = unary.getOperator();

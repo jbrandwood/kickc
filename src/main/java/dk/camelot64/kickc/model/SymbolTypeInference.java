@@ -104,6 +104,8 @@ public class SymbolTypeInference {
          return rInt.getType(programScope);
       } else if (rValue instanceof ConstantString) {
          type = SymbolTypeBasic.STRING;
+      } else if (rValue instanceof ConstantChar) {
+         type = SymbolTypeBasic.BYTE;
       } else if (rValue instanceof ConstantBool) {
          type = SymbolTypeBasic.BOOLEAN;
       } else if (rValue instanceof ConstantUnary) {

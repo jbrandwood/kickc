@@ -2,8 +2,7 @@
   .const RASTER = $d012
   .const BGCOL = $d020
   .const SCROLL = $d016
-  TEXT: .text "this is rex of camelot testing a scroller created in kickc. kickc is an optimizing c-compiler for 6502 assembler. "
-  STOP: .byte 0
+  TEXT: .text "-= this is rex of camelot testing a scroller created in kickc. kickc is an optimizing c-compiler for 6502 assembler. =-     @"
   jsr main
 main: {
     .const line = SCREEN+$28
@@ -38,7 +37,7 @@ main: {
     bne b5
     ldy #0
     lda (nxt),y
-    cmp #0
+    cmp #'@'
     bne b6
     lda #<TEXT
     sta nxt

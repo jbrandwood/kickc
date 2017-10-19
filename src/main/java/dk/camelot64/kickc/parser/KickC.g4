@@ -72,6 +72,7 @@ expr
     | NAME  #exprId
     | NUMBER #exprNumber
     | STRING #exprString
+    | CHAR #exprChar
     | BOOLEAN #exprBool
     ;
 
@@ -81,6 +82,7 @@ parameterList
 
 SIMPLETYPE: 'byte' | 'word' | 'string' | 'boolean' | 'void' ;
 STRING : '"' ('\\"' | ~'"')* '"';
+CHAR : '\''  ('\\\'' | ~'\'' ) '\'';
 BOOLEAN : 'true' | 'false';
 NUMBER : NUMFLOAT | NUMINT ;
 NUMFLOAT : BINFLOAT | DECFLOAT | HEXFLOAT;

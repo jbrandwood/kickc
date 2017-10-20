@@ -59,4 +59,10 @@ public class SymbolTypeBasic implements SymbolType {
    public int hashCode() {
       return typeName != null ? typeName.hashCode() : 0;
    }
+
+   @Override
+   public String toString() {
+      return getTypeName();
+   }
+
 }

@@ -24,4 +24,10 @@ public class SymbolTypeProcedure implements SymbolType {
    public String getTypeName() {
       return returnType.getTypeName() + "()";
    }
+
+   @Override
+   public String toString() {
+      return getTypeName();
+   }
+
 }

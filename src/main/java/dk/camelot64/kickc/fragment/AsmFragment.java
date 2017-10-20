@@ -89,6 +89,8 @@ public class AsmFragment {
          return getAsmNumber(((ConstantInteger) value).getNumber());
       } else if (value instanceof ConstantChar) {
          return "'"+((ConstantChar) value).getValue()+"'";
+      } else if (value instanceof ConstantString) {
+         return "\""+((ConstantString) value).getValue()+"\"";
       } else if (value instanceof ConstantUnary) {
          ConstantUnary unary = (ConstantUnary) value;
          Operator operator = unary.getOperator();
@@ -251,6 +253,16 @@ public class AsmFragment {
             return "_ror_";
          case "<<":
             return "_rol_";
+         case "&":
+            return "_band_";
+         case "|":
+            return "_bor_";
+         case "^":
+            return "_bxor_";
+         case "!":
+            return "_not_";
+         case "~":
+            return "_bnot_";
          default:
             return op;
       }

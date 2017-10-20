@@ -24,6 +24,10 @@ public class TestCompilationOutput extends TestCase {
       helper = new ReferenceHelper("dk/camelot64/kickc/test/ref/");
    }
 
+   public void testHalfscii() throws IOException, URISyntaxException {
+      compileAndCompare("halfscii");
+   }
+
    public void testLiterals() throws IOException, URISyntaxException {
       compileAndCompare("literals");
    }

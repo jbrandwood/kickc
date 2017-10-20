@@ -52,4 +52,9 @@ public class SymbolTypeArray extends SymbolTypePointer {
       result = 31 * result + (size != null ? size.hashCode() : 0);
       return result;
    }
+
+   @Override
+   public String toString() {
+      return getTypeName();
+   }
 }

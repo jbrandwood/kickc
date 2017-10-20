@@ -62,11 +62,14 @@ expr
     | expr '[' expr ']' #exprArray
     | ('--' | '++' ) expr #exprPreMod
     | expr ('--' | '++' )#exprPostMod
-    | ('+' | '-' | 'not' | '!' | '&' | '*') expr #exprUnary
+    | ('+' | '-' | 'not' | '!' | '&' | '*' | '~' ) expr #exprUnary
     | expr ('>>' | '<<' ) expr #exprBinary
-    | expr ('*' | '/' ) expr #exprBinary
+    | expr ('*' | '/' | '%' ) expr #exprBinary
     | expr ( '+' | '-')  expr #exprBinary
     | expr ( '==' | '!=' | '<>' | '<' | '<=' | '=<' | '>=' | '=>' | '>' ) expr #exprBinary
+    | expr ( '&' ) expr #exprBinary
+    | expr ( '^' ) expr #exprBinary
+    | expr ( '|' ) expr #exprBinary
     | expr ( 'and' | '&&' )  expr #exprBinary
     | expr ( 'or' | '||' )  expr #exprBinary
     | NAME  #exprId

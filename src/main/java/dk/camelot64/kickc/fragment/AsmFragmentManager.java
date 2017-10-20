@@ -29,7 +29,7 @@ public class AsmFragmentManager {
 
    public static Asm6502Parser.FileContext getFragment(String signature) {
       Asm6502Parser.FileContext fragment = fragmentFileCache.get(signature);
-      if(fragment==UNKNOWN) {
+      if (fragment == UNKNOWN) {
          throw new AsmFragment.UnknownFragmentException(signature);
       }
       if (fragment == null) {
@@ -59,41 +59,14 @@ public class AsmFragmentManager {
     * @return The synthesized fragment file contents. Null if the fragment could not be synthesized.
     */
    private static CharStream synthesizeFragment(String signature) {
-      if(signature.startsWith("xby=")) {
-         String subSignature = "aby="+signature.substring(4);
-         CharStream subCharStream = loadOrSynthesizeFragment(subSignature);
-         if(subCharStream!=null) {
-            CharStream result = CharStreams.fromString(subCharStream.toString()+"\ntax\n");
-            return result;
-         }
-      }
-      if(signature.startsWith("yby=")) {
-         String subSignature = "aby="+signature.substring(4);
-         CharStream subCharStream = loadOrSynthesizeFragment(subSignature);
-         if(subCharStream!=null) {
-            CharStream result = CharStreams.fromString(subCharStream.toString()+"\ntay\n");
-            return result;
-         }
-      }
-      if(signature.startsWith("zpby1=")) {
-         if(signature.contains("zpby2")) {
-            String subSignature = "aby="+signature.substring(6).replace("zpby2", "zpby1");
-            CharStream subCharStream = loadOrSynthesizeFragment(subSignature);
-            if(subCharStream!=null) {
-               CharStream result = CharStreams.fromString(subCharStream.toString().replace("zpby1", "zpby2")+"\nsta {zpby1}\n");
-               return result;
-            }
-         } else {
-            String subSignature = "aby="+signature.substring(6);
-            CharStream subCharStream = loadOrSynthesizeFragment(subSignature);
-            if(subCharStream!=null) {
-               CharStream result = CharStreams.fromString(subCharStream.toString()+"\nsta {zpby1}\n");
-               return result;
-            }
-         }
-      }
 
       String sigNew = signature;
+      sigNew = regexpRewriteSignature(sigNew, "(.*)=(.*)_band_aby", "$1=aby_band_$2");
+      sigNew = regexpRewriteSignature(sigNew, "(.*)=(.*)_band_xby", "$1=xby_band_$2");
+      sigNew = regexpRewriteSignature(sigNew, "(.*)=(.*)_band_yby", "$1=yby_band_$2");
+      sigNew = regexpRewriteSignature(sigNew, "(.*)=(.*)_bor_aby", "$1=aby_bor_$2");
+      sigNew = regexpRewriteSignature(sigNew, "(.*)=(.*)_bor_xby", "$1=xby_bor_$2");
+      sigNew = regexpRewriteSignature(sigNew, "(.*)=(.*)_bor_yby", "$1=yby_bor_$2");
       sigNew = regexpRewriteSignature(sigNew, "(.*)=(.*)_plus_aby", "$1=aby_plus_$2");
       sigNew = regexpRewriteSignature(sigNew, "(.*)=(.*)_plus_xby", "$1=xby_plus_$2");
       sigNew = regexpRewriteSignature(sigNew, "(.*)=(.*)_plus_yby", "$1=yby_plus_$2");
@@ -109,8 +82,94 @@ public class AsmFragmentManager {
       sigNew = regexpRewriteSignature(sigNew, "(.*)_neq_aby_then_(.*)", "aby_neq_$1_then_$2");
       sigNew = regexpRewriteSignature(sigNew, "(.*)_neq_xby_then_(.*)", "xby_neq_$1_then_$2");
       sigNew = regexpRewriteSignature(sigNew, "(.*)_neq_yby_then_(.*)", "yby_neq_$1_then_$2");
-      if(!signature.equals(sigNew)) {
-         return loadFragment(sigNew);
+      if (!signature.equals(sigNew)) {
+         CharStream loadFragment = loadFragment(sigNew);
+         if(loadFragment!=null) {
+            return loadFragment;
+         } else {
+            signature = sigNew;
+         }
+      }
+
+      if (signature.startsWith("xby=")) {
+         String subSignature = "aby=" + signature.substring(4);
+         CharStream subCharStream = loadOrSynthesizeFragment(subSignature);
+         if (subCharStream != null) {
+            CharStream result = CharStreams.fromString(subCharStream.toString() + "\ntax\n");
+            return result;
+         }
+      }
+      if (signature.startsWith("yby=")) {
+         String subSignature = "aby=" + signature.substring(4);
+         CharStream subCharStream = loadOrSynthesizeFragment(subSignature);
+         if (subCharStream != null) {
+            CharStream result = CharStreams.fromString(subCharStream.toString() + "\ntay\n");
+            return result;
+         }
+      }
+      if (signature.startsWith("zpby1=")) {
+         String subSignature = "aby=" + signature.substring(6).replace("zpby2", "zpby1").replace("zpby3", "zpby2");
+         CharStream subCharStream = loadOrSynthesizeFragment(subSignature);
+         if (subCharStream != null) {
+            CharStream result = CharStreams.fromString(subCharStream.toString().replace("zpby2", "zpby3").replace("zpby1", "zpby2") + "\nsta {zpby1}\n");
+            return result;
+         }
+      }
+      if (signature.contains("=zpby1_") && !signature.matches(".*=.*aby.*")) {
+         String subSignature = regexpRewriteSignature(signature, "(.*)=zpby1_(.*)", "$1=aby_$2").replace("zpby2", "zpby1").replace("zpby3", "zpby2");
+         CharStream subCharStream = loadOrSynthesizeFragment(subSignature);
+         if (subCharStream != null) {
+            CharStream result = CharStreams.fromString("lda {zpby1}\n"+subCharStream.toString().replace("zpby2", "zpby3").replace("zpby1", "zpby2"));
+            return result;
+         }
+      }
+      if (signature.contains("=xby_") && !signature.matches(".*=.*aby.*")) {
+         String subSignature = regexpRewriteSignature(signature, "(.*)=xby_(.*)", "$1=aby_$2");
+         CharStream subCharStream = loadOrSynthesizeFragment(subSignature);
+         if (subCharStream != null) {
+            CharStream result = CharStreams.fromString("txa\n"+subCharStream.toString());
+            return result;
+         }
+      }
+      if (signature.contains("=yby_") && !signature.matches(".*=.*aby.*")) {
+         String subSignature = regexpRewriteSignature(signature, "(.*)=yby_(.*)", "$1=aby_$2");
+         CharStream subCharStream = loadOrSynthesizeFragment(subSignature);
+         if (subCharStream != null) {
+            CharStream result = CharStreams.fromString("tya\n"+subCharStream.toString());
+            return result;
+         }
+      }
+      if (signature.endsWith("_staridx_aby") && !signature.matches(".*=.*yby.*")) {
+         String subSignature = regexpRewriteSignature(signature, "(.*)=(.*)_staridx_aby", "$1=$2_staridx_yby");
+         CharStream subCharStream = loadOrSynthesizeFragment(subSignature);
+         if (subCharStream != null) {
+            CharStream result = CharStreams.fromString("tay\n"+subCharStream.toString());
+            return result;
+         }
+      }
+      if (signature.endsWith("_staridx_aby") && !signature.matches(".*=.*xby.*")) {
+         String subSignature = regexpRewriteSignature(signature, "(.*)=(.*)_staridx_aby", "$1=$2_staridx_xby");
+         CharStream subCharStream = loadOrSynthesizeFragment(subSignature);
+         if (subCharStream != null) {
+            CharStream result = CharStreams.fromString("tax\n"+subCharStream.toString());
+            return result;
+         }
+      }
+      if (signature.endsWith("_staridx_zpby1") && !signature.matches(".*=.*yby.*")) {
+         String subSignature = regexpRewriteSignature(signature, "(.*)=(.*)_staridx_zpby1", "$1=$2_staridx_yby").replace("zpby2", "zpby1").replace("zpby3", "zpby2");
+         CharStream subCharStream = loadOrSynthesizeFragment(subSignature);
+         if (subCharStream != null) {
+            CharStream result = CharStreams.fromString("ldy {zpby1}\n"+subCharStream.toString().replace("zpby2", "zpby3").replace("zpby1", "zpby2"));
+            return result;
+         }
+      }
+      if (signature.endsWith("_staridx_zpby1") && !signature.matches(".*=.*xby.*")) {
+         String subSignature = regexpRewriteSignature(signature, "(.*)=(.*)_staridx_zpby1", "$1=$2_staridx_xby").replace("zpby2", "zpby1").replace("zpby3", "zpby2");
+         CharStream subCharStream = loadOrSynthesizeFragment(subSignature);
+         if (subCharStream != null) {
+            CharStream result = CharStreams.fromString("ldx {zpby1}\n"+subCharStream.toString().replace("zpby2", "zpby3").replace("zpby1", "zpby2"));
+            return result;
+         }
       }
 
       return null;
@@ -138,7 +197,7 @@ public class AsmFragmentManager {
    private static CharStream loadFragment(String signature) {
       ClassLoader classLoader = AsmFragmentManager.class.getClassLoader();
       URL fragmentUrl = classLoader.getResource("dk/camelot64/kickc/fragment/asm/" + signature + ".asm");
-      if(fragmentUrl==null) {
+      if (fragmentUrl == null) {
          return null;
       }
       try {

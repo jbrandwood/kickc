@@ -2,25 +2,27 @@ byte* SCREEN = $0400;
 
 byte char = 'a';
 byte num = 1;
-byte[] str = "bcd";
-byte[] nums = { 2, 3, 4};
+byte[] str = "bc"+"d"+'e';
+byte[] nums = { 2, 3, 4, 5};
 
 main();
 void main() {
     SCREEN[0] = char;
     SCREEN[2] = num;
-    for(byte i : 0..2) {
+    for(byte i : 0..3) {
         SCREEN[4+i] = str[i];
-        SCREEN[8+i] = nums[i];
+        SCREEN[9+i] = nums[i];
     }
 }
 PROGRAM
   (byte*) SCREEN ← (word) 1024
   (byte) char ← (byte) 'a'
   (byte) num ← (byte) 1
-  (byte[]) str ← (string) "bcd"
-  (byte[]) nums ← { (byte) 2, (byte) 3, (byte) 4 }
-  (void~) $0 ← call main 
+  (string~) $0 ← (string) "bc" + (string) "d"
+  (string~) $1 ← (string~) $0 + (byte) 'e'
+  (byte[]) str ← (string~) $1
+  (byte[]) nums ← { (byte) 2, (byte) 3, (byte) 4, (byte) 5 }
+  (void~) $2 ← call main 
 proc (void()) main()
   *((byte*) SCREEN + (byte) 0) ← (byte) char
   *((byte*) SCREEN + (byte) 2) ← (byte) num
@@ -29,18 +31,20 @@ main::@1:
   (byte~) main::$0 ← (byte) 4 + (byte) main::i
   (byte~) main::$1 ← (byte[]) str *idx (byte) main::i
   *((byte*) SCREEN + (byte~) main::$0) ← (byte~) main::$1
-  (byte~) main::$2 ← (byte) 8 + (byte) main::i
+  (byte~) main::$2 ← (byte) 9 + (byte) main::i
   (byte~) main::$3 ← (byte[]) nums *idx (byte) main::i
   *((byte*) SCREEN + (byte~) main::$2) ← (byte~) main::$3
   (byte) main::i ← ++ (byte) main::i
-  (boolean~) main::$4 ← (byte) main::i != (byte) 3
+  (boolean~) main::$4 ← (byte) main::i != (byte) 4
   if((boolean~) main::$4) goto main::@1
 main::@return:
   return 
 endproc // main()
 
 SYMBOLS
-(void~) $0
+(string~) $0
+(string~) $1
+(void~) $2
 (byte*) SCREEN
 (byte) char
 (void()) main()
@@ -61,9 +65,11 @@ INITIAL CONTROL FLOW GRAPH
   (byte*) SCREEN ← (word) 1024
   (byte) char ← (byte) 'a'
   (byte) num ← (byte) 1
-  (byte[]) str ← (string) "bcd"
-  (byte[]) nums ← { (byte) 2, (byte) 3, (byte) 4 }
-  (void~) $0 ← call main 
+  (string~) $0 ← (string) "bc" + (string) "d"
+  (string~) $1 ← (string~) $0 + (byte) 'e'
+  (byte[]) str ← (string~) $1
+  (byte[]) nums ← { (byte) 2, (byte) 3, (byte) 4, (byte) 5 }
+  (void~) $2 ← call main 
   to:@1
 main: scope:[main]  from
   *((byte*) SCREEN + (byte) 0) ← (byte) char
@@ -74,11 +80,11 @@ main::@1: scope:[main]  from main main::@1
   (byte~) main::$0 ← (byte) 4 + (byte) main::i
   (byte~) main::$1 ← (byte[]) str *idx (byte) main::i
   *((byte*) SCREEN + (byte~) main::$0) ← (byte~) main::$1
-  (byte~) main::$2 ← (byte) 8 + (byte) main::i
+  (byte~) main::$2 ← (byte) 9 + (byte) main::i
   (byte~) main::$3 ← (byte[]) nums *idx (byte) main::i
   *((byte*) SCREEN + (byte~) main::$2) ← (byte~) main::$3
   (byte) main::i ← ++ (byte) main::i
-  (boolean~) main::$4 ← (byte) main::i != (byte) 3
+  (boolean~) main::$4 ← (byte) main::i != (byte) 4
   if((boolean~) main::$4) goto main::@1
   to:main::@2
 main::@2: scope:[main]  from main::@1
@@ -97,9 +103,11 @@ CONTROL FLOW GRAPH
   (byte*) SCREEN ← (word) 1024
   (byte) char ← (byte) 'a'
   (byte) num ← (byte) 1
-  (byte[]) str ← (string) "bcd"
-  (byte[]) nums ← { (byte) 2, (byte) 3, (byte) 4 }
-  (void~) $0 ← call main 
+  (string~) $0 ← (string) "bc" + (string) "d"
+  (string~) $1 ← (string~) $0 + (byte) 'e'
+  (byte[]) str ← (string~) $1
+  (byte[]) nums ← { (byte) 2, (byte) 3, (byte) 4, (byte) 5 }
+  (void~) $2 ← call main 
   to:@end
 main: scope:[main]  from
   *((byte*) SCREEN + (byte) 0) ← (byte) char
@@ -110,11 +118,11 @@ main::@1: scope:[main]  from main main::@1
   (byte~) main::$0 ← (byte) 4 + (byte) main::i
   (byte~) main::$1 ← (byte[]) str *idx (byte) main::i
   *((byte*) SCREEN + (byte~) main::$0) ← (byte~) main::$1
-  (byte~) main::$2 ← (byte) 8 + (byte) main::i
+  (byte~) main::$2 ← (byte) 9 + (byte) main::i
   (byte~) main::$3 ← (byte[]) nums *idx (byte) main::i
   *((byte*) SCREEN + (byte~) main::$2) ← (byte~) main::$3
   (byte) main::i ← ++ (byte) main::i
-  (boolean~) main::$4 ← (byte) main::i != (byte) 3
+  (boolean~) main::$4 ← (byte) main::i != (byte) 4
   if((boolean~) main::$4) goto main::@1
   to:main::@return
 main::@return: scope:[main]  from main::@1
@@ -129,8 +137,10 @@ CONTROL FLOW GRAPH WITH ASSIGNMENT CALL
   (byte*) SCREEN ← (word) 1024
   (byte) char ← (byte) 'a'
   (byte) num ← (byte) 1
-  (byte[]) str ← (string) "bcd"
-  (byte[]) nums ← { (byte) 2, (byte) 3, (byte) 4 }
+  (string~) $0 ← (string) "bc" + (string) "d"
+  (string~) $1 ← (string~) $0 + (byte) 'e'
+  (byte[]) str ← (string~) $1
+  (byte[]) nums ← { (byte) 2, (byte) 3, (byte) 4, (byte) 5 }
   call main param-assignment
   to:@2
 @2: scope:[]  from @begin
@@ -144,11 +154,11 @@ main::@1: scope:[main]  from main main::@1
   (byte~) main::$0 ← (byte) 4 + (byte) main::i
   (byte~) main::$1 ← (byte[]) str *idx (byte) main::i
   *((byte*) SCREEN + (byte~) main::$0) ← (byte~) main::$1
-  (byte~) main::$2 ← (byte) 8 + (byte) main::i
+  (byte~) main::$2 ← (byte) 9 + (byte) main::i
   (byte~) main::$3 ← (byte[]) nums *idx (byte) main::i
   *((byte*) SCREEN + (byte~) main::$2) ← (byte~) main::$3
   (byte) main::i ← ++ (byte) main::i
-  (boolean~) main::$4 ← (byte) main::i != (byte) 3
+  (boolean~) main::$4 ← (byte) main::i != (byte) 4
   if((boolean~) main::$4) goto main::@1
   to:main::@return
 main::@return: scope:[main]  from main::@1
@@ -163,8 +173,10 @@ CONTROL FLOW GRAPH SSA
   (byte*) SCREEN#0 ← (word) 1024
   (byte) char#0 ← (byte) 'a'
   (byte) num#0 ← (byte) 1
-  (byte[]) str#0 ← (string) "bcd"
-  (byte[]) nums#0 ← { (byte) 2, (byte) 3, (byte) 4 }
+  (string~) $0 ← (string) "bc" + (string) "d"
+  (string~) $1 ← (string~) $0 + (byte) 'e'
+  (byte[]) str#0 ← (string~) $1
+  (byte[]) nums#0 ← { (byte) 2, (byte) 3, (byte) 4, (byte) 5 }
   call main param-assignment
   to:@2
 @2: scope:[]  from @begin
@@ -187,11 +199,11 @@ main::@1: scope:[main]  from main main::@1
   (byte~) main::$0 ← (byte) 4 + (byte) main::i#2
   (byte~) main::$1 ← (byte[]) str#1 *idx (byte) main::i#2
   *((byte*) SCREEN#2 + (byte~) main::$0) ← (byte~) main::$1
-  (byte~) main::$2 ← (byte) 8 + (byte) main::i#2
+  (byte~) main::$2 ← (byte) 9 + (byte) main::i#2
   (byte~) main::$3 ← (byte[]) nums#1 *idx (byte) main::i#2
   *((byte*) SCREEN#2 + (byte~) main::$2) ← (byte~) main::$3
   (byte) main::i#1 ← ++ (byte) main::i#2
-  (boolean~) main::$4 ← (byte) main::i#1 != (byte) 3
+  (boolean~) main::$4 ← (byte) main::i#1 != (byte) 4
   if((boolean~) main::$4) goto main::@1
   to:main::@return
 main::@return: scope:[main]  from main::@1
@@ -204,8 +216,10 @@ CONTROL FLOW GRAPH WITH ASSIGNMENT CALL & RETURN
   (byte*) SCREEN#0 ← (word) 1024
   (byte) char#0 ← (byte) 'a'
   (byte) num#0 ← (byte) 1
-  (byte[]) str#0 ← (string) "bcd"
-  (byte[]) nums#0 ← { (byte) 2, (byte) 3, (byte) 4 }
+  (string~) $0 ← (string) "bc" + (string) "d"
+  (string~) $1 ← (string~) $0 + (byte) 'e'
+  (byte[]) str#0 ← (string~) $1
+  (byte[]) nums#0 ← { (byte) 2, (byte) 3, (byte) 4, (byte) 5 }
   call main param-assignment
   to:@2
 @2: scope:[]  from @begin
@@ -228,11 +242,11 @@ main::@1: scope:[main]  from main main::@1
   (byte~) main::$0 ← (byte) 4 + (byte) main::i#2
   (byte~) main::$1 ← (byte[]) str#1 *idx (byte) main::i#2
   *((byte*) SCREEN#2 + (byte~) main::$0) ← (byte~) main::$1
-  (byte~) main::$2 ← (byte) 8 + (byte) main::i#2
+  (byte~) main::$2 ← (byte) 9 + (byte) main::i#2
   (byte~) main::$3 ← (byte[]) nums#1 *idx (byte) main::i#2
   *((byte*) SCREEN#2 + (byte~) main::$2) ← (byte~) main::$3
   (byte) main::i#1 ← ++ (byte) main::i#2
-  (boolean~) main::$4 ← (byte) main::i#1 != (byte) 3
+  (boolean~) main::$4 ← (byte) main::i#1 != (byte) 4
   if((boolean~) main::$4) goto main::@1
   to:main::@return
 main::@return: scope:[main]  from main::@1
@@ -241,6 +255,8 @@ main::@return: scope:[main]  from main::@1
 @end: scope:[]  from @2
 
 INITIAL SSA SYMBOL TABLE
+(string~) $0
+(string~) $1
 (label) @2
 (label) @begin
 (label) @end
@@ -282,8 +298,10 @@ CONTROL FLOW GRAPH
   (byte*) SCREEN#0 ← (word) 1024
   (byte) char#0 ← (byte) 'a'
   (byte) num#0 ← (byte) 1
-  (byte[]) str#0 ← (string) "bcd"
-  (byte[]) nums#0 ← { (byte) 2, (byte) 3, (byte) 4 }
+  (string~) $0 ← (string) "bc" + (string) "d"
+  (string~) $1 ← (string~) $0 + (byte) 'e'
+  (byte[]) str#0 ← (string~) $1
+  (byte[]) nums#0 ← { (byte) 2, (byte) 3, (byte) 4, (byte) 5 }
   call main param-assignment
   to:@end
 main: scope:[main]  from @begin
@@ -304,11 +322,11 @@ main::@1: scope:[main]  from main main::@1
   (byte~) main::$0 ← (byte) 4 + (byte) main::i#2
   (byte~) main::$1 ← (byte[]) str#1 *idx (byte) main::i#2
   *((byte*) SCREEN#2 + (byte~) main::$0) ← (byte~) main::$1
-  (byte~) main::$2 ← (byte) 8 + (byte) main::i#2
+  (byte~) main::$2 ← (byte) 9 + (byte) main::i#2
   (byte~) main::$3 ← (byte[]) nums#1 *idx (byte) main::i#2
   *((byte*) SCREEN#2 + (byte~) main::$2) ← (byte~) main::$3
   (byte) main::i#1 ← ++ (byte) main::i#2
-  (boolean~) main::$4 ← (byte) main::i#1 != (byte) 3
+  (boolean~) main::$4 ← (byte) main::i#1 != (byte) 4
   if((boolean~) main::$4) goto main::@1
   to:main::@return
 main::@return: scope:[main]  from main::@1
@@ -316,10 +334,10 @@ main::@return: scope:[main]  from main::@1
   to:@return
 @end: scope:[]  from @begin
 
+Alias (byte[]) str#0 = (string~) $1 (byte[]) str#2 
 Alias (byte) char#0 = (byte) char#1 
 Alias (byte*) SCREEN#0 = (byte*) SCREEN#1 
 Alias (byte) num#0 = (byte) num#1 
-Alias (byte[]) str#0 = (byte[]) str#2 
 Alias (byte[]) nums#0 = (byte[]) nums#2 
 Succesful SSA optimization Pass2AliasElimination
 CONTROL FLOW GRAPH
@@ -327,8 +345,9 @@ CONTROL FLOW GRAPH
   (byte*) SCREEN#0 ← (word) 1024
   (byte) char#0 ← (byte) 'a'
   (byte) num#0 ← (byte) 1
-  (byte[]) str#0 ← (string) "bcd"
-  (byte[]) nums#0 ← { (byte) 2, (byte) 3, (byte) 4 }
+  (string~) $0 ← (string) "bc" + (string) "d"
+  (byte[]) str#0 ← (string~) $0 + (byte) 'e'
+  (byte[]) nums#0 ← { (byte) 2, (byte) 3, (byte) 4, (byte) 5 }
   call main param-assignment
   to:@end
 main: scope:[main]  from @begin
@@ -344,11 +363,11 @@ main::@1: scope:[main]  from main main::@1
   (byte~) main::$0 ← (byte) 4 + (byte) main::i#2
   (byte~) main::$1 ← (byte[]) str#1 *idx (byte) main::i#2
   *((byte*) SCREEN#2 + (byte~) main::$0) ← (byte~) main::$1
-  (byte~) main::$2 ← (byte) 8 + (byte) main::i#2
+  (byte~) main::$2 ← (byte) 9 + (byte) main::i#2
   (byte~) main::$3 ← (byte[]) nums#1 *idx (byte) main::i#2
   *((byte*) SCREEN#2 + (byte~) main::$2) ← (byte~) main::$3
   (byte) main::i#1 ← ++ (byte) main::i#2
-  (boolean~) main::$4 ← (byte) main::i#1 != (byte) 3
+  (boolean~) main::$4 ← (byte) main::i#1 != (byte) 4
   if((boolean~) main::$4) goto main::@1
   to:main::@return
 main::@return: scope:[main]  from main::@1
@@ -365,8 +384,9 @@ CONTROL FLOW GRAPH
   (byte*) SCREEN#0 ← (word) 1024
   (byte) char#0 ← (byte) 'a'
   (byte) num#0 ← (byte) 1
-  (byte[]) str#0 ← (string) "bcd"
-  (byte[]) nums#0 ← { (byte) 2, (byte) 3, (byte) 4 }
+  (string~) $0 ← (string) "bc" + (string) "d"
+  (byte[]) str#0 ← (string~) $0 + (byte) 'e'
+  (byte[]) nums#0 ← { (byte) 2, (byte) 3, (byte) 4, (byte) 5 }
   call main param-assignment
   to:@end
 main: scope:[main]  from @begin
@@ -382,11 +402,11 @@ main::@1: scope:[main]  from main main::@1
   (byte~) main::$0 ← (byte) 4 + (byte) main::i#2
   (byte~) main::$1 ← (byte[]) str#1 *idx (byte) main::i#2
   *((byte*) SCREEN#2 + (byte~) main::$0) ← (byte~) main::$1
-  (byte~) main::$2 ← (byte) 8 + (byte) main::i#2
+  (byte~) main::$2 ← (byte) 9 + (byte) main::i#2
   (byte~) main::$3 ← (byte[]) nums#1 *idx (byte) main::i#2
   *((byte*) SCREEN#2 + (byte~) main::$2) ← (byte~) main::$3
   (byte) main::i#1 ← ++ (byte) main::i#2
-  (boolean~) main::$4 ← (byte) main::i#1 != (byte) 3
+  (boolean~) main::$4 ← (byte) main::i#1 != (byte) 4
   if((boolean~) main::$4) goto main::@1
   to:main::@return
 main::@return: scope:[main]  from main::@1
@@ -394,15 +414,16 @@ main::@return: scope:[main]  from main::@1
   to:@return
 @end: scope:[]  from @begin
 
-Simple Condition (boolean~) main::$4 if((byte) main::i#1!=(byte) 3) goto main::@1
+Simple Condition (boolean~) main::$4 if((byte) main::i#1!=(byte) 4) goto main::@1
 Succesful SSA optimization Pass2ConditionalJumpSimplification
 CONTROL FLOW GRAPH
 @begin: scope:[]  from
   (byte*) SCREEN#0 ← (word) 1024
   (byte) char#0 ← (byte) 'a'
   (byte) num#0 ← (byte) 1
-  (byte[]) str#0 ← (string) "bcd"
-  (byte[]) nums#0 ← { (byte) 2, (byte) 3, (byte) 4 }
+  (string~) $0 ← (string) "bc" + (string) "d"
+  (byte[]) str#0 ← (string~) $0 + (byte) 'e'
+  (byte[]) nums#0 ← { (byte) 2, (byte) 3, (byte) 4, (byte) 5 }
   call main param-assignment
   to:@end
 main: scope:[main]  from @begin
@@ -418,11 +439,11 @@ main::@1: scope:[main]  from main main::@1
   (byte~) main::$0 ← (byte) 4 + (byte) main::i#2
   (byte~) main::$1 ← (byte[]) str#1 *idx (byte) main::i#2
   *((byte*) SCREEN#2 + (byte~) main::$0) ← (byte~) main::$1
-  (byte~) main::$2 ← (byte) 8 + (byte) main::i#2
+  (byte~) main::$2 ← (byte) 9 + (byte) main::i#2
   (byte~) main::$3 ← (byte[]) nums#1 *idx (byte) main::i#2
   *((byte*) SCREEN#2 + (byte~) main::$2) ← (byte~) main::$3
   (byte) main::i#1 ← ++ (byte) main::i#2
-  if((byte) main::i#1!=(byte) 3) goto main::@1
+  if((byte) main::i#1!=(byte) 4) goto main::@1
   to:main::@return
 main::@return: scope:[main]  from main::@1
   return 
@@ -432,9 +453,41 @@ main::@return: scope:[main]  from main::@1
 Constant (const byte*) SCREEN#0 = 1024
 Constant (const byte) char#0 = 'a'
 Constant (const byte) num#0 = 1
-Constant (const byte[]) str#0 = "bcd"
-Constant (const byte[]) nums#0 = { 2, 3, 4 }
+Constant (const string) $0 = "bc"+"d"
+Constant (const byte[]) nums#0 = { 2, 3, 4, 5 }
 Constant (const byte) main::i#0 = 0
+Succesful SSA optimization Pass2ConstantIdentification
+CONTROL FLOW GRAPH
+@begin: scope:[]  from
+  (byte[]) str#0 ← (const string) $0 + (byte) 'e'
+  call main param-assignment
+  to:@end
+main: scope:[main]  from @begin
+  *((const byte*) SCREEN#0 + (byte) 0) ← (const byte) char#0
+  *((const byte*) SCREEN#0 + (byte) 2) ← (const byte) num#0
+  to:main::@1
+main::@1: scope:[main]  from main main::@1
+  (byte[]) nums#1 ← phi( main/(const byte[]) nums#0 )
+  (byte*) SCREEN#2 ← phi( main/(const byte*) SCREEN#0 )
+  (byte[]) str#1 ← phi( main/(byte[]) str#0 )
+  (byte) main::i#2 ← phi( main/(const byte) main::i#0 main::@1/(byte) main::i#1 )
+  (byte~) main::$0 ← (byte) 4 + (byte) main::i#2
+  (byte~) main::$1 ← (byte[]) str#1 *idx (byte) main::i#2
+  *((byte*) SCREEN#2 + (byte~) main::$0) ← (byte~) main::$1
+  (byte~) main::$2 ← (byte) 9 + (byte) main::i#2
+  (byte~) main::$3 ← (byte[]) nums#1 *idx (byte) main::i#2
+  *((byte*) SCREEN#2 + (byte~) main::$2) ← (byte~) main::$3
+  (byte) main::i#1 ← ++ (byte) main::i#2
+  if((byte) main::i#1!=(byte) 4) goto main::@1
+  to:main::@return
+main::@return: scope:[main]  from main::@1
+  return 
+  to:@return
+@end: scope:[]  from @begin
+
+Constant (const byte[]) str#0 = $0+'e'
+Constant (const byte*) SCREEN#2 = SCREEN#0
+Constant (const byte[]) nums#1 = nums#0
 Succesful SSA optimization Pass2ConstantIdentification
 CONTROL FLOW GRAPH
 @begin: scope:[]  from
@@ -445,18 +498,16 @@ main: scope:[main]  from @begin
   *((const byte*) SCREEN#0 + (byte) 2) ← (const byte) num#0
   to:main::@1
 main::@1: scope:[main]  from main main::@1
-  (byte[]) nums#1 ← phi( main/(const byte[]) nums#0 )
-  (byte*) SCREEN#2 ← phi( main/(const byte*) SCREEN#0 )
   (byte[]) str#1 ← phi( main/(const byte[]) str#0 )
   (byte) main::i#2 ← phi( main/(const byte) main::i#0 main::@1/(byte) main::i#1 )
   (byte~) main::$0 ← (byte) 4 + (byte) main::i#2
   (byte~) main::$1 ← (byte[]) str#1 *idx (byte) main::i#2
-  *((byte*) SCREEN#2 + (byte~) main::$0) ← (byte~) main::$1
-  (byte~) main::$2 ← (byte) 8 + (byte) main::i#2
-  (byte~) main::$3 ← (byte[]) nums#1 *idx (byte) main::i#2
-  *((byte*) SCREEN#2 + (byte~) main::$2) ← (byte~) main::$3
+  *((const byte*) SCREEN#2 + (byte~) main::$0) ← (byte~) main::$1
+  (byte~) main::$2 ← (byte) 9 + (byte) main::i#2
+  (byte~) main::$3 ← (const byte[]) nums#1 *idx (byte) main::i#2
+  *((const byte*) SCREEN#2 + (byte~) main::$2) ← (byte~) main::$3
   (byte) main::i#1 ← ++ (byte) main::i#2
-  if((byte) main::i#1!=(byte) 3) goto main::@1
+  if((byte) main::i#1!=(byte) 4) goto main::@1
   to:main::@return
 main::@return: scope:[main]  from main::@1
   return 
@@ -464,8 +515,6 @@ main::@return: scope:[main]  from main::@1
 @end: scope:[]  from @begin
 
 Constant (const byte[]) str#1 = str#0
-Constant (const byte*) SCREEN#2 = SCREEN#0
-Constant (const byte[]) nums#1 = nums#0
 Succesful SSA optimization Pass2ConstantIdentification
 CONTROL FLOW GRAPH
 @begin: scope:[]  from
@@ -480,11 +529,11 @@ main::@1: scope:[main]  from main main::@1
   (byte~) main::$0 ← (byte) 4 + (byte) main::i#2
   (byte~) main::$1 ← (const byte[]) str#1 *idx (byte) main::i#2
   *((const byte*) SCREEN#2 + (byte~) main::$0) ← (byte~) main::$1
-  (byte~) main::$2 ← (byte) 8 + (byte) main::i#2
+  (byte~) main::$2 ← (byte) 9 + (byte) main::i#2
   (byte~) main::$3 ← (const byte[]) nums#1 *idx (byte) main::i#2
   *((const byte*) SCREEN#2 + (byte~) main::$2) ← (byte~) main::$3
   (byte) main::i#1 ← ++ (byte) main::i#2
-  if((byte) main::i#1!=(byte) 3) goto main::@1
+  if((byte) main::i#1!=(byte) 4) goto main::@1
   to:main::@return
 main::@return: scope:[main]  from main::@1
   return 
@@ -498,7 +547,7 @@ Multiple usages for variable. Not optimizing sub-constant (byte) main::i#2
 Consolidated assigned array index constant in assignment *(SCREEN#2+4 + main::$0)
 Multiple usages for variable. Not optimizing sub-constant (byte) main::i#2
 Multiple usages for variable. Not optimizing sub-constant (byte) main::i#2
-Consolidated assigned array index constant in assignment *(SCREEN#2+8 + main::$2)
+Consolidated assigned array index constant in assignment *(SCREEN#2+9 + main::$2)
 Succesful SSA optimization Pass2ConstantAdditionElimination
 CONTROL FLOW GRAPH
 @begin: scope:[]  from
@@ -515,9 +564,9 @@ main::@1: scope:[main]  from main main::@1
   *((const byte*) SCREEN#2+(byte) 4 + (byte~) main::$0) ← (byte~) main::$1
   (byte~) main::$2 ← (byte) main::i#2
   (byte~) main::$3 ← (const byte[]) nums#1 *idx (byte) main::i#2
-  *((const byte*) SCREEN#2+(byte) 8 + (byte~) main::$2) ← (byte~) main::$3
+  *((const byte*) SCREEN#2+(byte) 9 + (byte~) main::$2) ← (byte~) main::$3
   (byte) main::i#1 ← ++ (byte) main::i#2
-  if((byte) main::i#1!=(byte) 3) goto main::@1
+  if((byte) main::i#1!=(byte) 4) goto main::@1
   to:main::@return
 main::@return: scope:[main]  from main::@1
   return 
@@ -541,9 +590,9 @@ main::@1: scope:[main]  from main main::@1
   (byte~) main::$1 ← (const byte[]) str#1 *idx (byte) main::i#2
   *((const byte*) SCREEN#2+(byte) 4 + (byte) main::i#2) ← (byte~) main::$1
   (byte~) main::$3 ← (const byte[]) nums#1 *idx (byte) main::i#2
-  *((const byte*) SCREEN#2+(byte) 8 + (byte) main::i#2) ← (byte~) main::$3
+  *((const byte*) SCREEN#2+(byte) 9 + (byte) main::i#2) ← (byte~) main::$3
   (byte) main::i#1 ← ++ (byte) main::i#2
-  if((byte) main::i#1!=(byte) 3) goto main::@1
+  if((byte) main::i#1!=(byte) 4) goto main::@1
   to:main::@return
 main::@return: scope:[main]  from main::@1
   return 
@@ -560,6 +609,7 @@ Multiple usages for variable. Not optimizing sub-constant (byte) main::i#2
 Multiple usages for variable. Not optimizing sub-constant (byte) main::i#2
 Constant inlined SCREEN#2 = (const byte*) SCREEN#0
 Constant inlined str#1 = (const byte[]) str#0
+Constant inlined $0 = (string) "bc"+(string) "d"
 Constant inlined main::i#0 = (byte) 0
 Constant inlined nums#1 = (const byte[]) nums#0
 Succesful SSA optimization Pass2ConstantInlining
@@ -576,9 +626,9 @@ main::@1: scope:[main]  from main main::@1
   (byte~) main::$1 ← (const byte[]) str#0 *idx (byte) main::i#2
   *((const byte*) SCREEN#0+(byte) 4 + (byte) main::i#2) ← (byte~) main::$1
   (byte~) main::$3 ← (const byte[]) nums#0 *idx (byte) main::i#2
-  *((const byte*) SCREEN#0+(byte) 8 + (byte) main::i#2) ← (byte~) main::$3
+  *((const byte*) SCREEN#0+(byte) 9 + (byte) main::i#2) ← (byte~) main::$3
   (byte) main::i#1 ← ++ (byte) main::i#2
-  if((byte) main::i#1!=(byte) 3) goto main::@1
+  if((byte) main::i#1!=(byte) 4) goto main::@1
   to:main::@return
 main::@return: scope:[main]  from main::@1
   return 
@@ -603,9 +653,9 @@ FINAL SYMBOL TABLE
 (byte) num
 (const byte) num#0 = (byte) 1
 (byte[]) nums
-(const byte[]) nums#0 = { (byte) 2, (byte) 3, (byte) 4 }
+(const byte[]) nums#0 = { (byte) 2, (byte) 3, (byte) 4, (byte) 5 }
 (byte[]) str
-(const byte[]) str#0 = (string) "bcd"
+(const byte[]) str#0 = (string) "bc"+(string) "d"+(byte) 'e'
 
 Block Sequence Planned @begin @end main main::@1 main::@return 
 Added new block during phi lifting main::@3(between main::@1 and main::@1)
@@ -624,9 +674,9 @@ main::@1: scope:[main]  from main main::@3
   (byte~) main::$1 ← (const byte[]) str#0 *idx (byte) main::i#2
   *((const byte*) SCREEN#0+(byte) 4 + (byte) main::i#2) ← (byte~) main::$1
   (byte~) main::$3 ← (const byte[]) nums#0 *idx (byte) main::i#2
-  *((const byte*) SCREEN#0+(byte) 8 + (byte) main::i#2) ← (byte~) main::$3
+  *((const byte*) SCREEN#0+(byte) 9 + (byte) main::i#2) ← (byte~) main::$3
   (byte) main::i#1 ← ++ (byte) main::i#2
-  if((byte) main::i#1!=(byte) 3) goto main::@3
+  if((byte) main::i#1!=(byte) 4) goto main::@3
   to:main::@return
 main::@return: scope:[main]  from main::@1
   return 
@@ -654,9 +704,9 @@ main::@1: scope:[main]  from main main::@3
   [4] (byte~) main::$1 ← (const byte[]) str#0 *idx (byte) main::i#2 [ main::i#2 main::$1 ]
   [5] *((const byte*) SCREEN#0+(byte) 4 + (byte) main::i#2) ← (byte~) main::$1 [ main::i#2 ]
   [6] (byte~) main::$3 ← (const byte[]) nums#0 *idx (byte) main::i#2 [ main::i#2 main::$3 ]
-  [7] *((const byte*) SCREEN#0+(byte) 8 + (byte) main::i#2) ← (byte~) main::$3 [ main::i#2 ]
+  [7] *((const byte*) SCREEN#0+(byte) 9 + (byte) main::i#2) ← (byte~) main::$3 [ main::i#2 ]
   [8] (byte) main::i#1 ← ++ (byte) main::i#2 [ main::i#1 ]
-  [9] if((byte) main::i#1!=(byte) 3) goto main::@3 [ main::i#1 ]
+  [9] if((byte) main::i#1!=(byte) 4) goto main::@3 [ main::i#1 ]
   to:main::@return
 main::@return: scope:[main]  from main::@1
   [10] return  [ ]
@@ -686,9 +736,9 @@ main::@1: scope:[main]  from main main::@1
   [4] (byte~) main::$1 ← (const byte[]) str#0 *idx (byte) main::i#2 [ main::i#2 main::$1 ]
   [5] *((const byte*) SCREEN#0+(byte) 4 + (byte) main::i#2) ← (byte~) main::$1 [ main::i#2 ]
   [6] (byte~) main::$3 ← (const byte[]) nums#0 *idx (byte) main::i#2 [ main::i#2 main::$3 ]
-  [7] *((const byte*) SCREEN#0+(byte) 8 + (byte) main::i#2) ← (byte~) main::$3 [ main::i#2 ]
+  [7] *((const byte*) SCREEN#0+(byte) 9 + (byte) main::i#2) ← (byte~) main::$3 [ main::i#2 ]
   [8] (byte) main::i#1 ← ++ (byte) main::i#2 [ main::i#1 ]
-  [9] if((byte) main::i#1!=(byte) 3) goto main::@1 [ main::i#1 ]
+  [9] if((byte) main::i#1!=(byte) 4) goto main::@1 [ main::i#1 ]
   to:main::@return
 main::@return: scope:[main]  from main::@1
   [10] return  [ ]
@@ -742,8 +792,8 @@ INITIAL ASM
   .const SCREEN = $400
   .const char = 'a'
   .const num = 1
-  str: .text "bcd"
-  nums: .byte 2, 3, 4
+  .const str = "bc"+"d"+'e'
+  nums: .byte 2, 3, 4, 5
 //SEG1 @begin
 bbegin:
 //SEG2 [0] call main param-assignment [ ]
@@ -786,15 +836,15 @@ main: {
     ldx i
     lda nums,x
     sta _3
-  //SEG15 [7] *((const byte*) SCREEN#0+(byte) 8 + (byte) main::i#2) ← (byte~) main::$3 [ main::i#2 ] -- cowo1_staridx_zpby1=zpby2 
+  //SEG15 [7] *((const byte*) SCREEN#0+(byte) 9 + (byte) main::i#2) ← (byte~) main::$3 [ main::i#2 ] -- cowo1_staridx_zpby1=zpby2 
     lda _3
     ldx i
-    sta SCREEN+8,x
+    sta SCREEN+9,x
   //SEG16 [8] (byte) main::i#1 ← ++ (byte) main::i#2 [ main::i#1 ] -- zpby1=_inc_zpby1 
     inc i
-  //SEG17 [9] if((byte) main::i#1!=(byte) 3) goto main::@1 [ main::i#1 ] -- zpby1_neq_coby1_then_la1 
+  //SEG17 [9] if((byte) main::i#1!=(byte) 4) goto main::@1 [ main::i#1 ] -- zpby1_neq_coby1_then_la1 
     lda i
-    cmp #3
+    cmp #4
     bne b1_from_b1
     jmp breturn
   //SEG18 main::@return
@@ -827,8 +877,8 @@ ASSEMBLER
   .const SCREEN = $400
   .const char = 'a'
   .const num = 1
-  str: .text "bcd"
-  nums: .byte 2, 3, 4
+  .const str = "bc"+"d"+'e'
+  nums: .byte 2, 3, 4, 5
 //SEG1 @begin
 bbegin:
 //SEG2 [0] call main param-assignment [ ]
@@ -859,12 +909,12 @@ main: {
     sta SCREEN+4,x
   //SEG14 [6] (byte~) main::$3 ← (const byte[]) nums#0 *idx (byte) main::i#2 [ main::i#2 main::$3 ] -- aby=cowo1_staridx_xby 
     lda nums,x
-  //SEG15 [7] *((const byte*) SCREEN#0+(byte) 8 + (byte) main::i#2) ← (byte~) main::$3 [ main::i#2 ] -- cowo1_staridx_xby=aby 
-    sta SCREEN+8,x
+  //SEG15 [7] *((const byte*) SCREEN#0+(byte) 9 + (byte) main::i#2) ← (byte~) main::$3 [ main::i#2 ] -- cowo1_staridx_xby=aby 
+    sta SCREEN+9,x
   //SEG16 [8] (byte) main::i#1 ← ++ (byte) main::i#2 [ main::i#1 ] -- xby=_inc_xby 
     inx
-  //SEG17 [9] if((byte) main::i#1!=(byte) 3) goto main::@1 [ main::i#1 ] -- xby_neq_coby1_then_la1 
-    cpx #3
+  //SEG17 [9] if((byte) main::i#1!=(byte) 4) goto main::@1 [ main::i#1 ] -- xby_neq_coby1_then_la1 
+    cpx #4
     bne b1_from_b1
   //SEG18 main::@return
   breturn:
@@ -880,8 +930,8 @@ ASSEMBLER
   .const SCREEN = $400
   .const char = 'a'
   .const num = 1
-  str: .text "bcd"
-  nums: .byte 2, 3, 4
+  .const str = "bc"+"d"+'e'
+  nums: .byte 2, 3, 4, 5
 //SEG1 @begin
 bbegin:
 //SEG2 [0] call main param-assignment [ ]
@@ -911,12 +961,12 @@ main: {
     sta SCREEN+4,x
   //SEG14 [6] (byte~) main::$3 ← (const byte[]) nums#0 *idx (byte) main::i#2 [ main::i#2 main::$3 ] -- aby=cowo1_staridx_xby 
     lda nums,x
-  //SEG15 [7] *((const byte*) SCREEN#0+(byte) 8 + (byte) main::i#2) ← (byte~) main::$3 [ main::i#2 ] -- cowo1_staridx_xby=aby 
-    sta SCREEN+8,x
+  //SEG15 [7] *((const byte*) SCREEN#0+(byte) 9 + (byte) main::i#2) ← (byte~) main::$3 [ main::i#2 ] -- cowo1_staridx_xby=aby 
+    sta SCREEN+9,x
   //SEG16 [8] (byte) main::i#1 ← ++ (byte) main::i#2 [ main::i#1 ] -- xby=_inc_xby 
     inx
-  //SEG17 [9] if((byte) main::i#1!=(byte) 3) goto main::@1 [ main::i#1 ] -- xby_neq_coby1_then_la1 
-    cpx #3
+  //SEG17 [9] if((byte) main::i#1!=(byte) 4) goto main::@1 [ main::i#1 ] -- xby_neq_coby1_then_la1 
+    cpx #4
     bne b1
   //SEG18 main::@return
   breturn:
@@ -934,8 +984,8 @@ ASSEMBLER
   .const SCREEN = $400
   .const char = 'a'
   .const num = 1
-  str: .text "bcd"
-  nums: .byte 2, 3, 4
+  .const str = "bc"+"d"+'e'
+  nums: .byte 2, 3, 4, 5
 //SEG1 @begin
 //SEG2 [0] call main param-assignment [ ]
   jsr main
@@ -962,12 +1012,12 @@ main: {
     sta SCREEN+4,x
   //SEG14 [6] (byte~) main::$3 ← (const byte[]) nums#0 *idx (byte) main::i#2 [ main::i#2 main::$3 ] -- aby=cowo1_staridx_xby 
     lda nums,x
-  //SEG15 [7] *((const byte*) SCREEN#0+(byte) 8 + (byte) main::i#2) ← (byte~) main::$3 [ main::i#2 ] -- cowo1_staridx_xby=aby 
-    sta SCREEN+8,x
+  //SEG15 [7] *((const byte*) SCREEN#0+(byte) 9 + (byte) main::i#2) ← (byte~) main::$3 [ main::i#2 ] -- cowo1_staridx_xby=aby 
+    sta SCREEN+9,x
   //SEG16 [8] (byte) main::i#1 ← ++ (byte) main::i#2 [ main::i#1 ] -- xby=_inc_xby 
     inx
-  //SEG17 [9] if((byte) main::i#1!=(byte) 3) goto main::@1 [ main::i#1 ] -- xby_neq_coby1_then_la1 
-    cpx #3
+  //SEG17 [9] if((byte) main::i#1!=(byte) 4) goto main::@1 [ main::i#1 ] -- xby_neq_coby1_then_la1 
+    cpx #4
     bne b1
   //SEG18 main::@return
   //SEG19 [10] return  [ ]
@@ -981,8 +1031,8 @@ ASSEMBLER
   .const SCREEN = $400
   .const char = 'a'
   .const num = 1
-  str: .text "bcd"
-  nums: .byte 2, 3, 4
+  .const str = "bc"+"d"+'e'
+  nums: .byte 2, 3, 4, 5
 //SEG1 @begin
 //SEG2 [0] call main param-assignment [ ]
   jsr main
@@ -1008,12 +1058,12 @@ main: {
     sta SCREEN+4,x
   //SEG14 [6] (byte~) main::$3 ← (const byte[]) nums#0 *idx (byte) main::i#2 [ main::i#2 main::$3 ] -- aby=cowo1_staridx_xby 
     lda nums,x
-  //SEG15 [7] *((const byte*) SCREEN#0+(byte) 8 + (byte) main::i#2) ← (byte~) main::$3 [ main::i#2 ] -- cowo1_staridx_xby=aby 
-    sta SCREEN+8,x
+  //SEG15 [7] *((const byte*) SCREEN#0+(byte) 9 + (byte) main::i#2) ← (byte~) main::$3 [ main::i#2 ] -- cowo1_staridx_xby=aby 
+    sta SCREEN+9,x
   //SEG16 [8] (byte) main::i#1 ← ++ (byte) main::i#2 [ main::i#1 ] -- xby=_inc_xby 
     inx
-  //SEG17 [9] if((byte) main::i#1!=(byte) 3) goto main::@1 [ main::i#1 ] -- xby_neq_coby1_then_la1 
-    cpx #3
+  //SEG17 [9] if((byte) main::i#1!=(byte) 4) goto main::@1 [ main::i#1 ] -- xby_neq_coby1_then_la1 
+    cpx #4
     bne b1
   //SEG18 main::@return
   //SEG19 [10] return  [ ]
@@ -1038,9 +1088,9 @@ FINAL SYMBOL TABLE
 (byte) num
 (const byte) num#0 num = (byte) 1
 (byte[]) nums
-(const byte[]) nums#0 nums = { (byte) 2, (byte) 3, (byte) 4 }
+(const byte[]) nums#0 nums = { (byte) 2, (byte) 3, (byte) 4, (byte) 5 }
 (byte[]) str
-(const byte[]) str#0 str = (string) "bcd"
+(const byte[]) str#0 str = (string) "bc"+(string) "d"+(byte) 'e'
 
 reg byte x [ main::i#2 main::i#1 ]
 reg byte a [ main::$1 ]
@@ -1051,8 +1101,8 @@ FINAL CODE
   .const SCREEN = $400
   .const char = 'a'
   .const num = 1
-  str: .text "bcd"
-  nums: .byte 2, 3, 4
+  .const str = "bc"+"d"+'e'
+  nums: .byte 2, 3, 4, 5
 //SEG1 @begin
 //SEG2 [0] call main param-assignment [ ]
   jsr main
@@ -1078,12 +1128,12 @@ main: {
     sta SCREEN+4,x
   //SEG14 [6] (byte~) main::$3 ← (const byte[]) nums#0 *idx (byte) main::i#2 [ main::i#2 main::$3 ] -- aby=cowo1_staridx_xby 
     lda nums,x
-  //SEG15 [7] *((const byte*) SCREEN#0+(byte) 8 + (byte) main::i#2) ← (byte~) main::$3 [ main::i#2 ] -- cowo1_staridx_xby=aby 
-    sta SCREEN+8,x
+  //SEG15 [7] *((const byte*) SCREEN#0+(byte) 9 + (byte) main::i#2) ← (byte~) main::$3 [ main::i#2 ] -- cowo1_staridx_xby=aby 
+    sta SCREEN+9,x
   //SEG16 [8] (byte) main::i#1 ← ++ (byte) main::i#2 [ main::i#1 ] -- xby=_inc_xby 
     inx
-  //SEG17 [9] if((byte) main::i#1!=(byte) 3) goto main::@1 [ main::i#1 ] -- xby_neq_coby1_then_la1 
-    cpx #3
+  //SEG17 [9] if((byte) main::i#1!=(byte) 4) goto main::@1 [ main::i#1 ] -- xby_neq_coby1_then_la1 
+    cpx #4
     bne b1
   //SEG18 main::@return
   //SEG19 [10] return  [ ]

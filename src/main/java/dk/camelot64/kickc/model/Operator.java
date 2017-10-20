@@ -39,6 +39,20 @@ public class Operator {
             return GE;
          case "*idx":
             return STAR_IDX;
+         case "&&":
+            return LOGIC_AND;
+         case "||":
+            return LOGIC_OR;
+         case "&":
+            return BOOL_AND;
+         case "|":
+            return BOOL_OR;
+         case "^":
+            return BOOL_XOR;
+         case "<<":
+            return SHIFT_LEFT;
+         case ">>":
+            return SHIFT_RIGHT;
          default:
             throw new RuntimeException("Unknown operator " + op);
       }
@@ -56,6 +70,8 @@ public class Operator {
             return DECREMENT;
          case "!":
             return NOT;
+         case "~":
+            return BOOL_NOT;
          case "*":
             return STAR;
          default:
@@ -71,6 +87,7 @@ public class Operator {
    public static Operator DECREMENT = new Operator("--", Type.UNARY, 1);
    public static Operator UNARY_PLUS = new Operator("+", Type.UNARY, 2);
    public static Operator UNARY_MINUS = new Operator("-", Type.UNARY, 2);
+   public static Operator BOOL_NOT = new Operator("~", Type.UNARY, 2);
    public static Operator NOT = new Operator("!", Type.UNARY, 2);
    public static Operator STAR = new Operator("*", Type.UNARY, 2);
    public static Operator STAR_IDX = new Operator("*idx", Type.BINARY, 2);
@@ -78,12 +95,19 @@ public class Operator {
    public static Operator DIVIDE = new Operator("/", Type.BINARY, 3);
    public static Operator PLUS = new Operator("+", Type.BINARY, 4);
    public static Operator MINUS = new Operator("-", Type.BINARY, 4);
+   public static Operator SHIFT_LEFT = new Operator("<<", Type.BINARY, 5);
+   public static Operator SHIFT_RIGHT = new Operator(">>", Type.BINARY, 5);
    public static Operator LT = new Operator("<", Type.BINARY, 6);
    public static Operator LE = new Operator("<=", Type.BINARY, 6);
    public static Operator GT = new Operator(">", Type.BINARY, 6);
    public static Operator GE = new Operator(">=", Type.BINARY, 6);
    public static Operator EQ = new Operator("==", Type.BINARY, 7);
    public static Operator NEQ = new Operator("!=", Type.BINARY, 7);
+   public static Operator BOOL_AND = new Operator("&", Type.BINARY, 8);
+   public static Operator BOOL_XOR = new Operator("^", Type.BINARY, 9);
+   public static Operator BOOL_OR = new Operator("|", Type.BINARY, 10);
+   public static Operator LOGIC_AND = new Operator("&&", Type.BINARY, 11);
+   public static Operator LOGIC_OR = new Operator("||", Type.BINARY, 12);
 
    public String getOperator() {
       return operator;

@@ -24,4 +24,10 @@ public class SymbolTypeProgram implements SymbolType {
    public boolean equals(Object obj) {
       return (obj instanceof SymbolTypeProgram);
    }
+
+   @Override
+   public String toString() {
+      return getTypeName();
+   }
+
 }

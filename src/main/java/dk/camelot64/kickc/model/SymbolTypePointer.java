@@ -47,4 +47,10 @@ public class SymbolTypePointer implements SymbolType {
    public int hashCode() {
       return elementType != null ? elementType.hashCode() : 0;
    }
+
+   @Override
+   public String toString() {
+      return getTypeName();
+   }
+
 }

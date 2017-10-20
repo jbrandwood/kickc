@@ -38,7 +38,13 @@ public class SymbolTypeInference {
          case "or":
             return SymbolTypeBasic.BOOLEAN;
          case "+":
+            if (type1.equals(SymbolTypeBasic.STRING) && SymbolTypeBasic.BYTE.equals(type2)) {
+               return SymbolTypeBasic.STRING;
+            } else if (type1.equals(SymbolTypeBasic.STRING) && SymbolTypeBasic.STRING.equals(type2)) {
+            return SymbolTypeBasic.STRING;
+         }
          case "-":
+            // Also continues "+"
             if (type1 instanceof SymbolTypePointer && (type2.equals(SymbolTypeBasic.BYTE) || type2.equals(SymbolTypeBasic.WORD))) {
                return new SymbolTypePointer(((SymbolTypePointer) type1).getElementType());
             }
@@ -69,6 +75,9 @@ public class SymbolTypeInference {
             }
             throw new RuntimeException("Type inference case not handled " + type1 + " " + operator + " " + type2);
          case "/":
+         case "&":
+         case "|":
+         case "^":
             if (SymbolTypeBasic.WORD.equals(type1) || SymbolTypeBasic.WORD.equals(type2)) {
                return SymbolTypeBasic.WORD;
             } else if (SymbolTypeBasic.BYTE.equals(type1) && SymbolTypeBasic.BYTE.equals(type2)) {

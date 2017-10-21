@@ -1,2 +1,0 @@
-asl
-sta {zpby1}

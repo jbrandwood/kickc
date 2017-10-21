@@ -108,7 +108,7 @@ public class AsmFragmentManager {
          }
       }
       if (signature.startsWith("zpby1=")) {
-         String subSignature = "aby=" + signature.substring(6).replace("zpby2", "zpby1").replace("zpby3", "zpby2");
+         String subSignature = "aby=" + signature.substring(6).replace("zpby1", "aby").replace("zpby2", "zpby1").replace("zpby3", "zpby2");
          CharStream subCharStream = loadOrSynthesizeFragment(subSignature);
          if (subCharStream != null) {
             CharStream result = CharStreams.fromString(subCharStream.toString().replace("zpby2", "zpby3").replace("zpby1", "zpby2") + "\nsta {zpby1}\n");

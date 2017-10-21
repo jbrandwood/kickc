@@ -1,0 +1,1427 @@
+byte* SCREEN = $0400;
+byte* SCROLL = $d016;
+byte[] TEXT = "tst @";
+main();
+
+void main() {
+    byte* nxt = TEXT;
+    byte i=0;
+    do {
+        byte c = *nxt;
+        if(c=='@') {
+           nxt = TEXT;
+           c = *nxt;
+        }
+        SCREEN[++i] = c;
+        nxt++;
+    } while (true)
+}
+
+Adding pre/post-modifier (byte) main::i ← ++ (byte) main::i
+Adding pre/post-modifier (byte*) main::nxt ← ++ (byte*) main::nxt
+PROGRAM
+  (byte*) SCREEN ← (word) 1024
+  (byte*) SCROLL ← (word) 53270
+  (byte[]) TEXT ← (string) "tst @"
+  (void~) $0 ← call main 
+proc (void()) main()
+  (byte*) main::nxt ← (byte[]) TEXT
+  (byte) main::i ← (byte) 0
+main::@1:
+  (byte~) main::$0 ← * (byte*) main::nxt
+  (byte) main::c ← (byte~) main::$0
+  (boolean~) main::$1 ← (byte) main::c == (byte) '@'
+  (boolean~) main::$2 ← ! (boolean~) main::$1
+  if((boolean~) main::$2) goto main::@2
+  (byte*) main::nxt ← (byte[]) TEXT
+  (byte~) main::$3 ← * (byte*) main::nxt
+  (byte) main::c ← (byte~) main::$3
+main::@2:
+  (byte) main::i ← ++ (byte) main::i
+  *((byte*) SCREEN + (byte) main::i) ← (byte) main::c
+  (byte*) main::nxt ← ++ (byte*) main::nxt
+  if(true) goto main::@1
+main::@return:
+  return 
+endproc // main()
+
+SYMBOLS
+(void~) $0
+(byte*) SCREEN
+(byte*) SCROLL
+(byte[]) TEXT
+(void()) main()
+(byte~) main::$0
+(boolean~) main::$1
+(boolean~) main::$2
+(byte~) main::$3
+(label) main::@1
+(label) main::@2
+(label) main::@return
+(byte) main::c
+(byte) main::i
+(byte*) main::nxt
+
+INITIAL CONTROL FLOW GRAPH
+@begin: scope:[]  from
+  (byte*) SCREEN ← (word) 1024
+  (byte*) SCROLL ← (word) 53270
+  (byte[]) TEXT ← (string) "tst @"
+  (void~) $0 ← call main 
+  to:@1
+main: scope:[main]  from
+  (byte*) main::nxt ← (byte[]) TEXT
+  (byte) main::i ← (byte) 0
+  to:main::@1
+main::@1: scope:[main]  from main main::@2
+  (byte~) main::$0 ← * (byte*) main::nxt
+  (byte) main::c ← (byte~) main::$0
+  (boolean~) main::$1 ← (byte) main::c == (byte) '@'
+  (boolean~) main::$2 ← ! (boolean~) main::$1
+  if((boolean~) main::$2) goto main::@2
+  to:main::@3
+main::@2: scope:[main]  from main::@1 main::@3
+  (byte) main::i ← ++ (byte) main::i
+  *((byte*) SCREEN + (byte) main::i) ← (byte) main::c
+  (byte*) main::nxt ← ++ (byte*) main::nxt
+  if(true) goto main::@1
+  to:main::@4
+main::@3: scope:[main]  from main::@1
+  (byte*) main::nxt ← (byte[]) TEXT
+  (byte~) main::$3 ← * (byte*) main::nxt
+  (byte) main::c ← (byte~) main::$3
+  to:main::@2
+main::@4: scope:[main]  from main::@2
+  to:main::@return
+main::@return: scope:[main]  from main::@4
+  return 
+  to:@return
+@1: scope:[]  from @begin
+  to:@end
+@end: scope:[]  from @1
+
+Removing empty block main::@4
+Removing empty block @1
+CONTROL FLOW GRAPH
+@begin: scope:[]  from
+  (byte*) SCREEN ← (word) 1024
+  (byte*) SCROLL ← (word) 53270
+  (byte[]) TEXT ← (string) "tst @"
+  (void~) $0 ← call main 
+  to:@end
+main: scope:[main]  from
+  (byte*) main::nxt ← (byte[]) TEXT
+  (byte) main::i ← (byte) 0
+  to:main::@1
+main::@1: scope:[main]  from main main::@2
+  (byte~) main::$0 ← * (byte*) main::nxt
+  (byte) main::c ← (byte~) main::$0
+  (boolean~) main::$1 ← (byte) main::c == (byte) '@'
+  (boolean~) main::$2 ← ! (boolean~) main::$1
+  if((boolean~) main::$2) goto main::@2
+  to:main::@3
+main::@2: scope:[main]  from main::@1 main::@3
+  (byte) main::i ← ++ (byte) main::i
+  *((byte*) SCREEN + (byte) main::i) ← (byte) main::c
+  (byte*) main::nxt ← ++ (byte*) main::nxt
+  if(true) goto main::@1
+  to:main::@return
+main::@3: scope:[main]  from main::@1
+  (byte*) main::nxt ← (byte[]) TEXT
+  (byte~) main::$3 ← * (byte*) main::nxt
+  (byte) main::c ← (byte~) main::$3
+  to:main::@2
+main::@return: scope:[main]  from main::@2
+  return 
+  to:@return
+@end: scope:[]  from @begin
+
+PROCEDURE MODIFY VARIABLE ANALYSIS
+
+CONTROL FLOW GRAPH WITH ASSIGNMENT CALL
+@begin: scope:[]  from
+  (byte*) SCREEN ← (word) 1024
+  (byte*) SCROLL ← (word) 53270
+  (byte[]) TEXT ← (string) "tst @"
+  call main param-assignment
+  to:@2
+@2: scope:[]  from @begin
+  to:@end
+main: scope:[main]  from @begin
+  (byte*) main::nxt ← (byte[]) TEXT
+  (byte) main::i ← (byte) 0
+  to:main::@1
+main::@1: scope:[main]  from main main::@2
+  (byte~) main::$0 ← * (byte*) main::nxt
+  (byte) main::c ← (byte~) main::$0
+  (boolean~) main::$1 ← (byte) main::c == (byte) '@'
+  (boolean~) main::$2 ← ! (boolean~) main::$1
+  if((boolean~) main::$2) goto main::@2
+  to:main::@3
+main::@2: scope:[main]  from main::@1 main::@3
+  (byte) main::i ← ++ (byte) main::i
+  *((byte*) SCREEN + (byte) main::i) ← (byte) main::c
+  (byte*) main::nxt ← ++ (byte*) main::nxt
+  if(true) goto main::@1
+  to:main::@return
+main::@3: scope:[main]  from main::@1
+  (byte*) main::nxt ← (byte[]) TEXT
+  (byte~) main::$3 ← * (byte*) main::nxt
+  (byte) main::c ← (byte~) main::$3
+  to:main::@2
+main::@return: scope:[main]  from main::@2
+  return 
+  to:@return
+@end: scope:[]  from @2
+
+Completing Phi functions...
+Completing Phi functions...
+Completing Phi functions...
+CONTROL FLOW GRAPH SSA
+@begin: scope:[]  from
+  (byte*) SCREEN#0 ← (word) 1024
+  (byte*) SCROLL#0 ← (word) 53270
+  (byte[]) TEXT#0 ← (string) "tst @"
+  call main param-assignment
+  to:@2
+@2: scope:[]  from @begin
+  to:@end
+main: scope:[main]  from @begin
+  (byte*) SCREEN#4 ← phi( @begin/(byte*) SCREEN#0 )
+  (byte[]) TEXT#1 ← phi( @begin/(byte[]) TEXT#0 )
+  (byte*) main::nxt#0 ← (byte[]) TEXT#1
+  (byte) main::i#0 ← (byte) 0
+  to:main::@1
+main::@1: scope:[main]  from main main::@2
+  (byte[]) TEXT#3 ← phi( main/(byte[]) TEXT#1 main::@2/(byte[]) TEXT#4 )
+  (byte*) SCREEN#2 ← phi( main/(byte*) SCREEN#4 main::@2/(byte*) SCREEN#1 )
+  (byte) main::i#3 ← phi( main/(byte) main::i#0 main::@2/(byte) main::i#1 )
+  (byte*) main::nxt#3 ← phi( main/(byte*) main::nxt#0 main::@2/(byte*) main::nxt#1 )
+  (byte~) main::$0 ← * (byte*) main::nxt#3
+  (byte) main::c#0 ← (byte~) main::$0
+  (boolean~) main::$1 ← (byte) main::c#0 == (byte) '@'
+  (boolean~) main::$2 ← ! (boolean~) main::$1
+  if((boolean~) main::$2) goto main::@2
+  to:main::@3
+main::@2: scope:[main]  from main::@1 main::@3
+  (byte[]) TEXT#4 ← phi( main::@1/(byte[]) TEXT#3 main::@3/(byte[]) TEXT#2 )
+  (byte*) main::nxt#4 ← phi( main::@1/(byte*) main::nxt#3 main::@3/(byte*) main::nxt#2 )
+  (byte*) SCREEN#1 ← phi( main::@1/(byte*) SCREEN#2 main::@3/(byte*) SCREEN#3 )
+  (byte) main::c#2 ← phi( main::@1/(byte) main::c#0 main::@3/(byte) main::c#1 )
+  (byte) main::i#2 ← phi( main::@1/(byte) main::i#3 main::@3/(byte) main::i#4 )
+  (byte) main::i#1 ← ++ (byte) main::i#2
+  *((byte*) SCREEN#1 + (byte) main::i#1) ← (byte) main::c#2
+  (byte*) main::nxt#1 ← ++ (byte*) main::nxt#4
+  if(true) goto main::@1
+  to:main::@return
+main::@3: scope:[main]  from main::@1
+  (byte*) SCREEN#3 ← phi( main::@1/(byte*) SCREEN#2 )
+  (byte) main::i#4 ← phi( main::@1/(byte) main::i#3 )
+  (byte[]) TEXT#2 ← phi( main::@1/(byte[]) TEXT#3 )
+  (byte*) main::nxt#2 ← (byte[]) TEXT#2
+  (byte~) main::$3 ← * (byte*) main::nxt#2
+  (byte) main::c#1 ← (byte~) main::$3
+  to:main::@2
+main::@return: scope:[main]  from main::@2
+  return 
+  to:@return
+@end: scope:[]  from @2
+
+CONTROL FLOW GRAPH WITH ASSIGNMENT CALL & RETURN
+@begin: scope:[]  from
+  (byte*) SCREEN#0 ← (word) 1024
+  (byte*) SCROLL#0 ← (word) 53270
+  (byte[]) TEXT#0 ← (string) "tst @"
+  call main param-assignment
+  to:@2
+@2: scope:[]  from @begin
+  to:@end
+main: scope:[main]  from @begin
+  (byte*) SCREEN#4 ← phi( @begin/(byte*) SCREEN#0 )
+  (byte[]) TEXT#1 ← phi( @begin/(byte[]) TEXT#0 )
+  (byte*) main::nxt#0 ← (byte[]) TEXT#1
+  (byte) main::i#0 ← (byte) 0
+  to:main::@1
+main::@1: scope:[main]  from main main::@2
+  (byte[]) TEXT#3 ← phi( main/(byte[]) TEXT#1 main::@2/(byte[]) TEXT#4 )
+  (byte*) SCREEN#2 ← phi( main/(byte*) SCREEN#4 main::@2/(byte*) SCREEN#1 )
+  (byte) main::i#3 ← phi( main/(byte) main::i#0 main::@2/(byte) main::i#1 )
+  (byte*) main::nxt#3 ← phi( main/(byte*) main::nxt#0 main::@2/(byte*) main::nxt#1 )
+  (byte~) main::$0 ← * (byte*) main::nxt#3
+  (byte) main::c#0 ← (byte~) main::$0
+  (boolean~) main::$1 ← (byte) main::c#0 == (byte) '@'
+  (boolean~) main::$2 ← ! (boolean~) main::$1
+  if((boolean~) main::$2) goto main::@2
+  to:main::@3
+main::@2: scope:[main]  from main::@1 main::@3
+  (byte[]) TEXT#4 ← phi( main::@1/(byte[]) TEXT#3 main::@3/(byte[]) TEXT#2 )
+  (byte*) main::nxt#4 ← phi( main::@1/(byte*) main::nxt#3 main::@3/(byte*) main::nxt#2 )
+  (byte*) SCREEN#1 ← phi( main::@1/(byte*) SCREEN#2 main::@3/(byte*) SCREEN#3 )
+  (byte) main::c#2 ← phi( main::@1/(byte) main::c#0 main::@3/(byte) main::c#1 )
+  (byte) main::i#2 ← phi( main::@1/(byte) main::i#3 main::@3/(byte) main::i#4 )
+  (byte) main::i#1 ← ++ (byte) main::i#2
+  *((byte*) SCREEN#1 + (byte) main::i#1) ← (byte) main::c#2
+  (byte*) main::nxt#1 ← ++ (byte*) main::nxt#4
+  if(true) goto main::@1
+  to:main::@return
+main::@3: scope:[main]  from main::@1
+  (byte*) SCREEN#3 ← phi( main::@1/(byte*) SCREEN#2 )
+  (byte) main::i#4 ← phi( main::@1/(byte) main::i#3 )
+  (byte[]) TEXT#2 ← phi( main::@1/(byte[]) TEXT#3 )
+  (byte*) main::nxt#2 ← (byte[]) TEXT#2
+  (byte~) main::$3 ← * (byte*) main::nxt#2
+  (byte) main::c#1 ← (byte~) main::$3
+  to:main::@2
+main::@return: scope:[main]  from main::@2
+  return 
+  to:@return
+@end: scope:[]  from @2
+
+INITIAL SSA SYMBOL TABLE
+(label) @2
+(label) @begin
+(label) @end
+(byte*) SCREEN
+(byte*) SCREEN#0
+(byte*) SCREEN#1
+(byte*) SCREEN#2
+(byte*) SCREEN#3
+(byte*) SCREEN#4
+(byte*) SCROLL
+(byte*) SCROLL#0
+(byte[]) TEXT
+(byte[]) TEXT#0
+(byte[]) TEXT#1
+(byte[]) TEXT#2
+(byte[]) TEXT#3
+(byte[]) TEXT#4
+(void()) main()
+(byte~) main::$0
+(boolean~) main::$1
+(boolean~) main::$2
+(byte~) main::$3
+(label) main::@1
+(label) main::@2
+(label) main::@3
+(label) main::@return
+(byte) main::c
+(byte) main::c#0
+(byte) main::c#1
+(byte) main::c#2
+(byte) main::i
+(byte) main::i#0
+(byte) main::i#1
+(byte) main::i#2
+(byte) main::i#3
+(byte) main::i#4
+(byte*) main::nxt
+(byte*) main::nxt#0
+(byte*) main::nxt#1
+(byte*) main::nxt#2
+(byte*) main::nxt#3
+(byte*) main::nxt#4
+
+Culled Empty Block (label) @2
+Succesful SSA optimization Pass2CullEmptyBlocks
+CONTROL FLOW GRAPH
+@begin: scope:[]  from
+  (byte*) SCREEN#0 ← (word) 1024
+  (byte*) SCROLL#0 ← (word) 53270
+  (byte[]) TEXT#0 ← (string) "tst @"
+  call main param-assignment
+  to:@end
+main: scope:[main]  from @begin
+  (byte*) SCREEN#4 ← phi( @begin/(byte*) SCREEN#0 )
+  (byte[]) TEXT#1 ← phi( @begin/(byte[]) TEXT#0 )
+  (byte*) main::nxt#0 ← (byte[]) TEXT#1
+  (byte) main::i#0 ← (byte) 0
+  to:main::@1
+main::@1: scope:[main]  from main main::@2
+  (byte[]) TEXT#3 ← phi( main/(byte[]) TEXT#1 main::@2/(byte[]) TEXT#4 )
+  (byte*) SCREEN#2 ← phi( main/(byte*) SCREEN#4 main::@2/(byte*) SCREEN#1 )
+  (byte) main::i#3 ← phi( main/(byte) main::i#0 main::@2/(byte) main::i#1 )
+  (byte*) main::nxt#3 ← phi( main/(byte*) main::nxt#0 main::@2/(byte*) main::nxt#1 )
+  (byte~) main::$0 ← * (byte*) main::nxt#3
+  (byte) main::c#0 ← (byte~) main::$0
+  (boolean~) main::$1 ← (byte) main::c#0 == (byte) '@'
+  (boolean~) main::$2 ← ! (boolean~) main::$1
+  if((boolean~) main::$2) goto main::@2
+  to:main::@3
+main::@2: scope:[main]  from main::@1 main::@3
+  (byte[]) TEXT#4 ← phi( main::@1/(byte[]) TEXT#3 main::@3/(byte[]) TEXT#2 )
+  (byte*) main::nxt#4 ← phi( main::@1/(byte*) main::nxt#3 main::@3/(byte*) main::nxt#2 )
+  (byte*) SCREEN#1 ← phi( main::@1/(byte*) SCREEN#2 main::@3/(byte*) SCREEN#3 )
+  (byte) main::c#2 ← phi( main::@1/(byte) main::c#0 main::@3/(byte) main::c#1 )
+  (byte) main::i#2 ← phi( main::@1/(byte) main::i#3 main::@3/(byte) main::i#4 )
+  (byte) main::i#1 ← ++ (byte) main::i#2
+  *((byte*) SCREEN#1 + (byte) main::i#1) ← (byte) main::c#2
+  (byte*) main::nxt#1 ← ++ (byte*) main::nxt#4
+  if(true) goto main::@1
+  to:main::@return
+main::@3: scope:[main]  from main::@1
+  (byte*) SCREEN#3 ← phi( main::@1/(byte*) SCREEN#2 )
+  (byte) main::i#4 ← phi( main::@1/(byte) main::i#3 )
+  (byte[]) TEXT#2 ← phi( main::@1/(byte[]) TEXT#3 )
+  (byte*) main::nxt#2 ← (byte[]) TEXT#2
+  (byte~) main::$3 ← * (byte*) main::nxt#2
+  (byte) main::c#1 ← (byte~) main::$3
+  to:main::@2
+main::@return: scope:[main]  from main::@2
+  return 
+  to:@return
+@end: scope:[]  from @begin
+
+Inversing boolean not (boolean~) main::$2 ← (byte) main::c#0 != (byte) '@' from (boolean~) main::$1 ← (byte) main::c#0 == (byte) '@'
+Succesful SSA optimization Pass2UnaryNotSimplification
+CONTROL FLOW GRAPH
+@begin: scope:[]  from
+  (byte*) SCREEN#0 ← (word) 1024
+  (byte*) SCROLL#0 ← (word) 53270
+  (byte[]) TEXT#0 ← (string) "tst @"
+  call main param-assignment
+  to:@end
+main: scope:[main]  from @begin
+  (byte*) SCREEN#4 ← phi( @begin/(byte*) SCREEN#0 )
+  (byte[]) TEXT#1 ← phi( @begin/(byte[]) TEXT#0 )
+  (byte*) main::nxt#0 ← (byte[]) TEXT#1
+  (byte) main::i#0 ← (byte) 0
+  to:main::@1
+main::@1: scope:[main]  from main main::@2
+  (byte[]) TEXT#3 ← phi( main/(byte[]) TEXT#1 main::@2/(byte[]) TEXT#4 )
+  (byte*) SCREEN#2 ← phi( main/(byte*) SCREEN#4 main::@2/(byte*) SCREEN#1 )
+  (byte) main::i#3 ← phi( main/(byte) main::i#0 main::@2/(byte) main::i#1 )
+  (byte*) main::nxt#3 ← phi( main/(byte*) main::nxt#0 main::@2/(byte*) main::nxt#1 )
+  (byte~) main::$0 ← * (byte*) main::nxt#3
+  (byte) main::c#0 ← (byte~) main::$0
+  (boolean~) main::$2 ← (byte) main::c#0 != (byte) '@'
+  if((boolean~) main::$2) goto main::@2
+  to:main::@3
+main::@2: scope:[main]  from main::@1 main::@3
+  (byte[]) TEXT#4 ← phi( main::@1/(byte[]) TEXT#3 main::@3/(byte[]) TEXT#2 )
+  (byte*) main::nxt#4 ← phi( main::@1/(byte*) main::nxt#3 main::@3/(byte*) main::nxt#2 )
+  (byte*) SCREEN#1 ← phi( main::@1/(byte*) SCREEN#2 main::@3/(byte*) SCREEN#3 )
+  (byte) main::c#2 ← phi( main::@1/(byte) main::c#0 main::@3/(byte) main::c#1 )
+  (byte) main::i#2 ← phi( main::@1/(byte) main::i#3 main::@3/(byte) main::i#4 )
+  (byte) main::i#1 ← ++ (byte) main::i#2
+  *((byte*) SCREEN#1 + (byte) main::i#1) ← (byte) main::c#2
+  (byte*) main::nxt#1 ← ++ (byte*) main::nxt#4
+  if(true) goto main::@1
+  to:main::@return
+main::@3: scope:[main]  from main::@1
+  (byte*) SCREEN#3 ← phi( main::@1/(byte*) SCREEN#2 )
+  (byte) main::i#4 ← phi( main::@1/(byte) main::i#3 )
+  (byte[]) TEXT#2 ← phi( main::@1/(byte[]) TEXT#3 )
+  (byte*) main::nxt#2 ← (byte[]) TEXT#2
+  (byte~) main::$3 ← * (byte*) main::nxt#2
+  (byte) main::c#1 ← (byte~) main::$3
+  to:main::@2
+main::@return: scope:[main]  from main::@2
+  return 
+  to:@return
+@end: scope:[]  from @begin
+
+Not aliassing across scopes: main::nxt#0 TEXT#1
+Not aliassing across scopes: main::nxt#2 TEXT#2
+Alias (byte[]) TEXT#0 = (byte[]) TEXT#1 
+Alias (byte*) SCREEN#0 = (byte*) SCREEN#4 
+Alias (byte) main::c#0 = (byte~) main::$0 
+Alias (byte[]) TEXT#2 = (byte[]) TEXT#3 
+Alias (byte) main::i#3 = (byte) main::i#4 
+Alias (byte*) SCREEN#2 = (byte*) SCREEN#3 
+Alias (byte) main::c#1 = (byte~) main::$3 
+Succesful SSA optimization Pass2AliasElimination
+CONTROL FLOW GRAPH
+@begin: scope:[]  from
+  (byte*) SCREEN#0 ← (word) 1024
+  (byte*) SCROLL#0 ← (word) 53270
+  (byte[]) TEXT#0 ← (string) "tst @"
+  call main param-assignment
+  to:@end
+main: scope:[main]  from @begin
+  (byte*) main::nxt#0 ← (byte[]) TEXT#0
+  (byte) main::i#0 ← (byte) 0
+  to:main::@1
+main::@1: scope:[main]  from main main::@2
+  (byte[]) TEXT#2 ← phi( main/(byte[]) TEXT#0 main::@2/(byte[]) TEXT#4 )
+  (byte*) SCREEN#2 ← phi( main/(byte*) SCREEN#0 main::@2/(byte*) SCREEN#1 )
+  (byte) main::i#3 ← phi( main/(byte) main::i#0 main::@2/(byte) main::i#1 )
+  (byte*) main::nxt#3 ← phi( main/(byte*) main::nxt#0 main::@2/(byte*) main::nxt#1 )
+  (byte) main::c#0 ← * (byte*) main::nxt#3
+  (boolean~) main::$2 ← (byte) main::c#0 != (byte) '@'
+  if((boolean~) main::$2) goto main::@2
+  to:main::@3
+main::@2: scope:[main]  from main::@1 main::@3
+  (byte[]) TEXT#4 ← phi( main::@1/(byte[]) TEXT#2 main::@3/(byte[]) TEXT#2 )
+  (byte*) main::nxt#4 ← phi( main::@1/(byte*) main::nxt#3 main::@3/(byte*) main::nxt#2 )
+  (byte*) SCREEN#1 ← phi( main::@1/(byte*) SCREEN#2 main::@3/(byte*) SCREEN#2 )
+  (byte) main::c#2 ← phi( main::@1/(byte) main::c#0 main::@3/(byte) main::c#1 )
+  (byte) main::i#2 ← phi( main::@1/(byte) main::i#3 main::@3/(byte) main::i#3 )
+  (byte) main::i#1 ← ++ (byte) main::i#2
+  *((byte*) SCREEN#1 + (byte) main::i#1) ← (byte) main::c#2
+  (byte*) main::nxt#1 ← ++ (byte*) main::nxt#4
+  if(true) goto main::@1
+  to:main::@return
+main::@3: scope:[main]  from main::@1
+  (byte*) main::nxt#2 ← (byte[]) TEXT#2
+  (byte) main::c#1 ← * (byte*) main::nxt#2
+  to:main::@2
+main::@return: scope:[main]  from main::@2
+  return 
+  to:@return
+@end: scope:[]  from @begin
+
+Not aliassing across scopes: main::nxt#0 TEXT#0
+Not aliassing across scopes: main::nxt#2 TEXT#2
+Redundant Phi (byte) main::i#2 (byte) main::i#3
+Redundant Phi (byte*) SCREEN#1 (byte*) SCREEN#2
+Redundant Phi (byte[]) TEXT#4 (byte[]) TEXT#2
+Succesful SSA optimization Pass2RedundantPhiElimination
+CONTROL FLOW GRAPH
+@begin: scope:[]  from
+  (byte*) SCREEN#0 ← (word) 1024
+  (byte*) SCROLL#0 ← (word) 53270
+  (byte[]) TEXT#0 ← (string) "tst @"
+  call main param-assignment
+  to:@end
+main: scope:[main]  from @begin
+  (byte*) main::nxt#0 ← (byte[]) TEXT#0
+  (byte) main::i#0 ← (byte) 0
+  to:main::@1
+main::@1: scope:[main]  from main main::@2
+  (byte[]) TEXT#2 ← phi( main/(byte[]) TEXT#0 main::@2/(byte[]) TEXT#2 )
+  (byte*) SCREEN#2 ← phi( main/(byte*) SCREEN#0 main::@2/(byte*) SCREEN#2 )
+  (byte) main::i#3 ← phi( main/(byte) main::i#0 main::@2/(byte) main::i#1 )
+  (byte*) main::nxt#3 ← phi( main/(byte*) main::nxt#0 main::@2/(byte*) main::nxt#1 )
+  (byte) main::c#0 ← * (byte*) main::nxt#3
+  (boolean~) main::$2 ← (byte) main::c#0 != (byte) '@'
+  if((boolean~) main::$2) goto main::@2
+  to:main::@3
+main::@2: scope:[main]  from main::@1 main::@3
+  (byte*) main::nxt#4 ← phi( main::@1/(byte*) main::nxt#3 main::@3/(byte*) main::nxt#2 )
+  (byte) main::c#2 ← phi( main::@1/(byte) main::c#0 main::@3/(byte) main::c#1 )
+  (byte) main::i#1 ← ++ (byte) main::i#3
+  *((byte*) SCREEN#2 + (byte) main::i#1) ← (byte) main::c#2
+  (byte*) main::nxt#1 ← ++ (byte*) main::nxt#4
+  if(true) goto main::@1
+  to:main::@return
+main::@3: scope:[main]  from main::@1
+  (byte*) main::nxt#2 ← (byte[]) TEXT#2
+  (byte) main::c#1 ← * (byte*) main::nxt#2
+  to:main::@2
+main::@return: scope:[main]  from main::@2
+  return 
+  to:@return
+@end: scope:[]  from @begin
+
+Self Phi Eliminated (byte*) SCREEN#2
+Self Phi Eliminated (byte[]) TEXT#2
+Succesful SSA optimization Pass2SelfPhiElimination
+CONTROL FLOW GRAPH
+@begin: scope:[]  from
+  (byte*) SCREEN#0 ← (word) 1024
+  (byte*) SCROLL#0 ← (word) 53270
+  (byte[]) TEXT#0 ← (string) "tst @"
+  call main param-assignment
+  to:@end
+main: scope:[main]  from @begin
+  (byte*) main::nxt#0 ← (byte[]) TEXT#0
+  (byte) main::i#0 ← (byte) 0
+  to:main::@1
+main::@1: scope:[main]  from main main::@2
+  (byte[]) TEXT#2 ← phi( main/(byte[]) TEXT#0 )
+  (byte*) SCREEN#2 ← phi( main/(byte*) SCREEN#0 )
+  (byte) main::i#3 ← phi( main/(byte) main::i#0 main::@2/(byte) main::i#1 )
+  (byte*) main::nxt#3 ← phi( main/(byte*) main::nxt#0 main::@2/(byte*) main::nxt#1 )
+  (byte) main::c#0 ← * (byte*) main::nxt#3
+  (boolean~) main::$2 ← (byte) main::c#0 != (byte) '@'
+  if((boolean~) main::$2) goto main::@2
+  to:main::@3
+main::@2: scope:[main]  from main::@1 main::@3
+  (byte*) main::nxt#4 ← phi( main::@1/(byte*) main::nxt#3 main::@3/(byte*) main::nxt#2 )
+  (byte) main::c#2 ← phi( main::@1/(byte) main::c#0 main::@3/(byte) main::c#1 )
+  (byte) main::i#1 ← ++ (byte) main::i#3
+  *((byte*) SCREEN#2 + (byte) main::i#1) ← (byte) main::c#2
+  (byte*) main::nxt#1 ← ++ (byte*) main::nxt#4
+  if(true) goto main::@1
+  to:main::@return
+main::@3: scope:[main]  from main::@1
+  (byte*) main::nxt#2 ← (byte[]) TEXT#2
+  (byte) main::c#1 ← * (byte*) main::nxt#2
+  to:main::@2
+main::@return: scope:[main]  from main::@2
+  return 
+  to:@return
+@end: scope:[]  from @begin
+
+Simple Condition (boolean~) main::$2 if((byte) main::c#0!=(byte) '@') goto main::@2
+Succesful SSA optimization Pass2ConditionalJumpSimplification
+CONTROL FLOW GRAPH
+@begin: scope:[]  from
+  (byte*) SCREEN#0 ← (word) 1024
+  (byte*) SCROLL#0 ← (word) 53270
+  (byte[]) TEXT#0 ← (string) "tst @"
+  call main param-assignment
+  to:@end
+main: scope:[main]  from @begin
+  (byte*) main::nxt#0 ← (byte[]) TEXT#0
+  (byte) main::i#0 ← (byte) 0
+  to:main::@1
+main::@1: scope:[main]  from main main::@2
+  (byte[]) TEXT#2 ← phi( main/(byte[]) TEXT#0 )
+  (byte*) SCREEN#2 ← phi( main/(byte*) SCREEN#0 )
+  (byte) main::i#3 ← phi( main/(byte) main::i#0 main::@2/(byte) main::i#1 )
+  (byte*) main::nxt#3 ← phi( main/(byte*) main::nxt#0 main::@2/(byte*) main::nxt#1 )
+  (byte) main::c#0 ← * (byte*) main::nxt#3
+  if((byte) main::c#0!=(byte) '@') goto main::@2
+  to:main::@3
+main::@2: scope:[main]  from main::@1 main::@3
+  (byte*) main::nxt#4 ← phi( main::@1/(byte*) main::nxt#3 main::@3/(byte*) main::nxt#2 )
+  (byte) main::c#2 ← phi( main::@1/(byte) main::c#0 main::@3/(byte) main::c#1 )
+  (byte) main::i#1 ← ++ (byte) main::i#3
+  *((byte*) SCREEN#2 + (byte) main::i#1) ← (byte) main::c#2
+  (byte*) main::nxt#1 ← ++ (byte*) main::nxt#4
+  if(true) goto main::@1
+  to:main::@return
+main::@3: scope:[main]  from main::@1
+  (byte*) main::nxt#2 ← (byte[]) TEXT#2
+  (byte) main::c#1 ← * (byte*) main::nxt#2
+  to:main::@2
+main::@return: scope:[main]  from main::@2
+  return 
+  to:@return
+@end: scope:[]  from @begin
+
+Constant (const byte*) SCREEN#0 = 1024
+Constant (const byte*) SCROLL#0 = 53270
+Constant (const byte[]) TEXT#0 = "tst @"
+Constant (const byte) main::i#0 = 0
+Succesful SSA optimization Pass2ConstantIdentification
+CONTROL FLOW GRAPH
+@begin: scope:[]  from
+  call main param-assignment
+  to:@end
+main: scope:[main]  from @begin
+  (byte*) main::nxt#0 ← (const byte[]) TEXT#0
+  to:main::@1
+main::@1: scope:[main]  from main main::@2
+  (byte[]) TEXT#2 ← phi( main/(const byte[]) TEXT#0 )
+  (byte*) SCREEN#2 ← phi( main/(const byte*) SCREEN#0 )
+  (byte) main::i#3 ← phi( main/(const byte) main::i#0 main::@2/(byte) main::i#1 )
+  (byte*) main::nxt#3 ← phi( main/(byte*) main::nxt#0 main::@2/(byte*) main::nxt#1 )
+  (byte) main::c#0 ← * (byte*) main::nxt#3
+  if((byte) main::c#0!=(byte) '@') goto main::@2
+  to:main::@3
+main::@2: scope:[main]  from main::@1 main::@3
+  (byte*) main::nxt#4 ← phi( main::@1/(byte*) main::nxt#3 main::@3/(byte*) main::nxt#2 )
+  (byte) main::c#2 ← phi( main::@1/(byte) main::c#0 main::@3/(byte) main::c#1 )
+  (byte) main::i#1 ← ++ (byte) main::i#3
+  *((byte*) SCREEN#2 + (byte) main::i#1) ← (byte) main::c#2
+  (byte*) main::nxt#1 ← ++ (byte*) main::nxt#4
+  if(true) goto main::@1
+  to:main::@return
+main::@3: scope:[main]  from main::@1
+  (byte*) main::nxt#2 ← (byte[]) TEXT#2
+  (byte) main::c#1 ← * (byte*) main::nxt#2
+  to:main::@2
+main::@return: scope:[main]  from main::@2
+  return 
+  to:@return
+@end: scope:[]  from @begin
+
+Constant (const byte*) main::nxt#0 = TEXT#0
+Constant (const byte*) SCREEN#2 = SCREEN#0
+Constant (const byte[]) TEXT#2 = TEXT#0
+Succesful SSA optimization Pass2ConstantIdentification
+CONTROL FLOW GRAPH
+@begin: scope:[]  from
+  call main param-assignment
+  to:@end
+main: scope:[main]  from @begin
+  to:main::@1
+main::@1: scope:[main]  from main main::@2
+  (byte) main::i#3 ← phi( main/(const byte) main::i#0 main::@2/(byte) main::i#1 )
+  (byte*) main::nxt#3 ← phi( main/(const byte*) main::nxt#0 main::@2/(byte*) main::nxt#1 )
+  (byte) main::c#0 ← * (byte*) main::nxt#3
+  if((byte) main::c#0!=(byte) '@') goto main::@2
+  to:main::@3
+main::@2: scope:[main]  from main::@1 main::@3
+  (byte*) main::nxt#4 ← phi( main::@1/(byte*) main::nxt#3 main::@3/(byte*) main::nxt#2 )
+  (byte) main::c#2 ← phi( main::@1/(byte) main::c#0 main::@3/(byte) main::c#1 )
+  (byte) main::i#1 ← ++ (byte) main::i#3
+  *((const byte*) SCREEN#2 + (byte) main::i#1) ← (byte) main::c#2
+  (byte*) main::nxt#1 ← ++ (byte*) main::nxt#4
+  if(true) goto main::@1
+  to:main::@return
+main::@3: scope:[main]  from main::@1
+  (byte*) main::nxt#2 ← (const byte[]) TEXT#2
+  (byte) main::c#1 ← * (byte*) main::nxt#2
+  to:main::@2
+main::@return: scope:[main]  from main::@2
+  return 
+  to:@return
+@end: scope:[]  from @begin
+
+Constant (const byte*) main::nxt#2 = TEXT#2
+Succesful SSA optimization Pass2ConstantIdentification
+CONTROL FLOW GRAPH
+@begin: scope:[]  from
+  call main param-assignment
+  to:@end
+main: scope:[main]  from @begin
+  to:main::@1
+main::@1: scope:[main]  from main main::@2
+  (byte) main::i#3 ← phi( main/(const byte) main::i#0 main::@2/(byte) main::i#1 )
+  (byte*) main::nxt#3 ← phi( main/(const byte*) main::nxt#0 main::@2/(byte*) main::nxt#1 )
+  (byte) main::c#0 ← * (byte*) main::nxt#3
+  if((byte) main::c#0!=(byte) '@') goto main::@2
+  to:main::@3
+main::@2: scope:[main]  from main::@1 main::@3
+  (byte*) main::nxt#4 ← phi( main::@1/(byte*) main::nxt#3 main::@3/(const byte*) main::nxt#2 )
+  (byte) main::c#2 ← phi( main::@1/(byte) main::c#0 main::@3/(byte) main::c#1 )
+  (byte) main::i#1 ← ++ (byte) main::i#3
+  *((const byte*) SCREEN#2 + (byte) main::i#1) ← (byte) main::c#2
+  (byte*) main::nxt#1 ← ++ (byte*) main::nxt#4
+  if(true) goto main::@1
+  to:main::@return
+main::@3: scope:[main]  from main::@1
+  (byte) main::c#1 ← * (const byte*) main::nxt#2
+  to:main::@2
+main::@return: scope:[main]  from main::@2
+  return 
+  to:@return
+@end: scope:[]  from @begin
+
+Constant inlined main::nxt#0 = (const byte[]) TEXT#0
+Constant inlined SCREEN#2 = (const byte*) SCREEN#0
+Constant inlined TEXT#2 = (const byte[]) TEXT#0
+Constant inlined main::nxt#2 = (const byte[]) TEXT#0
+Constant inlined main::i#0 = (byte) 0
+Succesful SSA optimization Pass2ConstantInlining
+CONTROL FLOW GRAPH
+@begin: scope:[]  from
+  call main param-assignment
+  to:@end
+main: scope:[main]  from @begin
+  to:main::@1
+main::@1: scope:[main]  from main main::@2
+  (byte) main::i#3 ← phi( main/(byte) 0 main::@2/(byte) main::i#1 )
+  (byte*) main::nxt#3 ← phi( main/(const byte[]) TEXT#0 main::@2/(byte*) main::nxt#1 )
+  (byte) main::c#0 ← * (byte*) main::nxt#3
+  if((byte) main::c#0!=(byte) '@') goto main::@2
+  to:main::@3
+main::@2: scope:[main]  from main::@1 main::@3
+  (byte*) main::nxt#4 ← phi( main::@1/(byte*) main::nxt#3 main::@3/(const byte[]) TEXT#0 )
+  (byte) main::c#2 ← phi( main::@1/(byte) main::c#0 main::@3/(byte) main::c#1 )
+  (byte) main::i#1 ← ++ (byte) main::i#3
+  *((const byte*) SCREEN#0 + (byte) main::i#1) ← (byte) main::c#2
+  (byte*) main::nxt#1 ← ++ (byte*) main::nxt#4
+  if(true) goto main::@1
+  to:main::@return
+main::@3: scope:[main]  from main::@1
+  (byte) main::c#1 ← * (const byte[]) TEXT#0
+  to:main::@2
+main::@return: scope:[main]  from main::@2
+  return 
+  to:@return
+@end: scope:[]  from @begin
+
+FINAL SYMBOL TABLE
+(label) @begin
+(label) @end
+(byte*) SCREEN
+(const byte*) SCREEN#0 = (word) 1024
+(byte*) SCROLL
+(const byte*) SCROLL#0 = (word) 53270
+(byte[]) TEXT
+(const byte[]) TEXT#0 = (string) "tst @"
+(void()) main()
+(label) main::@1
+(label) main::@2
+(label) main::@3
+(label) main::@return
+(byte) main::c
+(byte) main::c#0
+(byte) main::c#1
+(byte) main::c#2
+(byte) main::i
+(byte) main::i#1
+(byte) main::i#3
+(byte*) main::nxt
+(byte*) main::nxt#1
+(byte*) main::nxt#3
+(byte*) main::nxt#4
+
+Block Sequence Planned @begin @end main main::@1 main::@3 main::@2 main::@return 
+Added new block during phi lifting main::@5(between main::@2 and main::@1)
+Added new block during phi lifting main::@6(between main::@1 and main::@2)
+Block Sequence Planned @begin @end main main::@1 main::@3 main::@2 main::@return main::@5 main::@6 
+CONTROL FLOW GRAPH - PHI LIFTED
+@begin: scope:[]  from
+  call main param-assignment
+  to:@end
+@end: scope:[]  from @begin
+main: scope:[main]  from @begin
+  to:main::@1
+main::@1: scope:[main]  from main main::@5
+  (byte) main::i#3 ← phi( main/(byte) 0 main::@5/(byte~) main::i#5 )
+  (byte*) main::nxt#3 ← phi( main/(const byte[]) TEXT#0 main::@5/(byte*~) main::nxt#5 )
+  (byte) main::c#0 ← * (byte*) main::nxt#3
+  if((byte) main::c#0!=(byte) '@') goto main::@6
+  to:main::@3
+main::@3: scope:[main]  from main::@1
+  (byte) main::c#1 ← * (const byte[]) TEXT#0
+  (byte~) main::c#4 ← (byte) main::c#1
+  to:main::@2
+main::@2: scope:[main]  from main::@3 main::@6
+  (byte*) main::nxt#4 ← phi( main::@6/(byte*~) main::nxt#6 main::@3/(const byte[]) TEXT#0 )
+  (byte) main::c#2 ← phi( main::@6/(byte~) main::c#3 main::@3/(byte~) main::c#4 )
+  (byte) main::i#1 ← ++ (byte) main::i#3
+  *((const byte*) SCREEN#0 + (byte) main::i#1) ← (byte) main::c#2
+  (byte*) main::nxt#1 ← ++ (byte*) main::nxt#4
+  if(true) goto main::@5
+  to:main::@return
+main::@return: scope:[main]  from main::@2
+  return 
+  to:@return
+main::@5: scope:[main]  from main::@2
+  (byte*~) main::nxt#5 ← (byte*) main::nxt#1
+  (byte~) main::i#5 ← (byte) main::i#1
+  to:main::@1
+main::@6: scope:[main]  from main::@1
+  (byte~) main::c#3 ← (byte) main::c#0
+  (byte*~) main::nxt#6 ← (byte*) main::nxt#3
+  to:main::@2
+
+Adding NOP phi() at start of main
+CALL GRAPH
+Calls in [] to 0:main 
+
+Propagating live ranges...
+Propagating live ranges...
+Propagating live ranges...
+Propagating live ranges...
+Propagating live ranges...
+Propagating live ranges...
+CONTROL FLOW GRAPH - LIVE RANGES FOUND
+@begin: scope:[]  from
+  [0] call main param-assignment [ ]
+  to:@end
+@end: scope:[]  from @begin
+main: scope:[main]  from @begin
+  [1] phi() [ ]
+  to:main::@1
+main::@1: scope:[main]  from main main::@5
+  [2] (byte) main::i#3 ← phi( main/(byte) 0 main::@5/(byte~) main::i#5 ) [ main::nxt#3 main::i#3 ]
+  [2] (byte*) main::nxt#3 ← phi( main/(const byte[]) TEXT#0 main::@5/(byte*~) main::nxt#5 ) [ main::nxt#3 main::i#3 ]
+  [3] (byte) main::c#0 ← * (byte*) main::nxt#3 [ main::nxt#3 main::i#3 main::c#0 ]
+  [4] if((byte) main::c#0!=(byte) '@') goto main::@6 [ main::nxt#3 main::i#3 main::c#0 ]
+  to:main::@3
+main::@3: scope:[main]  from main::@1
+  [5] (byte) main::c#1 ← * (const byte[]) TEXT#0 [ main::i#3 main::c#1 ]
+  [6] (byte~) main::c#4 ← (byte) main::c#1 [ main::i#3 main::c#4 ]
+  to:main::@2
+main::@2: scope:[main]  from main::@3 main::@6
+  [7] (byte*) main::nxt#4 ← phi( main::@6/(byte*~) main::nxt#6 main::@3/(const byte[]) TEXT#0 ) [ main::i#3 main::c#2 main::nxt#4 ]
+  [7] (byte) main::c#2 ← phi( main::@6/(byte~) main::c#3 main::@3/(byte~) main::c#4 ) [ main::i#3 main::c#2 main::nxt#4 ]
+  [8] (byte) main::i#1 ← ++ (byte) main::i#3 [ main::c#2 main::nxt#4 main::i#1 ]
+  [9] *((const byte*) SCREEN#0 + (byte) main::i#1) ← (byte) main::c#2 [ main::nxt#4 main::i#1 ]
+  [10] (byte*) main::nxt#1 ← ++ (byte*) main::nxt#4 [ main::i#1 main::nxt#1 ]
+  [11] if(true) goto main::@5 [ main::i#1 main::nxt#1 ]
+  to:main::@return
+main::@return: scope:[main]  from main::@2
+  [12] return  [ ]
+  to:@return
+main::@5: scope:[main]  from main::@2
+  [13] (byte*~) main::nxt#5 ← (byte*) main::nxt#1 [ main::nxt#5 main::i#1 ]
+  [14] (byte~) main::i#5 ← (byte) main::i#1 [ main::nxt#5 main::i#5 ]
+  to:main::@1
+main::@6: scope:[main]  from main::@1
+  [15] (byte~) main::c#3 ← (byte) main::c#0 [ main::nxt#3 main::i#3 main::c#3 ]
+  [16] (byte*~) main::nxt#6 ← (byte*) main::nxt#3 [ main::i#3 main::c#3 main::nxt#6 ]
+  to:main::@2
+
+Created 4 initial phi equivalence classes
+Coalesced [6] main::c#4 ← main::c#1
+Coalesced [13] main::nxt#5 ← main::nxt#1
+Coalesced [14] main::i#5 ← main::i#1
+Coalesced [15] main::c#3 ← main::c#0
+Coalesced [16] main::nxt#6 ← main::nxt#3
+Coalesced down to 3 phi equivalence classes
+Culled Empty Block (label) main::@5
+Culled Empty Block (label) main::@6
+Block Sequence Planned @begin @end main main::@1 main::@3 main::@2 main::@return 
+Adding NOP phi() at start of main
+Propagating live ranges...
+Propagating live ranges...
+Propagating live ranges...
+Propagating live ranges...
+Propagating live ranges...
+CONTROL FLOW GRAPH - PHI MEM COALESCED
+@begin: scope:[]  from
+  [0] call main param-assignment [ ]
+  to:@end
+@end: scope:[]  from @begin
+main: scope:[main]  from @begin
+  [1] phi() [ ]
+  to:main::@1
+main::@1: scope:[main]  from main main::@2
+  [2] (byte) main::i#3 ← phi( main/(byte) 0 main::@2/(byte) main::i#1 ) [ main::nxt#3 main::i#3 ]
+  [2] (byte*) main::nxt#3 ← phi( main/(const byte[]) TEXT#0 main::@2/(byte*) main::nxt#1 ) [ main::nxt#3 main::i#3 ]
+  [3] (byte) main::c#0 ← * (byte*) main::nxt#3 [ main::nxt#3 main::i#3 main::c#0 ]
+  [4] if((byte) main::c#0!=(byte) '@') goto main::@2 [ main::nxt#3 main::i#3 main::c#0 ]
+  to:main::@3
+main::@3: scope:[main]  from main::@1
+  [5] (byte) main::c#1 ← * (const byte[]) TEXT#0 [ main::i#3 main::c#1 ]
+  to:main::@2
+main::@2: scope:[main]  from main::@1 main::@3
+  [6] (byte*) main::nxt#4 ← phi( main::@1/(byte*) main::nxt#3 main::@3/(const byte[]) TEXT#0 ) [ main::i#3 main::c#2 main::nxt#4 ]
+  [6] (byte) main::c#2 ← phi( main::@1/(byte) main::c#0 main::@3/(byte) main::c#1 ) [ main::i#3 main::c#2 main::nxt#4 ]
+  [7] (byte) main::i#1 ← ++ (byte) main::i#3 [ main::i#1 main::c#2 main::nxt#4 ]
+  [8] *((const byte*) SCREEN#0 + (byte) main::i#1) ← (byte) main::c#2 [ main::i#1 main::nxt#4 ]
+  [9] (byte*) main::nxt#1 ← ++ (byte*) main::nxt#4 [ main::nxt#1 main::i#1 ]
+  [10] if(true) goto main::@1 [ main::nxt#1 main::i#1 ]
+  to:main::@return
+main::@return: scope:[main]  from main::@2
+  [11] return  [ ]
+  to:@return
+
+DOMINATORS
+@begin dominated by  @begin 
+@end dominated by  @end @begin 
+main dominated by  @begin main 
+main::@1 dominated by  @begin main::@1 main 
+main::@3 dominated by  @begin main::@1 main::@3 main 
+main::@2 dominated by  @begin main::@2 main::@1 main 
+main::@return dominated by  main::@return @begin main::@2 main::@1 main 
+
+Found back edge: Loop head: main::@1 tails: main::@2 blocks: null
+Populated: Loop head: main::@1 tails: main::@2 blocks: main::@2 main::@1 main::@3 
+NATURAL LOOPS
+Loop head: main::@1 tails: main::@2 blocks: main::@2 main::@1 main::@3 
+
+Found 0 loops in scope []
+Found 1 loops in scope [main]
+  Loop head: main::@1 tails: main::@2 blocks: main::@2 main::@1 main::@3 
+NATURAL LOOPS WITH DEPTH
+Loop head: main::@1 tails: main::@2 blocks: main::@2 main::@1 main::@3  depth: 1
+
+
+VARIABLE REGISTER WEIGHTS
+(byte*) SCREEN
+(byte*) SCROLL
+(byte[]) TEXT
+(void()) main()
+(byte) main::c
+(byte) main::c#0 16.5
+(byte) main::c#1 22.0
+(byte) main::c#2 16.5
+(byte) main::i
+(byte) main::i#1 8.25
+(byte) main::i#3 4.4
+(byte*) main::nxt
+(byte*) main::nxt#1 11.0
+(byte*) main::nxt#3 11.0
+(byte*) main::nxt#4 7.333333333333333
+
+Initial phi equivalence classes
+[ main::i#3 main::i#1 ]
+[ main::c#2 main::c#0 main::c#1 ]
+[ main::nxt#4 main::nxt#3 main::nxt#1 ]
+Complete equivalence classes
+[ main::i#3 main::i#1 ]
+[ main::c#2 main::c#0 main::c#1 ]
+[ main::nxt#4 main::nxt#3 main::nxt#1 ]
+Allocated zp ZP_BYTE:2 [ main::i#3 main::i#1 ]
+Allocated zp ZP_BYTE:3 [ main::c#2 main::c#0 main::c#1 ]
+Allocated zp ZP_PTR_BYTE:4 [ main::nxt#4 main::nxt#3 main::nxt#1 ]
+INITIAL ASM
+//SEG0 Global Constants & labels
+  .const SCREEN = $400
+  .const SCROLL = $d016
+  TEXT: .text "tst @"
+//SEG1 @begin
+bbegin:
+//SEG2 [0] call main param-assignment [ ]
+//SEG3 [1] phi from @begin to main
+main_from_bbegin:
+  jsr main
+  jmp bend
+//SEG4 @end
+bend:
+//SEG5 main
+main: {
+    .label c = 3
+    .label i = 2
+    .label nxt = 4
+  //SEG6 [2] phi from main to main::@1
+  b1_from_main:
+  //SEG7 [2] phi (byte) main::i#3 = (byte) 0 -- zpby1=coby1 
+    lda #0
+    sta i
+  //SEG8 [2] phi (byte*) main::nxt#3 = (const byte[]) TEXT#0 -- zpptrby1=cowo1 
+    lda #<TEXT
+    sta nxt
+    lda #>TEXT
+    sta nxt+1
+    jmp b1
+  //SEG9 [2] phi from main::@2 to main::@1
+  b1_from_b2:
+  //SEG10 [2] phi (byte) main::i#3 = (byte) main::i#1 -- register_copy 
+  //SEG11 [2] phi (byte*) main::nxt#3 = (byte*) main::nxt#1 -- register_copy 
+    jmp b1
+  //SEG12 main::@1
+  b1:
+  //SEG13 [3] (byte) main::c#0 ← * (byte*) main::nxt#3 [ main::nxt#3 main::i#3 main::c#0 ] -- zpby1=_star_zpptrby1 
+    ldy #0
+    lda (nxt),y
+    sta c
+  //SEG14 [4] if((byte) main::c#0!=(byte) '@') goto main::@2 [ main::nxt#3 main::i#3 main::c#0 ] -- zpby1_neq_coby1_then_la1 
+    lda c
+    cmp #'@'
+    bne b2_from_b1
+    jmp b3
+  //SEG15 main::@3
+  b3:
+  //SEG16 [5] (byte) main::c#1 ← * (const byte[]) TEXT#0 [ main::i#3 main::c#1 ] -- zpby1=_star_cowo1 
+    lda TEXT
+    sta c
+  //SEG17 [6] phi from main::@3 to main::@2
+  b2_from_b3:
+  //SEG18 [6] phi (byte*) main::nxt#4 = (const byte[]) TEXT#0 -- zpptrby1=cowo1 
+    lda #<TEXT
+    sta nxt
+    lda #>TEXT
+    sta nxt+1
+  //SEG19 [6] phi (byte) main::c#2 = (byte) main::c#1 -- register_copy 
+    jmp b2
+  //SEG20 [6] phi from main::@1 to main::@2
+  b2_from_b1:
+  //SEG21 [6] phi (byte*) main::nxt#4 = (byte*) main::nxt#3 -- register_copy 
+  //SEG22 [6] phi (byte) main::c#2 = (byte) main::c#0 -- register_copy 
+    jmp b2
+  //SEG23 main::@2
+  b2:
+  //SEG24 [7] (byte) main::i#1 ← ++ (byte) main::i#3 [ main::i#1 main::c#2 main::nxt#4 ] -- zpby1=_inc_zpby1 
+    inc i
+  //SEG25 [8] *((const byte*) SCREEN#0 + (byte) main::i#1) ← (byte) main::c#2 [ main::i#1 main::nxt#4 ] -- cowo1_staridx_zpby1=zpby2 
+    lda c
+    ldx i
+    sta SCREEN,x
+  //SEG26 [9] (byte*) main::nxt#1 ← ++ (byte*) main::nxt#4 [ main::nxt#1 main::i#1 ] -- zpptrby1=_inc_zpptrby1 
+    inc nxt
+    bne !+
+    inc nxt+1
+  !:
+  //SEG27 [10] if(true) goto main::@1 [ main::nxt#1 main::i#1 ] -- true_then_la1 
+    jmp b1_from_b2
+    jmp breturn
+  //SEG28 main::@return
+  breturn:
+  //SEG29 [11] return  [ ]
+    rts
+}
+
+Statement [3] (byte) main::c#0 ← * (byte*) main::nxt#3 [ main::nxt#3 main::i#3 main::c#0 ] always clobbers reg byte a reg byte y 
+Removing always clobbered register reg byte a as potential for zp ZP_BYTE:2 [ main::i#3 main::i#1 ]
+Removing always clobbered register reg byte y as potential for zp ZP_BYTE:2 [ main::i#3 main::i#1 ]
+Statement [3] (byte) main::c#0 ← * (byte*) main::nxt#3 [ main::nxt#3 main::i#3 main::c#0 ] always clobbers reg byte a reg byte y 
+REGISTER UPLIFT POTENTIAL REGISTERS
+Potential registers zp ZP_BYTE:2 [ main::i#3 main::i#1 ] : zp ZP_BYTE:2 , reg byte x , 
+Potential registers zp ZP_BYTE:3 [ main::c#2 main::c#0 main::c#1 ] : zp ZP_BYTE:3 , reg byte a , reg byte x , reg byte y , 
+Potential registers zp ZP_PTR_BYTE:4 [ main::nxt#4 main::nxt#3 main::nxt#1 ] : zp ZP_PTR_BYTE:4 , 
+
+REGISTER UPLIFT SCOPES
+Uplift Scope [main] 55: zp ZP_BYTE:3 [ main::c#2 main::c#0 main::c#1 ] 29.33: zp ZP_PTR_BYTE:4 [ main::nxt#4 main::nxt#3 main::nxt#1 ] 12.65: zp ZP_BYTE:2 [ main::i#3 main::i#1 ] 
+Uplift Scope [] 
+
+Uplifting [main] best 800 combination reg byte a [ main::c#2 main::c#0 main::c#1 ] zp ZP_PTR_BYTE:4 [ main::nxt#4 main::nxt#3 main::nxt#1 ] reg byte x [ main::i#3 main::i#1 ] 
+Uplifting [] best 800 combination 
+Allocated (was zp ZP_PTR_BYTE:4) zp ZP_PTR_BYTE:2 [ main::nxt#4 main::nxt#3 main::nxt#1 ]
+Removing instruction jmp bend
+Removing instruction jmp b1
+Removing instruction jmp b3
+Removing instruction jmp b2
+Removing instruction jmp breturn
+Succesful ASM optimization Pass5NextJumpElimination
+ASSEMBLER
+//SEG0 Global Constants & labels
+  .const SCREEN = $400
+  .const SCROLL = $d016
+  TEXT: .text "tst @"
+//SEG1 @begin
+bbegin:
+//SEG2 [0] call main param-assignment [ ]
+//SEG3 [1] phi from @begin to main
+main_from_bbegin:
+  jsr main
+//SEG4 @end
+bend:
+//SEG5 main
+main: {
+    .label nxt = 2
+  //SEG6 [2] phi from main to main::@1
+  b1_from_main:
+  //SEG7 [2] phi (byte) main::i#3 = (byte) 0 -- xby=coby1 
+    ldx #0
+  //SEG8 [2] phi (byte*) main::nxt#3 = (const byte[]) TEXT#0 -- zpptrby1=cowo1 
+    lda #<TEXT
+    sta nxt
+    lda #>TEXT
+    sta nxt+1
+    jmp b1
+  //SEG9 [2] phi from main::@2 to main::@1
+  b1_from_b2:
+  //SEG10 [2] phi (byte) main::i#3 = (byte) main::i#1 -- register_copy 
+  //SEG11 [2] phi (byte*) main::nxt#3 = (byte*) main::nxt#1 -- register_copy 
+  //SEG12 main::@1
+  b1:
+  //SEG13 [3] (byte) main::c#0 ← * (byte*) main::nxt#3 [ main::nxt#3 main::i#3 main::c#0 ] -- aby=_star_zpptrby1 
+    ldy #0
+    lda (nxt),y
+  //SEG14 [4] if((byte) main::c#0!=(byte) '@') goto main::@2 [ main::nxt#3 main::i#3 main::c#0 ] -- aby_neq_coby1_then_la1 
+    cmp #'@'
+    bne b2_from_b1
+  //SEG15 main::@3
+  b3:
+  //SEG16 [5] (byte) main::c#1 ← * (const byte[]) TEXT#0 [ main::i#3 main::c#1 ] -- aby=_star_cowo1 
+    lda TEXT
+  //SEG17 [6] phi from main::@3 to main::@2
+  b2_from_b3:
+  //SEG18 [6] phi (byte*) main::nxt#4 = (const byte[]) TEXT#0 -- zpptrby1=cowo1 
+    lda #<TEXT
+    sta nxt
+    lda #>TEXT
+    sta nxt+1
+  //SEG19 [6] phi (byte) main::c#2 = (byte) main::c#1 -- register_copy 
+    jmp b2
+  //SEG20 [6] phi from main::@1 to main::@2
+  b2_from_b1:
+  //SEG21 [6] phi (byte*) main::nxt#4 = (byte*) main::nxt#3 -- register_copy 
+  //SEG22 [6] phi (byte) main::c#2 = (byte) main::c#0 -- register_copy 
+  //SEG23 main::@2
+  b2:
+  //SEG24 [7] (byte) main::i#1 ← ++ (byte) main::i#3 [ main::i#1 main::c#2 main::nxt#4 ] -- xby=_inc_xby 
+    inx
+  //SEG25 [8] *((const byte*) SCREEN#0 + (byte) main::i#1) ← (byte) main::c#2 [ main::i#1 main::nxt#4 ] -- cowo1_staridx_xby=aby 
+    sta SCREEN,x
+  //SEG26 [9] (byte*) main::nxt#1 ← ++ (byte*) main::nxt#4 [ main::nxt#1 main::i#1 ] -- zpptrby1=_inc_zpptrby1 
+    inc nxt
+    bne !+
+    inc nxt+1
+  !:
+  //SEG27 [10] if(true) goto main::@1 [ main::nxt#1 main::i#1 ] -- true_then_la1 
+    jmp b1_from_b2
+  //SEG28 main::@return
+  breturn:
+  //SEG29 [11] return  [ ]
+    rts
+}
+
+Replacing label b2_from_b1 with b2
+Replacing label b1_from_b2 with b1
+Removing instruction main_from_bbegin:
+Removing instruction b1_from_b2:
+Removing instruction b2_from_b1:
+Succesful ASM optimization Pass5RedundantLabelElimination
+ASSEMBLER
+//SEG0 Global Constants & labels
+  .const SCREEN = $400
+  .const SCROLL = $d016
+  TEXT: .text "tst @"
+//SEG1 @begin
+bbegin:
+//SEG2 [0] call main param-assignment [ ]
+//SEG3 [1] phi from @begin to main
+  jsr main
+//SEG4 @end
+bend:
+//SEG5 main
+main: {
+    .label nxt = 2
+  //SEG6 [2] phi from main to main::@1
+  b1_from_main:
+  //SEG7 [2] phi (byte) main::i#3 = (byte) 0 -- xby=coby1 
+    ldx #0
+  //SEG8 [2] phi (byte*) main::nxt#3 = (const byte[]) TEXT#0 -- zpptrby1=cowo1 
+    lda #<TEXT
+    sta nxt
+    lda #>TEXT
+    sta nxt+1
+    jmp b1
+  //SEG9 [2] phi from main::@2 to main::@1
+  //SEG10 [2] phi (byte) main::i#3 = (byte) main::i#1 -- register_copy 
+  //SEG11 [2] phi (byte*) main::nxt#3 = (byte*) main::nxt#1 -- register_copy 
+  //SEG12 main::@1
+  b1:
+  //SEG13 [3] (byte) main::c#0 ← * (byte*) main::nxt#3 [ main::nxt#3 main::i#3 main::c#0 ] -- aby=_star_zpptrby1 
+    ldy #0
+    lda (nxt),y
+  //SEG14 [4] if((byte) main::c#0!=(byte) '@') goto main::@2 [ main::nxt#3 main::i#3 main::c#0 ] -- aby_neq_coby1_then_la1 
+    cmp #'@'
+    bne b2
+  //SEG15 main::@3
+  b3:
+  //SEG16 [5] (byte) main::c#1 ← * (const byte[]) TEXT#0 [ main::i#3 main::c#1 ] -- aby=_star_cowo1 
+    lda TEXT
+  //SEG17 [6] phi from main::@3 to main::@2
+  b2_from_b3:
+  //SEG18 [6] phi (byte*) main::nxt#4 = (const byte[]) TEXT#0 -- zpptrby1=cowo1 
+    lda #<TEXT
+    sta nxt
+    lda #>TEXT
+    sta nxt+1
+  //SEG19 [6] phi (byte) main::c#2 = (byte) main::c#1 -- register_copy 
+    jmp b2
+  //SEG20 [6] phi from main::@1 to main::@2
+  //SEG21 [6] phi (byte*) main::nxt#4 = (byte*) main::nxt#3 -- register_copy 
+  //SEG22 [6] phi (byte) main::c#2 = (byte) main::c#0 -- register_copy 
+  //SEG23 main::@2
+  b2:
+  //SEG24 [7] (byte) main::i#1 ← ++ (byte) main::i#3 [ main::i#1 main::c#2 main::nxt#4 ] -- xby=_inc_xby 
+    inx
+  //SEG25 [8] *((const byte*) SCREEN#0 + (byte) main::i#1) ← (byte) main::c#2 [ main::i#1 main::nxt#4 ] -- cowo1_staridx_xby=aby 
+    sta SCREEN,x
+  //SEG26 [9] (byte*) main::nxt#1 ← ++ (byte*) main::nxt#4 [ main::nxt#1 main::i#1 ] -- zpptrby1=_inc_zpptrby1 
+    inc nxt
+    bne !+
+    inc nxt+1
+  !:
+  //SEG27 [10] if(true) goto main::@1 [ main::nxt#1 main::i#1 ] -- true_then_la1 
+    jmp b1
+  //SEG28 main::@return
+  breturn:
+  //SEG29 [11] return  [ ]
+    rts
+}
+
+Removing instruction bbegin:
+Removing instruction bend:
+Removing instruction b1_from_main:
+Removing instruction b3:
+Removing instruction b2_from_b3:
+Removing instruction breturn:
+Succesful ASM optimization Pass5UnusedLabelElimination
+ASSEMBLER
+//SEG0 Global Constants & labels
+  .const SCREEN = $400
+  .const SCROLL = $d016
+  TEXT: .text "tst @"
+//SEG1 @begin
+//SEG2 [0] call main param-assignment [ ]
+//SEG3 [1] phi from @begin to main
+  jsr main
+//SEG4 @end
+//SEG5 main
+main: {
+    .label nxt = 2
+  //SEG6 [2] phi from main to main::@1
+  //SEG7 [2] phi (byte) main::i#3 = (byte) 0 -- xby=coby1 
+    ldx #0
+  //SEG8 [2] phi (byte*) main::nxt#3 = (const byte[]) TEXT#0 -- zpptrby1=cowo1 
+    lda #<TEXT
+    sta nxt
+    lda #>TEXT
+    sta nxt+1
+    jmp b1
+  //SEG9 [2] phi from main::@2 to main::@1
+  //SEG10 [2] phi (byte) main::i#3 = (byte) main::i#1 -- register_copy 
+  //SEG11 [2] phi (byte*) main::nxt#3 = (byte*) main::nxt#1 -- register_copy 
+  //SEG12 main::@1
+  b1:
+  //SEG13 [3] (byte) main::c#0 ← * (byte*) main::nxt#3 [ main::nxt#3 main::i#3 main::c#0 ] -- aby=_star_zpptrby1 
+    ldy #0
+    lda (nxt),y
+  //SEG14 [4] if((byte) main::c#0!=(byte) '@') goto main::@2 [ main::nxt#3 main::i#3 main::c#0 ] -- aby_neq_coby1_then_la1 
+    cmp #'@'
+    bne b2
+  //SEG15 main::@3
+  //SEG16 [5] (byte) main::c#1 ← * (const byte[]) TEXT#0 [ main::i#3 main::c#1 ] -- aby=_star_cowo1 
+    lda TEXT
+  //SEG17 [6] phi from main::@3 to main::@2
+  //SEG18 [6] phi (byte*) main::nxt#4 = (const byte[]) TEXT#0 -- zpptrby1=cowo1 
+    lda #<TEXT
+    sta nxt
+    lda #>TEXT
+    sta nxt+1
+  //SEG19 [6] phi (byte) main::c#2 = (byte) main::c#1 -- register_copy 
+    jmp b2
+  //SEG20 [6] phi from main::@1 to main::@2
+  //SEG21 [6] phi (byte*) main::nxt#4 = (byte*) main::nxt#3 -- register_copy 
+  //SEG22 [6] phi (byte) main::c#2 = (byte) main::c#0 -- register_copy 
+  //SEG23 main::@2
+  b2:
+  //SEG24 [7] (byte) main::i#1 ← ++ (byte) main::i#3 [ main::i#1 main::c#2 main::nxt#4 ] -- xby=_inc_xby 
+    inx
+  //SEG25 [8] *((const byte*) SCREEN#0 + (byte) main::i#1) ← (byte) main::c#2 [ main::i#1 main::nxt#4 ] -- cowo1_staridx_xby=aby 
+    sta SCREEN,x
+  //SEG26 [9] (byte*) main::nxt#1 ← ++ (byte*) main::nxt#4 [ main::nxt#1 main::i#1 ] -- zpptrby1=_inc_zpptrby1 
+    inc nxt
+    bne !+
+    inc nxt+1
+  !:
+  //SEG27 [10] if(true) goto main::@1 [ main::nxt#1 main::i#1 ] -- true_then_la1 
+    jmp b1
+  //SEG28 main::@return
+  //SEG29 [11] return  [ ]
+    rts
+}
+
+Removing instruction jmp b1
+Removing instruction jmp b2
+Succesful ASM optimization Pass5NextJumpElimination
+ASSEMBLER
+//SEG0 Global Constants & labels
+  .const SCREEN = $400
+  .const SCROLL = $d016
+  TEXT: .text "tst @"
+//SEG1 @begin
+//SEG2 [0] call main param-assignment [ ]
+//SEG3 [1] phi from @begin to main
+  jsr main
+//SEG4 @end
+//SEG5 main
+main: {
+    .label nxt = 2
+  //SEG6 [2] phi from main to main::@1
+  //SEG7 [2] phi (byte) main::i#3 = (byte) 0 -- xby=coby1 
+    ldx #0
+  //SEG8 [2] phi (byte*) main::nxt#3 = (const byte[]) TEXT#0 -- zpptrby1=cowo1 
+    lda #<TEXT
+    sta nxt
+    lda #>TEXT
+    sta nxt+1
+  //SEG9 [2] phi from main::@2 to main::@1
+  //SEG10 [2] phi (byte) main::i#3 = (byte) main::i#1 -- register_copy 
+  //SEG11 [2] phi (byte*) main::nxt#3 = (byte*) main::nxt#1 -- register_copy 
+  //SEG12 main::@1
+  b1:
+  //SEG13 [3] (byte) main::c#0 ← * (byte*) main::nxt#3 [ main::nxt#3 main::i#3 main::c#0 ] -- aby=_star_zpptrby1 
+    ldy #0
+    lda (nxt),y
+  //SEG14 [4] if((byte) main::c#0!=(byte) '@') goto main::@2 [ main::nxt#3 main::i#3 main::c#0 ] -- aby_neq_coby1_then_la1 
+    cmp #'@'
+    bne b2
+  //SEG15 main::@3
+  //SEG16 [5] (byte) main::c#1 ← * (const byte[]) TEXT#0 [ main::i#3 main::c#1 ] -- aby=_star_cowo1 
+    lda TEXT
+  //SEG17 [6] phi from main::@3 to main::@2
+  //SEG18 [6] phi (byte*) main::nxt#4 = (const byte[]) TEXT#0 -- zpptrby1=cowo1 
+    lda #<TEXT
+    sta nxt
+    lda #>TEXT
+    sta nxt+1
+  //SEG19 [6] phi (byte) main::c#2 = (byte) main::c#1 -- register_copy 
+  //SEG20 [6] phi from main::@1 to main::@2
+  //SEG21 [6] phi (byte*) main::nxt#4 = (byte*) main::nxt#3 -- register_copy 
+  //SEG22 [6] phi (byte) main::c#2 = (byte) main::c#0 -- register_copy 
+  //SEG23 main::@2
+  b2:
+  //SEG24 [7] (byte) main::i#1 ← ++ (byte) main::i#3 [ main::i#1 main::c#2 main::nxt#4 ] -- xby=_inc_xby 
+    inx
+  //SEG25 [8] *((const byte*) SCREEN#0 + (byte) main::i#1) ← (byte) main::c#2 [ main::i#1 main::nxt#4 ] -- cowo1_staridx_xby=aby 
+    sta SCREEN,x
+  //SEG26 [9] (byte*) main::nxt#1 ← ++ (byte*) main::nxt#4 [ main::nxt#1 main::i#1 ] -- zpptrby1=_inc_zpptrby1 
+    inc nxt
+    bne !+
+    inc nxt+1
+  !:
+  //SEG27 [10] if(true) goto main::@1 [ main::nxt#1 main::i#1 ] -- true_then_la1 
+    jmp b1
+  //SEG28 main::@return
+  //SEG29 [11] return  [ ]
+    rts
+}
+
+FINAL SYMBOL TABLE
+(label) @begin
+(label) @end
+(byte*) SCREEN
+(const byte*) SCREEN#0 SCREEN = (word) 1024
+(byte*) SCROLL
+(const byte*) SCROLL#0 SCROLL = (word) 53270
+(byte[]) TEXT
+(const byte[]) TEXT#0 TEXT = (string) "tst @"
+(void()) main()
+(label) main::@1
+(label) main::@2
+(label) main::@3
+(label) main::@return
+(byte) main::c
+(byte) main::c#0 reg byte a 16.5
+(byte) main::c#1 reg byte a 22.0
+(byte) main::c#2 reg byte a 16.5
+(byte) main::i
+(byte) main::i#1 reg byte x 8.25
+(byte) main::i#3 reg byte x 4.4
+(byte*) main::nxt
+(byte*) main::nxt#1 nxt zp ZP_PTR_BYTE:2 11.0
+(byte*) main::nxt#3 nxt zp ZP_PTR_BYTE:2 11.0
+(byte*) main::nxt#4 nxt zp ZP_PTR_BYTE:2 7.333333333333333
+
+reg byte x [ main::i#3 main::i#1 ]
+reg byte a [ main::c#2 main::c#0 main::c#1 ]
+zp ZP_PTR_BYTE:2 [ main::nxt#4 main::nxt#3 main::nxt#1 ]
+
+FINAL CODE
+//SEG0 Global Constants & labels
+  .const SCREEN = $400
+  .const SCROLL = $d016
+  TEXT: .text "tst @"
+//SEG1 @begin
+//SEG2 [0] call main param-assignment [ ]
+//SEG3 [1] phi from @begin to main
+  jsr main
+//SEG4 @end
+//SEG5 main
+main: {
+    .label nxt = 2
+  //SEG6 [2] phi from main to main::@1
+  //SEG7 [2] phi (byte) main::i#3 = (byte) 0 -- xby=coby1 
+    ldx #0
+  //SEG8 [2] phi (byte*) main::nxt#3 = (const byte[]) TEXT#0 -- zpptrby1=cowo1 
+    lda #<TEXT
+    sta nxt
+    lda #>TEXT
+    sta nxt+1
+  //SEG9 [2] phi from main::@2 to main::@1
+  //SEG10 [2] phi (byte) main::i#3 = (byte) main::i#1 -- register_copy 
+  //SEG11 [2] phi (byte*) main::nxt#3 = (byte*) main::nxt#1 -- register_copy 
+  //SEG12 main::@1
+  b1:
+  //SEG13 [3] (byte) main::c#0 ← * (byte*) main::nxt#3 [ main::nxt#3 main::i#3 main::c#0 ] -- aby=_star_zpptrby1 
+    ldy #0
+    lda (nxt),y
+  //SEG14 [4] if((byte) main::c#0!=(byte) '@') goto main::@2 [ main::nxt#3 main::i#3 main::c#0 ] -- aby_neq_coby1_then_la1 
+    cmp #'@'
+    bne b2
+  //SEG15 main::@3
+  //SEG16 [5] (byte) main::c#1 ← * (const byte[]) TEXT#0 [ main::i#3 main::c#1 ] -- aby=_star_cowo1 
+    lda TEXT
+  //SEG17 [6] phi from main::@3 to main::@2
+  //SEG18 [6] phi (byte*) main::nxt#4 = (const byte[]) TEXT#0 -- zpptrby1=cowo1 
+    lda #<TEXT
+    sta nxt
+    lda #>TEXT
+    sta nxt+1
+  //SEG19 [6] phi (byte) main::c#2 = (byte) main::c#1 -- register_copy 
+  //SEG20 [6] phi from main::@1 to main::@2
+  //SEG21 [6] phi (byte*) main::nxt#4 = (byte*) main::nxt#3 -- register_copy 
+  //SEG22 [6] phi (byte) main::c#2 = (byte) main::c#0 -- register_copy 
+  //SEG23 main::@2
+  b2:
+  //SEG24 [7] (byte) main::i#1 ← ++ (byte) main::i#3 [ main::i#1 main::c#2 main::nxt#4 ] -- xby=_inc_xby 
+    inx
+  //SEG25 [8] *((const byte*) SCREEN#0 + (byte) main::i#1) ← (byte) main::c#2 [ main::i#1 main::nxt#4 ] -- cowo1_staridx_xby=aby 
+    sta SCREEN,x
+  //SEG26 [9] (byte*) main::nxt#1 ← ++ (byte*) main::nxt#4 [ main::nxt#1 main::i#1 ] -- zpptrby1=_inc_zpptrby1 
+    inc nxt
+    bne !+
+    inc nxt+1
+  !:
+  //SEG27 [10] if(true) goto main::@1 [ main::nxt#1 main::i#1 ] -- true_then_la1 
+    jmp b1
+  //SEG28 main::@return
+  //SEG29 [11] return  [ ]
+    rts
+}
+

@@ -83,7 +83,7 @@ parameterList
     : expr (',' expr)*
     ;
 
-SIMPLETYPE: 'byte' | 'word' | 'string' | 'boolean' | 'void' ;
+SIMPLETYPE: 'byte' | 'word' | 'boolean' | 'void' ;
 STRING : '"' ('\\"' | ~'"')* '"';
 CHAR : '\''  ('\\\'' | ~'\'' ) '\'';
 BOOLEAN : 'true' | 'false';

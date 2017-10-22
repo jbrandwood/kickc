@@ -1,9 +1,8 @@
 Known Problems
-- Clobber can occur in PHI-statements. Example: scroll-clobber.kc. c#1/c#2 (A-register) is clobbered by //SEG18 [6] phi (byte*) main::nxt#4 = (const byte[]) TEXT#0 -- zpptrby1=cowo1
+- Increment/decrement of value pointed to by piinter does not work. eg. byte* BGCOL = $d020; (*BGCOL)++;
+- Arrays / strings allocated inline destroy functions (because they are allocated where the call enters.
 
 Features
-- Add support for expressions in data initializers.
-- Add support for empty / filled byte data arrays.
 - Move the main code into a main() function, and disallow code outside functions. The main function per default has no parameters and exits with RTS.
 - Improve locality of block sequence for if(cond) { stmt1; } else { stmt2; } to if(!cond) goto @else stmt1; jmp @end; @else: stmt2; @end:
 - Optimize if/else by swapping if & else if cond is easier to evaluate than !cond.
@@ -18,11 +17,23 @@ Features
 - Add ability to call ASM code from KC.
 - Add ability to call KC code from ASM. (Maybe declare some functions external to ensure their interface is well defined. Maybe generate ASM call stubs.)
 - Add an export keyword ensuring that a function is generated even if it is never called. Maybe export can be handled by generating a call that can be used as stub.
-- Add inline ASM (maybe?)
+- Add inline ASM
+  - Syntax asm( "asm...", "asm...", "asm..." ); - aligned with gcc
+  - Better syntax: asm { asm... } - using real ASM syntax inline!
+  - Allow inline ASM parameter expansion
 - Handle long branches
-- Allow complex array expressions in lValues eg. (SCREEN+$100)[idx]
 - Optimize loops by unrolling them somewhat
 - Optimize loops with Strength reduction (https://en.wikipedia.org/wiki/Strength_reduction)
+- Remove unused functions.
+- Support calculated pointers eg. *(ptr+i)
+
+Arrays / Strings / Inline data
+- New semantic: Arrays are always allocated inline (and must therefore have a size). Pointers are never.
+- Allow complex array expressions in lValues eg. (SCREEN+$100)[idx]
+- Add string / static array length operation.
+- Add array initializer filling with a specific value / (pattern?).
+- Add support for empty / filled byte data arrays.
+- Add support for expressions in data initializers.
 
 Assembler Improvements
 - Relabel blocks eliminating long labels such as b3_from_b11
@@ -44,8 +55,7 @@ Register Allocation
   - Avoid clobbering alive vars
 - Maybe support several fragments for the same operation with different cost and clobbering profiles.
 - Add memory registers (if we need to free some ZP).
-- Implement fast combination elimination based on live ranges (skipping the ASM-code.)
-  - Improve combination testing by finding live range overlaps and not creating combinations that would create an overlap conflict.
+- Improve combination testing by finding live range overlaps and not creating combinations that would create an overlap conflict.
   - Combinations should be created in a tree-structure instead of just doing all combinations
   - Example: For equivalence classes a, b, c if a&c have overlapping live ranges they can never have the same register. Therefore the combination iterator should not create combinations where C has the same register as a.
 
@@ -54,8 +64,6 @@ Process/Code Structure Improvement
 - Refactor Expression Operator Implementation & Evaluation into one class per operator
 - Improve error messages to give better context
 - Offer to compile resulting ASM with KickAssembler
-+ Implemenent Assertions for the output of different phases (ensuring that the result of the phase is consistent)
-+ Make each phase return a separate object graph (allowing for keeeping the history in memory & performing rollbacks)
 
 Testing
 - Test single passes by configuring compiler to only log ICL before & after the tested step!
@@ -121,3 +129,8 @@ Done
 + In immemarray.kc the if(++j==8) is broken because the optimizer culls the empty block main::@3 (because the value is constant). In the end the phi()-function in main::@2 has two handlers for min::@1 phi( main::@1/(byte) main::j#1 main::@1/(const byte) main::j#2 )
 + Add literal char syntax ( 'c' == (byte) 3 )
 + Add string constants
++ Clobber can occur in PHI-statements. Example: scroll-clobber.kc. c#1/c#2 (A-register) is clobbered by //SEG18 [6] phi (byte*) main::nxt#4 = (const byte[]) TEXT#0 -- zpptrby1=cowo1
++ Implement fast combination elimination based on live ranges (skipping the ASM-code.)
++ Implemenent Assertions for the output of different phases (ensuring that the result of the phase is consistent)
++ Make each phase return a separate object graph (allowing for keeeping the history in memory & performing rollbacks)
++ Remove "string" keyword (if it exists).

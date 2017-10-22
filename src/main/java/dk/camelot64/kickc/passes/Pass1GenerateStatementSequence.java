@@ -188,9 +188,11 @@ public class Pass1GenerateStatementSequence extends KickCBaseVisitor<Object> {
          this.visit(stmtForCtx.stmt());
       }
       // Add increment
-      PrePostModifierHandler.addPreModifiers(this, ctx.expr(1));
-      this.visit(ctx.expr(1));
-      PrePostModifierHandler.addPostModifiers(this, ctx.expr(1));
+      if(ctx.expr(1)!=null) {
+         PrePostModifierHandler.addPreModifiers(this, ctx.expr(1));
+         this.visit(ctx.expr(1));
+         PrePostModifierHandler.addPostModifiers(this, ctx.expr(1));
+      }
       // Add condition
       PrePostModifierHandler.addPreModifiers(this, ctx.expr(0));
       RValue rValue = (RValue) this.visit(ctx.expr(0));

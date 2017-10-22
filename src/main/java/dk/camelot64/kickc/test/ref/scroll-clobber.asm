@@ -12,15 +12,17 @@ main: {
   b1:
     ldy #0
     lda (nxt),y
-    cmp #'@'
+    tay
+    cpy #'@'
     bne b2
+    ldy TEXT
     lda #<TEXT
     sta nxt
     lda #>TEXT
     sta nxt+1
-    lda TEXT
   b2:
     inx
+    tya
     sta SCREEN,x
     inc nxt
     bne !+

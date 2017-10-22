@@ -177,7 +177,9 @@ public class AsmProgram {
       }
 
       public void decIndent() {
-         this.indent = this.indent.substring(0, this.indent.length()-2);
+         if(this.indent.length()>=2) {
+            this.indent = this.indent.substring(0, this.indent.length() - 2);
+         }
       }
 
       public String getIndent() {

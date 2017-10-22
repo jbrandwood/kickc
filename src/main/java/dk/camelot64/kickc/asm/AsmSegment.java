@@ -1,6 +1,7 @@
 package dk.camelot64.kickc.asm;
 
 import dk.camelot64.kickc.asm.parser.AsmClobber;
+import dk.camelot64.kickc.model.PhiTransitions;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -36,6 +37,12 @@ public class AsmSegment {
     */
    private String fragment;
 
+   /** If the segment represents a PHI transition (See. {@link PhiTransitions}) this contains the transition ID. */
+   private String phiTransitionId;
+
+   /** If the segment is an assignment in a PHI transition this contains the index of the assignment within the transition. */
+   private Integer phiTransitionAssignmentIdx;
+
    public AsmSegment(int index, Integer statementIdx, String source) {
       this.lines = new ArrayList<>();
       this.index = index;
@@ -67,6 +74,21 @@ public class AsmSegment {
       this.fragment  = fragment;
    }
 
+   public String getPhiTransitionId() {
+      return phiTransitionId;
+   }
+
+   public void setPhiTransitionId(String phiTransitionId) {
+      this.phiTransitionId = phiTransitionId;
+   }
+
+   public Integer getPhiTransitionAssignmentIdx() {
+      return phiTransitionAssignmentIdx;
+   }
+
+   public void setPhiTransitionAssignmentIdx(Integer phiTransitionAssignmentIdx) {
+      this.phiTransitionAssignmentIdx = phiTransitionAssignmentIdx;
+   }
 
    /**
     * Get the number of bytes the segment occupies in memory.
@@ -121,6 +143,13 @@ public class AsmSegment {
          out.append(printState.getIndent()).append("//SEG").append(getIndex());
          if (source != null) {
             out.append(" ").append(source);
+         }
+         if(phiTransitionId!=null) {
+            out.append(" [").append(phiTransitionId);
+            if(phiTransitionAssignmentIdx!=null) {
+               out.append("#").append(phiTransitionAssignmentIdx);
+            }
+            out.append("]");
          }
          if (fragment!=null) {
             out.append(" -- ");

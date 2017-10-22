@@ -37,15 +37,16 @@ main: {
     bne b5
     ldy #0
     lda (nxt),y
-    cmp #'@'
+    tax
+    cpx #'@'
     bne b6
+    ldx TEXT
     lda #<TEXT
     sta nxt
     lda #>TEXT
     sta nxt+1
-    lda TEXT
   b6:
-    sta line+$27
+    stx line+$27
     inc nxt
     bne !+
     inc nxt+1

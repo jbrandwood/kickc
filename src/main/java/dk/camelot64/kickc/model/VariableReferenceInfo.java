@@ -176,7 +176,7 @@ public class VariableReferenceInfo {
     * @param rValue The rValue
     * @return All referenced variables
     */
-   private Collection<VariableRef> getReferenced(RValue rValue) {
+   public static Collection<VariableRef> getReferenced(RValue rValue) {
       if (rValue == null) {
          return new ArrayList<>();
       } else if (rValue instanceof ConstantValue) {

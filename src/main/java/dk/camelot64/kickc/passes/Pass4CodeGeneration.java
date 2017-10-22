@@ -306,7 +306,6 @@ public class Pass4CodeGeneration {
       PhiTransitions transitions = getTransitions(toBlock);
       PhiTransitions.PhiTransition transition = transitions.getTransition(fromBlock);
       if (!transition.isGenerated()) {
-
          Statement toFirstStatement = toBlock.getStatements().get(0);
          String segmentSrc = "[" + toFirstStatement.getIndex() + "] phi from ";
          for (ControlFlowBlock fBlock : transition.getFromBlocks()) {
@@ -314,13 +313,26 @@ public class Pass4CodeGeneration {
          }
          segmentSrc += "to " + toBlock.getLabel().getFullName();
          asm.startSegment(toFirstStatement.getIndex(), segmentSrc);
-
+         asm.getCurrentSegment().setPhiTransitionId(transition.getTransitionId());
          for (ControlFlowBlock fBlock : transition.getFromBlocks()) {
             asm.addLabel((toBlock.getLabel().getLocalName() + "_from_" + fBlock.getLabel().getLocalName()).replace('@', 'b').replace(':', '_'));
          }
          List<PhiTransitions.PhiTransition.PhiAssignment> assignments = transition.getAssignments();
          for (PhiTransitions.PhiTransition.PhiAssignment assignment : assignments) {
-            genAsmMove(asm, assignment.getVariable(), assignment.getrValue(), assignment.getPhiBlock(), scope);
+            LValue lValue = assignment.getVariable();
+            RValue rValue = assignment.getrValue();
+            Statement statement = assignment.getPhiBlock();
+            // Generate an ASM move fragment
+            asm.startSegment(statement.getIndex(), "[" + statement.getIndex() + "] phi " + lValue.toString(program) + " = " + rValue.toString(program));
+            asm.getCurrentSegment().setPhiTransitionId(transition.getTransitionId());
+            asm.getCurrentSegment().setPhiTransitionAssignmentIdx(assignment.getAssignmentIdx());
+            if (isRegisterCopy(lValue, rValue)) {
+               asm.getCurrentSegment().setFragment("register_copy");
+            } else {
+               AsmFragment asmFragment = new AsmFragment(lValue, rValue, program, scope);
+               asm.getCurrentSegment().setFragment(asmFragment.getSignature());
+               asmFragment.generate(asm);
+            }
          }
          transition.setGenerated(true);
       } else {
@@ -345,223 +357,10 @@ public class Pass4CodeGeneration {
    private PhiTransitions getTransitions(ControlFlowBlock toBlock) {
       PhiTransitions transitions = this.blockTransitions.get(toBlock);
       if (transitions == null) {
-         transitions = new PhiTransitions(toBlock);
+         transitions = new PhiTransitions(program, toBlock);
          this.blockTransitions.put(toBlock, transitions);
       }
       return transitions;
-   }
-
-   /**
-    * Keeps track of the phi transitions into a single block during code generation.
-    * Used to ensure that duplicate transitions are only code generated once.
-    */
-   public class PhiTransitions {
-
-      /**
-       * Label of the to-block.
-       */
-      private ControlFlowBlock toBlock;
-
-      /**
-       * The phi-block of the to-block.
-       */
-      private StatementPhiBlock phiBlock;
-
-      /**
-       * Maps from-block to the transition from the from-block to the to-block.
-       */
-      private Map<ControlFlowBlock, PhiTransition> transitions;
-
-      public PhiTransitions(ControlFlowBlock toBlock) {
-         this.toBlock = toBlock;
-         this.transitions = new LinkedHashMap<>();
-         if (toBlock.hasPhiBlock()) {
-            this.phiBlock = toBlock.getPhiBlock();
-            List<ControlFlowBlock> predecessors = new ArrayList<>(getGraph().getPredecessors(toBlock));
-            Collections.sort(predecessors, new Comparator<ControlFlowBlock>() {
-               @Override
-               public int compare(ControlFlowBlock o1, ControlFlowBlock o2) {
-                  return o1.getLabel().getFullName().compareTo(o2.getLabel().getFullName());
-               }
-            });
-            for (ControlFlowBlock predecessor : predecessors) {
-               PhiTransition transition = findTransition(predecessor);
-               transitions.put(predecessor, transition);
-            }
-         }
-      }
-
-      /**
-       * Find the transition from a specific fromBlock.
-       * If another transition already has the same assignments it is reused. If not a new transition is created.
-       *
-       * @param fromBlock
-       * @return
-       */
-      private PhiTransition findTransition(ControlFlowBlock fromBlock) {
-         PhiTransition transition = new PhiTransition(fromBlock);
-         boolean isCallTransition = toBlock.getLabel().equals(fromBlock.getCallSuccessor());
-         if (!isCallTransition) {
-            // If the transition is not a call - then attempt to join with other equal transition(s)
-            for (PhiTransition candidate : transitions.values()) {
-               if (candidate.equalAssignments(transition)) {
-                  candidate.addFromBlock(fromBlock);
-                  return candidate;
-               }
-            }
-         }
-         return transition;
-      }
-
-      public Collection<ControlFlowBlock> getFromBlocks() {
-         return transitions.keySet();
-      }
-
-      /**
-       * Get the transition into the to-block from a specific from-block
-       *
-       * @param fromBlock The from-block
-       * @return The transition from the from-block into the to-block
-       */
-      public PhiTransition getTransition(ControlFlowBlock fromBlock) {
-         PhiTransition transition = transitions.get(fromBlock);
-         if (transition == null) {
-            transition = findTransition(fromBlock);
-            transitions.put(fromBlock, transition);
-         }
-         return transition;
-      }
-
-
-      /**
-       * A single transition into a to-block.
-       * The transition contains the assignments necessary to enter the to-block from specific from-block(s).
-       * The transition may be shared between multiple from-blocks, if the assignments are identical.
-       */
-      public class PhiTransition {
-
-         private List<ControlFlowBlock> fromBlocks;
-
-         private List<PhiAssignment> assignments;
-
-         private boolean generated;
-
-         public PhiTransition(ControlFlowBlock fromBlock) {
-            this.fromBlocks = new ArrayList<>();
-            this.fromBlocks.add(fromBlock);
-            this.generated = false;
-            initAssignments(fromBlock);
-         }
-
-         private void initAssignments(ControlFlowBlock fromBlock) {
-            this.assignments = new ArrayList<>();
-            if (phiBlock != null) {
-               List<StatementPhiBlock.PhiVariable> phiVariables = new ArrayList<>(phiBlock.getPhiVariables());
-               Collections.reverse(phiVariables);
-               for (StatementPhiBlock.PhiVariable phiVariable : phiVariables) {
-                  List<StatementPhiBlock.PhiRValue> phiRValues = new ArrayList<>(phiVariable.getValues());
-                  Collections.sort(phiRValues, new Comparator<StatementPhiBlock.PhiRValue>() {
-                     @Override
-                     public int compare(StatementPhiBlock.PhiRValue o1, StatementPhiBlock.PhiRValue o2) {
-                        return o1.getPredecessor().getFullName().compareTo(o2.getPredecessor().getFullName());
-                     }
-                  });
-                  for (StatementPhiBlock.PhiRValue phiRValue : phiRValues) {
-                     if (phiRValue.getPredecessor().equals(fromBlock.getLabel())) {
-                        this.assignments.add(new PhiAssignment(phiVariable, phiRValue));
-                     }
-                  }
-               }
-            }
-         }
-
-         public List<PhiAssignment> getAssignments() {
-            return assignments;
-         }
-
-         public boolean isGenerated() {
-            return generated;
-         }
-
-         public void setGenerated(boolean generated) {
-            this.generated = generated;
-         }
-
-         public void addFromBlock(ControlFlowBlock fromBlock) {
-            fromBlocks.add(fromBlock);
-         }
-
-         /**
-          * Determines if another transition has the exact same assignments as this block
-          *
-          * @param other The other transition to examine
-          * @return true if the assignments are identical
-          */
-         public boolean equalAssignments(PhiTransition other) {
-            List<PhiAssignment> otherAssignments = other.getAssignments();
-            if (assignments.size() != otherAssignments.size()) {
-               return false;
-            }
-            for (int i = 0; i < assignments.size(); i++) {
-               PhiAssignment assignment = assignments.get(i);
-               PhiAssignment otherAssignment = otherAssignments.get(i);
-               ProgramScope scope = program.getScope();
-               if (assignment.getVariable() instanceof VariableRef && otherAssignment.getVariable() instanceof VariableRef) {
-                  Variable var = scope.getVariable((VariableRef) assignment.getVariable());
-                  Variable otherVar = scope.getVariable((VariableRef) otherAssignment.getVariable());
-                  if (!var.getAllocation().equals(otherVar.getAllocation())) {
-                     return false;
-                  }
-               } else if (!assignment.getVariable().equals(otherAssignment.getVariable())) {
-                  return false;
-               }
-               if (assignment.getrValue() instanceof VariableRef && otherAssignment.getrValue() instanceof VariableRef) {
-                  Variable var = scope.getVariable((VariableRef) assignment.getrValue());
-                  Variable otherVar = scope.getVariable((VariableRef) otherAssignment.getrValue());
-                  if (!var.getAllocation().equals(otherVar.getAllocation())) {
-                     return false;
-                  }
-               } else if (!assignment.getrValue().equals(otherAssignment.getrValue())) {
-                  return false;
-               }
-            }
-            return true;
-         }
-
-         public List<ControlFlowBlock> getFromBlocks() {
-            return fromBlocks;
-         }
-
-         /**
-          * Assignment of a single value during a phi transition
-          */
-         public class PhiAssignment {
-
-            private StatementPhiBlock.PhiVariable phiVariable;
-
-            private StatementPhiBlock.PhiRValue phiRValue;
-
-            public PhiAssignment(StatementPhiBlock.PhiVariable phiVariable, StatementPhiBlock.PhiRValue phiRValue) {
-               this.phiVariable = phiVariable;
-               this.phiRValue = phiRValue;
-            }
-
-            public LValue getVariable() {
-               return phiVariable.getVariable();
-            }
-
-            public RValue getrValue() {
-               return phiRValue.getrValue();
-            }
-
-            public Statement getPhiBlock() {
-               return phiBlock;
-            }
-
-         }
-
-      }
-
    }
 
    private Registers.Register getRegister(RValue rValue) {
@@ -573,32 +372,11 @@ public class Pass4CodeGeneration {
       }
    }
 
-   /**
-    * Generate ASM assigning a value (rValue) to a variable (lValue).
-    *
-    * @param asm       The ASM program to generate into
-    * @param lValue    The lValue that should be assigned the value
-    * @param rValue    The rValue to assign to the lValue.
-    * @param statement The ICL statement that is the cause of the assignment.
-    * @param scope     The scope where the ASM code is being inserted. Used to ensure that labels inserted in the code reference the right variables.
-    */
-   private void genAsmMove(AsmProgram asm, LValue lValue, RValue rValue, Statement statement, ScopeRef scope) {
-      asm.startSegment(statement.getIndex(), "[" + statement.getIndex() + "] phi " + lValue.toString(program) + " = " + rValue.toString(program));
-      if (isRegisterCopy(lValue, rValue)) {
-         asm.getCurrentSegment().setFragment("register_copy");
-      } else {
-         AsmFragment asmFragment = new AsmFragment(lValue, rValue, program, scope);
-         asm.getCurrentSegment().setFragment(asmFragment.getSignature());
-         asmFragment.generate(asm);
-      }
-   }
-
    private boolean isRegisterCopy(LValue lValue, RValue rValue) {
       return
             getRegister(lValue) != null &&
                   getRegister(rValue) != null &&
                   getRegister(lValue).equals(getRegister(rValue));
    }
-
 
 }

@@ -5,9 +5,7 @@ import dk.camelot64.kickc.asm.AsmSegment;
 import dk.camelot64.kickc.asm.parser.AsmClobber;
 import dk.camelot64.kickc.model.*;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
+import java.util.*;
 
 /*** Ensures that no statement clobbers a CPU register used by an alive variable - and that assigning statements clobber the CPU registers they assign to */
 public class Pass4AssertNoCpuClobber extends Pass2Base {
@@ -43,28 +41,30 @@ public class Pass4AssertNoCpuClobber extends Pass2Base {
             Collection<Registers.Register> clobberRegisters = getClobberRegisters(asmSegmentClobber);
             // Find vars assigned to in the statement
             Collection<VariableRef> assignedVars = Pass4RegisterUpliftPotentialRegisterAnalysis.getAssignedVars(statement);
-            // Two assigned vars cannot use same register
-            if(assignedVars.size()>1) {
-               for (VariableRef assignedVar1 : assignedVars) {
-                  for (VariableRef assignedVar2 : assignedVars) {
-                     if (assignedVar1.equals(assignedVar2)) {
-                        // Same variable - not relevant
-                        continue;
-                     }
-                     Registers.Register register1 = getProgram().getScope().getVariable(assignedVar1).getAllocation();
-                     Registers.Register register2 = getProgram().getScope().getVariable(assignedVar2).getAllocation();
-                     if (register1.equals(register2)) {
-                        if (verbose) {
-                           getLog().append("Two assigned variables " + assignedVar1 + " and " + assignedVar2 + " clobbered by use of same register " + register1 + " in statement " + statement);
-                        }
-                        clobberProblem = true;
-                     }
+
+            // Find alive variables
+            List<VariableRef> aliveVars = new ArrayList<>(getProgram().getLiveRangeVariablesEffective().getAliveEffective(statement));
+
+            // If the segment is an assignment in a phi transition, examine the later phi transition assignments and update alive variables alive and variables assigned
+            if(asmSegment.getPhiTransitionId()!=null && asmSegment.getPhiTransitionAssignmentIdx()!=null) {
+               String phiTransitionId = asmSegment.getPhiTransitionId();
+               int transitionAssignmentIdx = asmSegment.getPhiTransitionAssignmentIdx();
+               ControlFlowBlock statementBlock = getProgram().getGraph().getBlockFromStatementIdx(statementIdx);
+               PhiTransitions phiTransitions = new PhiTransitions(getProgram(), statementBlock);
+               PhiTransitions.PhiTransition phiTransition = phiTransitions.getTransition(phiTransitionId);
+               for (PhiTransitions.PhiTransition.PhiAssignment phiAssignment : phiTransition.getAssignments()) {
+                  // IF the assignment is later than the current one
+                  if(phiAssignment.getAssignmentIdx()>transitionAssignmentIdx) {
+                     RValue rValue = phiAssignment.getrValue();
+                     Collection<VariableRef> alive = VariableReferenceInfo.getReferenced(rValue);
+                     aliveVars.addAll(alive);
+                     VariableRef assignedVar = phiAssignment.getVariable();
+                     assignedVars.remove(assignedVar);
+                     alive.remove(assignedVar);
                   }
                }
             }
 
-            // Find alive variables
-            List<VariableRef> aliveVars = new ArrayList<>(getProgram().getLiveRangeVariablesEffective().getAliveEffective(statement));
             // Non-assigned alive variables must not be clobbered
             for (VariableRef aliveVar : aliveVars) {
                Variable variable = getProgram().getScope().getVariable(aliveVar);

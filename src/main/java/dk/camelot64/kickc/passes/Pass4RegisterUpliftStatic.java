@@ -38,6 +38,7 @@ public class Pass4RegisterUpliftStatic extends Pass2Base {
       */
 
       // Good combination for liverange.kc
+      /*
       setRegister(combination, "inc::$0", Registers.getRegisterX());
       setRegister(combination, "main::$0", Registers.getRegisterA());
       setRegister(combination, "inc::return#0", Registers.getRegisterA());
@@ -46,7 +47,15 @@ public class Pass4RegisterUpliftStatic extends Pass2Base {
       setRegister(combination, "main::a#2", Registers.getRegisterA());
       setRegister(combination, "i#11", Registers.getRegisterX());
       setRegister(combination, "inc::$0", Registers.getRegisterX());
+      */
 
+      // Clobber combination for scroll-clobber.kc
+      setRegister(combination, "main::c#0", Registers.getRegisterA());
+      setRegister(combination, "main::c#1", Registers.getRegisterA());
+      setRegister(combination, "main::c#2", Registers.getRegisterA());
+      setRegister(combination, "main::i#1", Registers.getRegisterX());
+      setRegister(combination, "main::i#3", Registers.getRegisterX());
+      setRegister(combination, "main::nxt#1", new Registers.RegisterZpPointerByte(2));
 
       boolean success = Pass4RegisterUpliftCombinations.generateCombinationAsm(
             combination,
@@ -66,6 +75,7 @@ public class Pass4RegisterUpliftStatic extends Pass2Base {
          }
          combination.store(getProgram().getLiveRangeEquivalenceClassSet());
       } else {
+         new Pass4AssertNoCpuClobber(getProgram()).check();
          throw new RuntimeException("Static uplift problem.");
       }
 

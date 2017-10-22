@@ -69,7 +69,6 @@ public class AsmFragment {
       this.bindings = new LinkedHashMap<>();
       this.program = program;
       setSignature(assignmentWithAluSignature(assignment, assignmentAlu));
-
    }
 
    /**

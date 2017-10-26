@@ -74,6 +74,10 @@ public class Operator {
             return BOOL_NOT;
          case "*":
             return STAR;
+         case "<":
+            return LOWBYTE;
+         case ">":
+            return HIBYTE;
          default:
             throw new RuntimeException("Unknown operator " + op);
       }
@@ -90,6 +94,8 @@ public class Operator {
    public static Operator BOOL_NOT = new Operator("~", Type.UNARY, 2);
    public static Operator NOT = new Operator("!", Type.UNARY, 2);
    public static Operator STAR = new Operator("*", Type.UNARY, 2);
+   public static Operator LOWBYTE = new Operator("<", Type.UNARY, 2);
+   public static Operator HIBYTE = new Operator(">", Type.UNARY, 2);
    public static Operator STAR_IDX = new Operator("*idx", Type.BINARY, 2);
    public static Operator MULTIPLY = new Operator("*", Type.BINARY, 3);
    public static Operator DIVIDE = new Operator("/", Type.BINARY, 3);
@@ -115,6 +121,10 @@ public class Operator {
 
    public int getPrecedence() {
       return precedence;
+   }
+
+   public Type getType() {
+      return type;
    }
 
    @Override

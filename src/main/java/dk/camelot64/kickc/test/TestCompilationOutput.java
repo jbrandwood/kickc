@@ -24,6 +24,10 @@ public class TestCompilationOutput extends TestCase {
       helper = new ReferenceHelper("dk/camelot64/kickc/test/ref/");
    }
 
+   public void testBitmapBresenham() throws IOException, URISyntaxException {
+      compileAndCompare("bitmap-bresenham");
+   }
+
    public void testScrollClobber() throws IOException, URISyntaxException {
       compileAndCompare("scroll-clobber");
    }

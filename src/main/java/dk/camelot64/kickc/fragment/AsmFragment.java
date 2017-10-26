@@ -239,9 +239,17 @@ public class AsmFragment {
          case "!=":
             return "_neq_";
          case "<":
-            return "_lt_";
+            if(operator.getType().equals(Operator.Type.UNARY)) {
+               return "_lo_";
+            }  else {
+               return "_lt_";
+            }
          case ">":
-            return "_gt_";
+            if(operator.getType().equals(Operator.Type.UNARY)) {
+               return "_hi_";
+            }  else {
+               return "_gt_";
+            }
          case "<=":
          case "=<":
             return "_le_";

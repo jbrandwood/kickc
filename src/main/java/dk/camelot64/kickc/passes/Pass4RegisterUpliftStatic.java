@@ -50,12 +50,22 @@ public class Pass4RegisterUpliftStatic extends Pass2Base {
       */
 
       // Clobber combination for scroll-clobber.kc
+      /*
       setRegister(combination, "main::c#0", Registers.getRegisterA());
       setRegister(combination, "main::c#1", Registers.getRegisterA());
       setRegister(combination, "main::c#2", Registers.getRegisterA());
       setRegister(combination, "main::i#1", Registers.getRegisterX());
       setRegister(combination, "main::i#3", Registers.getRegisterX());
       setRegister(combination, "main::nxt#1", new Registers.RegisterZpPointerByte(2));
+      */
+
+      // ALU combination for bitmap-bresenham.kc
+      setRegister(combination, "line::$3", Registers.getRegisterA());
+      setRegister(combination, "line::$5", Registers.getRegisterA());
+      setRegister(combination, "line::$4", Registers.getRegisterALU());
+      setRegister(combination, "line::$6", Registers.getRegisterA());
+      setRegister(combination, "line::$8", Registers.getRegisterA());
+      setRegister(combination, "line::$7", Registers.getRegisterALU());
 
       boolean success = Pass4RegisterUpliftCombinations.generateCombinationAsm(
             combination,

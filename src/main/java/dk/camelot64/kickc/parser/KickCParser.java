@@ -39,9 +39,9 @@ public class KickCParser extends Parser {
 	private static final String[] _LITERAL_NAMES = {
 		null, "'{'", "'}'", "'('", "')'", "'const'", "'='", "';'", "'if'", "'else'", 
 		"'while'", "'do'", "'for'", "'return'", "':'", "'..'", "','", "'*'", "'['", 
-		"']'", "'--'", "'++'", "'+'", "'-'", "'not'", "'!'", "'&'", "'~'", "'>>'", 
-		"'<<'", "'/'", "'%'", "'=='", "'!='", "'<>'", "'<'", "'<='", "'=<'", "'>='", 
-		"'=>'", "'>'", "'^'", "'|'", "'and'", "'&&'", "'or'", "'||'"
+		"']'", "'--'", "'++'", "'+'", "'-'", "'not'", "'!'", "'&'", "'~'", "'<'", 
+		"'>'", "'>>'", "'<<'", "'/'", "'%'", "'=='", "'!='", "'<>'", "'<='", "'=<'", 
+		"'>='", "'=>'", "'^'", "'|'", "'and'", "'&&'", "'or'", "'||'"
 	};
 	private static final String[] _SYMBOLIC_NAMES = {
 		null, null, null, null, null, null, null, null, null, null, null, null, 
@@ -194,7 +194,7 @@ public class KickCParser extends Parser {
 				setState(30); 
 				_errHandler.sync(this);
 				_la = _input.LA(1);
-			} while ( (((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << T__0) | (1L << T__2) | (1L << T__4) | (1L << T__7) | (1L << T__9) | (1L << T__10) | (1L << T__11) | (1L << T__12) | (1L << T__16) | (1L << T__19) | (1L << T__20) | (1L << T__21) | (1L << T__22) | (1L << T__23) | (1L << T__24) | (1L << T__25) | (1L << T__26) | (1L << SIMPLETYPE) | (1L << STRING) | (1L << CHAR) | (1L << BOOLEAN) | (1L << NUMBER) | (1L << NAME))) != 0) );
+			} while ( (((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << T__0) | (1L << T__2) | (1L << T__4) | (1L << T__7) | (1L << T__9) | (1L << T__10) | (1L << T__11) | (1L << T__12) | (1L << T__16) | (1L << T__19) | (1L << T__20) | (1L << T__21) | (1L << T__22) | (1L << T__23) | (1L << T__24) | (1L << T__25) | (1L << T__26) | (1L << T__27) | (1L << T__28) | (1L << SIMPLETYPE) | (1L << STRING) | (1L << CHAR) | (1L << BOOLEAN) | (1L << NUMBER) | (1L << NAME))) != 0) );
 			}
 		}
 		catch (RecognitionException re) {
@@ -459,7 +459,7 @@ public class KickCParser extends Parser {
 				setState(34);
 				_errHandler.sync(this);
 				_la = _input.LA(1);
-				if ((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << T__0) | (1L << T__2) | (1L << T__4) | (1L << T__7) | (1L << T__9) | (1L << T__10) | (1L << T__11) | (1L << T__12) | (1L << T__16) | (1L << T__19) | (1L << T__20) | (1L << T__21) | (1L << T__22) | (1L << T__23) | (1L << T__24) | (1L << T__25) | (1L << T__26) | (1L << SIMPLETYPE) | (1L << STRING) | (1L << CHAR) | (1L << BOOLEAN) | (1L << NUMBER) | (1L << NAME))) != 0)) {
+				if ((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << T__0) | (1L << T__2) | (1L << T__4) | (1L << T__7) | (1L << T__9) | (1L << T__10) | (1L << T__11) | (1L << T__12) | (1L << T__16) | (1L << T__19) | (1L << T__20) | (1L << T__21) | (1L << T__22) | (1L << T__23) | (1L << T__24) | (1L << T__25) | (1L << T__26) | (1L << T__27) | (1L << T__28) | (1L << SIMPLETYPE) | (1L << STRING) | (1L << CHAR) | (1L << BOOLEAN) | (1L << NUMBER) | (1L << NAME))) != 0)) {
 					{
 					setState(33);
 					stmtSeq();
@@ -497,7 +497,7 @@ public class KickCParser extends Parser {
 				setState(46);
 				_errHandler.sync(this);
 				_la = _input.LA(1);
-				if ((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << T__0) | (1L << T__2) | (1L << T__4) | (1L << T__7) | (1L << T__9) | (1L << T__10) | (1L << T__11) | (1L << T__12) | (1L << T__16) | (1L << T__19) | (1L << T__20) | (1L << T__21) | (1L << T__22) | (1L << T__23) | (1L << T__24) | (1L << T__25) | (1L << T__26) | (1L << SIMPLETYPE) | (1L << STRING) | (1L << CHAR) | (1L << BOOLEAN) | (1L << NUMBER) | (1L << NAME))) != 0)) {
+				if ((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << T__0) | (1L << T__2) | (1L << T__4) | (1L << T__7) | (1L << T__9) | (1L << T__10) | (1L << T__11) | (1L << T__12) | (1L << T__16) | (1L << T__19) | (1L << T__20) | (1L << T__21) | (1L << T__22) | (1L << T__23) | (1L << T__24) | (1L << T__25) | (1L << T__26) | (1L << T__27) | (1L << T__28) | (1L << SIMPLETYPE) | (1L << STRING) | (1L << CHAR) | (1L << BOOLEAN) | (1L << NUMBER) | (1L << NAME))) != 0)) {
 					{
 					setState(45);
 					stmtSeq();
@@ -663,7 +663,7 @@ public class KickCParser extends Parser {
 				setState(102);
 				_errHandler.sync(this);
 				_la = _input.LA(1);
-				if ((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << T__2) | (1L << T__16) | (1L << T__19) | (1L << T__20) | (1L << T__21) | (1L << T__22) | (1L << T__23) | (1L << T__24) | (1L << T__25) | (1L << T__26) | (1L << STRING) | (1L << CHAR) | (1L << BOOLEAN) | (1L << NUMBER) | (1L << NAME))) != 0)) {
+				if ((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << T__2) | (1L << T__16) | (1L << T__19) | (1L << T__20) | (1L << T__21) | (1L << T__22) | (1L << T__23) | (1L << T__24) | (1L << T__25) | (1L << T__26) | (1L << T__27) | (1L << T__28) | (1L << STRING) | (1L << CHAR) | (1L << BOOLEAN) | (1L << NUMBER) | (1L << NAME))) != 0)) {
 					{
 					setState(101);
 					expr(0);
@@ -844,7 +844,7 @@ public class KickCParser extends Parser {
 				setState(119);
 				_errHandler.sync(this);
 				_la = _input.LA(1);
-				if ((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << T__2) | (1L << T__16) | (1L << T__19) | (1L << T__20) | (1L << T__21) | (1L << T__22) | (1L << T__23) | (1L << T__24) | (1L << T__25) | (1L << T__26) | (1L << STRING) | (1L << CHAR) | (1L << BOOLEAN) | (1L << NUMBER) | (1L << NAME))) != 0)) {
+				if ((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << T__2) | (1L << T__16) | (1L << T__19) | (1L << T__20) | (1L << T__21) | (1L << T__22) | (1L << T__23) | (1L << T__24) | (1L << T__25) | (1L << T__26) | (1L << T__27) | (1L << T__28) | (1L << STRING) | (1L << CHAR) | (1L << BOOLEAN) | (1L << NUMBER) | (1L << NAME))) != 0)) {
 					{
 					setState(118);
 					expr(0);
@@ -1122,7 +1122,7 @@ public class KickCParser extends Parser {
 						setState(147);
 						_errHandler.sync(this);
 						_la = _input.LA(1);
-						if ((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << T__2) | (1L << T__16) | (1L << T__19) | (1L << T__20) | (1L << T__21) | (1L << T__22) | (1L << T__23) | (1L << T__24) | (1L << T__25) | (1L << T__26) | (1L << STRING) | (1L << CHAR) | (1L << BOOLEAN) | (1L << NUMBER) | (1L << NAME))) != 0)) {
+						if ((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << T__2) | (1L << T__16) | (1L << T__19) | (1L << T__20) | (1L << T__21) | (1L << T__22) | (1L << T__23) | (1L << T__24) | (1L << T__25) | (1L << T__26) | (1L << T__27) | (1L << T__28) | (1L << STRING) | (1L << CHAR) | (1L << BOOLEAN) | (1L << NUMBER) | (1L << NAME))) != 0)) {
 							{
 							setState(146);
 							expr(0);
@@ -1224,6 +1224,8 @@ public class KickCParser extends Parser {
 			case T__24:
 			case T__25:
 			case T__26:
+			case T__27:
+			case T__28:
 			case STRING:
 			case CHAR:
 			case BOOLEAN:
@@ -1767,7 +1769,7 @@ public class KickCParser extends Parser {
 				setState(197);
 				_errHandler.sync(this);
 				_la = _input.LA(1);
-				if ((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << T__2) | (1L << T__16) | (1L << T__19) | (1L << T__20) | (1L << T__21) | (1L << T__22) | (1L << T__23) | (1L << T__24) | (1L << T__25) | (1L << T__26) | (1L << STRING) | (1L << CHAR) | (1L << BOOLEAN) | (1L << NUMBER) | (1L << NAME))) != 0)) {
+				if ((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << T__2) | (1L << T__16) | (1L << T__19) | (1L << T__20) | (1L << T__21) | (1L << T__22) | (1L << T__23) | (1L << T__24) | (1L << T__25) | (1L << T__26) | (1L << T__27) | (1L << T__28) | (1L << STRING) | (1L << CHAR) | (1L << BOOLEAN) | (1L << NUMBER) | (1L << NAME))) != 0)) {
 					{
 					setState(196);
 					parameterList();
@@ -1819,7 +1821,7 @@ public class KickCParser extends Parser {
 				_prevctx = _localctx;
 				setState(207);
 				_la = _input.LA(1);
-				if ( !((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << T__16) | (1L << T__21) | (1L << T__22) | (1L << T__23) | (1L << T__24) | (1L << T__25) | (1L << T__26))) != 0)) ) {
+				if ( !((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << T__16) | (1L << T__21) | (1L << T__22) | (1L << T__23) | (1L << T__24) | (1L << T__25) | (1L << T__26) | (1L << T__27) | (1L << T__28))) != 0)) ) {
 				_errHandler.recoverInline(this);
 				}
 				else {
@@ -1897,7 +1899,7 @@ public class KickCParser extends Parser {
 						if (!(precpred(_ctx, 14))) throw new FailedPredicateException(this, "precpred(_ctx, 14)");
 						setState(217);
 						_la = _input.LA(1);
-						if ( !(_la==T__27 || _la==T__28) ) {
+						if ( !(_la==T__29 || _la==T__30) ) {
 						_errHandler.recoverInline(this);
 						}
 						else {
@@ -1917,7 +1919,7 @@ public class KickCParser extends Parser {
 						if (!(precpred(_ctx, 13))) throw new FailedPredicateException(this, "precpred(_ctx, 13)");
 						setState(220);
 						_la = _input.LA(1);
-						if ( !((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << T__16) | (1L << T__29) | (1L << T__30))) != 0)) ) {
+						if ( !((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << T__16) | (1L << T__31) | (1L << T__32))) != 0)) ) {
 						_errHandler.recoverInline(this);
 						}
 						else {
@@ -1957,7 +1959,7 @@ public class KickCParser extends Parser {
 						if (!(precpred(_ctx, 11))) throw new FailedPredicateException(this, "precpred(_ctx, 11)");
 						setState(226);
 						_la = _input.LA(1);
-						if ( !((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << T__31) | (1L << T__32) | (1L << T__33) | (1L << T__34) | (1L << T__35) | (1L << T__36) | (1L << T__37) | (1L << T__38) | (1L << T__39))) != 0)) ) {
+						if ( !((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << T__27) | (1L << T__28) | (1L << T__33) | (1L << T__34) | (1L << T__35) | (1L << T__36) | (1L << T__37) | (1L << T__38) | (1L << T__39))) != 0)) ) {
 						_errHandler.recoverInline(this);
 						}
 						else {
@@ -2242,9 +2244,9 @@ public class KickCParser extends Parser {
 		"\3\f\3\f\3\f\3\f\3\f\3\f\3\f\3\f\3\f\3\f\3\f\3\f\3\f\3\f\3\f\3\f\3\f\3"+
 		"\f\3\f\3\f\7\f\u00fd\n\f\f\f\16\f\u0100\13\f\3\r\3\r\3\r\7\r\u0105\n\r"+
 		"\f\r\16\r\u0108\13\r\3\r\2\5\20\24\26\16\2\4\6\b\n\f\16\20\22\24\26\30"+
-		"\2\n\3\2\26\27\4\2\23\23\30\35\3\2\36\37\4\2\23\23 !\3\2\30\31\3\2\"*"+
-		"\3\2-.\3\2/\60\2\u0132\2\32\3\2\2\2\4\36\3\2\2\2\6k\3\2\2\2\bn\3\2\2\2"+
-		"\n\u0080\3\2\2\2\f\u0082\3\2\2\2\16\u008a\3\2\2\2\20\u008d\3\2\2\2\22"+
+		"\2\n\3\2\26\27\4\2\23\23\30\37\3\2 !\4\2\23\23\"#\3\2\30\31\4\2\36\37"+
+		"$*\3\2-.\3\2/\60\2\u0132\2\32\3\2\2\2\4\36\3\2\2\2\6k\3\2\2\2\bn\3\2\2"+
+		"\2\n\u0080\3\2\2\2\f\u0082\3\2\2\2\16\u008a\3\2\2\2\20\u008d\3\2\2\2\22"+
 		"\u00a9\3\2\2\2\24\u00b3\3\2\2\2\26\u00d8\3\2\2\2\30\u0101\3\2\2\2\32\33"+
 		"\5\4\3\2\33\34\7\2\2\3\34\3\3\2\2\2\35\37\5\6\4\2\36\35\3\2\2\2\37 \3"+
 		"\2\2\2 \36\3\2\2\2 !\3\2\2\2!\5\3\2\2\2\"$\7\3\2\2#%\5\4\3\2$#\3\2\2\2"+

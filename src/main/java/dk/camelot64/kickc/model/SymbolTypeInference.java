@@ -15,6 +15,12 @@ public class SymbolTypeInference {
             } else {
                throw new RuntimeException("Type error: Dereferencing a non-pointer "+subType);
             }
+         case "<":
+         case ">":
+            if(subType instanceof SymbolTypePointer || SymbolTypeBasic.WORD.equals(subType)) {
+               return SymbolTypeBasic.BYTE;
+
+            }
          default:
             return subType;
       }
@@ -75,6 +81,9 @@ public class SymbolTypeInference {
             }
             throw new RuntimeException("Type inference case not handled " + type1 + " " + operator + " " + type2);
          case "/":
+            if (type1 instanceof SymbolTypePointer && SymbolTypeBasic.BYTE.equals(type2)) {
+               return type1;
+            }
          case "&":
          case "|":
          case "^":
@@ -83,6 +92,7 @@ public class SymbolTypeInference {
             } else if (SymbolTypeBasic.BYTE.equals(type1) && SymbolTypeBasic.BYTE.equals(type2)) {
                return SymbolTypeBasic.BYTE;
             }
+
             throw new RuntimeException("Type inference case not handled " + type1 + " " + operator + " " + type2);
          case "<<":
          case ">>":

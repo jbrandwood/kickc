@@ -1,0 +1,86 @@
+byte* COLS = $d800;
+byte* BGCOL = $d020;
+byte* FGCOL = $d021;
+byte* SCROLL = $d016;
+byte* D018 = $d018;
+
+byte* D011 = $d011;
+byte RST8 = %10000000;
+byte ECM =  %01000000;
+byte BMM =  %00100000;
+byte DEN =  %00010000;
+byte RSEL =  %00001000;
+
+byte* D016 = $d016;
+byte MCM =  %00010000;
+byte CSEL = %00001000;
+
+byte* SCREEN = $400;
+byte* BITMAP = $2000;
+
+byte[] plot_xlo = $1000;
+byte[] plot_xhi = $1100;
+byte[] plot_ylo = $1200;
+byte[] plot_yhi = $1300;
+
+main();
+
+void main() {
+    *BGCOL = 0;
+    *FGCOL = 0;
+    *D011 = BMM|DEN|RSEL;
+    *D018 = $18; // ((word)SCREEN/$40)|((word)BITMAP/$400); - casting byte* to word needed before this works.
+    initscreen();
+    initplottables();
+    line(0,0,10,20);
+    line(10,20,40,40);
+}
+
+void initscreen() {
+    for(byte* b = BITMAP; b!=BITMAP+$2000; b++) {
+        *b = $5a;
+    }
+    for(byte* c = SCREEN; c!=SCREEN+$400;c++) {
+        *c = $14;
+    }
+}
+
+void initplottables() {
+
+    for(byte x : 0..255) {
+        plot_xlo[x] = x&$f8;
+        plot_xhi[x] = $20;
+    }
+    byte* yoffs = $0;
+    for(byte y : 0..255) {
+        plot_xlo[y] = <yoffs | y&$7;
+        plot_xhi[y] = >yoffs;
+        yoffs = yoffs + 40*8;
+    }
+
+}
+
+void line(byte x0, byte y0, byte x1, byte y1) {
+  byte* plot_lo = $fd;
+  byte* plot_hi = $fe;
+  byte xd = x1-x0;
+  byte yd = y1-y0;
+  byte x = x0;
+  byte y = y0;
+  byte e = yd<<1;
+  do  {
+      //plot(x,y);
+      *plot_lo = plot_xlo[x]+plot_ylo[y];
+      *plot_hi = plot_xhi[x]+plot_yhi[y];
+      x = x + 1;
+      e = e+yd;
+      if(xd<e) {
+          y = y+1;
+          e = e - xd;
+      }
+  } while (x<(x1+1))
+}
+
+//void plot(byte x, byte y) {
+//}
+

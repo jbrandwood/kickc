@@ -1,1 +1,1 @@
-lda <{zpptrby1}
+lda {zpptrby1}

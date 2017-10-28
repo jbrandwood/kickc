@@ -59,11 +59,13 @@ public class Compiler {
    }
 
    public Program pass1GenerateSSA(KickCParser.FileContext file, CompileLog log) {
-      Pass1GenerateStatementSequence pass1GenerateStatementSequence1 = new Pass1GenerateStatementSequence(log);
-      pass1GenerateStatementSequence1.generate(file);
-      Pass1GenerateStatementSequence pass1GenerateStatementSequence = pass1GenerateStatementSequence1;
+      Pass1GenerateStatementSequence pass1GenerateStatementSequence = new Pass1GenerateStatementSequence(log);
+      pass1GenerateStatementSequence.generate(file);
       StatementSequence statementSequence = pass1GenerateStatementSequence.getSequence();
       ProgramScope programScope = pass1GenerateStatementSequence.getProgramScope();
+
+      statementSequence = (new Pass1FixLvalueLoHi(statementSequence, programScope, log)).fix();
+
       Pass1TypeInference pass1TypeInference = new Pass1TypeInference(programScope);
       pass1TypeInference.inferTypes(statementSequence);
 
@@ -124,6 +126,7 @@ public class Compiler {
       assertions.add(new Pass2AssertBlocks(program));
       assertions.add(new Pass2AssertNoCallParameters(program));
       assertions.add(new Pass2AssertNoCallLvalues(program));
+      assertions.add(new Pass2AssertNoLvalueLoHi(program));
       assertions.add(new Pass2AssertNoReturnValues(program));
       assertions.add(new Pass2AssertNoProcs(program));
       assertions.add(new Pass2AssertNoLabels(program));
@@ -256,12 +259,14 @@ public class Compiler {
 
       // Attempt uplifting registers through a lot of combinations
       //program.getLog().setVerboseUplift(true);
-      new Pass4RegisterUpliftCombinations(program).performUplift(200_000);
+      new Pass4RegisterUpliftCombinations(program).performUplift(10_000);
 
+      //program.getLog().setVerboseUplift(true);
       //new Pass4RegisterUpliftStatic(program).performUplift();
+      //program.getLog().setVerboseUplift(false);
 
       // Attempt uplifting registers one at a time to catch remaining potential not realized by combination search
-      new Pass4RegisterUpliftRemains(program).performUplift(100_000);
+      new Pass4RegisterUpliftRemains(program).performUplift(10_000);
 
       // Final register coalesce and finalization
       new Pass4ZeroPageCoalesce(program).allocate();

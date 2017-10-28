@@ -312,6 +312,18 @@ public interface KickCListener extends ParseTreeListener {
 	 */
 	void exitLvaluePar(KickCParser.LvalueParContext ctx);
 	/**
+	 * Enter a parse tree produced by the {@code lvalueLoHi}
+	 * labeled alternative in {@link KickCParser#lvalue}.
+	 * @param ctx the parse tree
+	 */
+	void enterLvalueLoHi(KickCParser.LvalueLoHiContext ctx);
+	/**
+	 * Exit a parse tree produced by the {@code lvalueLoHi}
+	 * labeled alternative in {@link KickCParser#lvalue}.
+	 * @param ctx the parse tree
+	 */
+	void exitLvalueLoHi(KickCParser.LvalueLoHiContext ctx);
+	/**
 	 * Enter a parse tree produced by the {@code exprPreMod}
 	 * labeled alternative in {@link KickCParser#expr}.
 	 * @param ctx the parse tree

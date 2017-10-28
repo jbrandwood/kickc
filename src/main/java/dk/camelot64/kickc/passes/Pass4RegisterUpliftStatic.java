@@ -59,13 +59,20 @@ public class Pass4RegisterUpliftStatic extends Pass2Base {
       setRegister(combination, "main::nxt#1", new Registers.RegisterZpPointerByte(2));
       */
 
-      // ALU combination for bitmap-bresenham.kc
+      // ALU combination plotter ORA in bitmap-bresenham.kc
+      collapseEquivalenceClasses("line::plotter#0", "line::plotter#1");
+      //setRegister(combination, "line::plotter#1", new Registers.RegisterZpPointerByte(21));
+      setRegister(combination, "line::$11", Registers.getRegisterA());
+      setRegister(combination, "line::$9", Registers.getRegisterA());
+      setRegister(combination, "line::$10", Registers.getRegisterALU());
       setRegister(combination, "line::$3", Registers.getRegisterA());
       setRegister(combination, "line::$5", Registers.getRegisterA());
       setRegister(combination, "line::$4", Registers.getRegisterALU());
       setRegister(combination, "line::$6", Registers.getRegisterA());
       setRegister(combination, "line::$8", Registers.getRegisterA());
       setRegister(combination, "line::$7", Registers.getRegisterALU());
+      setRegister(combination, "initplottables::$6", Registers.getRegisterA());
+      setRegister(combination, "initplottables::$7", Registers.getRegisterALU());
 
       boolean success = Pass4RegisterUpliftCombinations.generateCombinationAsm(
             combination,
@@ -97,6 +104,19 @@ public class Pass4RegisterUpliftStatic extends Pass2Base {
       VariableRef variableRef = scope.getVariable(varFullName).getRef();
       LiveRangeEquivalenceClass equivalenceClass = equivalenceClassSet.getEquivalenceClass(variableRef);
       combination.setRegister(equivalenceClass, register);
+   }
+
+   private void collapseEquivalenceClasses(String varFullName1, String varFullName2) {
+      LiveRangeEquivalenceClassSet equivalenceClassSet = getProgram().getLiveRangeEquivalenceClassSet();
+      ProgramScope scope = getProgram().getScope();
+      VariableRef variableRef1 = scope.getVariable(varFullName1).getRef();
+      LiveRangeEquivalenceClass equivalenceClass1 = equivalenceClassSet.getEquivalenceClass(variableRef1);
+      VariableRef variableRef2 = scope.getVariable(varFullName2).getRef();
+      LiveRangeEquivalenceClass equivalenceClass2 = equivalenceClassSet.getEquivalenceClass(variableRef2);
+      if(!equivalenceClass1.equals(equivalenceClass2)) {
+         equivalenceClass1.addAll(equivalenceClass2);
+         equivalenceClassSet.remove(equivalenceClass2);
+      }
    }
 
 }

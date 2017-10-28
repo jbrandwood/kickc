@@ -53,6 +53,10 @@ public class Operator {
             return SHIFT_LEFT;
          case ">>":
             return SHIFT_RIGHT;
+         case "lo=":
+            return SET_LOWBYTE;
+         case "hi=":
+            return SET_HIBYTE;
          default:
             throw new RuntimeException("Unknown operator " + op);
       }
@@ -97,6 +101,8 @@ public class Operator {
    public static Operator LOWBYTE = new Operator("<", Type.UNARY, 2);
    public static Operator HIBYTE = new Operator(">", Type.UNARY, 2);
    public static Operator STAR_IDX = new Operator("*idx", Type.BINARY, 2);
+   public static Operator SET_LOWBYTE = new Operator("lo=", Type.BINARY, 2);
+   public static Operator SET_HIBYTE = new Operator("hi=", Type.BINARY, 2);
    public static Operator MULTIPLY = new Operator("*", Type.BINARY, 3);
    public static Operator DIVIDE = new Operator("/", Type.BINARY, 3);
    public static Operator PLUS = new Operator("+", Type.BINARY, 4);

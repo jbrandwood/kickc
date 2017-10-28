@@ -270,6 +270,10 @@ public class AsmFragment {
             return "_not_";
          case "~":
             return "_bnot_";
+         case "lo=":
+            return "_setlo_";
+         case "hi=":
+            return "_sethi_";
          default:
             return op;
       }
@@ -435,21 +439,6 @@ public class AsmFragment {
             return new AsmParameter(getAsmParameter(boundVar), true);
          } else {
             throw new RuntimeException("Register Type not implemented " + register);
-         }
-      } else if (boundValue instanceof PointerDereferenceSimple) {
-         PointerDereferenceSimple deref = (PointerDereferenceSimple) boundValue;
-         RValue pointer = deref.getPointer();
-         if (pointer instanceof ConstantValue) {
-            ConstantValue pointerConst = (ConstantValue) pointer;
-            if (pointerConst instanceof ConstantInteger) {
-               ConstantInteger intPointer = (ConstantInteger) pointerConst;
-               String param = getAsmNumber(intPointer.getNumber());
-               return new AsmParameter(param, SymbolTypeBasic.BYTE.equals(intPointer.getType(program.getScope())));
-            } else {
-               throw new RuntimeException("Bound Value Type not implemented " + boundValue);
-            }
-         } else {
-            throw new RuntimeException("Bound Value Type not implemented " + boundValue);
          }
       } else if (boundValue instanceof ConstantVar) {
          ConstantVar constantVar = (ConstantVar) boundValue;

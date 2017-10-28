@@ -23,7 +23,7 @@ public class Pass4ZeroPageCoalesce extends Pass2Base {
    }
 
    /**
-    * Find two equivalence classes that can be coalesced into one - and perform the colalescence.
+    * Find two equivalence classes that can be coalesced into one - and perform the coalescence.
     *
     * @param liveRangeEquivalenceClassSet The set of live range equivalence classes
     * @return true if any classes were coalesced. False otherwise.

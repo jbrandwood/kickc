@@ -386,6 +386,22 @@ public class Pass1GenerateStatementSequence extends KickCBaseVisitor<Object> {
    }
 
    @Override
+   public Object visitLvalueLoHi(KickCParser.LvalueLoHiContext ctx) {
+      LValue lval = (LValue) visit(ctx.lvalue());
+      if (lval instanceof VariableRef) {
+         String opTxt = ctx.getChild(0).getText();
+         if (opTxt.equals("<")) {
+            return new LvalueLoHiByte(Operator.SET_LOWBYTE, (VariableRef) lval);
+         } else if (opTxt.equals(">")) {
+            return new LvalueLoHiByte(Operator.SET_HIBYTE, (VariableRef) lval);
+         } else {
+            throw new RuntimeException("Not implemented - lo/hi-lvalue operator "+opTxt);
+         }
+      }
+      throw new RuntimeException("Not implemented - lo/hi lvalues of non-variables");
+   }
+
+   @Override
    public LValue visitLvalueArray(KickCParser.LvalueArrayContext ctx) {
       LValue lval = (LValue) visit(ctx.lvalue());
       RValue index = (RValue) visit(ctx.expr());

@@ -328,6 +328,18 @@ public class KickCBaseListener implements KickCListener {
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
+	@Override public void enterLvalueLoHi(KickCParser.LvalueLoHiContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitLvalueLoHi(KickCParser.LvalueLoHiContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
 	@Override public void enterExprPreMod(KickCParser.ExprPreModContext ctx) { }
 	/**
 	 * {@inheritDoc}

@@ -52,6 +52,7 @@ lvalue
     : '(' lvalue ')' #lvaluePar
     | NAME #lvalueName
     | '*' lvalue #lvaluePtr
+    | ('<' | '>' ) lvalue #lvalueLoHi
     | lvalue '[' expr ']' #lvalueArray
     ;
 

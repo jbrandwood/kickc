@@ -56,9 +56,9 @@ public class Pass3VariableRegisterWeightAnalysis extends Pass2Base {
                }
                // Also add weight to used pointers
                if(lValue instanceof PointerDereferenceSimple) {
-                  addUsageWeightRValue(((PointerDereference) lValue).getPointer(), statement, block.getLabel());
+                  addUsageWeightRValue(((PointerDereferenceSimple) lValue).getPointer(), statement, block.getLabel());
                } else if(lValue instanceof PointerDereferenceIndexed) {
-                  addUsageWeightRValue(((PointerDereference) lValue).getPointer(), statement, block.getLabel());
+                  addUsageWeightRValue(((PointerDereferenceIndexed) lValue).getPointer(), statement, block.getLabel());
                   addUsageWeightRValue(((PointerDereferenceIndexed) lValue).getIndex(), statement, block.getLabel());
                }
                // Add weights for each usage of variables

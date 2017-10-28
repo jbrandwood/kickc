@@ -2,6 +2,7 @@ Known Problems
 - Increment/decrement of value pointed to by pointer does not work. eg. byte* BGCOL = $d020; (*BGCOL)++;
 - Arrays / strings allocated inline destroy functions (because they are allocated where the call enters.
 - Classic for() does not allow assignment as increment, eg. for(byte i=0;i<25;i=i+2) {}
+- Range-based for does not recognize symbolic constants. The following gives a ParseTreeConstantEvaluator$NotConstantException - const byte* BITMAP = $2000; for(byte* b : BITMAP..BITMAP+$2000) { *b = 0; }
 
 Features
 - Move the main code into a main() function, and disallow code outside functions. The main function per default has no parameters and exits with RTS.
@@ -23,8 +24,10 @@ Features
 - Remove unused functions.
 - Support calculated pointers eg. *(ptr+i)
 - Add syntax for encoded chars (eg. PETSCII instead of SCREEN)
-- Add support for casting. Specifically casting a byte* to a word (to enable calculating D018-value from pointer to bitmap & screen.)
+- Add support for casting. Specifically casting a byte* to a word and the other way (eg. to enable calculating D018-value from pointer to bitmap & screen.) -  *D018 = (byte*)((word)SCREEN/$40)|((word)BITMAP/$400);
+  - Consider whether autocasting word & byte* is possible ?
 - Add UpliftRemains support for attempting to uplift potentials to ALU (requires modifying two registers: 1. the ALU potential to ALU - the one added to the ALU potential to A.)
+- Support array-initializer syntax as literal word syntax. byte* plotter = { lo, hi };
 
 Arrays / Strings / Inline data
 - New semantic: Arrays are always allocated inline (and must therefore have a size). Pointers are never.
@@ -33,6 +36,7 @@ Arrays / Strings / Inline data
 - Add array initializer filling with a specific value / (pattern?).
 - Add support for empty / filled byte data arrays.
 - Add support for expressions in data initializers.
+- Create a fill-like array initialization - byte[$100] plot_xlo = { [x] = x&$f8 };
 
 - Inline ASM
   - Add support for inline asm
@@ -142,3 +146,5 @@ Done
 + Implemenent Assertions for the output of different phases (ensuring that the result of the phase is consistent)
 + Make each phase return a separate object graph (allowing for keeeping the history in memory & performing rollbacks)
 + Remove "string" keyword (if it exists).
++ Support hi/lo-byte lvalues - <plotter = plot_xlo[x]+plot_ylo[y]; >plotter = plot_xhi[x]+plot_yhi[y];
++ Add ALU support for lo/hi operators on pointers - to avoid unnecessary zp-variable holding for cases like byte v = y&$7 | <yoffs;

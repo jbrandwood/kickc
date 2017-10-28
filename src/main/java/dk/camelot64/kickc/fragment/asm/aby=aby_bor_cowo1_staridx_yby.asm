@@ -1,0 +1,1 @@
+ora {cowo1},y

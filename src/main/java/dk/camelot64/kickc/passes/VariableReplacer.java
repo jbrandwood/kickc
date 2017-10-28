@@ -100,8 +100,7 @@ public class VariableReplacer {
             if (getReplacement(pointer) != null) {
                deref.setPointer(getReplacement(pointer));
             }
-         }
-         if (lValue instanceof PointerDereferenceIndexed) {
+         } else if (lValue instanceof PointerDereferenceIndexed) {
             PointerDereferenceIndexed deref = (PointerDereferenceIndexed) lValue;
             RValue pointer = deref.getPointer();
             if (getReplacement(pointer) != null) {

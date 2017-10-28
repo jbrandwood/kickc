@@ -77,7 +77,7 @@ public class Pass2AssertSymbols extends Pass2SsaAssertion {
          } else if(symbol instanceof PointerDereferenceIndexed) {
             addSymbol(((PointerDereferenceIndexed) symbol).getPointer());
             addSymbol(((PointerDereferenceIndexed) symbol).getIndex());
-         } else if(symbol instanceof PointerDereference) {
+         } else if(symbol instanceof PointerDereferenceSimple) {
             addSymbol(((PointerDereference) symbol).getPointer());
          }
       }

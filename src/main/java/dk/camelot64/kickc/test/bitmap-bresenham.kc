@@ -18,8 +18,6 @@ byte CSEL = %00001000;
 byte* SCREEN = $400;
 const byte* BITMAP = $2000;
 
-// TODO: Make all arrays in-program allocations - byte[$100] plot_xlo;
-// TODO: Create a fill-like array initialization - byte[$100] plot_xlo = { [x] = x&$f8 };
 byte[] plot_xlo = $1000;
 byte[] plot_xhi = $1100;
 byte[] plot_ylo = $1200;
@@ -30,8 +28,7 @@ void main() {
     *BGCOL = 0;
     *FGCOL = 0;
     *D011 = BMM|DEN|RSEL|3;
-    //TODO: Add ability to cast byte* to word. *D018 = ((word)SCREEN/$40)|((word)BITMAP/$400);
-    *D018 = $18;
+    *D018 = $18; // Needs casting for *D018 = ((word)SCREEN/$40)|((word)BITMAP/$400);
     initscreen();
     initplottables();
     // TODO: Error with constant identification of the parameters!
@@ -40,7 +37,6 @@ void main() {
 }
 
 void line(byte x0, byte y0, byte x1, byte y1) {
-  //byte* plotter;
   byte xd = x1-x0;
   byte yd = y1-y0;
   byte x = x0;
@@ -48,11 +44,7 @@ void line(byte x0, byte y0, byte x1, byte y1) {
   byte e = yd>>1;
   do  {
       plot(x,y);
-      // TODO: Nice2have: Support array-initializer as words. plotter = { plot_xlo[x]+plot_ylo[y], plot_xhi[x]+plot_yhi[y] };
-      // TODO: Need2have: Ensure coalescing of plotter#0 and plotter#1 into a single live range equivalence class.
-      //<plotter = plot_xlo[x]+plot_ylo[y];
-      //>plotter = plot_xhi[x]+plot_yhi[y];
-      //*plotter = *plotter | plot_bit[x];
+      // TODO: Ensure coalescing of plotter#0 and plotter#1 into a single live range equivalence class.
       x = x + 1;
       e = e+yd;
       if(xd<e) {
@@ -63,7 +55,6 @@ void line(byte x0, byte y0, byte x1, byte y1) {
 }
 
 void initscreen() {
-    //TODO: Fix problem in interval-based for-loop: for(byte* b = BITMAP..BITMAP+$2000; b++)
     for(byte* b = BITMAP; b!=BITMAP+$2000; b++) {
         *b = 0;
     }
@@ -89,23 +80,20 @@ void initplottables() {
         plot_ylo[y] = y&$7 | <yoffs;
         plot_yhi[y] = >yoffs;
         if((y&$7)==7) {
-            // TODO: Error: Identify 8*40 as a word constant (not a byte)
-            yoffs = yoffs + 320;
+            yoffs = yoffs + 320; // Needs better constant type inference for yoffs = yoffs + 40*8;
         }
     }
-
 }
 
 
 
-// TODO: Implement inline functions (will be perfect for plot)
 void plot(byte x, byte y) {
+    // TODO: This assignment is needed - to avoid plotter var being destroyed during compilation. Find a way to eliminate it.
     byte* plotter = BITMAP;
     <plotter = plot_xlo[x]+plot_ylo[y];
     >plotter = plot_xhi[x]+plot_yhi[y];
-    // TODO: Error - <plotter can overflow - and carry must then be added to the >plotter part. Requires new logic?
+    // TODO: <plotter can overflow - and carry must then be added to the >plotter part. Requires new logic?
     *plotter = *plotter | plot_bit[x];
 }
 
-//TODO: Add a default main()-call.
 main();

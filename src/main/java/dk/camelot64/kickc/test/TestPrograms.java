@@ -13,13 +13,13 @@ import java.net.URISyntaxException;
 /**
  * Compile a number of source files and compare the resulting assembler with expected output
  */
-public class TestCompilationOutput extends TestCase {
+public class TestPrograms extends TestCase {
 
    ReferenceHelper helper;
 
    String testPath;
 
-   public TestCompilationOutput() throws IOException {
+   public TestPrograms() throws IOException {
       testPath = "src/main/java/dk/camelot64/kickc/test/";
       helper = new ReferenceHelper("dk/camelot64/kickc/test/ref/");
    }
@@ -38,10 +38,6 @@ public class TestCompilationOutput extends TestCase {
 
    public void testLiterals() throws IOException, URISyntaxException {
       compileAndCompare("literals");
-   }
-
-   public void testIncD020() throws IOException, URISyntaxException {
-      compileAndCompare("incd020");
    }
 
    public void testScroll() throws IOException, URISyntaxException {
@@ -144,11 +140,6 @@ public class TestCompilationOutput extends TestCase {
       compileAndCompare("forrangemin");
    }
 
-   public void testUseUninitialized() throws IOException, URISyntaxException {
-      String filename = "useuninitialized";
-      compileAndCompare(filename);
-   }
-
    public void testUseUndeclared() throws IOException, URISyntaxException {
       try {
          compileAndCompare("useundeclared");
@@ -161,7 +152,7 @@ public class TestCompilationOutput extends TestCase {
 
 
    private void compileAndCompare(String filename) throws IOException, URISyntaxException {
-      TestCompilationOutput tester = new TestCompilationOutput();
+      TestPrograms tester = new TestPrograms();
       tester.testFile(filename);
    }
 

@@ -95,7 +95,7 @@ public class Pass4CodeGeneration {
          if(! (constantVar.getValue() instanceof ConstantArray || constantVar.getValue() instanceof ConstantString)) {
             String asmName = constantVar.getAsmName() == null ? constantVar.getLocalName() : constantVar.getAsmName();
             if (asmName != null && !added.contains(asmName)) {
-               asm.addConstant(asmName.replace("#", "_").replace("$", "_"), AsmFragment.getAsmConstant(program, constantVar.getValue(), 99));
+               asm.addConstant(asmName.replace("#", "_").replace("$", "_"), AsmFragment.getAsmConstant(program, constantVar.getValue(), 99, scope));
                added.add(asmName);
             }
          }
@@ -119,7 +119,7 @@ public class Pass4CodeGeneration {
             if (asmName != null && !added.contains(asmName)) {
                List<String> asmElements = new ArrayList<>();
                for (ConstantValue element : constantArray.getElements()) {
-                  String asmElement = AsmFragment.getAsmConstant(program, element, 99);
+                  String asmElement = AsmFragment.getAsmConstant(program, element, 99, scope);
                   asmElements.add(asmElement);
                }
                if(SymbolTypeBasic.BYTE.equals(constantArray.getElementType())) {

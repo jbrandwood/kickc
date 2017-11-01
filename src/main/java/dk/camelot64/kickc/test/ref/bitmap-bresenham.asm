@@ -30,18 +30,18 @@ main: {
     sta D018
     jsr initscreen
     jsr initplottables
-    lda #y0
+    lda #line.y0
     sta line.y
     ldx #$a
-    lda #x0
+    lda #line.x0
     sta line.x
     lda #$14
     sta line.x1
     jsr line
-    lda #y0
+    lda #line.y0_1
     sta line.y
     ldx #$28
-    lda #x0
+    lda #line.x0_1
     sta line.x
     lda #$28
     sta line.x1
@@ -51,6 +51,8 @@ main: {
 line: {
     .const x0 = 0
     .const y0 = 0
+    .const x0_1 = $a
+    .const y0_1 = $14
     .label xd = 8
     .label yd = 9
     .label x = 3

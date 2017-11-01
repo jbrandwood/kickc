@@ -74,7 +74,7 @@ public class Pass4RegistersFinalize extends Pass2Base {
 
          for (ConstantVar constantVar : scope.getAllConstants(false)) {
             String asmName = constantVar.getAsmName();
-            Registers.Register allocation = new Registers.RegisterConstant();
+            Registers.Register allocation = new Registers.RegisterConstant(constantVar.getValue());
             if (asmName.contains("#")) {
                String shortName = asmName.substring(0, asmName.indexOf("#"));
                if (shortNames.get(shortName) == null || shortNames.get(shortName).equals(allocation)) {

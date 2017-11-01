@@ -28,6 +28,12 @@ public class TestPrograms extends TestCase {
       compileAndCompare("bitmap-bresenham");
    }
 
+   public void testCallConstParam() throws IOException, URISyntaxException {
+      String filename = "callconstparam";
+      compileAndCompare(filename);
+   }
+
+
    public void testScrollClobber() throws IOException, URISyntaxException {
       compileAndCompare("scroll-clobber");
    }

@@ -53,11 +53,6 @@ public class TestErrors extends TestCase {
       compileAndCompare(filename);
    }
 
-   public void testCallConstParamProblem() throws IOException, URISyntaxException {
-      String filename = "callconstparamproblem";
-      compileAndCompare(filename);
-   }
-
    private void compileAndCompare(String filename) throws IOException, URISyntaxException {
       TestErrors tester = new TestErrors();
       tester.testFile(filename);

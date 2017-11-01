@@ -27,7 +27,7 @@ public class AsmFragment {
    /**
     * The scope containing the fragment. Used when referencing symbols defined in other scopes.
     */
-   private ScopeRef scope;
+   private ScopeRef codeScopeRef;
 
    /**
     * The string signature/name of the fragment fragment.
@@ -39,7 +39,7 @@ public class AsmFragment {
          ControlFlowBlock block,
          Program program,
          ControlFlowGraph graph) {
-      this.scope = program.getGraph().getBlockFromStatementIdx(conditionalJump.getIndex()).getScope();
+      this.codeScopeRef = program.getGraph().getBlockFromStatementIdx(conditionalJump.getIndex()).getScope();
       this.bindings = new LinkedHashMap<>();
       this.program = program;
       String conditionalJumpSignature = conditionalJumpSignature(conditionalJump, block, graph);
@@ -47,7 +47,7 @@ public class AsmFragment {
    }
 
    public AsmFragment(StatementAssignment assignment, Program program) {
-      this.scope = program.getGraph().getBlockFromStatementIdx(assignment.getIndex()).getScope();
+      this.codeScopeRef = program.getGraph().getBlockFromStatementIdx(assignment.getIndex()).getScope();
       this.bindings = new LinkedHashMap<>();
       this.program = program;
       setSignature(assignmentSignature(
@@ -57,65 +57,22 @@ public class AsmFragment {
             assignment.getrValue2()));
    }
 
-   public AsmFragment(LValue lValue, RValue rValue, Program program, ScopeRef scope) {
-      this.scope = scope;
+   public AsmFragment(LValue lValue, RValue rValue, Program program, ScopeRef codeScopeRef) {
+      this.codeScopeRef = codeScopeRef;
       this.bindings = new LinkedHashMap<>();
       this.program = program;
       setSignature(assignmentSignature(lValue, null, null, rValue));
    }
 
    public AsmFragment(StatementAssignment assignment, StatementAssignment assignmentAlu, Program program) {
-      this.scope = program.getGraph().getBlockFromStatementIdx(assignment.getIndex()).getScope();
+      this.codeScopeRef = program.getGraph().getBlockFromStatementIdx(assignment.getIndex()).getScope();
       this.bindings = new LinkedHashMap<>();
       this.program = program;
       setSignature(assignmentWithAluSignature(assignment, assignmentAlu));
    }
 
-   /**
-    * Get ASM code for a constant value
-    *
-    * @param value The constant value
-    * @param precedence The precedence of the outer expression operator. Used to generate perenthesis when needed.
-    *
-    * @return The ASM string representing the constant value
-    */
-   public static String getAsmConstant(Program program, ConstantValue value, int precedence) {
-      if (value instanceof ConstantRef) {
-         ConstantVar constantVar = program.getScope().getConstant((ConstantRef) value);
-         String asmName = constantVar.getAsmName() == null ? constantVar.getLocalName() : constantVar.getAsmName();
-         return asmName.replace("#", "_").replace("$", "_");
-      } else if (value instanceof ConstantInteger) {
-         return getAsmNumber(((ConstantInteger) value).getNumber());
-      } else if (value instanceof ConstantChar) {
-         return "'"+((ConstantChar) value).getValue()+"'";
-      } else if (value instanceof ConstantString) {
-         return "\""+((ConstantString) value).getValue()+"\"";
-      } else if (value instanceof ConstantUnary) {
-         ConstantUnary unary = (ConstantUnary) value;
-         Operator operator = unary.getOperator();
-         boolean parenthesis = operator.getPrecedence()>precedence;
-         return
-               (parenthesis ? "(" : "") +
-                     operator.getOperator() +
-                     getAsmConstant(program, unary.getOperand(), operator.getPrecedence()) +
-                     (parenthesis? ")" : "");
-      } else if (value instanceof ConstantBinary) {
-         ConstantBinary binary = (ConstantBinary) value;
-         Operator operator = binary.getOperator();
-         boolean parenthesis = operator.getPrecedence()>precedence;
-         return
-               (parenthesis? "(" : "") +
-                     getAsmConstant(program, binary.getLeft(), operator.getPrecedence()) +
-                     operator.getOperator() +
-                     getAsmConstant(program, binary.getRight(), operator.getPrecedence()) +
-                     (parenthesis? ")" : "");
-      } else {
-         throw new RuntimeException("Constant type not supported " + value);
-      }
-   }
-
    private String assignmentWithAluSignature(StatementAssignment assignment, StatementAssignment assignmentAlu) {
-      this.scope = program.getGraph().getBlockFromStatementIdx(assignment.getIndex()).getScope();
+      this.codeScopeRef = program.getGraph().getBlockFromStatementIdx(assignment.getIndex()).getScope();
       if (!(assignment.getrValue2() instanceof VariableRef)) {
          throw new AluNotApplicableException("Error! ALU register only allowed as rValue2. " + assignment);
       }
@@ -291,6 +248,11 @@ public class AsmFragment {
       this.signature = signature;
    }
 
+   private Scope getCodeScope() {
+      return program.getScope().getScope(codeScopeRef);
+   }
+
+
    /**
     * Zero page register name indexing.
     */
@@ -436,18 +398,18 @@ public class AsmFragment {
          Variable boundVar = (Variable) boundValue;
          Registers.Register register = boundVar.getAllocation();
          if (register != null && register instanceof Registers.RegisterZp) {
-            return new AsmParameter(getAsmParameter(boundVar), true);
+            return new AsmParameter(getAsmParamName(boundVar), true);
          } else {
             throw new RuntimeException("Register Type not implemented " + register);
          }
       } else if (boundValue instanceof ConstantVar) {
          ConstantVar constantVar = (ConstantVar) boundValue;
-         String constantValueAsm = getAsmConstant(program, constantVar.getRef(), 99);
+         String constantValueAsm = getAsmConstant(program, constantVar.getRef(), 99, getCodeScope());
          boolean constantValueZp = SymbolTypeBasic.BYTE.equals(constantVar.getType(program.getScope()));
          return new AsmParameter(constantValueAsm, constantValueZp);
       } else if (boundValue instanceof ConstantValue) {
          ConstantValue boundConst = (ConstantValue) boundValue;
-         String constantValueAsm = getAsmConstant(program, boundConst, 99);
+         String constantValueAsm = getAsmConstant(program, boundConst, 99, getCodeScope());
          boolean constantValueZp = SymbolTypeBasic.BYTE.equals(boundConst.getType(program.getScope()));
          return new AsmParameter(constantValueAsm, constantValueZp);
       } else if (boundValue instanceof Label) {
@@ -455,6 +417,50 @@ public class AsmFragment {
          return new AsmParameter(param, false);
       } else {
           throw new RuntimeException("Bound Value Type not implemented " + boundValue);
+      }
+   }
+
+   /**
+    * Get ASM code for a constant value
+    *
+    * @param value The constant value
+    * @param precedence The precedence of the outer expression operator. Used to generate perenthesis when needed.
+    * @param codeScope The scope containing the code being generated. Used for adding scope to the name when needed (eg. line.x1 when referencing x1 variable inside line scope from outside line scope).
+    *
+    * @return The ASM string representing the constant value
+    */
+   public static String getAsmConstant(Program program, ConstantValue value, int precedence, Scope codeScope) {
+      if (value instanceof ConstantRef) {
+         ConstantVar constantVar = program.getScope().getConstant((ConstantRef) value);
+         String asmName = constantVar.getAsmName() == null ? constantVar.getLocalName() : constantVar.getAsmName();
+         return getAsmParamName(constantVar.getScope(), asmName, codeScope);
+      } else if (value instanceof ConstantInteger) {
+         return getAsmNumber(((ConstantInteger) value).getNumber());
+      } else if (value instanceof ConstantChar) {
+         return "'"+((ConstantChar) value).getValue()+"'";
+      } else if (value instanceof ConstantString) {
+         return "\""+((ConstantString) value).getValue()+"\"";
+      } else if (value instanceof ConstantUnary) {
+         ConstantUnary unary = (ConstantUnary) value;
+         Operator operator = unary.getOperator();
+         boolean parenthesis = operator.getPrecedence()>precedence;
+         return
+               (parenthesis ? "(" : "") +
+                     operator.getOperator() +
+                     getAsmConstant(program, unary.getOperand(), operator.getPrecedence(), codeScope) +
+                     (parenthesis? ")" : "");
+      } else if (value instanceof ConstantBinary) {
+         ConstantBinary binary = (ConstantBinary) value;
+         Operator operator = binary.getOperator();
+         boolean parenthesis = operator.getPrecedence()>precedence;
+         return
+               (parenthesis? "(" : "") +
+                     getAsmConstant(program, binary.getLeft(), operator.getPrecedence(), codeScope) +
+                     operator.getOperator() +
+                     getAsmConstant(program, binary.getRight(), operator.getPrecedence(), codeScope) +
+                     (parenthesis? ")" : "");
+      } else {
+         throw new RuntimeException("Constant type not supported " + value);
       }
    }
 
@@ -474,31 +480,33 @@ public class AsmFragment {
     * @param boundVar The variable
     * @return The ASM parameter to use in the ASM code
     */
-   private String getAsmParameter(Variable boundVar) {
+   private String getAsmParamName(Variable boundVar) {
       Scope varScope = boundVar.getScope();
       String asmName = boundVar.getAsmName() == null ? boundVar.getLocalName() : boundVar.getAsmName();
-      return getAsmParameter(varScope, asmName);
+      return getAsmParamName(varScope, asmName, getCodeScope());
    }
+
 
    /**
     * Get the ASM parameter for a specific bound constant
     * @param boundVar The constant
     * @return The ASM parameter to use in the ASM code
     */
-   private String getAsmParameter(ConstantVar boundVar) {
+   private String getAsmParamName(ConstantVar boundVar) {
       Scope varScope = boundVar.getScope();
       String asmName = boundVar.getAsmName() == null ? boundVar.getLocalName() : boundVar.getAsmName();
-      return getAsmParameter(varScope, asmName);
+      return getAsmParamName(varScope, asmName, getCodeScope());
    }
 
    /**
     * Get the ASM parameter for a specific bound constant/ variable
     * @param varScope The scope containing the var/const
     * @param asmName The ASM name of the variable (local name or specific ASM name).
+    * @param codeScope The scope containing the code being generated. Used for adding scope to the name when needed (eg. line.x1 when referencing x1 variable inside line scope from outside line scope).
     * @return The ASM parameter to use in the ASM code
     */
-   private String getAsmParameter(Scope varScope, String asmName) {
-      if (!varScope.getRef().equals(scope) && varScope.getRef().getFullName().length() > 0) {
+   private static String getAsmParamName(Scope varScope, String asmName, Scope codeScope) {
+      if (!varScope.equals(codeScope) && varScope.getRef().getFullName().length() > 0) {
          String param = varScope.getFullName() + "." + asmName
                .replace('@', 'b')
                .replace(':', '_')

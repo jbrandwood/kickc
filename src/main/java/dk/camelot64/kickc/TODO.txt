@@ -7,6 +7,7 @@ Known Problems
 - (useuninitialized.kc) Using an uninitialized variable fails in the optimizer phase. It should fail much earlier.
 
 Features
+- Inline contants that are only call parameters used once (eg. x0#0 and x0#1 in callconstparam.kc)
 - Move the main code into a main() function, and disallow code outside functions. The main function per default has no parameters and exits with RTS.
 - Improve locality of block sequence for if(cond) { stmt1; } else { stmt2; } to if(!cond) goto @else stmt1; jmp @end; @else: stmt2; @end:
 - Optimize if/else by swapping if & else if cond is easier to evaluate than !cond.
@@ -30,6 +31,12 @@ Features
   - Consider whether autocasting word & byte* is possible ?
 - Add UpliftRemains support for attempting to uplift potentials to ALU (requires modifying two registers: 1. the ALU potential to ALU - the one added to the ALU potential to A.)
 - Support array-initializer syntax as literal word syntax. byte* plotter = { lo, hi };
+
+Word Math
+- Support Word table lookup (through 2 byte-tables)
+- Support word math operations (addition, subtraction)
+- Implement a word-ALU
+- Usage: word[] plotter_x; word[] plotter_y; byte* plotter = plotter_x[x] + plotter_y[y]; ->     lda plotter_x_lo,x; clc; adc plotter_y_lo,y; sta plotter; lda plotter_x_hi,x; adc plotter_y_hi,y; sta plotter+1
 
 Arrays / Strings / Inline data
 - New semantic: Arrays are always allocated inline (and must therefore have a size). Pointers are never.
@@ -72,6 +79,8 @@ Register Allocation
 - Improve combination testing by finding live range overlaps and not creating combinations that would create an overlap conflict.
   - Combinations should be created in a tree-structure instead of just doing all combinations
   - Example: For equivalence classes a, b, c if a&c have overlapping live ranges they can never have the same register. Therefore the combination iterator should not create combinations where C has the same register as a.
+- Optimize registers in local windows - creating smaller sets of combinations. Currently some programs easily has millions of possible combinations.
+
 
 Process/Code Structure Improvement
 - Eliminate copy visitor
@@ -150,3 +159,5 @@ Done
 + Remove "string" keyword (if it exists).
 + Support hi/lo-byte lvalues - <plotter = plot_xlo[x]+plot_ylo[y]; >plotter = plot_xhi[x]+plot_yhi[y];
 + Add ALU support for lo/hi operators on pointers - to avoid unnecessary zp-variable holding for cases like byte v = y&$7 | <yoffs;
++ (callconstparam.kc) Constant parameters to multiple calls are mixed together because their versioned names (x0#0, X0#1) are shortened to not include the version and only one version is output in the ASM.
++ (callconstparam.kc) Constant call parameters are stored as values in the called function - not at the call. The reference from the call to the constant does not include the function name, so the result is an unknown symbol error when compiling the ASM.

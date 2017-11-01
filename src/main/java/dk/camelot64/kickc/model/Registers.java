@@ -236,6 +236,13 @@ public class Registers {
 
    /** Special register used for constants. Has no corresponding CPU register. */
    public static class RegisterConstant implements Register {
+
+      private ConstantValue constantValue;
+
+      public RegisterConstant(ConstantValue constantValue) {
+         this.constantValue = constantValue;
+      }
+
       @Override
       public RegisterType getType() {
          return RegisterType.CONSTANT;
@@ -246,20 +253,28 @@ public class Registers {
          return false;
       }
 
+      public ConstantValue getConstantValue() {
+         return constantValue;
+      }
+
       @Override
       public String toString(Program program) {
-         return "const";
+         return "const "+constantValue.toString(program);
       }
 
       @Override
       public int hashCode() {
-         return 31;
+         return constantValue != null ? constantValue.hashCode() : 0;
       }
 
       @Override
-      public boolean equals(Object obj) {
-         return obj instanceof RegisterConstant;
+      public boolean equals(Object o) {
+         if (this == o) return true;
+         if (o == null || getClass() != o.getClass()) return false;
+         RegisterConstant that = (RegisterConstant) o;
+         return constantValue != null ? constantValue.equals(that.constantValue) : that.constantValue == null;
       }
+
    }
 
 }

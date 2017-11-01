@@ -93,6 +93,8 @@ void plot(byte x, byte y) {
     <plotter = plot_xlo[x]+plot_ylo[y];
     >plotter = plot_xhi[x]+plot_yhi[y];
     // TODO: <plotter can overflow - and carry must then be added to the >plotter part. Requires new logic?
+    // TODO: New logic needed is 1) word-table lookup (split into two byte-tables) 2) word-addition 3) ALU-capable word-addition
+
     *plotter = *plotter | plot_bit[x];
 }
 
@@ -5900,13 +5902,13 @@ main: {
   //SEG17 [10] phi from main::@2 to line [phi:main::@2->line]
   line_from_b2:
   //SEG18 [10] phi (byte) line::y#0 = (const byte) line::y0#0 [phi:main::@2->line#0] -- zpby1=coby1 
-    lda #y0
+    lda #line.y0
     sta line.y
   //SEG19 [10] phi (byte) line::y1#2 = (byte) 10 [phi:main::@2->line#1] -- zpby1=coby1 
     lda #$a
     sta line.y1
   //SEG20 [10] phi (byte) line::x#0 = (const byte) line::x0#0 [phi:main::@2->line#2] -- zpby1=coby1 
-    lda #x0
+    lda #line.x0
     sta line.x
   //SEG21 [10] phi (byte) line::x1#2 = (byte) 20 [phi:main::@2->line#3] -- zpby1=coby1 
     lda #$14
@@ -5919,13 +5921,13 @@ main: {
   //SEG24 [10] phi from main::@3 to line [phi:main::@3->line]
   line_from_b3:
   //SEG25 [10] phi (byte) line::y#0 = (const byte) line::y0#1 [phi:main::@3->line#0] -- zpby1=coby1 
-    lda #y0
+    lda #line.y0_1
     sta line.y
   //SEG26 [10] phi (byte) line::y1#2 = (byte) 40 [phi:main::@3->line#1] -- zpby1=coby1 
     lda #$28
     sta line.y1
   //SEG27 [10] phi (byte) line::x#0 = (const byte) line::x0#1 [phi:main::@3->line#2] -- zpby1=coby1 
-    lda #x0
+    lda #line.x0_1
     sta line.x
   //SEG28 [10] phi (byte) line::x1#2 = (byte) 40 [phi:main::@3->line#3] -- zpby1=coby1 
     lda #$28
@@ -5941,6 +5943,8 @@ main: {
 line: {
     .const x0 = 0
     .const y0 = 0
+    .const x0_1 = $a
+    .const y0_1 = $14
     .label _10 = 20
     .label xd = 16
     .label yd = 17
@@ -6567,12 +6571,12 @@ main: {
   //SEG17 [10] phi from main::@2 to line [phi:main::@2->line]
   line_from_b2:
   //SEG18 [10] phi (byte) line::y#0 = (const byte) line::y0#0 [phi:main::@2->line#0] -- zpby1=coby1 
-    lda #y0
+    lda #line.y0
     sta line.y
   //SEG19 [10] phi (byte) line::y1#2 = (byte) 10 [phi:main::@2->line#1] -- xby=coby1 
     ldx #$a
   //SEG20 [10] phi (byte) line::x#0 = (const byte) line::x0#0 [phi:main::@2->line#2] -- zpby1=coby1 
-    lda #x0
+    lda #line.x0
     sta line.x
   //SEG21 [10] phi (byte) line::x1#2 = (byte) 20 [phi:main::@2->line#3] -- zpby1=coby1 
     lda #$14
@@ -6584,12 +6588,12 @@ main: {
   //SEG24 [10] phi from main::@3 to line [phi:main::@3->line]
   line_from_b3:
   //SEG25 [10] phi (byte) line::y#0 = (const byte) line::y0#1 [phi:main::@3->line#0] -- zpby1=coby1 
-    lda #y0
+    lda #line.y0_1
     sta line.y
   //SEG26 [10] phi (byte) line::y1#2 = (byte) 40 [phi:main::@3->line#1] -- xby=coby1 
     ldx #$28
   //SEG27 [10] phi (byte) line::x#0 = (const byte) line::x0#1 [phi:main::@3->line#2] -- zpby1=coby1 
-    lda #x0
+    lda #line.x0_1
     sta line.x
   //SEG28 [10] phi (byte) line::x1#2 = (byte) 40 [phi:main::@3->line#3] -- zpby1=coby1 
     lda #$28
@@ -6604,6 +6608,8 @@ main: {
 line: {
     .const x0 = 0
     .const y0 = 0
+    .const x0_1 = $a
+    .const y0_1 = $14
     .label xd = 8
     .label yd = 9
     .label x = 3
@@ -6969,12 +6975,12 @@ main: {
   //SEG17 [10] phi from main::@2 to line [phi:main::@2->line]
   line_from_b2:
   //SEG18 [10] phi (byte) line::y#0 = (const byte) line::y0#0 [phi:main::@2->line#0] -- zpby1=coby1 
-    lda #y0
+    lda #line.y0
     sta line.y
   //SEG19 [10] phi (byte) line::y1#2 = (byte) 10 [phi:main::@2->line#1] -- xby=coby1 
     ldx #$a
   //SEG20 [10] phi (byte) line::x#0 = (const byte) line::x0#0 [phi:main::@2->line#2] -- zpby1=coby1 
-    lda #x0
+    lda #line.x0
     sta line.x
   //SEG21 [10] phi (byte) line::x1#2 = (byte) 20 [phi:main::@2->line#3] -- zpby1=coby1 
     lda #$14
@@ -6986,12 +6992,12 @@ main: {
   //SEG24 [10] phi from main::@3 to line [phi:main::@3->line]
   line_from_b3:
   //SEG25 [10] phi (byte) line::y#0 = (const byte) line::y0#1 [phi:main::@3->line#0] -- zpby1=coby1 
-    lda #y0
+    lda #line.y0_1
     sta line.y
   //SEG26 [10] phi (byte) line::y1#2 = (byte) 40 [phi:main::@3->line#1] -- xby=coby1 
     ldx #$28
   //SEG27 [10] phi (byte) line::x#0 = (const byte) line::x0#1 [phi:main::@3->line#2] -- zpby1=coby1 
-    lda #x0
+    lda #line.x0_1
     sta line.x
   //SEG28 [10] phi (byte) line::x1#2 = (byte) 40 [phi:main::@3->line#3] -- zpby1=coby1 
     lda #$28
@@ -7006,6 +7012,8 @@ main: {
 line: {
     .const x0 = 0
     .const y0 = 0
+    .const x0_1 = $a
+    .const y0_1 = $14
     .label xd = 8
     .label yd = 9
     .label x = 3
@@ -7387,12 +7395,12 @@ main: {
   //SEG16 [7] call line param-assignment [ ]
   //SEG17 [10] phi from main::@2 to line [phi:main::@2->line]
   //SEG18 [10] phi (byte) line::y#0 = (const byte) line::y0#0 [phi:main::@2->line#0] -- zpby1=coby1 
-    lda #y0
+    lda #line.y0
     sta line.y
   //SEG19 [10] phi (byte) line::y1#2 = (byte) 10 [phi:main::@2->line#1] -- xby=coby1 
     ldx #$a
   //SEG20 [10] phi (byte) line::x#0 = (const byte) line::x0#0 [phi:main::@2->line#2] -- zpby1=coby1 
-    lda #x0
+    lda #line.x0
     sta line.x
   //SEG21 [10] phi (byte) line::x1#2 = (byte) 20 [phi:main::@2->line#3] -- zpby1=coby1 
     lda #$14
@@ -7403,12 +7411,12 @@ main: {
   //SEG23 [8] call line param-assignment [ ]
   //SEG24 [10] phi from main::@3 to line [phi:main::@3->line]
   //SEG25 [10] phi (byte) line::y#0 = (const byte) line::y0#1 [phi:main::@3->line#0] -- zpby1=coby1 
-    lda #y0
+    lda #line.y0_1
     sta line.y
   //SEG26 [10] phi (byte) line::y1#2 = (byte) 40 [phi:main::@3->line#1] -- xby=coby1 
     ldx #$28
   //SEG27 [10] phi (byte) line::x#0 = (const byte) line::x0#1 [phi:main::@3->line#2] -- zpby1=coby1 
-    lda #x0
+    lda #line.x0_1
     sta line.x
   //SEG28 [10] phi (byte) line::x1#2 = (byte) 40 [phi:main::@3->line#3] -- zpby1=coby1 
     lda #$28
@@ -7423,6 +7431,8 @@ main: {
 line: {
     .const x0 = 0
     .const y0 = 0
+    .const x0_1 = $a
+    .const y0_1 = $14
     .label xd = 8
     .label yd = 9
     .label x = 3
@@ -7783,12 +7793,12 @@ main: {
   //SEG16 [7] call line param-assignment [ ]
   //SEG17 [10] phi from main::@2 to line [phi:main::@2->line]
   //SEG18 [10] phi (byte) line::y#0 = (const byte) line::y0#0 [phi:main::@2->line#0] -- zpby1=coby1 
-    lda #y0
+    lda #line.y0
     sta line.y
   //SEG19 [10] phi (byte) line::y1#2 = (byte) 10 [phi:main::@2->line#1] -- xby=coby1 
     ldx #$a
   //SEG20 [10] phi (byte) line::x#0 = (const byte) line::x0#0 [phi:main::@2->line#2] -- zpby1=coby1 
-    lda #x0
+    lda #line.x0
     sta line.x
   //SEG21 [10] phi (byte) line::x1#2 = (byte) 20 [phi:main::@2->line#3] -- zpby1=coby1 
     lda #$14
@@ -7798,12 +7808,12 @@ main: {
   //SEG23 [8] call line param-assignment [ ]
   //SEG24 [10] phi from main::@3 to line [phi:main::@3->line]
   //SEG25 [10] phi (byte) line::y#0 = (const byte) line::y0#1 [phi:main::@3->line#0] -- zpby1=coby1 
-    lda #y0
+    lda #line.y0_1
     sta line.y
   //SEG26 [10] phi (byte) line::y1#2 = (byte) 40 [phi:main::@3->line#1] -- xby=coby1 
     ldx #$28
   //SEG27 [10] phi (byte) line::x#0 = (const byte) line::x0#1 [phi:main::@3->line#2] -- zpby1=coby1 
-    lda #x0
+    lda #line.x0_1
     sta line.x
   //SEG28 [10] phi (byte) line::x1#2 = (byte) 40 [phi:main::@3->line#3] -- zpby1=coby1 
     lda #$28
@@ -7817,6 +7827,8 @@ main: {
 line: {
     .const x0 = 0
     .const y0 = 0
+    .const x0_1 = $a
+    .const y0_1 = $14
     .label xd = 8
     .label yd = 9
     .label x = 3
@@ -8150,12 +8162,12 @@ main: {
   //SEG16 [7] call line param-assignment [ ]
   //SEG17 [10] phi from main::@2 to line [phi:main::@2->line]
   //SEG18 [10] phi (byte) line::y#0 = (const byte) line::y0#0 [phi:main::@2->line#0] -- zpby1=coby1 
-    lda #y0
+    lda #line.y0
     sta line.y
   //SEG19 [10] phi (byte) line::y1#2 = (byte) 10 [phi:main::@2->line#1] -- xby=coby1 
     ldx #$a
   //SEG20 [10] phi (byte) line::x#0 = (const byte) line::x0#0 [phi:main::@2->line#2] -- zpby1=coby1 
-    lda #x0
+    lda #line.x0
     sta line.x
   //SEG21 [10] phi (byte) line::x1#2 = (byte) 20 [phi:main::@2->line#3] -- zpby1=coby1 
     lda #$14
@@ -8165,12 +8177,12 @@ main: {
   //SEG23 [8] call line param-assignment [ ]
   //SEG24 [10] phi from main::@3 to line [phi:main::@3->line]
   //SEG25 [10] phi (byte) line::y#0 = (const byte) line::y0#1 [phi:main::@3->line#0] -- zpby1=coby1 
-    lda #y0
+    lda #line.y0_1
     sta line.y
   //SEG26 [10] phi (byte) line::y1#2 = (byte) 40 [phi:main::@3->line#1] -- xby=coby1 
     ldx #$28
   //SEG27 [10] phi (byte) line::x#0 = (const byte) line::x0#1 [phi:main::@3->line#2] -- zpby1=coby1 
-    lda #x0
+    lda #line.x0_1
     sta line.x
   //SEG28 [10] phi (byte) line::x1#2 = (byte) 40 [phi:main::@3->line#3] -- zpby1=coby1 
     lda #$28
@@ -8184,6 +8196,8 @@ main: {
 line: {
     .const x0 = 0
     .const y0 = 0
+    .const x0_1 = $a
+    .const y0_1 = $14
     .label xd = 8
     .label yd = 9
     .label x = 3
@@ -8549,7 +8563,7 @@ FINAL SYMBOL TABLE
 (byte) line::x#2 x zp ZP_BYTE:3 8.75
 (byte) line::x0
 (const byte) line::x0#0 x0 = (byte) 0
-(const byte) line::x0#1 x0 = (byte) 10
+(const byte) line::x0#1 x0#1 = (byte) 10
 (byte) line::x1
 (byte) line::x1#2 x1 zp ZP_BYTE:2 0.8125
 (byte) line::xd
@@ -8561,7 +8575,7 @@ FINAL SYMBOL TABLE
 (byte) line::y#4 y zp ZP_BYTE:4 11.0
 (byte) line::y0
 (const byte) line::y0#0 y0 = (byte) 0
-(const byte) line::y0#1 y0 = (byte) 20
+(const byte) line::y0#1 y0#1 = (byte) 20
 (byte) line::y1
 (byte) line::y1#2 reg byte x 1.0
 (byte) line::yd
@@ -8679,12 +8693,12 @@ main: {
   //SEG16 [7] call line param-assignment [ ]
   //SEG17 [10] phi from main::@2 to line [phi:main::@2->line]
   //SEG18 [10] phi (byte) line::y#0 = (const byte) line::y0#0 [phi:main::@2->line#0] -- zpby1=coby1 
-    lda #y0
+    lda #line.y0
     sta line.y
   //SEG19 [10] phi (byte) line::y1#2 = (byte) 10 [phi:main::@2->line#1] -- xby=coby1 
     ldx #$a
   //SEG20 [10] phi (byte) line::x#0 = (const byte) line::x0#0 [phi:main::@2->line#2] -- zpby1=coby1 
-    lda #x0
+    lda #line.x0
     sta line.x
   //SEG21 [10] phi (byte) line::x1#2 = (byte) 20 [phi:main::@2->line#3] -- zpby1=coby1 
     lda #$14
@@ -8694,12 +8708,12 @@ main: {
   //SEG23 [8] call line param-assignment [ ]
   //SEG24 [10] phi from main::@3 to line [phi:main::@3->line]
   //SEG25 [10] phi (byte) line::y#0 = (const byte) line::y0#1 [phi:main::@3->line#0] -- zpby1=coby1 
-    lda #y0
+    lda #line.y0_1
     sta line.y
   //SEG26 [10] phi (byte) line::y1#2 = (byte) 40 [phi:main::@3->line#1] -- xby=coby1 
     ldx #$28
   //SEG27 [10] phi (byte) line::x#0 = (const byte) line::x0#1 [phi:main::@3->line#2] -- zpby1=coby1 
-    lda #x0
+    lda #line.x0_1
     sta line.x
   //SEG28 [10] phi (byte) line::x1#2 = (byte) 40 [phi:main::@3->line#3] -- zpby1=coby1 
     lda #$28
@@ -8713,6 +8727,8 @@ main: {
 line: {
     .const x0 = 0
     .const y0 = 0
+    .const x0_1 = $a
+    .const y0_1 = $14
     .label xd = 8
     .label yd = 9
     .label x = 3

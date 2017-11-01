@@ -29,8 +29,7 @@ public class TestPrograms extends TestCase {
    }
 
    public void testCallConstParam() throws IOException, URISyntaxException {
-      String filename = "callconstparam";
-      compileAndCompare(filename);
+      compileAndCompare("callconstparam");
    }
 
 

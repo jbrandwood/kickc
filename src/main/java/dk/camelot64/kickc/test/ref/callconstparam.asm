@@ -7,17 +7,15 @@ main: {
     sta screen
     lda #>$400
     sta screen+1
-    ldx #line.x0
+    ldx #1
     jsr line
     lda #5
     sta line.x1
-    ldx #line.x0_1
+    ldx #3
     jsr line
     rts
 }
 line: {
-    .const x0 = 1
-    .const x0_1 = 3
     .label x1 = 2
   b1:
     txa

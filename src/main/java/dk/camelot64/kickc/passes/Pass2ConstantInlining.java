@@ -115,7 +115,9 @@ public class Pass2ConstantInlining extends Pass2SsaOptimization {
    }
 
    /**
-    * Find single variable versions that are constant eg. i#0 = 0
+    * Find
+    * - variable versions that are constant, while other versions are still variable eg. i#0 = 0, i#1 = i#0 + 1
+    * - constant versions where other constant versions have different values eg. line(1); line(2); (the constants here are the parameters to the method line)
     * @return Map from constant name to constant value
     */
    private Map<ConstantRef, ConstantValue> findConstVarVersions() {
@@ -129,8 +131,16 @@ public class Pass2ConstantInlining extends Pass2SsaOptimization {
             Collection<Symbol> scopeSymbols = constant.getScope().getAllSymbols();
             for (Symbol symbol : scopeSymbols) {
                if(symbol.getRef().isVersion() && symbol.getRef().getFullNameUnversioned().equals(baseName)) {
+                  ConstantValue value = constant.getValue();
                   if(symbol instanceof Variable) {
-                     aliases.put(constant.getRef(), constant.getValue());
+                     aliases.put(constant.getRef(), value);
+                     break;
+                  } else if(symbol instanceof ConstantVar) {
+                     ConstantValue otherValue = ((ConstantVar) symbol).getValue();
+                     if(!otherValue.equals(value) && !(value instanceof ConstantString) && !(value instanceof ConstantArray) && !(otherValue instanceof ConstantRef)) {
+                        aliases.put(constant.getRef(), value);
+                        break;
+                     }
                   }
                }
             }

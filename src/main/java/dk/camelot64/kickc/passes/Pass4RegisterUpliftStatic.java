@@ -60,6 +60,7 @@ public class Pass4RegisterUpliftStatic extends Pass2Base {
       */
 
       // ALU combination plotter ORA in bitmap-bresenham.kc
+      /*
       collapseEquivalenceClasses("line::plotter#0", "line::plotter#1");
       //setRegister(combination, "line::plotter#1", new Registers.RegisterZpPointerByte(21));
       setRegister(combination, "line::$11", Registers.getRegisterA());
@@ -73,6 +74,8 @@ public class Pass4RegisterUpliftStatic extends Pass2Base {
       setRegister(combination, "line::$7", Registers.getRegisterALU());
       setRegister(combination, "initplottables::$6", Registers.getRegisterA());
       setRegister(combination, "initplottables::$7", Registers.getRegisterALU());
+      */
+      setRegister(combination, "initplottables::$6", Registers.getRegisterA());
 
       boolean success = Pass4RegisterUpliftCombinations.generateCombinationAsm(
             combination,

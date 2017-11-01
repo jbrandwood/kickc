@@ -244,12 +244,13 @@ public class Compiler {
       program.getLog().append(program.getAsm().toString());
 
       // Find potential registers for each live range equivalence class - based on clobbering of fragments
+      program.getLog().append("REGISTER UPLIFT POTENTIAL REGISTERS");
+      new Pass4RegisterUpliftPotentialInitialize(program).initPotentialRegisters();
+      new Pass4RegisterUpliftPotentialAluAnalysis(program).findPotentialAlu();
       boolean change;
       do {
          change = new Pass4RegisterUpliftPotentialRegisterAnalysis(program).findPotentialRegisters();
       } while (change);
-      new Pass4RegisterUpliftPotentialAluAnalysis(program).findPotentialAlu();
-      program.getLog().append("REGISTER UPLIFT POTENTIAL REGISTERS");
       program.getLog().append(program.getRegisterPotentials().toString());
 
       // Find register uplift scopes

@@ -22,7 +22,7 @@ public class Pass4RegisterUpliftPotentialRegisterAnalysis extends Pass2Base {
    /***
     * For each statement - try out all potential register combinations and examine the clobber
     *
-    * @return true if the potential registers of the program was changed. Menas that another call might refine them further
+    * @return true if the potential registers of the program was changed. Means that another call might refine them further
     */
    public boolean findPotentialRegisters() {
 
@@ -30,26 +30,6 @@ public class Pass4RegisterUpliftPotentialRegisterAnalysis extends Pass2Base {
       LiveRangeEquivalenceClassSet liveRangeEquivalenceClassSet = getProgram().getLiveRangeEquivalenceClassSet();
 
       RegisterPotentials registerPotentials = getProgram().getRegisterPotentials();
-
-      // Initialize potential registers for all live range equilavence classes
-      if (registerPotentials == null) {
-         modified = true;
-         registerPotentials = new RegisterPotentials();
-         for (LiveRangeEquivalenceClass equivalenceClass : liveRangeEquivalenceClassSet.getEquivalenceClasses()) {
-            Registers.Register defaultRegister = equivalenceClass.getRegister();
-            Registers.RegisterType registerType = defaultRegister.getType();
-            if (registerType.equals(Registers.RegisterType.ZP_BYTE)) {
-               List<Registers.Register> potentials = Arrays.asList(
-                     defaultRegister,
-                     Registers.getRegisterA(),
-                     Registers.getRegisterX(),
-                     Registers.getRegisterY());
-               registerPotentials.setPotentialRegisters(equivalenceClass, potentials);
-            } else {
-               registerPotentials.setPotentialRegisters(equivalenceClass, Arrays.asList(defaultRegister));
-            }
-         }
-      }
 
       VariableReferenceInfo referenceInfo = new VariableReferenceInfo(getProgram());
       for (ControlFlowBlock block : getProgram().getGraph().getAllBlocks()) {
@@ -67,6 +47,13 @@ public class Pass4RegisterUpliftPotentialRegisterAnalysis extends Pass2Base {
             Set<LiveRangeEquivalenceClass> referencedClasses = new LinkedHashSet<>();
             for (VariableRef var : referencedVars) {
                referencedClasses.add(liveRangeEquivalenceClassSet.getEquivalenceClass(var));
+            }
+
+            // If statement assigns to an ALU potential equivalence class then always clobbered is empty
+            for (LiveRangeEquivalenceClass assignedClass : assignedClasses) {
+               if(registerPotentials.getPotentialRegisters(assignedClass).contains(Registers.getRegisterALU())) {
+                  continue;
+               }
             }
 
             // Generate all combinations of potential register allocations for the referenced equivalence classes
@@ -155,6 +142,15 @@ public class Pass4RegisterUpliftPotentialRegisterAnalysis extends Pass2Base {
             msg.append(" missing fragment " + e.getFragmentSignature());
             msg.append(" allocation: ").append(combination.toString());
             getLog().append(msg.toString());
+            continue;
+         } catch (AsmFragment.AluNotApplicableException e) {
+            if (getProgram().getLog().isVerboseUplift()) {
+               StringBuilder msg = new StringBuilder();
+               msg.append("Potential register analysis ");
+               msg.append("alu not applicable");
+               msg.append(" allocation: ").append(combination.toString());
+               getProgram().getLog().append(msg.toString());
+            }
             continue;
          }
          AsmClobber clobber = asm.getClobber();

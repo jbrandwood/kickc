@@ -99,5 +99,4 @@ public class Pass4RegisterUpliftPotentialAluAnalysis extends Pass2Base {
       getLog().append("Equivalence Class "+potentialAluEquivalenceClass+" has ALU potential.");
    }
 
-
 }

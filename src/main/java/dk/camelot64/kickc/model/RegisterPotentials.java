@@ -49,6 +49,10 @@ public class RegisterPotentials {
 
    public void addPotentialRegister(LiveRangeEquivalenceClass equivalenceClass, Registers.Register register) {
       List<Registers.Register> registers = potentials.get(equivalenceClass);
+      if(registers==null) {
+         registers= new ArrayList<>();
+         potentials.put(equivalenceClass, registers);
+      }
       if (!registers.contains(register)) {
          registers.add(register);
       }

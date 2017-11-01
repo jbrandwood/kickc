@@ -32,17 +32,17 @@ main: {
     jsr initplottables
     lda #0
     sta line.y
-    ldx #$a
+    ldx #$64
     sta line.x
-    lda #$14
+    lda #$c8
     sta line.x1
     jsr line
     lda #$14
     sta line.y
-    ldx #$28
+    ldx #$8c
     lda #$a
     sta line.x
-    lda #$28
+    lda #$8c
     sta line.x1
     jsr line
     rts
@@ -91,29 +91,34 @@ line: {
     rts
 }
 plot: {
-    .label _0 = 10
-    .label _3 = 10
-    .label _6 = 10
+    .label _5 = 12
+    .label plotter_x = 6
+    .label plotter_y = 10
     .label plotter = 6
-    lda plot_xlo,x
-    sta _0
-    lda plot_ylo,y
-    clc
-    adc _0
-    sta plotter
-    lda #>BITMAP
-    sta plotter+1
     lda plot_xhi,x
-    sta _3
+    sta plotter_x+1
+    lda #<0
+    sta plotter_x
+    lda plot_xlo,x
+    sta plotter_x
     lda plot_yhi,y
+    sta plotter_y+1
+    lda #<0
+    sta plotter_y
+    lda plot_ylo,y
+    sta plotter_y
+    lda plotter
     clc
-    adc _3
+    adc plotter_y
+    sta plotter
+    lda plotter+1
+    adc plotter_y+1
     sta plotter+1
     ldy #0
     lda (plotter),y
-    sta _6
+    sta _5
     lda plot_bit,x
-    ora _6
+    ora _5
     sta (plotter),y
     rts
 }

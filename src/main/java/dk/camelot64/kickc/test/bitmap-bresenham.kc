@@ -31,9 +31,8 @@ void main() {
     *D018 = $18; // Needs casting for *D018 = ((word)SCREEN/$40)|((word)BITMAP/$400);
     initscreen();
     initplottables();
-    // TODO: Error with constant identification of the parameters!
-    line(0,0,20,10);
-    line(10,20,40,40);
+    line(0,0,200,100);
+    line(10,20,140,140);
 }
 
 void line(byte x0, byte y0, byte x1, byte y1) {
@@ -44,7 +43,6 @@ void line(byte x0, byte y0, byte x1, byte y1) {
   byte e = yd>>1;
   do  {
       plot(x,y);
-      // TODO: Ensure coalescing of plotter#0 and plotter#1 into a single live range equivalence class.
       x = x + 1;
       e = e+yd;
       if(xd<e) {
@@ -62,7 +60,6 @@ void initscreen() {
         *c = $14;
     }
 }
-
 
 void initplottables() {
     byte bit = $80;
@@ -85,16 +82,14 @@ void initplottables() {
     }
 }
 
-
-
 void plot(byte x, byte y) {
-    // TODO: This assignment is needed - to avoid plotter var being destroyed during compilation. Find a way to eliminate it.
-    byte* plotter = BITMAP;
-    <plotter = plot_xlo[x]+plot_ylo[y];
-    >plotter = plot_xhi[x]+plot_yhi[y];
-    // TODO: <plotter can overflow - and carry must then be added to the >plotter part. Requires new logic?
-    // TODO: New logic needed is 1) word-table lookup (split into two byte-tables) 2) word-addition 3) ALU-capable word-addition
-
+    byte* plotter_x = 0;
+    byte* plotter_y = 0;
+    >plotter_x = plot_xhi[x];  // Needs word arrays arranged as two underlying byte arrays to allow byte* plotter_x = plot_x[x]; - and eventually - byte* plotter = plot_x[x] + plot_y[y];
+    <plotter_x = plot_xlo[x];
+    >plotter_y = plot_yhi[y];
+    <plotter_y = plot_ylo[y];
+    byte* plotter = plotter_x+plotter_y;
     *plotter = *plotter | plot_bit[x];
 }
 

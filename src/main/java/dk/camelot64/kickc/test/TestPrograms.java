@@ -28,6 +28,14 @@ public class TestPrograms extends TestCase {
       compileAndCompare("bitmap-bresenham");
    }
 
+   public void testBitmapPlotter() throws IOException, URISyntaxException {
+      compileAndCompare("bitmap-plotter");
+   }
+
+   public void testConstIdentification() throws IOException, URISyntaxException {
+      compileAndCompare("const-identification");
+   }
+
    public void testCallConstParam() throws IOException, URISyntaxException {
       compileAndCompare("callconstparam");
    }

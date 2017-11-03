@@ -414,6 +414,42 @@ main::@return: scope:[main]  from main::@1
   to:@return
 @end: scope:[]  from @begin
 
+Redundant Phi (byte[]) str#1 (byte[]) str#0
+Redundant Phi (byte*) SCREEN#2 (byte*) SCREEN#0
+Redundant Phi (byte[]) nums#1 (byte[]) nums#0
+Succesful SSA optimization Pass2RedundantPhiElimination
+CONTROL FLOW GRAPH
+@begin: scope:[]  from
+  (byte*) SCREEN#0 ← (word) 1024
+  (byte) char#0 ← (byte) 'a'
+  (byte) num#0 ← (byte) 1
+  (string~) $0 ← (string) "bc" + (string) "d"
+  (byte[]) str#0 ← (string~) $0 + (byte) 'e'
+  (byte[]) nums#0 ← { (byte) 2, (byte) 3, (byte) 4, (byte) 5 }
+  call main param-assignment
+  to:@end
+main: scope:[main]  from @begin
+  *((byte*) SCREEN#0 + (byte) 0) ← (byte) char#0
+  *((byte*) SCREEN#0 + (byte) 2) ← (byte) num#0
+  (byte) main::i#0 ← (byte) 0
+  to:main::@1
+main::@1: scope:[main]  from main main::@1
+  (byte) main::i#2 ← phi( main/(byte) main::i#0 main::@1/(byte) main::i#1 )
+  (byte~) main::$0 ← (byte) 4 + (byte) main::i#2
+  (byte~) main::$1 ← (byte[]) str#0 *idx (byte) main::i#2
+  *((byte*) SCREEN#0 + (byte~) main::$0) ← (byte~) main::$1
+  (byte~) main::$2 ← (byte) 9 + (byte) main::i#2
+  (byte~) main::$3 ← (byte[]) nums#0 *idx (byte) main::i#2
+  *((byte*) SCREEN#0 + (byte~) main::$2) ← (byte~) main::$3
+  (byte) main::i#1 ← ++ (byte) main::i#2
+  (boolean~) main::$4 ← (byte) main::i#1 != (byte) 4
+  if((boolean~) main::$4) goto main::@1
+  to:main::@return
+main::@return: scope:[main]  from main::@1
+  return 
+  to:@return
+@end: scope:[]  from @begin
+
 Simple Condition (boolean~) main::$4 if((byte) main::i#1!=(byte) 4) goto main::@1
 Succesful SSA optimization Pass2ConditionalJumpSimplification
 CONTROL FLOW GRAPH
@@ -432,16 +468,13 @@ main: scope:[main]  from @begin
   (byte) main::i#0 ← (byte) 0
   to:main::@1
 main::@1: scope:[main]  from main main::@1
-  (byte[]) nums#1 ← phi( main/(byte[]) nums#0 )
-  (byte*) SCREEN#2 ← phi( main/(byte*) SCREEN#0 )
-  (byte[]) str#1 ← phi( main/(byte[]) str#0 )
   (byte) main::i#2 ← phi( main/(byte) main::i#0 main::@1/(byte) main::i#1 )
   (byte~) main::$0 ← (byte) 4 + (byte) main::i#2
-  (byte~) main::$1 ← (byte[]) str#1 *idx (byte) main::i#2
-  *((byte*) SCREEN#2 + (byte~) main::$0) ← (byte~) main::$1
+  (byte~) main::$1 ← (byte[]) str#0 *idx (byte) main::i#2
+  *((byte*) SCREEN#0 + (byte~) main::$0) ← (byte~) main::$1
   (byte~) main::$2 ← (byte) 9 + (byte) main::i#2
-  (byte~) main::$3 ← (byte[]) nums#1 *idx (byte) main::i#2
-  *((byte*) SCREEN#2 + (byte~) main::$2) ← (byte~) main::$3
+  (byte~) main::$3 ← (byte[]) nums#0 *idx (byte) main::i#2
+  *((byte*) SCREEN#0 + (byte~) main::$2) ← (byte~) main::$3
   (byte) main::i#1 ← ++ (byte) main::i#2
   if((byte) main::i#1!=(byte) 4) goto main::@1
   to:main::@return
@@ -467,16 +500,13 @@ main: scope:[main]  from @begin
   *((const byte*) SCREEN#0 + (byte) 2) ← (const byte) num#0
   to:main::@1
 main::@1: scope:[main]  from main main::@1
-  (byte[]) nums#1 ← phi( main/(const byte[]) nums#0 )
-  (byte*) SCREEN#2 ← phi( main/(const byte*) SCREEN#0 )
-  (byte[]) str#1 ← phi( main/(byte[]) str#0 )
   (byte) main::i#2 ← phi( main/(const byte) main::i#0 main::@1/(byte) main::i#1 )
   (byte~) main::$0 ← (byte) 4 + (byte) main::i#2
-  (byte~) main::$1 ← (byte[]) str#1 *idx (byte) main::i#2
-  *((byte*) SCREEN#2 + (byte~) main::$0) ← (byte~) main::$1
+  (byte~) main::$1 ← (byte[]) str#0 *idx (byte) main::i#2
+  *((const byte*) SCREEN#0 + (byte~) main::$0) ← (byte~) main::$1
   (byte~) main::$2 ← (byte) 9 + (byte) main::i#2
-  (byte~) main::$3 ← (byte[]) nums#1 *idx (byte) main::i#2
-  *((byte*) SCREEN#2 + (byte~) main::$2) ← (byte~) main::$3
+  (byte~) main::$3 ← (const byte[]) nums#0 *idx (byte) main::i#2
+  *((const byte*) SCREEN#0 + (byte~) main::$2) ← (byte~) main::$3
   (byte) main::i#1 ← ++ (byte) main::i#2
   if((byte) main::i#1!=(byte) 4) goto main::@1
   to:main::@return
@@ -486,35 +516,6 @@ main::@return: scope:[main]  from main::@1
 @end: scope:[]  from @begin
 
 Constant (const byte[]) str#0 = $0+'e'
-Constant (const byte*) SCREEN#2 = SCREEN#0
-Constant (const byte[]) nums#1 = nums#0
-Succesful SSA optimization Pass2ConstantIdentification
-CONTROL FLOW GRAPH
-@begin: scope:[]  from
-  call main param-assignment
-  to:@end
-main: scope:[main]  from @begin
-  *((const byte*) SCREEN#0 + (byte) 0) ← (const byte) char#0
-  *((const byte*) SCREEN#0 + (byte) 2) ← (const byte) num#0
-  to:main::@1
-main::@1: scope:[main]  from main main::@1
-  (byte[]) str#1 ← phi( main/(const byte[]) str#0 )
-  (byte) main::i#2 ← phi( main/(const byte) main::i#0 main::@1/(byte) main::i#1 )
-  (byte~) main::$0 ← (byte) 4 + (byte) main::i#2
-  (byte~) main::$1 ← (byte[]) str#1 *idx (byte) main::i#2
-  *((const byte*) SCREEN#2 + (byte~) main::$0) ← (byte~) main::$1
-  (byte~) main::$2 ← (byte) 9 + (byte) main::i#2
-  (byte~) main::$3 ← (const byte[]) nums#1 *idx (byte) main::i#2
-  *((const byte*) SCREEN#2 + (byte~) main::$2) ← (byte~) main::$3
-  (byte) main::i#1 ← ++ (byte) main::i#2
-  if((byte) main::i#1!=(byte) 4) goto main::@1
-  to:main::@return
-main::@return: scope:[main]  from main::@1
-  return 
-  to:@return
-@end: scope:[]  from @begin
-
-Constant (const byte[]) str#1 = str#0
 Succesful SSA optimization Pass2ConstantIdentification
 CONTROL FLOW GRAPH
 @begin: scope:[]  from
@@ -527,11 +528,11 @@ main: scope:[main]  from @begin
 main::@1: scope:[main]  from main main::@1
   (byte) main::i#2 ← phi( main/(const byte) main::i#0 main::@1/(byte) main::i#1 )
   (byte~) main::$0 ← (byte) 4 + (byte) main::i#2
-  (byte~) main::$1 ← (const byte[]) str#1 *idx (byte) main::i#2
-  *((const byte*) SCREEN#2 + (byte~) main::$0) ← (byte~) main::$1
+  (byte~) main::$1 ← (const byte[]) str#0 *idx (byte) main::i#2
+  *((const byte*) SCREEN#0 + (byte~) main::$0) ← (byte~) main::$1
   (byte~) main::$2 ← (byte) 9 + (byte) main::i#2
-  (byte~) main::$3 ← (const byte[]) nums#1 *idx (byte) main::i#2
-  *((const byte*) SCREEN#2 + (byte~) main::$2) ← (byte~) main::$3
+  (byte~) main::$3 ← (const byte[]) nums#0 *idx (byte) main::i#2
+  *((const byte*) SCREEN#0 + (byte~) main::$2) ← (byte~) main::$3
   (byte) main::i#1 ← ++ (byte) main::i#2
   if((byte) main::i#1!=(byte) 4) goto main::@1
   to:main::@return
@@ -544,10 +545,10 @@ Consolidated assigned array index constant in assignment *(SCREEN#0+0)
 Consolidated assigned array index constant in assignment *(SCREEN#0+2)
 Multiple usages for variable. Not optimizing sub-constant (byte) main::i#2
 Multiple usages for variable. Not optimizing sub-constant (byte) main::i#2
-Consolidated assigned array index constant in assignment *(SCREEN#2+4 + main::$0)
+Consolidated assigned array index constant in assignment *(SCREEN#0+4 + main::$0)
 Multiple usages for variable. Not optimizing sub-constant (byte) main::i#2
 Multiple usages for variable. Not optimizing sub-constant (byte) main::i#2
-Consolidated assigned array index constant in assignment *(SCREEN#2+9 + main::$2)
+Consolidated assigned array index constant in assignment *(SCREEN#0+9 + main::$2)
 Succesful SSA optimization Pass2ConstantAdditionElimination
 CONTROL FLOW GRAPH
 @begin: scope:[]  from
@@ -560,11 +561,11 @@ main: scope:[main]  from @begin
 main::@1: scope:[main]  from main main::@1
   (byte) main::i#2 ← phi( main/(const byte) main::i#0 main::@1/(byte) main::i#1 )
   (byte~) main::$0 ← (byte) main::i#2
-  (byte~) main::$1 ← (const byte[]) str#1 *idx (byte) main::i#2
-  *((const byte*) SCREEN#2+(byte) 4 + (byte~) main::$0) ← (byte~) main::$1
+  (byte~) main::$1 ← (const byte[]) str#0 *idx (byte) main::i#2
+  *((const byte*) SCREEN#0+(byte) 4 + (byte~) main::$0) ← (byte~) main::$1
   (byte~) main::$2 ← (byte) main::i#2
-  (byte~) main::$3 ← (const byte[]) nums#1 *idx (byte) main::i#2
-  *((const byte*) SCREEN#2+(byte) 9 + (byte~) main::$2) ← (byte~) main::$3
+  (byte~) main::$3 ← (const byte[]) nums#0 *idx (byte) main::i#2
+  *((const byte*) SCREEN#0+(byte) 9 + (byte~) main::$2) ← (byte~) main::$3
   (byte) main::i#1 ← ++ (byte) main::i#2
   if((byte) main::i#1!=(byte) 4) goto main::@1
   to:main::@return
@@ -587,10 +588,10 @@ main: scope:[main]  from @begin
   to:main::@1
 main::@1: scope:[main]  from main main::@1
   (byte) main::i#2 ← phi( main/(const byte) main::i#0 main::@1/(byte) main::i#1 )
-  (byte~) main::$1 ← (const byte[]) str#1 *idx (byte) main::i#2
-  *((const byte*) SCREEN#2+(byte) 4 + (byte) main::i#2) ← (byte~) main::$1
-  (byte~) main::$3 ← (const byte[]) nums#1 *idx (byte) main::i#2
-  *((const byte*) SCREEN#2+(byte) 9 + (byte) main::i#2) ← (byte~) main::$3
+  (byte~) main::$1 ← (const byte[]) str#0 *idx (byte) main::i#2
+  *((const byte*) SCREEN#0+(byte) 4 + (byte) main::i#2) ← (byte~) main::$1
+  (byte~) main::$3 ← (const byte[]) nums#0 *idx (byte) main::i#2
+  *((const byte*) SCREEN#0+(byte) 9 + (byte) main::i#2) ← (byte~) main::$3
   (byte) main::i#1 ← ++ (byte) main::i#2
   if((byte) main::i#1!=(byte) 4) goto main::@1
   to:main::@return
@@ -607,11 +608,10 @@ Multiple usages for variable. Not optimizing sub-constant (byte) main::i#2
 Multiple usages for variable. Not optimizing sub-constant (byte) main::i#2
 Multiple usages for variable. Not optimizing sub-constant (byte) main::i#2
 Multiple usages for variable. Not optimizing sub-constant (byte) main::i#2
-Constant inlined SCREEN#2 = (const byte*) SCREEN#0
-Constant inlined str#1 = (const byte[]) str#0
+Inlining constant with var siblings (const byte) main::i#0
+Inlining constant with var siblings (const byte) main::i#0
 Constant inlined $0 = (string) "bc"+(string) "d"
 Constant inlined main::i#0 = (byte) 0
-Constant inlined nums#1 = (const byte[]) nums#0
 Succesful SSA optimization Pass2ConstantInlining
 CONTROL FLOW GRAPH
 @begin: scope:[]  from

@@ -134,12 +134,14 @@ public class Pass2ConstantInlining extends Pass2SsaOptimization {
                   ConstantValue value = constant.getValue();
                   if(symbol instanceof Variable) {
                      aliases.put(constant.getRef(), value);
-                     break;
+                     getLog().append("Inlining constant with var siblings "+constant);
+                     //   break;
                   } else if(symbol instanceof ConstantVar) {
                      ConstantValue otherValue = ((ConstantVar) symbol).getValue();
                      if(!otherValue.equals(value) && !(value instanceof ConstantString) && !(value instanceof ConstantArray) && !(otherValue instanceof ConstantRef)) {
                         aliases.put(constant.getRef(), value);
-                        break;
+                        getLog().append("Inlining constant with different constant siblings "+constant);
+                     //   break;
                      }
                   }
                }

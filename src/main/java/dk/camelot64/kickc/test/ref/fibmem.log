@@ -310,6 +310,35 @@ main::@return: scope:[main]  from main::@1
   to:@return
 @end: scope:[]  from @begin
 
+Redundant Phi (byte[15]) fibs#2 (byte[15]) fibs#0
+Succesful SSA optimization Pass2RedundantPhiElimination
+CONTROL FLOW GRAPH
+@begin: scope:[]  from
+  (byte[15]) fibs#0 ← (word) 4352
+  call main param-assignment
+  to:@end
+main: scope:[main]  from @begin
+  *((byte[15]) fibs#0 + (byte) 0) ← (byte) 0
+  *((byte[15]) fibs#0 + (byte) 1) ← (byte) 1
+  (byte) main::i#0 ← (byte) 0
+  to:main::@1
+main::@1: scope:[main]  from main main::@1
+  (byte) main::i#2 ← phi( main/(byte) main::i#0 main::@1/(byte) main::i#1 )
+  (byte~) main::$0 ← (byte) main::i#2 + (byte) 2
+  (byte~) main::$1 ← (byte[15]) fibs#0 *idx (byte) main::i#2
+  (byte~) main::$2 ← (byte) main::i#2 + (byte) 1
+  (byte~) main::$3 ← (byte[15]) fibs#0 *idx (byte~) main::$2
+  (byte~) main::$4 ← (byte~) main::$1 + (byte~) main::$3
+  *((byte[15]) fibs#0 + (byte~) main::$0) ← (byte~) main::$4
+  (byte) main::i#1 ← ++ (byte) main::i#2
+  (boolean~) main::$5 ← (byte) main::i#1 < (byte) 15
+  if((boolean~) main::$5) goto main::@1
+  to:main::@return
+main::@return: scope:[main]  from main::@1
+  return 
+  to:@return
+@end: scope:[]  from @begin
+
 Simple Condition (boolean~) main::$5 if((byte) main::i#1<(byte) 15) goto main::@1
 Succesful SSA optimization Pass2ConditionalJumpSimplification
 CONTROL FLOW GRAPH
@@ -323,14 +352,13 @@ main: scope:[main]  from @begin
   (byte) main::i#0 ← (byte) 0
   to:main::@1
 main::@1: scope:[main]  from main main::@1
-  (byte[15]) fibs#2 ← phi( main/(byte[15]) fibs#0 )
   (byte) main::i#2 ← phi( main/(byte) main::i#0 main::@1/(byte) main::i#1 )
   (byte~) main::$0 ← (byte) main::i#2 + (byte) 2
-  (byte~) main::$1 ← (byte[15]) fibs#2 *idx (byte) main::i#2
+  (byte~) main::$1 ← (byte[15]) fibs#0 *idx (byte) main::i#2
   (byte~) main::$2 ← (byte) main::i#2 + (byte) 1
-  (byte~) main::$3 ← (byte[15]) fibs#2 *idx (byte~) main::$2
+  (byte~) main::$3 ← (byte[15]) fibs#0 *idx (byte~) main::$2
   (byte~) main::$4 ← (byte~) main::$1 + (byte~) main::$3
-  *((byte[15]) fibs#2 + (byte~) main::$0) ← (byte~) main::$4
+  *((byte[15]) fibs#0 + (byte~) main::$0) ← (byte~) main::$4
   (byte) main::i#1 ← ++ (byte) main::i#2
   if((byte) main::i#1<(byte) 15) goto main::@1
   to:main::@return
@@ -351,40 +379,13 @@ main: scope:[main]  from @begin
   *((const byte[15]) fibs#0 + (byte) 1) ← (byte) 1
   to:main::@1
 main::@1: scope:[main]  from main main::@1
-  (byte[15]) fibs#2 ← phi( main/(const byte[15]) fibs#0 )
   (byte) main::i#2 ← phi( main/(const byte) main::i#0 main::@1/(byte) main::i#1 )
   (byte~) main::$0 ← (byte) main::i#2 + (byte) 2
-  (byte~) main::$1 ← (byte[15]) fibs#2 *idx (byte) main::i#2
+  (byte~) main::$1 ← (const byte[15]) fibs#0 *idx (byte) main::i#2
   (byte~) main::$2 ← (byte) main::i#2 + (byte) 1
-  (byte~) main::$3 ← (byte[15]) fibs#2 *idx (byte~) main::$2
+  (byte~) main::$3 ← (const byte[15]) fibs#0 *idx (byte~) main::$2
   (byte~) main::$4 ← (byte~) main::$1 + (byte~) main::$3
-  *((byte[15]) fibs#2 + (byte~) main::$0) ← (byte~) main::$4
-  (byte) main::i#1 ← ++ (byte) main::i#2
-  if((byte) main::i#1<(byte) 15) goto main::@1
-  to:main::@return
-main::@return: scope:[main]  from main::@1
-  return 
-  to:@return
-@end: scope:[]  from @begin
-
-Constant (const byte[15]) fibs#2 = fibs#0
-Succesful SSA optimization Pass2ConstantIdentification
-CONTROL FLOW GRAPH
-@begin: scope:[]  from
-  call main param-assignment
-  to:@end
-main: scope:[main]  from @begin
-  *((const byte[15]) fibs#0 + (byte) 0) ← (byte) 0
-  *((const byte[15]) fibs#0 + (byte) 1) ← (byte) 1
-  to:main::@1
-main::@1: scope:[main]  from main main::@1
-  (byte) main::i#2 ← phi( main/(const byte) main::i#0 main::@1/(byte) main::i#1 )
-  (byte~) main::$0 ← (byte) main::i#2 + (byte) 2
-  (byte~) main::$1 ← (const byte[15]) fibs#2 *idx (byte) main::i#2
-  (byte~) main::$2 ← (byte) main::i#2 + (byte) 1
-  (byte~) main::$3 ← (const byte[15]) fibs#2 *idx (byte~) main::$2
-  (byte~) main::$4 ← (byte~) main::$1 + (byte~) main::$3
-  *((const byte[15]) fibs#2 + (byte~) main::$0) ← (byte~) main::$4
+  *((const byte[15]) fibs#0 + (byte~) main::$0) ← (byte~) main::$4
   (byte) main::i#1 ← ++ (byte) main::i#2
   if((byte) main::i#1<(byte) 15) goto main::@1
   to:main::@return
@@ -399,7 +400,7 @@ Multiple usages for variable. Not optimizing sub-constant (byte) main::i#2
 Multiple usages for variable. Not optimizing sub-constant (byte) main::i#2
 Multiple usages for variable. Not optimizing sub-constant (byte) main::i#2
 Consolidated referenced array index constant in assignment main::$3
-Consolidated assigned array index constant in assignment *(fibs#2+2 + main::$0)
+Consolidated assigned array index constant in assignment *(fibs#0+2 + main::$0)
 Succesful SSA optimization Pass2ConstantAdditionElimination
 CONTROL FLOW GRAPH
 @begin: scope:[]  from
@@ -412,11 +413,11 @@ main: scope:[main]  from @begin
 main::@1: scope:[main]  from main main::@1
   (byte) main::i#2 ← phi( main/(const byte) main::i#0 main::@1/(byte) main::i#1 )
   (byte~) main::$0 ← (byte) main::i#2
-  (byte~) main::$1 ← (const byte[15]) fibs#2 *idx (byte) main::i#2
+  (byte~) main::$1 ← (const byte[15]) fibs#0 *idx (byte) main::i#2
   (byte~) main::$2 ← (byte) main::i#2
-  (byte~) main::$3 ← (const byte[15]) fibs#2+(byte) 1 *idx (byte~) main::$2
+  (byte~) main::$3 ← (const byte[15]) fibs#0+(byte) 1 *idx (byte~) main::$2
   (byte~) main::$4 ← (byte~) main::$1 + (byte~) main::$3
-  *((const byte[15]) fibs#2+(byte) 2 + (byte~) main::$0) ← (byte~) main::$4
+  *((const byte[15]) fibs#0+(byte) 2 + (byte~) main::$0) ← (byte~) main::$4
   (byte) main::i#1 ← ++ (byte) main::i#2
   if((byte) main::i#1<(byte) 15) goto main::@1
   to:main::@return
@@ -438,10 +439,10 @@ main: scope:[main]  from @begin
   to:main::@1
 main::@1: scope:[main]  from main main::@1
   (byte) main::i#2 ← phi( main/(const byte) main::i#0 main::@1/(byte) main::i#1 )
-  (byte~) main::$1 ← (const byte[15]) fibs#2 *idx (byte) main::i#2
-  (byte~) main::$3 ← (const byte[15]) fibs#2+(byte) 1 *idx (byte) main::i#2
+  (byte~) main::$1 ← (const byte[15]) fibs#0 *idx (byte) main::i#2
+  (byte~) main::$3 ← (const byte[15]) fibs#0+(byte) 1 *idx (byte) main::i#2
   (byte~) main::$4 ← (byte~) main::$1 + (byte~) main::$3
-  *((const byte[15]) fibs#2+(byte) 2 + (byte) main::i#2) ← (byte~) main::$4
+  *((const byte[15]) fibs#0+(byte) 2 + (byte) main::i#2) ← (byte~) main::$4
   (byte) main::i#1 ← ++ (byte) main::i#2
   if((byte) main::i#1<(byte) 15) goto main::@1
   to:main::@return
@@ -456,7 +457,8 @@ Multiple usages for variable. Not optimizing sub-constant (byte) main::i#2
 Multiple usages for variable. Not optimizing sub-constant (byte) main::i#2
 Multiple usages for variable. Not optimizing sub-constant (byte) main::i#2
 Multiple usages for variable. Not optimizing sub-constant (byte) main::i#2
-Constant inlined fibs#2 = (const byte[15]) fibs#0
+Inlining constant with var siblings (const byte) main::i#0
+Inlining constant with var siblings (const byte) main::i#0
 Constant inlined main::i#0 = (byte) 0
 Succesful SSA optimization Pass2ConstantInlining
 CONTROL FLOW GRAPH

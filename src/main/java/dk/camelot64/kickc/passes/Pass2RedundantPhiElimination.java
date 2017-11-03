@@ -2,8 +2,10 @@ package dk.camelot64.kickc.passes;
 
 import dk.camelot64.kickc.model.*;
 
+import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.Set;
 
 /** Compiler Pass eliminating redundant phi functions */
 public class Pass2RedundantPhiElimination extends Pass2SsaOptimization {

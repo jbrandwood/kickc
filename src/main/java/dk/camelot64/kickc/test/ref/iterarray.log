@@ -261,6 +261,30 @@ main::@return: scope:[main]  from main::@1
   to:@return
 @end: scope:[]  from @begin
 
+Redundant Phi (byte[16]) main::buf#1 (byte[16]) main::buf#0
+Succesful SSA optimization Pass2RedundantPhiElimination
+CONTROL FLOW GRAPH
+@begin: scope:[]  from
+  call main param-assignment
+  to:@end
+main: scope:[main]  from @begin
+  (byte[16]) main::buf#0 ← (word) 4352
+  (byte) main::i#0 ← (byte) 5
+  to:main::@1
+main::@1: scope:[main]  from main main::@1
+  (byte) main::i#2 ← phi( main/(byte) main::i#0 main::@1/(byte) main::i#1 )
+  (byte~) main::$0 ← (byte) 2 + (byte) main::i#2
+  (byte~) main::$1 ← (byte~) main::$0 + (byte) 2
+  *((byte[16]) main::buf#0 + (byte) main::i#2) ← (byte~) main::$1
+  (byte) main::i#1 ← (byte) main::i#2 + (byte) 1
+  (boolean~) main::$3 ← (byte) main::i#1 < (byte) 10
+  if((boolean~) main::$3) goto main::@1
+  to:main::@return
+main::@return: scope:[main]  from main::@1
+  return 
+  to:@return
+@end: scope:[]  from @begin
+
 Simple Condition (boolean~) main::$3 if((byte) main::i#1<(byte) 10) goto main::@1
 Succesful SSA optimization Pass2ConditionalJumpSimplification
 CONTROL FLOW GRAPH
@@ -272,11 +296,10 @@ main: scope:[main]  from @begin
   (byte) main::i#0 ← (byte) 5
   to:main::@1
 main::@1: scope:[main]  from main main::@1
-  (byte[16]) main::buf#1 ← phi( main/(byte[16]) main::buf#0 )
   (byte) main::i#2 ← phi( main/(byte) main::i#0 main::@1/(byte) main::i#1 )
   (byte~) main::$0 ← (byte) 2 + (byte) main::i#2
   (byte~) main::$1 ← (byte~) main::$0 + (byte) 2
-  *((byte[16]) main::buf#1 + (byte) main::i#2) ← (byte~) main::$1
+  *((byte[16]) main::buf#0 + (byte) main::i#2) ← (byte~) main::$1
   (byte) main::i#1 ← (byte) main::i#2 + (byte) 1
   if((byte) main::i#1<(byte) 10) goto main::@1
   to:main::@return
@@ -295,32 +318,10 @@ CONTROL FLOW GRAPH
 main: scope:[main]  from @begin
   to:main::@1
 main::@1: scope:[main]  from main main::@1
-  (byte[16]) main::buf#1 ← phi( main/(const byte[16]) main::buf#0 )
   (byte) main::i#2 ← phi( main/(const byte) main::i#0 main::@1/(byte) main::i#1 )
   (byte~) main::$0 ← (byte) 2 + (byte) main::i#2
   (byte~) main::$1 ← (byte~) main::$0 + (byte) 2
-  *((byte[16]) main::buf#1 + (byte) main::i#2) ← (byte~) main::$1
-  (byte) main::i#1 ← (byte) main::i#2 + (byte) 1
-  if((byte) main::i#1<(byte) 10) goto main::@1
-  to:main::@return
-main::@return: scope:[main]  from main::@1
-  return 
-  to:@return
-@end: scope:[]  from @begin
-
-Constant (const byte[16]) main::buf#1 = main::buf#0
-Succesful SSA optimization Pass2ConstantIdentification
-CONTROL FLOW GRAPH
-@begin: scope:[]  from
-  call main param-assignment
-  to:@end
-main: scope:[main]  from @begin
-  to:main::@1
-main::@1: scope:[main]  from main main::@1
-  (byte) main::i#2 ← phi( main/(const byte) main::i#0 main::@1/(byte) main::i#1 )
-  (byte~) main::$0 ← (byte) 2 + (byte) main::i#2
-  (byte~) main::$1 ← (byte~) main::$0 + (byte) 2
-  *((const byte[16]) main::buf#1 + (byte) main::i#2) ← (byte~) main::$1
+  *((const byte[16]) main::buf#0 + (byte) main::i#2) ← (byte~) main::$1
   (byte) main::i#1 ← (byte) main::i#2 + (byte) 1
   if((byte) main::i#1<(byte) 10) goto main::@1
   to:main::@return
@@ -344,7 +345,7 @@ main::@1: scope:[main]  from main main::@1
   (byte) main::i#2 ← phi( main/(const byte) main::i#0 main::@1/(byte) main::i#1 )
   (byte~) main::$0 ← (byte) main::i#2
   (byte~) main::$1 ← (byte~) main::$0 + (byte) 2+(byte) 2
-  *((const byte[16]) main::buf#1 + (byte) main::i#2) ← (byte~) main::$1
+  *((const byte[16]) main::buf#0 + (byte) main::i#2) ← (byte~) main::$1
   (byte) main::i#1 ← (byte) main::i#2 + (byte) 1
   if((byte) main::i#1<(byte) 10) goto main::@1
   to:main::@return
@@ -366,7 +367,7 @@ main: scope:[main]  from @begin
 main::@1: scope:[main]  from main main::@1
   (byte) main::i#2 ← phi( main/(const byte) main::i#0 main::@1/(byte) main::i#1 )
   (byte~) main::$1 ← (byte) main::i#2 + (byte) 2+(byte) 2
-  *((const byte[16]) main::buf#1 + (byte) main::i#2) ← (byte~) main::$1
+  *((const byte[16]) main::buf#0 + (byte) main::i#2) ← (byte~) main::$1
   (byte) main::i#1 ← (byte) main::i#2 + (byte) 1
   if((byte) main::i#1<(byte) 10) goto main::@1
   to:main::@return
@@ -381,7 +382,8 @@ Multiple usages for variable. Not optimizing sub-constant (byte) main::i#2
 Multiple usages for variable. Not optimizing sub-constant (byte) main::i#2
 Multiple usages for variable. Not optimizing sub-constant (byte) main::i#2
 Multiple usages for variable. Not optimizing sub-constant (byte) main::i#2
-Constant inlined main::buf#1 = (const byte[16]) main::buf#0
+Inlining constant with var siblings (const byte) main::i#0
+Inlining constant with var siblings (const byte) main::i#0
 Constant inlined main::i#0 = (byte) 5
 Succesful SSA optimization Pass2ConstantInlining
 CONTROL FLOW GRAPH

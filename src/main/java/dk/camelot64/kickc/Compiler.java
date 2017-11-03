@@ -140,8 +140,8 @@ public class Compiler {
       optimizations.add(new Pass2CullEmptyBlocks(program));
       optimizations.add(new Pass2UnaryNotSimplification(program));
       optimizations.add(new Pass2AliasElimination(program));
-      optimizations.add(new Pass2RedundantPhiElimination(program));
       optimizations.add(new Pass2SelfPhiElimination(program));
+      optimizations.add(new Pass2RedundantPhiElimination(program));
       optimizations.add(new Pass2ConditionalJumpSimplification(program));
       optimizations.add(new Pass2ConstantIdentification(program));
       optimizations.add(new Pass2ConstantAdditionElimination(program));

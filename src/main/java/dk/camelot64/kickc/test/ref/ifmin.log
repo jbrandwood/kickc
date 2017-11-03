@@ -330,9 +330,9 @@ main::@return: scope:[main]  from main::@2
   to:@return
 @end: scope:[]  from @begin
 
-Redundant Phi (byte) main::i#3 (byte) main::i#2
-Redundant Phi (byte*) SCREEN#4 (byte*) SCREEN#1
-Succesful SSA optimization Pass2RedundantPhiElimination
+Alias (byte) main::i#2 = (byte) main::i#3 
+Alias (byte*) SCREEN#1 = (byte*) SCREEN#4 
+Succesful SSA optimization Pass2AliasElimination
 CONTROL FLOW GRAPH
 @begin: scope:[]  from
   (byte*) SCREEN#0 ← (word) 1024
@@ -389,6 +389,34 @@ main::@return: scope:[main]  from main::@2
   to:@return
 @end: scope:[]  from @begin
 
+Redundant Phi (byte*) SCREEN#1 (byte*) SCREEN#0
+Succesful SSA optimization Pass2RedundantPhiElimination
+CONTROL FLOW GRAPH
+@begin: scope:[]  from
+  (byte*) SCREEN#0 ← (word) 1024
+  call main param-assignment
+  to:@end
+main: scope:[main]  from @begin
+  (byte) main::i#0 ← (byte) 0
+  to:main::@1
+main::@1: scope:[main]  from main main::@2
+  (byte) main::i#2 ← phi( main/(byte) main::i#0 main::@2/(byte) main::i#1 )
+  (boolean~) main::$1 ← (byte) main::i#2 >= (byte) 50
+  if((boolean~) main::$1) goto main::@2
+  to:main::@3
+main::@2: scope:[main]  from main::@1 main::@3
+  (byte) main::i#1 ← ++ (byte) main::i#2
+  (boolean~) main::$2 ← (byte) main::i#1 < (byte) 100
+  if((boolean~) main::$2) goto main::@1
+  to:main::@return
+main::@3: scope:[main]  from main::@1
+  *((byte*) SCREEN#0) ← (byte) main::i#2
+  to:main::@2
+main::@return: scope:[main]  from main::@2
+  return 
+  to:@return
+@end: scope:[]  from @begin
+
 Simple Condition (boolean~) main::$1 if((byte) main::i#2>=(byte) 50) goto main::@2
 Simple Condition (boolean~) main::$2 if((byte) main::i#1<(byte) 100) goto main::@1
 Succesful SSA optimization Pass2ConditionalJumpSimplification
@@ -401,7 +429,6 @@ main: scope:[main]  from @begin
   (byte) main::i#0 ← (byte) 0
   to:main::@1
 main::@1: scope:[main]  from main main::@2
-  (byte*) SCREEN#1 ← phi( main/(byte*) SCREEN#0 )
   (byte) main::i#2 ← phi( main/(byte) main::i#0 main::@2/(byte) main::i#1 )
   if((byte) main::i#2>=(byte) 50) goto main::@2
   to:main::@3
@@ -410,7 +437,7 @@ main::@2: scope:[main]  from main::@1 main::@3
   if((byte) main::i#1<(byte) 100) goto main::@1
   to:main::@return
 main::@3: scope:[main]  from main::@1
-  *((byte*) SCREEN#1) ← (byte) main::i#2
+  *((byte*) SCREEN#0) ← (byte) main::i#2
   to:main::@2
 main::@return: scope:[main]  from main::@2
   return 
@@ -427,7 +454,6 @@ CONTROL FLOW GRAPH
 main: scope:[main]  from @begin
   to:main::@1
 main::@1: scope:[main]  from main main::@2
-  (byte*) SCREEN#1 ← phi( main/(const byte*) SCREEN#0 )
   (byte) main::i#2 ← phi( main/(const byte) main::i#0 main::@2/(byte) main::i#1 )
   if((byte) main::i#2>=(byte) 50) goto main::@2
   to:main::@3
@@ -436,38 +462,15 @@ main::@2: scope:[main]  from main::@1 main::@3
   if((byte) main::i#1<(byte) 100) goto main::@1
   to:main::@return
 main::@3: scope:[main]  from main::@1
-  *((byte*) SCREEN#1) ← (byte) main::i#2
+  *((const byte*) SCREEN#0) ← (byte) main::i#2
   to:main::@2
 main::@return: scope:[main]  from main::@2
   return 
   to:@return
 @end: scope:[]  from @begin
 
-Constant (const byte*) SCREEN#1 = SCREEN#0
-Succesful SSA optimization Pass2ConstantIdentification
-CONTROL FLOW GRAPH
-@begin: scope:[]  from
-  call main param-assignment
-  to:@end
-main: scope:[main]  from @begin
-  to:main::@1
-main::@1: scope:[main]  from main main::@2
-  (byte) main::i#2 ← phi( main/(const byte) main::i#0 main::@2/(byte) main::i#1 )
-  if((byte) main::i#2>=(byte) 50) goto main::@2
-  to:main::@3
-main::@2: scope:[main]  from main::@1 main::@3
-  (byte) main::i#1 ← ++ (byte) main::i#2
-  if((byte) main::i#1<(byte) 100) goto main::@1
-  to:main::@return
-main::@3: scope:[main]  from main::@1
-  *((const byte*) SCREEN#1) ← (byte) main::i#2
-  to:main::@2
-main::@return: scope:[main]  from main::@2
-  return 
-  to:@return
-@end: scope:[]  from @begin
-
-Constant inlined SCREEN#1 = (const byte*) SCREEN#0
+Inlining constant with var siblings (const byte) main::i#0
+Inlining constant with var siblings (const byte) main::i#0
 Constant inlined main::i#0 = (byte) 0
 Succesful SSA optimization Pass2ConstantInlining
 CONTROL FLOW GRAPH

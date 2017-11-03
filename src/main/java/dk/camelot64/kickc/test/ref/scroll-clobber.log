@@ -472,10 +472,10 @@ main::@return: scope:[main]  from main::@2
 
 Not aliassing across scopes: main::nxt#0 TEXT#0
 Not aliassing across scopes: main::nxt#2 TEXT#2
-Redundant Phi (byte) main::i#2 (byte) main::i#3
-Redundant Phi (byte*) SCREEN#1 (byte*) SCREEN#2
-Redundant Phi (byte[]) TEXT#4 (byte[]) TEXT#2
-Succesful SSA optimization Pass2RedundantPhiElimination
+Alias (byte) main::i#2 = (byte) main::i#3 
+Alias (byte*) SCREEN#1 = (byte*) SCREEN#2 
+Alias (byte[]) TEXT#2 = (byte[]) TEXT#4 
+Succesful SSA optimization Pass2AliasElimination
 CONTROL FLOW GRAPH
 @begin: scope:[]  from
   (byte*) SCREEN#0 ← (word) 1024
@@ -489,8 +489,8 @@ main: scope:[main]  from @begin
   to:main::@1
 main::@1: scope:[main]  from main main::@2
   (byte[]) TEXT#2 ← phi( main/(byte[]) TEXT#0 main::@2/(byte[]) TEXT#2 )
-  (byte*) SCREEN#2 ← phi( main/(byte*) SCREEN#0 main::@2/(byte*) SCREEN#2 )
-  (byte) main::i#3 ← phi( main/(byte) main::i#0 main::@2/(byte) main::i#1 )
+  (byte*) SCREEN#1 ← phi( main/(byte*) SCREEN#0 main::@2/(byte*) SCREEN#1 )
+  (byte) main::i#2 ← phi( main/(byte) main::i#0 main::@2/(byte) main::i#1 )
   (byte*) main::nxt#3 ← phi( main/(byte*) main::nxt#0 main::@2/(byte*) main::nxt#1 )
   (byte) main::c#0 ← * (byte*) main::nxt#3
   (boolean~) main::$2 ← (byte) main::c#0 != (byte) '@'
@@ -499,8 +499,8 @@ main::@1: scope:[main]  from main main::@2
 main::@2: scope:[main]  from main::@1 main::@3
   (byte*) main::nxt#4 ← phi( main::@1/(byte*) main::nxt#3 main::@3/(byte*) main::nxt#2 )
   (byte) main::c#2 ← phi( main::@1/(byte) main::c#0 main::@3/(byte) main::c#1 )
-  (byte) main::i#1 ← ++ (byte) main::i#3
-  *((byte*) SCREEN#2 + (byte) main::i#1) ← (byte) main::c#2
+  (byte) main::i#1 ← ++ (byte) main::i#2
+  *((byte*) SCREEN#1 + (byte) main::i#1) ← (byte) main::c#2
   (byte*) main::nxt#1 ← ++ (byte*) main::nxt#4
   if(true) goto main::@1
   to:main::@return
@@ -513,7 +513,9 @@ main::@return: scope:[main]  from main::@2
   to:@return
 @end: scope:[]  from @begin
 
-Self Phi Eliminated (byte*) SCREEN#2
+Not aliassing across scopes: main::nxt#0 TEXT#0
+Not aliassing across scopes: main::nxt#2 TEXT#2
+Self Phi Eliminated (byte*) SCREEN#1
 Self Phi Eliminated (byte[]) TEXT#2
 Succesful SSA optimization Pass2SelfPhiElimination
 CONTROL FLOW GRAPH
@@ -529,8 +531,8 @@ main: scope:[main]  from @begin
   to:main::@1
 main::@1: scope:[main]  from main main::@2
   (byte[]) TEXT#2 ← phi( main/(byte[]) TEXT#0 )
-  (byte*) SCREEN#2 ← phi( main/(byte*) SCREEN#0 )
-  (byte) main::i#3 ← phi( main/(byte) main::i#0 main::@2/(byte) main::i#1 )
+  (byte*) SCREEN#1 ← phi( main/(byte*) SCREEN#0 )
+  (byte) main::i#2 ← phi( main/(byte) main::i#0 main::@2/(byte) main::i#1 )
   (byte*) main::nxt#3 ← phi( main/(byte*) main::nxt#0 main::@2/(byte*) main::nxt#1 )
   (byte) main::c#0 ← * (byte*) main::nxt#3
   (boolean~) main::$2 ← (byte) main::c#0 != (byte) '@'
@@ -539,13 +541,51 @@ main::@1: scope:[main]  from main main::@2
 main::@2: scope:[main]  from main::@1 main::@3
   (byte*) main::nxt#4 ← phi( main::@1/(byte*) main::nxt#3 main::@3/(byte*) main::nxt#2 )
   (byte) main::c#2 ← phi( main::@1/(byte) main::c#0 main::@3/(byte) main::c#1 )
-  (byte) main::i#1 ← ++ (byte) main::i#3
-  *((byte*) SCREEN#2 + (byte) main::i#1) ← (byte) main::c#2
+  (byte) main::i#1 ← ++ (byte) main::i#2
+  *((byte*) SCREEN#1 + (byte) main::i#1) ← (byte) main::c#2
   (byte*) main::nxt#1 ← ++ (byte*) main::nxt#4
   if(true) goto main::@1
   to:main::@return
 main::@3: scope:[main]  from main::@1
   (byte*) main::nxt#2 ← (byte[]) TEXT#2
+  (byte) main::c#1 ← * (byte*) main::nxt#2
+  to:main::@2
+main::@return: scope:[main]  from main::@2
+  return 
+  to:@return
+@end: scope:[]  from @begin
+
+Redundant Phi (byte*) SCREEN#1 (byte*) SCREEN#0
+Redundant Phi (byte[]) TEXT#2 (byte[]) TEXT#0
+Succesful SSA optimization Pass2RedundantPhiElimination
+CONTROL FLOW GRAPH
+@begin: scope:[]  from
+  (byte*) SCREEN#0 ← (word) 1024
+  (byte*) SCROLL#0 ← (word) 53270
+  (byte[]) TEXT#0 ← (string) "01234567@"
+  call main param-assignment
+  to:@end
+main: scope:[main]  from @begin
+  (byte*) main::nxt#0 ← (byte[]) TEXT#0
+  (byte) main::i#0 ← (byte) 0
+  to:main::@1
+main::@1: scope:[main]  from main main::@2
+  (byte) main::i#2 ← phi( main/(byte) main::i#0 main::@2/(byte) main::i#1 )
+  (byte*) main::nxt#3 ← phi( main/(byte*) main::nxt#0 main::@2/(byte*) main::nxt#1 )
+  (byte) main::c#0 ← * (byte*) main::nxt#3
+  (boolean~) main::$2 ← (byte) main::c#0 != (byte) '@'
+  if((boolean~) main::$2) goto main::@2
+  to:main::@3
+main::@2: scope:[main]  from main::@1 main::@3
+  (byte*) main::nxt#4 ← phi( main::@1/(byte*) main::nxt#3 main::@3/(byte*) main::nxt#2 )
+  (byte) main::c#2 ← phi( main::@1/(byte) main::c#0 main::@3/(byte) main::c#1 )
+  (byte) main::i#1 ← ++ (byte) main::i#2
+  *((byte*) SCREEN#0 + (byte) main::i#1) ← (byte) main::c#2
+  (byte*) main::nxt#1 ← ++ (byte*) main::nxt#4
+  if(true) goto main::@1
+  to:main::@return
+main::@3: scope:[main]  from main::@1
+  (byte*) main::nxt#2 ← (byte[]) TEXT#0
   (byte) main::c#1 ← * (byte*) main::nxt#2
   to:main::@2
 main::@return: scope:[main]  from main::@2
@@ -567,9 +607,7 @@ main: scope:[main]  from @begin
   (byte) main::i#0 ← (byte) 0
   to:main::@1
 main::@1: scope:[main]  from main main::@2
-  (byte[]) TEXT#2 ← phi( main/(byte[]) TEXT#0 )
-  (byte*) SCREEN#2 ← phi( main/(byte*) SCREEN#0 )
-  (byte) main::i#3 ← phi( main/(byte) main::i#0 main::@2/(byte) main::i#1 )
+  (byte) main::i#2 ← phi( main/(byte) main::i#0 main::@2/(byte) main::i#1 )
   (byte*) main::nxt#3 ← phi( main/(byte*) main::nxt#0 main::@2/(byte*) main::nxt#1 )
   (byte) main::c#0 ← * (byte*) main::nxt#3
   if((byte) main::c#0!=(byte) '@') goto main::@2
@@ -577,13 +615,13 @@ main::@1: scope:[main]  from main main::@2
 main::@2: scope:[main]  from main::@1 main::@3
   (byte*) main::nxt#4 ← phi( main::@1/(byte*) main::nxt#3 main::@3/(byte*) main::nxt#2 )
   (byte) main::c#2 ← phi( main::@1/(byte) main::c#0 main::@3/(byte) main::c#1 )
-  (byte) main::i#1 ← ++ (byte) main::i#3
-  *((byte*) SCREEN#2 + (byte) main::i#1) ← (byte) main::c#2
+  (byte) main::i#1 ← ++ (byte) main::i#2
+  *((byte*) SCREEN#0 + (byte) main::i#1) ← (byte) main::c#2
   (byte*) main::nxt#1 ← ++ (byte*) main::nxt#4
   if(true) goto main::@1
   to:main::@return
 main::@3: scope:[main]  from main::@1
-  (byte*) main::nxt#2 ← (byte[]) TEXT#2
+  (byte*) main::nxt#2 ← (byte[]) TEXT#0
   (byte) main::c#1 ← * (byte*) main::nxt#2
   to:main::@2
 main::@return: scope:[main]  from main::@2
@@ -604,9 +642,7 @@ main: scope:[main]  from @begin
   (byte*) main::nxt#0 ← (const byte[]) TEXT#0
   to:main::@1
 main::@1: scope:[main]  from main main::@2
-  (byte[]) TEXT#2 ← phi( main/(const byte[]) TEXT#0 )
-  (byte*) SCREEN#2 ← phi( main/(const byte*) SCREEN#0 )
-  (byte) main::i#3 ← phi( main/(const byte) main::i#0 main::@2/(byte) main::i#1 )
+  (byte) main::i#2 ← phi( main/(const byte) main::i#0 main::@2/(byte) main::i#1 )
   (byte*) main::nxt#3 ← phi( main/(byte*) main::nxt#0 main::@2/(byte*) main::nxt#1 )
   (byte) main::c#0 ← * (byte*) main::nxt#3
   if((byte) main::c#0!=(byte) '@') goto main::@2
@@ -614,13 +650,13 @@ main::@1: scope:[main]  from main main::@2
 main::@2: scope:[main]  from main::@1 main::@3
   (byte*) main::nxt#4 ← phi( main::@1/(byte*) main::nxt#3 main::@3/(byte*) main::nxt#2 )
   (byte) main::c#2 ← phi( main::@1/(byte) main::c#0 main::@3/(byte) main::c#1 )
-  (byte) main::i#1 ← ++ (byte) main::i#3
-  *((byte*) SCREEN#2 + (byte) main::i#1) ← (byte) main::c#2
+  (byte) main::i#1 ← ++ (byte) main::i#2
+  *((const byte*) SCREEN#0 + (byte) main::i#1) ← (byte) main::c#2
   (byte*) main::nxt#1 ← ++ (byte*) main::nxt#4
   if(true) goto main::@1
   to:main::@return
 main::@3: scope:[main]  from main::@1
-  (byte*) main::nxt#2 ← (byte[]) TEXT#2
+  (byte*) main::nxt#2 ← (const byte[]) TEXT#0
   (byte) main::c#1 ← * (byte*) main::nxt#2
   to:main::@2
 main::@return: scope:[main]  from main::@2
@@ -629,8 +665,7 @@ main::@return: scope:[main]  from main::@2
 @end: scope:[]  from @begin
 
 Constant (const byte*) main::nxt#0 = TEXT#0
-Constant (const byte*) SCREEN#2 = SCREEN#0
-Constant (const byte[]) TEXT#2 = TEXT#0
+Constant (const byte*) main::nxt#2 = TEXT#0
 Succesful SSA optimization Pass2ConstantIdentification
 CONTROL FLOW GRAPH
 @begin: scope:[]  from
@@ -639,38 +674,7 @@ CONTROL FLOW GRAPH
 main: scope:[main]  from @begin
   to:main::@1
 main::@1: scope:[main]  from main main::@2
-  (byte) main::i#3 ← phi( main/(const byte) main::i#0 main::@2/(byte) main::i#1 )
-  (byte*) main::nxt#3 ← phi( main/(const byte*) main::nxt#0 main::@2/(byte*) main::nxt#1 )
-  (byte) main::c#0 ← * (byte*) main::nxt#3
-  if((byte) main::c#0!=(byte) '@') goto main::@2
-  to:main::@3
-main::@2: scope:[main]  from main::@1 main::@3
-  (byte*) main::nxt#4 ← phi( main::@1/(byte*) main::nxt#3 main::@3/(byte*) main::nxt#2 )
-  (byte) main::c#2 ← phi( main::@1/(byte) main::c#0 main::@3/(byte) main::c#1 )
-  (byte) main::i#1 ← ++ (byte) main::i#3
-  *((const byte*) SCREEN#2 + (byte) main::i#1) ← (byte) main::c#2
-  (byte*) main::nxt#1 ← ++ (byte*) main::nxt#4
-  if(true) goto main::@1
-  to:main::@return
-main::@3: scope:[main]  from main::@1
-  (byte*) main::nxt#2 ← (const byte[]) TEXT#2
-  (byte) main::c#1 ← * (byte*) main::nxt#2
-  to:main::@2
-main::@return: scope:[main]  from main::@2
-  return 
-  to:@return
-@end: scope:[]  from @begin
-
-Constant (const byte*) main::nxt#2 = TEXT#2
-Succesful SSA optimization Pass2ConstantIdentification
-CONTROL FLOW GRAPH
-@begin: scope:[]  from
-  call main param-assignment
-  to:@end
-main: scope:[main]  from @begin
-  to:main::@1
-main::@1: scope:[main]  from main main::@2
-  (byte) main::i#3 ← phi( main/(const byte) main::i#0 main::@2/(byte) main::i#1 )
+  (byte) main::i#2 ← phi( main/(const byte) main::i#0 main::@2/(byte) main::i#1 )
   (byte*) main::nxt#3 ← phi( main/(const byte*) main::nxt#0 main::@2/(byte*) main::nxt#1 )
   (byte) main::c#0 ← * (byte*) main::nxt#3
   if((byte) main::c#0!=(byte) '@') goto main::@2
@@ -678,8 +682,8 @@ main::@1: scope:[main]  from main main::@2
 main::@2: scope:[main]  from main::@1 main::@3
   (byte*) main::nxt#4 ← phi( main::@1/(byte*) main::nxt#3 main::@3/(const byte*) main::nxt#2 )
   (byte) main::c#2 ← phi( main::@1/(byte) main::c#0 main::@3/(byte) main::c#1 )
-  (byte) main::i#1 ← ++ (byte) main::i#3
-  *((const byte*) SCREEN#2 + (byte) main::i#1) ← (byte) main::c#2
+  (byte) main::i#1 ← ++ (byte) main::i#2
+  *((const byte*) SCREEN#0 + (byte) main::i#1) ← (byte) main::c#2
   (byte*) main::nxt#1 ← ++ (byte*) main::nxt#4
   if(true) goto main::@1
   to:main::@return
@@ -691,9 +695,15 @@ main::@return: scope:[main]  from main::@2
   to:@return
 @end: scope:[]  from @begin
 
+Inlining constant with var siblings (const byte) main::i#0
+Inlining constant with var siblings (const byte) main::i#0
+Inlining constant with var siblings (const byte*) main::nxt#0
+Inlining constant with var siblings (const byte*) main::nxt#0
+Inlining constant with var siblings (const byte*) main::nxt#0
+Inlining constant with var siblings (const byte*) main::nxt#2
+Inlining constant with var siblings (const byte*) main::nxt#2
+Inlining constant with var siblings (const byte*) main::nxt#2
 Constant inlined main::nxt#0 = (const byte[]) TEXT#0
-Constant inlined SCREEN#2 = (const byte*) SCREEN#0
-Constant inlined TEXT#2 = (const byte[]) TEXT#0
 Constant inlined main::nxt#2 = (const byte[]) TEXT#0
 Constant inlined main::i#0 = (byte) 0
 Succesful SSA optimization Pass2ConstantInlining
@@ -704,7 +714,7 @@ CONTROL FLOW GRAPH
 main: scope:[main]  from @begin
   to:main::@1
 main::@1: scope:[main]  from main main::@2
-  (byte) main::i#3 ← phi( main/(byte) 0 main::@2/(byte) main::i#1 )
+  (byte) main::i#2 ← phi( main/(byte) 0 main::@2/(byte) main::i#1 )
   (byte*) main::nxt#3 ← phi( main/(const byte[]) TEXT#0 main::@2/(byte*) main::nxt#1 )
   (byte) main::c#0 ← * (byte*) main::nxt#3
   if((byte) main::c#0!=(byte) '@') goto main::@2
@@ -712,7 +722,7 @@ main::@1: scope:[main]  from main main::@2
 main::@2: scope:[main]  from main::@1 main::@3
   (byte*) main::nxt#4 ← phi( main::@1/(byte*) main::nxt#3 main::@3/(const byte[]) TEXT#0 )
   (byte) main::c#2 ← phi( main::@1/(byte) main::c#0 main::@3/(byte) main::c#1 )
-  (byte) main::i#1 ← ++ (byte) main::i#3
+  (byte) main::i#1 ← ++ (byte) main::i#2
   *((const byte*) SCREEN#0 + (byte) main::i#1) ← (byte) main::c#2
   (byte*) main::nxt#1 ← ++ (byte*) main::nxt#4
   if(true) goto main::@1
@@ -745,7 +755,7 @@ FINAL SYMBOL TABLE
 (byte) main::c#2
 (byte) main::i
 (byte) main::i#1
-(byte) main::i#3
+(byte) main::i#2
 (byte*) main::nxt
 (byte*) main::nxt#1
 (byte*) main::nxt#3
@@ -763,7 +773,7 @@ CONTROL FLOW GRAPH - PHI LIFTED
 main: scope:[main]  from @begin
   to:main::@1
 main::@1: scope:[main]  from main main::@5
-  (byte) main::i#3 ← phi( main/(byte) 0 main::@5/(byte~) main::i#5 )
+  (byte) main::i#2 ← phi( main/(byte) 0 main::@5/(byte~) main::i#5 )
   (byte*) main::nxt#3 ← phi( main/(const byte[]) TEXT#0 main::@5/(byte*~) main::nxt#5 )
   (byte) main::c#0 ← * (byte*) main::nxt#3
   if((byte) main::c#0!=(byte) '@') goto main::@6
@@ -775,7 +785,7 @@ main::@3: scope:[main]  from main::@1
 main::@2: scope:[main]  from main::@3 main::@6
   (byte*) main::nxt#4 ← phi( main::@6/(byte*~) main::nxt#6 main::@3/(const byte[]) TEXT#0 )
   (byte) main::c#2 ← phi( main::@6/(byte~) main::c#3 main::@3/(byte~) main::c#4 )
-  (byte) main::i#1 ← ++ (byte) main::i#3
+  (byte) main::i#1 ← ++ (byte) main::i#2
   *((const byte*) SCREEN#0 + (byte) main::i#1) ← (byte) main::c#2
   (byte*) main::nxt#1 ← ++ (byte*) main::nxt#4
   if(true) goto main::@5
@@ -811,19 +821,19 @@ main: scope:[main]  from @begin
   [1] phi() [ ]
   to:main::@1
 main::@1: scope:[main]  from main main::@5
-  [2] (byte) main::i#3 ← phi( main/(byte) 0 main::@5/(byte~) main::i#5 ) [ main::nxt#3 main::i#3 ]
-  [2] (byte*) main::nxt#3 ← phi( main/(const byte[]) TEXT#0 main::@5/(byte*~) main::nxt#5 ) [ main::nxt#3 main::i#3 ]
-  [3] (byte) main::c#0 ← * (byte*) main::nxt#3 [ main::nxt#3 main::i#3 main::c#0 ]
-  [4] if((byte) main::c#0!=(byte) '@') goto main::@6 [ main::nxt#3 main::i#3 main::c#0 ]
+  [2] (byte) main::i#2 ← phi( main/(byte) 0 main::@5/(byte~) main::i#5 ) [ main::nxt#3 main::i#2 ]
+  [2] (byte*) main::nxt#3 ← phi( main/(const byte[]) TEXT#0 main::@5/(byte*~) main::nxt#5 ) [ main::nxt#3 main::i#2 ]
+  [3] (byte) main::c#0 ← * (byte*) main::nxt#3 [ main::nxt#3 main::i#2 main::c#0 ]
+  [4] if((byte) main::c#0!=(byte) '@') goto main::@6 [ main::nxt#3 main::i#2 main::c#0 ]
   to:main::@3
 main::@3: scope:[main]  from main::@1
-  [5] (byte) main::c#1 ← * (const byte[]) TEXT#0 [ main::i#3 main::c#1 ]
-  [6] (byte~) main::c#4 ← (byte) main::c#1 [ main::i#3 main::c#4 ]
+  [5] (byte) main::c#1 ← * (const byte[]) TEXT#0 [ main::i#2 main::c#1 ]
+  [6] (byte~) main::c#4 ← (byte) main::c#1 [ main::i#2 main::c#4 ]
   to:main::@2
 main::@2: scope:[main]  from main::@3 main::@6
-  [7] (byte*) main::nxt#4 ← phi( main::@6/(byte*~) main::nxt#6 main::@3/(const byte[]) TEXT#0 ) [ main::i#3 main::c#2 main::nxt#4 ]
-  [7] (byte) main::c#2 ← phi( main::@6/(byte~) main::c#3 main::@3/(byte~) main::c#4 ) [ main::i#3 main::c#2 main::nxt#4 ]
-  [8] (byte) main::i#1 ← ++ (byte) main::i#3 [ main::c#2 main::nxt#4 main::i#1 ]
+  [7] (byte*) main::nxt#4 ← phi( main::@6/(byte*~) main::nxt#6 main::@3/(const byte[]) TEXT#0 ) [ main::i#2 main::c#2 main::nxt#4 ]
+  [7] (byte) main::c#2 ← phi( main::@6/(byte~) main::c#3 main::@3/(byte~) main::c#4 ) [ main::i#2 main::c#2 main::nxt#4 ]
+  [8] (byte) main::i#1 ← ++ (byte) main::i#2 [ main::c#2 main::nxt#4 main::i#1 ]
   [9] *((const byte*) SCREEN#0 + (byte) main::i#1) ← (byte) main::c#2 [ main::nxt#4 main::i#1 ]
   [10] (byte*) main::nxt#1 ← ++ (byte*) main::nxt#4 [ main::i#1 main::nxt#1 ]
   [11] if(true) goto main::@5 [ main::i#1 main::nxt#1 ]
@@ -836,8 +846,8 @@ main::@5: scope:[main]  from main::@2
   [14] (byte~) main::i#5 ← (byte) main::i#1 [ main::nxt#5 main::i#5 ]
   to:main::@1
 main::@6: scope:[main]  from main::@1
-  [15] (byte~) main::c#3 ← (byte) main::c#0 [ main::nxt#3 main::i#3 main::c#3 ]
-  [16] (byte*~) main::nxt#6 ← (byte*) main::nxt#3 [ main::i#3 main::c#3 main::nxt#6 ]
+  [15] (byte~) main::c#3 ← (byte) main::c#0 [ main::nxt#3 main::i#2 main::c#3 ]
+  [16] (byte*~) main::nxt#6 ← (byte*) main::nxt#3 [ main::i#2 main::c#3 main::nxt#6 ]
   to:main::@2
 
 Created 4 initial phi equivalence classes
@@ -865,18 +875,18 @@ main: scope:[main]  from @begin
   [1] phi() [ ]
   to:main::@1
 main::@1: scope:[main]  from main main::@2
-  [2] (byte) main::i#3 ← phi( main/(byte) 0 main::@2/(byte) main::i#1 ) [ main::nxt#3 main::i#3 ]
-  [2] (byte*) main::nxt#3 ← phi( main/(const byte[]) TEXT#0 main::@2/(byte*) main::nxt#1 ) [ main::nxt#3 main::i#3 ]
-  [3] (byte) main::c#0 ← * (byte*) main::nxt#3 [ main::nxt#3 main::i#3 main::c#0 ]
-  [4] if((byte) main::c#0!=(byte) '@') goto main::@2 [ main::nxt#3 main::i#3 main::c#0 ]
+  [2] (byte) main::i#2 ← phi( main/(byte) 0 main::@2/(byte) main::i#1 ) [ main::nxt#3 main::i#2 ]
+  [2] (byte*) main::nxt#3 ← phi( main/(const byte[]) TEXT#0 main::@2/(byte*) main::nxt#1 ) [ main::nxt#3 main::i#2 ]
+  [3] (byte) main::c#0 ← * (byte*) main::nxt#3 [ main::nxt#3 main::i#2 main::c#0 ]
+  [4] if((byte) main::c#0!=(byte) '@') goto main::@2 [ main::nxt#3 main::i#2 main::c#0 ]
   to:main::@3
 main::@3: scope:[main]  from main::@1
-  [5] (byte) main::c#1 ← * (const byte[]) TEXT#0 [ main::i#3 main::c#1 ]
+  [5] (byte) main::c#1 ← * (const byte[]) TEXT#0 [ main::i#2 main::c#1 ]
   to:main::@2
 main::@2: scope:[main]  from main::@1 main::@3
-  [6] (byte*) main::nxt#4 ← phi( main::@1/(byte*) main::nxt#3 main::@3/(const byte[]) TEXT#0 ) [ main::i#3 main::c#2 main::nxt#4 ]
-  [6] (byte) main::c#2 ← phi( main::@1/(byte) main::c#0 main::@3/(byte) main::c#1 ) [ main::i#3 main::c#2 main::nxt#4 ]
-  [7] (byte) main::i#1 ← ++ (byte) main::i#3 [ main::i#1 main::c#2 main::nxt#4 ]
+  [6] (byte*) main::nxt#4 ← phi( main::@1/(byte*) main::nxt#3 main::@3/(const byte[]) TEXT#0 ) [ main::i#2 main::c#2 main::nxt#4 ]
+  [6] (byte) main::c#2 ← phi( main::@1/(byte) main::c#0 main::@3/(byte) main::c#1 ) [ main::i#2 main::c#2 main::nxt#4 ]
+  [7] (byte) main::i#1 ← ++ (byte) main::i#2 [ main::i#1 main::c#2 main::nxt#4 ]
   [8] *((const byte*) SCREEN#0 + (byte) main::i#1) ← (byte) main::c#2 [ main::i#1 main::nxt#4 ]
   [9] (byte*) main::nxt#1 ← ++ (byte*) main::nxt#4 [ main::nxt#1 main::i#1 ]
   [10] if(true) goto main::@1 [ main::nxt#1 main::i#1 ]
@@ -917,21 +927,21 @@ VARIABLE REGISTER WEIGHTS
 (byte) main::c#2 16.5
 (byte) main::i
 (byte) main::i#1 8.25
-(byte) main::i#3 4.4
+(byte) main::i#2 4.4
 (byte*) main::nxt
 (byte*) main::nxt#1 11.0
 (byte*) main::nxt#3 11.0
 (byte*) main::nxt#4 7.333333333333333
 
 Initial phi equivalence classes
-[ main::i#3 main::i#1 ]
+[ main::i#2 main::i#1 ]
 [ main::c#2 main::c#0 main::c#1 ]
 [ main::nxt#4 main::nxt#3 main::nxt#1 ]
 Complete equivalence classes
-[ main::i#3 main::i#1 ]
+[ main::i#2 main::i#1 ]
 [ main::c#2 main::c#0 main::c#1 ]
 [ main::nxt#4 main::nxt#3 main::nxt#1 ]
-Allocated zp ZP_BYTE:2 [ main::i#3 main::i#1 ]
+Allocated zp ZP_BYTE:2 [ main::i#2 main::i#1 ]
 Allocated zp ZP_BYTE:3 [ main::c#2 main::c#0 main::c#1 ]
 Allocated zp ZP_PTR_BYTE:4 [ main::nxt#4 main::nxt#3 main::nxt#1 ]
 INITIAL ASM
@@ -955,7 +965,7 @@ main: {
     .label nxt = 4
   //SEG6 [2] phi from main to main::@1 [phi:main->main::@1]
   b1_from_main:
-  //SEG7 [2] phi (byte) main::i#3 = (byte) 0 [phi:main->main::@1#0] -- zpby1=coby1 
+  //SEG7 [2] phi (byte) main::i#2 = (byte) 0 [phi:main->main::@1#0] -- zpby1=coby1 
     lda #0
     sta i
   //SEG8 [2] phi (byte*) main::nxt#3 = (const byte[]) TEXT#0 [phi:main->main::@1#1] -- zpptrby1=cowo1 
@@ -966,23 +976,23 @@ main: {
     jmp b1
   //SEG9 [2] phi from main::@2 to main::@1 [phi:main::@2->main::@1]
   b1_from_b2:
-  //SEG10 [2] phi (byte) main::i#3 = (byte) main::i#1 [phi:main::@2->main::@1#0] -- register_copy 
+  //SEG10 [2] phi (byte) main::i#2 = (byte) main::i#1 [phi:main::@2->main::@1#0] -- register_copy 
   //SEG11 [2] phi (byte*) main::nxt#3 = (byte*) main::nxt#1 [phi:main::@2->main::@1#1] -- register_copy 
     jmp b1
   //SEG12 main::@1
   b1:
-  //SEG13 [3] (byte) main::c#0 ← * (byte*) main::nxt#3 [ main::nxt#3 main::i#3 main::c#0 ] -- zpby1=_star_zpptrby1 
+  //SEG13 [3] (byte) main::c#0 ← * (byte*) main::nxt#3 [ main::nxt#3 main::i#2 main::c#0 ] -- zpby1=_star_zpptrby1 
     ldy #0
     lda (nxt),y
     sta c
-  //SEG14 [4] if((byte) main::c#0!=(byte) '@') goto main::@2 [ main::nxt#3 main::i#3 main::c#0 ] -- zpby1_neq_coby1_then_la1 
+  //SEG14 [4] if((byte) main::c#0!=(byte) '@') goto main::@2 [ main::nxt#3 main::i#2 main::c#0 ] -- zpby1_neq_coby1_then_la1 
     lda c
     cmp #'@'
     bne b2_from_b1
     jmp b3
   //SEG15 main::@3
   b3:
-  //SEG16 [5] (byte) main::c#1 ← * (const byte[]) TEXT#0 [ main::i#3 main::c#1 ] -- zpby1=_star_cowo1 
+  //SEG16 [5] (byte) main::c#1 ← * (const byte[]) TEXT#0 [ main::i#2 main::c#1 ] -- zpby1=_star_cowo1 
     lda TEXT
     sta c
   //SEG17 [6] phi from main::@3 to main::@2 [phi:main::@3->main::@2]
@@ -1001,7 +1011,7 @@ main: {
     jmp b2
   //SEG23 main::@2
   b2:
-  //SEG24 [7] (byte) main::i#1 ← ++ (byte) main::i#3 [ main::i#1 main::c#2 main::nxt#4 ] -- zpby1=_inc_zpby1 
+  //SEG24 [7] (byte) main::i#1 ← ++ (byte) main::i#2 [ main::i#1 main::c#2 main::nxt#4 ] -- zpby1=_inc_zpby1 
     inc i
   //SEG25 [8] *((const byte*) SCREEN#0 + (byte) main::i#1) ← (byte) main::c#2 [ main::i#1 main::nxt#4 ] -- cowo1_staridx_zpby1=zpby2 
     lda c
@@ -1022,19 +1032,19 @@ main: {
 }
 
 REGISTER UPLIFT POTENTIAL REGISTERS
-Statement [3] (byte) main::c#0 ← * (byte*) main::nxt#3 [ main::nxt#3 main::i#3 main::c#0 ] always clobbers reg byte a reg byte y 
-Removing always clobbered register reg byte a as potential for zp ZP_BYTE:2 [ main::i#3 main::i#1 ]
-Removing always clobbered register reg byte y as potential for zp ZP_BYTE:2 [ main::i#3 main::i#1 ]
-Statement [3] (byte) main::c#0 ← * (byte*) main::nxt#3 [ main::nxt#3 main::i#3 main::c#0 ] always clobbers reg byte a reg byte y 
-Potential registers zp ZP_BYTE:2 [ main::i#3 main::i#1 ] : zp ZP_BYTE:2 , reg byte x , 
+Statement [3] (byte) main::c#0 ← * (byte*) main::nxt#3 [ main::nxt#3 main::i#2 main::c#0 ] always clobbers reg byte a reg byte y 
+Removing always clobbered register reg byte a as potential for zp ZP_BYTE:2 [ main::i#2 main::i#1 ]
+Removing always clobbered register reg byte y as potential for zp ZP_BYTE:2 [ main::i#2 main::i#1 ]
+Statement [3] (byte) main::c#0 ← * (byte*) main::nxt#3 [ main::nxt#3 main::i#2 main::c#0 ] always clobbers reg byte a reg byte y 
+Potential registers zp ZP_BYTE:2 [ main::i#2 main::i#1 ] : zp ZP_BYTE:2 , reg byte x , 
 Potential registers zp ZP_BYTE:3 [ main::c#2 main::c#0 main::c#1 ] : zp ZP_BYTE:3 , reg byte a , reg byte x , reg byte y , 
 Potential registers zp ZP_PTR_BYTE:4 [ main::nxt#4 main::nxt#3 main::nxt#1 ] : zp ZP_PTR_BYTE:4 , 
 
 REGISTER UPLIFT SCOPES
-Uplift Scope [main] 55: zp ZP_BYTE:3 [ main::c#2 main::c#0 main::c#1 ] 29.33: zp ZP_PTR_BYTE:4 [ main::nxt#4 main::nxt#3 main::nxt#1 ] 12.65: zp ZP_BYTE:2 [ main::i#3 main::i#1 ] 
+Uplift Scope [main] 55: zp ZP_BYTE:3 [ main::c#2 main::c#0 main::c#1 ] 29.33: zp ZP_PTR_BYTE:4 [ main::nxt#4 main::nxt#3 main::nxt#1 ] 12.65: zp ZP_BYTE:2 [ main::i#2 main::i#1 ] 
 Uplift Scope [] 
 
-Uplifting [main] best 840 combination reg byte y [ main::c#2 main::c#0 main::c#1 ] zp ZP_PTR_BYTE:4 [ main::nxt#4 main::nxt#3 main::nxt#1 ] reg byte x [ main::i#3 main::i#1 ] 
+Uplifting [main] best 840 combination reg byte y [ main::c#2 main::c#0 main::c#1 ] zp ZP_PTR_BYTE:4 [ main::nxt#4 main::nxt#3 main::nxt#1 ] reg byte x [ main::i#2 main::i#1 ] 
 Uplifting [] best 840 combination 
 Allocated (was zp ZP_PTR_BYTE:4) zp ZP_PTR_BYTE:2 [ main::nxt#4 main::nxt#3 main::nxt#1 ]
 Removing instruction jmp bend
@@ -1061,7 +1071,7 @@ main: {
     .label nxt = 2
   //SEG6 [2] phi from main to main::@1 [phi:main->main::@1]
   b1_from_main:
-  //SEG7 [2] phi (byte) main::i#3 = (byte) 0 [phi:main->main::@1#0] -- xby=coby1 
+  //SEG7 [2] phi (byte) main::i#2 = (byte) 0 [phi:main->main::@1#0] -- xby=coby1 
     ldx #0
   //SEG8 [2] phi (byte*) main::nxt#3 = (const byte[]) TEXT#0 [phi:main->main::@1#1] -- zpptrby1=cowo1 
     lda #<TEXT
@@ -1071,20 +1081,20 @@ main: {
     jmp b1
   //SEG9 [2] phi from main::@2 to main::@1 [phi:main::@2->main::@1]
   b1_from_b2:
-  //SEG10 [2] phi (byte) main::i#3 = (byte) main::i#1 [phi:main::@2->main::@1#0] -- register_copy 
+  //SEG10 [2] phi (byte) main::i#2 = (byte) main::i#1 [phi:main::@2->main::@1#0] -- register_copy 
   //SEG11 [2] phi (byte*) main::nxt#3 = (byte*) main::nxt#1 [phi:main::@2->main::@1#1] -- register_copy 
   //SEG12 main::@1
   b1:
-  //SEG13 [3] (byte) main::c#0 ← * (byte*) main::nxt#3 [ main::nxt#3 main::i#3 main::c#0 ] -- yby=_star_zpptrby1 
+  //SEG13 [3] (byte) main::c#0 ← * (byte*) main::nxt#3 [ main::nxt#3 main::i#2 main::c#0 ] -- yby=_star_zpptrby1 
     ldy #0
     lda (nxt),y
     tay
-  //SEG14 [4] if((byte) main::c#0!=(byte) '@') goto main::@2 [ main::nxt#3 main::i#3 main::c#0 ] -- yby_neq_coby1_then_la1 
+  //SEG14 [4] if((byte) main::c#0!=(byte) '@') goto main::@2 [ main::nxt#3 main::i#2 main::c#0 ] -- yby_neq_coby1_then_la1 
     cpy #'@'
     bne b2_from_b1
   //SEG15 main::@3
   b3:
-  //SEG16 [5] (byte) main::c#1 ← * (const byte[]) TEXT#0 [ main::i#3 main::c#1 ] -- yby=_star_cowo1 
+  //SEG16 [5] (byte) main::c#1 ← * (const byte[]) TEXT#0 [ main::i#2 main::c#1 ] -- yby=_star_cowo1 
     ldy TEXT
   //SEG17 [6] phi from main::@3 to main::@2 [phi:main::@3->main::@2]
   b2_from_b3:
@@ -1101,7 +1111,7 @@ main: {
   //SEG22 [6] phi (byte) main::c#2 = (byte) main::c#0 [phi:main::@1->main::@2#1] -- register_copy 
   //SEG23 main::@2
   b2:
-  //SEG24 [7] (byte) main::i#1 ← ++ (byte) main::i#3 [ main::i#1 main::c#2 main::nxt#4 ] -- xby=_inc_xby 
+  //SEG24 [7] (byte) main::i#1 ← ++ (byte) main::i#2 [ main::i#1 main::c#2 main::nxt#4 ] -- xby=_inc_xby 
     inx
   //SEG25 [8] *((const byte*) SCREEN#0 + (byte) main::i#1) ← (byte) main::c#2 [ main::i#1 main::nxt#4 ] -- cowo1_staridx_xby=yby 
     tya
@@ -1142,7 +1152,7 @@ main: {
     .label nxt = 2
   //SEG6 [2] phi from main to main::@1 [phi:main->main::@1]
   b1_from_main:
-  //SEG7 [2] phi (byte) main::i#3 = (byte) 0 [phi:main->main::@1#0] -- xby=coby1 
+  //SEG7 [2] phi (byte) main::i#2 = (byte) 0 [phi:main->main::@1#0] -- xby=coby1 
     ldx #0
   //SEG8 [2] phi (byte*) main::nxt#3 = (const byte[]) TEXT#0 [phi:main->main::@1#1] -- zpptrby1=cowo1 
     lda #<TEXT
@@ -1151,20 +1161,20 @@ main: {
     sta nxt+1
     jmp b1
   //SEG9 [2] phi from main::@2 to main::@1 [phi:main::@2->main::@1]
-  //SEG10 [2] phi (byte) main::i#3 = (byte) main::i#1 [phi:main::@2->main::@1#0] -- register_copy 
+  //SEG10 [2] phi (byte) main::i#2 = (byte) main::i#1 [phi:main::@2->main::@1#0] -- register_copy 
   //SEG11 [2] phi (byte*) main::nxt#3 = (byte*) main::nxt#1 [phi:main::@2->main::@1#1] -- register_copy 
   //SEG12 main::@1
   b1:
-  //SEG13 [3] (byte) main::c#0 ← * (byte*) main::nxt#3 [ main::nxt#3 main::i#3 main::c#0 ] -- yby=_star_zpptrby1 
+  //SEG13 [3] (byte) main::c#0 ← * (byte*) main::nxt#3 [ main::nxt#3 main::i#2 main::c#0 ] -- yby=_star_zpptrby1 
     ldy #0
     lda (nxt),y
     tay
-  //SEG14 [4] if((byte) main::c#0!=(byte) '@') goto main::@2 [ main::nxt#3 main::i#3 main::c#0 ] -- yby_neq_coby1_then_la1 
+  //SEG14 [4] if((byte) main::c#0!=(byte) '@') goto main::@2 [ main::nxt#3 main::i#2 main::c#0 ] -- yby_neq_coby1_then_la1 
     cpy #'@'
     bne b2
   //SEG15 main::@3
   b3:
-  //SEG16 [5] (byte) main::c#1 ← * (const byte[]) TEXT#0 [ main::i#3 main::c#1 ] -- yby=_star_cowo1 
+  //SEG16 [5] (byte) main::c#1 ← * (const byte[]) TEXT#0 [ main::i#2 main::c#1 ] -- yby=_star_cowo1 
     ldy TEXT
   //SEG17 [6] phi from main::@3 to main::@2 [phi:main::@3->main::@2]
   b2_from_b3:
@@ -1180,7 +1190,7 @@ main: {
   //SEG22 [6] phi (byte) main::c#2 = (byte) main::c#0 [phi:main::@1->main::@2#1] -- register_copy 
   //SEG23 main::@2
   b2:
-  //SEG24 [7] (byte) main::i#1 ← ++ (byte) main::i#3 [ main::i#1 main::c#2 main::nxt#4 ] -- xby=_inc_xby 
+  //SEG24 [7] (byte) main::i#1 ← ++ (byte) main::i#2 [ main::i#1 main::c#2 main::nxt#4 ] -- xby=_inc_xby 
     inx
   //SEG25 [8] *((const byte*) SCREEN#0 + (byte) main::i#1) ← (byte) main::c#2 [ main::i#1 main::nxt#4 ] -- cowo1_staridx_xby=yby 
     tya
@@ -1219,7 +1229,7 @@ ASSEMBLER
 main: {
     .label nxt = 2
   //SEG6 [2] phi from main to main::@1 [phi:main->main::@1]
-  //SEG7 [2] phi (byte) main::i#3 = (byte) 0 [phi:main->main::@1#0] -- xby=coby1 
+  //SEG7 [2] phi (byte) main::i#2 = (byte) 0 [phi:main->main::@1#0] -- xby=coby1 
     ldx #0
   //SEG8 [2] phi (byte*) main::nxt#3 = (const byte[]) TEXT#0 [phi:main->main::@1#1] -- zpptrby1=cowo1 
     lda #<TEXT
@@ -1228,19 +1238,19 @@ main: {
     sta nxt+1
     jmp b1
   //SEG9 [2] phi from main::@2 to main::@1 [phi:main::@2->main::@1]
-  //SEG10 [2] phi (byte) main::i#3 = (byte) main::i#1 [phi:main::@2->main::@1#0] -- register_copy 
+  //SEG10 [2] phi (byte) main::i#2 = (byte) main::i#1 [phi:main::@2->main::@1#0] -- register_copy 
   //SEG11 [2] phi (byte*) main::nxt#3 = (byte*) main::nxt#1 [phi:main::@2->main::@1#1] -- register_copy 
   //SEG12 main::@1
   b1:
-  //SEG13 [3] (byte) main::c#0 ← * (byte*) main::nxt#3 [ main::nxt#3 main::i#3 main::c#0 ] -- yby=_star_zpptrby1 
+  //SEG13 [3] (byte) main::c#0 ← * (byte*) main::nxt#3 [ main::nxt#3 main::i#2 main::c#0 ] -- yby=_star_zpptrby1 
     ldy #0
     lda (nxt),y
     tay
-  //SEG14 [4] if((byte) main::c#0!=(byte) '@') goto main::@2 [ main::nxt#3 main::i#3 main::c#0 ] -- yby_neq_coby1_then_la1 
+  //SEG14 [4] if((byte) main::c#0!=(byte) '@') goto main::@2 [ main::nxt#3 main::i#2 main::c#0 ] -- yby_neq_coby1_then_la1 
     cpy #'@'
     bne b2
   //SEG15 main::@3
-  //SEG16 [5] (byte) main::c#1 ← * (const byte[]) TEXT#0 [ main::i#3 main::c#1 ] -- yby=_star_cowo1 
+  //SEG16 [5] (byte) main::c#1 ← * (const byte[]) TEXT#0 [ main::i#2 main::c#1 ] -- yby=_star_cowo1 
     ldy TEXT
   //SEG17 [6] phi from main::@3 to main::@2 [phi:main::@3->main::@2]
   //SEG18 [6] phi (byte*) main::nxt#4 = (const byte[]) TEXT#0 [phi:main::@3->main::@2#0] -- zpptrby1=cowo1 
@@ -1255,7 +1265,7 @@ main: {
   //SEG22 [6] phi (byte) main::c#2 = (byte) main::c#0 [phi:main::@1->main::@2#1] -- register_copy 
   //SEG23 main::@2
   b2:
-  //SEG24 [7] (byte) main::i#1 ← ++ (byte) main::i#3 [ main::i#1 main::c#2 main::nxt#4 ] -- xby=_inc_xby 
+  //SEG24 [7] (byte) main::i#1 ← ++ (byte) main::i#2 [ main::i#1 main::c#2 main::nxt#4 ] -- xby=_inc_xby 
     inx
   //SEG25 [8] *((const byte*) SCREEN#0 + (byte) main::i#1) ← (byte) main::c#2 [ main::i#1 main::nxt#4 ] -- cowo1_staridx_xby=yby 
     tya
@@ -1289,7 +1299,7 @@ ASSEMBLER
 main: {
     .label nxt = 2
   //SEG6 [2] phi from main to main::@1 [phi:main->main::@1]
-  //SEG7 [2] phi (byte) main::i#3 = (byte) 0 [phi:main->main::@1#0] -- xby=coby1 
+  //SEG7 [2] phi (byte) main::i#2 = (byte) 0 [phi:main->main::@1#0] -- xby=coby1 
     ldx #0
   //SEG8 [2] phi (byte*) main::nxt#3 = (const byte[]) TEXT#0 [phi:main->main::@1#1] -- zpptrby1=cowo1 
     lda #<TEXT
@@ -1297,19 +1307,19 @@ main: {
     lda #>TEXT
     sta nxt+1
   //SEG9 [2] phi from main::@2 to main::@1 [phi:main::@2->main::@1]
-  //SEG10 [2] phi (byte) main::i#3 = (byte) main::i#1 [phi:main::@2->main::@1#0] -- register_copy 
+  //SEG10 [2] phi (byte) main::i#2 = (byte) main::i#1 [phi:main::@2->main::@1#0] -- register_copy 
   //SEG11 [2] phi (byte*) main::nxt#3 = (byte*) main::nxt#1 [phi:main::@2->main::@1#1] -- register_copy 
   //SEG12 main::@1
   b1:
-  //SEG13 [3] (byte) main::c#0 ← * (byte*) main::nxt#3 [ main::nxt#3 main::i#3 main::c#0 ] -- yby=_star_zpptrby1 
+  //SEG13 [3] (byte) main::c#0 ← * (byte*) main::nxt#3 [ main::nxt#3 main::i#2 main::c#0 ] -- yby=_star_zpptrby1 
     ldy #0
     lda (nxt),y
     tay
-  //SEG14 [4] if((byte) main::c#0!=(byte) '@') goto main::@2 [ main::nxt#3 main::i#3 main::c#0 ] -- yby_neq_coby1_then_la1 
+  //SEG14 [4] if((byte) main::c#0!=(byte) '@') goto main::@2 [ main::nxt#3 main::i#2 main::c#0 ] -- yby_neq_coby1_then_la1 
     cpy #'@'
     bne b2
   //SEG15 main::@3
-  //SEG16 [5] (byte) main::c#1 ← * (const byte[]) TEXT#0 [ main::i#3 main::c#1 ] -- yby=_star_cowo1 
+  //SEG16 [5] (byte) main::c#1 ← * (const byte[]) TEXT#0 [ main::i#2 main::c#1 ] -- yby=_star_cowo1 
     ldy TEXT
   //SEG17 [6] phi from main::@3 to main::@2 [phi:main::@3->main::@2]
   //SEG18 [6] phi (byte*) main::nxt#4 = (const byte[]) TEXT#0 [phi:main::@3->main::@2#0] -- zpptrby1=cowo1 
@@ -1323,7 +1333,7 @@ main: {
   //SEG22 [6] phi (byte) main::c#2 = (byte) main::c#0 [phi:main::@1->main::@2#1] -- register_copy 
   //SEG23 main::@2
   b2:
-  //SEG24 [7] (byte) main::i#1 ← ++ (byte) main::i#3 [ main::i#1 main::c#2 main::nxt#4 ] -- xby=_inc_xby 
+  //SEG24 [7] (byte) main::i#1 ← ++ (byte) main::i#2 [ main::i#1 main::c#2 main::nxt#4 ] -- xby=_inc_xby 
     inx
   //SEG25 [8] *((const byte*) SCREEN#0 + (byte) main::i#1) ← (byte) main::c#2 [ main::i#1 main::nxt#4 ] -- cowo1_staridx_xby=yby 
     tya
@@ -1360,13 +1370,13 @@ FINAL SYMBOL TABLE
 (byte) main::c#2 reg byte y 16.5
 (byte) main::i
 (byte) main::i#1 reg byte x 8.25
-(byte) main::i#3 reg byte x 4.4
+(byte) main::i#2 reg byte x 4.4
 (byte*) main::nxt
 (byte*) main::nxt#1 nxt zp ZP_PTR_BYTE:2 11.0
 (byte*) main::nxt#3 nxt zp ZP_PTR_BYTE:2 11.0
 (byte*) main::nxt#4 nxt zp ZP_PTR_BYTE:2 7.333333333333333
 
-reg byte x [ main::i#3 main::i#1 ]
+reg byte x [ main::i#2 main::i#1 ]
 reg byte y [ main::c#2 main::c#0 main::c#1 ]
 zp ZP_PTR_BYTE:2 [ main::nxt#4 main::nxt#3 main::nxt#1 ]
 
@@ -1384,7 +1394,7 @@ FINAL CODE
 main: {
     .label nxt = 2
   //SEG6 [2] phi from main to main::@1 [phi:main->main::@1]
-  //SEG7 [2] phi (byte) main::i#3 = (byte) 0 [phi:main->main::@1#0] -- xby=coby1 
+  //SEG7 [2] phi (byte) main::i#2 = (byte) 0 [phi:main->main::@1#0] -- xby=coby1 
     ldx #0
   //SEG8 [2] phi (byte*) main::nxt#3 = (const byte[]) TEXT#0 [phi:main->main::@1#1] -- zpptrby1=cowo1 
     lda #<TEXT
@@ -1392,19 +1402,19 @@ main: {
     lda #>TEXT
     sta nxt+1
   //SEG9 [2] phi from main::@2 to main::@1 [phi:main::@2->main::@1]
-  //SEG10 [2] phi (byte) main::i#3 = (byte) main::i#1 [phi:main::@2->main::@1#0] -- register_copy 
+  //SEG10 [2] phi (byte) main::i#2 = (byte) main::i#1 [phi:main::@2->main::@1#0] -- register_copy 
   //SEG11 [2] phi (byte*) main::nxt#3 = (byte*) main::nxt#1 [phi:main::@2->main::@1#1] -- register_copy 
   //SEG12 main::@1
   b1:
-  //SEG13 [3] (byte) main::c#0 ← * (byte*) main::nxt#3 [ main::nxt#3 main::i#3 main::c#0 ] -- yby=_star_zpptrby1 
+  //SEG13 [3] (byte) main::c#0 ← * (byte*) main::nxt#3 [ main::nxt#3 main::i#2 main::c#0 ] -- yby=_star_zpptrby1 
     ldy #0
     lda (nxt),y
     tay
-  //SEG14 [4] if((byte) main::c#0!=(byte) '@') goto main::@2 [ main::nxt#3 main::i#3 main::c#0 ] -- yby_neq_coby1_then_la1 
+  //SEG14 [4] if((byte) main::c#0!=(byte) '@') goto main::@2 [ main::nxt#3 main::i#2 main::c#0 ] -- yby_neq_coby1_then_la1 
     cpy #'@'
     bne b2
   //SEG15 main::@3
-  //SEG16 [5] (byte) main::c#1 ← * (const byte[]) TEXT#0 [ main::i#3 main::c#1 ] -- yby=_star_cowo1 
+  //SEG16 [5] (byte) main::c#1 ← * (const byte[]) TEXT#0 [ main::i#2 main::c#1 ] -- yby=_star_cowo1 
     ldy TEXT
   //SEG17 [6] phi from main::@3 to main::@2 [phi:main::@3->main::@2]
   //SEG18 [6] phi (byte*) main::nxt#4 = (const byte[]) TEXT#0 [phi:main::@3->main::@2#0] -- zpptrby1=cowo1 
@@ -1418,7 +1428,7 @@ main: {
   //SEG22 [6] phi (byte) main::c#2 = (byte) main::c#0 [phi:main::@1->main::@2#1] -- register_copy 
   //SEG23 main::@2
   b2:
-  //SEG24 [7] (byte) main::i#1 ← ++ (byte) main::i#3 [ main::i#1 main::c#2 main::nxt#4 ] -- xby=_inc_xby 
+  //SEG24 [7] (byte) main::i#1 ← ++ (byte) main::i#2 [ main::i#1 main::c#2 main::nxt#4 ] -- xby=_inc_xby 
     inx
   //SEG25 [8] *((const byte*) SCREEN#0 + (byte) main::i#1) ← (byte) main::c#2 [ main::i#1 main::nxt#4 ] -- cowo1_staridx_xby=yby 
     tya

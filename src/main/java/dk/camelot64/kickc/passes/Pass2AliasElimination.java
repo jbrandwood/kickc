@@ -60,7 +60,14 @@ public class Pass2AliasElimination extends Pass2SsaOptimization {
                   StatementPhiBlock.PhiVariable phiVariable = variableIterator.next();
                   AliasSet aliasSet = aliases.findAliasSet(phiVariable.getVariable());
                   if (aliasSet != null) {
-                     if (phiVariable.getValues().size() == 1 && aliasSet.contains(phiVariable.getValues().get(0).getrValue())) {
+                     boolean remove = true;
+                     for (StatementPhiBlock.PhiRValue phiRValue : phiVariable.getValues()) {
+                        if(!aliasSet.contains(phiRValue.getrValue())) {
+                            remove = false;
+                            break;
+                        }
+                     }
+                     if(remove) {
                         variableIterator.remove();
                      }
                   }
@@ -281,18 +288,39 @@ public class Pass2AliasElimination extends Pass2SsaOptimization {
          @Override
          public Void visitPhiBlock(StatementPhiBlock phi) {
             for (StatementPhiBlock.PhiVariable phiVariable : phi.getPhiVariables()) {
-               if(phiVariable.getValues().size()==1) {
-                  StatementPhiBlock.PhiRValue phiRValue = phiVariable.getValues().get(0);
-                  if (phiRValue.getrValue() instanceof VariableRef) {
-                     VariableRef variable = phiVariable.getVariable();
-                     VariableRef alias = (VariableRef) phiRValue.getrValue();
-                     if(variable.getScopeNames().equals(alias.getScopeNames())){
-                        aliases.add(variable, alias);
+               VariableRef variable = phiVariable.getVariable();
+               VariableRef alias = null;
+               for (StatementPhiBlock.PhiRValue phiRValue : phiVariable.getValues()) {
+                  if(alias==null) {
+                     // First rValue
+                     if (phiRValue.getrValue() instanceof VariableRef) {
+                        alias = (VariableRef) phiRValue.getrValue();
+                        if(!variable.getScopeNames().equals(alias.getScopeNames())){
+                           getLog().append("Not aliassing across scopes: "+variable+" "+alias);
+                           alias = null;
+                           break;
+                        } else if(variable.equals(alias)) {
+                           getLog().append("Not aliassing identity: "+variable+" "+alias);
+                           alias = null;
+                           break;
+                        }
                      } else {
-                        getLog().append("Not aliassing across scopes: "+variable+" "+alias);
+                        // Not aliasing non-variables
+                        break;
+                     }
+                  }  else {
+                     // rValue 2-n
+                     if(!alias.equals(phiRValue.getrValue())) {
+                        // Not aliasing if any rValue is not identical
+                        alias = null;
+                        break;
                      }
                   }
                }
+               if(alias!=null) {
+                  aliases.add(variable, alias);
+               }
+
             }
             return null;
          }

@@ -733,6 +733,63 @@ sum2::@return: scope:[sum2]  from sum2
   to:@return
 @end: scope:[]  from @begin
 
+Redundant Phi (byte*) SCREEN#1 (byte*) SCREEN#0
+Redundant Phi (byte*) SCREEN2#1 (byte*) SCREEN2#0
+Succesful SSA optimization Pass2RedundantPhiElimination
+CONTROL FLOW GRAPH
+@begin: scope:[]  from
+  (byte*) SCREEN#0 ← (word) 1024
+  (byte*) SCREEN2#0 ← (word) 1024 + (byte) 40
+  call main param-assignment
+  to:@end
+main: scope:[main]  from @begin
+  (byte) main::i#0 ← (byte) 0
+  to:main::@1
+main::@1: scope:[main]  from main main::@4
+  (byte) main::i#2 ← phi( main/(byte) main::i#0 main::@4/(byte) main::i#1 )
+  (byte~) main::$0 ← (byte) main::i#2 + (byte) 1
+  (byte~) main::$1 ← (byte) main::i#2 + (byte) 2
+  (byte) sum::a#0 ← (byte) main::i#2
+  (byte) sum::b#0 ← (byte~) main::$0
+  (byte) sum::c#0 ← (byte~) main::$1
+  call sum param-assignment
+  to:main::@3
+main::@3: scope:[main]  from main::@1
+  (byte~) main::$2 ← (byte) sum::return#0
+  *((byte*) SCREEN#0 + (byte) main::i#2) ← (byte~) main::$2
+  (byte~) main::$3 ← (byte) main::i#2 + (byte) 1
+  (byte~) main::$4 ← (byte) main::i#2 + (byte) 2
+  (byte) sum2::a#0 ← (byte) main::i#2
+  (byte) sum2::b#0 ← (byte~) main::$3
+  (byte) sum2::c#0 ← (byte~) main::$4
+  call sum2 param-assignment
+  to:main::@4
+main::@4: scope:[main]  from main::@3
+  (byte~) main::$5 ← (byte) sum2::return#0
+  *((byte*) SCREEN2#0 + (byte) main::i#2) ← (byte~) main::$5
+  (byte) main::i#1 ← ++ (byte) main::i#2
+  (boolean~) main::$6 ← (byte) main::i#1 != (byte) 11
+  if((boolean~) main::$6) goto main::@1
+  to:main::@return
+main::@return: scope:[main]  from main::@4
+  return 
+  to:@return
+sum: scope:[sum]  from main::@1
+  (byte~) sum::$0 ← (byte) sum::a#0 + (byte) sum::b#0
+  (byte) sum::return#0 ← (byte~) sum::$0 + (byte) sum::c#0
+  to:sum::@return
+sum::@return: scope:[sum]  from sum
+  return 
+  to:@return
+sum2: scope:[sum2]  from main::@3
+  (byte~) sum2::$0 ← (byte) sum2::a#0 + (byte) sum2::b#0
+  (byte) sum2::return#0 ← (byte~) sum2::$0 + (byte) sum2::c#0
+  to:sum2::@return
+sum2::@return: scope:[sum2]  from sum2
+  return 
+  to:@return
+@end: scope:[]  from @begin
+
 Simple Condition (boolean~) main::$6 if((byte) main::i#1!=(byte) 11) goto main::@1
 Succesful SSA optimization Pass2ConditionalJumpSimplification
 CONTROL FLOW GRAPH
@@ -745,8 +802,6 @@ main: scope:[main]  from @begin
   (byte) main::i#0 ← (byte) 0
   to:main::@1
 main::@1: scope:[main]  from main main::@4
-  (byte*) SCREEN2#1 ← phi( main/(byte*) SCREEN2#0 )
-  (byte*) SCREEN#1 ← phi( main/(byte*) SCREEN#0 )
   (byte) main::i#2 ← phi( main/(byte) main::i#0 main::@4/(byte) main::i#1 )
   (byte~) main::$0 ← (byte) main::i#2 + (byte) 1
   (byte~) main::$1 ← (byte) main::i#2 + (byte) 2
@@ -757,7 +812,7 @@ main::@1: scope:[main]  from main main::@4
   to:main::@3
 main::@3: scope:[main]  from main::@1
   (byte~) main::$2 ← (byte) sum::return#0
-  *((byte*) SCREEN#1 + (byte) main::i#2) ← (byte~) main::$2
+  *((byte*) SCREEN#0 + (byte) main::i#2) ← (byte~) main::$2
   (byte~) main::$3 ← (byte) main::i#2 + (byte) 1
   (byte~) main::$4 ← (byte) main::i#2 + (byte) 2
   (byte) sum2::a#0 ← (byte) main::i#2
@@ -767,7 +822,7 @@ main::@3: scope:[main]  from main::@1
   to:main::@4
 main::@4: scope:[main]  from main::@3
   (byte~) main::$5 ← (byte) sum2::return#0
-  *((byte*) SCREEN2#1 + (byte) main::i#2) ← (byte~) main::$5
+  *((byte*) SCREEN2#0 + (byte) main::i#2) ← (byte~) main::$5
   (byte) main::i#1 ← ++ (byte) main::i#2
   if((byte) main::i#1!=(byte) 11) goto main::@1
   to:main::@return
@@ -801,8 +856,6 @@ CONTROL FLOW GRAPH
 main: scope:[main]  from @begin
   to:main::@1
 main::@1: scope:[main]  from main main::@4
-  (byte*) SCREEN2#1 ← phi( main/(const byte*) SCREEN2#0 )
-  (byte*) SCREEN#1 ← phi( main/(const byte*) SCREEN#0 )
   (byte) main::i#2 ← phi( main/(const byte) main::i#0 main::@4/(byte) main::i#1 )
   (byte~) main::$0 ← (byte) main::i#2 + (byte) 1
   (byte~) main::$1 ← (byte) main::i#2 + (byte) 2
@@ -813,7 +866,7 @@ main::@1: scope:[main]  from main main::@4
   to:main::@3
 main::@3: scope:[main]  from main::@1
   (byte~) main::$2 ← (byte) sum::return#0
-  *((byte*) SCREEN#1 + (byte) main::i#2) ← (byte~) main::$2
+  *((const byte*) SCREEN#0 + (byte) main::i#2) ← (byte~) main::$2
   (byte~) main::$3 ← (byte) main::i#2 + (byte) 1
   (byte~) main::$4 ← (byte) main::i#2 + (byte) 2
   (byte) sum2::a#0 ← (byte) main::i#2
@@ -823,60 +876,7 @@ main::@3: scope:[main]  from main::@1
   to:main::@4
 main::@4: scope:[main]  from main::@3
   (byte~) main::$5 ← (byte) sum2::return#0
-  *((byte*) SCREEN2#1 + (byte) main::i#2) ← (byte~) main::$5
-  (byte) main::i#1 ← ++ (byte) main::i#2
-  if((byte) main::i#1!=(byte) 11) goto main::@1
-  to:main::@return
-main::@return: scope:[main]  from main::@4
-  return 
-  to:@return
-sum: scope:[sum]  from main::@1
-  (byte~) sum::$0 ← (byte) sum::a#0 + (byte) sum::b#0
-  (byte) sum::return#0 ← (byte~) sum::$0 + (byte) sum::c#0
-  to:sum::@return
-sum::@return: scope:[sum]  from sum
-  return 
-  to:@return
-sum2: scope:[sum2]  from main::@3
-  (byte~) sum2::$0 ← (byte) sum2::a#0 + (byte) sum2::b#0
-  (byte) sum2::return#0 ← (byte~) sum2::$0 + (byte) sum2::c#0
-  to:sum2::@return
-sum2::@return: scope:[sum2]  from sum2
-  return 
-  to:@return
-@end: scope:[]  from @begin
-
-Constant (const byte*) SCREEN#1 = SCREEN#0
-Constant (const byte*) SCREEN2#1 = SCREEN2#0
-Succesful SSA optimization Pass2ConstantIdentification
-CONTROL FLOW GRAPH
-@begin: scope:[]  from
-  call main param-assignment
-  to:@end
-main: scope:[main]  from @begin
-  to:main::@1
-main::@1: scope:[main]  from main main::@4
-  (byte) main::i#2 ← phi( main/(const byte) main::i#0 main::@4/(byte) main::i#1 )
-  (byte~) main::$0 ← (byte) main::i#2 + (byte) 1
-  (byte~) main::$1 ← (byte) main::i#2 + (byte) 2
-  (byte) sum::a#0 ← (byte) main::i#2
-  (byte) sum::b#0 ← (byte~) main::$0
-  (byte) sum::c#0 ← (byte~) main::$1
-  call sum param-assignment
-  to:main::@3
-main::@3: scope:[main]  from main::@1
-  (byte~) main::$2 ← (byte) sum::return#0
-  *((const byte*) SCREEN#1 + (byte) main::i#2) ← (byte~) main::$2
-  (byte~) main::$3 ← (byte) main::i#2 + (byte) 1
-  (byte~) main::$4 ← (byte) main::i#2 + (byte) 2
-  (byte) sum2::a#0 ← (byte) main::i#2
-  (byte) sum2::b#0 ← (byte~) main::$3
-  (byte) sum2::c#0 ← (byte~) main::$4
-  call sum2 param-assignment
-  to:main::@4
-main::@4: scope:[main]  from main::@3
-  (byte~) main::$5 ← (byte) sum2::return#0
-  *((const byte*) SCREEN2#1 + (byte) main::i#2) ← (byte~) main::$5
+  *((const byte*) SCREEN2#0 + (byte) main::i#2) ← (byte~) main::$5
   (byte) main::i#1 ← ++ (byte) main::i#2
   if((byte) main::i#1!=(byte) 11) goto main::@1
   to:main::@return
@@ -919,8 +919,8 @@ Multiple usages for variable. Not optimizing sub-constant (byte) main::i#2
 Multiple usages for variable. Not optimizing sub-constant (byte) main::i#2
 Multiple usages for variable. Not optimizing sub-constant (byte) main::i#2
 Multiple usages for variable. Not optimizing sub-constant (byte) main::i#2
-Constant inlined SCREEN#1 = (const byte*) SCREEN#0
-Constant inlined SCREEN2#1 = (const byte*) SCREEN2#0
+Inlining constant with var siblings (const byte) main::i#0
+Inlining constant with var siblings (const byte) main::i#0
 Constant inlined main::i#0 = (byte) 0
 Succesful SSA optimization Pass2ConstantInlining
 CONTROL FLOW GRAPH

@@ -370,6 +370,38 @@ main::@return: scope:[main]  from main::@1
   to:@return
 @end: scope:[]  from @begin
 
+Redundant Phi (byte) STAR#2 (byte) STAR#0
+Redundant Phi (byte*) SCREEN#2 (byte*) SCREEN#0
+Succesful SSA optimization Pass2RedundantPhiElimination
+CONTROL FLOW GRAPH
+@begin: scope:[]  from
+  (byte*) SCREEN#0 ← (word) 1024
+  (byte) STAR#0 ← (byte) 81
+  (byte*) VIC#0 ← (word) 53248
+  (byte~) $0 ← (byte) 16 * (byte) 2
+  (byte*~) $1 ← (byte*) VIC#0 + (byte~) $0
+  (byte*) BGCOL#0 ← (byte*~) $1 + (byte) 1
+  (byte) RED#0 ← (byte) 2
+  call main param-assignment
+  to:@end
+main: scope:[main]  from @begin
+  *((byte*) SCREEN#0) ← (byte) STAR#0
+  *((byte*) BGCOL#0) ← (byte) RED#0
+  (byte) main::i#0 ← (byte) 40
+  to:main::@1
+main::@1: scope:[main]  from main main::@1
+  (byte) main::i#2 ← phi( main/(byte) main::i#0 main::@1/(byte) main::i#1 )
+  (byte~) main::$0 ← (byte) STAR#0 + (byte) 1
+  *((byte*) SCREEN#0 + (byte) main::i#2) ← (byte~) main::$0
+  (byte) main::i#1 ← ++ (byte) main::i#2
+  (boolean~) main::$1 ← (byte) main::i#1 != (byte) 80
+  if((boolean~) main::$1) goto main::@1
+  to:main::@return
+main::@return: scope:[main]  from main::@1
+  return 
+  to:@return
+@end: scope:[]  from @begin
+
 Simple Condition (boolean~) main::$1 if((byte) main::i#1!=(byte) 80) goto main::@1
 Succesful SSA optimization Pass2ConditionalJumpSimplification
 CONTROL FLOW GRAPH
@@ -390,10 +422,8 @@ main: scope:[main]  from @begin
   to:main::@1
 main::@1: scope:[main]  from main main::@1
   (byte) main::i#2 ← phi( main/(byte) main::i#0 main::@1/(byte) main::i#1 )
-  (byte*) SCREEN#2 ← phi( main/(byte*) SCREEN#0 )
-  (byte) STAR#2 ← phi( main/(byte) STAR#0 )
-  (byte~) main::$0 ← (byte) STAR#2 + (byte) 1
-  *((byte*) SCREEN#2 + (byte) main::i#2) ← (byte~) main::$0
+  (byte~) main::$0 ← (byte) STAR#0 + (byte) 1
+  *((byte*) SCREEN#0 + (byte) main::i#2) ← (byte~) main::$0
   (byte) main::i#1 ← ++ (byte) main::i#2
   if((byte) main::i#1!=(byte) 80) goto main::@1
   to:main::@return
@@ -421,10 +451,8 @@ main: scope:[main]  from @begin
   to:main::@1
 main::@1: scope:[main]  from main main::@1
   (byte) main::i#2 ← phi( main/(const byte) main::i#0 main::@1/(byte) main::i#1 )
-  (byte*) SCREEN#2 ← phi( main/(const byte*) SCREEN#0 )
-  (byte) STAR#2 ← phi( main/(const byte) STAR#0 )
-  (byte~) main::$0 ← (byte) STAR#2 + (byte) 1
-  *((byte*) SCREEN#2 + (byte) main::i#2) ← (byte~) main::$0
+  (byte~) main::$0 ← (const byte) STAR#0 + (byte) 1
+  *((const byte*) SCREEN#0 + (byte) main::i#2) ← (byte~) main::$0
   (byte) main::i#1 ← ++ (byte) main::i#2
   if((byte) main::i#1!=(byte) 80) goto main::@1
   to:main::@return
@@ -434,8 +462,7 @@ main::@return: scope:[main]  from main::@1
 @end: scope:[]  from @begin
 
 Constant (const byte*) $1 = VIC#0+$0
-Constant (const byte) STAR#2 = STAR#0
-Constant (const byte*) SCREEN#2 = SCREEN#0
+Constant (const byte) main::$0 = STAR#0+1
 Succesful SSA optimization Pass2ConstantIdentification
 CONTROL FLOW GRAPH
 @begin: scope:[]  from
@@ -448,8 +475,7 @@ main: scope:[main]  from @begin
   to:main::@1
 main::@1: scope:[main]  from main main::@1
   (byte) main::i#2 ← phi( main/(const byte) main::i#0 main::@1/(byte) main::i#1 )
-  (byte~) main::$0 ← (const byte) STAR#2 + (byte) 1
-  *((const byte*) SCREEN#2 + (byte) main::i#2) ← (byte~) main::$0
+  *((const byte*) SCREEN#0 + (byte) main::i#2) ← (const byte) main::$0
   (byte) main::i#1 ← ++ (byte) main::i#2
   if((byte) main::i#1!=(byte) 80) goto main::@1
   to:main::@return
@@ -459,7 +485,6 @@ main::@return: scope:[main]  from main::@1
 @end: scope:[]  from @begin
 
 Constant (const byte*) BGCOL#0 = $1+1
-Constant (const byte) main::$0 = STAR#2+1
 Succesful SSA optimization Pass2ConstantIdentification
 CONTROL FLOW GRAPH
 @begin: scope:[]  from
@@ -471,7 +496,7 @@ main: scope:[main]  from @begin
   to:main::@1
 main::@1: scope:[main]  from main main::@1
   (byte) main::i#2 ← phi( main/(const byte) main::i#0 main::@1/(byte) main::i#1 )
-  *((const byte*) SCREEN#2 + (byte) main::i#2) ← (const byte) main::$0
+  *((const byte*) SCREEN#0 + (byte) main::i#2) ← (const byte) main::$0
   (byte) main::i#1 ← ++ (byte) main::i#2
   if((byte) main::i#1!=(byte) 80) goto main::@1
   to:main::@return
@@ -480,8 +505,8 @@ main::@return: scope:[main]  from main::@1
   to:@return
 @end: scope:[]  from @begin
 
-Constant inlined SCREEN#2 = (const byte*) SCREEN#0
-Constant inlined STAR#2 = (const byte) STAR#0
+Inlining constant with var siblings (const byte) main::i#0
+Inlining constant with var siblings (const byte) main::i#0
 Constant inlined $1 = (const byte*) VIC#0+(byte) 16*(byte) 2
 Constant inlined $0 = (byte) 16*(byte) 2
 Constant inlined main::i#0 = (byte) 40

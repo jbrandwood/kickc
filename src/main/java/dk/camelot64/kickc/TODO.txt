@@ -30,6 +30,14 @@ Features
   - Consider whether autocasting word & byte* is possible ?
 - Add UpliftRemains support for attempting to uplift potentials to ALU (requires modifying two registers: 1. the ALU potential to ALU - the one added to the ALU potential to A.)
 - Syntax for composing a word from two bytes. word w = { lo, hi } --> ICL: w = lo _word_ hi;
+- A syntax for supporting custom ASM fragments? Allowing the adding of a new operator / function call that is compiled into custom written ASM-fragments. Currently there seems to be a quite short way when adding a new expression operator - maybe give the progrmmer the same freedom.
+
+Constants
+- Do not create multiple versions & phi-statements for declared constants.
+- Perform static constant analysis determining if a var is ever assigned. Mark as constant before creating SSA/versions.
+- Limit number of versions & phi-blocks by create a generative algorithm for creating initial phi-blocks & variable versions.
+  - When an assignment is encountered create a new version.
+  - Backtrack the necessary new phi-blocks and changes into the code?
 
 Word Math
 - Support Word table lookup (through 2 byte-tables)
@@ -83,7 +91,15 @@ Register Allocation
   - Combinations should be created in a tree-structure instead of just doing all combinations
   - Example: For equivalence classes a, b, c if a&c have overlapping live ranges they can never have the same register. Therefore the combination iterator should not create combinations where C has the same register as a.
 - Optimize registers in local windows - creating smaller sets of combinations. Currently some programs easily has millions of possible combinations.
-
+- Optimize registers in a tree search.
+  - Initially allocate all variables to ZP registers
+  - Handle each scope prioritized
+  - Handle each variable prioritized
+  - For each variable try each potential register.
+    - Examine if current variables overlap with other variable assigned to the same register. If an overlap is found - the branch is dead
+    - Generate ASM & examine clobber. If the potential register allocation results in clobber - the branch is dead.
+    - Handle each remaining allocation possibility in order of their score - highest score first.
+    - Assign the variable to the selected register & Recurse down to the next variable.
 
 Process/Code Structure Improvement
 - Eliminate copy visitor
@@ -108,7 +124,6 @@ Real Usage
 - Implement spline library (spline.asm)
 - Implement polygon filler for complex polygons.
 - Implement a true type font renderer.
-
 
 Done
 + Test the ASM program output resulting from compiling specific KC program input.
@@ -166,3 +181,4 @@ Done
 + (callconstparam.kc) Constant call parameters are stored as values in the called function - not at the call. The reference from the call to the constant does not include the function name, so the result is an unknown symbol error when compiling the ASM.
 + Inline constants that are only call parameters used once (eg. x0#0 and x0#1 in callconstparam.kc)
 + Ensured that assignment to variables with ALU potential does not affect potential registers through clobbering.
++ (const-identification.kc) Constants are not identified correctly. Some times constant pointers are treated as variables Eg. byte* SCREEN = $0400 is adressed through zero-page even though it can be adressed directly.

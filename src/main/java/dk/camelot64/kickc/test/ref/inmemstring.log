@@ -437,10 +437,10 @@ main::@return: scope:[main]  from main::@2
 @end: scope:[]  from @begin
 
 Not aliassing across scopes: main::cursor#0 SCREEN#0
-Redundant Phi (byte*) main::cursor#3 (byte*) main::cursor#2
-Redundant Phi (byte*) SCREEN#2 (byte*) SCREEN#3
-Redundant Phi (byte[]) TEXT#3 (byte[]) TEXT#1
-Succesful SSA optimization Pass2RedundantPhiElimination
+Alias (byte*) main::cursor#2 = (byte*) main::cursor#3 
+Alias (byte*) SCREEN#2 = (byte*) SCREEN#3 
+Alias (byte[]) TEXT#1 = (byte[]) TEXT#3 
+Succesful SSA optimization Pass2AliasElimination
 CONTROL FLOW GRAPH
 @begin: scope:[]  from
   (byte*) SCREEN#0 ← (word) 1024
@@ -452,7 +452,7 @@ main: scope:[main]  from @begin
   (byte) main::i#0 ← (byte) 0
   to:main::@1
 main::@1: scope:[main]  from main main::@2
-  (byte*) SCREEN#3 ← phi( main/(byte*) SCREEN#0 main::@2/(byte*) SCREEN#3 )
+  (byte*) SCREEN#2 ← phi( main/(byte*) SCREEN#0 main::@2/(byte*) SCREEN#2 )
   (byte*) main::cursor#2 ← phi( main/(byte*) main::cursor#0 main::@2/(byte*) main::cursor#1 )
   (byte) main::i#3 ← phi( main/(byte) main::i#0 main::@2/(byte) main::i#4 )
   (byte[]) TEXT#1 ← phi( main/(byte[]) TEXT#0 main::@2/(byte[]) TEXT#1 )
@@ -465,7 +465,7 @@ main::@1: scope:[main]  from main main::@2
 main::@2: scope:[main]  from main::@1 main::@3
   (byte) main::i#4 ← phi( main::@1/(byte) main::i#1 main::@3/(byte) main::i#2 )
   (byte*) main::cursor#1 ← ++ (byte*) main::cursor#2
-  (byte*~) main::$3 ← (byte*) SCREEN#3 + (word) 1000
+  (byte*~) main::$3 ← (byte*) SCREEN#2 + (word) 1000
   (boolean~) main::$4 ← (byte*) main::cursor#1 < (byte*~) main::$3
   if((boolean~) main::$4) goto main::@1
   to:main::@return
@@ -477,8 +477,9 @@ main::@return: scope:[main]  from main::@2
   to:@return
 @end: scope:[]  from @begin
 
+Not aliassing across scopes: main::cursor#0 SCREEN#0
 Self Phi Eliminated (byte[]) TEXT#1
-Self Phi Eliminated (byte*) SCREEN#3
+Self Phi Eliminated (byte*) SCREEN#2
 Succesful SSA optimization Pass2SelfPhiElimination
 CONTROL FLOW GRAPH
 @begin: scope:[]  from
@@ -491,7 +492,7 @@ main: scope:[main]  from @begin
   (byte) main::i#0 ← (byte) 0
   to:main::@1
 main::@1: scope:[main]  from main main::@2
-  (byte*) SCREEN#3 ← phi( main/(byte*) SCREEN#0 )
+  (byte*) SCREEN#2 ← phi( main/(byte*) SCREEN#0 )
   (byte*) main::cursor#2 ← phi( main/(byte*) main::cursor#0 main::@2/(byte*) main::cursor#1 )
   (byte) main::i#3 ← phi( main/(byte) main::i#0 main::@2/(byte) main::i#4 )
   (byte[]) TEXT#1 ← phi( main/(byte[]) TEXT#0 )
@@ -504,7 +505,44 @@ main::@1: scope:[main]  from main main::@2
 main::@2: scope:[main]  from main::@1 main::@3
   (byte) main::i#4 ← phi( main::@1/(byte) main::i#1 main::@3/(byte) main::i#2 )
   (byte*) main::cursor#1 ← ++ (byte*) main::cursor#2
-  (byte*~) main::$3 ← (byte*) SCREEN#3 + (word) 1000
+  (byte*~) main::$3 ← (byte*) SCREEN#2 + (word) 1000
+  (boolean~) main::$4 ← (byte*) main::cursor#1 < (byte*~) main::$3
+  if((boolean~) main::$4) goto main::@1
+  to:main::@return
+main::@3: scope:[main]  from main::@1
+  (byte) main::i#2 ← (byte) 0
+  to:main::@2
+main::@return: scope:[main]  from main::@2
+  return 
+  to:@return
+@end: scope:[]  from @begin
+
+Redundant Phi (byte[]) TEXT#1 (byte[]) TEXT#0
+Redundant Phi (byte*) SCREEN#2 (byte*) SCREEN#0
+Succesful SSA optimization Pass2RedundantPhiElimination
+CONTROL FLOW GRAPH
+@begin: scope:[]  from
+  (byte*) SCREEN#0 ← (word) 1024
+  (byte[]) TEXT#0 ← (string) "camelot "
+  call main param-assignment
+  to:@end
+main: scope:[main]  from @begin
+  (byte*) main::cursor#0 ← (byte*) SCREEN#0
+  (byte) main::i#0 ← (byte) 0
+  to:main::@1
+main::@1: scope:[main]  from main main::@2
+  (byte*) main::cursor#2 ← phi( main/(byte*) main::cursor#0 main::@2/(byte*) main::cursor#1 )
+  (byte) main::i#3 ← phi( main/(byte) main::i#0 main::@2/(byte) main::i#4 )
+  (byte~) main::$0 ← (byte[]) TEXT#0 *idx (byte) main::i#3
+  *((byte*) main::cursor#2) ← (byte~) main::$0
+  (byte) main::i#1 ← ++ (byte) main::i#3
+  (boolean~) main::$2 ← (byte) main::i#1 != (byte) 8
+  if((boolean~) main::$2) goto main::@2
+  to:main::@3
+main::@2: scope:[main]  from main::@1 main::@3
+  (byte) main::i#4 ← phi( main::@1/(byte) main::i#1 main::@3/(byte) main::i#2 )
+  (byte*) main::cursor#1 ← ++ (byte*) main::cursor#2
+  (byte*~) main::$3 ← (byte*) SCREEN#0 + (word) 1000
   (boolean~) main::$4 ← (byte*) main::cursor#1 < (byte*~) main::$3
   if((boolean~) main::$4) goto main::@1
   to:main::@return
@@ -530,11 +568,9 @@ main: scope:[main]  from @begin
   (byte) main::i#0 ← (byte) 0
   to:main::@1
 main::@1: scope:[main]  from main main::@2
-  (byte*) SCREEN#3 ← phi( main/(byte*) SCREEN#0 )
   (byte*) main::cursor#2 ← phi( main/(byte*) main::cursor#0 main::@2/(byte*) main::cursor#1 )
   (byte) main::i#3 ← phi( main/(byte) main::i#0 main::@2/(byte) main::i#4 )
-  (byte[]) TEXT#1 ← phi( main/(byte[]) TEXT#0 )
-  (byte~) main::$0 ← (byte[]) TEXT#1 *idx (byte) main::i#3
+  (byte~) main::$0 ← (byte[]) TEXT#0 *idx (byte) main::i#3
   *((byte*) main::cursor#2) ← (byte~) main::$0
   (byte) main::i#1 ← ++ (byte) main::i#3
   if((byte) main::i#1!=(byte) 8) goto main::@2
@@ -542,7 +578,7 @@ main::@1: scope:[main]  from main main::@2
 main::@2: scope:[main]  from main::@1 main::@3
   (byte) main::i#4 ← phi( main::@1/(byte) main::i#1 main::@3/(byte) main::i#2 )
   (byte*) main::cursor#1 ← ++ (byte*) main::cursor#2
-  (byte*~) main::$3 ← (byte*) SCREEN#3 + (word) 1000
+  (byte*~) main::$3 ← (byte*) SCREEN#0 + (word) 1000
   if((byte*) main::cursor#1<(byte*~) main::$3) goto main::@1
   to:main::@return
 main::@3: scope:[main]  from main::@1
@@ -566,11 +602,9 @@ main: scope:[main]  from @begin
   (byte*) main::cursor#0 ← (const byte*) SCREEN#0
   to:main::@1
 main::@1: scope:[main]  from main main::@2
-  (byte*) SCREEN#3 ← phi( main/(const byte*) SCREEN#0 )
   (byte*) main::cursor#2 ← phi( main/(byte*) main::cursor#0 main::@2/(byte*) main::cursor#1 )
   (byte) main::i#3 ← phi( main/(const byte) main::i#0 main::@2/(byte) main::i#4 )
-  (byte[]) TEXT#1 ← phi( main/(const byte[]) TEXT#0 )
-  (byte~) main::$0 ← (byte[]) TEXT#1 *idx (byte) main::i#3
+  (byte~) main::$0 ← (const byte[]) TEXT#0 *idx (byte) main::i#3
   *((byte*) main::cursor#2) ← (byte~) main::$0
   (byte) main::i#1 ← ++ (byte) main::i#3
   if((byte) main::i#1!=(byte) 8) goto main::@2
@@ -578,7 +612,7 @@ main::@1: scope:[main]  from main main::@2
 main::@2: scope:[main]  from main::@1 main::@3
   (byte) main::i#4 ← phi( main::@1/(byte) main::i#1 main::@3/(const byte) main::i#2 )
   (byte*) main::cursor#1 ← ++ (byte*) main::cursor#2
-  (byte*~) main::$3 ← (byte*) SCREEN#3 + (word) 1000
+  (byte*~) main::$3 ← (const byte*) SCREEN#0 + (word) 1000
   if((byte*) main::cursor#1<(byte*~) main::$3) goto main::@1
   to:main::@return
 main::@3: scope:[main]  from main::@1
@@ -589,8 +623,7 @@ main::@return: scope:[main]  from main::@2
 @end: scope:[]  from @begin
 
 Constant (const byte*) main::cursor#0 = SCREEN#0
-Constant (const byte[]) TEXT#1 = TEXT#0
-Constant (const byte*) SCREEN#3 = SCREEN#0
+Constant (const byte*) main::$3 = SCREEN#0+1000
 Succesful SSA optimization Pass2ConstantIdentification
 CONTROL FLOW GRAPH
 @begin: scope:[]  from
@@ -601,36 +634,7 @@ main: scope:[main]  from @begin
 main::@1: scope:[main]  from main main::@2
   (byte*) main::cursor#2 ← phi( main/(const byte*) main::cursor#0 main::@2/(byte*) main::cursor#1 )
   (byte) main::i#3 ← phi( main/(const byte) main::i#0 main::@2/(byte) main::i#4 )
-  (byte~) main::$0 ← (const byte[]) TEXT#1 *idx (byte) main::i#3
-  *((byte*) main::cursor#2) ← (byte~) main::$0
-  (byte) main::i#1 ← ++ (byte) main::i#3
-  if((byte) main::i#1!=(byte) 8) goto main::@2
-  to:main::@3
-main::@2: scope:[main]  from main::@1 main::@3
-  (byte) main::i#4 ← phi( main::@1/(byte) main::i#1 main::@3/(const byte) main::i#2 )
-  (byte*) main::cursor#1 ← ++ (byte*) main::cursor#2
-  (byte*~) main::$3 ← (const byte*) SCREEN#3 + (word) 1000
-  if((byte*) main::cursor#1<(byte*~) main::$3) goto main::@1
-  to:main::@return
-main::@3: scope:[main]  from main::@1
-  to:main::@2
-main::@return: scope:[main]  from main::@2
-  return 
-  to:@return
-@end: scope:[]  from @begin
-
-Constant (const byte*) main::$3 = SCREEN#3+1000
-Succesful SSA optimization Pass2ConstantIdentification
-CONTROL FLOW GRAPH
-@begin: scope:[]  from
-  call main param-assignment
-  to:@end
-main: scope:[main]  from @begin
-  to:main::@1
-main::@1: scope:[main]  from main main::@2
-  (byte*) main::cursor#2 ← phi( main/(const byte*) main::cursor#0 main::@2/(byte*) main::cursor#1 )
-  (byte) main::i#3 ← phi( main/(const byte) main::i#0 main::@2/(byte) main::i#4 )
-  (byte~) main::$0 ← (const byte[]) TEXT#1 *idx (byte) main::i#3
+  (byte~) main::$0 ← (const byte[]) TEXT#0 *idx (byte) main::i#3
   *((byte*) main::cursor#2) ← (byte~) main::$0
   (byte) main::i#1 ← ++ (byte) main::i#3
   if((byte) main::i#1!=(byte) 8) goto main::@2
@@ -650,9 +654,15 @@ main::@return: scope:[main]  from main::@2
 Multiple usages for variable. Not optimizing sub-constant (byte) main::i#3
 Not culling empty block because it shares successor with its predecessor. (label) main::@3
 Multiple usages for variable. Not optimizing sub-constant (byte) main::i#3
-Constant inlined TEXT#1 = (const byte[]) TEXT#0
+Inlining constant with var siblings (const byte) main::i#0
+Inlining constant with var siblings (const byte) main::i#0
+Inlining constant with var siblings (const byte) main::i#0
+Inlining constant with var siblings (const byte) main::i#2
+Inlining constant with var siblings (const byte) main::i#2
+Inlining constant with var siblings (const byte) main::i#2
+Inlining constant with var siblings (const byte*) main::cursor#0
+Inlining constant with var siblings (const byte*) main::cursor#0
 Constant inlined main::$3 = (const byte*) SCREEN#0+(word) 1000
-Constant inlined SCREEN#3 = (const byte*) SCREEN#0
 Constant inlined main::i#2 = (byte) 0
 Constant inlined main::cursor#0 = (const byte*) SCREEN#0
 Constant inlined main::i#0 = (byte) 0

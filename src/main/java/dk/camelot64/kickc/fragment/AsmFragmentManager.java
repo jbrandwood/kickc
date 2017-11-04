@@ -27,16 +27,27 @@ public class AsmFragmentManager {
 
    private static Asm6502Parser.FileContext UNKNOWN = new Asm6502Parser.FileContext(null, 0);
 
-   public static Asm6502Parser.FileContext getFragment(String signature) {
+   public static AsmFragment getFragment(AsmFragmentSignature signature) {
+      Asm6502Parser.FileContext fragmentFile = getFragmentFile(signature.getSignature());
+      AsmFragment fragment = new AsmFragment(
+            signature.getProgram(),
+            signature.getSignature(),
+            signature.getCodeScope(),
+            fragmentFile,
+            signature.getBindings());
+      return fragment;
+   }
+
+   private static Asm6502Parser.FileContext getFragmentFile(String signature) {
       Asm6502Parser.FileContext fragment = fragmentFileCache.get(signature);
       if (fragment == UNKNOWN) {
-         throw new AsmFragment.UnknownFragmentException(signature);
+         throw new UnknownFragmentException(signature);
       }
       if (fragment == null) {
          CharStream fragmentCharStream = loadOrSynthesizeFragment(signature);
          if (fragmentCharStream == null) {
             fragmentFileCache.put(signature, UNKNOWN);
-            throw new AsmFragment.UnknownFragmentException(signature);
+            throw new UnknownFragmentException(signature);
          }
          fragment = parseFragment(fragmentCharStream, signature);
          fragmentFileCache.put(signature, fragment);
@@ -232,4 +243,17 @@ public class AsmFragmentManager {
    }
 
 
+   public static class UnknownFragmentException extends RuntimeException {
+
+      private String fragmentSignature;
+
+      public UnknownFragmentException(String signature) {
+         super("Fragment not found " + signature + ".asm");
+         this.fragmentSignature = signature;
+      }
+
+      public String getFragmentSignature() {
+         return fragmentSignature;
+      }
+   }
 }

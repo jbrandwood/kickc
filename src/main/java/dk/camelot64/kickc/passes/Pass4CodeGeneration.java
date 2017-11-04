@@ -2,6 +2,8 @@ package dk.camelot64.kickc.passes;
 
 import dk.camelot64.kickc.asm.*;
 import dk.camelot64.kickc.fragment.AsmFragment;
+import dk.camelot64.kickc.fragment.AsmFragmentManager;
+import dk.camelot64.kickc.fragment.AsmFragmentSignature;
 import dk.camelot64.kickc.model.*;
 
 import java.util.*;
@@ -100,7 +102,7 @@ public class Pass4CodeGeneration {
          if(! (constantVar.getValue() instanceof ConstantArray || constantVar.getValue() instanceof ConstantString)) {
             String asmName = constantVar.getAsmName() == null ? constantVar.getLocalName() : constantVar.getAsmName();
             if (asmName != null && !added.contains(asmName)) {
-               asm.addConstant(asmName.replace("#", "_").replace("$", "_"), AsmFragment.getAsmConstant(program, constantVar.getValue(), 99, scope));
+               asm.addConstant(asmName.replace("#", "_").replace("$", "_"), AsmFragment.getAsmConstant(program, constantVar.getValue(), 99, scopeRef));
                added.add(asmName);
             }
          }
@@ -124,7 +126,7 @@ public class Pass4CodeGeneration {
             if (asmName != null && !added.contains(asmName)) {
                List<String> asmElements = new ArrayList<>();
                for (ConstantValue element : constantArray.getElements()) {
-                  String asmElement = AsmFragment.getAsmConstant(program, element, 99, scope);
+                  String asmElement = AsmFragment.getAsmConstant(program, element, 99, scopeRef);
                   asmElements.add(asmElement);
                }
                if(SymbolTypeBasic.BYTE.equals(constantArray.getElementType())) {
@@ -198,8 +200,9 @@ public class Pass4CodeGeneration {
             throw new AsmFragment.AluNotApplicableException();
          }
          StatementAssignment assignment = (StatementAssignment) statement;
-         AsmFragment asmFragment = new AsmFragment(assignment, assignmentAlu, program);
-         asm.getCurrentSegment().setFragment(asmFragment.getSignature());
+         AsmFragmentSignature signature = new AsmFragmentSignature(assignment, assignmentAlu, program);
+         AsmFragment asmFragment = AsmFragmentManager.getFragment(signature);
+         asm.getCurrentSegment().setFragment(asmFragment.getName());
          asmFragment.generate(asm);
          aluState.clear();
          return;
@@ -224,14 +227,16 @@ public class Pass4CodeGeneration {
                if (assignment.getOperator() == null && assignment.getrValue1() == null && isRegisterCopy(lValue, assignment.getrValue2())) {
                   asm.addComment(lValue.toString(program) + " = " + assignment.getrValue2().toString(program) + "  // register copy " + getRegister(lValue));
                } else {
-                  AsmFragment asmFragment = new AsmFragment(assignment, program);
-                  asm.getCurrentSegment().setFragment(asmFragment.getSignature());
+                  AsmFragmentSignature asmFragmentSignature = new AsmFragmentSignature(assignment, program);
+                  AsmFragment asmFragment = AsmFragmentManager.getFragment(asmFragmentSignature);
+                  asm.getCurrentSegment().setFragment(asmFragment.getName());
                   asmFragment.generate(asm);
                }
             }
          } else if (statement instanceof StatementConditionalJump) {
-            AsmFragment asmFragment = new AsmFragment((StatementConditionalJump) statement, block, program, getGraph());
-            asm.getCurrentSegment().setFragment(asmFragment.getSignature());
+            AsmFragmentSignature asmSignature = new AsmFragmentSignature((StatementConditionalJump) statement, block, program, getGraph());
+            AsmFragment asmFragment = AsmFragmentManager.getFragment(asmSignature);
+            asm.getCurrentSegment().setFragment(asmFragment.getName());
             asmFragment.generate(asm);
          } else if (statement instanceof StatementCall) {
             StatementCall call = (StatementCall) statement;
@@ -334,8 +339,9 @@ public class Pass4CodeGeneration {
             if (isRegisterCopy(lValue, rValue)) {
                asm.getCurrentSegment().setFragment("register_copy");
             } else {
-               AsmFragment asmFragment = new AsmFragment(lValue, rValue, program, scope);
-               asm.getCurrentSegment().setFragment(asmFragment.getSignature());
+               AsmFragmentSignature asmSignature = new AsmFragmentSignature(lValue, rValue, program, scope);
+               AsmFragment asmFragment = AsmFragmentManager.getFragment(asmSignature);
+               asm.getCurrentSegment().setFragment(asmFragment.getName());
                asmFragment.generate(asm);
             }
          }

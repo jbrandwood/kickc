@@ -6,7 +6,6 @@ import dk.camelot64.kickc.asm.parser.Asm6502BaseVisitor;
 import dk.camelot64.kickc.asm.parser.Asm6502Parser;
 import dk.camelot64.kickc.model.*;
 
-import java.util.LinkedHashMap;
 import java.util.Map;
 
 /**
@@ -14,373 +13,37 @@ import java.util.Map;
  */
 public class AsmFragment {
 
-   /**
-    * The symbol table.
-    */
+   /** The symbol table. */
    private Program program;
 
-   /**
-    * Binding of named values in the fragment to values (constants, variables, ...) .
-    */
+   /** The name of the fragment used in error messages. */
+   private String name;
+
+   /** The fragment template ASM code. */
+   private Asm6502Parser.FileContext fragmentFile;
+
+   /** Binding of named values in the fragment to values (constants, variables, ...) . */
    private Map<String, Value> bindings;
 
-   /**
-    * The scope containing the fragment. Used when referencing symbols defined in other scopes.
-    */
+   /** The scope containing the fragment. Used when referencing symbols defined in other scopes. */
    private ScopeRef codeScopeRef;
-
-   /**
-    * The string signature/name of the fragment fragment.
-    */
-   private String signature;
+   private Object signature;
 
    public AsmFragment(
-         StatementConditionalJump conditionalJump,
-         ControlFlowBlock block,
          Program program,
-         ControlFlowGraph graph) {
-      this.codeScopeRef = program.getGraph().getBlockFromStatementIdx(conditionalJump.getIndex()).getScope();
-      this.bindings = new LinkedHashMap<>();
+         String name,
+         ScopeRef codeScopeRef,
+         Asm6502Parser.FileContext fragmentFile,
+         Map<String, Value> bindings) {
       this.program = program;
-      String conditionalJumpSignature = conditionalJumpSignature(conditionalJump, block, graph);
-      setSignature(conditionalJumpSignature);
-   }
-
-   public AsmFragment(StatementAssignment assignment, Program program) {
-      this.codeScopeRef = program.getGraph().getBlockFromStatementIdx(assignment.getIndex()).getScope();
-      this.bindings = new LinkedHashMap<>();
-      this.program = program;
-      setSignature(assignmentSignature(
-            assignment.getlValue(),
-            assignment.getrValue1(),
-            assignment.getOperator(),
-            assignment.getrValue2()));
-   }
-
-   public AsmFragment(LValue lValue, RValue rValue, Program program, ScopeRef codeScopeRef) {
+      this.name = name;
+      this.fragmentFile = fragmentFile;
+      this.bindings = bindings;
       this.codeScopeRef = codeScopeRef;
-      this.bindings = new LinkedHashMap<>();
-      this.program = program;
-      setSignature(assignmentSignature(lValue, null, null, rValue));
-   }
-
-   public AsmFragment(StatementAssignment assignment, StatementAssignment assignmentAlu, Program program) {
-      this.codeScopeRef = program.getGraph().getBlockFromStatementIdx(assignment.getIndex()).getScope();
-      this.bindings = new LinkedHashMap<>();
-      this.program = program;
-      setSignature(assignmentWithAluSignature(assignment, assignmentAlu));
-   }
-
-   private String assignmentWithAluSignature(StatementAssignment assignment, StatementAssignment assignmentAlu) {
-      this.codeScopeRef = program.getGraph().getBlockFromStatementIdx(assignment.getIndex()).getScope();
-      if (!(assignment.getrValue2() instanceof VariableRef)) {
-         throw new AluNotApplicableException("Error! ALU register only allowed as rValue2. " + assignment);
-      }
-      VariableRef assignmentRValue2 = (VariableRef) assignment.getrValue2();
-      Variable assignmentRValue2Var = program.getScope().getVariable(assignmentRValue2);
-      Registers.Register rVal2Register = assignmentRValue2Var.getAllocation();
-
-      if (!rVal2Register.getType().equals(Registers.RegisterType.REG_ALU_BYTE)) {
-         throw new AluNotApplicableException("Error! ALU register only allowed as rValue2. " + assignment);
-      }
-      StringBuilder signature = new StringBuilder();
-      signature.append(bind(assignment.getlValue()));
-      signature.append("=");
-      if (assignment.getrValue1() != null) {
-         signature.append(bind(assignment.getrValue1()));
-      }
-      if (assignment.getOperator() != null) {
-         signature.append(getOperatorFragmentName(assignment.getOperator()));
-      }
-      signature.append(assignmentRightSideSignature(
-            assignmentAlu.getrValue1(),
-            assignmentAlu.getOperator(),
-            assignmentAlu.getrValue2()));
-      return signature.toString();
-   }
-
-   private String assignmentSignature(LValue lValue, RValue rValue1, Operator operator, RValue rValue2) {
-      StringBuilder signature = new StringBuilder();
-      signature.append(bind(lValue));
-      signature.append("=");
-      signature.append(assignmentRightSideSignature(rValue1, operator, rValue2));
-      return signature.toString();
-   }
-
-   private String assignmentRightSideSignature(RValue rValue1, Operator operator, RValue rValue2) {
-      StringBuilder signature = new StringBuilder();
-      if (rValue1 != null) {
-         signature.append(bind(rValue1));
-      }
-      if (operator != null) {
-         signature.append(getOperatorFragmentName(operator));
-      }
-      if (
-            rValue2 instanceof ConstantInteger &&
-                  ((ConstantInteger) rValue2).getNumber() == 2 &&
-                  operator != null &&
-                  (operator.getOperator().equals(">>") || operator.getOperator().equals("<<"))) {
-         signature.append("2");
-      } else if (
-            rValue2 instanceof ConstantInteger &&
-                  ((ConstantInteger) rValue2).getNumber() == 1 &&
-                  operator != null &&
-                  (operator.getOperator().equals("-") || operator.getOperator().equals("+") || operator.getOperator().equals(
-                        ">>") || operator.getOperator().equals("<<"))) {
-         signature.append("1");
-      } else if (
-            rValue2 instanceof ConstantInteger &&
-                  ((ConstantInteger) rValue2).getNumber() == 0 &&
-                  operator != null &&
-                  (operator.getOperator().equals("-") || operator.getOperator().equals("+"))) {
-         signature.append("0");
-      } else {
-         signature.append(bind(rValue2));
-      }
-      return signature.toString();
-   }
-
-   private String conditionalJumpSignature(
-         StatementConditionalJump conditionalJump,
-         ControlFlowBlock block,
-         ControlFlowGraph graph) {
-      StringBuilder signature = new StringBuilder();
-      if (conditionalJump.getrValue1() != null) {
-         signature.append(bind(conditionalJump.getrValue1()));
-      }
-      if (conditionalJump.getOperator() != null) {
-         signature.append(getOperatorFragmentName(conditionalJump.getOperator()));
-      }
-      if (conditionalJump.getrValue2() instanceof ConstantInteger && ((ConstantInteger) conditionalJump.getrValue2()).getNumber() == 0) {
-         signature.append("0");
-      } else if (conditionalJump.getrValue2() instanceof ConstantBool) {
-         ConstantBool boolValue = (ConstantBool) conditionalJump.getrValue2();
-         signature.append(boolValue.toString());
-      } else {
-         signature.append(bind(conditionalJump.getrValue2()));
-      }
-      signature.append("_then_");
-      LabelRef destination = conditionalJump.getDestination();
-      ControlFlowBlock destinationBlock = graph.getBlock(destination);
-      String destinationLabel;
-      if (destinationBlock.hasPhiBlock()) {
-         destinationLabel = (destinationBlock.getLabel().getLocalName() + "_from_" + block.getLabel().getLocalName()).replace(
-               '@',
-               'b').replace(':', '_');
-      } else {
-         destinationLabel = destination.getLocalName();
-      }
-      Symbol destSymbol = program.getScope().getSymbol(destination);
-      signature.append(bind(new Label(destinationLabel, destSymbol.getScope(), false)));
-      return signature.toString();
-   }
-
-   private static String getOperatorFragmentName(Operator operator) {
-      String op = operator.getOperator();
-      switch (op) {
-         case "*":
-            return "_star_";
-         case "*idx":
-            return "_staridx_";
-         case "+":
-            return "_plus_";
-         case "++":
-            return "_inc_";
-         case "--":
-            return "_dec_";
-         case "-":
-            return "_minus_";
-         case "==":
-            return "_eq_";
-         case "<>":
-         case "!=":
-            return "_neq_";
-         case "<":
-            if(operator.getType().equals(Operator.Type.UNARY)) {
-               return "_lo_";
-            }  else {
-               return "_lt_";
-            }
-         case ">":
-            if(operator.getType().equals(Operator.Type.UNARY)) {
-               return "_hi_";
-            }  else {
-               return "_gt_";
-            }
-         case "<=":
-         case "=<":
-            return "_le_";
-         case ">=":
-         case "=>":
-            return "_ge_";
-         case ">>":
-            return "_ror_";
-         case "<<":
-            return "_rol_";
-         case "&":
-            return "_band_";
-         case "|":
-            return "_bor_";
-         case "^":
-            return "_bxor_";
-         case "!":
-            return "_not_";
-         case "~":
-            return "_bnot_";
-         case "lo=":
-            return "_setlo_";
-         case "hi=":
-            return "_sethi_";
-         default:
-            return op;
-      }
    }
 
    public Value getBinding(String name) {
       return bindings.get(name);
-   }
-
-   public String getSignature() {
-      return signature;
-   }
-
-   public void setSignature(String signature) {
-      this.signature = signature;
-   }
-
-   private Scope getCodeScope() {
-      return program.getScope().getScope(codeScopeRef);
-   }
-
-
-   /**
-    * Zero page register name indexing.
-    */
-   private int nextZpByteIdx = 1;
-   private int nextZpWordIdx = 1;
-   private int nextZpBoolIdx = 1;
-   private int nextZpPtrIdx = 1;
-   private int nextConstByteIdx = 1;
-   private int nextLabelIdx = 1;
-
-   /**
-    * Add bindings of a value.
-    *
-    * @param value The value to bind.
-    * @return The bound name of the value. If the value has already been bound the existing bound name is returned.
-    */
-   public String bind(Value value) {
-      if (value instanceof PointerDereferenceSimple) {
-         PointerDereferenceSimple deref = (PointerDereferenceSimple) value;
-         return "_star_" + bind(deref.getPointer());
-      } else if (value instanceof PointerDereferenceIndexed) {
-         PointerDereferenceIndexed deref = (PointerDereferenceIndexed) value;
-         return bind(deref.getPointer()) + "_staridx_" + bind(deref.getIndex());
-      }
-
-      if (value instanceof VariableRef) {
-         value = program.getScope().getVariable((VariableRef) value);
-      }
-      if (value instanceof ConstantRef) {
-         value = program.getScope().getConstant((ConstantRef) value);
-      }
-      if (value instanceof Variable) {
-         Variable variable = (Variable) value;
-         Registers.Register register = variable.getAllocation();
-         // Find value if it is already bound
-         for (String name : bindings.keySet()) {
-            Value bound = bindings.get(name);
-            if (bound instanceof Variable) {
-               Registers.Register boundRegister = ((Variable) bound).getAllocation();
-               if (boundRegister != null && boundRegister.equals(register)) {
-                  return name;
-               }
-            }
-         }
-         // Create a new suitable name
-         if (Registers.RegisterType.ZP_BYTE.equals(register.getType())) {
-            String name = "zpby" + nextZpByteIdx++;
-            bindings.put(name, value);
-            return name;
-         } else if (Registers.RegisterType.ZP_WORD.equals(register.getType())) {
-            String name = "zpwo" + nextZpWordIdx++;
-            bindings.put(name, value);
-            return name;
-         } else if (Registers.RegisterType.ZP_BOOL.equals(register.getType())) {
-            String name = "zpbo" + nextZpBoolIdx++;
-            bindings.put(name, value);
-            return name;
-         } else if (Registers.RegisterType.REG_X_BYTE.equals(register.getType())) {
-            String name = "xby";
-            bindings.put(name, value);
-            return name;
-         } else if (Registers.RegisterType.REG_Y_BYTE.equals(register.getType())) {
-            String name = "yby";
-            bindings.put(name, value);
-            return name;
-         } else if (Registers.RegisterType.REG_A_BYTE.equals(register.getType())) {
-            String name = "aby";
-            bindings.put(name, value);
-            return name;
-         } else if (Registers.RegisterType.ZP_PTR_BYTE.equals(register.getType())) {
-            String name = "zpptrby" + nextZpPtrIdx++;
-            bindings.put(name, value);
-            return name;
-         } else if (Registers.RegisterType.REG_ALU_BYTE.equals(register.getType())) {
-            throw new AluNotApplicableException();
-         }
-      } else if (value instanceof ConstantVar) {
-         ConstantVar constantVar = (ConstantVar) value;
-         SymbolType constType = constantVar.getType();
-         if (SymbolTypeBasic.BYTE.equals(constType)) {
-            String name = "coby" + nextConstByteIdx++;
-            bindings.put(name, constantVar);
-            return name;
-         } else if (SymbolTypeBasic.WORD.equals(constType)) {
-            String name = "cowo" + nextConstByteIdx++;
-            bindings.put(name, constantVar);
-            return name;
-         } else if (constType instanceof SymbolTypePointer && SymbolTypeBasic.BYTE.equals(((SymbolTypePointer) constType).getElementType())) {
-            String name = "cowo" + nextConstByteIdx++;
-            bindings.put(name, constantVar);
-            return name;
-         } else {
-            throw new RuntimeException("Unhandled constant type " + constType);
-         }
-      } else if (value instanceof ConstantInteger) {
-         ConstantInteger intValue = (ConstantInteger) value;
-         if (SymbolTypeBasic.BYTE.equals(intValue.getType(program.getScope()))) {
-            String name = "coby" + nextConstByteIdx++;
-            bindings.put(name, value);
-            return name;
-         } else if (SymbolTypeBasic.WORD.equals(intValue.getType(program.getScope()))) {
-            String name = "cowo" + nextConstByteIdx++;
-            bindings.put(name, value);
-            return name;
-         }
-      } else if(value instanceof ConstantValue) {
-         SymbolType type = SymbolTypeInference.inferType(program.getScope(), (ConstantValue) value);
-         if (SymbolTypeBasic.BYTE.equals(type)) {
-            String name = "coby" + nextConstByteIdx++;
-            bindings.put(name, value);
-            return name;
-         } else if (SymbolTypeBasic.WORD.equals(type)) {
-            String name = "cowo" + nextConstByteIdx++;
-            bindings.put(name, value);
-            return name;
-         } else if (type instanceof SymbolTypePointer) {
-            String name = "cowo" + nextConstByteIdx++;
-            bindings.put(name, value);
-            return name;
-         } else {
-            throw new RuntimeException("Unhandled constant type " + type);
-         }
-      } else if (value instanceof Label) {
-         String name = "la" + nextLabelIdx++;
-         bindings.put(name, value);
-         return name;
-      }
-      throw new RuntimeException("Binding of value type not supported " + value);
    }
 
    /**
@@ -392,7 +55,7 @@ public class AsmFragment {
    public AsmParameter getBoundValue(String name) {
       Value boundValue = getBinding(name);
       if (boundValue == null) {
-         throw new RuntimeException("Binding '" + name + "' not found in fragment " + signature + ".asm");
+         throw new RuntimeException("Binding '" + name + "' not found in fragment " + name + ".asm");
       }
       if (boundValue instanceof Variable) {
          Variable boundVar = (Variable) boundValue;
@@ -404,12 +67,12 @@ public class AsmFragment {
          }
       } else if (boundValue instanceof ConstantVar) {
          ConstantVar constantVar = (ConstantVar) boundValue;
-         String constantValueAsm = getAsmConstant(program, constantVar.getRef(), 99, getCodeScope());
+         String constantValueAsm = getAsmConstant(program, constantVar.getRef(), 99, codeScopeRef);
          boolean constantValueZp = SymbolTypeBasic.BYTE.equals(constantVar.getType(program.getScope()));
          return new AsmParameter(constantValueAsm, constantValueZp);
       } else if (boundValue instanceof ConstantValue) {
          ConstantValue boundConst = (ConstantValue) boundValue;
-         String constantValueAsm = getAsmConstant(program, boundConst, 99, getCodeScope());
+         String constantValueAsm = getAsmConstant(program, boundConst, 99, codeScopeRef);
          boolean constantValueZp = SymbolTypeBasic.BYTE.equals(boundConst.getType(program.getScope()));
          return new AsmParameter(constantValueAsm, constantValueZp);
       } else if (boundValue instanceof Label) {
@@ -429,11 +92,11 @@ public class AsmFragment {
     *
     * @return The ASM string representing the constant value
     */
-   public static String getAsmConstant(Program program, ConstantValue value, int precedence, Scope codeScope) {
+   public static String getAsmConstant(Program program, ConstantValue value, int precedence, ScopeRef codeScope) {
       if (value instanceof ConstantRef) {
          ConstantVar constantVar = program.getScope().getConstant((ConstantRef) value);
          String asmName = constantVar.getAsmName() == null ? constantVar.getLocalName() : constantVar.getAsmName();
-         return getAsmParamName(constantVar.getScope(), asmName, codeScope);
+         return getAsmParamName(constantVar.getScope().getRef(), asmName, codeScope);
       } else if (value instanceof ConstantInteger) {
          return getAsmNumber(((ConstantInteger) value).getNumber());
       } else if (value instanceof ConstantChar) {
@@ -481,9 +144,9 @@ public class AsmFragment {
     * @return The ASM parameter to use in the ASM code
     */
    private String getAsmParamName(Variable boundVar) {
-      Scope varScope = boundVar.getScope();
+      ScopeRef varScopeRef = boundVar.getScope().getRef();
       String asmName = boundVar.getAsmName() == null ? boundVar.getLocalName() : boundVar.getAsmName();
-      return getAsmParamName(varScope, asmName, getCodeScope());
+      return getAsmParamName(varScopeRef, asmName, codeScopeRef);
    }
 
    /**
@@ -492,21 +155,21 @@ public class AsmFragment {
     * @return The ASM parameter to use in the ASM code
     */
    private String getAsmParamName(ConstantVar boundVar) {
-      Scope varScope = boundVar.getScope();
+      ScopeRef varScopeRef = boundVar.getScope().getRef();
       String asmName = boundVar.getAsmName() == null ? boundVar.getLocalName() : boundVar.getAsmName();
-      return getAsmParamName(varScope, asmName, getCodeScope());
+      return getAsmParamName(varScopeRef, asmName, codeScopeRef);
    }
 
    /**
     * Get the ASM parameter for a specific bound constant/ variable
-    * @param varScope The scope containing the var/const
+    * @param varScopeRef The scope containing the var/const
     * @param asmName The ASM name of the variable (local name or specific ASM name).
-    * @param codeScope The scope containing the code being generated. Used for adding scope to the name when needed (eg. line.x1 when referencing x1 variable inside line scope from outside line scope).
+    * @param codeScopeRef The scope containing the code being generated. Used for adding scope to the name when needed (eg. line.x1 when referencing x1 variable inside line scope from outside line scope).
     * @return The ASM parameter to use in the ASM code
     */
-   private static String getAsmParamName(Scope varScope, String asmName, Scope codeScope) {
-      if (!varScope.equals(codeScope) && varScope.getRef().getFullName().length() > 0) {
-         String param = varScope.getFullName() + "." + asmName
+   private static String getAsmParamName(ScopeRef varScopeRef, String asmName, ScopeRef codeScopeRef) {
+      if (!varScopeRef.equals(codeScopeRef) && varScopeRef.getFullName().length() > 0) {
+         String param = varScopeRef.getFullName() + "." + asmName
                .replace('@', 'b')
                .replace(':', '_')
                .replace("#","_")
@@ -520,6 +183,9 @@ public class AsmFragment {
       }
    }
 
+   public String getName() {
+      return name;
+   }
 
    /** A parameter of an ASM instruction from a bound value. */
    public static class AsmParameter {
@@ -541,27 +207,24 @@ public class AsmFragment {
       }
    }
 
-
    /**
     * Generate assembler code for the assembler fragment.
     *
     * @param asm The assembler sequence to generate into.
     */
    public void generate(AsmProgram asm) {
-      String signature = this.getSignature();
-      Asm6502Parser.FileContext fragmentFile = AsmFragmentManager.getFragment(signature);
-      AsmSequenceGenerator asmSequenceGenerator = new AsmSequenceGenerator(signature, this, asm);
+      AsmSequenceGenerator asmSequenceGenerator = new AsmSequenceGenerator(name, this, asm);
       asmSequenceGenerator.generate(fragmentFile);
    }
 
    private static class AsmSequenceGenerator extends Asm6502BaseVisitor {
 
-      private String signature;
+      private String name;
       private AsmProgram program;
       private AsmFragment bindings;
 
-      public AsmSequenceGenerator(String signature, AsmFragment bindings, AsmProgram program) {
-         this.signature = signature;
+      public AsmSequenceGenerator(String name, AsmFragment bindings, AsmProgram program) {
+         this.name = name;
          this.bindings = bindings;
          this.program = program;
       }
@@ -604,7 +267,7 @@ public class AsmFragment {
          if (instruction != null) {
             program.addLine(instruction);
          } else {
-            throw new RuntimeException("Error parsing ASM fragment line in dk/camelot64/kickc/fragment/asm/" + signature + ".asm\n - Line: " + ctx.getText());
+            throw new RuntimeException("Error parsing ASM fragment line in dk/camelot64/kickc/fragment/asm/" + name + ".asm\n - Line: " + ctx.getText());
          }
          return null;
       }
@@ -657,7 +320,7 @@ public class AsmFragment {
                parameter.getParam(),
                parameter.isZp());
          if (type == null) {
-            throw new RuntimeException("Error in " + signature + ".asm line " + ctx.getStart().getLine() + " - Instruction type unknown " + mnemonic + " " + addressingMode + " " + parameter);
+            throw new RuntimeException("Error in " + name + ".asm line " + ctx.getStart().getLine() + " - Instruction type unknown " + mnemonic + " " + addressingMode + " " + parameter);
          }
          return new AsmInstruction(type, parameter.getParam());
       }
@@ -697,21 +360,6 @@ public class AsmFragment {
       public AsmParameter visitExprReplace(Asm6502Parser.ExprReplaceContext ctx) {
          String replaceName = ctx.NAME().getSymbol().getText();
          return bindings.getBoundValue(replaceName);
-      }
-   }
-
-
-   public static class UnknownFragmentException extends RuntimeException {
-
-      private String fragmentSignature;
-
-      public UnknownFragmentException(String signature) {
-         super("Fragment not found " + signature + ".asm");
-         this.fragmentSignature = signature;
-      }
-
-      public String getFragmentSignature() {
-         return fragmentSignature;
       }
    }
 

@@ -3,6 +3,7 @@ package dk.camelot64.kickc.passes;
 import dk.camelot64.kickc.fragment.AsmFragment;
 import dk.camelot64.kickc.asm.AsmProgram;
 import dk.camelot64.kickc.asm.AsmSegment;
+import dk.camelot64.kickc.fragment.AsmFragmentManager;
 import dk.camelot64.kickc.model.*;
 
 import java.util.*;
@@ -127,7 +128,7 @@ public class Pass4RegisterUpliftCombinations extends Pass2Base {
       // Generate ASM
       try {
          new Pass4CodeGeneration(program).generate();
-      } catch (AsmFragment.UnknownFragmentException e) {
+      } catch (AsmFragmentManager.UnknownFragmentException e) {
          unknownFragments.add(e.getFragmentSignature());
          if (program.getLog().isVerboseUplift()) {
             StringBuilder msg = new StringBuilder();

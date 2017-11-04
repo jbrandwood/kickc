@@ -3,6 +3,7 @@ package dk.camelot64.kickc.passes;
 import dk.camelot64.kickc.fragment.AsmFragment;
 import dk.camelot64.kickc.asm.AsmProgram;
 import dk.camelot64.kickc.asm.parser.AsmClobber;
+import dk.camelot64.kickc.fragment.AsmFragmentManager;
 import dk.camelot64.kickc.model.*;
 
 import java.util.*;
@@ -135,7 +136,7 @@ public class Pass4RegisterUpliftPotentialRegisterAnalysis extends Pass2Base {
          Pass4CodeGeneration.AsmCodegenAluState aluState = new Pass4CodeGeneration.AsmCodegenAluState();
          try {
             (new Pass4CodeGeneration(getProgram())).generateStatementAsm(asm, block, statement, aluState, false);
-         } catch (AsmFragment.UnknownFragmentException e) {
+         } catch (AsmFragmentManager.UnknownFragmentException e) {
             unknownFragments.add(e.getFragmentSignature());
             StringBuilder msg = new StringBuilder();
             msg.append("Potential register analysis " + statement );

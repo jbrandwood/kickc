@@ -1,3 +1,6 @@
+.pc = $801 "Basic"
+:BasicUpstart(main)
+.pc = $80d "Program"
   .label screen = 3
   jsr main
 main: {

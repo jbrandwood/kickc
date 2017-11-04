@@ -1,3 +1,6 @@
+.pc = $801 "Basic"
+:BasicUpstart(main)
+.pc = $80d "Program"
   .const COLS = $d800
   .const BGCOL = $d020
   .const FGCOL = $d021
@@ -243,10 +246,10 @@ line_ydxi: {
     rts
 }
 plot: {
-    .label _5 = 31
-    .label plotter_x = 27
-    .label plotter_y = 29
-    .label plotter = 27
+    .label _5 = $1f
+    .label plotter_x = $1b
+    .label plotter_y = $1d
+    .label plotter = $1b
     lda plot_xhi,x
     sta plotter_x+1
     lda #<0
@@ -275,12 +278,12 @@ plot: {
     rts
 }
 line_xdyi: {
-    .label x = 12
-    .label y = 13
-    .label x1 = 11
-    .label xd = 10
+    .label x = $c
+    .label y = $d
+    .label x1 = $b
+    .label xd = $a
     .label yd = 9
-    .label e = 14
+    .label e = $e
     lda yd
     lsr
     sta e
@@ -310,12 +313,12 @@ line_xdyi: {
     rts
 }
 line_ydxd: {
-    .label y = 19
-    .label x = 18
-    .label y1 = 17
-    .label yd = 16
-    .label xd = 15
-    .label e = 20
+    .label y = $13
+    .label x = $12
+    .label y1 = $11
+    .label yd = $10
+    .label xd = $f
+    .label e = $14
     lda xd
     lsr
     sta e
@@ -345,12 +348,12 @@ line_ydxd: {
     rts
 }
 line_xdyd: {
-    .label x = 24
-    .label y = 25
-    .label x1 = 23
-    .label xd = 22
-    .label yd = 21
-    .label e = 26
+    .label x = $18
+    .label y = $19
+    .label x1 = $17
+    .label xd = $16
+    .label yd = $15
+    .label e = $1a
     lda yd
     lsr
     sta e
@@ -381,7 +384,7 @@ line_xdyd: {
 }
 init_plot_tables: {
     .label _6 = 2
-    .label yoffs = 27
+    .label yoffs = $1b
     ldy #$80
     ldx #0
   b1:
@@ -435,8 +438,8 @@ init_plot_tables: {
     jmp b2
 }
 init_screen: {
-    .label b = 27
-    .label c = 27
+    .label b = $1b
+    .label c = $1b
     lda #<BITMAP
     sta b
     lda #>BITMAP

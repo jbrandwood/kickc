@@ -1,3 +1,6 @@
+.pc = $801 "Basic"
+:BasicUpstart(main)
+.pc = $80d "Program"
   .const SCREEN1 = $400
   .const SCREEN2 = $500
   jsr main

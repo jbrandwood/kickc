@@ -1,3 +1,6 @@
+.pc = $801 "Basic"
+:BasicUpstart(main)
+.pc = $80d "Program"
   .const SCREEN = $400
   .const COLORS = $d800
   .const FILL = $e6
@@ -119,7 +122,7 @@ findcol: {
     .label x = 8
     .label y = 9
     .label xp = 7
-    .label yp = 10
+    .label yp = $a
     .label diff = 7
     .label mindiff = 6
     ldy #0

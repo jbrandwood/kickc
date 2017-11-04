@@ -1,3 +1,6 @@
+.pc = $801 "Basic"
+:BasicUpstart(main)
+.pc = $80d "Program"
   .const D011 = $d011
   .const RST8 = $80
   .const ECM = $40

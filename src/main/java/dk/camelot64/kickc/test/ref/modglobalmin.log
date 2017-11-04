@@ -1,8 +1,6 @@
 byte cnt = 0;
 byte[256] SCREEN=$0400;
 
-main();
-
 void main() {
   inccnt();
   SCREEN[0]=cnt++;
@@ -23,7 +21,6 @@ Adding pre/post-modifier (byte) cnt ← ++ (byte) cnt
 PROGRAM
   (byte) cnt ← (byte) 0
   (byte[256]) SCREEN ← (word) 1024
-  (void~) $0 ← call main 
 proc (void()) main()
   (void~) main::$0 ← call inccnt 
   *((byte[256]) SCREEN + (byte) 0) ← (byte) cnt
@@ -39,9 +36,9 @@ proc (void()) inccnt()
 inccnt::@return:
   return 
 endproc // inccnt()
+  call main 
 
 SYMBOLS
-(void~) $0
 (byte[256]) SCREEN
 (byte) cnt
 (void()) inccnt()
@@ -55,7 +52,6 @@ INITIAL CONTROL FLOW GRAPH
 @begin: scope:[]  from
   (byte) cnt ← (byte) 0
   (byte[256]) SCREEN ← (word) 1024
-  (void~) $0 ← call main 
   to:@1
 main: scope:[main]  from
   (void~) main::$0 ← call inccnt 
@@ -77,17 +73,16 @@ inccnt::@return: scope:[inccnt]  from inccnt
   return 
   to:@return
 @2: scope:[]  from @1
+  call main 
   to:@end
 @end: scope:[]  from @2
 
 Removing empty block @1
-Removing empty block @2
 CONTROL FLOW GRAPH
 @begin: scope:[]  from
   (byte) cnt ← (byte) 0
   (byte[256]) SCREEN ← (word) 1024
-  (void~) $0 ← call main 
-  to:@end
+  to:@2
 main: scope:[main]  from
   (void~) main::$0 ← call inccnt 
   *((byte[256]) SCREEN + (byte) 0) ← (byte) cnt
@@ -105,7 +100,10 @@ inccnt: scope:[inccnt]  from
 inccnt::@return: scope:[inccnt]  from inccnt
   return 
   to:@return
-@end: scope:[]  from @begin
+@2: scope:[]  from @begin
+  call main 
+  to:@end
+@end: scope:[]  from @2
 
 PROCEDURE MODIFY VARIABLE ANALYSIS
 main modifies cnt
@@ -115,12 +113,8 @@ CONTROL FLOW GRAPH WITH ASSIGNMENT CALL
 @begin: scope:[]  from
   (byte) cnt ← (byte) 0
   (byte[256]) SCREEN ← (word) 1024
-  call main param-assignment
-  to:@3
-@3: scope:[]  from @begin
-  (byte) cnt ← (byte) cnt
-  to:@end
-main: scope:[main]  from @begin
+  to:@2
+main: scope:[main]  from @2
   call inccnt param-assignment
   to:main::@1
 main::@1: scope:[main]  from main
@@ -145,103 +139,119 @@ inccnt::@return: scope:[inccnt]  from inccnt
   (byte) cnt ← (byte) cnt
   return 
   to:@return
+@2: scope:[]  from @begin
+  call main param-assignment
+  to:@3
+@3: scope:[]  from @2
+  (byte) cnt ← (byte) cnt
+  to:@end
 @end: scope:[]  from @3
 
+Completing Phi functions...
 Completing Phi functions...
 Completing Phi functions...
 CONTROL FLOW GRAPH SSA
 @begin: scope:[]  from
   (byte) cnt#0 ← (byte) 0
   (byte[256]) SCREEN#0 ← (word) 1024
-  call main param-assignment
-  to:@3
-@3: scope:[]  from @begin
-  (byte) cnt#9 ← phi( @begin/(byte) cnt#0 )
-  (byte) cnt#1 ← (byte) cnt#9
-  to:@end
-main: scope:[main]  from @begin
-  (byte[256]) SCREEN#3 ← phi( @begin/(byte[256]) SCREEN#0 )
-  (byte) cnt#15 ← phi( @begin/(byte) cnt#0 )
+  to:@2
+main: scope:[main]  from @2
+  (byte[256]) SCREEN#3 ← phi( @2/(byte[256]) SCREEN#4 )
+  (byte) cnt#15 ← phi( @2/(byte) cnt#16 )
   call inccnt param-assignment
   to:main::@1
 main::@1: scope:[main]  from main
   (byte[256]) SCREEN#1 ← phi( main/(byte[256]) SCREEN#3 )
-  (byte) cnt#10 ← phi( main/(byte) cnt#15 )
-  (byte) cnt#2 ← (byte) cnt#10
-  *((byte[256]) SCREEN#1 + (byte) 0) ← (byte) cnt#2
-  (byte) cnt#3 ← ++ (byte) cnt#2
+  (byte) cnt#9 ← phi( main/(byte) cnt#15 )
+  (byte) cnt#1 ← (byte) cnt#9
+  *((byte[256]) SCREEN#1 + (byte) 0) ← (byte) cnt#1
+  (byte) cnt#2 ← ++ (byte) cnt#1
   call inccnt param-assignment
   to:main::@2
 main::@2: scope:[main]  from main::@1
   (byte[256]) SCREEN#2 ← phi( main::@1/(byte[256]) SCREEN#1 )
-  (byte) cnt#11 ← phi( main::@1/(byte) cnt#3 )
-  (byte) cnt#4 ← (byte) cnt#11
-  (byte) cnt#5 ← ++ (byte) cnt#4
-  *((byte[256]) SCREEN#2 + (byte) 1) ← (byte) cnt#5
+  (byte) cnt#10 ← phi( main::@1/(byte) cnt#2 )
+  (byte) cnt#3 ← (byte) cnt#10
+  (byte) cnt#4 ← ++ (byte) cnt#3
+  *((byte[256]) SCREEN#2 + (byte) 1) ← (byte) cnt#4
   to:main::@return
 main::@return: scope:[main]  from main::@2
-  (byte) cnt#12 ← phi( main::@2/(byte) cnt#5 )
-  (byte) cnt#6 ← (byte) cnt#12
+  (byte) cnt#11 ← phi( main::@2/(byte) cnt#4 )
+  (byte) cnt#5 ← (byte) cnt#11
   return 
   to:@return
 inccnt: scope:[inccnt]  from main main::@1
-  (byte) cnt#13 ← phi( main/(byte) cnt#15 main::@1/(byte) cnt#3 )
-  (byte) cnt#7 ← ++ (byte) cnt#13
+  (byte) cnt#12 ← phi( main/(byte) cnt#15 main::@1/(byte) cnt#2 )
+  (byte) cnt#6 ← ++ (byte) cnt#12
   to:inccnt::@return
 inccnt::@return: scope:[inccnt]  from inccnt
-  (byte) cnt#14 ← phi( inccnt/(byte) cnt#7 )
-  (byte) cnt#8 ← (byte) cnt#14
+  (byte) cnt#13 ← phi( inccnt/(byte) cnt#6 )
+  (byte) cnt#7 ← (byte) cnt#13
   return 
   to:@return
+@2: scope:[]  from @begin
+  (byte[256]) SCREEN#4 ← phi( @begin/(byte[256]) SCREEN#0 )
+  (byte) cnt#16 ← phi( @begin/(byte) cnt#0 )
+  call main param-assignment
+  to:@3
+@3: scope:[]  from @2
+  (byte) cnt#14 ← phi( @2/(byte) cnt#16 )
+  (byte) cnt#8 ← (byte) cnt#14
+  to:@end
 @end: scope:[]  from @3
 
 CONTROL FLOW GRAPH WITH ASSIGNMENT CALL & RETURN
 @begin: scope:[]  from
   (byte) cnt#0 ← (byte) 0
   (byte[256]) SCREEN#0 ← (word) 1024
-  call main param-assignment
-  to:@3
-@3: scope:[]  from @begin
-  (byte) cnt#9 ← phi( @begin/(byte) cnt#6 )
-  (byte) cnt#1 ← (byte) cnt#9
-  to:@end
-main: scope:[main]  from @begin
-  (byte[256]) SCREEN#3 ← phi( @begin/(byte[256]) SCREEN#0 )
-  (byte) cnt#15 ← phi( @begin/(byte) cnt#0 )
+  to:@2
+main: scope:[main]  from @2
+  (byte[256]) SCREEN#3 ← phi( @2/(byte[256]) SCREEN#4 )
+  (byte) cnt#15 ← phi( @2/(byte) cnt#16 )
   call inccnt param-assignment
   to:main::@1
 main::@1: scope:[main]  from main
   (byte[256]) SCREEN#1 ← phi( main/(byte[256]) SCREEN#3 )
-  (byte) cnt#10 ← phi( main/(byte) cnt#8 )
-  (byte) cnt#2 ← (byte) cnt#10
-  *((byte[256]) SCREEN#1 + (byte) 0) ← (byte) cnt#2
-  (byte) cnt#3 ← ++ (byte) cnt#2
+  (byte) cnt#9 ← phi( main/(byte) cnt#7 )
+  (byte) cnt#1 ← (byte) cnt#9
+  *((byte[256]) SCREEN#1 + (byte) 0) ← (byte) cnt#1
+  (byte) cnt#2 ← ++ (byte) cnt#1
   call inccnt param-assignment
   to:main::@2
 main::@2: scope:[main]  from main::@1
   (byte[256]) SCREEN#2 ← phi( main::@1/(byte[256]) SCREEN#1 )
-  (byte) cnt#11 ← phi( main::@1/(byte) cnt#8 )
-  (byte) cnt#4 ← (byte) cnt#11
-  (byte) cnt#5 ← ++ (byte) cnt#4
-  *((byte[256]) SCREEN#2 + (byte) 1) ← (byte) cnt#5
+  (byte) cnt#10 ← phi( main::@1/(byte) cnt#7 )
+  (byte) cnt#3 ← (byte) cnt#10
+  (byte) cnt#4 ← ++ (byte) cnt#3
+  *((byte[256]) SCREEN#2 + (byte) 1) ← (byte) cnt#4
   to:main::@return
 main::@return: scope:[main]  from main::@2
-  (byte) cnt#12 ← phi( main::@2/(byte) cnt#5 )
-  (byte) cnt#6 ← (byte) cnt#12
+  (byte) cnt#11 ← phi( main::@2/(byte) cnt#4 )
+  (byte) cnt#5 ← (byte) cnt#11
   return 
   to:@return
 inccnt: scope:[inccnt]  from main main::@1
-  (byte) cnt#13 ← phi( main/(byte) cnt#15 main::@1/(byte) cnt#3 )
-  (byte) cnt#7 ← ++ (byte) cnt#13
+  (byte) cnt#12 ← phi( main/(byte) cnt#15 main::@1/(byte) cnt#2 )
+  (byte) cnt#6 ← ++ (byte) cnt#12
   to:inccnt::@return
 inccnt::@return: scope:[inccnt]  from inccnt
-  (byte) cnt#14 ← phi( inccnt/(byte) cnt#7 )
-  (byte) cnt#8 ← (byte) cnt#14
+  (byte) cnt#13 ← phi( inccnt/(byte) cnt#6 )
+  (byte) cnt#7 ← (byte) cnt#13
   return 
   to:@return
+@2: scope:[]  from @begin
+  (byte[256]) SCREEN#4 ← phi( @begin/(byte[256]) SCREEN#0 )
+  (byte) cnt#16 ← phi( @begin/(byte) cnt#0 )
+  call main param-assignment
+  to:@3
+@3: scope:[]  from @2
+  (byte) cnt#14 ← phi( @2/(byte) cnt#5 )
+  (byte) cnt#8 ← (byte) cnt#14
+  to:@end
 @end: scope:[]  from @3
 
 INITIAL SSA SYMBOL TABLE
+(label) @2
 (label) @3
 (label) @begin
 (label) @end
@@ -250,6 +260,7 @@ INITIAL SSA SYMBOL TABLE
 (byte[256]) SCREEN#1
 (byte[256]) SCREEN#2
 (byte[256]) SCREEN#3
+(byte[256]) SCREEN#4
 (byte) cnt
 (byte) cnt#0
 (byte) cnt#1
@@ -259,6 +270,7 @@ INITIAL SSA SYMBOL TABLE
 (byte) cnt#13
 (byte) cnt#14
 (byte) cnt#15
+(byte) cnt#16
 (byte) cnt#2
 (byte) cnt#3
 (byte) cnt#4
@@ -274,41 +286,43 @@ INITIAL SSA SYMBOL TABLE
 (label) main::@2
 (label) main::@return
 
-Alias (byte) cnt#1 = (byte) cnt#9 (byte) cnt#6 (byte) cnt#12 (byte) cnt#5 
-Alias (byte) cnt#0 = (byte) cnt#15 
-Alias (byte[256]) SCREEN#0 = (byte[256]) SCREEN#3 (byte[256]) SCREEN#1 (byte[256]) SCREEN#2 
-Alias (byte) cnt#10 = (byte) cnt#8 (byte) cnt#2 (byte) cnt#11 (byte) cnt#4 (byte) cnt#14 (byte) cnt#7 
+Alias (byte) cnt#0 = (byte) cnt#15 (byte) cnt#16 
+Alias (byte[256]) SCREEN#0 = (byte[256]) SCREEN#3 (byte[256]) SCREEN#4 (byte[256]) SCREEN#1 (byte[256]) SCREEN#2 
+Alias (byte) cnt#1 = (byte) cnt#9 (byte) cnt#7 (byte) cnt#10 (byte) cnt#3 (byte) cnt#13 (byte) cnt#6 
+Alias (byte) cnt#11 = (byte) cnt#4 (byte) cnt#5 (byte) cnt#14 (byte) cnt#8 
 Succesful SSA optimization Pass2AliasElimination
 CONTROL FLOW GRAPH
 @begin: scope:[]  from
   (byte) cnt#0 ← (byte) 0
   (byte[256]) SCREEN#0 ← (word) 1024
-  call main param-assignment
-  to:@3
-@3: scope:[]  from @begin
-  to:@end
-main: scope:[main]  from @begin
+  to:@2
+main: scope:[main]  from @2
   call inccnt param-assignment
   to:main::@1
 main::@1: scope:[main]  from main
-  *((byte[256]) SCREEN#0 + (byte) 0) ← (byte) cnt#10
-  (byte) cnt#3 ← ++ (byte) cnt#10
+  *((byte[256]) SCREEN#0 + (byte) 0) ← (byte) cnt#1
+  (byte) cnt#2 ← ++ (byte) cnt#1
   call inccnt param-assignment
   to:main::@2
 main::@2: scope:[main]  from main::@1
-  (byte) cnt#1 ← ++ (byte) cnt#10
-  *((byte[256]) SCREEN#0 + (byte) 1) ← (byte) cnt#1
+  (byte) cnt#11 ← ++ (byte) cnt#1
+  *((byte[256]) SCREEN#0 + (byte) 1) ← (byte) cnt#11
   to:main::@return
 main::@return: scope:[main]  from main::@2
   return 
   to:@return
 inccnt: scope:[inccnt]  from main main::@1
-  (byte) cnt#13 ← phi( main/(byte) cnt#0 main::@1/(byte) cnt#3 )
-  (byte) cnt#10 ← ++ (byte) cnt#13
+  (byte) cnt#12 ← phi( main/(byte) cnt#0 main::@1/(byte) cnt#2 )
+  (byte) cnt#1 ← ++ (byte) cnt#12
   to:inccnt::@return
 inccnt::@return: scope:[inccnt]  from inccnt
   return 
   to:@return
+@2: scope:[]  from @begin
+  call main param-assignment
+  to:@3
+@3: scope:[]  from @2
+  to:@end
 @end: scope:[]  from @3
 
 Constant (const byte) cnt#0 = 0
@@ -316,32 +330,34 @@ Constant (const byte[256]) SCREEN#0 = 1024
 Succesful SSA optimization Pass2ConstantIdentification
 CONTROL FLOW GRAPH
 @begin: scope:[]  from
-  call main param-assignment
-  to:@3
-@3: scope:[]  from @begin
-  to:@end
-main: scope:[main]  from @begin
+  to:@2
+main: scope:[main]  from @2
   call inccnt param-assignment
   to:main::@1
 main::@1: scope:[main]  from main
-  *((const byte[256]) SCREEN#0 + (byte) 0) ← (byte) cnt#10
-  (byte) cnt#3 ← ++ (byte) cnt#10
+  *((const byte[256]) SCREEN#0 + (byte) 0) ← (byte) cnt#1
+  (byte) cnt#2 ← ++ (byte) cnt#1
   call inccnt param-assignment
   to:main::@2
 main::@2: scope:[main]  from main::@1
-  (byte) cnt#1 ← ++ (byte) cnt#10
-  *((const byte[256]) SCREEN#0 + (byte) 1) ← (byte) cnt#1
+  (byte) cnt#11 ← ++ (byte) cnt#1
+  *((const byte[256]) SCREEN#0 + (byte) 1) ← (byte) cnt#11
   to:main::@return
 main::@return: scope:[main]  from main::@2
   return 
   to:@return
 inccnt: scope:[inccnt]  from main main::@1
-  (byte) cnt#13 ← phi( main/(const byte) cnt#0 main::@1/(byte) cnt#3 )
-  (byte) cnt#10 ← ++ (byte) cnt#13
+  (byte) cnt#12 ← phi( main/(const byte) cnt#0 main::@1/(byte) cnt#2 )
+  (byte) cnt#1 ← ++ (byte) cnt#12
   to:inccnt::@return
 inccnt::@return: scope:[inccnt]  from inccnt
   return 
   to:@return
+@2: scope:[]  from @begin
+  call main param-assignment
+  to:@3
+@3: scope:[]  from @2
+  to:@end
 @end: scope:[]  from @3
 
 Consolidated assigned array index constant in assignment *(SCREEN#0+0)
@@ -349,63 +365,67 @@ Consolidated assigned array index constant in assignment *(SCREEN#0+1)
 Succesful SSA optimization Pass2ConstantAdditionElimination
 CONTROL FLOW GRAPH
 @begin: scope:[]  from
-  call main param-assignment
-  to:@3
-@3: scope:[]  from @begin
-  to:@end
-main: scope:[main]  from @begin
+  to:@2
+main: scope:[main]  from @2
   call inccnt param-assignment
   to:main::@1
 main::@1: scope:[main]  from main
-  *((const byte[256]) SCREEN#0+(byte) 0) ← (byte) cnt#10
-  (byte) cnt#3 ← ++ (byte) cnt#10
+  *((const byte[256]) SCREEN#0+(byte) 0) ← (byte) cnt#1
+  (byte) cnt#2 ← ++ (byte) cnt#1
   call inccnt param-assignment
   to:main::@2
 main::@2: scope:[main]  from main::@1
-  (byte) cnt#1 ← ++ (byte) cnt#10
-  *((const byte[256]) SCREEN#0+(byte) 1) ← (byte) cnt#1
+  (byte) cnt#11 ← ++ (byte) cnt#1
+  *((const byte[256]) SCREEN#0+(byte) 1) ← (byte) cnt#11
   to:main::@return
 main::@return: scope:[main]  from main::@2
   return 
   to:@return
 inccnt: scope:[inccnt]  from main main::@1
-  (byte) cnt#13 ← phi( main/(const byte) cnt#0 main::@1/(byte) cnt#3 )
-  (byte) cnt#10 ← ++ (byte) cnt#13
+  (byte) cnt#12 ← phi( main/(const byte) cnt#0 main::@1/(byte) cnt#2 )
+  (byte) cnt#1 ← ++ (byte) cnt#12
   to:inccnt::@return
 inccnt::@return: scope:[inccnt]  from inccnt
   return 
   to:@return
+@2: scope:[]  from @begin
+  call main param-assignment
+  to:@3
+@3: scope:[]  from @2
+  to:@end
 @end: scope:[]  from @3
 
 Culled Empty Block (label) @3
 Succesful SSA optimization Pass2CullEmptyBlocks
 CONTROL FLOW GRAPH
 @begin: scope:[]  from
-  call main param-assignment
-  to:@end
-main: scope:[main]  from @begin
+  to:@2
+main: scope:[main]  from @2
   call inccnt param-assignment
   to:main::@1
 main::@1: scope:[main]  from main
-  *((const byte[256]) SCREEN#0+(byte) 0) ← (byte) cnt#10
-  (byte) cnt#3 ← ++ (byte) cnt#10
+  *((const byte[256]) SCREEN#0+(byte) 0) ← (byte) cnt#1
+  (byte) cnt#2 ← ++ (byte) cnt#1
   call inccnt param-assignment
   to:main::@2
 main::@2: scope:[main]  from main::@1
-  (byte) cnt#1 ← ++ (byte) cnt#10
-  *((const byte[256]) SCREEN#0+(byte) 1) ← (byte) cnt#1
+  (byte) cnt#11 ← ++ (byte) cnt#1
+  *((const byte[256]) SCREEN#0+(byte) 1) ← (byte) cnt#11
   to:main::@return
 main::@return: scope:[main]  from main::@2
   return 
   to:@return
 inccnt: scope:[inccnt]  from main main::@1
-  (byte) cnt#13 ← phi( main/(const byte) cnt#0 main::@1/(byte) cnt#3 )
-  (byte) cnt#10 ← ++ (byte) cnt#13
+  (byte) cnt#12 ← phi( main/(const byte) cnt#0 main::@1/(byte) cnt#2 )
+  (byte) cnt#1 ← ++ (byte) cnt#12
   to:inccnt::@return
 inccnt::@return: scope:[inccnt]  from inccnt
   return 
   to:@return
-@end: scope:[]  from @begin
+@2: scope:[]  from @begin
+  call main param-assignment
+  to:@end
+@end: scope:[]  from @2
 
 Inlining constant with var siblings (const byte) cnt#0
 Inlining constant with var siblings (const byte) cnt#0
@@ -415,42 +435,45 @@ Constant inlined cnt#0 = (byte) 0
 Succesful SSA optimization Pass2ConstantInlining
 CONTROL FLOW GRAPH
 @begin: scope:[]  from
-  call main param-assignment
-  to:@end
-main: scope:[main]  from @begin
+  to:@2
+main: scope:[main]  from @2
   call inccnt param-assignment
   to:main::@1
 main::@1: scope:[main]  from main
-  *((const byte[256]) SCREEN#0+(byte) 0) ← (byte) cnt#10
-  (byte) cnt#3 ← ++ (byte) cnt#10
+  *((const byte[256]) SCREEN#0+(byte) 0) ← (byte) cnt#1
+  (byte) cnt#2 ← ++ (byte) cnt#1
   call inccnt param-assignment
   to:main::@2
 main::@2: scope:[main]  from main::@1
-  (byte) cnt#1 ← ++ (byte) cnt#10
-  *((const byte[256]) SCREEN#0+(byte) 1) ← (byte) cnt#1
+  (byte) cnt#11 ← ++ (byte) cnt#1
+  *((const byte[256]) SCREEN#0+(byte) 1) ← (byte) cnt#11
   to:main::@return
 main::@return: scope:[main]  from main::@2
   return 
   to:@return
 inccnt: scope:[inccnt]  from main main::@1
-  (byte) cnt#13 ← phi( main/(byte) 0 main::@1/(byte) cnt#3 )
-  (byte) cnt#10 ← ++ (byte) cnt#13
+  (byte) cnt#12 ← phi( main/(byte) 0 main::@1/(byte) cnt#2 )
+  (byte) cnt#1 ← ++ (byte) cnt#12
   to:inccnt::@return
 inccnt::@return: scope:[inccnt]  from inccnt
   return 
   to:@return
-@end: scope:[]  from @begin
+@2: scope:[]  from @begin
+  call main param-assignment
+  to:@end
+@end: scope:[]  from @2
 
 FINAL SYMBOL TABLE
+(label) @2
 (label) @begin
 (label) @end
 (byte[256]) SCREEN
 (const byte[256]) SCREEN#0 = (word) 1024
 (byte) cnt
 (byte) cnt#1
-(byte) cnt#10
-(byte) cnt#13
-(byte) cnt#3
+(byte) cnt#11
+(byte) cnt#12
+(byte) cnt#2
 (void()) inccnt()
 (label) inccnt::@return
 (void()) main()
@@ -458,32 +481,34 @@ FINAL SYMBOL TABLE
 (label) main::@2
 (label) main::@return
 
-Block Sequence Planned @begin @end main main::@1 main::@2 main::@return inccnt inccnt::@return 
-Block Sequence Planned @begin @end main main::@1 main::@2 main::@return inccnt inccnt::@return 
+Block Sequence Planned @begin @2 @end main main::@1 main::@2 main::@return inccnt inccnt::@return 
+Block Sequence Planned @begin @2 @end main main::@1 main::@2 main::@return inccnt inccnt::@return 
 CONTROL FLOW GRAPH - PHI LIFTED
 @begin: scope:[]  from
+  to:@2
+@2: scope:[]  from @begin
   call main param-assignment
   to:@end
-@end: scope:[]  from @begin
-main: scope:[main]  from @begin
+@end: scope:[]  from @2
+main: scope:[main]  from @2
   call inccnt param-assignment
   to:main::@1
 main::@1: scope:[main]  from main
-  *((const byte[256]) SCREEN#0+(byte) 0) ← (byte) cnt#10
-  (byte) cnt#3 ← ++ (byte) cnt#10
-  (byte~) cnt#16 ← (byte) cnt#3
+  *((const byte[256]) SCREEN#0+(byte) 0) ← (byte) cnt#1
+  (byte) cnt#2 ← ++ (byte) cnt#1
+  (byte~) cnt#17 ← (byte) cnt#2
   call inccnt param-assignment
   to:main::@2
 main::@2: scope:[main]  from main::@1
-  (byte) cnt#1 ← ++ (byte) cnt#10
-  *((const byte[256]) SCREEN#0+(byte) 1) ← (byte) cnt#1
+  (byte) cnt#11 ← ++ (byte) cnt#1
+  *((const byte[256]) SCREEN#0+(byte) 1) ← (byte) cnt#11
   to:main::@return
 main::@return: scope:[main]  from main::@2
   return 
   to:@return
 inccnt: scope:[inccnt]  from main main::@1
-  (byte) cnt#13 ← phi( main/(byte) 0 main::@1/(byte~) cnt#16 )
-  (byte) cnt#10 ← ++ (byte) cnt#13
+  (byte) cnt#12 ← phi( main/(byte) 0 main::@1/(byte~) cnt#17 )
+  (byte) cnt#1 ← ++ (byte) cnt#12
   to:inccnt::@return
 inccnt::@return: scope:[inccnt]  from inccnt
   return 
@@ -499,80 +524,85 @@ Propagating live ranges...
 Propagating live ranges...
 CONTROL FLOW GRAPH - LIVE RANGES FOUND
 @begin: scope:[]  from
+  to:@2
+@2: scope:[]  from @begin
   [0] call main param-assignment [ ]
   to:@end
-@end: scope:[]  from @begin
-main: scope:[main]  from @begin
+@end: scope:[]  from @2
+main: scope:[main]  from @2
   [1] phi() [ ]
-  [2] call inccnt param-assignment [ cnt#10 ]
+  [2] call inccnt param-assignment [ cnt#1 ]
   to:main::@1
 main::@1: scope:[main]  from main
-  [3] *((const byte[256]) SCREEN#0+(byte) 0) ← (byte) cnt#10 [ cnt#10 ]
-  [4] (byte) cnt#3 ← ++ (byte) cnt#10 [ cnt#3 ]
-  [5] (byte~) cnt#16 ← (byte) cnt#3 [ cnt#16 ]
-  [6] call inccnt param-assignment [ cnt#10 ]
+  [3] *((const byte[256]) SCREEN#0+(byte) 0) ← (byte) cnt#1 [ cnt#1 ]
+  [4] (byte) cnt#2 ← ++ (byte) cnt#1 [ cnt#2 ]
+  [5] (byte~) cnt#17 ← (byte) cnt#2 [ cnt#17 ]
+  [6] call inccnt param-assignment [ cnt#1 ]
   to:main::@2
 main::@2: scope:[main]  from main::@1
-  [7] (byte) cnt#1 ← ++ (byte) cnt#10 [ cnt#1 ]
-  [8] *((const byte[256]) SCREEN#0+(byte) 1) ← (byte) cnt#1 [ ]
+  [7] (byte) cnt#11 ← ++ (byte) cnt#1 [ cnt#11 ]
+  [8] *((const byte[256]) SCREEN#0+(byte) 1) ← (byte) cnt#11 [ ]
   to:main::@return
 main::@return: scope:[main]  from main::@2
   [9] return  [ ]
   to:@return
 inccnt: scope:[inccnt]  from main main::@1
-  [10] (byte) cnt#13 ← phi( main/(byte) 0 main::@1/(byte~) cnt#16 ) [ cnt#13 ]
-  [11] (byte) cnt#10 ← ++ (byte) cnt#13 [ cnt#10 ]
+  [10] (byte) cnt#12 ← phi( main/(byte) 0 main::@1/(byte~) cnt#17 ) [ cnt#12 ]
+  [11] (byte) cnt#1 ← ++ (byte) cnt#12 [ cnt#1 ]
   to:inccnt::@return
 inccnt::@return: scope:[inccnt]  from inccnt
-  [12] return  [ cnt#10 ]
+  [12] return  [ cnt#1 ]
   to:@return
 
 Created 1 initial phi equivalence classes
-Coalesced [5] cnt#16 ← cnt#3
+Coalesced [5] cnt#17 ← cnt#2
 Coalesced down to 1 phi equivalence classes
-Block Sequence Planned @begin @end main main::@1 main::@2 main::@return inccnt inccnt::@return 
+Block Sequence Planned @begin @2 @end main main::@1 main::@2 main::@return inccnt inccnt::@return 
 Adding NOP phi() at start of main
 Propagating live ranges...
 Propagating live ranges...
 Propagating live ranges...
 CONTROL FLOW GRAPH - PHI MEM COALESCED
 @begin: scope:[]  from
+  to:@2
+@2: scope:[]  from @begin
   [0] call main param-assignment [ ]
   to:@end
-@end: scope:[]  from @begin
-main: scope:[main]  from @begin
+@end: scope:[]  from @2
+main: scope:[main]  from @2
   [1] phi() [ ]
-  [2] call inccnt param-assignment [ cnt#10 ]
+  [2] call inccnt param-assignment [ cnt#1 ]
   to:main::@1
 main::@1: scope:[main]  from main
-  [3] *((const byte[256]) SCREEN#0+(byte) 0) ← (byte) cnt#10 [ cnt#10 ]
-  [4] (byte) cnt#3 ← ++ (byte) cnt#10 [ cnt#3 ]
-  [5] call inccnt param-assignment [ cnt#10 ]
+  [3] *((const byte[256]) SCREEN#0+(byte) 0) ← (byte) cnt#1 [ cnt#1 ]
+  [4] (byte) cnt#2 ← ++ (byte) cnt#1 [ cnt#2 ]
+  [5] call inccnt param-assignment [ cnt#1 ]
   to:main::@2
 main::@2: scope:[main]  from main::@1
-  [6] (byte) cnt#1 ← ++ (byte) cnt#10 [ cnt#1 ]
-  [7] *((const byte[256]) SCREEN#0+(byte) 1) ← (byte) cnt#1 [ ]
+  [6] (byte) cnt#11 ← ++ (byte) cnt#1 [ cnt#11 ]
+  [7] *((const byte[256]) SCREEN#0+(byte) 1) ← (byte) cnt#11 [ ]
   to:main::@return
 main::@return: scope:[main]  from main::@2
   [8] return  [ ]
   to:@return
 inccnt: scope:[inccnt]  from main main::@1
-  [9] (byte) cnt#13 ← phi( main/(byte) 0 main::@1/(byte) cnt#3 ) [ cnt#13 ]
-  [10] (byte) cnt#10 ← ++ (byte) cnt#13 [ cnt#10 ]
+  [9] (byte) cnt#12 ← phi( main/(byte) 0 main::@1/(byte) cnt#2 ) [ cnt#12 ]
+  [10] (byte) cnt#1 ← ++ (byte) cnt#12 [ cnt#1 ]
   to:inccnt::@return
 inccnt::@return: scope:[inccnt]  from inccnt
-  [11] return  [ cnt#10 ]
+  [11] return  [ cnt#1 ]
   to:@return
 
 DOMINATORS
 @begin dominated by  @begin 
-@end dominated by  @end @begin 
-main dominated by  @begin main 
-main::@1 dominated by  @begin main::@1 main 
-main::@2 dominated by  @begin main::@2 main::@1 main 
-main::@return dominated by  main::@return @begin main::@2 main::@1 main 
-inccnt dominated by  inccnt @begin main 
-inccnt::@return dominated by  inccnt::@return inccnt @begin main 
+@2 dominated by  @2 @begin 
+@end dominated by  @2 @end @begin 
+main dominated by  @2 @begin main 
+main::@1 dominated by  @2 @begin main::@1 main 
+main::@2 dominated by  @2 @begin main::@2 main::@1 main 
+main::@return dominated by  @2 main::@return @begin main::@2 main::@1 main 
+inccnt dominated by  @2 inccnt @begin main 
+inccnt::@return dominated by  inccnt::@return @2 inccnt @begin main 
 
 NATURAL LOOPS
 
@@ -585,106 +615,114 @@ NATURAL LOOPS WITH DEPTH
 VARIABLE REGISTER WEIGHTS
 (byte[256]) SCREEN
 (byte) cnt
-(byte) cnt#1 4.0
-(byte) cnt#10 1.6
-(byte) cnt#13 4.0
-(byte) cnt#3 4.0
+(byte) cnt#1 1.6
+(byte) cnt#11 4.0
+(byte) cnt#12 4.0
+(byte) cnt#2 4.0
 (void()) inccnt()
 (void()) main()
 
 Initial phi equivalence classes
-[ cnt#13 cnt#3 ]
+[ cnt#12 cnt#2 ]
+Added variable cnt#11 to zero page equivalence class [ cnt#11 ]
 Added variable cnt#1 to zero page equivalence class [ cnt#1 ]
-Added variable cnt#10 to zero page equivalence class [ cnt#10 ]
 Complete equivalence classes
-[ cnt#13 cnt#3 ]
+[ cnt#12 cnt#2 ]
+[ cnt#11 ]
 [ cnt#1 ]
-[ cnt#10 ]
-Allocated zp ZP_BYTE:2 [ cnt#13 cnt#3 ]
-Allocated zp ZP_BYTE:3 [ cnt#1 ]
-Allocated zp ZP_BYTE:4 [ cnt#10 ]
+Allocated zp ZP_BYTE:2 [ cnt#12 cnt#2 ]
+Allocated zp ZP_BYTE:3 [ cnt#11 ]
+Allocated zp ZP_BYTE:4 [ cnt#1 ]
 INITIAL ASM
-//SEG0 Global Constants & labels
+//SEG0 Basic Upstart
+.pc = $801 "Basic"
+:BasicUpstart(main)
+.pc = $80d "Program"
+//SEG1 Global Constants & labels
   .const SCREEN = $400
-  .label cnt = 3
-  .label cnt_3 = 2
-  .label cnt_10 = 4
-  .label cnt_13 = 2
-//SEG1 @begin
+  .label cnt = 4
+  .label cnt_2 = 2
+  .label cnt_11 = 3
+  .label cnt_12 = 2
+//SEG2 @begin
 bbegin:
-//SEG2 [0] call main param-assignment [ ]
-//SEG3 [1] phi from @begin to main [phi:@begin->main]
-main_from_bbegin:
+  jmp b2
+//SEG3 @2
+b2:
+//SEG4 [0] call main param-assignment [ ]
+//SEG5 [1] phi from @2 to main [phi:@2->main]
+main_from_b2:
   jsr main
   jmp bend
-//SEG4 @end
+//SEG6 @end
 bend:
-//SEG5 main
+//SEG7 main
 main: {
-  //SEG6 [2] call inccnt param-assignment [ cnt#10 ]
-  //SEG7 [9] phi from main to inccnt [phi:main->inccnt]
+  //SEG8 [2] call inccnt param-assignment [ cnt#1 ]
+  //SEG9 [9] phi from main to inccnt [phi:main->inccnt]
   inccnt_from_main:
-  //SEG8 [9] phi (byte) cnt#13 = (byte) 0 [phi:main->inccnt#0] -- zpby1=coby1 
+  //SEG10 [9] phi (byte) cnt#12 = (byte) 0 [phi:main->inccnt#0] -- zpby1=coby1 
     lda #0
-    sta cnt_13
+    sta cnt_12
     jsr inccnt
     jmp b1
-  //SEG9 main::@1
+  //SEG11 main::@1
   b1:
-  //SEG10 [3] *((const byte[256]) SCREEN#0+(byte) 0) ← (byte) cnt#10 [ cnt#10 ] -- _star_cowo1=zpby1 
-    lda cnt_10
+  //SEG12 [3] *((const byte[256]) SCREEN#0+(byte) 0) ← (byte) cnt#1 [ cnt#1 ] -- _star_cowo1=zpby1 
+    lda cnt
     sta SCREEN+0
-  //SEG11 [4] (byte) cnt#3 ← ++ (byte) cnt#10 [ cnt#3 ] -- zpby1=_inc_zpby2 
-    lda cnt_10
-    sta cnt_3
-    inc cnt_3
-  //SEG12 [5] call inccnt param-assignment [ cnt#10 ]
-  //SEG13 [9] phi from main::@1 to inccnt [phi:main::@1->inccnt]
+  //SEG13 [4] (byte) cnt#2 ← ++ (byte) cnt#1 [ cnt#2 ] -- zpby1=_inc_zpby2 
+    lda cnt
+    sta cnt_2
+    inc cnt_2
+  //SEG14 [5] call inccnt param-assignment [ cnt#1 ]
+  //SEG15 [9] phi from main::@1 to inccnt [phi:main::@1->inccnt]
   inccnt_from_b1:
-  //SEG14 [9] phi (byte) cnt#13 = (byte) cnt#3 [phi:main::@1->inccnt#0] -- register_copy 
+  //SEG16 [9] phi (byte) cnt#12 = (byte) cnt#2 [phi:main::@1->inccnt#0] -- register_copy 
     jsr inccnt
     jmp b2
-  //SEG15 main::@2
+  //SEG17 main::@2
   b2:
-  //SEG16 [6] (byte) cnt#1 ← ++ (byte) cnt#10 [ cnt#1 ] -- zpby1=_inc_zpby2 
-    lda cnt_10
-    sta cnt
-    inc cnt
-  //SEG17 [7] *((const byte[256]) SCREEN#0+(byte) 1) ← (byte) cnt#1 [ ] -- _star_cowo1=zpby1 
+  //SEG18 [6] (byte) cnt#11 ← ++ (byte) cnt#1 [ cnt#11 ] -- zpby1=_inc_zpby2 
     lda cnt
+    sta cnt_11
+    inc cnt_11
+  //SEG19 [7] *((const byte[256]) SCREEN#0+(byte) 1) ← (byte) cnt#11 [ ] -- _star_cowo1=zpby1 
+    lda cnt_11
     sta SCREEN+1
     jmp breturn
-  //SEG18 main::@return
+  //SEG20 main::@return
   breturn:
-  //SEG19 [8] return  [ ]
+  //SEG21 [8] return  [ ]
     rts
 }
-//SEG20 inccnt
+//SEG22 inccnt
 inccnt: {
-  //SEG21 [10] (byte) cnt#10 ← ++ (byte) cnt#13 [ cnt#10 ] -- zpby1=_inc_zpby2 
-    lda cnt_13
-    sta cnt_10
-    inc cnt_10
+  //SEG23 [10] (byte) cnt#1 ← ++ (byte) cnt#12 [ cnt#1 ] -- zpby1=_inc_zpby2 
+    lda cnt_12
+    sta cnt
+    inc cnt
     jmp breturn
-  //SEG22 inccnt::@return
+  //SEG24 inccnt::@return
   breturn:
-  //SEG23 [11] return  [ cnt#10 ]
+  //SEG25 [11] return  [ cnt#1 ]
     rts
 }
 
 REGISTER UPLIFT POTENTIAL REGISTERS
-Potential registers zp ZP_BYTE:2 [ cnt#13 cnt#3 ] : zp ZP_BYTE:2 , reg byte a , reg byte x , reg byte y , 
-Potential registers zp ZP_BYTE:3 [ cnt#1 ] : zp ZP_BYTE:3 , reg byte a , reg byte x , reg byte y , 
-Potential registers zp ZP_BYTE:4 [ cnt#10 ] : zp ZP_BYTE:4 , reg byte a , reg byte x , reg byte y , 
+Potential registers zp ZP_BYTE:2 [ cnt#12 cnt#2 ] : zp ZP_BYTE:2 , reg byte a , reg byte x , reg byte y , 
+Potential registers zp ZP_BYTE:3 [ cnt#11 ] : zp ZP_BYTE:3 , reg byte a , reg byte x , reg byte y , 
+Potential registers zp ZP_BYTE:4 [ cnt#1 ] : zp ZP_BYTE:4 , reg byte a , reg byte x , reg byte y , 
 
 REGISTER UPLIFT SCOPES
-Uplift Scope [] 8: zp ZP_BYTE:2 [ cnt#13 cnt#3 ] 4: zp ZP_BYTE:3 [ cnt#1 ] 1.6: zp ZP_BYTE:4 [ cnt#10 ] 
+Uplift Scope [] 8: zp ZP_BYTE:2 [ cnt#12 cnt#2 ] 4: zp ZP_BYTE:3 [ cnt#11 ] 1.6: zp ZP_BYTE:4 [ cnt#1 ] 
 Uplift Scope [main] 
 Uplift Scope [inccnt] 
 
-Uplifting [] best 61 combination reg byte x [ cnt#13 cnt#3 ] reg byte x [ cnt#1 ] reg byte x [ cnt#10 ] 
-Uplifting [main] best 61 combination 
-Uplifting [inccnt] best 61 combination 
+Uplifting [] best 91 combination reg byte x [ cnt#12 cnt#2 ] reg byte x [ cnt#11 ] reg byte x [ cnt#1 ] 
+Uplifting [main] best 91 combination 
+Uplifting [inccnt] best 91 combination 
+Removing instruction jmp b2
 Removing instruction jmp bend
 Removing instruction jmp b1
 Removing instruction jmp b2
@@ -692,109 +730,121 @@ Removing instruction jmp breturn
 Removing instruction jmp breturn
 Succesful ASM optimization Pass5NextJumpElimination
 ASSEMBLER
-//SEG0 Global Constants & labels
+//SEG0 Basic Upstart
+.pc = $801 "Basic"
+:BasicUpstart(main)
+.pc = $80d "Program"
+//SEG1 Global Constants & labels
   .const SCREEN = $400
-//SEG1 @begin
+//SEG2 @begin
 bbegin:
-//SEG2 [0] call main param-assignment [ ]
-//SEG3 [1] phi from @begin to main [phi:@begin->main]
-main_from_bbegin:
+//SEG3 @2
+b2:
+//SEG4 [0] call main param-assignment [ ]
+//SEG5 [1] phi from @2 to main [phi:@2->main]
+main_from_b2:
   jsr main
-//SEG4 @end
+//SEG6 @end
 bend:
-//SEG5 main
+//SEG7 main
 main: {
-  //SEG6 [2] call inccnt param-assignment [ cnt#10 ]
-  //SEG7 [9] phi from main to inccnt [phi:main->inccnt]
+  //SEG8 [2] call inccnt param-assignment [ cnt#1 ]
+  //SEG9 [9] phi from main to inccnt [phi:main->inccnt]
   inccnt_from_main:
-  //SEG8 [9] phi (byte) cnt#13 = (byte) 0 [phi:main->inccnt#0] -- xby=coby1 
+  //SEG10 [9] phi (byte) cnt#12 = (byte) 0 [phi:main->inccnt#0] -- xby=coby1 
     ldx #0
     jsr inccnt
-  //SEG9 main::@1
+  //SEG11 main::@1
   b1:
-  //SEG10 [3] *((const byte[256]) SCREEN#0+(byte) 0) ← (byte) cnt#10 [ cnt#10 ] -- _star_cowo1=xby 
+  //SEG12 [3] *((const byte[256]) SCREEN#0+(byte) 0) ← (byte) cnt#1 [ cnt#1 ] -- _star_cowo1=xby 
     stx SCREEN+0
-  //SEG11 [4] (byte) cnt#3 ← ++ (byte) cnt#10 [ cnt#3 ] -- xby=_inc_xby 
+  //SEG13 [4] (byte) cnt#2 ← ++ (byte) cnt#1 [ cnt#2 ] -- xby=_inc_xby 
     inx
-  //SEG12 [5] call inccnt param-assignment [ cnt#10 ]
-  //SEG13 [9] phi from main::@1 to inccnt [phi:main::@1->inccnt]
+  //SEG14 [5] call inccnt param-assignment [ cnt#1 ]
+  //SEG15 [9] phi from main::@1 to inccnt [phi:main::@1->inccnt]
   inccnt_from_b1:
-  //SEG14 [9] phi (byte) cnt#13 = (byte) cnt#3 [phi:main::@1->inccnt#0] -- register_copy 
+  //SEG16 [9] phi (byte) cnt#12 = (byte) cnt#2 [phi:main::@1->inccnt#0] -- register_copy 
     jsr inccnt
-  //SEG15 main::@2
+  //SEG17 main::@2
   b2:
-  //SEG16 [6] (byte) cnt#1 ← ++ (byte) cnt#10 [ cnt#1 ] -- xby=_inc_xby 
+  //SEG18 [6] (byte) cnt#11 ← ++ (byte) cnt#1 [ cnt#11 ] -- xby=_inc_xby 
     inx
-  //SEG17 [7] *((const byte[256]) SCREEN#0+(byte) 1) ← (byte) cnt#1 [ ] -- _star_cowo1=xby 
+  //SEG19 [7] *((const byte[256]) SCREEN#0+(byte) 1) ← (byte) cnt#11 [ ] -- _star_cowo1=xby 
     stx SCREEN+1
-  //SEG18 main::@return
+  //SEG20 main::@return
   breturn:
-  //SEG19 [8] return  [ ]
+  //SEG21 [8] return  [ ]
     rts
 }
-//SEG20 inccnt
+//SEG22 inccnt
 inccnt: {
-  //SEG21 [10] (byte) cnt#10 ← ++ (byte) cnt#13 [ cnt#10 ] -- xby=_inc_xby 
+  //SEG23 [10] (byte) cnt#1 ← ++ (byte) cnt#12 [ cnt#1 ] -- xby=_inc_xby 
     inx
-  //SEG22 inccnt::@return
+  //SEG24 inccnt::@return
   breturn:
-  //SEG23 [11] return  [ cnt#10 ]
-    rts
-}
-
-Removing instruction main_from_bbegin:
-Succesful ASM optimization Pass5RedundantLabelElimination
-ASSEMBLER
-//SEG0 Global Constants & labels
-  .const SCREEN = $400
-//SEG1 @begin
-bbegin:
-//SEG2 [0] call main param-assignment [ ]
-//SEG3 [1] phi from @begin to main [phi:@begin->main]
-  jsr main
-//SEG4 @end
-bend:
-//SEG5 main
-main: {
-  //SEG6 [2] call inccnt param-assignment [ cnt#10 ]
-  //SEG7 [9] phi from main to inccnt [phi:main->inccnt]
-  inccnt_from_main:
-  //SEG8 [9] phi (byte) cnt#13 = (byte) 0 [phi:main->inccnt#0] -- xby=coby1 
-    ldx #0
-    jsr inccnt
-  //SEG9 main::@1
-  b1:
-  //SEG10 [3] *((const byte[256]) SCREEN#0+(byte) 0) ← (byte) cnt#10 [ cnt#10 ] -- _star_cowo1=xby 
-    stx SCREEN+0
-  //SEG11 [4] (byte) cnt#3 ← ++ (byte) cnt#10 [ cnt#3 ] -- xby=_inc_xby 
-    inx
-  //SEG12 [5] call inccnt param-assignment [ cnt#10 ]
-  //SEG13 [9] phi from main::@1 to inccnt [phi:main::@1->inccnt]
-  inccnt_from_b1:
-  //SEG14 [9] phi (byte) cnt#13 = (byte) cnt#3 [phi:main::@1->inccnt#0] -- register_copy 
-    jsr inccnt
-  //SEG15 main::@2
-  b2:
-  //SEG16 [6] (byte) cnt#1 ← ++ (byte) cnt#10 [ cnt#1 ] -- xby=_inc_xby 
-    inx
-  //SEG17 [7] *((const byte[256]) SCREEN#0+(byte) 1) ← (byte) cnt#1 [ ] -- _star_cowo1=xby 
-    stx SCREEN+1
-  //SEG18 main::@return
-  breturn:
-  //SEG19 [8] return  [ ]
-    rts
-}
-//SEG20 inccnt
-inccnt: {
-  //SEG21 [10] (byte) cnt#10 ← ++ (byte) cnt#13 [ cnt#10 ] -- xby=_inc_xby 
-    inx
-  //SEG22 inccnt::@return
-  breturn:
-  //SEG23 [11] return  [ cnt#10 ]
+  //SEG25 [11] return  [ cnt#1 ]
     rts
 }
 
 Removing instruction bbegin:
+Removing instruction main_from_b2:
+Succesful ASM optimization Pass5RedundantLabelElimination
+ASSEMBLER
+//SEG0 Basic Upstart
+.pc = $801 "Basic"
+:BasicUpstart(main)
+.pc = $80d "Program"
+//SEG1 Global Constants & labels
+  .const SCREEN = $400
+//SEG2 @begin
+//SEG3 @2
+b2:
+//SEG4 [0] call main param-assignment [ ]
+//SEG5 [1] phi from @2 to main [phi:@2->main]
+  jsr main
+//SEG6 @end
+bend:
+//SEG7 main
+main: {
+  //SEG8 [2] call inccnt param-assignment [ cnt#1 ]
+  //SEG9 [9] phi from main to inccnt [phi:main->inccnt]
+  inccnt_from_main:
+  //SEG10 [9] phi (byte) cnt#12 = (byte) 0 [phi:main->inccnt#0] -- xby=coby1 
+    ldx #0
+    jsr inccnt
+  //SEG11 main::@1
+  b1:
+  //SEG12 [3] *((const byte[256]) SCREEN#0+(byte) 0) ← (byte) cnt#1 [ cnt#1 ] -- _star_cowo1=xby 
+    stx SCREEN+0
+  //SEG13 [4] (byte) cnt#2 ← ++ (byte) cnt#1 [ cnt#2 ] -- xby=_inc_xby 
+    inx
+  //SEG14 [5] call inccnt param-assignment [ cnt#1 ]
+  //SEG15 [9] phi from main::@1 to inccnt [phi:main::@1->inccnt]
+  inccnt_from_b1:
+  //SEG16 [9] phi (byte) cnt#12 = (byte) cnt#2 [phi:main::@1->inccnt#0] -- register_copy 
+    jsr inccnt
+  //SEG17 main::@2
+  b2:
+  //SEG18 [6] (byte) cnt#11 ← ++ (byte) cnt#1 [ cnt#11 ] -- xby=_inc_xby 
+    inx
+  //SEG19 [7] *((const byte[256]) SCREEN#0+(byte) 1) ← (byte) cnt#11 [ ] -- _star_cowo1=xby 
+    stx SCREEN+1
+  //SEG20 main::@return
+  breturn:
+  //SEG21 [8] return  [ ]
+    rts
+}
+//SEG22 inccnt
+inccnt: {
+  //SEG23 [10] (byte) cnt#1 ← ++ (byte) cnt#12 [ cnt#1 ] -- xby=_inc_xby 
+    inx
+  //SEG24 inccnt::@return
+  breturn:
+  //SEG25 [11] return  [ cnt#1 ]
+    rts
+}
+
+Removing instruction b2:
 Removing instruction bend:
 Removing instruction inccnt_from_main:
 Removing instruction b1:
@@ -804,57 +854,63 @@ Removing instruction breturn:
 Removing instruction breturn:
 Succesful ASM optimization Pass5UnusedLabelElimination
 ASSEMBLER
-//SEG0 Global Constants & labels
+//SEG0 Basic Upstart
+.pc = $801 "Basic"
+:BasicUpstart(main)
+.pc = $80d "Program"
+//SEG1 Global Constants & labels
   .const SCREEN = $400
-//SEG1 @begin
-//SEG2 [0] call main param-assignment [ ]
-//SEG3 [1] phi from @begin to main [phi:@begin->main]
+//SEG2 @begin
+//SEG3 @2
+//SEG4 [0] call main param-assignment [ ]
+//SEG5 [1] phi from @2 to main [phi:@2->main]
   jsr main
-//SEG4 @end
-//SEG5 main
+//SEG6 @end
+//SEG7 main
 main: {
-  //SEG6 [2] call inccnt param-assignment [ cnt#10 ]
-  //SEG7 [9] phi from main to inccnt [phi:main->inccnt]
-  //SEG8 [9] phi (byte) cnt#13 = (byte) 0 [phi:main->inccnt#0] -- xby=coby1 
+  //SEG8 [2] call inccnt param-assignment [ cnt#1 ]
+  //SEG9 [9] phi from main to inccnt [phi:main->inccnt]
+  //SEG10 [9] phi (byte) cnt#12 = (byte) 0 [phi:main->inccnt#0] -- xby=coby1 
     ldx #0
     jsr inccnt
-  //SEG9 main::@1
-  //SEG10 [3] *((const byte[256]) SCREEN#0+(byte) 0) ← (byte) cnt#10 [ cnt#10 ] -- _star_cowo1=xby 
+  //SEG11 main::@1
+  //SEG12 [3] *((const byte[256]) SCREEN#0+(byte) 0) ← (byte) cnt#1 [ cnt#1 ] -- _star_cowo1=xby 
     stx SCREEN+0
-  //SEG11 [4] (byte) cnt#3 ← ++ (byte) cnt#10 [ cnt#3 ] -- xby=_inc_xby 
+  //SEG13 [4] (byte) cnt#2 ← ++ (byte) cnt#1 [ cnt#2 ] -- xby=_inc_xby 
     inx
-  //SEG12 [5] call inccnt param-assignment [ cnt#10 ]
-  //SEG13 [9] phi from main::@1 to inccnt [phi:main::@1->inccnt]
-  //SEG14 [9] phi (byte) cnt#13 = (byte) cnt#3 [phi:main::@1->inccnt#0] -- register_copy 
+  //SEG14 [5] call inccnt param-assignment [ cnt#1 ]
+  //SEG15 [9] phi from main::@1 to inccnt [phi:main::@1->inccnt]
+  //SEG16 [9] phi (byte) cnt#12 = (byte) cnt#2 [phi:main::@1->inccnt#0] -- register_copy 
     jsr inccnt
-  //SEG15 main::@2
-  //SEG16 [6] (byte) cnt#1 ← ++ (byte) cnt#10 [ cnt#1 ] -- xby=_inc_xby 
+  //SEG17 main::@2
+  //SEG18 [6] (byte) cnt#11 ← ++ (byte) cnt#1 [ cnt#11 ] -- xby=_inc_xby 
     inx
-  //SEG17 [7] *((const byte[256]) SCREEN#0+(byte) 1) ← (byte) cnt#1 [ ] -- _star_cowo1=xby 
+  //SEG19 [7] *((const byte[256]) SCREEN#0+(byte) 1) ← (byte) cnt#11 [ ] -- _star_cowo1=xby 
     stx SCREEN+1
-  //SEG18 main::@return
-  //SEG19 [8] return  [ ]
+  //SEG20 main::@return
+  //SEG21 [8] return  [ ]
     rts
 }
-//SEG20 inccnt
+//SEG22 inccnt
 inccnt: {
-  //SEG21 [10] (byte) cnt#10 ← ++ (byte) cnt#13 [ cnt#10 ] -- xby=_inc_xby 
+  //SEG23 [10] (byte) cnt#1 ← ++ (byte) cnt#12 [ cnt#1 ] -- xby=_inc_xby 
     inx
-  //SEG22 inccnt::@return
-  //SEG23 [11] return  [ cnt#10 ]
+  //SEG24 inccnt::@return
+  //SEG25 [11] return  [ cnt#1 ]
     rts
 }
 
 FINAL SYMBOL TABLE
+(label) @2
 (label) @begin
 (label) @end
 (byte[256]) SCREEN
 (const byte[256]) SCREEN#0 SCREEN = (word) 1024
 (byte) cnt
-(byte) cnt#1 reg byte x 4.0
-(byte) cnt#10 reg byte x 1.6
-(byte) cnt#13 reg byte x 4.0
-(byte) cnt#3 reg byte x 4.0
+(byte) cnt#1 reg byte x 1.6
+(byte) cnt#11 reg byte x 4.0
+(byte) cnt#12 reg byte x 4.0
+(byte) cnt#2 reg byte x 4.0
 (void()) inccnt()
 (label) inccnt::@return
 (void()) main()
@@ -862,49 +918,54 @@ FINAL SYMBOL TABLE
 (label) main::@2
 (label) main::@return
 
-reg byte x [ cnt#13 cnt#3 ]
+reg byte x [ cnt#12 cnt#2 ]
+reg byte x [ cnt#11 ]
 reg byte x [ cnt#1 ]
-reg byte x [ cnt#10 ]
 
 FINAL CODE
-//SEG0 Global Constants & labels
+//SEG0 Basic Upstart
+.pc = $801 "Basic"
+:BasicUpstart(main)
+.pc = $80d "Program"
+//SEG1 Global Constants & labels
   .const SCREEN = $400
-//SEG1 @begin
-//SEG2 [0] call main param-assignment [ ]
-//SEG3 [1] phi from @begin to main [phi:@begin->main]
+//SEG2 @begin
+//SEG3 @2
+//SEG4 [0] call main param-assignment [ ]
+//SEG5 [1] phi from @2 to main [phi:@2->main]
   jsr main
-//SEG4 @end
-//SEG5 main
+//SEG6 @end
+//SEG7 main
 main: {
-  //SEG6 [2] call inccnt param-assignment [ cnt#10 ]
-  //SEG7 [9] phi from main to inccnt [phi:main->inccnt]
-  //SEG8 [9] phi (byte) cnt#13 = (byte) 0 [phi:main->inccnt#0] -- xby=coby1 
+  //SEG8 [2] call inccnt param-assignment [ cnt#1 ]
+  //SEG9 [9] phi from main to inccnt [phi:main->inccnt]
+  //SEG10 [9] phi (byte) cnt#12 = (byte) 0 [phi:main->inccnt#0] -- xby=coby1 
     ldx #0
     jsr inccnt
-  //SEG9 main::@1
-  //SEG10 [3] *((const byte[256]) SCREEN#0+(byte) 0) ← (byte) cnt#10 [ cnt#10 ] -- _star_cowo1=xby 
+  //SEG11 main::@1
+  //SEG12 [3] *((const byte[256]) SCREEN#0+(byte) 0) ← (byte) cnt#1 [ cnt#1 ] -- _star_cowo1=xby 
     stx SCREEN+0
-  //SEG11 [4] (byte) cnt#3 ← ++ (byte) cnt#10 [ cnt#3 ] -- xby=_inc_xby 
+  //SEG13 [4] (byte) cnt#2 ← ++ (byte) cnt#1 [ cnt#2 ] -- xby=_inc_xby 
     inx
-  //SEG12 [5] call inccnt param-assignment [ cnt#10 ]
-  //SEG13 [9] phi from main::@1 to inccnt [phi:main::@1->inccnt]
-  //SEG14 [9] phi (byte) cnt#13 = (byte) cnt#3 [phi:main::@1->inccnt#0] -- register_copy 
+  //SEG14 [5] call inccnt param-assignment [ cnt#1 ]
+  //SEG15 [9] phi from main::@1 to inccnt [phi:main::@1->inccnt]
+  //SEG16 [9] phi (byte) cnt#12 = (byte) cnt#2 [phi:main::@1->inccnt#0] -- register_copy 
     jsr inccnt
-  //SEG15 main::@2
-  //SEG16 [6] (byte) cnt#1 ← ++ (byte) cnt#10 [ cnt#1 ] -- xby=_inc_xby 
+  //SEG17 main::@2
+  //SEG18 [6] (byte) cnt#11 ← ++ (byte) cnt#1 [ cnt#11 ] -- xby=_inc_xby 
     inx
-  //SEG17 [7] *((const byte[256]) SCREEN#0+(byte) 1) ← (byte) cnt#1 [ ] -- _star_cowo1=xby 
+  //SEG19 [7] *((const byte[256]) SCREEN#0+(byte) 1) ← (byte) cnt#11 [ ] -- _star_cowo1=xby 
     stx SCREEN+1
-  //SEG18 main::@return
-  //SEG19 [8] return  [ ]
+  //SEG20 main::@return
+  //SEG21 [8] return  [ ]
     rts
 }
-//SEG20 inccnt
+//SEG22 inccnt
 inccnt: {
-  //SEG21 [10] (byte) cnt#10 ← ++ (byte) cnt#13 [ cnt#10 ] -- xby=_inc_xby 
+  //SEG23 [10] (byte) cnt#1 ← ++ (byte) cnt#12 [ cnt#1 ] -- xby=_inc_xby 
     inx
-  //SEG22 inccnt::@return
-  //SEG23 [11] return  [ cnt#10 ]
+  //SEG24 inccnt::@return
+  //SEG25 [11] return  [ cnt#1 ]
     rts
 }
 

@@ -1,5 +1,3 @@
-main();
-
 void main() {
   byte i=100;
   byte s=0;
@@ -16,7 +14,6 @@ Adding pre/post-modifier (byte) main::i ← -- (byte) main::i
 Adding pre/post-modifier (byte) main::s ← ++ (byte) main::s
 Adding pre/post-modifier (byte) main::s ← -- (byte) main::s
 PROGRAM
-  (void~) $0 ← call main 
 proc (void()) main()
   (byte) main::i ← (byte) 100
   (byte) main::s ← (byte) 0
@@ -39,9 +36,9 @@ main::@3:
 main::@return:
   return 
 endproc // main()
+  call main 
 
 SYMBOLS
-(void~) $0
 (void()) main()
 (boolean~) main::$0
 (boolean~) main::$1
@@ -57,7 +54,6 @@ SYMBOLS
 
 INITIAL CONTROL FLOW GRAPH
 @begin: scope:[]  from
-  (void~) $0 ← call main 
   to:@1
 main: scope:[main]  from
   (byte) main::i ← (byte) 100
@@ -95,6 +91,7 @@ main::@return: scope:[main]  from main::@3
   return 
   to:@return
 @1: scope:[]  from @begin
+  call main 
   to:@end
 @end: scope:[]  from @1
 
@@ -104,11 +101,9 @@ Removing empty block main::@7
 Removing empty block main::@5
 Removing empty block main::@9
 Removing empty block main::@10
-Removing empty block @1
 CONTROL FLOW GRAPH
 @begin: scope:[]  from
-  (void~) $0 ← call main 
-  to:@end
+  to:@1
 main: scope:[main]  from
   (byte) main::i ← (byte) 100
   (byte) main::s ← (byte) 0
@@ -132,17 +127,17 @@ main::@8: scope:[main]  from main::@2
 main::@return: scope:[main]  from main::@1
   return 
   to:@return
-@end: scope:[]  from @begin
+@1: scope:[]  from @begin
+  call main 
+  to:@end
+@end: scope:[]  from @1
 
 PROCEDURE MODIFY VARIABLE ANALYSIS
 
 CONTROL FLOW GRAPH WITH ASSIGNMENT CALL
 @begin: scope:[]  from
-  call main param-assignment
-  to:@2
-@2: scope:[]  from @begin
-  to:@end
-main: scope:[main]  from @begin
+  to:@1
+main: scope:[main]  from @1
   (byte) main::i ← (byte) 100
   (byte) main::s ← (byte) 0
   to:main::@1
@@ -165,6 +160,11 @@ main::@8: scope:[main]  from main::@2
 main::@return: scope:[main]  from main::@1
   return 
   to:@return
+@1: scope:[]  from @begin
+  call main param-assignment
+  to:@2
+@2: scope:[]  from @1
+  to:@end
 @end: scope:[]  from @2
 
 Completing Phi functions...
@@ -172,11 +172,8 @@ Completing Phi functions...
 Completing Phi functions...
 CONTROL FLOW GRAPH SSA
 @begin: scope:[]  from
-  call main param-assignment
-  to:@2
-@2: scope:[]  from @begin
-  to:@end
-main: scope:[main]  from @begin
+  to:@1
+main: scope:[main]  from @1
   (byte) main::i#0 ← (byte) 100
   (byte) main::s#0 ← (byte) 0
   to:main::@1
@@ -207,15 +204,17 @@ main::@8: scope:[main]  from main::@2
 main::@return: scope:[main]  from main::@1
   return 
   to:@return
+@1: scope:[]  from @begin
+  call main param-assignment
+  to:@2
+@2: scope:[]  from @1
+  to:@end
 @end: scope:[]  from @2
 
 CONTROL FLOW GRAPH WITH ASSIGNMENT CALL & RETURN
 @begin: scope:[]  from
-  call main param-assignment
-  to:@2
-@2: scope:[]  from @begin
-  to:@end
-main: scope:[main]  from @begin
+  to:@1
+main: scope:[main]  from @1
   (byte) main::i#0 ← (byte) 100
   (byte) main::s#0 ← (byte) 0
   to:main::@1
@@ -246,9 +245,15 @@ main::@8: scope:[main]  from main::@2
 main::@return: scope:[main]  from main::@1
   return 
   to:@return
+@1: scope:[]  from @begin
+  call main param-assignment
+  to:@2
+@2: scope:[]  from @1
+  to:@end
 @end: scope:[]  from @2
 
 INITIAL SSA SYMBOL TABLE
+(label) @1
 (label) @2
 (label) @begin
 (label) @end
@@ -281,9 +286,8 @@ Culled Empty Block (label) @2
 Succesful SSA optimization Pass2CullEmptyBlocks
 CONTROL FLOW GRAPH
 @begin: scope:[]  from
-  call main param-assignment
-  to:@end
-main: scope:[main]  from @begin
+  to:@1
+main: scope:[main]  from @1
   (byte) main::i#0 ← (byte) 100
   (byte) main::s#0 ← (byte) 0
   to:main::@1
@@ -314,15 +318,17 @@ main::@8: scope:[main]  from main::@2
 main::@return: scope:[main]  from main::@1
   return 
   to:@return
-@end: scope:[]  from @begin
+@1: scope:[]  from @begin
+  call main param-assignment
+  to:@end
+@end: scope:[]  from @1
 
 Inversing boolean not (boolean~) main::$2 ← (byte) main::i#3 <= (byte) 50 from (boolean~) main::$1 ← (byte) main::i#3 > (byte) 50
 Succesful SSA optimization Pass2UnaryNotSimplification
 CONTROL FLOW GRAPH
 @begin: scope:[]  from
-  call main param-assignment
-  to:@end
-main: scope:[main]  from @begin
+  to:@1
+main: scope:[main]  from @1
   (byte) main::i#0 ← (byte) 100
   (byte) main::s#0 ← (byte) 0
   to:main::@1
@@ -352,16 +358,18 @@ main::@8: scope:[main]  from main::@2
 main::@return: scope:[main]  from main::@1
   return 
   to:@return
-@end: scope:[]  from @begin
+@1: scope:[]  from @begin
+  call main param-assignment
+  to:@end
+@end: scope:[]  from @1
 
 Alias (byte) main::i#1 = (byte) main::i#3 (byte) main::i#4 (byte) main::i#5 
 Alias (byte) main::s#3 = (byte) main::s#5 (byte) main::s#6 (byte) main::s#4 
 Succesful SSA optimization Pass2AliasElimination
 CONTROL FLOW GRAPH
 @begin: scope:[]  from
-  call main param-assignment
-  to:@end
-main: scope:[main]  from @begin
+  to:@1
+main: scope:[main]  from @1
   (byte) main::i#0 ← (byte) 100
   (byte) main::s#0 ← (byte) 0
   to:main::@1
@@ -385,16 +393,18 @@ main::@8: scope:[main]  from main::@2
 main::@return: scope:[main]  from main::@1
   return 
   to:@return
-@end: scope:[]  from @begin
+@1: scope:[]  from @begin
+  call main param-assignment
+  to:@end
+@end: scope:[]  from @1
 
 Simple Condition (boolean~) main::$0 if((byte) main::i#1>(byte) 0) goto main::@2
 Simple Condition (boolean~) main::$2 if((byte) main::i#1<=(byte) 50) goto main::@4
 Succesful SSA optimization Pass2ConditionalJumpSimplification
 CONTROL FLOW GRAPH
 @begin: scope:[]  from
-  call main param-assignment
-  to:@end
-main: scope:[main]  from @begin
+  to:@1
+main: scope:[main]  from @1
   (byte) main::i#0 ← (byte) 100
   (byte) main::s#0 ← (byte) 0
   to:main::@1
@@ -416,16 +426,18 @@ main::@8: scope:[main]  from main::@2
 main::@return: scope:[main]  from main::@1
   return 
   to:@return
-@end: scope:[]  from @begin
+@1: scope:[]  from @begin
+  call main param-assignment
+  to:@end
+@end: scope:[]  from @1
 
 Constant (const byte) main::i#0 = 100
 Constant (const byte) main::s#0 = 0
 Succesful SSA optimization Pass2ConstantIdentification
 CONTROL FLOW GRAPH
 @begin: scope:[]  from
-  call main param-assignment
-  to:@end
-main: scope:[main]  from @begin
+  to:@1
+main: scope:[main]  from @1
   to:main::@1
 main::@1: scope:[main]  from main main::@4 main::@8
   (byte) main::s#3 ← phi( main/(const byte) main::s#0 main::@4/(byte) main::s#1 main::@8/(byte) main::s#2 )
@@ -445,7 +457,10 @@ main::@8: scope:[main]  from main::@2
 main::@return: scope:[main]  from main::@1
   return 
   to:@return
-@end: scope:[]  from @begin
+@1: scope:[]  from @begin
+  call main param-assignment
+  to:@end
+@end: scope:[]  from @1
 
 Inlining constant with var siblings (const byte) main::i#0
 Inlining constant with var siblings (const byte) main::i#0
@@ -457,9 +472,8 @@ Constant inlined main::i#0 = (byte) 100
 Succesful SSA optimization Pass2ConstantInlining
 CONTROL FLOW GRAPH
 @begin: scope:[]  from
-  call main param-assignment
-  to:@end
-main: scope:[main]  from @begin
+  to:@1
+main: scope:[main]  from @1
   to:main::@1
 main::@1: scope:[main]  from main main::@4 main::@8
   (byte) main::s#3 ← phi( main/(byte) 0 main::@4/(byte) main::s#1 main::@8/(byte) main::s#2 )
@@ -479,9 +493,13 @@ main::@8: scope:[main]  from main::@2
 main::@return: scope:[main]  from main::@1
   return 
   to:@return
-@end: scope:[]  from @begin
+@1: scope:[]  from @begin
+  call main param-assignment
+  to:@end
+@end: scope:[]  from @1
 
 FINAL SYMBOL TABLE
+(label) @1
 (label) @begin
 (label) @end
 (void()) main()
@@ -498,14 +516,16 @@ FINAL SYMBOL TABLE
 (byte) main::s#2
 (byte) main::s#3
 
-Block Sequence Planned @begin @end main main::@1 main::@return main::@2 main::@8 main::@4 
-Block Sequence Planned @begin @end main main::@1 main::@return main::@2 main::@8 main::@4 
+Block Sequence Planned @begin @1 @end main main::@1 main::@return main::@2 main::@8 main::@4 
+Block Sequence Planned @begin @1 @end main main::@1 main::@return main::@2 main::@8 main::@4 
 CONTROL FLOW GRAPH - PHI LIFTED
 @begin: scope:[]  from
+  to:@1
+@1: scope:[]  from @begin
   call main param-assignment
   to:@end
-@end: scope:[]  from @begin
-main: scope:[main]  from @begin
+@end: scope:[]  from @1
+main: scope:[main]  from @1
   to:main::@1
 main::@1: scope:[main]  from main main::@4 main::@8
   (byte) main::s#3 ← phi( main/(byte) 0 main::@4/(byte~) main::s#7 main::@8/(byte~) main::s#8 )
@@ -541,10 +561,12 @@ Propagating live ranges...
 Propagating live ranges...
 CONTROL FLOW GRAPH - LIVE RANGES FOUND
 @begin: scope:[]  from
+  to:@1
+@1: scope:[]  from @begin
   [0] call main param-assignment [ ]
   to:@end
-@end: scope:[]  from @begin
-main: scope:[main]  from @begin
+@end: scope:[]  from @1
+main: scope:[main]  from @1
   [1] phi() [ ]
   to:main::@1
 main::@1: scope:[main]  from main main::@4 main::@8
@@ -576,7 +598,7 @@ Coalesced [9] main::s#8 ← main::s#2
 Coalesced (already) [11] main::i#6 ← main::i#1
 Coalesced [12] main::s#7 ← main::s#1
 Coalesced down to 2 phi equivalence classes
-Block Sequence Planned @begin @end main main::@1 main::@return main::@2 main::@8 main::@4 
+Block Sequence Planned @begin @1 @end main main::@1 main::@return main::@2 main::@8 main::@4 
 Adding NOP phi() at start of main
 Propagating live ranges...
 Propagating live ranges...
@@ -585,10 +607,12 @@ Propagating live ranges...
 Propagating live ranges...
 CONTROL FLOW GRAPH - PHI MEM COALESCED
 @begin: scope:[]  from
+  to:@1
+@1: scope:[]  from @begin
   [0] call main param-assignment [ ]
   to:@end
-@end: scope:[]  from @begin
-main: scope:[main]  from @begin
+@end: scope:[]  from @1
+main: scope:[main]  from @1
   [1] phi() [ ]
   to:main::@1
 main::@1: scope:[main]  from main main::@4 main::@8
@@ -612,13 +636,14 @@ main::@4: scope:[main]  from main::@2
 
 DOMINATORS
 @begin dominated by  @begin 
-@end dominated by  @end @begin 
-main dominated by  @begin main 
-main::@1 dominated by  @begin main::@1 main 
-main::@return dominated by  main::@return @begin main::@1 main 
-main::@2 dominated by  @begin main::@2 main::@1 main 
-main::@8 dominated by  main::@8 @begin main::@2 main::@1 main 
-main::@4 dominated by  @begin main::@2 main::@1 main::@4 main 
+@1 dominated by  @1 @begin 
+@end dominated by  @1 @end @begin 
+main dominated by  @1 @begin main 
+main::@1 dominated by  @1 @begin main::@1 main 
+main::@return dominated by  @1 main::@return @begin main::@1 main 
+main::@2 dominated by  @1 @begin main::@2 main::@1 main 
+main::@8 dominated by  main::@8 @1 @begin main::@2 main::@1 main 
+main::@4 dominated by  @1 @begin main::@2 main::@1 main::@4 main 
 
 Found back edge: Loop head: main::@1 tails: main::@8 blocks: null
 Found back edge: Loop head: main::@1 tails: main::@4 blocks: null
@@ -654,62 +679,69 @@ Complete equivalence classes
 Allocated zp ZP_BYTE:2 [ main::i#2 main::i#1 ]
 Allocated zp ZP_BYTE:3 [ main::s#3 main::s#1 main::s#2 ]
 INITIAL ASM
-//SEG0 Global Constants & labels
-//SEG1 @begin
+//SEG0 Basic Upstart
+.pc = $801 "Basic"
+:BasicUpstart(main)
+.pc = $80d "Program"
+//SEG1 Global Constants & labels
+//SEG2 @begin
 bbegin:
-//SEG2 [0] call main param-assignment [ ]
-//SEG3 [1] phi from @begin to main [phi:@begin->main]
-main_from_bbegin:
+  jmp b1
+//SEG3 @1
+b1:
+//SEG4 [0] call main param-assignment [ ]
+//SEG5 [1] phi from @1 to main [phi:@1->main]
+main_from_b1:
   jsr main
   jmp bend
-//SEG4 @end
+//SEG6 @end
 bend:
-//SEG5 main
+//SEG7 main
 main: {
     .label i = 2
     .label s = 3
-  //SEG6 [2] phi from main to main::@1 [phi:main->main::@1]
+  //SEG8 [2] phi from main to main::@1 [phi:main->main::@1]
   b1_from_main:
-  //SEG7 [2] phi (byte) main::s#3 = (byte) 0 [phi:main->main::@1#0] -- zpby1=coby1 
+  //SEG9 [2] phi (byte) main::s#3 = (byte) 0 [phi:main->main::@1#0] -- zpby1=coby1 
     lda #0
     sta s
-  //SEG8 [2] phi (byte) main::i#2 = (byte) 100 [phi:main->main::@1#1] -- zpby1=coby1 
+  //SEG10 [2] phi (byte) main::i#2 = (byte) 100 [phi:main->main::@1#1] -- zpby1=coby1 
     lda #$64
     sta i
     jmp b1
-  //SEG9 main::@1
+  //SEG11 main::@1
   b1:
-  //SEG10 [3] (byte) main::i#1 ← -- (byte) main::i#2 [ main::s#3 main::i#1 ] -- zpby1=_dec_zpby1 
+  //SEG12 [3] (byte) main::i#1 ← -- (byte) main::i#2 [ main::s#3 main::i#1 ] -- zpby1=_dec_zpby1 
     dec i
-  //SEG11 [4] if((byte) main::i#1>(byte) 0) goto main::@2 [ main::s#3 main::i#1 ] -- zpby1_gt_0_then_la1 
+  //SEG13 [4] if((byte) main::i#1>(byte) 0) goto main::@2 [ main::s#3 main::i#1 ] -- zpby1_gt_0_then_la1 
     lda i
     bne b2
     jmp breturn
-  //SEG12 main::@return
+  //SEG14 main::@return
   breturn:
-  //SEG13 [5] return  [ ]
+  //SEG15 [5] return  [ ]
     rts
-  //SEG14 main::@2
+  //SEG16 main::@2
   b2:
-  //SEG15 [6] if((byte) main::i#1<=(byte) 50) goto main::@4 [ main::s#3 main::i#1 ] -- zpby1_le_coby1_then_la1 
+  //SEG17 [6] if((byte) main::i#1<=(byte) 50) goto main::@4 [ main::s#3 main::i#1 ] -- zpby1_le_coby1_then_la1 
     lda i
     cmp #$32
     bcc b4
     beq b4
     jmp b8
-  //SEG16 main::@8
+  //SEG18 main::@8
   b8:
-  //SEG17 [7] (byte) main::s#2 ← ++ (byte) main::s#3 [ main::i#1 main::s#2 ] -- zpby1=_inc_zpby1 
+  //SEG19 [7] (byte) main::s#2 ← ++ (byte) main::s#3 [ main::i#1 main::s#2 ] -- zpby1=_inc_zpby1 
     inc s
-  //SEG18 [2] phi from main::@4 main::@8 to main::@1 [phi:main::@4/main::@8->main::@1]
+  //SEG20 [2] phi from main::@4 main::@8 to main::@1 [phi:main::@4/main::@8->main::@1]
   b1_from_b4:
   b1_from_b8:
-  //SEG19 [2] phi (byte) main::s#3 = (byte) main::s#1 [phi:main::@4/main::@8->main::@1#0] -- register_copy 
-  //SEG20 [2] phi (byte) main::i#2 = (byte) main::i#1 [phi:main::@4/main::@8->main::@1#1] -- register_copy 
+  //SEG21 [2] phi (byte) main::s#3 = (byte) main::s#1 [phi:main::@4/main::@8->main::@1#0] -- register_copy 
+  //SEG22 [2] phi (byte) main::i#2 = (byte) main::i#1 [phi:main::@4/main::@8->main::@1#1] -- register_copy 
     jmp b1
-  //SEG21 main::@4
+  //SEG23 main::@4
   b4:
-  //SEG22 [8] (byte) main::s#1 ← -- (byte) main::s#3 [ main::i#1 main::s#1 ] -- zpby1=_dec_zpby1 
+  //SEG24 [8] (byte) main::s#1 ← -- (byte) main::s#3 [ main::i#1 main::s#1 ] -- zpby1=_dec_zpby1 
     dec s
     jmp b1_from_b4
 }
@@ -722,171 +754,190 @@ REGISTER UPLIFT SCOPES
 Uplift Scope [main] 55: zp ZP_BYTE:3 [ main::s#3 main::s#1 main::s#2 ] 44: zp ZP_BYTE:2 [ main::i#2 main::i#1 ] 
 Uplift Scope [] 
 
-Uplifting [main] best 380 combination reg byte y [ main::s#3 main::s#1 main::s#2 ] reg byte x [ main::i#2 main::i#1 ] 
-Uplifting [] best 380 combination 
+Uplifting [main] best 410 combination reg byte y [ main::s#3 main::s#1 main::s#2 ] reg byte x [ main::i#2 main::i#1 ] 
+Uplifting [] best 410 combination 
+Removing instruction jmp b1
 Removing instruction jmp bend
 Removing instruction jmp b1
 Removing instruction jmp breturn
 Removing instruction jmp b8
 Succesful ASM optimization Pass5NextJumpElimination
 ASSEMBLER
-//SEG0 Global Constants & labels
-//SEG1 @begin
+//SEG0 Basic Upstart
+.pc = $801 "Basic"
+:BasicUpstart(main)
+.pc = $80d "Program"
+//SEG1 Global Constants & labels
+//SEG2 @begin
 bbegin:
-//SEG2 [0] call main param-assignment [ ]
-//SEG3 [1] phi from @begin to main [phi:@begin->main]
-main_from_bbegin:
+//SEG3 @1
+b1:
+//SEG4 [0] call main param-assignment [ ]
+//SEG5 [1] phi from @1 to main [phi:@1->main]
+main_from_b1:
   jsr main
-//SEG4 @end
+//SEG6 @end
 bend:
-//SEG5 main
+//SEG7 main
 main: {
-  //SEG6 [2] phi from main to main::@1 [phi:main->main::@1]
+  //SEG8 [2] phi from main to main::@1 [phi:main->main::@1]
   b1_from_main:
-  //SEG7 [2] phi (byte) main::s#3 = (byte) 0 [phi:main->main::@1#0] -- yby=coby1 
+  //SEG9 [2] phi (byte) main::s#3 = (byte) 0 [phi:main->main::@1#0] -- yby=coby1 
     ldy #0
-  //SEG8 [2] phi (byte) main::i#2 = (byte) 100 [phi:main->main::@1#1] -- xby=coby1 
+  //SEG10 [2] phi (byte) main::i#2 = (byte) 100 [phi:main->main::@1#1] -- xby=coby1 
     ldx #$64
-  //SEG9 main::@1
+  //SEG11 main::@1
   b1:
-  //SEG10 [3] (byte) main::i#1 ← -- (byte) main::i#2 [ main::s#3 main::i#1 ] -- xby=_dec_xby 
+  //SEG12 [3] (byte) main::i#1 ← -- (byte) main::i#2 [ main::s#3 main::i#1 ] -- xby=_dec_xby 
     dex
-  //SEG11 [4] if((byte) main::i#1>(byte) 0) goto main::@2 [ main::s#3 main::i#1 ] -- xby_gt_0_then_la1 
+  //SEG13 [4] if((byte) main::i#1>(byte) 0) goto main::@2 [ main::s#3 main::i#1 ] -- xby_gt_0_then_la1 
     cpx #0
     bne b2
-  //SEG12 main::@return
+  //SEG14 main::@return
   breturn:
-  //SEG13 [5] return  [ ]
+  //SEG15 [5] return  [ ]
     rts
-  //SEG14 main::@2
+  //SEG16 main::@2
   b2:
-  //SEG15 [6] if((byte) main::i#1<=(byte) 50) goto main::@4 [ main::s#3 main::i#1 ] -- xby_le_coby1_then_la1 
+  //SEG17 [6] if((byte) main::i#1<=(byte) 50) goto main::@4 [ main::s#3 main::i#1 ] -- xby_le_coby1_then_la1 
     cpx #$32
     bcc b4
     beq b4
-  //SEG16 main::@8
+  //SEG18 main::@8
   b8:
-  //SEG17 [7] (byte) main::s#2 ← ++ (byte) main::s#3 [ main::i#1 main::s#2 ] -- yby=_inc_yby 
+  //SEG19 [7] (byte) main::s#2 ← ++ (byte) main::s#3 [ main::i#1 main::s#2 ] -- yby=_inc_yby 
     iny
-  //SEG18 [2] phi from main::@4 main::@8 to main::@1 [phi:main::@4/main::@8->main::@1]
+  //SEG20 [2] phi from main::@4 main::@8 to main::@1 [phi:main::@4/main::@8->main::@1]
   b1_from_b4:
   b1_from_b8:
-  //SEG19 [2] phi (byte) main::s#3 = (byte) main::s#1 [phi:main::@4/main::@8->main::@1#0] -- register_copy 
-  //SEG20 [2] phi (byte) main::i#2 = (byte) main::i#1 [phi:main::@4/main::@8->main::@1#1] -- register_copy 
+  //SEG21 [2] phi (byte) main::s#3 = (byte) main::s#1 [phi:main::@4/main::@8->main::@1#0] -- register_copy 
+  //SEG22 [2] phi (byte) main::i#2 = (byte) main::i#1 [phi:main::@4/main::@8->main::@1#1] -- register_copy 
     jmp b1
-  //SEG21 main::@4
+  //SEG23 main::@4
   b4:
-  //SEG22 [8] (byte) main::s#1 ← -- (byte) main::s#3 [ main::i#1 main::s#1 ] -- yby=_dec_yby 
+  //SEG24 [8] (byte) main::s#1 ← -- (byte) main::s#3 [ main::i#1 main::s#1 ] -- yby=_dec_yby 
     dey
     jmp b1_from_b4
 }
 
 Replacing label b1_from_b4 with b1_from_b8
-Removing instruction main_from_bbegin:
+Removing instruction bbegin:
+Removing instruction main_from_b1:
 Removing instruction b1_from_b4:
 Succesful ASM optimization Pass5RedundantLabelElimination
 ASSEMBLER
-//SEG0 Global Constants & labels
-//SEG1 @begin
-bbegin:
-//SEG2 [0] call main param-assignment [ ]
-//SEG3 [1] phi from @begin to main [phi:@begin->main]
+//SEG0 Basic Upstart
+.pc = $801 "Basic"
+:BasicUpstart(main)
+.pc = $80d "Program"
+//SEG1 Global Constants & labels
+//SEG2 @begin
+//SEG3 @1
+b1:
+//SEG4 [0] call main param-assignment [ ]
+//SEG5 [1] phi from @1 to main [phi:@1->main]
   jsr main
-//SEG4 @end
+//SEG6 @end
 bend:
-//SEG5 main
+//SEG7 main
 main: {
-  //SEG6 [2] phi from main to main::@1 [phi:main->main::@1]
+  //SEG8 [2] phi from main to main::@1 [phi:main->main::@1]
   b1_from_main:
-  //SEG7 [2] phi (byte) main::s#3 = (byte) 0 [phi:main->main::@1#0] -- yby=coby1 
+  //SEG9 [2] phi (byte) main::s#3 = (byte) 0 [phi:main->main::@1#0] -- yby=coby1 
     ldy #0
-  //SEG8 [2] phi (byte) main::i#2 = (byte) 100 [phi:main->main::@1#1] -- xby=coby1 
+  //SEG10 [2] phi (byte) main::i#2 = (byte) 100 [phi:main->main::@1#1] -- xby=coby1 
     ldx #$64
-  //SEG9 main::@1
+  //SEG11 main::@1
   b1:
-  //SEG10 [3] (byte) main::i#1 ← -- (byte) main::i#2 [ main::s#3 main::i#1 ] -- xby=_dec_xby 
+  //SEG12 [3] (byte) main::i#1 ← -- (byte) main::i#2 [ main::s#3 main::i#1 ] -- xby=_dec_xby 
     dex
-  //SEG11 [4] if((byte) main::i#1>(byte) 0) goto main::@2 [ main::s#3 main::i#1 ] -- xby_gt_0_then_la1 
+  //SEG13 [4] if((byte) main::i#1>(byte) 0) goto main::@2 [ main::s#3 main::i#1 ] -- xby_gt_0_then_la1 
     cpx #0
     bne b2
-  //SEG12 main::@return
+  //SEG14 main::@return
   breturn:
-  //SEG13 [5] return  [ ]
+  //SEG15 [5] return  [ ]
     rts
-  //SEG14 main::@2
+  //SEG16 main::@2
   b2:
-  //SEG15 [6] if((byte) main::i#1<=(byte) 50) goto main::@4 [ main::s#3 main::i#1 ] -- xby_le_coby1_then_la1 
+  //SEG17 [6] if((byte) main::i#1<=(byte) 50) goto main::@4 [ main::s#3 main::i#1 ] -- xby_le_coby1_then_la1 
     cpx #$32
     bcc b4
     beq b4
-  //SEG16 main::@8
+  //SEG18 main::@8
   b8:
-  //SEG17 [7] (byte) main::s#2 ← ++ (byte) main::s#3 [ main::i#1 main::s#2 ] -- yby=_inc_yby 
+  //SEG19 [7] (byte) main::s#2 ← ++ (byte) main::s#3 [ main::i#1 main::s#2 ] -- yby=_inc_yby 
     iny
-  //SEG18 [2] phi from main::@4 main::@8 to main::@1 [phi:main::@4/main::@8->main::@1]
+  //SEG20 [2] phi from main::@4 main::@8 to main::@1 [phi:main::@4/main::@8->main::@1]
   b1_from_b8:
-  //SEG19 [2] phi (byte) main::s#3 = (byte) main::s#1 [phi:main::@4/main::@8->main::@1#0] -- register_copy 
-  //SEG20 [2] phi (byte) main::i#2 = (byte) main::i#1 [phi:main::@4/main::@8->main::@1#1] -- register_copy 
+  //SEG21 [2] phi (byte) main::s#3 = (byte) main::s#1 [phi:main::@4/main::@8->main::@1#0] -- register_copy 
+  //SEG22 [2] phi (byte) main::i#2 = (byte) main::i#1 [phi:main::@4/main::@8->main::@1#1] -- register_copy 
     jmp b1
-  //SEG21 main::@4
+  //SEG23 main::@4
   b4:
-  //SEG22 [8] (byte) main::s#1 ← -- (byte) main::s#3 [ main::i#1 main::s#1 ] -- yby=_dec_yby 
+  //SEG24 [8] (byte) main::s#1 ← -- (byte) main::s#3 [ main::i#1 main::s#1 ] -- yby=_dec_yby 
     dey
     jmp b1_from_b8
 }
 
-Removing instruction bbegin:
+Removing instruction b1:
 Removing instruction bend:
 Removing instruction b1_from_main:
 Removing instruction breturn:
 Removing instruction b8:
 Succesful ASM optimization Pass5UnusedLabelElimination
 ASSEMBLER
-//SEG0 Global Constants & labels
-//SEG1 @begin
-//SEG2 [0] call main param-assignment [ ]
-//SEG3 [1] phi from @begin to main [phi:@begin->main]
+//SEG0 Basic Upstart
+.pc = $801 "Basic"
+:BasicUpstart(main)
+.pc = $80d "Program"
+//SEG1 Global Constants & labels
+//SEG2 @begin
+//SEG3 @1
+//SEG4 [0] call main param-assignment [ ]
+//SEG5 [1] phi from @1 to main [phi:@1->main]
   jsr main
-//SEG4 @end
-//SEG5 main
+//SEG6 @end
+//SEG7 main
 main: {
-  //SEG6 [2] phi from main to main::@1 [phi:main->main::@1]
-  //SEG7 [2] phi (byte) main::s#3 = (byte) 0 [phi:main->main::@1#0] -- yby=coby1 
+  //SEG8 [2] phi from main to main::@1 [phi:main->main::@1]
+  //SEG9 [2] phi (byte) main::s#3 = (byte) 0 [phi:main->main::@1#0] -- yby=coby1 
     ldy #0
-  //SEG8 [2] phi (byte) main::i#2 = (byte) 100 [phi:main->main::@1#1] -- xby=coby1 
+  //SEG10 [2] phi (byte) main::i#2 = (byte) 100 [phi:main->main::@1#1] -- xby=coby1 
     ldx #$64
-  //SEG9 main::@1
+  //SEG11 main::@1
   b1:
-  //SEG10 [3] (byte) main::i#1 ← -- (byte) main::i#2 [ main::s#3 main::i#1 ] -- xby=_dec_xby 
+  //SEG12 [3] (byte) main::i#1 ← -- (byte) main::i#2 [ main::s#3 main::i#1 ] -- xby=_dec_xby 
     dex
-  //SEG11 [4] if((byte) main::i#1>(byte) 0) goto main::@2 [ main::s#3 main::i#1 ] -- xby_gt_0_then_la1 
+  //SEG13 [4] if((byte) main::i#1>(byte) 0) goto main::@2 [ main::s#3 main::i#1 ] -- xby_gt_0_then_la1 
     cpx #0
     bne b2
-  //SEG12 main::@return
-  //SEG13 [5] return  [ ]
+  //SEG14 main::@return
+  //SEG15 [5] return  [ ]
     rts
-  //SEG14 main::@2
+  //SEG16 main::@2
   b2:
-  //SEG15 [6] if((byte) main::i#1<=(byte) 50) goto main::@4 [ main::s#3 main::i#1 ] -- xby_le_coby1_then_la1 
+  //SEG17 [6] if((byte) main::i#1<=(byte) 50) goto main::@4 [ main::s#3 main::i#1 ] -- xby_le_coby1_then_la1 
     cpx #$32
     bcc b4
     beq b4
-  //SEG16 main::@8
-  //SEG17 [7] (byte) main::s#2 ← ++ (byte) main::s#3 [ main::i#1 main::s#2 ] -- yby=_inc_yby 
+  //SEG18 main::@8
+  //SEG19 [7] (byte) main::s#2 ← ++ (byte) main::s#3 [ main::i#1 main::s#2 ] -- yby=_inc_yby 
     iny
-  //SEG18 [2] phi from main::@4 main::@8 to main::@1 [phi:main::@4/main::@8->main::@1]
+  //SEG20 [2] phi from main::@4 main::@8 to main::@1 [phi:main::@4/main::@8->main::@1]
   b1_from_b8:
-  //SEG19 [2] phi (byte) main::s#3 = (byte) main::s#1 [phi:main::@4/main::@8->main::@1#0] -- register_copy 
-  //SEG20 [2] phi (byte) main::i#2 = (byte) main::i#1 [phi:main::@4/main::@8->main::@1#1] -- register_copy 
+  //SEG21 [2] phi (byte) main::s#3 = (byte) main::s#1 [phi:main::@4/main::@8->main::@1#0] -- register_copy 
+  //SEG22 [2] phi (byte) main::i#2 = (byte) main::i#1 [phi:main::@4/main::@8->main::@1#1] -- register_copy 
     jmp b1
-  //SEG21 main::@4
+  //SEG23 main::@4
   b4:
-  //SEG22 [8] (byte) main::s#1 ← -- (byte) main::s#3 [ main::i#1 main::s#1 ] -- yby=_dec_yby 
+  //SEG24 [8] (byte) main::s#1 ← -- (byte) main::s#3 [ main::i#1 main::s#1 ] -- yby=_dec_yby 
     dey
     jmp b1_from_b8
 }
 
 FINAL SYMBOL TABLE
+(label) @1
 (label) @begin
 (label) @end
 (void()) main()
@@ -907,46 +958,51 @@ reg byte x [ main::i#2 main::i#1 ]
 reg byte y [ main::s#3 main::s#1 main::s#2 ]
 
 FINAL CODE
-//SEG0 Global Constants & labels
-//SEG1 @begin
-//SEG2 [0] call main param-assignment [ ]
-//SEG3 [1] phi from @begin to main [phi:@begin->main]
+//SEG0 Basic Upstart
+.pc = $801 "Basic"
+:BasicUpstart(main)
+.pc = $80d "Program"
+//SEG1 Global Constants & labels
+//SEG2 @begin
+//SEG3 @1
+//SEG4 [0] call main param-assignment [ ]
+//SEG5 [1] phi from @1 to main [phi:@1->main]
   jsr main
-//SEG4 @end
-//SEG5 main
+//SEG6 @end
+//SEG7 main
 main: {
-  //SEG6 [2] phi from main to main::@1 [phi:main->main::@1]
-  //SEG7 [2] phi (byte) main::s#3 = (byte) 0 [phi:main->main::@1#0] -- yby=coby1 
+  //SEG8 [2] phi from main to main::@1 [phi:main->main::@1]
+  //SEG9 [2] phi (byte) main::s#3 = (byte) 0 [phi:main->main::@1#0] -- yby=coby1 
     ldy #0
-  //SEG8 [2] phi (byte) main::i#2 = (byte) 100 [phi:main->main::@1#1] -- xby=coby1 
+  //SEG10 [2] phi (byte) main::i#2 = (byte) 100 [phi:main->main::@1#1] -- xby=coby1 
     ldx #$64
-  //SEG9 main::@1
+  //SEG11 main::@1
   b1:
-  //SEG10 [3] (byte) main::i#1 ← -- (byte) main::i#2 [ main::s#3 main::i#1 ] -- xby=_dec_xby 
+  //SEG12 [3] (byte) main::i#1 ← -- (byte) main::i#2 [ main::s#3 main::i#1 ] -- xby=_dec_xby 
     dex
-  //SEG11 [4] if((byte) main::i#1>(byte) 0) goto main::@2 [ main::s#3 main::i#1 ] -- xby_gt_0_then_la1 
+  //SEG13 [4] if((byte) main::i#1>(byte) 0) goto main::@2 [ main::s#3 main::i#1 ] -- xby_gt_0_then_la1 
     cpx #0
     bne b2
-  //SEG12 main::@return
-  //SEG13 [5] return  [ ]
+  //SEG14 main::@return
+  //SEG15 [5] return  [ ]
     rts
-  //SEG14 main::@2
+  //SEG16 main::@2
   b2:
-  //SEG15 [6] if((byte) main::i#1<=(byte) 50) goto main::@4 [ main::s#3 main::i#1 ] -- xby_le_coby1_then_la1 
+  //SEG17 [6] if((byte) main::i#1<=(byte) 50) goto main::@4 [ main::s#3 main::i#1 ] -- xby_le_coby1_then_la1 
     cpx #$32
     bcc b4
     beq b4
-  //SEG16 main::@8
-  //SEG17 [7] (byte) main::s#2 ← ++ (byte) main::s#3 [ main::i#1 main::s#2 ] -- yby=_inc_yby 
+  //SEG18 main::@8
+  //SEG19 [7] (byte) main::s#2 ← ++ (byte) main::s#3 [ main::i#1 main::s#2 ] -- yby=_inc_yby 
     iny
-  //SEG18 [2] phi from main::@4 main::@8 to main::@1 [phi:main::@4/main::@8->main::@1]
+  //SEG20 [2] phi from main::@4 main::@8 to main::@1 [phi:main::@4/main::@8->main::@1]
   b1_from_b8:
-  //SEG19 [2] phi (byte) main::s#3 = (byte) main::s#1 [phi:main::@4/main::@8->main::@1#0] -- register_copy 
-  //SEG20 [2] phi (byte) main::i#2 = (byte) main::i#1 [phi:main::@4/main::@8->main::@1#1] -- register_copy 
+  //SEG21 [2] phi (byte) main::s#3 = (byte) main::s#1 [phi:main::@4/main::@8->main::@1#0] -- register_copy 
+  //SEG22 [2] phi (byte) main::i#2 = (byte) main::i#1 [phi:main::@4/main::@8->main::@1#1] -- register_copy 
     jmp b1
-  //SEG21 main::@4
+  //SEG23 main::@4
   b4:
-  //SEG22 [8] (byte) main::s#1 ← -- (byte) main::s#3 [ main::i#1 main::s#1 ] -- yby=_dec_yby 
+  //SEG24 [8] (byte) main::s#1 ← -- (byte) main::s#3 [ main::i#1 main::s#1 ] -- yby=_dec_yby 
     dey
     jmp b1_from_b8
 }

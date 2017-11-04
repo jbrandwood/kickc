@@ -1,3 +1,6 @@
+.pc = $801 "Basic"
+:BasicUpstart(main)
+.pc = $80d "Program"
   .const SCREEN = $400
   .const CHARSET = $2000
   .const CHARGEN = $d000

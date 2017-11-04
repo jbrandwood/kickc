@@ -1,6 +1,5 @@
 byte* SCREEN = $0400;
 byte* SCREEN2 = $0400+40;
-main();
 
 void main() {
     for(byte i : 0..10) {
@@ -21,7 +20,6 @@ PROGRAM
   (byte*) SCREEN ← (word) 1024
   (word~) $0 ← (word) 1024 + (byte) 40
   (byte*) SCREEN2 ← (word~) $0
-  (void~) $1 ← call main 
 proc (void()) main()
   (byte) main::i ← (byte) 0
 main::@1:
@@ -57,10 +55,10 @@ sum2::@return:
   (byte) sum2::return ← (byte) sum2::return
   return (byte) sum2::return
 endproc // sum2()
+  call main 
 
 SYMBOLS
 (word~) $0
-(void~) $1
 (byte*) SCREEN
 (byte*) SCREEN2
 (void()) main()
@@ -96,7 +94,6 @@ INITIAL CONTROL FLOW GRAPH
   (byte*) SCREEN ← (word) 1024
   (word~) $0 ← (word) 1024 + (byte) 40
   (byte*) SCREEN2 ← (word~) $0
-  (void~) $1 ← call main 
   to:@1
 main: scope:[main]  from
   (byte) main::i ← (byte) 0
@@ -146,6 +143,7 @@ sum2::@return: scope:[sum2]  from sum2 sum2::@1
 sum2::@1: scope:[sum2]  from
   to:sum2::@return
 @3: scope:[]  from @2
+  call main 
   to:@end
 @end: scope:[]  from @3
 
@@ -154,14 +152,12 @@ Removing empty block @1
 Removing empty block sum::@1
 Removing empty block @2
 Removing empty block sum2::@1
-Removing empty block @3
 CONTROL FLOW GRAPH
 @begin: scope:[]  from
   (byte*) SCREEN ← (word) 1024
   (word~) $0 ← (word) 1024 + (byte) 40
   (byte*) SCREEN2 ← (word~) $0
-  (void~) $1 ← call main 
-  to:@end
+  to:@3
 main: scope:[main]  from
   (byte) main::i ← (byte) 0
   to:main::@1
@@ -199,7 +195,10 @@ sum2::@return: scope:[sum2]  from sum2
   (byte) sum2::return ← (byte) sum2::return
   return (byte) sum2::return
   to:@return
-@end: scope:[]  from @begin
+@3: scope:[]  from @begin
+  call main 
+  to:@end
+@end: scope:[]  from @3
 
 PROCEDURE MODIFY VARIABLE ANALYSIS
 
@@ -208,11 +207,8 @@ CONTROL FLOW GRAPH WITH ASSIGNMENT CALL
   (byte*) SCREEN ← (word) 1024
   (word~) $0 ← (word) 1024 + (byte) 40
   (byte*) SCREEN2 ← (word~) $0
-  call main param-assignment
-  to:@4
-@4: scope:[]  from @begin
-  to:@end
-main: scope:[main]  from @begin
+  to:@3
+main: scope:[main]  from @3
   (byte) main::i ← (byte) 0
   to:main::@1
 main::@1: scope:[main]  from main main::@4
@@ -261,8 +257,14 @@ sum2::@return: scope:[sum2]  from sum2
   (byte) sum2::return ← (byte) sum2::return
   return (byte) sum2::return
   to:@return
+@3: scope:[]  from @begin
+  call main param-assignment
+  to:@4
+@4: scope:[]  from @3
+  to:@end
 @end: scope:[]  from @4
 
+Completing Phi functions...
 Completing Phi functions...
 Completing Phi functions...
 Completing Phi functions...
@@ -272,13 +274,10 @@ CONTROL FLOW GRAPH SSA
   (byte*) SCREEN#0 ← (word) 1024
   (word~) $0 ← (word) 1024 + (byte) 40
   (byte*) SCREEN2#0 ← (word~) $0
-  call main param-assignment
-  to:@4
-@4: scope:[]  from @begin
-  to:@end
-main: scope:[main]  from @begin
-  (byte*) SCREEN2#4 ← phi( @begin/(byte*) SCREEN2#0 )
-  (byte*) SCREEN#3 ← phi( @begin/(byte*) SCREEN#0 )
+  to:@3
+main: scope:[main]  from @3
+  (byte*) SCREEN2#4 ← phi( @3/(byte*) SCREEN2#5 )
+  (byte*) SCREEN#3 ← phi( @3/(byte*) SCREEN#5 )
   (byte) main::i#0 ← (byte) 0
   to:main::@1
 main::@1: scope:[main]  from main main::@4
@@ -346,6 +345,13 @@ sum2::@return: scope:[sum2]  from sum2
   (byte) sum2::return#2 ← (byte) sum2::return#4
   return (byte) sum2::return#2
   to:@return
+@3: scope:[]  from @begin
+  (byte*) SCREEN2#5 ← phi( @begin/(byte*) SCREEN2#0 )
+  (byte*) SCREEN#5 ← phi( @begin/(byte*) SCREEN#0 )
+  call main param-assignment
+  to:@4
+@4: scope:[]  from @3
+  to:@end
 @end: scope:[]  from @4
 
 CONTROL FLOW GRAPH WITH ASSIGNMENT CALL & RETURN
@@ -353,13 +359,10 @@ CONTROL FLOW GRAPH WITH ASSIGNMENT CALL & RETURN
   (byte*) SCREEN#0 ← (word) 1024
   (word~) $0 ← (word) 1024 + (byte) 40
   (byte*) SCREEN2#0 ← (word~) $0
-  call main param-assignment
-  to:@4
-@4: scope:[]  from @begin
-  to:@end
-main: scope:[main]  from @begin
-  (byte*) SCREEN2#4 ← phi( @begin/(byte*) SCREEN2#0 )
-  (byte*) SCREEN#3 ← phi( @begin/(byte*) SCREEN#0 )
+  to:@3
+main: scope:[main]  from @3
+  (byte*) SCREEN2#4 ← phi( @3/(byte*) SCREEN2#5 )
+  (byte*) SCREEN#3 ← phi( @3/(byte*) SCREEN#5 )
   (byte) main::i#0 ← (byte) 0
   to:main::@1
 main::@1: scope:[main]  from main main::@4
@@ -429,10 +432,18 @@ sum2::@return: scope:[sum2]  from sum2
   (byte) sum2::return#2 ← (byte) sum2::return#4
   return 
   to:@return
+@3: scope:[]  from @begin
+  (byte*) SCREEN2#5 ← phi( @begin/(byte*) SCREEN2#0 )
+  (byte*) SCREEN#5 ← phi( @begin/(byte*) SCREEN#0 )
+  call main param-assignment
+  to:@4
+@4: scope:[]  from @3
+  to:@end
 @end: scope:[]  from @4
 
 INITIAL SSA SYMBOL TABLE
 (word~) $0
+(label) @3
 (label) @4
 (label) @begin
 (label) @end
@@ -442,12 +453,14 @@ INITIAL SSA SYMBOL TABLE
 (byte*) SCREEN#2
 (byte*) SCREEN#3
 (byte*) SCREEN#4
+(byte*) SCREEN#5
 (byte*) SCREEN2
 (byte*) SCREEN2#0
 (byte*) SCREEN2#1
 (byte*) SCREEN2#2
 (byte*) SCREEN2#3
 (byte*) SCREEN2#4
+(byte*) SCREEN2#5
 (void()) main()
 (byte~) main::$0
 (byte~) main::$1
@@ -512,11 +525,10 @@ CONTROL FLOW GRAPH
   (byte*) SCREEN#0 ← (word) 1024
   (word~) $0 ← (word) 1024 + (byte) 40
   (byte*) SCREEN2#0 ← (word~) $0
-  call main param-assignment
-  to:@end
-main: scope:[main]  from @begin
-  (byte*) SCREEN2#4 ← phi( @begin/(byte*) SCREEN2#0 )
-  (byte*) SCREEN#3 ← phi( @begin/(byte*) SCREEN#0 )
+  to:@3
+main: scope:[main]  from @3
+  (byte*) SCREEN2#4 ← phi( @3/(byte*) SCREEN2#5 )
+  (byte*) SCREEN#3 ← phi( @3/(byte*) SCREEN#5 )
   (byte) main::i#0 ← (byte) 0
   to:main::@1
 main::@1: scope:[main]  from main main::@4
@@ -586,7 +598,12 @@ sum2::@return: scope:[sum2]  from sum2
   (byte) sum2::return#2 ← (byte) sum2::return#4
   return 
   to:@return
-@end: scope:[]  from @begin
+@3: scope:[]  from @begin
+  (byte*) SCREEN2#5 ← phi( @begin/(byte*) SCREEN2#0 )
+  (byte*) SCREEN#5 ← phi( @begin/(byte*) SCREEN#0 )
+  call main param-assignment
+  to:@end
+@end: scope:[]  from @3
 
 Not aliassing across scopes: sum::a#0 main::i#2
 Not aliassing across scopes: sum::b#0 main::$0
@@ -596,8 +613,8 @@ Not aliassing across scopes: sum2::a#0 main::i#3
 Not aliassing across scopes: sum2::b#0 main::$3
 Not aliassing across scopes: sum2::c#0 main::$4
 Not aliassing across scopes: main::$5 sum2::return#3
-Alias (byte*) SCREEN2#0 = (word~) $0 (byte*) SCREEN2#4 
-Alias (byte*) SCREEN#0 = (byte*) SCREEN#3 
+Alias (byte*) SCREEN#0 = (byte*) SCREEN#3 (byte*) SCREEN#5 
+Alias (byte*) SCREEN2#0 = (byte*) SCREEN2#4 (byte*) SCREEN2#5 (word~) $0 
 Alias (byte) sum::return#0 = (byte) sum::return#2 (byte) sum::return#3 (byte) sum::return#1 (byte~) sum::$1 (byte) sum::return#4 
 Alias (byte*) SCREEN#1 = (byte*) SCREEN#2 (byte*) SCREEN#4 
 Alias (byte) main::i#2 = (byte) main::i#3 (byte) main::i#4 
@@ -614,9 +631,8 @@ CONTROL FLOW GRAPH
 @begin: scope:[]  from
   (byte*) SCREEN#0 ← (word) 1024
   (byte*) SCREEN2#0 ← (word) 1024 + (byte) 40
-  call main param-assignment
-  to:@end
-main: scope:[main]  from @begin
+  to:@3
+main: scope:[main]  from @3
   (byte) main::i#0 ← (byte) 0
   to:main::@1
 main::@1: scope:[main]  from main main::@4
@@ -664,7 +680,10 @@ sum2: scope:[sum2]  from main::@3
 sum2::@return: scope:[sum2]  from sum2
   return 
   to:@return
-@end: scope:[]  from @begin
+@3: scope:[]  from @begin
+  call main param-assignment
+  to:@end
+@end: scope:[]  from @3
 
 Not aliassing across scopes: sum::a#0 main::i#2
 Not aliassing across scopes: sum::b#0 main::$0
@@ -681,9 +700,8 @@ CONTROL FLOW GRAPH
 @begin: scope:[]  from
   (byte*) SCREEN#0 ← (word) 1024
   (byte*) SCREEN2#0 ← (word) 1024 + (byte) 40
-  call main param-assignment
-  to:@end
-main: scope:[main]  from @begin
+  to:@3
+main: scope:[main]  from @3
   (byte) main::i#0 ← (byte) 0
   to:main::@1
 main::@1: scope:[main]  from main main::@4
@@ -731,7 +749,10 @@ sum2: scope:[sum2]  from main::@3
 sum2::@return: scope:[sum2]  from sum2
   return 
   to:@return
-@end: scope:[]  from @begin
+@3: scope:[]  from @begin
+  call main param-assignment
+  to:@end
+@end: scope:[]  from @3
 
 Redundant Phi (byte*) SCREEN#1 (byte*) SCREEN#0
 Redundant Phi (byte*) SCREEN2#1 (byte*) SCREEN2#0
@@ -740,9 +761,8 @@ CONTROL FLOW GRAPH
 @begin: scope:[]  from
   (byte*) SCREEN#0 ← (word) 1024
   (byte*) SCREEN2#0 ← (word) 1024 + (byte) 40
-  call main param-assignment
-  to:@end
-main: scope:[main]  from @begin
+  to:@3
+main: scope:[main]  from @3
   (byte) main::i#0 ← (byte) 0
   to:main::@1
 main::@1: scope:[main]  from main main::@4
@@ -788,7 +808,10 @@ sum2: scope:[sum2]  from main::@3
 sum2::@return: scope:[sum2]  from sum2
   return 
   to:@return
-@end: scope:[]  from @begin
+@3: scope:[]  from @begin
+  call main param-assignment
+  to:@end
+@end: scope:[]  from @3
 
 Simple Condition (boolean~) main::$6 if((byte) main::i#1!=(byte) 11) goto main::@1
 Succesful SSA optimization Pass2ConditionalJumpSimplification
@@ -796,9 +819,8 @@ CONTROL FLOW GRAPH
 @begin: scope:[]  from
   (byte*) SCREEN#0 ← (word) 1024
   (byte*) SCREEN2#0 ← (word) 1024 + (byte) 40
-  call main param-assignment
-  to:@end
-main: scope:[main]  from @begin
+  to:@3
+main: scope:[main]  from @3
   (byte) main::i#0 ← (byte) 0
   to:main::@1
 main::@1: scope:[main]  from main main::@4
@@ -843,7 +865,10 @@ sum2: scope:[sum2]  from main::@3
 sum2::@return: scope:[sum2]  from sum2
   return 
   to:@return
-@end: scope:[]  from @begin
+@3: scope:[]  from @begin
+  call main param-assignment
+  to:@end
+@end: scope:[]  from @3
 
 Constant (const byte*) SCREEN#0 = 1024
 Constant (const byte*) SCREEN2#0 = 1024+40
@@ -851,9 +876,8 @@ Constant (const byte) main::i#0 = 0
 Succesful SSA optimization Pass2ConstantIdentification
 CONTROL FLOW GRAPH
 @begin: scope:[]  from
-  call main param-assignment
-  to:@end
-main: scope:[main]  from @begin
+  to:@3
+main: scope:[main]  from @3
   to:main::@1
 main::@1: scope:[main]  from main main::@4
   (byte) main::i#2 ← phi( main/(const byte) main::i#0 main::@4/(byte) main::i#1 )
@@ -897,7 +921,10 @@ sum2: scope:[sum2]  from main::@3
 sum2::@return: scope:[sum2]  from sum2
   return 
   to:@return
-@end: scope:[]  from @begin
+@3: scope:[]  from @begin
+  call main param-assignment
+  to:@end
+@end: scope:[]  from @3
 
 Multiple usages for variable. Not optimizing sub-constant (byte) main::i#2
 Multiple usages for variable. Not optimizing sub-constant (byte) main::i#2
@@ -925,9 +952,8 @@ Constant inlined main::i#0 = (byte) 0
 Succesful SSA optimization Pass2ConstantInlining
 CONTROL FLOW GRAPH
 @begin: scope:[]  from
-  call main param-assignment
-  to:@end
-main: scope:[main]  from @begin
+  to:@3
+main: scope:[main]  from @3
   to:main::@1
 main::@1: scope:[main]  from main main::@4
   (byte) main::i#2 ← phi( main/(byte) 0 main::@4/(byte) main::i#1 )
@@ -971,9 +997,13 @@ sum2: scope:[sum2]  from main::@3
 sum2::@return: scope:[sum2]  from sum2
   return 
   to:@return
-@end: scope:[]  from @begin
+@3: scope:[]  from @begin
+  call main param-assignment
+  to:@end
+@end: scope:[]  from @3
 
 FINAL SYMBOL TABLE
+(label) @3
 (label) @begin
 (label) @end
 (byte*) SCREEN
@@ -1017,15 +1047,17 @@ FINAL SYMBOL TABLE
 (byte) sum2::return
 (byte) sum2::return#0
 
-Block Sequence Planned @begin @end main main::@1 main::@3 main::@4 main::@return sum2 sum2::@return sum sum::@return 
+Block Sequence Planned @begin @3 @end main main::@1 main::@3 main::@4 main::@return sum2 sum2::@return sum sum::@return 
 Added new block during phi lifting main::@5(between main::@4 and main::@1)
-Block Sequence Planned @begin @end main main::@1 main::@3 main::@4 main::@return main::@5 sum2 sum2::@return sum sum::@return 
+Block Sequence Planned @begin @3 @end main main::@1 main::@3 main::@4 main::@return main::@5 sum2 sum2::@return sum sum::@return 
 CONTROL FLOW GRAPH - PHI LIFTED
 @begin: scope:[]  from
+  to:@3
+@3: scope:[]  from @begin
   call main param-assignment
   to:@end
-@end: scope:[]  from @begin
-main: scope:[main]  from @begin
+@end: scope:[]  from @3
+main: scope:[main]  from @3
   to:main::@1
 main::@1: scope:[main]  from main main::@5
   (byte) main::i#2 ← phi( main/(byte) 0 main::@5/(byte~) main::i#5 )
@@ -1086,10 +1118,12 @@ Propagating live ranges...
 Propagating live ranges...
 CONTROL FLOW GRAPH - LIVE RANGES FOUND
 @begin: scope:[]  from
+  to:@3
+@3: scope:[]  from @begin
   [0] call main param-assignment [ ]
   to:@end
-@end: scope:[]  from @begin
-main: scope:[main]  from @begin
+@end: scope:[]  from @3
+main: scope:[main]  from @3
   [1] phi() [ ]
   to:main::@1
 main::@1: scope:[main]  from main main::@5
@@ -1142,7 +1176,7 @@ Created 1 initial phi equivalence classes
 Coalesced [22] main::i#5 ← main::i#1
 Coalesced down to 1 phi equivalence classes
 Culled Empty Block (label) main::@5
-Block Sequence Planned @begin @end main main::@1 main::@3 main::@4 main::@return sum2 sum2::@return sum sum::@return 
+Block Sequence Planned @begin @3 @end main main::@1 main::@3 main::@4 main::@return sum2 sum2::@return sum sum::@return 
 Adding NOP phi() at start of main
 Propagating live ranges...
 Propagating live ranges...
@@ -1152,10 +1186,12 @@ Propagating live ranges...
 Propagating live ranges...
 CONTROL FLOW GRAPH - PHI MEM COALESCED
 @begin: scope:[]  from
+  to:@3
+@3: scope:[]  from @begin
   [0] call main param-assignment [ ]
   to:@end
-@end: scope:[]  from @begin
-main: scope:[main]  from @begin
+@end: scope:[]  from @3
+main: scope:[main]  from @3
   [1] phi() [ ]
   to:main::@1
 main::@1: scope:[main]  from main main::@4
@@ -1203,16 +1239,17 @@ sum::@return: scope:[sum]  from sum
 
 DOMINATORS
 @begin dominated by  @begin 
-@end dominated by  @end @begin 
-main dominated by  @begin main 
-main::@1 dominated by  @begin main::@1 main 
-main::@3 dominated by  @begin main::@1 main::@3 main 
-main::@4 dominated by  @begin main::@1 main::@4 main::@3 main 
-main::@return dominated by  main::@return @begin main::@1 main::@4 main::@3 main 
-sum2 dominated by  sum2 @begin main::@1 main::@3 main 
-sum2::@return dominated by  sum2 @begin sum2::@return main::@1 main::@3 main 
-sum dominated by  @begin sum main::@1 main 
-sum::@return dominated by  @begin sum::@return sum main::@1 main 
+@3 dominated by  @3 @begin 
+@end dominated by  @3 @end @begin 
+main dominated by  @3 @begin main 
+main::@1 dominated by  @3 @begin main::@1 main 
+main::@3 dominated by  @3 @begin main::@1 main::@3 main 
+main::@4 dominated by  @3 @begin main::@1 main::@4 main::@3 main 
+main::@return dominated by  main::@return @3 @begin main::@1 main::@4 main::@3 main 
+sum2 dominated by  @3 sum2 @begin main::@1 main::@3 main 
+sum2::@return dominated by  @3 sum2 @begin sum2::@return main::@1 main::@3 main 
+sum dominated by  @3 @begin sum main::@1 main 
+sum::@return dominated by  @3 @begin sum::@return sum main::@1 main 
 
 Found back edge: Loop head: main::@1 tails: main::@4 blocks: null
 Populated: Loop head: main::@1 tails: main::@4 blocks: main::@4 main::@3 main::@1 
@@ -1316,157 +1353,164 @@ Allocated zp ZP_BYTE:16 [ sum2::return#0 ]
 Allocated zp ZP_BYTE:17 [ sum::$0 ]
 Allocated zp ZP_BYTE:18 [ sum::return#0 ]
 INITIAL ASM
-//SEG0 Global Constants & labels
+//SEG0 Basic Upstart
+.pc = $801 "Basic"
+:BasicUpstart(main)
+.pc = $80d "Program"
+//SEG1 Global Constants & labels
   .const SCREEN = $400
   .const SCREEN2 = $400+$28
-//SEG1 @begin
+//SEG2 @begin
 bbegin:
-//SEG2 [0] call main param-assignment [ ]
-//SEG3 [1] phi from @begin to main [phi:@begin->main]
-main_from_bbegin:
+  jmp b3
+//SEG3 @3
+b3:
+//SEG4 [0] call main param-assignment [ ]
+//SEG5 [1] phi from @3 to main [phi:@3->main]
+main_from_b3:
   jsr main
   jmp bend
-//SEG4 @end
+//SEG6 @end
 bend:
-//SEG5 main
+//SEG7 main
 main: {
     .label _0 = 3
     .label _1 = 4
     .label _2 = 8
     .label _3 = 9
-    .label _4 = 10
-    .label _5 = 14
+    .label _4 = $a
+    .label _5 = $e
     .label i = 2
-  //SEG6 [2] phi from main to main::@1 [phi:main->main::@1]
+  //SEG8 [2] phi from main to main::@1 [phi:main->main::@1]
   b1_from_main:
-  //SEG7 [2] phi (byte) main::i#2 = (byte) 0 [phi:main->main::@1#0] -- zpby1=coby1 
+  //SEG9 [2] phi (byte) main::i#2 = (byte) 0 [phi:main->main::@1#0] -- zpby1=coby1 
     lda #0
     sta i
     jmp b1
-  //SEG8 [2] phi from main::@4 to main::@1 [phi:main::@4->main::@1]
+  //SEG10 [2] phi from main::@4 to main::@1 [phi:main::@4->main::@1]
   b1_from_b4:
-  //SEG9 [2] phi (byte) main::i#2 = (byte) main::i#1 [phi:main::@4->main::@1#0] -- register_copy 
+  //SEG11 [2] phi (byte) main::i#2 = (byte) main::i#1 [phi:main::@4->main::@1#0] -- register_copy 
     jmp b1
-  //SEG10 main::@1
+  //SEG12 main::@1
   b1:
-  //SEG11 [3] (byte~) main::$0 ← (byte) main::i#2 + (byte) 1 [ main::i#2 main::$0 ] -- zpby1=zpby2_plus_1 
+  //SEG13 [3] (byte~) main::$0 ← (byte) main::i#2 + (byte) 1 [ main::i#2 main::$0 ] -- zpby1=zpby2_plus_1 
     lda i
     clc
     adc #1
     sta _0
-  //SEG12 [4] (byte~) main::$1 ← (byte) main::i#2 + (byte) 2 [ main::i#2 main::$0 main::$1 ] -- zpby1=zpby2_plus_coby1 
+  //SEG14 [4] (byte~) main::$1 ← (byte) main::i#2 + (byte) 2 [ main::i#2 main::$0 main::$1 ] -- zpby1=zpby2_plus_coby1 
     lda i
     clc
     adc #2
     sta _1
-  //SEG13 [5] (byte) sum::a#0 ← (byte) main::i#2 [ main::i#2 main::$0 main::$1 sum::a#0 ] -- zpby1=zpby2 
+  //SEG15 [5] (byte) sum::a#0 ← (byte) main::i#2 [ main::i#2 main::$0 main::$1 sum::a#0 ] -- zpby1=zpby2 
     lda i
     sta sum.a
-  //SEG14 [6] (byte) sum::b#0 ← (byte~) main::$0 [ main::i#2 main::$1 sum::a#0 sum::b#0 ] -- zpby1=zpby2 
+  //SEG16 [6] (byte) sum::b#0 ← (byte~) main::$0 [ main::i#2 main::$1 sum::a#0 sum::b#0 ] -- zpby1=zpby2 
     lda _0
     sta sum.b
-  //SEG15 [7] (byte) sum::c#0 ← (byte~) main::$1 [ main::i#2 sum::a#0 sum::b#0 sum::c#0 ] -- zpby1=zpby2 
+  //SEG17 [7] (byte) sum::c#0 ← (byte~) main::$1 [ main::i#2 sum::a#0 sum::b#0 sum::c#0 ] -- zpby1=zpby2 
     lda _1
     sta sum.c
-  //SEG16 [8] call sum param-assignment [ main::i#2 sum::return#0 ]
+  //SEG18 [8] call sum param-assignment [ main::i#2 sum::return#0 ]
     jsr sum
     jmp b3
-  //SEG17 main::@3
+  //SEG19 main::@3
   b3:
-  //SEG18 [9] (byte~) main::$2 ← (byte) sum::return#0 [ main::i#2 main::$2 ] -- zpby1=zpby2 
+  //SEG20 [9] (byte~) main::$2 ← (byte) sum::return#0 [ main::i#2 main::$2 ] -- zpby1=zpby2 
     lda sum.return
     sta _2
-  //SEG19 [10] *((const byte*) SCREEN#0 + (byte) main::i#2) ← (byte~) main::$2 [ main::i#2 ] -- cowo1_staridx_zpby1=zpby2 
+  //SEG21 [10] *((const byte*) SCREEN#0 + (byte) main::i#2) ← (byte~) main::$2 [ main::i#2 ] -- cowo1_staridx_zpby1=zpby2 
     lda _2
     ldx i
     sta SCREEN,x
-  //SEG20 [11] (byte~) main::$3 ← (byte) main::i#2 + (byte) 1 [ main::i#2 main::$3 ] -- zpby1=zpby2_plus_1 
+  //SEG22 [11] (byte~) main::$3 ← (byte) main::i#2 + (byte) 1 [ main::i#2 main::$3 ] -- zpby1=zpby2_plus_1 
     lda i
     clc
     adc #1
     sta _3
-  //SEG21 [12] (byte~) main::$4 ← (byte) main::i#2 + (byte) 2 [ main::i#2 main::$3 main::$4 ] -- zpby1=zpby2_plus_coby1 
+  //SEG23 [12] (byte~) main::$4 ← (byte) main::i#2 + (byte) 2 [ main::i#2 main::$3 main::$4 ] -- zpby1=zpby2_plus_coby1 
     lda i
     clc
     adc #2
     sta _4
-  //SEG22 [13] (byte) sum2::a#0 ← (byte) main::i#2 [ main::i#2 main::$3 main::$4 sum2::a#0 ] -- zpby1=zpby2 
+  //SEG24 [13] (byte) sum2::a#0 ← (byte) main::i#2 [ main::i#2 main::$3 main::$4 sum2::a#0 ] -- zpby1=zpby2 
     lda i
     sta sum2.a
-  //SEG23 [14] (byte) sum2::b#0 ← (byte~) main::$3 [ main::i#2 main::$4 sum2::a#0 sum2::b#0 ] -- zpby1=zpby2 
+  //SEG25 [14] (byte) sum2::b#0 ← (byte~) main::$3 [ main::i#2 main::$4 sum2::a#0 sum2::b#0 ] -- zpby1=zpby2 
     lda _3
     sta sum2.b
-  //SEG24 [15] (byte) sum2::c#0 ← (byte~) main::$4 [ main::i#2 sum2::a#0 sum2::b#0 sum2::c#0 ] -- zpby1=zpby2 
+  //SEG26 [15] (byte) sum2::c#0 ← (byte~) main::$4 [ main::i#2 sum2::a#0 sum2::b#0 sum2::c#0 ] -- zpby1=zpby2 
     lda _4
     sta sum2.c
-  //SEG25 [16] call sum2 param-assignment [ main::i#2 sum2::return#0 ]
+  //SEG27 [16] call sum2 param-assignment [ main::i#2 sum2::return#0 ]
     jsr sum2
     jmp b4
-  //SEG26 main::@4
+  //SEG28 main::@4
   b4:
-  //SEG27 [17] (byte~) main::$5 ← (byte) sum2::return#0 [ main::i#2 main::$5 ] -- zpby1=zpby2 
+  //SEG29 [17] (byte~) main::$5 ← (byte) sum2::return#0 [ main::i#2 main::$5 ] -- zpby1=zpby2 
     lda sum2.return
     sta _5
-  //SEG28 [18] *((const byte*) SCREEN2#0 + (byte) main::i#2) ← (byte~) main::$5 [ main::i#2 ] -- cowo1_staridx_zpby1=zpby2 
+  //SEG30 [18] *((const byte*) SCREEN2#0 + (byte) main::i#2) ← (byte~) main::$5 [ main::i#2 ] -- cowo1_staridx_zpby1=zpby2 
     lda _5
     ldx i
     sta SCREEN2,x
-  //SEG29 [19] (byte) main::i#1 ← ++ (byte) main::i#2 [ main::i#1 ] -- zpby1=_inc_zpby1 
+  //SEG31 [19] (byte) main::i#1 ← ++ (byte) main::i#2 [ main::i#1 ] -- zpby1=_inc_zpby1 
     inc i
-  //SEG30 [20] if((byte) main::i#1!=(byte) 11) goto main::@1 [ main::i#1 ] -- zpby1_neq_coby1_then_la1 
+  //SEG32 [20] if((byte) main::i#1!=(byte) 11) goto main::@1 [ main::i#1 ] -- zpby1_neq_coby1_then_la1 
     lda i
     cmp #$b
     bne b1_from_b4
     jmp breturn
-  //SEG31 main::@return
+  //SEG33 main::@return
   breturn:
-  //SEG32 [21] return  [ ]
+  //SEG34 [21] return  [ ]
     rts
 }
-//SEG33 sum2
+//SEG35 sum2
 sum2: {
-    .label _0 = 15
-    .label a = 11
-    .label b = 12
-    .label c = 13
-    .label return = 16
-  //SEG34 [22] (byte~) sum2::$0 ← (byte) sum2::a#0 + (byte) sum2::b#0 [ sum2::c#0 sum2::$0 ] -- zpby1=zpby2_plus_zpby3 
+    .label _0 = $f
+    .label a = $b
+    .label b = $c
+    .label c = $d
+    .label return = $10
+  //SEG36 [22] (byte~) sum2::$0 ← (byte) sum2::a#0 + (byte) sum2::b#0 [ sum2::c#0 sum2::$0 ] -- zpby1=zpby2_plus_zpby3 
     lda a
     clc
     adc b
     sta _0
-  //SEG35 [23] (byte) sum2::return#0 ← (byte~) sum2::$0 + (byte) sum2::c#0 [ sum2::return#0 ] -- zpby1=zpby2_plus_zpby3 
+  //SEG37 [23] (byte) sum2::return#0 ← (byte~) sum2::$0 + (byte) sum2::c#0 [ sum2::return#0 ] -- zpby1=zpby2_plus_zpby3 
     lda _0
     clc
     adc c
     sta return
     jmp breturn
-  //SEG36 sum2::@return
+  //SEG38 sum2::@return
   breturn:
-  //SEG37 [24] return  [ sum2::return#0 ]
+  //SEG39 [24] return  [ sum2::return#0 ]
     rts
 }
-//SEG38 sum
+//SEG40 sum
 sum: {
-    .label _0 = 17
+    .label _0 = $11
     .label a = 5
     .label b = 6
     .label c = 7
-    .label return = 18
-  //SEG39 [25] (byte~) sum::$0 ← (byte) sum::a#0 + (byte) sum::b#0 [ sum::c#0 sum::$0 ] -- zpby1=zpby2_plus_zpby3 
+    .label return = $12
+  //SEG41 [25] (byte~) sum::$0 ← (byte) sum::a#0 + (byte) sum::b#0 [ sum::c#0 sum::$0 ] -- zpby1=zpby2_plus_zpby3 
     lda a
     clc
     adc b
     sta _0
-  //SEG40 [26] (byte) sum::return#0 ← (byte~) sum::$0 + (byte) sum::c#0 [ sum::return#0 ] -- zpby1=zpby2_plus_zpby3 
+  //SEG42 [26] (byte) sum::return#0 ← (byte~) sum::$0 + (byte) sum::c#0 [ sum::return#0 ] -- zpby1=zpby2_plus_zpby3 
     lda _0
     clc
     adc c
     sta return
     jmp breturn
-  //SEG41 sum::@return
+  //SEG43 sum::@return
   breturn:
-  //SEG42 [27] return  [ sum::return#0 ]
+  //SEG44 [27] return  [ sum::return#0 ]
     rts
 }
 
@@ -1502,22 +1546,23 @@ Uplift Scope [sum] 6.5: zp ZP_BYTE:6 [ sum::b#0 ] 6.5: zp ZP_BYTE:7 [ sum::c#0 ]
 Uplift Scope [sum2] 6.5: zp ZP_BYTE:12 [ sum2::b#0 ] 6.5: zp ZP_BYTE:13 [ sum2::c#0 ] 4.33: zp ZP_BYTE:11 [ sum2::a#0 ] 4.33: zp ZP_BYTE:16 [ sum2::return#0 ] 4: zp ZP_BYTE:15 [ sum2::$0 ] 
 Uplift Scope [] 
 
-Uplifting [main] best 1012 combination reg byte y [ main::i#2 main::i#1 ] reg byte a [ main::$2 ] reg byte a [ main::$5 ] reg byte x [ main::$0 ] reg byte a [ main::$1 ] reg byte x [ main::$3 ] reg byte a [ main::$4 ] 
-Uplifting [sum] best 942 combination reg byte x [ sum::b#0 ] zp ZP_BYTE:7 [ sum::c#0 ] zp ZP_BYTE:5 [ sum::a#0 ] reg byte a [ sum::return#0 ] reg byte a [ sum::$0 ] 
-Uplifting [sum2] best 872 combination reg byte x [ sum2::b#0 ] zp ZP_BYTE:13 [ sum2::c#0 ] zp ZP_BYTE:11 [ sum2::a#0 ] reg byte a [ sum2::return#0 ] reg byte a [ sum2::$0 ] 
-Uplifting [] best 872 combination 
+Uplifting [main] best 1042 combination reg byte y [ main::i#2 main::i#1 ] reg byte a [ main::$2 ] reg byte a [ main::$5 ] reg byte x [ main::$0 ] reg byte a [ main::$1 ] reg byte x [ main::$3 ] reg byte a [ main::$4 ] 
+Uplifting [sum] best 972 combination reg byte x [ sum::b#0 ] zp ZP_BYTE:7 [ sum::c#0 ] zp ZP_BYTE:5 [ sum::a#0 ] reg byte a [ sum::return#0 ] reg byte a [ sum::$0 ] 
+Uplifting [sum2] best 902 combination reg byte x [ sum2::b#0 ] zp ZP_BYTE:13 [ sum2::c#0 ] zp ZP_BYTE:11 [ sum2::a#0 ] reg byte a [ sum2::return#0 ] reg byte a [ sum2::$0 ] 
+Uplifting [] best 902 combination 
 Attempting to uplift remaining variables inzp ZP_BYTE:7 [ sum::c#0 ]
-Uplifting [sum] best 872 combination zp ZP_BYTE:7 [ sum::c#0 ] 
+Uplifting [sum] best 902 combination zp ZP_BYTE:7 [ sum::c#0 ] 
 Attempting to uplift remaining variables inzp ZP_BYTE:13 [ sum2::c#0 ]
-Uplifting [sum2] best 872 combination zp ZP_BYTE:13 [ sum2::c#0 ] 
+Uplifting [sum2] best 902 combination zp ZP_BYTE:13 [ sum2::c#0 ] 
 Attempting to uplift remaining variables inzp ZP_BYTE:5 [ sum::a#0 ]
-Uplifting [sum] best 872 combination zp ZP_BYTE:5 [ sum::a#0 ] 
+Uplifting [sum] best 902 combination zp ZP_BYTE:5 [ sum::a#0 ] 
 Attempting to uplift remaining variables inzp ZP_BYTE:11 [ sum2::a#0 ]
-Uplifting [sum2] best 872 combination zp ZP_BYTE:11 [ sum2::a#0 ] 
+Uplifting [sum2] best 902 combination zp ZP_BYTE:11 [ sum2::a#0 ] 
 Coalescing zero page register [ zp ZP_BYTE:5 [ sum::a#0 ] ] with [ zp ZP_BYTE:11 [ sum2::a#0 ] ]
 Coalescing zero page register [ zp ZP_BYTE:7 [ sum::c#0 ] ] with [ zp ZP_BYTE:13 [ sum2::c#0 ] ]
 Allocated (was zp ZP_BYTE:5) zp ZP_BYTE:2 [ sum::a#0 sum2::a#0 ]
 Allocated (was zp ZP_BYTE:7) zp ZP_BYTE:3 [ sum::c#0 sum2::c#0 ]
+Removing instruction jmp b3
 Removing instruction jmp bend
 Removing instruction jmp b1
 Removing instruction jmp b3
@@ -1527,230 +1572,242 @@ Removing instruction jmp breturn
 Removing instruction jmp breturn
 Succesful ASM optimization Pass5NextJumpElimination
 ASSEMBLER
-//SEG0 Global Constants & labels
+//SEG0 Basic Upstart
+.pc = $801 "Basic"
+:BasicUpstart(main)
+.pc = $80d "Program"
+//SEG1 Global Constants & labels
   .const SCREEN = $400
   .const SCREEN2 = $400+$28
-//SEG1 @begin
+//SEG2 @begin
 bbegin:
-//SEG2 [0] call main param-assignment [ ]
-//SEG3 [1] phi from @begin to main [phi:@begin->main]
-main_from_bbegin:
+//SEG3 @3
+b3:
+//SEG4 [0] call main param-assignment [ ]
+//SEG5 [1] phi from @3 to main [phi:@3->main]
+main_from_b3:
   jsr main
-//SEG4 @end
+//SEG6 @end
 bend:
-//SEG5 main
+//SEG7 main
 main: {
-  //SEG6 [2] phi from main to main::@1 [phi:main->main::@1]
+  //SEG8 [2] phi from main to main::@1 [phi:main->main::@1]
   b1_from_main:
-  //SEG7 [2] phi (byte) main::i#2 = (byte) 0 [phi:main->main::@1#0] -- yby=coby1 
+  //SEG9 [2] phi (byte) main::i#2 = (byte) 0 [phi:main->main::@1#0] -- yby=coby1 
     ldy #0
     jmp b1
-  //SEG8 [2] phi from main::@4 to main::@1 [phi:main::@4->main::@1]
+  //SEG10 [2] phi from main::@4 to main::@1 [phi:main::@4->main::@1]
   b1_from_b4:
-  //SEG9 [2] phi (byte) main::i#2 = (byte) main::i#1 [phi:main::@4->main::@1#0] -- register_copy 
-  //SEG10 main::@1
+  //SEG11 [2] phi (byte) main::i#2 = (byte) main::i#1 [phi:main::@4->main::@1#0] -- register_copy 
+  //SEG12 main::@1
   b1:
-  //SEG11 [3] (byte~) main::$0 ← (byte) main::i#2 + (byte) 1 [ main::i#2 main::$0 ] -- xby=yby_plus_1 
+  //SEG13 [3] (byte~) main::$0 ← (byte) main::i#2 + (byte) 1 [ main::i#2 main::$0 ] -- xby=yby_plus_1 
     tya
     tax
     inx
-  //SEG12 [4] (byte~) main::$1 ← (byte) main::i#2 + (byte) 2 [ main::i#2 main::$0 main::$1 ] -- aby=yby_plus_coby1 
+  //SEG14 [4] (byte~) main::$1 ← (byte) main::i#2 + (byte) 2 [ main::i#2 main::$0 main::$1 ] -- aby=yby_plus_coby1 
     tya
     clc
     adc #2
-  //SEG13 [5] (byte) sum::a#0 ← (byte) main::i#2 [ main::i#2 main::$0 main::$1 sum::a#0 ] -- zpby1=yby 
+  //SEG15 [5] (byte) sum::a#0 ← (byte) main::i#2 [ main::i#2 main::$0 main::$1 sum::a#0 ] -- zpby1=yby 
     sty sum.a
-  //SEG14 [6] (byte) sum::b#0 ← (byte~) main::$0 [ main::i#2 main::$1 sum::a#0 sum::b#0 ]
+  //SEG16 [6] (byte) sum::b#0 ← (byte~) main::$0 [ main::i#2 main::$1 sum::a#0 sum::b#0 ]
     // (byte) sum::b#0 = (byte~) main::$0  // register copy reg byte x
-  //SEG15 [7] (byte) sum::c#0 ← (byte~) main::$1 [ main::i#2 sum::a#0 sum::b#0 sum::c#0 ] -- zpby1=aby 
+  //SEG17 [7] (byte) sum::c#0 ← (byte~) main::$1 [ main::i#2 sum::a#0 sum::b#0 sum::c#0 ] -- zpby1=aby 
     sta sum.c
-  //SEG16 [8] call sum param-assignment [ main::i#2 sum::return#0 ]
+  //SEG18 [8] call sum param-assignment [ main::i#2 sum::return#0 ]
     jsr sum
-  //SEG17 main::@3
+  //SEG19 main::@3
   b3:
-  //SEG18 [9] (byte~) main::$2 ← (byte) sum::return#0 [ main::i#2 main::$2 ]
+  //SEG20 [9] (byte~) main::$2 ← (byte) sum::return#0 [ main::i#2 main::$2 ]
     // (byte~) main::$2 = (byte) sum::return#0  // register copy reg byte a
-  //SEG19 [10] *((const byte*) SCREEN#0 + (byte) main::i#2) ← (byte~) main::$2 [ main::i#2 ] -- cowo1_staridx_yby=aby 
+  //SEG21 [10] *((const byte*) SCREEN#0 + (byte) main::i#2) ← (byte~) main::$2 [ main::i#2 ] -- cowo1_staridx_yby=aby 
     sta SCREEN,y
-  //SEG20 [11] (byte~) main::$3 ← (byte) main::i#2 + (byte) 1 [ main::i#2 main::$3 ] -- xby=yby_plus_1 
+  //SEG22 [11] (byte~) main::$3 ← (byte) main::i#2 + (byte) 1 [ main::i#2 main::$3 ] -- xby=yby_plus_1 
     tya
     tax
     inx
-  //SEG21 [12] (byte~) main::$4 ← (byte) main::i#2 + (byte) 2 [ main::i#2 main::$3 main::$4 ] -- aby=yby_plus_coby1 
+  //SEG23 [12] (byte~) main::$4 ← (byte) main::i#2 + (byte) 2 [ main::i#2 main::$3 main::$4 ] -- aby=yby_plus_coby1 
     tya
     clc
     adc #2
-  //SEG22 [13] (byte) sum2::a#0 ← (byte) main::i#2 [ main::i#2 main::$3 main::$4 sum2::a#0 ] -- zpby1=yby 
+  //SEG24 [13] (byte) sum2::a#0 ← (byte) main::i#2 [ main::i#2 main::$3 main::$4 sum2::a#0 ] -- zpby1=yby 
     sty sum2.a
-  //SEG23 [14] (byte) sum2::b#0 ← (byte~) main::$3 [ main::i#2 main::$4 sum2::a#0 sum2::b#0 ]
+  //SEG25 [14] (byte) sum2::b#0 ← (byte~) main::$3 [ main::i#2 main::$4 sum2::a#0 sum2::b#0 ]
     // (byte) sum2::b#0 = (byte~) main::$3  // register copy reg byte x
-  //SEG24 [15] (byte) sum2::c#0 ← (byte~) main::$4 [ main::i#2 sum2::a#0 sum2::b#0 sum2::c#0 ] -- zpby1=aby 
+  //SEG26 [15] (byte) sum2::c#0 ← (byte~) main::$4 [ main::i#2 sum2::a#0 sum2::b#0 sum2::c#0 ] -- zpby1=aby 
     sta sum2.c
-  //SEG25 [16] call sum2 param-assignment [ main::i#2 sum2::return#0 ]
+  //SEG27 [16] call sum2 param-assignment [ main::i#2 sum2::return#0 ]
     jsr sum2
-  //SEG26 main::@4
+  //SEG28 main::@4
   b4:
-  //SEG27 [17] (byte~) main::$5 ← (byte) sum2::return#0 [ main::i#2 main::$5 ]
+  //SEG29 [17] (byte~) main::$5 ← (byte) sum2::return#0 [ main::i#2 main::$5 ]
     // (byte~) main::$5 = (byte) sum2::return#0  // register copy reg byte a
-  //SEG28 [18] *((const byte*) SCREEN2#0 + (byte) main::i#2) ← (byte~) main::$5 [ main::i#2 ] -- cowo1_staridx_yby=aby 
+  //SEG30 [18] *((const byte*) SCREEN2#0 + (byte) main::i#2) ← (byte~) main::$5 [ main::i#2 ] -- cowo1_staridx_yby=aby 
     sta SCREEN2,y
-  //SEG29 [19] (byte) main::i#1 ← ++ (byte) main::i#2 [ main::i#1 ] -- yby=_inc_yby 
+  //SEG31 [19] (byte) main::i#1 ← ++ (byte) main::i#2 [ main::i#1 ] -- yby=_inc_yby 
     iny
-  //SEG30 [20] if((byte) main::i#1!=(byte) 11) goto main::@1 [ main::i#1 ] -- yby_neq_coby1_then_la1 
+  //SEG32 [20] if((byte) main::i#1!=(byte) 11) goto main::@1 [ main::i#1 ] -- yby_neq_coby1_then_la1 
     cpy #$b
     bne b1_from_b4
-  //SEG31 main::@return
+  //SEG33 main::@return
   breturn:
-  //SEG32 [21] return  [ ]
+  //SEG34 [21] return  [ ]
     rts
 }
-//SEG33 sum2
+//SEG35 sum2
 sum2: {
     .label a = 2
     .label c = 3
-  //SEG34 [22] (byte~) sum2::$0 ← (byte) sum2::a#0 + (byte) sum2::b#0 [ sum2::c#0 sum2::$0 ] -- aby=zpby1_plus_xby 
+  //SEG36 [22] (byte~) sum2::$0 ← (byte) sum2::a#0 + (byte) sum2::b#0 [ sum2::c#0 sum2::$0 ] -- aby=zpby1_plus_xby 
     txa
     clc
     adc a
-  //SEG35 [23] (byte) sum2::return#0 ← (byte~) sum2::$0 + (byte) sum2::c#0 [ sum2::return#0 ] -- aby=aby_plus_zpby1 
+  //SEG37 [23] (byte) sum2::return#0 ← (byte~) sum2::$0 + (byte) sum2::c#0 [ sum2::return#0 ] -- aby=aby_plus_zpby1 
     clc
     adc c
-  //SEG36 sum2::@return
+  //SEG38 sum2::@return
   breturn:
-  //SEG37 [24] return  [ sum2::return#0 ]
+  //SEG39 [24] return  [ sum2::return#0 ]
     rts
 }
-//SEG38 sum
+//SEG40 sum
 sum: {
     .label a = 2
     .label c = 3
-  //SEG39 [25] (byte~) sum::$0 ← (byte) sum::a#0 + (byte) sum::b#0 [ sum::c#0 sum::$0 ] -- aby=zpby1_plus_xby 
+  //SEG41 [25] (byte~) sum::$0 ← (byte) sum::a#0 + (byte) sum::b#0 [ sum::c#0 sum::$0 ] -- aby=zpby1_plus_xby 
     txa
     clc
     adc a
-  //SEG40 [26] (byte) sum::return#0 ← (byte~) sum::$0 + (byte) sum::c#0 [ sum::return#0 ] -- aby=aby_plus_zpby1 
+  //SEG42 [26] (byte) sum::return#0 ← (byte~) sum::$0 + (byte) sum::c#0 [ sum::return#0 ] -- aby=aby_plus_zpby1 
     clc
     adc c
-  //SEG41 sum::@return
+  //SEG43 sum::@return
   breturn:
-  //SEG42 [27] return  [ sum::return#0 ]
+  //SEG44 [27] return  [ sum::return#0 ]
     rts
 }
 
 Replacing label b1_from_b4 with b1
-Removing instruction main_from_bbegin:
+Removing instruction bbegin:
+Removing instruction main_from_b3:
 Removing instruction b1_from_b4:
 Succesful ASM optimization Pass5RedundantLabelElimination
 ASSEMBLER
-//SEG0 Global Constants & labels
+//SEG0 Basic Upstart
+.pc = $801 "Basic"
+:BasicUpstart(main)
+.pc = $80d "Program"
+//SEG1 Global Constants & labels
   .const SCREEN = $400
   .const SCREEN2 = $400+$28
-//SEG1 @begin
-bbegin:
-//SEG2 [0] call main param-assignment [ ]
-//SEG3 [1] phi from @begin to main [phi:@begin->main]
+//SEG2 @begin
+//SEG3 @3
+b3:
+//SEG4 [0] call main param-assignment [ ]
+//SEG5 [1] phi from @3 to main [phi:@3->main]
   jsr main
-//SEG4 @end
+//SEG6 @end
 bend:
-//SEG5 main
+//SEG7 main
 main: {
-  //SEG6 [2] phi from main to main::@1 [phi:main->main::@1]
+  //SEG8 [2] phi from main to main::@1 [phi:main->main::@1]
   b1_from_main:
-  //SEG7 [2] phi (byte) main::i#2 = (byte) 0 [phi:main->main::@1#0] -- yby=coby1 
+  //SEG9 [2] phi (byte) main::i#2 = (byte) 0 [phi:main->main::@1#0] -- yby=coby1 
     ldy #0
     jmp b1
-  //SEG8 [2] phi from main::@4 to main::@1 [phi:main::@4->main::@1]
-  //SEG9 [2] phi (byte) main::i#2 = (byte) main::i#1 [phi:main::@4->main::@1#0] -- register_copy 
-  //SEG10 main::@1
+  //SEG10 [2] phi from main::@4 to main::@1 [phi:main::@4->main::@1]
+  //SEG11 [2] phi (byte) main::i#2 = (byte) main::i#1 [phi:main::@4->main::@1#0] -- register_copy 
+  //SEG12 main::@1
   b1:
-  //SEG11 [3] (byte~) main::$0 ← (byte) main::i#2 + (byte) 1 [ main::i#2 main::$0 ] -- xby=yby_plus_1 
+  //SEG13 [3] (byte~) main::$0 ← (byte) main::i#2 + (byte) 1 [ main::i#2 main::$0 ] -- xby=yby_plus_1 
     tya
     tax
     inx
-  //SEG12 [4] (byte~) main::$1 ← (byte) main::i#2 + (byte) 2 [ main::i#2 main::$0 main::$1 ] -- aby=yby_plus_coby1 
+  //SEG14 [4] (byte~) main::$1 ← (byte) main::i#2 + (byte) 2 [ main::i#2 main::$0 main::$1 ] -- aby=yby_plus_coby1 
     tya
     clc
     adc #2
-  //SEG13 [5] (byte) sum::a#0 ← (byte) main::i#2 [ main::i#2 main::$0 main::$1 sum::a#0 ] -- zpby1=yby 
+  //SEG15 [5] (byte) sum::a#0 ← (byte) main::i#2 [ main::i#2 main::$0 main::$1 sum::a#0 ] -- zpby1=yby 
     sty sum.a
-  //SEG14 [6] (byte) sum::b#0 ← (byte~) main::$0 [ main::i#2 main::$1 sum::a#0 sum::b#0 ]
+  //SEG16 [6] (byte) sum::b#0 ← (byte~) main::$0 [ main::i#2 main::$1 sum::a#0 sum::b#0 ]
     // (byte) sum::b#0 = (byte~) main::$0  // register copy reg byte x
-  //SEG15 [7] (byte) sum::c#0 ← (byte~) main::$1 [ main::i#2 sum::a#0 sum::b#0 sum::c#0 ] -- zpby1=aby 
+  //SEG17 [7] (byte) sum::c#0 ← (byte~) main::$1 [ main::i#2 sum::a#0 sum::b#0 sum::c#0 ] -- zpby1=aby 
     sta sum.c
-  //SEG16 [8] call sum param-assignment [ main::i#2 sum::return#0 ]
+  //SEG18 [8] call sum param-assignment [ main::i#2 sum::return#0 ]
     jsr sum
-  //SEG17 main::@3
+  //SEG19 main::@3
   b3:
-  //SEG18 [9] (byte~) main::$2 ← (byte) sum::return#0 [ main::i#2 main::$2 ]
+  //SEG20 [9] (byte~) main::$2 ← (byte) sum::return#0 [ main::i#2 main::$2 ]
     // (byte~) main::$2 = (byte) sum::return#0  // register copy reg byte a
-  //SEG19 [10] *((const byte*) SCREEN#0 + (byte) main::i#2) ← (byte~) main::$2 [ main::i#2 ] -- cowo1_staridx_yby=aby 
+  //SEG21 [10] *((const byte*) SCREEN#0 + (byte) main::i#2) ← (byte~) main::$2 [ main::i#2 ] -- cowo1_staridx_yby=aby 
     sta SCREEN,y
-  //SEG20 [11] (byte~) main::$3 ← (byte) main::i#2 + (byte) 1 [ main::i#2 main::$3 ] -- xby=yby_plus_1 
+  //SEG22 [11] (byte~) main::$3 ← (byte) main::i#2 + (byte) 1 [ main::i#2 main::$3 ] -- xby=yby_plus_1 
     tya
     tax
     inx
-  //SEG21 [12] (byte~) main::$4 ← (byte) main::i#2 + (byte) 2 [ main::i#2 main::$3 main::$4 ] -- aby=yby_plus_coby1 
+  //SEG23 [12] (byte~) main::$4 ← (byte) main::i#2 + (byte) 2 [ main::i#2 main::$3 main::$4 ] -- aby=yby_plus_coby1 
     tya
     clc
     adc #2
-  //SEG22 [13] (byte) sum2::a#0 ← (byte) main::i#2 [ main::i#2 main::$3 main::$4 sum2::a#0 ] -- zpby1=yby 
+  //SEG24 [13] (byte) sum2::a#0 ← (byte) main::i#2 [ main::i#2 main::$3 main::$4 sum2::a#0 ] -- zpby1=yby 
     sty sum2.a
-  //SEG23 [14] (byte) sum2::b#0 ← (byte~) main::$3 [ main::i#2 main::$4 sum2::a#0 sum2::b#0 ]
+  //SEG25 [14] (byte) sum2::b#0 ← (byte~) main::$3 [ main::i#2 main::$4 sum2::a#0 sum2::b#0 ]
     // (byte) sum2::b#0 = (byte~) main::$3  // register copy reg byte x
-  //SEG24 [15] (byte) sum2::c#0 ← (byte~) main::$4 [ main::i#2 sum2::a#0 sum2::b#0 sum2::c#0 ] -- zpby1=aby 
+  //SEG26 [15] (byte) sum2::c#0 ← (byte~) main::$4 [ main::i#2 sum2::a#0 sum2::b#0 sum2::c#0 ] -- zpby1=aby 
     sta sum2.c
-  //SEG25 [16] call sum2 param-assignment [ main::i#2 sum2::return#0 ]
+  //SEG27 [16] call sum2 param-assignment [ main::i#2 sum2::return#0 ]
     jsr sum2
-  //SEG26 main::@4
+  //SEG28 main::@4
   b4:
-  //SEG27 [17] (byte~) main::$5 ← (byte) sum2::return#0 [ main::i#2 main::$5 ]
+  //SEG29 [17] (byte~) main::$5 ← (byte) sum2::return#0 [ main::i#2 main::$5 ]
     // (byte~) main::$5 = (byte) sum2::return#0  // register copy reg byte a
-  //SEG28 [18] *((const byte*) SCREEN2#0 + (byte) main::i#2) ← (byte~) main::$5 [ main::i#2 ] -- cowo1_staridx_yby=aby 
+  //SEG30 [18] *((const byte*) SCREEN2#0 + (byte) main::i#2) ← (byte~) main::$5 [ main::i#2 ] -- cowo1_staridx_yby=aby 
     sta SCREEN2,y
-  //SEG29 [19] (byte) main::i#1 ← ++ (byte) main::i#2 [ main::i#1 ] -- yby=_inc_yby 
+  //SEG31 [19] (byte) main::i#1 ← ++ (byte) main::i#2 [ main::i#1 ] -- yby=_inc_yby 
     iny
-  //SEG30 [20] if((byte) main::i#1!=(byte) 11) goto main::@1 [ main::i#1 ] -- yby_neq_coby1_then_la1 
+  //SEG32 [20] if((byte) main::i#1!=(byte) 11) goto main::@1 [ main::i#1 ] -- yby_neq_coby1_then_la1 
     cpy #$b
     bne b1
-  //SEG31 main::@return
+  //SEG33 main::@return
   breturn:
-  //SEG32 [21] return  [ ]
+  //SEG34 [21] return  [ ]
     rts
 }
-//SEG33 sum2
+//SEG35 sum2
 sum2: {
     .label a = 2
     .label c = 3
-  //SEG34 [22] (byte~) sum2::$0 ← (byte) sum2::a#0 + (byte) sum2::b#0 [ sum2::c#0 sum2::$0 ] -- aby=zpby1_plus_xby 
+  //SEG36 [22] (byte~) sum2::$0 ← (byte) sum2::a#0 + (byte) sum2::b#0 [ sum2::c#0 sum2::$0 ] -- aby=zpby1_plus_xby 
     txa
     clc
     adc a
-  //SEG35 [23] (byte) sum2::return#0 ← (byte~) sum2::$0 + (byte) sum2::c#0 [ sum2::return#0 ] -- aby=aby_plus_zpby1 
+  //SEG37 [23] (byte) sum2::return#0 ← (byte~) sum2::$0 + (byte) sum2::c#0 [ sum2::return#0 ] -- aby=aby_plus_zpby1 
     clc
     adc c
-  //SEG36 sum2::@return
+  //SEG38 sum2::@return
   breturn:
-  //SEG37 [24] return  [ sum2::return#0 ]
+  //SEG39 [24] return  [ sum2::return#0 ]
     rts
 }
-//SEG38 sum
+//SEG40 sum
 sum: {
     .label a = 2
     .label c = 3
-  //SEG39 [25] (byte~) sum::$0 ← (byte) sum::a#0 + (byte) sum::b#0 [ sum::c#0 sum::$0 ] -- aby=zpby1_plus_xby 
+  //SEG41 [25] (byte~) sum::$0 ← (byte) sum::a#0 + (byte) sum::b#0 [ sum::c#0 sum::$0 ] -- aby=zpby1_plus_xby 
     txa
     clc
     adc a
-  //SEG40 [26] (byte) sum::return#0 ← (byte~) sum::$0 + (byte) sum::c#0 [ sum::return#0 ] -- aby=aby_plus_zpby1 
+  //SEG42 [26] (byte) sum::return#0 ← (byte~) sum::$0 + (byte) sum::c#0 [ sum::return#0 ] -- aby=aby_plus_zpby1 
     clc
     adc c
-  //SEG41 sum::@return
+  //SEG43 sum::@return
   breturn:
-  //SEG42 [27] return  [ sum::return#0 ]
+  //SEG44 [27] return  [ sum::return#0 ]
     rts
 }
 
-Removing instruction bbegin:
+Removing instruction b3:
 Removing instruction bend:
 Removing instruction b1_from_main:
 Removing instruction b3:
@@ -1760,209 +1817,220 @@ Removing instruction breturn:
 Removing instruction breturn:
 Succesful ASM optimization Pass5UnusedLabelElimination
 ASSEMBLER
-//SEG0 Global Constants & labels
+//SEG0 Basic Upstart
+.pc = $801 "Basic"
+:BasicUpstart(main)
+.pc = $80d "Program"
+//SEG1 Global Constants & labels
   .const SCREEN = $400
   .const SCREEN2 = $400+$28
-//SEG1 @begin
-//SEG2 [0] call main param-assignment [ ]
-//SEG3 [1] phi from @begin to main [phi:@begin->main]
+//SEG2 @begin
+//SEG3 @3
+//SEG4 [0] call main param-assignment [ ]
+//SEG5 [1] phi from @3 to main [phi:@3->main]
   jsr main
-//SEG4 @end
-//SEG5 main
+//SEG6 @end
+//SEG7 main
 main: {
-  //SEG6 [2] phi from main to main::@1 [phi:main->main::@1]
-  //SEG7 [2] phi (byte) main::i#2 = (byte) 0 [phi:main->main::@1#0] -- yby=coby1 
+  //SEG8 [2] phi from main to main::@1 [phi:main->main::@1]
+  //SEG9 [2] phi (byte) main::i#2 = (byte) 0 [phi:main->main::@1#0] -- yby=coby1 
     ldy #0
     jmp b1
-  //SEG8 [2] phi from main::@4 to main::@1 [phi:main::@4->main::@1]
-  //SEG9 [2] phi (byte) main::i#2 = (byte) main::i#1 [phi:main::@4->main::@1#0] -- register_copy 
-  //SEG10 main::@1
+  //SEG10 [2] phi from main::@4 to main::@1 [phi:main::@4->main::@1]
+  //SEG11 [2] phi (byte) main::i#2 = (byte) main::i#1 [phi:main::@4->main::@1#0] -- register_copy 
+  //SEG12 main::@1
   b1:
-  //SEG11 [3] (byte~) main::$0 ← (byte) main::i#2 + (byte) 1 [ main::i#2 main::$0 ] -- xby=yby_plus_1 
+  //SEG13 [3] (byte~) main::$0 ← (byte) main::i#2 + (byte) 1 [ main::i#2 main::$0 ] -- xby=yby_plus_1 
     tya
     tax
     inx
-  //SEG12 [4] (byte~) main::$1 ← (byte) main::i#2 + (byte) 2 [ main::i#2 main::$0 main::$1 ] -- aby=yby_plus_coby1 
+  //SEG14 [4] (byte~) main::$1 ← (byte) main::i#2 + (byte) 2 [ main::i#2 main::$0 main::$1 ] -- aby=yby_plus_coby1 
     tya
     clc
     adc #2
-  //SEG13 [5] (byte) sum::a#0 ← (byte) main::i#2 [ main::i#2 main::$0 main::$1 sum::a#0 ] -- zpby1=yby 
+  //SEG15 [5] (byte) sum::a#0 ← (byte) main::i#2 [ main::i#2 main::$0 main::$1 sum::a#0 ] -- zpby1=yby 
     sty sum.a
-  //SEG14 [6] (byte) sum::b#0 ← (byte~) main::$0 [ main::i#2 main::$1 sum::a#0 sum::b#0 ]
+  //SEG16 [6] (byte) sum::b#0 ← (byte~) main::$0 [ main::i#2 main::$1 sum::a#0 sum::b#0 ]
     // (byte) sum::b#0 = (byte~) main::$0  // register copy reg byte x
-  //SEG15 [7] (byte) sum::c#0 ← (byte~) main::$1 [ main::i#2 sum::a#0 sum::b#0 sum::c#0 ] -- zpby1=aby 
+  //SEG17 [7] (byte) sum::c#0 ← (byte~) main::$1 [ main::i#2 sum::a#0 sum::b#0 sum::c#0 ] -- zpby1=aby 
     sta sum.c
-  //SEG16 [8] call sum param-assignment [ main::i#2 sum::return#0 ]
+  //SEG18 [8] call sum param-assignment [ main::i#2 sum::return#0 ]
     jsr sum
-  //SEG17 main::@3
-  //SEG18 [9] (byte~) main::$2 ← (byte) sum::return#0 [ main::i#2 main::$2 ]
+  //SEG19 main::@3
+  //SEG20 [9] (byte~) main::$2 ← (byte) sum::return#0 [ main::i#2 main::$2 ]
     // (byte~) main::$2 = (byte) sum::return#0  // register copy reg byte a
-  //SEG19 [10] *((const byte*) SCREEN#0 + (byte) main::i#2) ← (byte~) main::$2 [ main::i#2 ] -- cowo1_staridx_yby=aby 
+  //SEG21 [10] *((const byte*) SCREEN#0 + (byte) main::i#2) ← (byte~) main::$2 [ main::i#2 ] -- cowo1_staridx_yby=aby 
     sta SCREEN,y
-  //SEG20 [11] (byte~) main::$3 ← (byte) main::i#2 + (byte) 1 [ main::i#2 main::$3 ] -- xby=yby_plus_1 
+  //SEG22 [11] (byte~) main::$3 ← (byte) main::i#2 + (byte) 1 [ main::i#2 main::$3 ] -- xby=yby_plus_1 
     tya
     tax
     inx
-  //SEG21 [12] (byte~) main::$4 ← (byte) main::i#2 + (byte) 2 [ main::i#2 main::$3 main::$4 ] -- aby=yby_plus_coby1 
+  //SEG23 [12] (byte~) main::$4 ← (byte) main::i#2 + (byte) 2 [ main::i#2 main::$3 main::$4 ] -- aby=yby_plus_coby1 
     tya
     clc
     adc #2
-  //SEG22 [13] (byte) sum2::a#0 ← (byte) main::i#2 [ main::i#2 main::$3 main::$4 sum2::a#0 ] -- zpby1=yby 
+  //SEG24 [13] (byte) sum2::a#0 ← (byte) main::i#2 [ main::i#2 main::$3 main::$4 sum2::a#0 ] -- zpby1=yby 
     sty sum2.a
-  //SEG23 [14] (byte) sum2::b#0 ← (byte~) main::$3 [ main::i#2 main::$4 sum2::a#0 sum2::b#0 ]
+  //SEG25 [14] (byte) sum2::b#0 ← (byte~) main::$3 [ main::i#2 main::$4 sum2::a#0 sum2::b#0 ]
     // (byte) sum2::b#0 = (byte~) main::$3  // register copy reg byte x
-  //SEG24 [15] (byte) sum2::c#0 ← (byte~) main::$4 [ main::i#2 sum2::a#0 sum2::b#0 sum2::c#0 ] -- zpby1=aby 
+  //SEG26 [15] (byte) sum2::c#0 ← (byte~) main::$4 [ main::i#2 sum2::a#0 sum2::b#0 sum2::c#0 ] -- zpby1=aby 
     sta sum2.c
-  //SEG25 [16] call sum2 param-assignment [ main::i#2 sum2::return#0 ]
+  //SEG27 [16] call sum2 param-assignment [ main::i#2 sum2::return#0 ]
     jsr sum2
-  //SEG26 main::@4
-  //SEG27 [17] (byte~) main::$5 ← (byte) sum2::return#0 [ main::i#2 main::$5 ]
+  //SEG28 main::@4
+  //SEG29 [17] (byte~) main::$5 ← (byte) sum2::return#0 [ main::i#2 main::$5 ]
     // (byte~) main::$5 = (byte) sum2::return#0  // register copy reg byte a
-  //SEG28 [18] *((const byte*) SCREEN2#0 + (byte) main::i#2) ← (byte~) main::$5 [ main::i#2 ] -- cowo1_staridx_yby=aby 
+  //SEG30 [18] *((const byte*) SCREEN2#0 + (byte) main::i#2) ← (byte~) main::$5 [ main::i#2 ] -- cowo1_staridx_yby=aby 
     sta SCREEN2,y
-  //SEG29 [19] (byte) main::i#1 ← ++ (byte) main::i#2 [ main::i#1 ] -- yby=_inc_yby 
+  //SEG31 [19] (byte) main::i#1 ← ++ (byte) main::i#2 [ main::i#1 ] -- yby=_inc_yby 
     iny
-  //SEG30 [20] if((byte) main::i#1!=(byte) 11) goto main::@1 [ main::i#1 ] -- yby_neq_coby1_then_la1 
+  //SEG32 [20] if((byte) main::i#1!=(byte) 11) goto main::@1 [ main::i#1 ] -- yby_neq_coby1_then_la1 
     cpy #$b
     bne b1
-  //SEG31 main::@return
-  //SEG32 [21] return  [ ]
+  //SEG33 main::@return
+  //SEG34 [21] return  [ ]
     rts
 }
-//SEG33 sum2
+//SEG35 sum2
 sum2: {
     .label a = 2
     .label c = 3
-  //SEG34 [22] (byte~) sum2::$0 ← (byte) sum2::a#0 + (byte) sum2::b#0 [ sum2::c#0 sum2::$0 ] -- aby=zpby1_plus_xby 
+  //SEG36 [22] (byte~) sum2::$0 ← (byte) sum2::a#0 + (byte) sum2::b#0 [ sum2::c#0 sum2::$0 ] -- aby=zpby1_plus_xby 
     txa
     clc
     adc a
-  //SEG35 [23] (byte) sum2::return#0 ← (byte~) sum2::$0 + (byte) sum2::c#0 [ sum2::return#0 ] -- aby=aby_plus_zpby1 
+  //SEG37 [23] (byte) sum2::return#0 ← (byte~) sum2::$0 + (byte) sum2::c#0 [ sum2::return#0 ] -- aby=aby_plus_zpby1 
     clc
     adc c
-  //SEG36 sum2::@return
-  //SEG37 [24] return  [ sum2::return#0 ]
+  //SEG38 sum2::@return
+  //SEG39 [24] return  [ sum2::return#0 ]
     rts
 }
-//SEG38 sum
+//SEG40 sum
 sum: {
     .label a = 2
     .label c = 3
-  //SEG39 [25] (byte~) sum::$0 ← (byte) sum::a#0 + (byte) sum::b#0 [ sum::c#0 sum::$0 ] -- aby=zpby1_plus_xby 
+  //SEG41 [25] (byte~) sum::$0 ← (byte) sum::a#0 + (byte) sum::b#0 [ sum::c#0 sum::$0 ] -- aby=zpby1_plus_xby 
     txa
     clc
     adc a
-  //SEG40 [26] (byte) sum::return#0 ← (byte~) sum::$0 + (byte) sum::c#0 [ sum::return#0 ] -- aby=aby_plus_zpby1 
+  //SEG42 [26] (byte) sum::return#0 ← (byte~) sum::$0 + (byte) sum::c#0 [ sum::return#0 ] -- aby=aby_plus_zpby1 
     clc
     adc c
-  //SEG41 sum::@return
-  //SEG42 [27] return  [ sum::return#0 ]
+  //SEG43 sum::@return
+  //SEG44 [27] return  [ sum::return#0 ]
     rts
 }
 
 Removing instruction jmp b1
 Succesful ASM optimization Pass5NextJumpElimination
 ASSEMBLER
-//SEG0 Global Constants & labels
+//SEG0 Basic Upstart
+.pc = $801 "Basic"
+:BasicUpstart(main)
+.pc = $80d "Program"
+//SEG1 Global Constants & labels
   .const SCREEN = $400
   .const SCREEN2 = $400+$28
-//SEG1 @begin
-//SEG2 [0] call main param-assignment [ ]
-//SEG3 [1] phi from @begin to main [phi:@begin->main]
+//SEG2 @begin
+//SEG3 @3
+//SEG4 [0] call main param-assignment [ ]
+//SEG5 [1] phi from @3 to main [phi:@3->main]
   jsr main
-//SEG4 @end
-//SEG5 main
+//SEG6 @end
+//SEG7 main
 main: {
-  //SEG6 [2] phi from main to main::@1 [phi:main->main::@1]
-  //SEG7 [2] phi (byte) main::i#2 = (byte) 0 [phi:main->main::@1#0] -- yby=coby1 
+  //SEG8 [2] phi from main to main::@1 [phi:main->main::@1]
+  //SEG9 [2] phi (byte) main::i#2 = (byte) 0 [phi:main->main::@1#0] -- yby=coby1 
     ldy #0
-  //SEG8 [2] phi from main::@4 to main::@1 [phi:main::@4->main::@1]
-  //SEG9 [2] phi (byte) main::i#2 = (byte) main::i#1 [phi:main::@4->main::@1#0] -- register_copy 
-  //SEG10 main::@1
+  //SEG10 [2] phi from main::@4 to main::@1 [phi:main::@4->main::@1]
+  //SEG11 [2] phi (byte) main::i#2 = (byte) main::i#1 [phi:main::@4->main::@1#0] -- register_copy 
+  //SEG12 main::@1
   b1:
-  //SEG11 [3] (byte~) main::$0 ← (byte) main::i#2 + (byte) 1 [ main::i#2 main::$0 ] -- xby=yby_plus_1 
+  //SEG13 [3] (byte~) main::$0 ← (byte) main::i#2 + (byte) 1 [ main::i#2 main::$0 ] -- xby=yby_plus_1 
     tya
     tax
     inx
-  //SEG12 [4] (byte~) main::$1 ← (byte) main::i#2 + (byte) 2 [ main::i#2 main::$0 main::$1 ] -- aby=yby_plus_coby1 
+  //SEG14 [4] (byte~) main::$1 ← (byte) main::i#2 + (byte) 2 [ main::i#2 main::$0 main::$1 ] -- aby=yby_plus_coby1 
     tya
     clc
     adc #2
-  //SEG13 [5] (byte) sum::a#0 ← (byte) main::i#2 [ main::i#2 main::$0 main::$1 sum::a#0 ] -- zpby1=yby 
+  //SEG15 [5] (byte) sum::a#0 ← (byte) main::i#2 [ main::i#2 main::$0 main::$1 sum::a#0 ] -- zpby1=yby 
     sty sum.a
-  //SEG14 [6] (byte) sum::b#0 ← (byte~) main::$0 [ main::i#2 main::$1 sum::a#0 sum::b#0 ]
+  //SEG16 [6] (byte) sum::b#0 ← (byte~) main::$0 [ main::i#2 main::$1 sum::a#0 sum::b#0 ]
     // (byte) sum::b#0 = (byte~) main::$0  // register copy reg byte x
-  //SEG15 [7] (byte) sum::c#0 ← (byte~) main::$1 [ main::i#2 sum::a#0 sum::b#0 sum::c#0 ] -- zpby1=aby 
+  //SEG17 [7] (byte) sum::c#0 ← (byte~) main::$1 [ main::i#2 sum::a#0 sum::b#0 sum::c#0 ] -- zpby1=aby 
     sta sum.c
-  //SEG16 [8] call sum param-assignment [ main::i#2 sum::return#0 ]
+  //SEG18 [8] call sum param-assignment [ main::i#2 sum::return#0 ]
     jsr sum
-  //SEG17 main::@3
-  //SEG18 [9] (byte~) main::$2 ← (byte) sum::return#0 [ main::i#2 main::$2 ]
+  //SEG19 main::@3
+  //SEG20 [9] (byte~) main::$2 ← (byte) sum::return#0 [ main::i#2 main::$2 ]
     // (byte~) main::$2 = (byte) sum::return#0  // register copy reg byte a
-  //SEG19 [10] *((const byte*) SCREEN#0 + (byte) main::i#2) ← (byte~) main::$2 [ main::i#2 ] -- cowo1_staridx_yby=aby 
+  //SEG21 [10] *((const byte*) SCREEN#0 + (byte) main::i#2) ← (byte~) main::$2 [ main::i#2 ] -- cowo1_staridx_yby=aby 
     sta SCREEN,y
-  //SEG20 [11] (byte~) main::$3 ← (byte) main::i#2 + (byte) 1 [ main::i#2 main::$3 ] -- xby=yby_plus_1 
+  //SEG22 [11] (byte~) main::$3 ← (byte) main::i#2 + (byte) 1 [ main::i#2 main::$3 ] -- xby=yby_plus_1 
     tya
     tax
     inx
-  //SEG21 [12] (byte~) main::$4 ← (byte) main::i#2 + (byte) 2 [ main::i#2 main::$3 main::$4 ] -- aby=yby_plus_coby1 
+  //SEG23 [12] (byte~) main::$4 ← (byte) main::i#2 + (byte) 2 [ main::i#2 main::$3 main::$4 ] -- aby=yby_plus_coby1 
     tya
     clc
     adc #2
-  //SEG22 [13] (byte) sum2::a#0 ← (byte) main::i#2 [ main::i#2 main::$3 main::$4 sum2::a#0 ] -- zpby1=yby 
+  //SEG24 [13] (byte) sum2::a#0 ← (byte) main::i#2 [ main::i#2 main::$3 main::$4 sum2::a#0 ] -- zpby1=yby 
     sty sum2.a
-  //SEG23 [14] (byte) sum2::b#0 ← (byte~) main::$3 [ main::i#2 main::$4 sum2::a#0 sum2::b#0 ]
+  //SEG25 [14] (byte) sum2::b#0 ← (byte~) main::$3 [ main::i#2 main::$4 sum2::a#0 sum2::b#0 ]
     // (byte) sum2::b#0 = (byte~) main::$3  // register copy reg byte x
-  //SEG24 [15] (byte) sum2::c#0 ← (byte~) main::$4 [ main::i#2 sum2::a#0 sum2::b#0 sum2::c#0 ] -- zpby1=aby 
+  //SEG26 [15] (byte) sum2::c#0 ← (byte~) main::$4 [ main::i#2 sum2::a#0 sum2::b#0 sum2::c#0 ] -- zpby1=aby 
     sta sum2.c
-  //SEG25 [16] call sum2 param-assignment [ main::i#2 sum2::return#0 ]
+  //SEG27 [16] call sum2 param-assignment [ main::i#2 sum2::return#0 ]
     jsr sum2
-  //SEG26 main::@4
-  //SEG27 [17] (byte~) main::$5 ← (byte) sum2::return#0 [ main::i#2 main::$5 ]
+  //SEG28 main::@4
+  //SEG29 [17] (byte~) main::$5 ← (byte) sum2::return#0 [ main::i#2 main::$5 ]
     // (byte~) main::$5 = (byte) sum2::return#0  // register copy reg byte a
-  //SEG28 [18] *((const byte*) SCREEN2#0 + (byte) main::i#2) ← (byte~) main::$5 [ main::i#2 ] -- cowo1_staridx_yby=aby 
+  //SEG30 [18] *((const byte*) SCREEN2#0 + (byte) main::i#2) ← (byte~) main::$5 [ main::i#2 ] -- cowo1_staridx_yby=aby 
     sta SCREEN2,y
-  //SEG29 [19] (byte) main::i#1 ← ++ (byte) main::i#2 [ main::i#1 ] -- yby=_inc_yby 
+  //SEG31 [19] (byte) main::i#1 ← ++ (byte) main::i#2 [ main::i#1 ] -- yby=_inc_yby 
     iny
-  //SEG30 [20] if((byte) main::i#1!=(byte) 11) goto main::@1 [ main::i#1 ] -- yby_neq_coby1_then_la1 
+  //SEG32 [20] if((byte) main::i#1!=(byte) 11) goto main::@1 [ main::i#1 ] -- yby_neq_coby1_then_la1 
     cpy #$b
     bne b1
-  //SEG31 main::@return
-  //SEG32 [21] return  [ ]
+  //SEG33 main::@return
+  //SEG34 [21] return  [ ]
     rts
 }
-//SEG33 sum2
+//SEG35 sum2
 sum2: {
     .label a = 2
     .label c = 3
-  //SEG34 [22] (byte~) sum2::$0 ← (byte) sum2::a#0 + (byte) sum2::b#0 [ sum2::c#0 sum2::$0 ] -- aby=zpby1_plus_xby 
+  //SEG36 [22] (byte~) sum2::$0 ← (byte) sum2::a#0 + (byte) sum2::b#0 [ sum2::c#0 sum2::$0 ] -- aby=zpby1_plus_xby 
     txa
     clc
     adc a
-  //SEG35 [23] (byte) sum2::return#0 ← (byte~) sum2::$0 + (byte) sum2::c#0 [ sum2::return#0 ] -- aby=aby_plus_zpby1 
+  //SEG37 [23] (byte) sum2::return#0 ← (byte~) sum2::$0 + (byte) sum2::c#0 [ sum2::return#0 ] -- aby=aby_plus_zpby1 
     clc
     adc c
-  //SEG36 sum2::@return
-  //SEG37 [24] return  [ sum2::return#0 ]
+  //SEG38 sum2::@return
+  //SEG39 [24] return  [ sum2::return#0 ]
     rts
 }
-//SEG38 sum
+//SEG40 sum
 sum: {
     .label a = 2
     .label c = 3
-  //SEG39 [25] (byte~) sum::$0 ← (byte) sum::a#0 + (byte) sum::b#0 [ sum::c#0 sum::$0 ] -- aby=zpby1_plus_xby 
+  //SEG41 [25] (byte~) sum::$0 ← (byte) sum::a#0 + (byte) sum::b#0 [ sum::c#0 sum::$0 ] -- aby=zpby1_plus_xby 
     txa
     clc
     adc a
-  //SEG40 [26] (byte) sum::return#0 ← (byte~) sum::$0 + (byte) sum::c#0 [ sum::return#0 ] -- aby=aby_plus_zpby1 
+  //SEG42 [26] (byte) sum::return#0 ← (byte~) sum::$0 + (byte) sum::c#0 [ sum::return#0 ] -- aby=aby_plus_zpby1 
     clc
     adc c
-  //SEG41 sum::@return
-  //SEG42 [27] return  [ sum::return#0 ]
+  //SEG43 sum::@return
+  //SEG44 [27] return  [ sum::return#0 ]
     rts
 }
 
 FINAL SYMBOL TABLE
+(label) @3
 (label) @begin
 (label) @end
 (byte*) SCREEN
@@ -2023,102 +2091,107 @@ reg byte a [ sum::$0 ]
 reg byte a [ sum::return#0 ]
 
 FINAL CODE
-//SEG0 Global Constants & labels
+//SEG0 Basic Upstart
+.pc = $801 "Basic"
+:BasicUpstart(main)
+.pc = $80d "Program"
+//SEG1 Global Constants & labels
   .const SCREEN = $400
   .const SCREEN2 = $400+$28
-//SEG1 @begin
-//SEG2 [0] call main param-assignment [ ]
-//SEG3 [1] phi from @begin to main [phi:@begin->main]
+//SEG2 @begin
+//SEG3 @3
+//SEG4 [0] call main param-assignment [ ]
+//SEG5 [1] phi from @3 to main [phi:@3->main]
   jsr main
-//SEG4 @end
-//SEG5 main
+//SEG6 @end
+//SEG7 main
 main: {
-  //SEG6 [2] phi from main to main::@1 [phi:main->main::@1]
-  //SEG7 [2] phi (byte) main::i#2 = (byte) 0 [phi:main->main::@1#0] -- yby=coby1 
+  //SEG8 [2] phi from main to main::@1 [phi:main->main::@1]
+  //SEG9 [2] phi (byte) main::i#2 = (byte) 0 [phi:main->main::@1#0] -- yby=coby1 
     ldy #0
-  //SEG8 [2] phi from main::@4 to main::@1 [phi:main::@4->main::@1]
-  //SEG9 [2] phi (byte) main::i#2 = (byte) main::i#1 [phi:main::@4->main::@1#0] -- register_copy 
-  //SEG10 main::@1
+  //SEG10 [2] phi from main::@4 to main::@1 [phi:main::@4->main::@1]
+  //SEG11 [2] phi (byte) main::i#2 = (byte) main::i#1 [phi:main::@4->main::@1#0] -- register_copy 
+  //SEG12 main::@1
   b1:
-  //SEG11 [3] (byte~) main::$0 ← (byte) main::i#2 + (byte) 1 [ main::i#2 main::$0 ] -- xby=yby_plus_1 
+  //SEG13 [3] (byte~) main::$0 ← (byte) main::i#2 + (byte) 1 [ main::i#2 main::$0 ] -- xby=yby_plus_1 
     tya
     tax
     inx
-  //SEG12 [4] (byte~) main::$1 ← (byte) main::i#2 + (byte) 2 [ main::i#2 main::$0 main::$1 ] -- aby=yby_plus_coby1 
+  //SEG14 [4] (byte~) main::$1 ← (byte) main::i#2 + (byte) 2 [ main::i#2 main::$0 main::$1 ] -- aby=yby_plus_coby1 
     tya
     clc
     adc #2
-  //SEG13 [5] (byte) sum::a#0 ← (byte) main::i#2 [ main::i#2 main::$0 main::$1 sum::a#0 ] -- zpby1=yby 
+  //SEG15 [5] (byte) sum::a#0 ← (byte) main::i#2 [ main::i#2 main::$0 main::$1 sum::a#0 ] -- zpby1=yby 
     sty sum.a
-  //SEG14 [6] (byte) sum::b#0 ← (byte~) main::$0 [ main::i#2 main::$1 sum::a#0 sum::b#0 ]
+  //SEG16 [6] (byte) sum::b#0 ← (byte~) main::$0 [ main::i#2 main::$1 sum::a#0 sum::b#0 ]
     // (byte) sum::b#0 = (byte~) main::$0  // register copy reg byte x
-  //SEG15 [7] (byte) sum::c#0 ← (byte~) main::$1 [ main::i#2 sum::a#0 sum::b#0 sum::c#0 ] -- zpby1=aby 
+  //SEG17 [7] (byte) sum::c#0 ← (byte~) main::$1 [ main::i#2 sum::a#0 sum::b#0 sum::c#0 ] -- zpby1=aby 
     sta sum.c
-  //SEG16 [8] call sum param-assignment [ main::i#2 sum::return#0 ]
+  //SEG18 [8] call sum param-assignment [ main::i#2 sum::return#0 ]
     jsr sum
-  //SEG17 main::@3
-  //SEG18 [9] (byte~) main::$2 ← (byte) sum::return#0 [ main::i#2 main::$2 ]
+  //SEG19 main::@3
+  //SEG20 [9] (byte~) main::$2 ← (byte) sum::return#0 [ main::i#2 main::$2 ]
     // (byte~) main::$2 = (byte) sum::return#0  // register copy reg byte a
-  //SEG19 [10] *((const byte*) SCREEN#0 + (byte) main::i#2) ← (byte~) main::$2 [ main::i#2 ] -- cowo1_staridx_yby=aby 
+  //SEG21 [10] *((const byte*) SCREEN#0 + (byte) main::i#2) ← (byte~) main::$2 [ main::i#2 ] -- cowo1_staridx_yby=aby 
     sta SCREEN,y
-  //SEG20 [11] (byte~) main::$3 ← (byte) main::i#2 + (byte) 1 [ main::i#2 main::$3 ] -- xby=yby_plus_1 
+  //SEG22 [11] (byte~) main::$3 ← (byte) main::i#2 + (byte) 1 [ main::i#2 main::$3 ] -- xby=yby_plus_1 
     tya
     tax
     inx
-  //SEG21 [12] (byte~) main::$4 ← (byte) main::i#2 + (byte) 2 [ main::i#2 main::$3 main::$4 ] -- aby=yby_plus_coby1 
+  //SEG23 [12] (byte~) main::$4 ← (byte) main::i#2 + (byte) 2 [ main::i#2 main::$3 main::$4 ] -- aby=yby_plus_coby1 
     tya
     clc
     adc #2
-  //SEG22 [13] (byte) sum2::a#0 ← (byte) main::i#2 [ main::i#2 main::$3 main::$4 sum2::a#0 ] -- zpby1=yby 
+  //SEG24 [13] (byte) sum2::a#0 ← (byte) main::i#2 [ main::i#2 main::$3 main::$4 sum2::a#0 ] -- zpby1=yby 
     sty sum2.a
-  //SEG23 [14] (byte) sum2::b#0 ← (byte~) main::$3 [ main::i#2 main::$4 sum2::a#0 sum2::b#0 ]
+  //SEG25 [14] (byte) sum2::b#0 ← (byte~) main::$3 [ main::i#2 main::$4 sum2::a#0 sum2::b#0 ]
     // (byte) sum2::b#0 = (byte~) main::$3  // register copy reg byte x
-  //SEG24 [15] (byte) sum2::c#0 ← (byte~) main::$4 [ main::i#2 sum2::a#0 sum2::b#0 sum2::c#0 ] -- zpby1=aby 
+  //SEG26 [15] (byte) sum2::c#0 ← (byte~) main::$4 [ main::i#2 sum2::a#0 sum2::b#0 sum2::c#0 ] -- zpby1=aby 
     sta sum2.c
-  //SEG25 [16] call sum2 param-assignment [ main::i#2 sum2::return#0 ]
+  //SEG27 [16] call sum2 param-assignment [ main::i#2 sum2::return#0 ]
     jsr sum2
-  //SEG26 main::@4
-  //SEG27 [17] (byte~) main::$5 ← (byte) sum2::return#0 [ main::i#2 main::$5 ]
+  //SEG28 main::@4
+  //SEG29 [17] (byte~) main::$5 ← (byte) sum2::return#0 [ main::i#2 main::$5 ]
     // (byte~) main::$5 = (byte) sum2::return#0  // register copy reg byte a
-  //SEG28 [18] *((const byte*) SCREEN2#0 + (byte) main::i#2) ← (byte~) main::$5 [ main::i#2 ] -- cowo1_staridx_yby=aby 
+  //SEG30 [18] *((const byte*) SCREEN2#0 + (byte) main::i#2) ← (byte~) main::$5 [ main::i#2 ] -- cowo1_staridx_yby=aby 
     sta SCREEN2,y
-  //SEG29 [19] (byte) main::i#1 ← ++ (byte) main::i#2 [ main::i#1 ] -- yby=_inc_yby 
+  //SEG31 [19] (byte) main::i#1 ← ++ (byte) main::i#2 [ main::i#1 ] -- yby=_inc_yby 
     iny
-  //SEG30 [20] if((byte) main::i#1!=(byte) 11) goto main::@1 [ main::i#1 ] -- yby_neq_coby1_then_la1 
+  //SEG32 [20] if((byte) main::i#1!=(byte) 11) goto main::@1 [ main::i#1 ] -- yby_neq_coby1_then_la1 
     cpy #$b
     bne b1
-  //SEG31 main::@return
-  //SEG32 [21] return  [ ]
+  //SEG33 main::@return
+  //SEG34 [21] return  [ ]
     rts
 }
-//SEG33 sum2
+//SEG35 sum2
 sum2: {
     .label a = 2
     .label c = 3
-  //SEG34 [22] (byte~) sum2::$0 ← (byte) sum2::a#0 + (byte) sum2::b#0 [ sum2::c#0 sum2::$0 ] -- aby=zpby1_plus_xby 
+  //SEG36 [22] (byte~) sum2::$0 ← (byte) sum2::a#0 + (byte) sum2::b#0 [ sum2::c#0 sum2::$0 ] -- aby=zpby1_plus_xby 
     txa
     clc
     adc a
-  //SEG35 [23] (byte) sum2::return#0 ← (byte~) sum2::$0 + (byte) sum2::c#0 [ sum2::return#0 ] -- aby=aby_plus_zpby1 
+  //SEG37 [23] (byte) sum2::return#0 ← (byte~) sum2::$0 + (byte) sum2::c#0 [ sum2::return#0 ] -- aby=aby_plus_zpby1 
     clc
     adc c
-  //SEG36 sum2::@return
-  //SEG37 [24] return  [ sum2::return#0 ]
+  //SEG38 sum2::@return
+  //SEG39 [24] return  [ sum2::return#0 ]
     rts
 }
-//SEG38 sum
+//SEG40 sum
 sum: {
     .label a = 2
     .label c = 3
-  //SEG39 [25] (byte~) sum::$0 ← (byte) sum::a#0 + (byte) sum::b#0 [ sum::c#0 sum::$0 ] -- aby=zpby1_plus_xby 
+  //SEG41 [25] (byte~) sum::$0 ← (byte) sum::a#0 + (byte) sum::b#0 [ sum::c#0 sum::$0 ] -- aby=zpby1_plus_xby 
     txa
     clc
     adc a
-  //SEG40 [26] (byte) sum::return#0 ← (byte~) sum::$0 + (byte) sum::c#0 [ sum::return#0 ] -- aby=aby_plus_zpby1 
+  //SEG42 [26] (byte) sum::return#0 ← (byte~) sum::$0 + (byte) sum::c#0 [ sum::return#0 ] -- aby=aby_plus_zpby1 
     clc
     adc c
-  //SEG41 sum::@return
-  //SEG42 [27] return  [ sum::return#0 ]
+  //SEG43 sum::@return
+  //SEG44 [27] return  [ sum::return#0 ]
     rts
 }
 

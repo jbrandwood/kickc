@@ -26,6 +26,8 @@ public class Pass1EliminateEmptyBlocks {
       for (ControlFlowBlock block : blocks) {
          if(block.getLabel().getFullName().equals(SymbolRef.END_BLOCK_NAME)) {
             continue;
+         } else if(block.getLabel().getFullName().equals(SymbolRef.BEGIN_BLOCK_NAME)) {
+            continue;
          }
          if (block.getStatements().isEmpty()) {
             List<ControlFlowBlock> predecessors = graph.getPredecessors(block);

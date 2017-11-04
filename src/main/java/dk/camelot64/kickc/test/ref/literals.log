@@ -5,7 +5,6 @@ byte num = 1;
 byte[] str = "bc"+"d"+'e';
 byte[] nums = { 2, 3, 4, 5};
 
-main();
 void main() {
     SCREEN[0] = char;
     SCREEN[2] = num;
@@ -22,7 +21,6 @@ PROGRAM
   (string~) $1 ← (string~) $0 + (byte) 'e'
   (byte[]) str ← (string~) $1
   (byte[]) nums ← { (byte) 2, (byte) 3, (byte) 4, (byte) 5 }
-  (void~) $2 ← call main 
 proc (void()) main()
   *((byte*) SCREEN + (byte) 0) ← (byte) char
   *((byte*) SCREEN + (byte) 2) ← (byte) num
@@ -40,11 +38,11 @@ main::@1:
 main::@return:
   return 
 endproc // main()
+  call main 
 
 SYMBOLS
 (string~) $0
 (string~) $1
-(void~) $2
 (byte*) SCREEN
 (byte) char
 (void()) main()
@@ -69,7 +67,6 @@ INITIAL CONTROL FLOW GRAPH
   (string~) $1 ← (string~) $0 + (byte) 'e'
   (byte[]) str ← (string~) $1
   (byte[]) nums ← { (byte) 2, (byte) 3, (byte) 4, (byte) 5 }
-  (void~) $2 ← call main 
   to:@1
 main: scope:[main]  from
   *((byte*) SCREEN + (byte) 0) ← (byte) char
@@ -93,11 +90,11 @@ main::@return: scope:[main]  from main::@2
   return 
   to:@return
 @1: scope:[]  from @begin
+  call main 
   to:@end
 @end: scope:[]  from @1
 
 Removing empty block main::@2
-Removing empty block @1
 CONTROL FLOW GRAPH
 @begin: scope:[]  from
   (byte*) SCREEN ← (word) 1024
@@ -107,8 +104,7 @@ CONTROL FLOW GRAPH
   (string~) $1 ← (string~) $0 + (byte) 'e'
   (byte[]) str ← (string~) $1
   (byte[]) nums ← { (byte) 2, (byte) 3, (byte) 4, (byte) 5 }
-  (void~) $2 ← call main 
-  to:@end
+  to:@1
 main: scope:[main]  from
   *((byte*) SCREEN + (byte) 0) ← (byte) char
   *((byte*) SCREEN + (byte) 2) ← (byte) num
@@ -128,7 +124,10 @@ main::@1: scope:[main]  from main main::@1
 main::@return: scope:[main]  from main::@1
   return 
   to:@return
-@end: scope:[]  from @begin
+@1: scope:[]  from @begin
+  call main 
+  to:@end
+@end: scope:[]  from @1
 
 PROCEDURE MODIFY VARIABLE ANALYSIS
 
@@ -141,11 +140,8 @@ CONTROL FLOW GRAPH WITH ASSIGNMENT CALL
   (string~) $1 ← (string~) $0 + (byte) 'e'
   (byte[]) str ← (string~) $1
   (byte[]) nums ← { (byte) 2, (byte) 3, (byte) 4, (byte) 5 }
-  call main param-assignment
-  to:@2
-@2: scope:[]  from @begin
-  to:@end
-main: scope:[main]  from @begin
+  to:@1
+main: scope:[main]  from @1
   *((byte*) SCREEN + (byte) 0) ← (byte) char
   *((byte*) SCREEN + (byte) 2) ← (byte) num
   (byte) main::i ← (byte) 0
@@ -164,8 +160,14 @@ main::@1: scope:[main]  from main main::@1
 main::@return: scope:[main]  from main::@1
   return 
   to:@return
+@1: scope:[]  from @begin
+  call main param-assignment
+  to:@2
+@2: scope:[]  from @1
+  to:@end
 @end: scope:[]  from @2
 
+Completing Phi functions...
 Completing Phi functions...
 Completing Phi functions...
 CONTROL FLOW GRAPH SSA
@@ -177,16 +179,13 @@ CONTROL FLOW GRAPH SSA
   (string~) $1 ← (string~) $0 + (byte) 'e'
   (byte[]) str#0 ← (string~) $1
   (byte[]) nums#0 ← { (byte) 2, (byte) 3, (byte) 4, (byte) 5 }
-  call main param-assignment
-  to:@2
-@2: scope:[]  from @begin
-  to:@end
-main: scope:[main]  from @begin
-  (byte[]) nums#2 ← phi( @begin/(byte[]) nums#0 )
-  (byte[]) str#2 ← phi( @begin/(byte[]) str#0 )
-  (byte) num#1 ← phi( @begin/(byte) num#0 )
-  (byte*) SCREEN#1 ← phi( @begin/(byte*) SCREEN#0 )
-  (byte) char#1 ← phi( @begin/(byte) char#0 )
+  to:@1
+main: scope:[main]  from @1
+  (byte[]) nums#2 ← phi( @1/(byte[]) nums#3 )
+  (byte[]) str#2 ← phi( @1/(byte[]) str#3 )
+  (byte) num#1 ← phi( @1/(byte) num#2 )
+  (byte*) SCREEN#1 ← phi( @1/(byte*) SCREEN#3 )
+  (byte) char#1 ← phi( @1/(byte) char#2 )
   *((byte*) SCREEN#1 + (byte) 0) ← (byte) char#1
   *((byte*) SCREEN#1 + (byte) 2) ← (byte) num#1
   (byte) main::i#0 ← (byte) 0
@@ -209,6 +208,16 @@ main::@1: scope:[main]  from main main::@1
 main::@return: scope:[main]  from main::@1
   return 
   to:@return
+@1: scope:[]  from @begin
+  (byte[]) nums#3 ← phi( @begin/(byte[]) nums#0 )
+  (byte[]) str#3 ← phi( @begin/(byte[]) str#0 )
+  (byte) num#2 ← phi( @begin/(byte) num#0 )
+  (byte*) SCREEN#3 ← phi( @begin/(byte*) SCREEN#0 )
+  (byte) char#2 ← phi( @begin/(byte) char#0 )
+  call main param-assignment
+  to:@2
+@2: scope:[]  from @1
+  to:@end
 @end: scope:[]  from @2
 
 CONTROL FLOW GRAPH WITH ASSIGNMENT CALL & RETURN
@@ -220,16 +229,13 @@ CONTROL FLOW GRAPH WITH ASSIGNMENT CALL & RETURN
   (string~) $1 ← (string~) $0 + (byte) 'e'
   (byte[]) str#0 ← (string~) $1
   (byte[]) nums#0 ← { (byte) 2, (byte) 3, (byte) 4, (byte) 5 }
-  call main param-assignment
-  to:@2
-@2: scope:[]  from @begin
-  to:@end
-main: scope:[main]  from @begin
-  (byte[]) nums#2 ← phi( @begin/(byte[]) nums#0 )
-  (byte[]) str#2 ← phi( @begin/(byte[]) str#0 )
-  (byte) num#1 ← phi( @begin/(byte) num#0 )
-  (byte*) SCREEN#1 ← phi( @begin/(byte*) SCREEN#0 )
-  (byte) char#1 ← phi( @begin/(byte) char#0 )
+  to:@1
+main: scope:[main]  from @1
+  (byte[]) nums#2 ← phi( @1/(byte[]) nums#3 )
+  (byte[]) str#2 ← phi( @1/(byte[]) str#3 )
+  (byte) num#1 ← phi( @1/(byte) num#2 )
+  (byte*) SCREEN#1 ← phi( @1/(byte*) SCREEN#3 )
+  (byte) char#1 ← phi( @1/(byte) char#2 )
   *((byte*) SCREEN#1 + (byte) 0) ← (byte) char#1
   *((byte*) SCREEN#1 + (byte) 2) ← (byte) num#1
   (byte) main::i#0 ← (byte) 0
@@ -252,11 +258,22 @@ main::@1: scope:[main]  from main main::@1
 main::@return: scope:[main]  from main::@1
   return 
   to:@return
+@1: scope:[]  from @begin
+  (byte[]) nums#3 ← phi( @begin/(byte[]) nums#0 )
+  (byte[]) str#3 ← phi( @begin/(byte[]) str#0 )
+  (byte) num#2 ← phi( @begin/(byte) num#0 )
+  (byte*) SCREEN#3 ← phi( @begin/(byte*) SCREEN#0 )
+  (byte) char#2 ← phi( @begin/(byte) char#0 )
+  call main param-assignment
+  to:@2
+@2: scope:[]  from @1
+  to:@end
 @end: scope:[]  from @2
 
 INITIAL SSA SYMBOL TABLE
 (string~) $0
 (string~) $1
+(label) @1
 (label) @2
 (label) @begin
 (label) @end
@@ -264,9 +281,11 @@ INITIAL SSA SYMBOL TABLE
 (byte*) SCREEN#0
 (byte*) SCREEN#1
 (byte*) SCREEN#2
+(byte*) SCREEN#3
 (byte) char
 (byte) char#0
 (byte) char#1
+(byte) char#2
 (void()) main()
 (byte~) main::$0
 (byte~) main::$1
@@ -282,14 +301,17 @@ INITIAL SSA SYMBOL TABLE
 (byte) num
 (byte) num#0
 (byte) num#1
+(byte) num#2
 (byte[]) nums
 (byte[]) nums#0
 (byte[]) nums#1
 (byte[]) nums#2
+(byte[]) nums#3
 (byte[]) str
 (byte[]) str#0
 (byte[]) str#1
 (byte[]) str#2
+(byte[]) str#3
 
 Culled Empty Block (label) @2
 Succesful SSA optimization Pass2CullEmptyBlocks
@@ -302,14 +324,13 @@ CONTROL FLOW GRAPH
   (string~) $1 ← (string~) $0 + (byte) 'e'
   (byte[]) str#0 ← (string~) $1
   (byte[]) nums#0 ← { (byte) 2, (byte) 3, (byte) 4, (byte) 5 }
-  call main param-assignment
-  to:@end
-main: scope:[main]  from @begin
-  (byte[]) nums#2 ← phi( @begin/(byte[]) nums#0 )
-  (byte[]) str#2 ← phi( @begin/(byte[]) str#0 )
-  (byte) num#1 ← phi( @begin/(byte) num#0 )
-  (byte*) SCREEN#1 ← phi( @begin/(byte*) SCREEN#0 )
-  (byte) char#1 ← phi( @begin/(byte) char#0 )
+  to:@1
+main: scope:[main]  from @1
+  (byte[]) nums#2 ← phi( @1/(byte[]) nums#3 )
+  (byte[]) str#2 ← phi( @1/(byte[]) str#3 )
+  (byte) num#1 ← phi( @1/(byte) num#2 )
+  (byte*) SCREEN#1 ← phi( @1/(byte*) SCREEN#3 )
+  (byte) char#1 ← phi( @1/(byte) char#2 )
   *((byte*) SCREEN#1 + (byte) 0) ← (byte) char#1
   *((byte*) SCREEN#1 + (byte) 2) ← (byte) num#1
   (byte) main::i#0 ← (byte) 0
@@ -332,13 +353,21 @@ main::@1: scope:[main]  from main main::@1
 main::@return: scope:[main]  from main::@1
   return 
   to:@return
-@end: scope:[]  from @begin
+@1: scope:[]  from @begin
+  (byte[]) nums#3 ← phi( @begin/(byte[]) nums#0 )
+  (byte[]) str#3 ← phi( @begin/(byte[]) str#0 )
+  (byte) num#2 ← phi( @begin/(byte) num#0 )
+  (byte*) SCREEN#3 ← phi( @begin/(byte*) SCREEN#0 )
+  (byte) char#2 ← phi( @begin/(byte) char#0 )
+  call main param-assignment
+  to:@end
+@end: scope:[]  from @1
 
-Alias (byte[]) str#0 = (string~) $1 (byte[]) str#2 
-Alias (byte) char#0 = (byte) char#1 
-Alias (byte*) SCREEN#0 = (byte*) SCREEN#1 
-Alias (byte) num#0 = (byte) num#1 
-Alias (byte[]) nums#0 = (byte[]) nums#2 
+Alias (byte) char#0 = (byte) char#1 (byte) char#2 
+Alias (byte*) SCREEN#0 = (byte*) SCREEN#1 (byte*) SCREEN#3 
+Alias (byte) num#0 = (byte) num#1 (byte) num#2 
+Alias (byte[]) str#0 = (byte[]) str#2 (byte[]) str#3 (string~) $1 
+Alias (byte[]) nums#0 = (byte[]) nums#2 (byte[]) nums#3 
 Succesful SSA optimization Pass2AliasElimination
 CONTROL FLOW GRAPH
 @begin: scope:[]  from
@@ -348,9 +377,8 @@ CONTROL FLOW GRAPH
   (string~) $0 ← (string) "bc" + (string) "d"
   (byte[]) str#0 ← (string~) $0 + (byte) 'e'
   (byte[]) nums#0 ← { (byte) 2, (byte) 3, (byte) 4, (byte) 5 }
-  call main param-assignment
-  to:@end
-main: scope:[main]  from @begin
+  to:@1
+main: scope:[main]  from @1
   *((byte*) SCREEN#0 + (byte) 0) ← (byte) char#0
   *((byte*) SCREEN#0 + (byte) 2) ← (byte) num#0
   (byte) main::i#0 ← (byte) 0
@@ -373,7 +401,10 @@ main::@1: scope:[main]  from main main::@1
 main::@return: scope:[main]  from main::@1
   return 
   to:@return
-@end: scope:[]  from @begin
+@1: scope:[]  from @begin
+  call main param-assignment
+  to:@end
+@end: scope:[]  from @1
 
 Self Phi Eliminated (byte[]) str#1
 Self Phi Eliminated (byte*) SCREEN#2
@@ -387,9 +418,8 @@ CONTROL FLOW GRAPH
   (string~) $0 ← (string) "bc" + (string) "d"
   (byte[]) str#0 ← (string~) $0 + (byte) 'e'
   (byte[]) nums#0 ← { (byte) 2, (byte) 3, (byte) 4, (byte) 5 }
-  call main param-assignment
-  to:@end
-main: scope:[main]  from @begin
+  to:@1
+main: scope:[main]  from @1
   *((byte*) SCREEN#0 + (byte) 0) ← (byte) char#0
   *((byte*) SCREEN#0 + (byte) 2) ← (byte) num#0
   (byte) main::i#0 ← (byte) 0
@@ -412,7 +442,10 @@ main::@1: scope:[main]  from main main::@1
 main::@return: scope:[main]  from main::@1
   return 
   to:@return
-@end: scope:[]  from @begin
+@1: scope:[]  from @begin
+  call main param-assignment
+  to:@end
+@end: scope:[]  from @1
 
 Redundant Phi (byte[]) str#1 (byte[]) str#0
 Redundant Phi (byte*) SCREEN#2 (byte*) SCREEN#0
@@ -426,9 +459,8 @@ CONTROL FLOW GRAPH
   (string~) $0 ← (string) "bc" + (string) "d"
   (byte[]) str#0 ← (string~) $0 + (byte) 'e'
   (byte[]) nums#0 ← { (byte) 2, (byte) 3, (byte) 4, (byte) 5 }
-  call main param-assignment
-  to:@end
-main: scope:[main]  from @begin
+  to:@1
+main: scope:[main]  from @1
   *((byte*) SCREEN#0 + (byte) 0) ← (byte) char#0
   *((byte*) SCREEN#0 + (byte) 2) ← (byte) num#0
   (byte) main::i#0 ← (byte) 0
@@ -448,7 +480,10 @@ main::@1: scope:[main]  from main main::@1
 main::@return: scope:[main]  from main::@1
   return 
   to:@return
-@end: scope:[]  from @begin
+@1: scope:[]  from @begin
+  call main param-assignment
+  to:@end
+@end: scope:[]  from @1
 
 Simple Condition (boolean~) main::$4 if((byte) main::i#1!=(byte) 4) goto main::@1
 Succesful SSA optimization Pass2ConditionalJumpSimplification
@@ -460,9 +495,8 @@ CONTROL FLOW GRAPH
   (string~) $0 ← (string) "bc" + (string) "d"
   (byte[]) str#0 ← (string~) $0 + (byte) 'e'
   (byte[]) nums#0 ← { (byte) 2, (byte) 3, (byte) 4, (byte) 5 }
-  call main param-assignment
-  to:@end
-main: scope:[main]  from @begin
+  to:@1
+main: scope:[main]  from @1
   *((byte*) SCREEN#0 + (byte) 0) ← (byte) char#0
   *((byte*) SCREEN#0 + (byte) 2) ← (byte) num#0
   (byte) main::i#0 ← (byte) 0
@@ -481,7 +515,10 @@ main::@1: scope:[main]  from main main::@1
 main::@return: scope:[main]  from main::@1
   return 
   to:@return
-@end: scope:[]  from @begin
+@1: scope:[]  from @begin
+  call main param-assignment
+  to:@end
+@end: scope:[]  from @1
 
 Constant (const byte*) SCREEN#0 = 1024
 Constant (const byte) char#0 = 'a'
@@ -493,9 +530,8 @@ Succesful SSA optimization Pass2ConstantIdentification
 CONTROL FLOW GRAPH
 @begin: scope:[]  from
   (byte[]) str#0 ← (const string) $0 + (byte) 'e'
-  call main param-assignment
-  to:@end
-main: scope:[main]  from @begin
+  to:@1
+main: scope:[main]  from @1
   *((const byte*) SCREEN#0 + (byte) 0) ← (const byte) char#0
   *((const byte*) SCREEN#0 + (byte) 2) ← (const byte) num#0
   to:main::@1
@@ -513,15 +549,17 @@ main::@1: scope:[main]  from main main::@1
 main::@return: scope:[main]  from main::@1
   return 
   to:@return
-@end: scope:[]  from @begin
+@1: scope:[]  from @begin
+  call main param-assignment
+  to:@end
+@end: scope:[]  from @1
 
 Constant (const byte[]) str#0 = $0+'e'
 Succesful SSA optimization Pass2ConstantIdentification
 CONTROL FLOW GRAPH
 @begin: scope:[]  from
-  call main param-assignment
-  to:@end
-main: scope:[main]  from @begin
+  to:@1
+main: scope:[main]  from @1
   *((const byte*) SCREEN#0 + (byte) 0) ← (const byte) char#0
   *((const byte*) SCREEN#0 + (byte) 2) ← (const byte) num#0
   to:main::@1
@@ -539,7 +577,10 @@ main::@1: scope:[main]  from main main::@1
 main::@return: scope:[main]  from main::@1
   return 
   to:@return
-@end: scope:[]  from @begin
+@1: scope:[]  from @begin
+  call main param-assignment
+  to:@end
+@end: scope:[]  from @1
 
 Consolidated assigned array index constant in assignment *(SCREEN#0+0)
 Consolidated assigned array index constant in assignment *(SCREEN#0+2)
@@ -552,9 +593,8 @@ Consolidated assigned array index constant in assignment *(SCREEN#0+9 + main::$2
 Succesful SSA optimization Pass2ConstantAdditionElimination
 CONTROL FLOW GRAPH
 @begin: scope:[]  from
-  call main param-assignment
-  to:@end
-main: scope:[main]  from @begin
+  to:@1
+main: scope:[main]  from @1
   *((const byte*) SCREEN#0+(byte) 0) ← (const byte) char#0
   *((const byte*) SCREEN#0+(byte) 2) ← (const byte) num#0
   to:main::@1
@@ -572,7 +612,10 @@ main::@1: scope:[main]  from main main::@1
 main::@return: scope:[main]  from main::@1
   return 
   to:@return
-@end: scope:[]  from @begin
+@1: scope:[]  from @begin
+  call main param-assignment
+  to:@end
+@end: scope:[]  from @1
 
 Multiple usages for variable. Not optimizing sub-constant (byte) main::i#2
 Multiple usages for variable. Not optimizing sub-constant (byte) main::i#2
@@ -580,9 +623,8 @@ Alias (byte) main::i#2 = (byte~) main::$0 (byte~) main::$2
 Succesful SSA optimization Pass2AliasElimination
 CONTROL FLOW GRAPH
 @begin: scope:[]  from
-  call main param-assignment
-  to:@end
-main: scope:[main]  from @begin
+  to:@1
+main: scope:[main]  from @1
   *((const byte*) SCREEN#0+(byte) 0) ← (const byte) char#0
   *((const byte*) SCREEN#0+(byte) 2) ← (const byte) num#0
   to:main::@1
@@ -598,7 +640,10 @@ main::@1: scope:[main]  from main main::@1
 main::@return: scope:[main]  from main::@1
   return 
   to:@return
-@end: scope:[]  from @begin
+@1: scope:[]  from @begin
+  call main param-assignment
+  to:@end
+@end: scope:[]  from @1
 
 Multiple usages for variable. Not optimizing sub-constant (byte) main::i#2
 Multiple usages for variable. Not optimizing sub-constant (byte) main::i#2
@@ -615,9 +660,8 @@ Constant inlined main::i#0 = (byte) 0
 Succesful SSA optimization Pass2ConstantInlining
 CONTROL FLOW GRAPH
 @begin: scope:[]  from
-  call main param-assignment
-  to:@end
-main: scope:[main]  from @begin
+  to:@1
+main: scope:[main]  from @1
   *((const byte*) SCREEN#0+(byte) 0) ← (const byte) char#0
   *((const byte*) SCREEN#0+(byte) 2) ← (const byte) num#0
   to:main::@1
@@ -633,9 +677,13 @@ main::@1: scope:[main]  from main main::@1
 main::@return: scope:[main]  from main::@1
   return 
   to:@return
-@end: scope:[]  from @begin
+@1: scope:[]  from @begin
+  call main param-assignment
+  to:@end
+@end: scope:[]  from @1
 
 FINAL SYMBOL TABLE
+(label) @1
 (label) @begin
 (label) @end
 (byte*) SCREEN
@@ -657,15 +705,17 @@ FINAL SYMBOL TABLE
 (byte[]) str
 (const byte[]) str#0 = (string) "bc"+(string) "d"+(byte) 'e'
 
-Block Sequence Planned @begin @end main main::@1 main::@return 
+Block Sequence Planned @begin @1 @end main main::@1 main::@return 
 Added new block during phi lifting main::@3(between main::@1 and main::@1)
-Block Sequence Planned @begin @end main main::@1 main::@return main::@3 
+Block Sequence Planned @begin @1 @end main main::@1 main::@return main::@3 
 CONTROL FLOW GRAPH - PHI LIFTED
 @begin: scope:[]  from
+  to:@1
+@1: scope:[]  from @begin
   call main param-assignment
   to:@end
-@end: scope:[]  from @begin
-main: scope:[main]  from @begin
+@end: scope:[]  from @1
+main: scope:[main]  from @1
   *((const byte*) SCREEN#0+(byte) 0) ← (const byte) char#0
   *((const byte*) SCREEN#0+(byte) 2) ← (const byte) num#0
   to:main::@1
@@ -692,10 +742,12 @@ Propagating live ranges...
 Propagating live ranges...
 CONTROL FLOW GRAPH - LIVE RANGES FOUND
 @begin: scope:[]  from
+  to:@1
+@1: scope:[]  from @begin
   [0] call main param-assignment [ ]
   to:@end
-@end: scope:[]  from @begin
-main: scope:[main]  from @begin
+@end: scope:[]  from @1
+main: scope:[main]  from @1
   [1] *((const byte*) SCREEN#0+(byte) 0) ← (const byte) char#0 [ ]
   [2] *((const byte*) SCREEN#0+(byte) 2) ← (const byte) num#0 [ ]
   to:main::@1
@@ -719,15 +771,17 @@ Created 1 initial phi equivalence classes
 Coalesced [11] main::i#3 ← main::i#1
 Coalesced down to 1 phi equivalence classes
 Culled Empty Block (label) main::@3
-Block Sequence Planned @begin @end main main::@1 main::@return 
+Block Sequence Planned @begin @1 @end main main::@1 main::@return 
 Propagating live ranges...
 Propagating live ranges...
 CONTROL FLOW GRAPH - PHI MEM COALESCED
 @begin: scope:[]  from
+  to:@1
+@1: scope:[]  from @begin
   [0] call main param-assignment [ ]
   to:@end
-@end: scope:[]  from @begin
-main: scope:[main]  from @begin
+@end: scope:[]  from @1
+main: scope:[main]  from @1
   [1] *((const byte*) SCREEN#0+(byte) 0) ← (const byte) char#0 [ ]
   [2] *((const byte*) SCREEN#0+(byte) 2) ← (const byte) num#0 [ ]
   to:main::@1
@@ -746,10 +800,11 @@ main::@return: scope:[main]  from main::@1
 
 DOMINATORS
 @begin dominated by  @begin 
-@end dominated by  @end @begin 
-main dominated by  @begin main 
-main::@1 dominated by  @begin main::@1 main 
-main::@return dominated by  main::@return @begin main::@1 main 
+@1 dominated by  @1 @begin 
+@end dominated by  @1 @end @begin 
+main dominated by  @1 @begin main 
+main::@1 dominated by  @1 @begin main::@1 main 
+main::@return dominated by  @1 main::@return @begin main::@1 main 
 
 Found back edge: Loop head: main::@1 tails: main::@1 blocks: null
 Populated: Loop head: main::@1 tails: main::@1 blocks: main::@1 
@@ -788,68 +843,75 @@ Allocated zp ZP_BYTE:2 [ main::i#2 main::i#1 ]
 Allocated zp ZP_BYTE:3 [ main::$1 ]
 Allocated zp ZP_BYTE:4 [ main::$3 ]
 INITIAL ASM
-//SEG0 Global Constants & labels
+//SEG0 Basic Upstart
+.pc = $801 "Basic"
+:BasicUpstart(main)
+.pc = $80d "Program"
+//SEG1 Global Constants & labels
   .const SCREEN = $400
   .const char = 'a'
   .const num = 1
   .const str = "bc"+"d"+'e'
   nums: .byte 2, 3, 4, 5
-//SEG1 @begin
+//SEG2 @begin
 bbegin:
-//SEG2 [0] call main param-assignment [ ]
+  jmp b1
+//SEG3 @1
+b1:
+//SEG4 [0] call main param-assignment [ ]
   jsr main
   jmp bend
-//SEG3 @end
+//SEG5 @end
 bend:
-//SEG4 main
+//SEG6 main
 main: {
     .label _1 = 3
     .label _3 = 4
     .label i = 2
-  //SEG5 [1] *((const byte*) SCREEN#0+(byte) 0) ← (const byte) char#0 [ ] -- _star_cowo1=coby2 
+  //SEG7 [1] *((const byte*) SCREEN#0+(byte) 0) ← (const byte) char#0 [ ] -- _star_cowo1=coby2 
     lda #char
     sta SCREEN+0
-  //SEG6 [2] *((const byte*) SCREEN#0+(byte) 2) ← (const byte) num#0 [ ] -- _star_cowo1=coby2 
+  //SEG8 [2] *((const byte*) SCREEN#0+(byte) 2) ← (const byte) num#0 [ ] -- _star_cowo1=coby2 
     lda #num
     sta SCREEN+2
-  //SEG7 [3] phi from main to main::@1 [phi:main->main::@1]
+  //SEG9 [3] phi from main to main::@1 [phi:main->main::@1]
   b1_from_main:
-  //SEG8 [3] phi (byte) main::i#2 = (byte) 0 [phi:main->main::@1#0] -- zpby1=coby1 
+  //SEG10 [3] phi (byte) main::i#2 = (byte) 0 [phi:main->main::@1#0] -- zpby1=coby1 
     lda #0
     sta i
     jmp b1
-  //SEG9 [3] phi from main::@1 to main::@1 [phi:main::@1->main::@1]
+  //SEG11 [3] phi from main::@1 to main::@1 [phi:main::@1->main::@1]
   b1_from_b1:
-  //SEG10 [3] phi (byte) main::i#2 = (byte) main::i#1 [phi:main::@1->main::@1#0] -- register_copy 
+  //SEG12 [3] phi (byte) main::i#2 = (byte) main::i#1 [phi:main::@1->main::@1#0] -- register_copy 
     jmp b1
-  //SEG11 main::@1
+  //SEG13 main::@1
   b1:
-  //SEG12 [4] (byte~) main::$1 ← (const byte[]) str#0 *idx (byte) main::i#2 [ main::i#2 main::$1 ] -- zpby1=cowo1_staridx_zpby2 
+  //SEG14 [4] (byte~) main::$1 ← (const byte[]) str#0 *idx (byte) main::i#2 [ main::i#2 main::$1 ] -- zpby1=cowo1_staridx_zpby2 
     ldx i
     lda str,x
     sta _1
-  //SEG13 [5] *((const byte*) SCREEN#0+(byte) 4 + (byte) main::i#2) ← (byte~) main::$1 [ main::i#2 ] -- cowo1_staridx_zpby1=zpby2 
+  //SEG15 [5] *((const byte*) SCREEN#0+(byte) 4 + (byte) main::i#2) ← (byte~) main::$1 [ main::i#2 ] -- cowo1_staridx_zpby1=zpby2 
     lda _1
     ldx i
     sta SCREEN+4,x
-  //SEG14 [6] (byte~) main::$3 ← (const byte[]) nums#0 *idx (byte) main::i#2 [ main::i#2 main::$3 ] -- zpby1=cowo1_staridx_zpby2 
+  //SEG16 [6] (byte~) main::$3 ← (const byte[]) nums#0 *idx (byte) main::i#2 [ main::i#2 main::$3 ] -- zpby1=cowo1_staridx_zpby2 
     ldx i
     lda nums,x
     sta _3
-  //SEG15 [7] *((const byte*) SCREEN#0+(byte) 9 + (byte) main::i#2) ← (byte~) main::$3 [ main::i#2 ] -- cowo1_staridx_zpby1=zpby2 
+  //SEG17 [7] *((const byte*) SCREEN#0+(byte) 9 + (byte) main::i#2) ← (byte~) main::$3 [ main::i#2 ] -- cowo1_staridx_zpby1=zpby2 
     lda _3
     ldx i
     sta SCREEN+9,x
-  //SEG16 [8] (byte) main::i#1 ← ++ (byte) main::i#2 [ main::i#1 ] -- zpby1=_inc_zpby1 
+  //SEG18 [8] (byte) main::i#1 ← ++ (byte) main::i#2 [ main::i#1 ] -- zpby1=_inc_zpby1 
     inc i
-  //SEG17 [9] if((byte) main::i#1!=(byte) 4) goto main::@1 [ main::i#1 ] -- zpby1_neq_coby1_then_la1 
+  //SEG19 [9] if((byte) main::i#1!=(byte) 4) goto main::@1 [ main::i#1 ] -- zpby1_neq_coby1_then_la1 
     lda i
     cmp #4
     bne b1_from_b1
     jmp breturn
-  //SEG18 main::@return
+  //SEG20 main::@return
   breturn:
-  //SEG19 [10] return  [ ]
+  //SEG21 [10] return  [ ]
     rts
 }
 
@@ -864,211 +926,235 @@ REGISTER UPLIFT SCOPES
 Uplift Scope [main] 29.7: zp ZP_BYTE:2 [ main::i#2 main::i#1 ] 22: zp ZP_BYTE:3 [ main::$1 ] 22: zp ZP_BYTE:4 [ main::$3 ] 
 Uplift Scope [] 
 
-Uplifting [main] best 392 combination reg byte x [ main::i#2 main::i#1 ] reg byte a [ main::$1 ] reg byte a [ main::$3 ] 
-Uplifting [] best 392 combination 
+Uplifting [main] best 422 combination reg byte x [ main::i#2 main::i#1 ] reg byte a [ main::$1 ] reg byte a [ main::$3 ] 
+Uplifting [] best 422 combination 
+Removing instruction jmp b1
 Removing instruction jmp bend
 Removing instruction jmp b1
 Removing instruction jmp breturn
 Succesful ASM optimization Pass5NextJumpElimination
 ASSEMBLER
-//SEG0 Global Constants & labels
+//SEG0 Basic Upstart
+.pc = $801 "Basic"
+:BasicUpstart(main)
+.pc = $80d "Program"
+//SEG1 Global Constants & labels
   .const SCREEN = $400
   .const char = 'a'
   .const num = 1
   .const str = "bc"+"d"+'e'
   nums: .byte 2, 3, 4, 5
-//SEG1 @begin
+//SEG2 @begin
 bbegin:
-//SEG2 [0] call main param-assignment [ ]
+//SEG3 @1
+b1:
+//SEG4 [0] call main param-assignment [ ]
   jsr main
-//SEG3 @end
+//SEG5 @end
 bend:
-//SEG4 main
+//SEG6 main
 main: {
-  //SEG5 [1] *((const byte*) SCREEN#0+(byte) 0) ← (const byte) char#0 [ ] -- _star_cowo1=coby2 
+  //SEG7 [1] *((const byte*) SCREEN#0+(byte) 0) ← (const byte) char#0 [ ] -- _star_cowo1=coby2 
     lda #char
     sta SCREEN+0
-  //SEG6 [2] *((const byte*) SCREEN#0+(byte) 2) ← (const byte) num#0 [ ] -- _star_cowo1=coby2 
+  //SEG8 [2] *((const byte*) SCREEN#0+(byte) 2) ← (const byte) num#0 [ ] -- _star_cowo1=coby2 
     lda #num
     sta SCREEN+2
-  //SEG7 [3] phi from main to main::@1 [phi:main->main::@1]
+  //SEG9 [3] phi from main to main::@1 [phi:main->main::@1]
   b1_from_main:
-  //SEG8 [3] phi (byte) main::i#2 = (byte) 0 [phi:main->main::@1#0] -- xby=coby1 
+  //SEG10 [3] phi (byte) main::i#2 = (byte) 0 [phi:main->main::@1#0] -- xby=coby1 
     ldx #0
     jmp b1
-  //SEG9 [3] phi from main::@1 to main::@1 [phi:main::@1->main::@1]
+  //SEG11 [3] phi from main::@1 to main::@1 [phi:main::@1->main::@1]
   b1_from_b1:
-  //SEG10 [3] phi (byte) main::i#2 = (byte) main::i#1 [phi:main::@1->main::@1#0] -- register_copy 
-  //SEG11 main::@1
+  //SEG12 [3] phi (byte) main::i#2 = (byte) main::i#1 [phi:main::@1->main::@1#0] -- register_copy 
+  //SEG13 main::@1
   b1:
-  //SEG12 [4] (byte~) main::$1 ← (const byte[]) str#0 *idx (byte) main::i#2 [ main::i#2 main::$1 ] -- aby=cowo1_staridx_xby 
+  //SEG14 [4] (byte~) main::$1 ← (const byte[]) str#0 *idx (byte) main::i#2 [ main::i#2 main::$1 ] -- aby=cowo1_staridx_xby 
     lda str,x
-  //SEG13 [5] *((const byte*) SCREEN#0+(byte) 4 + (byte) main::i#2) ← (byte~) main::$1 [ main::i#2 ] -- cowo1_staridx_xby=aby 
+  //SEG15 [5] *((const byte*) SCREEN#0+(byte) 4 + (byte) main::i#2) ← (byte~) main::$1 [ main::i#2 ] -- cowo1_staridx_xby=aby 
     sta SCREEN+4,x
-  //SEG14 [6] (byte~) main::$3 ← (const byte[]) nums#0 *idx (byte) main::i#2 [ main::i#2 main::$3 ] -- aby=cowo1_staridx_xby 
+  //SEG16 [6] (byte~) main::$3 ← (const byte[]) nums#0 *idx (byte) main::i#2 [ main::i#2 main::$3 ] -- aby=cowo1_staridx_xby 
     lda nums,x
-  //SEG15 [7] *((const byte*) SCREEN#0+(byte) 9 + (byte) main::i#2) ← (byte~) main::$3 [ main::i#2 ] -- cowo1_staridx_xby=aby 
+  //SEG17 [7] *((const byte*) SCREEN#0+(byte) 9 + (byte) main::i#2) ← (byte~) main::$3 [ main::i#2 ] -- cowo1_staridx_xby=aby 
     sta SCREEN+9,x
-  //SEG16 [8] (byte) main::i#1 ← ++ (byte) main::i#2 [ main::i#1 ] -- xby=_inc_xby 
+  //SEG18 [8] (byte) main::i#1 ← ++ (byte) main::i#2 [ main::i#1 ] -- xby=_inc_xby 
     inx
-  //SEG17 [9] if((byte) main::i#1!=(byte) 4) goto main::@1 [ main::i#1 ] -- xby_neq_coby1_then_la1 
+  //SEG19 [9] if((byte) main::i#1!=(byte) 4) goto main::@1 [ main::i#1 ] -- xby_neq_coby1_then_la1 
     cpx #4
     bne b1_from_b1
-  //SEG18 main::@return
+  //SEG20 main::@return
   breturn:
-  //SEG19 [10] return  [ ]
+  //SEG21 [10] return  [ ]
     rts
 }
 
 Replacing label b1_from_b1 with b1
+Removing instruction bbegin:
 Removing instruction b1_from_b1:
 Succesful ASM optimization Pass5RedundantLabelElimination
 ASSEMBLER
-//SEG0 Global Constants & labels
+//SEG0 Basic Upstart
+.pc = $801 "Basic"
+:BasicUpstart(main)
+.pc = $80d "Program"
+//SEG1 Global Constants & labels
   .const SCREEN = $400
   .const char = 'a'
   .const num = 1
   .const str = "bc"+"d"+'e'
   nums: .byte 2, 3, 4, 5
-//SEG1 @begin
-bbegin:
-//SEG2 [0] call main param-assignment [ ]
+//SEG2 @begin
+//SEG3 @1
+b1:
+//SEG4 [0] call main param-assignment [ ]
   jsr main
-//SEG3 @end
+//SEG5 @end
 bend:
-//SEG4 main
+//SEG6 main
 main: {
-  //SEG5 [1] *((const byte*) SCREEN#0+(byte) 0) ← (const byte) char#0 [ ] -- _star_cowo1=coby2 
+  //SEG7 [1] *((const byte*) SCREEN#0+(byte) 0) ← (const byte) char#0 [ ] -- _star_cowo1=coby2 
     lda #char
     sta SCREEN+0
-  //SEG6 [2] *((const byte*) SCREEN#0+(byte) 2) ← (const byte) num#0 [ ] -- _star_cowo1=coby2 
+  //SEG8 [2] *((const byte*) SCREEN#0+(byte) 2) ← (const byte) num#0 [ ] -- _star_cowo1=coby2 
     lda #num
     sta SCREEN+2
-  //SEG7 [3] phi from main to main::@1 [phi:main->main::@1]
+  //SEG9 [3] phi from main to main::@1 [phi:main->main::@1]
   b1_from_main:
-  //SEG8 [3] phi (byte) main::i#2 = (byte) 0 [phi:main->main::@1#0] -- xby=coby1 
+  //SEG10 [3] phi (byte) main::i#2 = (byte) 0 [phi:main->main::@1#0] -- xby=coby1 
     ldx #0
     jmp b1
-  //SEG9 [3] phi from main::@1 to main::@1 [phi:main::@1->main::@1]
-  //SEG10 [3] phi (byte) main::i#2 = (byte) main::i#1 [phi:main::@1->main::@1#0] -- register_copy 
-  //SEG11 main::@1
+  //SEG11 [3] phi from main::@1 to main::@1 [phi:main::@1->main::@1]
+  //SEG12 [3] phi (byte) main::i#2 = (byte) main::i#1 [phi:main::@1->main::@1#0] -- register_copy 
+  //SEG13 main::@1
   b1:
-  //SEG12 [4] (byte~) main::$1 ← (const byte[]) str#0 *idx (byte) main::i#2 [ main::i#2 main::$1 ] -- aby=cowo1_staridx_xby 
+  //SEG14 [4] (byte~) main::$1 ← (const byte[]) str#0 *idx (byte) main::i#2 [ main::i#2 main::$1 ] -- aby=cowo1_staridx_xby 
     lda str,x
-  //SEG13 [5] *((const byte*) SCREEN#0+(byte) 4 + (byte) main::i#2) ← (byte~) main::$1 [ main::i#2 ] -- cowo1_staridx_xby=aby 
+  //SEG15 [5] *((const byte*) SCREEN#0+(byte) 4 + (byte) main::i#2) ← (byte~) main::$1 [ main::i#2 ] -- cowo1_staridx_xby=aby 
     sta SCREEN+4,x
-  //SEG14 [6] (byte~) main::$3 ← (const byte[]) nums#0 *idx (byte) main::i#2 [ main::i#2 main::$3 ] -- aby=cowo1_staridx_xby 
+  //SEG16 [6] (byte~) main::$3 ← (const byte[]) nums#0 *idx (byte) main::i#2 [ main::i#2 main::$3 ] -- aby=cowo1_staridx_xby 
     lda nums,x
-  //SEG15 [7] *((const byte*) SCREEN#0+(byte) 9 + (byte) main::i#2) ← (byte~) main::$3 [ main::i#2 ] -- cowo1_staridx_xby=aby 
+  //SEG17 [7] *((const byte*) SCREEN#0+(byte) 9 + (byte) main::i#2) ← (byte~) main::$3 [ main::i#2 ] -- cowo1_staridx_xby=aby 
     sta SCREEN+9,x
-  //SEG16 [8] (byte) main::i#1 ← ++ (byte) main::i#2 [ main::i#1 ] -- xby=_inc_xby 
+  //SEG18 [8] (byte) main::i#1 ← ++ (byte) main::i#2 [ main::i#1 ] -- xby=_inc_xby 
     inx
-  //SEG17 [9] if((byte) main::i#1!=(byte) 4) goto main::@1 [ main::i#1 ] -- xby_neq_coby1_then_la1 
+  //SEG19 [9] if((byte) main::i#1!=(byte) 4) goto main::@1 [ main::i#1 ] -- xby_neq_coby1_then_la1 
     cpx #4
     bne b1
-  //SEG18 main::@return
+  //SEG20 main::@return
   breturn:
-  //SEG19 [10] return  [ ]
+  //SEG21 [10] return  [ ]
     rts
 }
 
-Removing instruction bbegin:
+Removing instruction b1:
 Removing instruction bend:
 Removing instruction b1_from_main:
 Removing instruction breturn:
 Succesful ASM optimization Pass5UnusedLabelElimination
 ASSEMBLER
-//SEG0 Global Constants & labels
+//SEG0 Basic Upstart
+.pc = $801 "Basic"
+:BasicUpstart(main)
+.pc = $80d "Program"
+//SEG1 Global Constants & labels
   .const SCREEN = $400
   .const char = 'a'
   .const num = 1
   .const str = "bc"+"d"+'e'
   nums: .byte 2, 3, 4, 5
-//SEG1 @begin
-//SEG2 [0] call main param-assignment [ ]
+//SEG2 @begin
+//SEG3 @1
+//SEG4 [0] call main param-assignment [ ]
   jsr main
-//SEG3 @end
-//SEG4 main
+//SEG5 @end
+//SEG6 main
 main: {
-  //SEG5 [1] *((const byte*) SCREEN#0+(byte) 0) ← (const byte) char#0 [ ] -- _star_cowo1=coby2 
+  //SEG7 [1] *((const byte*) SCREEN#0+(byte) 0) ← (const byte) char#0 [ ] -- _star_cowo1=coby2 
     lda #char
     sta SCREEN+0
-  //SEG6 [2] *((const byte*) SCREEN#0+(byte) 2) ← (const byte) num#0 [ ] -- _star_cowo1=coby2 
+  //SEG8 [2] *((const byte*) SCREEN#0+(byte) 2) ← (const byte) num#0 [ ] -- _star_cowo1=coby2 
     lda #num
     sta SCREEN+2
-  //SEG7 [3] phi from main to main::@1 [phi:main->main::@1]
-  //SEG8 [3] phi (byte) main::i#2 = (byte) 0 [phi:main->main::@1#0] -- xby=coby1 
+  //SEG9 [3] phi from main to main::@1 [phi:main->main::@1]
+  //SEG10 [3] phi (byte) main::i#2 = (byte) 0 [phi:main->main::@1#0] -- xby=coby1 
     ldx #0
     jmp b1
-  //SEG9 [3] phi from main::@1 to main::@1 [phi:main::@1->main::@1]
-  //SEG10 [3] phi (byte) main::i#2 = (byte) main::i#1 [phi:main::@1->main::@1#0] -- register_copy 
-  //SEG11 main::@1
+  //SEG11 [3] phi from main::@1 to main::@1 [phi:main::@1->main::@1]
+  //SEG12 [3] phi (byte) main::i#2 = (byte) main::i#1 [phi:main::@1->main::@1#0] -- register_copy 
+  //SEG13 main::@1
   b1:
-  //SEG12 [4] (byte~) main::$1 ← (const byte[]) str#0 *idx (byte) main::i#2 [ main::i#2 main::$1 ] -- aby=cowo1_staridx_xby 
+  //SEG14 [4] (byte~) main::$1 ← (const byte[]) str#0 *idx (byte) main::i#2 [ main::i#2 main::$1 ] -- aby=cowo1_staridx_xby 
     lda str,x
-  //SEG13 [5] *((const byte*) SCREEN#0+(byte) 4 + (byte) main::i#2) ← (byte~) main::$1 [ main::i#2 ] -- cowo1_staridx_xby=aby 
+  //SEG15 [5] *((const byte*) SCREEN#0+(byte) 4 + (byte) main::i#2) ← (byte~) main::$1 [ main::i#2 ] -- cowo1_staridx_xby=aby 
     sta SCREEN+4,x
-  //SEG14 [6] (byte~) main::$3 ← (const byte[]) nums#0 *idx (byte) main::i#2 [ main::i#2 main::$3 ] -- aby=cowo1_staridx_xby 
+  //SEG16 [6] (byte~) main::$3 ← (const byte[]) nums#0 *idx (byte) main::i#2 [ main::i#2 main::$3 ] -- aby=cowo1_staridx_xby 
     lda nums,x
-  //SEG15 [7] *((const byte*) SCREEN#0+(byte) 9 + (byte) main::i#2) ← (byte~) main::$3 [ main::i#2 ] -- cowo1_staridx_xby=aby 
+  //SEG17 [7] *((const byte*) SCREEN#0+(byte) 9 + (byte) main::i#2) ← (byte~) main::$3 [ main::i#2 ] -- cowo1_staridx_xby=aby 
     sta SCREEN+9,x
-  //SEG16 [8] (byte) main::i#1 ← ++ (byte) main::i#2 [ main::i#1 ] -- xby=_inc_xby 
+  //SEG18 [8] (byte) main::i#1 ← ++ (byte) main::i#2 [ main::i#1 ] -- xby=_inc_xby 
     inx
-  //SEG17 [9] if((byte) main::i#1!=(byte) 4) goto main::@1 [ main::i#1 ] -- xby_neq_coby1_then_la1 
+  //SEG19 [9] if((byte) main::i#1!=(byte) 4) goto main::@1 [ main::i#1 ] -- xby_neq_coby1_then_la1 
     cpx #4
     bne b1
-  //SEG18 main::@return
-  //SEG19 [10] return  [ ]
+  //SEG20 main::@return
+  //SEG21 [10] return  [ ]
     rts
 }
 
 Removing instruction jmp b1
 Succesful ASM optimization Pass5NextJumpElimination
 ASSEMBLER
-//SEG0 Global Constants & labels
+//SEG0 Basic Upstart
+.pc = $801 "Basic"
+:BasicUpstart(main)
+.pc = $80d "Program"
+//SEG1 Global Constants & labels
   .const SCREEN = $400
   .const char = 'a'
   .const num = 1
   .const str = "bc"+"d"+'e'
   nums: .byte 2, 3, 4, 5
-//SEG1 @begin
-//SEG2 [0] call main param-assignment [ ]
+//SEG2 @begin
+//SEG3 @1
+//SEG4 [0] call main param-assignment [ ]
   jsr main
-//SEG3 @end
-//SEG4 main
+//SEG5 @end
+//SEG6 main
 main: {
-  //SEG5 [1] *((const byte*) SCREEN#0+(byte) 0) ← (const byte) char#0 [ ] -- _star_cowo1=coby2 
+  //SEG7 [1] *((const byte*) SCREEN#0+(byte) 0) ← (const byte) char#0 [ ] -- _star_cowo1=coby2 
     lda #char
     sta SCREEN+0
-  //SEG6 [2] *((const byte*) SCREEN#0+(byte) 2) ← (const byte) num#0 [ ] -- _star_cowo1=coby2 
+  //SEG8 [2] *((const byte*) SCREEN#0+(byte) 2) ← (const byte) num#0 [ ] -- _star_cowo1=coby2 
     lda #num
     sta SCREEN+2
-  //SEG7 [3] phi from main to main::@1 [phi:main->main::@1]
-  //SEG8 [3] phi (byte) main::i#2 = (byte) 0 [phi:main->main::@1#0] -- xby=coby1 
+  //SEG9 [3] phi from main to main::@1 [phi:main->main::@1]
+  //SEG10 [3] phi (byte) main::i#2 = (byte) 0 [phi:main->main::@1#0] -- xby=coby1 
     ldx #0
-  //SEG9 [3] phi from main::@1 to main::@1 [phi:main::@1->main::@1]
-  //SEG10 [3] phi (byte) main::i#2 = (byte) main::i#1 [phi:main::@1->main::@1#0] -- register_copy 
-  //SEG11 main::@1
+  //SEG11 [3] phi from main::@1 to main::@1 [phi:main::@1->main::@1]
+  //SEG12 [3] phi (byte) main::i#2 = (byte) main::i#1 [phi:main::@1->main::@1#0] -- register_copy 
+  //SEG13 main::@1
   b1:
-  //SEG12 [4] (byte~) main::$1 ← (const byte[]) str#0 *idx (byte) main::i#2 [ main::i#2 main::$1 ] -- aby=cowo1_staridx_xby 
+  //SEG14 [4] (byte~) main::$1 ← (const byte[]) str#0 *idx (byte) main::i#2 [ main::i#2 main::$1 ] -- aby=cowo1_staridx_xby 
     lda str,x
-  //SEG13 [5] *((const byte*) SCREEN#0+(byte) 4 + (byte) main::i#2) ← (byte~) main::$1 [ main::i#2 ] -- cowo1_staridx_xby=aby 
+  //SEG15 [5] *((const byte*) SCREEN#0+(byte) 4 + (byte) main::i#2) ← (byte~) main::$1 [ main::i#2 ] -- cowo1_staridx_xby=aby 
     sta SCREEN+4,x
-  //SEG14 [6] (byte~) main::$3 ← (const byte[]) nums#0 *idx (byte) main::i#2 [ main::i#2 main::$3 ] -- aby=cowo1_staridx_xby 
+  //SEG16 [6] (byte~) main::$3 ← (const byte[]) nums#0 *idx (byte) main::i#2 [ main::i#2 main::$3 ] -- aby=cowo1_staridx_xby 
     lda nums,x
-  //SEG15 [7] *((const byte*) SCREEN#0+(byte) 9 + (byte) main::i#2) ← (byte~) main::$3 [ main::i#2 ] -- cowo1_staridx_xby=aby 
+  //SEG17 [7] *((const byte*) SCREEN#0+(byte) 9 + (byte) main::i#2) ← (byte~) main::$3 [ main::i#2 ] -- cowo1_staridx_xby=aby 
     sta SCREEN+9,x
-  //SEG16 [8] (byte) main::i#1 ← ++ (byte) main::i#2 [ main::i#1 ] -- xby=_inc_xby 
+  //SEG18 [8] (byte) main::i#1 ← ++ (byte) main::i#2 [ main::i#1 ] -- xby=_inc_xby 
     inx
-  //SEG17 [9] if((byte) main::i#1!=(byte) 4) goto main::@1 [ main::i#1 ] -- xby_neq_coby1_then_la1 
+  //SEG19 [9] if((byte) main::i#1!=(byte) 4) goto main::@1 [ main::i#1 ] -- xby_neq_coby1_then_la1 
     cpx #4
     bne b1
-  //SEG18 main::@return
-  //SEG19 [10] return  [ ]
+  //SEG20 main::@return
+  //SEG21 [10] return  [ ]
     rts
 }
 
 FINAL SYMBOL TABLE
+(label) @1
 (label) @begin
 (label) @end
 (byte*) SCREEN
@@ -1095,46 +1181,51 @@ reg byte a [ main::$1 ]
 reg byte a [ main::$3 ]
 
 FINAL CODE
-//SEG0 Global Constants & labels
+//SEG0 Basic Upstart
+.pc = $801 "Basic"
+:BasicUpstart(main)
+.pc = $80d "Program"
+//SEG1 Global Constants & labels
   .const SCREEN = $400
   .const char = 'a'
   .const num = 1
   .const str = "bc"+"d"+'e'
   nums: .byte 2, 3, 4, 5
-//SEG1 @begin
-//SEG2 [0] call main param-assignment [ ]
+//SEG2 @begin
+//SEG3 @1
+//SEG4 [0] call main param-assignment [ ]
   jsr main
-//SEG3 @end
-//SEG4 main
+//SEG5 @end
+//SEG6 main
 main: {
-  //SEG5 [1] *((const byte*) SCREEN#0+(byte) 0) ← (const byte) char#0 [ ] -- _star_cowo1=coby2 
+  //SEG7 [1] *((const byte*) SCREEN#0+(byte) 0) ← (const byte) char#0 [ ] -- _star_cowo1=coby2 
     lda #char
     sta SCREEN+0
-  //SEG6 [2] *((const byte*) SCREEN#0+(byte) 2) ← (const byte) num#0 [ ] -- _star_cowo1=coby2 
+  //SEG8 [2] *((const byte*) SCREEN#0+(byte) 2) ← (const byte) num#0 [ ] -- _star_cowo1=coby2 
     lda #num
     sta SCREEN+2
-  //SEG7 [3] phi from main to main::@1 [phi:main->main::@1]
-  //SEG8 [3] phi (byte) main::i#2 = (byte) 0 [phi:main->main::@1#0] -- xby=coby1 
+  //SEG9 [3] phi from main to main::@1 [phi:main->main::@1]
+  //SEG10 [3] phi (byte) main::i#2 = (byte) 0 [phi:main->main::@1#0] -- xby=coby1 
     ldx #0
-  //SEG9 [3] phi from main::@1 to main::@1 [phi:main::@1->main::@1]
-  //SEG10 [3] phi (byte) main::i#2 = (byte) main::i#1 [phi:main::@1->main::@1#0] -- register_copy 
-  //SEG11 main::@1
+  //SEG11 [3] phi from main::@1 to main::@1 [phi:main::@1->main::@1]
+  //SEG12 [3] phi (byte) main::i#2 = (byte) main::i#1 [phi:main::@1->main::@1#0] -- register_copy 
+  //SEG13 main::@1
   b1:
-  //SEG12 [4] (byte~) main::$1 ← (const byte[]) str#0 *idx (byte) main::i#2 [ main::i#2 main::$1 ] -- aby=cowo1_staridx_xby 
+  //SEG14 [4] (byte~) main::$1 ← (const byte[]) str#0 *idx (byte) main::i#2 [ main::i#2 main::$1 ] -- aby=cowo1_staridx_xby 
     lda str,x
-  //SEG13 [5] *((const byte*) SCREEN#0+(byte) 4 + (byte) main::i#2) ← (byte~) main::$1 [ main::i#2 ] -- cowo1_staridx_xby=aby 
+  //SEG15 [5] *((const byte*) SCREEN#0+(byte) 4 + (byte) main::i#2) ← (byte~) main::$1 [ main::i#2 ] -- cowo1_staridx_xby=aby 
     sta SCREEN+4,x
-  //SEG14 [6] (byte~) main::$3 ← (const byte[]) nums#0 *idx (byte) main::i#2 [ main::i#2 main::$3 ] -- aby=cowo1_staridx_xby 
+  //SEG16 [6] (byte~) main::$3 ← (const byte[]) nums#0 *idx (byte) main::i#2 [ main::i#2 main::$3 ] -- aby=cowo1_staridx_xby 
     lda nums,x
-  //SEG15 [7] *((const byte*) SCREEN#0+(byte) 9 + (byte) main::i#2) ← (byte~) main::$3 [ main::i#2 ] -- cowo1_staridx_xby=aby 
+  //SEG17 [7] *((const byte*) SCREEN#0+(byte) 9 + (byte) main::i#2) ← (byte~) main::$3 [ main::i#2 ] -- cowo1_staridx_xby=aby 
     sta SCREEN+9,x
-  //SEG16 [8] (byte) main::i#1 ← ++ (byte) main::i#2 [ main::i#1 ] -- xby=_inc_xby 
+  //SEG18 [8] (byte) main::i#1 ← ++ (byte) main::i#2 [ main::i#1 ] -- xby=_inc_xby 
     inx
-  //SEG17 [9] if((byte) main::i#1!=(byte) 4) goto main::@1 [ main::i#1 ] -- xby_neq_coby1_then_la1 
+  //SEG19 [9] if((byte) main::i#1!=(byte) 4) goto main::@1 [ main::i#1 ] -- xby_neq_coby1_then_la1 
     cpx #4
     bne b1
-  //SEG18 main::@return
-  //SEG19 [10] return  [ ]
+  //SEG20 main::@return
+  //SEG21 [10] return  [ ]
     rts
 }
 

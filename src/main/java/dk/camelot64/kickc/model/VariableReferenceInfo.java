@@ -165,6 +165,8 @@ public class VariableReferenceInfo {
       } else if (statement instanceof StatementReturn) {
          StatementReturn statementReturn = (StatementReturn) statement;
          referenced.addAll(getReferenced(statementReturn.getValue()));
+      } else if (statement instanceof StatementAsm) {
+         // No references in ASM atm.
       } else {
          throw new RuntimeException("Unknown statement type " + statement);
       }

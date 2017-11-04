@@ -3,13 +3,20 @@ package dk.camelot64.kickc.model;
 /** Inline ASM code */
 public class StatementAsm extends StatementBase {
 
+   /** ASM Fragment code. */
+   private String asmFragment;
 
-   public StatementAsm(Integer index) {
-      super(index);
+   public StatementAsm(String asmFragment) {
+      super(null);
+      this.asmFragment = asmFragment;
    }
 
    @Override
    public String toString(Program program) {
-      return null;
+      return "asm { "+asmFragment+" }";
+   }
+
+   public String getAsmFragment() {
+      return asmFragment;
    }
 }

@@ -27,7 +27,6 @@ public class AsmFragment {
 
    /** The scope containing the fragment. Used when referencing symbols defined in other scopes. */
    private ScopeRef codeScopeRef;
-   private Object signature;
 
    public AsmFragment(
          Program program,

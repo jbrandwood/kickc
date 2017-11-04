@@ -227,14 +227,14 @@ public class AsmFragmentManager {
     * @return The parsed fragment ready for generating
     * @throws IOException if the parsing/loading fails
     */
-   private static Asm6502Parser.FileContext parseFragment(CharStream fragmentCharStream, final String fragmentFileName) {
+   public static Asm6502Parser.FileContext parseFragment(CharStream fragmentCharStream, final String fragmentFileName) {
       Asm6502Parser.FileContext fragmentFile;
       Asm6502Lexer lexer = new Asm6502Lexer(fragmentCharStream);
       Asm6502Parser parser = new Asm6502Parser(new CommonTokenStream(lexer));
       parser.addErrorListener(new BaseErrorListener() {
          @Override
          public void syntaxError(Recognizer<?, ?> recognizer, Object offendingSymbol, int line, int charPositionInLine, String msg, RecognitionException e) {
-            throw new RuntimeException("Error parsing fragment fragmentFile " + fragmentFileName + "\n - Line: " + line + "\n - Message: " + msg);
+            throw new RuntimeException("Error parsing fragment " + fragmentFileName + "\n - Line: " + line + "\n - Message: " + msg);
          }
       });
       parser.setBuildParseTree(true);

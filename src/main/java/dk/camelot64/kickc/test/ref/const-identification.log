@@ -26,8 +26,6 @@ void plot(byte x) {
     SCREEN[idx] = SCREEN[idx]+1;
 }
 
-main();
-
 Adding pre/post-modifier (byte) line::x ← ++ (byte) line::x
 PROGRAM
   (byte[]) plots ← (word) 4096
@@ -72,10 +70,9 @@ proc (void()) plot((byte) plot::x)
 plot::@return:
   return 
 endproc // plot()
-  (void~) $0 ← call main 
+  call main 
 
 SYMBOLS
-(void~) $0
 (byte*) SCREEN
 (void()) line((byte) line::x0 , (byte) line::x1)
 (boolean~) line::$0
@@ -173,7 +170,7 @@ plot::@return: scope:[plot]  from plot
   return 
   to:@return
 @3: scope:[]  from @2
-  (void~) $0 ← call main 
+  call main 
   to:@end
 @end: scope:[]  from @3
 
@@ -237,7 +234,7 @@ plot::@return: scope:[plot]  from plot
   return 
   to:@return
 @3: scope:[]  from @begin
-  (void~) $0 ← call main 
+  call main 
   to:@end
 @end: scope:[]  from @3
 
@@ -1755,147 +1752,151 @@ Allocated zp ZP_BYTE:5 [ plot::idx#0 ]
 Allocated zp ZP_BYTE:6 [ plot::$1 ]
 Allocated zp ZP_BYTE:7 [ plot::$2 ]
 INITIAL ASM
-//SEG0 Global Constants & labels
+//SEG0 Basic Upstart
+.pc = $801 "Basic"
+:BasicUpstart(main)
+.pc = $80d "Program"
+//SEG1 Global Constants & labels
   .const plots = $1000
   .const SCREEN = $400
-//SEG1 @begin
+//SEG2 @begin
 bbegin:
   jmp b3
-//SEG2 @3
+//SEG3 @3
 b3:
-//SEG3 [0] call main param-assignment [ ]
-//SEG4 [1] phi from @3 to main [phi:@3->main]
+//SEG4 [0] call main param-assignment [ ]
+//SEG5 [1] phi from @3 to main [phi:@3->main]
 main_from_b3:
   jsr main
   jmp bend
-//SEG5 @end
+//SEG6 @end
 bend:
-//SEG6 main
+//SEG7 main
 main: {
     .label i = 2
-  //SEG7 [2] phi from main to main::@1 [phi:main->main::@1]
+  //SEG8 [2] phi from main to main::@1 [phi:main->main::@1]
   b1_from_main:
-  //SEG8 [2] phi (byte) main::i#2 = (byte) 0 [phi:main->main::@1#0] -- zpby1=coby1 
+  //SEG9 [2] phi (byte) main::i#2 = (byte) 0 [phi:main->main::@1#0] -- zpby1=coby1 
     lda #0
     sta i
     jmp b1
-  //SEG9 [2] phi from main::@1 to main::@1 [phi:main::@1->main::@1]
+  //SEG10 [2] phi from main::@1 to main::@1 [phi:main::@1->main::@1]
   b1_from_b1:
-  //SEG10 [2] phi (byte) main::i#2 = (byte) main::i#1 [phi:main::@1->main::@1#0] -- register_copy 
+  //SEG11 [2] phi (byte) main::i#2 = (byte) main::i#1 [phi:main::@1->main::@1#0] -- register_copy 
     jmp b1
-  //SEG11 main::@1
+  //SEG12 main::@1
   b1:
-  //SEG12 [3] *((const byte[]) plots#0 + (byte) main::i#2) ← (byte) main::i#2 [ main::i#2 ] -- cowo1_staridx_zpby1=zpby1 
+  //SEG13 [3] *((const byte[]) plots#0 + (byte) main::i#2) ← (byte) main::i#2 [ main::i#2 ] -- cowo1_staridx_zpby1=zpby1 
     ldx i
     txa
     sta plots,x
-  //SEG13 [4] *((const byte*) SCREEN#0 + (byte) main::i#2) ← (byte) 0 [ main::i#2 ] -- cowo1_staridx_zpby1=coby2 
+  //SEG14 [4] *((const byte*) SCREEN#0 + (byte) main::i#2) ← (byte) 0 [ main::i#2 ] -- cowo1_staridx_zpby1=coby2 
     lda #0
     ldx i
     sta SCREEN,x
-  //SEG14 [5] (byte) main::i#1 ← ++ (byte) main::i#2 [ main::i#1 ] -- zpby1=_inc_zpby1 
+  //SEG15 [5] (byte) main::i#1 ← ++ (byte) main::i#2 [ main::i#1 ] -- zpby1=_inc_zpby1 
     inc i
-  //SEG15 [6] if((byte) main::i#1!=(byte) 40) goto main::@1 [ main::i#1 ] -- zpby1_neq_coby1_then_la1 
+  //SEG16 [6] if((byte) main::i#1!=(byte) 40) goto main::@1 [ main::i#1 ] -- zpby1_neq_coby1_then_la1 
     lda i
     cmp #$28
     bne b1_from_b1
     jmp b2
-  //SEG16 main::@2
+  //SEG17 main::@2
   b2:
-  //SEG17 [7] call line param-assignment [ ]
+  //SEG18 [7] call line param-assignment [ ]
     jsr line
     jmp b5
-  //SEG18 main::@5
+  //SEG19 main::@5
   b5:
-  //SEG19 [8] if(true) goto main::@2 [ ] -- true_then_la1 
+  //SEG20 [8] if(true) goto main::@2 [ ] -- true_then_la1 
     jmp b2
     jmp breturn
-  //SEG20 main::@return
+  //SEG21 main::@return
   breturn:
-  //SEG21 [9] return  [ ]
+  //SEG22 [9] return  [ ]
     rts
 }
-//SEG22 line
+//SEG23 line
 line: {
     .const x1 = $a
     .label x = 3
-  //SEG23 [10] if((byte) 0>=(const byte) line::x1#0) goto line::@1 [ ] -- coby1_ge_coby2_then_la1 
+  //SEG24 [10] if((byte) 0>=(const byte) line::x1#0) goto line::@1 [ ] -- coby1_ge_coby2_then_la1 
     lda #0
     cmp #x1
     bcs b1
-  //SEG24 [11] phi from line to line::@2 [phi:line->line::@2]
+  //SEG25 [11] phi from line to line::@2 [phi:line->line::@2]
   b2_from_line:
-  //SEG25 [11] phi (byte) line::x#2 = (byte) 0 [phi:line->line::@2#0] -- zpby1=coby1 
+  //SEG26 [11] phi (byte) line::x#2 = (byte) 0 [phi:line->line::@2#0] -- zpby1=coby1 
     lda #0
     sta x
     jmp b2
-  //SEG26 [11] phi from line::@8 to line::@2 [phi:line::@8->line::@2]
+  //SEG27 [11] phi from line::@8 to line::@2 [phi:line::@8->line::@2]
   b2_from_b8:
-  //SEG27 [11] phi (byte) line::x#2 = (byte) line::x#1 [phi:line::@8->line::@2#0] -- register_copy 
+  //SEG28 [11] phi (byte) line::x#2 = (byte) line::x#1 [phi:line::@8->line::@2#0] -- register_copy 
     jmp b2
-  //SEG28 line::@2
+  //SEG29 line::@2
   b2:
-  //SEG29 [12] (byte) plot::x#1 ← (byte) line::x#2 [ line::x#2 plot::x#1 ] -- zpby1=zpby2 
+  //SEG30 [12] (byte) plot::x#1 ← (byte) line::x#2 [ line::x#2 plot::x#1 ] -- zpby1=zpby2 
     lda x
     sta plot.x
-  //SEG30 [13] call plot param-assignment [ line::x#2 ]
-  //SEG31 [18] phi from line::@2 to plot [phi:line::@2->plot]
+  //SEG31 [13] call plot param-assignment [ line::x#2 ]
+  //SEG32 [18] phi from line::@2 to plot [phi:line::@2->plot]
   plot_from_b2:
-  //SEG32 [18] phi (byte) plot::x#2 = (byte) plot::x#1 [phi:line::@2->plot#0] -- register_copy 
+  //SEG33 [18] phi (byte) plot::x#2 = (byte) plot::x#1 [phi:line::@2->plot#0] -- register_copy 
     jsr plot
     jmp b8
-  //SEG33 line::@8
+  //SEG34 line::@8
   b8:
-  //SEG34 [14] (byte) line::x#1 ← ++ (byte) line::x#2 [ line::x#1 ] -- zpby1=_inc_zpby1 
+  //SEG35 [14] (byte) line::x#1 ← ++ (byte) line::x#2 [ line::x#1 ] -- zpby1=_inc_zpby1 
     inc x
-  //SEG35 [15] if((byte) line::x#1<=(const byte) line::x1#0) goto line::@2 [ line::x#1 ] -- zpby1_le_coby1_then_la1 
+  //SEG36 [15] if((byte) line::x#1<=(const byte) line::x1#0) goto line::@2 [ line::x#1 ] -- zpby1_le_coby1_then_la1 
     lda x
     cmp #x1
     bcc b2_from_b8
     beq b2_from_b8
     jmp breturn
-  //SEG36 line::@return
+  //SEG37 line::@return
   breturn:
-  //SEG37 [16] return  [ ]
+  //SEG38 [16] return  [ ]
     rts
-  //SEG38 line::@1
+  //SEG39 line::@1
   b1:
-  //SEG39 [17] call plot param-assignment [ ]
-  //SEG40 [18] phi from line::@1 to plot [phi:line::@1->plot]
+  //SEG40 [17] call plot param-assignment [ ]
+  //SEG41 [18] phi from line::@1 to plot [phi:line::@1->plot]
   plot_from_b1:
-  //SEG41 [18] phi (byte) plot::x#2 = (byte) 0 [phi:line::@1->plot#0] -- zpby1=coby1 
+  //SEG42 [18] phi (byte) plot::x#2 = (byte) 0 [phi:line::@1->plot#0] -- zpby1=coby1 
     lda #0
     sta plot.x
     jsr plot
     jmp breturn
 }
-//SEG42 plot
+//SEG43 plot
 plot: {
     .label _1 = 6
     .label _2 = 7
     .label x = 4
     .label idx = 5
-  //SEG43 [19] (byte) plot::idx#0 ← (const byte[]) plots#0 *idx (byte) plot::x#2 [ plot::idx#0 ] -- zpby1=cowo1_staridx_zpby2 
+  //SEG44 [19] (byte) plot::idx#0 ← (const byte[]) plots#0 *idx (byte) plot::x#2 [ plot::idx#0 ] -- zpby1=cowo1_staridx_zpby2 
     ldx x
     lda plots,x
     sta idx
-  //SEG44 [20] (byte~) plot::$1 ← (const byte*) SCREEN#0 *idx (byte) plot::idx#0 [ plot::idx#0 plot::$1 ] -- zpby1=cowo1_staridx_zpby2 
+  //SEG45 [20] (byte~) plot::$1 ← (const byte*) SCREEN#0 *idx (byte) plot::idx#0 [ plot::idx#0 plot::$1 ] -- zpby1=cowo1_staridx_zpby2 
     ldx idx
     lda SCREEN,x
     sta _1
-  //SEG45 [21] (byte~) plot::$2 ← (byte~) plot::$1 + (byte) 1 [ plot::idx#0 plot::$2 ] -- zpby1=zpby2_plus_1 
+  //SEG46 [21] (byte~) plot::$2 ← (byte~) plot::$1 + (byte) 1 [ plot::idx#0 plot::$2 ] -- zpby1=zpby2_plus_1 
     lda _1
     clc
     adc #1
     sta _2
-  //SEG46 [22] *((const byte*) SCREEN#0 + (byte) plot::idx#0) ← (byte~) plot::$2 [ ] -- cowo1_staridx_zpby1=zpby2 
+  //SEG47 [22] *((const byte*) SCREEN#0 + (byte) plot::idx#0) ← (byte~) plot::$2 [ ] -- cowo1_staridx_zpby1=zpby2 
     lda _2
     ldx idx
     sta SCREEN,x
     jmp breturn
-  //SEG47 plot::@return
+  //SEG48 plot::@return
   breturn:
-  //SEG48 [23] return  [ ]
+  //SEG49 [23] return  [ ]
     rts
 }
 
@@ -1939,118 +1940,122 @@ Removing instruction jmp breturn
 Removing instruction jmp breturn
 Succesful ASM optimization Pass5NextJumpElimination
 ASSEMBLER
-//SEG0 Global Constants & labels
+//SEG0 Basic Upstart
+.pc = $801 "Basic"
+:BasicUpstart(main)
+.pc = $80d "Program"
+//SEG1 Global Constants & labels
   .const plots = $1000
   .const SCREEN = $400
-//SEG1 @begin
+//SEG2 @begin
 bbegin:
-//SEG2 @3
+//SEG3 @3
 b3:
-//SEG3 [0] call main param-assignment [ ]
-//SEG4 [1] phi from @3 to main [phi:@3->main]
+//SEG4 [0] call main param-assignment [ ]
+//SEG5 [1] phi from @3 to main [phi:@3->main]
 main_from_b3:
   jsr main
-//SEG5 @end
+//SEG6 @end
 bend:
-//SEG6 main
+//SEG7 main
 main: {
-  //SEG7 [2] phi from main to main::@1 [phi:main->main::@1]
+  //SEG8 [2] phi from main to main::@1 [phi:main->main::@1]
   b1_from_main:
-  //SEG8 [2] phi (byte) main::i#2 = (byte) 0 [phi:main->main::@1#0] -- xby=coby1 
+  //SEG9 [2] phi (byte) main::i#2 = (byte) 0 [phi:main->main::@1#0] -- xby=coby1 
     ldx #0
     jmp b1
-  //SEG9 [2] phi from main::@1 to main::@1 [phi:main::@1->main::@1]
+  //SEG10 [2] phi from main::@1 to main::@1 [phi:main::@1->main::@1]
   b1_from_b1:
-  //SEG10 [2] phi (byte) main::i#2 = (byte) main::i#1 [phi:main::@1->main::@1#0] -- register_copy 
-  //SEG11 main::@1
+  //SEG11 [2] phi (byte) main::i#2 = (byte) main::i#1 [phi:main::@1->main::@1#0] -- register_copy 
+  //SEG12 main::@1
   b1:
-  //SEG12 [3] *((const byte[]) plots#0 + (byte) main::i#2) ← (byte) main::i#2 [ main::i#2 ] -- cowo1_staridx_xby=xby 
+  //SEG13 [3] *((const byte[]) plots#0 + (byte) main::i#2) ← (byte) main::i#2 [ main::i#2 ] -- cowo1_staridx_xby=xby 
     txa
     sta plots,x
-  //SEG13 [4] *((const byte*) SCREEN#0 + (byte) main::i#2) ← (byte) 0 [ main::i#2 ] -- cowo1_staridx_xby=coby2 
+  //SEG14 [4] *((const byte*) SCREEN#0 + (byte) main::i#2) ← (byte) 0 [ main::i#2 ] -- cowo1_staridx_xby=coby2 
     lda #0
     sta SCREEN,x
-  //SEG14 [5] (byte) main::i#1 ← ++ (byte) main::i#2 [ main::i#1 ] -- xby=_inc_xby 
+  //SEG15 [5] (byte) main::i#1 ← ++ (byte) main::i#2 [ main::i#1 ] -- xby=_inc_xby 
     inx
-  //SEG15 [6] if((byte) main::i#1!=(byte) 40) goto main::@1 [ main::i#1 ] -- xby_neq_coby1_then_la1 
+  //SEG16 [6] if((byte) main::i#1!=(byte) 40) goto main::@1 [ main::i#1 ] -- xby_neq_coby1_then_la1 
     cpx #$28
     bne b1_from_b1
-  //SEG16 main::@2
+  //SEG17 main::@2
   b2:
-  //SEG17 [7] call line param-assignment [ ]
+  //SEG18 [7] call line param-assignment [ ]
     jsr line
-  //SEG18 main::@5
+  //SEG19 main::@5
   b5:
-  //SEG19 [8] if(true) goto main::@2 [ ] -- true_then_la1 
+  //SEG20 [8] if(true) goto main::@2 [ ] -- true_then_la1 
     jmp b2
-  //SEG20 main::@return
+  //SEG21 main::@return
   breturn:
-  //SEG21 [9] return  [ ]
+  //SEG22 [9] return  [ ]
     rts
 }
-//SEG22 line
+//SEG23 line
 line: {
     .const x1 = $a
     .label x = 2
-  //SEG23 [10] if((byte) 0>=(const byte) line::x1#0) goto line::@1 [ ] -- coby1_ge_coby2_then_la1 
+  //SEG24 [10] if((byte) 0>=(const byte) line::x1#0) goto line::@1 [ ] -- coby1_ge_coby2_then_la1 
     lda #0
     cmp #x1
     bcs b1
-  //SEG24 [11] phi from line to line::@2 [phi:line->line::@2]
+  //SEG25 [11] phi from line to line::@2 [phi:line->line::@2]
   b2_from_line:
-  //SEG25 [11] phi (byte) line::x#2 = (byte) 0 [phi:line->line::@2#0] -- zpby1=coby1 
+  //SEG26 [11] phi (byte) line::x#2 = (byte) 0 [phi:line->line::@2#0] -- zpby1=coby1 
     lda #0
     sta x
     jmp b2
-  //SEG26 [11] phi from line::@8 to line::@2 [phi:line::@8->line::@2]
+  //SEG27 [11] phi from line::@8 to line::@2 [phi:line::@8->line::@2]
   b2_from_b8:
-  //SEG27 [11] phi (byte) line::x#2 = (byte) line::x#1 [phi:line::@8->line::@2#0] -- register_copy 
-  //SEG28 line::@2
+  //SEG28 [11] phi (byte) line::x#2 = (byte) line::x#1 [phi:line::@8->line::@2#0] -- register_copy 
+  //SEG29 line::@2
   b2:
-  //SEG29 [12] (byte) plot::x#1 ← (byte) line::x#2 [ line::x#2 plot::x#1 ] -- yby=zpby1 
+  //SEG30 [12] (byte) plot::x#1 ← (byte) line::x#2 [ line::x#2 plot::x#1 ] -- yby=zpby1 
     ldy x
-  //SEG30 [13] call plot param-assignment [ line::x#2 ]
-  //SEG31 [18] phi from line::@2 to plot [phi:line::@2->plot]
+  //SEG31 [13] call plot param-assignment [ line::x#2 ]
+  //SEG32 [18] phi from line::@2 to plot [phi:line::@2->plot]
   plot_from_b2:
-  //SEG32 [18] phi (byte) plot::x#2 = (byte) plot::x#1 [phi:line::@2->plot#0] -- register_copy 
+  //SEG33 [18] phi (byte) plot::x#2 = (byte) plot::x#1 [phi:line::@2->plot#0] -- register_copy 
     jsr plot
-  //SEG33 line::@8
+  //SEG34 line::@8
   b8:
-  //SEG34 [14] (byte) line::x#1 ← ++ (byte) line::x#2 [ line::x#1 ] -- zpby1=_inc_zpby1 
+  //SEG35 [14] (byte) line::x#1 ← ++ (byte) line::x#2 [ line::x#1 ] -- zpby1=_inc_zpby1 
     inc x
-  //SEG35 [15] if((byte) line::x#1<=(const byte) line::x1#0) goto line::@2 [ line::x#1 ] -- zpby1_le_coby1_then_la1 
+  //SEG36 [15] if((byte) line::x#1<=(const byte) line::x1#0) goto line::@2 [ line::x#1 ] -- zpby1_le_coby1_then_la1 
     lda x
     cmp #x1
     bcc b2_from_b8
     beq b2_from_b8
-  //SEG36 line::@return
+  //SEG37 line::@return
   breturn:
-  //SEG37 [16] return  [ ]
+  //SEG38 [16] return  [ ]
     rts
-  //SEG38 line::@1
+  //SEG39 line::@1
   b1:
-  //SEG39 [17] call plot param-assignment [ ]
-  //SEG40 [18] phi from line::@1 to plot [phi:line::@1->plot]
+  //SEG40 [17] call plot param-assignment [ ]
+  //SEG41 [18] phi from line::@1 to plot [phi:line::@1->plot]
   plot_from_b1:
-  //SEG41 [18] phi (byte) plot::x#2 = (byte) 0 [phi:line::@1->plot#0] -- yby=coby1 
+  //SEG42 [18] phi (byte) plot::x#2 = (byte) 0 [phi:line::@1->plot#0] -- yby=coby1 
     ldy #0
     jsr plot
     jmp breturn
 }
-//SEG42 plot
+//SEG43 plot
 plot: {
-  //SEG43 [19] (byte) plot::idx#0 ← (const byte[]) plots#0 *idx (byte) plot::x#2 [ plot::idx#0 ] -- xby=cowo1_staridx_yby 
+  //SEG44 [19] (byte) plot::idx#0 ← (const byte[]) plots#0 *idx (byte) plot::x#2 [ plot::idx#0 ] -- xby=cowo1_staridx_yby 
     ldx plots,y
-  //SEG44 [20] (byte~) plot::$1 ← (const byte*) SCREEN#0 *idx (byte) plot::idx#0 [ plot::idx#0 plot::$1 ] -- aby=cowo1_staridx_xby 
+  //SEG45 [20] (byte~) plot::$1 ← (const byte*) SCREEN#0 *idx (byte) plot::idx#0 [ plot::idx#0 plot::$1 ] -- aby=cowo1_staridx_xby 
     lda SCREEN,x
-  //SEG45 [21] (byte~) plot::$2 ← (byte~) plot::$1 + (byte) 1 [ plot::idx#0 plot::$2 ] -- aby=aby_plus_1 
+  //SEG46 [21] (byte~) plot::$2 ← (byte~) plot::$1 + (byte) 1 [ plot::idx#0 plot::$2 ] -- aby=aby_plus_1 
     clc
     adc #1
-  //SEG46 [22] *((const byte*) SCREEN#0 + (byte) plot::idx#0) ← (byte~) plot::$2 [ ] -- cowo1_staridx_xby=aby 
+  //SEG47 [22] *((const byte*) SCREEN#0 + (byte) plot::idx#0) ← (byte~) plot::$2 [ ] -- cowo1_staridx_xby=aby 
     sta SCREEN,x
-  //SEG47 plot::@return
+  //SEG48 plot::@return
   breturn:
-  //SEG48 [23] return  [ ]
+  //SEG49 [23] return  [ ]
     rts
 }
 
@@ -2064,113 +2069,117 @@ Removing instruction b2_from_b8:
 Removing instruction plot_from_b1:
 Succesful ASM optimization Pass5RedundantLabelElimination
 ASSEMBLER
-//SEG0 Global Constants & labels
+//SEG0 Basic Upstart
+.pc = $801 "Basic"
+:BasicUpstart(main)
+.pc = $80d "Program"
+//SEG1 Global Constants & labels
   .const plots = $1000
   .const SCREEN = $400
-//SEG1 @begin
-//SEG2 @3
+//SEG2 @begin
+//SEG3 @3
 b3:
-//SEG3 [0] call main param-assignment [ ]
-//SEG4 [1] phi from @3 to main [phi:@3->main]
+//SEG4 [0] call main param-assignment [ ]
+//SEG5 [1] phi from @3 to main [phi:@3->main]
   jsr main
-//SEG5 @end
+//SEG6 @end
 bend:
-//SEG6 main
+//SEG7 main
 main: {
-  //SEG7 [2] phi from main to main::@1 [phi:main->main::@1]
+  //SEG8 [2] phi from main to main::@1 [phi:main->main::@1]
   b1_from_main:
-  //SEG8 [2] phi (byte) main::i#2 = (byte) 0 [phi:main->main::@1#0] -- xby=coby1 
+  //SEG9 [2] phi (byte) main::i#2 = (byte) 0 [phi:main->main::@1#0] -- xby=coby1 
     ldx #0
     jmp b1
-  //SEG9 [2] phi from main::@1 to main::@1 [phi:main::@1->main::@1]
-  //SEG10 [2] phi (byte) main::i#2 = (byte) main::i#1 [phi:main::@1->main::@1#0] -- register_copy 
-  //SEG11 main::@1
+  //SEG10 [2] phi from main::@1 to main::@1 [phi:main::@1->main::@1]
+  //SEG11 [2] phi (byte) main::i#2 = (byte) main::i#1 [phi:main::@1->main::@1#0] -- register_copy 
+  //SEG12 main::@1
   b1:
-  //SEG12 [3] *((const byte[]) plots#0 + (byte) main::i#2) ← (byte) main::i#2 [ main::i#2 ] -- cowo1_staridx_xby=xby 
+  //SEG13 [3] *((const byte[]) plots#0 + (byte) main::i#2) ← (byte) main::i#2 [ main::i#2 ] -- cowo1_staridx_xby=xby 
     txa
     sta plots,x
-  //SEG13 [4] *((const byte*) SCREEN#0 + (byte) main::i#2) ← (byte) 0 [ main::i#2 ] -- cowo1_staridx_xby=coby2 
+  //SEG14 [4] *((const byte*) SCREEN#0 + (byte) main::i#2) ← (byte) 0 [ main::i#2 ] -- cowo1_staridx_xby=coby2 
     lda #0
     sta SCREEN,x
-  //SEG14 [5] (byte) main::i#1 ← ++ (byte) main::i#2 [ main::i#1 ] -- xby=_inc_xby 
+  //SEG15 [5] (byte) main::i#1 ← ++ (byte) main::i#2 [ main::i#1 ] -- xby=_inc_xby 
     inx
-  //SEG15 [6] if((byte) main::i#1!=(byte) 40) goto main::@1 [ main::i#1 ] -- xby_neq_coby1_then_la1 
+  //SEG16 [6] if((byte) main::i#1!=(byte) 40) goto main::@1 [ main::i#1 ] -- xby_neq_coby1_then_la1 
     cpx #$28
     bne b1
-  //SEG16 main::@2
+  //SEG17 main::@2
   b2:
-  //SEG17 [7] call line param-assignment [ ]
+  //SEG18 [7] call line param-assignment [ ]
     jsr line
-  //SEG18 main::@5
+  //SEG19 main::@5
   b5:
-  //SEG19 [8] if(true) goto main::@2 [ ] -- true_then_la1 
+  //SEG20 [8] if(true) goto main::@2 [ ] -- true_then_la1 
     jmp b2
-  //SEG20 main::@return
+  //SEG21 main::@return
   breturn:
-  //SEG21 [9] return  [ ]
+  //SEG22 [9] return  [ ]
     rts
 }
-//SEG22 line
+//SEG23 line
 line: {
     .const x1 = $a
     .label x = 2
-  //SEG23 [10] if((byte) 0>=(const byte) line::x1#0) goto line::@1 [ ] -- coby1_ge_coby2_then_la1 
+  //SEG24 [10] if((byte) 0>=(const byte) line::x1#0) goto line::@1 [ ] -- coby1_ge_coby2_then_la1 
     lda #0
     cmp #x1
     bcs b1
-  //SEG24 [11] phi from line to line::@2 [phi:line->line::@2]
+  //SEG25 [11] phi from line to line::@2 [phi:line->line::@2]
   b2_from_line:
-  //SEG25 [11] phi (byte) line::x#2 = (byte) 0 [phi:line->line::@2#0] -- zpby1=coby1 
+  //SEG26 [11] phi (byte) line::x#2 = (byte) 0 [phi:line->line::@2#0] -- zpby1=coby1 
     lda #0
     sta x
     jmp b2
-  //SEG26 [11] phi from line::@8 to line::@2 [phi:line::@8->line::@2]
-  //SEG27 [11] phi (byte) line::x#2 = (byte) line::x#1 [phi:line::@8->line::@2#0] -- register_copy 
-  //SEG28 line::@2
+  //SEG27 [11] phi from line::@8 to line::@2 [phi:line::@8->line::@2]
+  //SEG28 [11] phi (byte) line::x#2 = (byte) line::x#1 [phi:line::@8->line::@2#0] -- register_copy 
+  //SEG29 line::@2
   b2:
-  //SEG29 [12] (byte) plot::x#1 ← (byte) line::x#2 [ line::x#2 plot::x#1 ] -- yby=zpby1 
+  //SEG30 [12] (byte) plot::x#1 ← (byte) line::x#2 [ line::x#2 plot::x#1 ] -- yby=zpby1 
     ldy x
-  //SEG30 [13] call plot param-assignment [ line::x#2 ]
-  //SEG31 [18] phi from line::@2 to plot [phi:line::@2->plot]
+  //SEG31 [13] call plot param-assignment [ line::x#2 ]
+  //SEG32 [18] phi from line::@2 to plot [phi:line::@2->plot]
   plot_from_b2:
-  //SEG32 [18] phi (byte) plot::x#2 = (byte) plot::x#1 [phi:line::@2->plot#0] -- register_copy 
+  //SEG33 [18] phi (byte) plot::x#2 = (byte) plot::x#1 [phi:line::@2->plot#0] -- register_copy 
     jsr plot
-  //SEG33 line::@8
+  //SEG34 line::@8
   b8:
-  //SEG34 [14] (byte) line::x#1 ← ++ (byte) line::x#2 [ line::x#1 ] -- zpby1=_inc_zpby1 
+  //SEG35 [14] (byte) line::x#1 ← ++ (byte) line::x#2 [ line::x#1 ] -- zpby1=_inc_zpby1 
     inc x
-  //SEG35 [15] if((byte) line::x#1<=(const byte) line::x1#0) goto line::@2 [ line::x#1 ] -- zpby1_le_coby1_then_la1 
+  //SEG36 [15] if((byte) line::x#1<=(const byte) line::x1#0) goto line::@2 [ line::x#1 ] -- zpby1_le_coby1_then_la1 
     lda x
     cmp #x1
     bcc b2
     beq b2
-  //SEG36 line::@return
+  //SEG37 line::@return
   breturn:
-  //SEG37 [16] return  [ ]
+  //SEG38 [16] return  [ ]
     rts
-  //SEG38 line::@1
+  //SEG39 line::@1
   b1:
-  //SEG39 [17] call plot param-assignment [ ]
-  //SEG40 [18] phi from line::@1 to plot [phi:line::@1->plot]
-  //SEG41 [18] phi (byte) plot::x#2 = (byte) 0 [phi:line::@1->plot#0] -- yby=coby1 
+  //SEG40 [17] call plot param-assignment [ ]
+  //SEG41 [18] phi from line::@1 to plot [phi:line::@1->plot]
+  //SEG42 [18] phi (byte) plot::x#2 = (byte) 0 [phi:line::@1->plot#0] -- yby=coby1 
     ldy #0
     jsr plot
     jmp breturn
 }
-//SEG42 plot
+//SEG43 plot
 plot: {
-  //SEG43 [19] (byte) plot::idx#0 ← (const byte[]) plots#0 *idx (byte) plot::x#2 [ plot::idx#0 ] -- xby=cowo1_staridx_yby 
+  //SEG44 [19] (byte) plot::idx#0 ← (const byte[]) plots#0 *idx (byte) plot::x#2 [ plot::idx#0 ] -- xby=cowo1_staridx_yby 
     ldx plots,y
-  //SEG44 [20] (byte~) plot::$1 ← (const byte*) SCREEN#0 *idx (byte) plot::idx#0 [ plot::idx#0 plot::$1 ] -- aby=cowo1_staridx_xby 
+  //SEG45 [20] (byte~) plot::$1 ← (const byte*) SCREEN#0 *idx (byte) plot::idx#0 [ plot::idx#0 plot::$1 ] -- aby=cowo1_staridx_xby 
     lda SCREEN,x
-  //SEG45 [21] (byte~) plot::$2 ← (byte~) plot::$1 + (byte) 1 [ plot::idx#0 plot::$2 ] -- aby=aby_plus_1 
+  //SEG46 [21] (byte~) plot::$2 ← (byte~) plot::$1 + (byte) 1 [ plot::idx#0 plot::$2 ] -- aby=aby_plus_1 
     clc
     adc #1
-  //SEG46 [22] *((const byte*) SCREEN#0 + (byte) plot::idx#0) ← (byte~) plot::$2 [ ] -- cowo1_staridx_xby=aby 
+  //SEG47 [22] *((const byte*) SCREEN#0 + (byte) plot::idx#0) ← (byte~) plot::$2 [ ] -- cowo1_staridx_xby=aby 
     sta SCREEN,x
-  //SEG47 plot::@return
+  //SEG48 plot::@return
   breturn:
-  //SEG48 [23] return  [ ]
+  //SEG49 [23] return  [ ]
     rts
 }
 
@@ -2185,104 +2194,108 @@ Removing instruction b8:
 Removing instruction breturn:
 Succesful ASM optimization Pass5UnusedLabelElimination
 ASSEMBLER
-//SEG0 Global Constants & labels
+//SEG0 Basic Upstart
+.pc = $801 "Basic"
+:BasicUpstart(main)
+.pc = $80d "Program"
+//SEG1 Global Constants & labels
   .const plots = $1000
   .const SCREEN = $400
-//SEG1 @begin
-//SEG2 @3
-//SEG3 [0] call main param-assignment [ ]
-//SEG4 [1] phi from @3 to main [phi:@3->main]
+//SEG2 @begin
+//SEG3 @3
+//SEG4 [0] call main param-assignment [ ]
+//SEG5 [1] phi from @3 to main [phi:@3->main]
   jsr main
-//SEG5 @end
-//SEG6 main
+//SEG6 @end
+//SEG7 main
 main: {
-  //SEG7 [2] phi from main to main::@1 [phi:main->main::@1]
-  //SEG8 [2] phi (byte) main::i#2 = (byte) 0 [phi:main->main::@1#0] -- xby=coby1 
+  //SEG8 [2] phi from main to main::@1 [phi:main->main::@1]
+  //SEG9 [2] phi (byte) main::i#2 = (byte) 0 [phi:main->main::@1#0] -- xby=coby1 
     ldx #0
     jmp b1
-  //SEG9 [2] phi from main::@1 to main::@1 [phi:main::@1->main::@1]
-  //SEG10 [2] phi (byte) main::i#2 = (byte) main::i#1 [phi:main::@1->main::@1#0] -- register_copy 
-  //SEG11 main::@1
+  //SEG10 [2] phi from main::@1 to main::@1 [phi:main::@1->main::@1]
+  //SEG11 [2] phi (byte) main::i#2 = (byte) main::i#1 [phi:main::@1->main::@1#0] -- register_copy 
+  //SEG12 main::@1
   b1:
-  //SEG12 [3] *((const byte[]) plots#0 + (byte) main::i#2) ← (byte) main::i#2 [ main::i#2 ] -- cowo1_staridx_xby=xby 
+  //SEG13 [3] *((const byte[]) plots#0 + (byte) main::i#2) ← (byte) main::i#2 [ main::i#2 ] -- cowo1_staridx_xby=xby 
     txa
     sta plots,x
-  //SEG13 [4] *((const byte*) SCREEN#0 + (byte) main::i#2) ← (byte) 0 [ main::i#2 ] -- cowo1_staridx_xby=coby2 
+  //SEG14 [4] *((const byte*) SCREEN#0 + (byte) main::i#2) ← (byte) 0 [ main::i#2 ] -- cowo1_staridx_xby=coby2 
     lda #0
     sta SCREEN,x
-  //SEG14 [5] (byte) main::i#1 ← ++ (byte) main::i#2 [ main::i#1 ] -- xby=_inc_xby 
+  //SEG15 [5] (byte) main::i#1 ← ++ (byte) main::i#2 [ main::i#1 ] -- xby=_inc_xby 
     inx
-  //SEG15 [6] if((byte) main::i#1!=(byte) 40) goto main::@1 [ main::i#1 ] -- xby_neq_coby1_then_la1 
+  //SEG16 [6] if((byte) main::i#1!=(byte) 40) goto main::@1 [ main::i#1 ] -- xby_neq_coby1_then_la1 
     cpx #$28
     bne b1
-  //SEG16 main::@2
+  //SEG17 main::@2
   b2:
-  //SEG17 [7] call line param-assignment [ ]
+  //SEG18 [7] call line param-assignment [ ]
     jsr line
-  //SEG18 main::@5
-  //SEG19 [8] if(true) goto main::@2 [ ] -- true_then_la1 
+  //SEG19 main::@5
+  //SEG20 [8] if(true) goto main::@2 [ ] -- true_then_la1 
     jmp b2
-  //SEG20 main::@return
-  //SEG21 [9] return  [ ]
+  //SEG21 main::@return
+  //SEG22 [9] return  [ ]
     rts
 }
-//SEG22 line
+//SEG23 line
 line: {
     .const x1 = $a
     .label x = 2
-  //SEG23 [10] if((byte) 0>=(const byte) line::x1#0) goto line::@1 [ ] -- coby1_ge_coby2_then_la1 
+  //SEG24 [10] if((byte) 0>=(const byte) line::x1#0) goto line::@1 [ ] -- coby1_ge_coby2_then_la1 
     lda #0
     cmp #x1
     bcs b1
-  //SEG24 [11] phi from line to line::@2 [phi:line->line::@2]
-  //SEG25 [11] phi (byte) line::x#2 = (byte) 0 [phi:line->line::@2#0] -- zpby1=coby1 
+  //SEG25 [11] phi from line to line::@2 [phi:line->line::@2]
+  //SEG26 [11] phi (byte) line::x#2 = (byte) 0 [phi:line->line::@2#0] -- zpby1=coby1 
     lda #0
     sta x
     jmp b2
-  //SEG26 [11] phi from line::@8 to line::@2 [phi:line::@8->line::@2]
-  //SEG27 [11] phi (byte) line::x#2 = (byte) line::x#1 [phi:line::@8->line::@2#0] -- register_copy 
-  //SEG28 line::@2
+  //SEG27 [11] phi from line::@8 to line::@2 [phi:line::@8->line::@2]
+  //SEG28 [11] phi (byte) line::x#2 = (byte) line::x#1 [phi:line::@8->line::@2#0] -- register_copy 
+  //SEG29 line::@2
   b2:
-  //SEG29 [12] (byte) plot::x#1 ← (byte) line::x#2 [ line::x#2 plot::x#1 ] -- yby=zpby1 
+  //SEG30 [12] (byte) plot::x#1 ← (byte) line::x#2 [ line::x#2 plot::x#1 ] -- yby=zpby1 
     ldy x
-  //SEG30 [13] call plot param-assignment [ line::x#2 ]
-  //SEG31 [18] phi from line::@2 to plot [phi:line::@2->plot]
-  //SEG32 [18] phi (byte) plot::x#2 = (byte) plot::x#1 [phi:line::@2->plot#0] -- register_copy 
+  //SEG31 [13] call plot param-assignment [ line::x#2 ]
+  //SEG32 [18] phi from line::@2 to plot [phi:line::@2->plot]
+  //SEG33 [18] phi (byte) plot::x#2 = (byte) plot::x#1 [phi:line::@2->plot#0] -- register_copy 
     jsr plot
-  //SEG33 line::@8
-  //SEG34 [14] (byte) line::x#1 ← ++ (byte) line::x#2 [ line::x#1 ] -- zpby1=_inc_zpby1 
+  //SEG34 line::@8
+  //SEG35 [14] (byte) line::x#1 ← ++ (byte) line::x#2 [ line::x#1 ] -- zpby1=_inc_zpby1 
     inc x
-  //SEG35 [15] if((byte) line::x#1<=(const byte) line::x1#0) goto line::@2 [ line::x#1 ] -- zpby1_le_coby1_then_la1 
+  //SEG36 [15] if((byte) line::x#1<=(const byte) line::x1#0) goto line::@2 [ line::x#1 ] -- zpby1_le_coby1_then_la1 
     lda x
     cmp #x1
     bcc b2
     beq b2
-  //SEG36 line::@return
+  //SEG37 line::@return
   breturn:
-  //SEG37 [16] return  [ ]
+  //SEG38 [16] return  [ ]
     rts
-  //SEG38 line::@1
+  //SEG39 line::@1
   b1:
-  //SEG39 [17] call plot param-assignment [ ]
-  //SEG40 [18] phi from line::@1 to plot [phi:line::@1->plot]
-  //SEG41 [18] phi (byte) plot::x#2 = (byte) 0 [phi:line::@1->plot#0] -- yby=coby1 
+  //SEG40 [17] call plot param-assignment [ ]
+  //SEG41 [18] phi from line::@1 to plot [phi:line::@1->plot]
+  //SEG42 [18] phi (byte) plot::x#2 = (byte) 0 [phi:line::@1->plot#0] -- yby=coby1 
     ldy #0
     jsr plot
     jmp breturn
 }
-//SEG42 plot
+//SEG43 plot
 plot: {
-  //SEG43 [19] (byte) plot::idx#0 ← (const byte[]) plots#0 *idx (byte) plot::x#2 [ plot::idx#0 ] -- xby=cowo1_staridx_yby 
+  //SEG44 [19] (byte) plot::idx#0 ← (const byte[]) plots#0 *idx (byte) plot::x#2 [ plot::idx#0 ] -- xby=cowo1_staridx_yby 
     ldx plots,y
-  //SEG44 [20] (byte~) plot::$1 ← (const byte*) SCREEN#0 *idx (byte) plot::idx#0 [ plot::idx#0 plot::$1 ] -- aby=cowo1_staridx_xby 
+  //SEG45 [20] (byte~) plot::$1 ← (const byte*) SCREEN#0 *idx (byte) plot::idx#0 [ plot::idx#0 plot::$1 ] -- aby=cowo1_staridx_xby 
     lda SCREEN,x
-  //SEG45 [21] (byte~) plot::$2 ← (byte~) plot::$1 + (byte) 1 [ plot::idx#0 plot::$2 ] -- aby=aby_plus_1 
+  //SEG46 [21] (byte~) plot::$2 ← (byte~) plot::$1 + (byte) 1 [ plot::idx#0 plot::$2 ] -- aby=aby_plus_1 
     clc
     adc #1
-  //SEG46 [22] *((const byte*) SCREEN#0 + (byte) plot::idx#0) ← (byte~) plot::$2 [ ] -- cowo1_staridx_xby=aby 
+  //SEG47 [22] *((const byte*) SCREEN#0 + (byte) plot::idx#0) ← (byte~) plot::$2 [ ] -- cowo1_staridx_xby=aby 
     sta SCREEN,x
-  //SEG47 plot::@return
-  //SEG48 [23] return  [ ]
+  //SEG48 plot::@return
+  //SEG49 [23] return  [ ]
     rts
 }
 
@@ -2290,203 +2303,211 @@ Removing instruction jmp b1
 Removing instruction jmp b2
 Succesful ASM optimization Pass5NextJumpElimination
 ASSEMBLER
-//SEG0 Global Constants & labels
+//SEG0 Basic Upstart
+.pc = $801 "Basic"
+:BasicUpstart(main)
+.pc = $80d "Program"
+//SEG1 Global Constants & labels
   .const plots = $1000
   .const SCREEN = $400
-//SEG1 @begin
-//SEG2 @3
-//SEG3 [0] call main param-assignment [ ]
-//SEG4 [1] phi from @3 to main [phi:@3->main]
+//SEG2 @begin
+//SEG3 @3
+//SEG4 [0] call main param-assignment [ ]
+//SEG5 [1] phi from @3 to main [phi:@3->main]
   jsr main
-//SEG5 @end
-//SEG6 main
+//SEG6 @end
+//SEG7 main
 main: {
-  //SEG7 [2] phi from main to main::@1 [phi:main->main::@1]
-  //SEG8 [2] phi (byte) main::i#2 = (byte) 0 [phi:main->main::@1#0] -- xby=coby1 
+  //SEG8 [2] phi from main to main::@1 [phi:main->main::@1]
+  //SEG9 [2] phi (byte) main::i#2 = (byte) 0 [phi:main->main::@1#0] -- xby=coby1 
     ldx #0
-  //SEG9 [2] phi from main::@1 to main::@1 [phi:main::@1->main::@1]
-  //SEG10 [2] phi (byte) main::i#2 = (byte) main::i#1 [phi:main::@1->main::@1#0] -- register_copy 
-  //SEG11 main::@1
+  //SEG10 [2] phi from main::@1 to main::@1 [phi:main::@1->main::@1]
+  //SEG11 [2] phi (byte) main::i#2 = (byte) main::i#1 [phi:main::@1->main::@1#0] -- register_copy 
+  //SEG12 main::@1
   b1:
-  //SEG12 [3] *((const byte[]) plots#0 + (byte) main::i#2) ← (byte) main::i#2 [ main::i#2 ] -- cowo1_staridx_xby=xby 
+  //SEG13 [3] *((const byte[]) plots#0 + (byte) main::i#2) ← (byte) main::i#2 [ main::i#2 ] -- cowo1_staridx_xby=xby 
     txa
     sta plots,x
-  //SEG13 [4] *((const byte*) SCREEN#0 + (byte) main::i#2) ← (byte) 0 [ main::i#2 ] -- cowo1_staridx_xby=coby2 
+  //SEG14 [4] *((const byte*) SCREEN#0 + (byte) main::i#2) ← (byte) 0 [ main::i#2 ] -- cowo1_staridx_xby=coby2 
     lda #0
     sta SCREEN,x
-  //SEG14 [5] (byte) main::i#1 ← ++ (byte) main::i#2 [ main::i#1 ] -- xby=_inc_xby 
+  //SEG15 [5] (byte) main::i#1 ← ++ (byte) main::i#2 [ main::i#1 ] -- xby=_inc_xby 
     inx
-  //SEG15 [6] if((byte) main::i#1!=(byte) 40) goto main::@1 [ main::i#1 ] -- xby_neq_coby1_then_la1 
+  //SEG16 [6] if((byte) main::i#1!=(byte) 40) goto main::@1 [ main::i#1 ] -- xby_neq_coby1_then_la1 
     cpx #$28
     bne b1
-  //SEG16 main::@2
+  //SEG17 main::@2
   b2:
-  //SEG17 [7] call line param-assignment [ ]
+  //SEG18 [7] call line param-assignment [ ]
     jsr line
-  //SEG18 main::@5
-  //SEG19 [8] if(true) goto main::@2 [ ] -- true_then_la1 
+  //SEG19 main::@5
+  //SEG20 [8] if(true) goto main::@2 [ ] -- true_then_la1 
     jmp b2
-  //SEG20 main::@return
-  //SEG21 [9] return  [ ]
+  //SEG21 main::@return
+  //SEG22 [9] return  [ ]
     rts
 }
-//SEG22 line
+//SEG23 line
 line: {
     .const x1 = $a
     .label x = 2
-  //SEG23 [10] if((byte) 0>=(const byte) line::x1#0) goto line::@1 [ ] -- coby1_ge_coby2_then_la1 
+  //SEG24 [10] if((byte) 0>=(const byte) line::x1#0) goto line::@1 [ ] -- coby1_ge_coby2_then_la1 
     lda #0
     cmp #x1
     bcs b1
-  //SEG24 [11] phi from line to line::@2 [phi:line->line::@2]
-  //SEG25 [11] phi (byte) line::x#2 = (byte) 0 [phi:line->line::@2#0] -- zpby1=coby1 
+  //SEG25 [11] phi from line to line::@2 [phi:line->line::@2]
+  //SEG26 [11] phi (byte) line::x#2 = (byte) 0 [phi:line->line::@2#0] -- zpby1=coby1 
     lda #0
     sta x
-  //SEG26 [11] phi from line::@8 to line::@2 [phi:line::@8->line::@2]
-  //SEG27 [11] phi (byte) line::x#2 = (byte) line::x#1 [phi:line::@8->line::@2#0] -- register_copy 
-  //SEG28 line::@2
+  //SEG27 [11] phi from line::@8 to line::@2 [phi:line::@8->line::@2]
+  //SEG28 [11] phi (byte) line::x#2 = (byte) line::x#1 [phi:line::@8->line::@2#0] -- register_copy 
+  //SEG29 line::@2
   b2:
-  //SEG29 [12] (byte) plot::x#1 ← (byte) line::x#2 [ line::x#2 plot::x#1 ] -- yby=zpby1 
+  //SEG30 [12] (byte) plot::x#1 ← (byte) line::x#2 [ line::x#2 plot::x#1 ] -- yby=zpby1 
     ldy x
-  //SEG30 [13] call plot param-assignment [ line::x#2 ]
-  //SEG31 [18] phi from line::@2 to plot [phi:line::@2->plot]
-  //SEG32 [18] phi (byte) plot::x#2 = (byte) plot::x#1 [phi:line::@2->plot#0] -- register_copy 
+  //SEG31 [13] call plot param-assignment [ line::x#2 ]
+  //SEG32 [18] phi from line::@2 to plot [phi:line::@2->plot]
+  //SEG33 [18] phi (byte) plot::x#2 = (byte) plot::x#1 [phi:line::@2->plot#0] -- register_copy 
     jsr plot
-  //SEG33 line::@8
-  //SEG34 [14] (byte) line::x#1 ← ++ (byte) line::x#2 [ line::x#1 ] -- zpby1=_inc_zpby1 
+  //SEG34 line::@8
+  //SEG35 [14] (byte) line::x#1 ← ++ (byte) line::x#2 [ line::x#1 ] -- zpby1=_inc_zpby1 
     inc x
-  //SEG35 [15] if((byte) line::x#1<=(const byte) line::x1#0) goto line::@2 [ line::x#1 ] -- zpby1_le_coby1_then_la1 
+  //SEG36 [15] if((byte) line::x#1<=(const byte) line::x1#0) goto line::@2 [ line::x#1 ] -- zpby1_le_coby1_then_la1 
     lda x
     cmp #x1
     bcc b2
     beq b2
-  //SEG36 line::@return
+  //SEG37 line::@return
   breturn:
-  //SEG37 [16] return  [ ]
+  //SEG38 [16] return  [ ]
     rts
-  //SEG38 line::@1
+  //SEG39 line::@1
   b1:
-  //SEG39 [17] call plot param-assignment [ ]
-  //SEG40 [18] phi from line::@1 to plot [phi:line::@1->plot]
-  //SEG41 [18] phi (byte) plot::x#2 = (byte) 0 [phi:line::@1->plot#0] -- yby=coby1 
+  //SEG40 [17] call plot param-assignment [ ]
+  //SEG41 [18] phi from line::@1 to plot [phi:line::@1->plot]
+  //SEG42 [18] phi (byte) plot::x#2 = (byte) 0 [phi:line::@1->plot#0] -- yby=coby1 
     ldy #0
     jsr plot
     jmp breturn
 }
-//SEG42 plot
+//SEG43 plot
 plot: {
-  //SEG43 [19] (byte) plot::idx#0 ← (const byte[]) plots#0 *idx (byte) plot::x#2 [ plot::idx#0 ] -- xby=cowo1_staridx_yby 
+  //SEG44 [19] (byte) plot::idx#0 ← (const byte[]) plots#0 *idx (byte) plot::x#2 [ plot::idx#0 ] -- xby=cowo1_staridx_yby 
     ldx plots,y
-  //SEG44 [20] (byte~) plot::$1 ← (const byte*) SCREEN#0 *idx (byte) plot::idx#0 [ plot::idx#0 plot::$1 ] -- aby=cowo1_staridx_xby 
+  //SEG45 [20] (byte~) plot::$1 ← (const byte*) SCREEN#0 *idx (byte) plot::idx#0 [ plot::idx#0 plot::$1 ] -- aby=cowo1_staridx_xby 
     lda SCREEN,x
-  //SEG45 [21] (byte~) plot::$2 ← (byte~) plot::$1 + (byte) 1 [ plot::idx#0 plot::$2 ] -- aby=aby_plus_1 
+  //SEG46 [21] (byte~) plot::$2 ← (byte~) plot::$1 + (byte) 1 [ plot::idx#0 plot::$2 ] -- aby=aby_plus_1 
     clc
     adc #1
-  //SEG46 [22] *((const byte*) SCREEN#0 + (byte) plot::idx#0) ← (byte~) plot::$2 [ ] -- cowo1_staridx_xby=aby 
+  //SEG47 [22] *((const byte*) SCREEN#0 + (byte) plot::idx#0) ← (byte~) plot::$2 [ ] -- cowo1_staridx_xby=aby 
     sta SCREEN,x
-  //SEG47 plot::@return
-  //SEG48 [23] return  [ ]
+  //SEG48 plot::@return
+  //SEG49 [23] return  [ ]
     rts
 }
 
 Removing instruction lda #0
 Succesful ASM optimization Pass5UnnecesaryLoadElimination
 ASSEMBLER
-//SEG0 Global Constants & labels
+//SEG0 Basic Upstart
+.pc = $801 "Basic"
+:BasicUpstart(main)
+.pc = $80d "Program"
+//SEG1 Global Constants & labels
   .const plots = $1000
   .const SCREEN = $400
-//SEG1 @begin
-//SEG2 @3
-//SEG3 [0] call main param-assignment [ ]
-//SEG4 [1] phi from @3 to main [phi:@3->main]
+//SEG2 @begin
+//SEG3 @3
+//SEG4 [0] call main param-assignment [ ]
+//SEG5 [1] phi from @3 to main [phi:@3->main]
   jsr main
-//SEG5 @end
-//SEG6 main
+//SEG6 @end
+//SEG7 main
 main: {
-  //SEG7 [2] phi from main to main::@1 [phi:main->main::@1]
-  //SEG8 [2] phi (byte) main::i#2 = (byte) 0 [phi:main->main::@1#0] -- xby=coby1 
+  //SEG8 [2] phi from main to main::@1 [phi:main->main::@1]
+  //SEG9 [2] phi (byte) main::i#2 = (byte) 0 [phi:main->main::@1#0] -- xby=coby1 
     ldx #0
-  //SEG9 [2] phi from main::@1 to main::@1 [phi:main::@1->main::@1]
-  //SEG10 [2] phi (byte) main::i#2 = (byte) main::i#1 [phi:main::@1->main::@1#0] -- register_copy 
-  //SEG11 main::@1
+  //SEG10 [2] phi from main::@1 to main::@1 [phi:main::@1->main::@1]
+  //SEG11 [2] phi (byte) main::i#2 = (byte) main::i#1 [phi:main::@1->main::@1#0] -- register_copy 
+  //SEG12 main::@1
   b1:
-  //SEG12 [3] *((const byte[]) plots#0 + (byte) main::i#2) ← (byte) main::i#2 [ main::i#2 ] -- cowo1_staridx_xby=xby 
+  //SEG13 [3] *((const byte[]) plots#0 + (byte) main::i#2) ← (byte) main::i#2 [ main::i#2 ] -- cowo1_staridx_xby=xby 
     txa
     sta plots,x
-  //SEG13 [4] *((const byte*) SCREEN#0 + (byte) main::i#2) ← (byte) 0 [ main::i#2 ] -- cowo1_staridx_xby=coby2 
+  //SEG14 [4] *((const byte*) SCREEN#0 + (byte) main::i#2) ← (byte) 0 [ main::i#2 ] -- cowo1_staridx_xby=coby2 
     lda #0
     sta SCREEN,x
-  //SEG14 [5] (byte) main::i#1 ← ++ (byte) main::i#2 [ main::i#1 ] -- xby=_inc_xby 
+  //SEG15 [5] (byte) main::i#1 ← ++ (byte) main::i#2 [ main::i#1 ] -- xby=_inc_xby 
     inx
-  //SEG15 [6] if((byte) main::i#1!=(byte) 40) goto main::@1 [ main::i#1 ] -- xby_neq_coby1_then_la1 
+  //SEG16 [6] if((byte) main::i#1!=(byte) 40) goto main::@1 [ main::i#1 ] -- xby_neq_coby1_then_la1 
     cpx #$28
     bne b1
-  //SEG16 main::@2
+  //SEG17 main::@2
   b2:
-  //SEG17 [7] call line param-assignment [ ]
+  //SEG18 [7] call line param-assignment [ ]
     jsr line
-  //SEG18 main::@5
-  //SEG19 [8] if(true) goto main::@2 [ ] -- true_then_la1 
+  //SEG19 main::@5
+  //SEG20 [8] if(true) goto main::@2 [ ] -- true_then_la1 
     jmp b2
-  //SEG20 main::@return
-  //SEG21 [9] return  [ ]
+  //SEG21 main::@return
+  //SEG22 [9] return  [ ]
     rts
 }
-//SEG22 line
+//SEG23 line
 line: {
     .const x1 = $a
     .label x = 2
-  //SEG23 [10] if((byte) 0>=(const byte) line::x1#0) goto line::@1 [ ] -- coby1_ge_coby2_then_la1 
+  //SEG24 [10] if((byte) 0>=(const byte) line::x1#0) goto line::@1 [ ] -- coby1_ge_coby2_then_la1 
     lda #0
     cmp #x1
     bcs b1
-  //SEG24 [11] phi from line to line::@2 [phi:line->line::@2]
-  //SEG25 [11] phi (byte) line::x#2 = (byte) 0 [phi:line->line::@2#0] -- zpby1=coby1 
+  //SEG25 [11] phi from line to line::@2 [phi:line->line::@2]
+  //SEG26 [11] phi (byte) line::x#2 = (byte) 0 [phi:line->line::@2#0] -- zpby1=coby1 
     sta x
-  //SEG26 [11] phi from line::@8 to line::@2 [phi:line::@8->line::@2]
-  //SEG27 [11] phi (byte) line::x#2 = (byte) line::x#1 [phi:line::@8->line::@2#0] -- register_copy 
-  //SEG28 line::@2
+  //SEG27 [11] phi from line::@8 to line::@2 [phi:line::@8->line::@2]
+  //SEG28 [11] phi (byte) line::x#2 = (byte) line::x#1 [phi:line::@8->line::@2#0] -- register_copy 
+  //SEG29 line::@2
   b2:
-  //SEG29 [12] (byte) plot::x#1 ← (byte) line::x#2 [ line::x#2 plot::x#1 ] -- yby=zpby1 
+  //SEG30 [12] (byte) plot::x#1 ← (byte) line::x#2 [ line::x#2 plot::x#1 ] -- yby=zpby1 
     ldy x
-  //SEG30 [13] call plot param-assignment [ line::x#2 ]
-  //SEG31 [18] phi from line::@2 to plot [phi:line::@2->plot]
-  //SEG32 [18] phi (byte) plot::x#2 = (byte) plot::x#1 [phi:line::@2->plot#0] -- register_copy 
+  //SEG31 [13] call plot param-assignment [ line::x#2 ]
+  //SEG32 [18] phi from line::@2 to plot [phi:line::@2->plot]
+  //SEG33 [18] phi (byte) plot::x#2 = (byte) plot::x#1 [phi:line::@2->plot#0] -- register_copy 
     jsr plot
-  //SEG33 line::@8
-  //SEG34 [14] (byte) line::x#1 ← ++ (byte) line::x#2 [ line::x#1 ] -- zpby1=_inc_zpby1 
+  //SEG34 line::@8
+  //SEG35 [14] (byte) line::x#1 ← ++ (byte) line::x#2 [ line::x#1 ] -- zpby1=_inc_zpby1 
     inc x
-  //SEG35 [15] if((byte) line::x#1<=(const byte) line::x1#0) goto line::@2 [ line::x#1 ] -- zpby1_le_coby1_then_la1 
+  //SEG36 [15] if((byte) line::x#1<=(const byte) line::x1#0) goto line::@2 [ line::x#1 ] -- zpby1_le_coby1_then_la1 
     lda x
     cmp #x1
     bcc b2
     beq b2
-  //SEG36 line::@return
+  //SEG37 line::@return
   breturn:
-  //SEG37 [16] return  [ ]
+  //SEG38 [16] return  [ ]
     rts
-  //SEG38 line::@1
+  //SEG39 line::@1
   b1:
-  //SEG39 [17] call plot param-assignment [ ]
-  //SEG40 [18] phi from line::@1 to plot [phi:line::@1->plot]
-  //SEG41 [18] phi (byte) plot::x#2 = (byte) 0 [phi:line::@1->plot#0] -- yby=coby1 
+  //SEG40 [17] call plot param-assignment [ ]
+  //SEG41 [18] phi from line::@1 to plot [phi:line::@1->plot]
+  //SEG42 [18] phi (byte) plot::x#2 = (byte) 0 [phi:line::@1->plot#0] -- yby=coby1 
     ldy #0
     jsr plot
     jmp breturn
 }
-//SEG42 plot
+//SEG43 plot
 plot: {
-  //SEG43 [19] (byte) plot::idx#0 ← (const byte[]) plots#0 *idx (byte) plot::x#2 [ plot::idx#0 ] -- xby=cowo1_staridx_yby 
+  //SEG44 [19] (byte) plot::idx#0 ← (const byte[]) plots#0 *idx (byte) plot::x#2 [ plot::idx#0 ] -- xby=cowo1_staridx_yby 
     ldx plots,y
-  //SEG44 [20] (byte~) plot::$1 ← (const byte*) SCREEN#0 *idx (byte) plot::idx#0 [ plot::idx#0 plot::$1 ] -- aby=cowo1_staridx_xby 
+  //SEG45 [20] (byte~) plot::$1 ← (const byte*) SCREEN#0 *idx (byte) plot::idx#0 [ plot::idx#0 plot::$1 ] -- aby=cowo1_staridx_xby 
     lda SCREEN,x
-  //SEG45 [21] (byte~) plot::$2 ← (byte~) plot::$1 + (byte) 1 [ plot::idx#0 plot::$2 ] -- aby=aby_plus_1 
+  //SEG46 [21] (byte~) plot::$2 ← (byte~) plot::$1 + (byte) 1 [ plot::idx#0 plot::$2 ] -- aby=aby_plus_1 
     clc
     adc #1
-  //SEG46 [22] *((const byte*) SCREEN#0 + (byte) plot::idx#0) ← (byte~) plot::$2 [ ] -- cowo1_staridx_xby=aby 
+  //SEG47 [22] *((const byte*) SCREEN#0 + (byte) plot::idx#0) ← (byte~) plot::$2 [ ] -- cowo1_staridx_xby=aby 
     sta SCREEN,x
-  //SEG47 plot::@return
-  //SEG48 [23] return  [ ]
+  //SEG48 plot::@return
+  //SEG49 [23] return  [ ]
     rts
 }
 
@@ -2535,101 +2556,105 @@ reg byte a [ plot::$1 ]
 reg byte a [ plot::$2 ]
 
 FINAL CODE
-//SEG0 Global Constants & labels
+//SEG0 Basic Upstart
+.pc = $801 "Basic"
+:BasicUpstart(main)
+.pc = $80d "Program"
+//SEG1 Global Constants & labels
   .const plots = $1000
   .const SCREEN = $400
-//SEG1 @begin
-//SEG2 @3
-//SEG3 [0] call main param-assignment [ ]
-//SEG4 [1] phi from @3 to main [phi:@3->main]
+//SEG2 @begin
+//SEG3 @3
+//SEG4 [0] call main param-assignment [ ]
+//SEG5 [1] phi from @3 to main [phi:@3->main]
   jsr main
-//SEG5 @end
-//SEG6 main
+//SEG6 @end
+//SEG7 main
 main: {
-  //SEG7 [2] phi from main to main::@1 [phi:main->main::@1]
-  //SEG8 [2] phi (byte) main::i#2 = (byte) 0 [phi:main->main::@1#0] -- xby=coby1 
+  //SEG8 [2] phi from main to main::@1 [phi:main->main::@1]
+  //SEG9 [2] phi (byte) main::i#2 = (byte) 0 [phi:main->main::@1#0] -- xby=coby1 
     ldx #0
-  //SEG9 [2] phi from main::@1 to main::@1 [phi:main::@1->main::@1]
-  //SEG10 [2] phi (byte) main::i#2 = (byte) main::i#1 [phi:main::@1->main::@1#0] -- register_copy 
-  //SEG11 main::@1
+  //SEG10 [2] phi from main::@1 to main::@1 [phi:main::@1->main::@1]
+  //SEG11 [2] phi (byte) main::i#2 = (byte) main::i#1 [phi:main::@1->main::@1#0] -- register_copy 
+  //SEG12 main::@1
   b1:
-  //SEG12 [3] *((const byte[]) plots#0 + (byte) main::i#2) ← (byte) main::i#2 [ main::i#2 ] -- cowo1_staridx_xby=xby 
+  //SEG13 [3] *((const byte[]) plots#0 + (byte) main::i#2) ← (byte) main::i#2 [ main::i#2 ] -- cowo1_staridx_xby=xby 
     txa
     sta plots,x
-  //SEG13 [4] *((const byte*) SCREEN#0 + (byte) main::i#2) ← (byte) 0 [ main::i#2 ] -- cowo1_staridx_xby=coby2 
+  //SEG14 [4] *((const byte*) SCREEN#0 + (byte) main::i#2) ← (byte) 0 [ main::i#2 ] -- cowo1_staridx_xby=coby2 
     lda #0
     sta SCREEN,x
-  //SEG14 [5] (byte) main::i#1 ← ++ (byte) main::i#2 [ main::i#1 ] -- xby=_inc_xby 
+  //SEG15 [5] (byte) main::i#1 ← ++ (byte) main::i#2 [ main::i#1 ] -- xby=_inc_xby 
     inx
-  //SEG15 [6] if((byte) main::i#1!=(byte) 40) goto main::@1 [ main::i#1 ] -- xby_neq_coby1_then_la1 
+  //SEG16 [6] if((byte) main::i#1!=(byte) 40) goto main::@1 [ main::i#1 ] -- xby_neq_coby1_then_la1 
     cpx #$28
     bne b1
-  //SEG16 main::@2
+  //SEG17 main::@2
   b2:
-  //SEG17 [7] call line param-assignment [ ]
+  //SEG18 [7] call line param-assignment [ ]
     jsr line
-  //SEG18 main::@5
-  //SEG19 [8] if(true) goto main::@2 [ ] -- true_then_la1 
+  //SEG19 main::@5
+  //SEG20 [8] if(true) goto main::@2 [ ] -- true_then_la1 
     jmp b2
-  //SEG20 main::@return
-  //SEG21 [9] return  [ ]
+  //SEG21 main::@return
+  //SEG22 [9] return  [ ]
     rts
 }
-//SEG22 line
+//SEG23 line
 line: {
     .const x1 = $a
     .label x = 2
-  //SEG23 [10] if((byte) 0>=(const byte) line::x1#0) goto line::@1 [ ] -- coby1_ge_coby2_then_la1 
+  //SEG24 [10] if((byte) 0>=(const byte) line::x1#0) goto line::@1 [ ] -- coby1_ge_coby2_then_la1 
     lda #0
     cmp #x1
     bcs b1
-  //SEG24 [11] phi from line to line::@2 [phi:line->line::@2]
-  //SEG25 [11] phi (byte) line::x#2 = (byte) 0 [phi:line->line::@2#0] -- zpby1=coby1 
+  //SEG25 [11] phi from line to line::@2 [phi:line->line::@2]
+  //SEG26 [11] phi (byte) line::x#2 = (byte) 0 [phi:line->line::@2#0] -- zpby1=coby1 
     sta x
-  //SEG26 [11] phi from line::@8 to line::@2 [phi:line::@8->line::@2]
-  //SEG27 [11] phi (byte) line::x#2 = (byte) line::x#1 [phi:line::@8->line::@2#0] -- register_copy 
-  //SEG28 line::@2
+  //SEG27 [11] phi from line::@8 to line::@2 [phi:line::@8->line::@2]
+  //SEG28 [11] phi (byte) line::x#2 = (byte) line::x#1 [phi:line::@8->line::@2#0] -- register_copy 
+  //SEG29 line::@2
   b2:
-  //SEG29 [12] (byte) plot::x#1 ← (byte) line::x#2 [ line::x#2 plot::x#1 ] -- yby=zpby1 
+  //SEG30 [12] (byte) plot::x#1 ← (byte) line::x#2 [ line::x#2 plot::x#1 ] -- yby=zpby1 
     ldy x
-  //SEG30 [13] call plot param-assignment [ line::x#2 ]
-  //SEG31 [18] phi from line::@2 to plot [phi:line::@2->plot]
-  //SEG32 [18] phi (byte) plot::x#2 = (byte) plot::x#1 [phi:line::@2->plot#0] -- register_copy 
+  //SEG31 [13] call plot param-assignment [ line::x#2 ]
+  //SEG32 [18] phi from line::@2 to plot [phi:line::@2->plot]
+  //SEG33 [18] phi (byte) plot::x#2 = (byte) plot::x#1 [phi:line::@2->plot#0] -- register_copy 
     jsr plot
-  //SEG33 line::@8
-  //SEG34 [14] (byte) line::x#1 ← ++ (byte) line::x#2 [ line::x#1 ] -- zpby1=_inc_zpby1 
+  //SEG34 line::@8
+  //SEG35 [14] (byte) line::x#1 ← ++ (byte) line::x#2 [ line::x#1 ] -- zpby1=_inc_zpby1 
     inc x
-  //SEG35 [15] if((byte) line::x#1<=(const byte) line::x1#0) goto line::@2 [ line::x#1 ] -- zpby1_le_coby1_then_la1 
+  //SEG36 [15] if((byte) line::x#1<=(const byte) line::x1#0) goto line::@2 [ line::x#1 ] -- zpby1_le_coby1_then_la1 
     lda x
     cmp #x1
     bcc b2
     beq b2
-  //SEG36 line::@return
+  //SEG37 line::@return
   breturn:
-  //SEG37 [16] return  [ ]
+  //SEG38 [16] return  [ ]
     rts
-  //SEG38 line::@1
+  //SEG39 line::@1
   b1:
-  //SEG39 [17] call plot param-assignment [ ]
-  //SEG40 [18] phi from line::@1 to plot [phi:line::@1->plot]
-  //SEG41 [18] phi (byte) plot::x#2 = (byte) 0 [phi:line::@1->plot#0] -- yby=coby1 
+  //SEG40 [17] call plot param-assignment [ ]
+  //SEG41 [18] phi from line::@1 to plot [phi:line::@1->plot]
+  //SEG42 [18] phi (byte) plot::x#2 = (byte) 0 [phi:line::@1->plot#0] -- yby=coby1 
     ldy #0
     jsr plot
     jmp breturn
 }
-//SEG42 plot
+//SEG43 plot
 plot: {
-  //SEG43 [19] (byte) plot::idx#0 ← (const byte[]) plots#0 *idx (byte) plot::x#2 [ plot::idx#0 ] -- xby=cowo1_staridx_yby 
+  //SEG44 [19] (byte) plot::idx#0 ← (const byte[]) plots#0 *idx (byte) plot::x#2 [ plot::idx#0 ] -- xby=cowo1_staridx_yby 
     ldx plots,y
-  //SEG44 [20] (byte~) plot::$1 ← (const byte*) SCREEN#0 *idx (byte) plot::idx#0 [ plot::idx#0 plot::$1 ] -- aby=cowo1_staridx_xby 
+  //SEG45 [20] (byte~) plot::$1 ← (const byte*) SCREEN#0 *idx (byte) plot::idx#0 [ plot::idx#0 plot::$1 ] -- aby=cowo1_staridx_xby 
     lda SCREEN,x
-  //SEG45 [21] (byte~) plot::$2 ← (byte~) plot::$1 + (byte) 1 [ plot::idx#0 plot::$2 ] -- aby=aby_plus_1 
+  //SEG46 [21] (byte~) plot::$2 ← (byte~) plot::$1 + (byte) 1 [ plot::idx#0 plot::$2 ] -- aby=aby_plus_1 
     clc
     adc #1
-  //SEG46 [22] *((const byte*) SCREEN#0 + (byte) plot::idx#0) ← (byte~) plot::$2 [ ] -- cowo1_staridx_xby=aby 
+  //SEG47 [22] *((const byte*) SCREEN#0 + (byte) plot::idx#0) ← (byte~) plot::$2 [ ] -- cowo1_staridx_xby=aby 
     sta SCREEN,x
-  //SEG47 plot::@return
-  //SEG48 [23] return  [ ]
+  //SEG48 plot::@return
+  //SEG49 [23] return  [ ]
     rts
 }
 

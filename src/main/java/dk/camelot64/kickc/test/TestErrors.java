@@ -24,6 +24,10 @@ public class TestErrors extends TestCase {
       helper = new ReferenceHelper("dk/camelot64/kickc/test/ref/");
    }
 
+   public void testOverlapAllocation() throws IOException, URISyntaxException {
+      compileAndCompare("overlap-allocation");
+   }
+
    public void testIncD020() throws IOException, URISyntaxException {
       compileAndCompare("incd020");
    }

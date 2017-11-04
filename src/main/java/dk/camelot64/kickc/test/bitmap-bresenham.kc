@@ -56,21 +56,32 @@ void line(byte x0, byte x1, byte y0, byte y1) {
             if(yd<xd) {
                 line_xdyi(x0, y0, x1, xd, yd);
             } else {
-            plot(x0, y0);
-            plot(x1, y1);
+                line_ydxi(y0, x0, y1, yd, xd);
             }
         } else {
-            plot(x0, y0);
-            plot(x1, y1);
+            yd = y0-y1;
+            if(yd<xd) {
+                line_xdyd(x0, y0, x1, xd, yd);
+            } else {
+                line_ydxd(y1, x1, y0, yd, xd);
+            }
         }
     } else {
-        xd = x1-x0;
+        xd = x0-x1;
         if(y0<y1) {
-            plot(x0, y0);
-            plot(x1, y1);
+            yd = y1-y0;
+            if(yd<xd) {
+                line_xdyd(x1, y1, x0, xd, yd);
+            } else {
+                line_ydxd(y0, x0, y1, yd, xd);
+            }
         } else {
-            plot(x0, y0);
-            plot(x1, y1);
+            yd = y0-y1;
+            if(yd<xd) {
+                line_xdyi(x1, y1, x0, xd, yd);
+            } else {
+                line_ydxi(y1, x1, y0, yd, xd);
+            }
         }
     }
 }
@@ -86,6 +97,45 @@ void line_xdyi(byte x, byte y, byte x1, byte xd, byte yd) {
           e = e - xd;
       }
   } while (x<(x1+1))
+}
+
+void line_xdyd(byte x, byte y, byte x1, byte xd, byte yd) {
+  byte e = yd>>1;
+  do  {
+      plot(x,y);
+      x = x + 1;
+      e = e+yd;
+      if(xd<e) {
+          y = y-1;
+          e = e - xd;
+      }
+  } while (x<(x1+1))
+}
+
+void line_ydxi(byte y, byte x, byte y1, byte yd, byte xd) {
+  byte e = xd>>1;
+  do  {
+      plot(x,y);
+      y = y + 1;
+      e = e+xd;
+      if(yd<e) {
+          x = x+1;
+          e = e - yd;
+      }
+  } while (y<(y1+1))
+}
+
+void line_ydxd(byte y, byte x, byte y1, byte yd, byte xd) {
+  byte e = xd>>1;
+  do  {
+      plot(x,y);
+      y = y + 1;
+      e = e+xd;
+      if(yd<e) {
+          x = x-1;
+          e = e - yd;
+      }
+  } while (y<(y1+1))
 }
 
 void plot(byte x, byte y) {

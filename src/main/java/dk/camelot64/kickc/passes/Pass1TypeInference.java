@@ -57,13 +57,13 @@ public class Pass1TypeInference {
          } else if(statement instanceof StatementCall) {
             StatementCall call = (StatementCall) statement;
             LValue lValue = call.getlValue();
+            String procedureName = call.getProcedureName();
+            Procedure procedure = scopes.peek().getProcedure(procedureName);
+            call.setProcedure(procedure.getRef());
+            if(procedure.getParameters().size()!=call.getParameters().size()) {
+               throw new RuntimeException("Wrong number of parameters in call. Expected " +procedure.getParameters().size()+". "+statement.toString());
+            }
             if(lValue instanceof VariableRef) {
-               String procedureName = call.getProcedureName();
-               Procedure procedure = scopes.peek().getProcedure(procedureName);
-               call.setProcedure(procedure.getRef());
-               if(procedure.getParameters().size()!=call.getParameters().size()) {
-                  throw new RuntimeException("Wrong number of parameters in call. Expected " +procedure.getParameters().size()+". "+statement.toString());
-               }
                Variable lValueVar = programScope.getVariable((VariableRef) lValue);
                lValueVar.setTypeInferred(procedure.getReturnType());
             }

@@ -47,6 +47,7 @@ public class Pass1GenerateStatementSequence extends KickCBaseVisitor<Object> {
 
    public void generate(KickCParser.FileContext file) {
       this.visit(file);
+      sequence.addStatement(new StatementCall(null, "main", new ArrayList<RValue>()));
    }
 
    @Override

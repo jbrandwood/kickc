@@ -25,9 +25,7 @@ public abstract class StatementBase implements Statement {
    public boolean equals(Object o) {
       if (this == o) return true;
       if (o == null || getClass() != o.getClass()) return false;
-
       StatementBase that = (StatementBase) o;
-
       return index != null ? index.equals(that.index) : that.index == null;
    }
 
@@ -60,4 +58,5 @@ public abstract class StatementBase implements Statement {
       str.append("]");
       return str.toString();
    }
+
 }

@@ -486,7 +486,6 @@ public class AsmFragment {
       return getAsmParamName(varScope, asmName, getCodeScope());
    }
 
-
    /**
     * Get the ASM parameter for a specific bound constant
     * @param boundVar The constant

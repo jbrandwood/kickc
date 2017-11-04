@@ -29,6 +29,11 @@ public class Pass4CodeGeneration {
       AsmProgram asm = new AsmProgram();
       ScopeRef currentScope = ScopeRef.ROOT;
 
+      asm.startSegment(null, "Basic Upstart");
+      asm.addLine(new AsmSetPc("Basic", 0x0801));
+      asm.addLine(new AsmBasicUpstart("main"));
+      asm.addLine(new AsmSetPc("Program", 0x080d));
+
       // Generate global ZP labels
       asm.startSegment(null, "Global Constants & labels");
       addConstants(asm, currentScope);

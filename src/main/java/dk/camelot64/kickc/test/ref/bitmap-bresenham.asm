@@ -58,10 +58,9 @@ lines: {
     lda lines_y+1,x
     tax
     sty line.x0
-    lda _2
-    sta line.x1
-    ldy _3
-    stx line.y1
+    ldy _2
+    lda _3
+    sta line.y0
     jsr line
     inc l
     lda l
@@ -71,73 +70,183 @@ lines: {
 }
 line: {
     .label x0 = 5
-    .label x1 = 8
-    .label y1 = 9
-    .label xd = 10
-    lda x0
-    cmp x1
-    bcs b1
-    lda x1
+    .label y0 = 3
+    .label xd = 8
+    .label yd = 4
+    cpy x0
+    bcc b1
+    tya
     sec
     sbc x0
     sta xd
-    cpy y1
-    bcs b2
-    sty $ff
-    lda y1
+    cpx y0
+    bcc b2
+    txa
     sec
-    sbc $ff
-    tax
-    cpx xd
+    sbc y0
+    sta yd
+    lda yd
+    cmp xd
     bcs b3
     lda x0
     sta line_xdyi.x
-    sty line_xdyi.y
-    lda x1
-    sta line_xdyi.x1
-    stx line_xdyi.yd
+    lda y0
+    sta line_xdyi.y
+    sty line_xdyi.x1
+    lda xd
+    sta line_xdyi.xd
+    lda yd
+    sta line_xdyi.yd
     jsr line_xdyi
   breturn:
     rts
   b3:
-    ldx x0
-    jsr plot
-    ldx x1
-    ldy y1
-    jsr plot
+    lda y0
+    sta line_ydxi.y
+    lda x0
+    sta line_ydxi.x
+    stx line_ydxi.y1
+    lda xd
+    sta line_ydxi.xd
+    jsr line_ydxi
     jmp breturn
   b2:
-    ldx x0
-    jsr plot
-    ldx x1
-    ldy y1
-    jsr plot
+    stx $ff
+    lda y0
+    sec
+    sbc $ff
+    sta yd
+    lda yd
+    cmp xd
+    bcs b6
+    lda x0
+    sta line_xdyd.x
+    lda y0
+    sta line_xdyd.y
+    sty line_xdyd.x1
+    lda xd
+    sta line_xdyd.xd
+    lda yd
+    sta line_xdyd.yd
+    jsr line_xdyd
+    jmp breturn
+  b6:
+    stx line_ydxd.y
+    sty line_ydxd.x
+    lda y0
+    sta line_ydxd.y1
+    lda yd
+    sta line_ydxd.yd
+    lda xd
+    sta line_ydxd.xd
+    jsr line_ydxd
     jmp breturn
   b1:
-    lda x1
+    sty $ff
+    lda x0
     sec
-    sbc x0
-    cpy y1
-    bcs b7
-    ldx x0
-    jsr plot
-    ldx x1
-    ldy y1
-    jsr plot
+    sbc $ff
+    sta xd
+    cpx y0
+    bcc b9
+    txa
+    sec
+    sbc y0
+    sta yd
+    lda yd
+    cmp xd
+    bcs b10
+    sty line_xdyd.x
+    stx line_xdyd.y
+    lda x0
+    sta line_xdyd.x1
+    lda xd
+    sta line_xdyd.xd
+    lda yd
+    sta line_xdyd.yd
+    jsr line_xdyd
     jmp breturn
-  b7:
-    ldx x0
-    jsr plot
-    ldx x1
-    ldy y1
-    jsr plot
+  b10:
+    lda y0
+    sta line_ydxd.y
+    lda x0
+    sta line_ydxd.x
+    stx line_ydxd.y1
+    lda yd
+    sta line_ydxd.yd
+    lda xd
+    sta line_ydxd.xd
+    jsr line_ydxd
+    jmp breturn
+  b9:
+    stx $ff
+    lda y0
+    sec
+    sbc $ff
+    sta yd
+    lda yd
+    cmp xd
+    bcs b13
+    sty line_xdyi.x
+    stx line_xdyi.y
+    lda x0
+    sta line_xdyi.x1
+    lda xd
+    sta line_xdyi.xd
+    lda yd
+    sta line_xdyi.yd
+    jsr line_xdyi
+    jmp breturn
+  b13:
+    stx line_ydxi.y
+    sty line_ydxi.x
+    lda y0
+    sta line_ydxi.y1
+    lda xd
+    sta line_ydxi.xd
+    jsr line_ydxi
     jmp breturn
 }
+line_ydxi: {
+    .label y = 7
+    .label x = 6
+    .label y1 = 5
+    .label yd = 4
+    .label xd = 3
+    .label e = 8
+    lda xd
+    lsr
+    sta e
+  b1:
+    ldx x
+    ldy y
+    jsr plot
+    inc y
+    lda e
+    clc
+    adc xd
+    sta e
+    lda yd
+    cmp e
+    bcs b2
+    inc x
+    lda e
+    sec
+    sbc yd
+    sta e
+  b2:
+    lda y1
+    clc
+    adc #1
+    cmp y
+    bcs b1
+    rts
+}
 plot: {
-    .label _5 = 15
-    .label plotter_x = 6
-    .label plotter_y = 13
-    .label plotter = 6
+    .label _5 = 31
+    .label plotter_x = 27
+    .label plotter_y = 29
+    .label plotter = 27
     lda plot_xhi,x
     sta plotter_x+1
     lda #<0
@@ -166,12 +275,12 @@ plot: {
     rts
 }
 line_xdyi: {
-    .label x = 3
-    .label y = 4
+    .label x = 12
+    .label y = 13
     .label x1 = 11
     .label xd = 10
-    .label yd = 12
-    .label e = 5
+    .label yd = 9
+    .label e = 14
     lda yd
     lsr
     sta e
@@ -200,9 +309,79 @@ line_xdyi: {
     bcs b1
     rts
 }
+line_ydxd: {
+    .label y = 19
+    .label x = 18
+    .label y1 = 17
+    .label yd = 16
+    .label xd = 15
+    .label e = 20
+    lda xd
+    lsr
+    sta e
+  b1:
+    ldx x
+    ldy y
+    jsr plot
+    inc y
+    lda e
+    clc
+    adc xd
+    sta e
+    lda yd
+    cmp e
+    bcs b2
+    dec x
+    lda e
+    sec
+    sbc yd
+    sta e
+  b2:
+    lda y1
+    clc
+    adc #1
+    cmp y
+    bcs b1
+    rts
+}
+line_xdyd: {
+    .label x = 24
+    .label y = 25
+    .label x1 = 23
+    .label xd = 22
+    .label yd = 21
+    .label e = 26
+    lda yd
+    lsr
+    sta e
+  b1:
+    ldx x
+    ldy y
+    jsr plot
+    inc x
+    lda e
+    clc
+    adc yd
+    sta e
+    lda xd
+    cmp e
+    bcs b2
+    dec y
+    lda e
+    sec
+    sbc xd
+    sta e
+  b2:
+    lda x1
+    clc
+    adc #1
+    cmp x
+    bcs b1
+    rts
+}
 init_plot_tables: {
     .label _6 = 2
-    .label yoffs = 6
+    .label yoffs = 27
     ldy #$80
     ldx #0
   b1:
@@ -256,8 +435,8 @@ init_plot_tables: {
     jmp b2
 }
 init_screen: {
-    .label b = 6
-    .label c = 6
+    .label b = 27
+    .label c = 27
     lda #<BITMAP
     sta b
     lda #>BITMAP

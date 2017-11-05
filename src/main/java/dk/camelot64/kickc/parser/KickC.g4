@@ -24,7 +24,7 @@ stmt
     | 'do' stmt 'while' '(' expr ')' ';' #stmtDoWhile
     | 'for' '(' forDeclaration? forIteration ')' stmt  #stmtFor
     | 'return' expr? ';' #stmtReturn
-    | 'asm' '{' asmLines '}' ';' #stmtAsm
+    | 'asm' '{' asmLines '}' #stmtAsm
     ;
 
 forDeclaration

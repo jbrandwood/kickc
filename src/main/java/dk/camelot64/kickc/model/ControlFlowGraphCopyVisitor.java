@@ -185,6 +185,6 @@ public class ControlFlowGraphCopyVisitor extends ControlFlowGraphBaseVisitor<Obj
 
    @Override
    public Object visitAsm(StatementAsm asm) {
-      return new StatementAsm(asm.getAsmFragment());
+      return new StatementAsm(asm.getAsmLines());
    }
 }

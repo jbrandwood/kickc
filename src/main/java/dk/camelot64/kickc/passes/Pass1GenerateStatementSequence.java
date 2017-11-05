@@ -298,6 +298,12 @@ public class Pass1GenerateStatementSequence extends KickCBaseVisitor<Object> {
    }
 
    @Override
+   public Object visitStmtAsm(KickCParser.StmtAsmContext ctx) {
+      sequence.addStatement(new StatementAsm(ctx.asmLines()));
+      return null;
+   }
+
+   @Override
    public List<Variable> visitParameterListDecl(KickCParser.ParameterListDeclContext ctx) {
       ArrayList<Variable> parameterDecls = new ArrayList<>();
       for (KickCParser.ParameterDeclContext parameterDeclCtx : ctx.parameterDecl()) {

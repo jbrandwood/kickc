@@ -28,6 +28,10 @@ public class TestPrograms extends TestCase {
       compileAndCompare("bitmap-bresenham");
    }
 
+   public void testInlineAsm() throws IOException, URISyntaxException {
+      compileAndCompare("inline-asm");
+   }
+
    public void testBitmapPlotter() throws IOException, URISyntaxException {
       compileAndCompare("bitmap-plotter");
    }
@@ -39,7 +43,6 @@ public class TestPrograms extends TestCase {
    public void testCallConstParam() throws IOException, URISyntaxException {
       compileAndCompare("callconstparam");
    }
-
 
    public void testScrollClobber() throws IOException, URISyntaxException {
       compileAndCompare("scroll-clobber");

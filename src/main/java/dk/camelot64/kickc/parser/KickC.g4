@@ -154,7 +154,6 @@ fragment NAME_START : [a-zA-Z_];
 fragment NAME_CHAR : [a-zA-Z0-9_];
 ASMREL: '!' [+-]* ;
 
-
 WS : [ \t\r\n]+ -> skip ;
 COMMENT_LINE : '//' ~[\r\n]* -> skip ;
 COMMENT_BLOCK : '/*' .*? '*/' -> skip;

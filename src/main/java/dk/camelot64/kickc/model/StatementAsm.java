@@ -1,22 +1,25 @@
 package dk.camelot64.kickc.model;
 
+import dk.camelot64.kickc.parser.KickCParser;
+
 /** Inline ASM code */
 public class StatementAsm extends StatementBase {
 
    /** ASM Fragment code. */
-   private String asmFragment;
+   private KickCParser.AsmLinesContext asmLines;
 
-   public StatementAsm(String asmFragment) {
+   public StatementAsm(KickCParser.AsmLinesContext asmLines) {
       super(null);
-      this.asmFragment = asmFragment;
+      this.asmLines = asmLines;
    }
 
    @Override
    public String toString(Program program) {
-      return "asm { "+asmFragment+" }";
+      return "asm { "+asmLines.getText()+" }";
    }
 
-   public String getAsmFragment() {
-      return asmFragment;
+   public KickCParser.AsmLinesContext getAsmLines() {
+      return asmLines;
    }
+
 }

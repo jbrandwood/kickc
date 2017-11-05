@@ -26,7 +26,7 @@ public class AsmFragment {
    /**
     * The fragment template ASM code.
     */
-   private KickCParser.AsmFileContext fragmentFile;
+   private KickCParser.AsmLinesContext fragmentFile;
 
    /**
     * Binding of named values in the fragment to values (constants, variables, ...) .
@@ -42,7 +42,7 @@ public class AsmFragment {
          Program program,
          String name,
          ScopeRef codeScopeRef,
-         KickCParser.AsmFileContext fragmentFile,
+         KickCParser.AsmLinesContext fragmentFile,
          Map<String, Value> bindings) {
       this.program = program;
       this.name = name;
@@ -246,7 +246,7 @@ public class AsmFragment {
          return program;
       }
 
-      public void generate(KickCParser.AsmFileContext context) {
+      public void generate(KickCParser.AsmLinesContext context) {
          this.visit(context);
       }
 

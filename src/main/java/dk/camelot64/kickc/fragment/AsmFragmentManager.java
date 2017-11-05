@@ -33,7 +33,7 @@ public class AsmFragmentManager {
             signature.getProgram(),
             signature.getSignature(),
             signature.getCodeScope(),
-            fragmentFile,
+            fragmentFile.asmLines(),
             signature.getBindings());
       return fragment;
    }

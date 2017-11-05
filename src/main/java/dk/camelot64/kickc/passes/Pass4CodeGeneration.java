@@ -257,10 +257,8 @@ public class Pass4CodeGeneration {
             asm.addInstruction("rts", AsmAddressingMode.NON, null, false);
          } else if (statement instanceof StatementAsm) {
             StatementAsm statementAsm = (StatementAsm) statement;
-            String name = "inline";
-            KickCParser.AsmFileContext inlineAsm = AsmFragmentManager.parseFragment(CharStreams.fromString(statementAsm.getAsmFragment()), name);
             HashMap<String, Value> bindings = new HashMap<>();
-            AsmFragment asmFragment = new AsmFragment(program, name, block.getScope(), inlineAsm, bindings);
+            AsmFragment asmFragment = new AsmFragment(program, "inline", block.getScope(), statementAsm.getAsmLines(), bindings);
             asmFragment.generate(asm);
          } else {
             throw new RuntimeException("Statement not supported " + statement);

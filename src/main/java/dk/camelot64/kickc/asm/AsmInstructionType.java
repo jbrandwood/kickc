@@ -1,7 +1,5 @@
 package dk.camelot64.kickc.asm;
 
-import dk.camelot64.kickc.asm.parser.AsmClobber;
-
 /** The instructions of the 6502 assembler instruction set */
 public class AsmInstructionType {
 

@@ -23,12 +23,12 @@ main: {
     lda #<screen
     clc
     adc idx
-    sta !s++1
+    sta !++1
     lda #>screen
     adc idx+1
-    sta !s++2
+    sta !++2
     lda #STAR
-  !s:
+  !:
     sta screen
     inx
     inc idx

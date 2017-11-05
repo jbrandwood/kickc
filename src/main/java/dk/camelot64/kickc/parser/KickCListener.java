@@ -18,6 +18,16 @@ public interface KickCListener extends ParseTreeListener {
 	 */
 	void exitFile(KickCParser.FileContext ctx);
 	/**
+	 * Enter a parse tree produced by {@link KickCParser#asmFile}.
+	 * @param ctx the parse tree
+	 */
+	void enterAsmFile(KickCParser.AsmFileContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link KickCParser#asmFile}.
+	 * @param ctx the parse tree
+	 */
+	void exitAsmFile(KickCParser.AsmFileContext ctx);
+	/**
 	 * Enter a parse tree produced by {@link KickCParser#stmtSeq}.
 	 * @param ctx the parse tree
 	 */
@@ -147,6 +157,18 @@ public interface KickCListener extends ParseTreeListener {
 	 * @param ctx the parse tree
 	 */
 	void exitStmtReturn(KickCParser.StmtReturnContext ctx);
+	/**
+	 * Enter a parse tree produced by the {@code stmtAsm}
+	 * labeled alternative in {@link KickCParser#stmt}.
+	 * @param ctx the parse tree
+	 */
+	void enterStmtAsm(KickCParser.StmtAsmContext ctx);
+	/**
+	 * Exit a parse tree produced by the {@code stmtAsm}
+	 * labeled alternative in {@link KickCParser#stmt}.
+	 * @param ctx the parse tree
+	 */
+	void exitStmtAsm(KickCParser.StmtAsmContext ctx);
 	/**
 	 * Enter a parse tree produced by the {@code forDecl}
 	 * labeled alternative in {@link KickCParser#forDeclaration}.
@@ -489,4 +511,188 @@ public interface KickCListener extends ParseTreeListener {
 	 * @param ctx the parse tree
 	 */
 	void exitParameterList(KickCParser.ParameterListContext ctx);
+	/**
+	 * Enter a parse tree produced by {@link KickCParser#asmLines}.
+	 * @param ctx the parse tree
+	 */
+	void enterAsmLines(KickCParser.AsmLinesContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link KickCParser#asmLines}.
+	 * @param ctx the parse tree
+	 */
+	void exitAsmLines(KickCParser.AsmLinesContext ctx);
+	/**
+	 * Enter a parse tree produced by {@link KickCParser#asmLine}.
+	 * @param ctx the parse tree
+	 */
+	void enterAsmLine(KickCParser.AsmLineContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link KickCParser#asmLine}.
+	 * @param ctx the parse tree
+	 */
+	void exitAsmLine(KickCParser.AsmLineContext ctx);
+	/**
+	 * Enter a parse tree produced by {@link KickCParser#asmLabel}.
+	 * @param ctx the parse tree
+	 */
+	void enterAsmLabel(KickCParser.AsmLabelContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link KickCParser#asmLabel}.
+	 * @param ctx the parse tree
+	 */
+	void exitAsmLabel(KickCParser.AsmLabelContext ctx);
+	/**
+	 * Enter a parse tree produced by {@link KickCParser#asmInstruction}.
+	 * @param ctx the parse tree
+	 */
+	void enterAsmInstruction(KickCParser.AsmInstructionContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link KickCParser#asmInstruction}.
+	 * @param ctx the parse tree
+	 */
+	void exitAsmInstruction(KickCParser.AsmInstructionContext ctx);
+	/**
+	 * Enter a parse tree produced by the {@code asmModeAbs}
+	 * labeled alternative in {@link KickCParser#asmParamMode}.
+	 * @param ctx the parse tree
+	 */
+	void enterAsmModeAbs(KickCParser.AsmModeAbsContext ctx);
+	/**
+	 * Exit a parse tree produced by the {@code asmModeAbs}
+	 * labeled alternative in {@link KickCParser#asmParamMode}.
+	 * @param ctx the parse tree
+	 */
+	void exitAsmModeAbs(KickCParser.AsmModeAbsContext ctx);
+	/**
+	 * Enter a parse tree produced by the {@code asmModeImm}
+	 * labeled alternative in {@link KickCParser#asmParamMode}.
+	 * @param ctx the parse tree
+	 */
+	void enterAsmModeImm(KickCParser.AsmModeImmContext ctx);
+	/**
+	 * Exit a parse tree produced by the {@code asmModeImm}
+	 * labeled alternative in {@link KickCParser#asmParamMode}.
+	 * @param ctx the parse tree
+	 */
+	void exitAsmModeImm(KickCParser.AsmModeImmContext ctx);
+	/**
+	 * Enter a parse tree produced by the {@code asmModeAbsXY}
+	 * labeled alternative in {@link KickCParser#asmParamMode}.
+	 * @param ctx the parse tree
+	 */
+	void enterAsmModeAbsXY(KickCParser.AsmModeAbsXYContext ctx);
+	/**
+	 * Exit a parse tree produced by the {@code asmModeAbsXY}
+	 * labeled alternative in {@link KickCParser#asmParamMode}.
+	 * @param ctx the parse tree
+	 */
+	void exitAsmModeAbsXY(KickCParser.AsmModeAbsXYContext ctx);
+	/**
+	 * Enter a parse tree produced by the {@code asmModeIndIdxXY}
+	 * labeled alternative in {@link KickCParser#asmParamMode}.
+	 * @param ctx the parse tree
+	 */
+	void enterAsmModeIndIdxXY(KickCParser.AsmModeIndIdxXYContext ctx);
+	/**
+	 * Exit a parse tree produced by the {@code asmModeIndIdxXY}
+	 * labeled alternative in {@link KickCParser#asmParamMode}.
+	 * @param ctx the parse tree
+	 */
+	void exitAsmModeIndIdxXY(KickCParser.AsmModeIndIdxXYContext ctx);
+	/**
+	 * Enter a parse tree produced by the {@code asmModeIdxIndXY}
+	 * labeled alternative in {@link KickCParser#asmParamMode}.
+	 * @param ctx the parse tree
+	 */
+	void enterAsmModeIdxIndXY(KickCParser.AsmModeIdxIndXYContext ctx);
+	/**
+	 * Exit a parse tree produced by the {@code asmModeIdxIndXY}
+	 * labeled alternative in {@link KickCParser#asmParamMode}.
+	 * @param ctx the parse tree
+	 */
+	void exitAsmModeIdxIndXY(KickCParser.AsmModeIdxIndXYContext ctx);
+	/**
+	 * Enter a parse tree produced by the {@code asmModeInd}
+	 * labeled alternative in {@link KickCParser#asmParamMode}.
+	 * @param ctx the parse tree
+	 */
+	void enterAsmModeInd(KickCParser.AsmModeIndContext ctx);
+	/**
+	 * Exit a parse tree produced by the {@code asmModeInd}
+	 * labeled alternative in {@link KickCParser#asmParamMode}.
+	 * @param ctx the parse tree
+	 */
+	void exitAsmModeInd(KickCParser.AsmModeIndContext ctx);
+	/**
+	 * Enter a parse tree produced by the {@code asmExprReplace}
+	 * labeled alternative in {@link KickCParser#asmExpr}.
+	 * @param ctx the parse tree
+	 */
+	void enterAsmExprReplace(KickCParser.AsmExprReplaceContext ctx);
+	/**
+	 * Exit a parse tree produced by the {@code asmExprReplace}
+	 * labeled alternative in {@link KickCParser#asmExpr}.
+	 * @param ctx the parse tree
+	 */
+	void exitAsmExprReplace(KickCParser.AsmExprReplaceContext ctx);
+	/**
+	 * Enter a parse tree produced by the {@code asmExprLabelRel}
+	 * labeled alternative in {@link KickCParser#asmExpr}.
+	 * @param ctx the parse tree
+	 */
+	void enterAsmExprLabelRel(KickCParser.AsmExprLabelRelContext ctx);
+	/**
+	 * Exit a parse tree produced by the {@code asmExprLabelRel}
+	 * labeled alternative in {@link KickCParser#asmExpr}.
+	 * @param ctx the parse tree
+	 */
+	void exitAsmExprLabelRel(KickCParser.AsmExprLabelRelContext ctx);
+	/**
+	 * Enter a parse tree produced by the {@code asmExprBinary}
+	 * labeled alternative in {@link KickCParser#asmExpr}.
+	 * @param ctx the parse tree
+	 */
+	void enterAsmExprBinary(KickCParser.AsmExprBinaryContext ctx);
+	/**
+	 * Exit a parse tree produced by the {@code asmExprBinary}
+	 * labeled alternative in {@link KickCParser#asmExpr}.
+	 * @param ctx the parse tree
+	 */
+	void exitAsmExprBinary(KickCParser.AsmExprBinaryContext ctx);
+	/**
+	 * Enter a parse tree produced by the {@code asmExprLabel}
+	 * labeled alternative in {@link KickCParser#asmExpr}.
+	 * @param ctx the parse tree
+	 */
+	void enterAsmExprLabel(KickCParser.AsmExprLabelContext ctx);
+	/**
+	 * Exit a parse tree produced by the {@code asmExprLabel}
+	 * labeled alternative in {@link KickCParser#asmExpr}.
+	 * @param ctx the parse tree
+	 */
+	void exitAsmExprLabel(KickCParser.AsmExprLabelContext ctx);
+	/**
+	 * Enter a parse tree produced by the {@code asmExprInt}
+	 * labeled alternative in {@link KickCParser#asmExpr}.
+	 * @param ctx the parse tree
+	 */
+	void enterAsmExprInt(KickCParser.AsmExprIntContext ctx);
+	/**
+	 * Exit a parse tree produced by the {@code asmExprInt}
+	 * labeled alternative in {@link KickCParser#asmExpr}.
+	 * @param ctx the parse tree
+	 */
+	void exitAsmExprInt(KickCParser.AsmExprIntContext ctx);
+	/**
+	 * Enter a parse tree produced by the {@code asmExprUnary}
+	 * labeled alternative in {@link KickCParser#asmExpr}.
+	 * @param ctx the parse tree
+	 */
+	void enterAsmExprUnary(KickCParser.AsmExprUnaryContext ctx);
+	/**
+	 * Exit a parse tree produced by the {@code asmExprUnary}
+	 * labeled alternative in {@link KickCParser#asmExpr}.
+	 * @param ctx the parse tree
+	 */
+	void exitAsmExprUnary(KickCParser.AsmExprUnaryContext ctx);
 }

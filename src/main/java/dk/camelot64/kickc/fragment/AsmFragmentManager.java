@@ -1,7 +1,7 @@
 package dk.camelot64.kickc.fragment;
 
-import dk.camelot64.kickc.asm.parser.Asm6502Lexer;
-import dk.camelot64.kickc.asm.parser.Asm6502Parser;
+import dk.camelot64.kickc.parser.KickCLexer;
+import dk.camelot64.kickc.parser.KickCParser;
 import org.antlr.v4.runtime.*;
 
 import java.io.IOException;
@@ -23,12 +23,12 @@ public class AsmFragmentManager {
    /**
     * Cache for fragment files. Maps signature to the parsed file.
     */
-   private static Map<String, Asm6502Parser.FileContext> fragmentFileCache = new HashMap<>();
+   private static Map<String, KickCParser.AsmFileContext> fragmentFileCache = new HashMap<>();
 
-   private static Asm6502Parser.FileContext UNKNOWN = new Asm6502Parser.FileContext(null, 0);
+   private static KickCParser.AsmFileContext UNKNOWN = new KickCParser.AsmFileContext(null, 0);
 
    public static AsmFragment getFragment(AsmFragmentSignature signature) {
-      Asm6502Parser.FileContext fragmentFile = getFragmentFile(signature.getSignature());
+      KickCParser.AsmFileContext fragmentFile = getFragmentFile(signature.getSignature());
       AsmFragment fragment = new AsmFragment(
             signature.getProgram(),
             signature.getSignature(),
@@ -38,8 +38,8 @@ public class AsmFragmentManager {
       return fragment;
    }
 
-   private static Asm6502Parser.FileContext getFragmentFile(String signature) {
-      Asm6502Parser.FileContext fragment = fragmentFileCache.get(signature);
+   private static KickCParser.AsmFileContext getFragmentFile(String signature) {
+      KickCParser.AsmFileContext fragment = fragmentFileCache.get(signature);
       if (fragment == UNKNOWN) {
          throw new UnknownFragmentException(signature);
       }
@@ -227,19 +227,18 @@ public class AsmFragmentManager {
     * @return The parsed fragment ready for generating
     * @throws IOException if the parsing/loading fails
     */
-   public static Asm6502Parser.FileContext parseFragment(CharStream fragmentCharStream, final String fragmentFileName) {
-      Asm6502Parser.FileContext fragmentFile;
-      Asm6502Lexer lexer = new Asm6502Lexer(fragmentCharStream);
-      Asm6502Parser parser = new Asm6502Parser(new CommonTokenStream(lexer));
-      parser.addErrorListener(new BaseErrorListener() {
+   public static KickCParser.AsmFileContext parseFragment(CharStream fragmentCharStream, final String fragmentFileName) {
+      KickCLexer kickCLexer = new KickCLexer(fragmentCharStream);
+      KickCParser kickCParser = new KickCParser(new CommonTokenStream(kickCLexer));
+      kickCParser.addErrorListener(new BaseErrorListener() {
          @Override
          public void syntaxError(Recognizer<?, ?> recognizer, Object offendingSymbol, int line, int charPositionInLine, String msg, RecognitionException e) {
             throw new RuntimeException("Error parsing fragment " + fragmentFileName + "\n - Line: " + line + "\n - Message: " + msg);
          }
       });
-      parser.setBuildParseTree(true);
-      fragmentFile = parser.file();
-      return fragmentFile;
+      kickCParser.setBuildParseTree(true);
+      KickCParser.AsmFileContext asmFileContext = kickCParser.asmFile();
+      return asmFileContext;
    }
 
 

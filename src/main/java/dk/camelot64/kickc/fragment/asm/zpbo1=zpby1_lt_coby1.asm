@@ -1,7 +1,7 @@
 lda {zpby1}
 cmp #{coby1}
-bcc !t+
-!f: lda #0
-jmp !d+
-!t: lda #$ff
-!d: sta {zpbo1}
+bcc !+
+lda #0
+jmp !++
+!: lda #$ff
+!: sta {zpbo1}

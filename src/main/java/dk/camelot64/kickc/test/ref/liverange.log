@@ -2,11 +2,11 @@ byte i=0;
 
 void main() {
    byte a=4;
-   a=a+inc();
-   a=a+inc();
+   a=a+inci();
+   a=a+inci();
 }
 
-byte inc() {
+byte inci() {
   i = i+7;
   return i;
 }
@@ -14,32 +14,32 @@ PROGRAM
   (byte) i ← (byte) 0
 proc (void()) main()
   (byte) main::a ← (byte) 4
-  (byte~) main::$0 ← call inc 
+  (byte~) main::$0 ← call inci 
   (byte~) main::$1 ← (byte) main::a + (byte~) main::$0
   (byte) main::a ← (byte~) main::$1
-  (byte~) main::$2 ← call inc 
+  (byte~) main::$2 ← call inci 
   (byte~) main::$3 ← (byte) main::a + (byte~) main::$2
   (byte) main::a ← (byte~) main::$3
 main::@return:
   return 
 endproc // main()
-proc (byte()) inc()
-  (byte~) inc::$0 ← (byte) i + (byte) 7
-  (byte) i ← (byte~) inc::$0
-  (byte) inc::return ← (byte) i
-  goto inc::@return
-inc::@return:
-  (byte) inc::return ← (byte) inc::return
-  return (byte) inc::return
-endproc // inc()
+proc (byte()) inci()
+  (byte~) inci::$0 ← (byte) i + (byte) 7
+  (byte) i ← (byte~) inci::$0
+  (byte) inci::return ← (byte) i
+  goto inci::@return
+inci::@return:
+  (byte) inci::return ← (byte) inci::return
+  return (byte) inci::return
+endproc // inci()
   call main 
 
 SYMBOLS
 (byte) i
-(byte()) inc()
-(byte~) inc::$0
-(label) inc::@return
-(byte) inc::return
+(byte()) inci()
+(byte~) inci::$0
+(label) inci::@return
+(byte) inci::return
 (void()) main()
 (byte~) main::$0
 (byte~) main::$1
@@ -54,10 +54,10 @@ INITIAL CONTROL FLOW GRAPH
   to:@1
 main: scope:[main]  from
   (byte) main::a ← (byte) 4
-  (byte~) main::$0 ← call inc 
+  (byte~) main::$0 ← call inci 
   (byte~) main::$1 ← (byte) main::a + (byte~) main::$0
   (byte) main::a ← (byte~) main::$1
-  (byte~) main::$2 ← call inc 
+  (byte~) main::$2 ← call inci 
   (byte~) main::$3 ← (byte) main::a + (byte~) main::$2
   (byte) main::a ← (byte~) main::$3
   to:main::@return
@@ -66,48 +66,48 @@ main::@return: scope:[main]  from main
   to:@return
 @1: scope:[]  from @begin
   to:@2
-inc: scope:[inc]  from
-  (byte~) inc::$0 ← (byte) i + (byte) 7
-  (byte) i ← (byte~) inc::$0
-  (byte) inc::return ← (byte) i
-  to:inc::@return
-inc::@return: scope:[inc]  from inc inc::@1
-  (byte) inc::return ← (byte) inc::return
-  return (byte) inc::return
+inci: scope:[inci]  from
+  (byte~) inci::$0 ← (byte) i + (byte) 7
+  (byte) i ← (byte~) inci::$0
+  (byte) inci::return ← (byte) i
+  to:inci::@return
+inci::@return: scope:[inci]  from inci inci::@1
+  (byte) inci::return ← (byte) inci::return
+  return (byte) inci::return
   to:@return
-inc::@1: scope:[inc]  from
-  to:inc::@return
+inci::@1: scope:[inci]  from
+  to:inci::@return
 @2: scope:[]  from @1
   call main 
   to:@end
 @end: scope:[]  from @2
 
 Removing empty block @1
-Removing empty block inc::@1
+Removing empty block inci::@1
 CONTROL FLOW GRAPH
 @begin: scope:[]  from
   (byte) i ← (byte) 0
   to:@2
 main: scope:[main]  from
   (byte) main::a ← (byte) 4
-  (byte~) main::$0 ← call inc 
+  (byte~) main::$0 ← call inci 
   (byte~) main::$1 ← (byte) main::a + (byte~) main::$0
   (byte) main::a ← (byte~) main::$1
-  (byte~) main::$2 ← call inc 
+  (byte~) main::$2 ← call inci 
   (byte~) main::$3 ← (byte) main::a + (byte~) main::$2
   (byte) main::a ← (byte~) main::$3
   to:main::@return
 main::@return: scope:[main]  from main
   return 
   to:@return
-inc: scope:[inc]  from
-  (byte~) inc::$0 ← (byte) i + (byte) 7
-  (byte) i ← (byte~) inc::$0
-  (byte) inc::return ← (byte) i
-  to:inc::@return
-inc::@return: scope:[inc]  from inc
-  (byte) inc::return ← (byte) inc::return
-  return (byte) inc::return
+inci: scope:[inci]  from
+  (byte~) inci::$0 ← (byte) i + (byte) 7
+  (byte) i ← (byte~) inci::$0
+  (byte) inci::return ← (byte) i
+  to:inci::@return
+inci::@return: scope:[inci]  from inci
+  (byte) inci::return ← (byte) inci::return
+  return (byte) inci::return
   to:@return
 @2: scope:[]  from @begin
   call main 
@@ -116,7 +116,7 @@ inc::@return: scope:[inc]  from inc
 
 PROCEDURE MODIFY VARIABLE ANALYSIS
 main modifies i
-inc modifies i
+inci modifies i
 
 CONTROL FLOW GRAPH WITH ASSIGNMENT CALL
 @begin: scope:[]  from
@@ -124,17 +124,17 @@ CONTROL FLOW GRAPH WITH ASSIGNMENT CALL
   to:@2
 main: scope:[main]  from @2
   (byte) main::a ← (byte) 4
-  (byte) inc::return ← call inc param-assignment
+  (byte) inci::return ← call inci param-assignment
   to:main::@1
 main::@1: scope:[main]  from main
-  (byte~) main::$0 ← (byte) inc::return
+  (byte~) main::$0 ← (byte) inci::return
   (byte) i ← (byte) i
   (byte~) main::$1 ← (byte) main::a + (byte~) main::$0
   (byte) main::a ← (byte~) main::$1
-  (byte) inc::return ← call inc param-assignment
+  (byte) inci::return ← call inci param-assignment
   to:main::@2
 main::@2: scope:[main]  from main::@1
-  (byte~) main::$2 ← (byte) inc::return
+  (byte~) main::$2 ← (byte) inci::return
   (byte) i ← (byte) i
   (byte~) main::$3 ← (byte) main::a + (byte~) main::$2
   (byte) main::a ← (byte~) main::$3
@@ -143,15 +143,15 @@ main::@return: scope:[main]  from main::@2
   (byte) i ← (byte) i
   return 
   to:@return
-inc: scope:[inc]  from main main::@1
-  (byte~) inc::$0 ← (byte) i + (byte) 7
-  (byte) i ← (byte~) inc::$0
-  (byte) inc::return ← (byte) i
-  to:inc::@return
-inc::@return: scope:[inc]  from inc
-  (byte) inc::return ← (byte) inc::return
+inci: scope:[inci]  from main main::@1
+  (byte~) inci::$0 ← (byte) i + (byte) 7
+  (byte) i ← (byte~) inci::$0
+  (byte) inci::return ← (byte) i
+  to:inci::@return
+inci::@return: scope:[inci]  from inci
+  (byte) inci::return ← (byte) inci::return
   (byte) i ← (byte) i
-  return (byte) inc::return
+  return (byte) inci::return
   to:@return
 @2: scope:[]  from @begin
   call main param-assignment
@@ -170,23 +170,23 @@ CONTROL FLOW GRAPH SSA
 main: scope:[main]  from @2
   (byte) i#13 ← phi( @2/(byte) i#14 )
   (byte) main::a#0 ← (byte) 4
-  (byte) inc::return#0 ← call inc param-assignment
+  (byte) inci::return#0 ← call inci param-assignment
   to:main::@1
 main::@1: scope:[main]  from main
   (byte) main::a#3 ← phi( main/(byte) main::a#0 )
   (byte) i#7 ← phi( main/(byte) i#13 )
-  (byte) inc::return#4 ← phi( main/(byte) inc::return#0 )
-  (byte~) main::$0 ← (byte) inc::return#4
+  (byte) inci::return#4 ← phi( main/(byte) inci::return#0 )
+  (byte~) main::$0 ← (byte) inci::return#4
   (byte) i#1 ← (byte) i#7
   (byte~) main::$1 ← (byte) main::a#3 + (byte~) main::$0
   (byte) main::a#1 ← (byte~) main::$1
-  (byte) inc::return#1 ← call inc param-assignment
+  (byte) inci::return#1 ← call inci param-assignment
   to:main::@2
 main::@2: scope:[main]  from main::@1
   (byte) main::a#4 ← phi( main::@1/(byte) main::a#1 )
   (byte) i#8 ← phi( main::@1/(byte) i#1 )
-  (byte) inc::return#5 ← phi( main::@1/(byte) inc::return#1 )
-  (byte~) main::$2 ← (byte) inc::return#5
+  (byte) inci::return#5 ← phi( main::@1/(byte) inci::return#1 )
+  (byte~) main::$2 ← (byte) inci::return#5
   (byte) i#2 ← (byte) i#8
   (byte~) main::$3 ← (byte) main::a#4 + (byte~) main::$2
   (byte) main::a#2 ← (byte~) main::$3
@@ -196,18 +196,18 @@ main::@return: scope:[main]  from main::@2
   (byte) i#3 ← (byte) i#9
   return 
   to:@return
-inc: scope:[inc]  from main main::@1
+inci: scope:[inci]  from main main::@1
   (byte) i#10 ← phi( main/(byte) i#13 main::@1/(byte) i#1 )
-  (byte~) inc::$0 ← (byte) i#10 + (byte) 7
-  (byte) i#4 ← (byte~) inc::$0
-  (byte) inc::return#2 ← (byte) i#4
-  to:inc::@return
-inc::@return: scope:[inc]  from inc
-  (byte) i#11 ← phi( inc/(byte) i#4 )
-  (byte) inc::return#6 ← phi( inc/(byte) inc::return#2 )
-  (byte) inc::return#3 ← (byte) inc::return#6
+  (byte~) inci::$0 ← (byte) i#10 + (byte) 7
+  (byte) i#4 ← (byte~) inci::$0
+  (byte) inci::return#2 ← (byte) i#4
+  to:inci::@return
+inci::@return: scope:[inci]  from inci
+  (byte) i#11 ← phi( inci/(byte) i#4 )
+  (byte) inci::return#6 ← phi( inci/(byte) inci::return#2 )
+  (byte) inci::return#3 ← (byte) inci::return#6
   (byte) i#5 ← (byte) i#11
-  return (byte) inc::return#3
+  return (byte) inci::return#3
   to:@return
 @2: scope:[]  from @begin
   (byte) i#14 ← phi( @begin/(byte) i#0 )
@@ -226,25 +226,25 @@ CONTROL FLOW GRAPH WITH ASSIGNMENT CALL & RETURN
 main: scope:[main]  from @2
   (byte) i#13 ← phi( @2/(byte) i#14 )
   (byte) main::a#0 ← (byte) 4
-  call inc param-assignment
-  (byte) inc::return#0 ← (byte) inc::return#3
+  call inci param-assignment
+  (byte) inci::return#0 ← (byte) inci::return#3
   to:main::@1
 main::@1: scope:[main]  from main
   (byte) main::a#3 ← phi( main/(byte) main::a#0 )
   (byte) i#7 ← phi( main/(byte) i#5 )
-  (byte) inc::return#4 ← phi( main/(byte) inc::return#0 )
-  (byte~) main::$0 ← (byte) inc::return#4
+  (byte) inci::return#4 ← phi( main/(byte) inci::return#0 )
+  (byte~) main::$0 ← (byte) inci::return#4
   (byte) i#1 ← (byte) i#7
   (byte~) main::$1 ← (byte) main::a#3 + (byte~) main::$0
   (byte) main::a#1 ← (byte~) main::$1
-  call inc param-assignment
-  (byte) inc::return#1 ← (byte) inc::return#3
+  call inci param-assignment
+  (byte) inci::return#1 ← (byte) inci::return#3
   to:main::@2
 main::@2: scope:[main]  from main::@1
   (byte) main::a#4 ← phi( main::@1/(byte) main::a#1 )
   (byte) i#8 ← phi( main::@1/(byte) i#5 )
-  (byte) inc::return#5 ← phi( main::@1/(byte) inc::return#1 )
-  (byte~) main::$2 ← (byte) inc::return#5
+  (byte) inci::return#5 ← phi( main::@1/(byte) inci::return#1 )
+  (byte~) main::$2 ← (byte) inci::return#5
   (byte) i#2 ← (byte) i#8
   (byte~) main::$3 ← (byte) main::a#4 + (byte~) main::$2
   (byte) main::a#2 ← (byte~) main::$3
@@ -254,16 +254,16 @@ main::@return: scope:[main]  from main::@2
   (byte) i#3 ← (byte) i#9
   return 
   to:@return
-inc: scope:[inc]  from main main::@1
+inci: scope:[inci]  from main main::@1
   (byte) i#10 ← phi( main/(byte) i#13 main::@1/(byte) i#1 )
-  (byte~) inc::$0 ← (byte) i#10 + (byte) 7
-  (byte) i#4 ← (byte~) inc::$0
-  (byte) inc::return#2 ← (byte) i#4
-  to:inc::@return
-inc::@return: scope:[inc]  from inc
-  (byte) i#11 ← phi( inc/(byte) i#4 )
-  (byte) inc::return#6 ← phi( inc/(byte) inc::return#2 )
-  (byte) inc::return#3 ← (byte) inc::return#6
+  (byte~) inci::$0 ← (byte) i#10 + (byte) 7
+  (byte) i#4 ← (byte~) inci::$0
+  (byte) inci::return#2 ← (byte) i#4
+  to:inci::@return
+inci::@return: scope:[inci]  from inci
+  (byte) i#11 ← phi( inci/(byte) i#4 )
+  (byte) inci::return#6 ← phi( inci/(byte) inci::return#2 )
+  (byte) inci::return#3 ← (byte) inci::return#6
   (byte) i#5 ← (byte) i#11
   return 
   to:@return
@@ -298,17 +298,17 @@ INITIAL SSA SYMBOL TABLE
 (byte) i#7
 (byte) i#8
 (byte) i#9
-(byte()) inc()
-(byte~) inc::$0
-(label) inc::@return
-(byte) inc::return
-(byte) inc::return#0
-(byte) inc::return#1
-(byte) inc::return#2
-(byte) inc::return#3
-(byte) inc::return#4
-(byte) inc::return#5
-(byte) inc::return#6
+(byte()) inci()
+(byte~) inci::$0
+(label) inci::@return
+(byte) inci::return
+(byte) inci::return#0
+(byte) inci::return#1
+(byte) inci::return#2
+(byte) inci::return#3
+(byte) inci::return#4
+(byte) inci::return#5
+(byte) inci::return#6
 (void()) main()
 (byte~) main::$0
 (byte~) main::$1
@@ -324,12 +324,12 @@ INITIAL SSA SYMBOL TABLE
 (byte) main::a#3
 (byte) main::a#4
 
-Not aliassing across scopes: main::$0 inc::return#4
-Not aliassing across scopes: main::$2 inc::return#5
-Not aliassing across scopes: i#4 inc::$0
-Not aliassing across scopes: inc::return#2 i#4
+Not aliassing across scopes: main::$0 inci::return#4
+Not aliassing across scopes: main::$2 inci::return#5
+Not aliassing across scopes: i#4 inci::$0
+Not aliassing across scopes: inci::return#2 i#4
 Alias (byte) i#0 = (byte) i#13 (byte) i#14 
-Alias (byte) inc::return#0 = (byte) inc::return#3 (byte) inc::return#4 (byte) inc::return#1 (byte) inc::return#5 (byte) inc::return#6 (byte) inc::return#2 
+Alias (byte) inci::return#0 = (byte) inci::return#3 (byte) inci::return#4 (byte) inci::return#1 (byte) inci::return#5 (byte) inci::return#6 (byte) inci::return#2 
 Alias (byte) i#1 = (byte) i#7 (byte) i#5 (byte) i#8 (byte) i#2 (byte) i#9 (byte) i#3 (byte) i#11 (byte) i#4 (byte) i#12 (byte) i#6 
 Alias (byte) main::a#0 = (byte) main::a#3 
 Alias (byte) main::a#1 = (byte~) main::$1 (byte) main::a#4 
@@ -341,27 +341,27 @@ CONTROL FLOW GRAPH
   to:@2
 main: scope:[main]  from @2
   (byte) main::a#0 ← (byte) 4
-  call inc param-assignment
+  call inci param-assignment
   to:main::@1
 main::@1: scope:[main]  from main
-  (byte~) main::$0 ← (byte) inc::return#0
+  (byte~) main::$0 ← (byte) inci::return#0
   (byte) main::a#1 ← (byte) main::a#0 + (byte~) main::$0
-  call inc param-assignment
+  call inci param-assignment
   to:main::@2
 main::@2: scope:[main]  from main::@1
-  (byte~) main::$2 ← (byte) inc::return#0
+  (byte~) main::$2 ← (byte) inci::return#0
   (byte) main::a#2 ← (byte) main::a#1 + (byte~) main::$2
   to:main::@return
 main::@return: scope:[main]  from main::@2
   return 
   to:@return
-inc: scope:[inc]  from main main::@1
+inci: scope:[inci]  from main main::@1
   (byte) i#10 ← phi( main/(byte) i#0 main::@1/(byte) i#1 )
-  (byte~) inc::$0 ← (byte) i#10 + (byte) 7
-  (byte) i#1 ← (byte~) inc::$0
-  (byte) inc::return#0 ← (byte) i#1
-  to:inc::@return
-inc::@return: scope:[inc]  from inc
+  (byte~) inci::$0 ← (byte) i#10 + (byte) 7
+  (byte) i#1 ← (byte~) inci::$0
+  (byte) inci::return#0 ← (byte) i#1
+  to:inci::@return
+inci::@return: scope:[inci]  from inci
   return 
   to:@return
 @2: scope:[]  from @begin
@@ -371,10 +371,10 @@ inc::@return: scope:[inc]  from inc
   to:@end
 @end: scope:[]  from @3
 
-Not aliassing across scopes: main::$0 inc::return#0
-Not aliassing across scopes: main::$2 inc::return#0
-Not aliassing across scopes: i#1 inc::$0
-Not aliassing across scopes: inc::return#0 i#1
+Not aliassing across scopes: main::$0 inci::return#0
+Not aliassing across scopes: main::$2 inci::return#0
+Not aliassing across scopes: i#1 inci::$0
+Not aliassing across scopes: inci::return#0 i#1
 Constant (const byte) i#0 = 0
 Constant (const byte) main::a#0 = 4
 Succesful SSA optimization Pass2ConstantIdentification
@@ -382,27 +382,27 @@ CONTROL FLOW GRAPH
 @begin: scope:[]  from
   to:@2
 main: scope:[main]  from @2
-  call inc param-assignment
+  call inci param-assignment
   to:main::@1
 main::@1: scope:[main]  from main
-  (byte~) main::$0 ← (byte) inc::return#0
+  (byte~) main::$0 ← (byte) inci::return#0
   (byte) main::a#1 ← (const byte) main::a#0 + (byte~) main::$0
-  call inc param-assignment
+  call inci param-assignment
   to:main::@2
 main::@2: scope:[main]  from main::@1
-  (byte~) main::$2 ← (byte) inc::return#0
+  (byte~) main::$2 ← (byte) inci::return#0
   (byte) main::a#2 ← (byte) main::a#1 + (byte~) main::$2
   to:main::@return
 main::@return: scope:[main]  from main::@2
   return 
   to:@return
-inc: scope:[inc]  from main main::@1
+inci: scope:[inci]  from main main::@1
   (byte) i#10 ← phi( main/(const byte) i#0 main::@1/(byte) i#1 )
-  (byte~) inc::$0 ← (byte) i#10 + (byte) 7
-  (byte) i#1 ← (byte~) inc::$0
-  (byte) inc::return#0 ← (byte) i#1
-  to:inc::@return
-inc::@return: scope:[inc]  from inc
+  (byte~) inci::$0 ← (byte) i#10 + (byte) 7
+  (byte) i#1 ← (byte~) inci::$0
+  (byte) inci::return#0 ← (byte) i#1
+  to:inci::@return
+inci::@return: scope:[inci]  from inci
   return 
   to:@return
 @2: scope:[]  from @begin
@@ -418,27 +418,27 @@ CONTROL FLOW GRAPH
 @begin: scope:[]  from
   to:@2
 main: scope:[main]  from @2
-  call inc param-assignment
+  call inci param-assignment
   to:main::@1
 main::@1: scope:[main]  from main
-  (byte~) main::$0 ← (byte) inc::return#0
+  (byte~) main::$0 ← (byte) inci::return#0
   (byte) main::a#1 ← (const byte) main::a#0 + (byte~) main::$0
-  call inc param-assignment
+  call inci param-assignment
   to:main::@2
 main::@2: scope:[main]  from main::@1
-  (byte~) main::$2 ← (byte) inc::return#0
+  (byte~) main::$2 ← (byte) inci::return#0
   (byte) main::a#2 ← (byte) main::a#1 + (byte~) main::$2
   to:main::@return
 main::@return: scope:[main]  from main::@2
   return 
   to:@return
-inc: scope:[inc]  from main main::@1
+inci: scope:[inci]  from main main::@1
   (byte) i#10 ← phi( main/(const byte) i#0 main::@1/(byte) i#1 )
-  (byte~) inc::$0 ← (byte) i#10 + (byte) 7
-  (byte) i#1 ← (byte~) inc::$0
-  (byte) inc::return#0 ← (byte) i#1
-  to:inc::@return
-inc::@return: scope:[inc]  from inc
+  (byte~) inci::$0 ← (byte) i#10 + (byte) 7
+  (byte) i#1 ← (byte~) inci::$0
+  (byte) inci::return#0 ← (byte) i#1
+  to:inci::@return
+inci::@return: scope:[inci]  from inci
   return 
   to:@return
 @2: scope:[]  from @begin
@@ -446,14 +446,14 @@ inc::@return: scope:[inc]  from inc
   to:@end
 @end: scope:[]  from @2
 
-Not aliassing across scopes: main::$0 inc::return#0
-Not aliassing across scopes: main::$2 inc::return#0
-Not aliassing across scopes: i#1 inc::$0
-Not aliassing across scopes: inc::return#0 i#1
-Not aliassing across scopes: main::$0 inc::return#0
-Not aliassing across scopes: main::$2 inc::return#0
-Not aliassing across scopes: i#1 inc::$0
-Not aliassing across scopes: inc::return#0 i#1
+Not aliassing across scopes: main::$0 inci::return#0
+Not aliassing across scopes: main::$2 inci::return#0
+Not aliassing across scopes: i#1 inci::$0
+Not aliassing across scopes: inci::return#0 i#1
+Not aliassing across scopes: main::$0 inci::return#0
+Not aliassing across scopes: main::$2 inci::return#0
+Not aliassing across scopes: i#1 inci::$0
+Not aliassing across scopes: inci::return#0 i#1
 Inlining constant with var siblings (const byte) main::a#0
 Inlining constant with var siblings (const byte) main::a#0
 Inlining constant with var siblings (const byte) i#0
@@ -465,27 +465,27 @@ CONTROL FLOW GRAPH
 @begin: scope:[]  from
   to:@2
 main: scope:[main]  from @2
-  call inc param-assignment
+  call inci param-assignment
   to:main::@1
 main::@1: scope:[main]  from main
-  (byte~) main::$0 ← (byte) inc::return#0
+  (byte~) main::$0 ← (byte) inci::return#0
   (byte) main::a#1 ← (byte) 4 + (byte~) main::$0
-  call inc param-assignment
+  call inci param-assignment
   to:main::@2
 main::@2: scope:[main]  from main::@1
-  (byte~) main::$2 ← (byte) inc::return#0
+  (byte~) main::$2 ← (byte) inci::return#0
   (byte) main::a#2 ← (byte) main::a#1 + (byte~) main::$2
   to:main::@return
 main::@return: scope:[main]  from main::@2
   return 
   to:@return
-inc: scope:[inc]  from main main::@1
+inci: scope:[inci]  from main main::@1
   (byte) i#10 ← phi( main/(byte) 0 main::@1/(byte) i#1 )
-  (byte~) inc::$0 ← (byte) i#10 + (byte) 7
-  (byte) i#1 ← (byte~) inc::$0
-  (byte) inc::return#0 ← (byte) i#1
-  to:inc::@return
-inc::@return: scope:[inc]  from inc
+  (byte~) inci::$0 ← (byte) i#10 + (byte) 7
+  (byte) i#1 ← (byte~) inci::$0
+  (byte) inci::return#0 ← (byte) i#1
+  to:inci::@return
+inci::@return: scope:[inci]  from inci
   return 
   to:@return
 @2: scope:[]  from @begin
@@ -500,11 +500,11 @@ FINAL SYMBOL TABLE
 (byte) i
 (byte) i#1
 (byte) i#10
-(byte()) inc()
-(byte~) inc::$0
-(label) inc::@return
-(byte) inc::return
-(byte) inc::return#0
+(byte()) inci()
+(byte~) inci::$0
+(label) inci::@return
+(byte) inci::return
+(byte) inci::return#0
 (void()) main()
 (byte~) main::$0
 (byte~) main::$2
@@ -515,8 +515,8 @@ FINAL SYMBOL TABLE
 (byte) main::a#1
 (byte) main::a#2
 
-Block Sequence Planned @begin @2 @end main main::@1 main::@2 main::@return inc inc::@return 
-Block Sequence Planned @begin @2 @end main main::@1 main::@2 main::@return inc inc::@return 
+Block Sequence Planned @begin @2 @end main main::@1 main::@2 main::@return inci inci::@return 
+Block Sequence Planned @begin @2 @end main main::@1 main::@2 main::@return inci inci::@return 
 CONTROL FLOW GRAPH - PHI LIFTED
 @begin: scope:[]  from
   to:@2
@@ -525,35 +525,35 @@ CONTROL FLOW GRAPH - PHI LIFTED
   to:@end
 @end: scope:[]  from @2
 main: scope:[main]  from @2
-  call inc param-assignment
+  call inci param-assignment
   to:main::@1
 main::@1: scope:[main]  from main
-  (byte~) main::$0 ← (byte) inc::return#0
+  (byte~) main::$0 ← (byte) inci::return#0
   (byte) main::a#1 ← (byte) 4 + (byte~) main::$0
   (byte~) i#15 ← (byte) i#1
-  call inc param-assignment
+  call inci param-assignment
   to:main::@2
 main::@2: scope:[main]  from main::@1
-  (byte~) main::$2 ← (byte) inc::return#0
+  (byte~) main::$2 ← (byte) inci::return#0
   (byte) main::a#2 ← (byte) main::a#1 + (byte~) main::$2
   to:main::@return
 main::@return: scope:[main]  from main::@2
   return 
   to:@return
-inc: scope:[inc]  from main main::@1
+inci: scope:[inci]  from main main::@1
   (byte) i#10 ← phi( main/(byte) 0 main::@1/(byte~) i#15 )
-  (byte~) inc::$0 ← (byte) i#10 + (byte) 7
-  (byte) i#1 ← (byte~) inc::$0
-  (byte) inc::return#0 ← (byte) i#1
-  to:inc::@return
-inc::@return: scope:[inc]  from inc
+  (byte~) inci::$0 ← (byte) i#10 + (byte) 7
+  (byte) i#1 ← (byte~) inci::$0
+  (byte) inci::return#0 ← (byte) i#1
+  to:inci::@return
+inci::@return: scope:[inci]  from inci
   return 
   to:@return
 
 Adding NOP phi() at start of main
 CALL GRAPH
 Calls in [] to 0:main 
-Calls in [main] to 2:inc 6:inc 
+Calls in [main] to 2:inci 6:inci 
 
 Propagating live ranges...
 Propagating live ranges...
@@ -569,36 +569,36 @@ CONTROL FLOW GRAPH - LIVE RANGES FOUND
 @end: scope:[]  from @2
 main: scope:[main]  from @2
   [1] phi() [ ]
-  [2] call inc param-assignment [ inc::return#0 i#1 ]
+  [2] call inci param-assignment [ inci::return#0 i#1 ]
   to:main::@1
 main::@1: scope:[main]  from main
-  [3] (byte~) main::$0 ← (byte) inc::return#0 [ main::$0 i#1 ]
+  [3] (byte~) main::$0 ← (byte) inci::return#0 [ main::$0 i#1 ]
   [4] (byte) main::a#1 ← (byte) 4 + (byte~) main::$0 [ main::a#1 i#1 ]
   [5] (byte~) i#15 ← (byte) i#1 [ main::a#1 i#15 ]
-  [6] call inc param-assignment [ inc::return#0 main::a#1 ]
+  [6] call inci param-assignment [ inci::return#0 main::a#1 ]
   to:main::@2
 main::@2: scope:[main]  from main::@1
-  [7] (byte~) main::$2 ← (byte) inc::return#0 [ main::a#1 main::$2 ]
+  [7] (byte~) main::$2 ← (byte) inci::return#0 [ main::a#1 main::$2 ]
   [8] (byte) main::a#2 ← (byte) main::a#1 + (byte~) main::$2 [ ]
   to:main::@return
 main::@return: scope:[main]  from main::@2
   [9] return  [ ]
   to:@return
-inc: scope:[inc]  from main main::@1
+inci: scope:[inci]  from main main::@1
   [10] (byte) i#10 ← phi( main/(byte) 0 main::@1/(byte~) i#15 ) [ i#10 ]
-  [11] (byte~) inc::$0 ← (byte) i#10 + (byte) 7 [ inc::$0 ]
-  [12] (byte) i#1 ← (byte~) inc::$0 [ i#1 ]
-  [13] (byte) inc::return#0 ← (byte) i#1 [ inc::return#0 i#1 ]
-  to:inc::@return
-inc::@return: scope:[inc]  from inc
-  [14] return  [ inc::return#0 i#1 ]
+  [11] (byte~) inci::$0 ← (byte) i#10 + (byte) 7 [ inci::$0 ]
+  [12] (byte) i#1 ← (byte~) inci::$0 [ i#1 ]
+  [13] (byte) inci::return#0 ← (byte) i#1 [ inci::return#0 i#1 ]
+  to:inci::@return
+inci::@return: scope:[inci]  from inci
+  [14] return  [ inci::return#0 i#1 ]
   to:@return
 
 Created 1 initial phi equivalence classes
 Coalesced [5] i#15 ← i#1
-Coalesced [12] i#1 ← inc::$0
+Coalesced [12] i#1 ← inci::$0
 Coalesced down to 1 phi equivalence classes
-Block Sequence Planned @begin @2 @end main main::@1 main::@2 main::@return inc inc::@return 
+Block Sequence Planned @begin @2 @end main main::@1 main::@2 main::@return inci inci::@return 
 Adding NOP phi() at start of main
 Propagating live ranges...
 Propagating live ranges...
@@ -614,27 +614,27 @@ CONTROL FLOW GRAPH - PHI MEM COALESCED
 @end: scope:[]  from @2
 main: scope:[main]  from @2
   [1] phi() [ ]
-  [2] call inc param-assignment [ inc::return#0 inc::$0 ]
+  [2] call inci param-assignment [ inci::return#0 inci::$0 ]
   to:main::@1
 main::@1: scope:[main]  from main
-  [3] (byte~) main::$0 ← (byte) inc::return#0 [ main::$0 inc::$0 ]
-  [4] (byte) main::a#1 ← (byte) 4 + (byte~) main::$0 [ main::a#1 inc::$0 ]
-  [5] call inc param-assignment [ inc::return#0 main::a#1 ]
+  [3] (byte~) main::$0 ← (byte) inci::return#0 [ main::$0 inci::$0 ]
+  [4] (byte) main::a#1 ← (byte) 4 + (byte~) main::$0 [ main::a#1 inci::$0 ]
+  [5] call inci param-assignment [ inci::return#0 main::a#1 ]
   to:main::@2
 main::@2: scope:[main]  from main::@1
-  [6] (byte~) main::$2 ← (byte) inc::return#0 [ main::a#1 main::$2 ]
+  [6] (byte~) main::$2 ← (byte) inci::return#0 [ main::a#1 main::$2 ]
   [7] (byte) main::a#2 ← (byte) main::a#1 + (byte~) main::$2 [ ]
   to:main::@return
 main::@return: scope:[main]  from main::@2
   [8] return  [ ]
   to:@return
-inc: scope:[inc]  from main main::@1
-  [9] (byte) i#10 ← phi( main/(byte) 0 main::@1/(byte~) inc::$0 ) [ i#10 ]
-  [10] (byte~) inc::$0 ← (byte) i#10 + (byte) 7 [ inc::$0 ]
-  [11] (byte) inc::return#0 ← (byte~) inc::$0 [ inc::return#0 inc::$0 ]
-  to:inc::@return
-inc::@return: scope:[inc]  from inc
-  [12] return  [ inc::return#0 inc::$0 ]
+inci: scope:[inci]  from main main::@1
+  [9] (byte) i#10 ← phi( main/(byte) 0 main::@1/(byte~) inci::$0 ) [ i#10 ]
+  [10] (byte~) inci::$0 ← (byte) i#10 + (byte) 7 [ inci::$0 ]
+  [11] (byte) inci::return#0 ← (byte~) inci::$0 [ inci::return#0 inci::$0 ]
+  to:inci::@return
+inci::@return: scope:[inci]  from inci
+  [12] return  [ inci::return#0 inci::$0 ]
   to:@return
 
 DOMINATORS
@@ -645,24 +645,24 @@ main dominated by  @2 @begin main
 main::@1 dominated by  @2 @begin main::@1 main 
 main::@2 dominated by  @2 @begin main::@2 main::@1 main 
 main::@return dominated by  @2 main::@return @begin main::@2 main::@1 main 
-inc dominated by  @2 inc @begin main 
-inc::@return dominated by  @2 inc @begin inc::@return main 
+inci dominated by  @2 inci @begin main 
+inci::@return dominated by  @2 inci @begin inci::@return main 
 
 NATURAL LOOPS
 
 Found 0 loops in scope []
 Found 0 loops in scope [main]
-Found 0 loops in scope [inc]
+Found 0 loops in scope [inci]
 NATURAL LOOPS WITH DEPTH
 
 
 VARIABLE REGISTER WEIGHTS
 (byte) i
 (byte) i#10 4.0
-(byte()) inc()
-(byte~) inc::$0 1.0
-(byte) inc::return
-(byte) inc::return#0 1.5
+(byte()) inci()
+(byte~) inci::$0 1.0
+(byte) inci::return
+(byte) inci::return#0 1.5
 (void()) main()
 (byte~) main::$0 4.0
 (byte~) main::$2 4.0
@@ -671,25 +671,25 @@ VARIABLE REGISTER WEIGHTS
 (byte) main::a#2 20.0
 
 Initial phi equivalence classes
-[ i#10 inc::$0 ]
+[ i#10 inci::$0 ]
 Added variable main::$0 to zero page equivalence class [ main::$0 ]
 Added variable main::a#1 to zero page equivalence class [ main::a#1 ]
 Added variable main::$2 to zero page equivalence class [ main::$2 ]
 Added variable main::a#2 to zero page equivalence class [ main::a#2 ]
-Added variable inc::return#0 to zero page equivalence class [ inc::return#0 ]
+Added variable inci::return#0 to zero page equivalence class [ inci::return#0 ]
 Complete equivalence classes
-[ i#10 inc::$0 ]
+[ i#10 inci::$0 ]
 [ main::$0 ]
 [ main::a#1 ]
 [ main::$2 ]
 [ main::a#2 ]
-[ inc::return#0 ]
-Allocated zp ZP_BYTE:2 [ i#10 inc::$0 ]
+[ inci::return#0 ]
+Allocated zp ZP_BYTE:2 [ i#10 inci::$0 ]
 Allocated zp ZP_BYTE:3 [ main::$0 ]
 Allocated zp ZP_BYTE:4 [ main::a#1 ]
 Allocated zp ZP_BYTE:5 [ main::$2 ]
 Allocated zp ZP_BYTE:6 [ main::a#2 ]
-Allocated zp ZP_BYTE:7 [ inc::return#0 ]
+Allocated zp ZP_BYTE:7 [ inci::return#0 ]
 INITIAL ASM
 //SEG0 Basic Upstart
 .pc = $801 "Basic"
@@ -715,34 +715,34 @@ main: {
     .label _2 = 5
     .label a = 4
     .label a_2 = 6
-  //SEG8 [2] call inc param-assignment [ inc::return#0 inc::$0 ]
-  //SEG9 [9] phi from main to inc [phi:main->inc]
-  inc_from_main:
-  //SEG10 [9] phi (byte) i#10 = (byte) 0 [phi:main->inc#0] -- zpby1=coby1 
+  //SEG8 [2] call inci param-assignment [ inci::return#0 inci::$0 ]
+  //SEG9 [9] phi from main to inci [phi:main->inci]
+  inci_from_main:
+  //SEG10 [9] phi (byte) i#10 = (byte) 0 [phi:main->inci#0] -- zpby1=coby1 
     lda #0
     sta i
-    jsr inc
+    jsr inci
     jmp b1
   //SEG11 main::@1
   b1:
-  //SEG12 [3] (byte~) main::$0 ← (byte) inc::return#0 [ main::$0 inc::$0 ] -- zpby1=zpby2 
-    lda inc.return
+  //SEG12 [3] (byte~) main::$0 ← (byte) inci::return#0 [ main::$0 inci::$0 ] -- zpby1=zpby2 
+    lda inci.return
     sta _0
-  //SEG13 [4] (byte) main::a#1 ← (byte) 4 + (byte~) main::$0 [ main::a#1 inc::$0 ] -- zpby1=coby1_plus_zpby2 
+  //SEG13 [4] (byte) main::a#1 ← (byte) 4 + (byte~) main::$0 [ main::a#1 inci::$0 ] -- zpby1=coby1_plus_zpby2 
     lda _0
     clc
     adc #4
     sta a
-  //SEG14 [5] call inc param-assignment [ inc::return#0 main::a#1 ]
-  //SEG15 [9] phi from main::@1 to inc [phi:main::@1->inc]
-  inc_from_b1:
-  //SEG16 [9] phi (byte) i#10 = (byte~) inc::$0 [phi:main::@1->inc#0] -- register_copy 
-    jsr inc
+  //SEG14 [5] call inci param-assignment [ inci::return#0 main::a#1 ]
+  //SEG15 [9] phi from main::@1 to inci [phi:main::@1->inci]
+  inci_from_b1:
+  //SEG16 [9] phi (byte) i#10 = (byte~) inci::$0 [phi:main::@1->inci#0] -- register_copy 
+    jsr inci
     jmp b2
   //SEG17 main::@2
   b2:
-  //SEG18 [6] (byte~) main::$2 ← (byte) inc::return#0 [ main::a#1 main::$2 ] -- zpby1=zpby2 
-    lda inc.return
+  //SEG18 [6] (byte~) main::$2 ← (byte) inci::return#0 [ main::a#1 main::$2 ] -- zpby1=zpby2 
+    lda inci.return
     sta _2
   //SEG19 [7] (byte) main::a#2 ← (byte) main::a#1 + (byte~) main::$2 [ ] -- zpby1=zpby2_plus_zpby3 
     lda a
@@ -755,48 +755,48 @@ main: {
   //SEG21 [8] return  [ ]
     rts
 }
-//SEG22 inc
-inc: {
+//SEG22 inci
+inci: {
     .label _0 = 2
     .label return = 7
-  //SEG23 [10] (byte~) inc::$0 ← (byte) i#10 + (byte) 7 [ inc::$0 ] -- zpby1=zpby1_plus_coby1 
+  //SEG23 [10] (byte~) inci::$0 ← (byte) i#10 + (byte) 7 [ inci::$0 ] -- zpby1=zpby1_plus_coby1 
     lda _0
     clc
     adc #7
     sta _0
-  //SEG24 [11] (byte) inc::return#0 ← (byte~) inc::$0 [ inc::return#0 inc::$0 ] -- zpby1=zpby2 
+  //SEG24 [11] (byte) inci::return#0 ← (byte~) inci::$0 [ inci::return#0 inci::$0 ] -- zpby1=zpby2 
     lda _0
     sta return
     jmp breturn
-  //SEG25 inc::@return
+  //SEG25 inci::@return
   breturn:
-  //SEG26 [12] return  [ inc::return#0 inc::$0 ]
+  //SEG26 [12] return  [ inci::return#0 inci::$0 ]
     rts
 }
 
 REGISTER UPLIFT POTENTIAL REGISTERS
-Statement [4] (byte) main::a#1 ← (byte) 4 + (byte~) main::$0 [ main::a#1 inc::$0 ] always clobbers reg byte a 
-Removing always clobbered register reg byte a as potential for zp ZP_BYTE:2 [ i#10 inc::$0 ]
-Statement [10] (byte~) inc::$0 ← (byte) i#10 + (byte) 7 [ inc::$0 ] always clobbers reg byte a 
+Statement [4] (byte) main::a#1 ← (byte) 4 + (byte~) main::$0 [ main::a#1 inci::$0 ] always clobbers reg byte a 
+Removing always clobbered register reg byte a as potential for zp ZP_BYTE:2 [ i#10 inci::$0 ]
+Statement [10] (byte~) inci::$0 ← (byte) i#10 + (byte) 7 [ inci::$0 ] always clobbers reg byte a 
 Removing always clobbered register reg byte a as potential for zp ZP_BYTE:4 [ main::a#1 ]
-Statement [4] (byte) main::a#1 ← (byte) 4 + (byte~) main::$0 [ main::a#1 inc::$0 ] always clobbers reg byte a 
+Statement [4] (byte) main::a#1 ← (byte) 4 + (byte~) main::$0 [ main::a#1 inci::$0 ] always clobbers reg byte a 
 Statement [7] (byte) main::a#2 ← (byte) main::a#1 + (byte~) main::$2 [ ] always clobbers reg byte a 
-Statement [10] (byte~) inc::$0 ← (byte) i#10 + (byte) 7 [ inc::$0 ] always clobbers reg byte a 
-Potential registers zp ZP_BYTE:2 [ i#10 inc::$0 ] : zp ZP_BYTE:2 , reg byte x , reg byte y , 
+Statement [10] (byte~) inci::$0 ← (byte) i#10 + (byte) 7 [ inci::$0 ] always clobbers reg byte a 
+Potential registers zp ZP_BYTE:2 [ i#10 inci::$0 ] : zp ZP_BYTE:2 , reg byte x , reg byte y , 
 Potential registers zp ZP_BYTE:3 [ main::$0 ] : zp ZP_BYTE:3 , reg byte a , reg byte x , reg byte y , 
 Potential registers zp ZP_BYTE:4 [ main::a#1 ] : zp ZP_BYTE:4 , reg byte x , reg byte y , 
 Potential registers zp ZP_BYTE:5 [ main::$2 ] : zp ZP_BYTE:5 , reg byte a , reg byte x , reg byte y , 
 Potential registers zp ZP_BYTE:6 [ main::a#2 ] : zp ZP_BYTE:6 , reg byte a , reg byte x , reg byte y , 
-Potential registers zp ZP_BYTE:7 [ inc::return#0 ] : zp ZP_BYTE:7 , reg byte a , reg byte x , reg byte y , 
+Potential registers zp ZP_BYTE:7 [ inci::return#0 ] : zp ZP_BYTE:7 , reg byte a , reg byte x , reg byte y , 
 
 REGISTER UPLIFT SCOPES
 Uplift Scope [main] 20: zp ZP_BYTE:6 [ main::a#2 ] 4: zp ZP_BYTE:3 [ main::$0 ] 4: zp ZP_BYTE:5 [ main::$2 ] 1.33: zp ZP_BYTE:4 [ main::a#1 ] 
-Uplift Scope [] 5: zp ZP_BYTE:2 [ i#10 inc::$0 ] 
-Uplift Scope [inc] 1.5: zp ZP_BYTE:7 [ inc::return#0 ] 
+Uplift Scope [] 5: zp ZP_BYTE:2 [ i#10 inci::$0 ] 
+Uplift Scope [inci] 1.5: zp ZP_BYTE:7 [ inci::return#0 ] 
 
 Uplifting [main] best 114 combination reg byte a [ main::a#2 ] reg byte a [ main::$0 ] reg byte a [ main::$2 ] zp ZP_BYTE:4 [ main::a#1 ] 
-Uplifting [] best 106 combination reg byte x [ i#10 inc::$0 ] 
-Uplifting [inc] best 99 combination reg byte a [ inc::return#0 ] 
+Uplifting [] best 106 combination reg byte x [ i#10 inci::$0 ] 
+Uplifting [inci] best 99 combination reg byte a [ inci::return#0 ] 
 Attempting to uplift remaining variables inzp ZP_BYTE:4 [ main::a#1 ]
 Uplifting [main] best 99 combination zp ZP_BYTE:4 [ main::a#1 ] 
 Allocated (was zp ZP_BYTE:4) zp ZP_BYTE:2 [ main::a#1 ]
@@ -826,29 +826,29 @@ bend:
 //SEG7 main
 main: {
     .label a = 2
-  //SEG8 [2] call inc param-assignment [ inc::return#0 inc::$0 ]
-  //SEG9 [9] phi from main to inc [phi:main->inc]
-  inc_from_main:
-  //SEG10 [9] phi (byte) i#10 = (byte) 0 [phi:main->inc#0] -- xby=coby1 
+  //SEG8 [2] call inci param-assignment [ inci::return#0 inci::$0 ]
+  //SEG9 [9] phi from main to inci [phi:main->inci]
+  inci_from_main:
+  //SEG10 [9] phi (byte) i#10 = (byte) 0 [phi:main->inci#0] -- xby=coby1 
     ldx #0
-    jsr inc
+    jsr inci
   //SEG11 main::@1
   b1:
-  //SEG12 [3] (byte~) main::$0 ← (byte) inc::return#0 [ main::$0 inc::$0 ]
-    // (byte~) main::$0 = (byte) inc::return#0  // register copy reg byte a
-  //SEG13 [4] (byte) main::a#1 ← (byte) 4 + (byte~) main::$0 [ main::a#1 inc::$0 ] -- zpby1=coby1_plus_aby 
+  //SEG12 [3] (byte~) main::$0 ← (byte) inci::return#0 [ main::$0 inci::$0 ]
+    // (byte~) main::$0 = (byte) inci::return#0  // register copy reg byte a
+  //SEG13 [4] (byte) main::a#1 ← (byte) 4 + (byte~) main::$0 [ main::a#1 inci::$0 ] -- zpby1=coby1_plus_aby 
     clc
     adc #4
     sta a
-  //SEG14 [5] call inc param-assignment [ inc::return#0 main::a#1 ]
-  //SEG15 [9] phi from main::@1 to inc [phi:main::@1->inc]
-  inc_from_b1:
-  //SEG16 [9] phi (byte) i#10 = (byte~) inc::$0 [phi:main::@1->inc#0] -- register_copy 
-    jsr inc
+  //SEG14 [5] call inci param-assignment [ inci::return#0 main::a#1 ]
+  //SEG15 [9] phi from main::@1 to inci [phi:main::@1->inci]
+  inci_from_b1:
+  //SEG16 [9] phi (byte) i#10 = (byte~) inci::$0 [phi:main::@1->inci#0] -- register_copy 
+    jsr inci
   //SEG17 main::@2
   b2:
-  //SEG18 [6] (byte~) main::$2 ← (byte) inc::return#0 [ main::a#1 main::$2 ]
-    // (byte~) main::$2 = (byte) inc::return#0  // register copy reg byte a
+  //SEG18 [6] (byte~) main::$2 ← (byte) inci::return#0 [ main::a#1 main::$2 ]
+    // (byte~) main::$2 = (byte) inci::return#0  // register copy reg byte a
   //SEG19 [7] (byte) main::a#2 ← (byte) main::a#1 + (byte~) main::$2 [ ] -- aby=zpby1_plus_aby 
     clc
     adc a
@@ -857,18 +857,18 @@ main: {
   //SEG21 [8] return  [ ]
     rts
 }
-//SEG22 inc
-inc: {
-  //SEG23 [10] (byte~) inc::$0 ← (byte) i#10 + (byte) 7 [ inc::$0 ] -- xby=xby_plus_coby1 
+//SEG22 inci
+inci: {
+  //SEG23 [10] (byte~) inci::$0 ← (byte) i#10 + (byte) 7 [ inci::$0 ] -- xby=xby_plus_coby1 
     txa
     clc
     adc #7
     tax
-  //SEG24 [11] (byte) inc::return#0 ← (byte~) inc::$0 [ inc::return#0 inc::$0 ] -- aby=xby 
+  //SEG24 [11] (byte) inci::return#0 ← (byte~) inci::$0 [ inci::return#0 inci::$0 ] -- aby=xby 
     txa
-  //SEG25 inc::@return
+  //SEG25 inci::@return
   breturn:
-  //SEG26 [12] return  [ inc::return#0 inc::$0 ]
+  //SEG26 [12] return  [ inci::return#0 inci::$0 ]
     rts
 }
 
@@ -892,29 +892,29 @@ bend:
 //SEG7 main
 main: {
     .label a = 2
-  //SEG8 [2] call inc param-assignment [ inc::return#0 inc::$0 ]
-  //SEG9 [9] phi from main to inc [phi:main->inc]
-  inc_from_main:
-  //SEG10 [9] phi (byte) i#10 = (byte) 0 [phi:main->inc#0] -- xby=coby1 
+  //SEG8 [2] call inci param-assignment [ inci::return#0 inci::$0 ]
+  //SEG9 [9] phi from main to inci [phi:main->inci]
+  inci_from_main:
+  //SEG10 [9] phi (byte) i#10 = (byte) 0 [phi:main->inci#0] -- xby=coby1 
     ldx #0
-    jsr inc
+    jsr inci
   //SEG11 main::@1
   b1:
-  //SEG12 [3] (byte~) main::$0 ← (byte) inc::return#0 [ main::$0 inc::$0 ]
-    // (byte~) main::$0 = (byte) inc::return#0  // register copy reg byte a
-  //SEG13 [4] (byte) main::a#1 ← (byte) 4 + (byte~) main::$0 [ main::a#1 inc::$0 ] -- zpby1=coby1_plus_aby 
+  //SEG12 [3] (byte~) main::$0 ← (byte) inci::return#0 [ main::$0 inci::$0 ]
+    // (byte~) main::$0 = (byte) inci::return#0  // register copy reg byte a
+  //SEG13 [4] (byte) main::a#1 ← (byte) 4 + (byte~) main::$0 [ main::a#1 inci::$0 ] -- zpby1=coby1_plus_aby 
     clc
     adc #4
     sta a
-  //SEG14 [5] call inc param-assignment [ inc::return#0 main::a#1 ]
-  //SEG15 [9] phi from main::@1 to inc [phi:main::@1->inc]
-  inc_from_b1:
-  //SEG16 [9] phi (byte) i#10 = (byte~) inc::$0 [phi:main::@1->inc#0] -- register_copy 
-    jsr inc
+  //SEG14 [5] call inci param-assignment [ inci::return#0 main::a#1 ]
+  //SEG15 [9] phi from main::@1 to inci [phi:main::@1->inci]
+  inci_from_b1:
+  //SEG16 [9] phi (byte) i#10 = (byte~) inci::$0 [phi:main::@1->inci#0] -- register_copy 
+    jsr inci
   //SEG17 main::@2
   b2:
-  //SEG18 [6] (byte~) main::$2 ← (byte) inc::return#0 [ main::a#1 main::$2 ]
-    // (byte~) main::$2 = (byte) inc::return#0  // register copy reg byte a
+  //SEG18 [6] (byte~) main::$2 ← (byte) inci::return#0 [ main::a#1 main::$2 ]
+    // (byte~) main::$2 = (byte) inci::return#0  // register copy reg byte a
   //SEG19 [7] (byte) main::a#2 ← (byte) main::a#1 + (byte~) main::$2 [ ] -- aby=zpby1_plus_aby 
     clc
     adc a
@@ -923,26 +923,26 @@ main: {
   //SEG21 [8] return  [ ]
     rts
 }
-//SEG22 inc
-inc: {
-  //SEG23 [10] (byte~) inc::$0 ← (byte) i#10 + (byte) 7 [ inc::$0 ] -- xby=xby_plus_coby1 
+//SEG22 inci
+inci: {
+  //SEG23 [10] (byte~) inci::$0 ← (byte) i#10 + (byte) 7 [ inci::$0 ] -- xby=xby_plus_coby1 
     txa
     clc
     adc #7
     tax
-  //SEG24 [11] (byte) inc::return#0 ← (byte~) inc::$0 [ inc::return#0 inc::$0 ] -- aby=xby 
+  //SEG24 [11] (byte) inci::return#0 ← (byte~) inci::$0 [ inci::return#0 inci::$0 ] -- aby=xby 
     txa
-  //SEG25 inc::@return
+  //SEG25 inci::@return
   breturn:
-  //SEG26 [12] return  [ inc::return#0 inc::$0 ]
+  //SEG26 [12] return  [ inci::return#0 inci::$0 ]
     rts
 }
 
 Removing instruction b2:
 Removing instruction bend:
-Removing instruction inc_from_main:
+Removing instruction inci_from_main:
 Removing instruction b1:
-Removing instruction inc_from_b1:
+Removing instruction inci_from_b1:
 Removing instruction b2:
 Removing instruction breturn:
 Removing instruction breturn:
@@ -962,25 +962,25 @@ ASSEMBLER
 //SEG7 main
 main: {
     .label a = 2
-  //SEG8 [2] call inc param-assignment [ inc::return#0 inc::$0 ]
-  //SEG9 [9] phi from main to inc [phi:main->inc]
-  //SEG10 [9] phi (byte) i#10 = (byte) 0 [phi:main->inc#0] -- xby=coby1 
+  //SEG8 [2] call inci param-assignment [ inci::return#0 inci::$0 ]
+  //SEG9 [9] phi from main to inci [phi:main->inci]
+  //SEG10 [9] phi (byte) i#10 = (byte) 0 [phi:main->inci#0] -- xby=coby1 
     ldx #0
-    jsr inc
+    jsr inci
   //SEG11 main::@1
-  //SEG12 [3] (byte~) main::$0 ← (byte) inc::return#0 [ main::$0 inc::$0 ]
-    // (byte~) main::$0 = (byte) inc::return#0  // register copy reg byte a
-  //SEG13 [4] (byte) main::a#1 ← (byte) 4 + (byte~) main::$0 [ main::a#1 inc::$0 ] -- zpby1=coby1_plus_aby 
+  //SEG12 [3] (byte~) main::$0 ← (byte) inci::return#0 [ main::$0 inci::$0 ]
+    // (byte~) main::$0 = (byte) inci::return#0  // register copy reg byte a
+  //SEG13 [4] (byte) main::a#1 ← (byte) 4 + (byte~) main::$0 [ main::a#1 inci::$0 ] -- zpby1=coby1_plus_aby 
     clc
     adc #4
     sta a
-  //SEG14 [5] call inc param-assignment [ inc::return#0 main::a#1 ]
-  //SEG15 [9] phi from main::@1 to inc [phi:main::@1->inc]
-  //SEG16 [9] phi (byte) i#10 = (byte~) inc::$0 [phi:main::@1->inc#0] -- register_copy 
-    jsr inc
+  //SEG14 [5] call inci param-assignment [ inci::return#0 main::a#1 ]
+  //SEG15 [9] phi from main::@1 to inci [phi:main::@1->inci]
+  //SEG16 [9] phi (byte) i#10 = (byte~) inci::$0 [phi:main::@1->inci#0] -- register_copy 
+    jsr inci
   //SEG17 main::@2
-  //SEG18 [6] (byte~) main::$2 ← (byte) inc::return#0 [ main::a#1 main::$2 ]
-    // (byte~) main::$2 = (byte) inc::return#0  // register copy reg byte a
+  //SEG18 [6] (byte~) main::$2 ← (byte) inci::return#0 [ main::a#1 main::$2 ]
+    // (byte~) main::$2 = (byte) inci::return#0  // register copy reg byte a
   //SEG19 [7] (byte) main::a#2 ← (byte) main::a#1 + (byte~) main::$2 [ ] -- aby=zpby1_plus_aby 
     clc
     adc a
@@ -988,17 +988,17 @@ main: {
   //SEG21 [8] return  [ ]
     rts
 }
-//SEG22 inc
-inc: {
-  //SEG23 [10] (byte~) inc::$0 ← (byte) i#10 + (byte) 7 [ inc::$0 ] -- xby=xby_plus_coby1 
+//SEG22 inci
+inci: {
+  //SEG23 [10] (byte~) inci::$0 ← (byte) i#10 + (byte) 7 [ inci::$0 ] -- xby=xby_plus_coby1 
     txa
     clc
     adc #7
     tax
-  //SEG24 [11] (byte) inc::return#0 ← (byte~) inc::$0 [ inc::return#0 inc::$0 ] -- aby=xby 
+  //SEG24 [11] (byte) inci::return#0 ← (byte~) inci::$0 [ inci::return#0 inci::$0 ] -- aby=xby 
     txa
-  //SEG25 inc::@return
-  //SEG26 [12] return  [ inc::return#0 inc::$0 ]
+  //SEG25 inci::@return
+  //SEG26 [12] return  [ inci::return#0 inci::$0 ]
     rts
 }
 
@@ -1008,11 +1008,11 @@ FINAL SYMBOL TABLE
 (label) @end
 (byte) i
 (byte) i#10 reg byte x 4.0
-(byte()) inc()
-(byte~) inc::$0 reg byte x 1.0
-(label) inc::@return
-(byte) inc::return
-(byte) inc::return#0 reg byte a 1.5
+(byte()) inci()
+(byte~) inci::$0 reg byte x 1.0
+(label) inci::@return
+(byte) inci::return
+(byte) inci::return#0 reg byte a 1.5
 (void()) main()
 (byte~) main::$0 reg byte a 4.0
 (byte~) main::$2 reg byte a 4.0
@@ -1023,12 +1023,12 @@ FINAL SYMBOL TABLE
 (byte) main::a#1 a zp ZP_BYTE:2 1.3333333333333333
 (byte) main::a#2 reg byte a 20.0
 
-reg byte x [ i#10 inc::$0 ]
+reg byte x [ i#10 inci::$0 ]
 reg byte a [ main::$0 ]
 zp ZP_BYTE:2 [ main::a#1 ]
 reg byte a [ main::$2 ]
 reg byte a [ main::a#2 ]
-reg byte a [ inc::return#0 ]
+reg byte a [ inci::return#0 ]
 
 FINAL CODE
 //SEG0 Basic Upstart
@@ -1045,25 +1045,25 @@ FINAL CODE
 //SEG7 main
 main: {
     .label a = 2
-  //SEG8 [2] call inc param-assignment [ inc::return#0 inc::$0 ]
-  //SEG9 [9] phi from main to inc [phi:main->inc]
-  //SEG10 [9] phi (byte) i#10 = (byte) 0 [phi:main->inc#0] -- xby=coby1 
+  //SEG8 [2] call inci param-assignment [ inci::return#0 inci::$0 ]
+  //SEG9 [9] phi from main to inci [phi:main->inci]
+  //SEG10 [9] phi (byte) i#10 = (byte) 0 [phi:main->inci#0] -- xby=coby1 
     ldx #0
-    jsr inc
+    jsr inci
   //SEG11 main::@1
-  //SEG12 [3] (byte~) main::$0 ← (byte) inc::return#0 [ main::$0 inc::$0 ]
-    // (byte~) main::$0 = (byte) inc::return#0  // register copy reg byte a
-  //SEG13 [4] (byte) main::a#1 ← (byte) 4 + (byte~) main::$0 [ main::a#1 inc::$0 ] -- zpby1=coby1_plus_aby 
+  //SEG12 [3] (byte~) main::$0 ← (byte) inci::return#0 [ main::$0 inci::$0 ]
+    // (byte~) main::$0 = (byte) inci::return#0  // register copy reg byte a
+  //SEG13 [4] (byte) main::a#1 ← (byte) 4 + (byte~) main::$0 [ main::a#1 inci::$0 ] -- zpby1=coby1_plus_aby 
     clc
     adc #4
     sta a
-  //SEG14 [5] call inc param-assignment [ inc::return#0 main::a#1 ]
-  //SEG15 [9] phi from main::@1 to inc [phi:main::@1->inc]
-  //SEG16 [9] phi (byte) i#10 = (byte~) inc::$0 [phi:main::@1->inc#0] -- register_copy 
-    jsr inc
+  //SEG14 [5] call inci param-assignment [ inci::return#0 main::a#1 ]
+  //SEG15 [9] phi from main::@1 to inci [phi:main::@1->inci]
+  //SEG16 [9] phi (byte) i#10 = (byte~) inci::$0 [phi:main::@1->inci#0] -- register_copy 
+    jsr inci
   //SEG17 main::@2
-  //SEG18 [6] (byte~) main::$2 ← (byte) inc::return#0 [ main::a#1 main::$2 ]
-    // (byte~) main::$2 = (byte) inc::return#0  // register copy reg byte a
+  //SEG18 [6] (byte~) main::$2 ← (byte) inci::return#0 [ main::a#1 main::$2 ]
+    // (byte~) main::$2 = (byte) inci::return#0  // register copy reg byte a
   //SEG19 [7] (byte) main::a#2 ← (byte) main::a#1 + (byte~) main::$2 [ ] -- aby=zpby1_plus_aby 
     clc
     adc a
@@ -1071,17 +1071,17 @@ main: {
   //SEG21 [8] return  [ ]
     rts
 }
-//SEG22 inc
-inc: {
-  //SEG23 [10] (byte~) inc::$0 ← (byte) i#10 + (byte) 7 [ inc::$0 ] -- xby=xby_plus_coby1 
+//SEG22 inci
+inci: {
+  //SEG23 [10] (byte~) inci::$0 ← (byte) i#10 + (byte) 7 [ inci::$0 ] -- xby=xby_plus_coby1 
     txa
     clc
     adc #7
     tax
-  //SEG24 [11] (byte) inc::return#0 ← (byte~) inc::$0 [ inc::return#0 inc::$0 ] -- aby=xby 
+  //SEG24 [11] (byte) inci::return#0 ← (byte~) inci::$0 [ inci::return#0 inci::$0 ] -- aby=xby 
     txa
-  //SEG25 inc::@return
-  //SEG26 [12] return  [ inc::return#0 inc::$0 ]
+  //SEG25 inci::@return
+  //SEG26 [12] return  [ inci::return#0 inci::$0 ]
     rts
 }
 

@@ -5,16 +5,16 @@
 main: {
     .label a = 2
     ldx #0
-    jsr inc
+    jsr inci
     clc
     adc #4
     sta a
-    jsr inc
+    jsr inci
     clc
     adc a
     rts
 }
-inc: {
+inci: {
     txa
     clc
     adc #7

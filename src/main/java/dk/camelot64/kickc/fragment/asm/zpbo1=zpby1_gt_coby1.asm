@@ -1,11 +1,11 @@
   LDA {zpby1}
   CMP #{coby1}
-  BEQ !f+
-  BCS !t+
-!f:
+  BEQ !+
+  BCS !++
+!:
   LDA #0
-  JMP !d+
-!t:
+  JMP !++
+!:
   LDA #$ff
-!d:
+!:
   STA {zpbo1}

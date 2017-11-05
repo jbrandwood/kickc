@@ -5,6 +5,10 @@ file :
     stmtSeq EOF
     ;
 
+asmFile :
+    asmLines EOF
+    ;
+
 stmtSeq
     : stmt+
     ;
@@ -20,6 +24,7 @@ stmt
     | 'do' stmt 'while' '(' expr ')' #stmtDoWhile
     | 'for' '(' forDeclaration? forIteration ')' stmt  #stmtFor
     | 'return' expr? ';' #stmtReturn
+    | 'asm' '{' asmLines '}' ';' #stmtAsm
     ;
 
 forDeclaration
@@ -63,7 +68,7 @@ expr
     | expr '[' expr ']' #exprArray
     | ('--' | '++' ) expr #exprPreMod
     | expr ('--' | '++' )#exprPostMod
-    | ('+' | '-' | 'not' | '!' | '&' | '*' | '~' | '<' | '>') expr #exprUnary
+    | ('+' | '-' | '!' | '&' | '*' | '~' | '<' | '>') expr #exprUnary
     | expr ('>>' | '<<' ) expr #exprBinary
     | expr ('*' | '/' | '%' ) expr #exprBinary
     | expr ( '+' | '-')  expr #exprBinary
@@ -71,8 +76,8 @@ expr
     | expr ( '&' ) expr #exprBinary
     | expr ( '^' ) expr #exprBinary
     | expr ( '|' ) expr #exprBinary
-    | expr ( 'and' | '&&' )  expr #exprBinary
-    | expr ( 'or' | '||' )  expr #exprBinary
+    | expr ( '&&' )  expr #exprBinary
+    | expr ( '||' )  expr #exprBinary
     | NAME  #exprId
     | NUMBER #exprNumber
     | STRING #exprString
@@ -82,6 +87,50 @@ expr
 
 parameterList
     : expr (',' expr)*
+    ;
+
+asmLines
+    : asmLine ( asmLine )*
+    ;
+
+asmLine
+    : asmLabel
+    | asmInstruction
+    ;
+
+asmLabel
+    : NAME ':'
+    | '!' ':'
+    ;
+
+asmInstruction
+    : MNEMONIC (asmParamMode)?
+    ;
+
+asmParamMode
+    : asmExpr #asmModeAbs
+    | '#' asmExpr #asmModeImm
+    | asmExpr ',' NAME #asmModeAbsXY
+    | '(' asmExpr ')' ',' NAME #asmModeIndIdxXY
+    | '(' asmExpr ',' NAME ')' #asmModeIdxIndXY
+    | '(' asmExpr ')'  #asmModeInd
+    ;
+
+asmExpr
+    : ('+' | '-' | '<' | '>') asmExpr #asmExprUnary
+    | asmExpr ('*' | '/' ) asmExpr #asmExprBinary
+    | asmExpr ( '+' | '-')  asmExpr #asmExprBinary
+    | NAME #asmExprLabel
+    | ASMREL #asmExprLabelRel
+    | '{' NAME '}' #asmExprReplace
+    | NUMBER #asmExprInt
+    ;
+
+MNEMONIC:
+    'brk' | 'ora' | 'kil' | 'slo' | 'nop' | 'asl' | 'php' | 'anc' | 'bpl' | 'clc' | 'jsr' | 'and' | 'rla' | 'bit' | 'rol' | 'pla' | 'plp' | 'bmi' | 'sec' |
+    'rti' | 'eor' | 'sre' | 'lsr' | 'pha' | 'alr' | 'jmp' | 'bvc' | 'cli' | 'rts' | 'adc' | 'rra' | 'bvs' | 'sei' | 'sax' | 'sty' | 'sta' | 'stx' | 'dey' |
+    'txa' | 'xaa' | 'bcc' | 'ahx' | 'tya' | 'txs' | 'tas' | 'shy' | 'shx' | 'ldy' | 'lda' | 'ldx' | 'lax' | 'tay' | 'tax' | 'bcs' | 'clv' | 'tsx' | 'las' |
+    'cpy' | 'cmp' | 'cpx' | 'dcp' | 'dec' | 'inc' | 'axs' | 'bne' | 'cld' | 'sbc' | 'isc' | 'inx' | 'beq' | 'sed' | 'dex' | 'iny'
     ;
 
 SIMPLETYPE: 'byte' | 'word' | 'boolean' | 'void' ;
@@ -103,6 +152,9 @@ fragment HEXDIGIT : [0-9a-fA-F];
 NAME : NAME_START NAME_CHAR* ;
 fragment NAME_START : [a-zA-Z_];
 fragment NAME_CHAR : [a-zA-Z0-9_];
+ASMREL: '!' [+-]* ;
+
+
 WS : [ \t\r\n]+ -> skip ;
 COMMENT_LINE : '//' ~[\r\n]* -> skip ;
 COMMENT_BLOCK : '/*' .*? '*/' -> skip;

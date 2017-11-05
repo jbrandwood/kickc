@@ -2,9 +2,9 @@ package dk.camelot64.kickc.fragment;
 
 import dk.camelot64.kickc.NumberParser;
 import dk.camelot64.kickc.asm.*;
-import dk.camelot64.kickc.asm.parser.Asm6502BaseVisitor;
-import dk.camelot64.kickc.asm.parser.Asm6502Parser;
 import dk.camelot64.kickc.model.*;
+import dk.camelot64.kickc.parser.KickCBaseVisitor;
+import dk.camelot64.kickc.parser.KickCParser;
 
 import java.util.Map;
 
@@ -13,26 +13,36 @@ import java.util.Map;
  */
 public class AsmFragment {
 
-   /** The symbol table. */
+   /**
+    * The symbol table.
+    */
    private Program program;
 
-   /** The name of the fragment used in error messages. */
+   /**
+    * The name of the fragment used in error messages.
+    */
    private String name;
 
-   /** The fragment template ASM code. */
-   private Asm6502Parser.FileContext fragmentFile;
+   /**
+    * The fragment template ASM code.
+    */
+   private KickCParser.AsmFileContext fragmentFile;
 
-   /** Binding of named values in the fragment to values (constants, variables, ...) . */
+   /**
+    * Binding of named values in the fragment to values (constants, variables, ...) .
+    */
    private Map<String, Value> bindings;
 
-   /** The scope containing the fragment. Used when referencing symbols defined in other scopes. */
+   /**
+    * The scope containing the fragment. Used when referencing symbols defined in other scopes.
+    */
    private ScopeRef codeScopeRef;
 
    public AsmFragment(
          Program program,
          String name,
          ScopeRef codeScopeRef,
-         Asm6502Parser.FileContext fragmentFile,
+         KickCParser.AsmFileContext fragmentFile,
          Map<String, Value> bindings) {
       this.program = program;
       this.name = name;
@@ -78,17 +88,16 @@ public class AsmFragment {
          String param = ((Label) boundValue).getLocalName().replace('@', 'b').replace(':', '_').replace("$", "_");
          return new AsmParameter(param, false);
       } else {
-          throw new RuntimeException("Bound Value Type not implemented " + boundValue);
+         throw new RuntimeException("Bound Value Type not implemented " + boundValue);
       }
    }
 
    /**
     * Get ASM code for a constant value
     *
-    * @param value The constant value
+    * @param value      The constant value
     * @param precedence The precedence of the outer expression operator. Used to generate perenthesis when needed.
-    * @param codeScope The scope containing the code being generated. Used for adding scope to the name when needed (eg. line.x1 when referencing x1 variable inside line scope from outside line scope).
-    *
+    * @param codeScope  The scope containing the code being generated. Used for adding scope to the name when needed (eg. line.x1 when referencing x1 variable inside line scope from outside line scope).
     * @return The ASM string representing the constant value
     */
    public static String getAsmConstant(Program program, ConstantValue value, int precedence, ScopeRef codeScope) {
@@ -99,46 +108,47 @@ public class AsmFragment {
       } else if (value instanceof ConstantInteger) {
          return getAsmNumber(((ConstantInteger) value).getNumber());
       } else if (value instanceof ConstantChar) {
-         return "'"+((ConstantChar) value).getValue()+"'";
+         return "'" + ((ConstantChar) value).getValue() + "'";
       } else if (value instanceof ConstantString) {
-         return "\""+((ConstantString) value).getValue()+"\"";
+         return "\"" + ((ConstantString) value).getValue() + "\"";
       } else if (value instanceof ConstantUnary) {
          ConstantUnary unary = (ConstantUnary) value;
          Operator operator = unary.getOperator();
-         boolean parenthesis = operator.getPrecedence()>precedence;
+         boolean parenthesis = operator.getPrecedence() > precedence;
          return
                (parenthesis ? "(" : "") +
                      operator.getOperator() +
                      getAsmConstant(program, unary.getOperand(), operator.getPrecedence(), codeScope) +
-                     (parenthesis? ")" : "");
+                     (parenthesis ? ")" : "");
       } else if (value instanceof ConstantBinary) {
          ConstantBinary binary = (ConstantBinary) value;
          Operator operator = binary.getOperator();
-         boolean parenthesis = operator.getPrecedence()>precedence;
+         boolean parenthesis = operator.getPrecedence() > precedence;
          return
-               (parenthesis? "(" : "") +
+               (parenthesis ? "(" : "") +
                      getAsmConstant(program, binary.getLeft(), operator.getPrecedence(), codeScope) +
                      operator.getOperator() +
                      getAsmConstant(program, binary.getRight(), operator.getPrecedence(), codeScope) +
-                     (parenthesis? ")" : "");
+                     (parenthesis ? ")" : "");
       } else {
          throw new RuntimeException("Constant type not supported " + value);
       }
    }
 
    public static String getAsmNumber(Number number) {
-      if(number instanceof Integer) {
-         if(number.intValue()>=0 && number.intValue()<=9) {
+      if (number instanceof Integer) {
+         if (number.intValue() >= 0 && number.intValue() <= 9) {
             return String.format("%d", number.intValue());
          } else {
             return String.format("$%x", number);
          }
       }
-      throw new RuntimeException("Unsupported number type "+number);
+      throw new RuntimeException("Unsupported number type " + number);
    }
 
    /**
     * Get the ASM parameter for a specific bound variable
+    *
     * @param boundVar The variable
     * @return The ASM parameter to use in the ASM code
     */
@@ -150,6 +160,7 @@ public class AsmFragment {
 
    /**
     * Get the ASM parameter for a specific bound constant
+    *
     * @param boundVar The constant
     * @return The ASM parameter to use in the ASM code
     */
@@ -161,8 +172,9 @@ public class AsmFragment {
 
    /**
     * Get the ASM parameter for a specific bound constant/ variable
-    * @param varScopeRef The scope containing the var/const
-    * @param asmName The ASM name of the variable (local name or specific ASM name).
+    *
+    * @param varScopeRef  The scope containing the var/const
+    * @param asmName      The ASM name of the variable (local name or specific ASM name).
     * @param codeScopeRef The scope containing the code being generated. Used for adding scope to the name when needed (eg. line.x1 when referencing x1 variable inside line scope from outside line scope).
     * @return The ASM parameter to use in the ASM code
     */
@@ -171,8 +183,8 @@ public class AsmFragment {
          String param = varScopeRef.getFullName() + "." + asmName
                .replace('@', 'b')
                .replace(':', '_')
-               .replace("#","_")
-               .replace("$","_");
+               .replace("#", "_")
+               .replace("$", "_");
          //param = ""+((Registers.RegisterZp) register).getZp();
          return param;
       } else {
@@ -186,7 +198,9 @@ public class AsmFragment {
       return name;
    }
 
-   /** A parameter of an ASM instruction from a bound value. */
+   /**
+    * A parameter of an ASM instruction from a bound value.
+    */
    public static class AsmParameter {
 
       private String param;
@@ -216,7 +230,7 @@ public class AsmFragment {
       asmSequenceGenerator.generate(fragmentFile);
    }
 
-   private static class AsmSequenceGenerator extends Asm6502BaseVisitor {
+   private static class AsmSequenceGenerator extends KickCBaseVisitor {
 
       private String name;
       private AsmProgram program;
@@ -232,26 +246,25 @@ public class AsmFragment {
          return program;
       }
 
-      public void generate(Asm6502Parser.FileContext context) {
+      public void generate(KickCParser.AsmFileContext context) {
          this.visit(context);
       }
 
       @Override
-      public Object visitLabel(Asm6502Parser.LabelContext ctx) {
+      public Object visitAsmLabel(KickCParser.AsmLabelContext ctx) {
          program.addLine(new AsmLabel(ctx.getChild(0).getText()));
          return null;
       }
 
-      @Override
-      public Object visitComment(Asm6502Parser.CommentContext ctx) {
-         program.addLine(new AsmComment(ctx.getChild(1).getText()));
-         return null;
-      }
+      //@Override
+      //public Object visitAsmComment(KickCParser.AsmCommentContext ctx) {
+      //   program.addLine(new AsmComment(ctx.getChild(1).getText()));
+      //   return null;
+      //}
 
-
       @Override
-      public Object visitInstruction(Asm6502Parser.InstructionContext ctx) {
-         Asm6502Parser.ParamModeContext paramModeCtx = ctx.paramMode();
+      public Object visitAsmInstruction(KickCParser.AsmInstructionContext ctx) {
+         KickCParser.AsmParamModeContext paramModeCtx = ctx.asmParamMode();
          AsmInstruction instruction;
          if (paramModeCtx == null) {
             AsmInstructionType type = AsmInstructionSet.getInstructionType(
@@ -272,45 +285,57 @@ public class AsmFragment {
       }
 
       @Override
-      public Object visitModeAbs(Asm6502Parser.ModeAbsContext ctx) {
-         return createAsmInstruction(ctx, ctx.expr(), AsmAddressingMode.ABS);
+      public Object visitAsmModeAbs(KickCParser.AsmModeAbsContext ctx) {
+         return createAsmInstruction(ctx, ctx.asmExpr(), AsmAddressingMode.ABS);
       }
 
       @Override
-      public Object visitModeImm(Asm6502Parser.ModeImmContext ctx) {
-         return createAsmInstruction(ctx, ctx.expr(), AsmAddressingMode.IMM);
+      public Object visitAsmModeImm(KickCParser.AsmModeImmContext ctx) {
+         return createAsmInstruction(ctx, ctx.asmExpr(), AsmAddressingMode.IMM);
       }
 
       @Override
-      public Object visitModeAbsX(Asm6502Parser.ModeAbsXContext ctx) {
-         return createAsmInstruction(ctx, ctx.expr(), AsmAddressingMode.ABX);
+      public Object visitAsmModeAbsXY(KickCParser.AsmModeAbsXYContext ctx) {
+         String xy = ctx.getChild(ctx.getChildCount() - 1).getText();
+         if (xy.equals("x")) {
+            return createAsmInstruction(ctx, ctx.asmExpr(), AsmAddressingMode.ABX);
+         } else if (xy.equals("y")) {
+            return createAsmInstruction(ctx, ctx.asmExpr(), AsmAddressingMode.ABY);
+         } else {
+            throw new RuntimeException("Unknown addressing mode " + ctx.getText());
+         }
       }
 
       @Override
-      public Object visitModeAbsY(Asm6502Parser.ModeAbsYContext ctx) {
-         return createAsmInstruction(ctx, ctx.expr(), AsmAddressingMode.ABY);
+      public Object visitAsmModeIndIdxXY(KickCParser.AsmModeIndIdxXYContext ctx) {
+         String xy = ctx.getChild(ctx.getChildCount() - 1).getText();
+         if (xy.equals("y")) {
+            return createAsmInstruction(ctx, ctx.asmExpr(), AsmAddressingMode.IZY);
+         } else {
+            throw new RuntimeException("Unknown addressing mode " + ctx.getText());
+         }
       }
 
       @Override
-      public Object visitModeIndY(Asm6502Parser.ModeIndYContext ctx) {
-         return createAsmInstruction(ctx, ctx.expr(), AsmAddressingMode.IZY);
+      public Object visitAsmModeIdxIndXY(KickCParser.AsmModeIdxIndXYContext ctx) {
+         String xy = ctx.getChild(ctx.getChildCount() - 1).getText();
+         if (xy.equals("x")) {
+            return createAsmInstruction(ctx, ctx.asmExpr(), AsmAddressingMode.IZX);
+         } else {
+            throw new RuntimeException("Unknown addressing mode " + ctx.getText());
+         }
       }
 
       @Override
-      public Object visitModeIndX(Asm6502Parser.ModeIndXContext ctx) {
-         return createAsmInstruction(ctx, ctx.expr(), AsmAddressingMode.IZX);
-      }
-
-      @Override
-      public Object visitModeInd(Asm6502Parser.ModeIndContext ctx) {
-         return createAsmInstruction(ctx, ctx.expr(), AsmAddressingMode.IND);
+      public Object visitAsmModeInd(KickCParser.AsmModeIndContext ctx) {
+         return createAsmInstruction(ctx, ctx.asmExpr(), AsmAddressingMode.IND);
       }
 
       private AsmInstruction createAsmInstruction(
-            Asm6502Parser.ParamModeContext ctx,
-            Asm6502Parser.ExprContext exprCtx,
+            KickCParser.AsmParamModeContext ctx,
+            KickCParser.AsmExprContext exprCtx,
             AsmAddressingMode addressingMode) {
-         Asm6502Parser.InstructionContext instructionCtx = (Asm6502Parser.InstructionContext) ctx.getParent();
+         KickCParser.AsmInstructionContext instructionCtx = (KickCParser.AsmInstructionContext) ctx.getParent();
          String mnemonic = instructionCtx.MNEMONIC().getSymbol().getText();
          AsmParameter parameter = (AsmParameter) this.visit(exprCtx);
          AsmInstructionType type = AsmInstructionSet.getInstructionType(
@@ -325,24 +350,24 @@ public class AsmFragment {
       }
 
       @Override
-      public AsmParameter visitExprBinary(Asm6502Parser.ExprBinaryContext ctx) {
-         AsmParameter left = (AsmParameter) this.visit(ctx.expr(0));
-         AsmParameter right = (AsmParameter) this.visit(ctx.expr(1));
+      public AsmParameter visitAsmExprBinary(KickCParser.AsmExprBinaryContext ctx) {
+         AsmParameter left = (AsmParameter) this.visit(ctx.asmExpr(0));
+         AsmParameter right = (AsmParameter) this.visit(ctx.asmExpr(1));
          String param = "" + left.getParam() + ctx.getChild(1).getText() + right.getParam();
          boolean zp = left.isZp() && right.isZp();
          return new AsmParameter(param, zp);
       }
 
       @Override
-      public AsmParameter visitExprUnary(Asm6502Parser.ExprUnaryContext ctx) {
-         AsmParameter sub = (AsmParameter) this.visit(ctx.expr());
+      public AsmParameter visitAsmExprUnary(KickCParser.AsmExprUnaryContext ctx) {
+         AsmParameter sub = (AsmParameter) this.visit(ctx.asmExpr());
          String param = ctx.getChild(0).getText() + sub.getParam();
          return new AsmParameter(param, sub.isZp());
       }
 
       @Override
-      public AsmParameter visitExprInt(Asm6502Parser.ExprIntContext ctx) {
-         Number number = NumberParser.parseLiteral(ctx.NUMINT().getText());
+      public AsmParameter visitAsmExprInt(KickCParser.AsmExprIntContext ctx) {
+         Number number = NumberParser.parseLiteral(ctx.NUMBER().getText());
          ConstantInteger intVal = new ConstantInteger(number.intValue());
          boolean isZp = SymbolTypeBasic.BYTE.equals(intVal.getType());
          String param = getAsmNumber(number);
@@ -350,13 +375,19 @@ public class AsmFragment {
       }
 
       @Override
-      public AsmParameter visitExprLabel(Asm6502Parser.ExprLabelContext ctx) {
+      public AsmParameter visitAsmExprLabel(KickCParser.AsmExprLabelContext ctx) {
          String param = ctx.NAME().getSymbol().getText();
          return new AsmParameter(param, false);
       }
 
       @Override
-      public AsmParameter visitExprReplace(Asm6502Parser.ExprReplaceContext ctx) {
+      public Object visitAsmExprLabelRel(KickCParser.AsmExprLabelRelContext ctx) {
+         String param = ctx.ASMREL().getSymbol().getText();
+         return new AsmParameter(param, false);
+      }
+
+      @Override
+      public AsmParameter visitAsmExprReplace(KickCParser.AsmExprReplaceContext ctx) {
          String replaceName = ctx.NAME().getSymbol().getText();
          return bindings.getBoundValue(replaceName);
       }

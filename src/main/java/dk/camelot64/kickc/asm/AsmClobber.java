@@ -1,4 +1,4 @@
-package dk.camelot64.kickc.asm.parser;
+package dk.camelot64.kickc.asm;
 
 /** Information about what parts of the CPU an ASM instruction clobbers  */
 public class AsmClobber {

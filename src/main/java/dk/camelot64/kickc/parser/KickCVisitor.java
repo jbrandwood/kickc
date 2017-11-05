@@ -17,6 +17,12 @@ public interface KickCVisitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitFile(KickCParser.FileContext ctx);
 	/**
+	 * Visit a parse tree produced by {@link KickCParser#asmFile}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitAsmFile(KickCParser.AsmFileContext ctx);
+	/**
 	 * Visit a parse tree produced by {@link KickCParser#stmtSeq}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
@@ -92,6 +98,13 @@ public interface KickCVisitor<T> extends ParseTreeVisitor<T> {
 	 * @return the visitor result
 	 */
 	T visitStmtReturn(KickCParser.StmtReturnContext ctx);
+	/**
+	 * Visit a parse tree produced by the {@code stmtAsm}
+	 * labeled alternative in {@link KickCParser#stmt}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitStmtAsm(KickCParser.StmtAsmContext ctx);
 	/**
 	 * Visit a parse tree produced by the {@code forDecl}
 	 * labeled alternative in {@link KickCParser#forDeclaration}.
@@ -292,4 +305,112 @@ public interface KickCVisitor<T> extends ParseTreeVisitor<T> {
 	 * @return the visitor result
 	 */
 	T visitParameterList(KickCParser.ParameterListContext ctx);
+	/**
+	 * Visit a parse tree produced by {@link KickCParser#asmLines}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitAsmLines(KickCParser.AsmLinesContext ctx);
+	/**
+	 * Visit a parse tree produced by {@link KickCParser#asmLine}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitAsmLine(KickCParser.AsmLineContext ctx);
+	/**
+	 * Visit a parse tree produced by {@link KickCParser#asmLabel}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitAsmLabel(KickCParser.AsmLabelContext ctx);
+	/**
+	 * Visit a parse tree produced by {@link KickCParser#asmInstruction}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitAsmInstruction(KickCParser.AsmInstructionContext ctx);
+	/**
+	 * Visit a parse tree produced by the {@code asmModeAbs}
+	 * labeled alternative in {@link KickCParser#asmParamMode}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitAsmModeAbs(KickCParser.AsmModeAbsContext ctx);
+	/**
+	 * Visit a parse tree produced by the {@code asmModeImm}
+	 * labeled alternative in {@link KickCParser#asmParamMode}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitAsmModeImm(KickCParser.AsmModeImmContext ctx);
+	/**
+	 * Visit a parse tree produced by the {@code asmModeAbsXY}
+	 * labeled alternative in {@link KickCParser#asmParamMode}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitAsmModeAbsXY(KickCParser.AsmModeAbsXYContext ctx);
+	/**
+	 * Visit a parse tree produced by the {@code asmModeIndIdxXY}
+	 * labeled alternative in {@link KickCParser#asmParamMode}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitAsmModeIndIdxXY(KickCParser.AsmModeIndIdxXYContext ctx);
+	/**
+	 * Visit a parse tree produced by the {@code asmModeIdxIndXY}
+	 * labeled alternative in {@link KickCParser#asmParamMode}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitAsmModeIdxIndXY(KickCParser.AsmModeIdxIndXYContext ctx);
+	/**
+	 * Visit a parse tree produced by the {@code asmModeInd}
+	 * labeled alternative in {@link KickCParser#asmParamMode}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitAsmModeInd(KickCParser.AsmModeIndContext ctx);
+	/**
+	 * Visit a parse tree produced by the {@code asmExprReplace}
+	 * labeled alternative in {@link KickCParser#asmExpr}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitAsmExprReplace(KickCParser.AsmExprReplaceContext ctx);
+	/**
+	 * Visit a parse tree produced by the {@code asmExprLabelRel}
+	 * labeled alternative in {@link KickCParser#asmExpr}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitAsmExprLabelRel(KickCParser.AsmExprLabelRelContext ctx);
+	/**
+	 * Visit a parse tree produced by the {@code asmExprBinary}
+	 * labeled alternative in {@link KickCParser#asmExpr}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitAsmExprBinary(KickCParser.AsmExprBinaryContext ctx);
+	/**
+	 * Visit a parse tree produced by the {@code asmExprLabel}
+	 * labeled alternative in {@link KickCParser#asmExpr}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitAsmExprLabel(KickCParser.AsmExprLabelContext ctx);
+	/**
+	 * Visit a parse tree produced by the {@code asmExprInt}
+	 * labeled alternative in {@link KickCParser#asmExpr}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitAsmExprInt(KickCParser.AsmExprIntContext ctx);
+	/**
+	 * Visit a parse tree produced by the {@code asmExprUnary}
+	 * labeled alternative in {@link KickCParser#asmExpr}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitAsmExprUnary(KickCParser.AsmExprUnaryContext ctx);
 }

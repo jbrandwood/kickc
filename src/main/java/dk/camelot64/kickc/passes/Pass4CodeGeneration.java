@@ -1,11 +1,11 @@
 package dk.camelot64.kickc.passes;
 
 import dk.camelot64.kickc.asm.*;
-import dk.camelot64.kickc.asm.parser.Asm6502Parser;
 import dk.camelot64.kickc.fragment.AsmFragment;
 import dk.camelot64.kickc.fragment.AsmFragmentManager;
 import dk.camelot64.kickc.fragment.AsmFragmentSignature;
 import dk.camelot64.kickc.model.*;
+import dk.camelot64.kickc.parser.KickCParser;
 import org.antlr.v4.runtime.CharStreams;
 
 import java.util.*;
@@ -258,7 +258,7 @@ public class Pass4CodeGeneration {
          } else if (statement instanceof StatementAsm) {
             StatementAsm statementAsm = (StatementAsm) statement;
             String name = "inline";
-            Asm6502Parser.FileContext inlineAsm = AsmFragmentManager.parseFragment(CharStreams.fromString(statementAsm.getAsmFragment()), name);
+            KickCParser.AsmFileContext inlineAsm = AsmFragmentManager.parseFragment(CharStreams.fromString(statementAsm.getAsmFragment()), name);
             HashMap<String, Value> bindings = new HashMap<>();
             AsmFragment asmFragment = new AsmFragment(program, name, block.getScope(), inlineAsm, bindings);
             asmFragment.generate(asm);

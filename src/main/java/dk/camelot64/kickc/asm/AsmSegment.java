@@ -1,6 +1,5 @@
 package dk.camelot64.kickc.asm;
 
-import dk.camelot64.kickc.asm.parser.AsmClobber;
 import dk.camelot64.kickc.model.PhiTransitions;
 
 import java.util.ArrayList;

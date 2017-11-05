@@ -8,30 +8,32 @@ Known Problems
 - (inline-asm-param.kc) Inline ASM does not attempt to handle parameters (variables).
 
 Features
-- Move the main code into a main() function, and disallow code outside functions. The main function per default has no parameters and exits with RTS.
 - Improve locality of block sequence for if(cond) { stmt1; } else { stmt2; } to if(!cond) goto @else stmt1; jmp @end; @else: stmt2; @end:
 - Optimize if/else by swapping if & else if cond is easier to evaluate than !cond.
-- Add signed bytes / words
-- Add Fixed Point number types fixed[8.8], fixed[16.8] - maybe even fixed[24.4]
-- Add imports
-- Add structs
-- Let { stmt } introduce a new anonymous scope. (But not when optimizing)
+- Let { stmt } and for() {} introduce a new anonymous scope. (But not when optimizing)
 - Add preprocessing / find a way to allow some functions to run at compile time
 - Implement inline compilation of functions (and a mechanism for choosing which methods / calls to inline)
-- Add ability to call ASM code from KC.
-- Add ability to call KC code from ASM. (Maybe declare some functions external to ensure their interface is well defined. Maybe generate ASM call stubs.)
-- Add an export keyword ensuring that a function is generated even if it is never called. Maybe export can be handled by generating a call that can be used as stub.
 - Handle long branches
 - Optimize loops by unrolling them somewhat
 - Optimize loops with Strength reduction (https://en.wikipedia.org/wiki/Strength_reduction)
-- Remove unused functions.
 - Support calculated pointers eg. *(ptr+i)
 - Add syntax for encoded chars (eg. PETSCII instead of SCREEN)
-- Add support for casting. Specifically casting a byte* to a word and the other way (eg. to enable calculating D018-value from pointer to bitmap & screen.) -  *D018 = (byte*)((word)SCREEN/$40)|((word)BITMAP/$400);
-  - Consider whether autocasting word & byte* is possible ?
-- Add UpliftRemains support for attempting to uplift potentials to ALU (requires modifying two registers: 1. the ALU potential to ALU - the one added to the ALU potential to A.)
-- Syntax for composing a word from two bytes. word w = { lo, hi } --> ICL: w = lo _word_ hi;
-- A syntax for supporting custom ASM fragments? Allowing the adding of a new operator / function call that is compiled into custom written ASM-fragments. Currently there seems to be a quite short way when adding a new expression operator - maybe give the progrmmer the same freedom.
+
+Syntax Checking
+- Disallow code outside functions.
+- Check that declared constants are never assigned.
+- Graceful error when using undeclared variable.
+- Graceful error when using uninitialized variable.
+
+New language Features
+- Add signed bytes / words
+- Add Fixed Point number types fixed[8.8], fixed[16.8] - maybe even fixed[24.4]
+- Add structs
+
+Imports
+- Add imports
+- Remove unused functions.
+- Add an export keyword ensuring that a function is generated even if it is never called. Maybe export can be handled by generating a call that can be used as stub.
 
 Constants
 - Do not create multiple versions & phi-statements for declared constants.
@@ -40,11 +42,14 @@ Constants
   - When an assignment is encountered create a new version.
   - Backtrack the necessary new phi-blocks and changes into the code?
 
-Word Math
+Word Operations / Math
+- Syntax for composing a word from two bytes. word w = { lo, hi } --> ICL: w = lo _word_ hi;
 - Support Word table lookup (through 2 byte-tables)
 - Support word math operations (addition, subtraction)
 - Implement a word-ALU
-- Usage: word[] plotter_x; word[] plotter_y; byte* plotter = plotter_x[x] + plotter_y[y]; ->     lda plotter_x_lo,x; clc; adc plotter_y_lo,y; sta plotter; lda plotter_x_hi,x; adc plotter_y_hi,y; sta plotter+1
+  - Usage: word[] plotter_x; word[] plotter_y; byte* plotter = plotter_x[x] + plotter_y[y]; ->     lda plotter_x_lo,x; clc; adc plotter_y_lo,y; sta plotter; lda plotter_x_hi,x; adc plotter_y_hi,y; sta plotter+1
+- Add support for casting. Specifically casting a byte* to a word and the other way (eg. to enable calculating D018-value from pointer to bitmap & screen.) -  *D018 = (byte*)((word)SCREEN/$40)|((word)BITMAP/$400);
+  - Consider whether autocasting word & byte* is possible ?
 
 Arrays / Strings / Inline data
 - New semantic: Arrays are always allocated inline (and must therefore have a size). Pointers are never.
@@ -59,11 +64,14 @@ Arrays / Strings / Inline data
   - Support syntax for initializing the address of a byte-array. byte[] plot_x = { addr=$1000 }; -- current syntax as a short hand byte[] plot_x = $1000;
   - Syntax for accessing the low/high byte-array that underlies the word-array. word[$100] plot_x; byte* plot_x_lo = plot_x.lo; plot_x_lo[0] = 0;
 
-- Inline ASM
-  - Allow inline ASM parameter expansion - eg lda line (where line is a variable)
-  - Allow lda <var> or sta <var> to just perform a register copy if possible.
-  - Add syntax for ensuring specific values are in A/X/Y when entering ASM - eg. asm( A: i, X: bits+1 ) { sta {SCREEN},x };
-  - Add syntax for specifying that ASM does not clobber specific registers (if the values are used but preserved through pha/pla) - eg. asm( A: noclob, X: i ) { pha lda #0 sta {SCREEN},x pla};
+ASM Integration / Inline ASM
+- Allow inline ASM parameter expansion - eg lda line (where line is a variable)
+- Allow lda <var> or sta <var> to just perform a register copy if possible.
+- Add syntax for ensuring specific values are in A/X/Y when entering ASM - eg. asm( A: i, X: bits+1 ) { sta {SCREEN},x };
+- Add syntax for specifying that ASM does not clobber specific registers (if the values are used but preserved through pha/pla) - eg. asm( A: noclob, X: i ) { pha lda #0 sta {SCREEN},x pla};
+- Add ability to call external ASM code from KC.
+- Add ability to call KC code from ASM. (Maybe declare some functions external to ensure their interface is well defined. Maybe generate ASM call stubs.)
+- A syntax for supporting custom ASM fragments? Allowing the adding of a new operator / function call that is compiled into custom written ASM-fragments. Currently there seems to be a quite short way when adding a new expression operator - maybe give the programmer the same freedom.
 
 Assembler Improvements
 - Relabel blocks eliminating long labels such as b3_from_b11
@@ -98,9 +106,11 @@ Register Allocation
     - Generate ASM & examine clobber. If the potential register allocation results in clobber - the branch is dead.
     - Handle each remaining allocation possibility in order of their score - highest score first.
     - Assign the variable to the selected register & Recurse down to the next variable.
+- Add UpliftRemains support for attempting to uplift potentials to ALU (requires modifying two registers: 1. the ALU potential to ALU - the one added to the ALU potential to A.)
+- Add ability to store/restore registers to free up registers for allocation in outer scopes. Requires marking registers as non-clobbered in certain cases.
 
 Process/Code Structure Improvement
-- Eliminate copy visitor
+- Eliminate copy visitor (using ListIterator option for adding elements)
 - Refactor Expression Operator Implementation & Evaluation into one class per operator
 - Improve error messages to give better context
 - Offer to compile resulting ASM with KickAssembler
@@ -184,3 +194,4 @@ Done
   + Syntax: asm { asm... } - using real ASM syntax inline!
 + Support ASM syntax check etc.
 + Also perform ASM clobber analysis when assigning registers.
++ Move the main code into a main() function. The main function per default has no parameters and exits with RTS.

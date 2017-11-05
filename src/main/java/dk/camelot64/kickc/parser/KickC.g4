@@ -21,7 +21,7 @@ stmt
     | expr  ';' #stmtExpr
     | 'if' '(' expr ')' stmt ( 'else' stmt )? #stmtIfElse
     | 'while' '(' expr ')' stmt  #stmtWhile
-    | 'do' stmt 'while' '(' expr ')' #stmtDoWhile
+    | 'do' stmt 'while' '(' expr ')' ';' #stmtDoWhile
     | 'for' '(' forDeclaration? forIteration ')' stmt  #stmtFor
     | 'return' expr? ';' #stmtReturn
     | 'asm' '{' asmLines '}' ';' #stmtAsm
@@ -124,6 +124,7 @@ asmExpr
     | ASMREL #asmExprLabelRel
     | '{' NAME '}' #asmExprReplace
     | NUMBER #asmExprInt
+    | CHAR #asmExprChar
     ;
 
 MNEMONIC:

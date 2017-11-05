@@ -18,6 +18,7 @@ main: {
     .label bits_gen = 6
     .label charset4 = 4
     .label chargen = 2
+    sei
     lda #$32
     sta PROCPORT
     lda #<CHARSET4
@@ -75,8 +76,7 @@ main: {
     bcc b3
     inc bits_gen
   b3:
-    asl
-    sta bits_gen
+    asl bits_gen
     ldy #0
     lda (chargen),y
     and #6
@@ -92,8 +92,7 @@ main: {
     bcc b4
     inc bits_gen
   b4:
-    asl
-    sta bits_gen
+    asl bits_gen
     ldy #0
     lda (chargen),y
     and #1
@@ -134,6 +133,7 @@ main: {
   !:
     lda #$37
     sta PROCPORT
+    cli
     ldx #0
   b6:
     txa

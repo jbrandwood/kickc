@@ -424,4 +424,11 @@ public class KickCBaseVisitor<T> extends AbstractParseTreeVisitor<T> implements 
 	 * {@link #visitChildren} on {@code ctx}.</p>
 	 */
 	@Override public T visitAsmExprUnary(KickCParser.AsmExprUnaryContext ctx) { return visitChildren(ctx); }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation returns the result of calling
+	 * {@link #visitChildren} on {@code ctx}.</p>
+	 */
+	@Override public T visitAsmExprChar(KickCParser.AsmExprCharContext ctx) { return visitChildren(ctx); }
 }

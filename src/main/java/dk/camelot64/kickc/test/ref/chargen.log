@@ -1,0 +1,2461 @@
+byte* PROCPORT = $01;
+byte* CHARGEN = $d000;
+byte* SCREEN = $0400;
+
+void main() {
+    asm { sei };
+    byte* CHAR_A = CHARGEN+8;
+    *PROCPORT = $32;
+    byte* sc = SCREEN;
+    for(byte y:0..7) {
+      byte bits = CHAR_A[y];
+      for(byte x:0..7) {
+        byte c = '.';
+        if((bits & $80) != 0) {
+           c = '*';
+        }
+        *sc = c;
+        sc++;
+        bits = bits<<1;
+      }
+      sc = sc+32;
+    }
+    *PROCPORT = $37;
+    asm { cli };
+}
+
+Adding pre/post-modifier (byte*) main::sc ← ++ (byte*) main::sc
+PROGRAM
+  (byte*) PROCPORT ← (byte) 1
+  (byte*) CHARGEN ← (word) 53248
+  (byte*) SCREEN ← (word) 1024
+proc (void()) main()
+  asm { sei }
+  (byte*~) main::$0 ← (byte*) CHARGEN + (byte) 8
+  (byte*) main::CHAR_A ← (byte*~) main::$0
+  *((byte*) PROCPORT) ← (byte) 50
+  (byte*) main::sc ← (byte*) SCREEN
+  (byte) main::y ← (byte) 0
+main::@1:
+  (byte~) main::$1 ← (byte*) main::CHAR_A *idx (byte) main::y
+  (byte) main::bits ← (byte~) main::$1
+  (byte) main::x ← (byte) 0
+main::@2:
+  (byte) main::c ← (byte) '.'
+  (byte~) main::$2 ← (byte) main::bits & (byte) 128
+  (boolean~) main::$3 ← (byte~) main::$2 != (byte) 0
+  (boolean~) main::$4 ← ! (boolean~) main::$3
+  if((boolean~) main::$4) goto main::@3
+  (byte) main::c ← (byte) '*'
+main::@3:
+  *((byte*) main::sc) ← (byte) main::c
+  (byte*) main::sc ← ++ (byte*) main::sc
+  (byte~) main::$5 ← (byte) main::bits << (byte) 1
+  (byte) main::bits ← (byte~) main::$5
+  (byte) main::x ← ++ (byte) main::x
+  (boolean~) main::$6 ← (byte) main::x != (byte) 8
+  if((boolean~) main::$6) goto main::@2
+  (byte*~) main::$7 ← (byte*) main::sc + (byte) 32
+  (byte*) main::sc ← (byte*~) main::$7
+  (byte) main::y ← ++ (byte) main::y
+  (boolean~) main::$8 ← (byte) main::y != (byte) 8
+  if((boolean~) main::$8) goto main::@1
+  *((byte*) PROCPORT) ← (byte) 55
+  asm { cli }
+main::@return:
+  return 
+endproc // main()
+  call main 
+
+SYMBOLS
+(byte*) CHARGEN
+(byte*) PROCPORT
+(byte*) SCREEN
+(void()) main()
+(byte*~) main::$0
+(byte~) main::$1
+(byte~) main::$2
+(boolean~) main::$3
+(boolean~) main::$4
+(byte~) main::$5
+(boolean~) main::$6
+(byte*~) main::$7
+(boolean~) main::$8
+(label) main::@1
+(label) main::@2
+(label) main::@3
+(label) main::@return
+(byte*) main::CHAR_A
+(byte) main::bits
+(byte) main::c
+(byte*) main::sc
+(byte) main::x
+(byte) main::y
+
+INITIAL CONTROL FLOW GRAPH
+@begin: scope:[]  from
+  (byte*) PROCPORT ← (byte) 1
+  (byte*) CHARGEN ← (word) 53248
+  (byte*) SCREEN ← (word) 1024
+  to:@1
+main: scope:[main]  from
+  asm { sei }
+  (byte*~) main::$0 ← (byte*) CHARGEN + (byte) 8
+  (byte*) main::CHAR_A ← (byte*~) main::$0
+  *((byte*) PROCPORT) ← (byte) 50
+  (byte*) main::sc ← (byte*) SCREEN
+  (byte) main::y ← (byte) 0
+  to:main::@1
+main::@1: scope:[main]  from main main::@5
+  (byte~) main::$1 ← (byte*) main::CHAR_A *idx (byte) main::y
+  (byte) main::bits ← (byte~) main::$1
+  (byte) main::x ← (byte) 0
+  to:main::@2
+main::@2: scope:[main]  from main::@1 main::@3
+  (byte) main::c ← (byte) '.'
+  (byte~) main::$2 ← (byte) main::bits & (byte) 128
+  (boolean~) main::$3 ← (byte~) main::$2 != (byte) 0
+  (boolean~) main::$4 ← ! (boolean~) main::$3
+  if((boolean~) main::$4) goto main::@3
+  to:main::@4
+main::@3: scope:[main]  from main::@2 main::@4
+  *((byte*) main::sc) ← (byte) main::c
+  (byte*) main::sc ← ++ (byte*) main::sc
+  (byte~) main::$5 ← (byte) main::bits << (byte) 1
+  (byte) main::bits ← (byte~) main::$5
+  (byte) main::x ← ++ (byte) main::x
+  (boolean~) main::$6 ← (byte) main::x != (byte) 8
+  if((boolean~) main::$6) goto main::@2
+  to:main::@5
+main::@4: scope:[main]  from main::@2
+  (byte) main::c ← (byte) '*'
+  to:main::@3
+main::@5: scope:[main]  from main::@3
+  (byte*~) main::$7 ← (byte*) main::sc + (byte) 32
+  (byte*) main::sc ← (byte*~) main::$7
+  (byte) main::y ← ++ (byte) main::y
+  (boolean~) main::$8 ← (byte) main::y != (byte) 8
+  if((boolean~) main::$8) goto main::@1
+  to:main::@6
+main::@6: scope:[main]  from main::@5
+  *((byte*) PROCPORT) ← (byte) 55
+  asm { cli }
+  to:main::@return
+main::@return: scope:[main]  from main::@6
+  return 
+  to:@return
+@1: scope:[]  from @begin
+  call main 
+  to:@end
+@end: scope:[]  from @1
+
+PROCEDURE MODIFY VARIABLE ANALYSIS
+
+CONTROL FLOW GRAPH WITH ASSIGNMENT CALL
+@begin: scope:[]  from
+  (byte*) PROCPORT ← (byte) 1
+  (byte*) CHARGEN ← (word) 53248
+  (byte*) SCREEN ← (word) 1024
+  to:@1
+main: scope:[main]  from @1
+  asm { sei }
+  (byte*~) main::$0 ← (byte*) CHARGEN + (byte) 8
+  (byte*) main::CHAR_A ← (byte*~) main::$0
+  *((byte*) PROCPORT) ← (byte) 50
+  (byte*) main::sc ← (byte*) SCREEN
+  (byte) main::y ← (byte) 0
+  to:main::@1
+main::@1: scope:[main]  from main main::@5
+  (byte~) main::$1 ← (byte*) main::CHAR_A *idx (byte) main::y
+  (byte) main::bits ← (byte~) main::$1
+  (byte) main::x ← (byte) 0
+  to:main::@2
+main::@2: scope:[main]  from main::@1 main::@3
+  (byte) main::c ← (byte) '.'
+  (byte~) main::$2 ← (byte) main::bits & (byte) 128
+  (boolean~) main::$3 ← (byte~) main::$2 != (byte) 0
+  (boolean~) main::$4 ← ! (boolean~) main::$3
+  if((boolean~) main::$4) goto main::@3
+  to:main::@4
+main::@3: scope:[main]  from main::@2 main::@4
+  *((byte*) main::sc) ← (byte) main::c
+  (byte*) main::sc ← ++ (byte*) main::sc
+  (byte~) main::$5 ← (byte) main::bits << (byte) 1
+  (byte) main::bits ← (byte~) main::$5
+  (byte) main::x ← ++ (byte) main::x
+  (boolean~) main::$6 ← (byte) main::x != (byte) 8
+  if((boolean~) main::$6) goto main::@2
+  to:main::@5
+main::@4: scope:[main]  from main::@2
+  (byte) main::c ← (byte) '*'
+  to:main::@3
+main::@5: scope:[main]  from main::@3
+  (byte*~) main::$7 ← (byte*) main::sc + (byte) 32
+  (byte*) main::sc ← (byte*~) main::$7
+  (byte) main::y ← ++ (byte) main::y
+  (boolean~) main::$8 ← (byte) main::y != (byte) 8
+  if((boolean~) main::$8) goto main::@1
+  to:main::@6
+main::@6: scope:[main]  from main::@5
+  *((byte*) PROCPORT) ← (byte) 55
+  asm { cli }
+  to:main::@return
+main::@return: scope:[main]  from main::@6
+  return 
+  to:@return
+@1: scope:[]  from @begin
+  call main param-assignment
+  to:@2
+@2: scope:[]  from @1
+  to:@end
+@end: scope:[]  from @2
+
+Completing Phi functions...
+Completing Phi functions...
+Completing Phi functions...
+Completing Phi functions...
+Completing Phi functions...
+CONTROL FLOW GRAPH SSA
+@begin: scope:[]  from
+  (byte*) PROCPORT#0 ← (byte) 1
+  (byte*) CHARGEN#0 ← (word) 53248
+  (byte*) SCREEN#0 ← (word) 1024
+  to:@1
+main: scope:[main]  from @1
+  (byte*) SCREEN#1 ← phi( @1/(byte*) SCREEN#2 )
+  (byte*) PROCPORT#1 ← phi( @1/(byte*) PROCPORT#3 )
+  (byte*) CHARGEN#1 ← phi( @1/(byte*) CHARGEN#2 )
+  asm { sei }
+  (byte*~) main::$0 ← (byte*) CHARGEN#1 + (byte) 8
+  (byte*) main::CHAR_A#0 ← (byte*~) main::$0
+  *((byte*) PROCPORT#1) ← (byte) 50
+  (byte*) main::sc#0 ← (byte*) SCREEN#1
+  (byte) main::y#0 ← (byte) 0
+  to:main::@1
+main::@1: scope:[main]  from main main::@5
+  (byte*) PROCPORT#8 ← phi( main/(byte*) PROCPORT#1 main::@5/(byte*) PROCPORT#4 )
+  (byte*) main::sc#7 ← phi( main/(byte*) main::sc#0 main::@5/(byte*) main::sc#2 )
+  (byte) main::y#2 ← phi( main/(byte) main::y#0 main::@5/(byte) main::y#1 )
+  (byte*) main::CHAR_A#1 ← phi( main/(byte*) main::CHAR_A#0 main::@5/(byte*) main::CHAR_A#2 )
+  (byte~) main::$1 ← (byte*) main::CHAR_A#1 *idx (byte) main::y#2
+  (byte) main::bits#0 ← (byte~) main::$1
+  (byte) main::x#0 ← (byte) 0
+  to:main::@2
+main::@2: scope:[main]  from main::@1 main::@3
+  (byte*) PROCPORT#6 ← phi( main::@1/(byte*) PROCPORT#8 main::@3/(byte*) PROCPORT#5 )
+  (byte*) main::CHAR_A#4 ← phi( main::@1/(byte*) main::CHAR_A#1 main::@3/(byte*) main::CHAR_A#3 )
+  (byte) main::y#5 ← phi( main::@1/(byte) main::y#2 main::@3/(byte) main::y#4 )
+  (byte) main::x#3 ← phi( main::@1/(byte) main::x#0 main::@3/(byte) main::x#1 )
+  (byte*) main::sc#5 ← phi( main::@1/(byte*) main::sc#7 main::@3/(byte*) main::sc#1 )
+  (byte) main::bits#2 ← phi( main::@1/(byte) main::bits#0 main::@3/(byte) main::bits#1 )
+  (byte) main::c#0 ← (byte) '.'
+  (byte~) main::$2 ← (byte) main::bits#2 & (byte) 128
+  (boolean~) main::$3 ← (byte~) main::$2 != (byte) 0
+  (boolean~) main::$4 ← ! (boolean~) main::$3
+  if((boolean~) main::$4) goto main::@3
+  to:main::@4
+main::@3: scope:[main]  from main::@2 main::@4
+  (byte*) PROCPORT#5 ← phi( main::@2/(byte*) PROCPORT#6 main::@4/(byte*) PROCPORT#7 )
+  (byte*) main::CHAR_A#3 ← phi( main::@2/(byte*) main::CHAR_A#4 main::@4/(byte*) main::CHAR_A#5 )
+  (byte) main::y#4 ← phi( main::@2/(byte) main::y#5 main::@4/(byte) main::y#6 )
+  (byte) main::x#2 ← phi( main::@2/(byte) main::x#3 main::@4/(byte) main::x#4 )
+  (byte) main::bits#3 ← phi( main::@2/(byte) main::bits#2 main::@4/(byte) main::bits#4 )
+  (byte*) main::sc#3 ← phi( main::@2/(byte*) main::sc#5 main::@4/(byte*) main::sc#6 )
+  (byte) main::c#2 ← phi( main::@2/(byte) main::c#0 main::@4/(byte) main::c#1 )
+  *((byte*) main::sc#3) ← (byte) main::c#2
+  (byte*) main::sc#1 ← ++ (byte*) main::sc#3
+  (byte~) main::$5 ← (byte) main::bits#3 << (byte) 1
+  (byte) main::bits#1 ← (byte~) main::$5
+  (byte) main::x#1 ← ++ (byte) main::x#2
+  (boolean~) main::$6 ← (byte) main::x#1 != (byte) 8
+  if((boolean~) main::$6) goto main::@2
+  to:main::@5
+main::@4: scope:[main]  from main::@2
+  (byte*) PROCPORT#7 ← phi( main::@2/(byte*) PROCPORT#6 )
+  (byte*) main::CHAR_A#5 ← phi( main::@2/(byte*) main::CHAR_A#4 )
+  (byte) main::y#6 ← phi( main::@2/(byte) main::y#5 )
+  (byte) main::x#4 ← phi( main::@2/(byte) main::x#3 )
+  (byte) main::bits#4 ← phi( main::@2/(byte) main::bits#2 )
+  (byte*) main::sc#6 ← phi( main::@2/(byte*) main::sc#5 )
+  (byte) main::c#1 ← (byte) '*'
+  to:main::@3
+main::@5: scope:[main]  from main::@3
+  (byte*) PROCPORT#4 ← phi( main::@3/(byte*) PROCPORT#5 )
+  (byte*) main::CHAR_A#2 ← phi( main::@3/(byte*) main::CHAR_A#3 )
+  (byte) main::y#3 ← phi( main::@3/(byte) main::y#4 )
+  (byte*) main::sc#4 ← phi( main::@3/(byte*) main::sc#1 )
+  (byte*~) main::$7 ← (byte*) main::sc#4 + (byte) 32
+  (byte*) main::sc#2 ← (byte*~) main::$7
+  (byte) main::y#1 ← ++ (byte) main::y#3
+  (boolean~) main::$8 ← (byte) main::y#1 != (byte) 8
+  if((boolean~) main::$8) goto main::@1
+  to:main::@6
+main::@6: scope:[main]  from main::@5
+  (byte*) PROCPORT#2 ← phi( main::@5/(byte*) PROCPORT#4 )
+  *((byte*) PROCPORT#2) ← (byte) 55
+  asm { cli }
+  to:main::@return
+main::@return: scope:[main]  from main::@6
+  return 
+  to:@return
+@1: scope:[]  from @begin
+  (byte*) SCREEN#2 ← phi( @begin/(byte*) SCREEN#0 )
+  (byte*) PROCPORT#3 ← phi( @begin/(byte*) PROCPORT#0 )
+  (byte*) CHARGEN#2 ← phi( @begin/(byte*) CHARGEN#0 )
+  call main param-assignment
+  to:@2
+@2: scope:[]  from @1
+  to:@end
+@end: scope:[]  from @2
+
+CONTROL FLOW GRAPH WITH ASSIGNMENT CALL & RETURN
+@begin: scope:[]  from
+  (byte*) PROCPORT#0 ← (byte) 1
+  (byte*) CHARGEN#0 ← (word) 53248
+  (byte*) SCREEN#0 ← (word) 1024
+  to:@1
+main: scope:[main]  from @1
+  (byte*) SCREEN#1 ← phi( @1/(byte*) SCREEN#2 )
+  (byte*) PROCPORT#1 ← phi( @1/(byte*) PROCPORT#3 )
+  (byte*) CHARGEN#1 ← phi( @1/(byte*) CHARGEN#2 )
+  asm { sei }
+  (byte*~) main::$0 ← (byte*) CHARGEN#1 + (byte) 8
+  (byte*) main::CHAR_A#0 ← (byte*~) main::$0
+  *((byte*) PROCPORT#1) ← (byte) 50
+  (byte*) main::sc#0 ← (byte*) SCREEN#1
+  (byte) main::y#0 ← (byte) 0
+  to:main::@1
+main::@1: scope:[main]  from main main::@5
+  (byte*) PROCPORT#8 ← phi( main/(byte*) PROCPORT#1 main::@5/(byte*) PROCPORT#4 )
+  (byte*) main::sc#7 ← phi( main/(byte*) main::sc#0 main::@5/(byte*) main::sc#2 )
+  (byte) main::y#2 ← phi( main/(byte) main::y#0 main::@5/(byte) main::y#1 )
+  (byte*) main::CHAR_A#1 ← phi( main/(byte*) main::CHAR_A#0 main::@5/(byte*) main::CHAR_A#2 )
+  (byte~) main::$1 ← (byte*) main::CHAR_A#1 *idx (byte) main::y#2
+  (byte) main::bits#0 ← (byte~) main::$1
+  (byte) main::x#0 ← (byte) 0
+  to:main::@2
+main::@2: scope:[main]  from main::@1 main::@3
+  (byte*) PROCPORT#6 ← phi( main::@1/(byte*) PROCPORT#8 main::@3/(byte*) PROCPORT#5 )
+  (byte*) main::CHAR_A#4 ← phi( main::@1/(byte*) main::CHAR_A#1 main::@3/(byte*) main::CHAR_A#3 )
+  (byte) main::y#5 ← phi( main::@1/(byte) main::y#2 main::@3/(byte) main::y#4 )
+  (byte) main::x#3 ← phi( main::@1/(byte) main::x#0 main::@3/(byte) main::x#1 )
+  (byte*) main::sc#5 ← phi( main::@1/(byte*) main::sc#7 main::@3/(byte*) main::sc#1 )
+  (byte) main::bits#2 ← phi( main::@1/(byte) main::bits#0 main::@3/(byte) main::bits#1 )
+  (byte) main::c#0 ← (byte) '.'
+  (byte~) main::$2 ← (byte) main::bits#2 & (byte) 128
+  (boolean~) main::$3 ← (byte~) main::$2 != (byte) 0
+  (boolean~) main::$4 ← ! (boolean~) main::$3
+  if((boolean~) main::$4) goto main::@3
+  to:main::@4
+main::@3: scope:[main]  from main::@2 main::@4
+  (byte*) PROCPORT#5 ← phi( main::@2/(byte*) PROCPORT#6 main::@4/(byte*) PROCPORT#7 )
+  (byte*) main::CHAR_A#3 ← phi( main::@2/(byte*) main::CHAR_A#4 main::@4/(byte*) main::CHAR_A#5 )
+  (byte) main::y#4 ← phi( main::@2/(byte) main::y#5 main::@4/(byte) main::y#6 )
+  (byte) main::x#2 ← phi( main::@2/(byte) main::x#3 main::@4/(byte) main::x#4 )
+  (byte) main::bits#3 ← phi( main::@2/(byte) main::bits#2 main::@4/(byte) main::bits#4 )
+  (byte*) main::sc#3 ← phi( main::@2/(byte*) main::sc#5 main::@4/(byte*) main::sc#6 )
+  (byte) main::c#2 ← phi( main::@2/(byte) main::c#0 main::@4/(byte) main::c#1 )
+  *((byte*) main::sc#3) ← (byte) main::c#2
+  (byte*) main::sc#1 ← ++ (byte*) main::sc#3
+  (byte~) main::$5 ← (byte) main::bits#3 << (byte) 1
+  (byte) main::bits#1 ← (byte~) main::$5
+  (byte) main::x#1 ← ++ (byte) main::x#2
+  (boolean~) main::$6 ← (byte) main::x#1 != (byte) 8
+  if((boolean~) main::$6) goto main::@2
+  to:main::@5
+main::@4: scope:[main]  from main::@2
+  (byte*) PROCPORT#7 ← phi( main::@2/(byte*) PROCPORT#6 )
+  (byte*) main::CHAR_A#5 ← phi( main::@2/(byte*) main::CHAR_A#4 )
+  (byte) main::y#6 ← phi( main::@2/(byte) main::y#5 )
+  (byte) main::x#4 ← phi( main::@2/(byte) main::x#3 )
+  (byte) main::bits#4 ← phi( main::@2/(byte) main::bits#2 )
+  (byte*) main::sc#6 ← phi( main::@2/(byte*) main::sc#5 )
+  (byte) main::c#1 ← (byte) '*'
+  to:main::@3
+main::@5: scope:[main]  from main::@3
+  (byte*) PROCPORT#4 ← phi( main::@3/(byte*) PROCPORT#5 )
+  (byte*) main::CHAR_A#2 ← phi( main::@3/(byte*) main::CHAR_A#3 )
+  (byte) main::y#3 ← phi( main::@3/(byte) main::y#4 )
+  (byte*) main::sc#4 ← phi( main::@3/(byte*) main::sc#1 )
+  (byte*~) main::$7 ← (byte*) main::sc#4 + (byte) 32
+  (byte*) main::sc#2 ← (byte*~) main::$7
+  (byte) main::y#1 ← ++ (byte) main::y#3
+  (boolean~) main::$8 ← (byte) main::y#1 != (byte) 8
+  if((boolean~) main::$8) goto main::@1
+  to:main::@6
+main::@6: scope:[main]  from main::@5
+  (byte*) PROCPORT#2 ← phi( main::@5/(byte*) PROCPORT#4 )
+  *((byte*) PROCPORT#2) ← (byte) 55
+  asm { cli }
+  to:main::@return
+main::@return: scope:[main]  from main::@6
+  return 
+  to:@return
+@1: scope:[]  from @begin
+  (byte*) SCREEN#2 ← phi( @begin/(byte*) SCREEN#0 )
+  (byte*) PROCPORT#3 ← phi( @begin/(byte*) PROCPORT#0 )
+  (byte*) CHARGEN#2 ← phi( @begin/(byte*) CHARGEN#0 )
+  call main param-assignment
+  to:@2
+@2: scope:[]  from @1
+  to:@end
+@end: scope:[]  from @2
+
+INITIAL SSA SYMBOL TABLE
+(label) @1
+(label) @2
+(label) @begin
+(label) @end
+(byte*) CHARGEN
+(byte*) CHARGEN#0
+(byte*) CHARGEN#1
+(byte*) CHARGEN#2
+(byte*) PROCPORT
+(byte*) PROCPORT#0
+(byte*) PROCPORT#1
+(byte*) PROCPORT#2
+(byte*) PROCPORT#3
+(byte*) PROCPORT#4
+(byte*) PROCPORT#5
+(byte*) PROCPORT#6
+(byte*) PROCPORT#7
+(byte*) PROCPORT#8
+(byte*) SCREEN
+(byte*) SCREEN#0
+(byte*) SCREEN#1
+(byte*) SCREEN#2
+(void()) main()
+(byte*~) main::$0
+(byte~) main::$1
+(byte~) main::$2
+(boolean~) main::$3
+(boolean~) main::$4
+(byte~) main::$5
+(boolean~) main::$6
+(byte*~) main::$7
+(boolean~) main::$8
+(label) main::@1
+(label) main::@2
+(label) main::@3
+(label) main::@4
+(label) main::@5
+(label) main::@6
+(label) main::@return
+(byte*) main::CHAR_A
+(byte*) main::CHAR_A#0
+(byte*) main::CHAR_A#1
+(byte*) main::CHAR_A#2
+(byte*) main::CHAR_A#3
+(byte*) main::CHAR_A#4
+(byte*) main::CHAR_A#5
+(byte) main::bits
+(byte) main::bits#0
+(byte) main::bits#1
+(byte) main::bits#2
+(byte) main::bits#3
+(byte) main::bits#4
+(byte) main::c
+(byte) main::c#0
+(byte) main::c#1
+(byte) main::c#2
+(byte*) main::sc
+(byte*) main::sc#0
+(byte*) main::sc#1
+(byte*) main::sc#2
+(byte*) main::sc#3
+(byte*) main::sc#4
+(byte*) main::sc#5
+(byte*) main::sc#6
+(byte*) main::sc#7
+(byte) main::x
+(byte) main::x#0
+(byte) main::x#1
+(byte) main::x#2
+(byte) main::x#3
+(byte) main::x#4
+(byte) main::y
+(byte) main::y#0
+(byte) main::y#1
+(byte) main::y#2
+(byte) main::y#3
+(byte) main::y#4
+(byte) main::y#5
+(byte) main::y#6
+
+Culled Empty Block (label) @2
+Succesful SSA optimization Pass2CullEmptyBlocks
+CONTROL FLOW GRAPH
+@begin: scope:[]  from
+  (byte*) PROCPORT#0 ← (byte) 1
+  (byte*) CHARGEN#0 ← (word) 53248
+  (byte*) SCREEN#0 ← (word) 1024
+  to:@1
+main: scope:[main]  from @1
+  (byte*) SCREEN#1 ← phi( @1/(byte*) SCREEN#2 )
+  (byte*) PROCPORT#1 ← phi( @1/(byte*) PROCPORT#3 )
+  (byte*) CHARGEN#1 ← phi( @1/(byte*) CHARGEN#2 )
+  asm { sei }
+  (byte*~) main::$0 ← (byte*) CHARGEN#1 + (byte) 8
+  (byte*) main::CHAR_A#0 ← (byte*~) main::$0
+  *((byte*) PROCPORT#1) ← (byte) 50
+  (byte*) main::sc#0 ← (byte*) SCREEN#1
+  (byte) main::y#0 ← (byte) 0
+  to:main::@1
+main::@1: scope:[main]  from main main::@5
+  (byte*) PROCPORT#8 ← phi( main/(byte*) PROCPORT#1 main::@5/(byte*) PROCPORT#4 )
+  (byte*) main::sc#7 ← phi( main/(byte*) main::sc#0 main::@5/(byte*) main::sc#2 )
+  (byte) main::y#2 ← phi( main/(byte) main::y#0 main::@5/(byte) main::y#1 )
+  (byte*) main::CHAR_A#1 ← phi( main/(byte*) main::CHAR_A#0 main::@5/(byte*) main::CHAR_A#2 )
+  (byte~) main::$1 ← (byte*) main::CHAR_A#1 *idx (byte) main::y#2
+  (byte) main::bits#0 ← (byte~) main::$1
+  (byte) main::x#0 ← (byte) 0
+  to:main::@2
+main::@2: scope:[main]  from main::@1 main::@3
+  (byte*) PROCPORT#6 ← phi( main::@1/(byte*) PROCPORT#8 main::@3/(byte*) PROCPORT#5 )
+  (byte*) main::CHAR_A#4 ← phi( main::@1/(byte*) main::CHAR_A#1 main::@3/(byte*) main::CHAR_A#3 )
+  (byte) main::y#5 ← phi( main::@1/(byte) main::y#2 main::@3/(byte) main::y#4 )
+  (byte) main::x#3 ← phi( main::@1/(byte) main::x#0 main::@3/(byte) main::x#1 )
+  (byte*) main::sc#5 ← phi( main::@1/(byte*) main::sc#7 main::@3/(byte*) main::sc#1 )
+  (byte) main::bits#2 ← phi( main::@1/(byte) main::bits#0 main::@3/(byte) main::bits#1 )
+  (byte) main::c#0 ← (byte) '.'
+  (byte~) main::$2 ← (byte) main::bits#2 & (byte) 128
+  (boolean~) main::$3 ← (byte~) main::$2 != (byte) 0
+  (boolean~) main::$4 ← ! (boolean~) main::$3
+  if((boolean~) main::$4) goto main::@3
+  to:main::@4
+main::@3: scope:[main]  from main::@2 main::@4
+  (byte*) PROCPORT#5 ← phi( main::@2/(byte*) PROCPORT#6 main::@4/(byte*) PROCPORT#7 )
+  (byte*) main::CHAR_A#3 ← phi( main::@2/(byte*) main::CHAR_A#4 main::@4/(byte*) main::CHAR_A#5 )
+  (byte) main::y#4 ← phi( main::@2/(byte) main::y#5 main::@4/(byte) main::y#6 )
+  (byte) main::x#2 ← phi( main::@2/(byte) main::x#3 main::@4/(byte) main::x#4 )
+  (byte) main::bits#3 ← phi( main::@2/(byte) main::bits#2 main::@4/(byte) main::bits#4 )
+  (byte*) main::sc#3 ← phi( main::@2/(byte*) main::sc#5 main::@4/(byte*) main::sc#6 )
+  (byte) main::c#2 ← phi( main::@2/(byte) main::c#0 main::@4/(byte) main::c#1 )
+  *((byte*) main::sc#3) ← (byte) main::c#2
+  (byte*) main::sc#1 ← ++ (byte*) main::sc#3
+  (byte~) main::$5 ← (byte) main::bits#3 << (byte) 1
+  (byte) main::bits#1 ← (byte~) main::$5
+  (byte) main::x#1 ← ++ (byte) main::x#2
+  (boolean~) main::$6 ← (byte) main::x#1 != (byte) 8
+  if((boolean~) main::$6) goto main::@2
+  to:main::@5
+main::@4: scope:[main]  from main::@2
+  (byte*) PROCPORT#7 ← phi( main::@2/(byte*) PROCPORT#6 )
+  (byte*) main::CHAR_A#5 ← phi( main::@2/(byte*) main::CHAR_A#4 )
+  (byte) main::y#6 ← phi( main::@2/(byte) main::y#5 )
+  (byte) main::x#4 ← phi( main::@2/(byte) main::x#3 )
+  (byte) main::bits#4 ← phi( main::@2/(byte) main::bits#2 )
+  (byte*) main::sc#6 ← phi( main::@2/(byte*) main::sc#5 )
+  (byte) main::c#1 ← (byte) '*'
+  to:main::@3
+main::@5: scope:[main]  from main::@3
+  (byte*) PROCPORT#4 ← phi( main::@3/(byte*) PROCPORT#5 )
+  (byte*) main::CHAR_A#2 ← phi( main::@3/(byte*) main::CHAR_A#3 )
+  (byte) main::y#3 ← phi( main::@3/(byte) main::y#4 )
+  (byte*) main::sc#4 ← phi( main::@3/(byte*) main::sc#1 )
+  (byte*~) main::$7 ← (byte*) main::sc#4 + (byte) 32
+  (byte*) main::sc#2 ← (byte*~) main::$7
+  (byte) main::y#1 ← ++ (byte) main::y#3
+  (boolean~) main::$8 ← (byte) main::y#1 != (byte) 8
+  if((boolean~) main::$8) goto main::@1
+  to:main::@6
+main::@6: scope:[main]  from main::@5
+  (byte*) PROCPORT#2 ← phi( main::@5/(byte*) PROCPORT#4 )
+  *((byte*) PROCPORT#2) ← (byte) 55
+  asm { cli }
+  to:main::@return
+main::@return: scope:[main]  from main::@6
+  return 
+  to:@return
+@1: scope:[]  from @begin
+  (byte*) SCREEN#2 ← phi( @begin/(byte*) SCREEN#0 )
+  (byte*) PROCPORT#3 ← phi( @begin/(byte*) PROCPORT#0 )
+  (byte*) CHARGEN#2 ← phi( @begin/(byte*) CHARGEN#0 )
+  call main param-assignment
+  to:@end
+@end: scope:[]  from @1
+
+Inversing boolean not (boolean~) main::$4 ← (byte~) main::$2 == (byte) 0 from (boolean~) main::$3 ← (byte~) main::$2 != (byte) 0
+Succesful SSA optimization Pass2UnaryNotSimplification
+CONTROL FLOW GRAPH
+@begin: scope:[]  from
+  (byte*) PROCPORT#0 ← (byte) 1
+  (byte*) CHARGEN#0 ← (word) 53248
+  (byte*) SCREEN#0 ← (word) 1024
+  to:@1
+main: scope:[main]  from @1
+  (byte*) SCREEN#1 ← phi( @1/(byte*) SCREEN#2 )
+  (byte*) PROCPORT#1 ← phi( @1/(byte*) PROCPORT#3 )
+  (byte*) CHARGEN#1 ← phi( @1/(byte*) CHARGEN#2 )
+  asm { sei }
+  (byte*~) main::$0 ← (byte*) CHARGEN#1 + (byte) 8
+  (byte*) main::CHAR_A#0 ← (byte*~) main::$0
+  *((byte*) PROCPORT#1) ← (byte) 50
+  (byte*) main::sc#0 ← (byte*) SCREEN#1
+  (byte) main::y#0 ← (byte) 0
+  to:main::@1
+main::@1: scope:[main]  from main main::@5
+  (byte*) PROCPORT#8 ← phi( main/(byte*) PROCPORT#1 main::@5/(byte*) PROCPORT#4 )
+  (byte*) main::sc#7 ← phi( main/(byte*) main::sc#0 main::@5/(byte*) main::sc#2 )
+  (byte) main::y#2 ← phi( main/(byte) main::y#0 main::@5/(byte) main::y#1 )
+  (byte*) main::CHAR_A#1 ← phi( main/(byte*) main::CHAR_A#0 main::@5/(byte*) main::CHAR_A#2 )
+  (byte~) main::$1 ← (byte*) main::CHAR_A#1 *idx (byte) main::y#2
+  (byte) main::bits#0 ← (byte~) main::$1
+  (byte) main::x#0 ← (byte) 0
+  to:main::@2
+main::@2: scope:[main]  from main::@1 main::@3
+  (byte*) PROCPORT#6 ← phi( main::@1/(byte*) PROCPORT#8 main::@3/(byte*) PROCPORT#5 )
+  (byte*) main::CHAR_A#4 ← phi( main::@1/(byte*) main::CHAR_A#1 main::@3/(byte*) main::CHAR_A#3 )
+  (byte) main::y#5 ← phi( main::@1/(byte) main::y#2 main::@3/(byte) main::y#4 )
+  (byte) main::x#3 ← phi( main::@1/(byte) main::x#0 main::@3/(byte) main::x#1 )
+  (byte*) main::sc#5 ← phi( main::@1/(byte*) main::sc#7 main::@3/(byte*) main::sc#1 )
+  (byte) main::bits#2 ← phi( main::@1/(byte) main::bits#0 main::@3/(byte) main::bits#1 )
+  (byte) main::c#0 ← (byte) '.'
+  (byte~) main::$2 ← (byte) main::bits#2 & (byte) 128
+  (boolean~) main::$4 ← (byte~) main::$2 == (byte) 0
+  if((boolean~) main::$4) goto main::@3
+  to:main::@4
+main::@3: scope:[main]  from main::@2 main::@4
+  (byte*) PROCPORT#5 ← phi( main::@2/(byte*) PROCPORT#6 main::@4/(byte*) PROCPORT#7 )
+  (byte*) main::CHAR_A#3 ← phi( main::@2/(byte*) main::CHAR_A#4 main::@4/(byte*) main::CHAR_A#5 )
+  (byte) main::y#4 ← phi( main::@2/(byte) main::y#5 main::@4/(byte) main::y#6 )
+  (byte) main::x#2 ← phi( main::@2/(byte) main::x#3 main::@4/(byte) main::x#4 )
+  (byte) main::bits#3 ← phi( main::@2/(byte) main::bits#2 main::@4/(byte) main::bits#4 )
+  (byte*) main::sc#3 ← phi( main::@2/(byte*) main::sc#5 main::@4/(byte*) main::sc#6 )
+  (byte) main::c#2 ← phi( main::@2/(byte) main::c#0 main::@4/(byte) main::c#1 )
+  *((byte*) main::sc#3) ← (byte) main::c#2
+  (byte*) main::sc#1 ← ++ (byte*) main::sc#3
+  (byte~) main::$5 ← (byte) main::bits#3 << (byte) 1
+  (byte) main::bits#1 ← (byte~) main::$5
+  (byte) main::x#1 ← ++ (byte) main::x#2
+  (boolean~) main::$6 ← (byte) main::x#1 != (byte) 8
+  if((boolean~) main::$6) goto main::@2
+  to:main::@5
+main::@4: scope:[main]  from main::@2
+  (byte*) PROCPORT#7 ← phi( main::@2/(byte*) PROCPORT#6 )
+  (byte*) main::CHAR_A#5 ← phi( main::@2/(byte*) main::CHAR_A#4 )
+  (byte) main::y#6 ← phi( main::@2/(byte) main::y#5 )
+  (byte) main::x#4 ← phi( main::@2/(byte) main::x#3 )
+  (byte) main::bits#4 ← phi( main::@2/(byte) main::bits#2 )
+  (byte*) main::sc#6 ← phi( main::@2/(byte*) main::sc#5 )
+  (byte) main::c#1 ← (byte) '*'
+  to:main::@3
+main::@5: scope:[main]  from main::@3
+  (byte*) PROCPORT#4 ← phi( main::@3/(byte*) PROCPORT#5 )
+  (byte*) main::CHAR_A#2 ← phi( main::@3/(byte*) main::CHAR_A#3 )
+  (byte) main::y#3 ← phi( main::@3/(byte) main::y#4 )
+  (byte*) main::sc#4 ← phi( main::@3/(byte*) main::sc#1 )
+  (byte*~) main::$7 ← (byte*) main::sc#4 + (byte) 32
+  (byte*) main::sc#2 ← (byte*~) main::$7
+  (byte) main::y#1 ← ++ (byte) main::y#3
+  (boolean~) main::$8 ← (byte) main::y#1 != (byte) 8
+  if((boolean~) main::$8) goto main::@1
+  to:main::@6
+main::@6: scope:[main]  from main::@5
+  (byte*) PROCPORT#2 ← phi( main::@5/(byte*) PROCPORT#4 )
+  *((byte*) PROCPORT#2) ← (byte) 55
+  asm { cli }
+  to:main::@return
+main::@return: scope:[main]  from main::@6
+  return 
+  to:@return
+@1: scope:[]  from @begin
+  (byte*) SCREEN#2 ← phi( @begin/(byte*) SCREEN#0 )
+  (byte*) PROCPORT#3 ← phi( @begin/(byte*) PROCPORT#0 )
+  (byte*) CHARGEN#2 ← phi( @begin/(byte*) CHARGEN#0 )
+  call main param-assignment
+  to:@end
+@end: scope:[]  from @1
+
+Not aliassing across scopes: main::sc#0 SCREEN#1
+Alias (byte*) CHARGEN#0 = (byte*) CHARGEN#1 (byte*) CHARGEN#2 
+Alias (byte*) PROCPORT#0 = (byte*) PROCPORT#1 (byte*) PROCPORT#3 
+Alias (byte*) SCREEN#0 = (byte*) SCREEN#1 (byte*) SCREEN#2 
+Alias (byte*) main::CHAR_A#0 = (byte*~) main::$0 
+Alias (byte) main::bits#0 = (byte~) main::$1 
+Alias (byte) main::bits#1 = (byte~) main::$5 
+Alias (byte*) main::sc#5 = (byte*) main::sc#6 
+Alias (byte) main::bits#2 = (byte) main::bits#4 
+Alias (byte) main::x#3 = (byte) main::x#4 
+Alias (byte) main::y#5 = (byte) main::y#6 
+Alias (byte*) main::CHAR_A#4 = (byte*) main::CHAR_A#5 
+Alias (byte*) PROCPORT#6 = (byte*) PROCPORT#7 
+Alias (byte*) main::sc#1 = (byte*) main::sc#4 
+Alias (byte) main::y#3 = (byte) main::y#4 
+Alias (byte*) main::CHAR_A#2 = (byte*) main::CHAR_A#3 
+Alias (byte*) PROCPORT#2 = (byte*) PROCPORT#4 (byte*) PROCPORT#5 
+Alias (byte*) main::sc#2 = (byte*~) main::$7 
+Succesful SSA optimization Pass2AliasElimination
+CONTROL FLOW GRAPH
+@begin: scope:[]  from
+  (byte*) PROCPORT#0 ← (byte) 1
+  (byte*) CHARGEN#0 ← (word) 53248
+  (byte*) SCREEN#0 ← (word) 1024
+  to:@1
+main: scope:[main]  from @1
+  asm { sei }
+  (byte*) main::CHAR_A#0 ← (byte*) CHARGEN#0 + (byte) 8
+  *((byte*) PROCPORT#0) ← (byte) 50
+  (byte*) main::sc#0 ← (byte*) SCREEN#0
+  (byte) main::y#0 ← (byte) 0
+  to:main::@1
+main::@1: scope:[main]  from main main::@5
+  (byte*) PROCPORT#8 ← phi( main/(byte*) PROCPORT#0 main::@5/(byte*) PROCPORT#2 )
+  (byte*) main::sc#7 ← phi( main/(byte*) main::sc#0 main::@5/(byte*) main::sc#2 )
+  (byte) main::y#2 ← phi( main/(byte) main::y#0 main::@5/(byte) main::y#1 )
+  (byte*) main::CHAR_A#1 ← phi( main/(byte*) main::CHAR_A#0 main::@5/(byte*) main::CHAR_A#2 )
+  (byte) main::bits#0 ← (byte*) main::CHAR_A#1 *idx (byte) main::y#2
+  (byte) main::x#0 ← (byte) 0
+  to:main::@2
+main::@2: scope:[main]  from main::@1 main::@3
+  (byte*) PROCPORT#6 ← phi( main::@1/(byte*) PROCPORT#8 main::@3/(byte*) PROCPORT#2 )
+  (byte*) main::CHAR_A#4 ← phi( main::@1/(byte*) main::CHAR_A#1 main::@3/(byte*) main::CHAR_A#2 )
+  (byte) main::y#5 ← phi( main::@1/(byte) main::y#2 main::@3/(byte) main::y#3 )
+  (byte) main::x#3 ← phi( main::@1/(byte) main::x#0 main::@3/(byte) main::x#1 )
+  (byte*) main::sc#5 ← phi( main::@1/(byte*) main::sc#7 main::@3/(byte*) main::sc#1 )
+  (byte) main::bits#2 ← phi( main::@1/(byte) main::bits#0 main::@3/(byte) main::bits#1 )
+  (byte) main::c#0 ← (byte) '.'
+  (byte~) main::$2 ← (byte) main::bits#2 & (byte) 128
+  (boolean~) main::$4 ← (byte~) main::$2 == (byte) 0
+  if((boolean~) main::$4) goto main::@3
+  to:main::@4
+main::@3: scope:[main]  from main::@2 main::@4
+  (byte*) PROCPORT#2 ← phi( main::@2/(byte*) PROCPORT#6 main::@4/(byte*) PROCPORT#6 )
+  (byte*) main::CHAR_A#2 ← phi( main::@2/(byte*) main::CHAR_A#4 main::@4/(byte*) main::CHAR_A#4 )
+  (byte) main::y#3 ← phi( main::@2/(byte) main::y#5 main::@4/(byte) main::y#5 )
+  (byte) main::x#2 ← phi( main::@2/(byte) main::x#3 main::@4/(byte) main::x#3 )
+  (byte) main::bits#3 ← phi( main::@2/(byte) main::bits#2 main::@4/(byte) main::bits#2 )
+  (byte*) main::sc#3 ← phi( main::@2/(byte*) main::sc#5 main::@4/(byte*) main::sc#5 )
+  (byte) main::c#2 ← phi( main::@2/(byte) main::c#0 main::@4/(byte) main::c#1 )
+  *((byte*) main::sc#3) ← (byte) main::c#2
+  (byte*) main::sc#1 ← ++ (byte*) main::sc#3
+  (byte) main::bits#1 ← (byte) main::bits#3 << (byte) 1
+  (byte) main::x#1 ← ++ (byte) main::x#2
+  (boolean~) main::$6 ← (byte) main::x#1 != (byte) 8
+  if((boolean~) main::$6) goto main::@2
+  to:main::@5
+main::@4: scope:[main]  from main::@2
+  (byte) main::c#1 ← (byte) '*'
+  to:main::@3
+main::@5: scope:[main]  from main::@3
+  (byte*) main::sc#2 ← (byte*) main::sc#1 + (byte) 32
+  (byte) main::y#1 ← ++ (byte) main::y#3
+  (boolean~) main::$8 ← (byte) main::y#1 != (byte) 8
+  if((boolean~) main::$8) goto main::@1
+  to:main::@6
+main::@6: scope:[main]  from main::@5
+  *((byte*) PROCPORT#2) ← (byte) 55
+  asm { cli }
+  to:main::@return
+main::@return: scope:[main]  from main::@6
+  return 
+  to:@return
+@1: scope:[]  from @begin
+  call main param-assignment
+  to:@end
+@end: scope:[]  from @1
+
+Not aliassing across scopes: main::sc#0 SCREEN#0
+Alias (byte*) main::sc#3 = (byte*) main::sc#5 
+Alias (byte) main::bits#2 = (byte) main::bits#3 
+Alias (byte) main::x#2 = (byte) main::x#3 
+Alias (byte) main::y#3 = (byte) main::y#5 
+Alias (byte*) main::CHAR_A#2 = (byte*) main::CHAR_A#4 
+Alias (byte*) PROCPORT#2 = (byte*) PROCPORT#6 
+Succesful SSA optimization Pass2AliasElimination
+CONTROL FLOW GRAPH
+@begin: scope:[]  from
+  (byte*) PROCPORT#0 ← (byte) 1
+  (byte*) CHARGEN#0 ← (word) 53248
+  (byte*) SCREEN#0 ← (word) 1024
+  to:@1
+main: scope:[main]  from @1
+  asm { sei }
+  (byte*) main::CHAR_A#0 ← (byte*) CHARGEN#0 + (byte) 8
+  *((byte*) PROCPORT#0) ← (byte) 50
+  (byte*) main::sc#0 ← (byte*) SCREEN#0
+  (byte) main::y#0 ← (byte) 0
+  to:main::@1
+main::@1: scope:[main]  from main main::@5
+  (byte*) PROCPORT#8 ← phi( main/(byte*) PROCPORT#0 main::@5/(byte*) PROCPORT#2 )
+  (byte*) main::sc#7 ← phi( main/(byte*) main::sc#0 main::@5/(byte*) main::sc#2 )
+  (byte) main::y#2 ← phi( main/(byte) main::y#0 main::@5/(byte) main::y#1 )
+  (byte*) main::CHAR_A#1 ← phi( main/(byte*) main::CHAR_A#0 main::@5/(byte*) main::CHAR_A#2 )
+  (byte) main::bits#0 ← (byte*) main::CHAR_A#1 *idx (byte) main::y#2
+  (byte) main::x#0 ← (byte) 0
+  to:main::@2
+main::@2: scope:[main]  from main::@1 main::@3
+  (byte*) PROCPORT#2 ← phi( main::@1/(byte*) PROCPORT#8 main::@3/(byte*) PROCPORT#2 )
+  (byte*) main::CHAR_A#2 ← phi( main::@1/(byte*) main::CHAR_A#1 main::@3/(byte*) main::CHAR_A#2 )
+  (byte) main::y#3 ← phi( main::@1/(byte) main::y#2 main::@3/(byte) main::y#3 )
+  (byte) main::x#2 ← phi( main::@1/(byte) main::x#0 main::@3/(byte) main::x#1 )
+  (byte*) main::sc#3 ← phi( main::@1/(byte*) main::sc#7 main::@3/(byte*) main::sc#1 )
+  (byte) main::bits#2 ← phi( main::@1/(byte) main::bits#0 main::@3/(byte) main::bits#1 )
+  (byte) main::c#0 ← (byte) '.'
+  (byte~) main::$2 ← (byte) main::bits#2 & (byte) 128
+  (boolean~) main::$4 ← (byte~) main::$2 == (byte) 0
+  if((boolean~) main::$4) goto main::@3
+  to:main::@4
+main::@3: scope:[main]  from main::@2 main::@4
+  (byte) main::c#2 ← phi( main::@2/(byte) main::c#0 main::@4/(byte) main::c#1 )
+  *((byte*) main::sc#3) ← (byte) main::c#2
+  (byte*) main::sc#1 ← ++ (byte*) main::sc#3
+  (byte) main::bits#1 ← (byte) main::bits#2 << (byte) 1
+  (byte) main::x#1 ← ++ (byte) main::x#2
+  (boolean~) main::$6 ← (byte) main::x#1 != (byte) 8
+  if((boolean~) main::$6) goto main::@2
+  to:main::@5
+main::@4: scope:[main]  from main::@2
+  (byte) main::c#1 ← (byte) '*'
+  to:main::@3
+main::@5: scope:[main]  from main::@3
+  (byte*) main::sc#2 ← (byte*) main::sc#1 + (byte) 32
+  (byte) main::y#1 ← ++ (byte) main::y#3
+  (boolean~) main::$8 ← (byte) main::y#1 != (byte) 8
+  if((boolean~) main::$8) goto main::@1
+  to:main::@6
+main::@6: scope:[main]  from main::@5
+  *((byte*) PROCPORT#2) ← (byte) 55
+  asm { cli }
+  to:main::@return
+main::@return: scope:[main]  from main::@6
+  return 
+  to:@return
+@1: scope:[]  from @begin
+  call main param-assignment
+  to:@end
+@end: scope:[]  from @1
+
+Not aliassing across scopes: main::sc#0 SCREEN#0
+Self Phi Eliminated (byte) main::y#3
+Self Phi Eliminated (byte*) main::CHAR_A#2
+Self Phi Eliminated (byte*) PROCPORT#2
+Succesful SSA optimization Pass2SelfPhiElimination
+CONTROL FLOW GRAPH
+@begin: scope:[]  from
+  (byte*) PROCPORT#0 ← (byte) 1
+  (byte*) CHARGEN#0 ← (word) 53248
+  (byte*) SCREEN#0 ← (word) 1024
+  to:@1
+main: scope:[main]  from @1
+  asm { sei }
+  (byte*) main::CHAR_A#0 ← (byte*) CHARGEN#0 + (byte) 8
+  *((byte*) PROCPORT#0) ← (byte) 50
+  (byte*) main::sc#0 ← (byte*) SCREEN#0
+  (byte) main::y#0 ← (byte) 0
+  to:main::@1
+main::@1: scope:[main]  from main main::@5
+  (byte*) PROCPORT#8 ← phi( main/(byte*) PROCPORT#0 main::@5/(byte*) PROCPORT#2 )
+  (byte*) main::sc#7 ← phi( main/(byte*) main::sc#0 main::@5/(byte*) main::sc#2 )
+  (byte) main::y#2 ← phi( main/(byte) main::y#0 main::@5/(byte) main::y#1 )
+  (byte*) main::CHAR_A#1 ← phi( main/(byte*) main::CHAR_A#0 main::@5/(byte*) main::CHAR_A#2 )
+  (byte) main::bits#0 ← (byte*) main::CHAR_A#1 *idx (byte) main::y#2
+  (byte) main::x#0 ← (byte) 0
+  to:main::@2
+main::@2: scope:[main]  from main::@1 main::@3
+  (byte*) PROCPORT#2 ← phi( main::@1/(byte*) PROCPORT#8 )
+  (byte*) main::CHAR_A#2 ← phi( main::@1/(byte*) main::CHAR_A#1 )
+  (byte) main::y#3 ← phi( main::@1/(byte) main::y#2 )
+  (byte) main::x#2 ← phi( main::@1/(byte) main::x#0 main::@3/(byte) main::x#1 )
+  (byte*) main::sc#3 ← phi( main::@1/(byte*) main::sc#7 main::@3/(byte*) main::sc#1 )
+  (byte) main::bits#2 ← phi( main::@1/(byte) main::bits#0 main::@3/(byte) main::bits#1 )
+  (byte) main::c#0 ← (byte) '.'
+  (byte~) main::$2 ← (byte) main::bits#2 & (byte) 128
+  (boolean~) main::$4 ← (byte~) main::$2 == (byte) 0
+  if((boolean~) main::$4) goto main::@3
+  to:main::@4
+main::@3: scope:[main]  from main::@2 main::@4
+  (byte) main::c#2 ← phi( main::@2/(byte) main::c#0 main::@4/(byte) main::c#1 )
+  *((byte*) main::sc#3) ← (byte) main::c#2
+  (byte*) main::sc#1 ← ++ (byte*) main::sc#3
+  (byte) main::bits#1 ← (byte) main::bits#2 << (byte) 1
+  (byte) main::x#1 ← ++ (byte) main::x#2
+  (boolean~) main::$6 ← (byte) main::x#1 != (byte) 8
+  if((boolean~) main::$6) goto main::@2
+  to:main::@5
+main::@4: scope:[main]  from main::@2
+  (byte) main::c#1 ← (byte) '*'
+  to:main::@3
+main::@5: scope:[main]  from main::@3
+  (byte*) main::sc#2 ← (byte*) main::sc#1 + (byte) 32
+  (byte) main::y#1 ← ++ (byte) main::y#3
+  (boolean~) main::$8 ← (byte) main::y#1 != (byte) 8
+  if((boolean~) main::$8) goto main::@1
+  to:main::@6
+main::@6: scope:[main]  from main::@5
+  *((byte*) PROCPORT#2) ← (byte) 55
+  asm { cli }
+  to:main::@return
+main::@return: scope:[main]  from main::@6
+  return 
+  to:@return
+@1: scope:[]  from @begin
+  call main param-assignment
+  to:@end
+@end: scope:[]  from @1
+
+Redundant Phi (byte) main::y#3 (byte) main::y#2
+Redundant Phi (byte*) main::CHAR_A#2 (byte*) main::CHAR_A#1
+Redundant Phi (byte*) PROCPORT#2 (byte*) PROCPORT#8
+Succesful SSA optimization Pass2RedundantPhiElimination
+CONTROL FLOW GRAPH
+@begin: scope:[]  from
+  (byte*) PROCPORT#0 ← (byte) 1
+  (byte*) CHARGEN#0 ← (word) 53248
+  (byte*) SCREEN#0 ← (word) 1024
+  to:@1
+main: scope:[main]  from @1
+  asm { sei }
+  (byte*) main::CHAR_A#0 ← (byte*) CHARGEN#0 + (byte) 8
+  *((byte*) PROCPORT#0) ← (byte) 50
+  (byte*) main::sc#0 ← (byte*) SCREEN#0
+  (byte) main::y#0 ← (byte) 0
+  to:main::@1
+main::@1: scope:[main]  from main main::@5
+  (byte*) PROCPORT#8 ← phi( main/(byte*) PROCPORT#0 main::@5/(byte*) PROCPORT#8 )
+  (byte*) main::sc#7 ← phi( main/(byte*) main::sc#0 main::@5/(byte*) main::sc#2 )
+  (byte) main::y#2 ← phi( main/(byte) main::y#0 main::@5/(byte) main::y#1 )
+  (byte*) main::CHAR_A#1 ← phi( main/(byte*) main::CHAR_A#0 main::@5/(byte*) main::CHAR_A#1 )
+  (byte) main::bits#0 ← (byte*) main::CHAR_A#1 *idx (byte) main::y#2
+  (byte) main::x#0 ← (byte) 0
+  to:main::@2
+main::@2: scope:[main]  from main::@1 main::@3
+  (byte) main::x#2 ← phi( main::@1/(byte) main::x#0 main::@3/(byte) main::x#1 )
+  (byte*) main::sc#3 ← phi( main::@1/(byte*) main::sc#7 main::@3/(byte*) main::sc#1 )
+  (byte) main::bits#2 ← phi( main::@1/(byte) main::bits#0 main::@3/(byte) main::bits#1 )
+  (byte) main::c#0 ← (byte) '.'
+  (byte~) main::$2 ← (byte) main::bits#2 & (byte) 128
+  (boolean~) main::$4 ← (byte~) main::$2 == (byte) 0
+  if((boolean~) main::$4) goto main::@3
+  to:main::@4
+main::@3: scope:[main]  from main::@2 main::@4
+  (byte) main::c#2 ← phi( main::@2/(byte) main::c#0 main::@4/(byte) main::c#1 )
+  *((byte*) main::sc#3) ← (byte) main::c#2
+  (byte*) main::sc#1 ← ++ (byte*) main::sc#3
+  (byte) main::bits#1 ← (byte) main::bits#2 << (byte) 1
+  (byte) main::x#1 ← ++ (byte) main::x#2
+  (boolean~) main::$6 ← (byte) main::x#1 != (byte) 8
+  if((boolean~) main::$6) goto main::@2
+  to:main::@5
+main::@4: scope:[main]  from main::@2
+  (byte) main::c#1 ← (byte) '*'
+  to:main::@3
+main::@5: scope:[main]  from main::@3
+  (byte*) main::sc#2 ← (byte*) main::sc#1 + (byte) 32
+  (byte) main::y#1 ← ++ (byte) main::y#2
+  (boolean~) main::$8 ← (byte) main::y#1 != (byte) 8
+  if((boolean~) main::$8) goto main::@1
+  to:main::@6
+main::@6: scope:[main]  from main::@5
+  *((byte*) PROCPORT#8) ← (byte) 55
+  asm { cli }
+  to:main::@return
+main::@return: scope:[main]  from main::@6
+  return 
+  to:@return
+@1: scope:[]  from @begin
+  call main param-assignment
+  to:@end
+@end: scope:[]  from @1
+
+Simple Condition (boolean~) main::$4 if((byte~) main::$2==(byte) 0) goto main::@3
+Simple Condition (boolean~) main::$6 if((byte) main::x#1!=(byte) 8) goto main::@2
+Simple Condition (boolean~) main::$8 if((byte) main::y#1!=(byte) 8) goto main::@1
+Succesful SSA optimization Pass2ConditionalJumpSimplification
+CONTROL FLOW GRAPH
+@begin: scope:[]  from
+  (byte*) PROCPORT#0 ← (byte) 1
+  (byte*) CHARGEN#0 ← (word) 53248
+  (byte*) SCREEN#0 ← (word) 1024
+  to:@1
+main: scope:[main]  from @1
+  asm { sei }
+  (byte*) main::CHAR_A#0 ← (byte*) CHARGEN#0 + (byte) 8
+  *((byte*) PROCPORT#0) ← (byte) 50
+  (byte*) main::sc#0 ← (byte*) SCREEN#0
+  (byte) main::y#0 ← (byte) 0
+  to:main::@1
+main::@1: scope:[main]  from main main::@5
+  (byte*) PROCPORT#8 ← phi( main/(byte*) PROCPORT#0 main::@5/(byte*) PROCPORT#8 )
+  (byte*) main::sc#7 ← phi( main/(byte*) main::sc#0 main::@5/(byte*) main::sc#2 )
+  (byte) main::y#2 ← phi( main/(byte) main::y#0 main::@5/(byte) main::y#1 )
+  (byte*) main::CHAR_A#1 ← phi( main/(byte*) main::CHAR_A#0 main::@5/(byte*) main::CHAR_A#1 )
+  (byte) main::bits#0 ← (byte*) main::CHAR_A#1 *idx (byte) main::y#2
+  (byte) main::x#0 ← (byte) 0
+  to:main::@2
+main::@2: scope:[main]  from main::@1 main::@3
+  (byte) main::x#2 ← phi( main::@1/(byte) main::x#0 main::@3/(byte) main::x#1 )
+  (byte*) main::sc#3 ← phi( main::@1/(byte*) main::sc#7 main::@3/(byte*) main::sc#1 )
+  (byte) main::bits#2 ← phi( main::@1/(byte) main::bits#0 main::@3/(byte) main::bits#1 )
+  (byte) main::c#0 ← (byte) '.'
+  (byte~) main::$2 ← (byte) main::bits#2 & (byte) 128
+  if((byte~) main::$2==(byte) 0) goto main::@3
+  to:main::@4
+main::@3: scope:[main]  from main::@2 main::@4
+  (byte) main::c#2 ← phi( main::@2/(byte) main::c#0 main::@4/(byte) main::c#1 )
+  *((byte*) main::sc#3) ← (byte) main::c#2
+  (byte*) main::sc#1 ← ++ (byte*) main::sc#3
+  (byte) main::bits#1 ← (byte) main::bits#2 << (byte) 1
+  (byte) main::x#1 ← ++ (byte) main::x#2
+  if((byte) main::x#1!=(byte) 8) goto main::@2
+  to:main::@5
+main::@4: scope:[main]  from main::@2
+  (byte) main::c#1 ← (byte) '*'
+  to:main::@3
+main::@5: scope:[main]  from main::@3
+  (byte*) main::sc#2 ← (byte*) main::sc#1 + (byte) 32
+  (byte) main::y#1 ← ++ (byte) main::y#2
+  if((byte) main::y#1!=(byte) 8) goto main::@1
+  to:main::@6
+main::@6: scope:[main]  from main::@5
+  *((byte*) PROCPORT#8) ← (byte) 55
+  asm { cli }
+  to:main::@return
+main::@return: scope:[main]  from main::@6
+  return 
+  to:@return
+@1: scope:[]  from @begin
+  call main param-assignment
+  to:@end
+@end: scope:[]  from @1
+
+Constant (const byte*) PROCPORT#0 = 1
+Constant (const byte*) CHARGEN#0 = 53248
+Constant (const byte*) SCREEN#0 = 1024
+Constant (const byte) main::y#0 = 0
+Constant (const byte) main::x#0 = 0
+Constant (const byte) main::c#0 = '.'
+Constant (const byte) main::c#1 = '*'
+Succesful SSA optimization Pass2ConstantIdentification
+CONTROL FLOW GRAPH
+@begin: scope:[]  from
+  to:@1
+main: scope:[main]  from @1
+  asm { sei }
+  (byte*) main::CHAR_A#0 ← (const byte*) CHARGEN#0 + (byte) 8
+  *((const byte*) PROCPORT#0) ← (byte) 50
+  (byte*) main::sc#0 ← (const byte*) SCREEN#0
+  to:main::@1
+main::@1: scope:[main]  from main main::@5
+  (byte*) PROCPORT#8 ← phi( main/(const byte*) PROCPORT#0 main::@5/(byte*) PROCPORT#8 )
+  (byte*) main::sc#7 ← phi( main/(byte*) main::sc#0 main::@5/(byte*) main::sc#2 )
+  (byte) main::y#2 ← phi( main/(const byte) main::y#0 main::@5/(byte) main::y#1 )
+  (byte*) main::CHAR_A#1 ← phi( main/(byte*) main::CHAR_A#0 main::@5/(byte*) main::CHAR_A#1 )
+  (byte) main::bits#0 ← (byte*) main::CHAR_A#1 *idx (byte) main::y#2
+  to:main::@2
+main::@2: scope:[main]  from main::@1 main::@3
+  (byte) main::x#2 ← phi( main::@1/(const byte) main::x#0 main::@3/(byte) main::x#1 )
+  (byte*) main::sc#3 ← phi( main::@1/(byte*) main::sc#7 main::@3/(byte*) main::sc#1 )
+  (byte) main::bits#2 ← phi( main::@1/(byte) main::bits#0 main::@3/(byte) main::bits#1 )
+  (byte~) main::$2 ← (byte) main::bits#2 & (byte) 128
+  if((byte~) main::$2==(byte) 0) goto main::@3
+  to:main::@4
+main::@3: scope:[main]  from main::@2 main::@4
+  (byte) main::c#2 ← phi( main::@2/(const byte) main::c#0 main::@4/(const byte) main::c#1 )
+  *((byte*) main::sc#3) ← (byte) main::c#2
+  (byte*) main::sc#1 ← ++ (byte*) main::sc#3
+  (byte) main::bits#1 ← (byte) main::bits#2 << (byte) 1
+  (byte) main::x#1 ← ++ (byte) main::x#2
+  if((byte) main::x#1!=(byte) 8) goto main::@2
+  to:main::@5
+main::@4: scope:[main]  from main::@2
+  to:main::@3
+main::@5: scope:[main]  from main::@3
+  (byte*) main::sc#2 ← (byte*) main::sc#1 + (byte) 32
+  (byte) main::y#1 ← ++ (byte) main::y#2
+  if((byte) main::y#1!=(byte) 8) goto main::@1
+  to:main::@6
+main::@6: scope:[main]  from main::@5
+  *((byte*) PROCPORT#8) ← (byte) 55
+  asm { cli }
+  to:main::@return
+main::@return: scope:[main]  from main::@6
+  return 
+  to:@return
+@1: scope:[]  from @begin
+  call main param-assignment
+  to:@end
+@end: scope:[]  from @1
+
+Constant (const byte*) main::CHAR_A#0 = CHARGEN#0+8
+Constant (const byte*) main::sc#0 = SCREEN#0
+Succesful SSA optimization Pass2ConstantIdentification
+CONTROL FLOW GRAPH
+@begin: scope:[]  from
+  to:@1
+main: scope:[main]  from @1
+  asm { sei }
+  *((const byte*) PROCPORT#0) ← (byte) 50
+  to:main::@1
+main::@1: scope:[main]  from main main::@5
+  (byte*) PROCPORT#8 ← phi( main/(const byte*) PROCPORT#0 main::@5/(byte*) PROCPORT#8 )
+  (byte*) main::sc#7 ← phi( main/(const byte*) main::sc#0 main::@5/(byte*) main::sc#2 )
+  (byte) main::y#2 ← phi( main/(const byte) main::y#0 main::@5/(byte) main::y#1 )
+  (byte*) main::CHAR_A#1 ← phi( main/(const byte*) main::CHAR_A#0 main::@5/(byte*) main::CHAR_A#1 )
+  (byte) main::bits#0 ← (byte*) main::CHAR_A#1 *idx (byte) main::y#2
+  to:main::@2
+main::@2: scope:[main]  from main::@1 main::@3
+  (byte) main::x#2 ← phi( main::@1/(const byte) main::x#0 main::@3/(byte) main::x#1 )
+  (byte*) main::sc#3 ← phi( main::@1/(byte*) main::sc#7 main::@3/(byte*) main::sc#1 )
+  (byte) main::bits#2 ← phi( main::@1/(byte) main::bits#0 main::@3/(byte) main::bits#1 )
+  (byte~) main::$2 ← (byte) main::bits#2 & (byte) 128
+  if((byte~) main::$2==(byte) 0) goto main::@3
+  to:main::@4
+main::@3: scope:[main]  from main::@2 main::@4
+  (byte) main::c#2 ← phi( main::@2/(const byte) main::c#0 main::@4/(const byte) main::c#1 )
+  *((byte*) main::sc#3) ← (byte) main::c#2
+  (byte*) main::sc#1 ← ++ (byte*) main::sc#3
+  (byte) main::bits#1 ← (byte) main::bits#2 << (byte) 1
+  (byte) main::x#1 ← ++ (byte) main::x#2
+  if((byte) main::x#1!=(byte) 8) goto main::@2
+  to:main::@5
+main::@4: scope:[main]  from main::@2
+  to:main::@3
+main::@5: scope:[main]  from main::@3
+  (byte*) main::sc#2 ← (byte*) main::sc#1 + (byte) 32
+  (byte) main::y#1 ← ++ (byte) main::y#2
+  if((byte) main::y#1!=(byte) 8) goto main::@1
+  to:main::@6
+main::@6: scope:[main]  from main::@5
+  *((byte*) PROCPORT#8) ← (byte) 55
+  asm { cli }
+  to:main::@return
+main::@return: scope:[main]  from main::@6
+  return 
+  to:@return
+@1: scope:[]  from @begin
+  call main param-assignment
+  to:@end
+@end: scope:[]  from @1
+
+Multiple usages for variable. Not optimizing sub-constant (byte*) main::sc#1
+Not culling empty block because it shares successor with its predecessor. (label) main::@4
+Self Phi Eliminated (byte*) main::CHAR_A#1
+Self Phi Eliminated (byte*) PROCPORT#8
+Succesful SSA optimization Pass2SelfPhiElimination
+CONTROL FLOW GRAPH
+@begin: scope:[]  from
+  to:@1
+main: scope:[main]  from @1
+  asm { sei }
+  *((const byte*) PROCPORT#0) ← (byte) 50
+  to:main::@1
+main::@1: scope:[main]  from main main::@5
+  (byte*) PROCPORT#8 ← phi( main/(const byte*) PROCPORT#0 )
+  (byte*) main::sc#7 ← phi( main/(const byte*) main::sc#0 main::@5/(byte*) main::sc#2 )
+  (byte) main::y#2 ← phi( main/(const byte) main::y#0 main::@5/(byte) main::y#1 )
+  (byte*) main::CHAR_A#1 ← phi( main/(const byte*) main::CHAR_A#0 )
+  (byte) main::bits#0 ← (byte*) main::CHAR_A#1 *idx (byte) main::y#2
+  to:main::@2
+main::@2: scope:[main]  from main::@1 main::@3
+  (byte) main::x#2 ← phi( main::@1/(const byte) main::x#0 main::@3/(byte) main::x#1 )
+  (byte*) main::sc#3 ← phi( main::@1/(byte*) main::sc#7 main::@3/(byte*) main::sc#1 )
+  (byte) main::bits#2 ← phi( main::@1/(byte) main::bits#0 main::@3/(byte) main::bits#1 )
+  (byte~) main::$2 ← (byte) main::bits#2 & (byte) 128
+  if((byte~) main::$2==(byte) 0) goto main::@3
+  to:main::@4
+main::@3: scope:[main]  from main::@2 main::@4
+  (byte) main::c#2 ← phi( main::@2/(const byte) main::c#0 main::@4/(const byte) main::c#1 )
+  *((byte*) main::sc#3) ← (byte) main::c#2
+  (byte*) main::sc#1 ← ++ (byte*) main::sc#3
+  (byte) main::bits#1 ← (byte) main::bits#2 << (byte) 1
+  (byte) main::x#1 ← ++ (byte) main::x#2
+  if((byte) main::x#1!=(byte) 8) goto main::@2
+  to:main::@5
+main::@4: scope:[main]  from main::@2
+  to:main::@3
+main::@5: scope:[main]  from main::@3
+  (byte*) main::sc#2 ← (byte*) main::sc#1 + (byte) 32
+  (byte) main::y#1 ← ++ (byte) main::y#2
+  if((byte) main::y#1!=(byte) 8) goto main::@1
+  to:main::@6
+main::@6: scope:[main]  from main::@5
+  *((byte*) PROCPORT#8) ← (byte) 55
+  asm { cli }
+  to:main::@return
+main::@return: scope:[main]  from main::@6
+  return 
+  to:@return
+@1: scope:[]  from @begin
+  call main param-assignment
+  to:@end
+@end: scope:[]  from @1
+
+Redundant Phi (byte*) main::CHAR_A#1 (const byte*) main::CHAR_A#0
+Redundant Phi (byte*) PROCPORT#8 (const byte*) PROCPORT#0
+Succesful SSA optimization Pass2RedundantPhiElimination
+CONTROL FLOW GRAPH
+@begin: scope:[]  from
+  to:@1
+main: scope:[main]  from @1
+  asm { sei }
+  *((const byte*) PROCPORT#0) ← (byte) 50
+  to:main::@1
+main::@1: scope:[main]  from main main::@5
+  (byte*) main::sc#7 ← phi( main/(const byte*) main::sc#0 main::@5/(byte*) main::sc#2 )
+  (byte) main::y#2 ← phi( main/(const byte) main::y#0 main::@5/(byte) main::y#1 )
+  (byte) main::bits#0 ← (const byte*) main::CHAR_A#0 *idx (byte) main::y#2
+  to:main::@2
+main::@2: scope:[main]  from main::@1 main::@3
+  (byte) main::x#2 ← phi( main::@1/(const byte) main::x#0 main::@3/(byte) main::x#1 )
+  (byte*) main::sc#3 ← phi( main::@1/(byte*) main::sc#7 main::@3/(byte*) main::sc#1 )
+  (byte) main::bits#2 ← phi( main::@1/(byte) main::bits#0 main::@3/(byte) main::bits#1 )
+  (byte~) main::$2 ← (byte) main::bits#2 & (byte) 128
+  if((byte~) main::$2==(byte) 0) goto main::@3
+  to:main::@4
+main::@3: scope:[main]  from main::@2 main::@4
+  (byte) main::c#2 ← phi( main::@2/(const byte) main::c#0 main::@4/(const byte) main::c#1 )
+  *((byte*) main::sc#3) ← (byte) main::c#2
+  (byte*) main::sc#1 ← ++ (byte*) main::sc#3
+  (byte) main::bits#1 ← (byte) main::bits#2 << (byte) 1
+  (byte) main::x#1 ← ++ (byte) main::x#2
+  if((byte) main::x#1!=(byte) 8) goto main::@2
+  to:main::@5
+main::@4: scope:[main]  from main::@2
+  to:main::@3
+main::@5: scope:[main]  from main::@3
+  (byte*) main::sc#2 ← (byte*) main::sc#1 + (byte) 32
+  (byte) main::y#1 ← ++ (byte) main::y#2
+  if((byte) main::y#1!=(byte) 8) goto main::@1
+  to:main::@6
+main::@6: scope:[main]  from main::@5
+  *((const byte*) PROCPORT#0) ← (byte) 55
+  asm { cli }
+  to:main::@return
+main::@return: scope:[main]  from main::@6
+  return 
+  to:@return
+@1: scope:[]  from @begin
+  call main param-assignment
+  to:@end
+@end: scope:[]  from @1
+
+Multiple usages for variable. Not optimizing sub-constant (byte) main::y#2
+Multiple usages for variable. Not optimizing sub-constant (byte*) main::sc#1
+Not culling empty block because it shares successor with its predecessor. (label) main::@4
+Multiple usages for variable. Not optimizing sub-constant (byte) main::y#2
+Multiple usages for variable. Not optimizing sub-constant (byte*) main::sc#1
+Inlining constant with var siblings (const byte) main::y#0
+Inlining constant with var siblings (const byte) main::y#0
+Inlining constant with var siblings (const byte) main::x#0
+Inlining constant with var siblings (const byte) main::x#0
+Inlining constant with var siblings (const byte) main::c#0
+Inlining constant with different constant siblings (const byte) main::c#0
+Inlining constant with var siblings (const byte) main::c#1
+Inlining constant with different constant siblings (const byte) main::c#1
+Inlining constant with var siblings (const byte*) main::sc#0
+Inlining constant with var siblings (const byte*) main::sc#0
+Inlining constant with var siblings (const byte*) main::sc#0
+Inlining constant with var siblings (const byte*) main::sc#0
+Constant inlined main::c#1 = (byte) '*'
+Constant inlined main::x#0 = (byte) 0
+Constant inlined main::c#0 = (byte) '.'
+Constant inlined main::sc#0 = (const byte*) SCREEN#0
+Constant inlined main::y#0 = (byte) 0
+Succesful SSA optimization Pass2ConstantInlining
+CONTROL FLOW GRAPH
+@begin: scope:[]  from
+  to:@1
+main: scope:[main]  from @1
+  asm { sei }
+  *((const byte*) PROCPORT#0) ← (byte) 50
+  to:main::@1
+main::@1: scope:[main]  from main main::@5
+  (byte*) main::sc#7 ← phi( main/(const byte*) SCREEN#0 main::@5/(byte*) main::sc#2 )
+  (byte) main::y#2 ← phi( main/(byte) 0 main::@5/(byte) main::y#1 )
+  (byte) main::bits#0 ← (const byte*) main::CHAR_A#0 *idx (byte) main::y#2
+  to:main::@2
+main::@2: scope:[main]  from main::@1 main::@3
+  (byte) main::x#2 ← phi( main::@1/(byte) 0 main::@3/(byte) main::x#1 )
+  (byte*) main::sc#3 ← phi( main::@1/(byte*) main::sc#7 main::@3/(byte*) main::sc#1 )
+  (byte) main::bits#2 ← phi( main::@1/(byte) main::bits#0 main::@3/(byte) main::bits#1 )
+  (byte~) main::$2 ← (byte) main::bits#2 & (byte) 128
+  if((byte~) main::$2==(byte) 0) goto main::@3
+  to:main::@4
+main::@3: scope:[main]  from main::@2 main::@4
+  (byte) main::c#2 ← phi( main::@2/(byte) '.' main::@4/(byte) '*' )
+  *((byte*) main::sc#3) ← (byte) main::c#2
+  (byte*) main::sc#1 ← ++ (byte*) main::sc#3
+  (byte) main::bits#1 ← (byte) main::bits#2 << (byte) 1
+  (byte) main::x#1 ← ++ (byte) main::x#2
+  if((byte) main::x#1!=(byte) 8) goto main::@2
+  to:main::@5
+main::@4: scope:[main]  from main::@2
+  to:main::@3
+main::@5: scope:[main]  from main::@3
+  (byte*) main::sc#2 ← (byte*) main::sc#1 + (byte) 32
+  (byte) main::y#1 ← ++ (byte) main::y#2
+  if((byte) main::y#1!=(byte) 8) goto main::@1
+  to:main::@6
+main::@6: scope:[main]  from main::@5
+  *((const byte*) PROCPORT#0) ← (byte) 55
+  asm { cli }
+  to:main::@return
+main::@return: scope:[main]  from main::@6
+  return 
+  to:@return
+@1: scope:[]  from @begin
+  call main param-assignment
+  to:@end
+@end: scope:[]  from @1
+
+FINAL SYMBOL TABLE
+(label) @1
+(label) @begin
+(label) @end
+(byte*) CHARGEN
+(const byte*) CHARGEN#0 = (word) 53248
+(byte*) PROCPORT
+(const byte*) PROCPORT#0 = (byte) 1
+(byte*) SCREEN
+(const byte*) SCREEN#0 = (word) 1024
+(void()) main()
+(byte~) main::$2
+(label) main::@1
+(label) main::@2
+(label) main::@3
+(label) main::@4
+(label) main::@5
+(label) main::@6
+(label) main::@return
+(byte*) main::CHAR_A
+(const byte*) main::CHAR_A#0 = (const byte*) CHARGEN#0+(byte) 8
+(byte) main::bits
+(byte) main::bits#0
+(byte) main::bits#1
+(byte) main::bits#2
+(byte) main::c
+(byte) main::c#2
+(byte*) main::sc
+(byte*) main::sc#1
+(byte*) main::sc#2
+(byte*) main::sc#3
+(byte*) main::sc#7
+(byte) main::x
+(byte) main::x#1
+(byte) main::x#2
+(byte) main::y
+(byte) main::y#1
+(byte) main::y#2
+
+Block Sequence Planned @begin @1 @end main main::@1 main::@2 main::@4 main::@3 main::@5 main::@6 main::@return 
+Added new block during phi lifting main::@7(between main::@5 and main::@1)
+Added new block during phi lifting main::@8(between main::@3 and main::@2)
+Block Sequence Planned @begin @1 @end main main::@1 main::@2 main::@4 main::@3 main::@5 main::@6 main::@return main::@7 main::@8 
+CONTROL FLOW GRAPH - PHI LIFTED
+@begin: scope:[]  from
+  to:@1
+@1: scope:[]  from @begin
+  call main param-assignment
+  to:@end
+@end: scope:[]  from @1
+main: scope:[main]  from @1
+  asm { sei }
+  *((const byte*) PROCPORT#0) ← (byte) 50
+  to:main::@1
+main::@1: scope:[main]  from main main::@7
+  (byte*) main::sc#7 ← phi( main/(const byte*) SCREEN#0 main::@7/(byte*~) main::sc#8 )
+  (byte) main::y#2 ← phi( main/(byte) 0 main::@7/(byte~) main::y#7 )
+  (byte) main::bits#0 ← (const byte*) main::CHAR_A#0 *idx (byte) main::y#2
+  (byte~) main::bits#5 ← (byte) main::bits#0
+  (byte*~) main::sc#9 ← (byte*) main::sc#7
+  to:main::@2
+main::@2: scope:[main]  from main::@1 main::@8
+  (byte) main::x#2 ← phi( main::@1/(byte) 0 main::@8/(byte~) main::x#5 )
+  (byte*) main::sc#3 ← phi( main::@1/(byte*~) main::sc#9 main::@8/(byte*~) main::sc#10 )
+  (byte) main::bits#2 ← phi( main::@1/(byte~) main::bits#5 main::@8/(byte~) main::bits#6 )
+  (byte~) main::$2 ← (byte) main::bits#2 & (byte) 128
+  if((byte~) main::$2==(byte) 0) goto main::@3
+  to:main::@4
+main::@4: scope:[main]  from main::@2
+  to:main::@3
+main::@3: scope:[main]  from main::@2 main::@4
+  (byte) main::c#2 ← phi( main::@2/(byte) '.' main::@4/(byte) '*' )
+  *((byte*) main::sc#3) ← (byte) main::c#2
+  (byte*) main::sc#1 ← ++ (byte*) main::sc#3
+  (byte) main::bits#1 ← (byte) main::bits#2 << (byte) 1
+  (byte) main::x#1 ← ++ (byte) main::x#2
+  if((byte) main::x#1!=(byte) 8) goto main::@8
+  to:main::@5
+main::@5: scope:[main]  from main::@3
+  (byte*) main::sc#2 ← (byte*) main::sc#1 + (byte) 32
+  (byte) main::y#1 ← ++ (byte) main::y#2
+  if((byte) main::y#1!=(byte) 8) goto main::@7
+  to:main::@6
+main::@6: scope:[main]  from main::@5
+  *((const byte*) PROCPORT#0) ← (byte) 55
+  asm { cli }
+  to:main::@return
+main::@return: scope:[main]  from main::@6
+  return 
+  to:@return
+main::@7: scope:[main]  from main::@5
+  (byte~) main::y#7 ← (byte) main::y#1
+  (byte*~) main::sc#8 ← (byte*) main::sc#2
+  to:main::@1
+main::@8: scope:[main]  from main::@3
+  (byte~) main::bits#6 ← (byte) main::bits#1
+  (byte*~) main::sc#10 ← (byte*) main::sc#1
+  (byte~) main::x#5 ← (byte) main::x#1
+  to:main::@2
+
+CALL GRAPH
+Calls in [] to 0:main 
+
+Propagating live ranges...
+Propagating live ranges...
+Propagating live ranges...
+Propagating live ranges...
+Propagating live ranges...
+Propagating live ranges...
+Propagating live ranges...
+Propagating live ranges...
+Propagating live ranges...
+Propagating live ranges...
+Propagating live ranges...
+Propagating live ranges...
+Propagating live ranges...
+Propagating live ranges...
+CONTROL FLOW GRAPH - LIVE RANGES FOUND
+@begin: scope:[]  from
+  to:@1
+@1: scope:[]  from @begin
+  [0] call main param-assignment [ ]
+  to:@end
+@end: scope:[]  from @1
+main: scope:[main]  from @1
+  asm { sei }
+  [2] *((const byte*) PROCPORT#0) ← (byte) 50 [ ]
+  to:main::@1
+main::@1: scope:[main]  from main main::@7
+  [3] (byte*) main::sc#7 ← phi( main/(const byte*) SCREEN#0 main::@7/(byte*~) main::sc#8 ) [ main::y#2 main::sc#7 ]
+  [3] (byte) main::y#2 ← phi( main/(byte) 0 main::@7/(byte~) main::y#7 ) [ main::y#2 main::sc#7 ]
+  [4] (byte) main::bits#0 ← (const byte*) main::CHAR_A#0 *idx (byte) main::y#2 [ main::y#2 main::sc#7 main::bits#0 ]
+  [5] (byte~) main::bits#5 ← (byte) main::bits#0 [ main::y#2 main::sc#7 main::bits#5 ]
+  [6] (byte*~) main::sc#9 ← (byte*) main::sc#7 [ main::y#2 main::bits#5 main::sc#9 ]
+  to:main::@2
+main::@2: scope:[main]  from main::@1 main::@8
+  [7] (byte) main::x#2 ← phi( main::@1/(byte) 0 main::@8/(byte~) main::x#5 ) [ main::y#2 main::bits#2 main::sc#3 main::x#2 ]
+  [7] (byte*) main::sc#3 ← phi( main::@1/(byte*~) main::sc#9 main::@8/(byte*~) main::sc#10 ) [ main::y#2 main::bits#2 main::sc#3 main::x#2 ]
+  [7] (byte) main::bits#2 ← phi( main::@1/(byte~) main::bits#5 main::@8/(byte~) main::bits#6 ) [ main::y#2 main::bits#2 main::sc#3 main::x#2 ]
+  [8] (byte~) main::$2 ← (byte) main::bits#2 & (byte) 128 [ main::y#2 main::bits#2 main::sc#3 main::x#2 main::$2 ]
+  [9] if((byte~) main::$2==(byte) 0) goto main::@3 [ main::y#2 main::bits#2 main::sc#3 main::x#2 ]
+  to:main::@4
+main::@4: scope:[main]  from main::@2
+  to:main::@3
+main::@3: scope:[main]  from main::@2 main::@4
+  [10] (byte) main::c#2 ← phi( main::@2/(byte) '.' main::@4/(byte) '*' ) [ main::y#2 main::bits#2 main::sc#3 main::x#2 main::c#2 ]
+  [11] *((byte*) main::sc#3) ← (byte) main::c#2 [ main::y#2 main::bits#2 main::sc#3 main::x#2 ]
+  [12] (byte*) main::sc#1 ← ++ (byte*) main::sc#3 [ main::y#2 main::bits#2 main::x#2 main::sc#1 ]
+  [13] (byte) main::bits#1 ← (byte) main::bits#2 << (byte) 1 [ main::y#2 main::x#2 main::sc#1 main::bits#1 ]
+  [14] (byte) main::x#1 ← ++ (byte) main::x#2 [ main::y#2 main::sc#1 main::bits#1 main::x#1 ]
+  [15] if((byte) main::x#1!=(byte) 8) goto main::@8 [ main::y#2 main::sc#1 main::bits#1 main::x#1 ]
+  to:main::@5
+main::@5: scope:[main]  from main::@3
+  [16] (byte*) main::sc#2 ← (byte*) main::sc#1 + (byte) 32 [ main::y#2 main::sc#2 ]
+  [17] (byte) main::y#1 ← ++ (byte) main::y#2 [ main::sc#2 main::y#1 ]
+  [18] if((byte) main::y#1!=(byte) 8) goto main::@7 [ main::sc#2 main::y#1 ]
+  to:main::@6
+main::@6: scope:[main]  from main::@5
+  [19] *((const byte*) PROCPORT#0) ← (byte) 55 [ ]
+  asm { cli }
+  to:main::@return
+main::@return: scope:[main]  from main::@6
+  [21] return  [ ]
+  to:@return
+main::@7: scope:[main]  from main::@5
+  [22] (byte~) main::y#7 ← (byte) main::y#1 [ main::y#7 main::sc#2 ]
+  [23] (byte*~) main::sc#8 ← (byte*) main::sc#2 [ main::y#7 main::sc#8 ]
+  to:main::@1
+main::@8: scope:[main]  from main::@3
+  [24] (byte~) main::bits#6 ← (byte) main::bits#1 [ main::y#2 main::bits#6 main::sc#1 main::x#1 ]
+  [25] (byte*~) main::sc#10 ← (byte*) main::sc#1 [ main::y#2 main::bits#6 main::sc#10 main::x#1 ]
+  [26] (byte~) main::x#5 ← (byte) main::x#1 [ main::y#2 main::bits#6 main::sc#10 main::x#5 ]
+  to:main::@2
+
+Created 6 initial phi equivalence classes
+Coalesced [5] main::bits#5 ← main::bits#0
+Coalesced [6] main::sc#9 ← main::sc#7
+Coalesced [22] main::y#7 ← main::y#1
+Coalesced [23] main::sc#8 ← main::sc#2
+Coalesced [24] main::bits#6 ← main::bits#1
+Coalesced [25] main::sc#10 ← main::sc#1
+Coalesced [26] main::x#5 ← main::x#1
+Coalesced down to 5 phi equivalence classes
+Not culling empty block because it shares successor with its predecessor. (label) main::@4
+Culled Empty Block (label) main::@7
+Culled Empty Block (label) main::@8
+Block Sequence Planned @begin @1 @end main main::@1 main::@2 main::@4 main::@3 main::@5 main::@6 main::@return 
+Propagating live ranges...
+Propagating live ranges...
+Propagating live ranges...
+Propagating live ranges...
+Propagating live ranges...
+Propagating live ranges...
+Propagating live ranges...
+Propagating live ranges...
+Propagating live ranges...
+Propagating live ranges...
+Propagating live ranges...
+Propagating live ranges...
+CONTROL FLOW GRAPH - PHI MEM COALESCED
+@begin: scope:[]  from
+  to:@1
+@1: scope:[]  from @begin
+  [0] call main param-assignment [ ]
+  to:@end
+@end: scope:[]  from @1
+main: scope:[main]  from @1
+  asm { sei }
+  [2] *((const byte*) PROCPORT#0) ← (byte) 50 [ ]
+  to:main::@1
+main::@1: scope:[main]  from main main::@5
+  [3] (byte*) main::sc#7 ← phi( main/(const byte*) SCREEN#0 main::@5/(byte*) main::sc#2 ) [ main::y#2 main::sc#7 ]
+  [3] (byte) main::y#2 ← phi( main/(byte) 0 main::@5/(byte) main::y#1 ) [ main::y#2 main::sc#7 ]
+  [4] (byte) main::bits#0 ← (const byte*) main::CHAR_A#0 *idx (byte) main::y#2 [ main::y#2 main::sc#7 main::bits#0 ]
+  to:main::@2
+main::@2: scope:[main]  from main::@1 main::@3
+  [5] (byte) main::x#2 ← phi( main::@1/(byte) 0 main::@3/(byte) main::x#1 ) [ main::y#2 main::bits#2 main::sc#3 main::x#2 ]
+  [5] (byte*) main::sc#3 ← phi( main::@1/(byte*) main::sc#7 main::@3/(byte*) main::sc#1 ) [ main::y#2 main::bits#2 main::sc#3 main::x#2 ]
+  [5] (byte) main::bits#2 ← phi( main::@1/(byte) main::bits#0 main::@3/(byte) main::bits#1 ) [ main::y#2 main::bits#2 main::sc#3 main::x#2 ]
+  [6] (byte~) main::$2 ← (byte) main::bits#2 & (byte) 128 [ main::y#2 main::bits#2 main::sc#3 main::x#2 main::$2 ]
+  [7] if((byte~) main::$2==(byte) 0) goto main::@3 [ main::y#2 main::bits#2 main::sc#3 main::x#2 ]
+  to:main::@4
+main::@4: scope:[main]  from main::@2
+  to:main::@3
+main::@3: scope:[main]  from main::@2 main::@4
+  [8] (byte) main::c#2 ← phi( main::@2/(byte) '.' main::@4/(byte) '*' ) [ main::y#2 main::bits#2 main::sc#3 main::x#2 main::c#2 ]
+  [9] *((byte*) main::sc#3) ← (byte) main::c#2 [ main::y#2 main::bits#2 main::sc#3 main::x#2 ]
+  [10] (byte*) main::sc#1 ← ++ (byte*) main::sc#3 [ main::y#2 main::bits#2 main::x#2 main::sc#1 ]
+  [11] (byte) main::bits#1 ← (byte) main::bits#2 << (byte) 1 [ main::y#2 main::x#2 main::bits#1 main::sc#1 ]
+  [12] (byte) main::x#1 ← ++ (byte) main::x#2 [ main::y#2 main::bits#1 main::sc#1 main::x#1 ]
+  [13] if((byte) main::x#1!=(byte) 8) goto main::@2 [ main::y#2 main::bits#1 main::sc#1 main::x#1 ]
+  to:main::@5
+main::@5: scope:[main]  from main::@3
+  [14] (byte*) main::sc#2 ← (byte*) main::sc#1 + (byte) 32 [ main::y#2 main::sc#2 ]
+  [15] (byte) main::y#1 ← ++ (byte) main::y#2 [ main::y#1 main::sc#2 ]
+  [16] if((byte) main::y#1!=(byte) 8) goto main::@1 [ main::y#1 main::sc#2 ]
+  to:main::@6
+main::@6: scope:[main]  from main::@5
+  [17] *((const byte*) PROCPORT#0) ← (byte) 55 [ ]
+  asm { cli }
+  to:main::@return
+main::@return: scope:[main]  from main::@6
+  [19] return  [ ]
+  to:@return
+
+DOMINATORS
+@begin dominated by  @begin 
+@1 dominated by  @1 @begin 
+@end dominated by  @1 @end @begin 
+main dominated by  @1 @begin main 
+main::@1 dominated by  @1 @begin main::@1 main 
+main::@2 dominated by  @1 @begin main::@2 main::@1 main 
+main::@4 dominated by  @1 @begin main::@2 main::@1 main::@4 main 
+main::@3 dominated by  @1 @begin main::@2 main::@1 main::@3 main 
+main::@5 dominated by  @1 @begin main::@2 main::@1 main::@3 main::@5 main 
+main::@6 dominated by  @1 @begin main::@2 main::@1 main::@3 main::@6 main::@5 main 
+main::@return dominated by  @1 main::@return @begin main::@2 main::@1 main::@3 main::@6 main::@5 main 
+
+Found back edge: Loop head: main::@2 tails: main::@3 blocks: null
+Found back edge: Loop head: main::@1 tails: main::@5 blocks: null
+Populated: Loop head: main::@2 tails: main::@3 blocks: main::@3 main::@2 main::@4 
+Populated: Loop head: main::@1 tails: main::@5 blocks: main::@5 main::@3 main::@2 main::@4 main::@1 
+NATURAL LOOPS
+Loop head: main::@2 tails: main::@3 blocks: main::@3 main::@2 main::@4 
+Loop head: main::@1 tails: main::@5 blocks: main::@5 main::@3 main::@2 main::@4 main::@1 
+
+Found 0 loops in scope []
+Found 2 loops in scope [main]
+  Loop head: main::@2 tails: main::@3 blocks: main::@3 main::@2 main::@4 
+  Loop head: main::@1 tails: main::@5 blocks: main::@5 main::@3 main::@2 main::@4 main::@1 
+NATURAL LOOPS WITH DEPTH
+Loop head: main::@2 tails: main::@3 blocks: main::@3 main::@2 main::@4  depth: 2
+Loop head: main::@1 tails: main::@5 blocks: main::@5 main::@3 main::@2 main::@4 main::@1  depth: 1
+
+
+VARIABLE REGISTER WEIGHTS
+(byte*) CHARGEN
+(byte*) PROCPORT
+(byte*) SCREEN
+(void()) main()
+(byte~) main::$2 202.0
+(byte*) main::CHAR_A
+(byte) main::bits
+(byte) main::bits#0 22.0
+(byte) main::bits#1 67.33333333333333
+(byte) main::bits#2 52.33333333333333
+(byte) main::c
+(byte) main::c#2 101.0
+(byte*) main::sc
+(byte*) main::sc#1 53.25
+(byte*) main::sc#2 7.333333333333333
+(byte*) main::sc#3 62.8
+(byte*) main::sc#7 11.0
+(byte) main::x
+(byte) main::x#1 151.5
+(byte) main::x#2 28.857142857142858
+(byte) main::y
+(byte) main::y#1 16.5
+(byte) main::y#2 2.75
+
+Initial phi equivalence classes
+[ main::y#2 main::y#1 ]
+[ main::bits#2 main::bits#0 main::bits#1 ]
+[ main::sc#3 main::sc#7 main::sc#2 main::sc#1 ]
+[ main::x#2 main::x#1 ]
+[ main::c#2 ]
+Added variable main::$2 to zero page equivalence class [ main::$2 ]
+Complete equivalence classes
+[ main::y#2 main::y#1 ]
+[ main::bits#2 main::bits#0 main::bits#1 ]
+[ main::sc#3 main::sc#7 main::sc#2 main::sc#1 ]
+[ main::x#2 main::x#1 ]
+[ main::c#2 ]
+[ main::$2 ]
+Allocated zp ZP_BYTE:2 [ main::y#2 main::y#1 ]
+Allocated zp ZP_BYTE:3 [ main::bits#2 main::bits#0 main::bits#1 ]
+Allocated zp ZP_PTR_BYTE:4 [ main::sc#3 main::sc#7 main::sc#2 main::sc#1 ]
+Allocated zp ZP_BYTE:6 [ main::x#2 main::x#1 ]
+Allocated zp ZP_BYTE:7 [ main::c#2 ]
+Allocated zp ZP_BYTE:8 [ main::$2 ]
+INITIAL ASM
+//SEG0 Basic Upstart
+.pc = $801 "Basic"
+:BasicUpstart(main)
+.pc = $80d "Program"
+//SEG1 Global Constants & labels
+  .const PROCPORT = 1
+  .const CHARGEN = $d000
+  .const SCREEN = $400
+//SEG2 @begin
+bbegin:
+  jmp b1
+//SEG3 @1
+b1:
+//SEG4 [0] call main param-assignment [ ]
+  jsr main
+  jmp bend
+//SEG5 @end
+bend:
+//SEG6 main
+main: {
+    .const CHAR_A = CHARGEN+8
+    .label _2 = 8
+    .label bits = 3
+    .label sc = 4
+    .label x = 6
+    .label y = 2
+    .label c = 7
+  //SEG7 asm { sei }
+    sei
+  //SEG8 [2] *((const byte*) PROCPORT#0) ← (byte) 50 [ ] -- _star_cowo1=coby2 
+    lda #$32
+    sta PROCPORT
+  //SEG9 [3] phi from main to main::@1 [phi:main->main::@1]
+  b1_from_main:
+  //SEG10 [3] phi (byte*) main::sc#7 = (const byte*) SCREEN#0 [phi:main->main::@1#0] -- zpptrby1=cowo1 
+    lda #<SCREEN
+    sta sc
+    lda #>SCREEN
+    sta sc+1
+  //SEG11 [3] phi (byte) main::y#2 = (byte) 0 [phi:main->main::@1#1] -- zpby1=coby1 
+    lda #0
+    sta y
+    jmp b1
+  //SEG12 [3] phi from main::@5 to main::@1 [phi:main::@5->main::@1]
+  b1_from_b5:
+  //SEG13 [3] phi (byte*) main::sc#7 = (byte*) main::sc#2 [phi:main::@5->main::@1#0] -- register_copy 
+  //SEG14 [3] phi (byte) main::y#2 = (byte) main::y#1 [phi:main::@5->main::@1#1] -- register_copy 
+    jmp b1
+  //SEG15 main::@1
+  b1:
+  //SEG16 [4] (byte) main::bits#0 ← (const byte*) main::CHAR_A#0 *idx (byte) main::y#2 [ main::y#2 main::sc#7 main::bits#0 ] -- zpby1=cowo1_staridx_zpby2 
+    ldx y
+    lda CHAR_A,x
+    sta bits
+  //SEG17 [5] phi from main::@1 to main::@2 [phi:main::@1->main::@2]
+  b2_from_b1:
+  //SEG18 [5] phi (byte) main::x#2 = (byte) 0 [phi:main::@1->main::@2#0] -- zpby1=coby1 
+    lda #0
+    sta x
+  //SEG19 [5] phi (byte*) main::sc#3 = (byte*) main::sc#7 [phi:main::@1->main::@2#1] -- register_copy 
+  //SEG20 [5] phi (byte) main::bits#2 = (byte) main::bits#0 [phi:main::@1->main::@2#2] -- register_copy 
+    jmp b2
+  //SEG21 [5] phi from main::@3 to main::@2 [phi:main::@3->main::@2]
+  b2_from_b3:
+  //SEG22 [5] phi (byte) main::x#2 = (byte) main::x#1 [phi:main::@3->main::@2#0] -- register_copy 
+  //SEG23 [5] phi (byte*) main::sc#3 = (byte*) main::sc#1 [phi:main::@3->main::@2#1] -- register_copy 
+  //SEG24 [5] phi (byte) main::bits#2 = (byte) main::bits#1 [phi:main::@3->main::@2#2] -- register_copy 
+    jmp b2
+  //SEG25 main::@2
+  b2:
+  //SEG26 [6] (byte~) main::$2 ← (byte) main::bits#2 & (byte) 128 [ main::y#2 main::bits#2 main::sc#3 main::x#2 main::$2 ] -- zpby1=zpby2_band_coby1 
+    lda bits
+    and #$80
+    sta _2
+  //SEG27 [7] if((byte~) main::$2==(byte) 0) goto main::@3 [ main::y#2 main::bits#2 main::sc#3 main::x#2 ] -- zpby1_eq_0_then_la1 
+    lda _2
+    beq b3_from_b2
+    jmp b4
+  //SEG28 main::@4
+  b4:
+  //SEG29 [8] phi from main::@4 to main::@3 [phi:main::@4->main::@3]
+  b3_from_b4:
+  //SEG30 [8] phi (byte) main::c#2 = (byte) '*' [phi:main::@4->main::@3#0] -- zpby1=coby1 
+    lda #'*'
+    sta c
+    jmp b3
+  //SEG31 [8] phi from main::@2 to main::@3 [phi:main::@2->main::@3]
+  b3_from_b2:
+  //SEG32 [8] phi (byte) main::c#2 = (byte) '.' [phi:main::@2->main::@3#0] -- zpby1=coby1 
+    lda #'.'
+    sta c
+    jmp b3
+  //SEG33 main::@3
+  b3:
+  //SEG34 [9] *((byte*) main::sc#3) ← (byte) main::c#2 [ main::y#2 main::bits#2 main::sc#3 main::x#2 ] -- _star_zpptrby1=zpby1 
+    ldy #0
+    lda c
+    sta (sc),y
+  //SEG35 [10] (byte*) main::sc#1 ← ++ (byte*) main::sc#3 [ main::y#2 main::bits#2 main::x#2 main::sc#1 ] -- zpptrby1=_inc_zpptrby1 
+    inc sc
+    bne !+
+    inc sc+1
+  !:
+  //SEG36 [11] (byte) main::bits#1 ← (byte) main::bits#2 << (byte) 1 [ main::y#2 main::x#2 main::bits#1 main::sc#1 ] -- zpby1=zpby1_rol_1 
+    asl bits
+  //SEG37 [12] (byte) main::x#1 ← ++ (byte) main::x#2 [ main::y#2 main::bits#1 main::sc#1 main::x#1 ] -- zpby1=_inc_zpby1 
+    inc x
+  //SEG38 [13] if((byte) main::x#1!=(byte) 8) goto main::@2 [ main::y#2 main::bits#1 main::sc#1 main::x#1 ] -- zpby1_neq_coby1_then_la1 
+    lda x
+    cmp #8
+    bne b2_from_b3
+    jmp b5
+  //SEG39 main::@5
+  b5:
+  //SEG40 [14] (byte*) main::sc#2 ← (byte*) main::sc#1 + (byte) 32 [ main::y#2 main::sc#2 ] -- zpptrby1=zpptrby1_plus_coby1 
+    lda sc
+    clc
+    adc #$20
+    sta sc
+    bcc !+
+    inc sc+1
+  !:
+  //SEG41 [15] (byte) main::y#1 ← ++ (byte) main::y#2 [ main::y#1 main::sc#2 ] -- zpby1=_inc_zpby1 
+    inc y
+  //SEG42 [16] if((byte) main::y#1!=(byte) 8) goto main::@1 [ main::y#1 main::sc#2 ] -- zpby1_neq_coby1_then_la1 
+    lda y
+    cmp #8
+    bne b1_from_b5
+    jmp b6
+  //SEG43 main::@6
+  b6:
+  //SEG44 [17] *((const byte*) PROCPORT#0) ← (byte) 55 [ ] -- _star_cowo1=coby2 
+    lda #$37
+    sta PROCPORT
+  //SEG45 asm { cli }
+    cli
+    jmp breturn
+  //SEG46 main::@return
+  breturn:
+  //SEG47 [19] return  [ ]
+    rts
+}
+
+REGISTER UPLIFT POTENTIAL REGISTERS
+Statement [2] *((const byte*) PROCPORT#0) ← (byte) 50 [ ] always clobbers reg byte a 
+Statement [6] (byte~) main::$2 ← (byte) main::bits#2 & (byte) 128 [ main::y#2 main::bits#2 main::sc#3 main::x#2 main::$2 ] always clobbers reg byte a 
+Removing always clobbered register reg byte a as potential for zp ZP_BYTE:2 [ main::y#2 main::y#1 ]
+Removing always clobbered register reg byte a as potential for zp ZP_BYTE:3 [ main::bits#2 main::bits#0 main::bits#1 ]
+Removing always clobbered register reg byte a as potential for zp ZP_BYTE:6 [ main::x#2 main::x#1 ]
+Statement [9] *((byte*) main::sc#3) ← (byte) main::c#2 [ main::y#2 main::bits#2 main::sc#3 main::x#2 ] always clobbers reg byte y 
+Removing always clobbered register reg byte y as potential for zp ZP_BYTE:2 [ main::y#2 main::y#1 ]
+Removing always clobbered register reg byte y as potential for zp ZP_BYTE:3 [ main::bits#2 main::bits#0 main::bits#1 ]
+Removing always clobbered register reg byte y as potential for zp ZP_BYTE:6 [ main::x#2 main::x#1 ]
+Statement [14] (byte*) main::sc#2 ← (byte*) main::sc#1 + (byte) 32 [ main::y#2 main::sc#2 ] always clobbers reg byte a 
+Statement [17] *((const byte*) PROCPORT#0) ← (byte) 55 [ ] always clobbers reg byte a 
+Statement [2] *((const byte*) PROCPORT#0) ← (byte) 50 [ ] always clobbers reg byte a 
+Statement [4] (byte) main::bits#0 ← (const byte*) main::CHAR_A#0 *idx (byte) main::y#2 [ main::y#2 main::sc#7 main::bits#0 ] always clobbers reg byte a 
+Statement [6] (byte~) main::$2 ← (byte) main::bits#2 & (byte) 128 [ main::y#2 main::bits#2 main::sc#3 main::x#2 main::$2 ] always clobbers reg byte a 
+Statement [9] *((byte*) main::sc#3) ← (byte) main::c#2 [ main::y#2 main::bits#2 main::sc#3 main::x#2 ] always clobbers reg byte y 
+Statement [14] (byte*) main::sc#2 ← (byte*) main::sc#1 + (byte) 32 [ main::y#2 main::sc#2 ] always clobbers reg byte a 
+Statement [17] *((const byte*) PROCPORT#0) ← (byte) 55 [ ] always clobbers reg byte a 
+Potential registers zp ZP_BYTE:2 [ main::y#2 main::y#1 ] : zp ZP_BYTE:2 , reg byte x , 
+Potential registers zp ZP_BYTE:3 [ main::bits#2 main::bits#0 main::bits#1 ] : zp ZP_BYTE:3 , reg byte x , 
+Potential registers zp ZP_PTR_BYTE:4 [ main::sc#3 main::sc#7 main::sc#2 main::sc#1 ] : zp ZP_PTR_BYTE:4 , 
+Potential registers zp ZP_BYTE:6 [ main::x#2 main::x#1 ] : zp ZP_BYTE:6 , reg byte x , 
+Potential registers zp ZP_BYTE:7 [ main::c#2 ] : zp ZP_BYTE:7 , reg byte a , reg byte x , reg byte y , 
+Potential registers zp ZP_BYTE:8 [ main::$2 ] : zp ZP_BYTE:8 , reg byte a , reg byte x , reg byte y , 
+
+REGISTER UPLIFT SCOPES
+Uplift Scope [main] 202: zp ZP_BYTE:8 [ main::$2 ] 180.36: zp ZP_BYTE:6 [ main::x#2 main::x#1 ] 141.67: zp ZP_BYTE:3 [ main::bits#2 main::bits#0 main::bits#1 ] 134.38: zp ZP_PTR_BYTE:4 [ main::sc#3 main::sc#7 main::sc#2 main::sc#1 ] 101: zp ZP_BYTE:7 [ main::c#2 ] 19.25: zp ZP_BYTE:2 [ main::y#2 main::y#1 ] 
+Uplift Scope [] 
+
+Uplifting [main] best 7259 combination reg byte a [ main::$2 ] reg byte x [ main::x#2 main::x#1 ] zp ZP_BYTE:3 [ main::bits#2 main::bits#0 main::bits#1 ] zp ZP_PTR_BYTE:4 [ main::sc#3 main::sc#7 main::sc#2 main::sc#1 ] reg byte a [ main::c#2 ] zp ZP_BYTE:2 [ main::y#2 main::y#1 ] 
+Uplifting [] best 7259 combination 
+Attempting to uplift remaining variables inzp ZP_BYTE:3 [ main::bits#2 main::bits#0 main::bits#1 ]
+Uplifting [main] best 7259 combination zp ZP_BYTE:3 [ main::bits#2 main::bits#0 main::bits#1 ] 
+Attempting to uplift remaining variables inzp ZP_BYTE:2 [ main::y#2 main::y#1 ]
+Uplifting [main] best 7259 combination zp ZP_BYTE:2 [ main::y#2 main::y#1 ] 
+Removing instruction jmp b1
+Removing instruction jmp bend
+Removing instruction jmp b1
+Removing instruction jmp b2
+Removing instruction jmp b4
+Removing instruction jmp b3
+Removing instruction jmp b5
+Removing instruction jmp b6
+Removing instruction jmp breturn
+Succesful ASM optimization Pass5NextJumpElimination
+ASSEMBLER
+//SEG0 Basic Upstart
+.pc = $801 "Basic"
+:BasicUpstart(main)
+.pc = $80d "Program"
+//SEG1 Global Constants & labels
+  .const PROCPORT = 1
+  .const CHARGEN = $d000
+  .const SCREEN = $400
+//SEG2 @begin
+bbegin:
+//SEG3 @1
+b1:
+//SEG4 [0] call main param-assignment [ ]
+  jsr main
+//SEG5 @end
+bend:
+//SEG6 main
+main: {
+    .const CHAR_A = CHARGEN+8
+    .label bits = 3
+    .label sc = 4
+    .label y = 2
+  //SEG7 asm { sei }
+    sei
+  //SEG8 [2] *((const byte*) PROCPORT#0) ← (byte) 50 [ ] -- _star_cowo1=coby2 
+    lda #$32
+    sta PROCPORT
+  //SEG9 [3] phi from main to main::@1 [phi:main->main::@1]
+  b1_from_main:
+  //SEG10 [3] phi (byte*) main::sc#7 = (const byte*) SCREEN#0 [phi:main->main::@1#0] -- zpptrby1=cowo1 
+    lda #<SCREEN
+    sta sc
+    lda #>SCREEN
+    sta sc+1
+  //SEG11 [3] phi (byte) main::y#2 = (byte) 0 [phi:main->main::@1#1] -- zpby1=coby1 
+    lda #0
+    sta y
+    jmp b1
+  //SEG12 [3] phi from main::@5 to main::@1 [phi:main::@5->main::@1]
+  b1_from_b5:
+  //SEG13 [3] phi (byte*) main::sc#7 = (byte*) main::sc#2 [phi:main::@5->main::@1#0] -- register_copy 
+  //SEG14 [3] phi (byte) main::y#2 = (byte) main::y#1 [phi:main::@5->main::@1#1] -- register_copy 
+  //SEG15 main::@1
+  b1:
+  //SEG16 [4] (byte) main::bits#0 ← (const byte*) main::CHAR_A#0 *idx (byte) main::y#2 [ main::y#2 main::sc#7 main::bits#0 ] -- zpby1=cowo1_staridx_zpby2 
+    ldx y
+    lda CHAR_A,x
+    sta bits
+  //SEG17 [5] phi from main::@1 to main::@2 [phi:main::@1->main::@2]
+  b2_from_b1:
+  //SEG18 [5] phi (byte) main::x#2 = (byte) 0 [phi:main::@1->main::@2#0] -- xby=coby1 
+    ldx #0
+  //SEG19 [5] phi (byte*) main::sc#3 = (byte*) main::sc#7 [phi:main::@1->main::@2#1] -- register_copy 
+  //SEG20 [5] phi (byte) main::bits#2 = (byte) main::bits#0 [phi:main::@1->main::@2#2] -- register_copy 
+    jmp b2
+  //SEG21 [5] phi from main::@3 to main::@2 [phi:main::@3->main::@2]
+  b2_from_b3:
+  //SEG22 [5] phi (byte) main::x#2 = (byte) main::x#1 [phi:main::@3->main::@2#0] -- register_copy 
+  //SEG23 [5] phi (byte*) main::sc#3 = (byte*) main::sc#1 [phi:main::@3->main::@2#1] -- register_copy 
+  //SEG24 [5] phi (byte) main::bits#2 = (byte) main::bits#1 [phi:main::@3->main::@2#2] -- register_copy 
+  //SEG25 main::@2
+  b2:
+  //SEG26 [6] (byte~) main::$2 ← (byte) main::bits#2 & (byte) 128 [ main::y#2 main::bits#2 main::sc#3 main::x#2 main::$2 ] -- aby=zpby1_band_coby1 
+    lda bits
+    and #$80
+  //SEG27 [7] if((byte~) main::$2==(byte) 0) goto main::@3 [ main::y#2 main::bits#2 main::sc#3 main::x#2 ] -- aby_eq_0_then_la1 
+    cmp #0
+    beq b3_from_b2
+  //SEG28 main::@4
+  b4:
+  //SEG29 [8] phi from main::@4 to main::@3 [phi:main::@4->main::@3]
+  b3_from_b4:
+  //SEG30 [8] phi (byte) main::c#2 = (byte) '*' [phi:main::@4->main::@3#0] -- aby=coby1 
+    lda #'*'
+    jmp b3
+  //SEG31 [8] phi from main::@2 to main::@3 [phi:main::@2->main::@3]
+  b3_from_b2:
+  //SEG32 [8] phi (byte) main::c#2 = (byte) '.' [phi:main::@2->main::@3#0] -- aby=coby1 
+    lda #'.'
+  //SEG33 main::@3
+  b3:
+  //SEG34 [9] *((byte*) main::sc#3) ← (byte) main::c#2 [ main::y#2 main::bits#2 main::sc#3 main::x#2 ] -- _star_zpptrby1=aby 
+    ldy #0
+    sta (sc),y
+  //SEG35 [10] (byte*) main::sc#1 ← ++ (byte*) main::sc#3 [ main::y#2 main::bits#2 main::x#2 main::sc#1 ] -- zpptrby1=_inc_zpptrby1 
+    inc sc
+    bne !+
+    inc sc+1
+  !:
+  //SEG36 [11] (byte) main::bits#1 ← (byte) main::bits#2 << (byte) 1 [ main::y#2 main::x#2 main::bits#1 main::sc#1 ] -- zpby1=zpby1_rol_1 
+    asl bits
+  //SEG37 [12] (byte) main::x#1 ← ++ (byte) main::x#2 [ main::y#2 main::bits#1 main::sc#1 main::x#1 ] -- xby=_inc_xby 
+    inx
+  //SEG38 [13] if((byte) main::x#1!=(byte) 8) goto main::@2 [ main::y#2 main::bits#1 main::sc#1 main::x#1 ] -- xby_neq_coby1_then_la1 
+    cpx #8
+    bne b2_from_b3
+  //SEG39 main::@5
+  b5:
+  //SEG40 [14] (byte*) main::sc#2 ← (byte*) main::sc#1 + (byte) 32 [ main::y#2 main::sc#2 ] -- zpptrby1=zpptrby1_plus_coby1 
+    lda sc
+    clc
+    adc #$20
+    sta sc
+    bcc !+
+    inc sc+1
+  !:
+  //SEG41 [15] (byte) main::y#1 ← ++ (byte) main::y#2 [ main::y#1 main::sc#2 ] -- zpby1=_inc_zpby1 
+    inc y
+  //SEG42 [16] if((byte) main::y#1!=(byte) 8) goto main::@1 [ main::y#1 main::sc#2 ] -- zpby1_neq_coby1_then_la1 
+    lda y
+    cmp #8
+    bne b1_from_b5
+  //SEG43 main::@6
+  b6:
+  //SEG44 [17] *((const byte*) PROCPORT#0) ← (byte) 55 [ ] -- _star_cowo1=coby2 
+    lda #$37
+    sta PROCPORT
+  //SEG45 asm { cli }
+    cli
+  //SEG46 main::@return
+  breturn:
+  //SEG47 [19] return  [ ]
+    rts
+}
+
+Replacing label b2_from_b3 with b2
+Replacing label b1_from_b5 with b1
+Removing instruction bbegin:
+Removing instruction b1_from_b5:
+Removing instruction b2_from_b3:
+Removing instruction b3_from_b4:
+Succesful ASM optimization Pass5RedundantLabelElimination
+ASSEMBLER
+//SEG0 Basic Upstart
+.pc = $801 "Basic"
+:BasicUpstart(main)
+.pc = $80d "Program"
+//SEG1 Global Constants & labels
+  .const PROCPORT = 1
+  .const CHARGEN = $d000
+  .const SCREEN = $400
+//SEG2 @begin
+//SEG3 @1
+b1:
+//SEG4 [0] call main param-assignment [ ]
+  jsr main
+//SEG5 @end
+bend:
+//SEG6 main
+main: {
+    .const CHAR_A = CHARGEN+8
+    .label bits = 3
+    .label sc = 4
+    .label y = 2
+  //SEG7 asm { sei }
+    sei
+  //SEG8 [2] *((const byte*) PROCPORT#0) ← (byte) 50 [ ] -- _star_cowo1=coby2 
+    lda #$32
+    sta PROCPORT
+  //SEG9 [3] phi from main to main::@1 [phi:main->main::@1]
+  b1_from_main:
+  //SEG10 [3] phi (byte*) main::sc#7 = (const byte*) SCREEN#0 [phi:main->main::@1#0] -- zpptrby1=cowo1 
+    lda #<SCREEN
+    sta sc
+    lda #>SCREEN
+    sta sc+1
+  //SEG11 [3] phi (byte) main::y#2 = (byte) 0 [phi:main->main::@1#1] -- zpby1=coby1 
+    lda #0
+    sta y
+    jmp b1
+  //SEG12 [3] phi from main::@5 to main::@1 [phi:main::@5->main::@1]
+  //SEG13 [3] phi (byte*) main::sc#7 = (byte*) main::sc#2 [phi:main::@5->main::@1#0] -- register_copy 
+  //SEG14 [3] phi (byte) main::y#2 = (byte) main::y#1 [phi:main::@5->main::@1#1] -- register_copy 
+  //SEG15 main::@1
+  b1:
+  //SEG16 [4] (byte) main::bits#0 ← (const byte*) main::CHAR_A#0 *idx (byte) main::y#2 [ main::y#2 main::sc#7 main::bits#0 ] -- zpby1=cowo1_staridx_zpby2 
+    ldx y
+    lda CHAR_A,x
+    sta bits
+  //SEG17 [5] phi from main::@1 to main::@2 [phi:main::@1->main::@2]
+  b2_from_b1:
+  //SEG18 [5] phi (byte) main::x#2 = (byte) 0 [phi:main::@1->main::@2#0] -- xby=coby1 
+    ldx #0
+  //SEG19 [5] phi (byte*) main::sc#3 = (byte*) main::sc#7 [phi:main::@1->main::@2#1] -- register_copy 
+  //SEG20 [5] phi (byte) main::bits#2 = (byte) main::bits#0 [phi:main::@1->main::@2#2] -- register_copy 
+    jmp b2
+  //SEG21 [5] phi from main::@3 to main::@2 [phi:main::@3->main::@2]
+  //SEG22 [5] phi (byte) main::x#2 = (byte) main::x#1 [phi:main::@3->main::@2#0] -- register_copy 
+  //SEG23 [5] phi (byte*) main::sc#3 = (byte*) main::sc#1 [phi:main::@3->main::@2#1] -- register_copy 
+  //SEG24 [5] phi (byte) main::bits#2 = (byte) main::bits#1 [phi:main::@3->main::@2#2] -- register_copy 
+  //SEG25 main::@2
+  b2:
+  //SEG26 [6] (byte~) main::$2 ← (byte) main::bits#2 & (byte) 128 [ main::y#2 main::bits#2 main::sc#3 main::x#2 main::$2 ] -- aby=zpby1_band_coby1 
+    lda bits
+    and #$80
+  //SEG27 [7] if((byte~) main::$2==(byte) 0) goto main::@3 [ main::y#2 main::bits#2 main::sc#3 main::x#2 ] -- aby_eq_0_then_la1 
+    cmp #0
+    beq b3_from_b2
+  //SEG28 main::@4
+  b4:
+  //SEG29 [8] phi from main::@4 to main::@3 [phi:main::@4->main::@3]
+  //SEG30 [8] phi (byte) main::c#2 = (byte) '*' [phi:main::@4->main::@3#0] -- aby=coby1 
+    lda #'*'
+    jmp b3
+  //SEG31 [8] phi from main::@2 to main::@3 [phi:main::@2->main::@3]
+  b3_from_b2:
+  //SEG32 [8] phi (byte) main::c#2 = (byte) '.' [phi:main::@2->main::@3#0] -- aby=coby1 
+    lda #'.'
+  //SEG33 main::@3
+  b3:
+  //SEG34 [9] *((byte*) main::sc#3) ← (byte) main::c#2 [ main::y#2 main::bits#2 main::sc#3 main::x#2 ] -- _star_zpptrby1=aby 
+    ldy #0
+    sta (sc),y
+  //SEG35 [10] (byte*) main::sc#1 ← ++ (byte*) main::sc#3 [ main::y#2 main::bits#2 main::x#2 main::sc#1 ] -- zpptrby1=_inc_zpptrby1 
+    inc sc
+    bne !+
+    inc sc+1
+  !:
+  //SEG36 [11] (byte) main::bits#1 ← (byte) main::bits#2 << (byte) 1 [ main::y#2 main::x#2 main::bits#1 main::sc#1 ] -- zpby1=zpby1_rol_1 
+    asl bits
+  //SEG37 [12] (byte) main::x#1 ← ++ (byte) main::x#2 [ main::y#2 main::bits#1 main::sc#1 main::x#1 ] -- xby=_inc_xby 
+    inx
+  //SEG38 [13] if((byte) main::x#1!=(byte) 8) goto main::@2 [ main::y#2 main::bits#1 main::sc#1 main::x#1 ] -- xby_neq_coby1_then_la1 
+    cpx #8
+    bne b2
+  //SEG39 main::@5
+  b5:
+  //SEG40 [14] (byte*) main::sc#2 ← (byte*) main::sc#1 + (byte) 32 [ main::y#2 main::sc#2 ] -- zpptrby1=zpptrby1_plus_coby1 
+    lda sc
+    clc
+    adc #$20
+    sta sc
+    bcc !+
+    inc sc+1
+  !:
+  //SEG41 [15] (byte) main::y#1 ← ++ (byte) main::y#2 [ main::y#1 main::sc#2 ] -- zpby1=_inc_zpby1 
+    inc y
+  //SEG42 [16] if((byte) main::y#1!=(byte) 8) goto main::@1 [ main::y#1 main::sc#2 ] -- zpby1_neq_coby1_then_la1 
+    lda y
+    cmp #8
+    bne b1
+  //SEG43 main::@6
+  b6:
+  //SEG44 [17] *((const byte*) PROCPORT#0) ← (byte) 55 [ ] -- _star_cowo1=coby2 
+    lda #$37
+    sta PROCPORT
+  //SEG45 asm { cli }
+    cli
+  //SEG46 main::@return
+  breturn:
+  //SEG47 [19] return  [ ]
+    rts
+}
+
+Removing instruction b1:
+Removing instruction bend:
+Removing instruction b1_from_main:
+Removing instruction b2_from_b1:
+Removing instruction b4:
+Removing instruction b5:
+Removing instruction b6:
+Removing instruction breturn:
+Succesful ASM optimization Pass5UnusedLabelElimination
+ASSEMBLER
+//SEG0 Basic Upstart
+.pc = $801 "Basic"
+:BasicUpstart(main)
+.pc = $80d "Program"
+//SEG1 Global Constants & labels
+  .const PROCPORT = 1
+  .const CHARGEN = $d000
+  .const SCREEN = $400
+//SEG2 @begin
+//SEG3 @1
+//SEG4 [0] call main param-assignment [ ]
+  jsr main
+//SEG5 @end
+//SEG6 main
+main: {
+    .const CHAR_A = CHARGEN+8
+    .label bits = 3
+    .label sc = 4
+    .label y = 2
+  //SEG7 asm { sei }
+    sei
+  //SEG8 [2] *((const byte*) PROCPORT#0) ← (byte) 50 [ ] -- _star_cowo1=coby2 
+    lda #$32
+    sta PROCPORT
+  //SEG9 [3] phi from main to main::@1 [phi:main->main::@1]
+  //SEG10 [3] phi (byte*) main::sc#7 = (const byte*) SCREEN#0 [phi:main->main::@1#0] -- zpptrby1=cowo1 
+    lda #<SCREEN
+    sta sc
+    lda #>SCREEN
+    sta sc+1
+  //SEG11 [3] phi (byte) main::y#2 = (byte) 0 [phi:main->main::@1#1] -- zpby1=coby1 
+    lda #0
+    sta y
+    jmp b1
+  //SEG12 [3] phi from main::@5 to main::@1 [phi:main::@5->main::@1]
+  //SEG13 [3] phi (byte*) main::sc#7 = (byte*) main::sc#2 [phi:main::@5->main::@1#0] -- register_copy 
+  //SEG14 [3] phi (byte) main::y#2 = (byte) main::y#1 [phi:main::@5->main::@1#1] -- register_copy 
+  //SEG15 main::@1
+  b1:
+  //SEG16 [4] (byte) main::bits#0 ← (const byte*) main::CHAR_A#0 *idx (byte) main::y#2 [ main::y#2 main::sc#7 main::bits#0 ] -- zpby1=cowo1_staridx_zpby2 
+    ldx y
+    lda CHAR_A,x
+    sta bits
+  //SEG17 [5] phi from main::@1 to main::@2 [phi:main::@1->main::@2]
+  //SEG18 [5] phi (byte) main::x#2 = (byte) 0 [phi:main::@1->main::@2#0] -- xby=coby1 
+    ldx #0
+  //SEG19 [5] phi (byte*) main::sc#3 = (byte*) main::sc#7 [phi:main::@1->main::@2#1] -- register_copy 
+  //SEG20 [5] phi (byte) main::bits#2 = (byte) main::bits#0 [phi:main::@1->main::@2#2] -- register_copy 
+    jmp b2
+  //SEG21 [5] phi from main::@3 to main::@2 [phi:main::@3->main::@2]
+  //SEG22 [5] phi (byte) main::x#2 = (byte) main::x#1 [phi:main::@3->main::@2#0] -- register_copy 
+  //SEG23 [5] phi (byte*) main::sc#3 = (byte*) main::sc#1 [phi:main::@3->main::@2#1] -- register_copy 
+  //SEG24 [5] phi (byte) main::bits#2 = (byte) main::bits#1 [phi:main::@3->main::@2#2] -- register_copy 
+  //SEG25 main::@2
+  b2:
+  //SEG26 [6] (byte~) main::$2 ← (byte) main::bits#2 & (byte) 128 [ main::y#2 main::bits#2 main::sc#3 main::x#2 main::$2 ] -- aby=zpby1_band_coby1 
+    lda bits
+    and #$80
+  //SEG27 [7] if((byte~) main::$2==(byte) 0) goto main::@3 [ main::y#2 main::bits#2 main::sc#3 main::x#2 ] -- aby_eq_0_then_la1 
+    cmp #0
+    beq b3_from_b2
+  //SEG28 main::@4
+  //SEG29 [8] phi from main::@4 to main::@3 [phi:main::@4->main::@3]
+  //SEG30 [8] phi (byte) main::c#2 = (byte) '*' [phi:main::@4->main::@3#0] -- aby=coby1 
+    lda #'*'
+    jmp b3
+  //SEG31 [8] phi from main::@2 to main::@3 [phi:main::@2->main::@3]
+  b3_from_b2:
+  //SEG32 [8] phi (byte) main::c#2 = (byte) '.' [phi:main::@2->main::@3#0] -- aby=coby1 
+    lda #'.'
+  //SEG33 main::@3
+  b3:
+  //SEG34 [9] *((byte*) main::sc#3) ← (byte) main::c#2 [ main::y#2 main::bits#2 main::sc#3 main::x#2 ] -- _star_zpptrby1=aby 
+    ldy #0
+    sta (sc),y
+  //SEG35 [10] (byte*) main::sc#1 ← ++ (byte*) main::sc#3 [ main::y#2 main::bits#2 main::x#2 main::sc#1 ] -- zpptrby1=_inc_zpptrby1 
+    inc sc
+    bne !+
+    inc sc+1
+  !:
+  //SEG36 [11] (byte) main::bits#1 ← (byte) main::bits#2 << (byte) 1 [ main::y#2 main::x#2 main::bits#1 main::sc#1 ] -- zpby1=zpby1_rol_1 
+    asl bits
+  //SEG37 [12] (byte) main::x#1 ← ++ (byte) main::x#2 [ main::y#2 main::bits#1 main::sc#1 main::x#1 ] -- xby=_inc_xby 
+    inx
+  //SEG38 [13] if((byte) main::x#1!=(byte) 8) goto main::@2 [ main::y#2 main::bits#1 main::sc#1 main::x#1 ] -- xby_neq_coby1_then_la1 
+    cpx #8
+    bne b2
+  //SEG39 main::@5
+  //SEG40 [14] (byte*) main::sc#2 ← (byte*) main::sc#1 + (byte) 32 [ main::y#2 main::sc#2 ] -- zpptrby1=zpptrby1_plus_coby1 
+    lda sc
+    clc
+    adc #$20
+    sta sc
+    bcc !+
+    inc sc+1
+  !:
+  //SEG41 [15] (byte) main::y#1 ← ++ (byte) main::y#2 [ main::y#1 main::sc#2 ] -- zpby1=_inc_zpby1 
+    inc y
+  //SEG42 [16] if((byte) main::y#1!=(byte) 8) goto main::@1 [ main::y#1 main::sc#2 ] -- zpby1_neq_coby1_then_la1 
+    lda y
+    cmp #8
+    bne b1
+  //SEG43 main::@6
+  //SEG44 [17] *((const byte*) PROCPORT#0) ← (byte) 55 [ ] -- _star_cowo1=coby2 
+    lda #$37
+    sta PROCPORT
+  //SEG45 asm { cli }
+    cli
+  //SEG46 main::@return
+  //SEG47 [19] return  [ ]
+    rts
+}
+
+Removing instruction jmp b1
+Removing instruction jmp b2
+Succesful ASM optimization Pass5NextJumpElimination
+ASSEMBLER
+//SEG0 Basic Upstart
+.pc = $801 "Basic"
+:BasicUpstart(main)
+.pc = $80d "Program"
+//SEG1 Global Constants & labels
+  .const PROCPORT = 1
+  .const CHARGEN = $d000
+  .const SCREEN = $400
+//SEG2 @begin
+//SEG3 @1
+//SEG4 [0] call main param-assignment [ ]
+  jsr main
+//SEG5 @end
+//SEG6 main
+main: {
+    .const CHAR_A = CHARGEN+8
+    .label bits = 3
+    .label sc = 4
+    .label y = 2
+  //SEG7 asm { sei }
+    sei
+  //SEG8 [2] *((const byte*) PROCPORT#0) ← (byte) 50 [ ] -- _star_cowo1=coby2 
+    lda #$32
+    sta PROCPORT
+  //SEG9 [3] phi from main to main::@1 [phi:main->main::@1]
+  //SEG10 [3] phi (byte*) main::sc#7 = (const byte*) SCREEN#0 [phi:main->main::@1#0] -- zpptrby1=cowo1 
+    lda #<SCREEN
+    sta sc
+    lda #>SCREEN
+    sta sc+1
+  //SEG11 [3] phi (byte) main::y#2 = (byte) 0 [phi:main->main::@1#1] -- zpby1=coby1 
+    lda #0
+    sta y
+  //SEG12 [3] phi from main::@5 to main::@1 [phi:main::@5->main::@1]
+  //SEG13 [3] phi (byte*) main::sc#7 = (byte*) main::sc#2 [phi:main::@5->main::@1#0] -- register_copy 
+  //SEG14 [3] phi (byte) main::y#2 = (byte) main::y#1 [phi:main::@5->main::@1#1] -- register_copy 
+  //SEG15 main::@1
+  b1:
+  //SEG16 [4] (byte) main::bits#0 ← (const byte*) main::CHAR_A#0 *idx (byte) main::y#2 [ main::y#2 main::sc#7 main::bits#0 ] -- zpby1=cowo1_staridx_zpby2 
+    ldx y
+    lda CHAR_A,x
+    sta bits
+  //SEG17 [5] phi from main::@1 to main::@2 [phi:main::@1->main::@2]
+  //SEG18 [5] phi (byte) main::x#2 = (byte) 0 [phi:main::@1->main::@2#0] -- xby=coby1 
+    ldx #0
+  //SEG19 [5] phi (byte*) main::sc#3 = (byte*) main::sc#7 [phi:main::@1->main::@2#1] -- register_copy 
+  //SEG20 [5] phi (byte) main::bits#2 = (byte) main::bits#0 [phi:main::@1->main::@2#2] -- register_copy 
+  //SEG21 [5] phi from main::@3 to main::@2 [phi:main::@3->main::@2]
+  //SEG22 [5] phi (byte) main::x#2 = (byte) main::x#1 [phi:main::@3->main::@2#0] -- register_copy 
+  //SEG23 [5] phi (byte*) main::sc#3 = (byte*) main::sc#1 [phi:main::@3->main::@2#1] -- register_copy 
+  //SEG24 [5] phi (byte) main::bits#2 = (byte) main::bits#1 [phi:main::@3->main::@2#2] -- register_copy 
+  //SEG25 main::@2
+  b2:
+  //SEG26 [6] (byte~) main::$2 ← (byte) main::bits#2 & (byte) 128 [ main::y#2 main::bits#2 main::sc#3 main::x#2 main::$2 ] -- aby=zpby1_band_coby1 
+    lda bits
+    and #$80
+  //SEG27 [7] if((byte~) main::$2==(byte) 0) goto main::@3 [ main::y#2 main::bits#2 main::sc#3 main::x#2 ] -- aby_eq_0_then_la1 
+    cmp #0
+    beq b3_from_b2
+  //SEG28 main::@4
+  //SEG29 [8] phi from main::@4 to main::@3 [phi:main::@4->main::@3]
+  //SEG30 [8] phi (byte) main::c#2 = (byte) '*' [phi:main::@4->main::@3#0] -- aby=coby1 
+    lda #'*'
+    jmp b3
+  //SEG31 [8] phi from main::@2 to main::@3 [phi:main::@2->main::@3]
+  b3_from_b2:
+  //SEG32 [8] phi (byte) main::c#2 = (byte) '.' [phi:main::@2->main::@3#0] -- aby=coby1 
+    lda #'.'
+  //SEG33 main::@3
+  b3:
+  //SEG34 [9] *((byte*) main::sc#3) ← (byte) main::c#2 [ main::y#2 main::bits#2 main::sc#3 main::x#2 ] -- _star_zpptrby1=aby 
+    ldy #0
+    sta (sc),y
+  //SEG35 [10] (byte*) main::sc#1 ← ++ (byte*) main::sc#3 [ main::y#2 main::bits#2 main::x#2 main::sc#1 ] -- zpptrby1=_inc_zpptrby1 
+    inc sc
+    bne !+
+    inc sc+1
+  !:
+  //SEG36 [11] (byte) main::bits#1 ← (byte) main::bits#2 << (byte) 1 [ main::y#2 main::x#2 main::bits#1 main::sc#1 ] -- zpby1=zpby1_rol_1 
+    asl bits
+  //SEG37 [12] (byte) main::x#1 ← ++ (byte) main::x#2 [ main::y#2 main::bits#1 main::sc#1 main::x#1 ] -- xby=_inc_xby 
+    inx
+  //SEG38 [13] if((byte) main::x#1!=(byte) 8) goto main::@2 [ main::y#2 main::bits#1 main::sc#1 main::x#1 ] -- xby_neq_coby1_then_la1 
+    cpx #8
+    bne b2
+  //SEG39 main::@5
+  //SEG40 [14] (byte*) main::sc#2 ← (byte*) main::sc#1 + (byte) 32 [ main::y#2 main::sc#2 ] -- zpptrby1=zpptrby1_plus_coby1 
+    lda sc
+    clc
+    adc #$20
+    sta sc
+    bcc !+
+    inc sc+1
+  !:
+  //SEG41 [15] (byte) main::y#1 ← ++ (byte) main::y#2 [ main::y#1 main::sc#2 ] -- zpby1=_inc_zpby1 
+    inc y
+  //SEG42 [16] if((byte) main::y#1!=(byte) 8) goto main::@1 [ main::y#1 main::sc#2 ] -- zpby1_neq_coby1_then_la1 
+    lda y
+    cmp #8
+    bne b1
+  //SEG43 main::@6
+  //SEG44 [17] *((const byte*) PROCPORT#0) ← (byte) 55 [ ] -- _star_cowo1=coby2 
+    lda #$37
+    sta PROCPORT
+  //SEG45 asm { cli }
+    cli
+  //SEG46 main::@return
+  //SEG47 [19] return  [ ]
+    rts
+}
+
+FINAL SYMBOL TABLE
+(label) @1
+(label) @begin
+(label) @end
+(byte*) CHARGEN
+(const byte*) CHARGEN#0 CHARGEN = (word) 53248
+(byte*) PROCPORT
+(const byte*) PROCPORT#0 PROCPORT = (byte) 1
+(byte*) SCREEN
+(const byte*) SCREEN#0 SCREEN = (word) 1024
+(void()) main()
+(byte~) main::$2 reg byte a 202.0
+(label) main::@1
+(label) main::@2
+(label) main::@3
+(label) main::@4
+(label) main::@5
+(label) main::@6
+(label) main::@return
+(byte*) main::CHAR_A
+(const byte*) main::CHAR_A#0 CHAR_A = (const byte*) CHARGEN#0+(byte) 8
+(byte) main::bits
+(byte) main::bits#0 bits zp ZP_BYTE:3 22.0
+(byte) main::bits#1 bits zp ZP_BYTE:3 67.33333333333333
+(byte) main::bits#2 bits zp ZP_BYTE:3 52.33333333333333
+(byte) main::c
+(byte) main::c#2 reg byte a 101.0
+(byte*) main::sc
+(byte*) main::sc#1 sc zp ZP_PTR_BYTE:4 53.25
+(byte*) main::sc#2 sc zp ZP_PTR_BYTE:4 7.333333333333333
+(byte*) main::sc#3 sc zp ZP_PTR_BYTE:4 62.8
+(byte*) main::sc#7 sc zp ZP_PTR_BYTE:4 11.0
+(byte) main::x
+(byte) main::x#1 reg byte x 151.5
+(byte) main::x#2 reg byte x 28.857142857142858
+(byte) main::y
+(byte) main::y#1 y zp ZP_BYTE:2 16.5
+(byte) main::y#2 y zp ZP_BYTE:2 2.75
+
+zp ZP_BYTE:2 [ main::y#2 main::y#1 ]
+zp ZP_BYTE:3 [ main::bits#2 main::bits#0 main::bits#1 ]
+zp ZP_PTR_BYTE:4 [ main::sc#3 main::sc#7 main::sc#2 main::sc#1 ]
+reg byte x [ main::x#2 main::x#1 ]
+reg byte a [ main::c#2 ]
+reg byte a [ main::$2 ]
+
+FINAL CODE
+//SEG0 Basic Upstart
+.pc = $801 "Basic"
+:BasicUpstart(main)
+.pc = $80d "Program"
+//SEG1 Global Constants & labels
+  .const PROCPORT = 1
+  .const CHARGEN = $d000
+  .const SCREEN = $400
+//SEG2 @begin
+//SEG3 @1
+//SEG4 [0] call main param-assignment [ ]
+  jsr main
+//SEG5 @end
+//SEG6 main
+main: {
+    .const CHAR_A = CHARGEN+8
+    .label bits = 3
+    .label sc = 4
+    .label y = 2
+  //SEG7 asm { sei }
+    sei
+  //SEG8 [2] *((const byte*) PROCPORT#0) ← (byte) 50 [ ] -- _star_cowo1=coby2 
+    lda #$32
+    sta PROCPORT
+  //SEG9 [3] phi from main to main::@1 [phi:main->main::@1]
+  //SEG10 [3] phi (byte*) main::sc#7 = (const byte*) SCREEN#0 [phi:main->main::@1#0] -- zpptrby1=cowo1 
+    lda #<SCREEN
+    sta sc
+    lda #>SCREEN
+    sta sc+1
+  //SEG11 [3] phi (byte) main::y#2 = (byte) 0 [phi:main->main::@1#1] -- zpby1=coby1 
+    lda #0
+    sta y
+  //SEG12 [3] phi from main::@5 to main::@1 [phi:main::@5->main::@1]
+  //SEG13 [3] phi (byte*) main::sc#7 = (byte*) main::sc#2 [phi:main::@5->main::@1#0] -- register_copy 
+  //SEG14 [3] phi (byte) main::y#2 = (byte) main::y#1 [phi:main::@5->main::@1#1] -- register_copy 
+  //SEG15 main::@1
+  b1:
+  //SEG16 [4] (byte) main::bits#0 ← (const byte*) main::CHAR_A#0 *idx (byte) main::y#2 [ main::y#2 main::sc#7 main::bits#0 ] -- zpby1=cowo1_staridx_zpby2 
+    ldx y
+    lda CHAR_A,x
+    sta bits
+  //SEG17 [5] phi from main::@1 to main::@2 [phi:main::@1->main::@2]
+  //SEG18 [5] phi (byte) main::x#2 = (byte) 0 [phi:main::@1->main::@2#0] -- xby=coby1 
+    ldx #0
+  //SEG19 [5] phi (byte*) main::sc#3 = (byte*) main::sc#7 [phi:main::@1->main::@2#1] -- register_copy 
+  //SEG20 [5] phi (byte) main::bits#2 = (byte) main::bits#0 [phi:main::@1->main::@2#2] -- register_copy 
+  //SEG21 [5] phi from main::@3 to main::@2 [phi:main::@3->main::@2]
+  //SEG22 [5] phi (byte) main::x#2 = (byte) main::x#1 [phi:main::@3->main::@2#0] -- register_copy 
+  //SEG23 [5] phi (byte*) main::sc#3 = (byte*) main::sc#1 [phi:main::@3->main::@2#1] -- register_copy 
+  //SEG24 [5] phi (byte) main::bits#2 = (byte) main::bits#1 [phi:main::@3->main::@2#2] -- register_copy 
+  //SEG25 main::@2
+  b2:
+  //SEG26 [6] (byte~) main::$2 ← (byte) main::bits#2 & (byte) 128 [ main::y#2 main::bits#2 main::sc#3 main::x#2 main::$2 ] -- aby=zpby1_band_coby1 
+    lda bits
+    and #$80
+  //SEG27 [7] if((byte~) main::$2==(byte) 0) goto main::@3 [ main::y#2 main::bits#2 main::sc#3 main::x#2 ] -- aby_eq_0_then_la1 
+    cmp #0
+    beq b3_from_b2
+  //SEG28 main::@4
+  //SEG29 [8] phi from main::@4 to main::@3 [phi:main::@4->main::@3]
+  //SEG30 [8] phi (byte) main::c#2 = (byte) '*' [phi:main::@4->main::@3#0] -- aby=coby1 
+    lda #'*'
+    jmp b3
+  //SEG31 [8] phi from main::@2 to main::@3 [phi:main::@2->main::@3]
+  b3_from_b2:
+  //SEG32 [8] phi (byte) main::c#2 = (byte) '.' [phi:main::@2->main::@3#0] -- aby=coby1 
+    lda #'.'
+  //SEG33 main::@3
+  b3:
+  //SEG34 [9] *((byte*) main::sc#3) ← (byte) main::c#2 [ main::y#2 main::bits#2 main::sc#3 main::x#2 ] -- _star_zpptrby1=aby 
+    ldy #0
+    sta (sc),y
+  //SEG35 [10] (byte*) main::sc#1 ← ++ (byte*) main::sc#3 [ main::y#2 main::bits#2 main::x#2 main::sc#1 ] -- zpptrby1=_inc_zpptrby1 
+    inc sc
+    bne !+
+    inc sc+1
+  !:
+  //SEG36 [11] (byte) main::bits#1 ← (byte) main::bits#2 << (byte) 1 [ main::y#2 main::x#2 main::bits#1 main::sc#1 ] -- zpby1=zpby1_rol_1 
+    asl bits
+  //SEG37 [12] (byte) main::x#1 ← ++ (byte) main::x#2 [ main::y#2 main::bits#1 main::sc#1 main::x#1 ] -- xby=_inc_xby 
+    inx
+  //SEG38 [13] if((byte) main::x#1!=(byte) 8) goto main::@2 [ main::y#2 main::bits#1 main::sc#1 main::x#1 ] -- xby_neq_coby1_then_la1 
+    cpx #8
+    bne b2
+  //SEG39 main::@5
+  //SEG40 [14] (byte*) main::sc#2 ← (byte*) main::sc#1 + (byte) 32 [ main::y#2 main::sc#2 ] -- zpptrby1=zpptrby1_plus_coby1 
+    lda sc
+    clc
+    adc #$20
+    sta sc
+    bcc !+
+    inc sc+1
+  !:
+  //SEG41 [15] (byte) main::y#1 ← ++ (byte) main::y#2 [ main::y#1 main::sc#2 ] -- zpby1=_inc_zpby1 
+    inc y
+  //SEG42 [16] if((byte) main::y#1!=(byte) 8) goto main::@1 [ main::y#1 main::sc#2 ] -- zpby1_neq_coby1_then_la1 
+    lda y
+    cmp #8
+    bne b1
+  //SEG43 main::@6
+  //SEG44 [17] *((const byte*) PROCPORT#0) ← (byte) 55 [ ] -- _star_cowo1=coby2 
+    lda #$37
+    sta PROCPORT
+  //SEG45 asm { cli }
+    cli
+  //SEG46 main::@return
+  //SEG47 [19] return  [ ]
+    rts
+}
+

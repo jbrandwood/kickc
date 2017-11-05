@@ -32,6 +32,10 @@ public class TestPrograms extends TestCase {
       compileAndCompare("inline-asm");
    }
 
+   public void testChargen() throws IOException, URISyntaxException {
+      compileAndCompare("chargen");
+   }
+
    public void testBitmapPlotter() throws IOException, URISyntaxException {
       compileAndCompare("bitmap-plotter");
    }

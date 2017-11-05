@@ -1,25 +1,14 @@
-byte* PROCPORT = $01;
-byte* CHARGEN = $d000;
-byte* SCREEN = $0400;
 
 void main() {
-    asm { sei };
-    byte* CHAR_A = CHARGEN+8;
-    *PROCPORT = $32;
-    byte* sc = SCREEN;
-    for(byte y:0..7) {
-      byte bits = CHAR_A[y];
-      for(byte x:0..7) {
-        if((bits & $80) != 0) {
-           *sc = '*';
-        } else {
-           *sc = '.';
-        }
-        sc++;
-        bits = bits<<1;
-      }
-      sc = sc+32;
-    }
-    *PROCPORT = $37;
-    asm { cli };
+    asm {
+        lda #'a'
+        ldx #$ff
+      !:
+        sta $0400,x
+        sta $0500,x
+        sta $0600,x
+        sta $0700,x
+        dex
+        bne !-
+    };
 }

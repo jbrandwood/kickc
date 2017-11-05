@@ -256,12 +256,6 @@ public class AsmFragment {
          return null;
       }
 
-      //@Override
-      //public Object visitAsmComment(KickCParser.AsmCommentContext ctx) {
-      //   program.addLine(new AsmComment(ctx.getChild(1).getText()));
-      //   return null;
-      //}
-
       @Override
       public Object visitAsmInstruction(KickCParser.AsmInstructionContext ctx) {
          KickCParser.AsmParamModeContext paramModeCtx = ctx.asmParamMode();
@@ -372,6 +366,11 @@ public class AsmFragment {
          boolean isZp = SymbolTypeBasic.BYTE.equals(intVal.getType());
          String param = getAsmNumber(number);
          return new AsmParameter(param, isZp);
+      }
+
+      @Override
+      public Object visitAsmExprChar(KickCParser.AsmExprCharContext ctx) {
+         return new AsmParameter(ctx.getText(), true);
       }
 
       @Override

@@ -695,4 +695,16 @@ public interface KickCListener extends ParseTreeListener {
 	 * @param ctx the parse tree
 	 */
 	void exitAsmExprUnary(KickCParser.AsmExprUnaryContext ctx);
+	/**
+	 * Enter a parse tree produced by the {@code asmExprChar}
+	 * labeled alternative in {@link KickCParser#asmExpr}.
+	 * @param ctx the parse tree
+	 */
+	void enterAsmExprChar(KickCParser.AsmExprCharContext ctx);
+	/**
+	 * Exit a parse tree produced by the {@code asmExprChar}
+	 * labeled alternative in {@link KickCParser#asmExpr}.
+	 * @param ctx the parse tree
+	 */
+	void exitAsmExprChar(KickCParser.AsmExprCharContext ctx);
 }

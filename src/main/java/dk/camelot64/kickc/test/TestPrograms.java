@@ -28,6 +28,10 @@ public class TestPrograms extends TestCase {
       compileAndCompare("bitmap-bresenham");
    }
 
+   public void testAsmClobber() throws IOException, URISyntaxException {
+      compileAndCompare("asm-clobber");
+   }
+
    public void testInlineAsm() throws IOException, URISyntaxException {
       compileAndCompare("inline-asm");
    }

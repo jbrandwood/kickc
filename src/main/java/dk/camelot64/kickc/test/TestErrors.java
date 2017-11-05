@@ -24,6 +24,10 @@ public class TestErrors extends TestCase {
       helper = new ReferenceHelper("dk/camelot64/kickc/test/ref/");
    }
 
+   public void testInlineAsmParam() throws IOException, URISyntaxException {
+      compileAndCompare("inline-asm-param");
+   }
+
    public void testOverlapAllocation() throws IOException, URISyntaxException {
       compileAndCompare("overlap-allocation");
    }

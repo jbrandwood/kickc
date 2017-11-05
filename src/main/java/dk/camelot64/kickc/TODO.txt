@@ -5,6 +5,7 @@ Known Problems
 - (forrangesymbolic.kc) Range-based for does not recognize symbolic constants. The following gives a ParseTreeConstantEvaluator$NotConstantException - const byte* BITMAP = $2000; for(byte* b : BITMAP..BITMAP+$2000) { *b = 0; }
 - (wordexpr.kc) Expressions based on bytes but resulting in words are erronously infered as bytes - eg. yoffs = yoffs + 40*8;
 - (useuninitialized.kc) Using an uninitialized variable fails in the optimizer phase. It should fail much earlier.
+- (inline-asm-param.kc) Inline ASM does not attempt to handle parameters (variables).
 
 Features
 - Move the main code into a main() function, and disallow code outside functions. The main function per default has no parameters and exits with RTS.
@@ -59,12 +60,7 @@ Arrays / Strings / Inline data
   - Syntax for accessing the low/high byte-array that underlies the word-array. word[$100] plot_x; byte* plot_x_lo = plot_x.lo; plot_x_lo[0] = 0;
 
 - Inline ASM
-  - Add support for inline asm
-    - Syntax asm( "asm...", "asm...", "asm..." ); - aligned with gcc
-    - Better syntax: asm { asm... } - using real ASM syntax inline!
   - Allow inline ASM parameter expansion - eg lda line (where line is a variable)
-  - Support ASM syntax check etc.
-  - Also perform ASM clobber analysis when assigning registers.
   - Allow lda <var> or sta <var> to just perform a register copy if possible.
 
 Assembler Improvements
@@ -182,3 +178,7 @@ Done
 + Inline constants that are only call parameters used once (eg. x0#0 and x0#1 in callconstparam.kc)
 + Ensured that assignment to variables with ALU potential does not affect potential registers through clobbering.
 + (const-identification.kc) Constants are not identified correctly. Some times constant pointers are treated as variables Eg. byte* SCREEN = $0400 is adressed through zero-page even though it can be adressed directly.
++ Add support for inline asm
+  + Syntax: asm { asm... } - using real ASM syntax inline!
++ Support ASM syntax check etc.
++ Also perform ASM clobber analysis when assigning registers.

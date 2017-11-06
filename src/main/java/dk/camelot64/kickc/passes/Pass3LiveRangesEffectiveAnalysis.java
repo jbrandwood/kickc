@@ -1,12 +1,12 @@
 package dk.camelot64.kickc.passes;
 
-/**
- * Find effective alive intervals for all variables in all statements. Add the intervals to the Program.
- */
 import dk.camelot64.kickc.model.*;
 
 import java.util.*;
 
+/**
+ * Find effective alive intervals for all variables in all statements. Add the intervals to the Program.
+ */
 public class Pass3LiveRangesEffectiveAnalysis extends Pass2Base {
 
    public Pass3LiveRangesEffectiveAnalysis(Program program) {
@@ -19,17 +19,17 @@ public class Pass3LiveRangesEffectiveAnalysis extends Pass2Base {
       //getLog().append("Calculated effective variable live ranges");
    }
 
-
    private LiveRangeVariablesEffective findAliveEffective(Program program) {
       LiveRangeVariables liveRangeVariables = program.getLiveRangeVariables();
-      Map<Integer, Collection<VariableRef>> effectiveLiveVariables = new HashMap<>();
+      Map<Integer, LiveRangeVariablesEffective.AliveCombinations> effectiveLiveVariablesCombinations = new HashMap<>();
       for (ControlFlowBlock block : program.getGraph().getAllBlocks()) {
          for (Statement statement : block.getStatements()) {
-            Collection<VariableRef> aliveEffective = findAliveEffective( liveRangeVariables, statement);
-            effectiveLiveVariables.put(statement.getIndex(), aliveEffective);
+            Collection<Collection<VariableRef>> statementAliveCombinations = findAliveEffective(liveRangeVariables, statement);
+            LiveRangeVariablesEffective.AliveCombinations aliveCombinations = new LiveRangeVariablesEffective.AliveCombinations(statementAliveCombinations);
+            effectiveLiveVariablesCombinations.put(statement.getIndex(), aliveCombinations);
          }
       }
-      return new LiveRangeVariablesEffective(effectiveLiveVariables);
+      return new LiveRangeVariablesEffective(effectiveLiveVariablesCombinations);
    }
 
    /**
@@ -41,10 +41,10 @@ public class Pass3LiveRangesEffectiveAnalysis extends Pass2Base {
     * @param statement The statement to examine
     * @return All variables alive at the statement
     */
-   private Collection<VariableRef> findAliveEffective(LiveRangeVariables liveRangeVariables, Statement statement) {
+   private Collection<Collection<VariableRef>> findAliveEffective(LiveRangeVariables liveRangeVariables, Statement statement) {
+      Set<Collection<VariableRef>> combinations = new LinkedHashSet<>();
       // Get variables alive from live range analysis
-      Collection<VariableRef> effectiveAlive = new LinkedHashSet<>();
-      effectiveAlive.addAll(liveRangeVariables.getAlive(statement));
+      Collection<VariableRef> effectiveAlive = liveRangeVariables.getAlive(statement);
       // If the statement is inside a method recurse back to all calls
       // For each call add the variables alive after the call that are not referenced (used/defined) inside the method
       ControlFlowBlock block = getProgram().getGraph().getBlockFromStatementIdx(statement.getIndex());
@@ -57,16 +57,28 @@ public class Pass3LiveRangesEffectiveAnalysis extends Pass2Base {
          VariableReferenceInfo referenceInfo = new VariableReferenceInfo(getProgram());
          Collection<VariableRef> referencedInProcedure = referenceInfo.getReferenced(procedure.getRef().getLabelRef());
          for (CallGraph.CallBlock.Call caller : callers) {
+            // Each caller creates its own combinations
             StatementCall callStatement =
                   (StatementCall) getProgram().getGraph().getStatementByIndex(caller.getCallStatementIdx());
-            Set<VariableRef> callAliveEffective = new LinkedHashSet<>(findAliveEffective(liveRangeVariables, callStatement));
-            // Clear out any variables referenced in the method
-            callAliveEffective.removeAll(referencedInProcedure);
-            effectiveAlive.addAll(callAliveEffective);
+            Collection<Collection<VariableRef>> callerCombinations = findAliveEffective(liveRangeVariables, callStatement);
+            for (Collection<VariableRef> callerCombination : callerCombinations) {
+               LinkedHashSet<VariableRef> combination = new LinkedHashSet<>();
+               // Add alive at call
+               combination.addAll(callerCombination);
+               // Clear out any variables referenced in the method
+               combination.removeAll(referencedInProcedure);
+               // Add alive at statement
+               combination.addAll(effectiveAlive);
+               // Add combination
+               combinations.add(combination);
+            }
          }
       }
-      return effectiveAlive;
+      if(combinations.size()==0) {
+         // Add the combination at the current statement if no other combinations have been created
+         combinations.add(effectiveAlive);
+      }
+      return combinations;
    }
-
 
 }

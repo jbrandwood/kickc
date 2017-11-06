@@ -227,7 +227,7 @@ public class Pass2AliasElimination extends Pass2SsaOptimization {
 
 
    private Aliases findAliases() {
-      Aliases candidates = findAliasesCandidates();
+      Aliases candidates = findAliasesCandidates(false, getProgram());
       cleanupCandidates(candidates);
       return candidates;
    }
@@ -265,9 +265,9 @@ public class Pass2AliasElimination extends Pass2SsaOptimization {
     *
     * @return Map from Variable to the Constant value
     */
-   private Aliases findAliasesCandidates() {
+   public static Aliases findAliasesCandidates(final boolean allowCrossScope, final Program program) {
       final Aliases aliases = new Aliases();
-      ControlFlowGraphBaseVisitor<Void> visitor = new ControlFlowGraphBaseVisitor<Void>() {
+      final ControlFlowGraphBaseVisitor<Void> visitor = new ControlFlowGraphBaseVisitor<Void>() {
          @Override
          public Void visitAssignment(StatementAssignment assignment) {
             if (assignment.getlValue() instanceof VariableRef) {
@@ -278,7 +278,11 @@ public class Pass2AliasElimination extends Pass2SsaOptimization {
                   if(variable.getScopeNames().equals(alias.getScopeNames())){
                      aliases.add(variable, alias);
                   } else {
-                     getLog().append("Not aliassing across scopes: "+variable+" "+alias);
+                     if(allowCrossScope) {
+                        aliases.add(variable, alias);
+                     } else {
+                        program.getLog().append("Not aliassing across scopes: " + variable + " " + alias);
+                     }
                   }
                }
             }
@@ -296,11 +300,13 @@ public class Pass2AliasElimination extends Pass2SsaOptimization {
                      if (phiRValue.getrValue() instanceof VariableRef) {
                         alias = (VariableRef) phiRValue.getrValue();
                         if(!variable.getScopeNames().equals(alias.getScopeNames())){
-                           getLog().append("Not aliassing across scopes: "+variable+" "+alias);
-                           alias = null;
-                           break;
+                           if(!allowCrossScope) {
+                              program.getLog().append("Not aliassing across scopes: " + variable + " " + alias);
+                              alias = null;
+                              break;
+                           }
                         } else if(variable.equals(alias)) {
-                           getLog().append("Not aliassing identity: "+variable+" "+alias);
+                           program.getLog().append("Not aliassing identity: "+variable+" "+alias);
                            alias = null;
                            break;
                         }
@@ -325,7 +331,7 @@ public class Pass2AliasElimination extends Pass2SsaOptimization {
             return null;
          }
       };
-      visitor.visitGraph(getGraph());
+      visitor.visitGraph(program.getGraph());
       return aliases;
    }
 

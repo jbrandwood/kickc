@@ -8,23 +8,76 @@ import java.util.*;
 public class LiveRangeVariablesEffective {
 
    /** Effectively alive variables by statement index. */
-   Map<Integer, Collection<VariableRef>> effectiveLiveVariables;
+   Map<Integer, AliveCombinations> effectiveLiveCombinations;
 
-   public LiveRangeVariablesEffective(Map<Integer, Collection<VariableRef>> effectiveLiveVariables) {
-      this.effectiveLiveVariables = effectiveLiveVariables;
+   public LiveRangeVariablesEffective(Map<Integer, AliveCombinations> effectiveLiveCombinations) {
+      this.effectiveLiveCombinations = effectiveLiveCombinations;
    }
 
    /**
-    * Get all variables alive at a statement.
-    * If the statement is inside a method this also includes all variables alive at the exit of the calls.
-    * <p>
-    * This method requires a number of other analysis to be present and updated in the (global) program - especailly the Call Graph.
+    * Get all variables potentially alive at a statement.
+    * If the statement is inside a method this also includes all variables alive at the exit of any call.
     * </p>
     * @param statement The statement to examine
-    * @return All variables alive at the statement
+    * @return All variables potentially alive at the statement
     */
    public Collection<VariableRef> getAliveEffective(Statement statement) {
-      return effectiveLiveVariables.get(statement.getIndex());
+      Set<VariableRef> effectiveAliveTotal = new LinkedHashSet<>();
+      AliveCombinations aliveCombinations = effectiveLiveCombinations.get(statement.getIndex());
+      for (AliveCombination aliveCombination : aliveCombinations.getCombinations()) {
+         effectiveAliveTotal.addAll(aliveCombination.getAlive());
+      }
+      return effectiveAliveTotal;
+   }
+
+   /**
+    * Get all combinations of variables alive at a statement.
+    * If the statement is inside a method the different combinations in the result arises from different calls of the method
+    * (recursively up til the main()-method.
+    * Each combination includes all variables alive at the exit of any surrounding call.
+    * </p>
+    * @param statement The statement to examine
+    * @return All combinations of variables alive at the statement
+    */
+   public AliveCombinations getAliveCombinations(Statement statement) {
+      return effectiveLiveCombinations.get(statement.getIndex());
+   }
+
+   /** Combinations of variables effectively alive at a specific statement.
+    * If the statement is inside a method the combinations are the live variables inside the method combined with each calling statements alive vars.
+    * As each caller might also be inside a methos there may be a large amount of combinations.
+    */
+   public static class AliveCombinations {
+
+      private Collection<AliveCombination> combinations;
+
+      public AliveCombinations(Collection<Collection<VariableRef>> aliveCombinations) {
+         ArrayList<AliveCombination> combinations = new ArrayList<>();
+         for (Collection<VariableRef> aliveCombination : aliveCombinations) {
+            combinations.add(new AliveCombination(aliveCombination));
+         }
+         this.combinations = combinations;
+      }
+
+      public Collection<AliveCombination> getCombinations() {
+         return combinations;
+      }
+
+   }
+
+   /** One single combinations of variables effectively alive at a specific statement. */
+   public static class AliveCombination {
+
+      private Collection<VariableRef> alive;
+
+      public AliveCombination(Collection<VariableRef> alive) {
+         this.alive = alive;
+      }
+
+      public Collection<VariableRef> getAlive() {
+         return alive;
+      }
+
    }
 
 

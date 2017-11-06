@@ -90,7 +90,7 @@ parameterList
     ;
 
 asmLines
-    : asmLine ( asmLine )*
+    : asmLine*
     ;
 
 asmLine

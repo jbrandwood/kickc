@@ -262,9 +262,9 @@ public class Compiler {
       //program.getLog().setVerboseUplift(true);
       new Pass4RegisterUpliftCombinations(program).performUplift(10_000);
 
-      //program.getLog().setVerboseUplift(true);
-      //new Pass4RegisterUpliftStatic(program).performUplift();
-      //program.getLog().setVerboseUplift(false);
+      program.getLog().setVerboseUplift(true);
+      new Pass4RegisterUpliftStatic(program).performUplift();
+      program.getLog().setVerboseUplift(false);
 
       // Attempt uplifting registers one at a time to catch remaining potential not realized by combination search
       new Pass4RegisterUpliftRemains(program).performUplift(10_000);

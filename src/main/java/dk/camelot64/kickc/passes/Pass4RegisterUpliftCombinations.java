@@ -42,10 +42,10 @@ public class Pass4RegisterUpliftCombinations extends Pass2Base {
     * Stores the best combination directly in the {@link LiveRangeEquivalenceClassSet}.
     *
     * @param combinationIterator The combination iterator used for supplying different register allocations to test
-    * @param maxCombinations The maximal number of combinations to test. It the iterator has more combinations he rest is skipped (and a message logged)
-    * @param unknownFragments Receives any unknown ASM fragments encountered during the combinsation search
-    * @param scope The scope where the variables are being tested. (Only used for logging)
-    * @param program The program to test (used for accessing global data structures)
+    * @param maxCombinations     The maximal number of combinations to test. It the iterator has more combinations he rest is skipped (and a message logged)
+    * @param unknownFragments    Receives any unknown ASM fragments encountered during the combinsation search
+    * @param scope               The scope where the variables are being tested. (Only used for logging)
+    * @param program             The program to test (used for accessing global data structures)
     */
    static void chooseBestUpliftCombination(
          RegisterCombinationIterator combinationIterator, int maxCombinations,
@@ -93,15 +93,15 @@ public class Pass4RegisterUpliftCombinations extends Pass2Base {
     * Attempt generate ASM with a specific register combination.
     * The generation may result in failure if
     * <ul>
-    *    <li>The combination has assigned the same register to variables with overlapping live ranges</li>
-    *    <li>The register combination results in clobbering registers containing values that are still alive</li>
-    *    <li>some ASM fragments are missing </li>
-    *    <li>the ALU register is used in a non-applicable way</li>
+    * <li>The combination has assigned the same register to variables with overlapping live ranges</li>
+    * <li>The register combination results in clobbering registers containing values that are still alive</li>
+    * <li>some ASM fragments are missing </li>
+    * <li>the ALU register is used in a non-applicable way</li>
     * </ul>
     *
-    * @param combination The register allocation combination
+    * @param combination      The register allocation combination
     * @param unknownFragments Will receive any AsmFragments that can not be found during the ASM code generation
-    * @param scope The scope where the combination is tested. (Only used for logging)
+    * @param scope            The scope where the combination is tested. (Only used for logging)
     * @return true if the generation was successful
     */
    public static boolean generateCombinationAsm(
@@ -167,6 +167,7 @@ public class Pass4RegisterUpliftCombinations extends Pass2Base {
     * Programs that take less cycles to execute have lower scores.
     * In practice the score is calculated by multiplying cycles of ASM instructions with
     * an estimate of the invocation count based on the loop depth of the instructions (10^depth).
+    *
     * @param program The program containing the ASM to check
     * @return The score of the ASM
     */
@@ -190,17 +191,17 @@ public class Pass4RegisterUpliftCombinations extends Pass2Base {
       return score;
    }
 
-
    /**
     * Check the register allocation for whether a is register being allocated to two variables with overlapping live ranges
+    *
     * @param program The program
     * @return true if the register allocation contains an overlapping allocation. false otherwise.
     */
    public static boolean isAllocationOverlapping(Program program) {
+      Pass2AliasElimination.Aliases aliases = Pass2AliasElimination.findAliasesCandidates(true, program);
       for (ControlFlowBlock block : program.getGraph().getAllBlocks()) {
          for (Statement statement : block.getStatements()) {
-            LinkedHashMap<Registers.Register, LiveRangeEquivalenceClass> usedRegisters = new LinkedHashMap<>();
-            if (isStatementAllocationOverlapping(program, statement, usedRegisters)) {
+            if (isStatementAllocationOverlapping(program, statement, aliases)) {
                return true;
             }
          }
@@ -211,32 +212,46 @@ public class Pass4RegisterUpliftCombinations extends Pass2Base {
    /**
     * Determine if a statement has an overlapping register allocation
     *
-    * @param program The program
-    * @param statement The statement to check
+    * @param program       The program
+    * @param statement     The statement to check
     * @param usedRegisters The used registers. Will be extended with all registers used in the statement.
     * @return true if there is an overlapping register allocation
     */
-   private static boolean isStatementAllocationOverlapping(
-         Program program,
-         Statement statement,
-         LinkedHashMap<Registers.Register, LiveRangeEquivalenceClass> usedRegisters) {
+   private static boolean isStatementAllocationOverlapping(Program program, Statement statement, Pass2AliasElimination.Aliases aliases) {
       ProgramScope programScope = program.getScope();
-      Collection<VariableRef> alive = program.getLiveRangeVariablesEffective().getAliveEffective(statement);
-      for (VariableRef varRef : alive) {
-         Variable var = programScope.getVariable(varRef);
-         Registers.Register allocation = var.getAllocation();
-         LiveRangeEquivalenceClass allocationClass = usedRegisters.get(allocation);
-         if (allocationClass != null && !allocationClass.contains(varRef)) {
-            if (program.getLog().isVerboseUplift()) {
-               StringBuilder msg = new StringBuilder();
-               msg.append("Overlap register " + allocation + " in " + statement.toString(program));
-               program.getLog().append(msg.toString());
+      LiveRangeVariablesEffective.AliveCombinations aliveCombinations = program.getLiveRangeVariablesEffective().getAliveCombinations(statement);
+      for (LiveRangeVariablesEffective.AliveCombination aliveCombination : aliveCombinations.getCombinations()) {
+         LinkedHashMap<Registers.Register, LiveRangeEquivalenceClass> usedRegisters = new LinkedHashMap<>();
+         Collection<VariableRef> alive = aliveCombination.getAlive();
+         for (VariableRef varRef : alive) {
+            Variable var = programScope.getVariable(varRef);
+            Registers.Register allocation = var.getAllocation();
+            LiveRangeEquivalenceClass allocationClass = usedRegisters.get(allocation);
+            if (allocationClass != null && !allocationClass.contains(varRef)) {
+               // Examine if the var is an alias of a var in the allocation class
+               boolean overlap = true;
+               Pass2AliasElimination.AliasSet aliasSet = aliases.findAliasSet(varRef);
+               if(aliasSet!=null) {
+                  for (VariableRef aliasVar : aliasSet.getVars()) {
+                     if(allocationClass.contains(aliasVar)) {
+                        overlap = false;
+                     }
+                  }
+               }
+               if(overlap) {
+                  if (program.getLog().isVerboseUplift()) {
+                     StringBuilder msg = new StringBuilder();
+                     msg.append("Overlap register " + allocation + " in " + statement.toString(program));
+                     program.getLog().append(msg.toString());
+                  }
+                  return true;
+               }
+            } else {
+               LiveRangeEquivalenceClass varClass =
+                     program.getLiveRangeEquivalenceClassSet().getEquivalenceClass(varRef);
+               usedRegisters.put(allocation, varClass);
             }
-            return true;
          }
-         LiveRangeEquivalenceClass varClass =
-               program.getLiveRangeEquivalenceClassSet().getEquivalenceClass(varRef);
-         usedRegisters.put(allocation, varClass);
       }
       return false;
    }

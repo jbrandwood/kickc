@@ -1,5 +1,6 @@
 package dk.camelot64.kickc.model;
 
+import java.util.Collection;
 import java.util.List;
 
 /** Statement base class implementing shared properties and logic  */
@@ -48,7 +49,22 @@ public abstract class StatementBase implements Statement {
          return "";
       }
       LiveRangeVariables liveRanges = program.getLiveRangeVariables();
-      List<VariableRef> alive = liveRanges.getAlive(this);
+      StringBuilder alive = new StringBuilder();
+      alive.append(getAliveString(liveRanges.getAlive(this)));
+      LiveRangeVariablesEffective liveRangeVariablesEffective = program.getLiveRangeVariablesEffective();
+      if(liveRangeVariablesEffective!=null) {
+         LiveRangeVariablesEffective.AliveCombinations aliveCombinations = liveRangeVariablesEffective.getAliveCombinations(this);
+         alive.append(" ( ");
+         for (LiveRangeVariablesEffective.AliveCombination aliveCombination : aliveCombinations.getCombinations()) {
+            alive.append(getAliveString(aliveCombination.getAlive()));
+            alive.append(" ");
+         }
+         alive.append(")");
+      }
+      return alive.toString();
+   }
+
+   private String getAliveString(Collection<VariableRef> alive) {
       StringBuilder str = new StringBuilder();
       str.append(" [ ");
       for (VariableRef variableRef : alive) {

@@ -74,8 +74,15 @@ public class Pass4RegisterUpliftStatic extends Pass2Base {
       setRegister(combination, "line::$7", Registers.getRegisterALU());
       setRegister(combination, "initplottables::$6", Registers.getRegisterA());
       setRegister(combination, "initplottables::$7", Registers.getRegisterALU());
-      */
       setRegister(combination, "initplottables::$6", Registers.getRegisterA());
+      */
+
+      setRegister(combination, "plot::x#0", Registers.getRegisterX());
+      setRegister(combination, "plot::x#1", Registers.getRegisterX());
+      setRegister(combination, "plot::x#2", Registers.getRegisterX());
+      setRegister(combination, "plot::x#3", Registers.getRegisterX());
+      setRegister(combination, "main::i#1", Registers.getRegisterX());
+      setRegister(combination, "main::i#2", Registers.getRegisterX());
 
       boolean success = Pass4RegisterUpliftCombinations.generateCombinationAsm(
             combination,

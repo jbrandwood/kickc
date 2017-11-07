@@ -19,7 +19,7 @@ public class Pass2AliasElimination extends Pass2SsaOptimization {
     */
    @Override
    public boolean optimize() {
-      final Aliases aliases = findAliases();
+      final Aliases aliases = findAliases(getProgram(), false);
       removeAliasAssignments(aliases);
       replaceVariables(aliases.getReplacements());
       for (AliasSet aliasSet : aliases.getAliasSets()) {
@@ -86,6 +86,14 @@ public class Pass2AliasElimination extends Pass2SsaOptimization {
 
       public Aliases() {
          this.aliases = new ArrayList<>();
+      }
+
+      public Aliases(Aliases aliases) {
+         this.aliases = new ArrayList<>();
+         for (AliasSet aliasSet : aliases.getAliasSets()) {
+            AliasSet copySet = new AliasSet(aliasSet);
+            this.aliases.add(copySet);
+         }
       }
 
       public List<VariableRef> getSymbolsToRemove() {
@@ -159,6 +167,10 @@ public class Pass2AliasElimination extends Pass2SsaOptimization {
          this.vars = new ArrayList<>();
       }
 
+      public AliasSet(AliasSet aliasSet) {
+         this.vars = new ArrayList<>(aliasSet.getVars());
+      }
+
       public void add(VariableRef variable) {
          vars.add(variable);
       }
@@ -226,16 +238,16 @@ public class Pass2AliasElimination extends Pass2SsaOptimization {
    }
 
 
-   private Aliases findAliases() {
-      Aliases candidates = findAliasesCandidates(false, getProgram());
-      cleanupCandidates(candidates);
+   public static Aliases findAliases(Program program, boolean allowCrossScope) {
+      Aliases candidates = findAliasesCandidates(allowCrossScope, program);
+      cleanupCandidates(candidates, program);
       return candidates;
    }
 
    // Remove all candidates that are used after assignment in phi blocks
-   private void cleanupCandidates(Aliases candidates) {
+   private static void cleanupCandidates(Aliases candidates, Program program) {
       for (final AliasSet aliasSet : candidates.aliases) {
-         for (ControlFlowBlock block : getGraph().getAllBlocks()) {
+         for (ControlFlowBlock block : program.getGraph().getAllBlocks()) {
             if(block.hasPhiBlock()) {
                StatementPhiBlock phi = block.getPhiBlock();
                boolean lMatch = false;
@@ -244,7 +256,7 @@ public class Pass2AliasElimination extends Pass2SsaOptimization {
                      for (StatementPhiBlock.PhiRValue phiRValue : phiVariable.getValues()) {
                         RValue rValue = phiRValue.getrValue();
                         if (aliasSet.contains(rValue)) {
-                           getLog().append("Alias candidate removed " + rValue.toString(getProgram()));
+                           program.getLog().append("Alias candidate removed " + rValue.toString(program));
                            aliasSet.remove(rValue);
                            break;
                         }
@@ -265,7 +277,7 @@ public class Pass2AliasElimination extends Pass2SsaOptimization {
     *
     * @return Map from Variable to the Constant value
     */
-   public static Aliases findAliasesCandidates(final boolean allowCrossScope, final Program program) {
+   private static Aliases findAliasesCandidates(final boolean allowCrossScope, final Program program) {
       final Aliases aliases = new Aliases();
       final ControlFlowGraphBaseVisitor<Void> visitor = new ControlFlowGraphBaseVisitor<Void>() {
          @Override

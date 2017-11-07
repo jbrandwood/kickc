@@ -209,6 +209,8 @@ public class Compiler {
       new Pass3StatementIndices(program).generateStatementIndices();
       new Pass3CallGraphAnalysis(program).findCallGraph();
       new Pass3LiveRangesAnalysis(program).findLiveRanges();
+      program.getLog().append("CONTROL FLOW GRAPH - BEFORE EFFECTIVE LIVE RANGES");
+      program.getLog().append(program.getGraph().toString(program));
       new Pass3LiveRangesEffectiveAnalysis(program).findLiveRangesEffective();
       program.getLog().append("CONTROL FLOW GRAPH - PHI MEM COALESCED");
       program.getLog().append(program.getGraph().toString(program));
@@ -262,9 +264,9 @@ public class Compiler {
       //program.getLog().setVerboseUplift(true);
       new Pass4RegisterUpliftCombinations(program).performUplift(10_000);
 
-      program.getLog().setVerboseUplift(true);
-      new Pass4RegisterUpliftStatic(program).performUplift();
-      program.getLog().setVerboseUplift(false);
+      //program.getLog().setVerboseUplift(true);
+      //new Pass4RegisterUpliftStatic(program).performUplift();
+      //program.getLog().setVerboseUplift(false);
 
       // Attempt uplifting registers one at a time to catch remaining potential not realized by combination search
       new Pass4RegisterUpliftRemains(program).performUplift(10_000);

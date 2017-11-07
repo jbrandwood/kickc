@@ -28,9 +28,6 @@ public class TestErrors extends TestCase {
       compileAndCompare("inline-asm-param");
    }
 
-   public void testOverlapAllocation() throws IOException, URISyntaxException {
-      compileAndCompare("overlap-allocation");
-   }
 
    public void testIncD020() throws IOException, URISyntaxException {
       compileAndCompare("incd020");

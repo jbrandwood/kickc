@@ -198,10 +198,9 @@ public class Pass4RegisterUpliftCombinations extends Pass2Base {
     * @return true if the register allocation contains an overlapping allocation. false otherwise.
     */
    public static boolean isAllocationOverlapping(Program program) {
-      Pass2AliasElimination.Aliases aliases = Pass2AliasElimination.findAliasesCandidates(true, program);
       for (ControlFlowBlock block : program.getGraph().getAllBlocks()) {
          for (Statement statement : block.getStatements()) {
-            if (isStatementAllocationOverlapping(program, statement, aliases)) {
+            if (isStatementAllocationOverlapping(program, statement)) {
                return true;
             }
          }
@@ -214,15 +213,15 @@ public class Pass4RegisterUpliftCombinations extends Pass2Base {
     *
     * @param program       The program
     * @param statement     The statement to check
-    * @param usedRegisters The used registers. Will be extended with all registers used in the statement.
     * @return true if there is an overlapping register allocation
     */
-   private static boolean isStatementAllocationOverlapping(Program program, Statement statement, Pass2AliasElimination.Aliases aliases) {
+   private static boolean isStatementAllocationOverlapping(Program program, Statement statement) {
       ProgramScope programScope = program.getScope();
       LiveRangeVariablesEffective.AliveCombinations aliveCombinations = program.getLiveRangeVariablesEffective().getAliveCombinations(statement);
-      for (LiveRangeVariablesEffective.AliveCombination aliveCombination : aliveCombinations.getCombinations()) {
+      for (LiveRangeVariablesEffective.CallPath callPath : aliveCombinations.getCallPaths().getCallPaths()) {
          LinkedHashMap<Registers.Register, LiveRangeEquivalenceClass> usedRegisters = new LinkedHashMap<>();
-         Collection<VariableRef> alive = aliveCombination.getAlive();
+         Collection<VariableRef> alive = aliveCombinations.getEffectiveAliveAtStmt(callPath);
+         Pass2AliasElimination.Aliases callPathAliases = callPath.getAliases();
          for (VariableRef varRef : alive) {
             Variable var = programScope.getVariable(varRef);
             Registers.Register allocation = var.getAllocation();
@@ -230,7 +229,7 @@ public class Pass4RegisterUpliftCombinations extends Pass2Base {
             if (allocationClass != null && !allocationClass.contains(varRef)) {
                // Examine if the var is an alias of a var in the allocation class
                boolean overlap = true;
-               Pass2AliasElimination.AliasSet aliasSet = aliases.findAliasSet(varRef);
+               Pass2AliasElimination.AliasSet aliasSet = callPathAliases.findAliasSet(varRef);
                if(aliasSet!=null) {
                   for (VariableRef aliasVar : aliasSet.getVars()) {
                      if(allocationClass.contains(aliasVar)) {

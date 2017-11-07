@@ -14,6 +14,8 @@ public class Procedure extends Scope {
    private final SymbolType returnType;
    private List<String> parameterNames;
 
+   public static final ProcedureRef ROOT = new ProcedureRef("");
+
    public Procedure(String name, SymbolType returnType, Scope parentScope) {
       super(name, parentScope);
       this.returnType = returnType;

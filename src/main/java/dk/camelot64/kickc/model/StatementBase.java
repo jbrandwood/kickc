@@ -55,8 +55,8 @@ public abstract class StatementBase implements Statement {
       if(liveRangeVariablesEffective!=null) {
          LiveRangeVariablesEffective.AliveCombinations aliveCombinations = liveRangeVariablesEffective.getAliveCombinations(this);
          alive.append(" ( ");
-         for (LiveRangeVariablesEffective.AliveCombination aliveCombination : aliveCombinations.getCombinations()) {
-            alive.append(getAliveString(aliveCombination.getAlive()));
+         for (LiveRangeVariablesEffective.CallPath callPath : aliveCombinations.getCallPaths().getCallPaths()) {
+            alive.append(getAliveString(aliveCombinations.getEffectiveAliveAtStmt(callPath)));
             alive.append(" ");
          }
          alive.append(")");

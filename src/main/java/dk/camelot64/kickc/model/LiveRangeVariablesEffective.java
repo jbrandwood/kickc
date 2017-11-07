@@ -1,31 +1,139 @@
 package dk.camelot64.kickc.model;
 
+import dk.camelot64.kickc.passes.Pass2AliasElimination;
+
 import java.util.*;
 
-/** Effective variable live ranges for all statements. (Including variables alive in calling methods)
- * Created by {@link dk.camelot64.kickc.passes.Pass3CallGraphAnalysis}
+/**
+ * Effective variable live ranges for all statements.
+ * (Including variables alive in calling methods).
+ * Created by {@link dk.camelot64.kickc.passes.Pass3LiveRangesEffectiveAnalysis}
  */
 public class LiveRangeVariablesEffective {
 
-   /** Effectively alive variables by statement index. */
-   Map<Integer, AliveCombinations> effectiveLiveCombinations;
+   /**
+    * The program.
+    */
+   private Program program;
 
-   public LiveRangeVariablesEffective(Map<Integer, AliveCombinations> effectiveLiveCombinations) {
-      this.effectiveLiveCombinations = effectiveLiveCombinations;
+   /**
+    * Call-paths for all procedures.
+    */
+   private Map<ProcedureRef, CallPaths> procedureCallPaths;
+
+   /**
+    * Normal variable live ranges.
+    */
+   private LiveRangeVariables liveRangeVariables;
+
+   /**
+    * Information about which procedures reference which variables.
+    */
+   private VariableReferenceInfo referenceInfo;
+
+   public LiveRangeVariablesEffective(Program program, Map<ProcedureRef, CallPaths> procedureCallPaths, LiveRangeVariables liveRangeVariables, VariableReferenceInfo referenceInfo) {
+      this.program = program;
+      this.procedureCallPaths = procedureCallPaths;
+      this.liveRangeVariables = liveRangeVariables;
+      this.referenceInfo = referenceInfo;
    }
+
+   /**
+    * All call-paths leading into a specific procedure.
+    */
+   public static class CallPaths {
+      /**
+       * The procedure
+       */
+      private ProcedureRef procedure;
+      /**
+       * All call-paths leading into the procedure from the main() procedure.
+       */
+      private Collection<CallPath> callPaths;
+
+      public CallPaths(ProcedureRef procedure) {
+         this.procedure = procedure;
+         this.callPaths = new ArrayList<>();
+      }
+
+      public ProcedureRef getProcedure() {
+         return procedure;
+      }
+
+      public Collection<CallPath> getCallPaths() {
+         return callPaths;
+      }
+
+      public void add(CallPath callPath) {
+         this.callPaths.add(callPath);
+      }
+   }
+
+   /**
+    * All variables alive in a specific procedure at a specific call-path.
+    * The call-path is th path from the main()-procedure to the procedure in question.
+    */
+   public static class CallPath {
+
+      /**
+       * The path from main() to the procedure. First element is the call to main(), last element is the call to the procedure.
+       */
+      private List<CallGraph.CallBlock.Call> path;
+      /**
+       * Alive variables on the call-path. Based on alive vars at each call in the path.
+       */
+      private Collection<VariableRef> alive;
+      /**
+       * Alias variables on the call-path. All global aliases plus any variables alias-assigned in a phi-block on the path.
+       */
+      private Pass2AliasElimination.Aliases aliases;
+
+      public CallPath(List<CallGraph.CallBlock.Call> path, Collection<VariableRef> alive, Pass2AliasElimination.Aliases aliases) {
+         this.path = path;
+         this.alive = alive;
+         this.aliases = aliases;
+      }
+
+      /**
+       * The path from main() to the procedure. First element is the call to main(), last element is the call to the procedure.
+       * @return Tha call path
+       */
+      public List<CallGraph.CallBlock.Call> getPath() {
+         return path;
+      }
+
+      /**
+       * Alive variables on the call-path. Based on alive vars at each call in the path.
+       * @return The alive variables
+       */
+      public Collection<VariableRef> getAlive() {
+         return alive;
+      }
+
+      /**
+       * Alias variables on the call-path. All global aliases plus any variables alias-assigned in a phi-block on the path.
+       * @return The aliases
+       */
+      public Pass2AliasElimination.Aliases getAliases() {
+         return aliases;
+      }
+   }
+
 
    /**
     * Get all variables potentially alive at a statement.
     * If the statement is inside a method this also includes all variables alive at the exit of any call.
     * </p>
+    *
     * @param statement The statement to examine
     * @return All variables potentially alive at the statement
     */
    public Collection<VariableRef> getAliveEffective(Statement statement) {
       Set<VariableRef> effectiveAliveTotal = new LinkedHashSet<>();
-      AliveCombinations aliveCombinations = effectiveLiveCombinations.get(statement.getIndex());
-      for (AliveCombination aliveCombination : aliveCombinations.getCombinations()) {
-         effectiveAliveTotal.addAll(aliveCombination.getAlive());
+      AliveCombinations aliveCombinations = getAliveCombinations(statement);
+      for (CallPath callPath : aliveCombinations.getCallPaths().getCallPaths()) {
+         Collection<VariableRef> alive = aliveCombinations.getEffectiveAliveAtStmt(callPath);
+         effectiveAliveTotal.addAll(alive);
       }
       return effectiveAliveTotal;
    }
@@ -36,46 +144,80 @@ public class LiveRangeVariablesEffective {
     * (recursively up til the main()-method.
     * Each combination includes all variables alive at the exit of any surrounding call.
     * </p>
+    *
     * @param statement The statement to examine
     * @return All combinations of variables alive at the statement
     */
    public AliveCombinations getAliveCombinations(Statement statement) {
-      return effectiveLiveCombinations.get(statement.getIndex());
+      List<VariableRef> aliveAtStmt = liveRangeVariables.getAlive(statement);
+      CallPaths callPaths;
+      Collection<VariableRef> referencedInProcedure;
+      ControlFlowBlock block = program.getGraph().getBlockFromStatementIdx(statement.getIndex());
+      ScopeRef scopeRef = block.getScope();
+      Scope scope = program.getScope().getScope(scopeRef);
+      if (scope instanceof Procedure) {
+         Procedure procedure = (Procedure) scope;
+         callPaths = procedureCallPaths.get(procedure.getRef());
+         referencedInProcedure = referenceInfo.getReferenced(procedure.getRef().getLabelRef());
+      } else {
+         callPaths = new CallPaths(Procedure.ROOT);
+         referencedInProcedure = new ArrayList<>();
+      }
+      return new AliveCombinations(callPaths, referencedInProcedure, aliveAtStmt);
    }
 
-   /** Combinations of variables effectively alive at a specific statement.
+   /**
+    * Combinations of variables effectively alive at a specific statement.
     * If the statement is inside a method the combinations are the live variables inside the method combined with each calling statements alive vars.
     * As each caller might also be inside a methos there may be a large amount of combinations.
     */
    public static class AliveCombinations {
 
-      private Collection<AliveCombination> combinations;
+      /**
+       * All call-paths to the procedure containing the statement.
+       */
+      private CallPaths callPaths;
+      /**
+       * All variables referenced in the procedure containing the statement.
+       */
+      private Collection<VariableRef> referencedInProcedure;
+      /**
+       * Variables alive at the statement inside the procedure.
+       */
+      private Collection<VariableRef> aliveAtStmt;
 
-      public AliveCombinations(Collection<Collection<VariableRef>> aliveCombinations) {
-         ArrayList<AliveCombination> combinations = new ArrayList<>();
-         for (Collection<VariableRef> aliveCombination : aliveCombinations) {
-            combinations.add(new AliveCombination(aliveCombination));
-         }
-         this.combinations = combinations;
+      public AliveCombinations(CallPaths callPaths, Collection<VariableRef> referencedInProcedure, Collection<VariableRef> aliveAtStmt) {
+         this.callPaths = callPaths;
+         this.referencedInProcedure = referencedInProcedure;
+         this.aliveAtStmt = aliveAtStmt;
       }
 
-      public Collection<AliveCombination> getCombinations() {
-         return combinations;
+      public CallPaths getCallPaths() {
+         return callPaths;
       }
 
-   }
-
-   /** One single combinations of variables effectively alive at a specific statement. */
-   public static class AliveCombination {
-
-      private Collection<VariableRef> alive;
-
-      public AliveCombination(Collection<VariableRef> alive) {
-         this.alive = alive;
+      public Collection<VariableRef> getReferencedInProcedure() {
+         return referencedInProcedure;
       }
 
-      public Collection<VariableRef> getAlive() {
-         return alive;
+      public Collection<VariableRef> getAliveAtStmt() {
+         return aliveAtStmt;
+      }
+
+      /**
+       * Get all variables effective alive at the statement for a specific call path.
+       * @param callPath The call path (returned from getCallPaths)
+       * @return All variables effectively alive at the statement on the call-path
+       */
+      public Collection<VariableRef> getEffectiveAliveAtStmt(CallPath callPath) {
+         LinkedHashSet<VariableRef> effectiveAlive = new LinkedHashSet<>();
+         // Add alive at call
+         effectiveAlive.addAll(callPath.getAlive());
+         // Clear out any variables referenced in the method
+         effectiveAlive.removeAll(referencedInProcedure);
+         // Add alive at statement
+         effectiveAlive.addAll(aliveAtStmt);
+         return effectiveAlive;
       }
 
    }

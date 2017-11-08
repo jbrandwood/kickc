@@ -102,11 +102,6 @@ public class Pass3LiveRangesEffectiveAnalysis extends Pass2Base {
          callPaths = new LiveRangeVariablesEffective.CallPaths(procedureRef);
          Collection<CallGraph.CallBlock.Call> callers =
                getProgram().getCallGraph().getCallers(procedure.getLabel().getRef());
-         ControlFlowBlock procedureBlock = getProgram().getGraph().getBlock(procedure.getLabel().getRef());
-         StatementPhiBlock procedurePhiBlock = null;
-         if(procedureBlock.hasPhiBlock()) {
-            procedurePhiBlock = procedureBlock.getPhiBlock();
-         }
          for (CallGraph.CallBlock.Call caller : callers) {
             // Each caller creates its own call-paths
             StatementCall callStatement =
@@ -130,15 +125,7 @@ public class Pass3LiveRangesEffectiveAnalysis extends Pass2Base {
                   alive.addAll(callerPath.getAlive());
                   alive.removeAll(referencedInCaller);
                   alive.addAll(liveRangeVariables.getAlive(callStatement));
-                  Pass2AliasElimination.Aliases aliases = new Pass2AliasElimination.Aliases(callerPath.getAliases());
-                  if(procedurePhiBlock!=null) {
-                     for (StatementPhiBlock.PhiVariable phiVariable : procedurePhiBlock.getPhiVariables()) {
-                        RValue phiRvalue = phiVariable.getrValue(callBlock.getLabel());
-                        if (phiRvalue instanceof VariableRef) {
-                           aliases.add(phiVariable.getVariable(), (VariableRef) phiRvalue);
-                        }
-                     }
-                  }
+                  Pass2AliasElimination.Aliases aliases = getCallAliases(procedure, callBlock, callerPath);
                   LiveRangeVariablesEffective.CallPath callPath = new LiveRangeVariablesEffective.CallPath(path, alive, aliases);
                   callPaths.add(callPath);
                }
@@ -148,7 +135,7 @@ public class Pass3LiveRangesEffectiveAnalysis extends Pass2Base {
                rootPath.add(caller);
                ArrayList<VariableRef> rootAlive = new ArrayList<>();
                // Initialize with global cross-scope aliases
-               Pass2AliasElimination.Aliases rootAliases = Pass2AliasElimination.findAliases(getProgram(), true);
+               Pass2AliasElimination.Aliases rootAliases = new Pass2AliasElimination.Aliases();
                LiveRangeVariablesEffective.CallPath rootCallPath = new LiveRangeVariablesEffective.CallPath(rootPath, rootAlive, rootAliases);
                callPaths.add(rootCallPath);
             }
@@ -157,6 +144,47 @@ public class Pass3LiveRangesEffectiveAnalysis extends Pass2Base {
       }
    }
 
+   /**
+    * Find aliases defined when taking a specific call - meaning call parameters that have specific values when taking the specific call.
+    * @param procedurePhiBlock The phi-block of the called procedure
+    * @param callBlock The block performing the call
+    * @param callerPath The call-path from main() to the calling procedure. (contains aliases for all preceding calls)
+    * @return Aliases defined by the specific call.
+    */
+   private Pass2AliasElimination.Aliases getCallAliases(Procedure procedure, ControlFlowBlock callBlock, LiveRangeVariablesEffective.CallPath callerPath) {
+      ControlFlowBlock procedureBlock = getProgram().getGraph().getBlock(procedure.getLabel().getRef());
+      StatementPhiBlock procedurePhiBlock = null;
+      if(procedureBlock.hasPhiBlock()) {
+         procedurePhiBlock = procedureBlock.getPhiBlock();
+      }
+      Pass2AliasElimination.Aliases aliases = new Pass2AliasElimination.Aliases(callerPath.getAliases());
+      // Find aliases inside the phi-block of the called method
+      if(procedurePhiBlock!=null) {
+         for (StatementPhiBlock.PhiVariable phiVariable : procedurePhiBlock.getPhiVariables()) {
+            RValue phiRvalue = phiVariable.getrValue(callBlock.getLabel());
+            if (phiRvalue instanceof VariableRef) {
+               aliases.add(phiVariable.getVariable(), (VariableRef) phiRvalue);
+            }
+         }
+      }
+      // Find call parameter aliasses in the calling block before the call
+      for (Statement statement : callBlock.getStatements()) {
+         if(statement instanceof StatementAssignment) {
+            StatementAssignment assignment = (StatementAssignment) statement;
+            LValue lValue = assignment.getlValue();
+            if(lValue instanceof VariableRef) {
+               Variable lValueVar = getProgram().getScope().getVariable((VariableRef) lValue);
+               if(lValueVar.getScope().equals(procedure)) {
+                  // Assigning into the procedure scope
+                  if(assignment.getrValue1()==null && assignment.getOperator()==null && assignment.getrValue2() instanceof VariableRef) {
+                     aliases.add((VariableRef) lValue, (VariableRef) assignment.getrValue2());
+                  }
+               }
+            }
+         }
+      }
+      return aliases;
+   }
 
 
 }

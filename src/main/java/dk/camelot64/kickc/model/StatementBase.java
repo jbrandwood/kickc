@@ -56,12 +56,26 @@ public abstract class StatementBase implements Statement {
          LiveRangeVariablesEffective.AliveCombinations aliveCombinations = liveRangeVariablesEffective.getAliveCombinations(this);
          alive.append(" ( ");
          for (LiveRangeVariablesEffective.CallPath callPath : aliveCombinations.getCallPaths().getCallPaths()) {
+            alive.append(getCallPathString(callPath.getPath()));
             alive.append(getAliveString(aliveCombinations.getEffectiveAliveAtStmt(callPath)));
             alive.append(" ");
          }
          alive.append(")");
       }
       return alive.toString();
+   }
+
+   private String getCallPathString(List<CallGraph.CallBlock.Call> path) {
+      StringBuilder out = new StringBuilder();
+      boolean first = true;
+      for (CallGraph.CallBlock.Call call : path) {
+         if(!first) {
+            out.append("::");
+         }
+         first = false;
+         out.append(call.toString());
+      }
+      return out.toString();
    }
 
    private String getAliveString(Collection<VariableRef> alive) {

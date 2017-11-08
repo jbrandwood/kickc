@@ -210,10 +210,10 @@ public class CallGraph {
          @Override
          public String toString() {
             StringBuilder out = new StringBuilder();
-            if (callStatementIdx != null) {
-               out.append(callStatementIdx).append(":");
-            }
             out.append(procedure);
+            if (callStatementIdx != null) {
+               out.append(":").append(callStatementIdx);
+            }
             return out.toString();
          }
 

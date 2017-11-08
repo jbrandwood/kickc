@@ -84,14 +84,19 @@ public class LiveRangeVariablesEffective {
        */
       private Collection<VariableRef> alive;
       /**
-       * Alias variables on the call-path. All global aliases plus any variables alias-assigned in a phi-block on the path.
+       * Alias variables for the innermost call. Variables alias-assigned as part of the innermost call on the path (in parameter assignment or phi block).
        */
-      private Pass2AliasElimination.Aliases aliases;
+      private Pass2AliasElimination.Aliases innerAliases;
+      /**
+       * Alias variables from the entire call-path. Any variables alias-assigned as part of a call on the path (in parameter assignment or phi block).
+       */
+      private Pass2AliasElimination.Aliases pathAliases;
 
-      public CallPath(List<CallGraph.CallBlock.Call> path, Collection<VariableRef> alive, Pass2AliasElimination.Aliases aliases) {
+      public CallPath(List<CallGraph.CallBlock.Call> path, Collection<VariableRef> alive, Pass2AliasElimination.Aliases innerAliases, Pass2AliasElimination.Aliases pathAliases) {
          this.path = path;
          this.alive = alive;
-         this.aliases = aliases;
+         this.innerAliases = innerAliases;
+         this.pathAliases = pathAliases;
       }
 
       /**
@@ -111,11 +116,19 @@ public class LiveRangeVariablesEffective {
       }
 
       /**
-       * Alias variables on the call-path. All global aliases plus any variables alias-assigned in a phi-block on the path.
+       * Alias variables from the entire call-path. Any variables alias-assigned as part of a call on the path (in parameter assignment or phi block).
        * @return The aliases
        */
-      public Pass2AliasElimination.Aliases getAliases() {
-         return aliases;
+      public Pass2AliasElimination.Aliases getPathAliases() {
+         return pathAliases;
+      }
+
+      /**
+       * Alias variables for the innermost call. Variables alias-assigned as part of the innermost call on the path (in parameter assignment or phi block).
+       * @return The aliases
+       */
+      public Pass2AliasElimination.Aliases getInnerAliases() {
+         return innerAliases;
       }
    }
 
@@ -141,8 +154,9 @@ public class LiveRangeVariablesEffective {
    /**
     * Get all combinations of variables alive at a statement.
     * If the statement is inside a method the different combinations in the result arises from different calls of the method
-    * (recursively up til the main()-method.
+    * (recursively up til the main()-method.)
     * Each combination includes all variables alive at the exit of any surrounding call.
+    * Also includes variable aliases that are part of the parameter assignments to the calls on the path.
     * </p>
     *
     * @param statement The statement to examine
@@ -163,6 +177,9 @@ public class LiveRangeVariablesEffective {
          callPaths = new CallPaths(Procedure.ROOT);
          referencedInProcedure = new ArrayList<>();
       }
+      // Examine if the statement is a parameter assignment before a call
+      throw new RuntimeException("Examine if the statement is a parameter assignment before a call - and add the inner aliases if it is");
+
       return new AliveCombinations(callPaths, referencedInProcedure, aliveAtStmt);
    }
 
@@ -185,23 +202,20 @@ public class LiveRangeVariablesEffective {
        * Variables alive at the statement inside the procedure.
        */
       private Collection<VariableRef> aliveAtStmt;
+      /**
+       * If the statement is an assignment to a call parameter this contains the aliases for that specific call.
+       */
+      private Pass2AliasElimination.Aliases callAliases;
 
-      public AliveCombinations(CallPaths callPaths, Collection<VariableRef> referencedInProcedure, Collection<VariableRef> aliveAtStmt) {
+      public AliveCombinations(CallPaths callPaths, Collection<VariableRef> referencedInProcedure, Collection<VariableRef> aliveAtStmt, Pass2AliasElimination.Aliases callAliases) {
          this.callPaths = callPaths;
          this.referencedInProcedure = referencedInProcedure;
          this.aliveAtStmt = aliveAtStmt;
+         this.callAliases = callAliases;
       }
 
       public CallPaths getCallPaths() {
          return callPaths;
-      }
-
-      public Collection<VariableRef> getReferencedInProcedure() {
-         return referencedInProcedure;
-      }
-
-      public Collection<VariableRef> getAliveAtStmt() {
-         return aliveAtStmt;
       }
 
       /**
@@ -220,6 +234,16 @@ public class LiveRangeVariablesEffective {
          return effectiveAlive;
       }
 
+      public Pass2AliasElimination.Aliases getEffectiveAliasesAtStmt(CallPath callPath) {
+         if(callAliases==null) {
+            return callPath.getPathAliases();
+         } else {
+            Pass2AliasElimination.Aliases aliases = new Pass2AliasElimination.Aliases();
+            aliases.addAll(callPath.getPathAliases());
+            aliases.addAll(callAliases);
+            return aliases;
+         }
+      }
    }
 
 

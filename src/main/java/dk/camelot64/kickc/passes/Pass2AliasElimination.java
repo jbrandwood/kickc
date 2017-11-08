@@ -157,6 +157,20 @@ public class Pass2AliasElimination extends Pass2SsaOptimization {
       public List<AliasSet> getAliasSets() {
          return aliases;
       }
+
+      public void addAll(Aliases aliases) {
+         for (AliasSet aliasSet : aliases.getAliasSets()) {
+            List<VariableRef> vars = aliasSet.getVars();
+            VariableRef first = null;
+            for (VariableRef var : vars) {
+               if(first==null) {
+                  first = var;
+               } else {
+                  add(first, var);
+               }
+            }
+         }
+      }
    }
 
    public static class AliasSet {

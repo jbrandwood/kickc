@@ -221,7 +221,7 @@ public class Pass4RegisterUpliftCombinations extends Pass2Base {
       for (LiveRangeVariablesEffective.CallPath callPath : aliveCombinations.getCallPaths().getCallPaths()) {
          LinkedHashMap<Registers.Register, LiveRangeEquivalenceClass> usedRegisters = new LinkedHashMap<>();
          Collection<VariableRef> alive = aliveCombinations.getEffectiveAliveAtStmt(callPath);
-         Pass2AliasElimination.Aliases callPathAliases = callPath.getAliases();
+         Pass2AliasElimination.Aliases callPathAliases = aliveCombinations.getEffectiveAliasesAtStmt(callPath);
          for (VariableRef varRef : alive) {
             Variable var = programScope.getVariable(varRef);
             Registers.Register allocation = var.getAllocation();

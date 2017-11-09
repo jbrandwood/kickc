@@ -109,7 +109,7 @@ public class Pass3LiveRangesAnalysis extends Pass2Base {
                   // Add all used variables to the previous statement (taking into account phi from blocks)
                   modified |= initUsedVars(liveRanges, stmt, previousStmt);
                   // Add all alive variables to previous that are used inside the method
-                  ControlFlowBlock procBlock = getProgram().getGraph().getBlockFromStatementIdx(stmt.getIndex());
+                  ControlFlowBlock procBlock = getProgram().getStatementBlocks().getBlock(stmt);
                   Procedure procedure = (Procedure) getProgram().getScope().getSymbol(procBlock.getLabel());
                   Collection<VariableRef> procUsed = referenceInfo.getUsed(procedure.getRef().getLabelRef());
                   // The call statement has no used or defined by itself so only work with the alive vars
@@ -153,7 +153,7 @@ public class Pass3LiveRangesAnalysis extends Pass2Base {
          // If current statement is a phi add the used variables to previous based on the phi entries
          StatementPhiBlock phi = (StatementPhiBlock) stmt;
          ControlFlowBlock previousBlock =
-               getProgram().getGraph().getBlockFromStatementIdx(previousStmt.getStatement().getIndex());
+               getProgram().getStatementBlocks().getBlock(previousStmt.getStatement());
          for (StatementPhiBlock.PhiVariable phiVariable : phi.getPhiVariables()) {
             for (StatementPhiBlock.PhiRValue phiRValue : phiVariable.getValues()) {
                if (phiRValue.getPredecessor().equals(previousBlock.getLabel())) {
@@ -252,7 +252,7 @@ public class Pass3LiveRangesAnalysis extends Pass2Base {
          }
       } else {
          // No preceding statements. Examine if this is the first statement in a call.
-         ControlFlowBlock block = getProgram().getGraph().getBlockFromStatementIdx(statement.getIndex());
+         ControlFlowBlock block = getProgram().getStatementBlocks().getBlock(statement);
          if (block.isProcedureEntry(getProgram())) {
             // Current is first statement of a call - add the statement preceding the call.
             Collection<CallGraph.CallBlock.Call> callers = getProgram().getCallGraph().getCallers(block.getLabel());
@@ -299,7 +299,7 @@ public class Pass3LiveRangesAnalysis extends Pass2Base {
    private Collection<Statement> getPrecedingStatement(Statement statement) {
       Statement previousStmt = null;
       Statement prev = null;
-      ControlFlowBlock block = getProgram().getGraph().getBlockFromStatementIdx(statement.getIndex());
+      ControlFlowBlock block = getProgram().getStatementBlocks().getBlock(statement);
       List<Statement> statements = block.getStatements();
       for (Statement stmt : statements) {
          if (statement.getIndex().equals(stmt.getIndex())) {

@@ -27,6 +27,8 @@ public class Program {
    /** Information about loops. */
    private NaturalLoopSet loopSet;
 
+   /** Which block is each statement a part of. */
+   private StatementBlocks statementBlocks;
    /** The variables freferenced by blocks/statements. */
    private VariableReferenceInfos variableReferenceInfos;
    /** The live ranges of all variables. */
@@ -119,6 +121,14 @@ public class Program {
 
    public void setVariableReferenceInfos(VariableReferenceInfos variableReferenceInfos) {
       this.variableReferenceInfos = variableReferenceInfos;
+   }
+
+   public StatementBlocks getStatementBlocks() {
+      return statementBlocks;
+   }
+
+   public void setStatementBlocks(StatementBlocks statementBlocks) {
+      this.statementBlocks = statementBlocks;
    }
 
    public void setLiveRangeVariables(LiveRangeVariables liveRangeVariables) {

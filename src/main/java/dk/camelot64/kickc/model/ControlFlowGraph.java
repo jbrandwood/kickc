@@ -146,19 +146,6 @@ public class ControlFlowGraph {
       return null;
    }
 
-
-
-   public ControlFlowBlock getBlockFromStatementIdx(int statementIdx) {
-      for (ControlFlowBlock block : getAllBlocks()) {
-         for (Statement statement : block.getStatements()) {
-            if(statementIdx==statement.getIndex()) {
-               return block;
-            }
-         }
-      }
-      return null;
-   }
-
    @Override
    public String toString() {
       return toString(null);

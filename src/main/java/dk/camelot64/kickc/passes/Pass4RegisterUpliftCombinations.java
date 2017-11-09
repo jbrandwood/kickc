@@ -182,7 +182,7 @@ public class Pass4RegisterUpliftCombinations extends Pass2Base {
             Integer statementIdx = asmSegment.getStatementIdx();
             int maxLoopDepth = 1;
             if (statementIdx != null) {
-               ControlFlowBlock block = graph.getBlockFromStatementIdx(statementIdx);
+               ControlFlowBlock block = program.getStatementBlocks().getBlock(statementIdx);
                maxLoopDepth = loopSet.getMaxLoopDepth(block.getLabel());
             }
             score += asmSegmentCycles * Math.pow(10, maxLoopDepth);

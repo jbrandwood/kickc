@@ -166,7 +166,7 @@ public class LiveRangeVariablesEffective {
       List<VariableRef> aliveAtStmt = liveRangeVariables.getAlive(statement);
       CallPaths callPaths;
       Collection<VariableRef> referencedInProcedure;
-      ControlFlowBlock block = program.getGraph().getBlockFromStatementIdx(statement.getIndex());
+      ControlFlowBlock block = program.getStatementBlocks().getBlock(statement);
       ScopeRef scopeRef = block.getScope();
       Scope scope = program.getScope().getScope(scopeRef);
       if (scope instanceof Procedure) {
@@ -186,9 +186,9 @@ public class LiveRangeVariablesEffective {
          for (CallPath calledPath : calledRefs.getCallPaths()) {
             List<CallGraph.CallBlock.Call> path = calledPath.getPath();
             CallGraph.CallBlock.Call lastCall = path.get(path.size() - 1);
-            Integer lastCallCallStatementIdx = lastCall.getCallStatementIdx();
-            ControlFlowBlock lastCallBlock = program.getGraph().getBlockFromStatementIdx(lastCallCallStatementIdx);
-            if(lastCallBlock.equals(block)) {
+            Integer lastCallStatementIdx = lastCall.getCallStatementIdx();
+            LabelRef lastCallBlockRef = program.getStatementBlocks().getBlockRef(lastCallStatementIdx);
+            if(lastCallBlockRef.equals(block.getLabel())) {
                if (callAliases == null) {
                   // Found a matching call!
                   callAliases = calledPath.getInnerAliases();

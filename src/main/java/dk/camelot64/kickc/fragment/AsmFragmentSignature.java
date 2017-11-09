@@ -25,7 +25,7 @@ public class AsmFragmentSignature {
          ControlFlowBlock block,
          Program program,
          ControlFlowGraph graph) {
-      this.codeScopeRef = program.getGraph().getBlockFromStatementIdx(conditionalJump.getIndex()).getScope();
+      this.codeScopeRef = program.getStatementBlocks().getBlock(conditionalJump).getScope();
       this.bindings = new LinkedHashMap<>();
       this.program = program;
       String conditionalJumpSignature = conditionalJumpSignature(conditionalJump, block, graph);
@@ -33,7 +33,7 @@ public class AsmFragmentSignature {
    }
 
    public AsmFragmentSignature(StatementAssignment assignment, Program program) {
-      this.codeScopeRef = program.getGraph().getBlockFromStatementIdx(assignment.getIndex()).getScope();
+      this.codeScopeRef = program.getStatementBlocks().getBlock(assignment).getScope();
       this.bindings = new LinkedHashMap<>();
       this.program = program;
       setSignature(assignmentSignature(
@@ -51,14 +51,14 @@ public class AsmFragmentSignature {
    }
 
    public AsmFragmentSignature(StatementAssignment assignment, StatementAssignment assignmentAlu, Program program) {
-      this.codeScopeRef = program.getGraph().getBlockFromStatementIdx(assignment.getIndex()).getScope();
+      this.codeScopeRef = program.getStatementBlocks().getBlock(assignment).getScope();
       this.bindings = new LinkedHashMap<>();
       this.program = program;
       setSignature(assignmentWithAluSignature(assignment, assignmentAlu));
    }
 
    private String assignmentWithAluSignature(StatementAssignment assignment, StatementAssignment assignmentAlu) {
-      this.codeScopeRef = program.getGraph().getBlockFromStatementIdx(assignment.getIndex()).getScope();
+      this.codeScopeRef = program.getStatementBlocks().getBlock(assignment).getScope();
       if (!(assignment.getrValue2() instanceof VariableRef)) {
          throw new AsmFragment.AluNotApplicableException("Error! ALU register only allowed as rValue2. " + assignment);
       }

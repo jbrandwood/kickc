@@ -49,7 +49,7 @@ public class Pass4AssertNoCpuClobber extends Pass2Base {
             if(asmSegment.getPhiTransitionId()!=null && asmSegment.getPhiTransitionAssignmentIdx()!=null) {
                String phiTransitionId = asmSegment.getPhiTransitionId();
                int transitionAssignmentIdx = asmSegment.getPhiTransitionAssignmentIdx();
-               ControlFlowBlock statementBlock = getProgram().getGraph().getBlockFromStatementIdx(statementIdx);
+               ControlFlowBlock statementBlock = getProgram().getStatementBlocks().getBlock(statementIdx);
                PhiTransitions phiTransitions = new PhiTransitions(getProgram(), statementBlock);
                PhiTransitions.PhiTransition phiTransition = phiTransitions.getTransition(phiTransitionId);
                for (PhiTransitions.PhiTransition.PhiAssignment phiAssignment : phiTransition.getAssignments()) {

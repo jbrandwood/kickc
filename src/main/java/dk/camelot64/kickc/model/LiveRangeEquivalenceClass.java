@@ -8,8 +8,8 @@ import java.util.List;
  **/
 public class LiveRangeEquivalenceClass {
 
-   /** The containing program. */
-   private Program program;
+   /** The containing set. */
+   private LiveRangeEquivalenceClassSet set;
 
    /** The variables of the equivalence class. */
    private List<VariableRef> variables;
@@ -20,8 +20,8 @@ public class LiveRangeEquivalenceClass {
    /** A register allocated to hold all variables of the equivalence class. (null if no register is currently allocated) */
    private Registers.Register register;
 
-   public LiveRangeEquivalenceClass(Program program) {
-      this.program = program;
+   public LiveRangeEquivalenceClass(LiveRangeEquivalenceClassSet set) {
+      this.set = set;
       this.variables = new ArrayList<>();
       this.liveRange = new LiveRange();
       this.register = null;
@@ -44,13 +44,18 @@ public class LiveRangeEquivalenceClass {
       if(variables.contains(variable)) {
          return;
       }
-      LiveRangeVariables liveRanges = program.getLiveRangeVariables();
+      LiveRangeVariables liveRanges = set.getProgram().getLiveRangeVariables();
       LiveRange varLiveRange = liveRanges.getLiveRange(variable);
       if (liveRange.overlaps(varLiveRange)) {
          throw new RuntimeException("Compilation error! Variable live range overlaps live range equivalence class live range. " + variable);
       }
       liveRange.add(varLiveRange);
       variables.add(variable);
+      set.setVarClass(variable, this);
+   }
+
+   public List<VariableRef> getVariables() {
+      return variables;
    }
 
    /**
@@ -68,17 +73,18 @@ public class LiveRangeEquivalenceClass {
    }
 
    public void addAll(LiveRangeEquivalenceClass other) {
-      variables.addAll(other.variables);
       liveRange.add(other.liveRange);
+      variables.addAll(other.variables);
+      for (VariableRef variable : other.variables) {
+         set.setVarClass(variable, this);
+      }
    }
 
    @Override
    public boolean equals(Object o) {
       if (this == o) return true;
       if (o == null || getClass() != o.getClass()) return false;
-
       LiveRangeEquivalenceClass that = (LiveRangeEquivalenceClass) o;
-
       return variables.equals(that.variables);
    }
 
@@ -107,7 +113,4 @@ public class LiveRangeEquivalenceClass {
       return s.toString();
    }
 
-   public List<VariableRef> getVariables() {
-      return variables;
-   }
 }

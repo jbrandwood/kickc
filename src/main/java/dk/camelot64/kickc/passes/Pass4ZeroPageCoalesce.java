@@ -34,8 +34,7 @@ public class Pass4ZeroPageCoalesce extends Pass2Base {
             if (!myEquivalenceClass.equals(otherEquivalenceClass)) {
                if(canCoalesce(myEquivalenceClass, otherEquivalenceClass)) {
                   getLog().append("Coalescing zero page register [ "+myEquivalenceClass+" ] with [ "+otherEquivalenceClass+" ]" );
-                  myEquivalenceClass.addAll(otherEquivalenceClass);
-                  liveRangeEquivalenceClassSet.remove(otherEquivalenceClass);
+                  liveRangeEquivalenceClassSet.consolidate(myEquivalenceClass, otherEquivalenceClass);
                   // Reset the program register allocation
                   getProgram().getLiveRangeEquivalenceClassSet().storeRegisterAllocation();
                   return true;

@@ -76,8 +76,7 @@ public class Pass3PhiMemCoalesce extends Pass2SsaOptimization {
                   replace.put((VariableRef) assignment.getlValue(), assignVar);
                   getLog().append("Coalesced (already) " + assignment);
                } else if (!lValEquivalenceClass.getLiveRange().overlaps(assignVarEquivalenceClass.getLiveRange())) {
-                  lValEquivalenceClass.addAll(assignVarEquivalenceClass);
-                  phiEquivalenceClassSet.remove(assignVarEquivalenceClass);
+                  phiEquivalenceClassSet.consolidate(lValEquivalenceClass, assignVarEquivalenceClass);
                   remove.add((VariableRef) assignment.getlValue());
                   replace.put((VariableRef) assignment.getlValue(), assignVar);
                   getLog().append("Coalesced " + assignment);
@@ -112,8 +111,7 @@ public class Pass3PhiMemCoalesce extends Pass2SsaOptimization {
                   VariableRef phiRVar = (VariableRef) phiRValue.getrValue();
                   LiveRangeEquivalenceClass rValEquivalenceClass = phiEquivalenceClasses.getOrCreateEquivalenceClass(phiRVar);
                   if(!rValEquivalenceClass.equals(equivalenceClass)) {
-                     equivalenceClass.addAll(rValEquivalenceClass);
-                     phiEquivalenceClasses.remove(rValEquivalenceClass);
+                     phiEquivalenceClasses.consolidate(equivalenceClass, rValEquivalenceClass);
                   }
                }
             }

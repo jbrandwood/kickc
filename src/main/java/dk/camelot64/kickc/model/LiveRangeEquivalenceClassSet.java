@@ -1,18 +1,43 @@
 package dk.camelot64.kickc.model;
 
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
-/** A set of live range equivalence classes. */
+/**
+ * A set of live range equivalence classes.
+ */
 public class LiveRangeEquivalenceClassSet {
 
+   /**
+    * The containing program.
+    */
    private Program program;
 
+   /**
+    * The equivalence classes of the set.
+    */
    private List<LiveRangeEquivalenceClass> equivalenceClasses;
+
+   /**
+    * Maps variables to their containing class.
+    */
+   Map<VariableRef, LiveRangeEquivalenceClass> varClass;
 
    public LiveRangeEquivalenceClassSet(Program program) {
       this.program = program;
       this.equivalenceClasses = new ArrayList<>();
+      this.varClass = new LinkedHashMap<>();
+   }
+
+   /**
+    * Get the containing program
+    *
+    * @return The program
+    */
+   Program getProgram() {
+      return program;
    }
 
    /**
@@ -28,10 +53,31 @@ public class LiveRangeEquivalenceClassSet {
          return equivalenceClass;
       }
       // Not found - create it
-      equivalenceClass = new LiveRangeEquivalenceClass(program);
+      equivalenceClass = new LiveRangeEquivalenceClass(this);
       equivalenceClasses.add(equivalenceClass);
       equivalenceClass.addVariable(variable);
       return equivalenceClass;
+   }
+
+   /**
+    * Consolidates two live range equivalence calsses into one.
+    * All variables and live ranges from the other class is added to the first one - and the other one is deleted.
+    * @param equivalenceClass The first live range equivalence class.
+    * @param otherEquivalenceClass The other live range equivalence class, that is added to the first and deleted.
+    */
+   public void consolidate(LiveRangeEquivalenceClass equivalenceClass, LiveRangeEquivalenceClass otherEquivalenceClass) {
+      equivalenceClass.addAll(otherEquivalenceClass);
+      equivalenceClasses.remove(otherEquivalenceClass);
+   }
+
+   /**
+    * Informs the set that class of a variable has ben set - called by add/remove methods inside LiveRangeEquivalenceClass
+    *
+    * @param variable         The variable
+    * @param equivalenceClass The class
+    */
+   void setVarClass(VariableRef variable, LiveRangeEquivalenceClass equivalenceClass) {
+      varClass.put(variable, equivalenceClass);
    }
 
    /**
@@ -41,12 +87,7 @@ public class LiveRangeEquivalenceClassSet {
     * @return The existing phi equivalence class. null if no equivalence class contains the variable.
     */
    public LiveRangeEquivalenceClass getEquivalenceClass(VariableRef variable) {
-      for (LiveRangeEquivalenceClass equivalenceClass : equivalenceClasses) {
-         if (equivalenceClass.contains(variable)) {
-            return equivalenceClass;
-         }
-      }
-      return null;
+      return varClass.get(variable);
    }
 
    public List<LiveRangeEquivalenceClass> getEquivalenceClasses() {
@@ -55,10 +96,6 @@ public class LiveRangeEquivalenceClassSet {
 
    public int size() {
       return equivalenceClasses.size();
-   }
-
-   public void remove(LiveRangeEquivalenceClass equivalenceClass) {
-      equivalenceClasses.remove(equivalenceClass);
    }
 
    /**

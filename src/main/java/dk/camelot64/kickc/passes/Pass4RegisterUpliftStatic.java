@@ -124,8 +124,7 @@ public class Pass4RegisterUpliftStatic extends Pass2Base {
       VariableRef variableRef2 = scope.getVariable(varFullName2).getRef();
       LiveRangeEquivalenceClass equivalenceClass2 = equivalenceClassSet.getEquivalenceClass(variableRef2);
       if(!equivalenceClass1.equals(equivalenceClass2)) {
-         equivalenceClass1.addAll(equivalenceClass2);
-         equivalenceClassSet.remove(equivalenceClass2);
+         equivalenceClassSet.consolidate(equivalenceClass1, equivalenceClass2);
       }
    }
 

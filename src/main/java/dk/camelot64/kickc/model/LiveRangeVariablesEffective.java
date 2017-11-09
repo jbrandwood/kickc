@@ -21,10 +21,8 @@ public class LiveRangeVariablesEffective {
     */
    private Map<ProcedureRef, CallPaths> procedureCallPaths;
 
-   /**
-    * Normal variable live ranges.
-    */
-   private LiveRangeVariables liveRangeVariables;
+   /** Variables (normally) alive at each statement by index. */
+   private Map<Integer, Collection<VariableRef>> statementsLiveVariables;
 
    /**
     * Information about which procedures reference which variables.
@@ -34,8 +32,13 @@ public class LiveRangeVariablesEffective {
    public LiveRangeVariablesEffective(Program program, Map<ProcedureRef, CallPaths> procedureCallPaths, LiveRangeVariables liveRangeVariables, VariableReferenceInfos referenceInfo) {
       this.program = program;
       this.procedureCallPaths = procedureCallPaths;
-      this.liveRangeVariables = liveRangeVariables;
       this.referenceInfo = referenceInfo;
+      this.statementsLiveVariables = new LinkedHashMap<>();
+      for (ControlFlowBlock block : program.getGraph().getAllBlocks()) {
+         for (Statement statement : block.getStatements()) {
+            statementsLiveVariables.put(statement.getIndex(), liveRangeVariables.getAlive(statement));
+         }
+      }
    }
 
    /**
@@ -163,7 +166,7 @@ public class LiveRangeVariablesEffective {
     * @return All combinations of variables alive at the statement
     */
    public AliveCombinations getAliveCombinations(Statement statement) {
-      List<VariableRef> aliveAtStmt = liveRangeVariables.getAlive(statement);
+      Collection<VariableRef> aliveAtStmt = statementsLiveVariables.get(statement.getIndex());
       CallPaths callPaths;
       Collection<VariableRef> referencedInProcedure;
       ControlFlowBlock block = program.getStatementBlocks().getBlock(statement);

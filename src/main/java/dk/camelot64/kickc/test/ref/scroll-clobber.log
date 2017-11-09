@@ -844,7 +844,7 @@ main::@6: scope:[main]  from main::@1
 
 Adding NOP phi() at start of main
 CALL GRAPH
-Calls in [] to 0:main 
+Calls in [] to main:0 
 
 Propagating live ranges...
 Propagating live ranges...
@@ -908,7 +908,7 @@ Propagating live ranges...
 Propagating live ranges...
 Propagating live ranges...
 Propagating live ranges...
-CONTROL FLOW GRAPH - PHI MEM COALESCED
+CONTROL FLOW GRAPH - BEFORE EFFECTIVE LIVE RANGES
 @begin: scope:[]  from
   to:@1
 @1: scope:[]  from @begin
@@ -937,6 +937,37 @@ main::@2: scope:[main]  from main::@1 main::@3
   to:main::@return
 main::@return: scope:[main]  from main::@2
   [11] return  [ ]
+  to:@return
+
+CONTROL FLOW GRAPH - PHI MEM COALESCED
+@begin: scope:[]  from
+  to:@1
+@1: scope:[]  from @begin
+  [0] call main param-assignment [ ] ( )
+  to:@end
+@end: scope:[]  from @1
+main: scope:[main]  from @1
+  [1] phi() [ ] ( main:0 [ ] )
+  to:main::@1
+main::@1: scope:[main]  from main main::@2
+  [2] (byte) main::i#2 ← phi( main/(byte) 0 main::@2/(byte) main::i#1 ) [ main::nxt#3 main::i#2 ] ( main:0 [ main::nxt#3 main::i#2 ] )
+  [2] (byte*) main::nxt#3 ← phi( main/(const byte[]) TEXT#0 main::@2/(byte*) main::nxt#1 ) [ main::nxt#3 main::i#2 ] ( main:0 [ main::nxt#3 main::i#2 ] )
+  [3] (byte) main::c#0 ← * (byte*) main::nxt#3 [ main::nxt#3 main::i#2 main::c#0 ] ( main:0 [ main::nxt#3 main::i#2 main::c#0 ] )
+  [4] if((byte) main::c#0!=(byte) '@') goto main::@2 [ main::nxt#3 main::i#2 main::c#0 ] ( main:0 [ main::nxt#3 main::i#2 main::c#0 ] )
+  to:main::@3
+main::@3: scope:[main]  from main::@1
+  [5] (byte) main::c#1 ← * (const byte[]) TEXT#0 [ main::i#2 main::c#1 ] ( main:0 [ main::i#2 main::c#1 ] )
+  to:main::@2
+main::@2: scope:[main]  from main::@1 main::@3
+  [6] (byte*) main::nxt#4 ← phi( main::@1/(byte*) main::nxt#3 main::@3/(const byte[]) TEXT#0 ) [ main::i#2 main::c#2 main::nxt#4 ] ( main:0 [ main::i#2 main::c#2 main::nxt#4 ] )
+  [6] (byte) main::c#2 ← phi( main::@1/(byte) main::c#0 main::@3/(byte) main::c#1 ) [ main::i#2 main::c#2 main::nxt#4 ] ( main:0 [ main::i#2 main::c#2 main::nxt#4 ] )
+  [7] (byte) main::i#1 ← ++ (byte) main::i#2 [ main::i#1 main::c#2 main::nxt#4 ] ( main:0 [ main::i#1 main::c#2 main::nxt#4 ] )
+  [8] *((const byte*) SCREEN#0 + (byte) main::i#1) ← (byte) main::c#2 [ main::i#1 main::nxt#4 ] ( main:0 [ main::i#1 main::nxt#4 ] )
+  [9] (byte*) main::nxt#1 ← ++ (byte*) main::nxt#4 [ main::nxt#1 main::i#1 ] ( main:0 [ main::nxt#1 main::i#1 ] )
+  [10] if(true) goto main::@1 [ main::nxt#1 main::i#1 ] ( main:0 [ main::nxt#1 main::i#1 ] )
+  to:main::@return
+main::@return: scope:[main]  from main::@2
+  [11] return  [ ] ( main:0 [ ] )
   to:@return
 
 DOMINATORS
@@ -1003,7 +1034,7 @@ bbegin:
   jmp b1
 //SEG3 @1
 b1:
-//SEG4 [0] call main param-assignment [ ]
+//SEG4 [0] call main param-assignment [ ] ( )
 //SEG5 [1] phi from @1 to main [phi:@1->main]
 main_from_b1:
   jsr main
@@ -1033,18 +1064,18 @@ main: {
     jmp b1
   //SEG14 main::@1
   b1:
-  //SEG15 [3] (byte) main::c#0 ← * (byte*) main::nxt#3 [ main::nxt#3 main::i#2 main::c#0 ] -- zpby1=_star_zpptrby1 
+  //SEG15 [3] (byte) main::c#0 ← * (byte*) main::nxt#3 [ main::nxt#3 main::i#2 main::c#0 ] ( main:0 [ main::nxt#3 main::i#2 main::c#0 ] ) -- zpby1=_star_zpptrby1 
     ldy #0
     lda (nxt),y
     sta c
-  //SEG16 [4] if((byte) main::c#0!=(byte) '@') goto main::@2 [ main::nxt#3 main::i#2 main::c#0 ] -- zpby1_neq_coby1_then_la1 
+  //SEG16 [4] if((byte) main::c#0!=(byte) '@') goto main::@2 [ main::nxt#3 main::i#2 main::c#0 ] ( main:0 [ main::nxt#3 main::i#2 main::c#0 ] ) -- zpby1_neq_coby1_then_la1 
     lda c
     cmp #'@'
     bne b2_from_b1
     jmp b3
   //SEG17 main::@3
   b3:
-  //SEG18 [5] (byte) main::c#1 ← * (const byte[]) TEXT#0 [ main::i#2 main::c#1 ] -- zpby1=_star_cowo1 
+  //SEG18 [5] (byte) main::c#1 ← * (const byte[]) TEXT#0 [ main::i#2 main::c#1 ] ( main:0 [ main::i#2 main::c#1 ] ) -- zpby1=_star_cowo1 
     lda TEXT
     sta c
   //SEG19 [6] phi from main::@3 to main::@2 [phi:main::@3->main::@2]
@@ -1063,31 +1094,31 @@ main: {
     jmp b2
   //SEG25 main::@2
   b2:
-  //SEG26 [7] (byte) main::i#1 ← ++ (byte) main::i#2 [ main::i#1 main::c#2 main::nxt#4 ] -- zpby1=_inc_zpby1 
+  //SEG26 [7] (byte) main::i#1 ← ++ (byte) main::i#2 [ main::i#1 main::c#2 main::nxt#4 ] ( main:0 [ main::i#1 main::c#2 main::nxt#4 ] ) -- zpby1=_inc_zpby1 
     inc i
-  //SEG27 [8] *((const byte*) SCREEN#0 + (byte) main::i#1) ← (byte) main::c#2 [ main::i#1 main::nxt#4 ] -- cowo1_staridx_zpby1=zpby2 
+  //SEG27 [8] *((const byte*) SCREEN#0 + (byte) main::i#1) ← (byte) main::c#2 [ main::i#1 main::nxt#4 ] ( main:0 [ main::i#1 main::nxt#4 ] ) -- cowo1_staridx_zpby1=zpby2 
     lda c
     ldx i
     sta SCREEN,x
-  //SEG28 [9] (byte*) main::nxt#1 ← ++ (byte*) main::nxt#4 [ main::nxt#1 main::i#1 ] -- zpptrby1=_inc_zpptrby1 
+  //SEG28 [9] (byte*) main::nxt#1 ← ++ (byte*) main::nxt#4 [ main::nxt#1 main::i#1 ] ( main:0 [ main::nxt#1 main::i#1 ] ) -- zpptrby1=_inc_zpptrby1 
     inc nxt
     bne !+
     inc nxt+1
   !:
-  //SEG29 [10] if(true) goto main::@1 [ main::nxt#1 main::i#1 ] -- true_then_la1 
+  //SEG29 [10] if(true) goto main::@1 [ main::nxt#1 main::i#1 ] ( main:0 [ main::nxt#1 main::i#1 ] ) -- true_then_la1 
     jmp b1_from_b2
     jmp breturn
   //SEG30 main::@return
   breturn:
-  //SEG31 [11] return  [ ]
+  //SEG31 [11] return  [ ] ( main:0 [ ] )
     rts
 }
 
 REGISTER UPLIFT POTENTIAL REGISTERS
-Statement [3] (byte) main::c#0 ← * (byte*) main::nxt#3 [ main::nxt#3 main::i#2 main::c#0 ] always clobbers reg byte a reg byte y 
+Statement [3] (byte) main::c#0 ← * (byte*) main::nxt#3 [ main::nxt#3 main::i#2 main::c#0 ] ( main:0 [ main::nxt#3 main::i#2 main::c#0 ] ) always clobbers reg byte a reg byte y 
 Removing always clobbered register reg byte a as potential for zp ZP_BYTE:2 [ main::i#2 main::i#1 ]
 Removing always clobbered register reg byte y as potential for zp ZP_BYTE:2 [ main::i#2 main::i#1 ]
-Statement [3] (byte) main::c#0 ← * (byte*) main::nxt#3 [ main::nxt#3 main::i#2 main::c#0 ] always clobbers reg byte a reg byte y 
+Statement [3] (byte) main::c#0 ← * (byte*) main::nxt#3 [ main::nxt#3 main::i#2 main::c#0 ] ( main:0 [ main::nxt#3 main::i#2 main::c#0 ] ) always clobbers reg byte a reg byte y 
 Potential registers zp ZP_BYTE:2 [ main::i#2 main::i#1 ] : zp ZP_BYTE:2 , reg byte x , 
 Potential registers zp ZP_BYTE:3 [ main::c#2 main::c#0 main::c#1 ] : zp ZP_BYTE:3 , reg byte a , reg byte x , reg byte y , 
 Potential registers zp ZP_PTR_BYTE:4 [ main::nxt#4 main::nxt#3 main::nxt#1 ] : zp ZP_PTR_BYTE:4 , 
@@ -1119,7 +1150,7 @@ ASSEMBLER
 bbegin:
 //SEG3 @1
 b1:
-//SEG4 [0] call main param-assignment [ ]
+//SEG4 [0] call main param-assignment [ ] ( )
 //SEG5 [1] phi from @1 to main [phi:@1->main]
 main_from_b1:
   jsr main
@@ -1144,16 +1175,16 @@ main: {
   //SEG13 [2] phi (byte*) main::nxt#3 = (byte*) main::nxt#1 [phi:main::@2->main::@1#1] -- register_copy 
   //SEG14 main::@1
   b1:
-  //SEG15 [3] (byte) main::c#0 ← * (byte*) main::nxt#3 [ main::nxt#3 main::i#2 main::c#0 ] -- yby=_star_zpptrby1 
+  //SEG15 [3] (byte) main::c#0 ← * (byte*) main::nxt#3 [ main::nxt#3 main::i#2 main::c#0 ] ( main:0 [ main::nxt#3 main::i#2 main::c#0 ] ) -- yby=_star_zpptrby1 
     ldy #0
     lda (nxt),y
     tay
-  //SEG16 [4] if((byte) main::c#0!=(byte) '@') goto main::@2 [ main::nxt#3 main::i#2 main::c#0 ] -- yby_neq_coby1_then_la1 
+  //SEG16 [4] if((byte) main::c#0!=(byte) '@') goto main::@2 [ main::nxt#3 main::i#2 main::c#0 ] ( main:0 [ main::nxt#3 main::i#2 main::c#0 ] ) -- yby_neq_coby1_then_la1 
     cpy #'@'
     bne b2_from_b1
   //SEG17 main::@3
   b3:
-  //SEG18 [5] (byte) main::c#1 ← * (const byte[]) TEXT#0 [ main::i#2 main::c#1 ] -- yby=_star_cowo1 
+  //SEG18 [5] (byte) main::c#1 ← * (const byte[]) TEXT#0 [ main::i#2 main::c#1 ] ( main:0 [ main::i#2 main::c#1 ] ) -- yby=_star_cowo1 
     ldy TEXT
   //SEG19 [6] phi from main::@3 to main::@2 [phi:main::@3->main::@2]
   b2_from_b3:
@@ -1170,21 +1201,21 @@ main: {
   //SEG24 [6] phi (byte) main::c#2 = (byte) main::c#0 [phi:main::@1->main::@2#1] -- register_copy 
   //SEG25 main::@2
   b2:
-  //SEG26 [7] (byte) main::i#1 ← ++ (byte) main::i#2 [ main::i#1 main::c#2 main::nxt#4 ] -- xby=_inc_xby 
+  //SEG26 [7] (byte) main::i#1 ← ++ (byte) main::i#2 [ main::i#1 main::c#2 main::nxt#4 ] ( main:0 [ main::i#1 main::c#2 main::nxt#4 ] ) -- xby=_inc_xby 
     inx
-  //SEG27 [8] *((const byte*) SCREEN#0 + (byte) main::i#1) ← (byte) main::c#2 [ main::i#1 main::nxt#4 ] -- cowo1_staridx_xby=yby 
+  //SEG27 [8] *((const byte*) SCREEN#0 + (byte) main::i#1) ← (byte) main::c#2 [ main::i#1 main::nxt#4 ] ( main:0 [ main::i#1 main::nxt#4 ] ) -- cowo1_staridx_xby=yby 
     tya
     sta SCREEN,x
-  //SEG28 [9] (byte*) main::nxt#1 ← ++ (byte*) main::nxt#4 [ main::nxt#1 main::i#1 ] -- zpptrby1=_inc_zpptrby1 
+  //SEG28 [9] (byte*) main::nxt#1 ← ++ (byte*) main::nxt#4 [ main::nxt#1 main::i#1 ] ( main:0 [ main::nxt#1 main::i#1 ] ) -- zpptrby1=_inc_zpptrby1 
     inc nxt
     bne !+
     inc nxt+1
   !:
-  //SEG29 [10] if(true) goto main::@1 [ main::nxt#1 main::i#1 ] -- true_then_la1 
+  //SEG29 [10] if(true) goto main::@1 [ main::nxt#1 main::i#1 ] ( main:0 [ main::nxt#1 main::i#1 ] ) -- true_then_la1 
     jmp b1_from_b2
   //SEG30 main::@return
   breturn:
-  //SEG31 [11] return  [ ]
+  //SEG31 [11] return  [ ] ( main:0 [ ] )
     rts
 }
 
@@ -1207,7 +1238,7 @@ ASSEMBLER
 //SEG2 @begin
 //SEG3 @1
 b1:
-//SEG4 [0] call main param-assignment [ ]
+//SEG4 [0] call main param-assignment [ ] ( )
 //SEG5 [1] phi from @1 to main [phi:@1->main]
   jsr main
 //SEG6 @end
@@ -1230,16 +1261,16 @@ main: {
   //SEG13 [2] phi (byte*) main::nxt#3 = (byte*) main::nxt#1 [phi:main::@2->main::@1#1] -- register_copy 
   //SEG14 main::@1
   b1:
-  //SEG15 [3] (byte) main::c#0 ← * (byte*) main::nxt#3 [ main::nxt#3 main::i#2 main::c#0 ] -- yby=_star_zpptrby1 
+  //SEG15 [3] (byte) main::c#0 ← * (byte*) main::nxt#3 [ main::nxt#3 main::i#2 main::c#0 ] ( main:0 [ main::nxt#3 main::i#2 main::c#0 ] ) -- yby=_star_zpptrby1 
     ldy #0
     lda (nxt),y
     tay
-  //SEG16 [4] if((byte) main::c#0!=(byte) '@') goto main::@2 [ main::nxt#3 main::i#2 main::c#0 ] -- yby_neq_coby1_then_la1 
+  //SEG16 [4] if((byte) main::c#0!=(byte) '@') goto main::@2 [ main::nxt#3 main::i#2 main::c#0 ] ( main:0 [ main::nxt#3 main::i#2 main::c#0 ] ) -- yby_neq_coby1_then_la1 
     cpy #'@'
     bne b2
   //SEG17 main::@3
   b3:
-  //SEG18 [5] (byte) main::c#1 ← * (const byte[]) TEXT#0 [ main::i#2 main::c#1 ] -- yby=_star_cowo1 
+  //SEG18 [5] (byte) main::c#1 ← * (const byte[]) TEXT#0 [ main::i#2 main::c#1 ] ( main:0 [ main::i#2 main::c#1 ] ) -- yby=_star_cowo1 
     ldy TEXT
   //SEG19 [6] phi from main::@3 to main::@2 [phi:main::@3->main::@2]
   b2_from_b3:
@@ -1255,21 +1286,21 @@ main: {
   //SEG24 [6] phi (byte) main::c#2 = (byte) main::c#0 [phi:main::@1->main::@2#1] -- register_copy 
   //SEG25 main::@2
   b2:
-  //SEG26 [7] (byte) main::i#1 ← ++ (byte) main::i#2 [ main::i#1 main::c#2 main::nxt#4 ] -- xby=_inc_xby 
+  //SEG26 [7] (byte) main::i#1 ← ++ (byte) main::i#2 [ main::i#1 main::c#2 main::nxt#4 ] ( main:0 [ main::i#1 main::c#2 main::nxt#4 ] ) -- xby=_inc_xby 
     inx
-  //SEG27 [8] *((const byte*) SCREEN#0 + (byte) main::i#1) ← (byte) main::c#2 [ main::i#1 main::nxt#4 ] -- cowo1_staridx_xby=yby 
+  //SEG27 [8] *((const byte*) SCREEN#0 + (byte) main::i#1) ← (byte) main::c#2 [ main::i#1 main::nxt#4 ] ( main:0 [ main::i#1 main::nxt#4 ] ) -- cowo1_staridx_xby=yby 
     tya
     sta SCREEN,x
-  //SEG28 [9] (byte*) main::nxt#1 ← ++ (byte*) main::nxt#4 [ main::nxt#1 main::i#1 ] -- zpptrby1=_inc_zpptrby1 
+  //SEG28 [9] (byte*) main::nxt#1 ← ++ (byte*) main::nxt#4 [ main::nxt#1 main::i#1 ] ( main:0 [ main::nxt#1 main::i#1 ] ) -- zpptrby1=_inc_zpptrby1 
     inc nxt
     bne !+
     inc nxt+1
   !:
-  //SEG29 [10] if(true) goto main::@1 [ main::nxt#1 main::i#1 ] -- true_then_la1 
+  //SEG29 [10] if(true) goto main::@1 [ main::nxt#1 main::i#1 ] ( main:0 [ main::nxt#1 main::i#1 ] ) -- true_then_la1 
     jmp b1
   //SEG30 main::@return
   breturn:
-  //SEG31 [11] return  [ ]
+  //SEG31 [11] return  [ ] ( main:0 [ ] )
     rts
 }
 
@@ -1291,7 +1322,7 @@ ASSEMBLER
   TEXT: .text "01234567@"
 //SEG2 @begin
 //SEG3 @1
-//SEG4 [0] call main param-assignment [ ]
+//SEG4 [0] call main param-assignment [ ] ( )
 //SEG5 [1] phi from @1 to main [phi:@1->main]
   jsr main
 //SEG6 @end
@@ -1312,15 +1343,15 @@ main: {
   //SEG13 [2] phi (byte*) main::nxt#3 = (byte*) main::nxt#1 [phi:main::@2->main::@1#1] -- register_copy 
   //SEG14 main::@1
   b1:
-  //SEG15 [3] (byte) main::c#0 ← * (byte*) main::nxt#3 [ main::nxt#3 main::i#2 main::c#0 ] -- yby=_star_zpptrby1 
+  //SEG15 [3] (byte) main::c#0 ← * (byte*) main::nxt#3 [ main::nxt#3 main::i#2 main::c#0 ] ( main:0 [ main::nxt#3 main::i#2 main::c#0 ] ) -- yby=_star_zpptrby1 
     ldy #0
     lda (nxt),y
     tay
-  //SEG16 [4] if((byte) main::c#0!=(byte) '@') goto main::@2 [ main::nxt#3 main::i#2 main::c#0 ] -- yby_neq_coby1_then_la1 
+  //SEG16 [4] if((byte) main::c#0!=(byte) '@') goto main::@2 [ main::nxt#3 main::i#2 main::c#0 ] ( main:0 [ main::nxt#3 main::i#2 main::c#0 ] ) -- yby_neq_coby1_then_la1 
     cpy #'@'
     bne b2
   //SEG17 main::@3
-  //SEG18 [5] (byte) main::c#1 ← * (const byte[]) TEXT#0 [ main::i#2 main::c#1 ] -- yby=_star_cowo1 
+  //SEG18 [5] (byte) main::c#1 ← * (const byte[]) TEXT#0 [ main::i#2 main::c#1 ] ( main:0 [ main::i#2 main::c#1 ] ) -- yby=_star_cowo1 
     ldy TEXT
   //SEG19 [6] phi from main::@3 to main::@2 [phi:main::@3->main::@2]
   //SEG20 [6] phi (byte*) main::nxt#4 = (const byte[]) TEXT#0 [phi:main::@3->main::@2#0] -- zpptrby1=cowo1 
@@ -1335,20 +1366,20 @@ main: {
   //SEG24 [6] phi (byte) main::c#2 = (byte) main::c#0 [phi:main::@1->main::@2#1] -- register_copy 
   //SEG25 main::@2
   b2:
-  //SEG26 [7] (byte) main::i#1 ← ++ (byte) main::i#2 [ main::i#1 main::c#2 main::nxt#4 ] -- xby=_inc_xby 
+  //SEG26 [7] (byte) main::i#1 ← ++ (byte) main::i#2 [ main::i#1 main::c#2 main::nxt#4 ] ( main:0 [ main::i#1 main::c#2 main::nxt#4 ] ) -- xby=_inc_xby 
     inx
-  //SEG27 [8] *((const byte*) SCREEN#0 + (byte) main::i#1) ← (byte) main::c#2 [ main::i#1 main::nxt#4 ] -- cowo1_staridx_xby=yby 
+  //SEG27 [8] *((const byte*) SCREEN#0 + (byte) main::i#1) ← (byte) main::c#2 [ main::i#1 main::nxt#4 ] ( main:0 [ main::i#1 main::nxt#4 ] ) -- cowo1_staridx_xby=yby 
     tya
     sta SCREEN,x
-  //SEG28 [9] (byte*) main::nxt#1 ← ++ (byte*) main::nxt#4 [ main::nxt#1 main::i#1 ] -- zpptrby1=_inc_zpptrby1 
+  //SEG28 [9] (byte*) main::nxt#1 ← ++ (byte*) main::nxt#4 [ main::nxt#1 main::i#1 ] ( main:0 [ main::nxt#1 main::i#1 ] ) -- zpptrby1=_inc_zpptrby1 
     inc nxt
     bne !+
     inc nxt+1
   !:
-  //SEG29 [10] if(true) goto main::@1 [ main::nxt#1 main::i#1 ] -- true_then_la1 
+  //SEG29 [10] if(true) goto main::@1 [ main::nxt#1 main::i#1 ] ( main:0 [ main::nxt#1 main::i#1 ] ) -- true_then_la1 
     jmp b1
   //SEG30 main::@return
-  //SEG31 [11] return  [ ]
+  //SEG31 [11] return  [ ] ( main:0 [ ] )
     rts
 }
 
@@ -1366,7 +1397,7 @@ ASSEMBLER
   TEXT: .text "01234567@"
 //SEG2 @begin
 //SEG3 @1
-//SEG4 [0] call main param-assignment [ ]
+//SEG4 [0] call main param-assignment [ ] ( )
 //SEG5 [1] phi from @1 to main [phi:@1->main]
   jsr main
 //SEG6 @end
@@ -1386,15 +1417,15 @@ main: {
   //SEG13 [2] phi (byte*) main::nxt#3 = (byte*) main::nxt#1 [phi:main::@2->main::@1#1] -- register_copy 
   //SEG14 main::@1
   b1:
-  //SEG15 [3] (byte) main::c#0 ← * (byte*) main::nxt#3 [ main::nxt#3 main::i#2 main::c#0 ] -- yby=_star_zpptrby1 
+  //SEG15 [3] (byte) main::c#0 ← * (byte*) main::nxt#3 [ main::nxt#3 main::i#2 main::c#0 ] ( main:0 [ main::nxt#3 main::i#2 main::c#0 ] ) -- yby=_star_zpptrby1 
     ldy #0
     lda (nxt),y
     tay
-  //SEG16 [4] if((byte) main::c#0!=(byte) '@') goto main::@2 [ main::nxt#3 main::i#2 main::c#0 ] -- yby_neq_coby1_then_la1 
+  //SEG16 [4] if((byte) main::c#0!=(byte) '@') goto main::@2 [ main::nxt#3 main::i#2 main::c#0 ] ( main:0 [ main::nxt#3 main::i#2 main::c#0 ] ) -- yby_neq_coby1_then_la1 
     cpy #'@'
     bne b2
   //SEG17 main::@3
-  //SEG18 [5] (byte) main::c#1 ← * (const byte[]) TEXT#0 [ main::i#2 main::c#1 ] -- yby=_star_cowo1 
+  //SEG18 [5] (byte) main::c#1 ← * (const byte[]) TEXT#0 [ main::i#2 main::c#1 ] ( main:0 [ main::i#2 main::c#1 ] ) -- yby=_star_cowo1 
     ldy TEXT
   //SEG19 [6] phi from main::@3 to main::@2 [phi:main::@3->main::@2]
   //SEG20 [6] phi (byte*) main::nxt#4 = (const byte[]) TEXT#0 [phi:main::@3->main::@2#0] -- zpptrby1=cowo1 
@@ -1408,20 +1439,20 @@ main: {
   //SEG24 [6] phi (byte) main::c#2 = (byte) main::c#0 [phi:main::@1->main::@2#1] -- register_copy 
   //SEG25 main::@2
   b2:
-  //SEG26 [7] (byte) main::i#1 ← ++ (byte) main::i#2 [ main::i#1 main::c#2 main::nxt#4 ] -- xby=_inc_xby 
+  //SEG26 [7] (byte) main::i#1 ← ++ (byte) main::i#2 [ main::i#1 main::c#2 main::nxt#4 ] ( main:0 [ main::i#1 main::c#2 main::nxt#4 ] ) -- xby=_inc_xby 
     inx
-  //SEG27 [8] *((const byte*) SCREEN#0 + (byte) main::i#1) ← (byte) main::c#2 [ main::i#1 main::nxt#4 ] -- cowo1_staridx_xby=yby 
+  //SEG27 [8] *((const byte*) SCREEN#0 + (byte) main::i#1) ← (byte) main::c#2 [ main::i#1 main::nxt#4 ] ( main:0 [ main::i#1 main::nxt#4 ] ) -- cowo1_staridx_xby=yby 
     tya
     sta SCREEN,x
-  //SEG28 [9] (byte*) main::nxt#1 ← ++ (byte*) main::nxt#4 [ main::nxt#1 main::i#1 ] -- zpptrby1=_inc_zpptrby1 
+  //SEG28 [9] (byte*) main::nxt#1 ← ++ (byte*) main::nxt#4 [ main::nxt#1 main::i#1 ] ( main:0 [ main::nxt#1 main::i#1 ] ) -- zpptrby1=_inc_zpptrby1 
     inc nxt
     bne !+
     inc nxt+1
   !:
-  //SEG29 [10] if(true) goto main::@1 [ main::nxt#1 main::i#1 ] -- true_then_la1 
+  //SEG29 [10] if(true) goto main::@1 [ main::nxt#1 main::i#1 ] ( main:0 [ main::nxt#1 main::i#1 ] ) -- true_then_la1 
     jmp b1
   //SEG30 main::@return
-  //SEG31 [11] return  [ ]
+  //SEG31 [11] return  [ ] ( main:0 [ ] )
     rts
 }
 
@@ -1467,7 +1498,7 @@ FINAL CODE
   TEXT: .text "01234567@"
 //SEG2 @begin
 //SEG3 @1
-//SEG4 [0] call main param-assignment [ ]
+//SEG4 [0] call main param-assignment [ ] ( )
 //SEG5 [1] phi from @1 to main [phi:@1->main]
   jsr main
 //SEG6 @end
@@ -1487,15 +1518,15 @@ main: {
   //SEG13 [2] phi (byte*) main::nxt#3 = (byte*) main::nxt#1 [phi:main::@2->main::@1#1] -- register_copy 
   //SEG14 main::@1
   b1:
-  //SEG15 [3] (byte) main::c#0 ← * (byte*) main::nxt#3 [ main::nxt#3 main::i#2 main::c#0 ] -- yby=_star_zpptrby1 
+  //SEG15 [3] (byte) main::c#0 ← * (byte*) main::nxt#3 [ main::nxt#3 main::i#2 main::c#0 ] ( main:0 [ main::nxt#3 main::i#2 main::c#0 ] ) -- yby=_star_zpptrby1 
     ldy #0
     lda (nxt),y
     tay
-  //SEG16 [4] if((byte) main::c#0!=(byte) '@') goto main::@2 [ main::nxt#3 main::i#2 main::c#0 ] -- yby_neq_coby1_then_la1 
+  //SEG16 [4] if((byte) main::c#0!=(byte) '@') goto main::@2 [ main::nxt#3 main::i#2 main::c#0 ] ( main:0 [ main::nxt#3 main::i#2 main::c#0 ] ) -- yby_neq_coby1_then_la1 
     cpy #'@'
     bne b2
   //SEG17 main::@3
-  //SEG18 [5] (byte) main::c#1 ← * (const byte[]) TEXT#0 [ main::i#2 main::c#1 ] -- yby=_star_cowo1 
+  //SEG18 [5] (byte) main::c#1 ← * (const byte[]) TEXT#0 [ main::i#2 main::c#1 ] ( main:0 [ main::i#2 main::c#1 ] ) -- yby=_star_cowo1 
     ldy TEXT
   //SEG19 [6] phi from main::@3 to main::@2 [phi:main::@3->main::@2]
   //SEG20 [6] phi (byte*) main::nxt#4 = (const byte[]) TEXT#0 [phi:main::@3->main::@2#0] -- zpptrby1=cowo1 
@@ -1509,20 +1540,20 @@ main: {
   //SEG24 [6] phi (byte) main::c#2 = (byte) main::c#0 [phi:main::@1->main::@2#1] -- register_copy 
   //SEG25 main::@2
   b2:
-  //SEG26 [7] (byte) main::i#1 ← ++ (byte) main::i#2 [ main::i#1 main::c#2 main::nxt#4 ] -- xby=_inc_xby 
+  //SEG26 [7] (byte) main::i#1 ← ++ (byte) main::i#2 [ main::i#1 main::c#2 main::nxt#4 ] ( main:0 [ main::i#1 main::c#2 main::nxt#4 ] ) -- xby=_inc_xby 
     inx
-  //SEG27 [8] *((const byte*) SCREEN#0 + (byte) main::i#1) ← (byte) main::c#2 [ main::i#1 main::nxt#4 ] -- cowo1_staridx_xby=yby 
+  //SEG27 [8] *((const byte*) SCREEN#0 + (byte) main::i#1) ← (byte) main::c#2 [ main::i#1 main::nxt#4 ] ( main:0 [ main::i#1 main::nxt#4 ] ) -- cowo1_staridx_xby=yby 
     tya
     sta SCREEN,x
-  //SEG28 [9] (byte*) main::nxt#1 ← ++ (byte*) main::nxt#4 [ main::nxt#1 main::i#1 ] -- zpptrby1=_inc_zpptrby1 
+  //SEG28 [9] (byte*) main::nxt#1 ← ++ (byte*) main::nxt#4 [ main::nxt#1 main::i#1 ] ( main:0 [ main::nxt#1 main::i#1 ] ) -- zpptrby1=_inc_zpptrby1 
     inc nxt
     bne !+
     inc nxt+1
   !:
-  //SEG29 [10] if(true) goto main::@1 [ main::nxt#1 main::i#1 ] -- true_then_la1 
+  //SEG29 [10] if(true) goto main::@1 [ main::nxt#1 main::i#1 ] ( main:0 [ main::nxt#1 main::i#1 ] ) -- true_then_la1 
     jmp b1
   //SEG30 main::@return
-  //SEG31 [11] return  [ ]
+  //SEG31 [11] return  [ ] ( main:0 [ ] )
     rts
 }
 

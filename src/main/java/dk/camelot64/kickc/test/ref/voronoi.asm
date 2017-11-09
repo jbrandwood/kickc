@@ -93,10 +93,6 @@ render: {
     lda #0
     sta x
   b2:
-    lda x
-    sta findcol.x
-    lda y
-    sta findcol.y
     jsr findcol
     tya
     ldy x
@@ -119,10 +115,10 @@ render: {
     rts
 }
 findcol: {
-    .label x = 8
-    .label y = 9
+    .label x = 5
+    .label y = 2
     .label xp = 7
-    .label yp = $a
+    .label yp = 8
     .label diff = 7
     .label mindiff = 6
     ldy #0

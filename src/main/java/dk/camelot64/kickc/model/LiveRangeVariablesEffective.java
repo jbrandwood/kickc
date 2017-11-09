@@ -177,10 +177,31 @@ public class LiveRangeVariablesEffective {
          callPaths = new CallPaths(Procedure.ROOT);
          referencedInProcedure = new ArrayList<>();
       }
+      Pass2AliasElimination.Aliases callAliases = null;
       // Examine if the statement is a parameter assignment before a call
-      throw new RuntimeException("Examine if the statement is a parameter assignment before a call - and add the inner aliases if it is");
+      LabelRef callSuccessor = block.getCallSuccessor();
+      if(callSuccessor !=null) {
+         ProcedureRef calledRef = new ProcedureRef(callSuccessor.getFullName());
+         CallPaths calledRefs = procedureCallPaths.get(calledRef);
+         for (CallPath calledPath : calledRefs.getCallPaths()) {
+            List<CallGraph.CallBlock.Call> path = calledPath.getPath();
+            CallGraph.CallBlock.Call lastCall = path.get(path.size() - 1);
+            Integer lastCallCallStatementIdx = lastCall.getCallStatementIdx();
+            ControlFlowBlock lastCallBlock = program.getGraph().getBlockFromStatementIdx(lastCallCallStatementIdx);
+            if(lastCallBlock.equals(block)) {
+               if (callAliases == null) {
+                  // Found a matching call!
+                  callAliases = calledPath.getInnerAliases();
+               } else {
+                  // Found another matching call!
+                  callAliases = new Pass2AliasElimination.Aliases(callAliases);
+                  callAliases.addAll(calledPath.getInnerAliases());
+               }
+            }
+         }
+      }
 
-      return new AliveCombinations(callPaths, referencedInProcedure, aliveAtStmt);
+      return new AliveCombinations(callPaths, referencedInProcedure, aliveAtStmt, callAliases);
    }
 
    /**

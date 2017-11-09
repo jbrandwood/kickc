@@ -552,7 +552,7 @@ main::@4: scope:[main]  from main::@2
 
 Adding NOP phi() at start of main
 CALL GRAPH
-Calls in [] to 0:main 
+Calls in [] to main:0 
 
 Propagating live ranges...
 Propagating live ranges...
@@ -605,7 +605,7 @@ Propagating live ranges...
 Propagating live ranges...
 Propagating live ranges...
 Propagating live ranges...
-CONTROL FLOW GRAPH - PHI MEM COALESCED
+CONTROL FLOW GRAPH - BEFORE EFFECTIVE LIVE RANGES
 @begin: scope:[]  from
   to:@1
 @1: scope:[]  from @begin
@@ -632,6 +632,35 @@ main::@8: scope:[main]  from main::@2
   to:main::@1
 main::@4: scope:[main]  from main::@2
   [8] (byte) main::s#1 ← -- (byte) main::s#3 [ main::i#1 main::s#1 ]
+  to:main::@1
+
+CONTROL FLOW GRAPH - PHI MEM COALESCED
+@begin: scope:[]  from
+  to:@1
+@1: scope:[]  from @begin
+  [0] call main param-assignment [ ] ( )
+  to:@end
+@end: scope:[]  from @1
+main: scope:[main]  from @1
+  [1] phi() [ ] ( main:0 [ ] )
+  to:main::@1
+main::@1: scope:[main]  from main main::@4 main::@8
+  [2] (byte) main::s#3 ← phi( main/(byte) 0 main::@4/(byte) main::s#1 main::@8/(byte) main::s#2 ) [ main::i#2 main::s#3 ] ( main:0 [ main::i#2 main::s#3 ] )
+  [2] (byte) main::i#2 ← phi( main/(byte) 100 main::@4/(byte) main::i#1 main::@8/(byte) main::i#1 ) [ main::i#2 main::s#3 ] ( main:0 [ main::i#2 main::s#3 ] )
+  [3] (byte) main::i#1 ← -- (byte) main::i#2 [ main::s#3 main::i#1 ] ( main:0 [ main::s#3 main::i#1 ] )
+  [4] if((byte) main::i#1>(byte) 0) goto main::@2 [ main::s#3 main::i#1 ] ( main:0 [ main::s#3 main::i#1 ] )
+  to:main::@return
+main::@return: scope:[main]  from main::@1
+  [5] return  [ ] ( main:0 [ ] )
+  to:@return
+main::@2: scope:[main]  from main::@1
+  [6] if((byte) main::i#1<=(byte) 50) goto main::@4 [ main::s#3 main::i#1 ] ( main:0 [ main::s#3 main::i#1 ] )
+  to:main::@8
+main::@8: scope:[main]  from main::@2
+  [7] (byte) main::s#2 ← ++ (byte) main::s#3 [ main::i#1 main::s#2 ] ( main:0 [ main::i#1 main::s#2 ] )
+  to:main::@1
+main::@4: scope:[main]  from main::@2
+  [8] (byte) main::s#1 ← -- (byte) main::s#3 [ main::i#1 main::s#1 ] ( main:0 [ main::i#1 main::s#1 ] )
   to:main::@1
 
 DOMINATORS
@@ -689,7 +718,7 @@ bbegin:
   jmp b1
 //SEG3 @1
 b1:
-//SEG4 [0] call main param-assignment [ ]
+//SEG4 [0] call main param-assignment [ ] ( )
 //SEG5 [1] phi from @1 to main [phi:@1->main]
 main_from_b1:
   jsr main
@@ -711,19 +740,19 @@ main: {
     jmp b1
   //SEG11 main::@1
   b1:
-  //SEG12 [3] (byte) main::i#1 ← -- (byte) main::i#2 [ main::s#3 main::i#1 ] -- zpby1=_dec_zpby1 
+  //SEG12 [3] (byte) main::i#1 ← -- (byte) main::i#2 [ main::s#3 main::i#1 ] ( main:0 [ main::s#3 main::i#1 ] ) -- zpby1=_dec_zpby1 
     dec i
-  //SEG13 [4] if((byte) main::i#1>(byte) 0) goto main::@2 [ main::s#3 main::i#1 ] -- zpby1_gt_0_then_la1 
+  //SEG13 [4] if((byte) main::i#1>(byte) 0) goto main::@2 [ main::s#3 main::i#1 ] ( main:0 [ main::s#3 main::i#1 ] ) -- zpby1_gt_0_then_la1 
     lda i
     bne b2
     jmp breturn
   //SEG14 main::@return
   breturn:
-  //SEG15 [5] return  [ ]
+  //SEG15 [5] return  [ ] ( main:0 [ ] )
     rts
   //SEG16 main::@2
   b2:
-  //SEG17 [6] if((byte) main::i#1<=(byte) 50) goto main::@4 [ main::s#3 main::i#1 ] -- zpby1_le_coby1_then_la1 
+  //SEG17 [6] if((byte) main::i#1<=(byte) 50) goto main::@4 [ main::s#3 main::i#1 ] ( main:0 [ main::s#3 main::i#1 ] ) -- zpby1_le_coby1_then_la1 
     lda i
     cmp #$32
     bcc b4
@@ -731,7 +760,7 @@ main: {
     jmp b8
   //SEG18 main::@8
   b8:
-  //SEG19 [7] (byte) main::s#2 ← ++ (byte) main::s#3 [ main::i#1 main::s#2 ] -- zpby1=_inc_zpby1 
+  //SEG19 [7] (byte) main::s#2 ← ++ (byte) main::s#3 [ main::i#1 main::s#2 ] ( main:0 [ main::i#1 main::s#2 ] ) -- zpby1=_inc_zpby1 
     inc s
   //SEG20 [2] phi from main::@4 main::@8 to main::@1 [phi:main::@4/main::@8->main::@1]
   b1_from_b4:
@@ -741,7 +770,7 @@ main: {
     jmp b1
   //SEG23 main::@4
   b4:
-  //SEG24 [8] (byte) main::s#1 ← -- (byte) main::s#3 [ main::i#1 main::s#1 ] -- zpby1=_dec_zpby1 
+  //SEG24 [8] (byte) main::s#1 ← -- (byte) main::s#3 [ main::i#1 main::s#1 ] ( main:0 [ main::i#1 main::s#1 ] ) -- zpby1=_dec_zpby1 
     dec s
     jmp b1_from_b4
 }
@@ -772,7 +801,7 @@ ASSEMBLER
 bbegin:
 //SEG3 @1
 b1:
-//SEG4 [0] call main param-assignment [ ]
+//SEG4 [0] call main param-assignment [ ] ( )
 //SEG5 [1] phi from @1 to main [phi:@1->main]
 main_from_b1:
   jsr main
@@ -788,24 +817,24 @@ main: {
     ldx #$64
   //SEG11 main::@1
   b1:
-  //SEG12 [3] (byte) main::i#1 ← -- (byte) main::i#2 [ main::s#3 main::i#1 ] -- xby=_dec_xby 
+  //SEG12 [3] (byte) main::i#1 ← -- (byte) main::i#2 [ main::s#3 main::i#1 ] ( main:0 [ main::s#3 main::i#1 ] ) -- xby=_dec_xby 
     dex
-  //SEG13 [4] if((byte) main::i#1>(byte) 0) goto main::@2 [ main::s#3 main::i#1 ] -- xby_gt_0_then_la1 
+  //SEG13 [4] if((byte) main::i#1>(byte) 0) goto main::@2 [ main::s#3 main::i#1 ] ( main:0 [ main::s#3 main::i#1 ] ) -- xby_gt_0_then_la1 
     cpx #0
     bne b2
   //SEG14 main::@return
   breturn:
-  //SEG15 [5] return  [ ]
+  //SEG15 [5] return  [ ] ( main:0 [ ] )
     rts
   //SEG16 main::@2
   b2:
-  //SEG17 [6] if((byte) main::i#1<=(byte) 50) goto main::@4 [ main::s#3 main::i#1 ] -- xby_le_coby1_then_la1 
+  //SEG17 [6] if((byte) main::i#1<=(byte) 50) goto main::@4 [ main::s#3 main::i#1 ] ( main:0 [ main::s#3 main::i#1 ] ) -- xby_le_coby1_then_la1 
     cpx #$32
     bcc b4
     beq b4
   //SEG18 main::@8
   b8:
-  //SEG19 [7] (byte) main::s#2 ← ++ (byte) main::s#3 [ main::i#1 main::s#2 ] -- yby=_inc_yby 
+  //SEG19 [7] (byte) main::s#2 ← ++ (byte) main::s#3 [ main::i#1 main::s#2 ] ( main:0 [ main::i#1 main::s#2 ] ) -- yby=_inc_yby 
     iny
   //SEG20 [2] phi from main::@4 main::@8 to main::@1 [phi:main::@4/main::@8->main::@1]
   b1_from_b4:
@@ -815,7 +844,7 @@ main: {
     jmp b1
   //SEG23 main::@4
   b4:
-  //SEG24 [8] (byte) main::s#1 ← -- (byte) main::s#3 [ main::i#1 main::s#1 ] -- yby=_dec_yby 
+  //SEG24 [8] (byte) main::s#1 ← -- (byte) main::s#3 [ main::i#1 main::s#1 ] ( main:0 [ main::i#1 main::s#1 ] ) -- yby=_dec_yby 
     dey
     jmp b1_from_b4
 }
@@ -834,7 +863,7 @@ ASSEMBLER
 //SEG2 @begin
 //SEG3 @1
 b1:
-//SEG4 [0] call main param-assignment [ ]
+//SEG4 [0] call main param-assignment [ ] ( )
 //SEG5 [1] phi from @1 to main [phi:@1->main]
   jsr main
 //SEG6 @end
@@ -849,24 +878,24 @@ main: {
     ldx #$64
   //SEG11 main::@1
   b1:
-  //SEG12 [3] (byte) main::i#1 ← -- (byte) main::i#2 [ main::s#3 main::i#1 ] -- xby=_dec_xby 
+  //SEG12 [3] (byte) main::i#1 ← -- (byte) main::i#2 [ main::s#3 main::i#1 ] ( main:0 [ main::s#3 main::i#1 ] ) -- xby=_dec_xby 
     dex
-  //SEG13 [4] if((byte) main::i#1>(byte) 0) goto main::@2 [ main::s#3 main::i#1 ] -- xby_gt_0_then_la1 
+  //SEG13 [4] if((byte) main::i#1>(byte) 0) goto main::@2 [ main::s#3 main::i#1 ] ( main:0 [ main::s#3 main::i#1 ] ) -- xby_gt_0_then_la1 
     cpx #0
     bne b2
   //SEG14 main::@return
   breturn:
-  //SEG15 [5] return  [ ]
+  //SEG15 [5] return  [ ] ( main:0 [ ] )
     rts
   //SEG16 main::@2
   b2:
-  //SEG17 [6] if((byte) main::i#1<=(byte) 50) goto main::@4 [ main::s#3 main::i#1 ] -- xby_le_coby1_then_la1 
+  //SEG17 [6] if((byte) main::i#1<=(byte) 50) goto main::@4 [ main::s#3 main::i#1 ] ( main:0 [ main::s#3 main::i#1 ] ) -- xby_le_coby1_then_la1 
     cpx #$32
     bcc b4
     beq b4
   //SEG18 main::@8
   b8:
-  //SEG19 [7] (byte) main::s#2 ← ++ (byte) main::s#3 [ main::i#1 main::s#2 ] -- yby=_inc_yby 
+  //SEG19 [7] (byte) main::s#2 ← ++ (byte) main::s#3 [ main::i#1 main::s#2 ] ( main:0 [ main::i#1 main::s#2 ] ) -- yby=_inc_yby 
     iny
   //SEG20 [2] phi from main::@4 main::@8 to main::@1 [phi:main::@4/main::@8->main::@1]
   b1_from_b8:
@@ -875,7 +904,7 @@ main: {
     jmp b1
   //SEG23 main::@4
   b4:
-  //SEG24 [8] (byte) main::s#1 ← -- (byte) main::s#3 [ main::i#1 main::s#1 ] -- yby=_dec_yby 
+  //SEG24 [8] (byte) main::s#1 ← -- (byte) main::s#3 [ main::i#1 main::s#1 ] ( main:0 [ main::i#1 main::s#1 ] ) -- yby=_dec_yby 
     dey
     jmp b1_from_b8
 }
@@ -894,7 +923,7 @@ ASSEMBLER
 //SEG1 Global Constants & labels
 //SEG2 @begin
 //SEG3 @1
-//SEG4 [0] call main param-assignment [ ]
+//SEG4 [0] call main param-assignment [ ] ( )
 //SEG5 [1] phi from @1 to main [phi:@1->main]
   jsr main
 //SEG6 @end
@@ -907,22 +936,22 @@ main: {
     ldx #$64
   //SEG11 main::@1
   b1:
-  //SEG12 [3] (byte) main::i#1 ← -- (byte) main::i#2 [ main::s#3 main::i#1 ] -- xby=_dec_xby 
+  //SEG12 [3] (byte) main::i#1 ← -- (byte) main::i#2 [ main::s#3 main::i#1 ] ( main:0 [ main::s#3 main::i#1 ] ) -- xby=_dec_xby 
     dex
-  //SEG13 [4] if((byte) main::i#1>(byte) 0) goto main::@2 [ main::s#3 main::i#1 ] -- xby_gt_0_then_la1 
+  //SEG13 [4] if((byte) main::i#1>(byte) 0) goto main::@2 [ main::s#3 main::i#1 ] ( main:0 [ main::s#3 main::i#1 ] ) -- xby_gt_0_then_la1 
     cpx #0
     bne b2
   //SEG14 main::@return
-  //SEG15 [5] return  [ ]
+  //SEG15 [5] return  [ ] ( main:0 [ ] )
     rts
   //SEG16 main::@2
   b2:
-  //SEG17 [6] if((byte) main::i#1<=(byte) 50) goto main::@4 [ main::s#3 main::i#1 ] -- xby_le_coby1_then_la1 
+  //SEG17 [6] if((byte) main::i#1<=(byte) 50) goto main::@4 [ main::s#3 main::i#1 ] ( main:0 [ main::s#3 main::i#1 ] ) -- xby_le_coby1_then_la1 
     cpx #$32
     bcc b4
     beq b4
   //SEG18 main::@8
-  //SEG19 [7] (byte) main::s#2 ← ++ (byte) main::s#3 [ main::i#1 main::s#2 ] -- yby=_inc_yby 
+  //SEG19 [7] (byte) main::s#2 ← ++ (byte) main::s#3 [ main::i#1 main::s#2 ] ( main:0 [ main::i#1 main::s#2 ] ) -- yby=_inc_yby 
     iny
   //SEG20 [2] phi from main::@4 main::@8 to main::@1 [phi:main::@4/main::@8->main::@1]
   b1_from_b8:
@@ -931,7 +960,7 @@ main: {
     jmp b1
   //SEG23 main::@4
   b4:
-  //SEG24 [8] (byte) main::s#1 ← -- (byte) main::s#3 [ main::i#1 main::s#1 ] -- yby=_dec_yby 
+  //SEG24 [8] (byte) main::s#1 ← -- (byte) main::s#3 [ main::i#1 main::s#1 ] ( main:0 [ main::i#1 main::s#1 ] ) -- yby=_dec_yby 
     dey
     jmp b1_from_b8
 }
@@ -965,7 +994,7 @@ FINAL CODE
 //SEG1 Global Constants & labels
 //SEG2 @begin
 //SEG3 @1
-//SEG4 [0] call main param-assignment [ ]
+//SEG4 [0] call main param-assignment [ ] ( )
 //SEG5 [1] phi from @1 to main [phi:@1->main]
   jsr main
 //SEG6 @end
@@ -978,22 +1007,22 @@ main: {
     ldx #$64
   //SEG11 main::@1
   b1:
-  //SEG12 [3] (byte) main::i#1 ← -- (byte) main::i#2 [ main::s#3 main::i#1 ] -- xby=_dec_xby 
+  //SEG12 [3] (byte) main::i#1 ← -- (byte) main::i#2 [ main::s#3 main::i#1 ] ( main:0 [ main::s#3 main::i#1 ] ) -- xby=_dec_xby 
     dex
-  //SEG13 [4] if((byte) main::i#1>(byte) 0) goto main::@2 [ main::s#3 main::i#1 ] -- xby_gt_0_then_la1 
+  //SEG13 [4] if((byte) main::i#1>(byte) 0) goto main::@2 [ main::s#3 main::i#1 ] ( main:0 [ main::s#3 main::i#1 ] ) -- xby_gt_0_then_la1 
     cpx #0
     bne b2
   //SEG14 main::@return
-  //SEG15 [5] return  [ ]
+  //SEG15 [5] return  [ ] ( main:0 [ ] )
     rts
   //SEG16 main::@2
   b2:
-  //SEG17 [6] if((byte) main::i#1<=(byte) 50) goto main::@4 [ main::s#3 main::i#1 ] -- xby_le_coby1_then_la1 
+  //SEG17 [6] if((byte) main::i#1<=(byte) 50) goto main::@4 [ main::s#3 main::i#1 ] ( main:0 [ main::s#3 main::i#1 ] ) -- xby_le_coby1_then_la1 
     cpx #$32
     bcc b4
     beq b4
   //SEG18 main::@8
-  //SEG19 [7] (byte) main::s#2 ← ++ (byte) main::s#3 [ main::i#1 main::s#2 ] -- yby=_inc_yby 
+  //SEG19 [7] (byte) main::s#2 ← ++ (byte) main::s#3 [ main::i#1 main::s#2 ] ( main:0 [ main::i#1 main::s#2 ] ) -- yby=_inc_yby 
     iny
   //SEG20 [2] phi from main::@4 main::@8 to main::@1 [phi:main::@4/main::@8->main::@1]
   b1_from_b8:
@@ -1002,7 +1031,7 @@ main: {
     jmp b1
   //SEG23 main::@4
   b4:
-  //SEG24 [8] (byte) main::s#1 ← -- (byte) main::s#3 [ main::i#1 main::s#1 ] -- yby=_dec_yby 
+  //SEG24 [8] (byte) main::s#1 ← -- (byte) main::s#3 [ main::i#1 main::s#1 ] ( main:0 [ main::i#1 main::s#1 ] ) -- yby=_dec_yby 
     dey
     jmp b1_from_b8
 }

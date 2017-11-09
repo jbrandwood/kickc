@@ -450,7 +450,7 @@ main::@2: scope:[main]  from main::@1
 
 Adding NOP phi() at start of main
 CALL GRAPH
-Calls in [] to 0:main 
+Calls in [] to main:0 
 
 Propagating live ranges...
 Propagating live ranges...
@@ -484,7 +484,7 @@ Block Sequence Planned @begin @1 @end main main::@1 main::@return main::@2
 Adding NOP phi() at start of main
 Propagating live ranges...
 Propagating live ranges...
-CONTROL FLOW GRAPH - PHI MEM COALESCED
+CONTROL FLOW GRAPH - BEFORE EFFECTIVE LIVE RANGES
 @begin: scope:[]  from
   to:@1
 @1: scope:[]  from @begin
@@ -504,6 +504,28 @@ main::@return: scope:[main]  from main::@1
 main::@2: scope:[main]  from main::@1
   [5] (byte) main::b#0 ← (const byte[1024]) main::SCREEN#0 *idx (byte) main::i#2 [ main::i#2 ]
   [6] (byte) main::i#1 ← ++ (byte) main::i#2 [ main::i#1 ]
+  to:main::@1
+
+CONTROL FLOW GRAPH - PHI MEM COALESCED
+@begin: scope:[]  from
+  to:@1
+@1: scope:[]  from @begin
+  [0] call main param-assignment [ ] ( )
+  to:@end
+@end: scope:[]  from @1
+main: scope:[main]  from @1
+  [1] phi() [ ] ( main:0 [ ] )
+  to:main::@1
+main::@1: scope:[main]  from main main::@2
+  [2] (byte) main::i#2 ← phi( main/(byte) 2 main::@2/(byte) main::i#1 ) [ main::i#2 ] ( main:0 [ main::i#2 ] )
+  [3] if((byte) main::i#2<(byte) 10) goto main::@2 [ main::i#2 ] ( main:0 [ main::i#2 ] )
+  to:main::@return
+main::@return: scope:[main]  from main::@1
+  [4] return  [ ] ( main:0 [ ] )
+  to:@return
+main::@2: scope:[main]  from main::@1
+  [5] (byte) main::b#0 ← (const byte[1024]) main::SCREEN#0 *idx (byte) main::i#2 [ main::i#2 ] ( main:0 [ main::i#2 ] )
+  [6] (byte) main::i#1 ← ++ (byte) main::i#2 [ main::i#1 ] ( main:0 [ main::i#1 ] )
   to:main::@1
 
 DOMINATORS
@@ -555,7 +577,7 @@ bbegin:
   jmp b1
 //SEG3 @1
 b1:
-//SEG4 [0] call main param-assignment [ ]
+//SEG4 [0] call main param-assignment [ ] ( )
 //SEG5 [1] phi from @1 to main [phi:@1->main]
 main_from_b1:
   jsr main
@@ -575,22 +597,22 @@ main: {
     jmp b1
   //SEG10 main::@1
   b1:
-  //SEG11 [3] if((byte) main::i#2<(byte) 10) goto main::@2 [ main::i#2 ] -- zpby1_lt_coby1_then_la1 
+  //SEG11 [3] if((byte) main::i#2<(byte) 10) goto main::@2 [ main::i#2 ] ( main:0 [ main::i#2 ] ) -- zpby1_lt_coby1_then_la1 
     lda i
     cmp #$a
     bcc b2
     jmp breturn
   //SEG12 main::@return
   breturn:
-  //SEG13 [4] return  [ ]
+  //SEG13 [4] return  [ ] ( main:0 [ ] )
     rts
   //SEG14 main::@2
   b2:
-  //SEG15 [5] (byte) main::b#0 ← (const byte[1024]) main::SCREEN#0 *idx (byte) main::i#2 [ main::i#2 ] -- zpby1=cowo1_staridx_zpby2 
+  //SEG15 [5] (byte) main::b#0 ← (const byte[1024]) main::SCREEN#0 *idx (byte) main::i#2 [ main::i#2 ] ( main:0 [ main::i#2 ] ) -- zpby1=cowo1_staridx_zpby2 
     ldx i
     lda SCREEN,x
     sta b
-  //SEG16 [6] (byte) main::i#1 ← ++ (byte) main::i#2 [ main::i#1 ] -- zpby1=_inc_zpby1 
+  //SEG16 [6] (byte) main::i#1 ← ++ (byte) main::i#2 [ main::i#1 ] ( main:0 [ main::i#1 ] ) -- zpby1=_inc_zpby1 
     inc i
   //SEG17 [2] phi from main::@2 to main::@1 [phi:main::@2->main::@1]
   b1_from_b2:
@@ -623,7 +645,7 @@ ASSEMBLER
 bbegin:
 //SEG3 @1
 b1:
-//SEG4 [0] call main param-assignment [ ]
+//SEG4 [0] call main param-assignment [ ] ( )
 //SEG5 [1] phi from @1 to main [phi:@1->main]
 main_from_b1:
   jsr main
@@ -638,18 +660,18 @@ main: {
     ldx #2
   //SEG10 main::@1
   b1:
-  //SEG11 [3] if((byte) main::i#2<(byte) 10) goto main::@2 [ main::i#2 ] -- xby_lt_coby1_then_la1 
+  //SEG11 [3] if((byte) main::i#2<(byte) 10) goto main::@2 [ main::i#2 ] ( main:0 [ main::i#2 ] ) -- xby_lt_coby1_then_la1 
     cpx #$a
     bcc b2
   //SEG12 main::@return
   breturn:
-  //SEG13 [4] return  [ ]
+  //SEG13 [4] return  [ ] ( main:0 [ ] )
     rts
   //SEG14 main::@2
   b2:
-  //SEG15 [5] (byte) main::b#0 ← (const byte[1024]) main::SCREEN#0 *idx (byte) main::i#2 [ main::i#2 ] -- aby=cowo1_staridx_xby 
+  //SEG15 [5] (byte) main::b#0 ← (const byte[1024]) main::SCREEN#0 *idx (byte) main::i#2 [ main::i#2 ] ( main:0 [ main::i#2 ] ) -- aby=cowo1_staridx_xby 
     lda SCREEN,x
-  //SEG16 [6] (byte) main::i#1 ← ++ (byte) main::i#2 [ main::i#1 ] -- xby=_inc_xby 
+  //SEG16 [6] (byte) main::i#1 ← ++ (byte) main::i#2 [ main::i#1 ] ( main:0 [ main::i#1 ] ) -- xby=_inc_xby 
     inx
   //SEG17 [2] phi from main::@2 to main::@1 [phi:main::@2->main::@1]
   b1_from_b2:
@@ -669,7 +691,7 @@ ASSEMBLER
 //SEG2 @begin
 //SEG3 @1
 b1:
-//SEG4 [0] call main param-assignment [ ]
+//SEG4 [0] call main param-assignment [ ] ( )
 //SEG5 [1] phi from @1 to main [phi:@1->main]
   jsr main
 //SEG6 @end
@@ -683,18 +705,18 @@ main: {
     ldx #2
   //SEG10 main::@1
   b1:
-  //SEG11 [3] if((byte) main::i#2<(byte) 10) goto main::@2 [ main::i#2 ] -- xby_lt_coby1_then_la1 
+  //SEG11 [3] if((byte) main::i#2<(byte) 10) goto main::@2 [ main::i#2 ] ( main:0 [ main::i#2 ] ) -- xby_lt_coby1_then_la1 
     cpx #$a
     bcc b2
   //SEG12 main::@return
   breturn:
-  //SEG13 [4] return  [ ]
+  //SEG13 [4] return  [ ] ( main:0 [ ] )
     rts
   //SEG14 main::@2
   b2:
-  //SEG15 [5] (byte) main::b#0 ← (const byte[1024]) main::SCREEN#0 *idx (byte) main::i#2 [ main::i#2 ] -- aby=cowo1_staridx_xby 
+  //SEG15 [5] (byte) main::b#0 ← (const byte[1024]) main::SCREEN#0 *idx (byte) main::i#2 [ main::i#2 ] ( main:0 [ main::i#2 ] ) -- aby=cowo1_staridx_xby 
     lda SCREEN,x
-  //SEG16 [6] (byte) main::i#1 ← ++ (byte) main::i#2 [ main::i#1 ] -- xby=_inc_xby 
+  //SEG16 [6] (byte) main::i#1 ← ++ (byte) main::i#2 [ main::i#1 ] ( main:0 [ main::i#1 ] ) -- xby=_inc_xby 
     inx
   //SEG17 [2] phi from main::@2 to main::@1 [phi:main::@2->main::@1]
   b1_from_b2:
@@ -716,7 +738,7 @@ ASSEMBLER
 //SEG1 Global Constants & labels
 //SEG2 @begin
 //SEG3 @1
-//SEG4 [0] call main param-assignment [ ]
+//SEG4 [0] call main param-assignment [ ] ( )
 //SEG5 [1] phi from @1 to main [phi:@1->main]
   jsr main
 //SEG6 @end
@@ -728,17 +750,17 @@ main: {
     ldx #2
   //SEG10 main::@1
   b1:
-  //SEG11 [3] if((byte) main::i#2<(byte) 10) goto main::@2 [ main::i#2 ] -- xby_lt_coby1_then_la1 
+  //SEG11 [3] if((byte) main::i#2<(byte) 10) goto main::@2 [ main::i#2 ] ( main:0 [ main::i#2 ] ) -- xby_lt_coby1_then_la1 
     cpx #$a
     bcc b2
   //SEG12 main::@return
-  //SEG13 [4] return  [ ]
+  //SEG13 [4] return  [ ] ( main:0 [ ] )
     rts
   //SEG14 main::@2
   b2:
-  //SEG15 [5] (byte) main::b#0 ← (const byte[1024]) main::SCREEN#0 *idx (byte) main::i#2 [ main::i#2 ] -- aby=cowo1_staridx_xby 
+  //SEG15 [5] (byte) main::b#0 ← (const byte[1024]) main::SCREEN#0 *idx (byte) main::i#2 [ main::i#2 ] ( main:0 [ main::i#2 ] ) -- aby=cowo1_staridx_xby 
     lda SCREEN,x
-  //SEG16 [6] (byte) main::i#1 ← ++ (byte) main::i#2 [ main::i#1 ] -- xby=_inc_xby 
+  //SEG16 [6] (byte) main::i#1 ← ++ (byte) main::i#2 [ main::i#1 ] ( main:0 [ main::i#1 ] ) -- xby=_inc_xby 
     inx
   //SEG17 [2] phi from main::@2 to main::@1 [phi:main::@2->main::@1]
   //SEG18 [2] phi (byte) main::i#2 = (byte) main::i#1 [phi:main::@2->main::@1#0] -- register_copy 
@@ -772,7 +794,7 @@ FINAL CODE
 //SEG1 Global Constants & labels
 //SEG2 @begin
 //SEG3 @1
-//SEG4 [0] call main param-assignment [ ]
+//SEG4 [0] call main param-assignment [ ] ( )
 //SEG5 [1] phi from @1 to main [phi:@1->main]
   jsr main
 //SEG6 @end
@@ -784,17 +806,17 @@ main: {
     ldx #2
   //SEG10 main::@1
   b1:
-  //SEG11 [3] if((byte) main::i#2<(byte) 10) goto main::@2 [ main::i#2 ] -- xby_lt_coby1_then_la1 
+  //SEG11 [3] if((byte) main::i#2<(byte) 10) goto main::@2 [ main::i#2 ] ( main:0 [ main::i#2 ] ) -- xby_lt_coby1_then_la1 
     cpx #$a
     bcc b2
   //SEG12 main::@return
-  //SEG13 [4] return  [ ]
+  //SEG13 [4] return  [ ] ( main:0 [ ] )
     rts
   //SEG14 main::@2
   b2:
-  //SEG15 [5] (byte) main::b#0 ← (const byte[1024]) main::SCREEN#0 *idx (byte) main::i#2 [ main::i#2 ] -- aby=cowo1_staridx_xby 
+  //SEG15 [5] (byte) main::b#0 ← (const byte[1024]) main::SCREEN#0 *idx (byte) main::i#2 [ main::i#2 ] ( main:0 [ main::i#2 ] ) -- aby=cowo1_staridx_xby 
     lda SCREEN,x
-  //SEG16 [6] (byte) main::i#1 ← ++ (byte) main::i#2 [ main::i#1 ] -- xby=_inc_xby 
+  //SEG16 [6] (byte) main::i#1 ← ++ (byte) main::i#2 [ main::i#1 ] ( main:0 [ main::i#1 ] ) -- xby=_inc_xby 
     inx
   //SEG17 [2] phi from main::@2 to main::@1 [phi:main::@2->main::@1]
   //SEG18 [2] phi (byte) main::i#2 = (byte) main::i#1 [phi:main::@2->main::@1#0] -- register_copy 

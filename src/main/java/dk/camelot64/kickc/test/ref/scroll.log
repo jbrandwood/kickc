@@ -3203,8 +3203,8 @@ fillscreen::@3: scope:[fillscreen]  from fillscreen::@1
 Adding NOP phi() at start of main
 Adding NOP phi() at start of fillscreen
 CALL GRAPH
-Calls in [] to 0:main 
-Calls in [main] to 2:fillscreen 
+Calls in [] to main:0 
+Calls in [main] to fillscreen:2 
 
 Propagating live ranges...
 Propagating live ranges...
@@ -3342,7 +3342,7 @@ Propagating live ranges...
 Propagating live ranges...
 Propagating live ranges...
 Propagating live ranges...
-CONTROL FLOW GRAPH - PHI MEM COALESCED
+CONTROL FLOW GRAPH - BEFORE EFFECTIVE LIVE RANGES
 @begin: scope:[]  from
   to:@2
 @2: scope:[]  from @begin
@@ -3413,6 +3413,79 @@ fillscreen::@1: scope:[fillscreen]  from fillscreen fillscreen::@1
   to:fillscreen::@return
 fillscreen::@return: scope:[fillscreen]  from fillscreen::@1
   [36] return  [ ]
+  to:@return
+
+CONTROL FLOW GRAPH - PHI MEM COALESCED
+@begin: scope:[]  from
+  to:@2
+@2: scope:[]  from @begin
+  [0] call main param-assignment [ ] ( )
+  to:@end
+@end: scope:[]  from @2
+main: scope:[main]  from @2
+  [1] phi() [ ] ( main:0 [ ] )
+  [2] call fillscreen param-assignment [ ] ( main:0 [ ] )
+  to:main::@2
+main::@2: scope:[main]  from main main::@2 main::@4
+  [3] (byte*) main::nxt#9 ← phi( main::@4/(byte*) main::nxt#10 main/(const byte*) TEXT#0 ) [ main::scroll#7 main::nxt#9 ] ( main:0 [ main::scroll#7 main::nxt#9 ] )
+  [3] (byte) main::scroll#7 ← phi( main::@4/(byte) main::scroll#10 main/(byte) 7 ) [ main::scroll#7 main::nxt#9 ] ( main:0 [ main::scroll#7 main::nxt#9 ] )
+  [4] (byte~) main::$2 ← * (const byte*) RASTER#0 [ main::scroll#7 main::nxt#9 main::$2 ] ( main:0 [ main::scroll#7 main::nxt#9 main::$2 ] )
+  [5] if((byte~) main::$2!=(byte) 254) goto main::@2 [ main::scroll#7 main::nxt#9 ] ( main:0 [ main::scroll#7 main::nxt#9 ] )
+  to:main::@3
+main::@3: scope:[main]  from main::@2 main::@3
+  [6] (byte~) main::$4 ← * (const byte*) RASTER#0 [ main::scroll#7 main::nxt#9 main::$4 ] ( main:0 [ main::scroll#7 main::nxt#9 main::$4 ] )
+  [7] if((byte~) main::$4!=(byte) 255) goto main::@3 [ main::scroll#7 main::nxt#9 ] ( main:0 [ main::scroll#7 main::nxt#9 ] )
+  to:main::@8
+main::@8: scope:[main]  from main::@3
+  [8] (byte~) main::$6 ← * (const byte*) BGCOL#0 [ main::scroll#7 main::nxt#9 main::$6 ] ( main:0 [ main::scroll#7 main::nxt#9 main::$6 ] )
+  [9] (byte~) main::$7 ← (byte~) main::$6 + (byte) 1 [ main::scroll#7 main::nxt#9 main::$7 ] ( main:0 [ main::scroll#7 main::nxt#9 main::$7 ] )
+  [10] *((const byte*) BGCOL#0) ← (byte~) main::$7 [ main::scroll#7 main::nxt#9 ] ( main:0 [ main::scroll#7 main::nxt#9 ] )
+  [11] (byte) main::scroll#1 ← -- (byte) main::scroll#7 [ main::nxt#9 main::scroll#1 ] ( main:0 [ main::nxt#9 main::scroll#1 ] )
+  [12] if((byte) main::scroll#1!=(byte) 255) goto main::@4 [ main::nxt#9 main::scroll#1 ] ( main:0 [ main::nxt#9 main::scroll#1 ] )
+  to:main::@5
+main::@5: scope:[main]  from main::@5 main::@8
+  [13] (byte) main::i#2 ← phi( main::@5/(byte) main::i#1 main::@8/(byte) 0 ) [ main::nxt#9 main::i#2 ] ( main:0 [ main::nxt#9 main::i#2 ] )
+  [14] (byte~) main::$11 ← (const byte[]) main::line#0+(byte) 1 *idx (byte) main::i#2 [ main::nxt#9 main::i#2 main::$11 ] ( main:0 [ main::nxt#9 main::i#2 main::$11 ] )
+  [15] *((const byte[]) main::line#0 + (byte) main::i#2) ← (byte~) main::$11 [ main::nxt#9 main::i#2 ] ( main:0 [ main::nxt#9 main::i#2 ] )
+  [16] (byte) main::i#1 ← ++ (byte) main::i#2 [ main::nxt#9 main::i#1 ] ( main:0 [ main::nxt#9 main::i#1 ] )
+  [17] if((byte) main::i#1!=(byte) 39) goto main::@5 [ main::nxt#9 main::i#1 ] ( main:0 [ main::nxt#9 main::i#1 ] )
+  to:main::@10
+main::@10: scope:[main]  from main::@5
+  [18] (byte) main::c#0 ← * (byte*) main::nxt#9 [ main::nxt#9 main::c#0 ] ( main:0 [ main::nxt#9 main::c#0 ] )
+  [19] if((byte) main::c#0!=(byte) '@') goto main::@6 [ main::nxt#9 main::c#0 ] ( main:0 [ main::nxt#9 main::c#0 ] )
+  to:main::@11
+main::@11: scope:[main]  from main::@10
+  [20] (byte) main::c#1 ← * (const byte*) TEXT#0 [ main::c#1 ] ( main:0 [ main::c#1 ] )
+  to:main::@6
+main::@6: scope:[main]  from main::@10 main::@11
+  [21] (byte*) main::nxt#4 ← phi( main::@10/(byte*) main::nxt#9 main::@11/(const byte*) TEXT#0 ) [ main::c#2 main::nxt#4 ] ( main:0 [ main::c#2 main::nxt#4 ] )
+  [21] (byte) main::c#2 ← phi( main::@10/(byte) main::c#0 main::@11/(byte) main::c#1 ) [ main::c#2 main::nxt#4 ] ( main:0 [ main::c#2 main::nxt#4 ] )
+  [22] *((const byte[]) main::line#0+(byte) 39) ← (byte) main::c#2 [ main::nxt#4 ] ( main:0 [ main::nxt#4 ] )
+  [23] (byte*) main::nxt#1 ← ++ (byte*) main::nxt#4 [ main::nxt#1 ] ( main:0 [ main::nxt#1 ] )
+  to:main::@4
+main::@4: scope:[main]  from main::@6 main::@8
+  [24] (byte*) main::nxt#10 ← phi( main::@6/(byte*) main::nxt#1 main::@8/(byte*) main::nxt#9 ) [ main::scroll#10 main::nxt#10 ] ( main:0 [ main::scroll#10 main::nxt#10 ] )
+  [24] (byte) main::scroll#10 ← phi( main::@6/(byte) 7 main::@8/(byte) main::scroll#1 ) [ main::scroll#10 main::nxt#10 ] ( main:0 [ main::scroll#10 main::nxt#10 ] )
+  [25] *((const byte*) SCROLL#0) ← (byte) main::scroll#10 [ main::scroll#10 main::nxt#10 ] ( main:0 [ main::scroll#10 main::nxt#10 ] )
+  [26] (byte~) main::$17 ← * (const byte*) BGCOL#0 [ main::scroll#10 main::nxt#10 main::$17 ] ( main:0 [ main::scroll#10 main::nxt#10 main::$17 ] )
+  [27] (byte~) main::$18 ← (byte~) main::$17 - (byte) 1 [ main::scroll#10 main::nxt#10 main::$18 ] ( main:0 [ main::scroll#10 main::nxt#10 main::$18 ] )
+  [28] *((const byte*) BGCOL#0) ← (byte~) main::$18 [ main::scroll#10 main::nxt#10 ] ( main:0 [ main::scroll#10 main::nxt#10 ] )
+  [29] if(true) goto main::@2 [ main::scroll#10 main::nxt#10 ] ( main:0 [ main::scroll#10 main::nxt#10 ] )
+  to:main::@return
+main::@return: scope:[main]  from main::@4
+  [30] return  [ ] ( main:0 [ ] )
+  to:@return
+fillscreen: scope:[fillscreen]  from main
+  [31] phi() [ ] ( main:0::fillscreen:2 [ ] )
+  to:fillscreen::@1
+fillscreen::@1: scope:[fillscreen]  from fillscreen fillscreen::@1
+  [32] (byte*) fillscreen::cursor#2 ← phi( fillscreen/(const byte*) SCREEN#0 fillscreen::@1/(byte*) fillscreen::cursor#1 ) [ fillscreen::cursor#2 ] ( main:0::fillscreen:2 [ fillscreen::cursor#2 ] )
+  [33] *((byte*) fillscreen::cursor#2) ← (const byte) fillscreen::fill#0 [ fillscreen::cursor#2 ] ( main:0::fillscreen:2 [ fillscreen::cursor#2 ] )
+  [34] (byte*) fillscreen::cursor#1 ← ++ (byte*) fillscreen::cursor#2 [ fillscreen::cursor#1 ] ( main:0::fillscreen:2 [ fillscreen::cursor#1 ] )
+  [35] if((byte*) fillscreen::cursor#1<(const byte*) SCREEN#0+(word) 1000) goto fillscreen::@1 [ fillscreen::cursor#1 ] ( main:0::fillscreen:2 [ fillscreen::cursor#1 ] )
+  to:fillscreen::@return
+fillscreen::@return: scope:[fillscreen]  from fillscreen::@1
+  [36] return  [ ] ( main:0::fillscreen:2 [ ] )
   to:@return
 
 DOMINATORS
@@ -3558,7 +3631,7 @@ bbegin:
   jmp b2
 //SEG3 @2
 b2:
-//SEG4 [0] call main param-assignment [ ]
+//SEG4 [0] call main param-assignment [ ] ( )
 //SEG5 [1] phi from @2 to main [phi:@2->main]
 main_from_b2:
   jsr main
@@ -3579,7 +3652,7 @@ main: {
     .label i = 3
     .label c = 4
     .label nxt = 5
-  //SEG8 [2] call fillscreen param-assignment [ ]
+  //SEG8 [2] call fillscreen param-assignment [ ] ( main:0 [ ] )
   //SEG9 [31] phi from main to fillscreen [phi:main->fillscreen]
   fillscreen_from_main:
     jsr fillscreen
@@ -3604,40 +3677,40 @@ main: {
     jmp b2
   //SEG17 main::@2
   b2:
-  //SEG18 [4] (byte~) main::$2 ← * (const byte*) RASTER#0 [ main::scroll#7 main::nxt#9 main::$2 ] -- zpby1=_star_cowo1 
+  //SEG18 [4] (byte~) main::$2 ← * (const byte*) RASTER#0 [ main::scroll#7 main::nxt#9 main::$2 ] ( main:0 [ main::scroll#7 main::nxt#9 main::$2 ] ) -- zpby1=_star_cowo1 
     lda RASTER
     sta _2
-  //SEG19 [5] if((byte~) main::$2!=(byte) 254) goto main::@2 [ main::scroll#7 main::nxt#9 ] -- zpby1_neq_coby1_then_la1 
+  //SEG19 [5] if((byte~) main::$2!=(byte) 254) goto main::@2 [ main::scroll#7 main::nxt#9 ] ( main:0 [ main::scroll#7 main::nxt#9 ] ) -- zpby1_neq_coby1_then_la1 
     lda _2
     cmp #$fe
     bne b2_from_b2
     jmp b3
   //SEG20 main::@3
   b3:
-  //SEG21 [6] (byte~) main::$4 ← * (const byte*) RASTER#0 [ main::scroll#7 main::nxt#9 main::$4 ] -- zpby1=_star_cowo1 
+  //SEG21 [6] (byte~) main::$4 ← * (const byte*) RASTER#0 [ main::scroll#7 main::nxt#9 main::$4 ] ( main:0 [ main::scroll#7 main::nxt#9 main::$4 ] ) -- zpby1=_star_cowo1 
     lda RASTER
     sta _4
-  //SEG22 [7] if((byte~) main::$4!=(byte) 255) goto main::@3 [ main::scroll#7 main::nxt#9 ] -- zpby1_neq_coby1_then_la1 
+  //SEG22 [7] if((byte~) main::$4!=(byte) 255) goto main::@3 [ main::scroll#7 main::nxt#9 ] ( main:0 [ main::scroll#7 main::nxt#9 ] ) -- zpby1_neq_coby1_then_la1 
     lda _4
     cmp #$ff
     bne b3
     jmp b8
   //SEG23 main::@8
   b8:
-  //SEG24 [8] (byte~) main::$6 ← * (const byte*) BGCOL#0 [ main::scroll#7 main::nxt#9 main::$6 ] -- zpby1=_star_cowo1 
+  //SEG24 [8] (byte~) main::$6 ← * (const byte*) BGCOL#0 [ main::scroll#7 main::nxt#9 main::$6 ] ( main:0 [ main::scroll#7 main::nxt#9 main::$6 ] ) -- zpby1=_star_cowo1 
     lda BGCOL
     sta _6
-  //SEG25 [9] (byte~) main::$7 ← (byte~) main::$6 + (byte) 1 [ main::scroll#7 main::nxt#9 main::$7 ] -- zpby1=zpby2_plus_1 
+  //SEG25 [9] (byte~) main::$7 ← (byte~) main::$6 + (byte) 1 [ main::scroll#7 main::nxt#9 main::$7 ] ( main:0 [ main::scroll#7 main::nxt#9 main::$7 ] ) -- zpby1=zpby2_plus_1 
     lda _6
     clc
     adc #1
     sta _7
-  //SEG26 [10] *((const byte*) BGCOL#0) ← (byte~) main::$7 [ main::scroll#7 main::nxt#9 ] -- _star_cowo1=zpby1 
+  //SEG26 [10] *((const byte*) BGCOL#0) ← (byte~) main::$7 [ main::scroll#7 main::nxt#9 ] ( main:0 [ main::scroll#7 main::nxt#9 ] ) -- _star_cowo1=zpby1 
     lda _7
     sta BGCOL
-  //SEG27 [11] (byte) main::scroll#1 ← -- (byte) main::scroll#7 [ main::nxt#9 main::scroll#1 ] -- zpby1=_dec_zpby1 
+  //SEG27 [11] (byte) main::scroll#1 ← -- (byte) main::scroll#7 [ main::nxt#9 main::scroll#1 ] ( main:0 [ main::nxt#9 main::scroll#1 ] ) -- zpby1=_dec_zpby1 
     dec scroll
-  //SEG28 [12] if((byte) main::scroll#1!=(byte) 255) goto main::@4 [ main::nxt#9 main::scroll#1 ] -- zpby1_neq_coby1_then_la1 
+  //SEG28 [12] if((byte) main::scroll#1!=(byte) 255) goto main::@4 [ main::nxt#9 main::scroll#1 ] ( main:0 [ main::nxt#9 main::scroll#1 ] ) -- zpby1_neq_coby1_then_la1 
     lda scroll
     cmp #$ff
     bne b4_from_b8
@@ -3653,35 +3726,35 @@ main: {
     jmp b5
   //SEG33 main::@5
   b5:
-  //SEG34 [14] (byte~) main::$11 ← (const byte[]) main::line#0+(byte) 1 *idx (byte) main::i#2 [ main::nxt#9 main::i#2 main::$11 ] -- zpby1=cowo1_staridx_zpby2 
+  //SEG34 [14] (byte~) main::$11 ← (const byte[]) main::line#0+(byte) 1 *idx (byte) main::i#2 [ main::nxt#9 main::i#2 main::$11 ] ( main:0 [ main::nxt#9 main::i#2 main::$11 ] ) -- zpby1=cowo1_staridx_zpby2 
     ldx i
     lda line+1,x
     sta _11
-  //SEG35 [15] *((const byte[]) main::line#0 + (byte) main::i#2) ← (byte~) main::$11 [ main::nxt#9 main::i#2 ] -- cowo1_staridx_zpby1=zpby2 
+  //SEG35 [15] *((const byte[]) main::line#0 + (byte) main::i#2) ← (byte~) main::$11 [ main::nxt#9 main::i#2 ] ( main:0 [ main::nxt#9 main::i#2 ] ) -- cowo1_staridx_zpby1=zpby2 
     lda _11
     ldx i
     sta line,x
-  //SEG36 [16] (byte) main::i#1 ← ++ (byte) main::i#2 [ main::nxt#9 main::i#1 ] -- zpby1=_inc_zpby1 
+  //SEG36 [16] (byte) main::i#1 ← ++ (byte) main::i#2 [ main::nxt#9 main::i#1 ] ( main:0 [ main::nxt#9 main::i#1 ] ) -- zpby1=_inc_zpby1 
     inc i
-  //SEG37 [17] if((byte) main::i#1!=(byte) 39) goto main::@5 [ main::nxt#9 main::i#1 ] -- zpby1_neq_coby1_then_la1 
+  //SEG37 [17] if((byte) main::i#1!=(byte) 39) goto main::@5 [ main::nxt#9 main::i#1 ] ( main:0 [ main::nxt#9 main::i#1 ] ) -- zpby1_neq_coby1_then_la1 
     lda i
     cmp #$27
     bne b5_from_b5
     jmp b10
   //SEG38 main::@10
   b10:
-  //SEG39 [18] (byte) main::c#0 ← * (byte*) main::nxt#9 [ main::nxt#9 main::c#0 ] -- zpby1=_star_zpptrby1 
+  //SEG39 [18] (byte) main::c#0 ← * (byte*) main::nxt#9 [ main::nxt#9 main::c#0 ] ( main:0 [ main::nxt#9 main::c#0 ] ) -- zpby1=_star_zpptrby1 
     ldy #0
     lda (nxt),y
     sta c
-  //SEG40 [19] if((byte) main::c#0!=(byte) '@') goto main::@6 [ main::nxt#9 main::c#0 ] -- zpby1_neq_coby1_then_la1 
+  //SEG40 [19] if((byte) main::c#0!=(byte) '@') goto main::@6 [ main::nxt#9 main::c#0 ] ( main:0 [ main::nxt#9 main::c#0 ] ) -- zpby1_neq_coby1_then_la1 
     lda c
     cmp #'@'
     bne b6_from_b10
     jmp b11
   //SEG41 main::@11
   b11:
-  //SEG42 [20] (byte) main::c#1 ← * (const byte*) TEXT#0 [ main::c#1 ] -- zpby1=_star_cowo1 
+  //SEG42 [20] (byte) main::c#1 ← * (const byte*) TEXT#0 [ main::c#1 ] ( main:0 [ main::c#1 ] ) -- zpby1=_star_cowo1 
     lda TEXT
     sta c
   //SEG43 [21] phi from main::@11 to main::@6 [phi:main::@11->main::@6]
@@ -3700,10 +3773,10 @@ main: {
     jmp b6
   //SEG49 main::@6
   b6:
-  //SEG50 [22] *((const byte[]) main::line#0+(byte) 39) ← (byte) main::c#2 [ main::nxt#4 ] -- _star_cowo1=zpby1 
+  //SEG50 [22] *((const byte[]) main::line#0+(byte) 39) ← (byte) main::c#2 [ main::nxt#4 ] ( main:0 [ main::nxt#4 ] ) -- _star_cowo1=zpby1 
     lda c
     sta line+$27
-  //SEG51 [23] (byte*) main::nxt#1 ← ++ (byte*) main::nxt#4 [ main::nxt#1 ] -- zpptrby1=_inc_zpptrby1 
+  //SEG51 [23] (byte*) main::nxt#1 ← ++ (byte*) main::nxt#4 [ main::nxt#1 ] ( main:0 [ main::nxt#1 ] ) -- zpptrby1=_inc_zpptrby1 
     inc nxt
     bne !+
     inc nxt+1
@@ -3722,26 +3795,26 @@ main: {
     jmp b4
   //SEG58 main::@4
   b4:
-  //SEG59 [25] *((const byte*) SCROLL#0) ← (byte) main::scroll#10 [ main::scroll#10 main::nxt#10 ] -- _star_cowo1=zpby1 
+  //SEG59 [25] *((const byte*) SCROLL#0) ← (byte) main::scroll#10 [ main::scroll#10 main::nxt#10 ] ( main:0 [ main::scroll#10 main::nxt#10 ] ) -- _star_cowo1=zpby1 
     lda scroll
     sta SCROLL
-  //SEG60 [26] (byte~) main::$17 ← * (const byte*) BGCOL#0 [ main::scroll#10 main::nxt#10 main::$17 ] -- zpby1=_star_cowo1 
+  //SEG60 [26] (byte~) main::$17 ← * (const byte*) BGCOL#0 [ main::scroll#10 main::nxt#10 main::$17 ] ( main:0 [ main::scroll#10 main::nxt#10 main::$17 ] ) -- zpby1=_star_cowo1 
     lda BGCOL
     sta _17
-  //SEG61 [27] (byte~) main::$18 ← (byte~) main::$17 - (byte) 1 [ main::scroll#10 main::nxt#10 main::$18 ] -- zpby1=zpby2_minus_1 
+  //SEG61 [27] (byte~) main::$18 ← (byte~) main::$17 - (byte) 1 [ main::scroll#10 main::nxt#10 main::$18 ] ( main:0 [ main::scroll#10 main::nxt#10 main::$18 ] ) -- zpby1=zpby2_minus_1 
     lda _17
     sec
     sbc #1
     sta _18
-  //SEG62 [28] *((const byte*) BGCOL#0) ← (byte~) main::$18 [ main::scroll#10 main::nxt#10 ] -- _star_cowo1=zpby1 
+  //SEG62 [28] *((const byte*) BGCOL#0) ← (byte~) main::$18 [ main::scroll#10 main::nxt#10 ] ( main:0 [ main::scroll#10 main::nxt#10 ] ) -- _star_cowo1=zpby1 
     lda _18
     sta BGCOL
-  //SEG63 [29] if(true) goto main::@2 [ main::scroll#10 main::nxt#10 ] -- true_then_la1 
+  //SEG63 [29] if(true) goto main::@2 [ main::scroll#10 main::nxt#10 ] ( main:0 [ main::scroll#10 main::nxt#10 ] ) -- true_then_la1 
     jmp b2_from_b4
     jmp breturn
   //SEG64 main::@return
   breturn:
-  //SEG65 [30] return  [ ]
+  //SEG65 [30] return  [ ] ( main:0 [ ] )
     rts
 }
 //SEG66 fillscreen
@@ -3762,16 +3835,16 @@ fillscreen: {
     jmp b1
   //SEG71 fillscreen::@1
   b1:
-  //SEG72 [33] *((byte*) fillscreen::cursor#2) ← (const byte) fillscreen::fill#0 [ fillscreen::cursor#2 ] -- _star_zpptrby1=coby1 
+  //SEG72 [33] *((byte*) fillscreen::cursor#2) ← (const byte) fillscreen::fill#0 [ fillscreen::cursor#2 ] ( main:0::fillscreen:2 [ fillscreen::cursor#2 ] ) -- _star_zpptrby1=coby1 
     ldy #0
     lda #fill
     sta (cursor),y
-  //SEG73 [34] (byte*) fillscreen::cursor#1 ← ++ (byte*) fillscreen::cursor#2 [ fillscreen::cursor#1 ] -- zpptrby1=_inc_zpptrby1 
+  //SEG73 [34] (byte*) fillscreen::cursor#1 ← ++ (byte*) fillscreen::cursor#2 [ fillscreen::cursor#1 ] ( main:0::fillscreen:2 [ fillscreen::cursor#1 ] ) -- zpptrby1=_inc_zpptrby1 
     inc cursor
     bne !+
     inc cursor+1
   !:
-  //SEG74 [35] if((byte*) fillscreen::cursor#1<(const byte*) SCREEN#0+(word) 1000) goto fillscreen::@1 [ fillscreen::cursor#1 ] -- zpptrby1_lt_cowo1_then_la1 
+  //SEG74 [35] if((byte*) fillscreen::cursor#1<(const byte*) SCREEN#0+(word) 1000) goto fillscreen::@1 [ fillscreen::cursor#1 ] ( main:0::fillscreen:2 [ fillscreen::cursor#1 ] ) -- zpptrby1_lt_cowo1_then_la1 
     lda cursor+1
     cmp #>SCREEN+$3e8
     bcc b1_from_b1
@@ -3783,15 +3856,15 @@ fillscreen: {
     jmp breturn
   //SEG75 fillscreen::@return
   breturn:
-  //SEG76 [36] return  [ ]
+  //SEG76 [36] return  [ ] ( main:0::fillscreen:2 [ ] )
     rts
 }
 
 REGISTER UPLIFT POTENTIAL REGISTERS
 Equivalence Class zp ZP_BYTE:11 [ main::$6 ] has ALU potential.
-Statement [18] (byte) main::c#0 ← * (byte*) main::nxt#9 [ main::nxt#9 main::c#0 ] always clobbers reg byte a reg byte y 
-Statement [33] *((byte*) fillscreen::cursor#2) ← (const byte) fillscreen::fill#0 [ fillscreen::cursor#2 ] always clobbers reg byte a reg byte y 
-Statement [35] if((byte*) fillscreen::cursor#1<(const byte*) SCREEN#0+(word) 1000) goto fillscreen::@1 [ fillscreen::cursor#1 ] always clobbers reg byte a 
+Statement [18] (byte) main::c#0 ← * (byte*) main::nxt#9 [ main::nxt#9 main::c#0 ] ( main:0 [ main::nxt#9 main::c#0 ] ) always clobbers reg byte a reg byte y 
+Statement [33] *((byte*) fillscreen::cursor#2) ← (const byte) fillscreen::fill#0 [ fillscreen::cursor#2 ] ( main:0::fillscreen:2 [ fillscreen::cursor#2 ] ) always clobbers reg byte a reg byte y 
+Statement [35] if((byte*) fillscreen::cursor#1<(const byte*) SCREEN#0+(word) 1000) goto fillscreen::@1 [ fillscreen::cursor#1 ] ( main:0::fillscreen:2 [ fillscreen::cursor#1 ] ) always clobbers reg byte a 
 Potential registers zp ZP_BYTE:2 [ main::scroll#7 main::scroll#10 main::scroll#1 ] : zp ZP_BYTE:2 , reg byte a , reg byte x , reg byte y , 
 Potential registers zp ZP_BYTE:3 [ main::i#2 main::i#1 ] : zp ZP_BYTE:3 , reg byte a , reg byte x , reg byte y , 
 Potential registers zp ZP_BYTE:4 [ main::c#2 main::c#0 main::c#1 ] : zp ZP_BYTE:4 , reg byte a , reg byte x , reg byte y , 
@@ -3852,7 +3925,7 @@ ASSEMBLER
 bbegin:
 //SEG3 @2
 b2:
-//SEG4 [0] call main param-assignment [ ]
+//SEG4 [0] call main param-assignment [ ] ( )
 //SEG5 [1] phi from @2 to main [phi:@2->main]
 main_from_b2:
   jsr main
@@ -3862,7 +3935,7 @@ bend:
 main: {
     .const line = SCREEN+$28
     .label nxt = 2
-  //SEG8 [2] call fillscreen param-assignment [ ]
+  //SEG8 [2] call fillscreen param-assignment [ ] ( main:0 [ ] )
   //SEG9 [31] phi from main to fillscreen [phi:main->fillscreen]
   fillscreen_from_main:
     jsr fillscreen
@@ -3885,30 +3958,30 @@ main: {
   //SEG16 [3] phi (byte) main::scroll#7 = (byte) main::scroll#10 [phi:main::@4->main::@2#1] -- register_copy 
   //SEG17 main::@2
   b2:
-  //SEG18 [4] (byte~) main::$2 ← * (const byte*) RASTER#0 [ main::scroll#7 main::nxt#9 main::$2 ] -- aby=_star_cowo1 
+  //SEG18 [4] (byte~) main::$2 ← * (const byte*) RASTER#0 [ main::scroll#7 main::nxt#9 main::$2 ] ( main:0 [ main::scroll#7 main::nxt#9 main::$2 ] ) -- aby=_star_cowo1 
     lda RASTER
-  //SEG19 [5] if((byte~) main::$2!=(byte) 254) goto main::@2 [ main::scroll#7 main::nxt#9 ] -- aby_neq_coby1_then_la1 
+  //SEG19 [5] if((byte~) main::$2!=(byte) 254) goto main::@2 [ main::scroll#7 main::nxt#9 ] ( main:0 [ main::scroll#7 main::nxt#9 ] ) -- aby_neq_coby1_then_la1 
     cmp #$fe
     bne b2_from_b2
   //SEG20 main::@3
   b3:
-  //SEG21 [6] (byte~) main::$4 ← * (const byte*) RASTER#0 [ main::scroll#7 main::nxt#9 main::$4 ] -- aby=_star_cowo1 
+  //SEG21 [6] (byte~) main::$4 ← * (const byte*) RASTER#0 [ main::scroll#7 main::nxt#9 main::$4 ] ( main:0 [ main::scroll#7 main::nxt#9 main::$4 ] ) -- aby=_star_cowo1 
     lda RASTER
-  //SEG22 [7] if((byte~) main::$4!=(byte) 255) goto main::@3 [ main::scroll#7 main::nxt#9 ] -- aby_neq_coby1_then_la1 
+  //SEG22 [7] if((byte~) main::$4!=(byte) 255) goto main::@3 [ main::scroll#7 main::nxt#9 ] ( main:0 [ main::scroll#7 main::nxt#9 ] ) -- aby_neq_coby1_then_la1 
     cmp #$ff
     bne b3
   //SEG23 main::@8
   b8:
-  //SEG24 [8] (byte~) main::$6 ← * (const byte*) BGCOL#0 [ main::scroll#7 main::nxt#9 main::$6 ] -- aby=_star_cowo1 
+  //SEG24 [8] (byte~) main::$6 ← * (const byte*) BGCOL#0 [ main::scroll#7 main::nxt#9 main::$6 ] ( main:0 [ main::scroll#7 main::nxt#9 main::$6 ] ) -- aby=_star_cowo1 
     lda BGCOL
-  //SEG25 [9] (byte~) main::$7 ← (byte~) main::$6 + (byte) 1 [ main::scroll#7 main::nxt#9 main::$7 ] -- aby=aby_plus_1 
+  //SEG25 [9] (byte~) main::$7 ← (byte~) main::$6 + (byte) 1 [ main::scroll#7 main::nxt#9 main::$7 ] ( main:0 [ main::scroll#7 main::nxt#9 main::$7 ] ) -- aby=aby_plus_1 
     clc
     adc #1
-  //SEG26 [10] *((const byte*) BGCOL#0) ← (byte~) main::$7 [ main::scroll#7 main::nxt#9 ] -- _star_cowo1=aby 
+  //SEG26 [10] *((const byte*) BGCOL#0) ← (byte~) main::$7 [ main::scroll#7 main::nxt#9 ] ( main:0 [ main::scroll#7 main::nxt#9 ] ) -- _star_cowo1=aby 
     sta BGCOL
-  //SEG27 [11] (byte) main::scroll#1 ← -- (byte) main::scroll#7 [ main::nxt#9 main::scroll#1 ] -- xby=_dec_xby 
+  //SEG27 [11] (byte) main::scroll#1 ← -- (byte) main::scroll#7 [ main::nxt#9 main::scroll#1 ] ( main:0 [ main::nxt#9 main::scroll#1 ] ) -- xby=_dec_xby 
     dex
-  //SEG28 [12] if((byte) main::scroll#1!=(byte) 255) goto main::@4 [ main::nxt#9 main::scroll#1 ] -- xby_neq_coby1_then_la1 
+  //SEG28 [12] if((byte) main::scroll#1!=(byte) 255) goto main::@4 [ main::nxt#9 main::scroll#1 ] ( main:0 [ main::nxt#9 main::scroll#1 ] ) -- xby_neq_coby1_then_la1 
     cpx #$ff
     bne b4_from_b8
   //SEG29 [13] phi from main::@8 to main::@5 [phi:main::@8->main::@5]
@@ -3921,27 +3994,27 @@ main: {
   //SEG32 [13] phi (byte) main::i#2 = (byte) main::i#1 [phi:main::@5->main::@5#0] -- register_copy 
   //SEG33 main::@5
   b5:
-  //SEG34 [14] (byte~) main::$11 ← (const byte[]) main::line#0+(byte) 1 *idx (byte) main::i#2 [ main::nxt#9 main::i#2 main::$11 ] -- aby=cowo1_staridx_xby 
+  //SEG34 [14] (byte~) main::$11 ← (const byte[]) main::line#0+(byte) 1 *idx (byte) main::i#2 [ main::nxt#9 main::i#2 main::$11 ] ( main:0 [ main::nxt#9 main::i#2 main::$11 ] ) -- aby=cowo1_staridx_xby 
     lda line+1,x
-  //SEG35 [15] *((const byte[]) main::line#0 + (byte) main::i#2) ← (byte~) main::$11 [ main::nxt#9 main::i#2 ] -- cowo1_staridx_xby=aby 
+  //SEG35 [15] *((const byte[]) main::line#0 + (byte) main::i#2) ← (byte~) main::$11 [ main::nxt#9 main::i#2 ] ( main:0 [ main::nxt#9 main::i#2 ] ) -- cowo1_staridx_xby=aby 
     sta line,x
-  //SEG36 [16] (byte) main::i#1 ← ++ (byte) main::i#2 [ main::nxt#9 main::i#1 ] -- xby=_inc_xby 
+  //SEG36 [16] (byte) main::i#1 ← ++ (byte) main::i#2 [ main::nxt#9 main::i#1 ] ( main:0 [ main::nxt#9 main::i#1 ] ) -- xby=_inc_xby 
     inx
-  //SEG37 [17] if((byte) main::i#1!=(byte) 39) goto main::@5 [ main::nxt#9 main::i#1 ] -- xby_neq_coby1_then_la1 
+  //SEG37 [17] if((byte) main::i#1!=(byte) 39) goto main::@5 [ main::nxt#9 main::i#1 ] ( main:0 [ main::nxt#9 main::i#1 ] ) -- xby_neq_coby1_then_la1 
     cpx #$27
     bne b5_from_b5
   //SEG38 main::@10
   b10:
-  //SEG39 [18] (byte) main::c#0 ← * (byte*) main::nxt#9 [ main::nxt#9 main::c#0 ] -- xby=_star_zpptrby1 
+  //SEG39 [18] (byte) main::c#0 ← * (byte*) main::nxt#9 [ main::nxt#9 main::c#0 ] ( main:0 [ main::nxt#9 main::c#0 ] ) -- xby=_star_zpptrby1 
     ldy #0
     lda (nxt),y
     tax
-  //SEG40 [19] if((byte) main::c#0!=(byte) '@') goto main::@6 [ main::nxt#9 main::c#0 ] -- xby_neq_coby1_then_la1 
+  //SEG40 [19] if((byte) main::c#0!=(byte) '@') goto main::@6 [ main::nxt#9 main::c#0 ] ( main:0 [ main::nxt#9 main::c#0 ] ) -- xby_neq_coby1_then_la1 
     cpx #'@'
     bne b6_from_b10
   //SEG41 main::@11
   b11:
-  //SEG42 [20] (byte) main::c#1 ← * (const byte*) TEXT#0 [ main::c#1 ] -- xby=_star_cowo1 
+  //SEG42 [20] (byte) main::c#1 ← * (const byte*) TEXT#0 [ main::c#1 ] ( main:0 [ main::c#1 ] ) -- xby=_star_cowo1 
     ldx TEXT
   //SEG43 [21] phi from main::@11 to main::@6 [phi:main::@11->main::@6]
   b6_from_b11:
@@ -3958,9 +4031,9 @@ main: {
   //SEG48 [21] phi (byte) main::c#2 = (byte) main::c#0 [phi:main::@10->main::@6#1] -- register_copy 
   //SEG49 main::@6
   b6:
-  //SEG50 [22] *((const byte[]) main::line#0+(byte) 39) ← (byte) main::c#2 [ main::nxt#4 ] -- _star_cowo1=xby 
+  //SEG50 [22] *((const byte[]) main::line#0+(byte) 39) ← (byte) main::c#2 [ main::nxt#4 ] ( main:0 [ main::nxt#4 ] ) -- _star_cowo1=xby 
     stx line+$27
-  //SEG51 [23] (byte*) main::nxt#1 ← ++ (byte*) main::nxt#4 [ main::nxt#1 ] -- zpptrby1=_inc_zpptrby1 
+  //SEG51 [23] (byte*) main::nxt#1 ← ++ (byte*) main::nxt#4 [ main::nxt#1 ] ( main:0 [ main::nxt#1 ] ) -- zpptrby1=_inc_zpptrby1 
     inc nxt
     bne !+
     inc nxt+1
@@ -3977,20 +4050,20 @@ main: {
   //SEG57 [24] phi (byte) main::scroll#10 = (byte) main::scroll#1 [phi:main::@8->main::@4#1] -- register_copy 
   //SEG58 main::@4
   b4:
-  //SEG59 [25] *((const byte*) SCROLL#0) ← (byte) main::scroll#10 [ main::scroll#10 main::nxt#10 ] -- _star_cowo1=xby 
+  //SEG59 [25] *((const byte*) SCROLL#0) ← (byte) main::scroll#10 [ main::scroll#10 main::nxt#10 ] ( main:0 [ main::scroll#10 main::nxt#10 ] ) -- _star_cowo1=xby 
     stx SCROLL
-  //SEG60 [26] (byte~) main::$17 ← * (const byte*) BGCOL#0 [ main::scroll#10 main::nxt#10 main::$17 ] -- aby=_star_cowo1 
+  //SEG60 [26] (byte~) main::$17 ← * (const byte*) BGCOL#0 [ main::scroll#10 main::nxt#10 main::$17 ] ( main:0 [ main::scroll#10 main::nxt#10 main::$17 ] ) -- aby=_star_cowo1 
     lda BGCOL
-  //SEG61 [27] (byte~) main::$18 ← (byte~) main::$17 - (byte) 1 [ main::scroll#10 main::nxt#10 main::$18 ] -- aby=aby_minus_1 
+  //SEG61 [27] (byte~) main::$18 ← (byte~) main::$17 - (byte) 1 [ main::scroll#10 main::nxt#10 main::$18 ] ( main:0 [ main::scroll#10 main::nxt#10 main::$18 ] ) -- aby=aby_minus_1 
     sec
     sbc #1
-  //SEG62 [28] *((const byte*) BGCOL#0) ← (byte~) main::$18 [ main::scroll#10 main::nxt#10 ] -- _star_cowo1=aby 
+  //SEG62 [28] *((const byte*) BGCOL#0) ← (byte~) main::$18 [ main::scroll#10 main::nxt#10 ] ( main:0 [ main::scroll#10 main::nxt#10 ] ) -- _star_cowo1=aby 
     sta BGCOL
-  //SEG63 [29] if(true) goto main::@2 [ main::scroll#10 main::nxt#10 ] -- true_then_la1 
+  //SEG63 [29] if(true) goto main::@2 [ main::scroll#10 main::nxt#10 ] ( main:0 [ main::scroll#10 main::nxt#10 ] ) -- true_then_la1 
     jmp b2_from_b4
   //SEG64 main::@return
   breturn:
-  //SEG65 [30] return  [ ]
+  //SEG65 [30] return  [ ] ( main:0 [ ] )
     rts
 }
 //SEG66 fillscreen
@@ -4010,16 +4083,16 @@ fillscreen: {
   //SEG70 [32] phi (byte*) fillscreen::cursor#2 = (byte*) fillscreen::cursor#1 [phi:fillscreen::@1->fillscreen::@1#0] -- register_copy 
   //SEG71 fillscreen::@1
   b1:
-  //SEG72 [33] *((byte*) fillscreen::cursor#2) ← (const byte) fillscreen::fill#0 [ fillscreen::cursor#2 ] -- _star_zpptrby1=coby1 
+  //SEG72 [33] *((byte*) fillscreen::cursor#2) ← (const byte) fillscreen::fill#0 [ fillscreen::cursor#2 ] ( main:0::fillscreen:2 [ fillscreen::cursor#2 ] ) -- _star_zpptrby1=coby1 
     ldy #0
     lda #fill
     sta (cursor),y
-  //SEG73 [34] (byte*) fillscreen::cursor#1 ← ++ (byte*) fillscreen::cursor#2 [ fillscreen::cursor#1 ] -- zpptrby1=_inc_zpptrby1 
+  //SEG73 [34] (byte*) fillscreen::cursor#1 ← ++ (byte*) fillscreen::cursor#2 [ fillscreen::cursor#1 ] ( main:0::fillscreen:2 [ fillscreen::cursor#1 ] ) -- zpptrby1=_inc_zpptrby1 
     inc cursor
     bne !+
     inc cursor+1
   !:
-  //SEG74 [35] if((byte*) fillscreen::cursor#1<(const byte*) SCREEN#0+(word) 1000) goto fillscreen::@1 [ fillscreen::cursor#1 ] -- zpptrby1_lt_cowo1_then_la1 
+  //SEG74 [35] if((byte*) fillscreen::cursor#1<(const byte*) SCREEN#0+(word) 1000) goto fillscreen::@1 [ fillscreen::cursor#1 ] ( main:0::fillscreen:2 [ fillscreen::cursor#1 ] ) -- zpptrby1_lt_cowo1_then_la1 
     lda cursor+1
     cmp #>SCREEN+$3e8
     bcc b1_from_b1
@@ -4030,7 +4103,7 @@ fillscreen: {
   !:
   //SEG75 fillscreen::@return
   breturn:
-  //SEG76 [36] return  [ ]
+  //SEG76 [36] return  [ ] ( main:0::fillscreen:2 [ ] )
     rts
 }
 
@@ -4062,7 +4135,7 @@ ASSEMBLER
 //SEG2 @begin
 //SEG3 @2
 b2:
-//SEG4 [0] call main param-assignment [ ]
+//SEG4 [0] call main param-assignment [ ] ( )
 //SEG5 [1] phi from @2 to main [phi:@2->main]
   jsr main
 //SEG6 @end
@@ -4071,7 +4144,7 @@ bend:
 main: {
     .const line = SCREEN+$28
     .label nxt = 2
-  //SEG8 [2] call fillscreen param-assignment [ ]
+  //SEG8 [2] call fillscreen param-assignment [ ] ( main:0 [ ] )
   //SEG9 [31] phi from main to fillscreen [phi:main->fillscreen]
   fillscreen_from_main:
     jsr fillscreen
@@ -4093,30 +4166,30 @@ main: {
   //SEG16 [3] phi (byte) main::scroll#7 = (byte) main::scroll#10 [phi:main::@4->main::@2#1] -- register_copy 
   //SEG17 main::@2
   b2:
-  //SEG18 [4] (byte~) main::$2 ← * (const byte*) RASTER#0 [ main::scroll#7 main::nxt#9 main::$2 ] -- aby=_star_cowo1 
+  //SEG18 [4] (byte~) main::$2 ← * (const byte*) RASTER#0 [ main::scroll#7 main::nxt#9 main::$2 ] ( main:0 [ main::scroll#7 main::nxt#9 main::$2 ] ) -- aby=_star_cowo1 
     lda RASTER
-  //SEG19 [5] if((byte~) main::$2!=(byte) 254) goto main::@2 [ main::scroll#7 main::nxt#9 ] -- aby_neq_coby1_then_la1 
+  //SEG19 [5] if((byte~) main::$2!=(byte) 254) goto main::@2 [ main::scroll#7 main::nxt#9 ] ( main:0 [ main::scroll#7 main::nxt#9 ] ) -- aby_neq_coby1_then_la1 
     cmp #$fe
     bne b2_from_b2
   //SEG20 main::@3
   b3:
-  //SEG21 [6] (byte~) main::$4 ← * (const byte*) RASTER#0 [ main::scroll#7 main::nxt#9 main::$4 ] -- aby=_star_cowo1 
+  //SEG21 [6] (byte~) main::$4 ← * (const byte*) RASTER#0 [ main::scroll#7 main::nxt#9 main::$4 ] ( main:0 [ main::scroll#7 main::nxt#9 main::$4 ] ) -- aby=_star_cowo1 
     lda RASTER
-  //SEG22 [7] if((byte~) main::$4!=(byte) 255) goto main::@3 [ main::scroll#7 main::nxt#9 ] -- aby_neq_coby1_then_la1 
+  //SEG22 [7] if((byte~) main::$4!=(byte) 255) goto main::@3 [ main::scroll#7 main::nxt#9 ] ( main:0 [ main::scroll#7 main::nxt#9 ] ) -- aby_neq_coby1_then_la1 
     cmp #$ff
     bne b3
   //SEG23 main::@8
   b8:
-  //SEG24 [8] (byte~) main::$6 ← * (const byte*) BGCOL#0 [ main::scroll#7 main::nxt#9 main::$6 ] -- aby=_star_cowo1 
+  //SEG24 [8] (byte~) main::$6 ← * (const byte*) BGCOL#0 [ main::scroll#7 main::nxt#9 main::$6 ] ( main:0 [ main::scroll#7 main::nxt#9 main::$6 ] ) -- aby=_star_cowo1 
     lda BGCOL
-  //SEG25 [9] (byte~) main::$7 ← (byte~) main::$6 + (byte) 1 [ main::scroll#7 main::nxt#9 main::$7 ] -- aby=aby_plus_1 
+  //SEG25 [9] (byte~) main::$7 ← (byte~) main::$6 + (byte) 1 [ main::scroll#7 main::nxt#9 main::$7 ] ( main:0 [ main::scroll#7 main::nxt#9 main::$7 ] ) -- aby=aby_plus_1 
     clc
     adc #1
-  //SEG26 [10] *((const byte*) BGCOL#0) ← (byte~) main::$7 [ main::scroll#7 main::nxt#9 ] -- _star_cowo1=aby 
+  //SEG26 [10] *((const byte*) BGCOL#0) ← (byte~) main::$7 [ main::scroll#7 main::nxt#9 ] ( main:0 [ main::scroll#7 main::nxt#9 ] ) -- _star_cowo1=aby 
     sta BGCOL
-  //SEG27 [11] (byte) main::scroll#1 ← -- (byte) main::scroll#7 [ main::nxt#9 main::scroll#1 ] -- xby=_dec_xby 
+  //SEG27 [11] (byte) main::scroll#1 ← -- (byte) main::scroll#7 [ main::nxt#9 main::scroll#1 ] ( main:0 [ main::nxt#9 main::scroll#1 ] ) -- xby=_dec_xby 
     dex
-  //SEG28 [12] if((byte) main::scroll#1!=(byte) 255) goto main::@4 [ main::nxt#9 main::scroll#1 ] -- xby_neq_coby1_then_la1 
+  //SEG28 [12] if((byte) main::scroll#1!=(byte) 255) goto main::@4 [ main::nxt#9 main::scroll#1 ] ( main:0 [ main::nxt#9 main::scroll#1 ] ) -- xby_neq_coby1_then_la1 
     cpx #$ff
     bne b4
   //SEG29 [13] phi from main::@8 to main::@5 [phi:main::@8->main::@5]
@@ -4128,27 +4201,27 @@ main: {
   //SEG32 [13] phi (byte) main::i#2 = (byte) main::i#1 [phi:main::@5->main::@5#0] -- register_copy 
   //SEG33 main::@5
   b5:
-  //SEG34 [14] (byte~) main::$11 ← (const byte[]) main::line#0+(byte) 1 *idx (byte) main::i#2 [ main::nxt#9 main::i#2 main::$11 ] -- aby=cowo1_staridx_xby 
+  //SEG34 [14] (byte~) main::$11 ← (const byte[]) main::line#0+(byte) 1 *idx (byte) main::i#2 [ main::nxt#9 main::i#2 main::$11 ] ( main:0 [ main::nxt#9 main::i#2 main::$11 ] ) -- aby=cowo1_staridx_xby 
     lda line+1,x
-  //SEG35 [15] *((const byte[]) main::line#0 + (byte) main::i#2) ← (byte~) main::$11 [ main::nxt#9 main::i#2 ] -- cowo1_staridx_xby=aby 
+  //SEG35 [15] *((const byte[]) main::line#0 + (byte) main::i#2) ← (byte~) main::$11 [ main::nxt#9 main::i#2 ] ( main:0 [ main::nxt#9 main::i#2 ] ) -- cowo1_staridx_xby=aby 
     sta line,x
-  //SEG36 [16] (byte) main::i#1 ← ++ (byte) main::i#2 [ main::nxt#9 main::i#1 ] -- xby=_inc_xby 
+  //SEG36 [16] (byte) main::i#1 ← ++ (byte) main::i#2 [ main::nxt#9 main::i#1 ] ( main:0 [ main::nxt#9 main::i#1 ] ) -- xby=_inc_xby 
     inx
-  //SEG37 [17] if((byte) main::i#1!=(byte) 39) goto main::@5 [ main::nxt#9 main::i#1 ] -- xby_neq_coby1_then_la1 
+  //SEG37 [17] if((byte) main::i#1!=(byte) 39) goto main::@5 [ main::nxt#9 main::i#1 ] ( main:0 [ main::nxt#9 main::i#1 ] ) -- xby_neq_coby1_then_la1 
     cpx #$27
     bne b5
   //SEG38 main::@10
   b10:
-  //SEG39 [18] (byte) main::c#0 ← * (byte*) main::nxt#9 [ main::nxt#9 main::c#0 ] -- xby=_star_zpptrby1 
+  //SEG39 [18] (byte) main::c#0 ← * (byte*) main::nxt#9 [ main::nxt#9 main::c#0 ] ( main:0 [ main::nxt#9 main::c#0 ] ) -- xby=_star_zpptrby1 
     ldy #0
     lda (nxt),y
     tax
-  //SEG40 [19] if((byte) main::c#0!=(byte) '@') goto main::@6 [ main::nxt#9 main::c#0 ] -- xby_neq_coby1_then_la1 
+  //SEG40 [19] if((byte) main::c#0!=(byte) '@') goto main::@6 [ main::nxt#9 main::c#0 ] ( main:0 [ main::nxt#9 main::c#0 ] ) -- xby_neq_coby1_then_la1 
     cpx #'@'
     bne b6
   //SEG41 main::@11
   b11:
-  //SEG42 [20] (byte) main::c#1 ← * (const byte*) TEXT#0 [ main::c#1 ] -- xby=_star_cowo1 
+  //SEG42 [20] (byte) main::c#1 ← * (const byte*) TEXT#0 [ main::c#1 ] ( main:0 [ main::c#1 ] ) -- xby=_star_cowo1 
     ldx TEXT
   //SEG43 [21] phi from main::@11 to main::@6 [phi:main::@11->main::@6]
   b6_from_b11:
@@ -4164,9 +4237,9 @@ main: {
   //SEG48 [21] phi (byte) main::c#2 = (byte) main::c#0 [phi:main::@10->main::@6#1] -- register_copy 
   //SEG49 main::@6
   b6:
-  //SEG50 [22] *((const byte[]) main::line#0+(byte) 39) ← (byte) main::c#2 [ main::nxt#4 ] -- _star_cowo1=xby 
+  //SEG50 [22] *((const byte[]) main::line#0+(byte) 39) ← (byte) main::c#2 [ main::nxt#4 ] ( main:0 [ main::nxt#4 ] ) -- _star_cowo1=xby 
     stx line+$27
-  //SEG51 [23] (byte*) main::nxt#1 ← ++ (byte*) main::nxt#4 [ main::nxt#1 ] -- zpptrby1=_inc_zpptrby1 
+  //SEG51 [23] (byte*) main::nxt#1 ← ++ (byte*) main::nxt#4 [ main::nxt#1 ] ( main:0 [ main::nxt#1 ] ) -- zpptrby1=_inc_zpptrby1 
     inc nxt
     bne !+
     inc nxt+1
@@ -4182,20 +4255,20 @@ main: {
   //SEG57 [24] phi (byte) main::scroll#10 = (byte) main::scroll#1 [phi:main::@8->main::@4#1] -- register_copy 
   //SEG58 main::@4
   b4:
-  //SEG59 [25] *((const byte*) SCROLL#0) ← (byte) main::scroll#10 [ main::scroll#10 main::nxt#10 ] -- _star_cowo1=xby 
+  //SEG59 [25] *((const byte*) SCROLL#0) ← (byte) main::scroll#10 [ main::scroll#10 main::nxt#10 ] ( main:0 [ main::scroll#10 main::nxt#10 ] ) -- _star_cowo1=xby 
     stx SCROLL
-  //SEG60 [26] (byte~) main::$17 ← * (const byte*) BGCOL#0 [ main::scroll#10 main::nxt#10 main::$17 ] -- aby=_star_cowo1 
+  //SEG60 [26] (byte~) main::$17 ← * (const byte*) BGCOL#0 [ main::scroll#10 main::nxt#10 main::$17 ] ( main:0 [ main::scroll#10 main::nxt#10 main::$17 ] ) -- aby=_star_cowo1 
     lda BGCOL
-  //SEG61 [27] (byte~) main::$18 ← (byte~) main::$17 - (byte) 1 [ main::scroll#10 main::nxt#10 main::$18 ] -- aby=aby_minus_1 
+  //SEG61 [27] (byte~) main::$18 ← (byte~) main::$17 - (byte) 1 [ main::scroll#10 main::nxt#10 main::$18 ] ( main:0 [ main::scroll#10 main::nxt#10 main::$18 ] ) -- aby=aby_minus_1 
     sec
     sbc #1
-  //SEG62 [28] *((const byte*) BGCOL#0) ← (byte~) main::$18 [ main::scroll#10 main::nxt#10 ] -- _star_cowo1=aby 
+  //SEG62 [28] *((const byte*) BGCOL#0) ← (byte~) main::$18 [ main::scroll#10 main::nxt#10 ] ( main:0 [ main::scroll#10 main::nxt#10 ] ) -- _star_cowo1=aby 
     sta BGCOL
-  //SEG63 [29] if(true) goto main::@2 [ main::scroll#10 main::nxt#10 ] -- true_then_la1 
+  //SEG63 [29] if(true) goto main::@2 [ main::scroll#10 main::nxt#10 ] ( main:0 [ main::scroll#10 main::nxt#10 ] ) -- true_then_la1 
     jmp b2
   //SEG64 main::@return
   breturn:
-  //SEG65 [30] return  [ ]
+  //SEG65 [30] return  [ ] ( main:0 [ ] )
     rts
 }
 //SEG66 fillscreen
@@ -4214,16 +4287,16 @@ fillscreen: {
   //SEG70 [32] phi (byte*) fillscreen::cursor#2 = (byte*) fillscreen::cursor#1 [phi:fillscreen::@1->fillscreen::@1#0] -- register_copy 
   //SEG71 fillscreen::@1
   b1:
-  //SEG72 [33] *((byte*) fillscreen::cursor#2) ← (const byte) fillscreen::fill#0 [ fillscreen::cursor#2 ] -- _star_zpptrby1=coby1 
+  //SEG72 [33] *((byte*) fillscreen::cursor#2) ← (const byte) fillscreen::fill#0 [ fillscreen::cursor#2 ] ( main:0::fillscreen:2 [ fillscreen::cursor#2 ] ) -- _star_zpptrby1=coby1 
     ldy #0
     lda #fill
     sta (cursor),y
-  //SEG73 [34] (byte*) fillscreen::cursor#1 ← ++ (byte*) fillscreen::cursor#2 [ fillscreen::cursor#1 ] -- zpptrby1=_inc_zpptrby1 
+  //SEG73 [34] (byte*) fillscreen::cursor#1 ← ++ (byte*) fillscreen::cursor#2 [ fillscreen::cursor#1 ] ( main:0::fillscreen:2 [ fillscreen::cursor#1 ] ) -- zpptrby1=_inc_zpptrby1 
     inc cursor
     bne !+
     inc cursor+1
   !:
-  //SEG74 [35] if((byte*) fillscreen::cursor#1<(const byte*) SCREEN#0+(word) 1000) goto fillscreen::@1 [ fillscreen::cursor#1 ] -- zpptrby1_lt_cowo1_then_la1 
+  //SEG74 [35] if((byte*) fillscreen::cursor#1<(const byte*) SCREEN#0+(word) 1000) goto fillscreen::@1 [ fillscreen::cursor#1 ] ( main:0::fillscreen:2 [ fillscreen::cursor#1 ] ) -- zpptrby1_lt_cowo1_then_la1 
     lda cursor+1
     cmp #>SCREEN+$3e8
     bcc b1
@@ -4234,7 +4307,7 @@ fillscreen: {
   !:
   //SEG75 fillscreen::@return
   breturn:
-  //SEG76 [36] return  [ ]
+  //SEG76 [36] return  [ ] ( main:0::fillscreen:2 [ ] )
     rts
 }
 
@@ -4265,7 +4338,7 @@ ASSEMBLER
   TEXT: .text "-= this is rex of camelot testing a scroller created in kickc. kickc is an optimizing c-compiler for 6502 assembler. =-     @"
 //SEG2 @begin
 //SEG3 @2
-//SEG4 [0] call main param-assignment [ ]
+//SEG4 [0] call main param-assignment [ ] ( )
 //SEG5 [1] phi from @2 to main [phi:@2->main]
   jsr main
 //SEG6 @end
@@ -4273,7 +4346,7 @@ ASSEMBLER
 main: {
     .const line = SCREEN+$28
     .label nxt = 2
-  //SEG8 [2] call fillscreen param-assignment [ ]
+  //SEG8 [2] call fillscreen param-assignment [ ] ( main:0 [ ] )
   //SEG9 [31] phi from main to fillscreen [phi:main->fillscreen]
     jsr fillscreen
   //SEG10 [3] phi from main to main::@2 [phi:main->main::@2]
@@ -4293,29 +4366,29 @@ main: {
   //SEG16 [3] phi (byte) main::scroll#7 = (byte) main::scroll#10 [phi:main::@4->main::@2#1] -- register_copy 
   //SEG17 main::@2
   b2:
-  //SEG18 [4] (byte~) main::$2 ← * (const byte*) RASTER#0 [ main::scroll#7 main::nxt#9 main::$2 ] -- aby=_star_cowo1 
+  //SEG18 [4] (byte~) main::$2 ← * (const byte*) RASTER#0 [ main::scroll#7 main::nxt#9 main::$2 ] ( main:0 [ main::scroll#7 main::nxt#9 main::$2 ] ) -- aby=_star_cowo1 
     lda RASTER
-  //SEG19 [5] if((byte~) main::$2!=(byte) 254) goto main::@2 [ main::scroll#7 main::nxt#9 ] -- aby_neq_coby1_then_la1 
+  //SEG19 [5] if((byte~) main::$2!=(byte) 254) goto main::@2 [ main::scroll#7 main::nxt#9 ] ( main:0 [ main::scroll#7 main::nxt#9 ] ) -- aby_neq_coby1_then_la1 
     cmp #$fe
     bne b2_from_b2
   //SEG20 main::@3
   b3:
-  //SEG21 [6] (byte~) main::$4 ← * (const byte*) RASTER#0 [ main::scroll#7 main::nxt#9 main::$4 ] -- aby=_star_cowo1 
+  //SEG21 [6] (byte~) main::$4 ← * (const byte*) RASTER#0 [ main::scroll#7 main::nxt#9 main::$4 ] ( main:0 [ main::scroll#7 main::nxt#9 main::$4 ] ) -- aby=_star_cowo1 
     lda RASTER
-  //SEG22 [7] if((byte~) main::$4!=(byte) 255) goto main::@3 [ main::scroll#7 main::nxt#9 ] -- aby_neq_coby1_then_la1 
+  //SEG22 [7] if((byte~) main::$4!=(byte) 255) goto main::@3 [ main::scroll#7 main::nxt#9 ] ( main:0 [ main::scroll#7 main::nxt#9 ] ) -- aby_neq_coby1_then_la1 
     cmp #$ff
     bne b3
   //SEG23 main::@8
-  //SEG24 [8] (byte~) main::$6 ← * (const byte*) BGCOL#0 [ main::scroll#7 main::nxt#9 main::$6 ] -- aby=_star_cowo1 
+  //SEG24 [8] (byte~) main::$6 ← * (const byte*) BGCOL#0 [ main::scroll#7 main::nxt#9 main::$6 ] ( main:0 [ main::scroll#7 main::nxt#9 main::$6 ] ) -- aby=_star_cowo1 
     lda BGCOL
-  //SEG25 [9] (byte~) main::$7 ← (byte~) main::$6 + (byte) 1 [ main::scroll#7 main::nxt#9 main::$7 ] -- aby=aby_plus_1 
+  //SEG25 [9] (byte~) main::$7 ← (byte~) main::$6 + (byte) 1 [ main::scroll#7 main::nxt#9 main::$7 ] ( main:0 [ main::scroll#7 main::nxt#9 main::$7 ] ) -- aby=aby_plus_1 
     clc
     adc #1
-  //SEG26 [10] *((const byte*) BGCOL#0) ← (byte~) main::$7 [ main::scroll#7 main::nxt#9 ] -- _star_cowo1=aby 
+  //SEG26 [10] *((const byte*) BGCOL#0) ← (byte~) main::$7 [ main::scroll#7 main::nxt#9 ] ( main:0 [ main::scroll#7 main::nxt#9 ] ) -- _star_cowo1=aby 
     sta BGCOL
-  //SEG27 [11] (byte) main::scroll#1 ← -- (byte) main::scroll#7 [ main::nxt#9 main::scroll#1 ] -- xby=_dec_xby 
+  //SEG27 [11] (byte) main::scroll#1 ← -- (byte) main::scroll#7 [ main::nxt#9 main::scroll#1 ] ( main:0 [ main::nxt#9 main::scroll#1 ] ) -- xby=_dec_xby 
     dex
-  //SEG28 [12] if((byte) main::scroll#1!=(byte) 255) goto main::@4 [ main::nxt#9 main::scroll#1 ] -- xby_neq_coby1_then_la1 
+  //SEG28 [12] if((byte) main::scroll#1!=(byte) 255) goto main::@4 [ main::nxt#9 main::scroll#1 ] ( main:0 [ main::nxt#9 main::scroll#1 ] ) -- xby_neq_coby1_then_la1 
     cpx #$ff
     bne b4
   //SEG29 [13] phi from main::@8 to main::@5 [phi:main::@8->main::@5]
@@ -4326,25 +4399,25 @@ main: {
   //SEG32 [13] phi (byte) main::i#2 = (byte) main::i#1 [phi:main::@5->main::@5#0] -- register_copy 
   //SEG33 main::@5
   b5:
-  //SEG34 [14] (byte~) main::$11 ← (const byte[]) main::line#0+(byte) 1 *idx (byte) main::i#2 [ main::nxt#9 main::i#2 main::$11 ] -- aby=cowo1_staridx_xby 
+  //SEG34 [14] (byte~) main::$11 ← (const byte[]) main::line#0+(byte) 1 *idx (byte) main::i#2 [ main::nxt#9 main::i#2 main::$11 ] ( main:0 [ main::nxt#9 main::i#2 main::$11 ] ) -- aby=cowo1_staridx_xby 
     lda line+1,x
-  //SEG35 [15] *((const byte[]) main::line#0 + (byte) main::i#2) ← (byte~) main::$11 [ main::nxt#9 main::i#2 ] -- cowo1_staridx_xby=aby 
+  //SEG35 [15] *((const byte[]) main::line#0 + (byte) main::i#2) ← (byte~) main::$11 [ main::nxt#9 main::i#2 ] ( main:0 [ main::nxt#9 main::i#2 ] ) -- cowo1_staridx_xby=aby 
     sta line,x
-  //SEG36 [16] (byte) main::i#1 ← ++ (byte) main::i#2 [ main::nxt#9 main::i#1 ] -- xby=_inc_xby 
+  //SEG36 [16] (byte) main::i#1 ← ++ (byte) main::i#2 [ main::nxt#9 main::i#1 ] ( main:0 [ main::nxt#9 main::i#1 ] ) -- xby=_inc_xby 
     inx
-  //SEG37 [17] if((byte) main::i#1!=(byte) 39) goto main::@5 [ main::nxt#9 main::i#1 ] -- xby_neq_coby1_then_la1 
+  //SEG37 [17] if((byte) main::i#1!=(byte) 39) goto main::@5 [ main::nxt#9 main::i#1 ] ( main:0 [ main::nxt#9 main::i#1 ] ) -- xby_neq_coby1_then_la1 
     cpx #$27
     bne b5
   //SEG38 main::@10
-  //SEG39 [18] (byte) main::c#0 ← * (byte*) main::nxt#9 [ main::nxt#9 main::c#0 ] -- xby=_star_zpptrby1 
+  //SEG39 [18] (byte) main::c#0 ← * (byte*) main::nxt#9 [ main::nxt#9 main::c#0 ] ( main:0 [ main::nxt#9 main::c#0 ] ) -- xby=_star_zpptrby1 
     ldy #0
     lda (nxt),y
     tax
-  //SEG40 [19] if((byte) main::c#0!=(byte) '@') goto main::@6 [ main::nxt#9 main::c#0 ] -- xby_neq_coby1_then_la1 
+  //SEG40 [19] if((byte) main::c#0!=(byte) '@') goto main::@6 [ main::nxt#9 main::c#0 ] ( main:0 [ main::nxt#9 main::c#0 ] ) -- xby_neq_coby1_then_la1 
     cpx #'@'
     bne b6
   //SEG41 main::@11
-  //SEG42 [20] (byte) main::c#1 ← * (const byte*) TEXT#0 [ main::c#1 ] -- xby=_star_cowo1 
+  //SEG42 [20] (byte) main::c#1 ← * (const byte*) TEXT#0 [ main::c#1 ] ( main:0 [ main::c#1 ] ) -- xby=_star_cowo1 
     ldx TEXT
   //SEG43 [21] phi from main::@11 to main::@6 [phi:main::@11->main::@6]
   //SEG44 [21] phi (byte*) main::nxt#4 = (const byte*) TEXT#0 [phi:main::@11->main::@6#0] -- zpptrby1=cowo1 
@@ -4359,9 +4432,9 @@ main: {
   //SEG48 [21] phi (byte) main::c#2 = (byte) main::c#0 [phi:main::@10->main::@6#1] -- register_copy 
   //SEG49 main::@6
   b6:
-  //SEG50 [22] *((const byte[]) main::line#0+(byte) 39) ← (byte) main::c#2 [ main::nxt#4 ] -- _star_cowo1=xby 
+  //SEG50 [22] *((const byte[]) main::line#0+(byte) 39) ← (byte) main::c#2 [ main::nxt#4 ] ( main:0 [ main::nxt#4 ] ) -- _star_cowo1=xby 
     stx line+$27
-  //SEG51 [23] (byte*) main::nxt#1 ← ++ (byte*) main::nxt#4 [ main::nxt#1 ] -- zpptrby1=_inc_zpptrby1 
+  //SEG51 [23] (byte*) main::nxt#1 ← ++ (byte*) main::nxt#4 [ main::nxt#1 ] ( main:0 [ main::nxt#1 ] ) -- zpptrby1=_inc_zpptrby1 
     inc nxt
     bne !+
     inc nxt+1
@@ -4376,19 +4449,19 @@ main: {
   //SEG57 [24] phi (byte) main::scroll#10 = (byte) main::scroll#1 [phi:main::@8->main::@4#1] -- register_copy 
   //SEG58 main::@4
   b4:
-  //SEG59 [25] *((const byte*) SCROLL#0) ← (byte) main::scroll#10 [ main::scroll#10 main::nxt#10 ] -- _star_cowo1=xby 
+  //SEG59 [25] *((const byte*) SCROLL#0) ← (byte) main::scroll#10 [ main::scroll#10 main::nxt#10 ] ( main:0 [ main::scroll#10 main::nxt#10 ] ) -- _star_cowo1=xby 
     stx SCROLL
-  //SEG60 [26] (byte~) main::$17 ← * (const byte*) BGCOL#0 [ main::scroll#10 main::nxt#10 main::$17 ] -- aby=_star_cowo1 
+  //SEG60 [26] (byte~) main::$17 ← * (const byte*) BGCOL#0 [ main::scroll#10 main::nxt#10 main::$17 ] ( main:0 [ main::scroll#10 main::nxt#10 main::$17 ] ) -- aby=_star_cowo1 
     lda BGCOL
-  //SEG61 [27] (byte~) main::$18 ← (byte~) main::$17 - (byte) 1 [ main::scroll#10 main::nxt#10 main::$18 ] -- aby=aby_minus_1 
+  //SEG61 [27] (byte~) main::$18 ← (byte~) main::$17 - (byte) 1 [ main::scroll#10 main::nxt#10 main::$18 ] ( main:0 [ main::scroll#10 main::nxt#10 main::$18 ] ) -- aby=aby_minus_1 
     sec
     sbc #1
-  //SEG62 [28] *((const byte*) BGCOL#0) ← (byte~) main::$18 [ main::scroll#10 main::nxt#10 ] -- _star_cowo1=aby 
+  //SEG62 [28] *((const byte*) BGCOL#0) ← (byte~) main::$18 [ main::scroll#10 main::nxt#10 ] ( main:0 [ main::scroll#10 main::nxt#10 ] ) -- _star_cowo1=aby 
     sta BGCOL
-  //SEG63 [29] if(true) goto main::@2 [ main::scroll#10 main::nxt#10 ] -- true_then_la1 
+  //SEG63 [29] if(true) goto main::@2 [ main::scroll#10 main::nxt#10 ] ( main:0 [ main::scroll#10 main::nxt#10 ] ) -- true_then_la1 
     jmp b2
   //SEG64 main::@return
-  //SEG65 [30] return  [ ]
+  //SEG65 [30] return  [ ] ( main:0 [ ] )
     rts
 }
 //SEG66 fillscreen
@@ -4406,16 +4479,16 @@ fillscreen: {
   //SEG70 [32] phi (byte*) fillscreen::cursor#2 = (byte*) fillscreen::cursor#1 [phi:fillscreen::@1->fillscreen::@1#0] -- register_copy 
   //SEG71 fillscreen::@1
   b1:
-  //SEG72 [33] *((byte*) fillscreen::cursor#2) ← (const byte) fillscreen::fill#0 [ fillscreen::cursor#2 ] -- _star_zpptrby1=coby1 
+  //SEG72 [33] *((byte*) fillscreen::cursor#2) ← (const byte) fillscreen::fill#0 [ fillscreen::cursor#2 ] ( main:0::fillscreen:2 [ fillscreen::cursor#2 ] ) -- _star_zpptrby1=coby1 
     ldy #0
     lda #fill
     sta (cursor),y
-  //SEG73 [34] (byte*) fillscreen::cursor#1 ← ++ (byte*) fillscreen::cursor#2 [ fillscreen::cursor#1 ] -- zpptrby1=_inc_zpptrby1 
+  //SEG73 [34] (byte*) fillscreen::cursor#1 ← ++ (byte*) fillscreen::cursor#2 [ fillscreen::cursor#1 ] ( main:0::fillscreen:2 [ fillscreen::cursor#1 ] ) -- zpptrby1=_inc_zpptrby1 
     inc cursor
     bne !+
     inc cursor+1
   !:
-  //SEG74 [35] if((byte*) fillscreen::cursor#1<(const byte*) SCREEN#0+(word) 1000) goto fillscreen::@1 [ fillscreen::cursor#1 ] -- zpptrby1_lt_cowo1_then_la1 
+  //SEG74 [35] if((byte*) fillscreen::cursor#1<(const byte*) SCREEN#0+(word) 1000) goto fillscreen::@1 [ fillscreen::cursor#1 ] ( main:0::fillscreen:2 [ fillscreen::cursor#1 ] ) -- zpptrby1_lt_cowo1_then_la1 
     lda cursor+1
     cmp #>SCREEN+$3e8
     bcc b1
@@ -4425,7 +4498,7 @@ fillscreen: {
     bcc b1
   !:
   //SEG75 fillscreen::@return
-  //SEG76 [36] return  [ ]
+  //SEG76 [36] return  [ ] ( main:0::fillscreen:2 [ ] )
     rts
 }
 
@@ -4448,7 +4521,7 @@ ASSEMBLER
   TEXT: .text "-= this is rex of camelot testing a scroller created in kickc. kickc is an optimizing c-compiler for 6502 assembler. =-     @"
 //SEG2 @begin
 //SEG3 @2
-//SEG4 [0] call main param-assignment [ ]
+//SEG4 [0] call main param-assignment [ ] ( )
 //SEG5 [1] phi from @2 to main [phi:@2->main]
   jsr main
 //SEG6 @end
@@ -4456,7 +4529,7 @@ ASSEMBLER
 main: {
     .const line = SCREEN+$28
     .label nxt = 2
-  //SEG8 [2] call fillscreen param-assignment [ ]
+  //SEG8 [2] call fillscreen param-assignment [ ] ( main:0 [ ] )
   //SEG9 [31] phi from main to fillscreen [phi:main->fillscreen]
     jsr fillscreen
   //SEG10 [3] phi from main to main::@2 [phi:main->main::@2]
@@ -4475,29 +4548,29 @@ main: {
   //SEG16 [3] phi (byte) main::scroll#7 = (byte) main::scroll#10 [phi:main::@4->main::@2#1] -- register_copy 
   //SEG17 main::@2
   b2:
-  //SEG18 [4] (byte~) main::$2 ← * (const byte*) RASTER#0 [ main::scroll#7 main::nxt#9 main::$2 ] -- aby=_star_cowo1 
+  //SEG18 [4] (byte~) main::$2 ← * (const byte*) RASTER#0 [ main::scroll#7 main::nxt#9 main::$2 ] ( main:0 [ main::scroll#7 main::nxt#9 main::$2 ] ) -- aby=_star_cowo1 
     lda RASTER
-  //SEG19 [5] if((byte~) main::$2!=(byte) 254) goto main::@2 [ main::scroll#7 main::nxt#9 ] -- aby_neq_coby1_then_la1 
+  //SEG19 [5] if((byte~) main::$2!=(byte) 254) goto main::@2 [ main::scroll#7 main::nxt#9 ] ( main:0 [ main::scroll#7 main::nxt#9 ] ) -- aby_neq_coby1_then_la1 
     cmp #$fe
     bne b2_from_b2
   //SEG20 main::@3
   b3:
-  //SEG21 [6] (byte~) main::$4 ← * (const byte*) RASTER#0 [ main::scroll#7 main::nxt#9 main::$4 ] -- aby=_star_cowo1 
+  //SEG21 [6] (byte~) main::$4 ← * (const byte*) RASTER#0 [ main::scroll#7 main::nxt#9 main::$4 ] ( main:0 [ main::scroll#7 main::nxt#9 main::$4 ] ) -- aby=_star_cowo1 
     lda RASTER
-  //SEG22 [7] if((byte~) main::$4!=(byte) 255) goto main::@3 [ main::scroll#7 main::nxt#9 ] -- aby_neq_coby1_then_la1 
+  //SEG22 [7] if((byte~) main::$4!=(byte) 255) goto main::@3 [ main::scroll#7 main::nxt#9 ] ( main:0 [ main::scroll#7 main::nxt#9 ] ) -- aby_neq_coby1_then_la1 
     cmp #$ff
     bne b3
   //SEG23 main::@8
-  //SEG24 [8] (byte~) main::$6 ← * (const byte*) BGCOL#0 [ main::scroll#7 main::nxt#9 main::$6 ] -- aby=_star_cowo1 
+  //SEG24 [8] (byte~) main::$6 ← * (const byte*) BGCOL#0 [ main::scroll#7 main::nxt#9 main::$6 ] ( main:0 [ main::scroll#7 main::nxt#9 main::$6 ] ) -- aby=_star_cowo1 
     lda BGCOL
-  //SEG25 [9] (byte~) main::$7 ← (byte~) main::$6 + (byte) 1 [ main::scroll#7 main::nxt#9 main::$7 ] -- aby=aby_plus_1 
+  //SEG25 [9] (byte~) main::$7 ← (byte~) main::$6 + (byte) 1 [ main::scroll#7 main::nxt#9 main::$7 ] ( main:0 [ main::scroll#7 main::nxt#9 main::$7 ] ) -- aby=aby_plus_1 
     clc
     adc #1
-  //SEG26 [10] *((const byte*) BGCOL#0) ← (byte~) main::$7 [ main::scroll#7 main::nxt#9 ] -- _star_cowo1=aby 
+  //SEG26 [10] *((const byte*) BGCOL#0) ← (byte~) main::$7 [ main::scroll#7 main::nxt#9 ] ( main:0 [ main::scroll#7 main::nxt#9 ] ) -- _star_cowo1=aby 
     sta BGCOL
-  //SEG27 [11] (byte) main::scroll#1 ← -- (byte) main::scroll#7 [ main::nxt#9 main::scroll#1 ] -- xby=_dec_xby 
+  //SEG27 [11] (byte) main::scroll#1 ← -- (byte) main::scroll#7 [ main::nxt#9 main::scroll#1 ] ( main:0 [ main::nxt#9 main::scroll#1 ] ) -- xby=_dec_xby 
     dex
-  //SEG28 [12] if((byte) main::scroll#1!=(byte) 255) goto main::@4 [ main::nxt#9 main::scroll#1 ] -- xby_neq_coby1_then_la1 
+  //SEG28 [12] if((byte) main::scroll#1!=(byte) 255) goto main::@4 [ main::nxt#9 main::scroll#1 ] ( main:0 [ main::nxt#9 main::scroll#1 ] ) -- xby_neq_coby1_then_la1 
     cpx #$ff
     bne b4
   //SEG29 [13] phi from main::@8 to main::@5 [phi:main::@8->main::@5]
@@ -4507,25 +4580,25 @@ main: {
   //SEG32 [13] phi (byte) main::i#2 = (byte) main::i#1 [phi:main::@5->main::@5#0] -- register_copy 
   //SEG33 main::@5
   b5:
-  //SEG34 [14] (byte~) main::$11 ← (const byte[]) main::line#0+(byte) 1 *idx (byte) main::i#2 [ main::nxt#9 main::i#2 main::$11 ] -- aby=cowo1_staridx_xby 
+  //SEG34 [14] (byte~) main::$11 ← (const byte[]) main::line#0+(byte) 1 *idx (byte) main::i#2 [ main::nxt#9 main::i#2 main::$11 ] ( main:0 [ main::nxt#9 main::i#2 main::$11 ] ) -- aby=cowo1_staridx_xby 
     lda line+1,x
-  //SEG35 [15] *((const byte[]) main::line#0 + (byte) main::i#2) ← (byte~) main::$11 [ main::nxt#9 main::i#2 ] -- cowo1_staridx_xby=aby 
+  //SEG35 [15] *((const byte[]) main::line#0 + (byte) main::i#2) ← (byte~) main::$11 [ main::nxt#9 main::i#2 ] ( main:0 [ main::nxt#9 main::i#2 ] ) -- cowo1_staridx_xby=aby 
     sta line,x
-  //SEG36 [16] (byte) main::i#1 ← ++ (byte) main::i#2 [ main::nxt#9 main::i#1 ] -- xby=_inc_xby 
+  //SEG36 [16] (byte) main::i#1 ← ++ (byte) main::i#2 [ main::nxt#9 main::i#1 ] ( main:0 [ main::nxt#9 main::i#1 ] ) -- xby=_inc_xby 
     inx
-  //SEG37 [17] if((byte) main::i#1!=(byte) 39) goto main::@5 [ main::nxt#9 main::i#1 ] -- xby_neq_coby1_then_la1 
+  //SEG37 [17] if((byte) main::i#1!=(byte) 39) goto main::@5 [ main::nxt#9 main::i#1 ] ( main:0 [ main::nxt#9 main::i#1 ] ) -- xby_neq_coby1_then_la1 
     cpx #$27
     bne b5
   //SEG38 main::@10
-  //SEG39 [18] (byte) main::c#0 ← * (byte*) main::nxt#9 [ main::nxt#9 main::c#0 ] -- xby=_star_zpptrby1 
+  //SEG39 [18] (byte) main::c#0 ← * (byte*) main::nxt#9 [ main::nxt#9 main::c#0 ] ( main:0 [ main::nxt#9 main::c#0 ] ) -- xby=_star_zpptrby1 
     ldy #0
     lda (nxt),y
     tax
-  //SEG40 [19] if((byte) main::c#0!=(byte) '@') goto main::@6 [ main::nxt#9 main::c#0 ] -- xby_neq_coby1_then_la1 
+  //SEG40 [19] if((byte) main::c#0!=(byte) '@') goto main::@6 [ main::nxt#9 main::c#0 ] ( main:0 [ main::nxt#9 main::c#0 ] ) -- xby_neq_coby1_then_la1 
     cpx #'@'
     bne b6
   //SEG41 main::@11
-  //SEG42 [20] (byte) main::c#1 ← * (const byte*) TEXT#0 [ main::c#1 ] -- xby=_star_cowo1 
+  //SEG42 [20] (byte) main::c#1 ← * (const byte*) TEXT#0 [ main::c#1 ] ( main:0 [ main::c#1 ] ) -- xby=_star_cowo1 
     ldx TEXT
   //SEG43 [21] phi from main::@11 to main::@6 [phi:main::@11->main::@6]
   //SEG44 [21] phi (byte*) main::nxt#4 = (const byte*) TEXT#0 [phi:main::@11->main::@6#0] -- zpptrby1=cowo1 
@@ -4539,9 +4612,9 @@ main: {
   //SEG48 [21] phi (byte) main::c#2 = (byte) main::c#0 [phi:main::@10->main::@6#1] -- register_copy 
   //SEG49 main::@6
   b6:
-  //SEG50 [22] *((const byte[]) main::line#0+(byte) 39) ← (byte) main::c#2 [ main::nxt#4 ] -- _star_cowo1=xby 
+  //SEG50 [22] *((const byte[]) main::line#0+(byte) 39) ← (byte) main::c#2 [ main::nxt#4 ] ( main:0 [ main::nxt#4 ] ) -- _star_cowo1=xby 
     stx line+$27
-  //SEG51 [23] (byte*) main::nxt#1 ← ++ (byte*) main::nxt#4 [ main::nxt#1 ] -- zpptrby1=_inc_zpptrby1 
+  //SEG51 [23] (byte*) main::nxt#1 ← ++ (byte*) main::nxt#4 [ main::nxt#1 ] ( main:0 [ main::nxt#1 ] ) -- zpptrby1=_inc_zpptrby1 
     inc nxt
     bne !+
     inc nxt+1
@@ -4555,19 +4628,19 @@ main: {
   //SEG57 [24] phi (byte) main::scroll#10 = (byte) main::scroll#1 [phi:main::@8->main::@4#1] -- register_copy 
   //SEG58 main::@4
   b4:
-  //SEG59 [25] *((const byte*) SCROLL#0) ← (byte) main::scroll#10 [ main::scroll#10 main::nxt#10 ] -- _star_cowo1=xby 
+  //SEG59 [25] *((const byte*) SCROLL#0) ← (byte) main::scroll#10 [ main::scroll#10 main::nxt#10 ] ( main:0 [ main::scroll#10 main::nxt#10 ] ) -- _star_cowo1=xby 
     stx SCROLL
-  //SEG60 [26] (byte~) main::$17 ← * (const byte*) BGCOL#0 [ main::scroll#10 main::nxt#10 main::$17 ] -- aby=_star_cowo1 
+  //SEG60 [26] (byte~) main::$17 ← * (const byte*) BGCOL#0 [ main::scroll#10 main::nxt#10 main::$17 ] ( main:0 [ main::scroll#10 main::nxt#10 main::$17 ] ) -- aby=_star_cowo1 
     lda BGCOL
-  //SEG61 [27] (byte~) main::$18 ← (byte~) main::$17 - (byte) 1 [ main::scroll#10 main::nxt#10 main::$18 ] -- aby=aby_minus_1 
+  //SEG61 [27] (byte~) main::$18 ← (byte~) main::$17 - (byte) 1 [ main::scroll#10 main::nxt#10 main::$18 ] ( main:0 [ main::scroll#10 main::nxt#10 main::$18 ] ) -- aby=aby_minus_1 
     sec
     sbc #1
-  //SEG62 [28] *((const byte*) BGCOL#0) ← (byte~) main::$18 [ main::scroll#10 main::nxt#10 ] -- _star_cowo1=aby 
+  //SEG62 [28] *((const byte*) BGCOL#0) ← (byte~) main::$18 [ main::scroll#10 main::nxt#10 ] ( main:0 [ main::scroll#10 main::nxt#10 ] ) -- _star_cowo1=aby 
     sta BGCOL
-  //SEG63 [29] if(true) goto main::@2 [ main::scroll#10 main::nxt#10 ] -- true_then_la1 
+  //SEG63 [29] if(true) goto main::@2 [ main::scroll#10 main::nxt#10 ] ( main:0 [ main::scroll#10 main::nxt#10 ] ) -- true_then_la1 
     jmp b2
   //SEG64 main::@return
-  //SEG65 [30] return  [ ]
+  //SEG65 [30] return  [ ] ( main:0 [ ] )
     rts
 }
 //SEG66 fillscreen
@@ -4584,16 +4657,16 @@ fillscreen: {
   //SEG70 [32] phi (byte*) fillscreen::cursor#2 = (byte*) fillscreen::cursor#1 [phi:fillscreen::@1->fillscreen::@1#0] -- register_copy 
   //SEG71 fillscreen::@1
   b1:
-  //SEG72 [33] *((byte*) fillscreen::cursor#2) ← (const byte) fillscreen::fill#0 [ fillscreen::cursor#2 ] -- _star_zpptrby1=coby1 
+  //SEG72 [33] *((byte*) fillscreen::cursor#2) ← (const byte) fillscreen::fill#0 [ fillscreen::cursor#2 ] ( main:0::fillscreen:2 [ fillscreen::cursor#2 ] ) -- _star_zpptrby1=coby1 
     ldy #0
     lda #fill
     sta (cursor),y
-  //SEG73 [34] (byte*) fillscreen::cursor#1 ← ++ (byte*) fillscreen::cursor#2 [ fillscreen::cursor#1 ] -- zpptrby1=_inc_zpptrby1 
+  //SEG73 [34] (byte*) fillscreen::cursor#1 ← ++ (byte*) fillscreen::cursor#2 [ fillscreen::cursor#1 ] ( main:0::fillscreen:2 [ fillscreen::cursor#1 ] ) -- zpptrby1=_inc_zpptrby1 
     inc cursor
     bne !+
     inc cursor+1
   !:
-  //SEG74 [35] if((byte*) fillscreen::cursor#1<(const byte*) SCREEN#0+(word) 1000) goto fillscreen::@1 [ fillscreen::cursor#1 ] -- zpptrby1_lt_cowo1_then_la1 
+  //SEG74 [35] if((byte*) fillscreen::cursor#1<(const byte*) SCREEN#0+(word) 1000) goto fillscreen::@1 [ fillscreen::cursor#1 ] ( main:0::fillscreen:2 [ fillscreen::cursor#1 ] ) -- zpptrby1_lt_cowo1_then_la1 
     lda cursor+1
     cmp #>SCREEN+$3e8
     bcc b1
@@ -4603,7 +4676,7 @@ fillscreen: {
     bcc b1
   !:
   //SEG75 fillscreen::@return
-  //SEG76 [36] return  [ ]
+  //SEG76 [36] return  [ ] ( main:0::fillscreen:2 [ ] )
     rts
 }
 
@@ -4623,7 +4696,7 @@ ASSEMBLER
   TEXT: .text "-= this is rex of camelot testing a scroller created in kickc. kickc is an optimizing c-compiler for 6502 assembler. =-     @"
 //SEG2 @begin
 //SEG3 @2
-//SEG4 [0] call main param-assignment [ ]
+//SEG4 [0] call main param-assignment [ ] ( )
 //SEG5 [1] phi from @2 to main [phi:@2->main]
   jsr main
 //SEG6 @end
@@ -4631,7 +4704,7 @@ ASSEMBLER
 main: {
     .const line = SCREEN+$28
     .label nxt = 2
-  //SEG8 [2] call fillscreen param-assignment [ ]
+  //SEG8 [2] call fillscreen param-assignment [ ] ( main:0 [ ] )
   //SEG9 [31] phi from main to fillscreen [phi:main->fillscreen]
     jsr fillscreen
   //SEG10 [3] phi from main to main::@2 [phi:main->main::@2]
@@ -4649,29 +4722,29 @@ main: {
   //SEG16 [3] phi (byte) main::scroll#7 = (byte) main::scroll#10 [phi:main::@4->main::@2#1] -- register_copy 
   //SEG17 main::@2
   b2:
-  //SEG18 [4] (byte~) main::$2 ← * (const byte*) RASTER#0 [ main::scroll#7 main::nxt#9 main::$2 ] -- aby=_star_cowo1 
+  //SEG18 [4] (byte~) main::$2 ← * (const byte*) RASTER#0 [ main::scroll#7 main::nxt#9 main::$2 ] ( main:0 [ main::scroll#7 main::nxt#9 main::$2 ] ) -- aby=_star_cowo1 
     lda RASTER
-  //SEG19 [5] if((byte~) main::$2!=(byte) 254) goto main::@2 [ main::scroll#7 main::nxt#9 ] -- aby_neq_coby1_then_la1 
+  //SEG19 [5] if((byte~) main::$2!=(byte) 254) goto main::@2 [ main::scroll#7 main::nxt#9 ] ( main:0 [ main::scroll#7 main::nxt#9 ] ) -- aby_neq_coby1_then_la1 
     cmp #$fe
     bne b2
   //SEG20 main::@3
   b3:
-  //SEG21 [6] (byte~) main::$4 ← * (const byte*) RASTER#0 [ main::scroll#7 main::nxt#9 main::$4 ] -- aby=_star_cowo1 
+  //SEG21 [6] (byte~) main::$4 ← * (const byte*) RASTER#0 [ main::scroll#7 main::nxt#9 main::$4 ] ( main:0 [ main::scroll#7 main::nxt#9 main::$4 ] ) -- aby=_star_cowo1 
     lda RASTER
-  //SEG22 [7] if((byte~) main::$4!=(byte) 255) goto main::@3 [ main::scroll#7 main::nxt#9 ] -- aby_neq_coby1_then_la1 
+  //SEG22 [7] if((byte~) main::$4!=(byte) 255) goto main::@3 [ main::scroll#7 main::nxt#9 ] ( main:0 [ main::scroll#7 main::nxt#9 ] ) -- aby_neq_coby1_then_la1 
     cmp #$ff
     bne b3
   //SEG23 main::@8
-  //SEG24 [8] (byte~) main::$6 ← * (const byte*) BGCOL#0 [ main::scroll#7 main::nxt#9 main::$6 ] -- aby=_star_cowo1 
+  //SEG24 [8] (byte~) main::$6 ← * (const byte*) BGCOL#0 [ main::scroll#7 main::nxt#9 main::$6 ] ( main:0 [ main::scroll#7 main::nxt#9 main::$6 ] ) -- aby=_star_cowo1 
     lda BGCOL
-  //SEG25 [9] (byte~) main::$7 ← (byte~) main::$6 + (byte) 1 [ main::scroll#7 main::nxt#9 main::$7 ] -- aby=aby_plus_1 
+  //SEG25 [9] (byte~) main::$7 ← (byte~) main::$6 + (byte) 1 [ main::scroll#7 main::nxt#9 main::$7 ] ( main:0 [ main::scroll#7 main::nxt#9 main::$7 ] ) -- aby=aby_plus_1 
     clc
     adc #1
-  //SEG26 [10] *((const byte*) BGCOL#0) ← (byte~) main::$7 [ main::scroll#7 main::nxt#9 ] -- _star_cowo1=aby 
+  //SEG26 [10] *((const byte*) BGCOL#0) ← (byte~) main::$7 [ main::scroll#7 main::nxt#9 ] ( main:0 [ main::scroll#7 main::nxt#9 ] ) -- _star_cowo1=aby 
     sta BGCOL
-  //SEG27 [11] (byte) main::scroll#1 ← -- (byte) main::scroll#7 [ main::nxt#9 main::scroll#1 ] -- xby=_dec_xby 
+  //SEG27 [11] (byte) main::scroll#1 ← -- (byte) main::scroll#7 [ main::nxt#9 main::scroll#1 ] ( main:0 [ main::nxt#9 main::scroll#1 ] ) -- xby=_dec_xby 
     dex
-  //SEG28 [12] if((byte) main::scroll#1!=(byte) 255) goto main::@4 [ main::nxt#9 main::scroll#1 ] -- xby_neq_coby1_then_la1 
+  //SEG28 [12] if((byte) main::scroll#1!=(byte) 255) goto main::@4 [ main::nxt#9 main::scroll#1 ] ( main:0 [ main::nxt#9 main::scroll#1 ] ) -- xby_neq_coby1_then_la1 
     cpx #$ff
     bne b4
   //SEG29 [13] phi from main::@8 to main::@5 [phi:main::@8->main::@5]
@@ -4681,25 +4754,25 @@ main: {
   //SEG32 [13] phi (byte) main::i#2 = (byte) main::i#1 [phi:main::@5->main::@5#0] -- register_copy 
   //SEG33 main::@5
   b5:
-  //SEG34 [14] (byte~) main::$11 ← (const byte[]) main::line#0+(byte) 1 *idx (byte) main::i#2 [ main::nxt#9 main::i#2 main::$11 ] -- aby=cowo1_staridx_xby 
+  //SEG34 [14] (byte~) main::$11 ← (const byte[]) main::line#0+(byte) 1 *idx (byte) main::i#2 [ main::nxt#9 main::i#2 main::$11 ] ( main:0 [ main::nxt#9 main::i#2 main::$11 ] ) -- aby=cowo1_staridx_xby 
     lda line+1,x
-  //SEG35 [15] *((const byte[]) main::line#0 + (byte) main::i#2) ← (byte~) main::$11 [ main::nxt#9 main::i#2 ] -- cowo1_staridx_xby=aby 
+  //SEG35 [15] *((const byte[]) main::line#0 + (byte) main::i#2) ← (byte~) main::$11 [ main::nxt#9 main::i#2 ] ( main:0 [ main::nxt#9 main::i#2 ] ) -- cowo1_staridx_xby=aby 
     sta line,x
-  //SEG36 [16] (byte) main::i#1 ← ++ (byte) main::i#2 [ main::nxt#9 main::i#1 ] -- xby=_inc_xby 
+  //SEG36 [16] (byte) main::i#1 ← ++ (byte) main::i#2 [ main::nxt#9 main::i#1 ] ( main:0 [ main::nxt#9 main::i#1 ] ) -- xby=_inc_xby 
     inx
-  //SEG37 [17] if((byte) main::i#1!=(byte) 39) goto main::@5 [ main::nxt#9 main::i#1 ] -- xby_neq_coby1_then_la1 
+  //SEG37 [17] if((byte) main::i#1!=(byte) 39) goto main::@5 [ main::nxt#9 main::i#1 ] ( main:0 [ main::nxt#9 main::i#1 ] ) -- xby_neq_coby1_then_la1 
     cpx #$27
     bne b5
   //SEG38 main::@10
-  //SEG39 [18] (byte) main::c#0 ← * (byte*) main::nxt#9 [ main::nxt#9 main::c#0 ] -- xby=_star_zpptrby1 
+  //SEG39 [18] (byte) main::c#0 ← * (byte*) main::nxt#9 [ main::nxt#9 main::c#0 ] ( main:0 [ main::nxt#9 main::c#0 ] ) -- xby=_star_zpptrby1 
     ldy #0
     lda (nxt),y
     tax
-  //SEG40 [19] if((byte) main::c#0!=(byte) '@') goto main::@6 [ main::nxt#9 main::c#0 ] -- xby_neq_coby1_then_la1 
+  //SEG40 [19] if((byte) main::c#0!=(byte) '@') goto main::@6 [ main::nxt#9 main::c#0 ] ( main:0 [ main::nxt#9 main::c#0 ] ) -- xby_neq_coby1_then_la1 
     cpx #'@'
     bne b6
   //SEG41 main::@11
-  //SEG42 [20] (byte) main::c#1 ← * (const byte*) TEXT#0 [ main::c#1 ] -- xby=_star_cowo1 
+  //SEG42 [20] (byte) main::c#1 ← * (const byte*) TEXT#0 [ main::c#1 ] ( main:0 [ main::c#1 ] ) -- xby=_star_cowo1 
     ldx TEXT
   //SEG43 [21] phi from main::@11 to main::@6 [phi:main::@11->main::@6]
   //SEG44 [21] phi (byte*) main::nxt#4 = (const byte*) TEXT#0 [phi:main::@11->main::@6#0] -- zpptrby1=cowo1 
@@ -4713,9 +4786,9 @@ main: {
   //SEG48 [21] phi (byte) main::c#2 = (byte) main::c#0 [phi:main::@10->main::@6#1] -- register_copy 
   //SEG49 main::@6
   b6:
-  //SEG50 [22] *((const byte[]) main::line#0+(byte) 39) ← (byte) main::c#2 [ main::nxt#4 ] -- _star_cowo1=xby 
+  //SEG50 [22] *((const byte[]) main::line#0+(byte) 39) ← (byte) main::c#2 [ main::nxt#4 ] ( main:0 [ main::nxt#4 ] ) -- _star_cowo1=xby 
     stx line+$27
-  //SEG51 [23] (byte*) main::nxt#1 ← ++ (byte*) main::nxt#4 [ main::nxt#1 ] -- zpptrby1=_inc_zpptrby1 
+  //SEG51 [23] (byte*) main::nxt#1 ← ++ (byte*) main::nxt#4 [ main::nxt#1 ] ( main:0 [ main::nxt#1 ] ) -- zpptrby1=_inc_zpptrby1 
     inc nxt
     bne !+
     inc nxt+1
@@ -4729,19 +4802,19 @@ main: {
   //SEG57 [24] phi (byte) main::scroll#10 = (byte) main::scroll#1 [phi:main::@8->main::@4#1] -- register_copy 
   //SEG58 main::@4
   b4:
-  //SEG59 [25] *((const byte*) SCROLL#0) ← (byte) main::scroll#10 [ main::scroll#10 main::nxt#10 ] -- _star_cowo1=xby 
+  //SEG59 [25] *((const byte*) SCROLL#0) ← (byte) main::scroll#10 [ main::scroll#10 main::nxt#10 ] ( main:0 [ main::scroll#10 main::nxt#10 ] ) -- _star_cowo1=xby 
     stx SCROLL
-  //SEG60 [26] (byte~) main::$17 ← * (const byte*) BGCOL#0 [ main::scroll#10 main::nxt#10 main::$17 ] -- aby=_star_cowo1 
+  //SEG60 [26] (byte~) main::$17 ← * (const byte*) BGCOL#0 [ main::scroll#10 main::nxt#10 main::$17 ] ( main:0 [ main::scroll#10 main::nxt#10 main::$17 ] ) -- aby=_star_cowo1 
     lda BGCOL
-  //SEG61 [27] (byte~) main::$18 ← (byte~) main::$17 - (byte) 1 [ main::scroll#10 main::nxt#10 main::$18 ] -- aby=aby_minus_1 
+  //SEG61 [27] (byte~) main::$18 ← (byte~) main::$17 - (byte) 1 [ main::scroll#10 main::nxt#10 main::$18 ] ( main:0 [ main::scroll#10 main::nxt#10 main::$18 ] ) -- aby=aby_minus_1 
     sec
     sbc #1
-  //SEG62 [28] *((const byte*) BGCOL#0) ← (byte~) main::$18 [ main::scroll#10 main::nxt#10 ] -- _star_cowo1=aby 
+  //SEG62 [28] *((const byte*) BGCOL#0) ← (byte~) main::$18 [ main::scroll#10 main::nxt#10 ] ( main:0 [ main::scroll#10 main::nxt#10 ] ) -- _star_cowo1=aby 
     sta BGCOL
-  //SEG63 [29] if(true) goto main::@2 [ main::scroll#10 main::nxt#10 ] -- true_then_la1 
+  //SEG63 [29] if(true) goto main::@2 [ main::scroll#10 main::nxt#10 ] ( main:0 [ main::scroll#10 main::nxt#10 ] ) -- true_then_la1 
     jmp b2
   //SEG64 main::@return
-  //SEG65 [30] return  [ ]
+  //SEG65 [30] return  [ ] ( main:0 [ ] )
     rts
 }
 //SEG66 fillscreen
@@ -4758,16 +4831,16 @@ fillscreen: {
   //SEG70 [32] phi (byte*) fillscreen::cursor#2 = (byte*) fillscreen::cursor#1 [phi:fillscreen::@1->fillscreen::@1#0] -- register_copy 
   //SEG71 fillscreen::@1
   b1:
-  //SEG72 [33] *((byte*) fillscreen::cursor#2) ← (const byte) fillscreen::fill#0 [ fillscreen::cursor#2 ] -- _star_zpptrby1=coby1 
+  //SEG72 [33] *((byte*) fillscreen::cursor#2) ← (const byte) fillscreen::fill#0 [ fillscreen::cursor#2 ] ( main:0::fillscreen:2 [ fillscreen::cursor#2 ] ) -- _star_zpptrby1=coby1 
     ldy #0
     lda #fill
     sta (cursor),y
-  //SEG73 [34] (byte*) fillscreen::cursor#1 ← ++ (byte*) fillscreen::cursor#2 [ fillscreen::cursor#1 ] -- zpptrby1=_inc_zpptrby1 
+  //SEG73 [34] (byte*) fillscreen::cursor#1 ← ++ (byte*) fillscreen::cursor#2 [ fillscreen::cursor#1 ] ( main:0::fillscreen:2 [ fillscreen::cursor#1 ] ) -- zpptrby1=_inc_zpptrby1 
     inc cursor
     bne !+
     inc cursor+1
   !:
-  //SEG74 [35] if((byte*) fillscreen::cursor#1<(const byte*) SCREEN#0+(word) 1000) goto fillscreen::@1 [ fillscreen::cursor#1 ] -- zpptrby1_lt_cowo1_then_la1 
+  //SEG74 [35] if((byte*) fillscreen::cursor#1<(const byte*) SCREEN#0+(word) 1000) goto fillscreen::@1 [ fillscreen::cursor#1 ] ( main:0::fillscreen:2 [ fillscreen::cursor#1 ] ) -- zpptrby1_lt_cowo1_then_la1 
     lda cursor+1
     cmp #>SCREEN+$3e8
     bcc b1
@@ -4777,7 +4850,7 @@ fillscreen: {
     bcc b1
   !:
   //SEG75 fillscreen::@return
-  //SEG76 [36] return  [ ]
+  //SEG76 [36] return  [ ] ( main:0::fillscreen:2 [ ] )
     rts
 }
 
@@ -4796,7 +4869,7 @@ ASSEMBLER
   TEXT: .text "-= this is rex of camelot testing a scroller created in kickc. kickc is an optimizing c-compiler for 6502 assembler. =-     @"
 //SEG2 @begin
 //SEG3 @2
-//SEG4 [0] call main param-assignment [ ]
+//SEG4 [0] call main param-assignment [ ] ( )
 //SEG5 [1] phi from @2 to main [phi:@2->main]
   jsr main
 //SEG6 @end
@@ -4804,7 +4877,7 @@ ASSEMBLER
 main: {
     .const line = SCREEN+$28
     .label nxt = 2
-  //SEG8 [2] call fillscreen param-assignment [ ]
+  //SEG8 [2] call fillscreen param-assignment [ ] ( main:0 [ ] )
   //SEG9 [31] phi from main to fillscreen [phi:main->fillscreen]
     jsr fillscreen
   //SEG10 [3] phi from main to main::@2 [phi:main->main::@2]
@@ -4821,29 +4894,29 @@ main: {
   //SEG16 [3] phi (byte) main::scroll#7 = (byte) main::scroll#10 [phi:main::@4->main::@2#1] -- register_copy 
   //SEG17 main::@2
   b2:
-  //SEG18 [4] (byte~) main::$2 ← * (const byte*) RASTER#0 [ main::scroll#7 main::nxt#9 main::$2 ] -- aby=_star_cowo1 
+  //SEG18 [4] (byte~) main::$2 ← * (const byte*) RASTER#0 [ main::scroll#7 main::nxt#9 main::$2 ] ( main:0 [ main::scroll#7 main::nxt#9 main::$2 ] ) -- aby=_star_cowo1 
     lda RASTER
-  //SEG19 [5] if((byte~) main::$2!=(byte) 254) goto main::@2 [ main::scroll#7 main::nxt#9 ] -- aby_neq_coby1_then_la1 
+  //SEG19 [5] if((byte~) main::$2!=(byte) 254) goto main::@2 [ main::scroll#7 main::nxt#9 ] ( main:0 [ main::scroll#7 main::nxt#9 ] ) -- aby_neq_coby1_then_la1 
     cmp #$fe
     bne b2
   //SEG20 main::@3
   b3:
-  //SEG21 [6] (byte~) main::$4 ← * (const byte*) RASTER#0 [ main::scroll#7 main::nxt#9 main::$4 ] -- aby=_star_cowo1 
+  //SEG21 [6] (byte~) main::$4 ← * (const byte*) RASTER#0 [ main::scroll#7 main::nxt#9 main::$4 ] ( main:0 [ main::scroll#7 main::nxt#9 main::$4 ] ) -- aby=_star_cowo1 
     lda RASTER
-  //SEG22 [7] if((byte~) main::$4!=(byte) 255) goto main::@3 [ main::scroll#7 main::nxt#9 ] -- aby_neq_coby1_then_la1 
+  //SEG22 [7] if((byte~) main::$4!=(byte) 255) goto main::@3 [ main::scroll#7 main::nxt#9 ] ( main:0 [ main::scroll#7 main::nxt#9 ] ) -- aby_neq_coby1_then_la1 
     cmp #$ff
     bne b3
   //SEG23 main::@8
-  //SEG24 [8] (byte~) main::$6 ← * (const byte*) BGCOL#0 [ main::scroll#7 main::nxt#9 main::$6 ] -- aby=_star_cowo1 
+  //SEG24 [8] (byte~) main::$6 ← * (const byte*) BGCOL#0 [ main::scroll#7 main::nxt#9 main::$6 ] ( main:0 [ main::scroll#7 main::nxt#9 main::$6 ] ) -- aby=_star_cowo1 
     lda BGCOL
-  //SEG25 [9] (byte~) main::$7 ← (byte~) main::$6 + (byte) 1 [ main::scroll#7 main::nxt#9 main::$7 ] -- aby=aby_plus_1 
+  //SEG25 [9] (byte~) main::$7 ← (byte~) main::$6 + (byte) 1 [ main::scroll#7 main::nxt#9 main::$7 ] ( main:0 [ main::scroll#7 main::nxt#9 main::$7 ] ) -- aby=aby_plus_1 
     clc
     adc #1
-  //SEG26 [10] *((const byte*) BGCOL#0) ← (byte~) main::$7 [ main::scroll#7 main::nxt#9 ] -- _star_cowo1=aby 
+  //SEG26 [10] *((const byte*) BGCOL#0) ← (byte~) main::$7 [ main::scroll#7 main::nxt#9 ] ( main:0 [ main::scroll#7 main::nxt#9 ] ) -- _star_cowo1=aby 
     sta BGCOL
-  //SEG27 [11] (byte) main::scroll#1 ← -- (byte) main::scroll#7 [ main::nxt#9 main::scroll#1 ] -- xby=_dec_xby 
+  //SEG27 [11] (byte) main::scroll#1 ← -- (byte) main::scroll#7 [ main::nxt#9 main::scroll#1 ] ( main:0 [ main::nxt#9 main::scroll#1 ] ) -- xby=_dec_xby 
     dex
-  //SEG28 [12] if((byte) main::scroll#1!=(byte) 255) goto main::@4 [ main::nxt#9 main::scroll#1 ] -- xby_neq_coby1_then_la1 
+  //SEG28 [12] if((byte) main::scroll#1!=(byte) 255) goto main::@4 [ main::nxt#9 main::scroll#1 ] ( main:0 [ main::nxt#9 main::scroll#1 ] ) -- xby_neq_coby1_then_la1 
     cpx #$ff
     bne b4
   //SEG29 [13] phi from main::@8 to main::@5 [phi:main::@8->main::@5]
@@ -4853,25 +4926,25 @@ main: {
   //SEG32 [13] phi (byte) main::i#2 = (byte) main::i#1 [phi:main::@5->main::@5#0] -- register_copy 
   //SEG33 main::@5
   b5:
-  //SEG34 [14] (byte~) main::$11 ← (const byte[]) main::line#0+(byte) 1 *idx (byte) main::i#2 [ main::nxt#9 main::i#2 main::$11 ] -- aby=cowo1_staridx_xby 
+  //SEG34 [14] (byte~) main::$11 ← (const byte[]) main::line#0+(byte) 1 *idx (byte) main::i#2 [ main::nxt#9 main::i#2 main::$11 ] ( main:0 [ main::nxt#9 main::i#2 main::$11 ] ) -- aby=cowo1_staridx_xby 
     lda line+1,x
-  //SEG35 [15] *((const byte[]) main::line#0 + (byte) main::i#2) ← (byte~) main::$11 [ main::nxt#9 main::i#2 ] -- cowo1_staridx_xby=aby 
+  //SEG35 [15] *((const byte[]) main::line#0 + (byte) main::i#2) ← (byte~) main::$11 [ main::nxt#9 main::i#2 ] ( main:0 [ main::nxt#9 main::i#2 ] ) -- cowo1_staridx_xby=aby 
     sta line,x
-  //SEG36 [16] (byte) main::i#1 ← ++ (byte) main::i#2 [ main::nxt#9 main::i#1 ] -- xby=_inc_xby 
+  //SEG36 [16] (byte) main::i#1 ← ++ (byte) main::i#2 [ main::nxt#9 main::i#1 ] ( main:0 [ main::nxt#9 main::i#1 ] ) -- xby=_inc_xby 
     inx
-  //SEG37 [17] if((byte) main::i#1!=(byte) 39) goto main::@5 [ main::nxt#9 main::i#1 ] -- xby_neq_coby1_then_la1 
+  //SEG37 [17] if((byte) main::i#1!=(byte) 39) goto main::@5 [ main::nxt#9 main::i#1 ] ( main:0 [ main::nxt#9 main::i#1 ] ) -- xby_neq_coby1_then_la1 
     cpx #$27
     bne b5
   //SEG38 main::@10
-  //SEG39 [18] (byte) main::c#0 ← * (byte*) main::nxt#9 [ main::nxt#9 main::c#0 ] -- xby=_star_zpptrby1 
+  //SEG39 [18] (byte) main::c#0 ← * (byte*) main::nxt#9 [ main::nxt#9 main::c#0 ] ( main:0 [ main::nxt#9 main::c#0 ] ) -- xby=_star_zpptrby1 
     ldy #0
     lda (nxt),y
     tax
-  //SEG40 [19] if((byte) main::c#0!=(byte) '@') goto main::@6 [ main::nxt#9 main::c#0 ] -- xby_neq_coby1_then_la1 
+  //SEG40 [19] if((byte) main::c#0!=(byte) '@') goto main::@6 [ main::nxt#9 main::c#0 ] ( main:0 [ main::nxt#9 main::c#0 ] ) -- xby_neq_coby1_then_la1 
     cpx #'@'
     bne b6
   //SEG41 main::@11
-  //SEG42 [20] (byte) main::c#1 ← * (const byte*) TEXT#0 [ main::c#1 ] -- xby=_star_cowo1 
+  //SEG42 [20] (byte) main::c#1 ← * (const byte*) TEXT#0 [ main::c#1 ] ( main:0 [ main::c#1 ] ) -- xby=_star_cowo1 
     ldx TEXT
   //SEG43 [21] phi from main::@11 to main::@6 [phi:main::@11->main::@6]
   //SEG44 [21] phi (byte*) main::nxt#4 = (const byte*) TEXT#0 [phi:main::@11->main::@6#0] -- zpptrby1=cowo1 
@@ -4885,9 +4958,9 @@ main: {
   //SEG48 [21] phi (byte) main::c#2 = (byte) main::c#0 [phi:main::@10->main::@6#1] -- register_copy 
   //SEG49 main::@6
   b6:
-  //SEG50 [22] *((const byte[]) main::line#0+(byte) 39) ← (byte) main::c#2 [ main::nxt#4 ] -- _star_cowo1=xby 
+  //SEG50 [22] *((const byte[]) main::line#0+(byte) 39) ← (byte) main::c#2 [ main::nxt#4 ] ( main:0 [ main::nxt#4 ] ) -- _star_cowo1=xby 
     stx line+$27
-  //SEG51 [23] (byte*) main::nxt#1 ← ++ (byte*) main::nxt#4 [ main::nxt#1 ] -- zpptrby1=_inc_zpptrby1 
+  //SEG51 [23] (byte*) main::nxt#1 ← ++ (byte*) main::nxt#4 [ main::nxt#1 ] ( main:0 [ main::nxt#1 ] ) -- zpptrby1=_inc_zpptrby1 
     inc nxt
     bne !+
     inc nxt+1
@@ -4901,19 +4974,19 @@ main: {
   //SEG57 [24] phi (byte) main::scroll#10 = (byte) main::scroll#1 [phi:main::@8->main::@4#1] -- register_copy 
   //SEG58 main::@4
   b4:
-  //SEG59 [25] *((const byte*) SCROLL#0) ← (byte) main::scroll#10 [ main::scroll#10 main::nxt#10 ] -- _star_cowo1=xby 
+  //SEG59 [25] *((const byte*) SCROLL#0) ← (byte) main::scroll#10 [ main::scroll#10 main::nxt#10 ] ( main:0 [ main::scroll#10 main::nxt#10 ] ) -- _star_cowo1=xby 
     stx SCROLL
-  //SEG60 [26] (byte~) main::$17 ← * (const byte*) BGCOL#0 [ main::scroll#10 main::nxt#10 main::$17 ] -- aby=_star_cowo1 
+  //SEG60 [26] (byte~) main::$17 ← * (const byte*) BGCOL#0 [ main::scroll#10 main::nxt#10 main::$17 ] ( main:0 [ main::scroll#10 main::nxt#10 main::$17 ] ) -- aby=_star_cowo1 
     lda BGCOL
-  //SEG61 [27] (byte~) main::$18 ← (byte~) main::$17 - (byte) 1 [ main::scroll#10 main::nxt#10 main::$18 ] -- aby=aby_minus_1 
+  //SEG61 [27] (byte~) main::$18 ← (byte~) main::$17 - (byte) 1 [ main::scroll#10 main::nxt#10 main::$18 ] ( main:0 [ main::scroll#10 main::nxt#10 main::$18 ] ) -- aby=aby_minus_1 
     sec
     sbc #1
-  //SEG62 [28] *((const byte*) BGCOL#0) ← (byte~) main::$18 [ main::scroll#10 main::nxt#10 ] -- _star_cowo1=aby 
+  //SEG62 [28] *((const byte*) BGCOL#0) ← (byte~) main::$18 [ main::scroll#10 main::nxt#10 ] ( main:0 [ main::scroll#10 main::nxt#10 ] ) -- _star_cowo1=aby 
     sta BGCOL
-  //SEG63 [29] if(true) goto main::@2 [ main::scroll#10 main::nxt#10 ] -- true_then_la1 
+  //SEG63 [29] if(true) goto main::@2 [ main::scroll#10 main::nxt#10 ] ( main:0 [ main::scroll#10 main::nxt#10 ] ) -- true_then_la1 
     jmp b2
   //SEG64 main::@return
-  //SEG65 [30] return  [ ]
+  //SEG65 [30] return  [ ] ( main:0 [ ] )
     rts
 }
 //SEG66 fillscreen
@@ -4930,16 +5003,16 @@ fillscreen: {
   //SEG70 [32] phi (byte*) fillscreen::cursor#2 = (byte*) fillscreen::cursor#1 [phi:fillscreen::@1->fillscreen::@1#0] -- register_copy 
   //SEG71 fillscreen::@1
   b1:
-  //SEG72 [33] *((byte*) fillscreen::cursor#2) ← (const byte) fillscreen::fill#0 [ fillscreen::cursor#2 ] -- _star_zpptrby1=coby1 
+  //SEG72 [33] *((byte*) fillscreen::cursor#2) ← (const byte) fillscreen::fill#0 [ fillscreen::cursor#2 ] ( main:0::fillscreen:2 [ fillscreen::cursor#2 ] ) -- _star_zpptrby1=coby1 
     ldy #0
     lda #fill
     sta (cursor),y
-  //SEG73 [34] (byte*) fillscreen::cursor#1 ← ++ (byte*) fillscreen::cursor#2 [ fillscreen::cursor#1 ] -- zpptrby1=_inc_zpptrby1 
+  //SEG73 [34] (byte*) fillscreen::cursor#1 ← ++ (byte*) fillscreen::cursor#2 [ fillscreen::cursor#1 ] ( main:0::fillscreen:2 [ fillscreen::cursor#1 ] ) -- zpptrby1=_inc_zpptrby1 
     inc cursor
     bne !+
     inc cursor+1
   !:
-  //SEG74 [35] if((byte*) fillscreen::cursor#1<(const byte*) SCREEN#0+(word) 1000) goto fillscreen::@1 [ fillscreen::cursor#1 ] -- zpptrby1_lt_cowo1_then_la1 
+  //SEG74 [35] if((byte*) fillscreen::cursor#1<(const byte*) SCREEN#0+(word) 1000) goto fillscreen::@1 [ fillscreen::cursor#1 ] ( main:0::fillscreen:2 [ fillscreen::cursor#1 ] ) -- zpptrby1_lt_cowo1_then_la1 
     lda cursor+1
     cmp #>SCREEN+$3e8
     bcc b1
@@ -4949,7 +5022,7 @@ fillscreen: {
     bcc b1
   !:
   //SEG75 fillscreen::@return
-  //SEG76 [36] return  [ ]
+  //SEG76 [36] return  [ ] ( main:0::fillscreen:2 [ ] )
     rts
 }
 
@@ -5037,7 +5110,7 @@ FINAL CODE
   TEXT: .text "-= this is rex of camelot testing a scroller created in kickc. kickc is an optimizing c-compiler for 6502 assembler. =-     @"
 //SEG2 @begin
 //SEG3 @2
-//SEG4 [0] call main param-assignment [ ]
+//SEG4 [0] call main param-assignment [ ] ( )
 //SEG5 [1] phi from @2 to main [phi:@2->main]
   jsr main
 //SEG6 @end
@@ -5045,7 +5118,7 @@ FINAL CODE
 main: {
     .const line = SCREEN+$28
     .label nxt = 2
-  //SEG8 [2] call fillscreen param-assignment [ ]
+  //SEG8 [2] call fillscreen param-assignment [ ] ( main:0 [ ] )
   //SEG9 [31] phi from main to fillscreen [phi:main->fillscreen]
     jsr fillscreen
   //SEG10 [3] phi from main to main::@2 [phi:main->main::@2]
@@ -5062,29 +5135,29 @@ main: {
   //SEG16 [3] phi (byte) main::scroll#7 = (byte) main::scroll#10 [phi:main::@4->main::@2#1] -- register_copy 
   //SEG17 main::@2
   b2:
-  //SEG18 [4] (byte~) main::$2 ← * (const byte*) RASTER#0 [ main::scroll#7 main::nxt#9 main::$2 ] -- aby=_star_cowo1 
+  //SEG18 [4] (byte~) main::$2 ← * (const byte*) RASTER#0 [ main::scroll#7 main::nxt#9 main::$2 ] ( main:0 [ main::scroll#7 main::nxt#9 main::$2 ] ) -- aby=_star_cowo1 
     lda RASTER
-  //SEG19 [5] if((byte~) main::$2!=(byte) 254) goto main::@2 [ main::scroll#7 main::nxt#9 ] -- aby_neq_coby1_then_la1 
+  //SEG19 [5] if((byte~) main::$2!=(byte) 254) goto main::@2 [ main::scroll#7 main::nxt#9 ] ( main:0 [ main::scroll#7 main::nxt#9 ] ) -- aby_neq_coby1_then_la1 
     cmp #$fe
     bne b2
   //SEG20 main::@3
   b3:
-  //SEG21 [6] (byte~) main::$4 ← * (const byte*) RASTER#0 [ main::scroll#7 main::nxt#9 main::$4 ] -- aby=_star_cowo1 
+  //SEG21 [6] (byte~) main::$4 ← * (const byte*) RASTER#0 [ main::scroll#7 main::nxt#9 main::$4 ] ( main:0 [ main::scroll#7 main::nxt#9 main::$4 ] ) -- aby=_star_cowo1 
     lda RASTER
-  //SEG22 [7] if((byte~) main::$4!=(byte) 255) goto main::@3 [ main::scroll#7 main::nxt#9 ] -- aby_neq_coby1_then_la1 
+  //SEG22 [7] if((byte~) main::$4!=(byte) 255) goto main::@3 [ main::scroll#7 main::nxt#9 ] ( main:0 [ main::scroll#7 main::nxt#9 ] ) -- aby_neq_coby1_then_la1 
     cmp #$ff
     bne b3
   //SEG23 main::@8
-  //SEG24 [8] (byte~) main::$6 ← * (const byte*) BGCOL#0 [ main::scroll#7 main::nxt#9 main::$6 ] -- aby=_star_cowo1 
+  //SEG24 [8] (byte~) main::$6 ← * (const byte*) BGCOL#0 [ main::scroll#7 main::nxt#9 main::$6 ] ( main:0 [ main::scroll#7 main::nxt#9 main::$6 ] ) -- aby=_star_cowo1 
     lda BGCOL
-  //SEG25 [9] (byte~) main::$7 ← (byte~) main::$6 + (byte) 1 [ main::scroll#7 main::nxt#9 main::$7 ] -- aby=aby_plus_1 
+  //SEG25 [9] (byte~) main::$7 ← (byte~) main::$6 + (byte) 1 [ main::scroll#7 main::nxt#9 main::$7 ] ( main:0 [ main::scroll#7 main::nxt#9 main::$7 ] ) -- aby=aby_plus_1 
     clc
     adc #1
-  //SEG26 [10] *((const byte*) BGCOL#0) ← (byte~) main::$7 [ main::scroll#7 main::nxt#9 ] -- _star_cowo1=aby 
+  //SEG26 [10] *((const byte*) BGCOL#0) ← (byte~) main::$7 [ main::scroll#7 main::nxt#9 ] ( main:0 [ main::scroll#7 main::nxt#9 ] ) -- _star_cowo1=aby 
     sta BGCOL
-  //SEG27 [11] (byte) main::scroll#1 ← -- (byte) main::scroll#7 [ main::nxt#9 main::scroll#1 ] -- xby=_dec_xby 
+  //SEG27 [11] (byte) main::scroll#1 ← -- (byte) main::scroll#7 [ main::nxt#9 main::scroll#1 ] ( main:0 [ main::nxt#9 main::scroll#1 ] ) -- xby=_dec_xby 
     dex
-  //SEG28 [12] if((byte) main::scroll#1!=(byte) 255) goto main::@4 [ main::nxt#9 main::scroll#1 ] -- xby_neq_coby1_then_la1 
+  //SEG28 [12] if((byte) main::scroll#1!=(byte) 255) goto main::@4 [ main::nxt#9 main::scroll#1 ] ( main:0 [ main::nxt#9 main::scroll#1 ] ) -- xby_neq_coby1_then_la1 
     cpx #$ff
     bne b4
   //SEG29 [13] phi from main::@8 to main::@5 [phi:main::@8->main::@5]
@@ -5094,25 +5167,25 @@ main: {
   //SEG32 [13] phi (byte) main::i#2 = (byte) main::i#1 [phi:main::@5->main::@5#0] -- register_copy 
   //SEG33 main::@5
   b5:
-  //SEG34 [14] (byte~) main::$11 ← (const byte[]) main::line#0+(byte) 1 *idx (byte) main::i#2 [ main::nxt#9 main::i#2 main::$11 ] -- aby=cowo1_staridx_xby 
+  //SEG34 [14] (byte~) main::$11 ← (const byte[]) main::line#0+(byte) 1 *idx (byte) main::i#2 [ main::nxt#9 main::i#2 main::$11 ] ( main:0 [ main::nxt#9 main::i#2 main::$11 ] ) -- aby=cowo1_staridx_xby 
     lda line+1,x
-  //SEG35 [15] *((const byte[]) main::line#0 + (byte) main::i#2) ← (byte~) main::$11 [ main::nxt#9 main::i#2 ] -- cowo1_staridx_xby=aby 
+  //SEG35 [15] *((const byte[]) main::line#0 + (byte) main::i#2) ← (byte~) main::$11 [ main::nxt#9 main::i#2 ] ( main:0 [ main::nxt#9 main::i#2 ] ) -- cowo1_staridx_xby=aby 
     sta line,x
-  //SEG36 [16] (byte) main::i#1 ← ++ (byte) main::i#2 [ main::nxt#9 main::i#1 ] -- xby=_inc_xby 
+  //SEG36 [16] (byte) main::i#1 ← ++ (byte) main::i#2 [ main::nxt#9 main::i#1 ] ( main:0 [ main::nxt#9 main::i#1 ] ) -- xby=_inc_xby 
     inx
-  //SEG37 [17] if((byte) main::i#1!=(byte) 39) goto main::@5 [ main::nxt#9 main::i#1 ] -- xby_neq_coby1_then_la1 
+  //SEG37 [17] if((byte) main::i#1!=(byte) 39) goto main::@5 [ main::nxt#9 main::i#1 ] ( main:0 [ main::nxt#9 main::i#1 ] ) -- xby_neq_coby1_then_la1 
     cpx #$27
     bne b5
   //SEG38 main::@10
-  //SEG39 [18] (byte) main::c#0 ← * (byte*) main::nxt#9 [ main::nxt#9 main::c#0 ] -- xby=_star_zpptrby1 
+  //SEG39 [18] (byte) main::c#0 ← * (byte*) main::nxt#9 [ main::nxt#9 main::c#0 ] ( main:0 [ main::nxt#9 main::c#0 ] ) -- xby=_star_zpptrby1 
     ldy #0
     lda (nxt),y
     tax
-  //SEG40 [19] if((byte) main::c#0!=(byte) '@') goto main::@6 [ main::nxt#9 main::c#0 ] -- xby_neq_coby1_then_la1 
+  //SEG40 [19] if((byte) main::c#0!=(byte) '@') goto main::@6 [ main::nxt#9 main::c#0 ] ( main:0 [ main::nxt#9 main::c#0 ] ) -- xby_neq_coby1_then_la1 
     cpx #'@'
     bne b6
   //SEG41 main::@11
-  //SEG42 [20] (byte) main::c#1 ← * (const byte*) TEXT#0 [ main::c#1 ] -- xby=_star_cowo1 
+  //SEG42 [20] (byte) main::c#1 ← * (const byte*) TEXT#0 [ main::c#1 ] ( main:0 [ main::c#1 ] ) -- xby=_star_cowo1 
     ldx TEXT
   //SEG43 [21] phi from main::@11 to main::@6 [phi:main::@11->main::@6]
   //SEG44 [21] phi (byte*) main::nxt#4 = (const byte*) TEXT#0 [phi:main::@11->main::@6#0] -- zpptrby1=cowo1 
@@ -5126,9 +5199,9 @@ main: {
   //SEG48 [21] phi (byte) main::c#2 = (byte) main::c#0 [phi:main::@10->main::@6#1] -- register_copy 
   //SEG49 main::@6
   b6:
-  //SEG50 [22] *((const byte[]) main::line#0+(byte) 39) ← (byte) main::c#2 [ main::nxt#4 ] -- _star_cowo1=xby 
+  //SEG50 [22] *((const byte[]) main::line#0+(byte) 39) ← (byte) main::c#2 [ main::nxt#4 ] ( main:0 [ main::nxt#4 ] ) -- _star_cowo1=xby 
     stx line+$27
-  //SEG51 [23] (byte*) main::nxt#1 ← ++ (byte*) main::nxt#4 [ main::nxt#1 ] -- zpptrby1=_inc_zpptrby1 
+  //SEG51 [23] (byte*) main::nxt#1 ← ++ (byte*) main::nxt#4 [ main::nxt#1 ] ( main:0 [ main::nxt#1 ] ) -- zpptrby1=_inc_zpptrby1 
     inc nxt
     bne !+
     inc nxt+1
@@ -5142,19 +5215,19 @@ main: {
   //SEG57 [24] phi (byte) main::scroll#10 = (byte) main::scroll#1 [phi:main::@8->main::@4#1] -- register_copy 
   //SEG58 main::@4
   b4:
-  //SEG59 [25] *((const byte*) SCROLL#0) ← (byte) main::scroll#10 [ main::scroll#10 main::nxt#10 ] -- _star_cowo1=xby 
+  //SEG59 [25] *((const byte*) SCROLL#0) ← (byte) main::scroll#10 [ main::scroll#10 main::nxt#10 ] ( main:0 [ main::scroll#10 main::nxt#10 ] ) -- _star_cowo1=xby 
     stx SCROLL
-  //SEG60 [26] (byte~) main::$17 ← * (const byte*) BGCOL#0 [ main::scroll#10 main::nxt#10 main::$17 ] -- aby=_star_cowo1 
+  //SEG60 [26] (byte~) main::$17 ← * (const byte*) BGCOL#0 [ main::scroll#10 main::nxt#10 main::$17 ] ( main:0 [ main::scroll#10 main::nxt#10 main::$17 ] ) -- aby=_star_cowo1 
     lda BGCOL
-  //SEG61 [27] (byte~) main::$18 ← (byte~) main::$17 - (byte) 1 [ main::scroll#10 main::nxt#10 main::$18 ] -- aby=aby_minus_1 
+  //SEG61 [27] (byte~) main::$18 ← (byte~) main::$17 - (byte) 1 [ main::scroll#10 main::nxt#10 main::$18 ] ( main:0 [ main::scroll#10 main::nxt#10 main::$18 ] ) -- aby=aby_minus_1 
     sec
     sbc #1
-  //SEG62 [28] *((const byte*) BGCOL#0) ← (byte~) main::$18 [ main::scroll#10 main::nxt#10 ] -- _star_cowo1=aby 
+  //SEG62 [28] *((const byte*) BGCOL#0) ← (byte~) main::$18 [ main::scroll#10 main::nxt#10 ] ( main:0 [ main::scroll#10 main::nxt#10 ] ) -- _star_cowo1=aby 
     sta BGCOL
-  //SEG63 [29] if(true) goto main::@2 [ main::scroll#10 main::nxt#10 ] -- true_then_la1 
+  //SEG63 [29] if(true) goto main::@2 [ main::scroll#10 main::nxt#10 ] ( main:0 [ main::scroll#10 main::nxt#10 ] ) -- true_then_la1 
     jmp b2
   //SEG64 main::@return
-  //SEG65 [30] return  [ ]
+  //SEG65 [30] return  [ ] ( main:0 [ ] )
     rts
 }
 //SEG66 fillscreen
@@ -5171,16 +5244,16 @@ fillscreen: {
   //SEG70 [32] phi (byte*) fillscreen::cursor#2 = (byte*) fillscreen::cursor#1 [phi:fillscreen::@1->fillscreen::@1#0] -- register_copy 
   //SEG71 fillscreen::@1
   b1:
-  //SEG72 [33] *((byte*) fillscreen::cursor#2) ← (const byte) fillscreen::fill#0 [ fillscreen::cursor#2 ] -- _star_zpptrby1=coby1 
+  //SEG72 [33] *((byte*) fillscreen::cursor#2) ← (const byte) fillscreen::fill#0 [ fillscreen::cursor#2 ] ( main:0::fillscreen:2 [ fillscreen::cursor#2 ] ) -- _star_zpptrby1=coby1 
     ldy #0
     lda #fill
     sta (cursor),y
-  //SEG73 [34] (byte*) fillscreen::cursor#1 ← ++ (byte*) fillscreen::cursor#2 [ fillscreen::cursor#1 ] -- zpptrby1=_inc_zpptrby1 
+  //SEG73 [34] (byte*) fillscreen::cursor#1 ← ++ (byte*) fillscreen::cursor#2 [ fillscreen::cursor#1 ] ( main:0::fillscreen:2 [ fillscreen::cursor#1 ] ) -- zpptrby1=_inc_zpptrby1 
     inc cursor
     bne !+
     inc cursor+1
   !:
-  //SEG74 [35] if((byte*) fillscreen::cursor#1<(const byte*) SCREEN#0+(word) 1000) goto fillscreen::@1 [ fillscreen::cursor#1 ] -- zpptrby1_lt_cowo1_then_la1 
+  //SEG74 [35] if((byte*) fillscreen::cursor#1<(const byte*) SCREEN#0+(word) 1000) goto fillscreen::@1 [ fillscreen::cursor#1 ] ( main:0::fillscreen:2 [ fillscreen::cursor#1 ] ) -- zpptrby1_lt_cowo1_then_la1 
     lda cursor+1
     cmp #>SCREEN+$3e8
     bcc b1
@@ -5190,7 +5263,7 @@ fillscreen: {
     bcc b1
   !:
   //SEG75 fillscreen::@return
-  //SEG76 [36] return  [ ]
+  //SEG76 [36] return  [ ] ( main:0::fillscreen:2 [ ] )
     rts
 }
 

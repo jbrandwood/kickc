@@ -126,8 +126,10 @@ public class Pass2AliasElimination extends Pass2SsaOptimization {
          AliasSet aliasSet2 = findAliasSet(var2);
          if (aliasSet1 != null) {
             if (aliasSet2 != null) {
-               aliasSet1.addAll(aliasSet2);
-               aliases.remove(aliasSet2);
+               if(aliasSet1!=aliasSet2) {
+                  aliasSet1.addAll(aliasSet2);
+                  aliases.remove(aliasSet2);
+               }
             } else {
                aliasSet1.add(var2);
             }

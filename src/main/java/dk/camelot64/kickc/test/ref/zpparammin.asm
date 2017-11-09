@@ -13,7 +13,6 @@ main: {
     tya
     clc
     adc #2
-    sty sum.a
     sta sum.c
     jsr sum
     sta SCREEN,y
@@ -23,7 +22,6 @@ main: {
     tya
     clc
     adc #2
-    sty sum2.a
     sta sum2.c
     jsr sum2
     sta SCREEN2,y
@@ -33,21 +31,21 @@ main: {
     rts
 }
 sum2: {
-    .label a = 2
-    .label c = 3
+    .label c = 2
+    sty $ff
     txa
     clc
-    adc a
+    adc $ff
     clc
     adc c
     rts
 }
 sum: {
-    .label a = 2
-    .label c = 3
+    .label c = 2
+    sty $ff
     txa
     clc
-    adc a
+    adc $ff
     clc
     adc c
     rts

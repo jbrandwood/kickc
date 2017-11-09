@@ -702,8 +702,8 @@ line::@3: scope:[line]  from line::@1
 
 Adding NOP phi() at start of main
 CALL GRAPH
-Calls in [] to 0:main 
-Calls in [main] to 2:line 4:line 
+Calls in [] to main:0 
+Calls in [main] to line:2 line:4 
 
 Propagating live ranges...
 Propagating live ranges...
@@ -770,7 +770,7 @@ Propagating live ranges...
 Propagating live ranges...
 Propagating live ranges...
 Propagating live ranges...
-CONTROL FLOW GRAPH - PHI MEM COALESCED
+CONTROL FLOW GRAPH - BEFORE EFFECTIVE LIVE RANGES
 @begin: scope:[]  from
   to:@2
 @2: scope:[]  from @begin
@@ -802,6 +802,40 @@ line::@1: scope:[line]  from line line::@1
   to:line::@return
 line::@return: scope:[line]  from line::@1
   [11] return  [ ]
+  to:@return
+
+CONTROL FLOW GRAPH - PHI MEM COALESCED
+@begin: scope:[]  from
+  to:@2
+@2: scope:[]  from @begin
+  [0] call main param-assignment [ ] ( )
+  to:@end
+@end: scope:[]  from @2
+main: scope:[main]  from @2
+  [1] phi() [ ] ( main:0 [ ] )
+  [2] call line param-assignment [ ] ( main:0 [ ] )
+  to:main::@1
+main::@1: scope:[main]  from main
+  [3] call line param-assignment [ ] ( main:0 [ ] )
+  to:main::@return
+main::@return: scope:[main]  from main::@1
+  [4] return  [ ] ( main:0 [ ] )
+  to:@return
+line: scope:[line]  from main main::@1
+  [5] (byte) line::x1#3 ← phi( main/(byte) 2 main::@1/(byte) 5 ) [ line::x#0 screen#14 line::x1#3 ] ( main:0::line:2 [ line::x#0 screen#14 line::x1#3 ] main:0::line:3 [ line::x#0 screen#14 line::x1#3 ] )
+  [5] (byte*) screen#14 ← phi( main/(word) 1024 main::@1/(byte*) screen#1 ) [ line::x#0 screen#14 line::x1#3 ] ( main:0::line:2 [ line::x#0 screen#14 line::x1#3 ] main:0::line:3 [ line::x#0 screen#14 line::x1#3 ] )
+  [5] (byte) line::x#0 ← phi( main/(byte) 1 main::@1/(byte) 3 ) [ line::x#0 screen#14 line::x1#3 ] ( main:0::line:2 [ line::x#0 screen#14 line::x1#3 ] main:0::line:3 [ line::x#0 screen#14 line::x1#3 ] )
+  to:line::@1
+line::@1: scope:[line]  from line line::@1
+  [6] (byte*) screen#10 ← phi( line/(byte*) screen#14 line::@1/(byte*) screen#1 ) [ line::x1#3 line::x#2 screen#10 ] ( main:0::line:2 [ line::x1#3 line::x#2 screen#10 ] main:0::line:3 [ line::x1#3 line::x#2 screen#10 ] )
+  [6] (byte) line::x#2 ← phi( line/(byte) line::x#0 line::@1/(byte) line::x#1 ) [ line::x1#3 line::x#2 screen#10 ] ( main:0::line:2 [ line::x1#3 line::x#2 screen#10 ] main:0::line:3 [ line::x1#3 line::x#2 screen#10 ] )
+  [7] *((byte*) screen#10) ← (byte) line::x#2 [ line::x1#3 line::x#2 screen#10 ] ( main:0::line:2 [ line::x1#3 line::x#2 screen#10 ] main:0::line:3 [ line::x1#3 line::x#2 screen#10 ] )
+  [8] (byte*) screen#1 ← ++ (byte*) screen#10 [ line::x1#3 line::x#2 screen#1 ] ( main:0::line:2 [ line::x1#3 line::x#2 screen#1 ] main:0::line:3 [ line::x1#3 line::x#2 screen#1 ] )
+  [9] (byte) line::x#1 ← ++ (byte) line::x#2 [ line::x1#3 line::x#1 screen#1 ] ( main:0::line:2 [ line::x1#3 line::x#1 screen#1 ] main:0::line:3 [ line::x1#3 line::x#1 screen#1 ] )
+  [10] if((byte) line::x#1<(byte) line::x1#3) goto line::@1 [ line::x1#3 line::x#1 screen#1 ] ( main:0::line:2 [ line::x1#3 line::x#1 screen#1 ] main:0::line:3 [ line::x1#3 line::x#1 screen#1 ] )
+  to:line::@return
+line::@return: scope:[line]  from line::@1
+  [11] return  [ ] ( main:0::line:2 [ ] main:0::line:3 [ ] )
   to:@return
 
 DOMINATORS
@@ -866,7 +900,7 @@ bbegin:
   jmp b2
 //SEG3 @2
 b2:
-//SEG4 [0] call main param-assignment [ ]
+//SEG4 [0] call main param-assignment [ ] ( )
 //SEG5 [1] phi from @2 to main [phi:@2->main]
 main_from_b2:
   jsr main
@@ -875,7 +909,7 @@ main_from_b2:
 bend:
 //SEG7 main
 main: {
-  //SEG8 [2] call line param-assignment [ ]
+  //SEG8 [2] call line param-assignment [ ] ( main:0 [ ] )
   //SEG9 [5] phi from main to line [phi:main->line]
   line_from_main:
   //SEG10 [5] phi (byte) line::x1#3 = (byte) 2 [phi:main->line#0] -- zpby1=coby1 
@@ -893,7 +927,7 @@ main: {
     jmp b1
   //SEG13 main::@1
   b1:
-  //SEG14 [3] call line param-assignment [ ]
+  //SEG14 [3] call line param-assignment [ ] ( main:0 [ ] )
   //SEG15 [5] phi from main::@1 to line [phi:main::@1->line]
   line_from_b1:
   //SEG16 [5] phi (byte) line::x1#3 = (byte) 5 [phi:main::@1->line#0] -- zpby1=coby1 
@@ -907,7 +941,7 @@ main: {
     jmp breturn
   //SEG19 main::@return
   breturn:
-  //SEG20 [4] return  [ ]
+  //SEG20 [4] return  [ ] ( main:0 [ ] )
     rts
 }
 //SEG21 line
@@ -922,33 +956,33 @@ line: {
     jmp b1
   //SEG25 line::@1
   b1:
-  //SEG26 [7] *((byte*) screen#10) ← (byte) line::x#2 [ line::x1#3 line::x#2 screen#10 ] -- _star_zpptrby1=zpby1 
+  //SEG26 [7] *((byte*) screen#10) ← (byte) line::x#2 [ line::x1#3 line::x#2 screen#10 ] ( main:0::line:2 [ line::x1#3 line::x#2 screen#10 ] main:0::line:3 [ line::x1#3 line::x#2 screen#10 ] ) -- _star_zpptrby1=zpby1 
     ldy #0
     lda x
     sta (screen),y
-  //SEG27 [8] (byte*) screen#1 ← ++ (byte*) screen#10 [ line::x1#3 line::x#2 screen#1 ] -- zpptrby1=_inc_zpptrby1 
+  //SEG27 [8] (byte*) screen#1 ← ++ (byte*) screen#10 [ line::x1#3 line::x#2 screen#1 ] ( main:0::line:2 [ line::x1#3 line::x#2 screen#1 ] main:0::line:3 [ line::x1#3 line::x#2 screen#1 ] ) -- zpptrby1=_inc_zpptrby1 
     inc screen
     bne !+
     inc screen+1
   !:
-  //SEG28 [9] (byte) line::x#1 ← ++ (byte) line::x#2 [ line::x1#3 line::x#1 screen#1 ] -- zpby1=_inc_zpby1 
+  //SEG28 [9] (byte) line::x#1 ← ++ (byte) line::x#2 [ line::x1#3 line::x#1 screen#1 ] ( main:0::line:2 [ line::x1#3 line::x#1 screen#1 ] main:0::line:3 [ line::x1#3 line::x#1 screen#1 ] ) -- zpby1=_inc_zpby1 
     inc x
-  //SEG29 [10] if((byte) line::x#1<(byte) line::x1#3) goto line::@1 [ line::x1#3 line::x#1 screen#1 ] -- zpby1_lt_zpby2_then_la1 
+  //SEG29 [10] if((byte) line::x#1<(byte) line::x1#3) goto line::@1 [ line::x1#3 line::x#1 screen#1 ] ( main:0::line:2 [ line::x1#3 line::x#1 screen#1 ] main:0::line:3 [ line::x1#3 line::x#1 screen#1 ] ) -- zpby1_lt_zpby2_then_la1 
     lda x
     cmp x1
     bcc b1_from_b1
     jmp breturn
   //SEG30 line::@return
   breturn:
-  //SEG31 [11] return  [ ]
+  //SEG31 [11] return  [ ] ( main:0::line:2 [ ] main:0::line:3 [ ] )
     rts
 }
 
 REGISTER UPLIFT POTENTIAL REGISTERS
-Statement [7] *((byte*) screen#10) ← (byte) line::x#2 [ line::x1#3 line::x#2 screen#10 ] always clobbers reg byte y 
+Statement [7] *((byte*) screen#10) ← (byte) line::x#2 [ line::x1#3 line::x#2 screen#10 ] ( main:0::line:2 [ line::x1#3 line::x#2 screen#10 ] main:0::line:3 [ line::x1#3 line::x#2 screen#10 ] ) always clobbers reg byte y 
 Removing always clobbered register reg byte y as potential for zp ZP_BYTE:2 [ line::x1#3 ]
 Removing always clobbered register reg byte y as potential for zp ZP_BYTE:3 [ line::x#2 line::x#0 line::x#1 ]
-Statement [7] *((byte*) screen#10) ← (byte) line::x#2 [ line::x1#3 line::x#2 screen#10 ] always clobbers reg byte y 
+Statement [7] *((byte*) screen#10) ← (byte) line::x#2 [ line::x1#3 line::x#2 screen#10 ] ( main:0::line:2 [ line::x1#3 line::x#2 screen#10 ] main:0::line:3 [ line::x1#3 line::x#2 screen#10 ] ) always clobbers reg byte y 
 Potential registers zp ZP_BYTE:2 [ line::x1#3 ] : zp ZP_BYTE:2 , reg byte a , reg byte x , 
 Potential registers zp ZP_BYTE:3 [ line::x#2 line::x#0 line::x#1 ] : zp ZP_BYTE:3 , reg byte a , reg byte x , 
 Potential registers zp ZP_PTR_BYTE:4 [ screen#10 screen#14 screen#1 ] : zp ZP_PTR_BYTE:4 , 
@@ -982,7 +1016,7 @@ ASSEMBLER
 bbegin:
 //SEG3 @2
 b2:
-//SEG4 [0] call main param-assignment [ ]
+//SEG4 [0] call main param-assignment [ ] ( )
 //SEG5 [1] phi from @2 to main [phi:@2->main]
 main_from_b2:
   jsr main
@@ -990,7 +1024,7 @@ main_from_b2:
 bend:
 //SEG7 main
 main: {
-  //SEG8 [2] call line param-assignment [ ]
+  //SEG8 [2] call line param-assignment [ ] ( main:0 [ ] )
   //SEG9 [5] phi from main to line [phi:main->line]
   line_from_main:
   //SEG10 [5] phi (byte) line::x1#3 = (byte) 2 [phi:main->line#0] -- zpby1=coby1 
@@ -1006,7 +1040,7 @@ main: {
     jsr line
   //SEG13 main::@1
   b1:
-  //SEG14 [3] call line param-assignment [ ]
+  //SEG14 [3] call line param-assignment [ ] ( main:0 [ ] )
   //SEG15 [5] phi from main::@1 to line [phi:main::@1->line]
   line_from_b1:
   //SEG16 [5] phi (byte) line::x1#3 = (byte) 5 [phi:main::@1->line#0] -- zpby1=coby1 
@@ -1018,7 +1052,7 @@ main: {
     jsr line
   //SEG19 main::@return
   breturn:
-  //SEG20 [4] return  [ ]
+  //SEG20 [4] return  [ ] ( main:0 [ ] )
     rts
 }
 //SEG21 line
@@ -1031,23 +1065,23 @@ line: {
   //SEG24 [6] phi (byte) line::x#2 = (byte) line::x#0 [phi:line/line::@1->line::@1#1] -- register_copy 
   //SEG25 line::@1
   b1:
-  //SEG26 [7] *((byte*) screen#10) ← (byte) line::x#2 [ line::x1#3 line::x#2 screen#10 ] -- _star_zpptrby1=xby 
+  //SEG26 [7] *((byte*) screen#10) ← (byte) line::x#2 [ line::x1#3 line::x#2 screen#10 ] ( main:0::line:2 [ line::x1#3 line::x#2 screen#10 ] main:0::line:3 [ line::x1#3 line::x#2 screen#10 ] ) -- _star_zpptrby1=xby 
     txa
     ldy #0
     sta (screen),y
-  //SEG27 [8] (byte*) screen#1 ← ++ (byte*) screen#10 [ line::x1#3 line::x#2 screen#1 ] -- zpptrby1=_inc_zpptrby1 
+  //SEG27 [8] (byte*) screen#1 ← ++ (byte*) screen#10 [ line::x1#3 line::x#2 screen#1 ] ( main:0::line:2 [ line::x1#3 line::x#2 screen#1 ] main:0::line:3 [ line::x1#3 line::x#2 screen#1 ] ) -- zpptrby1=_inc_zpptrby1 
     inc screen
     bne !+
     inc screen+1
   !:
-  //SEG28 [9] (byte) line::x#1 ← ++ (byte) line::x#2 [ line::x1#3 line::x#1 screen#1 ] -- xby=_inc_xby 
+  //SEG28 [9] (byte) line::x#1 ← ++ (byte) line::x#2 [ line::x1#3 line::x#1 screen#1 ] ( main:0::line:2 [ line::x1#3 line::x#1 screen#1 ] main:0::line:3 [ line::x1#3 line::x#1 screen#1 ] ) -- xby=_inc_xby 
     inx
-  //SEG29 [10] if((byte) line::x#1<(byte) line::x1#3) goto line::@1 [ line::x1#3 line::x#1 screen#1 ] -- xby_lt_zpby1_then_la1 
+  //SEG29 [10] if((byte) line::x#1<(byte) line::x1#3) goto line::@1 [ line::x1#3 line::x#1 screen#1 ] ( main:0::line:2 [ line::x1#3 line::x#1 screen#1 ] main:0::line:3 [ line::x1#3 line::x#1 screen#1 ] ) -- xby_lt_zpby1_then_la1 
     cpx x1
     bcc b1_from_b1
   //SEG30 line::@return
   breturn:
-  //SEG31 [11] return  [ ]
+  //SEG31 [11] return  [ ] ( main:0::line:2 [ ] main:0::line:3 [ ] )
     rts
 }
 
@@ -1068,14 +1102,14 @@ ASSEMBLER
 //SEG2 @begin
 //SEG3 @2
 b2:
-//SEG4 [0] call main param-assignment [ ]
+//SEG4 [0] call main param-assignment [ ] ( )
 //SEG5 [1] phi from @2 to main [phi:@2->main]
   jsr main
 //SEG6 @end
 bend:
 //SEG7 main
 main: {
-  //SEG8 [2] call line param-assignment [ ]
+  //SEG8 [2] call line param-assignment [ ] ( main:0 [ ] )
   //SEG9 [5] phi from main to line [phi:main->line]
   line_from_main:
   //SEG10 [5] phi (byte) line::x1#3 = (byte) 2 [phi:main->line#0] -- zpby1=coby1 
@@ -1091,7 +1125,7 @@ main: {
     jsr line
   //SEG13 main::@1
   b1:
-  //SEG14 [3] call line param-assignment [ ]
+  //SEG14 [3] call line param-assignment [ ] ( main:0 [ ] )
   //SEG15 [5] phi from main::@1 to line [phi:main::@1->line]
   //SEG16 [5] phi (byte) line::x1#3 = (byte) 5 [phi:main::@1->line#0] -- zpby1=coby1 
     lda #5
@@ -1102,7 +1136,7 @@ main: {
     jsr line
   //SEG19 main::@return
   breturn:
-  //SEG20 [4] return  [ ]
+  //SEG20 [4] return  [ ] ( main:0 [ ] )
     rts
 }
 //SEG21 line
@@ -1113,23 +1147,23 @@ line: {
   //SEG24 [6] phi (byte) line::x#2 = (byte) line::x#0 [phi:line/line::@1->line::@1#1] -- register_copy 
   //SEG25 line::@1
   b1:
-  //SEG26 [7] *((byte*) screen#10) ← (byte) line::x#2 [ line::x1#3 line::x#2 screen#10 ] -- _star_zpptrby1=xby 
+  //SEG26 [7] *((byte*) screen#10) ← (byte) line::x#2 [ line::x1#3 line::x#2 screen#10 ] ( main:0::line:2 [ line::x1#3 line::x#2 screen#10 ] main:0::line:3 [ line::x1#3 line::x#2 screen#10 ] ) -- _star_zpptrby1=xby 
     txa
     ldy #0
     sta (screen),y
-  //SEG27 [8] (byte*) screen#1 ← ++ (byte*) screen#10 [ line::x1#3 line::x#2 screen#1 ] -- zpptrby1=_inc_zpptrby1 
+  //SEG27 [8] (byte*) screen#1 ← ++ (byte*) screen#10 [ line::x1#3 line::x#2 screen#1 ] ( main:0::line:2 [ line::x1#3 line::x#2 screen#1 ] main:0::line:3 [ line::x1#3 line::x#2 screen#1 ] ) -- zpptrby1=_inc_zpptrby1 
     inc screen
     bne !+
     inc screen+1
   !:
-  //SEG28 [9] (byte) line::x#1 ← ++ (byte) line::x#2 [ line::x1#3 line::x#1 screen#1 ] -- xby=_inc_xby 
+  //SEG28 [9] (byte) line::x#1 ← ++ (byte) line::x#2 [ line::x1#3 line::x#1 screen#1 ] ( main:0::line:2 [ line::x1#3 line::x#1 screen#1 ] main:0::line:3 [ line::x1#3 line::x#1 screen#1 ] ) -- xby=_inc_xby 
     inx
-  //SEG29 [10] if((byte) line::x#1<(byte) line::x1#3) goto line::@1 [ line::x1#3 line::x#1 screen#1 ] -- xby_lt_zpby1_then_la1 
+  //SEG29 [10] if((byte) line::x#1<(byte) line::x1#3) goto line::@1 [ line::x1#3 line::x#1 screen#1 ] ( main:0::line:2 [ line::x1#3 line::x#1 screen#1 ] main:0::line:3 [ line::x1#3 line::x#1 screen#1 ] ) -- xby_lt_zpby1_then_la1 
     cpx x1
     bcc b1
   //SEG30 line::@return
   breturn:
-  //SEG31 [11] return  [ ]
+  //SEG31 [11] return  [ ] ( main:0::line:2 [ ] main:0::line:3 [ ] )
     rts
 }
 
@@ -1149,13 +1183,13 @@ ASSEMBLER
   .label screen = 3
 //SEG2 @begin
 //SEG3 @2
-//SEG4 [0] call main param-assignment [ ]
+//SEG4 [0] call main param-assignment [ ] ( )
 //SEG5 [1] phi from @2 to main [phi:@2->main]
   jsr main
 //SEG6 @end
 //SEG7 main
 main: {
-  //SEG8 [2] call line param-assignment [ ]
+  //SEG8 [2] call line param-assignment [ ] ( main:0 [ ] )
   //SEG9 [5] phi from main to line [phi:main->line]
   //SEG10 [5] phi (byte) line::x1#3 = (byte) 2 [phi:main->line#0] -- zpby1=coby1 
     lda #2
@@ -1169,7 +1203,7 @@ main: {
     ldx #1
     jsr line
   //SEG13 main::@1
-  //SEG14 [3] call line param-assignment [ ]
+  //SEG14 [3] call line param-assignment [ ] ( main:0 [ ] )
   //SEG15 [5] phi from main::@1 to line [phi:main::@1->line]
   //SEG16 [5] phi (byte) line::x1#3 = (byte) 5 [phi:main::@1->line#0] -- zpby1=coby1 
     lda #5
@@ -1179,7 +1213,7 @@ main: {
     ldx #3
     jsr line
   //SEG19 main::@return
-  //SEG20 [4] return  [ ]
+  //SEG20 [4] return  [ ] ( main:0 [ ] )
     rts
 }
 //SEG21 line
@@ -1190,22 +1224,22 @@ line: {
   //SEG24 [6] phi (byte) line::x#2 = (byte) line::x#0 [phi:line/line::@1->line::@1#1] -- register_copy 
   //SEG25 line::@1
   b1:
-  //SEG26 [7] *((byte*) screen#10) ← (byte) line::x#2 [ line::x1#3 line::x#2 screen#10 ] -- _star_zpptrby1=xby 
+  //SEG26 [7] *((byte*) screen#10) ← (byte) line::x#2 [ line::x1#3 line::x#2 screen#10 ] ( main:0::line:2 [ line::x1#3 line::x#2 screen#10 ] main:0::line:3 [ line::x1#3 line::x#2 screen#10 ] ) -- _star_zpptrby1=xby 
     txa
     ldy #0
     sta (screen),y
-  //SEG27 [8] (byte*) screen#1 ← ++ (byte*) screen#10 [ line::x1#3 line::x#2 screen#1 ] -- zpptrby1=_inc_zpptrby1 
+  //SEG27 [8] (byte*) screen#1 ← ++ (byte*) screen#10 [ line::x1#3 line::x#2 screen#1 ] ( main:0::line:2 [ line::x1#3 line::x#2 screen#1 ] main:0::line:3 [ line::x1#3 line::x#2 screen#1 ] ) -- zpptrby1=_inc_zpptrby1 
     inc screen
     bne !+
     inc screen+1
   !:
-  //SEG28 [9] (byte) line::x#1 ← ++ (byte) line::x#2 [ line::x1#3 line::x#1 screen#1 ] -- xby=_inc_xby 
+  //SEG28 [9] (byte) line::x#1 ← ++ (byte) line::x#2 [ line::x1#3 line::x#1 screen#1 ] ( main:0::line:2 [ line::x1#3 line::x#1 screen#1 ] main:0::line:3 [ line::x1#3 line::x#1 screen#1 ] ) -- xby=_inc_xby 
     inx
-  //SEG29 [10] if((byte) line::x#1<(byte) line::x1#3) goto line::@1 [ line::x1#3 line::x#1 screen#1 ] -- xby_lt_zpby1_then_la1 
+  //SEG29 [10] if((byte) line::x#1<(byte) line::x1#3) goto line::@1 [ line::x1#3 line::x#1 screen#1 ] ( main:0::line:2 [ line::x1#3 line::x#1 screen#1 ] main:0::line:3 [ line::x1#3 line::x#1 screen#1 ] ) -- xby_lt_zpby1_then_la1 
     cpx x1
     bcc b1
   //SEG30 line::@return
-  //SEG31 [11] return  [ ]
+  //SEG31 [11] return  [ ] ( main:0::line:2 [ ] main:0::line:3 [ ] )
     rts
 }
 
@@ -1244,13 +1278,13 @@ FINAL CODE
   .label screen = 3
 //SEG2 @begin
 //SEG3 @2
-//SEG4 [0] call main param-assignment [ ]
+//SEG4 [0] call main param-assignment [ ] ( )
 //SEG5 [1] phi from @2 to main [phi:@2->main]
   jsr main
 //SEG6 @end
 //SEG7 main
 main: {
-  //SEG8 [2] call line param-assignment [ ]
+  //SEG8 [2] call line param-assignment [ ] ( main:0 [ ] )
   //SEG9 [5] phi from main to line [phi:main->line]
   //SEG10 [5] phi (byte) line::x1#3 = (byte) 2 [phi:main->line#0] -- zpby1=coby1 
     lda #2
@@ -1264,7 +1298,7 @@ main: {
     ldx #1
     jsr line
   //SEG13 main::@1
-  //SEG14 [3] call line param-assignment [ ]
+  //SEG14 [3] call line param-assignment [ ] ( main:0 [ ] )
   //SEG15 [5] phi from main::@1 to line [phi:main::@1->line]
   //SEG16 [5] phi (byte) line::x1#3 = (byte) 5 [phi:main::@1->line#0] -- zpby1=coby1 
     lda #5
@@ -1274,7 +1308,7 @@ main: {
     ldx #3
     jsr line
   //SEG19 main::@return
-  //SEG20 [4] return  [ ]
+  //SEG20 [4] return  [ ] ( main:0 [ ] )
     rts
 }
 //SEG21 line
@@ -1285,22 +1319,22 @@ line: {
   //SEG24 [6] phi (byte) line::x#2 = (byte) line::x#0 [phi:line/line::@1->line::@1#1] -- register_copy 
   //SEG25 line::@1
   b1:
-  //SEG26 [7] *((byte*) screen#10) ← (byte) line::x#2 [ line::x1#3 line::x#2 screen#10 ] -- _star_zpptrby1=xby 
+  //SEG26 [7] *((byte*) screen#10) ← (byte) line::x#2 [ line::x1#3 line::x#2 screen#10 ] ( main:0::line:2 [ line::x1#3 line::x#2 screen#10 ] main:0::line:3 [ line::x1#3 line::x#2 screen#10 ] ) -- _star_zpptrby1=xby 
     txa
     ldy #0
     sta (screen),y
-  //SEG27 [8] (byte*) screen#1 ← ++ (byte*) screen#10 [ line::x1#3 line::x#2 screen#1 ] -- zpptrby1=_inc_zpptrby1 
+  //SEG27 [8] (byte*) screen#1 ← ++ (byte*) screen#10 [ line::x1#3 line::x#2 screen#1 ] ( main:0::line:2 [ line::x1#3 line::x#2 screen#1 ] main:0::line:3 [ line::x1#3 line::x#2 screen#1 ] ) -- zpptrby1=_inc_zpptrby1 
     inc screen
     bne !+
     inc screen+1
   !:
-  //SEG28 [9] (byte) line::x#1 ← ++ (byte) line::x#2 [ line::x1#3 line::x#1 screen#1 ] -- xby=_inc_xby 
+  //SEG28 [9] (byte) line::x#1 ← ++ (byte) line::x#2 [ line::x1#3 line::x#1 screen#1 ] ( main:0::line:2 [ line::x1#3 line::x#1 screen#1 ] main:0::line:3 [ line::x1#3 line::x#1 screen#1 ] ) -- xby=_inc_xby 
     inx
-  //SEG29 [10] if((byte) line::x#1<(byte) line::x1#3) goto line::@1 [ line::x1#3 line::x#1 screen#1 ] -- xby_lt_zpby1_then_la1 
+  //SEG29 [10] if((byte) line::x#1<(byte) line::x1#3) goto line::@1 [ line::x1#3 line::x#1 screen#1 ] ( main:0::line:2 [ line::x1#3 line::x#1 screen#1 ] main:0::line:3 [ line::x1#3 line::x#1 screen#1 ] ) -- xby_lt_zpby1_then_la1 
     cpx x1
     bcc b1
   //SEG30 line::@return
-  //SEG31 [11] return  [ ]
+  //SEG31 [11] return  [ ] ( main:0::line:2 [ ] main:0::line:3 [ ] )
     rts
 }
 

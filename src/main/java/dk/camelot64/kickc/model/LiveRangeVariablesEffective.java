@@ -29,9 +29,9 @@ public class LiveRangeVariablesEffective {
    /**
     * Information about which procedures reference which variables.
     */
-   private VariableReferenceInfo referenceInfo;
+   private VariableReferenceInfos referenceInfo;
 
-   public LiveRangeVariablesEffective(Program program, Map<ProcedureRef, CallPaths> procedureCallPaths, LiveRangeVariables liveRangeVariables, VariableReferenceInfo referenceInfo) {
+   public LiveRangeVariablesEffective(Program program, Map<ProcedureRef, CallPaths> procedureCallPaths, LiveRangeVariables liveRangeVariables, VariableReferenceInfos referenceInfo) {
       this.program = program;
       this.procedureCallPaths = procedureCallPaths;
       this.liveRangeVariables = liveRangeVariables;

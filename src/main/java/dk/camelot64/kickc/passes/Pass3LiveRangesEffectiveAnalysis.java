@@ -22,7 +22,7 @@ public class Pass3LiveRangesEffectiveAnalysis extends Pass2Base {
    /**
     * Information about which procedures reference which variables.
     */
-   private VariableReferenceInfo referenceInfo;
+   private VariableReferenceInfos referenceInfo;
 
 
    public Pass3LiveRangesEffectiveAnalysis(Program program) {
@@ -31,7 +31,7 @@ public class Pass3LiveRangesEffectiveAnalysis extends Pass2Base {
 
    public void findLiveRangesEffective() {
       this.liveRangeVariables = getProgram().getLiveRangeVariables();
-      this.referenceInfo = new VariableReferenceInfo(getProgram());
+      this.referenceInfo = getProgram().getVariableReferenceInfos();
       this.procedureCallPaths = new LinkedHashMap<>();
       populateProcedureCallPaths();
       LiveRangeVariablesEffective aliveEffective = new LiveRangeVariablesEffective(getProgram(), procedureCallPaths, liveRangeVariables, referenceInfo);

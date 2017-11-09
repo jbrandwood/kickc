@@ -51,7 +51,7 @@ public class Pass3LiveRangesAnalysis extends Pass2Base {
     * @return true if any live ranges was modified. false if no modification was performed (and the propagation is complete)
     */
    private boolean calculateLiveRanges(LiveRangeVariables liveRanges) {
-      VariableReferenceInfo referenceInfo = new VariableReferenceInfo(getProgram());
+      VariableReferenceInfos referenceInfo = getProgram().getVariableReferenceInfos();
       boolean modified = false;
       for (ControlFlowBlock block : getProgram().getGraph().getAllBlocks()) {
          for (Statement stmt : block.getStatements()) {
@@ -147,7 +147,7 @@ public class Pass3LiveRangesAnalysis extends Pass2Base {
          Statement stmt,
          PreviousStatement previousStmt) {
       boolean modified = false;
-      VariableReferenceInfo referenceInfo = new VariableReferenceInfo(getProgram());
+      VariableReferenceInfos referenceInfo = getProgram().getVariableReferenceInfos();
       Collection<VariableRef> usedNextStmt = referenceInfo.getUsed(stmt);
       if (stmt instanceof StatementPhiBlock) {
          // If current statement is a phi add the used variables to previous based on the phi entries

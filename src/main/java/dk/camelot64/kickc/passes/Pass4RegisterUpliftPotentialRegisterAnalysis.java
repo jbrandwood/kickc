@@ -32,7 +32,7 @@ public class Pass4RegisterUpliftPotentialRegisterAnalysis extends Pass2Base {
 
       RegisterPotentials registerPotentials = getProgram().getRegisterPotentials();
 
-      VariableReferenceInfo referenceInfo = new VariableReferenceInfo(getProgram());
+      VariableReferenceInfos referenceInfo = getProgram().getVariableReferenceInfos();
       for (ControlFlowBlock block : getProgram().getGraph().getAllBlocks()) {
          for (Statement statement : block.getStatements()) {
 

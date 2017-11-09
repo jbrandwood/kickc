@@ -27,6 +27,8 @@ public class Program {
    /** Information about loops. */
    private NaturalLoopSet loopSet;
 
+   /** The variables freferenced by blocks/statements. */
+   private VariableReferenceInfos variableReferenceInfos;
    /** The live ranges of all variables. */
    private LiveRangeVariables liveRangeVariables;
    /** Live range equivalence classes containing variables that do not have overlapping live ranges. */
@@ -109,6 +111,14 @@ public class Program {
 
    public NaturalLoopSet getLoopSet() {
       return loopSet;
+   }
+
+   public VariableReferenceInfos getVariableReferenceInfos() {
+      return variableReferenceInfos;
+   }
+
+   public void setVariableReferenceInfos(VariableReferenceInfos variableReferenceInfos) {
+      this.variableReferenceInfos = variableReferenceInfos;
    }
 
    public void setLiveRangeVariables(LiveRangeVariables liveRangeVariables) {

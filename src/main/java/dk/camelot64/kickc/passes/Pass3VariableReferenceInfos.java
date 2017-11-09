@@ -1,37 +1,36 @@
-package dk.camelot64.kickc.model;
+package dk.camelot64.kickc.passes;
+
+import dk.camelot64.kickc.model.*;
 
 import java.util.*;
 
-/** Information about variable referenced/used/defined in statements/blocks */
-public class VariableReferenceInfo {
+/**
+ * Identify variables defined/referenced for each block & statement.
+ */
+public class Pass3VariableReferenceInfos extends Pass2Base {
 
-   private Program program;
-
-   public VariableReferenceInfo(Program program) {
-      this.program = program;
+   public Pass3VariableReferenceInfos(Program program) {
+      super(program);
    }
 
-   public Program getProgram() {
-      return program;
+   /** Create defined/referenced maps */
+   public void generateVariableReferenceInfos() {
+      LinkedHashMap<LabelRef, Collection<VariableRef>> blockReferenced = new LinkedHashMap<>();
+      LinkedHashMap<LabelRef, Collection<VariableRef>> blockUsed = new LinkedHashMap<>();
+      LinkedHashMap<Integer, Collection<VariableRef>> stmtReferenced = new LinkedHashMap<>();
+      LinkedHashMap<Integer, Collection<VariableRef>> stmtDefined = new LinkedHashMap<>();
+      for (ControlFlowBlock block : getProgram().getGraph().getAllBlocks()) {
+         LabelRef blockLabel = block.getLabel();
+         blockReferenced.put(blockLabel, getReferenced(blockLabel, new ArrayList<LabelRef>()));
+         blockUsed.put(blockLabel, getUsed(blockLabel, new ArrayList<LabelRef>()));
+         for (Statement statement : block.getStatements()) {
+            stmtDefined.put(statement.getIndex(), getDefined(statement));
+            stmtReferenced.put(statement.getIndex(), getReferenced(statement));
+         }
+      }
+      getProgram().setVariableReferenceInfos(new VariableReferenceInfos(blockReferenced, blockUsed, stmtReferenced, stmtDefined));
    }
 
-   /**
-    * Get all variables used or defined inside a block and its successors (including any called method)
-    * @param labelRef The block to examine
-    * @return All used variables
-    */
-   public Collection<VariableRef> getReferenced(LabelRef labelRef) {
-      return getReferenced(labelRef, new ArrayList<LabelRef>());
-   }
-
-   /**
-    * Get all variables used inside a block and its successors (including any called method)
-    * @param labelRef The block to examine
-    * @return All used variables
-    */
-   public Collection<VariableRef> getUsed(LabelRef labelRef) {
-      return getUsed(labelRef, new ArrayList<LabelRef>());
-   }
 
    /**
     * Get all variables used inside a block and its successors (including any called method)
@@ -100,7 +99,7 @@ public class VariableReferenceInfo {
     * @param stmt The statement
     * @return Variables defined by the statement
     */
-   public Collection<VariableRef> getDefined(Statement stmt) {
+   private Collection<VariableRef> getDefined(Statement stmt) {
       if (stmt instanceof StatementAssignment) {
          StatementAssignment assignment = (StatementAssignment) stmt;
          LValue lValue = assignment.getlValue();
@@ -123,7 +122,7 @@ public class VariableReferenceInfo {
     * @param statement The statement to examine
     * @return The used variables (not including defined variables)
     */
-   public Collection<VariableRef> getUsed(Statement statement) {
+   private  Collection<VariableRef> getUsed(Statement statement) {
       LinkedHashSet<VariableRef> used = new LinkedHashSet<>();
       used.addAll(getReferenced(statement));
       used.removeAll(getDefined(statement));
@@ -135,7 +134,7 @@ public class VariableReferenceInfo {
     * @param statement The statement to examine
     * @return The referenced variables
     */
-   public Collection<VariableRef> getReferenced(Statement statement) {
+   private  Collection<VariableRef> getReferenced(Statement statement) {
       LinkedHashSet<VariableRef> referenced = new LinkedHashSet<>();
       if (statement instanceof StatementPhiBlock) {
          StatementPhiBlock phiBlock = (StatementPhiBlock) statement;
@@ -196,6 +195,7 @@ public class VariableReferenceInfo {
          throw new RuntimeException("Unhandled RValue type " + rValue);
       }
    }
+
 
 
 }

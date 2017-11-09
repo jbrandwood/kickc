@@ -244,7 +244,7 @@ public class Compiler {
       new Pass4RegistersFinalize(program).allocate(true);
 
       // Initial Code generation
-      new Pass4CodeGeneration(program).generate();
+      new Pass4CodeGeneration(program, true).generate();
       new Pass4AssertNoCpuClobber(program).check();
       program.getLog().append("INITIAL ASM");
       program.getLog().append(program.getAsm().toString());
@@ -284,7 +284,7 @@ public class Compiler {
    public void pass5GenerateAndOptimizeAsm(Program program) {
 
       // Final ASM code generation before optimization
-      new Pass4CodeGeneration(program).generate();
+      new Pass4CodeGeneration(program, true).generate();
       new Pass4AssertNoCpuClobber(program).check();
 
       List<Pass5AsmOptimization> pass5Optimizations = new ArrayList<>();

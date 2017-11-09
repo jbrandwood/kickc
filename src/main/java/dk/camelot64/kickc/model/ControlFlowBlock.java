@@ -136,7 +136,7 @@ public class ControlFlowBlock {
       }
       out.append("\n");
       for (Statement statement : statements) {
-         out.append("  " + statement.toString(program) + "\n");
+         out.append("  " + statement.toString(program, true) + "\n");
       }
       if (defaultSuccessor != null) {
          out.append("  to:");

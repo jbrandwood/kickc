@@ -17,7 +17,7 @@ public class StatementProcedureEnd extends StatementBase {
    }
 
    @Override
-   public String toString(Program program) {
-      return super.idxString() + "endproc // " + procedure.getFullName() + "()"+super.aliveString(program);
+   public String toString(Program program, boolean aliveInfo) {
+      return super.idxString() + "endproc // " + procedure.getFullName() + "()"+(aliveInfo?super.aliveString(program):"");
    }
 }

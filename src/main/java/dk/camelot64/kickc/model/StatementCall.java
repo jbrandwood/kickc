@@ -97,7 +97,7 @@ public class StatementCall extends StatementBase implements StatementLValue {
    }
 
    @Override
-   public String toString(Program program) {
+   public String toString(Program program, boolean aliveInfo) {
       StringBuilder res = new StringBuilder();
       res.append(super.idxString());
       if (lValue != null) {
@@ -118,7 +118,9 @@ public class StatementCall extends StatementBase implements StatementLValue {
       if (parametersByAssignment) {
          res.append("param-assignment");
       }
-      res.append(super.aliveString(program));
+      if(aliveInfo) {
+         res.append(super.aliveString(program));
+      }
       return res.toString();
    }
 

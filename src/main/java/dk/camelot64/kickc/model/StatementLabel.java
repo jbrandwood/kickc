@@ -17,8 +17,8 @@ public class StatementLabel extends StatementBase {
    }
 
    @Override
-   public String toString(Program program) {
-      return super.idxString() + label.getFullName() + ":"+super.aliveString(program);
+   public String toString(Program program, boolean aliveInfo) {
+      return super.idxString() + label.getFullName() + ":"+(aliveInfo?super.aliveString(program):"");
    }
 
 }

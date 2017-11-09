@@ -5,8 +5,6 @@ import dk.camelot64.kickc.fragment.AsmFragment;
 import dk.camelot64.kickc.fragment.AsmFragmentManager;
 import dk.camelot64.kickc.fragment.AsmFragmentSignature;
 import dk.camelot64.kickc.model.*;
-import dk.camelot64.kickc.parser.KickCParser;
-import org.antlr.v4.runtime.CharStreams;
 
 import java.util.*;
 
@@ -17,8 +15,12 @@ public class Pass4CodeGeneration {
 
    private Program program;
 
-   public Pass4CodeGeneration(Program program) {
+   /** Should the generated ASM contain verbose alive info for the statements (costs a bit more to generate). */
+   boolean verboseAliveInfo;
+
+   public Pass4CodeGeneration(Program program, boolean verboseAliveInfo) {
       this.program = program;
+      this.verboseAliveInfo = verboseAliveInfo;
    }
 
    ControlFlowGraph getGraph() {
@@ -193,7 +195,7 @@ public class Pass4CodeGeneration {
     */
    public void generateStatementAsm(AsmProgram asm, ControlFlowBlock block, Statement statement, AsmCodegenAluState aluState, boolean genCallPhiEntry) {
 
-      asm.startSegment(statement.getIndex(), statement.toString(program));
+      asm.startSegment(statement.getIndex(), statement.toString(program, verboseAliveInfo));
 
       // IF the previous statement was added to the ALU register - generate the composite ASM fragment
       if (aluState.hasAluAssignment()) {

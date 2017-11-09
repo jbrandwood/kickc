@@ -622,7 +622,7 @@ public class Pass1GenerateStatementSequence extends KickCBaseVisitor<Object> {
          for (PrePostModifier mod : modifiers) {
             Statement stmt = new StatementAssignment((LValue) mod.child, mod.operator, mod.child);
             parser.sequence.addStatement(stmt);
-            parser.program.getLog().append("Adding pre/post-modifier "+stmt.toString(parser.program));
+            parser.program.getLog().append("Adding pre/post-modifier "+stmt.toString(parser.program, true));
          }
       }
 

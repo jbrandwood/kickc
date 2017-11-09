@@ -26,7 +26,7 @@ public class StatementSequence {
          if(!(statement instanceof StatementLabel) && !(statement instanceof StatementProcedureBegin) && !(statement instanceof StatementProcedureEnd)) {
             out.append("  ");
          }
-         out.append(statement.toString(program)+"\n");
+         out.append(statement.toString(program, true)+"\n");
       }
       return out.toString();
    }

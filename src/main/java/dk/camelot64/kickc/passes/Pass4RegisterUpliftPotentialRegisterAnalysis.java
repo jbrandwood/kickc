@@ -69,7 +69,7 @@ public class Pass4RegisterUpliftPotentialRegisterAnalysis extends Pass2Base {
                continue;
             } else {
                StringBuilder msg = new StringBuilder();
-               msg.append("Statement ").append(statement.toString(getProgram()));
+               msg.append("Statement ").append(statement.toString(getProgram(), true));
                msg.append(" always clobbers ");
                for (Registers.Register register : alwaysClobbered) {
                   msg.append(register).append(" ");
@@ -132,10 +132,10 @@ public class Pass4RegisterUpliftPotentialRegisterAnalysis extends Pass2Base {
          combination.allocate(getProgram().getScope());
          // Generate ASM
          AsmProgram asm = new AsmProgram();
-         asm.startSegment(statement.getIndex(), statement.toString(getProgram()));
+         asm.startSegment(statement.getIndex(), statement.toString(getProgram(), true));
          Pass4CodeGeneration.AsmCodegenAluState aluState = new Pass4CodeGeneration.AsmCodegenAluState();
          try {
-            (new Pass4CodeGeneration(getProgram())).generateStatementAsm(asm, block, statement, aluState, false);
+            (new Pass4CodeGeneration(getProgram(), false)).generateStatementAsm(asm, block, statement, aluState, false);
          } catch (AsmFragmentManager.UnknownFragmentException e) {
             unknownFragments.add(e.getFragmentSignature());
             StringBuilder msg = new StringBuilder();

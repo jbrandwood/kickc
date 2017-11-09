@@ -63,14 +63,16 @@ public class StatementPhiBlock extends StatementBase {
    }
 
    @Override
-   public String toString(Program program) {
+   public String toString(Program program, boolean aliveInfo) {
       StringBuilder s = new StringBuilder();
       List<PhiVariable> variables = new ArrayList<>(phiVariables);
       Collections.reverse(variables);
       if(phiVariables.size()==0) {
          s.append(super.idxString());
          s.append("phi()");
-         s.append(super.aliveString(program));
+         if(aliveInfo) {
+            s.append(super.aliveString(program));
+         }
          s.append("\n  ");
       }
       for (PhiVariable phiVariable : variables) {
@@ -85,7 +87,9 @@ public class StatementPhiBlock extends StatementBase {
             s.append(rValue==null?"null":rValue.toString(program));
          }
          s.append(" )");
-         s.append(super.aliveString(program));
+         if(aliveInfo) {
+            s.append(super.aliveString(program));
+         }
          s.append("\n  ");
       }
       if(s.length()>0) {

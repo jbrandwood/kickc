@@ -127,7 +127,7 @@ public class Pass4RegisterUpliftCombinations extends Pass2Base {
       }
       // Generate ASM
       try {
-         new Pass4CodeGeneration(program).generate();
+         new Pass4CodeGeneration(program, false).generate();
       } catch (AsmFragmentManager.UnknownFragmentException e) {
          unknownFragments.add(e.getFragmentSignature());
          if (program.getLog().isVerboseUplift()) {
@@ -240,7 +240,7 @@ public class Pass4RegisterUpliftCombinations extends Pass2Base {
                if(overlap) {
                   if (program.getLog().isVerboseUplift()) {
                      StringBuilder msg = new StringBuilder();
-                     msg.append("Overlap register " + allocation + " in " + statement.toString(program));
+                     msg.append("Overlap register " + allocation + " in " + statement.toString(program, true));
                      program.getLog().append(msg.toString());
                   }
                   return true;

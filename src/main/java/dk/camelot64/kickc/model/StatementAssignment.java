@@ -90,18 +90,18 @@ public class StatementAssignment extends StatementBase implements StatementLValu
 
    @Override
    public String toString() {
-      return toString(null);
+      return toString(null, true);
    }
 
    @Override
-   public String toString(Program program) {
+   public String toString(Program program, boolean aliveInfo) {
       return
             super.idxString() +
             lValue.toString(program) + " ← " +
                   (rValue1==null?"":rValue1.toString(program)+" ") +
                   (operator==null?"":operator+" ") +
                   rValue2.toString(program) +
-            super.aliveString(program);
+                  (aliveInfo?super.aliveString(program):"");
    }
 
    @Override

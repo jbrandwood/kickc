@@ -35,8 +35,8 @@ public class StatementReturn extends StatementBase {
    }
 
    @Override
-   public String toString(Program program) {
-      return super.idxString() + "return " + (value == null ? "" : value.toString(program)) + super.aliveString(program);
+   public String toString(Program program, boolean aliveInfo) {
+      return super.idxString() + "return " + (value == null ? "" : value.toString(program)) + (aliveInfo?super.aliveString(program):"");
    }
 
    @Override

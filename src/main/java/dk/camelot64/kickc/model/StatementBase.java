@@ -41,7 +41,7 @@ public abstract class StatementBase implements Statement {
 
    @Override
    public String toString() {
-      return toString(null);
+      return toString(null, true);
    }
 
    public String aliveString(Program program) {

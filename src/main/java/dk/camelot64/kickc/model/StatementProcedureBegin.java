@@ -30,8 +30,8 @@ public class StatementProcedureBegin extends StatementBase {
    }
 
    @Override
-   public String toString(Program program) {
-      return super.idxString() + "proc " + procedure.toString(program) + super.aliveString(program);
+   public String toString(Program program, boolean aliveInfo) {
+      return super.idxString() + "proc " + procedure.toString(program) + (aliveInfo?super.aliveString(program):"");
    }
 
 }

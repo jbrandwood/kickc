@@ -14,7 +14,7 @@ public class StatementAsm extends StatementBase {
    }
 
    @Override
-   public String toString(Program program) {
+   public String toString(Program program, boolean aliveInfo) {
       return "asm { "+asmLines.getText()+" }";
    }
 

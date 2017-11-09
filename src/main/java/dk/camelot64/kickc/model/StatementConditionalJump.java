@@ -82,7 +82,7 @@ public class StatementConditionalJump extends StatementBase {
    }
 
    @Override
-   public String toString(Program program) {
+   public String toString(Program program, boolean aliveInfo) {
       StringBuilder out = new StringBuilder();
       out.append(super.idxString());
       out.append("if(");
@@ -93,7 +93,9 @@ public class StatementConditionalJump extends StatementBase {
       out.append(rValue2.toString(program));
       out.append(") goto ");
       out.append(destination.getFullName());
-      out.append(super.aliveString(program));
+      if(aliveInfo) {
+         out.append(super.aliveString(program));
+      }
       return out.toString();
    }
 

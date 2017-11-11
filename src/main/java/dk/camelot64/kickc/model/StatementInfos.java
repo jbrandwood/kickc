@@ -2,7 +2,7 @@ package dk.camelot64.kickc.model;
 
 import java.util.Map;
 
-/** Cached information about statements is a part of (which block they bloing to, statement from idx, ...) */
+/** Cached information about statements (which block they belong to, statement from idx, ...) */
 public class StatementInfos {
 
    /** The control flow graph. */

@@ -212,6 +212,7 @@ public class Compiler {
       new Pass3CallGraphAnalysis(program).findCallGraph();
       new Pass3StatementInfos(program).generateStatementInfos();
       new Pass3VariableReferenceInfos(program).generateVariableReferenceInfos();
+      new Pass3SymbolInfos(program).generateSymbolInfos();
       new Pass3LiveRangesAnalysis(program).findLiveRanges();
       program.getLog().append("CONTROL FLOW GRAPH - BEFORE EFFECTIVE LIVE RANGES");
       program.getLog().append(program.getGraph().toString(program));

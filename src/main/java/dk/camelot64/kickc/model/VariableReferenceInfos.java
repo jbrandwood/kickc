@@ -6,7 +6,7 @@ import java.util.Collection;
 import java.util.LinkedHashSet;
 import java.util.Map;
 
-/**  */
+/**  Cached information about which variables are defined/referenced/used in statements / blocks. */
 public class VariableReferenceInfos {
 
    /** Variables referenced in each block. */
@@ -39,7 +39,6 @@ public class VariableReferenceInfos {
     */
    public Collection<VariableRef> getReferenced(LabelRef labelRef) {
       return blockReferenced.get(labelRef);
-
    }
 
    /**

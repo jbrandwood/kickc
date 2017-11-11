@@ -43,6 +43,7 @@ public class Program {
    private RegisterPotentials registerPotentials;
    /** Separation of live range equivalence classes into scopes - used for register uplift */
    private RegisterUpliftProgram registerUpliftProgram;
+   private SymbolInfos symbolInfos;
 
    @JsonCreator
    public Program(
@@ -129,6 +130,14 @@ public class Program {
 
    public void setStatementInfos(StatementInfos statementInfos) {
       this.statementInfos = statementInfos;
+   }
+
+   public SymbolInfos getSymbolInfos() {
+      return symbolInfos;
+   }
+
+   public void setSymbolInfos(SymbolInfos symbolInfos) {
+      this.symbolInfos = symbolInfos;
    }
 
    public void setLiveRangeVariables(LiveRangeVariables liveRangeVariables) {

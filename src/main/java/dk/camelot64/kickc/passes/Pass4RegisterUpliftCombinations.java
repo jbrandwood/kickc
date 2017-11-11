@@ -223,7 +223,7 @@ public class Pass4RegisterUpliftCombinations extends Pass2Base {
          Collection<VariableRef> alive = aliveCombinations.getEffectiveAliveAtStmt(callPath);
          Pass2AliasElimination.Aliases callPathAliases = aliveCombinations.getEffectiveAliasesAtStmt(callPath);
          for (VariableRef varRef : alive) {
-            Variable var = programScope.getVariable(varRef);
+            Variable var = program.getSymbolInfos().getVariable(varRef);
             Registers.Register allocation = var.getAllocation();
             LiveRangeEquivalenceClass allocationClass = usedRegisters.get(allocation);
             if (allocationClass != null && !allocationClass.contains(varRef)) {

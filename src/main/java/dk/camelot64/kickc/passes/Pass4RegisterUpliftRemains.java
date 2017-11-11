@@ -30,7 +30,7 @@ public class Pass4RegisterUpliftRemains extends Pass2Base {
             getLog().append("Attempting to uplift remaining variables in"+equivalenceClass);
             RegisterCombinationIterator combinationIterator = new RegisterCombinationIterator(Arrays.asList(equivalenceClass), getProgram().getRegisterPotentials());
             VariableRef variableRef = equivalenceClass.getVariables().get(0);
-            Scope testedScope = getProgram().getScope().getVariable(variableRef).getScope();
+            Scope testedScope = getProgram().getSymbolInfos().getVariable(variableRef).getScope();
             Pass4RegisterUpliftCombinations.chooseBestUpliftCombination(combinationIterator, maxCombinations, unknownFragments, testedScope.getRef(), getProgram());
          }
       }

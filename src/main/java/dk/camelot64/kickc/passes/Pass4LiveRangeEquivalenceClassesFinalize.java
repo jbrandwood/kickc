@@ -68,8 +68,8 @@ public class Pass4LiveRangeEquivalenceClassesFinalize extends Pass2Base {
             for (VariableRef preference : preferences) {
                LiveRangeEquivalenceClass preferenceEquivalenceClass = liveRangeEquivalenceClassSet.getEquivalenceClass(preference);
                if (preferenceEquivalenceClass != null) {
-                  Variable potentialVariable = getProgram().getScope().getVariable(preference);
-                  Variable lValVariable = getProgram().getScope().getVariable(lValVar);
+                  Variable potentialVariable = getProgram().getSymbolInfos().getVariable(preference);
+                  Variable lValVariable = getProgram().getSymbolInfos().getVariable(lValVar);
                   if (lValVariable.getType().equals(potentialVariable.getType())) {
                      if (!lValLiveRange.overlaps(preferenceEquivalenceClass.getLiveRange())) {
                         chosen = preferenceEquivalenceClass;

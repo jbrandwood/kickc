@@ -47,9 +47,9 @@ public class Pass4ZeroPageCoalesce extends Pass2Base {
 
    private boolean canCoalesce(LiveRangeEquivalenceClass myEquivalenceClass, LiveRangeEquivalenceClass otherEquivalenceClass) {
       VariableRef myVariableRef = myEquivalenceClass.getVariables().get(0);
-      Variable myVariable = getProgram().getScope().getVariable(myVariableRef);
+      Variable myVariable = getProgram().getSymbolInfos().getVariable(myVariableRef);
       VariableRef otherVariableRef = otherEquivalenceClass.getVariables().get(0);
-      Variable otherVariable = getProgram().getScope().getVariable(otherVariableRef);
+      Variable otherVariable = getProgram().getSymbolInfos().getVariable(otherVariableRef);
       if (myVariable.getType().equals(otherVariable.getType())) {
          // Types match
          if (myEquivalenceClass.getRegister().isZp() && otherEquivalenceClass.getRegister().isZp()) {
@@ -59,7 +59,7 @@ public class Pass4ZeroPageCoalesce extends Pass2Base {
             getProgram().getLiveRangeEquivalenceClassSet().storeRegisterAllocation();
             // Try out the coalesce to test if it works
             for (VariableRef var : otherEquivalenceClass.getVariables()) {
-               Variable variable = getProgram().getScope().getVariable(var);
+               Variable variable = getProgram().getSymbolInfos().getVariable(var);
                variable.setAllocation(myEquivalenceClass.getRegister());
             }
             if(!Pass4RegisterUpliftCombinations.isAllocationOverlapping(getProgram())) {

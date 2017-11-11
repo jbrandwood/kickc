@@ -110,7 +110,7 @@ public class Pass4RegistersFinalize extends Pass2Base {
          if (register == null || register.isZp()) {
             String before = register == null ? null : register.toString();
             VariableRef variableRef = equivalenceClass.getVariables().get(0);
-            Variable variable = getProgram().getScope().getVariable(variableRef);
+            Variable variable = getProgram().getSymbolInfos().getVariable(variableRef);
             register = allocateNewRegisterZp(variable);
             equivalenceClass.setRegister(register);
             if (before == null || !before.equals(register.toString())) {

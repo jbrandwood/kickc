@@ -57,8 +57,8 @@ public class Pass3LiveRangesEffectiveAnalysis extends Pass2Base {
          for (CallGraph.CallBlock.Call caller : callers) {
             // Each caller creates its own call-paths
             StatementCall callStatement =
-                  (StatementCall) getProgram().getGraph().getStatementByIndex(caller.getCallStatementIdx());
-            ControlFlowBlock callBlock = getProgram().getStatementBlocks().getBlock(callStatement);
+                  (StatementCall) getProgram().getStatementInfos().getStatement(caller.getCallStatementIdx());
+            ControlFlowBlock callBlock = getProgram().getStatementInfos().getBlock(callStatement);
             ScopeRef callScopeRef = callBlock.getScope();
             Scope callScope = getProgram().getScope().getScope(callScopeRef);
             if (callScope instanceof Procedure) {

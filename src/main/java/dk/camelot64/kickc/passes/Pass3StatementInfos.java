@@ -8,23 +8,25 @@ import java.util.LinkedHashMap;
 /**
  * Identify the block for each statement.
  */
-public class Pass3StatementBlocks extends Pass2Base {
+public class Pass3StatementInfos extends Pass2Base {
 
-   public Pass3StatementBlocks(Program program) {
+   public Pass3StatementInfos(Program program) {
       super(program);
    }
 
    /**
     * Create map from statement index to block
     */
-   public void generateStatementBlocks() {
+   public void generateStatementInfos() {
       LinkedHashMap<Integer, LabelRef> stmtBlocks = new LinkedHashMap<>();
+      LinkedHashMap<Integer, Statement> stmtIdx = new LinkedHashMap<>();
       for (ControlFlowBlock block : getProgram().getGraph().getAllBlocks()) {
          for (Statement statement : block.getStatements()) {
             stmtBlocks.put(statement.getIndex(), block.getLabel());
+            stmtIdx.put(statement.getIndex(), statement);
          }
       }
-      getProgram().setStatementBlocks(new StatementBlocks(getProgram(), stmtBlocks));
+      getProgram().setStatementInfos(new StatementInfos(getProgram(), stmtBlocks, stmtIdx));
    }
 
 

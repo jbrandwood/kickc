@@ -194,7 +194,7 @@ public class Compiler {
 
       //program.getLog().setVerboseLiveRanges(true);
 
-      new Pass3StatementBlocks(program).generateStatementBlocks();
+      new Pass3StatementInfos(program).generateStatementInfos();
       new Pass3VariableReferenceInfos(program).generateVariableReferenceInfos();
       new Pass3LiveRangesAnalysis(program).findLiveRanges();
       program.getLog().append("CONTROL FLOW GRAPH - LIVE RANGES FOUND");
@@ -210,7 +210,7 @@ public class Compiler {
       new Pass3AddNopBeforeCallOns(program).generate();
       new Pass3StatementIndices(program).generateStatementIndices();
       new Pass3CallGraphAnalysis(program).findCallGraph();
-      new Pass3StatementBlocks(program).generateStatementBlocks();
+      new Pass3StatementInfos(program).generateStatementInfos();
       new Pass3VariableReferenceInfos(program).generateVariableReferenceInfos();
       new Pass3LiveRangesAnalysis(program).findLiveRanges();
       program.getLog().append("CONTROL FLOW GRAPH - BEFORE EFFECTIVE LIVE RANGES");

@@ -35,7 +35,7 @@ public class Pass4AssertNoCpuClobber extends Pass2Base {
          if (asmSegment.getStatementIdx() != null) {
             // Find the ICL statement
             int statementIdx = asmSegment.getStatementIdx();
-            Statement statement = getGraph().getStatementByIndex(statementIdx);
+            Statement statement = getProgram().getStatementInfos().getStatement(statementIdx);
             // Find the registered clobbered by the ASM asmSegment
             AsmClobber asmSegmentClobber = asmSegment.getClobber();
             Collection<Registers.Register> clobberRegisters = getClobberRegisters(asmSegmentClobber);
@@ -49,7 +49,7 @@ public class Pass4AssertNoCpuClobber extends Pass2Base {
             if(asmSegment.getPhiTransitionId()!=null && asmSegment.getPhiTransitionAssignmentIdx()!=null) {
                String phiTransitionId = asmSegment.getPhiTransitionId();
                int transitionAssignmentIdx = asmSegment.getPhiTransitionAssignmentIdx();
-               ControlFlowBlock statementBlock = getProgram().getStatementBlocks().getBlock(statementIdx);
+               ControlFlowBlock statementBlock = getProgram().getStatementInfos().getBlock(statementIdx);
                PhiTransitions phiTransitions = new PhiTransitions(getProgram(), statementBlock);
                PhiTransitions.PhiTransition phiTransition = phiTransitions.getTransition(phiTransitionId);
                for (PhiTransitions.PhiTransition.PhiAssignment phiAssignment : phiTransition.getAssignments()) {

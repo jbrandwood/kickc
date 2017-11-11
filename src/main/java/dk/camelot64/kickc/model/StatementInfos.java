@@ -2,8 +2,8 @@ package dk.camelot64.kickc.model;
 
 import java.util.Map;
 
-/** Cached information about which block each statement is a part of */
-public class StatementBlocks {
+/** Cached information about statements is a part of (which block they bloing to, statement from idx, ...) */
+public class StatementInfos {
 
    /** The control flow graph. */
    private ControlFlowGraph graph;
@@ -11,9 +11,13 @@ public class StatementBlocks {
    /** Maps statement index to block label. */
    private Map<Integer, LabelRef> stmtBlocks;
 
-   public StatementBlocks(Program program, Map<Integer, LabelRef> stmtBlocks) {
+   /** Maps statement index to statement. */
+   private Map<Integer, Statement> stmtIdx;
+
+   public StatementInfos(Program program, Map<Integer, LabelRef> stmtBlocks, Map<Integer, Statement> stmtIdx) {
       this.graph = program.getGraph();
       this.stmtBlocks = stmtBlocks;
+      this.stmtIdx = stmtIdx;
    }
 
    /**
@@ -52,5 +56,13 @@ public class StatementBlocks {
       return graph.getBlock(getBlockRef(stmtIdx));
    }
 
+   /**
+    * Get statement from index
+    * @param Statement index
+    * @return The statement with the passed index
+    */
+   public Statement getStatement(int index) {
+      return stmtIdx.get(index);
+   }
 
 }

@@ -169,7 +169,7 @@ public class LiveRangeVariablesEffective {
       Collection<VariableRef> aliveAtStmt = statementsLiveVariables.get(statement.getIndex());
       CallPaths callPaths;
       Collection<VariableRef> referencedInProcedure;
-      ControlFlowBlock block = program.getStatementBlocks().getBlock(statement);
+      ControlFlowBlock block = program.getStatementInfos().getBlock(statement);
       ScopeRef scopeRef = block.getScope();
       Scope scope = program.getScope().getScope(scopeRef);
       if (scope instanceof Procedure) {
@@ -190,7 +190,7 @@ public class LiveRangeVariablesEffective {
             List<CallGraph.CallBlock.Call> path = calledPath.getPath();
             CallGraph.CallBlock.Call lastCall = path.get(path.size() - 1);
             Integer lastCallStatementIdx = lastCall.getCallStatementIdx();
-            LabelRef lastCallBlockRef = program.getStatementBlocks().getBlockRef(lastCallStatementIdx);
+            LabelRef lastCallBlockRef = program.getStatementInfos().getBlockRef(lastCallStatementIdx);
             if(lastCallBlockRef.equals(block.getLabel())) {
                if (callAliases == null) {
                   // Found a matching call!

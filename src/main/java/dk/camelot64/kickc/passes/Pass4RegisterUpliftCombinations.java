@@ -112,7 +112,7 @@ public class Pass4RegisterUpliftCombinations extends Pass2Base {
       // Reset register allocation to original zero page allocation
       new Pass4RegistersFinalize(program).allocate(false);
       // Apply the uplift combination
-      combination.allocate(program.getScope());
+      combination.allocate(program);
       // Check the register allocation for whether a is register being allocated to two variables with overlapping live ranges
       if (isAllocationOverlapping(program)) {
          if (program.getLog().isVerboseUplift()) {

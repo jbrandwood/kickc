@@ -129,7 +129,7 @@ public class Pass4RegisterUpliftPotentialRegisterAnalysis extends Pass2Base {
          // Reset register allocation to original zero page allocation
          new Pass4RegistersFinalize(getProgram()).allocate(false);
          // Apply the combination
-         combination.allocate(getProgram().getScope());
+         combination.allocate(getProgram());
          // Generate ASM
          AsmProgram asm = new AsmProgram();
          asm.startSegment(statement.getIndex(), statement.toString(getProgram(), true));

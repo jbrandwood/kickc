@@ -63,7 +63,7 @@ public class AsmFragmentSignature {
          throw new AsmFragment.AluNotApplicableException("Error! ALU register only allowed as rValue2. " + assignment);
       }
       VariableRef assignmentRValue2 = (VariableRef) assignment.getrValue2();
-      Variable assignmentRValue2Var = program.getScope().getVariable(assignmentRValue2);
+      Variable assignmentRValue2Var = program.getSymbolInfos().getVariable(assignmentRValue2);
       Registers.Register rVal2Register = assignmentRValue2Var.getAllocation();
 
       if (!rVal2Register.getType().equals(Registers.RegisterType.REG_ALU_BYTE)) {
@@ -256,7 +256,7 @@ public class AsmFragmentSignature {
       }
 
       if (value instanceof VariableRef) {
-         value = program.getScope().getVariable((VariableRef) value);
+         value = program.getSymbolInfos().getVariable((VariableRef) value);
       }
       if (value instanceof ConstantRef) {
          value = program.getScope().getConstant((ConstantRef) value);

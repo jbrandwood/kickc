@@ -25,11 +25,11 @@ public class RegisterCombination {
     * Allocate the registers of the combination into the programs register allocation
     * (does not update the allocation in the equivalence classes).
     */
-   public void allocate(ProgramScope scope) {
+   public void allocate(Program program) {
       for (LiveRangeEquivalenceClass equivalenceClass : allocation.keySet()) {
          Registers.Register register = allocation.get(equivalenceClass);
          for (VariableRef variable : equivalenceClass.getVariables()) {
-            Variable var = scope.getVariable(variable);
+            Variable var = program.getSymbolInfos().getVariable(variable);
             var.setAllocation(register);
          }
       }

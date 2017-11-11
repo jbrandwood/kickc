@@ -186,10 +186,9 @@ public class PhiTransitions {
          for (int i = 0; i < assignments.size(); i++) {
             PhiTransition.PhiAssignment assignment = assignments.get(i);
             PhiTransition.PhiAssignment otherAssignment = otherAssignments.get(i);
-            ProgramScope scope = program.getScope();
-            if (assignment.getVariable() instanceof VariableRef && otherAssignment.getVariable() instanceof VariableRef) {
-               Variable var = scope.getVariable((VariableRef) assignment.getVariable());
-               Variable otherVar = scope.getVariable((VariableRef) otherAssignment.getVariable());
+            if (assignment.getVariable() != null && otherAssignment.getVariable() != null) {
+               Variable var = program.getSymbolInfos().getVariable(assignment.getVariable());
+               Variable otherVar = program.getSymbolInfos().getVariable(otherAssignment.getVariable());
                if (!var.getAllocation().equals(otherVar.getAllocation())) {
                   return false;
                }
@@ -197,8 +196,8 @@ public class PhiTransitions {
                return false;
             }
             if (assignment.getrValue() instanceof VariableRef && otherAssignment.getrValue() instanceof VariableRef) {
-               Variable var = scope.getVariable((VariableRef) assignment.getrValue());
-               Variable otherVar = scope.getVariable((VariableRef) otherAssignment.getrValue());
+               Variable var = program.getSymbolInfos().getVariable((VariableRef) assignment.getrValue());
+               Variable otherVar = program.getSymbolInfos().getVariable((VariableRef) otherAssignment.getrValue());
                if (!var.getAllocation().equals(otherVar.getAllocation())) {
                   return false;
                }

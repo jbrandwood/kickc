@@ -386,7 +386,7 @@ public class Pass4CodeGeneration {
    private Registers.Register getRegister(RValue rValue) {
       if (rValue instanceof VariableRef) {
          VariableRef rValueRef = (VariableRef) rValue;
-         return program.getScope().getVariable(rValueRef).getAllocation();
+         return program.getSymbolInfos().getVariable(rValueRef).getAllocation();
       } else {
          return null;
       }

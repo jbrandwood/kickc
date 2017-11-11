@@ -105,7 +105,7 @@ public class LiveRangeEquivalenceClassSet {
       for (LiveRangeEquivalenceClass equivalenceClass : getEquivalenceClasses()) {
          Registers.Register register = equivalenceClass.getRegister();
          for (VariableRef variable : equivalenceClass.getVariables()) {
-            Variable var = program.getScope().getVariable(variable);
+            Variable var = program.getSymbolInfos().getVariable(variable);
             var.setAllocation(register);
          }
       }

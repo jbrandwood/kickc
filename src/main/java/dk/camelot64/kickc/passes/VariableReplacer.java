@@ -89,9 +89,25 @@ public class VariableReplacer {
          }
          if (getReplacement(assignment.getrValue1()) != null) {
             assignment.setrValue1(getReplacement(assignment.getrValue1()));
+         } else {
+            if(assignment.getrValue1() instanceof PointerDereferenceSimple) {
+               PointerDereferenceSimple deref = (PointerDereferenceSimple) assignment.getrValue1();
+               RValue pointer = deref.getPointer();
+               if (getReplacement(pointer) != null) {
+                  deref.setPointer(getReplacement(pointer));
+               }
+            }
          }
          if (getReplacement(assignment.getrValue2()) != null) {
             assignment.setrValue2(getReplacement(assignment.getrValue2()));
+         } else {
+            if(assignment.getrValue2() instanceof PointerDereferenceSimple) {
+               PointerDereferenceSimple deref = (PointerDereferenceSimple) assignment.getrValue2();
+               RValue pointer = deref.getPointer();
+               if (getReplacement(pointer) != null) {
+                  deref.setPointer(getReplacement(pointer));
+               }
+            }
          }
          // Handle pointer dereference in LValue
          if (lValue instanceof PointerDereferenceSimple) {
@@ -111,6 +127,8 @@ public class VariableReplacer {
                deref.setIndex(getReplacement(index));
             }
          }
+         // Handle pointer dereference in RValue
+
          return null;
       }
 
@@ -118,9 +136,25 @@ public class VariableReplacer {
       public Void visitConditionalJump(StatementConditionalJump conditionalJump) {
          if (getReplacement(conditionalJump.getrValue1()) != null) {
             conditionalJump.setrValue1(getReplacement(conditionalJump.getrValue1()));
+         } else {
+            if (conditionalJump.getrValue1() instanceof PointerDereferenceSimple) {
+               PointerDereferenceSimple deref = (PointerDereferenceSimple) conditionalJump.getrValue1();
+               RValue pointer = deref.getPointer();
+               if (getReplacement(pointer) != null) {
+                  deref.setPointer(getReplacement(pointer));
+               }
+            }
          }
          if (getReplacement(conditionalJump.getrValue2()) != null) {
             conditionalJump.setrValue2(getReplacement(conditionalJump.getrValue2()));
+         } else {
+            if (conditionalJump.getrValue2() instanceof PointerDereferenceSimple) {
+               PointerDereferenceSimple deref = (PointerDereferenceSimple) conditionalJump.getrValue2();
+               RValue pointer = deref.getPointer();
+               if (getReplacement(pointer) != null) {
+                  deref.setPointer(getReplacement(pointer));
+               }
+            }
          }
          return null;
       }
@@ -129,6 +163,14 @@ public class VariableReplacer {
       public Void visitReturn(StatementReturn aReturn) {
          if (getReplacement(aReturn.getValue()) != null) {
             aReturn.setValue(getReplacement(aReturn.getValue()));
+         } else {
+            if (aReturn.getValue() instanceof PointerDereferenceSimple) {
+               PointerDereferenceSimple deref = (PointerDereferenceSimple) aReturn.getValue();
+               RValue pointer = deref.getPointer();
+               if (getReplacement(pointer) != null) {
+                  deref.setPointer(getReplacement(pointer));
+               }
+            }
          }
          return null;
       }
@@ -141,6 +183,14 @@ public class VariableReplacer {
                RValue newParam = parameter;
                if (getReplacement(parameter) != null) {
                   newParam = getReplacement(parameter);
+               } else {
+                  if (parameter instanceof PointerDereferenceSimple) {
+                     PointerDereferenceSimple deref = (PointerDereferenceSimple) parameter;
+                     RValue pointer = deref.getPointer();
+                     if (getReplacement(pointer) != null) {
+                        deref.setPointer(getReplacement(pointer));
+                     }
+                  }
                }
                newParams.add(newParam);
             }
@@ -168,6 +218,14 @@ public class VariableReplacer {
                      it.remove();
                   } else {
                      phirValue.setrValue(alias);
+                  }
+               } else {
+                  if(phirValue.getrValue() instanceof PointerDereferenceSimple) {
+                     PointerDereferenceSimple deref = (PointerDereferenceSimple) phirValue.getrValue();
+                     RValue pointer = deref.getPointer();
+                     if (getReplacement(pointer) != null) {
+                        deref.setPointer(getReplacement(pointer));
+                     }
                   }
                }
             }

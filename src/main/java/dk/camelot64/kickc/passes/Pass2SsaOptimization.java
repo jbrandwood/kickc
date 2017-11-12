@@ -220,7 +220,10 @@ public abstract class Pass2SsaOptimization {
                usage = usage + 1;
                usages.put(var, usage);
             } else if(rVal instanceof PointerDereference) {
-               throw new RuntimeException("Unexpected pointer dereference!");
+               Value pointer = ((PointerDereference) rVal).getPointer();
+               if(pointer instanceof RValue) {
+                  addUsage((RValue) pointer);
+               }
             }
          }
 

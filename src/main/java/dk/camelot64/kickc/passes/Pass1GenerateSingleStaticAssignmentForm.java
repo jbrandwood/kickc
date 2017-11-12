@@ -46,7 +46,7 @@ public class Pass1GenerateSingleStaticAssignmentForm {
                if (lValue instanceof VariableRef) {
                   VariableRef lValueRef = (VariableRef) lValue;
                   Variable assignedVar = symbols.getVariable(lValueRef);
-                  if(assignedVar instanceof VariableUnversioned) {
+                  if (assignedVar instanceof VariableUnversioned) {
                      // Assignment to a non-versioned non-intermediary variable
                      VariableUnversioned assignedSymbol = (VariableUnversioned) assignedVar;
                      VariableVersion version = assignedSymbol.createVersion();
@@ -68,25 +68,45 @@ public class Pass1GenerateSingleStaticAssignmentForm {
          // New phi functions introduced in the block to create versions of variables.
          Map<VariableUnversioned, VariableVersion> blockNewPhis = new LinkedHashMap<>();
          for (Statement statement : block.getStatements()) {
-            if(statement instanceof StatementReturn) {
+            if (statement instanceof StatementReturn) {
                StatementReturn statementReturn = (StatementReturn) statement;
-               {
+               if (statementReturn.getValue() instanceof PointerDereferenceSimple) {
+                  PointerDereferenceSimple deref = (PointerDereferenceSimple) ((StatementReturn) statement).getValue();
+                  RValue pointer = deref.getPointer();
+                  VariableVersion version = findOrCreateVersion(pointer, blockVersions, blockNewPhis);
+                  if (version != null) {
+                     deref.setPointer(version.getRef());
+                  }
+               } else {
                   VariableVersion version = findOrCreateVersion(statementReturn.getValue(), blockVersions, blockNewPhis);
                   if (version != null) {
                      statementReturn.setValue(version.getRef());
                   }
                }
-
             }
             if (statement instanceof StatementAssignment) {
                StatementAssignment assignment = (StatementAssignment) statement;
-               {
+               if (assignment.getrValue1() instanceof PointerDereferenceSimple) {
+                  PointerDereferenceSimple deref = (PointerDereferenceSimple) ((StatementAssignment) statement).getrValue1();
+                  RValue pointer = deref.getPointer();
+                  VariableVersion version = findOrCreateVersion(pointer, blockVersions, blockNewPhis);
+                  if (version != null) {
+                     deref.setPointer(version.getRef());
+                  }
+               } else {
                   VariableVersion version = findOrCreateVersion(assignment.getrValue1(), blockVersions, blockNewPhis);
                   if (version != null) {
                      assignment.setrValue1(version.getRef());
                   }
                }
-               {
+               if (assignment.getrValue2() instanceof PointerDereferenceSimple) {
+                  PointerDereferenceSimple deref = (PointerDereferenceSimple) ((StatementAssignment) statement).getrValue2();
+                  RValue pointer = deref.getPointer();
+                  VariableVersion version = findOrCreateVersion(pointer, blockVersions, blockNewPhis);
+                  if (version != null) {
+                     deref.setPointer(version.getRef());
+                  }
+               } else {
                   VariableVersion version = findOrCreateVersion(assignment.getrValue2(), blockVersions, blockNewPhis);
                   if (version != null) {
                      assignment.setrValue2(version.getRef());
@@ -97,18 +117,18 @@ public class Pass1GenerateSingleStaticAssignmentForm {
                if (lValue instanceof VariableRef) {
                   VariableRef lValueRef = (VariableRef) lValue;
                   Variable variable = symbols.getVariable(lValueRef);
-                  if(variable instanceof VariableVersion) {
+                  if (variable instanceof VariableVersion) {
                      VariableVersion versioned = (VariableVersion) variable;
                      blockVersions.put(versioned.getVersionOf(), versioned);
                   }
-               } else if(lValue instanceof PointerDereferenceSimple) {
+               } else if (lValue instanceof PointerDereferenceSimple) {
                   PointerDereferenceSimple deref = (PointerDereferenceSimple) lValue;
                   RValue pointer = deref.getPointer();
                   VariableVersion version = findOrCreateVersion(pointer, blockVersions, blockNewPhis);
                   if (version != null) {
                      deref.setPointer(version.getRef());
                   }
-               } else if(lValue instanceof PointerDereferenceIndexed) {
+               } else if (lValue instanceof PointerDereferenceIndexed) {
                   PointerDereferenceIndexed deref = (PointerDereferenceIndexed) lValue;
                   RValue pointer = deref.getPointer();
                   VariableVersion version = findOrCreateVersion(pointer, blockVersions, blockNewPhis);
@@ -179,7 +199,7 @@ public class Pass1GenerateSingleStaticAssignmentForm {
             if (statement instanceof StatementPhiBlock) {
                StatementPhiBlock phiBlock = (StatementPhiBlock) statement;
                for (StatementPhiBlock.PhiVariable phiVariable : phiBlock.getPhiVariables()) {
-                  if(phiVariable.isEmpty()) {
+                  if (phiVariable.isEmpty()) {
                      VariableRef phiLValVarRef = phiVariable.getVariable();
                      VariableVersion versioned = (VariableVersion) symbols.getVariable(phiLValVarRef);
                      VariableUnversioned unversioned = versioned.getVersionOf();
@@ -235,7 +255,7 @@ public class Pass1GenerateSingleStaticAssignmentForm {
             if (statement instanceof StatementLValue) {
                StatementLValue assignment = (StatementLValue) statement;
                addSymbolToMap(symbolMap, block, assignment.getlValue());
-            } else if(statement instanceof StatementPhiBlock) {
+            } else if (statement instanceof StatementPhiBlock) {
                StatementPhiBlock phiBlock = (StatementPhiBlock) statement;
                for (StatementPhiBlock.PhiVariable phiVariable : phiBlock.getPhiVariables()) {
                   addSymbolToMap(symbolMap, block, phiVariable.getVariable());
@@ -247,7 +267,7 @@ public class Pass1GenerateSingleStaticAssignmentForm {
    }
 
    private void addSymbolToMap(Map<LabelRef, Map<VariableUnversioned, VariableVersion>> symbolMap, ControlFlowBlock block, LValue lValue) {
-      if(lValue instanceof VariableRef) {
+      if (lValue instanceof VariableRef) {
          Variable lValueVar = symbols.getVariable((VariableRef) lValue);
          if (lValueVar instanceof VariableVersion) {
             VariableVersion versioned = (VariableVersion) lValueVar;

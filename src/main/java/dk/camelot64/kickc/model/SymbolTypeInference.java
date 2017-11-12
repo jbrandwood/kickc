@@ -136,6 +136,13 @@ public class SymbolTypeInference {
          SymbolType leftType = inferType(programScope, constBin.getLeft());
          SymbolType rightType = inferType(programScope, constBin.getRight());
          return inferType(leftType, constBin.getOperator(), rightType);
+      } else if(rValue instanceof PointerDereferenceSimple) {
+         SymbolType pointerType = inferType(programScope, ((PointerDereferenceSimple) rValue).getPointer());
+         if(pointerType instanceof SymbolTypePointer) {
+            return ((SymbolTypePointer) pointerType).getElementType();
+         } else {
+            throw new RuntimeException("Cannot infer pointer element type from pointer type "+pointerType);
+         }
       }
       if (type == null) {
          throw new RuntimeException("Cannot infer type for " + rValue);

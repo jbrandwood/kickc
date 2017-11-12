@@ -28,11 +28,6 @@ public class TestErrors extends TestCase {
       compileAndCompare("inline-asm-param");
    }
 
-
-   public void testIncD020() throws IOException, URISyntaxException {
-      compileAndCompare("incd020");
-   }
-
    public void testUseUninitialized() throws IOException, URISyntaxException {
       String filename = "useuninitialized";
       compileAndCompare(filename);

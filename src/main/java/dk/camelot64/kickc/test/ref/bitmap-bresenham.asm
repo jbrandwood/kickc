@@ -242,7 +242,6 @@ line_ydxi: {
     rts
 }
 plot: {
-    .label _5 = $a
     .label plotter_x = 8
     .label plotter_y = $b
     .label plotter = 8
@@ -267,9 +266,7 @@ plot: {
     sta plotter+1
     ldy #0
     lda (plotter),y
-    sta _5
-    lda plot_bit,x
-    ora _5
+    ora plot_bit,x
     sta (plotter),y
     rts
 }

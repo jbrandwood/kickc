@@ -1,0 +1,579 @@
+// Incrementing / decrementing pointer content should result in code modifying the memory location - eg. inc $d020.
+// Currently it does not but instead leads to just reading the value a few times.
+
+byte* BGCOL = $d020;
+void main() {
+    do {
+        ++*BGCOL;
+        (*BGCOL)--;
+    } while (true);
+}
+Adding pre/post-modifier *((byte*) BGCOL) ← ++ *((byte*) BGCOL)
+Adding pre/post-modifier *((byte*) BGCOL) ← -- *((byte*) BGCOL)
+PROGRAM
+  (byte*) BGCOL ← (word) 53280
+proc (void()) main()
+main::@1:
+  *((byte*) BGCOL) ← ++ *((byte*) BGCOL)
+  *((byte*) BGCOL) ← -- *((byte*) BGCOL)
+  if(true) goto main::@1
+main::@return:
+  return 
+endproc // main()
+  call main 
+
+SYMBOLS
+(byte*) BGCOL
+(void()) main()
+(label) main::@1
+(label) main::@return
+
+INITIAL CONTROL FLOW GRAPH
+@begin: scope:[]  from
+  (byte*) BGCOL ← (word) 53280
+  to:@1
+main: scope:[main]  from
+  to:main::@1
+main::@1: scope:[main]  from main main::@1
+  *((byte*) BGCOL) ← ++ *((byte*) BGCOL)
+  *((byte*) BGCOL) ← -- *((byte*) BGCOL)
+  if(true) goto main::@1
+  to:main::@2
+main::@2: scope:[main]  from main::@1
+  to:main::@return
+main::@return: scope:[main]  from main::@2
+  return 
+  to:@return
+@1: scope:[]  from @begin
+  call main 
+  to:@end
+@end: scope:[]  from @1
+
+Removing empty block main::@2
+CONTROL FLOW GRAPH
+@begin: scope:[]  from
+  (byte*) BGCOL ← (word) 53280
+  to:@1
+main: scope:[main]  from
+  to:main::@1
+main::@1: scope:[main]  from main main::@1
+  *((byte*) BGCOL) ← ++ *((byte*) BGCOL)
+  *((byte*) BGCOL) ← -- *((byte*) BGCOL)
+  if(true) goto main::@1
+  to:main::@return
+main::@return: scope:[main]  from main::@1
+  return 
+  to:@return
+@1: scope:[]  from @begin
+  call main 
+  to:@end
+@end: scope:[]  from @1
+
+PROCEDURE MODIFY VARIABLE ANALYSIS
+
+CONTROL FLOW GRAPH WITH ASSIGNMENT CALL
+@begin: scope:[]  from
+  (byte*) BGCOL ← (word) 53280
+  to:@1
+main: scope:[main]  from @1
+  to:main::@1
+main::@1: scope:[main]  from main main::@1
+  *((byte*) BGCOL) ← ++ *((byte*) BGCOL)
+  *((byte*) BGCOL) ← -- *((byte*) BGCOL)
+  if(true) goto main::@1
+  to:main::@return
+main::@return: scope:[main]  from main::@1
+  return 
+  to:@return
+@1: scope:[]  from @begin
+  call main param-assignment
+  to:@2
+@2: scope:[]  from @1
+  to:@end
+@end: scope:[]  from @2
+
+Completing Phi functions...
+Completing Phi functions...
+Completing Phi functions...
+CONTROL FLOW GRAPH SSA
+@begin: scope:[]  from
+  (byte*) BGCOL#0 ← (word) 53280
+  to:@1
+main: scope:[main]  from @1
+  (byte*) BGCOL#2 ← phi( @1/(byte*) BGCOL#3 )
+  to:main::@1
+main::@1: scope:[main]  from main main::@1
+  (byte*) BGCOL#1 ← phi( main/(byte*) BGCOL#2 main::@1/(byte*) BGCOL#1 )
+  *((byte*) BGCOL#1) ← ++ *((byte*) BGCOL#1)
+  *((byte*) BGCOL#1) ← -- *((byte*) BGCOL#1)
+  if(true) goto main::@1
+  to:main::@return
+main::@return: scope:[main]  from main::@1
+  return 
+  to:@return
+@1: scope:[]  from @begin
+  (byte*) BGCOL#3 ← phi( @begin/(byte*) BGCOL#0 )
+  call main param-assignment
+  to:@2
+@2: scope:[]  from @1
+  to:@end
+@end: scope:[]  from @2
+
+CONTROL FLOW GRAPH WITH ASSIGNMENT CALL & RETURN
+@begin: scope:[]  from
+  (byte*) BGCOL#0 ← (word) 53280
+  to:@1
+main: scope:[main]  from @1
+  (byte*) BGCOL#2 ← phi( @1/(byte*) BGCOL#3 )
+  to:main::@1
+main::@1: scope:[main]  from main main::@1
+  (byte*) BGCOL#1 ← phi( main/(byte*) BGCOL#2 main::@1/(byte*) BGCOL#1 )
+  *((byte*) BGCOL#1) ← ++ *((byte*) BGCOL#1)
+  *((byte*) BGCOL#1) ← -- *((byte*) BGCOL#1)
+  if(true) goto main::@1
+  to:main::@return
+main::@return: scope:[main]  from main::@1
+  return 
+  to:@return
+@1: scope:[]  from @begin
+  (byte*) BGCOL#3 ← phi( @begin/(byte*) BGCOL#0 )
+  call main param-assignment
+  to:@2
+@2: scope:[]  from @1
+  to:@end
+@end: scope:[]  from @2
+
+INITIAL SSA SYMBOL TABLE
+(label) @1
+(label) @2
+(label) @begin
+(label) @end
+(byte*) BGCOL
+(byte*) BGCOL#0
+(byte*) BGCOL#1
+(byte*) BGCOL#2
+(byte*) BGCOL#3
+(void()) main()
+(label) main::@1
+(label) main::@return
+
+Culled Empty Block (label) @2
+Succesful SSA optimization Pass2CullEmptyBlocks
+CONTROL FLOW GRAPH
+@begin: scope:[]  from
+  (byte*) BGCOL#0 ← (word) 53280
+  to:@1
+main: scope:[main]  from @1
+  (byte*) BGCOL#2 ← phi( @1/(byte*) BGCOL#3 )
+  to:main::@1
+main::@1: scope:[main]  from main main::@1
+  (byte*) BGCOL#1 ← phi( main/(byte*) BGCOL#2 main::@1/(byte*) BGCOL#1 )
+  *((byte*) BGCOL#1) ← ++ *((byte*) BGCOL#1)
+  *((byte*) BGCOL#1) ← -- *((byte*) BGCOL#1)
+  if(true) goto main::@1
+  to:main::@return
+main::@return: scope:[main]  from main::@1
+  return 
+  to:@return
+@1: scope:[]  from @begin
+  (byte*) BGCOL#3 ← phi( @begin/(byte*) BGCOL#0 )
+  call main param-assignment
+  to:@end
+@end: scope:[]  from @1
+
+Alias (byte*) BGCOL#0 = (byte*) BGCOL#2 (byte*) BGCOL#3 
+Succesful SSA optimization Pass2AliasElimination
+CONTROL FLOW GRAPH
+@begin: scope:[]  from
+  (byte*) BGCOL#0 ← (word) 53280
+  to:@1
+main: scope:[main]  from @1
+  to:main::@1
+main::@1: scope:[main]  from main main::@1
+  (byte*) BGCOL#1 ← phi( main/(byte*) BGCOL#0 main::@1/(byte*) BGCOL#1 )
+  *((byte*) BGCOL#1) ← ++ *((byte*) BGCOL#1)
+  *((byte*) BGCOL#1) ← -- *((byte*) BGCOL#1)
+  if(true) goto main::@1
+  to:main::@return
+main::@return: scope:[main]  from main::@1
+  return 
+  to:@return
+@1: scope:[]  from @begin
+  call main param-assignment
+  to:@end
+@end: scope:[]  from @1
+
+Self Phi Eliminated (byte*) BGCOL#1
+Succesful SSA optimization Pass2SelfPhiElimination
+CONTROL FLOW GRAPH
+@begin: scope:[]  from
+  (byte*) BGCOL#0 ← (word) 53280
+  to:@1
+main: scope:[main]  from @1
+  to:main::@1
+main::@1: scope:[main]  from main main::@1
+  (byte*) BGCOL#1 ← phi( main/(byte*) BGCOL#0 )
+  *((byte*) BGCOL#1) ← ++ *((byte*) BGCOL#1)
+  *((byte*) BGCOL#1) ← -- *((byte*) BGCOL#1)
+  if(true) goto main::@1
+  to:main::@return
+main::@return: scope:[main]  from main::@1
+  return 
+  to:@return
+@1: scope:[]  from @begin
+  call main param-assignment
+  to:@end
+@end: scope:[]  from @1
+
+Redundant Phi (byte*) BGCOL#1 (byte*) BGCOL#0
+Succesful SSA optimization Pass2RedundantPhiElimination
+CONTROL FLOW GRAPH
+@begin: scope:[]  from
+  (byte*) BGCOL#0 ← (word) 53280
+  to:@1
+main: scope:[main]  from @1
+  to:main::@1
+main::@1: scope:[main]  from main main::@1
+  *((byte*) BGCOL#0) ← ++ *((byte*) BGCOL#0)
+  *((byte*) BGCOL#0) ← -- *((byte*) BGCOL#0)
+  if(true) goto main::@1
+  to:main::@return
+main::@return: scope:[main]  from main::@1
+  return 
+  to:@return
+@1: scope:[]  from @begin
+  call main param-assignment
+  to:@end
+@end: scope:[]  from @1
+
+Constant (const byte*) BGCOL#0 = 53280
+Succesful SSA optimization Pass2ConstantIdentification
+CONTROL FLOW GRAPH
+@begin: scope:[]  from
+  to:@1
+main: scope:[main]  from @1
+  to:main::@1
+main::@1: scope:[main]  from main main::@1
+  *((const byte*) BGCOL#0) ← ++ *((const byte*) BGCOL#0)
+  *((const byte*) BGCOL#0) ← -- *((const byte*) BGCOL#0)
+  if(true) goto main::@1
+  to:main::@return
+main::@return: scope:[main]  from main::@1
+  return 
+  to:@return
+@1: scope:[]  from @begin
+  call main param-assignment
+  to:@end
+@end: scope:[]  from @1
+
+FINAL SYMBOL TABLE
+(label) @1
+(label) @begin
+(label) @end
+(byte*) BGCOL
+(const byte*) BGCOL#0 = (word) 53280
+(void()) main()
+(label) main::@1
+(label) main::@return
+
+Block Sequence Planned @begin @1 @end main main::@1 main::@return 
+Block Sequence Planned @begin @1 @end main main::@1 main::@return 
+CONTROL FLOW GRAPH - PHI LIFTED
+@begin: scope:[]  from
+  to:@1
+@1: scope:[]  from @begin
+  call main param-assignment
+  to:@end
+@end: scope:[]  from @1
+main: scope:[main]  from @1
+  to:main::@1
+main::@1: scope:[main]  from main main::@1
+  *((const byte*) BGCOL#0) ← ++ *((const byte*) BGCOL#0)
+  *((const byte*) BGCOL#0) ← -- *((const byte*) BGCOL#0)
+  if(true) goto main::@1
+  to:main::@return
+main::@return: scope:[main]  from main::@1
+  return 
+  to:@return
+
+Adding NOP phi() at start of main
+CALL GRAPH
+Calls in [] to main:0 
+
+Propagating live ranges...
+CONTROL FLOW GRAPH - LIVE RANGES FOUND
+@begin: scope:[]  from
+  to:@1
+@1: scope:[]  from @begin
+  [0] call main param-assignment [ ]
+  to:@end
+@end: scope:[]  from @1
+main: scope:[main]  from @1
+  [1] phi() [ ]
+  to:main::@1
+main::@1: scope:[main]  from main main::@1
+  [2] *((const byte*) BGCOL#0) ← ++ *((const byte*) BGCOL#0) [ ]
+  [3] *((const byte*) BGCOL#0) ← -- *((const byte*) BGCOL#0) [ ]
+  [4] if(true) goto main::@1 [ ]
+  to:main::@return
+main::@return: scope:[main]  from main::@1
+  [5] return  [ ]
+  to:@return
+
+Created 0 initial phi equivalence classes
+Coalesced down to 0 phi equivalence classes
+Block Sequence Planned @begin @1 @end main main::@1 main::@return 
+Adding NOP phi() at start of main
+Propagating live ranges...
+CONTROL FLOW GRAPH - BEFORE EFFECTIVE LIVE RANGES
+@begin: scope:[]  from
+  to:@1
+@1: scope:[]  from @begin
+  [0] call main param-assignment [ ]
+  to:@end
+@end: scope:[]  from @1
+main: scope:[main]  from @1
+  [1] phi() [ ]
+  to:main::@1
+main::@1: scope:[main]  from main main::@1
+  [2] *((const byte*) BGCOL#0) ← ++ *((const byte*) BGCOL#0) [ ]
+  [3] *((const byte*) BGCOL#0) ← -- *((const byte*) BGCOL#0) [ ]
+  [4] if(true) goto main::@1 [ ]
+  to:main::@return
+main::@return: scope:[main]  from main::@1
+  [5] return  [ ]
+  to:@return
+
+CONTROL FLOW GRAPH - PHI MEM COALESCED
+@begin: scope:[]  from
+  to:@1
+@1: scope:[]  from @begin
+  [0] call main param-assignment [ ] ( )
+  to:@end
+@end: scope:[]  from @1
+main: scope:[main]  from @1
+  [1] phi() [ ] ( main:0 [ ] )
+  to:main::@1
+main::@1: scope:[main]  from main main::@1
+  [2] *((const byte*) BGCOL#0) ← ++ *((const byte*) BGCOL#0) [ ] ( main:0 [ ] )
+  [3] *((const byte*) BGCOL#0) ← -- *((const byte*) BGCOL#0) [ ] ( main:0 [ ] )
+  [4] if(true) goto main::@1 [ ] ( main:0 [ ] )
+  to:main::@return
+main::@return: scope:[main]  from main::@1
+  [5] return  [ ] ( main:0 [ ] )
+  to:@return
+
+DOMINATORS
+@begin dominated by  @begin 
+@1 dominated by  @1 @begin 
+@end dominated by  @1 @end @begin 
+main dominated by  @1 @begin main 
+main::@1 dominated by  @1 @begin main::@1 main 
+main::@return dominated by  @1 main::@return @begin main::@1 main 
+
+Found back edge: Loop head: main::@1 tails: main::@1 blocks: null
+Populated: Loop head: main::@1 tails: main::@1 blocks: main::@1 
+NATURAL LOOPS
+Loop head: main::@1 tails: main::@1 blocks: main::@1 
+
+Found 0 loops in scope []
+Found 1 loops in scope [main]
+  Loop head: main::@1 tails: main::@1 blocks: main::@1 
+NATURAL LOOPS WITH DEPTH
+Loop head: main::@1 tails: main::@1 blocks: main::@1  depth: 1
+
+
+VARIABLE REGISTER WEIGHTS
+(byte*) BGCOL
+(void()) main()
+
+Initial phi equivalence classes
+Complete equivalence classes
+INITIAL ASM
+//SEG0 Basic Upstart
+.pc = $801 "Basic"
+:BasicUpstart(main)
+.pc = $80d "Program"
+//SEG1 Global Constants & labels
+  .const BGCOL = $d020
+//SEG2 @begin
+bbegin:
+  jmp b1
+//SEG3 @1
+b1:
+//SEG4 [0] call main param-assignment [ ] ( )
+//SEG5 [1] phi from @1 to main [phi:@1->main]
+main_from_b1:
+  jsr main
+  jmp bend
+//SEG6 @end
+bend:
+//SEG7 main
+main: {
+    jmp b1
+  //SEG8 main::@1
+  b1:
+  //SEG9 [2] *((const byte*) BGCOL#0) ← ++ *((const byte*) BGCOL#0) [ ] ( main:0 [ ] ) -- _star_cowo1=_inc__star_cowo1 
+    inc BGCOL
+  //SEG10 [3] *((const byte*) BGCOL#0) ← -- *((const byte*) BGCOL#0) [ ] ( main:0 [ ] ) -- _star_cowo1=_dec__star_cowo1 
+    dec BGCOL
+  //SEG11 [4] if(true) goto main::@1 [ ] ( main:0 [ ] ) -- true_then_la1 
+    jmp b1
+    jmp breturn
+  //SEG12 main::@return
+  breturn:
+  //SEG13 [5] return  [ ] ( main:0 [ ] )
+    rts
+}
+
+REGISTER UPLIFT POTENTIAL REGISTERS
+
+REGISTER UPLIFT SCOPES
+Uplift Scope [main] 
+Uplift Scope [] 
+
+Uplifting [main] best 255 combination 
+Uplifting [] best 255 combination 
+Removing instruction jmp b1
+Removing instruction jmp bend
+Removing instruction jmp b1
+Removing instruction jmp breturn
+Succesful ASM optimization Pass5NextJumpElimination
+ASSEMBLER
+//SEG0 Basic Upstart
+.pc = $801 "Basic"
+:BasicUpstart(main)
+.pc = $80d "Program"
+//SEG1 Global Constants & labels
+  .const BGCOL = $d020
+//SEG2 @begin
+bbegin:
+//SEG3 @1
+b1:
+//SEG4 [0] call main param-assignment [ ] ( )
+//SEG5 [1] phi from @1 to main [phi:@1->main]
+main_from_b1:
+  jsr main
+//SEG6 @end
+bend:
+//SEG7 main
+main: {
+  //SEG8 main::@1
+  b1:
+  //SEG9 [2] *((const byte*) BGCOL#0) ← ++ *((const byte*) BGCOL#0) [ ] ( main:0 [ ] ) -- _star_cowo1=_inc__star_cowo1 
+    inc BGCOL
+  //SEG10 [3] *((const byte*) BGCOL#0) ← -- *((const byte*) BGCOL#0) [ ] ( main:0 [ ] ) -- _star_cowo1=_dec__star_cowo1 
+    dec BGCOL
+  //SEG11 [4] if(true) goto main::@1 [ ] ( main:0 [ ] ) -- true_then_la1 
+    jmp b1
+  //SEG12 main::@return
+  breturn:
+  //SEG13 [5] return  [ ] ( main:0 [ ] )
+    rts
+}
+
+Removing instruction bbegin:
+Removing instruction main_from_b1:
+Succesful ASM optimization Pass5RedundantLabelElimination
+ASSEMBLER
+//SEG0 Basic Upstart
+.pc = $801 "Basic"
+:BasicUpstart(main)
+.pc = $80d "Program"
+//SEG1 Global Constants & labels
+  .const BGCOL = $d020
+//SEG2 @begin
+//SEG3 @1
+b1:
+//SEG4 [0] call main param-assignment [ ] ( )
+//SEG5 [1] phi from @1 to main [phi:@1->main]
+  jsr main
+//SEG6 @end
+bend:
+//SEG7 main
+main: {
+  //SEG8 main::@1
+  b1:
+  //SEG9 [2] *((const byte*) BGCOL#0) ← ++ *((const byte*) BGCOL#0) [ ] ( main:0 [ ] ) -- _star_cowo1=_inc__star_cowo1 
+    inc BGCOL
+  //SEG10 [3] *((const byte*) BGCOL#0) ← -- *((const byte*) BGCOL#0) [ ] ( main:0 [ ] ) -- _star_cowo1=_dec__star_cowo1 
+    dec BGCOL
+  //SEG11 [4] if(true) goto main::@1 [ ] ( main:0 [ ] ) -- true_then_la1 
+    jmp b1
+  //SEG12 main::@return
+  breturn:
+  //SEG13 [5] return  [ ] ( main:0 [ ] )
+    rts
+}
+
+Removing instruction b1:
+Removing instruction bend:
+Removing instruction breturn:
+Succesful ASM optimization Pass5UnusedLabelElimination
+ASSEMBLER
+//SEG0 Basic Upstart
+.pc = $801 "Basic"
+:BasicUpstart(main)
+.pc = $80d "Program"
+//SEG1 Global Constants & labels
+  .const BGCOL = $d020
+//SEG2 @begin
+//SEG3 @1
+//SEG4 [0] call main param-assignment [ ] ( )
+//SEG5 [1] phi from @1 to main [phi:@1->main]
+  jsr main
+//SEG6 @end
+//SEG7 main
+main: {
+  //SEG8 main::@1
+  b1:
+  //SEG9 [2] *((const byte*) BGCOL#0) ← ++ *((const byte*) BGCOL#0) [ ] ( main:0 [ ] ) -- _star_cowo1=_inc__star_cowo1 
+    inc BGCOL
+  //SEG10 [3] *((const byte*) BGCOL#0) ← -- *((const byte*) BGCOL#0) [ ] ( main:0 [ ] ) -- _star_cowo1=_dec__star_cowo1 
+    dec BGCOL
+  //SEG11 [4] if(true) goto main::@1 [ ] ( main:0 [ ] ) -- true_then_la1 
+    jmp b1
+  //SEG12 main::@return
+  //SEG13 [5] return  [ ] ( main:0 [ ] )
+    rts
+}
+
+FINAL SYMBOL TABLE
+(label) @1
+(label) @begin
+(label) @end
+(byte*) BGCOL
+(const byte*) BGCOL#0 BGCOL = (word) 53280
+(void()) main()
+(label) main::@1
+(label) main::@return
+
+
+FINAL CODE
+//SEG0 Basic Upstart
+.pc = $801 "Basic"
+:BasicUpstart(main)
+.pc = $80d "Program"
+//SEG1 Global Constants & labels
+  .const BGCOL = $d020
+//SEG2 @begin
+//SEG3 @1
+//SEG4 [0] call main param-assignment [ ] ( )
+//SEG5 [1] phi from @1 to main [phi:@1->main]
+  jsr main
+//SEG6 @end
+//SEG7 main
+main: {
+  //SEG8 main::@1
+  b1:
+  //SEG9 [2] *((const byte*) BGCOL#0) ← ++ *((const byte*) BGCOL#0) [ ] ( main:0 [ ] ) -- _star_cowo1=_inc__star_cowo1 
+    inc BGCOL
+  //SEG10 [3] *((const byte*) BGCOL#0) ← -- *((const byte*) BGCOL#0) [ ] ( main:0 [ ] ) -- _star_cowo1=_dec__star_cowo1 
+    dec BGCOL
+  //SEG11 [4] if(true) goto main::@1 [ ] ( main:0 [ ] ) -- true_then_la1 
+    jmp b1
+  //SEG12 main::@return
+  //SEG13 [5] return  [ ] ( main:0 [ ] )
+    rts
+}
+

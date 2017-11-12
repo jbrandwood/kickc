@@ -544,11 +544,15 @@ public class Pass1GenerateStatementSequence extends KickCBaseVisitor<Object> {
       RValue child = (RValue) this.visit(ctx.expr());
       String op = ((TerminalNode) ctx.getChild(0)).getSymbol().getText();
       Operator operator = Operator.getUnary(op);
-      VariableIntermediate tmpVar = getCurrentSymbols().addVariableIntermediate();
-      VariableRef tmpVarRef = tmpVar.getRef();
-      Statement stmt = new StatementAssignment(tmpVarRef, operator, child);
-      sequence.addStatement(stmt);
-      return tmpVarRef;
+      if(Operator.STAR.equals(operator)) {
+         return new PointerDereferenceSimple(child);
+      } else {
+         VariableIntermediate tmpVar = getCurrentSymbols().addVariableIntermediate();
+         VariableRef tmpVarRef = tmpVar.getRef();
+         Statement stmt = new StatementAssignment(tmpVarRef, operator, child);
+         sequence.addStatement(stmt);
+         return tmpVarRef;
+      }
    }
 
    @Override

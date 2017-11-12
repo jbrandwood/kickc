@@ -40,13 +40,15 @@ main: {
     lda RASTER
     cmp #$ff
     bne b2
-    ldx BGCOL
-    inx
-    stx BGCOL
+    lda BGCOL
+    clc
+    adc #1
+    sta BGCOL
     jsr plots
-    ldx BGCOL
-    dex
-    stx BGCOL
+    lda BGCOL
+    sec
+    sbc #1
+    sta BGCOL
     jmp b2
     rts
 }
@@ -60,8 +62,7 @@ plots: {
     tay
     ldx i
     lda plots_y,x
-    sty plot.x
-    tay
+    tax
     jsr plot
     inc i
     lda i
@@ -70,24 +71,21 @@ plots: {
     rts
 }
 plot: {
-    .label _5 = 8
-    .label x = 5
+    .label _5 = 7
     .label plotter_x = 3
-    .label plotter_y = 6
+    .label plotter_y = 5
     .label plotter = 3
-    ldx x
-    lda plot_xhi,x
+    lda plot_xhi,y
     sta plotter_x+1
     lda #<0
     sta plotter_x
-    ldx x
-    lda plot_xlo,x
+    lda plot_xlo,y
     sta plotter_x
-    lda plot_yhi,y
+    lda plot_yhi,x
     sta plotter_y+1
     lda #<0
     sta plotter_y
-    lda plot_ylo,y
+    lda plot_ylo,x
     sta plotter_y
     lda plotter
     clc
@@ -96,11 +94,10 @@ plot: {
     lda plotter+1
     adc plotter_y+1
     sta plotter+1
+    lda plot_bit,y
+    sta _5
     ldy #0
     lda (plotter),y
-    sta _5
-    ldx x
-    lda plot_bit,x
     ora _5
     sta (plotter),y
     rts

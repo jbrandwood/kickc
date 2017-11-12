@@ -40,15 +40,9 @@ main: {
     lda RASTER
     cmp #$ff
     bne b2
-    lda BGCOL
-    clc
-    adc #1
-    sta BGCOL
+    inc BGCOL
     jsr plots
-    lda BGCOL
-    sec
-    sbc #1
-    sta BGCOL
+    dec BGCOL
     jmp b2
     rts
 }

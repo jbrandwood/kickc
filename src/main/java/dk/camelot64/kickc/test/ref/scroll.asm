@@ -24,10 +24,7 @@ main: {
     lda RASTER
     cmp #$ff
     bne b3
-    lda BGCOL
-    clc
-    adc #1
-    sta BGCOL
+    inc BGCOL
     dex
     cpx #$ff
     bne b4
@@ -57,10 +54,7 @@ main: {
     ldx #7
   b4:
     stx SCROLL
-    lda BGCOL
-    sec
-    sbc #1
-    sta BGCOL
+    dec BGCOL
     jmp b2
     rts
 }

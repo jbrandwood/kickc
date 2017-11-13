@@ -46,12 +46,15 @@ public class AsmProgramStaticRegisterValues {
          AsmClobber clobber = instructionType.getClobber();
          if (clobber.isClobberA()) {
             current.setA(null);
+            current.setaMem(null);
          }
          if (clobber.isClobberX()) {
             current.setX(null);
+            current.setxMem(null);
          }
          if (clobber.isClobberY()) {
             current.setY(null);
+            current.setyMem(null);
          }
          if (clobber.isClobberC()) {
             current.setC(null);
@@ -66,34 +69,43 @@ public class AsmProgramStaticRegisterValues {
             current.setZ(null);
          }
          if (instructionType.getMnemnonic().equals("lda") && instructionType.getAddressingMode().equals(AsmAddressingMode.IMM)) {
+            current.setA(instruction.getParameter());
             try {
                int immValue = Integer.parseInt(instruction.getParameter());
                current.setZ(immValue == 0);
                current.setN(immValue > 127);
-               current.setA(immValue);
             } catch (NumberFormatException e) {
                // ignore
             }
+         }
+         if (instructionType.getMnemnonic().equals("sta") && (instructionType.getAddressingMode().equals(AsmAddressingMode.ZP)||instructionType.getAddressingMode().equals(AsmAddressingMode.ABS))) {
+            current.setaMem(instruction.getParameter());
          }
          if (instructionType.getMnemnonic().equals("ldx") && instructionType.getAddressingMode().equals(AsmAddressingMode.IMM)) {
+            current.setX(instruction.getParameter());
             try {
                int immValue = Integer.parseInt(instruction.getParameter());
                current.setZ(immValue == 0);
                current.setN(immValue > 127);
-               current.setX(immValue);
             } catch (NumberFormatException e) {
                // ignore
             }
          }
+         if (instructionType.getMnemnonic().equals("stx") && (instructionType.getAddressingMode().equals(AsmAddressingMode.ZP)||instructionType.getAddressingMode().equals(AsmAddressingMode.ABS))) {
+            current.setxMem(instruction.getParameter());
+         }
          if (instructionType.getMnemnonic().equals("ldy") && instructionType.getAddressingMode().equals(AsmAddressingMode.IMM)) {
+            current.setY(instruction.getParameter());
             try {
                int immValue = Integer.parseInt(instruction.getParameter());
                current.setZ(immValue == 0);
                current.setN(immValue > 127);
-               current.setY(immValue);
             } catch (NumberFormatException e) {
                // ignore
             }
+         }
+         if (instructionType.getMnemnonic().equals("sty") && (instructionType.getAddressingMode().equals(AsmAddressingMode.ZP)||instructionType.getAddressingMode().equals(AsmAddressingMode.ABS))) {
+            current.setyMem(instruction.getParameter());
          }
          if (instructionType.getMnemnonic().equals("sec")) {
             current.setC(Boolean.TRUE);
@@ -109,13 +121,16 @@ public class AsmProgramStaticRegisterValues {
     * Known values of registers/flags at an instruction. null where value is unknown.
     */
    public static class AsmRegisterValues {
-      private Integer a;
-      private Integer x;
-      private Integer y;
+      private String a;
+      private String x;
+      private String y;
       private Boolean c;
       private Boolean v;
       private Boolean n;
       private Boolean z;
+      private String aMem;
+      private String xMem;
+      private String yMem;
 
       public AsmRegisterValues() {
       }
@@ -128,17 +143,24 @@ public class AsmProgramStaticRegisterValues {
          this.v = original.getV();
          this.n = original.getN();
          this.z = original.getZ();
+         this.aMem = original.getaMem();
+         this.xMem = original.getxMem();
+         this.yMem = original.getyMem();
       }
 
-      public Integer getA() {
+      public String getA() {
          return a;
       }
 
-      public Integer getX() {
+      public String getaMem() {
+         return aMem;
+      }
+
+      public String getX() {
          return x;
       }
 
-      public Integer getY() {
+      public String getY() {
          return y;
       }
 
@@ -158,16 +180,36 @@ public class AsmProgramStaticRegisterValues {
          return z;
       }
 
-      public void setA(Integer a) {
-         this.a = a;
-      }
-
-      public void setX(Integer x) {
+      public void setX(String x) {
          this.x = x;
       }
 
-      public void setY(Integer y) {
+      public void setY(String y) {
          this.y = y;
+      }
+
+      public void setA(String a) {
+         this.a = a;
+      }
+
+      public void setaMem(String aMem) {
+         this.aMem = aMem;
+      }
+
+      public String getxMem() {
+         return xMem;
+      }
+
+      public void setxMem(String xMem) {
+         this.xMem = xMem;
+      }
+
+      public String getyMem() {
+         return yMem;
+      }
+
+      public void setyMem(String yMem) {
+         this.yMem = yMem;
       }
 
       public void setC(Boolean c) {

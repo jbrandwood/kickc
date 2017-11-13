@@ -90,7 +90,6 @@ line: {
     sec
     sbc $ff
     sta yd
-    lda yd
     cmp xd
     bcs b3
     ldx x0
@@ -120,7 +119,6 @@ line: {
     sec
     sbc y1
     sta yd
-    lda yd
     cmp xd
     bcs b6
     ldx x0
@@ -156,7 +154,6 @@ line: {
     sec
     sbc $ff
     sta yd
-    lda yd
     cmp xd
     bcs b10
     ldx x1
@@ -184,7 +181,6 @@ line: {
     sec
     sbc y1
     sta yd
-    lda yd
     cmp xd
     bcs b13
     ldx x1

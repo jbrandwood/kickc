@@ -22,7 +22,6 @@ animate: {
     clc
     adc #1
     sta XPOS+0
-    lda XPOS+0
     cmp #$28
     bne b1
     lda #0
@@ -32,7 +31,6 @@ animate: {
     clc
     adc #1
     sta YPOS+0
-    lda YPOS+0
     cmp #$19
     bne b2
     lda #0
@@ -41,7 +39,7 @@ animate: {
     ldx XPOS+1
     dex
     stx XPOS+1
-    lda XPOS+1
+    txa
     cmp #$ff
     bne b3
     lda #$28
@@ -51,7 +49,6 @@ animate: {
     clc
     adc #1
     sta YPOS+2
-    lda YPOS+2
     cmp #$19
     bne b4
     lda #0
@@ -60,7 +57,7 @@ animate: {
     ldx YPOS+3
     dex
     stx YPOS+3
-    lda YPOS+3
+    txa
     cmp #$ff
     bne breturn
     lda #$19
@@ -69,10 +66,8 @@ animate: {
     clc
     adc #7
     sta XPOS+3
-    lda XPOS+3
     cmp #$28
     bcc breturn
-    lda XPOS+3
     sec
     sbc #$28
     sta XPOS+3

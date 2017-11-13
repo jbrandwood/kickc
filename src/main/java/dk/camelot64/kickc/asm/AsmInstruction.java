@@ -55,4 +55,8 @@ public class AsmInstruction implements AsmLine {
    public void setParameter(String parameter) {
       this.parameter = parameter;
    }
+
+   public void setType(AsmInstructionType type) {
+      this.type = type;
+   }
 }

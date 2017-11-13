@@ -9,6 +9,7 @@ import dk.camelot64.kickc.model.Program;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
+import java.util.ListIterator;
 
 /**
  * Optimization performed on Assembler Code (Asm Code).
@@ -49,4 +50,12 @@ public abstract class Pass5AsmOptimization {
          }
       }
    }
+
+   public boolean remove(ListIterator<AsmLine> lineIt) {
+      getLog().append("Removing instruction " + lineIt.previous());
+      lineIt.remove();
+      return true;
+   }
+
+
 }

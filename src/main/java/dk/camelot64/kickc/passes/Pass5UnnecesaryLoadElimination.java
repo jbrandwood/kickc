@@ -5,6 +5,7 @@ import dk.camelot64.kickc.model.Program;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.ListIterator;
 
 /**
  * Maps out register values entering all instructions. Removes unnecessary loads / clears / sets
@@ -18,63 +19,92 @@ public class Pass5UnnecesaryLoadElimination extends Pass5AsmOptimization {
    @Override
    public boolean optimize() {
       AsmProgramStaticRegisterValues staticValues = new AsmProgramStaticRegisterValues(getAsmProgram());
-      List<AsmLine> removes = new ArrayList<>();
+      //List<AsmLine> removes = new ArrayList<>();
+      boolean modified = false;
 
       for (AsmSegment segment : getAsmProgram().getSegments()) {
-         for (AsmLine line : segment.getLines()) {
+         List<AsmLine> lines = segment.getLines();
+         ListIterator<AsmLine> lineIt = lines.listIterator();
+         while (lineIt.hasNext()) {
+            AsmLine line = lineIt.next();
             if (line instanceof AsmInstruction) {
                AsmInstruction instruction = (AsmInstruction) line;
                AsmInstructionType instructionType = instruction.getType();
+
                if (instructionType.getMnemnonic().equals("lda") && instructionType.getAddressingMode().equals(AsmAddressingMode.IMM)) {
-                  try {
-                     int immValue = Integer.parseInt(instruction.getParameter());
-                     AsmProgramStaticRegisterValues.AsmRegisterValues instructionValues = staticValues.getValues(instruction);
-                     if (instructionValues.getA() != null && instructionValues.getA().equals(immValue)) {
-                        removes.add(instruction);
-                     }
-                  } catch (NumberFormatException e) {
-                     // ignore
+                  String immValue = instruction.getParameter();
+                  AsmProgramStaticRegisterValues.AsmRegisterValues instructionValues = staticValues.getValues(instruction);
+                  if (instructionValues.getA() != null && instructionValues.getA().equals(immValue)) {
+                     modified = remove(lineIt);
+                  }
+               }
+               if (instructionType.getMnemnonic().equals("lda") && (instructionType.getAddressingMode().equals(AsmAddressingMode.ZP)||instructionType.getAddressingMode().equals(AsmAddressingMode.ABS))) {
+                  String memValue = instruction.getParameter();
+                  AsmProgramStaticRegisterValues.AsmRegisterValues instructionValues = staticValues.getValues(instruction);
+                  if (instructionValues.getaMem() != null && instructionValues.getaMem().equals(memValue)) {
+                     modified = remove(lineIt);
+                  } else if (instructionValues.getxMem() != null && instructionValues.getxMem().equals(memValue)) {
+                     getLog().append("Replacing instruction "+instruction+" with TXA");
+                     instruction.setType(AsmInstructionSet.getInstructionType("txa", AsmAddressingMode.NON, null, false));
+                     instruction.setParameter(null);
+                  } else if (instructionValues.getyMem() != null && instructionValues.getyMem().equals(memValue)) {
+                     getLog().append("Replacing instruction "+instruction+" with TYA");
+                     instruction.setType(AsmInstructionSet.getInstructionType("tya", AsmAddressingMode.NON, null, false));
+                     instruction.setParameter(null);
                   }
                }
                if (instructionType.getMnemnonic().equals("ldx") && instructionType.getAddressingMode().equals(AsmAddressingMode.IMM)) {
-                  try {
-                     int immValue = Integer.parseInt(instruction.getParameter());
-                     AsmProgramStaticRegisterValues.AsmRegisterValues instructionValues = staticValues.getValues(instruction);
-                     if (instructionValues.getX() != null && instructionValues.getX().equals(immValue)) {
-                        removes.add(instruction);
-                     }
-                  } catch (NumberFormatException e) {
-                     // ignore
+                  String immValue = instruction.getParameter();
+                  AsmProgramStaticRegisterValues.AsmRegisterValues instructionValues = staticValues.getValues(instruction);
+                  if (instructionValues.getX() != null && instructionValues.getX().equals(immValue)) {
+                     modified = remove(lineIt);
                   }
-
+               }
+               if (instructionType.getMnemnonic().equals("ldx") && (instructionType.getAddressingMode().equals(AsmAddressingMode.ZP)||instructionType.getAddressingMode().equals(AsmAddressingMode.ABS))) {
+                  String memValue = instruction.getParameter();
+                  AsmProgramStaticRegisterValues.AsmRegisterValues instructionValues = staticValues.getValues(instruction);
+                  if (instructionValues.getxMem() != null && instructionValues.getxMem().equals(memValue)) {
+                     modified = remove(lineIt);
+                  } else if (instructionValues.getaMem() != null && instructionValues.getaMem().equals(memValue)) {
+                     getLog().append("Replacing instruction "+instruction+" with TAX");
+                     instruction.setType(AsmInstructionSet.getInstructionType("tax", AsmAddressingMode.NON, null, false));
+                     instruction.setParameter(null);
+                  }
                }
                if (instructionType.getMnemnonic().equals("ldy") && instructionType.getAddressingMode().equals(AsmAddressingMode.IMM)) {
-                  try {
-                     int immValue = Integer.parseInt(instruction.getParameter());
-                     AsmProgramStaticRegisterValues.AsmRegisterValues instructionValues = staticValues.getValues(instruction);
-                     if (instructionValues.getY() != null && instructionValues.getY().equals(immValue)) {
-                        removes.add(instruction);
-                     }
-                  } catch (NumberFormatException e) {
-                     // ignore
+                  String immValue = instruction.getParameter();
+                  AsmProgramStaticRegisterValues.AsmRegisterValues instructionValues = staticValues.getValues(instruction);
+                  if (instructionValues.getY() != null && instructionValues.getY().equals(immValue)) {
+                     modified = remove(lineIt);
+                  }
+               }
+               if (instructionType.getMnemnonic().equals("ldy") && (instructionType.getAddressingMode().equals(AsmAddressingMode.ZP)||instructionType.getAddressingMode().equals(AsmAddressingMode.ABS))) {
+                  String memValue = instruction.getParameter();
+                  AsmProgramStaticRegisterValues.AsmRegisterValues instructionValues = staticValues.getValues(instruction);
+                  if (instructionValues.getyMem() != null && instructionValues.getyMem().equals(memValue)) {
+                     modified = remove(lineIt);
+                  } else  if (instructionValues.getaMem() != null && instructionValues.getaMem().equals(memValue)) {
+                     getLog().append("Replacing instruction "+instruction+" with TAY");
+                     instruction.setType(AsmInstructionSet.getInstructionType("tay", AsmAddressingMode.NON, null, false));
+                     instruction.setParameter(null);
                   }
                }
                if (instructionType.getMnemnonic().equals("clc")) {
                   AsmProgramStaticRegisterValues.AsmRegisterValues instructionValues = staticValues.getValues(instruction);
                   if (Boolean.FALSE.equals(instructionValues.getC())) {
-                     removes.add(instruction);
+                     modified = remove(lineIt);
                   }
                }
                if (instructionType.getMnemnonic().equals("sec")) {
                   AsmProgramStaticRegisterValues.AsmRegisterValues instructionValues = staticValues.getValues(instruction);
                   if (Boolean.TRUE.equals(instructionValues.getC())) {
-                     removes.add(instruction);
+                     modified = remove(lineIt);
                   }
                }
             }
          }
       }
-      remove(removes);
-      return removes.size() > 0;
+      return modified;
    }
+
 }

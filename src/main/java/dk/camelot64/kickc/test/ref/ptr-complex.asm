@@ -4,6 +4,7 @@
   jsr main
 main: {
     .const screen = $400
+    .const BGCOL = $d020
     .const sc2 = screen+$51
     .label _2 = 2
     .label _9 = 2
@@ -52,5 +53,6 @@ main: {
     bne b2
     inc $d020
     dec $d000+$21
+    inc BGCOL
     rts
 }

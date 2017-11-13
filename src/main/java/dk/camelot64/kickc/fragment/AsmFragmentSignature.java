@@ -259,6 +259,13 @@ public class AsmFragmentSignature {
          return bind(deref.getPointer()) + "_derefidx_" + bind(deref.getIndex());
       }
 
+      // Find value if it is already bound
+      for (String name : bindings.keySet()) {
+         Value bound = bindings.get(name);
+         if (bound.equals(value))
+            return name;
+      }
+
       if (value instanceof VariableRef) {
          value = program.getSymbolInfos().getVariable((VariableRef) value);
       }
@@ -313,15 +320,6 @@ public class AsmFragmentSignature {
       } else if (value instanceof ConstantVar) {
          ConstantVar constantVar = (ConstantVar) value;
          SymbolType constType = constantVar.getType();
-         // Find value if it is already bound
-         for (String name : bindings.keySet()) {
-            Value bound = bindings.get(name);
-            if (bound instanceof ConstantVar) {
-               if (bound.equals(value))
-                  return name;
-            }
-         }
-
 
          if (SymbolTypeBasic.BYTE.equals(constType)) {
             String name = "coby" + nextConstByteIdx++;

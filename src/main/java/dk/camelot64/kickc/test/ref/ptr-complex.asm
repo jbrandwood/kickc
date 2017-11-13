@@ -50,5 +50,7 @@ main: {
     inx
     cpx #$b
     bne b2
+    inc $d020
+    dec $d000+$21
     rts
 }

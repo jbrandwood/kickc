@@ -165,9 +165,13 @@ public class AsmFragmentSignature {
       String op = operator.getOperator();
       switch (op) {
          case "*":
-            return "_star_";
+            if(operator.getType().equals(Operator.Type.UNARY)) {
+               return "_deref_";
+            }  else {
+               return "_mul_";
+            }
          case "*idx":
-            return "_staridx_";
+            return "_derefidx_";
          case "+":
             return "_plus_";
          case "++":
@@ -249,10 +253,10 @@ public class AsmFragmentSignature {
    public String bind(Value value) {
       if (value instanceof PointerDereferenceSimple) {
          PointerDereferenceSimple deref = (PointerDereferenceSimple) value;
-         return "_star_" + bind(deref.getPointer());
+         return "_deref_" + bind(deref.getPointer());
       } else if (value instanceof PointerDereferenceIndexed) {
          PointerDereferenceIndexed deref = (PointerDereferenceIndexed) value;
-         return bind(deref.getPointer()) + "_staridx_" + bind(deref.getIndex());
+         return bind(deref.getPointer()) + "_derefidx_" + bind(deref.getIndex());
       }
 
       if (value instanceof VariableRef) {

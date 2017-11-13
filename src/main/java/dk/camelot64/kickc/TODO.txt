@@ -29,8 +29,7 @@ New language Features
 
 Pointers
 - Support calculated pointers eg. *(ptr+i)
-- Use a rule-based approach should de-inline most pointer derefs again just before register allocation. ( *a = *b + *c => $1=*b (reg a), $2=*c (alu), $3=$1+$2 (reg a), *a = $3  - but *a=*a+const should stay inlined as it has efficient ASM)
-- Change pointer derefs ASM signature to _deref_xxx (from _star_xxx)
+- Use a rule-based approach to de-inline most pointer derefs again just before register allocation. ( *a = *b + *c => $1=*b (reg a), $2=*c (alu), $3=$1+$2 (reg a), *a = $3  - but *a=*a+const should stay inlined as it has efficient ASM)
 - VariableReplacer, GraphReplacer, Pass1GenerateSSA#versionAllUses() has a pretty ugly handling of pointers. Abstract prettier code.
 - AsmFragmentManager only handles _neq_ pointer comparison. Abstract a better replacer and handle the rest.
 - Consider if array-indexing should be handled in the same way as unary * when generating statements (put into inline Pointers instead of temporary variables.) This will fix a[2]++, which probably does not work atm.
@@ -209,3 +208,4 @@ Done
 + (incd020.kc) Increment/decrement of value pointed to by pointer does not work. eg. byte* BGCOL = $d020; (*BGCOL)++;
 + All pointer derefs *ptr should per default be inlined as rValues/lValues in early passes (PointerDereference).
 + Alternatively: Selectively inline some pointer derefs that can be optimized in ASM
++ Change pointer derefs ASM signature to _deref_xxx (from _star_xxx)

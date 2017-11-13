@@ -126,8 +126,8 @@ public class AsmFragmentManager {
             return result;
          }
       }
-      if (signature.startsWith("_star_cowo1_neq_") && !signature.contains("aby")) {
-         String subSignature = "aby_neq_" + signature.substring(16).replace("cowo2", "cowo1").replace("cowo3", "cowo2").replace("coby2", "coby1").replace("coby3", "coby2");
+      if (signature.startsWith("_deref_cowo1_neq_") && !signature.contains("aby")) {
+         String subSignature = regexpRewriteSignature(signature, "_deref_cowo1_neq_(.*)", "aby_neq_$1").replace("cowo2", "cowo1").replace("cowo3", "cowo2").replace("coby2", "coby1").replace("coby3", "coby2");
          CharStream subCharStream = loadOrSynthesizeFragment(subSignature);
          if (subCharStream != null) {
             CharStream result = CharStreams.fromString("lda {cowo1}\n"+subCharStream.toString().replace("cowo2", "cowo3").replace("cowo1", "cowo2").replace("coby2", "coby3").replace("coby1", "coby2"));
@@ -158,48 +158,48 @@ public class AsmFragmentManager {
             return result;
          }
       }
-      if (signature.contains("=_star_cowo1") && !signature.matches(".*=.*aby.*")) {
-         String subSignature = regexpRewriteSignature(signature, "(.*)=_star_cowo1_(.*)", "$1=aby_$2").replace("cowo2", "cowo1").replace("cowo3", "cowo2").replace("coby2", "coby1").replace("coby3", "coby2");
+      if (signature.contains("=_deref_cowo1") && !signature.matches(".*=.*aby.*")) {
+         String subSignature = regexpRewriteSignature(signature, "(.*)=_deref_cowo1_(.*)", "$1=aby_$2").replace("cowo2", "cowo1").replace("cowo3", "cowo2").replace("coby2", "coby1").replace("coby3", "coby2");
          CharStream subCharStream = loadOrSynthesizeFragment(subSignature);
          if (subCharStream != null) {
             CharStream result = CharStreams.fromString("lda {cowo1}\n"+subCharStream.toString().replace("cowo2", "cowo3").replace("cowo1", "cowo2").replace("coby2", "coby3").replace("coby1", "coby2"));
             return result;
          }
       }
-      if (signature.contains("=_star_zpptrby1") && !signature.matches(".*=.*aby.*")&& !signature.matches(".*=.*yby.*")) {
-         String subSignature = regexpRewriteSignature(signature, "(.*)=_star_zpptrby1_(.*)", "$1=aby_$2").replace("zpptrby2", "zpptrby1").replace("zpptrby3", "zpptrby2");
+      if (signature.contains("=_deref_zpptrby1") && !signature.matches(".*=.*aby.*")&& !signature.matches(".*=.*yby.*")) {
+         String subSignature = regexpRewriteSignature(signature, "(.*)=_deref_zpptrby1_(.*)", "$1=aby_$2").replace("zpptrby2", "zpptrby1").replace("zpptrby3", "zpptrby2");
          CharStream subCharStream = loadOrSynthesizeFragment(subSignature);
          if (subCharStream != null) {
             CharStream result = CharStreams.fromString("ldy #0\n"+"lda ({zpptrby1}),y\n"+subCharStream.toString().replace("zpptrby2", "zpptrby3").replace("zpptrby1", "zpptrby2"));
             return result;
          }
       }
-      if (signature.endsWith("_staridx_aby") && !signature.matches(".*=.*yby.*")) {
-         String subSignature = regexpRewriteSignature(signature, "(.*)=(.*)_staridx_aby", "$1=$2_staridx_yby");
+      if (signature.endsWith("_derefidx_aby") && !signature.matches(".*=.*yby.*")) {
+         String subSignature = regexpRewriteSignature(signature, "(.*)=(.*)_derefidx_aby", "$1=$2_derefidx_yby");
          CharStream subCharStream = loadOrSynthesizeFragment(subSignature);
          if (subCharStream != null) {
             CharStream result = CharStreams.fromString("tay\n"+subCharStream.toString());
             return result;
          }
       }
-      if (signature.endsWith("_staridx_aby") && !signature.matches(".*=.*xby.*")) {
-         String subSignature = regexpRewriteSignature(signature, "(.*)=(.*)_staridx_aby", "$1=$2_staridx_xby");
+      if (signature.endsWith("_derefidx_aby") && !signature.matches(".*=.*xby.*")) {
+         String subSignature = regexpRewriteSignature(signature, "(.*)=(.*)_derefidx_aby", "$1=$2_derefidx_xby");
          CharStream subCharStream = loadOrSynthesizeFragment(subSignature);
          if (subCharStream != null) {
             CharStream result = CharStreams.fromString("tax\n"+subCharStream.toString());
             return result;
          }
       }
-      if (signature.endsWith("_staridx_zpby1") && !signature.matches(".*=.*yby.*")) {
-         String subSignature = regexpRewriteSignature(signature, "(.*)=(.*)_staridx_zpby1", "$1=$2_staridx_yby").replace("zpby2", "zpby1").replace("zpby3", "zpby2");
+      if (signature.endsWith("_derefidx_zpby1") && !signature.matches(".*=.*yby.*")) {
+         String subSignature = regexpRewriteSignature(signature, "(.*)=(.*)_derefidx_zpby1", "$1=$2_derefidx_yby").replace("zpby2", "zpby1").replace("zpby3", "zpby2");
          CharStream subCharStream = loadOrSynthesizeFragment(subSignature);
          if (subCharStream != null) {
             CharStream result = CharStreams.fromString("ldy {zpby1}\n"+subCharStream.toString().replace("zpby2", "zpby3").replace("zpby1", "zpby2"));
             return result;
          }
       }
-      if (signature.endsWith("_staridx_zpby1") && !signature.matches(".*=.*xby.*")) {
-         String subSignature = regexpRewriteSignature(signature, "(.*)=(.*)_staridx_zpby1", "$1=$2_staridx_xby").replace("zpby2", "zpby1").replace("zpby3", "zpby2");
+      if (signature.endsWith("_derefidx_zpby1") && !signature.matches(".*=.*xby.*")) {
+         String subSignature = regexpRewriteSignature(signature, "(.*)=(.*)_derefidx_zpby1", "$1=$2_derefidx_xby").replace("zpby2", "zpby1").replace("zpby3", "zpby2");
          CharStream subCharStream = loadOrSynthesizeFragment(subSignature);
          if (subCharStream != null) {
             CharStream result = CharStreams.fromString("ldx {zpby1}\n"+subCharStream.toString().replace("zpby2", "zpby3").replace("zpby1", "zpby2"));

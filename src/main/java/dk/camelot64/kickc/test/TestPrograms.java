@@ -24,6 +24,10 @@ public class TestPrograms extends TestCase {
       helper = new ReferenceHelper("dk/camelot64/kickc/test/ref/");
    }
 
+   public void testPtrComplex() throws IOException, URISyntaxException {
+      compileAndCompare("ptr-complex");
+   }
+
    public void testIncD020() throws IOException, URISyntaxException {
       compileAndCompare("incd020");
    }

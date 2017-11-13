@@ -328,6 +328,18 @@ public class KickCBaseListener implements KickCListener {
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
+	@Override public void enterLvaluePtrExpr(KickCParser.LvaluePtrExprContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitLvaluePtrExpr(KickCParser.LvaluePtrExprContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
 	@Override public void enterLvalueArray(KickCParser.LvalueArrayContext ctx) { }
 	/**
 	 * {@inheritDoc}
@@ -335,18 +347,6 @@ public class KickCBaseListener implements KickCListener {
 	 * <p>The default implementation does nothing.</p>
 	 */
 	@Override public void exitLvalueArray(KickCParser.LvalueArrayContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override public void enterLvaluePar(KickCParser.LvalueParContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override public void exitLvaluePar(KickCParser.LvalueParContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *

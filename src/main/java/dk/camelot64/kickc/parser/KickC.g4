@@ -54,9 +54,9 @@ initializer
     ;
 
 lvalue
-    : '(' lvalue ')' #lvaluePar
-    | NAME #lvalueName
-    | '*' lvalue #lvaluePtr
+    : NAME #lvalueName
+    | '*' NAME #lvaluePtr
+    | '*' '(' expr ')' #lvaluePtrExpr
     | ('<' | '>' ) lvalue #lvalueLoHi
     | lvalue '[' expr ']' #lvalueArray
     ;

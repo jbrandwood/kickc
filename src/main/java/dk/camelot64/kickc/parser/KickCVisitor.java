@@ -188,19 +188,19 @@ public interface KickCVisitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitLvaluePtr(KickCParser.LvaluePtrContext ctx);
 	/**
+	 * Visit a parse tree produced by the {@code lvaluePtrExpr}
+	 * labeled alternative in {@link KickCParser#lvalue}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitLvaluePtrExpr(KickCParser.LvaluePtrExprContext ctx);
+	/**
 	 * Visit a parse tree produced by the {@code lvalueArray}
 	 * labeled alternative in {@link KickCParser#lvalue}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
 	T visitLvalueArray(KickCParser.LvalueArrayContext ctx);
-	/**
-	 * Visit a parse tree produced by the {@code lvaluePar}
-	 * labeled alternative in {@link KickCParser#lvalue}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitLvaluePar(KickCParser.LvalueParContext ctx);
 	/**
 	 * Visit a parse tree produced by the {@code lvalueLoHi}
 	 * labeled alternative in {@link KickCParser#lvalue}.

@@ -310,6 +310,18 @@ public interface KickCListener extends ParseTreeListener {
 	 */
 	void exitLvaluePtr(KickCParser.LvaluePtrContext ctx);
 	/**
+	 * Enter a parse tree produced by the {@code lvaluePtrExpr}
+	 * labeled alternative in {@link KickCParser#lvalue}.
+	 * @param ctx the parse tree
+	 */
+	void enterLvaluePtrExpr(KickCParser.LvaluePtrExprContext ctx);
+	/**
+	 * Exit a parse tree produced by the {@code lvaluePtrExpr}
+	 * labeled alternative in {@link KickCParser#lvalue}.
+	 * @param ctx the parse tree
+	 */
+	void exitLvaluePtrExpr(KickCParser.LvaluePtrExprContext ctx);
+	/**
 	 * Enter a parse tree produced by the {@code lvalueArray}
 	 * labeled alternative in {@link KickCParser#lvalue}.
 	 * @param ctx the parse tree
@@ -321,18 +333,6 @@ public interface KickCListener extends ParseTreeListener {
 	 * @param ctx the parse tree
 	 */
 	void exitLvalueArray(KickCParser.LvalueArrayContext ctx);
-	/**
-	 * Enter a parse tree produced by the {@code lvaluePar}
-	 * labeled alternative in {@link KickCParser#lvalue}.
-	 * @param ctx the parse tree
-	 */
-	void enterLvaluePar(KickCParser.LvalueParContext ctx);
-	/**
-	 * Exit a parse tree produced by the {@code lvaluePar}
-	 * labeled alternative in {@link KickCParser#lvalue}.
-	 * @param ctx the parse tree
-	 */
-	void exitLvaluePar(KickCParser.LvalueParContext ctx);
 	/**
 	 * Enter a parse tree produced by the {@code lvalueLoHi}
 	 * labeled alternative in {@link KickCParser#lvalue}.

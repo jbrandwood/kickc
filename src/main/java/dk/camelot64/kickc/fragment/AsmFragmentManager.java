@@ -126,6 +126,22 @@ public class AsmFragmentManager {
             return result;
          }
       }
+      if (signature.startsWith("_deref_zpptrby1=")) {
+         String subSignature = regexpRewriteSignature(signature, "_deref_zpptrby1=(.*)", "aby=$1").replace("zpptrby2", "zpptrby1").replace("zpptrby3", "zpptrby2");
+         CharStream subCharStream = loadOrSynthesizeFragment(subSignature);
+         if (subCharStream != null) {
+            CharStream result = CharStreams.fromString(subCharStream.toString().replace("zpptrby2", "zpptrby3").replace("zpptrby1", "zpptrby2") + "\n"+"ldy #0\n" + "sta ({zpptrby1}),y\n");
+            return result;
+         }
+      }
+      if (signature.startsWith("_deref_cowo1=")) {
+         String subSignature = regexpRewriteSignature(signature, "_deref_cowo1=(.*)", "aby=$1").replace("cowo2", "cowo1").replace("cowo3", "cowo2").replace("coby2", "coby1").replace("coby3", "coby2");
+         CharStream subCharStream = loadOrSynthesizeFragment(subSignature);
+         if (subCharStream != null) {
+            CharStream result = CharStreams.fromString(subCharStream.toString().replace("cowo2", "cowo3").replace("cowo1", "cowo2").replace("coby2", "coby3").replace("coby1", "coby2") + "\nsta {cowo1}\n");
+            return result;
+         }
+      }
       if (signature.startsWith("_deref_cowo1_neq_") && !signature.contains("aby")) {
          String subSignature = regexpRewriteSignature(signature, "_deref_cowo1_neq_(.*)", "aby_neq_$1").replace("cowo2", "cowo1").replace("cowo3", "cowo2").replace("coby2", "coby1").replace("coby3", "coby2");
          CharStream subCharStream = loadOrSynthesizeFragment(subSignature);
@@ -167,7 +183,7 @@ public class AsmFragmentManager {
          }
       }
       if (signature.contains("=_deref_zpptrby1") && !signature.matches(".*=.*aby.*")&& !signature.matches(".*=.*yby.*")) {
-         String subSignature = regexpRewriteSignature(signature, "(.*)=_deref_zpptrby1_(.*)", "$1=aby_$2").replace("zpptrby2", "zpptrby1").replace("zpptrby3", "zpptrby2");
+         String subSignature = regexpRewriteSignature(signature, "(.*)=_deref_zpptrby1(.*)", "$1=aby$2").replace("zpptrby2", "zpptrby1").replace("zpptrby3", "zpptrby2");
          CharStream subCharStream = loadOrSynthesizeFragment(subSignature);
          if (subCharStream != null) {
             CharStream result = CharStreams.fromString("ldy #0\n"+"lda ({zpptrby1}),y\n"+subCharStream.toString().replace("zpptrby2", "zpptrby3").replace("zpptrby1", "zpptrby2"));

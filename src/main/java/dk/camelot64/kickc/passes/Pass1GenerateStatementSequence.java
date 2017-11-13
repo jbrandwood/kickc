@@ -170,7 +170,7 @@ public class Pass1GenerateStatementSequence extends KickCBaseVisitor<Object> {
       // Create and assign declared loop variable
       String varName = forDeclCtx.NAME().getText();
       Variable lValue;
-      if(forDeclCtx.typeDecl()!=null) {
+      if (forDeclCtx.typeDecl() != null) {
          SymbolType type = (SymbolType) visit(forDeclCtx.typeDecl());
          lValue = getCurrentSymbols().addVariable(varName, type);
       } else {
@@ -189,7 +189,7 @@ public class Pass1GenerateStatementSequence extends KickCBaseVisitor<Object> {
          this.visit(stmtForCtx.stmt());
       }
       // Add increment
-      if(ctx.expr(1)!=null) {
+      if (ctx.expr(1) != null) {
          PrePostModifierHandler.addPreModifiers(this, ctx.expr(1));
          this.visit(ctx.expr(1));
          PrePostModifierHandler.addPostModifiers(this, ctx.expr(1));
@@ -211,7 +211,7 @@ public class Pass1GenerateStatementSequence extends KickCBaseVisitor<Object> {
       // Create declared loop variable
       String varName = forDeclCtx.NAME().getText();
       Variable lValue;
-      if(forDeclCtx.typeDecl()!=null) {
+      if (forDeclCtx.typeDecl() != null) {
          SymbolType type = (SymbolType) visit(forDeclCtx.typeDecl());
          lValue = getCurrentSymbols().addVariable(varName, type);
       } else {
@@ -236,21 +236,21 @@ public class Pass1GenerateStatementSequence extends KickCBaseVisitor<Object> {
       }
       // Add increment
       ConstantInteger beyondLastVal;
-      if(rangeFirst.getNumber()>rangeLast.getNumber()) {
+      if (rangeFirst.getNumber() > rangeLast.getNumber()) {
          Statement stmtInc = new StatementAssignment(lValue.getRef(), Operator.DECREMENT, lValue.getRef());
          sequence.addStatement(stmtInc);
-         if(rangeLast.getNumber()==0) {
+         if (rangeLast.getNumber() == 0) {
             beyondLastVal = new ConstantInteger(255);
          } else {
-            beyondLastVal = new ConstantInteger(rangeLast.getNumber()-1);
+            beyondLastVal = new ConstantInteger(rangeLast.getNumber() - 1);
          }
-      }  else {
+      } else {
          Statement stmtInc = new StatementAssignment(lValue.getRef(), Operator.INCREMENT, lValue.getRef());
          sequence.addStatement(stmtInc);
-         if(rangeLast.getNumber()==255) {
+         if (rangeLast.getNumber() == 255) {
             beyondLastVal = new ConstantInteger(0);
          } else {
-            beyondLastVal = new ConstantInteger(rangeLast.getNumber()+1);
+            beyondLastVal = new ConstantInteger(rangeLast.getNumber() + 1);
          }
       }
 
@@ -290,7 +290,9 @@ public class Pass1GenerateStatementSequence extends KickCBaseVisitor<Object> {
          sequence.addStatement(new StatementAssignment(returnVar, returnVar));
       }
       VariableRef returnVarRef = null;
-      if(returnVar!=null) {returnVarRef = returnVar.getRef();}
+      if (returnVar != null) {
+         returnVarRef = returnVar.getRef();
+      }
       sequence.addStatement(new StatementReturn(returnVarRef));
       scopeStack.pop();
       sequence.addStatement(new StatementProcedureEnd(procedure.getRef()));
@@ -378,18 +380,17 @@ public class Pass1GenerateStatementSequence extends KickCBaseVisitor<Object> {
    }
 
    @Override
-   public LValue visitLvaluePar(KickCParser.LvalueParContext ctx) {
-      return (LValue) visit(ctx.lvalue());
+   public LValue visitLvaluePtr(KickCParser.LvaluePtrContext ctx) {
+      Variable variable = getCurrentSymbols().getVariable(ctx.NAME().getText());
+      return new PointerDereferenceSimple(variable.getRef());
    }
 
    @Override
-   public LValue visitLvaluePtr(KickCParser.LvaluePtrContext ctx) {
-      LValue lval = (LValue) visit(ctx.lvalue());
-      if (lval instanceof VariableRef) {
-         return new PointerDereferenceSimple(lval);
-      } else {
-         throw new RuntimeException("Not implemented");
-      }
+   public Object visitLvaluePtrExpr(KickCParser.LvaluePtrExprContext ctx) {
+      PrePostModifierHandler.addPreModifiers(this, ctx.expr());
+      RValue rValue = (RValue) this.visit(ctx.expr());
+      PrePostModifierHandler.addPostModifiers(this, ctx.expr());
+      return new PointerDereferenceSimple(rValue);
    }
 
    @Override
@@ -402,7 +403,7 @@ public class Pass1GenerateStatementSequence extends KickCBaseVisitor<Object> {
          } else if (opTxt.equals(">")) {
             return new LvalueLoHiByte(Operator.SET_HIBYTE, (VariableRef) lval);
          } else {
-            throw new RuntimeException("Not implemented - lo/hi-lvalue operator "+opTxt);
+            throw new RuntimeException("Not implemented - lo/hi-lvalue operator " + opTxt);
          }
       }
       throw new RuntimeException("Not implemented - lo/hi lvalues of non-variables");
@@ -444,7 +445,7 @@ public class Pass1GenerateStatementSequence extends KickCBaseVisitor<Object> {
    @Override
    public SymbolType visitTypeArray(KickCParser.TypeArrayContext ctx) {
       SymbolType elementType = (SymbolType) visit(ctx.typeDecl());
-      if(ctx.expr()!=null) {
+      if (ctx.expr() != null) {
          ConstantValue size = ParseTreeConstantEvaluator.evaluate(ctx.expr());
          if (size instanceof ConstantInteger) {
             return new SymbolTypeArray(elementType, ((ConstantInteger) size).getNumber());
@@ -512,7 +513,7 @@ public class Pass1GenerateStatementSequence extends KickCBaseVisitor<Object> {
    @Override
    public RValue visitExprString(KickCParser.ExprStringContext ctx) {
       String text = ctx.getText();
-      return new ConstantString(text.substring(1, text.length()-1));
+      return new ConstantString(text.substring(1, text.length() - 1));
    }
 
    @Override
@@ -544,7 +545,7 @@ public class Pass1GenerateStatementSequence extends KickCBaseVisitor<Object> {
       RValue child = (RValue) this.visit(ctx.expr());
       String op = ((TerminalNode) ctx.getChild(0)).getSymbol().getText();
       Operator operator = Operator.getUnary(op);
-      if(Operator.STAR.equals(operator)) {
+      if (Operator.STAR.equals(operator)) {
          return new PointerDereferenceSimple(child);
       } else {
          VariableIntermediate tmpVar = getCurrentSymbols().addVariableIntermediate();
@@ -575,9 +576,9 @@ public class Pass1GenerateStatementSequence extends KickCBaseVisitor<Object> {
    @Override
    public RValue visitExprId(KickCParser.ExprIdContext ctx) {
       Variable variable = getCurrentSymbols().getVariable(ctx.NAME().getText());
-      if(variable == null) {
-         program.getLog().append("ERROR! Line "+ctx.getStart().getLine()+". Unknown variable "+ctx.NAME().getText());
-         throw new CompileError("ERROR! Line "+ctx.getStart().getLine()+". Unknown variable "+ctx.NAME().getText());
+      if (variable == null) {
+         program.getLog().append("ERROR! Line " + ctx.getStart().getLine() + ". Unknown variable " + ctx.NAME().getText());
+         throw new CompileError("ERROR! Line " + ctx.getStart().getLine() + ". Unknown variable " + ctx.NAME().getText());
       }
       return variable.getRef();
    }
@@ -626,7 +627,7 @@ public class Pass1GenerateStatementSequence extends KickCBaseVisitor<Object> {
          for (PrePostModifier mod : modifiers) {
             Statement stmt = new StatementAssignment((LValue) mod.child, mod.operator, mod.child);
             parser.sequence.addStatement(stmt);
-            parser.program.getLog().append("Adding pre/post-modifier "+stmt.toString(parser.program, true));
+            parser.program.getLog().append("Adding pre/post-modifier " + stmt.toString(parser.program, true));
          }
       }
 

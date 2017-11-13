@@ -395,7 +395,7 @@ init_plot_tables: {
     lda #0
     sta yoffs
     sta yoffs+1
-    ldx #0
+    tax
   b3:
     txa
     and #7
@@ -433,7 +433,7 @@ init_screen: {
     sta b+1
   b1:
     ldy #0
-    lda #0
+    tya
     sta (b),y
     inc b
     bne !+

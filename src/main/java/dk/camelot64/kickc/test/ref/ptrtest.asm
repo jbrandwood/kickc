@@ -73,7 +73,7 @@ lvalue: {
     sta SCREEN
     lda #2
     sta SCREEN+1
-    ldx #2
+    tax
   b1:
     cpx #$a
     bcc b2

@@ -14,10 +14,10 @@ main: {
     lda #0
     sta y
     ldy #yd/2
-    ldx #0
+    tax
     lda #0+0*$28
     sta idx
-    lda #0
+    txa
     sta idx+1
   b1:
     lda #<screen

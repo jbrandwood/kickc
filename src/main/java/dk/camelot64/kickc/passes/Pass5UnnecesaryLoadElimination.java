@@ -36,6 +36,14 @@ public class Pass5UnnecesaryLoadElimination extends Pass5AsmOptimization {
                   AsmProgramStaticRegisterValues.AsmRegisterValues instructionValues = staticValues.getValues(instruction);
                   if (instructionValues.getA() != null && instructionValues.getA().equals(immValue)) {
                      modified = remove(lineIt);
+                  } else if (instructionValues.getX() != null && instructionValues.getX().equals(immValue)) {
+                     getLog().append("Replacing instruction "+instruction+" with TXA");
+                     instruction.setType(AsmInstructionSet.getInstructionType("txa", AsmAddressingMode.NON, null, false));
+                     instruction.setParameter(null);
+                  } else if (instructionValues.getY() != null && instructionValues.getY().equals(immValue)) {
+                     getLog().append("Replacing instruction "+instruction+" with TYA");
+                     instruction.setType(AsmInstructionSet.getInstructionType("tya", AsmAddressingMode.NON, null, false));
+                     instruction.setParameter(null);
                   }
                }
                if (instructionType.getMnemnonic().equals("lda") && (instructionType.getAddressingMode().equals(AsmAddressingMode.ZP)||instructionType.getAddressingMode().equals(AsmAddressingMode.ABS))) {
@@ -58,6 +66,10 @@ public class Pass5UnnecesaryLoadElimination extends Pass5AsmOptimization {
                   AsmProgramStaticRegisterValues.AsmRegisterValues instructionValues = staticValues.getValues(instruction);
                   if (instructionValues.getX() != null && instructionValues.getX().equals(immValue)) {
                      modified = remove(lineIt);
+                  } else if (instructionValues.getA() != null && instructionValues.getA().equals(immValue)) {
+                     getLog().append("Replacing instruction "+instruction+" with TAX");
+                     instruction.setType(AsmInstructionSet.getInstructionType("tax", AsmAddressingMode.NON, null, false));
+                     instruction.setParameter(null);
                   }
                }
                if (instructionType.getMnemnonic().equals("ldx") && (instructionType.getAddressingMode().equals(AsmAddressingMode.ZP)||instructionType.getAddressingMode().equals(AsmAddressingMode.ABS))) {
@@ -76,6 +88,10 @@ public class Pass5UnnecesaryLoadElimination extends Pass5AsmOptimization {
                   AsmProgramStaticRegisterValues.AsmRegisterValues instructionValues = staticValues.getValues(instruction);
                   if (instructionValues.getY() != null && instructionValues.getY().equals(immValue)) {
                      modified = remove(lineIt);
+                  } else if (instructionValues.getA() != null && instructionValues.getA().equals(immValue)) {
+                     getLog().append("Replacing instruction "+instruction+" with TAY");
+                     instruction.setType(AsmInstructionSet.getInstructionType("tay", AsmAddressingMode.NON, null, false));
+                     instruction.setParameter(null);
                   }
                }
                if (instructionType.getMnemnonic().equals("ldy") && (instructionType.getAddressingMode().equals(AsmAddressingMode.ZP)||instructionType.getAddressingMode().equals(AsmAddressingMode.ABS))) {

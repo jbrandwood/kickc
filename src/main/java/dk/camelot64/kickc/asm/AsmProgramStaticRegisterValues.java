@@ -107,6 +107,22 @@ public class AsmProgramStaticRegisterValues {
          if (instructionType.getMnemnonic().equals("sty") && (instructionType.getAddressingMode().equals(AsmAddressingMode.ZP)||instructionType.getAddressingMode().equals(AsmAddressingMode.ABS))) {
             current.setyMem(instruction.getParameter());
          }
+         if (instructionType.getMnemnonic().equals("txa")) {
+            current.setA(current.getX());
+            current.setaMem(current.getxMem());
+         }
+         if (instructionType.getMnemnonic().equals("tax")) {
+            current.setX(current.getA());
+            current.setxMem(current.getaMem());
+         }
+         if (instructionType.getMnemnonic().equals("tya")) {
+            current.setA(current.getY());
+            current.setaMem(current.getyMem());
+         }
+         if (instructionType.getMnemnonic().equals("tay")) {
+            current.setY(current.getA());
+            current.setyMem(current.getaMem());
+         }
          if (instructionType.getMnemnonic().equals("sec")) {
             current.setC(Boolean.TRUE);
          }

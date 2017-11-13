@@ -7,8 +7,8 @@
 main: {
     lda #0
     sta cnt3
-    ldy #0
-    ldx #0
+    tay
+    tax
     jsr inccnt
     sta SCREEN+0
     inx

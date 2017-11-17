@@ -30,20 +30,17 @@ void scroll_soft() {
     *SCROLL = scroll;
 }
 
-// Scroll the next bit from the current char onto the screen
+// Scroll the next bit from the current char onto the screen - trigger next char if needed
 byte* current_chargen = CHARGEN;
 byte current_bit = 1;
 void scroll_bit() {
-    scroll_hard();
     current_bit = current_bit>>1;
     if(current_bit==0) {
         word c = next_char();
-        c = c<<1;
-        c = c<<1;
-        c = c<<1;
-        current_chargen = CHARGEN+c;
+        current_chargen = CHARGEN+c<<3;
         current_bit = $80;
     }
+    scroll_hard();
     asm { sei }
     *PROCPORT = $32;
     byte* sc = SCREEN+40+39;
@@ -51,7 +48,7 @@ void scroll_bit() {
         byte bits = current_chargen[r];
         byte b = ' ';
         if((bits & current_bit) != 0) {
-            b = '*';
+            b = 128+' ';
         }
         *sc = b;
         sc = sc+40;

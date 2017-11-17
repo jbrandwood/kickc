@@ -103,17 +103,16 @@ public class AsmFragmentSignature {
       }
       if (
             rValue2 instanceof ConstantInteger &&
-                  ((ConstantInteger) rValue2).getNumber() == 2 &&
-                  operator != null &&
-                  (operator.getOperator().equals(">>") || operator.getOperator().equals("<<"))) {
-         signature.append("2");
-      } else if (
-            rValue2 instanceof ConstantInteger &&
                   ((ConstantInteger) rValue2).getNumber() == 1 &&
                   operator != null &&
-                  (operator.getOperator().equals("-") || operator.getOperator().equals("+") || operator.getOperator().equals(
-                        ">>") || operator.getOperator().equals("<<"))) {
+                  (operator.getOperator().equals("-") || operator.getOperator().equals("+"))) {
          signature.append("1");
+      } else if (
+            rValue2 instanceof ConstantInteger &&
+                  ((ConstantInteger) rValue2).getNumber() <= 7 &&
+                  operator != null &&
+                  (operator.getOperator().equals(">>") || operator.getOperator().equals("<<"))) {
+         signature.append(((ConstantInteger) rValue2).getNumber());
       } else if (
             rValue2 instanceof ConstantInteger &&
                   ((ConstantInteger) rValue2).getNumber() == 0 &&

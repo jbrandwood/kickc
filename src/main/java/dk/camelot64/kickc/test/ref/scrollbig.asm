@@ -50,10 +50,10 @@ scroll_soft: {
     rts
 }
 scroll_bit: {
-    .label _8 = 3
+    .label _4 = 9
+    .label _5 = 3
     .label c = 9
     .label sc = 5
-    jsr scroll_hard
     lda current_bit
     lsr
     sta current_bit
@@ -62,22 +62,23 @@ scroll_bit: {
     sta c
     lda #0
     sta c+1
-    asl c
-    rol c+1
-    asl c
-    rol c+1
-    asl c
-    rol c+1
+    asl _4
+    rol _4+1
+    asl _4
+    rol _4+1
+    asl _4
+    rol _4+1
     lda #<CHARGEN
     clc
-    adc c
-    sta _8
+    adc _4
+    sta _5
     lda #>CHARGEN
-    adc c+1
-    sta _8+1
+    adc _4+1
+    sta _5+1
     lda #$80
     sta current_bit
   b1:
+    jsr scroll_hard
     sei
     lda #$32
     sta PROCPORT
@@ -93,7 +94,7 @@ scroll_bit: {
     and current_bit
     cmp #0
     beq b3_from_b2
-    lda #'*'
+    lda #$80+' '
     jmp b3
   b3_from_b2:
     lda #' '
@@ -113,23 +114,6 @@ scroll_bit: {
     lda #$37
     sta PROCPORT
     cli
-    rts
-}
-next_char: {
-    ldy #0
-    lda (nxt),y
-    cmp #'@'
-    bne b1
-    lda TEXT
-    lda #<TEXT
-    sta nxt
-    lda #>TEXT
-    sta nxt+1
-  b1:
-    inc nxt
-    bne !+
-    inc nxt+1
-  !:
     rts
 }
 scroll_hard: {
@@ -162,6 +146,23 @@ scroll_hard: {
     inx
     cpx #$27
     bne b1
+    rts
+}
+next_char: {
+    ldy #0
+    lda (nxt),y
+    cmp #'@'
+    bne b1
+    lda TEXT
+    lda #<TEXT
+    sta nxt
+    lda #>TEXT
+    sta nxt+1
+  b1:
+    inc nxt
+    bne !+
+    inc nxt+1
+  !:
     rts
 }
 fillscreen: {

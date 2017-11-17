@@ -1,0 +1,102 @@
+// An 8x8 char letter scroller
+
+byte* PROCPORT = $01;
+byte* CHARGEN = $d000;
+byte* SCREEN = $0400;
+byte* RASTER = $d012;
+byte* BGCOL = $d020;
+byte* SCROLL = $d016;
+byte* TEXT = "-= this is rex of camelot testing a scroller created in kickc. kickc is an optimizing c-compiler for 6502 assembler. =-     @";
+
+void main() {
+    fillscreen(SCREEN, $20);
+    do {
+        // Wait for raster
+        do {} while(*RASTER!=$fe);
+        do {} while(*RASTER!=$ff);
+        ++*BGCOL;
+        scroll_soft();
+        --*BGCOL;
+    } while(true);
+}
+
+// Soft-scroll using $d016 - trigger bit-scroll/char-scroll when needed
+byte scroll = 7;
+void scroll_soft() {
+    if(--scroll==$ff) {
+        scroll = 7;
+        scroll_bit();
+    }
+    *SCROLL = scroll;
+}
+
+// Scroll the next bit from the current char onto the screen
+byte* current_chargen = CHARGEN;
+byte current_bit = 1;
+void scroll_bit() {
+    scroll_hard();
+    current_bit = current_bit>>1;
+    if(current_bit==0) {
+        word c = next_char();
+        c = c<<1;
+        c = c<<1;
+        c = c<<1;
+        current_chargen = CHARGEN+c;
+        current_bit = $80;
+    }
+    asm { sei }
+    *PROCPORT = $32;
+    byte* sc = SCREEN+40+39;
+    for(byte r:0..7) {
+        byte bits = current_chargen[r];
+        byte b = ' ';
+        if((bits & current_bit) != 0) {
+            b = '*';
+        }
+        *sc = b;
+        sc = sc+40;
+    }
+    *PROCPORT = $37;
+    asm { cli }
+}
+
+byte* nxt = TEXT;
+// Find the next char of the scroll text
+byte next_char() {
+  byte c = *nxt;
+  if(c=='@') {
+    nxt = TEXT;
+    c = *nxt;
+  }
+  nxt++;
+  return c;
+}
+
+void scroll_hard() {
+    // Hard scroll
+    byte[] line0 = SCREEN+40*0;
+    byte[] line1 = SCREEN+40*1;
+    byte[] line2 = SCREEN+40*2;
+    byte[] line3 = SCREEN+40*3;
+    byte[] line4 = SCREEN+40*4;
+    byte[] line5 = SCREEN+40*5;
+    byte[] line6 = SCREEN+40*6;
+    byte[] line7 = SCREEN+40*7;
+    for(byte i=0;i!=39;i++) {
+        line0[i]=line0[i+1];
+        line1[i]=line1[i+1];
+        line2[i]=line2[i+1];
+        line3[i]=line3[i+1];
+        line4[i]=line4[i+1];
+        line5[i]=line5[i+1];
+        line6[i]=line6[i+1];
+        line7[i]=line7[i+1];
+    }
+}
+
+// Fill the screen with one char
+void fillscreen(byte* screen, byte fill) {
+    for( byte* cursor = screen; cursor < screen+1000; cursor++) {
+        *cursor = fill;
+    }
+}

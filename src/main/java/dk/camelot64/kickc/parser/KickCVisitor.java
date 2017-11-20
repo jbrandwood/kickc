@@ -160,6 +160,13 @@ public interface KickCVisitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitTypeSimple(KickCParser.TypeSimpleContext ctx);
 	/**
+	 * Visit a parse tree produced by the {@code typeSignedSimple}
+	 * labeled alternative in {@link KickCParser#typeDecl}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitTypeSignedSimple(KickCParser.TypeSignedSimpleContext ctx);
+	/**
 	 * Visit a parse tree produced by the {@code initExpr}
 	 * labeled alternative in {@link KickCParser#initializer}.
 	 * @param ctx the parse tree

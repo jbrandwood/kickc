@@ -136,6 +136,8 @@ public class Pass4RegistersFinalize extends Pass2Base {
       SymbolType varType = variable.getType();
       if (varType.equals(SymbolTypeBasic.BYTE)) {
          return new Registers.RegisterZpByte(currentZp++);
+      } else if (varType.equals(SymbolTypeBasic.SBYTE)) {
+         return new Registers.RegisterZpSignedByte(currentZp++);
       } else if (varType.equals(SymbolTypeBasic.WORD)) {
          Registers.RegisterZpWord registerZpWord =
                new Registers.RegisterZpWord(currentZp);

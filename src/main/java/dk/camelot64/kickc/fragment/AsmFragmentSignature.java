@@ -66,7 +66,7 @@ public class AsmFragmentSignature {
       Variable assignmentRValue2Var = program.getSymbolInfos().getVariable(assignmentRValue2);
       Registers.Register rVal2Register = assignmentRValue2Var.getAllocation();
 
-      if (!rVal2Register.getType().equals(Registers.RegisterType.REG_ALU_BYTE)) {
+      if (!rVal2Register.getType().equals(Registers.RegisterType.REG_ALU)) {
          throw new AsmFragment.AluNotApplicableException("Error! ALU register only allowed as rValue2. " + assignment);
       }
       StringBuilder signature = new StringBuilder();
@@ -237,6 +237,7 @@ public class AsmFragmentSignature {
     * Zero page register name indexing.
     */
    private int nextZpByteIdx = 1;
+   private int nextZpSByteIdx = 1;
    private int nextZpWordIdx = 1;
    private int nextZpBoolIdx = 1;
    private int nextZpPtrIdx = 1;
@@ -290,6 +291,10 @@ public class AsmFragmentSignature {
             String name = "zpby" + nextZpByteIdx++;
             bindings.put(name, value);
             return name;
+         } else if (Registers.RegisterType.ZP_SBYTE.equals(register.getType())) {
+            String name = "zpsby" + nextZpSByteIdx++;
+            bindings.put(name, value);
+            return name;
          } else if (Registers.RegisterType.ZP_WORD.equals(register.getType())) {
             String name = "zpwo" + nextZpWordIdx++;
             bindings.put(name, value);
@@ -310,11 +315,23 @@ public class AsmFragmentSignature {
             String name = "aby";
             bindings.put(name, value);
             return name;
+         } else if (Registers.RegisterType.REG_X_SBYTE.equals(register.getType())) {
+            String name = "xsby";
+            bindings.put(name, value);
+            return name;
+         } else if (Registers.RegisterType.REG_Y_SBYTE.equals(register.getType())) {
+            String name = "ysby";
+            bindings.put(name, value);
+            return name;
+         } else if (Registers.RegisterType.REG_A_SBYTE.equals(register.getType())) {
+            String name = "asby";
+            bindings.put(name, value);
+            return name;
          } else if (Registers.RegisterType.ZP_PTR_BYTE.equals(register.getType())) {
             String name = "zpptrby" + nextZpPtrIdx++;
             bindings.put(name, value);
             return name;
-         } else if (Registers.RegisterType.REG_ALU_BYTE.equals(register.getType())) {
+         } else if (Registers.RegisterType.REG_ALU.equals(register.getType())) {
             throw new AsmFragment.AluNotApplicableException();
          }
       } else if (value instanceof ConstantVar) {

@@ -262,6 +262,18 @@ public interface KickCListener extends ParseTreeListener {
 	 */
 	void exitTypeSimple(KickCParser.TypeSimpleContext ctx);
 	/**
+	 * Enter a parse tree produced by the {@code typeSignedSimple}
+	 * labeled alternative in {@link KickCParser#typeDecl}.
+	 * @param ctx the parse tree
+	 */
+	void enterTypeSignedSimple(KickCParser.TypeSignedSimpleContext ctx);
+	/**
+	 * Exit a parse tree produced by the {@code typeSignedSimple}
+	 * labeled alternative in {@link KickCParser#typeDecl}.
+	 * @param ctx the parse tree
+	 */
+	void exitTypeSignedSimple(KickCParser.TypeSignedSimpleContext ctx);
+	/**
 	 * Enter a parse tree produced by the {@code initExpr}
 	 * labeled alternative in {@link KickCParser#initializer}.
 	 * @param ctx the parse tree

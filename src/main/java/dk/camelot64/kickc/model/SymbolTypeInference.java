@@ -63,6 +63,8 @@ public class SymbolTypeInference {
                return SymbolTypeBasic.WORD;
             } else if (SymbolTypeBasic.BYTE.equals(type1) && SymbolTypeBasic.BYTE.equals(type2)) {
                return SymbolTypeBasic.BYTE;
+            } else if (SymbolTypeBasic.SBYTE.equals(type1) && SymbolTypeBasic.SBYTE.equals(type2)) {
+               return SymbolTypeBasic.SBYTE;
             }
             throw new RuntimeException("Type inference case not handled " + type1 + " " + operator + " " + type2);
          case "*":
@@ -73,6 +75,8 @@ public class SymbolTypeInference {
                return SymbolTypeBasic.WORD;
             } else if (SymbolTypeBasic.BYTE.equals(type1) && SymbolTypeBasic.BYTE.equals(type2)) {
                return SymbolTypeBasic.BYTE;
+            } else if (SymbolTypeBasic.SBYTE.equals(type1) && SymbolTypeBasic.SBYTE.equals(type2)) {
+               return SymbolTypeBasic.SBYTE;
             }
             throw new RuntimeException("Type inference case not handled " + type1 + " " + operator + " " + type2);
          case "*idx":

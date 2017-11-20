@@ -1,8 +1,5 @@
 package dk.camelot64.kickc.model;
 
-import com.fasterxml.jackson.annotation.JsonCreator;
-import com.fasterxml.jackson.annotation.JsonProperty;
-
 /**
  * A Symbol (variable, jump label, etc.)
  */
@@ -19,15 +16,6 @@ public class VariableUnversioned extends Variable {
          SymbolType type) {
       super(name, scope, type);
       this.nextVersionNumber = 0;
-   }
-
-   @JsonCreator
-   public VariableUnversioned(
-         @JsonProperty("name") String name,
-         @JsonProperty("type") SymbolType type,
-         @JsonProperty("nextVersionNumber") Integer nextVersionNumber) {
-      super(name, null, type);
-      this.nextVersionNumber = nextVersionNumber;
    }
 
    /**

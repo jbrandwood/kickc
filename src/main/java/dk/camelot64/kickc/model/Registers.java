@@ -16,13 +16,33 @@ public class Registers {
       return new RegisterAByte();
    }
 
+   public static Register getRegisterASigned() {
+      return new RegisterASignedByte();
+   }
+
+   public static Register getRegisterXSigned() {
+      return new RegisterXSignedByte();
+   }
+
+   public static Register getRegisterYSigned() {
+      return new RegisterYSignedByte();
+   }
+
    public static Register getRegisterALU() {
       return new RegisterALUByte();
    }
 
    /** The register type. */
    public enum RegisterType {
-      ZP_BYTE, ZP_BOOL, REG_A_BYTE, REG_ALU_BYTE, REG_Y_BYTE, REG_X_BYTE, ZP_PTR_BYTE, ZP_WORD, CONSTANT
+      REG_A_BYTE, REG_A_SBYTE,
+      REG_Y_BYTE, REG_Y_SBYTE,
+      REG_X_BYTE, REG_X_SBYTE,
+      REG_ALU,
+      ZP_BYTE, ZP_SBYTE,
+      ZP_PTR_BYTE,
+      ZP_WORD,
+      ZP_BOOL,
+      CONSTANT
    }
 
    /** A register used for storing a single variable. */
@@ -83,7 +103,7 @@ public class Registers {
    }
 
 
-   /** A zero page address used as a register for a single byte variable. */
+   /** A zero page address used as a register for a single unsigned byte variable. */
    public static class RegisterZpByte extends RegisterZp {
 
       public RegisterZpByte(int zp) {
@@ -98,7 +118,22 @@ public class Registers {
 
    }
 
-   /** Two zero page addresses used as a register for a single word variable. */
+   /** A zero page address used as a register for a single signed byte variable. */
+   public static class RegisterZpSignedByte extends RegisterZp {
+
+      public RegisterZpSignedByte(int zp) {
+         super(zp);
+      }
+
+      @Override
+      public RegisterType getType() {
+         return RegisterType.ZP_SBYTE;
+      }
+
+
+   }
+
+   /** Two zero page addresses used as a register for a single unsigned word variable. */
    public static class RegisterZpWord extends RegisterZp {
 
       public RegisterZpWord(int zp) {
@@ -127,7 +162,7 @@ public class Registers {
 
    }
 
-   /** A zro page address pair used as a register containing a pointer to a byte. */
+   /** A zero page address pair used as a register containing a pointer to a byte. */
    public static class RegisterZpPointerByte extends RegisterZp {
 
       public RegisterZpPointerByte(int zp) {
@@ -206,7 +241,7 @@ public class Registers {
 
    }
 
-   /** The Y register. */
+   /** The A unsigned register. */
    public static class RegisterAByte extends RegisterCpuByte {
       @Override
       public RegisterType getType() {
@@ -220,11 +255,54 @@ public class Registers {
 
    }
 
+   /** The A signed register. */
+   public static class RegisterASignedByte extends RegisterCpuByte {
+      @Override
+      public RegisterType getType() {
+         return RegisterType.REG_A_SBYTE;
+      }
+
+      @Override
+      public String toString() {
+         return "reg sbyte a";
+      }
+
+   }
+
+   /** The X signed register. */
+   public static class RegisterXSignedByte extends RegisterCpuByte {
+      @Override
+      public RegisterType getType() {
+         return RegisterType.REG_X_SBYTE;
+      }
+
+      @Override
+      public String toString() {
+         return "reg sbyte x";
+      }
+
+   }
+
+   /** The Y signed register. */
+   public static class RegisterYSignedByte extends RegisterCpuByte {
+      @Override
+      public RegisterType getType() {
+         return RegisterType.REG_Y_SBYTE;
+      }
+
+      @Override
+      public String toString() {
+         return "reg sbyte y";
+      }
+
+   }
+
+
    /** The special ALU register. */
    public static class RegisterALUByte extends RegisterCpuByte {
       @Override
       public RegisterType getType() {
-         return RegisterType.REG_ALU_BYTE;
+         return RegisterType.REG_ALU;
       }
 
       @Override

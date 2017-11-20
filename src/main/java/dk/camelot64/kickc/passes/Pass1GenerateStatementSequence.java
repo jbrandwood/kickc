@@ -437,6 +437,11 @@ public class Pass1GenerateStatementSequence extends KickCBaseVisitor<Object> {
    }
 
    @Override
+   public SymbolType visitTypeSignedSimple(KickCParser.TypeSignedSimpleContext ctx) {
+      return SymbolTypeBasic.get("signed "+ctx.SIMPLETYPE().getText());
+   }
+
+   @Override
    public SymbolType visitTypePtr(KickCParser.TypePtrContext ctx) {
       SymbolType elementType = (SymbolType) visit(ctx.typeDecl());
       return new SymbolTypePointer(elementType);

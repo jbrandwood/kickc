@@ -24,6 +24,10 @@ public class TestPrograms extends TestCase {
       helper = new ReferenceHelper("dk/camelot64/kickc/test/ref/");
    }
 
+   public void testSignedBytes() throws IOException, URISyntaxException {
+      compileAndCompare("signed-bytes");
+   }
+
    public void testScrollBig() throws IOException, URISyntaxException {
       compileAndCompare("scrollbig");
    }

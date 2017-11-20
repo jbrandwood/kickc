@@ -220,7 +220,7 @@ public class Pass4CodeGeneration {
             if (lValue instanceof VariableRef) {
                VariableRef lValueRef = (VariableRef) lValue;
                Registers.Register lValRegister = program.getSymbolInfos().getVariable(lValueRef).getAllocation();
-               if (lValRegister.getType().equals(Registers.RegisterType.REG_ALU_BYTE)) {
+               if (lValRegister.getType().equals(Registers.RegisterType.REG_ALU)) {
                   asm.addComment(statement + "  //  ALU");
                   StatementAssignment assignmentAlu = assignment;
                   aluState.setAluAssignment(assignmentAlu);

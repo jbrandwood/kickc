@@ -44,6 +44,7 @@ parameterDecl
 
 typeDecl
     : SIMPLETYPE  #typeSimple
+    | 'signed' SIMPLETYPE  #typeSignedSimple
     | typeDecl '*' #typePtr
     | typeDecl '[' (expr)? ']' #typeArray
     ;

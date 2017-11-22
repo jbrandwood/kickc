@@ -1647,6 +1647,7 @@ main: {
     inc cursor+1
   !:
   //SEG27 [10] (byte) main::e#2 ← (byte) main::e#1 - (const byte) main::xd#0 [ main::x#1 main::y#1 main::cursor#2 main::e#2 ] ( main:0 [ main::x#1 main::y#1 main::cursor#2 main::e#2 ] ) -- zpby1=zpby1_minus_coby1 
+    lda e
     sec
     sbc #xd
     sta e
@@ -1694,13 +1695,12 @@ REGISTER UPLIFT SCOPES
 Uplift Scope [main] 55: zp ZP_BYTE:5 [ main::e#3 main::e#5 main::e#1 main::e#2 ] 46.75: zp ZP_PTR_BYTE:2 [ main::cursor#3 main::cursor#5 main::cursor#1 main::cursor#2 ] 29.33: zp ZP_BYTE:6 [ main::y#2 main::y#4 main::y#1 ] 14.67: zp ZP_BYTE:4 [ main::x#2 main::x#1 ] 
 Uplift Scope [] 
 
-Uplifting [main] best 1175 combination zp ZP_BYTE:5 [ main::e#3 main::e#5 main::e#1 main::e#2 ] zp ZP_PTR_BYTE:2 [ main::cursor#3 main::cursor#5 main::cursor#1 main::cursor#2 ] zp ZP_BYTE:6 [ main::y#2 main::y#4 main::y#1 ] reg byte x [ main::x#2 main::x#1 ] 
-Uplifting [] best 1175 combination 
-Attempting to uplift remaining variables inzp ZP_BYTE:5 [ main::e#3 main::e#5 main::e#1 main::e#2 ]
-Uplifting [main] best 1175 combination zp ZP_BYTE:5 [ main::e#3 main::e#5 main::e#1 main::e#2 ] 
+Uplifting [main] best 1195 combination reg byte x [ main::e#3 main::e#5 main::e#1 main::e#2 ] zp ZP_PTR_BYTE:2 [ main::cursor#3 main::cursor#5 main::cursor#1 main::cursor#2 ] zp ZP_BYTE:6 [ main::y#2 main::y#4 main::y#1 ] zp ZP_BYTE:4 [ main::x#2 main::x#1 ] 
+Uplifting [] best 1195 combination 
 Attempting to uplift remaining variables inzp ZP_BYTE:6 [ main::y#2 main::y#4 main::y#1 ]
-Uplifting [main] best 1175 combination zp ZP_BYTE:6 [ main::y#2 main::y#4 main::y#1 ] 
-Allocated (was zp ZP_BYTE:5) zp ZP_BYTE:4 [ main::e#3 main::e#5 main::e#1 main::e#2 ]
+Uplifting [main] best 1195 combination zp ZP_BYTE:6 [ main::y#2 main::y#4 main::y#1 ] 
+Attempting to uplift remaining variables inzp ZP_BYTE:4 [ main::x#2 main::x#1 ]
+Uplifting [main] best 1195 combination zp ZP_BYTE:4 [ main::x#2 main::x#1 ] 
 Allocated (was zp ZP_BYTE:6) zp ZP_BYTE:5 [ main::y#2 main::y#4 main::y#1 ]
 Removing instruction jmp b1
 Removing instruction jmp bend
@@ -1733,19 +1733,19 @@ main: {
     .const y1 = $18
     .const xd = x1-4
     .const yd = y1-4
+    .label x = 4
     .label cursor = 2
-    .label e = 4
     .label y = 5
   //SEG8 [2] phi from main to main::@1 [phi:main->main::@1]
   b1_from_main:
   //SEG9 [2] phi (byte) main::y#2 = (byte) 4 [phi:main->main::@1#0] -- zpby1=coby1 
     lda #4
     sta y
-  //SEG10 [2] phi (byte) main::e#3 = (const byte) main::yd#0/(byte) 2 [phi:main->main::@1#1] -- zpby1=coby1 
-    lda #yd/2
-    sta e
-  //SEG11 [2] phi (byte) main::x#2 = (byte) 4 [phi:main->main::@1#2] -- xby=coby1 
-    ldx #4
+  //SEG10 [2] phi (byte) main::e#3 = (const byte) main::yd#0/(byte) 2 [phi:main->main::@1#1] -- xby=coby1 
+    ldx #yd/2
+  //SEG11 [2] phi (byte) main::x#2 = (byte) 4 [phi:main->main::@1#2] -- zpby1=coby1 
+    lda #4
+    sta x
   //SEG12 [2] phi (byte*) main::cursor#3 = (const byte[1000]) SCREEN#0+(byte) 4*(byte) 40+(byte) 4 [phi:main->main::@1#3] -- zpptrby1=cowo1 
     lda #<SCREEN+4*$28+4
     sta cursor
@@ -1764,22 +1764,21 @@ main: {
     ldy #0
     lda #STAR
     sta (cursor),y
-  //SEG20 [4] (byte) main::x#1 ← (byte) main::x#2 + (byte) 1 [ main::cursor#3 main::e#3 main::y#2 main::x#1 ] ( main:0 [ main::cursor#3 main::e#3 main::y#2 main::x#1 ] ) -- xby=xby_plus_1 
-    inx
+  //SEG20 [4] (byte) main::x#1 ← (byte) main::x#2 + (byte) 1 [ main::cursor#3 main::e#3 main::y#2 main::x#1 ] ( main:0 [ main::cursor#3 main::e#3 main::y#2 main::x#1 ] ) -- zpby1=zpby1_plus_1 
+    inc x
   //SEG21 [5] (byte*) main::cursor#1 ← (byte*) main::cursor#3 + (byte) 1 [ main::e#3 main::y#2 main::x#1 main::cursor#1 ] ( main:0 [ main::e#3 main::y#2 main::x#1 main::cursor#1 ] ) -- zpptrby1=zpptrby1_plus_1 
     inc cursor
     bne !+
     inc cursor+1
   !:
-  //SEG22 [6] (byte) main::e#1 ← (byte) main::e#3 + (const byte) main::yd#0 [ main::y#2 main::x#1 main::cursor#1 main::e#1 ] ( main:0 [ main::y#2 main::x#1 main::cursor#1 main::e#1 ] ) -- zpby1=zpby1_plus_coby1 
-    lda e
+  //SEG22 [6] (byte) main::e#1 ← (byte) main::e#3 + (const byte) main::yd#0 [ main::y#2 main::x#1 main::cursor#1 main::e#1 ] ( main:0 [ main::y#2 main::x#1 main::cursor#1 main::e#1 ] ) -- xby=xby_plus_coby1 
+    txa
     clc
     adc #yd
-    sta e
-  //SEG23 [7] if((const byte) main::xd#0>=(byte) main::e#1) goto main::@2 [ main::y#2 main::x#1 main::cursor#1 main::e#1 ] ( main:0 [ main::y#2 main::x#1 main::cursor#1 main::e#1 ] ) -- coby1_ge_zpby1_then_la1 
-    lda #xd
-    cmp e
-    bcs b2_from_b1
+    tax
+  //SEG23 [7] if((const byte) main::xd#0>=(byte) main::e#1) goto main::@2 [ main::y#2 main::x#1 main::cursor#1 main::e#1 ] ( main:0 [ main::y#2 main::x#1 main::cursor#1 main::e#1 ] ) -- coby1_ge_xby_then_la1 
+    cpx #xd
+    bcc b2_from_b1
   //SEG24 main::@3
   b3:
   //SEG25 [8] (byte) main::y#1 ← (byte) main::y#2 + (byte) 1 [ main::x#1 main::cursor#1 main::e#1 main::y#1 ] ( main:0 [ main::x#1 main::cursor#1 main::e#1 main::y#1 ] ) -- zpby1=zpby1_plus_1 
@@ -1792,10 +1791,11 @@ main: {
     bcc !+
     inc cursor+1
   !:
-  //SEG27 [10] (byte) main::e#2 ← (byte) main::e#1 - (const byte) main::xd#0 [ main::x#1 main::y#1 main::cursor#2 main::e#2 ] ( main:0 [ main::x#1 main::y#1 main::cursor#2 main::e#2 ] ) -- zpby1=zpby1_minus_coby1 
+  //SEG27 [10] (byte) main::e#2 ← (byte) main::e#1 - (const byte) main::xd#0 [ main::x#1 main::y#1 main::cursor#2 main::e#2 ] ( main:0 [ main::x#1 main::y#1 main::cursor#2 main::e#2 ] ) -- xby=xby_minus_coby1 
+    txa
     sec
     sbc #xd
-    sta e
+    tax
   //SEG28 [11] phi from main::@1 main::@3 to main::@2 [phi:main::@1/main::@3->main::@2]
   b2_from_b1:
   b2_from_b3:
@@ -1804,8 +1804,115 @@ main: {
   //SEG31 [11] phi (byte*) main::cursor#5 = (byte*) main::cursor#1 [phi:main::@1/main::@3->main::@2#2] -- register_copy 
   //SEG32 main::@2
   b2:
-  //SEG33 [12] if((byte) main::x#1<(const byte) main::x1#0+(byte) 1) goto main::@1 [ main::cursor#5 main::x#1 main::e#5 main::y#4 ] ( main:0 [ main::cursor#5 main::x#1 main::e#5 main::y#4 ] ) -- xby_lt_coby1_then_la1 
-    cpx #x1+1
+  //SEG33 [12] if((byte) main::x#1<(const byte) main::x1#0+(byte) 1) goto main::@1 [ main::cursor#5 main::x#1 main::e#5 main::y#4 ] ( main:0 [ main::cursor#5 main::x#1 main::e#5 main::y#4 ] ) -- zpby1_lt_coby1_then_la1 
+    lda x
+    cmp #x1+1
+    bcc b1_from_b2
+  //SEG34 main::@return
+  breturn:
+  //SEG35 [13] return  [ ] ( main:0 [ ] )
+    rts
+}
+
+Removing instruction lda #4
+Succesful ASM optimization Pass5UnnecesaryLoadElimination
+ASSEMBLER
+//SEG0 Basic Upstart
+.pc = $801 "Basic"
+:BasicUpstart(main)
+.pc = $80d "Program"
+//SEG1 Global Constants & labels
+  .const STAR = $51
+  .const SCREEN = $400
+//SEG2 @begin
+bbegin:
+//SEG3 @1
+b1:
+//SEG4 [0] call main param-assignment [ ] ( )
+//SEG5 [1] phi from @1 to main [phi:@1->main]
+main_from_b1:
+  jsr main
+//SEG6 @end
+bend:
+//SEG7 main
+main: {
+    .const x1 = $27
+    .const y1 = $18
+    .const xd = x1-4
+    .const yd = y1-4
+    .label x = 4
+    .label cursor = 2
+    .label y = 5
+  //SEG8 [2] phi from main to main::@1 [phi:main->main::@1]
+  b1_from_main:
+  //SEG9 [2] phi (byte) main::y#2 = (byte) 4 [phi:main->main::@1#0] -- zpby1=coby1 
+    lda #4
+    sta y
+  //SEG10 [2] phi (byte) main::e#3 = (const byte) main::yd#0/(byte) 2 [phi:main->main::@1#1] -- xby=coby1 
+    ldx #yd/2
+  //SEG11 [2] phi (byte) main::x#2 = (byte) 4 [phi:main->main::@1#2] -- zpby1=coby1 
+    sta x
+  //SEG12 [2] phi (byte*) main::cursor#3 = (const byte[1000]) SCREEN#0+(byte) 4*(byte) 40+(byte) 4 [phi:main->main::@1#3] -- zpptrby1=cowo1 
+    lda #<SCREEN+4*$28+4
+    sta cursor
+    lda #>SCREEN+4*$28+4
+    sta cursor+1
+    jmp b1
+  //SEG13 [2] phi from main::@2 to main::@1 [phi:main::@2->main::@1]
+  b1_from_b2:
+  //SEG14 [2] phi (byte) main::y#2 = (byte) main::y#4 [phi:main::@2->main::@1#0] -- register_copy 
+  //SEG15 [2] phi (byte) main::e#3 = (byte) main::e#5 [phi:main::@2->main::@1#1] -- register_copy 
+  //SEG16 [2] phi (byte) main::x#2 = (byte) main::x#1 [phi:main::@2->main::@1#2] -- register_copy 
+  //SEG17 [2] phi (byte*) main::cursor#3 = (byte*) main::cursor#5 [phi:main::@2->main::@1#3] -- register_copy 
+  //SEG18 main::@1
+  b1:
+  //SEG19 [3] *((byte*) main::cursor#3) ← (const byte) STAR#0 [ main::cursor#3 main::x#2 main::e#3 main::y#2 ] ( main:0 [ main::cursor#3 main::x#2 main::e#3 main::y#2 ] ) -- _deref_zpptrby1=coby1 
+    ldy #0
+    lda #STAR
+    sta (cursor),y
+  //SEG20 [4] (byte) main::x#1 ← (byte) main::x#2 + (byte) 1 [ main::cursor#3 main::e#3 main::y#2 main::x#1 ] ( main:0 [ main::cursor#3 main::e#3 main::y#2 main::x#1 ] ) -- zpby1=zpby1_plus_1 
+    inc x
+  //SEG21 [5] (byte*) main::cursor#1 ← (byte*) main::cursor#3 + (byte) 1 [ main::e#3 main::y#2 main::x#1 main::cursor#1 ] ( main:0 [ main::e#3 main::y#2 main::x#1 main::cursor#1 ] ) -- zpptrby1=zpptrby1_plus_1 
+    inc cursor
+    bne !+
+    inc cursor+1
+  !:
+  //SEG22 [6] (byte) main::e#1 ← (byte) main::e#3 + (const byte) main::yd#0 [ main::y#2 main::x#1 main::cursor#1 main::e#1 ] ( main:0 [ main::y#2 main::x#1 main::cursor#1 main::e#1 ] ) -- xby=xby_plus_coby1 
+    txa
+    clc
+    adc #yd
+    tax
+  //SEG23 [7] if((const byte) main::xd#0>=(byte) main::e#1) goto main::@2 [ main::y#2 main::x#1 main::cursor#1 main::e#1 ] ( main:0 [ main::y#2 main::x#1 main::cursor#1 main::e#1 ] ) -- coby1_ge_xby_then_la1 
+    cpx #xd
+    bcc b2_from_b1
+  //SEG24 main::@3
+  b3:
+  //SEG25 [8] (byte) main::y#1 ← (byte) main::y#2 + (byte) 1 [ main::x#1 main::cursor#1 main::e#1 main::y#1 ] ( main:0 [ main::x#1 main::cursor#1 main::e#1 main::y#1 ] ) -- zpby1=zpby1_plus_1 
+    inc y
+  //SEG26 [9] (byte*) main::cursor#2 ← (byte*) main::cursor#1 + (byte) 40 [ main::x#1 main::e#1 main::y#1 main::cursor#2 ] ( main:0 [ main::x#1 main::e#1 main::y#1 main::cursor#2 ] ) -- zpptrby1=zpptrby1_plus_coby1 
+    lda cursor
+    clc
+    adc #$28
+    sta cursor
+    bcc !+
+    inc cursor+1
+  !:
+  //SEG27 [10] (byte) main::e#2 ← (byte) main::e#1 - (const byte) main::xd#0 [ main::x#1 main::y#1 main::cursor#2 main::e#2 ] ( main:0 [ main::x#1 main::y#1 main::cursor#2 main::e#2 ] ) -- xby=xby_minus_coby1 
+    txa
+    sec
+    sbc #xd
+    tax
+  //SEG28 [11] phi from main::@1 main::@3 to main::@2 [phi:main::@1/main::@3->main::@2]
+  b2_from_b1:
+  b2_from_b3:
+  //SEG29 [11] phi (byte) main::y#4 = (byte) main::y#2 [phi:main::@1/main::@3->main::@2#0] -- register_copy 
+  //SEG30 [11] phi (byte) main::e#5 = (byte) main::e#1 [phi:main::@1/main::@3->main::@2#1] -- register_copy 
+  //SEG31 [11] phi (byte*) main::cursor#5 = (byte*) main::cursor#1 [phi:main::@1/main::@3->main::@2#2] -- register_copy 
+  //SEG32 main::@2
+  b2:
+  //SEG33 [12] if((byte) main::x#1<(const byte) main::x1#0+(byte) 1) goto main::@1 [ main::cursor#5 main::x#1 main::e#5 main::y#4 ] ( main:0 [ main::cursor#5 main::x#1 main::e#5 main::y#4 ] ) -- zpby1_lt_coby1_then_la1 
+    lda x
+    cmp #x1+1
     bcc b1_from_b2
   //SEG34 main::@return
   breturn:
@@ -1843,19 +1950,18 @@ main: {
     .const y1 = $18
     .const xd = x1-4
     .const yd = y1-4
+    .label x = 4
     .label cursor = 2
-    .label e = 4
     .label y = 5
   //SEG8 [2] phi from main to main::@1 [phi:main->main::@1]
   b1_from_main:
   //SEG9 [2] phi (byte) main::y#2 = (byte) 4 [phi:main->main::@1#0] -- zpby1=coby1 
     lda #4
     sta y
-  //SEG10 [2] phi (byte) main::e#3 = (const byte) main::yd#0/(byte) 2 [phi:main->main::@1#1] -- zpby1=coby1 
-    lda #yd/2
-    sta e
-  //SEG11 [2] phi (byte) main::x#2 = (byte) 4 [phi:main->main::@1#2] -- xby=coby1 
-    ldx #4
+  //SEG10 [2] phi (byte) main::e#3 = (const byte) main::yd#0/(byte) 2 [phi:main->main::@1#1] -- xby=coby1 
+    ldx #yd/2
+  //SEG11 [2] phi (byte) main::x#2 = (byte) 4 [phi:main->main::@1#2] -- zpby1=coby1 
+    sta x
   //SEG12 [2] phi (byte*) main::cursor#3 = (const byte[1000]) SCREEN#0+(byte) 4*(byte) 40+(byte) 4 [phi:main->main::@1#3] -- zpptrby1=cowo1 
     lda #<SCREEN+4*$28+4
     sta cursor
@@ -1873,22 +1979,21 @@ main: {
     ldy #0
     lda #STAR
     sta (cursor),y
-  //SEG20 [4] (byte) main::x#1 ← (byte) main::x#2 + (byte) 1 [ main::cursor#3 main::e#3 main::y#2 main::x#1 ] ( main:0 [ main::cursor#3 main::e#3 main::y#2 main::x#1 ] ) -- xby=xby_plus_1 
-    inx
+  //SEG20 [4] (byte) main::x#1 ← (byte) main::x#2 + (byte) 1 [ main::cursor#3 main::e#3 main::y#2 main::x#1 ] ( main:0 [ main::cursor#3 main::e#3 main::y#2 main::x#1 ] ) -- zpby1=zpby1_plus_1 
+    inc x
   //SEG21 [5] (byte*) main::cursor#1 ← (byte*) main::cursor#3 + (byte) 1 [ main::e#3 main::y#2 main::x#1 main::cursor#1 ] ( main:0 [ main::e#3 main::y#2 main::x#1 main::cursor#1 ] ) -- zpptrby1=zpptrby1_plus_1 
     inc cursor
     bne !+
     inc cursor+1
   !:
-  //SEG22 [6] (byte) main::e#1 ← (byte) main::e#3 + (const byte) main::yd#0 [ main::y#2 main::x#1 main::cursor#1 main::e#1 ] ( main:0 [ main::y#2 main::x#1 main::cursor#1 main::e#1 ] ) -- zpby1=zpby1_plus_coby1 
-    lda e
+  //SEG22 [6] (byte) main::e#1 ← (byte) main::e#3 + (const byte) main::yd#0 [ main::y#2 main::x#1 main::cursor#1 main::e#1 ] ( main:0 [ main::y#2 main::x#1 main::cursor#1 main::e#1 ] ) -- xby=xby_plus_coby1 
+    txa
     clc
     adc #yd
-    sta e
-  //SEG23 [7] if((const byte) main::xd#0>=(byte) main::e#1) goto main::@2 [ main::y#2 main::x#1 main::cursor#1 main::e#1 ] ( main:0 [ main::y#2 main::x#1 main::cursor#1 main::e#1 ] ) -- coby1_ge_zpby1_then_la1 
-    lda #xd
-    cmp e
-    bcs b2
+    tax
+  //SEG23 [7] if((const byte) main::xd#0>=(byte) main::e#1) goto main::@2 [ main::y#2 main::x#1 main::cursor#1 main::e#1 ] ( main:0 [ main::y#2 main::x#1 main::cursor#1 main::e#1 ] ) -- coby1_ge_xby_then_la1 
+    cpx #xd
+    bcc b2
   //SEG24 main::@3
   b3:
   //SEG25 [8] (byte) main::y#1 ← (byte) main::y#2 + (byte) 1 [ main::x#1 main::cursor#1 main::e#1 main::y#1 ] ( main:0 [ main::x#1 main::cursor#1 main::e#1 main::y#1 ] ) -- zpby1=zpby1_plus_1 
@@ -1901,18 +2006,20 @@ main: {
     bcc !+
     inc cursor+1
   !:
-  //SEG27 [10] (byte) main::e#2 ← (byte) main::e#1 - (const byte) main::xd#0 [ main::x#1 main::y#1 main::cursor#2 main::e#2 ] ( main:0 [ main::x#1 main::y#1 main::cursor#2 main::e#2 ] ) -- zpby1=zpby1_minus_coby1 
+  //SEG27 [10] (byte) main::e#2 ← (byte) main::e#1 - (const byte) main::xd#0 [ main::x#1 main::y#1 main::cursor#2 main::e#2 ] ( main:0 [ main::x#1 main::y#1 main::cursor#2 main::e#2 ] ) -- xby=xby_minus_coby1 
+    txa
     sec
     sbc #xd
-    sta e
+    tax
   //SEG28 [11] phi from main::@1 main::@3 to main::@2 [phi:main::@1/main::@3->main::@2]
   //SEG29 [11] phi (byte) main::y#4 = (byte) main::y#2 [phi:main::@1/main::@3->main::@2#0] -- register_copy 
   //SEG30 [11] phi (byte) main::e#5 = (byte) main::e#1 [phi:main::@1/main::@3->main::@2#1] -- register_copy 
   //SEG31 [11] phi (byte*) main::cursor#5 = (byte*) main::cursor#1 [phi:main::@1/main::@3->main::@2#2] -- register_copy 
   //SEG32 main::@2
   b2:
-  //SEG33 [12] if((byte) main::x#1<(const byte) main::x1#0+(byte) 1) goto main::@1 [ main::cursor#5 main::x#1 main::e#5 main::y#4 ] ( main:0 [ main::cursor#5 main::x#1 main::e#5 main::y#4 ] ) -- xby_lt_coby1_then_la1 
-    cpx #x1+1
+  //SEG33 [12] if((byte) main::x#1<(const byte) main::x1#0+(byte) 1) goto main::@1 [ main::cursor#5 main::x#1 main::e#5 main::y#4 ] ( main:0 [ main::cursor#5 main::x#1 main::e#5 main::y#4 ] ) -- zpby1_lt_coby1_then_la1 
+    lda x
+    cmp #x1+1
     bcc b1
   //SEG34 main::@return
   breturn:
@@ -1946,18 +2053,17 @@ main: {
     .const y1 = $18
     .const xd = x1-4
     .const yd = y1-4
+    .label x = 4
     .label cursor = 2
-    .label e = 4
     .label y = 5
   //SEG8 [2] phi from main to main::@1 [phi:main->main::@1]
   //SEG9 [2] phi (byte) main::y#2 = (byte) 4 [phi:main->main::@1#0] -- zpby1=coby1 
     lda #4
     sta y
-  //SEG10 [2] phi (byte) main::e#3 = (const byte) main::yd#0/(byte) 2 [phi:main->main::@1#1] -- zpby1=coby1 
-    lda #yd/2
-    sta e
-  //SEG11 [2] phi (byte) main::x#2 = (byte) 4 [phi:main->main::@1#2] -- xby=coby1 
-    ldx #4
+  //SEG10 [2] phi (byte) main::e#3 = (const byte) main::yd#0/(byte) 2 [phi:main->main::@1#1] -- xby=coby1 
+    ldx #yd/2
+  //SEG11 [2] phi (byte) main::x#2 = (byte) 4 [phi:main->main::@1#2] -- zpby1=coby1 
+    sta x
   //SEG12 [2] phi (byte*) main::cursor#3 = (const byte[1000]) SCREEN#0+(byte) 4*(byte) 40+(byte) 4 [phi:main->main::@1#3] -- zpptrby1=cowo1 
     lda #<SCREEN+4*$28+4
     sta cursor
@@ -1975,22 +2081,21 @@ main: {
     ldy #0
     lda #STAR
     sta (cursor),y
-  //SEG20 [4] (byte) main::x#1 ← (byte) main::x#2 + (byte) 1 [ main::cursor#3 main::e#3 main::y#2 main::x#1 ] ( main:0 [ main::cursor#3 main::e#3 main::y#2 main::x#1 ] ) -- xby=xby_plus_1 
-    inx
+  //SEG20 [4] (byte) main::x#1 ← (byte) main::x#2 + (byte) 1 [ main::cursor#3 main::e#3 main::y#2 main::x#1 ] ( main:0 [ main::cursor#3 main::e#3 main::y#2 main::x#1 ] ) -- zpby1=zpby1_plus_1 
+    inc x
   //SEG21 [5] (byte*) main::cursor#1 ← (byte*) main::cursor#3 + (byte) 1 [ main::e#3 main::y#2 main::x#1 main::cursor#1 ] ( main:0 [ main::e#3 main::y#2 main::x#1 main::cursor#1 ] ) -- zpptrby1=zpptrby1_plus_1 
     inc cursor
     bne !+
     inc cursor+1
   !:
-  //SEG22 [6] (byte) main::e#1 ← (byte) main::e#3 + (const byte) main::yd#0 [ main::y#2 main::x#1 main::cursor#1 main::e#1 ] ( main:0 [ main::y#2 main::x#1 main::cursor#1 main::e#1 ] ) -- zpby1=zpby1_plus_coby1 
-    lda e
+  //SEG22 [6] (byte) main::e#1 ← (byte) main::e#3 + (const byte) main::yd#0 [ main::y#2 main::x#1 main::cursor#1 main::e#1 ] ( main:0 [ main::y#2 main::x#1 main::cursor#1 main::e#1 ] ) -- xby=xby_plus_coby1 
+    txa
     clc
     adc #yd
-    sta e
-  //SEG23 [7] if((const byte) main::xd#0>=(byte) main::e#1) goto main::@2 [ main::y#2 main::x#1 main::cursor#1 main::e#1 ] ( main:0 [ main::y#2 main::x#1 main::cursor#1 main::e#1 ] ) -- coby1_ge_zpby1_then_la1 
-    lda #xd
-    cmp e
-    bcs b2
+    tax
+  //SEG23 [7] if((const byte) main::xd#0>=(byte) main::e#1) goto main::@2 [ main::y#2 main::x#1 main::cursor#1 main::e#1 ] ( main:0 [ main::y#2 main::x#1 main::cursor#1 main::e#1 ] ) -- coby1_ge_xby_then_la1 
+    cpx #xd
+    bcc b2
   //SEG24 main::@3
   //SEG25 [8] (byte) main::y#1 ← (byte) main::y#2 + (byte) 1 [ main::x#1 main::cursor#1 main::e#1 main::y#1 ] ( main:0 [ main::x#1 main::cursor#1 main::e#1 main::y#1 ] ) -- zpby1=zpby1_plus_1 
     inc y
@@ -2002,18 +2107,20 @@ main: {
     bcc !+
     inc cursor+1
   !:
-  //SEG27 [10] (byte) main::e#2 ← (byte) main::e#1 - (const byte) main::xd#0 [ main::x#1 main::y#1 main::cursor#2 main::e#2 ] ( main:0 [ main::x#1 main::y#1 main::cursor#2 main::e#2 ] ) -- zpby1=zpby1_minus_coby1 
+  //SEG27 [10] (byte) main::e#2 ← (byte) main::e#1 - (const byte) main::xd#0 [ main::x#1 main::y#1 main::cursor#2 main::e#2 ] ( main:0 [ main::x#1 main::y#1 main::cursor#2 main::e#2 ] ) -- xby=xby_minus_coby1 
+    txa
     sec
     sbc #xd
-    sta e
+    tax
   //SEG28 [11] phi from main::@1 main::@3 to main::@2 [phi:main::@1/main::@3->main::@2]
   //SEG29 [11] phi (byte) main::y#4 = (byte) main::y#2 [phi:main::@1/main::@3->main::@2#0] -- register_copy 
   //SEG30 [11] phi (byte) main::e#5 = (byte) main::e#1 [phi:main::@1/main::@3->main::@2#1] -- register_copy 
   //SEG31 [11] phi (byte*) main::cursor#5 = (byte*) main::cursor#1 [phi:main::@1/main::@3->main::@2#2] -- register_copy 
   //SEG32 main::@2
   b2:
-  //SEG33 [12] if((byte) main::x#1<(const byte) main::x1#0+(byte) 1) goto main::@1 [ main::cursor#5 main::x#1 main::e#5 main::y#4 ] ( main:0 [ main::cursor#5 main::x#1 main::e#5 main::y#4 ] ) -- xby_lt_coby1_then_la1 
-    cpx #x1+1
+  //SEG33 [12] if((byte) main::x#1<(const byte) main::x1#0+(byte) 1) goto main::@1 [ main::cursor#5 main::x#1 main::e#5 main::y#4 ] ( main:0 [ main::cursor#5 main::x#1 main::e#5 main::y#4 ] ) -- zpby1_lt_coby1_then_la1 
+    lda x
+    cmp #x1+1
     bcc b1
   //SEG34 main::@return
   //SEG35 [13] return  [ ] ( main:0 [ ] )
@@ -2042,18 +2149,17 @@ main: {
     .const y1 = $18
     .const xd = x1-4
     .const yd = y1-4
+    .label x = 4
     .label cursor = 2
-    .label e = 4
     .label y = 5
   //SEG8 [2] phi from main to main::@1 [phi:main->main::@1]
   //SEG9 [2] phi (byte) main::y#2 = (byte) 4 [phi:main->main::@1#0] -- zpby1=coby1 
     lda #4
     sta y
-  //SEG10 [2] phi (byte) main::e#3 = (const byte) main::yd#0/(byte) 2 [phi:main->main::@1#1] -- zpby1=coby1 
-    lda #yd/2
-    sta e
-  //SEG11 [2] phi (byte) main::x#2 = (byte) 4 [phi:main->main::@1#2] -- xby=coby1 
-    ldx #4
+  //SEG10 [2] phi (byte) main::e#3 = (const byte) main::yd#0/(byte) 2 [phi:main->main::@1#1] -- xby=coby1 
+    ldx #yd/2
+  //SEG11 [2] phi (byte) main::x#2 = (byte) 4 [phi:main->main::@1#2] -- zpby1=coby1 
+    sta x
   //SEG12 [2] phi (byte*) main::cursor#3 = (const byte[1000]) SCREEN#0+(byte) 4*(byte) 40+(byte) 4 [phi:main->main::@1#3] -- zpptrby1=cowo1 
     lda #<SCREEN+4*$28+4
     sta cursor
@@ -2070,22 +2176,21 @@ main: {
     ldy #0
     lda #STAR
     sta (cursor),y
-  //SEG20 [4] (byte) main::x#1 ← (byte) main::x#2 + (byte) 1 [ main::cursor#3 main::e#3 main::y#2 main::x#1 ] ( main:0 [ main::cursor#3 main::e#3 main::y#2 main::x#1 ] ) -- xby=xby_plus_1 
-    inx
+  //SEG20 [4] (byte) main::x#1 ← (byte) main::x#2 + (byte) 1 [ main::cursor#3 main::e#3 main::y#2 main::x#1 ] ( main:0 [ main::cursor#3 main::e#3 main::y#2 main::x#1 ] ) -- zpby1=zpby1_plus_1 
+    inc x
   //SEG21 [5] (byte*) main::cursor#1 ← (byte*) main::cursor#3 + (byte) 1 [ main::e#3 main::y#2 main::x#1 main::cursor#1 ] ( main:0 [ main::e#3 main::y#2 main::x#1 main::cursor#1 ] ) -- zpptrby1=zpptrby1_plus_1 
     inc cursor
     bne !+
     inc cursor+1
   !:
-  //SEG22 [6] (byte) main::e#1 ← (byte) main::e#3 + (const byte) main::yd#0 [ main::y#2 main::x#1 main::cursor#1 main::e#1 ] ( main:0 [ main::y#2 main::x#1 main::cursor#1 main::e#1 ] ) -- zpby1=zpby1_plus_coby1 
-    lda e
+  //SEG22 [6] (byte) main::e#1 ← (byte) main::e#3 + (const byte) main::yd#0 [ main::y#2 main::x#1 main::cursor#1 main::e#1 ] ( main:0 [ main::y#2 main::x#1 main::cursor#1 main::e#1 ] ) -- xby=xby_plus_coby1 
+    txa
     clc
     adc #yd
-    sta e
-  //SEG23 [7] if((const byte) main::xd#0>=(byte) main::e#1) goto main::@2 [ main::y#2 main::x#1 main::cursor#1 main::e#1 ] ( main:0 [ main::y#2 main::x#1 main::cursor#1 main::e#1 ] ) -- coby1_ge_zpby1_then_la1 
-    lda #xd
-    cmp e
-    bcs b2
+    tax
+  //SEG23 [7] if((const byte) main::xd#0>=(byte) main::e#1) goto main::@2 [ main::y#2 main::x#1 main::cursor#1 main::e#1 ] ( main:0 [ main::y#2 main::x#1 main::cursor#1 main::e#1 ] ) -- coby1_ge_xby_then_la1 
+    cpx #xd
+    bcc b2
   //SEG24 main::@3
   //SEG25 [8] (byte) main::y#1 ← (byte) main::y#2 + (byte) 1 [ main::x#1 main::cursor#1 main::e#1 main::y#1 ] ( main:0 [ main::x#1 main::cursor#1 main::e#1 main::y#1 ] ) -- zpby1=zpby1_plus_1 
     inc y
@@ -2097,18 +2202,20 @@ main: {
     bcc !+
     inc cursor+1
   !:
-  //SEG27 [10] (byte) main::e#2 ← (byte) main::e#1 - (const byte) main::xd#0 [ main::x#1 main::y#1 main::cursor#2 main::e#2 ] ( main:0 [ main::x#1 main::y#1 main::cursor#2 main::e#2 ] ) -- zpby1=zpby1_minus_coby1 
+  //SEG27 [10] (byte) main::e#2 ← (byte) main::e#1 - (const byte) main::xd#0 [ main::x#1 main::y#1 main::cursor#2 main::e#2 ] ( main:0 [ main::x#1 main::y#1 main::cursor#2 main::e#2 ] ) -- xby=xby_minus_coby1 
+    txa
     sec
     sbc #xd
-    sta e
+    tax
   //SEG28 [11] phi from main::@1 main::@3 to main::@2 [phi:main::@1/main::@3->main::@2]
   //SEG29 [11] phi (byte) main::y#4 = (byte) main::y#2 [phi:main::@1/main::@3->main::@2#0] -- register_copy 
   //SEG30 [11] phi (byte) main::e#5 = (byte) main::e#1 [phi:main::@1/main::@3->main::@2#1] -- register_copy 
   //SEG31 [11] phi (byte*) main::cursor#5 = (byte*) main::cursor#1 [phi:main::@1/main::@3->main::@2#2] -- register_copy 
   //SEG32 main::@2
   b2:
-  //SEG33 [12] if((byte) main::x#1<(const byte) main::x1#0+(byte) 1) goto main::@1 [ main::cursor#5 main::x#1 main::e#5 main::y#4 ] ( main:0 [ main::cursor#5 main::x#1 main::e#5 main::y#4 ] ) -- xby_lt_coby1_then_la1 
-    cpx #x1+1
+  //SEG33 [12] if((byte) main::x#1<(const byte) main::x1#0+(byte) 1) goto main::@1 [ main::cursor#5 main::x#1 main::e#5 main::y#4 ] ( main:0 [ main::cursor#5 main::x#1 main::e#5 main::y#4 ] ) -- zpby1_lt_coby1_then_la1 
+    lda x
+    cmp #x1+1
     bcc b1
   //SEG34 main::@return
   //SEG35 [13] return  [ ] ( main:0 [ ] )
@@ -2134,13 +2241,13 @@ FINAL SYMBOL TABLE
 (byte*) main::cursor#3 cursor zp ZP_PTR_BYTE:2 11.0
 (byte*) main::cursor#5 cursor zp ZP_PTR_BYTE:2 16.5
 (byte) main::e
-(byte) main::e#1 e zp ZP_BYTE:4 11.0
-(byte) main::e#2 e zp ZP_BYTE:4 22.0
-(byte) main::e#3 e zp ZP_BYTE:4 5.5
-(byte) main::e#5 e zp ZP_BYTE:4 16.5
+(byte) main::e#1 reg byte x 11.0
+(byte) main::e#2 reg byte x 22.0
+(byte) main::e#3 reg byte x 5.5
+(byte) main::e#5 reg byte x 16.5
 (byte) main::x
-(byte) main::x#1 reg byte x 3.666666666666667
-(byte) main::x#2 reg byte x 11.0
+(byte) main::x#1 x zp ZP_BYTE:4 3.666666666666667
+(byte) main::x#2 x zp ZP_BYTE:4 11.0
 (byte) main::x0
 (byte) main::x1
 (const byte) main::x1#0 x1 = (byte) 39
@@ -2157,8 +2264,8 @@ FINAL SYMBOL TABLE
 (const byte) main::yd#0 yd = (const byte) main::y1#0-(byte) 4
 
 zp ZP_PTR_BYTE:2 [ main::cursor#3 main::cursor#5 main::cursor#1 main::cursor#2 ]
-reg byte x [ main::x#2 main::x#1 ]
-zp ZP_BYTE:4 [ main::e#3 main::e#5 main::e#1 main::e#2 ]
+zp ZP_BYTE:4 [ main::x#2 main::x#1 ]
+reg byte x [ main::e#3 main::e#5 main::e#1 main::e#2 ]
 zp ZP_BYTE:5 [ main::y#2 main::y#4 main::y#1 ]
 
 FINAL CODE
@@ -2181,18 +2288,17 @@ main: {
     .const y1 = $18
     .const xd = x1-4
     .const yd = y1-4
+    .label x = 4
     .label cursor = 2
-    .label e = 4
     .label y = 5
   //SEG8 [2] phi from main to main::@1 [phi:main->main::@1]
   //SEG9 [2] phi (byte) main::y#2 = (byte) 4 [phi:main->main::@1#0] -- zpby1=coby1 
     lda #4
     sta y
-  //SEG10 [2] phi (byte) main::e#3 = (const byte) main::yd#0/(byte) 2 [phi:main->main::@1#1] -- zpby1=coby1 
-    lda #yd/2
-    sta e
-  //SEG11 [2] phi (byte) main::x#2 = (byte) 4 [phi:main->main::@1#2] -- xby=coby1 
-    ldx #4
+  //SEG10 [2] phi (byte) main::e#3 = (const byte) main::yd#0/(byte) 2 [phi:main->main::@1#1] -- xby=coby1 
+    ldx #yd/2
+  //SEG11 [2] phi (byte) main::x#2 = (byte) 4 [phi:main->main::@1#2] -- zpby1=coby1 
+    sta x
   //SEG12 [2] phi (byte*) main::cursor#3 = (const byte[1000]) SCREEN#0+(byte) 4*(byte) 40+(byte) 4 [phi:main->main::@1#3] -- zpptrby1=cowo1 
     lda #<SCREEN+4*$28+4
     sta cursor
@@ -2209,22 +2315,21 @@ main: {
     ldy #0
     lda #STAR
     sta (cursor),y
-  //SEG20 [4] (byte) main::x#1 ← (byte) main::x#2 + (byte) 1 [ main::cursor#3 main::e#3 main::y#2 main::x#1 ] ( main:0 [ main::cursor#3 main::e#3 main::y#2 main::x#1 ] ) -- xby=xby_plus_1 
-    inx
+  //SEG20 [4] (byte) main::x#1 ← (byte) main::x#2 + (byte) 1 [ main::cursor#3 main::e#3 main::y#2 main::x#1 ] ( main:0 [ main::cursor#3 main::e#3 main::y#2 main::x#1 ] ) -- zpby1=zpby1_plus_1 
+    inc x
   //SEG21 [5] (byte*) main::cursor#1 ← (byte*) main::cursor#3 + (byte) 1 [ main::e#3 main::y#2 main::x#1 main::cursor#1 ] ( main:0 [ main::e#3 main::y#2 main::x#1 main::cursor#1 ] ) -- zpptrby1=zpptrby1_plus_1 
     inc cursor
     bne !+
     inc cursor+1
   !:
-  //SEG22 [6] (byte) main::e#1 ← (byte) main::e#3 + (const byte) main::yd#0 [ main::y#2 main::x#1 main::cursor#1 main::e#1 ] ( main:0 [ main::y#2 main::x#1 main::cursor#1 main::e#1 ] ) -- zpby1=zpby1_plus_coby1 
-    lda e
+  //SEG22 [6] (byte) main::e#1 ← (byte) main::e#3 + (const byte) main::yd#0 [ main::y#2 main::x#1 main::cursor#1 main::e#1 ] ( main:0 [ main::y#2 main::x#1 main::cursor#1 main::e#1 ] ) -- xby=xby_plus_coby1 
+    txa
     clc
     adc #yd
-    sta e
-  //SEG23 [7] if((const byte) main::xd#0>=(byte) main::e#1) goto main::@2 [ main::y#2 main::x#1 main::cursor#1 main::e#1 ] ( main:0 [ main::y#2 main::x#1 main::cursor#1 main::e#1 ] ) -- coby1_ge_zpby1_then_la1 
-    lda #xd
-    cmp e
-    bcs b2
+    tax
+  //SEG23 [7] if((const byte) main::xd#0>=(byte) main::e#1) goto main::@2 [ main::y#2 main::x#1 main::cursor#1 main::e#1 ] ( main:0 [ main::y#2 main::x#1 main::cursor#1 main::e#1 ] ) -- coby1_ge_xby_then_la1 
+    cpx #xd
+    bcc b2
   //SEG24 main::@3
   //SEG25 [8] (byte) main::y#1 ← (byte) main::y#2 + (byte) 1 [ main::x#1 main::cursor#1 main::e#1 main::y#1 ] ( main:0 [ main::x#1 main::cursor#1 main::e#1 main::y#1 ] ) -- zpby1=zpby1_plus_1 
     inc y
@@ -2236,18 +2341,20 @@ main: {
     bcc !+
     inc cursor+1
   !:
-  //SEG27 [10] (byte) main::e#2 ← (byte) main::e#1 - (const byte) main::xd#0 [ main::x#1 main::y#1 main::cursor#2 main::e#2 ] ( main:0 [ main::x#1 main::y#1 main::cursor#2 main::e#2 ] ) -- zpby1=zpby1_minus_coby1 
+  //SEG27 [10] (byte) main::e#2 ← (byte) main::e#1 - (const byte) main::xd#0 [ main::x#1 main::y#1 main::cursor#2 main::e#2 ] ( main:0 [ main::x#1 main::y#1 main::cursor#2 main::e#2 ] ) -- xby=xby_minus_coby1 
+    txa
     sec
     sbc #xd
-    sta e
+    tax
   //SEG28 [11] phi from main::@1 main::@3 to main::@2 [phi:main::@1/main::@3->main::@2]
   //SEG29 [11] phi (byte) main::y#4 = (byte) main::y#2 [phi:main::@1/main::@3->main::@2#0] -- register_copy 
   //SEG30 [11] phi (byte) main::e#5 = (byte) main::e#1 [phi:main::@1/main::@3->main::@2#1] -- register_copy 
   //SEG31 [11] phi (byte*) main::cursor#5 = (byte*) main::cursor#1 [phi:main::@1/main::@3->main::@2#2] -- register_copy 
   //SEG32 main::@2
   b2:
-  //SEG33 [12] if((byte) main::x#1<(const byte) main::x1#0+(byte) 1) goto main::@1 [ main::cursor#5 main::x#1 main::e#5 main::y#4 ] ( main:0 [ main::cursor#5 main::x#1 main::e#5 main::y#4 ] ) -- xby_lt_coby1_then_la1 
-    cpx #x1+1
+  //SEG33 [12] if((byte) main::x#1<(const byte) main::x1#0+(byte) 1) goto main::@1 [ main::cursor#5 main::x#1 main::e#5 main::y#4 ] ( main:0 [ main::cursor#5 main::x#1 main::e#5 main::y#4 ] ) -- zpby1_lt_coby1_then_la1 
+    lda x
+    cmp #x1+1
     bcc b1
   //SEG34 main::@return
   //SEG35 [13] return  [ ] ( main:0 [ ] )

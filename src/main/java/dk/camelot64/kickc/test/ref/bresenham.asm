@@ -9,14 +9,13 @@ main: {
     .const y1 = $18
     .const xd = x1-4
     .const yd = y1-4
+    .label x = 4
     .label cursor = 2
-    .label e = 4
     .label y = 5
     lda #4
     sta y
-    lda #yd/2
-    sta e
-    ldx #4
+    ldx #yd/2
+    sta x
     lda #<SCREEN+4*$28+4
     sta cursor
     lda #>SCREEN+4*$28+4
@@ -25,18 +24,17 @@ main: {
     ldy #0
     lda #STAR
     sta (cursor),y
-    inx
+    inc x
     inc cursor
     bne !+
     inc cursor+1
   !:
-    lda e
+    txa
     clc
     adc #yd
-    sta e
-    lda #xd
-    cmp e
-    bcs b2
+    tax
+    cpx #xd
+    bcc b2
     inc y
     lda cursor
     clc
@@ -45,11 +43,13 @@ main: {
     bcc !+
     inc cursor+1
   !:
+    txa
     sec
     sbc #xd
-    sta e
+    tax
   b2:
-    cpx #x1+1
+    lda x
+    cmp #x1+1
     bcc b1
     rts
 }

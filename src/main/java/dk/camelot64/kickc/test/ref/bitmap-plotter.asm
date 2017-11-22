@@ -65,7 +65,6 @@ plots: {
     rts
 }
 plot: {
-    .label _5 = 7
     .label plotter_x = 3
     .label plotter_y = 5
     .label plotter = 3
@@ -89,10 +88,8 @@ plot: {
     adc plotter_y+1
     sta plotter+1
     lda plot_bit,y
-    sta _5
     ldy #0
-    lda (plotter),y
-    ora _5
+    ora (plotter),y
     sta (plotter),y
     rts
 }

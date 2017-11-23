@@ -1,3 +1,3 @@
 sty $ff
 cmp $ff
-beq {la1}
+bcc {la1}

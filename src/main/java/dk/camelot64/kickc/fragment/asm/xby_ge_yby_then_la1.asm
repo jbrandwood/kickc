@@ -1,3 +1,3 @@
 sty $ff
 cpx $ff
-beq {la1}
+bcs  {la1}

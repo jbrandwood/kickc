@@ -1,3 +1,3 @@
 stx $ff
 cmp $ff
-beq {la1}
+bcs {la1}

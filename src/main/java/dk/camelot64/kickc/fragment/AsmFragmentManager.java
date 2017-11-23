@@ -70,37 +70,6 @@ public class AsmFragmentManager {
     */
    private static CharStream synthesizeFragment(String signature) {
 
-      String sigNew = signature;
-      sigNew = regexpRewriteSignature(sigNew, "(.*)=(.*)_band_aby", "$1=aby_band_$2");
-      sigNew = regexpRewriteSignature(sigNew, "(.*)=(.*)_band_xby", "$1=xby_band_$2");
-      sigNew = regexpRewriteSignature(sigNew, "(.*)=(.*)_band_yby", "$1=yby_band_$2");
-      sigNew = regexpRewriteSignature(sigNew, "(.*)=(.*)_bor_aby", "$1=aby_bor_$2");
-      sigNew = regexpRewriteSignature(sigNew, "(.*)=(.*)_bor_xby", "$1=xby_bor_$2");
-      sigNew = regexpRewriteSignature(sigNew, "(.*)=(.*)_bor_yby", "$1=yby_bor_$2");
-      sigNew = regexpRewriteSignature(sigNew, "(.*)=(.*)_plus_aby", "$1=aby_plus_$2");
-      sigNew = regexpRewriteSignature(sigNew, "(.*)=(.*)_plus_xby", "$1=xby_plus_$2");
-      sigNew = regexpRewriteSignature(sigNew, "(.*)=(.*)_plus_yby", "$1=yby_plus_$2");
-      sigNew = regexpRewriteSignature(sigNew, "(.*)_lt_aby_then_(.*)", "aby_ge_$1_then_$2");
-      sigNew = regexpRewriteSignature(sigNew, "(.*)_lt_xby_then_(.*)", "xby_ge_$1_then_$2");
-      sigNew = regexpRewriteSignature(sigNew, "(.*)_lt_yby_then_(.*)", "yby_ge_$1_then_$2");
-      sigNew = regexpRewriteSignature(sigNew, "(.*)_ge_aby_then_(.*)", "aby_lt_$1_then_$2");
-      sigNew = regexpRewriteSignature(sigNew, "(.*)_ge_xby_then_(.*)", "xby_lt_$1_then_$2");
-      sigNew = regexpRewriteSignature(sigNew, "(.*)_ge_yby_then_(.*)", "yby_lt_$1_then_$2");
-      sigNew = regexpRewriteSignature(sigNew, "(.*)_gt_aby_then_(.*)", "aby_le_$1_then_$2");
-      sigNew = regexpRewriteSignature(sigNew, "(.*)_gt_xby_then_(.*)", "xby_le_$1_then_$2");
-      sigNew = regexpRewriteSignature(sigNew, "(.*)_gt_yby_then_(.*)", "yby_le_$1_then_$2");
-      sigNew = regexpRewriteSignature(sigNew, "(.*)_neq_aby_then_(.*)", "aby_neq_$1_then_$2");
-      sigNew = regexpRewriteSignature(sigNew, "(.*)_neq_xby_then_(.*)", "xby_neq_$1_then_$2");
-      sigNew = regexpRewriteSignature(sigNew, "(.*)_neq_yby_then_(.*)", "yby_neq_$1_then_$2");
-      if (!signature.equals(sigNew)) {
-         CharStream loadFragment = loadFragment(sigNew);
-         if(loadFragment!=null) {
-            return loadFragment;
-         } else {
-            signature = sigNew;
-         }
-      }
-
       Map<String, String> mapZpsby = new LinkedHashMap<>();
       mapZpsby.put("zpsby2", "zpsby1");
       mapZpsby.put("zpsby3", "zpsby2");
@@ -117,6 +86,11 @@ public class AsmFragmentManager {
       mapConst.put("coby3", "coby2");
 
       List<FragmentSynthesis> synths = new ArrayList<>();
+
+      synths.add(new FragmentSynthesis("(.*)=(.*)_(band|bor|plus)_(as?by)", ".*=as?by_.*", null, "$1=$4_$3_$2", null, null));
+      synths.add(new FragmentSynthesis("(.*)=(.*)_(band|bor|plus)_(xs?by)", ".*=[xa]s?by_.*", null, "$1=$4_$3_$2", null, null));
+      synths.add(new FragmentSynthesis("(.*)=(.*)_(band|bor|plus)_(ys?by)", ".*=[axy]s?by_.*", null, "$1=$4_$3_$2", null, null));
+
       synths.add(new FragmentSynthesis("xby=(.*)", null, null, "aby=$1", "tax\n", null));
       synths.add(new FragmentSynthesis("yby=(.*)", null, null, "aby=$1", "tay\n", null));
       synths.add(new FragmentSynthesis("zpby1=(.*)", ".*=.*zps?by1.*", null, "aby=$1", "sta {zpby1}\n", mapZpby));
@@ -143,6 +117,24 @@ public class AsmFragmentManager {
       synths.add(new FragmentSynthesis("zpsby1_(lt|gt|le|ge|eq|neq)_(.*)", ".*as?by.*", "lda {zpsby1}\n", "asby_$1_$2", null, mapZpsby));
       synths.add(new FragmentSynthesis("_deref_cowo1_(lt|gt|le|ge|eq|neq)_(.*)", ".*as?by.*", "lda {cowo1}\n", "aby_$1_$2", null, mapConst));
       synths.add(new FragmentSynthesis("_deref_zpptrby1_(lt|gt|le|ge|eq|neq)_(.*)", ".*=.*as?by.*|.*=.*ys?by.*", "ldy #0\n"+"lda ({zpptrby1}),y\n", "aby_$1_$2", null, mapZpptrby));
+      synths.add(new FragmentSynthesis("(.*)_ge_(as?by)_then_(.*)", ".*[a]s?by.*_ge.*", null, "$2_lt_$1_then_$3", null, null));
+      synths.add(new FragmentSynthesis("(.*)_ge_(xs?by)_then_(.*)", ".*[ax]s?by.*_ge.*", null, "$2_lt_$1_then_$3", null, null));
+      synths.add(new FragmentSynthesis("(.*)_ge_(ys?by)_then_(.*)", ".*[axy]s?by.*_ge.*", null, "$2_lt_$1_then_$3", null, null));
+      synths.add(new FragmentSynthesis("(.*)_lt_(as?by)_then_(.*)", ".*[a]s?by.*_lt.*", null, "$2_ge_$1_then_$3", null, null));
+      synths.add(new FragmentSynthesis("(.*)_lt_(xs?by)_then_(.*)", ".*[ax]s?by.*_lt.*", null, "$2_ge_$1_then_$3", null, null));
+      synths.add(new FragmentSynthesis("(.*)_lt_(ys?by)_then_(.*)", ".*[axy]s?by.*_lt.*", null, "$2_ge_$1_then_$3", null, null));
+      synths.add(new FragmentSynthesis("(.*)_gt_(as?by)_then_(.*)", ".*[a]s?by.*_gt.*", null, "$2_le_$1_then_$3", null, null));
+      synths.add(new FragmentSynthesis("(.*)_gt_(xs?by)_then_(.*)", ".*[ax]s?by.*_gt.*", null, "$2_le_$1_then_$3", null, null));
+      synths.add(new FragmentSynthesis("(.*)_gt_(ys?by)_then_(.*)", ".*[axy]s?by.*_gt.*", null, "$2_le_$1_then_$3", null, null));
+      synths.add(new FragmentSynthesis("(.*)_le_(as?by)_then_(.*)", ".*[a]s?by.*_le.*", null, "$2_gt_$1_then_$3", null, null));
+      synths.add(new FragmentSynthesis("(.*)_le_(xs?by)_then_(.*)", ".*[ax]s?by.*_le.*", null, "$2_gt_$1_then_$3", null, null));
+      synths.add(new FragmentSynthesis("(.*)_le_(ys?by)_then_(.*)", ".*[axy]s?by.*_le.*", null, "$2_gt_$1_then_$3", null, null));
+      synths.add(new FragmentSynthesis("(.*)_neq_(as?by)_then_(.*)", ".*[a]s?by.*_neq.*", null, "$2_neq_$1_then_$3", null, null));
+      synths.add(new FragmentSynthesis("(.*)_neq_(xs?by)_then_(.*)", ".*[ax]s?by.*_neq.*", null, "$2_neq_$1_then_$3", null, null));
+      synths.add(new FragmentSynthesis("(.*)_neq_(ys?by)_then_(.*)", ".*[axy]s?by.*_neq.*", null, "$2_neq_$1_then_$3", null, null));
+      synths.add(new FragmentSynthesis("(.*)_eq_(as?by)_then_(.*)", ".*[a]s?by.*_eq.*", null, "$2_eq_$1_then_$3", null, null));
+      synths.add(new FragmentSynthesis("(.*)_eq_(xs?by)_then_(.*)", ".*[ax]s?by.*_eq.*", null, "$2_eq_$1_then_$3", null, null));
+      synths.add(new FragmentSynthesis("(.*)_eq_(ys?by)_then_(.*)", ".*[axy]s?by.*_eq.*", null, "$2_eq_$1_then_$3", null, null));
 
       for (FragmentSynthesis synth : synths) {
          CharStream synthesized = synth.synthesize(signature);

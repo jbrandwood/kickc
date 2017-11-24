@@ -115,6 +115,7 @@ public class AsmFragmentManager {
       synths.add(new FragmentSynthesis("zpsby1=(.*)", ".*=.*zpsby1.*", null, "asby=$1", "sta {zpsby1}\n", mapZpsby));
       synths.add(new FragmentSynthesis("_deref_cowo1=(.*)", null, null, "aby=$1", "sta {cowo1}\n", mapConst));
       synths.add(new FragmentSynthesis("_deref_zpptrby1=(.*)", ".*=.*zpptrby1.*", null, "aby=$1", "ldy #0\n" + "sta ({zpptrby1}),y\n", mapZpptrby));
+      synths.add(new FragmentSynthesis("cowo1_derefidx_zpby1=(.*)", null, null, "aby=$1", "ldx {zpby1}\n"+"sta {cowo1},x\n", mapZpby));
 
       synths.add(new FragmentSynthesis("(.*)=xby(.*)", ".*=.*as?by.*", "txa\n", "$1=aby$2", null, null));
       synths.add(new FragmentSynthesis("(.*)=yby(.*)", ".*=.*as?by.*", "tya\n", "$1=aby$2", null, null));

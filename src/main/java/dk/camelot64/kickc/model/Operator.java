@@ -1,6 +1,8 @@
 package dk.camelot64.kickc.model;
 
-/** An Operator. The operation performed on the rvalues in a Statement. */
+/**
+ * An Operator. The operation performed on the rvalues in a Statement.
+ */
 public class Operator {
 
    private String operator;
@@ -9,10 +11,13 @@ public class Operator {
 
    private Type type;
 
-   public Operator(String operator, Type type, int precedence) {
+   private String asmOperator;
+
+   public Operator(String operator, String asmOperator, Type type, int precedence) {
       this.operator = operator;
       this.precedence = precedence;
       this.type = type;
+      this.asmOperator = asmOperator;
    }
 
    public static Operator getBinary(String op) {
@@ -38,7 +43,7 @@ public class Operator {
          case ">=":
             return GE;
          case "*idx":
-            return STAR_IDX;
+            return DEREF_IDX;
          case "&&":
             return LOGIC_AND;
          case "||":
@@ -77,7 +82,7 @@ public class Operator {
          case "~":
             return BOOL_NOT;
          case "*":
-            return STAR;
+            return DEREF;
          case "<":
             return LOWBYTE;
          case ">":
@@ -87,39 +92,58 @@ public class Operator {
       }
    }
 
-   public static enum Type {
+   public static Operator getCastUnary(SymbolType castType) {
+      if (SymbolTypeBasic.BYTE.equals(castType)) {
+         return CAST_BYTE;
+      } else if (SymbolTypeBasic.SBYTE.equals(castType)) {
+         return CAST_SBYTE;
+      } else if (SymbolTypeBasic.WORD.equals(castType)) {
+         return CAST_WORD;
+      } else if (SymbolTypeBasic.SWORD.equals(castType)) {
+         return CAST_SWORD;
+      } else {
+         throw new RuntimeException("Unknown cast type " + castType);
+
+      }
+   }
+
+   public enum Type {
       UNARY, BINARY
    }
 
-   public static Operator INCREMENT = new Operator("++", Type.UNARY, 1);
-   public static Operator DECREMENT = new Operator("--", Type.UNARY, 1);
-   public static Operator UNARY_PLUS = new Operator("+", Type.UNARY, 2);
-   public static Operator UNARY_MINUS = new Operator("-", Type.UNARY, 2);
-   public static Operator BOOL_NOT = new Operator("~", Type.UNARY, 2);
-   public static Operator NOT = new Operator("!", Type.UNARY, 2);
-   public static Operator STAR = new Operator("*", Type.UNARY, 2);
-   public static Operator LOWBYTE = new Operator("<", Type.UNARY, 2);
-   public static Operator HIBYTE = new Operator(">", Type.UNARY, 2);
-   public static Operator STAR_IDX = new Operator("*idx", Type.BINARY, 2);
-   public static Operator SET_LOWBYTE = new Operator("lo=", Type.BINARY, 2);
-   public static Operator SET_HIBYTE = new Operator("hi=", Type.BINARY, 2);
-   public static Operator MULTIPLY = new Operator("*", Type.BINARY, 3);
-   public static Operator DIVIDE = new Operator("/", Type.BINARY, 3);
-   public static Operator PLUS = new Operator("+", Type.BINARY, 4);
-   public static Operator MINUS = new Operator("-", Type.BINARY, 4);
-   public static Operator SHIFT_LEFT = new Operator("<<", Type.BINARY, 5);
-   public static Operator SHIFT_RIGHT = new Operator(">>", Type.BINARY, 5);
-   public static Operator LT = new Operator("<", Type.BINARY, 6);
-   public static Operator LE = new Operator("<=", Type.BINARY, 6);
-   public static Operator GT = new Operator(">", Type.BINARY, 6);
-   public static Operator GE = new Operator(">=", Type.BINARY, 6);
-   public static Operator EQ = new Operator("==", Type.BINARY, 7);
-   public static Operator NEQ = new Operator("!=", Type.BINARY, 7);
-   public static Operator BOOL_AND = new Operator("&", Type.BINARY, 8);
-   public static Operator BOOL_XOR = new Operator("^", Type.BINARY, 9);
-   public static Operator BOOL_OR = new Operator("|", Type.BINARY, 10);
-   public static Operator LOGIC_AND = new Operator("&&", Type.BINARY, 11);
-   public static Operator LOGIC_OR = new Operator("||", Type.BINARY, 12);
+   public static final Operator INCREMENT = new Operator("++", "_inc_", Type.UNARY, 1);
+   public static final Operator DECREMENT = new Operator("--", "_dec_", Type.UNARY, 1);
+   public static final Operator UNARY_PLUS = new Operator("+", "_pos_", Type.UNARY, 2);
+   public static final Operator UNARY_MINUS = new Operator("-", "_neg_", Type.UNARY, 2);
+   public static final Operator BOOL_NOT = new Operator("~", "_not_", Type.UNARY, 2);
+   public static final Operator NOT = new Operator("!", "_not_", Type.UNARY, 2);
+   public static final Operator DEREF = new Operator("*", "_deref_", Type.UNARY, 2);
+   public static final Operator LOWBYTE = new Operator("<", "_lo_", Type.UNARY, 2);
+   public static final Operator HIBYTE = new Operator(">", "_hi_", Type.UNARY, 2);
+   public static final Operator DEREF_IDX = new Operator("*idx", "_derefidx_", Type.BINARY, 2);
+   public static final Operator SET_LOWBYTE = new Operator("lo=", "_setlo_", Type.BINARY, 2);
+   public static final Operator SET_HIBYTE = new Operator("hi=", "_sethi_", Type.BINARY, 2);
+   public static final Operator CAST_BYTE = new Operator("_byte_", "_byte_", Type.UNARY, 2);
+   public static final Operator CAST_SBYTE = new Operator("_sbyte_", "_sbyte_", Type.UNARY, 2);
+   public static final Operator CAST_WORD = new Operator("_word_", "_word_", Type.UNARY, 2);
+   public static final Operator CAST_SWORD = new Operator("_sword_", "_sword_", Type.UNARY, 2);
+   public static final Operator MULTIPLY = new Operator("*", "_mul_", Type.BINARY, 3);
+   public static final Operator DIVIDE = new Operator("/", "_div_", Type.BINARY, 3);
+   public static final Operator PLUS = new Operator("+", "_plus_", Type.BINARY, 4);
+   public static final Operator MINUS = new Operator("-", "_minus_", Type.BINARY, 4);
+   public static final Operator SHIFT_LEFT = new Operator("<<", "_rol_", Type.BINARY, 5);
+   public static final Operator SHIFT_RIGHT = new Operator(">>", "_ror_", Type.BINARY, 5);
+   public static final Operator LT = new Operator("<", "_lt_", Type.BINARY, 6);
+   public static final Operator LE = new Operator("<=", "_le_", Type.BINARY, 6);
+   public static final Operator GT = new Operator(">", "_gt_", Type.BINARY, 6);
+   public static final Operator GE = new Operator(">=", "_ge_", Type.BINARY, 6);
+   public static final Operator EQ = new Operator("==", "_eq_", Type.BINARY, 7);
+   public static final Operator NEQ = new Operator("!=", "_neq_", Type.BINARY, 7);
+   public static final Operator BOOL_AND = new Operator("&", "_band_", Type.BINARY, 8);
+   public static final Operator BOOL_XOR = new Operator("^", "_bxor_", Type.BINARY, 9);
+   public static final Operator BOOL_OR = new Operator("|", "_bor_", Type.BINARY, 10);
+   public static final Operator LOGIC_AND = new Operator("&&", "_and_", Type.BINARY, 11);
+   public static final Operator LOGIC_OR = new Operator("||", "_or_", Type.BINARY, 12);
 
    public String getOperator() {
       return operator;
@@ -131,6 +155,10 @@ public class Operator {
 
    public Type getType() {
       return type;
+   }
+
+   public String getAsmOperator() {
+      return asmOperator;
    }
 
    @Override

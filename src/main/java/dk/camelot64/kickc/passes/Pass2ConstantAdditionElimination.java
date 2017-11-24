@@ -88,7 +88,7 @@ public class Pass2ConstantAdditionElimination extends Pass2SsaOptimization {
          ConstantValue idxConstant = (ConstantValue) assignment.getrValue2();
          ConstantValue newPtr = new ConstantBinary(ptrConstant, Operator.PLUS, idxConstant);
          assignment.setrValue1(null);
-         assignment.setOperator(Operator.STAR);
+         assignment.setOperator(Operator.DEREF);
          assignment.setrValue2(newPtr);
          getLog().append("Consolidated referenced array index constant in assignment " + assignment.getlValue());
          return true;

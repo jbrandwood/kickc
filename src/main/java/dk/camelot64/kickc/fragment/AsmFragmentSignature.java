@@ -5,19 +5,29 @@ import dk.camelot64.kickc.model.*;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-/** A fragment signature generated from a {@link Statement} used to load/synthesize an AsmFragent for creating ASM code for the statement*/
+/**
+ * A fragment signature generated from a {@link Statement} used to load/synthesize an AsmFragent for creating ASM code for the statement
+ */
 public class AsmFragmentSignature {
 
-   /** The symbol table. */
+   /**
+    * The symbol table.
+    */
    private Program program;
 
-   /** The string signature/name of the fragment fragment. */
+   /**
+    * The string signature/name of the fragment fragment.
+    */
    private String signature;
 
-   /** Binding of named values in the fragment to values (constants, variables, ...) . */
+   /**
+    * Binding of named values in the fragment to values (constants, variables, ...) .
+    */
    private Map<String, Value> bindings;
 
-   /** The scope containing the fragment. Used when referencing symbols defined in other scopes. */
+   /**
+    * The scope containing the fragment. Used when referencing symbols defined in other scopes.
+    */
    private ScopeRef codeScopeRef;
 
    public AsmFragmentSignature(
@@ -161,68 +171,7 @@ public class AsmFragmentSignature {
    }
 
    private static String getOperatorFragmentName(Operator operator) {
-      String op = operator.getOperator();
-      switch (op) {
-         case "*":
-            if(operator.getType().equals(Operator.Type.UNARY)) {
-               return "_deref_";
-            }  else {
-               return "_mul_";
-            }
-         case "*idx":
-            return "_derefidx_";
-         case "+":
-            return "_plus_";
-         case "++":
-            return "_inc_";
-         case "--":
-            return "_dec_";
-         case "-":
-            return "_minus_";
-         case "==":
-            return "_eq_";
-         case "<>":
-         case "!=":
-            return "_neq_";
-         case "<":
-            if(operator.getType().equals(Operator.Type.UNARY)) {
-               return "_lo_";
-            }  else {
-               return "_lt_";
-            }
-         case ">":
-            if(operator.getType().equals(Operator.Type.UNARY)) {
-               return "_hi_";
-            }  else {
-               return "_gt_";
-            }
-         case "<=":
-         case "=<":
-            return "_le_";
-         case ">=":
-         case "=>":
-            return "_ge_";
-         case ">>":
-            return "_ror_";
-         case "<<":
-            return "_rol_";
-         case "&":
-            return "_band_";
-         case "|":
-            return "_bor_";
-         case "^":
-            return "_bxor_";
-         case "!":
-            return "_not_";
-         case "~":
-            return "_bnot_";
-         case "lo=":
-            return "_setlo_";
-         case "hi=":
-            return "_sethi_";
-         default:
-            return op;
-      }
+      return operator.getAsmOperator();
    }
 
    public String getSignature() {
@@ -364,7 +313,7 @@ public class AsmFragmentSignature {
             bindings.put(name, value);
             return name;
          }
-      } else if(value instanceof ConstantValue) {
+      } else if (value instanceof ConstantValue) {
          SymbolType type = SymbolTypeInference.inferType(program.getScope(), (ConstantValue) value);
          if (SymbolTypeBasic.BYTE.equals(type)) {
             String name = "coby" + nextConstByteIdx++;

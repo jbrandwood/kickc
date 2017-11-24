@@ -92,21 +92,30 @@ public class AsmFragmentManager {
       synths.add(new FragmentSynthesis("(.*)=(.*)_(band|bor|plus)_(ys?by)", ".*=[axy]s?by_.*", null, "$1=$4_$3_$2", null, null));
 
       synths.add(new FragmentSynthesis("xby=(.*)", null, null, "aby=$1", "tax\n", null));
+      synths.add(new FragmentSynthesis("xsby=(.*)", null, null, "asby=$1", "tax\n", null));
       synths.add(new FragmentSynthesis("yby=(.*)", null, null, "aby=$1", "tay\n", null));
-      synths.add(new FragmentSynthesis("zpby1=(.*)", ".*=.*zps?by1.*", null, "aby=$1", "sta {zpby1}\n", mapZpby));
-      synths.add(new FragmentSynthesis("zpsby1=(.*)", ".*=.*zps?by1.*", null, "asby=$1", "sta {zpsby1}\n", mapZpsby));
+      synths.add(new FragmentSynthesis("ysby=(.*)", null, null, "asby=$1", "tay\n", null));
+      synths.add(new FragmentSynthesis("zpby1=(.*)", ".*=.*zpby1.*", null, "aby=$1", "sta {zpby1}\n", mapZpby));
+      synths.add(new FragmentSynthesis("zpsby1=(.*)", ".*=.*zpsby1.*", null, "asby=$1", "sta {zpsby1}\n", mapZpsby));
       synths.add(new FragmentSynthesis("_deref_cowo1=(.*)", null, null, "aby=$1", "sta {cowo1}\n", mapConst));
-      synths.add(new FragmentSynthesis("_deref_zpptrby1=(.*)", ".*=.*zpptrs?by1.*", null, "aby=$1", "ldy #0\n" + "sta ({zpptrby1}),y\n", mapZpptrby));
+      synths.add(new FragmentSynthesis("_deref_zpptrby1=(.*)", ".*=.*zpptrby1.*", null, "aby=$1", "ldy #0\n" + "sta ({zpptrby1}),y\n", mapZpptrby));
 
       synths.add(new FragmentSynthesis("(.*)=xby(.*)", ".*=.*as?by.*", "txa\n", "$1=aby$2", null, null));
       synths.add(new FragmentSynthesis("(.*)=yby(.*)", ".*=.*as?by.*", "tya\n", "$1=aby$2", null, null));
-      synths.add(new FragmentSynthesis("(.*)=zpby1(.*)", ".*=.*as?by.*|zps?by1=.*", "lda {zpby1}\n", "$1=aby$2", null, mapZpby));
-      synths.add(new FragmentSynthesis("(.*)=zpsby1(.*)", ".*=.*as?by.*|zps?by1=.*", "lda {zpsby1}\n", "$1=aby$2", null, mapZpsby));
+      synths.add(new FragmentSynthesis("(.*)=zpby1(.*)", ".*=.*as?by.*|zpby1=.*", "lda {zpby1}\n", "$1=aby$2", null, mapZpby));
+      synths.add(new FragmentSynthesis("(.*)=zpsby1(.*)", ".*=.*as?by.*|zpsby1=.*", "lda {zpsby1}\n", "$1=aby$2", null, mapZpsby));
       synths.add(new FragmentSynthesis("(.*)=_deref_cowo1(.*)", ".*=.*as?by.*", "lda {cowo1}\n", "$1=aby$2", null, mapConst));
       synths.add(new FragmentSynthesis("(.*)=_deref_zpptrby1(.*)", ".*=.*as?by.*|.*=.*ys?by.*", "ldy #0\n"+"lda ({zpptrby1}),y\n", "$1=aby$2", null, mapZpptrby));
 
+      synths.add(new FragmentSynthesis("(.*)=(.*)_xby", ".*=[ax]s?by.*xs?by", "txa\n", "$1=$2_aby", null, null));
+      synths.add(new FragmentSynthesis("(.*)=(.*)_xsby", ".*=[ax]s?by.*xs?by", "txa\n", "$1=$2_asby", null, null));
+      synths.add(new FragmentSynthesis("(.*)=(.*)_yby", ".*=[ay]s?by.*ys?by", "tya\n", "$1=$2_aby", null, null));
+      synths.add(new FragmentSynthesis("(.*)=(.*)_ysby", ".*=[ay]s?by.*ys?by", "tya\n", "$1=$2_asby", null, null));
+      synths.add(new FragmentSynthesis("(.*)=(.*)_zpby1", ".*=.*as?by.*", "lda {zpby1}\n", "$1=$2_aby", null, mapZpby));
+      synths.add(new FragmentSynthesis("(.*)=(.*)_zpsby1", ".*=.*as?by.*", "lda {zpsby1}\n", "$1=$2_asby", null, mapZpsby));
+
       synths.add(new FragmentSynthesis("zpby1=zpby1(.*)", ".*=.*as?by.*", "lda {zpby1}\n", "aby=aby$1", "sta {zpby1}\n", mapZpby));
-      synths.add(new FragmentSynthesis("zpsby1=zpsby1(.*)", ".*=.*as?by.*", "lda {zpsby1}\n", "aby=aby$1", "sta {zpsby1}\n", mapZpby));
+      synths.add(new FragmentSynthesis("zpsby1=zpsby1(.*)", ".*=.*as?by.*", "lda {zpsby1}\n", "asby=asby$1", "sta {zpsby1}\n", mapZpby));
 
       synths.add(new FragmentSynthesis("(.*)=(.*)_derefidx_aby", ".*=.*ys?by.*", "tay\n", "$1=$2_derefidx_yby", null, null));
       synths.add(new FragmentSynthesis("(.*)=(.*)_derefidx_aby", ".*=.*xs?by.*", "tax\n", "$1=$2_derefidx_xby", null, null));

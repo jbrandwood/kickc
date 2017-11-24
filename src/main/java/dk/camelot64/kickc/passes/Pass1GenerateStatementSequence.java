@@ -438,7 +438,7 @@ public class Pass1GenerateStatementSequence extends KickCBaseVisitor<Object> {
 
    @Override
    public SymbolType visitTypeSignedSimple(KickCParser.TypeSignedSimpleContext ctx) {
-      return SymbolTypeBasic.get("signed "+ctx.SIMPLETYPE().getText());
+      return SymbolTypeBasic.get("signed " + ctx.SIMPLETYPE().getText());
    }
 
    @Override
@@ -464,8 +464,14 @@ public class Pass1GenerateStatementSequence extends KickCBaseVisitor<Object> {
 
    @Override
    public RValue visitExprCast(KickCParser.ExprCastContext ctx) {
-      program.getLog().append("Cast type ignored!");
-      return (RValue) visit(ctx.expr());
+      RValue child = (RValue) this.visit(ctx.expr());
+      SymbolType castType = (SymbolType) this.visit(ctx.typeDecl());
+      Operator operator = Operator.getCastUnary(castType);
+      VariableIntermediate tmpVar = getCurrentSymbols().addVariableIntermediate();
+      VariableRef tmpVarRef = tmpVar.getRef();
+      Statement stmt = new StatementAssignment(tmpVarRef, operator, child);
+      sequence.addStatement(stmt);
+      return tmpVarRef;
    }
 
    @Override
@@ -497,7 +503,7 @@ public class Pass1GenerateStatementSequence extends KickCBaseVisitor<Object> {
    public RValue visitExprArray(KickCParser.ExprArrayContext ctx) {
       RValue array = (LValue) visit(ctx.expr(0));
       RValue index = (RValue) visit(ctx.expr(1));
-      Operator operator = Operator.STAR_IDX;
+      Operator operator = Operator.DEREF_IDX;
       VariableIntermediate tmpVar = getCurrentSymbols().addVariableIntermediate();
       VariableRef tmpVarRef = tmpVar.getRef();
       Statement stmt = new StatementAssignment(tmpVarRef, array, operator, index);
@@ -550,7 +556,7 @@ public class Pass1GenerateStatementSequence extends KickCBaseVisitor<Object> {
       RValue child = (RValue) this.visit(ctx.expr());
       String op = ((TerminalNode) ctx.getChild(0)).getSymbol().getText();
       Operator operator = Operator.getUnary(op);
-      if (Operator.STAR.equals(operator)) {
+      if (Operator.DEREF.equals(operator)) {
          return new PointerDereferenceSimple(child);
       } else {
          VariableIntermediate tmpVar = getCurrentSymbols().addVariableIntermediate();

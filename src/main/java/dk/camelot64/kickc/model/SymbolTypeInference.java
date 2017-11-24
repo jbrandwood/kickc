@@ -1,29 +1,40 @@
 package dk.camelot64.kickc.model;
 
-/** Type inference of expressions (rValues & unary/binary operators) */
+/**
+ * Type inference of expressions (rValues & unary/binary operators)
+ */
 public class SymbolTypeInference {
 
    public static SymbolType inferType(Operator operator, SymbolType subType) {
-      if(operator==null) {
+      if (operator == null) {
          return subType;
       }
-      String op = operator.getOperator();
-      switch (op) {
-         case "*":
-            if(subType instanceof SymbolTypePointer) {
-               return ((SymbolTypePointer) subType).getElementType();
-            } else {
-               throw new RuntimeException("Type error: Dereferencing a non-pointer "+subType);
-            }
-         case "<":
-         case ">":
-            if(subType instanceof SymbolTypePointer || SymbolTypeBasic.WORD.equals(subType)) {
-               return SymbolTypeBasic.BYTE;
-
-            }
-         default:
-            return subType;
+      if (Operator.DEREF.equals(operator)) {
+         if (subType instanceof SymbolTypePointer) {
+            return ((SymbolTypePointer) subType).getElementType();
+         } else {
+            throw new RuntimeException("Type error: Dereferencing a non-pointer " + subType);
+         }
+      } else if (Operator.LOWBYTE.equals(operator)) {
+         if (subType instanceof SymbolTypePointer || SymbolTypeBasic.WORD.equals(subType)) {
+            return SymbolTypeBasic.BYTE;
+         }
+      } else if (Operator.HIBYTE.equals(operator)) {
+         if (subType instanceof SymbolTypePointer || SymbolTypeBasic.WORD.equals(subType)) {
+            return SymbolTypeBasic.BYTE;
+         }
+      } else if (Operator.CAST_BYTE.equals(operator)) {
+         return SymbolTypeBasic.BYTE;
+      } else if (Operator.CAST_SBYTE.equals(operator)) {
+         return SymbolTypeBasic.SBYTE;
+      } else if (Operator.CAST_WORD.equals(operator)) {
+         return SymbolTypeBasic.WORD;
+      } else if (Operator.CAST_SWORD.equals(operator)) {
+         return SymbolTypeBasic.SWORD;
+      } else {
+         return subType;
       }
+      throw new RuntimeException("Type inference problem unary " + operator + " " + subType);
    }
 
    public static SymbolType inferType(SymbolType type1, Operator operator, SymbolType type2) {
@@ -47,8 +58,8 @@ public class SymbolTypeInference {
             if (type1.equals(SymbolTypeBasic.STRING) && SymbolTypeBasic.BYTE.equals(type2)) {
                return SymbolTypeBasic.STRING;
             } else if (type1.equals(SymbolTypeBasic.STRING) && SymbolTypeBasic.STRING.equals(type2)) {
-            return SymbolTypeBasic.STRING;
-         }
+               return SymbolTypeBasic.STRING;
+            }
          case "-":
             // Also continues "+"
             if (type1 instanceof SymbolTypePointer && (type2.equals(SymbolTypeBasic.BYTE) || type2.equals(SymbolTypeBasic.WORD))) {
@@ -68,7 +79,7 @@ public class SymbolTypeInference {
             }
             throw new RuntimeException("Type inference case not handled " + type1 + " " + operator + " " + type2);
          case "*":
-            if(type1==null && type2 instanceof SymbolTypePointer) {
+            if (type1 == null && type2 instanceof SymbolTypePointer) {
                return ((SymbolTypePointer) type2).getElementType();
             }
             if (SymbolTypeBasic.WORD.equals(type1) || SymbolTypeBasic.WORD.equals(type2)) {
@@ -80,7 +91,7 @@ public class SymbolTypeInference {
             }
             throw new RuntimeException("Type inference case not handled " + type1 + " " + operator + " " + type2);
          case "*idx":
-            if(type1 instanceof SymbolTypePointer) {
+            if (type1 instanceof SymbolTypePointer) {
                return ((SymbolTypePointer) type1).getElementType();
             }
             throw new RuntimeException("Type inference case not handled " + type1 + " " + operator + " " + type2);
@@ -140,12 +151,12 @@ public class SymbolTypeInference {
          SymbolType leftType = inferType(programScope, constBin.getLeft());
          SymbolType rightType = inferType(programScope, constBin.getRight());
          return inferType(leftType, constBin.getOperator(), rightType);
-      } else if(rValue instanceof PointerDereferenceSimple) {
+      } else if (rValue instanceof PointerDereferenceSimple) {
          SymbolType pointerType = inferType(programScope, ((PointerDereferenceSimple) rValue).getPointer());
-         if(pointerType instanceof SymbolTypePointer) {
+         if (pointerType instanceof SymbolTypePointer) {
             return ((SymbolTypePointer) pointerType).getElementType();
          } else {
-            throw new RuntimeException("Cannot infer pointer element type from pointer type "+pointerType);
+            throw new RuntimeException("Cannot infer pointer element type from pointer type " + pointerType);
          }
       }
       if (type == null) {

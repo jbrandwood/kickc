@@ -205,7 +205,7 @@ public class Pass4CodeGeneration {
          }
          StatementAssignment assignment = (StatementAssignment) statement;
          AsmFragmentSignature signature = new AsmFragmentSignature(assignment, assignmentAlu, program);
-         AsmFragment asmFragment = AsmFragmentManager.getFragment(signature);
+         AsmFragment asmFragment = AsmFragmentManager.getFragment(signature, program.getLog());
          asm.getCurrentSegment().setFragment(asmFragment.getName());
          asmFragment.generate(asm);
          aluState.clear();
@@ -232,14 +232,14 @@ public class Pass4CodeGeneration {
                   asm.addComment(lValue.toString(program) + " = " + assignment.getrValue2().toString(program) + "  // register copy " + getRegister(lValue));
                } else {
                   AsmFragmentSignature asmFragmentSignature = new AsmFragmentSignature(assignment, program);
-                  AsmFragment asmFragment = AsmFragmentManager.getFragment(asmFragmentSignature);
+                  AsmFragment asmFragment = AsmFragmentManager.getFragment(asmFragmentSignature, program.getLog());
                   asm.getCurrentSegment().setFragment(asmFragment.getName());
                   asmFragment.generate(asm);
                }
             }
          } else if (statement instanceof StatementConditionalJump) {
             AsmFragmentSignature asmSignature = new AsmFragmentSignature((StatementConditionalJump) statement, block, program, getGraph());
-            AsmFragment asmFragment = AsmFragmentManager.getFragment(asmSignature);
+            AsmFragment asmFragment = AsmFragmentManager.getFragment(asmSignature, program.getLog());
             asm.getCurrentSegment().setFragment(asmFragment.getName());
             asmFragment.generate(asm);
          } else if (statement instanceof StatementCall) {
@@ -349,7 +349,7 @@ public class Pass4CodeGeneration {
                asm.getCurrentSegment().setFragment("register_copy");
             } else {
                AsmFragmentSignature asmSignature = new AsmFragmentSignature(lValue, rValue, program, scope);
-               AsmFragment asmFragment = AsmFragmentManager.getFragment(asmSignature);
+               AsmFragment asmFragment = AsmFragmentManager.getFragment(asmSignature, program.getLog());
                asm.getCurrentSegment().setFragment(asmFragment.getName());
                asmFragment.generate(asm);
             }

@@ -115,11 +115,9 @@ public class AsmFragment {
          ConstantUnary unary = (ConstantUnary) value;
          Operator operator = unary.getOperator();
          boolean parenthesis = operator.getPrecedence() > precedence;
-         return
-               (parenthesis ? "(" : "") +
-                     operator.getOperator() +
-                     getAsmConstant(program, unary.getOperand(), operator.getPrecedence(), codeScope) +
-                     (parenthesis ? ")" : "");
+         return (parenthesis ? "(" : "") +
+               getAsmConstantUnary(program, codeScope, operator, unary.getOperand(), precedence) +
+               (parenthesis ? ")" : "");
       } else if (value instanceof ConstantBinary) {
          ConstantBinary binary = (ConstantBinary) value;
          Operator operator = binary.getOperator();
@@ -132,6 +130,38 @@ public class AsmFragment {
                      (parenthesis ? ")" : "");
       } else {
          throw new RuntimeException("Constant type not supported " + value);
+      }
+   }
+
+   /**
+    * Get ASM code for a constant unary expression
+    *
+    * @param program   The program
+    * @param codeScope The scope containing the code being generated. Used for adding scope to the name when needed (eg. line.x1 when referencing x1 variable inside line scope from outside line scope).
+    * @param operator  The unary operator
+    * @param operand   The operand of the unary expression
+    * @return The ASM string representing the constant value
+    */
+   private static String getAsmConstantUnary(Program program, ScopeRef codeScope, Operator operator, ConstantValue operand, int outerPrecedence) {
+      if (Operator.CAST_BYTE.equals(operator) || Operator.CAST_SBYTE.equals(operator)) {
+         SymbolType operandType = SymbolTypeInference.inferType(program.getScope(), operand);
+         if(SymbolType.isByte(operandType) || SymbolType.isSByte(operandType)) {
+            // No cast needed
+            return getAsmConstant(program, operand, outerPrecedence, codeScope);
+         }  else {
+            return "$ff & " + getAsmConstant(program, operand, Operator.BOOL_AND.getPrecedence(), codeScope);
+         }
+      } else if (Operator.CAST_WORD.equals(operator) || Operator.CAST_SWORD.equals(operator)) {
+         SymbolType operandType = SymbolTypeInference.inferType(program.getScope(), operand);
+         if(SymbolType.isWord(operandType) || SymbolType.isSWord(operandType)) {
+            // No cast needed
+            return getAsmConstant(program, operand, outerPrecedence, codeScope);
+         }  else {
+            return "$ffff & " + getAsmConstant(program, operand, Operator.BOOL_AND.getPrecedence(), codeScope);
+         }
+      } else {
+         return operator.getOperator() +
+               getAsmConstant(program, operand, operator.getPrecedence(), codeScope);
       }
    }
 

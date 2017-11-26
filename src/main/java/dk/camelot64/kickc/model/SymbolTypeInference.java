@@ -265,13 +265,10 @@ public class SymbolTypeInference {
          type = SymbolType.BOOLEAN;
       } else if (rValue instanceof ConstantUnary) {
          ConstantUnary constUnary = (ConstantUnary) rValue;
-         SymbolType subType = inferType(programScope, constUnary.getOperand());
-         return inferType(constUnary.getOperator(), subType);
+         return inferType(programScope, constUnary.getOperator(), constUnary.getOperand());
       } else if (rValue instanceof ConstantBinary) {
          ConstantBinary constBin = (ConstantBinary) rValue;
-         SymbolType leftType = inferType(programScope, constBin.getLeft());
-         SymbolType rightType = inferType(programScope, constBin.getRight());
-         return inferType(leftType, constBin.getOperator(), rightType);
+         return inferType(programScope, constBin.getLeft(), constBin.getOperator(), constBin.getRight());
       } else if (rValue instanceof PointerDereferenceSimple) {
          SymbolType pointerType = inferType(programScope, ((PointerDereferenceSimple) rValue).getPointer());
          if (pointerType instanceof SymbolTypePointer) {

@@ -24,17 +24,20 @@ public class TestErrors extends TestCase {
       helper = new ReferenceHelper("dk/camelot64/kickc/test/ref/");
    }
 
+   public void testPrint() throws IOException, URISyntaxException {
+      compileAndCompare("print");
+   }
+
+   public void testConstants() throws IOException, URISyntaxException {
+      compileAndCompare("constants");
+   }
+
    public void testInlineAsmParam() throws IOException, URISyntaxException {
       compileAndCompare("inline-asm-param");
    }
 
    public void testUseUninitialized() throws IOException, URISyntaxException {
       String filename = "useuninitialized";
-      compileAndCompare(filename);
-   }
-
-   public void testWordExpr() throws IOException, URISyntaxException {
-      String filename = "wordexpr";
       compileAndCompare(filename);
    }
 

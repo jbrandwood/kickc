@@ -35,9 +35,7 @@ public class ConstantUnary implements ConstantValue {
       if (o == null || getClass() != o.getClass()) {
          return false;
       }
-
       ConstantUnary that = (ConstantUnary) o;
-
       if (!operator.equals(that.operator)) {
          return false;
       }

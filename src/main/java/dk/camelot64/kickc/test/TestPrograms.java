@@ -24,6 +24,10 @@ public class TestPrograms extends TestCase {
       helper = new ReferenceHelper("dk/camelot64/kickc/test/ref/");
    }
 
+   public void testWordExpr() throws IOException, URISyntaxException {
+      compileAndCompare("wordexpr");
+   }
+
    public void testZpptr() throws IOException, URISyntaxException {
       compileAndCompare("zpptr");
    }

@@ -179,6 +179,10 @@ public class Pass2ConstantIdentification extends Pass2SsaOptimization {
          case "--":
          case "<":
          case ">":
+         case "_byte_":
+         case "_sbyte_":
+         case "_word_":
+         case "_sword_":
             return new ConstantUnary(operator, c);
          case "*": { // pointer dereference - not constant
             return null;

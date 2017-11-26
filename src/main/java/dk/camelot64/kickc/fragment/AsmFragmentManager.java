@@ -111,6 +111,16 @@ public class AsmFragmentManager {
       mapZpptrToWord3.put("zpwo1", "zpwo3");
       mapZpptrToWord3.put("zpptrby1", "zpwo1");
       mapZpptrToWord3.put("zpptrby2", "zpwo2");
+      Map<String, String> mapSbyToBy = new LinkedHashMap<>();
+      mapSbyToBy.put("zpsby1", "zpby1");
+      mapSbyToBy.put("zpsby2", "zpby2");
+      mapSbyToBy.put("zpsby3", "zpby3");
+      mapSbyToBy.put("cosby1", "coby1");
+      mapSbyToBy.put("cosby2", "coby2");
+      mapSbyToBy.put("cosby3", "coby3");
+      mapSbyToBy.put("asby", "aby");
+      mapSbyToBy.put("xsby", "xby");
+      mapSbyToBy.put("ysby", "yby");
 
       List<FragmentSynthesis> synths = new ArrayList<>();
 
@@ -177,6 +187,10 @@ public class AsmFragmentManager {
       synths.add(new FragmentSynthesis("zpptrby1=zpptrby([12])_(sethi|setlo|plus|minus)_(.*)", ".*zpwo.*", null, "zpwo1=zpwo$1_$2_$3", null, mapZpptrToWord));
       synths.add(new FragmentSynthesis("zpptrby1=zpptrby1_(sethi|setlo|plus|minus)_zpwo1", null, null, "zpptrby1=zpptrby1_$1_zpwo1", null, mapZpptrToWord2));
       synths.add(new FragmentSynthesis("zpptrby1=zpptrby2_(sethi|setlo|plus|minus)_zpwo1", null, null, "zpptrby1=zpptrby2_$1_zpwo1", null, mapZpptrToWord3));
+
+      synths.add(new FragmentSynthesis("(zpsby.|asby|xsby|ysby)_(eq|neq)_(zpsby.|csoby.|asby|xsby|ysby)_then_(.*)", null, null, "$1_$2_$3_then_$4", null, mapSbyToBy));
+      synths.add(new FragmentSynthesis("(zpsby.|asby|xsby|ysby)=(zpsby.|cosby.|asby|xsby|ysby)", null, null, "$1=$2", null, mapSbyToBy));
+      synths.add(new FragmentSynthesis("(zpsby.|asby|xsby|ysby)=(zpsby.|csoby.|asby|xsby|ysby)_(plus|band|bxor|bor)_(zpsby.|csoby.|asby|xsby|ysby)", null, null, "$1=$2_$3_$4", null, mapSbyToBy));
 
       for (FragmentSynthesis synth : synths) {
          CharStream synthesized = synth.synthesize(signature, log);

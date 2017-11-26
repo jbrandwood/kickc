@@ -292,19 +292,19 @@ public class AsmFragmentSignature {
          } else {
             throw new RuntimeException("Unhandled constant type " + value);
          }
-         if (SymbolType.BYTE.equals(constType) || (constType instanceof SymbolTypeInline && ((SymbolTypeInline) constType).isByte())) {
+         if (SymbolType.isByte(constType)) {
             String name = "coby" + nextConstByteIdx++;
             bindings.put(name, value);
             return name;
-         } else if (SymbolType.WORD.equals(constType) || (constType instanceof SymbolTypeInline && ((SymbolTypeInline) constType).isWord())) {
-            String name = "cowo" + nextConstByteIdx++;
-            bindings.put(name, value);
-            return name;
-         } else if (SymbolType.SBYTE.equals(constType) || (constType instanceof SymbolTypeInline && ((SymbolTypeInline) constType).isSByte())) {
+         } else if (SymbolType.isSByte(constType)) {
             String name = "cosby" + nextConstByteIdx++;
             bindings.put(name, value);
             return name;
-         } else if (SymbolType.SWORD.equals(constType) || (constType instanceof SymbolTypeInline && ((SymbolTypeInline) constType).isSWord())) {
+         } else if (SymbolType.isWord(constType)) {
+            String name = "cowo" + nextConstByteIdx++;
+            bindings.put(name, value);
+            return name;
+         } else if (SymbolType.isSWord(constType)) {
             String name = "coswo" + nextConstByteIdx++;
             bindings.put(name, value);
             return name;

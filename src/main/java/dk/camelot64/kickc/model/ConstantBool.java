@@ -13,7 +13,7 @@ public class ConstantBool implements ConstantValue {
 
    @Override
    public SymbolType getType(ProgramScope scope) {
-      return SymbolTypeBasic.BOOLEAN;
+      return SymbolType.BOOLEAN;
    }
 
    @Override

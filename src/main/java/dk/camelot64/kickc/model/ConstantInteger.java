@@ -4,6 +4,8 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+import java.util.ArrayList;
+
 /** SSA form constant integer value */
 public class ConstantInteger implements ConstantValue {
 
@@ -25,13 +27,14 @@ public class ConstantInteger implements ConstantValue {
    }
 
    public SymbolType getType() {
-      SymbolType type;
-      if (getNumber() < 256) {
-         type = SymbolTypeBasic.BYTE;
-      } else {
-         type = SymbolTypeBasic.WORD;
+      ArrayList<SymbolTypeInteger> potentialTypes = new ArrayList<>();
+      Integer number = getNumber();
+      for (SymbolTypeInteger typeInteger : SymbolType.getIntegerTypes()) {
+         if(number>=typeInteger.getMinValue() && number<= typeInteger.getMaxValue()) {
+            potentialTypes.add(typeInteger);
+         }
       }
-      return type;
+      return new SymbolTypeInline(potentialTypes);
    }
 
    @Override

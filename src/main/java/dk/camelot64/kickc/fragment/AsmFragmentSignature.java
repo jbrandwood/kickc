@@ -283,52 +283,37 @@ public class AsmFragmentSignature {
          } else if (Registers.RegisterType.REG_ALU.equals(register.getType())) {
             throw new AsmFragment.AluNotApplicableException();
          }
-      } else if (value instanceof ConstantVar) {
-         ConstantVar constantVar = (ConstantVar) value;
-         SymbolType constType = constantVar.getType();
-
-         if (SymbolTypeBasic.BYTE.equals(constType)) {
-            String name = "coby" + nextConstByteIdx++;
-            bindings.put(name, constantVar);
-            return name;
-         } else if (SymbolTypeBasic.WORD.equals(constType)) {
-            String name = "cowo" + nextConstByteIdx++;
-            bindings.put(name, constantVar);
-            return name;
-         } else if (constType instanceof SymbolTypePointer && SymbolTypeBasic.BYTE.equals(((SymbolTypePointer) constType).getElementType())) {
-            String name = "cowo" + nextConstByteIdx++;
-            bindings.put(name, constantVar);
-            return name;
+      } else if (value instanceof ConstantVar || value instanceof ConstantValue) {
+         SymbolType constType;
+         if (value instanceof ConstantVar) {
+            constType = ((ConstantVar) value).getType();
+         } else if(value instanceof ConstantValue) {
+            constType = SymbolTypeInference.inferType(program.getScope(), (ConstantValue) value);
          } else {
-            throw new RuntimeException("Unhandled constant type " + constType);
+            throw new RuntimeException("Unhandled constant type " + value);
          }
-      } else if (value instanceof ConstantInteger) {
-         ConstantInteger intValue = (ConstantInteger) value;
-         if (SymbolTypeBasic.BYTE.equals(intValue.getType(program.getScope()))) {
+         if (SymbolType.BYTE.equals(constType) || (constType instanceof SymbolTypeInline && ((SymbolTypeInline) constType).isByte())) {
             String name = "coby" + nextConstByteIdx++;
             bindings.put(name, value);
             return name;
-         } else if (SymbolTypeBasic.WORD.equals(intValue.getType(program.getScope()))) {
+         } else if (SymbolType.WORD.equals(constType) || (constType instanceof SymbolTypeInline && ((SymbolTypeInline) constType).isWord())) {
             String name = "cowo" + nextConstByteIdx++;
             bindings.put(name, value);
             return name;
-         }
-      } else if (value instanceof ConstantValue) {
-         SymbolType type = SymbolTypeInference.inferType(program.getScope(), (ConstantValue) value);
-         if (SymbolTypeBasic.BYTE.equals(type)) {
-            String name = "coby" + nextConstByteIdx++;
+         } else if (SymbolType.SBYTE.equals(constType) || (constType instanceof SymbolTypeInline && ((SymbolTypeInline) constType).isSByte())) {
+            String name = "cosby" + nextConstByteIdx++;
             bindings.put(name, value);
             return name;
-         } else if (SymbolTypeBasic.WORD.equals(type)) {
-            String name = "cowo" + nextConstByteIdx++;
+         } else if (SymbolType.SWORD.equals(constType) || (constType instanceof SymbolTypeInline && ((SymbolTypeInline) constType).isSWord())) {
+            String name = "coswo" + nextConstByteIdx++;
             bindings.put(name, value);
             return name;
-         } else if (type instanceof SymbolTypePointer) {
+         } else if (constType instanceof SymbolTypePointer && SymbolType.BYTE.equals(((SymbolTypePointer) constType).getElementType())) {
             String name = "cowo" + nextConstByteIdx++;
             bindings.put(name, value);
             return name;
          } else {
-            throw new RuntimeException("Unhandled constant type " + type);
+            throw new RuntimeException("Unhandled constant type " + constType);
          }
       } else if (value instanceof Label) {
          String name = "la" + nextLabelIdx++;

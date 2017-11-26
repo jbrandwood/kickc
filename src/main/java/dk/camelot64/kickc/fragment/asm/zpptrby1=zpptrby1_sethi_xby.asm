@@ -1,1 +1,0 @@
-stx {zpptrby1}+1

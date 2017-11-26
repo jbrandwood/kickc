@@ -36,20 +36,17 @@ public class Pass1TypeInference {
             LValue lValue = assignment.getlValue();
             if (lValue instanceof VariableRef) {
                Variable symbol = programScope.getVariable((VariableRef) lValue);
-               if (SymbolTypeBasic.VAR.equals(symbol.getType())) {
+               if (SymbolType.VAR.equals(symbol.getType())) {
                   // Unresolved symbol - perform inference
                   Operator operator = assignment.getOperator();
                   if (operator == null || assignment.getrValue1() == null) {
                      // Copy operation or Unary operation
                      RValue rValue = assignment.getrValue2();
-                     SymbolType subType = SymbolTypeInference.inferType(programScope, rValue);
-                     SymbolType type = SymbolTypeInference.inferType(operator, subType);
+                     SymbolType type = SymbolTypeInference.inferType(programScope, operator, rValue);
                      symbol.setTypeInferred(type);
                   } else {
                      // Binary operation
-                     SymbolType type1 = SymbolTypeInference.inferType(programScope, assignment.getrValue1());
-                     SymbolType type2 = SymbolTypeInference.inferType(programScope, assignment.getrValue2());
-                     SymbolType type = SymbolTypeInference.inferType(type1, operator, type2);
+                     SymbolType type = SymbolTypeInference.inferType(programScope, assignment.getrValue1(), assignment.getOperator(), assignment.getrValue2());
                      symbol.setTypeInferred(type);
                   }
                }

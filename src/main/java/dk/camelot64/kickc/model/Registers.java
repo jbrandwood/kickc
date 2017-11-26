@@ -41,6 +41,7 @@ public class Registers {
       ZP_BYTE, ZP_SBYTE,
       ZP_PTR_BYTE,
       ZP_WORD,
+      ZP_SWORD,
       ZP_BOOL,
       CONSTANT
    }
@@ -146,6 +147,21 @@ public class Registers {
       }
 
    }
+
+   /** Two zero page addresses used as a register for a single signed word variable. */
+   public static class RegisterZpSWord extends RegisterZp {
+
+      public RegisterZpSWord(int zp) {
+         super(zp);
+      }
+
+      @Override
+      public RegisterType getType() {
+         return RegisterType.ZP_SWORD;
+      }
+
+   }
+
 
    /** A zero page address used as a register for a boolean variable. */
    public static class RegisterZpBool extends RegisterZp {

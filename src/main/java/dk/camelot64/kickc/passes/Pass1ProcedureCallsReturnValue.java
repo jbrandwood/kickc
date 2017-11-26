@@ -32,7 +32,7 @@ public class Pass1ProcedureCallsReturnValue extends ControlFlowGraphCopyVisitor 
       copyCall.setProcedure(procedureRef);
       addStatementToCurrentBlock(copyCall);
       getCurrentBlock().setCallSuccessor(procedure.getLabel().getRef());
-      if (!SymbolTypeBasic.VOID.equals(procedure.getReturnType())) {
+      if (!SymbolType.VOID.equals(procedure.getReturnType())) {
          // Find return variable final version
          Label returnBlockLabel = procedure.getLabel(SymbolRef.PROCEXIT_BLOCK_NAME);
          ControlFlowBlock returnBlock = program.getGraph().getBlock(returnBlockLabel.getRef());

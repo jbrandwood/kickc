@@ -100,6 +100,17 @@ public class AsmFragmentManager {
       mapConst.put("cowo3", "cowo2");
       mapConst.put("coby2", "coby1");
       mapConst.put("coby3", "coby2");
+      Map<String, String> mapZpptrToWord = new LinkedHashMap<>();
+      mapZpptrToWord.put("zpptrby1", "zpwo1");
+      mapZpptrToWord.put("zpptrby2", "zpwo2");
+      mapZpptrToWord.put("zpptrby3", "zpwo3");
+      Map<String, String> mapZpptrToWord2 = new LinkedHashMap<>();
+      mapZpptrToWord2.put("zpwo1", "zpwo2");
+      mapZpptrToWord2.put("zpptrby1", "zpwo1");
+      Map<String, String> mapZpptrToWord3 = new LinkedHashMap<>();
+      mapZpptrToWord3.put("zpwo1", "zpwo3");
+      mapZpptrToWord3.put("zpptrby1", "zpwo1");
+      mapZpptrToWord3.put("zpptrby2", "zpwo2");
 
       List<FragmentSynthesis> synths = new ArrayList<>();
 
@@ -162,6 +173,11 @@ public class AsmFragmentManager {
       synths.add(new FragmentSynthesis("(.*)_eq_(xs?by)_then_(.*)", ".*[ax]s?by.*_eq.*", null, "$2_eq_$1_then_$3", null, null));
       synths.add(new FragmentSynthesis("(.*)_eq_(ys?by)_then_(.*)", ".*[axy]s?by.*_eq.*", null, "$2_eq_$1_then_$3", null, null));
 
+      synths.add(new FragmentSynthesis("zpptrby1=(coby.|cowo.)_(sethi|setlo|plus|minus)_(.*)", ".*zpwo.*|.*=zpptr.*", null, "zpwo1=$1_$2_$3", null, mapZpptrToWord));
+      synths.add(new FragmentSynthesis("zpptrby1=zpptrby([12])_(sethi|setlo|plus|minus)_(.*)", ".*zpwo.*", null, "zpwo1=zpwo$1_$2_$3", null, mapZpptrToWord));
+      synths.add(new FragmentSynthesis("zpptrby1=zpptrby1_(sethi|setlo|plus|minus)_zpwo1", null, null, "zpptrby1=zpptrby1_$1_zpwo1", null, mapZpptrToWord2));
+      synths.add(new FragmentSynthesis("zpptrby1=zpptrby2_(sethi|setlo|plus|minus)_zpwo1", null, null, "zpptrby1=zpptrby2_$1_zpwo1", null, mapZpptrToWord3));
+
       for (FragmentSynthesis synth : synths) {
          CharStream synthesized = synth.synthesize(signature, log);
          if (synthesized != null) {
@@ -175,6 +191,26 @@ public class AsmFragmentManager {
       return null;
 
    }
+
+   /**
+    * Bindings/mappings used when synthesizing one fragment from another fragment.
+    * Eg. when synthesizing zpby1=zpby2_plus_zpby3 from aby=zpby1_plus_zpby2 the bindings (zpby2->zpby1, zpby3->zpby2) are used.
+    * <p>
+    * Often the same bindings are used in the signature-name and in the asm-code, but the bindings can be different.
+    * Eg. when synthesizing zpptrby1=zpptrby2_plus_zpwo1 from zpwo1=zpwo2_plus_zpwo3 the bindings (zpptrby1->zpwo1, zpptrby2->zpwo2, zpwo1->zpwo3)
+    * are used in the asm, but not in the signature.
+    */
+   private static class FragmentBindings {
+
+      /** Bindings used for renaming in the sub-signature. */
+      private Map<String, String> sigBindings;
+      /** Bindings used for renaming in the assembler-code. */
+      private Map<String, String> asmBindings;
+
+
+   }
+
+
 
    /**
     * AsmFragment synthesis based on matching fragment signature and reusing another fragment with added prefix/postfix and some bind-mappings

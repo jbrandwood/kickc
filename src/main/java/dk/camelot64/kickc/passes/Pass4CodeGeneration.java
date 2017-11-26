@@ -133,7 +133,7 @@ public class Pass4CodeGeneration {
                   String asmElement = AsmFragment.getAsmConstant(program, element, 99, scopeRef);
                   asmElements.add(asmElement);
                }
-               if(SymbolTypeBasic.BYTE.equals(constantArray.getElementType())) {
+               if(SymbolType.isByte(constantArray.getElementType())) {
                   asm.addDataNumeric(asmName.replace("#", "_").replace("$", "_"), AsmDataNumeric.Type.BYTE, asmElements);
                   added.add(asmName);
                } else {

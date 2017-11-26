@@ -13,7 +13,7 @@ public class ConstantChar implements ConstantValue {
 
    @Override
    public SymbolType getType(ProgramScope scope) {
-      return SymbolTypeBasic.BYTE;
+      return SymbolType.BYTE;
    }
 
    public Character getValue() {
@@ -30,7 +30,7 @@ public class ConstantChar implements ConstantValue {
       if (program == null) {
          return "'" + value + "'";
       } else {
-         return "(" + SymbolTypeBasic.BYTE.getTypeName() + ") " + "'" + value + "'";
+         return "(" + SymbolType.BYTE.getTypeName() + ") " + "'" + value + "'";
       }
    }
 

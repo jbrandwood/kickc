@@ -13,7 +13,7 @@ public class ConstantString implements ConstantValue {
 
    @Override
    public SymbolType getType(ProgramScope scope) {
-      return SymbolTypeBasic.STRING;
+      return SymbolType.STRING;
    }
 
    public String getValue() {
@@ -30,7 +30,7 @@ public class ConstantString implements ConstantValue {
       if (program == null) {
          return "\"" + value + "\"";
       } else {
-         return "(" + SymbolTypeBasic.STRING.getTypeName() + ") " + "\"" + value + "\"";
+         return "(" + SymbolType.STRING.getTypeName() + ") " + "\"" + value + "\"";
       }
    }
 

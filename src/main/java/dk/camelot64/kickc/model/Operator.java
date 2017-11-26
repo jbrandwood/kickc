@@ -70,9 +70,9 @@ public class Operator {
    public static Operator getUnary(String op) {
       switch (op) {
          case "+":
-            return UNARY_PLUS;
+            return POS;
          case "-":
-            return UNARY_MINUS;
+            return NEG;
          case "++":
             return INCREMENT;
          case "--":
@@ -93,13 +93,13 @@ public class Operator {
    }
 
    public static Operator getCastUnary(SymbolType castType) {
-      if (SymbolTypeBasic.BYTE.equals(castType)) {
+      if (SymbolType.BYTE.equals(castType)) {
          return CAST_BYTE;
-      } else if (SymbolTypeBasic.SBYTE.equals(castType)) {
+      } else if (SymbolType.SBYTE.equals(castType)) {
          return CAST_SBYTE;
-      } else if (SymbolTypeBasic.WORD.equals(castType)) {
+      } else if (SymbolType.WORD.equals(castType)) {
          return CAST_WORD;
-      } else if (SymbolTypeBasic.SWORD.equals(castType)) {
+      } else if (SymbolType.SWORD.equals(castType)) {
          return CAST_SWORD;
       } else {
          throw new RuntimeException("Unknown cast type " + castType);
@@ -113,8 +113,8 @@ public class Operator {
 
    public static final Operator INCREMENT = new Operator("++", "_inc_", Type.UNARY, 1);
    public static final Operator DECREMENT = new Operator("--", "_dec_", Type.UNARY, 1);
-   public static final Operator UNARY_PLUS = new Operator("+", "_pos_", Type.UNARY, 2);
-   public static final Operator UNARY_MINUS = new Operator("-", "_neg_", Type.UNARY, 2);
+   public static final Operator POS = new Operator("+", "_pos_", Type.UNARY, 2);
+   public static final Operator NEG = new Operator("-", "_neg_", Type.UNARY, 2);
    public static final Operator BOOL_NOT = new Operator("~", "_not_", Type.UNARY, 2);
    public static final Operator NOT = new Operator("!", "_not_", Type.UNARY, 2);
    public static final Operator DEREF = new Operator("*", "_deref_", Type.UNARY, 2);

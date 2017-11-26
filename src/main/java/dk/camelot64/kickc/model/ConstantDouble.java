@@ -13,7 +13,7 @@ public class ConstantDouble implements ConstantValue {
 
    @Override
    public SymbolType getType(ProgramScope scope) {
-      return SymbolTypeBasic.DOUBLE;
+      return SymbolType.DOUBLE;
    }
 
    public Double getNumber() {
@@ -30,7 +30,7 @@ public class ConstantDouble implements ConstantValue {
       if(program ==null) {
          return Double.toString(number);
       }  else {
-         return "(" + SymbolTypeBasic.VOID.getTypeName() + ") " + Double.toString(number);
+         return "(" + SymbolType.VOID.getTypeName() + ") " + Double.toString(number);
       }
    }
 

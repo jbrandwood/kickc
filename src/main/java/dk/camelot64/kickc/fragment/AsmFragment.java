@@ -64,7 +64,7 @@ public class AsmFragment {
    public AsmParameter getBoundValue(String name) {
       Value boundValue = getBinding(name);
       if (boundValue == null) {
-         throw new RuntimeException("Binding '" + name + "' not found in fragment " + name + ".asm");
+         throw new RuntimeException("Binding '" + name + "' not found in fragment " + this.name + ".asm");
       }
       if (boundValue instanceof Variable) {
          Variable boundVar = (Variable) boundValue;
@@ -77,12 +77,12 @@ public class AsmFragment {
       } else if (boundValue instanceof ConstantVar) {
          ConstantVar constantVar = (ConstantVar) boundValue;
          String constantValueAsm = getAsmConstant(program, constantVar.getRef(), 99, codeScopeRef);
-         boolean constantValueZp = SymbolTypeBasic.BYTE.equals(constantVar.getType(program.getScope()));
+         boolean constantValueZp = SymbolType.BYTE.equals(constantVar.getType(program.getScope()));
          return new AsmParameter(constantValueAsm, constantValueZp);
       } else if (boundValue instanceof ConstantValue) {
          ConstantValue boundConst = (ConstantValue) boundValue;
          String constantValueAsm = getAsmConstant(program, boundConst, 99, codeScopeRef);
-         boolean constantValueZp = SymbolTypeBasic.BYTE.equals(boundConst.getType(program.getScope()));
+         boolean constantValueZp = SymbolType.BYTE.equals(boundConst.getType(program.getScope()));
          return new AsmParameter(constantValueAsm, constantValueZp);
       } else if (boundValue instanceof Label) {
          String param = ((Label) boundValue).getLocalName().replace('@', 'b').replace(':', '_').replace("$", "_");
@@ -363,7 +363,7 @@ public class AsmFragment {
       public AsmParameter visitAsmExprInt(KickCParser.AsmExprIntContext ctx) {
          Number number = NumberParser.parseLiteral(ctx.NUMBER().getText());
          ConstantInteger intVal = new ConstantInteger(number.intValue());
-         boolean isZp = SymbolTypeBasic.BYTE.equals(intVal.getType());
+         boolean isZp = SymbolType.BYTE.equals(intVal.getType());
          String param = getAsmNumber(number);
          return new AsmParameter(param, isZp);
       }

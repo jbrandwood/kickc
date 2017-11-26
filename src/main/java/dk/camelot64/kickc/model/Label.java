@@ -65,7 +65,7 @@ public class Label implements Symbol {
 
    @JsonIgnore
    public SymbolType getType() {
-      return SymbolTypeBasic.LABEL;
+      return SymbolType.LABEL;
    }
 
    @Override

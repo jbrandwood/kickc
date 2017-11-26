@@ -273,7 +273,7 @@ public class Pass1GenerateStatementSequence extends KickCBaseVisitor<Object> {
       scopeStack.push(procedure);
       Label procExit = procedure.addLabel(SymbolRef.PROCEXIT_BLOCK_NAME);
       VariableUnversioned returnVar = null;
-      if (!SymbolTypeBasic.VOID.equals(type)) {
+      if (!SymbolType.VOID.equals(type)) {
          returnVar = procedure.addVariable("return", type);
       }
       List<Variable> parameterList = new ArrayList<>();
@@ -433,12 +433,12 @@ public class Pass1GenerateStatementSequence extends KickCBaseVisitor<Object> {
 
    @Override
    public SymbolType visitTypeSimple(KickCParser.TypeSimpleContext ctx) {
-      return SymbolTypeBasic.get(ctx.getText());
+      return SymbolType.get(ctx.getText());
    }
 
    @Override
    public SymbolType visitTypeSignedSimple(KickCParser.TypeSignedSimpleContext ctx) {
-      return SymbolTypeBasic.get("signed " + ctx.SIMPLETYPE().getText());
+      return SymbolType.get("signed " + ctx.SIMPLETYPE().getText());
    }
 
    @Override

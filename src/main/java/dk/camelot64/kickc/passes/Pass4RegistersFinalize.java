@@ -67,7 +67,7 @@ public class Pass4RegistersFinalize extends Pass2Base {
                   continue;
                } else {
                   // Be unhappy (if this triggers in the future extend with ability to create new names by adding suffixes)
-                  throw new RuntimeException("ASM name already used "+asmName);
+                  throw new RuntimeException("ASM name already used " + asmName);
                }
             }
          }
@@ -91,7 +91,7 @@ public class Pass4RegistersFinalize extends Pass2Base {
                continue;
             } else {
                // Be unhappy (if this triggers in the future extend with ability to create new names by adding suffixes)
-               throw new RuntimeException("ASM name already used "+asmName);
+               throw new RuntimeException("ASM name already used " + asmName);
             }
 
          }
@@ -129,23 +129,28 @@ public class Pass4RegistersFinalize extends Pass2Base {
     * Create a new register for a specific variable type.
     *
     * @param variable The variable to create a register for.
-    *                The register type created uses one or more zero page locations based on the variable type
+    *                 The register type created uses one or more zero page locations based on the variable type
     * @return The new zeropage register
     */
    private Registers.Register allocateNewRegisterZp(Variable variable) {
       SymbolType varType = variable.getType();
-      if (varType.equals(SymbolTypeBasic.BYTE)) {
+      if (SymbolType.isByte(varType)) {
          return new Registers.RegisterZpByte(currentZp++);
-      } else if (varType.equals(SymbolTypeBasic.SBYTE)) {
+      } else if (SymbolType.isSByte(varType)) {
          return new Registers.RegisterZpSignedByte(currentZp++);
-      } else if (varType.equals(SymbolTypeBasic.WORD)) {
+      } else if (SymbolType.isWord(varType)) {
          Registers.RegisterZpWord registerZpWord =
                new Registers.RegisterZpWord(currentZp);
          currentZp = currentZp + 2;
          return registerZpWord;
-      } else if (varType.equals(SymbolTypeBasic.BOOLEAN)) {
+      } else if (SymbolType.isSWord(varType)) {
+         Registers.RegisterZpSWord registerZpSWord =
+               new Registers.RegisterZpSWord(currentZp);
+         currentZp = currentZp + 2;
+         return registerZpSWord;
+      } else if (varType.equals(SymbolType.BOOLEAN)) {
          return new Registers.RegisterZpBool(currentZp++);
-      } else if (varType.equals(SymbolTypeBasic.VOID)) {
+      } else if (varType.equals(SymbolType.VOID)) {
          // No need to setRegister register for VOID value
          return null;
       } else if (varType instanceof SymbolTypePointer) {

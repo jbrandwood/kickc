@@ -24,6 +24,14 @@ public class TestErrors extends TestCase {
       helper = new ReferenceHelper("dk/camelot64/kickc/test/ref/");
    }
 
+   public void testLocalString() throws IOException, URISyntaxException {
+      compileAndCompare("local-string");
+   }
+
+   public void testInlineString() throws IOException, URISyntaxException {
+      compileAndCompare("inline-string");
+   }
+
    public void testPrint() throws IOException, URISyntaxException {
       compileAndCompare("print");
    }

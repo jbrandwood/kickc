@@ -1,0 +1,14 @@
+// Inline Strings in method calls are attempted inlined all the way to ASM. This creates error during binding. Instead a local constant byte[] st = "..."; variable should be created (generating an ASM .text).
+
+byte* screen = $0400;
+byte[] msg1 = "message 1 @";
+void main() {
+    print(msg1);
+    print("message 2 @");
+}
+
+void print(byte* msg) {
+    while(*msg!='@') {
+        *(screen++) = *msg;
+    }
+}

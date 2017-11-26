@@ -124,9 +124,9 @@ public class AsmFragmentManager {
 
       List<FragmentSynthesis> synths = new ArrayList<>();
 
-      synths.add(new FragmentSynthesis("(.*)=(.*)_(band|bor|plus)_(as?by)", ".*=as?by_.*", null, "$1=$4_$3_$2", null, null));
-      synths.add(new FragmentSynthesis("(.*)=(.*)_(band|bor|plus)_(xs?by)", ".*=[xa]s?by_.*", null, "$1=$4_$3_$2", null, null));
-      synths.add(new FragmentSynthesis("(.*)=(.*)_(band|bor|plus)_(ys?by)", ".*=[axy]s?by_.*", null, "$1=$4_$3_$2", null, null));
+      synths.add(new FragmentSynthesis("(.*)=(.*)_(band|bor|bxor|plus)_(as?by)", ".*=as?by_.*", null, "$1=$4_$3_$2", null, null));
+      synths.add(new FragmentSynthesis("(.*)=(.*)_(band|bor|bxor|plus)_(xs?by)", ".*=[xa]s?by_.*", null, "$1=$4_$3_$2", null, null));
+      synths.add(new FragmentSynthesis("(.*)=(.*)_(band|bor|bxor|plus)_(ys?by)", ".*=[axy]s?by_.*", null, "$1=$4_$3_$2", null, null));
 
       synths.add(new FragmentSynthesis("xby=(.*)", null, null, "aby=$1", "tax\n", null));
       synths.add(new FragmentSynthesis("xsby=(.*)", null, null, "asby=$1", "tax\n", null));

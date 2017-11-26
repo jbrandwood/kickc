@@ -81,6 +81,8 @@ public class Compiler {
 
       program.setGraph(controlFlowGraph);
 
+      new Pass1AddTypePromotions(program).addPromotions();
+
       log.append("INITIAL CONTROL FLOW GRAPH");
       log.append(program.getGraph().toString(program));
 
@@ -122,6 +124,7 @@ public class Compiler {
 
    public void pass2AssertSSA(Program program) {
       List<Pass2SsaAssertion> assertions = new ArrayList<>();
+      assertions.add(new Pass2AssertTypeMatch(program));
       assertions.add(new Pass2AssertSymbols(program));
       assertions.add(new Pass2AssertBlocks(program));
       assertions.add(new Pass2AssertNoCallParameters(program));

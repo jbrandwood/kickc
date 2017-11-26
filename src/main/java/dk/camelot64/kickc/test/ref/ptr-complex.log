@@ -24,8 +24,8 @@ void main() {
     }
 
     // Incrementing directly on a word
-    ++*$d020;
-    --*($d000+$21);
+    ++*(byte*)$d020;
+    --*(byte*)($d000+$21);
 
     // Increment on a const named pointer
     byte* BGCOL = $d020;
@@ -33,8 +33,8 @@ void main() {
 
 
 }
-Adding pre/post-modifier *((word) 53280) ← ++ *((word) 53280)
-Adding pre/post-modifier *((var) main::$13) ← -- *((var) main::$13)
+Adding pre/post-modifier *((var) main::$13) ← ++ *((var) main::$13)
+Adding pre/post-modifier *((var) main::$17) ← -- *((var) main::$17)
 Adding pre/post-modifier *((byte*) main::BGCOL) ← ++ *((byte*) main::BGCOL)
 PROGRAM
 proc (void()) main()
@@ -66,11 +66,17 @@ main::@2:
   (byte) main::j ← ++ (byte) main::j
   (boolean~) main::$12 ← (byte) main::j != (byte/signed byte/word/signed word) 11
   if((boolean~) main::$12) goto main::@2
-  *((word) 53280) ← ++ *((word) 53280)
-  (word~) main::$13 ← (word) 53248 + (byte/signed byte/word/signed word) 33
-  *((word~) main::$13) ← -- *((word~) main::$13)
-  (word~) main::$14 ← (word) 53248 + (byte/signed byte/word/signed word) 33
-  (word~) main::$15 ← (word) 53248 + (byte/signed byte/word/signed word) 33
+  (byte*~) main::$13 ← ((byte*)) (word) 53280
+  *((byte*~) main::$13) ← ++ *((byte*~) main::$13)
+  (byte*~) main::$14 ← ((byte*)) (word) 53280
+  (byte*~) main::$15 ← ((byte*)) (word) 53280
+  (word~) main::$16 ← (word) 53248 + (byte/signed byte/word/signed word) 33
+  (byte*~) main::$17 ← ((byte*)) (word~) main::$16
+  *((byte*~) main::$17) ← -- *((byte*~) main::$17)
+  (word~) main::$18 ← (word) 53248 + (byte/signed byte/word/signed word) 33
+  (byte*~) main::$19 ← ((byte*)) (word~) main::$18
+  (word~) main::$20 ← (word) 53248 + (byte/signed byte/word/signed word) 33
+  (byte*~) main::$21 ← ((byte*)) (word~) main::$20
   (byte*) main::BGCOL ← (word) 53280
   *((byte*) main::BGCOL) ← ++ *((byte*) main::BGCOL)
 main::@return:
@@ -85,10 +91,16 @@ SYMBOLS
 (byte*~) main::$10
 (byte*~) main::$11
 (boolean~) main::$12
-(word~) main::$13
-(word~) main::$14
-(word~) main::$15
+(byte*~) main::$13
+(byte*~) main::$14
+(byte*~) main::$15
+(word~) main::$16
+(byte*~) main::$17
+(word~) main::$18
+(byte*~) main::$19
 (byte*~) main::$2
+(word~) main::$20
+(byte*~) main::$21
 (boolean~) main::$3
 (byte*~) main::$4
 (byte*~) main::$5
@@ -110,7 +122,7 @@ INITIAL CONTROL FLOW GRAPH
 @begin: scope:[]  from
   to:@1
 main: scope:[main]  from
-  (byte*) main::screen ← (word/signed word) 1024
+  (byte*) main::screen ← ((byte*)) (word/signed word) 1024
   (byte*~) main::$0 ← (byte*) main::screen + (byte/signed byte/word/signed word) 80
   (byte) main::a ← *((byte*~) main::$0)
   (byte) main::i ← (byte/signed byte/word/signed word) 0
@@ -144,12 +156,18 @@ main::@2: scope:[main]  from main::@2 main::@3
   if((boolean~) main::$12) goto main::@2
   to:main::@4
 main::@4: scope:[main]  from main::@2
-  *((word) 53280) ← ++ *((word) 53280)
-  (word~) main::$13 ← (word) 53248 + (byte/signed byte/word/signed word) 33
-  *((word~) main::$13) ← -- *((word~) main::$13)
-  (word~) main::$14 ← (word) 53248 + (byte/signed byte/word/signed word) 33
-  (word~) main::$15 ← (word) 53248 + (byte/signed byte/word/signed word) 33
-  (byte*) main::BGCOL ← (word) 53280
+  (byte*~) main::$13 ← ((byte*)) (word) 53280
+  *((byte*~) main::$13) ← ++ *((byte*~) main::$13)
+  (byte*~) main::$14 ← ((byte*)) (word) 53280
+  (byte*~) main::$15 ← ((byte*)) (word) 53280
+  (word~) main::$16 ← (word) 53248 + (byte/signed byte/word/signed word) 33
+  (byte*~) main::$17 ← ((byte*)) (word~) main::$16
+  *((byte*~) main::$17) ← -- *((byte*~) main::$17)
+  (word~) main::$18 ← (word) 53248 + (byte/signed byte/word/signed word) 33
+  (byte*~) main::$19 ← ((byte*)) (word~) main::$18
+  (word~) main::$20 ← (word) 53248 + (byte/signed byte/word/signed word) 33
+  (byte*~) main::$21 ← ((byte*)) (word~) main::$20
+  (byte*) main::BGCOL ← ((byte*)) (word) 53280
   *((byte*) main::BGCOL) ← ++ *((byte*) main::BGCOL)
   to:main::@return
 main::@return: scope:[main]  from main::@4
@@ -166,7 +184,7 @@ CONTROL FLOW GRAPH WITH ASSIGNMENT CALL
 @begin: scope:[]  from
   to:@1
 main: scope:[main]  from @1
-  (byte*) main::screen ← (word/signed word) 1024
+  (byte*) main::screen ← ((byte*)) (word/signed word) 1024
   (byte*~) main::$0 ← (byte*) main::screen + (byte/signed byte/word/signed word) 80
   (byte) main::a ← *((byte*~) main::$0)
   (byte) main::i ← (byte/signed byte/word/signed word) 0
@@ -200,12 +218,18 @@ main::@2: scope:[main]  from main::@2 main::@3
   if((boolean~) main::$12) goto main::@2
   to:main::@4
 main::@4: scope:[main]  from main::@2
-  *((word) 53280) ← ++ *((word) 53280)
-  (word~) main::$13 ← (word) 53248 + (byte/signed byte/word/signed word) 33
-  *((word~) main::$13) ← -- *((word~) main::$13)
-  (word~) main::$14 ← (word) 53248 + (byte/signed byte/word/signed word) 33
-  (word~) main::$15 ← (word) 53248 + (byte/signed byte/word/signed word) 33
-  (byte*) main::BGCOL ← (word) 53280
+  (byte*~) main::$13 ← ((byte*)) (word) 53280
+  *((byte*~) main::$13) ← ++ *((byte*~) main::$13)
+  (byte*~) main::$14 ← ((byte*)) (word) 53280
+  (byte*~) main::$15 ← ((byte*)) (word) 53280
+  (word~) main::$16 ← (word) 53248 + (byte/signed byte/word/signed word) 33
+  (byte*~) main::$17 ← ((byte*)) (word~) main::$16
+  *((byte*~) main::$17) ← -- *((byte*~) main::$17)
+  (word~) main::$18 ← (word) 53248 + (byte/signed byte/word/signed word) 33
+  (byte*~) main::$19 ← ((byte*)) (word~) main::$18
+  (word~) main::$20 ← (word) 53248 + (byte/signed byte/word/signed word) 33
+  (byte*~) main::$21 ← ((byte*)) (word~) main::$20
+  (byte*) main::BGCOL ← ((byte*)) (word) 53280
   *((byte*) main::BGCOL) ← ++ *((byte*) main::BGCOL)
   to:main::@return
 main::@return: scope:[main]  from main::@4
@@ -223,7 +247,7 @@ CONTROL FLOW GRAPH SSA
 @begin: scope:[]  from
   to:@1
 main: scope:[main]  from @1
-  (byte*) main::screen#0 ← (word/signed word) 1024
+  (byte*) main::screen#0 ← ((byte*)) (word/signed word) 1024
   (byte*~) main::$0 ← (byte*) main::screen#0 + (byte/signed byte/word/signed word) 80
   (byte) main::a#0 ← *((byte*~) main::$0)
   (byte) main::i#0 ← (byte/signed byte/word/signed word) 0
@@ -262,12 +286,18 @@ main::@2: scope:[main]  from main::@2 main::@3
   if((boolean~) main::$12) goto main::@2
   to:main::@4
 main::@4: scope:[main]  from main::@2
-  *((word) 53280) ← ++ *((word) 53280)
-  (word~) main::$13 ← (word) 53248 + (byte/signed byte/word/signed word) 33
-  *((word~) main::$13) ← -- *((word~) main::$13)
-  (word~) main::$14 ← (word) 53248 + (byte/signed byte/word/signed word) 33
-  (word~) main::$15 ← (word) 53248 + (byte/signed byte/word/signed word) 33
-  (byte*) main::BGCOL#0 ← (word) 53280
+  (byte*~) main::$13 ← ((byte*)) (word) 53280
+  *((byte*~) main::$13) ← ++ *((byte*~) main::$13)
+  (byte*~) main::$14 ← ((byte*)) (word) 53280
+  (byte*~) main::$15 ← ((byte*)) (word) 53280
+  (word~) main::$16 ← (word) 53248 + (byte/signed byte/word/signed word) 33
+  (byte*~) main::$17 ← ((byte*)) (word~) main::$16
+  *((byte*~) main::$17) ← -- *((byte*~) main::$17)
+  (word~) main::$18 ← (word) 53248 + (byte/signed byte/word/signed word) 33
+  (byte*~) main::$19 ← ((byte*)) (word~) main::$18
+  (word~) main::$20 ← (word) 53248 + (byte/signed byte/word/signed word) 33
+  (byte*~) main::$21 ← ((byte*)) (word~) main::$20
+  (byte*) main::BGCOL#0 ← ((byte*)) (word) 53280
   *((byte*) main::BGCOL#0) ← ++ *((byte*) main::BGCOL#0)
   to:main::@return
 main::@return: scope:[main]  from main::@4
@@ -284,7 +314,7 @@ CONTROL FLOW GRAPH WITH ASSIGNMENT CALL & RETURN
 @begin: scope:[]  from
   to:@1
 main: scope:[main]  from @1
-  (byte*) main::screen#0 ← (word/signed word) 1024
+  (byte*) main::screen#0 ← ((byte*)) (word/signed word) 1024
   (byte*~) main::$0 ← (byte*) main::screen#0 + (byte/signed byte/word/signed word) 80
   (byte) main::a#0 ← *((byte*~) main::$0)
   (byte) main::i#0 ← (byte/signed byte/word/signed word) 0
@@ -323,12 +353,18 @@ main::@2: scope:[main]  from main::@2 main::@3
   if((boolean~) main::$12) goto main::@2
   to:main::@4
 main::@4: scope:[main]  from main::@2
-  *((word) 53280) ← ++ *((word) 53280)
-  (word~) main::$13 ← (word) 53248 + (byte/signed byte/word/signed word) 33
-  *((word~) main::$13) ← -- *((word~) main::$13)
-  (word~) main::$14 ← (word) 53248 + (byte/signed byte/word/signed word) 33
-  (word~) main::$15 ← (word) 53248 + (byte/signed byte/word/signed word) 33
-  (byte*) main::BGCOL#0 ← (word) 53280
+  (byte*~) main::$13 ← ((byte*)) (word) 53280
+  *((byte*~) main::$13) ← ++ *((byte*~) main::$13)
+  (byte*~) main::$14 ← ((byte*)) (word) 53280
+  (byte*~) main::$15 ← ((byte*)) (word) 53280
+  (word~) main::$16 ← (word) 53248 + (byte/signed byte/word/signed word) 33
+  (byte*~) main::$17 ← ((byte*)) (word~) main::$16
+  *((byte*~) main::$17) ← -- *((byte*~) main::$17)
+  (word~) main::$18 ← (word) 53248 + (byte/signed byte/word/signed word) 33
+  (byte*~) main::$19 ← ((byte*)) (word~) main::$18
+  (word~) main::$20 ← (word) 53248 + (byte/signed byte/word/signed word) 33
+  (byte*~) main::$21 ← ((byte*)) (word~) main::$20
+  (byte*) main::BGCOL#0 ← ((byte*)) (word) 53280
   *((byte*) main::BGCOL#0) ← ++ *((byte*) main::BGCOL#0)
   to:main::@return
 main::@return: scope:[main]  from main::@4
@@ -352,10 +388,16 @@ INITIAL SSA SYMBOL TABLE
 (byte*~) main::$10
 (byte*~) main::$11
 (boolean~) main::$12
-(word~) main::$13
-(word~) main::$14
-(word~) main::$15
+(byte*~) main::$13
+(byte*~) main::$14
+(byte*~) main::$15
+(word~) main::$16
+(byte*~) main::$17
+(word~) main::$18
+(byte*~) main::$19
 (byte*~) main::$2
+(word~) main::$20
+(byte*~) main::$21
 (boolean~) main::$3
 (byte*~) main::$4
 (byte*~) main::$5
@@ -394,7 +436,7 @@ CONTROL FLOW GRAPH
 @begin: scope:[]  from
   to:@1
 main: scope:[main]  from @1
-  (byte*) main::screen#0 ← (word/signed word) 1024
+  (byte*) main::screen#0 ← ((byte*)) (word/signed word) 1024
   (byte*~) main::$0 ← (byte*) main::screen#0 + (byte/signed byte/word/signed word) 80
   (byte) main::a#0 ← *((byte*~) main::$0)
   (byte) main::i#0 ← (byte/signed byte/word/signed word) 0
@@ -433,12 +475,18 @@ main::@2: scope:[main]  from main::@2 main::@3
   if((boolean~) main::$12) goto main::@2
   to:main::@4
 main::@4: scope:[main]  from main::@2
-  *((word) 53280) ← ++ *((word) 53280)
-  (word~) main::$13 ← (word) 53248 + (byte/signed byte/word/signed word) 33
-  *((word~) main::$13) ← -- *((word~) main::$13)
-  (word~) main::$14 ← (word) 53248 + (byte/signed byte/word/signed word) 33
-  (word~) main::$15 ← (word) 53248 + (byte/signed byte/word/signed word) 33
-  (byte*) main::BGCOL#0 ← (word) 53280
+  (byte*~) main::$13 ← ((byte*)) (word) 53280
+  *((byte*~) main::$13) ← ++ *((byte*~) main::$13)
+  (byte*~) main::$14 ← ((byte*)) (word) 53280
+  (byte*~) main::$15 ← ((byte*)) (word) 53280
+  (word~) main::$16 ← (word) 53248 + (byte/signed byte/word/signed word) 33
+  (byte*~) main::$17 ← ((byte*)) (word~) main::$16
+  *((byte*~) main::$17) ← -- *((byte*~) main::$17)
+  (word~) main::$18 ← (word) 53248 + (byte/signed byte/word/signed word) 33
+  (byte*~) main::$19 ← ((byte*)) (word~) main::$18
+  (word~) main::$20 ← (word) 53248 + (byte/signed byte/word/signed word) 33
+  (byte*~) main::$21 ← ((byte*)) (word~) main::$20
+  (byte*) main::BGCOL#0 ← ((byte*)) (word) 53280
   *((byte*) main::BGCOL#0) ← ++ *((byte*) main::BGCOL#0)
   to:main::@return
 main::@return: scope:[main]  from main::@4
@@ -457,7 +505,7 @@ CONTROL FLOW GRAPH
 @begin: scope:[]  from
   to:@1
 main: scope:[main]  from @1
-  (byte*) main::screen#0 ← (word/signed word) 1024
+  (byte*) main::screen#0 ← ((byte*)) (word/signed word) 1024
   (byte*~) main::$0 ← (byte*) main::screen#0 + (byte/signed byte/word/signed word) 80
   (byte) main::a#0 ← *((byte*~) main::$0)
   (byte) main::i#0 ← (byte/signed byte/word/signed word) 0
@@ -494,12 +542,18 @@ main::@2: scope:[main]  from main::@2 main::@3
   if((boolean~) main::$12) goto main::@2
   to:main::@4
 main::@4: scope:[main]  from main::@2
-  *((word) 53280) ← ++ *((word) 53280)
-  (word~) main::$13 ← (word) 53248 + (byte/signed byte/word/signed word) 33
-  *((word~) main::$13) ← -- *((word~) main::$13)
-  (word~) main::$14 ← (word) 53248 + (byte/signed byte/word/signed word) 33
-  (word~) main::$15 ← (word) 53248 + (byte/signed byte/word/signed word) 33
-  (byte*) main::BGCOL#0 ← (word) 53280
+  (byte*~) main::$13 ← ((byte*)) (word) 53280
+  *((byte*~) main::$13) ← ++ *((byte*~) main::$13)
+  (byte*~) main::$14 ← ((byte*)) (word) 53280
+  (byte*~) main::$15 ← ((byte*)) (word) 53280
+  (word~) main::$16 ← (word) 53248 + (byte/signed byte/word/signed word) 33
+  (byte*~) main::$17 ← ((byte*)) (word~) main::$16
+  *((byte*~) main::$17) ← -- *((byte*~) main::$17)
+  (word~) main::$18 ← (word) 53248 + (byte/signed byte/word/signed word) 33
+  (byte*~) main::$19 ← ((byte*)) (word~) main::$18
+  (word~) main::$20 ← (word) 53248 + (byte/signed byte/word/signed word) 33
+  (byte*~) main::$21 ← ((byte*)) (word~) main::$20
+  (byte*) main::BGCOL#0 ← ((byte*)) (word) 53280
   *((byte*) main::BGCOL#0) ← ++ *((byte*) main::BGCOL#0)
   to:main::@return
 main::@return: scope:[main]  from main::@4
@@ -518,7 +572,7 @@ CONTROL FLOW GRAPH
 @begin: scope:[]  from
   to:@1
 main: scope:[main]  from @1
-  (byte*) main::screen#0 ← (word/signed word) 1024
+  (byte*) main::screen#0 ← ((byte*)) (word/signed word) 1024
   (byte*~) main::$0 ← (byte*) main::screen#0 + (byte/signed byte/word/signed word) 80
   (byte) main::a#0 ← *((byte*~) main::$0)
   (byte) main::i#0 ← (byte/signed byte/word/signed word) 0
@@ -555,12 +609,18 @@ main::@2: scope:[main]  from main::@2 main::@3
   if((boolean~) main::$12) goto main::@2
   to:main::@4
 main::@4: scope:[main]  from main::@2
-  *((word) 53280) ← ++ *((word) 53280)
-  (word~) main::$13 ← (word) 53248 + (byte/signed byte/word/signed word) 33
-  *((word~) main::$13) ← -- *((word~) main::$13)
-  (word~) main::$14 ← (word) 53248 + (byte/signed byte/word/signed word) 33
-  (word~) main::$15 ← (word) 53248 + (byte/signed byte/word/signed word) 33
-  (byte*) main::BGCOL#0 ← (word) 53280
+  (byte*~) main::$13 ← ((byte*)) (word) 53280
+  *((byte*~) main::$13) ← ++ *((byte*~) main::$13)
+  (byte*~) main::$14 ← ((byte*)) (word) 53280
+  (byte*~) main::$15 ← ((byte*)) (word) 53280
+  (word~) main::$16 ← (word) 53248 + (byte/signed byte/word/signed word) 33
+  (byte*~) main::$17 ← ((byte*)) (word~) main::$16
+  *((byte*~) main::$17) ← -- *((byte*~) main::$17)
+  (word~) main::$18 ← (word) 53248 + (byte/signed byte/word/signed word) 33
+  (byte*~) main::$19 ← ((byte*)) (word~) main::$18
+  (word~) main::$20 ← (word) 53248 + (byte/signed byte/word/signed word) 33
+  (byte*~) main::$21 ← ((byte*)) (word~) main::$20
+  (byte*) main::BGCOL#0 ← ((byte*)) (word) 53280
   *((byte*) main::BGCOL#0) ← ++ *((byte*) main::BGCOL#0)
   to:main::@return
 main::@return: scope:[main]  from main::@4
@@ -578,7 +638,7 @@ CONTROL FLOW GRAPH
 @begin: scope:[]  from
   to:@1
 main: scope:[main]  from @1
-  (byte*) main::screen#0 ← (word/signed word) 1024
+  (byte*) main::screen#0 ← ((byte*)) (word/signed word) 1024
   (byte*~) main::$0 ← (byte*) main::screen#0 + (byte/signed byte/word/signed word) 80
   (byte) main::a#0 ← *((byte*~) main::$0)
   (byte) main::i#0 ← (byte/signed byte/word/signed word) 0
@@ -613,12 +673,18 @@ main::@2: scope:[main]  from main::@2 main::@3
   if((boolean~) main::$12) goto main::@2
   to:main::@4
 main::@4: scope:[main]  from main::@2
-  *((word) 53280) ← ++ *((word) 53280)
-  (word~) main::$13 ← (word) 53248 + (byte/signed byte/word/signed word) 33
-  *((word~) main::$13) ← -- *((word~) main::$13)
-  (word~) main::$14 ← (word) 53248 + (byte/signed byte/word/signed word) 33
-  (word~) main::$15 ← (word) 53248 + (byte/signed byte/word/signed word) 33
-  (byte*) main::BGCOL#0 ← (word) 53280
+  (byte*~) main::$13 ← ((byte*)) (word) 53280
+  *((byte*~) main::$13) ← ++ *((byte*~) main::$13)
+  (byte*~) main::$14 ← ((byte*)) (word) 53280
+  (byte*~) main::$15 ← ((byte*)) (word) 53280
+  (word~) main::$16 ← (word) 53248 + (byte/signed byte/word/signed word) 33
+  (byte*~) main::$17 ← ((byte*)) (word~) main::$16
+  *((byte*~) main::$17) ← -- *((byte*~) main::$17)
+  (word~) main::$18 ← (word) 53248 + (byte/signed byte/word/signed word) 33
+  (byte*~) main::$19 ← ((byte*)) (word~) main::$18
+  (word~) main::$20 ← (word) 53248 + (byte/signed byte/word/signed word) 33
+  (byte*~) main::$21 ← ((byte*)) (word~) main::$20
+  (byte*) main::BGCOL#0 ← ((byte*)) (word) 53280
   *((byte*) main::BGCOL#0) ← ++ *((byte*) main::BGCOL#0)
   to:main::@return
 main::@return: scope:[main]  from main::@4
@@ -636,7 +702,7 @@ CONTROL FLOW GRAPH
 @begin: scope:[]  from
   to:@1
 main: scope:[main]  from @1
-  (byte*) main::screen#0 ← (word/signed word) 1024
+  (byte*) main::screen#0 ← ((byte*)) (word/signed word) 1024
   (byte*~) main::$0 ← (byte*) main::screen#0 + (byte/signed byte/word/signed word) 80
   (byte) main::a#0 ← *((byte*~) main::$0)
   (byte) main::i#0 ← (byte/signed byte/word/signed word) 0
@@ -669,12 +735,18 @@ main::@2: scope:[main]  from main::@2 main::@3
   if((byte) main::j#1!=(byte/signed byte/word/signed word) 11) goto main::@2
   to:main::@4
 main::@4: scope:[main]  from main::@2
-  *((word) 53280) ← ++ *((word) 53280)
-  (word~) main::$13 ← (word) 53248 + (byte/signed byte/word/signed word) 33
-  *((word~) main::$13) ← -- *((word~) main::$13)
-  (word~) main::$14 ← (word) 53248 + (byte/signed byte/word/signed word) 33
-  (word~) main::$15 ← (word) 53248 + (byte/signed byte/word/signed word) 33
-  (byte*) main::BGCOL#0 ← (word) 53280
+  (byte*~) main::$13 ← ((byte*)) (word) 53280
+  *((byte*~) main::$13) ← ++ *((byte*~) main::$13)
+  (byte*~) main::$14 ← ((byte*)) (word) 53280
+  (byte*~) main::$15 ← ((byte*)) (word) 53280
+  (word~) main::$16 ← (word) 53248 + (byte/signed byte/word/signed word) 33
+  (byte*~) main::$17 ← ((byte*)) (word~) main::$16
+  *((byte*~) main::$17) ← -- *((byte*~) main::$17)
+  (word~) main::$18 ← (word) 53248 + (byte/signed byte/word/signed word) 33
+  (byte*~) main::$19 ← ((byte*)) (word~) main::$18
+  (word~) main::$20 ← (word) 53248 + (byte/signed byte/word/signed word) 33
+  (byte*~) main::$21 ← ((byte*)) (word~) main::$20
+  (byte*) main::BGCOL#0 ← ((byte*)) (word) 53280
   *((byte*) main::BGCOL#0) ← ++ *((byte*) main::BGCOL#0)
   to:main::@return
 main::@return: scope:[main]  from main::@4
@@ -685,13 +757,16 @@ main::@return: scope:[main]  from main::@4
   to:@end
 @end: scope:[]  from @1
 
-Constant (const byte*) main::screen#0 = 1024
+Constant (const byte*) main::screen#0 = ((byte*))1024
 Constant (const byte) main::i#0 = 0
 Constant (const byte) main::j#0 = 0
-Constant (const word) main::$13 = 53248+33
-Constant (const word) main::$14 = 53248+33
-Constant (const word) main::$15 = 53248+33
-Constant (const byte*) main::BGCOL#0 = 53280
+Constant (const byte*) main::$13 = ((byte*))53280
+Constant (const byte*) main::$14 = ((byte*))53280
+Constant (const byte*) main::$15 = ((byte*))53280
+Constant (const word) main::$16 = 53248+33
+Constant (const word) main::$18 = 53248+33
+Constant (const word) main::$20 = 53248+33
+Constant (const byte*) main::BGCOL#0 = ((byte*))53280
 Succesful SSA optimization Pass2ConstantIdentification
 CONTROL FLOW GRAPH
 @begin: scope:[]  from
@@ -727,8 +802,11 @@ main::@2: scope:[main]  from main::@2 main::@3
   if((byte) main::j#1!=(byte/signed byte/word/signed word) 11) goto main::@2
   to:main::@4
 main::@4: scope:[main]  from main::@2
-  *((word) 53280) ← ++ *((word) 53280)
-  *((const word) main::$13) ← -- *((const word) main::$13)
+  *((const byte*) main::$13) ← ++ *((const byte*) main::$13)
+  (byte*~) main::$17 ← ((byte*)) (const word) main::$16
+  *((byte*~) main::$17) ← -- *((byte*~) main::$17)
+  (byte*~) main::$19 ← ((byte*)) (const word) main::$18
+  (byte*~) main::$21 ← ((byte*)) (const word) main::$20
   *((const byte*) main::BGCOL#0) ← ++ *((const byte*) main::BGCOL#0)
   to:main::@return
 main::@return: scope:[main]  from main::@4
@@ -747,6 +825,9 @@ Constant (const byte*) main::$6 = main::screen#0+82
 Constant (const byte*) main::$7 = main::screen#0+122
 Constant (const byte*) main::$8 = main::screen#0+160
 Constant (const byte*) main::$10 = main::screen#0+200
+Constant (const byte*) main::$17 = ((byte*))main::$16
+Constant (const byte*) main::$19 = ((byte*))main::$18
+Constant (const byte*) main::$21 = ((byte*))main::$20
 Succesful SSA optimization Pass2ConstantIdentification
 CONTROL FLOW GRAPH
 @begin: scope:[]  from
@@ -774,8 +855,8 @@ main::@2: scope:[main]  from main::@2 main::@3
   if((byte) main::j#1!=(byte/signed byte/word/signed word) 11) goto main::@2
   to:main::@4
 main::@4: scope:[main]  from main::@2
-  *((word) 53280) ← ++ *((word) 53280)
-  *((const word) main::$13) ← -- *((const word) main::$13)
+  *((const byte*) main::$13) ← ++ *((const byte*) main::$13)
+  *((const byte*) main::$17) ← -- *((const byte*) main::$17)
   *((const byte*) main::BGCOL#0) ← ++ *((const byte*) main::BGCOL#0)
   to:main::@return
 main::@return: scope:[main]  from main::@4
@@ -798,17 +879,23 @@ Inlining constant with var siblings (const byte) main::i#0
 Inlining constant with var siblings (const byte) main::i#0
 Inlining constant with var siblings (const byte) main::j#0
 Inlining constant with var siblings (const byte) main::j#0
+Constant inlined main::$13 = ((byte*))(word) 53280
+Constant inlined main::$14 = ((byte*))(word) 53280
+Constant inlined main::$15 = ((byte*))(word) 53280
+Constant inlined main::$20 = (word) 53248+(byte/signed byte/word/signed word) 33
+Constant inlined main::$10 = (const byte*) main::screen#0+(byte/word/signed word) 200
+Constant inlined main::$21 = ((byte*))(word) 53248+(byte/signed byte/word/signed word) 33
+Constant inlined main::$16 = (word) 53248+(byte/signed byte/word/signed word) 33
 Constant inlined main::$1 = (const byte*) main::screen#0+(byte/signed byte/word/signed word) 40
+Constant inlined main::$17 = ((byte*))(word) 53248+(byte/signed byte/word/signed word) 33
+Constant inlined main::$18 = (word) 53248+(byte/signed byte/word/signed word) 33
 Constant inlined main::$0 = (const byte*) main::screen#0+(byte/signed byte/word/signed word) 80
+Constant inlined main::$19 = ((byte*))(word) 53248+(byte/signed byte/word/signed word) 33
 Constant inlined main::$5 = (const byte*) main::screen#0+(byte/signed byte/word/signed word) 121
 Constant inlined main::i#0 = (byte/signed byte/word/signed word) 0
-Constant inlined main::$13 = (word) 53248+(byte/signed byte/word/signed word) 33
 Constant inlined main::$6 = (const byte*) main::screen#0+(byte/signed byte/word/signed word) 82
-Constant inlined main::$14 = (word) 53248+(byte/signed byte/word/signed word) 33
-Constant inlined main::$15 = (word) 53248+(byte/signed byte/word/signed word) 33
 Constant inlined main::j#0 = (byte/signed byte/word/signed word) 0
 Constant inlined main::$7 = (const byte*) main::screen#0+(byte/signed byte/word/signed word) 122
-Constant inlined main::$10 = (const byte*) main::screen#0+(byte/word/signed word) 200
 Constant inlined main::$8 = (const byte*) main::screen#0+(byte/word/signed word) 160
 Succesful SSA optimization Pass2ConstantInlining
 CONTROL FLOW GRAPH
@@ -837,8 +924,8 @@ main::@2: scope:[main]  from main::@2 main::@3
   if((byte) main::j#1!=(byte/signed byte/word/signed word) 11) goto main::@2
   to:main::@4
 main::@4: scope:[main]  from main::@2
-  *((word) 53280) ← ++ *((word) 53280)
-  *((word) 53248+(byte/signed byte/word/signed word) 33) ← -- *((word) 53248+(byte/signed byte/word/signed word) 33)
+  *(((byte*))(word) 53280) ← ++ *(((byte*))(word) 53280)
+  *(((byte*))(word) 53248+(byte/signed byte/word/signed word) 33) ← -- *(((byte*))(word) 53248+(byte/signed byte/word/signed word) 33)
   *((const byte*) main::BGCOL#0) ← ++ *((const byte*) main::BGCOL#0)
   to:main::@return
 main::@return: scope:[main]  from main::@4
@@ -863,7 +950,7 @@ FINAL SYMBOL TABLE
 (label) main::@4
 (label) main::@return
 (byte*) main::BGCOL
-(const byte*) main::BGCOL#0 = (word) 53280
+(const byte*) main::BGCOL#0 = ((byte*))(word) 53280
 (byte) main::a
 (byte) main::a#0
 (byte) main::i
@@ -875,7 +962,7 @@ FINAL SYMBOL TABLE
 (byte*) main::sc2
 (const byte*) main::sc2#0 = (const byte*) main::screen#0+(byte/signed byte/word/signed word) 81
 (byte*) main::screen
-(const byte*) main::screen#0 = (word/signed word) 1024
+(const byte*) main::screen#0 = ((byte*))(word/signed word) 1024
 
 Block Sequence Planned @begin @1 @end main main::@1 main::@3 main::@2 main::@4 main::@return 
 Added new block during phi lifting main::@5(between main::@1 and main::@1)
@@ -911,8 +998,8 @@ main::@2: scope:[main]  from main::@3 main::@6
   if((byte) main::j#1!=(byte/signed byte/word/signed word) 11) goto main::@6
   to:main::@4
 main::@4: scope:[main]  from main::@2
-  *((word) 53280) ← ++ *((word) 53280)
-  *((word) 53248+(byte/signed byte/word/signed word) 33) ← -- *((word) 53248+(byte/signed byte/word/signed word) 33)
+  *(((byte*))(word) 53280) ← ++ *(((byte*))(word) 53280)
+  *(((byte*))(word) 53248+(byte/signed byte/word/signed word) 33) ← -- *(((byte*))(word) 53248+(byte/signed byte/word/signed word) 33)
   *((const byte*) main::BGCOL#0) ← ++ *((const byte*) main::BGCOL#0)
   to:main::@return
 main::@return: scope:[main]  from main::@4
@@ -961,8 +1048,8 @@ main::@2: scope:[main]  from main::@3 main::@6
   [14] if((byte) main::j#1!=(byte/signed byte/word/signed word) 11) goto main::@6 [ main::j#1 ]
   to:main::@4
 main::@4: scope:[main]  from main::@2
-  [15] *((word) 53280) ← ++ *((word) 53280) [ ]
-  [16] *((word) 53248+(byte/signed byte/word/signed word) 33) ← -- *((word) 53248+(byte/signed byte/word/signed word) 33) [ ]
+  [15] *(((byte*))(word) 53280) ← ++ *(((byte*))(word) 53280) [ ]
+  [16] *(((byte*))(word) 53248+(byte/signed byte/word/signed word) 33) ← -- *(((byte*))(word) 53248+(byte/signed byte/word/signed word) 33) [ ]
   [17] *((const byte*) main::BGCOL#0) ← ++ *((const byte*) main::BGCOL#0) [ ]
   to:main::@return
 main::@return: scope:[main]  from main::@4
@@ -1015,8 +1102,8 @@ main::@2: scope:[main]  from main::@2 main::@3
   [14] if((byte) main::j#1!=(byte/signed byte/word/signed word) 11) goto main::@2 [ main::j#1 ]
   to:main::@4
 main::@4: scope:[main]  from main::@2
-  [15] *((word) 53280) ← ++ *((word) 53280) [ ]
-  [16] *((word) 53248+(byte/signed byte/word/signed word) 33) ← -- *((word) 53248+(byte/signed byte/word/signed word) 33) [ ]
+  [15] *(((byte*))(word) 53280) ← ++ *(((byte*))(word) 53280) [ ]
+  [16] *(((byte*))(word) 53248+(byte/signed byte/word/signed word) 33) ← -- *(((byte*))(word) 53248+(byte/signed byte/word/signed word) 33) [ ]
   [17] *((const byte*) main::BGCOL#0) ← ++ *((const byte*) main::BGCOL#0) [ ]
   to:main::@return
 main::@return: scope:[main]  from main::@4
@@ -1053,8 +1140,8 @@ main::@2: scope:[main]  from main::@2 main::@3
   [14] if((byte) main::j#1!=(byte/signed byte/word/signed word) 11) goto main::@2 [ main::j#1 ] ( main:0 [ main::j#1 ] )
   to:main::@4
 main::@4: scope:[main]  from main::@2
-  [15] *((word) 53280) ← ++ *((word) 53280) [ ] ( main:0 [ ] )
-  [16] *((word) 53248+(byte/signed byte/word/signed word) 33) ← -- *((word) 53248+(byte/signed byte/word/signed word) 33) [ ] ( main:0 [ ] )
+  [15] *(((byte*))(word) 53280) ← ++ *(((byte*))(word) 53280) [ ] ( main:0 [ ] )
+  [16] *(((byte*))(word) 53248+(byte/signed byte/word/signed word) 33) ← -- *(((byte*))(word) 53248+(byte/signed byte/word/signed word) 33) [ ] ( main:0 [ ] )
   [17] *((const byte*) main::BGCOL#0) ← ++ *((const byte*) main::BGCOL#0) [ ] ( main:0 [ ] )
   to:main::@return
 main::@return: scope:[main]  from main::@4
@@ -1238,9 +1325,9 @@ main: {
     jmp b4
   //SEG30 main::@4
   b4:
-  //SEG31 [15] *((word) 53280) ← ++ *((word) 53280) [ ] ( main:0 [ ] ) -- _deref_cowo1=_inc__deref_cowo1 
+  //SEG31 [15] *(((byte*))(word) 53280) ← ++ *(((byte*))(word) 53280) [ ] ( main:0 [ ] ) -- _deref_cowo1=_inc__deref_cowo1 
     inc $d020
-  //SEG32 [16] *((word) 53248+(byte/signed byte/word/signed word) 33) ← -- *((word) 53248+(byte/signed byte/word/signed word) 33) [ ] ( main:0 [ ] ) -- _deref_cowo1=_dec__deref_cowo1 
+  //SEG32 [16] *(((byte*))(word) 53248+(byte/signed byte/word/signed word) 33) ← -- *(((byte*))(word) 53248+(byte/signed byte/word/signed word) 33) [ ] ( main:0 [ ] ) -- _deref_cowo1=_dec__deref_cowo1 
     dec $d000+$21
   //SEG33 [17] *((const byte*) main::BGCOL#0) ← ++ *((const byte*) main::BGCOL#0) [ ] ( main:0 [ ] ) -- _deref_cowo1=_inc__deref_cowo1 
     inc BGCOL
@@ -1391,9 +1478,9 @@ main: {
     bne b2_from_b2
   //SEG30 main::@4
   b4:
-  //SEG31 [15] *((word) 53280) ← ++ *((word) 53280) [ ] ( main:0 [ ] ) -- _deref_cowo1=_inc__deref_cowo1 
+  //SEG31 [15] *(((byte*))(word) 53280) ← ++ *(((byte*))(word) 53280) [ ] ( main:0 [ ] ) -- _deref_cowo1=_inc__deref_cowo1 
     inc $d020
-  //SEG32 [16] *((word) 53248+(byte/signed byte/word/signed word) 33) ← -- *((word) 53248+(byte/signed byte/word/signed word) 33) [ ] ( main:0 [ ] ) -- _deref_cowo1=_dec__deref_cowo1 
+  //SEG32 [16] *(((byte*))(word) 53248+(byte/signed byte/word/signed word) 33) ← -- *(((byte*))(word) 53248+(byte/signed byte/word/signed word) 33) [ ] ( main:0 [ ] ) -- _deref_cowo1=_dec__deref_cowo1 
     dec $d000+$21
   //SEG33 [17] *((const byte*) main::BGCOL#0) ← ++ *((const byte*) main::BGCOL#0) [ ] ( main:0 [ ] ) -- _deref_cowo1=_inc__deref_cowo1 
     inc BGCOL
@@ -1501,9 +1588,9 @@ main: {
     bne b2_from_b2
   //SEG30 main::@4
   b4:
-  //SEG31 [15] *((word) 53280) ← ++ *((word) 53280) [ ] ( main:0 [ ] ) -- _deref_cowo1=_inc__deref_cowo1 
+  //SEG31 [15] *(((byte*))(word) 53280) ← ++ *(((byte*))(word) 53280) [ ] ( main:0 [ ] ) -- _deref_cowo1=_inc__deref_cowo1 
     inc $d020
-  //SEG32 [16] *((word) 53248+(byte/signed byte/word/signed word) 33) ← -- *((word) 53248+(byte/signed byte/word/signed word) 33) [ ] ( main:0 [ ] ) -- _deref_cowo1=_dec__deref_cowo1 
+  //SEG32 [16] *(((byte*))(word) 53248+(byte/signed byte/word/signed word) 33) ← -- *(((byte*))(word) 53248+(byte/signed byte/word/signed word) 33) [ ] ( main:0 [ ] ) -- _deref_cowo1=_dec__deref_cowo1 
     dec $d000+$21
   //SEG33 [17] *((const byte*) main::BGCOL#0) ← ++ *((const byte*) main::BGCOL#0) [ ] ( main:0 [ ] ) -- _deref_cowo1=_inc__deref_cowo1 
     inc BGCOL
@@ -1612,9 +1699,9 @@ main: {
     bne b2
   //SEG30 main::@4
   b4:
-  //SEG31 [15] *((word) 53280) ← ++ *((word) 53280) [ ] ( main:0 [ ] ) -- _deref_cowo1=_inc__deref_cowo1 
+  //SEG31 [15] *(((byte*))(word) 53280) ← ++ *(((byte*))(word) 53280) [ ] ( main:0 [ ] ) -- _deref_cowo1=_inc__deref_cowo1 
     inc $d020
-  //SEG32 [16] *((word) 53248+(byte/signed byte/word/signed word) 33) ← -- *((word) 53248+(byte/signed byte/word/signed word) 33) [ ] ( main:0 [ ] ) -- _deref_cowo1=_dec__deref_cowo1 
+  //SEG32 [16] *(((byte*))(word) 53248+(byte/signed byte/word/signed word) 33) ← -- *(((byte*))(word) 53248+(byte/signed byte/word/signed word) 33) [ ] ( main:0 [ ] ) -- _deref_cowo1=_dec__deref_cowo1 
     dec $d000+$21
   //SEG33 [17] *((const byte*) main::BGCOL#0) ← ++ *((const byte*) main::BGCOL#0) [ ] ( main:0 [ ] ) -- _deref_cowo1=_inc__deref_cowo1 
     inc BGCOL
@@ -1719,9 +1806,9 @@ main: {
     cpx #$b
     bne b2
   //SEG30 main::@4
-  //SEG31 [15] *((word) 53280) ← ++ *((word) 53280) [ ] ( main:0 [ ] ) -- _deref_cowo1=_inc__deref_cowo1 
+  //SEG31 [15] *(((byte*))(word) 53280) ← ++ *(((byte*))(word) 53280) [ ] ( main:0 [ ] ) -- _deref_cowo1=_inc__deref_cowo1 
     inc $d020
-  //SEG32 [16] *((word) 53248+(byte/signed byte/word/signed word) 33) ← -- *((word) 53248+(byte/signed byte/word/signed word) 33) [ ] ( main:0 [ ] ) -- _deref_cowo1=_dec__deref_cowo1 
+  //SEG32 [16] *(((byte*))(word) 53248+(byte/signed byte/word/signed word) 33) ← -- *(((byte*))(word) 53248+(byte/signed byte/word/signed word) 33) [ ] ( main:0 [ ] ) -- _deref_cowo1=_dec__deref_cowo1 
     dec $d000+$21
   //SEG33 [17] *((const byte*) main::BGCOL#0) ← ++ *((const byte*) main::BGCOL#0) [ ] ( main:0 [ ] ) -- _deref_cowo1=_inc__deref_cowo1 
     inc BGCOL
@@ -1818,9 +1905,9 @@ main: {
     cpx #$b
     bne b2
   //SEG30 main::@4
-  //SEG31 [15] *((word) 53280) ← ++ *((word) 53280) [ ] ( main:0 [ ] ) -- _deref_cowo1=_inc__deref_cowo1 
+  //SEG31 [15] *(((byte*))(word) 53280) ← ++ *(((byte*))(word) 53280) [ ] ( main:0 [ ] ) -- _deref_cowo1=_inc__deref_cowo1 
     inc $d020
-  //SEG32 [16] *((word) 53248+(byte/signed byte/word/signed word) 33) ← -- *((word) 53248+(byte/signed byte/word/signed word) 33) [ ] ( main:0 [ ] ) -- _deref_cowo1=_dec__deref_cowo1 
+  //SEG32 [16] *(((byte*))(word) 53248+(byte/signed byte/word/signed word) 33) ← -- *(((byte*))(word) 53248+(byte/signed byte/word/signed word) 33) [ ] ( main:0 [ ] ) -- _deref_cowo1=_dec__deref_cowo1 
     dec $d000+$21
   //SEG33 [17] *((const byte*) main::BGCOL#0) ← ++ *((const byte*) main::BGCOL#0) [ ] ( main:0 [ ] ) -- _deref_cowo1=_inc__deref_cowo1 
     inc BGCOL
@@ -1843,7 +1930,7 @@ FINAL SYMBOL TABLE
 (label) main::@4
 (label) main::@return
 (byte*) main::BGCOL
-(const byte*) main::BGCOL#0 BGCOL = (word) 53280
+(const byte*) main::BGCOL#0 BGCOL = ((byte*))(word) 53280
 (byte) main::a
 (byte) main::a#0 reg byte a 20.0
 (byte) main::i
@@ -1855,7 +1942,7 @@ FINAL SYMBOL TABLE
 (byte*) main::sc2
 (const byte*) main::sc2#0 sc2 = (const byte*) main::screen#0+(byte/signed byte/word/signed word) 81
 (byte*) main::screen
-(const byte*) main::screen#0 screen = (word/signed word) 1024
+(const byte*) main::screen#0 screen = ((byte*))(word/signed word) 1024
 
 reg byte x [ main::i#2 main::i#1 ]
 reg byte x [ main::j#2 main::j#1 ]
@@ -1948,9 +2035,9 @@ main: {
     cpx #$b
     bne b2
   //SEG30 main::@4
-  //SEG31 [15] *((word) 53280) ← ++ *((word) 53280) [ ] ( main:0 [ ] ) -- _deref_cowo1=_inc__deref_cowo1 
+  //SEG31 [15] *(((byte*))(word) 53280) ← ++ *(((byte*))(word) 53280) [ ] ( main:0 [ ] ) -- _deref_cowo1=_inc__deref_cowo1 
     inc $d020
-  //SEG32 [16] *((word) 53248+(byte/signed byte/word/signed word) 33) ← -- *((word) 53248+(byte/signed byte/word/signed word) 33) [ ] ( main:0 [ ] ) -- _deref_cowo1=_dec__deref_cowo1 
+  //SEG32 [16] *(((byte*))(word) 53248+(byte/signed byte/word/signed word) 33) ← -- *(((byte*))(word) 53248+(byte/signed byte/word/signed word) 33) [ ] ( main:0 [ ] ) -- _deref_cowo1=_dec__deref_cowo1 
     dec $d000+$21
   //SEG33 [17] *((const byte*) main::BGCOL#0) ← ++ *((const byte*) main::BGCOL#0) [ ] ( main:0 [ ] ) -- _deref_cowo1=_inc__deref_cowo1 
     inc BGCOL

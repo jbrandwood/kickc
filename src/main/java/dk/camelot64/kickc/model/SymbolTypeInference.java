@@ -15,6 +15,17 @@ public class SymbolTypeInference {
     * @return The type of the resulting value
     */
    public static SymbolType inferType(ProgramScope programScope, Operator operator, RValue rValue) {
+      if (operator.equals(Operator.CAST_BYTE)) {
+         return SymbolType.BYTE;
+      } else if (operator.equals(Operator.CAST_SBYTE)) {
+         return SymbolType.SBYTE;
+      } else if (operator.equals(Operator.CAST_WORD)) {
+         return SymbolType.WORD;
+      } else if (operator.equals(Operator.CAST_SWORD)) {
+         return SymbolType.SWORD;
+      } else if (operator.equals(Operator.CAST_PTRBY)) {
+         return new SymbolTypePointer(SymbolType.BYTE);
+      }
       if (rValue instanceof ConstantValue) {
          ConstantValue value = ConstantValueCalculator.calcValue(programScope, operator, (ConstantValue) rValue);
          if (value != null) {
@@ -72,12 +83,15 @@ public class SymbolTypeInference {
 
    public static SymbolType inferType(SymbolType type1, Operator operator, SymbolType type2) {
 
-      if (operator.equals(Operator.PLUS)) {
+      if (Operator.PLUS.equals(operator)) {
          return inferPlus(type1, type2);
-      } else if (operator.equals(Operator.MINUS)) {
+      } else if (Operator.MINUS.equals(operator)) {
          return inferMinus(type1, type2);
+      } else if(Operator.SET_HIBYTE.equals(operator)) {
+         return type1;
+      } else if(Operator.SET_LOWBYTE.equals(operator)) {
+         return type1;
       }
-
 
       String op = operator.getOperator();
       switch (op) {
@@ -243,20 +257,20 @@ public class SymbolTypeInference {
    }
 
 
-   public static SymbolType inferType(ProgramScope programScope, RValue rValue) {
+   public static SymbolType inferType(ProgramScope symbols, RValue rValue) {
       SymbolType type = null;
       if (rValue instanceof VariableRef) {
-         Variable variable = programScope.getVariable((VariableRef) rValue);
+         Variable variable = symbols.getVariable((VariableRef) rValue);
          type = variable.getType();
       } else if (rValue instanceof ConstantRef) {
-         ConstantVar constVar = programScope.getConstant((ConstantRef) rValue);
+         ConstantVar constVar = symbols.getConstant((ConstantRef) rValue);
          type = constVar.getType();
       } else if (rValue instanceof Symbol) {
          Symbol rSymbol = (Symbol) rValue;
          type = rSymbol.getType();
       } else if (rValue instanceof ConstantInteger) {
          ConstantInteger rInt = (ConstantInteger) rValue;
-         return rInt.getType(programScope);
+         return rInt.getType(symbols);
       } else if (rValue instanceof ConstantString) {
          type = SymbolType.STRING;
       } else if (rValue instanceof ConstantChar) {
@@ -265,12 +279,14 @@ public class SymbolTypeInference {
          type = SymbolType.BOOLEAN;
       } else if (rValue instanceof ConstantUnary) {
          ConstantUnary constUnary = (ConstantUnary) rValue;
-         return inferType(programScope, constUnary.getOperator(), constUnary.getOperand());
+         return inferType(symbols, constUnary.getOperator(), constUnary.getOperand());
       } else if (rValue instanceof ConstantBinary) {
          ConstantBinary constBin = (ConstantBinary) rValue;
-         return inferType(programScope, constBin.getLeft(), constBin.getOperator(), constBin.getRight());
-      } else if (rValue instanceof PointerDereferenceSimple) {
-         SymbolType pointerType = inferType(programScope, ((PointerDereferenceSimple) rValue).getPointer());
+         return inferType(symbols, constBin.getLeft(), constBin.getOperator(), constBin.getRight());
+      } else if (rValue instanceof ValueArray) {
+         type = inferTypeArray(symbols, (ValueArray)rValue);
+      } else if (rValue instanceof PointerDereference) {
+         SymbolType pointerType = inferType(symbols, ((PointerDereference) rValue).getPointer());
          if (pointerType instanceof SymbolTypePointer) {
             return ((SymbolTypePointer) pointerType).getElementType();
          } else {
@@ -283,4 +299,61 @@ public class SymbolTypeInference {
       return type;
    }
 
+   private static SymbolType inferTypeArray(ProgramScope symbols, ValueArray array) {
+      SymbolType elmType = null;
+      for (RValue elm : array.getList()) {
+         SymbolType type = inferType(symbols, elm);
+         if(elmType==null) {
+            elmType = type;
+         } else {
+            // element type already defined - check for a match
+            if(!typeMatch(elmType, type)) {
+               throw new RuntimeException("Array element has type mismatch "+elm.toString()+" not matching type "+elmType.getTypeName());
+            }
+         }
+      }
+      if(elmType!=null) {
+         return new SymbolTypeArray(elmType);
+      } else {
+         throw new RuntimeException("Cannot infer array element type "+array.toString());
+      }
+   }
+
+   public static SymbolType inferTypeRValue(ProgramScope symbols, StatementAssignment assignment) {
+      SymbolType rValueType;
+      RValue rValue1 = assignment.getrValue1();
+      RValue rValue2 = assignment.getrValue2();
+      if (assignment.getrValue1() == null && assignment.getOperator() == null) {
+         rValueType = inferType(symbols, rValue2);
+      } else if (assignment.getrValue1() == null) {
+         rValueType = inferType(symbols, assignment.getOperator(), rValue2);
+      } else {
+         rValueType = inferType(symbols, rValue1, assignment.getOperator(), rValue2);
+      }
+      return rValueType;
+   }
+
+   /**
+    * Determine if lValue and rValue types match (the same types, not needing a cast).
+    *
+    * @param lValueType The lValue type
+    * @param rValueType The rvalue type
+    * @return true if the types match
+    */
+   public static boolean typeMatch(SymbolType lValueType, SymbolType rValueType) {
+      if (lValueType.equals(rValueType)) {
+         // Types match directly
+         return true;
+      } else if (rValueType instanceof SymbolTypeInline && ((SymbolTypeInline) rValueType).getTypes().contains(lValueType)) {
+         // Types match because the right side is a constant that matches the left side
+         return true;
+      } else if (lValueType instanceof SymbolTypePointer && rValueType instanceof SymbolTypePointer) {
+         return typeMatch(((SymbolTypePointer) lValueType).getElementType(), ((SymbolTypePointer) rValueType).getElementType());
+      } else if (SymbolType.STRING.equals(rValueType)) {
+         if(lValueType instanceof SymbolTypePointer && SymbolType.isByte(((SymbolTypePointer) lValueType).getElementType())) {
+            return true;
+         }
+      }
+      return false;
+   }
 }

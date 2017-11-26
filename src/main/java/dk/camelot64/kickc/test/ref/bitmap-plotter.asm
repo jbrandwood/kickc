@@ -116,10 +116,11 @@ init_plot_tables: {
     inx
     cpx #0
     bne b1
-    lda #0
+    lda #<0
     sta yoffs
+    lda #>0
     sta yoffs+1
-    tax
+    ldx #0
   b3:
     txa
     and #7

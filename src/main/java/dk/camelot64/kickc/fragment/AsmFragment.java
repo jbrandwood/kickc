@@ -151,7 +151,7 @@ public class AsmFragment {
          }  else {
             return "$ff & " + getAsmConstant(program, operand, Operator.BOOL_AND.getPrecedence(), codeScope);
          }
-      } else if (Operator.CAST_WORD.equals(operator) || Operator.CAST_SWORD.equals(operator)) {
+      } else if (Operator.CAST_WORD.equals(operator) || Operator.CAST_SWORD.equals(operator) || Operator.CAST_PTRBY.equals(operator)) {
          SymbolType operandType = SymbolTypeInference.inferType(program.getScope(), operand);
          if(SymbolType.isWord(operandType) || SymbolType.isSWord(operandType)) {
             // No cast needed

@@ -1,7 +1,7 @@
 
 // Minimal classic for() loop
 
-byte* SCREEN = $0400;
+byte* SCREEN = (byte*)$0400;
 
 void main() {
     for(byte i=0; i!=100; i++) {
@@ -12,7 +12,8 @@ void main() {
 
 Adding pre/post-modifier (byte) main::i ← ++ (byte) main::i
 PROGRAM
-  (byte*) SCREEN ← (word/signed word) 1024
+  (byte*~) $0 ← ((byte*)) (word/signed word) 1024
+  (byte*) SCREEN ← (byte*~) $0
 proc (void()) main()
   (byte) main::i ← (byte/signed byte/word/signed word) 0
 main::@1:
@@ -26,6 +27,7 @@ endproc // main()
   call main 
 
 SYMBOLS
+(byte*~) $0
 (byte*) SCREEN
 (void()) main()
 (boolean~) main::$0
@@ -35,7 +37,8 @@ SYMBOLS
 
 INITIAL CONTROL FLOW GRAPH
 @begin: scope:[]  from
-  (byte*) SCREEN ← (word/signed word) 1024
+  (byte*~) $0 ← ((byte*)) (word/signed word) 1024
+  (byte*) SCREEN ← (byte*~) $0
   to:@1
 main: scope:[main]  from
   (byte) main::i ← (byte/signed byte/word/signed word) 0
@@ -59,7 +62,8 @@ main::@return: scope:[main]  from main::@2
 Removing empty block main::@2
 CONTROL FLOW GRAPH
 @begin: scope:[]  from
-  (byte*) SCREEN ← (word/signed word) 1024
+  (byte*~) $0 ← ((byte*)) (word/signed word) 1024
+  (byte*) SCREEN ← (byte*~) $0
   to:@1
 main: scope:[main]  from
   (byte) main::i ← (byte/signed byte/word/signed word) 0
@@ -82,7 +86,8 @@ PROCEDURE MODIFY VARIABLE ANALYSIS
 
 CONTROL FLOW GRAPH WITH ASSIGNMENT CALL
 @begin: scope:[]  from
-  (byte*) SCREEN ← (word/signed word) 1024
+  (byte*~) $0 ← ((byte*)) (word/signed word) 1024
+  (byte*) SCREEN ← (byte*~) $0
   to:@1
 main: scope:[main]  from @1
   (byte) main::i ← (byte/signed byte/word/signed word) 0
@@ -108,7 +113,8 @@ Completing Phi functions...
 Completing Phi functions...
 CONTROL FLOW GRAPH SSA
 @begin: scope:[]  from
-  (byte*) SCREEN#0 ← (word/signed word) 1024
+  (byte*~) $0 ← ((byte*)) (word/signed word) 1024
+  (byte*) SCREEN#0 ← (byte*~) $0
   to:@1
 main: scope:[main]  from @1
   (byte*) SCREEN#2 ← phi( @1/(byte*) SCREEN#3 )
@@ -135,7 +141,8 @@ main::@return: scope:[main]  from main::@1
 
 CONTROL FLOW GRAPH WITH ASSIGNMENT CALL & RETURN
 @begin: scope:[]  from
-  (byte*) SCREEN#0 ← (word/signed word) 1024
+  (byte*~) $0 ← ((byte*)) (word/signed word) 1024
+  (byte*) SCREEN#0 ← (byte*~) $0
   to:@1
 main: scope:[main]  from @1
   (byte*) SCREEN#2 ← phi( @1/(byte*) SCREEN#3 )
@@ -161,6 +168,7 @@ main::@return: scope:[main]  from main::@1
 @end: scope:[]  from @2
 
 INITIAL SSA SYMBOL TABLE
+(byte*~) $0
 (label) @1
 (label) @2
 (label) @begin
@@ -183,7 +191,8 @@ Culled Empty Block (label) @2
 Succesful SSA optimization Pass2CullEmptyBlocks
 CONTROL FLOW GRAPH
 @begin: scope:[]  from
-  (byte*) SCREEN#0 ← (word/signed word) 1024
+  (byte*~) $0 ← ((byte*)) (word/signed word) 1024
+  (byte*) SCREEN#0 ← (byte*~) $0
   to:@1
 main: scope:[main]  from @1
   (byte*) SCREEN#2 ← phi( @1/(byte*) SCREEN#3 )
@@ -206,11 +215,11 @@ main::@return: scope:[main]  from main::@1
   to:@end
 @end: scope:[]  from @1
 
-Alias (byte*) SCREEN#0 = (byte*) SCREEN#2 (byte*) SCREEN#3 
+Alias (byte*) SCREEN#0 = (byte*) SCREEN#2 (byte*) SCREEN#3 (byte*~) $0 
 Succesful SSA optimization Pass2AliasElimination
 CONTROL FLOW GRAPH
 @begin: scope:[]  from
-  (byte*) SCREEN#0 ← (word/signed word) 1024
+  (byte*) SCREEN#0 ← ((byte*)) (word/signed word) 1024
   to:@1
 main: scope:[main]  from @1
   (byte) main::i#0 ← (byte/signed byte/word/signed word) 0
@@ -235,7 +244,7 @@ Self Phi Eliminated (byte*) SCREEN#1
 Succesful SSA optimization Pass2SelfPhiElimination
 CONTROL FLOW GRAPH
 @begin: scope:[]  from
-  (byte*) SCREEN#0 ← (word/signed word) 1024
+  (byte*) SCREEN#0 ← ((byte*)) (word/signed word) 1024
   to:@1
 main: scope:[main]  from @1
   (byte) main::i#0 ← (byte/signed byte/word/signed word) 0
@@ -260,7 +269,7 @@ Redundant Phi (byte*) SCREEN#1 (byte*) SCREEN#0
 Succesful SSA optimization Pass2RedundantPhiElimination
 CONTROL FLOW GRAPH
 @begin: scope:[]  from
-  (byte*) SCREEN#0 ← (word/signed word) 1024
+  (byte*) SCREEN#0 ← ((byte*)) (word/signed word) 1024
   to:@1
 main: scope:[main]  from @1
   (byte) main::i#0 ← (byte/signed byte/word/signed word) 0
@@ -284,7 +293,7 @@ Simple Condition (boolean~) main::$0 if((byte) main::i#1!=(byte/signed byte/word
 Succesful SSA optimization Pass2ConditionalJumpSimplification
 CONTROL FLOW GRAPH
 @begin: scope:[]  from
-  (byte*) SCREEN#0 ← (word/signed word) 1024
+  (byte*) SCREEN#0 ← ((byte*)) (word/signed word) 1024
   to:@1
 main: scope:[main]  from @1
   (byte) main::i#0 ← (byte/signed byte/word/signed word) 0
@@ -303,7 +312,7 @@ main::@return: scope:[main]  from main::@1
   to:@end
 @end: scope:[]  from @1
 
-Constant (const byte*) SCREEN#0 = 1024
+Constant (const byte*) SCREEN#0 = ((byte*))1024
 Constant (const byte) main::i#0 = 0
 Succesful SSA optimization Pass2ConstantIdentification
 CONTROL FLOW GRAPH
@@ -355,7 +364,7 @@ FINAL SYMBOL TABLE
 (label) @begin
 (label) @end
 (byte*) SCREEN
-(const byte*) SCREEN#0 = (word/signed word) 1024
+(const byte*) SCREEN#0 = ((byte*))(word/signed word) 1024
 (void()) main()
 (label) main::@1
 (label) main::@return
@@ -733,7 +742,7 @@ FINAL SYMBOL TABLE
 (label) @begin
 (label) @end
 (byte*) SCREEN
-(const byte*) SCREEN#0 SCREEN = (word/signed word) 1024
+(const byte*) SCREEN#0 SCREEN = ((byte*))(word/signed word) 1024
 (void()) main()
 (label) main::@1
 (label) main::@return

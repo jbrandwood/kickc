@@ -101,6 +101,8 @@ public class Operator {
          return CAST_WORD;
       } else if (SymbolType.SWORD.equals(castType)) {
          return CAST_SWORD;
+      } else if (castType instanceof SymbolTypePointer && SymbolType.BYTE.equals(((SymbolTypePointer) castType).getElementType())) {
+         return CAST_PTRBY;
       } else {
          throw new RuntimeException("Unknown cast type " + castType);
 
@@ -123,10 +125,11 @@ public class Operator {
    public static final Operator DEREF_IDX = new Operator("*idx", "_derefidx_", Type.BINARY, 2);
    public static final Operator SET_LOWBYTE = new Operator("lo=", "_setlo_", Type.BINARY, 2);
    public static final Operator SET_HIBYTE = new Operator("hi=", "_sethi_", Type.BINARY, 2);
-   public static final Operator CAST_BYTE = new Operator("_byte_", "_byte_", Type.UNARY, 2);
-   public static final Operator CAST_SBYTE = new Operator("_sbyte_", "_sbyte_", Type.UNARY, 2);
-   public static final Operator CAST_WORD = new Operator("_word_", "_word_", Type.UNARY, 2);
-   public static final Operator CAST_SWORD = new Operator("_sword_", "_sword_", Type.UNARY, 2);
+   public static final Operator CAST_BYTE = new Operator("((byte))", "_byte_", Type.UNARY, 2);
+   public static final Operator CAST_SBYTE = new Operator("((signed byte))", "_sbyte_", Type.UNARY, 2);
+   public static final Operator CAST_WORD = new Operator("((word))", "_word_", Type.UNARY, 2);
+   public static final Operator CAST_SWORD = new Operator("((signed word))", "_sword_", Type.UNARY, 2);
+   public static final Operator CAST_PTRBY = new Operator("((byte*))", "_ptrby_", Type.UNARY, 2);
    public static final Operator MULTIPLY = new Operator("*", "_mul_", Type.BINARY, 3);
    public static final Operator DIVIDE = new Operator("/", "_div_", Type.BINARY, 3);
    public static final Operator PLUS = new Operator("+", "_plus_", Type.BINARY, 4);

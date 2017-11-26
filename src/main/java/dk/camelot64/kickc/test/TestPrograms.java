@@ -210,6 +210,16 @@ public class TestPrograms extends TestCase {
       fail("Expected compile error.");
    }
 
+   public void testTypeMismatch() throws IOException, URISyntaxException {
+      try {
+         compileAndCompare("typemismatch");
+      } catch (CompileError e) {
+         // expecting error!
+         return;
+      }
+      fail("Expected compile error.");
+   }
+
 
    private void compileAndCompare(String filename) throws IOException, URISyntaxException {
       TestPrograms tester = new TestPrograms();

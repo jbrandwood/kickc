@@ -168,10 +168,10 @@ public class SymbolTypeInference {
       if (isSByte(type1) && isSByte(type2)) {
          return SymbolType.SBYTE;
       }
-      if (isWord(type1) && isWord(type2)) {
+      if (isWord(type1) && isWord(type2) || isByte(type2)) {
          return SymbolType.WORD;
       }
-      if (isSWord(type1) && isSWord(type2)) {
+      if (isSWord(type1) && isSWord(type2) || isSByte(type2)) {
          return SymbolType.SWORD;
       }
       throw new RuntimeException("Type inference case not handled " + type1 + " " + "+" + " " + type2);

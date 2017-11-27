@@ -70,8 +70,10 @@ public class AsmProgramStaticRegisterValues {
          }
          if (instructionType.getMnemnonic().equals("lda") && instructionType.getAddressingMode().equals(AsmAddressingMode.IMM)) {
             current.setA(instruction.getParameter());
+            current.setaMem(null);
+
             try {
-               int immValue = Integer.parseInt(instruction.getParameter());
+               int immValue = getImmValue(instruction);
                current.setZ(immValue == 0);
                current.setN(immValue > 127);
             } catch (NumberFormatException e) {
@@ -83,8 +85,9 @@ public class AsmProgramStaticRegisterValues {
          }
          if (instructionType.getMnemnonic().equals("ldx") && instructionType.getAddressingMode().equals(AsmAddressingMode.IMM)) {
             current.setX(instruction.getParameter());
+            current.setxMem(null);
             try {
-               int immValue = Integer.parseInt(instruction.getParameter());
+               int immValue = getImmValue(instruction);
                current.setZ(immValue == 0);
                current.setN(immValue > 127);
             } catch (NumberFormatException e) {
@@ -96,8 +99,9 @@ public class AsmProgramStaticRegisterValues {
          }
          if (instructionType.getMnemnonic().equals("ldy") && instructionType.getAddressingMode().equals(AsmAddressingMode.IMM)) {
             current.setY(instruction.getParameter());
+            current.setyMem(null);
             try {
-               int immValue = Integer.parseInt(instruction.getParameter());
+               int immValue = getImmValue(instruction);
                current.setZ(immValue == 0);
                current.setN(immValue > 127);
             } catch (NumberFormatException e) {
@@ -131,6 +135,18 @@ public class AsmProgramStaticRegisterValues {
          }
       }
       return current;
+   }
+
+   private int getImmValue(AsmInstruction instruction) {
+      int immValue;
+      if(instruction.getParameter().equals("<0")) {
+         immValue = 0;
+      } else if(instruction.getParameter().equals(">0")) {
+         immValue = 0;
+      } else{
+         immValue = Integer.parseInt(instruction.getParameter());
+      }
+      return immValue;
    }
 
    /**

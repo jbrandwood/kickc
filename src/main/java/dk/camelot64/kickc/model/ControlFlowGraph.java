@@ -118,12 +118,7 @@ public class ControlFlowGraph {
             predecessorBlocks.add(other);
          }
       }
-      Collections.sort(predecessorBlocks, new Comparator<ControlFlowBlock>() {
-         @Override
-         public int compare(ControlFlowBlock o1, ControlFlowBlock o2) {
-            return o1.getLabel().getFullName().compareTo(o2.getLabel().getFullName());
-         }
-      });
+      Collections.sort(predecessorBlocks, Comparator.comparing(o -> o.getLabel().getFullName()));
       return predecessorBlocks;
    }
 

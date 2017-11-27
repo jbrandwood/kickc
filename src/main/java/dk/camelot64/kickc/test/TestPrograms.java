@@ -24,6 +24,10 @@ public class TestPrograms extends TestCase {
       helper = new ReferenceHelper("dk/camelot64/kickc/test/ref/");
    }
 
+   public void testUnusedMethod() throws IOException, URISyntaxException {
+      compileAndCompare("unused-method");
+   }
+
    public void testLocalString() throws IOException, URISyntaxException {
       compileAndCompare("local-string");
    }

@@ -21,7 +21,6 @@ public class VariableReferenceInfos {
    /** Variables defined in each statement. */
    private Map<Integer, Collection<VariableRef>> stmtDefined;
 
-
    public VariableReferenceInfos(
          Map<LabelRef, Collection<VariableRef>> blockReferenced,
          Map<LabelRef, Collection<VariableRef>> blockUsed,

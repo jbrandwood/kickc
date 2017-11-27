@@ -1,0 +1,442 @@
+void main() {
+    byte* screen = $0400;
+    screen[0] = 1;
+}
+
+byte sum(byte b1, byte b2) {
+    return b1+b2;
+}
+PROGRAM
+proc (void()) main()
+  (byte*) main::screen ← (word/signed word) 1024
+  *((byte*) main::screen + (byte/signed byte/word/signed word) 0) ← (byte/signed byte/word/signed word) 1
+main::@return:
+  return 
+endproc // main()
+proc (byte()) sum((byte) sum::b1 , (byte) sum::b2)
+  (byte~) sum::$0 ← (byte) sum::b1 + (byte) sum::b2
+  (byte) sum::return ← (byte~) sum::$0
+  goto sum::@return
+sum::@return:
+  (byte) sum::return ← (byte) sum::return
+  return (byte) sum::return
+endproc // sum()
+  call main 
+
+SYMBOLS
+(void()) main()
+(label) main::@return
+(byte*) main::screen
+(byte()) sum((byte) sum::b1 , (byte) sum::b2)
+(byte~) sum::$0
+(label) sum::@return
+(byte) sum::b1
+(byte) sum::b2
+(byte) sum::return
+
+Promoting word/signed word to byte* in main::screen ← ((byte*)) 1024
+INITIAL CONTROL FLOW GRAPH
+@begin: scope:[]  from
+  to:@1
+main: scope:[main]  from
+  (byte*) main::screen ← ((byte*)) (word/signed word) 1024
+  *((byte*) main::screen + (byte/signed byte/word/signed word) 0) ← (byte/signed byte/word/signed word) 1
+  to:main::@return
+main::@return: scope:[main]  from main
+  return 
+  to:@return
+@1: scope:[]  from @begin
+  to:@2
+sum: scope:[sum]  from
+  (byte~) sum::$0 ← (byte) sum::b1 + (byte) sum::b2
+  (byte) sum::return ← (byte~) sum::$0
+  to:sum::@return
+sum::@return: scope:[sum]  from sum sum::@1
+  (byte) sum::return ← (byte) sum::return
+  return (byte) sum::return
+  to:@return
+sum::@1: scope:[sum]  from
+  to:sum::@return
+@2: scope:[]  from @1
+  call main 
+  to:@end
+@end: scope:[]  from @2
+
+Removing unused procedure sum
+Removing empty block @1
+CONTROL FLOW GRAPH
+@begin: scope:[]  from
+  to:@2
+main: scope:[main]  from
+  (byte*) main::screen ← ((byte*)) (word/signed word) 1024
+  *((byte*) main::screen + (byte/signed byte/word/signed word) 0) ← (byte/signed byte/word/signed word) 1
+  to:main::@return
+main::@return: scope:[main]  from main
+  return 
+  to:@return
+@2: scope:[]  from @begin
+  call main 
+  to:@end
+@end: scope:[]  from @2
+
+PROCEDURE MODIFY VARIABLE ANALYSIS
+
+CONTROL FLOW GRAPH WITH ASSIGNMENT CALL
+@begin: scope:[]  from
+  to:@2
+main: scope:[main]  from @2
+  (byte*) main::screen ← ((byte*)) (word/signed word) 1024
+  *((byte*) main::screen + (byte/signed byte/word/signed word) 0) ← (byte/signed byte/word/signed word) 1
+  to:main::@return
+main::@return: scope:[main]  from main
+  return 
+  to:@return
+@2: scope:[]  from @begin
+  call main param-assignment
+  to:@3
+@3: scope:[]  from @2
+  to:@end
+@end: scope:[]  from @3
+
+Completing Phi functions...
+CONTROL FLOW GRAPH SSA
+@begin: scope:[]  from
+  to:@2
+main: scope:[main]  from @2
+  (byte*) main::screen#0 ← ((byte*)) (word/signed word) 1024
+  *((byte*) main::screen#0 + (byte/signed byte/word/signed word) 0) ← (byte/signed byte/word/signed word) 1
+  to:main::@return
+main::@return: scope:[main]  from main
+  return 
+  to:@return
+@2: scope:[]  from @begin
+  call main param-assignment
+  to:@3
+@3: scope:[]  from @2
+  to:@end
+@end: scope:[]  from @3
+
+CONTROL FLOW GRAPH WITH ASSIGNMENT CALL & RETURN
+@begin: scope:[]  from
+  to:@2
+main: scope:[main]  from @2
+  (byte*) main::screen#0 ← ((byte*)) (word/signed word) 1024
+  *((byte*) main::screen#0 + (byte/signed byte/word/signed word) 0) ← (byte/signed byte/word/signed word) 1
+  to:main::@return
+main::@return: scope:[main]  from main
+  return 
+  to:@return
+@2: scope:[]  from @begin
+  call main param-assignment
+  to:@3
+@3: scope:[]  from @2
+  to:@end
+@end: scope:[]  from @3
+
+INITIAL SSA SYMBOL TABLE
+(label) @2
+(label) @3
+(label) @begin
+(label) @end
+(void()) main()
+(label) main::@return
+(byte*) main::screen
+(byte*) main::screen#0
+
+Culled Empty Block (label) @3
+Succesful SSA optimization Pass2CullEmptyBlocks
+CONTROL FLOW GRAPH
+@begin: scope:[]  from
+  to:@2
+main: scope:[main]  from @2
+  (byte*) main::screen#0 ← ((byte*)) (word/signed word) 1024
+  *((byte*) main::screen#0 + (byte/signed byte/word/signed word) 0) ← (byte/signed byte/word/signed word) 1
+  to:main::@return
+main::@return: scope:[main]  from main
+  return 
+  to:@return
+@2: scope:[]  from @begin
+  call main param-assignment
+  to:@end
+@end: scope:[]  from @2
+
+Constant (const byte*) main::screen#0 = ((byte*))1024
+Succesful SSA optimization Pass2ConstantIdentification
+CONTROL FLOW GRAPH
+@begin: scope:[]  from
+  to:@2
+main: scope:[main]  from @2
+  *((const byte*) main::screen#0 + (byte/signed byte/word/signed word) 0) ← (byte/signed byte/word/signed word) 1
+  to:main::@return
+main::@return: scope:[main]  from main
+  return 
+  to:@return
+@2: scope:[]  from @begin
+  call main param-assignment
+  to:@end
+@end: scope:[]  from @2
+
+Consolidated assigned array index constant in assignment *(main::screen#0+0)
+Succesful SSA optimization Pass2ConstantAdditionElimination
+CONTROL FLOW GRAPH
+@begin: scope:[]  from
+  to:@2
+main: scope:[main]  from @2
+  *((const byte*) main::screen#0+(byte/signed byte/word/signed word) 0) ← (byte/signed byte/word/signed word) 1
+  to:main::@return
+main::@return: scope:[main]  from main
+  return 
+  to:@return
+@2: scope:[]  from @begin
+  call main param-assignment
+  to:@end
+@end: scope:[]  from @2
+
+FINAL SYMBOL TABLE
+(label) @2
+(label) @begin
+(label) @end
+(void()) main()
+(label) main::@return
+(byte*) main::screen
+(const byte*) main::screen#0 = ((byte*))(word/signed word) 1024
+
+Block Sequence Planned @begin @2 @end main main::@return 
+Block Sequence Planned @begin @2 @end main main::@return 
+CONTROL FLOW GRAPH - PHI LIFTED
+@begin: scope:[]  from
+  to:@2
+@2: scope:[]  from @begin
+  call main param-assignment
+  to:@end
+@end: scope:[]  from @2
+main: scope:[main]  from @2
+  *((const byte*) main::screen#0+(byte/signed byte/word/signed word) 0) ← (byte/signed byte/word/signed word) 1
+  to:main::@return
+main::@return: scope:[main]  from main
+  return 
+  to:@return
+
+CALL GRAPH
+Calls in [] to main:0 
+
+Propagating live ranges...
+CONTROL FLOW GRAPH - LIVE RANGES FOUND
+@begin: scope:[]  from
+  to:@2
+@2: scope:[]  from @begin
+  [0] call main param-assignment [ ]
+  to:@end
+@end: scope:[]  from @2
+main: scope:[main]  from @2
+  [1] *((const byte*) main::screen#0+(byte/signed byte/word/signed word) 0) ← (byte/signed byte/word/signed word) 1 [ ]
+  to:main::@return
+main::@return: scope:[main]  from main
+  [2] return  [ ]
+  to:@return
+
+Created 0 initial phi equivalence classes
+Coalesced down to 0 phi equivalence classes
+Block Sequence Planned @begin @2 @end main main::@return 
+Propagating live ranges...
+CONTROL FLOW GRAPH - BEFORE EFFECTIVE LIVE RANGES
+@begin: scope:[]  from
+  to:@2
+@2: scope:[]  from @begin
+  [0] call main param-assignment [ ]
+  to:@end
+@end: scope:[]  from @2
+main: scope:[main]  from @2
+  [1] *((const byte*) main::screen#0+(byte/signed byte/word/signed word) 0) ← (byte/signed byte/word/signed word) 1 [ ]
+  to:main::@return
+main::@return: scope:[main]  from main
+  [2] return  [ ]
+  to:@return
+
+CONTROL FLOW GRAPH - PHI MEM COALESCED
+@begin: scope:[]  from
+  to:@2
+@2: scope:[]  from @begin
+  [0] call main param-assignment [ ] ( )
+  to:@end
+@end: scope:[]  from @2
+main: scope:[main]  from @2
+  [1] *((const byte*) main::screen#0+(byte/signed byte/word/signed word) 0) ← (byte/signed byte/word/signed word) 1 [ ] ( main:0 [ ] )
+  to:main::@return
+main::@return: scope:[main]  from main
+  [2] return  [ ] ( main:0 [ ] )
+  to:@return
+
+DOMINATORS
+@begin dominated by  @begin 
+@2 dominated by  @2 @begin 
+@end dominated by  @2 @begin @end 
+main dominated by  @2 @begin main 
+main::@return dominated by  main::@return @2 @begin main 
+
+NATURAL LOOPS
+
+Found 0 loops in scope []
+Found 0 loops in scope [main]
+NATURAL LOOPS WITH DEPTH
+
+
+VARIABLE REGISTER WEIGHTS
+(void()) main()
+(byte*) main::screen
+
+Initial phi equivalence classes
+Complete equivalence classes
+INITIAL ASM
+//SEG0 Basic Upstart
+.pc = $801 "Basic"
+:BasicUpstart(main)
+.pc = $80d "Program"
+//SEG1 Global Constants & labels
+//SEG2 @begin
+bbegin:
+  jmp b2
+//SEG3 @2
+b2:
+//SEG4 [0] call main param-assignment [ ] ( )
+  jsr main
+  jmp bend
+//SEG5 @end
+bend:
+//SEG6 main
+main: {
+    .const screen = $400
+  //SEG7 [1] *((const byte*) main::screen#0+(byte/signed byte/word/signed word) 0) ← (byte/signed byte/word/signed word) 1 [ ] ( main:0 [ ] ) -- _deref_cowo1=coby2 
+    lda #1
+    sta screen+0
+    jmp breturn
+  //SEG8 main::@return
+  breturn:
+  //SEG9 [2] return  [ ] ( main:0 [ ] )
+    rts
+}
+
+REGISTER UPLIFT POTENTIAL REGISTERS
+Statement [1] *((const byte*) main::screen#0+(byte/signed byte/word/signed word) 0) ← (byte/signed byte/word/signed word) 1 [ ] ( main:0 [ ] ) always clobbers reg byte a 
+
+REGISTER UPLIFT SCOPES
+Uplift Scope [main] 
+Uplift Scope [] 
+
+Uplifting [main] best 54 combination 
+Uplifting [] best 54 combination 
+Removing instruction jmp b2
+Removing instruction jmp bend
+Removing instruction jmp breturn
+Succesful ASM optimization Pass5NextJumpElimination
+ASSEMBLER
+//SEG0 Basic Upstart
+.pc = $801 "Basic"
+:BasicUpstart(main)
+.pc = $80d "Program"
+//SEG1 Global Constants & labels
+//SEG2 @begin
+bbegin:
+//SEG3 @2
+b2:
+//SEG4 [0] call main param-assignment [ ] ( )
+  jsr main
+//SEG5 @end
+bend:
+//SEG6 main
+main: {
+    .const screen = $400
+  //SEG7 [1] *((const byte*) main::screen#0+(byte/signed byte/word/signed word) 0) ← (byte/signed byte/word/signed word) 1 [ ] ( main:0 [ ] ) -- _deref_cowo1=coby2 
+    lda #1
+    sta screen+0
+  //SEG8 main::@return
+  breturn:
+  //SEG9 [2] return  [ ] ( main:0 [ ] )
+    rts
+}
+
+Removing instruction bbegin:
+Succesful ASM optimization Pass5RedundantLabelElimination
+ASSEMBLER
+//SEG0 Basic Upstart
+.pc = $801 "Basic"
+:BasicUpstart(main)
+.pc = $80d "Program"
+//SEG1 Global Constants & labels
+//SEG2 @begin
+//SEG3 @2
+b2:
+//SEG4 [0] call main param-assignment [ ] ( )
+  jsr main
+//SEG5 @end
+bend:
+//SEG6 main
+main: {
+    .const screen = $400
+  //SEG7 [1] *((const byte*) main::screen#0+(byte/signed byte/word/signed word) 0) ← (byte/signed byte/word/signed word) 1 [ ] ( main:0 [ ] ) -- _deref_cowo1=coby2 
+    lda #1
+    sta screen+0
+  //SEG8 main::@return
+  breturn:
+  //SEG9 [2] return  [ ] ( main:0 [ ] )
+    rts
+}
+
+Removing instruction b2:
+Removing instruction bend:
+Removing instruction breturn:
+Succesful ASM optimization Pass5UnusedLabelElimination
+ASSEMBLER
+//SEG0 Basic Upstart
+.pc = $801 "Basic"
+:BasicUpstart(main)
+.pc = $80d "Program"
+//SEG1 Global Constants & labels
+//SEG2 @begin
+//SEG3 @2
+//SEG4 [0] call main param-assignment [ ] ( )
+  jsr main
+//SEG5 @end
+//SEG6 main
+main: {
+    .const screen = $400
+  //SEG7 [1] *((const byte*) main::screen#0+(byte/signed byte/word/signed word) 0) ← (byte/signed byte/word/signed word) 1 [ ] ( main:0 [ ] ) -- _deref_cowo1=coby2 
+    lda #1
+    sta screen+0
+  //SEG8 main::@return
+  //SEG9 [2] return  [ ] ( main:0 [ ] )
+    rts
+}
+
+FINAL SYMBOL TABLE
+(label) @2
+(label) @begin
+(label) @end
+(void()) main()
+(label) main::@return
+(byte*) main::screen
+(const byte*) main::screen#0 screen = ((byte*))(word/signed word) 1024
+
+
+FINAL CODE
+//SEG0 Basic Upstart
+.pc = $801 "Basic"
+:BasicUpstart(main)
+.pc = $80d "Program"
+//SEG1 Global Constants & labels
+//SEG2 @begin
+//SEG3 @2
+//SEG4 [0] call main param-assignment [ ] ( )
+  jsr main
+//SEG5 @end
+//SEG6 main
+main: {
+    .const screen = $400
+  //SEG7 [1] *((const byte*) main::screen#0+(byte/signed byte/word/signed word) 0) ← (byte/signed byte/word/signed word) 1 [ ] ( main:0 [ ] ) -- _deref_cowo1=coby2 
+    lda #1
+    sta screen+0
+  //SEG8 main::@return
+  //SEG9 [2] return  [ ] ( main:0 [ ] )
+    rts
+}
+

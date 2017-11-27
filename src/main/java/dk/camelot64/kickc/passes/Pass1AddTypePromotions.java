@@ -61,6 +61,7 @@ public class Pass1AddTypePromotions {
          if(assignment.getOperator()==null) {
             // No operator - add cast directly!
             assignment.setOperator(Operator.getCastUnary(lValueType));
+            getProgram().getLog().append("Promoting "+rValueType+" to "+lValueType+" in "+assignment);
          } else {
             throw new RuntimeException("Tmp-var promotions not implemented yet "+assignment);
          }

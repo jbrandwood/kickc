@@ -86,14 +86,12 @@ public class Compiler {
       log.append("INITIAL CONTROL FLOW GRAPH");
       log.append(program.getGraph().toString(program));
 
-      Pass1EliminateEmptyBlocks pass1EliminateEmptyBlocks = new Pass1EliminateEmptyBlocks(program);
-      boolean blockEliminated = pass1EliminateEmptyBlocks.eliminate();
-      if (blockEliminated) {
-         log.append("CONTROL FLOW GRAPH");
-         log.append(program.getGraph().toString(program));
-      }
+      new Pass1EliminateUncalledProcedures(program).eliminate();
+      new Pass1EliminateEmptyBlocks(program).eliminate();
+      log.append("CONTROL FLOW GRAPH");
+      log.append(program.getGraph().toString(program));
 
-      (new Pass1ModifiedVarsAnalysis(program)).findModifiedVars();
+      new Pass1ModifiedVarsAnalysis(program).findModifiedVars();
       log.append("PROCEDURE MODIFY VARIABLE ANALYSIS");
       log.append(program.getProcedureModifiedVars().toString(program));
 

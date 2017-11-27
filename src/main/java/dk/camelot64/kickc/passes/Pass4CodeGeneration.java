@@ -48,6 +48,7 @@ public class Pass4CodeGeneration {
       for (ControlFlowBlock block : getGraph().getAllBlocks()) {
          if (!block.getScope().equals(currentScope)) {
             if (!ScopeRef.ROOT.equals(currentScope)) {
+               addData(asm, currentScope);
                asm.addScopeEnd();
             }
             currentScope = block.getScope();
@@ -56,7 +57,6 @@ public class Pass4CodeGeneration {
             // Add all ZP labels for the scope
             addConstants(asm, currentScope);
             addZpLabels(asm, currentScope);
-            addData(asm, currentScope);
          }
          // Generate entry points (if needed)
          genBlockEntryPoints(asm, block);
@@ -87,6 +87,7 @@ public class Pass4CodeGeneration {
          }
       }
       if (!ScopeRef.ROOT.equals(currentScope)) {
+         addData(asm, currentScope);
          asm.addScopeEnd();
       }
       program.setAsm(asm);

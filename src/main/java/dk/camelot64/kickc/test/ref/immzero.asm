@@ -6,9 +6,8 @@ main: {
     .label w = 2
     lda #<0
     sta w
-    lda #>0
     sta w+1
-    ldx #0
+    tax
   b1:
     txa
     clc

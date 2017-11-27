@@ -118,9 +118,8 @@ init_plot_tables: {
     bne b1
     lda #<0
     sta yoffs
-    lda #>0
     sta yoffs+1
-    ldx #0
+    tax
   b3:
     txa
     and #7

@@ -72,43 +72,37 @@ public class AsmProgramStaticRegisterValues {
             current.setA(instruction.getParameter());
             current.setaMem(null);
 
-            try {
-               int immValue = getImmValue(instruction);
+            Integer immValue = getImmValue(instruction.getParameter());
+            if (immValue != null) {
                current.setZ(immValue == 0);
                current.setN(immValue > 127);
-            } catch (NumberFormatException e) {
-               // ignore
             }
          }
-         if (instructionType.getMnemnonic().equals("sta") && (instructionType.getAddressingMode().equals(AsmAddressingMode.ZP)||instructionType.getAddressingMode().equals(AsmAddressingMode.ABS))) {
+         if (instructionType.getMnemnonic().equals("sta") && (instructionType.getAddressingMode().equals(AsmAddressingMode.ZP) || instructionType.getAddressingMode().equals(AsmAddressingMode.ABS))) {
             current.setaMem(instruction.getParameter());
          }
          if (instructionType.getMnemnonic().equals("ldx") && instructionType.getAddressingMode().equals(AsmAddressingMode.IMM)) {
             current.setX(instruction.getParameter());
             current.setxMem(null);
-            try {
-               int immValue = getImmValue(instruction);
+            Integer immValue = getImmValue(instruction.getParameter());
+            if (immValue != null) {
                current.setZ(immValue == 0);
                current.setN(immValue > 127);
-            } catch (NumberFormatException e) {
-               // ignore
             }
          }
-         if (instructionType.getMnemnonic().equals("stx") && (instructionType.getAddressingMode().equals(AsmAddressingMode.ZP)||instructionType.getAddressingMode().equals(AsmAddressingMode.ABS))) {
+         if (instructionType.getMnemnonic().equals("stx") && (instructionType.getAddressingMode().equals(AsmAddressingMode.ZP) || instructionType.getAddressingMode().equals(AsmAddressingMode.ABS))) {
             current.setxMem(instruction.getParameter());
          }
          if (instructionType.getMnemnonic().equals("ldy") && instructionType.getAddressingMode().equals(AsmAddressingMode.IMM)) {
             current.setY(instruction.getParameter());
             current.setyMem(null);
-            try {
-               int immValue = getImmValue(instruction);
+            Integer immValue = getImmValue(instruction.getParameter());
+            if (immValue != null) {
                current.setZ(immValue == 0);
                current.setN(immValue > 127);
-            } catch (NumberFormatException e) {
-               // ignore
             }
          }
-         if (instructionType.getMnemnonic().equals("sty") && (instructionType.getAddressingMode().equals(AsmAddressingMode.ZP)||instructionType.getAddressingMode().equals(AsmAddressingMode.ABS))) {
+         if (instructionType.getMnemnonic().equals("sty") && (instructionType.getAddressingMode().equals(AsmAddressingMode.ZP) || instructionType.getAddressingMode().equals(AsmAddressingMode.ABS))) {
             current.setyMem(instruction.getParameter());
          }
          if (instructionType.getMnemnonic().equals("txa")) {
@@ -137,16 +131,45 @@ public class AsmProgramStaticRegisterValues {
       return current;
    }
 
-   private int getImmValue(AsmInstruction instruction) {
-      int immValue;
-      if(instruction.getParameter().equals("<0")) {
-         immValue = 0;
-      } else if(instruction.getParameter().equals(">0")) {
-         immValue = 0;
-      } else{
-         immValue = Integer.parseInt(instruction.getParameter());
+   public static Integer getImmValue(String parameter) {
+      Integer immValue = null;
+      if (parameter != null) {
+         if(parameter.startsWith("<")) {
+            try {
+               int parValue = Integer.parseInt(parameter.substring(1));
+               return 0xff & parValue;
+            } catch (NumberFormatException e) {
+               // ignore
+            }
+         } else if(parameter.startsWith(">")) {
+            try {
+               int parValue = Integer.parseInt(parameter.substring(1));
+               return 0xff & (parValue / 0x100);
+            } catch (NumberFormatException e) {
+               // ignore
+            }
+         } else {
+            try {
+               immValue = Integer.parseInt(parameter);
+               return immValue;
+            } catch (NumberFormatException e) {
+               // ignore
+            }
+         }
       }
       return immValue;
+   }
+
+   public static boolean matchImm(String immVal1, String immVal2) {
+      if (immVal1 != null && immVal2 != null && immVal1.equals(immVal2)) {
+         return true;
+      }
+      Integer immInt1 = getImmValue(immVal1);
+      Integer immInt2 = getImmValue(immVal2);
+      if (immInt1 != null && immInt2 != null && immInt1.equals(immInt2)) {
+         return true;
+      }
+      return false;
    }
 
    /**
@@ -259,6 +282,7 @@ public class AsmProgramStaticRegisterValues {
       public void setZ(Boolean z) {
          this.z = z;
       }
+
 
    }
 

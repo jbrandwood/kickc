@@ -387,9 +387,7 @@ public class Pass1GenerateStatementSequence extends KickCBaseVisitor<Object> {
 
    @Override
    public Object visitLvaluePtrExpr(KickCParser.LvaluePtrExprContext ctx) {
-      PrePostModifierHandler.addPreModifiers(this, ctx.expr());
       RValue rValue = (RValue) this.visit(ctx.expr());
-      PrePostModifierHandler.addPostModifiers(this, ctx.expr());
       return new PointerDereferenceSimple(rValue);
    }
 

@@ -49,18 +49,7 @@ public class Pass3VariableRegisterWeightAnalysis extends Pass2Base {
                }
             } else if (statement instanceof StatementAssignment) {
                // Add weights for the definition of the variable
-               LValue lValue = ((StatementAssignment) statement).getlValue();
-               if (lValue instanceof VariableRef) {
-                  double w = addWeight((VariableRef) lValue, block.getLabel());
-                  //log.append("Definition of " + lValue + " w+:" + w + " - [" + statement.getIndex()+"]");
-               }
-               // Also add weight to used pointers
-               if(lValue instanceof PointerDereferenceSimple) {
-                  addUsageWeightRValue(((PointerDereferenceSimple) lValue).getPointer(), statement, block.getLabel());
-               } else if(lValue instanceof PointerDereferenceIndexed) {
-                  addUsageWeightRValue(((PointerDereferenceIndexed) lValue).getPointer(), statement, block.getLabel());
-                  addUsageWeightRValue(((PointerDereferenceIndexed) lValue).getIndex(), statement, block.getLabel());
-               }
+               addUsageWeightRValue(((StatementAssignment) statement).getlValue(), statement, block.getLabel());
                // Add weights for each usage of variables
                addUsageWeightRValue(((StatementAssignment) statement).getrValue1(), statement, block.getLabel());
                addUsageWeightRValue(((StatementAssignment) statement).getrValue2(), statement, block.getLabel());
@@ -80,6 +69,11 @@ public class Pass3VariableRegisterWeightAnalysis extends Pass2Base {
       if (rValue instanceof VariableRef) {
          double w = addWeight((VariableRef) rValue, block);
          //log.append("Usage of " + rValue + " w+:" + w + " - [" + statement.getIndex()+"]");
+      } else if(rValue instanceof PointerDereferenceSimple) {
+         addUsageWeightRValue(((PointerDereferenceSimple) rValue).getPointer(), statement, block);
+      } else if(rValue instanceof PointerDereferenceIndexed) {
+         addUsageWeightRValue(((PointerDereferenceIndexed) rValue).getPointer(), statement, block);
+         addUsageWeightRValue(((PointerDereferenceIndexed) rValue).getIndex(), statement, block);
       }
    }
 

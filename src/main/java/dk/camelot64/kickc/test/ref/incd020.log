@@ -302,71 +302,86 @@ main::@return: scope:[main]  from main::@1
   return 
   to:@return
 
+Adding NOP phi() at start of @begin
+Adding NOP phi() at start of @1
+Adding NOP phi() at start of @end
 Adding NOP phi() at start of main
 CALL GRAPH
-Calls in [] to main:0 
+Calls in [] to main:2 
 
 Propagating live ranges...
 CONTROL FLOW GRAPH - LIVE RANGES FOUND
 @begin: scope:[]  from
+  [0] phi() [ ]
   to:@1
 @1: scope:[]  from @begin
-  [0] call main param-assignment [ ]
+  [1] phi() [ ]
+  [2] call main param-assignment [ ]
   to:@end
 @end: scope:[]  from @1
+  [3] phi() [ ]
 main: scope:[main]  from @1
-  [1] phi() [ ]
+  [4] phi() [ ]
   to:main::@1
 main::@1: scope:[main]  from main main::@1
-  [2] *((const byte*) BGCOL#0) ← ++ *((const byte*) BGCOL#0) [ ]
-  [3] *((const byte*) BGCOL#0) ← -- *((const byte*) BGCOL#0) [ ]
-  [4] if(true) goto main::@1 [ ]
+  [5] *((const byte*) BGCOL#0) ← ++ *((const byte*) BGCOL#0) [ ]
+  [6] *((const byte*) BGCOL#0) ← -- *((const byte*) BGCOL#0) [ ]
+  [7] if(true) goto main::@1 [ ]
   to:main::@return
 main::@return: scope:[main]  from main::@1
-  [5] return  [ ]
+  [8] return  [ ]
   to:@return
 
 Created 0 initial phi equivalence classes
 Coalesced down to 0 phi equivalence classes
 Block Sequence Planned @begin @1 @end main main::@1 main::@return 
+Adding NOP phi() at start of @begin
+Adding NOP phi() at start of @1
+Adding NOP phi() at start of @end
 Adding NOP phi() at start of main
 Propagating live ranges...
 CONTROL FLOW GRAPH - BEFORE EFFECTIVE LIVE RANGES
 @begin: scope:[]  from
+  [0] phi() [ ]
   to:@1
 @1: scope:[]  from @begin
-  [0] call main param-assignment [ ]
+  [1] phi() [ ]
+  [2] call main param-assignment [ ]
   to:@end
 @end: scope:[]  from @1
+  [3] phi() [ ]
 main: scope:[main]  from @1
-  [1] phi() [ ]
+  [4] phi() [ ]
   to:main::@1
 main::@1: scope:[main]  from main main::@1
-  [2] *((const byte*) BGCOL#0) ← ++ *((const byte*) BGCOL#0) [ ]
-  [3] *((const byte*) BGCOL#0) ← -- *((const byte*) BGCOL#0) [ ]
-  [4] if(true) goto main::@1 [ ]
+  [5] *((const byte*) BGCOL#0) ← ++ *((const byte*) BGCOL#0) [ ]
+  [6] *((const byte*) BGCOL#0) ← -- *((const byte*) BGCOL#0) [ ]
+  [7] if(true) goto main::@1 [ ]
   to:main::@return
 main::@return: scope:[main]  from main::@1
-  [5] return  [ ]
+  [8] return  [ ]
   to:@return
 
 CONTROL FLOW GRAPH - PHI MEM COALESCED
 @begin: scope:[]  from
+  [0] phi() [ ] ( )
   to:@1
 @1: scope:[]  from @begin
-  [0] call main param-assignment [ ] ( )
+  [1] phi() [ ] ( )
+  [2] call main param-assignment [ ] ( )
   to:@end
 @end: scope:[]  from @1
+  [3] phi() [ ] ( )
 main: scope:[main]  from @1
-  [1] phi() [ ] ( main:0 [ ] )
+  [4] phi() [ ] ( main:2 [ ] )
   to:main::@1
 main::@1: scope:[main]  from main main::@1
-  [2] *((const byte*) BGCOL#0) ← ++ *((const byte*) BGCOL#0) [ ] ( main:0 [ ] )
-  [3] *((const byte*) BGCOL#0) ← -- *((const byte*) BGCOL#0) [ ] ( main:0 [ ] )
-  [4] if(true) goto main::@1 [ ] ( main:0 [ ] )
+  [5] *((const byte*) BGCOL#0) ← ++ *((const byte*) BGCOL#0) [ ] ( main:2 [ ] )
+  [6] *((const byte*) BGCOL#0) ← -- *((const byte*) BGCOL#0) [ ] ( main:2 [ ] )
+  [7] if(true) goto main::@1 [ ] ( main:2 [ ] )
   to:main::@return
 main::@return: scope:[main]  from main::@1
-  [5] return  [ ] ( main:0 [ ] )
+  [8] return  [ ] ( main:2 [ ] )
   to:@return
 
 DOMINATORS
@@ -404,31 +419,35 @@ INITIAL ASM
   .const BGCOL = $d020
 //SEG2 @begin
 bbegin:
+//SEG3 [1] phi from @begin to @1 [phi:@begin->@1]
+b1_from_bbegin:
   jmp b1
-//SEG3 @1
+//SEG4 @1
 b1:
-//SEG4 [0] call main param-assignment [ ] ( )
-//SEG5 [1] phi from @1 to main [phi:@1->main]
+//SEG5 [2] call main param-assignment [ ] ( )
+//SEG6 [4] phi from @1 to main [phi:@1->main]
 main_from_b1:
   jsr main
+//SEG7 [3] phi from @1 to @end [phi:@1->@end]
+bend_from_b1:
   jmp bend
-//SEG6 @end
+//SEG8 @end
 bend:
-//SEG7 main
+//SEG9 main
 main: {
     jmp b1
-  //SEG8 main::@1
+  //SEG10 main::@1
   b1:
-  //SEG9 [2] *((const byte*) BGCOL#0) ← ++ *((const byte*) BGCOL#0) [ ] ( main:0 [ ] ) -- _deref_cowo1=_inc__deref_cowo1 
+  //SEG11 [5] *((const byte*) BGCOL#0) ← ++ *((const byte*) BGCOL#0) [ ] ( main:2 [ ] ) -- _deref_cowo1=_inc__deref_cowo1 
     inc BGCOL
-  //SEG10 [3] *((const byte*) BGCOL#0) ← -- *((const byte*) BGCOL#0) [ ] ( main:0 [ ] ) -- _deref_cowo1=_dec__deref_cowo1 
+  //SEG12 [6] *((const byte*) BGCOL#0) ← -- *((const byte*) BGCOL#0) [ ] ( main:2 [ ] ) -- _deref_cowo1=_dec__deref_cowo1 
     dec BGCOL
-  //SEG11 [4] if(true) goto main::@1 [ ] ( main:0 [ ] ) -- true_then_la1 
+  //SEG13 [7] if(true) goto main::@1 [ ] ( main:2 [ ] ) -- true_then_la1 
     jmp b1
     jmp breturn
-  //SEG12 main::@return
+  //SEG14 main::@return
   breturn:
-  //SEG13 [5] return  [ ] ( main:0 [ ] )
+  //SEG15 [8] return  [ ] ( main:2 [ ] )
     rts
 }
 
@@ -438,8 +457,8 @@ REGISTER UPLIFT SCOPES
 Uplift Scope [main] 
 Uplift Scope [] 
 
-Uplifting [main] best 255 combination 
-Uplifting [] best 255 combination 
+Uplifting [main] best 228 combination 
+Uplifting [] best 228 combination 
 Removing instruction jmp b1
 Removing instruction jmp bend
 Removing instruction jmp b1
@@ -454,32 +473,38 @@ ASSEMBLER
   .const BGCOL = $d020
 //SEG2 @begin
 bbegin:
-//SEG3 @1
+//SEG3 [1] phi from @begin to @1 [phi:@begin->@1]
+b1_from_bbegin:
+//SEG4 @1
 b1:
-//SEG4 [0] call main param-assignment [ ] ( )
-//SEG5 [1] phi from @1 to main [phi:@1->main]
+//SEG5 [2] call main param-assignment [ ] ( )
+//SEG6 [4] phi from @1 to main [phi:@1->main]
 main_from_b1:
   jsr main
-//SEG6 @end
+//SEG7 [3] phi from @1 to @end [phi:@1->@end]
+bend_from_b1:
+//SEG8 @end
 bend:
-//SEG7 main
+//SEG9 main
 main: {
-  //SEG8 main::@1
+  //SEG10 main::@1
   b1:
-  //SEG9 [2] *((const byte*) BGCOL#0) ← ++ *((const byte*) BGCOL#0) [ ] ( main:0 [ ] ) -- _deref_cowo1=_inc__deref_cowo1 
+  //SEG11 [5] *((const byte*) BGCOL#0) ← ++ *((const byte*) BGCOL#0) [ ] ( main:2 [ ] ) -- _deref_cowo1=_inc__deref_cowo1 
     inc BGCOL
-  //SEG10 [3] *((const byte*) BGCOL#0) ← -- *((const byte*) BGCOL#0) [ ] ( main:0 [ ] ) -- _deref_cowo1=_dec__deref_cowo1 
+  //SEG12 [6] *((const byte*) BGCOL#0) ← -- *((const byte*) BGCOL#0) [ ] ( main:2 [ ] ) -- _deref_cowo1=_dec__deref_cowo1 
     dec BGCOL
-  //SEG11 [4] if(true) goto main::@1 [ ] ( main:0 [ ] ) -- true_then_la1 
+  //SEG13 [7] if(true) goto main::@1 [ ] ( main:2 [ ] ) -- true_then_la1 
     jmp b1
-  //SEG12 main::@return
+  //SEG14 main::@return
   breturn:
-  //SEG13 [5] return  [ ] ( main:0 [ ] )
+  //SEG15 [8] return  [ ] ( main:2 [ ] )
     rts
 }
 
 Removing instruction bbegin:
+Removing instruction b1_from_bbegin:
 Removing instruction main_from_b1:
+Removing instruction bend_from_b1:
 Succesful ASM optimization Pass5RedundantLabelElimination
 ASSEMBLER
 //SEG0 Basic Upstart
@@ -489,26 +514,28 @@ ASSEMBLER
 //SEG1 Global Constants & labels
   .const BGCOL = $d020
 //SEG2 @begin
-//SEG3 @1
+//SEG3 [1] phi from @begin to @1 [phi:@begin->@1]
+//SEG4 @1
 b1:
-//SEG4 [0] call main param-assignment [ ] ( )
-//SEG5 [1] phi from @1 to main [phi:@1->main]
+//SEG5 [2] call main param-assignment [ ] ( )
+//SEG6 [4] phi from @1 to main [phi:@1->main]
   jsr main
-//SEG6 @end
+//SEG7 [3] phi from @1 to @end [phi:@1->@end]
+//SEG8 @end
 bend:
-//SEG7 main
+//SEG9 main
 main: {
-  //SEG8 main::@1
+  //SEG10 main::@1
   b1:
-  //SEG9 [2] *((const byte*) BGCOL#0) ← ++ *((const byte*) BGCOL#0) [ ] ( main:0 [ ] ) -- _deref_cowo1=_inc__deref_cowo1 
+  //SEG11 [5] *((const byte*) BGCOL#0) ← ++ *((const byte*) BGCOL#0) [ ] ( main:2 [ ] ) -- _deref_cowo1=_inc__deref_cowo1 
     inc BGCOL
-  //SEG10 [3] *((const byte*) BGCOL#0) ← -- *((const byte*) BGCOL#0) [ ] ( main:0 [ ] ) -- _deref_cowo1=_dec__deref_cowo1 
+  //SEG12 [6] *((const byte*) BGCOL#0) ← -- *((const byte*) BGCOL#0) [ ] ( main:2 [ ] ) -- _deref_cowo1=_dec__deref_cowo1 
     dec BGCOL
-  //SEG11 [4] if(true) goto main::@1 [ ] ( main:0 [ ] ) -- true_then_la1 
+  //SEG13 [7] if(true) goto main::@1 [ ] ( main:2 [ ] ) -- true_then_la1 
     jmp b1
-  //SEG12 main::@return
+  //SEG14 main::@return
   breturn:
-  //SEG13 [5] return  [ ] ( main:0 [ ] )
+  //SEG15 [8] return  [ ] ( main:2 [ ] )
     rts
 }
 
@@ -524,23 +551,25 @@ ASSEMBLER
 //SEG1 Global Constants & labels
   .const BGCOL = $d020
 //SEG2 @begin
-//SEG3 @1
-//SEG4 [0] call main param-assignment [ ] ( )
-//SEG5 [1] phi from @1 to main [phi:@1->main]
+//SEG3 [1] phi from @begin to @1 [phi:@begin->@1]
+//SEG4 @1
+//SEG5 [2] call main param-assignment [ ] ( )
+//SEG6 [4] phi from @1 to main [phi:@1->main]
   jsr main
-//SEG6 @end
-//SEG7 main
+//SEG7 [3] phi from @1 to @end [phi:@1->@end]
+//SEG8 @end
+//SEG9 main
 main: {
-  //SEG8 main::@1
+  //SEG10 main::@1
   b1:
-  //SEG9 [2] *((const byte*) BGCOL#0) ← ++ *((const byte*) BGCOL#0) [ ] ( main:0 [ ] ) -- _deref_cowo1=_inc__deref_cowo1 
+  //SEG11 [5] *((const byte*) BGCOL#0) ← ++ *((const byte*) BGCOL#0) [ ] ( main:2 [ ] ) -- _deref_cowo1=_inc__deref_cowo1 
     inc BGCOL
-  //SEG10 [3] *((const byte*) BGCOL#0) ← -- *((const byte*) BGCOL#0) [ ] ( main:0 [ ] ) -- _deref_cowo1=_dec__deref_cowo1 
+  //SEG12 [6] *((const byte*) BGCOL#0) ← -- *((const byte*) BGCOL#0) [ ] ( main:2 [ ] ) -- _deref_cowo1=_dec__deref_cowo1 
     dec BGCOL
-  //SEG11 [4] if(true) goto main::@1 [ ] ( main:0 [ ] ) -- true_then_la1 
+  //SEG13 [7] if(true) goto main::@1 [ ] ( main:2 [ ] ) -- true_then_la1 
     jmp b1
-  //SEG12 main::@return
-  //SEG13 [5] return  [ ] ( main:0 [ ] )
+  //SEG14 main::@return
+  //SEG15 [8] return  [ ] ( main:2 [ ] )
     rts
 }
 
@@ -563,23 +592,25 @@ FINAL CODE
 //SEG1 Global Constants & labels
   .const BGCOL = $d020
 //SEG2 @begin
-//SEG3 @1
-//SEG4 [0] call main param-assignment [ ] ( )
-//SEG5 [1] phi from @1 to main [phi:@1->main]
+//SEG3 [1] phi from @begin to @1 [phi:@begin->@1]
+//SEG4 @1
+//SEG5 [2] call main param-assignment [ ] ( )
+//SEG6 [4] phi from @1 to main [phi:@1->main]
   jsr main
-//SEG6 @end
-//SEG7 main
+//SEG7 [3] phi from @1 to @end [phi:@1->@end]
+//SEG8 @end
+//SEG9 main
 main: {
-  //SEG8 main::@1
+  //SEG10 main::@1
   b1:
-  //SEG9 [2] *((const byte*) BGCOL#0) ← ++ *((const byte*) BGCOL#0) [ ] ( main:0 [ ] ) -- _deref_cowo1=_inc__deref_cowo1 
+  //SEG11 [5] *((const byte*) BGCOL#0) ← ++ *((const byte*) BGCOL#0) [ ] ( main:2 [ ] ) -- _deref_cowo1=_inc__deref_cowo1 
     inc BGCOL
-  //SEG10 [3] *((const byte*) BGCOL#0) ← -- *((const byte*) BGCOL#0) [ ] ( main:0 [ ] ) -- _deref_cowo1=_dec__deref_cowo1 
+  //SEG12 [6] *((const byte*) BGCOL#0) ← -- *((const byte*) BGCOL#0) [ ] ( main:2 [ ] ) -- _deref_cowo1=_dec__deref_cowo1 
     dec BGCOL
-  //SEG11 [4] if(true) goto main::@1 [ ] ( main:0 [ ] ) -- true_then_la1 
+  //SEG13 [7] if(true) goto main::@1 [ ] ( main:2 [ ] ) -- true_then_la1 
     jmp b1
-  //SEG12 main::@return
-  //SEG13 [5] return  [ ] ( main:0 [ ] )
+  //SEG14 main::@return
+  //SEG15 [8] return  [ ] ( main:2 [ ] )
     rts
 }
 

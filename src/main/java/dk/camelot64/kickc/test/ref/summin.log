@@ -646,10 +646,13 @@ sum::@return: scope:[sum]  from sum
   return 
   to:@return
 
+Adding NOP phi() at start of @begin
+Adding NOP phi() at start of @2
+Adding NOP phi() at start of @end
 Adding NOP phi() at start of main
 CALL GRAPH
-Calls in [] to main:0 
-Calls in [main] to sum:2 sum:5 sum:8 
+Calls in [] to main:2 
+Calls in [main] to sum:5 sum:8 sum:11 
 
 Propagating live ranges...
 Propagating live ranges...
@@ -661,46 +664,52 @@ Propagating live ranges...
 Propagating live ranges...
 CONTROL FLOW GRAPH - LIVE RANGES FOUND
 @begin: scope:[]  from
+  [0] phi() [ ]
   to:@2
 @2: scope:[]  from @begin
-  [0] call main param-assignment [ ]
+  [1] phi() [ ]
+  [2] call main param-assignment [ ]
   to:@end
 @end: scope:[]  from @2
+  [3] phi() [ ]
 main: scope:[main]  from @2
-  [1] phi() [ ]
-  [2] call sum param-assignment [ sum::return#3 ]
-  [3] (byte) sum::return#0 ← (byte) sum::return#3 [ sum::return#0 ]
+  [4] phi() [ ]
+  [5] call sum param-assignment [ sum::return#3 ]
+  [6] (byte) sum::return#0 ← (byte) sum::return#3 [ sum::return#0 ]
   to:main::@1
 main::@1: scope:[main]  from main
-  [4] (byte) main::s1#0 ← (byte) sum::return#0 [ main::s1#0 ]
-  [5] call sum param-assignment [ sum::return#3 main::s1#0 ]
-  [6] (byte) sum::return#1 ← (byte) sum::return#3 [ main::s1#0 sum::return#1 ]
+  [7] (byte) main::s1#0 ← (byte) sum::return#0 [ main::s1#0 ]
+  [8] call sum param-assignment [ sum::return#3 main::s1#0 ]
+  [9] (byte) sum::return#1 ← (byte) sum::return#3 [ main::s1#0 sum::return#1 ]
   to:main::@2
 main::@2: scope:[main]  from main::@1
-  [7] (byte) main::s2#0 ← (byte) sum::return#1 [ main::s1#0 main::s2#0 ]
-  [8] call sum param-assignment [ sum::return#3 main::s1#0 main::s2#0 ]
-  [9] (byte) sum::return#2 ← (byte) sum::return#3 [ main::s1#0 main::s2#0 sum::return#2 ]
+  [10] (byte) main::s2#0 ← (byte) sum::return#1 [ main::s1#0 main::s2#0 ]
+  [11] call sum param-assignment [ sum::return#3 main::s1#0 main::s2#0 ]
+  [12] (byte) sum::return#2 ← (byte) sum::return#3 [ main::s1#0 main::s2#0 sum::return#2 ]
   to:main::@3
 main::@3: scope:[main]  from main::@2
-  [10] (byte) main::s3#0 ← (byte) sum::return#2 [ main::s1#0 main::s2#0 main::s3#0 ]
-  [11] (byte~) main::$3 ← (byte) main::s1#0 + (byte) main::s2#0 [ main::s3#0 main::$3 ]
-  [12] (byte) main::s4#0 ← (byte~) main::$3 + (byte) main::s3#0 [ ]
+  [13] (byte) main::s3#0 ← (byte) sum::return#2 [ main::s1#0 main::s2#0 main::s3#0 ]
+  [14] (byte~) main::$3 ← (byte) main::s1#0 + (byte) main::s2#0 [ main::s3#0 main::$3 ]
+  [15] (byte) main::s4#0 ← (byte~) main::$3 + (byte) main::s3#0 [ ]
   to:main::@return
 main::@return: scope:[main]  from main::@3
-  [13] return  [ ]
+  [16] return  [ ]
   to:@return
 sum: scope:[sum]  from main main::@1 main::@2
-  [14] (byte) sum::b#3 ← phi( main/(byte/signed byte/word/signed word) 2 main::@1/(byte/signed byte/word/signed word) 4 main::@2/(byte/signed byte/word/signed word) 13 ) [ sum::a#3 sum::b#3 ]
-  [14] (byte) sum::a#3 ← phi( main/(byte/signed byte/word/signed word) 1 main::@1/(byte/signed byte/word/signed word) 3 main::@2/(byte/signed byte/word/signed word) 9 ) [ sum::a#3 sum::b#3 ]
-  [15] (byte) sum::return#3 ← (byte) sum::a#3 + (byte) sum::b#3 [ sum::return#3 ]
+  [17] (byte) sum::b#3 ← phi( main/(byte/signed byte/word/signed word) 2 main::@1/(byte/signed byte/word/signed word) 4 main::@2/(byte/signed byte/word/signed word) 13 ) [ sum::a#3 sum::b#3 ]
+  [17] (byte) sum::a#3 ← phi( main/(byte/signed byte/word/signed word) 1 main::@1/(byte/signed byte/word/signed word) 3 main::@2/(byte/signed byte/word/signed word) 9 ) [ sum::a#3 sum::b#3 ]
+  [18] (byte) sum::return#3 ← (byte) sum::a#3 + (byte) sum::b#3 [ sum::return#3 ]
   to:sum::@return
 sum::@return: scope:[sum]  from sum
-  [16] return  [ sum::return#3 ]
+  [19] return  [ sum::return#3 ]
   to:@return
 
 Created 2 initial phi equivalence classes
 Coalesced down to 2 phi equivalence classes
 Block Sequence Planned @begin @2 @end main main::@1 main::@2 main::@3 main::@return sum sum::@return 
+Adding NOP phi() at start of @begin
+Adding NOP phi() at start of @2
+Adding NOP phi() at start of @end
 Adding NOP phi() at start of main
 Propagating live ranges...
 Propagating live ranges...
@@ -712,80 +721,86 @@ Propagating live ranges...
 Propagating live ranges...
 CONTROL FLOW GRAPH - BEFORE EFFECTIVE LIVE RANGES
 @begin: scope:[]  from
+  [0] phi() [ ]
   to:@2
 @2: scope:[]  from @begin
-  [0] call main param-assignment [ ]
+  [1] phi() [ ]
+  [2] call main param-assignment [ ]
   to:@end
 @end: scope:[]  from @2
+  [3] phi() [ ]
 main: scope:[main]  from @2
-  [1] phi() [ ]
-  [2] call sum param-assignment [ sum::return#3 ]
-  [3] (byte) sum::return#0 ← (byte) sum::return#3 [ sum::return#0 ]
+  [4] phi() [ ]
+  [5] call sum param-assignment [ sum::return#3 ]
+  [6] (byte) sum::return#0 ← (byte) sum::return#3 [ sum::return#0 ]
   to:main::@1
 main::@1: scope:[main]  from main
-  [4] (byte) main::s1#0 ← (byte) sum::return#0 [ main::s1#0 ]
-  [5] call sum param-assignment [ sum::return#3 main::s1#0 ]
-  [6] (byte) sum::return#1 ← (byte) sum::return#3 [ main::s1#0 sum::return#1 ]
+  [7] (byte) main::s1#0 ← (byte) sum::return#0 [ main::s1#0 ]
+  [8] call sum param-assignment [ sum::return#3 main::s1#0 ]
+  [9] (byte) sum::return#1 ← (byte) sum::return#3 [ main::s1#0 sum::return#1 ]
   to:main::@2
 main::@2: scope:[main]  from main::@1
-  [7] (byte) main::s2#0 ← (byte) sum::return#1 [ main::s1#0 main::s2#0 ]
-  [8] call sum param-assignment [ sum::return#3 main::s1#0 main::s2#0 ]
-  [9] (byte) sum::return#2 ← (byte) sum::return#3 [ main::s1#0 main::s2#0 sum::return#2 ]
+  [10] (byte) main::s2#0 ← (byte) sum::return#1 [ main::s1#0 main::s2#0 ]
+  [11] call sum param-assignment [ sum::return#3 main::s1#0 main::s2#0 ]
+  [12] (byte) sum::return#2 ← (byte) sum::return#3 [ main::s1#0 main::s2#0 sum::return#2 ]
   to:main::@3
 main::@3: scope:[main]  from main::@2
-  [10] (byte) main::s3#0 ← (byte) sum::return#2 [ main::s1#0 main::s2#0 main::s3#0 ]
-  [11] (byte~) main::$3 ← (byte) main::s1#0 + (byte) main::s2#0 [ main::s3#0 main::$3 ]
-  [12] (byte) main::s4#0 ← (byte~) main::$3 + (byte) main::s3#0 [ ]
+  [13] (byte) main::s3#0 ← (byte) sum::return#2 [ main::s1#0 main::s2#0 main::s3#0 ]
+  [14] (byte~) main::$3 ← (byte) main::s1#0 + (byte) main::s2#0 [ main::s3#0 main::$3 ]
+  [15] (byte) main::s4#0 ← (byte~) main::$3 + (byte) main::s3#0 [ ]
   to:main::@return
 main::@return: scope:[main]  from main::@3
-  [13] return  [ ]
+  [16] return  [ ]
   to:@return
 sum: scope:[sum]  from main main::@1 main::@2
-  [14] (byte) sum::b#3 ← phi( main/(byte/signed byte/word/signed word) 2 main::@1/(byte/signed byte/word/signed word) 4 main::@2/(byte/signed byte/word/signed word) 13 ) [ sum::a#3 sum::b#3 ]
-  [14] (byte) sum::a#3 ← phi( main/(byte/signed byte/word/signed word) 1 main::@1/(byte/signed byte/word/signed word) 3 main::@2/(byte/signed byte/word/signed word) 9 ) [ sum::a#3 sum::b#3 ]
-  [15] (byte) sum::return#3 ← (byte) sum::a#3 + (byte) sum::b#3 [ sum::return#3 ]
+  [17] (byte) sum::b#3 ← phi( main/(byte/signed byte/word/signed word) 2 main::@1/(byte/signed byte/word/signed word) 4 main::@2/(byte/signed byte/word/signed word) 13 ) [ sum::a#3 sum::b#3 ]
+  [17] (byte) sum::a#3 ← phi( main/(byte/signed byte/word/signed word) 1 main::@1/(byte/signed byte/word/signed word) 3 main::@2/(byte/signed byte/word/signed word) 9 ) [ sum::a#3 sum::b#3 ]
+  [18] (byte) sum::return#3 ← (byte) sum::a#3 + (byte) sum::b#3 [ sum::return#3 ]
   to:sum::@return
 sum::@return: scope:[sum]  from sum
-  [16] return  [ sum::return#3 ]
+  [19] return  [ sum::return#3 ]
   to:@return
 
 CONTROL FLOW GRAPH - PHI MEM COALESCED
 @begin: scope:[]  from
+  [0] phi() [ ] ( )
   to:@2
 @2: scope:[]  from @begin
-  [0] call main param-assignment [ ] ( )
+  [1] phi() [ ] ( )
+  [2] call main param-assignment [ ] ( )
   to:@end
 @end: scope:[]  from @2
+  [3] phi() [ ] ( )
 main: scope:[main]  from @2
-  [1] phi() [ ] ( main:0 [ ] )
-  [2] call sum param-assignment [ sum::return#3 ] ( main:0 [ sum::return#3 ] )
-  [3] (byte) sum::return#0 ← (byte) sum::return#3 [ sum::return#0 ] ( main:0 [ sum::return#0 ] )
+  [4] phi() [ ] ( main:2 [ ] )
+  [5] call sum param-assignment [ sum::return#3 ] ( main:2 [ sum::return#3 ] )
+  [6] (byte) sum::return#0 ← (byte) sum::return#3 [ sum::return#0 ] ( main:2 [ sum::return#0 ] )
   to:main::@1
 main::@1: scope:[main]  from main
-  [4] (byte) main::s1#0 ← (byte) sum::return#0 [ main::s1#0 ] ( main:0 [ main::s1#0 ] )
-  [5] call sum param-assignment [ sum::return#3 main::s1#0 ] ( main:0 [ sum::return#3 main::s1#0 ] )
-  [6] (byte) sum::return#1 ← (byte) sum::return#3 [ main::s1#0 sum::return#1 ] ( main:0 [ main::s1#0 sum::return#1 ] )
+  [7] (byte) main::s1#0 ← (byte) sum::return#0 [ main::s1#0 ] ( main:2 [ main::s1#0 ] )
+  [8] call sum param-assignment [ sum::return#3 main::s1#0 ] ( main:2 [ sum::return#3 main::s1#0 ] )
+  [9] (byte) sum::return#1 ← (byte) sum::return#3 [ main::s1#0 sum::return#1 ] ( main:2 [ main::s1#0 sum::return#1 ] )
   to:main::@2
 main::@2: scope:[main]  from main::@1
-  [7] (byte) main::s2#0 ← (byte) sum::return#1 [ main::s1#0 main::s2#0 ] ( main:0 [ main::s1#0 main::s2#0 ] )
-  [8] call sum param-assignment [ sum::return#3 main::s1#0 main::s2#0 ] ( main:0 [ sum::return#3 main::s1#0 main::s2#0 ] )
-  [9] (byte) sum::return#2 ← (byte) sum::return#3 [ main::s1#0 main::s2#0 sum::return#2 ] ( main:0 [ main::s1#0 main::s2#0 sum::return#2 ] )
+  [10] (byte) main::s2#0 ← (byte) sum::return#1 [ main::s1#0 main::s2#0 ] ( main:2 [ main::s1#0 main::s2#0 ] )
+  [11] call sum param-assignment [ sum::return#3 main::s1#0 main::s2#0 ] ( main:2 [ sum::return#3 main::s1#0 main::s2#0 ] )
+  [12] (byte) sum::return#2 ← (byte) sum::return#3 [ main::s1#0 main::s2#0 sum::return#2 ] ( main:2 [ main::s1#0 main::s2#0 sum::return#2 ] )
   to:main::@3
 main::@3: scope:[main]  from main::@2
-  [10] (byte) main::s3#0 ← (byte) sum::return#2 [ main::s1#0 main::s2#0 main::s3#0 ] ( main:0 [ main::s1#0 main::s2#0 main::s3#0 ] )
-  [11] (byte~) main::$3 ← (byte) main::s1#0 + (byte) main::s2#0 [ main::s3#0 main::$3 ] ( main:0 [ main::s3#0 main::$3 ] )
-  [12] (byte) main::s4#0 ← (byte~) main::$3 + (byte) main::s3#0 [ ] ( main:0 [ ] )
+  [13] (byte) main::s3#0 ← (byte) sum::return#2 [ main::s1#0 main::s2#0 main::s3#0 ] ( main:2 [ main::s1#0 main::s2#0 main::s3#0 ] )
+  [14] (byte~) main::$3 ← (byte) main::s1#0 + (byte) main::s2#0 [ main::s3#0 main::$3 ] ( main:2 [ main::s3#0 main::$3 ] )
+  [15] (byte) main::s4#0 ← (byte~) main::$3 + (byte) main::s3#0 [ ] ( main:2 [ ] )
   to:main::@return
 main::@return: scope:[main]  from main::@3
-  [13] return  [ ] ( main:0 [ ] )
+  [16] return  [ ] ( main:2 [ ] )
   to:@return
 sum: scope:[sum]  from main main::@1 main::@2
-  [14] (byte) sum::b#3 ← phi( main/(byte/signed byte/word/signed word) 2 main::@1/(byte/signed byte/word/signed word) 4 main::@2/(byte/signed byte/word/signed word) 13 ) [ sum::a#3 sum::b#3 ] ( main:0::sum:2 [ sum::a#3 sum::b#3 ] main:0::sum:5 [ main::s1#0 sum::a#3 sum::b#3 ] main:0::sum:8 [ main::s1#0 main::s2#0 sum::a#3 sum::b#3 ] )
-  [14] (byte) sum::a#3 ← phi( main/(byte/signed byte/word/signed word) 1 main::@1/(byte/signed byte/word/signed word) 3 main::@2/(byte/signed byte/word/signed word) 9 ) [ sum::a#3 sum::b#3 ] ( main:0::sum:2 [ sum::a#3 sum::b#3 ] main:0::sum:5 [ main::s1#0 sum::a#3 sum::b#3 ] main:0::sum:8 [ main::s1#0 main::s2#0 sum::a#3 sum::b#3 ] )
-  [15] (byte) sum::return#3 ← (byte) sum::a#3 + (byte) sum::b#3 [ sum::return#3 ] ( main:0::sum:2 [ sum::return#3 ] main:0::sum:5 [ main::s1#0 sum::return#3 ] main:0::sum:8 [ main::s1#0 main::s2#0 sum::return#3 ] )
+  [17] (byte) sum::b#3 ← phi( main/(byte/signed byte/word/signed word) 2 main::@1/(byte/signed byte/word/signed word) 4 main::@2/(byte/signed byte/word/signed word) 13 ) [ sum::a#3 sum::b#3 ] ( main:2::sum:5 [ sum::a#3 sum::b#3 ] main:2::sum:8 [ main::s1#0 sum::a#3 sum::b#3 ] main:2::sum:11 [ main::s1#0 main::s2#0 sum::a#3 sum::b#3 ] )
+  [17] (byte) sum::a#3 ← phi( main/(byte/signed byte/word/signed word) 1 main::@1/(byte/signed byte/word/signed word) 3 main::@2/(byte/signed byte/word/signed word) 9 ) [ sum::a#3 sum::b#3 ] ( main:2::sum:5 [ sum::a#3 sum::b#3 ] main:2::sum:8 [ main::s1#0 sum::a#3 sum::b#3 ] main:2::sum:11 [ main::s1#0 main::s2#0 sum::a#3 sum::b#3 ] )
+  [18] (byte) sum::return#3 ← (byte) sum::a#3 + (byte) sum::b#3 [ sum::return#3 ] ( main:2::sum:5 [ sum::return#3 ] main:2::sum:8 [ main::s1#0 sum::return#3 ] main:2::sum:11 [ main::s1#0 main::s2#0 sum::return#3 ] )
   to:sum::@return
 sum::@return: scope:[sum]  from sum
-  [16] return  [ sum::return#3 ] ( main:0::sum:2 [ sum::return#3 ] main:0::sum:5 [ main::s1#0 sum::return#3 ] main:0::sum:8 [ main::s1#0 main::s2#0 sum::return#3 ] )
+  [19] return  [ sum::return#3 ] ( main:2::sum:5 [ sum::return#3 ] main:2::sum:8 [ main::s1#0 sum::return#3 ] main:2::sum:11 [ main::s1#0 main::s2#0 sum::return#3 ] )
   to:@return
 
 DOMINATORS
@@ -873,97 +888,101 @@ INITIAL ASM
 //SEG1 Global Constants & labels
 //SEG2 @begin
 bbegin:
+//SEG3 [1] phi from @begin to @2 [phi:@begin->@2]
+b2_from_bbegin:
   jmp b2
-//SEG3 @2
+//SEG4 @2
 b2:
-//SEG4 [0] call main param-assignment [ ] ( )
-//SEG5 [1] phi from @2 to main [phi:@2->main]
+//SEG5 [2] call main param-assignment [ ] ( )
+//SEG6 [4] phi from @2 to main [phi:@2->main]
 main_from_b2:
   jsr main
+//SEG7 [3] phi from @2 to @end [phi:@2->@end]
+bend_from_b2:
   jmp bend
-//SEG6 @end
+//SEG8 @end
 bend:
-//SEG7 main
+//SEG9 main
 main: {
     .label _3 = $a
     .label s1 = 5
     .label s2 = 7
     .label s3 = 9
     .label s4 = $b
-  //SEG8 [2] call sum param-assignment [ sum::return#3 ] ( main:0 [ sum::return#3 ] )
-  //SEG9 [14] phi from main to sum [phi:main->sum]
+  //SEG10 [5] call sum param-assignment [ sum::return#3 ] ( main:2 [ sum::return#3 ] )
+  //SEG11 [17] phi from main to sum [phi:main->sum]
   sum_from_main:
-  //SEG10 [14] phi (byte) sum::b#3 = (byte/signed byte/word/signed word) 2 [phi:main->sum#0] -- zpby1=coby1 
+  //SEG12 [17] phi (byte) sum::b#3 = (byte/signed byte/word/signed word) 2 [phi:main->sum#0] -- zpby1=coby1 
     lda #2
     sta sum.b
-  //SEG11 [14] phi (byte) sum::a#3 = (byte/signed byte/word/signed word) 1 [phi:main->sum#1] -- zpby1=coby1 
+  //SEG13 [17] phi (byte) sum::a#3 = (byte/signed byte/word/signed word) 1 [phi:main->sum#1] -- zpby1=coby1 
     lda #1
     sta sum.a
     jsr sum
-  //SEG12 [3] (byte) sum::return#0 ← (byte) sum::return#3 [ sum::return#0 ] ( main:0 [ sum::return#0 ] ) -- zpby1=zpby2 
+  //SEG14 [6] (byte) sum::return#0 ← (byte) sum::return#3 [ sum::return#0 ] ( main:2 [ sum::return#0 ] ) -- zpby1=zpby2 
     lda sum.return_3
     sta sum.return
     jmp b1
-  //SEG13 main::@1
+  //SEG15 main::@1
   b1:
-  //SEG14 [4] (byte) main::s1#0 ← (byte) sum::return#0 [ main::s1#0 ] ( main:0 [ main::s1#0 ] ) -- zpby1=zpby2 
+  //SEG16 [7] (byte) main::s1#0 ← (byte) sum::return#0 [ main::s1#0 ] ( main:2 [ main::s1#0 ] ) -- zpby1=zpby2 
     lda sum.return
     sta s1
-  //SEG15 [5] call sum param-assignment [ sum::return#3 main::s1#0 ] ( main:0 [ sum::return#3 main::s1#0 ] )
-  //SEG16 [14] phi from main::@1 to sum [phi:main::@1->sum]
+  //SEG17 [8] call sum param-assignment [ sum::return#3 main::s1#0 ] ( main:2 [ sum::return#3 main::s1#0 ] )
+  //SEG18 [17] phi from main::@1 to sum [phi:main::@1->sum]
   sum_from_b1:
-  //SEG17 [14] phi (byte) sum::b#3 = (byte/signed byte/word/signed word) 4 [phi:main::@1->sum#0] -- zpby1=coby1 
+  //SEG19 [17] phi (byte) sum::b#3 = (byte/signed byte/word/signed word) 4 [phi:main::@1->sum#0] -- zpby1=coby1 
     lda #4
     sta sum.b
-  //SEG18 [14] phi (byte) sum::a#3 = (byte/signed byte/word/signed word) 3 [phi:main::@1->sum#1] -- zpby1=coby1 
+  //SEG20 [17] phi (byte) sum::a#3 = (byte/signed byte/word/signed word) 3 [phi:main::@1->sum#1] -- zpby1=coby1 
     lda #3
     sta sum.a
     jsr sum
-  //SEG19 [6] (byte) sum::return#1 ← (byte) sum::return#3 [ main::s1#0 sum::return#1 ] ( main:0 [ main::s1#0 sum::return#1 ] ) -- zpby1=zpby2 
+  //SEG21 [9] (byte) sum::return#1 ← (byte) sum::return#3 [ main::s1#0 sum::return#1 ] ( main:2 [ main::s1#0 sum::return#1 ] ) -- zpby1=zpby2 
     lda sum.return_3
     sta sum.return_1
     jmp b2
-  //SEG20 main::@2
+  //SEG22 main::@2
   b2:
-  //SEG21 [7] (byte) main::s2#0 ← (byte) sum::return#1 [ main::s1#0 main::s2#0 ] ( main:0 [ main::s1#0 main::s2#0 ] ) -- zpby1=zpby2 
+  //SEG23 [10] (byte) main::s2#0 ← (byte) sum::return#1 [ main::s1#0 main::s2#0 ] ( main:2 [ main::s1#0 main::s2#0 ] ) -- zpby1=zpby2 
     lda sum.return_1
     sta s2
-  //SEG22 [8] call sum param-assignment [ sum::return#3 main::s1#0 main::s2#0 ] ( main:0 [ sum::return#3 main::s1#0 main::s2#0 ] )
-  //SEG23 [14] phi from main::@2 to sum [phi:main::@2->sum]
+  //SEG24 [11] call sum param-assignment [ sum::return#3 main::s1#0 main::s2#0 ] ( main:2 [ sum::return#3 main::s1#0 main::s2#0 ] )
+  //SEG25 [17] phi from main::@2 to sum [phi:main::@2->sum]
   sum_from_b2:
-  //SEG24 [14] phi (byte) sum::b#3 = (byte/signed byte/word/signed word) 13 [phi:main::@2->sum#0] -- zpby1=coby1 
+  //SEG26 [17] phi (byte) sum::b#3 = (byte/signed byte/word/signed word) 13 [phi:main::@2->sum#0] -- zpby1=coby1 
     lda #$d
     sta sum.b
-  //SEG25 [14] phi (byte) sum::a#3 = (byte/signed byte/word/signed word) 9 [phi:main::@2->sum#1] -- zpby1=coby1 
+  //SEG27 [17] phi (byte) sum::a#3 = (byte/signed byte/word/signed word) 9 [phi:main::@2->sum#1] -- zpby1=coby1 
     lda #9
     sta sum.a
     jsr sum
-  //SEG26 [9] (byte) sum::return#2 ← (byte) sum::return#3 [ main::s1#0 main::s2#0 sum::return#2 ] ( main:0 [ main::s1#0 main::s2#0 sum::return#2 ] ) -- zpby1=zpby2 
+  //SEG28 [12] (byte) sum::return#2 ← (byte) sum::return#3 [ main::s1#0 main::s2#0 sum::return#2 ] ( main:2 [ main::s1#0 main::s2#0 sum::return#2 ] ) -- zpby1=zpby2 
     lda sum.return_3
     sta sum.return_2
     jmp b3
-  //SEG27 main::@3
+  //SEG29 main::@3
   b3:
-  //SEG28 [10] (byte) main::s3#0 ← (byte) sum::return#2 [ main::s1#0 main::s2#0 main::s3#0 ] ( main:0 [ main::s1#0 main::s2#0 main::s3#0 ] ) -- zpby1=zpby2 
+  //SEG30 [13] (byte) main::s3#0 ← (byte) sum::return#2 [ main::s1#0 main::s2#0 main::s3#0 ] ( main:2 [ main::s1#0 main::s2#0 main::s3#0 ] ) -- zpby1=zpby2 
     lda sum.return_2
     sta s3
-  //SEG29 [11] (byte~) main::$3 ← (byte) main::s1#0 + (byte) main::s2#0 [ main::s3#0 main::$3 ] ( main:0 [ main::s3#0 main::$3 ] ) -- zpby1=zpby2_plus_zpby3 
+  //SEG31 [14] (byte~) main::$3 ← (byte) main::s1#0 + (byte) main::s2#0 [ main::s3#0 main::$3 ] ( main:2 [ main::s3#0 main::$3 ] ) -- zpby1=zpby2_plus_zpby3 
     lda s1
     clc
     adc s2
     sta _3
-  //SEG30 [12] (byte) main::s4#0 ← (byte~) main::$3 + (byte) main::s3#0 [ ] ( main:0 [ ] ) -- zpby1=zpby2_plus_zpby3 
+  //SEG32 [15] (byte) main::s4#0 ← (byte~) main::$3 + (byte) main::s3#0 [ ] ( main:2 [ ] ) -- zpby1=zpby2_plus_zpby3 
     lda _3
     clc
     adc s3
     sta s4
     jmp breturn
-  //SEG31 main::@return
+  //SEG33 main::@return
   breturn:
-  //SEG32 [13] return  [ ] ( main:0 [ ] )
+  //SEG34 [16] return  [ ] ( main:2 [ ] )
     rts
 }
-//SEG33 sum
+//SEG35 sum
 sum: {
     .label return = 4
     .label return_1 = 6
@@ -971,15 +990,15 @@ sum: {
     .label return_3 = $c
     .label a = 2
     .label b = 3
-  //SEG34 [15] (byte) sum::return#3 ← (byte) sum::a#3 + (byte) sum::b#3 [ sum::return#3 ] ( main:0::sum:2 [ sum::return#3 ] main:0::sum:5 [ main::s1#0 sum::return#3 ] main:0::sum:8 [ main::s1#0 main::s2#0 sum::return#3 ] ) -- zpby1=zpby2_plus_zpby3 
+  //SEG36 [18] (byte) sum::return#3 ← (byte) sum::a#3 + (byte) sum::b#3 [ sum::return#3 ] ( main:2::sum:5 [ sum::return#3 ] main:2::sum:8 [ main::s1#0 sum::return#3 ] main:2::sum:11 [ main::s1#0 main::s2#0 sum::return#3 ] ) -- zpby1=zpby2_plus_zpby3 
     lda a
     clc
     adc b
     sta return_3
     jmp breturn
-  //SEG35 sum::@return
+  //SEG37 sum::@return
   breturn:
-  //SEG36 [16] return  [ sum::return#3 ] ( main:0::sum:2 [ sum::return#3 ] main:0::sum:5 [ main::s1#0 sum::return#3 ] main:0::sum:8 [ main::s1#0 main::s2#0 sum::return#3 ] )
+  //SEG38 [19] return  [ sum::return#3 ] ( main:2::sum:5 [ sum::return#3 ] main:2::sum:8 [ main::s1#0 sum::return#3 ] main:2::sum:11 [ main::s1#0 main::s2#0 sum::return#3 ] )
     rts
 }
 
@@ -1001,13 +1020,13 @@ Uplift Scope [main] 20: zp ZP_BYTE:11 [ main::s4#0 ] 4: zp ZP_BYTE:10 [ main::$3
 Uplift Scope [sum] 4: zp ZP_BYTE:4 [ sum::return#0 ] 4: zp ZP_BYTE:6 [ sum::return#1 ] 4: zp ZP_BYTE:8 [ sum::return#2 ] 2: zp ZP_BYTE:2 [ sum::a#3 ] 2: zp ZP_BYTE:3 [ sum::b#3 ] 1.6: zp ZP_BYTE:12 [ sum::return#3 ] 
 Uplift Scope [] 
 
-Uplifting [main] best 170 combination reg byte a [ main::s4#0 ] reg byte a [ main::$3 ] zp ZP_BYTE:9 [ main::s3#0 ] reg byte x [ main::s2#0 ] zp ZP_BYTE:5 [ main::s1#0 ] 
-Uplifting [sum] best 126 combination reg byte a [ sum::return#0 ] reg byte a [ sum::return#1 ] reg byte a [ sum::return#2 ] reg byte y [ sum::a#3 ] reg byte a [ sum::b#3 ] reg byte a [ sum::return#3 ] 
-Uplifting [] best 126 combination 
+Uplifting [main] best 143 combination reg byte a [ main::s4#0 ] reg byte a [ main::$3 ] zp ZP_BYTE:9 [ main::s3#0 ] reg byte x [ main::s2#0 ] zp ZP_BYTE:5 [ main::s1#0 ] 
+Uplifting [sum] best 99 combination reg byte a [ sum::return#0 ] reg byte a [ sum::return#1 ] reg byte a [ sum::return#2 ] reg byte y [ sum::a#3 ] reg byte a [ sum::b#3 ] reg byte a [ sum::return#3 ] 
+Uplifting [] best 99 combination 
 Attempting to uplift remaining variables inzp ZP_BYTE:9 [ main::s3#0 ]
-Uplifting [main] best 126 combination zp ZP_BYTE:9 [ main::s3#0 ] 
+Uplifting [main] best 99 combination zp ZP_BYTE:9 [ main::s3#0 ] 
 Attempting to uplift remaining variables inzp ZP_BYTE:5 [ main::s1#0 ]
-Uplifting [main] best 126 combination zp ZP_BYTE:5 [ main::s1#0 ] 
+Uplifting [main] best 99 combination zp ZP_BYTE:5 [ main::s1#0 ] 
 Allocated (was zp ZP_BYTE:5) zp ZP_BYTE:2 [ main::s1#0 ]
 Allocated (was zp ZP_BYTE:9) zp ZP_BYTE:3 [ main::s3#0 ]
 Removing instruction jmp b2
@@ -1026,86 +1045,92 @@ ASSEMBLER
 //SEG1 Global Constants & labels
 //SEG2 @begin
 bbegin:
-//SEG3 @2
+//SEG3 [1] phi from @begin to @2 [phi:@begin->@2]
+b2_from_bbegin:
+//SEG4 @2
 b2:
-//SEG4 [0] call main param-assignment [ ] ( )
-//SEG5 [1] phi from @2 to main [phi:@2->main]
+//SEG5 [2] call main param-assignment [ ] ( )
+//SEG6 [4] phi from @2 to main [phi:@2->main]
 main_from_b2:
   jsr main
-//SEG6 @end
+//SEG7 [3] phi from @2 to @end [phi:@2->@end]
+bend_from_b2:
+//SEG8 @end
 bend:
-//SEG7 main
+//SEG9 main
 main: {
     .label s1 = 2
     .label s3 = 3
-  //SEG8 [2] call sum param-assignment [ sum::return#3 ] ( main:0 [ sum::return#3 ] )
-  //SEG9 [14] phi from main to sum [phi:main->sum]
+  //SEG10 [5] call sum param-assignment [ sum::return#3 ] ( main:2 [ sum::return#3 ] )
+  //SEG11 [17] phi from main to sum [phi:main->sum]
   sum_from_main:
-  //SEG10 [14] phi (byte) sum::b#3 = (byte/signed byte/word/signed word) 2 [phi:main->sum#0] -- aby=coby1 
+  //SEG12 [17] phi (byte) sum::b#3 = (byte/signed byte/word/signed word) 2 [phi:main->sum#0] -- aby=coby1 
     lda #2
-  //SEG11 [14] phi (byte) sum::a#3 = (byte/signed byte/word/signed word) 1 [phi:main->sum#1] -- yby=coby1 
+  //SEG13 [17] phi (byte) sum::a#3 = (byte/signed byte/word/signed word) 1 [phi:main->sum#1] -- yby=coby1 
     ldy #1
     jsr sum
-  //SEG12 [3] (byte) sum::return#0 ← (byte) sum::return#3 [ sum::return#0 ] ( main:0 [ sum::return#0 ] )
+  //SEG14 [6] (byte) sum::return#0 ← (byte) sum::return#3 [ sum::return#0 ] ( main:2 [ sum::return#0 ] )
     // (byte) sum::return#0 = (byte) sum::return#3  // register copy reg byte a
-  //SEG13 main::@1
+  //SEG15 main::@1
   b1:
-  //SEG14 [4] (byte) main::s1#0 ← (byte) sum::return#0 [ main::s1#0 ] ( main:0 [ main::s1#0 ] ) -- zpby1=aby 
+  //SEG16 [7] (byte) main::s1#0 ← (byte) sum::return#0 [ main::s1#0 ] ( main:2 [ main::s1#0 ] ) -- zpby1=aby 
     sta s1
-  //SEG15 [5] call sum param-assignment [ sum::return#3 main::s1#0 ] ( main:0 [ sum::return#3 main::s1#0 ] )
-  //SEG16 [14] phi from main::@1 to sum [phi:main::@1->sum]
+  //SEG17 [8] call sum param-assignment [ sum::return#3 main::s1#0 ] ( main:2 [ sum::return#3 main::s1#0 ] )
+  //SEG18 [17] phi from main::@1 to sum [phi:main::@1->sum]
   sum_from_b1:
-  //SEG17 [14] phi (byte) sum::b#3 = (byte/signed byte/word/signed word) 4 [phi:main::@1->sum#0] -- aby=coby1 
+  //SEG19 [17] phi (byte) sum::b#3 = (byte/signed byte/word/signed word) 4 [phi:main::@1->sum#0] -- aby=coby1 
     lda #4
-  //SEG18 [14] phi (byte) sum::a#3 = (byte/signed byte/word/signed word) 3 [phi:main::@1->sum#1] -- yby=coby1 
+  //SEG20 [17] phi (byte) sum::a#3 = (byte/signed byte/word/signed word) 3 [phi:main::@1->sum#1] -- yby=coby1 
     ldy #3
     jsr sum
-  //SEG19 [6] (byte) sum::return#1 ← (byte) sum::return#3 [ main::s1#0 sum::return#1 ] ( main:0 [ main::s1#0 sum::return#1 ] )
+  //SEG21 [9] (byte) sum::return#1 ← (byte) sum::return#3 [ main::s1#0 sum::return#1 ] ( main:2 [ main::s1#0 sum::return#1 ] )
     // (byte) sum::return#1 = (byte) sum::return#3  // register copy reg byte a
-  //SEG20 main::@2
+  //SEG22 main::@2
   b2:
-  //SEG21 [7] (byte) main::s2#0 ← (byte) sum::return#1 [ main::s1#0 main::s2#0 ] ( main:0 [ main::s1#0 main::s2#0 ] ) -- xby=aby 
+  //SEG23 [10] (byte) main::s2#0 ← (byte) sum::return#1 [ main::s1#0 main::s2#0 ] ( main:2 [ main::s1#0 main::s2#0 ] ) -- xby=aby 
     tax
-  //SEG22 [8] call sum param-assignment [ sum::return#3 main::s1#0 main::s2#0 ] ( main:0 [ sum::return#3 main::s1#0 main::s2#0 ] )
-  //SEG23 [14] phi from main::@2 to sum [phi:main::@2->sum]
+  //SEG24 [11] call sum param-assignment [ sum::return#3 main::s1#0 main::s2#0 ] ( main:2 [ sum::return#3 main::s1#0 main::s2#0 ] )
+  //SEG25 [17] phi from main::@2 to sum [phi:main::@2->sum]
   sum_from_b2:
-  //SEG24 [14] phi (byte) sum::b#3 = (byte/signed byte/word/signed word) 13 [phi:main::@2->sum#0] -- aby=coby1 
+  //SEG26 [17] phi (byte) sum::b#3 = (byte/signed byte/word/signed word) 13 [phi:main::@2->sum#0] -- aby=coby1 
     lda #$d
-  //SEG25 [14] phi (byte) sum::a#3 = (byte/signed byte/word/signed word) 9 [phi:main::@2->sum#1] -- yby=coby1 
+  //SEG27 [17] phi (byte) sum::a#3 = (byte/signed byte/word/signed word) 9 [phi:main::@2->sum#1] -- yby=coby1 
     ldy #9
     jsr sum
-  //SEG26 [9] (byte) sum::return#2 ← (byte) sum::return#3 [ main::s1#0 main::s2#0 sum::return#2 ] ( main:0 [ main::s1#0 main::s2#0 sum::return#2 ] )
+  //SEG28 [12] (byte) sum::return#2 ← (byte) sum::return#3 [ main::s1#0 main::s2#0 sum::return#2 ] ( main:2 [ main::s1#0 main::s2#0 sum::return#2 ] )
     // (byte) sum::return#2 = (byte) sum::return#3  // register copy reg byte a
-  //SEG27 main::@3
+  //SEG29 main::@3
   b3:
-  //SEG28 [10] (byte) main::s3#0 ← (byte) sum::return#2 [ main::s1#0 main::s2#0 main::s3#0 ] ( main:0 [ main::s1#0 main::s2#0 main::s3#0 ] ) -- zpby1=aby 
+  //SEG30 [13] (byte) main::s3#0 ← (byte) sum::return#2 [ main::s1#0 main::s2#0 main::s3#0 ] ( main:2 [ main::s1#0 main::s2#0 main::s3#0 ] ) -- zpby1=aby 
     sta s3
-  //SEG29 [11] (byte~) main::$3 ← (byte) main::s1#0 + (byte) main::s2#0 [ main::s3#0 main::$3 ] ( main:0 [ main::s3#0 main::$3 ] ) -- aby=zpby1_plus_xby 
+  //SEG31 [14] (byte~) main::$3 ← (byte) main::s1#0 + (byte) main::s2#0 [ main::s3#0 main::$3 ] ( main:2 [ main::s3#0 main::$3 ] ) -- aby=zpby1_plus_xby 
     txa
     clc
     adc s1
-  //SEG30 [12] (byte) main::s4#0 ← (byte~) main::$3 + (byte) main::s3#0 [ ] ( main:0 [ ] ) -- aby=aby_plus_zpby1 
+  //SEG32 [15] (byte) main::s4#0 ← (byte~) main::$3 + (byte) main::s3#0 [ ] ( main:2 [ ] ) -- aby=aby_plus_zpby1 
     clc
     adc s3
-  //SEG31 main::@return
+  //SEG33 main::@return
   breturn:
-  //SEG32 [13] return  [ ] ( main:0 [ ] )
+  //SEG34 [16] return  [ ] ( main:2 [ ] )
     rts
 }
-//SEG33 sum
+//SEG35 sum
 sum: {
-  //SEG34 [15] (byte) sum::return#3 ← (byte) sum::a#3 + (byte) sum::b#3 [ sum::return#3 ] ( main:0::sum:2 [ sum::return#3 ] main:0::sum:5 [ main::s1#0 sum::return#3 ] main:0::sum:8 [ main::s1#0 main::s2#0 sum::return#3 ] ) -- aby=yby_plus_aby 
+  //SEG36 [18] (byte) sum::return#3 ← (byte) sum::a#3 + (byte) sum::b#3 [ sum::return#3 ] ( main:2::sum:5 [ sum::return#3 ] main:2::sum:8 [ main::s1#0 sum::return#3 ] main:2::sum:11 [ main::s1#0 main::s2#0 sum::return#3 ] ) -- aby=yby_plus_aby 
     sty $ff
     clc
     adc $ff
-  //SEG35 sum::@return
+  //SEG37 sum::@return
   breturn:
-  //SEG36 [16] return  [ sum::return#3 ] ( main:0::sum:2 [ sum::return#3 ] main:0::sum:5 [ main::s1#0 sum::return#3 ] main:0::sum:8 [ main::s1#0 main::s2#0 sum::return#3 ] )
+  //SEG38 [19] return  [ sum::return#3 ] ( main:2::sum:5 [ sum::return#3 ] main:2::sum:8 [ main::s1#0 sum::return#3 ] main:2::sum:11 [ main::s1#0 main::s2#0 sum::return#3 ] )
     rts
 }
 
 Removing instruction bbegin:
+Removing instruction b2_from_bbegin:
 Removing instruction main_from_b2:
+Removing instruction bend_from_b2:
 Succesful ASM optimization Pass5RedundantLabelElimination
 ASSEMBLER
 //SEG0 Basic Upstart
@@ -1114,80 +1139,82 @@ ASSEMBLER
 .pc = $80d "Program"
 //SEG1 Global Constants & labels
 //SEG2 @begin
-//SEG3 @2
+//SEG3 [1] phi from @begin to @2 [phi:@begin->@2]
+//SEG4 @2
 b2:
-//SEG4 [0] call main param-assignment [ ] ( )
-//SEG5 [1] phi from @2 to main [phi:@2->main]
+//SEG5 [2] call main param-assignment [ ] ( )
+//SEG6 [4] phi from @2 to main [phi:@2->main]
   jsr main
-//SEG6 @end
+//SEG7 [3] phi from @2 to @end [phi:@2->@end]
+//SEG8 @end
 bend:
-//SEG7 main
+//SEG9 main
 main: {
     .label s1 = 2
     .label s3 = 3
-  //SEG8 [2] call sum param-assignment [ sum::return#3 ] ( main:0 [ sum::return#3 ] )
-  //SEG9 [14] phi from main to sum [phi:main->sum]
+  //SEG10 [5] call sum param-assignment [ sum::return#3 ] ( main:2 [ sum::return#3 ] )
+  //SEG11 [17] phi from main to sum [phi:main->sum]
   sum_from_main:
-  //SEG10 [14] phi (byte) sum::b#3 = (byte/signed byte/word/signed word) 2 [phi:main->sum#0] -- aby=coby1 
+  //SEG12 [17] phi (byte) sum::b#3 = (byte/signed byte/word/signed word) 2 [phi:main->sum#0] -- aby=coby1 
     lda #2
-  //SEG11 [14] phi (byte) sum::a#3 = (byte/signed byte/word/signed word) 1 [phi:main->sum#1] -- yby=coby1 
+  //SEG13 [17] phi (byte) sum::a#3 = (byte/signed byte/word/signed word) 1 [phi:main->sum#1] -- yby=coby1 
     ldy #1
     jsr sum
-  //SEG12 [3] (byte) sum::return#0 ← (byte) sum::return#3 [ sum::return#0 ] ( main:0 [ sum::return#0 ] )
+  //SEG14 [6] (byte) sum::return#0 ← (byte) sum::return#3 [ sum::return#0 ] ( main:2 [ sum::return#0 ] )
     // (byte) sum::return#0 = (byte) sum::return#3  // register copy reg byte a
-  //SEG13 main::@1
+  //SEG15 main::@1
   b1:
-  //SEG14 [4] (byte) main::s1#0 ← (byte) sum::return#0 [ main::s1#0 ] ( main:0 [ main::s1#0 ] ) -- zpby1=aby 
+  //SEG16 [7] (byte) main::s1#0 ← (byte) sum::return#0 [ main::s1#0 ] ( main:2 [ main::s1#0 ] ) -- zpby1=aby 
     sta s1
-  //SEG15 [5] call sum param-assignment [ sum::return#3 main::s1#0 ] ( main:0 [ sum::return#3 main::s1#0 ] )
-  //SEG16 [14] phi from main::@1 to sum [phi:main::@1->sum]
+  //SEG17 [8] call sum param-assignment [ sum::return#3 main::s1#0 ] ( main:2 [ sum::return#3 main::s1#0 ] )
+  //SEG18 [17] phi from main::@1 to sum [phi:main::@1->sum]
   sum_from_b1:
-  //SEG17 [14] phi (byte) sum::b#3 = (byte/signed byte/word/signed word) 4 [phi:main::@1->sum#0] -- aby=coby1 
+  //SEG19 [17] phi (byte) sum::b#3 = (byte/signed byte/word/signed word) 4 [phi:main::@1->sum#0] -- aby=coby1 
     lda #4
-  //SEG18 [14] phi (byte) sum::a#3 = (byte/signed byte/word/signed word) 3 [phi:main::@1->sum#1] -- yby=coby1 
+  //SEG20 [17] phi (byte) sum::a#3 = (byte/signed byte/word/signed word) 3 [phi:main::@1->sum#1] -- yby=coby1 
     ldy #3
     jsr sum
-  //SEG19 [6] (byte) sum::return#1 ← (byte) sum::return#3 [ main::s1#0 sum::return#1 ] ( main:0 [ main::s1#0 sum::return#1 ] )
+  //SEG21 [9] (byte) sum::return#1 ← (byte) sum::return#3 [ main::s1#0 sum::return#1 ] ( main:2 [ main::s1#0 sum::return#1 ] )
     // (byte) sum::return#1 = (byte) sum::return#3  // register copy reg byte a
-  //SEG20 main::@2
+  //SEG22 main::@2
   b2:
-  //SEG21 [7] (byte) main::s2#0 ← (byte) sum::return#1 [ main::s1#0 main::s2#0 ] ( main:0 [ main::s1#0 main::s2#0 ] ) -- xby=aby 
+  //SEG23 [10] (byte) main::s2#0 ← (byte) sum::return#1 [ main::s1#0 main::s2#0 ] ( main:2 [ main::s1#0 main::s2#0 ] ) -- xby=aby 
     tax
-  //SEG22 [8] call sum param-assignment [ sum::return#3 main::s1#0 main::s2#0 ] ( main:0 [ sum::return#3 main::s1#0 main::s2#0 ] )
-  //SEG23 [14] phi from main::@2 to sum [phi:main::@2->sum]
+  //SEG24 [11] call sum param-assignment [ sum::return#3 main::s1#0 main::s2#0 ] ( main:2 [ sum::return#3 main::s1#0 main::s2#0 ] )
+  //SEG25 [17] phi from main::@2 to sum [phi:main::@2->sum]
   sum_from_b2:
-  //SEG24 [14] phi (byte) sum::b#3 = (byte/signed byte/word/signed word) 13 [phi:main::@2->sum#0] -- aby=coby1 
+  //SEG26 [17] phi (byte) sum::b#3 = (byte/signed byte/word/signed word) 13 [phi:main::@2->sum#0] -- aby=coby1 
     lda #$d
-  //SEG25 [14] phi (byte) sum::a#3 = (byte/signed byte/word/signed word) 9 [phi:main::@2->sum#1] -- yby=coby1 
+  //SEG27 [17] phi (byte) sum::a#3 = (byte/signed byte/word/signed word) 9 [phi:main::@2->sum#1] -- yby=coby1 
     ldy #9
     jsr sum
-  //SEG26 [9] (byte) sum::return#2 ← (byte) sum::return#3 [ main::s1#0 main::s2#0 sum::return#2 ] ( main:0 [ main::s1#0 main::s2#0 sum::return#2 ] )
+  //SEG28 [12] (byte) sum::return#2 ← (byte) sum::return#3 [ main::s1#0 main::s2#0 sum::return#2 ] ( main:2 [ main::s1#0 main::s2#0 sum::return#2 ] )
     // (byte) sum::return#2 = (byte) sum::return#3  // register copy reg byte a
-  //SEG27 main::@3
+  //SEG29 main::@3
   b3:
-  //SEG28 [10] (byte) main::s3#0 ← (byte) sum::return#2 [ main::s1#0 main::s2#0 main::s3#0 ] ( main:0 [ main::s1#0 main::s2#0 main::s3#0 ] ) -- zpby1=aby 
+  //SEG30 [13] (byte) main::s3#0 ← (byte) sum::return#2 [ main::s1#0 main::s2#0 main::s3#0 ] ( main:2 [ main::s1#0 main::s2#0 main::s3#0 ] ) -- zpby1=aby 
     sta s3
-  //SEG29 [11] (byte~) main::$3 ← (byte) main::s1#0 + (byte) main::s2#0 [ main::s3#0 main::$3 ] ( main:0 [ main::s3#0 main::$3 ] ) -- aby=zpby1_plus_xby 
+  //SEG31 [14] (byte~) main::$3 ← (byte) main::s1#0 + (byte) main::s2#0 [ main::s3#0 main::$3 ] ( main:2 [ main::s3#0 main::$3 ] ) -- aby=zpby1_plus_xby 
     txa
     clc
     adc s1
-  //SEG30 [12] (byte) main::s4#0 ← (byte~) main::$3 + (byte) main::s3#0 [ ] ( main:0 [ ] ) -- aby=aby_plus_zpby1 
+  //SEG32 [15] (byte) main::s4#0 ← (byte~) main::$3 + (byte) main::s3#0 [ ] ( main:2 [ ] ) -- aby=aby_plus_zpby1 
     clc
     adc s3
-  //SEG31 main::@return
+  //SEG33 main::@return
   breturn:
-  //SEG32 [13] return  [ ] ( main:0 [ ] )
+  //SEG34 [16] return  [ ] ( main:2 [ ] )
     rts
 }
-//SEG33 sum
+//SEG35 sum
 sum: {
-  //SEG34 [15] (byte) sum::return#3 ← (byte) sum::a#3 + (byte) sum::b#3 [ sum::return#3 ] ( main:0::sum:2 [ sum::return#3 ] main:0::sum:5 [ main::s1#0 sum::return#3 ] main:0::sum:8 [ main::s1#0 main::s2#0 sum::return#3 ] ) -- aby=yby_plus_aby 
+  //SEG36 [18] (byte) sum::return#3 ← (byte) sum::a#3 + (byte) sum::b#3 [ sum::return#3 ] ( main:2::sum:5 [ sum::return#3 ] main:2::sum:8 [ main::s1#0 sum::return#3 ] main:2::sum:11 [ main::s1#0 main::s2#0 sum::return#3 ] ) -- aby=yby_plus_aby 
     sty $ff
     clc
     adc $ff
-  //SEG35 sum::@return
+  //SEG37 sum::@return
   breturn:
-  //SEG36 [16] return  [ sum::return#3 ] ( main:0::sum:2 [ sum::return#3 ] main:0::sum:5 [ main::s1#0 sum::return#3 ] main:0::sum:8 [ main::s1#0 main::s2#0 sum::return#3 ] )
+  //SEG38 [19] return  [ sum::return#3 ] ( main:2::sum:5 [ sum::return#3 ] main:2::sum:8 [ main::s1#0 sum::return#3 ] main:2::sum:11 [ main::s1#0 main::s2#0 sum::return#3 ] )
     rts
 }
 
@@ -1209,70 +1236,72 @@ ASSEMBLER
 .pc = $80d "Program"
 //SEG1 Global Constants & labels
 //SEG2 @begin
-//SEG3 @2
-//SEG4 [0] call main param-assignment [ ] ( )
-//SEG5 [1] phi from @2 to main [phi:@2->main]
+//SEG3 [1] phi from @begin to @2 [phi:@begin->@2]
+//SEG4 @2
+//SEG5 [2] call main param-assignment [ ] ( )
+//SEG6 [4] phi from @2 to main [phi:@2->main]
   jsr main
-//SEG6 @end
-//SEG7 main
+//SEG7 [3] phi from @2 to @end [phi:@2->@end]
+//SEG8 @end
+//SEG9 main
 main: {
     .label s1 = 2
     .label s3 = 3
-  //SEG8 [2] call sum param-assignment [ sum::return#3 ] ( main:0 [ sum::return#3 ] )
-  //SEG9 [14] phi from main to sum [phi:main->sum]
-  //SEG10 [14] phi (byte) sum::b#3 = (byte/signed byte/word/signed word) 2 [phi:main->sum#0] -- aby=coby1 
+  //SEG10 [5] call sum param-assignment [ sum::return#3 ] ( main:2 [ sum::return#3 ] )
+  //SEG11 [17] phi from main to sum [phi:main->sum]
+  //SEG12 [17] phi (byte) sum::b#3 = (byte/signed byte/word/signed word) 2 [phi:main->sum#0] -- aby=coby1 
     lda #2
-  //SEG11 [14] phi (byte) sum::a#3 = (byte/signed byte/word/signed word) 1 [phi:main->sum#1] -- yby=coby1 
+  //SEG13 [17] phi (byte) sum::a#3 = (byte/signed byte/word/signed word) 1 [phi:main->sum#1] -- yby=coby1 
     ldy #1
     jsr sum
-  //SEG12 [3] (byte) sum::return#0 ← (byte) sum::return#3 [ sum::return#0 ] ( main:0 [ sum::return#0 ] )
+  //SEG14 [6] (byte) sum::return#0 ← (byte) sum::return#3 [ sum::return#0 ] ( main:2 [ sum::return#0 ] )
     // (byte) sum::return#0 = (byte) sum::return#3  // register copy reg byte a
-  //SEG13 main::@1
-  //SEG14 [4] (byte) main::s1#0 ← (byte) sum::return#0 [ main::s1#0 ] ( main:0 [ main::s1#0 ] ) -- zpby1=aby 
+  //SEG15 main::@1
+  //SEG16 [7] (byte) main::s1#0 ← (byte) sum::return#0 [ main::s1#0 ] ( main:2 [ main::s1#0 ] ) -- zpby1=aby 
     sta s1
-  //SEG15 [5] call sum param-assignment [ sum::return#3 main::s1#0 ] ( main:0 [ sum::return#3 main::s1#0 ] )
-  //SEG16 [14] phi from main::@1 to sum [phi:main::@1->sum]
-  //SEG17 [14] phi (byte) sum::b#3 = (byte/signed byte/word/signed word) 4 [phi:main::@1->sum#0] -- aby=coby1 
+  //SEG17 [8] call sum param-assignment [ sum::return#3 main::s1#0 ] ( main:2 [ sum::return#3 main::s1#0 ] )
+  //SEG18 [17] phi from main::@1 to sum [phi:main::@1->sum]
+  //SEG19 [17] phi (byte) sum::b#3 = (byte/signed byte/word/signed word) 4 [phi:main::@1->sum#0] -- aby=coby1 
     lda #4
-  //SEG18 [14] phi (byte) sum::a#3 = (byte/signed byte/word/signed word) 3 [phi:main::@1->sum#1] -- yby=coby1 
+  //SEG20 [17] phi (byte) sum::a#3 = (byte/signed byte/word/signed word) 3 [phi:main::@1->sum#1] -- yby=coby1 
     ldy #3
     jsr sum
-  //SEG19 [6] (byte) sum::return#1 ← (byte) sum::return#3 [ main::s1#0 sum::return#1 ] ( main:0 [ main::s1#0 sum::return#1 ] )
+  //SEG21 [9] (byte) sum::return#1 ← (byte) sum::return#3 [ main::s1#0 sum::return#1 ] ( main:2 [ main::s1#0 sum::return#1 ] )
     // (byte) sum::return#1 = (byte) sum::return#3  // register copy reg byte a
-  //SEG20 main::@2
-  //SEG21 [7] (byte) main::s2#0 ← (byte) sum::return#1 [ main::s1#0 main::s2#0 ] ( main:0 [ main::s1#0 main::s2#0 ] ) -- xby=aby 
+  //SEG22 main::@2
+  //SEG23 [10] (byte) main::s2#0 ← (byte) sum::return#1 [ main::s1#0 main::s2#0 ] ( main:2 [ main::s1#0 main::s2#0 ] ) -- xby=aby 
     tax
-  //SEG22 [8] call sum param-assignment [ sum::return#3 main::s1#0 main::s2#0 ] ( main:0 [ sum::return#3 main::s1#0 main::s2#0 ] )
-  //SEG23 [14] phi from main::@2 to sum [phi:main::@2->sum]
-  //SEG24 [14] phi (byte) sum::b#3 = (byte/signed byte/word/signed word) 13 [phi:main::@2->sum#0] -- aby=coby1 
+  //SEG24 [11] call sum param-assignment [ sum::return#3 main::s1#0 main::s2#0 ] ( main:2 [ sum::return#3 main::s1#0 main::s2#0 ] )
+  //SEG25 [17] phi from main::@2 to sum [phi:main::@2->sum]
+  //SEG26 [17] phi (byte) sum::b#3 = (byte/signed byte/word/signed word) 13 [phi:main::@2->sum#0] -- aby=coby1 
     lda #$d
-  //SEG25 [14] phi (byte) sum::a#3 = (byte/signed byte/word/signed word) 9 [phi:main::@2->sum#1] -- yby=coby1 
+  //SEG27 [17] phi (byte) sum::a#3 = (byte/signed byte/word/signed word) 9 [phi:main::@2->sum#1] -- yby=coby1 
     ldy #9
     jsr sum
-  //SEG26 [9] (byte) sum::return#2 ← (byte) sum::return#3 [ main::s1#0 main::s2#0 sum::return#2 ] ( main:0 [ main::s1#0 main::s2#0 sum::return#2 ] )
+  //SEG28 [12] (byte) sum::return#2 ← (byte) sum::return#3 [ main::s1#0 main::s2#0 sum::return#2 ] ( main:2 [ main::s1#0 main::s2#0 sum::return#2 ] )
     // (byte) sum::return#2 = (byte) sum::return#3  // register copy reg byte a
-  //SEG27 main::@3
-  //SEG28 [10] (byte) main::s3#0 ← (byte) sum::return#2 [ main::s1#0 main::s2#0 main::s3#0 ] ( main:0 [ main::s1#0 main::s2#0 main::s3#0 ] ) -- zpby1=aby 
+  //SEG29 main::@3
+  //SEG30 [13] (byte) main::s3#0 ← (byte) sum::return#2 [ main::s1#0 main::s2#0 main::s3#0 ] ( main:2 [ main::s1#0 main::s2#0 main::s3#0 ] ) -- zpby1=aby 
     sta s3
-  //SEG29 [11] (byte~) main::$3 ← (byte) main::s1#0 + (byte) main::s2#0 [ main::s3#0 main::$3 ] ( main:0 [ main::s3#0 main::$3 ] ) -- aby=zpby1_plus_xby 
+  //SEG31 [14] (byte~) main::$3 ← (byte) main::s1#0 + (byte) main::s2#0 [ main::s3#0 main::$3 ] ( main:2 [ main::s3#0 main::$3 ] ) -- aby=zpby1_plus_xby 
     txa
     clc
     adc s1
-  //SEG30 [12] (byte) main::s4#0 ← (byte~) main::$3 + (byte) main::s3#0 [ ] ( main:0 [ ] ) -- aby=aby_plus_zpby1 
+  //SEG32 [15] (byte) main::s4#0 ← (byte~) main::$3 + (byte) main::s3#0 [ ] ( main:2 [ ] ) -- aby=aby_plus_zpby1 
     clc
     adc s3
-  //SEG31 main::@return
-  //SEG32 [13] return  [ ] ( main:0 [ ] )
+  //SEG33 main::@return
+  //SEG34 [16] return  [ ] ( main:2 [ ] )
     rts
 }
-//SEG33 sum
+//SEG35 sum
 sum: {
-  //SEG34 [15] (byte) sum::return#3 ← (byte) sum::a#3 + (byte) sum::b#3 [ sum::return#3 ] ( main:0::sum:2 [ sum::return#3 ] main:0::sum:5 [ main::s1#0 sum::return#3 ] main:0::sum:8 [ main::s1#0 main::s2#0 sum::return#3 ] ) -- aby=yby_plus_aby 
+  //SEG36 [18] (byte) sum::return#3 ← (byte) sum::a#3 + (byte) sum::b#3 [ sum::return#3 ] ( main:2::sum:5 [ sum::return#3 ] main:2::sum:8 [ main::s1#0 sum::return#3 ] main:2::sum:11 [ main::s1#0 main::s2#0 sum::return#3 ] ) -- aby=yby_plus_aby 
     sty $ff
     clc
     adc $ff
-  //SEG35 sum::@return
-  //SEG36 [16] return  [ sum::return#3 ] ( main:0::sum:2 [ sum::return#3 ] main:0::sum:5 [ main::s1#0 sum::return#3 ] main:0::sum:8 [ main::s1#0 main::s2#0 sum::return#3 ] )
+  //SEG37 sum::@return
+  //SEG38 [19] return  [ sum::return#3 ] ( main:2::sum:5 [ sum::return#3 ] main:2::sum:8 [ main::s1#0 sum::return#3 ] main:2::sum:11 [ main::s1#0 main::s2#0 sum::return#3 ] )
     rts
 }
 
@@ -1325,70 +1354,72 @@ FINAL CODE
 .pc = $80d "Program"
 //SEG1 Global Constants & labels
 //SEG2 @begin
-//SEG3 @2
-//SEG4 [0] call main param-assignment [ ] ( )
-//SEG5 [1] phi from @2 to main [phi:@2->main]
+//SEG3 [1] phi from @begin to @2 [phi:@begin->@2]
+//SEG4 @2
+//SEG5 [2] call main param-assignment [ ] ( )
+//SEG6 [4] phi from @2 to main [phi:@2->main]
   jsr main
-//SEG6 @end
-//SEG7 main
+//SEG7 [3] phi from @2 to @end [phi:@2->@end]
+//SEG8 @end
+//SEG9 main
 main: {
     .label s1 = 2
     .label s3 = 3
-  //SEG8 [2] call sum param-assignment [ sum::return#3 ] ( main:0 [ sum::return#3 ] )
-  //SEG9 [14] phi from main to sum [phi:main->sum]
-  //SEG10 [14] phi (byte) sum::b#3 = (byte/signed byte/word/signed word) 2 [phi:main->sum#0] -- aby=coby1 
+  //SEG10 [5] call sum param-assignment [ sum::return#3 ] ( main:2 [ sum::return#3 ] )
+  //SEG11 [17] phi from main to sum [phi:main->sum]
+  //SEG12 [17] phi (byte) sum::b#3 = (byte/signed byte/word/signed word) 2 [phi:main->sum#0] -- aby=coby1 
     lda #2
-  //SEG11 [14] phi (byte) sum::a#3 = (byte/signed byte/word/signed word) 1 [phi:main->sum#1] -- yby=coby1 
+  //SEG13 [17] phi (byte) sum::a#3 = (byte/signed byte/word/signed word) 1 [phi:main->sum#1] -- yby=coby1 
     ldy #1
     jsr sum
-  //SEG12 [3] (byte) sum::return#0 ← (byte) sum::return#3 [ sum::return#0 ] ( main:0 [ sum::return#0 ] )
+  //SEG14 [6] (byte) sum::return#0 ← (byte) sum::return#3 [ sum::return#0 ] ( main:2 [ sum::return#0 ] )
     // (byte) sum::return#0 = (byte) sum::return#3  // register copy reg byte a
-  //SEG13 main::@1
-  //SEG14 [4] (byte) main::s1#0 ← (byte) sum::return#0 [ main::s1#0 ] ( main:0 [ main::s1#0 ] ) -- zpby1=aby 
+  //SEG15 main::@1
+  //SEG16 [7] (byte) main::s1#0 ← (byte) sum::return#0 [ main::s1#0 ] ( main:2 [ main::s1#0 ] ) -- zpby1=aby 
     sta s1
-  //SEG15 [5] call sum param-assignment [ sum::return#3 main::s1#0 ] ( main:0 [ sum::return#3 main::s1#0 ] )
-  //SEG16 [14] phi from main::@1 to sum [phi:main::@1->sum]
-  //SEG17 [14] phi (byte) sum::b#3 = (byte/signed byte/word/signed word) 4 [phi:main::@1->sum#0] -- aby=coby1 
+  //SEG17 [8] call sum param-assignment [ sum::return#3 main::s1#0 ] ( main:2 [ sum::return#3 main::s1#0 ] )
+  //SEG18 [17] phi from main::@1 to sum [phi:main::@1->sum]
+  //SEG19 [17] phi (byte) sum::b#3 = (byte/signed byte/word/signed word) 4 [phi:main::@1->sum#0] -- aby=coby1 
     lda #4
-  //SEG18 [14] phi (byte) sum::a#3 = (byte/signed byte/word/signed word) 3 [phi:main::@1->sum#1] -- yby=coby1 
+  //SEG20 [17] phi (byte) sum::a#3 = (byte/signed byte/word/signed word) 3 [phi:main::@1->sum#1] -- yby=coby1 
     ldy #3
     jsr sum
-  //SEG19 [6] (byte) sum::return#1 ← (byte) sum::return#3 [ main::s1#0 sum::return#1 ] ( main:0 [ main::s1#0 sum::return#1 ] )
+  //SEG21 [9] (byte) sum::return#1 ← (byte) sum::return#3 [ main::s1#0 sum::return#1 ] ( main:2 [ main::s1#0 sum::return#1 ] )
     // (byte) sum::return#1 = (byte) sum::return#3  // register copy reg byte a
-  //SEG20 main::@2
-  //SEG21 [7] (byte) main::s2#0 ← (byte) sum::return#1 [ main::s1#0 main::s2#0 ] ( main:0 [ main::s1#0 main::s2#0 ] ) -- xby=aby 
+  //SEG22 main::@2
+  //SEG23 [10] (byte) main::s2#0 ← (byte) sum::return#1 [ main::s1#0 main::s2#0 ] ( main:2 [ main::s1#0 main::s2#0 ] ) -- xby=aby 
     tax
-  //SEG22 [8] call sum param-assignment [ sum::return#3 main::s1#0 main::s2#0 ] ( main:0 [ sum::return#3 main::s1#0 main::s2#0 ] )
-  //SEG23 [14] phi from main::@2 to sum [phi:main::@2->sum]
-  //SEG24 [14] phi (byte) sum::b#3 = (byte/signed byte/word/signed word) 13 [phi:main::@2->sum#0] -- aby=coby1 
+  //SEG24 [11] call sum param-assignment [ sum::return#3 main::s1#0 main::s2#0 ] ( main:2 [ sum::return#3 main::s1#0 main::s2#0 ] )
+  //SEG25 [17] phi from main::@2 to sum [phi:main::@2->sum]
+  //SEG26 [17] phi (byte) sum::b#3 = (byte/signed byte/word/signed word) 13 [phi:main::@2->sum#0] -- aby=coby1 
     lda #$d
-  //SEG25 [14] phi (byte) sum::a#3 = (byte/signed byte/word/signed word) 9 [phi:main::@2->sum#1] -- yby=coby1 
+  //SEG27 [17] phi (byte) sum::a#3 = (byte/signed byte/word/signed word) 9 [phi:main::@2->sum#1] -- yby=coby1 
     ldy #9
     jsr sum
-  //SEG26 [9] (byte) sum::return#2 ← (byte) sum::return#3 [ main::s1#0 main::s2#0 sum::return#2 ] ( main:0 [ main::s1#0 main::s2#0 sum::return#2 ] )
+  //SEG28 [12] (byte) sum::return#2 ← (byte) sum::return#3 [ main::s1#0 main::s2#0 sum::return#2 ] ( main:2 [ main::s1#0 main::s2#0 sum::return#2 ] )
     // (byte) sum::return#2 = (byte) sum::return#3  // register copy reg byte a
-  //SEG27 main::@3
-  //SEG28 [10] (byte) main::s3#0 ← (byte) sum::return#2 [ main::s1#0 main::s2#0 main::s3#0 ] ( main:0 [ main::s1#0 main::s2#0 main::s3#0 ] ) -- zpby1=aby 
+  //SEG29 main::@3
+  //SEG30 [13] (byte) main::s3#0 ← (byte) sum::return#2 [ main::s1#0 main::s2#0 main::s3#0 ] ( main:2 [ main::s1#0 main::s2#0 main::s3#0 ] ) -- zpby1=aby 
     sta s3
-  //SEG29 [11] (byte~) main::$3 ← (byte) main::s1#0 + (byte) main::s2#0 [ main::s3#0 main::$3 ] ( main:0 [ main::s3#0 main::$3 ] ) -- aby=zpby1_plus_xby 
+  //SEG31 [14] (byte~) main::$3 ← (byte) main::s1#0 + (byte) main::s2#0 [ main::s3#0 main::$3 ] ( main:2 [ main::s3#0 main::$3 ] ) -- aby=zpby1_plus_xby 
     txa
     clc
     adc s1
-  //SEG30 [12] (byte) main::s4#0 ← (byte~) main::$3 + (byte) main::s3#0 [ ] ( main:0 [ ] ) -- aby=aby_plus_zpby1 
+  //SEG32 [15] (byte) main::s4#0 ← (byte~) main::$3 + (byte) main::s3#0 [ ] ( main:2 [ ] ) -- aby=aby_plus_zpby1 
     clc
     adc s3
-  //SEG31 main::@return
-  //SEG32 [13] return  [ ] ( main:0 [ ] )
+  //SEG33 main::@return
+  //SEG34 [16] return  [ ] ( main:2 [ ] )
     rts
 }
-//SEG33 sum
+//SEG35 sum
 sum: {
-  //SEG34 [15] (byte) sum::return#3 ← (byte) sum::a#3 + (byte) sum::b#3 [ sum::return#3 ] ( main:0::sum:2 [ sum::return#3 ] main:0::sum:5 [ main::s1#0 sum::return#3 ] main:0::sum:8 [ main::s1#0 main::s2#0 sum::return#3 ] ) -- aby=yby_plus_aby 
+  //SEG36 [18] (byte) sum::return#3 ← (byte) sum::a#3 + (byte) sum::b#3 [ sum::return#3 ] ( main:2::sum:5 [ sum::return#3 ] main:2::sum:8 [ main::s1#0 sum::return#3 ] main:2::sum:11 [ main::s1#0 main::s2#0 sum::return#3 ] ) -- aby=yby_plus_aby 
     sty $ff
     clc
     adc $ff
-  //SEG35 sum::@return
-  //SEG36 [16] return  [ sum::return#3 ] ( main:0::sum:2 [ sum::return#3 ] main:0::sum:5 [ main::s1#0 sum::return#3 ] main:0::sum:8 [ main::s1#0 main::s2#0 sum::return#3 ] )
+  //SEG37 sum::@return
+  //SEG38 [19] return  [ sum::return#3 ] ( main:2::sum:5 [ sum::return#3 ] main:2::sum:8 [ main::s1#0 sum::return#3 ] main:2::sum:11 [ main::s1#0 main::s2#0 sum::return#3 ] )
     rts
 }
 

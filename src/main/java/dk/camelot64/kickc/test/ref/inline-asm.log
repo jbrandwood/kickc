@@ -151,54 +151,69 @@ main::@return: scope:[main]  from main
   return 
   to:@return
 
+Adding NOP phi() at start of @begin
+Adding NOP phi() at start of @1
+Adding NOP phi() at start of @end
 CALL GRAPH
-Calls in [] to main:0 
+Calls in [] to main:2 
 
 Propagating live ranges...
 CONTROL FLOW GRAPH - LIVE RANGES FOUND
 @begin: scope:[]  from
+  [0] phi() [ ]
   to:@1
 @1: scope:[]  from @begin
-  [0] call main param-assignment [ ]
+  [1] phi() [ ]
+  [2] call main param-assignment [ ]
   to:@end
 @end: scope:[]  from @1
+  [3] phi() [ ]
 main: scope:[main]  from @1
   asm { lda#'a'ldx#$ff!:sta$0400,xsta$0500,xsta$0600,xsta$0700,xdexbne!- }
   to:main::@return
 main::@return: scope:[main]  from main
-  [2] return  [ ]
+  [5] return  [ ]
   to:@return
 
 Created 0 initial phi equivalence classes
 Coalesced down to 0 phi equivalence classes
 Block Sequence Planned @begin @1 @end main main::@return 
+Adding NOP phi() at start of @begin
+Adding NOP phi() at start of @1
+Adding NOP phi() at start of @end
 Propagating live ranges...
 CONTROL FLOW GRAPH - BEFORE EFFECTIVE LIVE RANGES
 @begin: scope:[]  from
+  [0] phi() [ ]
   to:@1
 @1: scope:[]  from @begin
-  [0] call main param-assignment [ ]
+  [1] phi() [ ]
+  [2] call main param-assignment [ ]
   to:@end
 @end: scope:[]  from @1
+  [3] phi() [ ]
 main: scope:[main]  from @1
   asm { lda#'a'ldx#$ff!:sta$0400,xsta$0500,xsta$0600,xsta$0700,xdexbne!- }
   to:main::@return
 main::@return: scope:[main]  from main
-  [2] return  [ ]
+  [5] return  [ ]
   to:@return
 
 CONTROL FLOW GRAPH - PHI MEM COALESCED
 @begin: scope:[]  from
+  [0] phi() [ ] ( )
   to:@1
 @1: scope:[]  from @begin
-  [0] call main param-assignment [ ] ( )
+  [1] phi() [ ] ( )
+  [2] call main param-assignment [ ] ( )
   to:@end
 @end: scope:[]  from @1
+  [3] phi() [ ] ( )
 main: scope:[main]  from @1
   asm { lda#'a'ldx#$ff!:sta$0400,xsta$0500,xsta$0600,xsta$0700,xdexbne!- }
   to:main::@return
 main::@return: scope:[main]  from main
-  [2] return  [ ] ( main:0 [ ] )
+  [5] return  [ ] ( main:2 [ ] )
   to:@return
 
 DOMINATORS
@@ -228,17 +243,21 @@ INITIAL ASM
 //SEG1 Global Constants & labels
 //SEG2 @begin
 bbegin:
+//SEG3 [1] phi from @begin to @1 [phi:@begin->@1]
+b1_from_bbegin:
   jmp b1
-//SEG3 @1
+//SEG4 @1
 b1:
-//SEG4 [0] call main param-assignment [ ] ( )
+//SEG5 [2] call main param-assignment [ ] ( )
   jsr main
+//SEG6 [3] phi from @1 to @end [phi:@1->@end]
+bend_from_b1:
   jmp bend
-//SEG5 @end
+//SEG7 @end
 bend:
-//SEG6 main
+//SEG8 main
 main: {
-  //SEG7 asm { lda#'a'ldx#$ff!:sta$0400,xsta$0500,xsta$0600,xsta$0700,xdexbne!- }
+  //SEG9 asm { lda#'a'ldx#$ff!:sta$0400,xsta$0500,xsta$0600,xsta$0700,xdexbne!- }
     lda #'a'
     ldx #$ff
   !:
@@ -249,9 +268,9 @@ main: {
     dex
     bne !-
     jmp breturn
-  //SEG8 main::@return
+  //SEG10 main::@return
   breturn:
-  //SEG9 [2] return  [ ] ( main:0 [ ] )
+  //SEG11 [5] return  [ ] ( main:2 [ ] )
     rts
 }
 
@@ -262,8 +281,8 @@ REGISTER UPLIFT SCOPES
 Uplift Scope [main] 
 Uplift Scope [] 
 
-Uplifting [main] best 76 combination 
-Uplifting [] best 76 combination 
+Uplifting [main] best 49 combination 
+Uplifting [] best 49 combination 
 Removing instruction jmp b1
 Removing instruction jmp bend
 Removing instruction jmp breturn
@@ -276,15 +295,19 @@ ASSEMBLER
 //SEG1 Global Constants & labels
 //SEG2 @begin
 bbegin:
-//SEG3 @1
+//SEG3 [1] phi from @begin to @1 [phi:@begin->@1]
+b1_from_bbegin:
+//SEG4 @1
 b1:
-//SEG4 [0] call main param-assignment [ ] ( )
+//SEG5 [2] call main param-assignment [ ] ( )
   jsr main
-//SEG5 @end
+//SEG6 [3] phi from @1 to @end [phi:@1->@end]
+bend_from_b1:
+//SEG7 @end
 bend:
-//SEG6 main
+//SEG8 main
 main: {
-  //SEG7 asm { lda#'a'ldx#$ff!:sta$0400,xsta$0500,xsta$0600,xsta$0700,xdexbne!- }
+  //SEG9 asm { lda#'a'ldx#$ff!:sta$0400,xsta$0500,xsta$0600,xsta$0700,xdexbne!- }
     lda #'a'
     ldx #$ff
   !:
@@ -294,13 +317,15 @@ main: {
     sta $700,x
     dex
     bne !-
-  //SEG8 main::@return
+  //SEG10 main::@return
   breturn:
-  //SEG9 [2] return  [ ] ( main:0 [ ] )
+  //SEG11 [5] return  [ ] ( main:2 [ ] )
     rts
 }
 
 Removing instruction bbegin:
+Removing instruction b1_from_bbegin:
+Removing instruction bend_from_b1:
 Succesful ASM optimization Pass5RedundantLabelElimination
 ASSEMBLER
 //SEG0 Basic Upstart
@@ -309,15 +334,17 @@ ASSEMBLER
 .pc = $80d "Program"
 //SEG1 Global Constants & labels
 //SEG2 @begin
-//SEG3 @1
+//SEG3 [1] phi from @begin to @1 [phi:@begin->@1]
+//SEG4 @1
 b1:
-//SEG4 [0] call main param-assignment [ ] ( )
+//SEG5 [2] call main param-assignment [ ] ( )
   jsr main
-//SEG5 @end
+//SEG6 [3] phi from @1 to @end [phi:@1->@end]
+//SEG7 @end
 bend:
-//SEG6 main
+//SEG8 main
 main: {
-  //SEG7 asm { lda#'a'ldx#$ff!:sta$0400,xsta$0500,xsta$0600,xsta$0700,xdexbne!- }
+  //SEG9 asm { lda#'a'ldx#$ff!:sta$0400,xsta$0500,xsta$0600,xsta$0700,xdexbne!- }
     lda #'a'
     ldx #$ff
   !:
@@ -327,9 +354,9 @@ main: {
     sta $700,x
     dex
     bne !-
-  //SEG8 main::@return
+  //SEG10 main::@return
   breturn:
-  //SEG9 [2] return  [ ] ( main:0 [ ] )
+  //SEG11 [5] return  [ ] ( main:2 [ ] )
     rts
 }
 
@@ -344,13 +371,15 @@ ASSEMBLER
 .pc = $80d "Program"
 //SEG1 Global Constants & labels
 //SEG2 @begin
-//SEG3 @1
-//SEG4 [0] call main param-assignment [ ] ( )
+//SEG3 [1] phi from @begin to @1 [phi:@begin->@1]
+//SEG4 @1
+//SEG5 [2] call main param-assignment [ ] ( )
   jsr main
-//SEG5 @end
-//SEG6 main
+//SEG6 [3] phi from @1 to @end [phi:@1->@end]
+//SEG7 @end
+//SEG8 main
 main: {
-  //SEG7 asm { lda#'a'ldx#$ff!:sta$0400,xsta$0500,xsta$0600,xsta$0700,xdexbne!- }
+  //SEG9 asm { lda#'a'ldx#$ff!:sta$0400,xsta$0500,xsta$0600,xsta$0700,xdexbne!- }
     lda #'a'
     ldx #$ff
   !:
@@ -360,8 +389,8 @@ main: {
     sta $700,x
     dex
     bne !-
-  //SEG8 main::@return
-  //SEG9 [2] return  [ ] ( main:0 [ ] )
+  //SEG10 main::@return
+  //SEG11 [5] return  [ ] ( main:2 [ ] )
     rts
 }
 
@@ -380,13 +409,15 @@ FINAL CODE
 .pc = $80d "Program"
 //SEG1 Global Constants & labels
 //SEG2 @begin
-//SEG3 @1
-//SEG4 [0] call main param-assignment [ ] ( )
+//SEG3 [1] phi from @begin to @1 [phi:@begin->@1]
+//SEG4 @1
+//SEG5 [2] call main param-assignment [ ] ( )
   jsr main
-//SEG5 @end
-//SEG6 main
+//SEG6 [3] phi from @1 to @end [phi:@1->@end]
+//SEG7 @end
+//SEG8 main
 main: {
-  //SEG7 asm { lda#'a'ldx#$ff!:sta$0400,xsta$0500,xsta$0600,xsta$0700,xdexbne!- }
+  //SEG9 asm { lda#'a'ldx#$ff!:sta$0400,xsta$0500,xsta$0600,xsta$0700,xdexbne!- }
     lda #'a'
     ldx #$ff
   !:
@@ -396,8 +427,8 @@ main: {
     sta $700,x
     dex
     bne !-
-  //SEG8 main::@return
-  //SEG9 [2] return  [ ] ( main:0 [ ] )
+  //SEG10 main::@return
+  //SEG11 [5] return  [ ] ( main:2 [ ] )
     rts
 }
 

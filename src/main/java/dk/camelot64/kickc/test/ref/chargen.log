@@ -1480,8 +1480,12 @@ main::@8: scope:[main]  from main::@3
   (byte~) main::x#5 ← (byte) main::x#1
   to:main::@2
 
+Adding NOP phi() at start of @begin
+Adding NOP phi() at start of @1
+Adding NOP phi() at start of @end
+Adding NOP phi() at start of main::@4
 CALL GRAPH
-Calls in [] to main:0 
+Calls in [] to main:2 
 
 Propagating live ranges...
 Propagating live ranges...
@@ -1499,74 +1503,82 @@ Propagating live ranges...
 Propagating live ranges...
 CONTROL FLOW GRAPH - LIVE RANGES FOUND
 @begin: scope:[]  from
+  [0] phi() [ ]
   to:@1
 @1: scope:[]  from @begin
-  [0] call main param-assignment [ ]
+  [1] phi() [ ]
+  [2] call main param-assignment [ ]
   to:@end
 @end: scope:[]  from @1
+  [3] phi() [ ]
 main: scope:[main]  from @1
   asm { sei }
-  [2] *((const byte*) PROCPORT#0) ← (byte/signed byte/word/signed word) 50 [ ]
+  [5] *((const byte*) PROCPORT#0) ← (byte/signed byte/word/signed word) 50 [ ]
   to:main::@1
 main::@1: scope:[main]  from main main::@7
-  [3] (byte*) main::sc#7 ← phi( main/(const byte*) SCREEN#0 main::@7/(byte*~) main::sc#8 ) [ main::y#2 main::sc#7 ]
-  [3] (byte) main::y#2 ← phi( main/(byte/signed byte/word/signed word) 0 main::@7/(byte~) main::y#7 ) [ main::y#2 main::sc#7 ]
-  [4] (byte) main::bits#0 ← (const byte*) main::CHAR_A#0 *idx (byte) main::y#2 [ main::y#2 main::sc#7 main::bits#0 ]
-  [5] (byte~) main::bits#5 ← (byte) main::bits#0 [ main::y#2 main::sc#7 main::bits#5 ]
-  [6] (byte*~) main::sc#9 ← (byte*) main::sc#7 [ main::y#2 main::bits#5 main::sc#9 ]
+  [6] (byte*) main::sc#7 ← phi( main/(const byte*) SCREEN#0 main::@7/(byte*~) main::sc#8 ) [ main::y#2 main::sc#7 ]
+  [6] (byte) main::y#2 ← phi( main/(byte/signed byte/word/signed word) 0 main::@7/(byte~) main::y#7 ) [ main::y#2 main::sc#7 ]
+  [7] (byte) main::bits#0 ← (const byte*) main::CHAR_A#0 *idx (byte) main::y#2 [ main::y#2 main::sc#7 main::bits#0 ]
+  [8] (byte~) main::bits#5 ← (byte) main::bits#0 [ main::y#2 main::sc#7 main::bits#5 ]
+  [9] (byte*~) main::sc#9 ← (byte*) main::sc#7 [ main::y#2 main::bits#5 main::sc#9 ]
   to:main::@2
 main::@2: scope:[main]  from main::@1 main::@8
-  [7] (byte) main::x#2 ← phi( main::@1/(byte/signed byte/word/signed word) 0 main::@8/(byte~) main::x#5 ) [ main::y#2 main::bits#2 main::sc#3 main::x#2 ]
-  [7] (byte*) main::sc#3 ← phi( main::@1/(byte*~) main::sc#9 main::@8/(byte*~) main::sc#10 ) [ main::y#2 main::bits#2 main::sc#3 main::x#2 ]
-  [7] (byte) main::bits#2 ← phi( main::@1/(byte~) main::bits#5 main::@8/(byte~) main::bits#6 ) [ main::y#2 main::bits#2 main::sc#3 main::x#2 ]
-  [8] (byte~) main::$2 ← (byte) main::bits#2 & (byte/word/signed word) 128 [ main::y#2 main::bits#2 main::sc#3 main::x#2 main::$2 ]
-  [9] if((byte~) main::$2==(byte/signed byte/word/signed word) 0) goto main::@3 [ main::y#2 main::bits#2 main::sc#3 main::x#2 ]
+  [10] (byte) main::x#2 ← phi( main::@1/(byte/signed byte/word/signed word) 0 main::@8/(byte~) main::x#5 ) [ main::y#2 main::bits#2 main::sc#3 main::x#2 ]
+  [10] (byte*) main::sc#3 ← phi( main::@1/(byte*~) main::sc#9 main::@8/(byte*~) main::sc#10 ) [ main::y#2 main::bits#2 main::sc#3 main::x#2 ]
+  [10] (byte) main::bits#2 ← phi( main::@1/(byte~) main::bits#5 main::@8/(byte~) main::bits#6 ) [ main::y#2 main::bits#2 main::sc#3 main::x#2 ]
+  [11] (byte~) main::$2 ← (byte) main::bits#2 & (byte/word/signed word) 128 [ main::y#2 main::bits#2 main::sc#3 main::x#2 main::$2 ]
+  [12] if((byte~) main::$2==(byte/signed byte/word/signed word) 0) goto main::@3 [ main::y#2 main::bits#2 main::sc#3 main::x#2 ]
   to:main::@4
 main::@4: scope:[main]  from main::@2
+  [13] phi() [ main::y#2 main::bits#2 main::sc#3 main::x#2 ]
   to:main::@3
 main::@3: scope:[main]  from main::@2 main::@4
-  [10] (byte) main::c#2 ← phi( main::@2/(byte) '.' main::@4/(byte) '*' ) [ main::y#2 main::bits#2 main::sc#3 main::x#2 main::c#2 ]
-  [11] *((byte*) main::sc#3) ← (byte) main::c#2 [ main::y#2 main::bits#2 main::sc#3 main::x#2 ]
-  [12] (byte*) main::sc#1 ← ++ (byte*) main::sc#3 [ main::y#2 main::bits#2 main::x#2 main::sc#1 ]
-  [13] (byte) main::bits#1 ← (byte) main::bits#2 << (byte/signed byte/word/signed word) 1 [ main::y#2 main::x#2 main::sc#1 main::bits#1 ]
-  [14] (byte) main::x#1 ← ++ (byte) main::x#2 [ main::y#2 main::sc#1 main::bits#1 main::x#1 ]
-  [15] if((byte) main::x#1!=(byte/signed byte/word/signed word) 8) goto main::@8 [ main::y#2 main::sc#1 main::bits#1 main::x#1 ]
+  [14] (byte) main::c#2 ← phi( main::@2/(byte) '.' main::@4/(byte) '*' ) [ main::y#2 main::bits#2 main::sc#3 main::x#2 main::c#2 ]
+  [15] *((byte*) main::sc#3) ← (byte) main::c#2 [ main::y#2 main::bits#2 main::sc#3 main::x#2 ]
+  [16] (byte*) main::sc#1 ← ++ (byte*) main::sc#3 [ main::y#2 main::bits#2 main::x#2 main::sc#1 ]
+  [17] (byte) main::bits#1 ← (byte) main::bits#2 << (byte/signed byte/word/signed word) 1 [ main::y#2 main::x#2 main::sc#1 main::bits#1 ]
+  [18] (byte) main::x#1 ← ++ (byte) main::x#2 [ main::y#2 main::sc#1 main::bits#1 main::x#1 ]
+  [19] if((byte) main::x#1!=(byte/signed byte/word/signed word) 8) goto main::@8 [ main::y#2 main::sc#1 main::bits#1 main::x#1 ]
   to:main::@5
 main::@5: scope:[main]  from main::@3
-  [16] (byte*) main::sc#2 ← (byte*) main::sc#1 + (byte/signed byte/word/signed word) 32 [ main::y#2 main::sc#2 ]
-  [17] (byte) main::y#1 ← ++ (byte) main::y#2 [ main::sc#2 main::y#1 ]
-  [18] if((byte) main::y#1!=(byte/signed byte/word/signed word) 8) goto main::@7 [ main::sc#2 main::y#1 ]
+  [20] (byte*) main::sc#2 ← (byte*) main::sc#1 + (byte/signed byte/word/signed word) 32 [ main::y#2 main::sc#2 ]
+  [21] (byte) main::y#1 ← ++ (byte) main::y#2 [ main::sc#2 main::y#1 ]
+  [22] if((byte) main::y#1!=(byte/signed byte/word/signed word) 8) goto main::@7 [ main::sc#2 main::y#1 ]
   to:main::@6
 main::@6: scope:[main]  from main::@5
-  [19] *((const byte*) PROCPORT#0) ← (byte/signed byte/word/signed word) 55 [ ]
+  [23] *((const byte*) PROCPORT#0) ← (byte/signed byte/word/signed word) 55 [ ]
   asm { cli }
   to:main::@return
 main::@return: scope:[main]  from main::@6
-  [21] return  [ ]
+  [25] return  [ ]
   to:@return
 main::@7: scope:[main]  from main::@5
-  [22] (byte~) main::y#7 ← (byte) main::y#1 [ main::y#7 main::sc#2 ]
-  [23] (byte*~) main::sc#8 ← (byte*) main::sc#2 [ main::y#7 main::sc#8 ]
+  [26] (byte~) main::y#7 ← (byte) main::y#1 [ main::y#7 main::sc#2 ]
+  [27] (byte*~) main::sc#8 ← (byte*) main::sc#2 [ main::y#7 main::sc#8 ]
   to:main::@1
 main::@8: scope:[main]  from main::@3
-  [24] (byte~) main::bits#6 ← (byte) main::bits#1 [ main::y#2 main::bits#6 main::sc#1 main::x#1 ]
-  [25] (byte*~) main::sc#10 ← (byte*) main::sc#1 [ main::y#2 main::bits#6 main::sc#10 main::x#1 ]
-  [26] (byte~) main::x#5 ← (byte) main::x#1 [ main::y#2 main::bits#6 main::sc#10 main::x#5 ]
+  [28] (byte~) main::bits#6 ← (byte) main::bits#1 [ main::y#2 main::bits#6 main::sc#1 main::x#1 ]
+  [29] (byte*~) main::sc#10 ← (byte*) main::sc#1 [ main::y#2 main::bits#6 main::sc#10 main::x#1 ]
+  [30] (byte~) main::x#5 ← (byte) main::x#1 [ main::y#2 main::bits#6 main::sc#10 main::x#5 ]
   to:main::@2
 
 Created 6 initial phi equivalence classes
-Coalesced [5] main::bits#5 ← main::bits#0
-Coalesced [6] main::sc#9 ← main::sc#7
-Coalesced [22] main::y#7 ← main::y#1
-Coalesced [23] main::sc#8 ← main::sc#2
-Coalesced [24] main::bits#6 ← main::bits#1
-Coalesced [25] main::sc#10 ← main::sc#1
-Coalesced [26] main::x#5 ← main::x#1
+Coalesced [8] main::bits#5 ← main::bits#0
+Coalesced [9] main::sc#9 ← main::sc#7
+Coalesced [26] main::y#7 ← main::y#1
+Coalesced [27] main::sc#8 ← main::sc#2
+Coalesced [28] main::bits#6 ← main::bits#1
+Coalesced [29] main::sc#10 ← main::sc#1
+Coalesced [30] main::x#5 ← main::x#1
 Coalesced down to 5 phi equivalence classes
 Not culling empty block because it shares successor with its predecessor. (label) main::@4
 Culled Empty Block (label) main::@7
 Culled Empty Block (label) main::@8
 Block Sequence Planned @begin @1 @end main main::@1 main::@2 main::@4 main::@3 main::@5 main::@6 main::@return 
+Adding NOP phi() at start of @begin
+Adding NOP phi() at start of @1
+Adding NOP phi() at start of @end
+Adding NOP phi() at start of main::@4
 Propagating live ranges...
 Propagating live ranges...
 Propagating live ranges...
@@ -1581,94 +1593,102 @@ Propagating live ranges...
 Propagating live ranges...
 CONTROL FLOW GRAPH - BEFORE EFFECTIVE LIVE RANGES
 @begin: scope:[]  from
+  [0] phi() [ ]
   to:@1
 @1: scope:[]  from @begin
-  [0] call main param-assignment [ ]
+  [1] phi() [ ]
+  [2] call main param-assignment [ ]
   to:@end
 @end: scope:[]  from @1
+  [3] phi() [ ]
 main: scope:[main]  from @1
   asm { sei }
-  [2] *((const byte*) PROCPORT#0) ← (byte/signed byte/word/signed word) 50 [ ]
+  [5] *((const byte*) PROCPORT#0) ← (byte/signed byte/word/signed word) 50 [ ]
   to:main::@1
 main::@1: scope:[main]  from main main::@5
-  [3] (byte*) main::sc#7 ← phi( main/(const byte*) SCREEN#0 main::@5/(byte*) main::sc#2 ) [ main::y#2 main::sc#7 ]
-  [3] (byte) main::y#2 ← phi( main/(byte/signed byte/word/signed word) 0 main::@5/(byte) main::y#1 ) [ main::y#2 main::sc#7 ]
-  [4] (byte) main::bits#0 ← (const byte*) main::CHAR_A#0 *idx (byte) main::y#2 [ main::y#2 main::sc#7 main::bits#0 ]
+  [6] (byte*) main::sc#7 ← phi( main/(const byte*) SCREEN#0 main::@5/(byte*) main::sc#2 ) [ main::y#2 main::sc#7 ]
+  [6] (byte) main::y#2 ← phi( main/(byte/signed byte/word/signed word) 0 main::@5/(byte) main::y#1 ) [ main::y#2 main::sc#7 ]
+  [7] (byte) main::bits#0 ← (const byte*) main::CHAR_A#0 *idx (byte) main::y#2 [ main::y#2 main::sc#7 main::bits#0 ]
   to:main::@2
 main::@2: scope:[main]  from main::@1 main::@3
-  [5] (byte) main::x#2 ← phi( main::@1/(byte/signed byte/word/signed word) 0 main::@3/(byte) main::x#1 ) [ main::y#2 main::bits#2 main::sc#3 main::x#2 ]
-  [5] (byte*) main::sc#3 ← phi( main::@1/(byte*) main::sc#7 main::@3/(byte*) main::sc#1 ) [ main::y#2 main::bits#2 main::sc#3 main::x#2 ]
-  [5] (byte) main::bits#2 ← phi( main::@1/(byte) main::bits#0 main::@3/(byte) main::bits#1 ) [ main::y#2 main::bits#2 main::sc#3 main::x#2 ]
-  [6] (byte~) main::$2 ← (byte) main::bits#2 & (byte/word/signed word) 128 [ main::y#2 main::bits#2 main::sc#3 main::x#2 main::$2 ]
-  [7] if((byte~) main::$2==(byte/signed byte/word/signed word) 0) goto main::@3 [ main::y#2 main::bits#2 main::sc#3 main::x#2 ]
+  [8] (byte) main::x#2 ← phi( main::@1/(byte/signed byte/word/signed word) 0 main::@3/(byte) main::x#1 ) [ main::y#2 main::bits#2 main::sc#3 main::x#2 ]
+  [8] (byte*) main::sc#3 ← phi( main::@1/(byte*) main::sc#7 main::@3/(byte*) main::sc#1 ) [ main::y#2 main::bits#2 main::sc#3 main::x#2 ]
+  [8] (byte) main::bits#2 ← phi( main::@1/(byte) main::bits#0 main::@3/(byte) main::bits#1 ) [ main::y#2 main::bits#2 main::sc#3 main::x#2 ]
+  [9] (byte~) main::$2 ← (byte) main::bits#2 & (byte/word/signed word) 128 [ main::y#2 main::bits#2 main::sc#3 main::x#2 main::$2 ]
+  [10] if((byte~) main::$2==(byte/signed byte/word/signed word) 0) goto main::@3 [ main::y#2 main::bits#2 main::sc#3 main::x#2 ]
   to:main::@4
 main::@4: scope:[main]  from main::@2
+  [11] phi() [ main::y#2 main::bits#2 main::sc#3 main::x#2 ]
   to:main::@3
 main::@3: scope:[main]  from main::@2 main::@4
-  [8] (byte) main::c#2 ← phi( main::@2/(byte) '.' main::@4/(byte) '*' ) [ main::y#2 main::bits#2 main::sc#3 main::x#2 main::c#2 ]
-  [9] *((byte*) main::sc#3) ← (byte) main::c#2 [ main::y#2 main::bits#2 main::sc#3 main::x#2 ]
-  [10] (byte*) main::sc#1 ← ++ (byte*) main::sc#3 [ main::y#2 main::bits#2 main::x#2 main::sc#1 ]
-  [11] (byte) main::bits#1 ← (byte) main::bits#2 << (byte/signed byte/word/signed word) 1 [ main::y#2 main::x#2 main::bits#1 main::sc#1 ]
-  [12] (byte) main::x#1 ← ++ (byte) main::x#2 [ main::y#2 main::bits#1 main::sc#1 main::x#1 ]
-  [13] if((byte) main::x#1!=(byte/signed byte/word/signed word) 8) goto main::@2 [ main::y#2 main::bits#1 main::sc#1 main::x#1 ]
+  [12] (byte) main::c#2 ← phi( main::@2/(byte) '.' main::@4/(byte) '*' ) [ main::y#2 main::bits#2 main::sc#3 main::x#2 main::c#2 ]
+  [13] *((byte*) main::sc#3) ← (byte) main::c#2 [ main::y#2 main::bits#2 main::sc#3 main::x#2 ]
+  [14] (byte*) main::sc#1 ← ++ (byte*) main::sc#3 [ main::y#2 main::bits#2 main::x#2 main::sc#1 ]
+  [15] (byte) main::bits#1 ← (byte) main::bits#2 << (byte/signed byte/word/signed word) 1 [ main::y#2 main::x#2 main::bits#1 main::sc#1 ]
+  [16] (byte) main::x#1 ← ++ (byte) main::x#2 [ main::y#2 main::bits#1 main::sc#1 main::x#1 ]
+  [17] if((byte) main::x#1!=(byte/signed byte/word/signed word) 8) goto main::@2 [ main::y#2 main::bits#1 main::sc#1 main::x#1 ]
   to:main::@5
 main::@5: scope:[main]  from main::@3
-  [14] (byte*) main::sc#2 ← (byte*) main::sc#1 + (byte/signed byte/word/signed word) 32 [ main::y#2 main::sc#2 ]
-  [15] (byte) main::y#1 ← ++ (byte) main::y#2 [ main::y#1 main::sc#2 ]
-  [16] if((byte) main::y#1!=(byte/signed byte/word/signed word) 8) goto main::@1 [ main::y#1 main::sc#2 ]
+  [18] (byte*) main::sc#2 ← (byte*) main::sc#1 + (byte/signed byte/word/signed word) 32 [ main::y#2 main::sc#2 ]
+  [19] (byte) main::y#1 ← ++ (byte) main::y#2 [ main::y#1 main::sc#2 ]
+  [20] if((byte) main::y#1!=(byte/signed byte/word/signed word) 8) goto main::@1 [ main::y#1 main::sc#2 ]
   to:main::@6
 main::@6: scope:[main]  from main::@5
-  [17] *((const byte*) PROCPORT#0) ← (byte/signed byte/word/signed word) 55 [ ]
+  [21] *((const byte*) PROCPORT#0) ← (byte/signed byte/word/signed word) 55 [ ]
   asm { cli }
   to:main::@return
 main::@return: scope:[main]  from main::@6
-  [19] return  [ ]
+  [23] return  [ ]
   to:@return
 
 CONTROL FLOW GRAPH - PHI MEM COALESCED
 @begin: scope:[]  from
+  [0] phi() [ ] ( )
   to:@1
 @1: scope:[]  from @begin
-  [0] call main param-assignment [ ] ( )
+  [1] phi() [ ] ( )
+  [2] call main param-assignment [ ] ( )
   to:@end
 @end: scope:[]  from @1
+  [3] phi() [ ] ( )
 main: scope:[main]  from @1
   asm { sei }
-  [2] *((const byte*) PROCPORT#0) ← (byte/signed byte/word/signed word) 50 [ ] ( main:0 [ ] )
+  [5] *((const byte*) PROCPORT#0) ← (byte/signed byte/word/signed word) 50 [ ] ( main:2 [ ] )
   to:main::@1
 main::@1: scope:[main]  from main main::@5
-  [3] (byte*) main::sc#7 ← phi( main/(const byte*) SCREEN#0 main::@5/(byte*) main::sc#2 ) [ main::y#2 main::sc#7 ] ( main:0 [ main::y#2 main::sc#7 ] )
-  [3] (byte) main::y#2 ← phi( main/(byte/signed byte/word/signed word) 0 main::@5/(byte) main::y#1 ) [ main::y#2 main::sc#7 ] ( main:0 [ main::y#2 main::sc#7 ] )
-  [4] (byte) main::bits#0 ← (const byte*) main::CHAR_A#0 *idx (byte) main::y#2 [ main::y#2 main::sc#7 main::bits#0 ] ( main:0 [ main::y#2 main::sc#7 main::bits#0 ] )
+  [6] (byte*) main::sc#7 ← phi( main/(const byte*) SCREEN#0 main::@5/(byte*) main::sc#2 ) [ main::y#2 main::sc#7 ] ( main:2 [ main::y#2 main::sc#7 ] )
+  [6] (byte) main::y#2 ← phi( main/(byte/signed byte/word/signed word) 0 main::@5/(byte) main::y#1 ) [ main::y#2 main::sc#7 ] ( main:2 [ main::y#2 main::sc#7 ] )
+  [7] (byte) main::bits#0 ← (const byte*) main::CHAR_A#0 *idx (byte) main::y#2 [ main::y#2 main::sc#7 main::bits#0 ] ( main:2 [ main::y#2 main::sc#7 main::bits#0 ] )
   to:main::@2
 main::@2: scope:[main]  from main::@1 main::@3
-  [5] (byte) main::x#2 ← phi( main::@1/(byte/signed byte/word/signed word) 0 main::@3/(byte) main::x#1 ) [ main::y#2 main::bits#2 main::sc#3 main::x#2 ] ( main:0 [ main::y#2 main::bits#2 main::sc#3 main::x#2 ] )
-  [5] (byte*) main::sc#3 ← phi( main::@1/(byte*) main::sc#7 main::@3/(byte*) main::sc#1 ) [ main::y#2 main::bits#2 main::sc#3 main::x#2 ] ( main:0 [ main::y#2 main::bits#2 main::sc#3 main::x#2 ] )
-  [5] (byte) main::bits#2 ← phi( main::@1/(byte) main::bits#0 main::@3/(byte) main::bits#1 ) [ main::y#2 main::bits#2 main::sc#3 main::x#2 ] ( main:0 [ main::y#2 main::bits#2 main::sc#3 main::x#2 ] )
-  [6] (byte~) main::$2 ← (byte) main::bits#2 & (byte/word/signed word) 128 [ main::y#2 main::bits#2 main::sc#3 main::x#2 main::$2 ] ( main:0 [ main::y#2 main::bits#2 main::sc#3 main::x#2 main::$2 ] )
-  [7] if((byte~) main::$2==(byte/signed byte/word/signed word) 0) goto main::@3 [ main::y#2 main::bits#2 main::sc#3 main::x#2 ] ( main:0 [ main::y#2 main::bits#2 main::sc#3 main::x#2 ] )
+  [8] (byte) main::x#2 ← phi( main::@1/(byte/signed byte/word/signed word) 0 main::@3/(byte) main::x#1 ) [ main::y#2 main::bits#2 main::sc#3 main::x#2 ] ( main:2 [ main::y#2 main::bits#2 main::sc#3 main::x#2 ] )
+  [8] (byte*) main::sc#3 ← phi( main::@1/(byte*) main::sc#7 main::@3/(byte*) main::sc#1 ) [ main::y#2 main::bits#2 main::sc#3 main::x#2 ] ( main:2 [ main::y#2 main::bits#2 main::sc#3 main::x#2 ] )
+  [8] (byte) main::bits#2 ← phi( main::@1/(byte) main::bits#0 main::@3/(byte) main::bits#1 ) [ main::y#2 main::bits#2 main::sc#3 main::x#2 ] ( main:2 [ main::y#2 main::bits#2 main::sc#3 main::x#2 ] )
+  [9] (byte~) main::$2 ← (byte) main::bits#2 & (byte/word/signed word) 128 [ main::y#2 main::bits#2 main::sc#3 main::x#2 main::$2 ] ( main:2 [ main::y#2 main::bits#2 main::sc#3 main::x#2 main::$2 ] )
+  [10] if((byte~) main::$2==(byte/signed byte/word/signed word) 0) goto main::@3 [ main::y#2 main::bits#2 main::sc#3 main::x#2 ] ( main:2 [ main::y#2 main::bits#2 main::sc#3 main::x#2 ] )
   to:main::@4
 main::@4: scope:[main]  from main::@2
+  [11] phi() [ main::y#2 main::bits#2 main::sc#3 main::x#2 ] ( main:2 [ main::y#2 main::bits#2 main::sc#3 main::x#2 ] )
   to:main::@3
 main::@3: scope:[main]  from main::@2 main::@4
-  [8] (byte) main::c#2 ← phi( main::@2/(byte) '.' main::@4/(byte) '*' ) [ main::y#2 main::bits#2 main::sc#3 main::x#2 main::c#2 ] ( main:0 [ main::y#2 main::bits#2 main::sc#3 main::x#2 main::c#2 ] )
-  [9] *((byte*) main::sc#3) ← (byte) main::c#2 [ main::y#2 main::bits#2 main::sc#3 main::x#2 ] ( main:0 [ main::y#2 main::bits#2 main::sc#3 main::x#2 ] )
-  [10] (byte*) main::sc#1 ← ++ (byte*) main::sc#3 [ main::y#2 main::bits#2 main::x#2 main::sc#1 ] ( main:0 [ main::y#2 main::bits#2 main::x#2 main::sc#1 ] )
-  [11] (byte) main::bits#1 ← (byte) main::bits#2 << (byte/signed byte/word/signed word) 1 [ main::y#2 main::x#2 main::bits#1 main::sc#1 ] ( main:0 [ main::y#2 main::x#2 main::bits#1 main::sc#1 ] )
-  [12] (byte) main::x#1 ← ++ (byte) main::x#2 [ main::y#2 main::bits#1 main::sc#1 main::x#1 ] ( main:0 [ main::y#2 main::bits#1 main::sc#1 main::x#1 ] )
-  [13] if((byte) main::x#1!=(byte/signed byte/word/signed word) 8) goto main::@2 [ main::y#2 main::bits#1 main::sc#1 main::x#1 ] ( main:0 [ main::y#2 main::bits#1 main::sc#1 main::x#1 ] )
+  [12] (byte) main::c#2 ← phi( main::@2/(byte) '.' main::@4/(byte) '*' ) [ main::y#2 main::bits#2 main::sc#3 main::x#2 main::c#2 ] ( main:2 [ main::y#2 main::bits#2 main::sc#3 main::x#2 main::c#2 ] )
+  [13] *((byte*) main::sc#3) ← (byte) main::c#2 [ main::y#2 main::bits#2 main::sc#3 main::x#2 ] ( main:2 [ main::y#2 main::bits#2 main::sc#3 main::x#2 ] )
+  [14] (byte*) main::sc#1 ← ++ (byte*) main::sc#3 [ main::y#2 main::bits#2 main::x#2 main::sc#1 ] ( main:2 [ main::y#2 main::bits#2 main::x#2 main::sc#1 ] )
+  [15] (byte) main::bits#1 ← (byte) main::bits#2 << (byte/signed byte/word/signed word) 1 [ main::y#2 main::x#2 main::bits#1 main::sc#1 ] ( main:2 [ main::y#2 main::x#2 main::bits#1 main::sc#1 ] )
+  [16] (byte) main::x#1 ← ++ (byte) main::x#2 [ main::y#2 main::bits#1 main::sc#1 main::x#1 ] ( main:2 [ main::y#2 main::bits#1 main::sc#1 main::x#1 ] )
+  [17] if((byte) main::x#1!=(byte/signed byte/word/signed word) 8) goto main::@2 [ main::y#2 main::bits#1 main::sc#1 main::x#1 ] ( main:2 [ main::y#2 main::bits#1 main::sc#1 main::x#1 ] )
   to:main::@5
 main::@5: scope:[main]  from main::@3
-  [14] (byte*) main::sc#2 ← (byte*) main::sc#1 + (byte/signed byte/word/signed word) 32 [ main::y#2 main::sc#2 ] ( main:0 [ main::y#2 main::sc#2 ] )
-  [15] (byte) main::y#1 ← ++ (byte) main::y#2 [ main::y#1 main::sc#2 ] ( main:0 [ main::y#1 main::sc#2 ] )
-  [16] if((byte) main::y#1!=(byte/signed byte/word/signed word) 8) goto main::@1 [ main::y#1 main::sc#2 ] ( main:0 [ main::y#1 main::sc#2 ] )
+  [18] (byte*) main::sc#2 ← (byte*) main::sc#1 + (byte/signed byte/word/signed word) 32 [ main::y#2 main::sc#2 ] ( main:2 [ main::y#2 main::sc#2 ] )
+  [19] (byte) main::y#1 ← ++ (byte) main::y#2 [ main::y#1 main::sc#2 ] ( main:2 [ main::y#1 main::sc#2 ] )
+  [20] if((byte) main::y#1!=(byte/signed byte/word/signed word) 8) goto main::@1 [ main::y#1 main::sc#2 ] ( main:2 [ main::y#1 main::sc#2 ] )
   to:main::@6
 main::@6: scope:[main]  from main::@5
-  [17] *((const byte*) PROCPORT#0) ← (byte/signed byte/word/signed word) 55 [ ] ( main:0 [ ] )
+  [21] *((const byte*) PROCPORT#0) ← (byte/signed byte/word/signed word) 55 [ ] ( main:2 [ ] )
   asm { cli }
   to:main::@return
 main::@return: scope:[main]  from main::@6
-  [19] return  [ ] ( main:0 [ ] )
+  [23] return  [ ] ( main:2 [ ] )
   to:@return
 
 DOMINATORS
@@ -1711,20 +1731,20 @@ VARIABLE REGISTER WEIGHTS
 (byte) main::bits
 (byte) main::bits#0 22.0
 (byte) main::bits#1 67.33333333333333
-(byte) main::bits#2 52.33333333333333
+(byte) main::bits#2 44.85714285714286
 (byte) main::c
 (byte) main::c#2 101.0
 (byte*) main::sc
 (byte*) main::sc#1 53.25
 (byte*) main::sc#2 7.333333333333333
-(byte*) main::sc#3 62.8
+(byte*) main::sc#3 52.33333333333333
 (byte*) main::sc#7 11.0
 (byte) main::x
 (byte) main::x#1 151.5
-(byte) main::x#2 28.857142857142858
+(byte) main::x#2 25.25
 (byte) main::y
 (byte) main::y#1 16.5
-(byte) main::y#2 2.75
+(byte) main::y#2 2.5384615384615383
 
 Initial phi equivalence classes
 [ main::y#2 main::y#1 ]
@@ -1757,15 +1777,19 @@ INITIAL ASM
   .const SCREEN = $400
 //SEG2 @begin
 bbegin:
+//SEG3 [1] phi from @begin to @1 [phi:@begin->@1]
+b1_from_bbegin:
   jmp b1
-//SEG3 @1
+//SEG4 @1
 b1:
-//SEG4 [0] call main param-assignment [ ] ( )
+//SEG5 [2] call main param-assignment [ ] ( )
   jsr main
+//SEG6 [3] phi from @1 to @end [phi:@1->@end]
+bend_from_b1:
   jmp bend
-//SEG5 @end
+//SEG7 @end
 bend:
-//SEG6 main
+//SEG8 main
 main: {
     .const CHAR_A = CHARGEN+8
     .label _2 = 8
@@ -1774,94 +1798,96 @@ main: {
     .label x = 6
     .label y = 2
     .label c = 7
-  //SEG7 asm { sei }
+  //SEG9 asm { sei }
     sei
-  //SEG8 [2] *((const byte*) PROCPORT#0) ← (byte/signed byte/word/signed word) 50 [ ] ( main:0 [ ] ) -- _deref_cowo1=coby2 
+  //SEG10 [5] *((const byte*) PROCPORT#0) ← (byte/signed byte/word/signed word) 50 [ ] ( main:2 [ ] ) -- _deref_cowo1=coby2 
     lda #$32
     sta PROCPORT
-  //SEG9 [3] phi from main to main::@1 [phi:main->main::@1]
+  //SEG11 [6] phi from main to main::@1 [phi:main->main::@1]
   b1_from_main:
-  //SEG10 [3] phi (byte*) main::sc#7 = (const byte*) SCREEN#0 [phi:main->main::@1#0] -- zpptrby1=cowo1 
+  //SEG12 [6] phi (byte*) main::sc#7 = (const byte*) SCREEN#0 [phi:main->main::@1#0] -- zpptrby1=cowo1 
     lda #<SCREEN
     sta sc
     lda #>SCREEN
     sta sc+1
-  //SEG11 [3] phi (byte) main::y#2 = (byte/signed byte/word/signed word) 0 [phi:main->main::@1#1] -- zpby1=coby1 
+  //SEG13 [6] phi (byte) main::y#2 = (byte/signed byte/word/signed word) 0 [phi:main->main::@1#1] -- zpby1=coby1 
     lda #0
     sta y
     jmp b1
-  //SEG12 [3] phi from main::@5 to main::@1 [phi:main::@5->main::@1]
+  //SEG14 [6] phi from main::@5 to main::@1 [phi:main::@5->main::@1]
   b1_from_b5:
-  //SEG13 [3] phi (byte*) main::sc#7 = (byte*) main::sc#2 [phi:main::@5->main::@1#0] -- register_copy 
-  //SEG14 [3] phi (byte) main::y#2 = (byte) main::y#1 [phi:main::@5->main::@1#1] -- register_copy 
+  //SEG15 [6] phi (byte*) main::sc#7 = (byte*) main::sc#2 [phi:main::@5->main::@1#0] -- register_copy 
+  //SEG16 [6] phi (byte) main::y#2 = (byte) main::y#1 [phi:main::@5->main::@1#1] -- register_copy 
     jmp b1
-  //SEG15 main::@1
+  //SEG17 main::@1
   b1:
-  //SEG16 [4] (byte) main::bits#0 ← (const byte*) main::CHAR_A#0 *idx (byte) main::y#2 [ main::y#2 main::sc#7 main::bits#0 ] ( main:0 [ main::y#2 main::sc#7 main::bits#0 ] ) -- zpby1=cowo1_derefidx_zpby2 
+  //SEG18 [7] (byte) main::bits#0 ← (const byte*) main::CHAR_A#0 *idx (byte) main::y#2 [ main::y#2 main::sc#7 main::bits#0 ] ( main:2 [ main::y#2 main::sc#7 main::bits#0 ] ) -- zpby1=cowo1_derefidx_zpby2 
     ldx y
     lda CHAR_A,x
     sta bits
-  //SEG17 [5] phi from main::@1 to main::@2 [phi:main::@1->main::@2]
+  //SEG19 [8] phi from main::@1 to main::@2 [phi:main::@1->main::@2]
   b2_from_b1:
-  //SEG18 [5] phi (byte) main::x#2 = (byte/signed byte/word/signed word) 0 [phi:main::@1->main::@2#0] -- zpby1=coby1 
+  //SEG20 [8] phi (byte) main::x#2 = (byte/signed byte/word/signed word) 0 [phi:main::@1->main::@2#0] -- zpby1=coby1 
     lda #0
     sta x
-  //SEG19 [5] phi (byte*) main::sc#3 = (byte*) main::sc#7 [phi:main::@1->main::@2#1] -- register_copy 
-  //SEG20 [5] phi (byte) main::bits#2 = (byte) main::bits#0 [phi:main::@1->main::@2#2] -- register_copy 
+  //SEG21 [8] phi (byte*) main::sc#3 = (byte*) main::sc#7 [phi:main::@1->main::@2#1] -- register_copy 
+  //SEG22 [8] phi (byte) main::bits#2 = (byte) main::bits#0 [phi:main::@1->main::@2#2] -- register_copy 
     jmp b2
-  //SEG21 [5] phi from main::@3 to main::@2 [phi:main::@3->main::@2]
+  //SEG23 [8] phi from main::@3 to main::@2 [phi:main::@3->main::@2]
   b2_from_b3:
-  //SEG22 [5] phi (byte) main::x#2 = (byte) main::x#1 [phi:main::@3->main::@2#0] -- register_copy 
-  //SEG23 [5] phi (byte*) main::sc#3 = (byte*) main::sc#1 [phi:main::@3->main::@2#1] -- register_copy 
-  //SEG24 [5] phi (byte) main::bits#2 = (byte) main::bits#1 [phi:main::@3->main::@2#2] -- register_copy 
+  //SEG24 [8] phi (byte) main::x#2 = (byte) main::x#1 [phi:main::@3->main::@2#0] -- register_copy 
+  //SEG25 [8] phi (byte*) main::sc#3 = (byte*) main::sc#1 [phi:main::@3->main::@2#1] -- register_copy 
+  //SEG26 [8] phi (byte) main::bits#2 = (byte) main::bits#1 [phi:main::@3->main::@2#2] -- register_copy 
     jmp b2
-  //SEG25 main::@2
+  //SEG27 main::@2
   b2:
-  //SEG26 [6] (byte~) main::$2 ← (byte) main::bits#2 & (byte/word/signed word) 128 [ main::y#2 main::bits#2 main::sc#3 main::x#2 main::$2 ] ( main:0 [ main::y#2 main::bits#2 main::sc#3 main::x#2 main::$2 ] ) -- zpby1=zpby2_band_coby1 
+  //SEG28 [9] (byte~) main::$2 ← (byte) main::bits#2 & (byte/word/signed word) 128 [ main::y#2 main::bits#2 main::sc#3 main::x#2 main::$2 ] ( main:2 [ main::y#2 main::bits#2 main::sc#3 main::x#2 main::$2 ] ) -- zpby1=zpby2_band_coby1 
     lda bits
     and #$80
     sta _2
-  //SEG27 [7] if((byte~) main::$2==(byte/signed byte/word/signed word) 0) goto main::@3 [ main::y#2 main::bits#2 main::sc#3 main::x#2 ] ( main:0 [ main::y#2 main::bits#2 main::sc#3 main::x#2 ] ) -- zpby1_eq_0_then_la1 
+  //SEG29 [10] if((byte~) main::$2==(byte/signed byte/word/signed word) 0) goto main::@3 [ main::y#2 main::bits#2 main::sc#3 main::x#2 ] ( main:2 [ main::y#2 main::bits#2 main::sc#3 main::x#2 ] ) -- zpby1_eq_0_then_la1 
     lda _2
     beq b3_from_b2
+  //SEG30 [11] phi from main::@2 to main::@4 [phi:main::@2->main::@4]
+  b4_from_b2:
     jmp b4
-  //SEG28 main::@4
+  //SEG31 main::@4
   b4:
-  //SEG29 [8] phi from main::@4 to main::@3 [phi:main::@4->main::@3]
+  //SEG32 [12] phi from main::@4 to main::@3 [phi:main::@4->main::@3]
   b3_from_b4:
-  //SEG30 [8] phi (byte) main::c#2 = (byte) '*' [phi:main::@4->main::@3#0] -- zpby1=coby1 
+  //SEG33 [12] phi (byte) main::c#2 = (byte) '*' [phi:main::@4->main::@3#0] -- zpby1=coby1 
     lda #'*'
     sta c
     jmp b3
-  //SEG31 [8] phi from main::@2 to main::@3 [phi:main::@2->main::@3]
+  //SEG34 [12] phi from main::@2 to main::@3 [phi:main::@2->main::@3]
   b3_from_b2:
-  //SEG32 [8] phi (byte) main::c#2 = (byte) '.' [phi:main::@2->main::@3#0] -- zpby1=coby1 
+  //SEG35 [12] phi (byte) main::c#2 = (byte) '.' [phi:main::@2->main::@3#0] -- zpby1=coby1 
     lda #'.'
     sta c
     jmp b3
-  //SEG33 main::@3
+  //SEG36 main::@3
   b3:
-  //SEG34 [9] *((byte*) main::sc#3) ← (byte) main::c#2 [ main::y#2 main::bits#2 main::sc#3 main::x#2 ] ( main:0 [ main::y#2 main::bits#2 main::sc#3 main::x#2 ] ) -- _deref_zpptrby1=zpby1 
+  //SEG37 [13] *((byte*) main::sc#3) ← (byte) main::c#2 [ main::y#2 main::bits#2 main::sc#3 main::x#2 ] ( main:2 [ main::y#2 main::bits#2 main::sc#3 main::x#2 ] ) -- _deref_zpptrby1=zpby1 
     ldy #0
     lda c
     sta (sc),y
-  //SEG35 [10] (byte*) main::sc#1 ← ++ (byte*) main::sc#3 [ main::y#2 main::bits#2 main::x#2 main::sc#1 ] ( main:0 [ main::y#2 main::bits#2 main::x#2 main::sc#1 ] ) -- zpptrby1=_inc_zpptrby1 
+  //SEG38 [14] (byte*) main::sc#1 ← ++ (byte*) main::sc#3 [ main::y#2 main::bits#2 main::x#2 main::sc#1 ] ( main:2 [ main::y#2 main::bits#2 main::x#2 main::sc#1 ] ) -- zpptrby1=_inc_zpptrby1 
     inc sc
     bne !+
     inc sc+1
   !:
-  //SEG36 [11] (byte) main::bits#1 ← (byte) main::bits#2 << (byte/signed byte/word/signed word) 1 [ main::y#2 main::x#2 main::bits#1 main::sc#1 ] ( main:0 [ main::y#2 main::x#2 main::bits#1 main::sc#1 ] ) -- zpby1=zpby1_rol_1 
+  //SEG39 [15] (byte) main::bits#1 ← (byte) main::bits#2 << (byte/signed byte/word/signed word) 1 [ main::y#2 main::x#2 main::bits#1 main::sc#1 ] ( main:2 [ main::y#2 main::x#2 main::bits#1 main::sc#1 ] ) -- zpby1=zpby1_rol_1 
     asl bits
-  //SEG37 [12] (byte) main::x#1 ← ++ (byte) main::x#2 [ main::y#2 main::bits#1 main::sc#1 main::x#1 ] ( main:0 [ main::y#2 main::bits#1 main::sc#1 main::x#1 ] ) -- zpby1=_inc_zpby1 
+  //SEG40 [16] (byte) main::x#1 ← ++ (byte) main::x#2 [ main::y#2 main::bits#1 main::sc#1 main::x#1 ] ( main:2 [ main::y#2 main::bits#1 main::sc#1 main::x#1 ] ) -- zpby1=_inc_zpby1 
     inc x
-  //SEG38 [13] if((byte) main::x#1!=(byte/signed byte/word/signed word) 8) goto main::@2 [ main::y#2 main::bits#1 main::sc#1 main::x#1 ] ( main:0 [ main::y#2 main::bits#1 main::sc#1 main::x#1 ] ) -- zpby1_neq_coby1_then_la1 
+  //SEG41 [17] if((byte) main::x#1!=(byte/signed byte/word/signed word) 8) goto main::@2 [ main::y#2 main::bits#1 main::sc#1 main::x#1 ] ( main:2 [ main::y#2 main::bits#1 main::sc#1 main::x#1 ] ) -- zpby1_neq_coby1_then_la1 
     lda x
     cmp #8
     bne b2_from_b3
     jmp b5
-  //SEG39 main::@5
+  //SEG42 main::@5
   b5:
-  //SEG40 [14] (byte*) main::sc#2 ← (byte*) main::sc#1 + (byte/signed byte/word/signed word) 32 [ main::y#2 main::sc#2 ] ( main:0 [ main::y#2 main::sc#2 ] ) -- zpptrby1=zpptrby1_plus_coby1 
+  //SEG43 [18] (byte*) main::sc#2 ← (byte*) main::sc#1 + (byte/signed byte/word/signed word) 32 [ main::y#2 main::sc#2 ] ( main:2 [ main::y#2 main::sc#2 ] ) -- zpptrby1=zpptrby1_plus_coby1 
     lda sc
     clc
     adc #$20
@@ -1869,45 +1895,45 @@ main: {
     bcc !+
     inc sc+1
   !:
-  //SEG41 [15] (byte) main::y#1 ← ++ (byte) main::y#2 [ main::y#1 main::sc#2 ] ( main:0 [ main::y#1 main::sc#2 ] ) -- zpby1=_inc_zpby1 
+  //SEG44 [19] (byte) main::y#1 ← ++ (byte) main::y#2 [ main::y#1 main::sc#2 ] ( main:2 [ main::y#1 main::sc#2 ] ) -- zpby1=_inc_zpby1 
     inc y
-  //SEG42 [16] if((byte) main::y#1!=(byte/signed byte/word/signed word) 8) goto main::@1 [ main::y#1 main::sc#2 ] ( main:0 [ main::y#1 main::sc#2 ] ) -- zpby1_neq_coby1_then_la1 
+  //SEG45 [20] if((byte) main::y#1!=(byte/signed byte/word/signed word) 8) goto main::@1 [ main::y#1 main::sc#2 ] ( main:2 [ main::y#1 main::sc#2 ] ) -- zpby1_neq_coby1_then_la1 
     lda y
     cmp #8
     bne b1_from_b5
     jmp b6
-  //SEG43 main::@6
+  //SEG46 main::@6
   b6:
-  //SEG44 [17] *((const byte*) PROCPORT#0) ← (byte/signed byte/word/signed word) 55 [ ] ( main:0 [ ] ) -- _deref_cowo1=coby2 
+  //SEG47 [21] *((const byte*) PROCPORT#0) ← (byte/signed byte/word/signed word) 55 [ ] ( main:2 [ ] ) -- _deref_cowo1=coby2 
     lda #$37
     sta PROCPORT
-  //SEG45 asm { cli }
+  //SEG48 asm { cli }
     cli
     jmp breturn
-  //SEG46 main::@return
+  //SEG49 main::@return
   breturn:
-  //SEG47 [19] return  [ ] ( main:0 [ ] )
+  //SEG50 [23] return  [ ] ( main:2 [ ] )
     rts
 }
 
 REGISTER UPLIFT POTENTIAL REGISTERS
-Statement [2] *((const byte*) PROCPORT#0) ← (byte/signed byte/word/signed word) 50 [ ] ( main:0 [ ] ) always clobbers reg byte a 
-Statement [6] (byte~) main::$2 ← (byte) main::bits#2 & (byte/word/signed word) 128 [ main::y#2 main::bits#2 main::sc#3 main::x#2 main::$2 ] ( main:0 [ main::y#2 main::bits#2 main::sc#3 main::x#2 main::$2 ] ) always clobbers reg byte a 
+Statement [5] *((const byte*) PROCPORT#0) ← (byte/signed byte/word/signed word) 50 [ ] ( main:2 [ ] ) always clobbers reg byte a 
+Statement [9] (byte~) main::$2 ← (byte) main::bits#2 & (byte/word/signed word) 128 [ main::y#2 main::bits#2 main::sc#3 main::x#2 main::$2 ] ( main:2 [ main::y#2 main::bits#2 main::sc#3 main::x#2 main::$2 ] ) always clobbers reg byte a 
 Removing always clobbered register reg byte a as potential for zp ZP_BYTE:2 [ main::y#2 main::y#1 ]
 Removing always clobbered register reg byte a as potential for zp ZP_BYTE:3 [ main::bits#2 main::bits#0 main::bits#1 ]
 Removing always clobbered register reg byte a as potential for zp ZP_BYTE:6 [ main::x#2 main::x#1 ]
-Statement [9] *((byte*) main::sc#3) ← (byte) main::c#2 [ main::y#2 main::bits#2 main::sc#3 main::x#2 ] ( main:0 [ main::y#2 main::bits#2 main::sc#3 main::x#2 ] ) always clobbers reg byte y 
+Statement [13] *((byte*) main::sc#3) ← (byte) main::c#2 [ main::y#2 main::bits#2 main::sc#3 main::x#2 ] ( main:2 [ main::y#2 main::bits#2 main::sc#3 main::x#2 ] ) always clobbers reg byte y 
 Removing always clobbered register reg byte y as potential for zp ZP_BYTE:2 [ main::y#2 main::y#1 ]
 Removing always clobbered register reg byte y as potential for zp ZP_BYTE:3 [ main::bits#2 main::bits#0 main::bits#1 ]
 Removing always clobbered register reg byte y as potential for zp ZP_BYTE:6 [ main::x#2 main::x#1 ]
-Statement [14] (byte*) main::sc#2 ← (byte*) main::sc#1 + (byte/signed byte/word/signed word) 32 [ main::y#2 main::sc#2 ] ( main:0 [ main::y#2 main::sc#2 ] ) always clobbers reg byte a 
-Statement [17] *((const byte*) PROCPORT#0) ← (byte/signed byte/word/signed word) 55 [ ] ( main:0 [ ] ) always clobbers reg byte a 
-Statement [2] *((const byte*) PROCPORT#0) ← (byte/signed byte/word/signed word) 50 [ ] ( main:0 [ ] ) always clobbers reg byte a 
-Statement [4] (byte) main::bits#0 ← (const byte*) main::CHAR_A#0 *idx (byte) main::y#2 [ main::y#2 main::sc#7 main::bits#0 ] ( main:0 [ main::y#2 main::sc#7 main::bits#0 ] ) always clobbers reg byte a 
-Statement [6] (byte~) main::$2 ← (byte) main::bits#2 & (byte/word/signed word) 128 [ main::y#2 main::bits#2 main::sc#3 main::x#2 main::$2 ] ( main:0 [ main::y#2 main::bits#2 main::sc#3 main::x#2 main::$2 ] ) always clobbers reg byte a 
-Statement [9] *((byte*) main::sc#3) ← (byte) main::c#2 [ main::y#2 main::bits#2 main::sc#3 main::x#2 ] ( main:0 [ main::y#2 main::bits#2 main::sc#3 main::x#2 ] ) always clobbers reg byte y 
-Statement [14] (byte*) main::sc#2 ← (byte*) main::sc#1 + (byte/signed byte/word/signed word) 32 [ main::y#2 main::sc#2 ] ( main:0 [ main::y#2 main::sc#2 ] ) always clobbers reg byte a 
-Statement [17] *((const byte*) PROCPORT#0) ← (byte/signed byte/word/signed word) 55 [ ] ( main:0 [ ] ) always clobbers reg byte a 
+Statement [18] (byte*) main::sc#2 ← (byte*) main::sc#1 + (byte/signed byte/word/signed word) 32 [ main::y#2 main::sc#2 ] ( main:2 [ main::y#2 main::sc#2 ] ) always clobbers reg byte a 
+Statement [21] *((const byte*) PROCPORT#0) ← (byte/signed byte/word/signed word) 55 [ ] ( main:2 [ ] ) always clobbers reg byte a 
+Statement [5] *((const byte*) PROCPORT#0) ← (byte/signed byte/word/signed word) 50 [ ] ( main:2 [ ] ) always clobbers reg byte a 
+Statement [7] (byte) main::bits#0 ← (const byte*) main::CHAR_A#0 *idx (byte) main::y#2 [ main::y#2 main::sc#7 main::bits#0 ] ( main:2 [ main::y#2 main::sc#7 main::bits#0 ] ) always clobbers reg byte a 
+Statement [9] (byte~) main::$2 ← (byte) main::bits#2 & (byte/word/signed word) 128 [ main::y#2 main::bits#2 main::sc#3 main::x#2 main::$2 ] ( main:2 [ main::y#2 main::bits#2 main::sc#3 main::x#2 main::$2 ] ) always clobbers reg byte a 
+Statement [13] *((byte*) main::sc#3) ← (byte) main::c#2 [ main::y#2 main::bits#2 main::sc#3 main::x#2 ] ( main:2 [ main::y#2 main::bits#2 main::sc#3 main::x#2 ] ) always clobbers reg byte y 
+Statement [18] (byte*) main::sc#2 ← (byte*) main::sc#1 + (byte/signed byte/word/signed word) 32 [ main::y#2 main::sc#2 ] ( main:2 [ main::y#2 main::sc#2 ] ) always clobbers reg byte a 
+Statement [21] *((const byte*) PROCPORT#0) ← (byte/signed byte/word/signed word) 55 [ ] ( main:2 [ ] ) always clobbers reg byte a 
 Potential registers zp ZP_BYTE:2 [ main::y#2 main::y#1 ] : zp ZP_BYTE:2 , reg byte x , 
 Potential registers zp ZP_BYTE:3 [ main::bits#2 main::bits#0 main::bits#1 ] : zp ZP_BYTE:3 , reg byte x , 
 Potential registers zp ZP_PTR_BYTE:4 [ main::sc#3 main::sc#7 main::sc#2 main::sc#1 ] : zp ZP_PTR_BYTE:4 , 
@@ -1916,15 +1942,15 @@ Potential registers zp ZP_BYTE:7 [ main::c#2 ] : zp ZP_BYTE:7 , reg byte a , reg
 Potential registers zp ZP_BYTE:8 [ main::$2 ] : zp ZP_BYTE:8 , reg byte a , reg byte x , reg byte y , 
 
 REGISTER UPLIFT SCOPES
-Uplift Scope [main] 202: zp ZP_BYTE:8 [ main::$2 ] 180.36: zp ZP_BYTE:6 [ main::x#2 main::x#1 ] 141.67: zp ZP_BYTE:3 [ main::bits#2 main::bits#0 main::bits#1 ] 134.38: zp ZP_PTR_BYTE:4 [ main::sc#3 main::sc#7 main::sc#2 main::sc#1 ] 101: zp ZP_BYTE:7 [ main::c#2 ] 19.25: zp ZP_BYTE:2 [ main::y#2 main::y#1 ] 
+Uplift Scope [main] 202: zp ZP_BYTE:8 [ main::$2 ] 176.75: zp ZP_BYTE:6 [ main::x#2 main::x#1 ] 134.19: zp ZP_BYTE:3 [ main::bits#2 main::bits#0 main::bits#1 ] 123.92: zp ZP_PTR_BYTE:4 [ main::sc#3 main::sc#7 main::sc#2 main::sc#1 ] 101: zp ZP_BYTE:7 [ main::c#2 ] 19.04: zp ZP_BYTE:2 [ main::y#2 main::y#1 ] 
 Uplift Scope [] 
 
-Uplifting [main] best 7379 combination reg byte a [ main::$2 ] reg byte x [ main::x#2 main::x#1 ] zp ZP_BYTE:3 [ main::bits#2 main::bits#0 main::bits#1 ] zp ZP_PTR_BYTE:4 [ main::sc#3 main::sc#7 main::sc#2 main::sc#1 ] reg byte a [ main::c#2 ] zp ZP_BYTE:2 [ main::y#2 main::y#1 ] 
-Uplifting [] best 7379 combination 
+Uplifting [main] best 7352 combination reg byte a [ main::$2 ] reg byte x [ main::x#2 main::x#1 ] zp ZP_BYTE:3 [ main::bits#2 main::bits#0 main::bits#1 ] zp ZP_PTR_BYTE:4 [ main::sc#3 main::sc#7 main::sc#2 main::sc#1 ] reg byte a [ main::c#2 ] zp ZP_BYTE:2 [ main::y#2 main::y#1 ] 
+Uplifting [] best 7352 combination 
 Attempting to uplift remaining variables inzp ZP_BYTE:3 [ main::bits#2 main::bits#0 main::bits#1 ]
-Uplifting [main] best 7379 combination zp ZP_BYTE:3 [ main::bits#2 main::bits#0 main::bits#1 ] 
+Uplifting [main] best 7352 combination zp ZP_BYTE:3 [ main::bits#2 main::bits#0 main::bits#1 ] 
 Attempting to uplift remaining variables inzp ZP_BYTE:2 [ main::y#2 main::y#1 ]
-Uplifting [main] best 7379 combination zp ZP_BYTE:2 [ main::y#2 main::y#1 ] 
+Uplifting [main] best 7352 combination zp ZP_BYTE:2 [ main::y#2 main::y#1 ] 
 Removing instruction jmp b1
 Removing instruction jmp bend
 Removing instruction jmp b1
@@ -1946,95 +1972,101 @@ ASSEMBLER
   .const SCREEN = $400
 //SEG2 @begin
 bbegin:
-//SEG3 @1
+//SEG3 [1] phi from @begin to @1 [phi:@begin->@1]
+b1_from_bbegin:
+//SEG4 @1
 b1:
-//SEG4 [0] call main param-assignment [ ] ( )
+//SEG5 [2] call main param-assignment [ ] ( )
   jsr main
-//SEG5 @end
+//SEG6 [3] phi from @1 to @end [phi:@1->@end]
+bend_from_b1:
+//SEG7 @end
 bend:
-//SEG6 main
+//SEG8 main
 main: {
     .const CHAR_A = CHARGEN+8
     .label bits = 3
     .label sc = 4
     .label y = 2
-  //SEG7 asm { sei }
+  //SEG9 asm { sei }
     sei
-  //SEG8 [2] *((const byte*) PROCPORT#0) ← (byte/signed byte/word/signed word) 50 [ ] ( main:0 [ ] ) -- _deref_cowo1=coby2 
+  //SEG10 [5] *((const byte*) PROCPORT#0) ← (byte/signed byte/word/signed word) 50 [ ] ( main:2 [ ] ) -- _deref_cowo1=coby2 
     lda #$32
     sta PROCPORT
-  //SEG9 [3] phi from main to main::@1 [phi:main->main::@1]
+  //SEG11 [6] phi from main to main::@1 [phi:main->main::@1]
   b1_from_main:
-  //SEG10 [3] phi (byte*) main::sc#7 = (const byte*) SCREEN#0 [phi:main->main::@1#0] -- zpptrby1=cowo1 
+  //SEG12 [6] phi (byte*) main::sc#7 = (const byte*) SCREEN#0 [phi:main->main::@1#0] -- zpptrby1=cowo1 
     lda #<SCREEN
     sta sc
     lda #>SCREEN
     sta sc+1
-  //SEG11 [3] phi (byte) main::y#2 = (byte/signed byte/word/signed word) 0 [phi:main->main::@1#1] -- zpby1=coby1 
+  //SEG13 [6] phi (byte) main::y#2 = (byte/signed byte/word/signed word) 0 [phi:main->main::@1#1] -- zpby1=coby1 
     lda #0
     sta y
     jmp b1
-  //SEG12 [3] phi from main::@5 to main::@1 [phi:main::@5->main::@1]
+  //SEG14 [6] phi from main::@5 to main::@1 [phi:main::@5->main::@1]
   b1_from_b5:
-  //SEG13 [3] phi (byte*) main::sc#7 = (byte*) main::sc#2 [phi:main::@5->main::@1#0] -- register_copy 
-  //SEG14 [3] phi (byte) main::y#2 = (byte) main::y#1 [phi:main::@5->main::@1#1] -- register_copy 
-  //SEG15 main::@1
+  //SEG15 [6] phi (byte*) main::sc#7 = (byte*) main::sc#2 [phi:main::@5->main::@1#0] -- register_copy 
+  //SEG16 [6] phi (byte) main::y#2 = (byte) main::y#1 [phi:main::@5->main::@1#1] -- register_copy 
+  //SEG17 main::@1
   b1:
-  //SEG16 [4] (byte) main::bits#0 ← (const byte*) main::CHAR_A#0 *idx (byte) main::y#2 [ main::y#2 main::sc#7 main::bits#0 ] ( main:0 [ main::y#2 main::sc#7 main::bits#0 ] ) -- zpby1=cowo1_derefidx_zpby2 
+  //SEG18 [7] (byte) main::bits#0 ← (const byte*) main::CHAR_A#0 *idx (byte) main::y#2 [ main::y#2 main::sc#7 main::bits#0 ] ( main:2 [ main::y#2 main::sc#7 main::bits#0 ] ) -- zpby1=cowo1_derefidx_zpby2 
     ldx y
     lda CHAR_A,x
     sta bits
-  //SEG17 [5] phi from main::@1 to main::@2 [phi:main::@1->main::@2]
+  //SEG19 [8] phi from main::@1 to main::@2 [phi:main::@1->main::@2]
   b2_from_b1:
-  //SEG18 [5] phi (byte) main::x#2 = (byte/signed byte/word/signed word) 0 [phi:main::@1->main::@2#0] -- xby=coby1 
+  //SEG20 [8] phi (byte) main::x#2 = (byte/signed byte/word/signed word) 0 [phi:main::@1->main::@2#0] -- xby=coby1 
     ldx #0
-  //SEG19 [5] phi (byte*) main::sc#3 = (byte*) main::sc#7 [phi:main::@1->main::@2#1] -- register_copy 
-  //SEG20 [5] phi (byte) main::bits#2 = (byte) main::bits#0 [phi:main::@1->main::@2#2] -- register_copy 
+  //SEG21 [8] phi (byte*) main::sc#3 = (byte*) main::sc#7 [phi:main::@1->main::@2#1] -- register_copy 
+  //SEG22 [8] phi (byte) main::bits#2 = (byte) main::bits#0 [phi:main::@1->main::@2#2] -- register_copy 
     jmp b2
-  //SEG21 [5] phi from main::@3 to main::@2 [phi:main::@3->main::@2]
+  //SEG23 [8] phi from main::@3 to main::@2 [phi:main::@3->main::@2]
   b2_from_b3:
-  //SEG22 [5] phi (byte) main::x#2 = (byte) main::x#1 [phi:main::@3->main::@2#0] -- register_copy 
-  //SEG23 [5] phi (byte*) main::sc#3 = (byte*) main::sc#1 [phi:main::@3->main::@2#1] -- register_copy 
-  //SEG24 [5] phi (byte) main::bits#2 = (byte) main::bits#1 [phi:main::@3->main::@2#2] -- register_copy 
-  //SEG25 main::@2
+  //SEG24 [8] phi (byte) main::x#2 = (byte) main::x#1 [phi:main::@3->main::@2#0] -- register_copy 
+  //SEG25 [8] phi (byte*) main::sc#3 = (byte*) main::sc#1 [phi:main::@3->main::@2#1] -- register_copy 
+  //SEG26 [8] phi (byte) main::bits#2 = (byte) main::bits#1 [phi:main::@3->main::@2#2] -- register_copy 
+  //SEG27 main::@2
   b2:
-  //SEG26 [6] (byte~) main::$2 ← (byte) main::bits#2 & (byte/word/signed word) 128 [ main::y#2 main::bits#2 main::sc#3 main::x#2 main::$2 ] ( main:0 [ main::y#2 main::bits#2 main::sc#3 main::x#2 main::$2 ] ) -- aby=zpby1_band_coby1 
+  //SEG28 [9] (byte~) main::$2 ← (byte) main::bits#2 & (byte/word/signed word) 128 [ main::y#2 main::bits#2 main::sc#3 main::x#2 main::$2 ] ( main:2 [ main::y#2 main::bits#2 main::sc#3 main::x#2 main::$2 ] ) -- aby=zpby1_band_coby1 
     lda bits
     and #$80
-  //SEG27 [7] if((byte~) main::$2==(byte/signed byte/word/signed word) 0) goto main::@3 [ main::y#2 main::bits#2 main::sc#3 main::x#2 ] ( main:0 [ main::y#2 main::bits#2 main::sc#3 main::x#2 ] ) -- aby_eq_0_then_la1 
+  //SEG29 [10] if((byte~) main::$2==(byte/signed byte/word/signed word) 0) goto main::@3 [ main::y#2 main::bits#2 main::sc#3 main::x#2 ] ( main:2 [ main::y#2 main::bits#2 main::sc#3 main::x#2 ] ) -- aby_eq_0_then_la1 
     cmp #0
     beq b3_from_b2
-  //SEG28 main::@4
+  //SEG30 [11] phi from main::@2 to main::@4 [phi:main::@2->main::@4]
+  b4_from_b2:
+  //SEG31 main::@4
   b4:
-  //SEG29 [8] phi from main::@4 to main::@3 [phi:main::@4->main::@3]
+  //SEG32 [12] phi from main::@4 to main::@3 [phi:main::@4->main::@3]
   b3_from_b4:
-  //SEG30 [8] phi (byte) main::c#2 = (byte) '*' [phi:main::@4->main::@3#0] -- aby=coby1 
+  //SEG33 [12] phi (byte) main::c#2 = (byte) '*' [phi:main::@4->main::@3#0] -- aby=coby1 
     lda #'*'
     jmp b3
-  //SEG31 [8] phi from main::@2 to main::@3 [phi:main::@2->main::@3]
+  //SEG34 [12] phi from main::@2 to main::@3 [phi:main::@2->main::@3]
   b3_from_b2:
-  //SEG32 [8] phi (byte) main::c#2 = (byte) '.' [phi:main::@2->main::@3#0] -- aby=coby1 
+  //SEG35 [12] phi (byte) main::c#2 = (byte) '.' [phi:main::@2->main::@3#0] -- aby=coby1 
     lda #'.'
-  //SEG33 main::@3
+  //SEG36 main::@3
   b3:
-  //SEG34 [9] *((byte*) main::sc#3) ← (byte) main::c#2 [ main::y#2 main::bits#2 main::sc#3 main::x#2 ] ( main:0 [ main::y#2 main::bits#2 main::sc#3 main::x#2 ] ) -- _deref_zpptrby1=aby 
+  //SEG37 [13] *((byte*) main::sc#3) ← (byte) main::c#2 [ main::y#2 main::bits#2 main::sc#3 main::x#2 ] ( main:2 [ main::y#2 main::bits#2 main::sc#3 main::x#2 ] ) -- _deref_zpptrby1=aby 
     ldy #0
     sta (sc),y
-  //SEG35 [10] (byte*) main::sc#1 ← ++ (byte*) main::sc#3 [ main::y#2 main::bits#2 main::x#2 main::sc#1 ] ( main:0 [ main::y#2 main::bits#2 main::x#2 main::sc#1 ] ) -- zpptrby1=_inc_zpptrby1 
+  //SEG38 [14] (byte*) main::sc#1 ← ++ (byte*) main::sc#3 [ main::y#2 main::bits#2 main::x#2 main::sc#1 ] ( main:2 [ main::y#2 main::bits#2 main::x#2 main::sc#1 ] ) -- zpptrby1=_inc_zpptrby1 
     inc sc
     bne !+
     inc sc+1
   !:
-  //SEG36 [11] (byte) main::bits#1 ← (byte) main::bits#2 << (byte/signed byte/word/signed word) 1 [ main::y#2 main::x#2 main::bits#1 main::sc#1 ] ( main:0 [ main::y#2 main::x#2 main::bits#1 main::sc#1 ] ) -- zpby1=zpby1_rol_1 
+  //SEG39 [15] (byte) main::bits#1 ← (byte) main::bits#2 << (byte/signed byte/word/signed word) 1 [ main::y#2 main::x#2 main::bits#1 main::sc#1 ] ( main:2 [ main::y#2 main::x#2 main::bits#1 main::sc#1 ] ) -- zpby1=zpby1_rol_1 
     asl bits
-  //SEG37 [12] (byte) main::x#1 ← ++ (byte) main::x#2 [ main::y#2 main::bits#1 main::sc#1 main::x#1 ] ( main:0 [ main::y#2 main::bits#1 main::sc#1 main::x#1 ] ) -- xby=_inc_xby 
+  //SEG40 [16] (byte) main::x#1 ← ++ (byte) main::x#2 [ main::y#2 main::bits#1 main::sc#1 main::x#1 ] ( main:2 [ main::y#2 main::bits#1 main::sc#1 main::x#1 ] ) -- xby=_inc_xby 
     inx
-  //SEG38 [13] if((byte) main::x#1!=(byte/signed byte/word/signed word) 8) goto main::@2 [ main::y#2 main::bits#1 main::sc#1 main::x#1 ] ( main:0 [ main::y#2 main::bits#1 main::sc#1 main::x#1 ] ) -- xby_neq_coby1_then_la1 
+  //SEG41 [17] if((byte) main::x#1!=(byte/signed byte/word/signed word) 8) goto main::@2 [ main::y#2 main::bits#1 main::sc#1 main::x#1 ] ( main:2 [ main::y#2 main::bits#1 main::sc#1 main::x#1 ] ) -- xby_neq_coby1_then_la1 
     cpx #8
     bne b2_from_b3
-  //SEG39 main::@5
+  //SEG42 main::@5
   b5:
-  //SEG40 [14] (byte*) main::sc#2 ← (byte*) main::sc#1 + (byte/signed byte/word/signed word) 32 [ main::y#2 main::sc#2 ] ( main:0 [ main::y#2 main::sc#2 ] ) -- zpptrby1=zpptrby1_plus_coby1 
+  //SEG43 [18] (byte*) main::sc#2 ← (byte*) main::sc#1 + (byte/signed byte/word/signed word) 32 [ main::y#2 main::sc#2 ] ( main:2 [ main::y#2 main::sc#2 ] ) -- zpptrby1=zpptrby1_plus_coby1 
     lda sc
     clc
     adc #$20
@@ -2042,30 +2074,33 @@ main: {
     bcc !+
     inc sc+1
   !:
-  //SEG41 [15] (byte) main::y#1 ← ++ (byte) main::y#2 [ main::y#1 main::sc#2 ] ( main:0 [ main::y#1 main::sc#2 ] ) -- zpby1=_inc_zpby1 
+  //SEG44 [19] (byte) main::y#1 ← ++ (byte) main::y#2 [ main::y#1 main::sc#2 ] ( main:2 [ main::y#1 main::sc#2 ] ) -- zpby1=_inc_zpby1 
     inc y
-  //SEG42 [16] if((byte) main::y#1!=(byte/signed byte/word/signed word) 8) goto main::@1 [ main::y#1 main::sc#2 ] ( main:0 [ main::y#1 main::sc#2 ] ) -- zpby1_neq_coby1_then_la1 
+  //SEG45 [20] if((byte) main::y#1!=(byte/signed byte/word/signed word) 8) goto main::@1 [ main::y#1 main::sc#2 ] ( main:2 [ main::y#1 main::sc#2 ] ) -- zpby1_neq_coby1_then_la1 
     lda y
     cmp #8
     bne b1_from_b5
-  //SEG43 main::@6
+  //SEG46 main::@6
   b6:
-  //SEG44 [17] *((const byte*) PROCPORT#0) ← (byte/signed byte/word/signed word) 55 [ ] ( main:0 [ ] ) -- _deref_cowo1=coby2 
+  //SEG47 [21] *((const byte*) PROCPORT#0) ← (byte/signed byte/word/signed word) 55 [ ] ( main:2 [ ] ) -- _deref_cowo1=coby2 
     lda #$37
     sta PROCPORT
-  //SEG45 asm { cli }
+  //SEG48 asm { cli }
     cli
-  //SEG46 main::@return
+  //SEG49 main::@return
   breturn:
-  //SEG47 [19] return  [ ] ( main:0 [ ] )
+  //SEG50 [23] return  [ ] ( main:2 [ ] )
     rts
 }
 
 Replacing label b2_from_b3 with b2
 Replacing label b1_from_b5 with b1
 Removing instruction bbegin:
+Removing instruction b1_from_bbegin:
+Removing instruction bend_from_b1:
 Removing instruction b1_from_b5:
 Removing instruction b2_from_b3:
+Removing instruction b4_from_b2:
 Removing instruction b3_from_b4:
 Succesful ASM optimization Pass5RedundantLabelElimination
 ASSEMBLER
@@ -2078,92 +2113,95 @@ ASSEMBLER
   .const CHARGEN = $d000
   .const SCREEN = $400
 //SEG2 @begin
-//SEG3 @1
+//SEG3 [1] phi from @begin to @1 [phi:@begin->@1]
+//SEG4 @1
 b1:
-//SEG4 [0] call main param-assignment [ ] ( )
+//SEG5 [2] call main param-assignment [ ] ( )
   jsr main
-//SEG5 @end
+//SEG6 [3] phi from @1 to @end [phi:@1->@end]
+//SEG7 @end
 bend:
-//SEG6 main
+//SEG8 main
 main: {
     .const CHAR_A = CHARGEN+8
     .label bits = 3
     .label sc = 4
     .label y = 2
-  //SEG7 asm { sei }
+  //SEG9 asm { sei }
     sei
-  //SEG8 [2] *((const byte*) PROCPORT#0) ← (byte/signed byte/word/signed word) 50 [ ] ( main:0 [ ] ) -- _deref_cowo1=coby2 
+  //SEG10 [5] *((const byte*) PROCPORT#0) ← (byte/signed byte/word/signed word) 50 [ ] ( main:2 [ ] ) -- _deref_cowo1=coby2 
     lda #$32
     sta PROCPORT
-  //SEG9 [3] phi from main to main::@1 [phi:main->main::@1]
+  //SEG11 [6] phi from main to main::@1 [phi:main->main::@1]
   b1_from_main:
-  //SEG10 [3] phi (byte*) main::sc#7 = (const byte*) SCREEN#0 [phi:main->main::@1#0] -- zpptrby1=cowo1 
+  //SEG12 [6] phi (byte*) main::sc#7 = (const byte*) SCREEN#0 [phi:main->main::@1#0] -- zpptrby1=cowo1 
     lda #<SCREEN
     sta sc
     lda #>SCREEN
     sta sc+1
-  //SEG11 [3] phi (byte) main::y#2 = (byte/signed byte/word/signed word) 0 [phi:main->main::@1#1] -- zpby1=coby1 
+  //SEG13 [6] phi (byte) main::y#2 = (byte/signed byte/word/signed word) 0 [phi:main->main::@1#1] -- zpby1=coby1 
     lda #0
     sta y
     jmp b1
-  //SEG12 [3] phi from main::@5 to main::@1 [phi:main::@5->main::@1]
-  //SEG13 [3] phi (byte*) main::sc#7 = (byte*) main::sc#2 [phi:main::@5->main::@1#0] -- register_copy 
-  //SEG14 [3] phi (byte) main::y#2 = (byte) main::y#1 [phi:main::@5->main::@1#1] -- register_copy 
-  //SEG15 main::@1
+  //SEG14 [6] phi from main::@5 to main::@1 [phi:main::@5->main::@1]
+  //SEG15 [6] phi (byte*) main::sc#7 = (byte*) main::sc#2 [phi:main::@5->main::@1#0] -- register_copy 
+  //SEG16 [6] phi (byte) main::y#2 = (byte) main::y#1 [phi:main::@5->main::@1#1] -- register_copy 
+  //SEG17 main::@1
   b1:
-  //SEG16 [4] (byte) main::bits#0 ← (const byte*) main::CHAR_A#0 *idx (byte) main::y#2 [ main::y#2 main::sc#7 main::bits#0 ] ( main:0 [ main::y#2 main::sc#7 main::bits#0 ] ) -- zpby1=cowo1_derefidx_zpby2 
+  //SEG18 [7] (byte) main::bits#0 ← (const byte*) main::CHAR_A#0 *idx (byte) main::y#2 [ main::y#2 main::sc#7 main::bits#0 ] ( main:2 [ main::y#2 main::sc#7 main::bits#0 ] ) -- zpby1=cowo1_derefidx_zpby2 
     ldx y
     lda CHAR_A,x
     sta bits
-  //SEG17 [5] phi from main::@1 to main::@2 [phi:main::@1->main::@2]
+  //SEG19 [8] phi from main::@1 to main::@2 [phi:main::@1->main::@2]
   b2_from_b1:
-  //SEG18 [5] phi (byte) main::x#2 = (byte/signed byte/word/signed word) 0 [phi:main::@1->main::@2#0] -- xby=coby1 
+  //SEG20 [8] phi (byte) main::x#2 = (byte/signed byte/word/signed word) 0 [phi:main::@1->main::@2#0] -- xby=coby1 
     ldx #0
-  //SEG19 [5] phi (byte*) main::sc#3 = (byte*) main::sc#7 [phi:main::@1->main::@2#1] -- register_copy 
-  //SEG20 [5] phi (byte) main::bits#2 = (byte) main::bits#0 [phi:main::@1->main::@2#2] -- register_copy 
+  //SEG21 [8] phi (byte*) main::sc#3 = (byte*) main::sc#7 [phi:main::@1->main::@2#1] -- register_copy 
+  //SEG22 [8] phi (byte) main::bits#2 = (byte) main::bits#0 [phi:main::@1->main::@2#2] -- register_copy 
     jmp b2
-  //SEG21 [5] phi from main::@3 to main::@2 [phi:main::@3->main::@2]
-  //SEG22 [5] phi (byte) main::x#2 = (byte) main::x#1 [phi:main::@3->main::@2#0] -- register_copy 
-  //SEG23 [5] phi (byte*) main::sc#3 = (byte*) main::sc#1 [phi:main::@3->main::@2#1] -- register_copy 
-  //SEG24 [5] phi (byte) main::bits#2 = (byte) main::bits#1 [phi:main::@3->main::@2#2] -- register_copy 
-  //SEG25 main::@2
+  //SEG23 [8] phi from main::@3 to main::@2 [phi:main::@3->main::@2]
+  //SEG24 [8] phi (byte) main::x#2 = (byte) main::x#1 [phi:main::@3->main::@2#0] -- register_copy 
+  //SEG25 [8] phi (byte*) main::sc#3 = (byte*) main::sc#1 [phi:main::@3->main::@2#1] -- register_copy 
+  //SEG26 [8] phi (byte) main::bits#2 = (byte) main::bits#1 [phi:main::@3->main::@2#2] -- register_copy 
+  //SEG27 main::@2
   b2:
-  //SEG26 [6] (byte~) main::$2 ← (byte) main::bits#2 & (byte/word/signed word) 128 [ main::y#2 main::bits#2 main::sc#3 main::x#2 main::$2 ] ( main:0 [ main::y#2 main::bits#2 main::sc#3 main::x#2 main::$2 ] ) -- aby=zpby1_band_coby1 
+  //SEG28 [9] (byte~) main::$2 ← (byte) main::bits#2 & (byte/word/signed word) 128 [ main::y#2 main::bits#2 main::sc#3 main::x#2 main::$2 ] ( main:2 [ main::y#2 main::bits#2 main::sc#3 main::x#2 main::$2 ] ) -- aby=zpby1_band_coby1 
     lda bits
     and #$80
-  //SEG27 [7] if((byte~) main::$2==(byte/signed byte/word/signed word) 0) goto main::@3 [ main::y#2 main::bits#2 main::sc#3 main::x#2 ] ( main:0 [ main::y#2 main::bits#2 main::sc#3 main::x#2 ] ) -- aby_eq_0_then_la1 
+  //SEG29 [10] if((byte~) main::$2==(byte/signed byte/word/signed word) 0) goto main::@3 [ main::y#2 main::bits#2 main::sc#3 main::x#2 ] ( main:2 [ main::y#2 main::bits#2 main::sc#3 main::x#2 ] ) -- aby_eq_0_then_la1 
     cmp #0
     beq b3_from_b2
-  //SEG28 main::@4
+  //SEG30 [11] phi from main::@2 to main::@4 [phi:main::@2->main::@4]
+  //SEG31 main::@4
   b4:
-  //SEG29 [8] phi from main::@4 to main::@3 [phi:main::@4->main::@3]
-  //SEG30 [8] phi (byte) main::c#2 = (byte) '*' [phi:main::@4->main::@3#0] -- aby=coby1 
+  //SEG32 [12] phi from main::@4 to main::@3 [phi:main::@4->main::@3]
+  //SEG33 [12] phi (byte) main::c#2 = (byte) '*' [phi:main::@4->main::@3#0] -- aby=coby1 
     lda #'*'
     jmp b3
-  //SEG31 [8] phi from main::@2 to main::@3 [phi:main::@2->main::@3]
+  //SEG34 [12] phi from main::@2 to main::@3 [phi:main::@2->main::@3]
   b3_from_b2:
-  //SEG32 [8] phi (byte) main::c#2 = (byte) '.' [phi:main::@2->main::@3#0] -- aby=coby1 
+  //SEG35 [12] phi (byte) main::c#2 = (byte) '.' [phi:main::@2->main::@3#0] -- aby=coby1 
     lda #'.'
-  //SEG33 main::@3
+  //SEG36 main::@3
   b3:
-  //SEG34 [9] *((byte*) main::sc#3) ← (byte) main::c#2 [ main::y#2 main::bits#2 main::sc#3 main::x#2 ] ( main:0 [ main::y#2 main::bits#2 main::sc#3 main::x#2 ] ) -- _deref_zpptrby1=aby 
+  //SEG37 [13] *((byte*) main::sc#3) ← (byte) main::c#2 [ main::y#2 main::bits#2 main::sc#3 main::x#2 ] ( main:2 [ main::y#2 main::bits#2 main::sc#3 main::x#2 ] ) -- _deref_zpptrby1=aby 
     ldy #0
     sta (sc),y
-  //SEG35 [10] (byte*) main::sc#1 ← ++ (byte*) main::sc#3 [ main::y#2 main::bits#2 main::x#2 main::sc#1 ] ( main:0 [ main::y#2 main::bits#2 main::x#2 main::sc#1 ] ) -- zpptrby1=_inc_zpptrby1 
+  //SEG38 [14] (byte*) main::sc#1 ← ++ (byte*) main::sc#3 [ main::y#2 main::bits#2 main::x#2 main::sc#1 ] ( main:2 [ main::y#2 main::bits#2 main::x#2 main::sc#1 ] ) -- zpptrby1=_inc_zpptrby1 
     inc sc
     bne !+
     inc sc+1
   !:
-  //SEG36 [11] (byte) main::bits#1 ← (byte) main::bits#2 << (byte/signed byte/word/signed word) 1 [ main::y#2 main::x#2 main::bits#1 main::sc#1 ] ( main:0 [ main::y#2 main::x#2 main::bits#1 main::sc#1 ] ) -- zpby1=zpby1_rol_1 
+  //SEG39 [15] (byte) main::bits#1 ← (byte) main::bits#2 << (byte/signed byte/word/signed word) 1 [ main::y#2 main::x#2 main::bits#1 main::sc#1 ] ( main:2 [ main::y#2 main::x#2 main::bits#1 main::sc#1 ] ) -- zpby1=zpby1_rol_1 
     asl bits
-  //SEG37 [12] (byte) main::x#1 ← ++ (byte) main::x#2 [ main::y#2 main::bits#1 main::sc#1 main::x#1 ] ( main:0 [ main::y#2 main::bits#1 main::sc#1 main::x#1 ] ) -- xby=_inc_xby 
+  //SEG40 [16] (byte) main::x#1 ← ++ (byte) main::x#2 [ main::y#2 main::bits#1 main::sc#1 main::x#1 ] ( main:2 [ main::y#2 main::bits#1 main::sc#1 main::x#1 ] ) -- xby=_inc_xby 
     inx
-  //SEG38 [13] if((byte) main::x#1!=(byte/signed byte/word/signed word) 8) goto main::@2 [ main::y#2 main::bits#1 main::sc#1 main::x#1 ] ( main:0 [ main::y#2 main::bits#1 main::sc#1 main::x#1 ] ) -- xby_neq_coby1_then_la1 
+  //SEG41 [17] if((byte) main::x#1!=(byte/signed byte/word/signed word) 8) goto main::@2 [ main::y#2 main::bits#1 main::sc#1 main::x#1 ] ( main:2 [ main::y#2 main::bits#1 main::sc#1 main::x#1 ] ) -- xby_neq_coby1_then_la1 
     cpx #8
     bne b2
-  //SEG39 main::@5
+  //SEG42 main::@5
   b5:
-  //SEG40 [14] (byte*) main::sc#2 ← (byte*) main::sc#1 + (byte/signed byte/word/signed word) 32 [ main::y#2 main::sc#2 ] ( main:0 [ main::y#2 main::sc#2 ] ) -- zpptrby1=zpptrby1_plus_coby1 
+  //SEG43 [18] (byte*) main::sc#2 ← (byte*) main::sc#1 + (byte/signed byte/word/signed word) 32 [ main::y#2 main::sc#2 ] ( main:2 [ main::y#2 main::sc#2 ] ) -- zpptrby1=zpptrby1_plus_coby1 
     lda sc
     clc
     adc #$20
@@ -2171,22 +2209,22 @@ main: {
     bcc !+
     inc sc+1
   !:
-  //SEG41 [15] (byte) main::y#1 ← ++ (byte) main::y#2 [ main::y#1 main::sc#2 ] ( main:0 [ main::y#1 main::sc#2 ] ) -- zpby1=_inc_zpby1 
+  //SEG44 [19] (byte) main::y#1 ← ++ (byte) main::y#2 [ main::y#1 main::sc#2 ] ( main:2 [ main::y#1 main::sc#2 ] ) -- zpby1=_inc_zpby1 
     inc y
-  //SEG42 [16] if((byte) main::y#1!=(byte/signed byte/word/signed word) 8) goto main::@1 [ main::y#1 main::sc#2 ] ( main:0 [ main::y#1 main::sc#2 ] ) -- zpby1_neq_coby1_then_la1 
+  //SEG45 [20] if((byte) main::y#1!=(byte/signed byte/word/signed word) 8) goto main::@1 [ main::y#1 main::sc#2 ] ( main:2 [ main::y#1 main::sc#2 ] ) -- zpby1_neq_coby1_then_la1 
     lda y
     cmp #8
     bne b1
-  //SEG43 main::@6
+  //SEG46 main::@6
   b6:
-  //SEG44 [17] *((const byte*) PROCPORT#0) ← (byte/signed byte/word/signed word) 55 [ ] ( main:0 [ ] ) -- _deref_cowo1=coby2 
+  //SEG47 [21] *((const byte*) PROCPORT#0) ← (byte/signed byte/word/signed word) 55 [ ] ( main:2 [ ] ) -- _deref_cowo1=coby2 
     lda #$37
     sta PROCPORT
-  //SEG45 asm { cli }
+  //SEG48 asm { cli }
     cli
-  //SEG46 main::@return
+  //SEG49 main::@return
   breturn:
-  //SEG47 [19] return  [ ] ( main:0 [ ] )
+  //SEG50 [23] return  [ ] ( main:2 [ ] )
     rts
 }
 
@@ -2209,86 +2247,89 @@ ASSEMBLER
   .const CHARGEN = $d000
   .const SCREEN = $400
 //SEG2 @begin
-//SEG3 @1
-//SEG4 [0] call main param-assignment [ ] ( )
+//SEG3 [1] phi from @begin to @1 [phi:@begin->@1]
+//SEG4 @1
+//SEG5 [2] call main param-assignment [ ] ( )
   jsr main
-//SEG5 @end
-//SEG6 main
+//SEG6 [3] phi from @1 to @end [phi:@1->@end]
+//SEG7 @end
+//SEG8 main
 main: {
     .const CHAR_A = CHARGEN+8
     .label bits = 3
     .label sc = 4
     .label y = 2
-  //SEG7 asm { sei }
+  //SEG9 asm { sei }
     sei
-  //SEG8 [2] *((const byte*) PROCPORT#0) ← (byte/signed byte/word/signed word) 50 [ ] ( main:0 [ ] ) -- _deref_cowo1=coby2 
+  //SEG10 [5] *((const byte*) PROCPORT#0) ← (byte/signed byte/word/signed word) 50 [ ] ( main:2 [ ] ) -- _deref_cowo1=coby2 
     lda #$32
     sta PROCPORT
-  //SEG9 [3] phi from main to main::@1 [phi:main->main::@1]
-  //SEG10 [3] phi (byte*) main::sc#7 = (const byte*) SCREEN#0 [phi:main->main::@1#0] -- zpptrby1=cowo1 
+  //SEG11 [6] phi from main to main::@1 [phi:main->main::@1]
+  //SEG12 [6] phi (byte*) main::sc#7 = (const byte*) SCREEN#0 [phi:main->main::@1#0] -- zpptrby1=cowo1 
     lda #<SCREEN
     sta sc
     lda #>SCREEN
     sta sc+1
-  //SEG11 [3] phi (byte) main::y#2 = (byte/signed byte/word/signed word) 0 [phi:main->main::@1#1] -- zpby1=coby1 
+  //SEG13 [6] phi (byte) main::y#2 = (byte/signed byte/word/signed word) 0 [phi:main->main::@1#1] -- zpby1=coby1 
     lda #0
     sta y
     jmp b1
-  //SEG12 [3] phi from main::@5 to main::@1 [phi:main::@5->main::@1]
-  //SEG13 [3] phi (byte*) main::sc#7 = (byte*) main::sc#2 [phi:main::@5->main::@1#0] -- register_copy 
-  //SEG14 [3] phi (byte) main::y#2 = (byte) main::y#1 [phi:main::@5->main::@1#1] -- register_copy 
-  //SEG15 main::@1
+  //SEG14 [6] phi from main::@5 to main::@1 [phi:main::@5->main::@1]
+  //SEG15 [6] phi (byte*) main::sc#7 = (byte*) main::sc#2 [phi:main::@5->main::@1#0] -- register_copy 
+  //SEG16 [6] phi (byte) main::y#2 = (byte) main::y#1 [phi:main::@5->main::@1#1] -- register_copy 
+  //SEG17 main::@1
   b1:
-  //SEG16 [4] (byte) main::bits#0 ← (const byte*) main::CHAR_A#0 *idx (byte) main::y#2 [ main::y#2 main::sc#7 main::bits#0 ] ( main:0 [ main::y#2 main::sc#7 main::bits#0 ] ) -- zpby1=cowo1_derefidx_zpby2 
+  //SEG18 [7] (byte) main::bits#0 ← (const byte*) main::CHAR_A#0 *idx (byte) main::y#2 [ main::y#2 main::sc#7 main::bits#0 ] ( main:2 [ main::y#2 main::sc#7 main::bits#0 ] ) -- zpby1=cowo1_derefidx_zpby2 
     ldx y
     lda CHAR_A,x
     sta bits
-  //SEG17 [5] phi from main::@1 to main::@2 [phi:main::@1->main::@2]
-  //SEG18 [5] phi (byte) main::x#2 = (byte/signed byte/word/signed word) 0 [phi:main::@1->main::@2#0] -- xby=coby1 
+  //SEG19 [8] phi from main::@1 to main::@2 [phi:main::@1->main::@2]
+  //SEG20 [8] phi (byte) main::x#2 = (byte/signed byte/word/signed word) 0 [phi:main::@1->main::@2#0] -- xby=coby1 
     ldx #0
-  //SEG19 [5] phi (byte*) main::sc#3 = (byte*) main::sc#7 [phi:main::@1->main::@2#1] -- register_copy 
-  //SEG20 [5] phi (byte) main::bits#2 = (byte) main::bits#0 [phi:main::@1->main::@2#2] -- register_copy 
+  //SEG21 [8] phi (byte*) main::sc#3 = (byte*) main::sc#7 [phi:main::@1->main::@2#1] -- register_copy 
+  //SEG22 [8] phi (byte) main::bits#2 = (byte) main::bits#0 [phi:main::@1->main::@2#2] -- register_copy 
     jmp b2
-  //SEG21 [5] phi from main::@3 to main::@2 [phi:main::@3->main::@2]
-  //SEG22 [5] phi (byte) main::x#2 = (byte) main::x#1 [phi:main::@3->main::@2#0] -- register_copy 
-  //SEG23 [5] phi (byte*) main::sc#3 = (byte*) main::sc#1 [phi:main::@3->main::@2#1] -- register_copy 
-  //SEG24 [5] phi (byte) main::bits#2 = (byte) main::bits#1 [phi:main::@3->main::@2#2] -- register_copy 
-  //SEG25 main::@2
+  //SEG23 [8] phi from main::@3 to main::@2 [phi:main::@3->main::@2]
+  //SEG24 [8] phi (byte) main::x#2 = (byte) main::x#1 [phi:main::@3->main::@2#0] -- register_copy 
+  //SEG25 [8] phi (byte*) main::sc#3 = (byte*) main::sc#1 [phi:main::@3->main::@2#1] -- register_copy 
+  //SEG26 [8] phi (byte) main::bits#2 = (byte) main::bits#1 [phi:main::@3->main::@2#2] -- register_copy 
+  //SEG27 main::@2
   b2:
-  //SEG26 [6] (byte~) main::$2 ← (byte) main::bits#2 & (byte/word/signed word) 128 [ main::y#2 main::bits#2 main::sc#3 main::x#2 main::$2 ] ( main:0 [ main::y#2 main::bits#2 main::sc#3 main::x#2 main::$2 ] ) -- aby=zpby1_band_coby1 
+  //SEG28 [9] (byte~) main::$2 ← (byte) main::bits#2 & (byte/word/signed word) 128 [ main::y#2 main::bits#2 main::sc#3 main::x#2 main::$2 ] ( main:2 [ main::y#2 main::bits#2 main::sc#3 main::x#2 main::$2 ] ) -- aby=zpby1_band_coby1 
     lda bits
     and #$80
-  //SEG27 [7] if((byte~) main::$2==(byte/signed byte/word/signed word) 0) goto main::@3 [ main::y#2 main::bits#2 main::sc#3 main::x#2 ] ( main:0 [ main::y#2 main::bits#2 main::sc#3 main::x#2 ] ) -- aby_eq_0_then_la1 
+  //SEG29 [10] if((byte~) main::$2==(byte/signed byte/word/signed word) 0) goto main::@3 [ main::y#2 main::bits#2 main::sc#3 main::x#2 ] ( main:2 [ main::y#2 main::bits#2 main::sc#3 main::x#2 ] ) -- aby_eq_0_then_la1 
     cmp #0
     beq b3_from_b2
-  //SEG28 main::@4
-  //SEG29 [8] phi from main::@4 to main::@3 [phi:main::@4->main::@3]
-  //SEG30 [8] phi (byte) main::c#2 = (byte) '*' [phi:main::@4->main::@3#0] -- aby=coby1 
+  //SEG30 [11] phi from main::@2 to main::@4 [phi:main::@2->main::@4]
+  //SEG31 main::@4
+  //SEG32 [12] phi from main::@4 to main::@3 [phi:main::@4->main::@3]
+  //SEG33 [12] phi (byte) main::c#2 = (byte) '*' [phi:main::@4->main::@3#0] -- aby=coby1 
     lda #'*'
     jmp b3
-  //SEG31 [8] phi from main::@2 to main::@3 [phi:main::@2->main::@3]
+  //SEG34 [12] phi from main::@2 to main::@3 [phi:main::@2->main::@3]
   b3_from_b2:
-  //SEG32 [8] phi (byte) main::c#2 = (byte) '.' [phi:main::@2->main::@3#0] -- aby=coby1 
+  //SEG35 [12] phi (byte) main::c#2 = (byte) '.' [phi:main::@2->main::@3#0] -- aby=coby1 
     lda #'.'
-  //SEG33 main::@3
+  //SEG36 main::@3
   b3:
-  //SEG34 [9] *((byte*) main::sc#3) ← (byte) main::c#2 [ main::y#2 main::bits#2 main::sc#3 main::x#2 ] ( main:0 [ main::y#2 main::bits#2 main::sc#3 main::x#2 ] ) -- _deref_zpptrby1=aby 
+  //SEG37 [13] *((byte*) main::sc#3) ← (byte) main::c#2 [ main::y#2 main::bits#2 main::sc#3 main::x#2 ] ( main:2 [ main::y#2 main::bits#2 main::sc#3 main::x#2 ] ) -- _deref_zpptrby1=aby 
     ldy #0
     sta (sc),y
-  //SEG35 [10] (byte*) main::sc#1 ← ++ (byte*) main::sc#3 [ main::y#2 main::bits#2 main::x#2 main::sc#1 ] ( main:0 [ main::y#2 main::bits#2 main::x#2 main::sc#1 ] ) -- zpptrby1=_inc_zpptrby1 
+  //SEG38 [14] (byte*) main::sc#1 ← ++ (byte*) main::sc#3 [ main::y#2 main::bits#2 main::x#2 main::sc#1 ] ( main:2 [ main::y#2 main::bits#2 main::x#2 main::sc#1 ] ) -- zpptrby1=_inc_zpptrby1 
     inc sc
     bne !+
     inc sc+1
   !:
-  //SEG36 [11] (byte) main::bits#1 ← (byte) main::bits#2 << (byte/signed byte/word/signed word) 1 [ main::y#2 main::x#2 main::bits#1 main::sc#1 ] ( main:0 [ main::y#2 main::x#2 main::bits#1 main::sc#1 ] ) -- zpby1=zpby1_rol_1 
+  //SEG39 [15] (byte) main::bits#1 ← (byte) main::bits#2 << (byte/signed byte/word/signed word) 1 [ main::y#2 main::x#2 main::bits#1 main::sc#1 ] ( main:2 [ main::y#2 main::x#2 main::bits#1 main::sc#1 ] ) -- zpby1=zpby1_rol_1 
     asl bits
-  //SEG37 [12] (byte) main::x#1 ← ++ (byte) main::x#2 [ main::y#2 main::bits#1 main::sc#1 main::x#1 ] ( main:0 [ main::y#2 main::bits#1 main::sc#1 main::x#1 ] ) -- xby=_inc_xby 
+  //SEG40 [16] (byte) main::x#1 ← ++ (byte) main::x#2 [ main::y#2 main::bits#1 main::sc#1 main::x#1 ] ( main:2 [ main::y#2 main::bits#1 main::sc#1 main::x#1 ] ) -- xby=_inc_xby 
     inx
-  //SEG38 [13] if((byte) main::x#1!=(byte/signed byte/word/signed word) 8) goto main::@2 [ main::y#2 main::bits#1 main::sc#1 main::x#1 ] ( main:0 [ main::y#2 main::bits#1 main::sc#1 main::x#1 ] ) -- xby_neq_coby1_then_la1 
+  //SEG41 [17] if((byte) main::x#1!=(byte/signed byte/word/signed word) 8) goto main::@2 [ main::y#2 main::bits#1 main::sc#1 main::x#1 ] ( main:2 [ main::y#2 main::bits#1 main::sc#1 main::x#1 ] ) -- xby_neq_coby1_then_la1 
     cpx #8
     bne b2
-  //SEG39 main::@5
-  //SEG40 [14] (byte*) main::sc#2 ← (byte*) main::sc#1 + (byte/signed byte/word/signed word) 32 [ main::y#2 main::sc#2 ] ( main:0 [ main::y#2 main::sc#2 ] ) -- zpptrby1=zpptrby1_plus_coby1 
+  //SEG42 main::@5
+  //SEG43 [18] (byte*) main::sc#2 ← (byte*) main::sc#1 + (byte/signed byte/word/signed word) 32 [ main::y#2 main::sc#2 ] ( main:2 [ main::y#2 main::sc#2 ] ) -- zpptrby1=zpptrby1_plus_coby1 
     lda sc
     clc
     adc #$20
@@ -2296,20 +2337,20 @@ main: {
     bcc !+
     inc sc+1
   !:
-  //SEG41 [15] (byte) main::y#1 ← ++ (byte) main::y#2 [ main::y#1 main::sc#2 ] ( main:0 [ main::y#1 main::sc#2 ] ) -- zpby1=_inc_zpby1 
+  //SEG44 [19] (byte) main::y#1 ← ++ (byte) main::y#2 [ main::y#1 main::sc#2 ] ( main:2 [ main::y#1 main::sc#2 ] ) -- zpby1=_inc_zpby1 
     inc y
-  //SEG42 [16] if((byte) main::y#1!=(byte/signed byte/word/signed word) 8) goto main::@1 [ main::y#1 main::sc#2 ] ( main:0 [ main::y#1 main::sc#2 ] ) -- zpby1_neq_coby1_then_la1 
+  //SEG45 [20] if((byte) main::y#1!=(byte/signed byte/word/signed word) 8) goto main::@1 [ main::y#1 main::sc#2 ] ( main:2 [ main::y#1 main::sc#2 ] ) -- zpby1_neq_coby1_then_la1 
     lda y
     cmp #8
     bne b1
-  //SEG43 main::@6
-  //SEG44 [17] *((const byte*) PROCPORT#0) ← (byte/signed byte/word/signed word) 55 [ ] ( main:0 [ ] ) -- _deref_cowo1=coby2 
+  //SEG46 main::@6
+  //SEG47 [21] *((const byte*) PROCPORT#0) ← (byte/signed byte/word/signed word) 55 [ ] ( main:2 [ ] ) -- _deref_cowo1=coby2 
     lda #$37
     sta PROCPORT
-  //SEG45 asm { cli }
+  //SEG48 asm { cli }
     cli
-  //SEG46 main::@return
-  //SEG47 [19] return  [ ] ( main:0 [ ] )
+  //SEG49 main::@return
+  //SEG50 [23] return  [ ] ( main:2 [ ] )
     rts
 }
 
@@ -2326,84 +2367,87 @@ ASSEMBLER
   .const CHARGEN = $d000
   .const SCREEN = $400
 //SEG2 @begin
-//SEG3 @1
-//SEG4 [0] call main param-assignment [ ] ( )
+//SEG3 [1] phi from @begin to @1 [phi:@begin->@1]
+//SEG4 @1
+//SEG5 [2] call main param-assignment [ ] ( )
   jsr main
-//SEG5 @end
-//SEG6 main
+//SEG6 [3] phi from @1 to @end [phi:@1->@end]
+//SEG7 @end
+//SEG8 main
 main: {
     .const CHAR_A = CHARGEN+8
     .label bits = 3
     .label sc = 4
     .label y = 2
-  //SEG7 asm { sei }
+  //SEG9 asm { sei }
     sei
-  //SEG8 [2] *((const byte*) PROCPORT#0) ← (byte/signed byte/word/signed word) 50 [ ] ( main:0 [ ] ) -- _deref_cowo1=coby2 
+  //SEG10 [5] *((const byte*) PROCPORT#0) ← (byte/signed byte/word/signed word) 50 [ ] ( main:2 [ ] ) -- _deref_cowo1=coby2 
     lda #$32
     sta PROCPORT
-  //SEG9 [3] phi from main to main::@1 [phi:main->main::@1]
-  //SEG10 [3] phi (byte*) main::sc#7 = (const byte*) SCREEN#0 [phi:main->main::@1#0] -- zpptrby1=cowo1 
+  //SEG11 [6] phi from main to main::@1 [phi:main->main::@1]
+  //SEG12 [6] phi (byte*) main::sc#7 = (const byte*) SCREEN#0 [phi:main->main::@1#0] -- zpptrby1=cowo1 
     lda #<SCREEN
     sta sc
     lda #>SCREEN
     sta sc+1
-  //SEG11 [3] phi (byte) main::y#2 = (byte/signed byte/word/signed word) 0 [phi:main->main::@1#1] -- zpby1=coby1 
+  //SEG13 [6] phi (byte) main::y#2 = (byte/signed byte/word/signed word) 0 [phi:main->main::@1#1] -- zpby1=coby1 
     lda #0
     sta y
-  //SEG12 [3] phi from main::@5 to main::@1 [phi:main::@5->main::@1]
-  //SEG13 [3] phi (byte*) main::sc#7 = (byte*) main::sc#2 [phi:main::@5->main::@1#0] -- register_copy 
-  //SEG14 [3] phi (byte) main::y#2 = (byte) main::y#1 [phi:main::@5->main::@1#1] -- register_copy 
-  //SEG15 main::@1
+  //SEG14 [6] phi from main::@5 to main::@1 [phi:main::@5->main::@1]
+  //SEG15 [6] phi (byte*) main::sc#7 = (byte*) main::sc#2 [phi:main::@5->main::@1#0] -- register_copy 
+  //SEG16 [6] phi (byte) main::y#2 = (byte) main::y#1 [phi:main::@5->main::@1#1] -- register_copy 
+  //SEG17 main::@1
   b1:
-  //SEG16 [4] (byte) main::bits#0 ← (const byte*) main::CHAR_A#0 *idx (byte) main::y#2 [ main::y#2 main::sc#7 main::bits#0 ] ( main:0 [ main::y#2 main::sc#7 main::bits#0 ] ) -- zpby1=cowo1_derefidx_zpby2 
+  //SEG18 [7] (byte) main::bits#0 ← (const byte*) main::CHAR_A#0 *idx (byte) main::y#2 [ main::y#2 main::sc#7 main::bits#0 ] ( main:2 [ main::y#2 main::sc#7 main::bits#0 ] ) -- zpby1=cowo1_derefidx_zpby2 
     ldx y
     lda CHAR_A,x
     sta bits
-  //SEG17 [5] phi from main::@1 to main::@2 [phi:main::@1->main::@2]
-  //SEG18 [5] phi (byte) main::x#2 = (byte/signed byte/word/signed word) 0 [phi:main::@1->main::@2#0] -- xby=coby1 
+  //SEG19 [8] phi from main::@1 to main::@2 [phi:main::@1->main::@2]
+  //SEG20 [8] phi (byte) main::x#2 = (byte/signed byte/word/signed word) 0 [phi:main::@1->main::@2#0] -- xby=coby1 
     ldx #0
-  //SEG19 [5] phi (byte*) main::sc#3 = (byte*) main::sc#7 [phi:main::@1->main::@2#1] -- register_copy 
-  //SEG20 [5] phi (byte) main::bits#2 = (byte) main::bits#0 [phi:main::@1->main::@2#2] -- register_copy 
-  //SEG21 [5] phi from main::@3 to main::@2 [phi:main::@3->main::@2]
-  //SEG22 [5] phi (byte) main::x#2 = (byte) main::x#1 [phi:main::@3->main::@2#0] -- register_copy 
-  //SEG23 [5] phi (byte*) main::sc#3 = (byte*) main::sc#1 [phi:main::@3->main::@2#1] -- register_copy 
-  //SEG24 [5] phi (byte) main::bits#2 = (byte) main::bits#1 [phi:main::@3->main::@2#2] -- register_copy 
-  //SEG25 main::@2
+  //SEG21 [8] phi (byte*) main::sc#3 = (byte*) main::sc#7 [phi:main::@1->main::@2#1] -- register_copy 
+  //SEG22 [8] phi (byte) main::bits#2 = (byte) main::bits#0 [phi:main::@1->main::@2#2] -- register_copy 
+  //SEG23 [8] phi from main::@3 to main::@2 [phi:main::@3->main::@2]
+  //SEG24 [8] phi (byte) main::x#2 = (byte) main::x#1 [phi:main::@3->main::@2#0] -- register_copy 
+  //SEG25 [8] phi (byte*) main::sc#3 = (byte*) main::sc#1 [phi:main::@3->main::@2#1] -- register_copy 
+  //SEG26 [8] phi (byte) main::bits#2 = (byte) main::bits#1 [phi:main::@3->main::@2#2] -- register_copy 
+  //SEG27 main::@2
   b2:
-  //SEG26 [6] (byte~) main::$2 ← (byte) main::bits#2 & (byte/word/signed word) 128 [ main::y#2 main::bits#2 main::sc#3 main::x#2 main::$2 ] ( main:0 [ main::y#2 main::bits#2 main::sc#3 main::x#2 main::$2 ] ) -- aby=zpby1_band_coby1 
+  //SEG28 [9] (byte~) main::$2 ← (byte) main::bits#2 & (byte/word/signed word) 128 [ main::y#2 main::bits#2 main::sc#3 main::x#2 main::$2 ] ( main:2 [ main::y#2 main::bits#2 main::sc#3 main::x#2 main::$2 ] ) -- aby=zpby1_band_coby1 
     lda bits
     and #$80
-  //SEG27 [7] if((byte~) main::$2==(byte/signed byte/word/signed word) 0) goto main::@3 [ main::y#2 main::bits#2 main::sc#3 main::x#2 ] ( main:0 [ main::y#2 main::bits#2 main::sc#3 main::x#2 ] ) -- aby_eq_0_then_la1 
+  //SEG29 [10] if((byte~) main::$2==(byte/signed byte/word/signed word) 0) goto main::@3 [ main::y#2 main::bits#2 main::sc#3 main::x#2 ] ( main:2 [ main::y#2 main::bits#2 main::sc#3 main::x#2 ] ) -- aby_eq_0_then_la1 
     cmp #0
     beq b3_from_b2
-  //SEG28 main::@4
-  //SEG29 [8] phi from main::@4 to main::@3 [phi:main::@4->main::@3]
-  //SEG30 [8] phi (byte) main::c#2 = (byte) '*' [phi:main::@4->main::@3#0] -- aby=coby1 
+  //SEG30 [11] phi from main::@2 to main::@4 [phi:main::@2->main::@4]
+  //SEG31 main::@4
+  //SEG32 [12] phi from main::@4 to main::@3 [phi:main::@4->main::@3]
+  //SEG33 [12] phi (byte) main::c#2 = (byte) '*' [phi:main::@4->main::@3#0] -- aby=coby1 
     lda #'*'
     jmp b3
-  //SEG31 [8] phi from main::@2 to main::@3 [phi:main::@2->main::@3]
+  //SEG34 [12] phi from main::@2 to main::@3 [phi:main::@2->main::@3]
   b3_from_b2:
-  //SEG32 [8] phi (byte) main::c#2 = (byte) '.' [phi:main::@2->main::@3#0] -- aby=coby1 
+  //SEG35 [12] phi (byte) main::c#2 = (byte) '.' [phi:main::@2->main::@3#0] -- aby=coby1 
     lda #'.'
-  //SEG33 main::@3
+  //SEG36 main::@3
   b3:
-  //SEG34 [9] *((byte*) main::sc#3) ← (byte) main::c#2 [ main::y#2 main::bits#2 main::sc#3 main::x#2 ] ( main:0 [ main::y#2 main::bits#2 main::sc#3 main::x#2 ] ) -- _deref_zpptrby1=aby 
+  //SEG37 [13] *((byte*) main::sc#3) ← (byte) main::c#2 [ main::y#2 main::bits#2 main::sc#3 main::x#2 ] ( main:2 [ main::y#2 main::bits#2 main::sc#3 main::x#2 ] ) -- _deref_zpptrby1=aby 
     ldy #0
     sta (sc),y
-  //SEG35 [10] (byte*) main::sc#1 ← ++ (byte*) main::sc#3 [ main::y#2 main::bits#2 main::x#2 main::sc#1 ] ( main:0 [ main::y#2 main::bits#2 main::x#2 main::sc#1 ] ) -- zpptrby1=_inc_zpptrby1 
+  //SEG38 [14] (byte*) main::sc#1 ← ++ (byte*) main::sc#3 [ main::y#2 main::bits#2 main::x#2 main::sc#1 ] ( main:2 [ main::y#2 main::bits#2 main::x#2 main::sc#1 ] ) -- zpptrby1=_inc_zpptrby1 
     inc sc
     bne !+
     inc sc+1
   !:
-  //SEG36 [11] (byte) main::bits#1 ← (byte) main::bits#2 << (byte/signed byte/word/signed word) 1 [ main::y#2 main::x#2 main::bits#1 main::sc#1 ] ( main:0 [ main::y#2 main::x#2 main::bits#1 main::sc#1 ] ) -- zpby1=zpby1_rol_1 
+  //SEG39 [15] (byte) main::bits#1 ← (byte) main::bits#2 << (byte/signed byte/word/signed word) 1 [ main::y#2 main::x#2 main::bits#1 main::sc#1 ] ( main:2 [ main::y#2 main::x#2 main::bits#1 main::sc#1 ] ) -- zpby1=zpby1_rol_1 
     asl bits
-  //SEG37 [12] (byte) main::x#1 ← ++ (byte) main::x#2 [ main::y#2 main::bits#1 main::sc#1 main::x#1 ] ( main:0 [ main::y#2 main::bits#1 main::sc#1 main::x#1 ] ) -- xby=_inc_xby 
+  //SEG40 [16] (byte) main::x#1 ← ++ (byte) main::x#2 [ main::y#2 main::bits#1 main::sc#1 main::x#1 ] ( main:2 [ main::y#2 main::bits#1 main::sc#1 main::x#1 ] ) -- xby=_inc_xby 
     inx
-  //SEG38 [13] if((byte) main::x#1!=(byte/signed byte/word/signed word) 8) goto main::@2 [ main::y#2 main::bits#1 main::sc#1 main::x#1 ] ( main:0 [ main::y#2 main::bits#1 main::sc#1 main::x#1 ] ) -- xby_neq_coby1_then_la1 
+  //SEG41 [17] if((byte) main::x#1!=(byte/signed byte/word/signed word) 8) goto main::@2 [ main::y#2 main::bits#1 main::sc#1 main::x#1 ] ( main:2 [ main::y#2 main::bits#1 main::sc#1 main::x#1 ] ) -- xby_neq_coby1_then_la1 
     cpx #8
     bne b2
-  //SEG39 main::@5
-  //SEG40 [14] (byte*) main::sc#2 ← (byte*) main::sc#1 + (byte/signed byte/word/signed word) 32 [ main::y#2 main::sc#2 ] ( main:0 [ main::y#2 main::sc#2 ] ) -- zpptrby1=zpptrby1_plus_coby1 
+  //SEG42 main::@5
+  //SEG43 [18] (byte*) main::sc#2 ← (byte*) main::sc#1 + (byte/signed byte/word/signed word) 32 [ main::y#2 main::sc#2 ] ( main:2 [ main::y#2 main::sc#2 ] ) -- zpptrby1=zpptrby1_plus_coby1 
     lda sc
     clc
     adc #$20
@@ -2411,20 +2455,20 @@ main: {
     bcc !+
     inc sc+1
   !:
-  //SEG41 [15] (byte) main::y#1 ← ++ (byte) main::y#2 [ main::y#1 main::sc#2 ] ( main:0 [ main::y#1 main::sc#2 ] ) -- zpby1=_inc_zpby1 
+  //SEG44 [19] (byte) main::y#1 ← ++ (byte) main::y#2 [ main::y#1 main::sc#2 ] ( main:2 [ main::y#1 main::sc#2 ] ) -- zpby1=_inc_zpby1 
     inc y
-  //SEG42 [16] if((byte) main::y#1!=(byte/signed byte/word/signed word) 8) goto main::@1 [ main::y#1 main::sc#2 ] ( main:0 [ main::y#1 main::sc#2 ] ) -- zpby1_neq_coby1_then_la1 
+  //SEG45 [20] if((byte) main::y#1!=(byte/signed byte/word/signed word) 8) goto main::@1 [ main::y#1 main::sc#2 ] ( main:2 [ main::y#1 main::sc#2 ] ) -- zpby1_neq_coby1_then_la1 
     lda y
     cmp #8
     bne b1
-  //SEG43 main::@6
-  //SEG44 [17] *((const byte*) PROCPORT#0) ← (byte/signed byte/word/signed word) 55 [ ] ( main:0 [ ] ) -- _deref_cowo1=coby2 
+  //SEG46 main::@6
+  //SEG47 [21] *((const byte*) PROCPORT#0) ← (byte/signed byte/word/signed word) 55 [ ] ( main:2 [ ] ) -- _deref_cowo1=coby2 
     lda #$37
     sta PROCPORT
-  //SEG45 asm { cli }
+  //SEG48 asm { cli }
     cli
-  //SEG46 main::@return
-  //SEG47 [19] return  [ ] ( main:0 [ ] )
+  //SEG49 main::@return
+  //SEG50 [23] return  [ ] ( main:2 [ ] )
     rts
 }
 
@@ -2452,20 +2496,20 @@ FINAL SYMBOL TABLE
 (byte) main::bits
 (byte) main::bits#0 bits zp ZP_BYTE:3 22.0
 (byte) main::bits#1 bits zp ZP_BYTE:3 67.33333333333333
-(byte) main::bits#2 bits zp ZP_BYTE:3 52.33333333333333
+(byte) main::bits#2 bits zp ZP_BYTE:3 44.85714285714286
 (byte) main::c
 (byte) main::c#2 reg byte a 101.0
 (byte*) main::sc
 (byte*) main::sc#1 sc zp ZP_PTR_BYTE:4 53.25
 (byte*) main::sc#2 sc zp ZP_PTR_BYTE:4 7.333333333333333
-(byte*) main::sc#3 sc zp ZP_PTR_BYTE:4 62.8
+(byte*) main::sc#3 sc zp ZP_PTR_BYTE:4 52.33333333333333
 (byte*) main::sc#7 sc zp ZP_PTR_BYTE:4 11.0
 (byte) main::x
 (byte) main::x#1 reg byte x 151.5
-(byte) main::x#2 reg byte x 28.857142857142858
+(byte) main::x#2 reg byte x 25.25
 (byte) main::y
 (byte) main::y#1 y zp ZP_BYTE:2 16.5
-(byte) main::y#2 y zp ZP_BYTE:2 2.75
+(byte) main::y#2 y zp ZP_BYTE:2 2.5384615384615383
 
 zp ZP_BYTE:2 [ main::y#2 main::y#1 ]
 zp ZP_BYTE:3 [ main::bits#2 main::bits#0 main::bits#1 ]
@@ -2484,84 +2528,87 @@ FINAL CODE
   .const CHARGEN = $d000
   .const SCREEN = $400
 //SEG2 @begin
-//SEG3 @1
-//SEG4 [0] call main param-assignment [ ] ( )
+//SEG3 [1] phi from @begin to @1 [phi:@begin->@1]
+//SEG4 @1
+//SEG5 [2] call main param-assignment [ ] ( )
   jsr main
-//SEG5 @end
-//SEG6 main
+//SEG6 [3] phi from @1 to @end [phi:@1->@end]
+//SEG7 @end
+//SEG8 main
 main: {
     .const CHAR_A = CHARGEN+8
     .label bits = 3
     .label sc = 4
     .label y = 2
-  //SEG7 asm { sei }
+  //SEG9 asm { sei }
     sei
-  //SEG8 [2] *((const byte*) PROCPORT#0) ← (byte/signed byte/word/signed word) 50 [ ] ( main:0 [ ] ) -- _deref_cowo1=coby2 
+  //SEG10 [5] *((const byte*) PROCPORT#0) ← (byte/signed byte/word/signed word) 50 [ ] ( main:2 [ ] ) -- _deref_cowo1=coby2 
     lda #$32
     sta PROCPORT
-  //SEG9 [3] phi from main to main::@1 [phi:main->main::@1]
-  //SEG10 [3] phi (byte*) main::sc#7 = (const byte*) SCREEN#0 [phi:main->main::@1#0] -- zpptrby1=cowo1 
+  //SEG11 [6] phi from main to main::@1 [phi:main->main::@1]
+  //SEG12 [6] phi (byte*) main::sc#7 = (const byte*) SCREEN#0 [phi:main->main::@1#0] -- zpptrby1=cowo1 
     lda #<SCREEN
     sta sc
     lda #>SCREEN
     sta sc+1
-  //SEG11 [3] phi (byte) main::y#2 = (byte/signed byte/word/signed word) 0 [phi:main->main::@1#1] -- zpby1=coby1 
+  //SEG13 [6] phi (byte) main::y#2 = (byte/signed byte/word/signed word) 0 [phi:main->main::@1#1] -- zpby1=coby1 
     lda #0
     sta y
-  //SEG12 [3] phi from main::@5 to main::@1 [phi:main::@5->main::@1]
-  //SEG13 [3] phi (byte*) main::sc#7 = (byte*) main::sc#2 [phi:main::@5->main::@1#0] -- register_copy 
-  //SEG14 [3] phi (byte) main::y#2 = (byte) main::y#1 [phi:main::@5->main::@1#1] -- register_copy 
-  //SEG15 main::@1
+  //SEG14 [6] phi from main::@5 to main::@1 [phi:main::@5->main::@1]
+  //SEG15 [6] phi (byte*) main::sc#7 = (byte*) main::sc#2 [phi:main::@5->main::@1#0] -- register_copy 
+  //SEG16 [6] phi (byte) main::y#2 = (byte) main::y#1 [phi:main::@5->main::@1#1] -- register_copy 
+  //SEG17 main::@1
   b1:
-  //SEG16 [4] (byte) main::bits#0 ← (const byte*) main::CHAR_A#0 *idx (byte) main::y#2 [ main::y#2 main::sc#7 main::bits#0 ] ( main:0 [ main::y#2 main::sc#7 main::bits#0 ] ) -- zpby1=cowo1_derefidx_zpby2 
+  //SEG18 [7] (byte) main::bits#0 ← (const byte*) main::CHAR_A#0 *idx (byte) main::y#2 [ main::y#2 main::sc#7 main::bits#0 ] ( main:2 [ main::y#2 main::sc#7 main::bits#0 ] ) -- zpby1=cowo1_derefidx_zpby2 
     ldx y
     lda CHAR_A,x
     sta bits
-  //SEG17 [5] phi from main::@1 to main::@2 [phi:main::@1->main::@2]
-  //SEG18 [5] phi (byte) main::x#2 = (byte/signed byte/word/signed word) 0 [phi:main::@1->main::@2#0] -- xby=coby1 
+  //SEG19 [8] phi from main::@1 to main::@2 [phi:main::@1->main::@2]
+  //SEG20 [8] phi (byte) main::x#2 = (byte/signed byte/word/signed word) 0 [phi:main::@1->main::@2#0] -- xby=coby1 
     ldx #0
-  //SEG19 [5] phi (byte*) main::sc#3 = (byte*) main::sc#7 [phi:main::@1->main::@2#1] -- register_copy 
-  //SEG20 [5] phi (byte) main::bits#2 = (byte) main::bits#0 [phi:main::@1->main::@2#2] -- register_copy 
-  //SEG21 [5] phi from main::@3 to main::@2 [phi:main::@3->main::@2]
-  //SEG22 [5] phi (byte) main::x#2 = (byte) main::x#1 [phi:main::@3->main::@2#0] -- register_copy 
-  //SEG23 [5] phi (byte*) main::sc#3 = (byte*) main::sc#1 [phi:main::@3->main::@2#1] -- register_copy 
-  //SEG24 [5] phi (byte) main::bits#2 = (byte) main::bits#1 [phi:main::@3->main::@2#2] -- register_copy 
-  //SEG25 main::@2
+  //SEG21 [8] phi (byte*) main::sc#3 = (byte*) main::sc#7 [phi:main::@1->main::@2#1] -- register_copy 
+  //SEG22 [8] phi (byte) main::bits#2 = (byte) main::bits#0 [phi:main::@1->main::@2#2] -- register_copy 
+  //SEG23 [8] phi from main::@3 to main::@2 [phi:main::@3->main::@2]
+  //SEG24 [8] phi (byte) main::x#2 = (byte) main::x#1 [phi:main::@3->main::@2#0] -- register_copy 
+  //SEG25 [8] phi (byte*) main::sc#3 = (byte*) main::sc#1 [phi:main::@3->main::@2#1] -- register_copy 
+  //SEG26 [8] phi (byte) main::bits#2 = (byte) main::bits#1 [phi:main::@3->main::@2#2] -- register_copy 
+  //SEG27 main::@2
   b2:
-  //SEG26 [6] (byte~) main::$2 ← (byte) main::bits#2 & (byte/word/signed word) 128 [ main::y#2 main::bits#2 main::sc#3 main::x#2 main::$2 ] ( main:0 [ main::y#2 main::bits#2 main::sc#3 main::x#2 main::$2 ] ) -- aby=zpby1_band_coby1 
+  //SEG28 [9] (byte~) main::$2 ← (byte) main::bits#2 & (byte/word/signed word) 128 [ main::y#2 main::bits#2 main::sc#3 main::x#2 main::$2 ] ( main:2 [ main::y#2 main::bits#2 main::sc#3 main::x#2 main::$2 ] ) -- aby=zpby1_band_coby1 
     lda bits
     and #$80
-  //SEG27 [7] if((byte~) main::$2==(byte/signed byte/word/signed word) 0) goto main::@3 [ main::y#2 main::bits#2 main::sc#3 main::x#2 ] ( main:0 [ main::y#2 main::bits#2 main::sc#3 main::x#2 ] ) -- aby_eq_0_then_la1 
+  //SEG29 [10] if((byte~) main::$2==(byte/signed byte/word/signed word) 0) goto main::@3 [ main::y#2 main::bits#2 main::sc#3 main::x#2 ] ( main:2 [ main::y#2 main::bits#2 main::sc#3 main::x#2 ] ) -- aby_eq_0_then_la1 
     cmp #0
     beq b3_from_b2
-  //SEG28 main::@4
-  //SEG29 [8] phi from main::@4 to main::@3 [phi:main::@4->main::@3]
-  //SEG30 [8] phi (byte) main::c#2 = (byte) '*' [phi:main::@4->main::@3#0] -- aby=coby1 
+  //SEG30 [11] phi from main::@2 to main::@4 [phi:main::@2->main::@4]
+  //SEG31 main::@4
+  //SEG32 [12] phi from main::@4 to main::@3 [phi:main::@4->main::@3]
+  //SEG33 [12] phi (byte) main::c#2 = (byte) '*' [phi:main::@4->main::@3#0] -- aby=coby1 
     lda #'*'
     jmp b3
-  //SEG31 [8] phi from main::@2 to main::@3 [phi:main::@2->main::@3]
+  //SEG34 [12] phi from main::@2 to main::@3 [phi:main::@2->main::@3]
   b3_from_b2:
-  //SEG32 [8] phi (byte) main::c#2 = (byte) '.' [phi:main::@2->main::@3#0] -- aby=coby1 
+  //SEG35 [12] phi (byte) main::c#2 = (byte) '.' [phi:main::@2->main::@3#0] -- aby=coby1 
     lda #'.'
-  //SEG33 main::@3
+  //SEG36 main::@3
   b3:
-  //SEG34 [9] *((byte*) main::sc#3) ← (byte) main::c#2 [ main::y#2 main::bits#2 main::sc#3 main::x#2 ] ( main:0 [ main::y#2 main::bits#2 main::sc#3 main::x#2 ] ) -- _deref_zpptrby1=aby 
+  //SEG37 [13] *((byte*) main::sc#3) ← (byte) main::c#2 [ main::y#2 main::bits#2 main::sc#3 main::x#2 ] ( main:2 [ main::y#2 main::bits#2 main::sc#3 main::x#2 ] ) -- _deref_zpptrby1=aby 
     ldy #0
     sta (sc),y
-  //SEG35 [10] (byte*) main::sc#1 ← ++ (byte*) main::sc#3 [ main::y#2 main::bits#2 main::x#2 main::sc#1 ] ( main:0 [ main::y#2 main::bits#2 main::x#2 main::sc#1 ] ) -- zpptrby1=_inc_zpptrby1 
+  //SEG38 [14] (byte*) main::sc#1 ← ++ (byte*) main::sc#3 [ main::y#2 main::bits#2 main::x#2 main::sc#1 ] ( main:2 [ main::y#2 main::bits#2 main::x#2 main::sc#1 ] ) -- zpptrby1=_inc_zpptrby1 
     inc sc
     bne !+
     inc sc+1
   !:
-  //SEG36 [11] (byte) main::bits#1 ← (byte) main::bits#2 << (byte/signed byte/word/signed word) 1 [ main::y#2 main::x#2 main::bits#1 main::sc#1 ] ( main:0 [ main::y#2 main::x#2 main::bits#1 main::sc#1 ] ) -- zpby1=zpby1_rol_1 
+  //SEG39 [15] (byte) main::bits#1 ← (byte) main::bits#2 << (byte/signed byte/word/signed word) 1 [ main::y#2 main::x#2 main::bits#1 main::sc#1 ] ( main:2 [ main::y#2 main::x#2 main::bits#1 main::sc#1 ] ) -- zpby1=zpby1_rol_1 
     asl bits
-  //SEG37 [12] (byte) main::x#1 ← ++ (byte) main::x#2 [ main::y#2 main::bits#1 main::sc#1 main::x#1 ] ( main:0 [ main::y#2 main::bits#1 main::sc#1 main::x#1 ] ) -- xby=_inc_xby 
+  //SEG40 [16] (byte) main::x#1 ← ++ (byte) main::x#2 [ main::y#2 main::bits#1 main::sc#1 main::x#1 ] ( main:2 [ main::y#2 main::bits#1 main::sc#1 main::x#1 ] ) -- xby=_inc_xby 
     inx
-  //SEG38 [13] if((byte) main::x#1!=(byte/signed byte/word/signed word) 8) goto main::@2 [ main::y#2 main::bits#1 main::sc#1 main::x#1 ] ( main:0 [ main::y#2 main::bits#1 main::sc#1 main::x#1 ] ) -- xby_neq_coby1_then_la1 
+  //SEG41 [17] if((byte) main::x#1!=(byte/signed byte/word/signed word) 8) goto main::@2 [ main::y#2 main::bits#1 main::sc#1 main::x#1 ] ( main:2 [ main::y#2 main::bits#1 main::sc#1 main::x#1 ] ) -- xby_neq_coby1_then_la1 
     cpx #8
     bne b2
-  //SEG39 main::@5
-  //SEG40 [14] (byte*) main::sc#2 ← (byte*) main::sc#1 + (byte/signed byte/word/signed word) 32 [ main::y#2 main::sc#2 ] ( main:0 [ main::y#2 main::sc#2 ] ) -- zpptrby1=zpptrby1_plus_coby1 
+  //SEG42 main::@5
+  //SEG43 [18] (byte*) main::sc#2 ← (byte*) main::sc#1 + (byte/signed byte/word/signed word) 32 [ main::y#2 main::sc#2 ] ( main:2 [ main::y#2 main::sc#2 ] ) -- zpptrby1=zpptrby1_plus_coby1 
     lda sc
     clc
     adc #$20
@@ -2569,20 +2616,20 @@ main: {
     bcc !+
     inc sc+1
   !:
-  //SEG41 [15] (byte) main::y#1 ← ++ (byte) main::y#2 [ main::y#1 main::sc#2 ] ( main:0 [ main::y#1 main::sc#2 ] ) -- zpby1=_inc_zpby1 
+  //SEG44 [19] (byte) main::y#1 ← ++ (byte) main::y#2 [ main::y#1 main::sc#2 ] ( main:2 [ main::y#1 main::sc#2 ] ) -- zpby1=_inc_zpby1 
     inc y
-  //SEG42 [16] if((byte) main::y#1!=(byte/signed byte/word/signed word) 8) goto main::@1 [ main::y#1 main::sc#2 ] ( main:0 [ main::y#1 main::sc#2 ] ) -- zpby1_neq_coby1_then_la1 
+  //SEG45 [20] if((byte) main::y#1!=(byte/signed byte/word/signed word) 8) goto main::@1 [ main::y#1 main::sc#2 ] ( main:2 [ main::y#1 main::sc#2 ] ) -- zpby1_neq_coby1_then_la1 
     lda y
     cmp #8
     bne b1
-  //SEG43 main::@6
-  //SEG44 [17] *((const byte*) PROCPORT#0) ← (byte/signed byte/word/signed word) 55 [ ] ( main:0 [ ] ) -- _deref_cowo1=coby2 
+  //SEG46 main::@6
+  //SEG47 [21] *((const byte*) PROCPORT#0) ← (byte/signed byte/word/signed word) 55 [ ] ( main:2 [ ] ) -- _deref_cowo1=coby2 
     lda #$37
     sta PROCPORT
-  //SEG45 asm { cli }
+  //SEG48 asm { cli }
     cli
-  //SEG46 main::@return
-  //SEG47 [19] return  [ ] ( main:0 [ ] )
+  //SEG49 main::@return
+  //SEG50 [23] return  [ ] ( main:2 [ ] )
     rts
 }
 

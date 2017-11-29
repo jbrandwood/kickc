@@ -19,7 +19,7 @@ public class Pass2AliasElimination extends Pass2SsaOptimization {
     */
    @Override
    public boolean optimize() {
-      final Aliases aliases = findAliases(getProgram(), false);
+      final Aliases aliases = findAliases(getProgram());
       removeAliasAssignments(aliases);
       replaceVariables(aliases.getReplacements());
       for (AliasSet aliasSet : aliases.getAliasSets()) {
@@ -62,17 +62,17 @@ public class Pass2AliasElimination extends Pass2SsaOptimization {
                   if (aliasSet != null) {
                      boolean remove = true;
                      for (StatementPhiBlock.PhiRValue phiRValue : phiVariable.getValues()) {
-                        if(!aliasSet.contains(phiRValue.getrValue())) {
-                            remove = false;
-                            break;
+                        if (!aliasSet.contains(phiRValue.getrValue())) {
+                           remove = false;
+                           break;
                         }
                      }
-                     if(remove) {
+                     if (remove) {
                         variableIterator.remove();
                      }
                   }
                }
-               if(phiBlock.getPhiVariables().size()==0) {
+               if (phiBlock.getPhiVariables().size() == 0) {
                   iterator.remove();
                }
             }
@@ -109,7 +109,7 @@ public class Pass2AliasElimination extends Pass2SsaOptimization {
          for (AliasSet aliasSet : aliases) {
             VariableRef keepVar = aliasSet.getKeepVar();
             for (VariableRef var : aliasSet.getEliminateVars()) {
-               if(!var.equals(keepVar)) {
+               if (!var.equals(keepVar)) {
                   replacements.put(var, keepVar);
                }
             }
@@ -126,7 +126,7 @@ public class Pass2AliasElimination extends Pass2SsaOptimization {
          AliasSet aliasSet2 = findAliasSet(var2);
          if (aliasSet1 != null) {
             if (aliasSet2 != null) {
-               if(aliasSet1!=aliasSet2) {
+               if (aliasSet1 != aliasSet2) {
                   aliasSet1.addAll(aliasSet2);
                   aliases.remove(aliasSet2);
                }
@@ -165,7 +165,7 @@ public class Pass2AliasElimination extends Pass2SsaOptimization {
             List<VariableRef> vars = aliasSet.getVars();
             VariableRef first = null;
             for (VariableRef var : vars) {
-               if(first==null) {
+               if (first == null) {
                   first = var;
                } else {
                   add(first, var);
@@ -238,7 +238,7 @@ public class Pass2AliasElimination extends Pass2SsaOptimization {
          List<VariableRef> eliminate = new ArrayList<>();
          VariableRef keepVar = getKeepVar();
          for (VariableRef var : vars) {
-            if(!var.equals(keepVar)) {
+            if (!var.equals(keepVar)) {
                eliminate.add(var);
             }
          }
@@ -246,7 +246,7 @@ public class Pass2AliasElimination extends Pass2SsaOptimization {
       }
 
       public void remove(RValue rValue) {
-         if(rValue instanceof VariableRef) {
+         if (rValue instanceof VariableRef) {
             vars.remove(rValue);
          }
       }
@@ -254,8 +254,8 @@ public class Pass2AliasElimination extends Pass2SsaOptimization {
    }
 
 
-   public static Aliases findAliases(Program program, boolean allowCrossScope) {
-      Aliases candidates = findAliasesCandidates(allowCrossScope, program);
+   public static Aliases findAliases(Program program) {
+      Aliases candidates = findAliasesCandidates(program);
       cleanupCandidates(candidates, program);
       return candidates;
    }
@@ -264,11 +264,11 @@ public class Pass2AliasElimination extends Pass2SsaOptimization {
    private static void cleanupCandidates(Aliases candidates, Program program) {
       for (final AliasSet aliasSet : candidates.aliases) {
          for (ControlFlowBlock block : program.getGraph().getAllBlocks()) {
-            if(block.hasPhiBlock()) {
+            if (block.hasPhiBlock()) {
                StatementPhiBlock phi = block.getPhiBlock();
                boolean lMatch = false;
                for (StatementPhiBlock.PhiVariable phiVariable : phi.getPhiVariables()) {
-                  if(lMatch) {
+                  if (lMatch) {
                      for (StatementPhiBlock.PhiRValue phiRValue : phiVariable.getValues()) {
                         RValue rValue = phiRValue.getrValue();
                         if (aliasSet.contains(rValue)) {
@@ -289,77 +289,76 @@ public class Pass2AliasElimination extends Pass2SsaOptimization {
    }
 
    /**
-    * Find variables that have constant values.
+    * Find variables which are aliases of other variables.
     *
-    * @return Map from Variable to the Constant value
+    * @return A bunch of alias sets
     */
-   private static Aliases findAliasesCandidates(final boolean allowCrossScope, final Program program) {
-      final Aliases aliases = new Aliases();
-      final ControlFlowGraphBaseVisitor<Void> visitor = new ControlFlowGraphBaseVisitor<Void>() {
-         @Override
-         public Void visitAssignment(StatementAssignment assignment) {
-            if (assignment.getlValue() instanceof VariableRef) {
-               VariableRef variable = (VariableRef) assignment.getlValue();
-               if (assignment.getrValue1() == null && assignment.getOperator() == null && assignment.getrValue2() instanceof VariableRef) {
-                  // Alias assignment
-                  VariableRef alias = (VariableRef) assignment.getrValue2();
-                  if(variable.getScopeNames().equals(alias.getScopeNames())){
-                     aliases.add(variable, alias);
-                  } else {
-                     if(allowCrossScope) {
-                        aliases.add(variable, alias);
-                     } else {
+   private static Aliases findAliasesCandidates(final Program program) {
+      Aliases aliases = new Aliases();
+      for (ControlFlowBlock block : program.getGraph().getAllBlocks()) {
+         for (Statement statement : block.getStatements()) {
+            if(statement instanceof StatementAssignment) {
+               StatementAssignment assignment = (StatementAssignment) statement;
+               if (assignment.getlValue() instanceof VariableRef) {
+                  VariableRef variable = (VariableRef) assignment.getlValue();
+                  if (assignment.getrValue1() == null && assignment.getOperator() == null && assignment.getrValue2() instanceof VariableRef) {
+                     // Alias assignment
+                     VariableRef alias = (VariableRef) assignment.getrValue2();
+                     // Examine if the alis is assigned inside another scope
+                     ControlFlowBlock aliasAssignmentBlock = program.getGraph().getAssignmentBlock(alias);
+                     ScopeRef aliasScope = aliasAssignmentBlock.getScope();
+                     ScopeRef varScope = block.getScope();
+                     if (!varScope.equals(aliasScope) || !variable.getScopeNames().equals(alias.getScopeNames())) {
                         program.getLog().append("Not aliassing across scopes: " + variable + " " + alias);
+                     } else {
+                        aliases.add(variable, alias);
                      }
                   }
                }
-            }
-            return null;
-         }
-
-         @Override
-         public Void visitPhiBlock(StatementPhiBlock phi) {
-            for (StatementPhiBlock.PhiVariable phiVariable : phi.getPhiVariables()) {
-               VariableRef variable = phiVariable.getVariable();
-               VariableRef alias = null;
-               for (StatementPhiBlock.PhiRValue phiRValue : phiVariable.getValues()) {
-                  if(alias==null) {
-                     // First rValue
-                     if (phiRValue.getrValue() instanceof VariableRef) {
-                        alias = (VariableRef) phiRValue.getrValue();
-                        if(!variable.getScopeNames().equals(alias.getScopeNames())){
-                           if(!allowCrossScope) {
+            }  else if(statement instanceof StatementPhiBlock) {
+               StatementPhiBlock phi = (StatementPhiBlock) statement;
+               for (StatementPhiBlock.PhiVariable phiVariable : phi.getPhiVariables()) {
+                  VariableRef variable = phiVariable.getVariable();
+                  VariableRef alias = null;
+                  for (StatementPhiBlock.PhiRValue phiRValue : phiVariable.getValues()) {
+                     if (alias == null) {
+                        // First rValue
+                        if (phiRValue.getrValue() instanceof VariableRef) {
+                           alias = (VariableRef) phiRValue.getrValue();
+                           // Examine if the alis is assigned inside another scope
+                           ControlFlowBlock aliasAssignmentBlock = program.getGraph().getAssignmentBlock(alias);
+                           ScopeRef aliasScope = aliasAssignmentBlock.getScope();
+                           ScopeRef varScope = block.getScope();
+                           if (!varScope.equals(aliasScope) || !variable.getScopeNames().equals(alias.getScopeNames())) {
                               program.getLog().append("Not aliassing across scopes: " + variable + " " + alias);
                               alias = null;
                               break;
+                           } else if (variable.equals(alias)) {
+                              program.getLog().append("Not aliassing identity: " + variable + " " + alias);
+                              alias = null;
+                              break;
                            }
-                        } else if(variable.equals(alias)) {
-                           program.getLog().append("Not aliassing identity: "+variable+" "+alias);
-                           alias = null;
+                        } else {
+                           // Not aliasing non-variables
                            break;
                         }
                      } else {
-                        // Not aliasing non-variables
-                        break;
-                     }
-                  }  else {
-                     // rValue 2-n
-                     if(!alias.equals(phiRValue.getrValue())) {
-                        // Not aliasing if any rValue is not identical
-                        alias = null;
-                        break;
+                        // rValue 2-n
+                        if (!alias.equals(phiRValue.getrValue())) {
+                           // Not aliasing if any rValue is not identical
+                           alias = null;
+                           break;
+                        }
                      }
                   }
-               }
-               if(alias!=null) {
-                  aliases.add(variable, alias);
-               }
+                  if (alias != null) {
+                     aliases.add(variable, alias);
+                  }
 
+               }
             }
-            return null;
          }
-      };
-      visitor.visitGraph(program.getGraph());
+      }
       return aliases;
    }
 

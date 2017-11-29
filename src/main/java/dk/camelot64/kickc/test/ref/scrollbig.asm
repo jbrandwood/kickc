@@ -8,8 +8,8 @@
   .const BGCOL = $d020
   .const SCROLL = $d016
   .label current_bit = 2
-  .label nxt = 7
   .label current_chargen = 3
+  .label nxt = 7
   TEXT: .text "-= this is rex of camelot testing a scroller created in kickc. kickc is an optimizing c-compiler for 6502 assembler. =-     @"
   jsr main
 main: {

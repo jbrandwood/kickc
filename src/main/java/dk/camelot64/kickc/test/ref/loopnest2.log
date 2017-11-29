@@ -753,25 +753,29 @@ nest2::@return: scope:[nest2]  from nest2::@3
   to:@end
 @end: scope:[]  from @3
 
-Alias (byte*) SCREEN#0 = (byte*) SCREEN#13 (byte*) SCREEN#15 
+Not aliassing across scopes: SCREEN#13 SCREEN#15
+Not aliassing across scopes: SCREEN#8 SCREEN#10
+Not aliassing across scopes: SCREEN#3 SCREEN#5
 Alias (byte) main::j#2 = (byte) main::j#3 
 Alias (byte) main::i#2 = (byte) main::i#3 (byte) main::i#4 
-Alias (byte*) SCREEN#10 = (byte*) SCREEN#12 (byte*) SCREEN#14 (byte*) SCREEN#8 
+Alias (byte*) SCREEN#10 = (byte*) SCREEN#12 (byte*) SCREEN#14 
 Alias (byte) nest1::j#2 = (byte) nest1::j#3 
 Alias (byte) nest1::i#2 = (byte) nest1::i#3 (byte) nest1::i#4 
-Alias (byte*) SCREEN#3 = (byte*) SCREEN#7 (byte*) SCREEN#5 (byte*) SCREEN#9 
+Alias (byte*) SCREEN#5 = (byte*) SCREEN#7 (byte*) SCREEN#9 
 Alias (byte) nest2::i#2 = (byte) nest2::i#3 
 Alias (byte*) SCREEN#1 = (byte*) SCREEN#4 
+Alias (byte*) SCREEN#0 = (byte*) SCREEN#15 
 Succesful SSA optimization Pass2AliasElimination
 CONTROL FLOW GRAPH
 @begin: scope:[]  from
   (byte*) SCREEN#0 ← ((byte*)) (word/signed word) 1024
   to:@3
 main: scope:[main]  from @3
+  (byte*) SCREEN#13 ← phi( @3/(byte*) SCREEN#0 )
   (byte) main::i#0 ← (byte/signed byte/word/signed word) 100
   to:main::@1
 main::@1: scope:[main]  from main main::@3
-  (byte*) SCREEN#11 ← phi( main/(byte*) SCREEN#0 main::@3/(byte*) SCREEN#10 )
+  (byte*) SCREEN#11 ← phi( main/(byte*) SCREEN#13 main::@3/(byte*) SCREEN#10 )
   (byte) main::i#5 ← phi( main/(byte) main::i#0 main::@3/(byte) main::i#1 )
   (byte) main::j#0 ← (byte/signed byte/word/signed word) 100
   to:main::@2
@@ -795,15 +799,16 @@ main::@return: scope:[main]  from main::@3
   return 
   to:@return
 nest1: scope:[nest1]  from main::@2
+  (byte*) SCREEN#8 ← phi( main::@2/(byte*) SCREEN#10 )
   (byte) nest1::i#0 ← (byte/signed byte/word/signed word) 100
   to:nest1::@1
 nest1::@1: scope:[nest1]  from nest1 nest1::@3
-  (byte*) SCREEN#6 ← phi( nest1/(byte*) SCREEN#10 nest1::@3/(byte*) SCREEN#3 )
+  (byte*) SCREEN#6 ← phi( nest1/(byte*) SCREEN#8 nest1::@3/(byte*) SCREEN#5 )
   (byte) nest1::i#5 ← phi( nest1/(byte) nest1::i#0 nest1::@3/(byte) nest1::i#1 )
   (byte) nest1::j#0 ← (byte/signed byte/word/signed word) 100
   to:nest1::@2
 nest1::@2: scope:[nest1]  from nest1::@1 nest1::@5
-  (byte*) SCREEN#3 ← phi( nest1::@1/(byte*) SCREEN#6 nest1::@5/(byte*) SCREEN#3 )
+  (byte*) SCREEN#5 ← phi( nest1::@1/(byte*) SCREEN#6 nest1::@5/(byte*) SCREEN#5 )
   (byte) nest1::i#2 ← phi( nest1::@1/(byte) nest1::i#5 nest1::@5/(byte) nest1::i#2 )
   (byte) nest1::j#2 ← phi( nest1::@1/(byte) nest1::j#0 nest1::@5/(byte) nest1::j#1 )
   call nest2 param-assignment
@@ -822,6 +827,7 @@ nest1::@return: scope:[nest1]  from nest1::@3
   return 
   to:@return
 nest2: scope:[nest2]  from nest1::@2
+  (byte*) SCREEN#3 ← phi( nest1::@2/(byte*) SCREEN#5 )
   (byte) nest2::i#0 ← (byte/signed byte/word/signed word) 100
   to:nest2::@1
 nest2::@1: scope:[nest2]  from nest2 nest2::@3
@@ -851,10 +857,13 @@ nest2::@return: scope:[nest2]  from nest2::@3
   to:@end
 @end: scope:[]  from @3
 
+Not aliassing across scopes: SCREEN#13 SCREEN#0
+Not aliassing across scopes: SCREEN#8 SCREEN#10
+Not aliassing across scopes: SCREEN#3 SCREEN#5
 Self Phi Eliminated (byte) main::i#2
 Self Phi Eliminated (byte*) SCREEN#10
 Self Phi Eliminated (byte) nest1::i#2
-Self Phi Eliminated (byte*) SCREEN#3
+Self Phi Eliminated (byte*) SCREEN#5
 Self Phi Eliminated (byte*) SCREEN#1
 Self Phi Eliminated (byte) nest2::i#2
 Succesful SSA optimization Pass2SelfPhiElimination
@@ -863,10 +872,11 @@ CONTROL FLOW GRAPH
   (byte*) SCREEN#0 ← ((byte*)) (word/signed word) 1024
   to:@3
 main: scope:[main]  from @3
+  (byte*) SCREEN#13 ← phi( @3/(byte*) SCREEN#0 )
   (byte) main::i#0 ← (byte/signed byte/word/signed word) 100
   to:main::@1
 main::@1: scope:[main]  from main main::@3
-  (byte*) SCREEN#11 ← phi( main/(byte*) SCREEN#0 main::@3/(byte*) SCREEN#10 )
+  (byte*) SCREEN#11 ← phi( main/(byte*) SCREEN#13 main::@3/(byte*) SCREEN#10 )
   (byte) main::i#5 ← phi( main/(byte) main::i#0 main::@3/(byte) main::i#1 )
   (byte) main::j#0 ← (byte/signed byte/word/signed word) 100
   to:main::@2
@@ -890,15 +900,16 @@ main::@return: scope:[main]  from main::@3
   return 
   to:@return
 nest1: scope:[nest1]  from main::@2
+  (byte*) SCREEN#8 ← phi( main::@2/(byte*) SCREEN#10 )
   (byte) nest1::i#0 ← (byte/signed byte/word/signed word) 100
   to:nest1::@1
 nest1::@1: scope:[nest1]  from nest1 nest1::@3
-  (byte*) SCREEN#6 ← phi( nest1/(byte*) SCREEN#10 nest1::@3/(byte*) SCREEN#3 )
+  (byte*) SCREEN#6 ← phi( nest1/(byte*) SCREEN#8 nest1::@3/(byte*) SCREEN#5 )
   (byte) nest1::i#5 ← phi( nest1/(byte) nest1::i#0 nest1::@3/(byte) nest1::i#1 )
   (byte) nest1::j#0 ← (byte/signed byte/word/signed word) 100
   to:nest1::@2
 nest1::@2: scope:[nest1]  from nest1::@1 nest1::@5
-  (byte*) SCREEN#3 ← phi( nest1::@1/(byte*) SCREEN#6 )
+  (byte*) SCREEN#5 ← phi( nest1::@1/(byte*) SCREEN#6 )
   (byte) nest1::i#2 ← phi( nest1::@1/(byte) nest1::i#5 )
   (byte) nest1::j#2 ← phi( nest1::@1/(byte) nest1::j#0 nest1::@5/(byte) nest1::j#1 )
   call nest2 param-assignment
@@ -917,6 +928,7 @@ nest1::@return: scope:[nest1]  from nest1::@3
   return 
   to:@return
 nest2: scope:[nest2]  from nest1::@2
+  (byte*) SCREEN#3 ← phi( nest1::@2/(byte*) SCREEN#5 )
   (byte) nest2::i#0 ← (byte/signed byte/word/signed word) 100
   to:nest2::@1
 nest2::@1: scope:[nest2]  from nest2 nest2::@3
@@ -946,10 +958,13 @@ nest2::@return: scope:[nest2]  from nest2::@3
   to:@end
 @end: scope:[]  from @3
 
+Redundant Phi (byte*) SCREEN#13 (byte*) SCREEN#0
 Redundant Phi (byte) main::i#2 (byte) main::i#5
 Redundant Phi (byte*) SCREEN#10 (byte*) SCREEN#11
+Redundant Phi (byte*) SCREEN#8 (byte*) SCREEN#10
 Redundant Phi (byte) nest1::i#2 (byte) nest1::i#5
-Redundant Phi (byte*) SCREEN#3 (byte*) SCREEN#6
+Redundant Phi (byte*) SCREEN#5 (byte*) SCREEN#6
+Redundant Phi (byte*) SCREEN#3 (byte*) SCREEN#5
 Redundant Phi (byte*) SCREEN#1 (byte*) SCREEN#2
 Redundant Phi (byte) nest2::i#2 (byte) nest2::i#4
 Succesful SSA optimization Pass2RedundantPhiElimination
@@ -1195,6 +1210,8 @@ nest2::@return: scope:[nest2]  from nest2::@3
   to:@end
 @end: scope:[]  from @3
 
+Not aliassing across scopes: SCREEN#6 SCREEN#11
+Not aliassing across scopes: SCREEN#2 SCREEN#6
 Self Phi Eliminated (byte*) SCREEN#11
 Self Phi Eliminated (byte*) SCREEN#6
 Self Phi Eliminated (byte*) SCREEN#2

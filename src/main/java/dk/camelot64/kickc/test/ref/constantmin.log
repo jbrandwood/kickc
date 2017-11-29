@@ -326,10 +326,14 @@ main::@return: scope:[main]  from main::@1
   to:@end
 @end: scope:[]  from @1
 
-Alias (byte) STAR#0 = (byte) STAR#1 (byte) STAR#3 
-Alias (byte*) SCREEN#0 = (byte*) SCREEN#1 (byte*) SCREEN#3 
-Alias (byte) RED#0 = (byte) RED#1 (byte) RED#2 
-Alias (byte*) BGCOL#0 = (byte*) BGCOL#1 (byte*) BGCOL#2 (byte*~) $2 
+Not aliassing across scopes: STAR#1 STAR#3
+Not aliassing across scopes: SCREEN#1 SCREEN#3
+Not aliassing across scopes: RED#1 RED#2
+Not aliassing across scopes: BGCOL#1 BGCOL#2
+Alias (byte*) BGCOL#0 = (byte*~) $2 (byte*) BGCOL#2 
+Alias (byte) STAR#0 = (byte) STAR#3 
+Alias (byte*) SCREEN#0 = (byte*) SCREEN#3 
+Alias (byte) RED#0 = (byte) RED#2 
 Succesful SSA optimization Pass2AliasElimination
 CONTROL FLOW GRAPH
 @begin: scope:[]  from
@@ -342,14 +346,18 @@ CONTROL FLOW GRAPH
   (byte) RED#0 ← (byte/signed byte/word/signed word) 2
   to:@1
 main: scope:[main]  from @1
-  *((byte*) SCREEN#0) ← (byte) STAR#0
-  *((byte*) BGCOL#0) ← (byte) RED#0
+  (byte*) BGCOL#1 ← phi( @1/(byte*) BGCOL#0 )
+  (byte) RED#1 ← phi( @1/(byte) RED#0 )
+  (byte*) SCREEN#1 ← phi( @1/(byte*) SCREEN#0 )
+  (byte) STAR#1 ← phi( @1/(byte) STAR#0 )
+  *((byte*) SCREEN#1) ← (byte) STAR#1
+  *((byte*) BGCOL#1) ← (byte) RED#1
   (byte) main::i#0 ← (byte/signed byte/word/signed word) 40
   to:main::@1
 main::@1: scope:[main]  from main main::@1
   (byte) main::i#2 ← phi( main/(byte) main::i#0 main::@1/(byte) main::i#1 )
-  (byte*) SCREEN#2 ← phi( main/(byte*) SCREEN#0 main::@1/(byte*) SCREEN#2 )
-  (byte) STAR#2 ← phi( main/(byte) STAR#0 main::@1/(byte) STAR#2 )
+  (byte*) SCREEN#2 ← phi( main/(byte*) SCREEN#1 main::@1/(byte*) SCREEN#2 )
+  (byte) STAR#2 ← phi( main/(byte) STAR#1 main::@1/(byte) STAR#2 )
   (byte~) main::$0 ← (byte) STAR#2 + (byte/signed byte/word/signed word) 1
   *((byte*) SCREEN#2 + (byte) main::i#2) ← (byte~) main::$0
   (byte) main::i#1 ← ++ (byte) main::i#2
@@ -364,6 +372,10 @@ main::@return: scope:[main]  from main::@1
   to:@end
 @end: scope:[]  from @1
 
+Not aliassing across scopes: STAR#1 STAR#0
+Not aliassing across scopes: SCREEN#1 SCREEN#0
+Not aliassing across scopes: RED#1 RED#0
+Not aliassing across scopes: BGCOL#1 BGCOL#0
 Self Phi Eliminated (byte) STAR#2
 Self Phi Eliminated (byte*) SCREEN#2
 Succesful SSA optimization Pass2SelfPhiElimination
@@ -378,14 +390,18 @@ CONTROL FLOW GRAPH
   (byte) RED#0 ← (byte/signed byte/word/signed word) 2
   to:@1
 main: scope:[main]  from @1
-  *((byte*) SCREEN#0) ← (byte) STAR#0
-  *((byte*) BGCOL#0) ← (byte) RED#0
+  (byte*) BGCOL#1 ← phi( @1/(byte*) BGCOL#0 )
+  (byte) RED#1 ← phi( @1/(byte) RED#0 )
+  (byte*) SCREEN#1 ← phi( @1/(byte*) SCREEN#0 )
+  (byte) STAR#1 ← phi( @1/(byte) STAR#0 )
+  *((byte*) SCREEN#1) ← (byte) STAR#1
+  *((byte*) BGCOL#1) ← (byte) RED#1
   (byte) main::i#0 ← (byte/signed byte/word/signed word) 40
   to:main::@1
 main::@1: scope:[main]  from main main::@1
   (byte) main::i#2 ← phi( main/(byte) main::i#0 main::@1/(byte) main::i#1 )
-  (byte*) SCREEN#2 ← phi( main/(byte*) SCREEN#0 )
-  (byte) STAR#2 ← phi( main/(byte) STAR#0 )
+  (byte*) SCREEN#2 ← phi( main/(byte*) SCREEN#1 )
+  (byte) STAR#2 ← phi( main/(byte) STAR#1 )
   (byte~) main::$0 ← (byte) STAR#2 + (byte/signed byte/word/signed word) 1
   *((byte*) SCREEN#2 + (byte) main::i#2) ← (byte~) main::$0
   (byte) main::i#1 ← ++ (byte) main::i#2
@@ -400,8 +416,12 @@ main::@return: scope:[main]  from main::@1
   to:@end
 @end: scope:[]  from @1
 
-Redundant Phi (byte) STAR#2 (byte) STAR#0
-Redundant Phi (byte*) SCREEN#2 (byte*) SCREEN#0
+Redundant Phi (byte) STAR#1 (byte) STAR#0
+Redundant Phi (byte*) SCREEN#1 (byte*) SCREEN#0
+Redundant Phi (byte) RED#1 (byte) RED#0
+Redundant Phi (byte*) BGCOL#1 (byte*) BGCOL#0
+Redundant Phi (byte) STAR#2 (byte) STAR#1
+Redundant Phi (byte*) SCREEN#2 (byte*) SCREEN#1
 Succesful SSA optimization Pass2RedundantPhiElimination
 CONTROL FLOW GRAPH
 @begin: scope:[]  from

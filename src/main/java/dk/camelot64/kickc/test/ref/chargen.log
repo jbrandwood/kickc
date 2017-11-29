@@ -727,10 +727,10 @@ main::@return: scope:[main]  from main::@6
   to:@end
 @end: scope:[]  from @1
 
+Not aliassing across scopes: CHARGEN#1 CHARGEN#2
+Not aliassing across scopes: PROCPORT#1 PROCPORT#3
+Not aliassing across scopes: SCREEN#1 SCREEN#2
 Not aliassing across scopes: main::sc#0 SCREEN#1
-Alias (byte*) CHARGEN#0 = (byte*) CHARGEN#1 (byte*) CHARGEN#2 
-Alias (byte*) PROCPORT#0 = (byte*) PROCPORT#1 (byte*) PROCPORT#3 
-Alias (byte*) SCREEN#0 = (byte*) SCREEN#1 (byte*) SCREEN#2 
 Alias (byte*) main::CHAR_A#0 = (byte*~) main::$0 
 Alias (byte) main::bits#0 = (byte~) main::$1 
 Alias (byte) main::bits#1 = (byte~) main::$5 
@@ -745,6 +745,9 @@ Alias (byte) main::y#3 = (byte) main::y#4
 Alias (byte*) main::CHAR_A#2 = (byte*) main::CHAR_A#3 
 Alias (byte*) PROCPORT#2 = (byte*) PROCPORT#4 (byte*) PROCPORT#5 
 Alias (byte*) main::sc#2 = (byte*~) main::$7 
+Alias (byte*) CHARGEN#0 = (byte*) CHARGEN#2 
+Alias (byte*) PROCPORT#0 = (byte*) PROCPORT#3 
+Alias (byte*) SCREEN#0 = (byte*) SCREEN#2 
 Succesful SSA optimization Pass2AliasElimination
 CONTROL FLOW GRAPH
 @begin: scope:[]  from
@@ -753,14 +756,17 @@ CONTROL FLOW GRAPH
   (byte*) SCREEN#0 ← ((byte*)) (word/signed word) 1024
   to:@1
 main: scope:[main]  from @1
+  (byte*) SCREEN#1 ← phi( @1/(byte*) SCREEN#0 )
+  (byte*) PROCPORT#1 ← phi( @1/(byte*) PROCPORT#0 )
+  (byte*) CHARGEN#1 ← phi( @1/(byte*) CHARGEN#0 )
   asm { sei }
-  (byte*) main::CHAR_A#0 ← (byte*) CHARGEN#0 + (byte/signed byte/word/signed word) 8
-  *((byte*) PROCPORT#0) ← (byte/signed byte/word/signed word) 50
-  (byte*) main::sc#0 ← (byte*) SCREEN#0
+  (byte*) main::CHAR_A#0 ← (byte*) CHARGEN#1 + (byte/signed byte/word/signed word) 8
+  *((byte*) PROCPORT#1) ← (byte/signed byte/word/signed word) 50
+  (byte*) main::sc#0 ← (byte*) SCREEN#1
   (byte) main::y#0 ← (byte/signed byte/word/signed word) 0
   to:main::@1
 main::@1: scope:[main]  from main main::@5
-  (byte*) PROCPORT#8 ← phi( main/(byte*) PROCPORT#0 main::@5/(byte*) PROCPORT#2 )
+  (byte*) PROCPORT#8 ← phi( main/(byte*) PROCPORT#1 main::@5/(byte*) PROCPORT#2 )
   (byte*) main::sc#7 ← phi( main/(byte*) main::sc#0 main::@5/(byte*) main::sc#2 )
   (byte) main::y#2 ← phi( main/(byte) main::y#0 main::@5/(byte) main::y#1 )
   (byte*) main::CHAR_A#1 ← phi( main/(byte*) main::CHAR_A#0 main::@5/(byte*) main::CHAR_A#2 )
@@ -815,7 +821,10 @@ main::@return: scope:[main]  from main::@6
   to:@end
 @end: scope:[]  from @1
 
-Not aliassing across scopes: main::sc#0 SCREEN#0
+Not aliassing across scopes: CHARGEN#1 CHARGEN#0
+Not aliassing across scopes: PROCPORT#1 PROCPORT#0
+Not aliassing across scopes: SCREEN#1 SCREEN#0
+Not aliassing across scopes: main::sc#0 SCREEN#1
 Alias (byte*) main::sc#3 = (byte*) main::sc#5 
 Alias (byte) main::bits#2 = (byte) main::bits#3 
 Alias (byte) main::x#2 = (byte) main::x#3 
@@ -830,14 +839,17 @@ CONTROL FLOW GRAPH
   (byte*) SCREEN#0 ← ((byte*)) (word/signed word) 1024
   to:@1
 main: scope:[main]  from @1
+  (byte*) SCREEN#1 ← phi( @1/(byte*) SCREEN#0 )
+  (byte*) PROCPORT#1 ← phi( @1/(byte*) PROCPORT#0 )
+  (byte*) CHARGEN#1 ← phi( @1/(byte*) CHARGEN#0 )
   asm { sei }
-  (byte*) main::CHAR_A#0 ← (byte*) CHARGEN#0 + (byte/signed byte/word/signed word) 8
-  *((byte*) PROCPORT#0) ← (byte/signed byte/word/signed word) 50
-  (byte*) main::sc#0 ← (byte*) SCREEN#0
+  (byte*) main::CHAR_A#0 ← (byte*) CHARGEN#1 + (byte/signed byte/word/signed word) 8
+  *((byte*) PROCPORT#1) ← (byte/signed byte/word/signed word) 50
+  (byte*) main::sc#0 ← (byte*) SCREEN#1
   (byte) main::y#0 ← (byte/signed byte/word/signed word) 0
   to:main::@1
 main::@1: scope:[main]  from main main::@5
-  (byte*) PROCPORT#8 ← phi( main/(byte*) PROCPORT#0 main::@5/(byte*) PROCPORT#2 )
+  (byte*) PROCPORT#8 ← phi( main/(byte*) PROCPORT#1 main::@5/(byte*) PROCPORT#2 )
   (byte*) main::sc#7 ← phi( main/(byte*) main::sc#0 main::@5/(byte*) main::sc#2 )
   (byte) main::y#2 ← phi( main/(byte) main::y#0 main::@5/(byte) main::y#1 )
   (byte*) main::CHAR_A#1 ← phi( main/(byte*) main::CHAR_A#0 main::@5/(byte*) main::CHAR_A#2 )
@@ -886,7 +898,10 @@ main::@return: scope:[main]  from main::@6
   to:@end
 @end: scope:[]  from @1
 
-Not aliassing across scopes: main::sc#0 SCREEN#0
+Not aliassing across scopes: CHARGEN#1 CHARGEN#0
+Not aliassing across scopes: PROCPORT#1 PROCPORT#0
+Not aliassing across scopes: SCREEN#1 SCREEN#0
+Not aliassing across scopes: main::sc#0 SCREEN#1
 Self Phi Eliminated (byte) main::y#3
 Self Phi Eliminated (byte*) main::CHAR_A#2
 Self Phi Eliminated (byte*) PROCPORT#2
@@ -898,14 +913,17 @@ CONTROL FLOW GRAPH
   (byte*) SCREEN#0 ← ((byte*)) (word/signed word) 1024
   to:@1
 main: scope:[main]  from @1
+  (byte*) SCREEN#1 ← phi( @1/(byte*) SCREEN#0 )
+  (byte*) PROCPORT#1 ← phi( @1/(byte*) PROCPORT#0 )
+  (byte*) CHARGEN#1 ← phi( @1/(byte*) CHARGEN#0 )
   asm { sei }
-  (byte*) main::CHAR_A#0 ← (byte*) CHARGEN#0 + (byte/signed byte/word/signed word) 8
-  *((byte*) PROCPORT#0) ← (byte/signed byte/word/signed word) 50
-  (byte*) main::sc#0 ← (byte*) SCREEN#0
+  (byte*) main::CHAR_A#0 ← (byte*) CHARGEN#1 + (byte/signed byte/word/signed word) 8
+  *((byte*) PROCPORT#1) ← (byte/signed byte/word/signed word) 50
+  (byte*) main::sc#0 ← (byte*) SCREEN#1
   (byte) main::y#0 ← (byte/signed byte/word/signed word) 0
   to:main::@1
 main::@1: scope:[main]  from main main::@5
-  (byte*) PROCPORT#8 ← phi( main/(byte*) PROCPORT#0 main::@5/(byte*) PROCPORT#2 )
+  (byte*) PROCPORT#8 ← phi( main/(byte*) PROCPORT#1 main::@5/(byte*) PROCPORT#2 )
   (byte*) main::sc#7 ← phi( main/(byte*) main::sc#0 main::@5/(byte*) main::sc#2 )
   (byte) main::y#2 ← phi( main/(byte) main::y#0 main::@5/(byte) main::y#1 )
   (byte*) main::CHAR_A#1 ← phi( main/(byte*) main::CHAR_A#0 main::@5/(byte*) main::CHAR_A#2 )
@@ -954,6 +972,9 @@ main::@return: scope:[main]  from main::@6
   to:@end
 @end: scope:[]  from @1
 
+Redundant Phi (byte*) CHARGEN#1 (byte*) CHARGEN#0
+Redundant Phi (byte*) PROCPORT#1 (byte*) PROCPORT#0
+Redundant Phi (byte*) SCREEN#1 (byte*) SCREEN#0
 Redundant Phi (byte) main::y#3 (byte) main::y#2
 Redundant Phi (byte*) main::CHAR_A#2 (byte*) main::CHAR_A#1
 Redundant Phi (byte*) PROCPORT#2 (byte*) PROCPORT#8

@@ -7,6 +7,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.ListIterator;
 
 /** A named/labelled sequence of SSA statements connected to other basic blocks.
  * The connections defines the control flow of the program.
@@ -67,8 +68,24 @@ public class ControlFlowBlock {
       this.statements.add(statement);
    }
 
-   public void addStatementBeforeLast(Statement statement) {
-      this.statements.add(statements.size() - 1, statement);
+   /**
+    * Add a statement just before the call statement.
+    *
+    * Fails if there is no call statement
+    *
+    * @param statement The statement to add.
+    */
+   public void addStatementBeforeCall(Statement newStatement) {
+      ListIterator<Statement> listIterator = statements.listIterator();
+      while (listIterator.hasNext()) {
+         Statement statement = listIterator.next();
+         if(statement instanceof StatementCall) {
+            listIterator.previous();
+            listIterator.add(newStatement);
+            return;
+         }
+      }
+      throw new RuntimeException("No call statement in block "+getLabel().getFullName());
    }
 
    public void setDefaultSuccessor(LabelRef defaultSuccessor) {

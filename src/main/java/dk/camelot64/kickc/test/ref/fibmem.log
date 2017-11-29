@@ -263,19 +263,21 @@ main::@return: scope:[main]  from main::@1
   to:@end
 @end: scope:[]  from @1
 
-Alias (byte[15]) fibs#0 = (byte[15]) fibs#1 (byte[15]) fibs#3 
+Not aliassing across scopes: fibs#1 fibs#3
+Alias (byte[15]) fibs#0 = (byte[15]) fibs#3 
 Succesful SSA optimization Pass2AliasElimination
 CONTROL FLOW GRAPH
 @begin: scope:[]  from
   (byte[15]) fibs#0 ← ((byte*)) (word/signed word) 4352
   to:@1
 main: scope:[main]  from @1
-  *((byte[15]) fibs#0 + (byte/signed byte/word/signed word) 0) ← (byte/signed byte/word/signed word) 0
-  *((byte[15]) fibs#0 + (byte/signed byte/word/signed word) 1) ← (byte/signed byte/word/signed word) 1
+  (byte[15]) fibs#1 ← phi( @1/(byte[15]) fibs#0 )
+  *((byte[15]) fibs#1 + (byte/signed byte/word/signed word) 0) ← (byte/signed byte/word/signed word) 0
+  *((byte[15]) fibs#1 + (byte/signed byte/word/signed word) 1) ← (byte/signed byte/word/signed word) 1
   (byte) main::i#0 ← (byte/signed byte/word/signed word) 0
   to:main::@1
 main::@1: scope:[main]  from main main::@1
-  (byte[15]) fibs#2 ← phi( main/(byte[15]) fibs#0 main::@1/(byte[15]) fibs#2 )
+  (byte[15]) fibs#2 ← phi( main/(byte[15]) fibs#1 main::@1/(byte[15]) fibs#2 )
   (byte) main::i#2 ← phi( main/(byte) main::i#0 main::@1/(byte) main::i#1 )
   (byte~) main::$0 ← (byte) main::i#2 + (byte/signed byte/word/signed word) 2
   (byte~) main::$1 ← (byte[15]) fibs#2 *idx (byte) main::i#2
@@ -295,6 +297,7 @@ main::@return: scope:[main]  from main::@1
   to:@end
 @end: scope:[]  from @1
 
+Not aliassing across scopes: fibs#1 fibs#0
 Self Phi Eliminated (byte[15]) fibs#2
 Succesful SSA optimization Pass2SelfPhiElimination
 CONTROL FLOW GRAPH
@@ -302,12 +305,13 @@ CONTROL FLOW GRAPH
   (byte[15]) fibs#0 ← ((byte*)) (word/signed word) 4352
   to:@1
 main: scope:[main]  from @1
-  *((byte[15]) fibs#0 + (byte/signed byte/word/signed word) 0) ← (byte/signed byte/word/signed word) 0
-  *((byte[15]) fibs#0 + (byte/signed byte/word/signed word) 1) ← (byte/signed byte/word/signed word) 1
+  (byte[15]) fibs#1 ← phi( @1/(byte[15]) fibs#0 )
+  *((byte[15]) fibs#1 + (byte/signed byte/word/signed word) 0) ← (byte/signed byte/word/signed word) 0
+  *((byte[15]) fibs#1 + (byte/signed byte/word/signed word) 1) ← (byte/signed byte/word/signed word) 1
   (byte) main::i#0 ← (byte/signed byte/word/signed word) 0
   to:main::@1
 main::@1: scope:[main]  from main main::@1
-  (byte[15]) fibs#2 ← phi( main/(byte[15]) fibs#0 )
+  (byte[15]) fibs#2 ← phi( main/(byte[15]) fibs#1 )
   (byte) main::i#2 ← phi( main/(byte) main::i#0 main::@1/(byte) main::i#1 )
   (byte~) main::$0 ← (byte) main::i#2 + (byte/signed byte/word/signed word) 2
   (byte~) main::$1 ← (byte[15]) fibs#2 *idx (byte) main::i#2
@@ -327,7 +331,8 @@ main::@return: scope:[main]  from main::@1
   to:@end
 @end: scope:[]  from @1
 
-Redundant Phi (byte[15]) fibs#2 (byte[15]) fibs#0
+Redundant Phi (byte[15]) fibs#1 (byte[15]) fibs#0
+Redundant Phi (byte[15]) fibs#2 (byte[15]) fibs#1
 Succesful SSA optimization Pass2RedundantPhiElimination
 CONTROL FLOW GRAPH
 @begin: scope:[]  from

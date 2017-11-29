@@ -85,7 +85,7 @@ public class Pass3PhiLifting {
                         phiRValue.setrValue(newVar.getRef());
                         phiRValue.setPredecessor(newBlock.getLabel());
                      } else if(block.getLabel().equals(predecessorBlock.getCallSuccessor())) {
-                        predecessorBlock.addStatementBeforeLast(newAssignment);
+                        predecessorBlock.addStatementBeforeCall(newAssignment);
                         phiRValue.setrValue(newVar.getRef());
                      } else {
                         predecessorBlock.addStatement(newAssignment);

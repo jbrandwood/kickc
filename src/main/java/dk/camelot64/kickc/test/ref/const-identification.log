@@ -799,19 +799,30 @@ plot::@return: scope:[plot]  from plot
   to:@end
 @end: scope:[]  from @3
 
+Not aliassing across scopes: plots#3 plots#6
+Not aliassing across scopes: SCREEN#3 SCREEN#6
+Not aliassing across scopes: line::x0#1 line::x0#0
+Not aliassing across scopes: line::x1#1 line::x1#0
+Not aliassing across scopes: plots#7 plots#10
+Not aliassing across scopes: SCREEN#7 SCREEN#10
 Not aliassing across scopes: plot::x#0 line::x0#2
 Not aliassing across scopes: plot::x#1 line::x#2
-Alias (byte[]) plots#0 = (byte[]) plots#3 (byte[]) plots#6 
-Alias (byte*) SCREEN#0 = (byte*) SCREEN#3 (byte*) SCREEN#6 
-Alias (byte[]) plots#10 = (byte[]) plots#11 (byte[]) plots#7 (byte[]) plots#4 (byte[]) plots#8 
-Alias (byte*) SCREEN#10 = (byte*) SCREEN#11 (byte*) SCREEN#7 (byte*) SCREEN#4 (byte*) SCREEN#8 
-Alias (byte) line::x#0 = (byte) line::x0#1 (byte) line::x0#0 (byte) line::x0#2 (byte) line::x0#3 
-Alias (byte) line::x1#0 = (byte) line::x1#1 (byte) line::x1#4 
+Not aliassing across scopes: plots#2 plots#4
+Not aliassing across scopes: plot::x#2 plot::x#0
+Not aliassing across scopes: SCREEN#2 SCREEN#4
+Alias (byte[]) plots#10 = (byte[]) plots#11 
+Alias (byte*) SCREEN#10 = (byte*) SCREEN#11 
+Alias (byte) line::x#0 = (byte) line::x0#2 (byte) line::x0#1 (byte) line::x0#3 
+Alias (byte[]) plots#4 = (byte[]) plots#7 (byte[]) plots#8 
+Alias (byte*) SCREEN#4 = (byte*) SCREEN#7 (byte*) SCREEN#8 
+Alias (byte) line::x1#1 = (byte) line::x1#4 
 Alias (byte) line::x#2 = (byte) line::x#3 
 Alias (byte) line::x1#2 = (byte) line::x1#3 
 Alias (byte[]) plots#5 = (byte[]) plots#9 
 Alias (byte*) SCREEN#5 = (byte*) SCREEN#9 
 Alias (byte) plot::idx#0 = (byte~) plot::$0 
+Alias (byte[]) plots#0 = (byte[]) plots#6 
+Alias (byte*) SCREEN#0 = (byte*) SCREEN#6 
 Succesful SSA optimization Pass2AliasElimination
 CONTROL FLOW GRAPH
 @begin: scope:[]  from
@@ -819,11 +830,13 @@ CONTROL FLOW GRAPH
   (byte*) SCREEN#0 ← ((byte*)) (word/signed word) 1024
   to:@3
 main: scope:[main]  from @3
+  (byte*) SCREEN#3 ← phi( @3/(byte*) SCREEN#0 )
+  (byte[]) plots#3 ← phi( @3/(byte[]) plots#0 )
   (byte) main::i#0 ← (byte/signed byte/word/signed word) 0
   to:main::@1
 main::@1: scope:[main]  from main main::@1
-  (byte*) SCREEN#1 ← phi( main/(byte*) SCREEN#0 main::@1/(byte*) SCREEN#1 )
-  (byte[]) plots#1 ← phi( main/(byte[]) plots#0 main::@1/(byte[]) plots#1 )
+  (byte*) SCREEN#1 ← phi( main/(byte*) SCREEN#3 main::@1/(byte*) SCREEN#1 )
+  (byte[]) plots#1 ← phi( main/(byte[]) plots#3 main::@1/(byte[]) plots#1 )
   (byte) main::i#2 ← phi( main/(byte) main::i#0 main::@1/(byte) main::i#1 )
   *((byte[]) plots#1 + (byte) main::i#2) ← (byte) main::i#2
   *((byte*) SCREEN#1 + (byte) main::i#2) ← (byte/signed byte/word/signed word) 0
@@ -834,7 +847,7 @@ main::@1: scope:[main]  from main main::@1
 main::@2: scope:[main]  from main::@1 main::@5
   (byte*) SCREEN#10 ← phi( main::@1/(byte*) SCREEN#1 main::@5/(byte*) SCREEN#10 )
   (byte[]) plots#10 ← phi( main::@1/(byte[]) plots#1 main::@5/(byte[]) plots#10 )
-  (byte) line::x#0 ← (byte/signed byte/word/signed word) 0
+  (byte) line::x0#0 ← (byte/signed byte/word/signed word) 0
   (byte) line::x1#0 ← (byte/signed byte/word/signed word) 10
   call line param-assignment
   to:main::@5
@@ -845,7 +858,11 @@ main::@return: scope:[main]  from main::@5
   return 
   to:@return
 line: scope:[line]  from main::@2
-  (boolean~) line::$1 ← (byte) line::x#0 >= (byte) line::x1#0
+  (byte*) SCREEN#4 ← phi( main::@2/(byte*) SCREEN#10 )
+  (byte[]) plots#4 ← phi( main::@2/(byte[]) plots#10 )
+  (byte) line::x1#1 ← phi( main::@2/(byte) line::x1#0 )
+  (byte) line::x#0 ← phi( main::@2/(byte) line::x0#0 )
+  (boolean~) line::$1 ← (byte) line::x#0 >= (byte) line::x1#1
   if((boolean~) line::$1) goto line::@1
   to:line::@4
 line::@1: scope:[line]  from line
@@ -855,9 +872,9 @@ line::@1: scope:[line]  from line
 line::@4: scope:[line]  from line
   to:line::@2
 line::@2: scope:[line]  from line::@4 line::@8
-  (byte*) SCREEN#5 ← phi( line::@4/(byte*) SCREEN#10 line::@8/(byte*) SCREEN#5 )
-  (byte[]) plots#5 ← phi( line::@4/(byte[]) plots#10 line::@8/(byte[]) plots#5 )
-  (byte) line::x1#2 ← phi( line::@4/(byte) line::x1#0 line::@8/(byte) line::x1#2 )
+  (byte*) SCREEN#5 ← phi( line::@4/(byte*) SCREEN#4 line::@8/(byte*) SCREEN#5 )
+  (byte[]) plots#5 ← phi( line::@4/(byte[]) plots#4 line::@8/(byte[]) plots#5 )
+  (byte) line::x1#2 ← phi( line::@4/(byte) line::x1#1 line::@8/(byte) line::x1#2 )
   (byte) line::x#2 ← phi( line::@4/(byte) line::x#0 line::@8/(byte) line::x#1 )
   (byte) plot::x#1 ← (byte) line::x#2
   call plot param-assignment
@@ -871,9 +888,9 @@ line::@return: scope:[line]  from line::@1 line::@8
   return 
   to:@return
 plot: scope:[plot]  from line::@1 line::@2
-  (byte*) SCREEN#2 ← phi( line::@1/(byte*) SCREEN#10 line::@2/(byte*) SCREEN#5 )
+  (byte*) SCREEN#2 ← phi( line::@1/(byte*) SCREEN#4 line::@2/(byte*) SCREEN#5 )
   (byte) plot::x#2 ← phi( line::@1/(byte) plot::x#0 line::@2/(byte) plot::x#1 )
-  (byte[]) plots#2 ← phi( line::@1/(byte[]) plots#10 line::@2/(byte[]) plots#5 )
+  (byte[]) plots#2 ← phi( line::@1/(byte[]) plots#4 line::@2/(byte[]) plots#5 )
   (byte) plot::idx#0 ← (byte[]) plots#2 *idx (byte) plot::x#2
   (byte~) plot::$1 ← (byte*) SCREEN#2 *idx (byte) plot::idx#0
   (byte~) plot::$2 ← (byte~) plot::$1 + (byte/signed byte/word/signed word) 1
@@ -887,8 +904,17 @@ plot::@return: scope:[plot]  from plot
   to:@end
 @end: scope:[]  from @3
 
+Not aliassing across scopes: plots#3 plots#0
+Not aliassing across scopes: SCREEN#3 SCREEN#0
+Not aliassing across scopes: line::x#0 line::x0#0
+Not aliassing across scopes: line::x1#1 line::x1#0
+Not aliassing across scopes: plots#4 plots#10
+Not aliassing across scopes: SCREEN#4 SCREEN#10
 Not aliassing across scopes: plot::x#0 line::x#0
 Not aliassing across scopes: plot::x#1 line::x#2
+Not aliassing across scopes: plots#2 plots#4
+Not aliassing across scopes: plot::x#2 plot::x#0
+Not aliassing across scopes: SCREEN#2 SCREEN#4
 Self Phi Eliminated (byte[]) plots#1
 Self Phi Eliminated (byte*) SCREEN#1
 Self Phi Eliminated (byte[]) plots#10
@@ -903,11 +929,13 @@ CONTROL FLOW GRAPH
   (byte*) SCREEN#0 ← ((byte*)) (word/signed word) 1024
   to:@3
 main: scope:[main]  from @3
+  (byte*) SCREEN#3 ← phi( @3/(byte*) SCREEN#0 )
+  (byte[]) plots#3 ← phi( @3/(byte[]) plots#0 )
   (byte) main::i#0 ← (byte/signed byte/word/signed word) 0
   to:main::@1
 main::@1: scope:[main]  from main main::@1
-  (byte*) SCREEN#1 ← phi( main/(byte*) SCREEN#0 )
-  (byte[]) plots#1 ← phi( main/(byte[]) plots#0 )
+  (byte*) SCREEN#1 ← phi( main/(byte*) SCREEN#3 )
+  (byte[]) plots#1 ← phi( main/(byte[]) plots#3 )
   (byte) main::i#2 ← phi( main/(byte) main::i#0 main::@1/(byte) main::i#1 )
   *((byte[]) plots#1 + (byte) main::i#2) ← (byte) main::i#2
   *((byte*) SCREEN#1 + (byte) main::i#2) ← (byte/signed byte/word/signed word) 0
@@ -918,7 +946,7 @@ main::@1: scope:[main]  from main main::@1
 main::@2: scope:[main]  from main::@1 main::@5
   (byte*) SCREEN#10 ← phi( main::@1/(byte*) SCREEN#1 )
   (byte[]) plots#10 ← phi( main::@1/(byte[]) plots#1 )
-  (byte) line::x#0 ← (byte/signed byte/word/signed word) 0
+  (byte) line::x0#0 ← (byte/signed byte/word/signed word) 0
   (byte) line::x1#0 ← (byte/signed byte/word/signed word) 10
   call line param-assignment
   to:main::@5
@@ -929,7 +957,11 @@ main::@return: scope:[main]  from main::@5
   return 
   to:@return
 line: scope:[line]  from main::@2
-  (boolean~) line::$1 ← (byte) line::x#0 >= (byte) line::x1#0
+  (byte*) SCREEN#4 ← phi( main::@2/(byte*) SCREEN#10 )
+  (byte[]) plots#4 ← phi( main::@2/(byte[]) plots#10 )
+  (byte) line::x1#1 ← phi( main::@2/(byte) line::x1#0 )
+  (byte) line::x#0 ← phi( main::@2/(byte) line::x0#0 )
+  (boolean~) line::$1 ← (byte) line::x#0 >= (byte) line::x1#1
   if((boolean~) line::$1) goto line::@1
   to:line::@4
 line::@1: scope:[line]  from line
@@ -939,9 +971,9 @@ line::@1: scope:[line]  from line
 line::@4: scope:[line]  from line
   to:line::@2
 line::@2: scope:[line]  from line::@4 line::@8
-  (byte*) SCREEN#5 ← phi( line::@4/(byte*) SCREEN#10 )
-  (byte[]) plots#5 ← phi( line::@4/(byte[]) plots#10 )
-  (byte) line::x1#2 ← phi( line::@4/(byte) line::x1#0 )
+  (byte*) SCREEN#5 ← phi( line::@4/(byte*) SCREEN#4 )
+  (byte[]) plots#5 ← phi( line::@4/(byte[]) plots#4 )
+  (byte) line::x1#2 ← phi( line::@4/(byte) line::x1#1 )
   (byte) line::x#2 ← phi( line::@4/(byte) line::x#0 line::@8/(byte) line::x#1 )
   (byte) plot::x#1 ← (byte) line::x#2
   call plot param-assignment
@@ -955,9 +987,9 @@ line::@return: scope:[line]  from line::@1 line::@8
   return 
   to:@return
 plot: scope:[plot]  from line::@1 line::@2
-  (byte*) SCREEN#2 ← phi( line::@1/(byte*) SCREEN#10 line::@2/(byte*) SCREEN#5 )
+  (byte*) SCREEN#2 ← phi( line::@1/(byte*) SCREEN#4 line::@2/(byte*) SCREEN#5 )
   (byte) plot::x#2 ← phi( line::@1/(byte) plot::x#0 line::@2/(byte) plot::x#1 )
-  (byte[]) plots#2 ← phi( line::@1/(byte[]) plots#10 line::@2/(byte[]) plots#5 )
+  (byte[]) plots#2 ← phi( line::@1/(byte[]) plots#4 line::@2/(byte[]) plots#5 )
   (byte) plot::idx#0 ← (byte[]) plots#2 *idx (byte) plot::x#2
   (byte~) plot::$1 ← (byte*) SCREEN#2 *idx (byte) plot::idx#0
   (byte~) plot::$2 ← (byte~) plot::$1 + (byte/signed byte/word/signed word) 1
@@ -971,13 +1003,19 @@ plot::@return: scope:[plot]  from plot
   to:@end
 @end: scope:[]  from @3
 
-Redundant Phi (byte[]) plots#1 (byte[]) plots#0
-Redundant Phi (byte*) SCREEN#1 (byte*) SCREEN#0
+Redundant Phi (byte[]) plots#3 (byte[]) plots#0
+Redundant Phi (byte*) SCREEN#3 (byte*) SCREEN#0
+Redundant Phi (byte[]) plots#1 (byte[]) plots#3
+Redundant Phi (byte*) SCREEN#1 (byte*) SCREEN#3
 Redundant Phi (byte[]) plots#10 (byte[]) plots#1
 Redundant Phi (byte*) SCREEN#10 (byte*) SCREEN#1
-Redundant Phi (byte) line::x1#2 (byte) line::x1#0
-Redundant Phi (byte[]) plots#5 (byte[]) plots#10
-Redundant Phi (byte*) SCREEN#5 (byte*) SCREEN#10
+Redundant Phi (byte) line::x#0 (byte) line::x0#0
+Redundant Phi (byte) line::x1#1 (byte) line::x1#0
+Redundant Phi (byte[]) plots#4 (byte[]) plots#10
+Redundant Phi (byte*) SCREEN#4 (byte*) SCREEN#10
+Redundant Phi (byte) line::x1#2 (byte) line::x1#1
+Redundant Phi (byte[]) plots#5 (byte[]) plots#4
+Redundant Phi (byte*) SCREEN#5 (byte*) SCREEN#4
 Succesful SSA optimization Pass2RedundantPhiElimination
 CONTROL FLOW GRAPH
 @begin: scope:[]  from
@@ -996,7 +1034,7 @@ main::@1: scope:[main]  from main main::@1
   if((boolean~) main::$0) goto main::@1
   to:main::@2
 main::@2: scope:[main]  from main::@1 main::@5
-  (byte) line::x#0 ← (byte/signed byte/word/signed word) 0
+  (byte) line::x0#0 ← (byte/signed byte/word/signed word) 0
   (byte) line::x1#0 ← (byte/signed byte/word/signed word) 10
   call line param-assignment
   to:main::@5
@@ -1007,17 +1045,17 @@ main::@return: scope:[main]  from main::@5
   return 
   to:@return
 line: scope:[line]  from main::@2
-  (boolean~) line::$1 ← (byte) line::x#0 >= (byte) line::x1#0
+  (boolean~) line::$1 ← (byte) line::x0#0 >= (byte) line::x1#0
   if((boolean~) line::$1) goto line::@1
   to:line::@4
 line::@1: scope:[line]  from line
-  (byte) plot::x#0 ← (byte) line::x#0
+  (byte) plot::x#0 ← (byte) line::x0#0
   call plot param-assignment
   to:line::@return
 line::@4: scope:[line]  from line
   to:line::@2
 line::@2: scope:[line]  from line::@4 line::@8
-  (byte) line::x#2 ← phi( line::@4/(byte) line::x#0 line::@8/(byte) line::x#1 )
+  (byte) line::x#2 ← phi( line::@4/(byte) line::x0#0 line::@8/(byte) line::x#1 )
   (byte) plot::x#1 ← (byte) line::x#2
   call plot param-assignment
   to:line::@8
@@ -1066,7 +1104,7 @@ main::@1: scope:[main]  from main main::@1
   if((boolean~) main::$0) goto main::@1
   to:main::@2
 main::@2: scope:[main]  from main::@1 main::@5
-  (byte) line::x#0 ← (byte/signed byte/word/signed word) 0
+  (byte) line::x0#0 ← (byte/signed byte/word/signed word) 0
   (byte) line::x1#0 ← (byte/signed byte/word/signed word) 10
   call line param-assignment
   to:main::@5
@@ -1077,17 +1115,17 @@ main::@return: scope:[main]  from main::@5
   return 
   to:@return
 line: scope:[line]  from main::@2
-  (boolean~) line::$1 ← (byte) line::x#0 >= (byte) line::x1#0
+  (boolean~) line::$1 ← (byte) line::x0#0 >= (byte) line::x1#0
   if((boolean~) line::$1) goto line::@1
   to:line::@4
 line::@1: scope:[line]  from line
-  (byte) plot::x#0 ← (byte) line::x#0
+  (byte) plot::x#0 ← (byte) line::x0#0
   call plot param-assignment
   to:line::@return
 line::@4: scope:[line]  from line
   to:line::@2
 line::@2: scope:[line]  from line::@4 line::@8
-  (byte) line::x#2 ← phi( line::@4/(byte) line::x#0 line::@8/(byte) line::x#1 )
+  (byte) line::x#2 ← phi( line::@4/(byte) line::x0#0 line::@8/(byte) line::x#1 )
   (byte) plot::x#1 ← (byte) line::x#2
   call plot param-assignment
   to:line::@8
@@ -1115,7 +1153,7 @@ plot::@return: scope:[plot]  from plot
 @end: scope:[]  from @3
 
 Simple Condition (boolean~) main::$0 if((byte) main::i#1!=(byte/signed byte/word/signed word) 40) goto main::@1
-Simple Condition (boolean~) line::$1 if((byte) line::x#0>=(byte) line::x1#0) goto line::@1
+Simple Condition (boolean~) line::$1 if((byte) line::x0#0>=(byte) line::x1#0) goto line::@1
 Simple Condition (boolean~) line::$3 if((byte) line::x#1<=(byte) line::x1#0) goto line::@2
 Succesful SSA optimization Pass2ConditionalJumpSimplification
 CONTROL FLOW GRAPH
@@ -1134,7 +1172,7 @@ main::@1: scope:[main]  from main main::@1
   if((byte) main::i#1!=(byte/signed byte/word/signed word) 40) goto main::@1
   to:main::@2
 main::@2: scope:[main]  from main::@1 main::@5
-  (byte) line::x#0 ← (byte/signed byte/word/signed word) 0
+  (byte) line::x0#0 ← (byte/signed byte/word/signed word) 0
   (byte) line::x1#0 ← (byte/signed byte/word/signed word) 10
   call line param-assignment
   to:main::@5
@@ -1145,16 +1183,16 @@ main::@return: scope:[main]  from main::@5
   return 
   to:@return
 line: scope:[line]  from main::@2
-  if((byte) line::x#0>=(byte) line::x1#0) goto line::@1
+  if((byte) line::x0#0>=(byte) line::x1#0) goto line::@1
   to:line::@4
 line::@1: scope:[line]  from line
-  (byte) plot::x#0 ← (byte) line::x#0
+  (byte) plot::x#0 ← (byte) line::x0#0
   call plot param-assignment
   to:line::@return
 line::@4: scope:[line]  from line
   to:line::@2
 line::@2: scope:[line]  from line::@4 line::@8
-  (byte) line::x#2 ← phi( line::@4/(byte) line::x#0 line::@8/(byte) line::x#1 )
+  (byte) line::x#2 ← phi( line::@4/(byte) line::x0#0 line::@8/(byte) line::x#1 )
   (byte) plot::x#1 ← (byte) line::x#2
   call plot param-assignment
   to:line::@8
@@ -1183,7 +1221,7 @@ plot::@return: scope:[plot]  from plot
 Constant (const byte[]) plots#0 = ((byte*))4096
 Constant (const byte*) SCREEN#0 = ((byte*))1024
 Constant (const byte) main::i#0 = 0
-Constant (const byte) line::x#0 = 0
+Constant (const byte) line::x0#0 = 0
 Constant (const byte) line::x1#0 = 10
 Succesful SSA optimization Pass2ConstantIdentification
 CONTROL FLOW GRAPH
@@ -1208,16 +1246,16 @@ main::@return: scope:[main]  from main::@5
   return 
   to:@return
 line: scope:[line]  from main::@2
-  if((const byte) line::x#0>=(const byte) line::x1#0) goto line::@1
+  if((const byte) line::x0#0>=(const byte) line::x1#0) goto line::@1
   to:line::@4
 line::@1: scope:[line]  from line
-  (byte) plot::x#0 ← (const byte) line::x#0
+  (byte) plot::x#0 ← (const byte) line::x0#0
   call plot param-assignment
   to:line::@return
 line::@4: scope:[line]  from line
   to:line::@2
 line::@2: scope:[line]  from line::@4 line::@8
-  (byte) line::x#2 ← phi( line::@4/(const byte) line::x#0 line::@8/(byte) line::x#1 )
+  (byte) line::x#2 ← phi( line::@4/(const byte) line::x0#0 line::@8/(byte) line::x#1 )
   (byte) plot::x#1 ← (byte) line::x#2
   call plot param-assignment
   to:line::@8
@@ -1243,7 +1281,7 @@ plot::@return: scope:[plot]  from plot
   to:@end
 @end: scope:[]  from @3
 
-Constant (const byte) plot::x#0 = line::x#0
+Constant (const byte) plot::x#0 = line::x0#0
 Succesful SSA optimization Pass2ConstantIdentification
 CONTROL FLOW GRAPH
 @begin: scope:[]  from
@@ -1267,7 +1305,7 @@ main::@return: scope:[main]  from main::@5
   return 
   to:@return
 line: scope:[line]  from main::@2
-  if((const byte) line::x#0>=(const byte) line::x1#0) goto line::@1
+  if((const byte) line::x0#0>=(const byte) line::x1#0) goto line::@1
   to:line::@4
 line::@1: scope:[line]  from line
   call plot param-assignment
@@ -1275,7 +1313,7 @@ line::@1: scope:[line]  from line
 line::@4: scope:[line]  from line
   to:line::@2
 line::@2: scope:[line]  from line::@4 line::@8
-  (byte) line::x#2 ← phi( line::@4/(const byte) line::x#0 line::@8/(byte) line::x#1 )
+  (byte) line::x#2 ← phi( line::@4/(const byte) line::x0#0 line::@8/(byte) line::x#1 )
   (byte) plot::x#1 ← (byte) line::x#2
   call plot param-assignment
   to:line::@8
@@ -1327,13 +1365,13 @@ main::@return: scope:[main]  from main::@5
   return 
   to:@return
 line: scope:[line]  from main::@2
-  if((const byte) line::x#0>=(const byte) line::x1#0) goto line::@1
+  if((const byte) line::x0#0>=(const byte) line::x1#0) goto line::@1
   to:line::@2
 line::@1: scope:[line]  from line
   call plot param-assignment
   to:line::@return
 line::@2: scope:[line]  from line line::@8
-  (byte) line::x#2 ← phi( line/(const byte) line::x#0 line::@8/(byte) line::x#1 )
+  (byte) line::x#2 ← phi( line/(const byte) line::x0#0 line::@8/(byte) line::x#1 )
   (byte) plot::x#1 ← (byte) line::x#2
   call plot param-assignment
   to:line::@8
@@ -1367,13 +1405,10 @@ Multiple usages for variable. Not optimizing sub-constant (byte) main::i#2
 Multiple usages for variable. Not optimizing sub-constant (byte) main::i#2
 Inlining constant with var siblings (const byte) main::i#0
 Inlining constant with var siblings (const byte) main::i#0
-Inlining constant with var siblings (const byte) line::x#0
-Inlining constant with var siblings (const byte) line::x#0
 Inlining constant with var siblings (const byte) plot::x#0
 Inlining constant with var siblings (const byte) plot::x#0
 Constant inlined main::i#0 = (byte/signed byte/word/signed word) 0
-Constant inlined plot::x#0 = (byte/signed byte/word/signed word) 0
-Constant inlined line::x#0 = (byte/signed byte/word/signed word) 0
+Constant inlined plot::x#0 = (const byte) line::x0#0
 Succesful SSA optimization Pass2ConstantInlining
 CONTROL FLOW GRAPH
 @begin: scope:[]  from
@@ -1397,13 +1432,13 @@ main::@return: scope:[main]  from main::@5
   return 
   to:@return
 line: scope:[line]  from main::@2
-  if((byte/signed byte/word/signed word) 0>=(const byte) line::x1#0) goto line::@1
+  if((const byte) line::x0#0>=(const byte) line::x1#0) goto line::@1
   to:line::@2
 line::@1: scope:[line]  from line
   call plot param-assignment
   to:line::@return
 line::@2: scope:[line]  from line line::@8
-  (byte) line::x#2 ← phi( line/(byte/signed byte/word/signed word) 0 line::@8/(byte) line::x#1 )
+  (byte) line::x#2 ← phi( line/(const byte) line::x0#0 line::@8/(byte) line::x#1 )
   (byte) plot::x#1 ← (byte) line::x#2
   call plot param-assignment
   to:line::@8
@@ -1415,7 +1450,7 @@ line::@return: scope:[line]  from line::@1 line::@8
   return 
   to:@return
 plot: scope:[plot]  from line::@1 line::@2
-  (byte) plot::x#2 ← phi( line::@1/(byte/signed byte/word/signed word) 0 line::@2/(byte) plot::x#1 )
+  (byte) plot::x#2 ← phi( line::@1/(const byte) line::x0#0 line::@2/(byte) plot::x#1 )
   (byte) plot::idx#0 ← (const byte[]) plots#0 *idx (byte) plot::x#2
   (byte~) plot::$1 ← (const byte*) SCREEN#0 *idx (byte) plot::idx#0
   (byte~) plot::$2 ← (byte~) plot::$1 + (byte/signed byte/word/signed word) 1
@@ -1444,6 +1479,7 @@ FINAL SYMBOL TABLE
 (byte) line::x#1
 (byte) line::x#2
 (byte) line::x0
+(const byte) line::x0#0 = (byte/signed byte/word/signed word) 0
 (byte) line::x1
 (const byte) line::x1#0 = (byte/signed byte/word/signed word) 10
 (void()) main()
@@ -1499,10 +1535,10 @@ main::@6: scope:[main]  from main::@1
   (byte~) main::i#3 ← (byte) main::i#1
   to:main::@1
 line: scope:[line]  from main::@2
-  if((byte/signed byte/word/signed word) 0>=(const byte) line::x1#0) goto line::@1
+  if((const byte) line::x0#0>=(const byte) line::x1#0) goto line::@1
   to:line::@2
 line::@2: scope:[line]  from line line::@9
-  (byte) line::x#2 ← phi( line/(byte/signed byte/word/signed word) 0 line::@9/(byte~) line::x#4 )
+  (byte) line::x#2 ← phi( line/(const byte) line::x0#0 line::@9/(byte~) line::x#4 )
   (byte) plot::x#1 ← (byte) line::x#2
   (byte~) plot::x#3 ← (byte) plot::x#1
   call plot param-assignment
@@ -1521,7 +1557,7 @@ line::@1: scope:[line]  from line
   call plot param-assignment
   to:line::@return
 plot: scope:[plot]  from line::@1 line::@2
-  (byte) plot::x#2 ← phi( line::@1/(byte/signed byte/word/signed word) 0 line::@2/(byte~) plot::x#3 )
+  (byte) plot::x#2 ← phi( line::@1/(const byte) line::x0#0 line::@2/(byte~) plot::x#3 )
   (byte) plot::idx#0 ← (const byte[]) plots#0 *idx (byte) plot::x#2
   (byte~) plot::$1 ← (const byte*) SCREEN#0 *idx (byte) plot::idx#0
   (byte~) plot::$2 ← (byte~) plot::$1 + (byte/signed byte/word/signed word) 1
@@ -1571,10 +1607,10 @@ main::@6: scope:[main]  from main::@1
   [10] (byte~) main::i#3 ← (byte) main::i#1 [ main::i#3 ]
   to:main::@1
 line: scope:[line]  from main::@2
-  [11] if((byte/signed byte/word/signed word) 0>=(const byte) line::x1#0) goto line::@1 [ ]
+  [11] if((const byte) line::x0#0>=(const byte) line::x1#0) goto line::@1 [ ]
   to:line::@2
 line::@2: scope:[line]  from line line::@9
-  [12] (byte) line::x#2 ← phi( line/(byte/signed byte/word/signed word) 0 line::@9/(byte~) line::x#4 ) [ line::x#2 ]
+  [12] (byte) line::x#2 ← phi( line/(const byte) line::x0#0 line::@9/(byte~) line::x#4 ) [ line::x#2 ]
   [13] (byte) plot::x#1 ← (byte) line::x#2 [ line::x#2 plot::x#1 ]
   [14] (byte~) plot::x#3 ← (byte) plot::x#1 [ line::x#2 plot::x#3 ]
   [15] call plot param-assignment [ line::x#2 ]
@@ -1593,7 +1629,7 @@ line::@1: scope:[line]  from line
   [20] call plot param-assignment [ ]
   to:line::@return
 plot: scope:[plot]  from line::@1 line::@2
-  [21] (byte) plot::x#2 ← phi( line::@1/(byte/signed byte/word/signed word) 0 line::@2/(byte~) plot::x#3 ) [ plot::x#2 ]
+  [21] (byte) plot::x#2 ← phi( line::@1/(const byte) line::x0#0 line::@2/(byte~) plot::x#3 ) [ plot::x#2 ]
   [22] (byte) plot::idx#0 ← (const byte[]) plots#0 *idx (byte) plot::x#2 [ plot::idx#0 ]
   [23] (byte~) plot::$1 ← (const byte*) SCREEN#0 *idx (byte) plot::idx#0 [ plot::idx#0 plot::$1 ]
   [24] (byte~) plot::$2 ← (byte~) plot::$1 + (byte/signed byte/word/signed word) 1 [ plot::idx#0 plot::$2 ]
@@ -1642,10 +1678,10 @@ main::@return: scope:[main]  from main::@5
   [9] return  [ ]
   to:@return
 line: scope:[line]  from main::@2
-  [10] if((byte/signed byte/word/signed word) 0>=(const byte) line::x1#0) goto line::@1 [ ]
+  [10] if((const byte) line::x0#0>=(const byte) line::x1#0) goto line::@1 [ ]
   to:line::@2
 line::@2: scope:[line]  from line line::@8
-  [11] (byte) line::x#2 ← phi( line/(byte/signed byte/word/signed word) 0 line::@8/(byte) line::x#1 ) [ line::x#2 ]
+  [11] (byte) line::x#2 ← phi( line/(const byte) line::x0#0 line::@8/(byte) line::x#1 ) [ line::x#2 ]
   [12] (byte) plot::x#1 ← (byte) line::x#2 [ line::x#2 plot::x#1 ]
   [13] call plot param-assignment [ line::x#2 ]
   to:line::@8
@@ -1660,7 +1696,7 @@ line::@1: scope:[line]  from line
   [17] call plot param-assignment [ ]
   to:line::@return
 plot: scope:[plot]  from line::@1 line::@2
-  [18] (byte) plot::x#2 ← phi( line::@1/(byte/signed byte/word/signed word) 0 line::@2/(byte) plot::x#1 ) [ plot::x#2 ]
+  [18] (byte) plot::x#2 ← phi( line::@1/(const byte) line::x0#0 line::@2/(byte) plot::x#1 ) [ plot::x#2 ]
   [19] (byte) plot::idx#0 ← (const byte[]) plots#0 *idx (byte) plot::x#2 [ plot::idx#0 ]
   [20] (byte~) plot::$1 ← (const byte*) SCREEN#0 *idx (byte) plot::idx#0 [ plot::idx#0 plot::$1 ]
   [21] (byte~) plot::$2 ← (byte~) plot::$1 + (byte/signed byte/word/signed word) 1 [ plot::idx#0 plot::$2 ]
@@ -1697,10 +1733,10 @@ main::@return: scope:[main]  from main::@5
   [9] return  [ ] ( main:0 [ ] )
   to:@return
 line: scope:[line]  from main::@2
-  [10] if((byte/signed byte/word/signed word) 0>=(const byte) line::x1#0) goto line::@1 [ ] ( main:0::line:7 [ ] )
+  [10] if((const byte) line::x0#0>=(const byte) line::x1#0) goto line::@1 [ ] ( main:0::line:7 [ ] )
   to:line::@2
 line::@2: scope:[line]  from line line::@8
-  [11] (byte) line::x#2 ← phi( line/(byte/signed byte/word/signed word) 0 line::@8/(byte) line::x#1 ) [ line::x#2 ] ( main:0::line:7 [ line::x#2 ] )
+  [11] (byte) line::x#2 ← phi( line/(const byte) line::x0#0 line::@8/(byte) line::x#1 ) [ line::x#2 ] ( main:0::line:7 [ line::x#2 ] )
   [12] (byte) plot::x#1 ← (byte) line::x#2 [ line::x#2 plot::x#1 ] ( main:0::line:7 [ line::x#2 plot::x#1 ] )
   [13] call plot param-assignment [ line::x#2 ] ( main:0::line:7 [ line::x#2 ] )
   to:line::@8
@@ -1715,7 +1751,7 @@ line::@1: scope:[line]  from line
   [17] call plot param-assignment [ ] ( main:0::line:7 [ ] )
   to:line::@return
 plot: scope:[plot]  from line::@1 line::@2
-  [18] (byte) plot::x#2 ← phi( line::@1/(byte/signed byte/word/signed word) 0 line::@2/(byte) plot::x#1 ) [ plot::x#2 ] ( main:0::line:7::plot:13 [ line::x#2 plot::x#2 ] main:0::line:7::plot:17 [ plot::x#2 ] )
+  [18] (byte) plot::x#2 ← phi( line::@1/(const byte) line::x0#0 line::@2/(byte) plot::x#1 ) [ plot::x#2 ] ( main:0::line:7::plot:13 [ line::x#2 plot::x#2 ] main:0::line:7::plot:17 [ plot::x#2 ] )
   [19] (byte) plot::idx#0 ← (const byte[]) plots#0 *idx (byte) plot::x#2 [ plot::idx#0 ] ( main:0::line:7::plot:13 [ line::x#2 plot::idx#0 ] main:0::line:7::plot:17 [ plot::idx#0 ] )
   [20] (byte~) plot::$1 ← (const byte*) SCREEN#0 *idx (byte) plot::idx#0 [ plot::idx#0 plot::$1 ] ( main:0::line:7::plot:13 [ line::x#2 plot::idx#0 plot::$1 ] main:0::line:7::plot:17 [ plot::idx#0 plot::$1 ] )
   [21] (byte~) plot::$2 ← (byte~) plot::$1 + (byte/signed byte/word/signed word) 1 [ plot::idx#0 plot::$2 ] ( main:0::line:7::plot:13 [ line::x#2 plot::idx#0 plot::$2 ] main:0::line:7::plot:17 [ plot::idx#0 plot::$2 ] )
@@ -1875,16 +1911,17 @@ main: {
 }
 //SEG23 line
 line: {
+    .const x0 = 0
     .const x1 = $a
     .label x = 3
-  //SEG24 [10] if((byte/signed byte/word/signed word) 0>=(const byte) line::x1#0) goto line::@1 [ ] ( main:0::line:7 [ ] ) -- coby1_ge_coby2_then_la1 
-    lda #0
+  //SEG24 [10] if((const byte) line::x0#0>=(const byte) line::x1#0) goto line::@1 [ ] ( main:0::line:7 [ ] ) -- coby1_ge_coby2_then_la1 
+    lda #x0
     cmp #x1
     bcs b1
   //SEG25 [11] phi from line to line::@2 [phi:line->line::@2]
   b2_from_line:
-  //SEG26 [11] phi (byte) line::x#2 = (byte/signed byte/word/signed word) 0 [phi:line->line::@2#0] -- zpby1=coby1 
-    lda #0
+  //SEG26 [11] phi (byte) line::x#2 = (const byte) line::x0#0 [phi:line->line::@2#0] -- zpby1=coby1 
+    lda #x0
     sta x
     jmp b2
   //SEG27 [11] phi from line::@8 to line::@2 [phi:line::@8->line::@2]
@@ -1921,8 +1958,8 @@ line: {
   //SEG40 [17] call plot param-assignment [ ] ( main:0::line:7 [ ] )
   //SEG41 [18] phi from line::@1 to plot [phi:line::@1->plot]
   plot_from_b1:
-  //SEG42 [18] phi (byte) plot::x#2 = (byte/signed byte/word/signed word) 0 [phi:line::@1->plot#0] -- zpby1=coby1 
-    lda #0
+  //SEG42 [18] phi (byte) plot::x#2 = (const byte) line::x0#0 [phi:line::@1->plot#0] -- zpby1=coby1 
+    lda #x0
     sta plot.x
     jsr plot
     jmp breturn
@@ -1961,10 +1998,10 @@ REGISTER UPLIFT POTENTIAL REGISTERS
 Equivalence Class zp ZP_BYTE:6 [ plot::$1 ] has ALU potential.
 Statement [4] *((const byte*) SCREEN#0 + (byte) main::i#2) ← (byte/signed byte/word/signed word) 0 [ main::i#2 ] ( main:0 [ main::i#2 ] ) always clobbers reg byte a 
 Removing always clobbered register reg byte a as potential for zp ZP_BYTE:2 [ main::i#2 main::i#1 ]
-Statement [10] if((byte/signed byte/word/signed word) 0>=(const byte) line::x1#0) goto line::@1 [ ] ( main:0::line:7 [ ] ) always clobbers reg byte a 
+Statement [10] if((const byte) line::x0#0>=(const byte) line::x1#0) goto line::@1 [ ] ( main:0::line:7 [ ] ) always clobbers reg byte a 
 Statement [3] *((const byte[]) plots#0 + (byte) main::i#2) ← (byte) main::i#2 [ main::i#2 ] ( main:0 [ main::i#2 ] ) always clobbers reg byte a 
 Statement [4] *((const byte*) SCREEN#0 + (byte) main::i#2) ← (byte/signed byte/word/signed word) 0 [ main::i#2 ] ( main:0 [ main::i#2 ] ) always clobbers reg byte a 
-Statement [10] if((byte/signed byte/word/signed word) 0>=(const byte) line::x1#0) goto line::@1 [ ] ( main:0::line:7 [ ] ) always clobbers reg byte a 
+Statement [10] if((const byte) line::x0#0>=(const byte) line::x1#0) goto line::@1 [ ] ( main:0::line:7 [ ] ) always clobbers reg byte a 
 Potential registers zp ZP_BYTE:2 [ main::i#2 main::i#1 ] : zp ZP_BYTE:2 , reg byte x , reg byte y , 
 Potential registers zp ZP_BYTE:3 [ line::x#2 line::x#1 ] : zp ZP_BYTE:3 , reg byte a , reg byte x , reg byte y , 
 Potential registers zp ZP_BYTE:4 [ plot::x#2 plot::x#1 ] : zp ZP_BYTE:4 , reg byte a , reg byte x , reg byte y , 
@@ -2052,16 +2089,17 @@ main: {
 }
 //SEG23 line
 line: {
+    .const x0 = 0
     .const x1 = $a
     .label x = 2
-  //SEG24 [10] if((byte/signed byte/word/signed word) 0>=(const byte) line::x1#0) goto line::@1 [ ] ( main:0::line:7 [ ] ) -- coby1_ge_coby2_then_la1 
-    lda #0
+  //SEG24 [10] if((const byte) line::x0#0>=(const byte) line::x1#0) goto line::@1 [ ] ( main:0::line:7 [ ] ) -- coby1_ge_coby2_then_la1 
+    lda #x0
     cmp #x1
     bcs b1
   //SEG25 [11] phi from line to line::@2 [phi:line->line::@2]
   b2_from_line:
-  //SEG26 [11] phi (byte) line::x#2 = (byte/signed byte/word/signed word) 0 [phi:line->line::@2#0] -- zpby1=coby1 
-    lda #0
+  //SEG26 [11] phi (byte) line::x#2 = (const byte) line::x0#0 [phi:line->line::@2#0] -- zpby1=coby1 
+    lda #x0
     sta x
     jmp b2
   //SEG27 [11] phi from line::@8 to line::@2 [phi:line::@8->line::@2]
@@ -2094,8 +2132,8 @@ line: {
   //SEG40 [17] call plot param-assignment [ ] ( main:0::line:7 [ ] )
   //SEG41 [18] phi from line::@1 to plot [phi:line::@1->plot]
   plot_from_b1:
-  //SEG42 [18] phi (byte) plot::x#2 = (byte/signed byte/word/signed word) 0 [phi:line::@1->plot#0] -- yby=coby1 
-    ldy #0
+  //SEG42 [18] phi (byte) plot::x#2 = (const byte) line::x0#0 [phi:line::@1->plot#0] -- yby=coby1 
+    ldy #x0
     jsr plot
     jmp breturn
 }
@@ -2178,16 +2216,17 @@ main: {
 }
 //SEG23 line
 line: {
+    .const x0 = 0
     .const x1 = $a
     .label x = 2
-  //SEG24 [10] if((byte/signed byte/word/signed word) 0>=(const byte) line::x1#0) goto line::@1 [ ] ( main:0::line:7 [ ] ) -- coby1_ge_coby2_then_la1 
-    lda #0
+  //SEG24 [10] if((const byte) line::x0#0>=(const byte) line::x1#0) goto line::@1 [ ] ( main:0::line:7 [ ] ) -- coby1_ge_coby2_then_la1 
+    lda #x0
     cmp #x1
     bcs b1
   //SEG25 [11] phi from line to line::@2 [phi:line->line::@2]
   b2_from_line:
-  //SEG26 [11] phi (byte) line::x#2 = (byte/signed byte/word/signed word) 0 [phi:line->line::@2#0] -- zpby1=coby1 
-    lda #0
+  //SEG26 [11] phi (byte) line::x#2 = (const byte) line::x0#0 [phi:line->line::@2#0] -- zpby1=coby1 
+    lda #x0
     sta x
     jmp b2
   //SEG27 [11] phi from line::@8 to line::@2 [phi:line::@8->line::@2]
@@ -2218,8 +2257,8 @@ line: {
   b1:
   //SEG40 [17] call plot param-assignment [ ] ( main:0::line:7 [ ] )
   //SEG41 [18] phi from line::@1 to plot [phi:line::@1->plot]
-  //SEG42 [18] phi (byte) plot::x#2 = (byte/signed byte/word/signed word) 0 [phi:line::@1->plot#0] -- yby=coby1 
-    ldy #0
+  //SEG42 [18] phi (byte) plot::x#2 = (const byte) line::x0#0 [phi:line::@1->plot#0] -- yby=coby1 
+    ldy #x0
     jsr plot
     jmp breturn
 }
@@ -2298,15 +2337,16 @@ main: {
 }
 //SEG23 line
 line: {
+    .const x0 = 0
     .const x1 = $a
     .label x = 2
-  //SEG24 [10] if((byte/signed byte/word/signed word) 0>=(const byte) line::x1#0) goto line::@1 [ ] ( main:0::line:7 [ ] ) -- coby1_ge_coby2_then_la1 
-    lda #0
+  //SEG24 [10] if((const byte) line::x0#0>=(const byte) line::x1#0) goto line::@1 [ ] ( main:0::line:7 [ ] ) -- coby1_ge_coby2_then_la1 
+    lda #x0
     cmp #x1
     bcs b1
   //SEG25 [11] phi from line to line::@2 [phi:line->line::@2]
-  //SEG26 [11] phi (byte) line::x#2 = (byte/signed byte/word/signed word) 0 [phi:line->line::@2#0] -- zpby1=coby1 
-    lda #0
+  //SEG26 [11] phi (byte) line::x#2 = (const byte) line::x0#0 [phi:line->line::@2#0] -- zpby1=coby1 
+    lda #x0
     sta x
     jmp b2
   //SEG27 [11] phi from line::@8 to line::@2 [phi:line::@8->line::@2]
@@ -2335,8 +2375,8 @@ line: {
   b1:
   //SEG40 [17] call plot param-assignment [ ] ( main:0::line:7 [ ] )
   //SEG41 [18] phi from line::@1 to plot [phi:line::@1->plot]
-  //SEG42 [18] phi (byte) plot::x#2 = (byte/signed byte/word/signed word) 0 [phi:line::@1->plot#0] -- yby=coby1 
-    ldy #0
+  //SEG42 [18] phi (byte) plot::x#2 = (const byte) line::x0#0 [phi:line::@1->plot#0] -- yby=coby1 
+    ldy #x0
     jsr plot
     jmp breturn
 }
@@ -2406,15 +2446,16 @@ main: {
 }
 //SEG23 line
 line: {
+    .const x0 = 0
     .const x1 = $a
     .label x = 2
-  //SEG24 [10] if((byte/signed byte/word/signed word) 0>=(const byte) line::x1#0) goto line::@1 [ ] ( main:0::line:7 [ ] ) -- coby1_ge_coby2_then_la1 
-    lda #0
+  //SEG24 [10] if((const byte) line::x0#0>=(const byte) line::x1#0) goto line::@1 [ ] ( main:0::line:7 [ ] ) -- coby1_ge_coby2_then_la1 
+    lda #x0
     cmp #x1
     bcs b1
   //SEG25 [11] phi from line to line::@2 [phi:line->line::@2]
-  //SEG26 [11] phi (byte) line::x#2 = (byte/signed byte/word/signed word) 0 [phi:line->line::@2#0] -- zpby1=coby1 
-    lda #0
+  //SEG26 [11] phi (byte) line::x#2 = (const byte) line::x0#0 [phi:line->line::@2#0] -- zpby1=coby1 
+    lda #x0
     sta x
   //SEG27 [11] phi from line::@8 to line::@2 [phi:line::@8->line::@2]
   //SEG28 [11] phi (byte) line::x#2 = (byte) line::x#1 [phi:line::@8->line::@2#0] -- register_copy 
@@ -2442,8 +2483,8 @@ line: {
   b1:
   //SEG40 [17] call plot param-assignment [ ] ( main:0::line:7 [ ] )
   //SEG41 [18] phi from line::@1 to plot [phi:line::@1->plot]
-  //SEG42 [18] phi (byte) plot::x#2 = (byte/signed byte/word/signed word) 0 [phi:line::@1->plot#0] -- yby=coby1 
-    ldy #0
+  //SEG42 [18] phi (byte) plot::x#2 = (const byte) line::x0#0 [phi:line::@1->plot#0] -- yby=coby1 
+    ldy #x0
     jsr plot
     jmp breturn
 }
@@ -2463,7 +2504,7 @@ plot: {
     rts
 }
 
-Removing instruction lda #0
+Removing instruction lda #x0
 Succesful ASM optimization Pass5UnnecesaryLoadElimination
 ASSEMBLER
 //SEG0 Basic Upstart
@@ -2512,14 +2553,15 @@ main: {
 }
 //SEG23 line
 line: {
+    .const x0 = 0
     .const x1 = $a
     .label x = 2
-  //SEG24 [10] if((byte/signed byte/word/signed word) 0>=(const byte) line::x1#0) goto line::@1 [ ] ( main:0::line:7 [ ] ) -- coby1_ge_coby2_then_la1 
-    lda #0
+  //SEG24 [10] if((const byte) line::x0#0>=(const byte) line::x1#0) goto line::@1 [ ] ( main:0::line:7 [ ] ) -- coby1_ge_coby2_then_la1 
+    lda #x0
     cmp #x1
     bcs b1
   //SEG25 [11] phi from line to line::@2 [phi:line->line::@2]
-  //SEG26 [11] phi (byte) line::x#2 = (byte/signed byte/word/signed word) 0 [phi:line->line::@2#0] -- zpby1=coby1 
+  //SEG26 [11] phi (byte) line::x#2 = (const byte) line::x0#0 [phi:line->line::@2#0] -- zpby1=coby1 
     sta x
   //SEG27 [11] phi from line::@8 to line::@2 [phi:line::@8->line::@2]
   //SEG28 [11] phi (byte) line::x#2 = (byte) line::x#1 [phi:line::@8->line::@2#0] -- register_copy 
@@ -2547,8 +2589,8 @@ line: {
   b1:
   //SEG40 [17] call plot param-assignment [ ] ( main:0::line:7 [ ] )
   //SEG41 [18] phi from line::@1 to plot [phi:line::@1->plot]
-  //SEG42 [18] phi (byte) plot::x#2 = (byte/signed byte/word/signed word) 0 [phi:line::@1->plot#0] -- yby=coby1 
-    ldy #0
+  //SEG42 [18] phi (byte) plot::x#2 = (const byte) line::x0#0 [phi:line::@1->plot#0] -- yby=coby1 
+    ldy #x0
     jsr plot
     jmp breturn
 }
@@ -2583,6 +2625,7 @@ FINAL SYMBOL TABLE
 (byte) line::x#1 x zp ZP_BYTE:2 151.5
 (byte) line::x#2 x zp ZP_BYTE:2 101.0
 (byte) line::x0
+(const byte) line::x0#0 x0 = (byte/signed byte/word/signed word) 0
 (byte) line::x1
 (const byte) line::x1#0 x1 = (byte/signed byte/word/signed word) 10
 (void()) main()
@@ -2659,14 +2702,15 @@ main: {
 }
 //SEG23 line
 line: {
+    .const x0 = 0
     .const x1 = $a
     .label x = 2
-  //SEG24 [10] if((byte/signed byte/word/signed word) 0>=(const byte) line::x1#0) goto line::@1 [ ] ( main:0::line:7 [ ] ) -- coby1_ge_coby2_then_la1 
-    lda #0
+  //SEG24 [10] if((const byte) line::x0#0>=(const byte) line::x1#0) goto line::@1 [ ] ( main:0::line:7 [ ] ) -- coby1_ge_coby2_then_la1 
+    lda #x0
     cmp #x1
     bcs b1
   //SEG25 [11] phi from line to line::@2 [phi:line->line::@2]
-  //SEG26 [11] phi (byte) line::x#2 = (byte/signed byte/word/signed word) 0 [phi:line->line::@2#0] -- zpby1=coby1 
+  //SEG26 [11] phi (byte) line::x#2 = (const byte) line::x0#0 [phi:line->line::@2#0] -- zpby1=coby1 
     sta x
   //SEG27 [11] phi from line::@8 to line::@2 [phi:line::@8->line::@2]
   //SEG28 [11] phi (byte) line::x#2 = (byte) line::x#1 [phi:line::@8->line::@2#0] -- register_copy 
@@ -2694,8 +2738,8 @@ line: {
   b1:
   //SEG40 [17] call plot param-assignment [ ] ( main:0::line:7 [ ] )
   //SEG41 [18] phi from line::@1 to plot [phi:line::@1->plot]
-  //SEG42 [18] phi (byte) plot::x#2 = (byte/signed byte/word/signed word) 0 [phi:line::@1->plot#0] -- yby=coby1 
-    ldy #0
+  //SEG42 [18] phi (byte) plot::x#2 = (const byte) line::x0#0 [phi:line::@1->plot#0] -- yby=coby1 
+    ldy #x0
     jsr plot
     jmp breturn
 }

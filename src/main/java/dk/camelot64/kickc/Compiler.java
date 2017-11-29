@@ -131,6 +131,7 @@ public class Compiler {
       assertions.add(new Pass2AssertNoReturnValues(program));
       assertions.add(new Pass2AssertNoProcs(program));
       assertions.add(new Pass2AssertNoLabels(program));
+      assertions.add(new Pass2AssertSingleAssignment(program));
       for (Pass2SsaAssertion assertion : assertions) {
          assertion.check();
       }
@@ -169,6 +170,7 @@ public class Compiler {
                   ssaOptimized = true;
                   program.getLog().append("CONTROL FLOW GRAPH");
                   program.getLog().append(program.getGraph().toString(program));
+                  //pass2AssertSSA(program);
                }
             }
          }

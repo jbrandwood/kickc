@@ -344,19 +344,22 @@ nest::@return: scope:[nest]  from nest::@1
   to:@end
 @end: scope:[]  from @2
 
-Alias (byte*) SCREEN#0 = (byte*) SCREEN#4 (byte*) SCREEN#6 
+Not aliassing across scopes: SCREEN#4 SCREEN#6
+Not aliassing across scopes: SCREEN#2 SCREEN#3
 Alias (byte) main::i#2 = (byte) main::i#3 
-Alias (byte*) SCREEN#2 = (byte*) SCREEN#5 (byte*) SCREEN#3 
+Alias (byte*) SCREEN#3 = (byte*) SCREEN#5 
+Alias (byte*) SCREEN#0 = (byte*) SCREEN#6 
 Succesful SSA optimization Pass2AliasElimination
 CONTROL FLOW GRAPH
 @begin: scope:[]  from
   (byte*) SCREEN#0 ← ((byte*)) (word/signed word) 1024
   to:@2
 main: scope:[main]  from @2
+  (byte*) SCREEN#4 ← phi( @2/(byte*) SCREEN#0 )
   (byte) main::i#0 ← (byte/signed byte/word/signed word) 100
   to:main::@1
 main::@1: scope:[main]  from main main::@3
-  (byte*) SCREEN#2 ← phi( main/(byte*) SCREEN#0 main::@3/(byte*) SCREEN#2 )
+  (byte*) SCREEN#3 ← phi( main/(byte*) SCREEN#4 main::@3/(byte*) SCREEN#3 )
   (byte) main::i#2 ← phi( main/(byte) main::i#0 main::@3/(byte) main::i#1 )
   call nest param-assignment
   to:main::@3
@@ -369,6 +372,7 @@ main::@return: scope:[main]  from main::@3
   return 
   to:@return
 nest: scope:[nest]  from main::@1
+  (byte*) SCREEN#2 ← phi( main::@1/(byte*) SCREEN#3 )
   (byte) nest::j#0 ← (byte/signed byte/word/signed word) 100
   to:nest::@1
 nest::@1: scope:[nest]  from nest nest::@1
@@ -387,7 +391,9 @@ nest::@return: scope:[nest]  from nest::@1
   to:@end
 @end: scope:[]  from @2
 
-Self Phi Eliminated (byte*) SCREEN#2
+Not aliassing across scopes: SCREEN#4 SCREEN#0
+Not aliassing across scopes: SCREEN#2 SCREEN#3
+Self Phi Eliminated (byte*) SCREEN#3
 Self Phi Eliminated (byte*) SCREEN#1
 Succesful SSA optimization Pass2SelfPhiElimination
 CONTROL FLOW GRAPH
@@ -395,10 +401,11 @@ CONTROL FLOW GRAPH
   (byte*) SCREEN#0 ← ((byte*)) (word/signed word) 1024
   to:@2
 main: scope:[main]  from @2
+  (byte*) SCREEN#4 ← phi( @2/(byte*) SCREEN#0 )
   (byte) main::i#0 ← (byte/signed byte/word/signed word) 100
   to:main::@1
 main::@1: scope:[main]  from main main::@3
-  (byte*) SCREEN#2 ← phi( main/(byte*) SCREEN#0 )
+  (byte*) SCREEN#3 ← phi( main/(byte*) SCREEN#4 )
   (byte) main::i#2 ← phi( main/(byte) main::i#0 main::@3/(byte) main::i#1 )
   call nest param-assignment
   to:main::@3
@@ -411,6 +418,7 @@ main::@return: scope:[main]  from main::@3
   return 
   to:@return
 nest: scope:[nest]  from main::@1
+  (byte*) SCREEN#2 ← phi( main::@1/(byte*) SCREEN#3 )
   (byte) nest::j#0 ← (byte/signed byte/word/signed word) 100
   to:nest::@1
 nest::@1: scope:[nest]  from nest nest::@1
@@ -429,7 +437,9 @@ nest::@return: scope:[nest]  from nest::@1
   to:@end
 @end: scope:[]  from @2
 
-Redundant Phi (byte*) SCREEN#2 (byte*) SCREEN#0
+Redundant Phi (byte*) SCREEN#4 (byte*) SCREEN#0
+Redundant Phi (byte*) SCREEN#3 (byte*) SCREEN#4
+Redundant Phi (byte*) SCREEN#2 (byte*) SCREEN#3
 Redundant Phi (byte*) SCREEN#1 (byte*) SCREEN#2
 Succesful SSA optimization Pass2RedundantPhiElimination
 CONTROL FLOW GRAPH

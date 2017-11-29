@@ -138,8 +138,28 @@ main::@return: scope:[main]  from main
   to:@end
 @end: scope:[]  from @1
 
-Alias (byte*) SCREEN#0 = (byte*) SCREEN#1 (byte*) SCREEN#2 
+Not aliassing across scopes: SCREEN#1 SCREEN#2
+Alias (byte*) SCREEN#0 = (byte*) SCREEN#2 
 Succesful SSA optimization Pass2AliasElimination
+CONTROL FLOW GRAPH
+@begin: scope:[]  from
+  (byte*) SCREEN#0 ← ((byte*)) (word/signed word) 1024
+  to:@1
+main: scope:[main]  from @1
+  (byte*) SCREEN#1 ← phi( @1/(byte*) SCREEN#0 )
+  *((byte*) SCREEN#1) ← (byte/signed byte/word/signed word) 1
+  to:main::@return
+main::@return: scope:[main]  from main
+  return 
+  to:@return
+@1: scope:[]  from @begin
+  call main param-assignment
+  to:@end
+@end: scope:[]  from @1
+
+Not aliassing across scopes: SCREEN#1 SCREEN#0
+Redundant Phi (byte*) SCREEN#1 (byte*) SCREEN#0
+Succesful SSA optimization Pass2RedundantPhiElimination
 CONTROL FLOW GRAPH
 @begin: scope:[]  from
   (byte*) SCREEN#0 ← ((byte*)) (word/signed word) 1024

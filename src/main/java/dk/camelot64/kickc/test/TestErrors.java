@@ -28,6 +28,10 @@ public class TestErrors extends TestCase {
       compileAndCompare("inline-string");
    }
 
+   public void testPrintProblem() throws IOException, URISyntaxException {
+      compileAndCompare("print-problem");
+   }
+
    public void testPrint() throws IOException, URISyntaxException {
       compileAndCompare("print");
    }

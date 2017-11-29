@@ -6,14 +6,18 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 import java.util.*;
 
-/** The control flow graph of the program.
- * The control flow  graph is a set of connected basic blocks. */
+/**
+ * The control flow graph of the program.
+ * The control flow  graph is a set of connected basic blocks.
+ */
 public class ControlFlowGraph {
 
    private Map<LabelRef, ControlFlowBlock> blocks;
    private LabelRef firstBlockRef;
 
-   /** Sequence of blocks used when generating ASM */
+   /**
+    * Sequence of blocks used when generating ASM
+    */
    private List<LabelRef> sequence;
 
    public ControlFlowGraph(Map<LabelRef, ControlFlowBlock> blocks, LabelRef firstBlockRef) {
@@ -46,7 +50,7 @@ public class ControlFlowGraph {
 
    @JsonIgnore
    public Collection<ControlFlowBlock> getAllBlocks() {
-      if(sequence!=null) {
+      if (sequence != null) {
          ArrayList<ControlFlowBlock> blocks = new ArrayList<>();
          for (LabelRef labelRef : sequence) {
             blocks.add(getBlock(labelRef));
@@ -61,17 +65,18 @@ public class ControlFlowGraph {
       blocks.remove(label);
    }
 
-   /** Get the assignment of the passed variable.
+   /**
+    * Get the assignment of the passed variable.
     *
-     * @param variable The variable to find the assignment for
+    * @param variable The variable to find the assignment for
     * @return The assignment. null if the variable is not assigned. The variable is assigned by a Phi-statement instead.
     */
    public StatementAssignment getAssignment(VariableRef variable) {
       for (ControlFlowBlock block : getAllBlocks()) {
          for (Statement statement : block.getStatements()) {
-            if(statement instanceof StatementAssignment) {
+            if (statement instanceof StatementAssignment) {
                StatementAssignment assignment = (StatementAssignment) statement;
-               if(assignment.getlValue().equals(variable)) {
+               if (assignment.getlValue().equals(variable)) {
                   return assignment;
                }
             }
@@ -80,8 +85,35 @@ public class ControlFlowGraph {
       return null;
    }
 
+   /**
+    * Get the block containing the assignment of the passed variable.
+    *
+    * @param variable The variable to find the assignment for
+    * @return The block containing the assignment. null if the variable is not assigned.
+    */
+   public ControlFlowBlock getAssignmentBlock(VariableRef variable) {
+      for (ControlFlowBlock block : getAllBlocks()) {
+         for (Statement statement : block.getStatements()) {
+            if (statement instanceof StatementAssignment) {
+               StatementAssignment assignment = (StatementAssignment) statement;
+               if (assignment.getlValue().equals(variable)) {
+                  return block;
+               }
+            } else if(statement instanceof StatementPhiBlock) {
+               for (StatementPhiBlock.PhiVariable phiVariable : ((StatementPhiBlock) statement).getPhiVariables()) {
+                  if(phiVariable.getVariable().equals(variable)) {
+                     return block;
+                  }
+               }
+            }
+         }
+      }
+      return null;
+   }
+
+
    public ControlFlowBlock getDefaultSuccessor(ControlFlowBlock block) {
-      if(block.getDefaultSuccessor()!=null) {
+      if (block.getDefaultSuccessor() != null) {
          return blocks.get(block.getDefaultSuccessor());
       } else {
          return null;
@@ -89,7 +121,7 @@ public class ControlFlowGraph {
    }
 
    public ControlFlowBlock getCallSuccessor(ControlFlowBlock block) {
-      if(block.getCallSuccessor()!=null) {
+      if (block.getCallSuccessor() != null) {
          return blocks.get(block.getCallSuccessor());
       } else {
          return null;
@@ -97,7 +129,7 @@ public class ControlFlowGraph {
    }
 
    public ControlFlowBlock getConditionalSuccessor(ControlFlowBlock block) {
-      if(block.getConditionalSuccessor()!=null) {
+      if (block.getConditionalSuccessor() != null) {
          return blocks.get(block.getConditionalSuccessor());
       } else {
          return null;
@@ -108,13 +140,13 @@ public class ControlFlowGraph {
    public List<ControlFlowBlock> getPredecessors(ControlFlowBlock block) {
       ArrayList<ControlFlowBlock> predecessorBlocks = new ArrayList<>();
       for (ControlFlowBlock other : getAllBlocks()) {
-         if(block.getLabel().equals(other.getDefaultSuccessor())) {
+         if (block.getLabel().equals(other.getDefaultSuccessor())) {
             predecessorBlocks.add(other);
          }
-         if(block.getLabel().equals(other.getConditionalSuccessor())) {
+         if (block.getLabel().equals(other.getConditionalSuccessor())) {
             predecessorBlocks.add(other);
          }
-         if(block.getLabel().equals(other.getCallSuccessor())) {
+         if (block.getLabel().equals(other.getCallSuccessor())) {
             predecessorBlocks.add(other);
          }
       }
@@ -134,7 +166,7 @@ public class ControlFlowGraph {
    public ControlFlowBlock getMainBlock() {
       for (ControlFlowBlock block : getAllBlocks()) {
          LabelRef label = block.getLabel();
-         if(label.getFullName().equals("main")) {
+         if (label.getFullName().equals("main")) {
             return block;
          }
       }
@@ -176,13 +208,14 @@ public class ControlFlowGraph {
 
    /**
     * Get a statement from its statement index
+    *
     * @param statementIdx The statement index
     * @return The statement
     */
    public Statement getStatementByIndex(int statementIdx) {
       for (ControlFlowBlock block : getAllBlocks()) {
          for (Statement statement : block.getStatements()) {
-            if(statementIdx==statement.getIndex()) {
+            if (statementIdx == statement.getIndex()) {
                return statement;
             }
          }
@@ -192,13 +225,14 @@ public class ControlFlowGraph {
 
    /**
     * Get all blocks stat are part of the execution of a specific scope. (mostly a procedure)
+    *
     * @param scope The scope to find blocks for
     * @return All blocks that are part of the execution of the scope
     */
    public List<ControlFlowBlock> getScopeBlocks(ScopeRef scope) {
       ArrayList<ControlFlowBlock> scopeBlocks = new ArrayList<>();
       for (ControlFlowBlock block : getAllBlocks()) {
-         if(block.getScope().equals(scope)) {
+         if (block.getScope().equals(scope)) {
             scopeBlocks.add(block);
          }
       }

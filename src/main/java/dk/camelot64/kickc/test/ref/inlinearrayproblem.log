@@ -292,8 +292,10 @@ main::@return: scope:[main]  from main::@1
   to:@end
 @end: scope:[]  from @1
 
-Alias (byte*) SCREEN#0 = (byte*) SCREEN#2 (byte*) SCREEN#3 
-Alias (byte*) SCREEN2#0 = (byte*) SCREEN2#2 (byte*) SCREEN2#3 
+Not aliassing across scopes: SCREEN#2 SCREEN#3
+Not aliassing across scopes: SCREEN2#2 SCREEN2#3
+Alias (byte*) SCREEN#0 = (byte*) SCREEN#3 
+Alias (byte*) SCREEN2#0 = (byte*) SCREEN2#3 
 Succesful SSA optimization Pass2AliasElimination
 CONTROL FLOW GRAPH
 @begin: scope:[]  from
@@ -302,14 +304,16 @@ CONTROL FLOW GRAPH
   (byte*) SCREEN2#0 ← ((byte*)) (word/signed word~) $0
   to:@1
 main: scope:[main]  from @1
+  (byte*) SCREEN2#2 ← phi( @1/(byte*) SCREEN2#0 )
+  (byte*) SCREEN#2 ← phi( @1/(byte*) SCREEN#0 )
   (byte[]) main::txt#0 ← (string) "qwe"
   (byte[]) main::data#0 ← { (byte/signed byte/word/signed word) 1, (byte/signed byte/word/signed word) 2, (byte/signed byte/word/signed word) 3 }
   (byte) main::i#0 ← (byte/signed byte/word/signed word) 0
   to:main::@1
 main::@1: scope:[main]  from main main::@1
-  (byte*) SCREEN2#1 ← phi( main/(byte*) SCREEN2#0 main::@1/(byte*) SCREEN2#1 )
+  (byte*) SCREEN2#1 ← phi( main/(byte*) SCREEN2#2 main::@1/(byte*) SCREEN2#1 )
   (byte[]) main::data#1 ← phi( main/(byte[]) main::data#0 main::@1/(byte[]) main::data#1 )
-  (byte*) SCREEN#1 ← phi( main/(byte*) SCREEN#0 main::@1/(byte*) SCREEN#1 )
+  (byte*) SCREEN#1 ← phi( main/(byte*) SCREEN#2 main::@1/(byte*) SCREEN#1 )
   (byte) main::i#2 ← phi( main/(byte) main::i#0 main::@1/(byte) main::i#1 )
   (byte[]) main::txt#1 ← phi( main/(byte[]) main::txt#0 main::@1/(byte[]) main::txt#1 )
   (byte~) main::$0 ← (byte[]) main::txt#1 *idx (byte) main::i#2
@@ -328,6 +332,8 @@ main::@return: scope:[main]  from main::@1
   to:@end
 @end: scope:[]  from @1
 
+Not aliassing across scopes: SCREEN#2 SCREEN#0
+Not aliassing across scopes: SCREEN2#2 SCREEN2#0
 Self Phi Eliminated (byte[]) main::txt#1
 Self Phi Eliminated (byte*) SCREEN#1
 Self Phi Eliminated (byte[]) main::data#1
@@ -340,14 +346,16 @@ CONTROL FLOW GRAPH
   (byte*) SCREEN2#0 ← ((byte*)) (word/signed word~) $0
   to:@1
 main: scope:[main]  from @1
+  (byte*) SCREEN2#2 ← phi( @1/(byte*) SCREEN2#0 )
+  (byte*) SCREEN#2 ← phi( @1/(byte*) SCREEN#0 )
   (byte[]) main::txt#0 ← (string) "qwe"
   (byte[]) main::data#0 ← { (byte/signed byte/word/signed word) 1, (byte/signed byte/word/signed word) 2, (byte/signed byte/word/signed word) 3 }
   (byte) main::i#0 ← (byte/signed byte/word/signed word) 0
   to:main::@1
 main::@1: scope:[main]  from main main::@1
-  (byte*) SCREEN2#1 ← phi( main/(byte*) SCREEN2#0 )
+  (byte*) SCREEN2#1 ← phi( main/(byte*) SCREEN2#2 )
   (byte[]) main::data#1 ← phi( main/(byte[]) main::data#0 )
-  (byte*) SCREEN#1 ← phi( main/(byte*) SCREEN#0 )
+  (byte*) SCREEN#1 ← phi( main/(byte*) SCREEN#2 )
   (byte) main::i#2 ← phi( main/(byte) main::i#0 main::@1/(byte) main::i#1 )
   (byte[]) main::txt#1 ← phi( main/(byte[]) main::txt#0 )
   (byte~) main::$0 ← (byte[]) main::txt#1 *idx (byte) main::i#2
@@ -366,10 +374,12 @@ main::@return: scope:[main]  from main::@1
   to:@end
 @end: scope:[]  from @1
 
+Redundant Phi (byte*) SCREEN#2 (byte*) SCREEN#0
+Redundant Phi (byte*) SCREEN2#2 (byte*) SCREEN2#0
 Redundant Phi (byte[]) main::txt#1 (byte[]) main::txt#0
-Redundant Phi (byte*) SCREEN#1 (byte*) SCREEN#0
+Redundant Phi (byte*) SCREEN#1 (byte*) SCREEN#2
 Redundant Phi (byte[]) main::data#1 (byte[]) main::data#0
-Redundant Phi (byte*) SCREEN2#1 (byte*) SCREEN2#0
+Redundant Phi (byte*) SCREEN2#1 (byte*) SCREEN2#2
 Succesful SSA optimization Pass2RedundantPhiElimination
 CONTROL FLOW GRAPH
 @begin: scope:[]  from

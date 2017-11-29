@@ -20,9 +20,10 @@ main: {
     rts
 }
 line: {
+    .const x0 = 0
     .const x1 = $a
     .label x = 2
-    lda #0
+    lda #x0
     cmp #x1
     bcs b1
     sta x
@@ -37,7 +38,7 @@ line: {
   breturn:
     rts
   b1:
-    ldy #0
+    ldy #x0
     jsr plot
     jmp breturn
 }

@@ -17,7 +17,6 @@ main: {
   b2:
     jsr line
     jmp b2
-    rts
 }
 line: {
     .const x0 = 0

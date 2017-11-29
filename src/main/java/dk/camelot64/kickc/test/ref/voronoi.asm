@@ -15,7 +15,6 @@ main: {
     jsr render
     jsr animate
     jmp b1
-    rts
 }
 animate: {
     lda XPOS+0

@@ -573,6 +573,37 @@ main: {
     rts
 }
 
+Removing unreachable instruction rts
+Succesful ASM optimization Pass5AfterRtsElimination
+ASSEMBLER
+//SEG0 Basic Upstart
+.pc = $801 "Basic"
+:BasicUpstart(main)
+.pc = $80d "Program"
+//SEG1 Global Constants & labels
+  .const BGCOL = $d020
+//SEG2 @begin
+//SEG3 [1] phi from @begin to @1 [phi:@begin->@1]
+//SEG4 @1
+//SEG5 [2] call main param-assignment [ ] ( )
+//SEG6 [4] phi from @1 to main [phi:@1->main]
+  jsr main
+//SEG7 [3] phi from @1 to @end [phi:@1->@end]
+//SEG8 @end
+//SEG9 main
+main: {
+  //SEG10 main::@1
+  b1:
+  //SEG11 [5] *((const byte*) BGCOL#0) ← ++ *((const byte*) BGCOL#0) [ ] ( main:2 [ ] ) -- _deref_cowo1=_inc__deref_cowo1 
+    inc BGCOL
+  //SEG12 [6] *((const byte*) BGCOL#0) ← -- *((const byte*) BGCOL#0) [ ] ( main:2 [ ] ) -- _deref_cowo1=_dec__deref_cowo1 
+    dec BGCOL
+  //SEG13 [7] if(true) goto main::@1 [ ] ( main:2 [ ] ) -- true_then_la1 
+    jmp b1
+  //SEG14 main::@return
+  //SEG15 [8] return  [ ] ( main:2 [ ] )
+}
+
 FINAL SYMBOL TABLE
 (label) @1
 (label) @begin
@@ -611,6 +642,5 @@ main: {
     jmp b1
   //SEG14 main::@return
   //SEG15 [8] return  [ ] ( main:2 [ ] )
-    rts
 }
 

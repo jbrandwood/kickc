@@ -17,7 +17,7 @@ main: {
     sta (cursor),y
     inx
     cpx #8
-    bne b6
+    bne b2
     ldx #0
   b2:
     inc cursor
@@ -33,6 +33,4 @@ main: {
     bcc b1
   !:
     rts
-  b6:
-    jmp b2
 }

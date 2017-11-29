@@ -11,7 +11,7 @@ public class AsmInstructionSet {
 
    private static AsmInstructionSet set = new AsmInstructionSet();
 
-   public static AsmInstructionType getInstructionType(String mnemonic, AsmAddressingMode mode, String parameter, boolean isZp) {
+   public static AsmInstructionType getInstructionType(String mnemonic, AsmAddressingMode mode, boolean isZp) {
       AsmInstructionType type = null;
       if (AsmAddressingMode.ABS.equals(mode) && isZp) {
          type = set.getType(mnemonic, AsmAddressingMode.ZP);
@@ -30,19 +30,6 @@ public class AsmInstructionSet {
       }
       return type;
    }
-
-   private static boolean isZp(String parameter) {
-      Number number = null;
-      if(parameter!=null) {
-         try {
-            number = NumberParser.parseLiteral(parameter);
-         } catch (NumberFormatException e) {
-            // ignore
-         }
-      }
-      return (number != null && number.intValue()<256 && number.intValue()>=0);
-   }
-
 
    private List<AsmInstructionType> instructions;
 

@@ -56,7 +56,6 @@ main: {
     stx SCROLL
     dec BGCOL
     jmp b2
-    rts
 }
 fillscreen: {
     .const fill = $20

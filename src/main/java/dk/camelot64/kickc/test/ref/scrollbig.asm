@@ -37,7 +37,6 @@ main: {
     jsr scroll_soft
     dec BGCOL
     jmp b2
-    rts
 }
 scroll_soft: {
     dex

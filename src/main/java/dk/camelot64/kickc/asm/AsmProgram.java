@@ -66,7 +66,7 @@ public class AsmProgram {
    }
 
    public void addInstruction(String mnemonic, AsmAddressingMode addressingMode, String parameter, boolean zp) {
-      AsmInstructionType instructionType = AsmInstructionSet.getInstructionType(mnemonic, addressingMode, parameter, zp);
+      AsmInstructionType instructionType = AsmInstructionSet.getInstructionType(mnemonic, addressingMode, zp);
       addLine(new AsmInstruction(instructionType, parameter));
    }
 

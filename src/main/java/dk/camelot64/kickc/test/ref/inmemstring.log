@@ -1366,6 +1366,81 @@ main: {
     jmp b2
 }
 
+Skipping double jump to b2 in bne b6
+Succesful ASM optimization Pass5DoubleJumpElimination
+ASSEMBLER
+//SEG0 Basic Upstart
+.pc = $801 "Basic"
+:BasicUpstart(main)
+.pc = $80d "Program"
+//SEG1 Global Constants & labels
+  .const SCREEN = $400
+  TEXT: .text "camelot "
+//SEG2 @begin
+//SEG3 [1] phi from @begin to @1 [phi:@begin->@1]
+//SEG4 @1
+//SEG5 [2] call main param-assignment [ ] ( )
+//SEG6 [4] phi from @1 to main [phi:@1->main]
+  jsr main
+//SEG7 [3] phi from @1 to @end [phi:@1->@end]
+//SEG8 @end
+//SEG9 main
+main: {
+    .label cursor = 2
+  //SEG10 [5] phi from main to main::@1 [phi:main->main::@1]
+  //SEG11 [5] phi (byte*) main::cursor#2 = (const byte*) SCREEN#0 [phi:main->main::@1#0] -- zpptrby1=cowo1 
+    lda #<SCREEN
+    sta cursor
+    lda #>SCREEN
+    sta cursor+1
+  //SEG12 [5] phi (byte) main::i#3 = (byte/signed byte/word/signed word) 0 [phi:main->main::@1#1] -- xby=coby1 
+    ldx #0
+    jmp b1
+  //SEG13 [5] phi from main::@2 to main::@1 [phi:main::@2->main::@1]
+  //SEG14 [5] phi (byte*) main::cursor#2 = (byte*) main::cursor#1 [phi:main::@2->main::@1#0] -- register_copy 
+  //SEG15 [5] phi (byte) main::i#3 = (byte) main::i#4 [phi:main::@2->main::@1#1] -- register_copy 
+  //SEG16 main::@1
+  b1:
+  //SEG17 [6] (byte~) main::$0 ← (const byte[]) TEXT#0 *idx (byte) main::i#3 [ main::i#3 main::cursor#2 main::$0 ] ( main:2 [ main::i#3 main::cursor#2 main::$0 ] ) -- aby=cowo1_derefidx_xby 
+    lda TEXT,x
+  //SEG18 [7] *((byte*) main::cursor#2) ← (byte~) main::$0 [ main::i#3 main::cursor#2 ] ( main:2 [ main::i#3 main::cursor#2 ] ) -- _deref_zpptrby1=aby 
+    ldy #0
+    sta (cursor),y
+  //SEG19 [8] (byte) main::i#1 ← ++ (byte) main::i#3 [ main::cursor#2 main::i#1 ] ( main:2 [ main::cursor#2 main::i#1 ] ) -- xby=_inc_xby 
+    inx
+  //SEG20 [9] if((byte) main::i#1!=(byte/signed byte/word/signed word) 8) goto main::@6 [ main::cursor#2 main::i#1 ] ( main:2 [ main::cursor#2 main::i#1 ] ) -- xby_neq_coby1_then_la1 
+    cpx #8
+    bne b2
+  //SEG21 [10] phi from main::@1 to main::@2 [phi:main::@1->main::@2]
+  //SEG22 [10] phi (byte) main::i#4 = (byte/signed byte/word/signed word) 0 [phi:main::@1->main::@2#0] -- xby=coby1 
+    ldx #0
+  //SEG23 main::@2
+  b2:
+  //SEG24 [11] (byte*) main::cursor#1 ← ++ (byte*) main::cursor#2 [ main::i#4 main::cursor#1 ] ( main:2 [ main::i#4 main::cursor#1 ] ) -- zpptrby1=_inc_zpptrby1 
+    inc cursor
+    bne !+
+    inc cursor+1
+  !:
+  //SEG25 [12] if((byte*) main::cursor#1<(const byte*) SCREEN#0+(word/signed word) 1000) goto main::@1 [ main::i#4 main::cursor#1 ] ( main:2 [ main::i#4 main::cursor#1 ] ) -- zpptrby1_lt_cowo1_then_la1 
+    lda cursor+1
+    cmp #>SCREEN+$3e8
+    bcc b1
+    bne !+
+    lda cursor
+    cmp #<SCREEN+$3e8
+    bcc b1
+  !:
+  //SEG26 main::@return
+  //SEG27 [13] return  [ ] ( main:2 [ ] )
+    rts
+  //SEG28 [14] phi from main::@1 to main::@6 [phi:main::@1->main::@6]
+  //SEG29 main::@6
+  b6:
+  //SEG30 [10] phi from main::@6 to main::@2 [phi:main::@6->main::@2]
+  //SEG31 [10] phi (byte) main::i#4 = (byte) main::i#1 [phi:main::@6->main::@2#0] -- register_copy 
+    jmp b2
+}
+
 Removing instruction jmp b1
 Succesful ASM optimization Pass5NextJumpElimination
 ASSEMBLER
@@ -1409,7 +1484,7 @@ main: {
     inx
   //SEG20 [9] if((byte) main::i#1!=(byte/signed byte/word/signed word) 8) goto main::@6 [ main::cursor#2 main::i#1 ] ( main:2 [ main::cursor#2 main::i#1 ] ) -- xby_neq_coby1_then_la1 
     cpx #8
-    bne b6
+    bne b2
   //SEG21 [10] phi from main::@1 to main::@2 [phi:main::@1->main::@2]
   //SEG22 [10] phi (byte) main::i#4 = (byte/signed byte/word/signed word) 0 [phi:main::@1->main::@2#0] -- xby=coby1 
     ldx #0
@@ -1438,6 +1513,151 @@ main: {
   //SEG30 [10] phi from main::@6 to main::@2 [phi:main::@6->main::@2]
   //SEG31 [10] phi (byte) main::i#4 = (byte) main::i#1 [phi:main::@6->main::@2#0] -- register_copy 
     jmp b2
+}
+
+Removing instruction b6:
+Succesful ASM optimization Pass5UnusedLabelElimination
+ASSEMBLER
+//SEG0 Basic Upstart
+.pc = $801 "Basic"
+:BasicUpstart(main)
+.pc = $80d "Program"
+//SEG1 Global Constants & labels
+  .const SCREEN = $400
+  TEXT: .text "camelot "
+//SEG2 @begin
+//SEG3 [1] phi from @begin to @1 [phi:@begin->@1]
+//SEG4 @1
+//SEG5 [2] call main param-assignment [ ] ( )
+//SEG6 [4] phi from @1 to main [phi:@1->main]
+  jsr main
+//SEG7 [3] phi from @1 to @end [phi:@1->@end]
+//SEG8 @end
+//SEG9 main
+main: {
+    .label cursor = 2
+  //SEG10 [5] phi from main to main::@1 [phi:main->main::@1]
+  //SEG11 [5] phi (byte*) main::cursor#2 = (const byte*) SCREEN#0 [phi:main->main::@1#0] -- zpptrby1=cowo1 
+    lda #<SCREEN
+    sta cursor
+    lda #>SCREEN
+    sta cursor+1
+  //SEG12 [5] phi (byte) main::i#3 = (byte/signed byte/word/signed word) 0 [phi:main->main::@1#1] -- xby=coby1 
+    ldx #0
+  //SEG13 [5] phi from main::@2 to main::@1 [phi:main::@2->main::@1]
+  //SEG14 [5] phi (byte*) main::cursor#2 = (byte*) main::cursor#1 [phi:main::@2->main::@1#0] -- register_copy 
+  //SEG15 [5] phi (byte) main::i#3 = (byte) main::i#4 [phi:main::@2->main::@1#1] -- register_copy 
+  //SEG16 main::@1
+  b1:
+  //SEG17 [6] (byte~) main::$0 ← (const byte[]) TEXT#0 *idx (byte) main::i#3 [ main::i#3 main::cursor#2 main::$0 ] ( main:2 [ main::i#3 main::cursor#2 main::$0 ] ) -- aby=cowo1_derefidx_xby 
+    lda TEXT,x
+  //SEG18 [7] *((byte*) main::cursor#2) ← (byte~) main::$0 [ main::i#3 main::cursor#2 ] ( main:2 [ main::i#3 main::cursor#2 ] ) -- _deref_zpptrby1=aby 
+    ldy #0
+    sta (cursor),y
+  //SEG19 [8] (byte) main::i#1 ← ++ (byte) main::i#3 [ main::cursor#2 main::i#1 ] ( main:2 [ main::cursor#2 main::i#1 ] ) -- xby=_inc_xby 
+    inx
+  //SEG20 [9] if((byte) main::i#1!=(byte/signed byte/word/signed word) 8) goto main::@6 [ main::cursor#2 main::i#1 ] ( main:2 [ main::cursor#2 main::i#1 ] ) -- xby_neq_coby1_then_la1 
+    cpx #8
+    bne b2
+  //SEG21 [10] phi from main::@1 to main::@2 [phi:main::@1->main::@2]
+  //SEG22 [10] phi (byte) main::i#4 = (byte/signed byte/word/signed word) 0 [phi:main::@1->main::@2#0] -- xby=coby1 
+    ldx #0
+  //SEG23 main::@2
+  b2:
+  //SEG24 [11] (byte*) main::cursor#1 ← ++ (byte*) main::cursor#2 [ main::i#4 main::cursor#1 ] ( main:2 [ main::i#4 main::cursor#1 ] ) -- zpptrby1=_inc_zpptrby1 
+    inc cursor
+    bne !+
+    inc cursor+1
+  !:
+  //SEG25 [12] if((byte*) main::cursor#1<(const byte*) SCREEN#0+(word/signed word) 1000) goto main::@1 [ main::i#4 main::cursor#1 ] ( main:2 [ main::i#4 main::cursor#1 ] ) -- zpptrby1_lt_cowo1_then_la1 
+    lda cursor+1
+    cmp #>SCREEN+$3e8
+    bcc b1
+    bne !+
+    lda cursor
+    cmp #<SCREEN+$3e8
+    bcc b1
+  !:
+  //SEG26 main::@return
+  //SEG27 [13] return  [ ] ( main:2 [ ] )
+    rts
+  //SEG28 [14] phi from main::@1 to main::@6 [phi:main::@1->main::@6]
+  //SEG29 main::@6
+  //SEG30 [10] phi from main::@6 to main::@2 [phi:main::@6->main::@2]
+  //SEG31 [10] phi (byte) main::i#4 = (byte) main::i#1 [phi:main::@6->main::@2#0] -- register_copy 
+    jmp b2
+}
+
+Removing unreachable instruction jmp b2
+Succesful ASM optimization Pass5AfterRtsElimination
+ASSEMBLER
+//SEG0 Basic Upstart
+.pc = $801 "Basic"
+:BasicUpstart(main)
+.pc = $80d "Program"
+//SEG1 Global Constants & labels
+  .const SCREEN = $400
+  TEXT: .text "camelot "
+//SEG2 @begin
+//SEG3 [1] phi from @begin to @1 [phi:@begin->@1]
+//SEG4 @1
+//SEG5 [2] call main param-assignment [ ] ( )
+//SEG6 [4] phi from @1 to main [phi:@1->main]
+  jsr main
+//SEG7 [3] phi from @1 to @end [phi:@1->@end]
+//SEG8 @end
+//SEG9 main
+main: {
+    .label cursor = 2
+  //SEG10 [5] phi from main to main::@1 [phi:main->main::@1]
+  //SEG11 [5] phi (byte*) main::cursor#2 = (const byte*) SCREEN#0 [phi:main->main::@1#0] -- zpptrby1=cowo1 
+    lda #<SCREEN
+    sta cursor
+    lda #>SCREEN
+    sta cursor+1
+  //SEG12 [5] phi (byte) main::i#3 = (byte/signed byte/word/signed word) 0 [phi:main->main::@1#1] -- xby=coby1 
+    ldx #0
+  //SEG13 [5] phi from main::@2 to main::@1 [phi:main::@2->main::@1]
+  //SEG14 [5] phi (byte*) main::cursor#2 = (byte*) main::cursor#1 [phi:main::@2->main::@1#0] -- register_copy 
+  //SEG15 [5] phi (byte) main::i#3 = (byte) main::i#4 [phi:main::@2->main::@1#1] -- register_copy 
+  //SEG16 main::@1
+  b1:
+  //SEG17 [6] (byte~) main::$0 ← (const byte[]) TEXT#0 *idx (byte) main::i#3 [ main::i#3 main::cursor#2 main::$0 ] ( main:2 [ main::i#3 main::cursor#2 main::$0 ] ) -- aby=cowo1_derefidx_xby 
+    lda TEXT,x
+  //SEG18 [7] *((byte*) main::cursor#2) ← (byte~) main::$0 [ main::i#3 main::cursor#2 ] ( main:2 [ main::i#3 main::cursor#2 ] ) -- _deref_zpptrby1=aby 
+    ldy #0
+    sta (cursor),y
+  //SEG19 [8] (byte) main::i#1 ← ++ (byte) main::i#3 [ main::cursor#2 main::i#1 ] ( main:2 [ main::cursor#2 main::i#1 ] ) -- xby=_inc_xby 
+    inx
+  //SEG20 [9] if((byte) main::i#1!=(byte/signed byte/word/signed word) 8) goto main::@6 [ main::cursor#2 main::i#1 ] ( main:2 [ main::cursor#2 main::i#1 ] ) -- xby_neq_coby1_then_la1 
+    cpx #8
+    bne b2
+  //SEG21 [10] phi from main::@1 to main::@2 [phi:main::@1->main::@2]
+  //SEG22 [10] phi (byte) main::i#4 = (byte/signed byte/word/signed word) 0 [phi:main::@1->main::@2#0] -- xby=coby1 
+    ldx #0
+  //SEG23 main::@2
+  b2:
+  //SEG24 [11] (byte*) main::cursor#1 ← ++ (byte*) main::cursor#2 [ main::i#4 main::cursor#1 ] ( main:2 [ main::i#4 main::cursor#1 ] ) -- zpptrby1=_inc_zpptrby1 
+    inc cursor
+    bne !+
+    inc cursor+1
+  !:
+  //SEG25 [12] if((byte*) main::cursor#1<(const byte*) SCREEN#0+(word/signed word) 1000) goto main::@1 [ main::i#4 main::cursor#1 ] ( main:2 [ main::i#4 main::cursor#1 ] ) -- zpptrby1_lt_cowo1_then_la1 
+    lda cursor+1
+    cmp #>SCREEN+$3e8
+    bcc b1
+    bne !+
+    lda cursor
+    cmp #<SCREEN+$3e8
+    bcc b1
+  !:
+  //SEG26 main::@return
+  //SEG27 [13] return  [ ] ( main:2 [ ] )
+    rts
+  //SEG28 [14] phi from main::@1 to main::@6 [phi:main::@1->main::@6]
+  //SEG29 main::@6
+  //SEG30 [10] phi from main::@6 to main::@2 [phi:main::@6->main::@2]
+  //SEG31 [10] phi (byte) main::i#4 = (byte) main::i#1 [phi:main::@6->main::@2#0] -- register_copy 
 }
 
 FINAL SYMBOL TABLE
@@ -1507,7 +1727,7 @@ main: {
     inx
   //SEG20 [9] if((byte) main::i#1!=(byte/signed byte/word/signed word) 8) goto main::@6 [ main::cursor#2 main::i#1 ] ( main:2 [ main::cursor#2 main::i#1 ] ) -- xby_neq_coby1_then_la1 
     cpx #8
-    bne b6
+    bne b2
   //SEG21 [10] phi from main::@1 to main::@2 [phi:main::@1->main::@2]
   //SEG22 [10] phi (byte) main::i#4 = (byte/signed byte/word/signed word) 0 [phi:main::@1->main::@2#0] -- xby=coby1 
     ldx #0
@@ -1532,9 +1752,7 @@ main: {
     rts
   //SEG28 [14] phi from main::@1 to main::@6 [phi:main::@1->main::@6]
   //SEG29 main::@6
-  b6:
   //SEG30 [10] phi from main::@6 to main::@2 [phi:main::@6->main::@2]
   //SEG31 [10] phi (byte) main::i#4 = (byte) main::i#1 [phi:main::@6->main::@2#0] -- register_copy 
-    jmp b2
 }
 

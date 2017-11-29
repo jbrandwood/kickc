@@ -39,7 +39,6 @@ main: {
   b1:
     jsr lines
     jmp b1
-    rts
 }
 lines: {
     .label _2 = 3
@@ -386,7 +385,7 @@ init_plot_tables: {
     lsr
     tay
     cpy #0
-    bne b10
+    bne b2
     ldy #$80
   b2:
     inx
@@ -421,8 +420,6 @@ init_plot_tables: {
     cpx #0
     bne b3
     rts
-  b10:
-    jmp b2
 }
 init_screen: {
     .label b = 8

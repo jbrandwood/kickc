@@ -294,7 +294,6 @@ public class AsmFragment {
             AsmInstructionType type = AsmInstructionSet.getInstructionType(
                   ctx.MNEMONIC().getText(),
                   AsmAddressingMode.NON,
-                  null,
                   false);
             instruction = new AsmInstruction(type, null);
          } else {
@@ -365,7 +364,6 @@ public class AsmFragment {
          AsmInstructionType type = AsmInstructionSet.getInstructionType(
                mnemonic,
                addressingMode,
-               parameter.getParam(),
                parameter.isZp());
          if (type == null) {
             throw new RuntimeException("Error in " + name + ".asm line " + ctx.getStart().getLine() + " - Instruction type unknown " + mnemonic + " " + addressingMode + " " + parameter);

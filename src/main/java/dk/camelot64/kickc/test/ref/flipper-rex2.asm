@@ -24,7 +24,6 @@ main: {
     jsr flip
     jsr plot
     jmp b3_from_b11
-    rts
 }
 plot: {
     .label line = 2

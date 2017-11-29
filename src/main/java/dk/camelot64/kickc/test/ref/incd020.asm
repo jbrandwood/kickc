@@ -8,5 +8,4 @@ main: {
     inc BGCOL
     dec BGCOL
     jmp b1
-    rts
 }

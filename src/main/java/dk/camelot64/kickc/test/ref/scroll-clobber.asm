@@ -32,5 +32,4 @@ main: {
     inc nxt+1
   !:
     jmp b1
-    rts
 }

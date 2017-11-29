@@ -297,6 +297,8 @@ public class Compiler {
       pass5Optimizations.add(new Pass5UnnecesaryLoadElimination(program));
       pass5Optimizations.add(new Pass5RedundantLabelElimination(program));
       pass5Optimizations.add(new Pass5UnusedLabelElimination(program));
+      pass5Optimizations.add(new Pass5DoubleJumpElimination(program));
+      pass5Optimizations.add(new Pass5UnreachableCodeElimination(program));
       boolean asmOptimized = true;
       CompileLog log = program.getLog();
       while (asmOptimized) {

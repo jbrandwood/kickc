@@ -3,7 +3,6 @@ package dk.camelot64.kickc.passes;
 import dk.camelot64.kickc.asm.*;
 import dk.camelot64.kickc.model.Program;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.ListIterator;
 
@@ -38,11 +37,11 @@ public class Pass5UnnecesaryLoadElimination extends Pass5AsmOptimization {
                      modified = remove(lineIt);
                   } else if (AsmProgramStaticRegisterValues.matchImm(instructionValues.getX(), immValue)) {
                      getLog().append("Replacing instruction "+instruction+" with TXA");
-                     instruction.setType(AsmInstructionSet.getInstructionType("txa", AsmAddressingMode.NON, null, false));
+                     instruction.setType(AsmInstructionSet.getInstructionType("txa", AsmAddressingMode.NON, false));
                      instruction.setParameter(null);
                   } else if (AsmProgramStaticRegisterValues.matchImm(instructionValues.getY(), immValue)) {
                      getLog().append("Replacing instruction "+instruction+" with TYA");
-                     instruction.setType(AsmInstructionSet.getInstructionType("tya", AsmAddressingMode.NON, null, false));
+                     instruction.setType(AsmInstructionSet.getInstructionType("tya", AsmAddressingMode.NON, false));
                      instruction.setParameter(null);
                   }
                }
@@ -53,11 +52,11 @@ public class Pass5UnnecesaryLoadElimination extends Pass5AsmOptimization {
                      modified = remove(lineIt);
                   } else if (instructionValues.getxMem() != null && instructionValues.getxMem().equals(memValue)) {
                      getLog().append("Replacing instruction "+instruction+" with TXA");
-                     instruction.setType(AsmInstructionSet.getInstructionType("txa", AsmAddressingMode.NON, null, false));
+                     instruction.setType(AsmInstructionSet.getInstructionType("txa", AsmAddressingMode.NON, false));
                      instruction.setParameter(null);
                   } else if (instructionValues.getyMem() != null && instructionValues.getyMem().equals(memValue)) {
                      getLog().append("Replacing instruction "+instruction+" with TYA");
-                     instruction.setType(AsmInstructionSet.getInstructionType("tya", AsmAddressingMode.NON, null, false));
+                     instruction.setType(AsmInstructionSet.getInstructionType("tya", AsmAddressingMode.NON, false));
                      instruction.setParameter(null);
                   }
                }
@@ -68,7 +67,7 @@ public class Pass5UnnecesaryLoadElimination extends Pass5AsmOptimization {
                      modified = remove(lineIt);
                   } else if (AsmProgramStaticRegisterValues.matchImm(instructionValues.getA(), immValue)) {
                      getLog().append("Replacing instruction "+instruction+" with TAX");
-                     instruction.setType(AsmInstructionSet.getInstructionType("tax", AsmAddressingMode.NON, null, false));
+                     instruction.setType(AsmInstructionSet.getInstructionType("tax", AsmAddressingMode.NON, false));
                      instruction.setParameter(null);
                   }
                }
@@ -79,7 +78,7 @@ public class Pass5UnnecesaryLoadElimination extends Pass5AsmOptimization {
                      modified = remove(lineIt);
                   } else if (instructionValues.getaMem() != null && instructionValues.getaMem().equals(memValue)) {
                      getLog().append("Replacing instruction "+instruction+" with TAX");
-                     instruction.setType(AsmInstructionSet.getInstructionType("tax", AsmAddressingMode.NON, null, false));
+                     instruction.setType(AsmInstructionSet.getInstructionType("tax", AsmAddressingMode.NON, false));
                      instruction.setParameter(null);
                   }
                }
@@ -90,7 +89,7 @@ public class Pass5UnnecesaryLoadElimination extends Pass5AsmOptimization {
                      modified = remove(lineIt);
                   } else if (AsmProgramStaticRegisterValues.matchImm(instructionValues.getA(), immValue)) {
                      getLog().append("Replacing instruction "+instruction+" with TAY");
-                     instruction.setType(AsmInstructionSet.getInstructionType("tay", AsmAddressingMode.NON, null, false));
+                     instruction.setType(AsmInstructionSet.getInstructionType("tay", AsmAddressingMode.NON, false));
                      instruction.setParameter(null);
                   }
                }
@@ -101,7 +100,7 @@ public class Pass5UnnecesaryLoadElimination extends Pass5AsmOptimization {
                      modified = remove(lineIt);
                   } else  if (instructionValues.getaMem() != null && instructionValues.getaMem().equals(memValue)) {
                      getLog().append("Replacing instruction "+instruction+" with TAY");
-                     instruction.setType(AsmInstructionSet.getInstructionType("tay", AsmAddressingMode.NON, null, false));
+                     instruction.setType(AsmInstructionSet.getInstructionType("tay", AsmAddressingMode.NON, false));
                      instruction.setParameter(null);
                   }
                }

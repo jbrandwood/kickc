@@ -24,10 +24,6 @@ public class TestErrors extends TestCase {
       helper = new ReferenceHelper("dk/camelot64/kickc/test/ref/");
    }
 
-   public void testInlineString() throws IOException, URISyntaxException {
-      compileAndCompare("inline-string");
-   }
-
    public void testConstants() throws IOException, URISyntaxException {
       compileAndCompare("constants");
    }

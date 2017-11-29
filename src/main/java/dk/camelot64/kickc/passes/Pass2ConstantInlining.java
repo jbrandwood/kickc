@@ -92,7 +92,9 @@ public class Pass2ConstantInlining extends Pass2SsaOptimization {
       Collection<ConstantVar> allConstants = getProgram().getScope().getAllConstants(true);
       for (ConstantVar constant : allConstants) {
          if(constant.getRef().isIntermediate()) {
-            unnamed.put(constant.getRef(), constant.getValue());
+            if(!(constant.getValue() instanceof ConstantString) && !(constant.getValue() instanceof ConstantArray)) {
+               unnamed.put(constant.getRef(), constant.getValue());
+            }
          }
       }
       return unnamed;

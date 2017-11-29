@@ -112,10 +112,14 @@ public abstract class Scope implements Symbol {
    }
 
    public VariableIntermediate addVariableIntermediate() {
-      String name = "$" + intermediateVarCount++;
+      String name = allocateIntermediateVariableName();
       VariableIntermediate symbol = new VariableIntermediate(name, this, SymbolType.VAR);
       add(symbol);
       return symbol;
+   }
+
+   public String allocateIntermediateVariableName() {
+      return "$" + intermediateVarCount++;
    }
 
    public Symbol getSymbol(SymbolRef symbolRef) {

@@ -40,6 +40,10 @@ public class TestPrograms extends TestCase {
       compileAndCompare("unused-method");
    }
 
+   public void testInlineString() throws IOException, URISyntaxException {
+      compileAndCompare("inline-string");
+   }
+
    public void testLocalString() throws IOException, URISyntaxException {
       compileAndCompare("local-string");
    }

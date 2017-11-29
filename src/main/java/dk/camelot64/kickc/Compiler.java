@@ -86,6 +86,7 @@ public class Compiler {
       log.append("INITIAL CONTROL FLOW GRAPH");
       log.append(program.getGraph().toString(program));
 
+      new Pass1ExtractInlineStrings(program).extract();
       new Pass1EliminateUncalledProcedures(program).eliminate();
       new Pass1EliminateEmptyBlocks(program).eliminate();
       log.append("CONTROL FLOW GRAPH");

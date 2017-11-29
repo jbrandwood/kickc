@@ -20,6 +20,9 @@ public class Pass5NextJumpElimination extends Pass5AsmOptimization {
       AsmInstruction candidate = null;
       for (AsmSegment segment : getAsmProgram().getSegments()) {
          for (AsmLine line : segment.getLines()) {
+            if(line instanceof AsmScopeBegin || line instanceof AsmScopeEnd) {
+               candidate = null;
+            }
             if (candidate != null) {
                if (line instanceof AsmLabel) {
                   if (((AsmLabel) line).getLabel().equals(candidate.getParameter())) {

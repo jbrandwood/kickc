@@ -2,7 +2,6 @@
 :BasicUpstart(main)
 .pc = $80d "Program"
   .const SCREEN = $400
-  .const SCROLL = $d016
   TEXT: .text "01234567@"
   jsr main
 main: {

@@ -1,20 +1,13 @@
 .pc = $801 "Basic"
 :BasicUpstart(main)
 .pc = $80d "Program"
-  .const COLS = $d800
   .const BGCOL = $d020
   .const FGCOL = $d021
-  .const SCROLL = $d016
   .const D018 = $d018
   .const D011 = $d011
-  .const RST8 = $80
-  .const ECM = $40
   .const BMM = $20
   .const DEN = $10
   .const RSEL = 8
-  .const D016 = $d016
-  .const MCM = $10
-  .const CSEL = 8
   .const SCREEN = $400
   .const BITMAP = $2000
   .const plot_xlo = $1000

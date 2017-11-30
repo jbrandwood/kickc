@@ -159,6 +159,10 @@ public class AsmFragment {
          }  else {
             return "$ffff & " + getAsmConstant(program, operand, Operator.BOOL_AND.getPrecedence(), codeScope);
          }
+      } else if (Operator.INCREMENT.equals(operator) ) {
+         return getAsmConstant(program, operand, Operator.PLUS.getPrecedence(), codeScope)+"+1";
+      } else if (Operator.DECREMENT.equals(operator) ) {
+         return getAsmConstant(program, operand, Operator.PLUS.getPrecedence(), codeScope)+"-1";
       } else {
          return operator.getOperator() +
                getAsmConstant(program, operand, operator.getPrecedence(), codeScope);

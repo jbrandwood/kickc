@@ -63,30 +63,24 @@ public class Compiler {
       pass1GenerateStatementSequence.generate(file);
       StatementSequence statementSequence = pass1GenerateStatementSequence.getSequence();
       ProgramScope programScope = pass1GenerateStatementSequence.getProgramScope();
-
-      statementSequence = (new Pass1FixLvalueLoHi(statementSequence, programScope, log)).fix();
-
+      statementSequence = new Pass1FixLvalueLoHi(statementSequence, programScope, log).fix();
       Pass1TypeInference pass1TypeInference = new Pass1TypeInference(programScope);
       pass1TypeInference.inferTypes(statementSequence);
 
       Program program = new Program(programScope, log);
-
       log.append("PROGRAM");
       log.append(statementSequence.toString(program));
       log.append("SYMBOLS");
       log.append(programScope.getSymbolTableContents(program));
-
-      Pass1GenerateControlFlowGraph pass1GenerateControlFlowGraph = new Pass1GenerateControlFlowGraph(programScope);
-      ControlFlowGraph controlFlowGraph = pass1GenerateControlFlowGraph.generate(statementSequence);
-      program.setGraph(controlFlowGraph);
+      program.setGraph(new Pass1GenerateControlFlowGraph(programScope).generate(statementSequence));
 
       new Pass1AddTypePromotions(program).execute();
-
       log.append("INITIAL CONTROL FLOW GRAPH");
       log.append(program.getGraph().toString(program));
 
       new Pass1ExtractInlineStrings(program).execute();
       new Pass1EliminateUncalledProcedures(program).execute();
+      new Pass1EliminateUnusedVars(program).execute();
       new Pass1EliminateEmptyBlocks(program).execute();
       log.append("CONTROL FLOW GRAPH");
       log.append(program.getGraph().toString(program));

@@ -55,7 +55,7 @@ public class Pass1ProcedureCallParameters extends ControlFlowGraphCopyVisitor {
          currentBlockScope = currentBlockSymbol.getScope();
       }
       splitCurrentBlock(currentBlockScope.addLabelIntermediate().getRef());
-      if(!SymbolType.VOID.equals(procedure.getReturnType())) {
+      if(!SymbolType.VOID.equals(procedure.getReturnType()) && origCall.getlValue()!=null) {
          addStatementToCurrentBlock(new StatementAssignment(origCall.getlValue(), procReturnVarRef));
       } else {
          // No return type. Remove variable receiving the result.

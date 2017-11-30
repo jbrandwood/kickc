@@ -8,23 +8,15 @@ import java.util.ListIterator;
 /**
  * Add casts in all assignments where types are not equal, but the rValue type can be promoted to the lValue type.
  */
-public class Pass1AddTypePromotions {
-
-   private Program program;
+public class Pass1AddTypePromotions extends Pass1Base {
 
    public Pass1AddTypePromotions(Program program) {
-      this.program = program;
+      super(program);
    }
 
-   public Program getProgram() {
-      return program;
-   }
 
-   public ProgramScope getSymbols() {
-      return program.getScope();
-   }
-
-   public void addPromotions() {
+   @Override
+   public boolean executeStep() {
       for (ControlFlowBlock block : getProgram().getGraph().getAllBlocks()) {
          List<Statement> statements = block.getStatements();
          ListIterator<Statement> stmtIt = statements.listIterator();
@@ -36,7 +28,7 @@ public class Pass1AddTypePromotions {
             // TODO: Implement promotion for calls
          }
       }
-
+      return false;
    }
 
    /**
@@ -50,8 +42,8 @@ public class Pass1AddTypePromotions {
     */
    private void getPromotionAssignment(StatementAssignment assignment, ListIterator<Statement> stmtIt) {
       LValue lValue = assignment.getlValue();
-      SymbolType lValueType = SymbolTypeInference.inferType(getSymbols(), lValue);
-      SymbolType rValueType = SymbolTypeInference.inferTypeRValue(getSymbols(), assignment);
+      SymbolType lValueType = SymbolTypeInference.inferType(getScope(), lValue);
+      SymbolType rValueType = SymbolTypeInference.inferTypeRValue(getScope(), assignment);
       if (SymbolTypeInference.typeMatch(lValueType, rValueType)) {
          return;
       }

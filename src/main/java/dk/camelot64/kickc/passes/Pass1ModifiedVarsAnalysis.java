@@ -5,22 +5,22 @@ import dk.camelot64.kickc.model.*;
 import java.util.*;
 
 /** Find all variables from an outer scope modified in an inner scope (ie. a procedure) */
-public class Pass1ModifiedVarsAnalysis {
-
-   private Program program;
+public class Pass1ModifiedVarsAnalysis extends Pass1Base {
 
    public Pass1ModifiedVarsAnalysis(Program program) {
-      this.program = program;
+      super(program);
    }
 
-   public void findModifiedVars() {
+   @Override
+   boolean executeStep() {
       Map<ProcedureRef, Set<VariableRef>> modified = new LinkedHashMap<>();
-      Collection<Procedure> allProcedures = program.getScope().getAllProcedures(true);
+      Collection<Procedure> allProcedures = getScope().getAllProcedures(true);
       for (Procedure procedure : allProcedures) {
          Set<VariableRef> modifiedVars = getModifiedVars(procedure);
          modified.put(procedure.getRef(), modifiedVars);
       }
-      program.setProcedureModifiedVars(new ProcedureModifiedVars(modified));
+      getProgram().setProcedureModifiedVars(new ProcedureModifiedVars(modified));
+      return false;
    }
 
    /** Get all outside variables modified by a procedure (or any sub-procedure called by the procedure).
@@ -31,7 +31,7 @@ public class Pass1ModifiedVarsAnalysis {
    public Set<VariableRef> getModifiedVars(Procedure procedure) {
       Set<VariableRef> modified = new LinkedHashSet<>();
       ScopeRef procScope = procedure.getRef();
-      List<ControlFlowBlock> procBlocks = program.getGraph().getScopeBlocks(procScope);
+      List<ControlFlowBlock> procBlocks = getProgram().getGraph().getScopeBlocks(procScope);
       for (ControlFlowBlock block : procBlocks) {
          for (Statement statement : block.getStatements()) {
             if(statement instanceof StatementLValue) {
@@ -44,7 +44,7 @@ public class Pass1ModifiedVarsAnalysis {
                }
                if(statement instanceof StatementCall) {
                   ProcedureRef called = ((StatementCall) statement).getProcedure();
-                  Procedure calledProc = program.getScope().getProcedure(called);
+                  Procedure calledProc = getScope().getProcedure(called);
                   modified.addAll(getModifiedVars(calledProc));
                }
             }

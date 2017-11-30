@@ -24,6 +24,14 @@ public class TestPrograms extends TestCase {
       helper = new ReferenceHelper("dk/camelot64/kickc/test/ref/");
    }
 
+   public void testUnusedVars() throws IOException, URISyntaxException {
+      compileAndCompare("unused-vars");
+   }
+
+   public void testFillscreen() throws IOException, URISyntaxException {
+      compileAndCompare("fillscreen");
+   }
+
    public void testLiverangeCallProblem() throws IOException, URISyntaxException {
       compileAndCompare("liverange-call-problem");
    }

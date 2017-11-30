@@ -78,40 +78,33 @@ public class Compiler {
 
       Pass1GenerateControlFlowGraph pass1GenerateControlFlowGraph = new Pass1GenerateControlFlowGraph(programScope);
       ControlFlowGraph controlFlowGraph = pass1GenerateControlFlowGraph.generate(statementSequence);
-
       program.setGraph(controlFlowGraph);
 
-      new Pass1AddTypePromotions(program).addPromotions();
+      new Pass1AddTypePromotions(program).execute();
 
       log.append("INITIAL CONTROL FLOW GRAPH");
       log.append(program.getGraph().toString(program));
 
-      new Pass1ExtractInlineStrings(program).extract();
-      new Pass1EliminateUncalledProcedures(program).eliminate();
-      new Pass1EliminateEmptyBlocks(program).eliminate();
+      new Pass1ExtractInlineStrings(program).execute();
+      new Pass1EliminateUncalledProcedures(program).execute();
+      new Pass1EliminateEmptyBlocks(program).execute();
       log.append("CONTROL FLOW GRAPH");
       log.append(program.getGraph().toString(program));
 
-      new Pass1ModifiedVarsAnalysis(program).findModifiedVars();
+      new Pass1ModifiedVarsAnalysis(program).execute();
       log.append("PROCEDURE MODIFY VARIABLE ANALYSIS");
       log.append(program.getProcedureModifiedVars().toString(program));
 
-      Pass1ProcedureCallParameters pass1ProcedureCallParameters =
-            new Pass1ProcedureCallParameters(program);
-      pass1ProcedureCallParameters.generate();
+      new Pass1ProcedureCallParameters(program).generate();
       log.append("CONTROL FLOW GRAPH WITH ASSIGNMENT CALL");
       log.append(program.getGraph().toString(program));
 
-      Pass1GenerateSingleStaticAssignmentForm pass1GenerateSingleStaticAssignmentForm =
-            new Pass1GenerateSingleStaticAssignmentForm(log, program);
-      pass1GenerateSingleStaticAssignmentForm.generate();
+      new Pass1GenerateSingleStaticAssignmentForm(program).execute();
 
       log.append("CONTROL FLOW GRAPH SSA");
       log.append(program.getGraph().toString(program));
 
-      Pass1ProcedureCallsReturnValue pass1ProcedureCallsReturnValue =
-            new Pass1ProcedureCallsReturnValue(program);
-      program.setGraph(pass1ProcedureCallsReturnValue.generate());
+      program.setGraph(new Pass1ProcedureCallsReturnValue(program).generate());
       log.append("CONTROL FLOW GRAPH WITH ASSIGNMENT CALL & RETURN");
       log.append(program.getGraph().toString(program));
 

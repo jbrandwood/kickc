@@ -10,17 +10,16 @@ import java.util.List;
 /**
  * Eliminate empty blocks in pass 1 (before creating SSA)
  */
-public class Pass1EliminateEmptyBlocks {
-
-   private Program program;
+public class Pass1EliminateEmptyBlocks extends Pass1Base {
 
    public Pass1EliminateEmptyBlocks(Program program) {
-      this.program = program;
+      super(program);
    }
 
-   public boolean eliminate() {
-      CompileLog log = program.getLog();
-      ControlFlowGraph graph = program.getGraph();
+   @Override
+   boolean executeStep() {
+      CompileLog log = getLog();
+      ControlFlowGraph graph = getProgram().getGraph();
       Collection<ControlFlowBlock> blocks = graph.getAllBlocks();
       List<LabelRef> removeList = new ArrayList<>();
       for (ControlFlowBlock block : blocks) {
@@ -44,16 +43,18 @@ public class Pass1EliminateEmptyBlocks {
             }
          }
       }
+      boolean modified = false;
       for (LabelRef labelRef : removeList) {
-         Symbol removeSymbol = program.getScope().getSymbol(labelRef);
+         Symbol removeSymbol = getScope().getSymbol(labelRef);
          if(removeSymbol instanceof Label) {
             Label label = (Label) removeSymbol;
             graph.remove(labelRef);
             label.getScope().remove(label);
             log.append("Removing empty block "+labelRef);
+            modified = true;
          }
       }
-      return removeList.size()>0;
+      return modified;
    }
 
 }

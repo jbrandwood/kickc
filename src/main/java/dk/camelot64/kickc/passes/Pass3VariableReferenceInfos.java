@@ -19,16 +19,32 @@ public class Pass3VariableReferenceInfos extends Pass2Base {
       LinkedHashMap<LabelRef, Collection<VariableRef>> blockUsed = new LinkedHashMap<>();
       LinkedHashMap<Integer, Collection<VariableRef>> stmtReferenced = new LinkedHashMap<>();
       LinkedHashMap<Integer, Collection<VariableRef>> stmtDefined = new LinkedHashMap<>();
+      LinkedHashMap<VariableRef, Integer> varDefines = new LinkedHashMap<>();
+      LinkedHashMap<VariableRef, Collection<Integer>> varReferences = new LinkedHashMap<>();
       for (ControlFlowBlock block : getProgram().getGraph().getAllBlocks()) {
          LabelRef blockLabel = block.getLabel();
-         blockReferenced.put(blockLabel, getReferenced(blockLabel, new ArrayList<LabelRef>()));
-         blockUsed.put(blockLabel, getUsed(blockLabel, new ArrayList<LabelRef>()));
+         blockReferenced.put(blockLabel, getReferenced(blockLabel, new ArrayList<>()));
+         blockUsed.put(blockLabel, getUsed(blockLabel, new ArrayList<>()));
          for (Statement statement : block.getStatements()) {
-            stmtDefined.put(statement.getIndex(), getDefined(statement));
-            stmtReferenced.put(statement.getIndex(), getReferenced(statement));
+            Collection<VariableRef> defined = getDefined(statement);
+            Collection<VariableRef> referenced = getReferenced(statement);
+            stmtDefined.put(statement.getIndex(), defined);
+            stmtReferenced.put(statement.getIndex(), referenced);
+            for (VariableRef variableRef : defined) {
+               varDefines.put(variableRef, statement.getIndex());
+            }
+            for (VariableRef variableRef : referenced) {
+               Collection<Integer> stmts = varReferences.get(variableRef);
+               if(stmts==null) {
+                  stmts = new LinkedHashSet<>();
+                  varReferences.put(variableRef, stmts);
+               }
+               stmts.add(statement.getIndex());
+            }
+
          }
       }
-      getProgram().setVariableReferenceInfos(new VariableReferenceInfos(blockReferenced, blockUsed, stmtReferenced, stmtDefined));
+      getProgram().setVariableReferenceInfos(new VariableReferenceInfos(blockReferenced, blockUsed, stmtReferenced, stmtDefined, varDefines, varReferences));
    }
 
 
@@ -113,6 +129,12 @@ public class Pass3VariableReferenceInfos extends Pass2Base {
             defined.add(phiVariable.getVariable());
          }
          return defined;
+      } else if (stmt instanceof StatementCall) {
+         List<VariableRef> defined = new ArrayList<>();
+         if(((StatementCall) stmt).getlValue() instanceof VariableRef) {
+            defined.add((VariableRef) ((StatementCall) stmt).getlValue());
+         }
+         return defined;
       }
       return new ArrayList<>();
    }
@@ -191,11 +213,16 @@ public class Pass3VariableReferenceInfos extends Pass2Base {
          return used;
       } else if (rValue instanceof VariableRef) {
          return Arrays.asList((VariableRef) rValue);
+      } else if (rValue instanceof ValueArray) {
+         LinkedHashSet<VariableRef> used = new LinkedHashSet<>();
+         for (RValue value : ((ValueArray) rValue).getList()) {
+            used.addAll(getReferenced(value));
+         }
+         return used;
       } else {
          throw new RuntimeException("Unhandled RValue type " + rValue);
       }
    }
-
 
 
 }

@@ -81,6 +81,7 @@ public class Compiler {
       new Pass1ExtractInlineStrings(program).execute();
       new Pass1EliminateUncalledProcedures(program).execute();
       new Pass1EliminateUnusedVars(program).execute();
+
       new Pass1EliminateEmptyBlocks(program).execute();
       log.append("CONTROL FLOW GRAPH");
       log.append(program.getGraph().toString(program));

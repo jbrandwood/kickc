@@ -9,6 +9,9 @@ import java.util.Map;
 /**  Cached information about which variables are defined/referenced/used in statements / blocks. */
 public class VariableReferenceInfos {
 
+   /** The congtaining program. */
+   private Program program;
+
    /** Variables referenced in each block. */
    private Map<LabelRef, Collection<VariableRef>> blockReferenced;
 
@@ -21,14 +24,27 @@ public class VariableReferenceInfos {
    /** Variables defined in each statement. */
    private Map<Integer, Collection<VariableRef>> stmtDefined;
 
+   /** The statement defining each variable. */
+   private Map<VariableRef, Integer> varDefinitions;
+
+   /** All statements referencing each variable . */
+   private Map<VariableRef, Collection<Integer>> varReferences;
+
    public VariableReferenceInfos(
          Map<LabelRef, Collection<VariableRef>> blockReferenced,
          Map<LabelRef, Collection<VariableRef>> blockUsed,
-         Map<Integer, Collection<VariableRef>> stmtReferenced, Map<Integer, Collection<VariableRef>> stmtDefined) {
+         Map<Integer, Collection<VariableRef>> stmtReferenced,
+         Map<Integer, Collection<VariableRef>> stmtDefined,
+         Map<VariableRef, Integer> varDefinitions,
+         Map<VariableRef, Collection<Integer>> varReferences
+
+   ) {
       this.blockReferenced = blockReferenced;
       this.blockUsed = blockUsed;
       this.stmtDefined = stmtDefined;
       this.stmtReferenced = stmtReferenced;
+      this.varDefinitions = varDefinitions;
+      this.varReferences = varReferences;
    }
 
    /**
@@ -79,7 +95,6 @@ public class VariableReferenceInfos {
       return used;
    }
 
-
    /**
     * Get all variables referenced in an rValue
     * @param rValue The rValue
@@ -88,5 +103,16 @@ public class VariableReferenceInfos {
    public static Collection<VariableRef> getReferenced(RValue rValue) {
       return Pass3VariableReferenceInfos.getReferenced(rValue);
    }
+
+   /**
+    * Determines if a variable is unused
+    * @return true if the variable is defined but never referenced
+    */
+   public boolean isUnused(VariableRef variableRef) {
+      Collection<Integer> refs = new LinkedHashSet<>(varReferences.get(variableRef));
+      refs.remove(varDefinitions.get(variableRef));
+      return refs.size()==0;
+   }
+
 
 }

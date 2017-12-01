@@ -44,8 +44,6 @@ rvaluevar: {
     bcc b2
     rts
   b2:
-    ldy #0
-    lda (screen),y
     inc screen
     bne !+
     inc screen+1

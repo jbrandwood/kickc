@@ -52,7 +52,7 @@ public class Compiler {
                int charPositionInLine,
                String msg,
                RecognitionException e) {
-            throw new RuntimeException("Error parsing  file " + input.getSourceName() + "\n - Line: " + line + "\n - Message: " + msg);
+            throw new CompileError("Error parsing  file " + input.getSourceName() + "\n - Line: " + line + "\n - Message: " + msg);
          }
       });
       return parser.file();

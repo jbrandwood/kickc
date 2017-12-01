@@ -2,11 +2,30 @@
 grammar KickC;
 
 file :
-    stmtSeq EOF
+    declSeq EOF
     ;
 
 asmFile :
     asmLines EOF
+    ;
+
+declSeq
+    : decl+
+    ;
+
+decl
+    : typeDecl NAME '(' parameterListDecl? ')' '{' stmtSeq? '}' #declMethod
+    | declVar #declVariable
+    ;
+
+parameterListDecl
+    : parameterDecl (',' parameterDecl)* ;
+
+parameterDecl
+    : typeDecl NAME ;
+
+declVar
+    : ('const')? typeDecl NAME ('=' initializer)? ';'
     ;
 
 stmtSeq
@@ -14,9 +33,8 @@ stmtSeq
     ;
 
 stmt
-    : '{' stmtSeq? '}' #stmtBlock
-    | typeDecl NAME '(' parameterListDecl? ')' '{' stmtSeq? '}' #stmtFunction
-    | ('const')? typeDecl NAME ('=' initializer)? ';' #stmtDeclaration
+    : declVar #stmtDeclVar
+    | '{' stmtSeq? '}' #stmtBlock
     | lvalue '=' expr ';' #stmtAssignment
     | expr  ';' #stmtExpr
     | 'if' '(' expr ')' stmt ( 'else' stmt )? #stmtIfElse
@@ -35,12 +53,6 @@ forIteration
     : ';' expr ';' expr? # forClassic
     | ':' expr ( '..' ) expr #forRange
     ;
-
-parameterListDecl
-    : parameterDecl (',' parameterDecl)* ;
-
-parameterDecl
-    : typeDecl NAME ;
 
 typeDecl
     : SIMPLETYPE  #typeSimple

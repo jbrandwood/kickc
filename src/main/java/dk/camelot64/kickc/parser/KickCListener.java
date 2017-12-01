@@ -28,6 +28,50 @@ public interface KickCListener extends ParseTreeListener {
 	 */
 	void exitAsmFile(KickCParser.AsmFileContext ctx);
 	/**
+	 * Enter a parse tree produced by {@link KickCParser#declSeq}.
+	 * @param ctx the parse tree
+	 */
+	void enterDeclSeq(KickCParser.DeclSeqContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link KickCParser#declSeq}.
+	 * @param ctx the parse tree
+	 */
+	void exitDeclSeq(KickCParser.DeclSeqContext ctx);
+	/**
+	 * Enter a parse tree produced by the {@code declMethod}
+	 * labeled alternative in {@link KickCParser#decl}.
+	 * @param ctx the parse tree
+	 */
+	void enterDeclMethod(KickCParser.DeclMethodContext ctx);
+	/**
+	 * Exit a parse tree produced by the {@code declMethod}
+	 * labeled alternative in {@link KickCParser#decl}.
+	 * @param ctx the parse tree
+	 */
+	void exitDeclMethod(KickCParser.DeclMethodContext ctx);
+	/**
+	 * Enter a parse tree produced by the {@code declVariable}
+	 * labeled alternative in {@link KickCParser#decl}.
+	 * @param ctx the parse tree
+	 */
+	void enterDeclVariable(KickCParser.DeclVariableContext ctx);
+	/**
+	 * Exit a parse tree produced by the {@code declVariable}
+	 * labeled alternative in {@link KickCParser#decl}.
+	 * @param ctx the parse tree
+	 */
+	void exitDeclVariable(KickCParser.DeclVariableContext ctx);
+	/**
+	 * Enter a parse tree produced by {@link KickCParser#declVar}.
+	 * @param ctx the parse tree
+	 */
+	void enterDeclVar(KickCParser.DeclVarContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link KickCParser#declVar}.
+	 * @param ctx the parse tree
+	 */
+	void exitDeclVar(KickCParser.DeclVarContext ctx);
+	/**
 	 * Enter a parse tree produced by {@link KickCParser#stmtSeq}.
 	 * @param ctx the parse tree
 	 */
@@ -37,6 +81,18 @@ public interface KickCListener extends ParseTreeListener {
 	 * @param ctx the parse tree
 	 */
 	void exitStmtSeq(KickCParser.StmtSeqContext ctx);
+	/**
+	 * Enter a parse tree produced by the {@code stmtDeclVar}
+	 * labeled alternative in {@link KickCParser#stmt}.
+	 * @param ctx the parse tree
+	 */
+	void enterStmtDeclVar(KickCParser.StmtDeclVarContext ctx);
+	/**
+	 * Exit a parse tree produced by the {@code stmtDeclVar}
+	 * labeled alternative in {@link KickCParser#stmt}.
+	 * @param ctx the parse tree
+	 */
+	void exitStmtDeclVar(KickCParser.StmtDeclVarContext ctx);
 	/**
 	 * Enter a parse tree produced by the {@code stmtBlock}
 	 * labeled alternative in {@link KickCParser#stmt}.
@@ -49,30 +105,6 @@ public interface KickCListener extends ParseTreeListener {
 	 * @param ctx the parse tree
 	 */
 	void exitStmtBlock(KickCParser.StmtBlockContext ctx);
-	/**
-	 * Enter a parse tree produced by the {@code stmtFunction}
-	 * labeled alternative in {@link KickCParser#stmt}.
-	 * @param ctx the parse tree
-	 */
-	void enterStmtFunction(KickCParser.StmtFunctionContext ctx);
-	/**
-	 * Exit a parse tree produced by the {@code stmtFunction}
-	 * labeled alternative in {@link KickCParser#stmt}.
-	 * @param ctx the parse tree
-	 */
-	void exitStmtFunction(KickCParser.StmtFunctionContext ctx);
-	/**
-	 * Enter a parse tree produced by the {@code stmtDeclaration}
-	 * labeled alternative in {@link KickCParser#stmt}.
-	 * @param ctx the parse tree
-	 */
-	void enterStmtDeclaration(KickCParser.StmtDeclarationContext ctx);
-	/**
-	 * Exit a parse tree produced by the {@code stmtDeclaration}
-	 * labeled alternative in {@link KickCParser#stmt}.
-	 * @param ctx the parse tree
-	 */
-	void exitStmtDeclaration(KickCParser.StmtDeclarationContext ctx);
 	/**
 	 * Enter a parse tree produced by the {@code stmtAssignment}
 	 * labeled alternative in {@link KickCParser#stmt}.

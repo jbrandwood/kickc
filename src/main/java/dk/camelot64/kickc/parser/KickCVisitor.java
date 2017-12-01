@@ -23,11 +23,44 @@ public interface KickCVisitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitAsmFile(KickCParser.AsmFileContext ctx);
 	/**
+	 * Visit a parse tree produced by {@link KickCParser#declSeq}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitDeclSeq(KickCParser.DeclSeqContext ctx);
+	/**
+	 * Visit a parse tree produced by the {@code declMethod}
+	 * labeled alternative in {@link KickCParser#decl}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitDeclMethod(KickCParser.DeclMethodContext ctx);
+	/**
+	 * Visit a parse tree produced by the {@code declVariable}
+	 * labeled alternative in {@link KickCParser#decl}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitDeclVariable(KickCParser.DeclVariableContext ctx);
+	/**
+	 * Visit a parse tree produced by {@link KickCParser#declVar}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitDeclVar(KickCParser.DeclVarContext ctx);
+	/**
 	 * Visit a parse tree produced by {@link KickCParser#stmtSeq}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
 	T visitStmtSeq(KickCParser.StmtSeqContext ctx);
+	/**
+	 * Visit a parse tree produced by the {@code stmtDeclVar}
+	 * labeled alternative in {@link KickCParser#stmt}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitStmtDeclVar(KickCParser.StmtDeclVarContext ctx);
 	/**
 	 * Visit a parse tree produced by the {@code stmtBlock}
 	 * labeled alternative in {@link KickCParser#stmt}.
@@ -35,20 +68,6 @@ public interface KickCVisitor<T> extends ParseTreeVisitor<T> {
 	 * @return the visitor result
 	 */
 	T visitStmtBlock(KickCParser.StmtBlockContext ctx);
-	/**
-	 * Visit a parse tree produced by the {@code stmtFunction}
-	 * labeled alternative in {@link KickCParser#stmt}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitStmtFunction(KickCParser.StmtFunctionContext ctx);
-	/**
-	 * Visit a parse tree produced by the {@code stmtDeclaration}
-	 * labeled alternative in {@link KickCParser#stmt}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitStmtDeclaration(KickCParser.StmtDeclarationContext ctx);
 	/**
 	 * Visit a parse tree produced by the {@code stmtAssignment}
 	 * labeled alternative in {@link KickCParser#stmt}.

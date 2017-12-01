@@ -52,7 +52,16 @@ public class Pass1GenerateStatementSequence extends KickCBaseVisitor<Object> {
 
    @Override
    public Void visitFile(KickCParser.FileContext ctx) {
-      this.visit(ctx.stmtSeq());
+      List<KickCParser.StmtContext> stmts = ctx.stmtSeq().stmt();
+      for (KickCParser.StmtContext stmt : stmts) {
+         if (stmt instanceof KickCParser.StmtDeclarationContext || stmt instanceof KickCParser.StmtFunctionContext) {
+            this.visit(stmt);
+         } else {
+            program.getLog().append("Statement not allowed outside method. " + stmt.getText());
+            throw new CompileError("Statement not allowed outside method. " + stmt.getText());
+         }
+
+      }
       return null;
    }
 

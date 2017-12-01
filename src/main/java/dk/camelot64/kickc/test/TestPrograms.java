@@ -241,6 +241,16 @@ public class TestPrograms extends TestCase {
       compileAndCompare("forrangemin");
    }
 
+   public void testStmtOutsideMethod() throws IOException, URISyntaxException {
+      try {
+         compileAndCompare("stmt-outside-method");
+      } catch (CompileError e) {
+         // expecting error!
+         return;
+      }
+      fail("Expected compile error.");
+   }
+
    public void testUseUndeclared() throws IOException, URISyntaxException {
       try {
          compileAndCompare("useundeclared");

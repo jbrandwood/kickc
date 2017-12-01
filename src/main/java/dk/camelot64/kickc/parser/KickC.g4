@@ -1,12 +1,20 @@
 // KickC grammar
 grammar KickC;
 
-file :
-    declSeq EOF
+file
+    : importSeq declSeq EOF
     ;
 
-asmFile :
-    asmLines EOF
+asmFile
+    : asmLines EOF
+    ;
+
+importSeq
+    : importDecl+
+    ;
+
+importDecl
+    : 'import' STRING
     ;
 
 declSeq

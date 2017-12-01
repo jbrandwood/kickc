@@ -23,6 +23,18 @@ public interface KickCVisitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitAsmFile(KickCParser.AsmFileContext ctx);
 	/**
+	 * Visit a parse tree produced by {@link KickCParser#importSeq}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitImportSeq(KickCParser.ImportSeqContext ctx);
+	/**
+	 * Visit a parse tree produced by {@link KickCParser#importDecl}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitImportDecl(KickCParser.ImportDeclContext ctx);
+	/**
 	 * Visit a parse tree produced by {@link KickCParser#declSeq}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
@@ -42,6 +54,18 @@ public interface KickCVisitor<T> extends ParseTreeVisitor<T> {
 	 * @return the visitor result
 	 */
 	T visitDeclVariable(KickCParser.DeclVariableContext ctx);
+	/**
+	 * Visit a parse tree produced by {@link KickCParser#parameterListDecl}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitParameterListDecl(KickCParser.ParameterListDeclContext ctx);
+	/**
+	 * Visit a parse tree produced by {@link KickCParser#parameterDecl}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitParameterDecl(KickCParser.ParameterDeclContext ctx);
 	/**
 	 * Visit a parse tree produced by {@link KickCParser#declVar}.
 	 * @param ctx the parse tree
@@ -145,18 +169,6 @@ public interface KickCVisitor<T> extends ParseTreeVisitor<T> {
 	 * @return the visitor result
 	 */
 	T visitForRange(KickCParser.ForRangeContext ctx);
-	/**
-	 * Visit a parse tree produced by {@link KickCParser#parameterListDecl}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitParameterListDecl(KickCParser.ParameterListDeclContext ctx);
-	/**
-	 * Visit a parse tree produced by {@link KickCParser#parameterDecl}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitParameterDecl(KickCParser.ParameterDeclContext ctx);
 	/**
 	 * Visit a parse tree produced by the {@code typePtr}
 	 * labeled alternative in {@link KickCParser#typeDecl}.

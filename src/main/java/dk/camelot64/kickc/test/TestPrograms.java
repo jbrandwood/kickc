@@ -24,6 +24,10 @@ public class TestPrograms extends TestCase {
       helper = new ReferenceHelper("dk/camelot64/kickc/test/ref/");
    }
 
+   public void testImporting() throws IOException, URISyntaxException {
+      compileAndCompare("importing");
+   }
+
    public void testUnusedVars() throws IOException, URISyntaxException {
       compileAndCompare("unused-vars");
    }

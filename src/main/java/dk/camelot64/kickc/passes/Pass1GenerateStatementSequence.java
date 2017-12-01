@@ -52,8 +52,25 @@ public class Pass1GenerateStatementSequence extends KickCBaseVisitor<Object> {
 
    @Override
    public Void visitFile(KickCParser.FileContext ctx) {
+      this.visit(ctx.importSeq());
       this.visit(ctx.declSeq());
       return null;
+   }
+
+   @Override
+   public Object visitImportSeq(KickCParser.ImportSeqContext ctx) {
+      for (KickCParser.ImportDeclContext importDeclContext : ctx.importDecl()) {
+         this.visit(importDeclContext);
+      }
+      return null;
+   }
+
+   @Override
+   public Object visitImportDecl(KickCParser.ImportDeclContext ctx) {
+      String importName = ctx.STRING().getText();
+      program.getLog().append("Importing "+importName.substring(1, importName.length() - 1));
+      throw new RuntimeException("TODO: Implement importing!");
+      //return null;
    }
 
    @Override

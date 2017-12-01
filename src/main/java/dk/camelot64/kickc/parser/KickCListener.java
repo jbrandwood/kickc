@@ -28,6 +28,26 @@ public interface KickCListener extends ParseTreeListener {
 	 */
 	void exitAsmFile(KickCParser.AsmFileContext ctx);
 	/**
+	 * Enter a parse tree produced by {@link KickCParser#importSeq}.
+	 * @param ctx the parse tree
+	 */
+	void enterImportSeq(KickCParser.ImportSeqContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link KickCParser#importSeq}.
+	 * @param ctx the parse tree
+	 */
+	void exitImportSeq(KickCParser.ImportSeqContext ctx);
+	/**
+	 * Enter a parse tree produced by {@link KickCParser#importDecl}.
+	 * @param ctx the parse tree
+	 */
+	void enterImportDecl(KickCParser.ImportDeclContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link KickCParser#importDecl}.
+	 * @param ctx the parse tree
+	 */
+	void exitImportDecl(KickCParser.ImportDeclContext ctx);
+	/**
 	 * Enter a parse tree produced by {@link KickCParser#declSeq}.
 	 * @param ctx the parse tree
 	 */
@@ -61,6 +81,26 @@ public interface KickCListener extends ParseTreeListener {
 	 * @param ctx the parse tree
 	 */
 	void exitDeclVariable(KickCParser.DeclVariableContext ctx);
+	/**
+	 * Enter a parse tree produced by {@link KickCParser#parameterListDecl}.
+	 * @param ctx the parse tree
+	 */
+	void enterParameterListDecl(KickCParser.ParameterListDeclContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link KickCParser#parameterListDecl}.
+	 * @param ctx the parse tree
+	 */
+	void exitParameterListDecl(KickCParser.ParameterListDeclContext ctx);
+	/**
+	 * Enter a parse tree produced by {@link KickCParser#parameterDecl}.
+	 * @param ctx the parse tree
+	 */
+	void enterParameterDecl(KickCParser.ParameterDeclContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link KickCParser#parameterDecl}.
+	 * @param ctx the parse tree
+	 */
+	void exitParameterDecl(KickCParser.ParameterDeclContext ctx);
 	/**
 	 * Enter a parse tree produced by {@link KickCParser#declVar}.
 	 * @param ctx the parse tree
@@ -237,26 +277,6 @@ public interface KickCListener extends ParseTreeListener {
 	 * @param ctx the parse tree
 	 */
 	void exitForRange(KickCParser.ForRangeContext ctx);
-	/**
-	 * Enter a parse tree produced by {@link KickCParser#parameterListDecl}.
-	 * @param ctx the parse tree
-	 */
-	void enterParameterListDecl(KickCParser.ParameterListDeclContext ctx);
-	/**
-	 * Exit a parse tree produced by {@link KickCParser#parameterListDecl}.
-	 * @param ctx the parse tree
-	 */
-	void exitParameterListDecl(KickCParser.ParameterListDeclContext ctx);
-	/**
-	 * Enter a parse tree produced by {@link KickCParser#parameterDecl}.
-	 * @param ctx the parse tree
-	 */
-	void enterParameterDecl(KickCParser.ParameterDeclContext ctx);
-	/**
-	 * Exit a parse tree produced by {@link KickCParser#parameterDecl}.
-	 * @param ctx the parse tree
-	 */
-	void exitParameterDecl(KickCParser.ParameterDeclContext ctx);
 	/**
 	 * Enter a parse tree produced by the {@code typePtr}
 	 * labeled alternative in {@link KickCParser#typeDecl}.

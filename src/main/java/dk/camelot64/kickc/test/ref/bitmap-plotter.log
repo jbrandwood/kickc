@@ -22,7 +22,7 @@ void main() {
     *BGCOL = 0;
     *FGCOL = 0;
     *D011 = BMM|DEN|RSEL|3;
-    *D018 = $18; // Needs casting for *D018 = ((word)SCREEN/$40)|((word)BITMAP/$400);
+    *D018 = (byte)(((word)SCREEN/$40)|((word)BITMAP/$400));
     init_screen();
     init_plot_tables();
     do {
@@ -76,7 +76,7 @@ void init_plot_tables() {
         plot_ylo[y] = y&$7 | <yoffs;
         plot_yhi[y] = >yoffs;
         if((y&$7)==7) {
-            yoffs = yoffs + 320; // Needs better constant type inference for yoffs = yoffs + 40*8;
+            yoffs = yoffs + 40*8; // Needs better constant type inference for yoffs = yoffs + 40*8;
         }
     }
 }
@@ -123,15 +123,21 @@ proc (void()) main()
   (byte~) main::$1 ← (byte~) main::$0 | (byte) RSEL
   (byte~) main::$2 ← (byte~) main::$1 | (byte/signed byte/word/signed word) 3
   *((byte*) D011) ← (byte~) main::$2
-  *((byte*) D018) ← (byte/signed byte/word/signed word) 24
-  (void~) main::$3 ← call init_screen 
-  (void~) main::$4 ← call init_plot_tables 
+  (word~) main::$3 ← ((word)) (byte*) SCREEN
+  (word~) main::$4 ← (word~) main::$3 / (byte/signed byte/word/signed word) 64
+  (word~) main::$5 ← ((word)) (byte*) BITMAP
+  (word~) main::$6 ← (word~) main::$5 / (word/signed word) 1024
+  (word~) main::$7 ← (word~) main::$4 | (word~) main::$6
+  (byte~) main::$8 ← ((byte)) (word~) main::$7
+  *((byte*) D018) ← (byte~) main::$8
+  (void~) main::$9 ← call init_screen 
+  (void~) main::$10 ← call init_plot_tables 
 main::@1:
 main::@2:
-  (boolean~) main::$5 ← *((byte*) RASTER) != (byte/word/signed word) 255
-  if((boolean~) main::$5) goto main::@2
+  (boolean~) main::$11 ← *((byte*) RASTER) != (byte/word/signed word) 255
+  if((boolean~) main::$11) goto main::@2
   *((byte*) BGCOL) ← ++ *((byte*) BGCOL)
-  (void~) main::$6 ← call plots 
+  (void~) main::$12 ← call plots 
   *((byte*) BGCOL) ← -- *((byte*) BGCOL)
   if(true) goto main::@1
 main::@return:
@@ -208,12 +214,13 @@ init_plot_tables::@3:
   (boolean~) init_plot_tables::$11 ← (byte~) init_plot_tables::$10 == (byte/signed byte/word/signed word) 7
   (boolean~) init_plot_tables::$12 ← ! (boolean~) init_plot_tables::$11
   if((boolean~) init_plot_tables::$12) goto init_plot_tables::@4
-  (byte*~) init_plot_tables::$13 ← (byte*) init_plot_tables::yoffs + (word/signed word) 320
-  (byte*) init_plot_tables::yoffs ← (byte*~) init_plot_tables::$13
+  (word/signed word~) init_plot_tables::$13 ← (byte/signed byte/word/signed word) 40 * (byte/signed byte/word/signed word) 8
+  (byte*~) init_plot_tables::$14 ← (byte*) init_plot_tables::yoffs + (word/signed word~) init_plot_tables::$13
+  (byte*) init_plot_tables::yoffs ← (byte*~) init_plot_tables::$14
 init_plot_tables::@4:
   (byte) init_plot_tables::y ← ++ (byte) init_plot_tables::y
-  (boolean~) init_plot_tables::$14 ← (byte) init_plot_tables::y != (byte/signed byte/word/signed word) 0
-  if((boolean~) init_plot_tables::$14) goto init_plot_tables::@3
+  (boolean~) init_plot_tables::$15 ← (byte) init_plot_tables::y != (byte/signed byte/word/signed word) 0
+  if((boolean~) init_plot_tables::$15) goto init_plot_tables::@3
 init_plot_tables::@return:
   return 
 endproc // init_plot_tables()
@@ -260,8 +267,9 @@ SYMBOLS
 (byte~) init_plot_tables::$10
 (boolean~) init_plot_tables::$11
 (boolean~) init_plot_tables::$12
-(byte*~) init_plot_tables::$13
-(boolean~) init_plot_tables::$14
+(word/signed word~) init_plot_tables::$13
+(byte*~) init_plot_tables::$14
+(boolean~) init_plot_tables::$15
 (byte~) init_plot_tables::$2
 (boolean~) init_plot_tables::$3
 (boolean~) init_plot_tables::$4
@@ -292,11 +300,17 @@ SYMBOLS
 (void()) main()
 (byte~) main::$0
 (byte~) main::$1
+(void~) main::$10
+(boolean~) main::$11
+(void~) main::$12
 (byte~) main::$2
-(void~) main::$3
-(void~) main::$4
-(boolean~) main::$5
-(void~) main::$6
+(word~) main::$3
+(word~) main::$4
+(word~) main::$5
+(word~) main::$6
+(word~) main::$7
+(byte~) main::$8
+(void~) main::$9
 (label) main::@1
 (label) main::@2
 (label) main::@return
@@ -373,19 +387,25 @@ main: scope:[main]  from
   (byte~) main::$1 ← (byte~) main::$0 | (byte) RSEL
   (byte~) main::$2 ← (byte~) main::$1 | (byte/signed byte/word/signed word) 3
   *((byte*) D011) ← (byte~) main::$2
-  *((byte*) D018) ← (byte/signed byte/word/signed word) 24
-  (void~) main::$3 ← call init_screen 
-  (void~) main::$4 ← call init_plot_tables 
+  (word~) main::$3 ← ((word)) (byte*) SCREEN
+  (word~) main::$4 ← (word~) main::$3 / (byte/signed byte/word/signed word) 64
+  (word~) main::$5 ← ((word)) (byte*) BITMAP
+  (word~) main::$6 ← (word~) main::$5 / (word/signed word) 1024
+  (word~) main::$7 ← (word~) main::$4 | (word~) main::$6
+  (byte~) main::$8 ← ((byte)) (word~) main::$7
+  *((byte*) D018) ← (byte~) main::$8
+  (void~) main::$9 ← call init_screen 
+  (void~) main::$10 ← call init_plot_tables 
   to:main::@1
 main::@1: scope:[main]  from main main::@3
   to:main::@2
 main::@2: scope:[main]  from main::@1 main::@2
-  (boolean~) main::$5 ← *((byte*) RASTER) != (byte/word/signed word) 255
-  if((boolean~) main::$5) goto main::@2
+  (boolean~) main::$11 ← *((byte*) RASTER) != (byte/word/signed word) 255
+  if((boolean~) main::$11) goto main::@2
   to:main::@3
 main::@3: scope:[main]  from main::@2
   *((byte*) BGCOL) ← ++ *((byte*) BGCOL)
-  (void~) main::$6 ← call plots 
+  (void~) main::$12 ← call plots 
   *((byte*) BGCOL) ← -- *((byte*) BGCOL)
   if(true) goto main::@1
   to:main::@4
@@ -486,12 +506,13 @@ init_plot_tables::@3: scope:[init_plot_tables]  from init_plot_tables::@4 init_p
   to:init_plot_tables::@7
 init_plot_tables::@4: scope:[init_plot_tables]  from init_plot_tables::@3 init_plot_tables::@7
   (byte) init_plot_tables::y ← ++ (byte) init_plot_tables::y
-  (boolean~) init_plot_tables::$14 ← (byte) init_plot_tables::y != (byte/signed byte/word/signed word) 0
-  if((boolean~) init_plot_tables::$14) goto init_plot_tables::@3
+  (boolean~) init_plot_tables::$15 ← (byte) init_plot_tables::y != (byte/signed byte/word/signed word) 0
+  if((boolean~) init_plot_tables::$15) goto init_plot_tables::@3
   to:init_plot_tables::@8
 init_plot_tables::@7: scope:[init_plot_tables]  from init_plot_tables::@3
-  (byte*~) init_plot_tables::$13 ← (byte*) init_plot_tables::yoffs + (word/signed word) 320
-  (byte*) init_plot_tables::yoffs ← (byte*~) init_plot_tables::$13
+  (word/signed word~) init_plot_tables::$13 ← (byte/signed byte/word/signed word) 40 * (byte/signed byte/word/signed word) 8
+  (byte*~) init_plot_tables::$14 ← (byte*) init_plot_tables::yoffs + (word/signed word~) init_plot_tables::$13
+  (byte*) init_plot_tables::yoffs ← (byte*~) init_plot_tables::$14
   to:init_plot_tables::@4
 init_plot_tables::@8: scope:[init_plot_tables]  from init_plot_tables::@4
   to:init_plot_tables::@return
@@ -536,9 +557,9 @@ Eliminating unused variable (byte*) D016 and assignment [7] (byte*) D016 ← ((b
 Eliminating unused variable (byte) MCM and assignment [8] (byte) MCM ← (byte/signed byte/word/signed word) 16
 Eliminating unused variable (byte) CSEL and assignment [9] (byte) CSEL ← (byte/signed byte/word/signed word) 8
 Eliminating unused variable (byte*) COLS and assignment [13] (byte*) COLS ← ((byte*)) (word) 55296
-Eliminating unused variable - keeping the call (void~) main::$3
-Eliminating unused variable - keeping the call (void~) main::$4
-Eliminating unused variable - keeping the call (void~) main::$6
+Eliminating unused variable - keeping the call (void~) main::$9
+Eliminating unused variable - keeping the call (void~) main::$10
+Eliminating unused variable - keeping the call (void~) main::$12
 Eliminating unused variable - keeping the call (void~) plots::$2
 Removing empty block main::@4
 Removing empty block plots::@2
@@ -566,15 +587,21 @@ main: scope:[main]  from
   (byte~) main::$1 ← (byte~) main::$0 | (byte) RSEL
   (byte~) main::$2 ← (byte~) main::$1 | (byte/signed byte/word/signed word) 3
   *((byte*) D011) ← (byte~) main::$2
-  *((byte*) D018) ← (byte/signed byte/word/signed word) 24
+  (word~) main::$3 ← ((word)) (byte*) SCREEN
+  (word~) main::$4 ← (word~) main::$3 / (byte/signed byte/word/signed word) 64
+  (word~) main::$5 ← ((word)) (byte*) BITMAP
+  (word~) main::$6 ← (word~) main::$5 / (word/signed word) 1024
+  (word~) main::$7 ← (word~) main::$4 | (word~) main::$6
+  (byte~) main::$8 ← ((byte)) (word~) main::$7
+  *((byte*) D018) ← (byte~) main::$8
   call init_screen 
   call init_plot_tables 
   to:main::@2
 main::@1: scope:[main]  from main::@3
   to:main::@2
 main::@2: scope:[main]  from main main::@1 main::@2
-  (boolean~) main::$5 ← *((byte*) RASTER) != (byte/word/signed word) 255
-  if((boolean~) main::$5) goto main::@2
+  (boolean~) main::$11 ← *((byte*) RASTER) != (byte/word/signed word) 255
+  if((boolean~) main::$11) goto main::@2
   to:main::@3
 main::@3: scope:[main]  from main::@2
   *((byte*) BGCOL) ← ++ *((byte*) BGCOL)
@@ -673,12 +700,13 @@ init_plot_tables::@3: scope:[init_plot_tables]  from init_plot_tables::@4 init_p
   to:init_plot_tables::@7
 init_plot_tables::@4: scope:[init_plot_tables]  from init_plot_tables::@3 init_plot_tables::@7
   (byte) init_plot_tables::y ← ++ (byte) init_plot_tables::y
-  (boolean~) init_plot_tables::$14 ← (byte) init_plot_tables::y != (byte/signed byte/word/signed word) 0
-  if((boolean~) init_plot_tables::$14) goto init_plot_tables::@3
+  (boolean~) init_plot_tables::$15 ← (byte) init_plot_tables::y != (byte/signed byte/word/signed word) 0
+  if((boolean~) init_plot_tables::$15) goto init_plot_tables::@3
   to:init_plot_tables::@return
 init_plot_tables::@7: scope:[init_plot_tables]  from init_plot_tables::@3
-  (byte*~) init_plot_tables::$13 ← (byte*) init_plot_tables::yoffs + (word/signed word) 320
-  (byte*) init_plot_tables::yoffs ← (byte*~) init_plot_tables::$13
+  (word/signed word~) init_plot_tables::$13 ← (byte/signed byte/word/signed word) 40 * (byte/signed byte/word/signed word) 8
+  (byte*~) init_plot_tables::$14 ← (byte*) init_plot_tables::yoffs + (word/signed word~) init_plot_tables::$13
+  (byte*) init_plot_tables::yoffs ← (byte*~) init_plot_tables::$14
   to:init_plot_tables::@4
 init_plot_tables::@return: scope:[init_plot_tables]  from init_plot_tables::@4
   return 
@@ -733,7 +761,13 @@ main: scope:[main]  from @5
   (byte~) main::$1 ← (byte~) main::$0 | (byte) RSEL
   (byte~) main::$2 ← (byte~) main::$1 | (byte/signed byte/word/signed word) 3
   *((byte*) D011) ← (byte~) main::$2
-  *((byte*) D018) ← (byte/signed byte/word/signed word) 24
+  (word~) main::$3 ← ((word)) (byte*) SCREEN
+  (word~) main::$4 ← (word~) main::$3 / (byte/signed byte/word/signed word) 64
+  (word~) main::$5 ← ((word)) (byte*) BITMAP
+  (word~) main::$6 ← (word~) main::$5 / (word/signed word) 1024
+  (word~) main::$7 ← (word~) main::$4 | (word~) main::$6
+  (byte~) main::$8 ← ((byte)) (word~) main::$7
+  *((byte*) D018) ← (byte~) main::$8
   call init_screen param-assignment
   to:main::@5
 main::@5: scope:[main]  from main
@@ -744,8 +778,8 @@ main::@6: scope:[main]  from main::@5
 main::@1: scope:[main]  from main::@7
   to:main::@2
 main::@2: scope:[main]  from main::@1 main::@2 main::@6
-  (boolean~) main::$5 ← *((byte*) RASTER) != (byte/word/signed word) 255
-  if((boolean~) main::$5) goto main::@2
+  (boolean~) main::$11 ← *((byte*) RASTER) != (byte/word/signed word) 255
+  if((boolean~) main::$11) goto main::@2
   to:main::@3
 main::@3: scope:[main]  from main::@2
   *((byte*) BGCOL) ← ++ *((byte*) BGCOL)
@@ -850,12 +884,13 @@ init_plot_tables::@3: scope:[init_plot_tables]  from init_plot_tables::@4 init_p
   to:init_plot_tables::@7
 init_plot_tables::@4: scope:[init_plot_tables]  from init_plot_tables::@3 init_plot_tables::@7
   (byte) init_plot_tables::y ← ++ (byte) init_plot_tables::y
-  (boolean~) init_plot_tables::$14 ← (byte) init_plot_tables::y != (byte/signed byte/word/signed word) 0
-  if((boolean~) init_plot_tables::$14) goto init_plot_tables::@3
+  (boolean~) init_plot_tables::$15 ← (byte) init_plot_tables::y != (byte/signed byte/word/signed word) 0
+  if((boolean~) init_plot_tables::$15) goto init_plot_tables::@3
   to:init_plot_tables::@return
 init_plot_tables::@7: scope:[init_plot_tables]  from init_plot_tables::@3
-  (byte*~) init_plot_tables::$13 ← (byte*) init_plot_tables::yoffs + (word/signed word) 320
-  (byte*) init_plot_tables::yoffs ← (byte*~) init_plot_tables::$13
+  (word/signed word~) init_plot_tables::$13 ← (byte/signed byte/word/signed word) 40 * (byte/signed byte/word/signed word) 8
+  (byte*~) init_plot_tables::$14 ← (byte*) init_plot_tables::yoffs + (word/signed word~) init_plot_tables::$13
+  (byte*) init_plot_tables::yoffs ← (byte*~) init_plot_tables::$14
   to:init_plot_tables::@4
 init_plot_tables::@return: scope:[init_plot_tables]  from init_plot_tables::@4
   return 
@@ -919,13 +954,13 @@ main: scope:[main]  from @5
   (byte[]) plot_ylo#18 ← phi( @5/(byte[]) plot_ylo#20 )
   (byte[]) plots_y#10 ← phi( @5/(byte[]) plots_y#11 )
   (byte[]) plots_x#10 ← phi( @5/(byte[]) plots_x#11 )
-  (byte*) SCREEN#5 ← phi( @5/(byte*) SCREEN#6 )
   (byte[]) plot_bit#10 ← phi( @5/(byte[]) plot_bit#12 )
   (byte[]) plot_xhi#10 ← phi( @5/(byte[]) plot_xhi#12 )
   (byte[]) plot_xlo#10 ← phi( @5/(byte[]) plot_xlo#12 )
   (byte*) RASTER#6 ← phi( @5/(byte*) RASTER#8 )
-  (byte*) BITMAP#6 ← phi( @5/(byte*) BITMAP#7 )
   (byte*) D018#1 ← phi( @5/(byte*) D018#2 )
+  (byte*) BITMAP#1 ← phi( @5/(byte*) BITMAP#5 )
+  (byte*) SCREEN#1 ← phi( @5/(byte*) SCREEN#4 )
   (byte*) D011#1 ← phi( @5/(byte*) D011#2 )
   (byte) RSEL#1 ← phi( @5/(byte) RSEL#2 )
   (byte) DEN#1 ← phi( @5/(byte) DEN#2 )
@@ -938,7 +973,13 @@ main: scope:[main]  from @5
   (byte~) main::$1 ← (byte~) main::$0 | (byte) RSEL#1
   (byte~) main::$2 ← (byte~) main::$1 | (byte/signed byte/word/signed word) 3
   *((byte*) D011#1) ← (byte~) main::$2
-  *((byte*) D018#1) ← (byte/signed byte/word/signed word) 24
+  (word~) main::$3 ← ((word)) (byte*) SCREEN#1
+  (word~) main::$4 ← (word~) main::$3 / (byte/signed byte/word/signed word) 64
+  (word~) main::$5 ← ((word)) (byte*) BITMAP#1
+  (word~) main::$6 ← (word~) main::$5 / (word/signed word) 1024
+  (word~) main::$7 ← (word~) main::$4 | (word~) main::$6
+  (byte~) main::$8 ← ((byte)) (word~) main::$7
+  *((byte*) D018#1) ← (byte~) main::$8
   call init_screen param-assignment
   to:main::@5
 main::@5: scope:[main]  from main
@@ -950,7 +991,7 @@ main::@5: scope:[main]  from main
   (byte*) BGCOL#9 ← phi( main/(byte*) BGCOL#1 )
   (byte[]) plot_bit#8 ← phi( main/(byte[]) plot_bit#10 )
   (byte[]) plot_xhi#8 ← phi( main/(byte[]) plot_xhi#10 )
-  (byte*) BITMAP#8 ← phi( main/(byte*) BITMAP#6 )
+  (byte*) BITMAP#8 ← phi( main/(byte*) BITMAP#1 )
   (byte[]) plot_xlo#8 ← phi( main/(byte[]) plot_xlo#10 )
   (byte*) RASTER#4 ← phi( main/(byte*) RASTER#6 )
   call init_plot_tables param-assignment
@@ -990,8 +1031,8 @@ main::@2: scope:[main]  from main::@1 main::@2 main::@6
   (byte[]) plots_x#5 ← phi( main::@1/(byte[]) plots_x#6 main::@2/(byte[]) plots_x#5 main::@6/(byte[]) plots_x#7 )
   (byte*) BGCOL#5 ← phi( main::@1/(byte*) BGCOL#6 main::@2/(byte*) BGCOL#5 main::@6/(byte*) BGCOL#7 )
   (byte*) RASTER#1 ← phi( main::@1/(byte*) RASTER#2 main::@2/(byte*) RASTER#1 main::@6/(byte*) RASTER#3 )
-  (boolean~) main::$5 ← *((byte*) RASTER#1) != (byte/word/signed word) 255
-  if((boolean~) main::$5) goto main::@2
+  (boolean~) main::$11 ← *((byte*) RASTER#1) != (byte/word/signed word) 255
+  if((boolean~) main::$11) goto main::@2
   to:main::@3
 main::@3: scope:[main]  from main::@2
   (byte[]) plot_bit#11 ← phi( main::@2/(byte[]) plot_bit#13 )
@@ -1025,10 +1066,10 @@ main::@return: scope:[main]  from main::@7
   return 
   to:@return
 @1: scope:[]  from @begin
-  (byte*) SCREEN#8 ← phi( @begin/(byte*) SCREEN#0 )
   (byte*) RASTER#10 ← phi( @begin/(byte*) RASTER#0 )
-  (byte*) BITMAP#11 ← phi( @begin/(byte*) BITMAP#0 )
   (byte*) D018#4 ← phi( @begin/(byte*) D018#0 )
+  (byte*) BITMAP#11 ← phi( @begin/(byte*) BITMAP#0 )
+  (byte*) SCREEN#8 ← phi( @begin/(byte*) SCREEN#0 )
   (byte*) D011#4 ← phi( @begin/(byte*) D011#0 )
   (byte) RSEL#4 ← phi( @begin/(byte) RSEL#0 )
   (byte) DEN#4 ← phi( @begin/(byte) DEN#0 )
@@ -1087,10 +1128,10 @@ plots::@return: scope:[plots]  from plots::@3
   (byte) plots_cnt#12 ← phi( @1/(byte) plots_cnt#0 )
   (byte[]) plots_y#12 ← phi( @1/(byte[]) plots_y#0 )
   (byte[]) plots_x#12 ← phi( @1/(byte[]) plots_x#0 )
-  (byte*) SCREEN#7 ← phi( @1/(byte*) SCREEN#8 )
   (byte*) RASTER#9 ← phi( @1/(byte*) RASTER#10 )
-  (byte*) BITMAP#10 ← phi( @1/(byte*) BITMAP#11 )
   (byte*) D018#3 ← phi( @1/(byte*) D018#4 )
+  (byte*) BITMAP#10 ← phi( @1/(byte*) BITMAP#11 )
+  (byte*) SCREEN#7 ← phi( @1/(byte*) SCREEN#8 )
   (byte*) D011#3 ← phi( @1/(byte*) D011#4 )
   (byte) RSEL#3 ← phi( @1/(byte) RSEL#4 )
   (byte) DEN#3 ← phi( @1/(byte) DEN#4 )
@@ -1135,7 +1176,7 @@ init_plot_tables: scope:[init_plot_tables]  from main::@5
   (byte[]) plot_ylo#14 ← phi( main::@5/(byte[]) plot_ylo#17 )
   (byte[]) plot_bit#4 ← phi( main::@5/(byte[]) plot_bit#8 )
   (byte[]) plot_xhi#4 ← phi( main::@5/(byte[]) plot_xhi#8 )
-  (byte*) BITMAP#4 ← phi( main::@5/(byte*) BITMAP#8 )
+  (byte*) BITMAP#6 ← phi( main::@5/(byte*) BITMAP#8 )
   (byte[]) plot_xlo#4 ← phi( main::@5/(byte[]) plot_xlo#8 )
   (byte) init_plot_tables::bits#0 ← (byte/word/signed word) 128
   (byte) init_plot_tables::x#0 ← (byte/signed byte/word/signed word) 0
@@ -1146,12 +1187,12 @@ init_plot_tables::@1: scope:[init_plot_tables]  from init_plot_tables init_plot_
   (byte[]) plot_bit#2 ← phi( init_plot_tables/(byte[]) plot_bit#4 init_plot_tables::@2/(byte[]) plot_bit#5 )
   (byte) init_plot_tables::bits#3 ← phi( init_plot_tables/(byte) init_plot_tables::bits#0 init_plot_tables::@2/(byte) init_plot_tables::bits#4 )
   (byte[]) plot_xhi#2 ← phi( init_plot_tables/(byte[]) plot_xhi#4 init_plot_tables::@2/(byte[]) plot_xhi#5 )
-  (byte*) BITMAP#1 ← phi( init_plot_tables/(byte*) BITMAP#4 init_plot_tables::@2/(byte*) BITMAP#5 )
+  (byte*) BITMAP#2 ← phi( init_plot_tables/(byte*) BITMAP#6 init_plot_tables::@2/(byte*) BITMAP#7 )
   (byte[]) plot_xlo#2 ← phi( init_plot_tables/(byte[]) plot_xlo#4 init_plot_tables::@2/(byte[]) plot_xlo#5 )
   (byte) init_plot_tables::x#2 ← phi( init_plot_tables/(byte) init_plot_tables::x#0 init_plot_tables::@2/(byte) init_plot_tables::x#1 )
   (byte~) init_plot_tables::$0 ← (byte) init_plot_tables::x#2 & (byte/word/signed word) 248
   *((byte[]) plot_xlo#2 + (byte) init_plot_tables::x#2) ← (byte~) init_plot_tables::$0
-  (byte~) init_plot_tables::$1 ← > (byte*) BITMAP#1
+  (byte~) init_plot_tables::$1 ← > (byte*) BITMAP#2
   *((byte[]) plot_xhi#2 + (byte) init_plot_tables::x#2) ← (byte~) init_plot_tables::$1
   *((byte[]) plot_bit#2 + (byte) init_plot_tables::x#2) ← (byte) init_plot_tables::bits#3
   (byte~) init_plot_tables::$2 ← (byte) init_plot_tables::bits#3 >> (byte/signed byte/word/signed word) 1
@@ -1166,7 +1207,7 @@ init_plot_tables::@2: scope:[init_plot_tables]  from init_plot_tables::@1 init_p
   (byte[]) plot_bit#5 ← phi( init_plot_tables::@1/(byte[]) plot_bit#2 init_plot_tables::@5/(byte[]) plot_bit#9 )
   (byte) init_plot_tables::bits#4 ← phi( init_plot_tables::@1/(byte) init_plot_tables::bits#1 init_plot_tables::@5/(byte) init_plot_tables::bits#2 )
   (byte[]) plot_xhi#5 ← phi( init_plot_tables::@1/(byte[]) plot_xhi#2 init_plot_tables::@5/(byte[]) plot_xhi#9 )
-  (byte*) BITMAP#5 ← phi( init_plot_tables::@1/(byte*) BITMAP#1 init_plot_tables::@5/(byte*) BITMAP#9 )
+  (byte*) BITMAP#7 ← phi( init_plot_tables::@1/(byte*) BITMAP#2 init_plot_tables::@5/(byte*) BITMAP#9 )
   (byte[]) plot_xlo#5 ← phi( init_plot_tables::@1/(byte[]) plot_xlo#2 init_plot_tables::@5/(byte[]) plot_xlo#9 )
   (byte) init_plot_tables::x#3 ← phi( init_plot_tables::@1/(byte) init_plot_tables::x#2 init_plot_tables::@5/(byte) init_plot_tables::x#4 )
   (byte) init_plot_tables::x#1 ← ++ (byte) init_plot_tables::x#3
@@ -1178,7 +1219,7 @@ init_plot_tables::@5: scope:[init_plot_tables]  from init_plot_tables::@1
   (byte[]) plot_ylo#12 ← phi( init_plot_tables::@1/(byte[]) plot_ylo#11 )
   (byte[]) plot_bit#9 ← phi( init_plot_tables::@1/(byte[]) plot_bit#2 )
   (byte[]) plot_xhi#9 ← phi( init_plot_tables::@1/(byte[]) plot_xhi#2 )
-  (byte*) BITMAP#9 ← phi( init_plot_tables::@1/(byte*) BITMAP#1 )
+  (byte*) BITMAP#9 ← phi( init_plot_tables::@1/(byte*) BITMAP#2 )
   (byte[]) plot_xlo#9 ← phi( init_plot_tables::@1/(byte[]) plot_xlo#2 )
   (byte) init_plot_tables::x#4 ← phi( init_plot_tables::@1/(byte) init_plot_tables::x#2 )
   (byte) init_plot_tables::bits#2 ← (byte/word/signed word) 128
@@ -1211,45 +1252,46 @@ init_plot_tables::@4: scope:[init_plot_tables]  from init_plot_tables::@3 init_p
   (byte*) init_plot_tables::yoffs#4 ← phi( init_plot_tables::@3/(byte*) init_plot_tables::yoffs#2 init_plot_tables::@7/(byte*) init_plot_tables::yoffs#1 )
   (byte) init_plot_tables::y#3 ← phi( init_plot_tables::@3/(byte) init_plot_tables::y#2 init_plot_tables::@7/(byte) init_plot_tables::y#4 )
   (byte) init_plot_tables::y#1 ← ++ (byte) init_plot_tables::y#3
-  (boolean~) init_plot_tables::$14 ← (byte) init_plot_tables::y#1 != (byte/signed byte/word/signed word) 0
-  if((boolean~) init_plot_tables::$14) goto init_plot_tables::@3
+  (boolean~) init_plot_tables::$15 ← (byte) init_plot_tables::y#1 != (byte/signed byte/word/signed word) 0
+  if((boolean~) init_plot_tables::$15) goto init_plot_tables::@3
   to:init_plot_tables::@return
 init_plot_tables::@7: scope:[init_plot_tables]  from init_plot_tables::@3
   (byte[]) plot_yhi#9 ← phi( init_plot_tables::@3/(byte[]) plot_yhi#2 )
   (byte[]) plot_ylo#9 ← phi( init_plot_tables::@3/(byte[]) plot_ylo#2 )
   (byte) init_plot_tables::y#4 ← phi( init_plot_tables::@3/(byte) init_plot_tables::y#2 )
   (byte*) init_plot_tables::yoffs#3 ← phi( init_plot_tables::@3/(byte*) init_plot_tables::yoffs#2 )
-  (byte*~) init_plot_tables::$13 ← (byte*) init_plot_tables::yoffs#3 + (word/signed word) 320
-  (byte*) init_plot_tables::yoffs#1 ← (byte*~) init_plot_tables::$13
+  (word/signed word~) init_plot_tables::$13 ← (byte/signed byte/word/signed word) 40 * (byte/signed byte/word/signed word) 8
+  (byte*~) init_plot_tables::$14 ← (byte*) init_plot_tables::yoffs#3 + (word/signed word~) init_plot_tables::$13
+  (byte*) init_plot_tables::yoffs#1 ← (byte*~) init_plot_tables::$14
   to:init_plot_tables::@4
 init_plot_tables::@return: scope:[init_plot_tables]  from init_plot_tables::@4
   return 
   to:@return
 init_screen: scope:[init_screen]  from main
-  (byte*) SCREEN#4 ← phi( main/(byte*) SCREEN#5 )
-  (byte*) BITMAP#2 ← phi( main/(byte*) BITMAP#6 )
-  (byte*) init_screen::b#0 ← (byte*) BITMAP#2
+  (byte*) SCREEN#6 ← phi( main/(byte*) SCREEN#1 )
+  (byte*) BITMAP#3 ← phi( main/(byte*) BITMAP#1 )
+  (byte*) init_screen::b#0 ← (byte*) BITMAP#3
   to:init_screen::@1
 init_screen::@1: scope:[init_screen]  from init_screen init_screen::@1
-  (byte*) SCREEN#3 ← phi( init_screen/(byte*) SCREEN#4 init_screen::@1/(byte*) SCREEN#3 )
-  (byte*) BITMAP#3 ← phi( init_screen/(byte*) BITMAP#2 init_screen::@1/(byte*) BITMAP#3 )
+  (byte*) SCREEN#5 ← phi( init_screen/(byte*) SCREEN#6 init_screen::@1/(byte*) SCREEN#5 )
+  (byte*) BITMAP#4 ← phi( init_screen/(byte*) BITMAP#3 init_screen::@1/(byte*) BITMAP#4 )
   (byte*) init_screen::b#2 ← phi( init_screen/(byte*) init_screen::b#0 init_screen::@1/(byte*) init_screen::b#1 )
   *((byte*) init_screen::b#2) ← (byte/signed byte/word/signed word) 0
   (byte*) init_screen::b#1 ← ++ (byte*) init_screen::b#2
-  (byte*~) init_screen::$0 ← (byte*) BITMAP#3 + (word/signed word) 8192
+  (byte*~) init_screen::$0 ← (byte*) BITMAP#4 + (word/signed word) 8192
   (boolean~) init_screen::$1 ← (byte*) init_screen::b#1 != (byte*~) init_screen::$0
   if((boolean~) init_screen::$1) goto init_screen::@1
   to:init_screen::@3
 init_screen::@3: scope:[init_screen]  from init_screen::@1
-  (byte*) SCREEN#1 ← phi( init_screen::@1/(byte*) SCREEN#3 )
-  (byte*) init_screen::c#0 ← (byte*) SCREEN#1
+  (byte*) SCREEN#2 ← phi( init_screen::@1/(byte*) SCREEN#5 )
+  (byte*) init_screen::c#0 ← (byte*) SCREEN#2
   to:init_screen::@2
 init_screen::@2: scope:[init_screen]  from init_screen::@2 init_screen::@3
-  (byte*) SCREEN#2 ← phi( init_screen::@2/(byte*) SCREEN#2 init_screen::@3/(byte*) SCREEN#1 )
+  (byte*) SCREEN#3 ← phi( init_screen::@2/(byte*) SCREEN#3 init_screen::@3/(byte*) SCREEN#2 )
   (byte*) init_screen::c#2 ← phi( init_screen::@2/(byte*) init_screen::c#1 init_screen::@3/(byte*) init_screen::c#0 )
   *((byte*) init_screen::c#2) ← (byte/signed byte/word/signed word) 20
   (byte*) init_screen::c#1 ← ++ (byte*) init_screen::c#2
-  (byte*~) init_screen::$2 ← (byte*) SCREEN#2 + (word/signed word) 1024
+  (byte*~) init_screen::$2 ← (byte*) SCREEN#3 + (word/signed word) 1024
   (boolean~) init_screen::$3 ← (byte*) init_screen::c#1 != (byte*~) init_screen::$2
   if((boolean~) init_screen::$3) goto init_screen::@2
   to:init_screen::@return
@@ -1262,13 +1304,13 @@ init_screen::@return: scope:[init_screen]  from init_screen::@2
   (byte[]) plot_ylo#20 ← phi( @2/(byte[]) plot_ylo#0 )
   (byte[]) plots_y#11 ← phi( @2/(byte[]) plots_y#12 )
   (byte[]) plots_x#11 ← phi( @2/(byte[]) plots_x#12 )
-  (byte*) SCREEN#6 ← phi( @2/(byte*) SCREEN#7 )
   (byte[]) plot_bit#12 ← phi( @2/(byte[]) plot_bit#0 )
   (byte[]) plot_xhi#12 ← phi( @2/(byte[]) plot_xhi#0 )
   (byte[]) plot_xlo#12 ← phi( @2/(byte[]) plot_xlo#0 )
   (byte*) RASTER#8 ← phi( @2/(byte*) RASTER#9 )
-  (byte*) BITMAP#7 ← phi( @2/(byte*) BITMAP#10 )
   (byte*) D018#2 ← phi( @2/(byte*) D018#3 )
+  (byte*) BITMAP#5 ← phi( @2/(byte*) BITMAP#10 )
+  (byte*) SCREEN#4 ← phi( @2/(byte*) SCREEN#7 )
   (byte*) D011#2 ← phi( @2/(byte*) D011#3 )
   (byte) RSEL#2 ← phi( @2/(byte) RSEL#3 )
   (byte) DEN#2 ← phi( @2/(byte) DEN#3 )
@@ -1300,13 +1342,13 @@ main: scope:[main]  from @5
   (byte[]) plot_ylo#18 ← phi( @5/(byte[]) plot_ylo#20 )
   (byte[]) plots_y#10 ← phi( @5/(byte[]) plots_y#11 )
   (byte[]) plots_x#10 ← phi( @5/(byte[]) plots_x#11 )
-  (byte*) SCREEN#5 ← phi( @5/(byte*) SCREEN#6 )
   (byte[]) plot_bit#10 ← phi( @5/(byte[]) plot_bit#12 )
   (byte[]) plot_xhi#10 ← phi( @5/(byte[]) plot_xhi#12 )
   (byte[]) plot_xlo#10 ← phi( @5/(byte[]) plot_xlo#12 )
   (byte*) RASTER#6 ← phi( @5/(byte*) RASTER#8 )
-  (byte*) BITMAP#6 ← phi( @5/(byte*) BITMAP#7 )
   (byte*) D018#1 ← phi( @5/(byte*) D018#2 )
+  (byte*) BITMAP#1 ← phi( @5/(byte*) BITMAP#5 )
+  (byte*) SCREEN#1 ← phi( @5/(byte*) SCREEN#4 )
   (byte*) D011#1 ← phi( @5/(byte*) D011#2 )
   (byte) RSEL#1 ← phi( @5/(byte) RSEL#2 )
   (byte) DEN#1 ← phi( @5/(byte) DEN#2 )
@@ -1319,7 +1361,13 @@ main: scope:[main]  from @5
   (byte~) main::$1 ← (byte~) main::$0 | (byte) RSEL#1
   (byte~) main::$2 ← (byte~) main::$1 | (byte/signed byte/word/signed word) 3
   *((byte*) D011#1) ← (byte~) main::$2
-  *((byte*) D018#1) ← (byte/signed byte/word/signed word) 24
+  (word~) main::$3 ← ((word)) (byte*) SCREEN#1
+  (word~) main::$4 ← (word~) main::$3 / (byte/signed byte/word/signed word) 64
+  (word~) main::$5 ← ((word)) (byte*) BITMAP#1
+  (word~) main::$6 ← (word~) main::$5 / (word/signed word) 1024
+  (word~) main::$7 ← (word~) main::$4 | (word~) main::$6
+  (byte~) main::$8 ← ((byte)) (word~) main::$7
+  *((byte*) D018#1) ← (byte~) main::$8
   call init_screen param-assignment
   to:main::@5
 main::@5: scope:[main]  from main
@@ -1331,7 +1379,7 @@ main::@5: scope:[main]  from main
   (byte*) BGCOL#9 ← phi( main/(byte*) BGCOL#1 )
   (byte[]) plot_bit#8 ← phi( main/(byte[]) plot_bit#10 )
   (byte[]) plot_xhi#8 ← phi( main/(byte[]) plot_xhi#10 )
-  (byte*) BITMAP#8 ← phi( main/(byte*) BITMAP#6 )
+  (byte*) BITMAP#8 ← phi( main/(byte*) BITMAP#1 )
   (byte[]) plot_xlo#8 ← phi( main/(byte[]) plot_xlo#10 )
   (byte*) RASTER#4 ← phi( main/(byte*) RASTER#6 )
   call init_plot_tables param-assignment
@@ -1371,8 +1419,8 @@ main::@2: scope:[main]  from main::@1 main::@2 main::@6
   (byte[]) plots_x#5 ← phi( main::@1/(byte[]) plots_x#6 main::@2/(byte[]) plots_x#5 main::@6/(byte[]) plots_x#7 )
   (byte*) BGCOL#5 ← phi( main::@1/(byte*) BGCOL#6 main::@2/(byte*) BGCOL#5 main::@6/(byte*) BGCOL#7 )
   (byte*) RASTER#1 ← phi( main::@1/(byte*) RASTER#2 main::@2/(byte*) RASTER#1 main::@6/(byte*) RASTER#3 )
-  (boolean~) main::$5 ← *((byte*) RASTER#1) != (byte/word/signed word) 255
-  if((boolean~) main::$5) goto main::@2
+  (boolean~) main::$11 ← *((byte*) RASTER#1) != (byte/word/signed word) 255
+  if((boolean~) main::$11) goto main::@2
   to:main::@3
 main::@3: scope:[main]  from main::@2
   (byte[]) plot_bit#11 ← phi( main::@2/(byte[]) plot_bit#13 )
@@ -1406,10 +1454,10 @@ main::@return: scope:[main]  from main::@7
   return 
   to:@return
 @1: scope:[]  from @begin
-  (byte*) SCREEN#8 ← phi( @begin/(byte*) SCREEN#0 )
   (byte*) RASTER#10 ← phi( @begin/(byte*) RASTER#0 )
-  (byte*) BITMAP#11 ← phi( @begin/(byte*) BITMAP#0 )
   (byte*) D018#4 ← phi( @begin/(byte*) D018#0 )
+  (byte*) BITMAP#11 ← phi( @begin/(byte*) BITMAP#0 )
+  (byte*) SCREEN#8 ← phi( @begin/(byte*) SCREEN#0 )
   (byte*) D011#4 ← phi( @begin/(byte*) D011#0 )
   (byte) RSEL#4 ← phi( @begin/(byte) RSEL#0 )
   (byte) DEN#4 ← phi( @begin/(byte) DEN#0 )
@@ -1468,10 +1516,10 @@ plots::@return: scope:[plots]  from plots::@3
   (byte) plots_cnt#12 ← phi( @1/(byte) plots_cnt#0 )
   (byte[]) plots_y#12 ← phi( @1/(byte[]) plots_y#0 )
   (byte[]) plots_x#12 ← phi( @1/(byte[]) plots_x#0 )
-  (byte*) SCREEN#7 ← phi( @1/(byte*) SCREEN#8 )
   (byte*) RASTER#9 ← phi( @1/(byte*) RASTER#10 )
-  (byte*) BITMAP#10 ← phi( @1/(byte*) BITMAP#11 )
   (byte*) D018#3 ← phi( @1/(byte*) D018#4 )
+  (byte*) BITMAP#10 ← phi( @1/(byte*) BITMAP#11 )
+  (byte*) SCREEN#7 ← phi( @1/(byte*) SCREEN#8 )
   (byte*) D011#3 ← phi( @1/(byte*) D011#4 )
   (byte) RSEL#3 ← phi( @1/(byte) RSEL#4 )
   (byte) DEN#3 ← phi( @1/(byte) DEN#4 )
@@ -1516,7 +1564,7 @@ init_plot_tables: scope:[init_plot_tables]  from main::@5
   (byte[]) plot_ylo#14 ← phi( main::@5/(byte[]) plot_ylo#17 )
   (byte[]) plot_bit#4 ← phi( main::@5/(byte[]) plot_bit#8 )
   (byte[]) plot_xhi#4 ← phi( main::@5/(byte[]) plot_xhi#8 )
-  (byte*) BITMAP#4 ← phi( main::@5/(byte*) BITMAP#8 )
+  (byte*) BITMAP#6 ← phi( main::@5/(byte*) BITMAP#8 )
   (byte[]) plot_xlo#4 ← phi( main::@5/(byte[]) plot_xlo#8 )
   (byte) init_plot_tables::bits#0 ← (byte/word/signed word) 128
   (byte) init_plot_tables::x#0 ← (byte/signed byte/word/signed word) 0
@@ -1527,12 +1575,12 @@ init_plot_tables::@1: scope:[init_plot_tables]  from init_plot_tables init_plot_
   (byte[]) plot_bit#2 ← phi( init_plot_tables/(byte[]) plot_bit#4 init_plot_tables::@2/(byte[]) plot_bit#5 )
   (byte) init_plot_tables::bits#3 ← phi( init_plot_tables/(byte) init_plot_tables::bits#0 init_plot_tables::@2/(byte) init_plot_tables::bits#4 )
   (byte[]) plot_xhi#2 ← phi( init_plot_tables/(byte[]) plot_xhi#4 init_plot_tables::@2/(byte[]) plot_xhi#5 )
-  (byte*) BITMAP#1 ← phi( init_plot_tables/(byte*) BITMAP#4 init_plot_tables::@2/(byte*) BITMAP#5 )
+  (byte*) BITMAP#2 ← phi( init_plot_tables/(byte*) BITMAP#6 init_plot_tables::@2/(byte*) BITMAP#7 )
   (byte[]) plot_xlo#2 ← phi( init_plot_tables/(byte[]) plot_xlo#4 init_plot_tables::@2/(byte[]) plot_xlo#5 )
   (byte) init_plot_tables::x#2 ← phi( init_plot_tables/(byte) init_plot_tables::x#0 init_plot_tables::@2/(byte) init_plot_tables::x#1 )
   (byte~) init_plot_tables::$0 ← (byte) init_plot_tables::x#2 & (byte/word/signed word) 248
   *((byte[]) plot_xlo#2 + (byte) init_plot_tables::x#2) ← (byte~) init_plot_tables::$0
-  (byte~) init_plot_tables::$1 ← > (byte*) BITMAP#1
+  (byte~) init_plot_tables::$1 ← > (byte*) BITMAP#2
   *((byte[]) plot_xhi#2 + (byte) init_plot_tables::x#2) ← (byte~) init_plot_tables::$1
   *((byte[]) plot_bit#2 + (byte) init_plot_tables::x#2) ← (byte) init_plot_tables::bits#3
   (byte~) init_plot_tables::$2 ← (byte) init_plot_tables::bits#3 >> (byte/signed byte/word/signed word) 1
@@ -1547,7 +1595,7 @@ init_plot_tables::@2: scope:[init_plot_tables]  from init_plot_tables::@1 init_p
   (byte[]) plot_bit#5 ← phi( init_plot_tables::@1/(byte[]) plot_bit#2 init_plot_tables::@5/(byte[]) plot_bit#9 )
   (byte) init_plot_tables::bits#4 ← phi( init_plot_tables::@1/(byte) init_plot_tables::bits#1 init_plot_tables::@5/(byte) init_plot_tables::bits#2 )
   (byte[]) plot_xhi#5 ← phi( init_plot_tables::@1/(byte[]) plot_xhi#2 init_plot_tables::@5/(byte[]) plot_xhi#9 )
-  (byte*) BITMAP#5 ← phi( init_plot_tables::@1/(byte*) BITMAP#1 init_plot_tables::@5/(byte*) BITMAP#9 )
+  (byte*) BITMAP#7 ← phi( init_plot_tables::@1/(byte*) BITMAP#2 init_plot_tables::@5/(byte*) BITMAP#9 )
   (byte[]) plot_xlo#5 ← phi( init_plot_tables::@1/(byte[]) plot_xlo#2 init_plot_tables::@5/(byte[]) plot_xlo#9 )
   (byte) init_plot_tables::x#3 ← phi( init_plot_tables::@1/(byte) init_plot_tables::x#2 init_plot_tables::@5/(byte) init_plot_tables::x#4 )
   (byte) init_plot_tables::x#1 ← ++ (byte) init_plot_tables::x#3
@@ -1559,7 +1607,7 @@ init_plot_tables::@5: scope:[init_plot_tables]  from init_plot_tables::@1
   (byte[]) plot_ylo#12 ← phi( init_plot_tables::@1/(byte[]) plot_ylo#11 )
   (byte[]) plot_bit#9 ← phi( init_plot_tables::@1/(byte[]) plot_bit#2 )
   (byte[]) plot_xhi#9 ← phi( init_plot_tables::@1/(byte[]) plot_xhi#2 )
-  (byte*) BITMAP#9 ← phi( init_plot_tables::@1/(byte*) BITMAP#1 )
+  (byte*) BITMAP#9 ← phi( init_plot_tables::@1/(byte*) BITMAP#2 )
   (byte[]) plot_xlo#9 ← phi( init_plot_tables::@1/(byte[]) plot_xlo#2 )
   (byte) init_plot_tables::x#4 ← phi( init_plot_tables::@1/(byte) init_plot_tables::x#2 )
   (byte) init_plot_tables::bits#2 ← (byte/word/signed word) 128
@@ -1592,45 +1640,46 @@ init_plot_tables::@4: scope:[init_plot_tables]  from init_plot_tables::@3 init_p
   (byte*) init_plot_tables::yoffs#4 ← phi( init_plot_tables::@3/(byte*) init_plot_tables::yoffs#2 init_plot_tables::@7/(byte*) init_plot_tables::yoffs#1 )
   (byte) init_plot_tables::y#3 ← phi( init_plot_tables::@3/(byte) init_plot_tables::y#2 init_plot_tables::@7/(byte) init_plot_tables::y#4 )
   (byte) init_plot_tables::y#1 ← ++ (byte) init_plot_tables::y#3
-  (boolean~) init_plot_tables::$14 ← (byte) init_plot_tables::y#1 != (byte/signed byte/word/signed word) 0
-  if((boolean~) init_plot_tables::$14) goto init_plot_tables::@3
+  (boolean~) init_plot_tables::$15 ← (byte) init_plot_tables::y#1 != (byte/signed byte/word/signed word) 0
+  if((boolean~) init_plot_tables::$15) goto init_plot_tables::@3
   to:init_plot_tables::@return
 init_plot_tables::@7: scope:[init_plot_tables]  from init_plot_tables::@3
   (byte[]) plot_yhi#9 ← phi( init_plot_tables::@3/(byte[]) plot_yhi#2 )
   (byte[]) plot_ylo#9 ← phi( init_plot_tables::@3/(byte[]) plot_ylo#2 )
   (byte) init_plot_tables::y#4 ← phi( init_plot_tables::@3/(byte) init_plot_tables::y#2 )
   (byte*) init_plot_tables::yoffs#3 ← phi( init_plot_tables::@3/(byte*) init_plot_tables::yoffs#2 )
-  (byte*~) init_plot_tables::$13 ← (byte*) init_plot_tables::yoffs#3 + (word/signed word) 320
-  (byte*) init_plot_tables::yoffs#1 ← (byte*~) init_plot_tables::$13
+  (word/signed word~) init_plot_tables::$13 ← (byte/signed byte/word/signed word) 40 * (byte/signed byte/word/signed word) 8
+  (byte*~) init_plot_tables::$14 ← (byte*) init_plot_tables::yoffs#3 + (word/signed word~) init_plot_tables::$13
+  (byte*) init_plot_tables::yoffs#1 ← (byte*~) init_plot_tables::$14
   to:init_plot_tables::@4
 init_plot_tables::@return: scope:[init_plot_tables]  from init_plot_tables::@4
   return 
   to:@return
 init_screen: scope:[init_screen]  from main
-  (byte*) SCREEN#4 ← phi( main/(byte*) SCREEN#5 )
-  (byte*) BITMAP#2 ← phi( main/(byte*) BITMAP#6 )
-  (byte*) init_screen::b#0 ← (byte*) BITMAP#2
+  (byte*) SCREEN#6 ← phi( main/(byte*) SCREEN#1 )
+  (byte*) BITMAP#3 ← phi( main/(byte*) BITMAP#1 )
+  (byte*) init_screen::b#0 ← (byte*) BITMAP#3
   to:init_screen::@1
 init_screen::@1: scope:[init_screen]  from init_screen init_screen::@1
-  (byte*) SCREEN#3 ← phi( init_screen/(byte*) SCREEN#4 init_screen::@1/(byte*) SCREEN#3 )
-  (byte*) BITMAP#3 ← phi( init_screen/(byte*) BITMAP#2 init_screen::@1/(byte*) BITMAP#3 )
+  (byte*) SCREEN#5 ← phi( init_screen/(byte*) SCREEN#6 init_screen::@1/(byte*) SCREEN#5 )
+  (byte*) BITMAP#4 ← phi( init_screen/(byte*) BITMAP#3 init_screen::@1/(byte*) BITMAP#4 )
   (byte*) init_screen::b#2 ← phi( init_screen/(byte*) init_screen::b#0 init_screen::@1/(byte*) init_screen::b#1 )
   *((byte*) init_screen::b#2) ← (byte/signed byte/word/signed word) 0
   (byte*) init_screen::b#1 ← ++ (byte*) init_screen::b#2
-  (byte*~) init_screen::$0 ← (byte*) BITMAP#3 + (word/signed word) 8192
+  (byte*~) init_screen::$0 ← (byte*) BITMAP#4 + (word/signed word) 8192
   (boolean~) init_screen::$1 ← (byte*) init_screen::b#1 != (byte*~) init_screen::$0
   if((boolean~) init_screen::$1) goto init_screen::@1
   to:init_screen::@3
 init_screen::@3: scope:[init_screen]  from init_screen::@1
-  (byte*) SCREEN#1 ← phi( init_screen::@1/(byte*) SCREEN#3 )
-  (byte*) init_screen::c#0 ← (byte*) SCREEN#1
+  (byte*) SCREEN#2 ← phi( init_screen::@1/(byte*) SCREEN#5 )
+  (byte*) init_screen::c#0 ← (byte*) SCREEN#2
   to:init_screen::@2
 init_screen::@2: scope:[init_screen]  from init_screen::@2 init_screen::@3
-  (byte*) SCREEN#2 ← phi( init_screen::@2/(byte*) SCREEN#2 init_screen::@3/(byte*) SCREEN#1 )
+  (byte*) SCREEN#3 ← phi( init_screen::@2/(byte*) SCREEN#3 init_screen::@3/(byte*) SCREEN#2 )
   (byte*) init_screen::c#2 ← phi( init_screen::@2/(byte*) init_screen::c#1 init_screen::@3/(byte*) init_screen::c#0 )
   *((byte*) init_screen::c#2) ← (byte/signed byte/word/signed word) 20
   (byte*) init_screen::c#1 ← ++ (byte*) init_screen::c#2
-  (byte*~) init_screen::$2 ← (byte*) SCREEN#2 + (word/signed word) 1024
+  (byte*~) init_screen::$2 ← (byte*) SCREEN#3 + (word/signed word) 1024
   (boolean~) init_screen::$3 ← (byte*) init_screen::c#1 != (byte*~) init_screen::$2
   if((boolean~) init_screen::$3) goto init_screen::@2
   to:init_screen::@return
@@ -1643,13 +1692,13 @@ init_screen::@return: scope:[init_screen]  from init_screen::@2
   (byte[]) plot_ylo#20 ← phi( @2/(byte[]) plot_ylo#0 )
   (byte[]) plots_y#11 ← phi( @2/(byte[]) plots_y#12 )
   (byte[]) plots_x#11 ← phi( @2/(byte[]) plots_x#12 )
-  (byte*) SCREEN#6 ← phi( @2/(byte*) SCREEN#7 )
   (byte[]) plot_bit#12 ← phi( @2/(byte[]) plot_bit#0 )
   (byte[]) plot_xhi#12 ← phi( @2/(byte[]) plot_xhi#0 )
   (byte[]) plot_xlo#12 ← phi( @2/(byte[]) plot_xlo#0 )
   (byte*) RASTER#8 ← phi( @2/(byte*) RASTER#9 )
-  (byte*) BITMAP#7 ← phi( @2/(byte*) BITMAP#10 )
   (byte*) D018#2 ← phi( @2/(byte*) D018#3 )
+  (byte*) BITMAP#5 ← phi( @2/(byte*) BITMAP#10 )
+  (byte*) SCREEN#4 ← phi( @2/(byte*) SCREEN#7 )
   (byte*) D011#2 ← phi( @2/(byte*) D011#3 )
   (byte) RSEL#2 ← phi( @2/(byte) RSEL#3 )
   (byte) DEN#2 ← phi( @2/(byte) DEN#3 )
@@ -1758,8 +1807,9 @@ INITIAL SSA SYMBOL TABLE
 (byte~) init_plot_tables::$10
 (boolean~) init_plot_tables::$11
 (boolean~) init_plot_tables::$12
-(byte*~) init_plot_tables::$13
-(boolean~) init_plot_tables::$14
+(word/signed word~) init_plot_tables::$13
+(byte*~) init_plot_tables::$14
+(boolean~) init_plot_tables::$15
 (byte~) init_plot_tables::$2
 (boolean~) init_plot_tables::$3
 (boolean~) init_plot_tables::$4
@@ -1820,8 +1870,14 @@ INITIAL SSA SYMBOL TABLE
 (void()) main()
 (byte~) main::$0
 (byte~) main::$1
+(boolean~) main::$11
 (byte~) main::$2
-(boolean~) main::$5
+(word~) main::$3
+(word~) main::$4
+(word~) main::$5
+(word~) main::$6
+(word~) main::$7
+(byte~) main::$8
 (label) main::@1
 (label) main::@2
 (label) main::@3
@@ -2028,13 +2084,13 @@ main: scope:[main]  from @5
   (byte[]) plot_ylo#18 ← phi( @5/(byte[]) plot_ylo#20 )
   (byte[]) plots_y#10 ← phi( @5/(byte[]) plots_y#11 )
   (byte[]) plots_x#10 ← phi( @5/(byte[]) plots_x#11 )
-  (byte*) SCREEN#5 ← phi( @5/(byte*) SCREEN#6 )
   (byte[]) plot_bit#10 ← phi( @5/(byte[]) plot_bit#12 )
   (byte[]) plot_xhi#10 ← phi( @5/(byte[]) plot_xhi#12 )
   (byte[]) plot_xlo#10 ← phi( @5/(byte[]) plot_xlo#12 )
   (byte*) RASTER#6 ← phi( @5/(byte*) RASTER#8 )
-  (byte*) BITMAP#6 ← phi( @5/(byte*) BITMAP#7 )
   (byte*) D018#1 ← phi( @5/(byte*) D018#2 )
+  (byte*) BITMAP#1 ← phi( @5/(byte*) BITMAP#5 )
+  (byte*) SCREEN#1 ← phi( @5/(byte*) SCREEN#4 )
   (byte*) D011#1 ← phi( @5/(byte*) D011#2 )
   (byte) RSEL#1 ← phi( @5/(byte) RSEL#2 )
   (byte) DEN#1 ← phi( @5/(byte) DEN#2 )
@@ -2047,7 +2103,13 @@ main: scope:[main]  from @5
   (byte~) main::$1 ← (byte~) main::$0 | (byte) RSEL#1
   (byte~) main::$2 ← (byte~) main::$1 | (byte/signed byte/word/signed word) 3
   *((byte*) D011#1) ← (byte~) main::$2
-  *((byte*) D018#1) ← (byte/signed byte/word/signed word) 24
+  (word~) main::$3 ← ((word)) (byte*) SCREEN#1
+  (word~) main::$4 ← (word~) main::$3 / (byte/signed byte/word/signed word) 64
+  (word~) main::$5 ← ((word)) (byte*) BITMAP#1
+  (word~) main::$6 ← (word~) main::$5 / (word/signed word) 1024
+  (word~) main::$7 ← (word~) main::$4 | (word~) main::$6
+  (byte~) main::$8 ← ((byte)) (word~) main::$7
+  *((byte*) D018#1) ← (byte~) main::$8
   call init_screen param-assignment
   to:main::@5
 main::@5: scope:[main]  from main
@@ -2059,7 +2121,7 @@ main::@5: scope:[main]  from main
   (byte*) BGCOL#9 ← phi( main/(byte*) BGCOL#1 )
   (byte[]) plot_bit#8 ← phi( main/(byte[]) plot_bit#10 )
   (byte[]) plot_xhi#8 ← phi( main/(byte[]) plot_xhi#10 )
-  (byte*) BITMAP#8 ← phi( main/(byte*) BITMAP#6 )
+  (byte*) BITMAP#8 ← phi( main/(byte*) BITMAP#1 )
   (byte[]) plot_xlo#8 ← phi( main/(byte[]) plot_xlo#10 )
   (byte*) RASTER#4 ← phi( main/(byte*) RASTER#6 )
   call init_plot_tables param-assignment
@@ -2099,8 +2161,8 @@ main::@2: scope:[main]  from main::@1 main::@2 main::@6
   (byte[]) plots_x#5 ← phi( main::@1/(byte[]) plots_x#6 main::@2/(byte[]) plots_x#5 main::@6/(byte[]) plots_x#7 )
   (byte*) BGCOL#5 ← phi( main::@1/(byte*) BGCOL#6 main::@2/(byte*) BGCOL#5 main::@6/(byte*) BGCOL#7 )
   (byte*) RASTER#1 ← phi( main::@1/(byte*) RASTER#2 main::@2/(byte*) RASTER#1 main::@6/(byte*) RASTER#3 )
-  (boolean~) main::$5 ← *((byte*) RASTER#1) != (byte/word/signed word) 255
-  if((boolean~) main::$5) goto main::@2
+  (boolean~) main::$11 ← *((byte*) RASTER#1) != (byte/word/signed word) 255
+  if((boolean~) main::$11) goto main::@2
   to:main::@3
 main::@3: scope:[main]  from main::@2
   (byte[]) plot_bit#11 ← phi( main::@2/(byte[]) plot_bit#13 )
@@ -2134,10 +2196,10 @@ main::@return: scope:[main]  from main::@7
   return 
   to:@return
 @1: scope:[]  from @begin
-  (byte*) SCREEN#8 ← phi( @begin/(byte*) SCREEN#0 )
   (byte*) RASTER#10 ← phi( @begin/(byte*) RASTER#0 )
-  (byte*) BITMAP#11 ← phi( @begin/(byte*) BITMAP#0 )
   (byte*) D018#4 ← phi( @begin/(byte*) D018#0 )
+  (byte*) BITMAP#11 ← phi( @begin/(byte*) BITMAP#0 )
+  (byte*) SCREEN#8 ← phi( @begin/(byte*) SCREEN#0 )
   (byte*) D011#4 ← phi( @begin/(byte*) D011#0 )
   (byte) RSEL#4 ← phi( @begin/(byte) RSEL#0 )
   (byte) DEN#4 ← phi( @begin/(byte) DEN#0 )
@@ -2196,10 +2258,10 @@ plots::@return: scope:[plots]  from plots::@3
   (byte) plots_cnt#12 ← phi( @1/(byte) plots_cnt#0 )
   (byte[]) plots_y#12 ← phi( @1/(byte[]) plots_y#0 )
   (byte[]) plots_x#12 ← phi( @1/(byte[]) plots_x#0 )
-  (byte*) SCREEN#7 ← phi( @1/(byte*) SCREEN#8 )
   (byte*) RASTER#9 ← phi( @1/(byte*) RASTER#10 )
-  (byte*) BITMAP#10 ← phi( @1/(byte*) BITMAP#11 )
   (byte*) D018#3 ← phi( @1/(byte*) D018#4 )
+  (byte*) BITMAP#10 ← phi( @1/(byte*) BITMAP#11 )
+  (byte*) SCREEN#7 ← phi( @1/(byte*) SCREEN#8 )
   (byte*) D011#3 ← phi( @1/(byte*) D011#4 )
   (byte) RSEL#3 ← phi( @1/(byte) RSEL#4 )
   (byte) DEN#3 ← phi( @1/(byte) DEN#4 )
@@ -2244,7 +2306,7 @@ init_plot_tables: scope:[init_plot_tables]  from main::@5
   (byte[]) plot_ylo#14 ← phi( main::@5/(byte[]) plot_ylo#17 )
   (byte[]) plot_bit#4 ← phi( main::@5/(byte[]) plot_bit#8 )
   (byte[]) plot_xhi#4 ← phi( main::@5/(byte[]) plot_xhi#8 )
-  (byte*) BITMAP#4 ← phi( main::@5/(byte*) BITMAP#8 )
+  (byte*) BITMAP#6 ← phi( main::@5/(byte*) BITMAP#8 )
   (byte[]) plot_xlo#4 ← phi( main::@5/(byte[]) plot_xlo#8 )
   (byte) init_plot_tables::bits#0 ← (byte/word/signed word) 128
   (byte) init_plot_tables::x#0 ← (byte/signed byte/word/signed word) 0
@@ -2255,12 +2317,12 @@ init_plot_tables::@1: scope:[init_plot_tables]  from init_plot_tables init_plot_
   (byte[]) plot_bit#2 ← phi( init_plot_tables/(byte[]) plot_bit#4 init_plot_tables::@2/(byte[]) plot_bit#5 )
   (byte) init_plot_tables::bits#3 ← phi( init_plot_tables/(byte) init_plot_tables::bits#0 init_plot_tables::@2/(byte) init_plot_tables::bits#4 )
   (byte[]) plot_xhi#2 ← phi( init_plot_tables/(byte[]) plot_xhi#4 init_plot_tables::@2/(byte[]) plot_xhi#5 )
-  (byte*) BITMAP#1 ← phi( init_plot_tables/(byte*) BITMAP#4 init_plot_tables::@2/(byte*) BITMAP#5 )
+  (byte*) BITMAP#2 ← phi( init_plot_tables/(byte*) BITMAP#6 init_plot_tables::@2/(byte*) BITMAP#7 )
   (byte[]) plot_xlo#2 ← phi( init_plot_tables/(byte[]) plot_xlo#4 init_plot_tables::@2/(byte[]) plot_xlo#5 )
   (byte) init_plot_tables::x#2 ← phi( init_plot_tables/(byte) init_plot_tables::x#0 init_plot_tables::@2/(byte) init_plot_tables::x#1 )
   (byte~) init_plot_tables::$0 ← (byte) init_plot_tables::x#2 & (byte/word/signed word) 248
   *((byte[]) plot_xlo#2 + (byte) init_plot_tables::x#2) ← (byte~) init_plot_tables::$0
-  (byte~) init_plot_tables::$1 ← > (byte*) BITMAP#1
+  (byte~) init_plot_tables::$1 ← > (byte*) BITMAP#2
   *((byte[]) plot_xhi#2 + (byte) init_plot_tables::x#2) ← (byte~) init_plot_tables::$1
   *((byte[]) plot_bit#2 + (byte) init_plot_tables::x#2) ← (byte) init_plot_tables::bits#3
   (byte~) init_plot_tables::$2 ← (byte) init_plot_tables::bits#3 >> (byte/signed byte/word/signed word) 1
@@ -2275,7 +2337,7 @@ init_plot_tables::@2: scope:[init_plot_tables]  from init_plot_tables::@1 init_p
   (byte[]) plot_bit#5 ← phi( init_plot_tables::@1/(byte[]) plot_bit#2 init_plot_tables::@5/(byte[]) plot_bit#9 )
   (byte) init_plot_tables::bits#4 ← phi( init_plot_tables::@1/(byte) init_plot_tables::bits#1 init_plot_tables::@5/(byte) init_plot_tables::bits#2 )
   (byte[]) plot_xhi#5 ← phi( init_plot_tables::@1/(byte[]) plot_xhi#2 init_plot_tables::@5/(byte[]) plot_xhi#9 )
-  (byte*) BITMAP#5 ← phi( init_plot_tables::@1/(byte*) BITMAP#1 init_plot_tables::@5/(byte*) BITMAP#9 )
+  (byte*) BITMAP#7 ← phi( init_plot_tables::@1/(byte*) BITMAP#2 init_plot_tables::@5/(byte*) BITMAP#9 )
   (byte[]) plot_xlo#5 ← phi( init_plot_tables::@1/(byte[]) plot_xlo#2 init_plot_tables::@5/(byte[]) plot_xlo#9 )
   (byte) init_plot_tables::x#3 ← phi( init_plot_tables::@1/(byte) init_plot_tables::x#2 init_plot_tables::@5/(byte) init_plot_tables::x#4 )
   (byte) init_plot_tables::x#1 ← ++ (byte) init_plot_tables::x#3
@@ -2287,7 +2349,7 @@ init_plot_tables::@5: scope:[init_plot_tables]  from init_plot_tables::@1
   (byte[]) plot_ylo#12 ← phi( init_plot_tables::@1/(byte[]) plot_ylo#11 )
   (byte[]) plot_bit#9 ← phi( init_plot_tables::@1/(byte[]) plot_bit#2 )
   (byte[]) plot_xhi#9 ← phi( init_plot_tables::@1/(byte[]) plot_xhi#2 )
-  (byte*) BITMAP#9 ← phi( init_plot_tables::@1/(byte*) BITMAP#1 )
+  (byte*) BITMAP#9 ← phi( init_plot_tables::@1/(byte*) BITMAP#2 )
   (byte[]) plot_xlo#9 ← phi( init_plot_tables::@1/(byte[]) plot_xlo#2 )
   (byte) init_plot_tables::x#4 ← phi( init_plot_tables::@1/(byte) init_plot_tables::x#2 )
   (byte) init_plot_tables::bits#2 ← (byte/word/signed word) 128
@@ -2320,45 +2382,46 @@ init_plot_tables::@4: scope:[init_plot_tables]  from init_plot_tables::@3 init_p
   (byte*) init_plot_tables::yoffs#4 ← phi( init_plot_tables::@3/(byte*) init_plot_tables::yoffs#2 init_plot_tables::@7/(byte*) init_plot_tables::yoffs#1 )
   (byte) init_plot_tables::y#3 ← phi( init_plot_tables::@3/(byte) init_plot_tables::y#2 init_plot_tables::@7/(byte) init_plot_tables::y#4 )
   (byte) init_plot_tables::y#1 ← ++ (byte) init_plot_tables::y#3
-  (boolean~) init_plot_tables::$14 ← (byte) init_plot_tables::y#1 != (byte/signed byte/word/signed word) 0
-  if((boolean~) init_plot_tables::$14) goto init_plot_tables::@3
+  (boolean~) init_plot_tables::$15 ← (byte) init_plot_tables::y#1 != (byte/signed byte/word/signed word) 0
+  if((boolean~) init_plot_tables::$15) goto init_plot_tables::@3
   to:init_plot_tables::@return
 init_plot_tables::@7: scope:[init_plot_tables]  from init_plot_tables::@3
   (byte[]) plot_yhi#9 ← phi( init_plot_tables::@3/(byte[]) plot_yhi#2 )
   (byte[]) plot_ylo#9 ← phi( init_plot_tables::@3/(byte[]) plot_ylo#2 )
   (byte) init_plot_tables::y#4 ← phi( init_plot_tables::@3/(byte) init_plot_tables::y#2 )
   (byte*) init_plot_tables::yoffs#3 ← phi( init_plot_tables::@3/(byte*) init_plot_tables::yoffs#2 )
-  (byte*~) init_plot_tables::$13 ← (byte*) init_plot_tables::yoffs#3 + (word/signed word) 320
-  (byte*) init_plot_tables::yoffs#1 ← (byte*~) init_plot_tables::$13
+  (word/signed word~) init_plot_tables::$13 ← (byte/signed byte/word/signed word) 40 * (byte/signed byte/word/signed word) 8
+  (byte*~) init_plot_tables::$14 ← (byte*) init_plot_tables::yoffs#3 + (word/signed word~) init_plot_tables::$13
+  (byte*) init_plot_tables::yoffs#1 ← (byte*~) init_plot_tables::$14
   to:init_plot_tables::@4
 init_plot_tables::@return: scope:[init_plot_tables]  from init_plot_tables::@4
   return 
   to:@return
 init_screen: scope:[init_screen]  from main
-  (byte*) SCREEN#4 ← phi( main/(byte*) SCREEN#5 )
-  (byte*) BITMAP#2 ← phi( main/(byte*) BITMAP#6 )
-  (byte*) init_screen::b#0 ← (byte*) BITMAP#2
+  (byte*) SCREEN#6 ← phi( main/(byte*) SCREEN#1 )
+  (byte*) BITMAP#3 ← phi( main/(byte*) BITMAP#1 )
+  (byte*) init_screen::b#0 ← (byte*) BITMAP#3
   to:init_screen::@1
 init_screen::@1: scope:[init_screen]  from init_screen init_screen::@1
-  (byte*) SCREEN#3 ← phi( init_screen/(byte*) SCREEN#4 init_screen::@1/(byte*) SCREEN#3 )
-  (byte*) BITMAP#3 ← phi( init_screen/(byte*) BITMAP#2 init_screen::@1/(byte*) BITMAP#3 )
+  (byte*) SCREEN#5 ← phi( init_screen/(byte*) SCREEN#6 init_screen::@1/(byte*) SCREEN#5 )
+  (byte*) BITMAP#4 ← phi( init_screen/(byte*) BITMAP#3 init_screen::@1/(byte*) BITMAP#4 )
   (byte*) init_screen::b#2 ← phi( init_screen/(byte*) init_screen::b#0 init_screen::@1/(byte*) init_screen::b#1 )
   *((byte*) init_screen::b#2) ← (byte/signed byte/word/signed word) 0
   (byte*) init_screen::b#1 ← ++ (byte*) init_screen::b#2
-  (byte*~) init_screen::$0 ← (byte*) BITMAP#3 + (word/signed word) 8192
+  (byte*~) init_screen::$0 ← (byte*) BITMAP#4 + (word/signed word) 8192
   (boolean~) init_screen::$1 ← (byte*) init_screen::b#1 != (byte*~) init_screen::$0
   if((boolean~) init_screen::$1) goto init_screen::@1
   to:init_screen::@3
 init_screen::@3: scope:[init_screen]  from init_screen::@1
-  (byte*) SCREEN#1 ← phi( init_screen::@1/(byte*) SCREEN#3 )
-  (byte*) init_screen::c#0 ← (byte*) SCREEN#1
+  (byte*) SCREEN#2 ← phi( init_screen::@1/(byte*) SCREEN#5 )
+  (byte*) init_screen::c#0 ← (byte*) SCREEN#2
   to:init_screen::@2
 init_screen::@2: scope:[init_screen]  from init_screen::@2 init_screen::@3
-  (byte*) SCREEN#2 ← phi( init_screen::@2/(byte*) SCREEN#2 init_screen::@3/(byte*) SCREEN#1 )
+  (byte*) SCREEN#3 ← phi( init_screen::@2/(byte*) SCREEN#3 init_screen::@3/(byte*) SCREEN#2 )
   (byte*) init_screen::c#2 ← phi( init_screen::@2/(byte*) init_screen::c#1 init_screen::@3/(byte*) init_screen::c#0 )
   *((byte*) init_screen::c#2) ← (byte/signed byte/word/signed word) 20
   (byte*) init_screen::c#1 ← ++ (byte*) init_screen::c#2
-  (byte*~) init_screen::$2 ← (byte*) SCREEN#2 + (word/signed word) 1024
+  (byte*~) init_screen::$2 ← (byte*) SCREEN#3 + (word/signed word) 1024
   (boolean~) init_screen::$3 ← (byte*) init_screen::c#1 != (byte*~) init_screen::$2
   if((boolean~) init_screen::$3) goto init_screen::@2
   to:init_screen::@return
@@ -2371,13 +2434,13 @@ init_screen::@return: scope:[init_screen]  from init_screen::@2
   (byte[]) plot_ylo#20 ← phi( @2/(byte[]) plot_ylo#0 )
   (byte[]) plots_y#11 ← phi( @2/(byte[]) plots_y#12 )
   (byte[]) plots_x#11 ← phi( @2/(byte[]) plots_x#12 )
-  (byte*) SCREEN#6 ← phi( @2/(byte*) SCREEN#7 )
   (byte[]) plot_bit#12 ← phi( @2/(byte[]) plot_bit#0 )
   (byte[]) plot_xhi#12 ← phi( @2/(byte[]) plot_xhi#0 )
   (byte[]) plot_xlo#12 ← phi( @2/(byte[]) plot_xlo#0 )
   (byte*) RASTER#8 ← phi( @2/(byte*) RASTER#9 )
-  (byte*) BITMAP#7 ← phi( @2/(byte*) BITMAP#10 )
   (byte*) D018#2 ← phi( @2/(byte*) D018#3 )
+  (byte*) BITMAP#5 ← phi( @2/(byte*) BITMAP#10 )
+  (byte*) SCREEN#4 ← phi( @2/(byte*) SCREEN#7 )
   (byte*) D011#2 ← phi( @2/(byte*) D011#3 )
   (byte) RSEL#2 ← phi( @2/(byte) RSEL#3 )
   (byte) DEN#2 ← phi( @2/(byte) DEN#3 )
@@ -2410,13 +2473,13 @@ main: scope:[main]  from @5
   (byte[]) plot_ylo#18 ← phi( @5/(byte[]) plot_ylo#20 )
   (byte[]) plots_y#10 ← phi( @5/(byte[]) plots_y#11 )
   (byte[]) plots_x#10 ← phi( @5/(byte[]) plots_x#11 )
-  (byte*) SCREEN#5 ← phi( @5/(byte*) SCREEN#6 )
   (byte[]) plot_bit#10 ← phi( @5/(byte[]) plot_bit#12 )
   (byte[]) plot_xhi#10 ← phi( @5/(byte[]) plot_xhi#12 )
   (byte[]) plot_xlo#10 ← phi( @5/(byte[]) plot_xlo#12 )
   (byte*) RASTER#6 ← phi( @5/(byte*) RASTER#8 )
-  (byte*) BITMAP#6 ← phi( @5/(byte*) BITMAP#7 )
   (byte*) D018#1 ← phi( @5/(byte*) D018#2 )
+  (byte*) BITMAP#1 ← phi( @5/(byte*) BITMAP#5 )
+  (byte*) SCREEN#1 ← phi( @5/(byte*) SCREEN#4 )
   (byte*) D011#1 ← phi( @5/(byte*) D011#2 )
   (byte) RSEL#1 ← phi( @5/(byte) RSEL#2 )
   (byte) DEN#1 ← phi( @5/(byte) DEN#2 )
@@ -2429,7 +2492,13 @@ main: scope:[main]  from @5
   (byte~) main::$1 ← (byte~) main::$0 | (byte) RSEL#1
   (byte~) main::$2 ← (byte~) main::$1 | (byte/signed byte/word/signed word) 3
   *((byte*) D011#1) ← (byte~) main::$2
-  *((byte*) D018#1) ← (byte/signed byte/word/signed word) 24
+  (word~) main::$3 ← ((word)) (byte*) SCREEN#1
+  (word~) main::$4 ← (word~) main::$3 / (byte/signed byte/word/signed word) 64
+  (word~) main::$5 ← ((word)) (byte*) BITMAP#1
+  (word~) main::$6 ← (word~) main::$5 / (word/signed word) 1024
+  (word~) main::$7 ← (word~) main::$4 | (word~) main::$6
+  (byte~) main::$8 ← ((byte)) (word~) main::$7
+  *((byte*) D018#1) ← (byte~) main::$8
   call init_screen param-assignment
   to:main::@5
 main::@5: scope:[main]  from main
@@ -2441,7 +2510,7 @@ main::@5: scope:[main]  from main
   (byte*) BGCOL#9 ← phi( main/(byte*) BGCOL#1 )
   (byte[]) plot_bit#8 ← phi( main/(byte[]) plot_bit#10 )
   (byte[]) plot_xhi#8 ← phi( main/(byte[]) plot_xhi#10 )
-  (byte*) BITMAP#8 ← phi( main/(byte*) BITMAP#6 )
+  (byte*) BITMAP#8 ← phi( main/(byte*) BITMAP#1 )
   (byte[]) plot_xlo#8 ← phi( main/(byte[]) plot_xlo#10 )
   (byte*) RASTER#4 ← phi( main/(byte*) RASTER#6 )
   call init_plot_tables param-assignment
@@ -2481,8 +2550,8 @@ main::@2: scope:[main]  from main::@1 main::@2 main::@6
   (byte[]) plots_x#5 ← phi( main::@1/(byte[]) plots_x#6 main::@2/(byte[]) plots_x#5 main::@6/(byte[]) plots_x#7 )
   (byte*) BGCOL#5 ← phi( main::@1/(byte*) BGCOL#6 main::@2/(byte*) BGCOL#5 main::@6/(byte*) BGCOL#7 )
   (byte*) RASTER#1 ← phi( main::@1/(byte*) RASTER#2 main::@2/(byte*) RASTER#1 main::@6/(byte*) RASTER#3 )
-  (boolean~) main::$5 ← *((byte*) RASTER#1) != (byte/word/signed word) 255
-  if((boolean~) main::$5) goto main::@2
+  (boolean~) main::$11 ← *((byte*) RASTER#1) != (byte/word/signed word) 255
+  if((boolean~) main::$11) goto main::@2
   to:main::@3
 main::@3: scope:[main]  from main::@2
   (byte[]) plot_bit#11 ← phi( main::@2/(byte[]) plot_bit#13 )
@@ -2516,10 +2585,10 @@ main::@return: scope:[main]  from main::@7
   return 
   to:@return
 @1: scope:[]  from @begin
-  (byte*) SCREEN#8 ← phi( @begin/(byte*) SCREEN#0 )
   (byte*) RASTER#10 ← phi( @begin/(byte*) RASTER#0 )
-  (byte*) BITMAP#11 ← phi( @begin/(byte*) BITMAP#0 )
   (byte*) D018#4 ← phi( @begin/(byte*) D018#0 )
+  (byte*) BITMAP#11 ← phi( @begin/(byte*) BITMAP#0 )
+  (byte*) SCREEN#8 ← phi( @begin/(byte*) SCREEN#0 )
   (byte*) D011#4 ← phi( @begin/(byte*) D011#0 )
   (byte) RSEL#4 ← phi( @begin/(byte) RSEL#0 )
   (byte) DEN#4 ← phi( @begin/(byte) DEN#0 )
@@ -2578,10 +2647,10 @@ plots::@return: scope:[plots]  from plots::@3
   (byte) plots_cnt#12 ← phi( @1/(byte) plots_cnt#0 )
   (byte[]) plots_y#12 ← phi( @1/(byte[]) plots_y#0 )
   (byte[]) plots_x#12 ← phi( @1/(byte[]) plots_x#0 )
-  (byte*) SCREEN#7 ← phi( @1/(byte*) SCREEN#8 )
   (byte*) RASTER#9 ← phi( @1/(byte*) RASTER#10 )
-  (byte*) BITMAP#10 ← phi( @1/(byte*) BITMAP#11 )
   (byte*) D018#3 ← phi( @1/(byte*) D018#4 )
+  (byte*) BITMAP#10 ← phi( @1/(byte*) BITMAP#11 )
+  (byte*) SCREEN#7 ← phi( @1/(byte*) SCREEN#8 )
   (byte*) D011#3 ← phi( @1/(byte*) D011#4 )
   (byte) RSEL#3 ← phi( @1/(byte) RSEL#4 )
   (byte) DEN#3 ← phi( @1/(byte) DEN#4 )
@@ -2626,7 +2695,7 @@ init_plot_tables: scope:[init_plot_tables]  from main::@5
   (byte[]) plot_ylo#14 ← phi( main::@5/(byte[]) plot_ylo#17 )
   (byte[]) plot_bit#4 ← phi( main::@5/(byte[]) plot_bit#8 )
   (byte[]) plot_xhi#4 ← phi( main::@5/(byte[]) plot_xhi#8 )
-  (byte*) BITMAP#4 ← phi( main::@5/(byte*) BITMAP#8 )
+  (byte*) BITMAP#6 ← phi( main::@5/(byte*) BITMAP#8 )
   (byte[]) plot_xlo#4 ← phi( main::@5/(byte[]) plot_xlo#8 )
   (byte) init_plot_tables::bits#0 ← (byte/word/signed word) 128
   (byte) init_plot_tables::x#0 ← (byte/signed byte/word/signed word) 0
@@ -2637,12 +2706,12 @@ init_plot_tables::@1: scope:[init_plot_tables]  from init_plot_tables init_plot_
   (byte[]) plot_bit#2 ← phi( init_plot_tables/(byte[]) plot_bit#4 init_plot_tables::@2/(byte[]) plot_bit#5 )
   (byte) init_plot_tables::bits#3 ← phi( init_plot_tables/(byte) init_plot_tables::bits#0 init_plot_tables::@2/(byte) init_plot_tables::bits#4 )
   (byte[]) plot_xhi#2 ← phi( init_plot_tables/(byte[]) plot_xhi#4 init_plot_tables::@2/(byte[]) plot_xhi#5 )
-  (byte*) BITMAP#1 ← phi( init_plot_tables/(byte*) BITMAP#4 init_plot_tables::@2/(byte*) BITMAP#5 )
+  (byte*) BITMAP#2 ← phi( init_plot_tables/(byte*) BITMAP#6 init_plot_tables::@2/(byte*) BITMAP#7 )
   (byte[]) plot_xlo#2 ← phi( init_plot_tables/(byte[]) plot_xlo#4 init_plot_tables::@2/(byte[]) plot_xlo#5 )
   (byte) init_plot_tables::x#2 ← phi( init_plot_tables/(byte) init_plot_tables::x#0 init_plot_tables::@2/(byte) init_plot_tables::x#1 )
   (byte~) init_plot_tables::$0 ← (byte) init_plot_tables::x#2 & (byte/word/signed word) 248
   *((byte[]) plot_xlo#2 + (byte) init_plot_tables::x#2) ← (byte~) init_plot_tables::$0
-  (byte~) init_plot_tables::$1 ← > (byte*) BITMAP#1
+  (byte~) init_plot_tables::$1 ← > (byte*) BITMAP#2
   *((byte[]) plot_xhi#2 + (byte) init_plot_tables::x#2) ← (byte~) init_plot_tables::$1
   *((byte[]) plot_bit#2 + (byte) init_plot_tables::x#2) ← (byte) init_plot_tables::bits#3
   (byte~) init_plot_tables::$2 ← (byte) init_plot_tables::bits#3 >> (byte/signed byte/word/signed word) 1
@@ -2656,7 +2725,7 @@ init_plot_tables::@2: scope:[init_plot_tables]  from init_plot_tables::@1 init_p
   (byte[]) plot_bit#5 ← phi( init_plot_tables::@1/(byte[]) plot_bit#2 init_plot_tables::@5/(byte[]) plot_bit#9 )
   (byte) init_plot_tables::bits#4 ← phi( init_plot_tables::@1/(byte) init_plot_tables::bits#1 init_plot_tables::@5/(byte) init_plot_tables::bits#2 )
   (byte[]) plot_xhi#5 ← phi( init_plot_tables::@1/(byte[]) plot_xhi#2 init_plot_tables::@5/(byte[]) plot_xhi#9 )
-  (byte*) BITMAP#5 ← phi( init_plot_tables::@1/(byte*) BITMAP#1 init_plot_tables::@5/(byte*) BITMAP#9 )
+  (byte*) BITMAP#7 ← phi( init_plot_tables::@1/(byte*) BITMAP#2 init_plot_tables::@5/(byte*) BITMAP#9 )
   (byte[]) plot_xlo#5 ← phi( init_plot_tables::@1/(byte[]) plot_xlo#2 init_plot_tables::@5/(byte[]) plot_xlo#9 )
   (byte) init_plot_tables::x#3 ← phi( init_plot_tables::@1/(byte) init_plot_tables::x#2 init_plot_tables::@5/(byte) init_plot_tables::x#4 )
   (byte) init_plot_tables::x#1 ← ++ (byte) init_plot_tables::x#3
@@ -2668,7 +2737,7 @@ init_plot_tables::@5: scope:[init_plot_tables]  from init_plot_tables::@1
   (byte[]) plot_ylo#12 ← phi( init_plot_tables::@1/(byte[]) plot_ylo#11 )
   (byte[]) plot_bit#9 ← phi( init_plot_tables::@1/(byte[]) plot_bit#2 )
   (byte[]) plot_xhi#9 ← phi( init_plot_tables::@1/(byte[]) plot_xhi#2 )
-  (byte*) BITMAP#9 ← phi( init_plot_tables::@1/(byte*) BITMAP#1 )
+  (byte*) BITMAP#9 ← phi( init_plot_tables::@1/(byte*) BITMAP#2 )
   (byte[]) plot_xlo#9 ← phi( init_plot_tables::@1/(byte[]) plot_xlo#2 )
   (byte) init_plot_tables::x#4 ← phi( init_plot_tables::@1/(byte) init_plot_tables::x#2 )
   (byte) init_plot_tables::bits#2 ← (byte/word/signed word) 128
@@ -2700,45 +2769,46 @@ init_plot_tables::@4: scope:[init_plot_tables]  from init_plot_tables::@3 init_p
   (byte*) init_plot_tables::yoffs#4 ← phi( init_plot_tables::@3/(byte*) init_plot_tables::yoffs#2 init_plot_tables::@7/(byte*) init_plot_tables::yoffs#1 )
   (byte) init_plot_tables::y#3 ← phi( init_plot_tables::@3/(byte) init_plot_tables::y#2 init_plot_tables::@7/(byte) init_plot_tables::y#4 )
   (byte) init_plot_tables::y#1 ← ++ (byte) init_plot_tables::y#3
-  (boolean~) init_plot_tables::$14 ← (byte) init_plot_tables::y#1 != (byte/signed byte/word/signed word) 0
-  if((boolean~) init_plot_tables::$14) goto init_plot_tables::@3
+  (boolean~) init_plot_tables::$15 ← (byte) init_plot_tables::y#1 != (byte/signed byte/word/signed word) 0
+  if((boolean~) init_plot_tables::$15) goto init_plot_tables::@3
   to:init_plot_tables::@return
 init_plot_tables::@7: scope:[init_plot_tables]  from init_plot_tables::@3
   (byte[]) plot_yhi#9 ← phi( init_plot_tables::@3/(byte[]) plot_yhi#2 )
   (byte[]) plot_ylo#9 ← phi( init_plot_tables::@3/(byte[]) plot_ylo#2 )
   (byte) init_plot_tables::y#4 ← phi( init_plot_tables::@3/(byte) init_plot_tables::y#2 )
   (byte*) init_plot_tables::yoffs#3 ← phi( init_plot_tables::@3/(byte*) init_plot_tables::yoffs#2 )
-  (byte*~) init_plot_tables::$13 ← (byte*) init_plot_tables::yoffs#3 + (word/signed word) 320
-  (byte*) init_plot_tables::yoffs#1 ← (byte*~) init_plot_tables::$13
+  (word/signed word~) init_plot_tables::$13 ← (byte/signed byte/word/signed word) 40 * (byte/signed byte/word/signed word) 8
+  (byte*~) init_plot_tables::$14 ← (byte*) init_plot_tables::yoffs#3 + (word/signed word~) init_plot_tables::$13
+  (byte*) init_plot_tables::yoffs#1 ← (byte*~) init_plot_tables::$14
   to:init_plot_tables::@4
 init_plot_tables::@return: scope:[init_plot_tables]  from init_plot_tables::@4
   return 
   to:@return
 init_screen: scope:[init_screen]  from main
-  (byte*) SCREEN#4 ← phi( main/(byte*) SCREEN#5 )
-  (byte*) BITMAP#2 ← phi( main/(byte*) BITMAP#6 )
-  (byte*) init_screen::b#0 ← (byte*) BITMAP#2
+  (byte*) SCREEN#6 ← phi( main/(byte*) SCREEN#1 )
+  (byte*) BITMAP#3 ← phi( main/(byte*) BITMAP#1 )
+  (byte*) init_screen::b#0 ← (byte*) BITMAP#3
   to:init_screen::@1
 init_screen::@1: scope:[init_screen]  from init_screen init_screen::@1
-  (byte*) SCREEN#3 ← phi( init_screen/(byte*) SCREEN#4 init_screen::@1/(byte*) SCREEN#3 )
-  (byte*) BITMAP#3 ← phi( init_screen/(byte*) BITMAP#2 init_screen::@1/(byte*) BITMAP#3 )
+  (byte*) SCREEN#5 ← phi( init_screen/(byte*) SCREEN#6 init_screen::@1/(byte*) SCREEN#5 )
+  (byte*) BITMAP#4 ← phi( init_screen/(byte*) BITMAP#3 init_screen::@1/(byte*) BITMAP#4 )
   (byte*) init_screen::b#2 ← phi( init_screen/(byte*) init_screen::b#0 init_screen::@1/(byte*) init_screen::b#1 )
   *((byte*) init_screen::b#2) ← (byte/signed byte/word/signed word) 0
   (byte*) init_screen::b#1 ← ++ (byte*) init_screen::b#2
-  (byte*~) init_screen::$0 ← (byte*) BITMAP#3 + (word/signed word) 8192
+  (byte*~) init_screen::$0 ← (byte*) BITMAP#4 + (word/signed word) 8192
   (boolean~) init_screen::$1 ← (byte*) init_screen::b#1 != (byte*~) init_screen::$0
   if((boolean~) init_screen::$1) goto init_screen::@1
   to:init_screen::@3
 init_screen::@3: scope:[init_screen]  from init_screen::@1
-  (byte*) SCREEN#1 ← phi( init_screen::@1/(byte*) SCREEN#3 )
-  (byte*) init_screen::c#0 ← (byte*) SCREEN#1
+  (byte*) SCREEN#2 ← phi( init_screen::@1/(byte*) SCREEN#5 )
+  (byte*) init_screen::c#0 ← (byte*) SCREEN#2
   to:init_screen::@2
 init_screen::@2: scope:[init_screen]  from init_screen::@2 init_screen::@3
-  (byte*) SCREEN#2 ← phi( init_screen::@2/(byte*) SCREEN#2 init_screen::@3/(byte*) SCREEN#1 )
+  (byte*) SCREEN#3 ← phi( init_screen::@2/(byte*) SCREEN#3 init_screen::@3/(byte*) SCREEN#2 )
   (byte*) init_screen::c#2 ← phi( init_screen::@2/(byte*) init_screen::c#1 init_screen::@3/(byte*) init_screen::c#0 )
   *((byte*) init_screen::c#2) ← (byte/signed byte/word/signed word) 20
   (byte*) init_screen::c#1 ← ++ (byte*) init_screen::c#2
-  (byte*~) init_screen::$2 ← (byte*) SCREEN#2 + (word/signed word) 1024
+  (byte*~) init_screen::$2 ← (byte*) SCREEN#3 + (word/signed word) 1024
   (boolean~) init_screen::$3 ← (byte*) init_screen::c#1 != (byte*~) init_screen::$2
   if((boolean~) init_screen::$3) goto init_screen::@2
   to:init_screen::@return
@@ -2751,13 +2821,13 @@ init_screen::@return: scope:[init_screen]  from init_screen::@2
   (byte[]) plot_ylo#20 ← phi( @2/(byte[]) plot_ylo#0 )
   (byte[]) plots_y#11 ← phi( @2/(byte[]) plots_y#12 )
   (byte[]) plots_x#11 ← phi( @2/(byte[]) plots_x#12 )
-  (byte*) SCREEN#6 ← phi( @2/(byte*) SCREEN#7 )
   (byte[]) plot_bit#12 ← phi( @2/(byte[]) plot_bit#0 )
   (byte[]) plot_xhi#12 ← phi( @2/(byte[]) plot_xhi#0 )
   (byte[]) plot_xlo#12 ← phi( @2/(byte[]) plot_xlo#0 )
   (byte*) RASTER#8 ← phi( @2/(byte*) RASTER#9 )
-  (byte*) BITMAP#7 ← phi( @2/(byte*) BITMAP#10 )
   (byte*) D018#2 ← phi( @2/(byte*) D018#3 )
+  (byte*) BITMAP#5 ← phi( @2/(byte*) BITMAP#10 )
+  (byte*) SCREEN#4 ← phi( @2/(byte*) SCREEN#7 )
   (byte*) D011#2 ← phi( @2/(byte*) D011#3 )
   (byte) RSEL#2 ← phi( @2/(byte) RSEL#3 )
   (byte) DEN#2 ← phi( @2/(byte) DEN#3 )
@@ -2774,13 +2844,13 @@ Not aliassing across scopes: BMM#1 BMM#2
 Not aliassing across scopes: DEN#1 DEN#2
 Not aliassing across scopes: RSEL#1 RSEL#2
 Not aliassing across scopes: D011#1 D011#2
+Not aliassing across scopes: SCREEN#1 SCREEN#4
+Not aliassing across scopes: BITMAP#1 BITMAP#5
 Not aliassing across scopes: D018#1 D018#2
-Not aliassing across scopes: BITMAP#6 BITMAP#7
 Not aliassing across scopes: RASTER#6 RASTER#8
 Not aliassing across scopes: plot_xlo#10 plot_xlo#12
 Not aliassing across scopes: plot_xhi#10 plot_xhi#12
 Not aliassing across scopes: plot_bit#10 plot_bit#12
-Not aliassing across scopes: SCREEN#5 SCREEN#6
 Not aliassing across scopes: plots_x#10 plots_x#11
 Not aliassing across scopes: plots_y#10 plots_y#11
 Not aliassing across scopes: plot_ylo#18 plot_ylo#20
@@ -2804,19 +2874,19 @@ Not aliassing across scopes: plot::y#1 plot::y#0
 Not aliassing across scopes: plot_ylo#1 plot_ylo#3
 Not aliassing across scopes: plot_bit#1 plot_bit#3
 Not aliassing across scopes: plot_xlo#4 plot_xlo#8
-Not aliassing across scopes: BITMAP#4 BITMAP#8
+Not aliassing across scopes: BITMAP#6 BITMAP#8
 Not aliassing across scopes: plot_xhi#4 plot_xhi#8
 Not aliassing across scopes: plot_bit#4 plot_bit#8
 Not aliassing across scopes: plot_ylo#14 plot_ylo#17
 Not aliassing across scopes: plot_yhi#14 plot_yhi#17
-Not aliassing across scopes: BITMAP#2 BITMAP#6
-Not aliassing across scopes: SCREEN#4 SCREEN#5
-Not aliassing across scopes: init_screen::b#0 BITMAP#2
-Not aliassing across scopes: init_screen::c#0 SCREEN#1
-Not aliassing identity: SCREEN#2 SCREEN#2
+Not aliassing across scopes: BITMAP#3 BITMAP#1
+Not aliassing across scopes: SCREEN#6 SCREEN#1
+Not aliassing across scopes: init_screen::b#0 BITMAP#3
+Not aliassing across scopes: init_screen::c#0 SCREEN#2
+Not aliassing identity: SCREEN#3 SCREEN#3
 Alias (byte*) RASTER#3 = (byte*) RASTER#4 (byte*) RASTER#6 
 Alias (byte[]) plot_xlo#10 = (byte[]) plot_xlo#8 (byte[]) plot_xlo#15 
-Alias (byte*) BITMAP#6 = (byte*) BITMAP#8 
+Alias (byte*) BITMAP#1 = (byte*) BITMAP#8 
 Alias (byte[]) plot_xhi#10 = (byte[]) plot_xhi#8 (byte[]) plot_xhi#15 
 Alias (byte[]) plot_bit#10 = (byte[]) plot_bit#8 (byte[]) plot_bit#15 
 Alias (byte*) BGCOL#1 = (byte*) BGCOL#9 (byte*) BGCOL#7 
@@ -2841,10 +2911,10 @@ Alias (byte) BMM#0 = (byte) BMM#4 (byte) BMM#3 (byte) BMM#2
 Alias (byte) DEN#0 = (byte) DEN#4 (byte) DEN#3 (byte) DEN#2 
 Alias (byte) RSEL#0 = (byte) RSEL#4 (byte) RSEL#3 (byte) RSEL#2 
 Alias (byte*) D011#0 = (byte*) D011#4 (byte*) D011#3 (byte*) D011#2 
+Alias (byte*) SCREEN#0 = (byte*) SCREEN#8 (byte*) SCREEN#7 (byte*) SCREEN#4 
+Alias (byte*) BITMAP#0 = (byte*) BITMAP#11 (byte*) BITMAP#10 (byte*) BITMAP#5 
 Alias (byte*) D018#0 = (byte*) D018#4 (byte*) D018#3 (byte*) D018#2 
-Alias (byte*) BITMAP#0 = (byte*) BITMAP#11 (byte*) BITMAP#10 (byte*) BITMAP#7 
 Alias (byte*) RASTER#0 = (byte*) RASTER#10 (byte*) RASTER#9 (byte*) RASTER#8 
-Alias (byte*) SCREEN#0 = (byte*) SCREEN#8 (byte*) SCREEN#7 (byte*) SCREEN#6 
 Alias (byte) plots::i#2 = (byte) plots::i#3 
 Alias (byte) plots_cnt#1 = (byte) plots_cnt#2 
 Alias (byte[]) plots_x#1 = (byte[]) plots_x#3 
@@ -2861,7 +2931,7 @@ Alias (byte*) plot::plotter#0 = (byte*~) plot::$4
 Alias (byte) init_plot_tables::bits#1 = (byte~) init_plot_tables::$2 
 Alias (byte) init_plot_tables::x#2 = (byte) init_plot_tables::x#4 
 Alias (byte[]) plot_xlo#2 = (byte[]) plot_xlo#9 
-Alias (byte*) BITMAP#1 = (byte*) BITMAP#9 
+Alias (byte*) BITMAP#2 = (byte*) BITMAP#9 
 Alias (byte[]) plot_xhi#2 = (byte[]) plot_xhi#9 
 Alias (byte[]) plot_bit#2 = (byte[]) plot_bit#9 
 Alias (byte[]) plot_ylo#11 = (byte[]) plot_ylo#12 
@@ -2872,8 +2942,8 @@ Alias (byte*) init_plot_tables::yoffs#2 = (byte*) init_plot_tables::yoffs#3
 Alias (byte) init_plot_tables::y#2 = (byte) init_plot_tables::y#4 
 Alias (byte[]) plot_ylo#2 = (byte[]) plot_ylo#9 
 Alias (byte[]) plot_yhi#2 = (byte[]) plot_yhi#9 
-Alias (byte*) init_plot_tables::yoffs#1 = (byte*~) init_plot_tables::$13 
-Alias (byte*) SCREEN#1 = (byte*) SCREEN#3 
+Alias (byte*) init_plot_tables::yoffs#1 = (byte*~) init_plot_tables::$14 
+Alias (byte*) SCREEN#2 = (byte*) SCREEN#5 
 Alias (byte[]) plot_xlo#0 = (byte[]) plot_xlo#12 
 Alias (byte[]) plot_xhi#0 = (byte[]) plot_xhi#12 
 Alias (byte[]) plot_bit#0 = (byte[]) plot_bit#12 
@@ -2899,13 +2969,13 @@ main: scope:[main]  from @5
   (byte[]) plot_ylo#16 ← phi( @5/(byte[]) plot_ylo#0 )
   (byte[]) plots_y#10 ← phi( @5/(byte[]) plots_y#0 )
   (byte[]) plots_x#10 ← phi( @5/(byte[]) plots_x#0 )
-  (byte*) SCREEN#5 ← phi( @5/(byte*) SCREEN#0 )
   (byte[]) plot_bit#10 ← phi( @5/(byte[]) plot_bit#0 )
   (byte[]) plot_xhi#10 ← phi( @5/(byte[]) plot_xhi#0 )
   (byte[]) plot_xlo#10 ← phi( @5/(byte[]) plot_xlo#0 )
   (byte*) RASTER#3 ← phi( @5/(byte*) RASTER#0 )
-  (byte*) BITMAP#6 ← phi( @5/(byte*) BITMAP#0 )
   (byte*) D018#1 ← phi( @5/(byte*) D018#0 )
+  (byte*) BITMAP#1 ← phi( @5/(byte*) BITMAP#0 )
+  (byte*) SCREEN#1 ← phi( @5/(byte*) SCREEN#0 )
   (byte*) D011#1 ← phi( @5/(byte*) D011#0 )
   (byte) RSEL#1 ← phi( @5/(byte) RSEL#0 )
   (byte) DEN#1 ← phi( @5/(byte) DEN#0 )
@@ -2918,7 +2988,13 @@ main: scope:[main]  from @5
   (byte~) main::$1 ← (byte~) main::$0 | (byte) RSEL#1
   (byte~) main::$2 ← (byte~) main::$1 | (byte/signed byte/word/signed word) 3
   *((byte*) D011#1) ← (byte~) main::$2
-  *((byte*) D018#1) ← (byte/signed byte/word/signed word) 24
+  (word~) main::$3 ← ((word)) (byte*) SCREEN#1
+  (word~) main::$4 ← (word~) main::$3 / (byte/signed byte/word/signed word) 64
+  (word~) main::$5 ← ((word)) (byte*) BITMAP#1
+  (word~) main::$6 ← (word~) main::$5 / (word/signed word) 1024
+  (word~) main::$7 ← (word~) main::$4 | (word~) main::$6
+  (byte~) main::$8 ← ((byte)) (word~) main::$7
+  *((byte*) D018#1) ← (byte~) main::$8
   call init_screen param-assignment
   to:main::@5
 main::@5: scope:[main]  from main
@@ -2939,8 +3015,8 @@ main::@2: scope:[main]  from main::@1 main::@2 main::@6
   (byte[]) plots_x#4 ← phi( main::@1/(byte[]) plots_x#4 main::@2/(byte[]) plots_x#4 main::@6/(byte[]) plots_x#10 )
   (byte*) BGCOL#2 ← phi( main::@1/(byte*) BGCOL#2 main::@2/(byte*) BGCOL#2 main::@6/(byte*) BGCOL#1 )
   (byte*) RASTER#1 ← phi( main::@1/(byte*) RASTER#1 main::@2/(byte*) RASTER#1 main::@6/(byte*) RASTER#3 )
-  (boolean~) main::$5 ← *((byte*) RASTER#1) != (byte/word/signed word) 255
-  if((boolean~) main::$5) goto main::@2
+  (boolean~) main::$11 ← *((byte*) RASTER#1) != (byte/word/signed word) 255
+  if((boolean~) main::$11) goto main::@2
   to:main::@3
 main::@3: scope:[main]  from main::@2
   *((byte*) BGCOL#2) ← ++ *((byte*) BGCOL#2)
@@ -3031,7 +3107,7 @@ init_plot_tables: scope:[init_plot_tables]  from main::@5
   (byte[]) plot_ylo#14 ← phi( main::@5/(byte[]) plot_ylo#16 )
   (byte[]) plot_bit#4 ← phi( main::@5/(byte[]) plot_bit#10 )
   (byte[]) plot_xhi#4 ← phi( main::@5/(byte[]) plot_xhi#10 )
-  (byte*) BITMAP#4 ← phi( main::@5/(byte*) BITMAP#6 )
+  (byte*) BITMAP#6 ← phi( main::@5/(byte*) BITMAP#1 )
   (byte[]) plot_xlo#4 ← phi( main::@5/(byte[]) plot_xlo#10 )
   (byte) init_plot_tables::bits#0 ← (byte/word/signed word) 128
   (byte) init_plot_tables::x#0 ← (byte/signed byte/word/signed word) 0
@@ -3042,12 +3118,12 @@ init_plot_tables::@1: scope:[init_plot_tables]  from init_plot_tables init_plot_
   (byte[]) plot_bit#2 ← phi( init_plot_tables/(byte[]) plot_bit#4 init_plot_tables::@2/(byte[]) plot_bit#5 )
   (byte) init_plot_tables::bits#3 ← phi( init_plot_tables/(byte) init_plot_tables::bits#0 init_plot_tables::@2/(byte) init_plot_tables::bits#4 )
   (byte[]) plot_xhi#2 ← phi( init_plot_tables/(byte[]) plot_xhi#4 init_plot_tables::@2/(byte[]) plot_xhi#5 )
-  (byte*) BITMAP#1 ← phi( init_plot_tables/(byte*) BITMAP#4 init_plot_tables::@2/(byte*) BITMAP#5 )
+  (byte*) BITMAP#2 ← phi( init_plot_tables/(byte*) BITMAP#6 init_plot_tables::@2/(byte*) BITMAP#7 )
   (byte[]) plot_xlo#2 ← phi( init_plot_tables/(byte[]) plot_xlo#4 init_plot_tables::@2/(byte[]) plot_xlo#5 )
   (byte) init_plot_tables::x#2 ← phi( init_plot_tables/(byte) init_plot_tables::x#0 init_plot_tables::@2/(byte) init_plot_tables::x#1 )
   (byte~) init_plot_tables::$0 ← (byte) init_plot_tables::x#2 & (byte/word/signed word) 248
   *((byte[]) plot_xlo#2 + (byte) init_plot_tables::x#2) ← (byte~) init_plot_tables::$0
-  (byte~) init_plot_tables::$1 ← > (byte*) BITMAP#1
+  (byte~) init_plot_tables::$1 ← > (byte*) BITMAP#2
   *((byte[]) plot_xhi#2 + (byte) init_plot_tables::x#2) ← (byte~) init_plot_tables::$1
   *((byte[]) plot_bit#2 + (byte) init_plot_tables::x#2) ← (byte) init_plot_tables::bits#3
   (byte) init_plot_tables::bits#1 ← (byte) init_plot_tables::bits#3 >> (byte/signed byte/word/signed word) 1
@@ -3060,7 +3136,7 @@ init_plot_tables::@2: scope:[init_plot_tables]  from init_plot_tables::@1 init_p
   (byte[]) plot_bit#5 ← phi( init_plot_tables::@1/(byte[]) plot_bit#2 init_plot_tables::@5/(byte[]) plot_bit#2 )
   (byte) init_plot_tables::bits#4 ← phi( init_plot_tables::@1/(byte) init_plot_tables::bits#1 init_plot_tables::@5/(byte) init_plot_tables::bits#2 )
   (byte[]) plot_xhi#5 ← phi( init_plot_tables::@1/(byte[]) plot_xhi#2 init_plot_tables::@5/(byte[]) plot_xhi#2 )
-  (byte*) BITMAP#5 ← phi( init_plot_tables::@1/(byte*) BITMAP#1 init_plot_tables::@5/(byte*) BITMAP#1 )
+  (byte*) BITMAP#7 ← phi( init_plot_tables::@1/(byte*) BITMAP#2 init_plot_tables::@5/(byte*) BITMAP#2 )
   (byte[]) plot_xlo#5 ← phi( init_plot_tables::@1/(byte[]) plot_xlo#2 init_plot_tables::@5/(byte[]) plot_xlo#2 )
   (byte) init_plot_tables::x#3 ← phi( init_plot_tables::@1/(byte) init_plot_tables::x#2 init_plot_tables::@5/(byte) init_plot_tables::x#2 )
   (byte) init_plot_tables::x#1 ← ++ (byte) init_plot_tables::x#3
@@ -3095,39 +3171,40 @@ init_plot_tables::@4: scope:[init_plot_tables]  from init_plot_tables::@3 init_p
   (byte*) init_plot_tables::yoffs#4 ← phi( init_plot_tables::@3/(byte*) init_plot_tables::yoffs#2 init_plot_tables::@7/(byte*) init_plot_tables::yoffs#1 )
   (byte) init_plot_tables::y#3 ← phi( init_plot_tables::@3/(byte) init_plot_tables::y#2 init_plot_tables::@7/(byte) init_plot_tables::y#2 )
   (byte) init_plot_tables::y#1 ← ++ (byte) init_plot_tables::y#3
-  (boolean~) init_plot_tables::$14 ← (byte) init_plot_tables::y#1 != (byte/signed byte/word/signed word) 0
-  if((boolean~) init_plot_tables::$14) goto init_plot_tables::@3
+  (boolean~) init_plot_tables::$15 ← (byte) init_plot_tables::y#1 != (byte/signed byte/word/signed word) 0
+  if((boolean~) init_plot_tables::$15) goto init_plot_tables::@3
   to:init_plot_tables::@return
 init_plot_tables::@7: scope:[init_plot_tables]  from init_plot_tables::@3
-  (byte*) init_plot_tables::yoffs#1 ← (byte*) init_plot_tables::yoffs#2 + (word/signed word) 320
+  (word/signed word~) init_plot_tables::$13 ← (byte/signed byte/word/signed word) 40 * (byte/signed byte/word/signed word) 8
+  (byte*) init_plot_tables::yoffs#1 ← (byte*) init_plot_tables::yoffs#2 + (word/signed word~) init_plot_tables::$13
   to:init_plot_tables::@4
 init_plot_tables::@return: scope:[init_plot_tables]  from init_plot_tables::@4
   return 
   to:@return
 init_screen: scope:[init_screen]  from main
-  (byte*) SCREEN#4 ← phi( main/(byte*) SCREEN#5 )
-  (byte*) BITMAP#2 ← phi( main/(byte*) BITMAP#6 )
-  (byte*) init_screen::b#0 ← (byte*) BITMAP#2
+  (byte*) SCREEN#6 ← phi( main/(byte*) SCREEN#1 )
+  (byte*) BITMAP#3 ← phi( main/(byte*) BITMAP#1 )
+  (byte*) init_screen::b#0 ← (byte*) BITMAP#3
   to:init_screen::@1
 init_screen::@1: scope:[init_screen]  from init_screen init_screen::@1
-  (byte*) SCREEN#1 ← phi( init_screen/(byte*) SCREEN#4 init_screen::@1/(byte*) SCREEN#1 )
-  (byte*) BITMAP#3 ← phi( init_screen/(byte*) BITMAP#2 init_screen::@1/(byte*) BITMAP#3 )
+  (byte*) SCREEN#2 ← phi( init_screen/(byte*) SCREEN#6 init_screen::@1/(byte*) SCREEN#2 )
+  (byte*) BITMAP#4 ← phi( init_screen/(byte*) BITMAP#3 init_screen::@1/(byte*) BITMAP#4 )
   (byte*) init_screen::b#2 ← phi( init_screen/(byte*) init_screen::b#0 init_screen::@1/(byte*) init_screen::b#1 )
   *((byte*) init_screen::b#2) ← (byte/signed byte/word/signed word) 0
   (byte*) init_screen::b#1 ← ++ (byte*) init_screen::b#2
-  (byte*~) init_screen::$0 ← (byte*) BITMAP#3 + (word/signed word) 8192
+  (byte*~) init_screen::$0 ← (byte*) BITMAP#4 + (word/signed word) 8192
   (boolean~) init_screen::$1 ← (byte*) init_screen::b#1 != (byte*~) init_screen::$0
   if((boolean~) init_screen::$1) goto init_screen::@1
   to:init_screen::@3
 init_screen::@3: scope:[init_screen]  from init_screen::@1
-  (byte*) init_screen::c#0 ← (byte*) SCREEN#1
+  (byte*) init_screen::c#0 ← (byte*) SCREEN#2
   to:init_screen::@2
 init_screen::@2: scope:[init_screen]  from init_screen::@2 init_screen::@3
-  (byte*) SCREEN#2 ← phi( init_screen::@2/(byte*) SCREEN#2 init_screen::@3/(byte*) SCREEN#1 )
+  (byte*) SCREEN#3 ← phi( init_screen::@2/(byte*) SCREEN#3 init_screen::@3/(byte*) SCREEN#2 )
   (byte*) init_screen::c#2 ← phi( init_screen::@2/(byte*) init_screen::c#1 init_screen::@3/(byte*) init_screen::c#0 )
   *((byte*) init_screen::c#2) ← (byte/signed byte/word/signed word) 20
   (byte*) init_screen::c#1 ← ++ (byte*) init_screen::c#2
-  (byte*~) init_screen::$2 ← (byte*) SCREEN#2 + (word/signed word) 1024
+  (byte*~) init_screen::$2 ← (byte*) SCREEN#3 + (word/signed word) 1024
   (boolean~) init_screen::$3 ← (byte*) init_screen::c#1 != (byte*~) init_screen::$2
   if((boolean~) init_screen::$3) goto init_screen::@2
   to:init_screen::@return
@@ -3145,13 +3222,13 @@ Not aliassing across scopes: BMM#1 BMM#0
 Not aliassing across scopes: DEN#1 DEN#0
 Not aliassing across scopes: RSEL#1 RSEL#0
 Not aliassing across scopes: D011#1 D011#0
+Not aliassing across scopes: SCREEN#1 SCREEN#0
+Not aliassing across scopes: BITMAP#1 BITMAP#0
 Not aliassing across scopes: D018#1 D018#0
-Not aliassing across scopes: BITMAP#6 BITMAP#0
 Not aliassing across scopes: RASTER#3 RASTER#0
 Not aliassing across scopes: plot_xlo#10 plot_xlo#0
 Not aliassing across scopes: plot_xhi#10 plot_xhi#0
 Not aliassing across scopes: plot_bit#10 plot_bit#0
-Not aliassing across scopes: SCREEN#5 SCREEN#0
 Not aliassing across scopes: plots_x#10 plots_x#0
 Not aliassing across scopes: plots_y#10 plots_y#0
 Not aliassing across scopes: plot_ylo#16 plot_ylo#0
@@ -3185,19 +3262,19 @@ Not aliassing across scopes: plot::y#1 plot::y#0
 Not aliassing across scopes: plot_ylo#1 plot_ylo#3
 Not aliassing across scopes: plot_bit#1 plot_bit#3
 Not aliassing across scopes: plot_xlo#4 plot_xlo#10
-Not aliassing across scopes: BITMAP#4 BITMAP#6
+Not aliassing across scopes: BITMAP#6 BITMAP#1
 Not aliassing across scopes: plot_xhi#4 plot_xhi#10
 Not aliassing across scopes: plot_bit#4 plot_bit#10
 Not aliassing across scopes: plot_ylo#14 plot_ylo#16
 Not aliassing across scopes: plot_yhi#14 plot_yhi#16
-Not aliassing across scopes: BITMAP#2 BITMAP#6
-Not aliassing across scopes: SCREEN#4 SCREEN#5
-Not aliassing across scopes: init_screen::b#0 BITMAP#2
-Not aliassing across scopes: init_screen::c#0 SCREEN#1
-Not aliassing identity: SCREEN#2 SCREEN#2
+Not aliassing across scopes: BITMAP#3 BITMAP#1
+Not aliassing across scopes: SCREEN#6 SCREEN#1
+Not aliassing across scopes: init_screen::b#0 BITMAP#3
+Not aliassing across scopes: init_screen::c#0 SCREEN#2
+Not aliassing identity: SCREEN#3 SCREEN#3
 Alias (byte) init_plot_tables::x#2 = (byte) init_plot_tables::x#3 
 Alias (byte[]) plot_xlo#2 = (byte[]) plot_xlo#5 
-Alias (byte*) BITMAP#1 = (byte*) BITMAP#5 
+Alias (byte*) BITMAP#2 = (byte*) BITMAP#7 
 Alias (byte[]) plot_xhi#2 = (byte[]) plot_xhi#5 
 Alias (byte[]) plot_bit#2 = (byte[]) plot_bit#5 
 Alias (byte[]) plot_ylo#11 = (byte[]) plot_ylo#5 
@@ -3225,13 +3302,13 @@ main: scope:[main]  from @5
   (byte[]) plot_ylo#16 ← phi( @5/(byte[]) plot_ylo#0 )
   (byte[]) plots_y#10 ← phi( @5/(byte[]) plots_y#0 )
   (byte[]) plots_x#10 ← phi( @5/(byte[]) plots_x#0 )
-  (byte*) SCREEN#5 ← phi( @5/(byte*) SCREEN#0 )
   (byte[]) plot_bit#10 ← phi( @5/(byte[]) plot_bit#0 )
   (byte[]) plot_xhi#10 ← phi( @5/(byte[]) plot_xhi#0 )
   (byte[]) plot_xlo#10 ← phi( @5/(byte[]) plot_xlo#0 )
   (byte*) RASTER#3 ← phi( @5/(byte*) RASTER#0 )
-  (byte*) BITMAP#6 ← phi( @5/(byte*) BITMAP#0 )
   (byte*) D018#1 ← phi( @5/(byte*) D018#0 )
+  (byte*) BITMAP#1 ← phi( @5/(byte*) BITMAP#0 )
+  (byte*) SCREEN#1 ← phi( @5/(byte*) SCREEN#0 )
   (byte*) D011#1 ← phi( @5/(byte*) D011#0 )
   (byte) RSEL#1 ← phi( @5/(byte) RSEL#0 )
   (byte) DEN#1 ← phi( @5/(byte) DEN#0 )
@@ -3244,7 +3321,13 @@ main: scope:[main]  from @5
   (byte~) main::$1 ← (byte~) main::$0 | (byte) RSEL#1
   (byte~) main::$2 ← (byte~) main::$1 | (byte/signed byte/word/signed word) 3
   *((byte*) D011#1) ← (byte~) main::$2
-  *((byte*) D018#1) ← (byte/signed byte/word/signed word) 24
+  (word~) main::$3 ← ((word)) (byte*) SCREEN#1
+  (word~) main::$4 ← (word~) main::$3 / (byte/signed byte/word/signed word) 64
+  (word~) main::$5 ← ((word)) (byte*) BITMAP#1
+  (word~) main::$6 ← (word~) main::$5 / (word/signed word) 1024
+  (word~) main::$7 ← (word~) main::$4 | (word~) main::$6
+  (byte~) main::$8 ← ((byte)) (word~) main::$7
+  *((byte*) D018#1) ← (byte~) main::$8
   call init_screen param-assignment
   to:main::@5
 main::@5: scope:[main]  from main
@@ -3265,8 +3348,8 @@ main::@2: scope:[main]  from main::@1 main::@2 main::@6
   (byte[]) plots_x#4 ← phi( main::@1/(byte[]) plots_x#4 main::@2/(byte[]) plots_x#4 main::@6/(byte[]) plots_x#10 )
   (byte*) BGCOL#2 ← phi( main::@1/(byte*) BGCOL#2 main::@2/(byte*) BGCOL#2 main::@6/(byte*) BGCOL#1 )
   (byte*) RASTER#1 ← phi( main::@1/(byte*) RASTER#1 main::@2/(byte*) RASTER#1 main::@6/(byte*) RASTER#3 )
-  (boolean~) main::$5 ← *((byte*) RASTER#1) != (byte/word/signed word) 255
-  if((boolean~) main::$5) goto main::@2
+  (boolean~) main::$11 ← *((byte*) RASTER#1) != (byte/word/signed word) 255
+  if((boolean~) main::$11) goto main::@2
   to:main::@3
 main::@3: scope:[main]  from main::@2
   *((byte*) BGCOL#2) ← ++ *((byte*) BGCOL#2)
@@ -3357,7 +3440,7 @@ init_plot_tables: scope:[init_plot_tables]  from main::@5
   (byte[]) plot_ylo#14 ← phi( main::@5/(byte[]) plot_ylo#16 )
   (byte[]) plot_bit#4 ← phi( main::@5/(byte[]) plot_bit#10 )
   (byte[]) plot_xhi#4 ← phi( main::@5/(byte[]) plot_xhi#10 )
-  (byte*) BITMAP#4 ← phi( main::@5/(byte*) BITMAP#6 )
+  (byte*) BITMAP#6 ← phi( main::@5/(byte*) BITMAP#1 )
   (byte[]) plot_xlo#4 ← phi( main::@5/(byte[]) plot_xlo#10 )
   (byte) init_plot_tables::bits#0 ← (byte/word/signed word) 128
   (byte) init_plot_tables::x#0 ← (byte/signed byte/word/signed word) 0
@@ -3368,12 +3451,12 @@ init_plot_tables::@1: scope:[init_plot_tables]  from init_plot_tables init_plot_
   (byte[]) plot_bit#2 ← phi( init_plot_tables/(byte[]) plot_bit#4 init_plot_tables::@2/(byte[]) plot_bit#2 )
   (byte) init_plot_tables::bits#3 ← phi( init_plot_tables/(byte) init_plot_tables::bits#0 init_plot_tables::@2/(byte) init_plot_tables::bits#4 )
   (byte[]) plot_xhi#2 ← phi( init_plot_tables/(byte[]) plot_xhi#4 init_plot_tables::@2/(byte[]) plot_xhi#2 )
-  (byte*) BITMAP#1 ← phi( init_plot_tables/(byte*) BITMAP#4 init_plot_tables::@2/(byte*) BITMAP#1 )
+  (byte*) BITMAP#2 ← phi( init_plot_tables/(byte*) BITMAP#6 init_plot_tables::@2/(byte*) BITMAP#2 )
   (byte[]) plot_xlo#2 ← phi( init_plot_tables/(byte[]) plot_xlo#4 init_plot_tables::@2/(byte[]) plot_xlo#2 )
   (byte) init_plot_tables::x#2 ← phi( init_plot_tables/(byte) init_plot_tables::x#0 init_plot_tables::@2/(byte) init_plot_tables::x#1 )
   (byte~) init_plot_tables::$0 ← (byte) init_plot_tables::x#2 & (byte/word/signed word) 248
   *((byte[]) plot_xlo#2 + (byte) init_plot_tables::x#2) ← (byte~) init_plot_tables::$0
-  (byte~) init_plot_tables::$1 ← > (byte*) BITMAP#1
+  (byte~) init_plot_tables::$1 ← > (byte*) BITMAP#2
   *((byte[]) plot_xhi#2 + (byte) init_plot_tables::x#2) ← (byte~) init_plot_tables::$1
   *((byte[]) plot_bit#2 + (byte) init_plot_tables::x#2) ← (byte) init_plot_tables::bits#3
   (byte) init_plot_tables::bits#1 ← (byte) init_plot_tables::bits#3 >> (byte/signed byte/word/signed word) 1
@@ -3411,39 +3494,40 @@ init_plot_tables::@3: scope:[init_plot_tables]  from init_plot_tables::@4 init_p
 init_plot_tables::@4: scope:[init_plot_tables]  from init_plot_tables::@3 init_plot_tables::@7
   (byte*) init_plot_tables::yoffs#4 ← phi( init_plot_tables::@3/(byte*) init_plot_tables::yoffs#2 init_plot_tables::@7/(byte*) init_plot_tables::yoffs#1 )
   (byte) init_plot_tables::y#1 ← ++ (byte) init_plot_tables::y#2
-  (boolean~) init_plot_tables::$14 ← (byte) init_plot_tables::y#1 != (byte/signed byte/word/signed word) 0
-  if((boolean~) init_plot_tables::$14) goto init_plot_tables::@3
+  (boolean~) init_plot_tables::$15 ← (byte) init_plot_tables::y#1 != (byte/signed byte/word/signed word) 0
+  if((boolean~) init_plot_tables::$15) goto init_plot_tables::@3
   to:init_plot_tables::@return
 init_plot_tables::@7: scope:[init_plot_tables]  from init_plot_tables::@3
-  (byte*) init_plot_tables::yoffs#1 ← (byte*) init_plot_tables::yoffs#2 + (word/signed word) 320
+  (word/signed word~) init_plot_tables::$13 ← (byte/signed byte/word/signed word) 40 * (byte/signed byte/word/signed word) 8
+  (byte*) init_plot_tables::yoffs#1 ← (byte*) init_plot_tables::yoffs#2 + (word/signed word~) init_plot_tables::$13
   to:init_plot_tables::@4
 init_plot_tables::@return: scope:[init_plot_tables]  from init_plot_tables::@4
   return 
   to:@return
 init_screen: scope:[init_screen]  from main
-  (byte*) SCREEN#4 ← phi( main/(byte*) SCREEN#5 )
-  (byte*) BITMAP#2 ← phi( main/(byte*) BITMAP#6 )
-  (byte*) init_screen::b#0 ← (byte*) BITMAP#2
+  (byte*) SCREEN#6 ← phi( main/(byte*) SCREEN#1 )
+  (byte*) BITMAP#3 ← phi( main/(byte*) BITMAP#1 )
+  (byte*) init_screen::b#0 ← (byte*) BITMAP#3
   to:init_screen::@1
 init_screen::@1: scope:[init_screen]  from init_screen init_screen::@1
-  (byte*) SCREEN#1 ← phi( init_screen/(byte*) SCREEN#4 init_screen::@1/(byte*) SCREEN#1 )
-  (byte*) BITMAP#3 ← phi( init_screen/(byte*) BITMAP#2 init_screen::@1/(byte*) BITMAP#3 )
+  (byte*) SCREEN#2 ← phi( init_screen/(byte*) SCREEN#6 init_screen::@1/(byte*) SCREEN#2 )
+  (byte*) BITMAP#4 ← phi( init_screen/(byte*) BITMAP#3 init_screen::@1/(byte*) BITMAP#4 )
   (byte*) init_screen::b#2 ← phi( init_screen/(byte*) init_screen::b#0 init_screen::@1/(byte*) init_screen::b#1 )
   *((byte*) init_screen::b#2) ← (byte/signed byte/word/signed word) 0
   (byte*) init_screen::b#1 ← ++ (byte*) init_screen::b#2
-  (byte*~) init_screen::$0 ← (byte*) BITMAP#3 + (word/signed word) 8192
+  (byte*~) init_screen::$0 ← (byte*) BITMAP#4 + (word/signed word) 8192
   (boolean~) init_screen::$1 ← (byte*) init_screen::b#1 != (byte*~) init_screen::$0
   if((boolean~) init_screen::$1) goto init_screen::@1
   to:init_screen::@3
 init_screen::@3: scope:[init_screen]  from init_screen::@1
-  (byte*) init_screen::c#0 ← (byte*) SCREEN#1
+  (byte*) init_screen::c#0 ← (byte*) SCREEN#2
   to:init_screen::@2
 init_screen::@2: scope:[init_screen]  from init_screen::@2 init_screen::@3
-  (byte*) SCREEN#2 ← phi( init_screen::@2/(byte*) SCREEN#2 init_screen::@3/(byte*) SCREEN#1 )
+  (byte*) SCREEN#3 ← phi( init_screen::@2/(byte*) SCREEN#3 init_screen::@3/(byte*) SCREEN#2 )
   (byte*) init_screen::c#2 ← phi( init_screen::@2/(byte*) init_screen::c#1 init_screen::@3/(byte*) init_screen::c#0 )
   *((byte*) init_screen::c#2) ← (byte/signed byte/word/signed word) 20
   (byte*) init_screen::c#1 ← ++ (byte*) init_screen::c#2
-  (byte*~) init_screen::$2 ← (byte*) SCREEN#2 + (word/signed word) 1024
+  (byte*~) init_screen::$2 ← (byte*) SCREEN#3 + (word/signed word) 1024
   (boolean~) init_screen::$3 ← (byte*) init_screen::c#1 != (byte*~) init_screen::$2
   if((boolean~) init_screen::$3) goto init_screen::@2
   to:init_screen::@return
@@ -3461,13 +3545,13 @@ Not aliassing across scopes: BMM#1 BMM#0
 Not aliassing across scopes: DEN#1 DEN#0
 Not aliassing across scopes: RSEL#1 RSEL#0
 Not aliassing across scopes: D011#1 D011#0
+Not aliassing across scopes: SCREEN#1 SCREEN#0
+Not aliassing across scopes: BITMAP#1 BITMAP#0
 Not aliassing across scopes: D018#1 D018#0
-Not aliassing across scopes: BITMAP#6 BITMAP#0
 Not aliassing across scopes: RASTER#3 RASTER#0
 Not aliassing across scopes: plot_xlo#10 plot_xlo#0
 Not aliassing across scopes: plot_xhi#10 plot_xhi#0
 Not aliassing across scopes: plot_bit#10 plot_bit#0
-Not aliassing across scopes: SCREEN#5 SCREEN#0
 Not aliassing across scopes: plots_x#10 plots_x#0
 Not aliassing across scopes: plots_y#10 plots_y#0
 Not aliassing across scopes: plot_ylo#16 plot_ylo#0
@@ -3501,18 +3585,18 @@ Not aliassing across scopes: plot::y#1 plot::y#0
 Not aliassing across scopes: plot_ylo#1 plot_ylo#3
 Not aliassing across scopes: plot_bit#1 plot_bit#3
 Not aliassing across scopes: plot_xlo#4 plot_xlo#10
-Not aliassing across scopes: BITMAP#4 BITMAP#6
+Not aliassing across scopes: BITMAP#6 BITMAP#1
 Not aliassing across scopes: plot_xhi#4 plot_xhi#10
 Not aliassing across scopes: plot_bit#4 plot_bit#10
 Not aliassing across scopes: plot_ylo#14 plot_ylo#16
 Not aliassing across scopes: plot_yhi#14 plot_yhi#16
 Not aliassing identity: plot_ylo#2 plot_ylo#2
 Not aliassing identity: plot_yhi#2 plot_yhi#2
-Not aliassing across scopes: BITMAP#2 BITMAP#6
-Not aliassing across scopes: SCREEN#4 SCREEN#5
-Not aliassing across scopes: init_screen::b#0 BITMAP#2
-Not aliassing across scopes: init_screen::c#0 SCREEN#1
-Not aliassing identity: SCREEN#2 SCREEN#2
+Not aliassing across scopes: BITMAP#3 BITMAP#1
+Not aliassing across scopes: SCREEN#6 SCREEN#1
+Not aliassing across scopes: init_screen::b#0 BITMAP#3
+Not aliassing across scopes: init_screen::c#0 SCREEN#2
+Not aliassing identity: SCREEN#3 SCREEN#3
 Self Phi Eliminated (byte*) RASTER#1
 Self Phi Eliminated (byte*) RASTER#1
 Self Phi Eliminated (byte*) BGCOL#2
@@ -3542,16 +3626,16 @@ Self Phi Eliminated (byte[]) plot_yhi#3
 Self Phi Eliminated (byte[]) plot_ylo#3
 Self Phi Eliminated (byte[]) plot_bit#3
 Self Phi Eliminated (byte[]) plot_xlo#2
-Self Phi Eliminated (byte*) BITMAP#1
+Self Phi Eliminated (byte*) BITMAP#2
 Self Phi Eliminated (byte[]) plot_xhi#2
 Self Phi Eliminated (byte[]) plot_bit#2
 Self Phi Eliminated (byte[]) plot_ylo#11
 Self Phi Eliminated (byte[]) plot_yhi#11
 Self Phi Eliminated (byte[]) plot_ylo#2
 Self Phi Eliminated (byte[]) plot_yhi#2
-Self Phi Eliminated (byte*) BITMAP#3
-Self Phi Eliminated (byte*) SCREEN#1
+Self Phi Eliminated (byte*) BITMAP#4
 Self Phi Eliminated (byte*) SCREEN#2
+Self Phi Eliminated (byte*) SCREEN#3
 Succesful SSA optimization Pass2SelfPhiElimination
 CONTROL FLOW GRAPH
 @begin: scope:[]  from
@@ -3572,13 +3656,13 @@ main: scope:[main]  from @5
   (byte[]) plot_ylo#16 ← phi( @5/(byte[]) plot_ylo#0 )
   (byte[]) plots_y#10 ← phi( @5/(byte[]) plots_y#0 )
   (byte[]) plots_x#10 ← phi( @5/(byte[]) plots_x#0 )
-  (byte*) SCREEN#5 ← phi( @5/(byte*) SCREEN#0 )
   (byte[]) plot_bit#10 ← phi( @5/(byte[]) plot_bit#0 )
   (byte[]) plot_xhi#10 ← phi( @5/(byte[]) plot_xhi#0 )
   (byte[]) plot_xlo#10 ← phi( @5/(byte[]) plot_xlo#0 )
   (byte*) RASTER#3 ← phi( @5/(byte*) RASTER#0 )
-  (byte*) BITMAP#6 ← phi( @5/(byte*) BITMAP#0 )
   (byte*) D018#1 ← phi( @5/(byte*) D018#0 )
+  (byte*) BITMAP#1 ← phi( @5/(byte*) BITMAP#0 )
+  (byte*) SCREEN#1 ← phi( @5/(byte*) SCREEN#0 )
   (byte*) D011#1 ← phi( @5/(byte*) D011#0 )
   (byte) RSEL#1 ← phi( @5/(byte) RSEL#0 )
   (byte) DEN#1 ← phi( @5/(byte) DEN#0 )
@@ -3591,7 +3675,13 @@ main: scope:[main]  from @5
   (byte~) main::$1 ← (byte~) main::$0 | (byte) RSEL#1
   (byte~) main::$2 ← (byte~) main::$1 | (byte/signed byte/word/signed word) 3
   *((byte*) D011#1) ← (byte~) main::$2
-  *((byte*) D018#1) ← (byte/signed byte/word/signed word) 24
+  (word~) main::$3 ← ((word)) (byte*) SCREEN#1
+  (word~) main::$4 ← (word~) main::$3 / (byte/signed byte/word/signed word) 64
+  (word~) main::$5 ← ((word)) (byte*) BITMAP#1
+  (word~) main::$6 ← (word~) main::$5 / (word/signed word) 1024
+  (word~) main::$7 ← (word~) main::$4 | (word~) main::$6
+  (byte~) main::$8 ← ((byte)) (word~) main::$7
+  *((byte*) D018#1) ← (byte~) main::$8
   call init_screen param-assignment
   to:main::@5
 main::@5: scope:[main]  from main
@@ -3612,8 +3702,8 @@ main::@2: scope:[main]  from main::@1 main::@2 main::@6
   (byte[]) plots_x#4 ← phi( main::@6/(byte[]) plots_x#10 )
   (byte*) BGCOL#2 ← phi( main::@6/(byte*) BGCOL#1 )
   (byte*) RASTER#1 ← phi( main::@6/(byte*) RASTER#3 )
-  (boolean~) main::$5 ← *((byte*) RASTER#1) != (byte/word/signed word) 255
-  if((boolean~) main::$5) goto main::@2
+  (boolean~) main::$11 ← *((byte*) RASTER#1) != (byte/word/signed word) 255
+  if((boolean~) main::$11) goto main::@2
   to:main::@3
 main::@3: scope:[main]  from main::@2
   *((byte*) BGCOL#2) ← ++ *((byte*) BGCOL#2)
@@ -3704,7 +3794,7 @@ init_plot_tables: scope:[init_plot_tables]  from main::@5
   (byte[]) plot_ylo#14 ← phi( main::@5/(byte[]) plot_ylo#16 )
   (byte[]) plot_bit#4 ← phi( main::@5/(byte[]) plot_bit#10 )
   (byte[]) plot_xhi#4 ← phi( main::@5/(byte[]) plot_xhi#10 )
-  (byte*) BITMAP#4 ← phi( main::@5/(byte*) BITMAP#6 )
+  (byte*) BITMAP#6 ← phi( main::@5/(byte*) BITMAP#1 )
   (byte[]) plot_xlo#4 ← phi( main::@5/(byte[]) plot_xlo#10 )
   (byte) init_plot_tables::bits#0 ← (byte/word/signed word) 128
   (byte) init_plot_tables::x#0 ← (byte/signed byte/word/signed word) 0
@@ -3715,12 +3805,12 @@ init_plot_tables::@1: scope:[init_plot_tables]  from init_plot_tables init_plot_
   (byte[]) plot_bit#2 ← phi( init_plot_tables/(byte[]) plot_bit#4 )
   (byte) init_plot_tables::bits#3 ← phi( init_plot_tables/(byte) init_plot_tables::bits#0 init_plot_tables::@2/(byte) init_plot_tables::bits#4 )
   (byte[]) plot_xhi#2 ← phi( init_plot_tables/(byte[]) plot_xhi#4 )
-  (byte*) BITMAP#1 ← phi( init_plot_tables/(byte*) BITMAP#4 )
+  (byte*) BITMAP#2 ← phi( init_plot_tables/(byte*) BITMAP#6 )
   (byte[]) plot_xlo#2 ← phi( init_plot_tables/(byte[]) plot_xlo#4 )
   (byte) init_plot_tables::x#2 ← phi( init_plot_tables/(byte) init_plot_tables::x#0 init_plot_tables::@2/(byte) init_plot_tables::x#1 )
   (byte~) init_plot_tables::$0 ← (byte) init_plot_tables::x#2 & (byte/word/signed word) 248
   *((byte[]) plot_xlo#2 + (byte) init_plot_tables::x#2) ← (byte~) init_plot_tables::$0
-  (byte~) init_plot_tables::$1 ← > (byte*) BITMAP#1
+  (byte~) init_plot_tables::$1 ← > (byte*) BITMAP#2
   *((byte[]) plot_xhi#2 + (byte) init_plot_tables::x#2) ← (byte~) init_plot_tables::$1
   *((byte[]) plot_bit#2 + (byte) init_plot_tables::x#2) ← (byte) init_plot_tables::bits#3
   (byte) init_plot_tables::bits#1 ← (byte) init_plot_tables::bits#3 >> (byte/signed byte/word/signed word) 1
@@ -3758,39 +3848,40 @@ init_plot_tables::@3: scope:[init_plot_tables]  from init_plot_tables::@4 init_p
 init_plot_tables::@4: scope:[init_plot_tables]  from init_plot_tables::@3 init_plot_tables::@7
   (byte*) init_plot_tables::yoffs#4 ← phi( init_plot_tables::@3/(byte*) init_plot_tables::yoffs#2 init_plot_tables::@7/(byte*) init_plot_tables::yoffs#1 )
   (byte) init_plot_tables::y#1 ← ++ (byte) init_plot_tables::y#2
-  (boolean~) init_plot_tables::$14 ← (byte) init_plot_tables::y#1 != (byte/signed byte/word/signed word) 0
-  if((boolean~) init_plot_tables::$14) goto init_plot_tables::@3
+  (boolean~) init_plot_tables::$15 ← (byte) init_plot_tables::y#1 != (byte/signed byte/word/signed word) 0
+  if((boolean~) init_plot_tables::$15) goto init_plot_tables::@3
   to:init_plot_tables::@return
 init_plot_tables::@7: scope:[init_plot_tables]  from init_plot_tables::@3
-  (byte*) init_plot_tables::yoffs#1 ← (byte*) init_plot_tables::yoffs#2 + (word/signed word) 320
+  (word/signed word~) init_plot_tables::$13 ← (byte/signed byte/word/signed word) 40 * (byte/signed byte/word/signed word) 8
+  (byte*) init_plot_tables::yoffs#1 ← (byte*) init_plot_tables::yoffs#2 + (word/signed word~) init_plot_tables::$13
   to:init_plot_tables::@4
 init_plot_tables::@return: scope:[init_plot_tables]  from init_plot_tables::@4
   return 
   to:@return
 init_screen: scope:[init_screen]  from main
-  (byte*) SCREEN#4 ← phi( main/(byte*) SCREEN#5 )
-  (byte*) BITMAP#2 ← phi( main/(byte*) BITMAP#6 )
-  (byte*) init_screen::b#0 ← (byte*) BITMAP#2
+  (byte*) SCREEN#6 ← phi( main/(byte*) SCREEN#1 )
+  (byte*) BITMAP#3 ← phi( main/(byte*) BITMAP#1 )
+  (byte*) init_screen::b#0 ← (byte*) BITMAP#3
   to:init_screen::@1
 init_screen::@1: scope:[init_screen]  from init_screen init_screen::@1
-  (byte*) SCREEN#1 ← phi( init_screen/(byte*) SCREEN#4 )
-  (byte*) BITMAP#3 ← phi( init_screen/(byte*) BITMAP#2 )
+  (byte*) SCREEN#2 ← phi( init_screen/(byte*) SCREEN#6 )
+  (byte*) BITMAP#4 ← phi( init_screen/(byte*) BITMAP#3 )
   (byte*) init_screen::b#2 ← phi( init_screen/(byte*) init_screen::b#0 init_screen::@1/(byte*) init_screen::b#1 )
   *((byte*) init_screen::b#2) ← (byte/signed byte/word/signed word) 0
   (byte*) init_screen::b#1 ← ++ (byte*) init_screen::b#2
-  (byte*~) init_screen::$0 ← (byte*) BITMAP#3 + (word/signed word) 8192
+  (byte*~) init_screen::$0 ← (byte*) BITMAP#4 + (word/signed word) 8192
   (boolean~) init_screen::$1 ← (byte*) init_screen::b#1 != (byte*~) init_screen::$0
   if((boolean~) init_screen::$1) goto init_screen::@1
   to:init_screen::@3
 init_screen::@3: scope:[init_screen]  from init_screen::@1
-  (byte*) init_screen::c#0 ← (byte*) SCREEN#1
+  (byte*) init_screen::c#0 ← (byte*) SCREEN#2
   to:init_screen::@2
 init_screen::@2: scope:[init_screen]  from init_screen::@2 init_screen::@3
-  (byte*) SCREEN#2 ← phi( init_screen::@3/(byte*) SCREEN#1 )
+  (byte*) SCREEN#3 ← phi( init_screen::@3/(byte*) SCREEN#2 )
   (byte*) init_screen::c#2 ← phi( init_screen::@2/(byte*) init_screen::c#1 init_screen::@3/(byte*) init_screen::c#0 )
   *((byte*) init_screen::c#2) ← (byte/signed byte/word/signed word) 20
   (byte*) init_screen::c#1 ← ++ (byte*) init_screen::c#2
-  (byte*~) init_screen::$2 ← (byte*) SCREEN#2 + (word/signed word) 1024
+  (byte*~) init_screen::$2 ← (byte*) SCREEN#3 + (word/signed word) 1024
   (boolean~) init_screen::$3 ← (byte*) init_screen::c#1 != (byte*~) init_screen::$2
   if((boolean~) init_screen::$3) goto init_screen::@2
   to:init_screen::@return
@@ -3808,13 +3899,13 @@ Redundant Phi (byte) BMM#1 (byte) BMM#0
 Redundant Phi (byte) DEN#1 (byte) DEN#0
 Redundant Phi (byte) RSEL#1 (byte) RSEL#0
 Redundant Phi (byte*) D011#1 (byte*) D011#0
+Redundant Phi (byte*) SCREEN#1 (byte*) SCREEN#0
+Redundant Phi (byte*) BITMAP#1 (byte*) BITMAP#0
 Redundant Phi (byte*) D018#1 (byte*) D018#0
-Redundant Phi (byte*) BITMAP#6 (byte*) BITMAP#0
 Redundant Phi (byte*) RASTER#3 (byte*) RASTER#0
 Redundant Phi (byte[]) plot_xlo#10 (byte[]) plot_xlo#0
 Redundant Phi (byte[]) plot_xhi#10 (byte[]) plot_xhi#0
 Redundant Phi (byte[]) plot_bit#10 (byte[]) plot_bit#0
-Redundant Phi (byte*) SCREEN#5 (byte*) SCREEN#0
 Redundant Phi (byte[]) plots_x#10 (byte[]) plots_x#0
 Redundant Phi (byte[]) plots_y#10 (byte[]) plots_y#0
 Redundant Phi (byte[]) plot_ylo#16 (byte[]) plot_ylo#0
@@ -3854,24 +3945,24 @@ Redundant Phi (byte) plot::y#1 (byte) plot::y#0
 Redundant Phi (byte[]) plot_ylo#1 (byte[]) plot_ylo#3
 Redundant Phi (byte[]) plot_bit#1 (byte[]) plot_bit#3
 Redundant Phi (byte[]) plot_xlo#4 (byte[]) plot_xlo#10
-Redundant Phi (byte*) BITMAP#4 (byte*) BITMAP#6
+Redundant Phi (byte*) BITMAP#6 (byte*) BITMAP#1
 Redundant Phi (byte[]) plot_xhi#4 (byte[]) plot_xhi#10
 Redundant Phi (byte[]) plot_bit#4 (byte[]) plot_bit#10
 Redundant Phi (byte[]) plot_ylo#14 (byte[]) plot_ylo#16
 Redundant Phi (byte[]) plot_yhi#14 (byte[]) plot_yhi#16
 Redundant Phi (byte[]) plot_xlo#2 (byte[]) plot_xlo#4
-Redundant Phi (byte*) BITMAP#1 (byte*) BITMAP#4
+Redundant Phi (byte*) BITMAP#2 (byte*) BITMAP#6
 Redundant Phi (byte[]) plot_xhi#2 (byte[]) plot_xhi#4
 Redundant Phi (byte[]) plot_bit#2 (byte[]) plot_bit#4
 Redundant Phi (byte[]) plot_ylo#11 (byte[]) plot_ylo#14
 Redundant Phi (byte[]) plot_yhi#11 (byte[]) plot_yhi#14
 Redundant Phi (byte[]) plot_ylo#2 (byte[]) plot_ylo#11
 Redundant Phi (byte[]) plot_yhi#2 (byte[]) plot_yhi#11
-Redundant Phi (byte*) BITMAP#2 (byte*) BITMAP#6
-Redundant Phi (byte*) SCREEN#4 (byte*) SCREEN#5
-Redundant Phi (byte*) BITMAP#3 (byte*) BITMAP#2
-Redundant Phi (byte*) SCREEN#1 (byte*) SCREEN#4
-Redundant Phi (byte*) SCREEN#2 (byte*) SCREEN#1
+Redundant Phi (byte*) BITMAP#3 (byte*) BITMAP#1
+Redundant Phi (byte*) SCREEN#6 (byte*) SCREEN#1
+Redundant Phi (byte*) BITMAP#4 (byte*) BITMAP#3
+Redundant Phi (byte*) SCREEN#2 (byte*) SCREEN#6
+Redundant Phi (byte*) SCREEN#3 (byte*) SCREEN#2
 Succesful SSA optimization Pass2RedundantPhiElimination
 CONTROL FLOW GRAPH
 @begin: scope:[]  from
@@ -3893,7 +3984,13 @@ main: scope:[main]  from @5
   (byte~) main::$1 ← (byte~) main::$0 | (byte) RSEL#0
   (byte~) main::$2 ← (byte~) main::$1 | (byte/signed byte/word/signed word) 3
   *((byte*) D011#0) ← (byte~) main::$2
-  *((byte*) D018#0) ← (byte/signed byte/word/signed word) 24
+  (word~) main::$3 ← ((word)) (byte*) SCREEN#0
+  (word~) main::$4 ← (word~) main::$3 / (byte/signed byte/word/signed word) 64
+  (word~) main::$5 ← ((word)) (byte*) BITMAP#0
+  (word~) main::$6 ← (word~) main::$5 / (word/signed word) 1024
+  (word~) main::$7 ← (word~) main::$4 | (word~) main::$6
+  (byte~) main::$8 ← ((byte)) (word~) main::$7
+  *((byte*) D018#0) ← (byte~) main::$8
   call init_screen param-assignment
   to:main::@5
 main::@5: scope:[main]  from main
@@ -3904,8 +4001,8 @@ main::@6: scope:[main]  from main::@5
 main::@1: scope:[main]  from main::@7
   to:main::@2
 main::@2: scope:[main]  from main::@1 main::@2 main::@6
-  (boolean~) main::$5 ← *((byte*) RASTER#0) != (byte/word/signed word) 255
-  if((boolean~) main::$5) goto main::@2
+  (boolean~) main::$11 ← *((byte*) RASTER#0) != (byte/word/signed word) 255
+  if((boolean~) main::$11) goto main::@2
   to:main::@3
 main::@3: scope:[main]  from main::@2
   *((byte*) BGCOL#0) ← ++ *((byte*) BGCOL#0)
@@ -4013,11 +4110,12 @@ init_plot_tables::@3: scope:[init_plot_tables]  from init_plot_tables::@4 init_p
 init_plot_tables::@4: scope:[init_plot_tables]  from init_plot_tables::@3 init_plot_tables::@7
   (byte*) init_plot_tables::yoffs#4 ← phi( init_plot_tables::@3/(byte*) init_plot_tables::yoffs#2 init_plot_tables::@7/(byte*) init_plot_tables::yoffs#1 )
   (byte) init_plot_tables::y#1 ← ++ (byte) init_plot_tables::y#2
-  (boolean~) init_plot_tables::$14 ← (byte) init_plot_tables::y#1 != (byte/signed byte/word/signed word) 0
-  if((boolean~) init_plot_tables::$14) goto init_plot_tables::@3
+  (boolean~) init_plot_tables::$15 ← (byte) init_plot_tables::y#1 != (byte/signed byte/word/signed word) 0
+  if((boolean~) init_plot_tables::$15) goto init_plot_tables::@3
   to:init_plot_tables::@return
 init_plot_tables::@7: scope:[init_plot_tables]  from init_plot_tables::@3
-  (byte*) init_plot_tables::yoffs#1 ← (byte*) init_plot_tables::yoffs#2 + (word/signed word) 320
+  (word/signed word~) init_plot_tables::$13 ← (byte/signed byte/word/signed word) 40 * (byte/signed byte/word/signed word) 8
+  (byte*) init_plot_tables::yoffs#1 ← (byte*) init_plot_tables::yoffs#2 + (word/signed word~) init_plot_tables::$13
   to:init_plot_tables::@4
 init_plot_tables::@return: scope:[init_plot_tables]  from init_plot_tables::@4
   return 
@@ -4052,12 +4150,12 @@ init_screen::@return: scope:[init_screen]  from init_screen::@2
   to:@end
 @end: scope:[]  from @5
 
-Simple Condition (boolean~) main::$5 if(*((byte*) RASTER#0)!=(byte/word/signed word) 255) goto main::@2
+Simple Condition (boolean~) main::$11 if(*((byte*) RASTER#0)!=(byte/word/signed word) 255) goto main::@2
 Simple Condition (boolean~) plots::$3 if((byte) plots::i#1<(byte) plots_cnt#0) goto plots::@1
 Simple Condition (boolean~) init_plot_tables::$4 if((byte) init_plot_tables::bits#1!=(byte/signed byte/word/signed word) 0) goto init_plot_tables::@2
 Simple Condition (boolean~) init_plot_tables::$5 if((byte) init_plot_tables::x#1!=(byte/signed byte/word/signed word) 0) goto init_plot_tables::@1
 Simple Condition (boolean~) init_plot_tables::$12 if((byte~) init_plot_tables::$10!=(byte/signed byte/word/signed word) 7) goto init_plot_tables::@4
-Simple Condition (boolean~) init_plot_tables::$14 if((byte) init_plot_tables::y#1!=(byte/signed byte/word/signed word) 0) goto init_plot_tables::@3
+Simple Condition (boolean~) init_plot_tables::$15 if((byte) init_plot_tables::y#1!=(byte/signed byte/word/signed word) 0) goto init_plot_tables::@3
 Simple Condition (boolean~) init_screen::$1 if((byte*) init_screen::b#1!=(byte*~) init_screen::$0) goto init_screen::@1
 Simple Condition (boolean~) init_screen::$3 if((byte*) init_screen::c#1!=(byte*~) init_screen::$2) goto init_screen::@2
 Succesful SSA optimization Pass2ConditionalJumpSimplification
@@ -4081,7 +4179,13 @@ main: scope:[main]  from @5
   (byte~) main::$1 ← (byte~) main::$0 | (byte) RSEL#0
   (byte~) main::$2 ← (byte~) main::$1 | (byte/signed byte/word/signed word) 3
   *((byte*) D011#0) ← (byte~) main::$2
-  *((byte*) D018#0) ← (byte/signed byte/word/signed word) 24
+  (word~) main::$3 ← ((word)) (byte*) SCREEN#0
+  (word~) main::$4 ← (word~) main::$3 / (byte/signed byte/word/signed word) 64
+  (word~) main::$5 ← ((word)) (byte*) BITMAP#0
+  (word~) main::$6 ← (word~) main::$5 / (word/signed word) 1024
+  (word~) main::$7 ← (word~) main::$4 | (word~) main::$6
+  (byte~) main::$8 ← ((byte)) (word~) main::$7
+  *((byte*) D018#0) ← (byte~) main::$8
   call init_screen param-assignment
   to:main::@5
 main::@5: scope:[main]  from main
@@ -4199,7 +4303,8 @@ init_plot_tables::@4: scope:[init_plot_tables]  from init_plot_tables::@3 init_p
   if((byte) init_plot_tables::y#1!=(byte/signed byte/word/signed word) 0) goto init_plot_tables::@3
   to:init_plot_tables::@return
 init_plot_tables::@7: scope:[init_plot_tables]  from init_plot_tables::@3
-  (byte*) init_plot_tables::yoffs#1 ← (byte*) init_plot_tables::yoffs#2 + (word/signed word) 320
+  (word/signed word~) init_plot_tables::$13 ← (byte/signed byte/word/signed word) 40 * (byte/signed byte/word/signed word) 8
+  (byte*) init_plot_tables::yoffs#1 ← (byte*) init_plot_tables::yoffs#2 + (word/signed word~) init_plot_tables::$13
   to:init_plot_tables::@4
 init_plot_tables::@return: scope:[init_plot_tables]  from init_plot_tables::@4
   return 
@@ -4258,6 +4363,7 @@ Constant (const byte) init_plot_tables::x#0 = 0
 Constant (const byte) init_plot_tables::bits#2 = 128
 Constant (const byte*) init_plot_tables::yoffs#0 = ((byte*))0
 Constant (const byte) init_plot_tables::y#0 = 0
+Constant (const word/signed word) init_plot_tables::$13 = 40*8
 Succesful SSA optimization Pass2ConstantIdentification
 CONTROL FLOW GRAPH
 @begin: scope:[]  from
@@ -4269,7 +4375,13 @@ main: scope:[main]  from @5
   (byte~) main::$1 ← (byte~) main::$0 | (const byte) RSEL#0
   (byte~) main::$2 ← (byte~) main::$1 | (byte/signed byte/word/signed word) 3
   *((const byte*) D011#0) ← (byte~) main::$2
-  *((const byte*) D018#0) ← (byte/signed byte/word/signed word) 24
+  (word~) main::$3 ← ((word)) (const byte*) SCREEN#0
+  (word~) main::$4 ← (word~) main::$3 / (byte/signed byte/word/signed word) 64
+  (word~) main::$5 ← ((word)) (const byte*) BITMAP#0
+  (word~) main::$6 ← (word~) main::$5 / (word/signed word) 1024
+  (word~) main::$7 ← (word~) main::$4 | (word~) main::$6
+  (byte~) main::$8 ← ((byte)) (word~) main::$7
+  *((const byte*) D018#0) ← (byte~) main::$8
   call init_screen param-assignment
   to:main::@5
 main::@5: scope:[main]  from main
@@ -4371,7 +4483,7 @@ init_plot_tables::@4: scope:[init_plot_tables]  from init_plot_tables::@3 init_p
   if((byte) init_plot_tables::y#1!=(byte/signed byte/word/signed word) 0) goto init_plot_tables::@3
   to:init_plot_tables::@return
 init_plot_tables::@7: scope:[init_plot_tables]  from init_plot_tables::@3
-  (byte*) init_plot_tables::yoffs#1 ← (byte*) init_plot_tables::yoffs#2 + (word/signed word) 320
+  (byte*) init_plot_tables::yoffs#1 ← (byte*) init_plot_tables::yoffs#2 + (const word/signed word) init_plot_tables::$13
   to:init_plot_tables::@4
 init_plot_tables::@return: scope:[init_plot_tables]  from init_plot_tables::@4
   return 
@@ -4405,6 +4517,8 @@ init_screen::@return: scope:[init_screen]  from init_screen::@2
 @end: scope:[]  from @5
 
 Constant (const byte) main::$0 = BMM#0|DEN#0
+Constant (const word) main::$3 = ((word))SCREEN#0
+Constant (const word) main::$5 = ((word))BITMAP#0
 Constant (const byte) init_plot_tables::$1 = >BITMAP#0
 Constant (const byte*) init_screen::b#0 = BITMAP#0
 Constant (const byte*) init_screen::$0 = BITMAP#0+8192
@@ -4420,7 +4534,11 @@ main: scope:[main]  from @5
   (byte~) main::$1 ← (const byte) main::$0 | (const byte) RSEL#0
   (byte~) main::$2 ← (byte~) main::$1 | (byte/signed byte/word/signed word) 3
   *((const byte*) D011#0) ← (byte~) main::$2
-  *((const byte*) D018#0) ← (byte/signed byte/word/signed word) 24
+  (word~) main::$4 ← (const word) main::$3 / (byte/signed byte/word/signed word) 64
+  (word~) main::$6 ← (const word) main::$5 / (word/signed word) 1024
+  (word~) main::$7 ← (word~) main::$4 | (word~) main::$6
+  (byte~) main::$8 ← ((byte)) (word~) main::$7
+  *((const byte*) D018#0) ← (byte~) main::$8
   call init_screen param-assignment
   to:main::@5
 main::@5: scope:[main]  from main
@@ -4521,7 +4639,7 @@ init_plot_tables::@4: scope:[init_plot_tables]  from init_plot_tables::@3 init_p
   if((byte) init_plot_tables::y#1!=(byte/signed byte/word/signed word) 0) goto init_plot_tables::@3
   to:init_plot_tables::@return
 init_plot_tables::@7: scope:[init_plot_tables]  from init_plot_tables::@3
-  (byte*) init_plot_tables::yoffs#1 ← (byte*) init_plot_tables::yoffs#2 + (word/signed word) 320
+  (byte*) init_plot_tables::yoffs#1 ← (byte*) init_plot_tables::yoffs#2 + (const word/signed word) init_plot_tables::$13
   to:init_plot_tables::@4
 init_plot_tables::@return: scope:[init_plot_tables]  from init_plot_tables::@4
   return 
@@ -4551,6 +4669,8 @@ init_screen::@return: scope:[init_screen]  from init_screen::@2
 @end: scope:[]  from @5
 
 Constant (const byte) main::$1 = main::$0|RSEL#0
+Constant (const word) main::$4 = main::$3/64
+Constant (const word) main::$6 = main::$5/1024
 Succesful SSA optimization Pass2ConstantIdentification
 CONTROL FLOW GRAPH
 @begin: scope:[]  from
@@ -4560,7 +4680,9 @@ main: scope:[main]  from @5
   *((const byte*) FGCOL#0) ← (byte/signed byte/word/signed word) 0
   (byte~) main::$2 ← (const byte) main::$1 | (byte/signed byte/word/signed word) 3
   *((const byte*) D011#0) ← (byte~) main::$2
-  *((const byte*) D018#0) ← (byte/signed byte/word/signed word) 24
+  (word~) main::$7 ← (const word) main::$4 | (const word) main::$6
+  (byte~) main::$8 ← ((byte)) (word~) main::$7
+  *((const byte*) D018#0) ← (byte~) main::$8
   call init_screen param-assignment
   to:main::@5
 main::@5: scope:[main]  from main
@@ -4661,7 +4783,7 @@ init_plot_tables::@4: scope:[init_plot_tables]  from init_plot_tables::@3 init_p
   if((byte) init_plot_tables::y#1!=(byte/signed byte/word/signed word) 0) goto init_plot_tables::@3
   to:init_plot_tables::@return
 init_plot_tables::@7: scope:[init_plot_tables]  from init_plot_tables::@3
-  (byte*) init_plot_tables::yoffs#1 ← (byte*) init_plot_tables::yoffs#2 + (word/signed word) 320
+  (byte*) init_plot_tables::yoffs#1 ← (byte*) init_plot_tables::yoffs#2 + (const word/signed word) init_plot_tables::$13
   to:init_plot_tables::@4
 init_plot_tables::@return: scope:[init_plot_tables]  from init_plot_tables::@4
   return 
@@ -4691,6 +4813,7 @@ init_screen::@return: scope:[init_screen]  from init_screen::@2
 @end: scope:[]  from @5
 
 Constant (const byte) main::$2 = main::$1|3
+Constant (const word) main::$7 = main::$4|main::$6
 Succesful SSA optimization Pass2ConstantIdentification
 CONTROL FLOW GRAPH
 @begin: scope:[]  from
@@ -4699,7 +4822,8 @@ main: scope:[main]  from @5
   *((const byte*) BGCOL#0) ← (byte/signed byte/word/signed word) 0
   *((const byte*) FGCOL#0) ← (byte/signed byte/word/signed word) 0
   *((const byte*) D011#0) ← (const byte) main::$2
-  *((const byte*) D018#0) ← (byte/signed byte/word/signed word) 24
+  (byte~) main::$8 ← ((byte)) (const word) main::$7
+  *((const byte*) D018#0) ← (byte~) main::$8
   call init_screen param-assignment
   to:main::@5
 main::@5: scope:[main]  from main
@@ -4800,7 +4924,146 @@ init_plot_tables::@4: scope:[init_plot_tables]  from init_plot_tables::@3 init_p
   if((byte) init_plot_tables::y#1!=(byte/signed byte/word/signed word) 0) goto init_plot_tables::@3
   to:init_plot_tables::@return
 init_plot_tables::@7: scope:[init_plot_tables]  from init_plot_tables::@3
-  (byte*) init_plot_tables::yoffs#1 ← (byte*) init_plot_tables::yoffs#2 + (word/signed word) 320
+  (byte*) init_plot_tables::yoffs#1 ← (byte*) init_plot_tables::yoffs#2 + (const word/signed word) init_plot_tables::$13
+  to:init_plot_tables::@4
+init_plot_tables::@return: scope:[init_plot_tables]  from init_plot_tables::@4
+  return 
+  to:@return
+init_screen: scope:[init_screen]  from main
+  to:init_screen::@1
+init_screen::@1: scope:[init_screen]  from init_screen init_screen::@1
+  (byte*) init_screen::b#2 ← phi( init_screen/(const byte*) init_screen::b#0 init_screen::@1/(byte*) init_screen::b#1 )
+  *((byte*) init_screen::b#2) ← (byte/signed byte/word/signed word) 0
+  (byte*) init_screen::b#1 ← ++ (byte*) init_screen::b#2
+  if((byte*) init_screen::b#1!=(const byte*) init_screen::$0) goto init_screen::@1
+  to:init_screen::@3
+init_screen::@3: scope:[init_screen]  from init_screen::@1
+  to:init_screen::@2
+init_screen::@2: scope:[init_screen]  from init_screen::@2 init_screen::@3
+  (byte*) init_screen::c#2 ← phi( init_screen::@2/(byte*) init_screen::c#1 init_screen::@3/(const byte*) init_screen::c#0 )
+  *((byte*) init_screen::c#2) ← (byte/signed byte/word/signed word) 20
+  (byte*) init_screen::c#1 ← ++ (byte*) init_screen::c#2
+  if((byte*) init_screen::c#1!=(const byte*) init_screen::$2) goto init_screen::@2
+  to:init_screen::@return
+init_screen::@return: scope:[init_screen]  from init_screen::@2
+  return 
+  to:@return
+@5: scope:[]  from @2
+  call main param-assignment
+  to:@end
+@end: scope:[]  from @5
+
+Constant (const byte) main::$8 = ((byte))main::$7
+Succesful SSA optimization Pass2ConstantIdentification
+CONTROL FLOW GRAPH
+@begin: scope:[]  from
+  to:@1
+main: scope:[main]  from @5
+  *((const byte*) BGCOL#0) ← (byte/signed byte/word/signed word) 0
+  *((const byte*) FGCOL#0) ← (byte/signed byte/word/signed word) 0
+  *((const byte*) D011#0) ← (const byte) main::$2
+  *((const byte*) D018#0) ← (const byte) main::$8
+  call init_screen param-assignment
+  to:main::@5
+main::@5: scope:[main]  from main
+  call init_plot_tables param-assignment
+  to:main::@6
+main::@6: scope:[main]  from main::@5
+  to:main::@2
+main::@1: scope:[main]  from main::@7
+  to:main::@2
+main::@2: scope:[main]  from main::@1 main::@2 main::@6
+  if(*((const byte*) RASTER#0)!=(byte/word/signed word) 255) goto main::@2
+  to:main::@3
+main::@3: scope:[main]  from main::@2
+  *((const byte*) BGCOL#0) ← ++ *((const byte*) BGCOL#0)
+  call plots param-assignment
+  to:main::@7
+main::@7: scope:[main]  from main::@3
+  *((const byte*) BGCOL#0) ← -- *((const byte*) BGCOL#0)
+  if(true) goto main::@1
+  to:main::@return
+main::@return: scope:[main]  from main::@7
+  return 
+  to:@return
+@1: scope:[]  from @begin
+  to:@2
+plots: scope:[plots]  from main::@3
+  to:plots::@1
+plots::@1: scope:[plots]  from plots plots::@3
+  (byte) plots::i#2 ← phi( plots/(const byte) plots::i#0 plots::@3/(byte) plots::i#1 )
+  (byte~) plots::$0 ← (const byte[]) plots_x#0 *idx (byte) plots::i#2
+  (byte~) plots::$1 ← (const byte[]) plots_y#0 *idx (byte) plots::i#2
+  (byte) plot::x#0 ← (byte~) plots::$0
+  (byte) plot::y#0 ← (byte~) plots::$1
+  call plot param-assignment
+  to:plots::@3
+plots::@3: scope:[plots]  from plots::@1
+  (byte) plots::i#1 ← ++ (byte) plots::i#2
+  if((byte) plots::i#1<(const byte) plots_cnt#0) goto plots::@1
+  to:plots::@return
+plots::@return: scope:[plots]  from plots::@3
+  return 
+  to:@return
+@2: scope:[]  from @1
+  to:@5
+plot: scope:[plot]  from plots::@1
+  (byte~) plot::$0 ← (const byte[]) plot_xhi#0 *idx (byte) plot::x#0
+  (byte*) plot::plotter_x#1 ← (const byte*) plot::plotter_x#0 hi= (byte~) plot::$0
+  (byte~) plot::$1 ← (const byte[]) plot_xlo#0 *idx (byte) plot::x#0
+  (byte*) plot::plotter_x#2 ← (byte*) plot::plotter_x#1 lo= (byte~) plot::$1
+  (byte~) plot::$2 ← (const byte[]) plot_yhi#0 *idx (byte) plot::y#0
+  (word) plot::plotter_y#1 ← (const word) plot::plotter_y#0 hi= (byte~) plot::$2
+  (byte~) plot::$3 ← (const byte[]) plot_ylo#0 *idx (byte) plot::y#0
+  (word) plot::plotter_y#2 ← (word) plot::plotter_y#1 lo= (byte~) plot::$3
+  (byte*) plot::plotter#0 ← (byte*) plot::plotter_x#2 + (word) plot::plotter_y#2
+  (byte~) plot::$5 ← (const byte[]) plot_bit#0 *idx (byte) plot::x#0
+  (byte~) plot::$6 ← *((byte*) plot::plotter#0) | (byte~) plot::$5
+  *((byte*) plot::plotter#0) ← (byte~) plot::$6
+  to:plot::@return
+plot::@return: scope:[plot]  from plot
+  return 
+  to:@return
+init_plot_tables: scope:[init_plot_tables]  from main::@5
+  to:init_plot_tables::@1
+init_plot_tables::@1: scope:[init_plot_tables]  from init_plot_tables init_plot_tables::@2
+  (byte) init_plot_tables::bits#3 ← phi( init_plot_tables/(const byte) init_plot_tables::bits#0 init_plot_tables::@2/(byte) init_plot_tables::bits#4 )
+  (byte) init_plot_tables::x#2 ← phi( init_plot_tables/(const byte) init_plot_tables::x#0 init_plot_tables::@2/(byte) init_plot_tables::x#1 )
+  (byte~) init_plot_tables::$0 ← (byte) init_plot_tables::x#2 & (byte/word/signed word) 248
+  *((const byte[]) plot_xlo#0 + (byte) init_plot_tables::x#2) ← (byte~) init_plot_tables::$0
+  *((const byte[]) plot_xhi#0 + (byte) init_plot_tables::x#2) ← (const byte) init_plot_tables::$1
+  *((const byte[]) plot_bit#0 + (byte) init_plot_tables::x#2) ← (byte) init_plot_tables::bits#3
+  (byte) init_plot_tables::bits#1 ← (byte) init_plot_tables::bits#3 >> (byte/signed byte/word/signed word) 1
+  if((byte) init_plot_tables::bits#1!=(byte/signed byte/word/signed word) 0) goto init_plot_tables::@2
+  to:init_plot_tables::@5
+init_plot_tables::@2: scope:[init_plot_tables]  from init_plot_tables::@1 init_plot_tables::@5
+  (byte) init_plot_tables::bits#4 ← phi( init_plot_tables::@1/(byte) init_plot_tables::bits#1 init_plot_tables::@5/(const byte) init_plot_tables::bits#2 )
+  (byte) init_plot_tables::x#1 ← ++ (byte) init_plot_tables::x#2
+  if((byte) init_plot_tables::x#1!=(byte/signed byte/word/signed word) 0) goto init_plot_tables::@1
+  to:init_plot_tables::@6
+init_plot_tables::@5: scope:[init_plot_tables]  from init_plot_tables::@1
+  to:init_plot_tables::@2
+init_plot_tables::@6: scope:[init_plot_tables]  from init_plot_tables::@2
+  to:init_plot_tables::@3
+init_plot_tables::@3: scope:[init_plot_tables]  from init_plot_tables::@4 init_plot_tables::@6
+  (byte*) init_plot_tables::yoffs#2 ← phi( init_plot_tables::@4/(byte*) init_plot_tables::yoffs#4 init_plot_tables::@6/(const byte*) init_plot_tables::yoffs#0 )
+  (byte) init_plot_tables::y#2 ← phi( init_plot_tables::@4/(byte) init_plot_tables::y#1 init_plot_tables::@6/(const byte) init_plot_tables::y#0 )
+  (byte~) init_plot_tables::$6 ← (byte) init_plot_tables::y#2 & (byte/signed byte/word/signed word) 7
+  (byte~) init_plot_tables::$7 ← < (byte*) init_plot_tables::yoffs#2
+  (byte~) init_plot_tables::$8 ← (byte~) init_plot_tables::$6 | (byte~) init_plot_tables::$7
+  *((const byte[]) plot_ylo#0 + (byte) init_plot_tables::y#2) ← (byte~) init_plot_tables::$8
+  (byte~) init_plot_tables::$9 ← > (byte*) init_plot_tables::yoffs#2
+  *((const byte[]) plot_yhi#0 + (byte) init_plot_tables::y#2) ← (byte~) init_plot_tables::$9
+  (byte~) init_plot_tables::$10 ← (byte) init_plot_tables::y#2 & (byte/signed byte/word/signed word) 7
+  if((byte~) init_plot_tables::$10!=(byte/signed byte/word/signed word) 7) goto init_plot_tables::@4
+  to:init_plot_tables::@7
+init_plot_tables::@4: scope:[init_plot_tables]  from init_plot_tables::@3 init_plot_tables::@7
+  (byte*) init_plot_tables::yoffs#4 ← phi( init_plot_tables::@3/(byte*) init_plot_tables::yoffs#2 init_plot_tables::@7/(byte*) init_plot_tables::yoffs#1 )
+  (byte) init_plot_tables::y#1 ← ++ (byte) init_plot_tables::y#2
+  if((byte) init_plot_tables::y#1!=(byte/signed byte/word/signed word) 0) goto init_plot_tables::@3
+  to:init_plot_tables::@return
+init_plot_tables::@7: scope:[init_plot_tables]  from init_plot_tables::@3
+  (byte*) init_plot_tables::yoffs#1 ← (byte*) init_plot_tables::yoffs#2 + (const word/signed word) init_plot_tables::$13
   to:init_plot_tables::@4
 init_plot_tables::@return: scope:[init_plot_tables]  from init_plot_tables::@4
   return 
@@ -4857,7 +5120,7 @@ main: scope:[main]  from @5
   *((const byte*) BGCOL#0) ← (byte/signed byte/word/signed word) 0
   *((const byte*) FGCOL#0) ← (byte/signed byte/word/signed word) 0
   *((const byte*) D011#0) ← (const byte) main::$2
-  *((const byte*) D018#0) ← (byte/signed byte/word/signed word) 24
+  *((const byte*) D018#0) ← (const byte) main::$8
   call init_screen param-assignment
   to:main::@5
 main::@5: scope:[main]  from main
@@ -4948,7 +5211,7 @@ init_plot_tables::@4: scope:[init_plot_tables]  from init_plot_tables::@3 init_p
   if((byte) init_plot_tables::y#1!=(byte/signed byte/word/signed word) 0) goto init_plot_tables::@3
   to:init_plot_tables::@return
 init_plot_tables::@7: scope:[init_plot_tables]  from init_plot_tables::@3
-  (byte*) init_plot_tables::yoffs#1 ← (byte*) init_plot_tables::yoffs#2 + (word/signed word) 320
+  (byte*) init_plot_tables::yoffs#1 ← (byte*) init_plot_tables::yoffs#2 + (const word/signed word) init_plot_tables::$13
   to:init_plot_tables::@4
 init_plot_tables::@return: scope:[init_plot_tables]  from init_plot_tables::@4
   return 
@@ -5040,12 +5303,19 @@ Constant inlined main::$1 = (const byte) BMM#0|(const byte) DEN#0|(const byte) R
 Constant inlined init_plot_tables::$1 = >(const byte*) BITMAP#0
 Constant inlined main::$2 = (const byte) BMM#0|(const byte) DEN#0|(const byte) RSEL#0|(byte/signed byte/word/signed word) 3
 Constant inlined main::$0 = (const byte) BMM#0|(const byte) DEN#0
+Constant inlined main::$5 = ((word))(const byte*) BITMAP#0
 Constant inlined init_plot_tables::y#0 = (byte/signed byte/word/signed word) 0
+Constant inlined main::$6 = ((word))(const byte*) BITMAP#0/(word/signed word) 1024
 Constant inlined init_plot_tables::yoffs#0 = ((byte*))(byte/signed byte/word/signed word) 0
+Constant inlined main::$3 = ((word))(const byte*) SCREEN#0
+Constant inlined main::$4 = ((word))(const byte*) SCREEN#0/(byte/signed byte/word/signed word) 64
+Constant inlined init_plot_tables::$13 = (byte/signed byte/word/signed word) 40*(byte/signed byte/word/signed word) 8
 Constant inlined init_plot_tables::x#0 = (byte/signed byte/word/signed word) 0
 Constant inlined init_screen::c#0 = (const byte*) SCREEN#0
 Constant inlined init_screen::b#0 = (const byte*) BITMAP#0
+Constant inlined main::$7 = ((word))(const byte*) SCREEN#0/(byte/signed byte/word/signed word) 64|((word))(const byte*) BITMAP#0/(word/signed word) 1024
 Constant inlined init_screen::$0 = (const byte*) BITMAP#0+(word/signed word) 8192
+Constant inlined main::$8 = ((byte))((word))(const byte*) SCREEN#0/(byte/signed byte/word/signed word) 64|((word))(const byte*) BITMAP#0/(word/signed word) 1024
 Succesful SSA optimization Pass2ConstantInlining
 CONTROL FLOW GRAPH
 @begin: scope:[]  from
@@ -5054,7 +5324,7 @@ main: scope:[main]  from @5
   *((const byte*) BGCOL#0) ← (byte/signed byte/word/signed word) 0
   *((const byte*) FGCOL#0) ← (byte/signed byte/word/signed word) 0
   *((const byte*) D011#0) ← (const byte) BMM#0|(const byte) DEN#0|(const byte) RSEL#0|(byte/signed byte/word/signed word) 3
-  *((const byte*) D018#0) ← (byte/signed byte/word/signed word) 24
+  *((const byte*) D018#0) ← ((byte))((word))(const byte*) SCREEN#0/(byte/signed byte/word/signed word) 64|((word))(const byte*) BITMAP#0/(word/signed word) 1024
   call init_screen param-assignment
   to:main::@5
 main::@5: scope:[main]  from main
@@ -5145,7 +5415,7 @@ init_plot_tables::@4: scope:[init_plot_tables]  from init_plot_tables::@3 init_p
   if((byte) init_plot_tables::y#1!=(byte/signed byte/word/signed word) 0) goto init_plot_tables::@3
   to:init_plot_tables::@return
 init_plot_tables::@7: scope:[init_plot_tables]  from init_plot_tables::@3
-  (byte*) init_plot_tables::yoffs#1 ← (byte*) init_plot_tables::yoffs#2 + (word/signed word) 320
+  (byte*) init_plot_tables::yoffs#1 ← (byte*) init_plot_tables::yoffs#2 + (byte/signed byte/word/signed word) 40*(byte/signed byte/word/signed word) 8
   to:init_plot_tables::@4
 init_plot_tables::@return: scope:[init_plot_tables]  from init_plot_tables::@4
   return 
@@ -5306,7 +5576,7 @@ main: scope:[main]  from @5
   *((const byte*) BGCOL#0) ← (byte/signed byte/word/signed word) 0
   *((const byte*) FGCOL#0) ← (byte/signed byte/word/signed word) 0
   *((const byte*) D011#0) ← (const byte) BMM#0|(const byte) DEN#0|(const byte) RSEL#0|(byte/signed byte/word/signed word) 3
-  *((const byte*) D018#0) ← (byte/signed byte/word/signed word) 24
+  *((const byte*) D018#0) ← ((byte))((word))(const byte*) SCREEN#0/(byte/signed byte/word/signed word) 64|((word))(const byte*) BITMAP#0/(word/signed word) 1024
   call init_screen param-assignment
   to:main::@5
 main::@5: scope:[main]  from main
@@ -5395,7 +5665,7 @@ init_plot_tables::@3: scope:[init_plot_tables]  from init_plot_tables::@11 init_
   if((byte~) init_plot_tables::$10!=(byte/signed byte/word/signed word) 7) goto init_plot_tables::@12
   to:init_plot_tables::@7
 init_plot_tables::@7: scope:[init_plot_tables]  from init_plot_tables::@3
-  (byte*) init_plot_tables::yoffs#1 ← (byte*) init_plot_tables::yoffs#2 + (word/signed word) 320
+  (byte*) init_plot_tables::yoffs#1 ← (byte*) init_plot_tables::yoffs#2 + (byte/signed byte/word/signed word) 40*(byte/signed byte/word/signed word) 8
   (byte*~) init_plot_tables::yoffs#7 ← (byte*) init_plot_tables::yoffs#1
   to:init_plot_tables::@4
 init_plot_tables::@4: scope:[init_plot_tables]  from init_plot_tables::@12 init_plot_tables::@7
@@ -5479,7 +5749,7 @@ main: scope:[main]  from @5
   [4] *((const byte*) BGCOL#0) ← (byte/signed byte/word/signed word) 0 [ ]
   [5] *((const byte*) FGCOL#0) ← (byte/signed byte/word/signed word) 0 [ ]
   [6] *((const byte*) D011#0) ← (const byte) BMM#0|(const byte) DEN#0|(const byte) RSEL#0|(byte/signed byte/word/signed word) 3 [ ]
-  [7] *((const byte*) D018#0) ← (byte/signed byte/word/signed word) 24 [ ]
+  [7] *((const byte*) D018#0) ← ((byte))((word))(const byte*) SCREEN#0/(byte/signed byte/word/signed word) 64|((word))(const byte*) BITMAP#0/(word/signed word) 1024 [ ]
   [8] call init_screen param-assignment [ ]
   to:main::@5
 main::@5: scope:[main]  from main
@@ -5572,7 +5842,7 @@ init_plot_tables::@3: scope:[init_plot_tables]  from init_plot_tables::@11 init_
   [61] if((byte~) init_plot_tables::$10!=(byte/signed byte/word/signed word) 7) goto init_plot_tables::@12 [ init_plot_tables::y#2 init_plot_tables::yoffs#2 ]
   to:init_plot_tables::@7
 init_plot_tables::@7: scope:[init_plot_tables]  from init_plot_tables::@3
-  [62] (byte*) init_plot_tables::yoffs#1 ← (byte*) init_plot_tables::yoffs#2 + (word/signed word) 320 [ init_plot_tables::y#2 init_plot_tables::yoffs#1 ]
+  [62] (byte*) init_plot_tables::yoffs#1 ← (byte*) init_plot_tables::yoffs#2 + (byte/signed byte/word/signed word) 40*(byte/signed byte/word/signed word) 8 [ init_plot_tables::y#2 init_plot_tables::yoffs#1 ]
   [63] (byte*~) init_plot_tables::yoffs#7 ← (byte*) init_plot_tables::yoffs#1 [ init_plot_tables::y#2 init_plot_tables::yoffs#7 ]
   to:init_plot_tables::@4
 init_plot_tables::@4: scope:[init_plot_tables]  from init_plot_tables::@12 init_plot_tables::@7
@@ -5673,7 +5943,7 @@ main: scope:[main]  from @5
   [4] *((const byte*) BGCOL#0) ← (byte/signed byte/word/signed word) 0 [ ]
   [5] *((const byte*) FGCOL#0) ← (byte/signed byte/word/signed word) 0 [ ]
   [6] *((const byte*) D011#0) ← (const byte) BMM#0|(const byte) DEN#0|(const byte) RSEL#0|(byte/signed byte/word/signed word) 3 [ ]
-  [7] *((const byte*) D018#0) ← (byte/signed byte/word/signed word) 24 [ ]
+  [7] *((const byte*) D018#0) ← ((byte))((word))(const byte*) SCREEN#0/(byte/signed byte/word/signed word) 64|((word))(const byte*) BITMAP#0/(word/signed word) 1024 [ ]
   [8] call init_screen param-assignment [ ]
   to:main::@5
 main::@5: scope:[main]  from main
@@ -5760,7 +6030,7 @@ init_plot_tables::@3: scope:[init_plot_tables]  from init_plot_tables::@2 init_p
   [59] if((byte~) init_plot_tables::$10!=(byte/signed byte/word/signed word) 7) goto init_plot_tables::@4 [ init_plot_tables::y#2 init_plot_tables::yoffs#2 ]
   to:init_plot_tables::@7
 init_plot_tables::@7: scope:[init_plot_tables]  from init_plot_tables::@3
-  [60] (byte*) init_plot_tables::yoffs#1 ← (byte*) init_plot_tables::yoffs#2 + (word/signed word) 320 [ init_plot_tables::y#2 init_plot_tables::yoffs#1 ]
+  [60] (byte*) init_plot_tables::yoffs#1 ← (byte*) init_plot_tables::yoffs#2 + (byte/signed byte/word/signed word) 40*(byte/signed byte/word/signed word) 8 [ init_plot_tables::y#2 init_plot_tables::yoffs#1 ]
   to:init_plot_tables::@4
 init_plot_tables::@4: scope:[init_plot_tables]  from init_plot_tables::@3 init_plot_tables::@7
   [61] (byte*) init_plot_tables::yoffs#4 ← phi( init_plot_tables::@3/(byte*) init_plot_tables::yoffs#2 init_plot_tables::@7/(byte*) init_plot_tables::yoffs#1 ) [ init_plot_tables::y#2 init_plot_tables::yoffs#4 ]
@@ -5806,7 +6076,7 @@ main: scope:[main]  from @5
   [4] *((const byte*) BGCOL#0) ← (byte/signed byte/word/signed word) 0 [ ] ( main:2 [ ] )
   [5] *((const byte*) FGCOL#0) ← (byte/signed byte/word/signed word) 0 [ ] ( main:2 [ ] )
   [6] *((const byte*) D011#0) ← (const byte) BMM#0|(const byte) DEN#0|(const byte) RSEL#0|(byte/signed byte/word/signed word) 3 [ ] ( main:2 [ ] )
-  [7] *((const byte*) D018#0) ← (byte/signed byte/word/signed word) 24 [ ] ( main:2 [ ] )
+  [7] *((const byte*) D018#0) ← ((byte))((word))(const byte*) SCREEN#0/(byte/signed byte/word/signed word) 64|((word))(const byte*) BITMAP#0/(word/signed word) 1024 [ ] ( main:2 [ ] )
   [8] call init_screen param-assignment [ ] ( main:2 [ ] )
   to:main::@5
 main::@5: scope:[main]  from main
@@ -5893,7 +6163,7 @@ init_plot_tables::@3: scope:[init_plot_tables]  from init_plot_tables::@2 init_p
   [59] if((byte~) init_plot_tables::$10!=(byte/signed byte/word/signed word) 7) goto init_plot_tables::@4 [ init_plot_tables::y#2 init_plot_tables::yoffs#2 ] ( main:2::init_plot_tables:10 [ init_plot_tables::y#2 init_plot_tables::yoffs#2 ] )
   to:init_plot_tables::@7
 init_plot_tables::@7: scope:[init_plot_tables]  from init_plot_tables::@3
-  [60] (byte*) init_plot_tables::yoffs#1 ← (byte*) init_plot_tables::yoffs#2 + (word/signed word) 320 [ init_plot_tables::y#2 init_plot_tables::yoffs#1 ] ( main:2::init_plot_tables:10 [ init_plot_tables::y#2 init_plot_tables::yoffs#1 ] )
+  [60] (byte*) init_plot_tables::yoffs#1 ← (byte*) init_plot_tables::yoffs#2 + (byte/signed byte/word/signed word) 40*(byte/signed byte/word/signed word) 8 [ init_plot_tables::y#2 init_plot_tables::yoffs#1 ] ( main:2::init_plot_tables:10 [ init_plot_tables::y#2 init_plot_tables::yoffs#1 ] )
   to:init_plot_tables::@4
 init_plot_tables::@4: scope:[init_plot_tables]  from init_plot_tables::@3 init_plot_tables::@7
   [61] (byte*) init_plot_tables::yoffs#4 ← phi( init_plot_tables::@3/(byte*) init_plot_tables::yoffs#2 init_plot_tables::@7/(byte*) init_plot_tables::yoffs#1 ) [ init_plot_tables::y#2 init_plot_tables::yoffs#4 ] ( main:2::init_plot_tables:10 [ init_plot_tables::y#2 init_plot_tables::yoffs#4 ] )
@@ -6209,8 +6479,8 @@ main: {
   //SEG11 [6] *((const byte*) D011#0) ← (const byte) BMM#0|(const byte) DEN#0|(const byte) RSEL#0|(byte/signed byte/word/signed word) 3 [ ] ( main:2 [ ] ) -- _deref_cowo1=coby2 
     lda #BMM|DEN|RSEL|3
     sta D011
-  //SEG12 [7] *((const byte*) D018#0) ← (byte/signed byte/word/signed word) 24 [ ] ( main:2 [ ] ) -- _deref_cowo1=coby2 
-    lda #$18
+  //SEG12 [7] *((const byte*) D018#0) ← ((byte))((word))(const byte*) SCREEN#0/(byte/signed byte/word/signed word) 64|((word))(const byte*) BITMAP#0/(word/signed word) 1024 [ ] ( main:2 [ ] ) -- _deref_cowo1=coby2 
+    lda #$ff & ($ffff & SCREEN/$40|$ffff & BITMAP/$400)
     sta D018
   //SEG13 [8] call init_screen param-assignment [ ] ( main:2 [ ] )
   //SEG14 [66] phi from main to init_screen [phi:main->init_screen]
@@ -6493,13 +6763,13 @@ init_plot_tables: {
     jmp b7
   //SEG95 init_plot_tables::@7
   b7:
-  //SEG96 [60] (byte*) init_plot_tables::yoffs#1 ← (byte*) init_plot_tables::yoffs#2 + (word/signed word) 320 [ init_plot_tables::y#2 init_plot_tables::yoffs#1 ] ( main:2::init_plot_tables:10 [ init_plot_tables::y#2 init_plot_tables::yoffs#1 ] ) -- zpptrby1=zpptrby1_plus_cowo1 
+  //SEG96 [60] (byte*) init_plot_tables::yoffs#1 ← (byte*) init_plot_tables::yoffs#2 + (byte/signed byte/word/signed word) 40*(byte/signed byte/word/signed word) 8 [ init_plot_tables::y#2 init_plot_tables::yoffs#1 ] ( main:2::init_plot_tables:10 [ init_plot_tables::y#2 init_plot_tables::yoffs#1 ] ) -- zpptrby1=zpptrby1_plus_cowo1 
     lda yoffs
     clc
-    adc #<$140
+    adc #<$28*8
     sta yoffs
     lda yoffs+1
-    adc #>$140
+    adc #>$28*8
     sta yoffs+1
   //SEG97 [61] phi from init_plot_tables::@3 init_plot_tables::@7 to init_plot_tables::@4 [phi:init_plot_tables::@3/init_plot_tables::@7->init_plot_tables::@4]
   b4_from_b3:
@@ -6605,7 +6875,7 @@ Equivalence Class zp ZP_BYTE:34 [ init_plot_tables::$7 ] has ALU potential.
 Statement [4] *((const byte*) BGCOL#0) ← (byte/signed byte/word/signed word) 0 [ ] ( main:2 [ ] ) always clobbers reg byte a 
 Statement [5] *((const byte*) FGCOL#0) ← (byte/signed byte/word/signed word) 0 [ ] ( main:2 [ ] ) always clobbers reg byte a 
 Statement [6] *((const byte*) D011#0) ← (const byte) BMM#0|(const byte) DEN#0|(const byte) RSEL#0|(byte/signed byte/word/signed word) 3 [ ] ( main:2 [ ] ) always clobbers reg byte a 
-Statement [7] *((const byte*) D018#0) ← (byte/signed byte/word/signed word) 24 [ ] ( main:2 [ ] ) always clobbers reg byte a 
+Statement [7] *((const byte*) D018#0) ← ((byte))((word))(const byte*) SCREEN#0/(byte/signed byte/word/signed word) 64|((word))(const byte*) BITMAP#0/(word/signed word) 1024 [ ] ( main:2 [ ] ) always clobbers reg byte a 
 Statement [11] if(*((const byte*) RASTER#0)!=(byte/word/signed word) 255) goto main::@2 [ ] ( main:2 [ ] ) always clobbers reg byte a 
 Statement [28] (byte*) plot::plotter_x#1 ← ((byte*))(byte/signed byte/word/signed word) 0 hi= (byte~) plot::$0 [ plot::x#0 plot::y#0 plot::plotter_x#1 ] ( main:2::plots:13::plot:23 [ plots::i#2 plot::x#0 plot::y#0 plot::plotter_x#1 ] ) always clobbers reg byte a 
 Removing always clobbered register reg byte a as potential for zp ZP_BYTE:2 [ plots::i#2 plots::i#1 ]
@@ -6626,7 +6896,7 @@ Statement [52] (byte~) init_plot_tables::$6 ← (byte) init_plot_tables::y#2 & (
 Removing always clobbered register reg byte a as potential for zp ZP_BYTE:5 [ init_plot_tables::y#2 init_plot_tables::y#1 ]
 Statement [56] (byte~) init_plot_tables::$9 ← > (byte*) init_plot_tables::yoffs#2 [ init_plot_tables::y#2 init_plot_tables::yoffs#2 init_plot_tables::$9 ] ( main:2::init_plot_tables:10 [ init_plot_tables::y#2 init_plot_tables::yoffs#2 init_plot_tables::$9 ] ) always clobbers reg byte a 
 Statement [58] (byte~) init_plot_tables::$10 ← (byte) init_plot_tables::y#2 & (byte/signed byte/word/signed word) 7 [ init_plot_tables::y#2 init_plot_tables::yoffs#2 init_plot_tables::$10 ] ( main:2::init_plot_tables:10 [ init_plot_tables::y#2 init_plot_tables::yoffs#2 init_plot_tables::$10 ] ) always clobbers reg byte a 
-Statement [60] (byte*) init_plot_tables::yoffs#1 ← (byte*) init_plot_tables::yoffs#2 + (word/signed word) 320 [ init_plot_tables::y#2 init_plot_tables::yoffs#1 ] ( main:2::init_plot_tables:10 [ init_plot_tables::y#2 init_plot_tables::yoffs#1 ] ) always clobbers reg byte a 
+Statement [60] (byte*) init_plot_tables::yoffs#1 ← (byte*) init_plot_tables::yoffs#2 + (byte/signed byte/word/signed word) 40*(byte/signed byte/word/signed word) 8 [ init_plot_tables::y#2 init_plot_tables::yoffs#1 ] ( main:2::init_plot_tables:10 [ init_plot_tables::y#2 init_plot_tables::yoffs#1 ] ) always clobbers reg byte a 
 Statement [68] *((byte*) init_screen::b#2) ← (byte/signed byte/word/signed word) 0 [ init_screen::b#2 ] ( main:2::init_screen:8 [ init_screen::b#2 ] ) always clobbers reg byte a reg byte y 
 Statement [70] if((byte*) init_screen::b#1!=(const byte*) BITMAP#0+(word/signed word) 8192) goto init_screen::@1 [ init_screen::b#1 ] ( main:2::init_screen:8 [ init_screen::b#1 ] ) always clobbers reg byte a 
 Statement [72] *((byte*) init_screen::c#2) ← (byte/signed byte/word/signed word) 20 [ init_screen::c#2 ] ( main:2::init_screen:8 [ init_screen::c#2 ] ) always clobbers reg byte a reg byte y 
@@ -6634,7 +6904,7 @@ Statement [74] if((byte*) init_screen::c#1!=(const byte*) SCREEN#0+(word/signed 
 Statement [4] *((const byte*) BGCOL#0) ← (byte/signed byte/word/signed word) 0 [ ] ( main:2 [ ] ) always clobbers reg byte a 
 Statement [5] *((const byte*) FGCOL#0) ← (byte/signed byte/word/signed word) 0 [ ] ( main:2 [ ] ) always clobbers reg byte a 
 Statement [6] *((const byte*) D011#0) ← (const byte) BMM#0|(const byte) DEN#0|(const byte) RSEL#0|(byte/signed byte/word/signed word) 3 [ ] ( main:2 [ ] ) always clobbers reg byte a 
-Statement [7] *((const byte*) D018#0) ← (byte/signed byte/word/signed word) 24 [ ] ( main:2 [ ] ) always clobbers reg byte a 
+Statement [7] *((const byte*) D018#0) ← ((byte))((word))(const byte*) SCREEN#0/(byte/signed byte/word/signed word) 64|((word))(const byte*) BITMAP#0/(word/signed word) 1024 [ ] ( main:2 [ ] ) always clobbers reg byte a 
 Statement [11] if(*((const byte*) RASTER#0)!=(byte/word/signed word) 255) goto main::@2 [ ] ( main:2 [ ] ) always clobbers reg byte a 
 Statement [28] (byte*) plot::plotter_x#1 ← ((byte*))(byte/signed byte/word/signed word) 0 hi= (byte~) plot::$0 [ plot::x#0 plot::y#0 plot::plotter_x#1 ] ( main:2::plots:13::plot:23 [ plots::i#2 plot::x#0 plot::y#0 plot::plotter_x#1 ] ) always clobbers reg byte a 
 Statement [30] (byte*) plot::plotter_x#2 ← (byte*) plot::plotter_x#1 lo= (byte~) plot::$1 [ plot::x#0 plot::y#0 plot::plotter_x#2 ] ( main:2::plots:13::plot:23 [ plots::i#2 plot::x#0 plot::y#0 plot::plotter_x#2 ] ) always clobbers reg byte a 
@@ -6648,7 +6918,7 @@ Statement [45] *((const byte[]) plot_bit#0 + (byte) init_plot_tables::x#2) ← (
 Statement [52] (byte~) init_plot_tables::$6 ← (byte) init_plot_tables::y#2 & (byte/signed byte/word/signed word) 7 [ init_plot_tables::y#2 init_plot_tables::yoffs#2 init_plot_tables::$6 ] ( main:2::init_plot_tables:10 [ init_plot_tables::y#2 init_plot_tables::yoffs#2 init_plot_tables::$6 ] ) always clobbers reg byte a 
 Statement [56] (byte~) init_plot_tables::$9 ← > (byte*) init_plot_tables::yoffs#2 [ init_plot_tables::y#2 init_plot_tables::yoffs#2 init_plot_tables::$9 ] ( main:2::init_plot_tables:10 [ init_plot_tables::y#2 init_plot_tables::yoffs#2 init_plot_tables::$9 ] ) always clobbers reg byte a 
 Statement [58] (byte~) init_plot_tables::$10 ← (byte) init_plot_tables::y#2 & (byte/signed byte/word/signed word) 7 [ init_plot_tables::y#2 init_plot_tables::yoffs#2 init_plot_tables::$10 ] ( main:2::init_plot_tables:10 [ init_plot_tables::y#2 init_plot_tables::yoffs#2 init_plot_tables::$10 ] ) always clobbers reg byte a 
-Statement [60] (byte*) init_plot_tables::yoffs#1 ← (byte*) init_plot_tables::yoffs#2 + (word/signed word) 320 [ init_plot_tables::y#2 init_plot_tables::yoffs#1 ] ( main:2::init_plot_tables:10 [ init_plot_tables::y#2 init_plot_tables::yoffs#1 ] ) always clobbers reg byte a 
+Statement [60] (byte*) init_plot_tables::yoffs#1 ← (byte*) init_plot_tables::yoffs#2 + (byte/signed byte/word/signed word) 40*(byte/signed byte/word/signed word) 8 [ init_plot_tables::y#2 init_plot_tables::yoffs#1 ] ( main:2::init_plot_tables:10 [ init_plot_tables::y#2 init_plot_tables::yoffs#1 ] ) always clobbers reg byte a 
 Statement [68] *((byte*) init_screen::b#2) ← (byte/signed byte/word/signed word) 0 [ init_screen::b#2 ] ( main:2::init_screen:8 [ init_screen::b#2 ] ) always clobbers reg byte a reg byte y 
 Statement [70] if((byte*) init_screen::b#1!=(const byte*) BITMAP#0+(word/signed word) 8192) goto init_screen::@1 [ init_screen::b#1 ] ( main:2::init_screen:8 [ init_screen::b#1 ] ) always clobbers reg byte a 
 Statement [72] *((byte*) init_screen::c#2) ← (byte/signed byte/word/signed word) 20 [ init_screen::c#2 ] ( main:2::init_screen:8 [ init_screen::c#2 ] ) always clobbers reg byte a reg byte y 
@@ -6788,8 +7058,8 @@ main: {
   //SEG11 [6] *((const byte*) D011#0) ← (const byte) BMM#0|(const byte) DEN#0|(const byte) RSEL#0|(byte/signed byte/word/signed word) 3 [ ] ( main:2 [ ] ) -- _deref_cowo1=coby2 
     lda #BMM|DEN|RSEL|3
     sta D011
-  //SEG12 [7] *((const byte*) D018#0) ← (byte/signed byte/word/signed word) 24 [ ] ( main:2 [ ] ) -- _deref_cowo1=coby2 
-    lda #$18
+  //SEG12 [7] *((const byte*) D018#0) ← ((byte))((word))(const byte*) SCREEN#0/(byte/signed byte/word/signed word) 64|((word))(const byte*) BITMAP#0/(word/signed word) 1024 [ ] ( main:2 [ ] ) -- _deref_cowo1=coby2 
+    lda #$ff & ($ffff & SCREEN/$40|$ffff & BITMAP/$400)
     sta D018
   //SEG13 [8] call init_screen param-assignment [ ] ( main:2 [ ] )
   //SEG14 [66] phi from main to init_screen [phi:main->init_screen]
@@ -6998,13 +7268,13 @@ init_plot_tables: {
     bne b4_from_b3
   //SEG95 init_plot_tables::@7
   b7:
-  //SEG96 [60] (byte*) init_plot_tables::yoffs#1 ← (byte*) init_plot_tables::yoffs#2 + (word/signed word) 320 [ init_plot_tables::y#2 init_plot_tables::yoffs#1 ] ( main:2::init_plot_tables:10 [ init_plot_tables::y#2 init_plot_tables::yoffs#1 ] ) -- zpptrby1=zpptrby1_plus_cowo1 
+  //SEG96 [60] (byte*) init_plot_tables::yoffs#1 ← (byte*) init_plot_tables::yoffs#2 + (byte/signed byte/word/signed word) 40*(byte/signed byte/word/signed word) 8 [ init_plot_tables::y#2 init_plot_tables::yoffs#1 ] ( main:2::init_plot_tables:10 [ init_plot_tables::y#2 init_plot_tables::yoffs#1 ] ) -- zpptrby1=zpptrby1_plus_cowo1 
     lda yoffs
     clc
-    adc #<$140
+    adc #<$28*8
     sta yoffs
     lda yoffs+1
-    adc #>$140
+    adc #>$28*8
     sta yoffs+1
   //SEG97 [61] phi from init_plot_tables::@3 init_plot_tables::@7 to init_plot_tables::@4 [phi:init_plot_tables::@3/init_plot_tables::@7->init_plot_tables::@4]
   b4_from_b3:
@@ -7150,8 +7420,8 @@ main: {
   //SEG11 [6] *((const byte*) D011#0) ← (const byte) BMM#0|(const byte) DEN#0|(const byte) RSEL#0|(byte/signed byte/word/signed word) 3 [ ] ( main:2 [ ] ) -- _deref_cowo1=coby2 
     lda #BMM|DEN|RSEL|3
     sta D011
-  //SEG12 [7] *((const byte*) D018#0) ← (byte/signed byte/word/signed word) 24 [ ] ( main:2 [ ] ) -- _deref_cowo1=coby2 
-    lda #$18
+  //SEG12 [7] *((const byte*) D018#0) ← ((byte))((word))(const byte*) SCREEN#0/(byte/signed byte/word/signed word) 64|((word))(const byte*) BITMAP#0/(word/signed word) 1024 [ ] ( main:2 [ ] ) -- _deref_cowo1=coby2 
+    lda #$ff & ($ffff & SCREEN/$40|$ffff & BITMAP/$400)
     sta D018
   //SEG13 [8] call init_screen param-assignment [ ] ( main:2 [ ] )
   //SEG14 [66] phi from main to init_screen [phi:main->init_screen]
@@ -7358,13 +7628,13 @@ init_plot_tables: {
     bne b4_from_b3
   //SEG95 init_plot_tables::@7
   b7:
-  //SEG96 [60] (byte*) init_plot_tables::yoffs#1 ← (byte*) init_plot_tables::yoffs#2 + (word/signed word) 320 [ init_plot_tables::y#2 init_plot_tables::yoffs#1 ] ( main:2::init_plot_tables:10 [ init_plot_tables::y#2 init_plot_tables::yoffs#1 ] ) -- zpptrby1=zpptrby1_plus_cowo1 
+  //SEG96 [60] (byte*) init_plot_tables::yoffs#1 ← (byte*) init_plot_tables::yoffs#2 + (byte/signed byte/word/signed word) 40*(byte/signed byte/word/signed word) 8 [ init_plot_tables::y#2 init_plot_tables::yoffs#1 ] ( main:2::init_plot_tables:10 [ init_plot_tables::y#2 init_plot_tables::yoffs#1 ] ) -- zpptrby1=zpptrby1_plus_cowo1 
     lda yoffs
     clc
-    adc #<$140
+    adc #<$28*8
     sta yoffs
     lda yoffs+1
-    adc #>$140
+    adc #>$28*8
     sta yoffs+1
   //SEG97 [61] phi from init_plot_tables::@3 init_plot_tables::@7 to init_plot_tables::@4 [phi:init_plot_tables::@3/init_plot_tables::@7->init_plot_tables::@4]
   b4_from_b3:
@@ -7525,8 +7795,8 @@ main: {
   //SEG11 [6] *((const byte*) D011#0) ← (const byte) BMM#0|(const byte) DEN#0|(const byte) RSEL#0|(byte/signed byte/word/signed word) 3 [ ] ( main:2 [ ] ) -- _deref_cowo1=coby2 
     lda #BMM|DEN|RSEL|3
     sta D011
-  //SEG12 [7] *((const byte*) D018#0) ← (byte/signed byte/word/signed word) 24 [ ] ( main:2 [ ] ) -- _deref_cowo1=coby2 
-    lda #$18
+  //SEG12 [7] *((const byte*) D018#0) ← ((byte))((word))(const byte*) SCREEN#0/(byte/signed byte/word/signed word) 64|((word))(const byte*) BITMAP#0/(word/signed word) 1024 [ ] ( main:2 [ ] ) -- _deref_cowo1=coby2 
+    lda #$ff & ($ffff & SCREEN/$40|$ffff & BITMAP/$400)
     sta D018
   //SEG13 [8] call init_screen param-assignment [ ] ( main:2 [ ] )
   //SEG14 [66] phi from main to init_screen [phi:main->init_screen]
@@ -7728,13 +7998,13 @@ init_plot_tables: {
     bne b4
   //SEG95 init_plot_tables::@7
   b7:
-  //SEG96 [60] (byte*) init_plot_tables::yoffs#1 ← (byte*) init_plot_tables::yoffs#2 + (word/signed word) 320 [ init_plot_tables::y#2 init_plot_tables::yoffs#1 ] ( main:2::init_plot_tables:10 [ init_plot_tables::y#2 init_plot_tables::yoffs#1 ] ) -- zpptrby1=zpptrby1_plus_cowo1 
+  //SEG96 [60] (byte*) init_plot_tables::yoffs#1 ← (byte*) init_plot_tables::yoffs#2 + (byte/signed byte/word/signed word) 40*(byte/signed byte/word/signed word) 8 [ init_plot_tables::y#2 init_plot_tables::yoffs#1 ] ( main:2::init_plot_tables:10 [ init_plot_tables::y#2 init_plot_tables::yoffs#1 ] ) -- zpptrby1=zpptrby1_plus_cowo1 
     lda yoffs
     clc
-    adc #<$140
+    adc #<$28*8
     sta yoffs
     lda yoffs+1
-    adc #>$140
+    adc #>$28*8
     sta yoffs+1
   //SEG97 [61] phi from init_plot_tables::@3 init_plot_tables::@7 to init_plot_tables::@4 [phi:init_plot_tables::@3/init_plot_tables::@7->init_plot_tables::@4]
   //SEG98 [61] phi (byte*) init_plot_tables::yoffs#4 = (byte*) init_plot_tables::yoffs#2 [phi:init_plot_tables::@3/init_plot_tables::@7->init_plot_tables::@4#0] -- register_copy 
@@ -7884,8 +8154,8 @@ main: {
   //SEG11 [6] *((const byte*) D011#0) ← (const byte) BMM#0|(const byte) DEN#0|(const byte) RSEL#0|(byte/signed byte/word/signed word) 3 [ ] ( main:2 [ ] ) -- _deref_cowo1=coby2 
     lda #BMM|DEN|RSEL|3
     sta D011
-  //SEG12 [7] *((const byte*) D018#0) ← (byte/signed byte/word/signed word) 24 [ ] ( main:2 [ ] ) -- _deref_cowo1=coby2 
-    lda #$18
+  //SEG12 [7] *((const byte*) D018#0) ← ((byte))((word))(const byte*) SCREEN#0/(byte/signed byte/word/signed word) 64|((word))(const byte*) BITMAP#0/(word/signed word) 1024 [ ] ( main:2 [ ] ) -- _deref_cowo1=coby2 
+    lda #$ff & ($ffff & SCREEN/$40|$ffff & BITMAP/$400)
     sta D018
   //SEG13 [8] call init_screen param-assignment [ ] ( main:2 [ ] )
   //SEG14 [66] phi from main to init_screen [phi:main->init_screen]
@@ -8073,13 +8343,13 @@ init_plot_tables: {
     cmp #7
     bne b4
   //SEG95 init_plot_tables::@7
-  //SEG96 [60] (byte*) init_plot_tables::yoffs#1 ← (byte*) init_plot_tables::yoffs#2 + (word/signed word) 320 [ init_plot_tables::y#2 init_plot_tables::yoffs#1 ] ( main:2::init_plot_tables:10 [ init_plot_tables::y#2 init_plot_tables::yoffs#1 ] ) -- zpptrby1=zpptrby1_plus_cowo1 
+  //SEG96 [60] (byte*) init_plot_tables::yoffs#1 ← (byte*) init_plot_tables::yoffs#2 + (byte/signed byte/word/signed word) 40*(byte/signed byte/word/signed word) 8 [ init_plot_tables::y#2 init_plot_tables::yoffs#1 ] ( main:2::init_plot_tables:10 [ init_plot_tables::y#2 init_plot_tables::yoffs#1 ] ) -- zpptrby1=zpptrby1_plus_cowo1 
     lda yoffs
     clc
-    adc #<$140
+    adc #<$28*8
     sta yoffs
     lda yoffs+1
-    adc #>$140
+    adc #>$28*8
     sta yoffs+1
   //SEG97 [61] phi from init_plot_tables::@3 init_plot_tables::@7 to init_plot_tables::@4 [phi:init_plot_tables::@3/init_plot_tables::@7->init_plot_tables::@4]
   //SEG98 [61] phi (byte*) init_plot_tables::yoffs#4 = (byte*) init_plot_tables::yoffs#2 [phi:init_plot_tables::@3/init_plot_tables::@7->init_plot_tables::@4#0] -- register_copy 
@@ -8206,8 +8476,8 @@ main: {
   //SEG11 [6] *((const byte*) D011#0) ← (const byte) BMM#0|(const byte) DEN#0|(const byte) RSEL#0|(byte/signed byte/word/signed word) 3 [ ] ( main:2 [ ] ) -- _deref_cowo1=coby2 
     lda #BMM|DEN|RSEL|3
     sta D011
-  //SEG12 [7] *((const byte*) D018#0) ← (byte/signed byte/word/signed word) 24 [ ] ( main:2 [ ] ) -- _deref_cowo1=coby2 
-    lda #$18
+  //SEG12 [7] *((const byte*) D018#0) ← ((byte))((word))(const byte*) SCREEN#0/(byte/signed byte/word/signed word) 64|((word))(const byte*) BITMAP#0/(word/signed word) 1024 [ ] ( main:2 [ ] ) -- _deref_cowo1=coby2 
+    lda #$ff & ($ffff & SCREEN/$40|$ffff & BITMAP/$400)
     sta D018
   //SEG13 [8] call init_screen param-assignment [ ] ( main:2 [ ] )
   //SEG14 [66] phi from main to init_screen [phi:main->init_screen]
@@ -8395,13 +8665,13 @@ init_plot_tables: {
     cmp #7
     bne b4
   //SEG95 init_plot_tables::@7
-  //SEG96 [60] (byte*) init_plot_tables::yoffs#1 ← (byte*) init_plot_tables::yoffs#2 + (word/signed word) 320 [ init_plot_tables::y#2 init_plot_tables::yoffs#1 ] ( main:2::init_plot_tables:10 [ init_plot_tables::y#2 init_plot_tables::yoffs#1 ] ) -- zpptrby1=zpptrby1_plus_cowo1 
+  //SEG96 [60] (byte*) init_plot_tables::yoffs#1 ← (byte*) init_plot_tables::yoffs#2 + (byte/signed byte/word/signed word) 40*(byte/signed byte/word/signed word) 8 [ init_plot_tables::y#2 init_plot_tables::yoffs#1 ] ( main:2::init_plot_tables:10 [ init_plot_tables::y#2 init_plot_tables::yoffs#1 ] ) -- zpptrby1=zpptrby1_plus_cowo1 
     lda yoffs
     clc
-    adc #<$140
+    adc #<$28*8
     sta yoffs
     lda yoffs+1
-    adc #>$140
+    adc #>$28*8
     sta yoffs+1
   //SEG97 [61] phi from init_plot_tables::@3 init_plot_tables::@7 to init_plot_tables::@4 [phi:init_plot_tables::@3/init_plot_tables::@7->init_plot_tables::@4]
   //SEG98 [61] phi (byte*) init_plot_tables::yoffs#4 = (byte*) init_plot_tables::yoffs#2 [phi:init_plot_tables::@3/init_plot_tables::@7->init_plot_tables::@4#0] -- register_copy 
@@ -8528,8 +8798,8 @@ main: {
   //SEG11 [6] *((const byte*) D011#0) ← (const byte) BMM#0|(const byte) DEN#0|(const byte) RSEL#0|(byte/signed byte/word/signed word) 3 [ ] ( main:2 [ ] ) -- _deref_cowo1=coby2 
     lda #BMM|DEN|RSEL|3
     sta D011
-  //SEG12 [7] *((const byte*) D018#0) ← (byte/signed byte/word/signed word) 24 [ ] ( main:2 [ ] ) -- _deref_cowo1=coby2 
-    lda #$18
+  //SEG12 [7] *((const byte*) D018#0) ← ((byte))((word))(const byte*) SCREEN#0/(byte/signed byte/word/signed word) 64|((word))(const byte*) BITMAP#0/(word/signed word) 1024 [ ] ( main:2 [ ] ) -- _deref_cowo1=coby2 
+    lda #$ff & ($ffff & SCREEN/$40|$ffff & BITMAP/$400)
     sta D018
   //SEG13 [8] call init_screen param-assignment [ ] ( main:2 [ ] )
   //SEG14 [66] phi from main to init_screen [phi:main->init_screen]
@@ -8716,13 +8986,13 @@ init_plot_tables: {
     cmp #7
     bne b4
   //SEG95 init_plot_tables::@7
-  //SEG96 [60] (byte*) init_plot_tables::yoffs#1 ← (byte*) init_plot_tables::yoffs#2 + (word/signed word) 320 [ init_plot_tables::y#2 init_plot_tables::yoffs#1 ] ( main:2::init_plot_tables:10 [ init_plot_tables::y#2 init_plot_tables::yoffs#1 ] ) -- zpptrby1=zpptrby1_plus_cowo1 
+  //SEG96 [60] (byte*) init_plot_tables::yoffs#1 ← (byte*) init_plot_tables::yoffs#2 + (byte/signed byte/word/signed word) 40*(byte/signed byte/word/signed word) 8 [ init_plot_tables::y#2 init_plot_tables::yoffs#1 ] ( main:2::init_plot_tables:10 [ init_plot_tables::y#2 init_plot_tables::yoffs#1 ] ) -- zpptrby1=zpptrby1_plus_cowo1 
     lda yoffs
     clc
-    adc #<$140
+    adc #<$28*8
     sta yoffs
     lda yoffs+1
-    adc #>$140
+    adc #>$28*8
     sta yoffs+1
   //SEG97 [61] phi from init_plot_tables::@3 init_plot_tables::@7 to init_plot_tables::@4 [phi:init_plot_tables::@3/init_plot_tables::@7->init_plot_tables::@4]
   //SEG98 [61] phi (byte*) init_plot_tables::yoffs#4 = (byte*) init_plot_tables::yoffs#2 [phi:init_plot_tables::@3/init_plot_tables::@7->init_plot_tables::@4#0] -- register_copy 
@@ -8853,8 +9123,8 @@ main: {
   //SEG11 [6] *((const byte*) D011#0) ← (const byte) BMM#0|(const byte) DEN#0|(const byte) RSEL#0|(byte/signed byte/word/signed word) 3 [ ] ( main:2 [ ] ) -- _deref_cowo1=coby2 
     lda #BMM|DEN|RSEL|3
     sta D011
-  //SEG12 [7] *((const byte*) D018#0) ← (byte/signed byte/word/signed word) 24 [ ] ( main:2 [ ] ) -- _deref_cowo1=coby2 
-    lda #$18
+  //SEG12 [7] *((const byte*) D018#0) ← ((byte))((word))(const byte*) SCREEN#0/(byte/signed byte/word/signed word) 64|((word))(const byte*) BITMAP#0/(word/signed word) 1024 [ ] ( main:2 [ ] ) -- _deref_cowo1=coby2 
+    lda #$ff & ($ffff & SCREEN/$40|$ffff & BITMAP/$400)
     sta D018
   //SEG13 [8] call init_screen param-assignment [ ] ( main:2 [ ] )
   //SEG14 [66] phi from main to init_screen [phi:main->init_screen]
@@ -9038,13 +9308,13 @@ init_plot_tables: {
     cmp #7
     bne b4
   //SEG95 init_plot_tables::@7
-  //SEG96 [60] (byte*) init_plot_tables::yoffs#1 ← (byte*) init_plot_tables::yoffs#2 + (word/signed word) 320 [ init_plot_tables::y#2 init_plot_tables::yoffs#1 ] ( main:2::init_plot_tables:10 [ init_plot_tables::y#2 init_plot_tables::yoffs#1 ] ) -- zpptrby1=zpptrby1_plus_cowo1 
+  //SEG96 [60] (byte*) init_plot_tables::yoffs#1 ← (byte*) init_plot_tables::yoffs#2 + (byte/signed byte/word/signed word) 40*(byte/signed byte/word/signed word) 8 [ init_plot_tables::y#2 init_plot_tables::yoffs#1 ] ( main:2::init_plot_tables:10 [ init_plot_tables::y#2 init_plot_tables::yoffs#1 ] ) -- zpptrby1=zpptrby1_plus_cowo1 
     lda yoffs
     clc
-    adc #<$140
+    adc #<$28*8
     sta yoffs
     lda yoffs+1
-    adc #>$140
+    adc #>$28*8
     sta yoffs+1
   //SEG97 [61] phi from init_plot_tables::@3 init_plot_tables::@7 to init_plot_tables::@4 [phi:init_plot_tables::@3/init_plot_tables::@7->init_plot_tables::@4]
   //SEG98 [61] phi (byte*) init_plot_tables::yoffs#4 = (byte*) init_plot_tables::yoffs#2 [phi:init_plot_tables::@3/init_plot_tables::@7->init_plot_tables::@4#0] -- register_copy 
@@ -9169,8 +9439,8 @@ main: {
   //SEG11 [6] *((const byte*) D011#0) ← (const byte) BMM#0|(const byte) DEN#0|(const byte) RSEL#0|(byte/signed byte/word/signed word) 3 [ ] ( main:2 [ ] ) -- _deref_cowo1=coby2 
     lda #BMM|DEN|RSEL|3
     sta D011
-  //SEG12 [7] *((const byte*) D018#0) ← (byte/signed byte/word/signed word) 24 [ ] ( main:2 [ ] ) -- _deref_cowo1=coby2 
-    lda #$18
+  //SEG12 [7] *((const byte*) D018#0) ← ((byte))((word))(const byte*) SCREEN#0/(byte/signed byte/word/signed word) 64|((word))(const byte*) BITMAP#0/(word/signed word) 1024 [ ] ( main:2 [ ] ) -- _deref_cowo1=coby2 
+    lda #$ff & ($ffff & SCREEN/$40|$ffff & BITMAP/$400)
     sta D018
   //SEG13 [8] call init_screen param-assignment [ ] ( main:2 [ ] )
   //SEG14 [66] phi from main to init_screen [phi:main->init_screen]
@@ -9354,13 +9624,13 @@ init_plot_tables: {
     cmp #7
     bne b4
   //SEG95 init_plot_tables::@7
-  //SEG96 [60] (byte*) init_plot_tables::yoffs#1 ← (byte*) init_plot_tables::yoffs#2 + (word/signed word) 320 [ init_plot_tables::y#2 init_plot_tables::yoffs#1 ] ( main:2::init_plot_tables:10 [ init_plot_tables::y#2 init_plot_tables::yoffs#1 ] ) -- zpptrby1=zpptrby1_plus_cowo1 
+  //SEG96 [60] (byte*) init_plot_tables::yoffs#1 ← (byte*) init_plot_tables::yoffs#2 + (byte/signed byte/word/signed word) 40*(byte/signed byte/word/signed word) 8 [ init_plot_tables::y#2 init_plot_tables::yoffs#1 ] ( main:2::init_plot_tables:10 [ init_plot_tables::y#2 init_plot_tables::yoffs#1 ] ) -- zpptrby1=zpptrby1_plus_cowo1 
     lda yoffs
     clc
-    adc #<$140
+    adc #<$28*8
     sta yoffs
     lda yoffs+1
-    adc #>$140
+    adc #>$28*8
     sta yoffs+1
   //SEG97 [61] phi from init_plot_tables::@3 init_plot_tables::@7 to init_plot_tables::@4 [phi:init_plot_tables::@3/init_plot_tables::@7->init_plot_tables::@4]
   //SEG98 [61] phi (byte*) init_plot_tables::yoffs#4 = (byte*) init_plot_tables::yoffs#2 [phi:init_plot_tables::@3/init_plot_tables::@7->init_plot_tables::@4#0] -- register_copy 
@@ -9484,8 +9754,8 @@ main: {
   //SEG11 [6] *((const byte*) D011#0) ← (const byte) BMM#0|(const byte) DEN#0|(const byte) RSEL#0|(byte/signed byte/word/signed word) 3 [ ] ( main:2 [ ] ) -- _deref_cowo1=coby2 
     lda #BMM|DEN|RSEL|3
     sta D011
-  //SEG12 [7] *((const byte*) D018#0) ← (byte/signed byte/word/signed word) 24 [ ] ( main:2 [ ] ) -- _deref_cowo1=coby2 
-    lda #$18
+  //SEG12 [7] *((const byte*) D018#0) ← ((byte))((word))(const byte*) SCREEN#0/(byte/signed byte/word/signed word) 64|((word))(const byte*) BITMAP#0/(word/signed word) 1024 [ ] ( main:2 [ ] ) -- _deref_cowo1=coby2 
+    lda #$ff & ($ffff & SCREEN/$40|$ffff & BITMAP/$400)
     sta D018
   //SEG13 [8] call init_screen param-assignment [ ] ( main:2 [ ] )
   //SEG14 [66] phi from main to init_screen [phi:main->init_screen]
@@ -9669,13 +9939,13 @@ init_plot_tables: {
     cmp #7
     bne b4
   //SEG95 init_plot_tables::@7
-  //SEG96 [60] (byte*) init_plot_tables::yoffs#1 ← (byte*) init_plot_tables::yoffs#2 + (word/signed word) 320 [ init_plot_tables::y#2 init_plot_tables::yoffs#1 ] ( main:2::init_plot_tables:10 [ init_plot_tables::y#2 init_plot_tables::yoffs#1 ] ) -- zpptrby1=zpptrby1_plus_cowo1 
+  //SEG96 [60] (byte*) init_plot_tables::yoffs#1 ← (byte*) init_plot_tables::yoffs#2 + (byte/signed byte/word/signed word) 40*(byte/signed byte/word/signed word) 8 [ init_plot_tables::y#2 init_plot_tables::yoffs#1 ] ( main:2::init_plot_tables:10 [ init_plot_tables::y#2 init_plot_tables::yoffs#1 ] ) -- zpptrby1=zpptrby1_plus_cowo1 
     lda yoffs
     clc
-    adc #<$140
+    adc #<$28*8
     sta yoffs
     lda yoffs+1
-    adc #>$140
+    adc #>$28*8
     sta yoffs+1
   //SEG97 [61] phi from init_plot_tables::@3 init_plot_tables::@7 to init_plot_tables::@4 [phi:init_plot_tables::@3/init_plot_tables::@7->init_plot_tables::@4]
   //SEG98 [61] phi (byte*) init_plot_tables::yoffs#4 = (byte*) init_plot_tables::yoffs#2 [phi:init_plot_tables::@3/init_plot_tables::@7->init_plot_tables::@4#0] -- register_copy 
@@ -9932,8 +10202,8 @@ main: {
   //SEG11 [6] *((const byte*) D011#0) ← (const byte) BMM#0|(const byte) DEN#0|(const byte) RSEL#0|(byte/signed byte/word/signed word) 3 [ ] ( main:2 [ ] ) -- _deref_cowo1=coby2 
     lda #BMM|DEN|RSEL|3
     sta D011
-  //SEG12 [7] *((const byte*) D018#0) ← (byte/signed byte/word/signed word) 24 [ ] ( main:2 [ ] ) -- _deref_cowo1=coby2 
-    lda #$18
+  //SEG12 [7] *((const byte*) D018#0) ← ((byte))((word))(const byte*) SCREEN#0/(byte/signed byte/word/signed word) 64|((word))(const byte*) BITMAP#0/(word/signed word) 1024 [ ] ( main:2 [ ] ) -- _deref_cowo1=coby2 
+    lda #$ff & ($ffff & SCREEN/$40|$ffff & BITMAP/$400)
     sta D018
   //SEG13 [8] call init_screen param-assignment [ ] ( main:2 [ ] )
   //SEG14 [66] phi from main to init_screen [phi:main->init_screen]
@@ -10117,13 +10387,13 @@ init_plot_tables: {
     cmp #7
     bne b4
   //SEG95 init_plot_tables::@7
-  //SEG96 [60] (byte*) init_plot_tables::yoffs#1 ← (byte*) init_plot_tables::yoffs#2 + (word/signed word) 320 [ init_plot_tables::y#2 init_plot_tables::yoffs#1 ] ( main:2::init_plot_tables:10 [ init_plot_tables::y#2 init_plot_tables::yoffs#1 ] ) -- zpptrby1=zpptrby1_plus_cowo1 
+  //SEG96 [60] (byte*) init_plot_tables::yoffs#1 ← (byte*) init_plot_tables::yoffs#2 + (byte/signed byte/word/signed word) 40*(byte/signed byte/word/signed word) 8 [ init_plot_tables::y#2 init_plot_tables::yoffs#1 ] ( main:2::init_plot_tables:10 [ init_plot_tables::y#2 init_plot_tables::yoffs#1 ] ) -- zpptrby1=zpptrby1_plus_cowo1 
     lda yoffs
     clc
-    adc #<$140
+    adc #<$28*8
     sta yoffs
     lda yoffs+1
-    adc #>$140
+    adc #>$28*8
     sta yoffs+1
   //SEG97 [61] phi from init_plot_tables::@3 init_plot_tables::@7 to init_plot_tables::@4 [phi:init_plot_tables::@3/init_plot_tables::@7->init_plot_tables::@4]
   //SEG98 [61] phi (byte*) init_plot_tables::yoffs#4 = (byte*) init_plot_tables::yoffs#2 [phi:init_plot_tables::@3/init_plot_tables::@7->init_plot_tables::@4#0] -- register_copy 

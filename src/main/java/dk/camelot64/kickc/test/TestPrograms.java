@@ -24,6 +24,10 @@ public class TestPrograms extends TestCase {
       helper = new ReferenceHelper("dk/camelot64/kickc/test/ref/");
    }
 
+   public void testDoubleImport() throws IOException, URISyntaxException {
+      compileAndCompare("double-import");
+   }
+
    public void testImporting() throws IOException, URISyntaxException {
       compileAndCompare("importing");
    }

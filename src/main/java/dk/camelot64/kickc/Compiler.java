@@ -19,10 +19,9 @@ public class Compiler {
    private Program program;
 
    public Compiler() {
-      this.program = new Program(new ProgramScope(), new CompileLog());
-      this.program.setImportPaths(new ArrayList<>());
+      this.program = new Program();
    }
-   
+
    public CompileLog getLog() {
       return program.getLog();
    }
@@ -57,44 +56,50 @@ public class Compiler {
    }
 
    public static void loadAndParseFile(String fileName, Program program, StatementSequenceGenerator statementSequenceGenerator) {
-      CharStream fileStream = loadFile(fileName, program);
-      program.getLog().append(fileStream.toString());
-      KickCLexer lexer = new KickCLexer(fileStream);
-      KickCParser parser = new KickCParser(new CommonTokenStream(lexer));
-      parser.setBuildParseTree(true);
-      parser.addErrorListener(new BaseErrorListener() {
-         @Override
-         public void syntaxError(
-               Recognizer<?, ?> recognizer,
-               Object offendingSymbol,
-               int line,
-               int charPositionInLine,
-               String msg,
-               RecognitionException e) {
-            throw new CompileError("Error parsing  file " + fileStream.getSourceName() + "\n - Line: " + line + "\n - Message: " + msg);
-         }
-      });
-      statementSequenceGenerator.generate(parser.file());
-   }
-
-   private static CharStream loadFile(String fileName, Program program) {
-      if(!fileName.endsWith(".kc")) {
-         fileName += ".kc";
-      }
       try {
-         List<String> importPaths = program.getImportPaths();
-         for (String importPath : importPaths) {
-            if(!importPath.endsWith("/")) {
-               importPath += "/";
-            }
-            String filePath = importPath + fileName;
-            File file = new File(filePath);
-            if(file.exists()) {
-               return CharStreams.fromPath(file.toPath());
-            }
+         File file = loadFile(fileName, program);
+         List<String> imported = program.getImported();
+         if (imported.contains(file.getAbsolutePath())) {
+            return;
          }
+         final CharStream fileStream = CharStreams.fromPath(file.toPath());
+         imported.add(file.getAbsolutePath());
+         program.getLog().append(fileStream.toString());
+         KickCLexer lexer = new KickCLexer(fileStream);
+         KickCParser parser = new KickCParser(new CommonTokenStream(lexer));
+         parser.setBuildParseTree(true);
+         parser.addErrorListener(new BaseErrorListener() {
+            @Override
+            public void syntaxError(
+                  Recognizer<?, ?> recognizer,
+                  Object offendingSymbol,
+                  int line,
+                  int charPositionInLine,
+                  String msg,
+                  RecognitionException e) {
+               throw new CompileError("Error parsing  file " + fileStream.getSourceName() + "\n - Line: " + line + "\n - Message: " + msg);
+            }
+         });
+         statementSequenceGenerator.generate(parser.file());
       } catch (IOException e) {
          throw new CompileError("Error loading file " + fileName, e);
+      }
+   }
+
+   private static File loadFile(String fileName, Program program) {
+      if (!fileName.endsWith(".kc")) {
+         fileName += ".kc";
+      }
+      List<String> importPaths = program.getImportPaths();
+      for (String importPath : importPaths) {
+         if (!importPath.endsWith("/")) {
+            importPath += "/";
+         }
+         String filePath = importPath + fileName;
+         File file = new File(filePath);
+         if (file.exists()) {
+            return file;
+         }
       }
       throw new CompileError("File  not found " + fileName);
    }

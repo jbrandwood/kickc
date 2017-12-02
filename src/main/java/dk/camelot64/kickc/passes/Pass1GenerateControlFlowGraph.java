@@ -7,19 +7,20 @@ import java.util.Map;
 import java.util.Stack;
 
 /** Pass that generates a control flow graph for the program */
-public class Pass1GenerateControlFlowGraph {
+public class Pass1GenerateControlFlowGraph extends Pass1Base {
 
-   private ProgramScope scope;
-   private Map<LabelRef, ControlFlowBlock> blocks;
-   private ControlFlowBlock firstBlock;
-
-   public Pass1GenerateControlFlowGraph(ProgramScope scope) {
-      this.scope = scope;
-      this.blocks = new LinkedHashMap<>();
+   public Pass1GenerateControlFlowGraph(Program program) {
+      super(program);
    }
 
-   public ControlFlowGraph generate(StatementSequence sequence) {
-      this.firstBlock = getOrCreateBlock(scope.addLabel(SymbolRef.BEGIN_BLOCK_NAME).getRef(), ScopeRef.ROOT);
+   private Map<LabelRef, ControlFlowBlock> blocks;
+
+   @Override
+   boolean executeStep() {
+      this.blocks = new LinkedHashMap<>();
+      ProgramScope scope = getScope();
+      StatementSequence sequence = getProgram().getStatementSequence();
+      ControlFlowBlock firstBlock = getOrCreateBlock(scope.addLabel(SymbolRef.BEGIN_BLOCK_NAME).getRef(), ScopeRef.ROOT);
       Stack<ControlFlowBlock> blockStack = new Stack<>();
       blockStack.push(firstBlock);
       sequence.addStatement(new StatementLabel(scope.addLabel(SymbolRef.END_BLOCK_NAME).getRef()));
@@ -79,8 +80,9 @@ public class Pass1GenerateControlFlowGraph {
             currentBlock.addStatement(statement);
          }
       }
-
-      return new ControlFlowGraph(blocks, firstBlock.getLabel());
+      ControlFlowGraph controlFlowGraph = new ControlFlowGraph(blocks, firstBlock.getLabel());
+      getProgram().setGraph(controlFlowGraph);
+      return false;
    }
 
    private ControlFlowBlock getOrCreateBlock(LabelRef label, ScopeRef scope) {

@@ -6,6 +6,8 @@ import dk.camelot64.kickc.parser.KickCParser;
 import dk.camelot64.kickc.passes.*;
 import org.antlr.v4.runtime.*;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -14,23 +16,39 @@ import java.util.List;
  */
 public class Compiler {
 
-   public Program compile(final CharStream input) {
-      CompileLog log = new CompileLog();
+   private Program program;
+
+   public Compiler() {
+      this.program = new Program(new ProgramScope(), new CompileLog());
+      this.program.setImportPaths(new ArrayList<>());
+   }
+   
+   public CompileLog getLog() {
+      return program.getLog();
+   }
+
+   public void addImportPath(String path) {
+      program.getImportPaths().add(path);
+   }
+
+   public Program compile(String fileName) throws IOException {
       try {
-         KickCParser.FileContext file = pass0ParseInput(input, log);
-         Program program = pass1GenerateSSA(file, log);
-         pass2OptimizeSSA(program);
-         log.append("FINAL SYMBOL TABLE");
-         log.append(program.getScope().getSymbolTableContents(program));
-         pass3Analysis(program);
-         pass4RegisterAllocation(program);
-         pass5GenerateAndOptimizeAsm(program);
-
-         log.append("FINAL SYMBOL TABLE");
-         log.append(program.getScope().getSymbolTableContents(program));
-         log.append("FINAL CODE");
-         log.append(program.getAsm().toString());
-
+         StatementSequenceGenerator statementSequenceGenerator = new StatementSequenceGenerator(program);
+         loadAndParseFile(fileName, program, statementSequenceGenerator);
+         StatementSequence sequence = statementSequenceGenerator.getSequence();
+         sequence.addStatement(new StatementCall(null, "main", new ArrayList<>()));
+         program.setStatementSequence(sequence);
+         pass1GenerateSSA();
+         pass2OptimizeSSA();
+         getLog().append("FINAL SYMBOL TABLE");
+         getLog().append(program.getScope().getSymbolTableContents(program));
+         pass3Analysis();
+         pass4RegisterAllocation();
+         pass5GenerateAndOptimizeAsm();
+         getLog().append("FINAL SYMBOL TABLE");
+         getLog().append(program.getScope().getSymbolTableContents(program));
+         getLog().append("FINAL CODE");
+         getLog().append(program.getAsm().toString());
          return program;
       } catch (Exception e) {
          //System.out.println(log.getLog());
@@ -38,9 +56,10 @@ public class Compiler {
       }
    }
 
-   public KickCParser.FileContext pass0ParseInput(final CharStream input, CompileLog log) {
-      log.append(input.toString());
-      KickCLexer lexer = new KickCLexer(input);
+   public static void loadAndParseFile(String fileName, Program program, StatementSequenceGenerator statementSequenceGenerator) {
+      CharStream fileStream = loadFile(fileName, program);
+      program.getLog().append(fileStream.toString());
+      KickCLexer lexer = new KickCLexer(fileStream);
       KickCParser parser = new KickCParser(new CommonTokenStream(lexer));
       parser.setBuildParseTree(true);
       parser.addErrorListener(new BaseErrorListener() {
@@ -52,64 +71,80 @@ public class Compiler {
                int charPositionInLine,
                String msg,
                RecognitionException e) {
-            throw new CompileError("Error parsing  file " + input.getSourceName() + "\n - Line: " + line + "\n - Message: " + msg);
+            throw new CompileError("Error parsing  file " + fileStream.getSourceName() + "\n - Line: " + line + "\n - Message: " + msg);
          }
       });
-      return parser.file();
+      statementSequenceGenerator.generate(parser.file());
    }
 
-   public Program pass1GenerateSSA(KickCParser.FileContext file, CompileLog log) {
-      Pass1GenerateStatementSequence pass1GenerateStatementSequence = new Pass1GenerateStatementSequence(log);
-      pass1GenerateStatementSequence.generate(file);
-      StatementSequence statementSequence = pass1GenerateStatementSequence.getSequence();
-      ProgramScope programScope = pass1GenerateStatementSequence.getProgramScope();
-      statementSequence = new Pass1FixLvalueLoHi(statementSequence, programScope, log).fix();
-      Pass1TypeInference pass1TypeInference = new Pass1TypeInference(programScope);
-      pass1TypeInference.inferTypes(statementSequence);
+   private static CharStream loadFile(String fileName, Program program) {
+      if(!fileName.endsWith(".kc")) {
+         fileName += ".kc";
+      }
+      try {
+         List<String> importPaths = program.getImportPaths();
+         for (String importPath : importPaths) {
+            if(!importPath.endsWith("/")) {
+               importPath += "/";
+            }
+            String filePath = importPath + fileName;
+            File file = new File(filePath);
+            if(file.exists()) {
+               return CharStreams.fromPath(file.toPath());
+            }
+         }
+      } catch (IOException e) {
+         throw new CompileError("Error loading file " + fileName, e);
+      }
+      throw new CompileError("File  not found " + fileName);
+   }
 
-      Program program = new Program(programScope, log);
-      log.append("PROGRAM");
-      log.append(statementSequence.toString(program));
-      log.append("SYMBOLS");
-      log.append(programScope.getSymbolTableContents(program));
-      program.setGraph(new Pass1GenerateControlFlowGraph(programScope).generate(statementSequence));
+   private Program pass1GenerateSSA() {
+      new Pass1FixLvalueLoHi(program).execute();
+      new Pass1TypeInference(program).execute();
+
+      getLog().append("PROGRAM");
+      getLog().append(program.getStatementSequence().toString(program));
+      getLog().append("SYMBOLS");
+      getLog().append(program.getScope().getSymbolTableContents(program));
+      new Pass1GenerateControlFlowGraph(program).execute();
 
       new Pass1AddTypePromotions(program).execute();
-      log.append("INITIAL CONTROL FLOW GRAPH");
-      log.append(program.getGraph().toString(program));
+      getLog().append("INITIAL CONTROL FLOW GRAPH");
+      getLog().append(program.getGraph().toString(program));
 
       new Pass1ExtractInlineStrings(program).execute();
       new Pass1EliminateUncalledProcedures(program).execute();
       new Pass1EliminateUnusedVars(program).execute();
 
       new Pass1EliminateEmptyBlocks(program).execute();
-      log.append("CONTROL FLOW GRAPH");
-      log.append(program.getGraph().toString(program));
+      getLog().append("CONTROL FLOW GRAPH");
+      getLog().append(program.getGraph().toString(program));
 
       new Pass1ModifiedVarsAnalysis(program).execute();
-      log.append("PROCEDURE MODIFY VARIABLE ANALYSIS");
-      log.append(program.getProcedureModifiedVars().toString(program));
+      getLog().append("PROCEDURE MODIFY VARIABLE ANALYSIS");
+      getLog().append(program.getProcedureModifiedVars().toString(program));
 
       new Pass1ProcedureCallParameters(program).generate();
-      log.append("CONTROL FLOW GRAPH WITH ASSIGNMENT CALL");
-      log.append(program.getGraph().toString(program));
+      getLog().append("CONTROL FLOW GRAPH WITH ASSIGNMENT CALL");
+      getLog().append(program.getGraph().toString(program));
 
       new Pass1GenerateSingleStaticAssignmentForm(program).execute();
 
-      log.append("CONTROL FLOW GRAPH SSA");
-      log.append(program.getGraph().toString(program));
+      getLog().append("CONTROL FLOW GRAPH SSA");
+      getLog().append(program.getGraph().toString(program));
 
       program.setGraph(new Pass1ProcedureCallsReturnValue(program).generate());
-      log.append("CONTROL FLOW GRAPH WITH ASSIGNMENT CALL & RETURN");
-      log.append(program.getGraph().toString(program));
+      getLog().append("CONTROL FLOW GRAPH WITH ASSIGNMENT CALL & RETURN");
+      getLog().append(program.getGraph().toString(program));
 
-      log.append("INITIAL SSA SYMBOL TABLE");
-      log.append(program.getScope().getSymbolTableContents(program));
+      getLog().append("INITIAL SSA SYMBOL TABLE");
+      getLog().append(program.getScope().getSymbolTableContents(program));
 
       return program;
    }
 
-   public void pass2AssertSSA(Program program) {
+   private void pass2AssertSSA() {
       List<Pass2SsaAssertion> assertions = new ArrayList<>();
       assertions.add(new Pass2AssertTypeMatch(program));
       assertions.add(new Pass2AssertSymbols(program));
@@ -126,7 +161,7 @@ public class Compiler {
       }
    }
 
-   public void pass2OptimizeSSA(Program program) {
+   private void pass2OptimizeSSA() {
       List<Pass2SsaOptimization> optimizations = new ArrayList<>();
       optimizations.add(new Pass2CullEmptyBlocks(program));
       optimizations.add(new Pass2UnaryNotSimplification(program));
@@ -136,29 +171,29 @@ public class Compiler {
       optimizations.add(new Pass2ConditionalJumpSimplification(program));
       optimizations.add(new Pass2ConstantIdentification(program));
       optimizations.add(new Pass2ConstantAdditionElimination(program));
-      pass2OptimizeSSA(program, optimizations);
+      pass2OptimizeSSA(optimizations);
 
       // Constant inlining optimizations - as the last step to ensure that constant identification has been completed
       List<Pass2SsaOptimization> constantOptimizations = new ArrayList<>();
       constantOptimizations.add(new Pass2ConstantInlining(program));
-      pass2OptimizeSSA(program, constantOptimizations);
+      pass2OptimizeSSA(constantOptimizations);
 
    }
 
-   private void pass2OptimizeSSA(Program program, List<Pass2SsaOptimization> optimizations) {
+   private void pass2OptimizeSSA(List<Pass2SsaOptimization> optimizations) {
       boolean ssaOptimized = true;
       while (ssaOptimized) {
-         pass2AssertSSA(program);
+         pass2AssertSSA();
          ssaOptimized = false;
          for (Pass2SsaOptimization optimization : optimizations) {
             boolean stepOptimized = true;
             while (stepOptimized) {
                stepOptimized = optimization.optimize();
                if (stepOptimized) {
-                  program.getLog().append("Succesful SSA optimization " + optimization.getClass().getSimpleName() + "");
+                  getLog().append("Succesful SSA optimization " + optimization.getClass().getSimpleName() + "");
                   ssaOptimized = true;
-                  program.getLog().append("CONTROL FLOW GRAPH");
-                  program.getLog().append(program.getGraph().toString(program));
+                  getLog().append("CONTROL FLOW GRAPH");
+                  getLog().append(program.getGraph().toString(program));
                   //pass2AssertSSA(program);
                }
             }
@@ -166,34 +201,34 @@ public class Compiler {
       }
    }
 
-   private void pass3Analysis(Program program) {
+   private void pass3Analysis() {
 
       new Pass3BlockSequencePlanner(program).plan();
 
       // Phi lifting ensures that all variables in phi-blocks are in different live range equivalence classes
       new Pass3PhiLifting(program).perform();
       new Pass3BlockSequencePlanner(program).plan();
-      program.getLog().append("CONTROL FLOW GRAPH - PHI LIFTED");
-      program.getLog().append(program.getGraph().toString(program));
-      pass2AssertSSA(program);
+      getLog().append("CONTROL FLOW GRAPH - PHI LIFTED");
+      getLog().append(program.getGraph().toString(program));
+      pass2AssertSSA();
 
       new Pass3AddNopBeforeCallOns(program).generate();
       new Pass3StatementIndices(program).generateStatementIndices();
 
       new Pass3CallGraphAnalysis(program).findCallGraph();
-      program.getLog().append("CALL GRAPH");
-      program.getLog().append(program.getCallGraph().toString());
+      getLog().append("CALL GRAPH");
+      getLog().append(program.getCallGraph().toString());
 
-      //program.getLog().setVerboseLiveRanges(true);
+      //getLog().setVerboseLiveRanges(true);
 
       new Pass3StatementInfos(program).generateStatementInfos();
       new Pass3VariableReferenceInfos(program).generateVariableReferenceInfos();
       new Pass3LiveRangesAnalysis(program).findLiveRanges();
-      program.getLog().append("CONTROL FLOW GRAPH - LIVE RANGES FOUND");
-      program.getLog().append(program.getGraph().toString(program));
-      pass2AssertSSA(program);
+      getLog().append("CONTROL FLOW GRAPH - LIVE RANGES FOUND");
+      getLog().append(program.getGraph().toString(program));
+      pass2AssertSSA();
 
-      //program.getLog().setVerboseLiveRanges(false);
+      //getLog().setVerboseLiveRanges(false);
 
       // Phi mem coalesce removes as many variables introduced by phi lifting as possible - as long as their live ranges do not overlap
       new Pass3PhiMemCoalesce(program).optimize();
@@ -206,32 +241,32 @@ public class Compiler {
       new Pass3VariableReferenceInfos(program).generateVariableReferenceInfos();
       new Pass3SymbolInfos(program).generateSymbolInfos();
       new Pass3LiveRangesAnalysis(program).findLiveRanges();
-      program.getLog().append("CONTROL FLOW GRAPH - BEFORE EFFECTIVE LIVE RANGES");
-      program.getLog().append(program.getGraph().toString(program));
+      getLog().append("CONTROL FLOW GRAPH - BEFORE EFFECTIVE LIVE RANGES");
+      getLog().append(program.getGraph().toString(program));
       new Pass3LiveRangesEffectiveAnalysis(program).findLiveRangesEffective();
-      program.getLog().append("CONTROL FLOW GRAPH - PHI MEM COALESCED");
-      program.getLog().append(program.getGraph().toString(program));
-      pass2AssertSSA(program);
+      getLog().append("CONTROL FLOW GRAPH - PHI MEM COALESCED");
+      getLog().append(program.getGraph().toString(program));
+      pass2AssertSSA();
 
       new Pass3DominatorsAnalysis(program).findDominators();
-      program.getLog().append("DOMINATORS");
-      program.getLog().append(program.getDominators().toString());
+      getLog().append("DOMINATORS");
+      getLog().append(program.getDominators().toString());
 
       new Pass3LoopAnalysis(program).findLoops();
-      program.getLog().append("NATURAL LOOPS");
-      program.getLog().append(program.getLoopSet().toString());
+      getLog().append("NATURAL LOOPS");
+      getLog().append(program.getLoopSet().toString());
 
       new Pass3LoopDepthAnalysis(program).findLoopDepths();
-      program.getLog().append("NATURAL LOOPS WITH DEPTH");
-      program.getLog().append(program.getLoopSet().toString());
+      getLog().append("NATURAL LOOPS WITH DEPTH");
+      getLog().append(program.getLoopSet().toString());
 
       new Pass3VariableRegisterWeightAnalysis(program).findWeights();
-      program.getLog().append("\nVARIABLE REGISTER WEIGHTS");
-      program.getLog().append(program.getScope().toString(program, Variable.class));
+      getLog().append("\nVARIABLE REGISTER WEIGHTS");
+      getLog().append(program.getScope().toString(program, Variable.class));
 
    }
 
-   private void pass4RegisterAllocation(Program program) {
+   private void pass4RegisterAllocation() {
 
       new Pass4LiveRangeEquivalenceClassesFinalize(program).allocate();
       new Pass4RegistersFinalize(program).allocate(true);
@@ -239,31 +274,31 @@ public class Compiler {
       // Initial Code generation
       new Pass4CodeGeneration(program, true).generate();
       new Pass4AssertNoCpuClobber(program).check();
-      program.getLog().append("INITIAL ASM");
-      program.getLog().append(program.getAsm().toString());
+      getLog().append("INITIAL ASM");
+      getLog().append(program.getAsm().toString());
 
       // Find potential registers for each live range equivalence class - based on clobbering of fragments
-      program.getLog().append("REGISTER UPLIFT POTENTIAL REGISTERS");
+      getLog().append("REGISTER UPLIFT POTENTIAL REGISTERS");
       new Pass4RegisterUpliftPotentialInitialize(program).initPotentialRegisters();
       new Pass4RegisterUpliftPotentialAluAnalysis(program).findPotentialAlu();
       boolean change;
       do {
          change = new Pass4RegisterUpliftPotentialRegisterAnalysis(program).findPotentialRegisters();
       } while (change);
-      program.getLog().append(program.getRegisterPotentials().toString());
+      getLog().append(program.getRegisterPotentials().toString());
 
       // Find register uplift scopes
       new Pass4RegisterUpliftScopeAnalysis(program).findScopes();
-      program.getLog().append("REGISTER UPLIFT SCOPES");
-      program.getLog().append(program.getRegisterUpliftProgram().toString((program.getVariableRegisterWeights())));
+      getLog().append("REGISTER UPLIFT SCOPES");
+      getLog().append(program.getRegisterUpliftProgram().toString((program.getVariableRegisterWeights())));
 
       // Attempt uplifting registers through a lot of combinations
-      //program.getLog().setVerboseUplift(true);
+      //getLog().setVerboseUplift(true);
       new Pass4RegisterUpliftCombinations(program).performUplift(10_000);
 
-      //program.getLog().setVerboseUplift(true);
+      //getLog().setVerboseUplift(true);
       //new Pass4RegisterUpliftStatic(program).performUplift();
-      //program.getLog().setVerboseUplift(false);
+      //getLog().setVerboseUplift(false);
 
       // Attempt uplifting registers one at a time to catch remaining potential not realized by combination search
       new Pass4RegisterUpliftRemains(program).performUplift(10_000);
@@ -274,7 +309,7 @@ public class Compiler {
 
    }
 
-   public void pass5GenerateAndOptimizeAsm(Program program) {
+   private void pass5GenerateAndOptimizeAsm() {
 
       // Final ASM code generation before optimization
       new Pass4CodeGeneration(program, true).generate();
@@ -288,16 +323,15 @@ public class Compiler {
       pass5Optimizations.add(new Pass5DoubleJumpElimination(program));
       pass5Optimizations.add(new Pass5UnreachableCodeElimination(program));
       boolean asmOptimized = true;
-      CompileLog log = program.getLog();
       while (asmOptimized) {
          asmOptimized = false;
          for (Pass5AsmOptimization optimization : pass5Optimizations) {
             boolean stepOptimized = optimization.optimize();
             if (stepOptimized) {
-               log.append("Succesful ASM optimization " + optimization.getClass().getSimpleName());
+               getLog().append("Succesful ASM optimization " + optimization.getClass().getSimpleName());
                asmOptimized = true;
-               log.append("ASSEMBLER");
-               log.append(program.getAsm().toString());
+               getLog().append("ASSEMBLER");
+               getLog().append(program.getAsm().toString());
             }
          }
       }

@@ -10,7 +10,7 @@ asmFile
     ;
 
 importSeq
-    : importDecl+
+    : importDecl*
     ;
 
 importDecl

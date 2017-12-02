@@ -1,6 +1,6 @@
 package dk.camelot64.kickc.passes;
 
-import dk.camelot64.kickc.CompileLog;
+import dk.camelot64.kickc.Compiler;
 import dk.camelot64.kickc.NumberParser;
 import dk.camelot64.kickc.model.*;
 import dk.camelot64.kickc.parser.KickCBaseVisitor;
@@ -15,21 +15,17 @@ import java.util.Stack;
 /**
  * Generates program SSA form by visiting the ANTLR4 parse tree
  */
-public class Pass1GenerateStatementSequence extends KickCBaseVisitor<Object> {
+public class StatementSequenceGenerator extends KickCBaseVisitor<Object> {
 
    private Program program;
    private Stack<Scope> scopeStack;
    private StatementSequence sequence;
 
-   public Pass1GenerateStatementSequence(CompileLog log) {
-      this.program = new Program(new ProgramScope(), log);
+   public StatementSequenceGenerator(Program program) {
+      this.program = program;
       this.scopeStack = new Stack<>();
       scopeStack.push(program.getScope());
       this.sequence = new StatementSequence();
-   }
-
-   public ProgramScope getProgramScope() {
-      return program.getScope();
    }
 
    private Scope getCurrentSymbols() {
@@ -47,7 +43,6 @@ public class Pass1GenerateStatementSequence extends KickCBaseVisitor<Object> {
 
    public void generate(KickCParser.FileContext file) {
       this.visit(file);
-      sequence.addStatement(new StatementCall(null, "main", new ArrayList<RValue>()));
    }
 
    @Override
@@ -68,9 +63,10 @@ public class Pass1GenerateStatementSequence extends KickCBaseVisitor<Object> {
    @Override
    public Object visitImportDecl(KickCParser.ImportDeclContext ctx) {
       String importName = ctx.STRING().getText();
-      program.getLog().append("Importing "+importName.substring(1, importName.length() - 1));
-      throw new RuntimeException("TODO: Implement importing!");
-      //return null;
+      String importFileName = importName.substring(1, importName.length() - 1);
+      program.getLog().append("Importing "+ importFileName);
+      Compiler.loadAndParseFile(importFileName, program, this);
+      return null;
    }
 
    @Override
@@ -638,9 +634,9 @@ public class Pass1GenerateStatementSequence extends KickCBaseVisitor<Object> {
 
       private List<PrePostModifier> postMods;
       private List<PrePostModifier> preMods;
-      private Pass1GenerateStatementSequence mainParser;
+      private StatementSequenceGenerator mainParser;
 
-      public PrePostModifierHandler(Pass1GenerateStatementSequence mainParser) {
+      public PrePostModifierHandler(StatementSequenceGenerator mainParser) {
          this.mainParser = mainParser;
          preMods = new ArrayList<>();
          postMods = new ArrayList<>();
@@ -654,14 +650,14 @@ public class Pass1GenerateStatementSequence extends KickCBaseVisitor<Object> {
          return postMods;
       }
 
-      public static void addPostModifiers(Pass1GenerateStatementSequence parser, ParserRuleContext ctx) {
+      public static void addPostModifiers(StatementSequenceGenerator parser, ParserRuleContext ctx) {
          PrePostModifierHandler prePostModifierHandler = new PrePostModifierHandler(parser);
          prePostModifierHandler.visit(ctx);
          List<PrePostModifier> modifiers = prePostModifierHandler.getPostMods();
          addModifierStatements(parser, modifiers);
       }
 
-      public static void addPreModifiers(Pass1GenerateStatementSequence parser, ParserRuleContext ctx) {
+      public static void addPreModifiers(StatementSequenceGenerator parser, ParserRuleContext ctx) {
          PrePostModifierHandler modifierHandler = new PrePostModifierHandler(parser);
          modifierHandler.visit(ctx);
          List<PrePostModifier> modifiers = modifierHandler.getPreMods();
@@ -669,7 +665,7 @@ public class Pass1GenerateStatementSequence extends KickCBaseVisitor<Object> {
       }
 
       private static void addModifierStatements(
-            Pass1GenerateStatementSequence parser,
+            StatementSequenceGenerator parser,
             List<PrePostModifier> modifiers) {
          for (PrePostModifier mod : modifiers) {
             Statement stmt = new StatementAssignment((LValue) mod.child, mod.operator, mod.child);

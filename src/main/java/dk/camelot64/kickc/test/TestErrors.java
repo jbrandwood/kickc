@@ -53,11 +53,10 @@ public class TestErrors extends TestCase {
    }
 
    private void testFile(String fileName) throws IOException, URISyntaxException {
-      String inputPath = testPath + fileName + ".kc";
-      System.out.println("Testing output for " + inputPath);
-      CharStream input = CharStreams.fromFileName(inputPath);
+      System.out.println("Testing output for " + fileName);
       Compiler compiler = new Compiler();
-      Program program = compiler.compile(input);
+      compiler.addImportPath(testPath);
+      Program program = compiler.compile(fileName);
       boolean success = true;
       success &= helper.testOutput(fileName, ".asm", program.getAsm().toString(false));
       success &= helper.testOutput(fileName, ".sym", program.getScope().getSymbolTableContents(program));

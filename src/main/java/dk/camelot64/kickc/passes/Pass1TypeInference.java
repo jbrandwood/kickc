@@ -8,22 +8,18 @@ import java.util.Stack;
  * Pass through the generated statements inferring types of unresolved variables.
  * Also updates procedure calls to point to the actual procedure called.
  */
-public class Pass1TypeInference {
+public class Pass1TypeInference extends Pass1Base {
 
-   private ProgramScope programScope;
-
-   public Pass1TypeInference(ProgramScope programScope) {
-      this.programScope = programScope;
+   public Pass1TypeInference(Program program) {
+      super(program);
    }
 
-   public ProgramScope getProgramScope() {
-      return programScope;
-   }
-
-   public void inferTypes(StatementSequence sequence) {
+   @Override
+   boolean executeStep() {
       Stack<Scope> scopes = new Stack<>();
+      ProgramScope programScope = getScope();
       scopes.add(programScope);
-      for (Statement statement : sequence.getStatements()) {
+      for (Statement statement : getProgram().getStatementSequence().getStatements()) {
          if(statement instanceof StatementProcedureBegin) {
                 StatementProcedureBegin procedureBegin = (StatementProcedureBegin) statement;
             ProcedureRef procedureRef = procedureBegin.getProcedure();
@@ -66,6 +62,7 @@ public class Pass1TypeInference {
             }
          }
       }
+      return false;
    }
 
 }

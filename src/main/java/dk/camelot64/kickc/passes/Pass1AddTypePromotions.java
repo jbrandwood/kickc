@@ -14,7 +14,6 @@ public class Pass1AddTypePromotions extends Pass1Base {
       super(program);
    }
 
-
    @Override
    public boolean executeStep() {
       for (ControlFlowBlock block : getProgram().getGraph().getAllBlocks()) {

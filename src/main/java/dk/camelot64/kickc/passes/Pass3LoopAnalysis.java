@@ -83,7 +83,7 @@ public class Pass3LoopAnalysis extends Pass2Base {
          }
       }
 
-      getProgram().setLoops(loopSet);
+      getProgram().setLoopSet(loopSet);
    }
 
 

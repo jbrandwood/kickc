@@ -7,5 +7,7 @@ public class CompileError extends RuntimeException {
       super(message);
    }
 
-
+   public CompileError(String message, Throwable cause) {
+      super(message, cause);
+   }
 }

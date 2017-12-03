@@ -24,6 +24,15 @@ public class TestPrograms extends TestCase {
       helper = new ReferenceHelper("dk/camelot64/kickc/test/ref/");
    }
 
+   public void testConstantAbsMin() throws IOException, URISyntaxException {
+      compileAndCompare("constabsmin");
+   }
+
+
+   public void testBasicFloats() throws IOException, URISyntaxException {
+      compileAndCompare("basic-floats");
+   }
+
    public void testDoubleImport() throws IOException, URISyntaxException {
       compileAndCompare("double-import");
    }

@@ -1,44 +1,41 @@
-import "imported.kc"
+
 
 void main() {
-    byte* screen = $0400;
-    *screen = 1;
-    *BGCOL = RED;
-}
-Importing imported.kc
-const byte *BGCOL = $d021;
-const byte RED = 2;
 
+    // Load word register Y,A into FAC (floating point accumulator)
+    asm {
+        lda #$55
+        ldy #$aa
+        jsr $b391
+    }
+
+    // Load FAC (floating point accumulator) integer part into word register Y,A
+    asm {
+        jsr $b1aa
+        sty $fe
+        sta $ff
+    }
+
+}
 PROGRAM
-  (byte*) BGCOL ← (word) 53281
-  (byte) RED ← (byte/signed byte/word/signed word) 2
 proc (void()) main()
-  (byte*) main::screen ← (word/signed word) 1024
-  *((byte*) main::screen) ← (byte/signed byte/word/signed word) 1
-  *((byte*) BGCOL) ← (byte) RED
+  asm { lda#$55ldy#$aajsr$b391 }
+  asm { jsr$b1aasty$festa$ff }
 main::@return:
   return 
 endproc // main()
   call main 
 
 SYMBOLS
-(byte*) BGCOL
-(byte) RED
 (void()) main()
 (label) main::@return
-(byte*) main::screen
 
-Promoting word to byte* in BGCOL ← ((byte*)) 53281
-Promoting word/signed word to byte* in main::screen ← ((byte*)) 1024
 INITIAL CONTROL FLOW GRAPH
 @begin: scope:[]  from
-  (byte*) BGCOL ← ((byte*)) (word) 53281
-  (byte) RED ← (byte/signed byte/word/signed word) 2
   to:@1
 main: scope:[main]  from
-  (byte*) main::screen ← ((byte*)) (word/signed word) 1024
-  *((byte*) main::screen) ← (byte/signed byte/word/signed word) 1
-  *((byte*) BGCOL) ← (byte) RED
+  asm { lda#$55ldy#$aajsr$b391 }
+  asm { jsr$b1aasty$festa$ff }
   to:main::@return
 main::@return: scope:[main]  from main
   return 
@@ -50,13 +47,10 @@ main::@return: scope:[main]  from main
 
 CONTROL FLOW GRAPH
 @begin: scope:[]  from
-  (byte*) BGCOL ← ((byte*)) (word) 53281
-  (byte) RED ← (byte/signed byte/word/signed word) 2
   to:@1
 main: scope:[main]  from
-  (byte*) main::screen ← ((byte*)) (word/signed word) 1024
-  *((byte*) main::screen) ← (byte/signed byte/word/signed word) 1
-  *((byte*) BGCOL) ← (byte) RED
+  asm { lda#$55ldy#$aajsr$b391 }
+  asm { jsr$b1aasty$festa$ff }
   to:main::@return
 main::@return: scope:[main]  from main
   return 
@@ -70,13 +64,10 @@ PROCEDURE MODIFY VARIABLE ANALYSIS
 
 CONTROL FLOW GRAPH WITH ASSIGNMENT CALL
 @begin: scope:[]  from
-  (byte*) BGCOL ← ((byte*)) (word) 53281
-  (byte) RED ← (byte/signed byte/word/signed word) 2
   to:@1
 main: scope:[main]  from @1
-  (byte*) main::screen ← ((byte*)) (word/signed word) 1024
-  *((byte*) main::screen) ← (byte/signed byte/word/signed word) 1
-  *((byte*) BGCOL) ← (byte) RED
+  asm { lda#$55ldy#$aajsr$b391 }
+  asm { jsr$b1aasty$festa$ff }
   to:main::@return
 main::@return: scope:[main]  from main
   return 
@@ -91,13 +82,10 @@ main::@return: scope:[main]  from main
 Completing Phi functions...
 CONTROL FLOW GRAPH SSA
 @begin: scope:[]  from
-  (byte*) BGCOL#0 ← ((byte*)) (word) 53281
-  (byte) RED#0 ← (byte/signed byte/word/signed word) 2
   to:@1
 main: scope:[main]  from @1
-  (byte*) main::screen#0 ← ((byte*)) (word/signed word) 1024
-  *((byte*) main::screen#0) ← (byte/signed byte/word/signed word) 1
-  *((byte*) BGCOL#0) ← (byte) RED#0
+  asm { lda#$55ldy#$aajsr$b391 }
+  asm { jsr$b1aasty$festa$ff }
   to:main::@return
 main::@return: scope:[main]  from main
   return 
@@ -111,13 +99,10 @@ main::@return: scope:[main]  from main
 
 CONTROL FLOW GRAPH WITH ASSIGNMENT CALL & RETURN
 @begin: scope:[]  from
-  (byte*) BGCOL#0 ← ((byte*)) (word) 53281
-  (byte) RED#0 ← (byte/signed byte/word/signed word) 2
   to:@1
 main: scope:[main]  from @1
-  (byte*) main::screen#0 ← ((byte*)) (word/signed word) 1024
-  *((byte*) main::screen#0) ← (byte/signed byte/word/signed word) 1
-  *((byte*) BGCOL#0) ← (byte) RED#0
+  asm { lda#$55ldy#$aajsr$b391 }
+  asm { jsr$b1aasty$festa$ff }
   to:main::@return
 main::@return: scope:[main]  from main
   return 
@@ -134,45 +119,17 @@ INITIAL SSA SYMBOL TABLE
 (label) @2
 (label) @begin
 (label) @end
-(byte*) BGCOL
-(byte*) BGCOL#0
-(byte) RED
-(byte) RED#0
 (void()) main()
 (label) main::@return
-(byte*) main::screen
-(byte*) main::screen#0
 
 Culled Empty Block (label) @2
 Succesful SSA optimization Pass2CullEmptyBlocks
 CONTROL FLOW GRAPH
 @begin: scope:[]  from
-  (byte*) BGCOL#0 ← ((byte*)) (word) 53281
-  (byte) RED#0 ← (byte/signed byte/word/signed word) 2
   to:@1
 main: scope:[main]  from @1
-  (byte*) main::screen#0 ← ((byte*)) (word/signed word) 1024
-  *((byte*) main::screen#0) ← (byte/signed byte/word/signed word) 1
-  *((byte*) BGCOL#0) ← (byte) RED#0
-  to:main::@return
-main::@return: scope:[main]  from main
-  return 
-  to:@return
-@1: scope:[]  from @begin
-  call main param-assignment
-  to:@end
-@end: scope:[]  from @1
-
-Constant (const byte*) BGCOL#0 = ((byte*))53281
-Constant (const byte) RED#0 = 2
-Constant (const byte*) main::screen#0 = ((byte*))1024
-Succesful SSA optimization Pass2ConstantIdentification
-CONTROL FLOW GRAPH
-@begin: scope:[]  from
-  to:@1
-main: scope:[main]  from @1
-  *((const byte*) main::screen#0) ← (byte/signed byte/word/signed word) 1
-  *((const byte*) BGCOL#0) ← (const byte) RED#0
+  asm { lda#$55ldy#$aajsr$b391 }
+  asm { jsr$b1aasty$festa$ff }
   to:main::@return
 main::@return: scope:[main]  from main
   return 
@@ -186,14 +143,8 @@ FINAL SYMBOL TABLE
 (label) @1
 (label) @begin
 (label) @end
-(byte*) BGCOL
-(const byte*) BGCOL#0 = ((byte*))(word) 53281
-(byte) RED
-(const byte) RED#0 = (byte/signed byte/word/signed word) 2
 (void()) main()
 (label) main::@return
-(byte*) main::screen
-(const byte*) main::screen#0 = ((byte*))(word/signed word) 1024
 
 Block Sequence Planned @begin @1 @end main main::@return 
 Block Sequence Planned @begin @1 @end main main::@return 
@@ -205,8 +156,8 @@ CONTROL FLOW GRAPH - PHI LIFTED
   to:@end
 @end: scope:[]  from @1
 main: scope:[main]  from @1
-  *((const byte*) main::screen#0) ← (byte/signed byte/word/signed word) 1
-  *((const byte*) BGCOL#0) ← (const byte) RED#0
+  asm { lda#$55ldy#$aajsr$b391 }
+  asm { jsr$b1aasty$festa$ff }
   to:main::@return
 main::@return: scope:[main]  from main
   return 
@@ -230,8 +181,8 @@ CONTROL FLOW GRAPH - LIVE RANGES FOUND
 @end: scope:[]  from @1
   [3] phi() [ ]
 main: scope:[main]  from @1
-  [4] *((const byte*) main::screen#0) ← (byte/signed byte/word/signed word) 1 [ ]
-  [5] *((const byte*) BGCOL#0) ← (const byte) RED#0 [ ]
+  asm { lda#$55ldy#$aajsr$b391 }
+  asm { jsr$b1aasty$festa$ff }
   to:main::@return
 main::@return: scope:[main]  from main
   [6] return  [ ]
@@ -255,8 +206,8 @@ CONTROL FLOW GRAPH - BEFORE EFFECTIVE LIVE RANGES
 @end: scope:[]  from @1
   [3] phi() [ ]
 main: scope:[main]  from @1
-  [4] *((const byte*) main::screen#0) ← (byte/signed byte/word/signed word) 1 [ ]
-  [5] *((const byte*) BGCOL#0) ← (const byte) RED#0 [ ]
+  asm { lda#$55ldy#$aajsr$b391 }
+  asm { jsr$b1aasty$festa$ff }
   to:main::@return
 main::@return: scope:[main]  from main
   [6] return  [ ]
@@ -273,8 +224,8 @@ CONTROL FLOW GRAPH - PHI MEM COALESCED
 @end: scope:[]  from @1
   [3] phi() [ ] ( )
 main: scope:[main]  from @1
-  [4] *((const byte*) main::screen#0) ← (byte/signed byte/word/signed word) 1 [ ] ( main:2 [ ] )
-  [5] *((const byte*) BGCOL#0) ← (const byte) RED#0 [ ] ( main:2 [ ] )
+  asm { lda#$55ldy#$aajsr$b391 }
+  asm { jsr$b1aasty$festa$ff }
   to:main::@return
 main::@return: scope:[main]  from main
   [6] return  [ ] ( main:2 [ ] )
@@ -295,10 +246,7 @@ NATURAL LOOPS WITH DEPTH
 
 
 VARIABLE REGISTER WEIGHTS
-(byte*) BGCOL
-(byte) RED
 (void()) main()
-(byte*) main::screen
 
 Initial phi equivalence classes
 Complete equivalence classes
@@ -308,8 +256,6 @@ INITIAL ASM
 :BasicUpstart(main)
 .pc = $80d "Program"
 //SEG1 Global Constants & labels
-  .const BGCOL = $d021
-  .const RED = 2
 //SEG2 @begin
 bbegin:
 //SEG3 [1] phi from @begin to @1 [phi:@begin->@1]
@@ -326,13 +272,14 @@ bend_from_b1:
 bend:
 //SEG8 main
 main: {
-    .const screen = $400
-  //SEG9 [4] *((const byte*) main::screen#0) ← (byte/signed byte/word/signed word) 1 [ ] ( main:2 [ ] ) -- _deref_cowo1=coby2 
-    lda #1
-    sta screen
-  //SEG10 [5] *((const byte*) BGCOL#0) ← (const byte) RED#0 [ ] ( main:2 [ ] ) -- _deref_cowo1=coby2 
-    lda #RED
-    sta BGCOL
+  //SEG9 asm { lda#$55ldy#$aajsr$b391 }
+    lda #$55
+    ldy #$aa
+    jsr $b391
+  //SEG10 asm { jsr$b1aasty$festa$ff }
+    jsr $b1aa
+    sty $fe
+    sta $ff
     jmp breturn
   //SEG11 main::@return
   breturn:
@@ -341,15 +288,14 @@ main: {
 }
 
 REGISTER UPLIFT POTENTIAL REGISTERS
-Statement [4] *((const byte*) main::screen#0) ← (byte/signed byte/word/signed word) 1 [ ] ( main:2 [ ] ) always clobbers reg byte a 
-Statement [5] *((const byte*) BGCOL#0) ← (const byte) RED#0 [ ] ( main:2 [ ] ) always clobbers reg byte a 
+Statement asm { lda#$55ldy#$aajsr$b391 } always clobbers reg byte a reg byte y 
 
 REGISTER UPLIFT SCOPES
 Uplift Scope [main] 
 Uplift Scope [] 
 
-Uplifting [main] best 33 combination 
-Uplifting [] best 33 combination 
+Uplifting [main] best 45 combination 
+Uplifting [] best 45 combination 
 Removing instruction jmp b1
 Removing instruction jmp bend
 Removing instruction jmp breturn
@@ -360,8 +306,6 @@ ASSEMBLER
 :BasicUpstart(main)
 .pc = $80d "Program"
 //SEG1 Global Constants & labels
-  .const BGCOL = $d021
-  .const RED = 2
 //SEG2 @begin
 bbegin:
 //SEG3 [1] phi from @begin to @1 [phi:@begin->@1]
@@ -376,13 +320,14 @@ bend_from_b1:
 bend:
 //SEG8 main
 main: {
-    .const screen = $400
-  //SEG9 [4] *((const byte*) main::screen#0) ← (byte/signed byte/word/signed word) 1 [ ] ( main:2 [ ] ) -- _deref_cowo1=coby2 
-    lda #1
-    sta screen
-  //SEG10 [5] *((const byte*) BGCOL#0) ← (const byte) RED#0 [ ] ( main:2 [ ] ) -- _deref_cowo1=coby2 
-    lda #RED
-    sta BGCOL
+  //SEG9 asm { lda#$55ldy#$aajsr$b391 }
+    lda #$55
+    ldy #$aa
+    jsr $b391
+  //SEG10 asm { jsr$b1aasty$festa$ff }
+    jsr $b1aa
+    sty $fe
+    sta $ff
   //SEG11 main::@return
   breturn:
   //SEG12 [6] return  [ ] ( main:2 [ ] )
@@ -399,8 +344,6 @@ ASSEMBLER
 :BasicUpstart(main)
 .pc = $80d "Program"
 //SEG1 Global Constants & labels
-  .const BGCOL = $d021
-  .const RED = 2
 //SEG2 @begin
 //SEG3 [1] phi from @begin to @1 [phi:@begin->@1]
 //SEG4 @1
@@ -412,13 +355,14 @@ b1:
 bend:
 //SEG8 main
 main: {
-    .const screen = $400
-  //SEG9 [4] *((const byte*) main::screen#0) ← (byte/signed byte/word/signed word) 1 [ ] ( main:2 [ ] ) -- _deref_cowo1=coby2 
-    lda #1
-    sta screen
-  //SEG10 [5] *((const byte*) BGCOL#0) ← (const byte) RED#0 [ ] ( main:2 [ ] ) -- _deref_cowo1=coby2 
-    lda #RED
-    sta BGCOL
+  //SEG9 asm { lda#$55ldy#$aajsr$b391 }
+    lda #$55
+    ldy #$aa
+    jsr $b391
+  //SEG10 asm { jsr$b1aasty$festa$ff }
+    jsr $b1aa
+    sty $fe
+    sta $ff
   //SEG11 main::@return
   breturn:
   //SEG12 [6] return  [ ] ( main:2 [ ] )
@@ -435,8 +379,6 @@ ASSEMBLER
 :BasicUpstart(main)
 .pc = $80d "Program"
 //SEG1 Global Constants & labels
-  .const BGCOL = $d021
-  .const RED = 2
 //SEG2 @begin
 //SEG3 [1] phi from @begin to @1 [phi:@begin->@1]
 //SEG4 @1
@@ -446,13 +388,14 @@ ASSEMBLER
 //SEG7 @end
 //SEG8 main
 main: {
-    .const screen = $400
-  //SEG9 [4] *((const byte*) main::screen#0) ← (byte/signed byte/word/signed word) 1 [ ] ( main:2 [ ] ) -- _deref_cowo1=coby2 
-    lda #1
-    sta screen
-  //SEG10 [5] *((const byte*) BGCOL#0) ← (const byte) RED#0 [ ] ( main:2 [ ] ) -- _deref_cowo1=coby2 
-    lda #RED
-    sta BGCOL
+  //SEG9 asm { lda#$55ldy#$aajsr$b391 }
+    lda #$55
+    ldy #$aa
+    jsr $b391
+  //SEG10 asm { jsr$b1aasty$festa$ff }
+    jsr $b1aa
+    sty $fe
+    sta $ff
   //SEG11 main::@return
   //SEG12 [6] return  [ ] ( main:2 [ ] )
     rts
@@ -462,14 +405,8 @@ FINAL SYMBOL TABLE
 (label) @1
 (label) @begin
 (label) @end
-(byte*) BGCOL
-(const byte*) BGCOL#0 BGCOL = ((byte*))(word) 53281
-(byte) RED
-(const byte) RED#0 RED = (byte/signed byte/word/signed word) 2
 (void()) main()
 (label) main::@return
-(byte*) main::screen
-(const byte*) main::screen#0 screen = ((byte*))(word/signed word) 1024
 
 
 FINAL CODE
@@ -478,8 +415,6 @@ FINAL CODE
 :BasicUpstart(main)
 .pc = $80d "Program"
 //SEG1 Global Constants & labels
-  .const BGCOL = $d021
-  .const RED = 2
 //SEG2 @begin
 //SEG3 [1] phi from @begin to @1 [phi:@begin->@1]
 //SEG4 @1
@@ -489,13 +424,14 @@ FINAL CODE
 //SEG7 @end
 //SEG8 main
 main: {
-    .const screen = $400
-  //SEG9 [4] *((const byte*) main::screen#0) ← (byte/signed byte/word/signed word) 1 [ ] ( main:2 [ ] ) -- _deref_cowo1=coby2 
-    lda #1
-    sta screen
-  //SEG10 [5] *((const byte*) BGCOL#0) ← (const byte) RED#0 [ ] ( main:2 [ ] ) -- _deref_cowo1=coby2 
-    lda #RED
-    sta BGCOL
+  //SEG9 asm { lda#$55ldy#$aajsr$b391 }
+    lda #$55
+    ldy #$aa
+    jsr $b391
+  //SEG10 asm { jsr$b1aasty$festa$ff }
+    jsr $b1aa
+    sty $fe
+    sta $ff
   //SEG11 main::@return
   //SEG12 [6] return  [ ] ( main:2 [ ] )
     rts

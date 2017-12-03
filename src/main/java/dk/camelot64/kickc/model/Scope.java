@@ -118,6 +118,26 @@ public abstract class Scope implements Symbol {
       return symbol;
    }
 
+   /**
+    * Get all versions of an unversioned variable
+    * @param unversioned The unversioned variable
+    * @return All versions of the variable
+    */
+   public Collection<VariableVersion> getVersions(VariableUnversioned unversioned) {
+      LinkedHashSet<VariableVersion> versions = new LinkedHashSet<>();
+      for (Symbol symbol : symbols.values()) {
+         if(symbol instanceof VariableVersion) {
+            if(((VariableVersion) symbol).isVersioned()) {
+               if(((VariableVersion) symbol).getVersionOf().equals(unversioned)) {
+                  versions.add((VariableVersion) symbol);
+               }
+            }
+         }
+      }
+      return versions;
+   }
+
+
    public String allocateIntermediateVariableName() {
       return "$" + intermediateVarCount++;
    }

@@ -2,6 +2,7 @@ package dk.camelot64.kickc.passes;
 
 import dk.camelot64.kickc.model.*;
 
+import java.util.Collection;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
@@ -45,6 +46,9 @@ public class Pass1GenerateSingleStaticAssignmentForm extends Pass1Base {
                      // Assignment to a non-versioned non-intermediary variable
                      VariableUnversioned assignedSymbol = (VariableUnversioned) assignedVar;
                      VariableVersion version = assignedSymbol.createVersion();
+                     if(assignedSymbol.isDeclaredConstant()) {
+                        version.setDeclaredConstant(true);
+                     }
                      statementLValue.setlValue(version.getRef());
                   }
                }
@@ -164,15 +168,26 @@ public class Pass1GenerateSingleStaticAssignmentForm extends Pass1Base {
          if (rValueVar instanceof VariableUnversioned) {
             // rValue needs versioning - look for version in statements
             VariableUnversioned rSymbol = (VariableUnversioned) rValueVar;
-            version = blockVersions.get(rSymbol);
-            if (version == null) {
-               // look for version in new phi functions
-               version = blockNewPhis.get(rSymbol);
-            }
-            if (version == null) {
-               // create a new phi function
-               version = rSymbol.createVersion();
-               blockNewPhis.put(rSymbol, version);
+            if(rSymbol.isDeclaredConstant()) {
+               // A constant - find the single created version
+               Scope scope = rSymbol.getScope();
+               Collection<VariableVersion> versions = scope.getVersions(rSymbol);
+               if(versions.size()!=1) {
+                  throw new RuntimeException("Error! Constants always must exactly one version "+rSymbol);
+               }
+               return versions.iterator().next();
+            }  else {
+               // A proper variable - find or create version
+               version = blockVersions.get(rSymbol);
+               if (version == null) {
+                  // look for version in new phi functions
+                  version = blockNewPhis.get(rSymbol);
+               }
+               if (version == null) {
+                  // create a new phi function
+                  version = rSymbol.createVersion();
+                  blockNewPhis.put(rSymbol, version);
+               }
             }
          }
       }

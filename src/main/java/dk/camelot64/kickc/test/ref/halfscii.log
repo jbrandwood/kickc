@@ -5159,6 +5159,250 @@ main: {
     rts
 }
 
+Relabelling long label b2_from_b1 to b7
+Succesful ASM optimization Pass5RelabelLongLabels
+ASSEMBLER
+//SEG0 Basic Upstart
+.pc = $801 "Basic"
+:BasicUpstart(main)
+.pc = $80d "Program"
+//SEG1 Global Constants & labels
+  .const SCREEN = $400
+  .const CHARGEN = $d000
+  .const PROCPORT = 1
+  .const D018 = $d018
+  .const CHARSET4 = $2800
+  bits_count: .byte 0, 1, 1, 2, 1, 2, 2, 3, 1, 2, 2, 3, 2, 3, 3, 4
+//SEG2 @begin
+//SEG3 [1] phi from @begin to @1 [phi:@begin->@1]
+//SEG4 @1
+//SEG5 [2] call main param-assignment [ ] ( )
+  jsr main
+//SEG6 [3] phi from @1 to @end [phi:@1->@end]
+//SEG7 @end
+//SEG8 main
+main: {
+    .label _1 = 6
+    .label _12 = 9
+    .label _23 = 9
+    .label _33 = 9
+    .label chargen1 = 7
+    .label bits_gen = 6
+    .label charset4 = 4
+    .label chargen = 2
+  //SEG9 asm { sei }
+    sei
+  //SEG10 [5] *((const byte*) PROCPORT#0) ← (byte/signed byte/word/signed word) 50 [ ] ( main:2 [ ] ) -- _deref_cowo1=coby2 
+    lda #$32
+    sta PROCPORT
+  //SEG11 [6] phi from main to main::@1 [phi:main->main::@1]
+  //SEG12 [6] phi (byte*) main::charset4#10 = (const byte*) CHARSET4#0 [phi:main->main::@1#0] -- zpptrby1=cowo1 
+    lda #<CHARSET4
+    sta charset4
+    lda #>CHARSET4
+    sta charset4+1
+  //SEG13 [6] phi (byte*) main::chargen#10 = (const byte*) CHARGEN#0 [phi:main->main::@1#1] -- zpptrby1=cowo1 
+    lda #<CHARGEN
+    sta chargen
+    lda #>CHARGEN
+    sta chargen+1
+    jmp b1
+  //SEG14 [6] phi from main::@5 to main::@1 [phi:main::@5->main::@1]
+  //SEG15 [6] phi (byte*) main::charset4#10 = (byte*) main::charset4#1 [phi:main::@5->main::@1#0] -- register_copy 
+  //SEG16 [6] phi (byte*) main::chargen#10 = (byte*) main::chargen#1 [phi:main::@5->main::@1#1] -- register_copy 
+  //SEG17 main::@1
+  b1:
+  //SEG18 [7] (byte*) main::chargen1#0 ← (byte*) main::chargen#10 + (byte/signed byte/word/signed word) 1 [ main::chargen#10 main::charset4#10 main::chargen1#0 ] ( main:2 [ main::chargen#10 main::charset4#10 main::chargen1#0 ] ) -- zpptrby1=zpptrby2_plus_1 
+    lda chargen
+    clc
+    adc #1
+    sta chargen1
+    lda chargen+1
+    adc #0
+    sta chargen1+1
+  //SEG19 [8] (byte~) main::$1 ← *((byte*) main::chargen#10) & (byte/signed byte/word/signed word) 96 [ main::chargen#10 main::charset4#10 main::chargen1#0 main::$1 ] ( main:2 [ main::chargen#10 main::charset4#10 main::chargen1#0 main::$1 ] ) -- zpby1=_deref_zpptrby1_band_coby1 
+    ldy #0
+    lda (chargen),y
+    and #$60
+    sta _1
+  //SEG20 [9] (byte~) main::$2 ← *((byte*) main::chargen1#0) & (byte/signed byte/word/signed word) 96 [ main::chargen#10 main::charset4#10 main::chargen1#0 main::$1 main::$2 ] ( main:2 [ main::chargen#10 main::charset4#10 main::chargen1#0 main::$1 main::$2 ] ) -- aby=_deref_zpptrby1_band_coby1 
+    lda (chargen1),y
+    and #$60
+  //SEG21 [10] (byte~) main::$3 ← (byte~) main::$2 >> (byte/signed byte/word/signed word) 2 [ main::chargen#10 main::charset4#10 main::chargen1#0 main::$1 main::$3 ] ( main:2 [ main::chargen#10 main::charset4#10 main::chargen1#0 main::$1 main::$3 ] ) -- aby=aby_ror_2 
+    lsr
+    lsr
+  //SEG22 [11] (byte~) main::$4 ← (byte~) main::$1 | (byte~) main::$3 [ main::chargen#10 main::charset4#10 main::chargen1#0 main::$4 ] ( main:2 [ main::chargen#10 main::charset4#10 main::chargen1#0 main::$4 ] ) -- aby=zpby1_bor_aby 
+    ora _1
+  //SEG23 [12] (byte~) main::$5 ← (byte~) main::$4 >> (byte/signed byte/word/signed word) 1 [ main::chargen#10 main::charset4#10 main::chargen1#0 main::$5 ] ( main:2 [ main::chargen#10 main::charset4#10 main::chargen1#0 main::$5 ] ) -- aby=aby_ror_1 
+    lsr
+  //SEG24 [13] (byte~) main::$6 ← (byte~) main::$5 >> (byte/signed byte/word/signed word) 2 [ main::chargen#10 main::charset4#10 main::chargen1#0 main::$6 ] ( main:2 [ main::chargen#10 main::charset4#10 main::chargen1#0 main::$6 ] ) -- aby=aby_ror_2 
+    lsr
+    lsr
+  //SEG25 [14] (byte) main::bits#0 ← (const byte[]) bits_count#0 *idx (byte~) main::$6 [ main::chargen#10 main::charset4#10 main::chargen1#0 main::bits#0 ] ( main:2 [ main::chargen#10 main::charset4#10 main::chargen1#0 main::bits#0 ] ) -- aby=cowo1_derefidx_aby 
+    tax
+    lda bits_count,x
+  //SEG26 [15] if((byte) main::bits#0<(byte/signed byte/word/signed word) 2) goto main::@2 [ main::chargen#10 main::charset4#10 main::chargen1#0 ] ( main:2 [ main::chargen#10 main::charset4#10 main::chargen1#0 ] ) -- aby_lt_coby1_then_la1 
+    cmp #2
+    bcc b7
+  //SEG27 [16] phi from main::@1 to main::@7 [phi:main::@1->main::@7]
+  //SEG28 main::@7
+  //SEG29 [17] phi from main::@7 to main::@2 [phi:main::@7->main::@2]
+  //SEG30 [17] phi (byte) main::bits_gen#9 = (byte/signed byte/word/signed word) 0+(byte/signed byte/word/signed word) 1 [phi:main::@7->main::@2#0] -- aby=coby1 
+    lda #0+1
+    jmp b2
+  //SEG31 [17] phi from main::@1 to main::@2 [phi:main::@1->main::@2]
+  b7:
+  //SEG32 [17] phi (byte) main::bits_gen#9 = (byte/signed byte/word/signed word) 0 [phi:main::@1->main::@2#0] -- aby=coby1 
+    lda #0
+  //SEG33 main::@2
+  b2:
+  //SEG34 [18] (byte) main::bits_gen#1 ← (byte) main::bits_gen#9 << (byte/signed byte/word/signed word) 1 [ main::chargen#10 main::charset4#10 main::chargen1#0 main::bits_gen#1 ] ( main:2 [ main::chargen#10 main::charset4#10 main::chargen1#0 main::bits_gen#1 ] ) -- zpby1=aby_rol_1 
+    asl
+    sta bits_gen
+  //SEG35 [19] (byte~) main::$12 ← *((byte*) main::chargen#10) & (byte/signed byte/word/signed word) 24 [ main::chargen#10 main::charset4#10 main::chargen1#0 main::bits_gen#1 main::$12 ] ( main:2 [ main::chargen#10 main::charset4#10 main::chargen1#0 main::bits_gen#1 main::$12 ] ) -- zpby1=_deref_zpptrby1_band_coby1 
+    ldy #0
+    lda (chargen),y
+    and #$18
+    sta _12
+  //SEG36 [20] (byte~) main::$13 ← *((byte*) main::chargen1#0) & (byte/signed byte/word/signed word) 24 [ main::chargen#10 main::charset4#10 main::chargen1#0 main::bits_gen#1 main::$12 main::$13 ] ( main:2 [ main::chargen#10 main::charset4#10 main::chargen1#0 main::bits_gen#1 main::$12 main::$13 ] ) -- aby=_deref_zpptrby1_band_coby1 
+    lda (chargen1),y
+    and #$18
+  //SEG37 [21] (byte~) main::$14 ← (byte~) main::$13 >> (byte/signed byte/word/signed word) 2 [ main::chargen#10 main::charset4#10 main::chargen1#0 main::bits_gen#1 main::$12 main::$14 ] ( main:2 [ main::chargen#10 main::charset4#10 main::chargen1#0 main::bits_gen#1 main::$12 main::$14 ] ) -- aby=aby_ror_2 
+    lsr
+    lsr
+  //SEG38 [22] (byte~) main::$15 ← (byte~) main::$12 | (byte~) main::$14 [ main::chargen#10 main::charset4#10 main::chargen1#0 main::bits_gen#1 main::$15 ] ( main:2 [ main::chargen#10 main::charset4#10 main::chargen1#0 main::bits_gen#1 main::$15 ] ) -- aby=zpby1_bor_aby 
+    ora _12
+  //SEG39 [23] (byte~) main::$16 ← (byte~) main::$15 >> (byte/signed byte/word/signed word) 1 [ main::chargen#10 main::charset4#10 main::chargen1#0 main::bits_gen#1 main::$16 ] ( main:2 [ main::chargen#10 main::charset4#10 main::chargen1#0 main::bits_gen#1 main::$16 ] ) -- aby=aby_ror_1 
+    lsr
+  //SEG40 [24] (byte) main::bits#1 ← (const byte[]) bits_count#0 *idx (byte~) main::$16 [ main::chargen#10 main::charset4#10 main::chargen1#0 main::bits_gen#1 main::bits#1 ] ( main:2 [ main::chargen#10 main::charset4#10 main::chargen1#0 main::bits_gen#1 main::bits#1 ] ) -- aby=cowo1_derefidx_aby 
+    tax
+    lda bits_count,x
+  //SEG41 [25] if((byte) main::bits#1<(byte/signed byte/word/signed word) 2) goto main::@3 [ main::chargen#10 main::charset4#10 main::chargen1#0 main::bits_gen#1 ] ( main:2 [ main::chargen#10 main::charset4#10 main::chargen1#0 main::bits_gen#1 ] ) -- aby_lt_coby1_then_la1 
+    cmp #2
+    bcc b3
+  //SEG42 main::@8
+  //SEG43 [26] (byte) main::bits_gen#4 ← (byte) main::bits_gen#1 + (byte/signed byte/word/signed word) 1 [ main::chargen#10 main::charset4#10 main::chargen1#0 main::bits_gen#4 ] ( main:2 [ main::chargen#10 main::charset4#10 main::chargen1#0 main::bits_gen#4 ] ) -- zpby1=zpby1_plus_1 
+    inc bits_gen
+  //SEG44 [27] phi from main::@2 main::@8 to main::@3 [phi:main::@2/main::@8->main::@3]
+  //SEG45 [27] phi (byte) main::bits_gen#11 = (byte) main::bits_gen#1 [phi:main::@2/main::@8->main::@3#0] -- register_copy 
+  //SEG46 main::@3
+  b3:
+  //SEG47 [28] (byte) main::bits_gen#14 ← (byte) main::bits_gen#11 << (byte/signed byte/word/signed word) 1 [ main::chargen#10 main::charset4#10 main::chargen1#0 main::bits_gen#14 ] ( main:2 [ main::chargen#10 main::charset4#10 main::chargen1#0 main::bits_gen#14 ] ) -- zpby1=zpby1_rol_1 
+    asl bits_gen
+  //SEG48 [29] (byte~) main::$22 ← *((byte*) main::chargen#10) & (byte/signed byte/word/signed word) 6 [ main::chargen#10 main::charset4#10 main::chargen1#0 main::bits_gen#14 main::$22 ] ( main:2 [ main::chargen#10 main::charset4#10 main::chargen1#0 main::bits_gen#14 main::$22 ] ) -- aby=_deref_zpptrby1_band_coby1 
+    ldy #0
+    lda (chargen),y
+    and #6
+  //SEG49 [30] (byte~) main::$23 ← (byte~) main::$22 << (byte/signed byte/word/signed word) 1 [ main::chargen#10 main::charset4#10 main::chargen1#0 main::bits_gen#14 main::$23 ] ( main:2 [ main::chargen#10 main::charset4#10 main::chargen1#0 main::bits_gen#14 main::$23 ] ) -- zpby1=aby_rol_1 
+    asl
+    sta _23
+  //SEG50 [31] (byte~) main::$24 ← *((byte*) main::chargen1#0) & (byte/signed byte/word/signed word) 6 [ main::chargen#10 main::charset4#10 main::chargen1#0 main::bits_gen#14 main::$23 main::$24 ] ( main:2 [ main::chargen#10 main::charset4#10 main::chargen1#0 main::bits_gen#14 main::$23 main::$24 ] ) -- aby=_deref_zpptrby1_band_coby1 
+    lda (chargen1),y
+    and #6
+  //SEG51 [32] (byte~) main::$25 ← (byte~) main::$24 >> (byte/signed byte/word/signed word) 1 [ main::chargen#10 main::charset4#10 main::chargen1#0 main::bits_gen#14 main::$23 main::$25 ] ( main:2 [ main::chargen#10 main::charset4#10 main::chargen1#0 main::bits_gen#14 main::$23 main::$25 ] ) -- aby=aby_ror_1 
+    lsr
+  //SEG52 [33] (byte~) main::$26 ← (byte~) main::$23 | (byte~) main::$25 [ main::chargen#10 main::charset4#10 main::chargen1#0 main::bits_gen#14 main::$26 ] ( main:2 [ main::chargen#10 main::charset4#10 main::chargen1#0 main::bits_gen#14 main::$26 ] ) -- aby=zpby1_bor_aby 
+    ora _23
+  //SEG53 [34] (byte) main::bits#2 ← (const byte[]) bits_count#0 *idx (byte~) main::$26 [ main::chargen#10 main::charset4#10 main::chargen1#0 main::bits_gen#14 main::bits#2 ] ( main:2 [ main::chargen#10 main::charset4#10 main::chargen1#0 main::bits_gen#14 main::bits#2 ] ) -- aby=cowo1_derefidx_aby 
+    tax
+    lda bits_count,x
+  //SEG54 [35] if((byte) main::bits#2<(byte/signed byte/word/signed word) 2) goto main::@4 [ main::chargen#10 main::charset4#10 main::chargen1#0 main::bits_gen#14 ] ( main:2 [ main::chargen#10 main::charset4#10 main::chargen1#0 main::bits_gen#14 ] ) -- aby_lt_coby1_then_la1 
+    cmp #2
+    bcc b4
+  //SEG55 main::@9
+  //SEG56 [36] (byte) main::bits_gen#6 ← (byte) main::bits_gen#14 + (byte/signed byte/word/signed word) 1 [ main::chargen#10 main::charset4#10 main::chargen1#0 main::bits_gen#6 ] ( main:2 [ main::chargen#10 main::charset4#10 main::chargen1#0 main::bits_gen#6 ] ) -- zpby1=zpby1_plus_1 
+    inc bits_gen
+  //SEG57 [37] phi from main::@3 main::@9 to main::@4 [phi:main::@3/main::@9->main::@4]
+  //SEG58 [37] phi (byte) main::bits_gen#13 = (byte) main::bits_gen#14 [phi:main::@3/main::@9->main::@4#0] -- register_copy 
+  //SEG59 main::@4
+  b4:
+  //SEG60 [38] (byte) main::bits_gen#16 ← (byte) main::bits_gen#13 << (byte/signed byte/word/signed word) 1 [ main::chargen#10 main::charset4#10 main::chargen1#0 main::bits_gen#16 ] ( main:2 [ main::chargen#10 main::charset4#10 main::chargen1#0 main::bits_gen#16 ] ) -- zpby1=zpby1_rol_1 
+    asl bits_gen
+  //SEG61 [39] (byte~) main::$32 ← *((byte*) main::chargen#10) & (byte/signed byte/word/signed word) 1 [ main::chargen#10 main::charset4#10 main::chargen1#0 main::bits_gen#16 main::$32 ] ( main:2 [ main::chargen#10 main::charset4#10 main::chargen1#0 main::bits_gen#16 main::$32 ] ) -- aby=_deref_zpptrby1_band_coby1 
+    ldy #0
+    lda (chargen),y
+    and #1
+  //SEG62 [40] (byte~) main::$33 ← (byte~) main::$32 << (byte/signed byte/word/signed word) 2 [ main::chargen#10 main::charset4#10 main::chargen1#0 main::bits_gen#16 main::$33 ] ( main:2 [ main::chargen#10 main::charset4#10 main::chargen1#0 main::bits_gen#16 main::$33 ] ) -- zpby1=aby_rol_2 
+    asl
+    asl
+    sta _33
+  //SEG63 [41] (byte~) main::$34 ← *((byte*) main::chargen1#0) & (byte/signed byte/word/signed word) 1 [ main::chargen#10 main::charset4#10 main::bits_gen#16 main::$33 main::$34 ] ( main:2 [ main::chargen#10 main::charset4#10 main::bits_gen#16 main::$33 main::$34 ] ) -- aby=_deref_zpptrby1_band_coby1 
+    lda (chargen1),y
+    and #1
+  //SEG64 [42] (byte~) main::$35 ← (byte~) main::$33 | (byte~) main::$34 [ main::chargen#10 main::charset4#10 main::bits_gen#16 main::$35 ] ( main:2 [ main::chargen#10 main::charset4#10 main::bits_gen#16 main::$35 ] ) -- aby=zpby1_bor_aby 
+    ora _33
+  //SEG65 [43] (byte) main::bits#3 ← (const byte[]) bits_count#0 *idx (byte~) main::$35 [ main::chargen#10 main::charset4#10 main::bits_gen#16 main::bits#3 ] ( main:2 [ main::chargen#10 main::charset4#10 main::bits_gen#16 main::bits#3 ] ) -- aby=cowo1_derefidx_aby 
+    tax
+    lda bits_count,x
+  //SEG66 [44] if((byte) main::bits#3<(byte/signed byte/word/signed word) 2) goto main::@5 [ main::chargen#10 main::charset4#10 main::bits_gen#16 ] ( main:2 [ main::chargen#10 main::charset4#10 main::bits_gen#16 ] ) -- aby_lt_coby1_then_la1 
+    cmp #2
+    bcc b5
+  //SEG67 main::@10
+  //SEG68 [45] (byte) main::bits_gen#8 ← (byte) main::bits_gen#16 + (byte/signed byte/word/signed word) 1 [ main::chargen#10 main::charset4#10 main::bits_gen#8 ] ( main:2 [ main::chargen#10 main::charset4#10 main::bits_gen#8 ] ) -- zpby1=zpby1_plus_1 
+    inc bits_gen
+  //SEG69 [46] phi from main::@10 main::@4 to main::@5 [phi:main::@10/main::@4->main::@5]
+  //SEG70 [46] phi (byte) main::bits_gen#15 = (byte) main::bits_gen#8 [phi:main::@10/main::@4->main::@5#0] -- register_copy 
+  //SEG71 main::@5
+  b5:
+  //SEG72 [47] (byte) main::bits_gen#7 ← (byte) main::bits_gen#15 << (byte/signed byte/word/signed word) 1 [ main::chargen#10 main::charset4#10 main::bits_gen#7 ] ( main:2 [ main::chargen#10 main::charset4#10 main::bits_gen#7 ] ) -- aby=zpby1_rol_1 
+    lda bits_gen
+    asl
+  //SEG73 [48] *((byte*) main::charset4#10) ← (byte) main::bits_gen#7 [ main::chargen#10 main::charset4#10 ] ( main:2 [ main::chargen#10 main::charset4#10 ] ) -- _deref_zpptrby1=aby 
+    ldy #0
+    sta (charset4),y
+  //SEG74 [49] (byte*) main::charset4#1 ← ++ (byte*) main::charset4#10 [ main::chargen#10 main::charset4#1 ] ( main:2 [ main::chargen#10 main::charset4#1 ] ) -- zpptrby1=_inc_zpptrby1 
+    inc charset4
+    bne !+
+    inc charset4+1
+  !:
+  //SEG75 [50] (byte*) main::chargen#1 ← (byte*) main::chargen#10 + (byte/signed byte/word/signed word) 2 [ main::chargen#1 main::charset4#1 ] ( main:2 [ main::chargen#1 main::charset4#1 ] ) -- zpptrby1=zpptrby1_plus_coby1 
+    lda chargen
+    clc
+    adc #2
+    sta chargen
+    bcc !+
+    inc chargen+1
+  !:
+  //SEG76 [51] if((byte*) main::chargen#1<(const byte*) CHARGEN#0+(word/signed word) 2048) goto main::@1 [ main::chargen#1 main::charset4#1 ] ( main:2 [ main::chargen#1 main::charset4#1 ] ) -- zpptrby1_lt_cowo1_then_la1 
+    lda chargen+1
+    cmp #>CHARGEN+$800
+    bcc b1
+    bne !+
+    lda chargen
+    cmp #<CHARGEN+$800
+    bcc b1
+  !:
+  //SEG77 main::@11
+  //SEG78 [52] *((const byte*) PROCPORT#0) ← (byte/signed byte/word/signed word) 55 [ ] ( main:2 [ ] ) -- _deref_cowo1=coby2 
+    lda #$37
+    sta PROCPORT
+  //SEG79 asm { cli }
+    cli
+  //SEG80 [54] phi from main::@11 to main::@6 [phi:main::@11->main::@6]
+  //SEG81 [54] phi (byte) main::i#2 = (byte/signed byte/word/signed word) 0 [phi:main::@11->main::@6#0] -- xby=coby1 
+    ldx #0
+    jmp b6
+  //SEG82 [54] phi from main::@6 to main::@6 [phi:main::@6->main::@6]
+  //SEG83 [54] phi (byte) main::i#2 = (byte) main::i#1 [phi:main::@6->main::@6#0] -- register_copy 
+  //SEG84 main::@6
+  b6:
+  //SEG85 [55] *((const byte*) SCREEN#0 + (byte) main::i#2) ← (byte) main::i#2 [ main::i#2 ] ( main:2 [ main::i#2 ] ) -- cowo1_derefidx_xby=xby 
+    txa
+    sta SCREEN,x
+  //SEG86 [56] (byte) main::i#1 ← ++ (byte) main::i#2 [ main::i#1 ] ( main:2 [ main::i#1 ] ) -- xby=_inc_xby 
+    inx
+  //SEG87 [57] if((byte) main::i#1!=(byte/signed byte/word/signed word) 0) goto main::@6 [ main::i#1 ] ( main:2 [ main::i#1 ] ) -- xby_neq_0_then_la1 
+    cpx #0
+    bne b6
+  //SEG88 main::@12
+  //SEG89 [58] *((const byte*) D018#0) ← (byte/signed byte/word/signed word) 25 [ ] ( main:2 [ ] ) -- _deref_cowo1=coby2 
+    lda #$19
+    sta D018
+  //SEG90 main::@return
+  //SEG91 [59] return  [ ] ( main:2 [ ] )
+    rts
+}
+
 Removing instruction jmp b1
 Removing instruction jmp b6
 Succesful ASM optimization Pass5NextJumpElimination
@@ -5243,7 +5487,7 @@ main: {
     lda bits_count,x
   //SEG26 [15] if((byte) main::bits#0<(byte/signed byte/word/signed word) 2) goto main::@2 [ main::chargen#10 main::charset4#10 main::chargen1#0 ] ( main:2 [ main::chargen#10 main::charset4#10 main::chargen1#0 ] ) -- aby_lt_coby1_then_la1 
     cmp #2
-    bcc b2_from_b1
+    bcc b7
   //SEG27 [16] phi from main::@1 to main::@7 [phi:main::@1->main::@7]
   //SEG28 main::@7
   //SEG29 [17] phi from main::@7 to main::@2 [phi:main::@7->main::@2]
@@ -5251,7 +5495,7 @@ main: {
     lda #0+1
     jmp b2
   //SEG31 [17] phi from main::@1 to main::@2 [phi:main::@1->main::@2]
-  b2_from_b1:
+  b7:
   //SEG32 [17] phi (byte) main::bits_gen#9 = (byte/signed byte/word/signed word) 0 [phi:main::@1->main::@2#0] -- aby=coby1 
     lda #0
   //SEG33 main::@2
@@ -5591,7 +5835,7 @@ main: {
     lda bits_count,x
   //SEG26 [15] if((byte) main::bits#0<(byte/signed byte/word/signed word) 2) goto main::@2 [ main::chargen#10 main::charset4#10 main::chargen1#0 ] ( main:2 [ main::chargen#10 main::charset4#10 main::chargen1#0 ] ) -- aby_lt_coby1_then_la1 
     cmp #2
-    bcc b2_from_b1
+    bcc b7
   //SEG27 [16] phi from main::@1 to main::@7 [phi:main::@1->main::@7]
   //SEG28 main::@7
   //SEG29 [17] phi from main::@7 to main::@2 [phi:main::@7->main::@2]
@@ -5599,7 +5843,7 @@ main: {
     lda #0+1
     jmp b2
   //SEG31 [17] phi from main::@1 to main::@2 [phi:main::@1->main::@2]
-  b2_from_b1:
+  b7:
   //SEG32 [17] phi (byte) main::bits_gen#9 = (byte/signed byte/word/signed word) 0 [phi:main::@1->main::@2#0] -- aby=coby1 
     lda #0
   //SEG33 main::@2

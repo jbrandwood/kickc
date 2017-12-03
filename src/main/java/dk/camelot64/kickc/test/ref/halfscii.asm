@@ -51,10 +51,10 @@ main: {
     tax
     lda bits_count,x
     cmp #2
-    bcc b2_from_b1
+    bcc b7
     lda #0+1
     jmp b2
-  b2_from_b1:
+  b7:
     lda #0
   b2:
     asl

@@ -92,10 +92,10 @@ scroll_bit: {
     lda (current_chargen),y
     and current_bit
     cmp #0
-    beq b3_from_b2
+    beq b4
     lda #$80+' '
     jmp b3
-  b3_from_b2:
+  b4:
     lda #' '
   b3:
     ldy #0

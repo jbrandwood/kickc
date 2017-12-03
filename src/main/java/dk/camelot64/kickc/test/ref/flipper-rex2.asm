@@ -8,7 +8,7 @@
   jsr main
 main: {
     jsr prepare
-  b3_from_b11:
+  b1:
     ldx #$19
   b3:
     lda RASTER
@@ -23,7 +23,7 @@ main: {
     bne b3
     jsr flip
     jsr plot
-    jmp b3_from_b11
+    jmp b1
 }
 plot: {
     .label line = 2

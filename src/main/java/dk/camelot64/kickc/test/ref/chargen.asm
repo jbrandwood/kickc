@@ -28,10 +28,10 @@ main: {
     lda bits
     and #$80
     cmp #0
-    beq b3_from_b2
+    beq b4
     lda #'*'
     jmp b3
-  b3_from_b2:
+  b4:
     lda #'.'
   b3:
     ldy #0

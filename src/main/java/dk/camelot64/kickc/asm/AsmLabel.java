@@ -45,4 +45,7 @@ public class AsmLabel implements AsmLine {
       return getAsm();
    }
 
+   public void setLabel(String label) {
+      this.label = label;
+   }
 }

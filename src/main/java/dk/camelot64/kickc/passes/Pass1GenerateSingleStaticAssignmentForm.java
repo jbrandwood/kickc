@@ -45,9 +45,16 @@ public class Pass1GenerateSingleStaticAssignmentForm extends Pass1Base {
                   if (assignedVar instanceof VariableUnversioned) {
                      // Assignment to a non-versioned non-intermediary variable
                      VariableUnversioned assignedSymbol = (VariableUnversioned) assignedVar;
-                     VariableVersion version = assignedSymbol.createVersion();
+                     VariableVersion version;
                      if(assignedSymbol.isDeclaredConstant()) {
+                        Collection<VariableVersion> versions = assignedVar.getScope().getVersions(assignedSymbol);
+                        if(versions.size()!=0) {
+                           throw new CompileError("Error! Constants can not be modified "+statement);
+                        }
+                        version = assignedSymbol.createVersion();
                         version.setDeclaredConstant(true);
+                     } else {
+                        version = assignedSymbol.createVersion();
                      }
                      statementLValue.setlValue(version.getRef());
                   }
@@ -173,7 +180,7 @@ public class Pass1GenerateSingleStaticAssignmentForm extends Pass1Base {
                Scope scope = rSymbol.getScope();
                Collection<VariableVersion> versions = scope.getVersions(rSymbol);
                if(versions.size()!=1) {
-                  throw new RuntimeException("Error! Constants always must exactly one version "+rSymbol);
+                  throw new CompileError("Error! Constants must have exactly one version "+rSymbol);
                }
                return versions.iterator().next();
             }  else {

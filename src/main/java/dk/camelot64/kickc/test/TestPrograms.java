@@ -28,7 +28,6 @@ public class TestPrograms extends TestCase {
       compileAndCompare("constabsmin");
    }
 
-
    public void testBasicFloats() throws IOException, URISyntaxException {
       compileAndCompare("basic-floats");
    }
@@ -256,6 +255,16 @@ public class TestPrograms extends TestCase {
 
    public void testForRangeMin() throws IOException, URISyntaxException {
       compileAndCompare("forrangemin");
+   }
+
+   public void testAssignConst() throws IOException, URISyntaxException {
+      try {
+         compileAndCompare("assign-const");
+      } catch (CompileError e) {
+         // expecting error!
+         return;
+      }
+      fail("Expected compile error.");
    }
 
    public void testStmtOutsideMethod() throws IOException, URISyntaxException {

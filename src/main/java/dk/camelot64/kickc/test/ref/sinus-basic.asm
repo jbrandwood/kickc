@@ -134,18 +134,16 @@ print_char: {
     rts
 }
 getFAC: {
-    .const lo = $fe
-    .const hi = $ff
     .label w = 9
     .label return = 9
     jsr $b1aa
     sty $fe
     sta $ff
-    lda lo
+    lda memLo
     sta w
     lda #0
     sta w+1
-    lda hi
+    lda memHi
     sta return+1
     rts
 }
@@ -192,13 +190,13 @@ divMEMbyFAC: {
     rts
 }
 setFAC: {
-    .const lo = $fe
-    .const hi = $ff
+    .label _0 = 7
     .label w = 9
     lda w
-    sta lo
+    sta _0
     lda w+1
-    sta hi
+    sta _0+1
+    jsr prepareMEM
     ldy $fe
     lda $ff
     jsr $b391

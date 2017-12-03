@@ -2,13 +2,20 @@
 // See https://www.c64-wiki.com/wiki/Floating_point_arithmetic
 // See http://www.pagetable.com/c64rom/c64rom_sc.html
 
+// Zeropage addresses used to hold lo/hi-bytes of addresses of float numbers in MEM
+const byte* memLo = $fe;
+const byte* memHi = $ff;
+
+// Prepare MEM pointers for operations using MEM
+void prepareMEM(byte* mem) {
+    *memLo = <mem;
+    *memHi = >mem;
+}
+
 // FAC = word
 // Set the FAC (floating point accumulator) to the integer value of a 16bit word
 void setFAC(word w) {
-    const byte* lo = $fe;
-    const byte* hi = $ff;
-    *lo = <w;
-    *hi = >w;
+    prepareMEM((byte*)w);
     // Load word register Y,A into FAC (floating point accumulator)
     asm {
         ldy $fe
@@ -21,8 +28,6 @@ void setFAC(word w) {
 // Get the value of the FAC (floating point accumulator) as an integer 16bit word
 // Destroys the value in the FAC in the process
 word getFAC() {
-    const byte* lo = $fe;
-    const byte* hi = $ff;
     // Load FAC (floating point accumulator) integer part into word register Y,A
     asm {
         jsr $b1aa
@@ -30,8 +35,8 @@ word getFAC() {
         sta $ff
     }
     word w = 0;
-    <w = *lo;
-    >w = *hi;
+    <w = *memLo;
+    >w = *memHi;
     return w;
 }
 
@@ -49,16 +54,6 @@ void setFACtoARG() {
     asm {
         jsr $bbfc
     }
-}
-
-// Zeropage addresses used to hold lo/hi-bytes of addresses of float numbers in MEM
-const byte* memLo = $fe;
-const byte* memHi = $ff;
-
-// Prepare MEM pointers for operations using MEM
-void prepareMEM(byte* mem) {
-    *memLo = <mem;
-    *memHi = >mem;
 }
 
 // MEM = FAC

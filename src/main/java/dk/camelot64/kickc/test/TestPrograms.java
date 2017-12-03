@@ -56,7 +56,7 @@ public class TestPrograms extends TestCase {
       compileAndCompare("print-problem");
    }
 
-   public void testPrint() throws IOException, URISyntaxException {
+   public void testPrintMsg() throws IOException, URISyntaxException {
       compileAndCompare("printmsg");
    }
 

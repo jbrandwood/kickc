@@ -1,19 +1,267 @@
+// Library wrapping the BASIC floating point functions
+// See https://www.c64-wiki.com/wiki/Floating_point_arithmetic
+// See http://www.pagetable.com/c64rom/c64rom_sc.html
 
-
-void main() {
-
+// FAC = word
+// Set the FAC (floating point accumulator) to the integer value of a 16bit word
+void setFAC(word w) {
+    const byte* lo = $fe;
+    const byte* hi = $ff;
+    *lo = <w;
+    *hi = >w;
     // Load word register Y,A into FAC (floating point accumulator)
     asm {
-        lda #$55
-        ldy #$aa
+        ldy $fe
+        lda $ff
         jsr $b391
     }
+}
 
+// word = FAC
+// Get the value of the FAC (floating point accumulator) as an integer 16bit word
+// Destroys the value in the FAC in the process
+word getFAC() {
+    const byte* lo = $fe;
+    const byte* hi = $ff;
     // Load FAC (floating point accumulator) integer part into word register Y,A
     asm {
         jsr $b1aa
         sty $fe
         sta $ff
     }
+    word w = 0;
+    <w = *lo;
+    >w = *hi;
+    return w;
+}
 
+// ARG = FAC
+// Set the ARG (floating point argument) to the value of the FAC (floating point accumulator)
+void setARGtoFAC() {
+    asm {
+        jsr $bc0f
+    }
+}
+
+// FAC = ARG
+// Set the FAC (floating point accumulator) to the value of the ARG (floating point argument)
+void setFACtoARG() {
+    asm {
+        jsr $bbfc
+    }
+}
+
+// Zeropage addresses used to hold lo/hi-bytes of addresses of float numbers in MEM
+const byte* memLo = $fe;
+const byte* memHi = $ff;
+
+// Prepare MEM pointers for operations using MEM
+void prepareMEM(byte* mem) {
+    *memLo = <mem;
+    *memHi = >mem;
+}
+
+// MEM = FAC
+// Stores the value of the FAC to memory
+// Stores 5 bytes (means it is necessary to allocate 5 bytes to avoid clobbering other data using eg. byte[] mem = {0, 0, 0, 0, 0};)
+void setMEMtoFAC(byte* mem) {
+    prepareMEM(mem);
+    asm {
+        ldx $fe
+        ldy $ff
+        jsr $bbd4
+    }
+}
+
+// FAC = MEM
+// Set the FAC to value from MEM (float saved in memory)
+// Reads 5 bytes
+void setFACtoMEM(byte* mem) {
+    prepareMEM(mem);
+    asm {
+        lda $fe
+        ldy $ff
+        jsr $bba2
+    }
+}
+
+// FAC = PI/2
+// Set the FAC to PI/2
+// Reads 5 bytes from the BASIC ROM
+void setFACtoPIhalf() {
+    asm {
+        lda #$e0
+        ldy #$e2
+        jsr $bba2
+    }
+}
+
+// FAC = 2*PI
+// Set the FAC to 2*PI
+// Reads 5 bytes from the BASIC ROM
+void setFACto2PI() {
+    asm {
+        lda #$e5
+        ldy #$e2
+        jsr $bba2
+    }
+}
+
+// ARG = MEM
+// Load the ARG from memory
+// Reads 5 bytes
+void setARGtoMEM(byte* mem) {
+    prepareMEM(mem);
+    asm {
+        lda $fe
+        ldy $ff
+        jsr $ba8c
+    }
+}
+
+// FAC = MEM+FAC
+// Set FAC to MEM (float saved in memory) plus FAC (float accumulator)
+// Reads 5 bytes from memory
+void addMEMtoFAC(byte* mem) {
+    prepareMEM(mem);
+    asm {
+        lda $fe //memLo
+        ldy $ff //memHi
+        jsr $b867
+    }
+}
+
+// FAC = ARG+FAC
+// Add ARG (floating point argument) to FAC (floating point accumulator)
+void addARGtoFAC() {
+    asm {
+        jsr $b86a
+    }
+}
+
+// FAC = MEM-FAC
+// Set FAC to MEM (float saved in memory) minus FAC (float accumulator)
+// Reads 5 bytes from memory
+void subFACfromMEM(byte* mem) {
+    prepareMEM(mem);
+    asm {
+        lda $fe
+        ldy $ff
+        jsr $b850
+    }
+}
+
+// FAC = ARG-FAC
+// Set FAC to ARG minus FAC
+void subFACfromARG() {
+    asm {
+        jsr $b853
+    }
+}
+
+// FAC = MEM/FAC
+// Set FAC to MEM (float saved in memory) divided by FAC (float accumulator)
+// Reads 5 bytes from memory
+void divMEMbyFAC(byte* mem) {
+    prepareMEM(mem);
+    asm {
+        lda $fe
+        ldy $ff
+        jsr $bb0f
+    }
+}
+
+// FAC = MEM*FAC
+// Set FAC to MEM (float saved in memory) multiplied by FAC (float accumulator)
+// Reads 5 bytes from memory
+void mulFACbyMEM(byte* mem) {
+    prepareMEM(mem);
+    asm {
+        lda $fe
+        ldy $ff
+        jsr $ba28
+    }
+}
+
+// FAC = MEM^FAC
+// Set FAC to MEM (float saved in memory) raised to power of FAC (float accumulator)
+// Reads 5 bytes from memory
+void pwrMEMbyFAC(byte* mem) {
+    prepareMEM(mem);
+    asm {
+        lda $fe
+        ldy $ff
+        jsr $bf78
+    }
+}
+
+// FAC = int(FAC)
+// Set FAC to integer part of the FAC - int(FAC)
+// The integer part is defined as the next lower integer - like java floor()
+void intFAC() {
+    asm {
+        jsr $bccc
+    }
+}
+
+// FAC = sin(FAC)
+// Set FAC to sinus of the FAC - sin(FAC)
+// Sinus is calculated on radians (0-2*PI)
+void sinFAC() {
+    asm {
+        jsr $e26b
+    }
+}
+
+// FAC = cos(FAC)
+// Set FAC to cosinus of the FAC - cos(FAC)
+// Cosinus is calculated on radians (0-2*PI)
+void cosFAC() {
+    asm {
+        jsr $e264
+    }
+}
+
+// FAC = tan(FAC)
+// Set FAC to the tangens of FAC - tan(FAC)
+// Tangens is calculated on radians (0-2*PI)
+void tanFAC() {
+    asm {
+        jsr $e2b4
+    }
+}
+
+// FAC = atn(FAC)
+// Set FAC to the arc tangens of FAC - atn(FAC)
+// Arc Tangens is calculated on radians (0-2*PI)
+void atnFAC() {
+    asm {
+        jsr $e303
+    }
+}
+
+// FAC = sqr(FAC)
+// Set FAC to the square root of FAC - sqr(FAC)
+void sqrFAC() {
+    asm {
+        jsr $bf71
+    }
+}
+
+// FAC = exp(FAC)
+// Set FAC to the exponential function of FAC - exp(FAC)
+// Exp is based on the natural logarithm e=2.71828183
+void expFAC() {
+    asm {
+        jsr $bfed
+    }
+}
+
+// FAC = log(FAC)
+// Set FAC to the logarithm of FAC - log(FAC)
+// Log is based on the natural logarithm e=2.71828183
+void logFAC() {
+    asm {
+        jsr $b9ea
+    }
 }

@@ -52,6 +52,9 @@ public class Pass1TypeInference extends Pass1Base {
             LValue lValue = call.getlValue();
             String procedureName = call.getProcedureName();
             Procedure procedure = scopes.peek().getProcedure(procedureName);
+            if(procedure==null) {
+               throw new CompileError("Called procedure not found. "+call.toString(getProgram(), false));
+            }
             call.setProcedure(procedure.getRef());
             if(procedure.getParameters().size()!=call.getParameters().size()) {
                throw new CompileError("Wrong number of parameters in call. Expected " +procedure.getParameters().size()+". "+statement.toString());

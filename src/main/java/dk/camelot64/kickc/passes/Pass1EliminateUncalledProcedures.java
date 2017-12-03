@@ -46,7 +46,7 @@ public class Pass1EliminateUncalledProcedures extends Pass1Base {
          procedure.getScope().remove(procedure);
       }
 
-      return false;
+      return unusedProcedures.size()>0;
    }
 
 }

@@ -52,7 +52,10 @@ public class Pass3PhiLifting {
                      newVar.setType(phiLValue.getType());
                      newVar.setInferredType(true);
                      List<Statement> predecessorStatements = predecessorBlock.getStatements();
-                     Statement lastPredecessorStatement = predecessorStatements.get(predecessorStatements.size() - 1);
+                     Statement lastPredecessorStatement = null;
+                     if(predecessorStatements.size()>0) {
+                        lastPredecessorStatement = predecessorStatements.get(predecessorStatements.size() - 1);
+                     }
                      StatementAssignment newAssignment = new StatementAssignment(newVar, phiRValue.getrValue());
                      if (lastPredecessorStatement instanceof StatementConditionalJump) {
                         // Use or Create a new block between the predecessor and this one - getReplacement labels where appropriate

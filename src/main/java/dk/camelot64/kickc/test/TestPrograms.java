@@ -29,7 +29,7 @@ public class TestPrograms extends TestCase {
    }
 
    public void testBasicFloats() throws IOException, URISyntaxException {
-      compileAndCompare("basic-floats");
+      compileAndCompare("sinus-basic");
    }
 
    public void testDoubleImport() throws IOException, URISyntaxException {
@@ -57,7 +57,7 @@ public class TestPrograms extends TestCase {
    }
 
    public void testPrint() throws IOException, URISyntaxException {
-      compileAndCompare("print");
+      compileAndCompare("printmsg");
    }
 
    public void testUnusedMethod() throws IOException, URISyntaxException {
@@ -258,75 +258,51 @@ public class TestPrograms extends TestCase {
    }
 
    public void testAssignConst() throws IOException, URISyntaxException {
-      try {
-         compileAndCompare("assign-const");
-      } catch (CompileError e) {
-         // expecting error!
-         return;
-      }
-      fail("Expected compile error.");
+      assertError("assign-const", "Constants can not be modified");
    }
 
    public void testStmtOutsideMethod() throws IOException, URISyntaxException {
-      try {
-         compileAndCompare("stmt-outside-method");
-      } catch (CompileError e) {
-         // expecting error!
-         return;
-      }
-      fail("Expected compile error.");
+      assertError("stmt-outside-method", "Error parsing");
    }
 
    public void testUseUndeclared() throws IOException, URISyntaxException {
-      try {
-         compileAndCompare("useundeclared");
-      } catch (CompileError e) {
-         // expecting error!
-         return;
-      }
-      fail("Expected compile error.");
+      assertError("useundeclared", "Unknown variable");
    }
 
    public void testUseUninitialized() throws IOException, URISyntaxException {
-      try {
-         compileAndCompare("useuninitialized");
-      } catch (CompileError e) {
-         // expecting error!
-         return;
-      }
-      fail("Expected compile error.");
+      assertError("useuninitialized", "Variable used before being defined");
    }
 
    public void testTypeMismatch() throws IOException, URISyntaxException {
-      try {
-         compileAndCompare("typemismatch");
-      } catch (CompileError e) {
-         // expecting error!
-         return;
-      }
-      fail("Expected compile error.");
+      assertError("typemismatch", "Type mismatch");
    }
 
    public void testToManyParams() throws IOException, URISyntaxException {
-      try {
-         compileAndCompare("tomanyparams");
-      } catch (CompileError e) {
-         // expecting error!
-         return;
-      }
-      fail("Expected compile error.");
+      assertError("tomanyparams", "Wrong number of parameters in call");
    }
 
    public void testToFewParams() throws IOException, URISyntaxException {
+      assertError("tofewparams", "Wrong number of parameters in call");
+   }
+
+   public void testNoReturn() throws IOException, URISyntaxException {
+      assertError("noreturn", "Method must end with a return statement");
+   }
+
+   public void testProcedureNotFound() throws IOException, URISyntaxException {
+      assertError("procedurenotfound", "Called procedure not found");
+   }
+
+   private void assertError(String kcFile, String expectError) throws IOException, URISyntaxException {
       try {
-         compileAndCompare("tofewparams");
+         compileAndCompare(kcFile);
       } catch (CompileError e) {
          // expecting error!
+         assertTrue("Error message expected  '"+expectError+"' - was:"+e.getMessage(), e.getMessage().contains(expectError));
          return;
       }
       fail("Expected compile error.");
    }
-
 
 
    private void compileAndCompare(String filename) throws IOException, URISyntaxException {

@@ -11,14 +11,15 @@
   f_127: .byte 0, 0, 0, 0, 0
   jsr main
 main: {
-    .label _2 = 9
-    .label _11 = 9
+    .label _3 = 9
+    .label _12 = 9
     .label i = 2
-    lda #$7f
+    lda #<$4fb
     sta setFAC.w
-    lda #0
+    lda #>$4fb
     sta setFAC.w+1
     jsr setFAC
+    jsr divFACby10
     lda #<f_127
     sta setMEMtoFAC.mem
     lda #>f_127
@@ -36,9 +37,9 @@ main: {
     sta i
   b1:
     lda i
-    sta _2
+    sta _3
     lda #0
-    sta _2+1
+    sta _3+1
     jsr setFAC
     lda #<f_2pi
     sta mulFACbyMEM.mem
@@ -69,9 +70,9 @@ main: {
     inc i
     lda i
     cmp #$1a
-    bne b16
+    bne b17
     rts
-  b16:
+  b17:
     lda print_ln._0
     sta char_cursor
     lda print_ln._0+1
@@ -208,5 +209,9 @@ setMEMtoFAC: {
     ldx $fe
     ldy $ff
     jsr $bbd4
+    rts
+}
+divFACby10: {
+    jsr $bafe
     rts
 }

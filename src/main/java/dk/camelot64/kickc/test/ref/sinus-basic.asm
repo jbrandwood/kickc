@@ -3,14 +3,11 @@
 .pc = $80d "Program"
   .const memLo = $fe
   .const memHi = $ff
-  .const f_2pi = $e2e5
   .label char_cursor = 5
   .label line_cursor = 3
-  hextab: .byte '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'a', 'b', 'c', 'd', 'e', 'f'
-  f_i: .byte 0, 0, 0, 0, 0
-  f_127: .byte 0, 0, 0, 0, 0
   jsr main
 main: {
+    .const f_2pi = $e2e5
     .label _3 = 9
     .label _12 = 9
     .label i = 2
@@ -78,6 +75,8 @@ main: {
     lda print_ln._0+1
     sta char_cursor+1
     jmp b1
+    f_i: .byte 0, 0, 0, 0, 0
+    f_127: .byte 0, 0, 0, 0, 0
 }
 print_ln: {
     .label _0 = 3
@@ -124,6 +123,7 @@ print_byte: {
     lda hextab,x
     jsr print_char
     rts
+    hextab: .byte '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'a', 'b', 'c', 'd', 'e', 'f'
 }
 print_char: {
     ldy #0
@@ -149,9 +149,9 @@ getFAC: {
     rts
 }
 addMEMtoFAC: {
-    lda #<f_127
+    lda #<main.f_127
     sta prepareMEM.mem
-    lda #>f_127
+    lda #>main.f_127
     sta prepareMEM.mem+1
     jsr prepareMEM
     lda $fe
@@ -180,9 +180,9 @@ sinFAC: {
     rts
 }
 divMEMbyFAC: {
-    lda #<f_i
+    lda #<main.f_i
     sta prepareMEM.mem
-    lda #>f_i
+    lda #>main.f_i
     sta prepareMEM.mem+1
     jsr prepareMEM
     lda $fe

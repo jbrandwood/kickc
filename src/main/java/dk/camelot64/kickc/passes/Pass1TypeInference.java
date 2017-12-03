@@ -54,7 +54,7 @@ public class Pass1TypeInference extends Pass1Base {
             Procedure procedure = scopes.peek().getProcedure(procedureName);
             call.setProcedure(procedure.getRef());
             if(procedure.getParameters().size()!=call.getParameters().size()) {
-               throw new RuntimeException("Wrong number of parameters in call. Expected " +procedure.getParameters().size()+". "+statement.toString());
+               throw new CompileError("Wrong number of parameters in call. Expected " +procedure.getParameters().size()+". "+statement.toString());
             }
             if(lValue instanceof VariableRef) {
                Variable lValueVar = programScope.getVariable((VariableRef) lValue);

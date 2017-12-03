@@ -307,6 +307,27 @@ public class TestPrograms extends TestCase {
       fail("Expected compile error.");
    }
 
+   public void testToManyParams() throws IOException, URISyntaxException {
+      try {
+         compileAndCompare("tomanyparams");
+      } catch (CompileError e) {
+         // expecting error!
+         return;
+      }
+      fail("Expected compile error.");
+   }
+
+   public void testToFewParams() throws IOException, URISyntaxException {
+      try {
+         compileAndCompare("tofewparams");
+      } catch (CompileError e) {
+         // expecting error!
+         return;
+      }
+      fail("Expected compile error.");
+   }
+
+
 
    private void compileAndCompare(String filename) throws IOException, URISyntaxException {
       TestPrograms tester = new TestPrograms();

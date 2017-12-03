@@ -32,11 +32,6 @@ public class TestErrors extends TestCase {
       compileAndCompare("inline-asm-param");
    }
 
-   public void testUseUninitialized() throws IOException, URISyntaxException {
-      String filename = "useuninitialized";
-      compileAndCompare(filename);
-   }
-
    public void testForRangeSymbolic() throws IOException, URISyntaxException {
       String filename = "forrangesymbolic";
       compileAndCompare(filename);

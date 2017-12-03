@@ -118,6 +118,7 @@ public class Compiler {
       getLog().append("INITIAL CONTROL FLOW GRAPH");
       getLog().append(program.getGraph().toString(program));
 
+      new Pass1AssertUsedVars(program).execute();
       new Pass1ExtractInlineStrings(program).execute();
       new Pass1EliminateUncalledProcedures(program).execute();
       new Pass1EliminateUnusedVars(program).execute();

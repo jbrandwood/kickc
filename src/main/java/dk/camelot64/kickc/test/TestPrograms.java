@@ -287,6 +287,16 @@ public class TestPrograms extends TestCase {
       fail("Expected compile error.");
    }
 
+   public void testUseUninitialized() throws IOException, URISyntaxException {
+      try {
+         compileAndCompare("useuninitialized");
+      } catch (CompileError e) {
+         // expecting error!
+         return;
+      }
+      fail("Expected compile error.");
+   }
+
    public void testTypeMismatch() throws IOException, URISyntaxException {
       try {
          compileAndCompare("typemismatch");

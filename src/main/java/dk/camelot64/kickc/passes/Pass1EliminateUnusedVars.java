@@ -17,7 +17,6 @@ public class Pass1EliminateUnusedVars extends Pass1Base {
    public boolean executeStep() {
       new Pass3StatementIndices(getProgram()).generateStatementIndices();
       new Pass3VariableReferenceInfos(getProgram()).generateVariableReferenceInfos();
-
       VariableReferenceInfos referenceInfos = getProgram().getVariableReferenceInfos();
 
       boolean modified = false;
@@ -51,7 +50,6 @@ public class Pass1EliminateUnusedVars extends Pass1Base {
 
       getProgram().setVariableReferenceInfos(null);
       new Pass3StatementIndices(getProgram()).clearStatementIndices();
-
       return modified;
    }
 

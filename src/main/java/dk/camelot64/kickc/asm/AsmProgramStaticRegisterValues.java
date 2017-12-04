@@ -44,6 +44,9 @@ public class AsmProgramStaticRegisterValues {
          current = new AsmRegisterValues(current);
          AsmInstructionType instructionType = instruction.getType();
          AsmClobber clobber = instructionType.getClobber();
+         if(instruction.getType().getMnemnonic().equals("jsr")) {
+            clobber = AsmClobber.CLOBBER_ALL;
+         }
          if (clobber.isClobberA()) {
             current.setA(null);
             current.setaMem(null);

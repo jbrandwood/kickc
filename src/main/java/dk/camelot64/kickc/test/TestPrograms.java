@@ -24,6 +24,10 @@ public class TestPrograms extends TestCase {
       helper = new ReferenceHelper("dk/camelot64/kickc/test/ref/");
    }
 
+   public void testSinusSprites() throws IOException, URISyntaxException {
+      compileAndCompare("sinus-sprites");
+   }
+
    public void testConstantAbsMin() throws IOException, URISyntaxException {
       compileAndCompare("constabsmin");
    }

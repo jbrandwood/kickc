@@ -1,1 +1,1 @@
-xor #{coby1}
+eor #{coby1}

@@ -14,6 +14,17 @@ public class AsmClobber {
    public AsmClobber() {
    }
 
+   AsmClobber(boolean clobberAll) {
+      this.clobberA = clobberAll;
+      this.clobberX = clobberAll;
+      this.clobberY = clobberAll;
+      this.clobberC = clobberAll;
+      this.clobberN = clobberAll;
+      this.clobberV = clobberAll;
+      this.clobberZ = clobberAll;
+   }
+
+
    public boolean isClobberA() {
       return clobberA;
    }
@@ -69,6 +80,9 @@ public class AsmClobber {
    public void setClobberV(boolean clobberV) {
       this.clobberV = clobberV;
    }
+
+   public static final AsmClobber CLOBBER_ALL = new AsmClobber(true);
+
 
    /**
     * Adds clobber.

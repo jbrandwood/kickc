@@ -149,8 +149,8 @@ public class AsmFragmentManager {
       synths.add(new FragmentSynthesis("(.*)=(.*)_xsby", ".*=[ax]s?by.*xs?by|.*derefidx_xs?by", "txa\n", "$1=$2_asby", null, null));
       synths.add(new FragmentSynthesis("(.*)=(.*)_yby", ".*=[ay]s?by.*ys?by|.*derefidx_ys?by", "tya\n", "$1=$2_aby", null, null));
       synths.add(new FragmentSynthesis("(.*)=(.*)_ysby", ".*=[ay]s?by.*ys?by|.*derefidx_ys?by", "tya\n", "$1=$2_asby", null, null));
-      synths.add(new FragmentSynthesis("(.*)=(.*)_zpby1", ".*=.*as?by.*", "lda {zpby1}\n", "$1=$2_aby", null, mapZpby));
-      synths.add(new FragmentSynthesis("(.*)=(.*)_zpsby1", ".*=.*as?by.*", "lda {zpsby1}\n", "$1=$2_asby", null, mapZpsby));
+      synths.add(new FragmentSynthesis("(.*)=(.*)_zpby1", ".*=.*as?by.*|.*zps?by1.*_zps?by1", "lda {zpby1}\n", "$1=$2_aby", null, mapZpby));
+      synths.add(new FragmentSynthesis("(.*)=(.*)_zpsby1", ".*=.*as?by.*|.*zps?by1.*_zps?by1", "lda {zpsby1}\n", "$1=$2_asby", null, mapZpsby));
 
       synths.add(new FragmentSynthesis("zpby1=zpby1(.*)", ".*=.*as?by.*", "lda {zpby1}\n", "aby=aby$1", "sta {zpby1}\n", mapZpby));
       synths.add(new FragmentSynthesis("zpsby1=zpsby1(.*)", ".*=.*as?by.*", "lda {zpsby1}\n", "asby=asby$1", "sta {zpsby1}\n", mapZpby));

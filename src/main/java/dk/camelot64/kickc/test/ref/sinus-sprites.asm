@@ -11,6 +11,7 @@
   .const BORDERCOL = $d020
   .const SPRITES_XPOS = $d000
   .const SPRITES_YPOS = $d001
+  .const SPRITES_XMSB = $d010
   .const SPRITES_ENABLE = $d015
   .const SPRITES_EXPAND_Y = $d017
   .const SPRITES_EXPAND_X = $d01d
@@ -21,7 +22,7 @@
   .const sintab_y = $1100
   .const sprites = $2000
   .label progress_idx = 4
-  .label progress_cursor = 9
+  .label progress_cursor = $a
   .label sin_idx_x = 2
   .label sin_idx_y = 3
   jsr main
@@ -38,24 +39,40 @@ main: {
     jmp b2
 }
 anim: {
+    .label _3 = 5
     .label xidx = 4
-    .label yidx = 5
-    .label j = 6
+    .label x = $e
+    .label x_msb = 5
+    .label j2 = 6
+    .label j = 7
     inc BORDERCOL
     lda sin_idx_x
     sta xidx
-    lda sin_idx_y
-    sta yidx
+    ldy sin_idx_y
     lda #0
     sta j
-    ldy #$c
+    lda #$c
+    sta j2
+    lda #0
+    sta x_msb
   b1:
     ldx xidx
     lda sintab_x,x
-    sta SPRITES_XPOS,y
-    ldx yidx
-    lda sintab_y,x
-    sta SPRITES_YPOS,y
+    clc
+    adc #<$1e
+    sta x
+    lda #>$1e
+    adc #0
+    sta x+1
+    asl _3
+    ora x_msb
+    sta x_msb
+    lda x
+    ldx j2
+    sta SPRITES_XPOS,x
+    lda sintab_y,y
+    ldx j2
+    sta SPRITES_YPOS,x
     lda xidx
     clc
     adc #$a
@@ -66,22 +83,28 @@ anim: {
     sbc #sinlen_x
     sta xidx
   b2:
-    lda yidx
+    tya
     clc
     adc #8
-    sta yidx
-    cmp #sinlen_y
+    tay
+    cpy #sinlen_y
     bcc b3
+    tya
     sec
     sbc #sinlen_y
-    sta yidx
+    tay
   b3:
-    dey
-    dey
+    lda j2
+    sec
+    sbc #1
+    sta j2
+    dec j2
     inc j
     lda j
     cmp #7
     bne b1
+    lda x_msb
+    sta SPRITES_XMSB
     inc sin_idx_x
     lda sin_idx_x
     cmp #sinlen_x
@@ -123,7 +146,7 @@ init: {
     sta gen_sintab.sintab+1
     lda #sinlen_x
     sta gen_sintab.length
-    lda #$10
+    lda #0
     sta gen_sintab.min
     ldx #$ff
     jsr gen_sintab
@@ -138,7 +161,7 @@ init: {
     sta gen_sintab.sintab+1
     lda #sinlen_y
     sta gen_sintab.length
-    lda #$30
+    lda #$32
     sta gen_sintab.min
     ldx #$d0
     jsr gen_sintab
@@ -146,7 +169,7 @@ init: {
     rts
 }
 clear_screen: {
-    .label sc = 7
+    .label sc = 8
     lda #<SCREEN
     sta sc
     lda #>SCREEN
@@ -171,15 +194,15 @@ clear_screen: {
 }
 gen_sintab: {
     .const f_2pi = $e2e5
-    .label _0 = $d
-    .label _3 = $d
-    .label _13 = $d
-    .label _17 = $d
-    .label _23 = $d
+    .label _0 = $e
+    .label _3 = $e
+    .label _13 = $e
+    .label _17 = $e
+    .label _23 = $e
     .label i = 2
     .label min = 2
     .label length = 3
-    .label sintab = 7
+    .label sintab = 8
     txa
     sta _0
     lda #0
@@ -307,8 +330,8 @@ progress_inc: {
     progress_chars: .byte $20, $65, $74, $75, $61, $f6, $e7, $ea, $e0
 }
 getFAC: {
-    .label w = $d
-    .label return = $d
+    .label w = $e
+    .label return = $e
     jsr $b1aa
     sty $fe
     sta $ff
@@ -321,7 +344,7 @@ getFAC: {
     rts
 }
 addMEMtoFAC: {
-    .label mem = $b
+    .label mem = $c
     jsr prepareMEM
     lda $fe
     ldy $ff
@@ -329,7 +352,7 @@ addMEMtoFAC: {
     rts
 }
 prepareMEM: {
-    .label mem = $b
+    .label mem = $c
     lda mem
     sta memLo
     lda mem+1
@@ -337,7 +360,7 @@ prepareMEM: {
     rts
 }
 mulFACbyMEM: {
-    .label mem = $b
+    .label mem = $c
     jsr prepareMEM
     lda $fe
     ldy $ff
@@ -349,7 +372,7 @@ sinFAC: {
     rts
 }
 divMEMbyFAC: {
-    .label mem = $b
+    .label mem = $c
     jsr prepareMEM
     lda $fe
     ldy $ff
@@ -357,8 +380,8 @@ divMEMbyFAC: {
     rts
 }
 setFAC: {
-    .label _0 = $b
-    .label w = $d
+    .label _0 = $c
+    .label w = $e
     lda w
     sta _0
     lda w+1
@@ -370,7 +393,7 @@ setFAC: {
     rts
 }
 setMEMtoFAC: {
-    .label mem = $b
+    .label mem = $c
     jsr prepareMEM
     ldx $fe
     ldy $ff
@@ -386,11 +409,11 @@ setARGtoFAC: {
     rts
 }
 progress_init: {
-    .label line = 9
+    .label line = $a
     rts
 }
 gen_sprites: {
-    .label spr = 7
+    .label spr = 8
     .label i = 2
     lda #<sprites
     sta spr
@@ -422,12 +445,12 @@ gen_sprites: {
     cml: .text "camelot"
 }
 gen_chargen_sprite: {
-    .label _0 = $d
-    .label _1 = $d
-    .label sprite = 9
-    .label chargen = $b
+    .label _0 = $e
+    .label _1 = $e
+    .label sprite = $a
+    .label chargen = $c
     .label bits = 4
-    .label s_gen = $f
+    .label s_gen = 7
     .label x = 5
     .label y = 3
     .label c = 6

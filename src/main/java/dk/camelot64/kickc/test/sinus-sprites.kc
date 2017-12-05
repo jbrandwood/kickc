@@ -44,9 +44,9 @@ void init() {
     place_sprites();
     gen_sprites();
     progress_init(SCREEN);
-    gen_sintab(sintab_x, sinlen_x, $10, $ff);
+    gen_sintab(sintab_x, sinlen_x, $00, $ff);
     progress_init(SCREEN+40);
-    gen_sintab(sintab_y, sinlen_y, $30, $d0);
+    gen_sintab(sintab_y, sinlen_y, $32, $d0);
     clear_screen();
 }
 
@@ -89,8 +89,11 @@ void anim() {
     byte xidx = sin_idx_x;
     byte yidx = sin_idx_y;
     byte j2 = 12;
+    byte x_msb = 0;
     for( byte j : 0..6) {
-        SPRITES_XPOS[j2] = sintab_x[xidx];
+        word x = (word)$1e + sintab_x[xidx];
+        x_msb = x_msb<<1 | >x;
+        SPRITES_XPOS[j2] = (byte)x;
         SPRITES_YPOS[j2] = sintab_y[yidx];
         xidx = xidx+10;
         if(xidx>=sinlen_x) {
@@ -103,6 +106,7 @@ void anim() {
         j2--;
         j2--;
     }
+    *SPRITES_XMSB = x_msb;
 
     // Increment sin indices
     if(++sin_idx_x>=sinlen_x) {
@@ -152,17 +156,23 @@ void gen_chargen_sprite(byte ch, byte* sprite) {
     asm { sei }
     *PROCPORT = $32;
     for(byte y:0..7) {
+      // current chargen line
       byte bits = chargen[y];
+      // current sprite byte
       byte s_gen = 0;
+      // #bits filled into current sprite byte
       byte s_gen_cnt = 0;
       for(byte x:0..7) {
+        // Find the current chargen pixel (c)
         byte c = 0;
         if((bits & $80) != 0) {
            c = 1;
         }
+        // generate 3 pixels in the sprite byte (s_gen)
         for(byte b : 0..2){
             s_gen = s_gen<<1 | c;
             if(++s_gen_cnt==8) {
+                // sprite byte filled - store and move to next byte
                 sprite[0] = s_gen;
                 sprite[3] = s_gen;
                 sprite[6] = s_gen;
@@ -171,8 +181,10 @@ void gen_chargen_sprite(byte ch, byte* sprite) {
                 s_gen_cnt = 0;
             }
         }
+        // move to next char pixel
         bits = bits<<1;
       }
+      // move 3 lines down in the sprite (already moved 1 through ++)
       sprite = sprite + 6;
     }
     *PROCPORT = $37;

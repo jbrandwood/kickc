@@ -24,6 +24,10 @@ public class TestErrors extends TestCase {
       helper = new ReferenceHelper("dk/camelot64/kickc/test/ref/");
    }
 
+   public void testNoCast() throws IOException, URISyntaxException {
+      compileAndCompare("nocast");
+   }
+
    public void testConstants() throws IOException, URISyntaxException {
       compileAndCompare("constants");
    }

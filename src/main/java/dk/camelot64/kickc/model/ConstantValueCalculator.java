@@ -4,7 +4,7 @@ package dk.camelot64.kickc.model;
 public class ConstantValueCalculator {
 
 
-   private static ConstantValue calcValue(ProgramScope programScope, ConstantValue value) {
+   public static ConstantValue calcValue(ProgramScope programScope, ConstantValue value) {
       if(value instanceof ConstantInteger) {
          return value;
       } else if(value instanceof ConstantString) {
@@ -36,9 +36,51 @@ public class ConstantValueCalculator {
          return neg(calcValue(programScope, value));
       } else if(operator.equals(Operator.POS)) {
          return pos(calcValue(programScope, value));
+      } else if(operator.equals(Operator.CAST_WORD)) {
+         return castWord(calcValue(programScope, value));
+      } else if(operator.equals(Operator.CAST_SWORD)) {
+         return castSWord(calcValue(programScope, value));
+      } else if(operator.equals(Operator.CAST_BYTE)) {
+         return castByte(calcValue(programScope, value));
+      } else if(operator.equals(Operator.CAST_SBYTE)) {
+         return castSByte(calcValue(programScope, value));
       }
       return null;
    }
+
+   private static ConstantValue castWord(ConstantValue value) {
+      if(value instanceof ConstantInteger) {
+         return new ConstantInteger(0xffff&((ConstantInteger) value).getNumber());
+      }
+      return null;
+   }
+
+   private static ConstantValue castSWord(ConstantValue value) {
+      if(value instanceof ConstantInteger) {
+         return new ConstantInteger(0xffff&((ConstantInteger) value).getNumber());
+      }
+      return null;
+   }
+
+   private static ConstantValue castByte(ConstantValue value) {
+      if(value instanceof ConstantInteger) {
+         return new ConstantInteger(0xff&((ConstantInteger) value).getNumber());
+      }
+      return null;
+   }
+
+   private static ConstantValue castSByte(ConstantValue value) {
+      if(value instanceof ConstantInteger) {
+         return new ConstantInteger(0xff&((ConstantInteger) value).getNumber());
+      }
+      return null;
+   }
+
+   private static ConstantValue castPtrByte(ConstantValue value) {
+      return value;
+   }
+
+
 
    public static ConstantValue calcValue(ProgramScope programScope, ConstantValue value1, Operator operator, ConstantValue value2) {
       if(operator.equals(Operator.MULTIPLY)) {

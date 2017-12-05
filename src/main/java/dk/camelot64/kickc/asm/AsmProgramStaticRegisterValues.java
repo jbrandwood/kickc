@@ -71,7 +71,21 @@ public class AsmProgramStaticRegisterValues {
          if (clobber.isClobberZ()) {
             current.setZ(null);
          }
-         if (instructionType.getMnemnonic().equals("lda") && instructionType.getAddressingMode().equals(AsmAddressingMode.IMM)) {
+         String mnemnonic = instructionType.getMnemnonic();
+         AsmAddressingMode addressingMode = instructionType.getAddressingMode();
+         if ((mnemnonic.equals("inc") || mnemnonic.equals("dec") || mnemnonic.equals("ror") || mnemnonic.equals("rol") || mnemnonic.equals("lsr") || mnemnonic.equals("asl")) && (addressingMode.equals(AsmAddressingMode.ZP) || addressingMode.equals(AsmAddressingMode.ABS))) {
+            String modParam = instruction.getParameter();
+            if(current.getaMem()!=null && current.getaMem().equals(modParam)) {
+               current.setaMem(null);
+            }
+            if(current.getxMem()!=null && current.getxMem().equals(modParam)) {
+               current.setxMem(null);
+            }
+            if(current.getyMem()!=null && current.getyMem().equals(modParam)) {
+               current.setyMem(null);
+            }
+         }
+         if (mnemnonic.equals("lda") && addressingMode.equals(AsmAddressingMode.IMM)) {
             current.setA(instruction.getParameter());
             current.setaMem(null);
             Integer immValue = getImmValue(instruction.getParameter());
@@ -80,15 +94,14 @@ public class AsmProgramStaticRegisterValues {
                current.setN(immValue > 127);
             }
          }
-         if (instructionType.getMnemnonic().equals("lda") && (instructionType.getAddressingMode().equals(AsmAddressingMode.ZP) || instructionType.getAddressingMode().equals(AsmAddressingMode.ABS))) {
+         if (mnemnonic.equals("lda") && (addressingMode.equals(AsmAddressingMode.ZP) || addressingMode.equals(AsmAddressingMode.ABS))) {
             current.setaMem(instruction.getParameter());
             current.setA(null);
          }
-         if (instructionType.getMnemnonic().equals("sta") && (instructionType.getAddressingMode().equals(AsmAddressingMode.ZP) || instructionType.getAddressingMode().equals(AsmAddressingMode.ABS))) {
+         if (mnemnonic.equals("sta") && (addressingMode.equals(AsmAddressingMode.ZP) || addressingMode.equals(AsmAddressingMode.ABS))) {
             current.setaMem(instruction.getParameter());
-            current.setA(null);
          }
-         if (instructionType.getMnemnonic().equals("ldx") && instructionType.getAddressingMode().equals(AsmAddressingMode.IMM)) {
+         if (mnemnonic.equals("ldx") && addressingMode.equals(AsmAddressingMode.IMM)) {
             current.setX(instruction.getParameter());
             current.setxMem(null);
             Integer immValue = getImmValue(instruction.getParameter());
@@ -97,15 +110,14 @@ public class AsmProgramStaticRegisterValues {
                current.setN(immValue > 127);
             }
          }
-         if (instructionType.getMnemnonic().equals("ldx") && (instructionType.getAddressingMode().equals(AsmAddressingMode.ZP) || instructionType.getAddressingMode().equals(AsmAddressingMode.ABS))) {
+         if (mnemnonic.equals("ldx") && (addressingMode.equals(AsmAddressingMode.ZP) || addressingMode.equals(AsmAddressingMode.ABS))) {
             current.setxMem(instruction.getParameter());
             current.setX(null);
          }
-         if (instructionType.getMnemnonic().equals("stx") && (instructionType.getAddressingMode().equals(AsmAddressingMode.ZP) || instructionType.getAddressingMode().equals(AsmAddressingMode.ABS))) {
+         if (mnemnonic.equals("stx") && (addressingMode.equals(AsmAddressingMode.ZP) || addressingMode.equals(AsmAddressingMode.ABS))) {
             current.setxMem(instruction.getParameter());
-            current.setX(null);
          }
-         if (instructionType.getMnemnonic().equals("ldy") && instructionType.getAddressingMode().equals(AsmAddressingMode.IMM)) {
+         if (mnemnonic.equals("ldy") && addressingMode.equals(AsmAddressingMode.IMM)) {
             current.setY(instruction.getParameter());
             current.setyMem(null);
             Integer immValue = getImmValue(instruction.getParameter());
@@ -114,34 +126,33 @@ public class AsmProgramStaticRegisterValues {
                current.setN(immValue > 127);
             }
          }
-         if (instructionType.getMnemnonic().equals("ldy") && (instructionType.getAddressingMode().equals(AsmAddressingMode.ZP) || instructionType.getAddressingMode().equals(AsmAddressingMode.ABS))) {
+         if (mnemnonic.equals("ldy") && (addressingMode.equals(AsmAddressingMode.ZP) || addressingMode.equals(AsmAddressingMode.ABS))) {
+            current.setyMem(instruction.getParameter());
+         }
+         if (mnemnonic.equals("sty") && (addressingMode.equals(AsmAddressingMode.ZP) || addressingMode.equals(AsmAddressingMode.ABS))) {
             current.setyMem(instruction.getParameter());
             current.setY(null);
          }
-         if (instructionType.getMnemnonic().equals("sty") && (instructionType.getAddressingMode().equals(AsmAddressingMode.ZP) || instructionType.getAddressingMode().equals(AsmAddressingMode.ABS))) {
-            current.setyMem(instruction.getParameter());
-            current.setY(null);
-         }
-         if (instructionType.getMnemnonic().equals("txa")) {
+         if (mnemnonic.equals("txa")) {
             current.setA(current.getX());
             current.setaMem(current.getxMem());
          }
-         if (instructionType.getMnemnonic().equals("tax")) {
+         if (mnemnonic.equals("tax")) {
             current.setX(current.getA());
             current.setxMem(current.getaMem());
          }
-         if (instructionType.getMnemnonic().equals("tya")) {
+         if (mnemnonic.equals("tya")) {
             current.setA(current.getY());
             current.setaMem(current.getyMem());
          }
-         if (instructionType.getMnemnonic().equals("tay")) {
+         if (mnemnonic.equals("tay")) {
             current.setY(current.getA());
             current.setyMem(current.getaMem());
          }
-         if (instructionType.getMnemnonic().equals("sec")) {
+         if (mnemnonic.equals("sec")) {
             current.setC(Boolean.TRUE);
          }
-         if (instructionType.getMnemnonic().equals("clc")) {
+         if (mnemnonic.equals("clc")) {
             current.setC(Boolean.FALSE);
          }
       }

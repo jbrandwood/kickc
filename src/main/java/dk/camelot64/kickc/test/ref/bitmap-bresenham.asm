@@ -43,13 +43,10 @@ lines: {
     ldx l
     lda lines_x,x
     tay
-    ldx l
     lda lines_x+1,x
     sta _2
-    ldx l
     lda lines_y,x
     sta _3
-    ldx l
     lda lines_y+1,x
     tax
     sty line.x0

@@ -71,7 +71,6 @@ anim: {
     ldx j2
     sta SPRITES_XPOS,x
     lda sintab_y,y
-    ldx j2
     sta SPRITES_YPOS,x
     lda xidx
     clc

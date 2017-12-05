@@ -47,7 +47,6 @@ plots: {
     ldx i
     lda plots_x,x
     tay
-    ldx i
     lda plots_y,x
     tax
     jsr plot

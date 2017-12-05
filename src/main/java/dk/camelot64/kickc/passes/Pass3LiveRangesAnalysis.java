@@ -124,7 +124,8 @@ public class Pass3LiveRangesAnalysis extends Pass2Base {
                            }
                         }
                      } else {
-                        throw new RuntimeException("Never occurs!");
+                        // Do nothing
+                        // getLog().append("Not propagating "+aliveVar.toString(getProgram()) +" in BEFORE_METHOD case from "+stmt.toString(getProgram(), false)+ " to "+previousStmt.getStatement().toString(getProgram(), false));
                      }
                   }
                }

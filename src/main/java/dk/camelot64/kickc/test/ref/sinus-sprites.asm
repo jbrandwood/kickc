@@ -6,6 +6,7 @@
   .const PROCPORT = 1
   .const CHARGEN = $d000
   .const SCREEN = $400
+  .const COLS = $d800
   .const RASTER = $d012
   .const BORDERCOL = $d020
   .const SPRITES_XPOS = $d000
@@ -19,6 +20,8 @@
   .const sinlen_y = $c5
   .const sintab_y = $1100
   .const sprites = $2000
+  .label progress_idx = 4
+  .label progress_cursor = 9
   .label sin_idx_x = 2
   .label sin_idx_y = 3
   jsr main
@@ -97,6 +100,52 @@ anim: {
     rts
 }
 init: {
+    jsr clear_screen
+    ldx #0
+  b1:
+    lda #0
+    sta COLS,x
+    lda #$b
+    sta COLS+$28,x
+    inx
+    cpx #$28
+    bne b1
+    jsr place_sprites
+    jsr gen_sprites
+    lda #<SCREEN
+    sta progress_init.line
+    lda #>SCREEN
+    sta progress_init.line+1
+    jsr progress_init
+    lda #<sintab_x
+    sta gen_sintab.sintab
+    lda #>sintab_x
+    sta gen_sintab.sintab+1
+    lda #sinlen_x
+    sta gen_sintab.length
+    lda #$10
+    sta gen_sintab.min
+    ldx #$ff
+    jsr gen_sintab
+    lda #<SCREEN+$28
+    sta progress_init.line
+    lda #>SCREEN+$28
+    sta progress_init.line+1
+    jsr progress_init
+    lda #<sintab_y
+    sta gen_sintab.sintab
+    lda #>sintab_y
+    sta gen_sintab.sintab+1
+    lda #sinlen_y
+    sta gen_sintab.length
+    lda #$30
+    sta gen_sintab.min
+    ldx #$d0
+    jsr gen_sintab
+    jsr clear_screen
+    rts
+}
+clear_screen: {
     .label sc = 7
     lda #<SCREEN
     sta sc
@@ -118,37 +167,15 @@ init: {
     cmp #<SCREEN+$3e8
     bcc b1
   !:
-    jsr place_sprites
-    jsr gen_sprites
-    lda #<sintab_x
-    sta gen_sintab.sintab
-    lda #>sintab_x
-    sta gen_sintab.sintab+1
-    lda #sinlen_x
-    sta gen_sintab.length
-    lda #$10
-    sta gen_sintab.min
-    ldx #$ff
-    jsr gen_sintab
-    lda #<sintab_y
-    sta gen_sintab.sintab
-    lda #>sintab_y
-    sta gen_sintab.sintab+1
-    lda #sinlen_y
-    sta gen_sintab.length
-    lda #$30
-    sta gen_sintab.min
-    ldx #$d0
-    jsr gen_sintab
     rts
 }
 gen_sintab: {
     .const f_2pi = $e2e5
-    .label _0 = $b
-    .label _3 = $b
-    .label _13 = $b
-    .label _17 = $b
-    .label _23 = $b
+    .label _0 = $d
+    .label _3 = $d
+    .label _13 = $d
+    .label _17 = $d
+    .label _23 = $d
     .label i = 2
     .label min = 2
     .label length = 3
@@ -204,6 +231,7 @@ gen_sintab: {
     sta setMEMtoFAC.mem+1
     jsr setMEMtoFAC
     lda #0
+    sta progress_idx
     sta i
   b1:
     lda i
@@ -246,7 +274,7 @@ gen_sintab: {
     lda _23
     ldy i
     sta (sintab),y
-    inc BORDERCOL
+    jsr progress_inc
     inc i
     lda i
     cmp length
@@ -256,9 +284,31 @@ gen_sintab: {
     f_min: .byte 0, 0, 0, 0, 0
     f_amp: .byte 0, 0, 0, 0, 0
 }
+progress_inc: {
+    inc progress_idx
+    lda progress_idx
+    cmp #8
+    bne b1
+    lda progress_chars+8
+    ldy #0
+    sta (progress_cursor),y
+    inc progress_cursor
+    bne !+
+    inc progress_cursor+1
+  !:
+    lda #0
+    sta progress_idx
+  b1:
+    ldx progress_idx
+    lda progress_chars,x
+    ldy #0
+    sta (progress_cursor),y
+    rts
+    progress_chars: .byte $20, $65, $74, $75, $61, $f6, $e7, $ea, $e0
+}
 getFAC: {
-    .label w = $b
-    .label return = $b
+    .label w = $d
+    .label return = $d
     jsr $b1aa
     sty $fe
     sta $ff
@@ -271,7 +321,7 @@ getFAC: {
     rts
 }
 addMEMtoFAC: {
-    .label mem = 9
+    .label mem = $b
     jsr prepareMEM
     lda $fe
     ldy $ff
@@ -279,7 +329,7 @@ addMEMtoFAC: {
     rts
 }
 prepareMEM: {
-    .label mem = 9
+    .label mem = $b
     lda mem
     sta memLo
     lda mem+1
@@ -287,7 +337,7 @@ prepareMEM: {
     rts
 }
 mulFACbyMEM: {
-    .label mem = 9
+    .label mem = $b
     jsr prepareMEM
     lda $fe
     ldy $ff
@@ -299,7 +349,7 @@ sinFAC: {
     rts
 }
 divMEMbyFAC: {
-    .label mem = 9
+    .label mem = $b
     jsr prepareMEM
     lda $fe
     ldy $ff
@@ -307,8 +357,8 @@ divMEMbyFAC: {
     rts
 }
 setFAC: {
-    .label _0 = 9
-    .label w = $b
+    .label _0 = $b
+    .label w = $d
     lda w
     sta _0
     lda w+1
@@ -320,7 +370,7 @@ setFAC: {
     rts
 }
 setMEMtoFAC: {
-    .label mem = 9
+    .label mem = $b
     jsr prepareMEM
     ldx $fe
     ldy $ff
@@ -333,6 +383,10 @@ subFACfromARG: {
 }
 setARGtoFAC: {
     jsr $bc0f
+    rts
+}
+progress_init: {
+    .label line = 9
     rts
 }
 gen_sprites: {
@@ -368,12 +422,12 @@ gen_sprites: {
     cml: .text "camelot"
 }
 gen_chargen_sprite: {
-    .label _0 = $b
-    .label _1 = $b
+    .label _0 = $d
+    .label _1 = $d
     .label sprite = 9
-    .label chargen = $e
+    .label chargen = $b
     .label bits = 4
-    .label s_gen = $d
+    .label s_gen = $f
     .label x = 5
     .label y = 3
     .label c = 6

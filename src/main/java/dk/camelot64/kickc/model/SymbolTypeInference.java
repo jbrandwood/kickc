@@ -1,5 +1,7 @@
 package dk.camelot64.kickc.model;
 
+import java.util.Collection;
+
 /**
  * Type inference of expressions (rValues & unary/binary operators)
  */
@@ -308,7 +310,11 @@ public class SymbolTypeInference {
          } else {
             // element type already defined - check for a match
             if(!typeMatch(elmType, type)) {
-               throw new RuntimeException("Array element has type mismatch "+elm.toString()+" not matching type "+elmType.getTypeName());
+               if(typeMatch(type, elmType)) {
+                  elmType = type;
+               } else {
+                  throw new RuntimeException("Array element has type mismatch " + elm.toString() + " not matching type " + elmType.getTypeName());
+               }
             }
          }
       }
@@ -344,9 +350,18 @@ public class SymbolTypeInference {
       if (lValueType.equals(rValueType)) {
          // Types match directly
          return true;
-      } else if (rValueType instanceof SymbolTypeInline && ((SymbolTypeInline) rValueType).getTypes().contains(lValueType)) {
-         // Types match because the right side is a constant that matches the left side
-         return true;
+      } else if (rValueType instanceof SymbolTypeInline) {
+         if(lValueType instanceof SymbolTypeInline) {
+            // Both are inline types - RValue type must be superset of LValue
+            Collection<SymbolTypeInteger> lValueTypes = ((SymbolTypeInline) lValueType).getTypes();
+            Collection<SymbolTypeInteger> rValueTypes = ((SymbolTypeInline) rValueType).getTypes();
+            if(rValueTypes.containsAll(lValueTypes)) {
+               return true;
+            }
+         }  else if (((SymbolTypeInline) rValueType).getTypes().contains(lValueType)) {
+               // Types match because the right side is a constant that matches the left side
+               return true;
+         }
       } else if (lValueType instanceof SymbolTypePointer && rValueType instanceof SymbolTypePointer) {
          return typeMatch(((SymbolTypePointer) lValueType).getElementType(), ((SymbolTypePointer) rValueType).getElementType());
       } else if (SymbolType.STRING.equals(rValueType)) {

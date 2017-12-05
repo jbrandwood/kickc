@@ -93,8 +93,8 @@ public class Pass2ConstantIdentification extends Pass2SsaOptimization {
                         if (elementType == null) {
                            elementType = type;
                         } else {
-                           if (!elementType.equals(type)) {
-                              throw new RuntimeException("Array type mismatch " + elementType + "!=" + type + " " + valueArray.toString(getProgram()));
+                           if (!SymbolTypeInference.typeMatch(type, elementType)) {
+                              throw new RuntimeException("Array type mismatch " + elementType + " does not match " + type + " " + valueArray.toString(getProgram()));
                            }
                         }
                         elements.add(constantValue);

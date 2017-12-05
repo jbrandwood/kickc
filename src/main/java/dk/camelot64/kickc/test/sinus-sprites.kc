@@ -4,6 +4,7 @@ import "print"
 const byte* PROCPORT = $01;
 const byte* CHARGEN = $d000;
 const byte* SCREEN = $0400;
+const byte* COLS = $d800;
 
 const byte* RASTER = $d012;
 const byte* BORDERCOL = $d020;
@@ -35,14 +36,51 @@ void main() {
 }
 
 void init() {
-    for(byte* sc = SCREEN; sc<SCREEN+1000; sc++) {
-        *sc = ' ';
+    clear_screen();
+    for( byte i : 0..39) {
+        COLS[i] = $0;
+        COLS[40+i] = $b;
     }
     place_sprites();
     gen_sprites();
+    progress_init(SCREEN);
     gen_sintab(sintab_x, sinlen_x, $10, $ff);
+    progress_init(SCREEN+40);
     gen_sintab(sintab_y, sinlen_y, $30, $d0);
+    clear_screen();
 }
+
+void clear_screen() {
+    for(byte* sc = SCREEN; sc<SCREEN+1000; sc++) {
+        *sc = ' ';
+    }
+}
+
+// Current position of the progress cursor
+byte* progress_cursor = SCREEN;
+// Current index within the progress cursor (0-7)
+byte progress_idx = 0;
+
+// Initialize the PETSCII progress bar
+void progress_init(byte* line) {
+    progress_cursor = line;
+    progress_idx = 0;
+}
+
+// Increase PETSCII progress one bit
+// Done by increasing the character until the idx is 8 and then moving to the next char
+void progress_inc() {
+    // Progress characters
+    const byte[] progress_chars = { $20, $65, $74, $75, $61, $f6, $e7, $ea, $e0};
+    progress_idx++;
+    if(progress_idx==8) {
+        *progress_cursor = progress_chars[8];
+        progress_cursor++;
+        progress_idx = 0;
+    }
+    *progress_cursor = progress_chars[progress_idx];
+}
+
 
 byte sin_idx_x = 0;
 byte sin_idx_y = 0;
@@ -179,6 +217,6 @@ void gen_sintab(byte* sintab, byte length, byte min, byte max) {
         mulFACbyMEM(f_amp);    // fac =  sin( i * 2 * PI / length ) * (max - min) / 2
         addMEMtoFAC(f_min);    // fac =  sin( i * 2 * PI / length ) * (max - min) / 2 + min + (max - min) / 2
         sintab[i] = (byte)getFAC();
-        (*BORDERCOL)++;
+        progress_inc();
     }
 }

@@ -16,32 +16,19 @@ public class Registers {
       return new RegisterAByte();
    }
 
-   public static Register getRegisterASigned() {
-      return new RegisterASignedByte();
-   }
-
-   public static Register getRegisterXSigned() {
-      return new RegisterXSignedByte();
-   }
-
-   public static Register getRegisterYSigned() {
-      return new RegisterYSignedByte();
-   }
-
    public static Register getRegisterALU() {
       return new RegisterALUByte();
    }
 
    /** The register type. */
    public enum RegisterType {
-      REG_A_BYTE, REG_A_SBYTE,
-      REG_Y_BYTE, REG_Y_SBYTE,
-      REG_X_BYTE, REG_X_SBYTE,
+      REG_A_BYTE,
+      REG_Y_BYTE,
+      REG_X_BYTE,
       REG_ALU,
-      ZP_BYTE, ZP_SBYTE,
+      ZP_BYTE,
       ZP_PTR_BYTE,
       ZP_WORD,
-      ZP_SWORD,
       ZP_BOOL,
       CONSTANT
    }
@@ -119,21 +106,6 @@ public class Registers {
 
    }
 
-   /** A zero page address used as a register for a single signed byte variable. */
-   public static class RegisterZpSignedByte extends RegisterZp {
-
-      public RegisterZpSignedByte(int zp) {
-         super(zp);
-      }
-
-      @Override
-      public RegisterType getType() {
-         return RegisterType.ZP_SBYTE;
-      }
-
-
-   }
-
    /** Two zero page addresses used as a register for a single unsigned word variable. */
    public static class RegisterZpWord extends RegisterZp {
 
@@ -144,20 +116,6 @@ public class Registers {
       @Override
       public RegisterType getType() {
          return RegisterType.ZP_WORD;
-      }
-
-   }
-
-   /** Two zero page addresses used as a register for a single signed word variable. */
-   public static class RegisterZpSWord extends RegisterZp {
-
-      public RegisterZpSWord(int zp) {
-         super(zp);
-      }
-
-      @Override
-      public RegisterType getType() {
-         return RegisterType.ZP_SWORD;
       }
 
    }
@@ -270,49 +228,6 @@ public class Registers {
       }
 
    }
-
-   /** The A signed register. */
-   public static class RegisterASignedByte extends RegisterCpuByte {
-      @Override
-      public RegisterType getType() {
-         return RegisterType.REG_A_SBYTE;
-      }
-
-      @Override
-      public String toString() {
-         return "reg sbyte a";
-      }
-
-   }
-
-   /** The X signed register. */
-   public static class RegisterXSignedByte extends RegisterCpuByte {
-      @Override
-      public RegisterType getType() {
-         return RegisterType.REG_X_SBYTE;
-      }
-
-      @Override
-      public String toString() {
-         return "reg sbyte x";
-      }
-
-   }
-
-   /** The Y signed register. */
-   public static class RegisterYSignedByte extends RegisterCpuByte {
-      @Override
-      public RegisterType getType() {
-         return RegisterType.REG_Y_SBYTE;
-      }
-
-      @Override
-      public String toString() {
-         return "reg sbyte y";
-      }
-
-   }
-
 
    /** The special ALU register. */
    public static class RegisterALUByte extends RegisterCpuByte {

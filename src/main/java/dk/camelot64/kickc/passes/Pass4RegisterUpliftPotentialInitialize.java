@@ -30,13 +30,6 @@ public class Pass4RegisterUpliftPotentialInitialize extends Pass2Base {
                   Registers.getRegisterX(),
                   Registers.getRegisterY());
             registerPotentials.setPotentialRegisters(equivalenceClass, potentials);
-         } else if (registerType.equals(Registers.RegisterType.ZP_SBYTE)) {
-            List<Registers.Register> potentials = Arrays.asList(
-                  defaultRegister,
-                  Registers.getRegisterASigned(),
-                  Registers.getRegisterXSigned(),
-                  Registers.getRegisterYSigned());
-            registerPotentials.setPotentialRegisters(equivalenceClass, potentials);
          } else {
             registerPotentials.setPotentialRegisters(equivalenceClass, Arrays.asList(defaultRegister));
          }

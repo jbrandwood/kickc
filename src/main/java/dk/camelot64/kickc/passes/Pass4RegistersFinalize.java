@@ -144,10 +144,10 @@ public class Pass4RegistersFinalize extends Pass2Base {
          currentZp = currentZp + 2;
          return registerZpWord;
       } else if (SymbolType.isSWord(varType)) {
-         Registers.RegisterZpSWord registerZpSWord =
-               new Registers.RegisterZpSWord(currentZp);
+         Registers.RegisterZpWord registerZpWord =
+               new Registers.RegisterZpWord(currentZp);
          currentZp = currentZp + 2;
-         return registerZpSWord;
+         return registerZpWord;
       } else if (varType.equals(SymbolType.BOOLEAN)) {
          return new Registers.RegisterZpBool(currentZp++);
       } else if (varType.equals(SymbolType.VOID)) {

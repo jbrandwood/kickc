@@ -253,33 +253,33 @@ public class AsmFragmentSignature {
          } else if (Registers.RegisterType.REG_X_BYTE.equals(register.getType())) {
             SymbolType varType = ((Variable) value).getType();
             if (SymbolType.isByte(varType)) {
-               String name = "xby";
+               String name = "vbuxx";
                bindings.put(name, value);
                return name;
             } else if (SymbolType.isSByte(varType)) {
-               String name = "xsby";
+               String name = "vbsxx";
                bindings.put(name, value);
                return name;
             }
          } else if (Registers.RegisterType.REG_Y_BYTE.equals(register.getType())) {
             SymbolType varType = ((Variable) value).getType();
             if (SymbolType.isByte(varType)) {
-               String name = "yby";
+               String name = "vbuyy";
                bindings.put(name, value);
                return name;
             } else if (SymbolType.isSByte(varType)) {
-               String name = "ysby";
+               String name = "vbsyy";
                bindings.put(name, value);
                return name;
             }
          } else if (Registers.RegisterType.REG_A_BYTE.equals(register.getType())) {
             SymbolType varType = ((Variable) value).getType();
             if (SymbolType.isByte(varType)) {
-               String name = "aby";
+               String name = "vbuaa";
                bindings.put(name, value);
                return name;
             } else if (SymbolType.isSByte(varType)) {
-               String name = "asby";
+               String name = "vbsaa";
                bindings.put(name, value);
                return name;
             }
@@ -302,10 +302,8 @@ public class AsmFragmentSignature {
          SymbolType constType;
          if (value instanceof ConstantVar) {
             constType = ((ConstantVar) value).getType();
-         } else if (value instanceof ConstantValue) {
-            constType = SymbolTypeInference.inferType(program.getScope(), (ConstantValue) value);
          } else {
-            throw new RuntimeException("Unhandled constant type " + value);
+            constType = SymbolTypeInference.inferType(program.getScope(), (ConstantValue) value);
          }
          if (SymbolType.isByte(constType)) {
             String name = "coby" + nextConstByteIdx++;

@@ -300,23 +300,23 @@ public class AsmFragmentSignature {
             constType = SymbolTypeInference.inferType(program.getScope(), (ConstantValue) value);
          }
          if (SymbolType.isByte(constType)) {
-            String name = "coby" + nextConstByteIdx++;
+            String name = "vbuc" + nextConstByteIdx++;
             bindings.put(name, value);
             return name;
          } else if (SymbolType.isSByte(constType)) {
-            String name = "cosby" + nextConstByteIdx++;
+            String name = "vbsc" + nextConstByteIdx++;
             bindings.put(name, value);
             return name;
          } else if (SymbolType.isWord(constType)) {
-            String name = "cowo" + nextConstByteIdx++;
+            String name = "vwuc" + nextConstByteIdx++;
             bindings.put(name, value);
             return name;
          } else if (SymbolType.isSWord(constType)) {
-            String name = "coswo" + nextConstByteIdx++;
+            String name = "vwsc" + nextConstByteIdx++;
             bindings.put(name, value);
             return name;
          } else if (constType instanceof SymbolTypePointer && SymbolType.BYTE.equals(((SymbolTypePointer) constType).getElementType())) {
-            String name = "cowo" + nextConstByteIdx++;
+            String name = "vwuc" + nextConstByteIdx++;
             bindings.put(name, value);
             return name;
          } else {

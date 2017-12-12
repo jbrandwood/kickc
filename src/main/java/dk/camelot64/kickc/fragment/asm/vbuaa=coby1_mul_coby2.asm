@@ -1,1 +1,0 @@
-lda {coby1}*{coby2}

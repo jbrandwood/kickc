@@ -62,7 +62,20 @@ public class AsmFragment {
     * @return The bound value to use in the generated ASM code
     */
    public AsmParameter getBoundValue(String name) {
-      Value boundValue = getBinding(name);
+      Value boundValue = null;
+      if(name.length()==2) {
+         // Short name!
+         for (String boundName : bindings.keySet()) {
+            if(boundName.substring(boundName.length()-2).equals(name)) {
+               boundValue = getBinding(boundName);
+               break;
+            }
+         }
+      } else {
+         // Long name
+         boundValue = getBinding(name);
+      }
+
       if (boundValue == null) {
          throw new RuntimeException("Binding '" + name + "' not found in fragment " + this.name + ".asm");
       }

@@ -4,10 +4,8 @@ import dk.camelot64.kickc.Compiler;
 import dk.camelot64.kickc.model.CompileError;
 import dk.camelot64.kickc.model.Program;
 import junit.framework.TestCase;
-import org.antlr.v4.runtime.CharStream;
-import org.antlr.v4.runtime.CharStreams;
 
-import java.io.*;
+import java.io.IOException;
 import java.net.URISyntaxException;
 
 /**

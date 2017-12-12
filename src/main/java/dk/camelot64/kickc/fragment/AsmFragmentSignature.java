@@ -241,15 +241,9 @@ public class AsmFragmentSignature {
          // Create a new suitable name
          if (Registers.RegisterType.ZP_BYTE.equals(register.getType())) {
             SymbolType varType = ((Variable) value).getType();
-            if (SymbolType.isByte(varType)) {
-               String name = "zpby" + nextZpByteIdx++;
-               bindings.put(name, value);
-               return name;
-            } else if (SymbolType.isSByte(varType)) {
-               String name = "zpsby" + nextZpSByteIdx++;
-               bindings.put(name, value);
-               return name;
-            }
+            String name = getTypePrefix(varType) + getRegisterName(register);
+            bindings.put(name, value);
+            return name;
          } else if (Registers.RegisterType.REG_X_BYTE.equals(register.getType())) {
             SymbolType varType = ((Variable) value).getType();
             if (SymbolType.isByte(varType)) {
@@ -334,6 +328,59 @@ public class AsmFragmentSignature {
          return name;
       }
       throw new RuntimeException("Binding of value type not supported " + value);
+   }
+
+   /**
+    * Get the symbol type part of the binding name (eg. vbu/pws/...)
+    * @param type The type
+    * @return The type name
+    */
+   private String getTypePrefix(SymbolType type) {
+      if (SymbolType.isByte(type)) {
+         return "vbu";
+      } else if (SymbolType.isSByte(type)) {
+         return "vbs";
+      } else {
+         throw new RuntimeException("Not implemented "+type);
+      }
+   }
+
+   /**
+    * Get the register part of the binding name (eg. aa, z1, c2, ...).
+    * Examines all previous bindings to reuse register index if the same register is bound multiple times.
+    * @param register The register
+    * @return The register part of the binding name.
+    */
+   private String getRegisterName(Registers.Register register) {
+      if(Registers.RegisterType.ZP_BYTE.equals(register.getType())) {
+         return "z"+ getRegisterZpNameIdx((Registers.RegisterZp) register);
+      } else {
+         throw new RuntimeException("Not implemented "+register.getType());
+      }
+   }
+
+   /**
+    * Get the register ZP name index to use for a specific register.
+    * Examines all previous bindings to reuse register index if the same register is bound multiple times.
+    * @param register The register to find an index for
+    * @return The index. Either reused ot allocated from {@link #nextZpByteIdx}
+    */
+   private String getRegisterZpNameIdx(Registers.RegisterZp register) {
+      Registers.RegisterZp registerZp = register;
+      for (String boundName : bindings.keySet()) {
+         Value boundValue = bindings.get(boundName);
+         if(boundValue instanceof Variable) {
+            Registers.Register boundRegister = ((Variable) boundValue).getAllocation();
+            if(boundRegister!=null && boundRegister.isZp()) {
+               Registers.RegisterZp boundRegisterZp = (Registers.RegisterZp) boundRegister;
+               if(registerZp.getZp()==boundRegisterZp.getZp()) {
+                  // Found other register with same ZP address!
+                  return boundName.substring(boundName.length()-1);
+               }
+            }
+         }
+      }
+      return Integer.toString(nextZpByteIdx++);
    }
 
 

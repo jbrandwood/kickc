@@ -1196,9 +1196,9 @@ Complete equivalence classes
 Allocated zp ZP_BYTE:2 [ main::j#6 main::j#1 ]
 Allocated zp ZP_BYTE:3 [ main::i#4 main::i#1 ]
 Allocated zp ZP_BYTE:4 [ main::k#2 main::k#1 ]
-Allocated zp ZP_PTR_BYTE:5 [ main::zpptr2#0 ]
+Allocated zp ZP_WORD:5 [ main::zpptr2#0 ]
 Allocated zp ZP_WORD:7 [ main::w#0 ]
-Allocated zp ZP_PTR_BYTE:9 [ main::zpptr2#1 ]
+Allocated zp ZP_WORD:9 [ main::zpptr2#1 ]
 INITIAL ASM
 //SEG0 Basic Upstart
 .pc = $801 "Basic"
@@ -1266,7 +1266,7 @@ main: {
     jmp b3
   //SEG24 main::@3
   b3:
-  //SEG25 [8] (byte*) main::zpptr2#0 ← (const byte*) main::zpptr#0 + (byte) main::i#4 [ main::j#6 main::i#4 main::k#2 main::zpptr2#0 ] ( main:2 [ main::j#6 main::i#4 main::k#2 main::zpptr2#0 ] ) -- zpptrby1=vwuc1_plus_vbuz1 
+  //SEG25 [8] (byte*) main::zpptr2#0 ← (const byte*) main::zpptr#0 + (byte) main::i#4 [ main::j#6 main::i#4 main::k#2 main::zpptr2#0 ] ( main:2 [ main::j#6 main::i#4 main::k#2 main::zpptr2#0 ] ) -- pbuz1=vwuc1_plus_vbuz2 
     lda #<zpptr
     clc
     adc i
@@ -1274,12 +1274,12 @@ main: {
     lda #>zpptr
     adc #0
     sta zpptr2+1
-  //SEG26 [9] (word) main::w#0 ← ((word)) (byte) main::j#6 [ main::j#6 main::i#4 main::k#2 main::zpptr2#0 main::w#0 ] ( main:2 [ main::j#6 main::i#4 main::k#2 main::zpptr2#0 main::w#0 ] ) -- zpwo1=_word_vbuz1 
+  //SEG26 [9] (word) main::w#0 ← ((word)) (byte) main::j#6 [ main::j#6 main::i#4 main::k#2 main::zpptr2#0 main::w#0 ] ( main:2 [ main::j#6 main::i#4 main::k#2 main::zpptr2#0 main::w#0 ] ) -- vwuz1=_word_vbuz2 
     lda j
     sta w
     lda #0
     sta w+1
-  //SEG27 [10] (byte*) main::zpptr2#1 ← (byte*) main::zpptr2#0 + (word) main::w#0 [ main::j#6 main::i#4 main::k#2 main::zpptr2#1 ] ( main:2 [ main::j#6 main::i#4 main::k#2 main::zpptr2#1 ] ) -- zpptrby1=zpptrby2_plus_zpwo1 
+  //SEG27 [10] (byte*) main::zpptr2#1 ← (byte*) main::zpptr2#0 + (word) main::w#0 [ main::j#6 main::i#4 main::k#2 main::zpptr2#1 ] ( main:2 [ main::j#6 main::i#4 main::k#2 main::zpptr2#1 ] ) -- pbuz1=pbuz2_plus_vwuz3 
     lda zpptr2_1
     clc
     adc zpptr2
@@ -1287,7 +1287,7 @@ main: {
     lda zpptr2_1+1
     adc zpptr2+1
     sta w+1
-  //SEG28 [11] *((byte*) main::zpptr2#1) ← (byte) main::k#2 [ main::j#6 main::i#4 main::k#2 ] ( main:2 [ main::j#6 main::i#4 main::k#2 ] ) -- _deref_zpptrby1=vbuz1 
+  //SEG28 [11] *((byte*) main::zpptr2#1) ← (byte) main::k#2 [ main::j#6 main::i#4 main::k#2 ] ( main:2 [ main::j#6 main::i#4 main::k#2 ] ) -- _deref_pbuz1=vbuz2 
     ldy #0
     lda k
     sta (zpptr2_1),y
@@ -1340,22 +1340,22 @@ Statement [11] *((byte*) main::zpptr2#1) ← (byte) main::k#2 [ main::j#6 main::
 Potential registers zp ZP_BYTE:2 [ main::j#6 main::j#1 ] : zp ZP_BYTE:2 , reg byte x , 
 Potential registers zp ZP_BYTE:3 [ main::i#4 main::i#1 ] : zp ZP_BYTE:3 , reg byte x , 
 Potential registers zp ZP_BYTE:4 [ main::k#2 main::k#1 ] : zp ZP_BYTE:4 , reg byte x , 
-Potential registers zp ZP_PTR_BYTE:5 [ main::zpptr2#0 ] : zp ZP_PTR_BYTE:5 , 
+Potential registers zp ZP_WORD:5 [ main::zpptr2#0 ] : zp ZP_WORD:5 , 
 Potential registers zp ZP_WORD:7 [ main::w#0 ] : zp ZP_WORD:7 , 
-Potential registers zp ZP_PTR_BYTE:9 [ main::zpptr2#1 ] : zp ZP_PTR_BYTE:9 , 
+Potential registers zp ZP_WORD:9 [ main::zpptr2#1 ] : zp ZP_WORD:9 , 
 
 REGISTER UPLIFT SCOPES
-Uplift Scope [main] 2,102.1: zp ZP_BYTE:4 [ main::k#2 main::k#1 ] 2,002: zp ZP_WORD:7 [ main::w#0 ] 2,002: zp ZP_PTR_BYTE:9 [ main::zpptr2#1 ] 1,001: zp ZP_PTR_BYTE:5 [ main::zpptr2#0 ] 301.88: zp ZP_BYTE:3 [ main::i#4 main::i#1 ] 109.5: zp ZP_BYTE:2 [ main::j#6 main::j#1 ] 
+Uplift Scope [main] 2,102.1: zp ZP_BYTE:4 [ main::k#2 main::k#1 ] 2,002: zp ZP_WORD:7 [ main::w#0 ] 2,002: zp ZP_WORD:9 [ main::zpptr2#1 ] 1,001: zp ZP_WORD:5 [ main::zpptr2#0 ] 301.88: zp ZP_BYTE:3 [ main::i#4 main::i#1 ] 109.5: zp ZP_BYTE:2 [ main::j#6 main::j#1 ] 
 Uplift Scope [] 
 
-Uplifting [main] best 83433 combination reg byte x [ main::k#2 main::k#1 ] zp ZP_WORD:7 [ main::w#0 ] zp ZP_PTR_BYTE:9 [ main::zpptr2#1 ] zp ZP_PTR_BYTE:5 [ main::zpptr2#0 ] zp ZP_BYTE:3 [ main::i#4 main::i#1 ] zp ZP_BYTE:2 [ main::j#6 main::j#1 ] 
+Uplifting [main] best 83433 combination reg byte x [ main::k#2 main::k#1 ] zp ZP_WORD:7 [ main::w#0 ] zp ZP_WORD:9 [ main::zpptr2#1 ] zp ZP_WORD:5 [ main::zpptr2#0 ] zp ZP_BYTE:3 [ main::i#4 main::i#1 ] zp ZP_BYTE:2 [ main::j#6 main::j#1 ] 
 Uplifting [] best 83433 combination 
 Attempting to uplift remaining variables inzp ZP_BYTE:3 [ main::i#4 main::i#1 ]
 Uplifting [main] best 83433 combination zp ZP_BYTE:3 [ main::i#4 main::i#1 ] 
 Attempting to uplift remaining variables inzp ZP_BYTE:2 [ main::j#6 main::j#1 ]
 Uplifting [main] best 83433 combination zp ZP_BYTE:2 [ main::j#6 main::j#1 ] 
-Coalescing zero page register [ zp ZP_PTR_BYTE:5 [ main::zpptr2#0 ] ] with [ zp ZP_PTR_BYTE:9 [ main::zpptr2#1 ] ]
-Allocated (was zp ZP_PTR_BYTE:5) zp ZP_PTR_BYTE:4 [ main::zpptr2#0 main::zpptr2#1 ]
+Coalescing zero page register [ zp ZP_WORD:5 [ main::zpptr2#0 ] ] with [ zp ZP_WORD:9 [ main::zpptr2#1 ] ]
+Allocated (was zp ZP_WORD:5) zp ZP_WORD:4 [ main::zpptr2#0 main::zpptr2#1 ]
 Allocated (was zp ZP_WORD:7) zp ZP_WORD:6 [ main::w#0 ]
 Removing instruction jmp b1
 Removing instruction jmp bend
@@ -1425,7 +1425,7 @@ main: {
   //SEG23 [7] phi (byte) main::k#2 = (byte) main::k#1 [phi:main::@3->main::@3#0] -- register_copy 
   //SEG24 main::@3
   b3:
-  //SEG25 [8] (byte*) main::zpptr2#0 ← (const byte*) main::zpptr#0 + (byte) main::i#4 [ main::j#6 main::i#4 main::k#2 main::zpptr2#0 ] ( main:2 [ main::j#6 main::i#4 main::k#2 main::zpptr2#0 ] ) -- zpptrby1=vwuc1_plus_vbuz1 
+  //SEG25 [8] (byte*) main::zpptr2#0 ← (const byte*) main::zpptr#0 + (byte) main::i#4 [ main::j#6 main::i#4 main::k#2 main::zpptr2#0 ] ( main:2 [ main::j#6 main::i#4 main::k#2 main::zpptr2#0 ] ) -- pbuz1=vwuc1_plus_vbuz2 
     lda #<zpptr
     clc
     adc i
@@ -1433,12 +1433,12 @@ main: {
     lda #>zpptr
     adc #0
     sta zpptr2+1
-  //SEG26 [9] (word) main::w#0 ← ((word)) (byte) main::j#6 [ main::j#6 main::i#4 main::k#2 main::zpptr2#0 main::w#0 ] ( main:2 [ main::j#6 main::i#4 main::k#2 main::zpptr2#0 main::w#0 ] ) -- zpwo1=_word_vbuz1 
+  //SEG26 [9] (word) main::w#0 ← ((word)) (byte) main::j#6 [ main::j#6 main::i#4 main::k#2 main::zpptr2#0 main::w#0 ] ( main:2 [ main::j#6 main::i#4 main::k#2 main::zpptr2#0 main::w#0 ] ) -- vwuz1=_word_vbuz2 
     lda j
     sta w
     lda #0
     sta w+1
-  //SEG27 [10] (byte*) main::zpptr2#1 ← (byte*) main::zpptr2#0 + (word) main::w#0 [ main::j#6 main::i#4 main::k#2 main::zpptr2#1 ] ( main:2 [ main::j#6 main::i#4 main::k#2 main::zpptr2#1 ] ) -- zpptrby1=zpptrby1_plus_zpwo1 
+  //SEG27 [10] (byte*) main::zpptr2#1 ← (byte*) main::zpptr2#0 + (word) main::w#0 [ main::j#6 main::i#4 main::k#2 main::zpptr2#1 ] ( main:2 [ main::j#6 main::i#4 main::k#2 main::zpptr2#1 ] ) -- pbuz1=pbuz1_plus_vwuz2 
     lda zpptr2
     clc
     adc w
@@ -1446,7 +1446,7 @@ main: {
     lda zpptr2+1
     adc w+1
     sta zpptr2+1
-  //SEG28 [11] *((byte*) main::zpptr2#1) ← (byte) main::k#2 [ main::j#6 main::i#4 main::k#2 ] ( main:2 [ main::j#6 main::i#4 main::k#2 ] ) -- _deref_zpptrby1=vbuxx 
+  //SEG28 [11] *((byte*) main::zpptr2#1) ← (byte) main::k#2 [ main::j#6 main::i#4 main::k#2 ] ( main:2 [ main::j#6 main::i#4 main::k#2 ] ) -- _deref_pbuz1=vbuxx 
     txa
     ldy #0
     sta (zpptr2),y
@@ -1540,7 +1540,7 @@ main: {
   //SEG23 [7] phi (byte) main::k#2 = (byte) main::k#1 [phi:main::@3->main::@3#0] -- register_copy 
   //SEG24 main::@3
   b3:
-  //SEG25 [8] (byte*) main::zpptr2#0 ← (const byte*) main::zpptr#0 + (byte) main::i#4 [ main::j#6 main::i#4 main::k#2 main::zpptr2#0 ] ( main:2 [ main::j#6 main::i#4 main::k#2 main::zpptr2#0 ] ) -- zpptrby1=vwuc1_plus_vbuz1 
+  //SEG25 [8] (byte*) main::zpptr2#0 ← (const byte*) main::zpptr#0 + (byte) main::i#4 [ main::j#6 main::i#4 main::k#2 main::zpptr2#0 ] ( main:2 [ main::j#6 main::i#4 main::k#2 main::zpptr2#0 ] ) -- pbuz1=vwuc1_plus_vbuz2 
     lda #<zpptr
     clc
     adc i
@@ -1548,12 +1548,12 @@ main: {
     lda #>zpptr
     adc #0
     sta zpptr2+1
-  //SEG26 [9] (word) main::w#0 ← ((word)) (byte) main::j#6 [ main::j#6 main::i#4 main::k#2 main::zpptr2#0 main::w#0 ] ( main:2 [ main::j#6 main::i#4 main::k#2 main::zpptr2#0 main::w#0 ] ) -- zpwo1=_word_vbuz1 
+  //SEG26 [9] (word) main::w#0 ← ((word)) (byte) main::j#6 [ main::j#6 main::i#4 main::k#2 main::zpptr2#0 main::w#0 ] ( main:2 [ main::j#6 main::i#4 main::k#2 main::zpptr2#0 main::w#0 ] ) -- vwuz1=_word_vbuz2 
     lda j
     sta w
     lda #0
     sta w+1
-  //SEG27 [10] (byte*) main::zpptr2#1 ← (byte*) main::zpptr2#0 + (word) main::w#0 [ main::j#6 main::i#4 main::k#2 main::zpptr2#1 ] ( main:2 [ main::j#6 main::i#4 main::k#2 main::zpptr2#1 ] ) -- zpptrby1=zpptrby1_plus_zpwo1 
+  //SEG27 [10] (byte*) main::zpptr2#1 ← (byte*) main::zpptr2#0 + (word) main::w#0 [ main::j#6 main::i#4 main::k#2 main::zpptr2#1 ] ( main:2 [ main::j#6 main::i#4 main::k#2 main::zpptr2#1 ] ) -- pbuz1=pbuz1_plus_vwuz2 
     lda zpptr2
     clc
     adc w
@@ -1561,7 +1561,7 @@ main: {
     lda zpptr2+1
     adc w+1
     sta zpptr2+1
-  //SEG28 [11] *((byte*) main::zpptr2#1) ← (byte) main::k#2 [ main::j#6 main::i#4 main::k#2 ] ( main:2 [ main::j#6 main::i#4 main::k#2 ] ) -- _deref_zpptrby1=vbuxx 
+  //SEG28 [11] *((byte*) main::zpptr2#1) ← (byte) main::k#2 [ main::j#6 main::i#4 main::k#2 ] ( main:2 [ main::j#6 main::i#4 main::k#2 ] ) -- _deref_pbuz1=vbuxx 
     txa
     ldy #0
     sta (zpptr2),y
@@ -1646,7 +1646,7 @@ main: {
   //SEG23 [7] phi (byte) main::k#2 = (byte) main::k#1 [phi:main::@3->main::@3#0] -- register_copy 
   //SEG24 main::@3
   b3:
-  //SEG25 [8] (byte*) main::zpptr2#0 ← (const byte*) main::zpptr#0 + (byte) main::i#4 [ main::j#6 main::i#4 main::k#2 main::zpptr2#0 ] ( main:2 [ main::j#6 main::i#4 main::k#2 main::zpptr2#0 ] ) -- zpptrby1=vwuc1_plus_vbuz1 
+  //SEG25 [8] (byte*) main::zpptr2#0 ← (const byte*) main::zpptr#0 + (byte) main::i#4 [ main::j#6 main::i#4 main::k#2 main::zpptr2#0 ] ( main:2 [ main::j#6 main::i#4 main::k#2 main::zpptr2#0 ] ) -- pbuz1=vwuc1_plus_vbuz2 
     lda #<zpptr
     clc
     adc i
@@ -1654,12 +1654,12 @@ main: {
     lda #>zpptr
     adc #0
     sta zpptr2+1
-  //SEG26 [9] (word) main::w#0 ← ((word)) (byte) main::j#6 [ main::j#6 main::i#4 main::k#2 main::zpptr2#0 main::w#0 ] ( main:2 [ main::j#6 main::i#4 main::k#2 main::zpptr2#0 main::w#0 ] ) -- zpwo1=_word_vbuz1 
+  //SEG26 [9] (word) main::w#0 ← ((word)) (byte) main::j#6 [ main::j#6 main::i#4 main::k#2 main::zpptr2#0 main::w#0 ] ( main:2 [ main::j#6 main::i#4 main::k#2 main::zpptr2#0 main::w#0 ] ) -- vwuz1=_word_vbuz2 
     lda j
     sta w
     lda #0
     sta w+1
-  //SEG27 [10] (byte*) main::zpptr2#1 ← (byte*) main::zpptr2#0 + (word) main::w#0 [ main::j#6 main::i#4 main::k#2 main::zpptr2#1 ] ( main:2 [ main::j#6 main::i#4 main::k#2 main::zpptr2#1 ] ) -- zpptrby1=zpptrby1_plus_zpwo1 
+  //SEG27 [10] (byte*) main::zpptr2#1 ← (byte*) main::zpptr2#0 + (word) main::w#0 [ main::j#6 main::i#4 main::k#2 main::zpptr2#1 ] ( main:2 [ main::j#6 main::i#4 main::k#2 main::zpptr2#1 ] ) -- pbuz1=pbuz1_plus_vwuz2 
     lda zpptr2
     clc
     adc w
@@ -1667,7 +1667,7 @@ main: {
     lda zpptr2+1
     adc w+1
     sta zpptr2+1
-  //SEG28 [11] *((byte*) main::zpptr2#1) ← (byte) main::k#2 [ main::j#6 main::i#4 main::k#2 ] ( main:2 [ main::j#6 main::i#4 main::k#2 ] ) -- _deref_zpptrby1=vbuxx 
+  //SEG28 [11] *((byte*) main::zpptr2#1) ← (byte) main::k#2 [ main::j#6 main::i#4 main::k#2 ] ( main:2 [ main::j#6 main::i#4 main::k#2 ] ) -- _deref_pbuz1=vbuxx 
     txa
     ldy #0
     sta (zpptr2),y
@@ -1743,7 +1743,7 @@ main: {
   //SEG23 [7] phi (byte) main::k#2 = (byte) main::k#1 [phi:main::@3->main::@3#0] -- register_copy 
   //SEG24 main::@3
   b3:
-  //SEG25 [8] (byte*) main::zpptr2#0 ← (const byte*) main::zpptr#0 + (byte) main::i#4 [ main::j#6 main::i#4 main::k#2 main::zpptr2#0 ] ( main:2 [ main::j#6 main::i#4 main::k#2 main::zpptr2#0 ] ) -- zpptrby1=vwuc1_plus_vbuz1 
+  //SEG25 [8] (byte*) main::zpptr2#0 ← (const byte*) main::zpptr#0 + (byte) main::i#4 [ main::j#6 main::i#4 main::k#2 main::zpptr2#0 ] ( main:2 [ main::j#6 main::i#4 main::k#2 main::zpptr2#0 ] ) -- pbuz1=vwuc1_plus_vbuz2 
     lda #<zpptr
     clc
     adc i
@@ -1751,12 +1751,12 @@ main: {
     lda #>zpptr
     adc #0
     sta zpptr2+1
-  //SEG26 [9] (word) main::w#0 ← ((word)) (byte) main::j#6 [ main::j#6 main::i#4 main::k#2 main::zpptr2#0 main::w#0 ] ( main:2 [ main::j#6 main::i#4 main::k#2 main::zpptr2#0 main::w#0 ] ) -- zpwo1=_word_vbuz1 
+  //SEG26 [9] (word) main::w#0 ← ((word)) (byte) main::j#6 [ main::j#6 main::i#4 main::k#2 main::zpptr2#0 main::w#0 ] ( main:2 [ main::j#6 main::i#4 main::k#2 main::zpptr2#0 main::w#0 ] ) -- vwuz1=_word_vbuz2 
     lda j
     sta w
     lda #0
     sta w+1
-  //SEG27 [10] (byte*) main::zpptr2#1 ← (byte*) main::zpptr2#0 + (word) main::w#0 [ main::j#6 main::i#4 main::k#2 main::zpptr2#1 ] ( main:2 [ main::j#6 main::i#4 main::k#2 main::zpptr2#1 ] ) -- zpptrby1=zpptrby1_plus_zpwo1 
+  //SEG27 [10] (byte*) main::zpptr2#1 ← (byte*) main::zpptr2#0 + (word) main::w#0 [ main::j#6 main::i#4 main::k#2 main::zpptr2#1 ] ( main:2 [ main::j#6 main::i#4 main::k#2 main::zpptr2#1 ] ) -- pbuz1=pbuz1_plus_vwuz2 
     lda zpptr2
     clc
     adc w
@@ -1764,7 +1764,7 @@ main: {
     lda zpptr2+1
     adc w+1
     sta zpptr2+1
-  //SEG28 [11] *((byte*) main::zpptr2#1) ← (byte) main::k#2 [ main::j#6 main::i#4 main::k#2 ] ( main:2 [ main::j#6 main::i#4 main::k#2 ] ) -- _deref_zpptrby1=vbuxx 
+  //SEG28 [11] *((byte*) main::zpptr2#1) ← (byte) main::k#2 [ main::j#6 main::i#4 main::k#2 ] ( main:2 [ main::j#6 main::i#4 main::k#2 ] ) -- _deref_pbuz1=vbuxx 
     txa
     ldy #0
     sta (zpptr2),y
@@ -1817,13 +1817,13 @@ FINAL SYMBOL TABLE
 (byte*) main::zpptr
 (const byte*) main::zpptr#0 zpptr = ((byte*))(word/signed word) 4096
 (byte*) main::zpptr2
-(byte*) main::zpptr2#0 zpptr2 zp ZP_PTR_BYTE:4 1001.0
-(byte*) main::zpptr2#1 zpptr2 zp ZP_PTR_BYTE:4 2002.0
+(byte*) main::zpptr2#0 zpptr2 zp ZP_WORD:4 1001.0
+(byte*) main::zpptr2#1 zpptr2 zp ZP_WORD:4 2002.0
 
 zp ZP_BYTE:2 [ main::j#6 main::j#1 ]
 zp ZP_BYTE:3 [ main::i#4 main::i#1 ]
 reg byte x [ main::k#2 main::k#1 ]
-zp ZP_PTR_BYTE:4 [ main::zpptr2#0 main::zpptr2#1 ]
+zp ZP_WORD:4 [ main::zpptr2#0 main::zpptr2#1 ]
 zp ZP_WORD:6 [ main::w#0 ]
 
 FINAL CODE
@@ -1870,7 +1870,7 @@ main: {
   //SEG23 [7] phi (byte) main::k#2 = (byte) main::k#1 [phi:main::@3->main::@3#0] -- register_copy 
   //SEG24 main::@3
   b3:
-  //SEG25 [8] (byte*) main::zpptr2#0 ← (const byte*) main::zpptr#0 + (byte) main::i#4 [ main::j#6 main::i#4 main::k#2 main::zpptr2#0 ] ( main:2 [ main::j#6 main::i#4 main::k#2 main::zpptr2#0 ] ) -- zpptrby1=vwuc1_plus_vbuz1 
+  //SEG25 [8] (byte*) main::zpptr2#0 ← (const byte*) main::zpptr#0 + (byte) main::i#4 [ main::j#6 main::i#4 main::k#2 main::zpptr2#0 ] ( main:2 [ main::j#6 main::i#4 main::k#2 main::zpptr2#0 ] ) -- pbuz1=vwuc1_plus_vbuz2 
     lda #<zpptr
     clc
     adc i
@@ -1878,12 +1878,12 @@ main: {
     lda #>zpptr
     adc #0
     sta zpptr2+1
-  //SEG26 [9] (word) main::w#0 ← ((word)) (byte) main::j#6 [ main::j#6 main::i#4 main::k#2 main::zpptr2#0 main::w#0 ] ( main:2 [ main::j#6 main::i#4 main::k#2 main::zpptr2#0 main::w#0 ] ) -- zpwo1=_word_vbuz1 
+  //SEG26 [9] (word) main::w#0 ← ((word)) (byte) main::j#6 [ main::j#6 main::i#4 main::k#2 main::zpptr2#0 main::w#0 ] ( main:2 [ main::j#6 main::i#4 main::k#2 main::zpptr2#0 main::w#0 ] ) -- vwuz1=_word_vbuz2 
     lda j
     sta w
     lda #0
     sta w+1
-  //SEG27 [10] (byte*) main::zpptr2#1 ← (byte*) main::zpptr2#0 + (word) main::w#0 [ main::j#6 main::i#4 main::k#2 main::zpptr2#1 ] ( main:2 [ main::j#6 main::i#4 main::k#2 main::zpptr2#1 ] ) -- zpptrby1=zpptrby1_plus_zpwo1 
+  //SEG27 [10] (byte*) main::zpptr2#1 ← (byte*) main::zpptr2#0 + (word) main::w#0 [ main::j#6 main::i#4 main::k#2 main::zpptr2#1 ] ( main:2 [ main::j#6 main::i#4 main::k#2 main::zpptr2#1 ] ) -- pbuz1=pbuz1_plus_vwuz2 
     lda zpptr2
     clc
     adc w
@@ -1891,7 +1891,7 @@ main: {
     lda zpptr2+1
     adc w+1
     sta zpptr2+1
-  //SEG28 [11] *((byte*) main::zpptr2#1) ← (byte) main::k#2 [ main::j#6 main::i#4 main::k#2 ] ( main:2 [ main::j#6 main::i#4 main::k#2 ] ) -- _deref_zpptrby1=vbuxx 
+  //SEG28 [11] *((byte*) main::zpptr2#1) ← (byte) main::k#2 [ main::j#6 main::i#4 main::k#2 ] ( main:2 [ main::j#6 main::i#4 main::k#2 ] ) -- _deref_pbuz1=vbuxx 
     txa
     ldy #0
     sta (zpptr2),y

@@ -1583,7 +1583,7 @@ Complete equivalence classes
 [ main::x#2 main::x#1 ]
 [ main::e#3 main::e#5 main::e#1 main::e#2 ]
 [ main::y#2 main::y#4 main::y#1 ]
-Allocated zp ZP_PTR_BYTE:2 [ main::cursor#3 main::cursor#5 main::cursor#1 main::cursor#2 ]
+Allocated zp ZP_WORD:2 [ main::cursor#3 main::cursor#5 main::cursor#1 main::cursor#2 ]
 Allocated zp ZP_BYTE:4 [ main::x#2 main::x#1 ]
 Allocated zp ZP_BYTE:5 [ main::e#3 main::e#5 main::e#1 main::e#2 ]
 Allocated zp ZP_BYTE:6 [ main::y#2 main::y#4 main::y#1 ]
@@ -1632,7 +1632,7 @@ main: {
   //SEG13 [5] phi (byte) main::x#2 = (byte/signed byte/word/signed word) 4 [phi:main->main::@1#2] -- vbuz1=vbuc1 
     lda #4
     sta x
-  //SEG14 [5] phi (byte*) main::cursor#3 = (const byte[1000]) SCREEN#0+(byte/signed byte/word/signed word) 4*(byte/signed byte/word/signed word) 40+(byte/signed byte/word/signed word) 4 [phi:main->main::@1#3] -- zpptrby1=vwuc1 
+  //SEG14 [5] phi (byte*) main::cursor#3 = (const byte[1000]) SCREEN#0+(byte/signed byte/word/signed word) 4*(byte/signed byte/word/signed word) 40+(byte/signed byte/word/signed word) 4 [phi:main->main::@1#3] -- pbuz1=vwuc1 
     lda #<SCREEN+4*$28+4
     sta cursor
     lda #>SCREEN+4*$28+4
@@ -1647,13 +1647,13 @@ main: {
     jmp b1
   //SEG20 main::@1
   b1:
-  //SEG21 [6] *((byte*) main::cursor#3) ← (const byte) STAR#0 [ main::cursor#3 main::x#2 main::e#3 main::y#2 ] ( main:2 [ main::cursor#3 main::x#2 main::e#3 main::y#2 ] ) -- _deref_zpptrby1=vbuc1 
+  //SEG21 [6] *((byte*) main::cursor#3) ← (const byte) STAR#0 [ main::cursor#3 main::x#2 main::e#3 main::y#2 ] ( main:2 [ main::cursor#3 main::x#2 main::e#3 main::y#2 ] ) -- _deref_pbuz1=vbuc1 
     ldy #0
     lda #STAR
     sta (cursor),y
   //SEG22 [7] (byte) main::x#1 ← (byte) main::x#2 + (byte/signed byte/word/signed word) 1 [ main::cursor#3 main::e#3 main::y#2 main::x#1 ] ( main:2 [ main::cursor#3 main::e#3 main::y#2 main::x#1 ] ) -- vbuz1=vbuz1_plus_1 
     inc x
-  //SEG23 [8] (byte*) main::cursor#1 ← (byte*) main::cursor#3 + (byte/signed byte/word/signed word) 1 [ main::e#3 main::y#2 main::x#1 main::cursor#1 ] ( main:2 [ main::e#3 main::y#2 main::x#1 main::cursor#1 ] ) -- zpptrby1=zpptrby1_plus_1 
+  //SEG23 [8] (byte*) main::cursor#1 ← (byte*) main::cursor#3 + (byte/signed byte/word/signed word) 1 [ main::e#3 main::y#2 main::x#1 main::cursor#1 ] ( main:2 [ main::e#3 main::y#2 main::x#1 main::cursor#1 ] ) -- pbuz1=pbuz1_plus_1 
     inc cursor
     bne !+
     inc cursor+1
@@ -1672,7 +1672,7 @@ main: {
   b3:
   //SEG27 [11] (byte) main::y#1 ← (byte) main::y#2 + (byte/signed byte/word/signed word) 1 [ main::x#1 main::cursor#1 main::e#1 main::y#1 ] ( main:2 [ main::x#1 main::cursor#1 main::e#1 main::y#1 ] ) -- vbuz1=vbuz1_plus_1 
     inc y
-  //SEG28 [12] (byte*) main::cursor#2 ← (byte*) main::cursor#1 + (byte/signed byte/word/signed word) 40 [ main::x#1 main::e#1 main::y#1 main::cursor#2 ] ( main:2 [ main::x#1 main::e#1 main::y#1 main::cursor#2 ] ) -- zpptrby1=zpptrby1_plus_vbuc1 
+  //SEG28 [12] (byte*) main::cursor#2 ← (byte*) main::cursor#1 + (byte/signed byte/word/signed word) 40 [ main::x#1 main::e#1 main::y#1 main::cursor#2 ] ( main:2 [ main::x#1 main::e#1 main::y#1 main::cursor#2 ] ) -- pbuz1=pbuz1_plus_vbuc1 
     lda cursor
     clc
     adc #$28
@@ -1720,16 +1720,16 @@ Statement [6] *((byte*) main::cursor#3) ← (const byte) STAR#0 [ main::cursor#3
 Statement [9] (byte) main::e#1 ← (byte) main::e#3 + (const byte) main::yd#0 [ main::y#2 main::x#1 main::cursor#1 main::e#1 ] ( main:2 [ main::y#2 main::x#1 main::cursor#1 main::e#1 ] ) always clobbers reg byte a 
 Statement [12] (byte*) main::cursor#2 ← (byte*) main::cursor#1 + (byte/signed byte/word/signed word) 40 [ main::x#1 main::e#1 main::y#1 main::cursor#2 ] ( main:2 [ main::x#1 main::e#1 main::y#1 main::cursor#2 ] ) always clobbers reg byte a 
 Statement [13] (byte) main::e#2 ← (byte) main::e#1 - (const byte) main::xd#0 [ main::x#1 main::y#1 main::cursor#2 main::e#2 ] ( main:2 [ main::x#1 main::y#1 main::cursor#2 main::e#2 ] ) always clobbers reg byte a 
-Potential registers zp ZP_PTR_BYTE:2 [ main::cursor#3 main::cursor#5 main::cursor#1 main::cursor#2 ] : zp ZP_PTR_BYTE:2 , 
+Potential registers zp ZP_WORD:2 [ main::cursor#3 main::cursor#5 main::cursor#1 main::cursor#2 ] : zp ZP_WORD:2 , 
 Potential registers zp ZP_BYTE:4 [ main::x#2 main::x#1 ] : zp ZP_BYTE:4 , reg byte x , 
 Potential registers zp ZP_BYTE:5 [ main::e#3 main::e#5 main::e#1 main::e#2 ] : zp ZP_BYTE:5 , reg byte x , 
 Potential registers zp ZP_BYTE:6 [ main::y#2 main::y#4 main::y#1 ] : zp ZP_BYTE:6 , reg byte x , 
 
 REGISTER UPLIFT SCOPES
-Uplift Scope [main] 55: zp ZP_BYTE:5 [ main::e#3 main::e#5 main::e#1 main::e#2 ] 46.75: zp ZP_PTR_BYTE:2 [ main::cursor#3 main::cursor#5 main::cursor#1 main::cursor#2 ] 29.33: zp ZP_BYTE:6 [ main::y#2 main::y#4 main::y#1 ] 14.67: zp ZP_BYTE:4 [ main::x#2 main::x#1 ] 
+Uplift Scope [main] 55: zp ZP_BYTE:5 [ main::e#3 main::e#5 main::e#1 main::e#2 ] 46.75: zp ZP_WORD:2 [ main::cursor#3 main::cursor#5 main::cursor#1 main::cursor#2 ] 29.33: zp ZP_BYTE:6 [ main::y#2 main::y#4 main::y#1 ] 14.67: zp ZP_BYTE:4 [ main::x#2 main::x#1 ] 
 Uplift Scope [] 
 
-Uplifting [main] best 1198 combination reg byte x [ main::e#3 main::e#5 main::e#1 main::e#2 ] zp ZP_PTR_BYTE:2 [ main::cursor#3 main::cursor#5 main::cursor#1 main::cursor#2 ] zp ZP_BYTE:6 [ main::y#2 main::y#4 main::y#1 ] zp ZP_BYTE:4 [ main::x#2 main::x#1 ] 
+Uplifting [main] best 1198 combination reg byte x [ main::e#3 main::e#5 main::e#1 main::e#2 ] zp ZP_WORD:2 [ main::cursor#3 main::cursor#5 main::cursor#1 main::cursor#2 ] zp ZP_BYTE:6 [ main::y#2 main::y#4 main::y#1 ] zp ZP_BYTE:4 [ main::x#2 main::x#1 ] 
 Uplifting [] best 1198 combination 
 Attempting to uplift remaining variables inzp ZP_BYTE:6 [ main::y#2 main::y#4 main::y#1 ]
 Uplifting [main] best 1198 combination zp ZP_BYTE:6 [ main::y#2 main::y#4 main::y#1 ] 
@@ -1784,7 +1784,7 @@ main: {
   //SEG13 [5] phi (byte) main::x#2 = (byte/signed byte/word/signed word) 4 [phi:main->main::@1#2] -- vbuz1=vbuc1 
     lda #4
     sta x
-  //SEG14 [5] phi (byte*) main::cursor#3 = (const byte[1000]) SCREEN#0+(byte/signed byte/word/signed word) 4*(byte/signed byte/word/signed word) 40+(byte/signed byte/word/signed word) 4 [phi:main->main::@1#3] -- zpptrby1=vwuc1 
+  //SEG14 [5] phi (byte*) main::cursor#3 = (const byte[1000]) SCREEN#0+(byte/signed byte/word/signed word) 4*(byte/signed byte/word/signed word) 40+(byte/signed byte/word/signed word) 4 [phi:main->main::@1#3] -- pbuz1=vwuc1 
     lda #<SCREEN+4*$28+4
     sta cursor
     lda #>SCREEN+4*$28+4
@@ -1798,13 +1798,13 @@ main: {
   //SEG19 [5] phi (byte*) main::cursor#3 = (byte*) main::cursor#5 [phi:main::@2->main::@1#3] -- register_copy 
   //SEG20 main::@1
   b1:
-  //SEG21 [6] *((byte*) main::cursor#3) ← (const byte) STAR#0 [ main::cursor#3 main::x#2 main::e#3 main::y#2 ] ( main:2 [ main::cursor#3 main::x#2 main::e#3 main::y#2 ] ) -- _deref_zpptrby1=vbuc1 
+  //SEG21 [6] *((byte*) main::cursor#3) ← (const byte) STAR#0 [ main::cursor#3 main::x#2 main::e#3 main::y#2 ] ( main:2 [ main::cursor#3 main::x#2 main::e#3 main::y#2 ] ) -- _deref_pbuz1=vbuc1 
     ldy #0
     lda #STAR
     sta (cursor),y
   //SEG22 [7] (byte) main::x#1 ← (byte) main::x#2 + (byte/signed byte/word/signed word) 1 [ main::cursor#3 main::e#3 main::y#2 main::x#1 ] ( main:2 [ main::cursor#3 main::e#3 main::y#2 main::x#1 ] ) -- vbuz1=vbuz1_plus_1 
     inc x
-  //SEG23 [8] (byte*) main::cursor#1 ← (byte*) main::cursor#3 + (byte/signed byte/word/signed word) 1 [ main::e#3 main::y#2 main::x#1 main::cursor#1 ] ( main:2 [ main::e#3 main::y#2 main::x#1 main::cursor#1 ] ) -- zpptrby1=zpptrby1_plus_1 
+  //SEG23 [8] (byte*) main::cursor#1 ← (byte*) main::cursor#3 + (byte/signed byte/word/signed word) 1 [ main::e#3 main::y#2 main::x#1 main::cursor#1 ] ( main:2 [ main::e#3 main::y#2 main::x#1 main::cursor#1 ] ) -- pbuz1=pbuz1_plus_1 
     inc cursor
     bne !+
     inc cursor+1
@@ -1821,7 +1821,7 @@ main: {
   b3:
   //SEG27 [11] (byte) main::y#1 ← (byte) main::y#2 + (byte/signed byte/word/signed word) 1 [ main::x#1 main::cursor#1 main::e#1 main::y#1 ] ( main:2 [ main::x#1 main::cursor#1 main::e#1 main::y#1 ] ) -- vbuz1=vbuz1_plus_1 
     inc y
-  //SEG28 [12] (byte*) main::cursor#2 ← (byte*) main::cursor#1 + (byte/signed byte/word/signed word) 40 [ main::x#1 main::e#1 main::y#1 main::cursor#2 ] ( main:2 [ main::x#1 main::e#1 main::y#1 main::cursor#2 ] ) -- zpptrby1=zpptrby1_plus_vbuc1 
+  //SEG28 [12] (byte*) main::cursor#2 ← (byte*) main::cursor#1 + (byte/signed byte/word/signed word) 40 [ main::x#1 main::e#1 main::y#1 main::cursor#2 ] ( main:2 [ main::x#1 main::e#1 main::y#1 main::cursor#2 ] ) -- pbuz1=pbuz1_plus_vbuc1 
     lda cursor
     clc
     adc #$28
@@ -1894,7 +1894,7 @@ main: {
     ldx #yd/2
   //SEG13 [5] phi (byte) main::x#2 = (byte/signed byte/word/signed word) 4 [phi:main->main::@1#2] -- vbuz1=vbuc1 
     sta x
-  //SEG14 [5] phi (byte*) main::cursor#3 = (const byte[1000]) SCREEN#0+(byte/signed byte/word/signed word) 4*(byte/signed byte/word/signed word) 40+(byte/signed byte/word/signed word) 4 [phi:main->main::@1#3] -- zpptrby1=vwuc1 
+  //SEG14 [5] phi (byte*) main::cursor#3 = (const byte[1000]) SCREEN#0+(byte/signed byte/word/signed word) 4*(byte/signed byte/word/signed word) 40+(byte/signed byte/word/signed word) 4 [phi:main->main::@1#3] -- pbuz1=vwuc1 
     lda #<SCREEN+4*$28+4
     sta cursor
     lda #>SCREEN+4*$28+4
@@ -1908,13 +1908,13 @@ main: {
   //SEG19 [5] phi (byte*) main::cursor#3 = (byte*) main::cursor#5 [phi:main::@2->main::@1#3] -- register_copy 
   //SEG20 main::@1
   b1:
-  //SEG21 [6] *((byte*) main::cursor#3) ← (const byte) STAR#0 [ main::cursor#3 main::x#2 main::e#3 main::y#2 ] ( main:2 [ main::cursor#3 main::x#2 main::e#3 main::y#2 ] ) -- _deref_zpptrby1=vbuc1 
+  //SEG21 [6] *((byte*) main::cursor#3) ← (const byte) STAR#0 [ main::cursor#3 main::x#2 main::e#3 main::y#2 ] ( main:2 [ main::cursor#3 main::x#2 main::e#3 main::y#2 ] ) -- _deref_pbuz1=vbuc1 
     ldy #0
     lda #STAR
     sta (cursor),y
   //SEG22 [7] (byte) main::x#1 ← (byte) main::x#2 + (byte/signed byte/word/signed word) 1 [ main::cursor#3 main::e#3 main::y#2 main::x#1 ] ( main:2 [ main::cursor#3 main::e#3 main::y#2 main::x#1 ] ) -- vbuz1=vbuz1_plus_1 
     inc x
-  //SEG23 [8] (byte*) main::cursor#1 ← (byte*) main::cursor#3 + (byte/signed byte/word/signed word) 1 [ main::e#3 main::y#2 main::x#1 main::cursor#1 ] ( main:2 [ main::e#3 main::y#2 main::x#1 main::cursor#1 ] ) -- zpptrby1=zpptrby1_plus_1 
+  //SEG23 [8] (byte*) main::cursor#1 ← (byte*) main::cursor#3 + (byte/signed byte/word/signed word) 1 [ main::e#3 main::y#2 main::x#1 main::cursor#1 ] ( main:2 [ main::e#3 main::y#2 main::x#1 main::cursor#1 ] ) -- pbuz1=pbuz1_plus_1 
     inc cursor
     bne !+
     inc cursor+1
@@ -1931,7 +1931,7 @@ main: {
   b3:
   //SEG27 [11] (byte) main::y#1 ← (byte) main::y#2 + (byte/signed byte/word/signed word) 1 [ main::x#1 main::cursor#1 main::e#1 main::y#1 ] ( main:2 [ main::x#1 main::cursor#1 main::e#1 main::y#1 ] ) -- vbuz1=vbuz1_plus_1 
     inc y
-  //SEG28 [12] (byte*) main::cursor#2 ← (byte*) main::cursor#1 + (byte/signed byte/word/signed word) 40 [ main::x#1 main::e#1 main::y#1 main::cursor#2 ] ( main:2 [ main::x#1 main::e#1 main::y#1 main::cursor#2 ] ) -- zpptrby1=zpptrby1_plus_vbuc1 
+  //SEG28 [12] (byte*) main::cursor#2 ← (byte*) main::cursor#1 + (byte/signed byte/word/signed word) 40 [ main::x#1 main::e#1 main::y#1 main::cursor#2 ] ( main:2 [ main::x#1 main::e#1 main::y#1 main::cursor#2 ] ) -- pbuz1=pbuz1_plus_vbuc1 
     lda cursor
     clc
     adc #$28
@@ -2008,7 +2008,7 @@ main: {
     ldx #yd/2
   //SEG13 [5] phi (byte) main::x#2 = (byte/signed byte/word/signed word) 4 [phi:main->main::@1#2] -- vbuz1=vbuc1 
     sta x
-  //SEG14 [5] phi (byte*) main::cursor#3 = (const byte[1000]) SCREEN#0+(byte/signed byte/word/signed word) 4*(byte/signed byte/word/signed word) 40+(byte/signed byte/word/signed word) 4 [phi:main->main::@1#3] -- zpptrby1=vwuc1 
+  //SEG14 [5] phi (byte*) main::cursor#3 = (const byte[1000]) SCREEN#0+(byte/signed byte/word/signed word) 4*(byte/signed byte/word/signed word) 40+(byte/signed byte/word/signed word) 4 [phi:main->main::@1#3] -- pbuz1=vwuc1 
     lda #<SCREEN+4*$28+4
     sta cursor
     lda #>SCREEN+4*$28+4
@@ -2021,13 +2021,13 @@ main: {
   //SEG19 [5] phi (byte*) main::cursor#3 = (byte*) main::cursor#5 [phi:main::@2->main::@1#3] -- register_copy 
   //SEG20 main::@1
   b1:
-  //SEG21 [6] *((byte*) main::cursor#3) ← (const byte) STAR#0 [ main::cursor#3 main::x#2 main::e#3 main::y#2 ] ( main:2 [ main::cursor#3 main::x#2 main::e#3 main::y#2 ] ) -- _deref_zpptrby1=vbuc1 
+  //SEG21 [6] *((byte*) main::cursor#3) ← (const byte) STAR#0 [ main::cursor#3 main::x#2 main::e#3 main::y#2 ] ( main:2 [ main::cursor#3 main::x#2 main::e#3 main::y#2 ] ) -- _deref_pbuz1=vbuc1 
     ldy #0
     lda #STAR
     sta (cursor),y
   //SEG22 [7] (byte) main::x#1 ← (byte) main::x#2 + (byte/signed byte/word/signed word) 1 [ main::cursor#3 main::e#3 main::y#2 main::x#1 ] ( main:2 [ main::cursor#3 main::e#3 main::y#2 main::x#1 ] ) -- vbuz1=vbuz1_plus_1 
     inc x
-  //SEG23 [8] (byte*) main::cursor#1 ← (byte*) main::cursor#3 + (byte/signed byte/word/signed word) 1 [ main::e#3 main::y#2 main::x#1 main::cursor#1 ] ( main:2 [ main::e#3 main::y#2 main::x#1 main::cursor#1 ] ) -- zpptrby1=zpptrby1_plus_1 
+  //SEG23 [8] (byte*) main::cursor#1 ← (byte*) main::cursor#3 + (byte/signed byte/word/signed word) 1 [ main::e#3 main::y#2 main::x#1 main::cursor#1 ] ( main:2 [ main::e#3 main::y#2 main::x#1 main::cursor#1 ] ) -- pbuz1=pbuz1_plus_1 
     inc cursor
     bne !+
     inc cursor+1
@@ -2044,7 +2044,7 @@ main: {
   b3:
   //SEG27 [11] (byte) main::y#1 ← (byte) main::y#2 + (byte/signed byte/word/signed word) 1 [ main::x#1 main::cursor#1 main::e#1 main::y#1 ] ( main:2 [ main::x#1 main::cursor#1 main::e#1 main::y#1 ] ) -- vbuz1=vbuz1_plus_1 
     inc y
-  //SEG28 [12] (byte*) main::cursor#2 ← (byte*) main::cursor#1 + (byte/signed byte/word/signed word) 40 [ main::x#1 main::e#1 main::y#1 main::cursor#2 ] ( main:2 [ main::x#1 main::e#1 main::y#1 main::cursor#2 ] ) -- zpptrby1=zpptrby1_plus_vbuc1 
+  //SEG28 [12] (byte*) main::cursor#2 ← (byte*) main::cursor#1 + (byte/signed byte/word/signed word) 40 [ main::x#1 main::e#1 main::y#1 main::cursor#2 ] ( main:2 [ main::x#1 main::e#1 main::y#1 main::cursor#2 ] ) -- pbuz1=pbuz1_plus_vbuc1 
     lda cursor
     clc
     adc #$28
@@ -2112,7 +2112,7 @@ main: {
     ldx #yd/2
   //SEG13 [5] phi (byte) main::x#2 = (byte/signed byte/word/signed word) 4 [phi:main->main::@1#2] -- vbuz1=vbuc1 
     sta x
-  //SEG14 [5] phi (byte*) main::cursor#3 = (const byte[1000]) SCREEN#0+(byte/signed byte/word/signed word) 4*(byte/signed byte/word/signed word) 40+(byte/signed byte/word/signed word) 4 [phi:main->main::@1#3] -- zpptrby1=vwuc1 
+  //SEG14 [5] phi (byte*) main::cursor#3 = (const byte[1000]) SCREEN#0+(byte/signed byte/word/signed word) 4*(byte/signed byte/word/signed word) 40+(byte/signed byte/word/signed word) 4 [phi:main->main::@1#3] -- pbuz1=vwuc1 
     lda #<SCREEN+4*$28+4
     sta cursor
     lda #>SCREEN+4*$28+4
@@ -2125,13 +2125,13 @@ main: {
   //SEG19 [5] phi (byte*) main::cursor#3 = (byte*) main::cursor#5 [phi:main::@2->main::@1#3] -- register_copy 
   //SEG20 main::@1
   b1:
-  //SEG21 [6] *((byte*) main::cursor#3) ← (const byte) STAR#0 [ main::cursor#3 main::x#2 main::e#3 main::y#2 ] ( main:2 [ main::cursor#3 main::x#2 main::e#3 main::y#2 ] ) -- _deref_zpptrby1=vbuc1 
+  //SEG21 [6] *((byte*) main::cursor#3) ← (const byte) STAR#0 [ main::cursor#3 main::x#2 main::e#3 main::y#2 ] ( main:2 [ main::cursor#3 main::x#2 main::e#3 main::y#2 ] ) -- _deref_pbuz1=vbuc1 
     ldy #0
     lda #STAR
     sta (cursor),y
   //SEG22 [7] (byte) main::x#1 ← (byte) main::x#2 + (byte/signed byte/word/signed word) 1 [ main::cursor#3 main::e#3 main::y#2 main::x#1 ] ( main:2 [ main::cursor#3 main::e#3 main::y#2 main::x#1 ] ) -- vbuz1=vbuz1_plus_1 
     inc x
-  //SEG23 [8] (byte*) main::cursor#1 ← (byte*) main::cursor#3 + (byte/signed byte/word/signed word) 1 [ main::e#3 main::y#2 main::x#1 main::cursor#1 ] ( main:2 [ main::e#3 main::y#2 main::x#1 main::cursor#1 ] ) -- zpptrby1=zpptrby1_plus_1 
+  //SEG23 [8] (byte*) main::cursor#1 ← (byte*) main::cursor#3 + (byte/signed byte/word/signed word) 1 [ main::e#3 main::y#2 main::x#1 main::cursor#1 ] ( main:2 [ main::e#3 main::y#2 main::x#1 main::cursor#1 ] ) -- pbuz1=pbuz1_plus_1 
     inc cursor
     bne !+
     inc cursor+1
@@ -2147,7 +2147,7 @@ main: {
   //SEG26 main::@3
   //SEG27 [11] (byte) main::y#1 ← (byte) main::y#2 + (byte/signed byte/word/signed word) 1 [ main::x#1 main::cursor#1 main::e#1 main::y#1 ] ( main:2 [ main::x#1 main::cursor#1 main::e#1 main::y#1 ] ) -- vbuz1=vbuz1_plus_1 
     inc y
-  //SEG28 [12] (byte*) main::cursor#2 ← (byte*) main::cursor#1 + (byte/signed byte/word/signed word) 40 [ main::x#1 main::e#1 main::y#1 main::cursor#2 ] ( main:2 [ main::x#1 main::e#1 main::y#1 main::cursor#2 ] ) -- zpptrby1=zpptrby1_plus_vbuc1 
+  //SEG28 [12] (byte*) main::cursor#2 ← (byte*) main::cursor#1 + (byte/signed byte/word/signed word) 40 [ main::x#1 main::e#1 main::y#1 main::cursor#2 ] ( main:2 [ main::x#1 main::e#1 main::y#1 main::cursor#2 ] ) -- pbuz1=pbuz1_plus_vbuc1 
     lda cursor
     clc
     adc #$28
@@ -2210,7 +2210,7 @@ main: {
     ldx #yd/2
   //SEG13 [5] phi (byte) main::x#2 = (byte/signed byte/word/signed word) 4 [phi:main->main::@1#2] -- vbuz1=vbuc1 
     sta x
-  //SEG14 [5] phi (byte*) main::cursor#3 = (const byte[1000]) SCREEN#0+(byte/signed byte/word/signed word) 4*(byte/signed byte/word/signed word) 40+(byte/signed byte/word/signed word) 4 [phi:main->main::@1#3] -- zpptrby1=vwuc1 
+  //SEG14 [5] phi (byte*) main::cursor#3 = (const byte[1000]) SCREEN#0+(byte/signed byte/word/signed word) 4*(byte/signed byte/word/signed word) 40+(byte/signed byte/word/signed word) 4 [phi:main->main::@1#3] -- pbuz1=vwuc1 
     lda #<SCREEN+4*$28+4
     sta cursor
     lda #>SCREEN+4*$28+4
@@ -2222,13 +2222,13 @@ main: {
   //SEG19 [5] phi (byte*) main::cursor#3 = (byte*) main::cursor#5 [phi:main::@2->main::@1#3] -- register_copy 
   //SEG20 main::@1
   b1:
-  //SEG21 [6] *((byte*) main::cursor#3) ← (const byte) STAR#0 [ main::cursor#3 main::x#2 main::e#3 main::y#2 ] ( main:2 [ main::cursor#3 main::x#2 main::e#3 main::y#2 ] ) -- _deref_zpptrby1=vbuc1 
+  //SEG21 [6] *((byte*) main::cursor#3) ← (const byte) STAR#0 [ main::cursor#3 main::x#2 main::e#3 main::y#2 ] ( main:2 [ main::cursor#3 main::x#2 main::e#3 main::y#2 ] ) -- _deref_pbuz1=vbuc1 
     ldy #0
     lda #STAR
     sta (cursor),y
   //SEG22 [7] (byte) main::x#1 ← (byte) main::x#2 + (byte/signed byte/word/signed word) 1 [ main::cursor#3 main::e#3 main::y#2 main::x#1 ] ( main:2 [ main::cursor#3 main::e#3 main::y#2 main::x#1 ] ) -- vbuz1=vbuz1_plus_1 
     inc x
-  //SEG23 [8] (byte*) main::cursor#1 ← (byte*) main::cursor#3 + (byte/signed byte/word/signed word) 1 [ main::e#3 main::y#2 main::x#1 main::cursor#1 ] ( main:2 [ main::e#3 main::y#2 main::x#1 main::cursor#1 ] ) -- zpptrby1=zpptrby1_plus_1 
+  //SEG23 [8] (byte*) main::cursor#1 ← (byte*) main::cursor#3 + (byte/signed byte/word/signed word) 1 [ main::e#3 main::y#2 main::x#1 main::cursor#1 ] ( main:2 [ main::e#3 main::y#2 main::x#1 main::cursor#1 ] ) -- pbuz1=pbuz1_plus_1 
     inc cursor
     bne !+
     inc cursor+1
@@ -2244,7 +2244,7 @@ main: {
   //SEG26 main::@3
   //SEG27 [11] (byte) main::y#1 ← (byte) main::y#2 + (byte/signed byte/word/signed word) 1 [ main::x#1 main::cursor#1 main::e#1 main::y#1 ] ( main:2 [ main::x#1 main::cursor#1 main::e#1 main::y#1 ] ) -- vbuz1=vbuz1_plus_1 
     inc y
-  //SEG28 [12] (byte*) main::cursor#2 ← (byte*) main::cursor#1 + (byte/signed byte/word/signed word) 40 [ main::x#1 main::e#1 main::y#1 main::cursor#2 ] ( main:2 [ main::x#1 main::e#1 main::y#1 main::cursor#2 ] ) -- zpptrby1=zpptrby1_plus_vbuc1 
+  //SEG28 [12] (byte*) main::cursor#2 ← (byte*) main::cursor#1 + (byte/signed byte/word/signed word) 40 [ main::x#1 main::e#1 main::y#1 main::cursor#2 ] ( main:2 [ main::x#1 main::e#1 main::y#1 main::cursor#2 ] ) -- pbuz1=pbuz1_plus_vbuc1 
     lda cursor
     clc
     adc #$28
@@ -2286,10 +2286,10 @@ FINAL SYMBOL TABLE
 (label) main::@3
 (label) main::@return
 (byte*) main::cursor
-(byte*) main::cursor#1 cursor zp ZP_PTR_BYTE:2 8.25
-(byte*) main::cursor#2 cursor zp ZP_PTR_BYTE:2 11.0
-(byte*) main::cursor#3 cursor zp ZP_PTR_BYTE:2 11.0
-(byte*) main::cursor#5 cursor zp ZP_PTR_BYTE:2 16.5
+(byte*) main::cursor#1 cursor zp ZP_WORD:2 8.25
+(byte*) main::cursor#2 cursor zp ZP_WORD:2 11.0
+(byte*) main::cursor#3 cursor zp ZP_WORD:2 11.0
+(byte*) main::cursor#5 cursor zp ZP_WORD:2 16.5
 (byte) main::e
 (byte) main::e#1 reg byte x 11.0
 (byte) main::e#2 reg byte x 22.0
@@ -2313,7 +2313,7 @@ FINAL SYMBOL TABLE
 (byte) main::yd
 (const byte) main::yd#0 yd = (const byte) main::y1#0-(byte/signed byte/word/signed word) 4
 
-zp ZP_PTR_BYTE:2 [ main::cursor#3 main::cursor#5 main::cursor#1 main::cursor#2 ]
+zp ZP_WORD:2 [ main::cursor#3 main::cursor#5 main::cursor#1 main::cursor#2 ]
 zp ZP_BYTE:4 [ main::x#2 main::x#1 ]
 reg byte x [ main::e#3 main::e#5 main::e#1 main::e#2 ]
 zp ZP_BYTE:5 [ main::y#2 main::y#4 main::y#1 ]
@@ -2351,7 +2351,7 @@ main: {
     ldx #yd/2
   //SEG13 [5] phi (byte) main::x#2 = (byte/signed byte/word/signed word) 4 [phi:main->main::@1#2] -- vbuz1=vbuc1 
     sta x
-  //SEG14 [5] phi (byte*) main::cursor#3 = (const byte[1000]) SCREEN#0+(byte/signed byte/word/signed word) 4*(byte/signed byte/word/signed word) 40+(byte/signed byte/word/signed word) 4 [phi:main->main::@1#3] -- zpptrby1=vwuc1 
+  //SEG14 [5] phi (byte*) main::cursor#3 = (const byte[1000]) SCREEN#0+(byte/signed byte/word/signed word) 4*(byte/signed byte/word/signed word) 40+(byte/signed byte/word/signed word) 4 [phi:main->main::@1#3] -- pbuz1=vwuc1 
     lda #<SCREEN+4*$28+4
     sta cursor
     lda #>SCREEN+4*$28+4
@@ -2363,13 +2363,13 @@ main: {
   //SEG19 [5] phi (byte*) main::cursor#3 = (byte*) main::cursor#5 [phi:main::@2->main::@1#3] -- register_copy 
   //SEG20 main::@1
   b1:
-  //SEG21 [6] *((byte*) main::cursor#3) ← (const byte) STAR#0 [ main::cursor#3 main::x#2 main::e#3 main::y#2 ] ( main:2 [ main::cursor#3 main::x#2 main::e#3 main::y#2 ] ) -- _deref_zpptrby1=vbuc1 
+  //SEG21 [6] *((byte*) main::cursor#3) ← (const byte) STAR#0 [ main::cursor#3 main::x#2 main::e#3 main::y#2 ] ( main:2 [ main::cursor#3 main::x#2 main::e#3 main::y#2 ] ) -- _deref_pbuz1=vbuc1 
     ldy #0
     lda #STAR
     sta (cursor),y
   //SEG22 [7] (byte) main::x#1 ← (byte) main::x#2 + (byte/signed byte/word/signed word) 1 [ main::cursor#3 main::e#3 main::y#2 main::x#1 ] ( main:2 [ main::cursor#3 main::e#3 main::y#2 main::x#1 ] ) -- vbuz1=vbuz1_plus_1 
     inc x
-  //SEG23 [8] (byte*) main::cursor#1 ← (byte*) main::cursor#3 + (byte/signed byte/word/signed word) 1 [ main::e#3 main::y#2 main::x#1 main::cursor#1 ] ( main:2 [ main::e#3 main::y#2 main::x#1 main::cursor#1 ] ) -- zpptrby1=zpptrby1_plus_1 
+  //SEG23 [8] (byte*) main::cursor#1 ← (byte*) main::cursor#3 + (byte/signed byte/word/signed word) 1 [ main::e#3 main::y#2 main::x#1 main::cursor#1 ] ( main:2 [ main::e#3 main::y#2 main::x#1 main::cursor#1 ] ) -- pbuz1=pbuz1_plus_1 
     inc cursor
     bne !+
     inc cursor+1
@@ -2385,7 +2385,7 @@ main: {
   //SEG26 main::@3
   //SEG27 [11] (byte) main::y#1 ← (byte) main::y#2 + (byte/signed byte/word/signed word) 1 [ main::x#1 main::cursor#1 main::e#1 main::y#1 ] ( main:2 [ main::x#1 main::cursor#1 main::e#1 main::y#1 ] ) -- vbuz1=vbuz1_plus_1 
     inc y
-  //SEG28 [12] (byte*) main::cursor#2 ← (byte*) main::cursor#1 + (byte/signed byte/word/signed word) 40 [ main::x#1 main::e#1 main::y#1 main::cursor#2 ] ( main:2 [ main::x#1 main::e#1 main::y#1 main::cursor#2 ] ) -- zpptrby1=zpptrby1_plus_vbuc1 
+  //SEG28 [12] (byte*) main::cursor#2 ← (byte*) main::cursor#1 + (byte/signed byte/word/signed word) 40 [ main::x#1 main::e#1 main::y#1 main::cursor#2 ] ( main:2 [ main::x#1 main::e#1 main::y#1 main::cursor#2 ] ) -- pbuz1=pbuz1_plus_vbuc1 
     lda cursor
     clc
     adc #$28

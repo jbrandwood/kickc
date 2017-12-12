@@ -27,7 +27,6 @@ public class Registers {
       REG_X_BYTE,
       REG_ALU,
       ZP_BYTE,
-      ZP_PTR_BYTE,
       ZP_WORD,
       ZP_BOOL,
       CONSTANT
@@ -133,20 +132,6 @@ public class Registers {
          return RegisterType.ZP_BOOL;
       }
 
-
-   }
-
-   /** A zero page address pair used as a register containing a pointer to a byte. */
-   public static class RegisterZpPointerByte extends RegisterZp {
-
-      public RegisterZpPointerByte(int zp) {
-         super(zp);
-      }
-
-      @Override
-      public RegisterType getType() {
-         return RegisterType.ZP_PTR_BYTE;
-      }
 
    }
 

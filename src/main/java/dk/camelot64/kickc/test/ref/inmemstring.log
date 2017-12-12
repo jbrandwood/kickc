@@ -987,7 +987,7 @@ Complete equivalence classes
 [ main::cursor#2 main::cursor#1 ]
 [ main::$0 ]
 Allocated zp ZP_BYTE:2 [ main::i#3 main::i#4 main::i#1 ]
-Allocated zp ZP_PTR_BYTE:3 [ main::cursor#2 main::cursor#1 ]
+Allocated zp ZP_WORD:3 [ main::cursor#2 main::cursor#1 ]
 Allocated zp ZP_BYTE:5 [ main::$0 ]
 INITIAL ASM
 //SEG0 Basic Upstart
@@ -1020,7 +1020,7 @@ main: {
     .label cursor = 3
   //SEG10 [5] phi from main to main::@1 [phi:main->main::@1]
   b1_from_main:
-  //SEG11 [5] phi (byte*) main::cursor#2 = (const byte*) SCREEN#0 [phi:main->main::@1#0] -- zpptrby1=vwuc1 
+  //SEG11 [5] phi (byte*) main::cursor#2 = (const byte*) SCREEN#0 [phi:main->main::@1#0] -- pbuz1=vwuc1 
     lda #<SCREEN
     sta cursor
     lda #>SCREEN
@@ -1040,7 +1040,7 @@ main: {
     ldx i
     lda TEXT,x
     sta _0
-  //SEG18 [7] *((byte*) main::cursor#2) ← (byte~) main::$0 [ main::i#3 main::cursor#2 ] ( main:2 [ main::i#3 main::cursor#2 ] ) -- _deref_zpptrby1=vbuz1 
+  //SEG18 [7] *((byte*) main::cursor#2) ← (byte~) main::$0 [ main::i#3 main::cursor#2 ] ( main:2 [ main::i#3 main::cursor#2 ] ) -- _deref_pbuz1=vbuz2 
     ldy #0
     lda _0
     sta (cursor),y
@@ -1058,12 +1058,12 @@ main: {
     jmp b2
   //SEG23 main::@2
   b2:
-  //SEG24 [11] (byte*) main::cursor#1 ← ++ (byte*) main::cursor#2 [ main::i#4 main::cursor#1 ] ( main:2 [ main::i#4 main::cursor#1 ] ) -- zpptrby1=_inc_zpptrby1 
+  //SEG24 [11] (byte*) main::cursor#1 ← ++ (byte*) main::cursor#2 [ main::i#4 main::cursor#1 ] ( main:2 [ main::i#4 main::cursor#1 ] ) -- pbuz1=_inc_pbuz1 
     inc cursor
     bne !+
     inc cursor+1
   !:
-  //SEG25 [12] if((byte*) main::cursor#1<(const byte*) SCREEN#0+(word/signed word) 1000) goto main::@1 [ main::i#4 main::cursor#1 ] ( main:2 [ main::i#4 main::cursor#1 ] ) -- zpptrby1_lt_vwuc1_then_la1 
+  //SEG25 [12] if((byte*) main::cursor#1<(const byte*) SCREEN#0+(word/signed word) 1000) goto main::@1 [ main::i#4 main::cursor#1 ] ( main:2 [ main::i#4 main::cursor#1 ] ) -- pbuz1_lt_vwuc1_then_la1 
     lda cursor+1
     cmp #>SCREEN+$3e8
     bcc b1_from_b2
@@ -1096,16 +1096,16 @@ Removing always clobbered register reg byte a as potential for zp ZP_BYTE:2 [ ma
 Statement [7] *((byte*) main::cursor#2) ← (byte~) main::$0 [ main::i#3 main::cursor#2 ] ( main:2 [ main::i#3 main::cursor#2 ] ) always clobbers reg byte y 
 Statement [12] if((byte*) main::cursor#1<(const byte*) SCREEN#0+(word/signed word) 1000) goto main::@1 [ main::i#4 main::cursor#1 ] ( main:2 [ main::i#4 main::cursor#1 ] ) always clobbers reg byte a 
 Potential registers zp ZP_BYTE:2 [ main::i#3 main::i#4 main::i#1 ] : zp ZP_BYTE:2 , reg byte x , 
-Potential registers zp ZP_PTR_BYTE:3 [ main::cursor#2 main::cursor#1 ] : zp ZP_PTR_BYTE:3 , 
+Potential registers zp ZP_WORD:3 [ main::cursor#2 main::cursor#1 ] : zp ZP_WORD:3 , 
 Potential registers zp ZP_BYTE:5 [ main::$0 ] : zp ZP_BYTE:5 , reg byte a , reg byte x , reg byte y , 
 
 REGISTER UPLIFT SCOPES
-Uplift Scope [main] 29.33: zp ZP_BYTE:2 [ main::i#3 main::i#4 main::i#1 ] 22: zp ZP_BYTE:5 [ main::$0 ] 21.21: zp ZP_PTR_BYTE:3 [ main::cursor#2 main::cursor#1 ] 
+Uplift Scope [main] 29.33: zp ZP_BYTE:2 [ main::i#3 main::i#4 main::i#1 ] 22: zp ZP_BYTE:5 [ main::$0 ] 21.21: zp ZP_WORD:3 [ main::cursor#2 main::cursor#1 ] 
 Uplift Scope [] 
 
-Uplifting [main] best 858 combination reg byte x [ main::i#3 main::i#4 main::i#1 ] reg byte a [ main::$0 ] zp ZP_PTR_BYTE:3 [ main::cursor#2 main::cursor#1 ] 
+Uplifting [main] best 858 combination reg byte x [ main::i#3 main::i#4 main::i#1 ] reg byte a [ main::$0 ] zp ZP_WORD:3 [ main::cursor#2 main::cursor#1 ] 
 Uplifting [] best 858 combination 
-Allocated (was zp ZP_PTR_BYTE:3) zp ZP_PTR_BYTE:2 [ main::cursor#2 main::cursor#1 ]
+Allocated (was zp ZP_WORD:3) zp ZP_WORD:2 [ main::cursor#2 main::cursor#1 ]
 Removing instruction jmp b1
 Removing instruction jmp bend
 Removing instruction jmp b1
@@ -1140,7 +1140,7 @@ main: {
     .label cursor = 2
   //SEG10 [5] phi from main to main::@1 [phi:main->main::@1]
   b1_from_main:
-  //SEG11 [5] phi (byte*) main::cursor#2 = (const byte*) SCREEN#0 [phi:main->main::@1#0] -- zpptrby1=vwuc1 
+  //SEG11 [5] phi (byte*) main::cursor#2 = (const byte*) SCREEN#0 [phi:main->main::@1#0] -- pbuz1=vwuc1 
     lda #<SCREEN
     sta cursor
     lda #>SCREEN
@@ -1156,7 +1156,7 @@ main: {
   b1:
   //SEG17 [6] (byte~) main::$0 ← (const byte[]) TEXT#0 *idx (byte) main::i#3 [ main::i#3 main::cursor#2 main::$0 ] ( main:2 [ main::i#3 main::cursor#2 main::$0 ] ) -- vbuaa=vwuc1_derefidx_vbuxx 
     lda TEXT,x
-  //SEG18 [7] *((byte*) main::cursor#2) ← (byte~) main::$0 [ main::i#3 main::cursor#2 ] ( main:2 [ main::i#3 main::cursor#2 ] ) -- _deref_zpptrby1=vbuaa 
+  //SEG18 [7] *((byte*) main::cursor#2) ← (byte~) main::$0 [ main::i#3 main::cursor#2 ] ( main:2 [ main::i#3 main::cursor#2 ] ) -- _deref_pbuz1=vbuaa 
     ldy #0
     sta (cursor),y
   //SEG19 [8] (byte) main::i#1 ← ++ (byte) main::i#3 [ main::cursor#2 main::i#1 ] ( main:2 [ main::cursor#2 main::i#1 ] ) -- vbuxx=_inc_vbuxx 
@@ -1170,12 +1170,12 @@ main: {
     ldx #0
   //SEG23 main::@2
   b2:
-  //SEG24 [11] (byte*) main::cursor#1 ← ++ (byte*) main::cursor#2 [ main::i#4 main::cursor#1 ] ( main:2 [ main::i#4 main::cursor#1 ] ) -- zpptrby1=_inc_zpptrby1 
+  //SEG24 [11] (byte*) main::cursor#1 ← ++ (byte*) main::cursor#2 [ main::i#4 main::cursor#1 ] ( main:2 [ main::i#4 main::cursor#1 ] ) -- pbuz1=_inc_pbuz1 
     inc cursor
     bne !+
     inc cursor+1
   !:
-  //SEG25 [12] if((byte*) main::cursor#1<(const byte*) SCREEN#0+(word/signed word) 1000) goto main::@1 [ main::i#4 main::cursor#1 ] ( main:2 [ main::i#4 main::cursor#1 ] ) -- zpptrby1_lt_vwuc1_then_la1 
+  //SEG25 [12] if((byte*) main::cursor#1<(const byte*) SCREEN#0+(word/signed word) 1000) goto main::@1 [ main::i#4 main::cursor#1 ] ( main:2 [ main::i#4 main::cursor#1 ] ) -- pbuz1_lt_vwuc1_then_la1 
     lda cursor+1
     cmp #>SCREEN+$3e8
     bcc b1_from_b2
@@ -1232,7 +1232,7 @@ main: {
     .label cursor = 2
   //SEG10 [5] phi from main to main::@1 [phi:main->main::@1]
   b1_from_main:
-  //SEG11 [5] phi (byte*) main::cursor#2 = (const byte*) SCREEN#0 [phi:main->main::@1#0] -- zpptrby1=vwuc1 
+  //SEG11 [5] phi (byte*) main::cursor#2 = (const byte*) SCREEN#0 [phi:main->main::@1#0] -- pbuz1=vwuc1 
     lda #<SCREEN
     sta cursor
     lda #>SCREEN
@@ -1247,7 +1247,7 @@ main: {
   b1:
   //SEG17 [6] (byte~) main::$0 ← (const byte[]) TEXT#0 *idx (byte) main::i#3 [ main::i#3 main::cursor#2 main::$0 ] ( main:2 [ main::i#3 main::cursor#2 main::$0 ] ) -- vbuaa=vwuc1_derefidx_vbuxx 
     lda TEXT,x
-  //SEG18 [7] *((byte*) main::cursor#2) ← (byte~) main::$0 [ main::i#3 main::cursor#2 ] ( main:2 [ main::i#3 main::cursor#2 ] ) -- _deref_zpptrby1=vbuaa 
+  //SEG18 [7] *((byte*) main::cursor#2) ← (byte~) main::$0 [ main::i#3 main::cursor#2 ] ( main:2 [ main::i#3 main::cursor#2 ] ) -- _deref_pbuz1=vbuaa 
     ldy #0
     sta (cursor),y
   //SEG19 [8] (byte) main::i#1 ← ++ (byte) main::i#3 [ main::cursor#2 main::i#1 ] ( main:2 [ main::cursor#2 main::i#1 ] ) -- vbuxx=_inc_vbuxx 
@@ -1261,12 +1261,12 @@ main: {
     ldx #0
   //SEG23 main::@2
   b2:
-  //SEG24 [11] (byte*) main::cursor#1 ← ++ (byte*) main::cursor#2 [ main::i#4 main::cursor#1 ] ( main:2 [ main::i#4 main::cursor#1 ] ) -- zpptrby1=_inc_zpptrby1 
+  //SEG24 [11] (byte*) main::cursor#1 ← ++ (byte*) main::cursor#2 [ main::i#4 main::cursor#1 ] ( main:2 [ main::i#4 main::cursor#1 ] ) -- pbuz1=_inc_pbuz1 
     inc cursor
     bne !+
     inc cursor+1
   !:
-  //SEG25 [12] if((byte*) main::cursor#1<(const byte*) SCREEN#0+(word/signed word) 1000) goto main::@1 [ main::i#4 main::cursor#1 ] ( main:2 [ main::i#4 main::cursor#1 ] ) -- zpptrby1_lt_vwuc1_then_la1 
+  //SEG25 [12] if((byte*) main::cursor#1<(const byte*) SCREEN#0+(word/signed word) 1000) goto main::@1 [ main::i#4 main::cursor#1 ] ( main:2 [ main::i#4 main::cursor#1 ] ) -- pbuz1_lt_vwuc1_then_la1 
     lda cursor+1
     cmp #>SCREEN+$3e8
     bcc b1
@@ -1313,7 +1313,7 @@ ASSEMBLER
 main: {
     .label cursor = 2
   //SEG10 [5] phi from main to main::@1 [phi:main->main::@1]
-  //SEG11 [5] phi (byte*) main::cursor#2 = (const byte*) SCREEN#0 [phi:main->main::@1#0] -- zpptrby1=vwuc1 
+  //SEG11 [5] phi (byte*) main::cursor#2 = (const byte*) SCREEN#0 [phi:main->main::@1#0] -- pbuz1=vwuc1 
     lda #<SCREEN
     sta cursor
     lda #>SCREEN
@@ -1328,7 +1328,7 @@ main: {
   b1:
   //SEG17 [6] (byte~) main::$0 ← (const byte[]) TEXT#0 *idx (byte) main::i#3 [ main::i#3 main::cursor#2 main::$0 ] ( main:2 [ main::i#3 main::cursor#2 main::$0 ] ) -- vbuaa=vwuc1_derefidx_vbuxx 
     lda TEXT,x
-  //SEG18 [7] *((byte*) main::cursor#2) ← (byte~) main::$0 [ main::i#3 main::cursor#2 ] ( main:2 [ main::i#3 main::cursor#2 ] ) -- _deref_zpptrby1=vbuaa 
+  //SEG18 [7] *((byte*) main::cursor#2) ← (byte~) main::$0 [ main::i#3 main::cursor#2 ] ( main:2 [ main::i#3 main::cursor#2 ] ) -- _deref_pbuz1=vbuaa 
     ldy #0
     sta (cursor),y
   //SEG19 [8] (byte) main::i#1 ← ++ (byte) main::i#3 [ main::cursor#2 main::i#1 ] ( main:2 [ main::cursor#2 main::i#1 ] ) -- vbuxx=_inc_vbuxx 
@@ -1341,12 +1341,12 @@ main: {
     ldx #0
   //SEG23 main::@2
   b2:
-  //SEG24 [11] (byte*) main::cursor#1 ← ++ (byte*) main::cursor#2 [ main::i#4 main::cursor#1 ] ( main:2 [ main::i#4 main::cursor#1 ] ) -- zpptrby1=_inc_zpptrby1 
+  //SEG24 [11] (byte*) main::cursor#1 ← ++ (byte*) main::cursor#2 [ main::i#4 main::cursor#1 ] ( main:2 [ main::i#4 main::cursor#1 ] ) -- pbuz1=_inc_pbuz1 
     inc cursor
     bne !+
     inc cursor+1
   !:
-  //SEG25 [12] if((byte*) main::cursor#1<(const byte*) SCREEN#0+(word/signed word) 1000) goto main::@1 [ main::i#4 main::cursor#1 ] ( main:2 [ main::i#4 main::cursor#1 ] ) -- zpptrby1_lt_vwuc1_then_la1 
+  //SEG25 [12] if((byte*) main::cursor#1<(const byte*) SCREEN#0+(word/signed word) 1000) goto main::@1 [ main::i#4 main::cursor#1 ] ( main:2 [ main::i#4 main::cursor#1 ] ) -- pbuz1_lt_vwuc1_then_la1 
     lda cursor+1
     cmp #>SCREEN+$3e8
     bcc b1
@@ -1388,7 +1388,7 @@ ASSEMBLER
 main: {
     .label cursor = 2
   //SEG10 [5] phi from main to main::@1 [phi:main->main::@1]
-  //SEG11 [5] phi (byte*) main::cursor#2 = (const byte*) SCREEN#0 [phi:main->main::@1#0] -- zpptrby1=vwuc1 
+  //SEG11 [5] phi (byte*) main::cursor#2 = (const byte*) SCREEN#0 [phi:main->main::@1#0] -- pbuz1=vwuc1 
     lda #<SCREEN
     sta cursor
     lda #>SCREEN
@@ -1403,7 +1403,7 @@ main: {
   b1:
   //SEG17 [6] (byte~) main::$0 ← (const byte[]) TEXT#0 *idx (byte) main::i#3 [ main::i#3 main::cursor#2 main::$0 ] ( main:2 [ main::i#3 main::cursor#2 main::$0 ] ) -- vbuaa=vwuc1_derefidx_vbuxx 
     lda TEXT,x
-  //SEG18 [7] *((byte*) main::cursor#2) ← (byte~) main::$0 [ main::i#3 main::cursor#2 ] ( main:2 [ main::i#3 main::cursor#2 ] ) -- _deref_zpptrby1=vbuaa 
+  //SEG18 [7] *((byte*) main::cursor#2) ← (byte~) main::$0 [ main::i#3 main::cursor#2 ] ( main:2 [ main::i#3 main::cursor#2 ] ) -- _deref_pbuz1=vbuaa 
     ldy #0
     sta (cursor),y
   //SEG19 [8] (byte) main::i#1 ← ++ (byte) main::i#3 [ main::cursor#2 main::i#1 ] ( main:2 [ main::cursor#2 main::i#1 ] ) -- vbuxx=_inc_vbuxx 
@@ -1416,12 +1416,12 @@ main: {
     ldx #0
   //SEG23 main::@2
   b2:
-  //SEG24 [11] (byte*) main::cursor#1 ← ++ (byte*) main::cursor#2 [ main::i#4 main::cursor#1 ] ( main:2 [ main::i#4 main::cursor#1 ] ) -- zpptrby1=_inc_zpptrby1 
+  //SEG24 [11] (byte*) main::cursor#1 ← ++ (byte*) main::cursor#2 [ main::i#4 main::cursor#1 ] ( main:2 [ main::i#4 main::cursor#1 ] ) -- pbuz1=_inc_pbuz1 
     inc cursor
     bne !+
     inc cursor+1
   !:
-  //SEG25 [12] if((byte*) main::cursor#1<(const byte*) SCREEN#0+(word/signed word) 1000) goto main::@1 [ main::i#4 main::cursor#1 ] ( main:2 [ main::i#4 main::cursor#1 ] ) -- zpptrby1_lt_vwuc1_then_la1 
+  //SEG25 [12] if((byte*) main::cursor#1<(const byte*) SCREEN#0+(word/signed word) 1000) goto main::@1 [ main::i#4 main::cursor#1 ] ( main:2 [ main::i#4 main::cursor#1 ] ) -- pbuz1_lt_vwuc1_then_la1 
     lda cursor+1
     cmp #>SCREEN+$3e8
     bcc b1
@@ -1463,7 +1463,7 @@ ASSEMBLER
 main: {
     .label cursor = 2
   //SEG10 [5] phi from main to main::@1 [phi:main->main::@1]
-  //SEG11 [5] phi (byte*) main::cursor#2 = (const byte*) SCREEN#0 [phi:main->main::@1#0] -- zpptrby1=vwuc1 
+  //SEG11 [5] phi (byte*) main::cursor#2 = (const byte*) SCREEN#0 [phi:main->main::@1#0] -- pbuz1=vwuc1 
     lda #<SCREEN
     sta cursor
     lda #>SCREEN
@@ -1477,7 +1477,7 @@ main: {
   b1:
   //SEG17 [6] (byte~) main::$0 ← (const byte[]) TEXT#0 *idx (byte) main::i#3 [ main::i#3 main::cursor#2 main::$0 ] ( main:2 [ main::i#3 main::cursor#2 main::$0 ] ) -- vbuaa=vwuc1_derefidx_vbuxx 
     lda TEXT,x
-  //SEG18 [7] *((byte*) main::cursor#2) ← (byte~) main::$0 [ main::i#3 main::cursor#2 ] ( main:2 [ main::i#3 main::cursor#2 ] ) -- _deref_zpptrby1=vbuaa 
+  //SEG18 [7] *((byte*) main::cursor#2) ← (byte~) main::$0 [ main::i#3 main::cursor#2 ] ( main:2 [ main::i#3 main::cursor#2 ] ) -- _deref_pbuz1=vbuaa 
     ldy #0
     sta (cursor),y
   //SEG19 [8] (byte) main::i#1 ← ++ (byte) main::i#3 [ main::cursor#2 main::i#1 ] ( main:2 [ main::cursor#2 main::i#1 ] ) -- vbuxx=_inc_vbuxx 
@@ -1490,12 +1490,12 @@ main: {
     ldx #0
   //SEG23 main::@2
   b2:
-  //SEG24 [11] (byte*) main::cursor#1 ← ++ (byte*) main::cursor#2 [ main::i#4 main::cursor#1 ] ( main:2 [ main::i#4 main::cursor#1 ] ) -- zpptrby1=_inc_zpptrby1 
+  //SEG24 [11] (byte*) main::cursor#1 ← ++ (byte*) main::cursor#2 [ main::i#4 main::cursor#1 ] ( main:2 [ main::i#4 main::cursor#1 ] ) -- pbuz1=_inc_pbuz1 
     inc cursor
     bne !+
     inc cursor+1
   !:
-  //SEG25 [12] if((byte*) main::cursor#1<(const byte*) SCREEN#0+(word/signed word) 1000) goto main::@1 [ main::i#4 main::cursor#1 ] ( main:2 [ main::i#4 main::cursor#1 ] ) -- zpptrby1_lt_vwuc1_then_la1 
+  //SEG25 [12] if((byte*) main::cursor#1<(const byte*) SCREEN#0+(word/signed word) 1000) goto main::@1 [ main::i#4 main::cursor#1 ] ( main:2 [ main::i#4 main::cursor#1 ] ) -- pbuz1_lt_vwuc1_then_la1 
     lda cursor+1
     cmp #>SCREEN+$3e8
     bcc b1
@@ -1537,7 +1537,7 @@ ASSEMBLER
 main: {
     .label cursor = 2
   //SEG10 [5] phi from main to main::@1 [phi:main->main::@1]
-  //SEG11 [5] phi (byte*) main::cursor#2 = (const byte*) SCREEN#0 [phi:main->main::@1#0] -- zpptrby1=vwuc1 
+  //SEG11 [5] phi (byte*) main::cursor#2 = (const byte*) SCREEN#0 [phi:main->main::@1#0] -- pbuz1=vwuc1 
     lda #<SCREEN
     sta cursor
     lda #>SCREEN
@@ -1551,7 +1551,7 @@ main: {
   b1:
   //SEG17 [6] (byte~) main::$0 ← (const byte[]) TEXT#0 *idx (byte) main::i#3 [ main::i#3 main::cursor#2 main::$0 ] ( main:2 [ main::i#3 main::cursor#2 main::$0 ] ) -- vbuaa=vwuc1_derefidx_vbuxx 
     lda TEXT,x
-  //SEG18 [7] *((byte*) main::cursor#2) ← (byte~) main::$0 [ main::i#3 main::cursor#2 ] ( main:2 [ main::i#3 main::cursor#2 ] ) -- _deref_zpptrby1=vbuaa 
+  //SEG18 [7] *((byte*) main::cursor#2) ← (byte~) main::$0 [ main::i#3 main::cursor#2 ] ( main:2 [ main::i#3 main::cursor#2 ] ) -- _deref_pbuz1=vbuaa 
     ldy #0
     sta (cursor),y
   //SEG19 [8] (byte) main::i#1 ← ++ (byte) main::i#3 [ main::cursor#2 main::i#1 ] ( main:2 [ main::cursor#2 main::i#1 ] ) -- vbuxx=_inc_vbuxx 
@@ -1564,12 +1564,12 @@ main: {
     ldx #0
   //SEG23 main::@2
   b2:
-  //SEG24 [11] (byte*) main::cursor#1 ← ++ (byte*) main::cursor#2 [ main::i#4 main::cursor#1 ] ( main:2 [ main::i#4 main::cursor#1 ] ) -- zpptrby1=_inc_zpptrby1 
+  //SEG24 [11] (byte*) main::cursor#1 ← ++ (byte*) main::cursor#2 [ main::i#4 main::cursor#1 ] ( main:2 [ main::i#4 main::cursor#1 ] ) -- pbuz1=_inc_pbuz1 
     inc cursor
     bne !+
     inc cursor+1
   !:
-  //SEG25 [12] if((byte*) main::cursor#1<(const byte*) SCREEN#0+(word/signed word) 1000) goto main::@1 [ main::i#4 main::cursor#1 ] ( main:2 [ main::i#4 main::cursor#1 ] ) -- zpptrby1_lt_vwuc1_then_la1 
+  //SEG25 [12] if((byte*) main::cursor#1<(const byte*) SCREEN#0+(word/signed word) 1000) goto main::@1 [ main::i#4 main::cursor#1 ] ( main:2 [ main::i#4 main::cursor#1 ] ) -- pbuz1_lt_vwuc1_then_la1 
     lda cursor+1
     cmp #>SCREEN+$3e8
     bcc b1
@@ -1610,7 +1610,7 @@ ASSEMBLER
 main: {
     .label cursor = 2
   //SEG10 [5] phi from main to main::@1 [phi:main->main::@1]
-  //SEG11 [5] phi (byte*) main::cursor#2 = (const byte*) SCREEN#0 [phi:main->main::@1#0] -- zpptrby1=vwuc1 
+  //SEG11 [5] phi (byte*) main::cursor#2 = (const byte*) SCREEN#0 [phi:main->main::@1#0] -- pbuz1=vwuc1 
     lda #<SCREEN
     sta cursor
     lda #>SCREEN
@@ -1624,7 +1624,7 @@ main: {
   b1:
   //SEG17 [6] (byte~) main::$0 ← (const byte[]) TEXT#0 *idx (byte) main::i#3 [ main::i#3 main::cursor#2 main::$0 ] ( main:2 [ main::i#3 main::cursor#2 main::$0 ] ) -- vbuaa=vwuc1_derefidx_vbuxx 
     lda TEXT,x
-  //SEG18 [7] *((byte*) main::cursor#2) ← (byte~) main::$0 [ main::i#3 main::cursor#2 ] ( main:2 [ main::i#3 main::cursor#2 ] ) -- _deref_zpptrby1=vbuaa 
+  //SEG18 [7] *((byte*) main::cursor#2) ← (byte~) main::$0 [ main::i#3 main::cursor#2 ] ( main:2 [ main::i#3 main::cursor#2 ] ) -- _deref_pbuz1=vbuaa 
     ldy #0
     sta (cursor),y
   //SEG19 [8] (byte) main::i#1 ← ++ (byte) main::i#3 [ main::cursor#2 main::i#1 ] ( main:2 [ main::cursor#2 main::i#1 ] ) -- vbuxx=_inc_vbuxx 
@@ -1637,12 +1637,12 @@ main: {
     ldx #0
   //SEG23 main::@2
   b2:
-  //SEG24 [11] (byte*) main::cursor#1 ← ++ (byte*) main::cursor#2 [ main::i#4 main::cursor#1 ] ( main:2 [ main::i#4 main::cursor#1 ] ) -- zpptrby1=_inc_zpptrby1 
+  //SEG24 [11] (byte*) main::cursor#1 ← ++ (byte*) main::cursor#2 [ main::i#4 main::cursor#1 ] ( main:2 [ main::i#4 main::cursor#1 ] ) -- pbuz1=_inc_pbuz1 
     inc cursor
     bne !+
     inc cursor+1
   !:
-  //SEG25 [12] if((byte*) main::cursor#1<(const byte*) SCREEN#0+(word/signed word) 1000) goto main::@1 [ main::i#4 main::cursor#1 ] ( main:2 [ main::i#4 main::cursor#1 ] ) -- zpptrby1_lt_vwuc1_then_la1 
+  //SEG25 [12] if((byte*) main::cursor#1<(const byte*) SCREEN#0+(word/signed word) 1000) goto main::@1 [ main::i#4 main::cursor#1 ] ( main:2 [ main::i#4 main::cursor#1 ] ) -- pbuz1_lt_vwuc1_then_la1 
     lda cursor+1
     cmp #>SCREEN+$3e8
     bcc b1
@@ -1675,15 +1675,15 @@ FINAL SYMBOL TABLE
 (label) main::@6
 (label) main::@return
 (byte*) main::cursor
-(byte*) main::cursor#1 cursor zp ZP_PTR_BYTE:2 16.5
-(byte*) main::cursor#2 cursor zp ZP_PTR_BYTE:2 4.714285714285714
+(byte*) main::cursor#1 cursor zp ZP_WORD:2 16.5
+(byte*) main::cursor#2 cursor zp ZP_WORD:2 4.714285714285714
 (byte) main::i
 (byte) main::i#1 reg byte x 11.0
 (byte) main::i#3 reg byte x 11.0
 (byte) main::i#4 reg byte x 7.333333333333333
 
 reg byte x [ main::i#3 main::i#4 main::i#1 ]
-zp ZP_PTR_BYTE:2 [ main::cursor#2 main::cursor#1 ]
+zp ZP_WORD:2 [ main::cursor#2 main::cursor#1 ]
 reg byte a [ main::$0 ]
 
 FINAL CODE
@@ -1706,7 +1706,7 @@ FINAL CODE
 main: {
     .label cursor = 2
   //SEG10 [5] phi from main to main::@1 [phi:main->main::@1]
-  //SEG11 [5] phi (byte*) main::cursor#2 = (const byte*) SCREEN#0 [phi:main->main::@1#0] -- zpptrby1=vwuc1 
+  //SEG11 [5] phi (byte*) main::cursor#2 = (const byte*) SCREEN#0 [phi:main->main::@1#0] -- pbuz1=vwuc1 
     lda #<SCREEN
     sta cursor
     lda #>SCREEN
@@ -1720,7 +1720,7 @@ main: {
   b1:
   //SEG17 [6] (byte~) main::$0 ← (const byte[]) TEXT#0 *idx (byte) main::i#3 [ main::i#3 main::cursor#2 main::$0 ] ( main:2 [ main::i#3 main::cursor#2 main::$0 ] ) -- vbuaa=vwuc1_derefidx_vbuxx 
     lda TEXT,x
-  //SEG18 [7] *((byte*) main::cursor#2) ← (byte~) main::$0 [ main::i#3 main::cursor#2 ] ( main:2 [ main::i#3 main::cursor#2 ] ) -- _deref_zpptrby1=vbuaa 
+  //SEG18 [7] *((byte*) main::cursor#2) ← (byte~) main::$0 [ main::i#3 main::cursor#2 ] ( main:2 [ main::i#3 main::cursor#2 ] ) -- _deref_pbuz1=vbuaa 
     ldy #0
     sta (cursor),y
   //SEG19 [8] (byte) main::i#1 ← ++ (byte) main::i#3 [ main::cursor#2 main::i#1 ] ( main:2 [ main::cursor#2 main::i#1 ] ) -- vbuxx=_inc_vbuxx 
@@ -1733,12 +1733,12 @@ main: {
     ldx #0
   //SEG23 main::@2
   b2:
-  //SEG24 [11] (byte*) main::cursor#1 ← ++ (byte*) main::cursor#2 [ main::i#4 main::cursor#1 ] ( main:2 [ main::i#4 main::cursor#1 ] ) -- zpptrby1=_inc_zpptrby1 
+  //SEG24 [11] (byte*) main::cursor#1 ← ++ (byte*) main::cursor#2 [ main::i#4 main::cursor#1 ] ( main:2 [ main::i#4 main::cursor#1 ] ) -- pbuz1=_inc_pbuz1 
     inc cursor
     bne !+
     inc cursor+1
   !:
-  //SEG25 [12] if((byte*) main::cursor#1<(const byte*) SCREEN#0+(word/signed word) 1000) goto main::@1 [ main::i#4 main::cursor#1 ] ( main:2 [ main::i#4 main::cursor#1 ] ) -- zpptrby1_lt_vwuc1_then_la1 
+  //SEG25 [12] if((byte*) main::cursor#1<(const byte*) SCREEN#0+(word/signed word) 1000) goto main::@1 [ main::i#4 main::cursor#1 ] ( main:2 [ main::i#4 main::cursor#1 ] ) -- pbuz1_lt_vwuc1_then_la1 
     lda cursor+1
     cmp #>SCREEN+$3e8
     bcc b1

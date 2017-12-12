@@ -154,10 +154,10 @@ public class Pass4RegistersFinalize extends Pass2Base {
          // No need to setRegister register for VOID value
          return null;
       } else if (varType instanceof SymbolTypePointer) {
-         Registers.RegisterZpPointerByte registerZpPointerByte =
-               new Registers.RegisterZpPointerByte(currentZp);
+         Registers.RegisterZpWord registerZpWord =
+               new Registers.RegisterZpWord(currentZp);
          currentZp = currentZp + 2;
-         return registerZpPointerByte;
+         return registerZpWord;
       } else {
          throw new RuntimeException("Unhandled variable type " + varType);
       }

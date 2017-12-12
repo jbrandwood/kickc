@@ -937,7 +937,7 @@ Complete equivalence classes
 [ screen#10 screen#14 screen#11 ]
 Allocated zp ZP_BYTE:2 [ line::x1#3 ]
 Allocated zp ZP_BYTE:3 [ line::x#2 line::x#0 line::x#1 ]
-Allocated zp ZP_PTR_BYTE:4 [ screen#10 screen#14 screen#11 ]
+Allocated zp ZP_WORD:4 [ screen#10 screen#14 screen#11 ]
 INITIAL ASM
 //SEG0 Basic Upstart
 .pc = $801 "Basic"
@@ -969,7 +969,7 @@ main: {
   //SEG12 [9] phi (byte) line::x1#3 = (byte/signed byte/word/signed word) 2 [phi:main->line#0] -- vbuz1=vbuc1 
     lda #2
     sta line.x1
-  //SEG13 [9] phi (byte*) screen#14 = ((byte*))(word/signed word) 1024 [phi:main->line#1] -- zpptrby1=vwuc1 
+  //SEG13 [9] phi (byte*) screen#14 = ((byte*))(word/signed word) 1024 [phi:main->line#1] -- pbuz1=vwuc1 
     lda #<$400
     sta screen
     lda #>$400
@@ -1012,11 +1012,11 @@ line: {
     jmp b1
   //SEG28 line::@1
   b1:
-  //SEG29 [11] *((byte*) screen#10) ← (byte) line::x#2 [ line::x1#3 line::x#2 screen#10 ] ( main:2::line:5 [ line::x1#3 line::x#2 screen#10 ] main:2::line:7 [ line::x1#3 line::x#2 screen#10 ] ) -- _deref_zpptrby1=vbuz1 
+  //SEG29 [11] *((byte*) screen#10) ← (byte) line::x#2 [ line::x1#3 line::x#2 screen#10 ] ( main:2::line:5 [ line::x1#3 line::x#2 screen#10 ] main:2::line:7 [ line::x1#3 line::x#2 screen#10 ] ) -- _deref_pbuz1=vbuz2 
     ldy #0
     lda x
     sta (screen),y
-  //SEG30 [12] (byte*) screen#11 ← ++ (byte*) screen#10 [ line::x1#3 screen#11 line::x#2 ] ( main:2::line:5 [ line::x1#3 screen#11 line::x#2 ] main:2::line:7 [ line::x1#3 screen#11 line::x#2 ] ) -- zpptrby1=_inc_zpptrby1 
+  //SEG30 [12] (byte*) screen#11 ← ++ (byte*) screen#10 [ line::x1#3 screen#11 line::x#2 ] ( main:2::line:5 [ line::x1#3 screen#11 line::x#2 ] main:2::line:7 [ line::x1#3 screen#11 line::x#2 ] ) -- pbuz1=_inc_pbuz1 
     inc screen
     bne !+
     inc screen+1
@@ -1041,19 +1041,19 @@ Removing always clobbered register reg byte y as potential for zp ZP_BYTE:3 [ li
 Statement [11] *((byte*) screen#10) ← (byte) line::x#2 [ line::x1#3 line::x#2 screen#10 ] ( main:2::line:5 [ line::x1#3 line::x#2 screen#10 ] main:2::line:7 [ line::x1#3 line::x#2 screen#10 ] ) always clobbers reg byte y 
 Potential registers zp ZP_BYTE:2 [ line::x1#3 ] : zp ZP_BYTE:2 , reg byte a , reg byte x , 
 Potential registers zp ZP_BYTE:3 [ line::x#2 line::x#0 line::x#1 ] : zp ZP_BYTE:3 , reg byte a , reg byte x , 
-Potential registers zp ZP_PTR_BYTE:4 [ screen#10 screen#14 screen#11 ] : zp ZP_PTR_BYTE:4 , 
+Potential registers zp ZP_WORD:4 [ screen#10 screen#14 screen#11 ] : zp ZP_WORD:4 , 
 
 REGISTER UPLIFT SCOPES
 Uplift Scope [line] 30.17: zp ZP_BYTE:3 [ line::x#2 line::x#0 line::x#1 ] 1.83: zp ZP_BYTE:2 [ line::x1#3 ] 
-Uplift Scope [] 25.5: zp ZP_PTR_BYTE:4 [ screen#10 screen#14 screen#11 ] 
+Uplift Scope [] 25.5: zp ZP_WORD:4 [ screen#10 screen#14 screen#11 ] 
 Uplift Scope [main] 
 
 Uplifting [line] best 437 combination reg byte x [ line::x#2 line::x#0 line::x#1 ] zp ZP_BYTE:2 [ line::x1#3 ] 
-Uplifting [] best 437 combination zp ZP_PTR_BYTE:4 [ screen#10 screen#14 screen#11 ] 
+Uplifting [] best 437 combination zp ZP_WORD:4 [ screen#10 screen#14 screen#11 ] 
 Uplifting [main] best 437 combination 
 Attempting to uplift remaining variables inzp ZP_BYTE:2 [ line::x1#3 ]
 Uplifting [line] best 437 combination zp ZP_BYTE:2 [ line::x1#3 ] 
-Allocated (was zp ZP_PTR_BYTE:4) zp ZP_PTR_BYTE:3 [ screen#10 screen#14 screen#11 ]
+Allocated (was zp ZP_WORD:4) zp ZP_WORD:3 [ screen#10 screen#14 screen#11 ]
 Removing instruction jmp b2
 Removing instruction jmp bend
 Removing instruction jmp b1
@@ -1090,7 +1090,7 @@ main: {
   //SEG12 [9] phi (byte) line::x1#3 = (byte/signed byte/word/signed word) 2 [phi:main->line#0] -- vbuz1=vbuc1 
     lda #2
     sta line.x1
-  //SEG13 [9] phi (byte*) screen#14 = ((byte*))(word/signed word) 1024 [phi:main->line#1] -- zpptrby1=vwuc1 
+  //SEG13 [9] phi (byte*) screen#14 = ((byte*))(word/signed word) 1024 [phi:main->line#1] -- pbuz1=vwuc1 
     lda #<$400
     sta screen
     lda #>$400
@@ -1127,11 +1127,11 @@ line: {
   //SEG27 [10] phi (byte) line::x#2 = (byte) line::x#0 [phi:line/line::@1->line::@1#1] -- register_copy 
   //SEG28 line::@1
   b1:
-  //SEG29 [11] *((byte*) screen#10) ← (byte) line::x#2 [ line::x1#3 line::x#2 screen#10 ] ( main:2::line:5 [ line::x1#3 line::x#2 screen#10 ] main:2::line:7 [ line::x1#3 line::x#2 screen#10 ] ) -- _deref_zpptrby1=vbuxx 
+  //SEG29 [11] *((byte*) screen#10) ← (byte) line::x#2 [ line::x1#3 line::x#2 screen#10 ] ( main:2::line:5 [ line::x1#3 line::x#2 screen#10 ] main:2::line:7 [ line::x1#3 line::x#2 screen#10 ] ) -- _deref_pbuz1=vbuxx 
     txa
     ldy #0
     sta (screen),y
-  //SEG30 [12] (byte*) screen#11 ← ++ (byte*) screen#10 [ line::x1#3 screen#11 line::x#2 ] ( main:2::line:5 [ line::x1#3 screen#11 line::x#2 ] main:2::line:7 [ line::x1#3 screen#11 line::x#2 ] ) -- zpptrby1=_inc_zpptrby1 
+  //SEG30 [12] (byte*) screen#11 ← ++ (byte*) screen#10 [ line::x1#3 screen#11 line::x#2 ] ( main:2::line:5 [ line::x1#3 screen#11 line::x#2 ] main:2::line:7 [ line::x1#3 screen#11 line::x#2 ] ) -- pbuz1=_inc_pbuz1 
     inc screen
     bne !+
     inc screen+1
@@ -1182,7 +1182,7 @@ main: {
   //SEG12 [9] phi (byte) line::x1#3 = (byte/signed byte/word/signed word) 2 [phi:main->line#0] -- vbuz1=vbuc1 
     lda #2
     sta line.x1
-  //SEG13 [9] phi (byte*) screen#14 = ((byte*))(word/signed word) 1024 [phi:main->line#1] -- zpptrby1=vwuc1 
+  //SEG13 [9] phi (byte*) screen#14 = ((byte*))(word/signed word) 1024 [phi:main->line#1] -- pbuz1=vwuc1 
     lda #<$400
     sta screen
     lda #>$400
@@ -1215,11 +1215,11 @@ line: {
   //SEG27 [10] phi (byte) line::x#2 = (byte) line::x#0 [phi:line/line::@1->line::@1#1] -- register_copy 
   //SEG28 line::@1
   b1:
-  //SEG29 [11] *((byte*) screen#10) ← (byte) line::x#2 [ line::x1#3 line::x#2 screen#10 ] ( main:2::line:5 [ line::x1#3 line::x#2 screen#10 ] main:2::line:7 [ line::x1#3 line::x#2 screen#10 ] ) -- _deref_zpptrby1=vbuxx 
+  //SEG29 [11] *((byte*) screen#10) ← (byte) line::x#2 [ line::x1#3 line::x#2 screen#10 ] ( main:2::line:5 [ line::x1#3 line::x#2 screen#10 ] main:2::line:7 [ line::x1#3 line::x#2 screen#10 ] ) -- _deref_pbuz1=vbuxx 
     txa
     ldy #0
     sta (screen),y
-  //SEG30 [12] (byte*) screen#11 ← ++ (byte*) screen#10 [ line::x1#3 screen#11 line::x#2 ] ( main:2::line:5 [ line::x1#3 screen#11 line::x#2 ] main:2::line:7 [ line::x1#3 screen#11 line::x#2 ] ) -- zpptrby1=_inc_zpptrby1 
+  //SEG30 [12] (byte*) screen#11 ← ++ (byte*) screen#10 [ line::x1#3 screen#11 line::x#2 ] ( main:2::line:5 [ line::x1#3 screen#11 line::x#2 ] main:2::line:7 [ line::x1#3 screen#11 line::x#2 ] ) -- pbuz1=_inc_pbuz1 
     inc screen
     bne !+
     inc screen+1
@@ -1264,7 +1264,7 @@ main: {
   //SEG12 [9] phi (byte) line::x1#3 = (byte/signed byte/word/signed word) 2 [phi:main->line#0] -- vbuz1=vbuc1 
     lda #2
     sta line.x1
-  //SEG13 [9] phi (byte*) screen#14 = ((byte*))(word/signed word) 1024 [phi:main->line#1] -- zpptrby1=vwuc1 
+  //SEG13 [9] phi (byte*) screen#14 = ((byte*))(word/signed word) 1024 [phi:main->line#1] -- pbuz1=vwuc1 
     lda #<$400
     sta screen
     lda #>$400
@@ -1295,11 +1295,11 @@ line: {
   //SEG27 [10] phi (byte) line::x#2 = (byte) line::x#0 [phi:line/line::@1->line::@1#1] -- register_copy 
   //SEG28 line::@1
   b1:
-  //SEG29 [11] *((byte*) screen#10) ← (byte) line::x#2 [ line::x1#3 line::x#2 screen#10 ] ( main:2::line:5 [ line::x1#3 line::x#2 screen#10 ] main:2::line:7 [ line::x1#3 line::x#2 screen#10 ] ) -- _deref_zpptrby1=vbuxx 
+  //SEG29 [11] *((byte*) screen#10) ← (byte) line::x#2 [ line::x1#3 line::x#2 screen#10 ] ( main:2::line:5 [ line::x1#3 line::x#2 screen#10 ] main:2::line:7 [ line::x1#3 line::x#2 screen#10 ] ) -- _deref_pbuz1=vbuxx 
     txa
     ldy #0
     sta (screen),y
-  //SEG30 [12] (byte*) screen#11 ← ++ (byte*) screen#10 [ line::x1#3 screen#11 line::x#2 ] ( main:2::line:5 [ line::x1#3 screen#11 line::x#2 ] main:2::line:7 [ line::x1#3 screen#11 line::x#2 ] ) -- zpptrby1=_inc_zpptrby1 
+  //SEG30 [12] (byte*) screen#11 ← ++ (byte*) screen#10 [ line::x1#3 screen#11 line::x#2 ] ( main:2::line:5 [ line::x1#3 screen#11 line::x#2 ] main:2::line:7 [ line::x1#3 screen#11 line::x#2 ] ) -- pbuz1=_inc_pbuz1 
     inc screen
     bne !+
     inc screen+1
@@ -1332,13 +1332,13 @@ FINAL SYMBOL TABLE
 (label) main::@1
 (label) main::@return
 (byte*) screen
-(byte*) screen#10 screen zp ZP_PTR_BYTE:3 17.5
-(byte*) screen#11 screen zp ZP_PTR_BYTE:3 4.0
-(byte*) screen#14 screen zp ZP_PTR_BYTE:3 4.0
+(byte*) screen#10 screen zp ZP_WORD:3 17.5
+(byte*) screen#11 screen zp ZP_WORD:3 4.0
+(byte*) screen#14 screen zp ZP_WORD:3 4.0
 
 zp ZP_BYTE:2 [ line::x1#3 ]
 reg byte x [ line::x#2 line::x#0 line::x#1 ]
-zp ZP_PTR_BYTE:3 [ screen#10 screen#14 screen#11 ]
+zp ZP_WORD:3 [ screen#10 screen#14 screen#11 ]
 
 FINAL CODE
 //SEG0 Basic Upstart
@@ -1362,7 +1362,7 @@ main: {
   //SEG12 [9] phi (byte) line::x1#3 = (byte/signed byte/word/signed word) 2 [phi:main->line#0] -- vbuz1=vbuc1 
     lda #2
     sta line.x1
-  //SEG13 [9] phi (byte*) screen#14 = ((byte*))(word/signed word) 1024 [phi:main->line#1] -- zpptrby1=vwuc1 
+  //SEG13 [9] phi (byte*) screen#14 = ((byte*))(word/signed word) 1024 [phi:main->line#1] -- pbuz1=vwuc1 
     lda #<$400
     sta screen
     lda #>$400
@@ -1393,11 +1393,11 @@ line: {
   //SEG27 [10] phi (byte) line::x#2 = (byte) line::x#0 [phi:line/line::@1->line::@1#1] -- register_copy 
   //SEG28 line::@1
   b1:
-  //SEG29 [11] *((byte*) screen#10) ← (byte) line::x#2 [ line::x1#3 line::x#2 screen#10 ] ( main:2::line:5 [ line::x1#3 line::x#2 screen#10 ] main:2::line:7 [ line::x1#3 line::x#2 screen#10 ] ) -- _deref_zpptrby1=vbuxx 
+  //SEG29 [11] *((byte*) screen#10) ← (byte) line::x#2 [ line::x1#3 line::x#2 screen#10 ] ( main:2::line:5 [ line::x1#3 line::x#2 screen#10 ] main:2::line:7 [ line::x1#3 line::x#2 screen#10 ] ) -- _deref_pbuz1=vbuxx 
     txa
     ldy #0
     sta (screen),y
-  //SEG30 [12] (byte*) screen#11 ← ++ (byte*) screen#10 [ line::x1#3 screen#11 line::x#2 ] ( main:2::line:5 [ line::x1#3 screen#11 line::x#2 ] main:2::line:7 [ line::x1#3 screen#11 line::x#2 ] ) -- zpptrby1=_inc_zpptrby1 
+  //SEG30 [12] (byte*) screen#11 ← ++ (byte*) screen#10 [ line::x1#3 screen#11 line::x#2 ] ( main:2::line:5 [ line::x1#3 screen#11 line::x#2 ] main:2::line:7 [ line::x1#3 screen#11 line::x#2 ] ) -- pbuz1=_inc_pbuz1 
     inc screen
     bne !+
     inc screen+1

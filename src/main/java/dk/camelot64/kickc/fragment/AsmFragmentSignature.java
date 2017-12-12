@@ -186,10 +186,7 @@ public class AsmFragmentSignature {
     * Zero page register name indexing.
     */
    private int nextZpByteIdx = 1;
-   private int nextZpSByteIdx = 1;
-   private int nextZpWordIdx = 1;
    private int nextZpBoolIdx = 1;
-   private int nextZpPtrIdx = 1;
    private int nextConstByteIdx = 1;
    private int nextLabelIdx = 1;
 
@@ -278,15 +275,12 @@ public class AsmFragmentSignature {
                return name;
             }
          } else if (Registers.RegisterType.ZP_WORD.equals(register.getType())) {
-            String name = "zpwo" + nextZpWordIdx++;
+            SymbolType varType = ((Variable) value).getType();
+            String name = getTypePrefix(varType) + getRegisterName(register);
             bindings.put(name, value);
             return name;
          } else if (Registers.RegisterType.ZP_BOOL.equals(register.getType())) {
             String name = "zpbo" + nextZpBoolIdx++;
-            bindings.put(name, value);
-            return name;
-         } else if (Registers.RegisterType.ZP_PTR_BYTE.equals(register.getType())) {
-            String name = "zpptrby" + nextZpPtrIdx++;
             bindings.put(name, value);
             return name;
          } else if (Registers.RegisterType.REG_ALU.equals(register.getType())) {
@@ -340,6 +334,19 @@ public class AsmFragmentSignature {
          return "vbu";
       } else if (SymbolType.isSByte(type)) {
          return "vbs";
+      } else if (SymbolType.isWord(type)) {
+         return "vwu";
+      } else if (type instanceof SymbolTypePointer ) {
+         SymbolType elementType = ((SymbolTypePointer) type).getElementType();
+         if (SymbolType.isByte(elementType)) {
+            return "pbu";
+         } else if (SymbolType.isSByte(elementType)) {
+            return "pbs";
+         } else if (SymbolType.isWord(elementType)) {
+            return "pwu";
+         } else {
+            throw new RuntimeException("Not implemented "+type);
+         }
       } else {
          throw new RuntimeException("Not implemented "+type);
       }
@@ -353,7 +360,9 @@ public class AsmFragmentSignature {
     */
    private String getRegisterName(Registers.Register register) {
       if(Registers.RegisterType.ZP_BYTE.equals(register.getType())) {
-         return "z"+ getRegisterZpNameIdx((Registers.RegisterZp) register);
+         return "z" + getRegisterZpNameIdx((Registers.RegisterZp) register);
+      } else if (Registers.RegisterType.ZP_WORD.equals(register.getType())) {
+         return "z" + getRegisterZpNameIdx((Registers.RegisterZp) register);
       } else {
          throw new RuntimeException("Not implemented "+register.getType());
       }
@@ -366,14 +375,13 @@ public class AsmFragmentSignature {
     * @return The index. Either reused ot allocated from {@link #nextZpByteIdx}
     */
    private String getRegisterZpNameIdx(Registers.RegisterZp register) {
-      Registers.RegisterZp registerZp = register;
       for (String boundName : bindings.keySet()) {
          Value boundValue = bindings.get(boundName);
          if(boundValue instanceof Variable) {
             Registers.Register boundRegister = ((Variable) boundValue).getAllocation();
             if(boundRegister!=null && boundRegister.isZp()) {
                Registers.RegisterZp boundRegisterZp = (Registers.RegisterZp) boundRegister;
-               if(registerZp.getZp()==boundRegisterZp.getZp()) {
+               if(register.getZp()==boundRegisterZp.getZp()) {
                   // Found other register with same ZP address!
                   return boundName.substring(boundName.length()-1);
                }

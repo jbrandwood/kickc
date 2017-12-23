@@ -3,13 +3,11 @@
 .pc = $80d "Program"
   .const memLo = $fe
   .const memHi = $ff
-  .label char_cursor = 5
   .label line_cursor = 3
+  .label char_cursor = 5
   jsr main
 main: {
     .const f_2pi = $e2e5
-    .label _3 = 9
-    .label _12 = 9
     .label i = 2
     lda #<$4fb
     sta setFAC.w
@@ -34,9 +32,9 @@ main: {
     sta i
   b1:
     lda i
-    sta _3
+    sta setFAC.w
     lda #0
-    sta _3+1
+    sta setFAC.w+1
     jsr setFAC
     lda #<f_2pi
     sta mulFACbyMEM.mem
@@ -70,29 +68,28 @@ main: {
     bne b17
     rts
   b17:
-    lda print_ln._0
+    lda line_cursor
     sta char_cursor
-    lda print_ln._0+1
+    lda line_cursor+1
     sta char_cursor+1
     jmp b1
     f_i: .byte 0, 0, 0, 0, 0
     f_127: .byte 0, 0, 0, 0, 0
 }
 print_ln: {
-    .label _0 = 3
   b1:
-    lda _0
+    lda line_cursor
     clc
     adc #$28
-    sta _0
+    sta line_cursor
     bcc !+
-    inc _0+1
+    inc line_cursor+1
   !:
-    lda _0+1
+    lda line_cursor+1
     cmp char_cursor+1
     bcc b1
     bne !+
-    lda _0
+    lda line_cursor
     cmp char_cursor
     bcc b1
   !:
@@ -191,12 +188,11 @@ divMEMbyFAC: {
     rts
 }
 setFAC: {
-    .label _0 = 7
     .label w = 9
     lda w
-    sta _0
+    sta prepareMEM.mem
     lda w+1
-    sta _0+1
+    sta prepareMEM.mem+1
     jsr prepareMEM
     ldy $fe
     lda $ff

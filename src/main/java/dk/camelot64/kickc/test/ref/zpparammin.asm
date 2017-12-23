@@ -5,35 +5,35 @@
   .const SCREEN2 = $400+$28
   jsr main
 main: {
-    ldy #0
+    ldx #0
   b1:
-    tya
-    tax
-    inx
-    tya
+    txa
+    tay
+    iny
+    txa
     clc
     adc #2
     sta sum.c
     jsr sum
-    sta SCREEN,y
-    tya
-    tax
-    inx
-    tya
+    sta SCREEN,x
+    txa
+    tay
+    iny
+    txa
     clc
     adc #2
     sta sum2.c
     jsr sum2
-    sta SCREEN2,y
-    iny
-    cpy #$b
+    sta SCREEN2,x
+    inx
+    cpx #$b
     bne b1
     rts
 }
 sum2: {
     .label c = 2
-    sty $ff
-    txa
+    stx $ff
+    tya
     clc
     adc $ff
     clc
@@ -42,8 +42,8 @@ sum2: {
 }
 sum: {
     .label c = 2
-    sty $ff
-    txa
+    stx $ff
+    tya
     clc
     adc $ff
     clc

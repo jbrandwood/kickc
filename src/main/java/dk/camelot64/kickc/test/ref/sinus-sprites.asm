@@ -1,21 +1,21 @@
 .pc = $801 "Basic"
 :BasicUpstart(main)
 .pc = $80d "Program"
-  .const memLo = $fe
-  .const memHi = $ff
   .const PROCPORT = 1
   .const CHARGEN = $d000
-  .const SCREEN = $400
-  .const COLS = $d800
-  .const RASTER = $d012
-  .const BORDERCOL = $d020
   .const SPRITES_XPOS = $d000
   .const SPRITES_YPOS = $d001
   .const SPRITES_XMSB = $d010
+  .const RASTER = $d012
   .const SPRITES_ENABLE = $d015
   .const SPRITES_EXPAND_Y = $d017
   .const SPRITES_EXPAND_X = $d01d
+  .const BORDERCOL = $d020
   .const SPRITES_COLS = $d027
+  .const COLS = $d800
+  .const memLo = $fe
+  .const memHi = $ff
+  .const SCREEN = $400
   .const sinlen_x = $dd
   .const sintab_x = $1000
   .const sinlen_y = $c5
@@ -193,28 +193,24 @@ clear_screen: {
 }
 gen_sintab: {
     .const f_2pi = $e2e5
-    .label _0 = $e
-    .label _3 = $e
-    .label _13 = $e
-    .label _17 = $e
     .label _23 = $e
     .label i = 2
     .label min = 2
     .label length = 3
     .label sintab = 8
     txa
-    sta _0
+    sta setFAC.w
     lda #0
-    sta _0+1
+    sta setFAC.w+1
     jsr setFAC
     jsr setARGtoFAC
     lda #0
     tax
     tay
     lda min
-    sta _3
+    sta setFAC.w
     txa
-    sta _3+1
+    sta setFAC.w+1
     jsr setFAC
     lda #<f_min
     sta setMEMtoFAC.mem
@@ -257,9 +253,9 @@ gen_sintab: {
     sta i
   b1:
     lda i
-    sta _13
+    sta setFAC.w
     lda #0
-    sta _13+1
+    sta setFAC.w+1
     jsr setFAC
     lda #<f_2pi
     sta mulFACbyMEM.mem
@@ -272,9 +268,9 @@ gen_sintab: {
     sta setMEMtoFAC.mem+1
     jsr setMEMtoFAC
     lda length
-    sta _17
+    sta setFAC.w
     lda #0
-    sta _17+1
+    sta setFAC.w+1
     jsr setFAC
     lda #<f_i
     sta divMEMbyFAC.mem
@@ -379,12 +375,11 @@ divMEMbyFAC: {
     rts
 }
 setFAC: {
-    .label _0 = $c
     .label w = $e
     lda w
-    sta _0
+    sta prepareMEM.mem
     lda w+1
-    sta _0+1
+    sta prepareMEM.mem+1
     jsr prepareMEM
     ldy $fe
     lda $ff

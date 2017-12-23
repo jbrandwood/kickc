@@ -22,6 +22,10 @@ public class TestPrograms extends TestCase {
       helper = new ReferenceHelper("dk/camelot64/kickc/test/ref/");
    }
 
+   public void testSignedWords() throws IOException, URISyntaxException {
+      compileAndCompare("signed-words");
+   }
+
    public void testSinusSprites() throws IOException, URISyntaxException {
       compileAndCompare("sinus-sprites");
    }

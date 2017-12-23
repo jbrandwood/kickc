@@ -21,17 +21,17 @@ public class Pass2AliasElimination extends Pass2SsaOptimization {
    public boolean optimize() {
       final Aliases aliases = findAliases(getProgram());
       removeAliasAssignments(aliases);
-      replaceVariables(aliases.getReplacements());
+      replaceVariables(aliases.getReplacements(getSymbols()));
       for (AliasSet aliasSet : aliases.getAliasSets()) {
          StringBuilder str = new StringBuilder();
-         str.append(aliasSet.getKeepVar().toString(getProgram()));
+         str.append(aliasSet.getKeepVar(getSymbols()).toString(getProgram()));
          str.append(" = ");
-         for (VariableRef var : aliasSet.getEliminateVars()) {
+         for (VariableRef var : aliasSet.getEliminateVars(getSymbols())) {
             str.append(var.toString(getProgram()) + " ");
          }
          getLog().append("Alias " + str);
       }
-      deleteSymbols(aliases.getSymbolsToRemove());
+      deleteSymbols(aliases.getSymbolsToRemove(getSymbols()));
       return (aliases.size() > 0);
    }
 
@@ -96,19 +96,19 @@ public class Pass2AliasElimination extends Pass2SsaOptimization {
          }
       }
 
-      public List<VariableRef> getSymbolsToRemove() {
+      public List<VariableRef> getSymbolsToRemove(ProgramScope scope) {
          ArrayList<VariableRef> eliminates = new ArrayList<>();
          for (AliasSet alias : aliases) {
-            eliminates.addAll(alias.getEliminateVars());
+            eliminates.addAll(alias.getEliminateVars(scope));
          }
          return eliminates;
       }
 
-      public Map<VariableRef, VariableRef> getReplacements() {
+      public Map<VariableRef, VariableRef> getReplacements(ProgramScope scope) {
          HashMap<VariableRef, VariableRef> replacements = new LinkedHashMap<>();
          for (AliasSet aliasSet : aliases) {
-            VariableRef keepVar = aliasSet.getKeepVar();
-            for (VariableRef var : aliasSet.getEliminateVars()) {
+            VariableRef keepVar = aliasSet.getKeepVar(scope);
+            for (VariableRef var : aliasSet.getEliminateVars(scope)) {
                if (!var.equals(keepVar)) {
                   replacements.put(var, keepVar);
                }
@@ -207,36 +207,59 @@ public class Pass2AliasElimination extends Pass2SsaOptimization {
          vars.addAll(aliasSet.getVars());
       }
 
-      public VariableRef getKeepVar() {
-         VariableRef keep = null;
-         List<VariableRef> vars = new ArrayList<>(this.vars);
-         Collections.sort(vars, new Comparator<VariableRef>() {
-            @Override
-            public int compare(VariableRef o1, VariableRef o2) {
-               return o1.getFullName().compareTo(o2.getFullName());
-            }
-         });
+      public VariableRef getKeepVar(ProgramScope scope) {
+         // Score all base names (without versions for versioned vars, full name for intermediates)
+         int maxScore = 0;
+         String maxName = null;
+         Map<String, Integer> varNameScore = new LinkedHashMap<>();
          for (VariableRef var : vars) {
-            if (keep == null) {
-               keep = var;
+            String name;
+            int score;
+            Variable variable = scope.getVariable(var);
+            if(variable.isDeclaredConstant()) {
+               name = var.getFullNameUnversioned();
+               score = 100;
+            } else if(var.isVersion()) {
+               name = var.getFullNameUnversioned();
+               score = 4-var.getScopeDepth();
             } else {
-               if (var.isVersion()) {
-                  if (keep.isVersion()) {
-                     if (var.getScopeDepth() < keep.getScopeDepth()) {
-                        keep = var;
-                     }
-                  } else {
-                     keep = var;
-                  }
+               // must be intermediate
+               name = var.getFullName();
+               score = 2-var.getScopeDepth();
+            }
+            Integer nameScore = varNameScore.get(name);
+            if(nameScore==null) {
+               nameScore = 0;
+            }
+            nameScore = nameScore + score;
+            varNameScore.put(name, nameScore);
+            if(nameScore>maxScore) {
+               maxName = name;
+               maxScore = nameScore;
+            }
+         }
+         // Find first var with highest scoring name
+         List<VariableRef> vars = new ArrayList<>(this.vars);
+         Collections.sort(vars, Comparator.comparing(SymbolRef::getFullName));
+         for (VariableRef var : vars) {
+            if(var.isVersion()) {
+               if(maxName.equals(var.getFullNameUnversioned())) {
+                  return var;
+               }
+            }  else {
+               if(maxName.equals(var.getFullName())) {
+                  return var;
                }
             }
          }
-         return keep;
+
+         throw new RuntimeException("Keep variable unexpectedly not found!");
+
       }
 
-      public List<VariableRef> getEliminateVars() {
+      public List<VariableRef> getEliminateVars(ProgramScope scope) {
          List<VariableRef> eliminate = new ArrayList<>();
-         VariableRef keepVar = getKeepVar();
+         VariableRef keepVar = getKeepVar(scope);
          for (VariableRef var : vars) {
             if (!var.equals(keepVar)) {
                eliminate.add(var);
@@ -269,6 +292,10 @@ public class Pass2AliasElimination extends Pass2SsaOptimization {
                boolean lMatch = false;
                for (StatementPhiBlock.PhiVariable phiVariable : phi.getPhiVariables()) {
                   if (lMatch) {
+                     if (aliasSet.contains(phiVariable.getVariable())) {
+                        // Assigning inside tha alias set again - no need to check the variables
+                        continue;
+                     }
                      for (StatementPhiBlock.PhiRValue phiRValue : phiVariable.getValues()) {
                         RValue rValue = phiRValue.getrValue();
                         if (aliasSet.contains(rValue)) {
@@ -308,7 +335,7 @@ public class Pass2AliasElimination extends Pass2SsaOptimization {
                      ControlFlowBlock aliasAssignmentBlock = program.getGraph().getAssignmentBlock(alias);
                      ScopeRef aliasScope = aliasAssignmentBlock.getScope();
                      ScopeRef varScope = block.getScope();
-                     if (!varScope.equals(aliasScope) || !variable.getScopeNames().equals(alias.getScopeNames())) {
+                     if (!alias.isIntermediate() && (!varScope.equals(aliasScope) || !variable.getScopeNames().equals(alias.getScopeNames()))) {
                         program.getLog().append("Not aliassing across scopes: " + variable + " " + alias);
                      } else {
                         aliases.add(variable, alias);

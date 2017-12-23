@@ -34,24 +34,19 @@ main: {
     jmp b1
 }
 lines: {
-    .label _2 = 3
-    .label _3 = 4
     .label l = 2
     lda #0
     sta l
   b1:
     ldx l
     lda lines_x,x
-    tay
+    sta line.x0
     lda lines_x+1,x
-    sta _2
+    sta line.x1
     lda lines_y,x
-    sta _3
+    tay
     lda lines_y+1,x
-    tax
-    sty line.x0
-    ldy _3
-    stx line.y1
+    sta line.y1
     jsr line
     inc l
     lda l
@@ -60,9 +55,9 @@ lines: {
     rts
 }
 line: {
-    .label x0 = 5
-    .label x1 = 3
-    .label y1 = 4
+    .label x0 = 3
+    .label x1 = 4
+    .label y1 = 5
     .label xd = 7
     .label yd = $a
     lda x0
@@ -95,8 +90,6 @@ line: {
   b3:
     sty line_ydxi.y
     ldx x0
-    lda y1
-    sta line_ydxi.y1
     lda yd
     sta line_ydxi.yd
     lda xd
@@ -148,6 +141,8 @@ line: {
     ldx x1
     lda y1
     sta line_xdyd.y
+    lda x0
+    sta line_xdyd.x1
     lda xd
     sta line_xdyd.xd
     lda yd
@@ -157,8 +152,6 @@ line: {
   b10:
     sty line_ydxd.y
     ldx x0
-    lda y1
-    sta line_ydxd.y1
     lda yd
     sta line_ydxd.yd
     lda xd
@@ -175,6 +168,8 @@ line: {
     ldx x1
     lda y1
     sta line_xdyi.y
+    lda x0
+    sta line_xdyi.x1
     lda xd
     sta line_xdyi.xd
     lda yd

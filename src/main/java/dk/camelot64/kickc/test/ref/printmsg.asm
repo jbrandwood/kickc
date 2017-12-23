@@ -22,9 +22,9 @@ main: {
     lda #>$400
     sta line_cursor+1
     jsr print_ln
-    lda print_ln._0
+    lda line_cursor
     sta char_cursor
-    lda print_ln._0+1
+    lda line_cursor+1
     sta char_cursor+1
     lda #<msg2
     sta print_str.str
@@ -32,9 +32,9 @@ main: {
     sta print_str.str+1
     jsr print_str
     jsr print_ln
-    lda print_ln._0
+    lda line_cursor
     sta char_cursor
-    lda print_ln._0+1
+    lda line_cursor+1
     sta char_cursor+1
     lda #<msg3
     sta print_str.str
@@ -45,20 +45,19 @@ main: {
     rts
 }
 print_ln: {
-    .label _0 = 2
   b1:
-    lda _0
+    lda line_cursor
     clc
     adc #$28
-    sta _0
+    sta line_cursor
     bcc !+
-    inc _0+1
+    inc line_cursor+1
   !:
-    lda _0+1
+    lda line_cursor+1
     cmp char_cursor+1
     bcc b1
     bne !+
-    lda _0
+    lda line_cursor
     cmp char_cursor
     bcc b1
   !:

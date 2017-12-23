@@ -235,57 +235,10 @@ public class AsmFragmentSignature {
                }
             }
          }
-         // Create a new suitable name
-         if (Registers.RegisterType.ZP_BYTE.equals(register.getType())) {
-            SymbolType varType = ((Variable) value).getType();
-            String name = getTypePrefix(varType) + getRegisterName(register);
-            bindings.put(name, value);
-            return name;
-         } else if (Registers.RegisterType.REG_X_BYTE.equals(register.getType())) {
-            SymbolType varType = ((Variable) value).getType();
-            if (SymbolType.isByte(varType)) {
-               String name = "vbuxx";
-               bindings.put(name, value);
-               return name;
-            } else if (SymbolType.isSByte(varType)) {
-               String name = "vbsxx";
-               bindings.put(name, value);
-               return name;
-            }
-         } else if (Registers.RegisterType.REG_Y_BYTE.equals(register.getType())) {
-            SymbolType varType = ((Variable) value).getType();
-            if (SymbolType.isByte(varType)) {
-               String name = "vbuyy";
-               bindings.put(name, value);
-               return name;
-            } else if (SymbolType.isSByte(varType)) {
-               String name = "vbsyy";
-               bindings.put(name, value);
-               return name;
-            }
-         } else if (Registers.RegisterType.REG_A_BYTE.equals(register.getType())) {
-            SymbolType varType = ((Variable) value).getType();
-            if (SymbolType.isByte(varType)) {
-               String name = "vbuaa";
-               bindings.put(name, value);
-               return name;
-            } else if (SymbolType.isSByte(varType)) {
-               String name = "vbsaa";
-               bindings.put(name, value);
-               return name;
-            }
-         } else if (Registers.RegisterType.ZP_WORD.equals(register.getType())) {
-            SymbolType varType = ((Variable) value).getType();
-            String name = getTypePrefix(varType) + getRegisterName(register);
-            bindings.put(name, value);
-            return name;
-         } else if (Registers.RegisterType.ZP_BOOL.equals(register.getType())) {
-            String name = "zpbo" + nextZpBoolIdx++;
-            bindings.put(name, value);
-            return name;
-         } else if (Registers.RegisterType.REG_ALU.equals(register.getType())) {
-            throw new AsmFragment.AluNotApplicableException();
-         }
+         SymbolType varType = ((Variable) value).getType();
+         String name = getTypePrefix(varType) + getRegisterName(register);
+         bindings.put(name, value);
+         return name;
       } else if (value instanceof ConstantVar || value instanceof ConstantValue) {
          SymbolType constType;
          if (value instanceof ConstantVar) {
@@ -293,29 +246,14 @@ public class AsmFragmentSignature {
          } else {
             constType = SymbolTypeInference.inferType(program.getScope(), (ConstantValue) value);
          }
-         if (SymbolType.isByte(constType)) {
-            String name = "vbuc" + nextConstByteIdx++;
-            bindings.put(name, value);
-            return name;
-         } else if (SymbolType.isSByte(constType)) {
-            String name = "vbsc" + nextConstByteIdx++;
-            bindings.put(name, value);
-            return name;
-         } else if (SymbolType.isWord(constType)) {
-            String name = "vwuc" + nextConstByteIdx++;
-            bindings.put(name, value);
-            return name;
-         } else if (SymbolType.isSWord(constType)) {
-            String name = "vwsc" + nextConstByteIdx++;
-            bindings.put(name, value);
-            return name;
-         } else if (constType instanceof SymbolTypePointer && SymbolType.BYTE.equals(((SymbolTypePointer) constType).getElementType())) {
-            String name = "vwuc" + nextConstByteIdx++;
-            bindings.put(name, value);
-            return name;
+         String name;
+         if (constType instanceof SymbolTypePointer && SymbolType.BYTE.equals(((SymbolTypePointer) constType).getElementType())) {
+            name = "vwuc" + nextConstByteIdx++;
          } else {
-            throw new RuntimeException("Unhandled constant type " + constType);
+            name = getTypePrefix(constType) + "c" + nextConstByteIdx++;
          }
+         bindings.put(name, value);
+         return name;
       } else if (value instanceof Label) {
          String name = "la" + nextLabelIdx++;
          bindings.put(name, value);
@@ -363,6 +301,14 @@ public class AsmFragmentSignature {
          return "z" + getRegisterZpNameIdx((Registers.RegisterZp) register);
       } else if (Registers.RegisterType.ZP_WORD.equals(register.getType())) {
          return "z" + getRegisterZpNameIdx((Registers.RegisterZp) register);
+      } else if (Registers.RegisterType.REG_A_BYTE.equals(register.getType())) {
+         return "aa";
+      } else if (Registers.RegisterType.REG_X_BYTE.equals(register.getType())) {
+         return "xx";
+      } else if (Registers.RegisterType.REG_Y_BYTE.equals(register.getType())) {
+         return "yy";
+      } else if (Registers.RegisterType.REG_ALU.equals(register.getType())) {
+         throw new AsmFragment.AluNotApplicableException();
       } else {
          throw new RuntimeException("Not implemented "+register.getType());
       }

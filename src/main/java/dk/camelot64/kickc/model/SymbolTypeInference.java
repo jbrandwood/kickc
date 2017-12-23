@@ -62,11 +62,11 @@ public class SymbolTypeInference {
             throw new RuntimeException("Type error: Dereferencing a non-pointer " + subType);
          }
       } else if (Operator.LOWBYTE.equals(operator)) {
-         if (subType instanceof SymbolTypePointer || SymbolType.WORD.equals(subType)) {
+         if (subType instanceof SymbolTypePointer || SymbolType.WORD.equals(subType) || SymbolType.WORD.equals(subType)) {
             return SymbolType.BYTE;
          }
       } else if (Operator.HIBYTE.equals(operator)) {
-         if (subType instanceof SymbolTypePointer || SymbolType.WORD.equals(subType)) {
+         if (subType instanceof SymbolTypePointer || SymbolType.WORD.equals(subType) || SymbolType.SWORD.equals(subType) ) {
             return SymbolType.BYTE;
          }
       } else if (Operator.CAST_BYTE.equals(operator)) {
@@ -117,7 +117,7 @@ public class SymbolTypeInference {
             }
             if (SymbolType.WORD.equals(type1) || SymbolType.WORD.equals(type2)) {
                return SymbolType.WORD;
-            } else if (isByte(type1) && isByte(type2)) {
+            } else if (SymbolType.isByte(type1) && SymbolType.isByte(type2)) {
                return SymbolType.BYTE;
             } else if (SymbolType.SBYTE.equals(type1) && SymbolType.SBYTE.equals(type2)) {
                return SymbolType.SBYTE;
@@ -129,7 +129,7 @@ public class SymbolTypeInference {
             }
             throw new RuntimeException("Type inference case not handled " + type1 + " " + operator + " " + type2);
          case "/":
-            if (type1 instanceof SymbolTypePointer && isByte(type2)) {
+            if (type1 instanceof SymbolTypePointer && SymbolType.isByte(type2)) {
                return type1;
             }
          case "&":
@@ -137,17 +137,21 @@ public class SymbolTypeInference {
          case "^":
             if (SymbolType.WORD.equals(type1) || SymbolType.WORD.equals(type2)) {
                return SymbolType.WORD;
-            } else if (isByte(type1) && isByte(type2)) {
+            } else if (SymbolType.isByte(type1) && SymbolType.isByte(type2)) {
                return SymbolType.BYTE;
             }
 
             throw new RuntimeException("Type inference case not handled " + type1 + " " + operator + " " + type2);
          case "<<":
          case ">>":
-            if (SymbolType.WORD.equals(type1)) {
-               return SymbolType.WORD;
-            } else if (isByte(type1)) {
+            if (SymbolType.isByte(type1)) {
                return SymbolType.BYTE;
+            } else if (SymbolType.isSByte(type1)) {
+               return SymbolType.SBYTE;
+            } else if (SymbolType.isWord(type1)) {
+               return SymbolType.WORD;
+            } else if (SymbolType.isSWord(type1)) {
+               return SymbolType.SWORD;
             }
             throw new RuntimeException("Type inference case not handled " + type1 + " " + operator + " " + type2);
          default:
@@ -156,7 +160,7 @@ public class SymbolTypeInference {
    }
 
    private static SymbolType inferPlus(SymbolType type1, SymbolType type2) {
-      if (type1.equals(SymbolType.STRING) && isByte(type2)) {
+      if (type1.equals(SymbolType.STRING) && SymbolType.isByte(type2)) {
          return SymbolType.STRING;
       } else if (type1.equals(SymbolType.STRING) && SymbolType.STRING.equals(type2)) {
          return SymbolType.STRING;
@@ -164,16 +168,16 @@ public class SymbolTypeInference {
       if (type1 instanceof SymbolTypePointer && isInteger(type2)) {
          return new SymbolTypePointer(((SymbolTypePointer) type1).getElementType());
       }
-      if (isByte(type1) && isByte(type2)) {
+      if (SymbolType.isByte(type1) && SymbolType.isByte(type2)) {
          return SymbolType.BYTE;
       }
-      if (isSByte(type1) && isSByte(type2)) {
+      if (SymbolType.isSByte(type1) && SymbolType.isSByte(type2)) {
          return SymbolType.SBYTE;
       }
-      if (isWord(type1) && isWord(type2) || isByte(type2)) {
+      if (SymbolType.isWord(type1) && (SymbolType.isWord(type2) || SymbolType.isByte(type2))) {
          return SymbolType.WORD;
       }
-      if (isSWord(type1) && isSWord(type2) || isSByte(type2)) {
+      if (SymbolType.isSWord(type1) && (SymbolType.isSWord(type2) || SymbolType.isSByte(type2))) {
          return SymbolType.SWORD;
       }
       throw new RuntimeException("Type inference case not handled " + type1 + " " + "+" + " " + type2);
@@ -186,16 +190,16 @@ public class SymbolTypeInference {
       if (type1 instanceof SymbolTypePointer && type2 instanceof SymbolTypePointer) {
          return SymbolType.WORD;
       }
-      if (isByte(type1) && isByte(type2)) {
+      if (SymbolType.isByte(type1) && SymbolType.isByte(type2)) {
          return SymbolType.BYTE;
       }
-      if (isSByte(type1) && isSByte(type2)) {
+      if (SymbolType.isSByte(type1) && SymbolType.isSByte(type2)) {
          return SymbolType.SBYTE;
       }
-      if (isWord(type1) && isWord(type2)) {
+      if (SymbolType.isWord(type1) && SymbolType.isWord(type2)) {
          return SymbolType.WORD;
       }
-      if (isSWord(type1) && isSWord(type2)) {
+      if (SymbolType.isSWord(type1) && SymbolType.isSWord(type2)) {
          return SymbolType.SWORD;
       }
       throw new RuntimeException("Type inference case not handled " + type1 + " " + "+" + " " + type2);
@@ -205,59 +209,18 @@ public class SymbolTypeInference {
    private static boolean isInteger(SymbolType type) {
       if (SymbolType.BYTE.equals(type)) {
          return true;
-      } else if (SymbolType.WORD.equals(type)) {
+      } else if(SymbolType.WORD.equals(type)) {
          return true;
-      } else if (SymbolType.SBYTE.equals(type)) {
+      } else if(SymbolType.SBYTE.equals(type)) {
          return true;
-      } else if (SymbolType.SWORD.equals(type)) {
+      } else if(SymbolType.SWORD.equals(type)) {
          return true;
-      } else if (type instanceof SymbolTypeInline) {
+      } else if(type instanceof SymbolTypeInline) {
          return true;
       } else {
          return false;
       }
    }
-
-   private static boolean isByte(SymbolType type) {
-      if (SymbolType.BYTE.equals(type)) {
-         return true;
-      } else if (type instanceof SymbolTypeInline) {
-         return ((SymbolTypeInline) type).isByte();
-      } else {
-         return false;
-      }
-   }
-
-   private static boolean isSByte(SymbolType type) {
-      if (SymbolType.SBYTE.equals(type)) {
-         return true;
-      } else if (type instanceof SymbolTypeInline) {
-         return ((SymbolTypeInline) type).isSByte();
-      } else {
-         return false;
-      }
-   }
-
-   private static boolean isWord(SymbolType type) {
-      if (SymbolType.WORD.equals(type)) {
-         return true;
-      } else if (type instanceof SymbolTypeInline) {
-         return ((SymbolTypeInline) type).isWord();
-      } else {
-         return false;
-      }
-   }
-
-   private static boolean isSWord(SymbolType type) {
-      if (SymbolType.SWORD.equals(type)) {
-         return true;
-      } else if (type instanceof SymbolTypeInline) {
-         return ((SymbolTypeInline) type).isSWord();
-      } else {
-         return false;
-      }
-   }
-
 
    public static SymbolType inferType(ProgramScope symbols, RValue rValue) {
       SymbolType type = null;

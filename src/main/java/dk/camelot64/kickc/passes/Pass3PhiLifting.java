@@ -41,13 +41,22 @@ public class Pass3PhiLifting {
                      ControlFlowBlock predecessorBlock = graph.getBlock(predecessorRef);
                      VariableRef rValVarRef = (VariableRef) phiRValue.getrValue();
                      Variable newVar;
-                     if(rValVarRef.isVersion()) {
-                        Variable rValVar = program.getScope().getVariable(rValVarRef);
-                        newVar = ((VariableVersion) rValVar).getVersionOf().createVersion();
+                     if(phiVariable.getVariable().isVersion()) {
+                        Variable lValVar = program.getScope().getVariable(phiVariable.getVariable());
+                        newVar = ((VariableVersion) lValVar).getVersionOf().createVersion();
                      } else {
-                        Symbol predecessorSymbol = programScope.getSymbol(predecessorRef);
-                        newVar = predecessorSymbol.getScope().addVariableIntermediate();
+                        throw new RuntimeException("Only versions! "+phiVariable.getVariable());
+                        //   Symbol predecessorSymbol = programScope.getSymbol(predecessorRef);
+                        //   newVar = predecessorSymbol.getScope().addVariableIntermediate();
                      }
+                     // If the PHI LValue does not work when lifting - try the rValue instead! Original code below
+                     //if(rValVarRef.isVersion()) {
+                     //   Variable rValVar = program.getScope().getVariable(rValVarRef);
+                     //   newVar = ((VariableVersion) rValVar).getVersionOf().createVersion();
+                     //} else {
+                     //   Symbol predecessorSymbol = programScope.getSymbol(predecessorRef);
+                     //   newVar = predecessorSymbol.getScope().addVariableIntermediate();
+                     //}
                      Symbol phiLValue = programScope.getSymbol(phiVariable.getVariable());
                      newVar.setType(phiLValue.getType());
                      newVar.setInferredType(true);

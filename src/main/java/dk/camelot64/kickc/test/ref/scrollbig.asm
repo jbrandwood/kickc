@@ -50,12 +50,10 @@ scroll_soft: {
 }
 scroll_bit: {
     .label _4 = 9
-    .label _5 = 3
     .label c = 9
     .label sc = 5
+    lsr current_bit
     lda current_bit
-    lsr
-    sta current_bit
     bne b1
     jsr next_char
     sta c
@@ -70,10 +68,10 @@ scroll_bit: {
     lda #<CHARGEN
     clc
     adc _4
-    sta _5
+    sta current_chargen
     lda #>CHARGEN
     adc _4+1
-    sta _5+1
+    sta current_chargen+1
     lda #$80
     sta current_bit
   b1:

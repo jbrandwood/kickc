@@ -336,6 +336,8 @@ public class AsmFragmentSignature {
          return "vbs";
       } else if (SymbolType.isWord(type)) {
          return "vwu";
+      } else if (SymbolType.isSWord(type)) {
+         return "vws";
       } else if (type instanceof SymbolTypePointer ) {
          SymbolType elementType = ((SymbolTypePointer) type).getElementType();
          if (SymbolType.isByte(elementType)) {

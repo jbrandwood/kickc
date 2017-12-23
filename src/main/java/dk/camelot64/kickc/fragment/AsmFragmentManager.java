@@ -111,6 +111,9 @@ public class AsmFragmentManager {
 
       List<FragmentSynthesis> synths = new ArrayList<>();
 
+      synths.add(new FragmentSynthesis("(.*)pbuc(.)(.*)", null, null, "$1vwuc$2$3", null, null));
+      synths.add(new FragmentSynthesis("(.*)pbsc(.)(.*)", null, null, "$1vwuc$2$3", null, null));
+
       synths.add(new FragmentSynthesis("(.*)=(.*)_(band|bor|bxor|plus)_(vb.aa)", ".*=vb.aa_.*", null, "$1=$4_$3_$2", null, null));
       synths.add(new FragmentSynthesis("(.*)=(.*)_(band|bor|bxor|plus)_(vb.xx)", ".*=vb.[ax][ax]_.*", null, "$1=$4_$3_$2", null, null));
       synths.add(new FragmentSynthesis("(.*)=(.*)_(band|bor|bxor|plus)_(vb.yy)", ".*=vb.[axy][axy]_.*", null, "$1=$4_$3_$2", null, null));

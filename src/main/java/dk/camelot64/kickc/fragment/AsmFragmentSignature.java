@@ -246,12 +246,7 @@ public class AsmFragmentSignature {
          } else {
             constType = SymbolTypeInference.inferType(program.getScope(), (ConstantValue) value);
          }
-         String name;
-         if (constType instanceof SymbolTypePointer && SymbolType.BYTE.equals(((SymbolTypePointer) constType).getElementType())) {
-            name = "vwuc" + nextConstByteIdx++;
-         } else {
-            name = getTypePrefix(constType) + "c" + nextConstByteIdx++;
-         }
+         String name = getTypePrefix(constType) + "c" + nextConstByteIdx++;
          bindings.put(name, value);
          return name;
       } else if (value instanceof Label) {
@@ -276,7 +271,7 @@ public class AsmFragmentSignature {
          return "vwu";
       } else if (SymbolType.isSWord(type)) {
          return "vws";
-      } else if (type instanceof SymbolTypePointer ) {
+      } else if (type instanceof SymbolTypePointer) {
          SymbolType elementType = ((SymbolTypePointer) type).getElementType();
          if (SymbolType.isByte(elementType)) {
             return "pbu";
@@ -285,10 +280,10 @@ public class AsmFragmentSignature {
          } else if (SymbolType.isWord(elementType)) {
             return "pwu";
          } else {
-            throw new RuntimeException("Not implemented "+type);
+            throw new RuntimeException("Not implemented " + type);
          }
       } else {
-         throw new RuntimeException("Not implemented "+type);
+         throw new RuntimeException("Not implemented " + type);
       }
    }
 
@@ -299,7 +294,7 @@ public class AsmFragmentSignature {
     * @return The register part of the binding name.
     */
    private String getRegisterName(Registers.Register register) {
-      if(Registers.RegisterType.ZP_BYTE.equals(register.getType())) {
+      if (Registers.RegisterType.ZP_BYTE.equals(register.getType())) {
          return "z" + getRegisterZpNameIdx((Registers.RegisterZp) register);
       } else if (Registers.RegisterType.ZP_WORD.equals(register.getType())) {
          return "z" + getRegisterZpNameIdx((Registers.RegisterZp) register);
@@ -312,7 +307,7 @@ public class AsmFragmentSignature {
       } else if (Registers.RegisterType.REG_ALU.equals(register.getType())) {
          throw new AsmFragment.AluNotApplicableException();
       } else {
-         throw new RuntimeException("Not implemented "+register.getType());
+         throw new RuntimeException("Not implemented " + register.getType());
       }
    }
 
@@ -325,13 +320,13 @@ public class AsmFragmentSignature {
    private String getRegisterZpNameIdx(Registers.RegisterZp register) {
       for (String boundName : bindings.keySet()) {
          Value boundValue = bindings.get(boundName);
-         if(boundValue instanceof Variable) {
+         if (boundValue instanceof Variable) {
             Registers.Register boundRegister = ((Variable) boundValue).getAllocation();
-            if(boundRegister!=null && boundRegister.isZp()) {
+            if (boundRegister != null && boundRegister.isZp()) {
                Registers.RegisterZp boundRegisterZp = (Registers.RegisterZp) boundRegister;
-               if(register.getZp()==boundRegisterZp.getZp()) {
+               if (register.getZp() == boundRegisterZp.getZp()) {
                   // Found other register with same ZP address!
-                  return boundName.substring(boundName.length()-1);
+                  return boundName.substring(boundName.length() - 1);
                }
             }
          }

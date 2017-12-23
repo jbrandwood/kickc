@@ -159,9 +159,10 @@ public class AsmFragmentSignature {
       ControlFlowBlock destinationBlock = graph.getBlock(destination);
       String destinationLabel;
       if (destinationBlock.hasPhiBlock()) {
-         destinationLabel = (destinationBlock.getLabel().getLocalName() + "_from_" + block.getLabel().getLocalName()).replace(
-               '@',
-               'b').replace(':', '_');
+         destinationLabel =
+               (destinationBlock.getLabel().getLocalName() +
+                     "_from_" +
+                     block.getLabel().getLocalName()).replace('@', 'b').replace(':', '_');
       } else {
          destinationLabel = destination.getLocalName();
       }

@@ -1,4 +1,4 @@
-// Generated from /Users/jespergravgaard/c64/src/kickc/src/main/java/dk/camelot64/kickc/parser/KickC.g4 by ANTLR 4.7
+// Generated from C:/c64/src/kickc/src/main/java/dk/camelot64/kickc/parser\KickC.g4 by ANTLR 4.7
 package dk.camelot64.kickc.parser;
 import org.antlr.v4.runtime.tree.ParseTreeVisitor;
 
@@ -198,20 +198,6 @@ public interface KickCVisitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitTypeSignedSimple(KickCParser.TypeSignedSimpleContext ctx);
 	/**
-	 * Visit a parse tree produced by the {@code initExpr}
-	 * labeled alternative in {@link KickCParser#initializer}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitInitExpr(KickCParser.InitExprContext ctx);
-	/**
-	 * Visit a parse tree produced by the {@code initList}
-	 * labeled alternative in {@link KickCParser#initializer}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitInitList(KickCParser.InitListContext ctx);
-	/**
 	 * Visit a parse tree produced by the {@code lvalueName}
 	 * labeled alternative in {@link KickCParser#lvalue}.
 	 * @param ctx the parse tree
@@ -288,6 +274,13 @@ public interface KickCVisitor<T> extends ParseTreeVisitor<T> {
 	 * @return the visitor result
 	 */
 	T visitExprChar(KickCParser.ExprCharContext ctx);
+	/**
+	 * Visit a parse tree produced by the {@code initList}
+	 * labeled alternative in {@link KickCParser#expr}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitInitList(KickCParser.InitListContext ctx);
 	/**
 	 * Visit a parse tree produced by the {@code exprCast}
 	 * labeled alternative in {@link KickCParser#expr}.

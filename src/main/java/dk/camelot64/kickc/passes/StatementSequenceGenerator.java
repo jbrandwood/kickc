@@ -138,11 +138,11 @@ public class StatementSequenceGenerator extends KickCBaseVisitor<Object> {
    public Object visitDeclVar(KickCParser.DeclVarContext ctx) {
       SymbolType type = (SymbolType) visit(ctx.typeDecl());
       String varName = ctx.NAME().getText();
-      KickCParser.InitializerContext initializer = ctx.initializer();
       VariableUnversioned lValue = getCurrentSymbols().addVariable(varName, type);
       if (ctx.getChild(0).getText().equals("const")) {
          lValue.setDeclaredConstant(true);
       }
+      KickCParser.ExprContext initializer = ctx.expr();
       if (initializer != null) {
          addInitialAssignment(initializer, lValue);
       }
@@ -269,7 +269,7 @@ public class StatementSequenceGenerator extends KickCBaseVisitor<Object> {
       } else {
          lValue = getCurrentSymbols().getVariable(varName);
       }
-      KickCParser.InitializerContext initializer = forDeclCtx.initializer();
+      KickCParser.ExprContext initializer = forDeclCtx.expr();
       if (initializer != null) {
          addInitialAssignment(initializer, lValue);
       }
@@ -388,7 +388,7 @@ public class StatementSequenceGenerator extends KickCBaseVisitor<Object> {
       return null;
    }
 
-   private void addInitialAssignment(KickCParser.InitializerContext initializer, Variable lValue) {
+   private void addInitialAssignment(KickCParser.ExprContext initializer, Variable lValue) {
       PrePostModifierHandler.addPreModifiers(this, initializer);
       RValue rValue = (RValue) visit(initializer);
       Statement stmt = new StatementAssignment(lValue, rValue);
@@ -449,14 +449,9 @@ public class StatementSequenceGenerator extends KickCBaseVisitor<Object> {
    }
 
    @Override
-   public RValue visitInitExpr(KickCParser.InitExprContext ctx) {
-      return (RValue) visit(ctx.expr());
-   }
-
-   @Override
    public RValue visitInitList(KickCParser.InitListContext ctx) {
       List<RValue> initValues = new ArrayList<>();
-      for (KickCParser.InitializerContext initializer : ctx.initializer()) {
+      for (KickCParser.ExprContext initializer : ctx.expr()) {
          RValue rValue = (RValue) visit(initializer);
          initValues.add(rValue);
       }

@@ -65,11 +65,6 @@ public class ParseTreeConstantEvaluator extends KickCBaseVisitor<ConstantValue> 
    }
 
    @Override
-   public ConstantValue visitInitExpr(KickCParser.InitExprContext ctx) {
-      return visit(ctx.expr());
-   }
-
-   @Override
    public ConstantValue visitInitList(KickCParser.InitListContext ctx) {
       throw new NotConstantException();
    }

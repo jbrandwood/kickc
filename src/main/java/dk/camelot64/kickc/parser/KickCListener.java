@@ -1,4 +1,4 @@
-// Generated from /Users/jespergravgaard/c64/src/kickc/src/main/java/dk/camelot64/kickc/parser/KickC.g4 by ANTLR 4.7
+// Generated from C:/c64/src/kickc/src/main/java/dk/camelot64/kickc/parser\KickC.g4 by ANTLR 4.7
 package dk.camelot64.kickc.parser;
 import org.antlr.v4.runtime.tree.ParseTreeListener;
 
@@ -326,30 +326,6 @@ public interface KickCListener extends ParseTreeListener {
 	 */
 	void exitTypeSignedSimple(KickCParser.TypeSignedSimpleContext ctx);
 	/**
-	 * Enter a parse tree produced by the {@code initExpr}
-	 * labeled alternative in {@link KickCParser#initializer}.
-	 * @param ctx the parse tree
-	 */
-	void enterInitExpr(KickCParser.InitExprContext ctx);
-	/**
-	 * Exit a parse tree produced by the {@code initExpr}
-	 * labeled alternative in {@link KickCParser#initializer}.
-	 * @param ctx the parse tree
-	 */
-	void exitInitExpr(KickCParser.InitExprContext ctx);
-	/**
-	 * Enter a parse tree produced by the {@code initList}
-	 * labeled alternative in {@link KickCParser#initializer}.
-	 * @param ctx the parse tree
-	 */
-	void enterInitList(KickCParser.InitListContext ctx);
-	/**
-	 * Exit a parse tree produced by the {@code initList}
-	 * labeled alternative in {@link KickCParser#initializer}.
-	 * @param ctx the parse tree
-	 */
-	void exitInitList(KickCParser.InitListContext ctx);
-	/**
 	 * Enter a parse tree produced by the {@code lvalueName}
 	 * labeled alternative in {@link KickCParser#lvalue}.
 	 * @param ctx the parse tree
@@ -481,6 +457,18 @@ public interface KickCListener extends ParseTreeListener {
 	 * @param ctx the parse tree
 	 */
 	void exitExprChar(KickCParser.ExprCharContext ctx);
+	/**
+	 * Enter a parse tree produced by the {@code initList}
+	 * labeled alternative in {@link KickCParser#expr}.
+	 * @param ctx the parse tree
+	 */
+	void enterInitList(KickCParser.InitListContext ctx);
+	/**
+	 * Exit a parse tree produced by the {@code initList}
+	 * labeled alternative in {@link KickCParser#expr}.
+	 * @param ctx the parse tree
+	 */
+	void exitInitList(KickCParser.InitListContext ctx);
 	/**
 	 * Enter a parse tree produced by the {@code exprCast}
 	 * labeled alternative in {@link KickCParser#expr}.

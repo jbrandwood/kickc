@@ -33,7 +33,7 @@ parameterDecl
     : typeDecl NAME ;
 
 declVar
-    : ('const')? typeDecl NAME ('=' initializer)? ';'
+    : ('const')? typeDecl NAME ('=' expr)? ';'
     ;
 
 stmtSeq
@@ -54,7 +54,7 @@ stmt
     ;
 
 forDeclaration
-    : typeDecl? NAME ('=' initializer)? #forDecl
+    : typeDecl? NAME ('=' expr)? #forDecl
     ;
 
 forIteration
@@ -67,11 +67,6 @@ typeDecl
     | 'signed' SIMPLETYPE  #typeSignedSimple
     | typeDecl '*' #typePtr
     | typeDecl '[' (expr)? ']' #typeArray
-    ;
-
-initializer
-    : expr #initExpr
-    | '{' initializer (',' initializer )* '}' #initList
     ;
 
 lvalue
@@ -99,6 +94,7 @@ expr
     | expr ( '|' ) expr #exprBinary
     | expr ( '&&' )  expr #exprBinary
     | expr ( '||' )  expr #exprBinary
+    | '{' expr (',' expr )* '}' #initList
     | NAME  #exprId
     | NUMBER #exprNumber
     | STRING #exprString

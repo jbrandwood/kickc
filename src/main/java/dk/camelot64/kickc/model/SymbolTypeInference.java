@@ -1,5 +1,6 @@
 package dk.camelot64.kickc.model;
 
+import java.util.ArrayList;
 import java.util.Collection;
 
 /**
@@ -40,7 +41,11 @@ public class SymbolTypeInference {
 
    public static SymbolType inferType(ProgramScope programScope, RValue rValue1, Operator operator, RValue rValue2) {
       if (rValue1 instanceof ConstantValue && rValue2 instanceof ConstantValue) {
-         ConstantValue value = ConstantValueCalculator.calcValue(programScope, (ConstantValue) rValue1, operator, (ConstantValue) rValue2);
+         ConstantValue value = ConstantValueCalculator.calcValue(
+               programScope,
+               (ConstantValue) rValue1,
+               operator,
+               (ConstantValue) rValue2);
          if (value != null) {
             return value.getType(programScope);
          }
@@ -66,7 +71,7 @@ public class SymbolTypeInference {
             return SymbolType.BYTE;
          }
       } else if (Operator.HIBYTE.equals(operator)) {
-         if (subType instanceof SymbolTypePointer || SymbolType.WORD.equals(subType) || SymbolType.SWORD.equals(subType) ) {
+         if (subType instanceof SymbolTypePointer || SymbolType.WORD.equals(subType) || SymbolType.SWORD.equals(subType)) {
             return SymbolType.BYTE;
          }
       } else if (Operator.CAST_BYTE.equals(operator)) {
@@ -89,9 +94,9 @@ public class SymbolTypeInference {
          return inferPlus(type1, type2);
       } else if (Operator.MINUS.equals(operator)) {
          return inferMinus(type1, type2);
-      } else if(Operator.SET_HIBYTE.equals(operator)) {
+      } else if (Operator.SET_HIBYTE.equals(operator)) {
          return type1;
-      } else if(Operator.SET_LOWBYTE.equals(operator)) {
+      } else if (Operator.SET_LOWBYTE.equals(operator)) {
          return type1;
       }
 
@@ -209,14 +214,15 @@ public class SymbolTypeInference {
    private static boolean isInteger(SymbolType type) {
       if (SymbolType.BYTE.equals(type)) {
          return true;
-      } else if(SymbolType.WORD.equals(type)) {
+      } else if (SymbolType.WORD.equals(type)) {
          return true;
-      } else if(SymbolType.SBYTE.equals(type)) {
+      } else if (SymbolType.SBYTE.equals(type)) {
          return true;
-      } else if(SymbolType.SWORD.equals(type)) {
+      } else if (SymbolType.SWORD.equals(type)) {
          return true;
-      } else if(type instanceof SymbolTypeInline) {
-         return true;
+      } else if (type instanceof SymbolTypeInline) {
+         SymbolTypeInline typeInline = (SymbolTypeInline) type;
+         return typeInline.isByte() || typeInline.isSByte() || typeInline.isWord() || typeInline.isSWord();
       } else {
          return false;
       }
@@ -248,8 +254,8 @@ public class SymbolTypeInference {
       } else if (rValue instanceof ConstantBinary) {
          ConstantBinary constBin = (ConstantBinary) rValue;
          return inferType(symbols, constBin.getLeft(), constBin.getOperator(), constBin.getRight());
-      } else if (rValue instanceof ValueArray) {
-         type = inferTypeArray(symbols, (ValueArray)rValue);
+      } else if (rValue instanceof ValueList) {
+         type = inferTypeList(symbols, (ValueList) rValue);
       } else if (rValue instanceof PointerDereference) {
          SymbolType pointerType = inferType(symbols, ((PointerDereference) rValue).getPointer());
          if (pointerType instanceof SymbolTypePointer) {
@@ -264,16 +270,16 @@ public class SymbolTypeInference {
       return type;
    }
 
-   private static SymbolType inferTypeArray(ProgramScope symbols, ValueArray array) {
+   private static SymbolType inferTypeList(ProgramScope symbols, ValueList list) {
       SymbolType elmType = null;
-      for (RValue elm : array.getList()) {
+      for (RValue elm : list.getList()) {
          SymbolType type = inferType(symbols, elm);
-         if(elmType==null) {
+         if (elmType == null) {
             elmType = type;
          } else {
             // element type already defined - check for a match
-            if(!typeMatch(elmType, type)) {
-               if(typeMatch(type, elmType)) {
+            if (!typeMatch(elmType, type)) {
+               if (typeMatch(type, elmType)) {
                   elmType = type;
                } else {
                   throw new RuntimeException("Array element has type mismatch " + elm.toString() + " not matching type " + elmType.getTypeName());
@@ -281,10 +287,18 @@ public class SymbolTypeInference {
             }
          }
       }
-      if(elmType!=null) {
-         return new SymbolTypeArray(elmType);
+      if (elmType != null) {
+         if ((list.getList().size() == 2 && SymbolType.isByte(elmType) || SymbolType.isSByte(elmType))) {
+            // Potentially a word constructor - return a composite type
+            ArrayList<SymbolType> types = new ArrayList<>();
+            types.add(new SymbolTypeArray(elmType));
+            types.add(SymbolType.WORD);
+            return new SymbolTypeInline(types);
+         } else {
+            return new SymbolTypeArray(elmType);
+         }
       } else {
-         throw new RuntimeException("Cannot infer array element type "+array.toString());
+         throw new RuntimeException("Cannot infer list element type " + list.toString());
       }
    }
 
@@ -314,24 +328,49 @@ public class SymbolTypeInference {
          // Types match directly
          return true;
       } else if (rValueType instanceof SymbolTypeInline) {
-         if(lValueType instanceof SymbolTypeInline) {
+         Collection<SymbolType> rTypes = ((SymbolTypeInline) rValueType).getTypes();
+         if (lValueType instanceof SymbolTypeInline) {
             // Both are inline types - RValue type must be superset of LValue
-            Collection<SymbolTypeInteger> lValueTypes = ((SymbolTypeInline) lValueType).getTypes();
-            Collection<SymbolTypeInteger> rValueTypes = ((SymbolTypeInline) rValueType).getTypes();
-            if(rValueTypes.containsAll(lValueTypes)) {
-               return true;
-            }
-         }  else if (((SymbolTypeInline) rValueType).getTypes().contains(lValueType)) {
-               // Types match because the right side is a constant that matches the left side
-               return true;
+            Collection<SymbolType> lTypes = ((SymbolTypeInline) lValueType).getTypes();
+            return typeContainsMatchAll(lTypes, rTypes);
+         } else {
+            // Types match because the right side matches the left side
+            return typeContainsMatch(lValueType, rTypes);
          }
       } else if (lValueType instanceof SymbolTypePointer && rValueType instanceof SymbolTypePointer) {
-         return typeMatch(((SymbolTypePointer) lValueType).getElementType(), ((SymbolTypePointer) rValueType).getElementType());
+         return typeMatch(
+               ((SymbolTypePointer) lValueType).getElementType(),
+               ((SymbolTypePointer) rValueType).getElementType());
       } else if (SymbolType.STRING.equals(rValueType)) {
-         if(lValueType instanceof SymbolTypePointer && SymbolType.isByte(((SymbolTypePointer) lValueType).getElementType())) {
+         if (lValueType instanceof SymbolTypePointer && SymbolType.isByte(((SymbolTypePointer) lValueType).getElementType())) {
             return true;
          }
       }
       return false;
    }
+
+   private static boolean typeContainsMatchAll(Collection<SymbolType> lTypes, Collection<SymbolType> rTypes) {
+      for (SymbolType lType : lTypes) {
+         if (!typeContainsMatch(lType, rTypes)) {
+            return false;
+         }
+      }
+      return true;
+   }
+
+   /**
+    * Determine is a list of potential inferred types contains a match for another type
+    * @param lValueType The type (rValue) we want to find a match for in the list
+    * @param rTypes The list of inferred potential types
+    * @return true if the list has a match
+    */
+   private static boolean typeContainsMatch(SymbolType lValueType, Collection<SymbolType> rTypes) {
+      for (SymbolType rType : rTypes) {
+         if (typeMatch(lValueType, rType)) {
+            return true;
+         }
+      }
+      return false;
+   }
+
 }

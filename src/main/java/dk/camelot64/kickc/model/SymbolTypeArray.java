@@ -32,7 +32,12 @@ public class SymbolTypeArray extends SymbolTypePointer {
 
    @Override
    public String getTypeName() {
-      return getElementType().getTypeName()+"["+(size==null?"":size)+"]";
+      SymbolType elementType = getElementType();
+      if(elementType instanceof SymbolTypeInline) {
+         return "("+elementType.getTypeName()+")"+"["+(size==null?"":size)+"]";
+      }else {
+         return elementType.getTypeName()+"["+(size==null?"":size)+"]";
+      }
    }
 
    @Override

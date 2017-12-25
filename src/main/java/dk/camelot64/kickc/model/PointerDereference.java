@@ -5,4 +5,7 @@ public interface PointerDereference extends LValue {
 
    RValue getPointer();
 
+   void setPointer(RValue pointer);
+
+
 }

@@ -213,9 +213,9 @@ public class Pass3VariableReferenceInfos extends Pass2Base {
          return used;
       } else if (rValue instanceof VariableRef) {
          return Arrays.asList((VariableRef) rValue);
-      } else if (rValue instanceof ValueArray) {
+      } else if (rValue instanceof ValueList) {
          LinkedHashSet<VariableRef> used = new LinkedHashSet<>();
-         for (RValue value : ((ValueArray) rValue).getList()) {
+         for (RValue value : ((ValueList) rValue).getList()) {
             used.addAll(getReferenced(value));
          }
          return used;

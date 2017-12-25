@@ -22,6 +22,10 @@ public class TestPrograms extends TestCase {
       helper = new ReferenceHelper("dk/camelot64/kickc/test/ref/");
    }
 
+   public void testInlineWord() throws IOException, URISyntaxException {
+      compileAndCompare("inline-word");
+   }
+
    public void testSignedWords() throws IOException, URISyntaxException {
       compileAndCompare("signed-words");
    }
@@ -181,6 +185,10 @@ public class TestPrograms extends TestCase {
 
    public void testInMemArray() throws IOException, URISyntaxException {
       compileAndCompare("inmemarray");
+   }
+
+   public void testInMemConstArray() throws IOException, URISyntaxException {
+      compileAndCompare("inmem-const-array");
    }
 
    public void testInMemString() throws IOException, URISyntaxException {

@@ -80,9 +80,9 @@ public class Pass2ConstantIdentification extends Pass2SsaOptimization {
                   if (constant != null) {
                      constants.put(variable, constant);
                   }
-               } else if (assignment.getrValue2() instanceof ValueArray && assignment.getOperator() == null && assignment.getrValue1() == null) {
-                  ValueArray valueArray = (ValueArray) assignment.getrValue2();
-                  List<RValue> values = valueArray.getList();
+               } else if (assignment.getrValue2() instanceof ValueList && assignment.getOperator() == null && assignment.getrValue1() == null) {
+                  ValueList valueList = (ValueList) assignment.getrValue2();
+                  List<RValue> values = valueList.getList();
                   boolean allConstant = true;
                   SymbolType elementType = null;
                   List<ConstantValue> elements = new ArrayList<>();
@@ -94,7 +94,7 @@ public class Pass2ConstantIdentification extends Pass2SsaOptimization {
                            elementType = type;
                         } else {
                            if (!SymbolTypeInference.typeMatch(type, elementType)) {
-                              throw new RuntimeException("Array type mismatch " + elementType + " does not match " + type + " " + valueArray.toString(getProgram()));
+                              throw new RuntimeException("Array type mismatch " + elementType + " does not match " + type + " " + valueList.toString(getProgram()));
                            }
                         }
                         elements.add(constantValue);

@@ -27,7 +27,7 @@ public class ConstantInteger implements ConstantValue {
    }
 
    public SymbolType getType() {
-      ArrayList<SymbolTypeInteger> potentialTypes = new ArrayList<>();
+      ArrayList<SymbolType> potentialTypes = new ArrayList<>();
       Integer number = getNumber();
       for (SymbolTypeInteger typeInteger : SymbolType.getIntegerTypes()) {
          if(number>=typeInteger.getMinValue() && number<= typeInteger.getMaxValue()) {

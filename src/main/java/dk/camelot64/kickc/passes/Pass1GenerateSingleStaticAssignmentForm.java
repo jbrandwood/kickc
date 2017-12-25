@@ -65,6 +65,27 @@ public class Pass1GenerateSingleStaticAssignmentForm extends Pass1Base {
    }
 
    /**
+    * Version all variable uses in the replacable value
+    *
+    * @param replacableValue The value to version variable usages in
+    * @param blockVersions Newest version of variables in the block.
+    * @param blockNewPhis New phi functions introduced in the block to create versions of variables.
+    */
+   private void execute(
+         VariableReplacer.ReplacableValue replacableValue,
+         Map<VariableUnversioned, VariableVersion> blockVersions,
+         Map<VariableUnversioned, VariableVersion> blockNewPhis) {
+      RValue value = replacableValue.get();
+      VariableVersion version = findOrCreateVersion(value, blockVersions, blockNewPhis);
+      if (version != null) {
+         replacableValue.set(version.getRef());
+      }
+      for (VariableReplacer.ReplacableValue subValue : replacableValue.getSubValues()) {
+         execute(subValue, blockVersions, blockNewPhis);
+      }
+   }
+
+   /**
     * Version all uses of non-versioned non-intermediary variables
     */
    private void versionAllUses() {
@@ -75,49 +96,13 @@ public class Pass1GenerateSingleStaticAssignmentForm extends Pass1Base {
          Map<VariableUnversioned, VariableVersion> blockNewPhis = new LinkedHashMap<>();
          for (Statement statement : block.getStatements()) {
             if (statement instanceof StatementReturn) {
-               StatementReturn statementReturn = (StatementReturn) statement;
-               if (statementReturn.getValue() instanceof PointerDereferenceSimple) {
-                  PointerDereferenceSimple deref = (PointerDereferenceSimple) ((StatementReturn) statement).getValue();
-                  RValue pointer = deref.getPointer();
-                  VariableVersion version = findOrCreateVersion(pointer, blockVersions, blockNewPhis);
-                  if (version != null) {
-                     deref.setPointer(version.getRef());
-                  }
-               } else {
-                  VariableVersion version = findOrCreateVersion(statementReturn.getValue(), blockVersions, blockNewPhis);
-                  if (version != null) {
-                     statementReturn.setValue(version.getRef());
-                  }
-               }
-            }
-            if (statement instanceof StatementAssignment) {
+               execute(new VariableReplacer.ReplacableReturn((StatementReturn) statement), blockVersions, blockNewPhis);
+            } else if (statement instanceof StatementAssignment) {
                StatementAssignment assignment = (StatementAssignment) statement;
-               if (assignment.getrValue1() instanceof PointerDereferenceSimple) {
-                  PointerDereferenceSimple deref = (PointerDereferenceSimple) ((StatementAssignment) statement).getrValue1();
-                  RValue pointer = deref.getPointer();
-                  VariableVersion version = findOrCreateVersion(pointer, blockVersions, blockNewPhis);
-                  if (version != null) {
-                     deref.setPointer(version.getRef());
-                  }
-               } else {
-                  VariableVersion version = findOrCreateVersion(assignment.getrValue1(), blockVersions, blockNewPhis);
-                  if (version != null) {
-                     assignment.setrValue1(version.getRef());
-                  }
-               }
-               if (assignment.getrValue2() instanceof PointerDereferenceSimple) {
-                  PointerDereferenceSimple deref = (PointerDereferenceSimple) ((StatementAssignment) statement).getrValue2();
-                  RValue pointer = deref.getPointer();
-                  VariableVersion version = findOrCreateVersion(pointer, blockVersions, blockNewPhis);
-                  if (version != null) {
-                     deref.setPointer(version.getRef());
-                  }
-               } else {
-                  VariableVersion version = findOrCreateVersion(assignment.getrValue2(), blockVersions, blockNewPhis);
-                  if (version != null) {
-                     assignment.setrValue2(version.getRef());
-                  }
-               }
+               execute(new VariableReplacer.ReplacableRValue1(assignment), blockVersions, blockNewPhis);
+               execute(new VariableReplacer.ReplacableRValue2(assignment), blockVersions, blockNewPhis);
+               execute(new VariableReplacer.ReplacableLValue(assignment), blockVersions, blockNewPhis);
+
                // Update map of versions encountered in the block
                LValue lValue = assignment.getlValue();
                if (lValue instanceof VariableRef) {
@@ -126,25 +111,6 @@ public class Pass1GenerateSingleStaticAssignmentForm extends Pass1Base {
                   if (variable instanceof VariableVersion) {
                      VariableVersion versioned = (VariableVersion) variable;
                      blockVersions.put(versioned.getVersionOf(), versioned);
-                  }
-               } else if (lValue instanceof PointerDereferenceSimple) {
-                  PointerDereferenceSimple deref = (PointerDereferenceSimple) lValue;
-                  RValue pointer = deref.getPointer();
-                  VariableVersion version = findOrCreateVersion(pointer, blockVersions, blockNewPhis);
-                  if (version != null) {
-                     deref.setPointer(version.getRef());
-                  }
-               } else if (lValue instanceof PointerDereferenceIndexed) {
-                  PointerDereferenceIndexed deref = (PointerDereferenceIndexed) lValue;
-                  RValue pointer = deref.getPointer();
-                  VariableVersion version = findOrCreateVersion(pointer, blockVersions, blockNewPhis);
-                  if (version != null) {
-                     deref.setPointer(version.getRef());
-                  }
-                  RValue index = deref.getIndex();
-                  VariableVersion iVersion = findOrCreateVersion(index, blockVersions, blockNewPhis);
-                  if (iVersion != null) {
-                     deref.setIndex(iVersion.getRef());
                   }
                }
             }

@@ -455,7 +455,7 @@ public class StatementSequenceGenerator extends KickCBaseVisitor<Object> {
          RValue rValue = (RValue) visit(initializer);
          initValues.add(rValue);
       }
-      return new ValueArray(initValues);
+      return new ValueList(initValues);
    }
 
    @Override

@@ -48,7 +48,7 @@ public abstract class Pass2SsaOptimization {
     */
    public void replaceVariables(final Map<? extends SymbolRef, ? extends RValue> aliases) {
       VariableReplacer replacer = new VariableReplacer(aliases);
-      replacer.getReplacement(getGraph());
+      replacer.execute(getGraph());
    }
 
    /**

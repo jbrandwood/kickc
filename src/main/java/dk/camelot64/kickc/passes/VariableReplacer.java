@@ -2,10 +2,7 @@ package dk.camelot64.kickc.passes;
 
 import dk.camelot64.kickc.model.*;
 
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * A replacer capable to alias all usages of a variable (or constant var) with a suitable replacement
@@ -18,9 +15,55 @@ public class VariableReplacer {
       this.aliases = aliases;
    }
 
-   public void getReplacement(ControlFlowGraph graph) {
-      ControlFlowGraphBaseVisitor<Void> visitor = new GraphReplacer();
-      visitor.visitGraph(graph);
+   public void execute(ControlFlowGraph graph) {
+      //new GraphReplacer().visitGraph(graph);
+      for (ControlFlowBlock block : graph.getAllBlocks()) {
+         for (Statement statement : block.getStatements()) {
+            if (statement instanceof StatementAssignment) {
+               execute(new ReplacableLValue((StatementLValue) statement));
+               execute(new ReplacableRValue1((StatementAssignment) statement));
+               execute(new ReplacableRValue2((StatementAssignment) statement));
+            } else if (statement instanceof StatementCall) {
+               execute(new ReplacableLValue((StatementLValue) statement));
+               StatementCall call = (StatementCall) statement;
+               if(call.getParameters()!=null) {
+                  int size = call.getParameters().size();
+                  for (int i = 0; i < size; i++) {
+                     execute(new ReplacableCallParameter(call, i));
+                  }
+               }
+            } else if (statement instanceof StatementConditionalJump) {
+               execute(new ReplacableCondRValue1((StatementConditionalJump) statement));
+               execute(new ReplacableCondRValue2((StatementConditionalJump) statement));
+            } else if (statement instanceof StatementReturn) {
+               execute(new ReplacableReturn((StatementReturn) statement));
+            } else if (statement instanceof StatementPhiBlock) {
+               for (StatementPhiBlock.PhiVariable phiVariable : ((StatementPhiBlock) statement).getPhiVariables()) {
+                  execute(new ReplacablePhiVariable(phiVariable));
+                  int size = phiVariable.getValues().size();
+                  for (int i = 0; i < size; i++) {
+                     execute(new ReplacablePhiValue(phiVariable, i));
+                  }
+               }
+            }
+         }
+      }
+   }
+
+   /**
+    * Execute replacements inside a replacable value - and its sub-values.
+    * @param replacable The replacable value
+    */
+   void execute(ReplacableValue replacable) {
+      if(replacable.get()!=null) {
+         RValue replacement = getReplacement(replacable.get());
+         if(replacement!=null) {
+            replacable.set(replacement);
+         }
+         for (ReplacableValue subReplacable : replacable.getSubValues()) {
+            execute(subReplacable);
+         }
+      }
    }
 
    /**
@@ -32,14 +75,14 @@ public class VariableReplacer {
     * @return The alias to use. Null if no alias exists.
     */
    public RValue getReplacement(RValue rValue) {
-      if(rValue instanceof SymbolRef) {
+      if (rValue instanceof SymbolRef) {
          RValue alias = aliases.get(rValue);
-         if(alias!=null) {
-            if(alias.equals(rValue)) {
+         if (alias != null) {
+            if (alias.equals(rValue)) {
                return alias;
             }
             RValue replacement = getReplacement(alias);
-            if(replacement!=null) {
+            if (replacement != null) {
                return replacement;
             } else {
                return alias;
@@ -72,166 +115,264 @@ public class VariableReplacer {
    }
 
    /**
-    * Visitor capable of handling replacements in an entire flow graph.
+    * Interface representing an RValue that can be replaced.
+    * The value may have sub-values that can also be replaced.
     */
-   private class GraphReplacer extends ControlFlowGraphBaseVisitor<Void> {
+   public static abstract class ReplacableValue {
 
-      @Override
-      public Void visitAssignment(StatementAssignment assignment) {
-         LValue lValue = assignment.getlValue();
-         if (getReplacement(lValue) != null) {
-            RValue alias = getReplacement(lValue);
-            if (alias instanceof LValue) {
-               assignment.setlValue((LValue) alias);
-            } else {
-               throw new RuntimeException("Error replacing LValue variable " + lValue + " with " + alias);
-            }
-         }
-         if (getReplacement(assignment.getrValue1()) != null) {
-            assignment.setrValue1(getReplacement(assignment.getrValue1()));
-         } else {
-            if(assignment.getrValue1() instanceof PointerDereferenceSimple) {
-               PointerDereferenceSimple deref = (PointerDereferenceSimple) assignment.getrValue1();
-               RValue pointer = deref.getPointer();
-               if (getReplacement(pointer) != null) {
-                  deref.setPointer(getReplacement(pointer));
-               }
-            }
-         }
-         if (getReplacement(assignment.getrValue2()) != null) {
-            assignment.setrValue2(getReplacement(assignment.getrValue2()));
-         } else {
-            if(assignment.getrValue2() instanceof PointerDereferenceSimple) {
-               PointerDereferenceSimple deref = (PointerDereferenceSimple) assignment.getrValue2();
-               RValue pointer = deref.getPointer();
-               if (getReplacement(pointer) != null) {
-                  deref.setPointer(getReplacement(pointer));
-               }
-            }
-         }
-         // Handle pointer dereference in LValue
-         if (lValue instanceof PointerDereferenceSimple) {
-            PointerDereferenceSimple deref = (PointerDereferenceSimple) lValue;
-            RValue pointer = deref.getPointer();
-            if (getReplacement(pointer) != null) {
-               deref.setPointer(getReplacement(pointer));
-            }
-         } else if (lValue instanceof PointerDereferenceIndexed) {
-            PointerDereferenceIndexed deref = (PointerDereferenceIndexed) lValue;
-            RValue pointer = deref.getPointer();
-            if (getReplacement(pointer) != null) {
-               deref.setPointer(getReplacement(pointer));
-            }
-            RValue index = deref.getIndex();
-            if (getReplacement(index) != null) {
-               deref.setIndex(getReplacement(index));
-            }
-         }
-         // Handle pointer dereference in RValue
+      public abstract RValue get();
 
-         return null;
+      public abstract void set(RValue value);
+
+      public Collection<ReplacableValue> getSubValues() {
+         RValue value = get();
+         ArrayList<ReplacableValue> subValues = new ArrayList<>();
+         if (value instanceof PointerDereferenceIndexed) {
+            subValues.add(new ReplacablePointer((PointerDereference) value));
+            subValues.add(new ReplacablePointerIndex((PointerDereferenceIndexed) value));
+         } else if (value instanceof PointerDereferenceSimple) {
+            subValues.add(new ReplacablePointer((PointerDereference) value));
+         } else if (value instanceof ValueList) {
+            ValueList valueList = (ValueList) value;
+            int size = valueList.getList().size();
+            for (int i = 0; i < size; i++) {
+               subValues.add(new ReplacableListElement(valueList, i));
+            }
+         }
+         return subValues;
+      }
+
+   }
+
+   /** Replacable LValue as part of an assignment statement (or a call). */
+   public static class ReplacableLValue extends ReplacableValue {
+      private final StatementLValue statement;
+
+      public ReplacableLValue(StatementLValue statement) {
+         this.statement = statement;
       }
 
       @Override
-      public Void visitConditionalJump(StatementConditionalJump conditionalJump) {
-         if (getReplacement(conditionalJump.getrValue1()) != null) {
-            conditionalJump.setrValue1(getReplacement(conditionalJump.getrValue1()));
-         } else {
-            if (conditionalJump.getrValue1() instanceof PointerDereferenceSimple) {
-               PointerDereferenceSimple deref = (PointerDereferenceSimple) conditionalJump.getrValue1();
-               RValue pointer = deref.getPointer();
-               if (getReplacement(pointer) != null) {
-                  deref.setPointer(getReplacement(pointer));
-               }
-            }
-         }
-         if (getReplacement(conditionalJump.getrValue2()) != null) {
-            conditionalJump.setrValue2(getReplacement(conditionalJump.getrValue2()));
-         } else {
-            if (conditionalJump.getrValue2() instanceof PointerDereferenceSimple) {
-               PointerDereferenceSimple deref = (PointerDereferenceSimple) conditionalJump.getrValue2();
-               RValue pointer = deref.getPointer();
-               if (getReplacement(pointer) != null) {
-                  deref.setPointer(getReplacement(pointer));
-               }
-            }
-         }
-         return null;
+      public RValue get() {
+         return statement.getlValue();
       }
 
       @Override
-      public Void visitReturn(StatementReturn aReturn) {
-         if (getReplacement(aReturn.getValue()) != null) {
-            aReturn.setValue(getReplacement(aReturn.getValue()));
-         } else {
-            if (aReturn.getValue() instanceof PointerDereferenceSimple) {
-               PointerDereferenceSimple deref = (PointerDereferenceSimple) aReturn.getValue();
-               RValue pointer = deref.getPointer();
-               if (getReplacement(pointer) != null) {
-                  deref.setPointer(getReplacement(pointer));
-               }
-            }
-         }
-         return null;
+      public void set(RValue value) {
+         statement.setlValue((LValue) value);
+      }
+
+   }
+
+   /** Replacable pointer inside a pointer dererence value. */
+   public static class ReplacablePointer extends ReplacableValue {
+      private final PointerDereference pointer;
+
+      ReplacablePointer(PointerDereference pointer) {
+         this.pointer = pointer;
       }
 
       @Override
-      public Void visitCall(StatementCall call) {
-         if (call.getParameters() != null) {
-            List<RValue> newParams = new ArrayList<>();
-            for (RValue parameter : call.getParameters()) {
-               RValue newParam = parameter;
-               if (getReplacement(parameter) != null) {
-                  newParam = getReplacement(parameter);
-               } else {
-                  if (parameter instanceof PointerDereferenceSimple) {
-                     PointerDereferenceSimple deref = (PointerDereferenceSimple) parameter;
-                     RValue pointer = deref.getPointer();
-                     if (getReplacement(pointer) != null) {
-                        deref.setPointer(getReplacement(pointer));
-                     }
-                  }
-               }
-               newParams.add(newParam);
-            }
-            call.setParameters(newParams);
-         }
-         return null;
+      public RValue get() {
+         return pointer.getPointer();
       }
 
       @Override
-      public Void visitPhiBlock(StatementPhiBlock phi) {
-         for (StatementPhiBlock.PhiVariable phiVariable : phi.getPhiVariables()) {
-            if (getReplacement(phiVariable.getVariable()) != null) {
-               RValue alias = getReplacement(phiVariable.getVariable());
-               if (alias instanceof LValue) {
-                  phiVariable.setVariable((VariableRef) alias);
-               }
-            }
-            List<StatementPhiBlock.PhiRValue> phirValues = phiVariable.getValues();
-            Iterator<StatementPhiBlock.PhiRValue> it = phirValues.iterator();
-            while (it.hasNext()) {
-               StatementPhiBlock.PhiRValue phirValue = it.next();
-               if (getReplacement(phirValue.getrValue()) != null) {
-                  RValue alias = getReplacement(phirValue.getrValue());
-                  if (LValue.VOID.equals(alias)) {
-                     it.remove();
-                  } else {
-                     phirValue.setrValue(alias);
-                  }
-               } else {
-                  if(phirValue.getrValue() instanceof PointerDereferenceSimple) {
-                     PointerDereferenceSimple deref = (PointerDereferenceSimple) phirValue.getrValue();
-                     RValue pointer = deref.getPointer();
-                     if (getReplacement(pointer) != null) {
-                        deref.setPointer(getReplacement(pointer));
-                     }
-                  }
-               }
-            }
-         }
-         return null;
+      public void set(RValue val) {
+         pointer.setPointer(val);
       }
+
+   }
+
+   public static class ReplacableListElement extends ReplacableValue {
+      private ValueList list;
+      private int idx;
+
+      public ReplacableListElement(ValueList list, int idx) {
+         this.list = list;
+         this.idx = idx;
+      }
+
+      @Override
+      public RValue get() {
+         return list.getList().get(idx);
+      }
+
+      @Override
+      public void set(RValue value) {
+         list.getList().set(idx, value);
+      }
+
+   }
+
+   /** Replacable pointer index inside a indexed pointer dererence value. */
+   public static class ReplacablePointerIndex extends ReplacableValue {
+      private final PointerDereferenceIndexed pointer;
+
+      ReplacablePointerIndex(PointerDereferenceIndexed pointer) {
+         this.pointer = pointer;
+      }
+
+      @Override
+      public RValue get() {
+         return pointer.getIndex();
+      }
+
+      @Override
+      public void set(RValue val) {
+         pointer.setIndex(val);
+      }
+
+   }
+
+   public static class ReplacableRValue1 extends ReplacableValue {
+      private final StatementAssignment statement;
+
+      public ReplacableRValue1(StatementAssignment statement) {
+         this.statement = statement;
+      }
+
+      @Override
+      public RValue get() {
+         return statement.getrValue1();
+      }
+
+      @Override
+      public void set(RValue value) {
+         statement.setrValue1(value);
+      }
+   }
+
+   public static class ReplacableRValue2 extends ReplacableValue {
+      private final StatementAssignment statement;
+
+      public ReplacableRValue2(StatementAssignment statement) {
+         this.statement = statement;
+      }
+
+      @Override
+      public RValue get() {
+         return statement.getrValue2();
+      }
+
+      @Override
+      public void set(RValue value) {
+         statement.setrValue2(value);
+      }
+   }
+
+   public static class ReplacableCallParameter extends ReplacableValue {
+      private final StatementCall call;
+      private final int i;
+
+      public ReplacableCallParameter(StatementCall call, int i) {
+         this.call = call;
+         this.i = i;
+      }
+
+      @Override
+      public RValue get() {
+         return call.getParameters().get(i);
+      }
+
+      @Override
+      public void set(RValue value) {
+         call.getParameters().set(i, value);
+      }
+   }
+
+   public static class ReplacableCondRValue1 extends ReplacableValue {
+      private final StatementConditionalJump statement;
+
+      public ReplacableCondRValue1(StatementConditionalJump statement) {
+         this.statement = statement;
+      }
+
+      @Override
+      public RValue get() {
+         return statement.getrValue1();
+      }
+
+      @Override
+      public void set(RValue value) {
+         statement.setrValue1(value);
+      }
+   }
+
+   public static class ReplacableCondRValue2 extends ReplacableValue {
+      private final StatementConditionalJump statement;
+
+      public ReplacableCondRValue2(StatementConditionalJump statement) {
+         this.statement = statement;
+      }
+
+      @Override
+      public RValue get() {
+         return statement.getrValue2();
+      }
+
+      @Override
+      public void set(RValue value) {
+         statement.setrValue2(value);
+      }
+   }
+
+   public static class ReplacableReturn extends ReplacableValue {
+      private final StatementReturn statement;
+
+      public ReplacableReturn(StatementReturn statement) {
+         this.statement = statement;
+      }
+
+      @Override
+      public RValue get() {
+         return statement.getValue();
+      }
+
+      @Override
+      public void set(RValue value) {
+         statement.setValue(value);
+      }
+   }
+
+   public static class ReplacablePhiValue extends ReplacableValue {
+      private final StatementPhiBlock.PhiVariable phiVariable;
+      private final int i;
+
+      public ReplacablePhiValue(StatementPhiBlock.PhiVariable phiVariable, int i) {
+         this.phiVariable = phiVariable;
+         this.i = i;
+      }
+
+      @Override
+      public RValue get() {
+         return phiVariable.getValues().get(i).getrValue();
+      }
+
+      @Override
+      public void set(RValue value) {
+         phiVariable.getValues().get(i).setrValue(value);
+      }
+   }
+
+   /** Replacable LValue as part of an assignment statement (or a call). */
+   public static class ReplacablePhiVariable extends ReplacableValue {
+      private final StatementPhiBlock.PhiVariable phiVariable;
+
+      public ReplacablePhiVariable(StatementPhiBlock.PhiVariable phiVariable) {
+         this.phiVariable = phiVariable;
+      }
+
+      @Override
+      public RValue get() {
+         return phiVariable.getVariable();
+      }
+
+      @Override
+      public void set(RValue value) {
+         phiVariable.setVariable((VariableRef) value);
+      }
+
    }
 
 }

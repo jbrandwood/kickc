@@ -49,8 +49,8 @@ scroll_soft: {
     rts
 }
 scroll_bit: {
-    .label _4 = 9
-    .label c = 9
+    .label _4 = 3
+    .label c = 3
     .label sc = 5
     lsr current_bit
     lda current_bit
@@ -65,12 +65,12 @@ scroll_bit: {
     rol _4+1
     asl _4
     rol _4+1
-    lda #<CHARGEN
+    lda current_chargen
     clc
-    adc _4
+    adc #<CHARGEN
     sta current_chargen
-    lda #>CHARGEN
-    adc _4+1
+    lda current_chargen+1
+    adc #>CHARGEN
     sta current_chargen+1
     lda #$80
     sta current_bit

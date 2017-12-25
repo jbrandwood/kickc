@@ -8669,12 +8669,12 @@ Uplifting [scroll_hard] best 9094 combination reg byte a [ scroll_hard::$31 ]
 Attempting to uplift remaining variables inzp ZP_BYTE:3 [ current_bit#29 current_bit#12 current_bit#21 current_bit#5 ]
 Uplifting [] best 9094 combination zp ZP_BYTE:3 [ current_bit#29 current_bit#12 current_bit#21 current_bit#5 ] 
 Coalescing zero page register [ zp ZP_WORD:4 [ current_chargen#27 current_chargen#11 current_chargen#19 current_chargen#5 ] ] with [ zp ZP_WORD:14 [ fillscreen::cursor#2 fillscreen::cursor#1 ] ]
-Coalescing zero page register [ zp ZP_WORD:18 [ scroll_bit::c#0 ] ] with [ zp ZP_WORD:20 [ scroll_bit::$4 ] ]
+Coalescing zero page register [ zp ZP_WORD:4 [ current_chargen#27 current_chargen#11 current_chargen#19 current_chargen#5 fillscreen::cursor#2 fillscreen::cursor#1 ] ] with [ zp ZP_WORD:18 [ scroll_bit::c#0 ] ]
+Coalescing zero page register [ zp ZP_WORD:4 [ current_chargen#27 current_chargen#11 current_chargen#19 current_chargen#5 fillscreen::cursor#2 fillscreen::cursor#1 scroll_bit::c#0 ] ] with [ zp ZP_WORD:20 [ scroll_bit::$4 ] ]
 Allocated (was zp ZP_BYTE:3) zp ZP_BYTE:2 [ current_bit#29 current_bit#12 current_bit#21 current_bit#5 ]
-Allocated (was zp ZP_WORD:4) zp ZP_WORD:3 [ current_chargen#27 current_chargen#11 current_chargen#19 current_chargen#5 fillscreen::cursor#2 fillscreen::cursor#1 ]
+Allocated (was zp ZP_WORD:4) zp ZP_WORD:3 [ current_chargen#27 current_chargen#11 current_chargen#19 current_chargen#5 fillscreen::cursor#2 fillscreen::cursor#1 scroll_bit::c#0 scroll_bit::$4 ]
 Allocated (was zp ZP_WORD:7) zp ZP_WORD:5 [ scroll_bit::sc#2 scroll_bit::sc#1 ]
 Allocated (was zp ZP_WORD:11) zp ZP_WORD:7 [ nxt#18 nxt#31 nxt#14 nxt#36 nxt#19 ]
-Allocated (was zp ZP_WORD:18) zp ZP_WORD:9 [ scroll_bit::c#0 scroll_bit::$4 ]
 Removing instruction jmp b6
 Removing instruction jmp bend
 Removing instruction jmp b2
@@ -8832,8 +8832,8 @@ scroll_soft: {
 }
 //SEG55 scroll_bit
 scroll_bit: {
-    .label _4 = 9
-    .label c = 9
+    .label _4 = 3
+    .label c = 3
     .label sc = 5
   //SEG56 [21] (byte) current_bit#5 ← (byte) current_bit#29 >> (byte/signed byte/word/signed word) 1 [ nxt#31 current_chargen#27 current_bit#5 ] ( main:2::scroll_soft:10::scroll_bit:17 [ nxt#31 current_chargen#27 current_bit#5 ] ) -- vbuz1=vbuz1_ror_1 
     lsr current_bit
@@ -8863,13 +8863,13 @@ scroll_bit: {
     rol _4+1
     asl _4
     rol _4+1
-  //SEG66 [29] (byte*) current_chargen#5 ← (const byte*) CHARGEN#0 + (word~) scroll_bit::$4 [ current_chargen#5 nxt#19 ] ( main:2::scroll_soft:10::scroll_bit:17 [ current_chargen#5 nxt#19 ] ) -- pbuz1=pbuc1_plus_vwuz2 
-    lda #<CHARGEN
+  //SEG66 [29] (byte*) current_chargen#5 ← (const byte*) CHARGEN#0 + (word~) scroll_bit::$4 [ current_chargen#5 nxt#19 ] ( main:2::scroll_soft:10::scroll_bit:17 [ current_chargen#5 nxt#19 ] ) -- pbuz1=pbuc1_plus_vwuz1 
+    lda current_chargen
     clc
-    adc _4
+    adc #<CHARGEN
     sta current_chargen
-    lda #>CHARGEN
-    adc _4+1
+    lda current_chargen+1
+    adc #>CHARGEN
     sta current_chargen+1
   //SEG67 [30] phi from scroll_bit::@8 to scroll_bit::@1 [phi:scroll_bit::@8->scroll_bit::@1]
   b1_from_b8:
@@ -9253,8 +9253,8 @@ scroll_soft: {
 }
 //SEG55 scroll_bit
 scroll_bit: {
-    .label _4 = 9
-    .label c = 9
+    .label _4 = 3
+    .label c = 3
     .label sc = 5
   //SEG56 [21] (byte) current_bit#5 ← (byte) current_bit#29 >> (byte/signed byte/word/signed word) 1 [ nxt#31 current_chargen#27 current_bit#5 ] ( main:2::scroll_soft:10::scroll_bit:17 [ nxt#31 current_chargen#27 current_bit#5 ] ) -- vbuz1=vbuz1_ror_1 
     lsr current_bit
@@ -9283,13 +9283,13 @@ scroll_bit: {
     rol _4+1
     asl _4
     rol _4+1
-  //SEG66 [29] (byte*) current_chargen#5 ← (const byte*) CHARGEN#0 + (word~) scroll_bit::$4 [ current_chargen#5 nxt#19 ] ( main:2::scroll_soft:10::scroll_bit:17 [ current_chargen#5 nxt#19 ] ) -- pbuz1=pbuc1_plus_vwuz2 
-    lda #<CHARGEN
+  //SEG66 [29] (byte*) current_chargen#5 ← (const byte*) CHARGEN#0 + (word~) scroll_bit::$4 [ current_chargen#5 nxt#19 ] ( main:2::scroll_soft:10::scroll_bit:17 [ current_chargen#5 nxt#19 ] ) -- pbuz1=pbuc1_plus_vwuz1 
+    lda current_chargen
     clc
-    adc _4
+    adc #<CHARGEN
     sta current_chargen
-    lda #>CHARGEN
-    adc _4+1
+    lda current_chargen+1
+    adc #>CHARGEN
     sta current_chargen+1
   //SEG67 [30] phi from scroll_bit::@8 to scroll_bit::@1 [phi:scroll_bit::@8->scroll_bit::@1]
   b1_from_b8:
@@ -9656,8 +9656,8 @@ scroll_soft: {
 }
 //SEG55 scroll_bit
 scroll_bit: {
-    .label _4 = 9
-    .label c = 9
+    .label _4 = 3
+    .label c = 3
     .label sc = 5
   //SEG56 [21] (byte) current_bit#5 ← (byte) current_bit#29 >> (byte/signed byte/word/signed word) 1 [ nxt#31 current_chargen#27 current_bit#5 ] ( main:2::scroll_soft:10::scroll_bit:17 [ nxt#31 current_chargen#27 current_bit#5 ] ) -- vbuz1=vbuz1_ror_1 
     lsr current_bit
@@ -9684,13 +9684,13 @@ scroll_bit: {
     rol _4+1
     asl _4
     rol _4+1
-  //SEG66 [29] (byte*) current_chargen#5 ← (const byte*) CHARGEN#0 + (word~) scroll_bit::$4 [ current_chargen#5 nxt#19 ] ( main:2::scroll_soft:10::scroll_bit:17 [ current_chargen#5 nxt#19 ] ) -- pbuz1=pbuc1_plus_vwuz2 
-    lda #<CHARGEN
+  //SEG66 [29] (byte*) current_chargen#5 ← (const byte*) CHARGEN#0 + (word~) scroll_bit::$4 [ current_chargen#5 nxt#19 ] ( main:2::scroll_soft:10::scroll_bit:17 [ current_chargen#5 nxt#19 ] ) -- pbuz1=pbuc1_plus_vwuz1 
+    lda current_chargen
     clc
-    adc _4
+    adc #<CHARGEN
     sta current_chargen
-    lda #>CHARGEN
-    adc _4+1
+    lda current_chargen+1
+    adc #>CHARGEN
     sta current_chargen+1
   //SEG67 [30] phi from scroll_bit::@8 to scroll_bit::@1 [phi:scroll_bit::@8->scroll_bit::@1]
   //SEG68 [30] phi (byte*) nxt#36 = (byte*) nxt#19 [phi:scroll_bit::@8->scroll_bit::@1#0] -- register_copy 
@@ -10020,8 +10020,8 @@ scroll_soft: {
 }
 //SEG55 scroll_bit
 scroll_bit: {
-    .label _4 = 9
-    .label c = 9
+    .label _4 = 3
+    .label c = 3
     .label sc = 5
   //SEG56 [21] (byte) current_bit#5 ← (byte) current_bit#29 >> (byte/signed byte/word/signed word) 1 [ nxt#31 current_chargen#27 current_bit#5 ] ( main:2::scroll_soft:10::scroll_bit:17 [ nxt#31 current_chargen#27 current_bit#5 ] ) -- vbuz1=vbuz1_ror_1 
     lsr current_bit
@@ -10048,13 +10048,13 @@ scroll_bit: {
     rol _4+1
     asl _4
     rol _4+1
-  //SEG66 [29] (byte*) current_chargen#5 ← (const byte*) CHARGEN#0 + (word~) scroll_bit::$4 [ current_chargen#5 nxt#19 ] ( main:2::scroll_soft:10::scroll_bit:17 [ current_chargen#5 nxt#19 ] ) -- pbuz1=pbuc1_plus_vwuz2 
-    lda #<CHARGEN
+  //SEG66 [29] (byte*) current_chargen#5 ← (const byte*) CHARGEN#0 + (word~) scroll_bit::$4 [ current_chargen#5 nxt#19 ] ( main:2::scroll_soft:10::scroll_bit:17 [ current_chargen#5 nxt#19 ] ) -- pbuz1=pbuc1_plus_vwuz1 
+    lda current_chargen
     clc
-    adc _4
+    adc #<CHARGEN
     sta current_chargen
-    lda #>CHARGEN
-    adc _4+1
+    lda current_chargen+1
+    adc #>CHARGEN
     sta current_chargen+1
   //SEG67 [30] phi from scroll_bit::@8 to scroll_bit::@1 [phi:scroll_bit::@8->scroll_bit::@1]
   //SEG68 [30] phi (byte*) nxt#36 = (byte*) nxt#19 [phi:scroll_bit::@8->scroll_bit::@1#0] -- register_copy 
@@ -10383,8 +10383,8 @@ scroll_soft: {
 }
 //SEG55 scroll_bit
 scroll_bit: {
-    .label _4 = 9
-    .label c = 9
+    .label _4 = 3
+    .label c = 3
     .label sc = 5
   //SEG56 [21] (byte) current_bit#5 ← (byte) current_bit#29 >> (byte/signed byte/word/signed word) 1 [ nxt#31 current_chargen#27 current_bit#5 ] ( main:2::scroll_soft:10::scroll_bit:17 [ nxt#31 current_chargen#27 current_bit#5 ] ) -- vbuz1=vbuz1_ror_1 
     lsr current_bit
@@ -10411,13 +10411,13 @@ scroll_bit: {
     rol _4+1
     asl _4
     rol _4+1
-  //SEG66 [29] (byte*) current_chargen#5 ← (const byte*) CHARGEN#0 + (word~) scroll_bit::$4 [ current_chargen#5 nxt#19 ] ( main:2::scroll_soft:10::scroll_bit:17 [ current_chargen#5 nxt#19 ] ) -- pbuz1=pbuc1_plus_vwuz2 
-    lda #<CHARGEN
+  //SEG66 [29] (byte*) current_chargen#5 ← (const byte*) CHARGEN#0 + (word~) scroll_bit::$4 [ current_chargen#5 nxt#19 ] ( main:2::scroll_soft:10::scroll_bit:17 [ current_chargen#5 nxt#19 ] ) -- pbuz1=pbuc1_plus_vwuz1 
+    lda current_chargen
     clc
-    adc _4
+    adc #<CHARGEN
     sta current_chargen
-    lda #>CHARGEN
-    adc _4+1
+    lda current_chargen+1
+    adc #>CHARGEN
     sta current_chargen+1
   //SEG67 [30] phi from scroll_bit::@8 to scroll_bit::@1 [phi:scroll_bit::@8->scroll_bit::@1]
   //SEG68 [30] phi (byte*) nxt#36 = (byte*) nxt#19 [phi:scroll_bit::@8->scroll_bit::@1#0] -- register_copy 
@@ -10747,8 +10747,8 @@ scroll_soft: {
 }
 //SEG55 scroll_bit
 scroll_bit: {
-    .label _4 = 9
-    .label c = 9
+    .label _4 = 3
+    .label c = 3
     .label sc = 5
   //SEG56 [21] (byte) current_bit#5 ← (byte) current_bit#29 >> (byte/signed byte/word/signed word) 1 [ nxt#31 current_chargen#27 current_bit#5 ] ( main:2::scroll_soft:10::scroll_bit:17 [ nxt#31 current_chargen#27 current_bit#5 ] ) -- vbuz1=vbuz1_ror_1 
     lsr current_bit
@@ -10775,13 +10775,13 @@ scroll_bit: {
     rol _4+1
     asl _4
     rol _4+1
-  //SEG66 [29] (byte*) current_chargen#5 ← (const byte*) CHARGEN#0 + (word~) scroll_bit::$4 [ current_chargen#5 nxt#19 ] ( main:2::scroll_soft:10::scroll_bit:17 [ current_chargen#5 nxt#19 ] ) -- pbuz1=pbuc1_plus_vwuz2 
-    lda #<CHARGEN
+  //SEG66 [29] (byte*) current_chargen#5 ← (const byte*) CHARGEN#0 + (word~) scroll_bit::$4 [ current_chargen#5 nxt#19 ] ( main:2::scroll_soft:10::scroll_bit:17 [ current_chargen#5 nxt#19 ] ) -- pbuz1=pbuc1_plus_vwuz1 
+    lda current_chargen
     clc
-    adc _4
+    adc #<CHARGEN
     sta current_chargen
-    lda #>CHARGEN
-    adc _4+1
+    lda current_chargen+1
+    adc #>CHARGEN
     sta current_chargen+1
   //SEG67 [30] phi from scroll_bit::@8 to scroll_bit::@1 [phi:scroll_bit::@8->scroll_bit::@1]
   //SEG68 [30] phi (byte*) nxt#36 = (byte*) nxt#19 [phi:scroll_bit::@8->scroll_bit::@1#0] -- register_copy 
@@ -11114,8 +11114,8 @@ scroll_soft: {
 }
 //SEG55 scroll_bit
 scroll_bit: {
-    .label _4 = 9
-    .label c = 9
+    .label _4 = 3
+    .label c = 3
     .label sc = 5
   //SEG56 [21] (byte) current_bit#5 ← (byte) current_bit#29 >> (byte/signed byte/word/signed word) 1 [ nxt#31 current_chargen#27 current_bit#5 ] ( main:2::scroll_soft:10::scroll_bit:17 [ nxt#31 current_chargen#27 current_bit#5 ] ) -- vbuz1=vbuz1_ror_1 
     lsr current_bit
@@ -11142,13 +11142,13 @@ scroll_bit: {
     rol _4+1
     asl _4
     rol _4+1
-  //SEG66 [29] (byte*) current_chargen#5 ← (const byte*) CHARGEN#0 + (word~) scroll_bit::$4 [ current_chargen#5 nxt#19 ] ( main:2::scroll_soft:10::scroll_bit:17 [ current_chargen#5 nxt#19 ] ) -- pbuz1=pbuc1_plus_vwuz2 
-    lda #<CHARGEN
+  //SEG66 [29] (byte*) current_chargen#5 ← (const byte*) CHARGEN#0 + (word~) scroll_bit::$4 [ current_chargen#5 nxt#19 ] ( main:2::scroll_soft:10::scroll_bit:17 [ current_chargen#5 nxt#19 ] ) -- pbuz1=pbuc1_plus_vwuz1 
+    lda current_chargen
     clc
-    adc _4
+    adc #<CHARGEN
     sta current_chargen
-    lda #>CHARGEN
-    adc _4+1
+    lda current_chargen+1
+    adc #>CHARGEN
     sta current_chargen+1
   //SEG67 [30] phi from scroll_bit::@8 to scroll_bit::@1 [phi:scroll_bit::@8->scroll_bit::@1]
   //SEG68 [30] phi (byte*) nxt#36 = (byte*) nxt#19 [phi:scroll_bit::@8->scroll_bit::@1#0] -- register_copy 
@@ -11469,8 +11469,8 @@ scroll_soft: {
 }
 //SEG55 scroll_bit
 scroll_bit: {
-    .label _4 = 9
-    .label c = 9
+    .label _4 = 3
+    .label c = 3
     .label sc = 5
   //SEG56 [21] (byte) current_bit#5 ← (byte) current_bit#29 >> (byte/signed byte/word/signed word) 1 [ nxt#31 current_chargen#27 current_bit#5 ] ( main:2::scroll_soft:10::scroll_bit:17 [ nxt#31 current_chargen#27 current_bit#5 ] ) -- vbuz1=vbuz1_ror_1 
     lsr current_bit
@@ -11497,13 +11497,13 @@ scroll_bit: {
     rol _4+1
     asl _4
     rol _4+1
-  //SEG66 [29] (byte*) current_chargen#5 ← (const byte*) CHARGEN#0 + (word~) scroll_bit::$4 [ current_chargen#5 nxt#19 ] ( main:2::scroll_soft:10::scroll_bit:17 [ current_chargen#5 nxt#19 ] ) -- pbuz1=pbuc1_plus_vwuz2 
-    lda #<CHARGEN
+  //SEG66 [29] (byte*) current_chargen#5 ← (const byte*) CHARGEN#0 + (word~) scroll_bit::$4 [ current_chargen#5 nxt#19 ] ( main:2::scroll_soft:10::scroll_bit:17 [ current_chargen#5 nxt#19 ] ) -- pbuz1=pbuc1_plus_vwuz1 
+    lda current_chargen
     clc
-    adc _4
+    adc #<CHARGEN
     sta current_chargen
-    lda #>CHARGEN
-    adc _4+1
+    lda current_chargen+1
+    adc #>CHARGEN
     sta current_chargen+1
   //SEG67 [30] phi from scroll_bit::@8 to scroll_bit::@1 [phi:scroll_bit::@8->scroll_bit::@1]
   //SEG68 [30] phi (byte*) nxt#36 = (byte*) nxt#19 [phi:scroll_bit::@8->scroll_bit::@1#0] -- register_copy 
@@ -11823,8 +11823,8 @@ scroll_soft: {
 }
 //SEG55 scroll_bit
 scroll_bit: {
-    .label _4 = 9
-    .label c = 9
+    .label _4 = 3
+    .label c = 3
     .label sc = 5
   //SEG56 [21] (byte) current_bit#5 ← (byte) current_bit#29 >> (byte/signed byte/word/signed word) 1 [ nxt#31 current_chargen#27 current_bit#5 ] ( main:2::scroll_soft:10::scroll_bit:17 [ nxt#31 current_chargen#27 current_bit#5 ] ) -- vbuz1=vbuz1_ror_1 
     lsr current_bit
@@ -11851,13 +11851,13 @@ scroll_bit: {
     rol _4+1
     asl _4
     rol _4+1
-  //SEG66 [29] (byte*) current_chargen#5 ← (const byte*) CHARGEN#0 + (word~) scroll_bit::$4 [ current_chargen#5 nxt#19 ] ( main:2::scroll_soft:10::scroll_bit:17 [ current_chargen#5 nxt#19 ] ) -- pbuz1=pbuc1_plus_vwuz2 
-    lda #<CHARGEN
+  //SEG66 [29] (byte*) current_chargen#5 ← (const byte*) CHARGEN#0 + (word~) scroll_bit::$4 [ current_chargen#5 nxt#19 ] ( main:2::scroll_soft:10::scroll_bit:17 [ current_chargen#5 nxt#19 ] ) -- pbuz1=pbuc1_plus_vwuz1 
+    lda current_chargen
     clc
-    adc _4
+    adc #<CHARGEN
     sta current_chargen
-    lda #>CHARGEN
-    adc _4+1
+    lda current_chargen+1
+    adc #>CHARGEN
     sta current_chargen+1
   //SEG67 [30] phi from scroll_bit::@8 to scroll_bit::@1 [phi:scroll_bit::@8->scroll_bit::@1]
   //SEG68 [30] phi (byte*) nxt#36 = (byte*) nxt#19 [phi:scroll_bit::@8->scroll_bit::@1#0] -- register_copy 
@@ -12133,7 +12133,7 @@ FINAL SYMBOL TABLE
 (void()) scroll_bit()
 (byte~) scroll_bit::$10 reg byte a 22.0
 (byte~) scroll_bit::$3 reg byte a 4.0
-(word~) scroll_bit::$4 $4 zp ZP_WORD:9 4.0
+(word~) scroll_bit::$4 $4 zp ZP_WORD:3 4.0
 (label) scroll_bit::@1
 (label) scroll_bit::@2
 (label) scroll_bit::@3
@@ -12148,7 +12148,7 @@ FINAL SYMBOL TABLE
 (byte) scroll_bit::bits
 (byte) scroll_bit::bits#0 reg byte a 22.0
 (word) scroll_bit::c
-(word) scroll_bit::c#0 c zp ZP_WORD:9 4.0
+(word) scroll_bit::c#0 c zp ZP_WORD:3 4.0
 (byte) scroll_bit::r
 (byte) scroll_bit::r#1 reg byte x 16.5
 (byte) scroll_bit::r#2 reg byte x 4.125
@@ -12192,7 +12192,7 @@ FINAL SYMBOL TABLE
 
 reg byte x [ scroll#18 scroll#10 scroll#3 ]
 zp ZP_BYTE:2 [ current_bit#29 current_bit#12 current_bit#21 current_bit#5 ]
-zp ZP_WORD:3 [ current_chargen#27 current_chargen#11 current_chargen#19 current_chargen#5 fillscreen::cursor#2 fillscreen::cursor#1 ]
+zp ZP_WORD:3 [ current_chargen#27 current_chargen#11 current_chargen#19 current_chargen#5 fillscreen::cursor#2 fillscreen::cursor#1 scroll_bit::c#0 scroll_bit::$4 ]
 reg byte x [ scroll_bit::r#2 scroll_bit::r#1 ]
 zp ZP_WORD:5 [ scroll_bit::sc#2 scroll_bit::sc#1 ]
 reg byte a [ scroll_bit::b#2 ]
@@ -12201,7 +12201,6 @@ zp ZP_WORD:7 [ nxt#18 nxt#31 nxt#14 nxt#36 nxt#19 ]
 reg byte a [ next_char::return#1 next_char::c#0 next_char::c#1 ]
 reg byte a [ next_char::return#0 ]
 reg byte a [ scroll_bit::$3 ]
-zp ZP_WORD:9 [ scroll_bit::c#0 scroll_bit::$4 ]
 reg byte a [ scroll_bit::bits#0 ]
 reg byte a [ scroll_bit::$10 ]
 reg byte a [ scroll_hard::$17 ]
@@ -12321,8 +12320,8 @@ scroll_soft: {
 }
 //SEG55 scroll_bit
 scroll_bit: {
-    .label _4 = 9
-    .label c = 9
+    .label _4 = 3
+    .label c = 3
     .label sc = 5
   //SEG56 [21] (byte) current_bit#5 ← (byte) current_bit#29 >> (byte/signed byte/word/signed word) 1 [ nxt#31 current_chargen#27 current_bit#5 ] ( main:2::scroll_soft:10::scroll_bit:17 [ nxt#31 current_chargen#27 current_bit#5 ] ) -- vbuz1=vbuz1_ror_1 
     lsr current_bit
@@ -12349,13 +12348,13 @@ scroll_bit: {
     rol _4+1
     asl _4
     rol _4+1
-  //SEG66 [29] (byte*) current_chargen#5 ← (const byte*) CHARGEN#0 + (word~) scroll_bit::$4 [ current_chargen#5 nxt#19 ] ( main:2::scroll_soft:10::scroll_bit:17 [ current_chargen#5 nxt#19 ] ) -- pbuz1=pbuc1_plus_vwuz2 
-    lda #<CHARGEN
+  //SEG66 [29] (byte*) current_chargen#5 ← (const byte*) CHARGEN#0 + (word~) scroll_bit::$4 [ current_chargen#5 nxt#19 ] ( main:2::scroll_soft:10::scroll_bit:17 [ current_chargen#5 nxt#19 ] ) -- pbuz1=pbuc1_plus_vwuz1 
+    lda current_chargen
     clc
-    adc _4
+    adc #<CHARGEN
     sta current_chargen
-    lda #>CHARGEN
-    adc _4+1
+    lda current_chargen+1
+    adc #>CHARGEN
     sta current_chargen+1
   //SEG67 [30] phi from scroll_bit::@8 to scroll_bit::@1 [phi:scroll_bit::@8->scroll_bit::@1]
   //SEG68 [30] phi (byte*) nxt#36 = (byte*) nxt#19 [phi:scroll_bit::@8->scroll_bit::@1#0] -- register_copy 

@@ -96,7 +96,7 @@ print_ln: {
     rts
 }
 print_word: {
-    .label w = 9
+    .label w = 7
     lda w+1
     tax
     jsr print_byte
@@ -132,15 +132,12 @@ print_char: {
     rts
 }
 getFAC: {
-    .label w = 9
-    .label return = 9
+    .label return = 7
     jsr $b1aa
     sty $fe
     sta $ff
     lda memLo
-    sta w
-    lda #0
-    sta w+1
+    sta return
     lda memHi
     sta return+1
     rts
@@ -188,11 +185,7 @@ divMEMbyFAC: {
     rts
 }
 setFAC: {
-    .label w = 9
-    lda w
-    sta prepareMEM.mem
-    lda w+1
-    sta prepareMEM.mem+1
+    .label w = 7
     jsr prepareMEM
     ldy $fe
     lda $ff

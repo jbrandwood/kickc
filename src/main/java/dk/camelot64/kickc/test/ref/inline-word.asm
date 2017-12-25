@@ -5,7 +5,7 @@
   jsr main
 main: {
     .label w = 3
-    .label sc = 5
+    .label sc = 3
     .label l = 2
     ldx #0
   b1:
@@ -16,9 +16,6 @@ main: {
     sta w+1
     lda l
     sta w
-    sta sc
-    lda w+1
-    sta sc+1
     ldy #0
     lda #'*'
     sta (sc),y

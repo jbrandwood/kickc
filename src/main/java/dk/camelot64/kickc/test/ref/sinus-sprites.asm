@@ -41,7 +41,7 @@ main: {
 anim: {
     .label _3 = 5
     .label xidx = 4
-    .label x = $e
+    .label x = 8
     .label x_msb = 5
     .label j2 = 6
     .label j = 7
@@ -193,7 +193,7 @@ clear_screen: {
 }
 gen_sintab: {
     .const f_2pi = $e2e5
-    .label _23 = $e
+    .label _23 = $c
     .label i = 2
     .label min = 2
     .label length = 3
@@ -325,15 +325,12 @@ progress_inc: {
     progress_chars: .byte $20, $65, $74, $75, $61, $f6, $e7, $ea, $e0
 }
 getFAC: {
-    .label w = $e
-    .label return = $e
+    .label return = $c
     jsr $b1aa
     sty $fe
     sta $ff
     lda memLo
-    sta w
-    lda #0
-    sta w+1
+    sta return
     lda memHi
     sta return+1
     rts
@@ -375,11 +372,7 @@ divMEMbyFAC: {
     rts
 }
 setFAC: {
-    .label w = $e
-    lda w
-    sta prepareMEM.mem
-    lda w+1
-    sta prepareMEM.mem+1
+    .label w = $c
     jsr prepareMEM
     ldy $fe
     lda $ff
@@ -439,8 +432,8 @@ gen_sprites: {
     cml: .text "camelot"
 }
 gen_chargen_sprite: {
-    .label _0 = $e
-    .label _1 = $e
+    .label _0 = $c
+    .label _1 = $c
     .label sprite = $a
     .label chargen = $c
     .label bits = 4
@@ -458,12 +451,12 @@ gen_chargen_sprite: {
     rol _1+1
     asl _1
     rol _1+1
-    lda #<CHARGEN
+    lda chargen
     clc
-    adc _1
+    adc #<CHARGEN
     sta chargen
-    lda #>CHARGEN
-    adc _1+1
+    lda chargen+1
+    adc #>CHARGEN
     sta chargen+1
     sei
     lda #$32

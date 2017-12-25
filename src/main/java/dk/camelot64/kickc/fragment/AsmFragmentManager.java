@@ -191,8 +191,13 @@ public class AsmFragmentManager {
       synths.add(new FragmentSynthesis("(vwsz.)=(vwsz.|vwsc.)", null, null, "$1=$2", null, mapSToU));
       synths.add(new FragmentSynthesis("(vwsz.)=(vwsz.|vwsc.)_(plus|band|bxor|bor)_(vwsz.|vwsc.)", null, null, "$1=$2_$3_$4", null, mapSToU));
 
+      synths.add(new FragmentSynthesis("(vwuz.)=(vwuz.)_(plus|minus|band|bxor|bor)_vb.c(.)", null, null, "$1=$2_$3_vwuc$4", null, null));
+      synths.add(new FragmentSynthesis("(vwuz.)=vb.c(.)_(plus|minus|band|bxor|bor)_(vwuz.)", null, null, "$1=vwuc$2_$3_$4", null, null));
       synths.add(new FragmentSynthesis("(vwsz.)=(vwsz.)_(plus|minus|band|bxor|bor)_vb.c(.)", null, null, "$1=$2_$3_vwsc$4", null, null));
       synths.add(new FragmentSynthesis("(vwsz.)=vb.c(.)_(plus|minus|band|bxor|bor)_(vwsz.)", null, null, "$1=vwsc$2_$3_$4", null, null));
+
+      synths.add(new FragmentSynthesis("(vwuz.)=(vwuc.)_(plus|band|bxor|bor)_(vwuz.)", null, null, "$1=$4_$3_$2", null, null));
+      synths.add(new FragmentSynthesis("(vwsz.)=(vwsc.)_(plus|band|bxor|bor)_(vwsz.)", null, null, "$1=$4_$3_$2", null, null));
 
       synths.add(new FragmentSynthesis("(vbuz.|vbuaa|vbuxx|vbuyy)=_(lo|hi)_vws(z.|c.)", null, null, "$1=_$2_vwu$3", null, mapSToU));
 

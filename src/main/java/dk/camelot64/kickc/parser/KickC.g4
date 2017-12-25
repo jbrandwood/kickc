@@ -83,11 +83,12 @@ expr
     | '(' typeDecl ')' expr #exprCast
     | expr '[' expr ']' #exprArray
     | ('--' | '++' ) expr #exprPreMod
-    | expr ('--' | '++' )#exprPostMod
-    | ('+' | '-' | '!' | '&' | '*' | '~' | '<' | '>') expr #exprUnary
+    | expr ('--' | '++' ) #exprPostMod
+    | ('+' | '-' | '!' | '&' | '*' | '~') expr #exprUnary
     | expr ('>>' | '<<' ) expr #exprBinary
     | expr ('*' | '/' | '%' ) expr #exprBinary
     | expr ( '+' | '-')  expr #exprBinary
+    | ('<' | '>') expr #exprUnary
     | expr ( '==' | '!=' | '<>' | '<' | '<=' | '=<' | '>=' | '=>' | '>' ) expr #exprBinary
     | expr ( '&' ) expr #exprBinary
     | expr ( '^' ) expr #exprBinary

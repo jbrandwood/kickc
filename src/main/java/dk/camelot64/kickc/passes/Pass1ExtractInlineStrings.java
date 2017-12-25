@@ -5,7 +5,7 @@ import dk.camelot64.kickc.model.*;
 import java.util.*;
 
 /**
- * Eliminate uncalled methods
+ * All inline strings in the code are extracted into constants.
  */
 public class Pass1ExtractInlineStrings extends Pass1Base {
 
@@ -22,41 +22,42 @@ public class Pass1ExtractInlineStrings extends Pass1Base {
             Statement statement = stmtIt.next();
             if (statement instanceof StatementCall) {
                StatementCall call = (StatementCall) statement;
-               ListIterator<RValue> parIt = call.getParameters().listIterator();
-               int parNum = 0;
-               while (parIt.hasNext()) {
-                  RValue parameter = parIt.next();
-                  if (parameter instanceof ConstantString) {
-                     Procedure procedure = getProgram().getScope().getProcedure(call.getProcedure());
-                     String parameterName = procedure.getParameterNames().get(parNum);
-                     ConstantVar strConst = createStringConstantVar(blockScope, (ConstantString) parameter, parameterName);
-                     parIt.set(strConst.getRef());
-                  }
-                  parNum++;
+               Procedure procedure = getProgram().getScope().getProcedure(call.getProcedure());
+               List<RValue> parameters = call.getParameters();
+               int size = parameters.size();
+               for (int i = 0; i < size; i++) {
+                  String parameterName = procedure.getParameterNames().get(i);
+                  execute(new VariableReplacer.ReplacableCallParameter(call, i), blockScope, parameterName);
                }
             } else if (statement instanceof StatementAssignment) {
                StatementAssignment assignment = (StatementAssignment) statement;
-               if(assignment.getrValue1() instanceof ConstantString && assignment.getrValue2() instanceof ConstantString) {
+               if(assignment.getrValue1()==null && assignment.getOperator()==null && assignment.getrValue2() instanceof ConstantString) {
+                  // This will be picked up later as a constant - the temporary constant variable is not needed
                   continue;
                }
-               if (assignment.getrValue1() instanceof ConstantString) {
-                  ConstantVar strConst = createStringConstantVar(blockScope, (ConstantString) assignment.getrValue1(), null);
-                  assignment.setrValue1(strConst.getRef());
+               if(assignment.getrValue1() instanceof ConstantString && assignment.getrValue2() instanceof ConstantString) {
+                  // This will be picked up later as a constant - the temporary constant variable is not needed
+                  continue;
                }
-               if (assignment.getrValue2() instanceof ConstantString && assignment.getOperator() != null) {
-                  ConstantVar strConst = createStringConstantVar(blockScope, (ConstantString) assignment.getrValue2(), null);
-                  assignment.setrValue2(strConst.getRef());
-               }
+               execute(new VariableReplacer.ReplacableRValue1(assignment), blockScope, null);
+               execute(new VariableReplacer.ReplacableRValue2(assignment), blockScope, null);
             } else if (statement instanceof StatementReturn) {
-               StatementReturn statementReturn = (StatementReturn) statement;
-               if (statementReturn.getValue() instanceof ConstantString) {
-                  ConstantVar strConst = createStringConstantVar(blockScope, (ConstantString) statementReturn.getValue(), null);
-                  statementReturn.setValue(strConst.getRef());
-               }
+               execute(new VariableReplacer.ReplacableReturn((StatementReturn) statement), blockScope, null);
             }
          }
       }
       return false;
+   }
+
+   private void execute(VariableReplacer.ReplacableValue replacable, Scope blockScope, String nameHint) {
+      RValue value = replacable.get();
+      if(value instanceof ConstantString) {
+         ConstantVar strConst = createStringConstantVar(blockScope, (ConstantString) replacable.get(), nameHint);
+         replacable.set(strConst.getRef());
+      }
+      for (VariableReplacer.ReplacableValue subValue : replacable.getSubValues()) {
+         execute(subValue, blockScope, nameHint);
+      }
    }
 
    private ConstantVar createStringConstantVar(Scope blockScope, ConstantString constantString, String nameHint) {

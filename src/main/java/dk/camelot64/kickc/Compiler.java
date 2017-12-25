@@ -105,24 +105,26 @@ public class Compiler {
    }
 
    private Program pass1GenerateSSA() {
+
       new Pass1FixLvalueLoHi(program).execute();
       new Pass1TypeInference(program).execute();
-
       getLog().append("PROGRAM");
       getLog().append(program.getStatementSequence().toString(program));
       getLog().append("SYMBOLS");
       getLog().append(program.getScope().getSymbolTableContents(program));
-      new Pass1GenerateControlFlowGraph(program).execute();
 
+      new Pass1GenerateControlFlowGraph(program).execute();
       new Pass1AddTypePromotions(program).execute();
+
       getLog().append("INITIAL CONTROL FLOW GRAPH");
       getLog().append(program.getGraph().toString(program));
 
       new Pass1AssertReturn(program).execute();
       new Pass1AssertUsedVars(program).execute();
-      new Pass1ExtractInlineStrings(program).execute();
       new Pass1EliminateUncalledProcedures(program).execute();
       new Pass1EliminateUnusedVars(program).execute();
+      new Pass1ExtractInlineStrings(program).execute();
+      new Pass1FixWordConstructors(program).execute();
 
       new Pass1EliminateEmptyBlocks(program).execute();
       getLog().append("CONTROL FLOW GRAPH");

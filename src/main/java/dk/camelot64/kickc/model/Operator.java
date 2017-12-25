@@ -120,8 +120,7 @@ public class Operator {
    public static final Operator BOOL_NOT = new Operator("~", "_not_", Type.UNARY, 2);
    public static final Operator NOT = new Operator("!", "_not_", Type.UNARY, 2);
    public static final Operator DEREF = new Operator("*", "_deref_", Type.UNARY, 2);
-   public static final Operator LOWBYTE = new Operator("<", "_lo_", Type.UNARY, 2);
-   public static final Operator HIBYTE = new Operator(">", "_hi_", Type.UNARY, 2);
+   public static final Operator WORD = new Operator("w=", "_word_", Type.BINARY, 2);
    public static final Operator DEREF_IDX = new Operator("*idx", "_derefidx_", Type.BINARY, 2);
    public static final Operator SET_LOWBYTE = new Operator("lo=", "_setlo_", Type.BINARY, 2);
    public static final Operator SET_HIBYTE = new Operator("hi=", "_sethi_", Type.BINARY, 2);
@@ -136,17 +135,19 @@ public class Operator {
    public static final Operator MINUS = new Operator("-", "_minus_", Type.BINARY, 4);
    public static final Operator SHIFT_LEFT = new Operator("<<", "_rol_", Type.BINARY, 5);
    public static final Operator SHIFT_RIGHT = new Operator(">>", "_ror_", Type.BINARY, 5);
-   public static final Operator LT = new Operator("<", "_lt_", Type.BINARY, 6);
-   public static final Operator LE = new Operator("<=", "_le_", Type.BINARY, 6);
-   public static final Operator GT = new Operator(">", "_gt_", Type.BINARY, 6);
-   public static final Operator GE = new Operator(">=", "_ge_", Type.BINARY, 6);
-   public static final Operator EQ = new Operator("==", "_eq_", Type.BINARY, 7);
-   public static final Operator NEQ = new Operator("!=", "_neq_", Type.BINARY, 7);
-   public static final Operator BOOL_AND = new Operator("&", "_band_", Type.BINARY, 8);
-   public static final Operator BOOL_XOR = new Operator("^", "_bxor_", Type.BINARY, 9);
-   public static final Operator BOOL_OR = new Operator("|", "_bor_", Type.BINARY, 10);
-   public static final Operator LOGIC_AND = new Operator("&&", "_and_", Type.BINARY, 11);
-   public static final Operator LOGIC_OR = new Operator("||", "_or_", Type.BINARY, 12);
+   public static final Operator LOWBYTE = new Operator("<", "_lo_", Type.UNARY, 6);
+   public static final Operator HIBYTE = new Operator(">", "_hi_", Type.UNARY, 6);
+   public static final Operator LT = new Operator("<", "_lt_", Type.BINARY, 7);
+   public static final Operator LE = new Operator("<=", "_le_", Type.BINARY, 7);
+   public static final Operator GT = new Operator(">", "_gt_", Type.BINARY, 7);
+   public static final Operator GE = new Operator(">=", "_ge_", Type.BINARY, 7);
+   public static final Operator EQ = new Operator("==", "_eq_", Type.BINARY, 8);
+   public static final Operator NEQ = new Operator("!=", "_neq_", Type.BINARY, 8);
+   public static final Operator BOOL_AND = new Operator("&", "_band_", Type.BINARY, 9);
+   public static final Operator BOOL_XOR = new Operator("^", "_bxor_", Type.BINARY, 10);
+   public static final Operator BOOL_OR = new Operator("|", "_bor_", Type.BINARY, 11);
+   public static final Operator LOGIC_AND = new Operator("&&", "_and_", Type.BINARY, 12);
+   public static final Operator LOGIC_OR = new Operator("||", "_or_", Type.BINARY, 13);
 
    public String getOperator() {
       return operator;

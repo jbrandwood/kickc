@@ -106,11 +106,18 @@ public class Pass2ConstantInlining extends Pass2SsaOptimization {
     */
    private Map<ConstantRef, ConstantValue> findAliasConstants() {
       Map<ConstantRef, ConstantValue> aliases = new HashMap<>();
-      Collection<ConstantVar> allConstants = getProgram().getScope().getAllConstants(true);
+      ProgramScope programScope = getProgram().getScope();
+      Collection<ConstantVar> allConstants = programScope.getAllConstants(true);
       for (ConstantVar constant : allConstants) {
          ConstantValue constantValue = constant.getValue();
          if(constantValue instanceof ConstantRef) {
-            aliases.put(constant.getRef(), constant.getValue());
+            if(((ConstantRef) constantValue).isIntermediate()) {
+               // The value is an intermediate constant - replace all uses of the intermediate with uses of the referer instead.
+               aliases.put((ConstantRef) constant.getValue(), constant.getRef());
+               constant.setValue(programScope.getConstant((ConstantRef) constantValue).getValue());
+            }  else {
+               aliases.put(constant.getRef(), constant.getValue());
+            }
          }
       }
       return aliases;

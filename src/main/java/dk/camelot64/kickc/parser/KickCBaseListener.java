@@ -1,4 +1,4 @@
-// Generated from C:/c64/src/kickc/src/main/java/dk/camelot64/kickc/parser\KickC.g4 by ANTLR 4.7
+// Generated from /Users/jespergravgaard/c64/src/kickc/src/main/java/dk/camelot64/kickc/parser/KickC.g4 by ANTLR 4.7
 package dk.camelot64.kickc.parser;
 
 import org.antlr.v4.runtime.ParserRuleContext;

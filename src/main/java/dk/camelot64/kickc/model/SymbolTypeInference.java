@@ -67,11 +67,11 @@ public class SymbolTypeInference {
             throw new RuntimeException("Type error: Dereferencing a non-pointer " + subType);
          }
       } else if (Operator.LOWBYTE.equals(operator)) {
-         if (subType instanceof SymbolTypePointer || SymbolType.WORD.equals(subType) || SymbolType.WORD.equals(subType)) {
+         if (subType instanceof SymbolTypePointer || SymbolType.isWord(subType) || SymbolType.isSWord(subType)) {
             return SymbolType.BYTE;
          }
       } else if (Operator.HIBYTE.equals(operator)) {
-         if (subType instanceof SymbolTypePointer || SymbolType.WORD.equals(subType) || SymbolType.SWORD.equals(subType)) {
+         if (subType instanceof SymbolTypePointer || SymbolType.isWord(subType) || SymbolType.isSWord(subType) ) {
             return SymbolType.BYTE;
          }
       } else if (Operator.CAST_BYTE.equals(operator)) {
@@ -98,6 +98,8 @@ public class SymbolTypeInference {
          return type1;
       } else if (Operator.SET_LOWBYTE.equals(operator)) {
          return type1;
+      } else if (Operator.WORD.equals(operator)) {
+         return SymbolType.WORD;
       }
 
       String op = operator.getOperator();

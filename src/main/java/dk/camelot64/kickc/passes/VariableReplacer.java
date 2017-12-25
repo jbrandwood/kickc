@@ -107,6 +107,22 @@ public class VariableReplacer {
             }
             return new ConstantBinary(aliasLeft, constantBinary.getOperator(), aliasRight);
          }
+      } else if(rValue instanceof ConstantArray) {
+         ConstantArray constantArray = (ConstantArray) rValue;
+         ArrayList<ConstantValue> replacementList = new ArrayList<>();
+         boolean any = false;
+         for (ConstantValue elemValue : constantArray.getElements()) {
+            RValue elemReplacement = getReplacement(elemValue);
+            if(elemReplacement!=null) {
+               replacementList.add((ConstantValue) elemReplacement);
+               any = true;
+            } else{
+               replacementList.add(elemValue);
+            }
+         }
+         if(any) {
+            return new ConstantArray(replacementList, constantArray.getElementType());
+         }
       }
 
       // No replacement found - return null

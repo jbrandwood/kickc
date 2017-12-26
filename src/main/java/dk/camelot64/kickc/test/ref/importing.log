@@ -350,11 +350,8 @@ Uplift Scope []
 
 Uplifting [main] best 33 combination 
 Uplifting [] best 33 combination 
-Removing instruction jmp b1
-Removing instruction jmp bend
-Removing instruction jmp breturn
-Succesful ASM optimization Pass5NextJumpElimination
-ASSEMBLER
+
+ASSEMBLER BEFORE OPTIMIZATION
 //SEG0 Basic Upstart
 .pc = $801 "Basic"
 :BasicUpstart(main)
@@ -366,12 +363,14 @@ ASSEMBLER
 bbegin:
 //SEG3 [1] phi from @begin to @1 [phi:@begin->@1]
 b1_from_bbegin:
+  jmp b1
 //SEG4 @1
 b1:
 //SEG5 [2] call main param-assignment [ ] ( )
   jsr main
 //SEG6 [3] phi from @1 to @end [phi:@1->@end]
 bend_from_b1:
+  jmp bend
 //SEG7 @end
 bend:
 //SEG8 main
@@ -383,80 +382,26 @@ main: {
   //SEG10 [5] *((const byte*) BGCOL#0) ← (const byte) RED#0 [ ] ( main:2 [ ] ) -- _deref_pbuc1=vbuc2 
     lda #RED
     sta BGCOL
+    jmp breturn
   //SEG11 main::@return
   breturn:
   //SEG12 [6] return  [ ] ( main:2 [ ] )
     rts
 }
 
+ASSEMBLER OPTIMIZATIONS
+Removing instruction jmp b1
+Removing instruction jmp bend
+Removing instruction jmp breturn
+Succesful ASM optimization Pass5NextJumpElimination
 Removing instruction bbegin:
 Removing instruction b1_from_bbegin:
 Removing instruction bend_from_b1:
 Succesful ASM optimization Pass5RedundantLabelElimination
-ASSEMBLER
-//SEG0 Basic Upstart
-.pc = $801 "Basic"
-:BasicUpstart(main)
-.pc = $80d "Program"
-//SEG1 Global Constants & labels
-  .const BGCOL = $d021
-  .const RED = 2
-//SEG2 @begin
-//SEG3 [1] phi from @begin to @1 [phi:@begin->@1]
-//SEG4 @1
-b1:
-//SEG5 [2] call main param-assignment [ ] ( )
-  jsr main
-//SEG6 [3] phi from @1 to @end [phi:@1->@end]
-//SEG7 @end
-bend:
-//SEG8 main
-main: {
-    .const screen = $400
-  //SEG9 [4] *((const byte*) main::screen#0) ← (byte/signed byte/word/signed word) 1 [ ] ( main:2 [ ] ) -- _deref_pbuc1=vbuc2 
-    lda #1
-    sta screen
-  //SEG10 [5] *((const byte*) BGCOL#0) ← (const byte) RED#0 [ ] ( main:2 [ ] ) -- _deref_pbuc1=vbuc2 
-    lda #RED
-    sta BGCOL
-  //SEG11 main::@return
-  breturn:
-  //SEG12 [6] return  [ ] ( main:2 [ ] )
-    rts
-}
-
 Removing instruction b1:
 Removing instruction bend:
 Removing instruction breturn:
 Succesful ASM optimization Pass5UnusedLabelElimination
-ASSEMBLER
-//SEG0 Basic Upstart
-.pc = $801 "Basic"
-:BasicUpstart(main)
-.pc = $80d "Program"
-//SEG1 Global Constants & labels
-  .const BGCOL = $d021
-  .const RED = 2
-//SEG2 @begin
-//SEG3 [1] phi from @begin to @1 [phi:@begin->@1]
-//SEG4 @1
-//SEG5 [2] call main param-assignment [ ] ( )
-  jsr main
-//SEG6 [3] phi from @1 to @end [phi:@1->@end]
-//SEG7 @end
-//SEG8 main
-main: {
-    .const screen = $400
-  //SEG9 [4] *((const byte*) main::screen#0) ← (byte/signed byte/word/signed word) 1 [ ] ( main:2 [ ] ) -- _deref_pbuc1=vbuc2 
-    lda #1
-    sta screen
-  //SEG10 [5] *((const byte*) BGCOL#0) ← (const byte) RED#0 [ ] ( main:2 [ ] ) -- _deref_pbuc1=vbuc2 
-    lda #RED
-    sta BGCOL
-  //SEG11 main::@return
-  //SEG12 [6] return  [ ] ( main:2 [ ] )
-    rts
-}
 
 FINAL SYMBOL TABLE
 (label) @1

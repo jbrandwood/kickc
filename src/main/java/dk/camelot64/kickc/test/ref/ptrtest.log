@@ -2494,6 +2494,216 @@ Uplifting [main] best 1503 combination
 Uplifting [] best 1503 combination 
 Coalescing zero page register [ zp ZP_WORD:3 [ lvaluevar::screen#2 lvaluevar::screen#1 ] ] with [ zp ZP_WORD:6 [ rvaluevar::screen#2 rvaluevar::screen#1 ] ]
 Allocated (was zp ZP_WORD:3) zp ZP_WORD:2 [ lvaluevar::screen#2 lvaluevar::screen#1 rvaluevar::screen#2 rvaluevar::screen#1 ]
+
+ASSEMBLER BEFORE OPTIMIZATION
+//SEG0 Basic Upstart
+.pc = $801 "Basic"
+:BasicUpstart(main)
+.pc = $80d "Program"
+//SEG1 Global Constants & labels
+//SEG2 @begin
+bbegin:
+//SEG3 [1] phi from @begin to @5 [phi:@begin->@5]
+b5_from_bbegin:
+  jmp b5
+//SEG4 @5
+b5:
+//SEG5 [2] call main param-assignment [ ] ( )
+//SEG6 [4] phi from @5 to main [phi:@5->main]
+main_from_b5:
+  jsr main
+//SEG7 [3] phi from @5 to @end [phi:@5->@end]
+bend_from_b5:
+  jmp bend
+//SEG8 @end
+bend:
+//SEG9 main
+main: {
+  //SEG10 [5] call lvalue param-assignment [ ] ( main:2 [ ] )
+    jsr lvalue
+  //SEG11 [6] phi from main to main::@1 [phi:main->main::@1]
+  b1_from_main:
+    jmp b1
+  //SEG12 main::@1
+  b1:
+  //SEG13 [7] call rvalue param-assignment [ ] ( main:2 [ ] )
+    jsr rvalue
+  //SEG14 [8] phi from main::@1 to main::@2 [phi:main::@1->main::@2]
+  b2_from_b1:
+    jmp b2
+  //SEG15 main::@2
+  b2:
+  //SEG16 [9] call rvaluevar param-assignment [ ] ( main:2 [ ] )
+  //SEG17 [20] phi from main::@2 to rvaluevar [phi:main::@2->rvaluevar]
+  rvaluevar_from_b2:
+    jsr rvaluevar
+  //SEG18 [10] phi from main::@2 to main::@3 [phi:main::@2->main::@3]
+  b3_from_b2:
+    jmp b3
+  //SEG19 main::@3
+  b3:
+  //SEG20 [11] call lvaluevar param-assignment [ ] ( main:2 [ ] )
+  //SEG21 [13] phi from main::@3 to lvaluevar [phi:main::@3->lvaluevar]
+  lvaluevar_from_b3:
+    jsr lvaluevar
+    jmp breturn
+  //SEG22 main::@return
+  breturn:
+  //SEG23 [12] return  [ ] ( main:2 [ ] )
+    rts
+}
+//SEG24 lvaluevar
+lvaluevar: {
+    .const b = 4
+    .label screen = 2
+  //SEG25 [14] phi from lvaluevar to lvaluevar::@1 [phi:lvaluevar->lvaluevar::@1]
+  b1_from_lvaluevar:
+  //SEG26 [14] phi (byte*) lvaluevar::screen#2 = ((byte*))(word/signed word) 1024 [phi:lvaluevar->lvaluevar::@1#0] -- pbuz1=pbuc1 
+    lda #<$400
+    sta screen
+    lda #>$400
+    sta screen+1
+  //SEG27 [14] phi (byte) lvaluevar::i#2 = (byte/signed byte/word/signed word) 2 [phi:lvaluevar->lvaluevar::@1#1] -- vbuxx=vbuc1 
+    ldx #2
+    jmp b1
+  //SEG28 lvaluevar::@1
+  b1:
+  //SEG29 [15] if((byte) lvaluevar::i#2<(byte/signed byte/word/signed word) 10) goto lvaluevar::@2 [ lvaluevar::i#2 lvaluevar::screen#2 ] ( main:2::lvaluevar:11 [ lvaluevar::i#2 lvaluevar::screen#2 ] ) -- vbuxx_lt_vbuc1_then_la1 
+    cpx #$a
+    bcc b2
+    jmp breturn
+  //SEG30 lvaluevar::@return
+  breturn:
+  //SEG31 [16] return  [ ] ( main:2::lvaluevar:11 [ ] )
+    rts
+  //SEG32 lvaluevar::@2
+  b2:
+  //SEG33 [17] *((byte*) lvaluevar::screen#2) ← (const byte) lvaluevar::b#0 [ lvaluevar::i#2 lvaluevar::screen#2 ] ( main:2::lvaluevar:11 [ lvaluevar::i#2 lvaluevar::screen#2 ] ) -- _deref_pbuz1=vbuc1 
+    ldy #0
+    lda #b
+    sta (screen),y
+  //SEG34 [18] (byte*) lvaluevar::screen#1 ← ++ (byte*) lvaluevar::screen#2 [ lvaluevar::i#2 lvaluevar::screen#1 ] ( main:2::lvaluevar:11 [ lvaluevar::i#2 lvaluevar::screen#1 ] ) -- pbuz1=_inc_pbuz1 
+    inc screen
+    bne !+
+    inc screen+1
+  !:
+  //SEG35 [19] (byte) lvaluevar::i#1 ← ++ (byte) lvaluevar::i#2 [ lvaluevar::i#1 lvaluevar::screen#1 ] ( main:2::lvaluevar:11 [ lvaluevar::i#1 lvaluevar::screen#1 ] ) -- vbuxx=_inc_vbuxx 
+    inx
+  //SEG36 [14] phi from lvaluevar::@2 to lvaluevar::@1 [phi:lvaluevar::@2->lvaluevar::@1]
+  b1_from_b2:
+  //SEG37 [14] phi (byte*) lvaluevar::screen#2 = (byte*) lvaluevar::screen#1 [phi:lvaluevar::@2->lvaluevar::@1#0] -- register_copy 
+  //SEG38 [14] phi (byte) lvaluevar::i#2 = (byte) lvaluevar::i#1 [phi:lvaluevar::@2->lvaluevar::@1#1] -- register_copy 
+    jmp b1
+}
+//SEG39 rvaluevar
+rvaluevar: {
+    .label screen = 2
+  //SEG40 [21] phi from rvaluevar to rvaluevar::@1 [phi:rvaluevar->rvaluevar::@1]
+  b1_from_rvaluevar:
+  //SEG41 [21] phi (byte*) rvaluevar::screen#2 = ((byte*))(word/signed word) 1024 [phi:rvaluevar->rvaluevar::@1#0] -- pbuz1=pbuc1 
+    lda #<$400
+    sta screen
+    lda #>$400
+    sta screen+1
+  //SEG42 [21] phi (byte) rvaluevar::i#2 = (byte/signed byte/word/signed word) 2 [phi:rvaluevar->rvaluevar::@1#1] -- vbuxx=vbuc1 
+    ldx #2
+    jmp b1
+  //SEG43 rvaluevar::@1
+  b1:
+  //SEG44 [22] if((byte) rvaluevar::i#2<(byte/signed byte/word/signed word) 10) goto rvaluevar::@2 [ rvaluevar::i#2 rvaluevar::screen#2 ] ( main:2::rvaluevar:9 [ rvaluevar::i#2 rvaluevar::screen#2 ] ) -- vbuxx_lt_vbuc1_then_la1 
+    cpx #$a
+    bcc b2
+    jmp breturn
+  //SEG45 rvaluevar::@return
+  breturn:
+  //SEG46 [23] return  [ ] ( main:2::rvaluevar:9 [ ] )
+    rts
+  //SEG47 rvaluevar::@2
+  b2:
+  //SEG48 [24] (byte*) rvaluevar::screen#1 ← ++ (byte*) rvaluevar::screen#2 [ rvaluevar::i#2 rvaluevar::screen#1 ] ( main:2::rvaluevar:9 [ rvaluevar::i#2 rvaluevar::screen#1 ] ) -- pbuz1=_inc_pbuz1 
+    inc screen
+    bne !+
+    inc screen+1
+  !:
+  //SEG49 [25] (byte) rvaluevar::i#1 ← ++ (byte) rvaluevar::i#2 [ rvaluevar::i#1 rvaluevar::screen#1 ] ( main:2::rvaluevar:9 [ rvaluevar::i#1 rvaluevar::screen#1 ] ) -- vbuxx=_inc_vbuxx 
+    inx
+  //SEG50 [21] phi from rvaluevar::@2 to rvaluevar::@1 [phi:rvaluevar::@2->rvaluevar::@1]
+  b1_from_b2:
+  //SEG51 [21] phi (byte*) rvaluevar::screen#2 = (byte*) rvaluevar::screen#1 [phi:rvaluevar::@2->rvaluevar::@1#0] -- register_copy 
+  //SEG52 [21] phi (byte) rvaluevar::i#2 = (byte) rvaluevar::i#1 [phi:rvaluevar::@2->rvaluevar::@1#1] -- register_copy 
+    jmp b1
+}
+//SEG53 rvalue
+rvalue: {
+    .const SCREEN = $400
+  //SEG54 [26] (byte) rvalue::b#0 ← *((const byte[1024]) rvalue::SCREEN#0) [ ] ( main:2::rvalue:7 [ ] ) -- vbuaa=_deref_pbuc1 
+    lda SCREEN
+  //SEG55 [27] (byte) rvalue::b#1 ← * (const byte[1024]) rvalue::SCREEN#0+(byte/signed byte/word/signed word) 1 [ ] ( main:2::rvalue:7 [ ] ) -- vbuaa=_deref_pbuc1 
+    lda SCREEN+1
+  //SEG56 [28] phi from rvalue to rvalue::@1 [phi:rvalue->rvalue::@1]
+  b1_from_rvalue:
+  //SEG57 [28] phi (byte) rvalue::i#2 = (byte/signed byte/word/signed word) 2 [phi:rvalue->rvalue::@1#0] -- vbuxx=vbuc1 
+    ldx #2
+    jmp b1
+  //SEG58 rvalue::@1
+  b1:
+  //SEG59 [29] if((byte) rvalue::i#2<(byte/signed byte/word/signed word) 10) goto rvalue::@2 [ rvalue::i#2 ] ( main:2::rvalue:7 [ rvalue::i#2 ] ) -- vbuxx_lt_vbuc1_then_la1 
+    cpx #$a
+    bcc b2
+    jmp breturn
+  //SEG60 rvalue::@return
+  breturn:
+  //SEG61 [30] return  [ ] ( main:2::rvalue:7 [ ] )
+    rts
+  //SEG62 rvalue::@2
+  b2:
+  //SEG63 [31] (byte) rvalue::b#2 ← (const byte[1024]) rvalue::SCREEN#0 *idx (byte) rvalue::i#2 [ rvalue::i#2 ] ( main:2::rvalue:7 [ rvalue::i#2 ] ) -- vbuaa=pbuc1_derefidx_vbuxx 
+    lda SCREEN,x
+  //SEG64 [32] (byte) rvalue::i#1 ← ++ (byte) rvalue::i#2 [ rvalue::i#1 ] ( main:2::rvalue:7 [ rvalue::i#1 ] ) -- vbuxx=_inc_vbuxx 
+    inx
+  //SEG65 [28] phi from rvalue::@2 to rvalue::@1 [phi:rvalue::@2->rvalue::@1]
+  b1_from_b2:
+  //SEG66 [28] phi (byte) rvalue::i#2 = (byte) rvalue::i#1 [phi:rvalue::@2->rvalue::@1#0] -- register_copy 
+    jmp b1
+}
+//SEG67 lvalue
+lvalue: {
+    .const SCREEN = $400
+  //SEG68 [33] *((const byte[1024]) lvalue::SCREEN#0) ← (byte/signed byte/word/signed word) 1 [ ] ( main:2::lvalue:5 [ ] ) -- _deref_pbuc1=vbuc2 
+    lda #1
+    sta SCREEN
+  //SEG69 [34] *((const byte[1024]) lvalue::SCREEN#0+(byte/signed byte/word/signed word) 1) ← (byte/signed byte/word/signed word) 2 [ ] ( main:2::lvalue:5 [ ] ) -- _deref_pbuc1=vbuc2 
+    lda #2
+    sta SCREEN+1
+  //SEG70 [35] phi from lvalue to lvalue::@1 [phi:lvalue->lvalue::@1]
+  b1_from_lvalue:
+  //SEG71 [35] phi (byte) lvalue::i#2 = (byte/signed byte/word/signed word) 2 [phi:lvalue->lvalue::@1#0] -- vbuxx=vbuc1 
+    ldx #2
+    jmp b1
+  //SEG72 lvalue::@1
+  b1:
+  //SEG73 [36] if((byte) lvalue::i#2<(byte/signed byte/word/signed word) 10) goto lvalue::@2 [ lvalue::i#2 ] ( main:2::lvalue:5 [ lvalue::i#2 ] ) -- vbuxx_lt_vbuc1_then_la1 
+    cpx #$a
+    bcc b2
+    jmp breturn
+  //SEG74 lvalue::@return
+  breturn:
+  //SEG75 [37] return  [ ] ( main:2::lvalue:5 [ ] )
+    rts
+  //SEG76 lvalue::@2
+  b2:
+  //SEG77 [38] *((const byte[1024]) lvalue::SCREEN#0 + (byte) lvalue::i#2) ← (byte/signed byte/word/signed word) 3 [ lvalue::i#2 ] ( main:2::lvalue:5 [ lvalue::i#2 ] ) -- pbuc1_derefidx_vbuxx=vbuc2 
+    lda #3
+    sta SCREEN,x
+  //SEG78 [39] (byte) lvalue::i#1 ← ++ (byte) lvalue::i#2 [ lvalue::i#1 ] ( main:2::lvalue:5 [ lvalue::i#1 ] ) -- vbuxx=_inc_vbuxx 
+    inx
+  //SEG79 [35] phi from lvalue::@2 to lvalue::@1 [phi:lvalue::@2->lvalue::@1]
+  b1_from_b2:
+  //SEG80 [35] phi (byte) lvalue::i#2 = (byte) lvalue::i#1 [phi:lvalue::@2->lvalue::@1#0] -- register_copy 
+    jmp b1
+}
+
+ASSEMBLER OPTIMIZATIONS
 Removing instruction jmp b5
 Removing instruction jmp bend
 Removing instruction jmp b1
@@ -2509,200 +2719,6 @@ Removing instruction jmp breturn
 Removing instruction jmp b1
 Removing instruction jmp breturn
 Succesful ASM optimization Pass5NextJumpElimination
-ASSEMBLER
-//SEG0 Basic Upstart
-.pc = $801 "Basic"
-:BasicUpstart(main)
-.pc = $80d "Program"
-//SEG1 Global Constants & labels
-//SEG2 @begin
-bbegin:
-//SEG3 [1] phi from @begin to @5 [phi:@begin->@5]
-b5_from_bbegin:
-//SEG4 @5
-b5:
-//SEG5 [2] call main param-assignment [ ] ( )
-//SEG6 [4] phi from @5 to main [phi:@5->main]
-main_from_b5:
-  jsr main
-//SEG7 [3] phi from @5 to @end [phi:@5->@end]
-bend_from_b5:
-//SEG8 @end
-bend:
-//SEG9 main
-main: {
-  //SEG10 [5] call lvalue param-assignment [ ] ( main:2 [ ] )
-    jsr lvalue
-  //SEG11 [6] phi from main to main::@1 [phi:main->main::@1]
-  b1_from_main:
-  //SEG12 main::@1
-  b1:
-  //SEG13 [7] call rvalue param-assignment [ ] ( main:2 [ ] )
-    jsr rvalue
-  //SEG14 [8] phi from main::@1 to main::@2 [phi:main::@1->main::@2]
-  b2_from_b1:
-  //SEG15 main::@2
-  b2:
-  //SEG16 [9] call rvaluevar param-assignment [ ] ( main:2 [ ] )
-  //SEG17 [20] phi from main::@2 to rvaluevar [phi:main::@2->rvaluevar]
-  rvaluevar_from_b2:
-    jsr rvaluevar
-  //SEG18 [10] phi from main::@2 to main::@3 [phi:main::@2->main::@3]
-  b3_from_b2:
-  //SEG19 main::@3
-  b3:
-  //SEG20 [11] call lvaluevar param-assignment [ ] ( main:2 [ ] )
-  //SEG21 [13] phi from main::@3 to lvaluevar [phi:main::@3->lvaluevar]
-  lvaluevar_from_b3:
-    jsr lvaluevar
-  //SEG22 main::@return
-  breturn:
-  //SEG23 [12] return  [ ] ( main:2 [ ] )
-    rts
-}
-//SEG24 lvaluevar
-lvaluevar: {
-    .const b = 4
-    .label screen = 2
-  //SEG25 [14] phi from lvaluevar to lvaluevar::@1 [phi:lvaluevar->lvaluevar::@1]
-  b1_from_lvaluevar:
-  //SEG26 [14] phi (byte*) lvaluevar::screen#2 = ((byte*))(word/signed word) 1024 [phi:lvaluevar->lvaluevar::@1#0] -- pbuz1=pbuc1 
-    lda #<$400
-    sta screen
-    lda #>$400
-    sta screen+1
-  //SEG27 [14] phi (byte) lvaluevar::i#2 = (byte/signed byte/word/signed word) 2 [phi:lvaluevar->lvaluevar::@1#1] -- vbuxx=vbuc1 
-    ldx #2
-  //SEG28 lvaluevar::@1
-  b1:
-  //SEG29 [15] if((byte) lvaluevar::i#2<(byte/signed byte/word/signed word) 10) goto lvaluevar::@2 [ lvaluevar::i#2 lvaluevar::screen#2 ] ( main:2::lvaluevar:11 [ lvaluevar::i#2 lvaluevar::screen#2 ] ) -- vbuxx_lt_vbuc1_then_la1 
-    cpx #$a
-    bcc b2
-  //SEG30 lvaluevar::@return
-  breturn:
-  //SEG31 [16] return  [ ] ( main:2::lvaluevar:11 [ ] )
-    rts
-  //SEG32 lvaluevar::@2
-  b2:
-  //SEG33 [17] *((byte*) lvaluevar::screen#2) ← (const byte) lvaluevar::b#0 [ lvaluevar::i#2 lvaluevar::screen#2 ] ( main:2::lvaluevar:11 [ lvaluevar::i#2 lvaluevar::screen#2 ] ) -- _deref_pbuz1=vbuc1 
-    ldy #0
-    lda #b
-    sta (screen),y
-  //SEG34 [18] (byte*) lvaluevar::screen#1 ← ++ (byte*) lvaluevar::screen#2 [ lvaluevar::i#2 lvaluevar::screen#1 ] ( main:2::lvaluevar:11 [ lvaluevar::i#2 lvaluevar::screen#1 ] ) -- pbuz1=_inc_pbuz1 
-    inc screen
-    bne !+
-    inc screen+1
-  !:
-  //SEG35 [19] (byte) lvaluevar::i#1 ← ++ (byte) lvaluevar::i#2 [ lvaluevar::i#1 lvaluevar::screen#1 ] ( main:2::lvaluevar:11 [ lvaluevar::i#1 lvaluevar::screen#1 ] ) -- vbuxx=_inc_vbuxx 
-    inx
-  //SEG36 [14] phi from lvaluevar::@2 to lvaluevar::@1 [phi:lvaluevar::@2->lvaluevar::@1]
-  b1_from_b2:
-  //SEG37 [14] phi (byte*) lvaluevar::screen#2 = (byte*) lvaluevar::screen#1 [phi:lvaluevar::@2->lvaluevar::@1#0] -- register_copy 
-  //SEG38 [14] phi (byte) lvaluevar::i#2 = (byte) lvaluevar::i#1 [phi:lvaluevar::@2->lvaluevar::@1#1] -- register_copy 
-    jmp b1
-}
-//SEG39 rvaluevar
-rvaluevar: {
-    .label screen = 2
-  //SEG40 [21] phi from rvaluevar to rvaluevar::@1 [phi:rvaluevar->rvaluevar::@1]
-  b1_from_rvaluevar:
-  //SEG41 [21] phi (byte*) rvaluevar::screen#2 = ((byte*))(word/signed word) 1024 [phi:rvaluevar->rvaluevar::@1#0] -- pbuz1=pbuc1 
-    lda #<$400
-    sta screen
-    lda #>$400
-    sta screen+1
-  //SEG42 [21] phi (byte) rvaluevar::i#2 = (byte/signed byte/word/signed word) 2 [phi:rvaluevar->rvaluevar::@1#1] -- vbuxx=vbuc1 
-    ldx #2
-  //SEG43 rvaluevar::@1
-  b1:
-  //SEG44 [22] if((byte) rvaluevar::i#2<(byte/signed byte/word/signed word) 10) goto rvaluevar::@2 [ rvaluevar::i#2 rvaluevar::screen#2 ] ( main:2::rvaluevar:9 [ rvaluevar::i#2 rvaluevar::screen#2 ] ) -- vbuxx_lt_vbuc1_then_la1 
-    cpx #$a
-    bcc b2
-  //SEG45 rvaluevar::@return
-  breturn:
-  //SEG46 [23] return  [ ] ( main:2::rvaluevar:9 [ ] )
-    rts
-  //SEG47 rvaluevar::@2
-  b2:
-  //SEG48 [24] (byte*) rvaluevar::screen#1 ← ++ (byte*) rvaluevar::screen#2 [ rvaluevar::i#2 rvaluevar::screen#1 ] ( main:2::rvaluevar:9 [ rvaluevar::i#2 rvaluevar::screen#1 ] ) -- pbuz1=_inc_pbuz1 
-    inc screen
-    bne !+
-    inc screen+1
-  !:
-  //SEG49 [25] (byte) rvaluevar::i#1 ← ++ (byte) rvaluevar::i#2 [ rvaluevar::i#1 rvaluevar::screen#1 ] ( main:2::rvaluevar:9 [ rvaluevar::i#1 rvaluevar::screen#1 ] ) -- vbuxx=_inc_vbuxx 
-    inx
-  //SEG50 [21] phi from rvaluevar::@2 to rvaluevar::@1 [phi:rvaluevar::@2->rvaluevar::@1]
-  b1_from_b2:
-  //SEG51 [21] phi (byte*) rvaluevar::screen#2 = (byte*) rvaluevar::screen#1 [phi:rvaluevar::@2->rvaluevar::@1#0] -- register_copy 
-  //SEG52 [21] phi (byte) rvaluevar::i#2 = (byte) rvaluevar::i#1 [phi:rvaluevar::@2->rvaluevar::@1#1] -- register_copy 
-    jmp b1
-}
-//SEG53 rvalue
-rvalue: {
-    .const SCREEN = $400
-  //SEG54 [26] (byte) rvalue::b#0 ← *((const byte[1024]) rvalue::SCREEN#0) [ ] ( main:2::rvalue:7 [ ] ) -- vbuaa=_deref_pbuc1 
-    lda SCREEN
-  //SEG55 [27] (byte) rvalue::b#1 ← * (const byte[1024]) rvalue::SCREEN#0+(byte/signed byte/word/signed word) 1 [ ] ( main:2::rvalue:7 [ ] ) -- vbuaa=_deref_pbuc1 
-    lda SCREEN+1
-  //SEG56 [28] phi from rvalue to rvalue::@1 [phi:rvalue->rvalue::@1]
-  b1_from_rvalue:
-  //SEG57 [28] phi (byte) rvalue::i#2 = (byte/signed byte/word/signed word) 2 [phi:rvalue->rvalue::@1#0] -- vbuxx=vbuc1 
-    ldx #2
-  //SEG58 rvalue::@1
-  b1:
-  //SEG59 [29] if((byte) rvalue::i#2<(byte/signed byte/word/signed word) 10) goto rvalue::@2 [ rvalue::i#2 ] ( main:2::rvalue:7 [ rvalue::i#2 ] ) -- vbuxx_lt_vbuc1_then_la1 
-    cpx #$a
-    bcc b2
-  //SEG60 rvalue::@return
-  breturn:
-  //SEG61 [30] return  [ ] ( main:2::rvalue:7 [ ] )
-    rts
-  //SEG62 rvalue::@2
-  b2:
-  //SEG63 [31] (byte) rvalue::b#2 ← (const byte[1024]) rvalue::SCREEN#0 *idx (byte) rvalue::i#2 [ rvalue::i#2 ] ( main:2::rvalue:7 [ rvalue::i#2 ] ) -- vbuaa=pbuc1_derefidx_vbuxx 
-    lda SCREEN,x
-  //SEG64 [32] (byte) rvalue::i#1 ← ++ (byte) rvalue::i#2 [ rvalue::i#1 ] ( main:2::rvalue:7 [ rvalue::i#1 ] ) -- vbuxx=_inc_vbuxx 
-    inx
-  //SEG65 [28] phi from rvalue::@2 to rvalue::@1 [phi:rvalue::@2->rvalue::@1]
-  b1_from_b2:
-  //SEG66 [28] phi (byte) rvalue::i#2 = (byte) rvalue::i#1 [phi:rvalue::@2->rvalue::@1#0] -- register_copy 
-    jmp b1
-}
-//SEG67 lvalue
-lvalue: {
-    .const SCREEN = $400
-  //SEG68 [33] *((const byte[1024]) lvalue::SCREEN#0) ← (byte/signed byte/word/signed word) 1 [ ] ( main:2::lvalue:5 [ ] ) -- _deref_pbuc1=vbuc2 
-    lda #1
-    sta SCREEN
-  //SEG69 [34] *((const byte[1024]) lvalue::SCREEN#0+(byte/signed byte/word/signed word) 1) ← (byte/signed byte/word/signed word) 2 [ ] ( main:2::lvalue:5 [ ] ) -- _deref_pbuc1=vbuc2 
-    lda #2
-    sta SCREEN+1
-  //SEG70 [35] phi from lvalue to lvalue::@1 [phi:lvalue->lvalue::@1]
-  b1_from_lvalue:
-  //SEG71 [35] phi (byte) lvalue::i#2 = (byte/signed byte/word/signed word) 2 [phi:lvalue->lvalue::@1#0] -- vbuxx=vbuc1 
-    ldx #2
-  //SEG72 lvalue::@1
-  b1:
-  //SEG73 [36] if((byte) lvalue::i#2<(byte/signed byte/word/signed word) 10) goto lvalue::@2 [ lvalue::i#2 ] ( main:2::lvalue:5 [ lvalue::i#2 ] ) -- vbuxx_lt_vbuc1_then_la1 
-    cpx #$a
-    bcc b2
-  //SEG74 lvalue::@return
-  breturn:
-  //SEG75 [37] return  [ ] ( main:2::lvalue:5 [ ] )
-    rts
-  //SEG76 lvalue::@2
-  b2:
-  //SEG77 [38] *((const byte[1024]) lvalue::SCREEN#0 + (byte) lvalue::i#2) ← (byte/signed byte/word/signed word) 3 [ lvalue::i#2 ] ( main:2::lvalue:5 [ lvalue::i#2 ] ) -- pbuc1_derefidx_vbuxx=vbuc2 
-    lda #3
-    sta SCREEN,x
-  //SEG78 [39] (byte) lvalue::i#1 ← ++ (byte) lvalue::i#2 [ lvalue::i#1 ] ( main:2::lvalue:5 [ lvalue::i#1 ] ) -- vbuxx=_inc_vbuxx 
-    inx
-  //SEG79 [35] phi from lvalue::@2 to lvalue::@1 [phi:lvalue::@2->lvalue::@1]
-  b1_from_b2:
-  //SEG80 [35] phi (byte) lvalue::i#2 = (byte) lvalue::i#1 [phi:lvalue::@2->lvalue::@1#0] -- register_copy 
-    jmp b1
-}
-
 Removing instruction bbegin:
 Removing instruction b5_from_bbegin:
 Removing instruction main_from_b5:
@@ -2713,191 +2729,6 @@ Removing instruction rvaluevar_from_b2:
 Removing instruction b3_from_b2:
 Removing instruction lvaluevar_from_b3:
 Succesful ASM optimization Pass5RedundantLabelElimination
-ASSEMBLER
-//SEG0 Basic Upstart
-.pc = $801 "Basic"
-:BasicUpstart(main)
-.pc = $80d "Program"
-//SEG1 Global Constants & labels
-//SEG2 @begin
-//SEG3 [1] phi from @begin to @5 [phi:@begin->@5]
-//SEG4 @5
-b5:
-//SEG5 [2] call main param-assignment [ ] ( )
-//SEG6 [4] phi from @5 to main [phi:@5->main]
-  jsr main
-//SEG7 [3] phi from @5 to @end [phi:@5->@end]
-//SEG8 @end
-bend:
-//SEG9 main
-main: {
-  //SEG10 [5] call lvalue param-assignment [ ] ( main:2 [ ] )
-    jsr lvalue
-  //SEG11 [6] phi from main to main::@1 [phi:main->main::@1]
-  //SEG12 main::@1
-  b1:
-  //SEG13 [7] call rvalue param-assignment [ ] ( main:2 [ ] )
-    jsr rvalue
-  //SEG14 [8] phi from main::@1 to main::@2 [phi:main::@1->main::@2]
-  //SEG15 main::@2
-  b2:
-  //SEG16 [9] call rvaluevar param-assignment [ ] ( main:2 [ ] )
-  //SEG17 [20] phi from main::@2 to rvaluevar [phi:main::@2->rvaluevar]
-    jsr rvaluevar
-  //SEG18 [10] phi from main::@2 to main::@3 [phi:main::@2->main::@3]
-  //SEG19 main::@3
-  b3:
-  //SEG20 [11] call lvaluevar param-assignment [ ] ( main:2 [ ] )
-  //SEG21 [13] phi from main::@3 to lvaluevar [phi:main::@3->lvaluevar]
-    jsr lvaluevar
-  //SEG22 main::@return
-  breturn:
-  //SEG23 [12] return  [ ] ( main:2 [ ] )
-    rts
-}
-//SEG24 lvaluevar
-lvaluevar: {
-    .const b = 4
-    .label screen = 2
-  //SEG25 [14] phi from lvaluevar to lvaluevar::@1 [phi:lvaluevar->lvaluevar::@1]
-  b1_from_lvaluevar:
-  //SEG26 [14] phi (byte*) lvaluevar::screen#2 = ((byte*))(word/signed word) 1024 [phi:lvaluevar->lvaluevar::@1#0] -- pbuz1=pbuc1 
-    lda #<$400
-    sta screen
-    lda #>$400
-    sta screen+1
-  //SEG27 [14] phi (byte) lvaluevar::i#2 = (byte/signed byte/word/signed word) 2 [phi:lvaluevar->lvaluevar::@1#1] -- vbuxx=vbuc1 
-    ldx #2
-  //SEG28 lvaluevar::@1
-  b1:
-  //SEG29 [15] if((byte) lvaluevar::i#2<(byte/signed byte/word/signed word) 10) goto lvaluevar::@2 [ lvaluevar::i#2 lvaluevar::screen#2 ] ( main:2::lvaluevar:11 [ lvaluevar::i#2 lvaluevar::screen#2 ] ) -- vbuxx_lt_vbuc1_then_la1 
-    cpx #$a
-    bcc b2
-  //SEG30 lvaluevar::@return
-  breturn:
-  //SEG31 [16] return  [ ] ( main:2::lvaluevar:11 [ ] )
-    rts
-  //SEG32 lvaluevar::@2
-  b2:
-  //SEG33 [17] *((byte*) lvaluevar::screen#2) ← (const byte) lvaluevar::b#0 [ lvaluevar::i#2 lvaluevar::screen#2 ] ( main:2::lvaluevar:11 [ lvaluevar::i#2 lvaluevar::screen#2 ] ) -- _deref_pbuz1=vbuc1 
-    ldy #0
-    lda #b
-    sta (screen),y
-  //SEG34 [18] (byte*) lvaluevar::screen#1 ← ++ (byte*) lvaluevar::screen#2 [ lvaluevar::i#2 lvaluevar::screen#1 ] ( main:2::lvaluevar:11 [ lvaluevar::i#2 lvaluevar::screen#1 ] ) -- pbuz1=_inc_pbuz1 
-    inc screen
-    bne !+
-    inc screen+1
-  !:
-  //SEG35 [19] (byte) lvaluevar::i#1 ← ++ (byte) lvaluevar::i#2 [ lvaluevar::i#1 lvaluevar::screen#1 ] ( main:2::lvaluevar:11 [ lvaluevar::i#1 lvaluevar::screen#1 ] ) -- vbuxx=_inc_vbuxx 
-    inx
-  //SEG36 [14] phi from lvaluevar::@2 to lvaluevar::@1 [phi:lvaluevar::@2->lvaluevar::@1]
-  b1_from_b2:
-  //SEG37 [14] phi (byte*) lvaluevar::screen#2 = (byte*) lvaluevar::screen#1 [phi:lvaluevar::@2->lvaluevar::@1#0] -- register_copy 
-  //SEG38 [14] phi (byte) lvaluevar::i#2 = (byte) lvaluevar::i#1 [phi:lvaluevar::@2->lvaluevar::@1#1] -- register_copy 
-    jmp b1
-}
-//SEG39 rvaluevar
-rvaluevar: {
-    .label screen = 2
-  //SEG40 [21] phi from rvaluevar to rvaluevar::@1 [phi:rvaluevar->rvaluevar::@1]
-  b1_from_rvaluevar:
-  //SEG41 [21] phi (byte*) rvaluevar::screen#2 = ((byte*))(word/signed word) 1024 [phi:rvaluevar->rvaluevar::@1#0] -- pbuz1=pbuc1 
-    lda #<$400
-    sta screen
-    lda #>$400
-    sta screen+1
-  //SEG42 [21] phi (byte) rvaluevar::i#2 = (byte/signed byte/word/signed word) 2 [phi:rvaluevar->rvaluevar::@1#1] -- vbuxx=vbuc1 
-    ldx #2
-  //SEG43 rvaluevar::@1
-  b1:
-  //SEG44 [22] if((byte) rvaluevar::i#2<(byte/signed byte/word/signed word) 10) goto rvaluevar::@2 [ rvaluevar::i#2 rvaluevar::screen#2 ] ( main:2::rvaluevar:9 [ rvaluevar::i#2 rvaluevar::screen#2 ] ) -- vbuxx_lt_vbuc1_then_la1 
-    cpx #$a
-    bcc b2
-  //SEG45 rvaluevar::@return
-  breturn:
-  //SEG46 [23] return  [ ] ( main:2::rvaluevar:9 [ ] )
-    rts
-  //SEG47 rvaluevar::@2
-  b2:
-  //SEG48 [24] (byte*) rvaluevar::screen#1 ← ++ (byte*) rvaluevar::screen#2 [ rvaluevar::i#2 rvaluevar::screen#1 ] ( main:2::rvaluevar:9 [ rvaluevar::i#2 rvaluevar::screen#1 ] ) -- pbuz1=_inc_pbuz1 
-    inc screen
-    bne !+
-    inc screen+1
-  !:
-  //SEG49 [25] (byte) rvaluevar::i#1 ← ++ (byte) rvaluevar::i#2 [ rvaluevar::i#1 rvaluevar::screen#1 ] ( main:2::rvaluevar:9 [ rvaluevar::i#1 rvaluevar::screen#1 ] ) -- vbuxx=_inc_vbuxx 
-    inx
-  //SEG50 [21] phi from rvaluevar::@2 to rvaluevar::@1 [phi:rvaluevar::@2->rvaluevar::@1]
-  b1_from_b2:
-  //SEG51 [21] phi (byte*) rvaluevar::screen#2 = (byte*) rvaluevar::screen#1 [phi:rvaluevar::@2->rvaluevar::@1#0] -- register_copy 
-  //SEG52 [21] phi (byte) rvaluevar::i#2 = (byte) rvaluevar::i#1 [phi:rvaluevar::@2->rvaluevar::@1#1] -- register_copy 
-    jmp b1
-}
-//SEG53 rvalue
-rvalue: {
-    .const SCREEN = $400
-  //SEG54 [26] (byte) rvalue::b#0 ← *((const byte[1024]) rvalue::SCREEN#0) [ ] ( main:2::rvalue:7 [ ] ) -- vbuaa=_deref_pbuc1 
-    lda SCREEN
-  //SEG55 [27] (byte) rvalue::b#1 ← * (const byte[1024]) rvalue::SCREEN#0+(byte/signed byte/word/signed word) 1 [ ] ( main:2::rvalue:7 [ ] ) -- vbuaa=_deref_pbuc1 
-    lda SCREEN+1
-  //SEG56 [28] phi from rvalue to rvalue::@1 [phi:rvalue->rvalue::@1]
-  b1_from_rvalue:
-  //SEG57 [28] phi (byte) rvalue::i#2 = (byte/signed byte/word/signed word) 2 [phi:rvalue->rvalue::@1#0] -- vbuxx=vbuc1 
-    ldx #2
-  //SEG58 rvalue::@1
-  b1:
-  //SEG59 [29] if((byte) rvalue::i#2<(byte/signed byte/word/signed word) 10) goto rvalue::@2 [ rvalue::i#2 ] ( main:2::rvalue:7 [ rvalue::i#2 ] ) -- vbuxx_lt_vbuc1_then_la1 
-    cpx #$a
-    bcc b2
-  //SEG60 rvalue::@return
-  breturn:
-  //SEG61 [30] return  [ ] ( main:2::rvalue:7 [ ] )
-    rts
-  //SEG62 rvalue::@2
-  b2:
-  //SEG63 [31] (byte) rvalue::b#2 ← (const byte[1024]) rvalue::SCREEN#0 *idx (byte) rvalue::i#2 [ rvalue::i#2 ] ( main:2::rvalue:7 [ rvalue::i#2 ] ) -- vbuaa=pbuc1_derefidx_vbuxx 
-    lda SCREEN,x
-  //SEG64 [32] (byte) rvalue::i#1 ← ++ (byte) rvalue::i#2 [ rvalue::i#1 ] ( main:2::rvalue:7 [ rvalue::i#1 ] ) -- vbuxx=_inc_vbuxx 
-    inx
-  //SEG65 [28] phi from rvalue::@2 to rvalue::@1 [phi:rvalue::@2->rvalue::@1]
-  b1_from_b2:
-  //SEG66 [28] phi (byte) rvalue::i#2 = (byte) rvalue::i#1 [phi:rvalue::@2->rvalue::@1#0] -- register_copy 
-    jmp b1
-}
-//SEG67 lvalue
-lvalue: {
-    .const SCREEN = $400
-  //SEG68 [33] *((const byte[1024]) lvalue::SCREEN#0) ← (byte/signed byte/word/signed word) 1 [ ] ( main:2::lvalue:5 [ ] ) -- _deref_pbuc1=vbuc2 
-    lda #1
-    sta SCREEN
-  //SEG69 [34] *((const byte[1024]) lvalue::SCREEN#0+(byte/signed byte/word/signed word) 1) ← (byte/signed byte/word/signed word) 2 [ ] ( main:2::lvalue:5 [ ] ) -- _deref_pbuc1=vbuc2 
-    lda #2
-    sta SCREEN+1
-  //SEG70 [35] phi from lvalue to lvalue::@1 [phi:lvalue->lvalue::@1]
-  b1_from_lvalue:
-  //SEG71 [35] phi (byte) lvalue::i#2 = (byte/signed byte/word/signed word) 2 [phi:lvalue->lvalue::@1#0] -- vbuxx=vbuc1 
-    ldx #2
-  //SEG72 lvalue::@1
-  b1:
-  //SEG73 [36] if((byte) lvalue::i#2<(byte/signed byte/word/signed word) 10) goto lvalue::@2 [ lvalue::i#2 ] ( main:2::lvalue:5 [ lvalue::i#2 ] ) -- vbuxx_lt_vbuc1_then_la1 
-    cpx #$a
-    bcc b2
-  //SEG74 lvalue::@return
-  breturn:
-  //SEG75 [37] return  [ ] ( main:2::lvalue:5 [ ] )
-    rts
-  //SEG76 lvalue::@2
-  b2:
-  //SEG77 [38] *((const byte[1024]) lvalue::SCREEN#0 + (byte) lvalue::i#2) ← (byte/signed byte/word/signed word) 3 [ lvalue::i#2 ] ( main:2::lvalue:5 [ lvalue::i#2 ] ) -- pbuc1_derefidx_vbuxx=vbuc2 
-    lda #3
-    sta SCREEN,x
-  //SEG78 [39] (byte) lvalue::i#1 ← ++ (byte) lvalue::i#2 [ lvalue::i#1 ] ( main:2::lvalue:5 [ lvalue::i#1 ] ) -- vbuxx=_inc_vbuxx 
-    inx
-  //SEG79 [35] phi from lvalue::@2 to lvalue::@1 [phi:lvalue::@2->lvalue::@1]
-  b1_from_b2:
-  //SEG80 [35] phi (byte) lvalue::i#2 = (byte) lvalue::i#1 [phi:lvalue::@2->lvalue::@1#0] -- register_copy 
-    jmp b1
-}
-
 Removing instruction b5:
 Removing instruction bend:
 Removing instruction b1:
@@ -2917,174 +2748,8 @@ Removing instruction b1_from_lvalue:
 Removing instruction breturn:
 Removing instruction b1_from_b2:
 Succesful ASM optimization Pass5UnusedLabelElimination
-ASSEMBLER
-//SEG0 Basic Upstart
-.pc = $801 "Basic"
-:BasicUpstart(main)
-.pc = $80d "Program"
-//SEG1 Global Constants & labels
-//SEG2 @begin
-//SEG3 [1] phi from @begin to @5 [phi:@begin->@5]
-//SEG4 @5
-//SEG5 [2] call main param-assignment [ ] ( )
-//SEG6 [4] phi from @5 to main [phi:@5->main]
-  jsr main
-//SEG7 [3] phi from @5 to @end [phi:@5->@end]
-//SEG8 @end
-//SEG9 main
-main: {
-  //SEG10 [5] call lvalue param-assignment [ ] ( main:2 [ ] )
-    jsr lvalue
-  //SEG11 [6] phi from main to main::@1 [phi:main->main::@1]
-  //SEG12 main::@1
-  //SEG13 [7] call rvalue param-assignment [ ] ( main:2 [ ] )
-    jsr rvalue
-  //SEG14 [8] phi from main::@1 to main::@2 [phi:main::@1->main::@2]
-  //SEG15 main::@2
-  //SEG16 [9] call rvaluevar param-assignment [ ] ( main:2 [ ] )
-  //SEG17 [20] phi from main::@2 to rvaluevar [phi:main::@2->rvaluevar]
-    jsr rvaluevar
-  //SEG18 [10] phi from main::@2 to main::@3 [phi:main::@2->main::@3]
-  //SEG19 main::@3
-  //SEG20 [11] call lvaluevar param-assignment [ ] ( main:2 [ ] )
-  //SEG21 [13] phi from main::@3 to lvaluevar [phi:main::@3->lvaluevar]
-    jsr lvaluevar
-  //SEG22 main::@return
-  //SEG23 [12] return  [ ] ( main:2 [ ] )
-    rts
-}
-//SEG24 lvaluevar
-lvaluevar: {
-    .const b = 4
-    .label screen = 2
-  //SEG25 [14] phi from lvaluevar to lvaluevar::@1 [phi:lvaluevar->lvaluevar::@1]
-  //SEG26 [14] phi (byte*) lvaluevar::screen#2 = ((byte*))(word/signed word) 1024 [phi:lvaluevar->lvaluevar::@1#0] -- pbuz1=pbuc1 
-    lda #<$400
-    sta screen
-    lda #>$400
-    sta screen+1
-  //SEG27 [14] phi (byte) lvaluevar::i#2 = (byte/signed byte/word/signed word) 2 [phi:lvaluevar->lvaluevar::@1#1] -- vbuxx=vbuc1 
-    ldx #2
-  //SEG28 lvaluevar::@1
-  b1:
-  //SEG29 [15] if((byte) lvaluevar::i#2<(byte/signed byte/word/signed word) 10) goto lvaluevar::@2 [ lvaluevar::i#2 lvaluevar::screen#2 ] ( main:2::lvaluevar:11 [ lvaluevar::i#2 lvaluevar::screen#2 ] ) -- vbuxx_lt_vbuc1_then_la1 
-    cpx #$a
-    bcc b2
-  //SEG30 lvaluevar::@return
-  //SEG31 [16] return  [ ] ( main:2::lvaluevar:11 [ ] )
-    rts
-  //SEG32 lvaluevar::@2
-  b2:
-  //SEG33 [17] *((byte*) lvaluevar::screen#2) ← (const byte) lvaluevar::b#0 [ lvaluevar::i#2 lvaluevar::screen#2 ] ( main:2::lvaluevar:11 [ lvaluevar::i#2 lvaluevar::screen#2 ] ) -- _deref_pbuz1=vbuc1 
-    ldy #0
-    lda #b
-    sta (screen),y
-  //SEG34 [18] (byte*) lvaluevar::screen#1 ← ++ (byte*) lvaluevar::screen#2 [ lvaluevar::i#2 lvaluevar::screen#1 ] ( main:2::lvaluevar:11 [ lvaluevar::i#2 lvaluevar::screen#1 ] ) -- pbuz1=_inc_pbuz1 
-    inc screen
-    bne !+
-    inc screen+1
-  !:
-  //SEG35 [19] (byte) lvaluevar::i#1 ← ++ (byte) lvaluevar::i#2 [ lvaluevar::i#1 lvaluevar::screen#1 ] ( main:2::lvaluevar:11 [ lvaluevar::i#1 lvaluevar::screen#1 ] ) -- vbuxx=_inc_vbuxx 
-    inx
-  //SEG36 [14] phi from lvaluevar::@2 to lvaluevar::@1 [phi:lvaluevar::@2->lvaluevar::@1]
-  //SEG37 [14] phi (byte*) lvaluevar::screen#2 = (byte*) lvaluevar::screen#1 [phi:lvaluevar::@2->lvaluevar::@1#0] -- register_copy 
-  //SEG38 [14] phi (byte) lvaluevar::i#2 = (byte) lvaluevar::i#1 [phi:lvaluevar::@2->lvaluevar::@1#1] -- register_copy 
-    jmp b1
-}
-//SEG39 rvaluevar
-rvaluevar: {
-    .label screen = 2
-  //SEG40 [21] phi from rvaluevar to rvaluevar::@1 [phi:rvaluevar->rvaluevar::@1]
-  //SEG41 [21] phi (byte*) rvaluevar::screen#2 = ((byte*))(word/signed word) 1024 [phi:rvaluevar->rvaluevar::@1#0] -- pbuz1=pbuc1 
-    lda #<$400
-    sta screen
-    lda #>$400
-    sta screen+1
-  //SEG42 [21] phi (byte) rvaluevar::i#2 = (byte/signed byte/word/signed word) 2 [phi:rvaluevar->rvaluevar::@1#1] -- vbuxx=vbuc1 
-    ldx #2
-  //SEG43 rvaluevar::@1
-  b1:
-  //SEG44 [22] if((byte) rvaluevar::i#2<(byte/signed byte/word/signed word) 10) goto rvaluevar::@2 [ rvaluevar::i#2 rvaluevar::screen#2 ] ( main:2::rvaluevar:9 [ rvaluevar::i#2 rvaluevar::screen#2 ] ) -- vbuxx_lt_vbuc1_then_la1 
-    cpx #$a
-    bcc b2
-  //SEG45 rvaluevar::@return
-  //SEG46 [23] return  [ ] ( main:2::rvaluevar:9 [ ] )
-    rts
-  //SEG47 rvaluevar::@2
-  b2:
-  //SEG48 [24] (byte*) rvaluevar::screen#1 ← ++ (byte*) rvaluevar::screen#2 [ rvaluevar::i#2 rvaluevar::screen#1 ] ( main:2::rvaluevar:9 [ rvaluevar::i#2 rvaluevar::screen#1 ] ) -- pbuz1=_inc_pbuz1 
-    inc screen
-    bne !+
-    inc screen+1
-  !:
-  //SEG49 [25] (byte) rvaluevar::i#1 ← ++ (byte) rvaluevar::i#2 [ rvaluevar::i#1 rvaluevar::screen#1 ] ( main:2::rvaluevar:9 [ rvaluevar::i#1 rvaluevar::screen#1 ] ) -- vbuxx=_inc_vbuxx 
-    inx
-  //SEG50 [21] phi from rvaluevar::@2 to rvaluevar::@1 [phi:rvaluevar::@2->rvaluevar::@1]
-  //SEG51 [21] phi (byte*) rvaluevar::screen#2 = (byte*) rvaluevar::screen#1 [phi:rvaluevar::@2->rvaluevar::@1#0] -- register_copy 
-  //SEG52 [21] phi (byte) rvaluevar::i#2 = (byte) rvaluevar::i#1 [phi:rvaluevar::@2->rvaluevar::@1#1] -- register_copy 
-    jmp b1
-}
-//SEG53 rvalue
-rvalue: {
-    .const SCREEN = $400
-  //SEG54 [26] (byte) rvalue::b#0 ← *((const byte[1024]) rvalue::SCREEN#0) [ ] ( main:2::rvalue:7 [ ] ) -- vbuaa=_deref_pbuc1 
-    lda SCREEN
-  //SEG55 [27] (byte) rvalue::b#1 ← * (const byte[1024]) rvalue::SCREEN#0+(byte/signed byte/word/signed word) 1 [ ] ( main:2::rvalue:7 [ ] ) -- vbuaa=_deref_pbuc1 
-    lda SCREEN+1
-  //SEG56 [28] phi from rvalue to rvalue::@1 [phi:rvalue->rvalue::@1]
-  //SEG57 [28] phi (byte) rvalue::i#2 = (byte/signed byte/word/signed word) 2 [phi:rvalue->rvalue::@1#0] -- vbuxx=vbuc1 
-    ldx #2
-  //SEG58 rvalue::@1
-  b1:
-  //SEG59 [29] if((byte) rvalue::i#2<(byte/signed byte/word/signed word) 10) goto rvalue::@2 [ rvalue::i#2 ] ( main:2::rvalue:7 [ rvalue::i#2 ] ) -- vbuxx_lt_vbuc1_then_la1 
-    cpx #$a
-    bcc b2
-  //SEG60 rvalue::@return
-  //SEG61 [30] return  [ ] ( main:2::rvalue:7 [ ] )
-    rts
-  //SEG62 rvalue::@2
-  b2:
-  //SEG63 [31] (byte) rvalue::b#2 ← (const byte[1024]) rvalue::SCREEN#0 *idx (byte) rvalue::i#2 [ rvalue::i#2 ] ( main:2::rvalue:7 [ rvalue::i#2 ] ) -- vbuaa=pbuc1_derefidx_vbuxx 
-    lda SCREEN,x
-  //SEG64 [32] (byte) rvalue::i#1 ← ++ (byte) rvalue::i#2 [ rvalue::i#1 ] ( main:2::rvalue:7 [ rvalue::i#1 ] ) -- vbuxx=_inc_vbuxx 
-    inx
-  //SEG65 [28] phi from rvalue::@2 to rvalue::@1 [phi:rvalue::@2->rvalue::@1]
-  //SEG66 [28] phi (byte) rvalue::i#2 = (byte) rvalue::i#1 [phi:rvalue::@2->rvalue::@1#0] -- register_copy 
-    jmp b1
-}
-//SEG67 lvalue
-lvalue: {
-    .const SCREEN = $400
-  //SEG68 [33] *((const byte[1024]) lvalue::SCREEN#0) ← (byte/signed byte/word/signed word) 1 [ ] ( main:2::lvalue:5 [ ] ) -- _deref_pbuc1=vbuc2 
-    lda #1
-    sta SCREEN
-  //SEG69 [34] *((const byte[1024]) lvalue::SCREEN#0+(byte/signed byte/word/signed word) 1) ← (byte/signed byte/word/signed word) 2 [ ] ( main:2::lvalue:5 [ ] ) -- _deref_pbuc1=vbuc2 
-    lda #2
-    sta SCREEN+1
-  //SEG70 [35] phi from lvalue to lvalue::@1 [phi:lvalue->lvalue::@1]
-  //SEG71 [35] phi (byte) lvalue::i#2 = (byte/signed byte/word/signed word) 2 [phi:lvalue->lvalue::@1#0] -- vbuxx=vbuc1 
-    ldx #2
-  //SEG72 lvalue::@1
-  b1:
-  //SEG73 [36] if((byte) lvalue::i#2<(byte/signed byte/word/signed word) 10) goto lvalue::@2 [ lvalue::i#2 ] ( main:2::lvalue:5 [ lvalue::i#2 ] ) -- vbuxx_lt_vbuc1_then_la1 
-    cpx #$a
-    bcc b2
-  //SEG74 lvalue::@return
-  //SEG75 [37] return  [ ] ( main:2::lvalue:5 [ ] )
-    rts
-  //SEG76 lvalue::@2
-  b2:
-  //SEG77 [38] *((const byte[1024]) lvalue::SCREEN#0 + (byte) lvalue::i#2) ← (byte/signed byte/word/signed word) 3 [ lvalue::i#2 ] ( main:2::lvalue:5 [ lvalue::i#2 ] ) -- pbuc1_derefidx_vbuxx=vbuc2 
-    lda #3
-    sta SCREEN,x
-  //SEG78 [39] (byte) lvalue::i#1 ← ++ (byte) lvalue::i#2 [ lvalue::i#1 ] ( main:2::lvalue:5 [ lvalue::i#1 ] ) -- vbuxx=_inc_vbuxx 
-    inx
-  //SEG79 [35] phi from lvalue::@2 to lvalue::@1 [phi:lvalue::@2->lvalue::@1]
-  //SEG80 [35] phi (byte) lvalue::i#2 = (byte) lvalue::i#1 [phi:lvalue::@2->lvalue::@1#0] -- register_copy 
-    jmp b1
-}
-
 Replacing instruction ldx #2 with TAX
+
 FINAL SYMBOL TABLE
 (label) @5
 (label) @begin

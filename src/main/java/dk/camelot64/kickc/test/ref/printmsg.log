@@ -2238,6 +2238,200 @@ Uplifting [] best 1262 combination zp ZP_WORD:2 [ line_cursor#8 line_cursor#16 l
 Uplifting [print_str] best 1262 combination zp ZP_WORD:4 [ print_str::str#4 print_str::str#6 print_str::str#0 ] 
 Uplifting [print_ln] best 1262 combination 
 Uplifting [main] best 1262 combination 
+
+ASSEMBLER BEFORE OPTIMIZATION
+//SEG0 Basic Upstart
+.pc = $801 "Basic"
+:BasicUpstart(main)
+.pc = $80d "Program"
+//SEG1 Global Constants & labels
+  .label char_cursor = 6
+  .label line_cursor = 2
+  msg: .text "hello world! @"
+  msg2: .text "hello c64! @"
+  msg3: .text "hello 2017! @"
+//SEG2 @begin
+bbegin:
+//SEG3 [1] phi from @begin to @6 [phi:@begin->@6]
+b6_from_bbegin:
+  jmp b6
+//SEG4 @6
+b6:
+//SEG5 [2] call main param-assignment [ ] ( )
+//SEG6 [4] phi from @6 to main [phi:@6->main]
+main_from_b6:
+  jsr main
+//SEG7 [3] phi from @6 to @end [phi:@6->@end]
+bend_from_b6:
+  jmp bend
+//SEG8 @end
+bend:
+//SEG9 main
+main: {
+  //SEG10 [5] call print_str param-assignment [ char_cursor#13 ] ( main:2 [ char_cursor#13 ] )
+  //SEG11 [22] phi from main to print_str [phi:main->print_str]
+  print_str_from_main:
+  //SEG12 [22] phi (byte*) char_cursor#29 = ((byte*))(word/signed word) 1024 [phi:main->print_str#0] -- pbuz1=pbuc1 
+    lda #<$400
+    sta char_cursor
+    lda #>$400
+    sta char_cursor+1
+  //SEG13 [22] phi (byte*) print_str::str#6 = (const byte[]) msg#0 [phi:main->print_str#1] -- pbuz1=pbuc1 
+    lda #<msg
+    sta print_str.str
+    lda #>msg
+    sta print_str.str+1
+    jsr print_str
+  //SEG14 [6] phi from main to main::@1 [phi:main->main::@1]
+  b1_from_main:
+    jmp b1
+  //SEG15 main::@1
+  b1:
+  //SEG16 [7] call print_ln param-assignment [ line_cursor#1 ] ( main:2 [ line_cursor#1 ] )
+  //SEG17 [17] phi from main::@1 to print_ln [phi:main::@1->print_ln]
+  print_ln_from_b1:
+  //SEG18 [17] phi (byte*) line_cursor#16 = ((byte*))(word/signed word) 1024 [phi:main::@1->print_ln#0] -- pbuz1=pbuc1 
+    lda #<$400
+    sta line_cursor
+    lda #>$400
+    sta line_cursor+1
+    jsr print_ln
+    jmp b2
+  //SEG19 main::@2
+  b2:
+  //SEG20 [8] (byte*~) char_cursor#31 ← (byte*) line_cursor#1 [ char_cursor#31 line_cursor#1 ] ( main:2 [ char_cursor#31 line_cursor#1 ] ) -- pbuz1=pbuz2 
+    lda line_cursor
+    sta char_cursor
+    lda line_cursor+1
+    sta char_cursor+1
+  //SEG21 [9] call print_str param-assignment [ line_cursor#1 char_cursor#13 ] ( main:2 [ line_cursor#1 char_cursor#13 ] )
+  //SEG22 [22] phi from main::@2 to print_str [phi:main::@2->print_str]
+  print_str_from_b2:
+  //SEG23 [22] phi (byte*) char_cursor#29 = (byte*~) char_cursor#31 [phi:main::@2->print_str#0] -- register_copy 
+  //SEG24 [22] phi (byte*) print_str::str#6 = (const byte[]) msg2#0 [phi:main::@2->print_str#1] -- pbuz1=pbuc1 
+    lda #<msg2
+    sta print_str.str
+    lda #>msg2
+    sta print_str.str+1
+    jsr print_str
+  //SEG25 [10] phi from main::@2 to main::@3 [phi:main::@2->main::@3]
+  b3_from_b2:
+    jmp b3
+  //SEG26 main::@3
+  b3:
+  //SEG27 [11] call print_ln param-assignment [ line_cursor#1 ] ( main:2 [ line_cursor#1 ] )
+  //SEG28 [17] phi from main::@3 to print_ln [phi:main::@3->print_ln]
+  print_ln_from_b3:
+  //SEG29 [17] phi (byte*) line_cursor#16 = (byte*) line_cursor#1 [phi:main::@3->print_ln#0] -- register_copy 
+    jsr print_ln
+    jmp b4
+  //SEG30 main::@4
+  b4:
+  //SEG31 [12] (byte*~) char_cursor#32 ← (byte*) line_cursor#1 [ line_cursor#1 char_cursor#32 ] ( main:2 [ line_cursor#1 char_cursor#32 ] ) -- pbuz1=pbuz2 
+    lda line_cursor
+    sta char_cursor
+    lda line_cursor+1
+    sta char_cursor+1
+  //SEG32 [13] call print_str param-assignment [ line_cursor#1 char_cursor#13 ] ( main:2 [ line_cursor#1 char_cursor#13 ] )
+  //SEG33 [22] phi from main::@4 to print_str [phi:main::@4->print_str]
+  print_str_from_b4:
+  //SEG34 [22] phi (byte*) char_cursor#29 = (byte*~) char_cursor#32 [phi:main::@4->print_str#0] -- register_copy 
+  //SEG35 [22] phi (byte*) print_str::str#6 = (const byte[]) msg3#0 [phi:main::@4->print_str#1] -- pbuz1=pbuc1 
+    lda #<msg3
+    sta print_str.str
+    lda #>msg3
+    sta print_str.str+1
+    jsr print_str
+  //SEG36 [14] phi from main::@4 to main::@5 [phi:main::@4->main::@5]
+  b5_from_b4:
+    jmp b5
+  //SEG37 main::@5
+  b5:
+  //SEG38 [15] call print_ln param-assignment [ ] ( main:2 [ ] )
+  //SEG39 [17] phi from main::@5 to print_ln [phi:main::@5->print_ln]
+  print_ln_from_b5:
+  //SEG40 [17] phi (byte*) line_cursor#16 = (byte*) line_cursor#1 [phi:main::@5->print_ln#0] -- register_copy 
+    jsr print_ln
+    jmp breturn
+  //SEG41 main::@return
+  breturn:
+  //SEG42 [16] return  [ ] ( main:2 [ ] )
+    rts
+}
+//SEG43 print_ln
+print_ln: {
+  //SEG44 [18] phi from print_ln print_ln::@1 to print_ln::@1 [phi:print_ln/print_ln::@1->print_ln::@1]
+  b1_from_print_ln:
+  b1_from_b1:
+  //SEG45 [18] phi (byte*) line_cursor#8 = (byte*) line_cursor#16 [phi:print_ln/print_ln::@1->print_ln::@1#0] -- register_copy 
+    jmp b1
+  //SEG46 print_ln::@1
+  b1:
+  //SEG47 [19] (byte*) line_cursor#1 ← (byte*) line_cursor#8 + (byte/signed byte/word/signed word) 40 [ line_cursor#1 char_cursor#13 ] ( main:2::print_ln:7 [ line_cursor#1 char_cursor#13 ] main:2::print_ln:11 [ line_cursor#1 char_cursor#13 ] main:2::print_ln:15 [ line_cursor#1 char_cursor#13 ] ) -- pbuz1=pbuz1_plus_vbuc1 
+    lda line_cursor
+    clc
+    adc #$28
+    sta line_cursor
+    bcc !+
+    inc line_cursor+1
+  !:
+  //SEG48 [20] if((byte*) line_cursor#1<(byte*) char_cursor#13) goto print_ln::@1 [ line_cursor#1 char_cursor#13 ] ( main:2::print_ln:7 [ line_cursor#1 char_cursor#13 ] main:2::print_ln:11 [ line_cursor#1 char_cursor#13 ] main:2::print_ln:15 [ line_cursor#1 char_cursor#13 ] ) -- pbuz1_lt_pbuz2_then_la1 
+    lda line_cursor+1
+    cmp char_cursor+1
+    bcc b1_from_b1
+    bne !+
+    lda line_cursor
+    cmp char_cursor
+    bcc b1_from_b1
+  !:
+    jmp breturn
+  //SEG49 print_ln::@return
+  breturn:
+  //SEG50 [21] return  [ line_cursor#1 ] ( main:2::print_ln:7 [ line_cursor#1 ] main:2::print_ln:11 [ line_cursor#1 ] main:2::print_ln:15 [ line_cursor#1 ] )
+    rts
+}
+//SEG51 print_str
+print_str: {
+    .label str = 4
+  //SEG52 [23] phi from print_str print_str::@2 to print_str::@1 [phi:print_str/print_str::@2->print_str::@1]
+  b1_from_print_str:
+  b1_from_b2:
+  //SEG53 [23] phi (byte*) char_cursor#13 = (byte*) char_cursor#29 [phi:print_str/print_str::@2->print_str::@1#0] -- register_copy 
+  //SEG54 [23] phi (byte*) print_str::str#4 = (byte*) print_str::str#6 [phi:print_str/print_str::@2->print_str::@1#1] -- register_copy 
+    jmp b1
+  //SEG55 print_str::@1
+  b1:
+  //SEG56 [24] if(*((byte*) print_str::str#4)!=(byte) '@') goto print_str::@2 [ char_cursor#13 print_str::str#4 ] ( main:2::print_str:5 [ char_cursor#13 print_str::str#4 ] main:2::print_str:9 [ line_cursor#1 char_cursor#13 print_str::str#4 ] main:2::print_str:13 [ line_cursor#1 char_cursor#13 print_str::str#4 ] ) -- _deref_pbuz1_neq_vbuc1_then_la1 
+    ldy #0
+    lda (str),y
+    cmp #'@'
+    bne b2
+    jmp breturn
+  //SEG57 print_str::@return
+  breturn:
+  //SEG58 [25] return  [ char_cursor#13 ] ( main:2::print_str:5 [ char_cursor#13 ] main:2::print_str:9 [ line_cursor#1 char_cursor#13 ] main:2::print_str:13 [ line_cursor#1 char_cursor#13 ] )
+    rts
+  //SEG59 print_str::@2
+  b2:
+  //SEG60 [26] *((byte*) char_cursor#13) ← *((byte*) print_str::str#4) [ char_cursor#13 print_str::str#4 ] ( main:2::print_str:5 [ char_cursor#13 print_str::str#4 ] main:2::print_str:9 [ line_cursor#1 char_cursor#13 print_str::str#4 ] main:2::print_str:13 [ line_cursor#1 char_cursor#13 print_str::str#4 ] ) -- _deref_pbuz1=_deref_pbuz2 
+    ldy #0
+    lda (str),y
+    ldy #0
+    sta (char_cursor),y
+  //SEG61 [27] (byte*) char_cursor#1 ← ++ (byte*) char_cursor#13 [ print_str::str#4 char_cursor#1 ] ( main:2::print_str:5 [ print_str::str#4 char_cursor#1 ] main:2::print_str:9 [ line_cursor#1 print_str::str#4 char_cursor#1 ] main:2::print_str:13 [ line_cursor#1 print_str::str#4 char_cursor#1 ] ) -- pbuz1=_inc_pbuz1 
+    inc char_cursor
+    bne !+
+    inc char_cursor+1
+  !:
+  //SEG62 [28] (byte*) print_str::str#0 ← ++ (byte*) print_str::str#4 [ print_str::str#0 char_cursor#1 ] ( main:2::print_str:5 [ print_str::str#0 char_cursor#1 ] main:2::print_str:9 [ line_cursor#1 print_str::str#0 char_cursor#1 ] main:2::print_str:13 [ line_cursor#1 print_str::str#0 char_cursor#1 ] ) -- pbuz1=_inc_pbuz1 
+    inc str
+    bne !+
+    inc str+1
+  !:
+    jmp b1_from_b2
+}
+
+ASSEMBLER OPTIMIZATIONS
 Removing instruction jmp b6
 Removing instruction jmp bend
 Removing instruction jmp b1
@@ -2251,367 +2445,8 @@ Removing instruction jmp breturn
 Removing instruction jmp b1
 Removing instruction jmp breturn
 Succesful ASM optimization Pass5NextJumpElimination
-ASSEMBLER
-//SEG0 Basic Upstart
-.pc = $801 "Basic"
-:BasicUpstart(main)
-.pc = $80d "Program"
-//SEG1 Global Constants & labels
-  .label char_cursor = 6
-  .label line_cursor = 2
-  msg: .text "hello world! @"
-  msg2: .text "hello c64! @"
-  msg3: .text "hello 2017! @"
-//SEG2 @begin
-bbegin:
-//SEG3 [1] phi from @begin to @6 [phi:@begin->@6]
-b6_from_bbegin:
-//SEG4 @6
-b6:
-//SEG5 [2] call main param-assignment [ ] ( )
-//SEG6 [4] phi from @6 to main [phi:@6->main]
-main_from_b6:
-  jsr main
-//SEG7 [3] phi from @6 to @end [phi:@6->@end]
-bend_from_b6:
-//SEG8 @end
-bend:
-//SEG9 main
-main: {
-  //SEG10 [5] call print_str param-assignment [ char_cursor#13 ] ( main:2 [ char_cursor#13 ] )
-  //SEG11 [22] phi from main to print_str [phi:main->print_str]
-  print_str_from_main:
-  //SEG12 [22] phi (byte*) char_cursor#29 = ((byte*))(word/signed word) 1024 [phi:main->print_str#0] -- pbuz1=pbuc1 
-    lda #<$400
-    sta char_cursor
-    lda #>$400
-    sta char_cursor+1
-  //SEG13 [22] phi (byte*) print_str::str#6 = (const byte[]) msg#0 [phi:main->print_str#1] -- pbuz1=pbuc1 
-    lda #<msg
-    sta print_str.str
-    lda #>msg
-    sta print_str.str+1
-    jsr print_str
-  //SEG14 [6] phi from main to main::@1 [phi:main->main::@1]
-  b1_from_main:
-  //SEG15 main::@1
-  b1:
-  //SEG16 [7] call print_ln param-assignment [ line_cursor#1 ] ( main:2 [ line_cursor#1 ] )
-  //SEG17 [17] phi from main::@1 to print_ln [phi:main::@1->print_ln]
-  print_ln_from_b1:
-  //SEG18 [17] phi (byte*) line_cursor#16 = ((byte*))(word/signed word) 1024 [phi:main::@1->print_ln#0] -- pbuz1=pbuc1 
-    lda #<$400
-    sta line_cursor
-    lda #>$400
-    sta line_cursor+1
-    jsr print_ln
-  //SEG19 main::@2
-  b2:
-  //SEG20 [8] (byte*~) char_cursor#31 ← (byte*) line_cursor#1 [ char_cursor#31 line_cursor#1 ] ( main:2 [ char_cursor#31 line_cursor#1 ] ) -- pbuz1=pbuz2 
-    lda line_cursor
-    sta char_cursor
-    lda line_cursor+1
-    sta char_cursor+1
-  //SEG21 [9] call print_str param-assignment [ line_cursor#1 char_cursor#13 ] ( main:2 [ line_cursor#1 char_cursor#13 ] )
-  //SEG22 [22] phi from main::@2 to print_str [phi:main::@2->print_str]
-  print_str_from_b2:
-  //SEG23 [22] phi (byte*) char_cursor#29 = (byte*~) char_cursor#31 [phi:main::@2->print_str#0] -- register_copy 
-  //SEG24 [22] phi (byte*) print_str::str#6 = (const byte[]) msg2#0 [phi:main::@2->print_str#1] -- pbuz1=pbuc1 
-    lda #<msg2
-    sta print_str.str
-    lda #>msg2
-    sta print_str.str+1
-    jsr print_str
-  //SEG25 [10] phi from main::@2 to main::@3 [phi:main::@2->main::@3]
-  b3_from_b2:
-  //SEG26 main::@3
-  b3:
-  //SEG27 [11] call print_ln param-assignment [ line_cursor#1 ] ( main:2 [ line_cursor#1 ] )
-  //SEG28 [17] phi from main::@3 to print_ln [phi:main::@3->print_ln]
-  print_ln_from_b3:
-  //SEG29 [17] phi (byte*) line_cursor#16 = (byte*) line_cursor#1 [phi:main::@3->print_ln#0] -- register_copy 
-    jsr print_ln
-  //SEG30 main::@4
-  b4:
-  //SEG31 [12] (byte*~) char_cursor#32 ← (byte*) line_cursor#1 [ line_cursor#1 char_cursor#32 ] ( main:2 [ line_cursor#1 char_cursor#32 ] ) -- pbuz1=pbuz2 
-    lda line_cursor
-    sta char_cursor
-    lda line_cursor+1
-    sta char_cursor+1
-  //SEG32 [13] call print_str param-assignment [ line_cursor#1 char_cursor#13 ] ( main:2 [ line_cursor#1 char_cursor#13 ] )
-  //SEG33 [22] phi from main::@4 to print_str [phi:main::@4->print_str]
-  print_str_from_b4:
-  //SEG34 [22] phi (byte*) char_cursor#29 = (byte*~) char_cursor#32 [phi:main::@4->print_str#0] -- register_copy 
-  //SEG35 [22] phi (byte*) print_str::str#6 = (const byte[]) msg3#0 [phi:main::@4->print_str#1] -- pbuz1=pbuc1 
-    lda #<msg3
-    sta print_str.str
-    lda #>msg3
-    sta print_str.str+1
-    jsr print_str
-  //SEG36 [14] phi from main::@4 to main::@5 [phi:main::@4->main::@5]
-  b5_from_b4:
-  //SEG37 main::@5
-  b5:
-  //SEG38 [15] call print_ln param-assignment [ ] ( main:2 [ ] )
-  //SEG39 [17] phi from main::@5 to print_ln [phi:main::@5->print_ln]
-  print_ln_from_b5:
-  //SEG40 [17] phi (byte*) line_cursor#16 = (byte*) line_cursor#1 [phi:main::@5->print_ln#0] -- register_copy 
-    jsr print_ln
-  //SEG41 main::@return
-  breturn:
-  //SEG42 [16] return  [ ] ( main:2 [ ] )
-    rts
-}
-//SEG43 print_ln
-print_ln: {
-  //SEG44 [18] phi from print_ln print_ln::@1 to print_ln::@1 [phi:print_ln/print_ln::@1->print_ln::@1]
-  b1_from_print_ln:
-  b1_from_b1:
-  //SEG45 [18] phi (byte*) line_cursor#8 = (byte*) line_cursor#16 [phi:print_ln/print_ln::@1->print_ln::@1#0] -- register_copy 
-  //SEG46 print_ln::@1
-  b1:
-  //SEG47 [19] (byte*) line_cursor#1 ← (byte*) line_cursor#8 + (byte/signed byte/word/signed word) 40 [ line_cursor#1 char_cursor#13 ] ( main:2::print_ln:7 [ line_cursor#1 char_cursor#13 ] main:2::print_ln:11 [ line_cursor#1 char_cursor#13 ] main:2::print_ln:15 [ line_cursor#1 char_cursor#13 ] ) -- pbuz1=pbuz1_plus_vbuc1 
-    lda line_cursor
-    clc
-    adc #$28
-    sta line_cursor
-    bcc !+
-    inc line_cursor+1
-  !:
-  //SEG48 [20] if((byte*) line_cursor#1<(byte*) char_cursor#13) goto print_ln::@1 [ line_cursor#1 char_cursor#13 ] ( main:2::print_ln:7 [ line_cursor#1 char_cursor#13 ] main:2::print_ln:11 [ line_cursor#1 char_cursor#13 ] main:2::print_ln:15 [ line_cursor#1 char_cursor#13 ] ) -- pbuz1_lt_pbuz2_then_la1 
-    lda line_cursor+1
-    cmp char_cursor+1
-    bcc b1_from_b1
-    bne !+
-    lda line_cursor
-    cmp char_cursor
-    bcc b1_from_b1
-  !:
-  //SEG49 print_ln::@return
-  breturn:
-  //SEG50 [21] return  [ line_cursor#1 ] ( main:2::print_ln:7 [ line_cursor#1 ] main:2::print_ln:11 [ line_cursor#1 ] main:2::print_ln:15 [ line_cursor#1 ] )
-    rts
-}
-//SEG51 print_str
-print_str: {
-    .label str = 4
-  //SEG52 [23] phi from print_str print_str::@2 to print_str::@1 [phi:print_str/print_str::@2->print_str::@1]
-  b1_from_print_str:
-  b1_from_b2:
-  //SEG53 [23] phi (byte*) char_cursor#13 = (byte*) char_cursor#29 [phi:print_str/print_str::@2->print_str::@1#0] -- register_copy 
-  //SEG54 [23] phi (byte*) print_str::str#4 = (byte*) print_str::str#6 [phi:print_str/print_str::@2->print_str::@1#1] -- register_copy 
-  //SEG55 print_str::@1
-  b1:
-  //SEG56 [24] if(*((byte*) print_str::str#4)!=(byte) '@') goto print_str::@2 [ char_cursor#13 print_str::str#4 ] ( main:2::print_str:5 [ char_cursor#13 print_str::str#4 ] main:2::print_str:9 [ line_cursor#1 char_cursor#13 print_str::str#4 ] main:2::print_str:13 [ line_cursor#1 char_cursor#13 print_str::str#4 ] ) -- _deref_pbuz1_neq_vbuc1_then_la1 
-    ldy #0
-    lda (str),y
-    cmp #'@'
-    bne b2
-  //SEG57 print_str::@return
-  breturn:
-  //SEG58 [25] return  [ char_cursor#13 ] ( main:2::print_str:5 [ char_cursor#13 ] main:2::print_str:9 [ line_cursor#1 char_cursor#13 ] main:2::print_str:13 [ line_cursor#1 char_cursor#13 ] )
-    rts
-  //SEG59 print_str::@2
-  b2:
-  //SEG60 [26] *((byte*) char_cursor#13) ← *((byte*) print_str::str#4) [ char_cursor#13 print_str::str#4 ] ( main:2::print_str:5 [ char_cursor#13 print_str::str#4 ] main:2::print_str:9 [ line_cursor#1 char_cursor#13 print_str::str#4 ] main:2::print_str:13 [ line_cursor#1 char_cursor#13 print_str::str#4 ] ) -- _deref_pbuz1=_deref_pbuz2 
-    ldy #0
-    lda (str),y
-    ldy #0
-    sta (char_cursor),y
-  //SEG61 [27] (byte*) char_cursor#1 ← ++ (byte*) char_cursor#13 [ print_str::str#4 char_cursor#1 ] ( main:2::print_str:5 [ print_str::str#4 char_cursor#1 ] main:2::print_str:9 [ line_cursor#1 print_str::str#4 char_cursor#1 ] main:2::print_str:13 [ line_cursor#1 print_str::str#4 char_cursor#1 ] ) -- pbuz1=_inc_pbuz1 
-    inc char_cursor
-    bne !+
-    inc char_cursor+1
-  !:
-  //SEG62 [28] (byte*) print_str::str#0 ← ++ (byte*) print_str::str#4 [ print_str::str#0 char_cursor#1 ] ( main:2::print_str:5 [ print_str::str#0 char_cursor#1 ] main:2::print_str:9 [ line_cursor#1 print_str::str#0 char_cursor#1 ] main:2::print_str:13 [ line_cursor#1 print_str::str#0 char_cursor#1 ] ) -- pbuz1=_inc_pbuz1 
-    inc str
-    bne !+
-    inc str+1
-  !:
-    jmp b1_from_b2
-}
-
 Removing instruction ldy #0
 Succesful ASM optimization Pass5UnnecesaryLoadElimination
-ASSEMBLER
-//SEG0 Basic Upstart
-.pc = $801 "Basic"
-:BasicUpstart(main)
-.pc = $80d "Program"
-//SEG1 Global Constants & labels
-  .label char_cursor = 6
-  .label line_cursor = 2
-  msg: .text "hello world! @"
-  msg2: .text "hello c64! @"
-  msg3: .text "hello 2017! @"
-//SEG2 @begin
-bbegin:
-//SEG3 [1] phi from @begin to @6 [phi:@begin->@6]
-b6_from_bbegin:
-//SEG4 @6
-b6:
-//SEG5 [2] call main param-assignment [ ] ( )
-//SEG6 [4] phi from @6 to main [phi:@6->main]
-main_from_b6:
-  jsr main
-//SEG7 [3] phi from @6 to @end [phi:@6->@end]
-bend_from_b6:
-//SEG8 @end
-bend:
-//SEG9 main
-main: {
-  //SEG10 [5] call print_str param-assignment [ char_cursor#13 ] ( main:2 [ char_cursor#13 ] )
-  //SEG11 [22] phi from main to print_str [phi:main->print_str]
-  print_str_from_main:
-  //SEG12 [22] phi (byte*) char_cursor#29 = ((byte*))(word/signed word) 1024 [phi:main->print_str#0] -- pbuz1=pbuc1 
-    lda #<$400
-    sta char_cursor
-    lda #>$400
-    sta char_cursor+1
-  //SEG13 [22] phi (byte*) print_str::str#6 = (const byte[]) msg#0 [phi:main->print_str#1] -- pbuz1=pbuc1 
-    lda #<msg
-    sta print_str.str
-    lda #>msg
-    sta print_str.str+1
-    jsr print_str
-  //SEG14 [6] phi from main to main::@1 [phi:main->main::@1]
-  b1_from_main:
-  //SEG15 main::@1
-  b1:
-  //SEG16 [7] call print_ln param-assignment [ line_cursor#1 ] ( main:2 [ line_cursor#1 ] )
-  //SEG17 [17] phi from main::@1 to print_ln [phi:main::@1->print_ln]
-  print_ln_from_b1:
-  //SEG18 [17] phi (byte*) line_cursor#16 = ((byte*))(word/signed word) 1024 [phi:main::@1->print_ln#0] -- pbuz1=pbuc1 
-    lda #<$400
-    sta line_cursor
-    lda #>$400
-    sta line_cursor+1
-    jsr print_ln
-  //SEG19 main::@2
-  b2:
-  //SEG20 [8] (byte*~) char_cursor#31 ← (byte*) line_cursor#1 [ char_cursor#31 line_cursor#1 ] ( main:2 [ char_cursor#31 line_cursor#1 ] ) -- pbuz1=pbuz2 
-    lda line_cursor
-    sta char_cursor
-    lda line_cursor+1
-    sta char_cursor+1
-  //SEG21 [9] call print_str param-assignment [ line_cursor#1 char_cursor#13 ] ( main:2 [ line_cursor#1 char_cursor#13 ] )
-  //SEG22 [22] phi from main::@2 to print_str [phi:main::@2->print_str]
-  print_str_from_b2:
-  //SEG23 [22] phi (byte*) char_cursor#29 = (byte*~) char_cursor#31 [phi:main::@2->print_str#0] -- register_copy 
-  //SEG24 [22] phi (byte*) print_str::str#6 = (const byte[]) msg2#0 [phi:main::@2->print_str#1] -- pbuz1=pbuc1 
-    lda #<msg2
-    sta print_str.str
-    lda #>msg2
-    sta print_str.str+1
-    jsr print_str
-  //SEG25 [10] phi from main::@2 to main::@3 [phi:main::@2->main::@3]
-  b3_from_b2:
-  //SEG26 main::@3
-  b3:
-  //SEG27 [11] call print_ln param-assignment [ line_cursor#1 ] ( main:2 [ line_cursor#1 ] )
-  //SEG28 [17] phi from main::@3 to print_ln [phi:main::@3->print_ln]
-  print_ln_from_b3:
-  //SEG29 [17] phi (byte*) line_cursor#16 = (byte*) line_cursor#1 [phi:main::@3->print_ln#0] -- register_copy 
-    jsr print_ln
-  //SEG30 main::@4
-  b4:
-  //SEG31 [12] (byte*~) char_cursor#32 ← (byte*) line_cursor#1 [ line_cursor#1 char_cursor#32 ] ( main:2 [ line_cursor#1 char_cursor#32 ] ) -- pbuz1=pbuz2 
-    lda line_cursor
-    sta char_cursor
-    lda line_cursor+1
-    sta char_cursor+1
-  //SEG32 [13] call print_str param-assignment [ line_cursor#1 char_cursor#13 ] ( main:2 [ line_cursor#1 char_cursor#13 ] )
-  //SEG33 [22] phi from main::@4 to print_str [phi:main::@4->print_str]
-  print_str_from_b4:
-  //SEG34 [22] phi (byte*) char_cursor#29 = (byte*~) char_cursor#32 [phi:main::@4->print_str#0] -- register_copy 
-  //SEG35 [22] phi (byte*) print_str::str#6 = (const byte[]) msg3#0 [phi:main::@4->print_str#1] -- pbuz1=pbuc1 
-    lda #<msg3
-    sta print_str.str
-    lda #>msg3
-    sta print_str.str+1
-    jsr print_str
-  //SEG36 [14] phi from main::@4 to main::@5 [phi:main::@4->main::@5]
-  b5_from_b4:
-  //SEG37 main::@5
-  b5:
-  //SEG38 [15] call print_ln param-assignment [ ] ( main:2 [ ] )
-  //SEG39 [17] phi from main::@5 to print_ln [phi:main::@5->print_ln]
-  print_ln_from_b5:
-  //SEG40 [17] phi (byte*) line_cursor#16 = (byte*) line_cursor#1 [phi:main::@5->print_ln#0] -- register_copy 
-    jsr print_ln
-  //SEG41 main::@return
-  breturn:
-  //SEG42 [16] return  [ ] ( main:2 [ ] )
-    rts
-}
-//SEG43 print_ln
-print_ln: {
-  //SEG44 [18] phi from print_ln print_ln::@1 to print_ln::@1 [phi:print_ln/print_ln::@1->print_ln::@1]
-  b1_from_print_ln:
-  b1_from_b1:
-  //SEG45 [18] phi (byte*) line_cursor#8 = (byte*) line_cursor#16 [phi:print_ln/print_ln::@1->print_ln::@1#0] -- register_copy 
-  //SEG46 print_ln::@1
-  b1:
-  //SEG47 [19] (byte*) line_cursor#1 ← (byte*) line_cursor#8 + (byte/signed byte/word/signed word) 40 [ line_cursor#1 char_cursor#13 ] ( main:2::print_ln:7 [ line_cursor#1 char_cursor#13 ] main:2::print_ln:11 [ line_cursor#1 char_cursor#13 ] main:2::print_ln:15 [ line_cursor#1 char_cursor#13 ] ) -- pbuz1=pbuz1_plus_vbuc1 
-    lda line_cursor
-    clc
-    adc #$28
-    sta line_cursor
-    bcc !+
-    inc line_cursor+1
-  !:
-  //SEG48 [20] if((byte*) line_cursor#1<(byte*) char_cursor#13) goto print_ln::@1 [ line_cursor#1 char_cursor#13 ] ( main:2::print_ln:7 [ line_cursor#1 char_cursor#13 ] main:2::print_ln:11 [ line_cursor#1 char_cursor#13 ] main:2::print_ln:15 [ line_cursor#1 char_cursor#13 ] ) -- pbuz1_lt_pbuz2_then_la1 
-    lda line_cursor+1
-    cmp char_cursor+1
-    bcc b1_from_b1
-    bne !+
-    lda line_cursor
-    cmp char_cursor
-    bcc b1_from_b1
-  !:
-  //SEG49 print_ln::@return
-  breturn:
-  //SEG50 [21] return  [ line_cursor#1 ] ( main:2::print_ln:7 [ line_cursor#1 ] main:2::print_ln:11 [ line_cursor#1 ] main:2::print_ln:15 [ line_cursor#1 ] )
-    rts
-}
-//SEG51 print_str
-print_str: {
-    .label str = 4
-  //SEG52 [23] phi from print_str print_str::@2 to print_str::@1 [phi:print_str/print_str::@2->print_str::@1]
-  b1_from_print_str:
-  b1_from_b2:
-  //SEG53 [23] phi (byte*) char_cursor#13 = (byte*) char_cursor#29 [phi:print_str/print_str::@2->print_str::@1#0] -- register_copy 
-  //SEG54 [23] phi (byte*) print_str::str#4 = (byte*) print_str::str#6 [phi:print_str/print_str::@2->print_str::@1#1] -- register_copy 
-  //SEG55 print_str::@1
-  b1:
-  //SEG56 [24] if(*((byte*) print_str::str#4)!=(byte) '@') goto print_str::@2 [ char_cursor#13 print_str::str#4 ] ( main:2::print_str:5 [ char_cursor#13 print_str::str#4 ] main:2::print_str:9 [ line_cursor#1 char_cursor#13 print_str::str#4 ] main:2::print_str:13 [ line_cursor#1 char_cursor#13 print_str::str#4 ] ) -- _deref_pbuz1_neq_vbuc1_then_la1 
-    ldy #0
-    lda (str),y
-    cmp #'@'
-    bne b2
-  //SEG57 print_str::@return
-  breturn:
-  //SEG58 [25] return  [ char_cursor#13 ] ( main:2::print_str:5 [ char_cursor#13 ] main:2::print_str:9 [ line_cursor#1 char_cursor#13 ] main:2::print_str:13 [ line_cursor#1 char_cursor#13 ] )
-    rts
-  //SEG59 print_str::@2
-  b2:
-  //SEG60 [26] *((byte*) char_cursor#13) ← *((byte*) print_str::str#4) [ char_cursor#13 print_str::str#4 ] ( main:2::print_str:5 [ char_cursor#13 print_str::str#4 ] main:2::print_str:9 [ line_cursor#1 char_cursor#13 print_str::str#4 ] main:2::print_str:13 [ line_cursor#1 char_cursor#13 print_str::str#4 ] ) -- _deref_pbuz1=_deref_pbuz2 
-    ldy #0
-    lda (str),y
-    sta (char_cursor),y
-  //SEG61 [27] (byte*) char_cursor#1 ← ++ (byte*) char_cursor#13 [ print_str::str#4 char_cursor#1 ] ( main:2::print_str:5 [ print_str::str#4 char_cursor#1 ] main:2::print_str:9 [ line_cursor#1 print_str::str#4 char_cursor#1 ] main:2::print_str:13 [ line_cursor#1 print_str::str#4 char_cursor#1 ] ) -- pbuz1=_inc_pbuz1 
-    inc char_cursor
-    bne !+
-    inc char_cursor+1
-  !:
-  //SEG62 [28] (byte*) print_str::str#0 ← ++ (byte*) print_str::str#4 [ print_str::str#0 char_cursor#1 ] ( main:2::print_str:5 [ print_str::str#0 char_cursor#1 ] main:2::print_str:9 [ line_cursor#1 print_str::str#0 char_cursor#1 ] main:2::print_str:13 [ line_cursor#1 print_str::str#0 char_cursor#1 ] ) -- pbuz1=_inc_pbuz1 
-    inc str
-    bne !+
-    inc str+1
-  !:
-    jmp b1_from_b2
-}
-
 Replacing label b1_from_b1 with b1
 Replacing label b1_from_b1 with b1
 Replacing label b1_from_b2 with b1
@@ -2630,171 +2465,6 @@ Removing instruction b1_from_b1:
 Removing instruction b1_from_print_str:
 Removing instruction b1_from_b2:
 Succesful ASM optimization Pass5RedundantLabelElimination
-ASSEMBLER
-//SEG0 Basic Upstart
-.pc = $801 "Basic"
-:BasicUpstart(main)
-.pc = $80d "Program"
-//SEG1 Global Constants & labels
-  .label char_cursor = 6
-  .label line_cursor = 2
-  msg: .text "hello world! @"
-  msg2: .text "hello c64! @"
-  msg3: .text "hello 2017! @"
-//SEG2 @begin
-//SEG3 [1] phi from @begin to @6 [phi:@begin->@6]
-//SEG4 @6
-b6:
-//SEG5 [2] call main param-assignment [ ] ( )
-//SEG6 [4] phi from @6 to main [phi:@6->main]
-  jsr main
-//SEG7 [3] phi from @6 to @end [phi:@6->@end]
-//SEG8 @end
-bend:
-//SEG9 main
-main: {
-  //SEG10 [5] call print_str param-assignment [ char_cursor#13 ] ( main:2 [ char_cursor#13 ] )
-  //SEG11 [22] phi from main to print_str [phi:main->print_str]
-  print_str_from_main:
-  //SEG12 [22] phi (byte*) char_cursor#29 = ((byte*))(word/signed word) 1024 [phi:main->print_str#0] -- pbuz1=pbuc1 
-    lda #<$400
-    sta char_cursor
-    lda #>$400
-    sta char_cursor+1
-  //SEG13 [22] phi (byte*) print_str::str#6 = (const byte[]) msg#0 [phi:main->print_str#1] -- pbuz1=pbuc1 
-    lda #<msg
-    sta print_str.str
-    lda #>msg
-    sta print_str.str+1
-    jsr print_str
-  //SEG14 [6] phi from main to main::@1 [phi:main->main::@1]
-  //SEG15 main::@1
-  b1:
-  //SEG16 [7] call print_ln param-assignment [ line_cursor#1 ] ( main:2 [ line_cursor#1 ] )
-  //SEG17 [17] phi from main::@1 to print_ln [phi:main::@1->print_ln]
-  //SEG18 [17] phi (byte*) line_cursor#16 = ((byte*))(word/signed word) 1024 [phi:main::@1->print_ln#0] -- pbuz1=pbuc1 
-    lda #<$400
-    sta line_cursor
-    lda #>$400
-    sta line_cursor+1
-    jsr print_ln
-  //SEG19 main::@2
-  b2:
-  //SEG20 [8] (byte*~) char_cursor#31 ← (byte*) line_cursor#1 [ char_cursor#31 line_cursor#1 ] ( main:2 [ char_cursor#31 line_cursor#1 ] ) -- pbuz1=pbuz2 
-    lda line_cursor
-    sta char_cursor
-    lda line_cursor+1
-    sta char_cursor+1
-  //SEG21 [9] call print_str param-assignment [ line_cursor#1 char_cursor#13 ] ( main:2 [ line_cursor#1 char_cursor#13 ] )
-  //SEG22 [22] phi from main::@2 to print_str [phi:main::@2->print_str]
-  print_str_from_b2:
-  //SEG23 [22] phi (byte*) char_cursor#29 = (byte*~) char_cursor#31 [phi:main::@2->print_str#0] -- register_copy 
-  //SEG24 [22] phi (byte*) print_str::str#6 = (const byte[]) msg2#0 [phi:main::@2->print_str#1] -- pbuz1=pbuc1 
-    lda #<msg2
-    sta print_str.str
-    lda #>msg2
-    sta print_str.str+1
-    jsr print_str
-  //SEG25 [10] phi from main::@2 to main::@3 [phi:main::@2->main::@3]
-  //SEG26 main::@3
-  b3:
-  //SEG27 [11] call print_ln param-assignment [ line_cursor#1 ] ( main:2 [ line_cursor#1 ] )
-  //SEG28 [17] phi from main::@3 to print_ln [phi:main::@3->print_ln]
-  //SEG29 [17] phi (byte*) line_cursor#16 = (byte*) line_cursor#1 [phi:main::@3->print_ln#0] -- register_copy 
-    jsr print_ln
-  //SEG30 main::@4
-  b4:
-  //SEG31 [12] (byte*~) char_cursor#32 ← (byte*) line_cursor#1 [ line_cursor#1 char_cursor#32 ] ( main:2 [ line_cursor#1 char_cursor#32 ] ) -- pbuz1=pbuz2 
-    lda line_cursor
-    sta char_cursor
-    lda line_cursor+1
-    sta char_cursor+1
-  //SEG32 [13] call print_str param-assignment [ line_cursor#1 char_cursor#13 ] ( main:2 [ line_cursor#1 char_cursor#13 ] )
-  //SEG33 [22] phi from main::@4 to print_str [phi:main::@4->print_str]
-  print_str_from_b4:
-  //SEG34 [22] phi (byte*) char_cursor#29 = (byte*~) char_cursor#32 [phi:main::@4->print_str#0] -- register_copy 
-  //SEG35 [22] phi (byte*) print_str::str#6 = (const byte[]) msg3#0 [phi:main::@4->print_str#1] -- pbuz1=pbuc1 
-    lda #<msg3
-    sta print_str.str
-    lda #>msg3
-    sta print_str.str+1
-    jsr print_str
-  //SEG36 [14] phi from main::@4 to main::@5 [phi:main::@4->main::@5]
-  //SEG37 main::@5
-  b5:
-  //SEG38 [15] call print_ln param-assignment [ ] ( main:2 [ ] )
-  //SEG39 [17] phi from main::@5 to print_ln [phi:main::@5->print_ln]
-  //SEG40 [17] phi (byte*) line_cursor#16 = (byte*) line_cursor#1 [phi:main::@5->print_ln#0] -- register_copy 
-    jsr print_ln
-  //SEG41 main::@return
-  breturn:
-  //SEG42 [16] return  [ ] ( main:2 [ ] )
-    rts
-}
-//SEG43 print_ln
-print_ln: {
-  //SEG44 [18] phi from print_ln print_ln::@1 to print_ln::@1 [phi:print_ln/print_ln::@1->print_ln::@1]
-  //SEG45 [18] phi (byte*) line_cursor#8 = (byte*) line_cursor#16 [phi:print_ln/print_ln::@1->print_ln::@1#0] -- register_copy 
-  //SEG46 print_ln::@1
-  b1:
-  //SEG47 [19] (byte*) line_cursor#1 ← (byte*) line_cursor#8 + (byte/signed byte/word/signed word) 40 [ line_cursor#1 char_cursor#13 ] ( main:2::print_ln:7 [ line_cursor#1 char_cursor#13 ] main:2::print_ln:11 [ line_cursor#1 char_cursor#13 ] main:2::print_ln:15 [ line_cursor#1 char_cursor#13 ] ) -- pbuz1=pbuz1_plus_vbuc1 
-    lda line_cursor
-    clc
-    adc #$28
-    sta line_cursor
-    bcc !+
-    inc line_cursor+1
-  !:
-  //SEG48 [20] if((byte*) line_cursor#1<(byte*) char_cursor#13) goto print_ln::@1 [ line_cursor#1 char_cursor#13 ] ( main:2::print_ln:7 [ line_cursor#1 char_cursor#13 ] main:2::print_ln:11 [ line_cursor#1 char_cursor#13 ] main:2::print_ln:15 [ line_cursor#1 char_cursor#13 ] ) -- pbuz1_lt_pbuz2_then_la1 
-    lda line_cursor+1
-    cmp char_cursor+1
-    bcc b1
-    bne !+
-    lda line_cursor
-    cmp char_cursor
-    bcc b1
-  !:
-  //SEG49 print_ln::@return
-  breturn:
-  //SEG50 [21] return  [ line_cursor#1 ] ( main:2::print_ln:7 [ line_cursor#1 ] main:2::print_ln:11 [ line_cursor#1 ] main:2::print_ln:15 [ line_cursor#1 ] )
-    rts
-}
-//SEG51 print_str
-print_str: {
-    .label str = 4
-  //SEG52 [23] phi from print_str print_str::@2 to print_str::@1 [phi:print_str/print_str::@2->print_str::@1]
-  //SEG53 [23] phi (byte*) char_cursor#13 = (byte*) char_cursor#29 [phi:print_str/print_str::@2->print_str::@1#0] -- register_copy 
-  //SEG54 [23] phi (byte*) print_str::str#4 = (byte*) print_str::str#6 [phi:print_str/print_str::@2->print_str::@1#1] -- register_copy 
-  //SEG55 print_str::@1
-  b1:
-  //SEG56 [24] if(*((byte*) print_str::str#4)!=(byte) '@') goto print_str::@2 [ char_cursor#13 print_str::str#4 ] ( main:2::print_str:5 [ char_cursor#13 print_str::str#4 ] main:2::print_str:9 [ line_cursor#1 char_cursor#13 print_str::str#4 ] main:2::print_str:13 [ line_cursor#1 char_cursor#13 print_str::str#4 ] ) -- _deref_pbuz1_neq_vbuc1_then_la1 
-    ldy #0
-    lda (str),y
-    cmp #'@'
-    bne b2
-  //SEG57 print_str::@return
-  breturn:
-  //SEG58 [25] return  [ char_cursor#13 ] ( main:2::print_str:5 [ char_cursor#13 ] main:2::print_str:9 [ line_cursor#1 char_cursor#13 ] main:2::print_str:13 [ line_cursor#1 char_cursor#13 ] )
-    rts
-  //SEG59 print_str::@2
-  b2:
-  //SEG60 [26] *((byte*) char_cursor#13) ← *((byte*) print_str::str#4) [ char_cursor#13 print_str::str#4 ] ( main:2::print_str:5 [ char_cursor#13 print_str::str#4 ] main:2::print_str:9 [ line_cursor#1 char_cursor#13 print_str::str#4 ] main:2::print_str:13 [ line_cursor#1 char_cursor#13 print_str::str#4 ] ) -- _deref_pbuz1=_deref_pbuz2 
-    ldy #0
-    lda (str),y
-    sta (char_cursor),y
-  //SEG61 [27] (byte*) char_cursor#1 ← ++ (byte*) char_cursor#13 [ print_str::str#4 char_cursor#1 ] ( main:2::print_str:5 [ print_str::str#4 char_cursor#1 ] main:2::print_str:9 [ line_cursor#1 print_str::str#4 char_cursor#1 ] main:2::print_str:13 [ line_cursor#1 print_str::str#4 char_cursor#1 ] ) -- pbuz1=_inc_pbuz1 
-    inc char_cursor
-    bne !+
-    inc char_cursor+1
-  !:
-  //SEG62 [28] (byte*) print_str::str#0 ← ++ (byte*) print_str::str#4 [ print_str::str#0 char_cursor#1 ] ( main:2::print_str:5 [ print_str::str#0 char_cursor#1 ] main:2::print_str:9 [ line_cursor#1 print_str::str#0 char_cursor#1 ] main:2::print_str:13 [ line_cursor#1 print_str::str#0 char_cursor#1 ] ) -- pbuz1=_inc_pbuz1 
-    inc str
-    bne !+
-    inc str+1
-  !:
-    jmp b1
-}
-
 Removing instruction b6:
 Removing instruction bend:
 Removing instruction print_str_from_main:
@@ -2809,157 +2479,6 @@ Removing instruction breturn:
 Removing instruction breturn:
 Removing instruction breturn:
 Succesful ASM optimization Pass5UnusedLabelElimination
-ASSEMBLER
-//SEG0 Basic Upstart
-.pc = $801 "Basic"
-:BasicUpstart(main)
-.pc = $80d "Program"
-//SEG1 Global Constants & labels
-  .label char_cursor = 6
-  .label line_cursor = 2
-  msg: .text "hello world! @"
-  msg2: .text "hello c64! @"
-  msg3: .text "hello 2017! @"
-//SEG2 @begin
-//SEG3 [1] phi from @begin to @6 [phi:@begin->@6]
-//SEG4 @6
-//SEG5 [2] call main param-assignment [ ] ( )
-//SEG6 [4] phi from @6 to main [phi:@6->main]
-  jsr main
-//SEG7 [3] phi from @6 to @end [phi:@6->@end]
-//SEG8 @end
-//SEG9 main
-main: {
-  //SEG10 [5] call print_str param-assignment [ char_cursor#13 ] ( main:2 [ char_cursor#13 ] )
-  //SEG11 [22] phi from main to print_str [phi:main->print_str]
-  //SEG12 [22] phi (byte*) char_cursor#29 = ((byte*))(word/signed word) 1024 [phi:main->print_str#0] -- pbuz1=pbuc1 
-    lda #<$400
-    sta char_cursor
-    lda #>$400
-    sta char_cursor+1
-  //SEG13 [22] phi (byte*) print_str::str#6 = (const byte[]) msg#0 [phi:main->print_str#1] -- pbuz1=pbuc1 
-    lda #<msg
-    sta print_str.str
-    lda #>msg
-    sta print_str.str+1
-    jsr print_str
-  //SEG14 [6] phi from main to main::@1 [phi:main->main::@1]
-  //SEG15 main::@1
-  //SEG16 [7] call print_ln param-assignment [ line_cursor#1 ] ( main:2 [ line_cursor#1 ] )
-  //SEG17 [17] phi from main::@1 to print_ln [phi:main::@1->print_ln]
-  //SEG18 [17] phi (byte*) line_cursor#16 = ((byte*))(word/signed word) 1024 [phi:main::@1->print_ln#0] -- pbuz1=pbuc1 
-    lda #<$400
-    sta line_cursor
-    lda #>$400
-    sta line_cursor+1
-    jsr print_ln
-  //SEG19 main::@2
-  //SEG20 [8] (byte*~) char_cursor#31 ← (byte*) line_cursor#1 [ char_cursor#31 line_cursor#1 ] ( main:2 [ char_cursor#31 line_cursor#1 ] ) -- pbuz1=pbuz2 
-    lda line_cursor
-    sta char_cursor
-    lda line_cursor+1
-    sta char_cursor+1
-  //SEG21 [9] call print_str param-assignment [ line_cursor#1 char_cursor#13 ] ( main:2 [ line_cursor#1 char_cursor#13 ] )
-  //SEG22 [22] phi from main::@2 to print_str [phi:main::@2->print_str]
-  //SEG23 [22] phi (byte*) char_cursor#29 = (byte*~) char_cursor#31 [phi:main::@2->print_str#0] -- register_copy 
-  //SEG24 [22] phi (byte*) print_str::str#6 = (const byte[]) msg2#0 [phi:main::@2->print_str#1] -- pbuz1=pbuc1 
-    lda #<msg2
-    sta print_str.str
-    lda #>msg2
-    sta print_str.str+1
-    jsr print_str
-  //SEG25 [10] phi from main::@2 to main::@3 [phi:main::@2->main::@3]
-  //SEG26 main::@3
-  //SEG27 [11] call print_ln param-assignment [ line_cursor#1 ] ( main:2 [ line_cursor#1 ] )
-  //SEG28 [17] phi from main::@3 to print_ln [phi:main::@3->print_ln]
-  //SEG29 [17] phi (byte*) line_cursor#16 = (byte*) line_cursor#1 [phi:main::@3->print_ln#0] -- register_copy 
-    jsr print_ln
-  //SEG30 main::@4
-  //SEG31 [12] (byte*~) char_cursor#32 ← (byte*) line_cursor#1 [ line_cursor#1 char_cursor#32 ] ( main:2 [ line_cursor#1 char_cursor#32 ] ) -- pbuz1=pbuz2 
-    lda line_cursor
-    sta char_cursor
-    lda line_cursor+1
-    sta char_cursor+1
-  //SEG32 [13] call print_str param-assignment [ line_cursor#1 char_cursor#13 ] ( main:2 [ line_cursor#1 char_cursor#13 ] )
-  //SEG33 [22] phi from main::@4 to print_str [phi:main::@4->print_str]
-  //SEG34 [22] phi (byte*) char_cursor#29 = (byte*~) char_cursor#32 [phi:main::@4->print_str#0] -- register_copy 
-  //SEG35 [22] phi (byte*) print_str::str#6 = (const byte[]) msg3#0 [phi:main::@4->print_str#1] -- pbuz1=pbuc1 
-    lda #<msg3
-    sta print_str.str
-    lda #>msg3
-    sta print_str.str+1
-    jsr print_str
-  //SEG36 [14] phi from main::@4 to main::@5 [phi:main::@4->main::@5]
-  //SEG37 main::@5
-  //SEG38 [15] call print_ln param-assignment [ ] ( main:2 [ ] )
-  //SEG39 [17] phi from main::@5 to print_ln [phi:main::@5->print_ln]
-  //SEG40 [17] phi (byte*) line_cursor#16 = (byte*) line_cursor#1 [phi:main::@5->print_ln#0] -- register_copy 
-    jsr print_ln
-  //SEG41 main::@return
-  //SEG42 [16] return  [ ] ( main:2 [ ] )
-    rts
-}
-//SEG43 print_ln
-print_ln: {
-  //SEG44 [18] phi from print_ln print_ln::@1 to print_ln::@1 [phi:print_ln/print_ln::@1->print_ln::@1]
-  //SEG45 [18] phi (byte*) line_cursor#8 = (byte*) line_cursor#16 [phi:print_ln/print_ln::@1->print_ln::@1#0] -- register_copy 
-  //SEG46 print_ln::@1
-  b1:
-  //SEG47 [19] (byte*) line_cursor#1 ← (byte*) line_cursor#8 + (byte/signed byte/word/signed word) 40 [ line_cursor#1 char_cursor#13 ] ( main:2::print_ln:7 [ line_cursor#1 char_cursor#13 ] main:2::print_ln:11 [ line_cursor#1 char_cursor#13 ] main:2::print_ln:15 [ line_cursor#1 char_cursor#13 ] ) -- pbuz1=pbuz1_plus_vbuc1 
-    lda line_cursor
-    clc
-    adc #$28
-    sta line_cursor
-    bcc !+
-    inc line_cursor+1
-  !:
-  //SEG48 [20] if((byte*) line_cursor#1<(byte*) char_cursor#13) goto print_ln::@1 [ line_cursor#1 char_cursor#13 ] ( main:2::print_ln:7 [ line_cursor#1 char_cursor#13 ] main:2::print_ln:11 [ line_cursor#1 char_cursor#13 ] main:2::print_ln:15 [ line_cursor#1 char_cursor#13 ] ) -- pbuz1_lt_pbuz2_then_la1 
-    lda line_cursor+1
-    cmp char_cursor+1
-    bcc b1
-    bne !+
-    lda line_cursor
-    cmp char_cursor
-    bcc b1
-  !:
-  //SEG49 print_ln::@return
-  //SEG50 [21] return  [ line_cursor#1 ] ( main:2::print_ln:7 [ line_cursor#1 ] main:2::print_ln:11 [ line_cursor#1 ] main:2::print_ln:15 [ line_cursor#1 ] )
-    rts
-}
-//SEG51 print_str
-print_str: {
-    .label str = 4
-  //SEG52 [23] phi from print_str print_str::@2 to print_str::@1 [phi:print_str/print_str::@2->print_str::@1]
-  //SEG53 [23] phi (byte*) char_cursor#13 = (byte*) char_cursor#29 [phi:print_str/print_str::@2->print_str::@1#0] -- register_copy 
-  //SEG54 [23] phi (byte*) print_str::str#4 = (byte*) print_str::str#6 [phi:print_str/print_str::@2->print_str::@1#1] -- register_copy 
-  //SEG55 print_str::@1
-  b1:
-  //SEG56 [24] if(*((byte*) print_str::str#4)!=(byte) '@') goto print_str::@2 [ char_cursor#13 print_str::str#4 ] ( main:2::print_str:5 [ char_cursor#13 print_str::str#4 ] main:2::print_str:9 [ line_cursor#1 char_cursor#13 print_str::str#4 ] main:2::print_str:13 [ line_cursor#1 char_cursor#13 print_str::str#4 ] ) -- _deref_pbuz1_neq_vbuc1_then_la1 
-    ldy #0
-    lda (str),y
-    cmp #'@'
-    bne b2
-  //SEG57 print_str::@return
-  //SEG58 [25] return  [ char_cursor#13 ] ( main:2::print_str:5 [ char_cursor#13 ] main:2::print_str:9 [ line_cursor#1 char_cursor#13 ] main:2::print_str:13 [ line_cursor#1 char_cursor#13 ] )
-    rts
-  //SEG59 print_str::@2
-  b2:
-  //SEG60 [26] *((byte*) char_cursor#13) ← *((byte*) print_str::str#4) [ char_cursor#13 print_str::str#4 ] ( main:2::print_str:5 [ char_cursor#13 print_str::str#4 ] main:2::print_str:9 [ line_cursor#1 char_cursor#13 print_str::str#4 ] main:2::print_str:13 [ line_cursor#1 char_cursor#13 print_str::str#4 ] ) -- _deref_pbuz1=_deref_pbuz2 
-    ldy #0
-    lda (str),y
-    sta (char_cursor),y
-  //SEG61 [27] (byte*) char_cursor#1 ← ++ (byte*) char_cursor#13 [ print_str::str#4 char_cursor#1 ] ( main:2::print_str:5 [ print_str::str#4 char_cursor#1 ] main:2::print_str:9 [ line_cursor#1 print_str::str#4 char_cursor#1 ] main:2::print_str:13 [ line_cursor#1 print_str::str#4 char_cursor#1 ] ) -- pbuz1=_inc_pbuz1 
-    inc char_cursor
-    bne !+
-    inc char_cursor+1
-  !:
-  //SEG62 [28] (byte*) print_str::str#0 ← ++ (byte*) print_str::str#4 [ print_str::str#0 char_cursor#1 ] ( main:2::print_str:5 [ print_str::str#0 char_cursor#1 ] main:2::print_str:9 [ line_cursor#1 print_str::str#0 char_cursor#1 ] main:2::print_str:13 [ line_cursor#1 print_str::str#0 char_cursor#1 ] ) -- pbuz1=_inc_pbuz1 
-    inc str
-    bne !+
-    inc str+1
-  !:
-    jmp b1
-}
 
 FINAL SYMBOL TABLE
 (label) @6

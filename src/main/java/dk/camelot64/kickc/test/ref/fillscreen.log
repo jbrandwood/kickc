@@ -1001,13 +1001,8 @@ Uplift Scope []
 Uplifting [fillscreen] best 418 combination reg byte x [ fillscreen::j#2 fillscreen::j#1 ] reg byte a [ fillscreen::c#0 ] 
 Uplifting [main] best 412 combination reg byte a [ main::c#0 ] 
 Uplifting [] best 412 combination 
-Removing instruction jmp b2
-Removing instruction jmp bend
-Removing instruction jmp breturn
-Removing instruction jmp b1
-Removing instruction jmp breturn
-Succesful ASM optimization Pass5NextJumpElimination
-ASSEMBLER
+
+ASSEMBLER BEFORE OPTIMIZATION
 //SEG0 Basic Upstart
 .pc = $801 "Basic"
 :BasicUpstart(main)
@@ -1018,12 +1013,14 @@ ASSEMBLER
 bbegin:
 //SEG3 [1] phi from @begin to @2 [phi:@begin->@2]
 b2_from_bbegin:
+  jmp b2
 //SEG4 @2
 b2:
 //SEG5 [2] call main param-assignment [ ] ( )
   jsr main
 //SEG6 [3] phi from @2 to @end [phi:@2->@end]
 bend_from_b2:
+  jmp bend
 //SEG7 @end
 bend:
 //SEG8 main
@@ -1036,6 +1033,7 @@ main: {
   //SEG12 [8] phi from main to fillscreen [phi:main->fillscreen]
   fillscreen_from_main:
     jsr fillscreen
+    jmp breturn
   //SEG13 main::@return
   breturn:
   //SEG14 [7] return  [ ] ( main:2 [ ] )
@@ -1054,6 +1052,7 @@ fillscreen: {
   //SEG18 [9] phi from fillscreen::@1 to fillscreen::@1 [phi:fillscreen::@1->fillscreen::@1]
   b1_from_b1:
   //SEG19 [9] phi (byte) fillscreen::j#2 = (byte) fillscreen::j#1 [phi:fillscreen::@1->fillscreen::@1#0] -- register_copy 
+    jmp b1
   //SEG20 fillscreen::@1
   b1:
   //SEG21 [10] *((const byte*) SCREEN#0 + (byte) fillscreen::j#2) ← (byte) fillscreen::c#0 [ fillscreen::c#0 fillscreen::j#2 ] ( main:2::fillscreen:6 [ fillscreen::c#0 fillscreen::j#2 ] ) -- pbuc1_derefidx_vbuxx=vbuaa 
@@ -1069,82 +1068,26 @@ fillscreen: {
   //SEG26 [15] if((byte) fillscreen::j#1!=(byte/signed byte/word/signed word) 0) goto fillscreen::@1 [ fillscreen::c#0 fillscreen::j#1 ] ( main:2::fillscreen:6 [ fillscreen::c#0 fillscreen::j#1 ] ) -- vbuxx_neq_0_then_la1 
     cpx #0
     bne b1_from_b1
+    jmp breturn
   //SEG27 fillscreen::@return
   breturn:
   //SEG28 [16] return  [ ] ( main:2::fillscreen:6 [ ] )
     rts
 }
 
+ASSEMBLER OPTIMIZATIONS
+Removing instruction jmp b2
+Removing instruction jmp bend
+Removing instruction jmp breturn
+Removing instruction jmp b1
+Removing instruction jmp breturn
+Succesful ASM optimization Pass5NextJumpElimination
 Replacing label b1_from_b1 with b1
 Removing instruction bbegin:
 Removing instruction b2_from_bbegin:
 Removing instruction bend_from_b2:
 Removing instruction b1_from_b1:
 Succesful ASM optimization Pass5RedundantLabelElimination
-ASSEMBLER
-//SEG0 Basic Upstart
-.pc = $801 "Basic"
-:BasicUpstart(main)
-.pc = $80d "Program"
-//SEG1 Global Constants & labels
-  .const SCREEN = $400
-//SEG2 @begin
-//SEG3 [1] phi from @begin to @2 [phi:@begin->@2]
-//SEG4 @2
-b2:
-//SEG5 [2] call main param-assignment [ ] ( )
-  jsr main
-//SEG6 [3] phi from @2 to @end [phi:@2->@end]
-//SEG7 @end
-bend:
-//SEG8 main
-main: {
-  //SEG9 [4] (byte) main::c#0 ← *((const byte*) SCREEN#0) [ main::c#0 ] ( main:2 [ main::c#0 ] ) -- vbuaa=_deref_pbuc1 
-    lda SCREEN
-  //SEG10 [5] (byte) fillscreen::c#0 ← (byte) main::c#0 [ fillscreen::c#0 ] ( main:2 [ fillscreen::c#0 ] )
-    // (byte) fillscreen::c#0 = (byte) main::c#0  // register copy reg byte a
-  //SEG11 [6] call fillscreen param-assignment [ ] ( main:2 [ ] )
-  //SEG12 [8] phi from main to fillscreen [phi:main->fillscreen]
-  fillscreen_from_main:
-    jsr fillscreen
-  //SEG13 main::@return
-  breturn:
-  //SEG14 [7] return  [ ] ( main:2 [ ] )
-    rts
-}
-//SEG15 fillscreen
-fillscreen: {
-    .const SCREEN2 = SCREEN+$100
-    .const SCREEN3 = SCREEN+$200
-    .const SCREEN4 = SCREEN+$3e8
-  //SEG16 [9] phi from fillscreen to fillscreen::@1 [phi:fillscreen->fillscreen::@1]
-  b1_from_fillscreen:
-  //SEG17 [9] phi (byte) fillscreen::j#2 = (byte/signed byte/word/signed word) 0 [phi:fillscreen->fillscreen::@1#0] -- vbuxx=vbuc1 
-    ldx #0
-    jmp b1
-  //SEG18 [9] phi from fillscreen::@1 to fillscreen::@1 [phi:fillscreen::@1->fillscreen::@1]
-  //SEG19 [9] phi (byte) fillscreen::j#2 = (byte) fillscreen::j#1 [phi:fillscreen::@1->fillscreen::@1#0] -- register_copy 
-  //SEG20 fillscreen::@1
-  b1:
-  //SEG21 [10] *((const byte*) SCREEN#0 + (byte) fillscreen::j#2) ← (byte) fillscreen::c#0 [ fillscreen::c#0 fillscreen::j#2 ] ( main:2::fillscreen:6 [ fillscreen::c#0 fillscreen::j#2 ] ) -- pbuc1_derefidx_vbuxx=vbuaa 
-    sta SCREEN,x
-  //SEG22 [11] *((const byte*) fillscreen::SCREEN2#0 + (byte) fillscreen::j#2) ← (byte) fillscreen::c#0 [ fillscreen::c#0 fillscreen::j#2 ] ( main:2::fillscreen:6 [ fillscreen::c#0 fillscreen::j#2 ] ) -- pbuc1_derefidx_vbuxx=vbuaa 
-    sta SCREEN2,x
-  //SEG23 [12] *((const byte*) fillscreen::SCREEN3#0 + (byte) fillscreen::j#2) ← (byte) fillscreen::c#0 [ fillscreen::c#0 fillscreen::j#2 ] ( main:2::fillscreen:6 [ fillscreen::c#0 fillscreen::j#2 ] ) -- pbuc1_derefidx_vbuxx=vbuaa 
-    sta SCREEN3,x
-  //SEG24 [13] *((const byte*) fillscreen::SCREEN4#0 + (byte) fillscreen::j#2) ← (byte) fillscreen::c#0 [ fillscreen::c#0 fillscreen::j#2 ] ( main:2::fillscreen:6 [ fillscreen::c#0 fillscreen::j#2 ] ) -- pbuc1_derefidx_vbuxx=vbuaa 
-    sta SCREEN4,x
-  //SEG25 [14] (byte) fillscreen::j#1 ← ++ (byte) fillscreen::j#2 [ fillscreen::c#0 fillscreen::j#1 ] ( main:2::fillscreen:6 [ fillscreen::c#0 fillscreen::j#1 ] ) -- vbuxx=_inc_vbuxx 
-    inx
-  //SEG26 [15] if((byte) fillscreen::j#1!=(byte/signed byte/word/signed word) 0) goto fillscreen::@1 [ fillscreen::c#0 fillscreen::j#1 ] ( main:2::fillscreen:6 [ fillscreen::c#0 fillscreen::j#1 ] ) -- vbuxx_neq_0_then_la1 
-    cpx #0
-    bne b1
-  //SEG27 fillscreen::@return
-  breturn:
-  //SEG28 [16] return  [ ] ( main:2::fillscreen:6 [ ] )
-    rts
-}
-
 Removing instruction b2:
 Removing instruction bend:
 Removing instruction fillscreen_from_main:
@@ -1152,122 +1095,8 @@ Removing instruction breturn:
 Removing instruction b1_from_fillscreen:
 Removing instruction breturn:
 Succesful ASM optimization Pass5UnusedLabelElimination
-ASSEMBLER
-//SEG0 Basic Upstart
-.pc = $801 "Basic"
-:BasicUpstart(main)
-.pc = $80d "Program"
-//SEG1 Global Constants & labels
-  .const SCREEN = $400
-//SEG2 @begin
-//SEG3 [1] phi from @begin to @2 [phi:@begin->@2]
-//SEG4 @2
-//SEG5 [2] call main param-assignment [ ] ( )
-  jsr main
-//SEG6 [3] phi from @2 to @end [phi:@2->@end]
-//SEG7 @end
-//SEG8 main
-main: {
-  //SEG9 [4] (byte) main::c#0 ← *((const byte*) SCREEN#0) [ main::c#0 ] ( main:2 [ main::c#0 ] ) -- vbuaa=_deref_pbuc1 
-    lda SCREEN
-  //SEG10 [5] (byte) fillscreen::c#0 ← (byte) main::c#0 [ fillscreen::c#0 ] ( main:2 [ fillscreen::c#0 ] )
-    // (byte) fillscreen::c#0 = (byte) main::c#0  // register copy reg byte a
-  //SEG11 [6] call fillscreen param-assignment [ ] ( main:2 [ ] )
-  //SEG12 [8] phi from main to fillscreen [phi:main->fillscreen]
-    jsr fillscreen
-  //SEG13 main::@return
-  //SEG14 [7] return  [ ] ( main:2 [ ] )
-    rts
-}
-//SEG15 fillscreen
-fillscreen: {
-    .const SCREEN2 = SCREEN+$100
-    .const SCREEN3 = SCREEN+$200
-    .const SCREEN4 = SCREEN+$3e8
-  //SEG16 [9] phi from fillscreen to fillscreen::@1 [phi:fillscreen->fillscreen::@1]
-  //SEG17 [9] phi (byte) fillscreen::j#2 = (byte/signed byte/word/signed word) 0 [phi:fillscreen->fillscreen::@1#0] -- vbuxx=vbuc1 
-    ldx #0
-    jmp b1
-  //SEG18 [9] phi from fillscreen::@1 to fillscreen::@1 [phi:fillscreen::@1->fillscreen::@1]
-  //SEG19 [9] phi (byte) fillscreen::j#2 = (byte) fillscreen::j#1 [phi:fillscreen::@1->fillscreen::@1#0] -- register_copy 
-  //SEG20 fillscreen::@1
-  b1:
-  //SEG21 [10] *((const byte*) SCREEN#0 + (byte) fillscreen::j#2) ← (byte) fillscreen::c#0 [ fillscreen::c#0 fillscreen::j#2 ] ( main:2::fillscreen:6 [ fillscreen::c#0 fillscreen::j#2 ] ) -- pbuc1_derefidx_vbuxx=vbuaa 
-    sta SCREEN,x
-  //SEG22 [11] *((const byte*) fillscreen::SCREEN2#0 + (byte) fillscreen::j#2) ← (byte) fillscreen::c#0 [ fillscreen::c#0 fillscreen::j#2 ] ( main:2::fillscreen:6 [ fillscreen::c#0 fillscreen::j#2 ] ) -- pbuc1_derefidx_vbuxx=vbuaa 
-    sta SCREEN2,x
-  //SEG23 [12] *((const byte*) fillscreen::SCREEN3#0 + (byte) fillscreen::j#2) ← (byte) fillscreen::c#0 [ fillscreen::c#0 fillscreen::j#2 ] ( main:2::fillscreen:6 [ fillscreen::c#0 fillscreen::j#2 ] ) -- pbuc1_derefidx_vbuxx=vbuaa 
-    sta SCREEN3,x
-  //SEG24 [13] *((const byte*) fillscreen::SCREEN4#0 + (byte) fillscreen::j#2) ← (byte) fillscreen::c#0 [ fillscreen::c#0 fillscreen::j#2 ] ( main:2::fillscreen:6 [ fillscreen::c#0 fillscreen::j#2 ] ) -- pbuc1_derefidx_vbuxx=vbuaa 
-    sta SCREEN4,x
-  //SEG25 [14] (byte) fillscreen::j#1 ← ++ (byte) fillscreen::j#2 [ fillscreen::c#0 fillscreen::j#1 ] ( main:2::fillscreen:6 [ fillscreen::c#0 fillscreen::j#1 ] ) -- vbuxx=_inc_vbuxx 
-    inx
-  //SEG26 [15] if((byte) fillscreen::j#1!=(byte/signed byte/word/signed word) 0) goto fillscreen::@1 [ fillscreen::c#0 fillscreen::j#1 ] ( main:2::fillscreen:6 [ fillscreen::c#0 fillscreen::j#1 ] ) -- vbuxx_neq_0_then_la1 
-    cpx #0
-    bne b1
-  //SEG27 fillscreen::@return
-  //SEG28 [16] return  [ ] ( main:2::fillscreen:6 [ ] )
-    rts
-}
-
 Removing instruction jmp b1
 Succesful ASM optimization Pass5NextJumpElimination
-ASSEMBLER
-//SEG0 Basic Upstart
-.pc = $801 "Basic"
-:BasicUpstart(main)
-.pc = $80d "Program"
-//SEG1 Global Constants & labels
-  .const SCREEN = $400
-//SEG2 @begin
-//SEG3 [1] phi from @begin to @2 [phi:@begin->@2]
-//SEG4 @2
-//SEG5 [2] call main param-assignment [ ] ( )
-  jsr main
-//SEG6 [3] phi from @2 to @end [phi:@2->@end]
-//SEG7 @end
-//SEG8 main
-main: {
-  //SEG9 [4] (byte) main::c#0 ← *((const byte*) SCREEN#0) [ main::c#0 ] ( main:2 [ main::c#0 ] ) -- vbuaa=_deref_pbuc1 
-    lda SCREEN
-  //SEG10 [5] (byte) fillscreen::c#0 ← (byte) main::c#0 [ fillscreen::c#0 ] ( main:2 [ fillscreen::c#0 ] )
-    // (byte) fillscreen::c#0 = (byte) main::c#0  // register copy reg byte a
-  //SEG11 [6] call fillscreen param-assignment [ ] ( main:2 [ ] )
-  //SEG12 [8] phi from main to fillscreen [phi:main->fillscreen]
-    jsr fillscreen
-  //SEG13 main::@return
-  //SEG14 [7] return  [ ] ( main:2 [ ] )
-    rts
-}
-//SEG15 fillscreen
-fillscreen: {
-    .const SCREEN2 = SCREEN+$100
-    .const SCREEN3 = SCREEN+$200
-    .const SCREEN4 = SCREEN+$3e8
-  //SEG16 [9] phi from fillscreen to fillscreen::@1 [phi:fillscreen->fillscreen::@1]
-  //SEG17 [9] phi (byte) fillscreen::j#2 = (byte/signed byte/word/signed word) 0 [phi:fillscreen->fillscreen::@1#0] -- vbuxx=vbuc1 
-    ldx #0
-  //SEG18 [9] phi from fillscreen::@1 to fillscreen::@1 [phi:fillscreen::@1->fillscreen::@1]
-  //SEG19 [9] phi (byte) fillscreen::j#2 = (byte) fillscreen::j#1 [phi:fillscreen::@1->fillscreen::@1#0] -- register_copy 
-  //SEG20 fillscreen::@1
-  b1:
-  //SEG21 [10] *((const byte*) SCREEN#0 + (byte) fillscreen::j#2) ← (byte) fillscreen::c#0 [ fillscreen::c#0 fillscreen::j#2 ] ( main:2::fillscreen:6 [ fillscreen::c#0 fillscreen::j#2 ] ) -- pbuc1_derefidx_vbuxx=vbuaa 
-    sta SCREEN,x
-  //SEG22 [11] *((const byte*) fillscreen::SCREEN2#0 + (byte) fillscreen::j#2) ← (byte) fillscreen::c#0 [ fillscreen::c#0 fillscreen::j#2 ] ( main:2::fillscreen:6 [ fillscreen::c#0 fillscreen::j#2 ] ) -- pbuc1_derefidx_vbuxx=vbuaa 
-    sta SCREEN2,x
-  //SEG23 [12] *((const byte*) fillscreen::SCREEN3#0 + (byte) fillscreen::j#2) ← (byte) fillscreen::c#0 [ fillscreen::c#0 fillscreen::j#2 ] ( main:2::fillscreen:6 [ fillscreen::c#0 fillscreen::j#2 ] ) -- pbuc1_derefidx_vbuxx=vbuaa 
-    sta SCREEN3,x
-  //SEG24 [13] *((const byte*) fillscreen::SCREEN4#0 + (byte) fillscreen::j#2) ← (byte) fillscreen::c#0 [ fillscreen::c#0 fillscreen::j#2 ] ( main:2::fillscreen:6 [ fillscreen::c#0 fillscreen::j#2 ] ) -- pbuc1_derefidx_vbuxx=vbuaa 
-    sta SCREEN4,x
-  //SEG25 [14] (byte) fillscreen::j#1 ← ++ (byte) fillscreen::j#2 [ fillscreen::c#0 fillscreen::j#1 ] ( main:2::fillscreen:6 [ fillscreen::c#0 fillscreen::j#1 ] ) -- vbuxx=_inc_vbuxx 
-    inx
-  //SEG26 [15] if((byte) fillscreen::j#1!=(byte/signed byte/word/signed word) 0) goto fillscreen::@1 [ fillscreen::c#0 fillscreen::j#1 ] ( main:2::fillscreen:6 [ fillscreen::c#0 fillscreen::j#1 ] ) -- vbuxx_neq_0_then_la1 
-    cpx #0
-    bne b1
-  //SEG27 fillscreen::@return
-  //SEG28 [16] return  [ ] ( main:2::fillscreen:6 [ ] )
-    rts
-}
 
 FINAL SYMBOL TABLE
 (label) @2

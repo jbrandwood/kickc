@@ -283,11 +283,8 @@ Uplift Scope []
 
 Uplifting [main] best 49 combination 
 Uplifting [] best 49 combination 
-Removing instruction jmp b1
-Removing instruction jmp bend
-Removing instruction jmp breturn
-Succesful ASM optimization Pass5NextJumpElimination
-ASSEMBLER
+
+ASSEMBLER BEFORE OPTIMIZATION
 //SEG0 Basic Upstart
 .pc = $801 "Basic"
 :BasicUpstart(main)
@@ -297,12 +294,14 @@ ASSEMBLER
 bbegin:
 //SEG3 [1] phi from @begin to @1 [phi:@begin->@1]
 b1_from_bbegin:
+  jmp b1
 //SEG4 @1
 b1:
 //SEG5 [2] call main param-assignment [ ] ( )
   jsr main
 //SEG6 [3] phi from @1 to @end [phi:@1->@end]
 bend_from_b1:
+  jmp bend
 //SEG7 @end
 bend:
 //SEG8 main
@@ -317,82 +316,26 @@ main: {
     sta $700,x
     dex
     bne !-
+    jmp breturn
   //SEG10 main::@return
   breturn:
   //SEG11 [5] return  [ ] ( main:2 [ ] )
     rts
 }
 
+ASSEMBLER OPTIMIZATIONS
+Removing instruction jmp b1
+Removing instruction jmp bend
+Removing instruction jmp breturn
+Succesful ASM optimization Pass5NextJumpElimination
 Removing instruction bbegin:
 Removing instruction b1_from_bbegin:
 Removing instruction bend_from_b1:
 Succesful ASM optimization Pass5RedundantLabelElimination
-ASSEMBLER
-//SEG0 Basic Upstart
-.pc = $801 "Basic"
-:BasicUpstart(main)
-.pc = $80d "Program"
-//SEG1 Global Constants & labels
-//SEG2 @begin
-//SEG3 [1] phi from @begin to @1 [phi:@begin->@1]
-//SEG4 @1
-b1:
-//SEG5 [2] call main param-assignment [ ] ( )
-  jsr main
-//SEG6 [3] phi from @1 to @end [phi:@1->@end]
-//SEG7 @end
-bend:
-//SEG8 main
-main: {
-  //SEG9 asm { lda#'a'ldx#$ff!:sta$0400,xsta$0500,xsta$0600,xsta$0700,xdexbne!- }
-    lda #'a'
-    ldx #$ff
-  !:
-    sta $400,x
-    sta $500,x
-    sta $600,x
-    sta $700,x
-    dex
-    bne !-
-  //SEG10 main::@return
-  breturn:
-  //SEG11 [5] return  [ ] ( main:2 [ ] )
-    rts
-}
-
 Removing instruction b1:
 Removing instruction bend:
 Removing instruction breturn:
 Succesful ASM optimization Pass5UnusedLabelElimination
-ASSEMBLER
-//SEG0 Basic Upstart
-.pc = $801 "Basic"
-:BasicUpstart(main)
-.pc = $80d "Program"
-//SEG1 Global Constants & labels
-//SEG2 @begin
-//SEG3 [1] phi from @begin to @1 [phi:@begin->@1]
-//SEG4 @1
-//SEG5 [2] call main param-assignment [ ] ( )
-  jsr main
-//SEG6 [3] phi from @1 to @end [phi:@1->@end]
-//SEG7 @end
-//SEG8 main
-main: {
-  //SEG9 asm { lda#'a'ldx#$ff!:sta$0400,xsta$0500,xsta$0600,xsta$0700,xdexbne!- }
-    lda #'a'
-    ldx #$ff
-  !:
-    sta $400,x
-    sta $500,x
-    sta $600,x
-    sta $700,x
-    dex
-    bne !-
-  //SEG10 main::@return
-  //SEG11 [5] return  [ ] ( main:2 [ ] )
-    rts
-}
 
 FINAL SYMBOL TABLE
 (label) @1

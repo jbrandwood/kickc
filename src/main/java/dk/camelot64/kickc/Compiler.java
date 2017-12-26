@@ -44,7 +44,7 @@ public class Compiler {
          pass3Analysis();
          pass4RegisterAllocation();
          pass5GenerateAndOptimizeAsm();
-         getLog().append("FINAL SYMBOL TABLE");
+         getLog().append("\nFINAL SYMBOL TABLE");
          getLog().append(program.getScope().getSymbolTableContents(program));
          getLog().append("FINAL CODE");
          getLog().append(program.getAsm().toString());
@@ -324,6 +324,10 @@ public class Compiler {
       new Pass4CodeGeneration(program, true).generate();
       new Pass4AssertNoCpuClobber(program).check();
 
+      getLog().append("\nASSEMBLER BEFORE OPTIMIZATION");
+      getLog().append(program.getAsm().toString());
+
+      getLog().append("ASSEMBLER OPTIMIZATIONS");
       List<Pass5AsmOptimization> pass5Optimizations = new ArrayList<>();
       pass5Optimizations.add(new Pass5NextJumpElimination(program));
       pass5Optimizations.add(new Pass5UnnecesaryLoadElimination(program));
@@ -340,11 +344,13 @@ public class Compiler {
             if (stepOptimized) {
                getLog().append("Succesful ASM optimization " + optimization.getClass().getSimpleName());
                asmOptimized = true;
-               getLog().append("ASSEMBLER");
-               getLog().append(program.getAsm().toString());
+               //getLog().append("ASSEMBLER");
+               //getLog().append(program.getAsm().toString());
             }
          }
       }
+
+
    }
 
 }

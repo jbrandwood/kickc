@@ -719,12 +719,8 @@ Uplift Scope []
 
 Uplifting [main] best 333 combination reg byte x [ main::i#2 main::i#1 ] reg byte a [ main::$0 ] reg byte a [ main::$2 ] 
 Uplifting [] best 333 combination 
-Removing instruction jmp b1
-Removing instruction jmp bend
-Removing instruction jmp b1
-Removing instruction jmp breturn
-Succesful ASM optimization Pass5NextJumpElimination
-ASSEMBLER
+
+ASSEMBLER BEFORE OPTIMIZATION
 //SEG0 Basic Upstart
 .pc = $801 "Basic"
 :BasicUpstart(main)
@@ -734,6 +730,7 @@ ASSEMBLER
 bbegin:
 //SEG3 [1] phi from @begin to @1 [phi:@begin->@1]
 b1_from_bbegin:
+  jmp b1
 //SEG4 @1
 b1:
 //SEG5 [2] call main param-assignment [ ] ( )
@@ -742,6 +739,7 @@ main_from_b1:
   jsr main
 //SEG7 [3] phi from @1 to @end [phi:@1->@end]
 bend_from_b1:
+  jmp bend
 //SEG8 @end
 bend:
 //SEG9 main
@@ -751,6 +749,7 @@ main: {
   b1_from_main:
   //SEG11 [5] phi (byte) main::i#2 = (byte/signed byte/word/signed word) 0 [phi:main->main::@1#0] -- vbuxx=vbuc1 
     ldx #0
+    jmp b1
   //SEG12 main::@1
   b1:
   //SEG13 [6] (byte~) main::$0 ← (const byte[]) main::msg#0 *idx (byte) main::i#2 [ main::i#2 main::$0 ] ( main:2 [ main::i#2 main::$0 ] ) -- vbuaa=pbuc1_derefidx_vbuxx 
@@ -758,6 +757,7 @@ main: {
   //SEG14 [7] if((byte~) main::$0!=(byte) '@') goto main::@2 [ main::i#2 ] ( main:2 [ main::i#2 ] ) -- vbuaa_neq_vbuc1_then_la1 
     cmp #'@'
     bne b2
+    jmp breturn
   //SEG15 main::@return
   breturn:
   //SEG16 [8] return  [ ] ( main:2 [ ] )
@@ -777,109 +777,23 @@ main: {
     msg: .text "message 2 @"
 }
 
+ASSEMBLER OPTIMIZATIONS
+Removing instruction jmp b1
+Removing instruction jmp bend
+Removing instruction jmp b1
+Removing instruction jmp breturn
+Succesful ASM optimization Pass5NextJumpElimination
 Removing instruction bbegin:
 Removing instruction b1_from_bbegin:
 Removing instruction main_from_b1:
 Removing instruction bend_from_b1:
 Succesful ASM optimization Pass5RedundantLabelElimination
-ASSEMBLER
-//SEG0 Basic Upstart
-.pc = $801 "Basic"
-:BasicUpstart(main)
-.pc = $80d "Program"
-//SEG1 Global Constants & labels
-//SEG2 @begin
-//SEG3 [1] phi from @begin to @1 [phi:@begin->@1]
-//SEG4 @1
-b1:
-//SEG5 [2] call main param-assignment [ ] ( )
-//SEG6 [4] phi from @1 to main [phi:@1->main]
-  jsr main
-//SEG7 [3] phi from @1 to @end [phi:@1->@end]
-//SEG8 @end
-bend:
-//SEG9 main
-main: {
-    .const screen = $400
-  //SEG10 [5] phi from main to main::@1 [phi:main->main::@1]
-  b1_from_main:
-  //SEG11 [5] phi (byte) main::i#2 = (byte/signed byte/word/signed word) 0 [phi:main->main::@1#0] -- vbuxx=vbuc1 
-    ldx #0
-  //SEG12 main::@1
-  b1:
-  //SEG13 [6] (byte~) main::$0 ← (const byte[]) main::msg#0 *idx (byte) main::i#2 [ main::i#2 main::$0 ] ( main:2 [ main::i#2 main::$0 ] ) -- vbuaa=pbuc1_derefidx_vbuxx 
-    lda msg,x
-  //SEG14 [7] if((byte~) main::$0!=(byte) '@') goto main::@2 [ main::i#2 ] ( main:2 [ main::i#2 ] ) -- vbuaa_neq_vbuc1_then_la1 
-    cmp #'@'
-    bne b2
-  //SEG15 main::@return
-  breturn:
-  //SEG16 [8] return  [ ] ( main:2 [ ] )
-    rts
-  //SEG17 main::@2
-  b2:
-  //SEG18 [9] (byte~) main::$2 ← (const byte[]) main::msg#0 *idx (byte) main::i#2 [ main::i#2 main::$2 ] ( main:2 [ main::i#2 main::$2 ] ) -- vbuaa=pbuc1_derefidx_vbuxx 
-    lda msg,x
-  //SEG19 [10] *((const byte*) main::screen#0 + (byte) main::i#2) ← (byte~) main::$2 [ main::i#2 ] ( main:2 [ main::i#2 ] ) -- pbuc1_derefidx_vbuxx=vbuaa 
-    sta screen,x
-  //SEG20 [11] (byte) main::i#1 ← ++ (byte) main::i#2 [ main::i#1 ] ( main:2 [ main::i#1 ] ) -- vbuxx=_inc_vbuxx 
-    inx
-  //SEG21 [5] phi from main::@2 to main::@1 [phi:main::@2->main::@1]
-  b1_from_b2:
-  //SEG22 [5] phi (byte) main::i#2 = (byte) main::i#1 [phi:main::@2->main::@1#0] -- register_copy 
-    jmp b1
-    msg: .text "message 2 @"
-}
-
 Removing instruction b1:
 Removing instruction bend:
 Removing instruction b1_from_main:
 Removing instruction breturn:
 Removing instruction b1_from_b2:
 Succesful ASM optimization Pass5UnusedLabelElimination
-ASSEMBLER
-//SEG0 Basic Upstart
-.pc = $801 "Basic"
-:BasicUpstart(main)
-.pc = $80d "Program"
-//SEG1 Global Constants & labels
-//SEG2 @begin
-//SEG3 [1] phi from @begin to @1 [phi:@begin->@1]
-//SEG4 @1
-//SEG5 [2] call main param-assignment [ ] ( )
-//SEG6 [4] phi from @1 to main [phi:@1->main]
-  jsr main
-//SEG7 [3] phi from @1 to @end [phi:@1->@end]
-//SEG8 @end
-//SEG9 main
-main: {
-    .const screen = $400
-  //SEG10 [5] phi from main to main::@1 [phi:main->main::@1]
-  //SEG11 [5] phi (byte) main::i#2 = (byte/signed byte/word/signed word) 0 [phi:main->main::@1#0] -- vbuxx=vbuc1 
-    ldx #0
-  //SEG12 main::@1
-  b1:
-  //SEG13 [6] (byte~) main::$0 ← (const byte[]) main::msg#0 *idx (byte) main::i#2 [ main::i#2 main::$0 ] ( main:2 [ main::i#2 main::$0 ] ) -- vbuaa=pbuc1_derefidx_vbuxx 
-    lda msg,x
-  //SEG14 [7] if((byte~) main::$0!=(byte) '@') goto main::@2 [ main::i#2 ] ( main:2 [ main::i#2 ] ) -- vbuaa_neq_vbuc1_then_la1 
-    cmp #'@'
-    bne b2
-  //SEG15 main::@return
-  //SEG16 [8] return  [ ] ( main:2 [ ] )
-    rts
-  //SEG17 main::@2
-  b2:
-  //SEG18 [9] (byte~) main::$2 ← (const byte[]) main::msg#0 *idx (byte) main::i#2 [ main::i#2 main::$2 ] ( main:2 [ main::i#2 main::$2 ] ) -- vbuaa=pbuc1_derefidx_vbuxx 
-    lda msg,x
-  //SEG19 [10] *((const byte*) main::screen#0 + (byte) main::i#2) ← (byte~) main::$2 [ main::i#2 ] ( main:2 [ main::i#2 ] ) -- pbuc1_derefidx_vbuxx=vbuaa 
-    sta screen,x
-  //SEG20 [11] (byte) main::i#1 ← ++ (byte) main::i#2 [ main::i#1 ] ( main:2 [ main::i#1 ] ) -- vbuxx=_inc_vbuxx 
-    inx
-  //SEG21 [5] phi from main::@2 to main::@1 [phi:main::@2->main::@1]
-  //SEG22 [5] phi (byte) main::i#2 = (byte) main::i#1 [phi:main::@2->main::@1#0] -- register_copy 
-    jmp b1
-    msg: .text "message 2 @"
-}
 
 FINAL SYMBOL TABLE
 (label) @1

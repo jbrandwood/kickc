@@ -945,14 +945,8 @@ Uplifting [] best 72 combination reg byte x [ i#10 i#11 ]
 Attempting to uplift remaining variables inzp ZP_BYTE:5 [ main::a#1 ]
 Uplifting [main] best 72 combination zp ZP_BYTE:5 [ main::a#1 ] 
 Allocated (was zp ZP_BYTE:5) zp ZP_BYTE:2 [ main::a#1 ]
-Removing instruction jmp b2
-Removing instruction jmp bend
-Removing instruction jmp b1
-Removing instruction jmp b2
-Removing instruction jmp breturn
-Removing instruction jmp breturn
-Succesful ASM optimization Pass5NextJumpElimination
-ASSEMBLER
+
+ASSEMBLER BEFORE OPTIMIZATION
 //SEG0 Basic Upstart
 .pc = $801 "Basic"
 :BasicUpstart(main)
@@ -962,6 +956,7 @@ ASSEMBLER
 bbegin:
 //SEG3 [1] phi from @begin to @2 [phi:@begin->@2]
 b2_from_bbegin:
+  jmp b2
 //SEG4 @2
 b2:
 //SEG5 [2] call main param-assignment [ ] ( )
@@ -970,6 +965,7 @@ main_from_b2:
   jsr main
 //SEG7 [3] phi from @2 to @end [phi:@2->@end]
 bend_from_b2:
+  jmp bend
 //SEG8 @end
 bend:
 //SEG9 main
@@ -983,6 +979,7 @@ main: {
     jsr inci
   //SEG13 [6] (byte) inci::return#0 ← (byte) inci::return#2 [ inci::return#0 i#11 ] ( main:2 [ inci::return#0 i#11 ] )
     // (byte) inci::return#0 = (byte) inci::return#2  // register copy reg byte a
+    jmp b1
   //SEG14 main::@1
   b1:
   //SEG15 [7] (byte~) main::$0 ← (byte) inci::return#0 [ main::$0 i#11 ] ( main:2 [ main::$0 i#11 ] )
@@ -998,6 +995,7 @@ main: {
     jsr inci
   //SEG20 [10] (byte) inci::return#1 ← (byte) inci::return#2 [ main::a#1 inci::return#1 ] ( main:2 [ main::a#1 inci::return#1 ] )
     // (byte) inci::return#1 = (byte) inci::return#2  // register copy reg byte a
+    jmp b2
   //SEG21 main::@2
   b2:
   //SEG22 [11] (byte~) main::$2 ← (byte) inci::return#1 [ main::a#1 main::$2 ] ( main:2 [ main::a#1 main::$2 ] )
@@ -1005,6 +1003,7 @@ main: {
   //SEG23 [12] (byte) main::a#2 ← (byte) main::a#1 + (byte~) main::$2 [ ] ( main:2 [ ] ) -- vbuaa=vbuz1_plus_vbuaa 
     clc
     adc a
+    jmp breturn
   //SEG24 main::@return
   breturn:
   //SEG25 [13] return  [ ] ( main:2 [ ] )
@@ -1019,86 +1018,26 @@ inci: {
     tax
   //SEG28 [16] (byte) inci::return#2 ← (byte) i#11 [ inci::return#2 i#11 ] ( main:2::inci:5 [ inci::return#2 i#11 ] main:2::inci:9 [ main::a#1 inci::return#2 i#11 ] ) -- vbuaa=vbuxx 
     txa
+    jmp breturn
   //SEG29 inci::@return
   breturn:
   //SEG30 [17] return  [ inci::return#2 i#11 ] ( main:2::inci:5 [ inci::return#2 i#11 ] main:2::inci:9 [ main::a#1 inci::return#2 i#11 ] )
     rts
 }
 
+ASSEMBLER OPTIMIZATIONS
+Removing instruction jmp b2
+Removing instruction jmp bend
+Removing instruction jmp b1
+Removing instruction jmp b2
+Removing instruction jmp breturn
+Removing instruction jmp breturn
+Succesful ASM optimization Pass5NextJumpElimination
 Removing instruction bbegin:
 Removing instruction b2_from_bbegin:
 Removing instruction main_from_b2:
 Removing instruction bend_from_b2:
 Succesful ASM optimization Pass5RedundantLabelElimination
-ASSEMBLER
-//SEG0 Basic Upstart
-.pc = $801 "Basic"
-:BasicUpstart(main)
-.pc = $80d "Program"
-//SEG1 Global Constants & labels
-//SEG2 @begin
-//SEG3 [1] phi from @begin to @2 [phi:@begin->@2]
-//SEG4 @2
-b2:
-//SEG5 [2] call main param-assignment [ ] ( )
-//SEG6 [4] phi from @2 to main [phi:@2->main]
-  jsr main
-//SEG7 [3] phi from @2 to @end [phi:@2->@end]
-//SEG8 @end
-bend:
-//SEG9 main
-main: {
-    .label a = 2
-  //SEG10 [5] call inci param-assignment [ inci::return#2 i#11 ] ( main:2 [ inci::return#2 i#11 ] )
-  //SEG11 [14] phi from main to inci [phi:main->inci]
-  inci_from_main:
-  //SEG12 [14] phi (byte) i#10 = (byte/signed byte/word/signed word) 0 [phi:main->inci#0] -- vbuxx=vbuc1 
-    ldx #0
-    jsr inci
-  //SEG13 [6] (byte) inci::return#0 ← (byte) inci::return#2 [ inci::return#0 i#11 ] ( main:2 [ inci::return#0 i#11 ] )
-    // (byte) inci::return#0 = (byte) inci::return#2  // register copy reg byte a
-  //SEG14 main::@1
-  b1:
-  //SEG15 [7] (byte~) main::$0 ← (byte) inci::return#0 [ main::$0 i#11 ] ( main:2 [ main::$0 i#11 ] )
-    // (byte~) main::$0 = (byte) inci::return#0  // register copy reg byte a
-  //SEG16 [8] (byte) main::a#1 ← (byte/signed byte/word/signed word) 4 + (byte~) main::$0 [ main::a#1 i#11 ] ( main:2 [ main::a#1 i#11 ] ) -- vbuz1=vbuc1_plus_vbuaa 
-    clc
-    adc #4
-    sta a
-  //SEG17 [9] call inci param-assignment [ inci::return#2 main::a#1 ] ( main:2 [ inci::return#2 main::a#1 ] )
-  //SEG18 [14] phi from main::@1 to inci [phi:main::@1->inci]
-  inci_from_b1:
-  //SEG19 [14] phi (byte) i#10 = (byte) i#11 [phi:main::@1->inci#0] -- register_copy 
-    jsr inci
-  //SEG20 [10] (byte) inci::return#1 ← (byte) inci::return#2 [ main::a#1 inci::return#1 ] ( main:2 [ main::a#1 inci::return#1 ] )
-    // (byte) inci::return#1 = (byte) inci::return#2  // register copy reg byte a
-  //SEG21 main::@2
-  b2:
-  //SEG22 [11] (byte~) main::$2 ← (byte) inci::return#1 [ main::a#1 main::$2 ] ( main:2 [ main::a#1 main::$2 ] )
-    // (byte~) main::$2 = (byte) inci::return#1  // register copy reg byte a
-  //SEG23 [12] (byte) main::a#2 ← (byte) main::a#1 + (byte~) main::$2 [ ] ( main:2 [ ] ) -- vbuaa=vbuz1_plus_vbuaa 
-    clc
-    adc a
-  //SEG24 main::@return
-  breturn:
-  //SEG25 [13] return  [ ] ( main:2 [ ] )
-    rts
-}
-//SEG26 inci
-inci: {
-  //SEG27 [15] (byte) i#11 ← (byte) i#10 + (byte/signed byte/word/signed word) 7 [ i#11 ] ( main:2::inci:5 [ i#11 ] main:2::inci:9 [ main::a#1 i#11 ] ) -- vbuxx=vbuxx_plus_vbuc1 
-    txa
-    clc
-    adc #7
-    tax
-  //SEG28 [16] (byte) inci::return#2 ← (byte) i#11 [ inci::return#2 i#11 ] ( main:2::inci:5 [ inci::return#2 i#11 ] main:2::inci:9 [ main::a#1 inci::return#2 i#11 ] ) -- vbuaa=vbuxx 
-    txa
-  //SEG29 inci::@return
-  breturn:
-  //SEG30 [17] return  [ inci::return#2 i#11 ] ( main:2::inci:5 [ inci::return#2 i#11 ] main:2::inci:9 [ main::a#1 inci::return#2 i#11 ] )
-    rts
-}
-
 Removing instruction b2:
 Removing instruction bend:
 Removing instruction inci_from_main:
@@ -1108,66 +1047,6 @@ Removing instruction b2:
 Removing instruction breturn:
 Removing instruction breturn:
 Succesful ASM optimization Pass5UnusedLabelElimination
-ASSEMBLER
-//SEG0 Basic Upstart
-.pc = $801 "Basic"
-:BasicUpstart(main)
-.pc = $80d "Program"
-//SEG1 Global Constants & labels
-//SEG2 @begin
-//SEG3 [1] phi from @begin to @2 [phi:@begin->@2]
-//SEG4 @2
-//SEG5 [2] call main param-assignment [ ] ( )
-//SEG6 [4] phi from @2 to main [phi:@2->main]
-  jsr main
-//SEG7 [3] phi from @2 to @end [phi:@2->@end]
-//SEG8 @end
-//SEG9 main
-main: {
-    .label a = 2
-  //SEG10 [5] call inci param-assignment [ inci::return#2 i#11 ] ( main:2 [ inci::return#2 i#11 ] )
-  //SEG11 [14] phi from main to inci [phi:main->inci]
-  //SEG12 [14] phi (byte) i#10 = (byte/signed byte/word/signed word) 0 [phi:main->inci#0] -- vbuxx=vbuc1 
-    ldx #0
-    jsr inci
-  //SEG13 [6] (byte) inci::return#0 ← (byte) inci::return#2 [ inci::return#0 i#11 ] ( main:2 [ inci::return#0 i#11 ] )
-    // (byte) inci::return#0 = (byte) inci::return#2  // register copy reg byte a
-  //SEG14 main::@1
-  //SEG15 [7] (byte~) main::$0 ← (byte) inci::return#0 [ main::$0 i#11 ] ( main:2 [ main::$0 i#11 ] )
-    // (byte~) main::$0 = (byte) inci::return#0  // register copy reg byte a
-  //SEG16 [8] (byte) main::a#1 ← (byte/signed byte/word/signed word) 4 + (byte~) main::$0 [ main::a#1 i#11 ] ( main:2 [ main::a#1 i#11 ] ) -- vbuz1=vbuc1_plus_vbuaa 
-    clc
-    adc #4
-    sta a
-  //SEG17 [9] call inci param-assignment [ inci::return#2 main::a#1 ] ( main:2 [ inci::return#2 main::a#1 ] )
-  //SEG18 [14] phi from main::@1 to inci [phi:main::@1->inci]
-  //SEG19 [14] phi (byte) i#10 = (byte) i#11 [phi:main::@1->inci#0] -- register_copy 
-    jsr inci
-  //SEG20 [10] (byte) inci::return#1 ← (byte) inci::return#2 [ main::a#1 inci::return#1 ] ( main:2 [ main::a#1 inci::return#1 ] )
-    // (byte) inci::return#1 = (byte) inci::return#2  // register copy reg byte a
-  //SEG21 main::@2
-  //SEG22 [11] (byte~) main::$2 ← (byte) inci::return#1 [ main::a#1 main::$2 ] ( main:2 [ main::a#1 main::$2 ] )
-    // (byte~) main::$2 = (byte) inci::return#1  // register copy reg byte a
-  //SEG23 [12] (byte) main::a#2 ← (byte) main::a#1 + (byte~) main::$2 [ ] ( main:2 [ ] ) -- vbuaa=vbuz1_plus_vbuaa 
-    clc
-    adc a
-  //SEG24 main::@return
-  //SEG25 [13] return  [ ] ( main:2 [ ] )
-    rts
-}
-//SEG26 inci
-inci: {
-  //SEG27 [15] (byte) i#11 ← (byte) i#10 + (byte/signed byte/word/signed word) 7 [ i#11 ] ( main:2::inci:5 [ i#11 ] main:2::inci:9 [ main::a#1 i#11 ] ) -- vbuxx=vbuxx_plus_vbuc1 
-    txa
-    clc
-    adc #7
-    tax
-  //SEG28 [16] (byte) inci::return#2 ← (byte) i#11 [ inci::return#2 i#11 ] ( main:2::inci:5 [ inci::return#2 i#11 ] main:2::inci:9 [ main::a#1 inci::return#2 i#11 ] ) -- vbuaa=vbuxx 
-    txa
-  //SEG29 inci::@return
-  //SEG30 [17] return  [ inci::return#2 i#11 ] ( main:2::inci:5 [ inci::return#2 i#11 ] main:2::inci:9 [ main::a#1 inci::return#2 i#11 ] )
-    rts
-}
 
 FINAL SYMBOL TABLE
 (label) @2

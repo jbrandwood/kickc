@@ -771,12 +771,8 @@ Uplift Scope []
 
 Uplifting [main] best 275 combination reg byte x [ main::i#2 main::i#1 ] 
 Uplifting [] best 275 combination 
-Removing instruction jmp b1
-Removing instruction jmp bend
-Removing instruction jmp b1
-Removing instruction jmp breturn
-Succesful ASM optimization Pass5NextJumpElimination
-ASSEMBLER
+
+ASSEMBLER BEFORE OPTIMIZATION
 //SEG0 Basic Upstart
 .pc = $801 "Basic"
 :BasicUpstart(main)
@@ -791,12 +787,14 @@ ASSEMBLER
 bbegin:
 //SEG3 [1] phi from @begin to @1 [phi:@begin->@1]
 b1_from_bbegin:
+  jmp b1
 //SEG4 @1
 b1:
 //SEG5 [2] call main param-assignment [ ] ( )
   jsr main
 //SEG6 [3] phi from @1 to @end [phi:@1->@end]
 bend_from_b1:
+  jmp bend
 //SEG7 @end
 bend:
 //SEG8 main
@@ -815,6 +813,7 @@ main: {
   //SEG13 [6] phi from main::@1 to main::@1 [phi:main::@1->main::@1]
   b1_from_b1:
   //SEG14 [6] phi (byte) main::i#2 = (byte) main::i#1 [phi:main::@1->main::@1#0] -- register_copy 
+    jmp b1
   //SEG15 main::@1
   b1:
   //SEG16 [7] *((const byte*) SCREEN#0 + (byte) main::i#2) ← (const byte) STAR#0+(byte/signed byte/word/signed word) 1 [ main::i#2 ] ( main:2 [ main::i#2 ] ) -- pbuc1_derefidx_vbuxx=vbuc2 
@@ -825,168 +824,32 @@ main: {
   //SEG18 [9] if((byte) main::i#1!=(byte/signed byte/word/signed word) 80) goto main::@1 [ main::i#1 ] ( main:2 [ main::i#1 ] ) -- vbuxx_neq_vbuc1_then_la1 
     cpx #$50
     bne b1_from_b1
+    jmp breturn
   //SEG19 main::@return
   breturn:
   //SEG20 [10] return  [ ] ( main:2 [ ] )
     rts
 }
 
+ASSEMBLER OPTIMIZATIONS
+Removing instruction jmp b1
+Removing instruction jmp bend
+Removing instruction jmp b1
+Removing instruction jmp breturn
+Succesful ASM optimization Pass5NextJumpElimination
 Replacing label b1_from_b1 with b1
 Removing instruction bbegin:
 Removing instruction b1_from_bbegin:
 Removing instruction bend_from_b1:
 Removing instruction b1_from_b1:
 Succesful ASM optimization Pass5RedundantLabelElimination
-ASSEMBLER
-//SEG0 Basic Upstart
-.pc = $801 "Basic"
-:BasicUpstart(main)
-.pc = $80d "Program"
-//SEG1 Global Constants & labels
-  .const SCREEN = $400
-  .const STAR = $51
-  .const VIC = $d000
-  .const RED = 2
-  .const BGCOL = VIC+$10*2+1
-//SEG2 @begin
-//SEG3 [1] phi from @begin to @1 [phi:@begin->@1]
-//SEG4 @1
-b1:
-//SEG5 [2] call main param-assignment [ ] ( )
-  jsr main
-//SEG6 [3] phi from @1 to @end [phi:@1->@end]
-//SEG7 @end
-bend:
-//SEG8 main
-main: {
-  //SEG9 [4] *((const byte*) SCREEN#0) ← (const byte) STAR#0 [ ] ( main:2 [ ] ) -- _deref_pbuc1=vbuc2 
-    lda #STAR
-    sta SCREEN
-  //SEG10 [5] *((const byte*) BGCOL#0) ← (const byte) RED#0 [ ] ( main:2 [ ] ) -- _deref_pbuc1=vbuc2 
-    lda #RED
-    sta BGCOL
-  //SEG11 [6] phi from main to main::@1 [phi:main->main::@1]
-  b1_from_main:
-  //SEG12 [6] phi (byte) main::i#2 = (byte/signed byte/word/signed word) 40 [phi:main->main::@1#0] -- vbuxx=vbuc1 
-    ldx #$28
-    jmp b1
-  //SEG13 [6] phi from main::@1 to main::@1 [phi:main::@1->main::@1]
-  //SEG14 [6] phi (byte) main::i#2 = (byte) main::i#1 [phi:main::@1->main::@1#0] -- register_copy 
-  //SEG15 main::@1
-  b1:
-  //SEG16 [7] *((const byte*) SCREEN#0 + (byte) main::i#2) ← (const byte) STAR#0+(byte/signed byte/word/signed word) 1 [ main::i#2 ] ( main:2 [ main::i#2 ] ) -- pbuc1_derefidx_vbuxx=vbuc2 
-    lda #STAR+1
-    sta SCREEN,x
-  //SEG17 [8] (byte) main::i#1 ← ++ (byte) main::i#2 [ main::i#1 ] ( main:2 [ main::i#1 ] ) -- vbuxx=_inc_vbuxx 
-    inx
-  //SEG18 [9] if((byte) main::i#1!=(byte/signed byte/word/signed word) 80) goto main::@1 [ main::i#1 ] ( main:2 [ main::i#1 ] ) -- vbuxx_neq_vbuc1_then_la1 
-    cpx #$50
-    bne b1
-  //SEG19 main::@return
-  breturn:
-  //SEG20 [10] return  [ ] ( main:2 [ ] )
-    rts
-}
-
 Removing instruction b1:
 Removing instruction bend:
 Removing instruction b1_from_main:
 Removing instruction breturn:
 Succesful ASM optimization Pass5UnusedLabelElimination
-ASSEMBLER
-//SEG0 Basic Upstart
-.pc = $801 "Basic"
-:BasicUpstart(main)
-.pc = $80d "Program"
-//SEG1 Global Constants & labels
-  .const SCREEN = $400
-  .const STAR = $51
-  .const VIC = $d000
-  .const RED = 2
-  .const BGCOL = VIC+$10*2+1
-//SEG2 @begin
-//SEG3 [1] phi from @begin to @1 [phi:@begin->@1]
-//SEG4 @1
-//SEG5 [2] call main param-assignment [ ] ( )
-  jsr main
-//SEG6 [3] phi from @1 to @end [phi:@1->@end]
-//SEG7 @end
-//SEG8 main
-main: {
-  //SEG9 [4] *((const byte*) SCREEN#0) ← (const byte) STAR#0 [ ] ( main:2 [ ] ) -- _deref_pbuc1=vbuc2 
-    lda #STAR
-    sta SCREEN
-  //SEG10 [5] *((const byte*) BGCOL#0) ← (const byte) RED#0 [ ] ( main:2 [ ] ) -- _deref_pbuc1=vbuc2 
-    lda #RED
-    sta BGCOL
-  //SEG11 [6] phi from main to main::@1 [phi:main->main::@1]
-  //SEG12 [6] phi (byte) main::i#2 = (byte/signed byte/word/signed word) 40 [phi:main->main::@1#0] -- vbuxx=vbuc1 
-    ldx #$28
-    jmp b1
-  //SEG13 [6] phi from main::@1 to main::@1 [phi:main::@1->main::@1]
-  //SEG14 [6] phi (byte) main::i#2 = (byte) main::i#1 [phi:main::@1->main::@1#0] -- register_copy 
-  //SEG15 main::@1
-  b1:
-  //SEG16 [7] *((const byte*) SCREEN#0 + (byte) main::i#2) ← (const byte) STAR#0+(byte/signed byte/word/signed word) 1 [ main::i#2 ] ( main:2 [ main::i#2 ] ) -- pbuc1_derefidx_vbuxx=vbuc2 
-    lda #STAR+1
-    sta SCREEN,x
-  //SEG17 [8] (byte) main::i#1 ← ++ (byte) main::i#2 [ main::i#1 ] ( main:2 [ main::i#1 ] ) -- vbuxx=_inc_vbuxx 
-    inx
-  //SEG18 [9] if((byte) main::i#1!=(byte/signed byte/word/signed word) 80) goto main::@1 [ main::i#1 ] ( main:2 [ main::i#1 ] ) -- vbuxx_neq_vbuc1_then_la1 
-    cpx #$50
-    bne b1
-  //SEG19 main::@return
-  //SEG20 [10] return  [ ] ( main:2 [ ] )
-    rts
-}
-
 Removing instruction jmp b1
 Succesful ASM optimization Pass5NextJumpElimination
-ASSEMBLER
-//SEG0 Basic Upstart
-.pc = $801 "Basic"
-:BasicUpstart(main)
-.pc = $80d "Program"
-//SEG1 Global Constants & labels
-  .const SCREEN = $400
-  .const STAR = $51
-  .const VIC = $d000
-  .const RED = 2
-  .const BGCOL = VIC+$10*2+1
-//SEG2 @begin
-//SEG3 [1] phi from @begin to @1 [phi:@begin->@1]
-//SEG4 @1
-//SEG5 [2] call main param-assignment [ ] ( )
-  jsr main
-//SEG6 [3] phi from @1 to @end [phi:@1->@end]
-//SEG7 @end
-//SEG8 main
-main: {
-  //SEG9 [4] *((const byte*) SCREEN#0) ← (const byte) STAR#0 [ ] ( main:2 [ ] ) -- _deref_pbuc1=vbuc2 
-    lda #STAR
-    sta SCREEN
-  //SEG10 [5] *((const byte*) BGCOL#0) ← (const byte) RED#0 [ ] ( main:2 [ ] ) -- _deref_pbuc1=vbuc2 
-    lda #RED
-    sta BGCOL
-  //SEG11 [6] phi from main to main::@1 [phi:main->main::@1]
-  //SEG12 [6] phi (byte) main::i#2 = (byte/signed byte/word/signed word) 40 [phi:main->main::@1#0] -- vbuxx=vbuc1 
-    ldx #$28
-  //SEG13 [6] phi from main::@1 to main::@1 [phi:main::@1->main::@1]
-  //SEG14 [6] phi (byte) main::i#2 = (byte) main::i#1 [phi:main::@1->main::@1#0] -- register_copy 
-  //SEG15 main::@1
-  b1:
-  //SEG16 [7] *((const byte*) SCREEN#0 + (byte) main::i#2) ← (const byte) STAR#0+(byte/signed byte/word/signed word) 1 [ main::i#2 ] ( main:2 [ main::i#2 ] ) -- pbuc1_derefidx_vbuxx=vbuc2 
-    lda #STAR+1
-    sta SCREEN,x
-  //SEG17 [8] (byte) main::i#1 ← ++ (byte) main::i#2 [ main::i#1 ] ( main:2 [ main::i#1 ] ) -- vbuxx=_inc_vbuxx 
-    inx
-  //SEG18 [9] if((byte) main::i#1!=(byte/signed byte/word/signed word) 80) goto main::@1 [ main::i#1 ] ( main:2 [ main::i#1 ] ) -- vbuxx_neq_vbuc1_then_la1 
-    cpx #$50
-    bne b1
-  //SEG19 main::@return
-  //SEG20 [10] return  [ ] ( main:2 [ ] )
-    rts
-}
 
 FINAL SYMBOL TABLE
 (label) @1

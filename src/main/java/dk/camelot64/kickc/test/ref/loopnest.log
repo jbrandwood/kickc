@@ -946,15 +946,8 @@ Uplift Scope []
 Uplifting [nest] best 2428 combination reg byte x [ nest::j#2 nest::j#1 ] 
 Uplifting [main] best 2358 combination reg byte y [ main::i#2 main::i#1 ] 
 Uplifting [] best 2358 combination 
-Removing instruction jmp b2
-Removing instruction jmp bend
-Removing instruction jmp b1
-Removing instruction jmp b3
-Removing instruction jmp breturn
-Removing instruction jmp b1
-Removing instruction jmp breturn
-Succesful ASM optimization Pass5NextJumpElimination
-ASSEMBLER
+
+ASSEMBLER BEFORE OPTIMIZATION
 //SEG0 Basic Upstart
 .pc = $801 "Basic"
 :BasicUpstart(main)
@@ -965,6 +958,7 @@ ASSEMBLER
 bbegin:
 //SEG3 [1] phi from @begin to @2 [phi:@begin->@2]
 b2_from_bbegin:
+  jmp b2
 //SEG4 @2
 b2:
 //SEG5 [2] call main param-assignment [ ] ( )
@@ -973,6 +967,7 @@ main_from_b2:
   jsr main
 //SEG7 [3] phi from @2 to @end [phi:@2->@end]
 bend_from_b2:
+  jmp bend
 //SEG8 @end
 bend:
 //SEG9 main
@@ -985,12 +980,14 @@ main: {
   //SEG12 [5] phi from main::@3 to main::@1 [phi:main::@3->main::@1]
   b1_from_b3:
   //SEG13 [5] phi (byte) main::i#2 = (byte) main::i#1 [phi:main::@3->main::@1#0] -- register_copy 
+    jmp b1
   //SEG14 main::@1
   b1:
   //SEG15 [6] call nest param-assignment [ main::i#2 ] ( main:2 [ main::i#2 ] )
   //SEG16 [10] phi from main::@1 to nest [phi:main::@1->nest]
   nest_from_b1:
     jsr nest
+    jmp b3
   //SEG17 main::@3
   b3:
   //SEG18 [7] (byte) main::i#1 ← -- (byte) main::i#2 [ main::i#1 ] ( main:2 [ main::i#1 ] ) -- vbuyy=_dec_vbuyy 
@@ -998,6 +995,7 @@ main: {
   //SEG19 [8] if((byte) main::i#1>(byte/signed byte/word/signed word) 0) goto main::@1 [ main::i#1 ] ( main:2 [ main::i#1 ] ) -- vbuyy_gt_0_then_la1 
     cpy #0
     bne b1_from_b3
+    jmp breturn
   //SEG20 main::@return
   breturn:
   //SEG21 [9] return  [ ] ( main:2 [ ] )
@@ -1013,6 +1011,7 @@ nest: {
   //SEG25 [11] phi from nest::@1 to nest::@1 [phi:nest::@1->nest::@1]
   b1_from_b1:
   //SEG26 [11] phi (byte) nest::j#2 = (byte) nest::j#1 [phi:nest::@1->nest::@1#0] -- register_copy 
+    jmp b1
   //SEG27 nest::@1
   b1:
   //SEG28 [12] *((const byte*) SCREEN#0) ← (byte) nest::j#2 [ nest::j#2 ] ( main:2::nest:6 [ main::i#2 nest::j#2 ] ) -- _deref_pbuc1=vbuxx 
@@ -1022,12 +1021,22 @@ nest: {
   //SEG30 [14] if((byte) nest::j#1>(byte/signed byte/word/signed word) 0) goto nest::@1 [ nest::j#1 ] ( main:2::nest:6 [ main::i#2 nest::j#1 ] ) -- vbuxx_gt_0_then_la1 
     cpx #0
     bne b1_from_b1
+    jmp breturn
   //SEG31 nest::@return
   breturn:
   //SEG32 [15] return  [ ] ( main:2::nest:6 [ main::i#2 ] )
     rts
 }
 
+ASSEMBLER OPTIMIZATIONS
+Removing instruction jmp b2
+Removing instruction jmp bend
+Removing instruction jmp b1
+Removing instruction jmp b3
+Removing instruction jmp breturn
+Removing instruction jmp b1
+Removing instruction jmp breturn
+Succesful ASM optimization Pass5NextJumpElimination
 Replacing label b1_from_b3 with b1
 Replacing label b1_from_b1 with b1
 Removing instruction bbegin:
@@ -1038,73 +1047,6 @@ Removing instruction b1_from_b3:
 Removing instruction nest_from_b1:
 Removing instruction b1_from_b1:
 Succesful ASM optimization Pass5RedundantLabelElimination
-ASSEMBLER
-//SEG0 Basic Upstart
-.pc = $801 "Basic"
-:BasicUpstart(main)
-.pc = $80d "Program"
-//SEG1 Global Constants & labels
-  .const SCREEN = $400
-//SEG2 @begin
-//SEG3 [1] phi from @begin to @2 [phi:@begin->@2]
-//SEG4 @2
-b2:
-//SEG5 [2] call main param-assignment [ ] ( )
-//SEG6 [4] phi from @2 to main [phi:@2->main]
-  jsr main
-//SEG7 [3] phi from @2 to @end [phi:@2->@end]
-//SEG8 @end
-bend:
-//SEG9 main
-main: {
-  //SEG10 [5] phi from main to main::@1 [phi:main->main::@1]
-  b1_from_main:
-  //SEG11 [5] phi (byte) main::i#2 = (byte/signed byte/word/signed word) 100 [phi:main->main::@1#0] -- vbuyy=vbuc1 
-    ldy #$64
-    jmp b1
-  //SEG12 [5] phi from main::@3 to main::@1 [phi:main::@3->main::@1]
-  //SEG13 [5] phi (byte) main::i#2 = (byte) main::i#1 [phi:main::@3->main::@1#0] -- register_copy 
-  //SEG14 main::@1
-  b1:
-  //SEG15 [6] call nest param-assignment [ main::i#2 ] ( main:2 [ main::i#2 ] )
-  //SEG16 [10] phi from main::@1 to nest [phi:main::@1->nest]
-    jsr nest
-  //SEG17 main::@3
-  b3:
-  //SEG18 [7] (byte) main::i#1 ← -- (byte) main::i#2 [ main::i#1 ] ( main:2 [ main::i#1 ] ) -- vbuyy=_dec_vbuyy 
-    dey
-  //SEG19 [8] if((byte) main::i#1>(byte/signed byte/word/signed word) 0) goto main::@1 [ main::i#1 ] ( main:2 [ main::i#1 ] ) -- vbuyy_gt_0_then_la1 
-    cpy #0
-    bne b1
-  //SEG20 main::@return
-  breturn:
-  //SEG21 [9] return  [ ] ( main:2 [ ] )
-    rts
-}
-//SEG22 nest
-nest: {
-  //SEG23 [11] phi from nest to nest::@1 [phi:nest->nest::@1]
-  b1_from_nest:
-  //SEG24 [11] phi (byte) nest::j#2 = (byte/signed byte/word/signed word) 100 [phi:nest->nest::@1#0] -- vbuxx=vbuc1 
-    ldx #$64
-    jmp b1
-  //SEG25 [11] phi from nest::@1 to nest::@1 [phi:nest::@1->nest::@1]
-  //SEG26 [11] phi (byte) nest::j#2 = (byte) nest::j#1 [phi:nest::@1->nest::@1#0] -- register_copy 
-  //SEG27 nest::@1
-  b1:
-  //SEG28 [12] *((const byte*) SCREEN#0) ← (byte) nest::j#2 [ nest::j#2 ] ( main:2::nest:6 [ main::i#2 nest::j#2 ] ) -- _deref_pbuc1=vbuxx 
-    stx SCREEN
-  //SEG29 [13] (byte) nest::j#1 ← -- (byte) nest::j#2 [ nest::j#1 ] ( main:2::nest:6 [ main::i#2 nest::j#1 ] ) -- vbuxx=_dec_vbuxx 
-    dex
-  //SEG30 [14] if((byte) nest::j#1>(byte/signed byte/word/signed word) 0) goto nest::@1 [ nest::j#1 ] ( main:2::nest:6 [ main::i#2 nest::j#1 ] ) -- vbuxx_gt_0_then_la1 
-    cpx #0
-    bne b1
-  //SEG31 nest::@return
-  breturn:
-  //SEG32 [15] return  [ ] ( main:2::nest:6 [ main::i#2 ] )
-    rts
-}
-
 Removing instruction b2:
 Removing instruction bend:
 Removing instruction b1_from_main:
@@ -1113,126 +1055,9 @@ Removing instruction breturn:
 Removing instruction b1_from_nest:
 Removing instruction breturn:
 Succesful ASM optimization Pass5UnusedLabelElimination
-ASSEMBLER
-//SEG0 Basic Upstart
-.pc = $801 "Basic"
-:BasicUpstart(main)
-.pc = $80d "Program"
-//SEG1 Global Constants & labels
-  .const SCREEN = $400
-//SEG2 @begin
-//SEG3 [1] phi from @begin to @2 [phi:@begin->@2]
-//SEG4 @2
-//SEG5 [2] call main param-assignment [ ] ( )
-//SEG6 [4] phi from @2 to main [phi:@2->main]
-  jsr main
-//SEG7 [3] phi from @2 to @end [phi:@2->@end]
-//SEG8 @end
-//SEG9 main
-main: {
-  //SEG10 [5] phi from main to main::@1 [phi:main->main::@1]
-  //SEG11 [5] phi (byte) main::i#2 = (byte/signed byte/word/signed word) 100 [phi:main->main::@1#0] -- vbuyy=vbuc1 
-    ldy #$64
-    jmp b1
-  //SEG12 [5] phi from main::@3 to main::@1 [phi:main::@3->main::@1]
-  //SEG13 [5] phi (byte) main::i#2 = (byte) main::i#1 [phi:main::@3->main::@1#0] -- register_copy 
-  //SEG14 main::@1
-  b1:
-  //SEG15 [6] call nest param-assignment [ main::i#2 ] ( main:2 [ main::i#2 ] )
-  //SEG16 [10] phi from main::@1 to nest [phi:main::@1->nest]
-    jsr nest
-  //SEG17 main::@3
-  //SEG18 [7] (byte) main::i#1 ← -- (byte) main::i#2 [ main::i#1 ] ( main:2 [ main::i#1 ] ) -- vbuyy=_dec_vbuyy 
-    dey
-  //SEG19 [8] if((byte) main::i#1>(byte/signed byte/word/signed word) 0) goto main::@1 [ main::i#1 ] ( main:2 [ main::i#1 ] ) -- vbuyy_gt_0_then_la1 
-    cpy #0
-    bne b1
-  //SEG20 main::@return
-  //SEG21 [9] return  [ ] ( main:2 [ ] )
-    rts
-}
-//SEG22 nest
-nest: {
-  //SEG23 [11] phi from nest to nest::@1 [phi:nest->nest::@1]
-  //SEG24 [11] phi (byte) nest::j#2 = (byte/signed byte/word/signed word) 100 [phi:nest->nest::@1#0] -- vbuxx=vbuc1 
-    ldx #$64
-    jmp b1
-  //SEG25 [11] phi from nest::@1 to nest::@1 [phi:nest::@1->nest::@1]
-  //SEG26 [11] phi (byte) nest::j#2 = (byte) nest::j#1 [phi:nest::@1->nest::@1#0] -- register_copy 
-  //SEG27 nest::@1
-  b1:
-  //SEG28 [12] *((const byte*) SCREEN#0) ← (byte) nest::j#2 [ nest::j#2 ] ( main:2::nest:6 [ main::i#2 nest::j#2 ] ) -- _deref_pbuc1=vbuxx 
-    stx SCREEN
-  //SEG29 [13] (byte) nest::j#1 ← -- (byte) nest::j#2 [ nest::j#1 ] ( main:2::nest:6 [ main::i#2 nest::j#1 ] ) -- vbuxx=_dec_vbuxx 
-    dex
-  //SEG30 [14] if((byte) nest::j#1>(byte/signed byte/word/signed word) 0) goto nest::@1 [ nest::j#1 ] ( main:2::nest:6 [ main::i#2 nest::j#1 ] ) -- vbuxx_gt_0_then_la1 
-    cpx #0
-    bne b1
-  //SEG31 nest::@return
-  //SEG32 [15] return  [ ] ( main:2::nest:6 [ main::i#2 ] )
-    rts
-}
-
 Removing instruction jmp b1
 Removing instruction jmp b1
 Succesful ASM optimization Pass5NextJumpElimination
-ASSEMBLER
-//SEG0 Basic Upstart
-.pc = $801 "Basic"
-:BasicUpstart(main)
-.pc = $80d "Program"
-//SEG1 Global Constants & labels
-  .const SCREEN = $400
-//SEG2 @begin
-//SEG3 [1] phi from @begin to @2 [phi:@begin->@2]
-//SEG4 @2
-//SEG5 [2] call main param-assignment [ ] ( )
-//SEG6 [4] phi from @2 to main [phi:@2->main]
-  jsr main
-//SEG7 [3] phi from @2 to @end [phi:@2->@end]
-//SEG8 @end
-//SEG9 main
-main: {
-  //SEG10 [5] phi from main to main::@1 [phi:main->main::@1]
-  //SEG11 [5] phi (byte) main::i#2 = (byte/signed byte/word/signed word) 100 [phi:main->main::@1#0] -- vbuyy=vbuc1 
-    ldy #$64
-  //SEG12 [5] phi from main::@3 to main::@1 [phi:main::@3->main::@1]
-  //SEG13 [5] phi (byte) main::i#2 = (byte) main::i#1 [phi:main::@3->main::@1#0] -- register_copy 
-  //SEG14 main::@1
-  b1:
-  //SEG15 [6] call nest param-assignment [ main::i#2 ] ( main:2 [ main::i#2 ] )
-  //SEG16 [10] phi from main::@1 to nest [phi:main::@1->nest]
-    jsr nest
-  //SEG17 main::@3
-  //SEG18 [7] (byte) main::i#1 ← -- (byte) main::i#2 [ main::i#1 ] ( main:2 [ main::i#1 ] ) -- vbuyy=_dec_vbuyy 
-    dey
-  //SEG19 [8] if((byte) main::i#1>(byte/signed byte/word/signed word) 0) goto main::@1 [ main::i#1 ] ( main:2 [ main::i#1 ] ) -- vbuyy_gt_0_then_la1 
-    cpy #0
-    bne b1
-  //SEG20 main::@return
-  //SEG21 [9] return  [ ] ( main:2 [ ] )
-    rts
-}
-//SEG22 nest
-nest: {
-  //SEG23 [11] phi from nest to nest::@1 [phi:nest->nest::@1]
-  //SEG24 [11] phi (byte) nest::j#2 = (byte/signed byte/word/signed word) 100 [phi:nest->nest::@1#0] -- vbuxx=vbuc1 
-    ldx #$64
-  //SEG25 [11] phi from nest::@1 to nest::@1 [phi:nest::@1->nest::@1]
-  //SEG26 [11] phi (byte) nest::j#2 = (byte) nest::j#1 [phi:nest::@1->nest::@1#0] -- register_copy 
-  //SEG27 nest::@1
-  b1:
-  //SEG28 [12] *((const byte*) SCREEN#0) ← (byte) nest::j#2 [ nest::j#2 ] ( main:2::nest:6 [ main::i#2 nest::j#2 ] ) -- _deref_pbuc1=vbuxx 
-    stx SCREEN
-  //SEG29 [13] (byte) nest::j#1 ← -- (byte) nest::j#2 [ nest::j#1 ] ( main:2::nest:6 [ main::i#2 nest::j#1 ] ) -- vbuxx=_dec_vbuxx 
-    dex
-  //SEG30 [14] if((byte) nest::j#1>(byte/signed byte/word/signed word) 0) goto nest::@1 [ nest::j#1 ] ( main:2::nest:6 [ main::i#2 nest::j#1 ] ) -- vbuxx_gt_0_then_la1 
-    cpx #0
-    bne b1
-  //SEG31 nest::@return
-  //SEG32 [15] return  [ ] ( main:2::nest:6 [ main::i#2 ] )
-    rts
-}
 
 FINAL SYMBOL TABLE
 (label) @2

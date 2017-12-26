@@ -1225,14 +1225,8 @@ Uplift Scope []
 
 Uplifting [main] best 553 combination reg byte y [ main::j#3 main::j#4 main::j#1 ] reg byte x [ main::i#2 main::i#1 ] reg byte a [ main::$0 ] 
 Uplifting [] best 553 combination 
-Removing instruction jmp b1
-Removing instruction jmp bend
-Removing instruction jmp b1
-Removing instruction jmp b2
-Removing instruction jmp breturn
-Removing instruction jmp b6
-Succesful ASM optimization Pass5NextJumpElimination
-ASSEMBLER
+
+ASSEMBLER BEFORE OPTIMIZATION
 //SEG0 Basic Upstart
 .pc = $801 "Basic"
 :BasicUpstart(main)
@@ -1245,6 +1239,7 @@ ASSEMBLER
 bbegin:
 //SEG3 [1] phi from @begin to @1 [phi:@begin->@1]
 b1_from_bbegin:
+  jmp b1
 //SEG4 @1
 b1:
 //SEG5 [2] call main param-assignment [ ] ( )
@@ -1253,6 +1248,7 @@ main_from_b1:
   jsr main
 //SEG7 [3] phi from @1 to @end [phi:@1->@end]
 bend_from_b1:
+  jmp bend
 //SEG8 @end
 bend:
 //SEG9 main
@@ -1270,6 +1266,7 @@ main: {
   b1_from_b2:
   //SEG14 [5] phi (byte) main::j#3 = (byte) main::j#4 [phi:main::@2->main::@1#0] -- register_copy 
   //SEG15 [5] phi (byte) main::i#2 = (byte) main::i#1 [phi:main::@2->main::@1#1] -- register_copy 
+    jmp b1
   //SEG16 main::@1
   b1:
   //SEG17 [6] *((const byte*) main::screen#0 + (byte) main::i#2) ← (byte) '*' [ main::i#2 main::j#3 ] ( main:2 [ main::i#2 main::j#3 ] ) -- pbuc1_derefidx_vbuxx=vbuc2 
@@ -1288,6 +1285,7 @@ main: {
   b2_from_b1:
   //SEG23 [11] phi (byte) main::j#4 = (byte/signed byte/word/signed word) 0 [phi:main::@1->main::@2#0] -- vbuyy=vbuc1 
     ldy #0
+    jmp b2
   //SEG24 main::@2
   b2:
   //SEG25 [12] (byte) main::i#1 ← ++ (byte) main::i#2 [ main::i#1 main::j#4 ] ( main:2 [ main::i#1 main::j#4 ] ) -- vbuxx=_inc_vbuxx 
@@ -1295,12 +1293,14 @@ main: {
   //SEG26 [13] if((byte) main::i#1!=(byte/signed byte/word/signed word) 40) goto main::@1 [ main::i#1 main::j#4 ] ( main:2 [ main::i#1 main::j#4 ] ) -- vbuxx_neq_vbuc1_then_la1 
     cpx #$28
     bne b1_from_b2
+    jmp breturn
   //SEG27 main::@return
   breturn:
   //SEG28 [14] return  [ ] ( main:2 [ ] )
     rts
   //SEG29 [15] phi from main::@1 to main::@6 [phi:main::@1->main::@6]
   b6_from_b1:
+    jmp b6
   //SEG30 main::@6
   b6:
   //SEG31 [11] phi from main::@6 to main::@2 [phi:main::@6->main::@2]
@@ -1310,6 +1310,14 @@ main: {
     colseq: .byte WHITE, RED, GREEN
 }
 
+ASSEMBLER OPTIMIZATIONS
+Removing instruction jmp b1
+Removing instruction jmp bend
+Removing instruction jmp b1
+Removing instruction jmp b2
+Removing instruction jmp breturn
+Removing instruction jmp b6
+Succesful ASM optimization Pass5NextJumpElimination
 Replacing label b6_from_b1 with b6
 Replacing label b1_from_b2 with b1
 Removing instruction bbegin:
@@ -1320,414 +1328,20 @@ Removing instruction b1_from_b2:
 Removing instruction b6_from_b1:
 Removing instruction b2_from_b6:
 Succesful ASM optimization Pass5RedundantLabelElimination
-ASSEMBLER
-//SEG0 Basic Upstart
-.pc = $801 "Basic"
-:BasicUpstart(main)
-.pc = $80d "Program"
-//SEG1 Global Constants & labels
-  .const WHITE = 1
-  .const RED = 2
-  .const GREEN = 5
-//SEG2 @begin
-//SEG3 [1] phi from @begin to @1 [phi:@begin->@1]
-//SEG4 @1
-b1:
-//SEG5 [2] call main param-assignment [ ] ( )
-//SEG6 [4] phi from @1 to main [phi:@1->main]
-  jsr main
-//SEG7 [3] phi from @1 to @end [phi:@1->@end]
-//SEG8 @end
-bend:
-//SEG9 main
-main: {
-    .const screen = $400
-    .const cols = $d800
-  //SEG10 [5] phi from main to main::@1 [phi:main->main::@1]
-  b1_from_main:
-  //SEG11 [5] phi (byte) main::j#3 = (byte/signed byte/word/signed word) 0 [phi:main->main::@1#0] -- vbuyy=vbuc1 
-    ldy #0
-  //SEG12 [5] phi (byte) main::i#2 = (byte/signed byte/word/signed word) 0 [phi:main->main::@1#1] -- vbuxx=vbuc1 
-    ldx #0
-    jmp b1
-  //SEG13 [5] phi from main::@2 to main::@1 [phi:main::@2->main::@1]
-  //SEG14 [5] phi (byte) main::j#3 = (byte) main::j#4 [phi:main::@2->main::@1#0] -- register_copy 
-  //SEG15 [5] phi (byte) main::i#2 = (byte) main::i#1 [phi:main::@2->main::@1#1] -- register_copy 
-  //SEG16 main::@1
-  b1:
-  //SEG17 [6] *((const byte*) main::screen#0 + (byte) main::i#2) ← (byte) '*' [ main::i#2 main::j#3 ] ( main:2 [ main::i#2 main::j#3 ] ) -- pbuc1_derefidx_vbuxx=vbuc2 
-    lda #'*'
-    sta screen,x
-  //SEG18 [7] (byte~) main::$0 ← (const byte[]) main::colseq#0 *idx (byte) main::j#3 [ main::i#2 main::j#3 main::$0 ] ( main:2 [ main::i#2 main::j#3 main::$0 ] ) -- vbuaa=pbuc1_derefidx_vbuyy 
-    lda colseq,y
-  //SEG19 [8] *((const byte*) main::cols#0 + (byte) main::i#2) ← (byte~) main::$0 [ main::i#2 main::j#3 ] ( main:2 [ main::i#2 main::j#3 ] ) -- pbuc1_derefidx_vbuxx=vbuaa 
-    sta cols,x
-  //SEG20 [9] (byte) main::j#1 ← ++ (byte) main::j#3 [ main::i#2 main::j#1 ] ( main:2 [ main::i#2 main::j#1 ] ) -- vbuyy=_inc_vbuyy 
-    iny
-  //SEG21 [10] if((byte) main::j#1!=(byte/signed byte/word/signed word) 3) goto main::@6 [ main::i#2 main::j#1 ] ( main:2 [ main::i#2 main::j#1 ] ) -- vbuyy_neq_vbuc1_then_la1 
-    cpy #3
-    bne b6
-  //SEG22 [11] phi from main::@1 to main::@2 [phi:main::@1->main::@2]
-  b2_from_b1:
-  //SEG23 [11] phi (byte) main::j#4 = (byte/signed byte/word/signed word) 0 [phi:main::@1->main::@2#0] -- vbuyy=vbuc1 
-    ldy #0
-  //SEG24 main::@2
-  b2:
-  //SEG25 [12] (byte) main::i#1 ← ++ (byte) main::i#2 [ main::i#1 main::j#4 ] ( main:2 [ main::i#1 main::j#4 ] ) -- vbuxx=_inc_vbuxx 
-    inx
-  //SEG26 [13] if((byte) main::i#1!=(byte/signed byte/word/signed word) 40) goto main::@1 [ main::i#1 main::j#4 ] ( main:2 [ main::i#1 main::j#4 ] ) -- vbuxx_neq_vbuc1_then_la1 
-    cpx #$28
-    bne b1
-  //SEG27 main::@return
-  breturn:
-  //SEG28 [14] return  [ ] ( main:2 [ ] )
-    rts
-  //SEG29 [15] phi from main::@1 to main::@6 [phi:main::@1->main::@6]
-  //SEG30 main::@6
-  b6:
-  //SEG31 [11] phi from main::@6 to main::@2 [phi:main::@6->main::@2]
-  //SEG32 [11] phi (byte) main::j#4 = (byte) main::j#1 [phi:main::@6->main::@2#0] -- register_copy 
-    jmp b2
-    colseq: .byte WHITE, RED, GREEN
-}
-
 Removing instruction b1:
 Removing instruction bend:
 Removing instruction b1_from_main:
 Removing instruction b2_from_b1:
 Removing instruction breturn:
 Succesful ASM optimization Pass5UnusedLabelElimination
-ASSEMBLER
-//SEG0 Basic Upstart
-.pc = $801 "Basic"
-:BasicUpstart(main)
-.pc = $80d "Program"
-//SEG1 Global Constants & labels
-  .const WHITE = 1
-  .const RED = 2
-  .const GREEN = 5
-//SEG2 @begin
-//SEG3 [1] phi from @begin to @1 [phi:@begin->@1]
-//SEG4 @1
-//SEG5 [2] call main param-assignment [ ] ( )
-//SEG6 [4] phi from @1 to main [phi:@1->main]
-  jsr main
-//SEG7 [3] phi from @1 to @end [phi:@1->@end]
-//SEG8 @end
-//SEG9 main
-main: {
-    .const screen = $400
-    .const cols = $d800
-  //SEG10 [5] phi from main to main::@1 [phi:main->main::@1]
-  //SEG11 [5] phi (byte) main::j#3 = (byte/signed byte/word/signed word) 0 [phi:main->main::@1#0] -- vbuyy=vbuc1 
-    ldy #0
-  //SEG12 [5] phi (byte) main::i#2 = (byte/signed byte/word/signed word) 0 [phi:main->main::@1#1] -- vbuxx=vbuc1 
-    ldx #0
-    jmp b1
-  //SEG13 [5] phi from main::@2 to main::@1 [phi:main::@2->main::@1]
-  //SEG14 [5] phi (byte) main::j#3 = (byte) main::j#4 [phi:main::@2->main::@1#0] -- register_copy 
-  //SEG15 [5] phi (byte) main::i#2 = (byte) main::i#1 [phi:main::@2->main::@1#1] -- register_copy 
-  //SEG16 main::@1
-  b1:
-  //SEG17 [6] *((const byte*) main::screen#0 + (byte) main::i#2) ← (byte) '*' [ main::i#2 main::j#3 ] ( main:2 [ main::i#2 main::j#3 ] ) -- pbuc1_derefidx_vbuxx=vbuc2 
-    lda #'*'
-    sta screen,x
-  //SEG18 [7] (byte~) main::$0 ← (const byte[]) main::colseq#0 *idx (byte) main::j#3 [ main::i#2 main::j#3 main::$0 ] ( main:2 [ main::i#2 main::j#3 main::$0 ] ) -- vbuaa=pbuc1_derefidx_vbuyy 
-    lda colseq,y
-  //SEG19 [8] *((const byte*) main::cols#0 + (byte) main::i#2) ← (byte~) main::$0 [ main::i#2 main::j#3 ] ( main:2 [ main::i#2 main::j#3 ] ) -- pbuc1_derefidx_vbuxx=vbuaa 
-    sta cols,x
-  //SEG20 [9] (byte) main::j#1 ← ++ (byte) main::j#3 [ main::i#2 main::j#1 ] ( main:2 [ main::i#2 main::j#1 ] ) -- vbuyy=_inc_vbuyy 
-    iny
-  //SEG21 [10] if((byte) main::j#1!=(byte/signed byte/word/signed word) 3) goto main::@6 [ main::i#2 main::j#1 ] ( main:2 [ main::i#2 main::j#1 ] ) -- vbuyy_neq_vbuc1_then_la1 
-    cpy #3
-    bne b6
-  //SEG22 [11] phi from main::@1 to main::@2 [phi:main::@1->main::@2]
-  //SEG23 [11] phi (byte) main::j#4 = (byte/signed byte/word/signed word) 0 [phi:main::@1->main::@2#0] -- vbuyy=vbuc1 
-    ldy #0
-  //SEG24 main::@2
-  b2:
-  //SEG25 [12] (byte) main::i#1 ← ++ (byte) main::i#2 [ main::i#1 main::j#4 ] ( main:2 [ main::i#1 main::j#4 ] ) -- vbuxx=_inc_vbuxx 
-    inx
-  //SEG26 [13] if((byte) main::i#1!=(byte/signed byte/word/signed word) 40) goto main::@1 [ main::i#1 main::j#4 ] ( main:2 [ main::i#1 main::j#4 ] ) -- vbuxx_neq_vbuc1_then_la1 
-    cpx #$28
-    bne b1
-  //SEG27 main::@return
-  //SEG28 [14] return  [ ] ( main:2 [ ] )
-    rts
-  //SEG29 [15] phi from main::@1 to main::@6 [phi:main::@1->main::@6]
-  //SEG30 main::@6
-  b6:
-  //SEG31 [11] phi from main::@6 to main::@2 [phi:main::@6->main::@2]
-  //SEG32 [11] phi (byte) main::j#4 = (byte) main::j#1 [phi:main::@6->main::@2#0] -- register_copy 
-    jmp b2
-    colseq: .byte WHITE, RED, GREEN
-}
-
 Skipping double jump to b2 in bne b6
 Succesful ASM optimization Pass5DoubleJumpElimination
-ASSEMBLER
-//SEG0 Basic Upstart
-.pc = $801 "Basic"
-:BasicUpstart(main)
-.pc = $80d "Program"
-//SEG1 Global Constants & labels
-  .const WHITE = 1
-  .const RED = 2
-  .const GREEN = 5
-//SEG2 @begin
-//SEG3 [1] phi from @begin to @1 [phi:@begin->@1]
-//SEG4 @1
-//SEG5 [2] call main param-assignment [ ] ( )
-//SEG6 [4] phi from @1 to main [phi:@1->main]
-  jsr main
-//SEG7 [3] phi from @1 to @end [phi:@1->@end]
-//SEG8 @end
-//SEG9 main
-main: {
-    .const screen = $400
-    .const cols = $d800
-  //SEG10 [5] phi from main to main::@1 [phi:main->main::@1]
-  //SEG11 [5] phi (byte) main::j#3 = (byte/signed byte/word/signed word) 0 [phi:main->main::@1#0] -- vbuyy=vbuc1 
-    ldy #0
-  //SEG12 [5] phi (byte) main::i#2 = (byte/signed byte/word/signed word) 0 [phi:main->main::@1#1] -- vbuxx=vbuc1 
-    ldx #0
-    jmp b1
-  //SEG13 [5] phi from main::@2 to main::@1 [phi:main::@2->main::@1]
-  //SEG14 [5] phi (byte) main::j#3 = (byte) main::j#4 [phi:main::@2->main::@1#0] -- register_copy 
-  //SEG15 [5] phi (byte) main::i#2 = (byte) main::i#1 [phi:main::@2->main::@1#1] -- register_copy 
-  //SEG16 main::@1
-  b1:
-  //SEG17 [6] *((const byte*) main::screen#0 + (byte) main::i#2) ← (byte) '*' [ main::i#2 main::j#3 ] ( main:2 [ main::i#2 main::j#3 ] ) -- pbuc1_derefidx_vbuxx=vbuc2 
-    lda #'*'
-    sta screen,x
-  //SEG18 [7] (byte~) main::$0 ← (const byte[]) main::colseq#0 *idx (byte) main::j#3 [ main::i#2 main::j#3 main::$0 ] ( main:2 [ main::i#2 main::j#3 main::$0 ] ) -- vbuaa=pbuc1_derefidx_vbuyy 
-    lda colseq,y
-  //SEG19 [8] *((const byte*) main::cols#0 + (byte) main::i#2) ← (byte~) main::$0 [ main::i#2 main::j#3 ] ( main:2 [ main::i#2 main::j#3 ] ) -- pbuc1_derefidx_vbuxx=vbuaa 
-    sta cols,x
-  //SEG20 [9] (byte) main::j#1 ← ++ (byte) main::j#3 [ main::i#2 main::j#1 ] ( main:2 [ main::i#2 main::j#1 ] ) -- vbuyy=_inc_vbuyy 
-    iny
-  //SEG21 [10] if((byte) main::j#1!=(byte/signed byte/word/signed word) 3) goto main::@6 [ main::i#2 main::j#1 ] ( main:2 [ main::i#2 main::j#1 ] ) -- vbuyy_neq_vbuc1_then_la1 
-    cpy #3
-    bne b2
-  //SEG22 [11] phi from main::@1 to main::@2 [phi:main::@1->main::@2]
-  //SEG23 [11] phi (byte) main::j#4 = (byte/signed byte/word/signed word) 0 [phi:main::@1->main::@2#0] -- vbuyy=vbuc1 
-    ldy #0
-  //SEG24 main::@2
-  b2:
-  //SEG25 [12] (byte) main::i#1 ← ++ (byte) main::i#2 [ main::i#1 main::j#4 ] ( main:2 [ main::i#1 main::j#4 ] ) -- vbuxx=_inc_vbuxx 
-    inx
-  //SEG26 [13] if((byte) main::i#1!=(byte/signed byte/word/signed word) 40) goto main::@1 [ main::i#1 main::j#4 ] ( main:2 [ main::i#1 main::j#4 ] ) -- vbuxx_neq_vbuc1_then_la1 
-    cpx #$28
-    bne b1
-  //SEG27 main::@return
-  //SEG28 [14] return  [ ] ( main:2 [ ] )
-    rts
-  //SEG29 [15] phi from main::@1 to main::@6 [phi:main::@1->main::@6]
-  //SEG30 main::@6
-  b6:
-  //SEG31 [11] phi from main::@6 to main::@2 [phi:main::@6->main::@2]
-  //SEG32 [11] phi (byte) main::j#4 = (byte) main::j#1 [phi:main::@6->main::@2#0] -- register_copy 
-    jmp b2
-    colseq: .byte WHITE, RED, GREEN
-}
-
 Removing instruction jmp b1
 Succesful ASM optimization Pass5NextJumpElimination
-ASSEMBLER
-//SEG0 Basic Upstart
-.pc = $801 "Basic"
-:BasicUpstart(main)
-.pc = $80d "Program"
-//SEG1 Global Constants & labels
-  .const WHITE = 1
-  .const RED = 2
-  .const GREEN = 5
-//SEG2 @begin
-//SEG3 [1] phi from @begin to @1 [phi:@begin->@1]
-//SEG4 @1
-//SEG5 [2] call main param-assignment [ ] ( )
-//SEG6 [4] phi from @1 to main [phi:@1->main]
-  jsr main
-//SEG7 [3] phi from @1 to @end [phi:@1->@end]
-//SEG8 @end
-//SEG9 main
-main: {
-    .const screen = $400
-    .const cols = $d800
-  //SEG10 [5] phi from main to main::@1 [phi:main->main::@1]
-  //SEG11 [5] phi (byte) main::j#3 = (byte/signed byte/word/signed word) 0 [phi:main->main::@1#0] -- vbuyy=vbuc1 
-    ldy #0
-  //SEG12 [5] phi (byte) main::i#2 = (byte/signed byte/word/signed word) 0 [phi:main->main::@1#1] -- vbuxx=vbuc1 
-    ldx #0
-  //SEG13 [5] phi from main::@2 to main::@1 [phi:main::@2->main::@1]
-  //SEG14 [5] phi (byte) main::j#3 = (byte) main::j#4 [phi:main::@2->main::@1#0] -- register_copy 
-  //SEG15 [5] phi (byte) main::i#2 = (byte) main::i#1 [phi:main::@2->main::@1#1] -- register_copy 
-  //SEG16 main::@1
-  b1:
-  //SEG17 [6] *((const byte*) main::screen#0 + (byte) main::i#2) ← (byte) '*' [ main::i#2 main::j#3 ] ( main:2 [ main::i#2 main::j#3 ] ) -- pbuc1_derefidx_vbuxx=vbuc2 
-    lda #'*'
-    sta screen,x
-  //SEG18 [7] (byte~) main::$0 ← (const byte[]) main::colseq#0 *idx (byte) main::j#3 [ main::i#2 main::j#3 main::$0 ] ( main:2 [ main::i#2 main::j#3 main::$0 ] ) -- vbuaa=pbuc1_derefidx_vbuyy 
-    lda colseq,y
-  //SEG19 [8] *((const byte*) main::cols#0 + (byte) main::i#2) ← (byte~) main::$0 [ main::i#2 main::j#3 ] ( main:2 [ main::i#2 main::j#3 ] ) -- pbuc1_derefidx_vbuxx=vbuaa 
-    sta cols,x
-  //SEG20 [9] (byte) main::j#1 ← ++ (byte) main::j#3 [ main::i#2 main::j#1 ] ( main:2 [ main::i#2 main::j#1 ] ) -- vbuyy=_inc_vbuyy 
-    iny
-  //SEG21 [10] if((byte) main::j#1!=(byte/signed byte/word/signed word) 3) goto main::@6 [ main::i#2 main::j#1 ] ( main:2 [ main::i#2 main::j#1 ] ) -- vbuyy_neq_vbuc1_then_la1 
-    cpy #3
-    bne b2
-  //SEG22 [11] phi from main::@1 to main::@2 [phi:main::@1->main::@2]
-  //SEG23 [11] phi (byte) main::j#4 = (byte/signed byte/word/signed word) 0 [phi:main::@1->main::@2#0] -- vbuyy=vbuc1 
-    ldy #0
-  //SEG24 main::@2
-  b2:
-  //SEG25 [12] (byte) main::i#1 ← ++ (byte) main::i#2 [ main::i#1 main::j#4 ] ( main:2 [ main::i#1 main::j#4 ] ) -- vbuxx=_inc_vbuxx 
-    inx
-  //SEG26 [13] if((byte) main::i#1!=(byte/signed byte/word/signed word) 40) goto main::@1 [ main::i#1 main::j#4 ] ( main:2 [ main::i#1 main::j#4 ] ) -- vbuxx_neq_vbuc1_then_la1 
-    cpx #$28
-    bne b1
-  //SEG27 main::@return
-  //SEG28 [14] return  [ ] ( main:2 [ ] )
-    rts
-  //SEG29 [15] phi from main::@1 to main::@6 [phi:main::@1->main::@6]
-  //SEG30 main::@6
-  b6:
-  //SEG31 [11] phi from main::@6 to main::@2 [phi:main::@6->main::@2]
-  //SEG32 [11] phi (byte) main::j#4 = (byte) main::j#1 [phi:main::@6->main::@2#0] -- register_copy 
-    jmp b2
-    colseq: .byte WHITE, RED, GREEN
-}
-
 Removing instruction b6:
 Succesful ASM optimization Pass5UnusedLabelElimination
-ASSEMBLER
-//SEG0 Basic Upstart
-.pc = $801 "Basic"
-:BasicUpstart(main)
-.pc = $80d "Program"
-//SEG1 Global Constants & labels
-  .const WHITE = 1
-  .const RED = 2
-  .const GREEN = 5
-//SEG2 @begin
-//SEG3 [1] phi from @begin to @1 [phi:@begin->@1]
-//SEG4 @1
-//SEG5 [2] call main param-assignment [ ] ( )
-//SEG6 [4] phi from @1 to main [phi:@1->main]
-  jsr main
-//SEG7 [3] phi from @1 to @end [phi:@1->@end]
-//SEG8 @end
-//SEG9 main
-main: {
-    .const screen = $400
-    .const cols = $d800
-  //SEG10 [5] phi from main to main::@1 [phi:main->main::@1]
-  //SEG11 [5] phi (byte) main::j#3 = (byte/signed byte/word/signed word) 0 [phi:main->main::@1#0] -- vbuyy=vbuc1 
-    ldy #0
-  //SEG12 [5] phi (byte) main::i#2 = (byte/signed byte/word/signed word) 0 [phi:main->main::@1#1] -- vbuxx=vbuc1 
-    ldx #0
-  //SEG13 [5] phi from main::@2 to main::@1 [phi:main::@2->main::@1]
-  //SEG14 [5] phi (byte) main::j#3 = (byte) main::j#4 [phi:main::@2->main::@1#0] -- register_copy 
-  //SEG15 [5] phi (byte) main::i#2 = (byte) main::i#1 [phi:main::@2->main::@1#1] -- register_copy 
-  //SEG16 main::@1
-  b1:
-  //SEG17 [6] *((const byte*) main::screen#0 + (byte) main::i#2) ← (byte) '*' [ main::i#2 main::j#3 ] ( main:2 [ main::i#2 main::j#3 ] ) -- pbuc1_derefidx_vbuxx=vbuc2 
-    lda #'*'
-    sta screen,x
-  //SEG18 [7] (byte~) main::$0 ← (const byte[]) main::colseq#0 *idx (byte) main::j#3 [ main::i#2 main::j#3 main::$0 ] ( main:2 [ main::i#2 main::j#3 main::$0 ] ) -- vbuaa=pbuc1_derefidx_vbuyy 
-    lda colseq,y
-  //SEG19 [8] *((const byte*) main::cols#0 + (byte) main::i#2) ← (byte~) main::$0 [ main::i#2 main::j#3 ] ( main:2 [ main::i#2 main::j#3 ] ) -- pbuc1_derefidx_vbuxx=vbuaa 
-    sta cols,x
-  //SEG20 [9] (byte) main::j#1 ← ++ (byte) main::j#3 [ main::i#2 main::j#1 ] ( main:2 [ main::i#2 main::j#1 ] ) -- vbuyy=_inc_vbuyy 
-    iny
-  //SEG21 [10] if((byte) main::j#1!=(byte/signed byte/word/signed word) 3) goto main::@6 [ main::i#2 main::j#1 ] ( main:2 [ main::i#2 main::j#1 ] ) -- vbuyy_neq_vbuc1_then_la1 
-    cpy #3
-    bne b2
-  //SEG22 [11] phi from main::@1 to main::@2 [phi:main::@1->main::@2]
-  //SEG23 [11] phi (byte) main::j#4 = (byte/signed byte/word/signed word) 0 [phi:main::@1->main::@2#0] -- vbuyy=vbuc1 
-    ldy #0
-  //SEG24 main::@2
-  b2:
-  //SEG25 [12] (byte) main::i#1 ← ++ (byte) main::i#2 [ main::i#1 main::j#4 ] ( main:2 [ main::i#1 main::j#4 ] ) -- vbuxx=_inc_vbuxx 
-    inx
-  //SEG26 [13] if((byte) main::i#1!=(byte/signed byte/word/signed word) 40) goto main::@1 [ main::i#1 main::j#4 ] ( main:2 [ main::i#1 main::j#4 ] ) -- vbuxx_neq_vbuc1_then_la1 
-    cpx #$28
-    bne b1
-  //SEG27 main::@return
-  //SEG28 [14] return  [ ] ( main:2 [ ] )
-    rts
-  //SEG29 [15] phi from main::@1 to main::@6 [phi:main::@1->main::@6]
-  //SEG30 main::@6
-  //SEG31 [11] phi from main::@6 to main::@2 [phi:main::@6->main::@2]
-  //SEG32 [11] phi (byte) main::j#4 = (byte) main::j#1 [phi:main::@6->main::@2#0] -- register_copy 
-    jmp b2
-    colseq: .byte WHITE, RED, GREEN
-}
-
 Removing unreachable instruction jmp b2
 Succesful ASM optimization Pass5UnreachableCodeElimination
-ASSEMBLER
-//SEG0 Basic Upstart
-.pc = $801 "Basic"
-:BasicUpstart(main)
-.pc = $80d "Program"
-//SEG1 Global Constants & labels
-  .const WHITE = 1
-  .const RED = 2
-  .const GREEN = 5
-//SEG2 @begin
-//SEG3 [1] phi from @begin to @1 [phi:@begin->@1]
-//SEG4 @1
-//SEG5 [2] call main param-assignment [ ] ( )
-//SEG6 [4] phi from @1 to main [phi:@1->main]
-  jsr main
-//SEG7 [3] phi from @1 to @end [phi:@1->@end]
-//SEG8 @end
-//SEG9 main
-main: {
-    .const screen = $400
-    .const cols = $d800
-  //SEG10 [5] phi from main to main::@1 [phi:main->main::@1]
-  //SEG11 [5] phi (byte) main::j#3 = (byte/signed byte/word/signed word) 0 [phi:main->main::@1#0] -- vbuyy=vbuc1 
-    ldy #0
-  //SEG12 [5] phi (byte) main::i#2 = (byte/signed byte/word/signed word) 0 [phi:main->main::@1#1] -- vbuxx=vbuc1 
-    ldx #0
-  //SEG13 [5] phi from main::@2 to main::@1 [phi:main::@2->main::@1]
-  //SEG14 [5] phi (byte) main::j#3 = (byte) main::j#4 [phi:main::@2->main::@1#0] -- register_copy 
-  //SEG15 [5] phi (byte) main::i#2 = (byte) main::i#1 [phi:main::@2->main::@1#1] -- register_copy 
-  //SEG16 main::@1
-  b1:
-  //SEG17 [6] *((const byte*) main::screen#0 + (byte) main::i#2) ← (byte) '*' [ main::i#2 main::j#3 ] ( main:2 [ main::i#2 main::j#3 ] ) -- pbuc1_derefidx_vbuxx=vbuc2 
-    lda #'*'
-    sta screen,x
-  //SEG18 [7] (byte~) main::$0 ← (const byte[]) main::colseq#0 *idx (byte) main::j#3 [ main::i#2 main::j#3 main::$0 ] ( main:2 [ main::i#2 main::j#3 main::$0 ] ) -- vbuaa=pbuc1_derefidx_vbuyy 
-    lda colseq,y
-  //SEG19 [8] *((const byte*) main::cols#0 + (byte) main::i#2) ← (byte~) main::$0 [ main::i#2 main::j#3 ] ( main:2 [ main::i#2 main::j#3 ] ) -- pbuc1_derefidx_vbuxx=vbuaa 
-    sta cols,x
-  //SEG20 [9] (byte) main::j#1 ← ++ (byte) main::j#3 [ main::i#2 main::j#1 ] ( main:2 [ main::i#2 main::j#1 ] ) -- vbuyy=_inc_vbuyy 
-    iny
-  //SEG21 [10] if((byte) main::j#1!=(byte/signed byte/word/signed word) 3) goto main::@6 [ main::i#2 main::j#1 ] ( main:2 [ main::i#2 main::j#1 ] ) -- vbuyy_neq_vbuc1_then_la1 
-    cpy #3
-    bne b2
-  //SEG22 [11] phi from main::@1 to main::@2 [phi:main::@1->main::@2]
-  //SEG23 [11] phi (byte) main::j#4 = (byte/signed byte/word/signed word) 0 [phi:main::@1->main::@2#0] -- vbuyy=vbuc1 
-    ldy #0
-  //SEG24 main::@2
-  b2:
-  //SEG25 [12] (byte) main::i#1 ← ++ (byte) main::i#2 [ main::i#1 main::j#4 ] ( main:2 [ main::i#1 main::j#4 ] ) -- vbuxx=_inc_vbuxx 
-    inx
-  //SEG26 [13] if((byte) main::i#1!=(byte/signed byte/word/signed word) 40) goto main::@1 [ main::i#1 main::j#4 ] ( main:2 [ main::i#1 main::j#4 ] ) -- vbuxx_neq_vbuc1_then_la1 
-    cpx #$28
-    bne b1
-  //SEG27 main::@return
-  //SEG28 [14] return  [ ] ( main:2 [ ] )
-    rts
-  //SEG29 [15] phi from main::@1 to main::@6 [phi:main::@1->main::@6]
-  //SEG30 main::@6
-  //SEG31 [11] phi from main::@6 to main::@2 [phi:main::@6->main::@2]
-  //SEG32 [11] phi (byte) main::j#4 = (byte) main::j#1 [phi:main::@6->main::@2#0] -- register_copy 
-    colseq: .byte WHITE, RED, GREEN
-}
 
 FINAL SYMBOL TABLE
 (label) @1

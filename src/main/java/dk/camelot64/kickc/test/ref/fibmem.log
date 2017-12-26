@@ -801,12 +801,8 @@ Uplift Scope []
 
 Uplifting [main] best 365 combination reg byte x [ main::i#2 main::i#1 ] reg byte alu [ main::$3 ] reg byte a [ main::$4 ] reg byte a [ main::$1 ] 
 Uplifting [] best 365 combination 
-Removing instruction jmp b1
-Removing instruction jmp bend
-Removing instruction jmp b1
-Removing instruction jmp breturn
-Succesful ASM optimization Pass5NextJumpElimination
-ASSEMBLER
+
+ASSEMBLER BEFORE OPTIMIZATION
 //SEG0 Basic Upstart
 .pc = $801 "Basic"
 :BasicUpstart(main)
@@ -817,12 +813,14 @@ ASSEMBLER
 bbegin:
 //SEG3 [1] phi from @begin to @1 [phi:@begin->@1]
 b1_from_bbegin:
+  jmp b1
 //SEG4 @1
 b1:
 //SEG5 [2] call main param-assignment [ ] ( )
   jsr main
 //SEG6 [3] phi from @1 to @end [phi:@1->@end]
 bend_from_b1:
+  jmp bend
 //SEG7 @end
 bend:
 //SEG8 main
@@ -841,6 +839,7 @@ main: {
   //SEG13 [6] phi from main::@1 to main::@1 [phi:main::@1->main::@1]
   b1_from_b1:
   //SEG14 [6] phi (byte) main::i#2 = (byte) main::i#1 [phi:main::@1->main::@1#0] -- register_copy 
+    jmp b1
   //SEG15 main::@1
   b1:
   //SEG16 [7] (byte~) main::$1 ← (const byte[15]) fibs#0 *idx (byte) main::i#2 [ main::i#2 main::$1 ] ( main:2 [ main::i#2 main::$1 ] ) -- vbuaa=pbuc1_derefidx_vbuxx 
@@ -857,174 +856,32 @@ main: {
   //SEG21 [12] if((byte) main::i#1<(byte/signed byte/word/signed word) 15) goto main::@1 [ main::i#1 ] ( main:2 [ main::i#1 ] ) -- vbuxx_lt_vbuc1_then_la1 
     cpx #$f
     bcc b1_from_b1
+    jmp breturn
   //SEG22 main::@return
   breturn:
   //SEG23 [13] return  [ ] ( main:2 [ ] )
     rts
 }
 
+ASSEMBLER OPTIMIZATIONS
+Removing instruction jmp b1
+Removing instruction jmp bend
+Removing instruction jmp b1
+Removing instruction jmp breturn
+Succesful ASM optimization Pass5NextJumpElimination
 Replacing label b1_from_b1 with b1
 Removing instruction bbegin:
 Removing instruction b1_from_bbegin:
 Removing instruction bend_from_b1:
 Removing instruction b1_from_b1:
 Succesful ASM optimization Pass5RedundantLabelElimination
-ASSEMBLER
-//SEG0 Basic Upstart
-.pc = $801 "Basic"
-:BasicUpstart(main)
-.pc = $80d "Program"
-//SEG1 Global Constants & labels
-  .const fibs = $1100
-//SEG2 @begin
-//SEG3 [1] phi from @begin to @1 [phi:@begin->@1]
-//SEG4 @1
-b1:
-//SEG5 [2] call main param-assignment [ ] ( )
-  jsr main
-//SEG6 [3] phi from @1 to @end [phi:@1->@end]
-//SEG7 @end
-bend:
-//SEG8 main
-main: {
-  //SEG9 [4] *((const byte[15]) fibs#0+(byte/signed byte/word/signed word) 0) ← (byte/signed byte/word/signed word) 0 [ ] ( main:2 [ ] ) -- _deref_pbuc1=vbuc2 
-    lda #0
-    sta fibs+0
-  //SEG10 [5] *((const byte[15]) fibs#0+(byte/signed byte/word/signed word) 1) ← (byte/signed byte/word/signed word) 1 [ ] ( main:2 [ ] ) -- _deref_pbuc1=vbuc2 
-    lda #1
-    sta fibs+1
-  //SEG11 [6] phi from main to main::@1 [phi:main->main::@1]
-  b1_from_main:
-  //SEG12 [6] phi (byte) main::i#2 = (byte/signed byte/word/signed word) 0 [phi:main->main::@1#0] -- vbuxx=vbuc1 
-    ldx #0
-    jmp b1
-  //SEG13 [6] phi from main::@1 to main::@1 [phi:main::@1->main::@1]
-  //SEG14 [6] phi (byte) main::i#2 = (byte) main::i#1 [phi:main::@1->main::@1#0] -- register_copy 
-  //SEG15 main::@1
-  b1:
-  //SEG16 [7] (byte~) main::$1 ← (const byte[15]) fibs#0 *idx (byte) main::i#2 [ main::i#2 main::$1 ] ( main:2 [ main::i#2 main::$1 ] ) -- vbuaa=pbuc1_derefidx_vbuxx 
-    lda fibs,x
-  //SEG17 [8] (byte~) main::$3 ← (const byte[15]) fibs#0+(byte/signed byte/word/signed word) 1 *idx (byte) main::i#2 [ main::i#2 main::$1 main::$3 ] ( main:2 [ main::i#2 main::$1 main::$3 ] )
-    // [8] main::$3 ← fibs#0+1 *idx main::i#2  //  ALU
-  //SEG18 [9] (byte~) main::$4 ← (byte~) main::$1 + (byte~) main::$3 [ main::i#2 main::$4 ] ( main:2 [ main::i#2 main::$4 ] ) -- vbuaa=vbuaa_plus_pbuc1_derefidx_vbuxx 
-    clc
-    adc fibs+1,x
-  //SEG19 [10] *((const byte[15]) fibs#0+(byte/signed byte/word/signed word) 2 + (byte) main::i#2) ← (byte~) main::$4 [ main::i#2 ] ( main:2 [ main::i#2 ] ) -- pbuc1_derefidx_vbuxx=vbuaa 
-    sta fibs+2,x
-  //SEG20 [11] (byte) main::i#1 ← ++ (byte) main::i#2 [ main::i#1 ] ( main:2 [ main::i#1 ] ) -- vbuxx=_inc_vbuxx 
-    inx
-  //SEG21 [12] if((byte) main::i#1<(byte/signed byte/word/signed word) 15) goto main::@1 [ main::i#1 ] ( main:2 [ main::i#1 ] ) -- vbuxx_lt_vbuc1_then_la1 
-    cpx #$f
-    bcc b1
-  //SEG22 main::@return
-  breturn:
-  //SEG23 [13] return  [ ] ( main:2 [ ] )
-    rts
-}
-
 Removing instruction b1:
 Removing instruction bend:
 Removing instruction b1_from_main:
 Removing instruction breturn:
 Succesful ASM optimization Pass5UnusedLabelElimination
-ASSEMBLER
-//SEG0 Basic Upstart
-.pc = $801 "Basic"
-:BasicUpstart(main)
-.pc = $80d "Program"
-//SEG1 Global Constants & labels
-  .const fibs = $1100
-//SEG2 @begin
-//SEG3 [1] phi from @begin to @1 [phi:@begin->@1]
-//SEG4 @1
-//SEG5 [2] call main param-assignment [ ] ( )
-  jsr main
-//SEG6 [3] phi from @1 to @end [phi:@1->@end]
-//SEG7 @end
-//SEG8 main
-main: {
-  //SEG9 [4] *((const byte[15]) fibs#0+(byte/signed byte/word/signed word) 0) ← (byte/signed byte/word/signed word) 0 [ ] ( main:2 [ ] ) -- _deref_pbuc1=vbuc2 
-    lda #0
-    sta fibs+0
-  //SEG10 [5] *((const byte[15]) fibs#0+(byte/signed byte/word/signed word) 1) ← (byte/signed byte/word/signed word) 1 [ ] ( main:2 [ ] ) -- _deref_pbuc1=vbuc2 
-    lda #1
-    sta fibs+1
-  //SEG11 [6] phi from main to main::@1 [phi:main->main::@1]
-  //SEG12 [6] phi (byte) main::i#2 = (byte/signed byte/word/signed word) 0 [phi:main->main::@1#0] -- vbuxx=vbuc1 
-    ldx #0
-    jmp b1
-  //SEG13 [6] phi from main::@1 to main::@1 [phi:main::@1->main::@1]
-  //SEG14 [6] phi (byte) main::i#2 = (byte) main::i#1 [phi:main::@1->main::@1#0] -- register_copy 
-  //SEG15 main::@1
-  b1:
-  //SEG16 [7] (byte~) main::$1 ← (const byte[15]) fibs#0 *idx (byte) main::i#2 [ main::i#2 main::$1 ] ( main:2 [ main::i#2 main::$1 ] ) -- vbuaa=pbuc1_derefidx_vbuxx 
-    lda fibs,x
-  //SEG17 [8] (byte~) main::$3 ← (const byte[15]) fibs#0+(byte/signed byte/word/signed word) 1 *idx (byte) main::i#2 [ main::i#2 main::$1 main::$3 ] ( main:2 [ main::i#2 main::$1 main::$3 ] )
-    // [8] main::$3 ← fibs#0+1 *idx main::i#2  //  ALU
-  //SEG18 [9] (byte~) main::$4 ← (byte~) main::$1 + (byte~) main::$3 [ main::i#2 main::$4 ] ( main:2 [ main::i#2 main::$4 ] ) -- vbuaa=vbuaa_plus_pbuc1_derefidx_vbuxx 
-    clc
-    adc fibs+1,x
-  //SEG19 [10] *((const byte[15]) fibs#0+(byte/signed byte/word/signed word) 2 + (byte) main::i#2) ← (byte~) main::$4 [ main::i#2 ] ( main:2 [ main::i#2 ] ) -- pbuc1_derefidx_vbuxx=vbuaa 
-    sta fibs+2,x
-  //SEG20 [11] (byte) main::i#1 ← ++ (byte) main::i#2 [ main::i#1 ] ( main:2 [ main::i#1 ] ) -- vbuxx=_inc_vbuxx 
-    inx
-  //SEG21 [12] if((byte) main::i#1<(byte/signed byte/word/signed word) 15) goto main::@1 [ main::i#1 ] ( main:2 [ main::i#1 ] ) -- vbuxx_lt_vbuc1_then_la1 
-    cpx #$f
-    bcc b1
-  //SEG22 main::@return
-  //SEG23 [13] return  [ ] ( main:2 [ ] )
-    rts
-}
-
 Removing instruction jmp b1
 Succesful ASM optimization Pass5NextJumpElimination
-ASSEMBLER
-//SEG0 Basic Upstart
-.pc = $801 "Basic"
-:BasicUpstart(main)
-.pc = $80d "Program"
-//SEG1 Global Constants & labels
-  .const fibs = $1100
-//SEG2 @begin
-//SEG3 [1] phi from @begin to @1 [phi:@begin->@1]
-//SEG4 @1
-//SEG5 [2] call main param-assignment [ ] ( )
-  jsr main
-//SEG6 [3] phi from @1 to @end [phi:@1->@end]
-//SEG7 @end
-//SEG8 main
-main: {
-  //SEG9 [4] *((const byte[15]) fibs#0+(byte/signed byte/word/signed word) 0) ← (byte/signed byte/word/signed word) 0 [ ] ( main:2 [ ] ) -- _deref_pbuc1=vbuc2 
-    lda #0
-    sta fibs+0
-  //SEG10 [5] *((const byte[15]) fibs#0+(byte/signed byte/word/signed word) 1) ← (byte/signed byte/word/signed word) 1 [ ] ( main:2 [ ] ) -- _deref_pbuc1=vbuc2 
-    lda #1
-    sta fibs+1
-  //SEG11 [6] phi from main to main::@1 [phi:main->main::@1]
-  //SEG12 [6] phi (byte) main::i#2 = (byte/signed byte/word/signed word) 0 [phi:main->main::@1#0] -- vbuxx=vbuc1 
-    ldx #0
-  //SEG13 [6] phi from main::@1 to main::@1 [phi:main::@1->main::@1]
-  //SEG14 [6] phi (byte) main::i#2 = (byte) main::i#1 [phi:main::@1->main::@1#0] -- register_copy 
-  //SEG15 main::@1
-  b1:
-  //SEG16 [7] (byte~) main::$1 ← (const byte[15]) fibs#0 *idx (byte) main::i#2 [ main::i#2 main::$1 ] ( main:2 [ main::i#2 main::$1 ] ) -- vbuaa=pbuc1_derefidx_vbuxx 
-    lda fibs,x
-  //SEG17 [8] (byte~) main::$3 ← (const byte[15]) fibs#0+(byte/signed byte/word/signed word) 1 *idx (byte) main::i#2 [ main::i#2 main::$1 main::$3 ] ( main:2 [ main::i#2 main::$1 main::$3 ] )
-    // [8] main::$3 ← fibs#0+1 *idx main::i#2  //  ALU
-  //SEG18 [9] (byte~) main::$4 ← (byte~) main::$1 + (byte~) main::$3 [ main::i#2 main::$4 ] ( main:2 [ main::i#2 main::$4 ] ) -- vbuaa=vbuaa_plus_pbuc1_derefidx_vbuxx 
-    clc
-    adc fibs+1,x
-  //SEG19 [10] *((const byte[15]) fibs#0+(byte/signed byte/word/signed word) 2 + (byte) main::i#2) ← (byte~) main::$4 [ main::i#2 ] ( main:2 [ main::i#2 ] ) -- pbuc1_derefidx_vbuxx=vbuaa 
-    sta fibs+2,x
-  //SEG20 [11] (byte) main::i#1 ← ++ (byte) main::i#2 [ main::i#1 ] ( main:2 [ main::i#1 ] ) -- vbuxx=_inc_vbuxx 
-    inx
-  //SEG21 [12] if((byte) main::i#1<(byte/signed byte/word/signed word) 15) goto main::@1 [ main::i#1 ] ( main:2 [ main::i#1 ] ) -- vbuxx_lt_vbuc1_then_la1 
-    cpx #$f
-    bcc b1
-  //SEG22 main::@return
-  //SEG23 [13] return  [ ] ( main:2 [ ] )
-    rts
-}
 
 FINAL SYMBOL TABLE
 (label) @1

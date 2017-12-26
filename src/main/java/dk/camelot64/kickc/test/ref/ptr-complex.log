@@ -1352,6 +1352,128 @@ Uplifting [] best 1195 combination
 Coalescing zero page register [ zp ZP_WORD:4 [ main::$2 ] ] with [ zp ZP_WORD:6 [ main::$9 ] ]
 Allocated (was zp ZP_WORD:4) zp ZP_WORD:2 [ main::$2 main::$9 ]
 Allocated (was zp ZP_WORD:8) zp ZP_WORD:4 [ main::$11 ]
+
+ASSEMBLER BEFORE OPTIMIZATION
+//SEG0 Basic Upstart
+.pc = $801 "Basic"
+:BasicUpstart(main)
+.pc = $80d "Program"
+//SEG1 Global Constants & labels
+//SEG2 @begin
+bbegin:
+//SEG3 [1] phi from @begin to @1 [phi:@begin->@1]
+b1_from_bbegin:
+  jmp b1
+//SEG4 @1
+b1:
+//SEG5 [2] call main param-assignment [ ] ( )
+//SEG6 [4] phi from @1 to main [phi:@1->main]
+main_from_b1:
+  jsr main
+//SEG7 [3] phi from @1 to @end [phi:@1->@end]
+bend_from_b1:
+  jmp bend
+//SEG8 @end
+bend:
+//SEG9 main
+main: {
+    .const screen = $400
+    .const BGCOL = $d020
+    .const sc2 = screen+$51
+    .label _2 = 2
+    .label _9 = 2
+    .label _11 = 4
+  //SEG10 [5] phi from main to main::@1 [phi:main->main::@1]
+  b1_from_main:
+  //SEG11 [5] phi (byte) main::i#2 = (byte/signed byte/word/signed word) 0 [phi:main->main::@1#0] -- vbuxx=vbuc1 
+    ldx #0
+    jmp b1
+  //SEG12 [5] phi from main::@1 to main::@1 [phi:main::@1->main::@1]
+  b1_from_b1:
+  //SEG13 [5] phi (byte) main::i#2 = (byte) main::i#1 [phi:main::@1->main::@1#0] -- register_copy 
+    jmp b1
+  //SEG14 main::@1
+  b1:
+  //SEG15 [6] (byte*~) main::$2 ← (const byte*) main::screen#0+(byte/signed byte/word/signed word) 40 + (byte) main::i#2 [ main::i#2 main::$2 ] ( main:2 [ main::i#2 main::$2 ] ) -- pbuz1=pbuc1_plus_vbuxx 
+    txa
+    clc
+    adc #<screen+$28
+    sta _2
+    lda #0
+    adc #>screen+$28
+    sta _2+1
+  //SEG16 [7] *((const byte*) main::screen#0 + (byte) main::i#2) ← *((byte*~) main::$2) [ main::i#2 ] ( main:2 [ main::i#2 ] ) -- pbuc1_derefidx_vbuxx=_deref_pbuz1 
+    ldy #0
+    lda (_2),y
+    sta screen,x
+  //SEG17 [8] (byte) main::i#1 ← ++ (byte) main::i#2 [ main::i#1 ] ( main:2 [ main::i#1 ] ) -- vbuxx=_inc_vbuxx 
+    inx
+  //SEG18 [9] if((byte) main::i#1!=(byte/signed byte/word/signed word) 11) goto main::@1 [ main::i#1 ] ( main:2 [ main::i#1 ] ) -- vbuxx_neq_vbuc1_then_la1 
+    cpx #$b
+    bne b1_from_b1
+    jmp b3
+  //SEG19 main::@3
+  b3:
+  //SEG20 [10] *((const byte*) main::sc2#0) ← *((const byte*) main::screen#0+(byte/signed byte/word/signed word) 121) [ ] ( main:2 [ ] ) -- _deref_pbuc1=_deref_pbuc2 
+    lda screen+$79
+    sta sc2
+  //SEG21 [11] *((const byte*) main::screen#0+(byte/signed byte/word/signed word) 82) ← *((const byte*) main::screen#0+(byte/signed byte/word/signed word) 122) [ ] ( main:2 [ ] ) -- _deref_pbuc1=_deref_pbuc2 
+    lda screen+$7a
+    sta screen+$52
+  //SEG22 [12] phi from main::@3 to main::@2 [phi:main::@3->main::@2]
+  b2_from_b3:
+  //SEG23 [12] phi (byte) main::j#2 = (byte/signed byte/word/signed word) 0 [phi:main::@3->main::@2#0] -- vbuxx=vbuc1 
+    ldx #0
+    jmp b2
+  //SEG24 [12] phi from main::@2 to main::@2 [phi:main::@2->main::@2]
+  b2_from_b2:
+  //SEG25 [12] phi (byte) main::j#2 = (byte) main::j#1 [phi:main::@2->main::@2#0] -- register_copy 
+    jmp b2
+  //SEG26 main::@2
+  b2:
+  //SEG27 [13] (byte*~) main::$9 ← (const byte*) main::screen#0+(byte/word/signed word) 160 + (byte) main::j#2 [ main::j#2 main::$9 ] ( main:2 [ main::j#2 main::$9 ] ) -- pbuz1=pbuc1_plus_vbuxx 
+    txa
+    clc
+    adc #<screen+$a0
+    sta _9
+    lda #0
+    adc #>screen+$a0
+    sta _9+1
+  //SEG28 [14] (byte*~) main::$11 ← (const byte*) main::screen#0+(byte/word/signed word) 200 + (byte) main::j#2 [ main::j#2 main::$9 main::$11 ] ( main:2 [ main::j#2 main::$9 main::$11 ] ) -- pbuz1=pbuc1_plus_vbuxx 
+    txa
+    clc
+    adc #<screen+$c8
+    sta _11
+    lda #0
+    adc #>screen+$c8
+    sta _11+1
+  //SEG29 [15] *((byte*~) main::$9) ← *((byte*~) main::$11) [ main::j#2 ] ( main:2 [ main::j#2 ] ) -- _deref_pbuz1=_deref_pbuz2 
+    ldy #0
+    lda (_11),y
+    ldy #0
+    sta (_9),y
+  //SEG30 [16] (byte) main::j#1 ← ++ (byte) main::j#2 [ main::j#1 ] ( main:2 [ main::j#1 ] ) -- vbuxx=_inc_vbuxx 
+    inx
+  //SEG31 [17] if((byte) main::j#1!=(byte/signed byte/word/signed word) 11) goto main::@2 [ main::j#1 ] ( main:2 [ main::j#1 ] ) -- vbuxx_neq_vbuc1_then_la1 
+    cpx #$b
+    bne b2_from_b2
+    jmp b4
+  //SEG32 main::@4
+  b4:
+  //SEG33 [18] *(((byte*))(word) 53280) ← ++ *(((byte*))(word) 53280) [ ] ( main:2 [ ] ) -- _deref_pbuc1=_inc__deref_pbuc1 
+    inc $d020
+  //SEG34 [19] *(((byte*))(word) 53248+(byte/signed byte/word/signed word) 33) ← -- *(((byte*))(word) 53248+(byte/signed byte/word/signed word) 33) [ ] ( main:2 [ ] ) -- _deref_pbuc1=_dec__deref_pbuc1 
+    dec $d000+$21
+  //SEG35 [20] *((const byte*) main::BGCOL#0) ← ++ *((const byte*) main::BGCOL#0) [ ] ( main:2 [ ] ) -- _deref_pbuc1=_inc__deref_pbuc1 
+    inc BGCOL
+    jmp breturn
+  //SEG36 main::@return
+  breturn:
+  //SEG37 [21] return  [ ] ( main:2 [ ] )
+    rts
+}
+
+ASSEMBLER OPTIMIZATIONS
 Removing instruction jmp b1
 Removing instruction jmp bend
 Removing instruction jmp b1
@@ -1360,233 +1482,8 @@ Removing instruction jmp b2
 Removing instruction jmp b4
 Removing instruction jmp breturn
 Succesful ASM optimization Pass5NextJumpElimination
-ASSEMBLER
-//SEG0 Basic Upstart
-.pc = $801 "Basic"
-:BasicUpstart(main)
-.pc = $80d "Program"
-//SEG1 Global Constants & labels
-//SEG2 @begin
-bbegin:
-//SEG3 [1] phi from @begin to @1 [phi:@begin->@1]
-b1_from_bbegin:
-//SEG4 @1
-b1:
-//SEG5 [2] call main param-assignment [ ] ( )
-//SEG6 [4] phi from @1 to main [phi:@1->main]
-main_from_b1:
-  jsr main
-//SEG7 [3] phi from @1 to @end [phi:@1->@end]
-bend_from_b1:
-//SEG8 @end
-bend:
-//SEG9 main
-main: {
-    .const screen = $400
-    .const BGCOL = $d020
-    .const sc2 = screen+$51
-    .label _2 = 2
-    .label _9 = 2
-    .label _11 = 4
-  //SEG10 [5] phi from main to main::@1 [phi:main->main::@1]
-  b1_from_main:
-  //SEG11 [5] phi (byte) main::i#2 = (byte/signed byte/word/signed word) 0 [phi:main->main::@1#0] -- vbuxx=vbuc1 
-    ldx #0
-    jmp b1
-  //SEG12 [5] phi from main::@1 to main::@1 [phi:main::@1->main::@1]
-  b1_from_b1:
-  //SEG13 [5] phi (byte) main::i#2 = (byte) main::i#1 [phi:main::@1->main::@1#0] -- register_copy 
-  //SEG14 main::@1
-  b1:
-  //SEG15 [6] (byte*~) main::$2 ← (const byte*) main::screen#0+(byte/signed byte/word/signed word) 40 + (byte) main::i#2 [ main::i#2 main::$2 ] ( main:2 [ main::i#2 main::$2 ] ) -- pbuz1=pbuc1_plus_vbuxx 
-    txa
-    clc
-    adc #<screen+$28
-    sta _2
-    lda #0
-    adc #>screen+$28
-    sta _2+1
-  //SEG16 [7] *((const byte*) main::screen#0 + (byte) main::i#2) ← *((byte*~) main::$2) [ main::i#2 ] ( main:2 [ main::i#2 ] ) -- pbuc1_derefidx_vbuxx=_deref_pbuz1 
-    ldy #0
-    lda (_2),y
-    sta screen,x
-  //SEG17 [8] (byte) main::i#1 ← ++ (byte) main::i#2 [ main::i#1 ] ( main:2 [ main::i#1 ] ) -- vbuxx=_inc_vbuxx 
-    inx
-  //SEG18 [9] if((byte) main::i#1!=(byte/signed byte/word/signed word) 11) goto main::@1 [ main::i#1 ] ( main:2 [ main::i#1 ] ) -- vbuxx_neq_vbuc1_then_la1 
-    cpx #$b
-    bne b1_from_b1
-  //SEG19 main::@3
-  b3:
-  //SEG20 [10] *((const byte*) main::sc2#0) ← *((const byte*) main::screen#0+(byte/signed byte/word/signed word) 121) [ ] ( main:2 [ ] ) -- _deref_pbuc1=_deref_pbuc2 
-    lda screen+$79
-    sta sc2
-  //SEG21 [11] *((const byte*) main::screen#0+(byte/signed byte/word/signed word) 82) ← *((const byte*) main::screen#0+(byte/signed byte/word/signed word) 122) [ ] ( main:2 [ ] ) -- _deref_pbuc1=_deref_pbuc2 
-    lda screen+$7a
-    sta screen+$52
-  //SEG22 [12] phi from main::@3 to main::@2 [phi:main::@3->main::@2]
-  b2_from_b3:
-  //SEG23 [12] phi (byte) main::j#2 = (byte/signed byte/word/signed word) 0 [phi:main::@3->main::@2#0] -- vbuxx=vbuc1 
-    ldx #0
-    jmp b2
-  //SEG24 [12] phi from main::@2 to main::@2 [phi:main::@2->main::@2]
-  b2_from_b2:
-  //SEG25 [12] phi (byte) main::j#2 = (byte) main::j#1 [phi:main::@2->main::@2#0] -- register_copy 
-  //SEG26 main::@2
-  b2:
-  //SEG27 [13] (byte*~) main::$9 ← (const byte*) main::screen#0+(byte/word/signed word) 160 + (byte) main::j#2 [ main::j#2 main::$9 ] ( main:2 [ main::j#2 main::$9 ] ) -- pbuz1=pbuc1_plus_vbuxx 
-    txa
-    clc
-    adc #<screen+$a0
-    sta _9
-    lda #0
-    adc #>screen+$a0
-    sta _9+1
-  //SEG28 [14] (byte*~) main::$11 ← (const byte*) main::screen#0+(byte/word/signed word) 200 + (byte) main::j#2 [ main::j#2 main::$9 main::$11 ] ( main:2 [ main::j#2 main::$9 main::$11 ] ) -- pbuz1=pbuc1_plus_vbuxx 
-    txa
-    clc
-    adc #<screen+$c8
-    sta _11
-    lda #0
-    adc #>screen+$c8
-    sta _11+1
-  //SEG29 [15] *((byte*~) main::$9) ← *((byte*~) main::$11) [ main::j#2 ] ( main:2 [ main::j#2 ] ) -- _deref_pbuz1=_deref_pbuz2 
-    ldy #0
-    lda (_11),y
-    ldy #0
-    sta (_9),y
-  //SEG30 [16] (byte) main::j#1 ← ++ (byte) main::j#2 [ main::j#1 ] ( main:2 [ main::j#1 ] ) -- vbuxx=_inc_vbuxx 
-    inx
-  //SEG31 [17] if((byte) main::j#1!=(byte/signed byte/word/signed word) 11) goto main::@2 [ main::j#1 ] ( main:2 [ main::j#1 ] ) -- vbuxx_neq_vbuc1_then_la1 
-    cpx #$b
-    bne b2_from_b2
-  //SEG32 main::@4
-  b4:
-  //SEG33 [18] *(((byte*))(word) 53280) ← ++ *(((byte*))(word) 53280) [ ] ( main:2 [ ] ) -- _deref_pbuc1=_inc__deref_pbuc1 
-    inc $d020
-  //SEG34 [19] *(((byte*))(word) 53248+(byte/signed byte/word/signed word) 33) ← -- *(((byte*))(word) 53248+(byte/signed byte/word/signed word) 33) [ ] ( main:2 [ ] ) -- _deref_pbuc1=_dec__deref_pbuc1 
-    dec $d000+$21
-  //SEG35 [20] *((const byte*) main::BGCOL#0) ← ++ *((const byte*) main::BGCOL#0) [ ] ( main:2 [ ] ) -- _deref_pbuc1=_inc__deref_pbuc1 
-    inc BGCOL
-  //SEG36 main::@return
-  breturn:
-  //SEG37 [21] return  [ ] ( main:2 [ ] )
-    rts
-}
-
 Removing instruction ldy #0
 Succesful ASM optimization Pass5UnnecesaryLoadElimination
-ASSEMBLER
-//SEG0 Basic Upstart
-.pc = $801 "Basic"
-:BasicUpstart(main)
-.pc = $80d "Program"
-//SEG1 Global Constants & labels
-//SEG2 @begin
-bbegin:
-//SEG3 [1] phi from @begin to @1 [phi:@begin->@1]
-b1_from_bbegin:
-//SEG4 @1
-b1:
-//SEG5 [2] call main param-assignment [ ] ( )
-//SEG6 [4] phi from @1 to main [phi:@1->main]
-main_from_b1:
-  jsr main
-//SEG7 [3] phi from @1 to @end [phi:@1->@end]
-bend_from_b1:
-//SEG8 @end
-bend:
-//SEG9 main
-main: {
-    .const screen = $400
-    .const BGCOL = $d020
-    .const sc2 = screen+$51
-    .label _2 = 2
-    .label _9 = 2
-    .label _11 = 4
-  //SEG10 [5] phi from main to main::@1 [phi:main->main::@1]
-  b1_from_main:
-  //SEG11 [5] phi (byte) main::i#2 = (byte/signed byte/word/signed word) 0 [phi:main->main::@1#0] -- vbuxx=vbuc1 
-    ldx #0
-    jmp b1
-  //SEG12 [5] phi from main::@1 to main::@1 [phi:main::@1->main::@1]
-  b1_from_b1:
-  //SEG13 [5] phi (byte) main::i#2 = (byte) main::i#1 [phi:main::@1->main::@1#0] -- register_copy 
-  //SEG14 main::@1
-  b1:
-  //SEG15 [6] (byte*~) main::$2 ← (const byte*) main::screen#0+(byte/signed byte/word/signed word) 40 + (byte) main::i#2 [ main::i#2 main::$2 ] ( main:2 [ main::i#2 main::$2 ] ) -- pbuz1=pbuc1_plus_vbuxx 
-    txa
-    clc
-    adc #<screen+$28
-    sta _2
-    lda #0
-    adc #>screen+$28
-    sta _2+1
-  //SEG16 [7] *((const byte*) main::screen#0 + (byte) main::i#2) ← *((byte*~) main::$2) [ main::i#2 ] ( main:2 [ main::i#2 ] ) -- pbuc1_derefidx_vbuxx=_deref_pbuz1 
-    ldy #0
-    lda (_2),y
-    sta screen,x
-  //SEG17 [8] (byte) main::i#1 ← ++ (byte) main::i#2 [ main::i#1 ] ( main:2 [ main::i#1 ] ) -- vbuxx=_inc_vbuxx 
-    inx
-  //SEG18 [9] if((byte) main::i#1!=(byte/signed byte/word/signed word) 11) goto main::@1 [ main::i#1 ] ( main:2 [ main::i#1 ] ) -- vbuxx_neq_vbuc1_then_la1 
-    cpx #$b
-    bne b1_from_b1
-  //SEG19 main::@3
-  b3:
-  //SEG20 [10] *((const byte*) main::sc2#0) ← *((const byte*) main::screen#0+(byte/signed byte/word/signed word) 121) [ ] ( main:2 [ ] ) -- _deref_pbuc1=_deref_pbuc2 
-    lda screen+$79
-    sta sc2
-  //SEG21 [11] *((const byte*) main::screen#0+(byte/signed byte/word/signed word) 82) ← *((const byte*) main::screen#0+(byte/signed byte/word/signed word) 122) [ ] ( main:2 [ ] ) -- _deref_pbuc1=_deref_pbuc2 
-    lda screen+$7a
-    sta screen+$52
-  //SEG22 [12] phi from main::@3 to main::@2 [phi:main::@3->main::@2]
-  b2_from_b3:
-  //SEG23 [12] phi (byte) main::j#2 = (byte/signed byte/word/signed word) 0 [phi:main::@3->main::@2#0] -- vbuxx=vbuc1 
-    ldx #0
-    jmp b2
-  //SEG24 [12] phi from main::@2 to main::@2 [phi:main::@2->main::@2]
-  b2_from_b2:
-  //SEG25 [12] phi (byte) main::j#2 = (byte) main::j#1 [phi:main::@2->main::@2#0] -- register_copy 
-  //SEG26 main::@2
-  b2:
-  //SEG27 [13] (byte*~) main::$9 ← (const byte*) main::screen#0+(byte/word/signed word) 160 + (byte) main::j#2 [ main::j#2 main::$9 ] ( main:2 [ main::j#2 main::$9 ] ) -- pbuz1=pbuc1_plus_vbuxx 
-    txa
-    clc
-    adc #<screen+$a0
-    sta _9
-    lda #0
-    adc #>screen+$a0
-    sta _9+1
-  //SEG28 [14] (byte*~) main::$11 ← (const byte*) main::screen#0+(byte/word/signed word) 200 + (byte) main::j#2 [ main::j#2 main::$9 main::$11 ] ( main:2 [ main::j#2 main::$9 main::$11 ] ) -- pbuz1=pbuc1_plus_vbuxx 
-    txa
-    clc
-    adc #<screen+$c8
-    sta _11
-    lda #0
-    adc #>screen+$c8
-    sta _11+1
-  //SEG29 [15] *((byte*~) main::$9) ← *((byte*~) main::$11) [ main::j#2 ] ( main:2 [ main::j#2 ] ) -- _deref_pbuz1=_deref_pbuz2 
-    ldy #0
-    lda (_11),y
-    sta (_9),y
-  //SEG30 [16] (byte) main::j#1 ← ++ (byte) main::j#2 [ main::j#1 ] ( main:2 [ main::j#1 ] ) -- vbuxx=_inc_vbuxx 
-    inx
-  //SEG31 [17] if((byte) main::j#1!=(byte/signed byte/word/signed word) 11) goto main::@2 [ main::j#1 ] ( main:2 [ main::j#1 ] ) -- vbuxx_neq_vbuc1_then_la1 
-    cpx #$b
-    bne b2_from_b2
-  //SEG32 main::@4
-  b4:
-  //SEG33 [18] *(((byte*))(word) 53280) ← ++ *(((byte*))(word) 53280) [ ] ( main:2 [ ] ) -- _deref_pbuc1=_inc__deref_pbuc1 
-    inc $d020
-  //SEG34 [19] *(((byte*))(word) 53248+(byte/signed byte/word/signed word) 33) ← -- *(((byte*))(word) 53248+(byte/signed byte/word/signed word) 33) [ ] ( main:2 [ ] ) -- _deref_pbuc1=_dec__deref_pbuc1 
-    dec $d000+$21
-  //SEG35 [20] *((const byte*) main::BGCOL#0) ← ++ *((const byte*) main::BGCOL#0) [ ] ( main:2 [ ] ) -- _deref_pbuc1=_inc__deref_pbuc1 
-    inc BGCOL
-  //SEG36 main::@return
-  breturn:
-  //SEG37 [21] return  [ ] ( main:2 [ ] )
-    rts
-}
-
 Replacing label b1_from_b1 with b1
 Replacing label b2_from_b2 with b2
 Removing instruction bbegin:
@@ -1596,112 +1493,6 @@ Removing instruction bend_from_b1:
 Removing instruction b1_from_b1:
 Removing instruction b2_from_b2:
 Succesful ASM optimization Pass5RedundantLabelElimination
-ASSEMBLER
-//SEG0 Basic Upstart
-.pc = $801 "Basic"
-:BasicUpstart(main)
-.pc = $80d "Program"
-//SEG1 Global Constants & labels
-//SEG2 @begin
-//SEG3 [1] phi from @begin to @1 [phi:@begin->@1]
-//SEG4 @1
-b1:
-//SEG5 [2] call main param-assignment [ ] ( )
-//SEG6 [4] phi from @1 to main [phi:@1->main]
-  jsr main
-//SEG7 [3] phi from @1 to @end [phi:@1->@end]
-//SEG8 @end
-bend:
-//SEG9 main
-main: {
-    .const screen = $400
-    .const BGCOL = $d020
-    .const sc2 = screen+$51
-    .label _2 = 2
-    .label _9 = 2
-    .label _11 = 4
-  //SEG10 [5] phi from main to main::@1 [phi:main->main::@1]
-  b1_from_main:
-  //SEG11 [5] phi (byte) main::i#2 = (byte/signed byte/word/signed word) 0 [phi:main->main::@1#0] -- vbuxx=vbuc1 
-    ldx #0
-    jmp b1
-  //SEG12 [5] phi from main::@1 to main::@1 [phi:main::@1->main::@1]
-  //SEG13 [5] phi (byte) main::i#2 = (byte) main::i#1 [phi:main::@1->main::@1#0] -- register_copy 
-  //SEG14 main::@1
-  b1:
-  //SEG15 [6] (byte*~) main::$2 ← (const byte*) main::screen#0+(byte/signed byte/word/signed word) 40 + (byte) main::i#2 [ main::i#2 main::$2 ] ( main:2 [ main::i#2 main::$2 ] ) -- pbuz1=pbuc1_plus_vbuxx 
-    txa
-    clc
-    adc #<screen+$28
-    sta _2
-    lda #0
-    adc #>screen+$28
-    sta _2+1
-  //SEG16 [7] *((const byte*) main::screen#0 + (byte) main::i#2) ← *((byte*~) main::$2) [ main::i#2 ] ( main:2 [ main::i#2 ] ) -- pbuc1_derefidx_vbuxx=_deref_pbuz1 
-    ldy #0
-    lda (_2),y
-    sta screen,x
-  //SEG17 [8] (byte) main::i#1 ← ++ (byte) main::i#2 [ main::i#1 ] ( main:2 [ main::i#1 ] ) -- vbuxx=_inc_vbuxx 
-    inx
-  //SEG18 [9] if((byte) main::i#1!=(byte/signed byte/word/signed word) 11) goto main::@1 [ main::i#1 ] ( main:2 [ main::i#1 ] ) -- vbuxx_neq_vbuc1_then_la1 
-    cpx #$b
-    bne b1
-  //SEG19 main::@3
-  b3:
-  //SEG20 [10] *((const byte*) main::sc2#0) ← *((const byte*) main::screen#0+(byte/signed byte/word/signed word) 121) [ ] ( main:2 [ ] ) -- _deref_pbuc1=_deref_pbuc2 
-    lda screen+$79
-    sta sc2
-  //SEG21 [11] *((const byte*) main::screen#0+(byte/signed byte/word/signed word) 82) ← *((const byte*) main::screen#0+(byte/signed byte/word/signed word) 122) [ ] ( main:2 [ ] ) -- _deref_pbuc1=_deref_pbuc2 
-    lda screen+$7a
-    sta screen+$52
-  //SEG22 [12] phi from main::@3 to main::@2 [phi:main::@3->main::@2]
-  b2_from_b3:
-  //SEG23 [12] phi (byte) main::j#2 = (byte/signed byte/word/signed word) 0 [phi:main::@3->main::@2#0] -- vbuxx=vbuc1 
-    ldx #0
-    jmp b2
-  //SEG24 [12] phi from main::@2 to main::@2 [phi:main::@2->main::@2]
-  //SEG25 [12] phi (byte) main::j#2 = (byte) main::j#1 [phi:main::@2->main::@2#0] -- register_copy 
-  //SEG26 main::@2
-  b2:
-  //SEG27 [13] (byte*~) main::$9 ← (const byte*) main::screen#0+(byte/word/signed word) 160 + (byte) main::j#2 [ main::j#2 main::$9 ] ( main:2 [ main::j#2 main::$9 ] ) -- pbuz1=pbuc1_plus_vbuxx 
-    txa
-    clc
-    adc #<screen+$a0
-    sta _9
-    lda #0
-    adc #>screen+$a0
-    sta _9+1
-  //SEG28 [14] (byte*~) main::$11 ← (const byte*) main::screen#0+(byte/word/signed word) 200 + (byte) main::j#2 [ main::j#2 main::$9 main::$11 ] ( main:2 [ main::j#2 main::$9 main::$11 ] ) -- pbuz1=pbuc1_plus_vbuxx 
-    txa
-    clc
-    adc #<screen+$c8
-    sta _11
-    lda #0
-    adc #>screen+$c8
-    sta _11+1
-  //SEG29 [15] *((byte*~) main::$9) ← *((byte*~) main::$11) [ main::j#2 ] ( main:2 [ main::j#2 ] ) -- _deref_pbuz1=_deref_pbuz2 
-    ldy #0
-    lda (_11),y
-    sta (_9),y
-  //SEG30 [16] (byte) main::j#1 ← ++ (byte) main::j#2 [ main::j#1 ] ( main:2 [ main::j#1 ] ) -- vbuxx=_inc_vbuxx 
-    inx
-  //SEG31 [17] if((byte) main::j#1!=(byte/signed byte/word/signed word) 11) goto main::@2 [ main::j#1 ] ( main:2 [ main::j#1 ] ) -- vbuxx_neq_vbuc1_then_la1 
-    cpx #$b
-    bne b2
-  //SEG32 main::@4
-  b4:
-  //SEG33 [18] *(((byte*))(word) 53280) ← ++ *(((byte*))(word) 53280) [ ] ( main:2 [ ] ) -- _deref_pbuc1=_inc__deref_pbuc1 
-    inc $d020
-  //SEG34 [19] *(((byte*))(word) 53248+(byte/signed byte/word/signed word) 33) ← -- *(((byte*))(word) 53248+(byte/signed byte/word/signed word) 33) [ ] ( main:2 [ ] ) -- _deref_pbuc1=_dec__deref_pbuc1 
-    dec $d000+$21
-  //SEG35 [20] *((const byte*) main::BGCOL#0) ← ++ *((const byte*) main::BGCOL#0) [ ] ( main:2 [ ] ) -- _deref_pbuc1=_inc__deref_pbuc1 
-    inc BGCOL
-  //SEG36 main::@return
-  breturn:
-  //SEG37 [21] return  [ ] ( main:2 [ ] )
-    rts
-}
-
 Removing instruction b1:
 Removing instruction bend:
 Removing instruction b1_from_main:
@@ -1710,204 +1501,9 @@ Removing instruction b2_from_b3:
 Removing instruction b4:
 Removing instruction breturn:
 Succesful ASM optimization Pass5UnusedLabelElimination
-ASSEMBLER
-//SEG0 Basic Upstart
-.pc = $801 "Basic"
-:BasicUpstart(main)
-.pc = $80d "Program"
-//SEG1 Global Constants & labels
-//SEG2 @begin
-//SEG3 [1] phi from @begin to @1 [phi:@begin->@1]
-//SEG4 @1
-//SEG5 [2] call main param-assignment [ ] ( )
-//SEG6 [4] phi from @1 to main [phi:@1->main]
-  jsr main
-//SEG7 [3] phi from @1 to @end [phi:@1->@end]
-//SEG8 @end
-//SEG9 main
-main: {
-    .const screen = $400
-    .const BGCOL = $d020
-    .const sc2 = screen+$51
-    .label _2 = 2
-    .label _9 = 2
-    .label _11 = 4
-  //SEG10 [5] phi from main to main::@1 [phi:main->main::@1]
-  //SEG11 [5] phi (byte) main::i#2 = (byte/signed byte/word/signed word) 0 [phi:main->main::@1#0] -- vbuxx=vbuc1 
-    ldx #0
-    jmp b1
-  //SEG12 [5] phi from main::@1 to main::@1 [phi:main::@1->main::@1]
-  //SEG13 [5] phi (byte) main::i#2 = (byte) main::i#1 [phi:main::@1->main::@1#0] -- register_copy 
-  //SEG14 main::@1
-  b1:
-  //SEG15 [6] (byte*~) main::$2 ← (const byte*) main::screen#0+(byte/signed byte/word/signed word) 40 + (byte) main::i#2 [ main::i#2 main::$2 ] ( main:2 [ main::i#2 main::$2 ] ) -- pbuz1=pbuc1_plus_vbuxx 
-    txa
-    clc
-    adc #<screen+$28
-    sta _2
-    lda #0
-    adc #>screen+$28
-    sta _2+1
-  //SEG16 [7] *((const byte*) main::screen#0 + (byte) main::i#2) ← *((byte*~) main::$2) [ main::i#2 ] ( main:2 [ main::i#2 ] ) -- pbuc1_derefidx_vbuxx=_deref_pbuz1 
-    ldy #0
-    lda (_2),y
-    sta screen,x
-  //SEG17 [8] (byte) main::i#1 ← ++ (byte) main::i#2 [ main::i#1 ] ( main:2 [ main::i#1 ] ) -- vbuxx=_inc_vbuxx 
-    inx
-  //SEG18 [9] if((byte) main::i#1!=(byte/signed byte/word/signed word) 11) goto main::@1 [ main::i#1 ] ( main:2 [ main::i#1 ] ) -- vbuxx_neq_vbuc1_then_la1 
-    cpx #$b
-    bne b1
-  //SEG19 main::@3
-  //SEG20 [10] *((const byte*) main::sc2#0) ← *((const byte*) main::screen#0+(byte/signed byte/word/signed word) 121) [ ] ( main:2 [ ] ) -- _deref_pbuc1=_deref_pbuc2 
-    lda screen+$79
-    sta sc2
-  //SEG21 [11] *((const byte*) main::screen#0+(byte/signed byte/word/signed word) 82) ← *((const byte*) main::screen#0+(byte/signed byte/word/signed word) 122) [ ] ( main:2 [ ] ) -- _deref_pbuc1=_deref_pbuc2 
-    lda screen+$7a
-    sta screen+$52
-  //SEG22 [12] phi from main::@3 to main::@2 [phi:main::@3->main::@2]
-  //SEG23 [12] phi (byte) main::j#2 = (byte/signed byte/word/signed word) 0 [phi:main::@3->main::@2#0] -- vbuxx=vbuc1 
-    ldx #0
-    jmp b2
-  //SEG24 [12] phi from main::@2 to main::@2 [phi:main::@2->main::@2]
-  //SEG25 [12] phi (byte) main::j#2 = (byte) main::j#1 [phi:main::@2->main::@2#0] -- register_copy 
-  //SEG26 main::@2
-  b2:
-  //SEG27 [13] (byte*~) main::$9 ← (const byte*) main::screen#0+(byte/word/signed word) 160 + (byte) main::j#2 [ main::j#2 main::$9 ] ( main:2 [ main::j#2 main::$9 ] ) -- pbuz1=pbuc1_plus_vbuxx 
-    txa
-    clc
-    adc #<screen+$a0
-    sta _9
-    lda #0
-    adc #>screen+$a0
-    sta _9+1
-  //SEG28 [14] (byte*~) main::$11 ← (const byte*) main::screen#0+(byte/word/signed word) 200 + (byte) main::j#2 [ main::j#2 main::$9 main::$11 ] ( main:2 [ main::j#2 main::$9 main::$11 ] ) -- pbuz1=pbuc1_plus_vbuxx 
-    txa
-    clc
-    adc #<screen+$c8
-    sta _11
-    lda #0
-    adc #>screen+$c8
-    sta _11+1
-  //SEG29 [15] *((byte*~) main::$9) ← *((byte*~) main::$11) [ main::j#2 ] ( main:2 [ main::j#2 ] ) -- _deref_pbuz1=_deref_pbuz2 
-    ldy #0
-    lda (_11),y
-    sta (_9),y
-  //SEG30 [16] (byte) main::j#1 ← ++ (byte) main::j#2 [ main::j#1 ] ( main:2 [ main::j#1 ] ) -- vbuxx=_inc_vbuxx 
-    inx
-  //SEG31 [17] if((byte) main::j#1!=(byte/signed byte/word/signed word) 11) goto main::@2 [ main::j#1 ] ( main:2 [ main::j#1 ] ) -- vbuxx_neq_vbuc1_then_la1 
-    cpx #$b
-    bne b2
-  //SEG32 main::@4
-  //SEG33 [18] *(((byte*))(word) 53280) ← ++ *(((byte*))(word) 53280) [ ] ( main:2 [ ] ) -- _deref_pbuc1=_inc__deref_pbuc1 
-    inc $d020
-  //SEG34 [19] *(((byte*))(word) 53248+(byte/signed byte/word/signed word) 33) ← -- *(((byte*))(word) 53248+(byte/signed byte/word/signed word) 33) [ ] ( main:2 [ ] ) -- _deref_pbuc1=_dec__deref_pbuc1 
-    dec $d000+$21
-  //SEG35 [20] *((const byte*) main::BGCOL#0) ← ++ *((const byte*) main::BGCOL#0) [ ] ( main:2 [ ] ) -- _deref_pbuc1=_inc__deref_pbuc1 
-    inc BGCOL
-  //SEG36 main::@return
-  //SEG37 [21] return  [ ] ( main:2 [ ] )
-    rts
-}
-
 Removing instruction jmp b1
 Removing instruction jmp b2
 Succesful ASM optimization Pass5NextJumpElimination
-ASSEMBLER
-//SEG0 Basic Upstart
-.pc = $801 "Basic"
-:BasicUpstart(main)
-.pc = $80d "Program"
-//SEG1 Global Constants & labels
-//SEG2 @begin
-//SEG3 [1] phi from @begin to @1 [phi:@begin->@1]
-//SEG4 @1
-//SEG5 [2] call main param-assignment [ ] ( )
-//SEG6 [4] phi from @1 to main [phi:@1->main]
-  jsr main
-//SEG7 [3] phi from @1 to @end [phi:@1->@end]
-//SEG8 @end
-//SEG9 main
-main: {
-    .const screen = $400
-    .const BGCOL = $d020
-    .const sc2 = screen+$51
-    .label _2 = 2
-    .label _9 = 2
-    .label _11 = 4
-  //SEG10 [5] phi from main to main::@1 [phi:main->main::@1]
-  //SEG11 [5] phi (byte) main::i#2 = (byte/signed byte/word/signed word) 0 [phi:main->main::@1#0] -- vbuxx=vbuc1 
-    ldx #0
-  //SEG12 [5] phi from main::@1 to main::@1 [phi:main::@1->main::@1]
-  //SEG13 [5] phi (byte) main::i#2 = (byte) main::i#1 [phi:main::@1->main::@1#0] -- register_copy 
-  //SEG14 main::@1
-  b1:
-  //SEG15 [6] (byte*~) main::$2 ← (const byte*) main::screen#0+(byte/signed byte/word/signed word) 40 + (byte) main::i#2 [ main::i#2 main::$2 ] ( main:2 [ main::i#2 main::$2 ] ) -- pbuz1=pbuc1_plus_vbuxx 
-    txa
-    clc
-    adc #<screen+$28
-    sta _2
-    lda #0
-    adc #>screen+$28
-    sta _2+1
-  //SEG16 [7] *((const byte*) main::screen#0 + (byte) main::i#2) ← *((byte*~) main::$2) [ main::i#2 ] ( main:2 [ main::i#2 ] ) -- pbuc1_derefidx_vbuxx=_deref_pbuz1 
-    ldy #0
-    lda (_2),y
-    sta screen,x
-  //SEG17 [8] (byte) main::i#1 ← ++ (byte) main::i#2 [ main::i#1 ] ( main:2 [ main::i#1 ] ) -- vbuxx=_inc_vbuxx 
-    inx
-  //SEG18 [9] if((byte) main::i#1!=(byte/signed byte/word/signed word) 11) goto main::@1 [ main::i#1 ] ( main:2 [ main::i#1 ] ) -- vbuxx_neq_vbuc1_then_la1 
-    cpx #$b
-    bne b1
-  //SEG19 main::@3
-  //SEG20 [10] *((const byte*) main::sc2#0) ← *((const byte*) main::screen#0+(byte/signed byte/word/signed word) 121) [ ] ( main:2 [ ] ) -- _deref_pbuc1=_deref_pbuc2 
-    lda screen+$79
-    sta sc2
-  //SEG21 [11] *((const byte*) main::screen#0+(byte/signed byte/word/signed word) 82) ← *((const byte*) main::screen#0+(byte/signed byte/word/signed word) 122) [ ] ( main:2 [ ] ) -- _deref_pbuc1=_deref_pbuc2 
-    lda screen+$7a
-    sta screen+$52
-  //SEG22 [12] phi from main::@3 to main::@2 [phi:main::@3->main::@2]
-  //SEG23 [12] phi (byte) main::j#2 = (byte/signed byte/word/signed word) 0 [phi:main::@3->main::@2#0] -- vbuxx=vbuc1 
-    ldx #0
-  //SEG24 [12] phi from main::@2 to main::@2 [phi:main::@2->main::@2]
-  //SEG25 [12] phi (byte) main::j#2 = (byte) main::j#1 [phi:main::@2->main::@2#0] -- register_copy 
-  //SEG26 main::@2
-  b2:
-  //SEG27 [13] (byte*~) main::$9 ← (const byte*) main::screen#0+(byte/word/signed word) 160 + (byte) main::j#2 [ main::j#2 main::$9 ] ( main:2 [ main::j#2 main::$9 ] ) -- pbuz1=pbuc1_plus_vbuxx 
-    txa
-    clc
-    adc #<screen+$a0
-    sta _9
-    lda #0
-    adc #>screen+$a0
-    sta _9+1
-  //SEG28 [14] (byte*~) main::$11 ← (const byte*) main::screen#0+(byte/word/signed word) 200 + (byte) main::j#2 [ main::j#2 main::$9 main::$11 ] ( main:2 [ main::j#2 main::$9 main::$11 ] ) -- pbuz1=pbuc1_plus_vbuxx 
-    txa
-    clc
-    adc #<screen+$c8
-    sta _11
-    lda #0
-    adc #>screen+$c8
-    sta _11+1
-  //SEG29 [15] *((byte*~) main::$9) ← *((byte*~) main::$11) [ main::j#2 ] ( main:2 [ main::j#2 ] ) -- _deref_pbuz1=_deref_pbuz2 
-    ldy #0
-    lda (_11),y
-    sta (_9),y
-  //SEG30 [16] (byte) main::j#1 ← ++ (byte) main::j#2 [ main::j#1 ] ( main:2 [ main::j#1 ] ) -- vbuxx=_inc_vbuxx 
-    inx
-  //SEG31 [17] if((byte) main::j#1!=(byte/signed byte/word/signed word) 11) goto main::@2 [ main::j#1 ] ( main:2 [ main::j#1 ] ) -- vbuxx_neq_vbuc1_then_la1 
-    cpx #$b
-    bne b2
-  //SEG32 main::@4
-  //SEG33 [18] *(((byte*))(word) 53280) ← ++ *(((byte*))(word) 53280) [ ] ( main:2 [ ] ) -- _deref_pbuc1=_inc__deref_pbuc1 
-    inc $d020
-  //SEG34 [19] *(((byte*))(word) 53248+(byte/signed byte/word/signed word) 33) ← -- *(((byte*))(word) 53248+(byte/signed byte/word/signed word) 33) [ ] ( main:2 [ ] ) -- _deref_pbuc1=_dec__deref_pbuc1 
-    dec $d000+$21
-  //SEG35 [20] *((const byte*) main::BGCOL#0) ← ++ *((const byte*) main::BGCOL#0) [ ] ( main:2 [ ] ) -- _deref_pbuc1=_inc__deref_pbuc1 
-    inc BGCOL
-  //SEG36 main::@return
-  //SEG37 [21] return  [ ] ( main:2 [ ] )
-    rts
-}
 
 FINAL SYMBOL TABLE
 (label) @1

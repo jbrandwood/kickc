@@ -888,14 +888,8 @@ Attempting to uplift remaining variables inzp ZP_BYTE:4 [ char#4 ]
 Uplifting [] best 76 combination zp ZP_BYTE:4 [ char#4 ] 
 Coalescing zero page register [ zp ZP_BYTE:3 [ char#2 ] ] with [ zp ZP_BYTE:4 [ char#4 ] ]
 Allocated (was zp ZP_BYTE:3) zp ZP_BYTE:2 [ char#2 char#4 ]
-Removing instruction jmp b2
-Removing instruction jmp bend
-Removing instruction jmp b1
-Removing instruction jmp b2
-Removing instruction jmp breturn
-Removing instruction jmp breturn
-Succesful ASM optimization Pass5NextJumpElimination
-ASSEMBLER
+
+ASSEMBLER BEFORE OPTIMIZATION
 //SEG0 Basic Upstart
 .pc = $801 "Basic"
 :BasicUpstart(main)
@@ -906,6 +900,7 @@ ASSEMBLER
 bbegin:
 //SEG3 [1] phi from @begin to @2 [phi:@begin->@2]
 b2_from_bbegin:
+  jmp b2
 //SEG4 @2
 b2:
 //SEG5 [2] call main param-assignment [ ] ( )
@@ -914,6 +909,7 @@ main_from_b2:
   jsr main
 //SEG7 [3] phi from @2 to @end [phi:@2->@end]
 bend_from_b2:
+  jmp bend
 //SEG8 @end
 bend:
 //SEG9 main
@@ -924,6 +920,7 @@ main: {
   //SEG12 [11] phi (byte) line#12 = (byte/signed byte/word/signed word) 64 [phi:main->ln#0] -- vbuaa=vbuc1 
     lda #$40
     jsr ln
+    jmp b1
   //SEG13 main::@1
   b1:
   //SEG14 [6] (byte) char#2 ← ++ (byte) line#13 [ line#13 ] ( main:2 [ line#13 ] ) -- vbuz1=_inc_vbuaa 
@@ -934,6 +931,7 @@ main: {
   ln_from_b1:
   //SEG17 [11] phi (byte) line#12 = (byte) line#13 [phi:main::@1->ln#0] -- register_copy 
     jsr ln
+    jmp b2
   //SEG18 main::@2
   b2:
   //SEG19 [8] (byte) char#4 ← ++ (byte) line#13 [ line#13 ] ( main:2 [ line#13 ] ) -- vbuz1=_inc_vbuaa 
@@ -944,6 +942,7 @@ main: {
   ln_from_b2:
   //SEG22 [11] phi (byte) line#12 = (byte) line#13 [phi:main::@2->ln#0] -- register_copy 
     jsr ln
+    jmp breturn
   //SEG23 main::@return
   breturn:
   //SEG24 [10] return  [ ] ( main:2 [ ] )
@@ -954,78 +953,26 @@ ln: {
   //SEG26 [12] (byte) line#13 ← (byte) line#12 + (byte/signed byte/word/signed word) 2 [ line#13 ] ( main:2::ln:5 [ line#13 ] main:2::ln:7 [ line#13 ] main:2::ln:9 [ line#13 ] ) -- vbuaa=vbuaa_plus_vbuc1 
     clc
     adc #2
+    jmp breturn
   //SEG27 ln::@return
   breturn:
   //SEG28 [13] return  [ line#13 ] ( main:2::ln:5 [ line#13 ] main:2::ln:7 [ line#13 ] main:2::ln:9 [ line#13 ] )
     rts
 }
 
+ASSEMBLER OPTIMIZATIONS
+Removing instruction jmp b2
+Removing instruction jmp bend
+Removing instruction jmp b1
+Removing instruction jmp b2
+Removing instruction jmp breturn
+Removing instruction jmp breturn
+Succesful ASM optimization Pass5NextJumpElimination
 Removing instruction bbegin:
 Removing instruction b2_from_bbegin:
 Removing instruction main_from_b2:
 Removing instruction bend_from_b2:
 Succesful ASM optimization Pass5RedundantLabelElimination
-ASSEMBLER
-//SEG0 Basic Upstart
-.pc = $801 "Basic"
-:BasicUpstart(main)
-.pc = $80d "Program"
-//SEG1 Global Constants & labels
-  .label char = 2
-//SEG2 @begin
-//SEG3 [1] phi from @begin to @2 [phi:@begin->@2]
-//SEG4 @2
-b2:
-//SEG5 [2] call main param-assignment [ ] ( )
-//SEG6 [4] phi from @2 to main [phi:@2->main]
-  jsr main
-//SEG7 [3] phi from @2 to @end [phi:@2->@end]
-//SEG8 @end
-bend:
-//SEG9 main
-main: {
-  //SEG10 [5] call ln param-assignment [ line#13 ] ( main:2 [ line#13 ] )
-  //SEG11 [11] phi from main to ln [phi:main->ln]
-  ln_from_main:
-  //SEG12 [11] phi (byte) line#12 = (byte/signed byte/word/signed word) 64 [phi:main->ln#0] -- vbuaa=vbuc1 
-    lda #$40
-    jsr ln
-  //SEG13 main::@1
-  b1:
-  //SEG14 [6] (byte) char#2 ← ++ (byte) line#13 [ line#13 ] ( main:2 [ line#13 ] ) -- vbuz1=_inc_vbuaa 
-    sta char
-    inc char
-  //SEG15 [7] call ln param-assignment [ line#13 ] ( main:2 [ line#13 ] )
-  //SEG16 [11] phi from main::@1 to ln [phi:main::@1->ln]
-  ln_from_b1:
-  //SEG17 [11] phi (byte) line#12 = (byte) line#13 [phi:main::@1->ln#0] -- register_copy 
-    jsr ln
-  //SEG18 main::@2
-  b2:
-  //SEG19 [8] (byte) char#4 ← ++ (byte) line#13 [ line#13 ] ( main:2 [ line#13 ] ) -- vbuz1=_inc_vbuaa 
-    sta char
-    inc char
-  //SEG20 [9] call ln param-assignment [ ] ( main:2 [ ] )
-  //SEG21 [11] phi from main::@2 to ln [phi:main::@2->ln]
-  ln_from_b2:
-  //SEG22 [11] phi (byte) line#12 = (byte) line#13 [phi:main::@2->ln#0] -- register_copy 
-    jsr ln
-  //SEG23 main::@return
-  breturn:
-  //SEG24 [10] return  [ ] ( main:2 [ ] )
-    rts
-}
-//SEG25 ln
-ln: {
-  //SEG26 [12] (byte) line#13 ← (byte) line#12 + (byte/signed byte/word/signed word) 2 [ line#13 ] ( main:2::ln:5 [ line#13 ] main:2::ln:7 [ line#13 ] main:2::ln:9 [ line#13 ] ) -- vbuaa=vbuaa_plus_vbuc1 
-    clc
-    adc #2
-  //SEG27 ln::@return
-  breturn:
-  //SEG28 [13] return  [ line#13 ] ( main:2::ln:5 [ line#13 ] main:2::ln:7 [ line#13 ] main:2::ln:9 [ line#13 ] )
-    rts
-}
-
 Removing instruction b2:
 Removing instruction bend:
 Removing instruction ln_from_main:
@@ -1036,57 +983,6 @@ Removing instruction ln_from_b2:
 Removing instruction breturn:
 Removing instruction breturn:
 Succesful ASM optimization Pass5UnusedLabelElimination
-ASSEMBLER
-//SEG0 Basic Upstart
-.pc = $801 "Basic"
-:BasicUpstart(main)
-.pc = $80d "Program"
-//SEG1 Global Constants & labels
-  .label char = 2
-//SEG2 @begin
-//SEG3 [1] phi from @begin to @2 [phi:@begin->@2]
-//SEG4 @2
-//SEG5 [2] call main param-assignment [ ] ( )
-//SEG6 [4] phi from @2 to main [phi:@2->main]
-  jsr main
-//SEG7 [3] phi from @2 to @end [phi:@2->@end]
-//SEG8 @end
-//SEG9 main
-main: {
-  //SEG10 [5] call ln param-assignment [ line#13 ] ( main:2 [ line#13 ] )
-  //SEG11 [11] phi from main to ln [phi:main->ln]
-  //SEG12 [11] phi (byte) line#12 = (byte/signed byte/word/signed word) 64 [phi:main->ln#0] -- vbuaa=vbuc1 
-    lda #$40
-    jsr ln
-  //SEG13 main::@1
-  //SEG14 [6] (byte) char#2 ← ++ (byte) line#13 [ line#13 ] ( main:2 [ line#13 ] ) -- vbuz1=_inc_vbuaa 
-    sta char
-    inc char
-  //SEG15 [7] call ln param-assignment [ line#13 ] ( main:2 [ line#13 ] )
-  //SEG16 [11] phi from main::@1 to ln [phi:main::@1->ln]
-  //SEG17 [11] phi (byte) line#12 = (byte) line#13 [phi:main::@1->ln#0] -- register_copy 
-    jsr ln
-  //SEG18 main::@2
-  //SEG19 [8] (byte) char#4 ← ++ (byte) line#13 [ line#13 ] ( main:2 [ line#13 ] ) -- vbuz1=_inc_vbuaa 
-    sta char
-    inc char
-  //SEG20 [9] call ln param-assignment [ ] ( main:2 [ ] )
-  //SEG21 [11] phi from main::@2 to ln [phi:main::@2->ln]
-  //SEG22 [11] phi (byte) line#12 = (byte) line#13 [phi:main::@2->ln#0] -- register_copy 
-    jsr ln
-  //SEG23 main::@return
-  //SEG24 [10] return  [ ] ( main:2 [ ] )
-    rts
-}
-//SEG25 ln
-ln: {
-  //SEG26 [12] (byte) line#13 ← (byte) line#12 + (byte/signed byte/word/signed word) 2 [ line#13 ] ( main:2::ln:5 [ line#13 ] main:2::ln:7 [ line#13 ] main:2::ln:9 [ line#13 ] ) -- vbuaa=vbuaa_plus_vbuc1 
-    clc
-    adc #2
-  //SEG27 ln::@return
-  //SEG28 [13] return  [ line#13 ] ( main:2::ln:5 [ line#13 ] main:2::ln:7 [ line#13 ] main:2::ln:9 [ line#13 ] )
-    rts
-}
 
 FINAL SYMBOL TABLE
 (label) @2

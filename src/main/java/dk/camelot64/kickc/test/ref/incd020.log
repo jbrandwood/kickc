@@ -459,12 +459,8 @@ Uplift Scope []
 
 Uplifting [main] best 228 combination 
 Uplifting [] best 228 combination 
-Removing instruction jmp b1
-Removing instruction jmp bend
-Removing instruction jmp b1
-Removing instruction jmp breturn
-Succesful ASM optimization Pass5NextJumpElimination
-ASSEMBLER
+
+ASSEMBLER BEFORE OPTIMIZATION
 //SEG0 Basic Upstart
 .pc = $801 "Basic"
 :BasicUpstart(main)
@@ -475,6 +471,7 @@ ASSEMBLER
 bbegin:
 //SEG3 [1] phi from @begin to @1 [phi:@begin->@1]
 b1_from_bbegin:
+  jmp b1
 //SEG4 @1
 b1:
 //SEG5 [2] call main param-assignment [ ] ( )
@@ -483,10 +480,12 @@ main_from_b1:
   jsr main
 //SEG7 [3] phi from @1 to @end [phi:@1->@end]
 bend_from_b1:
+  jmp bend
 //SEG8 @end
 bend:
 //SEG9 main
 main: {
+    jmp b1
   //SEG10 main::@1
   b1:
   //SEG11 [5] *((const byte*) BGCOL#0) ← ++ *((const byte*) BGCOL#0) [ ] ( main:2 [ ] ) -- _deref_pbuc1=_inc__deref_pbuc1 
@@ -495,114 +494,30 @@ main: {
     dec BGCOL
   //SEG13 [7] if(true) goto main::@1 [ ] ( main:2 [ ] ) -- true_then_la1 
     jmp b1
+    jmp breturn
   //SEG14 main::@return
   breturn:
   //SEG15 [8] return  [ ] ( main:2 [ ] )
     rts
 }
 
+ASSEMBLER OPTIMIZATIONS
+Removing instruction jmp b1
+Removing instruction jmp bend
+Removing instruction jmp b1
+Removing instruction jmp breturn
+Succesful ASM optimization Pass5NextJumpElimination
 Removing instruction bbegin:
 Removing instruction b1_from_bbegin:
 Removing instruction main_from_b1:
 Removing instruction bend_from_b1:
 Succesful ASM optimization Pass5RedundantLabelElimination
-ASSEMBLER
-//SEG0 Basic Upstart
-.pc = $801 "Basic"
-:BasicUpstart(main)
-.pc = $80d "Program"
-//SEG1 Global Constants & labels
-  .const BGCOL = $d020
-//SEG2 @begin
-//SEG3 [1] phi from @begin to @1 [phi:@begin->@1]
-//SEG4 @1
-b1:
-//SEG5 [2] call main param-assignment [ ] ( )
-//SEG6 [4] phi from @1 to main [phi:@1->main]
-  jsr main
-//SEG7 [3] phi from @1 to @end [phi:@1->@end]
-//SEG8 @end
-bend:
-//SEG9 main
-main: {
-  //SEG10 main::@1
-  b1:
-  //SEG11 [5] *((const byte*) BGCOL#0) ← ++ *((const byte*) BGCOL#0) [ ] ( main:2 [ ] ) -- _deref_pbuc1=_inc__deref_pbuc1 
-    inc BGCOL
-  //SEG12 [6] *((const byte*) BGCOL#0) ← -- *((const byte*) BGCOL#0) [ ] ( main:2 [ ] ) -- _deref_pbuc1=_dec__deref_pbuc1 
-    dec BGCOL
-  //SEG13 [7] if(true) goto main::@1 [ ] ( main:2 [ ] ) -- true_then_la1 
-    jmp b1
-  //SEG14 main::@return
-  breturn:
-  //SEG15 [8] return  [ ] ( main:2 [ ] )
-    rts
-}
-
 Removing instruction b1:
 Removing instruction bend:
 Removing instruction breturn:
 Succesful ASM optimization Pass5UnusedLabelElimination
-ASSEMBLER
-//SEG0 Basic Upstart
-.pc = $801 "Basic"
-:BasicUpstart(main)
-.pc = $80d "Program"
-//SEG1 Global Constants & labels
-  .const BGCOL = $d020
-//SEG2 @begin
-//SEG3 [1] phi from @begin to @1 [phi:@begin->@1]
-//SEG4 @1
-//SEG5 [2] call main param-assignment [ ] ( )
-//SEG6 [4] phi from @1 to main [phi:@1->main]
-  jsr main
-//SEG7 [3] phi from @1 to @end [phi:@1->@end]
-//SEG8 @end
-//SEG9 main
-main: {
-  //SEG10 main::@1
-  b1:
-  //SEG11 [5] *((const byte*) BGCOL#0) ← ++ *((const byte*) BGCOL#0) [ ] ( main:2 [ ] ) -- _deref_pbuc1=_inc__deref_pbuc1 
-    inc BGCOL
-  //SEG12 [6] *((const byte*) BGCOL#0) ← -- *((const byte*) BGCOL#0) [ ] ( main:2 [ ] ) -- _deref_pbuc1=_dec__deref_pbuc1 
-    dec BGCOL
-  //SEG13 [7] if(true) goto main::@1 [ ] ( main:2 [ ] ) -- true_then_la1 
-    jmp b1
-  //SEG14 main::@return
-  //SEG15 [8] return  [ ] ( main:2 [ ] )
-    rts
-}
-
 Removing unreachable instruction rts
 Succesful ASM optimization Pass5UnreachableCodeElimination
-ASSEMBLER
-//SEG0 Basic Upstart
-.pc = $801 "Basic"
-:BasicUpstart(main)
-.pc = $80d "Program"
-//SEG1 Global Constants & labels
-  .const BGCOL = $d020
-//SEG2 @begin
-//SEG3 [1] phi from @begin to @1 [phi:@begin->@1]
-//SEG4 @1
-//SEG5 [2] call main param-assignment [ ] ( )
-//SEG6 [4] phi from @1 to main [phi:@1->main]
-  jsr main
-//SEG7 [3] phi from @1 to @end [phi:@1->@end]
-//SEG8 @end
-//SEG9 main
-main: {
-  //SEG10 main::@1
-  b1:
-  //SEG11 [5] *((const byte*) BGCOL#0) ← ++ *((const byte*) BGCOL#0) [ ] ( main:2 [ ] ) -- _deref_pbuc1=_inc__deref_pbuc1 
-    inc BGCOL
-  //SEG12 [6] *((const byte*) BGCOL#0) ← -- *((const byte*) BGCOL#0) [ ] ( main:2 [ ] ) -- _deref_pbuc1=_dec__deref_pbuc1 
-    dec BGCOL
-  //SEG13 [7] if(true) goto main::@1 [ ] ( main:2 [ ] ) -- true_then_la1 
-    jmp b1
-  //SEG14 main::@return
-  //SEG15 [8] return  [ ] ( main:2 [ ] )
-}
 
 FINAL SYMBOL TABLE
 (label) @1

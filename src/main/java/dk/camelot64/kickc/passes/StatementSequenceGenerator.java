@@ -397,58 +397,6 @@ public class StatementSequenceGenerator extends KickCBaseVisitor<Object> {
    }
 
    @Override
-   public Void visitStmtAssignment(KickCParser.StmtAssignmentContext ctx) {
-      PrePostModifierHandler.addPreModifiers(this, ctx);
-      LValue lValue = (LValue) visit(ctx.lvalue());
-      RValue rValue = (RValue) this.visit(ctx.expr());
-      Statement stmt = new StatementAssignment(lValue, rValue);
-      sequence.addStatement(stmt);
-      PrePostModifierHandler.addPostModifiers(this, ctx);
-      return null;
-   }
-
-   @Override
-   public LValue visitLvalueName(KickCParser.LvalueNameContext ctx) {
-      Variable variable = getCurrentSymbols().getVariable(ctx.NAME().getText());
-      return variable.getRef();
-   }
-
-   @Override
-   public LValue visitLvaluePtr(KickCParser.LvaluePtrContext ctx) {
-      Variable variable = getCurrentSymbols().getVariable(ctx.NAME().getText());
-      return new PointerDereferenceSimple(variable.getRef());
-   }
-
-   @Override
-   public Object visitLvaluePtrExpr(KickCParser.LvaluePtrExprContext ctx) {
-      RValue rValue = (RValue) this.visit(ctx.expr());
-      return new PointerDereferenceSimple(rValue);
-   }
-
-   @Override
-   public Object visitLvalueLoHi(KickCParser.LvalueLoHiContext ctx) {
-      LValue lval = (LValue) visit(ctx.lvalue());
-      if (lval instanceof VariableRef) {
-         String opTxt = ctx.getChild(0).getText();
-         if (opTxt.equals("<")) {
-            return new LvalueLoHiByte(Operator.SET_LOWBYTE, (VariableRef) lval);
-         } else if (opTxt.equals(">")) {
-            return new LvalueLoHiByte(Operator.SET_HIBYTE, (VariableRef) lval);
-         } else {
-            throw new RuntimeException("Not implemented - lo/hi-lvalue operator " + opTxt);
-         }
-      }
-      throw new RuntimeException("Not implemented - lo/hi lvalues of non-variables");
-   }
-
-   @Override
-   public LValue visitLvalueArray(KickCParser.LvalueArrayContext ctx) {
-      LValue lval = (LValue) visit(ctx.lvalue());
-      RValue index = (RValue) visit(ctx.expr());
-      return new PointerDereferenceIndexed(lval, index);
-   }
-
-   @Override
    public RValue visitInitList(KickCParser.InitListContext ctx) {
       List<RValue> initValues = new ArrayList<>();
       for (KickCParser.ExprContext initializer : ctx.expr()) {
@@ -487,6 +435,19 @@ public class StatementSequenceGenerator extends KickCBaseVisitor<Object> {
       } else {
          return new SymbolTypeArray(elementType);
       }
+   }
+
+   @Override
+   public Object visitExprAssignment(KickCParser.ExprAssignmentContext ctx) {
+      LValue lValue = (LValue) visit(ctx.expr(0));
+      if(lValue instanceof VariableRef && ((VariableRef) lValue).isIntermediate()) {
+         // Encountered an intermediate variable. This must be turned into a proper LValue later. Put it into a marker to signify that
+         lValue = new LvalueIntermediate((VariableRef) lValue);
+      }
+      RValue rValue = (RValue) this.visit(ctx.expr(1));
+      Statement stmt = new StatementAssignment(lValue, rValue);
+      sequence.addStatement(stmt);
+      return lValue;
    }
 
    @Override
@@ -530,12 +491,7 @@ public class StatementSequenceGenerator extends KickCBaseVisitor<Object> {
    public RValue visitExprArray(KickCParser.ExprArrayContext ctx) {
       RValue array = (LValue) visit(ctx.expr(0));
       RValue index = (RValue) visit(ctx.expr(1));
-      Operator operator = Operator.DEREF_IDX;
-      VariableIntermediate tmpVar = getCurrentSymbols().addVariableIntermediate();
-      VariableRef tmpVarRef = tmpVar.getRef();
-      Statement stmt = new StatementAssignment(tmpVarRef, array, operator, index);
-      sequence.addStatement(stmt);
-      return tmpVarRef;
+      return new PointerDereferenceIndexed(array, index);
    }
 
    @Override
@@ -579,19 +535,21 @@ public class StatementSequenceGenerator extends KickCBaseVisitor<Object> {
    }
 
    @Override
+   public Object visitExprPtr(KickCParser.ExprPtrContext ctx) {
+      RValue child = (RValue) this.visit(ctx.expr());
+      return new PointerDereferenceSimple(child);
+   }
+
+   @Override
    public RValue visitExprUnary(KickCParser.ExprUnaryContext ctx) {
       RValue child = (RValue) this.visit(ctx.expr());
       String op = ((TerminalNode) ctx.getChild(0)).getSymbol().getText();
       Operator operator = Operator.getUnary(op);
-      if (Operator.DEREF.equals(operator)) {
-         return new PointerDereferenceSimple(child);
-      } else {
-         VariableIntermediate tmpVar = getCurrentSymbols().addVariableIntermediate();
-         VariableRef tmpVarRef = tmpVar.getRef();
-         Statement stmt = new StatementAssignment(tmpVarRef, operator, child);
-         sequence.addStatement(stmt);
-         return tmpVarRef;
-      }
+      VariableIntermediate tmpVar = getCurrentSymbols().addVariableIntermediate();
+      VariableRef tmpVarRef = tmpVar.getRef();
+      Statement stmt = new StatementAssignment(tmpVarRef, operator, child);
+      sequence.addStatement(stmt);
+      return tmpVarRef;
    }
 
    @Override

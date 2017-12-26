@@ -222,8 +222,7 @@ line_ydxi: {
     rts
 }
 plot: {
-    .label _2 = $a
-    .label _4 = 8
+    .label _0 = 8
     .label plotter_x = 8
     .label plotter_y = $b
     .label plotter = 8
@@ -232,21 +231,19 @@ plot: {
     lda plot_xlo,x
     sta plotter_x
     lda plot_yhi,y
-    sta _2
+    sta plotter_y+1
     lda plot_ylo,y
     sta plotter_y
-    lda _2
-    sta plotter_y+1
-    lda _4
+    lda _0
     clc
     adc plotter_y
-    sta _4
-    lda _4+1
+    sta _0
+    lda _0+1
     adc plotter_y+1
-    sta _4+1
-    lda plot_bit,x
+    sta _0+1
     ldy #0
-    ora (plotter),y
+    lda (plotter),y
+    ora plot_bit,x
     sta (plotter),y
     rts
 }

@@ -6,26 +6,26 @@
 main: {
     .label w = 3
     .label sc = 3
-    .label l = 2
-    ldx #0
+    .label h = 2
+    lda #0
+    sta h
   b1:
-    lda #4
-    sta l
+    ldx #4
   b2:
-    lda his,x
+    ldy h
+    lda his,y
     sta w+1
-    lda l
-    sta w
+    stx w
     ldy #0
     lda #'*'
     sta (sc),y
-    inc l
-    lda l
-    cmp #8
-    bne b2
     inx
-    cpx #2
+    cpx #8
+    bne b2
+    inc h
+    lda h
+    cmp #3
     bne b1
     rts
-    his: .byte >SCREEN, >SCREEN+$100
+    his: .byte >SCREEN, >SCREEN+$100, >SCREEN+$200
 }

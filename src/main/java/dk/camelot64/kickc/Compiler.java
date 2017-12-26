@@ -106,7 +106,6 @@ public class Compiler {
 
    private Program pass1GenerateSSA() {
 
-      new Pass1FixLvalueLoHi(program).execute();
       new Pass1TypeInference(program).execute();
       getLog().append("PROGRAM");
       getLog().append(program.getStatementSequence().toString(program));
@@ -114,6 +113,8 @@ public class Compiler {
       getLog().append(program.getScope().getSymbolTableContents(program));
 
       new Pass1GenerateControlFlowGraph(program).execute();
+      new Pass1FixLValuesLoHi(program).execute();
+      new Pass1AssertNoLValueIntermediate(program).execute();
       new Pass1AddTypePromotions(program).execute();
 
       getLog().append("INITIAL CONTROL FLOW GRAPH");

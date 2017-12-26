@@ -146,18 +146,6 @@ public interface KickCListener extends ParseTreeListener {
 	 */
 	void exitStmtBlock(KickCParser.StmtBlockContext ctx);
 	/**
-	 * Enter a parse tree produced by the {@code stmtAssignment}
-	 * labeled alternative in {@link KickCParser#stmt}.
-	 * @param ctx the parse tree
-	 */
-	void enterStmtAssignment(KickCParser.StmtAssignmentContext ctx);
-	/**
-	 * Exit a parse tree produced by the {@code stmtAssignment}
-	 * labeled alternative in {@link KickCParser#stmt}.
-	 * @param ctx the parse tree
-	 */
-	void exitStmtAssignment(KickCParser.StmtAssignmentContext ctx);
-	/**
 	 * Enter a parse tree produced by the {@code stmtExpr}
 	 * labeled alternative in {@link KickCParser#stmt}.
 	 * @param ctx the parse tree
@@ -326,65 +314,17 @@ public interface KickCListener extends ParseTreeListener {
 	 */
 	void exitTypeSignedSimple(KickCParser.TypeSignedSimpleContext ctx);
 	/**
-	 * Enter a parse tree produced by the {@code lvalueName}
-	 * labeled alternative in {@link KickCParser#lvalue}.
+	 * Enter a parse tree produced by the {@code exprPtr}
+	 * labeled alternative in {@link KickCParser#expr}.
 	 * @param ctx the parse tree
 	 */
-	void enterLvalueName(KickCParser.LvalueNameContext ctx);
+	void enterExprPtr(KickCParser.ExprPtrContext ctx);
 	/**
-	 * Exit a parse tree produced by the {@code lvalueName}
-	 * labeled alternative in {@link KickCParser#lvalue}.
+	 * Exit a parse tree produced by the {@code exprPtr}
+	 * labeled alternative in {@link KickCParser#expr}.
 	 * @param ctx the parse tree
 	 */
-	void exitLvalueName(KickCParser.LvalueNameContext ctx);
-	/**
-	 * Enter a parse tree produced by the {@code lvaluePtr}
-	 * labeled alternative in {@link KickCParser#lvalue}.
-	 * @param ctx the parse tree
-	 */
-	void enterLvaluePtr(KickCParser.LvaluePtrContext ctx);
-	/**
-	 * Exit a parse tree produced by the {@code lvaluePtr}
-	 * labeled alternative in {@link KickCParser#lvalue}.
-	 * @param ctx the parse tree
-	 */
-	void exitLvaluePtr(KickCParser.LvaluePtrContext ctx);
-	/**
-	 * Enter a parse tree produced by the {@code lvaluePtrExpr}
-	 * labeled alternative in {@link KickCParser#lvalue}.
-	 * @param ctx the parse tree
-	 */
-	void enterLvaluePtrExpr(KickCParser.LvaluePtrExprContext ctx);
-	/**
-	 * Exit a parse tree produced by the {@code lvaluePtrExpr}
-	 * labeled alternative in {@link KickCParser#lvalue}.
-	 * @param ctx the parse tree
-	 */
-	void exitLvaluePtrExpr(KickCParser.LvaluePtrExprContext ctx);
-	/**
-	 * Enter a parse tree produced by the {@code lvalueArray}
-	 * labeled alternative in {@link KickCParser#lvalue}.
-	 * @param ctx the parse tree
-	 */
-	void enterLvalueArray(KickCParser.LvalueArrayContext ctx);
-	/**
-	 * Exit a parse tree produced by the {@code lvalueArray}
-	 * labeled alternative in {@link KickCParser#lvalue}.
-	 * @param ctx the parse tree
-	 */
-	void exitLvalueArray(KickCParser.LvalueArrayContext ctx);
-	/**
-	 * Enter a parse tree produced by the {@code lvalueLoHi}
-	 * labeled alternative in {@link KickCParser#lvalue}.
-	 * @param ctx the parse tree
-	 */
-	void enterLvalueLoHi(KickCParser.LvalueLoHiContext ctx);
-	/**
-	 * Exit a parse tree produced by the {@code lvalueLoHi}
-	 * labeled alternative in {@link KickCParser#lvalue}.
-	 * @param ctx the parse tree
-	 */
-	void exitLvalueLoHi(KickCParser.LvalueLoHiContext ctx);
+	void exitExprPtr(KickCParser.ExprPtrContext ctx);
 	/**
 	 * Enter a parse tree produced by the {@code exprPreMod}
 	 * labeled alternative in {@link KickCParser#expr}.
@@ -541,6 +481,18 @@ public interface KickCListener extends ParseTreeListener {
 	 * @param ctx the parse tree
 	 */
 	void exitExprId(KickCParser.ExprIdContext ctx);
+	/**
+	 * Enter a parse tree produced by the {@code exprAssignment}
+	 * labeled alternative in {@link KickCParser#expr}.
+	 * @param ctx the parse tree
+	 */
+	void enterExprAssignment(KickCParser.ExprAssignmentContext ctx);
+	/**
+	 * Exit a parse tree produced by the {@code exprAssignment}
+	 * labeled alternative in {@link KickCParser#expr}.
+	 * @param ctx the parse tree
+	 */
+	void exitExprAssignment(KickCParser.ExprAssignmentContext ctx);
 	/**
 	 * Enter a parse tree produced by the {@code exprArray}
 	 * labeled alternative in {@link KickCParser#expr}.

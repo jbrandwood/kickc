@@ -28,21 +28,12 @@ public class TestErrors extends TestCase {
       compileAndCompare("nocast");
    }
 
-   public void testConstants() throws IOException, URISyntaxException {
-      compileAndCompare("constants");
-   }
-
    public void testInlineAsmParam() throws IOException, URISyntaxException {
       compileAndCompare("inline-asm-param");
    }
 
    public void testForRangeSymbolic() throws IOException, URISyntaxException {
       String filename = "forrangesymbolic";
-      compileAndCompare(filename);
-   }
-
-   public void testForIncrementAssign() throws IOException, URISyntaxException {
-      String filename = "forincrementassign";
       compileAndCompare(filename);
    }
 

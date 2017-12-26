@@ -93,13 +93,6 @@ public interface KickCVisitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitStmtBlock(KickCParser.StmtBlockContext ctx);
 	/**
-	 * Visit a parse tree produced by the {@code stmtAssignment}
-	 * labeled alternative in {@link KickCParser#stmt}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitStmtAssignment(KickCParser.StmtAssignmentContext ctx);
-	/**
 	 * Visit a parse tree produced by the {@code stmtExpr}
 	 * labeled alternative in {@link KickCParser#stmt}.
 	 * @param ctx the parse tree
@@ -198,40 +191,12 @@ public interface KickCVisitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitTypeSignedSimple(KickCParser.TypeSignedSimpleContext ctx);
 	/**
-	 * Visit a parse tree produced by the {@code lvalueName}
-	 * labeled alternative in {@link KickCParser#lvalue}.
+	 * Visit a parse tree produced by the {@code exprPtr}
+	 * labeled alternative in {@link KickCParser#expr}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
-	T visitLvalueName(KickCParser.LvalueNameContext ctx);
-	/**
-	 * Visit a parse tree produced by the {@code lvaluePtr}
-	 * labeled alternative in {@link KickCParser#lvalue}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitLvaluePtr(KickCParser.LvaluePtrContext ctx);
-	/**
-	 * Visit a parse tree produced by the {@code lvaluePtrExpr}
-	 * labeled alternative in {@link KickCParser#lvalue}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitLvaluePtrExpr(KickCParser.LvaluePtrExprContext ctx);
-	/**
-	 * Visit a parse tree produced by the {@code lvalueArray}
-	 * labeled alternative in {@link KickCParser#lvalue}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitLvalueArray(KickCParser.LvalueArrayContext ctx);
-	/**
-	 * Visit a parse tree produced by the {@code lvalueLoHi}
-	 * labeled alternative in {@link KickCParser#lvalue}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitLvalueLoHi(KickCParser.LvalueLoHiContext ctx);
+	T visitExprPtr(KickCParser.ExprPtrContext ctx);
 	/**
 	 * Visit a parse tree produced by the {@code exprPreMod}
 	 * labeled alternative in {@link KickCParser#expr}.
@@ -323,6 +288,13 @@ public interface KickCVisitor<T> extends ParseTreeVisitor<T> {
 	 * @return the visitor result
 	 */
 	T visitExprId(KickCParser.ExprIdContext ctx);
+	/**
+	 * Visit a parse tree produced by the {@code exprAssignment}
+	 * labeled alternative in {@link KickCParser#expr}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitExprAssignment(KickCParser.ExprAssignmentContext ctx);
 	/**
 	 * Visit a parse tree produced by the {@code exprArray}
 	 * labeled alternative in {@link KickCParser#expr}.

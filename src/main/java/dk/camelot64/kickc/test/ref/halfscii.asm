@@ -10,9 +10,9 @@
   jsr main
 main: {
     .label _1 = 6
-    .label _12 = 9
-    .label _23 = 9
-    .label _33 = 9
+    .label _11 = 9
+    .label _21 = 9
+    .label _30 = 9
     .label chargen1 = 7
     .label bits_gen = 6
     .label charset4 = 4
@@ -62,12 +62,12 @@ main: {
     ldy #0
     lda (chargen),y
     and #$18
-    sta _12
+    sta _11
     lda (chargen1),y
     and #$18
     lsr
     lsr
-    ora _12
+    ora _11
     lsr
     tax
     lda bits_count,x
@@ -80,11 +80,11 @@ main: {
     lda (chargen),y
     and #6
     asl
-    sta _23
+    sta _21
     lda (chargen1),y
     and #6
     lsr
-    ora _23
+    ora _21
     tax
     lda bits_count,x
     cmp #2
@@ -97,10 +97,10 @@ main: {
     and #1
     asl
     asl
-    sta _33
+    sta _30
     lda (chargen1),y
     and #1
-    ora _33
+    ora _30
     tax
     lda bits_count,x
     cmp #2

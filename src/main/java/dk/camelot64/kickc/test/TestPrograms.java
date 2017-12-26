@@ -22,6 +22,18 @@ public class TestPrograms extends TestCase {
       helper = new ReferenceHelper("dk/camelot64/kickc/test/ref/");
    }
 
+   public void testForIncrementAssign() throws IOException, URISyntaxException {
+      compileAndCompare("forincrementassign");
+   }
+
+   public void testConstants() throws IOException, URISyntaxException {
+      compileAndCompare("constants");
+   }
+
+   public void testInlineAssignment() throws IOException, URISyntaxException {
+      compileAndCompare("inline-assignment");
+   }
+
    public void testInlineWord() throws IOException, URISyntaxException {
       compileAndCompare("inline-word");
    }
@@ -305,6 +317,10 @@ public class TestPrograms extends TestCase {
 
    public void testProcedureNotFound() throws IOException, URISyntaxException {
       assertError("procedurenotfound", "Called procedure not found");
+   }
+
+   public void testIllegalLValue() throws IOException, URISyntaxException {
+      assertError("illegallvalue", "LValue is illegal");
    }
 
    private void assertError(String kcFile, String expectError) throws IOException, URISyntaxException {

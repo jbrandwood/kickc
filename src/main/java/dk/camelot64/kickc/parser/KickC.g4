@@ -43,7 +43,6 @@ stmtSeq
 stmt
     : declVar #stmtDeclVar
     | '{' stmtSeq? '}' #stmtBlock
-    | lvalue '=' expr ';' #stmtAssignment
     | expr  ';' #stmtExpr
     | 'if' '(' expr ')' stmt ( 'else' stmt )? #stmtIfElse
     | 'while' '(' expr ')' stmt  #stmtWhile
@@ -58,7 +57,7 @@ forDeclaration
     ;
 
 forIteration
-    : ';' expr ';' expr? # forClassic
+    : ';' expr ';' expr # forClassic
     | ':' expr ( '..' ) expr #forRange
     ;
 
@@ -69,14 +68,6 @@ typeDecl
     | typeDecl '[' (expr)? ']' #typeArray
     ;
 
-lvalue
-    : NAME #lvalueName
-    | '*' NAME #lvaluePtr
-    | '*' '(' expr ')' #lvaluePtrExpr
-    | ('<' | '>' ) lvalue #lvalueLoHi
-    | lvalue '[' expr ']' #lvalueArray
-    ;
-
 expr
     : '(' expr ')' #exprPar
     | NAME '(' parameterList? ')' #exprCall
@@ -84,7 +75,8 @@ expr
     | expr '[' expr ']' #exprArray
     | ('--' | '++' ) expr #exprPreMod
     | expr ('--' | '++' ) #exprPostMod
-    | ('+' | '-' | '!' | '&' | '*' | '~') expr #exprUnary
+    | '*' expr #exprPtr
+    | ('+' | '-' | '!' | '&' | '~') expr #exprUnary
     | expr ('>>' | '<<' ) expr #exprBinary
     | expr ('*' | '/' | '%' ) expr #exprBinary
     | expr ( '+' | '-')  expr #exprBinary
@@ -95,6 +87,7 @@ expr
     | expr ( '|' ) expr #exprBinary
     | expr ( '&&' )  expr #exprBinary
     | expr ( '||' )  expr #exprBinary
+    | <assoc=right> expr '=' expr  #exprAssignment
     | '{' expr (',' expr )* '}' #initList
     | NAME  #exprId
     | NUMBER #exprNumber

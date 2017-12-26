@@ -39,8 +39,15 @@ public class Pass2ConstantAdditionElimination extends Pass2SsaOptimization {
             if (statement instanceof StatementAssignment) {
                StatementAssignment assignment = (StatementAssignment) statement;
                if(assignment.getlValue() instanceof PointerDereferenceIndexed) {
-                  optimized |= optimizePointerDereferenceIndexed(assignment);
+                  optimized |= optimizePointerDereferenceIndexed(new VariableReplacer.ReplacableLValue(assignment));
                }
+               if(assignment.getrValue1() instanceof PointerDereferenceIndexed) {
+                  optimized |= optimizePointerDereferenceIndexed(new VariableReplacer.ReplacableRValue1(assignment));
+               }
+               if(assignment.getrValue2() instanceof PointerDereferenceIndexed) {
+                  optimized |= optimizePointerDereferenceIndexed(new VariableReplacer.ReplacableRValue2(assignment));
+               }
+
                Operator operator = assignment.getOperator();
                if (operator != null) {
                   switch (operator.getOperator()) {
@@ -52,20 +59,28 @@ public class Pass2ConstantAdditionElimination extends Pass2SsaOptimization {
                         break;
                   }
                }
+            } else if(statement instanceof StatementConditionalJump) {
+               StatementConditionalJump jump = (StatementConditionalJump) statement;
+               if(jump.getrValue1() instanceof PointerDereferenceIndexed) {
+                  optimized |= optimizePointerDereferenceIndexed(new VariableReplacer.ReplacableCondRValue1(jump));
+               }
+               if(jump.getrValue2() instanceof PointerDereferenceIndexed) {
+                  optimized |= optimizePointerDereferenceIndexed(new VariableReplacer.ReplacableCondRValue2(jump));
+               }
             }
          }
       }
       return optimized;
    }
 
-   private boolean optimizePointerDereferenceIndexed(StatementAssignment assignment) {
-      PointerDereferenceIndexed pointerDereferenceIndexed = (PointerDereferenceIndexed) assignment.getlValue();
+   private boolean optimizePointerDereferenceIndexed(VariableReplacer.ReplacableValue value) {
+      PointerDereferenceIndexed pointerDereferenceIndexed = (PointerDereferenceIndexed) value.get();
       if(pointerDereferenceIndexed.getPointer() instanceof ConstantValue && pointerDereferenceIndexed.getIndex() instanceof ConstantValue) {
          ConstantValue ptrConstant = (ConstantValue) pointerDereferenceIndexed.getPointer();
          ConstantValue idxConstant = (ConstantValue) pointerDereferenceIndexed.getIndex();
          ConstantValue newPtr = new ConstantBinary(ptrConstant, Operator.PLUS, idxConstant);
-         assignment.setlValue(new PointerDereferenceSimple(newPtr));
-         getLog().append("Consolidated assigned array index constant in assignment " + assignment.getlValue());
+         value.set(new PointerDereferenceSimple(newPtr));
+         getLog().append("Consolidated array index constant in " + value.get().toString());
          return true;
       }
       if(pointerDereferenceIndexed.getPointer() instanceof ConstantValue && pointerDereferenceIndexed.getIndex() instanceof VariableRef) {
@@ -75,7 +90,7 @@ public class Pass2ConstantAdditionElimination extends Pass2SsaOptimization {
             ConstantValue ptrConstant = (ConstantValue) pointerDereferenceIndexed.getPointer();
             ConstantValue newPtr = new ConstantBinary(ptrConstant, Operator.PLUS, consolidated);
             pointerDereferenceIndexed.setPointer(newPtr);
-            getLog().append("Consolidated assigned array index constant in assignment " + assignment.getlValue());
+            getLog().append("Consolidated array index constant in assignment " + value.get().toString());
             return true;
          }
       }

@@ -18,6 +18,9 @@ public class SymbolTypeInference {
     * @return The type of the resulting value
     */
    public static SymbolType inferType(ProgramScope programScope, Operator operator, RValue rValue) {
+      if(operator==null) {
+         return inferType(programScope, rValue);
+      }
       if (operator.equals(Operator.CAST_BYTE)) {
          return SymbolType.BYTE;
       } else if (operator.equals(Operator.CAST_SBYTE)) {
@@ -375,4 +378,45 @@ public class SymbolTypeInference {
       return false;
    }
 
+   public static void inferCallLValue(ProgramScope programScope, StatementCall call) {
+      LValue lValue = call.getlValue();
+      if(lValue instanceof VariableRef) {
+         Variable lValueVar = programScope.getVariable((VariableRef) lValue);
+         if(SymbolType.VAR.equals(lValueVar.getType())) {
+            Procedure procedure = programScope.getProcedure(call.getProcedure());
+            lValueVar.setTypeInferred(procedure.getReturnType());
+         }
+      }
+   }
+
+   public static void inferAssignmentLValue(ProgramScope programScope, StatementAssignment assignment) {
+      LValue lValue = assignment.getlValue();
+      if (lValue instanceof VariableRef) {
+         Variable symbol = programScope.getVariable((VariableRef) lValue);
+         if (SymbolType.VAR.equals(symbol.getType())) {
+            // Unresolved symbol - perform inference
+            Operator operator = assignment.getOperator();
+            if (operator == null || assignment.getrValue1() == null) {
+               // Copy operation or Unary operation
+               RValue rValue = assignment.getrValue2();
+               SymbolType type = inferType(programScope, operator, rValue);
+               symbol.setTypeInferred(type);
+            } else {
+               // Binary operation
+               SymbolType type = inferType(programScope, assignment.getrValue1(), assignment.getOperator(), assignment.getrValue2());
+               symbol.setTypeInferred(type);
+            }
+         }
+      }
+   }
+
+   public static void inferLValue(ProgramScope programScope, StatementLValue statementLValue) {
+      if(statementLValue instanceof StatementAssignment) {
+         inferAssignmentLValue(programScope, (StatementAssignment) statementLValue);
+      } else if(statementLValue instanceof StatementCall) {
+         inferCallLValue(programScope, (StatementCall) statementLValue);
+      } else {
+         throw new RuntimeException("LValue statement not implemented "+statementLValue);
+      }
+   }
 }

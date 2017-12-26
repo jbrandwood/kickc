@@ -61,23 +61,23 @@ flip: {
     .label r = 4
     lda #$10
     sta r
-    ldy #$f
-    ldx #0
+    ldx #$f
+    ldy #0
   b1:
     lda #$10
     sta c
   b2:
-    lda buffer1,x
-    sta buffer2,y
-    inx
-    tya
+    lda buffer1,y
+    sta buffer2,x
+    iny
+    txa
     clc
     adc #$10
-    tay
+    tax
     dec c
     lda c
     bne b2
-    dey
+    dex
     dec r
     lda r
     bne b1

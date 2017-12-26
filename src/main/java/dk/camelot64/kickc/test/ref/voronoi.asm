@@ -35,10 +35,10 @@ animate: {
     lda #0
     sta YPOS+0
   b2:
-    ldx XPOS+1
-    dex
-    stx XPOS+1
-    txa
+    lda XPOS+1
+    sec
+    sbc #1
+    sta XPOS+1
     cmp #$ff
     bne b3
     lda #$28
@@ -53,10 +53,10 @@ animate: {
     lda #0
     sta YPOS+2
   b4:
-    ldx YPOS+3
-    dex
-    stx YPOS+3
-    txa
+    lda YPOS+3
+    sec
+    sbc #1
+    sta YPOS+3
     cmp #$ff
     bne breturn
     lda #$19

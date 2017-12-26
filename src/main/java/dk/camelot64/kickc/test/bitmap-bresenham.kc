@@ -139,12 +139,8 @@ void line_ydxd(byte y, byte x, byte y1, byte yd, byte xd) {
 }
 
 void plot(byte x, byte y) {
-    byte* plotter_x = 0;
-    word plotter_y = 0;
-    >plotter_x = plot_xhi[x];  // Needs word arrays arranged as two underlying byte arrays to allow byte* plotter_x = plot_x[x]; - and eventually - byte* plotter = plot_x[x] + plot_y[y];
-    <plotter_x = plot_xlo[x];
-    >plotter_y = plot_yhi[y];
-    <plotter_y = plot_ylo[y];
+    word plotter_x = { plot_xhi[x], plot_xlo[x] };  // Needs word arrays arranged as two underlying byte arrays to allow byte* plotter_x = plot_x[x]; - and eventually - byte* plotter = plot_x[x] + plot_y[y];
+    word plotter_y = { plot_yhi[y], plot_ylo[y] };
     byte* plotter = plotter_x+plotter_y;
     *plotter = *plotter | plot_bit[x];
 }
@@ -165,7 +161,7 @@ void init_plot_tables() {
         plot_ylo[y] = y&$7 | <yoffs;
         plot_yhi[y] = >yoffs;
         if((y&$7)==7) {
-            yoffs = yoffs + 320; // Needs better constant type inference for yoffs = yoffs + 40*8;
+            yoffs = yoffs + 40*8;
         }
     }
 }

@@ -132,6 +132,8 @@ public class AsmFragmentManager {
       synths.add(new FragmentSynthesis("(.*)=vbuyy(.*)", ".*=.*vb.aa.*", "tya\n", "$1=vbuaa$2", null, null));
       synths.add(new FragmentSynthesis("(.*)=vbuz1(.*)", ".*=.*vb.aa.*|.*z1.*z1.*", "lda {z1}\n", "$1=vbuaa$2", null, mapZ));
       synths.add(new FragmentSynthesis("(.*)=vbsz1(.*)", ".*=.*vb.aa.*|.*z1.*z1.*", "lda {z1}\n", "$1=vbsaa$2", null, mapZ));
+      synths.add(new FragmentSynthesis("(.*)=vbuz2(.*)", ".*=.*vb.aa.*|.*z2.*z2.*|.*z3.*", "lda {z2}\n", "$1=vbuaa$2", null, null));
+      synths.add(new FragmentSynthesis("(.*)=vbsz2(.*)", ".*=.*vb.aa.*|.*z2.*z2.*|.*z3.*", "lda {z2}\n", "$1=vbsaa$2", null, null));
       synths.add(new FragmentSynthesis("(.*)=vbuz2", ".*=.*aa.*|.*z2.*=.*", "lda {z2}\n", "$1=vbuaa", null, null));
       synths.add(new FragmentSynthesis("(.*)=vbsz2", ".*=.*aa.*|.*z2.*=.*", "lda {z2}\n", "$1=vbuaa", null, null));
       synths.add(new FragmentSynthesis("(.*)=vbuc1", ".*=.*aa.*", "lda #{c1}\n", "$1=vbuaa", null, mapConst));
@@ -155,6 +157,10 @@ public class AsmFragmentManager {
       synths.add(new FragmentSynthesis("(.*)=(.*)_derefidx_vbuaa", ".*=.*xx.*", "tax\n", "$1=$2_derefidx_vbuxx", null, null));
       synths.add(new FragmentSynthesis("(.*)=(.*)_derefidx_vbuz1", ".*=.*yy.*|.*z1.*z1.*", "ldy {z1}\n", "$1=$2_derefidx_vbuyy", null, mapZ));
       synths.add(new FragmentSynthesis("(.*)=(.*)_derefidx_vbuz1", ".*=.*xx.*|.*z1.*z1.*", "ldx {z1}\n", "$1=$2_derefidx_vbuxx", null, mapZ));
+      synths.add(new FragmentSynthesis("(.*)=(.*)_derefidx_vbuz2", ".*=.*xx.*|.*z2.*z2.*", "ldx {z2}\n", "$1=$2_derefidx_vbuxx", null, mapZ));
+      synths.add(new FragmentSynthesis("(.*)=(.*)_derefidx_vbuz2", ".*=.*yy.*|.*z2.*z2.*", "ldy {z2}\n", "$1=$2_derefidx_vbuyy", null, mapZ));
+      synths.add(new FragmentSynthesis("(.*)=(.*)_derefidx_vbuz3", ".*=.*xx.*|.*z3.*z3.*", "ldx {z3}\n", "$1=$2_derefidx_vbuxx", null, mapZ));
+      synths.add(new FragmentSynthesis("(.*)=(.*)_derefidx_vbuz3", ".*=.*yy.*|.*z3.*z3.*", "ldy {z3}\n", "$1=$2_derefidx_vbuyy", null, mapZ));
 
       synths.add(new FragmentSynthesis("vbuz1_(lt|gt|le|ge|eq|neq)_(.*)", ".*vb.aa.*", "lda {z1}\n", "vbuaa_$1_$2", null, mapZ));
       synths.add(new FragmentSynthesis("vbsz1_(lt|gt|le|ge|eq|neq)_(.*)", ".*vb.aa.*", "lda {z1}\n", "vbsaa_$1_$2", null, mapZ));

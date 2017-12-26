@@ -43,7 +43,7 @@ public class Pass4RegisterUpliftPotentialAluAnalysis extends Pass2Base {
                         // The variable has ALU potential
                         setHasAluPotential(registerPotentials, potentialAluVar);
                      }
-                  } else if (assignment.getOperator()!=null && (Operator.PLUS.equals(assignment.getOperator()) || Operator.BOOL_OR.equals(assignment.getOperator()))) {
+                  } else if (assignment.getOperator()!=null && (Operator.PLUS.equals(assignment.getOperator()) || Operator.BOOL_OR.equals(assignment.getOperator())|| Operator.WORD.equals(assignment.getOperator()))) {
                      // ALU applicable if the variable is one of the two values
                      if (assignment.getrValue2().equals(potentialAluVar) && assignment.getrValue1() != null) {
                         // The variable has ALU potential

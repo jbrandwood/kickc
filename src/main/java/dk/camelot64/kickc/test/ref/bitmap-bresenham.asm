@@ -222,28 +222,28 @@ line_ydxi: {
     rts
 }
 plot: {
+    .label _2 = $a
+    .label _4 = 8
     .label plotter_x = 8
     .label plotter_y = $b
     .label plotter = 8
     lda plot_xhi,x
     sta plotter_x+1
-    lda #<0
-    sta plotter_x
     lda plot_xlo,x
     sta plotter_x
     lda plot_yhi,y
-    sta plotter_y+1
-    lda #<0
-    sta plotter_y
+    sta _2
     lda plot_ylo,y
     sta plotter_y
-    lda plotter
+    lda _2
+    sta plotter_y+1
+    lda _4
     clc
     adc plotter_y
-    sta plotter
-    lda plotter+1
+    sta _4
+    lda _4+1
     adc plotter_y+1
-    sta plotter+1
+    sta _4+1
     lda plot_bit,x
     ldy #0
     ora (plotter),y
@@ -395,10 +395,10 @@ init_plot_tables: {
     bne b4
     lda yoffs
     clc
-    adc #<$140
+    adc #<$28*8
     sta yoffs
     lda yoffs+1
-    adc #>$140
+    adc #>$28*8
     sta yoffs+1
   b4:
     inx

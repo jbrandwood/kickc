@@ -20,7 +20,7 @@ import java.util.regex.Pattern;
  */
 public class AsmFragmentManager {
 
-   static boolean verboseFragmentLog = false;
+   static boolean verboseFragmentLog = true;
 
    /**
     * Cache for fragment files. Maps signature to the parsed file.
@@ -195,7 +195,6 @@ public class AsmFragmentManager {
       synths.add(new FragmentSynthesis("vbuz1=vbuz1(.*)", ".*=.*vb.aa.*|.*z1.*z1.*z1.*", "lda {z1}\n", "vbuaa=vbuaa$1", "sta {z1}\n", mapZ));
       synths.add(new FragmentSynthesis("vbsz1=vbsz1(.*)", ".*=.*vb.aa.*|.*z1.*z1.*z1.*", "lda {z1}\n", "vbsaa=vbsaa$1", "sta {z1}\n", mapZ));
 
-
       synths.add(new FragmentSynthesis("vbuz1_(lt|gt|le|ge|eq|neq)_(.*)", ".*vb.aa.*", "lda {z1}\n", "vbuaa_$1_$2", null, mapZ));
       synths.add(new FragmentSynthesis("vbsz1_(lt|gt|le|ge|eq|neq)_(.*)", ".*vb.aa.*", "lda {z1}\n", "vbsaa_$1_$2", null, mapZ));
       synths.add(new FragmentSynthesis("_deref_vwuc1_(lt|gt|le|ge|eq|neq)_(.*)", ".*vb.aa.*", "lda {c1}\n", "vbuaa_$1_$2", null, mapC));
@@ -252,6 +251,10 @@ public class AsmFragmentManager {
       synths.add(new FragmentSynthesis("(v..)z1=(v..)z1_(plus|minus|band|bxor|bor)_(.*)", null, null, "$1z1=$2z2_$3_$4", null, mapZ, false));
       synths.add(new FragmentSynthesis("(v..)z1=(.*)_(plus|minus|band|bxor|bor)_(v..)z1", null, null, "$1z1=$2_$3_$4z2", null, mapZ, false));
       synths.add(new FragmentSynthesis("(v..)z1=_(neg|lo|hi)_(v..)z1", null, null, "$1z1=_$2_$3z2", null, mapZ, false));
+
+      // INC/DEC from +1 / -1
+      synths.add(new FragmentSynthesis("vb(.)aa=_inc_(.*)", null, null, "vb$1aa=$2_plus_1", null, null));
+      synths.add(new FragmentSynthesis("vb(.)aa=_dec_(.*)", null, null, "vb$1aa=$2_minus_1", null, null));
 
 
       for (FragmentSynthesis synth : synths) {

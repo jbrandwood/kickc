@@ -161,7 +161,6 @@ public class Compiler {
       assertions.add(new Pass2AssertBlocks(program));
       assertions.add(new Pass2AssertNoCallParameters(program));
       assertions.add(new Pass2AssertNoCallLvalues(program));
-      assertions.add(new Pass2AssertNoLvalueLoHi(program));
       assertions.add(new Pass2AssertNoReturnValues(program));
       assertions.add(new Pass2AssertNoProcs(program));
       assertions.add(new Pass2AssertNoLabels(program));
@@ -215,16 +214,13 @@ public class Compiler {
    private void pass3Analysis() {
 
       new Pass3AssertNoValueLists(program).check();
-
       new Pass3BlockSequencePlanner(program).plan();
-
       // Phi lifting ensures that all variables in phi-blocks are in different live range equivalence classes
       new Pass3PhiLifting(program).perform();
       new Pass3BlockSequencePlanner(program).plan();
       getLog().append("CONTROL FLOW GRAPH - PHI LIFTED");
       getLog().append(program.getGraph().toString(program));
       pass2AssertSSA();
-
       new Pass3AddNopBeforeCallOns(program).generate();
       new PassNStatementIndices(program).generateStatementIndices();
 

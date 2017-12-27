@@ -27,7 +27,7 @@ public class Pass1ExtractInlineStrings extends Pass1Base {
                int size = parameters.size();
                for (int i = 0; i < size; i++) {
                   String parameterName = procedure.getParameterNames().get(i);
-                  execute(new VariableReplacer.ReplacableCallParameter(call, i), blockScope, parameterName);
+                  execute(new ValueReplacer.ReplaceableCallParameter(call, i), blockScope, parameterName);
                }
             } else if (statement instanceof StatementAssignment) {
                StatementAssignment assignment = (StatementAssignment) statement;
@@ -39,23 +39,23 @@ public class Pass1ExtractInlineStrings extends Pass1Base {
                   // This will be picked up later as a constant - the temporary constant variable is not needed
                   continue;
                }
-               execute(new VariableReplacer.ReplacableRValue1(assignment), blockScope, null);
-               execute(new VariableReplacer.ReplacableRValue2(assignment), blockScope, null);
+               execute(new ValueReplacer.ReplaceableRValue1(assignment), blockScope, null);
+               execute(new ValueReplacer.ReplaceableRValue2(assignment), blockScope, null);
             } else if (statement instanceof StatementReturn) {
-               execute(new VariableReplacer.ReplacableReturn((StatementReturn) statement), blockScope, null);
+               execute(new ValueReplacer.ReplaceableReturn((StatementReturn) statement), blockScope, null);
             }
          }
       }
       return false;
    }
 
-   private void execute(VariableReplacer.ReplacableValue replacable, Scope blockScope, String nameHint) {
-      RValue value = replacable.get();
+   private void execute(ValueReplacer.ReplaceableValue replaceable, Scope blockScope, String nameHint) {
+      RValue value = replaceable.get();
       if(value instanceof ConstantString) {
-         ConstantVar strConst = createStringConstantVar(blockScope, (ConstantString) replacable.get(), nameHint);
-         replacable.set(strConst.getRef());
+         ConstantVar strConst = createStringConstantVar(blockScope, (ConstantString) replaceable.get(), nameHint);
+         replaceable.set(strConst.getRef());
       }
-      for (VariableReplacer.ReplacableValue subValue : replacable.getSubValues()) {
+      for (ValueReplacer.ReplaceableValue subValue : replaceable.getSubValues()) {
          execute(subValue, blockScope, nameHint);
       }
    }

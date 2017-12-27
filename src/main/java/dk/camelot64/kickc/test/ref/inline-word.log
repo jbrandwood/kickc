@@ -1,10 +1,10 @@
 const byte* SCREEN = $400;
 
 void main() {
-   byte[] his = { >SCREEN, >SCREEN+$100, >SCREEN+$200 };
+   byte[] his = { >SCREEN, >SCREEN+$100, >SCREEN+$200 }; // constant array
    for( byte h: 0..2) {
       for (byte l: 4..7) {
-         word w = { his[h], l };
+         word w = { his[h], l }; // inline word
          byte* sc = (byte*)w;
          *sc = '*';
       }
@@ -99,7 +99,6 @@ main::@return: scope:[main]  from main::@4
   to:@end
 @end: scope:[]  from @1
 
-Fixing word constructor with main::w ← *(main::his + main::h) w= main::l
 Removing empty block main::@4
 CONTROL FLOW GRAPH
 @begin: scope:[]  from
@@ -118,7 +117,7 @@ main::@1: scope:[main]  from main main::@3
   (byte) main::l ← (byte/signed byte/word/signed word) 4
   to:main::@2
 main::@2: scope:[main]  from main::@1 main::@2
-  (word) main::w ← *((byte[]) main::his + (byte) main::h) w= (byte) main::l
+  (word) main::w ← { *((byte[]) main::his + (byte) main::h), (byte) main::l }
   (byte*~) main::$5 ← ((byte*)) (word) main::w
   (byte*) main::sc ← (byte*~) main::$5
   *((byte*) main::sc) ← (byte) '*'
@@ -158,7 +157,7 @@ main::@1: scope:[main]  from main main::@3
   (byte) main::l ← (byte/signed byte/word/signed word) 4
   to:main::@2
 main::@2: scope:[main]  from main::@1 main::@2
-  (word) main::w ← *((byte[]) main::his + (byte) main::h) w= (byte) main::l
+  (word) main::w ← { *((byte[]) main::his + (byte) main::h), (byte) main::l }
   (byte*~) main::$5 ← ((byte*)) (word) main::w
   (byte*) main::sc ← (byte*~) main::$5
   *((byte*) main::sc) ← (byte) '*'
@@ -206,7 +205,7 @@ main::@2: scope:[main]  from main::@1 main::@2
   (byte) main::l#2 ← phi( main::@1/(byte) main::l#0 main::@2/(byte) main::l#1 )
   (byte) main::h#2 ← phi( main::@1/(byte) main::h#4 main::@2/(byte) main::h#2 )
   (byte[]) main::his#1 ← phi( main::@1/(byte[]) main::his#2 main::@2/(byte[]) main::his#1 )
-  (word) main::w#0 ← *((byte[]) main::his#1 + (byte) main::h#2) w= (byte) main::l#2
+  (word) main::w#0 ← { *((byte[]) main::his#1 + (byte) main::h#2), (byte) main::l#2 }
   (byte*~) main::$5 ← ((byte*)) (word) main::w#0
   (byte*) main::sc#0 ← (byte*~) main::$5
   *((byte*) main::sc#0) ← (byte) '*'
@@ -253,7 +252,7 @@ main::@2: scope:[main]  from main::@1 main::@2
   (byte) main::l#2 ← phi( main::@1/(byte) main::l#0 main::@2/(byte) main::l#1 )
   (byte) main::h#2 ← phi( main::@1/(byte) main::h#4 main::@2/(byte) main::h#2 )
   (byte[]) main::his#1 ← phi( main::@1/(byte[]) main::his#2 main::@2/(byte[]) main::his#1 )
-  (word) main::w#0 ← *((byte[]) main::his#1 + (byte) main::h#2) w= (byte) main::l#2
+  (word) main::w#0 ← { *((byte[]) main::his#1 + (byte) main::h#2), (byte) main::l#2 }
   (byte*~) main::$5 ← ((byte*)) (word) main::w#0
   (byte*) main::sc#0 ← (byte*~) main::$5
   *((byte*) main::sc#0) ← (byte) '*'
@@ -342,7 +341,7 @@ main::@2: scope:[main]  from main::@1 main::@2
   (byte) main::l#2 ← phi( main::@1/(byte) main::l#0 main::@2/(byte) main::l#1 )
   (byte) main::h#2 ← phi( main::@1/(byte) main::h#4 main::@2/(byte) main::h#2 )
   (byte[]) main::his#1 ← phi( main::@1/(byte[]) main::his#2 main::@2/(byte[]) main::his#1 )
-  (word) main::w#0 ← *((byte[]) main::his#1 + (byte) main::h#2) w= (byte) main::l#2
+  (word) main::w#0 ← { *((byte[]) main::his#1 + (byte) main::h#2), (byte) main::l#2 }
   (byte*~) main::$5 ← ((byte*)) (word) main::w#0
   (byte*) main::sc#0 ← (byte*~) main::$5
   *((byte*) main::sc#0) ← (byte) '*'
@@ -391,7 +390,7 @@ main::@2: scope:[main]  from main::@1 main::@2
   (byte) main::l#2 ← phi( main::@1/(byte) main::l#0 main::@2/(byte) main::l#1 )
   (byte) main::h#2 ← phi( main::@1/(byte) main::h#4 main::@2/(byte) main::h#2 )
   (byte[]) main::his#1 ← phi( main::@1/(byte[]) main::his#2 main::@2/(byte[]) main::his#1 )
-  (word) main::w#0 ← *((byte[]) main::his#1 + (byte) main::h#2) w= (byte) main::l#2
+  (word) main::w#0 ← { *((byte[]) main::his#1 + (byte) main::h#2), (byte) main::l#2 }
   (byte*) main::sc#0 ← ((byte*)) (word) main::w#0
   *((byte*) main::sc#0) ← (byte) '*'
   (byte) main::l#1 ← ++ (byte) main::l#2
@@ -436,7 +435,7 @@ main::@2: scope:[main]  from main::@1 main::@2
   (byte) main::l#2 ← phi( main::@1/(byte) main::l#0 main::@2/(byte) main::l#1 )
   (byte) main::h#2 ← phi( main::@1/(byte) main::h#4 )
   (byte[]) main::his#1 ← phi( main::@1/(byte[]) main::his#2 )
-  (word) main::w#0 ← *((byte[]) main::his#1 + (byte) main::h#2) w= (byte) main::l#2
+  (word) main::w#0 ← { *((byte[]) main::his#1 + (byte) main::h#2), (byte) main::l#2 }
   (byte*) main::sc#0 ← ((byte*)) (word) main::w#0
   *((byte*) main::sc#0) ← (byte) '*'
   (byte) main::l#1 ← ++ (byte) main::l#2
@@ -479,7 +478,7 @@ main::@1: scope:[main]  from main main::@3
   to:main::@2
 main::@2: scope:[main]  from main::@1 main::@2
   (byte) main::l#2 ← phi( main::@1/(byte) main::l#0 main::@2/(byte) main::l#1 )
-  (word) main::w#0 ← *((byte[]) main::his#2 + (byte) main::h#4) w= (byte) main::l#2
+  (word) main::w#0 ← { *((byte[]) main::his#2 + (byte) main::h#4), (byte) main::l#2 }
   (byte*) main::sc#0 ← ((byte*)) (word) main::w#0
   *((byte*) main::sc#0) ← (byte) '*'
   (byte) main::l#1 ← ++ (byte) main::l#2
@@ -522,7 +521,7 @@ main::@1: scope:[main]  from main main::@3
   to:main::@2
 main::@2: scope:[main]  from main::@1 main::@2
   (byte) main::l#2 ← phi( main::@1/(byte) main::l#0 main::@2/(byte) main::l#1 )
-  (word) main::w#0 ← *((byte[]) main::his#2 + (byte) main::h#4) w= (byte) main::l#2
+  (word) main::w#0 ← { *((byte[]) main::his#2 + (byte) main::h#4), (byte) main::l#2 }
   (byte*) main::sc#0 ← ((byte*)) (word) main::w#0
   *((byte*) main::sc#0) ← (byte) '*'
   (byte) main::l#1 ← ++ (byte) main::l#2
@@ -561,7 +560,7 @@ main::@1: scope:[main]  from main main::@3
   to:main::@2
 main::@2: scope:[main]  from main::@1 main::@2
   (byte) main::l#2 ← phi( main::@1/(const byte) main::l#0 main::@2/(byte) main::l#1 )
-  (word) main::w#0 ← *((byte[]) main::his#2 + (byte) main::h#4) w= (byte) main::l#2
+  (word) main::w#0 ← { *((byte[]) main::his#2 + (byte) main::h#4), (byte) main::l#2 }
   (byte*) main::sc#0 ← ((byte*)) (word) main::w#0
   *((byte*) main::sc#0) ← (byte) '*'
   (byte) main::l#1 ← ++ (byte) main::l#2
@@ -597,7 +596,7 @@ main::@1: scope:[main]  from main main::@3
   to:main::@2
 main::@2: scope:[main]  from main::@1 main::@2
   (byte) main::l#2 ← phi( main::@1/(const byte) main::l#0 main::@2/(byte) main::l#1 )
-  (word) main::w#0 ← *((byte[]) main::his#2 + (byte) main::h#4) w= (byte) main::l#2
+  (word) main::w#0 ← { *((byte[]) main::his#2 + (byte) main::h#4), (byte) main::l#2 }
   (byte*) main::sc#0 ← ((byte*)) (word) main::w#0
   *((byte*) main::sc#0) ← (byte) '*'
   (byte) main::l#1 ← ++ (byte) main::l#2
@@ -630,7 +629,7 @@ main::@1: scope:[main]  from main main::@3
   to:main::@2
 main::@2: scope:[main]  from main::@1 main::@2
   (byte) main::l#2 ← phi( main::@1/(const byte) main::l#0 main::@2/(byte) main::l#1 )
-  (word) main::w#0 ← *((byte[]) main::his#2 + (byte) main::h#4) w= (byte) main::l#2
+  (word) main::w#0 ← { *((byte[]) main::his#2 + (byte) main::h#4), (byte) main::l#2 }
   (byte*) main::sc#0 ← ((byte*)) (word) main::w#0
   *((byte*) main::sc#0) ← (byte) '*'
   (byte) main::l#1 ← ++ (byte) main::l#2
@@ -650,6 +649,37 @@ main::@return: scope:[main]  from main::@3
 
 Constant (const byte[]) main::his#0 = { main::$0, main::$2, main::$4 }
 Succesful SSA optimization Pass2ConstantIdentification
+CONTROL FLOW GRAPH
+@begin: scope:[]  from
+  to:@1
+main: scope:[main]  from @1
+  to:main::@1
+main::@1: scope:[main]  from main main::@3
+  (byte) main::h#4 ← phi( main/(const byte) main::h#0 main::@3/(byte) main::h#1 )
+  (byte[]) main::his#2 ← phi( main/(const byte[]) main::his#0 main::@3/(byte[]) main::his#2 )
+  to:main::@2
+main::@2: scope:[main]  from main::@1 main::@2
+  (byte) main::l#2 ← phi( main::@1/(const byte) main::l#0 main::@2/(byte) main::l#1 )
+  (word) main::w#0 ← { *((byte[]) main::his#2 + (byte) main::h#4), (byte) main::l#2 }
+  (byte*) main::sc#0 ← ((byte*)) (word) main::w#0
+  *((byte*) main::sc#0) ← (byte) '*'
+  (byte) main::l#1 ← ++ (byte) main::l#2
+  if((byte) main::l#1!=(byte/signed byte/word/signed word) 8) goto main::@2
+  to:main::@3
+main::@3: scope:[main]  from main::@2
+  (byte) main::h#1 ← ++ (byte) main::h#4
+  if((byte) main::h#1!=(byte/signed byte/word/signed word) 3) goto main::@1
+  to:main::@return
+main::@return: scope:[main]  from main::@3
+  return 
+  to:@return
+@1: scope:[]  from @begin
+  call main param-assignment
+  to:@end
+@end: scope:[]  from @1
+
+Fixing word constructor with main::w#0 ← *(main::his#2 + main::h#4) w= main::l#2
+Succesful SSA optimization Pass2FixWordConstructors
 CONTROL FLOW GRAPH
 @begin: scope:[]  from
   to:@1

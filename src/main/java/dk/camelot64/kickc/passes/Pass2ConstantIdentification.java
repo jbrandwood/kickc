@@ -57,8 +57,9 @@ public class Pass2ConstantIdentification extends Pass2SsaOptimization {
       ControlFlowGraphBaseVisitor<Void> visitor = new ControlFlowGraphBaseVisitor<Void>() {
          @Override
          public Void visitAssignment(StatementAssignment assignment) {
-            if (assignment.getlValue() instanceof VariableRef) {
-               VariableRef variable = (VariableRef) assignment.getlValue();
+            LValue lValue = assignment.getlValue();
+            if (lValue instanceof VariableRef) {
+               VariableRef variable = (VariableRef) lValue;
                if (assignment.getrValue1() == null && getConstant(assignment.getrValue2()) != null) {
                   if (assignment.getOperator() == null) {
                      // Constant assignment
@@ -81,35 +82,39 @@ public class Pass2ConstantIdentification extends Pass2SsaOptimization {
                      constants.put(variable, constant);
                   }
                } else if (assignment.getrValue2() instanceof ValueList && assignment.getOperator() == null && assignment.getrValue1() == null) {
-                  ValueList valueList = (ValueList) assignment.getrValue2();
-                  List<RValue> values = valueList.getList();
-                  boolean allConstant = true;
-                  SymbolType elementType = null;
-                  List<ConstantValue> elements = new ArrayList<>();
-                  for (RValue value : values) {
-                     if (value instanceof ConstantValue) {
-                        ConstantValue constantValue = (ConstantValue) value;
-                        SymbolType type = constantValue.getType(getSymbols());
-                        if (elementType == null) {
-                           elementType = type;
-                        } else {
-                           if (!SymbolTypeInference.typeMatch(type, elementType)) {
-                              throw new RuntimeException("Array type mismatch " + elementType + " does not match " + type + " " + valueList.toString(getProgram()));
+                  if (lValue instanceof VariableRef) {
+                     Variable lVariable = getSymbols().getVariable((VariableRef) lValue);
+                     if (lVariable.getType() instanceof SymbolTypeArray) {
+                        ValueList valueList = (ValueList) assignment.getrValue2();
+                        List<RValue> values = valueList.getList();
+                        boolean allConstant = true;
+                        SymbolType elementType = null;
+                        List<ConstantValue> elements = new ArrayList<>();
+                        for (RValue value : values) {
+                           if (value instanceof ConstantValue) {
+                              ConstantValue constantValue = (ConstantValue) value;
+                              SymbolType type = constantValue.getType(getSymbols());
+                              if (elementType == null) {
+                                 elementType = type;
+                              } else {
+                                 if (!SymbolTypeInference.typeMatch(type, elementType)) {
+                                    throw new RuntimeException("Array type mismatch " + elementType + " does not match " + type + " " + valueList.toString(getProgram()));
+                                 }
+                              }
+                              elements.add(constantValue);
+                           } else {
+                              allConstant = false;
+                              elementType = null;
+                              break;
                            }
                         }
-                        elements.add(constantValue);
-                     } else {
-                        allConstant = false;
-                        elementType = null;
-                        break;
+                        if (allConstant && elementType != null) {
+                           ConstantValue constant = new ConstantArray(elements, elementType);
+                           constants.put(variable, constant);
+                        }
                      }
                   }
-                  if (allConstant && elementType != null) {
-                     ConstantValue constant = new ConstantArray(elements, elementType);
-                     constants.put(variable, constant);
-                  }
                }
-
             }
             return null;
          }
@@ -164,6 +169,8 @@ public class Pass2ConstantIdentification extends Pass2SsaOptimization {
          case "<<":
          case ">>":
             return new ConstantBinary(c1, operator, c2);
+         case "w=":
+            return new ConstantBinary(new ConstantBinary(c1, Operator.MULTIPLY, new ConstantInteger(256)), Operator.PLUS, c2);
          case "*idx":
             // Pointer dereference - not constant
             return null;

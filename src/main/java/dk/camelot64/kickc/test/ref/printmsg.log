@@ -52,10 +52,19 @@ void print_char(byte ch) {
     *(char_cursor++) = ch;
 }
 
+// Clear the screen
+void print_cls() {
+    for(byte* sc=$0400; sc!=$0400+1000; sc++) {
+        *sc = ' ';
+    }
+}
+
+
 
 Adding pre/post-modifier (byte*) char_cursor ← ++ (byte*) char_cursor
 Adding pre/post-modifier (byte*) print_str::str ← ++ (byte*) print_str::str
 Adding pre/post-modifier (byte*) char_cursor ← ++ (byte*) char_cursor
+Adding pre/post-modifier (byte*) print_cls::sc ← ++ (byte*) print_cls::sc
 PROGRAM
   (byte*) line_cursor ← (word/signed word) 1024
   (byte*) char_cursor ← (byte*) line_cursor
@@ -106,6 +115,17 @@ proc (void()) print_char((byte) print_char::ch)
 print_char::@return:
   return 
 endproc // print_char()
+proc (void()) print_cls()
+  (byte*) print_cls::sc ← (word/signed word) 1024
+print_cls::@1:
+  *((byte*) print_cls::sc) ← (byte) ' '
+  (byte*) print_cls::sc ← ++ (byte*) print_cls::sc
+  (word/signed word~) print_cls::$0 ← (word/signed word) 1024 + (word/signed word) 1000
+  (boolean~) print_cls::$1 ← (byte*) print_cls::sc != (word/signed word~) print_cls::$0
+  if((boolean~) print_cls::$1) goto print_cls::@1
+print_cls::@return:
+  return 
+endproc // print_cls()
   (byte[]) msg ← (string) "hello world! @"
   (byte[]) msg2 ← (string) "hello c64! @"
   (byte[]) msg3 ← (string) "hello 2017! @"
@@ -146,6 +166,12 @@ SYMBOLS
 (void()) print_char((byte) print_char::ch)
 (label) print_char::@return
 (byte) print_char::ch
+(void()) print_cls()
+(word/signed word~) print_cls::$0
+(boolean~) print_cls::$1
+(label) print_cls::@1
+(label) print_cls::@return
+(byte*) print_cls::sc
 (void()) print_ln()
 (byte*~) print_ln::$0
 (boolean~) print_ln::$1
@@ -167,6 +193,7 @@ SYMBOLS
 (word) print_word::w
 
 Promoting word/signed word to byte* in line_cursor ← ((byte*)) 1024
+Promoting word/signed word to byte* in print_cls::sc ← ((byte*)) 1024
 INITIAL CONTROL FLOW GRAPH
 @begin: scope:[]  from
   (byte*) line_cursor ← ((byte*)) (word/signed word) 1024
@@ -243,10 +270,27 @@ print_char::@return: scope:[print_char]  from print_char
   return 
   to:@return
 @5: scope:[]  from @4
+  to:@6
+print_cls: scope:[print_cls]  from
+  (byte*) print_cls::sc ← ((byte*)) (word/signed word) 1024
+  to:print_cls::@1
+print_cls::@1: scope:[print_cls]  from print_cls print_cls::@1
+  *((byte*) print_cls::sc) ← (byte) ' '
+  (byte*) print_cls::sc ← ++ (byte*) print_cls::sc
+  (word/signed word~) print_cls::$0 ← (word/signed word) 1024 + (word/signed word) 1000
+  (boolean~) print_cls::$1 ← (byte*) print_cls::sc != (word/signed word~) print_cls::$0
+  if((boolean~) print_cls::$1) goto print_cls::@1
+  to:print_cls::@2
+print_cls::@2: scope:[print_cls]  from print_cls::@1
+  to:print_cls::@return
+print_cls::@return: scope:[print_cls]  from print_cls::@2
+  return 
+  to:@return
+@6: scope:[]  from @5
   (byte[]) msg ← (string) "hello world! @"
   (byte[]) msg2 ← (string) "hello c64! @"
   (byte[]) msg3 ← (string) "hello 2017! @"
-  to:@6
+  to:@7
 main: scope:[main]  from
   (void~) main::$0 ← call print_str (byte[]) msg 
   (void~) main::$1 ← call print_ln 
@@ -258,12 +302,13 @@ main: scope:[main]  from
 main::@return: scope:[main]  from main
   return 
   to:@return
-@6: scope:[]  from @5
+@7: scope:[]  from @6
   call main 
   to:@end
-@end: scope:[]  from @6
+@end: scope:[]  from @7
 
 Removing unused procedure print_word
+Removing unused procedure print_cls
 Removing unused procedure print_byte
 Removing unused procedure print_char
 Eliminating unused variable - keeping the call (void~) main::$0
@@ -280,11 +325,12 @@ Removing empty block @1
 Removing empty block @2
 Removing empty block @3
 Removing empty block @4
+Removing empty block @5
 CONTROL FLOW GRAPH
 @begin: scope:[]  from
   (byte*) line_cursor ← ((byte*)) (word/signed word) 1024
   (byte*) char_cursor ← (byte*) line_cursor
-  to:@5
+  to:@6
 print_str: scope:[print_str]  from
   to:print_str::@1
 print_str::@1: scope:[print_str]  from print_str print_str::@2
@@ -313,11 +359,11 @@ print_ln::@2: scope:[print_ln]  from print_ln::@1
 print_ln::@return: scope:[print_ln]  from print_ln::@2
   return 
   to:@return
-@5: scope:[]  from @begin
+@6: scope:[]  from @begin
   (byte[]) msg ← (string) "hello world! @"
   (byte[]) msg2 ← (string) "hello c64! @"
   (byte[]) msg3 ← (string) "hello 2017! @"
-  to:@6
+  to:@7
 main: scope:[main]  from
   call print_str (byte[]) msg 
   call print_ln 
@@ -329,10 +375,10 @@ main: scope:[main]  from
 main::@return: scope:[main]  from main
   return 
   to:@return
-@6: scope:[]  from @5
+@7: scope:[]  from @6
   call main 
   to:@end
-@end: scope:[]  from @6
+@end: scope:[]  from @7
 
 PROCEDURE MODIFY VARIABLE ANALYSIS
 print_str modifies char_cursor
@@ -345,7 +391,7 @@ CONTROL FLOW GRAPH WITH ASSIGNMENT CALL
 @begin: scope:[]  from
   (byte*) line_cursor ← ((byte*)) (word/signed word) 1024
   (byte*) char_cursor ← (byte*) line_cursor
-  to:@5
+  to:@6
 print_str: scope:[print_str]  from main main::@2 main::@4
   to:print_str::@1
 print_str::@1: scope:[print_str]  from print_str print_str::@2
@@ -377,12 +423,12 @@ print_ln::@return: scope:[print_ln]  from print_ln::@2
   (byte*) char_cursor ← (byte*) char_cursor
   return 
   to:@return
-@5: scope:[]  from @begin
+@6: scope:[]  from @begin
   (byte[]) msg ← (string) "hello world! @"
   (byte[]) msg2 ← (string) "hello c64! @"
   (byte[]) msg3 ← (string) "hello 2017! @"
-  to:@6
-main: scope:[main]  from @6
+  to:@7
+main: scope:[main]  from @7
   (byte*) print_str::str ← (byte[]) msg
   call print_str param-assignment
   to:main::@1
@@ -419,14 +465,14 @@ main::@return: scope:[main]  from main::@6
   (byte*) line_cursor ← (byte*) line_cursor
   return 
   to:@return
-@6: scope:[]  from @5
-  call main param-assignment
-  to:@7
 @7: scope:[]  from @6
+  call main param-assignment
+  to:@8
+@8: scope:[]  from @7
   (byte*) char_cursor ← (byte*) char_cursor
   (byte*) line_cursor ← (byte*) line_cursor
   to:@end
-@end: scope:[]  from @7
+@end: scope:[]  from @8
 
 Completing Phi functions...
 Completing Phi functions...
@@ -438,7 +484,7 @@ CONTROL FLOW GRAPH SSA
 @begin: scope:[]  from
   (byte*) line_cursor#0 ← ((byte*)) (word/signed word) 1024
   (byte*) char_cursor#0 ← (byte*) line_cursor#0
-  to:@5
+  to:@6
 print_str: scope:[print_str]  from main main::@2 main::@4
   (byte*) char_cursor#29 ← phi( main/(byte*) char_cursor#27 main::@2/(byte*) char_cursor#6 main::@4/(byte*) char_cursor#8 )
   (byte*) print_str::str#6 ← phi( main/(byte*) print_str::str#1 main::@2/(byte*) print_str::str#2 main::@4/(byte*) print_str::str#3 )
@@ -484,19 +530,19 @@ print_ln::@return: scope:[print_ln]  from print_ln::@2
   (byte*) char_cursor#4 ← (byte*) char_cursor#16
   return 
   to:@return
-@5: scope:[]  from @begin
+@6: scope:[]  from @begin
   (byte*) line_cursor#22 ← phi( @begin/(byte*) line_cursor#0 )
   (byte*) char_cursor#30 ← phi( @begin/(byte*) char_cursor#0 )
   (byte[]) msg#0 ← (string) "hello world! @"
   (byte[]) msg2#0 ← (string) "hello c64! @"
   (byte[]) msg3#0 ← (string) "hello 2017! @"
-  to:@6
-main: scope:[main]  from @6
-  (byte[]) msg3#5 ← phi( @6/(byte[]) msg3#6 )
-  (byte[]) msg2#3 ← phi( @6/(byte[]) msg2#4 )
-  (byte*) line_cursor#21 ← phi( @6/(byte*) line_cursor#20 )
-  (byte*) char_cursor#27 ← phi( @6/(byte*) char_cursor#28 )
-  (byte[]) msg#1 ← phi( @6/(byte[]) msg#2 )
+  to:@7
+main: scope:[main]  from @7
+  (byte[]) msg3#5 ← phi( @7/(byte[]) msg3#6 )
+  (byte[]) msg2#3 ← phi( @7/(byte[]) msg2#4 )
+  (byte*) line_cursor#21 ← phi( @7/(byte*) line_cursor#20 )
+  (byte*) char_cursor#27 ← phi( @7/(byte*) char_cursor#28 )
+  (byte[]) msg#1 ← phi( @7/(byte[]) msg#2 )
   (byte*) print_str::str#1 ← (byte[]) msg#1
   call print_str param-assignment
   to:main::@1
@@ -553,27 +599,27 @@ main::@return: scope:[main]  from main::@6
   (byte*) line_cursor#6 ← (byte*) line_cursor#14
   return 
   to:@return
-@6: scope:[]  from @5
-  (byte[]) msg3#6 ← phi( @5/(byte[]) msg3#0 )
-  (byte[]) msg2#4 ← phi( @5/(byte[]) msg2#0 )
-  (byte*) line_cursor#20 ← phi( @5/(byte*) line_cursor#22 )
-  (byte*) char_cursor#28 ← phi( @5/(byte*) char_cursor#30 )
-  (byte[]) msg#2 ← phi( @5/(byte[]) msg#0 )
-  call main param-assignment
-  to:@7
 @7: scope:[]  from @6
-  (byte*) line_cursor#15 ← phi( @6/(byte*) line_cursor#20 )
-  (byte*) char_cursor#24 ← phi( @6/(byte*) char_cursor#28 )
+  (byte[]) msg3#6 ← phi( @6/(byte[]) msg3#0 )
+  (byte[]) msg2#4 ← phi( @6/(byte[]) msg2#0 )
+  (byte*) line_cursor#20 ← phi( @6/(byte*) line_cursor#22 )
+  (byte*) char_cursor#28 ← phi( @6/(byte*) char_cursor#30 )
+  (byte[]) msg#2 ← phi( @6/(byte[]) msg#0 )
+  call main param-assignment
+  to:@8
+@8: scope:[]  from @7
+  (byte*) line_cursor#15 ← phi( @7/(byte*) line_cursor#20 )
+  (byte*) char_cursor#24 ← phi( @7/(byte*) char_cursor#28 )
   (byte*) char_cursor#12 ← (byte*) char_cursor#24
   (byte*) line_cursor#7 ← (byte*) line_cursor#15
   to:@end
-@end: scope:[]  from @7
+@end: scope:[]  from @8
 
 CONTROL FLOW GRAPH WITH ASSIGNMENT CALL & RETURN
 @begin: scope:[]  from
   (byte*) line_cursor#0 ← ((byte*)) (word/signed word) 1024
   (byte*) char_cursor#0 ← (byte*) line_cursor#0
-  to:@5
+  to:@6
 print_str: scope:[print_str]  from main main::@2 main::@4
   (byte*) char_cursor#29 ← phi( main/(byte*) char_cursor#27 main::@2/(byte*) char_cursor#6 main::@4/(byte*) char_cursor#8 )
   (byte*) print_str::str#6 ← phi( main/(byte*) print_str::str#1 main::@2/(byte*) print_str::str#2 main::@4/(byte*) print_str::str#3 )
@@ -619,19 +665,19 @@ print_ln::@return: scope:[print_ln]  from print_ln::@2
   (byte*) char_cursor#4 ← (byte*) char_cursor#16
   return 
   to:@return
-@5: scope:[]  from @begin
+@6: scope:[]  from @begin
   (byte*) line_cursor#22 ← phi( @begin/(byte*) line_cursor#0 )
   (byte*) char_cursor#30 ← phi( @begin/(byte*) char_cursor#0 )
   (byte[]) msg#0 ← (string) "hello world! @"
   (byte[]) msg2#0 ← (string) "hello c64! @"
   (byte[]) msg3#0 ← (string) "hello 2017! @"
-  to:@6
-main: scope:[main]  from @6
-  (byte[]) msg3#5 ← phi( @6/(byte[]) msg3#6 )
-  (byte[]) msg2#3 ← phi( @6/(byte[]) msg2#4 )
-  (byte*) line_cursor#21 ← phi( @6/(byte*) line_cursor#20 )
-  (byte*) char_cursor#27 ← phi( @6/(byte*) char_cursor#28 )
-  (byte[]) msg#1 ← phi( @6/(byte[]) msg#2 )
+  to:@7
+main: scope:[main]  from @7
+  (byte[]) msg3#5 ← phi( @7/(byte[]) msg3#6 )
+  (byte[]) msg2#3 ← phi( @7/(byte[]) msg2#4 )
+  (byte*) line_cursor#21 ← phi( @7/(byte*) line_cursor#20 )
+  (byte*) char_cursor#27 ← phi( @7/(byte*) char_cursor#28 )
+  (byte[]) msg#1 ← phi( @7/(byte[]) msg#2 )
   (byte*) print_str::str#1 ← (byte[]) msg#1
   call print_str param-assignment
   to:main::@1
@@ -688,26 +734,26 @@ main::@return: scope:[main]  from main::@6
   (byte*) line_cursor#6 ← (byte*) line_cursor#14
   return 
   to:@return
-@6: scope:[]  from @5
-  (byte[]) msg3#6 ← phi( @5/(byte[]) msg3#0 )
-  (byte[]) msg2#4 ← phi( @5/(byte[]) msg2#0 )
-  (byte*) line_cursor#20 ← phi( @5/(byte*) line_cursor#22 )
-  (byte*) char_cursor#28 ← phi( @5/(byte*) char_cursor#30 )
-  (byte[]) msg#2 ← phi( @5/(byte[]) msg#0 )
-  call main param-assignment
-  to:@7
 @7: scope:[]  from @6
-  (byte*) line_cursor#15 ← phi( @6/(byte*) line_cursor#6 )
-  (byte*) char_cursor#24 ← phi( @6/(byte*) char_cursor#11 )
+  (byte[]) msg3#6 ← phi( @6/(byte[]) msg3#0 )
+  (byte[]) msg2#4 ← phi( @6/(byte[]) msg2#0 )
+  (byte*) line_cursor#20 ← phi( @6/(byte*) line_cursor#22 )
+  (byte*) char_cursor#28 ← phi( @6/(byte*) char_cursor#30 )
+  (byte[]) msg#2 ← phi( @6/(byte[]) msg#0 )
+  call main param-assignment
+  to:@8
+@8: scope:[]  from @7
+  (byte*) line_cursor#15 ← phi( @7/(byte*) line_cursor#6 )
+  (byte*) char_cursor#24 ← phi( @7/(byte*) char_cursor#11 )
   (byte*) char_cursor#12 ← (byte*) char_cursor#24
   (byte*) line_cursor#7 ← (byte*) line_cursor#15
   to:@end
-@end: scope:[]  from @7
+@end: scope:[]  from @8
 
 INITIAL SSA SYMBOL TABLE
-(label) @5
 (label) @6
 (label) @7
+(label) @8
 (label) @begin
 (label) @end
 (byte*) char_cursor
@@ -860,7 +906,7 @@ Succesful SSA optimization Pass2AliasElimination
 CONTROL FLOW GRAPH
 @begin: scope:[]  from
   (byte*) char_cursor#0 ← ((byte*)) (word/signed word) 1024
-  to:@5
+  to:@6
 print_str: scope:[print_str]  from main main::@2 main::@4
   (byte*) char_cursor#29 ← phi( main/(byte*) char_cursor#27 main::@2/(byte*) char_cursor#18 main::@4/(byte*) char_cursor#20 )
   (byte*) print_str::str#6 ← phi( main/(byte*) print_str::str#1 main::@2/(byte*) print_str::str#2 main::@4/(byte*) print_str::str#3 )
@@ -895,17 +941,17 @@ print_ln::@2: scope:[print_ln]  from print_ln::@1
 print_ln::@return: scope:[print_ln]  from print_ln::@2
   return 
   to:@return
-@5: scope:[]  from @begin
+@6: scope:[]  from @begin
   (byte[]) msg#0 ← (string) "hello world! @"
   (byte[]) msg2#0 ← (string) "hello c64! @"
   (byte[]) msg3#0 ← (string) "hello 2017! @"
-  to:@6
-main: scope:[main]  from @6
-  (byte[]) msg3#1 ← phi( @6/(byte[]) msg3#0 )
-  (byte[]) msg2#1 ← phi( @6/(byte[]) msg2#0 )
-  (byte*) line_cursor#17 ← phi( @6/(byte*) char_cursor#0 )
-  (byte*) char_cursor#27 ← phi( @6/(byte*) char_cursor#0 )
-  (byte[]) msg#1 ← phi( @6/(byte[]) msg#0 )
+  to:@7
+main: scope:[main]  from @7
+  (byte[]) msg3#1 ← phi( @7/(byte[]) msg3#0 )
+  (byte[]) msg2#1 ← phi( @7/(byte[]) msg2#0 )
+  (byte*) line_cursor#17 ← phi( @7/(byte*) char_cursor#0 )
+  (byte*) char_cursor#27 ← phi( @7/(byte*) char_cursor#0 )
+  (byte[]) msg#1 ← phi( @7/(byte[]) msg#0 )
   (byte*) print_str::str#1 ← (byte[]) msg#1
   call print_str param-assignment
   to:main::@1
@@ -940,14 +986,14 @@ main::@6: scope:[main]  from main::@5
 main::@return: scope:[main]  from main::@6
   return 
   to:@return
-@6: scope:[]  from @5
-  call main param-assignment
-  to:@7
 @7: scope:[]  from @6
-  (byte*) line_cursor#15 ← phi( @6/(byte*) line_cursor#13 )
-  (byte*) char_cursor#12 ← phi( @6/(byte*) char_cursor#10 )
+  call main param-assignment
+  to:@8
+@8: scope:[]  from @7
+  (byte*) line_cursor#15 ← phi( @7/(byte*) line_cursor#13 )
+  (byte*) char_cursor#12 ← phi( @7/(byte*) char_cursor#10 )
   to:@end
-@end: scope:[]  from @7
+@end: scope:[]  from @8
 
 Not aliassing across scopes: print_str::str#6 print_str::str#1
 Not aliassing across scopes: char_cursor#29 char_cursor#27
@@ -977,7 +1023,7 @@ Succesful SSA optimization Pass2SelfPhiElimination
 CONTROL FLOW GRAPH
 @begin: scope:[]  from
   (byte*) char_cursor#0 ← ((byte*)) (word/signed word) 1024
-  to:@5
+  to:@6
 print_str: scope:[print_str]  from main main::@2 main::@4
   (byte*) char_cursor#29 ← phi( main/(byte*) char_cursor#27 main::@2/(byte*) char_cursor#18 main::@4/(byte*) char_cursor#20 )
   (byte*) print_str::str#6 ← phi( main/(byte*) print_str::str#1 main::@2/(byte*) print_str::str#2 main::@4/(byte*) print_str::str#3 )
@@ -1012,17 +1058,17 @@ print_ln::@2: scope:[print_ln]  from print_ln::@1
 print_ln::@return: scope:[print_ln]  from print_ln::@2
   return 
   to:@return
-@5: scope:[]  from @begin
+@6: scope:[]  from @begin
   (byte[]) msg#0 ← (string) "hello world! @"
   (byte[]) msg2#0 ← (string) "hello c64! @"
   (byte[]) msg3#0 ← (string) "hello 2017! @"
-  to:@6
-main: scope:[main]  from @6
-  (byte[]) msg3#1 ← phi( @6/(byte[]) msg3#0 )
-  (byte[]) msg2#1 ← phi( @6/(byte[]) msg2#0 )
-  (byte*) line_cursor#17 ← phi( @6/(byte*) char_cursor#0 )
-  (byte*) char_cursor#27 ← phi( @6/(byte*) char_cursor#0 )
-  (byte[]) msg#1 ← phi( @6/(byte[]) msg#0 )
+  to:@7
+main: scope:[main]  from @7
+  (byte[]) msg3#1 ← phi( @7/(byte[]) msg3#0 )
+  (byte[]) msg2#1 ← phi( @7/(byte[]) msg2#0 )
+  (byte*) line_cursor#17 ← phi( @7/(byte*) char_cursor#0 )
+  (byte*) char_cursor#27 ← phi( @7/(byte*) char_cursor#0 )
+  (byte[]) msg#1 ← phi( @7/(byte[]) msg#0 )
   (byte*) print_str::str#1 ← (byte[]) msg#1
   call print_str param-assignment
   to:main::@1
@@ -1057,14 +1103,14 @@ main::@6: scope:[main]  from main::@5
 main::@return: scope:[main]  from main::@6
   return 
   to:@return
-@6: scope:[]  from @5
-  call main param-assignment
-  to:@7
 @7: scope:[]  from @6
-  (byte*) line_cursor#15 ← phi( @6/(byte*) line_cursor#13 )
-  (byte*) char_cursor#12 ← phi( @6/(byte*) char_cursor#10 )
+  call main param-assignment
+  to:@8
+@8: scope:[]  from @7
+  (byte*) line_cursor#15 ← phi( @7/(byte*) line_cursor#13 )
+  (byte*) char_cursor#12 ← phi( @7/(byte*) char_cursor#10 )
   to:@end
-@end: scope:[]  from @7
+@end: scope:[]  from @8
 
 Redundant Phi (byte*) char_cursor#15 (byte*) char_cursor#26
 Redundant Phi (byte[]) msg#1 (byte[]) msg#0
@@ -1087,7 +1133,7 @@ Succesful SSA optimization Pass2RedundantPhiElimination
 CONTROL FLOW GRAPH
 @begin: scope:[]  from
   (byte*) char_cursor#0 ← ((byte*)) (word/signed word) 1024
-  to:@5
+  to:@6
 print_str: scope:[print_str]  from main main::@2 main::@4
   (byte*) char_cursor#29 ← phi( main/(byte*) char_cursor#0 main::@2/(byte*) line_cursor#1 main::@4/(byte*) line_cursor#1 )
   (byte*) print_str::str#6 ← phi( main/(byte*) print_str::str#1 main::@2/(byte*) print_str::str#2 main::@4/(byte*) print_str::str#3 )
@@ -1121,12 +1167,12 @@ print_ln::@2: scope:[print_ln]  from print_ln::@1
 print_ln::@return: scope:[print_ln]  from print_ln::@2
   return 
   to:@return
-@5: scope:[]  from @begin
+@6: scope:[]  from @begin
   (byte[]) msg#0 ← (string) "hello world! @"
   (byte[]) msg2#0 ← (string) "hello c64! @"
   (byte[]) msg3#0 ← (string) "hello 2017! @"
-  to:@6
-main: scope:[main]  from @6
+  to:@7
+main: scope:[main]  from @7
   (byte*) print_str::str#1 ← (byte[]) msg#0
   call print_str param-assignment
   to:main::@1
@@ -1152,19 +1198,19 @@ main::@6: scope:[main]  from main::@5
 main::@return: scope:[main]  from main::@6
   return 
   to:@return
-@6: scope:[]  from @5
-  call main param-assignment
-  to:@7
 @7: scope:[]  from @6
+  call main param-assignment
+  to:@8
+@8: scope:[]  from @7
   to:@end
-@end: scope:[]  from @7
+@end: scope:[]  from @8
 
 Redundant Phi (byte*) char_cursor#26 (byte*) char_cursor#13
 Succesful SSA optimization Pass2RedundantPhiElimination
 CONTROL FLOW GRAPH
 @begin: scope:[]  from
   (byte*) char_cursor#0 ← ((byte*)) (word/signed word) 1024
-  to:@5
+  to:@6
 print_str: scope:[print_str]  from main main::@2 main::@4
   (byte*) char_cursor#29 ← phi( main/(byte*) char_cursor#0 main::@2/(byte*) line_cursor#1 main::@4/(byte*) line_cursor#1 )
   (byte*) print_str::str#6 ← phi( main/(byte*) print_str::str#1 main::@2/(byte*) print_str::str#2 main::@4/(byte*) print_str::str#3 )
@@ -1197,12 +1243,12 @@ print_ln::@2: scope:[print_ln]  from print_ln::@1
 print_ln::@return: scope:[print_ln]  from print_ln::@2
   return 
   to:@return
-@5: scope:[]  from @begin
+@6: scope:[]  from @begin
   (byte[]) msg#0 ← (string) "hello world! @"
   (byte[]) msg2#0 ← (string) "hello c64! @"
   (byte[]) msg3#0 ← (string) "hello 2017! @"
-  to:@6
-main: scope:[main]  from @6
+  to:@7
+main: scope:[main]  from @7
   (byte*) print_str::str#1 ← (byte[]) msg#0
   call print_str param-assignment
   to:main::@1
@@ -1228,12 +1274,12 @@ main::@6: scope:[main]  from main::@5
 main::@return: scope:[main]  from main::@6
   return 
   to:@return
-@6: scope:[]  from @5
-  call main param-assignment
-  to:@7
 @7: scope:[]  from @6
+  call main param-assignment
+  to:@8
+@8: scope:[]  from @7
   to:@end
-@end: scope:[]  from @7
+@end: scope:[]  from @8
 
 Simple Condition (boolean~) print_str::$0 if(*((byte*) print_str::str#4)!=(byte) '@') goto print_str::@2
 Simple Condition (boolean~) print_ln::$1 if((byte*) line_cursor#1<(byte*) char_cursor#13) goto print_ln::@1
@@ -1241,7 +1287,7 @@ Succesful SSA optimization Pass2ConditionalJumpSimplification
 CONTROL FLOW GRAPH
 @begin: scope:[]  from
   (byte*) char_cursor#0 ← ((byte*)) (word/signed word) 1024
-  to:@5
+  to:@6
 print_str: scope:[print_str]  from main main::@2 main::@4
   (byte*) char_cursor#29 ← phi( main/(byte*) char_cursor#0 main::@2/(byte*) line_cursor#1 main::@4/(byte*) line_cursor#1 )
   (byte*) print_str::str#6 ← phi( main/(byte*) print_str::str#1 main::@2/(byte*) print_str::str#2 main::@4/(byte*) print_str::str#3 )
@@ -1272,12 +1318,12 @@ print_ln::@2: scope:[print_ln]  from print_ln::@1
 print_ln::@return: scope:[print_ln]  from print_ln::@2
   return 
   to:@return
-@5: scope:[]  from @begin
+@6: scope:[]  from @begin
   (byte[]) msg#0 ← (string) "hello world! @"
   (byte[]) msg2#0 ← (string) "hello c64! @"
   (byte[]) msg3#0 ← (string) "hello 2017! @"
-  to:@6
-main: scope:[main]  from @6
+  to:@7
+main: scope:[main]  from @7
   (byte*) print_str::str#1 ← (byte[]) msg#0
   call print_str param-assignment
   to:main::@1
@@ -1303,12 +1349,12 @@ main::@6: scope:[main]  from main::@5
 main::@return: scope:[main]  from main::@6
   return 
   to:@return
-@6: scope:[]  from @5
-  call main param-assignment
-  to:@7
 @7: scope:[]  from @6
+  call main param-assignment
+  to:@8
+@8: scope:[]  from @7
   to:@end
-@end: scope:[]  from @7
+@end: scope:[]  from @8
 
 Constant (const byte*) char_cursor#0 = ((byte*))1024
 Constant (const byte[]) msg#0 = "hello world! @"
@@ -1317,7 +1363,7 @@ Constant (const byte[]) msg3#0 = "hello 2017! @"
 Succesful SSA optimization Pass2ConstantIdentification
 CONTROL FLOW GRAPH
 @begin: scope:[]  from
-  to:@5
+  to:@6
 print_str: scope:[print_str]  from main main::@2 main::@4
   (byte*) char_cursor#29 ← phi( main/(const byte*) char_cursor#0 main::@2/(byte*) line_cursor#1 main::@4/(byte*) line_cursor#1 )
   (byte*) print_str::str#6 ← phi( main/(byte*) print_str::str#1 main::@2/(byte*) print_str::str#2 main::@4/(byte*) print_str::str#3 )
@@ -1348,9 +1394,9 @@ print_ln::@2: scope:[print_ln]  from print_ln::@1
 print_ln::@return: scope:[print_ln]  from print_ln::@2
   return 
   to:@return
-@5: scope:[]  from @begin
-  to:@6
-main: scope:[main]  from @6
+@6: scope:[]  from @begin
+  to:@7
+main: scope:[main]  from @7
   (byte*) print_str::str#1 ← (const byte[]) msg#0
   call print_str param-assignment
   to:main::@1
@@ -1376,12 +1422,12 @@ main::@6: scope:[main]  from main::@5
 main::@return: scope:[main]  from main::@6
   return 
   to:@return
-@6: scope:[]  from @5
-  call main param-assignment
-  to:@7
 @7: scope:[]  from @6
+  call main param-assignment
+  to:@8
+@8: scope:[]  from @7
   to:@end
-@end: scope:[]  from @7
+@end: scope:[]  from @8
 
 Constant (const byte*) print_str::str#1 = msg#0
 Constant (const byte*) print_str::str#2 = msg2#0
@@ -1389,7 +1435,7 @@ Constant (const byte*) print_str::str#3 = msg3#0
 Succesful SSA optimization Pass2ConstantIdentification
 CONTROL FLOW GRAPH
 @begin: scope:[]  from
-  to:@5
+  to:@6
 print_str: scope:[print_str]  from main main::@2 main::@4
   (byte*) char_cursor#29 ← phi( main/(const byte*) char_cursor#0 main::@2/(byte*) line_cursor#1 main::@4/(byte*) line_cursor#1 )
   (byte*) print_str::str#6 ← phi( main/(const byte*) print_str::str#1 main::@2/(const byte*) print_str::str#2 main::@4/(const byte*) print_str::str#3 )
@@ -1420,9 +1466,9 @@ print_ln::@2: scope:[print_ln]  from print_ln::@1
 print_ln::@return: scope:[print_ln]  from print_ln::@2
   return 
   to:@return
-@5: scope:[]  from @begin
-  to:@6
-main: scope:[main]  from @6
+@6: scope:[]  from @begin
+  to:@7
+main: scope:[main]  from @7
   call print_str param-assignment
   to:main::@1
 main::@1: scope:[main]  from main
@@ -1445,21 +1491,21 @@ main::@6: scope:[main]  from main::@5
 main::@return: scope:[main]  from main::@6
   return 
   to:@return
-@6: scope:[]  from @5
-  call main param-assignment
-  to:@7
 @7: scope:[]  from @6
+  call main param-assignment
+  to:@8
+@8: scope:[]  from @7
   to:@end
-@end: scope:[]  from @7
+@end: scope:[]  from @8
 
 Culled Empty Block (label) print_ln::@2
-Culled Empty Block (label) @5
+Culled Empty Block (label) @6
 Culled Empty Block (label) main::@6
-Culled Empty Block (label) @7
+Culled Empty Block (label) @8
 Succesful SSA optimization Pass2CullEmptyBlocks
 CONTROL FLOW GRAPH
 @begin: scope:[]  from
-  to:@6
+  to:@7
 print_str: scope:[print_str]  from main main::@2 main::@4
   (byte*) char_cursor#29 ← phi( main/(const byte*) char_cursor#0 main::@2/(byte*) line_cursor#1 main::@4/(byte*) line_cursor#1 )
   (byte*) print_str::str#6 ← phi( main/(const byte*) print_str::str#1 main::@2/(const byte*) print_str::str#2 main::@4/(const byte*) print_str::str#3 )
@@ -1488,7 +1534,7 @@ print_ln::@1: scope:[print_ln]  from print_ln print_ln::@1
 print_ln::@return: scope:[print_ln]  from print_ln::@1
   return 
   to:@return
-main: scope:[main]  from @6
+main: scope:[main]  from @7
   call print_str param-assignment
   to:main::@1
 main::@1: scope:[main]  from main
@@ -1509,10 +1555,10 @@ main::@5: scope:[main]  from main::@4
 main::@return: scope:[main]  from main::@5
   return 
   to:@return
-@6: scope:[]  from @begin
+@7: scope:[]  from @begin
   call main param-assignment
   to:@end
-@end: scope:[]  from @6
+@end: scope:[]  from @7
 
 Inlining constant with var siblings (const byte*) print_str::str#1
 Inlining constant with var siblings (const byte*) print_str::str#1
@@ -1533,7 +1579,7 @@ Constant inlined print_str::str#1 = (const byte[]) msg#0
 Succesful SSA optimization Pass2ConstantInlining
 CONTROL FLOW GRAPH
 @begin: scope:[]  from
-  to:@6
+  to:@7
 print_str: scope:[print_str]  from main main::@2 main::@4
   (byte*) char_cursor#29 ← phi( main/((byte*))(word/signed word) 1024 main::@2/(byte*) line_cursor#1 main::@4/(byte*) line_cursor#1 )
   (byte*) print_str::str#6 ← phi( main/(const byte[]) msg#0 main::@2/(const byte[]) msg2#0 main::@4/(const byte[]) msg3#0 )
@@ -1562,7 +1608,7 @@ print_ln::@1: scope:[print_ln]  from print_ln print_ln::@1
 print_ln::@return: scope:[print_ln]  from print_ln::@1
   return 
   to:@return
-main: scope:[main]  from @6
+main: scope:[main]  from @7
   call print_str param-assignment
   to:main::@1
 main::@1: scope:[main]  from main
@@ -1583,13 +1629,13 @@ main::@5: scope:[main]  from main::@4
 main::@return: scope:[main]  from main::@5
   return 
   to:@return
-@6: scope:[]  from @begin
+@7: scope:[]  from @begin
   call main param-assignment
   to:@end
-@end: scope:[]  from @6
+@end: scope:[]  from @7
 
 FINAL SYMBOL TABLE
-(label) @6
+(label) @7
 (label) @begin
 (label) @end
 (byte*) char_cursor
@@ -1625,17 +1671,17 @@ FINAL SYMBOL TABLE
 (byte*) print_str::str#4
 (byte*) print_str::str#6
 
-Block Sequence Planned @begin @6 @end main main::@1 main::@2 main::@3 main::@4 main::@5 main::@return print_ln print_ln::@1 print_ln::@return print_str print_str::@1 print_str::@return print_str::@2 
+Block Sequence Planned @begin @7 @end main main::@1 main::@2 main::@3 main::@4 main::@5 main::@return print_ln print_ln::@1 print_ln::@return print_str print_str::@1 print_str::@return print_str::@2 
 Added new block during phi lifting print_ln::@3(between print_ln::@1 and print_ln::@1)
-Block Sequence Planned @begin @6 @end main main::@1 main::@2 main::@3 main::@4 main::@5 main::@return print_ln print_ln::@1 print_ln::@return print_ln::@3 print_str print_str::@1 print_str::@return print_str::@2 
+Block Sequence Planned @begin @7 @end main main::@1 main::@2 main::@3 main::@4 main::@5 main::@return print_ln print_ln::@1 print_ln::@return print_ln::@3 print_str print_str::@1 print_str::@return print_str::@2 
 CONTROL FLOW GRAPH - PHI LIFTED
 @begin: scope:[]  from
-  to:@6
-@6: scope:[]  from @begin
+  to:@7
+@7: scope:[]  from @begin
   call main param-assignment
   to:@end
-@end: scope:[]  from @6
-main: scope:[main]  from @6
+@end: scope:[]  from @7
+main: scope:[main]  from @7
   call print_str param-assignment
   to:main::@1
 main::@1: scope:[main]  from main
@@ -1698,7 +1744,7 @@ print_str::@2: scope:[print_str]  from print_str::@1
   to:print_str::@1
 
 Adding NOP phi() at start of @begin
-Adding NOP phi() at start of @6
+Adding NOP phi() at start of @7
 Adding NOP phi() at start of @end
 Adding NOP phi() at start of main
 Adding NOP phi() at start of main::@1
@@ -1717,14 +1763,14 @@ Propagating live ranges...
 CONTROL FLOW GRAPH - LIVE RANGES FOUND
 @begin: scope:[]  from
   [0] phi() [ ]
-  to:@6
-@6: scope:[]  from @begin
+  to:@7
+@7: scope:[]  from @begin
   [1] phi() [ ]
   [2] call main param-assignment [ ]
   to:@end
-@end: scope:[]  from @6
+@end: scope:[]  from @7
   [3] phi() [ ]
-main: scope:[main]  from @6
+main: scope:[main]  from @7
   [4] phi() [ ]
   [5] call print_str param-assignment [ char_cursor#13 ]
   to:main::@1
@@ -1801,9 +1847,9 @@ Coalesced [33] print_str::str#8 ← print_str::str#0
 Coalesced [34] char_cursor#34 ← char_cursor#1
 Coalesced down to 3 phi equivalence classes
 Culled Empty Block (label) print_ln::@3
-Block Sequence Planned @begin @6 @end main main::@1 main::@2 main::@3 main::@4 main::@5 main::@return print_ln print_ln::@1 print_ln::@return print_str print_str::@1 print_str::@return print_str::@2 
+Block Sequence Planned @begin @7 @end main main::@1 main::@2 main::@3 main::@4 main::@5 main::@return print_ln print_ln::@1 print_ln::@return print_str print_str::@1 print_str::@return print_str::@2 
 Adding NOP phi() at start of @begin
-Adding NOP phi() at start of @6
+Adding NOP phi() at start of @7
 Adding NOP phi() at start of @end
 Adding NOP phi() at start of main
 Adding NOP phi() at start of main::@1
@@ -1819,14 +1865,14 @@ Propagating live ranges...
 CONTROL FLOW GRAPH - BEFORE EFFECTIVE LIVE RANGES
 @begin: scope:[]  from
   [0] phi() [ ]
-  to:@6
-@6: scope:[]  from @begin
+  to:@7
+@7: scope:[]  from @begin
   [1] phi() [ ]
   [2] call main param-assignment [ ]
   to:@end
-@end: scope:[]  from @6
+@end: scope:[]  from @7
   [3] phi() [ ]
-main: scope:[main]  from @6
+main: scope:[main]  from @7
   [4] phi() [ ]
   [5] call print_str param-assignment [ char_cursor#13 ]
   to:main::@1
@@ -1885,14 +1931,14 @@ print_str::@2: scope:[print_str]  from print_str::@1
 CONTROL FLOW GRAPH - PHI MEM COALESCED
 @begin: scope:[]  from
   [0] phi() [ ] ( )
-  to:@6
-@6: scope:[]  from @begin
+  to:@7
+@7: scope:[]  from @begin
   [1] phi() [ ] ( )
   [2] call main param-assignment [ ] ( )
   to:@end
-@end: scope:[]  from @6
+@end: scope:[]  from @7
   [3] phi() [ ] ( )
-main: scope:[main]  from @6
+main: scope:[main]  from @7
   [4] phi() [ ] ( main:2 [ ] )
   [5] call print_str param-assignment [ char_cursor#13 ] ( main:2 [ char_cursor#13 ] )
   to:main::@1
@@ -1950,22 +1996,22 @@ print_str::@2: scope:[print_str]  from print_str::@1
 
 DOMINATORS
 @begin dominated by  @begin 
-@6 dominated by  @begin @6 
-@end dominated by  @begin @end @6 
-main dominated by  @begin main @6 
-main::@1 dominated by  @begin main @6 main::@1 
-main::@2 dominated by  @begin main @6 main::@1 main::@2 
-main::@3 dominated by  @begin main @6 main::@1 main::@2 main::@3 
-main::@4 dominated by  @begin main @6 main::@1 main::@2 main::@3 main::@4 
-main::@5 dominated by  @begin main @6 main::@1 main::@2 main::@5 main::@3 main::@4 
-main::@return dominated by  main::@return @begin main @6 main::@1 main::@2 main::@5 main::@3 main::@4 
-print_ln dominated by  @begin main print_ln @6 main::@1 
-print_ln::@1 dominated by  print_ln::@1 @begin main print_ln @6 main::@1 
-print_ln::@return dominated by  print_ln::@1 @begin main print_ln print_ln::@return @6 main::@1 
-print_str dominated by  @begin main @6 print_str 
-print_str::@1 dominated by  @begin main print_str::@1 @6 print_str 
-print_str::@return dominated by  @begin print_str::@return main print_str::@1 @6 print_str 
-print_str::@2 dominated by  @begin main print_str::@1 print_str::@2 @6 print_str 
+@7 dominated by  @begin @7 
+@end dominated by  @begin @end @7 
+main dominated by  @begin main @7 
+main::@1 dominated by  @begin main @7 main::@1 
+main::@2 dominated by  @begin main @7 main::@1 main::@2 
+main::@3 dominated by  @begin main @7 main::@1 main::@2 main::@3 
+main::@4 dominated by  @begin main @7 main::@1 main::@2 main::@3 main::@4 
+main::@5 dominated by  @begin main @7 main::@1 main::@2 main::@5 main::@3 main::@4 
+main::@return dominated by  main::@return @begin main @7 main::@1 main::@2 main::@5 main::@3 main::@4 
+print_ln dominated by  @begin main print_ln @7 main::@1 
+print_ln::@1 dominated by  print_ln::@1 @begin main print_ln @7 main::@1 
+print_ln::@return dominated by  print_ln::@1 @begin main print_ln print_ln::@return @7 main::@1 
+print_str dominated by  @begin main print_str @7 
+print_str::@1 dominated by  @begin main print_str::@1 print_str @7 
+print_str::@return dominated by  @begin print_str::@return main print_str::@1 print_str @7 
+print_str::@2 dominated by  @begin main print_str::@1 print_str::@2 print_str @7 
 
 Found back edge: Loop head: print_ln::@1 tails: print_ln::@1 blocks: null
 Found back edge: Loop head: print_str::@1 tails: print_str::@2 blocks: null
@@ -2032,17 +2078,17 @@ INITIAL ASM
   msg3: .text "hello 2017! @"
 //SEG2 @begin
 bbegin:
-//SEG3 [1] phi from @begin to @6 [phi:@begin->@6]
-b6_from_bbegin:
-  jmp b6
-//SEG4 @6
-b6:
+//SEG3 [1] phi from @begin to @7 [phi:@begin->@7]
+b7_from_bbegin:
+  jmp b7
+//SEG4 @7
+b7:
 //SEG5 [2] call main param-assignment [ ] ( )
-//SEG6 [4] phi from @6 to main [phi:@6->main]
-main_from_b6:
+//SEG6 [4] phi from @7 to main [phi:@7->main]
+main_from_b7:
   jsr main
-//SEG7 [3] phi from @6 to @end [phi:@6->@end]
-bend_from_b6:
+//SEG7 [3] phi from @7 to @end [phi:@7->@end]
+bend_from_b7:
   jmp bend
 //SEG8 @end
 bend:
@@ -2246,17 +2292,17 @@ ASSEMBLER BEFORE OPTIMIZATION
   msg3: .text "hello 2017! @"
 //SEG2 @begin
 bbegin:
-//SEG3 [1] phi from @begin to @6 [phi:@begin->@6]
-b6_from_bbegin:
-  jmp b6
-//SEG4 @6
-b6:
+//SEG3 [1] phi from @begin to @7 [phi:@begin->@7]
+b7_from_bbegin:
+  jmp b7
+//SEG4 @7
+b7:
 //SEG5 [2] call main param-assignment [ ] ( )
-//SEG6 [4] phi from @6 to main [phi:@6->main]
-main_from_b6:
+//SEG6 [4] phi from @7 to main [phi:@7->main]
+main_from_b7:
   jsr main
-//SEG7 [3] phi from @6 to @end [phi:@6->@end]
-bend_from_b6:
+//SEG7 [3] phi from @7 to @end [phi:@7->@end]
+bend_from_b7:
   jmp bend
 //SEG8 @end
 bend:
@@ -2426,7 +2472,7 @@ print_str: {
 }
 
 ASSEMBLER OPTIMIZATIONS
-Removing instruction jmp b6
+Removing instruction jmp b7
 Removing instruction jmp bend
 Removing instruction jmp b1
 Removing instruction jmp b2
@@ -2445,9 +2491,9 @@ Replacing label b1_from_b1 with b1
 Replacing label b1_from_b1 with b1
 Replacing label b1_from_b2 with b1
 Removing instruction bbegin:
-Removing instruction b6_from_bbegin:
-Removing instruction main_from_b6:
-Removing instruction bend_from_b6:
+Removing instruction b7_from_bbegin:
+Removing instruction main_from_b7:
+Removing instruction bend_from_b7:
 Removing instruction b1_from_main:
 Removing instruction print_ln_from_b1:
 Removing instruction b3_from_b2:
@@ -2459,7 +2505,7 @@ Removing instruction b1_from_b1:
 Removing instruction b1_from_print_str:
 Removing instruction b1_from_b2:
 Succesful ASM optimization Pass5RedundantLabelElimination
-Removing instruction b6:
+Removing instruction b7:
 Removing instruction bend:
 Removing instruction print_str_from_main:
 Removing instruction b1:
@@ -2475,7 +2521,7 @@ Removing instruction breturn:
 Succesful ASM optimization Pass5UnusedLabelElimination
 
 FINAL SYMBOL TABLE
-(label) @6
+(label) @7
 (label) @begin
 (label) @end
 (byte*) char_cursor
@@ -2529,12 +2575,12 @@ FINAL CODE
   msg2: .text "hello c64! @"
   msg3: .text "hello 2017! @"
 //SEG2 @begin
-//SEG3 [1] phi from @begin to @6 [phi:@begin->@6]
-//SEG4 @6
+//SEG3 [1] phi from @begin to @7 [phi:@begin->@7]
+//SEG4 @7
 //SEG5 [2] call main param-assignment [ ] ( )
-//SEG6 [4] phi from @6 to main [phi:@6->main]
+//SEG6 [4] phi from @7 to main [phi:@7->main]
   jsr main
-//SEG7 [3] phi from @6 to @end [phi:@6->@end]
+//SEG7 [3] phi from @7 to @end [phi:@7->@end]
 //SEG8 @end
 //SEG9 main
 main: {

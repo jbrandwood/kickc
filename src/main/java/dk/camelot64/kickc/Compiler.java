@@ -125,7 +125,6 @@ public class Compiler {
       new Pass1EliminateUncalledProcedures(program).execute();
       new Pass1EliminateUnusedVars(program).execute();
       new Pass1ExtractInlineStrings(program).execute();
-      new Pass1FixWordConstructors(program).execute();
 
       new Pass1EliminateEmptyBlocks(program).execute();
       getLog().append("CONTROL FLOW GRAPH");
@@ -181,6 +180,7 @@ public class Compiler {
       optimizations.add(new Pass2ConditionalJumpSimplification(program));
       optimizations.add(new Pass2ConstantIdentification(program));
       optimizations.add(new Pass2ConstantAdditionElimination(program));
+      optimizations.add(new Pass2FixWordConstructors(program));
       pass2OptimizeSSA(optimizations);
 
       // Constant inlining optimizations - as the last step to ensure that constant identification has been completed

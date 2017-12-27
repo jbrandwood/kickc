@@ -3,17 +3,18 @@ package dk.camelot64.kickc.passes;
 import dk.camelot64.kickc.model.*;
 
 /**
- * The syntax for word constructors <code>word w = { b1, b2 };</code>
- * is turned into a binary operator <code>word w = b1 _toword_ b2 ;</code>
+ * Identifies word constructors <code>{ b1, b2 }</code> and replaces
+ * them with a binary operator <code>word w = b1 w= b2 ;</code>
  */
-public class Pass1FixWordConstructors extends Pass1Base {
+public class Pass2FixWordConstructors extends Pass2SsaOptimization{
 
-   public Pass1FixWordConstructors(Program program) {
+   public Pass2FixWordConstructors(Program program) {
       super(program);
    }
 
    @Override
-   boolean executeStep() {
+   public boolean optimize() {
+      boolean optimized = false;
       ProgramScope programScope = getProgram().getScope();
       for (ControlFlowBlock block : getProgram().getGraph().getAllBlocks()) {
          for (Statement statement : block.getStatements()) {
@@ -33,6 +34,7 @@ public class Pass1FixWordConstructors extends Pass1Base {
                            assignment.setOperator(Operator.WORD);
                            assignment.setrValue2(list.getList().get(1));
                            getLog().append("Fixing word constructor with " + assignment.toString());
+                           optimized = true;
                         }
                      }
                   }
@@ -40,7 +42,7 @@ public class Pass1FixWordConstructors extends Pass1Base {
             }
          }
       }
-      return false;
+      return optimized;
    }
 
 }

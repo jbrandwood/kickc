@@ -65,22 +65,22 @@ public class Pass1GenerateSingleStaticAssignmentForm extends Pass1Base {
    }
 
    /**
-    * Version all variable uses in the replacable value
+    * Version all variable uses in the replaceable value
     *
-    * @param replacableValue The value to version variable usages in
+    * @param replaceableValue The value to version variable usages in
     * @param blockVersions Newest version of variables in the block.
     * @param blockNewPhis New phi functions introduced in the block to create versions of variables.
     */
    private void execute(
-         VariableReplacer.ReplacableValue replacableValue,
+         ValueReplacer.ReplaceableValue replaceableValue,
          Map<VariableUnversioned, VariableVersion> blockVersions,
          Map<VariableUnversioned, VariableVersion> blockNewPhis) {
-      RValue value = replacableValue.get();
+      RValue value = replaceableValue.get();
       VariableVersion version = findOrCreateVersion(value, blockVersions, blockNewPhis);
       if (version != null) {
-         replacableValue.set(version.getRef());
+         replaceableValue.set(version.getRef());
       }
-      for (VariableReplacer.ReplacableValue subValue : replacableValue.getSubValues()) {
+      for (ValueReplacer.ReplaceableValue subValue : replaceableValue.getSubValues()) {
          execute(subValue, blockVersions, blockNewPhis);
       }
    }
@@ -96,12 +96,12 @@ public class Pass1GenerateSingleStaticAssignmentForm extends Pass1Base {
          Map<VariableUnversioned, VariableVersion> blockNewPhis = new LinkedHashMap<>();
          for (Statement statement : block.getStatements()) {
             if (statement instanceof StatementReturn) {
-               execute(new VariableReplacer.ReplacableReturn((StatementReturn) statement), blockVersions, blockNewPhis);
+               execute(new ValueReplacer.ReplaceableReturn((StatementReturn) statement), blockVersions, blockNewPhis);
             } else if (statement instanceof StatementAssignment) {
                StatementAssignment assignment = (StatementAssignment) statement;
-               execute(new VariableReplacer.ReplacableRValue1(assignment), blockVersions, blockNewPhis);
-               execute(new VariableReplacer.ReplacableRValue2(assignment), blockVersions, blockNewPhis);
-               execute(new VariableReplacer.ReplacableLValue(assignment), blockVersions, blockNewPhis);
+               execute(new ValueReplacer.ReplaceableRValue1(assignment), blockVersions, blockNewPhis);
+               execute(new ValueReplacer.ReplaceableRValue2(assignment), blockVersions, blockNewPhis);
+               execute(new ValueReplacer.ReplaceableLValue(assignment), blockVersions, blockNewPhis);
 
                // Update map of versions encountered in the block
                LValue lValue = assignment.getlValue();

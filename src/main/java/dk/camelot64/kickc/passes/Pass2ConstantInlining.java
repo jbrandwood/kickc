@@ -52,11 +52,10 @@ public class Pass2ConstantInlining extends Pass2SsaOptimization {
     * @param inline The replacements to make
     */
    private void replaceInSymbolTable(Map<ConstantRef, ConstantValue> inline) {
-      VariableReplacer replacer = new VariableReplacer(inline);
       Collection<ConstantVar> allConstants = getProgram().getScope().getAllConstants(true);
       for (ConstantVar constantVar : allConstants) {
          ConstantValue constantValue = constantVar.getValue();
-         RValue replacement = replacer.getReplacement(constantValue);
+         RValue replacement = AliasReplacer.getReplacement(constantValue, inline);
          if(replacement!=null) {
             constantVar.setValue((ConstantValue) replacement);
          }
@@ -68,13 +67,12 @@ public class Pass2ConstantInlining extends Pass2SsaOptimization {
     * @param inline The replacements
     */
    private void replaceInValues(Map<ConstantRef, ConstantValue> inline) {
-      VariableReplacer replacer = new VariableReplacer(inline);
       boolean replaced = true;
       while(replaced) {
          replaced = false;
          for (ConstantRef constantRef : inline.keySet()) {
             ConstantValue constantValue = inline.get(constantRef);
-            ConstantValue replacement = (ConstantValue) replacer.getReplacement(constantValue);
+            ConstantValue replacement = (ConstantValue) AliasReplacer.getReplacement(constantValue, inline);
             if (replacement != null) {
                replaced = true;
                inline.put(constantRef, replacement);
@@ -112,7 +110,7 @@ public class Pass2ConstantInlining extends Pass2SsaOptimization {
          ConstantValue constantValue = constant.getValue();
          if(constantValue instanceof ConstantRef) {
             if(((ConstantRef) constantValue).isIntermediate()) {
-               // The value is an intermediate constant - replace all uses of the intermediate with uses of the referer instead.
+               // The value is an intermediate constant - replace all uses of the intermediate with uses of the referrer instead.
                aliases.put((ConstantRef) constant.getValue(), constant.getRef());
                constant.setValue(programScope.getConstant((ConstantRef) constantValue).getValue());
             }  else {

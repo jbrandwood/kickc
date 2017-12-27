@@ -39,13 +39,13 @@ public class Pass2ConstantAdditionElimination extends Pass2SsaOptimization {
             if (statement instanceof StatementAssignment) {
                StatementAssignment assignment = (StatementAssignment) statement;
                if(assignment.getlValue() instanceof PointerDereferenceIndexed) {
-                  optimized |= optimizePointerDereferenceIndexed(new VariableReplacer.ReplacableLValue(assignment));
+                  optimized |= optimizePointerDereferenceIndexed(new ValueReplacer.ReplaceableLValue(assignment));
                }
                if(assignment.getrValue1() instanceof PointerDereferenceIndexed) {
-                  optimized |= optimizePointerDereferenceIndexed(new VariableReplacer.ReplacableRValue1(assignment));
+                  optimized |= optimizePointerDereferenceIndexed(new ValueReplacer.ReplaceableRValue1(assignment));
                }
                if(assignment.getrValue2() instanceof PointerDereferenceIndexed) {
-                  optimized |= optimizePointerDereferenceIndexed(new VariableReplacer.ReplacableRValue2(assignment));
+                  optimized |= optimizePointerDereferenceIndexed(new ValueReplacer.ReplaceableRValue2(assignment));
                }
 
                Operator operator = assignment.getOperator();
@@ -62,10 +62,10 @@ public class Pass2ConstantAdditionElimination extends Pass2SsaOptimization {
             } else if(statement instanceof StatementConditionalJump) {
                StatementConditionalJump jump = (StatementConditionalJump) statement;
                if(jump.getrValue1() instanceof PointerDereferenceIndexed) {
-                  optimized |= optimizePointerDereferenceIndexed(new VariableReplacer.ReplacableCondRValue1(jump));
+                  optimized |= optimizePointerDereferenceIndexed(new ValueReplacer.ReplaceableCondRValue1(jump));
                }
                if(jump.getrValue2() instanceof PointerDereferenceIndexed) {
-                  optimized |= optimizePointerDereferenceIndexed(new VariableReplacer.ReplacableCondRValue2(jump));
+                  optimized |= optimizePointerDereferenceIndexed(new ValueReplacer.ReplaceableCondRValue2(jump));
                }
             }
          }
@@ -73,7 +73,7 @@ public class Pass2ConstantAdditionElimination extends Pass2SsaOptimization {
       return optimized;
    }
 
-   private boolean optimizePointerDereferenceIndexed(VariableReplacer.ReplacableValue value) {
+   private boolean optimizePointerDereferenceIndexed(ValueReplacer.ReplaceableValue value) {
       PointerDereferenceIndexed pointerDereferenceIndexed = (PointerDereferenceIndexed) value.get();
       if(pointerDereferenceIndexed.getPointer() instanceof ConstantValue && pointerDereferenceIndexed.getIndex() instanceof ConstantValue) {
          ConstantValue ptrConstant = (ConstantValue) pointerDereferenceIndexed.getPointer();

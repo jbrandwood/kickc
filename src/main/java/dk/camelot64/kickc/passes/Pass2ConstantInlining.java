@@ -38,7 +38,6 @@ public class Pass2ConstantInlining extends Pass2SsaOptimization {
       // Replace all usages of the constants in constant definitions inside the symbol table
       replaceInSymbolTable(inline);
 
-
       for (ConstantRef constantRef : inline.keySet()) {
          getLog().append("Constant inlined " + constantRef.toString()+" = "+inline.get(constantRef).toString(getProgram()));
       }
@@ -90,7 +89,7 @@ public class Pass2ConstantInlining extends Pass2SsaOptimization {
       Collection<ConstantVar> allConstants = getProgram().getScope().getAllConstants(true);
       for (ConstantVar constant : allConstants) {
          if(constant.getRef().isIntermediate()) {
-            if(!(constant.getValue() instanceof ConstantString) && !(constant.getValue() instanceof ConstantArray)) {
+            if(!(constant.getType().equals(SymbolType.STRING)) && !(constant.getValue() instanceof ConstantArray)) {
                unnamed.put(constant.getRef(), constant.getValue());
             }
          }

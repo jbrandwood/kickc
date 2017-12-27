@@ -425,6 +425,12 @@ public class SymbolTypeInference {
                symbol.setTypeInferred(type);
             }
          }
+         // If the type is an array or a string the symbol is constant
+         if(symbol.getType() instanceof SymbolTypeArray) {
+            symbol.setDeclaredConstant(true);
+         } else if(SymbolType.STRING.equals(symbol.getType())) {
+            symbol.setDeclaredConstant(true);
+         }
       }
    }
 

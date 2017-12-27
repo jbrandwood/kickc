@@ -21,7 +21,10 @@ public class ConstantValueCalculator {
       } else if(value instanceof ConstantBinary) {
          ConstantBinary binary = (ConstantBinary) value;
          return calcValue(programScope, binary.getLeft(), binary.getOperator(), binary.getRight());
-      } else if(value instanceof ConstantArray) {
+      } else if(value instanceof ConstantArrayList) {
+         // Cannot calculate value of inline array
+         return null;
+      } else if(value instanceof ConstantArrayFilled) {
          // Cannot calculate value of inline array
          return null;
       } else {

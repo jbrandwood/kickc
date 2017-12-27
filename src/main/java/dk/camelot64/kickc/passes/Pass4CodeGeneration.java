@@ -104,7 +104,7 @@ public class Pass4CodeGeneration {
       Collection<ConstantVar> scopeConstants = scope.getAllConstants(false);
       Set<String> added = new LinkedHashSet<>();
       for (ConstantVar constantVar : scopeConstants) {
-         if(! (constantVar.getValue() instanceof ConstantArray || constantVar.getType().equals(SymbolType.STRING))) {
+         if(!(constantVar.getValue() instanceof ConstantArrayList || constantVar.getValue() instanceof ConstantArrayFilled|| constantVar.getType().equals(SymbolType.STRING))) {
             String asmName = constantVar.getAsmName() == null ? constantVar.getLocalName() : constantVar.getAsmName();
             if (asmName != null && !added.contains(asmName)) {
                asm.addConstant(asmName.replace("#", "_").replace("$", "_"), AsmFragment.getAsmConstant(program, constantVar.getValue(), 99, scopeRef));
@@ -125,21 +125,30 @@ public class Pass4CodeGeneration {
       Collection<ConstantVar> scopeConstants = scope.getAllConstants(false);
       Set<String> added = new LinkedHashSet<>();
       for (ConstantVar constantVar : scopeConstants) {
-         if(constantVar.getValue() instanceof ConstantArray) {
-            ConstantArray constantArray = (ConstantArray) constantVar.getValue();
+         if(constantVar.getValue() instanceof ConstantArrayList) {
+            ConstantArrayList constantArrayList = (ConstantArrayList) constantVar.getValue();
             String asmName = constantVar.getAsmName() == null ? constantVar.getLocalName() : constantVar.getAsmName();
             if (asmName != null && !added.contains(asmName)) {
                List<String> asmElements = new ArrayList<>();
-               for (ConstantValue element : constantArray.getElements()) {
+               for (ConstantValue element : constantArrayList.getElements()) {
                   String asmElement = AsmFragment.getAsmConstant(program, element, 99, scopeRef);
                   asmElements.add(asmElement);
                }
-               if(SymbolType.isByte(constantArray.getElementType())) {
+               if(SymbolType.isByte(constantArrayList.getElementType())) {
                   asm.addDataNumeric(asmName.replace("#", "_").replace("$", "_"), AsmDataNumeric.Type.BYTE, asmElements);
                   added.add(asmName);
                } else {
-                  throw new RuntimeException("Unhandled constant array element type "+constantArray.toString(program));
+                  throw new RuntimeException("Unhandled constant array element type "+ constantArrayList.toString(program));
                }
+            }
+         } else if(constantVar.getValue() instanceof ConstantArrayFilled) {
+            String asmName = constantVar.getAsmName() == null ? constantVar.getLocalName() : constantVar.getAsmName();
+            ConstantArrayFilled constantArrayFilled = (ConstantArrayFilled) constantVar.getValue();
+            if(SymbolType.isByte(constantArrayFilled.getElementType())) {
+               asm.addDataFilled(asmName.replace("#", "_").replace("$", "_"), AsmDataNumeric.Type.BYTE, constantArrayFilled.getSize(), "0");
+               added.add(asmName);
+            } else {
+               throw new RuntimeException("Unhandled constant array element type "+ constantArrayFilled.toString(program));
             }
          } else if(constantVar.getType().equals(SymbolType.STRING)) {
             String asmName = constantVar.getAsmName() == null ? constantVar.getLocalName() : constantVar.getAsmName();

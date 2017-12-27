@@ -10,12 +10,12 @@
   .const RSEL = 8
   .const SCREEN = $400
   .const BITMAP = $2000
-  .const plot_xlo = $1000
-  .const plot_xhi = $1100
-  .const plot_ylo = $1200
-  .const plot_yhi = $1300
-  .const plot_bit = $1400
   .const lines_cnt = 8
+  plot_xlo: .fill 256, 0
+  plot_xhi: .fill 256, 0
+  plot_ylo: .fill 256, 0
+  plot_yhi: .fill 256, 0
+  plot_bit: .fill 256, 0
   lines_x: .byte $3c, $50, $6e, $50, $3c, $28, $a, $28, $3c
   lines_y: .byte $a, $28, $3c, $50, $6e, $50, $3c, $28, $a
   jsr main

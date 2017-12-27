@@ -128,7 +128,7 @@ public class Pass2ConstantIdentification extends Pass2SsaOptimization {
                            }
                         }
                         if (allConstant && elementType != null) {
-                           ConstantValue constant = new ConstantArray(elements, elementType);
+                           ConstantValue constant = new ConstantArrayList(elements, elementType);
                            constants.put(variable, constant);
                         }
                      }

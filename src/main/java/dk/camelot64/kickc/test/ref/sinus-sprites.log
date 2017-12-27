@@ -5,10 +5,10 @@ import "print"
 const byte* SCREEN = $0400;
 
 const byte sinlen_x = 221;
-const byte[] sintab_x = $1000;
+const byte[221] sintab_x;
 const byte sinlen_y = 197;
-const byte[] sintab_y = $1100;
-const byte[] sprites = $2000;
+const byte[197] sintab_y;
+const byte* sprites = $2000;
 
 void main() {
     init();
@@ -824,10 +824,10 @@ print_cls::@return:
 endproc // print_cls()
   (byte*) SCREEN ← (word/signed word) 1024
   (byte) sinlen_x ← (byte/word/signed word) 221
-  (byte[]) sintab_x ← (word/signed word) 4096
+  (byte[221]) sintab_x ← { fill( 221, 0) }
   (byte) sinlen_y ← (byte/word/signed word) 197
-  (byte[]) sintab_y ← (word/signed word) 4352
-  (byte[]) sprites ← (word/signed word) 8192
+  (byte[197]) sintab_y ← { fill( 197, 0) }
+  (byte*) sprites ← (word/signed word) 8192
 proc (void()) main()
   (void~) main::$0 ← call init 
 main::@1:
@@ -852,10 +852,10 @@ init::@1:
   (void~) init::$3 ← call place_sprites 
   (void~) init::$4 ← call gen_sprites 
   (void~) init::$5 ← call progress_init (byte*) SCREEN 
-  (void~) init::$6 ← call gen_sintab (byte[]) sintab_x (byte) sinlen_x (byte/signed byte/word/signed word) 0 (byte/word/signed word) 255 
+  (void~) init::$6 ← call gen_sintab (byte[221]) sintab_x (byte) sinlen_x (byte/signed byte/word/signed word) 0 (byte/word/signed word) 255 
   (byte*~) init::$7 ← (byte*) SCREEN + (byte/signed byte/word/signed word) 40
   (void~) init::$8 ← call progress_init (byte*~) init::$7 
-  (void~) init::$9 ← call gen_sintab (byte[]) sintab_y (byte) sinlen_y (byte/signed byte/word/signed word) 50 (byte/word/signed word) 208 
+  (void~) init::$9 ← call gen_sintab (byte[197]) sintab_y (byte) sinlen_y (byte/signed byte/word/signed word) 50 (byte/word/signed word) 208 
   (void~) init::$10 ← call clear_screen 
 init::@return:
   return 
@@ -904,7 +904,7 @@ proc (void()) anim()
   (byte) anim::j ← (byte/signed byte/word/signed word) 0
 anim::@1:
   (word~) anim::$0 ← ((word)) (byte/signed byte/word/signed word) 30
-  (word~) anim::$1 ← (word~) anim::$0 + *((byte[]) sintab_x + (byte) anim::xidx)
+  (word~) anim::$1 ← (word~) anim::$0 + *((byte[221]) sintab_x + (byte) anim::xidx)
   (word) anim::x ← (word~) anim::$1
   (byte~) anim::$2 ← (byte) anim::x_msb << (byte/signed byte/word/signed word) 1
   (byte~) anim::$3 ← > (word) anim::x
@@ -912,7 +912,7 @@ anim::@1:
   (byte) anim::x_msb ← (byte~) anim::$4
   (byte~) anim::$5 ← < (word) anim::x
   *((byte*) SPRITES_XPOS + (byte) anim::j2) ← (byte~) anim::$5
-  *((byte*) SPRITES_YPOS + (byte) anim::j2) ← *((byte[]) sintab_y + (byte) anim::yidx)
+  *((byte*) SPRITES_YPOS + (byte) anim::j2) ← *((byte[197]) sintab_y + (byte) anim::yidx)
   (byte/word~) anim::$6 ← (byte) anim::xidx + (byte/signed byte/word/signed word) 10
   (byte) anim::xidx ← (byte/word~) anim::$6
   (boolean~) anim::$7 ← (byte) anim::xidx >= (byte) sinlen_x
@@ -957,8 +957,8 @@ proc (void()) place_sprites()
   *((byte*) SPRITES_EXPAND_Y) ← (byte/signed byte/word/signed word) 127
   (byte*~) place_sprites::$0 ← (byte*) SCREEN + (word/signed word) 1016
   (byte*) place_sprites::sprites_ptr ← (byte*~) place_sprites::$0
-  (byte[]~) place_sprites::$1 ← (byte[]) sprites / (byte/signed byte/word/signed word) 64
-  (byte~) place_sprites::$2 ← ((byte)) (byte[]~) place_sprites::$1
+  (byte*~) place_sprites::$1 ← (byte*) sprites / (byte/signed byte/word/signed word) 64
+  (byte~) place_sprites::$2 ← ((byte)) (byte*~) place_sprites::$1
   (byte) place_sprites::spr_id ← (byte~) place_sprites::$2
   (byte) place_sprites::spr_x ← (byte/signed byte/word/signed word) 60
   (byte) place_sprites::j2 ← (byte/signed byte/word/signed word) 0
@@ -985,7 +985,7 @@ place_sprites::@return:
 endproc // place_sprites()
 proc (void()) gen_sprites()
   (byte[]) gen_sprites::cml ← (string) "camelot"
-  (byte*) gen_sprites::spr ← (byte[]) sprites
+  (byte*) gen_sprites::spr ← (byte*) sprites
   (byte) gen_sprites::i ← (byte/signed byte/word/signed word) 0
 gen_sprites::@1:
   (void~) gen_sprites::$0 ← call gen_chargen_sprite *((byte[]) gen_sprites::cml + (byte) gen_sprites::i) (byte*) gen_sprites::spr 
@@ -1295,7 +1295,7 @@ SYMBOLS
 (byte*) mulFACbyMEM::mem
 (void()) place_sprites()
 (byte*~) place_sprites::$0
-(byte[]~) place_sprites::$1
+(byte*~) place_sprites::$1
 (byte~) place_sprites::$2
 (byte/word~) place_sprites::$3
 (byte~) place_sprites::$4
@@ -1396,9 +1396,9 @@ SYMBOLS
 (byte) sin_idx_y
 (byte) sinlen_x
 (byte) sinlen_y
-(byte[]) sintab_x
-(byte[]) sintab_y
-(byte[]) sprites
+(byte[221]) sintab_x
+(byte[197]) sintab_y
+(byte*) sprites
 (void()) sqrFAC()
 (label) sqrFAC::@return
 (void()) subFACfromARG()
@@ -1432,9 +1432,7 @@ Promoting byte/word/signed word to byte* in memHi ← ((byte*)) 255
 Promoting word/signed word to byte* in line_cursor ← ((byte*)) 1024
 Promoting word/signed word to byte* in print_cls::sc ← ((byte*)) 1024
 Promoting word/signed word to byte* in SCREEN ← ((byte*)) 1024
-Promoting word/signed word to byte[] in sintab_x ← ((byte*)) 4096
-Promoting word/signed word to byte[] in sintab_y ← ((byte*)) 4352
-Promoting word/signed word to byte[] in sprites ← ((byte*)) 8192
+Promoting word/signed word to byte* in sprites ← ((byte*)) 8192
 Promoting word to byte* in gen_sintab::f_2pi ← ((byte*)) 58085
 INITIAL CONTROL FLOW GRAPH
 @begin: scope:[]  from
@@ -1787,10 +1785,10 @@ print_cls::@return: scope:[print_cls]  from print_cls::@2
 @33: scope:[]  from @32
   (byte*) SCREEN ← ((byte*)) (word/signed word) 1024
   (byte) sinlen_x ← (byte/word/signed word) 221
-  (byte[]) sintab_x ← ((byte*)) (word/signed word) 4096
+  (byte[221]) sintab_x ← { fill( 221, 0) }
   (byte) sinlen_y ← (byte/word/signed word) 197
-  (byte[]) sintab_y ← ((byte*)) (word/signed word) 4352
-  (byte[]) sprites ← ((byte*)) (word/signed word) 8192
+  (byte[197]) sintab_y ← { fill( 197, 0) }
+  (byte*) sprites ← ((byte*)) (word/signed word) 8192
   to:@34
 main: scope:[main]  from
   (void~) main::$0 ← call init 
@@ -1828,10 +1826,10 @@ init::@2: scope:[init]  from init::@1
   (void~) init::$3 ← call place_sprites 
   (void~) init::$4 ← call gen_sprites 
   (void~) init::$5 ← call progress_init (byte*) SCREEN 
-  (void~) init::$6 ← call gen_sintab (byte[]) sintab_x (byte) sinlen_x (byte/signed byte/word/signed word) 0 (byte/word/signed word) 255 
+  (void~) init::$6 ← call gen_sintab (byte[221]) sintab_x (byte) sinlen_x (byte/signed byte/word/signed word) 0 (byte/word/signed word) 255 
   (byte*~) init::$7 ← (byte*) SCREEN + (byte/signed byte/word/signed word) 40
   (void~) init::$8 ← call progress_init (byte*~) init::$7 
-  (void~) init::$9 ← call gen_sintab (byte[]) sintab_y (byte) sinlen_y (byte/signed byte/word/signed word) 50 (byte/word/signed word) 208 
+  (void~) init::$9 ← call gen_sintab (byte[197]) sintab_y (byte) sinlen_y (byte/signed byte/word/signed word) 50 (byte/word/signed word) 208 
   (void~) init::$10 ← call clear_screen 
   to:init::@return
 init::@return: scope:[init]  from init::@2
@@ -1899,7 +1897,7 @@ anim: scope:[anim]  from
   to:anim::@1
 anim::@1: scope:[anim]  from anim anim::@3
   (word~) anim::$0 ← ((word)) (byte/signed byte/word/signed word) 30
-  (word~) anim::$1 ← (word~) anim::$0 + *((byte[]) sintab_x + (byte) anim::xidx)
+  (word~) anim::$1 ← (word~) anim::$0 + *((byte[221]) sintab_x + (byte) anim::xidx)
   (word) anim::x ← (word~) anim::$1
   (byte~) anim::$2 ← (byte) anim::x_msb << (byte/signed byte/word/signed word) 1
   (byte~) anim::$3 ← > (word) anim::x
@@ -1907,7 +1905,7 @@ anim::@1: scope:[anim]  from anim anim::@3
   (byte) anim::x_msb ← (byte~) anim::$4
   (byte~) anim::$5 ← < (word) anim::x
   *((byte*) SPRITES_XPOS + (byte) anim::j2) ← (byte~) anim::$5
-  *((byte*) SPRITES_YPOS + (byte) anim::j2) ← *((byte[]) sintab_y + (byte) anim::yidx)
+  *((byte*) SPRITES_YPOS + (byte) anim::j2) ← *((byte[197]) sintab_y + (byte) anim::yidx)
   (byte/word~) anim::$6 ← (byte) anim::xidx + (byte/signed byte/word/signed word) 10
   (byte) anim::xidx ← (byte/word~) anim::$6
   (boolean~) anim::$7 ← (byte) anim::xidx >= (byte) sinlen_x
@@ -1969,8 +1967,8 @@ place_sprites: scope:[place_sprites]  from
   *((byte*) SPRITES_EXPAND_Y) ← (byte/signed byte/word/signed word) 127
   (byte*~) place_sprites::$0 ← (byte*) SCREEN + (word/signed word) 1016
   (byte*) place_sprites::sprites_ptr ← (byte*~) place_sprites::$0
-  (byte[]~) place_sprites::$1 ← (byte[]) sprites / (byte/signed byte/word/signed word) 64
-  (byte~) place_sprites::$2 ← ((byte)) (byte[]~) place_sprites::$1
+  (byte*~) place_sprites::$1 ← (byte*) sprites / (byte/signed byte/word/signed word) 64
+  (byte~) place_sprites::$2 ← ((byte)) (byte*~) place_sprites::$1
   (byte) place_sprites::spr_id ← (byte~) place_sprites::$2
   (byte) place_sprites::spr_x ← (byte/signed byte/word/signed word) 60
   (byte) place_sprites::j2 ← (byte/signed byte/word/signed word) 0
@@ -2003,7 +2001,7 @@ place_sprites::@return: scope:[place_sprites]  from place_sprites::@2
   to:@41
 gen_sprites: scope:[gen_sprites]  from
   (byte[]) gen_sprites::cml ← (string) "camelot"
-  (byte*) gen_sprites::spr ← (byte[]) sprites
+  (byte*) gen_sprites::spr ← (byte*) sprites
   (byte) gen_sprites::i ← (byte/signed byte/word/signed word) 0
   to:gen_sprites::@1
 gen_sprites::@1: scope:[gen_sprites]  from gen_sprites gen_sprites::@1
@@ -2351,10 +2349,10 @@ sinFAC::@return: scope:[sinFAC]  from sinFAC
 @33: scope:[]  from @begin
   (byte*) SCREEN ← ((byte*)) (word/signed word) 1024
   (byte) sinlen_x ← (byte/word/signed word) 221
-  (byte[]) sintab_x ← ((byte*)) (word/signed word) 4096
+  (byte[221]) sintab_x ← { fill( 221, 0) }
   (byte) sinlen_y ← (byte/word/signed word) 197
-  (byte[]) sintab_y ← ((byte*)) (word/signed word) 4352
-  (byte[]) sprites ← ((byte*)) (word/signed word) 8192
+  (byte[197]) sintab_y ← { fill( 197, 0) }
+  (byte*) sprites ← ((byte*)) (word/signed word) 8192
   to:@36
 main: scope:[main]  from
   call init 
@@ -2388,10 +2386,10 @@ init::@2: scope:[init]  from init::@1
   call place_sprites 
   call gen_sprites 
   call progress_init (byte*) SCREEN 
-  call gen_sintab (byte[]) sintab_x (byte) sinlen_x (byte/signed byte/word/signed word) 0 (byte/word/signed word) 255 
+  call gen_sintab (byte[221]) sintab_x (byte) sinlen_x (byte/signed byte/word/signed word) 0 (byte/word/signed word) 255 
   (byte*~) init::$7 ← (byte*) SCREEN + (byte/signed byte/word/signed word) 40
   call progress_init (byte*~) init::$7 
-  call gen_sintab (byte[]) sintab_y (byte) sinlen_y (byte/signed byte/word/signed word) 50 (byte/word/signed word) 208 
+  call gen_sintab (byte[197]) sintab_y (byte) sinlen_y (byte/signed byte/word/signed word) 50 (byte/word/signed word) 208 
   call clear_screen 
   to:init::@return
 init::@return: scope:[init]  from init::@2
@@ -2453,7 +2451,7 @@ anim: scope:[anim]  from
   to:anim::@1
 anim::@1: scope:[anim]  from anim anim::@3
   (word~) anim::$0 ← ((word)) (byte/signed byte/word/signed word) 30
-  (word~) anim::$1 ← (word~) anim::$0 + *((byte[]) sintab_x + (byte) anim::xidx)
+  (word~) anim::$1 ← (word~) anim::$0 + *((byte[221]) sintab_x + (byte) anim::xidx)
   (word) anim::x ← (word~) anim::$1
   (byte~) anim::$2 ← (byte) anim::x_msb << (byte/signed byte/word/signed word) 1
   (byte~) anim::$3 ← > (word) anim::x
@@ -2461,7 +2459,7 @@ anim::@1: scope:[anim]  from anim anim::@3
   (byte) anim::x_msb ← (byte~) anim::$4
   (byte~) anim::$5 ← < (word) anim::x
   *((byte*) SPRITES_XPOS + (byte) anim::j2) ← (byte~) anim::$5
-  *((byte*) SPRITES_YPOS + (byte) anim::j2) ← *((byte[]) sintab_y + (byte) anim::yidx)
+  *((byte*) SPRITES_YPOS + (byte) anim::j2) ← *((byte[197]) sintab_y + (byte) anim::yidx)
   (byte/word~) anim::$6 ← (byte) anim::xidx + (byte/signed byte/word/signed word) 10
   (byte) anim::xidx ← (byte/word~) anim::$6
   (boolean~) anim::$7 ← (byte) anim::xidx >= (byte) sinlen_x
@@ -2521,8 +2519,8 @@ place_sprites: scope:[place_sprites]  from
   *((byte*) SPRITES_EXPAND_Y) ← (byte/signed byte/word/signed word) 127
   (byte*~) place_sprites::$0 ← (byte*) SCREEN + (word/signed word) 1016
   (byte*) place_sprites::sprites_ptr ← (byte*~) place_sprites::$0
-  (byte[]~) place_sprites::$1 ← (byte[]) sprites / (byte/signed byte/word/signed word) 64
-  (byte~) place_sprites::$2 ← ((byte)) (byte[]~) place_sprites::$1
+  (byte*~) place_sprites::$1 ← (byte*) sprites / (byte/signed byte/word/signed word) 64
+  (byte~) place_sprites::$2 ← ((byte)) (byte*~) place_sprites::$1
   (byte) place_sprites::spr_id ← (byte~) place_sprites::$2
   (byte) place_sprites::spr_x ← (byte/signed byte/word/signed word) 60
   (byte) place_sprites::j2 ← (byte/signed byte/word/signed word) 0
@@ -2551,7 +2549,7 @@ place_sprites::@return: scope:[place_sprites]  from place_sprites::@1
   to:@return
 gen_sprites: scope:[gen_sprites]  from
   (byte[]) gen_sprites::cml ← (const string) gen_sprites::$3
-  (byte*) gen_sprites::spr ← (byte[]) sprites
+  (byte*) gen_sprites::spr ← (byte*) sprites
   (byte) gen_sprites::i ← (byte/signed byte/word/signed word) 0
   to:gen_sprites::@1
 gen_sprites::@1: scope:[gen_sprites]  from gen_sprites gen_sprites::@1
@@ -2807,10 +2805,10 @@ sinFAC::@return: scope:[sinFAC]  from sinFAC
 @33: scope:[]  from @begin
   (byte*) SCREEN ← ((byte*)) (word/signed word) 1024
   (byte) sinlen_x ← (byte/word/signed word) 221
-  (byte[]) sintab_x ← ((byte*)) (word/signed word) 4096
+  (byte[221]) sintab_x ← { fill( 221, 0) }
   (byte) sinlen_y ← (byte/word/signed word) 197
-  (byte[]) sintab_y ← ((byte*)) (word/signed word) 4352
-  (byte[]) sprites ← ((byte*)) (word/signed word) 8192
+  (byte[197]) sintab_y ← { fill( 197, 0) }
+  (byte*) sprites ← ((byte*)) (word/signed word) 8192
   to:@36
 main: scope:[main]  from @43
   call init param-assignment
@@ -2867,7 +2865,7 @@ init::@5: scope:[init]  from init::@4
 init::@6: scope:[init]  from init::@5
   (byte*) progress_cursor ← (byte*) progress_cursor
   (byte) progress_idx ← (byte) progress_idx
-  (byte*) gen_sintab::sintab ← (byte[]) sintab_x
+  (byte*) gen_sintab::sintab ← (byte[221]) sintab_x
   (byte) gen_sintab::length ← (byte) sinlen_x
   (byte) gen_sintab::min ← (byte/signed byte/word/signed word) 0
   (byte) gen_sintab::max ← (byte/word/signed word) 255
@@ -2883,7 +2881,7 @@ init::@7: scope:[init]  from init::@6
 init::@8: scope:[init]  from init::@7
   (byte*) progress_cursor ← (byte*) progress_cursor
   (byte) progress_idx ← (byte) progress_idx
-  (byte*) gen_sintab::sintab ← (byte[]) sintab_y
+  (byte*) gen_sintab::sintab ← (byte[197]) sintab_y
   (byte) gen_sintab::length ← (byte) sinlen_y
   (byte) gen_sintab::min ← (byte/signed byte/word/signed word) 50
   (byte) gen_sintab::max ← (byte/word/signed word) 208
@@ -2961,7 +2959,7 @@ anim: scope:[anim]  from main::@3
   to:anim::@1
 anim::@1: scope:[anim]  from anim anim::@3
   (word~) anim::$0 ← ((word)) (byte/signed byte/word/signed word) 30
-  (word~) anim::$1 ← (word~) anim::$0 + *((byte[]) sintab_x + (byte) anim::xidx)
+  (word~) anim::$1 ← (word~) anim::$0 + *((byte[221]) sintab_x + (byte) anim::xidx)
   (word) anim::x ← (word~) anim::$1
   (byte~) anim::$2 ← (byte) anim::x_msb << (byte/signed byte/word/signed word) 1
   (byte~) anim::$3 ← > (word) anim::x
@@ -2969,7 +2967,7 @@ anim::@1: scope:[anim]  from anim anim::@3
   (byte) anim::x_msb ← (byte~) anim::$4
   (byte~) anim::$5 ← < (word) anim::x
   *((byte*) SPRITES_XPOS + (byte) anim::j2) ← (byte~) anim::$5
-  *((byte*) SPRITES_YPOS + (byte) anim::j2) ← *((byte[]) sintab_y + (byte) anim::yidx)
+  *((byte*) SPRITES_YPOS + (byte) anim::j2) ← *((byte[197]) sintab_y + (byte) anim::yidx)
   (byte/word~) anim::$6 ← (byte) anim::xidx + (byte/signed byte/word/signed word) 10
   (byte) anim::xidx ← (byte/word~) anim::$6
   (boolean~) anim::$7 ← (byte) anim::xidx >= (byte) sinlen_x
@@ -3031,8 +3029,8 @@ place_sprites: scope:[place_sprites]  from init::@2
   *((byte*) SPRITES_EXPAND_Y) ← (byte/signed byte/word/signed word) 127
   (byte*~) place_sprites::$0 ← (byte*) SCREEN + (word/signed word) 1016
   (byte*) place_sprites::sprites_ptr ← (byte*~) place_sprites::$0
-  (byte[]~) place_sprites::$1 ← (byte[]) sprites / (byte/signed byte/word/signed word) 64
-  (byte~) place_sprites::$2 ← ((byte)) (byte[]~) place_sprites::$1
+  (byte*~) place_sprites::$1 ← (byte*) sprites / (byte/signed byte/word/signed word) 64
+  (byte~) place_sprites::$2 ← ((byte)) (byte*~) place_sprites::$1
   (byte) place_sprites::spr_id ← (byte~) place_sprites::$2
   (byte) place_sprites::spr_x ← (byte/signed byte/word/signed word) 60
   (byte) place_sprites::j2 ← (byte/signed byte/word/signed word) 0
@@ -3061,7 +3059,7 @@ place_sprites::@return: scope:[place_sprites]  from place_sprites::@1
   to:@return
 gen_sprites: scope:[gen_sprites]  from init::@4
   (byte[]) gen_sprites::cml ← (const string) gen_sprites::$3
-  (byte*) gen_sprites::spr ← (byte[]) sprites
+  (byte*) gen_sprites::spr ← (byte*) sprites
   (byte) gen_sprites::i ← (byte/signed byte/word/signed word) 0
   to:gen_sprites::@1
 gen_sprites::@1: scope:[gen_sprites]  from gen_sprites gen_sprites::@3
@@ -3404,10 +3402,10 @@ sinFAC::@return: scope:[sinFAC]  from sinFAC
 @33: scope:[]  from @begin
   (byte*) SCREEN#0 ← ((byte*)) (word/signed word) 1024
   (byte) sinlen_x#0 ← (byte/word/signed word) 221
-  (byte[]) sintab_x#0 ← ((byte*)) (word/signed word) 4096
+  (byte[221]) sintab_x#0 ← { fill( 221, 0) }
   (byte) sinlen_y#0 ← (byte/word/signed word) 197
-  (byte[]) sintab_y#0 ← ((byte*)) (word/signed word) 4352
-  (byte[]) sprites#0 ← ((byte*)) (word/signed word) 8192
+  (byte[197]) sintab_y#0 ← { fill( 197, 0) }
+  (byte*) sprites#0 ← ((byte*)) (word/signed word) 8192
   to:@36
 main: scope:[main]  from @43
   (byte) sin_idx_y#24 ← phi( @43/(byte) sin_idx_y#17 )
@@ -3507,7 +3505,7 @@ init::@6: scope:[init]  from init::@5
   (byte*) progress_cursor#17 ← phi( init::@5/(byte*) progress_cursor#31 )
   (byte*) progress_cursor#2 ← (byte*) progress_cursor#17
   (byte) progress_idx#2 ← (byte) progress_idx#18
-  (byte*) gen_sintab::sintab#0 ← (byte[]) sintab_x#0
+  (byte*) gen_sintab::sintab#0 ← (byte[221]) sintab_x#0
   (byte) gen_sintab::length#0 ← (byte) sinlen_x#0
   (byte) gen_sintab::min#0 ← (byte/signed byte/word/signed word) 0
   (byte) gen_sintab::max#0 ← (byte/word/signed word) 255
@@ -3527,7 +3525,7 @@ init::@8: scope:[init]  from init::@7
   (byte*) progress_cursor#19 ← phi( init::@7/(byte*) progress_cursor#3 )
   (byte*) progress_cursor#4 ← (byte*) progress_cursor#19
   (byte) progress_idx#4 ← (byte) progress_idx#20
-  (byte*) gen_sintab::sintab#1 ← (byte[]) sintab_y#0
+  (byte*) gen_sintab::sintab#1 ← (byte[197]) sintab_y#0
   (byte) gen_sintab::length#1 ← (byte) sinlen_y#0
   (byte) gen_sintab::min#1 ← (byte/signed byte/word/signed word) 50
   (byte) gen_sintab::max#1 ← (byte/word/signed word) 208
@@ -3633,7 +3631,7 @@ anim::@1: scope:[anim]  from anim anim::@3
   (byte) anim::x_msb#2 ← phi( anim/(byte) anim::x_msb#0 anim::@3/(byte) anim::x_msb#4 )
   (byte) anim::xidx#3 ← phi( anim/(byte) anim::xidx#0 anim::@3/(byte) anim::xidx#5 )
   (word~) anim::$0 ← ((word)) (byte/signed byte/word/signed word) 30
-  (word~) anim::$1 ← (word~) anim::$0 + *((byte[]) sintab_x#0 + (byte) anim::xidx#3)
+  (word~) anim::$1 ← (word~) anim::$0 + *((byte[221]) sintab_x#0 + (byte) anim::xidx#3)
   (word) anim::x#0 ← (word~) anim::$1
   (byte~) anim::$2 ← (byte) anim::x_msb#2 << (byte/signed byte/word/signed word) 1
   (byte~) anim::$3 ← > (word) anim::x#0
@@ -3641,7 +3639,7 @@ anim::@1: scope:[anim]  from anim anim::@3
   (byte) anim::x_msb#1 ← (byte~) anim::$4
   (byte~) anim::$5 ← < (word) anim::x#0
   *((byte*) SPRITES_XPOS#0 + (byte) anim::j2#3) ← (byte~) anim::$5
-  *((byte*) SPRITES_YPOS#0 + (byte) anim::j2#3) ← *((byte[]) sintab_y#0 + (byte) anim::yidx#3)
+  *((byte*) SPRITES_YPOS#0 + (byte) anim::j2#3) ← *((byte[197]) sintab_y#0 + (byte) anim::yidx#3)
   (byte/word~) anim::$6 ← (byte) anim::xidx#3 + (byte/signed byte/word/signed word) 10
   (byte) anim::xidx#1 ← (byte/word~) anim::$6
   (boolean~) anim::$7 ← (byte) anim::xidx#1 >= (byte) sinlen_x#0
@@ -3742,8 +3740,8 @@ place_sprites: scope:[place_sprites]  from init::@2
   *((byte*) SPRITES_EXPAND_Y#0) ← (byte/signed byte/word/signed word) 127
   (byte*~) place_sprites::$0 ← (byte*) SCREEN#0 + (word/signed word) 1016
   (byte*) place_sprites::sprites_ptr#0 ← (byte*~) place_sprites::$0
-  (byte[]~) place_sprites::$1 ← (byte[]) sprites#0 / (byte/signed byte/word/signed word) 64
-  (byte~) place_sprites::$2 ← ((byte)) (byte[]~) place_sprites::$1
+  (byte*~) place_sprites::$1 ← (byte*) sprites#0 / (byte/signed byte/word/signed word) 64
+  (byte~) place_sprites::$2 ← ((byte)) (byte*~) place_sprites::$1
   (byte) place_sprites::spr_id#0 ← (byte~) place_sprites::$2
   (byte) place_sprites::spr_x#0 ← (byte/signed byte/word/signed word) 60
   (byte) place_sprites::j2#0 ← (byte/signed byte/word/signed word) 0
@@ -3778,7 +3776,7 @@ place_sprites::@return: scope:[place_sprites]  from place_sprites::@1
   to:@return
 gen_sprites: scope:[gen_sprites]  from init::@4
   (byte[]) gen_sprites::cml#0 ← (const string) gen_sprites::$3
-  (byte*) gen_sprites::spr#0 ← (byte[]) sprites#0
+  (byte*) gen_sprites::spr#0 ← (byte*) sprites#0
   (byte) gen_sprites::i#0 ← (byte/signed byte/word/signed word) 0
   to:gen_sprites::@1
 gen_sprites::@1: scope:[gen_sprites]  from gen_sprites gen_sprites::@3
@@ -4305,10 +4303,10 @@ sinFAC::@return: scope:[sinFAC]  from sinFAC
 @33: scope:[]  from @begin
   (byte*) SCREEN#0 ← ((byte*)) (word/signed word) 1024
   (byte) sinlen_x#0 ← (byte/word/signed word) 221
-  (byte[]) sintab_x#0 ← ((byte*)) (word/signed word) 4096
+  (byte[221]) sintab_x#0 ← { fill( 221, 0) }
   (byte) sinlen_y#0 ← (byte/word/signed word) 197
-  (byte[]) sintab_y#0 ← ((byte*)) (word/signed word) 4352
-  (byte[]) sprites#0 ← ((byte*)) (word/signed word) 8192
+  (byte[197]) sintab_y#0 ← { fill( 197, 0) }
+  (byte*) sprites#0 ← ((byte*)) (word/signed word) 8192
   to:@36
 main: scope:[main]  from @43
   (byte) sin_idx_y#24 ← phi( @43/(byte) sin_idx_y#17 )
@@ -4408,7 +4406,7 @@ init::@6: scope:[init]  from init::@5
   (byte*) progress_cursor#17 ← phi( init::@5/(byte*) progress_cursor#9 )
   (byte*) progress_cursor#2 ← (byte*) progress_cursor#17
   (byte) progress_idx#2 ← (byte) progress_idx#18
-  (byte*) gen_sintab::sintab#0 ← (byte[]) sintab_x#0
+  (byte*) gen_sintab::sintab#0 ← (byte[221]) sintab_x#0
   (byte) gen_sintab::length#0 ← (byte) sinlen_x#0
   (byte) gen_sintab::min#0 ← (byte/signed byte/word/signed word) 0
   (byte) gen_sintab::max#0 ← (byte/word/signed word) 255
@@ -4428,7 +4426,7 @@ init::@8: scope:[init]  from init::@7
   (byte*) progress_cursor#19 ← phi( init::@7/(byte*) progress_cursor#9 )
   (byte*) progress_cursor#4 ← (byte*) progress_cursor#19
   (byte) progress_idx#4 ← (byte) progress_idx#20
-  (byte*) gen_sintab::sintab#1 ← (byte[]) sintab_y#0
+  (byte*) gen_sintab::sintab#1 ← (byte[197]) sintab_y#0
   (byte) gen_sintab::length#1 ← (byte) sinlen_y#0
   (byte) gen_sintab::min#1 ← (byte/signed byte/word/signed word) 50
   (byte) gen_sintab::max#1 ← (byte/word/signed word) 208
@@ -4534,7 +4532,7 @@ anim::@1: scope:[anim]  from anim anim::@3
   (byte) anim::x_msb#2 ← phi( anim/(byte) anim::x_msb#0 anim::@3/(byte) anim::x_msb#4 )
   (byte) anim::xidx#3 ← phi( anim/(byte) anim::xidx#0 anim::@3/(byte) anim::xidx#5 )
   (word~) anim::$0 ← ((word)) (byte/signed byte/word/signed word) 30
-  (word~) anim::$1 ← (word~) anim::$0 + *((byte[]) sintab_x#0 + (byte) anim::xidx#3)
+  (word~) anim::$1 ← (word~) anim::$0 + *((byte[221]) sintab_x#0 + (byte) anim::xidx#3)
   (word) anim::x#0 ← (word~) anim::$1
   (byte~) anim::$2 ← (byte) anim::x_msb#2 << (byte/signed byte/word/signed word) 1
   (byte~) anim::$3 ← > (word) anim::x#0
@@ -4542,7 +4540,7 @@ anim::@1: scope:[anim]  from anim anim::@3
   (byte) anim::x_msb#1 ← (byte~) anim::$4
   (byte~) anim::$5 ← < (word) anim::x#0
   *((byte*) SPRITES_XPOS#0 + (byte) anim::j2#3) ← (byte~) anim::$5
-  *((byte*) SPRITES_YPOS#0 + (byte) anim::j2#3) ← *((byte[]) sintab_y#0 + (byte) anim::yidx#3)
+  *((byte*) SPRITES_YPOS#0 + (byte) anim::j2#3) ← *((byte[197]) sintab_y#0 + (byte) anim::yidx#3)
   (byte/word~) anim::$6 ← (byte) anim::xidx#3 + (byte/signed byte/word/signed word) 10
   (byte) anim::xidx#1 ← (byte/word~) anim::$6
   (boolean~) anim::$7 ← (byte) anim::xidx#1 >= (byte) sinlen_x#0
@@ -4643,8 +4641,8 @@ place_sprites: scope:[place_sprites]  from init::@2
   *((byte*) SPRITES_EXPAND_Y#0) ← (byte/signed byte/word/signed word) 127
   (byte*~) place_sprites::$0 ← (byte*) SCREEN#0 + (word/signed word) 1016
   (byte*) place_sprites::sprites_ptr#0 ← (byte*~) place_sprites::$0
-  (byte[]~) place_sprites::$1 ← (byte[]) sprites#0 / (byte/signed byte/word/signed word) 64
-  (byte~) place_sprites::$2 ← ((byte)) (byte[]~) place_sprites::$1
+  (byte*~) place_sprites::$1 ← (byte*) sprites#0 / (byte/signed byte/word/signed word) 64
+  (byte~) place_sprites::$2 ← ((byte)) (byte*~) place_sprites::$1
   (byte) place_sprites::spr_id#0 ← (byte~) place_sprites::$2
   (byte) place_sprites::spr_x#0 ← (byte/signed byte/word/signed word) 60
   (byte) place_sprites::j2#0 ← (byte/signed byte/word/signed word) 0
@@ -4679,7 +4677,7 @@ place_sprites::@return: scope:[place_sprites]  from place_sprites::@1
   to:@return
 gen_sprites: scope:[gen_sprites]  from init::@4
   (byte[]) gen_sprites::cml#0 ← (const string) gen_sprites::$3
-  (byte*) gen_sprites::spr#0 ← (byte[]) sprites#0
+  (byte*) gen_sprites::spr#0 ← (byte*) sprites#0
   (byte) gen_sprites::i#0 ← (byte/signed byte/word/signed word) 0
   to:gen_sprites::@1
 gen_sprites::@1: scope:[gen_sprites]  from gen_sprites gen_sprites::@3
@@ -5554,7 +5552,7 @@ INITIAL SSA SYMBOL TABLE
 (byte*) mulFACbyMEM::mem#2
 (void()) place_sprites()
 (byte*~) place_sprites::$0
-(byte[]~) place_sprites::$1
+(byte*~) place_sprites::$1
 (byte~) place_sprites::$2
 (byte/word~) place_sprites::$3
 (byte~) place_sprites::$4
@@ -5830,12 +5828,12 @@ INITIAL SSA SYMBOL TABLE
 (byte) sinlen_x#0
 (byte) sinlen_y
 (byte) sinlen_y#0
-(byte[]) sintab_x
-(byte[]) sintab_x#0
-(byte[]) sintab_y
-(byte[]) sintab_y#0
-(byte[]) sprites
-(byte[]) sprites#0
+(byte[221]) sintab_x
+(byte[221]) sintab_x#0
+(byte[197]) sintab_y
+(byte[197]) sintab_y#0
+(byte*) sprites
+(byte*) sprites#0
 (void()) subFACfromARG()
 (label) subFACfromARG::@return
 
@@ -5961,10 +5959,10 @@ sinFAC::@return: scope:[sinFAC]  from sinFAC
 @33: scope:[]  from @begin
   (byte*) SCREEN#0 ← ((byte*)) (word/signed word) 1024
   (byte) sinlen_x#0 ← (byte/word/signed word) 221
-  (byte[]) sintab_x#0 ← ((byte*)) (word/signed word) 4096
+  (byte[221]) sintab_x#0 ← { fill( 221, 0) }
   (byte) sinlen_y#0 ← (byte/word/signed word) 197
-  (byte[]) sintab_y#0 ← ((byte*)) (word/signed word) 4352
-  (byte[]) sprites#0 ← ((byte*)) (word/signed word) 8192
+  (byte[197]) sintab_y#0 ← { fill( 197, 0) }
+  (byte*) sprites#0 ← ((byte*)) (word/signed word) 8192
   to:@36
 main: scope:[main]  from @43
   (byte) sin_idx_y#24 ← phi( @43/(byte) sin_idx_y#17 )
@@ -6064,7 +6062,7 @@ init::@6: scope:[init]  from init::@5
   (byte*) progress_cursor#17 ← phi( init::@5/(byte*) progress_cursor#9 )
   (byte*) progress_cursor#2 ← (byte*) progress_cursor#17
   (byte) progress_idx#2 ← (byte) progress_idx#18
-  (byte*) gen_sintab::sintab#0 ← (byte[]) sintab_x#0
+  (byte*) gen_sintab::sintab#0 ← (byte[221]) sintab_x#0
   (byte) gen_sintab::length#0 ← (byte) sinlen_x#0
   (byte) gen_sintab::min#0 ← (byte/signed byte/word/signed word) 0
   (byte) gen_sintab::max#0 ← (byte/word/signed word) 255
@@ -6084,7 +6082,7 @@ init::@8: scope:[init]  from init::@7
   (byte*) progress_cursor#19 ← phi( init::@7/(byte*) progress_cursor#9 )
   (byte*) progress_cursor#4 ← (byte*) progress_cursor#19
   (byte) progress_idx#4 ← (byte) progress_idx#20
-  (byte*) gen_sintab::sintab#1 ← (byte[]) sintab_y#0
+  (byte*) gen_sintab::sintab#1 ← (byte[197]) sintab_y#0
   (byte) gen_sintab::length#1 ← (byte) sinlen_y#0
   (byte) gen_sintab::min#1 ← (byte/signed byte/word/signed word) 50
   (byte) gen_sintab::max#1 ← (byte/word/signed word) 208
@@ -6189,7 +6187,7 @@ anim::@1: scope:[anim]  from anim anim::@3
   (byte) anim::x_msb#2 ← phi( anim/(byte) anim::x_msb#0 anim::@3/(byte) anim::x_msb#4 )
   (byte) anim::xidx#3 ← phi( anim/(byte) anim::xidx#0 anim::@3/(byte) anim::xidx#5 )
   (word~) anim::$0 ← ((word)) (byte/signed byte/word/signed word) 30
-  (word~) anim::$1 ← (word~) anim::$0 + *((byte[]) sintab_x#0 + (byte) anim::xidx#3)
+  (word~) anim::$1 ← (word~) anim::$0 + *((byte[221]) sintab_x#0 + (byte) anim::xidx#3)
   (word) anim::x#0 ← (word~) anim::$1
   (byte~) anim::$2 ← (byte) anim::x_msb#2 << (byte/signed byte/word/signed word) 1
   (byte~) anim::$3 ← > (word) anim::x#0
@@ -6197,7 +6195,7 @@ anim::@1: scope:[anim]  from anim anim::@3
   (byte) anim::x_msb#1 ← (byte~) anim::$4
   (byte~) anim::$5 ← < (word) anim::x#0
   *((byte*) SPRITES_XPOS#0 + (byte) anim::j2#3) ← (byte~) anim::$5
-  *((byte*) SPRITES_YPOS#0 + (byte) anim::j2#3) ← *((byte[]) sintab_y#0 + (byte) anim::yidx#3)
+  *((byte*) SPRITES_YPOS#0 + (byte) anim::j2#3) ← *((byte[197]) sintab_y#0 + (byte) anim::yidx#3)
   (byte/word~) anim::$6 ← (byte) anim::xidx#3 + (byte/signed byte/word/signed word) 10
   (byte) anim::xidx#1 ← (byte/word~) anim::$6
   (boolean~) anim::$8 ← (byte) anim::xidx#1 < (byte) sinlen_x#0
@@ -6294,8 +6292,8 @@ place_sprites: scope:[place_sprites]  from init::@2
   *((byte*) SPRITES_EXPAND_Y#0) ← (byte/signed byte/word/signed word) 127
   (byte*~) place_sprites::$0 ← (byte*) SCREEN#0 + (word/signed word) 1016
   (byte*) place_sprites::sprites_ptr#0 ← (byte*~) place_sprites::$0
-  (byte[]~) place_sprites::$1 ← (byte[]) sprites#0 / (byte/signed byte/word/signed word) 64
-  (byte~) place_sprites::$2 ← ((byte)) (byte[]~) place_sprites::$1
+  (byte*~) place_sprites::$1 ← (byte*) sprites#0 / (byte/signed byte/word/signed word) 64
+  (byte~) place_sprites::$2 ← ((byte)) (byte*~) place_sprites::$1
   (byte) place_sprites::spr_id#0 ← (byte~) place_sprites::$2
   (byte) place_sprites::spr_x#0 ← (byte/signed byte/word/signed word) 60
   (byte) place_sprites::j2#0 ← (byte/signed byte/word/signed word) 0
@@ -6330,7 +6328,7 @@ place_sprites::@return: scope:[place_sprites]  from place_sprites::@1
   to:@return
 gen_sprites: scope:[gen_sprites]  from init::@4
   (byte[]) gen_sprites::cml#0 ← (const string) gen_sprites::$3
-  (byte*) gen_sprites::spr#0 ← (byte[]) sprites#0
+  (byte*) gen_sprites::spr#0 ← (byte*) sprites#0
   (byte) gen_sprites::i#0 ← (byte/signed byte/word/signed word) 0
   to:gen_sprites::@1
 gen_sprites::@1: scope:[gen_sprites]  from gen_sprites gen_sprites::@3
@@ -7038,10 +7036,10 @@ sinFAC::@return: scope:[sinFAC]  from sinFAC
 @33: scope:[]  from @begin
   (byte*) SCREEN#0 ← ((byte*)) (word/signed word) 1024
   (byte) sinlen_x#0 ← (byte/word/signed word) 221
-  (byte[]) sintab_x#0 ← ((byte*)) (word/signed word) 4096
+  (byte[221]) sintab_x#0 ← { fill( 221, 0) }
   (byte) sinlen_y#0 ← (byte/word/signed word) 197
-  (byte[]) sintab_y#0 ← ((byte*)) (word/signed word) 4352
-  (byte[]) sprites#0 ← ((byte*)) (word/signed word) 8192
+  (byte[197]) sintab_y#0 ← { fill( 197, 0) }
+  (byte*) sprites#0 ← ((byte*)) (word/signed word) 8192
   to:@36
 main: scope:[main]  from @43
   (byte) sin_idx_y#21 ← phi( @43/(byte) sin_idx_y#17 )
@@ -7107,7 +7105,7 @@ init::@5: scope:[init]  from init::@4
 init::@6: scope:[init]  from init::@5
   (byte) progress_idx#18 ← phi( init::@5/(byte) progress_idx#23 )
   (byte*) progress_cursor#17 ← phi( init::@5/(byte*) progress_cursor#22 )
-  (byte*) gen_sintab::sintab#0 ← (byte[]) sintab_x#0
+  (byte*) gen_sintab::sintab#0 ← (byte[221]) sintab_x#0
   (byte) gen_sintab::length#0 ← (byte) sinlen_x#0
   (byte) gen_sintab::min#0 ← (byte/signed byte/word/signed word) 0
   (byte) gen_sintab::max#0 ← (byte/word/signed word) 255
@@ -7122,7 +7120,7 @@ init::@7: scope:[init]  from init::@6
 init::@8: scope:[init]  from init::@7
   (byte) progress_idx#20 ← phi( init::@7/(byte) progress_idx#23 )
   (byte*) progress_cursor#19 ← phi( init::@7/(byte*) progress_cursor#22 )
-  (byte*) gen_sintab::sintab#1 ← (byte[]) sintab_y#0
+  (byte*) gen_sintab::sintab#1 ← (byte[197]) sintab_y#0
   (byte) gen_sintab::length#1 ← (byte) sinlen_y#0
   (byte) gen_sintab::min#1 ← (byte/signed byte/word/signed word) 50
   (byte) gen_sintab::max#1 ← (byte/word/signed word) 208
@@ -7207,13 +7205,13 @@ anim::@1: scope:[anim]  from anim anim::@3
   (byte) anim::x_msb#2 ← phi( anim/(byte) anim::x_msb#0 anim::@3/(byte) anim::x_msb#3 )
   (byte) anim::xidx#3 ← phi( anim/(byte) anim::xidx#0 anim::@3/(byte) anim::xidx#5 )
   (word~) anim::$0 ← ((word)) (byte/signed byte/word/signed word) 30
-  (word) anim::x#0 ← (word~) anim::$0 + *((byte[]) sintab_x#0 + (byte) anim::xidx#3)
+  (word) anim::x#0 ← (word~) anim::$0 + *((byte[221]) sintab_x#0 + (byte) anim::xidx#3)
   (byte~) anim::$2 ← (byte) anim::x_msb#2 << (byte/signed byte/word/signed word) 1
   (byte~) anim::$3 ← > (word) anim::x#0
   (byte) anim::x_msb#1 ← (byte~) anim::$2 | (byte~) anim::$3
   (byte~) anim::$5 ← < (word) anim::x#0
   *((byte*) SPRITES_XPOS#0 + (byte) anim::j2#3) ← (byte~) anim::$5
-  *((byte*) SPRITES_YPOS#0 + (byte) anim::j2#3) ← *((byte[]) sintab_y#0 + (byte) anim::yidx#3)
+  *((byte*) SPRITES_YPOS#0 + (byte) anim::j2#3) ← *((byte[197]) sintab_y#0 + (byte) anim::yidx#3)
   (byte) anim::xidx#1 ← (byte) anim::xidx#3 + (byte/signed byte/word/signed word) 10
   (boolean~) anim::$8 ← (byte) anim::xidx#1 < (byte) sinlen_x#0
   if((boolean~) anim::$8) goto anim::@2
@@ -7282,8 +7280,8 @@ place_sprites: scope:[place_sprites]  from init::@2
   *((byte*) SPRITES_EXPAND_X#0) ← (byte/signed byte/word/signed word) 127
   *((byte*) SPRITES_EXPAND_Y#0) ← (byte/signed byte/word/signed word) 127
   (byte*) place_sprites::sprites_ptr#0 ← (byte*) SCREEN#0 + (word/signed word) 1016
-  (byte[]~) place_sprites::$1 ← (byte[]) sprites#0 / (byte/signed byte/word/signed word) 64
-  (byte) place_sprites::spr_id#0 ← ((byte)) (byte[]~) place_sprites::$1
+  (byte*~) place_sprites::$1 ← (byte*) sprites#0 / (byte/signed byte/word/signed word) 64
+  (byte) place_sprites::spr_id#0 ← ((byte)) (byte*~) place_sprites::$1
   (byte) place_sprites::spr_x#0 ← (byte/signed byte/word/signed word) 60
   (byte) place_sprites::j2#0 ← (byte/signed byte/word/signed word) 0
   (byte) place_sprites::col#0 ← (byte/signed byte/word/signed word) 5
@@ -7315,7 +7313,7 @@ place_sprites::@return: scope:[place_sprites]  from place_sprites::@1
   to:@return
 gen_sprites: scope:[gen_sprites]  from init::@4
   (byte[]) gen_sprites::cml#0 ← (const string) gen_sprites::$3
-  (byte*) gen_sprites::spr#0 ← (byte[]) sprites#0
+  (byte*) gen_sprites::spr#0 ← (byte*) sprites#0
   (byte) gen_sprites::i#0 ← (byte/signed byte/word/signed word) 0
   to:gen_sprites::@1
 gen_sprites::@1: scope:[gen_sprites]  from gen_sprites gen_sprites::@3
@@ -7768,10 +7766,10 @@ sinFAC::@return: scope:[sinFAC]  from sinFAC
 @33: scope:[]  from @begin
   (byte*) SCREEN#0 ← ((byte*)) (word/signed word) 1024
   (byte) sinlen_x#0 ← (byte/word/signed word) 221
-  (byte[]) sintab_x#0 ← ((byte*)) (word/signed word) 4096
+  (byte[221]) sintab_x#0 ← { fill( 221, 0) }
   (byte) sinlen_y#0 ← (byte/word/signed word) 197
-  (byte[]) sintab_y#0 ← ((byte*)) (word/signed word) 4352
-  (byte[]) sprites#0 ← ((byte*)) (word/signed word) 8192
+  (byte[197]) sintab_y#0 ← { fill( 197, 0) }
+  (byte*) sprites#0 ← ((byte*)) (word/signed word) 8192
   to:@36
 main: scope:[main]  from @43
   (byte) sin_idx_y#21 ← phi( @43/(byte) sin_idx_y#17 )
@@ -7837,7 +7835,7 @@ init::@5: scope:[init]  from init::@4
 init::@6: scope:[init]  from init::@5
   (byte) progress_idx#18 ← phi( init::@5/(byte) progress_idx#23 )
   (byte*) progress_cursor#17 ← phi( init::@5/(byte*) progress_cursor#22 )
-  (byte*) gen_sintab::sintab#0 ← (byte[]) sintab_x#0
+  (byte*) gen_sintab::sintab#0 ← (byte[221]) sintab_x#0
   (byte) gen_sintab::length#0 ← (byte) sinlen_x#0
   (byte) gen_sintab::min#0 ← (byte/signed byte/word/signed word) 0
   (byte) gen_sintab::max#0 ← (byte/word/signed word) 255
@@ -7852,7 +7850,7 @@ init::@7: scope:[init]  from init::@6
 init::@8: scope:[init]  from init::@7
   (byte) progress_idx#20 ← phi( init::@7/(byte) progress_idx#23 )
   (byte*) progress_cursor#19 ← phi( init::@7/(byte*) progress_cursor#22 )
-  (byte*) gen_sintab::sintab#1 ← (byte[]) sintab_y#0
+  (byte*) gen_sintab::sintab#1 ← (byte[197]) sintab_y#0
   (byte) gen_sintab::length#1 ← (byte) sinlen_y#0
   (byte) gen_sintab::min#1 ← (byte/signed byte/word/signed word) 50
   (byte) gen_sintab::max#1 ← (byte/word/signed word) 208
@@ -7937,13 +7935,13 @@ anim::@1: scope:[anim]  from anim anim::@3
   (byte) anim::x_msb#2 ← phi( anim/(byte) anim::x_msb#0 anim::@3/(byte) anim::x_msb#1 )
   (byte) anim::xidx#3 ← phi( anim/(byte) anim::xidx#0 anim::@3/(byte) anim::xidx#5 )
   (word~) anim::$0 ← ((word)) (byte/signed byte/word/signed word) 30
-  (word) anim::x#0 ← (word~) anim::$0 + *((byte[]) sintab_x#0 + (byte) anim::xidx#3)
+  (word) anim::x#0 ← (word~) anim::$0 + *((byte[221]) sintab_x#0 + (byte) anim::xidx#3)
   (byte~) anim::$2 ← (byte) anim::x_msb#2 << (byte/signed byte/word/signed word) 1
   (byte~) anim::$3 ← > (word) anim::x#0
   (byte) anim::x_msb#1 ← (byte~) anim::$2 | (byte~) anim::$3
   (byte~) anim::$5 ← < (word) anim::x#0
   *((byte*) SPRITES_XPOS#0 + (byte) anim::j2#3) ← (byte~) anim::$5
-  *((byte*) SPRITES_YPOS#0 + (byte) anim::j2#3) ← *((byte[]) sintab_y#0 + (byte) anim::yidx#3)
+  *((byte*) SPRITES_YPOS#0 + (byte) anim::j2#3) ← *((byte[197]) sintab_y#0 + (byte) anim::yidx#3)
   (byte) anim::xidx#1 ← (byte) anim::xidx#3 + (byte/signed byte/word/signed word) 10
   (boolean~) anim::$8 ← (byte) anim::xidx#1 < (byte) sinlen_x#0
   if((boolean~) anim::$8) goto anim::@2
@@ -7998,8 +7996,8 @@ place_sprites: scope:[place_sprites]  from init::@2
   *((byte*) SPRITES_EXPAND_X#0) ← (byte/signed byte/word/signed word) 127
   *((byte*) SPRITES_EXPAND_Y#0) ← (byte/signed byte/word/signed word) 127
   (byte*) place_sprites::sprites_ptr#0 ← (byte*) SCREEN#0 + (word/signed word) 1016
-  (byte[]~) place_sprites::$1 ← (byte[]) sprites#0 / (byte/signed byte/word/signed word) 64
-  (byte) place_sprites::spr_id#0 ← ((byte)) (byte[]~) place_sprites::$1
+  (byte*~) place_sprites::$1 ← (byte*) sprites#0 / (byte/signed byte/word/signed word) 64
+  (byte) place_sprites::spr_id#0 ← ((byte)) (byte*~) place_sprites::$1
   (byte) place_sprites::spr_x#0 ← (byte/signed byte/word/signed word) 60
   (byte) place_sprites::j2#0 ← (byte/signed byte/word/signed word) 0
   (byte) place_sprites::col#0 ← (byte/signed byte/word/signed word) 5
@@ -8031,7 +8029,7 @@ place_sprites::@return: scope:[place_sprites]  from place_sprites::@1
   to:@return
 gen_sprites: scope:[gen_sprites]  from init::@4
   (byte[]) gen_sprites::cml#0 ← (const string) gen_sprites::$3
-  (byte*) gen_sprites::spr#0 ← (byte[]) sprites#0
+  (byte*) gen_sprites::spr#0 ← (byte*) sprites#0
   (byte) gen_sprites::i#0 ← (byte/signed byte/word/signed word) 0
   to:gen_sprites::@1
 gen_sprites::@1: scope:[gen_sprites]  from gen_sprites gen_sprites::@3
@@ -8469,10 +8467,10 @@ sinFAC::@return: scope:[sinFAC]  from sinFAC
 @33: scope:[]  from @begin
   (byte*) SCREEN#0 ← ((byte*)) (word/signed word) 1024
   (byte) sinlen_x#0 ← (byte/word/signed word) 221
-  (byte[]) sintab_x#0 ← ((byte*)) (word/signed word) 4096
+  (byte[221]) sintab_x#0 ← { fill( 221, 0) }
   (byte) sinlen_y#0 ← (byte/word/signed word) 197
-  (byte[]) sintab_y#0 ← ((byte*)) (word/signed word) 4352
-  (byte[]) sprites#0 ← ((byte*)) (word/signed word) 8192
+  (byte[197]) sintab_y#0 ← { fill( 197, 0) }
+  (byte*) sprites#0 ← ((byte*)) (word/signed word) 8192
   to:@36
 main: scope:[main]  from @43
   (byte) sin_idx_y#21 ← phi( @43/(byte) sin_idx_y#17 )
@@ -8538,7 +8536,7 @@ init::@5: scope:[init]  from init::@4
 init::@6: scope:[init]  from init::@5
   (byte) progress_idx#18 ← phi( init::@5/(byte) progress_idx#23 )
   (byte*) progress_cursor#17 ← phi( init::@5/(byte*) progress_cursor#22 )
-  (byte*) gen_sintab::sintab#0 ← (byte[]) sintab_x#0
+  (byte*) gen_sintab::sintab#0 ← (byte[221]) sintab_x#0
   (byte) gen_sintab::length#0 ← (byte) sinlen_x#0
   (byte) gen_sintab::min#0 ← (byte/signed byte/word/signed word) 0
   (byte) gen_sintab::max#0 ← (byte/word/signed word) 255
@@ -8553,7 +8551,7 @@ init::@7: scope:[init]  from init::@6
 init::@8: scope:[init]  from init::@7
   (byte) progress_idx#20 ← phi( init::@7/(byte) progress_idx#23 )
   (byte*) progress_cursor#19 ← phi( init::@7/(byte*) progress_cursor#22 )
-  (byte*) gen_sintab::sintab#1 ← (byte[]) sintab_y#0
+  (byte*) gen_sintab::sintab#1 ← (byte[197]) sintab_y#0
   (byte) gen_sintab::length#1 ← (byte) sinlen_y#0
   (byte) gen_sintab::min#1 ← (byte/signed byte/word/signed word) 50
   (byte) gen_sintab::max#1 ← (byte/word/signed word) 208
@@ -8638,13 +8636,13 @@ anim::@1: scope:[anim]  from anim anim::@3
   (byte) anim::x_msb#2 ← phi( anim/(byte) anim::x_msb#0 anim::@3/(byte) anim::x_msb#1 )
   (byte) anim::xidx#3 ← phi( anim/(byte) anim::xidx#0 anim::@3/(byte) anim::xidx#5 )
   (word~) anim::$0 ← ((word)) (byte/signed byte/word/signed word) 30
-  (word) anim::x#0 ← (word~) anim::$0 + *((byte[]) sintab_x#0 + (byte) anim::xidx#3)
+  (word) anim::x#0 ← (word~) anim::$0 + *((byte[221]) sintab_x#0 + (byte) anim::xidx#3)
   (byte~) anim::$2 ← (byte) anim::x_msb#2 << (byte/signed byte/word/signed word) 1
   (byte~) anim::$3 ← > (word) anim::x#0
   (byte) anim::x_msb#1 ← (byte~) anim::$2 | (byte~) anim::$3
   (byte~) anim::$5 ← < (word) anim::x#0
   *((byte*) SPRITES_XPOS#0 + (byte) anim::j2#3) ← (byte~) anim::$5
-  *((byte*) SPRITES_YPOS#0 + (byte) anim::j2#3) ← *((byte[]) sintab_y#0 + (byte) anim::yidx#3)
+  *((byte*) SPRITES_YPOS#0 + (byte) anim::j2#3) ← *((byte[197]) sintab_y#0 + (byte) anim::yidx#3)
   (byte) anim::xidx#1 ← (byte) anim::xidx#3 + (byte/signed byte/word/signed word) 10
   (boolean~) anim::$8 ← (byte) anim::xidx#1 < (byte) sinlen_x#0
   if((boolean~) anim::$8) goto anim::@2
@@ -8699,8 +8697,8 @@ place_sprites: scope:[place_sprites]  from init::@2
   *((byte*) SPRITES_EXPAND_X#0) ← (byte/signed byte/word/signed word) 127
   *((byte*) SPRITES_EXPAND_Y#0) ← (byte/signed byte/word/signed word) 127
   (byte*) place_sprites::sprites_ptr#0 ← (byte*) SCREEN#0 + (word/signed word) 1016
-  (byte[]~) place_sprites::$1 ← (byte[]) sprites#0 / (byte/signed byte/word/signed word) 64
-  (byte) place_sprites::spr_id#0 ← ((byte)) (byte[]~) place_sprites::$1
+  (byte*~) place_sprites::$1 ← (byte*) sprites#0 / (byte/signed byte/word/signed word) 64
+  (byte) place_sprites::spr_id#0 ← ((byte)) (byte*~) place_sprites::$1
   (byte) place_sprites::spr_x#0 ← (byte/signed byte/word/signed word) 60
   (byte) place_sprites::j2#0 ← (byte/signed byte/word/signed word) 0
   (byte) place_sprites::col#0 ← (byte/signed byte/word/signed word) 5
@@ -8732,7 +8730,7 @@ place_sprites::@return: scope:[place_sprites]  from place_sprites::@1
   to:@return
 gen_sprites: scope:[gen_sprites]  from init::@4
   (byte[]) gen_sprites::cml#0 ← (const string) gen_sprites::$3
-  (byte*) gen_sprites::spr#0 ← (byte[]) sprites#0
+  (byte*) gen_sprites::spr#0 ← (byte*) sprites#0
   (byte) gen_sprites::i#0 ← (byte/signed byte/word/signed word) 0
   to:gen_sprites::@1
 gen_sprites::@1: scope:[gen_sprites]  from gen_sprites gen_sprites::@3
@@ -9121,10 +9119,10 @@ sinFAC::@return: scope:[sinFAC]  from sinFAC
 @33: scope:[]  from @begin
   (byte*) SCREEN#0 ← ((byte*)) (word/signed word) 1024
   (byte) sinlen_x#0 ← (byte/word/signed word) 221
-  (byte[]) sintab_x#0 ← ((byte*)) (word/signed word) 4096
+  (byte[221]) sintab_x#0 ← { fill( 221, 0) }
   (byte) sinlen_y#0 ← (byte/word/signed word) 197
-  (byte[]) sintab_y#0 ← ((byte*)) (word/signed word) 4352
-  (byte[]) sprites#0 ← ((byte*)) (word/signed word) 8192
+  (byte[197]) sintab_y#0 ← { fill( 197, 0) }
+  (byte*) sprites#0 ← ((byte*)) (word/signed word) 8192
   to:@36
 main: scope:[main]  from @43
   call init param-assignment
@@ -9174,7 +9172,7 @@ init::@5: scope:[init]  from init::@4
   call progress_init param-assignment
   to:init::@6
 init::@6: scope:[init]  from init::@5
-  (byte*) gen_sintab::sintab#0 ← (byte[]) sintab_x#0
+  (byte*) gen_sintab::sintab#0 ← (byte[221]) sintab_x#0
   (byte) gen_sintab::length#0 ← (byte) sinlen_x#0
   (byte) gen_sintab::min#0 ← (byte/signed byte/word/signed word) 0
   (byte) gen_sintab::max#0 ← (byte/word/signed word) 255
@@ -9185,7 +9183,7 @@ init::@7: scope:[init]  from init::@6
   call progress_init param-assignment
   to:init::@8
 init::@8: scope:[init]  from init::@7
-  (byte*) gen_sintab::sintab#1 ← (byte[]) sintab_y#0
+  (byte*) gen_sintab::sintab#1 ← (byte[197]) sintab_y#0
   (byte) gen_sintab::length#1 ← (byte) sinlen_y#0
   (byte) gen_sintab::min#1 ← (byte/signed byte/word/signed word) 50
   (byte) gen_sintab::max#1 ← (byte/word/signed word) 208
@@ -9262,13 +9260,13 @@ anim::@1: scope:[anim]  from anim anim::@3
   (byte) anim::x_msb#2 ← phi( anim/(byte) anim::x_msb#0 anim::@3/(byte) anim::x_msb#1 )
   (byte) anim::xidx#3 ← phi( anim/(byte) anim::xidx#0 anim::@3/(byte) anim::xidx#5 )
   (word~) anim::$0 ← ((word)) (byte/signed byte/word/signed word) 30
-  (word) anim::x#0 ← (word~) anim::$0 + *((byte[]) sintab_x#0 + (byte) anim::xidx#3)
+  (word) anim::x#0 ← (word~) anim::$0 + *((byte[221]) sintab_x#0 + (byte) anim::xidx#3)
   (byte~) anim::$2 ← (byte) anim::x_msb#2 << (byte/signed byte/word/signed word) 1
   (byte~) anim::$3 ← > (word) anim::x#0
   (byte) anim::x_msb#1 ← (byte~) anim::$2 | (byte~) anim::$3
   (byte~) anim::$5 ← < (word) anim::x#0
   *((byte*) SPRITES_XPOS#0 + (byte) anim::j2#3) ← (byte~) anim::$5
-  *((byte*) SPRITES_YPOS#0 + (byte) anim::j2#3) ← *((byte[]) sintab_y#0 + (byte) anim::yidx#3)
+  *((byte*) SPRITES_YPOS#0 + (byte) anim::j2#3) ← *((byte[197]) sintab_y#0 + (byte) anim::yidx#3)
   (byte) anim::xidx#1 ← (byte) anim::xidx#3 + (byte/signed byte/word/signed word) 10
   (boolean~) anim::$8 ← (byte) anim::xidx#1 < (byte) sinlen_x#0
   if((boolean~) anim::$8) goto anim::@2
@@ -9323,8 +9321,8 @@ place_sprites: scope:[place_sprites]  from init::@2
   *((byte*) SPRITES_EXPAND_X#0) ← (byte/signed byte/word/signed word) 127
   *((byte*) SPRITES_EXPAND_Y#0) ← (byte/signed byte/word/signed word) 127
   (byte*) place_sprites::sprites_ptr#0 ← (byte*) SCREEN#0 + (word/signed word) 1016
-  (byte[]~) place_sprites::$1 ← (byte[]) sprites#0 / (byte/signed byte/word/signed word) 64
-  (byte) place_sprites::spr_id#0 ← ((byte)) (byte[]~) place_sprites::$1
+  (byte*~) place_sprites::$1 ← (byte*) sprites#0 / (byte/signed byte/word/signed word) 64
+  (byte) place_sprites::spr_id#0 ← ((byte)) (byte*~) place_sprites::$1
   (byte) place_sprites::spr_x#0 ← (byte/signed byte/word/signed word) 60
   (byte) place_sprites::j2#0 ← (byte/signed byte/word/signed word) 0
   (byte) place_sprites::col#0 ← (byte/signed byte/word/signed word) 5
@@ -9355,7 +9353,7 @@ place_sprites::@return: scope:[place_sprites]  from place_sprites::@1
   to:@return
 gen_sprites: scope:[gen_sprites]  from init::@4
   (byte[]) gen_sprites::cml#0 ← (const string) gen_sprites::$3
-  (byte*) gen_sprites::spr#0 ← (byte[]) sprites#0
+  (byte*) gen_sprites::spr#0 ← (byte*) sprites#0
   (byte) gen_sprites::i#0 ← (byte/signed byte/word/signed word) 0
   to:gen_sprites::@1
 gen_sprites::@1: scope:[gen_sprites]  from gen_sprites gen_sprites::@3
@@ -9685,10 +9683,10 @@ sinFAC::@return: scope:[sinFAC]  from sinFAC
 @33: scope:[]  from @begin
   (byte*) SCREEN#0 ← ((byte*)) (word/signed word) 1024
   (byte) sinlen_x#0 ← (byte/word/signed word) 221
-  (byte[]) sintab_x#0 ← ((byte*)) (word/signed word) 4096
+  (byte[221]) sintab_x#0 ← { fill( 221, 0) }
   (byte) sinlen_y#0 ← (byte/word/signed word) 197
-  (byte[]) sintab_y#0 ← ((byte*)) (word/signed word) 4352
-  (byte[]) sprites#0 ← ((byte*)) (word/signed word) 8192
+  (byte[197]) sintab_y#0 ← { fill( 197, 0) }
+  (byte*) sprites#0 ← ((byte*)) (word/signed word) 8192
   to:@36
 main: scope:[main]  from @43
   call init param-assignment
@@ -9738,7 +9736,7 @@ init::@5: scope:[init]  from init::@4
   call progress_init param-assignment
   to:init::@6
 init::@6: scope:[init]  from init::@5
-  (byte*) gen_sintab::sintab#0 ← (byte[]) sintab_x#0
+  (byte*) gen_sintab::sintab#0 ← (byte[221]) sintab_x#0
   (byte) gen_sintab::length#0 ← (byte) sinlen_x#0
   (byte) gen_sintab::min#0 ← (byte/signed byte/word/signed word) 0
   (byte) gen_sintab::max#0 ← (byte/word/signed word) 255
@@ -9749,7 +9747,7 @@ init::@7: scope:[init]  from init::@6
   call progress_init param-assignment
   to:init::@8
 init::@8: scope:[init]  from init::@7
-  (byte*) gen_sintab::sintab#1 ← (byte[]) sintab_y#0
+  (byte*) gen_sintab::sintab#1 ← (byte[197]) sintab_y#0
   (byte) gen_sintab::length#1 ← (byte) sinlen_y#0
   (byte) gen_sintab::min#1 ← (byte/signed byte/word/signed word) 50
   (byte) gen_sintab::max#1 ← (byte/word/signed word) 208
@@ -9826,13 +9824,13 @@ anim::@1: scope:[anim]  from anim anim::@3
   (byte) anim::x_msb#2 ← phi( anim/(byte) anim::x_msb#0 anim::@3/(byte) anim::x_msb#1 )
   (byte) anim::xidx#3 ← phi( anim/(byte) anim::xidx#0 anim::@3/(byte) anim::xidx#5 )
   (word~) anim::$0 ← ((word)) (byte/signed byte/word/signed word) 30
-  (word) anim::x#0 ← (word~) anim::$0 + *((byte[]) sintab_x#0 + (byte) anim::xidx#3)
+  (word) anim::x#0 ← (word~) anim::$0 + *((byte[221]) sintab_x#0 + (byte) anim::xidx#3)
   (byte~) anim::$2 ← (byte) anim::x_msb#2 << (byte/signed byte/word/signed word) 1
   (byte~) anim::$3 ← > (word) anim::x#0
   (byte) anim::x_msb#1 ← (byte~) anim::$2 | (byte~) anim::$3
   (byte~) anim::$5 ← < (word) anim::x#0
   *((byte*) SPRITES_XPOS#0 + (byte) anim::j2#3) ← (byte~) anim::$5
-  *((byte*) SPRITES_YPOS#0 + (byte) anim::j2#3) ← *((byte[]) sintab_y#0 + (byte) anim::yidx#3)
+  *((byte*) SPRITES_YPOS#0 + (byte) anim::j2#3) ← *((byte[197]) sintab_y#0 + (byte) anim::yidx#3)
   (byte) anim::xidx#1 ← (byte) anim::xidx#3 + (byte/signed byte/word/signed word) 10
   (boolean~) anim::$8 ← (byte) anim::xidx#1 < (byte) sinlen_x#0
   if((boolean~) anim::$8) goto anim::@2
@@ -9887,8 +9885,8 @@ place_sprites: scope:[place_sprites]  from init::@2
   *((byte*) SPRITES_EXPAND_X#0) ← (byte/signed byte/word/signed word) 127
   *((byte*) SPRITES_EXPAND_Y#0) ← (byte/signed byte/word/signed word) 127
   (byte*) place_sprites::sprites_ptr#0 ← (byte*) SCREEN#0 + (word/signed word) 1016
-  (byte[]~) place_sprites::$1 ← (byte[]) sprites#0 / (byte/signed byte/word/signed word) 64
-  (byte) place_sprites::spr_id#0 ← ((byte)) (byte[]~) place_sprites::$1
+  (byte*~) place_sprites::$1 ← (byte*) sprites#0 / (byte/signed byte/word/signed word) 64
+  (byte) place_sprites::spr_id#0 ← ((byte)) (byte*~) place_sprites::$1
   (byte) place_sprites::spr_x#0 ← (byte/signed byte/word/signed word) 60
   (byte) place_sprites::j2#0 ← (byte/signed byte/word/signed word) 0
   (byte) place_sprites::col#0 ← (byte/signed byte/word/signed word) 5
@@ -9919,7 +9917,7 @@ place_sprites::@return: scope:[place_sprites]  from place_sprites::@1
   to:@return
 gen_sprites: scope:[gen_sprites]  from init::@4
   (byte[]) gen_sprites::cml#0 ← (const string) gen_sprites::$3
-  (byte*) gen_sprites::spr#0 ← (byte[]) sprites#0
+  (byte*) gen_sprites::spr#0 ← (byte*) sprites#0
   (byte) gen_sprites::i#0 ← (byte/signed byte/word/signed word) 0
   to:gen_sprites::@1
 gen_sprites::@1: scope:[gen_sprites]  from gen_sprites gen_sprites::@3
@@ -10262,10 +10260,10 @@ sinFAC::@return: scope:[sinFAC]  from sinFAC
 @33: scope:[]  from @begin
   (byte*) SCREEN#0 ← ((byte*)) (word/signed word) 1024
   (byte) sinlen_x#0 ← (byte/word/signed word) 221
-  (byte[]) sintab_x#0 ← ((byte*)) (word/signed word) 4096
+  (byte[221]) sintab_x#0 ← { fill( 221, 0) }
   (byte) sinlen_y#0 ← (byte/word/signed word) 197
-  (byte[]) sintab_y#0 ← ((byte*)) (word/signed word) 4352
-  (byte[]) sprites#0 ← ((byte*)) (word/signed word) 8192
+  (byte[197]) sintab_y#0 ← { fill( 197, 0) }
+  (byte*) sprites#0 ← ((byte*)) (word/signed word) 8192
   to:@36
 main: scope:[main]  from @43
   call init param-assignment
@@ -10313,7 +10311,7 @@ init::@5: scope:[init]  from init::@4
   call progress_init param-assignment
   to:init::@6
 init::@6: scope:[init]  from init::@5
-  (byte*) gen_sintab::sintab#0 ← (byte[]) sintab_x#0
+  (byte*) gen_sintab::sintab#0 ← (byte[221]) sintab_x#0
   (byte) gen_sintab::length#0 ← (byte) sinlen_x#0
   (byte) gen_sintab::min#0 ← (byte/signed byte/word/signed word) 0
   (byte) gen_sintab::max#0 ← (byte/word/signed word) 255
@@ -10324,7 +10322,7 @@ init::@7: scope:[init]  from init::@6
   call progress_init param-assignment
   to:init::@8
 init::@8: scope:[init]  from init::@7
-  (byte*) gen_sintab::sintab#1 ← (byte[]) sintab_y#0
+  (byte*) gen_sintab::sintab#1 ← (byte[197]) sintab_y#0
   (byte) gen_sintab::length#1 ← (byte) sinlen_y#0
   (byte) gen_sintab::min#1 ← (byte/signed byte/word/signed word) 50
   (byte) gen_sintab::max#1 ← (byte/word/signed word) 208
@@ -10399,13 +10397,13 @@ anim::@1: scope:[anim]  from anim anim::@3
   (byte) anim::x_msb#2 ← phi( anim/(byte) anim::x_msb#0 anim::@3/(byte) anim::x_msb#1 )
   (byte) anim::xidx#3 ← phi( anim/(byte) anim::xidx#0 anim::@3/(byte) anim::xidx#5 )
   (word~) anim::$0 ← ((word)) (byte/signed byte/word/signed word) 30
-  (word) anim::x#0 ← (word~) anim::$0 + *((byte[]) sintab_x#0 + (byte) anim::xidx#3)
+  (word) anim::x#0 ← (word~) anim::$0 + *((byte[221]) sintab_x#0 + (byte) anim::xidx#3)
   (byte~) anim::$2 ← (byte) anim::x_msb#2 << (byte/signed byte/word/signed word) 1
   (byte~) anim::$3 ← > (word) anim::x#0
   (byte) anim::x_msb#1 ← (byte~) anim::$2 | (byte~) anim::$3
   (byte~) anim::$5 ← < (word) anim::x#0
   *((byte*) SPRITES_XPOS#0 + (byte) anim::j2#3) ← (byte~) anim::$5
-  *((byte*) SPRITES_YPOS#0 + (byte) anim::j2#3) ← *((byte[]) sintab_y#0 + (byte) anim::yidx#3)
+  *((byte*) SPRITES_YPOS#0 + (byte) anim::j2#3) ← *((byte[197]) sintab_y#0 + (byte) anim::yidx#3)
   (byte) anim::xidx#1 ← (byte) anim::xidx#3 + (byte/signed byte/word/signed word) 10
   if((byte) anim::xidx#1<(byte) sinlen_x#0) goto anim::@2
   to:anim::@6
@@ -10455,8 +10453,8 @@ place_sprites: scope:[place_sprites]  from init::@2
   *((byte*) SPRITES_EXPAND_X#0) ← (byte/signed byte/word/signed word) 127
   *((byte*) SPRITES_EXPAND_Y#0) ← (byte/signed byte/word/signed word) 127
   (byte*) place_sprites::sprites_ptr#0 ← (byte*) SCREEN#0 + (word/signed word) 1016
-  (byte[]~) place_sprites::$1 ← (byte[]) sprites#0 / (byte/signed byte/word/signed word) 64
-  (byte) place_sprites::spr_id#0 ← ((byte)) (byte[]~) place_sprites::$1
+  (byte*~) place_sprites::$1 ← (byte*) sprites#0 / (byte/signed byte/word/signed word) 64
+  (byte) place_sprites::spr_id#0 ← ((byte)) (byte*~) place_sprites::$1
   (byte) place_sprites::spr_x#0 ← (byte/signed byte/word/signed word) 60
   (byte) place_sprites::j2#0 ← (byte/signed byte/word/signed word) 0
   (byte) place_sprites::col#0 ← (byte/signed byte/word/signed word) 5
@@ -10486,7 +10484,7 @@ place_sprites::@return: scope:[place_sprites]  from place_sprites::@1
   to:@return
 gen_sprites: scope:[gen_sprites]  from init::@4
   (byte[]) gen_sprites::cml#0 ← (const string) gen_sprites::$3
-  (byte*) gen_sprites::spr#0 ← (byte[]) sprites#0
+  (byte*) gen_sprites::spr#0 ← (byte*) sprites#0
   (byte) gen_sprites::i#0 ← (byte/signed byte/word/signed word) 0
   to:gen_sprites::@1
 gen_sprites::@1: scope:[gen_sprites]  from gen_sprites gen_sprites::@3
@@ -10710,9 +10708,9 @@ Constant (const byte*) memLo#0 = ((byte*))254
 Constant (const byte*) memHi#0 = ((byte*))255
 Constant (const byte*) SCREEN#0 = ((byte*))1024
 Constant (const byte) sinlen_x#0 = 221
-Constant (const byte*) sintab_x#0 = ((byte*))4096
+Constant (const byte[221]) sintab_x#0 = { fill( 221, 0) }
 Constant (const byte) sinlen_y#0 = 197
-Constant (const byte*) sintab_y#0 = ((byte*))4352
+Constant (const byte[197]) sintab_y#0 = { fill( 197, 0) }
 Constant (const byte*) sprites#0 = ((byte*))8192
 Constant (const byte) init::i#0 = 0
 Constant (const byte) gen_sintab::min#0 = 0
@@ -10894,7 +10892,7 @@ init::@5: scope:[init]  from init::@4
   call progress_init param-assignment
   to:init::@6
 init::@6: scope:[init]  from init::@5
-  (byte*) gen_sintab::sintab#0 ← (const byte*) sintab_x#0
+  (byte*) gen_sintab::sintab#0 ← (const byte[221]) sintab_x#0
   (byte) gen_sintab::length#0 ← (const byte) sinlen_x#0
   call gen_sintab param-assignment
   to:init::@7
@@ -10903,7 +10901,7 @@ init::@7: scope:[init]  from init::@6
   call progress_init param-assignment
   to:init::@8
 init::@8: scope:[init]  from init::@7
-  (byte*) gen_sintab::sintab#1 ← (const byte*) sintab_y#0
+  (byte*) gen_sintab::sintab#1 ← (const byte[197]) sintab_y#0
   (byte) gen_sintab::length#1 ← (const byte) sinlen_y#0
   call gen_sintab param-assignment
   to:init::@9
@@ -10966,13 +10964,13 @@ anim::@1: scope:[anim]  from anim anim::@3
   (byte) anim::j2#3 ← phi( anim/(const byte) anim::j2#0 anim::@3/(byte) anim::j2#2 )
   (byte) anim::x_msb#2 ← phi( anim/(const byte) anim::x_msb#0 anim::@3/(byte) anim::x_msb#1 )
   (byte) anim::xidx#3 ← phi( anim/(byte) anim::xidx#0 anim::@3/(byte) anim::xidx#5 )
-  (word) anim::x#0 ← (const word) anim::$0 + *((const byte*) sintab_x#0 + (byte) anim::xidx#3)
+  (word) anim::x#0 ← (const word) anim::$0 + *((const byte[221]) sintab_x#0 + (byte) anim::xidx#3)
   (byte~) anim::$2 ← (byte) anim::x_msb#2 << (byte/signed byte/word/signed word) 1
   (byte~) anim::$3 ← > (word) anim::x#0
   (byte) anim::x_msb#1 ← (byte~) anim::$2 | (byte~) anim::$3
   (byte~) anim::$5 ← < (word) anim::x#0
   *((const byte*) SPRITES_XPOS#0 + (byte) anim::j2#3) ← (byte~) anim::$5
-  *((const byte*) SPRITES_YPOS#0 + (byte) anim::j2#3) ← *((const byte*) sintab_y#0 + (byte) anim::yidx#3)
+  *((const byte*) SPRITES_YPOS#0 + (byte) anim::j2#3) ← *((const byte[197]) sintab_y#0 + (byte) anim::yidx#3)
   (byte) anim::xidx#1 ← (byte) anim::xidx#3 + (byte/signed byte/word/signed word) 10
   if((byte) anim::xidx#1<(const byte) sinlen_x#0) goto anim::@2
   to:anim::@6
@@ -11020,8 +11018,8 @@ place_sprites: scope:[place_sprites]  from init::@2
   *((const byte*) SPRITES_EXPAND_X#0) ← (byte/signed byte/word/signed word) 127
   *((const byte*) SPRITES_EXPAND_Y#0) ← (byte/signed byte/word/signed word) 127
   (byte*) place_sprites::sprites_ptr#0 ← (const byte*) SCREEN#0 + (word/signed word) 1016
-  (byte[]~) place_sprites::$1 ← (const byte*) sprites#0 / (byte/signed byte/word/signed word) 64
-  (byte) place_sprites::spr_id#0 ← ((byte)) (byte[]~) place_sprites::$1
+  (byte*~) place_sprites::$1 ← (const byte*) sprites#0 / (byte/signed byte/word/signed word) 64
+  (byte) place_sprites::spr_id#0 ← ((byte)) (byte*~) place_sprites::$1
   to:place_sprites::@1
 place_sprites::@1: scope:[place_sprites]  from place_sprites place_sprites::@1
   (byte) place_sprites::col#2 ← phi( place_sprites/(const byte) place_sprites::col#0 place_sprites::@1/(byte) place_sprites::col#1 )
@@ -11238,10 +11236,10 @@ gen_sintab::@return: scope:[gen_sintab]  from gen_sintab::@23
 @end: scope:[]  from @44
 
 Constant (const byte*) progress_init::line#0 = SCREEN#0
-Constant (const byte*) gen_sintab::sintab#0 = sintab_x#0
+Constant (const byte[221]) gen_sintab::sintab#0 = sintab_x#0
 Constant (const byte) gen_sintab::length#0 = sinlen_x#0
 Constant (const byte*) progress_init::line#1 = SCREEN#0+40
-Constant (const byte*) gen_sintab::sintab#1 = sintab_y#0
+Constant (const byte[197]) gen_sintab::sintab#1 = sintab_y#0
 Constant (const byte) gen_sintab::length#1 = sinlen_y#0
 Constant (const byte*) clear_screen::sc#0 = SCREEN#0
 Constant (const byte*) clear_screen::$0 = SCREEN#0+1000
@@ -11464,13 +11462,13 @@ anim::@1: scope:[anim]  from anim anim::@3
   (byte) anim::j2#3 ← phi( anim/(const byte) anim::j2#0 anim::@3/(byte) anim::j2#2 )
   (byte) anim::x_msb#2 ← phi( anim/(const byte) anim::x_msb#0 anim::@3/(byte) anim::x_msb#1 )
   (byte) anim::xidx#3 ← phi( anim/(byte) anim::xidx#0 anim::@3/(byte) anim::xidx#5 )
-  (word) anim::x#0 ← (const word) anim::$0 + *((const byte*) sintab_x#0 + (byte) anim::xidx#3)
+  (word) anim::x#0 ← (const word) anim::$0 + *((const byte[221]) sintab_x#0 + (byte) anim::xidx#3)
   (byte~) anim::$2 ← (byte) anim::x_msb#2 << (byte/signed byte/word/signed word) 1
   (byte~) anim::$3 ← > (word) anim::x#0
   (byte) anim::x_msb#1 ← (byte~) anim::$2 | (byte~) anim::$3
   (byte~) anim::$5 ← < (word) anim::x#0
   *((const byte*) SPRITES_XPOS#0 + (byte) anim::j2#3) ← (byte~) anim::$5
-  *((const byte*) SPRITES_YPOS#0 + (byte) anim::j2#3) ← *((const byte*) sintab_y#0 + (byte) anim::yidx#3)
+  *((const byte*) SPRITES_YPOS#0 + (byte) anim::j2#3) ← *((const byte[197]) sintab_y#0 + (byte) anim::yidx#3)
   (byte) anim::xidx#1 ← (byte) anim::xidx#3 + (byte/signed byte/word/signed word) 10
   if((byte) anim::xidx#1<(const byte) sinlen_x#0) goto anim::@2
   to:anim::@6
@@ -11627,7 +11625,7 @@ gen_chargen_sprite::@return: scope:[gen_chargen_sprite]  from gen_chargen_sprite
   return 
   to:@return
 gen_sintab: scope:[gen_sintab]  from init::@6 init::@8
-  (byte*) gen_sintab::sintab#12 ← phi( init::@6/(const byte*) gen_sintab::sintab#0 init::@8/(const byte*) gen_sintab::sintab#1 )
+  (byte*) gen_sintab::sintab#12 ← phi( init::@6/(const byte[221]) gen_sintab::sintab#0 init::@8/(const byte[197]) gen_sintab::sintab#1 )
   (byte) gen_sintab::length#10 ← phi( init::@6/(const byte) gen_sintab::length#0 init::@8/(const byte) gen_sintab::length#1 )
   (byte) gen_sintab::min#2 ← phi( init::@6/(const byte) gen_sintab::min#0 init::@8/(const byte) gen_sintab::min#1 )
   (byte) gen_sintab::max#2 ← phi( init::@6/(const byte) gen_sintab::max#0 init::@8/(const byte) gen_sintab::max#1 )
@@ -11927,13 +11925,13 @@ anim::@1: scope:[anim]  from anim anim::@3
   (byte) anim::j2#3 ← phi( anim/(const byte) anim::j2#0 anim::@3/(byte) anim::j2#2 )
   (byte) anim::x_msb#2 ← phi( anim/(const byte) anim::x_msb#0 anim::@3/(byte) anim::x_msb#1 )
   (byte) anim::xidx#3 ← phi( anim/(byte) anim::xidx#0 anim::@3/(byte) anim::xidx#5 )
-  (word) anim::x#0 ← (const word) anim::$0 + *((const byte*) sintab_x#0 + (byte) anim::xidx#3)
+  (word) anim::x#0 ← (const word) anim::$0 + *((const byte[221]) sintab_x#0 + (byte) anim::xidx#3)
   (byte~) anim::$2 ← (byte) anim::x_msb#2 << (byte/signed byte/word/signed word) 1
   (byte~) anim::$3 ← > (word) anim::x#0
   (byte) anim::x_msb#1 ← (byte~) anim::$2 | (byte~) anim::$3
   (byte~) anim::$5 ← < (word) anim::x#0
   *((const byte*) SPRITES_XPOS#0 + (byte) anim::j2#3) ← (byte~) anim::$5
-  *((const byte*) SPRITES_YPOS#0 + (byte) anim::j2#3) ← *((const byte*) sintab_y#0 + (byte) anim::yidx#3)
+  *((const byte*) SPRITES_YPOS#0 + (byte) anim::j2#3) ← *((const byte[197]) sintab_y#0 + (byte) anim::yidx#3)
   (byte) anim::xidx#1 ← (byte) anim::xidx#3 + (byte/signed byte/word/signed word) 10
   if((byte) anim::xidx#1<(const byte) sinlen_x#0) goto anim::@2
   to:anim::@6
@@ -12089,7 +12087,7 @@ gen_chargen_sprite::@return: scope:[gen_chargen_sprite]  from gen_chargen_sprite
   return 
   to:@return
 gen_sintab: scope:[gen_sintab]  from init::@6 init::@8
-  (byte*) gen_sintab::sintab#12 ← phi( init::@6/(const byte*) gen_sintab::sintab#0 init::@8/(const byte*) gen_sintab::sintab#1 )
+  (byte*) gen_sintab::sintab#12 ← phi( init::@6/(const byte[221]) gen_sintab::sintab#0 init::@8/(const byte[197]) gen_sintab::sintab#1 )
   (byte) gen_sintab::length#10 ← phi( init::@6/(const byte) gen_sintab::length#0 init::@8/(const byte) gen_sintab::length#1 )
   (byte) gen_sintab::min#2 ← phi( init::@6/(const byte) gen_sintab::min#0 init::@8/(const byte) gen_sintab::min#1 )
   (byte) gen_sintab::max#2 ← phi( init::@6/(const byte) gen_sintab::max#0 init::@8/(const byte) gen_sintab::max#1 )
@@ -12395,13 +12393,13 @@ anim::@1: scope:[anim]  from anim anim::@3
   (byte) anim::j2#3 ← phi( anim/(const byte) anim::j2#0 anim::@3/(byte) anim::j2#2 )
   (byte) anim::x_msb#2 ← phi( anim/(const byte) anim::x_msb#0 anim::@3/(byte) anim::x_msb#1 )
   (byte) anim::xidx#3 ← phi( anim/(byte) anim::xidx#0 anim::@3/(byte) anim::xidx#5 )
-  (word) anim::x#0 ← (const word) anim::$0 + *((const byte*) sintab_x#0 + (byte) anim::xidx#3)
+  (word) anim::x#0 ← (const word) anim::$0 + *((const byte[221]) sintab_x#0 + (byte) anim::xidx#3)
   (byte~) anim::$2 ← (byte) anim::x_msb#2 << (byte/signed byte/word/signed word) 1
   (byte~) anim::$3 ← > (word) anim::x#0
   (byte) anim::x_msb#1 ← (byte~) anim::$2 | (byte~) anim::$3
   (byte~) anim::$5 ← < (word) anim::x#0
   *((const byte*) SPRITES_XPOS#0 + (byte) anim::j2#3) ← (byte~) anim::$5
-  *((const byte*) SPRITES_YPOS#0 + (byte) anim::j2#3) ← *((const byte*) sintab_y#0 + (byte) anim::yidx#3)
+  *((const byte*) SPRITES_YPOS#0 + (byte) anim::j2#3) ← *((const byte[197]) sintab_y#0 + (byte) anim::yidx#3)
   (byte) anim::xidx#1 ← (byte) anim::xidx#3 + (byte/signed byte/word/signed word) 10
   if((byte) anim::xidx#1<(const byte) sinlen_x#0) goto anim::@2
   to:anim::@6
@@ -12557,7 +12555,7 @@ gen_chargen_sprite::@return: scope:[gen_chargen_sprite]  from gen_chargen_sprite
   return 
   to:@return
 gen_sintab: scope:[gen_sintab]  from init::@6 init::@8
-  (byte*) gen_sintab::sintab#12 ← phi( init::@6/(const byte*) gen_sintab::sintab#0 init::@8/(const byte*) gen_sintab::sintab#1 )
+  (byte*) gen_sintab::sintab#12 ← phi( init::@6/(const byte[221]) gen_sintab::sintab#0 init::@8/(const byte[197]) gen_sintab::sintab#1 )
   (byte) gen_sintab::length#10 ← phi( init::@6/(const byte) gen_sintab::length#0 init::@8/(const byte) gen_sintab::length#1 )
   (byte) gen_sintab::min#2 ← phi( init::@6/(const byte) gen_sintab::min#0 init::@8/(const byte) gen_sintab::min#1 )
   (byte) gen_sintab::max#2 ← phi( init::@6/(const byte) gen_sintab::max#0 init::@8/(const byte) gen_sintab::max#1 )
@@ -12862,13 +12860,13 @@ anim::@1: scope:[anim]  from anim anim::@3
   (byte) anim::j2#3 ← phi( anim/(const byte) anim::j2#0 anim::@3/(byte) anim::j2#2 )
   (byte) anim::x_msb#2 ← phi( anim/(const byte) anim::x_msb#0 anim::@3/(byte) anim::x_msb#1 )
   (byte) anim::xidx#3 ← phi( anim/(byte) anim::xidx#0 anim::@3/(byte) anim::xidx#5 )
-  (word) anim::x#0 ← (const word) anim::$0 + *((const byte*) sintab_x#0 + (byte) anim::xidx#3)
+  (word) anim::x#0 ← (const word) anim::$0 + *((const byte[221]) sintab_x#0 + (byte) anim::xidx#3)
   (byte~) anim::$2 ← (byte) anim::x_msb#2 << (byte/signed byte/word/signed word) 1
   (byte~) anim::$3 ← > (word) anim::x#0
   (byte) anim::x_msb#1 ← (byte~) anim::$2 | (byte~) anim::$3
   (byte~) anim::$5 ← < (word) anim::x#0
   *((const byte*) SPRITES_XPOS#0 + (byte) anim::j2#3) ← (byte~) anim::$5
-  *((const byte*) SPRITES_YPOS#0 + (byte) anim::j2#3) ← *((const byte*) sintab_y#0 + (byte) anim::yidx#3)
+  *((const byte*) SPRITES_YPOS#0 + (byte) anim::j2#3) ← *((const byte[197]) sintab_y#0 + (byte) anim::yidx#3)
   (byte) anim::xidx#1 ← (byte) anim::xidx#3 + (byte/signed byte/word/signed word) 10
   if((byte) anim::xidx#1<(const byte) sinlen_x#0) goto anim::@2
   to:anim::@6
@@ -13024,7 +13022,7 @@ gen_chargen_sprite::@return: scope:[gen_chargen_sprite]  from gen_chargen_sprite
   return 
   to:@return
 gen_sintab: scope:[gen_sintab]  from init::@6 init::@8
-  (byte*) gen_sintab::sintab#12 ← phi( init::@6/(const byte*) gen_sintab::sintab#0 init::@8/(const byte*) gen_sintab::sintab#1 )
+  (byte*) gen_sintab::sintab#12 ← phi( init::@6/(const byte[221]) gen_sintab::sintab#0 init::@8/(const byte[197]) gen_sintab::sintab#1 )
   (byte) gen_sintab::length#10 ← phi( init::@6/(const byte) gen_sintab::length#0 init::@8/(const byte) gen_sintab::length#1 )
   (byte) gen_sintab::min#2 ← phi( init::@6/(const byte) gen_sintab::min#0 init::@8/(const byte) gen_sintab::min#1 )
   (byte) gen_sintab::max#2 ← phi( init::@6/(const byte) gen_sintab::max#0 init::@8/(const byte) gen_sintab::max#1 )
@@ -13325,13 +13323,13 @@ anim::@1: scope:[anim]  from anim anim::@3
   (byte) anim::j2#3 ← phi( anim/(const byte) anim::j2#0 anim::@3/(byte) anim::j2#2 )
   (byte) anim::x_msb#2 ← phi( anim/(const byte) anim::x_msb#0 anim::@3/(byte) anim::x_msb#1 )
   (byte) anim::xidx#3 ← phi( anim/(byte) anim::xidx#0 anim::@3/(byte) anim::xidx#5 )
-  (word) anim::x#0 ← (const word) anim::$0 + *((const byte*) sintab_x#0 + (byte) anim::xidx#3)
+  (word) anim::x#0 ← (const word) anim::$0 + *((const byte[221]) sintab_x#0 + (byte) anim::xidx#3)
   (byte~) anim::$2 ← (byte) anim::x_msb#2 << (byte/signed byte/word/signed word) 1
   (byte~) anim::$3 ← > (word) anim::x#0
   (byte) anim::x_msb#1 ← (byte~) anim::$2 | (byte~) anim::$3
   (byte~) anim::$5 ← < (word) anim::x#0
   *((const byte*) SPRITES_XPOS#0 + (byte) anim::j2#3) ← (byte~) anim::$5
-  *((const byte*) SPRITES_YPOS#0 + (byte) anim::j2#3) ← *((const byte*) sintab_y#0 + (byte) anim::yidx#3)
+  *((const byte*) SPRITES_YPOS#0 + (byte) anim::j2#3) ← *((const byte[197]) sintab_y#0 + (byte) anim::yidx#3)
   (byte) anim::xidx#1 ← (byte) anim::xidx#3 + (byte/signed byte/word/signed word) 10
   if((byte) anim::xidx#1<(const byte) sinlen_x#0) goto anim::@2
   to:anim::@6
@@ -13487,7 +13485,7 @@ gen_chargen_sprite::@return: scope:[gen_chargen_sprite]  from gen_chargen_sprite
   return 
   to:@return
 gen_sintab: scope:[gen_sintab]  from init::@6 init::@8
-  (byte*) gen_sintab::sintab#12 ← phi( init::@6/(const byte*) gen_sintab::sintab#0 init::@8/(const byte*) gen_sintab::sintab#1 )
+  (byte*) gen_sintab::sintab#12 ← phi( init::@6/(const byte[221]) gen_sintab::sintab#0 init::@8/(const byte[197]) gen_sintab::sintab#1 )
   (byte) gen_sintab::length#10 ← phi( init::@6/(const byte) gen_sintab::length#0 init::@8/(const byte) gen_sintab::length#1 )
   (byte) gen_sintab::min#2 ← phi( init::@6/(const byte) gen_sintab::min#0 init::@8/(const byte) gen_sintab::min#1 )
   (byte) gen_sintab::max#2 ← phi( init::@6/(const byte) gen_sintab::max#0 init::@8/(const byte) gen_sintab::max#1 )
@@ -13785,13 +13783,13 @@ anim::@1: scope:[anim]  from anim anim::@3
   (byte) anim::j2#3 ← phi( anim/(const byte) anim::j2#0 anim::@3/(byte) anim::j2#2 )
   (byte) anim::x_msb#2 ← phi( anim/(const byte) anim::x_msb#0 anim::@3/(byte) anim::x_msb#1 )
   (byte) anim::xidx#3 ← phi( anim/(byte) anim::xidx#0 anim::@3/(byte) anim::xidx#5 )
-  (word) anim::x#0 ← (const word) anim::$0 + *((const byte*) sintab_x#0 + (byte) anim::xidx#3)
+  (word) anim::x#0 ← (const word) anim::$0 + *((const byte[221]) sintab_x#0 + (byte) anim::xidx#3)
   (byte~) anim::$2 ← (byte) anim::x_msb#2 << (byte/signed byte/word/signed word) 1
   (byte~) anim::$3 ← > (word) anim::x#0
   (byte) anim::x_msb#1 ← (byte~) anim::$2 | (byte~) anim::$3
   (byte~) anim::$5 ← < (word) anim::x#0
   *((const byte*) SPRITES_XPOS#0 + (byte) anim::j2#3) ← (byte~) anim::$5
-  *((const byte*) SPRITES_YPOS#0 + (byte) anim::j2#3) ← *((const byte*) sintab_y#0 + (byte) anim::yidx#3)
+  *((const byte*) SPRITES_YPOS#0 + (byte) anim::j2#3) ← *((const byte[197]) sintab_y#0 + (byte) anim::yidx#3)
   (byte) anim::xidx#1 ← (byte) anim::xidx#3 + (byte/signed byte/word/signed word) 10
   if((byte) anim::xidx#1<(const byte) sinlen_x#0) goto anim::@2
   to:anim::@6
@@ -13947,7 +13945,7 @@ gen_chargen_sprite::@return: scope:[gen_chargen_sprite]  from gen_chargen_sprite
   return 
   to:@return
 gen_sintab: scope:[gen_sintab]  from init::@6 init::@8
-  (byte*) gen_sintab::sintab#12 ← phi( init::@6/(const byte*) gen_sintab::sintab#0 init::@8/(const byte*) gen_sintab::sintab#1 )
+  (byte*) gen_sintab::sintab#12 ← phi( init::@6/(const byte[221]) gen_sintab::sintab#0 init::@8/(const byte[197]) gen_sintab::sintab#1 )
   (byte) gen_sintab::length#10 ← phi( init::@6/(const byte) gen_sintab::length#0 init::@8/(const byte) gen_sintab::length#1 )
   (byte) gen_sintab::min#2 ← phi( init::@6/(const byte) gen_sintab::min#0 init::@8/(const byte) gen_sintab::min#1 )
   (byte) gen_sintab::max#2 ← phi( init::@6/(const byte) gen_sintab::max#0 init::@8/(const byte) gen_sintab::max#1 )
@@ -14249,13 +14247,13 @@ anim::@1: scope:[anim]  from anim anim::@3
   (byte) anim::j2#3 ← phi( anim/(const byte) anim::j2#0 anim::@3/(byte) anim::j2#2 )
   (byte) anim::x_msb#2 ← phi( anim/(const byte) anim::x_msb#0 anim::@3/(byte) anim::x_msb#1 )
   (byte) anim::xidx#3 ← phi( anim/(byte) anim::xidx#0 anim::@3/(byte) anim::xidx#5 )
-  (word) anim::x#0 ← (const word) anim::$0 + *((const byte*) sintab_x#0 + (byte) anim::xidx#3)
+  (word) anim::x#0 ← (const word) anim::$0 + *((const byte[221]) sintab_x#0 + (byte) anim::xidx#3)
   (byte~) anim::$2 ← (byte) anim::x_msb#2 << (byte/signed byte/word/signed word) 1
   (byte~) anim::$3 ← > (word) anim::x#0
   (byte) anim::x_msb#1 ← (byte~) anim::$2 | (byte~) anim::$3
   (byte~) anim::$5 ← < (word) anim::x#0
   *((const byte*) SPRITES_XPOS#0 + (byte) anim::j2#3) ← (byte~) anim::$5
-  *((const byte*) SPRITES_YPOS#0 + (byte) anim::j2#3) ← *((const byte*) sintab_y#0 + (byte) anim::yidx#3)
+  *((const byte*) SPRITES_YPOS#0 + (byte) anim::j2#3) ← *((const byte[197]) sintab_y#0 + (byte) anim::yidx#3)
   (byte) anim::xidx#1 ← (byte) anim::xidx#3 + (byte/signed byte/word/signed word) 10
   if((byte) anim::xidx#1<(const byte) sinlen_x#0) goto anim::@2
   to:anim::@6
@@ -14411,7 +14409,7 @@ gen_chargen_sprite::@return: scope:[gen_chargen_sprite]  from gen_chargen_sprite
   return 
   to:@return
 gen_sintab: scope:[gen_sintab]  from init::@6 init::@8
-  (byte*) gen_sintab::sintab#12 ← phi( init::@6/(const byte*) gen_sintab::sintab#0 init::@8/(const byte*) gen_sintab::sintab#1 )
+  (byte*) gen_sintab::sintab#12 ← phi( init::@6/(const byte[221]) gen_sintab::sintab#0 init::@8/(const byte[197]) gen_sintab::sintab#1 )
   (byte) gen_sintab::length#10 ← phi( init::@6/(const byte) gen_sintab::length#0 init::@8/(const byte) gen_sintab::length#1 )
   (byte) gen_sintab::min#2 ← phi( init::@6/(const byte) gen_sintab::min#0 init::@8/(const byte) gen_sintab::min#1 )
   (byte) gen_sintab::max#2 ← phi( init::@6/(const byte) gen_sintab::max#0 init::@8/(const byte) gen_sintab::max#1 )
@@ -14710,13 +14708,13 @@ anim::@1: scope:[anim]  from anim anim::@3
   (byte) anim::j2#3 ← phi( anim/(const byte) anim::j2#0 anim::@3/(byte) anim::j2#2 )
   (byte) anim::x_msb#2 ← phi( anim/(const byte) anim::x_msb#0 anim::@3/(byte) anim::x_msb#1 )
   (byte) anim::xidx#3 ← phi( anim/(byte) anim::xidx#0 anim::@3/(byte) anim::xidx#5 )
-  (word) anim::x#0 ← (const word) anim::$0 + *((const byte*) sintab_x#0 + (byte) anim::xidx#3)
+  (word) anim::x#0 ← (const word) anim::$0 + *((const byte[221]) sintab_x#0 + (byte) anim::xidx#3)
   (byte~) anim::$2 ← (byte) anim::x_msb#2 << (byte/signed byte/word/signed word) 1
   (byte~) anim::$3 ← > (word) anim::x#0
   (byte) anim::x_msb#1 ← (byte~) anim::$2 | (byte~) anim::$3
   (byte~) anim::$5 ← < (word) anim::x#0
   *((const byte*) SPRITES_XPOS#0 + (byte) anim::j2#3) ← (byte~) anim::$5
-  *((const byte*) SPRITES_YPOS#0 + (byte) anim::j2#3) ← *((const byte*) sintab_y#0 + (byte) anim::yidx#3)
+  *((const byte*) SPRITES_YPOS#0 + (byte) anim::j2#3) ← *((const byte[197]) sintab_y#0 + (byte) anim::yidx#3)
   (byte) anim::xidx#1 ← (byte) anim::xidx#3 + (byte/signed byte/word/signed word) 10
   if((byte) anim::xidx#1<(const byte) sinlen_x#0) goto anim::@2
   to:anim::@6
@@ -14872,7 +14870,7 @@ gen_chargen_sprite::@return: scope:[gen_chargen_sprite]  from gen_chargen_sprite
   return 
   to:@return
 gen_sintab: scope:[gen_sintab]  from init::@6 init::@8
-  (byte*) gen_sintab::sintab#12 ← phi( init::@6/(const byte*) gen_sintab::sintab#0 init::@8/(const byte*) gen_sintab::sintab#1 )
+  (byte*) gen_sintab::sintab#12 ← phi( init::@6/(const byte[221]) gen_sintab::sintab#0 init::@8/(const byte[197]) gen_sintab::sintab#1 )
   (byte) gen_sintab::length#10 ← phi( init::@6/(const byte) gen_sintab::length#0 init::@8/(const byte) gen_sintab::length#1 )
   (byte) gen_sintab::min#2 ← phi( init::@6/(const byte) gen_sintab::min#0 init::@8/(const byte) gen_sintab::min#1 )
   (byte) gen_sintab::max#2 ← phi( init::@6/(const byte) gen_sintab::max#0 init::@8/(const byte) gen_sintab::max#1 )
@@ -15154,13 +15152,13 @@ anim::@1: scope:[anim]  from anim anim::@3
   (byte) anim::j2#3 ← phi( anim/(const byte) anim::j2#0 anim::@3/(byte) anim::j2#2 )
   (byte) anim::x_msb#2 ← phi( anim/(const byte) anim::x_msb#0 anim::@3/(byte) anim::x_msb#1 )
   (byte) anim::xidx#3 ← phi( anim/(byte) anim::xidx#0 anim::@3/(byte) anim::xidx#5 )
-  (word) anim::x#0 ← (const word) anim::$0 + *((const byte*) sintab_x#0 + (byte) anim::xidx#3)
+  (word) anim::x#0 ← (const word) anim::$0 + *((const byte[221]) sintab_x#0 + (byte) anim::xidx#3)
   (byte~) anim::$2 ← (byte) anim::x_msb#2 << (byte/signed byte/word/signed word) 1
   (byte~) anim::$3 ← > (word) anim::x#0
   (byte) anim::x_msb#1 ← (byte~) anim::$2 | (byte~) anim::$3
   (byte~) anim::$5 ← < (word) anim::x#0
   *((const byte*) SPRITES_XPOS#0 + (byte) anim::j2#3) ← (byte~) anim::$5
-  *((const byte*) SPRITES_YPOS#0 + (byte) anim::j2#3) ← *((const byte*) sintab_y#0 + (byte) anim::yidx#3)
+  *((const byte*) SPRITES_YPOS#0 + (byte) anim::j2#3) ← *((const byte[197]) sintab_y#0 + (byte) anim::yidx#3)
   (byte) anim::xidx#1 ← (byte) anim::xidx#3 + (byte/signed byte/word/signed word) 10
   if((byte) anim::xidx#1<(const byte) sinlen_x#0) goto anim::@2
   to:anim::@6
@@ -15314,7 +15312,7 @@ gen_chargen_sprite::@return: scope:[gen_chargen_sprite]  from gen_chargen_sprite
   return 
   to:@return
 gen_sintab: scope:[gen_sintab]  from init::@6 init::@8
-  (byte*) gen_sintab::sintab#12 ← phi( init::@6/(const byte*) gen_sintab::sintab#0 init::@8/(const byte*) gen_sintab::sintab#1 )
+  (byte*) gen_sintab::sintab#12 ← phi( init::@6/(const byte[221]) gen_sintab::sintab#0 init::@8/(const byte[197]) gen_sintab::sintab#1 )
   (byte) gen_sintab::length#10 ← phi( init::@6/(const byte) gen_sintab::length#0 init::@8/(const byte) gen_sintab::length#1 )
   (byte) gen_sintab::min#2 ← phi( init::@6/(const byte) gen_sintab::min#0 init::@8/(const byte) gen_sintab::min#1 )
   (byte) gen_sintab::max#2 ← phi( init::@6/(const byte) gen_sintab::max#0 init::@8/(const byte) gen_sintab::max#1 )
@@ -15618,13 +15616,13 @@ anim::@1: scope:[anim]  from anim anim::@3
   (byte) anim::j2#3 ← phi( anim/(const byte) anim::j2#0 anim::@3/(byte) anim::j2#2 )
   (byte) anim::x_msb#2 ← phi( anim/(const byte) anim::x_msb#0 anim::@3/(byte) anim::x_msb#1 )
   (byte) anim::xidx#3 ← phi( anim/(byte) anim::xidx#0 anim::@3/(byte) anim::xidx#5 )
-  (word) anim::x#0 ← (const word) anim::$0 + *((const byte*) sintab_x#0 + (byte) anim::xidx#3)
+  (word) anim::x#0 ← (const word) anim::$0 + *((const byte[221]) sintab_x#0 + (byte) anim::xidx#3)
   (byte~) anim::$2 ← (byte) anim::x_msb#2 << (byte/signed byte/word/signed word) 1
   (byte~) anim::$3 ← > (word) anim::x#0
   (byte) anim::x_msb#1 ← (byte~) anim::$2 | (byte~) anim::$3
   (byte~) anim::$5 ← < (word) anim::x#0
   *((const byte*) SPRITES_XPOS#0 + (byte) anim::j2#3) ← (byte~) anim::$5
-  *((const byte*) SPRITES_YPOS#0 + (byte) anim::j2#3) ← *((const byte*) sintab_y#0 + (byte) anim::yidx#3)
+  *((const byte*) SPRITES_YPOS#0 + (byte) anim::j2#3) ← *((const byte[197]) sintab_y#0 + (byte) anim::yidx#3)
   (byte) anim::xidx#1 ← (byte) anim::xidx#3 + (byte/signed byte/word/signed word) 10
   if((byte) anim::xidx#1<(const byte) sinlen_x#0) goto anim::@2
   to:anim::@6
@@ -15778,7 +15776,7 @@ gen_chargen_sprite::@return: scope:[gen_chargen_sprite]  from gen_chargen_sprite
   return 
   to:@return
 gen_sintab: scope:[gen_sintab]  from init::@6 init::@8
-  (byte*) gen_sintab::sintab#12 ← phi( init::@6/(const byte*) gen_sintab::sintab#0 init::@8/(const byte*) gen_sintab::sintab#1 )
+  (byte*) gen_sintab::sintab#12 ← phi( init::@6/(const byte[221]) gen_sintab::sintab#0 init::@8/(const byte[197]) gen_sintab::sintab#1 )
   (byte) gen_sintab::length#10 ← phi( init::@6/(const byte) gen_sintab::length#0 init::@8/(const byte) gen_sintab::length#1 )
   (byte) gen_sintab::min#2 ← phi( init::@6/(const byte) gen_sintab::min#0 init::@8/(const byte) gen_sintab::min#1 )
   (byte) gen_sintab::max#2 ← phi( init::@6/(const byte) gen_sintab::max#0 init::@8/(const byte) gen_sintab::max#1 )
@@ -16059,13 +16057,13 @@ anim::@1: scope:[anim]  from anim anim::@3
   (byte) anim::j2#3 ← phi( anim/(const byte) anim::j2#0 anim::@3/(byte) anim::j2#2 )
   (byte) anim::x_msb#2 ← phi( anim/(const byte) anim::x_msb#0 anim::@3/(byte) anim::x_msb#1 )
   (byte) anim::xidx#3 ← phi( anim/(byte) anim::xidx#0 anim::@3/(byte) anim::xidx#5 )
-  (word) anim::x#0 ← (const word) anim::$0 + *((const byte*) sintab_x#0 + (byte) anim::xidx#3)
+  (word) anim::x#0 ← (const word) anim::$0 + *((const byte[221]) sintab_x#0 + (byte) anim::xidx#3)
   (byte~) anim::$2 ← (byte) anim::x_msb#2 << (byte/signed byte/word/signed word) 1
   (byte~) anim::$3 ← > (word) anim::x#0
   (byte) anim::x_msb#1 ← (byte~) anim::$2 | (byte~) anim::$3
   (byte~) anim::$5 ← < (word) anim::x#0
   *((const byte*) SPRITES_XPOS#0 + (byte) anim::j2#3) ← (byte~) anim::$5
-  *((const byte*) SPRITES_YPOS#0 + (byte) anim::j2#3) ← *((const byte*) sintab_y#0 + (byte) anim::yidx#3)
+  *((const byte*) SPRITES_YPOS#0 + (byte) anim::j2#3) ← *((const byte[197]) sintab_y#0 + (byte) anim::yidx#3)
   (byte) anim::xidx#1 ← (byte) anim::xidx#3 + (byte/signed byte/word/signed word) 10
   if((byte) anim::xidx#1<(const byte) sinlen_x#0) goto anim::@2
   to:anim::@6
@@ -16218,7 +16216,7 @@ gen_chargen_sprite::@return: scope:[gen_chargen_sprite]  from gen_chargen_sprite
   return 
   to:@return
 gen_sintab: scope:[gen_sintab]  from init::@6 init::@8
-  (byte*) gen_sintab::sintab#12 ← phi( init::@6/(const byte*) gen_sintab::sintab#0 init::@8/(const byte*) gen_sintab::sintab#1 )
+  (byte*) gen_sintab::sintab#12 ← phi( init::@6/(const byte[221]) gen_sintab::sintab#0 init::@8/(const byte[197]) gen_sintab::sintab#1 )
   (byte) gen_sintab::length#10 ← phi( init::@6/(const byte) gen_sintab::length#0 init::@8/(const byte) gen_sintab::length#1 )
   (byte) gen_sintab::min#2 ← phi( init::@6/(const byte) gen_sintab::min#0 init::@8/(const byte) gen_sintab::min#1 )
   (byte) gen_sintab::max#2 ← phi( init::@6/(const byte) gen_sintab::max#0 init::@8/(const byte) gen_sintab::max#1 )
@@ -16415,9 +16413,9 @@ Inlining constant with var siblings (const byte) gen_sintab::max#1
 Inlining constant with different constant siblings (const byte) gen_sintab::max#1
 Inlining constant with var siblings (const byte) gen_sintab::i#0
 Inlining constant with var siblings (const byte) gen_sintab::i#0
-Inlining constant with var siblings (const byte*) gen_sintab::sintab#0
+Inlining constant with var siblings (const byte[221]) gen_sintab::sintab#0
 Inlining constant with var siblings (const byte) gen_sintab::length#0
-Inlining constant with var siblings (const byte*) gen_sintab::sintab#1
+Inlining constant with var siblings (const byte[197]) gen_sintab::sintab#1
 Inlining constant with var siblings (const byte) gen_sintab::length#1
 Inlining constant with var siblings (const byte) progress_idx#23
 Inlining constant with var siblings (const byte) progress_idx#23
@@ -16457,9 +16455,9 @@ Constant inlined gen_sprites::spr#0 = (const byte*) sprites#0
 Constant inlined clear_screen::sc#0 = (const byte*) SCREEN#0
 Constant inlined sin_idx_y#17 = (byte/signed byte/word/signed word) 0
 Constant inlined gen_chargen_sprite::x#0 = (byte/signed byte/word/signed word) 0
-Constant inlined gen_sintab::sintab#0 = (const byte*) sintab_x#0
+Constant inlined gen_sintab::sintab#0 = (const byte[221]) sintab_x#0
 Constant inlined place_sprites::j2#0 = (byte/signed byte/word/signed word) 0
-Constant inlined gen_sintab::sintab#1 = (const byte*) sintab_y#0
+Constant inlined gen_sintab::sintab#1 = (const byte[197]) sintab_y#0
 Constant inlined sin_idx_x#4 = (byte/signed byte/word/signed word) 0
 Constant inlined gen_sintab::length#0 = (const byte) sinlen_x#0
 Constant inlined gen_sintab::max#0 = (byte/word/signed word) 255
@@ -16682,13 +16680,13 @@ anim::@1: scope:[anim]  from anim anim::@3
   (byte) anim::j2#3 ← phi( anim/(byte/signed byte/word/signed word) 12 anim::@3/(byte) anim::j2#2 )
   (byte) anim::x_msb#2 ← phi( anim/(byte/signed byte/word/signed word) 0 anim::@3/(byte) anim::x_msb#1 )
   (byte) anim::xidx#3 ← phi( anim/(byte) anim::xidx#0 anim::@3/(byte) anim::xidx#5 )
-  (word) anim::x#0 ← ((word))(byte/signed byte/word/signed word) 30 + *((const byte*) sintab_x#0 + (byte) anim::xidx#3)
+  (word) anim::x#0 ← ((word))(byte/signed byte/word/signed word) 30 + *((const byte[221]) sintab_x#0 + (byte) anim::xidx#3)
   (byte~) anim::$2 ← (byte) anim::x_msb#2 << (byte/signed byte/word/signed word) 1
   (byte~) anim::$3 ← > (word) anim::x#0
   (byte) anim::x_msb#1 ← (byte~) anim::$2 | (byte~) anim::$3
   (byte~) anim::$5 ← < (word) anim::x#0
   *((const byte*) SPRITES_XPOS#0 + (byte) anim::j2#3) ← (byte~) anim::$5
-  *((const byte*) SPRITES_YPOS#0 + (byte) anim::j2#3) ← *((const byte*) sintab_y#0 + (byte) anim::yidx#3)
+  *((const byte*) SPRITES_YPOS#0 + (byte) anim::j2#3) ← *((const byte[197]) sintab_y#0 + (byte) anim::yidx#3)
   (byte) anim::xidx#1 ← (byte) anim::xidx#3 + (byte/signed byte/word/signed word) 10
   if((byte) anim::xidx#1<(const byte) sinlen_x#0) goto anim::@2
   to:anim::@6
@@ -16841,7 +16839,7 @@ gen_chargen_sprite::@return: scope:[gen_chargen_sprite]  from gen_chargen_sprite
   return 
   to:@return
 gen_sintab: scope:[gen_sintab]  from init::@6 init::@8
-  (byte*) gen_sintab::sintab#12 ← phi( init::@6/(const byte*) sintab_x#0 init::@8/(const byte*) sintab_y#0 )
+  (byte*) gen_sintab::sintab#12 ← phi( init::@6/(const byte[221]) sintab_x#0 init::@8/(const byte[197]) sintab_y#0 )
   (byte) gen_sintab::length#10 ← phi( init::@6/(const byte) sinlen_x#0 init::@8/(const byte) sinlen_y#0 )
   (byte) gen_sintab::min#2 ← phi( init::@6/(byte/signed byte/word/signed word) 0 init::@8/(byte/signed byte/word/signed word) 50 )
   (byte) gen_sintab::max#2 ← phi( init::@6/(byte/word/signed word) 255 init::@8/(byte/word/signed word) 208 )
@@ -17239,11 +17237,11 @@ FINAL SYMBOL TABLE
 (const byte) sinlen_x#0 = (byte/word/signed word) 221
 (byte) sinlen_y
 (const byte) sinlen_y#0 = (byte/word/signed word) 197
-(byte[]) sintab_x
-(const byte*) sintab_x#0 = ((byte*))(word/signed word) 4096
-(byte[]) sintab_y
-(const byte*) sintab_y#0 = ((byte*))(word/signed word) 4352
-(byte[]) sprites
+(byte[221]) sintab_x
+(const byte[221]) sintab_x#0 = { fill( 221, 0) }
+(byte[197]) sintab_y
+(const byte[197]) sintab_y#0 = { fill( 197, 0) }
+(byte*) sprites
 (const byte*) sprites#0 = ((byte*))(word/signed word) 8192
 (void()) subFACfromARG()
 (label) subFACfromARG::@return
@@ -17307,13 +17305,13 @@ anim::@1: scope:[anim]  from anim anim::@11
   (byte) anim::j2#3 ← phi( anim/(byte/signed byte/word/signed word) 12 anim::@11/(byte~) anim::j2#8 )
   (byte) anim::x_msb#2 ← phi( anim/(byte/signed byte/word/signed word) 0 anim::@11/(byte~) anim::x_msb#8 )
   (byte) anim::xidx#3 ← phi( anim/(byte~) anim::xidx#8 anim::@11/(byte~) anim::xidx#9 )
-  (word) anim::x#0 ← ((word))(byte/signed byte/word/signed word) 30 + *((const byte*) sintab_x#0 + (byte) anim::xidx#3)
+  (word) anim::x#0 ← ((word))(byte/signed byte/word/signed word) 30 + *((const byte[221]) sintab_x#0 + (byte) anim::xidx#3)
   (byte~) anim::$2 ← (byte) anim::x_msb#2 << (byte/signed byte/word/signed word) 1
   (byte~) anim::$3 ← > (word) anim::x#0
   (byte) anim::x_msb#1 ← (byte~) anim::$2 | (byte~) anim::$3
   (byte~) anim::$5 ← < (word) anim::x#0
   *((const byte*) SPRITES_XPOS#0 + (byte) anim::j2#3) ← (byte~) anim::$5
-  *((const byte*) SPRITES_YPOS#0 + (byte) anim::j2#3) ← *((const byte*) sintab_y#0 + (byte) anim::yidx#3)
+  *((const byte*) SPRITES_YPOS#0 + (byte) anim::j2#3) ← *((const byte[197]) sintab_y#0 + (byte) anim::yidx#3)
   (byte) anim::xidx#1 ← (byte) anim::xidx#3 + (byte/signed byte/word/signed word) 10
   if((byte) anim::xidx#1<(const byte) sinlen_x#0) goto anim::@12
   to:anim::@6
@@ -17429,7 +17427,7 @@ clear_screen::@3: scope:[clear_screen]  from clear_screen::@1
   (byte*~) clear_screen::sc#3 ← (byte*) clear_screen::sc#1
   to:clear_screen::@1
 gen_sintab: scope:[gen_sintab]  from init::@6 init::@8
-  (byte*) gen_sintab::sintab#12 ← phi( init::@6/(const byte*) sintab_x#0 init::@8/(const byte*) sintab_y#0 )
+  (byte*) gen_sintab::sintab#12 ← phi( init::@6/(const byte[221]) sintab_x#0 init::@8/(const byte[197]) sintab_y#0 )
   (byte) gen_sintab::length#10 ← phi( init::@6/(const byte) sinlen_x#0 init::@8/(const byte) sinlen_y#0 )
   (byte) gen_sintab::min#2 ← phi( init::@6/(byte/signed byte/word/signed word) 0 init::@8/(byte/signed byte/word/signed word) 50 )
   (byte) gen_sintab::max#2 ← phi( init::@6/(byte/word/signed word) 255 init::@8/(byte/word/signed word) 208 )
@@ -17941,13 +17939,13 @@ anim::@1: scope:[anim]  from anim anim::@11
   [19] (byte) anim::j2#3 ← phi( anim/(byte/signed byte/word/signed word) 12 anim::@11/(byte~) anim::j2#8 ) [ sin_idx_x#13 sin_idx_y#13 anim::xidx#3 anim::x_msb#2 anim::j2#3 anim::yidx#3 anim::j#2 ]
   [19] (byte) anim::x_msb#2 ← phi( anim/(byte/signed byte/word/signed word) 0 anim::@11/(byte~) anim::x_msb#8 ) [ sin_idx_x#13 sin_idx_y#13 anim::xidx#3 anim::x_msb#2 anim::j2#3 anim::yidx#3 anim::j#2 ]
   [19] (byte) anim::xidx#3 ← phi( anim/(byte~) anim::xidx#8 anim::@11/(byte~) anim::xidx#9 ) [ sin_idx_x#13 sin_idx_y#13 anim::xidx#3 anim::x_msb#2 anim::j2#3 anim::yidx#3 anim::j#2 ]
-  [20] (word) anim::x#0 ← ((word))(byte/signed byte/word/signed word) 30 + *((const byte*) sintab_x#0 + (byte) anim::xidx#3) [ sin_idx_x#13 sin_idx_y#13 anim::xidx#3 anim::x_msb#2 anim::j2#3 anim::yidx#3 anim::j#2 anim::x#0 ]
+  [20] (word) anim::x#0 ← ((word))(byte/signed byte/word/signed word) 30 + *((const byte[221]) sintab_x#0 + (byte) anim::xidx#3) [ sin_idx_x#13 sin_idx_y#13 anim::xidx#3 anim::x_msb#2 anim::j2#3 anim::yidx#3 anim::j#2 anim::x#0 ]
   [21] (byte~) anim::$2 ← (byte) anim::x_msb#2 << (byte/signed byte/word/signed word) 1 [ sin_idx_x#13 sin_idx_y#13 anim::xidx#3 anim::j2#3 anim::yidx#3 anim::j#2 anim::x#0 anim::$2 ]
   [22] (byte~) anim::$3 ← > (word) anim::x#0 [ sin_idx_x#13 sin_idx_y#13 anim::xidx#3 anim::j2#3 anim::yidx#3 anim::j#2 anim::x#0 anim::$2 anim::$3 ]
   [23] (byte) anim::x_msb#1 ← (byte~) anim::$2 | (byte~) anim::$3 [ sin_idx_x#13 sin_idx_y#13 anim::xidx#3 anim::j2#3 anim::yidx#3 anim::j#2 anim::x#0 anim::x_msb#1 ]
   [24] (byte~) anim::$5 ← < (word) anim::x#0 [ sin_idx_x#13 sin_idx_y#13 anim::xidx#3 anim::j2#3 anim::yidx#3 anim::j#2 anim::x_msb#1 anim::$5 ]
   [25] *((const byte*) SPRITES_XPOS#0 + (byte) anim::j2#3) ← (byte~) anim::$5 [ sin_idx_x#13 sin_idx_y#13 anim::xidx#3 anim::j2#3 anim::yidx#3 anim::j#2 anim::x_msb#1 ]
-  [26] *((const byte*) SPRITES_YPOS#0 + (byte) anim::j2#3) ← *((const byte*) sintab_y#0 + (byte) anim::yidx#3) [ sin_idx_x#13 sin_idx_y#13 anim::xidx#3 anim::j2#3 anim::yidx#3 anim::j#2 anim::x_msb#1 ]
+  [26] *((const byte*) SPRITES_YPOS#0 + (byte) anim::j2#3) ← *((const byte[197]) sintab_y#0 + (byte) anim::yidx#3) [ sin_idx_x#13 sin_idx_y#13 anim::xidx#3 anim::j2#3 anim::yidx#3 anim::j#2 anim::x_msb#1 ]
   [27] (byte) anim::xidx#1 ← (byte) anim::xidx#3 + (byte/signed byte/word/signed word) 10 [ sin_idx_x#13 sin_idx_y#13 anim::j2#3 anim::yidx#3 anim::j#2 anim::x_msb#1 anim::xidx#1 ]
   [28] if((byte) anim::xidx#1<(const byte) sinlen_x#0) goto anim::@12 [ sin_idx_x#13 sin_idx_y#13 anim::j2#3 anim::yidx#3 anim::j#2 anim::x_msb#1 anim::xidx#1 ]
   to:anim::@6
@@ -18074,7 +18072,7 @@ clear_screen::@3: scope:[clear_screen]  from clear_screen::@1
   [90] (byte*~) clear_screen::sc#3 ← (byte*) clear_screen::sc#1 [ clear_screen::sc#3 ]
   to:clear_screen::@1
 gen_sintab: scope:[gen_sintab]  from init::@6 init::@8
-  [91] (byte*) gen_sintab::sintab#12 ← phi( init::@6/(const byte*) sintab_x#0 init::@8/(const byte*) sintab_y#0 ) [ gen_sintab::max#2 gen_sintab::min#2 gen_sintab::length#10 gen_sintab::sintab#12 progress_cursor#22 ]
+  [91] (byte*) gen_sintab::sintab#12 ← phi( init::@6/(const byte[221]) sintab_x#0 init::@8/(const byte[197]) sintab_y#0 ) [ gen_sintab::max#2 gen_sintab::min#2 gen_sintab::length#10 gen_sintab::sintab#12 progress_cursor#22 ]
   [91] (byte) gen_sintab::length#10 ← phi( init::@6/(const byte) sinlen_x#0 init::@8/(const byte) sinlen_y#0 ) [ gen_sintab::max#2 gen_sintab::min#2 gen_sintab::length#10 gen_sintab::sintab#12 progress_cursor#22 ]
   [91] (byte) gen_sintab::min#2 ← phi( init::@6/(byte/signed byte/word/signed word) 0 init::@8/(byte/signed byte/word/signed word) 50 ) [ gen_sintab::max#2 gen_sintab::min#2 gen_sintab::length#10 gen_sintab::sintab#12 progress_cursor#22 ]
   [91] (byte) gen_sintab::max#2 ← phi( init::@6/(byte/word/signed word) 255 init::@8/(byte/word/signed word) 208 ) [ gen_sintab::max#2 gen_sintab::min#2 gen_sintab::length#10 gen_sintab::sintab#12 progress_cursor#22 ]
@@ -18665,13 +18663,13 @@ anim::@1: scope:[anim]  from anim anim::@3
   [15] (byte) anim::j2#3 ← phi( anim/(byte/signed byte/word/signed word) 12 anim::@3/(byte) anim::j2#2 ) [ sin_idx_x#13 sin_idx_y#13 anim::xidx#3 anim::x_msb#2 anim::j2#3 anim::yidx#3 anim::j#2 ]
   [15] (byte) anim::x_msb#2 ← phi( anim/(byte/signed byte/word/signed word) 0 anim::@3/(byte) anim::x_msb#1 ) [ sin_idx_x#13 sin_idx_y#13 anim::xidx#3 anim::x_msb#2 anim::j2#3 anim::yidx#3 anim::j#2 ]
   [15] (byte) anim::xidx#3 ← phi( anim/(byte) anim::xidx#0 anim::@3/(byte) anim::xidx#5 ) [ sin_idx_x#13 sin_idx_y#13 anim::xidx#3 anim::x_msb#2 anim::j2#3 anim::yidx#3 anim::j#2 ]
-  [16] (word) anim::x#0 ← ((word))(byte/signed byte/word/signed word) 30 + *((const byte*) sintab_x#0 + (byte) anim::xidx#3) [ sin_idx_x#13 sin_idx_y#13 anim::xidx#3 anim::x_msb#2 anim::j2#3 anim::yidx#3 anim::j#2 anim::x#0 ]
+  [16] (word) anim::x#0 ← ((word))(byte/signed byte/word/signed word) 30 + *((const byte[221]) sintab_x#0 + (byte) anim::xidx#3) [ sin_idx_x#13 sin_idx_y#13 anim::xidx#3 anim::x_msb#2 anim::j2#3 anim::yidx#3 anim::j#2 anim::x#0 ]
   [17] (byte~) anim::$2 ← (byte) anim::x_msb#2 << (byte/signed byte/word/signed word) 1 [ sin_idx_x#13 sin_idx_y#13 anim::xidx#3 anim::j2#3 anim::yidx#3 anim::j#2 anim::x#0 anim::$2 ]
   [18] (byte~) anim::$3 ← > (word) anim::x#0 [ sin_idx_x#13 sin_idx_y#13 anim::xidx#3 anim::j2#3 anim::yidx#3 anim::j#2 anim::x#0 anim::$2 anim::$3 ]
   [19] (byte) anim::x_msb#1 ← (byte~) anim::$2 | (byte~) anim::$3 [ sin_idx_x#13 sin_idx_y#13 anim::xidx#3 anim::j2#3 anim::yidx#3 anim::j#2 anim::x_msb#1 anim::x#0 ]
   [20] (byte~) anim::$5 ← < (word) anim::x#0 [ sin_idx_x#13 sin_idx_y#13 anim::xidx#3 anim::j2#3 anim::yidx#3 anim::j#2 anim::x_msb#1 anim::$5 ]
   [21] *((const byte*) SPRITES_XPOS#0 + (byte) anim::j2#3) ← (byte~) anim::$5 [ sin_idx_x#13 sin_idx_y#13 anim::xidx#3 anim::j2#3 anim::yidx#3 anim::j#2 anim::x_msb#1 ]
-  [22] *((const byte*) SPRITES_YPOS#0 + (byte) anim::j2#3) ← *((const byte*) sintab_y#0 + (byte) anim::yidx#3) [ sin_idx_x#13 sin_idx_y#13 anim::xidx#3 anim::j2#3 anim::yidx#3 anim::j#2 anim::x_msb#1 ]
+  [22] *((const byte*) SPRITES_YPOS#0 + (byte) anim::j2#3) ← *((const byte[197]) sintab_y#0 + (byte) anim::yidx#3) [ sin_idx_x#13 sin_idx_y#13 anim::xidx#3 anim::j2#3 anim::yidx#3 anim::j#2 anim::x_msb#1 ]
   [23] (byte) anim::xidx#1 ← (byte) anim::xidx#3 + (byte/signed byte/word/signed word) 10 [ sin_idx_x#13 sin_idx_y#13 anim::j2#3 anim::yidx#3 anim::j#2 anim::x_msb#1 anim::xidx#1 ]
   [24] if((byte) anim::xidx#1<(const byte) sinlen_x#0) goto anim::@2 [ sin_idx_x#13 sin_idx_y#13 anim::j2#3 anim::yidx#3 anim::j#2 anim::x_msb#1 anim::xidx#1 ]
   to:anim::@6
@@ -18771,7 +18769,7 @@ clear_screen::@return: scope:[clear_screen]  from clear_screen::@1
   [73] return  [ ]
   to:@return
 gen_sintab: scope:[gen_sintab]  from init::@6 init::@8
-  [74] (byte*) gen_sintab::sintab#12 ← phi( init::@6/(const byte*) sintab_x#0 init::@8/(const byte*) sintab_y#0 ) [ gen_sintab::max#2 gen_sintab::min#2 gen_sintab::length#10 gen_sintab::sintab#12 progress_init::line#2 ]
+  [74] (byte*) gen_sintab::sintab#12 ← phi( init::@6/(const byte[221]) sintab_x#0 init::@8/(const byte[197]) sintab_y#0 ) [ gen_sintab::max#2 gen_sintab::min#2 gen_sintab::length#10 gen_sintab::sintab#12 progress_init::line#2 ]
   [74] (byte) gen_sintab::length#10 ← phi( init::@6/(const byte) sinlen_x#0 init::@8/(const byte) sinlen_y#0 ) [ gen_sintab::max#2 gen_sintab::min#2 gen_sintab::length#10 gen_sintab::sintab#12 progress_init::line#2 ]
   [74] (byte) gen_sintab::min#2 ← phi( init::@6/(byte/signed byte/word/signed word) 0 init::@8/(byte/signed byte/word/signed word) 50 ) [ gen_sintab::max#2 gen_sintab::min#2 gen_sintab::length#10 gen_sintab::sintab#12 progress_init::line#2 ]
   [74] (byte) gen_sintab::max#2 ← phi( init::@6/(byte/word/signed word) 255 init::@8/(byte/word/signed word) 208 ) [ gen_sintab::max#2 gen_sintab::min#2 gen_sintab::length#10 gen_sintab::sintab#12 progress_init::line#2 ]
@@ -19136,13 +19134,13 @@ anim::@1: scope:[anim]  from anim anim::@3
   [15] (byte) anim::j2#3 ← phi( anim/(byte/signed byte/word/signed word) 12 anim::@3/(byte) anim::j2#2 ) [ sin_idx_x#13 sin_idx_y#13 anim::xidx#3 anim::x_msb#2 anim::j2#3 anim::yidx#3 anim::j#2 ] ( main:2::anim:9 [ sin_idx_x#13 sin_idx_y#13 anim::xidx#3 anim::x_msb#2 anim::j2#3 anim::yidx#3 anim::j#2 ] )
   [15] (byte) anim::x_msb#2 ← phi( anim/(byte/signed byte/word/signed word) 0 anim::@3/(byte) anim::x_msb#1 ) [ sin_idx_x#13 sin_idx_y#13 anim::xidx#3 anim::x_msb#2 anim::j2#3 anim::yidx#3 anim::j#2 ] ( main:2::anim:9 [ sin_idx_x#13 sin_idx_y#13 anim::xidx#3 anim::x_msb#2 anim::j2#3 anim::yidx#3 anim::j#2 ] )
   [15] (byte) anim::xidx#3 ← phi( anim/(byte) anim::xidx#0 anim::@3/(byte) anim::xidx#5 ) [ sin_idx_x#13 sin_idx_y#13 anim::xidx#3 anim::x_msb#2 anim::j2#3 anim::yidx#3 anim::j#2 ] ( main:2::anim:9 [ sin_idx_x#13 sin_idx_y#13 anim::xidx#3 anim::x_msb#2 anim::j2#3 anim::yidx#3 anim::j#2 ] )
-  [16] (word) anim::x#0 ← ((word))(byte/signed byte/word/signed word) 30 + *((const byte*) sintab_x#0 + (byte) anim::xidx#3) [ sin_idx_x#13 sin_idx_y#13 anim::xidx#3 anim::x_msb#2 anim::j2#3 anim::yidx#3 anim::j#2 anim::x#0 ] ( main:2::anim:9 [ sin_idx_x#13 sin_idx_y#13 anim::xidx#3 anim::x_msb#2 anim::j2#3 anim::yidx#3 anim::j#2 anim::x#0 ] )
+  [16] (word) anim::x#0 ← ((word))(byte/signed byte/word/signed word) 30 + *((const byte[221]) sintab_x#0 + (byte) anim::xidx#3) [ sin_idx_x#13 sin_idx_y#13 anim::xidx#3 anim::x_msb#2 anim::j2#3 anim::yidx#3 anim::j#2 anim::x#0 ] ( main:2::anim:9 [ sin_idx_x#13 sin_idx_y#13 anim::xidx#3 anim::x_msb#2 anim::j2#3 anim::yidx#3 anim::j#2 anim::x#0 ] )
   [17] (byte~) anim::$2 ← (byte) anim::x_msb#2 << (byte/signed byte/word/signed word) 1 [ sin_idx_x#13 sin_idx_y#13 anim::xidx#3 anim::j2#3 anim::yidx#3 anim::j#2 anim::x#0 anim::$2 ] ( main:2::anim:9 [ sin_idx_x#13 sin_idx_y#13 anim::xidx#3 anim::j2#3 anim::yidx#3 anim::j#2 anim::x#0 anim::$2 ] )
   [18] (byte~) anim::$3 ← > (word) anim::x#0 [ sin_idx_x#13 sin_idx_y#13 anim::xidx#3 anim::j2#3 anim::yidx#3 anim::j#2 anim::x#0 anim::$2 anim::$3 ] ( main:2::anim:9 [ sin_idx_x#13 sin_idx_y#13 anim::xidx#3 anim::j2#3 anim::yidx#3 anim::j#2 anim::x#0 anim::$2 anim::$3 ] )
   [19] (byte) anim::x_msb#1 ← (byte~) anim::$2 | (byte~) anim::$3 [ sin_idx_x#13 sin_idx_y#13 anim::xidx#3 anim::j2#3 anim::yidx#3 anim::j#2 anim::x_msb#1 anim::x#0 ] ( main:2::anim:9 [ sin_idx_x#13 sin_idx_y#13 anim::xidx#3 anim::j2#3 anim::yidx#3 anim::j#2 anim::x_msb#1 anim::x#0 ] )
   [20] (byte~) anim::$5 ← < (word) anim::x#0 [ sin_idx_x#13 sin_idx_y#13 anim::xidx#3 anim::j2#3 anim::yidx#3 anim::j#2 anim::x_msb#1 anim::$5 ] ( main:2::anim:9 [ sin_idx_x#13 sin_idx_y#13 anim::xidx#3 anim::j2#3 anim::yidx#3 anim::j#2 anim::x_msb#1 anim::$5 ] )
   [21] *((const byte*) SPRITES_XPOS#0 + (byte) anim::j2#3) ← (byte~) anim::$5 [ sin_idx_x#13 sin_idx_y#13 anim::xidx#3 anim::j2#3 anim::yidx#3 anim::j#2 anim::x_msb#1 ] ( main:2::anim:9 [ sin_idx_x#13 sin_idx_y#13 anim::xidx#3 anim::j2#3 anim::yidx#3 anim::j#2 anim::x_msb#1 ] )
-  [22] *((const byte*) SPRITES_YPOS#0 + (byte) anim::j2#3) ← *((const byte*) sintab_y#0 + (byte) anim::yidx#3) [ sin_idx_x#13 sin_idx_y#13 anim::xidx#3 anim::j2#3 anim::yidx#3 anim::j#2 anim::x_msb#1 ] ( main:2::anim:9 [ sin_idx_x#13 sin_idx_y#13 anim::xidx#3 anim::j2#3 anim::yidx#3 anim::j#2 anim::x_msb#1 ] )
+  [22] *((const byte*) SPRITES_YPOS#0 + (byte) anim::j2#3) ← *((const byte[197]) sintab_y#0 + (byte) anim::yidx#3) [ sin_idx_x#13 sin_idx_y#13 anim::xidx#3 anim::j2#3 anim::yidx#3 anim::j#2 anim::x_msb#1 ] ( main:2::anim:9 [ sin_idx_x#13 sin_idx_y#13 anim::xidx#3 anim::j2#3 anim::yidx#3 anim::j#2 anim::x_msb#1 ] )
   [23] (byte) anim::xidx#1 ← (byte) anim::xidx#3 + (byte/signed byte/word/signed word) 10 [ sin_idx_x#13 sin_idx_y#13 anim::j2#3 anim::yidx#3 anim::j#2 anim::x_msb#1 anim::xidx#1 ] ( main:2::anim:9 [ sin_idx_x#13 sin_idx_y#13 anim::j2#3 anim::yidx#3 anim::j#2 anim::x_msb#1 anim::xidx#1 ] )
   [24] if((byte) anim::xidx#1<(const byte) sinlen_x#0) goto anim::@2 [ sin_idx_x#13 sin_idx_y#13 anim::j2#3 anim::yidx#3 anim::j#2 anim::x_msb#1 anim::xidx#1 ] ( main:2::anim:9 [ sin_idx_x#13 sin_idx_y#13 anim::j2#3 anim::yidx#3 anim::j#2 anim::x_msb#1 anim::xidx#1 ] )
   to:anim::@6
@@ -19242,7 +19240,7 @@ clear_screen::@return: scope:[clear_screen]  from clear_screen::@1
   [73] return  [ ] ( main:2::init:5::clear_screen:47 [ ] main:2::init:5::clear_screen:66 [ ] )
   to:@return
 gen_sintab: scope:[gen_sintab]  from init::@6 init::@8
-  [74] (byte*) gen_sintab::sintab#12 ← phi( init::@6/(const byte*) sintab_x#0 init::@8/(const byte*) sintab_y#0 ) [ gen_sintab::max#2 gen_sintab::min#2 gen_sintab::length#10 gen_sintab::sintab#12 progress_init::line#2 ] ( main:2::init:5::gen_sintab:60 [ gen_sintab::max#2 gen_sintab::min#2 gen_sintab::length#10 gen_sintab::sintab#12 progress_init::line#2 ] main:2::init:5::gen_sintab:64 [ gen_sintab::max#2 gen_sintab::min#2 gen_sintab::length#10 gen_sintab::sintab#12 progress_init::line#2 ] )
+  [74] (byte*) gen_sintab::sintab#12 ← phi( init::@6/(const byte[221]) sintab_x#0 init::@8/(const byte[197]) sintab_y#0 ) [ gen_sintab::max#2 gen_sintab::min#2 gen_sintab::length#10 gen_sintab::sintab#12 progress_init::line#2 ] ( main:2::init:5::gen_sintab:60 [ gen_sintab::max#2 gen_sintab::min#2 gen_sintab::length#10 gen_sintab::sintab#12 progress_init::line#2 ] main:2::init:5::gen_sintab:64 [ gen_sintab::max#2 gen_sintab::min#2 gen_sintab::length#10 gen_sintab::sintab#12 progress_init::line#2 ] )
   [74] (byte) gen_sintab::length#10 ← phi( init::@6/(const byte) sinlen_x#0 init::@8/(const byte) sinlen_y#0 ) [ gen_sintab::max#2 gen_sintab::min#2 gen_sintab::length#10 gen_sintab::sintab#12 progress_init::line#2 ] ( main:2::init:5::gen_sintab:60 [ gen_sintab::max#2 gen_sintab::min#2 gen_sintab::length#10 gen_sintab::sintab#12 progress_init::line#2 ] main:2::init:5::gen_sintab:64 [ gen_sintab::max#2 gen_sintab::min#2 gen_sintab::length#10 gen_sintab::sintab#12 progress_init::line#2 ] )
   [74] (byte) gen_sintab::min#2 ← phi( init::@6/(byte/signed byte/word/signed word) 0 init::@8/(byte/signed byte/word/signed word) 50 ) [ gen_sintab::max#2 gen_sintab::min#2 gen_sintab::length#10 gen_sintab::sintab#12 progress_init::line#2 ] ( main:2::init:5::gen_sintab:60 [ gen_sintab::max#2 gen_sintab::min#2 gen_sintab::length#10 gen_sintab::sintab#12 progress_init::line#2 ] main:2::init:5::gen_sintab:64 [ gen_sintab::max#2 gen_sintab::min#2 gen_sintab::length#10 gen_sintab::sintab#12 progress_init::line#2 ] )
   [74] (byte) gen_sintab::max#2 ← phi( init::@6/(byte/word/signed word) 255 init::@8/(byte/word/signed word) 208 ) [ gen_sintab::max#2 gen_sintab::min#2 gen_sintab::length#10 gen_sintab::sintab#12 progress_init::line#2 ] ( main:2::init:5::gen_sintab:60 [ gen_sintab::max#2 gen_sintab::min#2 gen_sintab::length#10 gen_sintab::sintab#12 progress_init::line#2 ] main:2::init:5::gen_sintab:64 [ gen_sintab::max#2 gen_sintab::min#2 gen_sintab::length#10 gen_sintab::sintab#12 progress_init::line#2 ] )
@@ -19954,9 +19952,9 @@ VARIABLE REGISTER WEIGHTS
 (byte) sin_idx_y#3 2.0
 (byte) sinlen_x
 (byte) sinlen_y
-(byte[]) sintab_x
-(byte[]) sintab_y
-(byte[]) sprites
+(byte[221]) sintab_x
+(byte[197]) sintab_y
+(byte*) sprites
 (void()) subFACfromARG()
 
 Initial phi equivalence classes
@@ -20148,14 +20146,14 @@ INITIAL ASM
   .const memHi = $ff
   .const SCREEN = $400
   .const sinlen_x = $dd
-  .const sintab_x = $1000
   .const sinlen_y = $c5
-  .const sintab_y = $1100
   .const sprites = $2000
   .label progress_idx = $12
   .label progress_cursor = $13
   .label sin_idx_x = 2
   .label sin_idx_y = 3
+  sintab_x: .fill 221, 0
+  sintab_y: .fill 197, 0
 //SEG2 @begin
 bbegin:
 //SEG3 [1] phi from @begin to @43 [phi:@begin->@43]
@@ -20264,7 +20262,7 @@ anim: {
     jmp b1
   //SEG44 anim::@1
   b1:
-  //SEG45 [16] (word) anim::x#0 ← ((word))(byte/signed byte/word/signed word) 30 + *((const byte*) sintab_x#0 + (byte) anim::xidx#3) [ sin_idx_x#13 sin_idx_y#13 anim::xidx#3 anim::x_msb#2 anim::j2#3 anim::yidx#3 anim::j#2 anim::x#0 ] ( main:2::anim:9 [ sin_idx_x#13 sin_idx_y#13 anim::xidx#3 anim::x_msb#2 anim::j2#3 anim::yidx#3 anim::j#2 anim::x#0 ] ) -- vwuz1=vwuc1_plus_pbuc2_derefidx_vbuz2 
+  //SEG45 [16] (word) anim::x#0 ← ((word))(byte/signed byte/word/signed word) 30 + *((const byte[221]) sintab_x#0 + (byte) anim::xidx#3) [ sin_idx_x#13 sin_idx_y#13 anim::xidx#3 anim::x_msb#2 anim::j2#3 anim::yidx#3 anim::j#2 anim::x#0 ] ( main:2::anim:9 [ sin_idx_x#13 sin_idx_y#13 anim::xidx#3 anim::x_msb#2 anim::j2#3 anim::yidx#3 anim::j#2 anim::x#0 ] ) -- vwuz1=vwuc1_plus_pbuc2_derefidx_vbuz2 
     ldx xidx
     lda sintab_x,x
     clc
@@ -20291,7 +20289,7 @@ anim: {
     lda _5
     ldx j2_3
     sta SPRITES_XPOS,x
-  //SEG51 [22] *((const byte*) SPRITES_YPOS#0 + (byte) anim::j2#3) ← *((const byte*) sintab_y#0 + (byte) anim::yidx#3) [ sin_idx_x#13 sin_idx_y#13 anim::xidx#3 anim::j2#3 anim::yidx#3 anim::j#2 anim::x_msb#1 ] ( main:2::anim:9 [ sin_idx_x#13 sin_idx_y#13 anim::xidx#3 anim::j2#3 anim::yidx#3 anim::j#2 anim::x_msb#1 ] ) -- pbuc1_derefidx_vbuz1=pbuc2_derefidx_vbuz2 
+  //SEG51 [22] *((const byte*) SPRITES_YPOS#0 + (byte) anim::j2#3) ← *((const byte[197]) sintab_y#0 + (byte) anim::yidx#3) [ sin_idx_x#13 sin_idx_y#13 anim::xidx#3 anim::j2#3 anim::yidx#3 anim::j#2 anim::x_msb#1 ] ( main:2::anim:9 [ sin_idx_x#13 sin_idx_y#13 anim::xidx#3 anim::j2#3 anim::yidx#3 anim::j#2 anim::x_msb#1 ] ) -- pbuc1_derefidx_vbuz1=pbuc2_derefidx_vbuz2 
     ldx yidx
     lda sintab_y,x
     ldx j2_3
@@ -20489,7 +20487,7 @@ init: {
   //SEG119 [60] call gen_sintab param-assignment [ ] ( main:2::init:5 [ ] )
   //SEG120 [74] phi from init::@6 to gen_sintab [phi:init::@6->gen_sintab]
   gen_sintab_from_b6:
-  //SEG121 [74] phi (byte*) gen_sintab::sintab#12 = (const byte*) sintab_x#0 [phi:init::@6->gen_sintab#0] -- pbuz1=pbuc1 
+  //SEG121 [74] phi (byte*) gen_sintab::sintab#12 = (const byte[221]) sintab_x#0 [phi:init::@6->gen_sintab#0] -- pbuz1=pbuc1 
     lda #<sintab_x
     sta gen_sintab.sintab
     lda #>sintab_x
@@ -20526,7 +20524,7 @@ init: {
   //SEG132 [64] call gen_sintab param-assignment [ ] ( main:2::init:5 [ ] )
   //SEG133 [74] phi from init::@8 to gen_sintab [phi:init::@8->gen_sintab]
   gen_sintab_from_b8:
-  //SEG134 [74] phi (byte*) gen_sintab::sintab#12 = (const byte*) sintab_y#0 [phi:init::@8->gen_sintab#0] -- pbuz1=pbuc1 
+  //SEG134 [74] phi (byte*) gen_sintab::sintab#12 = (const byte[197]) sintab_y#0 [phi:init::@8->gen_sintab#0] -- pbuz1=pbuc1 
     lda #<sintab_y
     sta gen_sintab.sintab
     lda #>sintab_y
@@ -21564,7 +21562,7 @@ Equivalence Class zp ZP_BYTE:53 [ anim::$3 ] has ALU potential.
 Statement [7] if(*((const byte*) RASTER#0)!=(byte/word/signed word) 255) goto main::@2 [ sin_idx_x#13 sin_idx_y#13 ] ( main:2 [ sin_idx_x#13 sin_idx_y#13 ] ) always clobbers reg byte a 
 Removing always clobbered register reg byte a as potential for zp ZP_BYTE:2 [ sin_idx_x#13 sin_idx_x#11 sin_idx_x#3 ]
 Removing always clobbered register reg byte a as potential for zp ZP_BYTE:3 [ sin_idx_y#13 sin_idx_y#11 sin_idx_y#3 ]
-Statement [16] (word) anim::x#0 ← ((word))(byte/signed byte/word/signed word) 30 + *((const byte*) sintab_x#0 + (byte) anim::xidx#3) [ sin_idx_x#13 sin_idx_y#13 anim::xidx#3 anim::x_msb#2 anim::j2#3 anim::yidx#3 anim::j#2 anim::x#0 ] ( main:2::anim:9 [ sin_idx_x#13 sin_idx_y#13 anim::xidx#3 anim::x_msb#2 anim::j2#3 anim::yidx#3 anim::j#2 anim::x#0 ] ) always clobbers reg byte a 
+Statement [16] (word) anim::x#0 ← ((word))(byte/signed byte/word/signed word) 30 + *((const byte[221]) sintab_x#0 + (byte) anim::xidx#3) [ sin_idx_x#13 sin_idx_y#13 anim::xidx#3 anim::x_msb#2 anim::j2#3 anim::yidx#3 anim::j#2 anim::x#0 ] ( main:2::anim:9 [ sin_idx_x#13 sin_idx_y#13 anim::xidx#3 anim::x_msb#2 anim::j2#3 anim::yidx#3 anim::j#2 anim::x#0 ] ) always clobbers reg byte a 
 Removing always clobbered register reg byte a as potential for zp ZP_BYTE:4 [ anim::xidx#3 anim::xidx#0 anim::xidx#5 anim::xidx#1 anim::xidx#2 ]
 Removing always clobbered register reg byte a as potential for zp ZP_BYTE:5 [ anim::x_msb#2 anim::x_msb#1 ]
 Removing always clobbered register reg byte a as potential for zp ZP_BYTE:6 [ anim::j2#3 anim::j2#2 ]
@@ -21572,7 +21570,7 @@ Removing always clobbered register reg byte a as potential for zp ZP_BYTE:7 [ an
 Removing always clobbered register reg byte a as potential for zp ZP_BYTE:8 [ anim::j#2 anim::j#1 ]
 Statement [17] (byte~) anim::$2 ← (byte) anim::x_msb#2 << (byte/signed byte/word/signed word) 1 [ sin_idx_x#13 sin_idx_y#13 anim::xidx#3 anim::j2#3 anim::yidx#3 anim::j#2 anim::x#0 anim::$2 ] ( main:2::anim:9 [ sin_idx_x#13 sin_idx_y#13 anim::xidx#3 anim::j2#3 anim::yidx#3 anim::j#2 anim::x#0 anim::$2 ] ) always clobbers reg byte a 
 Statement [20] (byte~) anim::$5 ← < (word) anim::x#0 [ sin_idx_x#13 sin_idx_y#13 anim::xidx#3 anim::j2#3 anim::yidx#3 anim::j#2 anim::x_msb#1 anim::$5 ] ( main:2::anim:9 [ sin_idx_x#13 sin_idx_y#13 anim::xidx#3 anim::j2#3 anim::yidx#3 anim::j#2 anim::x_msb#1 anim::$5 ] ) always clobbers reg byte a 
-Statement [22] *((const byte*) SPRITES_YPOS#0 + (byte) anim::j2#3) ← *((const byte*) sintab_y#0 + (byte) anim::yidx#3) [ sin_idx_x#13 sin_idx_y#13 anim::xidx#3 anim::j2#3 anim::yidx#3 anim::j#2 anim::x_msb#1 ] ( main:2::anim:9 [ sin_idx_x#13 sin_idx_y#13 anim::xidx#3 anim::j2#3 anim::yidx#3 anim::j#2 anim::x_msb#1 ] ) always clobbers reg byte a 
+Statement [22] *((const byte*) SPRITES_YPOS#0 + (byte) anim::j2#3) ← *((const byte[197]) sintab_y#0 + (byte) anim::yidx#3) [ sin_idx_x#13 sin_idx_y#13 anim::xidx#3 anim::j2#3 anim::yidx#3 anim::j#2 anim::x_msb#1 ] ( main:2::anim:9 [ sin_idx_x#13 sin_idx_y#13 anim::xidx#3 anim::j2#3 anim::yidx#3 anim::j#2 anim::x_msb#1 ] ) always clobbers reg byte a 
 Statement [23] (byte) anim::xidx#1 ← (byte) anim::xidx#3 + (byte/signed byte/word/signed word) 10 [ sin_idx_x#13 sin_idx_y#13 anim::j2#3 anim::yidx#3 anim::j#2 anim::x_msb#1 anim::xidx#1 ] ( main:2::anim:9 [ sin_idx_x#13 sin_idx_y#13 anim::j2#3 anim::yidx#3 anim::j#2 anim::x_msb#1 anim::xidx#1 ] ) always clobbers reg byte a 
 Statement [25] (byte) anim::xidx#2 ← (byte) anim::xidx#1 - (const byte) sinlen_x#0 [ sin_idx_x#13 sin_idx_y#13 anim::j2#3 anim::yidx#3 anim::j#2 anim::x_msb#1 anim::xidx#2 ] ( main:2::anim:9 [ sin_idx_x#13 sin_idx_y#13 anim::j2#3 anim::yidx#3 anim::j#2 anim::x_msb#1 anim::xidx#2 ] ) always clobbers reg byte a 
 Statement [27] (byte) anim::yidx#1 ← (byte) anim::yidx#3 + (byte/signed byte/word/signed word) 8 [ sin_idx_x#13 sin_idx_y#13 anim::j2#3 anim::j#2 anim::xidx#5 anim::x_msb#1 anim::yidx#1 ] ( main:2::anim:9 [ sin_idx_x#13 sin_idx_y#13 anim::j2#3 anim::j#2 anim::xidx#5 anim::x_msb#1 anim::yidx#1 ] ) always clobbers reg byte a 
@@ -21661,10 +21659,10 @@ Statement [224] *((const byte*) SPRITES_COLS#0 + (byte) place_sprites::j#2) ← 
 Statement [225] (byte) place_sprites::spr_x#1 ← (byte) place_sprites::spr_x#2 + (byte/signed byte/word/signed word) 32 [ place_sprites::j#2 place_sprites::j2#3 place_sprites::col#2 place_sprites::spr_id#1 place_sprites::spr_x#1 ] ( main:2::init:5::place_sprites:54 [ place_sprites::j#2 place_sprites::j2#3 place_sprites::col#2 place_sprites::spr_id#1 place_sprites::spr_x#1 ] ) always clobbers reg byte a 
 Statement [226] (byte) place_sprites::col#1 ← (byte) place_sprites::col#2 ^ (byte/signed byte/word/signed word) 7^(byte/signed byte/word/signed word) 5 [ place_sprites::j#2 place_sprites::j2#3 place_sprites::spr_id#1 place_sprites::spr_x#1 place_sprites::col#1 ] ( main:2::init:5::place_sprites:54 [ place_sprites::j#2 place_sprites::j2#3 place_sprites::spr_id#1 place_sprites::spr_x#1 place_sprites::col#1 ] ) always clobbers reg byte a 
 Statement [7] if(*((const byte*) RASTER#0)!=(byte/word/signed word) 255) goto main::@2 [ sin_idx_x#13 sin_idx_y#13 ] ( main:2 [ sin_idx_x#13 sin_idx_y#13 ] ) always clobbers reg byte a 
-Statement [16] (word) anim::x#0 ← ((word))(byte/signed byte/word/signed word) 30 + *((const byte*) sintab_x#0 + (byte) anim::xidx#3) [ sin_idx_x#13 sin_idx_y#13 anim::xidx#3 anim::x_msb#2 anim::j2#3 anim::yidx#3 anim::j#2 anim::x#0 ] ( main:2::anim:9 [ sin_idx_x#13 sin_idx_y#13 anim::xidx#3 anim::x_msb#2 anim::j2#3 anim::yidx#3 anim::j#2 anim::x#0 ] ) always clobbers reg byte a 
+Statement [16] (word) anim::x#0 ← ((word))(byte/signed byte/word/signed word) 30 + *((const byte[221]) sintab_x#0 + (byte) anim::xidx#3) [ sin_idx_x#13 sin_idx_y#13 anim::xidx#3 anim::x_msb#2 anim::j2#3 anim::yidx#3 anim::j#2 anim::x#0 ] ( main:2::anim:9 [ sin_idx_x#13 sin_idx_y#13 anim::xidx#3 anim::x_msb#2 anim::j2#3 anim::yidx#3 anim::j#2 anim::x#0 ] ) always clobbers reg byte a 
 Statement [17] (byte~) anim::$2 ← (byte) anim::x_msb#2 << (byte/signed byte/word/signed word) 1 [ sin_idx_x#13 sin_idx_y#13 anim::xidx#3 anim::j2#3 anim::yidx#3 anim::j#2 anim::x#0 anim::$2 ] ( main:2::anim:9 [ sin_idx_x#13 sin_idx_y#13 anim::xidx#3 anim::j2#3 anim::yidx#3 anim::j#2 anim::x#0 anim::$2 ] ) always clobbers reg byte a 
 Statement [20] (byte~) anim::$5 ← < (word) anim::x#0 [ sin_idx_x#13 sin_idx_y#13 anim::xidx#3 anim::j2#3 anim::yidx#3 anim::j#2 anim::x_msb#1 anim::$5 ] ( main:2::anim:9 [ sin_idx_x#13 sin_idx_y#13 anim::xidx#3 anim::j2#3 anim::yidx#3 anim::j#2 anim::x_msb#1 anim::$5 ] ) always clobbers reg byte a 
-Statement [22] *((const byte*) SPRITES_YPOS#0 + (byte) anim::j2#3) ← *((const byte*) sintab_y#0 + (byte) anim::yidx#3) [ sin_idx_x#13 sin_idx_y#13 anim::xidx#3 anim::j2#3 anim::yidx#3 anim::j#2 anim::x_msb#1 ] ( main:2::anim:9 [ sin_idx_x#13 sin_idx_y#13 anim::xidx#3 anim::j2#3 anim::yidx#3 anim::j#2 anim::x_msb#1 ] ) always clobbers reg byte a 
+Statement [22] *((const byte*) SPRITES_YPOS#0 + (byte) anim::j2#3) ← *((const byte[197]) sintab_y#0 + (byte) anim::yidx#3) [ sin_idx_x#13 sin_idx_y#13 anim::xidx#3 anim::j2#3 anim::yidx#3 anim::j#2 anim::x_msb#1 ] ( main:2::anim:9 [ sin_idx_x#13 sin_idx_y#13 anim::xidx#3 anim::j2#3 anim::yidx#3 anim::j#2 anim::x_msb#1 ] ) always clobbers reg byte a 
 Statement [23] (byte) anim::xidx#1 ← (byte) anim::xidx#3 + (byte/signed byte/word/signed word) 10 [ sin_idx_x#13 sin_idx_y#13 anim::j2#3 anim::yidx#3 anim::j#2 anim::x_msb#1 anim::xidx#1 ] ( main:2::anim:9 [ sin_idx_x#13 sin_idx_y#13 anim::j2#3 anim::yidx#3 anim::j#2 anim::x_msb#1 anim::xidx#1 ] ) always clobbers reg byte a 
 Statement [25] (byte) anim::xidx#2 ← (byte) anim::xidx#1 - (const byte) sinlen_x#0 [ sin_idx_x#13 sin_idx_y#13 anim::j2#3 anim::yidx#3 anim::j#2 anim::x_msb#1 anim::xidx#2 ] ( main:2::anim:9 [ sin_idx_x#13 sin_idx_y#13 anim::j2#3 anim::yidx#3 anim::j#2 anim::x_msb#1 anim::xidx#2 ] ) always clobbers reg byte a 
 Statement [27] (byte) anim::yidx#1 ← (byte) anim::yidx#3 + (byte/signed byte/word/signed word) 8 [ sin_idx_x#13 sin_idx_y#13 anim::j2#3 anim::j#2 anim::xidx#5 anim::x_msb#1 anim::yidx#1 ] ( main:2::anim:9 [ sin_idx_x#13 sin_idx_y#13 anim::j2#3 anim::j#2 anim::xidx#5 anim::x_msb#1 anim::yidx#1 ] ) always clobbers reg byte a 
@@ -21927,14 +21925,14 @@ ASSEMBLER BEFORE OPTIMIZATION
   .const memHi = $ff
   .const SCREEN = $400
   .const sinlen_x = $dd
-  .const sintab_x = $1000
   .const sinlen_y = $c5
-  .const sintab_y = $1100
   .const sprites = $2000
   .label progress_idx = 4
   .label progress_cursor = $a
   .label sin_idx_x = 2
   .label sin_idx_y = 3
+  sintab_x: .fill 221, 0
+  sintab_y: .fill 197, 0
 //SEG2 @begin
 bbegin:
 //SEG3 [1] phi from @begin to @43 [phi:@begin->@43]
@@ -22037,7 +22035,7 @@ anim: {
     jmp b1
   //SEG44 anim::@1
   b1:
-  //SEG45 [16] (word) anim::x#0 ← ((word))(byte/signed byte/word/signed word) 30 + *((const byte*) sintab_x#0 + (byte) anim::xidx#3) [ sin_idx_x#13 sin_idx_y#13 anim::xidx#3 anim::x_msb#2 anim::j2#3 anim::yidx#3 anim::j#2 anim::x#0 ] ( main:2::anim:9 [ sin_idx_x#13 sin_idx_y#13 anim::xidx#3 anim::x_msb#2 anim::j2#3 anim::yidx#3 anim::j#2 anim::x#0 ] ) -- vwuz1=vwuc1_plus_pbuc2_derefidx_vbuz2 
+  //SEG45 [16] (word) anim::x#0 ← ((word))(byte/signed byte/word/signed word) 30 + *((const byte[221]) sintab_x#0 + (byte) anim::xidx#3) [ sin_idx_x#13 sin_idx_y#13 anim::xidx#3 anim::x_msb#2 anim::j2#3 anim::yidx#3 anim::j#2 anim::x#0 ] ( main:2::anim:9 [ sin_idx_x#13 sin_idx_y#13 anim::xidx#3 anim::x_msb#2 anim::j2#3 anim::yidx#3 anim::j#2 anim::x#0 ] ) -- vwuz1=vwuc1_plus_pbuc2_derefidx_vbuz2 
     ldx xidx
     lda sintab_x,x
     clc
@@ -22058,7 +22056,7 @@ anim: {
   //SEG50 [21] *((const byte*) SPRITES_XPOS#0 + (byte) anim::j2#3) ← (byte~) anim::$5 [ sin_idx_x#13 sin_idx_y#13 anim::xidx#3 anim::j2#3 anim::yidx#3 anim::j#2 anim::x_msb#1 ] ( main:2::anim:9 [ sin_idx_x#13 sin_idx_y#13 anim::xidx#3 anim::j2#3 anim::yidx#3 anim::j#2 anim::x_msb#1 ] ) -- pbuc1_derefidx_vbuz1=vbuaa 
     ldx j2
     sta SPRITES_XPOS,x
-  //SEG51 [22] *((const byte*) SPRITES_YPOS#0 + (byte) anim::j2#3) ← *((const byte*) sintab_y#0 + (byte) anim::yidx#3) [ sin_idx_x#13 sin_idx_y#13 anim::xidx#3 anim::j2#3 anim::yidx#3 anim::j#2 anim::x_msb#1 ] ( main:2::anim:9 [ sin_idx_x#13 sin_idx_y#13 anim::xidx#3 anim::j2#3 anim::yidx#3 anim::j#2 anim::x_msb#1 ] ) -- pbuc1_derefidx_vbuz1=pbuc2_derefidx_vbuyy 
+  //SEG51 [22] *((const byte*) SPRITES_YPOS#0 + (byte) anim::j2#3) ← *((const byte[197]) sintab_y#0 + (byte) anim::yidx#3) [ sin_idx_x#13 sin_idx_y#13 anim::xidx#3 anim::j2#3 anim::yidx#3 anim::j#2 anim::x_msb#1 ] ( main:2::anim:9 [ sin_idx_x#13 sin_idx_y#13 anim::xidx#3 anim::j2#3 anim::yidx#3 anim::j#2 anim::x_msb#1 ] ) -- pbuc1_derefidx_vbuz1=pbuc2_derefidx_vbuyy 
     lda sintab_y,y
     ldx j2
     sta SPRITES_YPOS,x
@@ -22248,7 +22246,7 @@ init: {
   //SEG119 [60] call gen_sintab param-assignment [ ] ( main:2::init:5 [ ] )
   //SEG120 [74] phi from init::@6 to gen_sintab [phi:init::@6->gen_sintab]
   gen_sintab_from_b6:
-  //SEG121 [74] phi (byte*) gen_sintab::sintab#12 = (const byte*) sintab_x#0 [phi:init::@6->gen_sintab#0] -- pbuz1=pbuc1 
+  //SEG121 [74] phi (byte*) gen_sintab::sintab#12 = (const byte[221]) sintab_x#0 [phi:init::@6->gen_sintab#0] -- pbuz1=pbuc1 
     lda #<sintab_x
     sta gen_sintab.sintab
     lda #>sintab_x
@@ -22284,7 +22282,7 @@ init: {
   //SEG132 [64] call gen_sintab param-assignment [ ] ( main:2::init:5 [ ] )
   //SEG133 [74] phi from init::@8 to gen_sintab [phi:init::@8->gen_sintab]
   gen_sintab_from_b8:
-  //SEG134 [74] phi (byte*) gen_sintab::sintab#12 = (const byte*) sintab_y#0 [phi:init::@8->gen_sintab#0] -- pbuz1=pbuc1 
+  //SEG134 [74] phi (byte*) gen_sintab::sintab#12 = (const byte[197]) sintab_y#0 [phi:init::@8->gen_sintab#0] -- pbuz1=pbuc1 
     lda #<sintab_y
     sta gen_sintab.sintab
     lda #>sintab_y
@@ -23867,11 +23865,11 @@ FINAL SYMBOL TABLE
 (const byte) sinlen_x#0 sinlen_x = (byte/word/signed word) 221
 (byte) sinlen_y
 (const byte) sinlen_y#0 sinlen_y = (byte/word/signed word) 197
-(byte[]) sintab_x
-(const byte*) sintab_x#0 sintab_x = ((byte*))(word/signed word) 4096
-(byte[]) sintab_y
-(const byte*) sintab_y#0 sintab_y = ((byte*))(word/signed word) 4352
-(byte[]) sprites
+(byte[221]) sintab_x
+(const byte[221]) sintab_x#0 sintab_x = { fill( 221, 0) }
+(byte[197]) sintab_y
+(const byte[197]) sintab_y#0 sintab_y = { fill( 197, 0) }
+(byte*) sprites
 (const byte*) sprites#0 sprites = ((byte*))(word/signed word) 8192
 (void()) subFACfromARG()
 (label) subFACfromARG::@return
@@ -23925,14 +23923,14 @@ FINAL CODE
   .const memHi = $ff
   .const SCREEN = $400
   .const sinlen_x = $dd
-  .const sintab_x = $1000
   .const sinlen_y = $c5
-  .const sintab_y = $1100
   .const sprites = $2000
   .label progress_idx = 4
   .label progress_cursor = $a
   .label sin_idx_x = 2
   .label sin_idx_y = 3
+  sintab_x: .fill 221, 0
+  sintab_y: .fill 197, 0
 //SEG2 @begin
 //SEG3 [1] phi from @begin to @43 [phi:@begin->@43]
 //SEG4 @43
@@ -24007,7 +24005,7 @@ anim: {
   //SEG43 [15] phi (byte) anim::xidx#3 = (byte) anim::xidx#5 [phi:anim::@3->anim::@1#4] -- register_copy 
   //SEG44 anim::@1
   b1:
-  //SEG45 [16] (word) anim::x#0 ← ((word))(byte/signed byte/word/signed word) 30 + *((const byte*) sintab_x#0 + (byte) anim::xidx#3) [ sin_idx_x#13 sin_idx_y#13 anim::xidx#3 anim::x_msb#2 anim::j2#3 anim::yidx#3 anim::j#2 anim::x#0 ] ( main:2::anim:9 [ sin_idx_x#13 sin_idx_y#13 anim::xidx#3 anim::x_msb#2 anim::j2#3 anim::yidx#3 anim::j#2 anim::x#0 ] ) -- vwuz1=vwuc1_plus_pbuc2_derefidx_vbuz2 
+  //SEG45 [16] (word) anim::x#0 ← ((word))(byte/signed byte/word/signed word) 30 + *((const byte[221]) sintab_x#0 + (byte) anim::xidx#3) [ sin_idx_x#13 sin_idx_y#13 anim::xidx#3 anim::x_msb#2 anim::j2#3 anim::yidx#3 anim::j#2 anim::x#0 ] ( main:2::anim:9 [ sin_idx_x#13 sin_idx_y#13 anim::xidx#3 anim::x_msb#2 anim::j2#3 anim::yidx#3 anim::j#2 anim::x#0 ] ) -- vwuz1=vwuc1_plus_pbuc2_derefidx_vbuz2 
     ldx xidx
     lda sintab_x,x
     clc
@@ -24027,7 +24025,7 @@ anim: {
   //SEG50 [21] *((const byte*) SPRITES_XPOS#0 + (byte) anim::j2#3) ← (byte~) anim::$5 [ sin_idx_x#13 sin_idx_y#13 anim::xidx#3 anim::j2#3 anim::yidx#3 anim::j#2 anim::x_msb#1 ] ( main:2::anim:9 [ sin_idx_x#13 sin_idx_y#13 anim::xidx#3 anim::j2#3 anim::yidx#3 anim::j#2 anim::x_msb#1 ] ) -- pbuc1_derefidx_vbuz1=vbuaa 
     ldx j2
     sta SPRITES_XPOS,x
-  //SEG51 [22] *((const byte*) SPRITES_YPOS#0 + (byte) anim::j2#3) ← *((const byte*) sintab_y#0 + (byte) anim::yidx#3) [ sin_idx_x#13 sin_idx_y#13 anim::xidx#3 anim::j2#3 anim::yidx#3 anim::j#2 anim::x_msb#1 ] ( main:2::anim:9 [ sin_idx_x#13 sin_idx_y#13 anim::xidx#3 anim::j2#3 anim::yidx#3 anim::j#2 anim::x_msb#1 ] ) -- pbuc1_derefidx_vbuz1=pbuc2_derefidx_vbuyy 
+  //SEG51 [22] *((const byte*) SPRITES_YPOS#0 + (byte) anim::j2#3) ← *((const byte[197]) sintab_y#0 + (byte) anim::yidx#3) [ sin_idx_x#13 sin_idx_y#13 anim::xidx#3 anim::j2#3 anim::yidx#3 anim::j#2 anim::x_msb#1 ] ( main:2::anim:9 [ sin_idx_x#13 sin_idx_y#13 anim::xidx#3 anim::j2#3 anim::yidx#3 anim::j#2 anim::x_msb#1 ] ) -- pbuc1_derefidx_vbuz1=pbuc2_derefidx_vbuyy 
     lda sintab_y,y
     sta SPRITES_YPOS,x
   //SEG52 [23] (byte) anim::xidx#1 ← (byte) anim::xidx#3 + (byte/signed byte/word/signed word) 10 [ sin_idx_x#13 sin_idx_y#13 anim::j2#3 anim::yidx#3 anim::j#2 anim::x_msb#1 anim::xidx#1 ] ( main:2::anim:9 [ sin_idx_x#13 sin_idx_y#13 anim::j2#3 anim::yidx#3 anim::j#2 anim::x_msb#1 anim::xidx#1 ] ) -- vbuz1=vbuz1_plus_vbuc1 
@@ -24166,7 +24164,7 @@ init: {
   //SEG118 init::@6
   //SEG119 [60] call gen_sintab param-assignment [ ] ( main:2::init:5 [ ] )
   //SEG120 [74] phi from init::@6 to gen_sintab [phi:init::@6->gen_sintab]
-  //SEG121 [74] phi (byte*) gen_sintab::sintab#12 = (const byte*) sintab_x#0 [phi:init::@6->gen_sintab#0] -- pbuz1=pbuc1 
+  //SEG121 [74] phi (byte*) gen_sintab::sintab#12 = (const byte[221]) sintab_x#0 [phi:init::@6->gen_sintab#0] -- pbuz1=pbuc1 
     lda #<sintab_x
     sta gen_sintab.sintab
     lda #>sintab_x
@@ -24194,7 +24192,7 @@ init: {
   //SEG131 init::@8
   //SEG132 [64] call gen_sintab param-assignment [ ] ( main:2::init:5 [ ] )
   //SEG133 [74] phi from init::@8 to gen_sintab [phi:init::@8->gen_sintab]
-  //SEG134 [74] phi (byte*) gen_sintab::sintab#12 = (const byte*) sintab_y#0 [phi:init::@8->gen_sintab#0] -- pbuz1=pbuc1 
+  //SEG134 [74] phi (byte*) gen_sintab::sintab#12 = (const byte[197]) sintab_y#0 [phi:init::@8->gen_sintab#0] -- pbuz1=pbuc1 
     lda #<sintab_y
     sta gen_sintab.sintab
     lda #>sintab_y

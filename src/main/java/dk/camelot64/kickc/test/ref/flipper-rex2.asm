@@ -1,10 +1,10 @@
 .pc = $801 "Basic"
 :BasicUpstart(main)
 .pc = $80d "Program"
-  .const SCREEN = $400
-  .const buffer1 = $1000
-  .const buffer2 = $1100
   .const RASTER = $d012
+  .const SCREEN = $400
+  buffer1: .fill 256, 0
+  buffer2: .fill 256, 0
   jsr main
 main: {
     jsr prepare

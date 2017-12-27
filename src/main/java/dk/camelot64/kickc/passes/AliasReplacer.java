@@ -56,11 +56,11 @@ public class AliasReplacer implements ValueReplacer.Replacer {
             }
             return new ConstantBinary(aliasLeft, constantBinary.getOperator(), aliasRight);
          }
-      } else if (rValue instanceof ConstantArray) {
-         ConstantArray constantArray = (ConstantArray) rValue;
+      } else if (rValue instanceof ConstantArrayList) {
+         ConstantArrayList constantArrayList = (ConstantArrayList) rValue;
          ArrayList<ConstantValue> replacementList = new ArrayList<>();
          boolean any = false;
-         for (ConstantValue elemValue : constantArray.getElements()) {
+         for (ConstantValue elemValue : constantArrayList.getElements()) {
             RValue elemReplacement = getReplacement(elemValue, aliases);
             if (elemReplacement != null) {
                replacementList.add((ConstantValue) elemReplacement);
@@ -70,7 +70,7 @@ public class AliasReplacer implements ValueReplacer.Replacer {
             }
          }
          if (any) {
-            return new ConstantArray(replacementList, constantArray.getElementType());
+            return new ConstantArrayList(replacementList, constantArrayList.getElementType());
          }
       }
 

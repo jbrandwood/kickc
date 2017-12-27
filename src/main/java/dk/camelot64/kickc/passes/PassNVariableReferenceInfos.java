@@ -293,12 +293,14 @@ public class PassNVariableReferenceInfos extends Pass2Base {
          used.addAll(getReferenced(((ConstantBinary) rValue).getLeft()));
          used.addAll(getReferenced(((ConstantBinary) rValue).getRight()));
          return used;
-      } else if (rValue instanceof ConstantArray) {
+      } else if (rValue instanceof ConstantArrayList) {
          Collection<SymbolRef> used = new LinkedHashSet<>();
-         for(ConstantValue elem : ((ConstantArray) rValue).getElements()) {
+         for(ConstantValue elem : ((ConstantArrayList) rValue).getElements()) {
             used.addAll(getReferenced(elem));
          }
          return used;
+      } else if (rValue instanceof ConstantArrayFilled) {
+         return new ArrayList<>();
       } else if (rValue instanceof ConstantUnary) {
          return getReferenced(((ConstantUnary) rValue).getOperand());
       } else if (rValue instanceof ConstantRef) {

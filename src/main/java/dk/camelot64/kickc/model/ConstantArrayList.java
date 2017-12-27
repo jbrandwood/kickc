@@ -5,13 +5,13 @@ import java.util.List;
 /**
  * An array of constants. The array is allocated in the code memory (eg. as a set of .byte's ).
  */
-public class ConstantArray implements ConstantValue {
+public class ConstantArrayList implements ConstantValue {
 
    private List<ConstantValue> list;
 
    private SymbolType elementType;
 
-   public ConstantArray(List<ConstantValue> list, SymbolType elementType) {
+   public ConstantArrayList(List<ConstantValue> list, SymbolType elementType) {
       this.list = list;
       this.elementType = elementType;
    }

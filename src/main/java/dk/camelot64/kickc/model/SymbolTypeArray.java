@@ -1,18 +1,16 @@
 package dk.camelot64.kickc.model;
 
-import com.fasterxml.jackson.annotation.JsonCreator;
-import com.fasterxml.jackson.annotation.JsonProperty;
-
-/** A fixed size array of another type */
+/**
+ * A fixed size array of another type
+ */
 public class SymbolTypeArray extends SymbolTypePointer {
 
-   /** The fixed size of the array. Can by null, if the type is not known yet. (It will be constant before the compilation is done) */
+   /**
+    * The fixed size of the array. Can by null, if the type is not known yet. (It will be constant before the compilation is done)
+    */
    private Integer size;
 
-   @JsonCreator
-   public SymbolTypeArray(
-         @JsonProperty("elementType") SymbolType elementType,
-         @JsonProperty("size") int size) {
+   public SymbolTypeArray(SymbolType elementType, Integer size) {
       super(elementType);
       this.size = size;
    }
@@ -22,7 +20,7 @@ public class SymbolTypeArray extends SymbolTypePointer {
       this.size = null;
    }
 
-   public int getSize() {
+   public Integer getSize() {
       return size;
    }
 
@@ -34,17 +32,17 @@ public class SymbolTypeArray extends SymbolTypePointer {
    public String getTypeName() {
       SymbolType elementType = getElementType();
       if(elementType instanceof SymbolTypeInline) {
-         return "("+elementType.getTypeName()+")"+"["+(size==null?"":size)+"]";
-      }else {
-         return elementType.getTypeName()+"["+(size==null?"":size)+"]";
+         return "(" + elementType.getTypeName() + ")" + "[" + (size == null ? "" : size) + "]";
+      } else {
+         return elementType.getTypeName() + "[" + (size == null ? "" : size) + "]";
       }
    }
 
    @Override
    public boolean equals(Object o) {
-      if (this == o) return true;
-      if (o == null || getClass() != o.getClass()) return false;
-      if (!super.equals(o)) return false;
+      if(this == o) return true;
+      if(o == null || getClass() != o.getClass()) return false;
+      if(!super.equals(o)) return false;
 
       SymbolTypeArray that = (SymbolTypeArray) o;
 

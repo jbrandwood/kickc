@@ -17,14 +17,14 @@
   .const memHi = $ff
   .const SCREEN = $400
   .const sinlen_x = $dd
-  .const sintab_x = $1000
   .const sinlen_y = $c5
-  .const sintab_y = $1100
   .const sprites = $2000
   .label progress_idx = 4
   .label progress_cursor = $a
   .label sin_idx_x = 2
   .label sin_idx_y = 3
+  sintab_x: .fill 221, 0
+  sintab_y: .fill 197, 0
   jsr main
 main: {
     jsr init

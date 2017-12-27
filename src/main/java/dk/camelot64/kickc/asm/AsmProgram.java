@@ -94,6 +94,17 @@ public class AsmProgram {
    }
 
    /**
+    * Add a FILL data declaration to the ASM
+    * @param label The label of the data
+    * @param type The type of the data
+    * @param size The size of data to fill
+    */
+   public void addDataFilled(String label, AsmDataNumeric.Type type, int size, String fillValue) {
+      addLine(new AsmDataFill(label, type, size, fillValue));
+   }
+
+
+   /**
     * Add a string data declaration tot the ASM
     * @param label The label of the data
     * @param value The value of the string

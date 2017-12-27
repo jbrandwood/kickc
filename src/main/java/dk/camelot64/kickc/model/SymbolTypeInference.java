@@ -279,8 +279,10 @@ public class SymbolTypeInference {
          } else {
             throw new RuntimeException("Cannot infer pointer element type from pointer type " + pointerType);
          }
-      } else if(rValue instanceof ConstantArray) {
-         return new SymbolTypeArray(((ConstantArray) rValue).getElementType());
+      } else if(rValue instanceof ConstantArrayList) {
+         return new SymbolTypeArray(((ConstantArrayList) rValue).getElementType());
+      } else if(rValue instanceof ConstantArrayFilled) {
+         return new SymbolTypeArray(((ConstantArrayFilled) rValue).getElementType(), ((ConstantArrayFilled) rValue).getSize());
       }
       if(type == null) {
          throw new RuntimeException("Cannot infer type for " + rValue);
@@ -424,12 +426,12 @@ public class SymbolTypeInference {
                SymbolType type = inferType(programScope, assignment.getrValue1(), assignment.getOperator(), assignment.getrValue2());
                symbol.setTypeInferred(type);
             }
-         }
-         // If the type is an array or a string the symbol is constant
-         if(symbol.getType() instanceof SymbolTypeArray) {
-            symbol.setDeclaredConstant(true);
-         } else if(SymbolType.STRING.equals(symbol.getType())) {
-            symbol.setDeclaredConstant(true);
+            // If the type is an array or a string the symbol is constant
+            if(symbol.getType() instanceof SymbolTypeArray) {
+               symbol.setDeclaredConstant(true);
+            } else if(SymbolType.STRING.equals(symbol.getType())) {
+               symbol.setDeclaredConstant(true);
+            }
          }
       }
    }

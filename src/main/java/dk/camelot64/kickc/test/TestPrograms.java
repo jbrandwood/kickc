@@ -22,6 +22,10 @@ public class TestPrograms extends TestCase {
       helper = new ReferenceHelper("dk/camelot64/kickc/test/ref/");
    }
 
+   public void testArraysInit() throws IOException, URISyntaxException {
+      compileAndCompare("arrays-init");
+   }
+
    public void testConstantStringConcat() throws IOException, URISyntaxException {
       compileAndCompare("constant-string-concat");
    }
@@ -341,6 +345,10 @@ public class TestPrograms extends TestCase {
 
    public void testValueListError() throws IOException, URISyntaxException {
       assertError("valuelist-error", "Value list not resolved to word constructor");
+   }
+
+   public void testArrayUninitialized() throws IOException, URISyntaxException {
+      assertError("array-uninitialized", "Cannot determine array size.");
    }
 
    private void assertError(String kcFile, String expectError) throws IOException, URISyntaxException {

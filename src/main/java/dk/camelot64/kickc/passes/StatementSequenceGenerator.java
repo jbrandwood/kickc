@@ -33,8 +33,8 @@ public class StatementSequenceGenerator extends KickCBaseVisitor<Object> {
    }
 
    private Procedure getCurrentProcedure() {
-      for (Scope scope : scopeStack) {
-         if (scope instanceof Procedure) {
+      for(Scope scope : scopeStack) {
+         if(scope instanceof Procedure) {
             return (Procedure) scope;
          }
       }
@@ -54,7 +54,7 @@ public class StatementSequenceGenerator extends KickCBaseVisitor<Object> {
 
    @Override
    public Object visitImportSeq(KickCParser.ImportSeqContext ctx) {
-      for (KickCParser.ImportDeclContext importDeclContext : ctx.importDecl()) {
+      for(KickCParser.ImportDeclContext importDeclContext : ctx.importDecl()) {
          this.visit(importDeclContext);
       }
       return null;
@@ -64,14 +64,14 @@ public class StatementSequenceGenerator extends KickCBaseVisitor<Object> {
    public Object visitImportDecl(KickCParser.ImportDeclContext ctx) {
       String importName = ctx.STRING().getText();
       String importFileName = importName.substring(1, importName.length() - 1);
-      program.getLog().append("Importing "+ importFileName);
+      program.getLog().append("Importing " + importFileName);
       Compiler.loadAndParseFile(importFileName, program, this);
       return null;
    }
 
    @Override
    public Object visitDeclSeq(KickCParser.DeclSeqContext ctx) {
-      for (KickCParser.DeclContext declContext : ctx.decl()) {
+      for(KickCParser.DeclContext declContext : ctx.decl()) {
          this.visit(declContext);
       }
       return null;
@@ -85,24 +85,24 @@ public class StatementSequenceGenerator extends KickCBaseVisitor<Object> {
       scopeStack.push(procedure);
       Label procExit = procedure.addLabel(SymbolRef.PROCEXIT_BLOCK_NAME);
       VariableUnversioned returnVar = null;
-      if (!SymbolType.VOID.equals(type)) {
+      if(!SymbolType.VOID.equals(type)) {
          returnVar = procedure.addVariable("return", type);
       }
       List<Variable> parameterList = new ArrayList<>();
-      if (ctx.parameterListDecl() != null) {
+      if(ctx.parameterListDecl() != null) {
          parameterList = (List<Variable>) this.visit(ctx.parameterListDecl());
       }
       procedure.setParameters(parameterList);
       sequence.addStatement(new StatementProcedureBegin(procedure.getRef()));
-      if (ctx.stmtSeq() != null) {
+      if(ctx.stmtSeq() != null) {
          this.visit(ctx.stmtSeq());
       }
       sequence.addStatement(new StatementLabel(procExit.getRef()));
-      if (returnVar != null) {
+      if(returnVar != null) {
          sequence.addStatement(new StatementAssignment(returnVar, returnVar));
       }
       VariableRef returnVarRef = null;
-      if (returnVar != null) {
+      if(returnVar != null) {
          returnVarRef = returnVar.getRef();
       }
       sequence.addStatement(new StatementReturn(returnVarRef));
@@ -114,7 +114,7 @@ public class StatementSequenceGenerator extends KickCBaseVisitor<Object> {
    @Override
    public List<Variable> visitParameterListDecl(KickCParser.ParameterListDeclContext ctx) {
       ArrayList<Variable> parameterDecls = new ArrayList<>();
-      for (KickCParser.ParameterDeclContext parameterDeclCtx : ctx.parameterDecl()) {
+      for(KickCParser.ParameterDeclContext parameterDeclCtx : ctx.parameterDecl()) {
          Variable parameterDecl = (Variable) this.visit(parameterDeclCtx);
          parameterDecls.add(parameterDecl);
       }
@@ -139,19 +139,31 @@ public class StatementSequenceGenerator extends KickCBaseVisitor<Object> {
       SymbolType type = (SymbolType) visit(ctx.typeDecl());
       String varName = ctx.NAME().getText();
       VariableUnversioned lValue = getCurrentSymbols().addVariable(varName, type);
-      if (ctx.getChild(0).getText().equals("const")) {
+      if(ctx.getChild(0).getText().equals("const")) {
+         lValue.setDeclaredConstant(true);
+      }
+      if(type instanceof SymbolTypeArray || type.equals(SymbolType.STRING)) {
          lValue.setDeclaredConstant(true);
       }
       KickCParser.ExprContext initializer = ctx.expr();
-      if (initializer != null) {
+      if(initializer != null) {
          addInitialAssignment(initializer, lValue);
+      } else if(type instanceof SymbolTypeArray) {
+         // Add an zero-array initializer
+         SymbolTypeArray typeArray = (SymbolTypeArray) type;
+         Integer size = typeArray.getSize();
+         if(size==null) {
+            throw new CompileError("Error! Cannot determine array size. "+lValue.toString(program));
+         }
+         Statement stmt = new StatementAssignment(lValue, new ConstantArrayFilled(typeArray.getElementType(), size));
+         sequence.addStatement(stmt);
       }
       return null;
    }
 
    @Override
    public Void visitStmtSeq(KickCParser.StmtSeqContext ctx) {
-      for (int i = 0; i < ctx.getChildCount(); i++) {
+      for(int i = 0; i < ctx.getChildCount(); i++) {
          this.visit(ctx.stmt(i));
       }
       return null;
@@ -159,7 +171,7 @@ public class StatementSequenceGenerator extends KickCBaseVisitor<Object> {
 
    @Override
    public Void visitStmtBlock(KickCParser.StmtBlockContext ctx) {
-      if (ctx.stmtSeq() != null) {
+      if(ctx.stmtSeq() != null) {
          this.visit(ctx.stmtSeq());
       }
       return null;
@@ -187,7 +199,7 @@ public class StatementSequenceGenerator extends KickCBaseVisitor<Object> {
       this.visit(ctx.stmt(0));
 
       KickCParser.StmtContext elseStmt = ctx.stmt(1);
-      if (elseStmt != null) {
+      if(elseStmt != null) {
          // There is an else statement - add the else part and any needed labels/jumps
          Label endJumpLabel = getCurrentSymbols().addLabelIntermediate();
          Statement endJmpStmt = new StatementJump(endJumpLabel.getRef());
@@ -234,7 +246,7 @@ public class StatementSequenceGenerator extends KickCBaseVisitor<Object> {
       Label beginJumpLabel = getCurrentSymbols().addLabelIntermediate();
       StatementLabel beginJumpTarget = new StatementLabel(beginJumpLabel.getRef());
       sequence.addStatement(beginJumpTarget);
-      if (ctx.stmt() != null) {
+      if(ctx.stmt() != null) {
          this.visit(ctx.stmt());
       }
       PrePostModifierHandler.addPreModifiers(this, ctx.expr());
@@ -263,14 +275,14 @@ public class StatementSequenceGenerator extends KickCBaseVisitor<Object> {
       // Create and assign declared loop variable
       String varName = forDeclCtx.NAME().getText();
       Variable lValue;
-      if (forDeclCtx.typeDecl() != null) {
+      if(forDeclCtx.typeDecl() != null) {
          SymbolType type = (SymbolType) visit(forDeclCtx.typeDecl());
          lValue = getCurrentSymbols().addVariable(varName, type);
       } else {
          lValue = getCurrentSymbols().getVariable(varName);
       }
       KickCParser.ExprContext initializer = forDeclCtx.expr();
-      if (initializer != null) {
+      if(initializer != null) {
          addInitialAssignment(initializer, lValue);
       }
       // Add label
@@ -278,11 +290,11 @@ public class StatementSequenceGenerator extends KickCBaseVisitor<Object> {
       StatementLabel repeatTarget = new StatementLabel(repeatLabel.getRef());
       sequence.addStatement(repeatTarget);
       // Add body
-      if (stmtForCtx.stmt() != null) {
+      if(stmtForCtx.stmt() != null) {
          this.visit(stmtForCtx.stmt());
       }
       // Add increment
-      if (ctx.expr(1) != null) {
+      if(ctx.expr(1) != null) {
          PrePostModifierHandler.addPreModifiers(this, ctx.expr(1));
          this.visit(ctx.expr(1));
          PrePostModifierHandler.addPostModifiers(this, ctx.expr(1));
@@ -304,7 +316,7 @@ public class StatementSequenceGenerator extends KickCBaseVisitor<Object> {
       // Create declared loop variable
       String varName = forDeclCtx.NAME().getText();
       Variable lValue;
-      if (forDeclCtx.typeDecl() != null) {
+      if(forDeclCtx.typeDecl() != null) {
          SymbolType type = (SymbolType) visit(forDeclCtx.typeDecl());
          lValue = getCurrentSymbols().addVariable(varName, type);
       } else {
@@ -324,15 +336,15 @@ public class StatementSequenceGenerator extends KickCBaseVisitor<Object> {
       StatementLabel repeatTarget = new StatementLabel(repeatLabel.getRef());
       sequence.addStatement(repeatTarget);
       // Add body
-      if (stmtForCtx.stmt() != null) {
+      if(stmtForCtx.stmt() != null) {
          this.visit(stmtForCtx.stmt());
       }
       // Add increment
       ConstantInteger beyondLastVal;
-      if (rangeFirst.getNumber() > rangeLast.getNumber()) {
+      if(rangeFirst.getNumber() > rangeLast.getNumber()) {
          Statement stmtInc = new StatementAssignment(lValue.getRef(), Operator.DECREMENT, lValue.getRef());
          sequence.addStatement(stmtInc);
-         if (rangeLast.getNumber() == 0) {
+         if(rangeLast.getNumber() == 0) {
             beyondLastVal = new ConstantInteger(255);
          } else {
             beyondLastVal = new ConstantInteger(rangeLast.getNumber() - 1);
@@ -340,7 +352,7 @@ public class StatementSequenceGenerator extends KickCBaseVisitor<Object> {
       } else {
          Statement stmtInc = new StatementAssignment(lValue.getRef(), Operator.INCREMENT, lValue.getRef());
          sequence.addStatement(stmtInc);
-         if (rangeLast.getNumber() == 255) {
+         if(rangeLast.getNumber() == 255) {
             beyondLastVal = new ConstantInteger(0);
          } else {
             beyondLastVal = new ConstantInteger(rangeLast.getNumber() + 1);
@@ -370,7 +382,7 @@ public class StatementSequenceGenerator extends KickCBaseVisitor<Object> {
       Procedure procedure = getCurrentProcedure();
       KickCParser.ExprContext exprCtx = ctx.expr();
       RValue rValue;
-      if (exprCtx != null) {
+      if(exprCtx != null) {
          PrePostModifierHandler.addPreModifiers(this, exprCtx);
          rValue = (RValue) this.visit(exprCtx);
          Variable returnVar = procedure.getVariable("return");
@@ -399,7 +411,7 @@ public class StatementSequenceGenerator extends KickCBaseVisitor<Object> {
    @Override
    public RValue visitInitList(KickCParser.InitListContext ctx) {
       List<RValue> initValues = new ArrayList<>();
-      for (KickCParser.ExprContext initializer : ctx.expr()) {
+      for(KickCParser.ExprContext initializer : ctx.expr()) {
          RValue rValue = (RValue) visit(initializer);
          initValues.add(rValue);
       }
@@ -425,9 +437,9 @@ public class StatementSequenceGenerator extends KickCBaseVisitor<Object> {
    @Override
    public SymbolType visitTypeArray(KickCParser.TypeArrayContext ctx) {
       SymbolType elementType = (SymbolType) visit(ctx.typeDecl());
-      if (ctx.expr() != null) {
+      if(ctx.expr() != null) {
          ConstantValue size = ParseTreeConstantEvaluator.evaluate(ctx.expr());
-         if (size instanceof ConstantInteger) {
+         if(size instanceof ConstantInteger) {
             return new SymbolTypeArray(elementType, ((ConstantInteger) size).getNumber());
          } else {
             throw new RuntimeException("Array size not a constant integer " + ctx.getText());
@@ -466,7 +478,7 @@ public class StatementSequenceGenerator extends KickCBaseVisitor<Object> {
    public Object visitExprCall(KickCParser.ExprCallContext ctx) {
       List<RValue> parameters;
       KickCParser.ParameterListContext parameterList = ctx.parameterList();
-      if (parameterList != null) {
+      if(parameterList != null) {
          parameters = (List<RValue>) this.visit(parameterList);
       } else {
          parameters = new ArrayList<>();
@@ -480,7 +492,7 @@ public class StatementSequenceGenerator extends KickCBaseVisitor<Object> {
    @Override
    public List<RValue> visitParameterList(KickCParser.ParameterListContext ctx) {
       List<RValue> parameters = new ArrayList<>();
-      for (KickCParser.ExprContext exprContext : ctx.expr()) {
+      for(KickCParser.ExprContext exprContext : ctx.expr()) {
          RValue param = (RValue) this.visit(exprContext);
          parameters.add(param);
       }
@@ -497,7 +509,7 @@ public class StatementSequenceGenerator extends KickCBaseVisitor<Object> {
    @Override
    public RValue visitExprNumber(KickCParser.ExprNumberContext ctx) {
       Number number = NumberParser.parseLiteral(ctx.getText());
-      if (number instanceof Integer) {
+      if(number instanceof Integer) {
          return new ConstantInteger((Integer) number);
       } else {
          return new ConstantDouble((Double) number);
@@ -572,7 +584,7 @@ public class StatementSequenceGenerator extends KickCBaseVisitor<Object> {
    @Override
    public RValue visitExprId(KickCParser.ExprIdContext ctx) {
       Variable variable = getCurrentSymbols().getVariable(ctx.NAME().getText());
-      if (variable == null) {
+      if(variable == null) {
          program.getLog().append("ERROR! Line " + ctx.getStart().getLine() + ". Unknown variable " + ctx.NAME().getText());
          throw new CompileError("ERROR! Line " + ctx.getStart().getLine() + ". Unknown variable " + ctx.NAME().getText());
       }
@@ -620,7 +632,7 @@ public class StatementSequenceGenerator extends KickCBaseVisitor<Object> {
       private static void addModifierStatements(
             StatementSequenceGenerator parser,
             List<PrePostModifier> modifiers) {
-         for (PrePostModifier mod : modifiers) {
+         for(PrePostModifier mod : modifiers) {
             Statement stmt = new StatementAssignment((LValue) mod.child, mod.operator, mod.child);
             parser.sequence.addStatement(stmt);
             parser.program.getLog().append("Adding pre/post-modifier " + stmt.toString(parser.program, true));

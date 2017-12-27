@@ -1,6 +1,6 @@
 package dk.camelot64.kickc.model;
 
-import dk.camelot64.kickc.passes.Pass3VariableReferenceInfos;
+import dk.camelot64.kickc.passes.PassNVariableReferenceInfos;
 
 import java.util.Collection;
 import java.util.LinkedHashSet;
@@ -13,38 +13,48 @@ public class VariableReferenceInfos {
    private Program program;
 
    /** Variables referenced in each block. */
-   private Map<LabelRef, Collection<VariableRef>> blockReferenced;
+   private Map<LabelRef, Collection<VariableRef>> blockReferencedVars;
 
    /** Variables used in each block. */
-   private Map<LabelRef, Collection<VariableRef>> blockUsed;
+   private Map<LabelRef, Collection<VariableRef>> blockUsedVars;
 
    /** Variables referenced in each statement. */
-   private Map<Integer, Collection<VariableRef>> stmtReferenced;
+   private Map<Integer, Collection<VariableRef>> stmtReferencedVars;
 
    /** Variables defined in each statement. */
-   private Map<Integer, Collection<VariableRef>> stmtDefined;
+   private Map<Integer, Collection<VariableRef>> stmtDefinedVars;
 
    /** The statement defining each variable. */
-   private Map<VariableRef, Integer> varDefinitions;
+   private Map<VariableRef, Integer> varDefineStmt;
 
    /** All statements referencing each variable . */
-   private Map<VariableRef, Collection<Integer>> varReferences;
+   private Map<VariableRef, Collection<Integer>> varRefStmts;
+
+   /** All statements referencing each constant. */
+   private Map<ConstantRef, Collection<Integer>> constRefStmts;
+
+   /** All constants referencing another constant. (maps from a constant to all constants using it in their value)*/
+   private Map<ConstantRef, Collection<ConstantRef>> constRefConsts;
 
    public VariableReferenceInfos(
-         Map<LabelRef, Collection<VariableRef>> blockReferenced,
-         Map<LabelRef, Collection<VariableRef>> blockUsed,
-         Map<Integer, Collection<VariableRef>> stmtReferenced,
-         Map<Integer, Collection<VariableRef>> stmtDefined,
-         Map<VariableRef, Integer> varDefinitions,
-         Map<VariableRef, Collection<Integer>> varReferences
+         Map<LabelRef, Collection<VariableRef>> blockReferencedVars,
+         Map<LabelRef, Collection<VariableRef>> blockUsedVars,
+         Map<Integer, Collection<VariableRef>> stmtReferencedVars,
+         Map<Integer, Collection<VariableRef>> stmtDefinedVars,
+         Map<VariableRef, Integer> varDefineStmt,
+         Map<VariableRef, Collection<Integer>> varRefStmts,
+         Map<ConstantRef, Collection<Integer>> constRefStmts,
+         Map<ConstantRef, Collection<ConstantRef>> constRefConsts
 
    ) {
-      this.blockReferenced = blockReferenced;
-      this.blockUsed = blockUsed;
-      this.stmtDefined = stmtDefined;
-      this.stmtReferenced = stmtReferenced;
-      this.varDefinitions = varDefinitions;
-      this.varReferences = varReferences;
+      this.blockReferencedVars = blockReferencedVars;
+      this.blockUsedVars = blockUsedVars;
+      this.stmtDefinedVars = stmtDefinedVars;
+      this.stmtReferencedVars = stmtReferencedVars;
+      this.varDefineStmt = varDefineStmt;
+      this.varRefStmts = varRefStmts;
+      this.constRefStmts = constRefStmts;
+      this.constRefConsts = constRefConsts;
    }
 
    /**
@@ -52,8 +62,8 @@ public class VariableReferenceInfos {
     * @param labelRef The block to examine
     * @return All used variables
     */
-   public Collection<VariableRef> getReferenced(LabelRef labelRef) {
-      return blockReferenced.get(labelRef);
+   public Collection<VariableRef> getReferencedVars(LabelRef labelRef) {
+      return blockReferencedVars.get(labelRef);
    }
 
    /**
@@ -61,8 +71,8 @@ public class VariableReferenceInfos {
     * @param labelRef The block to examine
     * @return All used variables
     */
-   public Collection<VariableRef> getUsed(LabelRef labelRef) {
-      return blockUsed.get(labelRef);
+   public Collection<VariableRef> getUsedVars(LabelRef labelRef) {
+      return blockUsedVars.get(labelRef);
    }
 
    /**
@@ -70,8 +80,8 @@ public class VariableReferenceInfos {
     * @param stmt The statement
     * @return Variables defined by the statement
     */
-   public Collection<VariableRef> getDefined(Statement stmt) {
-      return stmtDefined.get(stmt.getIndex());
+   public Collection<VariableRef> getDefinedVars(Statement stmt) {
+      return stmtDefinedVars.get(stmt.getIndex());
    }
 
    /**
@@ -79,8 +89,8 @@ public class VariableReferenceInfos {
     * @param statement The statement to examine
     * @return The referenced variables
     */
-   public Collection<VariableRef> getReferenced(Statement statement) {
-      return stmtReferenced.get(statement.getIndex());
+   public Collection<VariableRef> getReferencedVars(Statement statement) {
+      return stmtReferencedVars.get(statement.getIndex());
    }
 
    /**
@@ -88,10 +98,10 @@ public class VariableReferenceInfos {
     * @param statement The statement to examine
     * @return The used variables (not including defined variables)
     */
-   public Collection<VariableRef> getUsed(Statement statement) {
+   public Collection<VariableRef> getUsedVars(Statement statement) {
       LinkedHashSet<VariableRef> used = new LinkedHashSet<>();
-      used.addAll(getReferenced(statement));
-      used.removeAll(getDefined(statement));
+      used.addAll(getReferencedVars(statement));
+      used.removeAll(getDefinedVars(statement));
       return used;
    }
 
@@ -100,8 +110,8 @@ public class VariableReferenceInfos {
     * @param rValue The rValue
     * @return All referenced variables
     */
-   public static Collection<VariableRef> getReferenced(RValue rValue) {
-      return Pass3VariableReferenceInfos.getReferenced(rValue);
+   public static Collection<VariableRef> getReferencedVars(RValue rValue) {
+      return PassNVariableReferenceInfos.getReferencedVars(rValue);
    }
 
    /**
@@ -109,9 +119,21 @@ public class VariableReferenceInfos {
     * @return true if the variable is defined but never referenced
     */
    public boolean isUnused(VariableRef variableRef) {
-      Collection<Integer> refs = new LinkedHashSet<>(varReferences.get(variableRef));
-      refs.remove(varDefinitions.get(variableRef));
+      Collection<Integer> refs = new LinkedHashSet<>(varRefStmts.get(variableRef));
+      refs.remove(varDefineStmt.get(variableRef));
       return refs.size()==0;
+   }
+
+   /**
+    * Determines if a constant is unused
+    * @return true if the constant is never referenced
+    */
+   public boolean isUnused(ConstantRef constRef) {
+      Collection<Integer> constStmts = this.constRefStmts.get(constRef);
+      Collection<ConstantRef> constRefs = constRefConsts.get(constRef);
+      boolean unusedInStmts = constStmts == null || constStmts.size() == 0;
+      boolean unusedInConsts = constRefs == null || constRefs.size() == 0;
+      return unusedInStmts && unusedInConsts;
    }
 
 

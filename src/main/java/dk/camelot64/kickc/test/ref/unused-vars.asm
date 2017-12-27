@@ -19,6 +19,5 @@ main: {
     rts
 }
 s: {
-    .const return = 2
     rts
 }

@@ -3,8 +3,9 @@
 .pc = $80d "Program"
   jsr main
 main: {
+    .const SCREEN = $400
     .label a = 2
-    ldx #0
+    ldy #0
     jsr inci
     clc
     adc #4
@@ -12,13 +13,16 @@ main: {
     jsr inci
     clc
     adc a
+    tax
+    sty SCREEN
+    stx SCREEN+1
     rts
 }
 inci: {
-    txa
+    tya
     clc
     adc #7
-    tax
-    txa
+    tay
+    tya
     rts
 }

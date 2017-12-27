@@ -1,17 +1,14 @@
 .pc = $801 "Basic"
 :BasicUpstart(main)
 .pc = $80d "Program"
-  .label char = 2
+  .const SCREEN = $400
   jsr main
 main: {
     lda #$40
     jsr ln
-    sta char
-    inc char
     jsr ln
-    sta char
-    inc char
     jsr ln
+    sta SCREEN
     rts
 }
 ln: {

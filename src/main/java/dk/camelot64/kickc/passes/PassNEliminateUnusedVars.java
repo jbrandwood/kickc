@@ -2,23 +2,23 @@ package dk.camelot64.kickc.passes;
 
 import dk.camelot64.kickc.model.*;
 
-import java.util.*;
+import java.util.Collection;
+import java.util.ListIterator;
 
 /**
- * Eliminate unused variables
+ * Eliminate unused variables or constants
  */
-public class Pass1EliminateUnusedVars extends Pass1Base {
+public class PassNEliminateUnusedVars extends Pass2SsaOptimization {
 
-   public Pass1EliminateUnusedVars(Program program) {
+   public PassNEliminateUnusedVars(Program program) {
       super(program);
    }
 
    @Override
-   public boolean executeStep() {
-      new Pass3StatementIndices(getProgram()).generateStatementIndices();
-      new Pass3VariableReferenceInfos(getProgram()).generateVariableReferenceInfos();
+   public boolean step() {
+      new PassNStatementIndices(getProgram()).generateStatementIndices();
+      new PassNVariableReferenceInfos(getProgram()).generateVariableReferenceInfos();
       VariableReferenceInfos referenceInfos = getProgram().getVariableReferenceInfos();
-
       boolean modified = false;
       for (ControlFlowBlock block : getGraph().getAllBlocks()) {
          ListIterator<Statement> stmtIt = block.getStatements().listIterator();
@@ -48,8 +48,17 @@ public class Pass1EliminateUnusedVars extends Pass1Base {
          }
       }
 
+      Collection<ConstantVar> allConstants = getScope().getAllConstants(true);
+      for(ConstantVar constant : allConstants) {
+         if(referenceInfos.isUnused(constant.getRef())) {
+            getLog().append("Eliminating unused constant "+ constant.toString(getProgram()));
+            constant.getScope().remove(constant);
+            modified = true;
+         }
+      }
+
       getProgram().setVariableReferenceInfos(null);
-      new Pass3StatementIndices(getProgram()).clearStatementIndices();
+      new PassNStatementIndices(getProgram()).clearStatementIndices();
       return modified;
    }
 

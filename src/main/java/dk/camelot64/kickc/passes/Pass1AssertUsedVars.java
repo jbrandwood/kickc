@@ -15,16 +15,16 @@ public class Pass1AssertUsedVars extends Pass1Base {
    }
 
    @Override
-   public boolean executeStep() {
+   public boolean step() {
 
-      new Pass3StatementIndices(getProgram()).generateStatementIndices();
-      new Pass3VariableReferenceInfos(getProgram()).generateVariableReferenceInfos();
+      new PassNStatementIndices(getProgram()).generateStatementIndices();
+      new PassNVariableReferenceInfos(getProgram()).generateVariableReferenceInfos();
       VariableReferenceInfos referenceInfos = getProgram().getVariableReferenceInfos();
 
       ControlFlowBlock beginBlock = getProgram().getGraph().getBlock(new LabelRef(SymbolRef.BEGIN_BLOCK_NAME));
       assertUsedVars(beginBlock, referenceInfos, new LinkedHashSet<>(), new LinkedHashSet<>());
       getProgram().setVariableReferenceInfos(null);
-      new Pass3StatementIndices(getProgram()).clearStatementIndices();
+      new PassNStatementIndices(getProgram()).clearStatementIndices();
 
       return false;
    }
@@ -44,13 +44,13 @@ public class Pass1AssertUsedVars extends Pass1Base {
       }
       visited.add(block.getLabel());
       for (Statement statement : block.getStatements()) {
-         Collection<VariableRef> used =  referenceInfos.getUsed(statement);
+         Collection<VariableRef> used =  referenceInfos.getUsedVars(statement);
          for (VariableRef usedRef : used) {
             if(!defined.contains(usedRef)) {
                throw new CompileError("Error! Variable used before being defined "+usedRef.toString(getProgram())+" in "+statement.toString(getProgram(), false));
             }
          }
-         Collection<VariableRef> defd = referenceInfos.getDefined(statement);
+         Collection<VariableRef> defd = referenceInfos.getDefinedVars(statement);
          for (VariableRef definedRef : defd) {
             defined.add(definedRef);
          }

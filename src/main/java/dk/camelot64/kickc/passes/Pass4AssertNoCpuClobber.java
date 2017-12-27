@@ -56,7 +56,7 @@ public class Pass4AssertNoCpuClobber extends Pass2Base {
                   // IF the assignment is later than the current one
                   if(phiAssignment.getAssignmentIdx()>transitionAssignmentIdx) {
                      RValue rValue = phiAssignment.getrValue();
-                     Collection<VariableRef> alive = VariableReferenceInfos.getReferenced(rValue);
+                     Collection<VariableRef> alive = VariableReferenceInfos.getReferencedVars(rValue);
                      aliveVars.addAll(alive);
                      VariableRef assignedVar = phiAssignment.getVariable();
                      assignedVars.remove(assignedVar);

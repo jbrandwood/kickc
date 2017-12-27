@@ -6,9 +6,9 @@ package dk.camelot64.kickc.passes;
 
 import dk.camelot64.kickc.model.*;
 
-public class Pass3StatementIndices extends Pass2Base {
+public class PassNStatementIndices extends Pass2Base {
 
-   public Pass3StatementIndices(Program program) {
+   public PassNStatementIndices(Program program) {
       super(program);
    }
 

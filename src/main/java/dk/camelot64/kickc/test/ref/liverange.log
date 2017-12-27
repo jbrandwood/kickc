@@ -4,6 +4,9 @@ void main() {
    byte a=4;
    a=a+inci();
    a=a+inci();
+   byte* SCREEN = $400;
+   *SCREEN = i;
+   *(SCREEN+1) = a;
 }
 
 byte inci() {
@@ -15,17 +18,21 @@ PROGRAM
 proc (void()) main()
   (byte) main::a ← (byte/signed byte/word/signed word) 4
   (byte~) main::$0 ← call inci 
-  (byte~) main::$1 ← (byte) main::a + (byte~) main::$0
-  (byte) main::a ← (byte~) main::$1
+  (byte/word~) main::$1 ← (byte) main::a + (byte~) main::$0
+  (byte) main::a ← (byte/word~) main::$1
   (byte~) main::$2 ← call inci 
-  (byte~) main::$3 ← (byte) main::a + (byte~) main::$2
-  (byte) main::a ← (byte~) main::$3
+  (byte/word~) main::$3 ← (byte) main::a + (byte~) main::$2
+  (byte) main::a ← (byte/word~) main::$3
+  (byte*) main::SCREEN ← (word/signed word) 1024
+  *((byte*) main::SCREEN) ← (byte) i
+  (byte*~) main::$4 ← (byte*) main::SCREEN + (byte/signed byte/word/signed word) 1
+  *((byte*~) main::$4) ← (byte) main::a
 main::@return:
   return 
 endproc // main()
 proc (byte()) inci()
-  (byte~) inci::$0 ← (byte) i + (byte/signed byte/word/signed word) 7
-  (byte) i ← (byte~) inci::$0
+  (byte/word~) inci::$0 ← (byte) i + (byte/signed byte/word/signed word) 7
+  (byte) i ← (byte/word~) inci::$0
   (byte) inci::return ← (byte) i
   goto inci::@return
 inci::@return:
@@ -37,17 +44,20 @@ endproc // inci()
 SYMBOLS
 (byte) i
 (byte()) inci()
-(byte~) inci::$0
+(byte/word~) inci::$0
 (label) inci::@return
 (byte) inci::return
 (void()) main()
 (byte~) main::$0
-(byte~) main::$1
+(byte/word~) main::$1
 (byte~) main::$2
-(byte~) main::$3
+(byte/word~) main::$3
+(byte*~) main::$4
 (label) main::@return
+(byte*) main::SCREEN
 (byte) main::a
 
+Promoting word/signed word to byte* in main::SCREEN ← ((byte*)) 1024
 INITIAL CONTROL FLOW GRAPH
 @begin: scope:[]  from
   (byte) i ← (byte/signed byte/word/signed word) 0
@@ -55,11 +65,15 @@ INITIAL CONTROL FLOW GRAPH
 main: scope:[main]  from
   (byte) main::a ← (byte/signed byte/word/signed word) 4
   (byte~) main::$0 ← call inci 
-  (byte~) main::$1 ← (byte) main::a + (byte~) main::$0
-  (byte) main::a ← (byte~) main::$1
+  (byte/word~) main::$1 ← (byte) main::a + (byte~) main::$0
+  (byte) main::a ← (byte/word~) main::$1
   (byte~) main::$2 ← call inci 
-  (byte~) main::$3 ← (byte) main::a + (byte~) main::$2
-  (byte) main::a ← (byte~) main::$3
+  (byte/word~) main::$3 ← (byte) main::a + (byte~) main::$2
+  (byte) main::a ← (byte/word~) main::$3
+  (byte*) main::SCREEN ← ((byte*)) (word/signed word) 1024
+  *((byte*) main::SCREEN) ← (byte) i
+  (byte*~) main::$4 ← (byte*) main::SCREEN + (byte/signed byte/word/signed word) 1
+  *((byte*~) main::$4) ← (byte) main::a
   to:main::@return
 main::@return: scope:[main]  from main
   return 
@@ -67,8 +81,8 @@ main::@return: scope:[main]  from main
 @1: scope:[]  from @begin
   to:@2
 inci: scope:[inci]  from
-  (byte~) inci::$0 ← (byte) i + (byte/signed byte/word/signed word) 7
-  (byte) i ← (byte~) inci::$0
+  (byte/word~) inci::$0 ← (byte) i + (byte/signed byte/word/signed word) 7
+  (byte) i ← (byte/word~) inci::$0
   (byte) inci::return ← (byte) i
   to:inci::@return
 inci::@return: scope:[inci]  from inci inci::@1
@@ -91,18 +105,22 @@ CONTROL FLOW GRAPH
 main: scope:[main]  from
   (byte) main::a ← (byte/signed byte/word/signed word) 4
   (byte~) main::$0 ← call inci 
-  (byte~) main::$1 ← (byte) main::a + (byte~) main::$0
-  (byte) main::a ← (byte~) main::$1
+  (byte/word~) main::$1 ← (byte) main::a + (byte~) main::$0
+  (byte) main::a ← (byte/word~) main::$1
   (byte~) main::$2 ← call inci 
-  (byte~) main::$3 ← (byte) main::a + (byte~) main::$2
-  (byte) main::a ← (byte~) main::$3
+  (byte/word~) main::$3 ← (byte) main::a + (byte~) main::$2
+  (byte) main::a ← (byte/word~) main::$3
+  (byte*) main::SCREEN ← ((byte*)) (word/signed word) 1024
+  *((byte*) main::SCREEN) ← (byte) i
+  (byte*~) main::$4 ← (byte*) main::SCREEN + (byte/signed byte/word/signed word) 1
+  *((byte*~) main::$4) ← (byte) main::a
   to:main::@return
 main::@return: scope:[main]  from main
   return 
   to:@return
 inci: scope:[inci]  from
-  (byte~) inci::$0 ← (byte) i + (byte/signed byte/word/signed word) 7
-  (byte) i ← (byte~) inci::$0
+  (byte/word~) inci::$0 ← (byte) i + (byte/signed byte/word/signed word) 7
+  (byte) i ← (byte/word~) inci::$0
   (byte) inci::return ← (byte) i
   to:inci::@return
 inci::@return: scope:[inci]  from inci
@@ -129,23 +147,27 @@ main: scope:[main]  from @2
 main::@1: scope:[main]  from main
   (byte~) main::$0 ← (byte) inci::return
   (byte) i ← (byte) i
-  (byte~) main::$1 ← (byte) main::a + (byte~) main::$0
-  (byte) main::a ← (byte~) main::$1
+  (byte/word~) main::$1 ← (byte) main::a + (byte~) main::$0
+  (byte) main::a ← (byte/word~) main::$1
   (byte) inci::return ← call inci param-assignment
   to:main::@2
 main::@2: scope:[main]  from main::@1
   (byte~) main::$2 ← (byte) inci::return
   (byte) i ← (byte) i
-  (byte~) main::$3 ← (byte) main::a + (byte~) main::$2
-  (byte) main::a ← (byte~) main::$3
+  (byte/word~) main::$3 ← (byte) main::a + (byte~) main::$2
+  (byte) main::a ← (byte/word~) main::$3
+  (byte*) main::SCREEN ← ((byte*)) (word/signed word) 1024
+  *((byte*) main::SCREEN) ← (byte) i
+  (byte*~) main::$4 ← (byte*) main::SCREEN + (byte/signed byte/word/signed word) 1
+  *((byte*~) main::$4) ← (byte) main::a
   to:main::@return
 main::@return: scope:[main]  from main::@2
   (byte) i ← (byte) i
   return 
   to:@return
 inci: scope:[inci]  from main main::@1
-  (byte~) inci::$0 ← (byte) i + (byte/signed byte/word/signed word) 7
-  (byte) i ← (byte~) inci::$0
+  (byte/word~) inci::$0 ← (byte) i + (byte/signed byte/word/signed word) 7
+  (byte) i ← (byte/word~) inci::$0
   (byte) inci::return ← (byte) i
   to:inci::@return
 inci::@return: scope:[inci]  from inci
@@ -178,8 +200,8 @@ main::@1: scope:[main]  from main
   (byte) inci::return#4 ← phi( main/(byte) inci::return#0 )
   (byte~) main::$0 ← (byte) inci::return#4
   (byte) i#1 ← (byte) i#7
-  (byte~) main::$1 ← (byte) main::a#3 + (byte~) main::$0
-  (byte) main::a#1 ← (byte~) main::$1
+  (byte/word~) main::$1 ← (byte) main::a#3 + (byte~) main::$0
+  (byte) main::a#1 ← (byte/word~) main::$1
   (byte) inci::return#1 ← call inci param-assignment
   to:main::@2
 main::@2: scope:[main]  from main::@1
@@ -188,8 +210,12 @@ main::@2: scope:[main]  from main::@1
   (byte) inci::return#5 ← phi( main::@1/(byte) inci::return#1 )
   (byte~) main::$2 ← (byte) inci::return#5
   (byte) i#2 ← (byte) i#8
-  (byte~) main::$3 ← (byte) main::a#4 + (byte~) main::$2
-  (byte) main::a#2 ← (byte~) main::$3
+  (byte/word~) main::$3 ← (byte) main::a#4 + (byte~) main::$2
+  (byte) main::a#2 ← (byte/word~) main::$3
+  (byte*) main::SCREEN#0 ← ((byte*)) (word/signed word) 1024
+  *((byte*) main::SCREEN#0) ← (byte) i#2
+  (byte*~) main::$4 ← (byte*) main::SCREEN#0 + (byte/signed byte/word/signed word) 1
+  *((byte*~) main::$4) ← (byte) main::a#2
   to:main::@return
 main::@return: scope:[main]  from main::@2
   (byte) i#9 ← phi( main::@2/(byte) i#2 )
@@ -198,8 +224,8 @@ main::@return: scope:[main]  from main::@2
   to:@return
 inci: scope:[inci]  from main main::@1
   (byte) i#10 ← phi( main/(byte) i#13 main::@1/(byte) i#1 )
-  (byte~) inci::$0 ← (byte) i#10 + (byte/signed byte/word/signed word) 7
-  (byte) i#4 ← (byte~) inci::$0
+  (byte/word~) inci::$0 ← (byte) i#10 + (byte/signed byte/word/signed word) 7
+  (byte) i#4 ← (byte/word~) inci::$0
   (byte) inci::return#2 ← (byte) i#4
   to:inci::@return
 inci::@return: scope:[inci]  from inci
@@ -235,8 +261,8 @@ main::@1: scope:[main]  from main
   (byte) inci::return#4 ← phi( main/(byte) inci::return#0 )
   (byte~) main::$0 ← (byte) inci::return#4
   (byte) i#1 ← (byte) i#7
-  (byte~) main::$1 ← (byte) main::a#3 + (byte~) main::$0
-  (byte) main::a#1 ← (byte~) main::$1
+  (byte/word~) main::$1 ← (byte) main::a#3 + (byte~) main::$0
+  (byte) main::a#1 ← (byte/word~) main::$1
   call inci param-assignment
   (byte) inci::return#1 ← (byte) inci::return#3
   to:main::@2
@@ -246,8 +272,12 @@ main::@2: scope:[main]  from main::@1
   (byte) inci::return#5 ← phi( main::@1/(byte) inci::return#1 )
   (byte~) main::$2 ← (byte) inci::return#5
   (byte) i#2 ← (byte) i#8
-  (byte~) main::$3 ← (byte) main::a#4 + (byte~) main::$2
-  (byte) main::a#2 ← (byte~) main::$3
+  (byte/word~) main::$3 ← (byte) main::a#4 + (byte~) main::$2
+  (byte) main::a#2 ← (byte/word~) main::$3
+  (byte*) main::SCREEN#0 ← ((byte*)) (word/signed word) 1024
+  *((byte*) main::SCREEN#0) ← (byte) i#2
+  (byte*~) main::$4 ← (byte*) main::SCREEN#0 + (byte/signed byte/word/signed word) 1
+  *((byte*~) main::$4) ← (byte) main::a#2
   to:main::@return
 main::@return: scope:[main]  from main::@2
   (byte) i#9 ← phi( main::@2/(byte) i#2 )
@@ -256,8 +286,8 @@ main::@return: scope:[main]  from main::@2
   to:@return
 inci: scope:[inci]  from main main::@1
   (byte) i#10 ← phi( main/(byte) i#13 main::@1/(byte) i#1 )
-  (byte~) inci::$0 ← (byte) i#10 + (byte/signed byte/word/signed word) 7
-  (byte) i#4 ← (byte~) inci::$0
+  (byte/word~) inci::$0 ← (byte) i#10 + (byte/signed byte/word/signed word) 7
+  (byte) i#4 ← (byte/word~) inci::$0
   (byte) inci::return#2 ← (byte) i#4
   to:inci::@return
 inci::@return: scope:[inci]  from inci
@@ -299,7 +329,7 @@ INITIAL SSA SYMBOL TABLE
 (byte) i#8
 (byte) i#9
 (byte()) inci()
-(byte~) inci::$0
+(byte/word~) inci::$0
 (label) inci::@return
 (byte) inci::return
 (byte) inci::return#0
@@ -311,12 +341,15 @@ INITIAL SSA SYMBOL TABLE
 (byte) inci::return#6
 (void()) main()
 (byte~) main::$0
-(byte~) main::$1
+(byte/word~) main::$1
 (byte~) main::$2
-(byte~) main::$3
+(byte/word~) main::$3
+(byte*~) main::$4
 (label) main::@1
 (label) main::@2
 (label) main::@return
+(byte*) main::SCREEN
+(byte*) main::SCREEN#0
 (byte) main::a
 (byte) main::a#0
 (byte) main::a#1
@@ -337,11 +370,11 @@ Not aliassing across scopes: i#12 i#3
 Alias (byte) inci::return#0 = (byte) inci::return#4 
 Alias (byte) main::a#0 = (byte) main::a#3 
 Alias (byte) i#1 = (byte) i#7 
-Alias (byte) main::a#1 = (byte~) main::$1 (byte) main::a#4 
+Alias (byte) main::a#1 = (byte/word~) main::$1 (byte) main::a#4 
 Alias (byte) inci::return#1 = (byte) inci::return#5 
 Alias (byte) i#2 = (byte) i#8 (byte) i#9 (byte) i#3 
-Alias (byte) main::a#2 = (byte~) main::$3 
-Alias (byte) i#11 = (byte) i#4 (byte~) inci::$0 (byte) i#5 
+Alias (byte) main::a#2 = (byte/word~) main::$3 
+Alias (byte) i#11 = (byte) i#4 (byte/word~) inci::$0 (byte) i#5 
 Alias (byte) inci::return#2 = (byte) inci::return#6 (byte) inci::return#3 
 Alias (byte) i#0 = (byte) i#14 
 Alias (byte) i#12 = (byte) i#6 
@@ -367,6 +400,10 @@ main::@2: scope:[main]  from main::@1
   (byte) i#2 ← phi( main::@1/(byte) i#11 )
   (byte~) main::$2 ← (byte) inci::return#1
   (byte) main::a#2 ← (byte) main::a#1 + (byte~) main::$2
+  (byte*) main::SCREEN#0 ← ((byte*)) (word/signed word) 1024
+  *((byte*) main::SCREEN#0) ← (byte) i#2
+  (byte*~) main::$4 ← (byte*) main::SCREEN#0 + (byte/signed byte/word/signed word) 1
+  *((byte*~) main::$4) ← (byte) main::a#2
   to:main::@return
 main::@return: scope:[main]  from main::@2
   return 
@@ -420,6 +457,10 @@ main::@1: scope:[main]  from main
 main::@2: scope:[main]  from main::@1
   (byte~) main::$2 ← (byte) inci::return#1
   (byte) main::a#2 ← (byte) main::a#1 + (byte~) main::$2
+  (byte*) main::SCREEN#0 ← ((byte*)) (word/signed word) 1024
+  *((byte*) main::SCREEN#0) ← (byte) i#11
+  (byte*~) main::$4 ← (byte*) main::SCREEN#0 + (byte/signed byte/word/signed word) 1
+  *((byte*~) main::$4) ← (byte) main::a#2
   to:main::@return
 main::@return: scope:[main]  from main::@2
   return 
@@ -441,6 +482,7 @@ inci::@return: scope:[inci]  from inci
 
 Constant (const byte) i#0 = 0
 Constant (const byte) main::a#0 = 4
+Constant (const byte*) main::SCREEN#0 = ((byte*))1024
 Succesful SSA optimization Pass2ConstantIdentification
 CONTROL FLOW GRAPH
 @begin: scope:[]  from
@@ -458,6 +500,48 @@ main::@1: scope:[main]  from main
 main::@2: scope:[main]  from main::@1
   (byte~) main::$2 ← (byte) inci::return#1
   (byte) main::a#2 ← (byte) main::a#1 + (byte~) main::$2
+  *((const byte*) main::SCREEN#0) ← (byte) i#11
+  (byte*~) main::$4 ← (const byte*) main::SCREEN#0 + (byte/signed byte/word/signed word) 1
+  *((byte*~) main::$4) ← (byte) main::a#2
+  to:main::@return
+main::@return: scope:[main]  from main::@2
+  return 
+  to:@return
+inci: scope:[inci]  from main main::@1
+  (byte) i#10 ← phi( main/(const byte) i#0 main::@1/(byte) i#11 )
+  (byte) i#11 ← (byte) i#10 + (byte/signed byte/word/signed word) 7
+  (byte) inci::return#2 ← (byte) i#11
+  to:inci::@return
+inci::@return: scope:[inci]  from inci
+  return 
+  to:@return
+@2: scope:[]  from @begin
+  call main param-assignment
+  to:@3
+@3: scope:[]  from @2
+  to:@end
+@end: scope:[]  from @3
+
+Constant (const byte*) main::$4 = main::SCREEN#0+1
+Succesful SSA optimization Pass2ConstantIdentification
+CONTROL FLOW GRAPH
+@begin: scope:[]  from
+  to:@2
+main: scope:[main]  from @2
+  call inci param-assignment
+  (byte) inci::return#0 ← (byte) inci::return#2
+  to:main::@1
+main::@1: scope:[main]  from main
+  (byte~) main::$0 ← (byte) inci::return#0
+  (byte) main::a#1 ← (const byte) main::a#0 + (byte~) main::$0
+  call inci param-assignment
+  (byte) inci::return#1 ← (byte) inci::return#2
+  to:main::@2
+main::@2: scope:[main]  from main::@1
+  (byte~) main::$2 ← (byte) inci::return#1
+  (byte) main::a#2 ← (byte) main::a#1 + (byte~) main::$2
+  *((const byte*) main::SCREEN#0) ← (byte) i#11
+  *((const byte*) main::$4) ← (byte) main::a#2
   to:main::@return
 main::@return: scope:[main]  from main::@2
   return 
@@ -495,6 +579,8 @@ main::@1: scope:[main]  from main
 main::@2: scope:[main]  from main::@1
   (byte~) main::$2 ← (byte) inci::return#1
   (byte) main::a#2 ← (byte) main::a#1 + (byte~) main::$2
+  *((const byte*) main::SCREEN#0) ← (byte) i#11
+  *((const byte*) main::$4) ← (byte) main::a#2
   to:main::@return
 main::@return: scope:[main]  from main::@2
   return 
@@ -527,6 +613,7 @@ Inlining constant with var siblings (const byte) main::a#0
 Inlining constant with var siblings (const byte) i#0
 Inlining constant with var siblings (const byte) i#0
 Constant inlined main::a#0 = (byte/signed byte/word/signed word) 4
+Constant inlined main::$4 = (const byte*) main::SCREEN#0+(byte/signed byte/word/signed word) 1
 Constant inlined i#0 = (byte/signed byte/word/signed word) 0
 Succesful SSA optimization Pass2ConstantInlining
 CONTROL FLOW GRAPH
@@ -545,6 +632,8 @@ main::@1: scope:[main]  from main
 main::@2: scope:[main]  from main::@1
   (byte~) main::$2 ← (byte) inci::return#1
   (byte) main::a#2 ← (byte) main::a#1 + (byte~) main::$2
+  *((const byte*) main::SCREEN#0) ← (byte) i#11
+  *((const byte*) main::SCREEN#0+(byte/signed byte/word/signed word) 1) ← (byte) main::a#2
   to:main::@return
 main::@return: scope:[main]  from main::@2
   return 
@@ -581,6 +670,8 @@ FINAL SYMBOL TABLE
 (label) main::@1
 (label) main::@2
 (label) main::@return
+(byte*) main::SCREEN
+(const byte*) main::SCREEN#0 = ((byte*))(word/signed word) 1024
 (byte) main::a
 (byte) main::a#1
 (byte) main::a#2
@@ -608,6 +699,8 @@ main::@1: scope:[main]  from main
 main::@2: scope:[main]  from main::@1
   (byte~) main::$2 ← (byte) inci::return#1
   (byte) main::a#2 ← (byte) main::a#1 + (byte~) main::$2
+  *((const byte*) main::SCREEN#0) ← (byte) i#11
+  *((const byte*) main::SCREEN#0+(byte/signed byte/word/signed word) 1) ← (byte) main::a#2
   to:main::@return
 main::@return: scope:[main]  from main::@2
   return 
@@ -654,23 +747,25 @@ main::@1: scope:[main]  from main
   [7] (byte~) main::$0 ← (byte) inci::return#0 [ main::$0 i#11 ]
   [8] (byte) main::a#1 ← (byte/signed byte/word/signed word) 4 + (byte~) main::$0 [ main::a#1 i#11 ]
   [9] (byte~) i#15 ← (byte) i#11 [ main::a#1 i#15 ]
-  [10] call inci param-assignment [ inci::return#2 main::a#1 ]
-  [11] (byte) inci::return#1 ← (byte) inci::return#2 [ main::a#1 inci::return#1 ]
+  [10] call inci param-assignment [ inci::return#2 main::a#1 i#11 ]
+  [11] (byte) inci::return#1 ← (byte) inci::return#2 [ main::a#1 i#11 inci::return#1 ]
   to:main::@2
 main::@2: scope:[main]  from main::@1
-  [12] (byte~) main::$2 ← (byte) inci::return#1 [ main::a#1 main::$2 ]
-  [13] (byte) main::a#2 ← (byte) main::a#1 + (byte~) main::$2 [ ]
+  [12] (byte~) main::$2 ← (byte) inci::return#1 [ main::a#1 i#11 main::$2 ]
+  [13] (byte) main::a#2 ← (byte) main::a#1 + (byte~) main::$2 [ i#11 main::a#2 ]
+  [14] *((const byte*) main::SCREEN#0) ← (byte) i#11 [ main::a#2 ]
+  [15] *((const byte*) main::SCREEN#0+(byte/signed byte/word/signed word) 1) ← (byte) main::a#2 [ ]
   to:main::@return
 main::@return: scope:[main]  from main::@2
-  [14] return  [ ]
+  [16] return  [ ]
   to:@return
 inci: scope:[inci]  from main main::@1
-  [15] (byte) i#10 ← phi( main/(byte/signed byte/word/signed word) 0 main::@1/(byte~) i#15 ) [ i#10 ]
-  [16] (byte) i#11 ← (byte) i#10 + (byte/signed byte/word/signed word) 7 [ i#11 ]
-  [17] (byte) inci::return#2 ← (byte) i#11 [ inci::return#2 i#11 ]
+  [17] (byte) i#10 ← phi( main/(byte/signed byte/word/signed word) 0 main::@1/(byte~) i#15 ) [ i#10 ]
+  [18] (byte) i#11 ← (byte) i#10 + (byte/signed byte/word/signed word) 7 [ i#11 ]
+  [19] (byte) inci::return#2 ← (byte) i#11 [ inci::return#2 i#11 ]
   to:inci::@return
 inci::@return: scope:[inci]  from inci
-  [18] return  [ inci::return#2 i#11 ]
+  [20] return  [ inci::return#2 i#11 ]
   to:@return
 
 Created 1 initial phi equivalence classes
@@ -705,23 +800,25 @@ main: scope:[main]  from @2
 main::@1: scope:[main]  from main
   [7] (byte~) main::$0 ← (byte) inci::return#0 [ main::$0 i#11 ]
   [8] (byte) main::a#1 ← (byte/signed byte/word/signed word) 4 + (byte~) main::$0 [ main::a#1 i#11 ]
-  [9] call inci param-assignment [ inci::return#2 main::a#1 ]
-  [10] (byte) inci::return#1 ← (byte) inci::return#2 [ main::a#1 inci::return#1 ]
+  [9] call inci param-assignment [ inci::return#2 main::a#1 i#11 ]
+  [10] (byte) inci::return#1 ← (byte) inci::return#2 [ main::a#1 inci::return#1 i#11 ]
   to:main::@2
 main::@2: scope:[main]  from main::@1
-  [11] (byte~) main::$2 ← (byte) inci::return#1 [ main::a#1 main::$2 ]
-  [12] (byte) main::a#2 ← (byte) main::a#1 + (byte~) main::$2 [ ]
+  [11] (byte~) main::$2 ← (byte) inci::return#1 [ main::a#1 main::$2 i#11 ]
+  [12] (byte) main::a#2 ← (byte) main::a#1 + (byte~) main::$2 [ main::a#2 i#11 ]
+  [13] *((const byte*) main::SCREEN#0) ← (byte) i#11 [ main::a#2 ]
+  [14] *((const byte*) main::SCREEN#0+(byte/signed byte/word/signed word) 1) ← (byte) main::a#2 [ ]
   to:main::@return
 main::@return: scope:[main]  from main::@2
-  [13] return  [ ]
+  [15] return  [ ]
   to:@return
 inci: scope:[inci]  from main main::@1
-  [14] (byte) i#10 ← phi( main/(byte/signed byte/word/signed word) 0 main::@1/(byte) i#11 ) [ i#10 ]
-  [15] (byte) i#11 ← (byte) i#10 + (byte/signed byte/word/signed word) 7 [ i#11 ]
-  [16] (byte) inci::return#2 ← (byte) i#11 [ inci::return#2 i#11 ]
+  [16] (byte) i#10 ← phi( main/(byte/signed byte/word/signed word) 0 main::@1/(byte) i#11 ) [ i#10 ]
+  [17] (byte) i#11 ← (byte) i#10 + (byte/signed byte/word/signed word) 7 [ i#11 ]
+  [18] (byte) inci::return#2 ← (byte) i#11 [ inci::return#2 i#11 ]
   to:inci::@return
 inci::@return: scope:[inci]  from inci
-  [17] return  [ inci::return#2 i#11 ]
+  [19] return  [ inci::return#2 i#11 ]
   to:@return
 
 CONTROL FLOW GRAPH - PHI MEM COALESCED
@@ -742,23 +839,25 @@ main: scope:[main]  from @2
 main::@1: scope:[main]  from main
   [7] (byte~) main::$0 ← (byte) inci::return#0 [ main::$0 i#11 ] ( main:2 [ main::$0 i#11 ] )
   [8] (byte) main::a#1 ← (byte/signed byte/word/signed word) 4 + (byte~) main::$0 [ main::a#1 i#11 ] ( main:2 [ main::a#1 i#11 ] )
-  [9] call inci param-assignment [ inci::return#2 main::a#1 ] ( main:2 [ inci::return#2 main::a#1 ] )
-  [10] (byte) inci::return#1 ← (byte) inci::return#2 [ main::a#1 inci::return#1 ] ( main:2 [ main::a#1 inci::return#1 ] )
+  [9] call inci param-assignment [ inci::return#2 main::a#1 i#11 ] ( main:2 [ inci::return#2 main::a#1 i#11 ] )
+  [10] (byte) inci::return#1 ← (byte) inci::return#2 [ main::a#1 inci::return#1 i#11 ] ( main:2 [ main::a#1 inci::return#1 i#11 ] )
   to:main::@2
 main::@2: scope:[main]  from main::@1
-  [11] (byte~) main::$2 ← (byte) inci::return#1 [ main::a#1 main::$2 ] ( main:2 [ main::a#1 main::$2 ] )
-  [12] (byte) main::a#2 ← (byte) main::a#1 + (byte~) main::$2 [ ] ( main:2 [ ] )
+  [11] (byte~) main::$2 ← (byte) inci::return#1 [ main::a#1 main::$2 i#11 ] ( main:2 [ main::a#1 main::$2 i#11 ] )
+  [12] (byte) main::a#2 ← (byte) main::a#1 + (byte~) main::$2 [ main::a#2 i#11 ] ( main:2 [ main::a#2 i#11 ] )
+  [13] *((const byte*) main::SCREEN#0) ← (byte) i#11 [ main::a#2 ] ( main:2 [ main::a#2 ] )
+  [14] *((const byte*) main::SCREEN#0+(byte/signed byte/word/signed word) 1) ← (byte) main::a#2 [ ] ( main:2 [ ] )
   to:main::@return
 main::@return: scope:[main]  from main::@2
-  [13] return  [ ] ( main:2 [ ] )
+  [15] return  [ ] ( main:2 [ ] )
   to:@return
 inci: scope:[inci]  from main main::@1
-  [14] (byte) i#10 ← phi( main/(byte/signed byte/word/signed word) 0 main::@1/(byte) i#11 ) [ i#10 ] ( main:2::inci:5 [ i#10 ] main:2::inci:9 [ main::a#1 i#10 ] )
-  [15] (byte) i#11 ← (byte) i#10 + (byte/signed byte/word/signed word) 7 [ i#11 ] ( main:2::inci:5 [ i#11 ] main:2::inci:9 [ main::a#1 i#11 ] )
-  [16] (byte) inci::return#2 ← (byte) i#11 [ inci::return#2 i#11 ] ( main:2::inci:5 [ inci::return#2 i#11 ] main:2::inci:9 [ main::a#1 inci::return#2 i#11 ] )
+  [16] (byte) i#10 ← phi( main/(byte/signed byte/word/signed word) 0 main::@1/(byte) i#11 ) [ i#10 ] ( main:2::inci:5 [ i#10 ] main:2::inci:9 [ main::a#1 i#10 ] )
+  [17] (byte) i#11 ← (byte) i#10 + (byte/signed byte/word/signed word) 7 [ i#11 ] ( main:2::inci:5 [ i#11 ] main:2::inci:9 [ main::a#1 i#11 ] )
+  [18] (byte) inci::return#2 ← (byte) i#11 [ inci::return#2 i#11 ] ( main:2::inci:5 [ inci::return#2 i#11 ] main:2::inci:9 [ main::a#1 inci::return#2 i#11 ] )
   to:inci::@return
 inci::@return: scope:[inci]  from inci
-  [17] return  [ inci::return#2 i#11 ] ( main:2::inci:5 [ inci::return#2 i#11 ] main:2::inci:9 [ main::a#1 inci::return#2 i#11 ] )
+  [19] return  [ inci::return#2 i#11 ] ( main:2::inci:5 [ inci::return#2 i#11 ] main:2::inci:9 [ main::a#1 inci::return#2 i#11 ] )
   to:@return
 
 DOMINATORS
@@ -783,7 +882,7 @@ NATURAL LOOPS WITH DEPTH
 VARIABLE REGISTER WEIGHTS
 (byte) i
 (byte) i#10 4.0
-(byte) i#11 0.8571428571428571
+(byte) i#11 0.7272727272727273
 (byte()) inci()
 (byte) inci::return
 (byte) inci::return#0 4.0
@@ -792,9 +891,10 @@ VARIABLE REGISTER WEIGHTS
 (void()) main()
 (byte~) main::$0 4.0
 (byte~) main::$2 4.0
+(byte*) main::SCREEN
 (byte) main::a
 (byte) main::a#1 1.0
-(byte) main::a#2 20.0
+(byte) main::a#2 2.0
 
 Initial phi equivalence classes
 [ i#10 i#11 ]
@@ -847,14 +947,15 @@ bend_from_b2:
 bend:
 //SEG9 main
 main: {
+    .const SCREEN = $400
     .label _0 = 4
     .label _2 = 7
     .label a = 5
     .label a_2 = 8
   //SEG10 [5] call inci param-assignment [ inci::return#2 i#11 ] ( main:2 [ inci::return#2 i#11 ] )
-  //SEG11 [14] phi from main to inci [phi:main->inci]
+  //SEG11 [16] phi from main to inci [phi:main->inci]
   inci_from_main:
-  //SEG12 [14] phi (byte) i#10 = (byte/signed byte/word/signed word) 0 [phi:main->inci#0] -- vbuz1=vbuc1 
+  //SEG12 [16] phi (byte) i#10 = (byte/signed byte/word/signed word) 0 [phi:main->inci#0] -- vbuz1=vbuc1 
     lda #0
     sta i
     jsr inci
@@ -872,59 +973,65 @@ main: {
     clc
     adc #4
     sta a
-  //SEG17 [9] call inci param-assignment [ inci::return#2 main::a#1 ] ( main:2 [ inci::return#2 main::a#1 ] )
-  //SEG18 [14] phi from main::@1 to inci [phi:main::@1->inci]
+  //SEG17 [9] call inci param-assignment [ inci::return#2 main::a#1 i#11 ] ( main:2 [ inci::return#2 main::a#1 i#11 ] )
+  //SEG18 [16] phi from main::@1 to inci [phi:main::@1->inci]
   inci_from_b1:
-  //SEG19 [14] phi (byte) i#10 = (byte) i#11 [phi:main::@1->inci#0] -- register_copy 
+  //SEG19 [16] phi (byte) i#10 = (byte) i#11 [phi:main::@1->inci#0] -- register_copy 
     jsr inci
-  //SEG20 [10] (byte) inci::return#1 ← (byte) inci::return#2 [ main::a#1 inci::return#1 ] ( main:2 [ main::a#1 inci::return#1 ] ) -- vbuz1=vbuz2 
+  //SEG20 [10] (byte) inci::return#1 ← (byte) inci::return#2 [ main::a#1 inci::return#1 i#11 ] ( main:2 [ main::a#1 inci::return#1 i#11 ] ) -- vbuz1=vbuz2 
     lda inci.return_2
     sta inci.return_1
     jmp b2
   //SEG21 main::@2
   b2:
-  //SEG22 [11] (byte~) main::$2 ← (byte) inci::return#1 [ main::a#1 main::$2 ] ( main:2 [ main::a#1 main::$2 ] ) -- vbuz1=vbuz2 
+  //SEG22 [11] (byte~) main::$2 ← (byte) inci::return#1 [ main::a#1 main::$2 i#11 ] ( main:2 [ main::a#1 main::$2 i#11 ] ) -- vbuz1=vbuz2 
     lda inci.return_1
     sta _2
-  //SEG23 [12] (byte) main::a#2 ← (byte) main::a#1 + (byte~) main::$2 [ ] ( main:2 [ ] ) -- vbuz1=vbuz2_plus_vbuz3 
+  //SEG23 [12] (byte) main::a#2 ← (byte) main::a#1 + (byte~) main::$2 [ main::a#2 i#11 ] ( main:2 [ main::a#2 i#11 ] ) -- vbuz1=vbuz2_plus_vbuz3 
     lda a
     clc
     adc _2
     sta a_2
+  //SEG24 [13] *((const byte*) main::SCREEN#0) ← (byte) i#11 [ main::a#2 ] ( main:2 [ main::a#2 ] ) -- _deref_pbuc1=vbuz1 
+    lda i
+    sta SCREEN
+  //SEG25 [14] *((const byte*) main::SCREEN#0+(byte/signed byte/word/signed word) 1) ← (byte) main::a#2 [ ] ( main:2 [ ] ) -- _deref_pbuc1=vbuz1 
+    lda a_2
+    sta SCREEN+1
     jmp breturn
-  //SEG24 main::@return
+  //SEG26 main::@return
   breturn:
-  //SEG25 [13] return  [ ] ( main:2 [ ] )
+  //SEG27 [15] return  [ ] ( main:2 [ ] )
     rts
 }
-//SEG26 inci
+//SEG28 inci
 inci: {
     .label return = 3
     .label return_1 = 6
     .label return_2 = 9
-  //SEG27 [15] (byte) i#11 ← (byte) i#10 + (byte/signed byte/word/signed word) 7 [ i#11 ] ( main:2::inci:5 [ i#11 ] main:2::inci:9 [ main::a#1 i#11 ] ) -- vbuz1=vbuz1_plus_vbuc1 
+  //SEG29 [17] (byte) i#11 ← (byte) i#10 + (byte/signed byte/word/signed word) 7 [ i#11 ] ( main:2::inci:5 [ i#11 ] main:2::inci:9 [ main::a#1 i#11 ] ) -- vbuz1=vbuz1_plus_vbuc1 
     lda i
     clc
     adc #7
     sta i
-  //SEG28 [16] (byte) inci::return#2 ← (byte) i#11 [ inci::return#2 i#11 ] ( main:2::inci:5 [ inci::return#2 i#11 ] main:2::inci:9 [ main::a#1 inci::return#2 i#11 ] ) -- vbuz1=vbuz2 
+  //SEG30 [18] (byte) inci::return#2 ← (byte) i#11 [ inci::return#2 i#11 ] ( main:2::inci:5 [ inci::return#2 i#11 ] main:2::inci:9 [ main::a#1 inci::return#2 i#11 ] ) -- vbuz1=vbuz2 
     lda i
     sta return_2
     jmp breturn
-  //SEG29 inci::@return
+  //SEG31 inci::@return
   breturn:
-  //SEG30 [17] return  [ inci::return#2 i#11 ] ( main:2::inci:5 [ inci::return#2 i#11 ] main:2::inci:9 [ main::a#1 inci::return#2 i#11 ] )
+  //SEG32 [19] return  [ inci::return#2 i#11 ] ( main:2::inci:5 [ inci::return#2 i#11 ] main:2::inci:9 [ main::a#1 inci::return#2 i#11 ] )
     rts
 }
 
 REGISTER UPLIFT POTENTIAL REGISTERS
 Statement [8] (byte) main::a#1 ← (byte/signed byte/word/signed word) 4 + (byte~) main::$0 [ main::a#1 i#11 ] ( main:2 [ main::a#1 i#11 ] ) always clobbers reg byte a 
 Removing always clobbered register reg byte a as potential for zp ZP_BYTE:2 [ i#10 i#11 ]
-Statement [15] (byte) i#11 ← (byte) i#10 + (byte/signed byte/word/signed word) 7 [ i#11 ] ( main:2::inci:5 [ i#11 ] main:2::inci:9 [ main::a#1 i#11 ] ) always clobbers reg byte a 
+Statement [17] (byte) i#11 ← (byte) i#10 + (byte/signed byte/word/signed word) 7 [ i#11 ] ( main:2::inci:5 [ i#11 ] main:2::inci:9 [ main::a#1 i#11 ] ) always clobbers reg byte a 
 Removing always clobbered register reg byte a as potential for zp ZP_BYTE:5 [ main::a#1 ]
 Statement [8] (byte) main::a#1 ← (byte/signed byte/word/signed word) 4 + (byte~) main::$0 [ main::a#1 i#11 ] ( main:2 [ main::a#1 i#11 ] ) always clobbers reg byte a 
-Statement [12] (byte) main::a#2 ← (byte) main::a#1 + (byte~) main::$2 [ ] ( main:2 [ ] ) always clobbers reg byte a 
-Statement [15] (byte) i#11 ← (byte) i#10 + (byte/signed byte/word/signed word) 7 [ i#11 ] ( main:2::inci:5 [ i#11 ] main:2::inci:9 [ main::a#1 i#11 ] ) always clobbers reg byte a 
+Statement [12] (byte) main::a#2 ← (byte) main::a#1 + (byte~) main::$2 [ main::a#2 i#11 ] ( main:2 [ main::a#2 i#11 ] ) always clobbers reg byte a 
+Statement [17] (byte) i#11 ← (byte) i#10 + (byte/signed byte/word/signed word) 7 [ i#11 ] ( main:2::inci:5 [ i#11 ] main:2::inci:9 [ main::a#1 i#11 ] ) always clobbers reg byte a 
 Potential registers zp ZP_BYTE:2 [ i#10 i#11 ] : zp ZP_BYTE:2 , reg byte x , reg byte y , 
 Potential registers zp ZP_BYTE:3 [ inci::return#0 ] : zp ZP_BYTE:3 , reg byte a , reg byte x , reg byte y , 
 Potential registers zp ZP_BYTE:4 [ main::$0 ] : zp ZP_BYTE:4 , reg byte a , reg byte x , reg byte y , 
@@ -935,15 +1042,15 @@ Potential registers zp ZP_BYTE:8 [ main::a#2 ] : zp ZP_BYTE:8 , reg byte a , reg
 Potential registers zp ZP_BYTE:9 [ inci::return#2 ] : zp ZP_BYTE:9 , reg byte a , reg byte x , reg byte y , 
 
 REGISTER UPLIFT SCOPES
-Uplift Scope [main] 20: zp ZP_BYTE:8 [ main::a#2 ] 4: zp ZP_BYTE:4 [ main::$0 ] 4: zp ZP_BYTE:7 [ main::$2 ] 1: zp ZP_BYTE:5 [ main::a#1 ] 
+Uplift Scope [main] 4: zp ZP_BYTE:4 [ main::$0 ] 4: zp ZP_BYTE:7 [ main::$2 ] 2: zp ZP_BYTE:8 [ main::a#2 ] 1: zp ZP_BYTE:5 [ main::a#1 ] 
 Uplift Scope [inci] 4: zp ZP_BYTE:3 [ inci::return#0 ] 4: zp ZP_BYTE:6 [ inci::return#1 ] 1.5: zp ZP_BYTE:9 [ inci::return#2 ] 
-Uplift Scope [] 4.86: zp ZP_BYTE:2 [ i#10 i#11 ] 
+Uplift Scope [] 4.73: zp ZP_BYTE:2 [ i#10 i#11 ] 
 
-Uplifting [main] best 99 combination reg byte a [ main::a#2 ] reg byte a [ main::$0 ] reg byte a [ main::$2 ] zp ZP_BYTE:5 [ main::a#1 ] 
-Uplifting [inci] best 78 combination reg byte a [ inci::return#0 ] reg byte a [ inci::return#1 ] reg byte a [ inci::return#2 ] 
-Uplifting [] best 72 combination reg byte x [ i#10 i#11 ] 
+Uplifting [main] best 112 combination reg byte a [ main::$0 ] reg byte a [ main::$2 ] reg byte x [ main::a#2 ] zp ZP_BYTE:5 [ main::a#1 ] 
+Uplifting [inci] best 91 combination reg byte a [ inci::return#0 ] reg byte a [ inci::return#1 ] reg byte a [ inci::return#2 ] 
+Uplifting [] best 82 combination reg byte y [ i#10 i#11 ] 
 Attempting to uplift remaining variables inzp ZP_BYTE:5 [ main::a#1 ]
-Uplifting [main] best 72 combination zp ZP_BYTE:5 [ main::a#1 ] 
+Uplifting [main] best 82 combination zp ZP_BYTE:5 [ main::a#1 ] 
 Allocated (was zp ZP_BYTE:5) zp ZP_BYTE:2 [ main::a#1 ]
 
 ASSEMBLER BEFORE OPTIMIZATION
@@ -970,12 +1077,13 @@ bend_from_b2:
 bend:
 //SEG9 main
 main: {
+    .const SCREEN = $400
     .label a = 2
   //SEG10 [5] call inci param-assignment [ inci::return#2 i#11 ] ( main:2 [ inci::return#2 i#11 ] )
-  //SEG11 [14] phi from main to inci [phi:main->inci]
+  //SEG11 [16] phi from main to inci [phi:main->inci]
   inci_from_main:
-  //SEG12 [14] phi (byte) i#10 = (byte/signed byte/word/signed word) 0 [phi:main->inci#0] -- vbuxx=vbuc1 
-    ldx #0
+  //SEG12 [16] phi (byte) i#10 = (byte/signed byte/word/signed word) 0 [phi:main->inci#0] -- vbuyy=vbuc1 
+    ldy #0
     jsr inci
   //SEG13 [6] (byte) inci::return#0 ← (byte) inci::return#2 [ inci::return#0 i#11 ] ( main:2 [ inci::return#0 i#11 ] )
     // (byte) inci::return#0 = (byte) inci::return#2  // register copy reg byte a
@@ -988,40 +1096,45 @@ main: {
     clc
     adc #4
     sta a
-  //SEG17 [9] call inci param-assignment [ inci::return#2 main::a#1 ] ( main:2 [ inci::return#2 main::a#1 ] )
-  //SEG18 [14] phi from main::@1 to inci [phi:main::@1->inci]
+  //SEG17 [9] call inci param-assignment [ inci::return#2 main::a#1 i#11 ] ( main:2 [ inci::return#2 main::a#1 i#11 ] )
+  //SEG18 [16] phi from main::@1 to inci [phi:main::@1->inci]
   inci_from_b1:
-  //SEG19 [14] phi (byte) i#10 = (byte) i#11 [phi:main::@1->inci#0] -- register_copy 
+  //SEG19 [16] phi (byte) i#10 = (byte) i#11 [phi:main::@1->inci#0] -- register_copy 
     jsr inci
-  //SEG20 [10] (byte) inci::return#1 ← (byte) inci::return#2 [ main::a#1 inci::return#1 ] ( main:2 [ main::a#1 inci::return#1 ] )
+  //SEG20 [10] (byte) inci::return#1 ← (byte) inci::return#2 [ main::a#1 inci::return#1 i#11 ] ( main:2 [ main::a#1 inci::return#1 i#11 ] )
     // (byte) inci::return#1 = (byte) inci::return#2  // register copy reg byte a
     jmp b2
   //SEG21 main::@2
   b2:
-  //SEG22 [11] (byte~) main::$2 ← (byte) inci::return#1 [ main::a#1 main::$2 ] ( main:2 [ main::a#1 main::$2 ] )
+  //SEG22 [11] (byte~) main::$2 ← (byte) inci::return#1 [ main::a#1 main::$2 i#11 ] ( main:2 [ main::a#1 main::$2 i#11 ] )
     // (byte~) main::$2 = (byte) inci::return#1  // register copy reg byte a
-  //SEG23 [12] (byte) main::a#2 ← (byte) main::a#1 + (byte~) main::$2 [ ] ( main:2 [ ] ) -- vbuaa=vbuz1_plus_vbuaa 
+  //SEG23 [12] (byte) main::a#2 ← (byte) main::a#1 + (byte~) main::$2 [ main::a#2 i#11 ] ( main:2 [ main::a#2 i#11 ] ) -- vbuxx=vbuz1_plus_vbuaa 
     clc
     adc a
+    tax
+  //SEG24 [13] *((const byte*) main::SCREEN#0) ← (byte) i#11 [ main::a#2 ] ( main:2 [ main::a#2 ] ) -- _deref_pbuc1=vbuyy 
+    sty SCREEN
+  //SEG25 [14] *((const byte*) main::SCREEN#0+(byte/signed byte/word/signed word) 1) ← (byte) main::a#2 [ ] ( main:2 [ ] ) -- _deref_pbuc1=vbuxx 
+    stx SCREEN+1
     jmp breturn
-  //SEG24 main::@return
+  //SEG26 main::@return
   breturn:
-  //SEG25 [13] return  [ ] ( main:2 [ ] )
+  //SEG27 [15] return  [ ] ( main:2 [ ] )
     rts
 }
-//SEG26 inci
+//SEG28 inci
 inci: {
-  //SEG27 [15] (byte) i#11 ← (byte) i#10 + (byte/signed byte/word/signed word) 7 [ i#11 ] ( main:2::inci:5 [ i#11 ] main:2::inci:9 [ main::a#1 i#11 ] ) -- vbuxx=vbuxx_plus_vbuc1 
-    txa
+  //SEG29 [17] (byte) i#11 ← (byte) i#10 + (byte/signed byte/word/signed word) 7 [ i#11 ] ( main:2::inci:5 [ i#11 ] main:2::inci:9 [ main::a#1 i#11 ] ) -- vbuyy=vbuyy_plus_vbuc1 
+    tya
     clc
     adc #7
-    tax
-  //SEG28 [16] (byte) inci::return#2 ← (byte) i#11 [ inci::return#2 i#11 ] ( main:2::inci:5 [ inci::return#2 i#11 ] main:2::inci:9 [ main::a#1 inci::return#2 i#11 ] ) -- vbuaa=vbuxx 
-    txa
+    tay
+  //SEG30 [18] (byte) inci::return#2 ← (byte) i#11 [ inci::return#2 i#11 ] ( main:2::inci:5 [ inci::return#2 i#11 ] main:2::inci:9 [ main::a#1 inci::return#2 i#11 ] ) -- vbuaa=vbuyy 
+    tya
     jmp breturn
-  //SEG29 inci::@return
+  //SEG31 inci::@return
   breturn:
-  //SEG30 [17] return  [ inci::return#2 i#11 ] ( main:2::inci:5 [ inci::return#2 i#11 ] main:2::inci:9 [ main::a#1 inci::return#2 i#11 ] )
+  //SEG32 [19] return  [ inci::return#2 i#11 ] ( main:2::inci:5 [ inci::return#2 i#11 ] main:2::inci:9 [ main::a#1 inci::return#2 i#11 ] )
     rts
 }
 
@@ -1053,8 +1166,8 @@ FINAL SYMBOL TABLE
 (label) @begin
 (label) @end
 (byte) i
-(byte) i#10 reg byte x 4.0
-(byte) i#11 reg byte x 0.8571428571428571
+(byte) i#10 reg byte y 4.0
+(byte) i#11 reg byte y 0.7272727272727273
 (byte()) inci()
 (label) inci::@return
 (byte) inci::return
@@ -1067,17 +1180,19 @@ FINAL SYMBOL TABLE
 (label) main::@1
 (label) main::@2
 (label) main::@return
+(byte*) main::SCREEN
+(const byte*) main::SCREEN#0 SCREEN = ((byte*))(word/signed word) 1024
 (byte) main::a
 (byte) main::a#1 a zp ZP_BYTE:2 1.0
-(byte) main::a#2 reg byte a 20.0
+(byte) main::a#2 reg byte x 2.0
 
-reg byte x [ i#10 i#11 ]
+reg byte y [ i#10 i#11 ]
 reg byte a [ inci::return#0 ]
 reg byte a [ main::$0 ]
 zp ZP_BYTE:2 [ main::a#1 ]
 reg byte a [ inci::return#1 ]
 reg byte a [ main::$2 ]
-reg byte a [ main::a#2 ]
+reg byte x [ main::a#2 ]
 reg byte a [ inci::return#2 ]
 
 FINAL CODE
@@ -1096,11 +1211,12 @@ FINAL CODE
 //SEG8 @end
 //SEG9 main
 main: {
+    .const SCREEN = $400
     .label a = 2
   //SEG10 [5] call inci param-assignment [ inci::return#2 i#11 ] ( main:2 [ inci::return#2 i#11 ] )
-  //SEG11 [14] phi from main to inci [phi:main->inci]
-  //SEG12 [14] phi (byte) i#10 = (byte/signed byte/word/signed word) 0 [phi:main->inci#0] -- vbuxx=vbuc1 
-    ldx #0
+  //SEG11 [16] phi from main to inci [phi:main->inci]
+  //SEG12 [16] phi (byte) i#10 = (byte/signed byte/word/signed word) 0 [phi:main->inci#0] -- vbuyy=vbuc1 
+    ldy #0
     jsr inci
   //SEG13 [6] (byte) inci::return#0 ← (byte) inci::return#2 [ inci::return#0 i#11 ] ( main:2 [ inci::return#0 i#11 ] )
     // (byte) inci::return#0 = (byte) inci::return#2  // register copy reg byte a
@@ -1111,33 +1227,38 @@ main: {
     clc
     adc #4
     sta a
-  //SEG17 [9] call inci param-assignment [ inci::return#2 main::a#1 ] ( main:2 [ inci::return#2 main::a#1 ] )
-  //SEG18 [14] phi from main::@1 to inci [phi:main::@1->inci]
-  //SEG19 [14] phi (byte) i#10 = (byte) i#11 [phi:main::@1->inci#0] -- register_copy 
+  //SEG17 [9] call inci param-assignment [ inci::return#2 main::a#1 i#11 ] ( main:2 [ inci::return#2 main::a#1 i#11 ] )
+  //SEG18 [16] phi from main::@1 to inci [phi:main::@1->inci]
+  //SEG19 [16] phi (byte) i#10 = (byte) i#11 [phi:main::@1->inci#0] -- register_copy 
     jsr inci
-  //SEG20 [10] (byte) inci::return#1 ← (byte) inci::return#2 [ main::a#1 inci::return#1 ] ( main:2 [ main::a#1 inci::return#1 ] )
+  //SEG20 [10] (byte) inci::return#1 ← (byte) inci::return#2 [ main::a#1 inci::return#1 i#11 ] ( main:2 [ main::a#1 inci::return#1 i#11 ] )
     // (byte) inci::return#1 = (byte) inci::return#2  // register copy reg byte a
   //SEG21 main::@2
-  //SEG22 [11] (byte~) main::$2 ← (byte) inci::return#1 [ main::a#1 main::$2 ] ( main:2 [ main::a#1 main::$2 ] )
+  //SEG22 [11] (byte~) main::$2 ← (byte) inci::return#1 [ main::a#1 main::$2 i#11 ] ( main:2 [ main::a#1 main::$2 i#11 ] )
     // (byte~) main::$2 = (byte) inci::return#1  // register copy reg byte a
-  //SEG23 [12] (byte) main::a#2 ← (byte) main::a#1 + (byte~) main::$2 [ ] ( main:2 [ ] ) -- vbuaa=vbuz1_plus_vbuaa 
+  //SEG23 [12] (byte) main::a#2 ← (byte) main::a#1 + (byte~) main::$2 [ main::a#2 i#11 ] ( main:2 [ main::a#2 i#11 ] ) -- vbuxx=vbuz1_plus_vbuaa 
     clc
     adc a
-  //SEG24 main::@return
-  //SEG25 [13] return  [ ] ( main:2 [ ] )
+    tax
+  //SEG24 [13] *((const byte*) main::SCREEN#0) ← (byte) i#11 [ main::a#2 ] ( main:2 [ main::a#2 ] ) -- _deref_pbuc1=vbuyy 
+    sty SCREEN
+  //SEG25 [14] *((const byte*) main::SCREEN#0+(byte/signed byte/word/signed word) 1) ← (byte) main::a#2 [ ] ( main:2 [ ] ) -- _deref_pbuc1=vbuxx 
+    stx SCREEN+1
+  //SEG26 main::@return
+  //SEG27 [15] return  [ ] ( main:2 [ ] )
     rts
 }
-//SEG26 inci
+//SEG28 inci
 inci: {
-  //SEG27 [15] (byte) i#11 ← (byte) i#10 + (byte/signed byte/word/signed word) 7 [ i#11 ] ( main:2::inci:5 [ i#11 ] main:2::inci:9 [ main::a#1 i#11 ] ) -- vbuxx=vbuxx_plus_vbuc1 
-    txa
+  //SEG29 [17] (byte) i#11 ← (byte) i#10 + (byte/signed byte/word/signed word) 7 [ i#11 ] ( main:2::inci:5 [ i#11 ] main:2::inci:9 [ main::a#1 i#11 ] ) -- vbuyy=vbuyy_plus_vbuc1 
+    tya
     clc
     adc #7
-    tax
-  //SEG28 [16] (byte) inci::return#2 ← (byte) i#11 [ inci::return#2 i#11 ] ( main:2::inci:5 [ inci::return#2 i#11 ] main:2::inci:9 [ main::a#1 inci::return#2 i#11 ] ) -- vbuaa=vbuxx 
-    txa
-  //SEG29 inci::@return
-  //SEG30 [17] return  [ inci::return#2 i#11 ] ( main:2::inci:5 [ inci::return#2 i#11 ] main:2::inci:9 [ main::a#1 inci::return#2 i#11 ] )
+    tay
+  //SEG30 [18] (byte) inci::return#2 ← (byte) i#11 [ inci::return#2 i#11 ] ( main:2::inci:5 [ inci::return#2 i#11 ] main:2::inci:9 [ main::a#1 inci::return#2 i#11 ] ) -- vbuaa=vbuyy 
+    tya
+  //SEG31 inci::@return
+  //SEG32 [19] return  [ inci::return#2 i#11 ] ( main:2::inci:5 [ inci::return#2 i#11 ] main:2::inci:9 [ main::a#1 inci::return#2 i#11 ] )
     rts
 }
 

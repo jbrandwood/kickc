@@ -12,7 +12,7 @@ public class Pass2CullEmptyBlocks extends Pass2SsaOptimization {
    }
 
    @Override
-   public boolean optimize() {
+   public boolean step() {
       final List<ControlFlowBlock> remove = new ArrayList<>();
       for (ControlFlowBlock block : getGraph().getAllBlocks()) {
          if (block.getStatements().isEmpty() && block.getLabel().isIntermediate()) {
@@ -83,7 +83,7 @@ public class Pass2CullEmptyBlocks extends Pass2SsaOptimization {
          phiFixVisitor.visitBlock(successor);
          getGraph().getAllBlocks().remove(removeBlock);
          LabelRef removeBlockLabelRef = removeBlock.getLabel();
-         Label removeBlockLabel = getSymbols().getLabel(removeBlockLabelRef);
+         Label removeBlockLabel = getScope().getLabel(removeBlockLabelRef);
          removeBlockLabel.getScope().remove(removeBlockLabel);
          getLog().append("Culled Empty Block " + removeBlockLabel.toString(getProgram()));
       }

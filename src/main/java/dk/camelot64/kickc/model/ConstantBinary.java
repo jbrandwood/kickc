@@ -32,7 +32,7 @@ public class ConstantBinary implements ConstantValue {
 
    @Override
    public SymbolType getType(ProgramScope scope) {
-      return SymbolTypeInference.inferType(left.getType(scope), operator, right.getType(scope));
+      return SymbolTypeInference.inferType(scope, left, operator, right);
    }
 
    @Override

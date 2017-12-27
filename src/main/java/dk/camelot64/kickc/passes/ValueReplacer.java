@@ -1,6 +1,7 @@
 package dk.camelot64.kickc.passes;
 
 import dk.camelot64.kickc.model.*;
+import org.stringtemplate.v4.ST;
 
 import java.util.*;
 
@@ -11,7 +12,13 @@ public class ValueReplacer {
 
    /** A replacer that receives a replaceable value and has the potential to replace the value or recurse into sub-values. */
    public interface Replacer {
-      void execute(ReplaceableValue replaceable);
+      /**
+       * Execute replacement of a replaceable value.
+       * @param replaceable The replaceable value
+       * @param currentStmt The current statement that the value is a part of
+       * @param currentBlock The current block that the value is a part of
+       */
+      void execute(ReplaceableValue replaceable, Statement currentStmt, ControlFlowBlock currentBlock);
    }
 
    /**
@@ -24,29 +31,29 @@ public class ValueReplacer {
       for (ControlFlowBlock block : graph.getAllBlocks()) {
          for (Statement statement : block.getStatements()) {
             if (statement instanceof StatementAssignment) {
-               executeAll(new ReplaceableLValue((StatementLValue) statement), replacer);
-               executeAll(new ReplaceableRValue1((StatementAssignment) statement), replacer);
-               executeAll(new ReplaceableRValue2((StatementAssignment) statement), replacer);
+               executeAll(new ReplaceableLValue((StatementLValue) statement), replacer, statement, block);
+               executeAll(new ReplaceableRValue1((StatementAssignment) statement), replacer, statement, block);
+               executeAll(new ReplaceableRValue2((StatementAssignment) statement), replacer, statement, block);
             } else if (statement instanceof StatementCall) {
-               replacer.execute(new ReplaceableLValue((StatementLValue) statement));
+               executeAll(new ReplaceableLValue((StatementLValue) statement), replacer, statement, block);
                StatementCall call = (StatementCall) statement;
                if (call.getParameters() != null) {
                   int size = call.getParameters().size();
                   for (int i = 0; i < size; i++) {
-                     executeAll(new ReplaceableCallParameter(call, i), replacer);
+                     executeAll(new ReplaceableCallParameter(call, i), replacer, statement, block);
                   }
                }
             } else if (statement instanceof StatementConditionalJump) {
-               executeAll(new ReplaceableCondRValue1((StatementConditionalJump) statement), replacer);
-               executeAll(new ReplaceableCondRValue2((StatementConditionalJump) statement), replacer);
+               executeAll(new ReplaceableCondRValue1((StatementConditionalJump) statement), replacer, statement, block);
+               executeAll(new ReplaceableCondRValue2((StatementConditionalJump) statement), replacer, statement, block);
             } else if (statement instanceof StatementReturn) {
-               executeAll(new ReplaceableReturn((StatementReturn) statement), replacer);
+               executeAll(new ReplaceableReturn((StatementReturn) statement), replacer, statement, block);
             } else if (statement instanceof StatementPhiBlock) {
                for (StatementPhiBlock.PhiVariable phiVariable : ((StatementPhiBlock) statement).getPhiVariables()) {
-                  executeAll(new ReplaceablePhiVariable(phiVariable), replacer);
+                  executeAll(new ReplaceablePhiVariable(phiVariable), replacer, statement, block);
                   int size = phiVariable.getValues().size();
                   for (int i = 0; i < size; i++) {
-                     executeAll(new ReplaceablePhiValue(phiVariable, i), replacer);
+                     executeAll(new ReplaceablePhiValue(phiVariable, i), replacer, statement, block);
                   }
                }
             }
@@ -59,10 +66,10 @@ public class ValueReplacer {
     * @param replaceable The replaceable value
     * @param replacer The value replacer
     */
-   public static void executeAll(ReplaceableValue replaceable, Replacer replacer) {
-      replacer.execute(replaceable);
+   public static void executeAll(ReplaceableValue replaceable, Replacer replacer, Statement currentStmt, ControlFlowBlock currentBlock ) {
+      replacer.execute(replaceable, currentStmt, currentBlock);
       for (ReplaceableValue subValue : replaceable.getSubValues()) {
-         executeAll(subValue, replacer);
+         executeAll(subValue, replacer, currentStmt, currentBlock);
       }
    }
 

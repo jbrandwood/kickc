@@ -16,7 +16,7 @@ public class Pass1GenerateControlFlowGraph extends Pass1Base {
    private Map<LabelRef, ControlFlowBlock> blocks;
 
    @Override
-   boolean executeStep() {
+   public boolean step() {
       this.blocks = new LinkedHashMap<>();
       ProgramScope scope = getScope();
       StatementSequence sequence = getProgram().getStatementSequence();

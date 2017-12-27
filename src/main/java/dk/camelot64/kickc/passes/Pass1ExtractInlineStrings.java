@@ -14,7 +14,31 @@ public class Pass1ExtractInlineStrings extends Pass1Base {
    }
 
    @Override
-   boolean executeStep() {
+   public boolean step() {
+      ValueReplacer.executeAll(getGraph(), (replaceable, currentStmt, currentBlock) -> {
+         String nameHint = null;
+         if(currentStmt instanceof StatementCall) {
+            StatementCall call = (StatementCall) currentStmt;
+            List<RValue> parameters = call.getParameters();
+            for (int i = 0; i < parameters.size(); i++) {
+               RValue parameter = parameters.get(i);
+               if(parameter.equals(replaceable.get())) {
+                  // The replaceable value is the parameter - use the parameter name as name hint
+                  Procedure procedure = getProgram().getScope().getProcedure(call.getProcedure());
+                  nameHint = procedure.getParameterNames().get(i);
+                  break;
+               }
+            }
+         }
+         Scope blockScope = getProgram().getScope().getScope(currentBlock.getScope());
+         RValue value = replaceable.get();
+         if(value instanceof ConstantString) {
+            ConstantVar strConst = createStringConstantVar(blockScope, (ConstantString) replaceable.get(), nameHint);
+            replaceable.set(strConst.getRef());
+         }
+      });
+
+      /*
       for (ControlFlowBlock block : getProgram().getGraph().getAllBlocks()) {
          ListIterator<Statement> stmtIt = block.getStatements().listIterator();
          Scope blockScope = getProgram().getScope().getScope(block.getScope());
@@ -46,6 +70,7 @@ public class Pass1ExtractInlineStrings extends Pass1Base {
             }
          }
       }
+      */
       return false;
    }
 
@@ -71,7 +96,7 @@ public class Pass1ExtractInlineStrings extends Pass1Base {
             name = nameHint + nameHintIdx++;
          }
       }
-      ConstantVar strConst = new ConstantVar(name, blockScope, new SymbolTypeArray(SymbolType.BYTE), constantString);
+      ConstantVar strConst = new ConstantVar(name, blockScope, SymbolType.STRING, constantString);
       blockScope.add(strConst);
       getLog().append("Creating constant string variable for inline " + strConst.toString(getProgram()) + " \"" + constantString.getValue() + "\"");
       return strConst;

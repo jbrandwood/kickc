@@ -10,8 +10,7 @@ public class ConstantValueCalculator {
       } else if(value instanceof ConstantString) {
          return value;
       } else if(value instanceof ConstantChar) {
-         ConstantChar charValue = (ConstantChar) value;
-         return new ConstantInteger((int)charValue.getValue());
+         return value;
       } else if(value instanceof ConstantRef) {
          ConstantVar constantVar = programScope.getConstant((ConstantRef) value);
          ConstantValue constantVarValue = constantVar.getValue();
@@ -119,6 +118,14 @@ public class ConstantValueCalculator {
    private static ConstantValue plus(ConstantValue value1, ConstantValue value2) {
       if(value1 instanceof ConstantInteger && value2 instanceof ConstantInteger) {
          return new ConstantInteger(((ConstantInteger) value1).getNumber()+((ConstantInteger) value2).getNumber());
+      } if(value1 instanceof ConstantInteger && value2 instanceof ConstantChar) {
+         return new ConstantInteger(((ConstantInteger) value1).getNumber()+((ConstantChar) value2).getValue());
+      } if(value1 instanceof ConstantChar && value2 instanceof ConstantInteger) {
+         return new ConstantInteger(((ConstantChar) value1).getValue()+((ConstantInteger) value2).getNumber());
+      } if(value1 instanceof ConstantString && value2 instanceof ConstantString) {
+         return new ConstantString(((ConstantString) value1).getValue() + ((ConstantString) value2).getValue());
+      } if(value1 instanceof ConstantString && value2 instanceof ConstantChar) {
+         return new ConstantString(((ConstantString) value1).getValue() + ((ConstantChar) value2).getValue());
       }
       return null;
    }

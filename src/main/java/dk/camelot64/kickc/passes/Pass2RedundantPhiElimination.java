@@ -18,7 +18,7 @@ public class Pass2RedundantPhiElimination extends Pass2SsaOptimization {
     * Eliminate alias assignments replacing them with the aliased variable.
     */
    @Override
-   public boolean optimize() {
+   public boolean step() {
       final Map<VariableRef, RValue> aliases = findRedundantPhis();
       removeAssignments(aliases.keySet());
       replaceVariables(aliases);

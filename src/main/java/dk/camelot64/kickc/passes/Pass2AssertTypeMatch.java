@@ -31,6 +31,9 @@ public class Pass2AssertTypeMatch extends Pass2SsaAssertion {
       if(SymbolTypeInference.typeMatch(lValueType, rValueType)) {
          return;
       }
+      if(SymbolTypeInference.typeMatch(rValueType, lValueType)) {
+         return;
+      }
       // Types do not match
       getLog().append("ERROR! Type mismatch (" + lValueType.getTypeName() + ") cannot be assigned from (" + rValueType.getTypeName() + "). In " + statement.toString(getProgram(), false));
       throw new CompileError("ERROR! Type mismatch (" + lValueType.getTypeName() + ") cannot be assigned from (" + rValueType.getTypeName() + "). In " + statement.toString(getProgram(), false));

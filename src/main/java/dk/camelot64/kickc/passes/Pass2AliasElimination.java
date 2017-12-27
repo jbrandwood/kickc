@@ -18,20 +18,20 @@ public class Pass2AliasElimination extends Pass2SsaOptimization {
     * Eliminate alias assignments replacing them with the aliassed variable.
     */
    @Override
-   public boolean optimize() {
+   public boolean step() {
       final Aliases aliases = findAliases(getProgram());
       removeAliasAssignments(aliases);
-      replaceVariables(aliases.getReplacements(getSymbols()));
+      replaceVariables(aliases.getReplacements(getScope()));
       for (AliasSet aliasSet : aliases.getAliasSets()) {
          StringBuilder str = new StringBuilder();
-         str.append(aliasSet.getKeepVar(getSymbols()).toString(getProgram()));
+         str.append(aliasSet.getKeepVar(getScope()).toString(getProgram()));
          str.append(" = ");
-         for (VariableRef var : aliasSet.getEliminateVars(getSymbols())) {
+         for (VariableRef var : aliasSet.getEliminateVars(getScope())) {
             str.append(var.toString(getProgram()) + " ");
          }
          getLog().append("Alias " + str);
       }
-      deleteSymbols(aliases.getSymbolsToRemove(getSymbols()));
+      deleteSymbols(aliases.getSymbolsToRemove(getScope()));
       return (aliases.size() > 0);
    }
 

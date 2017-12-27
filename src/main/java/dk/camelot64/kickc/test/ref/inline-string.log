@@ -108,20 +108,22 @@ print::@return: scope:[print]  from print::@3
 Eliminating unused variable - keeping the call (void~) main::$0
 Eliminating unused variable - keeping the call (void~) main::$1
 Eliminating unused variable - keeping the call (void~) main::$2
-Creating constant string variable for inline (const byte[]) main::msg "message 3 @"
+Creating constant string variable for inline (const string) $0 "message 1 @"
+Creating constant string variable for inline (const string) main::$3 "message 2 @"
+Creating constant string variable for inline (const string) main::msg "message 3 @"
 Removing empty block print::@4
 Removing empty block print::@3
 Removing empty block print::@5
 Removing empty block print::@6
 CONTROL FLOW GRAPH
 @begin: scope:[]  from
-  (byte[]) msg1 ← (string) "message 1 @"
+  (byte[]) msg1 ← (const string) $0
   to:@1
 main: scope:[main]  from
-  (byte[]) main::msg2 ← (string) "message 2 @"
+  (byte[]) main::msg2 ← (const string) main::$3
   call print (byte[]) msg1 
   call print (byte[]) main::msg2 
-  call print (const byte[]) main::msg 
+  call print (const string) main::msg 
   to:main::@return
 main::@return: scope:[main]  from main
   return 
@@ -154,10 +156,10 @@ print modifies screen
 
 CONTROL FLOW GRAPH WITH ASSIGNMENT CALL
 @begin: scope:[]  from
-  (byte[]) msg1 ← (string) "message 1 @"
+  (byte[]) msg1 ← (const string) $0
   to:@1
 main: scope:[main]  from @2
-  (byte[]) main::msg2 ← (string) "message 2 @"
+  (byte[]) main::msg2 ← (const string) main::$3
   (byte*) print::msg ← (byte[]) msg1
   call print param-assignment
   to:main::@1
@@ -168,7 +170,7 @@ main::@1: scope:[main]  from main
   to:main::@2
 main::@2: scope:[main]  from main::@1
   (byte*) screen ← (byte*) screen
-  (byte*) print::msg ← (const byte[]) main::msg
+  (byte*) print::msg ← (const string) main::msg
   call print param-assignment
   to:main::@3
 main::@3: scope:[main]  from main::@2
@@ -209,12 +211,12 @@ Completing Phi functions...
 Completing Phi functions...
 CONTROL FLOW GRAPH SSA
 @begin: scope:[]  from
-  (byte[]) msg1#0 ← (string) "message 1 @"
+  (byte[]) msg1#0 ← (const string) $0
   to:@1
 main: scope:[main]  from @2
   (byte*) screen#15 ← phi( @2/(byte*) screen#17 )
   (byte[]) msg1#1 ← phi( @2/(byte[]) msg1#2 )
-  (byte[]) main::msg2#0 ← (string) "message 2 @"
+  (byte[]) main::msg2#0 ← (const string) main::$3
   (byte*) print::msg#0 ← (byte[]) msg1#1
   call print param-assignment
   to:main::@1
@@ -228,7 +230,7 @@ main::@1: scope:[main]  from main
 main::@2: scope:[main]  from main::@1
   (byte*) screen#9 ← phi( main::@1/(byte*) screen#0 )
   (byte*) screen#1 ← (byte*) screen#9
-  (byte*) print::msg#2 ← (const byte[]) main::msg
+  (byte*) print::msg#2 ← (const string) main::msg
   call print param-assignment
   to:main::@3
 main::@3: scope:[main]  from main::@2
@@ -279,12 +281,12 @@ print::@return: scope:[print]  from print::@1
 
 CONTROL FLOW GRAPH WITH ASSIGNMENT CALL & RETURN
 @begin: scope:[]  from
-  (byte[]) msg1#0 ← (string) "message 1 @"
+  (byte[]) msg1#0 ← (const string) $0
   to:@1
 main: scope:[main]  from @2
   (byte*) screen#15 ← phi( @2/(byte*) screen#17 )
   (byte[]) msg1#1 ← phi( @2/(byte[]) msg1#2 )
-  (byte[]) main::msg2#0 ← (string) "message 2 @"
+  (byte[]) main::msg2#0 ← (const string) main::$3
   (byte*) print::msg#0 ← (byte[]) msg1#1
   call print param-assignment
   to:main::@1
@@ -298,7 +300,7 @@ main::@1: scope:[main]  from main
 main::@2: scope:[main]  from main::@1
   (byte*) screen#9 ← phi( main::@1/(byte*) screen#6 )
   (byte*) screen#1 ← (byte*) screen#9
-  (byte*) print::msg#2 ← (const byte[]) main::msg
+  (byte*) print::msg#2 ← (const string) main::msg
   call print param-assignment
   to:main::@3
 main::@3: scope:[main]  from main::@2
@@ -348,17 +350,19 @@ print::@return: scope:[print]  from print::@1
 @end: scope:[]  from @3
 
 INITIAL SSA SYMBOL TABLE
+(const string) $0 = (string) "message 1 @"
 (label) @1
 (label) @2
 (label) @3
 (label) @begin
 (label) @end
 (void()) main()
+(const string) main::$3 = (string) "message 2 @"
 (label) main::@1
 (label) main::@2
 (label) main::@3
 (label) main::@return
-(const byte[]) main::msg = (string) "message 3 @"
+(const string) main::msg = (string) "message 3 @"
 (byte[]) main::msg2
 (byte[]) main::msg2#0
 (byte[]) main::msg2#1
@@ -423,12 +427,12 @@ Alias (byte*) screen#14 = (byte*) screen#7
 Succesful SSA optimization Pass2AliasElimination
 CONTROL FLOW GRAPH
 @begin: scope:[]  from
-  (byte[]) msg1#0 ← (string) "message 1 @"
+  (byte[]) msg1#0 ← (const string) $0
   to:@1
 main: scope:[main]  from @2
   (byte*) screen#15 ← phi( @2/(byte*) screen#17 )
   (byte[]) msg1#1 ← phi( @2/(byte[]) msg1#0 )
-  (byte[]) main::msg2#0 ← (string) "message 2 @"
+  (byte[]) main::msg2#0 ← (const string) main::$3
   (byte*) print::msg#0 ← (byte[]) msg1#1
   call print param-assignment
   to:main::@1
@@ -439,7 +443,7 @@ main::@1: scope:[main]  from main
   to:main::@2
 main::@2: scope:[main]  from main::@1
   (byte*) screen#1 ← phi( main::@1/(byte*) screen#12 )
-  (byte*) print::msg#2 ← (const byte[]) main::msg
+  (byte*) print::msg#2 ← (const string) main::msg
   call print param-assignment
   to:main::@3
 main::@3: scope:[main]  from main::@2
@@ -496,10 +500,10 @@ Redundant Phi (byte*) screen#14 (byte*) screen#10
 Succesful SSA optimization Pass2RedundantPhiElimination
 CONTROL FLOW GRAPH
 @begin: scope:[]  from
-  (byte[]) msg1#0 ← (string) "message 1 @"
+  (byte[]) msg1#0 ← (const string) $0
   to:@1
 main: scope:[main]  from @2
-  (byte[]) main::msg2#0 ← (string) "message 2 @"
+  (byte[]) main::msg2#0 ← (const string) main::$3
   (byte*) print::msg#0 ← (byte[]) msg1#0
   call print param-assignment
   to:main::@1
@@ -508,7 +512,7 @@ main::@1: scope:[main]  from main
   call print param-assignment
   to:main::@2
 main::@2: scope:[main]  from main::@1
-  (byte*) print::msg#2 ← (const byte[]) main::msg
+  (byte*) print::msg#2 ← (const string) main::msg
   call print param-assignment
   to:main::@3
 main::@3: scope:[main]  from main::@2
@@ -548,10 +552,10 @@ Simple Condition (boolean~) print::$0 if(*((byte*) print::msg#4)!=(byte) '@') go
 Succesful SSA optimization Pass2ConditionalJumpSimplification
 CONTROL FLOW GRAPH
 @begin: scope:[]  from
-  (byte[]) msg1#0 ← (string) "message 1 @"
+  (byte[]) msg1#0 ← (const string) $0
   to:@1
 main: scope:[main]  from @2
-  (byte[]) main::msg2#0 ← (string) "message 2 @"
+  (byte[]) main::msg2#0 ← (const string) main::$3
   (byte*) print::msg#0 ← (byte[]) msg1#0
   call print param-assignment
   to:main::@1
@@ -560,7 +564,7 @@ main::@1: scope:[main]  from main
   call print param-assignment
   to:main::@2
 main::@2: scope:[main]  from main::@1
-  (byte*) print::msg#2 ← (const byte[]) main::msg
+  (byte*) print::msg#2 ← (const string) main::msg
   call print param-assignment
   to:main::@3
 main::@3: scope:[main]  from main::@2
@@ -595,20 +599,20 @@ print::@return: scope:[print]  from print::@1
   to:@end
 @end: scope:[]  from @3
 
-Constant (const byte[]) msg1#0 = "message 1 @"
-Constant (const byte[]) main::msg2#0 = "message 2 @"
-Constant (const byte*) print::msg#2 = main::msg
+Constant (const string) msg1#0 = $0
+Constant (const string) main::msg2#0 = main::$3
+Constant (const string) print::msg#2 = main::msg
 Constant (const byte*) screen#17 = ((byte*))1024
 Succesful SSA optimization Pass2ConstantIdentification
 CONTROL FLOW GRAPH
 @begin: scope:[]  from
   to:@1
 main: scope:[main]  from @2
-  (byte*) print::msg#0 ← (const byte[]) msg1#0
+  (byte*) print::msg#0 ← (const string) msg1#0
   call print param-assignment
   to:main::@1
 main::@1: scope:[main]  from main
-  (byte*) print::msg#1 ← (const byte[]) main::msg2#0
+  (byte*) print::msg#1 ← (const string) main::msg2#0
   call print param-assignment
   to:main::@2
 main::@2: scope:[main]  from main::@1
@@ -623,7 +627,7 @@ main::@return: scope:[main]  from main::@3
   to:@2
 print: scope:[print]  from main main::@1 main::@2
   (byte*) screen#18 ← phi( main/(const byte*) screen#17 main::@1/(byte*) screen#12 main::@2/(byte*) screen#12 )
-  (byte*) print::msg#6 ← phi( main/(byte*) print::msg#0 main::@1/(byte*) print::msg#1 main::@2/(const byte*) print::msg#2 )
+  (byte*) print::msg#6 ← phi( main/(byte*) print::msg#0 main::@1/(byte*) print::msg#1 main::@2/(const string) print::msg#2 )
   to:print::@1
 print::@1: scope:[print]  from print print::@2
   (byte*) screen#12 ← phi( print/(byte*) screen#18 print::@2/(byte*) screen#5 )
@@ -645,8 +649,8 @@ print::@return: scope:[print]  from print::@1
   to:@end
 @end: scope:[]  from @3
 
-Constant (const byte*) print::msg#0 = msg1#0
-Constant (const byte*) print::msg#1 = main::msg2#0
+Constant (const string) print::msg#0 = msg1#0
+Constant (const string) print::msg#1 = main::msg2#0
 Succesful SSA optimization Pass2ConstantIdentification
 CONTROL FLOW GRAPH
 @begin: scope:[]  from
@@ -669,7 +673,7 @@ main::@return: scope:[main]  from main::@3
   to:@2
 print: scope:[print]  from main main::@1 main::@2
   (byte*) screen#18 ← phi( main/(const byte*) screen#17 main::@1/(byte*) screen#12 main::@2/(byte*) screen#12 )
-  (byte*) print::msg#6 ← phi( main/(const byte*) print::msg#0 main::@1/(const byte*) print::msg#1 main::@2/(const byte*) print::msg#2 )
+  (byte*) print::msg#6 ← phi( main/(const string) print::msg#0 main::@1/(const string) print::msg#1 main::@2/(const string) print::msg#2 )
   to:print::@1
 print::@1: scope:[print]  from print print::@2
   (byte*) screen#12 ← phi( print/(byte*) screen#18 print::@2/(byte*) screen#5 )
@@ -712,7 +716,7 @@ main::@return: scope:[main]  from main::@2
   to:@return
 print: scope:[print]  from main main::@1 main::@2
   (byte*) screen#18 ← phi( main/(const byte*) screen#17 main::@1/(byte*) screen#12 main::@2/(byte*) screen#12 )
-  (byte*) print::msg#6 ← phi( main/(const byte*) print::msg#0 main::@1/(const byte*) print::msg#1 main::@2/(const byte*) print::msg#2 )
+  (byte*) print::msg#6 ← phi( main/(const string) print::msg#0 main::@1/(const string) print::msg#1 main::@2/(const string) print::msg#2 )
   to:print::@1
 print::@1: scope:[print]  from print print::@2
   (byte*) screen#12 ← phi( print/(byte*) screen#18 print::@2/(byte*) screen#5 )
@@ -732,21 +736,23 @@ print::@return: scope:[print]  from print::@1
   to:@end
 @end: scope:[]  from @2
 
-Inlining constant with var siblings (const byte*) print::msg#2
-Inlining constant with var siblings (const byte*) print::msg#2
-Inlining constant with var siblings (const byte*) print::msg#2
-Inlining constant with var siblings (const byte*) print::msg#0
-Inlining constant with var siblings (const byte*) print::msg#0
-Inlining constant with var siblings (const byte*) print::msg#0
-Inlining constant with var siblings (const byte*) print::msg#1
-Inlining constant with var siblings (const byte*) print::msg#1
-Inlining constant with var siblings (const byte*) print::msg#1
+Inlining constant with var siblings (const string) print::msg#2
+Inlining constant with var siblings (const string) print::msg#2
+Inlining constant with var siblings (const string) print::msg#2
+Inlining constant with var siblings (const string) print::msg#0
+Inlining constant with var siblings (const string) print::msg#0
+Inlining constant with var siblings (const string) print::msg#0
+Inlining constant with var siblings (const string) print::msg#1
+Inlining constant with var siblings (const string) print::msg#1
+Inlining constant with var siblings (const string) print::msg#1
 Inlining constant with var siblings (const byte*) screen#17
 Inlining constant with var siblings (const byte*) screen#17
 Inlining constant with var siblings (const byte*) screen#17
-Constant inlined print::msg#2 = (const byte[]) main::msg
-Constant inlined print::msg#1 = (const byte[]) main::msg2#0
-Constant inlined print::msg#0 = (const byte[]) msg1#0
+Constant inlined main::$3 = (const string) main::msg2#0
+Constant inlined print::msg#2 = (const string) main::msg
+Constant inlined $0 = (const string) msg1#0
+Constant inlined print::msg#1 = (const string) main::msg2#0
+Constant inlined print::msg#0 = (const string) msg1#0
 Constant inlined screen#17 = ((byte*))(word/signed word) 1024
 Succesful SSA optimization Pass2ConstantInlining
 CONTROL FLOW GRAPH
@@ -766,7 +772,7 @@ main::@return: scope:[main]  from main::@2
   to:@return
 print: scope:[print]  from main main::@1 main::@2
   (byte*) screen#18 ← phi( main/((byte*))(word/signed word) 1024 main::@1/(byte*) screen#12 main::@2/(byte*) screen#12 )
-  (byte*) print::msg#6 ← phi( main/(const byte[]) msg1#0 main::@1/(const byte[]) main::msg2#0 main::@2/(const byte[]) main::msg )
+  (byte*) print::msg#6 ← phi( main/(const string) msg1#0 main::@1/(const string) main::msg2#0 main::@2/(const string) main::msg )
   to:print::@1
 print::@1: scope:[print]  from print print::@2
   (byte*) screen#12 ← phi( print/(byte*) screen#18 print::@2/(byte*) screen#5 )
@@ -794,11 +800,11 @@ FINAL SYMBOL TABLE
 (label) main::@1
 (label) main::@2
 (label) main::@return
-(const byte[]) main::msg = (string) "message 3 @"
+(const string) main::msg = (string) "message 3 @"
 (byte[]) main::msg2
-(const byte[]) main::msg2#0 = (string) "message 2 @"
+(const string) main::msg2#0 = (string) "message 2 @"
 (byte[]) msg1
-(const byte[]) msg1#0 = (string) "message 1 @"
+(const string) msg1#0 = (string) "message 1 @"
 (void()) print((byte*) print::msg)
 (label) print::@1
 (label) print::@2
@@ -837,7 +843,7 @@ main::@return: scope:[main]  from main::@2
   to:@return
 print: scope:[print]  from main main::@1 main::@2
   (byte*) screen#18 ← phi( main/((byte*))(word/signed word) 1024 main::@1/(byte*~) screen#19 main::@2/(byte*~) screen#20 )
-  (byte*) print::msg#6 ← phi( main/(const byte[]) msg1#0 main::@1/(const byte[]) main::msg2#0 main::@2/(const byte[]) main::msg )
+  (byte*) print::msg#6 ← phi( main/(const string) msg1#0 main::@1/(const string) main::msg2#0 main::@2/(const string) main::msg )
   (byte*~) print::msg#7 ← (byte*) print::msg#6
   (byte*~) screen#21 ← (byte*) screen#18
   to:print::@1
@@ -896,7 +902,7 @@ main::@return: scope:[main]  from main::@2
   to:@return
 print: scope:[print]  from main main::@1 main::@2
   [11] (byte*) screen#18 ← phi( main/((byte*))(word/signed word) 1024 main::@1/(byte*~) screen#19 main::@2/(byte*~) screen#20 ) [ print::msg#6 screen#18 ]
-  [11] (byte*) print::msg#6 ← phi( main/(const byte[]) msg1#0 main::@1/(const byte[]) main::msg2#0 main::@2/(const byte[]) main::msg ) [ print::msg#6 screen#18 ]
+  [11] (byte*) print::msg#6 ← phi( main/(const string) msg1#0 main::@1/(const string) main::msg2#0 main::@2/(const string) main::msg ) [ print::msg#6 screen#18 ]
   [12] (byte*~) print::msg#7 ← (byte*) print::msg#6 [ screen#18 print::msg#7 ]
   [13] (byte*~) screen#21 ← (byte*) screen#18 [ print::msg#7 screen#21 ]
   to:print::@1
@@ -962,7 +968,7 @@ main::@return: scope:[main]  from main::@2
   to:@return
 print: scope:[print]  from main main::@1 main::@2
   [11] (byte*) screen#18 ← phi( main/((byte*))(word/signed word) 1024 main::@1/(byte*) screen#12 main::@2/(byte*) screen#12 ) [ print::msg#6 screen#18 ]
-  [11] (byte*) print::msg#6 ← phi( main/(const byte[]) msg1#0 main::@1/(const byte[]) main::msg2#0 main::@2/(const byte[]) main::msg ) [ print::msg#6 screen#18 ]
+  [11] (byte*) print::msg#6 ← phi( main/(const string) msg1#0 main::@1/(const string) main::msg2#0 main::@2/(const string) main::msg ) [ print::msg#6 screen#18 ]
   to:print::@1
 print::@1: scope:[print]  from print print::@2
   [12] (byte*) screen#12 ← phi( print/(byte*) screen#18 print::@2/(byte*) screen#5 ) [ screen#12 print::msg#4 ]
@@ -1005,7 +1011,7 @@ main::@return: scope:[main]  from main::@2
   to:@return
 print: scope:[print]  from main main::@1 main::@2
   [11] (byte*) screen#18 ← phi( main/((byte*))(word/signed word) 1024 main::@1/(byte*) screen#12 main::@2/(byte*) screen#12 ) [ print::msg#6 screen#18 ] ( main:2::print:5 [ print::msg#6 screen#18 ] main:2::print:7 [ print::msg#6 screen#18 ] main:2::print:9 [ print::msg#6 screen#18 ] )
-  [11] (byte*) print::msg#6 ← phi( main/(const byte[]) msg1#0 main::@1/(const byte[]) main::msg2#0 main::@2/(const byte[]) main::msg ) [ print::msg#6 screen#18 ] ( main:2::print:5 [ print::msg#6 screen#18 ] main:2::print:7 [ print::msg#6 screen#18 ] main:2::print:9 [ print::msg#6 screen#18 ] )
+  [11] (byte*) print::msg#6 ← phi( main/(const string) msg1#0 main::@1/(const string) main::msg2#0 main::@2/(const string) main::msg ) [ print::msg#6 screen#18 ] ( main:2::print:5 [ print::msg#6 screen#18 ] main:2::print:7 [ print::msg#6 screen#18 ] main:2::print:9 [ print::msg#6 screen#18 ] )
   to:print::@1
 print::@1: scope:[print]  from print print::@2
   [12] (byte*) screen#12 ← phi( print/(byte*) screen#18 print::@2/(byte*) screen#5 ) [ screen#12 print::msg#4 ] ( main:2::print:5 [ screen#12 print::msg#4 ] main:2::print:7 [ screen#12 print::msg#4 ] main:2::print:9 [ screen#12 print::msg#4 ] )
@@ -1103,7 +1109,7 @@ main: {
     sta screen
     lda #>$400
     sta screen+1
-  //SEG13 [11] phi (byte*) print::msg#6 = (const byte[]) msg1#0 [phi:main->print#1] -- pbuz1=pbuc1 
+  //SEG13 [11] phi (byte*) print::msg#6 = (const string) msg1#0 [phi:main->print#1] -- pbuz1=pbuc1 
     lda #<msg1
     sta print.msg
     lda #>msg1
@@ -1118,7 +1124,7 @@ main: {
   //SEG17 [11] phi from main::@1 to print [phi:main::@1->print]
   print_from_b1:
   //SEG18 [11] phi (byte*) screen#18 = (byte*) screen#12 [phi:main::@1->print#0] -- register_copy 
-  //SEG19 [11] phi (byte*) print::msg#6 = (const byte[]) main::msg2#0 [phi:main::@1->print#1] -- pbuz1=pbuc1 
+  //SEG19 [11] phi (byte*) print::msg#6 = (const string) main::msg2#0 [phi:main::@1->print#1] -- pbuz1=pbuc1 
     lda #<msg2
     sta print.msg
     lda #>msg2
@@ -1133,7 +1139,7 @@ main: {
   //SEG23 [11] phi from main::@2 to print [phi:main::@2->print]
   print_from_b2:
   //SEG24 [11] phi (byte*) screen#18 = (byte*) screen#12 [phi:main::@2->print#0] -- register_copy 
-  //SEG25 [11] phi (byte*) print::msg#6 = (const byte[]) main::msg [phi:main::@2->print#1] -- pbuz1=pbuc1 
+  //SEG25 [11] phi (byte*) print::msg#6 = (const string) main::msg [phi:main::@2->print#1] -- pbuz1=pbuc1 
     lda #<msg
     sta print.msg
     lda #>msg
@@ -1237,7 +1243,7 @@ main: {
     sta screen
     lda #>$400
     sta screen+1
-  //SEG13 [11] phi (byte*) print::msg#6 = (const byte[]) msg1#0 [phi:main->print#1] -- pbuz1=pbuc1 
+  //SEG13 [11] phi (byte*) print::msg#6 = (const string) msg1#0 [phi:main->print#1] -- pbuz1=pbuc1 
     lda #<msg1
     sta print.msg
     lda #>msg1
@@ -1252,7 +1258,7 @@ main: {
   //SEG17 [11] phi from main::@1 to print [phi:main::@1->print]
   print_from_b1:
   //SEG18 [11] phi (byte*) screen#18 = (byte*) screen#12 [phi:main::@1->print#0] -- register_copy 
-  //SEG19 [11] phi (byte*) print::msg#6 = (const byte[]) main::msg2#0 [phi:main::@1->print#1] -- pbuz1=pbuc1 
+  //SEG19 [11] phi (byte*) print::msg#6 = (const string) main::msg2#0 [phi:main::@1->print#1] -- pbuz1=pbuc1 
     lda #<msg2
     sta print.msg
     lda #>msg2
@@ -1267,7 +1273,7 @@ main: {
   //SEG23 [11] phi from main::@2 to print [phi:main::@2->print]
   print_from_b2:
   //SEG24 [11] phi (byte*) screen#18 = (byte*) screen#12 [phi:main::@2->print#0] -- register_copy 
-  //SEG25 [11] phi (byte*) print::msg#6 = (const byte[]) main::msg [phi:main::@2->print#1] -- pbuz1=pbuc1 
+  //SEG25 [11] phi (byte*) print::msg#6 = (const string) main::msg [phi:main::@2->print#1] -- pbuz1=pbuc1 
     lda #<msg
     sta print.msg
     lda #>msg
@@ -1362,11 +1368,11 @@ FINAL SYMBOL TABLE
 (label) main::@1
 (label) main::@2
 (label) main::@return
-(const byte[]) main::msg msg = (string) "message 3 @"
+(const string) main::msg msg = (string) "message 3 @"
 (byte[]) main::msg2
-(const byte[]) main::msg2#0 msg2 = (string) "message 2 @"
+(const string) main::msg2#0 msg2 = (string) "message 2 @"
 (byte[]) msg1
-(const byte[]) msg1#0 msg1 = (string) "message 1 @"
+(const string) msg1#0 msg1 = (string) "message 1 @"
 (void()) print((byte*) print::msg)
 (label) print::@1
 (label) print::@2
@@ -1408,7 +1414,7 @@ main: {
     sta screen
     lda #>$400
     sta screen+1
-  //SEG13 [11] phi (byte*) print::msg#6 = (const byte[]) msg1#0 [phi:main->print#1] -- pbuz1=pbuc1 
+  //SEG13 [11] phi (byte*) print::msg#6 = (const string) msg1#0 [phi:main->print#1] -- pbuz1=pbuc1 
     lda #<msg1
     sta print.msg
     lda #>msg1
@@ -1419,7 +1425,7 @@ main: {
   //SEG16 [7] call print param-assignment [ screen#12 ] ( main:2 [ screen#12 ] )
   //SEG17 [11] phi from main::@1 to print [phi:main::@1->print]
   //SEG18 [11] phi (byte*) screen#18 = (byte*) screen#12 [phi:main::@1->print#0] -- register_copy 
-  //SEG19 [11] phi (byte*) print::msg#6 = (const byte[]) main::msg2#0 [phi:main::@1->print#1] -- pbuz1=pbuc1 
+  //SEG19 [11] phi (byte*) print::msg#6 = (const string) main::msg2#0 [phi:main::@1->print#1] -- pbuz1=pbuc1 
     lda #<msg2
     sta print.msg
     lda #>msg2
@@ -1430,7 +1436,7 @@ main: {
   //SEG22 [9] call print param-assignment [ ] ( main:2 [ ] )
   //SEG23 [11] phi from main::@2 to print [phi:main::@2->print]
   //SEG24 [11] phi (byte*) screen#18 = (byte*) screen#12 [phi:main::@2->print#0] -- register_copy 
-  //SEG25 [11] phi (byte*) print::msg#6 = (const byte[]) main::msg [phi:main::@2->print#1] -- pbuz1=pbuc1 
+  //SEG25 [11] phi (byte*) print::msg#6 = (const string) main::msg [phi:main::@2->print#1] -- pbuz1=pbuc1 
     lda #<msg
     sta print.msg
     lda #>msg

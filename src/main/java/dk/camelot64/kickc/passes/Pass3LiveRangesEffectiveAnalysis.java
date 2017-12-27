@@ -67,7 +67,7 @@ public class Pass3LiveRangesEffectiveAnalysis extends Pass2Base {
                // Make sure we have populated the call-paths of the calling procedure
                populateProcedureCallPaths(callerProcedure);
                // Find variables referenced in caller procedure
-               Collection<VariableRef> referencedInCaller = referenceInfo.getReferenced(callerProcedure.getRef().getLabelRef());
+               Collection<VariableRef> referencedInCaller = referenceInfo.getReferencedVars(callerProcedure.getRef().getLabelRef());
                // For each caller path - create a new call-path
                LiveRangeVariablesEffective.CallPaths callerPaths = procedureCallPaths.get(callerProcedure.getRef());
                for (LiveRangeVariablesEffective.CallPath callerPath : callerPaths.getCallPaths()) {

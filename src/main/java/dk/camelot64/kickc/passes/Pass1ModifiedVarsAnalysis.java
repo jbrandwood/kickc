@@ -12,7 +12,7 @@ public class Pass1ModifiedVarsAnalysis extends Pass1Base {
    }
 
    @Override
-   boolean executeStep() {
+   public boolean step() {
       Map<ProcedureRef, Set<VariableRef>> modified = new LinkedHashMap<>();
       Collection<Procedure> allProcedures = getScope().getAllProcedures(true);
       for (Procedure procedure : allProcedures) {

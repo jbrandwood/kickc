@@ -1,4 +1,4 @@
-
+byte* SCREEN= $400;
 byte line = $40;
 byte char = line;
 
@@ -8,6 +8,7 @@ void main() {
     ln();
     char++;
     ln();
+    *SCREEN = char;
 }
 
 void ln() {
@@ -23,6 +24,7 @@ void ln() {
 Adding pre/post-modifier (byte) char ← ++ (byte) char
 Adding pre/post-modifier (byte) char ← ++ (byte) char
 PROGRAM
+  (byte*) SCREEN ← (word/signed word) 1024
   (byte) line ← (byte/signed byte/word/signed word) 64
   (byte) char ← (byte) line
 proc (void()) main()
@@ -31,12 +33,13 @@ proc (void()) main()
   (void~) main::$1 ← call ln 
   (byte) char ← ++ (byte) char
   (void~) main::$2 ← call ln 
+  *((byte*) SCREEN) ← (byte) char
 main::@return:
   return 
 endproc // main()
 proc (void()) ln()
-  (byte~) ln::$0 ← (byte) line + (byte/signed byte/word/signed word) 2
-  (byte) line ← (byte~) ln::$0
+  (byte/word~) ln::$0 ← (byte) line + (byte/signed byte/word/signed word) 2
+  (byte) line ← (byte/word~) ln::$0
   (byte) char ← (byte) line
 ln::@return:
   return 
@@ -44,10 +47,11 @@ endproc // ln()
   call main 
 
 SYMBOLS
+(byte*) SCREEN
 (byte) char
 (byte) line
 (void()) ln()
-(byte~) ln::$0
+(byte/word~) ln::$0
 (label) ln::@return
 (void()) main()
 (void~) main::$0
@@ -55,8 +59,10 @@ SYMBOLS
 (void~) main::$2
 (label) main::@return
 
+Promoting word/signed word to byte* in SCREEN ← ((byte*)) 1024
 INITIAL CONTROL FLOW GRAPH
 @begin: scope:[]  from
+  (byte*) SCREEN ← ((byte*)) (word/signed word) 1024
   (byte) line ← (byte/signed byte/word/signed word) 64
   (byte) char ← (byte) line
   to:@1
@@ -66,6 +72,7 @@ main: scope:[main]  from
   (void~) main::$1 ← call ln 
   (byte) char ← ++ (byte) char
   (void~) main::$2 ← call ln 
+  *((byte*) SCREEN) ← (byte) char
   to:main::@return
 main::@return: scope:[main]  from main
   return 
@@ -73,8 +80,8 @@ main::@return: scope:[main]  from main
 @1: scope:[]  from @begin
   to:@2
 ln: scope:[ln]  from
-  (byte~) ln::$0 ← (byte) line + (byte/signed byte/word/signed word) 2
-  (byte) line ← (byte~) ln::$0
+  (byte/word~) ln::$0 ← (byte) line + (byte/signed byte/word/signed word) 2
+  (byte) line ← (byte/word~) ln::$0
   (byte) char ← (byte) line
   to:ln::@return
 ln::@return: scope:[ln]  from ln
@@ -91,6 +98,7 @@ Eliminating unused variable - keeping the call (void~) main::$2
 Removing empty block @1
 CONTROL FLOW GRAPH
 @begin: scope:[]  from
+  (byte*) SCREEN ← ((byte*)) (word/signed word) 1024
   (byte) line ← (byte/signed byte/word/signed word) 64
   (byte) char ← (byte) line
   to:@2
@@ -100,13 +108,14 @@ main: scope:[main]  from
   call ln 
   (byte) char ← ++ (byte) char
   call ln 
+  *((byte*) SCREEN) ← (byte) char
   to:main::@return
 main::@return: scope:[main]  from main
   return 
   to:@return
 ln: scope:[ln]  from
-  (byte~) ln::$0 ← (byte) line + (byte/signed byte/word/signed word) 2
-  (byte) line ← (byte~) ln::$0
+  (byte/word~) ln::$0 ← (byte) line + (byte/signed byte/word/signed word) 2
+  (byte) line ← (byte/word~) ln::$0
   (byte) char ← (byte) line
   to:ln::@return
 ln::@return: scope:[ln]  from ln
@@ -125,6 +134,7 @@ ln modifies char
 
 CONTROL FLOW GRAPH WITH ASSIGNMENT CALL
 @begin: scope:[]  from
+  (byte*) SCREEN ← ((byte*)) (word/signed word) 1024
   (byte) line ← (byte/signed byte/word/signed word) 64
   (byte) char ← (byte) line
   to:@2
@@ -146,6 +156,7 @@ main::@2: scope:[main]  from main::@1
 main::@3: scope:[main]  from main::@2
   (byte) line ← (byte) line
   (byte) char ← (byte) char
+  *((byte*) SCREEN) ← (byte) char
   to:main::@return
 main::@return: scope:[main]  from main::@3
   (byte) line ← (byte) line
@@ -153,8 +164,8 @@ main::@return: scope:[main]  from main::@3
   return 
   to:@return
 ln: scope:[ln]  from main main::@1 main::@2
-  (byte~) ln::$0 ← (byte) line + (byte/signed byte/word/signed word) 2
-  (byte) line ← (byte~) ln::$0
+  (byte/word~) ln::$0 ← (byte) line + (byte/signed byte/word/signed word) 2
+  (byte) line ← (byte/word~) ln::$0
   (byte) char ← (byte) line
   to:ln::@return
 ln::@return: scope:[ln]  from ln
@@ -173,17 +184,23 @@ ln::@return: scope:[ln]  from ln
 
 Completing Phi functions...
 Completing Phi functions...
+Completing Phi functions...
+Completing Phi functions...
+Completing Phi functions...
 CONTROL FLOW GRAPH SSA
 @begin: scope:[]  from
+  (byte*) SCREEN#0 ← ((byte*)) (word/signed word) 1024
   (byte) line#0 ← (byte/signed byte/word/signed word) 64
   (byte) char#0 ← (byte) line#0
   to:@2
 main: scope:[main]  from @2
+  (byte*) SCREEN#4 ← phi( @2/(byte*) SCREEN#5 )
   (byte) char#16 ← phi( @2/(byte) char#17 )
   (byte) line#15 ← phi( @2/(byte) line#16 )
   call ln param-assignment
   to:main::@1
 main::@1: scope:[main]  from main
+  (byte*) SCREEN#3 ← phi( main/(byte*) SCREEN#4 )
   (byte) char#10 ← phi( main/(byte) char#16 )
   (byte) line#8 ← phi( main/(byte) line#15 )
   (byte) line#1 ← (byte) line#8
@@ -192,6 +209,7 @@ main::@1: scope:[main]  from main
   call ln param-assignment
   to:main::@2
 main::@2: scope:[main]  from main::@1
+  (byte*) SCREEN#2 ← phi( main::@1/(byte*) SCREEN#3 )
   (byte) char#11 ← phi( main::@1/(byte) char#2 )
   (byte) line#9 ← phi( main::@1/(byte) line#1 )
   (byte) line#2 ← (byte) line#9
@@ -200,10 +218,12 @@ main::@2: scope:[main]  from main::@1
   call ln param-assignment
   to:main::@3
 main::@3: scope:[main]  from main::@2
+  (byte*) SCREEN#1 ← phi( main::@2/(byte*) SCREEN#2 )
   (byte) char#12 ← phi( main::@2/(byte) char#4 )
   (byte) line#10 ← phi( main::@2/(byte) line#2 )
   (byte) line#3 ← (byte) line#10
   (byte) char#5 ← (byte) char#12
+  *((byte*) SCREEN#1) ← (byte) char#5
   to:main::@return
 main::@return: scope:[main]  from main::@3
   (byte) char#13 ← phi( main::@3/(byte) char#5 )
@@ -214,8 +234,8 @@ main::@return: scope:[main]  from main::@3
   to:@return
 ln: scope:[ln]  from main main::@1 main::@2
   (byte) line#12 ← phi( main/(byte) line#15 main::@1/(byte) line#1 main::@2/(byte) line#2 )
-  (byte~) ln::$0 ← (byte) line#12 + (byte/signed byte/word/signed word) 2
-  (byte) line#5 ← (byte~) ln::$0
+  (byte/word~) ln::$0 ← (byte) line#12 + (byte/signed byte/word/signed word) 2
+  (byte) line#5 ← (byte/word~) ln::$0
   (byte) char#7 ← (byte) line#5
   to:ln::@return
 ln::@return: scope:[ln]  from ln
@@ -226,6 +246,7 @@ ln::@return: scope:[ln]  from ln
   return 
   to:@return
 @2: scope:[]  from @begin
+  (byte*) SCREEN#5 ← phi( @begin/(byte*) SCREEN#0 )
   (byte) char#17 ← phi( @begin/(byte) char#0 )
   (byte) line#16 ← phi( @begin/(byte) line#0 )
   call main param-assignment
@@ -240,15 +261,18 @@ ln::@return: scope:[ln]  from ln
 
 CONTROL FLOW GRAPH WITH ASSIGNMENT CALL & RETURN
 @begin: scope:[]  from
+  (byte*) SCREEN#0 ← ((byte*)) (word/signed word) 1024
   (byte) line#0 ← (byte/signed byte/word/signed word) 64
   (byte) char#0 ← (byte) line#0
   to:@2
 main: scope:[main]  from @2
+  (byte*) SCREEN#4 ← phi( @2/(byte*) SCREEN#5 )
   (byte) char#16 ← phi( @2/(byte) char#17 )
   (byte) line#15 ← phi( @2/(byte) line#16 )
   call ln param-assignment
   to:main::@1
 main::@1: scope:[main]  from main
+  (byte*) SCREEN#3 ← phi( main/(byte*) SCREEN#4 )
   (byte) char#10 ← phi( main/(byte) char#8 )
   (byte) line#8 ← phi( main/(byte) line#6 )
   (byte) line#1 ← (byte) line#8
@@ -257,6 +281,7 @@ main::@1: scope:[main]  from main
   call ln param-assignment
   to:main::@2
 main::@2: scope:[main]  from main::@1
+  (byte*) SCREEN#2 ← phi( main::@1/(byte*) SCREEN#3 )
   (byte) char#11 ← phi( main::@1/(byte) char#8 )
   (byte) line#9 ← phi( main::@1/(byte) line#6 )
   (byte) line#2 ← (byte) line#9
@@ -265,10 +290,12 @@ main::@2: scope:[main]  from main::@1
   call ln param-assignment
   to:main::@3
 main::@3: scope:[main]  from main::@2
+  (byte*) SCREEN#1 ← phi( main::@2/(byte*) SCREEN#2 )
   (byte) char#12 ← phi( main::@2/(byte) char#8 )
   (byte) line#10 ← phi( main::@2/(byte) line#6 )
   (byte) line#3 ← (byte) line#10
   (byte) char#5 ← (byte) char#12
+  *((byte*) SCREEN#1) ← (byte) char#5
   to:main::@return
 main::@return: scope:[main]  from main::@3
   (byte) char#13 ← phi( main::@3/(byte) char#5 )
@@ -279,8 +306,8 @@ main::@return: scope:[main]  from main::@3
   to:@return
 ln: scope:[ln]  from main main::@1 main::@2
   (byte) line#12 ← phi( main/(byte) line#15 main::@1/(byte) line#1 main::@2/(byte) line#2 )
-  (byte~) ln::$0 ← (byte) line#12 + (byte/signed byte/word/signed word) 2
-  (byte) line#5 ← (byte~) ln::$0
+  (byte/word~) ln::$0 ← (byte) line#12 + (byte/signed byte/word/signed word) 2
+  (byte) line#5 ← (byte/word~) ln::$0
   (byte) char#7 ← (byte) line#5
   to:ln::@return
 ln::@return: scope:[ln]  from ln
@@ -291,6 +318,7 @@ ln::@return: scope:[ln]  from ln
   return 
   to:@return
 @2: scope:[]  from @begin
+  (byte*) SCREEN#5 ← phi( @begin/(byte*) SCREEN#0 )
   (byte) char#17 ← phi( @begin/(byte) char#0 )
   (byte) line#16 ← phi( @begin/(byte) line#0 )
   call main param-assignment
@@ -308,6 +336,13 @@ INITIAL SSA SYMBOL TABLE
 (label) @3
 (label) @begin
 (label) @end
+(byte*) SCREEN
+(byte*) SCREEN#0
+(byte*) SCREEN#1
+(byte*) SCREEN#2
+(byte*) SCREEN#3
+(byte*) SCREEN#4
+(byte*) SCREEN#5
 (byte) char
 (byte) char#0
 (byte) char#1
@@ -346,7 +381,7 @@ INITIAL SSA SYMBOL TABLE
 (byte) line#8
 (byte) line#9
 (void()) ln()
-(byte~) ln::$0
+(byte/word~) ln::$0
 (label) ln::@return
 (void()) main()
 (label) main::@1
@@ -356,6 +391,7 @@ INITIAL SSA SYMBOL TABLE
 
 Not aliassing across scopes: line#15 line#16
 Not aliassing across scopes: char#16 char#17
+Not aliassing across scopes: SCREEN#4 SCREEN#5
 Not aliassing across scopes: line#8 line#6
 Not aliassing across scopes: char#10 char#8
 Not aliassing across scopes: line#9 line#6
@@ -366,21 +402,25 @@ Not aliassing across scopes: line#12 line#15
 Not aliassing across scopes: line#14 line#4
 Not aliassing across scopes: char#15 char#6
 Alias (byte) line#0 = (byte) char#0 (byte) line#16 (byte) char#17 
+Alias (byte*) SCREEN#1 = (byte*) SCREEN#3 (byte*) SCREEN#4 (byte*) SCREEN#2 
 Alias (byte) line#1 = (byte) line#8 
 Alias (byte) char#1 = (byte) char#10 
 Alias (byte) line#2 = (byte) line#9 
 Alias (byte) char#11 = (byte) char#3 
 Alias (byte) line#10 = (byte) line#3 (byte) line#11 (byte) line#4 
 Alias (byte) char#12 = (byte) char#5 (byte) char#13 (byte) char#6 
-Alias (byte) line#13 = (byte) line#5 (byte~) ln::$0 (byte) char#7 (byte) char#14 (byte) line#6 (byte) char#8 
+Alias (byte) line#13 = (byte) line#5 (byte/word~) ln::$0 (byte) char#7 (byte) char#14 (byte) line#6 (byte) char#8 
+Alias (byte*) SCREEN#0 = (byte*) SCREEN#5 
 Alias (byte) line#14 = (byte) line#7 
 Alias (byte) char#15 = (byte) char#9 
 Succesful SSA optimization Pass2AliasElimination
 CONTROL FLOW GRAPH
 @begin: scope:[]  from
+  (byte*) SCREEN#0 ← ((byte*)) (word/signed word) 1024
   (byte) line#0 ← (byte/signed byte/word/signed word) 64
   to:@2
 main: scope:[main]  from @2
+  (byte*) SCREEN#1 ← phi( @2/(byte*) SCREEN#0 )
   (byte) char#16 ← phi( @2/(byte) line#0 )
   (byte) line#15 ← phi( @2/(byte) line#0 )
   call ln param-assignment
@@ -400,6 +440,7 @@ main::@2: scope:[main]  from main::@1
 main::@3: scope:[main]  from main::@2
   (byte) char#12 ← phi( main::@2/(byte) line#13 )
   (byte) line#10 ← phi( main::@2/(byte) line#13 )
+  *((byte*) SCREEN#1) ← (byte) char#12
   to:main::@return
 main::@return: scope:[main]  from main::@3
   return 
@@ -422,6 +463,7 @@ ln::@return: scope:[ln]  from ln
 
 Not aliassing across scopes: line#15 line#0
 Not aliassing across scopes: char#16 line#0
+Not aliassing across scopes: SCREEN#1 SCREEN#0
 Not aliassing across scopes: line#1 line#13
 Not aliassing across scopes: char#1 line#13
 Not aliassing across scopes: line#2 line#13
@@ -433,6 +475,7 @@ Not aliassing across scopes: line#14 line#10
 Not aliassing across scopes: char#15 char#12
 Redundant Phi (byte) line#15 (byte) line#0
 Redundant Phi (byte) char#16 (byte) line#0
+Redundant Phi (byte*) SCREEN#1 (byte*) SCREEN#0
 Redundant Phi (byte) line#1 (byte) line#13
 Redundant Phi (byte) char#1 (byte) line#13
 Redundant Phi (byte) line#2 (byte) line#13
@@ -444,6 +487,7 @@ Redundant Phi (byte) char#15 (byte) char#12
 Succesful SSA optimization Pass2RedundantPhiElimination
 CONTROL FLOW GRAPH
 @begin: scope:[]  from
+  (byte*) SCREEN#0 ← ((byte*)) (word/signed word) 1024
   (byte) line#0 ← (byte/signed byte/word/signed word) 64
   to:@2
 main: scope:[main]  from @2
@@ -458,6 +502,7 @@ main::@2: scope:[main]  from main::@1
   call ln param-assignment
   to:main::@3
 main::@3: scope:[main]  from main::@2
+  *((byte*) SCREEN#0) ← (byte) line#13
   to:main::@return
 main::@return: scope:[main]  from main::@3
   return 
@@ -476,6 +521,7 @@ ln::@return: scope:[ln]  from ln
   to:@end
 @end: scope:[]  from @3
 
+Constant (const byte*) SCREEN#0 = ((byte*))1024
 Constant (const byte) line#0 = 64
 Succesful SSA optimization Pass2ConstantIdentification
 CONTROL FLOW GRAPH
@@ -493,6 +539,7 @@ main::@2: scope:[main]  from main::@1
   call ln param-assignment
   to:main::@3
 main::@3: scope:[main]  from main::@2
+  *((const byte*) SCREEN#0) ← (byte) line#13
   to:main::@return
 main::@return: scope:[main]  from main::@3
   return 
@@ -511,7 +558,41 @@ ln::@return: scope:[ln]  from ln
   to:@end
 @end: scope:[]  from @3
 
-Culled Empty Block (label) main::@3
+Eliminating unused variable (byte) char#2 and assignment [1] (byte) char#2 ← ++ (byte) line#13
+Eliminating unused variable (byte) char#4 and assignment [3] (byte) char#4 ← ++ (byte) line#13
+Succesful SSA optimization PassNEliminateUnusedVars
+CONTROL FLOW GRAPH
+@begin: scope:[]  from
+  to:@2
+main: scope:[main]  from @2
+  call ln param-assignment
+  to:main::@1
+main::@1: scope:[main]  from main
+  call ln param-assignment
+  to:main::@2
+main::@2: scope:[main]  from main::@1
+  call ln param-assignment
+  to:main::@3
+main::@3: scope:[main]  from main::@2
+  *((const byte*) SCREEN#0) ← (byte) line#13
+  to:main::@return
+main::@return: scope:[main]  from main::@3
+  return 
+  to:@return
+ln: scope:[ln]  from main main::@1 main::@2
+  (byte) line#12 ← phi( main/(const byte) line#0 main::@1/(byte) line#13 main::@2/(byte) line#13 )
+  (byte) line#13 ← (byte) line#12 + (byte/signed byte/word/signed word) 2
+  to:ln::@return
+ln::@return: scope:[ln]  from ln
+  return 
+  to:@return
+@2: scope:[]  from @begin
+  call main param-assignment
+  to:@3
+@3: scope:[]  from @2
+  to:@end
+@end: scope:[]  from @3
+
 Culled Empty Block (label) @3
 Succesful SSA optimization Pass2CullEmptyBlocks
 CONTROL FLOW GRAPH
@@ -521,14 +602,15 @@ main: scope:[main]  from @2
   call ln param-assignment
   to:main::@1
 main::@1: scope:[main]  from main
-  (byte) char#2 ← ++ (byte) line#13
   call ln param-assignment
   to:main::@2
 main::@2: scope:[main]  from main::@1
-  (byte) char#4 ← ++ (byte) line#13
   call ln param-assignment
+  to:main::@3
+main::@3: scope:[main]  from main::@2
+  *((const byte*) SCREEN#0) ← (byte) line#13
   to:main::@return
-main::@return: scope:[main]  from main::@2
+main::@return: scope:[main]  from main::@3
   return 
   to:@return
 ln: scope:[ln]  from main main::@1 main::@2
@@ -554,14 +636,15 @@ main: scope:[main]  from @2
   call ln param-assignment
   to:main::@1
 main::@1: scope:[main]  from main
-  (byte) char#2 ← ++ (byte) line#13
   call ln param-assignment
   to:main::@2
 main::@2: scope:[main]  from main::@1
-  (byte) char#4 ← ++ (byte) line#13
   call ln param-assignment
+  to:main::@3
+main::@3: scope:[main]  from main::@2
+  *((const byte*) SCREEN#0) ← (byte) line#13
   to:main::@return
-main::@return: scope:[main]  from main::@2
+main::@return: scope:[main]  from main::@3
   return 
   to:@return
 ln: scope:[ln]  from main main::@1 main::@2
@@ -580,9 +663,9 @@ FINAL SYMBOL TABLE
 (label) @2
 (label) @begin
 (label) @end
+(byte*) SCREEN
+(const byte*) SCREEN#0 = ((byte*))(word/signed word) 1024
 (byte) char
-(byte) char#2
-(byte) char#4
 (byte) line
 (byte) line#12
 (byte) line#13
@@ -591,10 +674,11 @@ FINAL SYMBOL TABLE
 (void()) main()
 (label) main::@1
 (label) main::@2
+(label) main::@3
 (label) main::@return
 
-Block Sequence Planned @begin @2 @end main main::@1 main::@2 main::@return ln ln::@return 
-Block Sequence Planned @begin @2 @end main main::@1 main::@2 main::@return ln ln::@return 
+Block Sequence Planned @begin @2 @end main main::@1 main::@2 main::@3 main::@return ln ln::@return 
+Block Sequence Planned @begin @2 @end main main::@1 main::@2 main::@3 main::@return ln ln::@return 
 CONTROL FLOW GRAPH - PHI LIFTED
 @begin: scope:[]  from
   to:@2
@@ -606,16 +690,17 @@ main: scope:[main]  from @2
   call ln param-assignment
   to:main::@1
 main::@1: scope:[main]  from main
-  (byte) char#2 ← ++ (byte) line#13
   (byte~) line#17 ← (byte) line#13
   call ln param-assignment
   to:main::@2
 main::@2: scope:[main]  from main::@1
-  (byte) char#4 ← ++ (byte) line#13
   (byte~) line#18 ← (byte) line#13
   call ln param-assignment
+  to:main::@3
+main::@3: scope:[main]  from main::@2
+  *((const byte*) SCREEN#0) ← (byte) line#13
   to:main::@return
-main::@return: scope:[main]  from main::@2
+main::@return: scope:[main]  from main::@3
   return 
   to:@return
 ln: scope:[ln]  from main main::@1 main::@2
@@ -632,7 +717,7 @@ Adding NOP phi() at start of @end
 Adding NOP phi() at start of main
 CALL GRAPH
 Calls in [] to main:2 
-Calls in [main] to ln:5 ln:8 ln:11 
+Calls in [main] to ln:5 ln:7 ln:9 
 
 Propagating live ranges...
 Propagating live ranges...
@@ -652,35 +737,38 @@ main: scope:[main]  from @2
   [5] call ln param-assignment [ line#13 ]
   to:main::@1
 main::@1: scope:[main]  from main
-  [6] (byte) char#2 ← ++ (byte) line#13 [ line#13 ]
-  [7] (byte~) line#17 ← (byte) line#13 [ line#17 ]
-  [8] call ln param-assignment [ line#13 ]
+  [6] (byte~) line#17 ← (byte) line#13 [ line#17 ]
+  [7] call ln param-assignment [ line#13 ]
   to:main::@2
 main::@2: scope:[main]  from main::@1
-  [9] (byte) char#4 ← ++ (byte) line#13 [ line#13 ]
-  [10] (byte~) line#18 ← (byte) line#13 [ line#18 ]
-  [11] call ln param-assignment [ ]
+  [8] (byte~) line#18 ← (byte) line#13 [ line#18 ]
+  [9] call ln param-assignment [ line#13 ]
+  to:main::@3
+main::@3: scope:[main]  from main::@2
+  [10] *((const byte*) SCREEN#0) ← (byte) line#13 [ ]
   to:main::@return
-main::@return: scope:[main]  from main::@2
-  [12] return  [ ]
+main::@return: scope:[main]  from main::@3
+  [11] return  [ ]
   to:@return
 ln: scope:[ln]  from main main::@1 main::@2
-  [13] (byte) line#12 ← phi( main/(byte/signed byte/word/signed word) 64 main::@1/(byte~) line#17 main::@2/(byte~) line#18 ) [ line#12 ]
-  [14] (byte) line#13 ← (byte) line#12 + (byte/signed byte/word/signed word) 2 [ line#13 ]
+  [12] (byte) line#12 ← phi( main/(byte/signed byte/word/signed word) 64 main::@1/(byte~) line#17 main::@2/(byte~) line#18 ) [ line#12 ]
+  [13] (byte) line#13 ← (byte) line#12 + (byte/signed byte/word/signed word) 2 [ line#13 ]
   to:ln::@return
 ln::@return: scope:[ln]  from ln
-  [15] return  [ line#13 ]
+  [14] return  [ line#13 ]
   to:@return
 
 Created 1 initial phi equivalence classes
-Coalesced [7] line#17 ← line#13
-Coalesced (already) [10] line#18 ← line#13
+Coalesced [6] line#17 ← line#13
+Coalesced (already) [8] line#18 ← line#13
 Coalesced down to 1 phi equivalence classes
-Block Sequence Planned @begin @2 @end main main::@1 main::@2 main::@return ln ln::@return 
+Block Sequence Planned @begin @2 @end main main::@1 main::@2 main::@3 main::@return ln ln::@return 
 Adding NOP phi() at start of @begin
 Adding NOP phi() at start of @2
 Adding NOP phi() at start of @end
 Adding NOP phi() at start of main
+Adding NOP phi() at start of main::@1
+Adding NOP phi() at start of main::@2
 Propagating live ranges...
 Propagating live ranges...
 Propagating live ranges...
@@ -699,22 +787,25 @@ main: scope:[main]  from @2
   [5] call ln param-assignment [ line#13 ]
   to:main::@1
 main::@1: scope:[main]  from main
-  [6] (byte) char#2 ← ++ (byte) line#13 [ line#13 ]
+  [6] phi() [ line#13 ]
   [7] call ln param-assignment [ line#13 ]
   to:main::@2
 main::@2: scope:[main]  from main::@1
-  [8] (byte) char#4 ← ++ (byte) line#13 [ line#13 ]
-  [9] call ln param-assignment [ ]
+  [8] phi() [ line#13 ]
+  [9] call ln param-assignment [ line#13 ]
+  to:main::@3
+main::@3: scope:[main]  from main::@2
+  [10] *((const byte*) SCREEN#0) ← (byte) line#13 [ ]
   to:main::@return
-main::@return: scope:[main]  from main::@2
-  [10] return  [ ]
+main::@return: scope:[main]  from main::@3
+  [11] return  [ ]
   to:@return
 ln: scope:[ln]  from main main::@1 main::@2
-  [11] (byte) line#12 ← phi( main/(byte/signed byte/word/signed word) 64 main::@1/(byte) line#13 main::@2/(byte) line#13 ) [ line#12 ]
-  [12] (byte) line#13 ← (byte) line#12 + (byte/signed byte/word/signed word) 2 [ line#13 ]
+  [12] (byte) line#12 ← phi( main/(byte/signed byte/word/signed word) 64 main::@1/(byte) line#13 main::@2/(byte) line#13 ) [ line#12 ]
+  [13] (byte) line#13 ← (byte) line#12 + (byte/signed byte/word/signed word) 2 [ line#13 ]
   to:ln::@return
 ln::@return: scope:[ln]  from ln
-  [13] return  [ line#13 ]
+  [14] return  [ line#13 ]
   to:@return
 
 CONTROL FLOW GRAPH - PHI MEM COALESCED
@@ -732,22 +823,25 @@ main: scope:[main]  from @2
   [5] call ln param-assignment [ line#13 ] ( main:2 [ line#13 ] )
   to:main::@1
 main::@1: scope:[main]  from main
-  [6] (byte) char#2 ← ++ (byte) line#13 [ line#13 ] ( main:2 [ line#13 ] )
+  [6] phi() [ line#13 ] ( main:2 [ line#13 ] )
   [7] call ln param-assignment [ line#13 ] ( main:2 [ line#13 ] )
   to:main::@2
 main::@2: scope:[main]  from main::@1
-  [8] (byte) char#4 ← ++ (byte) line#13 [ line#13 ] ( main:2 [ line#13 ] )
-  [9] call ln param-assignment [ ] ( main:2 [ ] )
+  [8] phi() [ line#13 ] ( main:2 [ line#13 ] )
+  [9] call ln param-assignment [ line#13 ] ( main:2 [ line#13 ] )
+  to:main::@3
+main::@3: scope:[main]  from main::@2
+  [10] *((const byte*) SCREEN#0) ← (byte) line#13 [ ] ( main:2 [ ] )
   to:main::@return
-main::@return: scope:[main]  from main::@2
-  [10] return  [ ] ( main:2 [ ] )
+main::@return: scope:[main]  from main::@3
+  [11] return  [ ] ( main:2 [ ] )
   to:@return
 ln: scope:[ln]  from main main::@1 main::@2
-  [11] (byte) line#12 ← phi( main/(byte/signed byte/word/signed word) 64 main::@1/(byte) line#13 main::@2/(byte) line#13 ) [ line#12 ] ( main:2::ln:5 [ line#12 ] main:2::ln:7 [ line#12 ] main:2::ln:9 [ line#12 ] )
-  [12] (byte) line#13 ← (byte) line#12 + (byte/signed byte/word/signed word) 2 [ line#13 ] ( main:2::ln:5 [ line#13 ] main:2::ln:7 [ line#13 ] main:2::ln:9 [ line#13 ] )
+  [12] (byte) line#12 ← phi( main/(byte/signed byte/word/signed word) 64 main::@1/(byte) line#13 main::@2/(byte) line#13 ) [ line#12 ] ( main:2::ln:5 [ line#12 ] main:2::ln:7 [ line#12 ] main:2::ln:9 [ line#12 ] )
+  [13] (byte) line#13 ← (byte) line#12 + (byte/signed byte/word/signed word) 2 [ line#13 ] ( main:2::ln:5 [ line#13 ] main:2::ln:7 [ line#13 ] main:2::ln:9 [ line#13 ] )
   to:ln::@return
 ln::@return: scope:[ln]  from ln
-  [13] return  [ line#13 ] ( main:2::ln:5 [ line#13 ] main:2::ln:7 [ line#13 ] main:2::ln:9 [ line#13 ] )
+  [14] return  [ line#13 ] ( main:2::ln:5 [ line#13 ] main:2::ln:7 [ line#13 ] main:2::ln:9 [ line#13 ] )
   to:@return
 
 DOMINATORS
@@ -757,7 +851,8 @@ DOMINATORS
 main dominated by  @2 @begin main 
 main::@1 dominated by  @2 @begin main::@1 main 
 main::@2 dominated by  @2 @begin main::@1 main::@2 main 
-main::@return dominated by  main::@return @2 @begin main::@1 main::@2 main 
+main::@3 dominated by  @2 @begin main::@1 main::@2 main main::@3 
+main::@return dominated by  main::@return @2 @begin main::@1 main::@2 main main::@3 
 ln dominated by  @2 ln @begin main 
 ln::@return dominated by  @2 ln ln::@return @begin main 
 
@@ -770,34 +865,26 @@ NATURAL LOOPS WITH DEPTH
 
 
 VARIABLE REGISTER WEIGHTS
+(byte*) SCREEN
 (byte) char
-(byte) char#2 20.0
-(byte) char#4 20.0
 (byte) line
 (byte) line#12 6.0
-(byte) line#13 1.6666666666666665
+(byte) line#13 1.1428571428571428
 (void()) ln()
 (void()) main()
 
 Initial phi equivalence classes
 [ line#12 line#13 ]
-Added variable char#2 to zero page equivalence class [ char#2 ]
-Added variable char#4 to zero page equivalence class [ char#4 ]
 Complete equivalence classes
 [ line#12 line#13 ]
-[ char#2 ]
-[ char#4 ]
 Allocated zp ZP_BYTE:2 [ line#12 line#13 ]
-Allocated zp ZP_BYTE:3 [ char#2 ]
-Allocated zp ZP_BYTE:4 [ char#4 ]
 INITIAL ASM
 //SEG0 Basic Upstart
 .pc = $801 "Basic"
 :BasicUpstart(main)
 .pc = $80d "Program"
 //SEG1 Global Constants & labels
-  .label char = 3
-  .label char_4 = 4
+  .const SCREEN = $400
   .label line = 2
 //SEG2 @begin
 bbegin:
@@ -818,76 +905,70 @@ bend:
 //SEG9 main
 main: {
   //SEG10 [5] call ln param-assignment [ line#13 ] ( main:2 [ line#13 ] )
-  //SEG11 [11] phi from main to ln [phi:main->ln]
+  //SEG11 [12] phi from main to ln [phi:main->ln]
   ln_from_main:
-  //SEG12 [11] phi (byte) line#12 = (byte/signed byte/word/signed word) 64 [phi:main->ln#0] -- vbuz1=vbuc1 
+  //SEG12 [12] phi (byte) line#12 = (byte/signed byte/word/signed word) 64 [phi:main->ln#0] -- vbuz1=vbuc1 
     lda #$40
     sta line
     jsr ln
+  //SEG13 [6] phi from main to main::@1 [phi:main->main::@1]
+  b1_from_main:
     jmp b1
-  //SEG13 main::@1
+  //SEG14 main::@1
   b1:
-  //SEG14 [6] (byte) char#2 ← ++ (byte) line#13 [ line#13 ] ( main:2 [ line#13 ] ) -- vbuz1=_inc_vbuz2 
-    lda line
-    sta char
-    inc char
   //SEG15 [7] call ln param-assignment [ line#13 ] ( main:2 [ line#13 ] )
-  //SEG16 [11] phi from main::@1 to ln [phi:main::@1->ln]
+  //SEG16 [12] phi from main::@1 to ln [phi:main::@1->ln]
   ln_from_b1:
-  //SEG17 [11] phi (byte) line#12 = (byte) line#13 [phi:main::@1->ln#0] -- register_copy 
+  //SEG17 [12] phi (byte) line#12 = (byte) line#13 [phi:main::@1->ln#0] -- register_copy 
     jsr ln
+  //SEG18 [8] phi from main::@1 to main::@2 [phi:main::@1->main::@2]
+  b2_from_b1:
     jmp b2
-  //SEG18 main::@2
+  //SEG19 main::@2
   b2:
-  //SEG19 [8] (byte) char#4 ← ++ (byte) line#13 [ line#13 ] ( main:2 [ line#13 ] ) -- vbuz1=_inc_vbuz2 
-    lda line
-    sta char_4
-    inc char_4
-  //SEG20 [9] call ln param-assignment [ ] ( main:2 [ ] )
-  //SEG21 [11] phi from main::@2 to ln [phi:main::@2->ln]
+  //SEG20 [9] call ln param-assignment [ line#13 ] ( main:2 [ line#13 ] )
+  //SEG21 [12] phi from main::@2 to ln [phi:main::@2->ln]
   ln_from_b2:
-  //SEG22 [11] phi (byte) line#12 = (byte) line#13 [phi:main::@2->ln#0] -- register_copy 
+  //SEG22 [12] phi (byte) line#12 = (byte) line#13 [phi:main::@2->ln#0] -- register_copy 
     jsr ln
+    jmp b3
+  //SEG23 main::@3
+  b3:
+  //SEG24 [10] *((const byte*) SCREEN#0) ← (byte) line#13 [ ] ( main:2 [ ] ) -- _deref_pbuc1=vbuz1 
+    lda line
+    sta SCREEN
     jmp breturn
-  //SEG23 main::@return
+  //SEG25 main::@return
   breturn:
-  //SEG24 [10] return  [ ] ( main:2 [ ] )
+  //SEG26 [11] return  [ ] ( main:2 [ ] )
     rts
 }
-//SEG25 ln
+//SEG27 ln
 ln: {
-  //SEG26 [12] (byte) line#13 ← (byte) line#12 + (byte/signed byte/word/signed word) 2 [ line#13 ] ( main:2::ln:5 [ line#13 ] main:2::ln:7 [ line#13 ] main:2::ln:9 [ line#13 ] ) -- vbuz1=vbuz1_plus_vbuc1 
+  //SEG28 [13] (byte) line#13 ← (byte) line#12 + (byte/signed byte/word/signed word) 2 [ line#13 ] ( main:2::ln:5 [ line#13 ] main:2::ln:7 [ line#13 ] main:2::ln:9 [ line#13 ] ) -- vbuz1=vbuz1_plus_vbuc1 
     lda line
     clc
     adc #2
     sta line
     jmp breturn
-  //SEG27 ln::@return
+  //SEG29 ln::@return
   breturn:
-  //SEG28 [13] return  [ line#13 ] ( main:2::ln:5 [ line#13 ] main:2::ln:7 [ line#13 ] main:2::ln:9 [ line#13 ] )
+  //SEG30 [14] return  [ line#13 ] ( main:2::ln:5 [ line#13 ] main:2::ln:7 [ line#13 ] main:2::ln:9 [ line#13 ] )
     rts
 }
 
 REGISTER UPLIFT POTENTIAL REGISTERS
-Statement [12] (byte) line#13 ← (byte) line#12 + (byte/signed byte/word/signed word) 2 [ line#13 ] ( main:2::ln:5 [ line#13 ] main:2::ln:7 [ line#13 ] main:2::ln:9 [ line#13 ] ) always clobbers reg byte a 
+Statement [13] (byte) line#13 ← (byte) line#12 + (byte/signed byte/word/signed word) 2 [ line#13 ] ( main:2::ln:5 [ line#13 ] main:2::ln:7 [ line#13 ] main:2::ln:9 [ line#13 ] ) always clobbers reg byte a 
 Potential registers zp ZP_BYTE:2 [ line#12 line#13 ] : zp ZP_BYTE:2 , reg byte a , reg byte x , reg byte y , 
-Potential registers zp ZP_BYTE:3 [ char#2 ] : zp ZP_BYTE:3 , reg byte a , reg byte x , reg byte y , 
-Potential registers zp ZP_BYTE:4 [ char#4 ] : zp ZP_BYTE:4 , reg byte a , reg byte x , reg byte y , 
 
 REGISTER UPLIFT SCOPES
-Uplift Scope [] 20: zp ZP_BYTE:3 [ char#2 ] 20: zp ZP_BYTE:4 [ char#4 ] 7.67: zp ZP_BYTE:2 [ line#12 line#13 ] 
+Uplift Scope [] 7.14: zp ZP_BYTE:2 [ line#12 line#13 ] 
 Uplift Scope [main] 
 Uplift Scope [ln] 
 
-Uplifting [] best 76 combination zp ZP_BYTE:3 [ char#2 ] zp ZP_BYTE:4 [ char#4 ] reg byte a [ line#12 line#13 ] 
-Uplifting [main] best 76 combination 
-Uplifting [ln] best 76 combination 
-Attempting to uplift remaining variables inzp ZP_BYTE:3 [ char#2 ]
-Uplifting [] best 76 combination zp ZP_BYTE:3 [ char#2 ] 
-Attempting to uplift remaining variables inzp ZP_BYTE:4 [ char#4 ]
-Uplifting [] best 76 combination zp ZP_BYTE:4 [ char#4 ] 
-Coalescing zero page register [ zp ZP_BYTE:3 [ char#2 ] ] with [ zp ZP_BYTE:4 [ char#4 ] ]
-Allocated (was zp ZP_BYTE:3) zp ZP_BYTE:2 [ char#2 char#4 ]
+Uplifting [] best 67 combination reg byte a [ line#12 line#13 ] 
+Uplifting [main] best 67 combination 
+Uplifting [ln] best 67 combination 
 
 ASSEMBLER BEFORE OPTIMIZATION
 //SEG0 Basic Upstart
@@ -895,7 +976,7 @@ ASSEMBLER BEFORE OPTIMIZATION
 :BasicUpstart(main)
 .pc = $80d "Program"
 //SEG1 Global Constants & labels
-  .label char = 2
+  .const SCREEN = $400
 //SEG2 @begin
 bbegin:
 //SEG3 [1] phi from @begin to @2 [phi:@begin->@2]
@@ -915,48 +996,51 @@ bend:
 //SEG9 main
 main: {
   //SEG10 [5] call ln param-assignment [ line#13 ] ( main:2 [ line#13 ] )
-  //SEG11 [11] phi from main to ln [phi:main->ln]
+  //SEG11 [12] phi from main to ln [phi:main->ln]
   ln_from_main:
-  //SEG12 [11] phi (byte) line#12 = (byte/signed byte/word/signed word) 64 [phi:main->ln#0] -- vbuaa=vbuc1 
+  //SEG12 [12] phi (byte) line#12 = (byte/signed byte/word/signed word) 64 [phi:main->ln#0] -- vbuaa=vbuc1 
     lda #$40
     jsr ln
+  //SEG13 [6] phi from main to main::@1 [phi:main->main::@1]
+  b1_from_main:
     jmp b1
-  //SEG13 main::@1
+  //SEG14 main::@1
   b1:
-  //SEG14 [6] (byte) char#2 ← ++ (byte) line#13 [ line#13 ] ( main:2 [ line#13 ] ) -- vbuz1=_inc_vbuaa 
-    sta char
-    inc char
   //SEG15 [7] call ln param-assignment [ line#13 ] ( main:2 [ line#13 ] )
-  //SEG16 [11] phi from main::@1 to ln [phi:main::@1->ln]
+  //SEG16 [12] phi from main::@1 to ln [phi:main::@1->ln]
   ln_from_b1:
-  //SEG17 [11] phi (byte) line#12 = (byte) line#13 [phi:main::@1->ln#0] -- register_copy 
+  //SEG17 [12] phi (byte) line#12 = (byte) line#13 [phi:main::@1->ln#0] -- register_copy 
     jsr ln
+  //SEG18 [8] phi from main::@1 to main::@2 [phi:main::@1->main::@2]
+  b2_from_b1:
     jmp b2
-  //SEG18 main::@2
+  //SEG19 main::@2
   b2:
-  //SEG19 [8] (byte) char#4 ← ++ (byte) line#13 [ line#13 ] ( main:2 [ line#13 ] ) -- vbuz1=_inc_vbuaa 
-    sta char
-    inc char
-  //SEG20 [9] call ln param-assignment [ ] ( main:2 [ ] )
-  //SEG21 [11] phi from main::@2 to ln [phi:main::@2->ln]
+  //SEG20 [9] call ln param-assignment [ line#13 ] ( main:2 [ line#13 ] )
+  //SEG21 [12] phi from main::@2 to ln [phi:main::@2->ln]
   ln_from_b2:
-  //SEG22 [11] phi (byte) line#12 = (byte) line#13 [phi:main::@2->ln#0] -- register_copy 
+  //SEG22 [12] phi (byte) line#12 = (byte) line#13 [phi:main::@2->ln#0] -- register_copy 
     jsr ln
+    jmp b3
+  //SEG23 main::@3
+  b3:
+  //SEG24 [10] *((const byte*) SCREEN#0) ← (byte) line#13 [ ] ( main:2 [ ] ) -- _deref_pbuc1=vbuaa 
+    sta SCREEN
     jmp breturn
-  //SEG23 main::@return
+  //SEG25 main::@return
   breturn:
-  //SEG24 [10] return  [ ] ( main:2 [ ] )
+  //SEG26 [11] return  [ ] ( main:2 [ ] )
     rts
 }
-//SEG25 ln
+//SEG27 ln
 ln: {
-  //SEG26 [12] (byte) line#13 ← (byte) line#12 + (byte/signed byte/word/signed word) 2 [ line#13 ] ( main:2::ln:5 [ line#13 ] main:2::ln:7 [ line#13 ] main:2::ln:9 [ line#13 ] ) -- vbuaa=vbuaa_plus_vbuc1 
+  //SEG28 [13] (byte) line#13 ← (byte) line#12 + (byte/signed byte/word/signed word) 2 [ line#13 ] ( main:2::ln:5 [ line#13 ] main:2::ln:7 [ line#13 ] main:2::ln:9 [ line#13 ] ) -- vbuaa=vbuaa_plus_vbuc1 
     clc
     adc #2
     jmp breturn
-  //SEG27 ln::@return
+  //SEG29 ln::@return
   breturn:
-  //SEG28 [13] return  [ line#13 ] ( main:2::ln:5 [ line#13 ] main:2::ln:7 [ line#13 ] main:2::ln:9 [ line#13 ] )
+  //SEG30 [14] return  [ line#13 ] ( main:2::ln:5 [ line#13 ] main:2::ln:7 [ line#13 ] main:2::ln:9 [ line#13 ] )
     rts
 }
 
@@ -965,6 +1049,7 @@ Removing instruction jmp b2
 Removing instruction jmp bend
 Removing instruction jmp b1
 Removing instruction jmp b2
+Removing instruction jmp b3
 Removing instruction jmp breturn
 Removing instruction jmp breturn
 Succesful ASM optimization Pass5NextJumpElimination
@@ -972,14 +1057,17 @@ Removing instruction bbegin:
 Removing instruction b2_from_bbegin:
 Removing instruction main_from_b2:
 Removing instruction bend_from_b2:
+Removing instruction b1_from_main:
+Removing instruction ln_from_b1:
+Removing instruction b2_from_b1:
+Removing instruction ln_from_b2:
 Succesful ASM optimization Pass5RedundantLabelElimination
 Removing instruction b2:
 Removing instruction bend:
 Removing instruction ln_from_main:
 Removing instruction b1:
-Removing instruction ln_from_b1:
 Removing instruction b2:
-Removing instruction ln_from_b2:
+Removing instruction b3:
 Removing instruction breturn:
 Removing instruction breturn:
 Succesful ASM optimization Pass5UnusedLabelElimination
@@ -988,21 +1076,21 @@ FINAL SYMBOL TABLE
 (label) @2
 (label) @begin
 (label) @end
+(byte*) SCREEN
+(const byte*) SCREEN#0 SCREEN = ((byte*))(word/signed word) 1024
 (byte) char
-(byte) char#2 char zp ZP_BYTE:2 20.0
-(byte) char#4 char zp ZP_BYTE:2 20.0
 (byte) line
 (byte) line#12 reg byte a 6.0
-(byte) line#13 reg byte a 1.6666666666666665
+(byte) line#13 reg byte a 1.1428571428571428
 (void()) ln()
 (label) ln::@return
 (void()) main()
 (label) main::@1
 (label) main::@2
+(label) main::@3
 (label) main::@return
 
 reg byte a [ line#12 line#13 ]
-zp ZP_BYTE:2 [ char#2 char#4 ]
 
 FINAL CODE
 //SEG0 Basic Upstart
@@ -1010,7 +1098,7 @@ FINAL CODE
 :BasicUpstart(main)
 .pc = $80d "Program"
 //SEG1 Global Constants & labels
-  .label char = 2
+  .const SCREEN = $400
 //SEG2 @begin
 //SEG3 [1] phi from @begin to @2 [phi:@begin->@2]
 //SEG4 @2
@@ -1022,37 +1110,36 @@ FINAL CODE
 //SEG9 main
 main: {
   //SEG10 [5] call ln param-assignment [ line#13 ] ( main:2 [ line#13 ] )
-  //SEG11 [11] phi from main to ln [phi:main->ln]
-  //SEG12 [11] phi (byte) line#12 = (byte/signed byte/word/signed word) 64 [phi:main->ln#0] -- vbuaa=vbuc1 
+  //SEG11 [12] phi from main to ln [phi:main->ln]
+  //SEG12 [12] phi (byte) line#12 = (byte/signed byte/word/signed word) 64 [phi:main->ln#0] -- vbuaa=vbuc1 
     lda #$40
     jsr ln
-  //SEG13 main::@1
-  //SEG14 [6] (byte) char#2 ← ++ (byte) line#13 [ line#13 ] ( main:2 [ line#13 ] ) -- vbuz1=_inc_vbuaa 
-    sta char
-    inc char
+  //SEG13 [6] phi from main to main::@1 [phi:main->main::@1]
+  //SEG14 main::@1
   //SEG15 [7] call ln param-assignment [ line#13 ] ( main:2 [ line#13 ] )
-  //SEG16 [11] phi from main::@1 to ln [phi:main::@1->ln]
-  //SEG17 [11] phi (byte) line#12 = (byte) line#13 [phi:main::@1->ln#0] -- register_copy 
+  //SEG16 [12] phi from main::@1 to ln [phi:main::@1->ln]
+  //SEG17 [12] phi (byte) line#12 = (byte) line#13 [phi:main::@1->ln#0] -- register_copy 
     jsr ln
-  //SEG18 main::@2
-  //SEG19 [8] (byte) char#4 ← ++ (byte) line#13 [ line#13 ] ( main:2 [ line#13 ] ) -- vbuz1=_inc_vbuaa 
-    sta char
-    inc char
-  //SEG20 [9] call ln param-assignment [ ] ( main:2 [ ] )
-  //SEG21 [11] phi from main::@2 to ln [phi:main::@2->ln]
-  //SEG22 [11] phi (byte) line#12 = (byte) line#13 [phi:main::@2->ln#0] -- register_copy 
+  //SEG18 [8] phi from main::@1 to main::@2 [phi:main::@1->main::@2]
+  //SEG19 main::@2
+  //SEG20 [9] call ln param-assignment [ line#13 ] ( main:2 [ line#13 ] )
+  //SEG21 [12] phi from main::@2 to ln [phi:main::@2->ln]
+  //SEG22 [12] phi (byte) line#12 = (byte) line#13 [phi:main::@2->ln#0] -- register_copy 
     jsr ln
-  //SEG23 main::@return
-  //SEG24 [10] return  [ ] ( main:2 [ ] )
+  //SEG23 main::@3
+  //SEG24 [10] *((const byte*) SCREEN#0) ← (byte) line#13 [ ] ( main:2 [ ] ) -- _deref_pbuc1=vbuaa 
+    sta SCREEN
+  //SEG25 main::@return
+  //SEG26 [11] return  [ ] ( main:2 [ ] )
     rts
 }
-//SEG25 ln
+//SEG27 ln
 ln: {
-  //SEG26 [12] (byte) line#13 ← (byte) line#12 + (byte/signed byte/word/signed word) 2 [ line#13 ] ( main:2::ln:5 [ line#13 ] main:2::ln:7 [ line#13 ] main:2::ln:9 [ line#13 ] ) -- vbuaa=vbuaa_plus_vbuc1 
+  //SEG28 [13] (byte) line#13 ← (byte) line#12 + (byte/signed byte/word/signed word) 2 [ line#13 ] ( main:2::ln:5 [ line#13 ] main:2::ln:7 [ line#13 ] main:2::ln:9 [ line#13 ] ) -- vbuaa=vbuaa_plus_vbuc1 
     clc
     adc #2
-  //SEG27 ln::@return
-  //SEG28 [13] return  [ line#13 ] ( main:2::ln:5 [ line#13 ] main:2::ln:7 [ line#13 ] main:2::ln:9 [ line#13 ] )
+  //SEG29 ln::@return
+  //SEG30 [14] return  [ line#13 ] ( main:2::ln:5 [ line#13 ] main:2::ln:7 [ line#13 ] main:2::ln:9 [ line#13 ] )
     rts
 }
 

@@ -15,7 +15,7 @@ public class Pass1EliminateUncalledProcedures extends Pass1Base {
    }
 
    @Override
-   boolean executeStep() {
+   public boolean step() {
       Set<ProcedureRef> calledProcedures = new LinkedHashSet<>();
       for (ControlFlowBlock block : getProgram().getGraph().getAllBlocks()) {
          for (Statement statement : block.getStatements()) {

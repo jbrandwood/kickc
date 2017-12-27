@@ -17,7 +17,7 @@ public class Pass1EliminateEmptyBlocks extends Pass1Base {
    }
 
    @Override
-   boolean executeStep() {
+   public boolean step() {
       CompileLog log = getLog();
       ControlFlowGraph graph = getProgram().getGraph();
       Collection<ControlFlowBlock> blocks = graph.getAllBlocks();

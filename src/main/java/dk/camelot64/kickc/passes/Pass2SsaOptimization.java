@@ -1,6 +1,5 @@
 package dk.camelot64.kickc.passes;
 
-import dk.camelot64.kickc.CompileLog;
 import dk.camelot64.kickc.model.*;
 
 import java.util.*;
@@ -9,28 +8,10 @@ import java.util.*;
  * Optimization on Single Static Assignment form (Control Flow Graph) performed during Compiler Pass 2.
  * Optimizations are performed repeatedly until none of them yield any result
  */
-public abstract class Pass2SsaOptimization {
-
-   private Program program;
+public abstract class Pass2SsaOptimization extends Pass1Base {
 
    public Pass2SsaOptimization(Program program) {
-      this.program = program;
-   }
-
-   public CompileLog getLog() {
-      return program.getLog();
-   }
-
-   public ControlFlowGraph getGraph() {
-      return program.getGraph();
-   }
-
-   public ProgramScope getSymbols() {
-      return program.getScope();
-   }
-
-   public Program getProgram() {
-      return program;
+      super(program);
    }
 
    /**
@@ -38,8 +19,7 @@ public abstract class Pass2SsaOptimization {
     *
     * @return true if an optimization was performed. false if no optimization was possible.
     */
-   public abstract boolean optimize();
-
+   public abstract boolean step();
 
    /**
     * Replace all usages of variables in statements with aliases.
@@ -144,7 +124,7 @@ public abstract class Pass2SsaOptimization {
 
    public void deleteSymbols(Collection<? extends SymbolRef> symbols) {
       for (SymbolRef symbolRef : symbols) {
-         Symbol symbol = getSymbols().getSymbol(symbolRef.getFullName());
+         Symbol symbol = getScope().getSymbol(symbolRef.getFullName());
          symbol.getScope().remove(symbol);
       }
    }

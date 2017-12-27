@@ -122,11 +122,12 @@ public class Compiler {
 
       new Pass1AssertReturn(program).execute();
       new Pass1AssertUsedVars(program).execute();
-      new Pass1EliminateUncalledProcedures(program).execute();
-      new Pass1EliminateUnusedVars(program).execute();
-      new Pass1ExtractInlineStrings(program).execute();
 
+      new Pass1EliminateUncalledProcedures(program).execute();
+      new PassNEliminateUnusedVars(program).execute();
+      new Pass1ExtractInlineStrings(program).execute();
       new Pass1EliminateEmptyBlocks(program).execute();
+
       getLog().append("CONTROL FLOW GRAPH");
       getLog().append(program.getGraph().toString(program));
 
@@ -181,6 +182,7 @@ public class Compiler {
       optimizations.add(new Pass2ConstantIdentification(program));
       optimizations.add(new Pass2ConstantAdditionElimination(program));
       optimizations.add(new Pass2FixWordConstructors(program));
+      optimizations.add(new PassNEliminateUnusedVars(program));
       pass2OptimizeSSA(optimizations);
 
       // Constant inlining optimizations - as the last step to ensure that constant identification has been completed
@@ -198,7 +200,7 @@ public class Compiler {
          for (Pass2SsaOptimization optimization : optimizations) {
             boolean stepOptimized = true;
             while (stepOptimized) {
-               stepOptimized = optimization.optimize();
+               stepOptimized = optimization.step();
                if (stepOptimized) {
                   getLog().append("Succesful SSA optimization " + optimization.getClass().getSimpleName() + "");
                   ssaOptimized = true;
@@ -223,7 +225,7 @@ public class Compiler {
       pass2AssertSSA();
 
       new Pass3AddNopBeforeCallOns(program).generate();
-      new Pass3StatementIndices(program).generateStatementIndices();
+      new PassNStatementIndices(program).generateStatementIndices();
 
       new Pass3CallGraphAnalysis(program).findCallGraph();
       getLog().append("CALL GRAPH");
@@ -232,7 +234,7 @@ public class Compiler {
       //getLog().setVerboseLiveRanges(true);
 
       new Pass3StatementInfos(program).generateStatementInfos();
-      new Pass3VariableReferenceInfos(program).generateVariableReferenceInfos();
+      new PassNVariableReferenceInfos(program).generateVariableReferenceInfos();
       new Pass3LiveRangesAnalysis(program).findLiveRanges();
       getLog().append("CONTROL FLOW GRAPH - LIVE RANGES FOUND");
       getLog().append(program.getGraph().toString(program));
@@ -241,14 +243,14 @@ public class Compiler {
       //getLog().setVerboseLiveRanges(false);
 
       // Phi mem coalesce removes as many variables introduced by phi lifting as possible - as long as their live ranges do not overlap
-      new Pass3PhiMemCoalesce(program).optimize();
-      new Pass2CullEmptyBlocks(program).optimize();
+      new Pass3PhiMemCoalesce(program).step();
+      new Pass2CullEmptyBlocks(program).step();
       new Pass3BlockSequencePlanner(program).plan();
       new Pass3AddNopBeforeCallOns(program).generate();
-      new Pass3StatementIndices(program).generateStatementIndices();
+      new PassNStatementIndices(program).generateStatementIndices();
       new Pass3CallGraphAnalysis(program).findCallGraph();
       new Pass3StatementInfos(program).generateStatementInfos();
-      new Pass3VariableReferenceInfos(program).generateVariableReferenceInfos();
+      new PassNVariableReferenceInfos(program).generateVariableReferenceInfos();
       new Pass3SymbolInfos(program).generateSymbolInfos();
       new Pass3LiveRangesAnalysis(program).findLiveRanges();
       getLog().append("CONTROL FLOW GRAPH - BEFORE EFFECTIVE LIVE RANGES");

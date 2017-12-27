@@ -18,7 +18,7 @@ public class Pass1GenerateSingleStaticAssignmentForm extends Pass1Base {
    }
 
    @Override
-   boolean executeStep() {
+   public boolean step() {
       versionAllAssignments();
       versionAllUses();
       boolean done;

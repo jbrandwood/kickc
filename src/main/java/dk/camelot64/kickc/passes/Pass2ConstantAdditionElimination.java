@@ -28,7 +28,7 @@ public class Pass2ConstantAdditionElimination extends Pass2SsaOptimization {
     * @return true optimization was performed. false if no optimization was possible.
     */
    @Override
-   public boolean optimize() {
+   public boolean step() {
       boolean optimized = false;
 
       this.usages = countVarUsages();

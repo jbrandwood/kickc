@@ -19,7 +19,7 @@ public class Pass2UnaryNotSimplification extends Pass2SsaOptimization {
     * Eliminate unary nots if they are the only usage of a reversable comparison
     */
    @Override
-   public boolean optimize() {
+   public boolean step() {
       final Map<VariableRef, Integer> usages = countVarUsages();
       final Map<LValue, StatementAssignment> assignments = getAllAssignments();
       final List<VariableRef> unusedComparisons = optimizeUnaryNots(assignments, usages);

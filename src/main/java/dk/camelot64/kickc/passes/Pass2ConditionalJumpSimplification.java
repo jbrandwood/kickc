@@ -19,7 +19,7 @@ public class Pass2ConditionalJumpSimplification extends Pass2SsaOptimization {
     * Eliminate alias assignments replacing them with the aliased variable.
     */
    @Override
-   public boolean optimize() {
+   public boolean step() {
       final Map<LValue, StatementAssignment> assignments = getAllAssignments();
       final Map<RValue, List<Statement>> usages = getAllUsages();
       final List<VariableRef> simpleConditionVars = getSimpleConditions(assignments, usages);

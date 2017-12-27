@@ -37,8 +37,8 @@ public class Pass4RegisterUpliftPotentialRegisterAnalysis extends Pass2Base {
          for (Statement statement : block.getStatements()) {
 
             // Find all variables referenced/assigned in the statement
-            Set<VariableRef> referencedVars = new HashSet<>(referenceInfo.getReferenced(statement));
-            Set<VariableRef> assignedVars = new HashSet<>(referenceInfo.getDefined(statement));
+            Set<VariableRef> referencedVars = new HashSet<>(referenceInfo.getReferencedVars(statement));
+            Set<VariableRef> assignedVars = new HashSet<>(referenceInfo.getDefinedVars(statement));
 
             // Find referenced/assigned live range equivalence classes
             Set<LiveRangeEquivalenceClass> assignedClasses = new LinkedHashSet<>();

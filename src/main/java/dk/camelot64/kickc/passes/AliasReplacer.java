@@ -78,12 +78,12 @@ public class AliasReplacer implements ValueReplacer.Replacer {
 
    }
 
-   @Override
    /**
     * Execute alias replacement on a replaceable value
     * @param replaceable The replaceable value
     */
-   public void execute(ValueReplacer.ReplaceableValue replaceable) {
+   @Override
+   public void execute(ValueReplacer.ReplaceableValue replaceable, Statement currentStmt, ControlFlowBlock currentBlock) {
       if (replaceable.get() != null) {
          RValue replacement = getReplacement(replaceable.get(), aliases);
          if (replacement != null) {

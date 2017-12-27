@@ -27,7 +27,7 @@ public class Pass3PhiMemCoalesce extends Pass2SsaOptimization {
    }
 
    @Override
-   public boolean optimize() {
+   public boolean step() {
       EquivalenceClassPhiInitializer equivalenceClassPhiInitializer = new EquivalenceClassPhiInitializer(getProgram());
       equivalenceClassPhiInitializer.visitGraph(getGraph());
       LiveRangeEquivalenceClassSet phiEquivalenceClasses = equivalenceClassPhiInitializer.getPhiEquivalenceClasses();

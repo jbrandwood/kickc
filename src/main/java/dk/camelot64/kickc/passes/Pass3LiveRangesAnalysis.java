@@ -56,7 +56,7 @@ public class Pass3LiveRangesAnalysis extends Pass2Base {
       for (ControlFlowBlock block : getProgram().getGraph().getAllBlocks()) {
          for (Statement stmt : block.getStatements()) {
             List<VariableRef> aliveNextStmt = liveRanges.getAlive(stmt);
-            Collection<VariableRef> definedNextStmt = referenceInfo.getDefined(stmt);
+            Collection<VariableRef> definedNextStmt = referenceInfo.getDefinedVars(stmt);
             initLiveRange(liveRanges, definedNextStmt);
             Collection<PreviousStatement> previousStmts = getPreviousStatements(stmt);
             for (PreviousStatement previousStmt : previousStmts) {
@@ -77,7 +77,7 @@ public class Pass3LiveRangesAnalysis extends Pass2Base {
                   // Add all vars that are referenced in the method
                   StatementCall call = (StatementCall) stmt;
                   ProcedureRef procedure = call.getProcedure();
-                  Collection<VariableRef> procUsed = referenceInfo.getReferenced(procedure.getLabelRef());
+                  Collection<VariableRef> procUsed = referenceInfo.getReferencedVars(procedure.getLabelRef());
                   // The call statement has no used or defined by itself so only work with the alive vars
                   for (VariableRef aliveVar : aliveNextStmt) {
                      // Add all variables to previous that are not used inside the method
@@ -93,7 +93,7 @@ public class Pass3LiveRangesAnalysis extends Pass2Base {
                   // Add all vars that the method does not use
                   StatementCall call = (StatementCall) stmt;
                   ProcedureRef procedure = call.getProcedure();
-                  Collection<VariableRef> procUsed = referenceInfo.getReferenced(procedure.getLabelRef());
+                  Collection<VariableRef> procUsed = referenceInfo.getReferencedVars(procedure.getLabelRef());
                   // The call statement has no used or defined by itself so only work with the alive vars
                   for (VariableRef aliveVar : aliveNextStmt) {
                      // Add all variables to previous that are not used inside the method
@@ -111,7 +111,7 @@ public class Pass3LiveRangesAnalysis extends Pass2Base {
                   // Add all alive variables to previous that are used inside the method
                   ControlFlowBlock procBlock = getProgram().getStatementInfos().getBlock(stmt);
                   Procedure procedure = (Procedure) getProgram().getScope().getSymbol(procBlock.getLabel());
-                  Collection<VariableRef> procUsed = referenceInfo.getUsed(procedure.getRef().getLabelRef());
+                  Collection<VariableRef> procUsed = referenceInfo.getUsedVars(procedure.getRef().getLabelRef());
                   // The call statement has no used or defined by itself so only work with the alive vars
                   for (VariableRef aliveVar : aliveNextStmt) {
                      // Add all variables to previous that are used inside the method
@@ -149,7 +149,7 @@ public class Pass3LiveRangesAnalysis extends Pass2Base {
          PreviousStatement previousStmt) {
       boolean modified = false;
       VariableReferenceInfos referenceInfo = getProgram().getVariableReferenceInfos();
-      Collection<VariableRef> usedNextStmt = referenceInfo.getUsed(stmt);
+      Collection<VariableRef> usedNextStmt = referenceInfo.getUsedVars(stmt);
       if (stmt instanceof StatementPhiBlock) {
          // If current statement is a phi add the used variables to previous based on the phi entries
          StatementPhiBlock phi = (StatementPhiBlock) stmt;

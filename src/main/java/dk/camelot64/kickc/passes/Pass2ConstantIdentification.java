@@ -22,7 +22,7 @@ public class Pass2ConstantIdentification extends Pass2SsaOptimization {
     * @return true optimization was performed. false if no optimization was possible.
     */
    @Override
-   public boolean optimize() {
+   public boolean step() {
       Map<VariableRef, ConstantValue> constants = findConstantVariables();
       LinkedHashMap<VariableRef, RValue> constAliases = new LinkedHashMap<>();
       // Update symbol table with the constant value
@@ -30,10 +30,28 @@ public class Pass2ConstantIdentification extends Pass2SsaOptimization {
          Variable variable = getProgram().getScope().getVariable(constRef);
          ConstantValue constVal = constants.get(constRef);
          Scope constScope = variable.getScope();
+
+         SymbolType valueType = SymbolTypeInference.inferType(getScope(), constVal);
+         SymbolType variableType = variable.getType();
+         SymbolType constType = variableType;
+
+         if(!valueType.equals(variableType)) {
+            if(SymbolTypeInference.typeMatch(valueType, variableType)) {
+               constType = valueType;
+            } else if(SymbolTypeInference.typeMatch(variableType, valueType)) {
+               constType = variableType;
+            } else {
+               throw new CompileError(
+                     "Constant variable has a non-matching type \n variable: " + variable.toString(getProgram()) +
+                           "\n value: (" + valueType.toString()+") "+ConstantValueCalculator.calcValue(getScope(), constVal) +
+                           "\n value definition: "+constVal.toString(getProgram()));
+            }
+         }
+
          ConstantVar constantVar = new ConstantVar(
                variable.getName(),
                constScope,
-               variable.getType(),
+               constType,
                constVal);
          constScope.remove(variable);
          constScope.add(constantVar);
@@ -79,11 +97,12 @@ public class Pass2ConstantIdentification extends Pass2SsaOptimization {
                         assignment.getOperator(),
                         getConstant(assignment.getrValue2()));
                   if (constant != null) {
+
                      constants.put(variable, constant);
                   }
                } else if (assignment.getrValue2() instanceof ValueList && assignment.getOperator() == null && assignment.getrValue1() == null) {
                   if (lValue instanceof VariableRef) {
-                     Variable lVariable = getSymbols().getVariable((VariableRef) lValue);
+                     Variable lVariable = getScope().getVariable((VariableRef) lValue);
                      if (lVariable.getType() instanceof SymbolTypeArray) {
                         ValueList valueList = (ValueList) assignment.getrValue2();
                         List<RValue> values = valueList.getList();
@@ -93,7 +112,7 @@ public class Pass2ConstantIdentification extends Pass2SsaOptimization {
                         for (RValue value : values) {
                            if (value instanceof ConstantValue) {
                               ConstantValue constantValue = (ConstantValue) value;
-                              SymbolType type = constantValue.getType(getSymbols());
+                              SymbolType type = constantValue.getType(getScope());
                               if (elementType == null) {
                                  elementType = type;
                               } else {
@@ -157,10 +176,19 @@ public class Pass2ConstantIdentification extends Pass2SsaOptimization {
    }
 
 
-   static ConstantValue createBinary(ConstantValue c1, Operator operator, ConstantValue c2) {
+   ConstantValue createBinary(ConstantValue c1, Operator operator, ConstantValue c2) {
       switch (operator.getOperator()) {
          case "-":
          case "+":
+            if(SymbolType.STRING.equals(c1.getType(getScope()))) {
+               if(c1 instanceof ConstantRef) {
+                  c1 = getScope().getConstant((ConstantRef) c1).getValue();
+               }
+               if(c2 instanceof ConstantRef) {
+                  c2 = getScope().getConstant((ConstantRef) c2).getValue();
+               }
+               return new ConstantBinary(c1, operator, c2);
+            }
          case "*":
          case "/":
          case "&":
@@ -188,6 +216,7 @@ public class Pass2ConstantIdentification extends Pass2SsaOptimization {
          case "<":
          case ">":
          case "((byte))":
+         case "((signed byte))":
          case "((sbyte))":
          case "((word))":
          case "((signed word))":

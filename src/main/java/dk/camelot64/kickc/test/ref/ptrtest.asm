@@ -52,16 +52,12 @@ rvaluevar: {
     jmp b1
 }
 rvalue: {
-    .const SCREEN = $400
-    lda SCREEN
-    lda SCREEN+1
     ldx #2
   b1:
     cpx #$a
     bcc b2
     rts
   b2:
-    lda SCREEN,x
     inx
     jmp b1
 }

@@ -15,7 +15,7 @@ public class Pass1AssertReturn extends Pass1Base {
    }
 
    @Override
-   public boolean executeStep() {
+   public boolean step() {
       Collection<Procedure> allProcedures = getProgram().getScope().getAllProcedures(true);
       for (Procedure procedure : allProcedures) {
          if (procedure.getReturnType() != null && !SymbolType.VOID.equals(procedure.getReturnType())) {

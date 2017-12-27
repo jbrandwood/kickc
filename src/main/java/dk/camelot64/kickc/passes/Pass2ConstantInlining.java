@@ -23,7 +23,7 @@ public class Pass2ConstantInlining extends Pass2SsaOptimization {
     * @return true optimization was performed. false if no optimization was possible.
     */
    @Override
-   public boolean optimize() {
+   public boolean step() {
       Map<ConstantRef, ConstantValue> inline = new HashMap<>();
       inline.putAll(findUnnamedConstants());
       inline.putAll(findAliasConstants());

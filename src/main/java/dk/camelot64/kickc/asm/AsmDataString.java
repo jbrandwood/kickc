@@ -27,7 +27,7 @@ public class AsmDataString implements AsmLine {
       StringBuilder asm = new StringBuilder();
       asm.append(label+": ");
       asm.append(".text ");
-      asm.append("\""+value+"\"");
+      asm.append(value);
       return asm.toString();
    }
 

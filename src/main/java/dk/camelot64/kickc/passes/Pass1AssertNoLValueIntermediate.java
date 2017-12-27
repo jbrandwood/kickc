@@ -12,7 +12,7 @@ public class Pass1AssertNoLValueIntermediate extends Pass1Base {
    }
 
    @Override
-   public boolean executeStep() {
+   public boolean step() {
       for (ControlFlowBlock block : getGraph().getAllBlocks()) {
          for (Statement statement : block.getStatements()) {
             if(statement instanceof StatementLValue) {

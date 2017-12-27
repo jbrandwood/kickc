@@ -175,7 +175,7 @@ public class LiveRangeVariablesEffective {
       if (scope instanceof Procedure) {
          Procedure procedure = (Procedure) scope;
          callPaths = procedureCallPaths.get(procedure.getRef());
-         referencedInProcedure = referenceInfo.getReferenced(procedure.getRef().getLabelRef());
+         referencedInProcedure = referenceInfo.getReferencedVars(procedure.getRef().getLabelRef());
       } else {
          callPaths = new CallPaths(Procedure.ROOT);
          referencedInProcedure = new ArrayList<>();

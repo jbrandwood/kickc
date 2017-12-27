@@ -22,6 +22,10 @@ public class TestPrograms extends TestCase {
       helper = new ReferenceHelper("dk/camelot64/kickc/test/ref/");
    }
 
+   public void testConstantStringConcat() throws IOException, URISyntaxException {
+      compileAndCompare("constant-string-concat");
+   }
+
    public void testTrueInlineWords() throws IOException, URISyntaxException {
       compileAndCompare("true-inline-words");
    }
@@ -331,10 +335,15 @@ public class TestPrograms extends TestCase {
       assertError("illegallvalue", "LValue is illegal");
    }
 
+   public void testInvalidConstType() throws IOException, URISyntaxException {
+      assertError("invalid-consttype", "Constant variable has a non-matching type");
+   }
+
    private void assertError(String kcFile, String expectError) throws IOException, URISyntaxException {
       try {
          compileAndCompare(kcFile);
       } catch (CompileError e) {
+         System.out.println("Got error: "+e.getMessage());
          // expecting error!
          assertTrue("Error message expected  '"+expectError+"' - was:"+e.getMessage(), e.getMessage().contains(expectError));
          return;

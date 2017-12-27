@@ -17,7 +17,7 @@ public class Pass1FixLValuesLoHi extends Pass1Base {
    }
 
    @Override
-   boolean executeStep() {
+   public boolean step() {
       ProgramScope programScope = getProgram().getScope();
       for (ControlFlowBlock block : getProgram().getGraph().getAllBlocks()) {
          List<Statement> statements = block.getStatements();

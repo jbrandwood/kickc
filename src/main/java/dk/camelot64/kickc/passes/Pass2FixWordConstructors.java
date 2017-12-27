@@ -13,7 +13,7 @@ public class Pass2FixWordConstructors extends Pass2SsaOptimization{
    }
 
    @Override
-   public boolean optimize() {
+   public boolean step() {
       boolean optimized = false;
       ProgramScope programScope = getProgram().getScope();
       for (ControlFlowBlock block : getProgram().getGraph().getAllBlocks()) {

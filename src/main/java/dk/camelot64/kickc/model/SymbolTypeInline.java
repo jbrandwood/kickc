@@ -1,5 +1,6 @@
 package dk.camelot64.kickc.model;
 
+import java.util.Arrays;
 import java.util.Collection;
 
 /**
@@ -20,6 +21,9 @@ public class SymbolTypeInline implements SymbolType {
    public Collection<SymbolType> getTypes() {
       return types;
    }
+
+   /** All numeric types. */
+   public static final SymbolTypeInline NUMERIC = new SymbolTypeInline(Arrays.asList(BYTE, SBYTE, WORD, SWORD) );
 
    @Override
    public String getTypeName() {

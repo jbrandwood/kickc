@@ -15,7 +15,7 @@ public class Pass1TypeInference extends Pass1Base {
    }
 
    @Override
-   boolean executeStep() {
+   public boolean step() {
       Stack<Scope> scopes = new Stack<>();
       ProgramScope programScope = getScope();
       scopes.add(programScope);

@@ -323,7 +323,7 @@ public class PassNVariableReferenceInfos extends Pass2Base {
       } else if (rValue instanceof ValueList) {
          LinkedHashSet<SymbolRef> used = new LinkedHashSet<>();
          for (RValue value : ((ValueList) rValue).getList()) {
-            used.addAll(getReferencedVars(value));
+            used.addAll(getReferenced(value));
          }
          return used;
       } else {

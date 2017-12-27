@@ -339,6 +339,10 @@ public class TestPrograms extends TestCase {
       assertError("invalid-consttype", "Constant variable has a non-matching type");
    }
 
+   public void testValueListError() throws IOException, URISyntaxException {
+      assertError("valuelist-error", "Value list not resolved to word constructor");
+   }
+
    private void assertError(String kcFile, String expectError) throws IOException, URISyntaxException {
       try {
          compileAndCompare(kcFile);

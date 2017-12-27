@@ -206,7 +206,6 @@ public class Compiler {
                   ssaOptimized = true;
                   getLog().append("CONTROL FLOW GRAPH");
                   getLog().append(program.getGraph().toString(program));
-                  //pass2AssertSSA(program);
                }
             }
          }
@@ -214,6 +213,8 @@ public class Compiler {
    }
 
    private void pass3Analysis() {
+
+      new Pass3AssertNoValueLists(program).check();
 
       new Pass3BlockSequencePlanner(program).plan();
 

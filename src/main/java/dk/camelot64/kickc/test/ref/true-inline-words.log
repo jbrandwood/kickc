@@ -1,0 +1,1019 @@
+
+void main() {
+    byte[] bs = { 'c', 'm' };           // constant byte array
+    byte b = 4;                         // constant byte
+    word w = { b, 0 };                  // constant inline word
+    word w2 = { 1, 1 } + w + { 0, 0 };  // constant inline words inside expression
+    byte* sc = w2;                      // implicit cast to (byte*)
+    *sc = bs[1];                        // In the end $501 is set to 'c'
+
+    // Test the result
+    byte* pos = $501;
+    byte* bgcol = $d021;
+    if(*pos=='m') {
+        *bgcol = 5;
+    } else {
+        *bgcol = 2;
+    }
+}
+
+
+PROGRAM
+proc (void()) main()
+  (byte[]) main::bs ← { (byte) 'c', (byte) 'm' }
+  (byte) main::b ← (byte/signed byte/word/signed word) 4
+  (word) main::w ← { (byte) main::b, (byte/signed byte/word/signed word) 0 }
+  (word~) main::$0 ← { (byte/signed byte/word/signed word) 1, (byte/signed byte/word/signed word) 1 } + (word) main::w
+  (word~) main::$1 ← (word~) main::$0 + { (byte/signed byte/word/signed word) 0, (byte/signed byte/word/signed word) 0 }
+  (word) main::w2 ← (word~) main::$1
+  (byte*) main::sc ← (word) main::w2
+  *((byte*) main::sc) ← *((byte[]) main::bs + (byte/signed byte/word/signed word) 1)
+  (byte*) main::pos ← (word/signed word) 1281
+  (byte*) main::bgcol ← (word) 53281
+  (boolean~) main::$2 ← *((byte*) main::pos) == (byte) 'm'
+  (boolean~) main::$3 ← ! (boolean~) main::$2
+  if((boolean~) main::$3) goto main::@1
+  *((byte*) main::bgcol) ← (byte/signed byte/word/signed word) 5
+  goto main::@2
+main::@1:
+  *((byte*) main::bgcol) ← (byte/signed byte/word/signed word) 2
+main::@2:
+main::@return:
+  return 
+endproc // main()
+  call main 
+
+SYMBOLS
+(void()) main()
+(word~) main::$0
+(word~) main::$1
+(boolean~) main::$2
+(boolean~) main::$3
+(label) main::@1
+(label) main::@2
+(label) main::@return
+(byte) main::b
+(byte*) main::bgcol
+(byte[]) main::bs
+(byte*) main::pos
+(byte*) main::sc
+(word) main::w
+(word) main::w2
+
+Promoting word to byte* in main::sc ← ((byte*)) main::w2
+Promoting word/signed word to byte* in main::pos ← ((byte*)) 1281
+Promoting word to byte* in main::bgcol ← ((byte*)) 53281
+INITIAL CONTROL FLOW GRAPH
+@begin: scope:[]  from
+  to:@1
+main: scope:[main]  from
+  (byte[]) main::bs ← { (byte) 'c', (byte) 'm' }
+  (byte) main::b ← (byte/signed byte/word/signed word) 4
+  (word) main::w ← { (byte) main::b, (byte/signed byte/word/signed word) 0 }
+  (word~) main::$0 ← { (byte/signed byte/word/signed word) 1, (byte/signed byte/word/signed word) 1 } + (word) main::w
+  (word~) main::$1 ← (word~) main::$0 + { (byte/signed byte/word/signed word) 0, (byte/signed byte/word/signed word) 0 }
+  (word) main::w2 ← (word~) main::$1
+  (byte*) main::sc ← ((byte*)) (word) main::w2
+  *((byte*) main::sc) ← *((byte[]) main::bs + (byte/signed byte/word/signed word) 1)
+  (byte*) main::pos ← ((byte*)) (word/signed word) 1281
+  (byte*) main::bgcol ← ((byte*)) (word) 53281
+  (boolean~) main::$2 ← *((byte*) main::pos) == (byte) 'm'
+  (boolean~) main::$3 ← ! (boolean~) main::$2
+  if((boolean~) main::$3) goto main::@1
+  to:main::@3
+main::@1: scope:[main]  from main main::@4
+  *((byte*) main::bgcol) ← (byte/signed byte/word/signed word) 2
+  to:main::@2
+main::@3: scope:[main]  from main
+  *((byte*) main::bgcol) ← (byte/signed byte/word/signed word) 5
+  to:main::@2
+main::@2: scope:[main]  from main::@1 main::@3
+  to:main::@return
+main::@4: scope:[main]  from
+  to:main::@1
+main::@return: scope:[main]  from main::@2
+  return 
+  to:@return
+@1: scope:[]  from @begin
+  call main 
+  to:@end
+@end: scope:[]  from @1
+
+Removing empty block main::@2
+Removing empty block main::@4
+CONTROL FLOW GRAPH
+@begin: scope:[]  from
+  to:@1
+main: scope:[main]  from
+  (byte[]) main::bs ← { (byte) 'c', (byte) 'm' }
+  (byte) main::b ← (byte/signed byte/word/signed word) 4
+  (word) main::w ← { (byte) main::b, (byte/signed byte/word/signed word) 0 }
+  (word~) main::$0 ← { (byte/signed byte/word/signed word) 1, (byte/signed byte/word/signed word) 1 } + (word) main::w
+  (word~) main::$1 ← (word~) main::$0 + { (byte/signed byte/word/signed word) 0, (byte/signed byte/word/signed word) 0 }
+  (word) main::w2 ← (word~) main::$1
+  (byte*) main::sc ← ((byte*)) (word) main::w2
+  *((byte*) main::sc) ← *((byte[]) main::bs + (byte/signed byte/word/signed word) 1)
+  (byte*) main::pos ← ((byte*)) (word/signed word) 1281
+  (byte*) main::bgcol ← ((byte*)) (word) 53281
+  (boolean~) main::$2 ← *((byte*) main::pos) == (byte) 'm'
+  (boolean~) main::$3 ← ! (boolean~) main::$2
+  if((boolean~) main::$3) goto main::@1
+  to:main::@3
+main::@1: scope:[main]  from main
+  *((byte*) main::bgcol) ← (byte/signed byte/word/signed word) 2
+  to:main::@return
+main::@3: scope:[main]  from main
+  *((byte*) main::bgcol) ← (byte/signed byte/word/signed word) 5
+  to:main::@return
+main::@return: scope:[main]  from main::@1 main::@3
+  return 
+  to:@return
+@1: scope:[]  from @begin
+  call main 
+  to:@end
+@end: scope:[]  from @1
+
+PROCEDURE MODIFY VARIABLE ANALYSIS
+
+CONTROL FLOW GRAPH WITH ASSIGNMENT CALL
+@begin: scope:[]  from
+  to:@1
+main: scope:[main]  from @1
+  (byte[]) main::bs ← { (byte) 'c', (byte) 'm' }
+  (byte) main::b ← (byte/signed byte/word/signed word) 4
+  (word) main::w ← { (byte) main::b, (byte/signed byte/word/signed word) 0 }
+  (word~) main::$0 ← { (byte/signed byte/word/signed word) 1, (byte/signed byte/word/signed word) 1 } + (word) main::w
+  (word~) main::$1 ← (word~) main::$0 + { (byte/signed byte/word/signed word) 0, (byte/signed byte/word/signed word) 0 }
+  (word) main::w2 ← (word~) main::$1
+  (byte*) main::sc ← ((byte*)) (word) main::w2
+  *((byte*) main::sc) ← *((byte[]) main::bs + (byte/signed byte/word/signed word) 1)
+  (byte*) main::pos ← ((byte*)) (word/signed word) 1281
+  (byte*) main::bgcol ← ((byte*)) (word) 53281
+  (boolean~) main::$2 ← *((byte*) main::pos) == (byte) 'm'
+  (boolean~) main::$3 ← ! (boolean~) main::$2
+  if((boolean~) main::$3) goto main::@1
+  to:main::@3
+main::@1: scope:[main]  from main
+  *((byte*) main::bgcol) ← (byte/signed byte/word/signed word) 2
+  to:main::@return
+main::@3: scope:[main]  from main
+  *((byte*) main::bgcol) ← (byte/signed byte/word/signed word) 5
+  to:main::@return
+main::@return: scope:[main]  from main::@1 main::@3
+  return 
+  to:@return
+@1: scope:[]  from @begin
+  call main param-assignment
+  to:@2
+@2: scope:[]  from @1
+  to:@end
+@end: scope:[]  from @2
+
+Completing Phi functions...
+CONTROL FLOW GRAPH SSA
+@begin: scope:[]  from
+  to:@1
+main: scope:[main]  from @1
+  (byte[]) main::bs#0 ← { (byte) 'c', (byte) 'm' }
+  (byte) main::b#0 ← (byte/signed byte/word/signed word) 4
+  (word) main::w#0 ← { (byte) main::b#0, (byte/signed byte/word/signed word) 0 }
+  (word~) main::$0 ← { (byte/signed byte/word/signed word) 1, (byte/signed byte/word/signed word) 1 } + (word) main::w#0
+  (word~) main::$1 ← (word~) main::$0 + { (byte/signed byte/word/signed word) 0, (byte/signed byte/word/signed word) 0 }
+  (word) main::w2#0 ← (word~) main::$1
+  (byte*) main::sc#0 ← ((byte*)) (word) main::w2#0
+  *((byte*) main::sc#0) ← *((byte[]) main::bs#0 + (byte/signed byte/word/signed word) 1)
+  (byte*) main::pos#0 ← ((byte*)) (word/signed word) 1281
+  (byte*) main::bgcol#0 ← ((byte*)) (word) 53281
+  (boolean~) main::$2 ← *((byte*) main::pos#0) == (byte) 'm'
+  (boolean~) main::$3 ← ! (boolean~) main::$2
+  if((boolean~) main::$3) goto main::@1
+  to:main::@3
+main::@1: scope:[main]  from main
+  (byte*) main::bgcol#1 ← phi( main/(byte*) main::bgcol#0 )
+  *((byte*) main::bgcol#1) ← (byte/signed byte/word/signed word) 2
+  to:main::@return
+main::@3: scope:[main]  from main
+  (byte*) main::bgcol#2 ← phi( main/(byte*) main::bgcol#0 )
+  *((byte*) main::bgcol#2) ← (byte/signed byte/word/signed word) 5
+  to:main::@return
+main::@return: scope:[main]  from main::@1 main::@3
+  return 
+  to:@return
+@1: scope:[]  from @begin
+  call main param-assignment
+  to:@2
+@2: scope:[]  from @1
+  to:@end
+@end: scope:[]  from @2
+
+CONTROL FLOW GRAPH WITH ASSIGNMENT CALL & RETURN
+@begin: scope:[]  from
+  to:@1
+main: scope:[main]  from @1
+  (byte[]) main::bs#0 ← { (byte) 'c', (byte) 'm' }
+  (byte) main::b#0 ← (byte/signed byte/word/signed word) 4
+  (word) main::w#0 ← { (byte) main::b#0, (byte/signed byte/word/signed word) 0 }
+  (word~) main::$0 ← { (byte/signed byte/word/signed word) 1, (byte/signed byte/word/signed word) 1 } + (word) main::w#0
+  (word~) main::$1 ← (word~) main::$0 + { (byte/signed byte/word/signed word) 0, (byte/signed byte/word/signed word) 0 }
+  (word) main::w2#0 ← (word~) main::$1
+  (byte*) main::sc#0 ← ((byte*)) (word) main::w2#0
+  *((byte*) main::sc#0) ← *((byte[]) main::bs#0 + (byte/signed byte/word/signed word) 1)
+  (byte*) main::pos#0 ← ((byte*)) (word/signed word) 1281
+  (byte*) main::bgcol#0 ← ((byte*)) (word) 53281
+  (boolean~) main::$2 ← *((byte*) main::pos#0) == (byte) 'm'
+  (boolean~) main::$3 ← ! (boolean~) main::$2
+  if((boolean~) main::$3) goto main::@1
+  to:main::@3
+main::@1: scope:[main]  from main
+  (byte*) main::bgcol#1 ← phi( main/(byte*) main::bgcol#0 )
+  *((byte*) main::bgcol#1) ← (byte/signed byte/word/signed word) 2
+  to:main::@return
+main::@3: scope:[main]  from main
+  (byte*) main::bgcol#2 ← phi( main/(byte*) main::bgcol#0 )
+  *((byte*) main::bgcol#2) ← (byte/signed byte/word/signed word) 5
+  to:main::@return
+main::@return: scope:[main]  from main::@1 main::@3
+  return 
+  to:@return
+@1: scope:[]  from @begin
+  call main param-assignment
+  to:@2
+@2: scope:[]  from @1
+  to:@end
+@end: scope:[]  from @2
+
+INITIAL SSA SYMBOL TABLE
+(label) @1
+(label) @2
+(label) @begin
+(label) @end
+(void()) main()
+(word~) main::$0
+(word~) main::$1
+(boolean~) main::$2
+(boolean~) main::$3
+(label) main::@1
+(label) main::@3
+(label) main::@return
+(byte) main::b
+(byte) main::b#0
+(byte*) main::bgcol
+(byte*) main::bgcol#0
+(byte*) main::bgcol#1
+(byte*) main::bgcol#2
+(byte[]) main::bs
+(byte[]) main::bs#0
+(byte*) main::pos
+(byte*) main::pos#0
+(byte*) main::sc
+(byte*) main::sc#0
+(word) main::w
+(word) main::w#0
+(word) main::w2
+(word) main::w2#0
+
+Culled Empty Block (label) @2
+Succesful SSA optimization Pass2CullEmptyBlocks
+CONTROL FLOW GRAPH
+@begin: scope:[]  from
+  to:@1
+main: scope:[main]  from @1
+  (byte[]) main::bs#0 ← { (byte) 'c', (byte) 'm' }
+  (byte) main::b#0 ← (byte/signed byte/word/signed word) 4
+  (word) main::w#0 ← { (byte) main::b#0, (byte/signed byte/word/signed word) 0 }
+  (word~) main::$0 ← { (byte/signed byte/word/signed word) 1, (byte/signed byte/word/signed word) 1 } + (word) main::w#0
+  (word~) main::$1 ← (word~) main::$0 + { (byte/signed byte/word/signed word) 0, (byte/signed byte/word/signed word) 0 }
+  (word) main::w2#0 ← (word~) main::$1
+  (byte*) main::sc#0 ← ((byte*)) (word) main::w2#0
+  *((byte*) main::sc#0) ← *((byte[]) main::bs#0 + (byte/signed byte/word/signed word) 1)
+  (byte*) main::pos#0 ← ((byte*)) (word/signed word) 1281
+  (byte*) main::bgcol#0 ← ((byte*)) (word) 53281
+  (boolean~) main::$2 ← *((byte*) main::pos#0) == (byte) 'm'
+  (boolean~) main::$3 ← ! (boolean~) main::$2
+  if((boolean~) main::$3) goto main::@1
+  to:main::@3
+main::@1: scope:[main]  from main
+  (byte*) main::bgcol#1 ← phi( main/(byte*) main::bgcol#0 )
+  *((byte*) main::bgcol#1) ← (byte/signed byte/word/signed word) 2
+  to:main::@return
+main::@3: scope:[main]  from main
+  (byte*) main::bgcol#2 ← phi( main/(byte*) main::bgcol#0 )
+  *((byte*) main::bgcol#2) ← (byte/signed byte/word/signed word) 5
+  to:main::@return
+main::@return: scope:[main]  from main::@1 main::@3
+  return 
+  to:@return
+@1: scope:[]  from @begin
+  call main param-assignment
+  to:@end
+@end: scope:[]  from @1
+
+Inversing boolean not (boolean~) main::$3 ← *((byte*) main::pos#0) != (byte) 'm' from (boolean~) main::$2 ← *((byte*) main::pos#0) == (byte) 'm'
+Succesful SSA optimization Pass2UnaryNotSimplification
+CONTROL FLOW GRAPH
+@begin: scope:[]  from
+  to:@1
+main: scope:[main]  from @1
+  (byte[]) main::bs#0 ← { (byte) 'c', (byte) 'm' }
+  (byte) main::b#0 ← (byte/signed byte/word/signed word) 4
+  (word) main::w#0 ← { (byte) main::b#0, (byte/signed byte/word/signed word) 0 }
+  (word~) main::$0 ← { (byte/signed byte/word/signed word) 1, (byte/signed byte/word/signed word) 1 } + (word) main::w#0
+  (word~) main::$1 ← (word~) main::$0 + { (byte/signed byte/word/signed word) 0, (byte/signed byte/word/signed word) 0 }
+  (word) main::w2#0 ← (word~) main::$1
+  (byte*) main::sc#0 ← ((byte*)) (word) main::w2#0
+  *((byte*) main::sc#0) ← *((byte[]) main::bs#0 + (byte/signed byte/word/signed word) 1)
+  (byte*) main::pos#0 ← ((byte*)) (word/signed word) 1281
+  (byte*) main::bgcol#0 ← ((byte*)) (word) 53281
+  (boolean~) main::$3 ← *((byte*) main::pos#0) != (byte) 'm'
+  if((boolean~) main::$3) goto main::@1
+  to:main::@3
+main::@1: scope:[main]  from main
+  (byte*) main::bgcol#1 ← phi( main/(byte*) main::bgcol#0 )
+  *((byte*) main::bgcol#1) ← (byte/signed byte/word/signed word) 2
+  to:main::@return
+main::@3: scope:[main]  from main
+  (byte*) main::bgcol#2 ← phi( main/(byte*) main::bgcol#0 )
+  *((byte*) main::bgcol#2) ← (byte/signed byte/word/signed word) 5
+  to:main::@return
+main::@return: scope:[main]  from main::@1 main::@3
+  return 
+  to:@return
+@1: scope:[]  from @begin
+  call main param-assignment
+  to:@end
+@end: scope:[]  from @1
+
+Alias (word) main::w2#0 = (word~) main::$1 
+Alias (byte*) main::bgcol#0 = (byte*) main::bgcol#1 (byte*) main::bgcol#2 
+Succesful SSA optimization Pass2AliasElimination
+CONTROL FLOW GRAPH
+@begin: scope:[]  from
+  to:@1
+main: scope:[main]  from @1
+  (byte[]) main::bs#0 ← { (byte) 'c', (byte) 'm' }
+  (byte) main::b#0 ← (byte/signed byte/word/signed word) 4
+  (word) main::w#0 ← { (byte) main::b#0, (byte/signed byte/word/signed word) 0 }
+  (word~) main::$0 ← { (byte/signed byte/word/signed word) 1, (byte/signed byte/word/signed word) 1 } + (word) main::w#0
+  (word) main::w2#0 ← (word~) main::$0 + { (byte/signed byte/word/signed word) 0, (byte/signed byte/word/signed word) 0 }
+  (byte*) main::sc#0 ← ((byte*)) (word) main::w2#0
+  *((byte*) main::sc#0) ← *((byte[]) main::bs#0 + (byte/signed byte/word/signed word) 1)
+  (byte*) main::pos#0 ← ((byte*)) (word/signed word) 1281
+  (byte*) main::bgcol#0 ← ((byte*)) (word) 53281
+  (boolean~) main::$3 ← *((byte*) main::pos#0) != (byte) 'm'
+  if((boolean~) main::$3) goto main::@1
+  to:main::@3
+main::@1: scope:[main]  from main
+  *((byte*) main::bgcol#0) ← (byte/signed byte/word/signed word) 2
+  to:main::@return
+main::@3: scope:[main]  from main
+  *((byte*) main::bgcol#0) ← (byte/signed byte/word/signed word) 5
+  to:main::@return
+main::@return: scope:[main]  from main::@1 main::@3
+  return 
+  to:@return
+@1: scope:[]  from @begin
+  call main param-assignment
+  to:@end
+@end: scope:[]  from @1
+
+Simple Condition (boolean~) main::$3 if(*((byte*) main::pos#0)!=(byte) 'm') goto main::@1
+Succesful SSA optimization Pass2ConditionalJumpSimplification
+CONTROL FLOW GRAPH
+@begin: scope:[]  from
+  to:@1
+main: scope:[main]  from @1
+  (byte[]) main::bs#0 ← { (byte) 'c', (byte) 'm' }
+  (byte) main::b#0 ← (byte/signed byte/word/signed word) 4
+  (word) main::w#0 ← { (byte) main::b#0, (byte/signed byte/word/signed word) 0 }
+  (word~) main::$0 ← { (byte/signed byte/word/signed word) 1, (byte/signed byte/word/signed word) 1 } + (word) main::w#0
+  (word) main::w2#0 ← (word~) main::$0 + { (byte/signed byte/word/signed word) 0, (byte/signed byte/word/signed word) 0 }
+  (byte*) main::sc#0 ← ((byte*)) (word) main::w2#0
+  *((byte*) main::sc#0) ← *((byte[]) main::bs#0 + (byte/signed byte/word/signed word) 1)
+  (byte*) main::pos#0 ← ((byte*)) (word/signed word) 1281
+  (byte*) main::bgcol#0 ← ((byte*)) (word) 53281
+  if(*((byte*) main::pos#0)!=(byte) 'm') goto main::@1
+  to:main::@3
+main::@1: scope:[main]  from main
+  *((byte*) main::bgcol#0) ← (byte/signed byte/word/signed word) 2
+  to:main::@return
+main::@3: scope:[main]  from main
+  *((byte*) main::bgcol#0) ← (byte/signed byte/word/signed word) 5
+  to:main::@return
+main::@return: scope:[main]  from main::@1 main::@3
+  return 
+  to:@return
+@1: scope:[]  from @begin
+  call main param-assignment
+  to:@end
+@end: scope:[]  from @1
+
+Constant (const byte[]) main::bs#0 = { 'c', 'm' }
+Constant (const byte) main::b#0 = 4
+Constant (const byte*) main::pos#0 = ((byte*))1281
+Constant (const byte*) main::bgcol#0 = ((byte*))53281
+Succesful SSA optimization Pass2ConstantIdentification
+CONTROL FLOW GRAPH
+@begin: scope:[]  from
+  to:@1
+main: scope:[main]  from @1
+  (word) main::w#0 ← { (const byte) main::b#0, (byte/signed byte/word/signed word) 0 }
+  (word~) main::$0 ← { (byte/signed byte/word/signed word) 1, (byte/signed byte/word/signed word) 1 } + (word) main::w#0
+  (word) main::w2#0 ← (word~) main::$0 + { (byte/signed byte/word/signed word) 0, (byte/signed byte/word/signed word) 0 }
+  (byte*) main::sc#0 ← ((byte*)) (word) main::w2#0
+  *((byte*) main::sc#0) ← *((const byte[]) main::bs#0 + (byte/signed byte/word/signed word) 1)
+  if(*((const byte*) main::pos#0)!=(byte) 'm') goto main::@1
+  to:main::@3
+main::@1: scope:[main]  from main
+  *((const byte*) main::bgcol#0) ← (byte/signed byte/word/signed word) 2
+  to:main::@return
+main::@3: scope:[main]  from main
+  *((const byte*) main::bgcol#0) ← (byte/signed byte/word/signed word) 5
+  to:main::@return
+main::@return: scope:[main]  from main::@1 main::@3
+  return 
+  to:@return
+@1: scope:[]  from @begin
+  call main param-assignment
+  to:@end
+@end: scope:[]  from @1
+
+Consolidated array index constant in *(main::bs#0+1)
+Succesful SSA optimization Pass2ConstantAdditionElimination
+CONTROL FLOW GRAPH
+@begin: scope:[]  from
+  to:@1
+main: scope:[main]  from @1
+  (word) main::w#0 ← { (const byte) main::b#0, (byte/signed byte/word/signed word) 0 }
+  (word~) main::$0 ← { (byte/signed byte/word/signed word) 1, (byte/signed byte/word/signed word) 1 } + (word) main::w#0
+  (word) main::w2#0 ← (word~) main::$0 + { (byte/signed byte/word/signed word) 0, (byte/signed byte/word/signed word) 0 }
+  (byte*) main::sc#0 ← ((byte*)) (word) main::w2#0
+  *((byte*) main::sc#0) ← *((const byte[]) main::bs#0+(byte/signed byte/word/signed word) 1)
+  if(*((const byte*) main::pos#0)!=(byte) 'm') goto main::@1
+  to:main::@3
+main::@1: scope:[main]  from main
+  *((const byte*) main::bgcol#0) ← (byte/signed byte/word/signed word) 2
+  to:main::@return
+main::@3: scope:[main]  from main
+  *((const byte*) main::bgcol#0) ← (byte/signed byte/word/signed word) 5
+  to:main::@return
+main::@return: scope:[main]  from main::@1 main::@3
+  return 
+  to:@return
+@1: scope:[]  from @begin
+  call main param-assignment
+  to:@end
+@end: scope:[]  from @1
+
+Fixing word constructor with main::$4 ← main::b#0 w= 0
+Fixing word constructor with main::$5 ← 1 w= 1
+Fixing word constructor with main::$6 ← 0 w= 0
+Succesful SSA optimization Pass2FixWordConstructors
+CONTROL FLOW GRAPH
+@begin: scope:[]  from
+  to:@1
+main: scope:[main]  from @1
+  (word~) main::$4 ← (const byte) main::b#0 w= (byte/signed byte/word/signed word) 0
+  (word) main::w#0 ← (word~) main::$4
+  (word~) main::$5 ← (byte/signed byte/word/signed word) 1 w= (byte/signed byte/word/signed word) 1
+  (word~) main::$0 ← (word~) main::$5 + (word) main::w#0
+  (word~) main::$6 ← (byte/signed byte/word/signed word) 0 w= (byte/signed byte/word/signed word) 0
+  (word) main::w2#0 ← (word~) main::$0 + (word~) main::$6
+  (byte*) main::sc#0 ← ((byte*)) (word) main::w2#0
+  *((byte*) main::sc#0) ← *((const byte[]) main::bs#0+(byte/signed byte/word/signed word) 1)
+  if(*((const byte*) main::pos#0)!=(byte) 'm') goto main::@1
+  to:main::@3
+main::@1: scope:[main]  from main
+  *((const byte*) main::bgcol#0) ← (byte/signed byte/word/signed word) 2
+  to:main::@return
+main::@3: scope:[main]  from main
+  *((const byte*) main::bgcol#0) ← (byte/signed byte/word/signed word) 5
+  to:main::@return
+main::@return: scope:[main]  from main::@1 main::@3
+  return 
+  to:@return
+@1: scope:[]  from @begin
+  call main param-assignment
+  to:@end
+@end: scope:[]  from @1
+
+Alias (word) main::w#0 = (word~) main::$4 
+Succesful SSA optimization Pass2AliasElimination
+CONTROL FLOW GRAPH
+@begin: scope:[]  from
+  to:@1
+main: scope:[main]  from @1
+  (word) main::w#0 ← (const byte) main::b#0 w= (byte/signed byte/word/signed word) 0
+  (word~) main::$5 ← (byte/signed byte/word/signed word) 1 w= (byte/signed byte/word/signed word) 1
+  (word~) main::$0 ← (word~) main::$5 + (word) main::w#0
+  (word~) main::$6 ← (byte/signed byte/word/signed word) 0 w= (byte/signed byte/word/signed word) 0
+  (word) main::w2#0 ← (word~) main::$0 + (word~) main::$6
+  (byte*) main::sc#0 ← ((byte*)) (word) main::w2#0
+  *((byte*) main::sc#0) ← *((const byte[]) main::bs#0+(byte/signed byte/word/signed word) 1)
+  if(*((const byte*) main::pos#0)!=(byte) 'm') goto main::@1
+  to:main::@3
+main::@1: scope:[main]  from main
+  *((const byte*) main::bgcol#0) ← (byte/signed byte/word/signed word) 2
+  to:main::@return
+main::@3: scope:[main]  from main
+  *((const byte*) main::bgcol#0) ← (byte/signed byte/word/signed word) 5
+  to:main::@return
+main::@return: scope:[main]  from main::@1 main::@3
+  return 
+  to:@return
+@1: scope:[]  from @begin
+  call main param-assignment
+  to:@end
+@end: scope:[]  from @1
+
+Constant (const word) main::w#0 = main::b#0*256+0
+Constant (const word) main::$5 = 1*256+1
+Constant (const word) main::$6 = 0*256+0
+Succesful SSA optimization Pass2ConstantIdentification
+CONTROL FLOW GRAPH
+@begin: scope:[]  from
+  to:@1
+main: scope:[main]  from @1
+  (word~) main::$0 ← (const word) main::$5 + (const word) main::w#0
+  (word) main::w2#0 ← (word~) main::$0 + (const word) main::$6
+  (byte*) main::sc#0 ← ((byte*)) (word) main::w2#0
+  *((byte*) main::sc#0) ← *((const byte[]) main::bs#0+(byte/signed byte/word/signed word) 1)
+  if(*((const byte*) main::pos#0)!=(byte) 'm') goto main::@1
+  to:main::@3
+main::@1: scope:[main]  from main
+  *((const byte*) main::bgcol#0) ← (byte/signed byte/word/signed word) 2
+  to:main::@return
+main::@3: scope:[main]  from main
+  *((const byte*) main::bgcol#0) ← (byte/signed byte/word/signed word) 5
+  to:main::@return
+main::@return: scope:[main]  from main::@1 main::@3
+  return 
+  to:@return
+@1: scope:[]  from @begin
+  call main param-assignment
+  to:@end
+@end: scope:[]  from @1
+
+Constant (const word) main::$0 = main::$5+main::w#0
+Succesful SSA optimization Pass2ConstantIdentification
+CONTROL FLOW GRAPH
+@begin: scope:[]  from
+  to:@1
+main: scope:[main]  from @1
+  (word) main::w2#0 ← (const word) main::$0 + (const word) main::$6
+  (byte*) main::sc#0 ← ((byte*)) (word) main::w2#0
+  *((byte*) main::sc#0) ← *((const byte[]) main::bs#0+(byte/signed byte/word/signed word) 1)
+  if(*((const byte*) main::pos#0)!=(byte) 'm') goto main::@1
+  to:main::@3
+main::@1: scope:[main]  from main
+  *((const byte*) main::bgcol#0) ← (byte/signed byte/word/signed word) 2
+  to:main::@return
+main::@3: scope:[main]  from main
+  *((const byte*) main::bgcol#0) ← (byte/signed byte/word/signed word) 5
+  to:main::@return
+main::@return: scope:[main]  from main::@1 main::@3
+  return 
+  to:@return
+@1: scope:[]  from @begin
+  call main param-assignment
+  to:@end
+@end: scope:[]  from @1
+
+Constant (const word) main::w2#0 = main::$0+main::$6
+Succesful SSA optimization Pass2ConstantIdentification
+CONTROL FLOW GRAPH
+@begin: scope:[]  from
+  to:@1
+main: scope:[main]  from @1
+  (byte*) main::sc#0 ← ((byte*)) (const word) main::w2#0
+  *((byte*) main::sc#0) ← *((const byte[]) main::bs#0+(byte/signed byte/word/signed word) 1)
+  if(*((const byte*) main::pos#0)!=(byte) 'm') goto main::@1
+  to:main::@3
+main::@1: scope:[main]  from main
+  *((const byte*) main::bgcol#0) ← (byte/signed byte/word/signed word) 2
+  to:main::@return
+main::@3: scope:[main]  from main
+  *((const byte*) main::bgcol#0) ← (byte/signed byte/word/signed word) 5
+  to:main::@return
+main::@return: scope:[main]  from main::@1 main::@3
+  return 
+  to:@return
+@1: scope:[]  from @begin
+  call main param-assignment
+  to:@end
+@end: scope:[]  from @1
+
+Constant (const byte*) main::sc#0 = ((byte*))main::w2#0
+Succesful SSA optimization Pass2ConstantIdentification
+CONTROL FLOW GRAPH
+@begin: scope:[]  from
+  to:@1
+main: scope:[main]  from @1
+  *((const byte*) main::sc#0) ← *((const byte[]) main::bs#0+(byte/signed byte/word/signed word) 1)
+  if(*((const byte*) main::pos#0)!=(byte) 'm') goto main::@1
+  to:main::@3
+main::@1: scope:[main]  from main
+  *((const byte*) main::bgcol#0) ← (byte/signed byte/word/signed word) 2
+  to:main::@return
+main::@3: scope:[main]  from main
+  *((const byte*) main::bgcol#0) ← (byte/signed byte/word/signed word) 5
+  to:main::@return
+main::@return: scope:[main]  from main::@1 main::@3
+  return 
+  to:@return
+@1: scope:[]  from @begin
+  call main param-assignment
+  to:@end
+@end: scope:[]  from @1
+
+Constant inlined main::$5 = (byte/signed byte/word/signed word) 1*(word/signed word) 256+(byte/signed byte/word/signed word) 1
+Constant inlined main::$6 = (byte/signed byte/word/signed word) 0*(word/signed word) 256+(byte/signed byte/word/signed word) 0
+Constant inlined main::$0 = (byte/signed byte/word/signed word) 1*(word/signed word) 256+(byte/signed byte/word/signed word) 1+(const word) main::w#0
+Succesful SSA optimization Pass2ConstantInlining
+CONTROL FLOW GRAPH
+@begin: scope:[]  from
+  to:@1
+main: scope:[main]  from @1
+  *((const byte*) main::sc#0) ← *((const byte[]) main::bs#0+(byte/signed byte/word/signed word) 1)
+  if(*((const byte*) main::pos#0)!=(byte) 'm') goto main::@1
+  to:main::@3
+main::@1: scope:[main]  from main
+  *((const byte*) main::bgcol#0) ← (byte/signed byte/word/signed word) 2
+  to:main::@return
+main::@3: scope:[main]  from main
+  *((const byte*) main::bgcol#0) ← (byte/signed byte/word/signed word) 5
+  to:main::@return
+main::@return: scope:[main]  from main::@1 main::@3
+  return 
+  to:@return
+@1: scope:[]  from @begin
+  call main param-assignment
+  to:@end
+@end: scope:[]  from @1
+
+FINAL SYMBOL TABLE
+(label) @1
+(label) @begin
+(label) @end
+(void()) main()
+(label) main::@1
+(label) main::@3
+(label) main::@return
+(byte) main::b
+(const byte) main::b#0 = (byte/signed byte/word/signed word) 4
+(byte*) main::bgcol
+(const byte*) main::bgcol#0 = ((byte*))(word) 53281
+(byte[]) main::bs
+(const byte[]) main::bs#0 = { (byte) 'c', (byte) 'm' }
+(byte*) main::pos
+(const byte*) main::pos#0 = ((byte*))(word/signed word) 1281
+(byte*) main::sc
+(const byte*) main::sc#0 = ((byte*))(const word) main::w2#0
+(word) main::w
+(const word) main::w#0 = (const byte) main::b#0*(word/signed word) 256+(byte/signed byte/word/signed word) 0
+(word) main::w2
+(const word) main::w2#0 = (byte/signed byte/word/signed word) 1*(word/signed word) 256+(byte/signed byte/word/signed word) 1+(const word) main::w#0+(byte/signed byte/word/signed word) 0*(word/signed word) 256+(byte/signed byte/word/signed word) 0
+
+Block Sequence Planned @begin @1 @end main main::@3 main::@return main::@1 
+Block Sequence Planned @begin @1 @end main main::@3 main::@return main::@1 
+CONTROL FLOW GRAPH - PHI LIFTED
+@begin: scope:[]  from
+  to:@1
+@1: scope:[]  from @begin
+  call main param-assignment
+  to:@end
+@end: scope:[]  from @1
+main: scope:[main]  from @1
+  *((const byte*) main::sc#0) ← *((const byte[]) main::bs#0+(byte/signed byte/word/signed word) 1)
+  if(*((const byte*) main::pos#0)!=(byte) 'm') goto main::@1
+  to:main::@3
+main::@3: scope:[main]  from main
+  *((const byte*) main::bgcol#0) ← (byte/signed byte/word/signed word) 5
+  to:main::@return
+main::@return: scope:[main]  from main::@1 main::@3
+  return 
+  to:@return
+main::@1: scope:[main]  from main
+  *((const byte*) main::bgcol#0) ← (byte/signed byte/word/signed word) 2
+  to:main::@return
+
+Adding NOP phi() at start of @begin
+Adding NOP phi() at start of @1
+Adding NOP phi() at start of @end
+CALL GRAPH
+Calls in [] to main:2 
+
+Propagating live ranges...
+CONTROL FLOW GRAPH - LIVE RANGES FOUND
+@begin: scope:[]  from
+  [0] phi() [ ]
+  to:@1
+@1: scope:[]  from @begin
+  [1] phi() [ ]
+  [2] call main param-assignment [ ]
+  to:@end
+@end: scope:[]  from @1
+  [3] phi() [ ]
+main: scope:[main]  from @1
+  [4] *((const byte*) main::sc#0) ← *((const byte[]) main::bs#0+(byte/signed byte/word/signed word) 1) [ ]
+  [5] if(*((const byte*) main::pos#0)!=(byte) 'm') goto main::@1 [ ]
+  to:main::@3
+main::@3: scope:[main]  from main
+  [6] *((const byte*) main::bgcol#0) ← (byte/signed byte/word/signed word) 5 [ ]
+  to:main::@return
+main::@return: scope:[main]  from main::@1 main::@3
+  [7] return  [ ]
+  to:@return
+main::@1: scope:[main]  from main
+  [8] *((const byte*) main::bgcol#0) ← (byte/signed byte/word/signed word) 2 [ ]
+  to:main::@return
+
+Created 0 initial phi equivalence classes
+Coalesced down to 0 phi equivalence classes
+Block Sequence Planned @begin @1 @end main main::@3 main::@return main::@1 
+Adding NOP phi() at start of @begin
+Adding NOP phi() at start of @1
+Adding NOP phi() at start of @end
+Propagating live ranges...
+CONTROL FLOW GRAPH - BEFORE EFFECTIVE LIVE RANGES
+@begin: scope:[]  from
+  [0] phi() [ ]
+  to:@1
+@1: scope:[]  from @begin
+  [1] phi() [ ]
+  [2] call main param-assignment [ ]
+  to:@end
+@end: scope:[]  from @1
+  [3] phi() [ ]
+main: scope:[main]  from @1
+  [4] *((const byte*) main::sc#0) ← *((const byte[]) main::bs#0+(byte/signed byte/word/signed word) 1) [ ]
+  [5] if(*((const byte*) main::pos#0)!=(byte) 'm') goto main::@1 [ ]
+  to:main::@3
+main::@3: scope:[main]  from main
+  [6] *((const byte*) main::bgcol#0) ← (byte/signed byte/word/signed word) 5 [ ]
+  to:main::@return
+main::@return: scope:[main]  from main::@1 main::@3
+  [7] return  [ ]
+  to:@return
+main::@1: scope:[main]  from main
+  [8] *((const byte*) main::bgcol#0) ← (byte/signed byte/word/signed word) 2 [ ]
+  to:main::@return
+
+CONTROL FLOW GRAPH - PHI MEM COALESCED
+@begin: scope:[]  from
+  [0] phi() [ ] ( )
+  to:@1
+@1: scope:[]  from @begin
+  [1] phi() [ ] ( )
+  [2] call main param-assignment [ ] ( )
+  to:@end
+@end: scope:[]  from @1
+  [3] phi() [ ] ( )
+main: scope:[main]  from @1
+  [4] *((const byte*) main::sc#0) ← *((const byte[]) main::bs#0+(byte/signed byte/word/signed word) 1) [ ] ( main:2 [ ] )
+  [5] if(*((const byte*) main::pos#0)!=(byte) 'm') goto main::@1 [ ] ( main:2 [ ] )
+  to:main::@3
+main::@3: scope:[main]  from main
+  [6] *((const byte*) main::bgcol#0) ← (byte/signed byte/word/signed word) 5 [ ] ( main:2 [ ] )
+  to:main::@return
+main::@return: scope:[main]  from main::@1 main::@3
+  [7] return  [ ] ( main:2 [ ] )
+  to:@return
+main::@1: scope:[main]  from main
+  [8] *((const byte*) main::bgcol#0) ← (byte/signed byte/word/signed word) 2 [ ] ( main:2 [ ] )
+  to:main::@return
+
+DOMINATORS
+@begin dominated by  @begin 
+@1 dominated by  @1 @begin 
+@end dominated by  @1 @begin @end 
+main dominated by  @1 @begin main 
+main::@3 dominated by  @1 @begin main main::@3 
+main::@return dominated by  main::@return @1 @begin main 
+main::@1 dominated by  @1 @begin main::@1 main 
+
+NATURAL LOOPS
+
+Found 0 loops in scope []
+Found 0 loops in scope [main]
+NATURAL LOOPS WITH DEPTH
+
+
+VARIABLE REGISTER WEIGHTS
+(void()) main()
+(byte) main::b
+(byte*) main::bgcol
+(byte[]) main::bs
+(byte*) main::pos
+(byte*) main::sc
+(word) main::w
+(word) main::w2
+
+Initial phi equivalence classes
+Complete equivalence classes
+INITIAL ASM
+//SEG0 Basic Upstart
+.pc = $801 "Basic"
+:BasicUpstart(main)
+.pc = $80d "Program"
+//SEG1 Global Constants & labels
+//SEG2 @begin
+bbegin:
+//SEG3 [1] phi from @begin to @1 [phi:@begin->@1]
+b1_from_bbegin:
+  jmp b1
+//SEG4 @1
+b1:
+//SEG5 [2] call main param-assignment [ ] ( )
+  jsr main
+//SEG6 [3] phi from @1 to @end [phi:@1->@end]
+bend_from_b1:
+  jmp bend
+//SEG7 @end
+bend:
+//SEG8 main
+main: {
+    .const b = 4
+    .const pos = $501
+    .const bgcol = $d021
+    .const w = b*$100+0
+    .const w2 = 1*$100+1+w+0*$100+0
+    .const sc = w2
+  //SEG9 [4] *((const byte*) main::sc#0) ← *((const byte[]) main::bs#0+(byte/signed byte/word/signed word) 1) [ ] ( main:2 [ ] ) -- _deref_pbuc1=_deref_pbuc2 
+    lda bs+1
+    sta sc
+  //SEG10 [5] if(*((const byte*) main::pos#0)!=(byte) 'm') goto main::@1 [ ] ( main:2 [ ] ) -- _deref_pbuc1_neq_vbuc2_then_la1 
+    lda pos
+    cmp #'m'
+    bne b1
+    jmp b3
+  //SEG11 main::@3
+  b3:
+  //SEG12 [6] *((const byte*) main::bgcol#0) ← (byte/signed byte/word/signed word) 5 [ ] ( main:2 [ ] ) -- _deref_pbuc1=vbuc2 
+    lda #5
+    sta bgcol
+    jmp breturn
+  //SEG13 main::@return
+  breturn:
+  //SEG14 [7] return  [ ] ( main:2 [ ] )
+    rts
+  //SEG15 main::@1
+  b1:
+  //SEG16 [8] *((const byte*) main::bgcol#0) ← (byte/signed byte/word/signed word) 2 [ ] ( main:2 [ ] ) -- _deref_pbuc1=vbuc2 
+    lda #2
+    sta bgcol
+    jmp breturn
+    bs: .byte 'c', 'm'
+}
+
+REGISTER UPLIFT POTENTIAL REGISTERS
+Statement [4] *((const byte*) main::sc#0) ← *((const byte[]) main::bs#0+(byte/signed byte/word/signed word) 1) [ ] ( main:2 [ ] ) always clobbers reg byte a 
+Statement [5] if(*((const byte*) main::pos#0)!=(byte) 'm') goto main::@1 [ ] ( main:2 [ ] ) always clobbers reg byte a 
+Statement [6] *((const byte*) main::bgcol#0) ← (byte/signed byte/word/signed word) 5 [ ] ( main:2 [ ] ) always clobbers reg byte a 
+Statement [8] *((const byte*) main::bgcol#0) ← (byte/signed byte/word/signed word) 2 [ ] ( main:2 [ ] ) always clobbers reg byte a 
+
+REGISTER UPLIFT SCOPES
+Uplift Scope [main] 
+Uplift Scope [] 
+
+Uplifting [main] best 55 combination 
+Uplifting [] best 55 combination 
+
+ASSEMBLER BEFORE OPTIMIZATION
+//SEG0 Basic Upstart
+.pc = $801 "Basic"
+:BasicUpstart(main)
+.pc = $80d "Program"
+//SEG1 Global Constants & labels
+//SEG2 @begin
+bbegin:
+//SEG3 [1] phi from @begin to @1 [phi:@begin->@1]
+b1_from_bbegin:
+  jmp b1
+//SEG4 @1
+b1:
+//SEG5 [2] call main param-assignment [ ] ( )
+  jsr main
+//SEG6 [3] phi from @1 to @end [phi:@1->@end]
+bend_from_b1:
+  jmp bend
+//SEG7 @end
+bend:
+//SEG8 main
+main: {
+    .const b = 4
+    .const pos = $501
+    .const bgcol = $d021
+    .const w = b*$100+0
+    .const w2 = 1*$100+1+w+0*$100+0
+    .const sc = w2
+  //SEG9 [4] *((const byte*) main::sc#0) ← *((const byte[]) main::bs#0+(byte/signed byte/word/signed word) 1) [ ] ( main:2 [ ] ) -- _deref_pbuc1=_deref_pbuc2 
+    lda bs+1
+    sta sc
+  //SEG10 [5] if(*((const byte*) main::pos#0)!=(byte) 'm') goto main::@1 [ ] ( main:2 [ ] ) -- _deref_pbuc1_neq_vbuc2_then_la1 
+    lda pos
+    cmp #'m'
+    bne b1
+    jmp b3
+  //SEG11 main::@3
+  b3:
+  //SEG12 [6] *((const byte*) main::bgcol#0) ← (byte/signed byte/word/signed word) 5 [ ] ( main:2 [ ] ) -- _deref_pbuc1=vbuc2 
+    lda #5
+    sta bgcol
+    jmp breturn
+  //SEG13 main::@return
+  breturn:
+  //SEG14 [7] return  [ ] ( main:2 [ ] )
+    rts
+  //SEG15 main::@1
+  b1:
+  //SEG16 [8] *((const byte*) main::bgcol#0) ← (byte/signed byte/word/signed word) 2 [ ] ( main:2 [ ] ) -- _deref_pbuc1=vbuc2 
+    lda #2
+    sta bgcol
+    jmp breturn
+    bs: .byte 'c', 'm'
+}
+
+ASSEMBLER OPTIMIZATIONS
+Removing instruction jmp b1
+Removing instruction jmp bend
+Removing instruction jmp b3
+Removing instruction jmp breturn
+Succesful ASM optimization Pass5NextJumpElimination
+Removing instruction bbegin:
+Removing instruction b1_from_bbegin:
+Removing instruction bend_from_b1:
+Succesful ASM optimization Pass5RedundantLabelElimination
+Removing instruction b1:
+Removing instruction bend:
+Removing instruction b3:
+Succesful ASM optimization Pass5UnusedLabelElimination
+
+FINAL SYMBOL TABLE
+(label) @1
+(label) @begin
+(label) @end
+(void()) main()
+(label) main::@1
+(label) main::@3
+(label) main::@return
+(byte) main::b
+(const byte) main::b#0 b = (byte/signed byte/word/signed word) 4
+(byte*) main::bgcol
+(const byte*) main::bgcol#0 bgcol = ((byte*))(word) 53281
+(byte[]) main::bs
+(const byte[]) main::bs#0 bs = { (byte) 'c', (byte) 'm' }
+(byte*) main::pos
+(const byte*) main::pos#0 pos = ((byte*))(word/signed word) 1281
+(byte*) main::sc
+(const byte*) main::sc#0 sc = ((byte*))(const word) main::w2#0
+(word) main::w
+(const word) main::w#0 w = (const byte) main::b#0*(word/signed word) 256+(byte/signed byte/word/signed word) 0
+(word) main::w2
+(const word) main::w2#0 w2 = (byte/signed byte/word/signed word) 1*(word/signed word) 256+(byte/signed byte/word/signed word) 1+(const word) main::w#0+(byte/signed byte/word/signed word) 0*(word/signed word) 256+(byte/signed byte/word/signed word) 0
+
+
+FINAL CODE
+//SEG0 Basic Upstart
+.pc = $801 "Basic"
+:BasicUpstart(main)
+.pc = $80d "Program"
+//SEG1 Global Constants & labels
+//SEG2 @begin
+//SEG3 [1] phi from @begin to @1 [phi:@begin->@1]
+//SEG4 @1
+//SEG5 [2] call main param-assignment [ ] ( )
+  jsr main
+//SEG6 [3] phi from @1 to @end [phi:@1->@end]
+//SEG7 @end
+//SEG8 main
+main: {
+    .const b = 4
+    .const pos = $501
+    .const bgcol = $d021
+    .const w = b*$100+0
+    .const w2 = 1*$100+1+w+0*$100+0
+    .const sc = w2
+  //SEG9 [4] *((const byte*) main::sc#0) ← *((const byte[]) main::bs#0+(byte/signed byte/word/signed word) 1) [ ] ( main:2 [ ] ) -- _deref_pbuc1=_deref_pbuc2 
+    lda bs+1
+    sta sc
+  //SEG10 [5] if(*((const byte*) main::pos#0)!=(byte) 'm') goto main::@1 [ ] ( main:2 [ ] ) -- _deref_pbuc1_neq_vbuc2_then_la1 
+    lda pos
+    cmp #'m'
+    bne b1
+  //SEG11 main::@3
+  //SEG12 [6] *((const byte*) main::bgcol#0) ← (byte/signed byte/word/signed word) 5 [ ] ( main:2 [ ] ) -- _deref_pbuc1=vbuc2 
+    lda #5
+    sta bgcol
+  //SEG13 main::@return
+  breturn:
+  //SEG14 [7] return  [ ] ( main:2 [ ] )
+    rts
+  //SEG15 main::@1
+  b1:
+  //SEG16 [8] *((const byte*) main::bgcol#0) ← (byte/signed byte/word/signed word) 2 [ ] ( main:2 [ ] ) -- _deref_pbuc1=vbuc2 
+    lda #2
+    sta bgcol
+    jmp breturn
+    bs: .byte 'c', 'm'
+}
+

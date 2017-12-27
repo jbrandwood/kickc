@@ -1,9 +1,10 @@
 package dk.camelot64.kickc.passes;
 
 import dk.camelot64.kickc.model.*;
-import org.stringtemplate.v4.ST;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.ListIterator;
 
 /**
  * A replacer capable to alias all usages of a variable (or constant var) with a suitable replacement
@@ -15,10 +16,11 @@ public class ValueReplacer {
       /**
        * Execute replacement of a replaceable value.
        * @param replaceable The replaceable value
-       * @param currentStmt The current statement that the value is a part of
+       * @param currentStmt The statement iterator - just past the current statement that the value is a part of. Current statment can be retrieved by calling
+       * @param stmtIt The statement iterator - just past the current statement. Can be used for modifying the control flow block.
        * @param currentBlock The current block that the value is a part of
        */
-      void execute(ReplaceableValue replaceable, Statement currentStmt, ControlFlowBlock currentBlock);
+      void execute(ReplaceableValue replaceable, Statement currentStmt, ListIterator<Statement> stmtIt, ControlFlowBlock currentBlock);
    }
 
    /**
@@ -29,31 +31,33 @@ public class ValueReplacer {
     */
    public static void executeAll(ControlFlowGraph graph, Replacer replacer) {
       for (ControlFlowBlock block : graph.getAllBlocks()) {
-         for (Statement statement : block.getStatements()) {
+         ListIterator<Statement> statementsIt = block.getStatements().listIterator();
+         while(statementsIt.hasNext()) {
+            Statement statement = statementsIt.next();
             if (statement instanceof StatementAssignment) {
-               executeAll(new ReplaceableLValue((StatementLValue) statement), replacer, statement, block);
-               executeAll(new ReplaceableRValue1((StatementAssignment) statement), replacer, statement, block);
-               executeAll(new ReplaceableRValue2((StatementAssignment) statement), replacer, statement, block);
+               executeAll(new ReplaceableLValue((StatementLValue) statement), replacer, statement, statementsIt, block);
+               executeAll(new ReplaceableRValue1((StatementAssignment) statement), replacer, statement, statementsIt, block);
+               executeAll(new ReplaceableRValue2((StatementAssignment) statement), replacer, statement,statementsIt, block);
             } else if (statement instanceof StatementCall) {
-               executeAll(new ReplaceableLValue((StatementLValue) statement), replacer, statement, block);
+               executeAll(new ReplaceableLValue((StatementLValue) statement), replacer, statement, statementsIt, block);
                StatementCall call = (StatementCall) statement;
                if (call.getParameters() != null) {
                   int size = call.getParameters().size();
                   for (int i = 0; i < size; i++) {
-                     executeAll(new ReplaceableCallParameter(call, i), replacer, statement, block);
+                     executeAll(new ReplaceableCallParameter(call, i), replacer, statement, statementsIt, block);
                   }
                }
             } else if (statement instanceof StatementConditionalJump) {
-               executeAll(new ReplaceableCondRValue1((StatementConditionalJump) statement), replacer, statement, block);
-               executeAll(new ReplaceableCondRValue2((StatementConditionalJump) statement), replacer, statement, block);
+               executeAll(new ReplaceableCondRValue1((StatementConditionalJump) statement), replacer, statement, statementsIt, block);
+               executeAll(new ReplaceableCondRValue2((StatementConditionalJump) statement), replacer, statement, statementsIt, block);
             } else if (statement instanceof StatementReturn) {
-               executeAll(new ReplaceableReturn((StatementReturn) statement), replacer, statement, block);
+               executeAll(new ReplaceableReturn((StatementReturn) statement), replacer, statement, statementsIt, block);
             } else if (statement instanceof StatementPhiBlock) {
                for (StatementPhiBlock.PhiVariable phiVariable : ((StatementPhiBlock) statement).getPhiVariables()) {
-                  executeAll(new ReplaceablePhiVariable(phiVariable), replacer, statement, block);
+                  executeAll(new ReplaceablePhiVariable(phiVariable), replacer, statement, statementsIt, block);
                   int size = phiVariable.getValues().size();
                   for (int i = 0; i < size; i++) {
-                     executeAll(new ReplaceablePhiValue(phiVariable, i), replacer, statement, block);
+                     executeAll(new ReplaceablePhiValue(phiVariable, i), replacer, statement, statementsIt, block);
                   }
                }
             }
@@ -66,10 +70,10 @@ public class ValueReplacer {
     * @param replaceable The replaceable value
     * @param replacer The value replacer
     */
-   public static void executeAll(ReplaceableValue replaceable, Replacer replacer, Statement currentStmt, ControlFlowBlock currentBlock ) {
-      replacer.execute(replaceable, currentStmt, currentBlock);
+   public static void executeAll(ReplaceableValue replaceable, Replacer replacer, Statement currentStmt, ListIterator<Statement> stmtIt, ControlFlowBlock currentBlock ) {
+      replacer.execute(replaceable, currentStmt, stmtIt, currentBlock);
       for (ReplaceableValue subValue : replaceable.getSubValues()) {
-         executeAll(subValue, replacer, currentStmt, currentBlock);
+         executeAll(subValue, replacer, currentStmt, stmtIt, currentBlock);
       }
    }
 

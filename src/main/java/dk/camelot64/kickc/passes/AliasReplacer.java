@@ -3,6 +3,7 @@ package dk.camelot64.kickc.passes;
 import dk.camelot64.kickc.model.*;
 
 import java.util.ArrayList;
+import java.util.ListIterator;
 import java.util.Map;
 
 /** A {@link ValueReplacer} that replaces symbols with their alias. */
@@ -83,7 +84,7 @@ public class AliasReplacer implements ValueReplacer.Replacer {
     * @param replaceable The replaceable value
     */
    @Override
-   public void execute(ValueReplacer.ReplaceableValue replaceable, Statement currentStmt, ControlFlowBlock currentBlock) {
+   public void execute(ValueReplacer.ReplaceableValue replaceable, Statement currentStmt, ListIterator<Statement> stmtIt, ControlFlowBlock currentBlock) {
       if (replaceable.get() != null) {
          RValue replacement = getReplacement(replaceable.get(), aliases);
          if (replacement != null) {

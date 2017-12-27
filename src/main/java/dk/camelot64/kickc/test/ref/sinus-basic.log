@@ -4225,7 +4225,7 @@ main::@return: scope:[main]  from main::@16
   to:@end
 @end: scope:[]  from @35
 
-Fixing word constructor with getFAC::return#0 ← *(memHi#0) w= *(memLo#0)
+Fixing word constructor with getFAC::$0 ← *(memHi#0) w= *(memLo#0)
 Succesful SSA optimization Pass2FixWordConstructors
 CONTROL FLOW GRAPH
 @begin: scope:[]  from
@@ -4306,7 +4306,8 @@ setFAC::@return: scope:[setFAC]  from setFAC::@1
   to:@return
 getFAC: scope:[getFAC]  from main::@13
   asm { jsr$b1aasty$festa$ff }
-  (word) getFAC::return#0 ← *((const byte*) memHi#0) w= *((const byte*) memLo#0)
+  (word~) getFAC::$0 ← *((const byte*) memHi#0) w= *((const byte*) memLo#0)
+  (word) getFAC::return#0 ← (word~) getFAC::$0
   to:getFAC::@return
 getFAC::@return: scope:[getFAC]  from getFAC
   return 
@@ -4434,6 +4435,208 @@ Culled Empty Block (label) @6
 Culled Empty Block (label) main::@5
 Culled Empty Block (label) @35
 Succesful SSA optimization Pass2CullEmptyBlocks
+CONTROL FLOW GRAPH
+@begin: scope:[]  from
+  to:@34
+print_ln: scope:[print_ln]  from main::@15
+  to:print_ln::@1
+print_ln::@1: scope:[print_ln]  from print_ln print_ln::@1
+  (byte*) line_cursor#6 ← phi( print_ln/(byte*) line_cursor#13 print_ln::@1/(byte*) line_cursor#1 )
+  (byte*) line_cursor#1 ← (byte*) line_cursor#6 + (byte/signed byte/word/signed word) 40
+  if((byte*) line_cursor#1<(byte*) char_cursor#10) goto print_ln::@1
+  to:print_ln::@return
+print_ln::@return: scope:[print_ln]  from print_ln::@1
+  return 
+  to:@return
+print_word: scope:[print_word]  from main::@14
+  (byte) print_byte::b#0 ← > (word) print_word::w#0
+  call print_byte param-assignment
+  to:print_word::@1
+print_word::@1: scope:[print_word]  from print_word
+  (byte) print_byte::b#1 ← < (word) print_word::w#0
+  call print_byte param-assignment
+  to:print_word::@return
+print_word::@return: scope:[print_word]  from print_word::@1
+  return 
+  to:@return
+print_byte: scope:[print_byte]  from print_word print_word::@1
+  (byte*) char_cursor#31 ← phi( print_word/(byte*) char_cursor#32 print_word::@1/(byte*) char_cursor#10 )
+  (byte) print_byte::b#2 ← phi( print_word/(byte) print_byte::b#0 print_word::@1/(byte) print_byte::b#1 )
+  (byte~) print_byte::$0 ← (byte) print_byte::b#2 >> (byte/signed byte/word/signed word) 4
+  (byte) print_char::ch#0 ← *((const byte[]) print_byte::hextab#0 + (byte~) print_byte::$0)
+  call print_char param-assignment
+  to:print_byte::@1
+print_byte::@1: scope:[print_byte]  from print_byte
+  (byte~) print_byte::$2 ← (byte) print_byte::b#2 & (byte/signed byte/word/signed word) 15
+  (byte) print_char::ch#1 ← *((const byte[]) print_byte::hextab#0 + (byte~) print_byte::$2)
+  call print_char param-assignment
+  to:print_byte::@return
+print_byte::@return: scope:[print_byte]  from print_byte::@1
+  return 
+  to:@return
+print_char: scope:[print_char]  from print_byte print_byte::@1
+  (byte*) char_cursor#23 ← phi( print_byte/(byte*) char_cursor#31 print_byte::@1/(byte*) char_cursor#10 )
+  (byte) print_char::ch#2 ← phi( print_byte/(byte) print_char::ch#0 print_byte::@1/(byte) print_char::ch#1 )
+  *((byte*) char_cursor#23) ← (byte) print_char::ch#2
+  (byte*) char_cursor#10 ← ++ (byte*) char_cursor#23
+  to:print_char::@return
+print_char::@return: scope:[print_char]  from print_char
+  return 
+  to:@return
+prepareMEM: scope:[prepareMEM]  from addMEMtoFAC divMEMbyFAC mulFACbyMEM setFAC setMEMtoFAC
+  (byte*) prepareMEM::mem#5 ← phi( addMEMtoFAC/(const byte[]) prepareMEM::mem#2 divMEMbyFAC/(const byte[]) prepareMEM::mem#3 mulFACbyMEM/(byte*) prepareMEM::mem#4 setFAC/(byte*) prepareMEM::mem#0 setMEMtoFAC/(byte*) prepareMEM::mem#1 )
+  (byte~) prepareMEM::$0 ← < (byte*) prepareMEM::mem#5
+  *((const byte*) memLo#0) ← (byte~) prepareMEM::$0
+  (byte~) prepareMEM::$1 ← > (byte*) prepareMEM::mem#5
+  *((const byte*) memHi#0) ← (byte~) prepareMEM::$1
+  to:prepareMEM::@return
+prepareMEM::@return: scope:[prepareMEM]  from prepareMEM
+  return 
+  to:@return
+setFAC: scope:[setFAC]  from main main::@1 main::@8
+  (word) setFAC::w#3 ← phi( main/(const word) setFAC::w#0 main::@1/(word) setFAC::w#1 main::@8/(const word) setFAC::w#2 )
+  (byte*) prepareMEM::mem#0 ← ((byte*)) (word) setFAC::w#3
+  call prepareMEM param-assignment
+  to:setFAC::@1
+setFAC::@1: scope:[setFAC]  from setFAC
+  asm { ldy$felda$ffjsr$b391 }
+  to:setFAC::@return
+setFAC::@return: scope:[setFAC]  from setFAC::@1
+  return 
+  to:@return
+getFAC: scope:[getFAC]  from main::@13
+  asm { jsr$b1aasty$festa$ff }
+  (word~) getFAC::$0 ← *((const byte*) memHi#0) w= *((const byte*) memLo#0)
+  (word) getFAC::return#0 ← (word~) getFAC::$0
+  to:getFAC::@return
+getFAC::@return: scope:[getFAC]  from getFAC
+  return 
+  to:@return
+setMEMtoFAC: scope:[setMEMtoFAC]  from main::@4 main::@7
+  (byte*) setMEMtoFAC::mem#2 ← phi( main::@4/(const byte[]) setMEMtoFAC::mem#0 main::@7/(const byte[]) setMEMtoFAC::mem#1 )
+  (byte*) prepareMEM::mem#1 ← (byte*) setMEMtoFAC::mem#2
+  call prepareMEM param-assignment
+  to:setMEMtoFAC::@1
+setMEMtoFAC::@1: scope:[setMEMtoFAC]  from setMEMtoFAC
+  asm { ldx$feldy$ffjsr$bbd4 }
+  to:setMEMtoFAC::@return
+setMEMtoFAC::@return: scope:[setMEMtoFAC]  from setMEMtoFAC::@1
+  return 
+  to:@return
+addMEMtoFAC: scope:[addMEMtoFAC]  from main::@12
+  call prepareMEM param-assignment
+  to:addMEMtoFAC::@1
+addMEMtoFAC::@1: scope:[addMEMtoFAC]  from addMEMtoFAC
+  asm { lda$feldy$ffjsr$b867 }
+  to:addMEMtoFAC::@return
+addMEMtoFAC::@return: scope:[addMEMtoFAC]  from addMEMtoFAC::@1
+  return 
+  to:@return
+divMEMbyFAC: scope:[divMEMbyFAC]  from main::@9
+  call prepareMEM param-assignment
+  to:divMEMbyFAC::@1
+divMEMbyFAC::@1: scope:[divMEMbyFAC]  from divMEMbyFAC
+  asm { lda$feldy$ffjsr$bb0f }
+  to:divMEMbyFAC::@return
+divMEMbyFAC::@return: scope:[divMEMbyFAC]  from divMEMbyFAC::@1
+  return 
+  to:@return
+mulFACbyMEM: scope:[mulFACbyMEM]  from main::@11 main::@6
+  (byte*) mulFACbyMEM::mem#2 ← phi( main::@11/(const byte[]) mulFACbyMEM::mem#1 main::@6/(const byte*) mulFACbyMEM::mem#0 )
+  (byte*) prepareMEM::mem#4 ← (byte*) mulFACbyMEM::mem#2
+  call prepareMEM param-assignment
+  to:mulFACbyMEM::@1
+mulFACbyMEM::@1: scope:[mulFACbyMEM]  from mulFACbyMEM
+  asm { lda$feldy$ffjsr$ba28 }
+  to:mulFACbyMEM::@return
+mulFACbyMEM::@return: scope:[mulFACbyMEM]  from mulFACbyMEM::@1
+  return 
+  to:@return
+sinFAC: scope:[sinFAC]  from main::@10
+  asm { jsr$e26b }
+  to:sinFAC::@return
+sinFAC::@return: scope:[sinFAC]  from sinFAC
+  return 
+  to:@return
+divFACby10: scope:[divFACby10]  from main::@3
+  asm { jsr$bafe }
+  to:divFACby10::@return
+divFACby10::@return: scope:[divFACby10]  from divFACby10
+  return 
+  to:@return
+main: scope:[main]  from @34
+  call setFAC param-assignment
+  to:main::@3
+main::@3: scope:[main]  from main
+  call divFACby10 param-assignment
+  to:main::@4
+main::@4: scope:[main]  from main::@3
+  call setMEMtoFAC param-assignment
+  to:main::@1
+main::@1: scope:[main]  from main::@16 main::@4
+  (byte*) line_cursor#13 ← phi( main::@16/(byte*) line_cursor#1 main::@4/(const byte*) char_cursor#0 )
+  (byte*) char_cursor#32 ← phi( main::@16/(byte*) line_cursor#1 main::@4/(const byte*) char_cursor#0 )
+  (byte) main::i#10 ← phi( main::@16/(byte) main::i#1 main::@4/(const byte) main::i#0 )
+  (word) setFAC::w#1 ← ((word)) (byte) main::i#10
+  call setFAC param-assignment
+  to:main::@6
+main::@6: scope:[main]  from main::@1
+  call mulFACbyMEM param-assignment
+  to:main::@7
+main::@7: scope:[main]  from main::@6
+  call setMEMtoFAC param-assignment
+  to:main::@8
+main::@8: scope:[main]  from main::@7
+  call setFAC param-assignment
+  to:main::@9
+main::@9: scope:[main]  from main::@8
+  call divMEMbyFAC param-assignment
+  to:main::@10
+main::@10: scope:[main]  from main::@9
+  call sinFAC param-assignment
+  to:main::@11
+main::@11: scope:[main]  from main::@10
+  call mulFACbyMEM param-assignment
+  to:main::@12
+main::@12: scope:[main]  from main::@11
+  call addMEMtoFAC param-assignment
+  to:main::@13
+main::@13: scope:[main]  from main::@12
+  call getFAC param-assignment
+  (word) getFAC::return#2 ← (word) getFAC::return#0
+  to:main::@14
+main::@14: scope:[main]  from main::@13
+  (word) print_word::w#0 ← (word) getFAC::return#2
+  call print_word param-assignment
+  to:main::@15
+main::@15: scope:[main]  from main::@14
+  call print_ln param-assignment
+  to:main::@16
+main::@16: scope:[main]  from main::@15
+  (byte) main::i#1 ← ++ (byte) main::i#10
+  if((byte) main::i#1!=(byte/signed byte/word/signed word) 26) goto main::@1
+  to:main::@return
+main::@return: scope:[main]  from main::@16
+  return 
+  to:@return
+@34: scope:[]  from @begin
+  call main param-assignment
+  to:@end
+@end: scope:[]  from @34
+
+Not aliassing across scopes: line_cursor#6 line_cursor#13
+Not aliassing across scopes: print_byte::b#2 print_byte::b#0
+Not aliassing across scopes: char_cursor#31 char_cursor#32
+Not aliassing across scopes: print_char::ch#2 print_char::ch#0
+Not aliassing across scopes: char_cursor#23 char_cursor#31
+Not aliassing across scopes: prepareMEM::mem#1 setMEMtoFAC::mem#2
+Not aliassing across scopes: prepareMEM::mem#4 mulFACbyMEM::mem#2
+Not aliassing across scopes: char_cursor#32 line_cursor#1
+Not aliassing across scopes: line_cursor#13 line_cursor#1
+Not aliassing across scopes: getFAC::return#2 getFAC::return#0
+Not aliassing across scopes: print_word::w#0 getFAC::return#2
+Alias (word) getFAC::return#0 = (word~) getFAC::$0 
+Succesful SSA optimization Pass2AliasElimination
 CONTROL FLOW GRAPH
 @begin: scope:[]  from
   to:@34

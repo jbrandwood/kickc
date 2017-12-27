@@ -351,6 +351,14 @@ public class TestPrograms extends TestCase {
       assertError("array-uninitialized", "Cannot determine array size.");
    }
 
+   public void testArrayLengthMismatch() throws IOException, URISyntaxException {
+      assertError("array-length-mismatch", "Array length mismatch");
+   }
+
+   public void testStringLengthMismatch() throws IOException, URISyntaxException {
+      assertError("string-length-mismatch", "Array length mismatch");
+   }
+
    private void assertError(String kcFile, String expectError) throws IOException, URISyntaxException {
       try {
          compileAndCompare(kcFile);

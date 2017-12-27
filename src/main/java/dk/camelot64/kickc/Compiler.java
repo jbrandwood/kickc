@@ -116,6 +116,7 @@ public class Compiler {
       new Pass1FixLValuesLoHi(program).execute();
       new Pass1AssertNoLValueIntermediate(program).execute();
       new Pass1AddTypePromotions(program).execute();
+      new Pass1AssertArrayLengths(program).execute();
 
       getLog().append("INITIAL CONTROL FLOW GRAPH");
       getLog().append(program.getGraph().toString(program));

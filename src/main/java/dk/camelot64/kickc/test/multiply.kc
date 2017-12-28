@@ -18,14 +18,19 @@ void init_mul_tables() {
   // If f(x) = x*x/4 then f(x+1) = f(x) + x/2 + 1/4
   byte* sqr_lo = mul_sqr_lo+1;
   byte* sqr_hi = mul_sqr_hi+1;
-  word sqr = 0;
+  word sqr = 0; // sqr = (i*i)/4
+  byte i_2 = 0; // i/2
   for(word i : 1..511) {
-    // sqr++ on even numbers because 1 = 2*1/4 (from the two previous numbers) + 1/2 (half of the previous uneven number)
-    if((i&1)==0) sqr++;
+    if((i&1)==0) {
+        // sqr++ on even numbers because 1 = 2*1/4 (from the two previous numbers) + 1/2 (half of the previous uneven number)
+        sqr++;
+        // increase i/2 on even numbers
+        i_2++;
+    }
     *sqr_lo++ = <sqr;
     *sqr_hi++ = >sqr;
     // sqr = sqr + i/2 (when uneven 1/2 is not added here)
-    sqr = sqr + i>>1;
+    sqr = sqr + i_2;
   }
 
 }

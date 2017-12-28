@@ -17,18 +17,18 @@ byte[512] mul_sqr_hi;
 // Initialize the mul_sqr multiplication tables with f(x)=int(x*x/4)
 void init_mul_tables() {
   // If f(x) = x*x/4 then f(x+1) = f(x) + x/2 + 1/4
-  byte* sqr_lo = mul_sqr_lo+1;
-  byte* sqr_hi = mul_sqr_hi+1;
   word sqr = 0; // sqr = (x*x)/4
   byte x_2 = 0; // x/2
-  for(word x : 1..511) {
-    if((x&1)==0) {
+  byte c = 0;   // Counter used for determining x%2==0
+  byte* sqr_hi = mul_sqr_hi+1;
+  for(byte* sqr_lo = mul_sqr_lo+1; sqr_lo!=mul_sqr_lo+512; sqr_lo++) {
+    if((++c&1)==0) {
         sqr++; // sqr++ on even numbers because 1 = 2*1/4 (from the two previous numbers) + 1/2 (half of the previous uneven number)
         x_2++; // increase i/2 on even numbers
     }
-    *sqr_lo++ = <sqr;
+    *sqr_lo = <sqr;
     *sqr_hi++ = >sqr;
-    sqr = sqr + x_2; // sqr = sqr + i/2 (when uneven the 1/2 is not added here )
+    sqr = sqr + x_2; // sqr = sqr + i/2 (when uneven the 1/2 is not added here - see above)
   }
 
 }
@@ -82,10 +82,11 @@ void mul_tables_compare() {
             *BGCOL = 2;
     }
 }
+Adding pre/post-modifier (byte) init_mul_tables::c ← ++ (byte) init_mul_tables::c
 Adding pre/post-modifier (word) init_mul_tables::sqr ← ++ (word) init_mul_tables::sqr
 Adding pre/post-modifier (byte) init_mul_tables::x_2 ← ++ (byte) init_mul_tables::x_2
-Adding pre/post-modifier (byte*) init_mul_tables::sqr_lo ← ++ (byte*) init_mul_tables::sqr_lo
 Adding pre/post-modifier (byte*) init_mul_tables::sqr_hi ← ++ (byte*) init_mul_tables::sqr_hi
+Adding pre/post-modifier (byte*) init_mul_tables::sqr_lo ← ++ (byte*) init_mul_tables::sqr_lo
 PROGRAM
   (byte*) BGCOL ← (word) 53281
 proc (void()) main()
@@ -98,15 +99,16 @@ endproc // main()
   (byte[512]) mul_sqr_lo ← { fill( 512, 0) }
   (byte[512]) mul_sqr_hi ← { fill( 512, 0) }
 proc (void()) init_mul_tables()
-  (byte*~) init_mul_tables::$0 ← (byte[512]) mul_sqr_lo + (byte/signed byte/word/signed word) 1
-  (byte*) init_mul_tables::sqr_lo ← (byte*~) init_mul_tables::$0
-  (byte*~) init_mul_tables::$1 ← (byte[512]) mul_sqr_hi + (byte/signed byte/word/signed word) 1
-  (byte*) init_mul_tables::sqr_hi ← (byte*~) init_mul_tables::$1
   (word) init_mul_tables::sqr ← (byte/signed byte/word/signed word) 0
   (byte) init_mul_tables::x_2 ← (byte/signed byte/word/signed word) 0
-  (word) init_mul_tables::x ← (byte/signed byte/word/signed word) 1
+  (byte) init_mul_tables::c ← (byte/signed byte/word/signed word) 0
+  (byte*~) init_mul_tables::$0 ← (byte[512]) mul_sqr_hi + (byte/signed byte/word/signed word) 1
+  (byte*) init_mul_tables::sqr_hi ← (byte*~) init_mul_tables::$0
+  (byte*~) init_mul_tables::$1 ← (byte[512]) mul_sqr_lo + (byte/signed byte/word/signed word) 1
+  (byte*) init_mul_tables::sqr_lo ← (byte*~) init_mul_tables::$1
 init_mul_tables::@1:
-  (byte~) init_mul_tables::$2 ← (word) init_mul_tables::x & (byte/signed byte/word/signed word) 1
+  (byte) init_mul_tables::c ← ++ (byte) init_mul_tables::c
+  (byte~) init_mul_tables::$2 ← (byte) init_mul_tables::c & (byte/signed byte/word/signed word) 1
   (boolean~) init_mul_tables::$3 ← (byte~) init_mul_tables::$2 == (byte/signed byte/word/signed word) 0
   (boolean~) init_mul_tables::$4 ← ! (boolean~) init_mul_tables::$3
   if((boolean~) init_mul_tables::$4) goto init_mul_tables::@2
@@ -115,15 +117,15 @@ init_mul_tables::@1:
 init_mul_tables::@2:
   (byte~) init_mul_tables::$5 ← < (word) init_mul_tables::sqr
   *((byte*) init_mul_tables::sqr_lo) ← (byte~) init_mul_tables::$5
-  (byte*) init_mul_tables::sqr_lo ← ++ (byte*) init_mul_tables::sqr_lo
   (byte~) init_mul_tables::$6 ← > (word) init_mul_tables::sqr
   *((byte*) init_mul_tables::sqr_hi) ← (byte~) init_mul_tables::$6
   (byte*) init_mul_tables::sqr_hi ← ++ (byte*) init_mul_tables::sqr_hi
   (word~) init_mul_tables::$7 ← (word) init_mul_tables::sqr + (byte) init_mul_tables::x_2
   (word) init_mul_tables::sqr ← (word~) init_mul_tables::$7
-  (word) init_mul_tables::x ← ++ (word) init_mul_tables::x
-  (boolean~) init_mul_tables::$8 ← (word) init_mul_tables::x != (word/signed word) 512
-  if((boolean~) init_mul_tables::$8) goto init_mul_tables::@1
+  (byte*) init_mul_tables::sqr_lo ← ++ (byte*) init_mul_tables::sqr_lo
+  (byte*~) init_mul_tables::$8 ← (byte[512]) mul_sqr_lo + (word/signed word) 512
+  (boolean~) init_mul_tables::$9 ← (byte*) init_mul_tables::sqr_lo != (byte*~) init_mul_tables::$8
+  if((boolean~) init_mul_tables::$9) goto init_mul_tables::@1
 init_mul_tables::@return:
   return 
 endproc // init_mul_tables()
@@ -183,14 +185,15 @@ SYMBOLS
 (byte~) init_mul_tables::$5
 (byte~) init_mul_tables::$6
 (word~) init_mul_tables::$7
-(boolean~) init_mul_tables::$8
+(byte*~) init_mul_tables::$8
+(boolean~) init_mul_tables::$9
 (label) init_mul_tables::@1
 (label) init_mul_tables::@2
 (label) init_mul_tables::@return
+(byte) init_mul_tables::c
 (word) init_mul_tables::sqr
 (byte*) init_mul_tables::sqr_hi
 (byte*) init_mul_tables::sqr_lo
-(word) init_mul_tables::x
 (byte) init_mul_tables::x_2
 (void()) init_mul_tables_asm()
 (label) init_mul_tables_asm::@return
@@ -241,16 +244,17 @@ main::@return: scope:[main]  from main
   (byte[512]) mul_sqr_hi ← { fill( 512, 0) }
   to:@2
 init_mul_tables: scope:[init_mul_tables]  from
-  (byte*~) init_mul_tables::$0 ← (byte[512]) mul_sqr_lo + (byte/signed byte/word/signed word) 1
-  (byte*) init_mul_tables::sqr_lo ← (byte*~) init_mul_tables::$0
-  (byte*~) init_mul_tables::$1 ← (byte[512]) mul_sqr_hi + (byte/signed byte/word/signed word) 1
-  (byte*) init_mul_tables::sqr_hi ← (byte*~) init_mul_tables::$1
   (word) init_mul_tables::sqr ← (byte/signed byte/word/signed word) 0
   (byte) init_mul_tables::x_2 ← (byte/signed byte/word/signed word) 0
-  (word) init_mul_tables::x ← (byte/signed byte/word/signed word) 1
+  (byte) init_mul_tables::c ← (byte/signed byte/word/signed word) 0
+  (byte*~) init_mul_tables::$0 ← (byte[512]) mul_sqr_hi + (byte/signed byte/word/signed word) 1
+  (byte*) init_mul_tables::sqr_hi ← (byte*~) init_mul_tables::$0
+  (byte*~) init_mul_tables::$1 ← (byte[512]) mul_sqr_lo + (byte/signed byte/word/signed word) 1
+  (byte*) init_mul_tables::sqr_lo ← (byte*~) init_mul_tables::$1
   to:init_mul_tables::@1
 init_mul_tables::@1: scope:[init_mul_tables]  from init_mul_tables init_mul_tables::@2
-  (byte~) init_mul_tables::$2 ← (word) init_mul_tables::x & (byte/signed byte/word/signed word) 1
+  (byte) init_mul_tables::c ← ++ (byte) init_mul_tables::c
+  (byte~) init_mul_tables::$2 ← (byte) init_mul_tables::c & (byte/signed byte/word/signed word) 1
   (boolean~) init_mul_tables::$3 ← (byte~) init_mul_tables::$2 == (byte/signed byte/word/signed word) 0
   (boolean~) init_mul_tables::$4 ← ! (boolean~) init_mul_tables::$3
   if((boolean~) init_mul_tables::$4) goto init_mul_tables::@2
@@ -258,15 +262,15 @@ init_mul_tables::@1: scope:[init_mul_tables]  from init_mul_tables init_mul_tabl
 init_mul_tables::@2: scope:[init_mul_tables]  from init_mul_tables::@1 init_mul_tables::@3
   (byte~) init_mul_tables::$5 ← < (word) init_mul_tables::sqr
   *((byte*) init_mul_tables::sqr_lo) ← (byte~) init_mul_tables::$5
-  (byte*) init_mul_tables::sqr_lo ← ++ (byte*) init_mul_tables::sqr_lo
   (byte~) init_mul_tables::$6 ← > (word) init_mul_tables::sqr
   *((byte*) init_mul_tables::sqr_hi) ← (byte~) init_mul_tables::$6
   (byte*) init_mul_tables::sqr_hi ← ++ (byte*) init_mul_tables::sqr_hi
   (word~) init_mul_tables::$7 ← (word) init_mul_tables::sqr + (byte) init_mul_tables::x_2
   (word) init_mul_tables::sqr ← (word~) init_mul_tables::$7
-  (word) init_mul_tables::x ← ++ (word) init_mul_tables::x
-  (boolean~) init_mul_tables::$8 ← (word) init_mul_tables::x != (word/signed word) 512
-  if((boolean~) init_mul_tables::$8) goto init_mul_tables::@1
+  (byte*) init_mul_tables::sqr_lo ← ++ (byte*) init_mul_tables::sqr_lo
+  (byte*~) init_mul_tables::$8 ← (byte[512]) mul_sqr_lo + (word/signed word) 512
+  (boolean~) init_mul_tables::$9 ← (byte*) init_mul_tables::sqr_lo != (byte*~) init_mul_tables::$8
+  if((boolean~) init_mul_tables::$9) goto init_mul_tables::@1
   to:init_mul_tables::@4
 init_mul_tables::@3: scope:[init_mul_tables]  from init_mul_tables::@1
   (word) init_mul_tables::sqr ← ++ (word) init_mul_tables::sqr
@@ -367,16 +371,17 @@ main::@return: scope:[main]  from main
   (byte[512]) mul_sqr_hi ← { fill( 512, 0) }
   to:@2
 init_mul_tables: scope:[init_mul_tables]  from
-  (byte*~) init_mul_tables::$0 ← (byte[512]) mul_sqr_lo + (byte/signed byte/word/signed word) 1
-  (byte*) init_mul_tables::sqr_lo ← (byte*~) init_mul_tables::$0
-  (byte*~) init_mul_tables::$1 ← (byte[512]) mul_sqr_hi + (byte/signed byte/word/signed word) 1
-  (byte*) init_mul_tables::sqr_hi ← (byte*~) init_mul_tables::$1
   (word) init_mul_tables::sqr ← (byte/signed byte/word/signed word) 0
   (byte) init_mul_tables::x_2 ← (byte/signed byte/word/signed word) 0
-  (word) init_mul_tables::x ← (byte/signed byte/word/signed word) 1
+  (byte) init_mul_tables::c ← (byte/signed byte/word/signed word) 0
+  (byte*~) init_mul_tables::$0 ← (byte[512]) mul_sqr_hi + (byte/signed byte/word/signed word) 1
+  (byte*) init_mul_tables::sqr_hi ← (byte*~) init_mul_tables::$0
+  (byte*~) init_mul_tables::$1 ← (byte[512]) mul_sqr_lo + (byte/signed byte/word/signed word) 1
+  (byte*) init_mul_tables::sqr_lo ← (byte*~) init_mul_tables::$1
   to:init_mul_tables::@1
 init_mul_tables::@1: scope:[init_mul_tables]  from init_mul_tables init_mul_tables::@2
-  (byte~) init_mul_tables::$2 ← (word) init_mul_tables::x & (byte/signed byte/word/signed word) 1
+  (byte) init_mul_tables::c ← ++ (byte) init_mul_tables::c
+  (byte~) init_mul_tables::$2 ← (byte) init_mul_tables::c & (byte/signed byte/word/signed word) 1
   (boolean~) init_mul_tables::$3 ← (byte~) init_mul_tables::$2 == (byte/signed byte/word/signed word) 0
   (boolean~) init_mul_tables::$4 ← ! (boolean~) init_mul_tables::$3
   if((boolean~) init_mul_tables::$4) goto init_mul_tables::@2
@@ -384,15 +389,15 @@ init_mul_tables::@1: scope:[init_mul_tables]  from init_mul_tables init_mul_tabl
 init_mul_tables::@2: scope:[init_mul_tables]  from init_mul_tables::@1 init_mul_tables::@3
   (byte~) init_mul_tables::$5 ← < (word) init_mul_tables::sqr
   *((byte*) init_mul_tables::sqr_lo) ← (byte~) init_mul_tables::$5
-  (byte*) init_mul_tables::sqr_lo ← ++ (byte*) init_mul_tables::sqr_lo
   (byte~) init_mul_tables::$6 ← > (word) init_mul_tables::sqr
   *((byte*) init_mul_tables::sqr_hi) ← (byte~) init_mul_tables::$6
   (byte*) init_mul_tables::sqr_hi ← ++ (byte*) init_mul_tables::sqr_hi
   (word~) init_mul_tables::$7 ← (word) init_mul_tables::sqr + (byte) init_mul_tables::x_2
   (word) init_mul_tables::sqr ← (word~) init_mul_tables::$7
-  (word) init_mul_tables::x ← ++ (word) init_mul_tables::x
-  (boolean~) init_mul_tables::$8 ← (word) init_mul_tables::x != (word/signed word) 512
-  if((boolean~) init_mul_tables::$8) goto init_mul_tables::@1
+  (byte*) init_mul_tables::sqr_lo ← ++ (byte*) init_mul_tables::sqr_lo
+  (byte*~) init_mul_tables::$8 ← (byte[512]) mul_sqr_lo + (word/signed word) 512
+  (boolean~) init_mul_tables::$9 ← (byte*) init_mul_tables::sqr_lo != (byte*~) init_mul_tables::$8
+  if((boolean~) init_mul_tables::$9) goto init_mul_tables::@1
   to:init_mul_tables::@return
 init_mul_tables::@3: scope:[init_mul_tables]  from init_mul_tables::@1
   (word) init_mul_tables::sqr ← ++ (word) init_mul_tables::sqr
@@ -489,16 +494,17 @@ main::@return: scope:[main]  from main::@3
   (byte[512]) mul_sqr_hi ← { fill( 512, 0) }
   to:@2
 init_mul_tables: scope:[init_mul_tables]  from main
-  (byte*~) init_mul_tables::$0 ← (byte[512]) mul_sqr_lo + (byte/signed byte/word/signed word) 1
-  (byte*) init_mul_tables::sqr_lo ← (byte*~) init_mul_tables::$0
-  (byte*~) init_mul_tables::$1 ← (byte[512]) mul_sqr_hi + (byte/signed byte/word/signed word) 1
-  (byte*) init_mul_tables::sqr_hi ← (byte*~) init_mul_tables::$1
   (word) init_mul_tables::sqr ← (byte/signed byte/word/signed word) 0
   (byte) init_mul_tables::x_2 ← (byte/signed byte/word/signed word) 0
-  (word) init_mul_tables::x ← (byte/signed byte/word/signed word) 1
+  (byte) init_mul_tables::c ← (byte/signed byte/word/signed word) 0
+  (byte*~) init_mul_tables::$0 ← (byte[512]) mul_sqr_hi + (byte/signed byte/word/signed word) 1
+  (byte*) init_mul_tables::sqr_hi ← (byte*~) init_mul_tables::$0
+  (byte*~) init_mul_tables::$1 ← (byte[512]) mul_sqr_lo + (byte/signed byte/word/signed word) 1
+  (byte*) init_mul_tables::sqr_lo ← (byte*~) init_mul_tables::$1
   to:init_mul_tables::@1
 init_mul_tables::@1: scope:[init_mul_tables]  from init_mul_tables init_mul_tables::@2
-  (byte~) init_mul_tables::$2 ← (word) init_mul_tables::x & (byte/signed byte/word/signed word) 1
+  (byte) init_mul_tables::c ← ++ (byte) init_mul_tables::c
+  (byte~) init_mul_tables::$2 ← (byte) init_mul_tables::c & (byte/signed byte/word/signed word) 1
   (boolean~) init_mul_tables::$3 ← (byte~) init_mul_tables::$2 == (byte/signed byte/word/signed word) 0
   (boolean~) init_mul_tables::$4 ← ! (boolean~) init_mul_tables::$3
   if((boolean~) init_mul_tables::$4) goto init_mul_tables::@2
@@ -506,15 +512,15 @@ init_mul_tables::@1: scope:[init_mul_tables]  from init_mul_tables init_mul_tabl
 init_mul_tables::@2: scope:[init_mul_tables]  from init_mul_tables::@1 init_mul_tables::@3
   (byte~) init_mul_tables::$5 ← < (word) init_mul_tables::sqr
   *((byte*) init_mul_tables::sqr_lo) ← (byte~) init_mul_tables::$5
-  (byte*) init_mul_tables::sqr_lo ← ++ (byte*) init_mul_tables::sqr_lo
   (byte~) init_mul_tables::$6 ← > (word) init_mul_tables::sqr
   *((byte*) init_mul_tables::sqr_hi) ← (byte~) init_mul_tables::$6
   (byte*) init_mul_tables::sqr_hi ← ++ (byte*) init_mul_tables::sqr_hi
   (word~) init_mul_tables::$7 ← (word) init_mul_tables::sqr + (byte) init_mul_tables::x_2
   (word) init_mul_tables::sqr ← (word~) init_mul_tables::$7
-  (word) init_mul_tables::x ← ++ (word) init_mul_tables::x
-  (boolean~) init_mul_tables::$8 ← (word) init_mul_tables::x != (word/signed word) 512
-  if((boolean~) init_mul_tables::$8) goto init_mul_tables::@1
+  (byte*) init_mul_tables::sqr_lo ← ++ (byte*) init_mul_tables::sqr_lo
+  (byte*~) init_mul_tables::$8 ← (byte[512]) mul_sqr_lo + (word/signed word) 512
+  (boolean~) init_mul_tables::$9 ← (byte*) init_mul_tables::sqr_lo != (byte*~) init_mul_tables::$8
+  if((boolean~) init_mul_tables::$9) goto init_mul_tables::@1
   to:init_mul_tables::@return
 init_mul_tables::@3: scope:[init_mul_tables]  from init_mul_tables::@1
   (word) init_mul_tables::sqr ← ++ (word) init_mul_tables::sqr
@@ -622,45 +628,46 @@ main::@return: scope:[main]  from main::@3
   (byte[512]) mul_sqr_hi#0 ← { fill( 512, 0) }
   to:@2
 init_mul_tables: scope:[init_mul_tables]  from main
-  (byte*~) init_mul_tables::$0 ← (byte[512]) mul_sqr_lo#0 + (byte/signed byte/word/signed word) 1
-  (byte*) init_mul_tables::sqr_lo#0 ← (byte*~) init_mul_tables::$0
-  (byte*~) init_mul_tables::$1 ← (byte[512]) mul_sqr_hi#0 + (byte/signed byte/word/signed word) 1
-  (byte*) init_mul_tables::sqr_hi#0 ← (byte*~) init_mul_tables::$1
   (word) init_mul_tables::sqr#0 ← (byte/signed byte/word/signed word) 0
   (byte) init_mul_tables::x_2#0 ← (byte/signed byte/word/signed word) 0
-  (word) init_mul_tables::x#0 ← (byte/signed byte/word/signed word) 1
+  (byte) init_mul_tables::c#0 ← (byte/signed byte/word/signed word) 0
+  (byte*~) init_mul_tables::$0 ← (byte[512]) mul_sqr_hi#0 + (byte/signed byte/word/signed word) 1
+  (byte*) init_mul_tables::sqr_hi#0 ← (byte*~) init_mul_tables::$0
+  (byte*~) init_mul_tables::$1 ← (byte[512]) mul_sqr_lo#0 + (byte/signed byte/word/signed word) 1
+  (byte*) init_mul_tables::sqr_lo#0 ← (byte*~) init_mul_tables::$1
   to:init_mul_tables::@1
 init_mul_tables::@1: scope:[init_mul_tables]  from init_mul_tables init_mul_tables::@2
   (byte) init_mul_tables::x_2#4 ← phi( init_mul_tables/(byte) init_mul_tables::x_2#0 init_mul_tables::@2/(byte) init_mul_tables::x_2#2 )
   (byte*) init_mul_tables::sqr_hi#3 ← phi( init_mul_tables/(byte*) init_mul_tables::sqr_hi#0 init_mul_tables::@2/(byte*) init_mul_tables::sqr_hi#1 )
   (byte*) init_mul_tables::sqr_lo#3 ← phi( init_mul_tables/(byte*) init_mul_tables::sqr_lo#0 init_mul_tables::@2/(byte*) init_mul_tables::sqr_lo#1 )
   (word) init_mul_tables::sqr#5 ← phi( init_mul_tables/(word) init_mul_tables::sqr#0 init_mul_tables::@2/(word) init_mul_tables::sqr#1 )
-  (word) init_mul_tables::x#2 ← phi( init_mul_tables/(word) init_mul_tables::x#0 init_mul_tables::@2/(word) init_mul_tables::x#1 )
-  (byte~) init_mul_tables::$2 ← (word) init_mul_tables::x#2 & (byte/signed byte/word/signed word) 1
+  (byte) init_mul_tables::c#2 ← phi( init_mul_tables/(byte) init_mul_tables::c#0 init_mul_tables::@2/(byte) init_mul_tables::c#3 )
+  (byte) init_mul_tables::c#1 ← ++ (byte) init_mul_tables::c#2
+  (byte~) init_mul_tables::$2 ← (byte) init_mul_tables::c#1 & (byte/signed byte/word/signed word) 1
   (boolean~) init_mul_tables::$3 ← (byte~) init_mul_tables::$2 == (byte/signed byte/word/signed word) 0
   (boolean~) init_mul_tables::$4 ← ! (boolean~) init_mul_tables::$3
   if((boolean~) init_mul_tables::$4) goto init_mul_tables::@2
   to:init_mul_tables::@3
 init_mul_tables::@2: scope:[init_mul_tables]  from init_mul_tables::@1 init_mul_tables::@3
-  (word) init_mul_tables::x#3 ← phi( init_mul_tables::@1/(word) init_mul_tables::x#2 init_mul_tables::@3/(word) init_mul_tables::x#4 )
+  (byte) init_mul_tables::c#3 ← phi( init_mul_tables::@1/(byte) init_mul_tables::c#1 init_mul_tables::@3/(byte) init_mul_tables::c#4 )
   (byte) init_mul_tables::x_2#2 ← phi( init_mul_tables::@1/(byte) init_mul_tables::x_2#4 init_mul_tables::@3/(byte) init_mul_tables::x_2#1 )
   (byte*) init_mul_tables::sqr_hi#2 ← phi( init_mul_tables::@1/(byte*) init_mul_tables::sqr_hi#3 init_mul_tables::@3/(byte*) init_mul_tables::sqr_hi#4 )
   (byte*) init_mul_tables::sqr_lo#2 ← phi( init_mul_tables::@1/(byte*) init_mul_tables::sqr_lo#3 init_mul_tables::@3/(byte*) init_mul_tables::sqr_lo#4 )
   (word) init_mul_tables::sqr#3 ← phi( init_mul_tables::@1/(word) init_mul_tables::sqr#5 init_mul_tables::@3/(word) init_mul_tables::sqr#2 )
   (byte~) init_mul_tables::$5 ← < (word) init_mul_tables::sqr#3
   *((byte*) init_mul_tables::sqr_lo#2) ← (byte~) init_mul_tables::$5
-  (byte*) init_mul_tables::sqr_lo#1 ← ++ (byte*) init_mul_tables::sqr_lo#2
   (byte~) init_mul_tables::$6 ← > (word) init_mul_tables::sqr#3
   *((byte*) init_mul_tables::sqr_hi#2) ← (byte~) init_mul_tables::$6
   (byte*) init_mul_tables::sqr_hi#1 ← ++ (byte*) init_mul_tables::sqr_hi#2
   (word~) init_mul_tables::$7 ← (word) init_mul_tables::sqr#3 + (byte) init_mul_tables::x_2#2
   (word) init_mul_tables::sqr#1 ← (word~) init_mul_tables::$7
-  (word) init_mul_tables::x#1 ← ++ (word) init_mul_tables::x#3
-  (boolean~) init_mul_tables::$8 ← (word) init_mul_tables::x#1 != (word/signed word) 512
-  if((boolean~) init_mul_tables::$8) goto init_mul_tables::@1
+  (byte*) init_mul_tables::sqr_lo#1 ← ++ (byte*) init_mul_tables::sqr_lo#2
+  (byte*~) init_mul_tables::$8 ← (byte[512]) mul_sqr_lo#0 + (word/signed word) 512
+  (boolean~) init_mul_tables::$9 ← (byte*) init_mul_tables::sqr_lo#1 != (byte*~) init_mul_tables::$8
+  if((boolean~) init_mul_tables::$9) goto init_mul_tables::@1
   to:init_mul_tables::@return
 init_mul_tables::@3: scope:[init_mul_tables]  from init_mul_tables::@1
-  (word) init_mul_tables::x#4 ← phi( init_mul_tables::@1/(word) init_mul_tables::x#2 )
+  (byte) init_mul_tables::c#4 ← phi( init_mul_tables::@1/(byte) init_mul_tables::c#1 )
   (byte*) init_mul_tables::sqr_hi#4 ← phi( init_mul_tables::@1/(byte*) init_mul_tables::sqr_hi#3 )
   (byte*) init_mul_tables::sqr_lo#4 ← phi( init_mul_tables::@1/(byte*) init_mul_tables::sqr_lo#3 )
   (byte) init_mul_tables::x_2#3 ← phi( init_mul_tables::@1/(byte) init_mul_tables::x_2#4 )
@@ -784,45 +791,46 @@ main::@return: scope:[main]  from main::@3
   (byte[512]) mul_sqr_hi#0 ← { fill( 512, 0) }
   to:@2
 init_mul_tables: scope:[init_mul_tables]  from main
-  (byte*~) init_mul_tables::$0 ← (byte[512]) mul_sqr_lo#0 + (byte/signed byte/word/signed word) 1
-  (byte*) init_mul_tables::sqr_lo#0 ← (byte*~) init_mul_tables::$0
-  (byte*~) init_mul_tables::$1 ← (byte[512]) mul_sqr_hi#0 + (byte/signed byte/word/signed word) 1
-  (byte*) init_mul_tables::sqr_hi#0 ← (byte*~) init_mul_tables::$1
   (word) init_mul_tables::sqr#0 ← (byte/signed byte/word/signed word) 0
   (byte) init_mul_tables::x_2#0 ← (byte/signed byte/word/signed word) 0
-  (word) init_mul_tables::x#0 ← (byte/signed byte/word/signed word) 1
+  (byte) init_mul_tables::c#0 ← (byte/signed byte/word/signed word) 0
+  (byte*~) init_mul_tables::$0 ← (byte[512]) mul_sqr_hi#0 + (byte/signed byte/word/signed word) 1
+  (byte*) init_mul_tables::sqr_hi#0 ← (byte*~) init_mul_tables::$0
+  (byte*~) init_mul_tables::$1 ← (byte[512]) mul_sqr_lo#0 + (byte/signed byte/word/signed word) 1
+  (byte*) init_mul_tables::sqr_lo#0 ← (byte*~) init_mul_tables::$1
   to:init_mul_tables::@1
 init_mul_tables::@1: scope:[init_mul_tables]  from init_mul_tables init_mul_tables::@2
   (byte) init_mul_tables::x_2#4 ← phi( init_mul_tables/(byte) init_mul_tables::x_2#0 init_mul_tables::@2/(byte) init_mul_tables::x_2#2 )
   (byte*) init_mul_tables::sqr_hi#3 ← phi( init_mul_tables/(byte*) init_mul_tables::sqr_hi#0 init_mul_tables::@2/(byte*) init_mul_tables::sqr_hi#1 )
   (byte*) init_mul_tables::sqr_lo#3 ← phi( init_mul_tables/(byte*) init_mul_tables::sqr_lo#0 init_mul_tables::@2/(byte*) init_mul_tables::sqr_lo#1 )
   (word) init_mul_tables::sqr#5 ← phi( init_mul_tables/(word) init_mul_tables::sqr#0 init_mul_tables::@2/(word) init_mul_tables::sqr#1 )
-  (word) init_mul_tables::x#2 ← phi( init_mul_tables/(word) init_mul_tables::x#0 init_mul_tables::@2/(word) init_mul_tables::x#1 )
-  (byte~) init_mul_tables::$2 ← (word) init_mul_tables::x#2 & (byte/signed byte/word/signed word) 1
+  (byte) init_mul_tables::c#2 ← phi( init_mul_tables/(byte) init_mul_tables::c#0 init_mul_tables::@2/(byte) init_mul_tables::c#3 )
+  (byte) init_mul_tables::c#1 ← ++ (byte) init_mul_tables::c#2
+  (byte~) init_mul_tables::$2 ← (byte) init_mul_tables::c#1 & (byte/signed byte/word/signed word) 1
   (boolean~) init_mul_tables::$3 ← (byte~) init_mul_tables::$2 == (byte/signed byte/word/signed word) 0
   (boolean~) init_mul_tables::$4 ← ! (boolean~) init_mul_tables::$3
   if((boolean~) init_mul_tables::$4) goto init_mul_tables::@2
   to:init_mul_tables::@3
 init_mul_tables::@2: scope:[init_mul_tables]  from init_mul_tables::@1 init_mul_tables::@3
-  (word) init_mul_tables::x#3 ← phi( init_mul_tables::@1/(word) init_mul_tables::x#2 init_mul_tables::@3/(word) init_mul_tables::x#4 )
+  (byte) init_mul_tables::c#3 ← phi( init_mul_tables::@1/(byte) init_mul_tables::c#1 init_mul_tables::@3/(byte) init_mul_tables::c#4 )
   (byte) init_mul_tables::x_2#2 ← phi( init_mul_tables::@1/(byte) init_mul_tables::x_2#4 init_mul_tables::@3/(byte) init_mul_tables::x_2#1 )
   (byte*) init_mul_tables::sqr_hi#2 ← phi( init_mul_tables::@1/(byte*) init_mul_tables::sqr_hi#3 init_mul_tables::@3/(byte*) init_mul_tables::sqr_hi#4 )
   (byte*) init_mul_tables::sqr_lo#2 ← phi( init_mul_tables::@1/(byte*) init_mul_tables::sqr_lo#3 init_mul_tables::@3/(byte*) init_mul_tables::sqr_lo#4 )
   (word) init_mul_tables::sqr#3 ← phi( init_mul_tables::@1/(word) init_mul_tables::sqr#5 init_mul_tables::@3/(word) init_mul_tables::sqr#2 )
   (byte~) init_mul_tables::$5 ← < (word) init_mul_tables::sqr#3
   *((byte*) init_mul_tables::sqr_lo#2) ← (byte~) init_mul_tables::$5
-  (byte*) init_mul_tables::sqr_lo#1 ← ++ (byte*) init_mul_tables::sqr_lo#2
   (byte~) init_mul_tables::$6 ← > (word) init_mul_tables::sqr#3
   *((byte*) init_mul_tables::sqr_hi#2) ← (byte~) init_mul_tables::$6
   (byte*) init_mul_tables::sqr_hi#1 ← ++ (byte*) init_mul_tables::sqr_hi#2
   (word~) init_mul_tables::$7 ← (word) init_mul_tables::sqr#3 + (byte) init_mul_tables::x_2#2
   (word) init_mul_tables::sqr#1 ← (word~) init_mul_tables::$7
-  (word) init_mul_tables::x#1 ← ++ (word) init_mul_tables::x#3
-  (boolean~) init_mul_tables::$8 ← (word) init_mul_tables::x#1 != (word/signed word) 512
-  if((boolean~) init_mul_tables::$8) goto init_mul_tables::@1
+  (byte*) init_mul_tables::sqr_lo#1 ← ++ (byte*) init_mul_tables::sqr_lo#2
+  (byte*~) init_mul_tables::$8 ← (byte[512]) mul_sqr_lo#0 + (word/signed word) 512
+  (boolean~) init_mul_tables::$9 ← (byte*) init_mul_tables::sqr_lo#1 != (byte*~) init_mul_tables::$8
+  if((boolean~) init_mul_tables::$9) goto init_mul_tables::@1
   to:init_mul_tables::@return
 init_mul_tables::@3: scope:[init_mul_tables]  from init_mul_tables::@1
-  (word) init_mul_tables::x#4 ← phi( init_mul_tables::@1/(word) init_mul_tables::x#2 )
+  (byte) init_mul_tables::c#4 ← phi( init_mul_tables::@1/(byte) init_mul_tables::c#1 )
   (byte*) init_mul_tables::sqr_hi#4 ← phi( init_mul_tables::@1/(byte*) init_mul_tables::sqr_hi#3 )
   (byte*) init_mul_tables::sqr_lo#4 ← phi( init_mul_tables::@1/(byte*) init_mul_tables::sqr_lo#3 )
   (byte) init_mul_tables::x_2#3 ← phi( init_mul_tables::@1/(byte) init_mul_tables::x_2#4 )
@@ -957,11 +965,18 @@ INITIAL SSA SYMBOL TABLE
 (byte~) init_mul_tables::$5
 (byte~) init_mul_tables::$6
 (word~) init_mul_tables::$7
-(boolean~) init_mul_tables::$8
+(byte*~) init_mul_tables::$8
+(boolean~) init_mul_tables::$9
 (label) init_mul_tables::@1
 (label) init_mul_tables::@2
 (label) init_mul_tables::@3
 (label) init_mul_tables::@return
+(byte) init_mul_tables::c
+(byte) init_mul_tables::c#0
+(byte) init_mul_tables::c#1
+(byte) init_mul_tables::c#2
+(byte) init_mul_tables::c#3
+(byte) init_mul_tables::c#4
 (word) init_mul_tables::sqr
 (word) init_mul_tables::sqr#0
 (word) init_mul_tables::sqr#1
@@ -981,12 +996,6 @@ INITIAL SSA SYMBOL TABLE
 (byte*) init_mul_tables::sqr_lo#2
 (byte*) init_mul_tables::sqr_lo#3
 (byte*) init_mul_tables::sqr_lo#4
-(word) init_mul_tables::x
-(word) init_mul_tables::x#0
-(word) init_mul_tables::x#1
-(word) init_mul_tables::x#2
-(word) init_mul_tables::x#3
-(word) init_mul_tables::x#4
 (byte) init_mul_tables::x_2
 (byte) init_mul_tables::x_2#0
 (byte) init_mul_tables::x_2#1
@@ -1069,45 +1078,46 @@ main::@return: scope:[main]  from main::@2
   (byte[512]) mul_sqr_hi#0 ← { fill( 512, 0) }
   to:@2
 init_mul_tables: scope:[init_mul_tables]  from main
-  (byte*~) init_mul_tables::$0 ← (byte[512]) mul_sqr_lo#0 + (byte/signed byte/word/signed word) 1
-  (byte*) init_mul_tables::sqr_lo#0 ← (byte*~) init_mul_tables::$0
-  (byte*~) init_mul_tables::$1 ← (byte[512]) mul_sqr_hi#0 + (byte/signed byte/word/signed word) 1
-  (byte*) init_mul_tables::sqr_hi#0 ← (byte*~) init_mul_tables::$1
   (word) init_mul_tables::sqr#0 ← (byte/signed byte/word/signed word) 0
   (byte) init_mul_tables::x_2#0 ← (byte/signed byte/word/signed word) 0
-  (word) init_mul_tables::x#0 ← (byte/signed byte/word/signed word) 1
+  (byte) init_mul_tables::c#0 ← (byte/signed byte/word/signed word) 0
+  (byte*~) init_mul_tables::$0 ← (byte[512]) mul_sqr_hi#0 + (byte/signed byte/word/signed word) 1
+  (byte*) init_mul_tables::sqr_hi#0 ← (byte*~) init_mul_tables::$0
+  (byte*~) init_mul_tables::$1 ← (byte[512]) mul_sqr_lo#0 + (byte/signed byte/word/signed word) 1
+  (byte*) init_mul_tables::sqr_lo#0 ← (byte*~) init_mul_tables::$1
   to:init_mul_tables::@1
 init_mul_tables::@1: scope:[init_mul_tables]  from init_mul_tables init_mul_tables::@2
   (byte) init_mul_tables::x_2#4 ← phi( init_mul_tables/(byte) init_mul_tables::x_2#0 init_mul_tables::@2/(byte) init_mul_tables::x_2#2 )
   (byte*) init_mul_tables::sqr_hi#3 ← phi( init_mul_tables/(byte*) init_mul_tables::sqr_hi#0 init_mul_tables::@2/(byte*) init_mul_tables::sqr_hi#1 )
   (byte*) init_mul_tables::sqr_lo#3 ← phi( init_mul_tables/(byte*) init_mul_tables::sqr_lo#0 init_mul_tables::@2/(byte*) init_mul_tables::sqr_lo#1 )
   (word) init_mul_tables::sqr#5 ← phi( init_mul_tables/(word) init_mul_tables::sqr#0 init_mul_tables::@2/(word) init_mul_tables::sqr#1 )
-  (word) init_mul_tables::x#2 ← phi( init_mul_tables/(word) init_mul_tables::x#0 init_mul_tables::@2/(word) init_mul_tables::x#1 )
-  (byte~) init_mul_tables::$2 ← (word) init_mul_tables::x#2 & (byte/signed byte/word/signed word) 1
+  (byte) init_mul_tables::c#2 ← phi( init_mul_tables/(byte) init_mul_tables::c#0 init_mul_tables::@2/(byte) init_mul_tables::c#3 )
+  (byte) init_mul_tables::c#1 ← ++ (byte) init_mul_tables::c#2
+  (byte~) init_mul_tables::$2 ← (byte) init_mul_tables::c#1 & (byte/signed byte/word/signed word) 1
   (boolean~) init_mul_tables::$3 ← (byte~) init_mul_tables::$2 == (byte/signed byte/word/signed word) 0
   (boolean~) init_mul_tables::$4 ← ! (boolean~) init_mul_tables::$3
   if((boolean~) init_mul_tables::$4) goto init_mul_tables::@2
   to:init_mul_tables::@3
 init_mul_tables::@2: scope:[init_mul_tables]  from init_mul_tables::@1 init_mul_tables::@3
-  (word) init_mul_tables::x#3 ← phi( init_mul_tables::@1/(word) init_mul_tables::x#2 init_mul_tables::@3/(word) init_mul_tables::x#4 )
+  (byte) init_mul_tables::c#3 ← phi( init_mul_tables::@1/(byte) init_mul_tables::c#1 init_mul_tables::@3/(byte) init_mul_tables::c#4 )
   (byte) init_mul_tables::x_2#2 ← phi( init_mul_tables::@1/(byte) init_mul_tables::x_2#4 init_mul_tables::@3/(byte) init_mul_tables::x_2#1 )
   (byte*) init_mul_tables::sqr_hi#2 ← phi( init_mul_tables::@1/(byte*) init_mul_tables::sqr_hi#3 init_mul_tables::@3/(byte*) init_mul_tables::sqr_hi#4 )
   (byte*) init_mul_tables::sqr_lo#2 ← phi( init_mul_tables::@1/(byte*) init_mul_tables::sqr_lo#3 init_mul_tables::@3/(byte*) init_mul_tables::sqr_lo#4 )
   (word) init_mul_tables::sqr#3 ← phi( init_mul_tables::@1/(word) init_mul_tables::sqr#5 init_mul_tables::@3/(word) init_mul_tables::sqr#2 )
   (byte~) init_mul_tables::$5 ← < (word) init_mul_tables::sqr#3
   *((byte*) init_mul_tables::sqr_lo#2) ← (byte~) init_mul_tables::$5
-  (byte*) init_mul_tables::sqr_lo#1 ← ++ (byte*) init_mul_tables::sqr_lo#2
   (byte~) init_mul_tables::$6 ← > (word) init_mul_tables::sqr#3
   *((byte*) init_mul_tables::sqr_hi#2) ← (byte~) init_mul_tables::$6
   (byte*) init_mul_tables::sqr_hi#1 ← ++ (byte*) init_mul_tables::sqr_hi#2
   (word~) init_mul_tables::$7 ← (word) init_mul_tables::sqr#3 + (byte) init_mul_tables::x_2#2
   (word) init_mul_tables::sqr#1 ← (word~) init_mul_tables::$7
-  (word) init_mul_tables::x#1 ← ++ (word) init_mul_tables::x#3
-  (boolean~) init_mul_tables::$8 ← (word) init_mul_tables::x#1 != (word/signed word) 512
-  if((boolean~) init_mul_tables::$8) goto init_mul_tables::@1
+  (byte*) init_mul_tables::sqr_lo#1 ← ++ (byte*) init_mul_tables::sqr_lo#2
+  (byte*~) init_mul_tables::$8 ← (byte[512]) mul_sqr_lo#0 + (word/signed word) 512
+  (boolean~) init_mul_tables::$9 ← (byte*) init_mul_tables::sqr_lo#1 != (byte*~) init_mul_tables::$8
+  if((boolean~) init_mul_tables::$9) goto init_mul_tables::@1
   to:init_mul_tables::@return
 init_mul_tables::@3: scope:[init_mul_tables]  from init_mul_tables::@1
-  (word) init_mul_tables::x#4 ← phi( init_mul_tables::@1/(word) init_mul_tables::x#2 )
+  (byte) init_mul_tables::c#4 ← phi( init_mul_tables::@1/(byte) init_mul_tables::c#1 )
   (byte*) init_mul_tables::sqr_hi#4 ← phi( init_mul_tables::@1/(byte*) init_mul_tables::sqr_hi#3 )
   (byte*) init_mul_tables::sqr_lo#4 ← phi( init_mul_tables::@1/(byte*) init_mul_tables::sqr_lo#3 )
   (byte) init_mul_tables::x_2#3 ← phi( init_mul_tables::@1/(byte) init_mul_tables::x_2#4 )
@@ -1233,44 +1243,45 @@ main::@return: scope:[main]  from main::@2
   (byte[512]) mul_sqr_hi#0 ← { fill( 512, 0) }
   to:@2
 init_mul_tables: scope:[init_mul_tables]  from main
-  (byte*~) init_mul_tables::$0 ← (byte[512]) mul_sqr_lo#0 + (byte/signed byte/word/signed word) 1
-  (byte*) init_mul_tables::sqr_lo#0 ← (byte*~) init_mul_tables::$0
-  (byte*~) init_mul_tables::$1 ← (byte[512]) mul_sqr_hi#0 + (byte/signed byte/word/signed word) 1
-  (byte*) init_mul_tables::sqr_hi#0 ← (byte*~) init_mul_tables::$1
   (word) init_mul_tables::sqr#0 ← (byte/signed byte/word/signed word) 0
   (byte) init_mul_tables::x_2#0 ← (byte/signed byte/word/signed word) 0
-  (word) init_mul_tables::x#0 ← (byte/signed byte/word/signed word) 1
+  (byte) init_mul_tables::c#0 ← (byte/signed byte/word/signed word) 0
+  (byte*~) init_mul_tables::$0 ← (byte[512]) mul_sqr_hi#0 + (byte/signed byte/word/signed word) 1
+  (byte*) init_mul_tables::sqr_hi#0 ← (byte*~) init_mul_tables::$0
+  (byte*~) init_mul_tables::$1 ← (byte[512]) mul_sqr_lo#0 + (byte/signed byte/word/signed word) 1
+  (byte*) init_mul_tables::sqr_lo#0 ← (byte*~) init_mul_tables::$1
   to:init_mul_tables::@1
 init_mul_tables::@1: scope:[init_mul_tables]  from init_mul_tables init_mul_tables::@2
   (byte) init_mul_tables::x_2#4 ← phi( init_mul_tables/(byte) init_mul_tables::x_2#0 init_mul_tables::@2/(byte) init_mul_tables::x_2#2 )
   (byte*) init_mul_tables::sqr_hi#3 ← phi( init_mul_tables/(byte*) init_mul_tables::sqr_hi#0 init_mul_tables::@2/(byte*) init_mul_tables::sqr_hi#1 )
   (byte*) init_mul_tables::sqr_lo#3 ← phi( init_mul_tables/(byte*) init_mul_tables::sqr_lo#0 init_mul_tables::@2/(byte*) init_mul_tables::sqr_lo#1 )
   (word) init_mul_tables::sqr#5 ← phi( init_mul_tables/(word) init_mul_tables::sqr#0 init_mul_tables::@2/(word) init_mul_tables::sqr#1 )
-  (word) init_mul_tables::x#2 ← phi( init_mul_tables/(word) init_mul_tables::x#0 init_mul_tables::@2/(word) init_mul_tables::x#1 )
-  (byte~) init_mul_tables::$2 ← (word) init_mul_tables::x#2 & (byte/signed byte/word/signed word) 1
+  (byte) init_mul_tables::c#2 ← phi( init_mul_tables/(byte) init_mul_tables::c#0 init_mul_tables::@2/(byte) init_mul_tables::c#3 )
+  (byte) init_mul_tables::c#1 ← ++ (byte) init_mul_tables::c#2
+  (byte~) init_mul_tables::$2 ← (byte) init_mul_tables::c#1 & (byte/signed byte/word/signed word) 1
   (boolean~) init_mul_tables::$4 ← (byte~) init_mul_tables::$2 != (byte/signed byte/word/signed word) 0
   if((boolean~) init_mul_tables::$4) goto init_mul_tables::@2
   to:init_mul_tables::@3
 init_mul_tables::@2: scope:[init_mul_tables]  from init_mul_tables::@1 init_mul_tables::@3
-  (word) init_mul_tables::x#3 ← phi( init_mul_tables::@1/(word) init_mul_tables::x#2 init_mul_tables::@3/(word) init_mul_tables::x#4 )
+  (byte) init_mul_tables::c#3 ← phi( init_mul_tables::@1/(byte) init_mul_tables::c#1 init_mul_tables::@3/(byte) init_mul_tables::c#4 )
   (byte) init_mul_tables::x_2#2 ← phi( init_mul_tables::@1/(byte) init_mul_tables::x_2#4 init_mul_tables::@3/(byte) init_mul_tables::x_2#1 )
   (byte*) init_mul_tables::sqr_hi#2 ← phi( init_mul_tables::@1/(byte*) init_mul_tables::sqr_hi#3 init_mul_tables::@3/(byte*) init_mul_tables::sqr_hi#4 )
   (byte*) init_mul_tables::sqr_lo#2 ← phi( init_mul_tables::@1/(byte*) init_mul_tables::sqr_lo#3 init_mul_tables::@3/(byte*) init_mul_tables::sqr_lo#4 )
   (word) init_mul_tables::sqr#3 ← phi( init_mul_tables::@1/(word) init_mul_tables::sqr#5 init_mul_tables::@3/(word) init_mul_tables::sqr#2 )
   (byte~) init_mul_tables::$5 ← < (word) init_mul_tables::sqr#3
   *((byte*) init_mul_tables::sqr_lo#2) ← (byte~) init_mul_tables::$5
-  (byte*) init_mul_tables::sqr_lo#1 ← ++ (byte*) init_mul_tables::sqr_lo#2
   (byte~) init_mul_tables::$6 ← > (word) init_mul_tables::sqr#3
   *((byte*) init_mul_tables::sqr_hi#2) ← (byte~) init_mul_tables::$6
   (byte*) init_mul_tables::sqr_hi#1 ← ++ (byte*) init_mul_tables::sqr_hi#2
   (word~) init_mul_tables::$7 ← (word) init_mul_tables::sqr#3 + (byte) init_mul_tables::x_2#2
   (word) init_mul_tables::sqr#1 ← (word~) init_mul_tables::$7
-  (word) init_mul_tables::x#1 ← ++ (word) init_mul_tables::x#3
-  (boolean~) init_mul_tables::$8 ← (word) init_mul_tables::x#1 != (word/signed word) 512
-  if((boolean~) init_mul_tables::$8) goto init_mul_tables::@1
+  (byte*) init_mul_tables::sqr_lo#1 ← ++ (byte*) init_mul_tables::sqr_lo#2
+  (byte*~) init_mul_tables::$8 ← (byte[512]) mul_sqr_lo#0 + (word/signed word) 512
+  (boolean~) init_mul_tables::$9 ← (byte*) init_mul_tables::sqr_lo#1 != (byte*~) init_mul_tables::$8
+  if((boolean~) init_mul_tables::$9) goto init_mul_tables::@1
   to:init_mul_tables::@return
 init_mul_tables::@3: scope:[init_mul_tables]  from init_mul_tables::@1
-  (word) init_mul_tables::x#4 ← phi( init_mul_tables::@1/(word) init_mul_tables::x#2 )
+  (byte) init_mul_tables::c#4 ← phi( init_mul_tables::@1/(byte) init_mul_tables::c#1 )
   (byte*) init_mul_tables::sqr_hi#4 ← phi( init_mul_tables::@1/(byte*) init_mul_tables::sqr_hi#3 )
   (byte*) init_mul_tables::sqr_lo#4 ← phi( init_mul_tables::@1/(byte*) init_mul_tables::sqr_lo#3 )
   (byte) init_mul_tables::x_2#3 ← phi( init_mul_tables::@1/(byte) init_mul_tables::x_2#4 )
@@ -1365,14 +1376,14 @@ Not aliassing across scopes: BGCOL#13 BGCOL#14
 Not aliassing across scopes: BGCOL#1 BGCOL#6
 Alias (byte*) BGCOL#11 = (byte*) BGCOL#13 (byte*) BGCOL#6 
 Alias (byte*) BGCOL#0 = (byte*) BGCOL#16 (byte*) BGCOL#15 (byte*) BGCOL#14 
-Alias (byte*) init_mul_tables::sqr_lo#0 = (byte*~) init_mul_tables::$0 
-Alias (byte*) init_mul_tables::sqr_hi#0 = (byte*~) init_mul_tables::$1 
+Alias (byte*) init_mul_tables::sqr_hi#0 = (byte*~) init_mul_tables::$0 
+Alias (byte*) init_mul_tables::sqr_lo#0 = (byte*~) init_mul_tables::$1 
 Alias (word) init_mul_tables::sqr#1 = (word~) init_mul_tables::$7 
 Alias (word) init_mul_tables::sqr#4 = (word) init_mul_tables::sqr#5 
 Alias (byte) init_mul_tables::x_2#3 = (byte) init_mul_tables::x_2#4 
 Alias (byte*) init_mul_tables::sqr_lo#3 = (byte*) init_mul_tables::sqr_lo#4 
 Alias (byte*) init_mul_tables::sqr_hi#3 = (byte*) init_mul_tables::sqr_hi#4 
-Alias (word) init_mul_tables::x#2 = (word) init_mul_tables::x#4 
+Alias (byte) init_mul_tables::c#1 = (byte) init_mul_tables::c#4 
 Alias (byte*) BGCOL#2 = (byte*) BGCOL#7 
 Alias (byte) mul_tables_compare::i#2 = (byte) mul_tables_compare::i#7 
 Alias (byte*) BGCOL#3 = (byte*) BGCOL#8 
@@ -1404,38 +1415,39 @@ main::@return: scope:[main]  from main::@2
   (byte[512]) mul_sqr_hi#0 ← { fill( 512, 0) }
   to:@2
 init_mul_tables: scope:[init_mul_tables]  from main
-  (byte*) init_mul_tables::sqr_lo#0 ← (byte[512]) mul_sqr_lo#0 + (byte/signed byte/word/signed word) 1
-  (byte*) init_mul_tables::sqr_hi#0 ← (byte[512]) mul_sqr_hi#0 + (byte/signed byte/word/signed word) 1
   (word) init_mul_tables::sqr#0 ← (byte/signed byte/word/signed word) 0
   (byte) init_mul_tables::x_2#0 ← (byte/signed byte/word/signed word) 0
-  (word) init_mul_tables::x#0 ← (byte/signed byte/word/signed word) 1
+  (byte) init_mul_tables::c#0 ← (byte/signed byte/word/signed word) 0
+  (byte*) init_mul_tables::sqr_hi#0 ← (byte[512]) mul_sqr_hi#0 + (byte/signed byte/word/signed word) 1
+  (byte*) init_mul_tables::sqr_lo#0 ← (byte[512]) mul_sqr_lo#0 + (byte/signed byte/word/signed word) 1
   to:init_mul_tables::@1
 init_mul_tables::@1: scope:[init_mul_tables]  from init_mul_tables init_mul_tables::@2
   (byte) init_mul_tables::x_2#3 ← phi( init_mul_tables/(byte) init_mul_tables::x_2#0 init_mul_tables::@2/(byte) init_mul_tables::x_2#2 )
   (byte*) init_mul_tables::sqr_hi#3 ← phi( init_mul_tables/(byte*) init_mul_tables::sqr_hi#0 init_mul_tables::@2/(byte*) init_mul_tables::sqr_hi#1 )
   (byte*) init_mul_tables::sqr_lo#3 ← phi( init_mul_tables/(byte*) init_mul_tables::sqr_lo#0 init_mul_tables::@2/(byte*) init_mul_tables::sqr_lo#1 )
   (word) init_mul_tables::sqr#4 ← phi( init_mul_tables/(word) init_mul_tables::sqr#0 init_mul_tables::@2/(word) init_mul_tables::sqr#1 )
-  (word) init_mul_tables::x#2 ← phi( init_mul_tables/(word) init_mul_tables::x#0 init_mul_tables::@2/(word) init_mul_tables::x#1 )
-  (byte~) init_mul_tables::$2 ← (word) init_mul_tables::x#2 & (byte/signed byte/word/signed word) 1
+  (byte) init_mul_tables::c#2 ← phi( init_mul_tables/(byte) init_mul_tables::c#0 init_mul_tables::@2/(byte) init_mul_tables::c#3 )
+  (byte) init_mul_tables::c#1 ← ++ (byte) init_mul_tables::c#2
+  (byte~) init_mul_tables::$2 ← (byte) init_mul_tables::c#1 & (byte/signed byte/word/signed word) 1
   (boolean~) init_mul_tables::$4 ← (byte~) init_mul_tables::$2 != (byte/signed byte/word/signed word) 0
   if((boolean~) init_mul_tables::$4) goto init_mul_tables::@2
   to:init_mul_tables::@3
 init_mul_tables::@2: scope:[init_mul_tables]  from init_mul_tables::@1 init_mul_tables::@3
-  (word) init_mul_tables::x#3 ← phi( init_mul_tables::@1/(word) init_mul_tables::x#2 init_mul_tables::@3/(word) init_mul_tables::x#2 )
+  (byte) init_mul_tables::c#3 ← phi( init_mul_tables::@1/(byte) init_mul_tables::c#1 init_mul_tables::@3/(byte) init_mul_tables::c#1 )
   (byte) init_mul_tables::x_2#2 ← phi( init_mul_tables::@1/(byte) init_mul_tables::x_2#3 init_mul_tables::@3/(byte) init_mul_tables::x_2#1 )
   (byte*) init_mul_tables::sqr_hi#2 ← phi( init_mul_tables::@1/(byte*) init_mul_tables::sqr_hi#3 init_mul_tables::@3/(byte*) init_mul_tables::sqr_hi#3 )
   (byte*) init_mul_tables::sqr_lo#2 ← phi( init_mul_tables::@1/(byte*) init_mul_tables::sqr_lo#3 init_mul_tables::@3/(byte*) init_mul_tables::sqr_lo#3 )
   (word) init_mul_tables::sqr#3 ← phi( init_mul_tables::@1/(word) init_mul_tables::sqr#4 init_mul_tables::@3/(word) init_mul_tables::sqr#2 )
   (byte~) init_mul_tables::$5 ← < (word) init_mul_tables::sqr#3
   *((byte*) init_mul_tables::sqr_lo#2) ← (byte~) init_mul_tables::$5
-  (byte*) init_mul_tables::sqr_lo#1 ← ++ (byte*) init_mul_tables::sqr_lo#2
   (byte~) init_mul_tables::$6 ← > (word) init_mul_tables::sqr#3
   *((byte*) init_mul_tables::sqr_hi#2) ← (byte~) init_mul_tables::$6
   (byte*) init_mul_tables::sqr_hi#1 ← ++ (byte*) init_mul_tables::sqr_hi#2
   (word) init_mul_tables::sqr#1 ← (word) init_mul_tables::sqr#3 + (byte) init_mul_tables::x_2#2
-  (word) init_mul_tables::x#1 ← ++ (word) init_mul_tables::x#3
-  (boolean~) init_mul_tables::$8 ← (word) init_mul_tables::x#1 != (word/signed word) 512
-  if((boolean~) init_mul_tables::$8) goto init_mul_tables::@1
+  (byte*) init_mul_tables::sqr_lo#1 ← ++ (byte*) init_mul_tables::sqr_lo#2
+  (byte*~) init_mul_tables::$8 ← (byte[512]) mul_sqr_lo#0 + (word/signed word) 512
+  (boolean~) init_mul_tables::$9 ← (byte*) init_mul_tables::sqr_lo#1 != (byte*~) init_mul_tables::$8
+  if((boolean~) init_mul_tables::$9) goto init_mul_tables::@1
   to:init_mul_tables::@return
 init_mul_tables::@3: scope:[init_mul_tables]  from init_mul_tables::@1
   (word) init_mul_tables::sqr#2 ← ++ (word) init_mul_tables::sqr#4
@@ -1518,7 +1530,7 @@ Not aliassing across scopes: BGCOL#11 BGCOL#0
 Not aliassing across scopes: BGCOL#1 BGCOL#11
 Alias (byte*) init_mul_tables::sqr_lo#2 = (byte*) init_mul_tables::sqr_lo#3 
 Alias (byte*) init_mul_tables::sqr_hi#2 = (byte*) init_mul_tables::sqr_hi#3 
-Alias (word) init_mul_tables::x#2 = (word) init_mul_tables::x#3 
+Alias (byte) init_mul_tables::c#1 = (byte) init_mul_tables::c#3 
 Alias (byte) mul_tables_compare::i#10 = (byte) mul_tables_compare::i#3 (byte) mul_tables_compare::i#2 (byte) mul_tables_compare::i#4 (byte) mul_tables_compare::i#6 
 Alias (byte*) BGCOL#10 = (byte*) BGCOL#3 (byte*) BGCOL#2 (byte*) BGCOL#4 (byte*) BGCOL#12 
 Succesful SSA optimization Pass2AliasElimination
@@ -1544,19 +1556,20 @@ main::@return: scope:[main]  from main::@2
   (byte[512]) mul_sqr_hi#0 ← { fill( 512, 0) }
   to:@2
 init_mul_tables: scope:[init_mul_tables]  from main
-  (byte*) init_mul_tables::sqr_lo#0 ← (byte[512]) mul_sqr_lo#0 + (byte/signed byte/word/signed word) 1
-  (byte*) init_mul_tables::sqr_hi#0 ← (byte[512]) mul_sqr_hi#0 + (byte/signed byte/word/signed word) 1
   (word) init_mul_tables::sqr#0 ← (byte/signed byte/word/signed word) 0
   (byte) init_mul_tables::x_2#0 ← (byte/signed byte/word/signed word) 0
-  (word) init_mul_tables::x#0 ← (byte/signed byte/word/signed word) 1
+  (byte) init_mul_tables::c#0 ← (byte/signed byte/word/signed word) 0
+  (byte*) init_mul_tables::sqr_hi#0 ← (byte[512]) mul_sqr_hi#0 + (byte/signed byte/word/signed word) 1
+  (byte*) init_mul_tables::sqr_lo#0 ← (byte[512]) mul_sqr_lo#0 + (byte/signed byte/word/signed word) 1
   to:init_mul_tables::@1
 init_mul_tables::@1: scope:[init_mul_tables]  from init_mul_tables init_mul_tables::@2
   (byte) init_mul_tables::x_2#3 ← phi( init_mul_tables/(byte) init_mul_tables::x_2#0 init_mul_tables::@2/(byte) init_mul_tables::x_2#2 )
   (byte*) init_mul_tables::sqr_hi#2 ← phi( init_mul_tables/(byte*) init_mul_tables::sqr_hi#0 init_mul_tables::@2/(byte*) init_mul_tables::sqr_hi#1 )
   (byte*) init_mul_tables::sqr_lo#2 ← phi( init_mul_tables/(byte*) init_mul_tables::sqr_lo#0 init_mul_tables::@2/(byte*) init_mul_tables::sqr_lo#1 )
   (word) init_mul_tables::sqr#4 ← phi( init_mul_tables/(word) init_mul_tables::sqr#0 init_mul_tables::@2/(word) init_mul_tables::sqr#1 )
-  (word) init_mul_tables::x#2 ← phi( init_mul_tables/(word) init_mul_tables::x#0 init_mul_tables::@2/(word) init_mul_tables::x#1 )
-  (byte~) init_mul_tables::$2 ← (word) init_mul_tables::x#2 & (byte/signed byte/word/signed word) 1
+  (byte) init_mul_tables::c#2 ← phi( init_mul_tables/(byte) init_mul_tables::c#0 init_mul_tables::@2/(byte) init_mul_tables::c#1 )
+  (byte) init_mul_tables::c#1 ← ++ (byte) init_mul_tables::c#2
+  (byte~) init_mul_tables::$2 ← (byte) init_mul_tables::c#1 & (byte/signed byte/word/signed word) 1
   (boolean~) init_mul_tables::$4 ← (byte~) init_mul_tables::$2 != (byte/signed byte/word/signed word) 0
   if((boolean~) init_mul_tables::$4) goto init_mul_tables::@2
   to:init_mul_tables::@3
@@ -1565,14 +1578,14 @@ init_mul_tables::@2: scope:[init_mul_tables]  from init_mul_tables::@1 init_mul_
   (word) init_mul_tables::sqr#3 ← phi( init_mul_tables::@1/(word) init_mul_tables::sqr#4 init_mul_tables::@3/(word) init_mul_tables::sqr#2 )
   (byte~) init_mul_tables::$5 ← < (word) init_mul_tables::sqr#3
   *((byte*) init_mul_tables::sqr_lo#2) ← (byte~) init_mul_tables::$5
-  (byte*) init_mul_tables::sqr_lo#1 ← ++ (byte*) init_mul_tables::sqr_lo#2
   (byte~) init_mul_tables::$6 ← > (word) init_mul_tables::sqr#3
   *((byte*) init_mul_tables::sqr_hi#2) ← (byte~) init_mul_tables::$6
   (byte*) init_mul_tables::sqr_hi#1 ← ++ (byte*) init_mul_tables::sqr_hi#2
   (word) init_mul_tables::sqr#1 ← (word) init_mul_tables::sqr#3 + (byte) init_mul_tables::x_2#2
-  (word) init_mul_tables::x#1 ← ++ (word) init_mul_tables::x#2
-  (boolean~) init_mul_tables::$8 ← (word) init_mul_tables::x#1 != (word/signed word) 512
-  if((boolean~) init_mul_tables::$8) goto init_mul_tables::@1
+  (byte*) init_mul_tables::sqr_lo#1 ← ++ (byte*) init_mul_tables::sqr_lo#2
+  (byte*~) init_mul_tables::$8 ← (byte[512]) mul_sqr_lo#0 + (word/signed word) 512
+  (boolean~) init_mul_tables::$9 ← (byte*) init_mul_tables::sqr_lo#1 != (byte*~) init_mul_tables::$8
+  if((boolean~) init_mul_tables::$9) goto init_mul_tables::@1
   to:init_mul_tables::@return
 init_mul_tables::@3: scope:[init_mul_tables]  from init_mul_tables::@1
   (word) init_mul_tables::sqr#2 ← ++ (word) init_mul_tables::sqr#4
@@ -1669,19 +1682,20 @@ main::@return: scope:[main]  from main::@2
   (byte[512]) mul_sqr_hi#0 ← { fill( 512, 0) }
   to:@2
 init_mul_tables: scope:[init_mul_tables]  from main
-  (byte*) init_mul_tables::sqr_lo#0 ← (byte[512]) mul_sqr_lo#0 + (byte/signed byte/word/signed word) 1
-  (byte*) init_mul_tables::sqr_hi#0 ← (byte[512]) mul_sqr_hi#0 + (byte/signed byte/word/signed word) 1
   (word) init_mul_tables::sqr#0 ← (byte/signed byte/word/signed word) 0
   (byte) init_mul_tables::x_2#0 ← (byte/signed byte/word/signed word) 0
-  (word) init_mul_tables::x#0 ← (byte/signed byte/word/signed word) 1
+  (byte) init_mul_tables::c#0 ← (byte/signed byte/word/signed word) 0
+  (byte*) init_mul_tables::sqr_hi#0 ← (byte[512]) mul_sqr_hi#0 + (byte/signed byte/word/signed word) 1
+  (byte*) init_mul_tables::sqr_lo#0 ← (byte[512]) mul_sqr_lo#0 + (byte/signed byte/word/signed word) 1
   to:init_mul_tables::@1
 init_mul_tables::@1: scope:[init_mul_tables]  from init_mul_tables init_mul_tables::@2
   (byte) init_mul_tables::x_2#3 ← phi( init_mul_tables/(byte) init_mul_tables::x_2#0 init_mul_tables::@2/(byte) init_mul_tables::x_2#2 )
   (byte*) init_mul_tables::sqr_hi#2 ← phi( init_mul_tables/(byte*) init_mul_tables::sqr_hi#0 init_mul_tables::@2/(byte*) init_mul_tables::sqr_hi#1 )
   (byte*) init_mul_tables::sqr_lo#2 ← phi( init_mul_tables/(byte*) init_mul_tables::sqr_lo#0 init_mul_tables::@2/(byte*) init_mul_tables::sqr_lo#1 )
   (word) init_mul_tables::sqr#4 ← phi( init_mul_tables/(word) init_mul_tables::sqr#0 init_mul_tables::@2/(word) init_mul_tables::sqr#1 )
-  (word) init_mul_tables::x#2 ← phi( init_mul_tables/(word) init_mul_tables::x#0 init_mul_tables::@2/(word) init_mul_tables::x#1 )
-  (byte~) init_mul_tables::$2 ← (word) init_mul_tables::x#2 & (byte/signed byte/word/signed word) 1
+  (byte) init_mul_tables::c#2 ← phi( init_mul_tables/(byte) init_mul_tables::c#0 init_mul_tables::@2/(byte) init_mul_tables::c#1 )
+  (byte) init_mul_tables::c#1 ← ++ (byte) init_mul_tables::c#2
+  (byte~) init_mul_tables::$2 ← (byte) init_mul_tables::c#1 & (byte/signed byte/word/signed word) 1
   (boolean~) init_mul_tables::$4 ← (byte~) init_mul_tables::$2 != (byte/signed byte/word/signed word) 0
   if((boolean~) init_mul_tables::$4) goto init_mul_tables::@2
   to:init_mul_tables::@3
@@ -1690,14 +1704,14 @@ init_mul_tables::@2: scope:[init_mul_tables]  from init_mul_tables::@1 init_mul_
   (word) init_mul_tables::sqr#3 ← phi( init_mul_tables::@1/(word) init_mul_tables::sqr#4 init_mul_tables::@3/(word) init_mul_tables::sqr#2 )
   (byte~) init_mul_tables::$5 ← < (word) init_mul_tables::sqr#3
   *((byte*) init_mul_tables::sqr_lo#2) ← (byte~) init_mul_tables::$5
-  (byte*) init_mul_tables::sqr_lo#1 ← ++ (byte*) init_mul_tables::sqr_lo#2
   (byte~) init_mul_tables::$6 ← > (word) init_mul_tables::sqr#3
   *((byte*) init_mul_tables::sqr_hi#2) ← (byte~) init_mul_tables::$6
   (byte*) init_mul_tables::sqr_hi#1 ← ++ (byte*) init_mul_tables::sqr_hi#2
   (word) init_mul_tables::sqr#1 ← (word) init_mul_tables::sqr#3 + (byte) init_mul_tables::x_2#2
-  (word) init_mul_tables::x#1 ← ++ (word) init_mul_tables::x#2
-  (boolean~) init_mul_tables::$8 ← (word) init_mul_tables::x#1 != (word/signed word) 512
-  if((boolean~) init_mul_tables::$8) goto init_mul_tables::@1
+  (byte*) init_mul_tables::sqr_lo#1 ← ++ (byte*) init_mul_tables::sqr_lo#2
+  (byte*~) init_mul_tables::$8 ← (byte[512]) mul_sqr_lo#0 + (word/signed word) 512
+  (boolean~) init_mul_tables::$9 ← (byte*) init_mul_tables::sqr_lo#1 != (byte*~) init_mul_tables::$8
+  if((boolean~) init_mul_tables::$9) goto init_mul_tables::@1
   to:init_mul_tables::@return
 init_mul_tables::@3: scope:[init_mul_tables]  from init_mul_tables::@1
   (word) init_mul_tables::sqr#2 ← ++ (word) init_mul_tables::sqr#4
@@ -1793,19 +1807,20 @@ main::@return: scope:[main]  from main::@2
   (byte[512]) mul_sqr_hi#0 ← { fill( 512, 0) }
   to:@2
 init_mul_tables: scope:[init_mul_tables]  from main
-  (byte*) init_mul_tables::sqr_lo#0 ← (byte[512]) mul_sqr_lo#0 + (byte/signed byte/word/signed word) 1
-  (byte*) init_mul_tables::sqr_hi#0 ← (byte[512]) mul_sqr_hi#0 + (byte/signed byte/word/signed word) 1
   (word) init_mul_tables::sqr#0 ← (byte/signed byte/word/signed word) 0
   (byte) init_mul_tables::x_2#0 ← (byte/signed byte/word/signed word) 0
-  (word) init_mul_tables::x#0 ← (byte/signed byte/word/signed word) 1
+  (byte) init_mul_tables::c#0 ← (byte/signed byte/word/signed word) 0
+  (byte*) init_mul_tables::sqr_hi#0 ← (byte[512]) mul_sqr_hi#0 + (byte/signed byte/word/signed word) 1
+  (byte*) init_mul_tables::sqr_lo#0 ← (byte[512]) mul_sqr_lo#0 + (byte/signed byte/word/signed word) 1
   to:init_mul_tables::@1
 init_mul_tables::@1: scope:[init_mul_tables]  from init_mul_tables init_mul_tables::@2
   (byte) init_mul_tables::x_2#3 ← phi( init_mul_tables/(byte) init_mul_tables::x_2#0 init_mul_tables::@2/(byte) init_mul_tables::x_2#2 )
   (byte*) init_mul_tables::sqr_hi#2 ← phi( init_mul_tables/(byte*) init_mul_tables::sqr_hi#0 init_mul_tables::@2/(byte*) init_mul_tables::sqr_hi#1 )
   (byte*) init_mul_tables::sqr_lo#2 ← phi( init_mul_tables/(byte*) init_mul_tables::sqr_lo#0 init_mul_tables::@2/(byte*) init_mul_tables::sqr_lo#1 )
   (word) init_mul_tables::sqr#4 ← phi( init_mul_tables/(word) init_mul_tables::sqr#0 init_mul_tables::@2/(word) init_mul_tables::sqr#1 )
-  (word) init_mul_tables::x#2 ← phi( init_mul_tables/(word) init_mul_tables::x#0 init_mul_tables::@2/(word) init_mul_tables::x#1 )
-  (byte~) init_mul_tables::$2 ← (word) init_mul_tables::x#2 & (byte/signed byte/word/signed word) 1
+  (byte) init_mul_tables::c#2 ← phi( init_mul_tables/(byte) init_mul_tables::c#0 init_mul_tables::@2/(byte) init_mul_tables::c#1 )
+  (byte) init_mul_tables::c#1 ← ++ (byte) init_mul_tables::c#2
+  (byte~) init_mul_tables::$2 ← (byte) init_mul_tables::c#1 & (byte/signed byte/word/signed word) 1
   (boolean~) init_mul_tables::$4 ← (byte~) init_mul_tables::$2 != (byte/signed byte/word/signed word) 0
   if((boolean~) init_mul_tables::$4) goto init_mul_tables::@2
   to:init_mul_tables::@3
@@ -1814,14 +1829,14 @@ init_mul_tables::@2: scope:[init_mul_tables]  from init_mul_tables::@1 init_mul_
   (word) init_mul_tables::sqr#3 ← phi( init_mul_tables::@1/(word) init_mul_tables::sqr#4 init_mul_tables::@3/(word) init_mul_tables::sqr#2 )
   (byte~) init_mul_tables::$5 ← < (word) init_mul_tables::sqr#3
   *((byte*) init_mul_tables::sqr_lo#2) ← (byte~) init_mul_tables::$5
-  (byte*) init_mul_tables::sqr_lo#1 ← ++ (byte*) init_mul_tables::sqr_lo#2
   (byte~) init_mul_tables::$6 ← > (word) init_mul_tables::sqr#3
   *((byte*) init_mul_tables::sqr_hi#2) ← (byte~) init_mul_tables::$6
   (byte*) init_mul_tables::sqr_hi#1 ← ++ (byte*) init_mul_tables::sqr_hi#2
   (word) init_mul_tables::sqr#1 ← (word) init_mul_tables::sqr#3 + (byte) init_mul_tables::x_2#2
-  (word) init_mul_tables::x#1 ← ++ (word) init_mul_tables::x#2
-  (boolean~) init_mul_tables::$8 ← (word) init_mul_tables::x#1 != (word/signed word) 512
-  if((boolean~) init_mul_tables::$8) goto init_mul_tables::@1
+  (byte*) init_mul_tables::sqr_lo#1 ← ++ (byte*) init_mul_tables::sqr_lo#2
+  (byte*~) init_mul_tables::$8 ← (byte[512]) mul_sqr_lo#0 + (word/signed word) 512
+  (boolean~) init_mul_tables::$9 ← (byte*) init_mul_tables::sqr_lo#1 != (byte*~) init_mul_tables::$8
+  if((boolean~) init_mul_tables::$9) goto init_mul_tables::@1
   to:init_mul_tables::@return
 init_mul_tables::@3: scope:[init_mul_tables]  from init_mul_tables::@1
   (word) init_mul_tables::sqr#2 ← ++ (word) init_mul_tables::sqr#4
@@ -1891,7 +1906,7 @@ mul_tables_compare::@return: scope:[mul_tables_compare]  from mul_tables_compare
 @end: scope:[]  from @4
 
 Simple Condition (boolean~) init_mul_tables::$4 if((byte~) init_mul_tables::$2!=(byte/signed byte/word/signed word) 0) goto init_mul_tables::@2
-Simple Condition (boolean~) init_mul_tables::$8 if((word) init_mul_tables::x#1!=(word/signed word) 512) goto init_mul_tables::@1
+Simple Condition (boolean~) init_mul_tables::$9 if((byte*) init_mul_tables::sqr_lo#1!=(byte*~) init_mul_tables::$8) goto init_mul_tables::@1
 Simple Condition (boolean~) mul_tables_compare::$1 if(*((byte[512]) mul_sqr_lo#0 + (byte) mul_tables_compare::i#10)==*((byte[512]) asm_mul_sqr_lo#0 + (byte) mul_tables_compare::i#10)) goto mul_tables_compare::@2
 Simple Condition (boolean~) mul_tables_compare::$5 if(*((byte*~) mul_tables_compare::$2 + (byte) mul_tables_compare::i#10)==*((byte*~) mul_tables_compare::$3 + (byte) mul_tables_compare::i#10)) goto mul_tables_compare::@3
 Simple Condition (boolean~) mul_tables_compare::$7 if(*((byte[512]) mul_sqr_lo#0 + (byte) mul_tables_compare::i#10)==*((byte[512]) asm_mul_sqr_lo#0 + (byte) mul_tables_compare::i#10)) goto mul_tables_compare::@4
@@ -1919,19 +1934,20 @@ main::@return: scope:[main]  from main::@2
   (byte[512]) mul_sqr_hi#0 ← { fill( 512, 0) }
   to:@2
 init_mul_tables: scope:[init_mul_tables]  from main
-  (byte*) init_mul_tables::sqr_lo#0 ← (byte[512]) mul_sqr_lo#0 + (byte/signed byte/word/signed word) 1
-  (byte*) init_mul_tables::sqr_hi#0 ← (byte[512]) mul_sqr_hi#0 + (byte/signed byte/word/signed word) 1
   (word) init_mul_tables::sqr#0 ← (byte/signed byte/word/signed word) 0
   (byte) init_mul_tables::x_2#0 ← (byte/signed byte/word/signed word) 0
-  (word) init_mul_tables::x#0 ← (byte/signed byte/word/signed word) 1
+  (byte) init_mul_tables::c#0 ← (byte/signed byte/word/signed word) 0
+  (byte*) init_mul_tables::sqr_hi#0 ← (byte[512]) mul_sqr_hi#0 + (byte/signed byte/word/signed word) 1
+  (byte*) init_mul_tables::sqr_lo#0 ← (byte[512]) mul_sqr_lo#0 + (byte/signed byte/word/signed word) 1
   to:init_mul_tables::@1
 init_mul_tables::@1: scope:[init_mul_tables]  from init_mul_tables init_mul_tables::@2
   (byte) init_mul_tables::x_2#3 ← phi( init_mul_tables/(byte) init_mul_tables::x_2#0 init_mul_tables::@2/(byte) init_mul_tables::x_2#2 )
   (byte*) init_mul_tables::sqr_hi#2 ← phi( init_mul_tables/(byte*) init_mul_tables::sqr_hi#0 init_mul_tables::@2/(byte*) init_mul_tables::sqr_hi#1 )
   (byte*) init_mul_tables::sqr_lo#2 ← phi( init_mul_tables/(byte*) init_mul_tables::sqr_lo#0 init_mul_tables::@2/(byte*) init_mul_tables::sqr_lo#1 )
   (word) init_mul_tables::sqr#4 ← phi( init_mul_tables/(word) init_mul_tables::sqr#0 init_mul_tables::@2/(word) init_mul_tables::sqr#1 )
-  (word) init_mul_tables::x#2 ← phi( init_mul_tables/(word) init_mul_tables::x#0 init_mul_tables::@2/(word) init_mul_tables::x#1 )
-  (byte~) init_mul_tables::$2 ← (word) init_mul_tables::x#2 & (byte/signed byte/word/signed word) 1
+  (byte) init_mul_tables::c#2 ← phi( init_mul_tables/(byte) init_mul_tables::c#0 init_mul_tables::@2/(byte) init_mul_tables::c#1 )
+  (byte) init_mul_tables::c#1 ← ++ (byte) init_mul_tables::c#2
+  (byte~) init_mul_tables::$2 ← (byte) init_mul_tables::c#1 & (byte/signed byte/word/signed word) 1
   if((byte~) init_mul_tables::$2!=(byte/signed byte/word/signed word) 0) goto init_mul_tables::@2
   to:init_mul_tables::@3
 init_mul_tables::@2: scope:[init_mul_tables]  from init_mul_tables::@1 init_mul_tables::@3
@@ -1939,13 +1955,13 @@ init_mul_tables::@2: scope:[init_mul_tables]  from init_mul_tables::@1 init_mul_
   (word) init_mul_tables::sqr#3 ← phi( init_mul_tables::@1/(word) init_mul_tables::sqr#4 init_mul_tables::@3/(word) init_mul_tables::sqr#2 )
   (byte~) init_mul_tables::$5 ← < (word) init_mul_tables::sqr#3
   *((byte*) init_mul_tables::sqr_lo#2) ← (byte~) init_mul_tables::$5
-  (byte*) init_mul_tables::sqr_lo#1 ← ++ (byte*) init_mul_tables::sqr_lo#2
   (byte~) init_mul_tables::$6 ← > (word) init_mul_tables::sqr#3
   *((byte*) init_mul_tables::sqr_hi#2) ← (byte~) init_mul_tables::$6
   (byte*) init_mul_tables::sqr_hi#1 ← ++ (byte*) init_mul_tables::sqr_hi#2
   (word) init_mul_tables::sqr#1 ← (word) init_mul_tables::sqr#3 + (byte) init_mul_tables::x_2#2
-  (word) init_mul_tables::x#1 ← ++ (word) init_mul_tables::x#2
-  if((word) init_mul_tables::x#1!=(word/signed word) 512) goto init_mul_tables::@1
+  (byte*) init_mul_tables::sqr_lo#1 ← ++ (byte*) init_mul_tables::sqr_lo#2
+  (byte*~) init_mul_tables::$8 ← (byte[512]) mul_sqr_lo#0 + (word/signed word) 512
+  if((byte*) init_mul_tables::sqr_lo#1!=(byte*~) init_mul_tables::$8) goto init_mul_tables::@1
   to:init_mul_tables::@return
 init_mul_tables::@3: scope:[init_mul_tables]  from init_mul_tables::@1
   (word) init_mul_tables::sqr#2 ← ++ (word) init_mul_tables::sqr#4
@@ -2014,7 +2030,7 @@ Constant (const byte[512]) mul_sqr_lo#0 = { fill( 512, 0) }
 Constant (const byte[512]) mul_sqr_hi#0 = { fill( 512, 0) }
 Constant (const word) init_mul_tables::sqr#0 = 0
 Constant (const byte) init_mul_tables::x_2#0 = 0
-Constant (const word) init_mul_tables::x#0 = 1
+Constant (const byte) init_mul_tables::c#0 = 0
 Constant (const byte[512]) asm_mul_sqr_lo#0 = { fill( 512, 0) }
 Constant (const byte[512]) asm_mul_sqr_hi#0 = { fill( 512, 0) }
 Constant (const byte) mul_tables_compare::i#0 = 0
@@ -2037,16 +2053,17 @@ main::@return: scope:[main]  from main::@2
 @1: scope:[]  from @begin
   to:@2
 init_mul_tables: scope:[init_mul_tables]  from main
-  (byte*) init_mul_tables::sqr_lo#0 ← (const byte[512]) mul_sqr_lo#0 + (byte/signed byte/word/signed word) 1
   (byte*) init_mul_tables::sqr_hi#0 ← (const byte[512]) mul_sqr_hi#0 + (byte/signed byte/word/signed word) 1
+  (byte*) init_mul_tables::sqr_lo#0 ← (const byte[512]) mul_sqr_lo#0 + (byte/signed byte/word/signed word) 1
   to:init_mul_tables::@1
 init_mul_tables::@1: scope:[init_mul_tables]  from init_mul_tables init_mul_tables::@2
   (byte) init_mul_tables::x_2#3 ← phi( init_mul_tables/(const byte) init_mul_tables::x_2#0 init_mul_tables::@2/(byte) init_mul_tables::x_2#2 )
   (byte*) init_mul_tables::sqr_hi#2 ← phi( init_mul_tables/(byte*) init_mul_tables::sqr_hi#0 init_mul_tables::@2/(byte*) init_mul_tables::sqr_hi#1 )
   (byte*) init_mul_tables::sqr_lo#2 ← phi( init_mul_tables/(byte*) init_mul_tables::sqr_lo#0 init_mul_tables::@2/(byte*) init_mul_tables::sqr_lo#1 )
   (word) init_mul_tables::sqr#4 ← phi( init_mul_tables/(const word) init_mul_tables::sqr#0 init_mul_tables::@2/(word) init_mul_tables::sqr#1 )
-  (word) init_mul_tables::x#2 ← phi( init_mul_tables/(const word) init_mul_tables::x#0 init_mul_tables::@2/(word) init_mul_tables::x#1 )
-  (byte~) init_mul_tables::$2 ← (word) init_mul_tables::x#2 & (byte/signed byte/word/signed word) 1
+  (byte) init_mul_tables::c#2 ← phi( init_mul_tables/(const byte) init_mul_tables::c#0 init_mul_tables::@2/(byte) init_mul_tables::c#1 )
+  (byte) init_mul_tables::c#1 ← ++ (byte) init_mul_tables::c#2
+  (byte~) init_mul_tables::$2 ← (byte) init_mul_tables::c#1 & (byte/signed byte/word/signed word) 1
   if((byte~) init_mul_tables::$2!=(byte/signed byte/word/signed word) 0) goto init_mul_tables::@2
   to:init_mul_tables::@3
 init_mul_tables::@2: scope:[init_mul_tables]  from init_mul_tables::@1 init_mul_tables::@3
@@ -2054,13 +2071,13 @@ init_mul_tables::@2: scope:[init_mul_tables]  from init_mul_tables::@1 init_mul_
   (word) init_mul_tables::sqr#3 ← phi( init_mul_tables::@1/(word) init_mul_tables::sqr#4 init_mul_tables::@3/(word) init_mul_tables::sqr#2 )
   (byte~) init_mul_tables::$5 ← < (word) init_mul_tables::sqr#3
   *((byte*) init_mul_tables::sqr_lo#2) ← (byte~) init_mul_tables::$5
-  (byte*) init_mul_tables::sqr_lo#1 ← ++ (byte*) init_mul_tables::sqr_lo#2
   (byte~) init_mul_tables::$6 ← > (word) init_mul_tables::sqr#3
   *((byte*) init_mul_tables::sqr_hi#2) ← (byte~) init_mul_tables::$6
   (byte*) init_mul_tables::sqr_hi#1 ← ++ (byte*) init_mul_tables::sqr_hi#2
   (word) init_mul_tables::sqr#1 ← (word) init_mul_tables::sqr#3 + (byte) init_mul_tables::x_2#2
-  (word) init_mul_tables::x#1 ← ++ (word) init_mul_tables::x#2
-  if((word) init_mul_tables::x#1!=(word/signed word) 512) goto init_mul_tables::@1
+  (byte*) init_mul_tables::sqr_lo#1 ← ++ (byte*) init_mul_tables::sqr_lo#2
+  (byte*~) init_mul_tables::$8 ← (const byte[512]) mul_sqr_lo#0 + (word/signed word) 512
+  if((byte*) init_mul_tables::sqr_lo#1!=(byte*~) init_mul_tables::$8) goto init_mul_tables::@1
   to:init_mul_tables::@return
 init_mul_tables::@3: scope:[init_mul_tables]  from init_mul_tables::@1
   (word) init_mul_tables::sqr#2 ← ++ (word) init_mul_tables::sqr#4
@@ -2121,8 +2138,9 @@ mul_tables_compare::@return: scope:[mul_tables_compare]  from mul_tables_compare
   to:@end
 @end: scope:[]  from @4
 
-Constant (const byte*) init_mul_tables::sqr_lo#0 = mul_sqr_lo#0+1
 Constant (const byte*) init_mul_tables::sqr_hi#0 = mul_sqr_hi#0+1
+Constant (const byte*) init_mul_tables::sqr_lo#0 = mul_sqr_lo#0+1
+Constant (const byte*) init_mul_tables::$8 = mul_sqr_lo#0+512
 Constant (const byte*) mul_tables_compare::$2 = mul_sqr_hi#0+256
 Constant (const byte*) mul_tables_compare::$3 = asm_mul_sqr_hi#0+256
 Constant (const byte*) mul_tables_compare::$8 = mul_sqr_hi#0+256
@@ -2152,8 +2170,9 @@ init_mul_tables::@1: scope:[init_mul_tables]  from init_mul_tables init_mul_tabl
   (byte*) init_mul_tables::sqr_hi#2 ← phi( init_mul_tables/(const byte*) init_mul_tables::sqr_hi#0 init_mul_tables::@2/(byte*) init_mul_tables::sqr_hi#1 )
   (byte*) init_mul_tables::sqr_lo#2 ← phi( init_mul_tables/(const byte*) init_mul_tables::sqr_lo#0 init_mul_tables::@2/(byte*) init_mul_tables::sqr_lo#1 )
   (word) init_mul_tables::sqr#4 ← phi( init_mul_tables/(const word) init_mul_tables::sqr#0 init_mul_tables::@2/(word) init_mul_tables::sqr#1 )
-  (word) init_mul_tables::x#2 ← phi( init_mul_tables/(const word) init_mul_tables::x#0 init_mul_tables::@2/(word) init_mul_tables::x#1 )
-  (byte~) init_mul_tables::$2 ← (word) init_mul_tables::x#2 & (byte/signed byte/word/signed word) 1
+  (byte) init_mul_tables::c#2 ← phi( init_mul_tables/(const byte) init_mul_tables::c#0 init_mul_tables::@2/(byte) init_mul_tables::c#1 )
+  (byte) init_mul_tables::c#1 ← ++ (byte) init_mul_tables::c#2
+  (byte~) init_mul_tables::$2 ← (byte) init_mul_tables::c#1 & (byte/signed byte/word/signed word) 1
   if((byte~) init_mul_tables::$2!=(byte/signed byte/word/signed word) 0) goto init_mul_tables::@2
   to:init_mul_tables::@3
 init_mul_tables::@2: scope:[init_mul_tables]  from init_mul_tables::@1 init_mul_tables::@3
@@ -2161,13 +2180,12 @@ init_mul_tables::@2: scope:[init_mul_tables]  from init_mul_tables::@1 init_mul_
   (word) init_mul_tables::sqr#3 ← phi( init_mul_tables::@1/(word) init_mul_tables::sqr#4 init_mul_tables::@3/(word) init_mul_tables::sqr#2 )
   (byte~) init_mul_tables::$5 ← < (word) init_mul_tables::sqr#3
   *((byte*) init_mul_tables::sqr_lo#2) ← (byte~) init_mul_tables::$5
-  (byte*) init_mul_tables::sqr_lo#1 ← ++ (byte*) init_mul_tables::sqr_lo#2
   (byte~) init_mul_tables::$6 ← > (word) init_mul_tables::sqr#3
   *((byte*) init_mul_tables::sqr_hi#2) ← (byte~) init_mul_tables::$6
   (byte*) init_mul_tables::sqr_hi#1 ← ++ (byte*) init_mul_tables::sqr_hi#2
   (word) init_mul_tables::sqr#1 ← (word) init_mul_tables::sqr#3 + (byte) init_mul_tables::x_2#2
-  (word) init_mul_tables::x#1 ← ++ (word) init_mul_tables::x#2
-  if((word) init_mul_tables::x#1!=(word/signed word) 512) goto init_mul_tables::@1
+  (byte*) init_mul_tables::sqr_lo#1 ← ++ (byte*) init_mul_tables::sqr_lo#2
+  if((byte*) init_mul_tables::sqr_lo#1!=(const byte*) init_mul_tables::$8) goto init_mul_tables::@1
   to:init_mul_tables::@return
 init_mul_tables::@3: scope:[init_mul_tables]  from init_mul_tables::@1
   (word) init_mul_tables::sqr#2 ← ++ (word) init_mul_tables::sqr#4
@@ -2249,8 +2267,9 @@ init_mul_tables::@1: scope:[init_mul_tables]  from init_mul_tables init_mul_tabl
   (byte*) init_mul_tables::sqr_hi#2 ← phi( init_mul_tables/(const byte*) init_mul_tables::sqr_hi#0 init_mul_tables::@2/(byte*) init_mul_tables::sqr_hi#1 )
   (byte*) init_mul_tables::sqr_lo#2 ← phi( init_mul_tables/(const byte*) init_mul_tables::sqr_lo#0 init_mul_tables::@2/(byte*) init_mul_tables::sqr_lo#1 )
   (word) init_mul_tables::sqr#4 ← phi( init_mul_tables/(const word) init_mul_tables::sqr#0 init_mul_tables::@2/(word) init_mul_tables::sqr#1 )
-  (word) init_mul_tables::x#2 ← phi( init_mul_tables/(const word) init_mul_tables::x#0 init_mul_tables::@2/(word) init_mul_tables::x#1 )
-  (byte~) init_mul_tables::$2 ← (word) init_mul_tables::x#2 & (byte/signed byte/word/signed word) 1
+  (byte) init_mul_tables::c#2 ← phi( init_mul_tables/(const byte) init_mul_tables::c#0 init_mul_tables::@2/(byte) init_mul_tables::c#1 )
+  (byte) init_mul_tables::c#1 ← ++ (byte) init_mul_tables::c#2
+  (byte~) init_mul_tables::$2 ← (byte) init_mul_tables::c#1 & (byte/signed byte/word/signed word) 1
   if((byte~) init_mul_tables::$2!=(byte/signed byte/word/signed word) 0) goto init_mul_tables::@2
   to:init_mul_tables::@3
 init_mul_tables::@2: scope:[init_mul_tables]  from init_mul_tables::@1 init_mul_tables::@3
@@ -2258,13 +2277,12 @@ init_mul_tables::@2: scope:[init_mul_tables]  from init_mul_tables::@1 init_mul_
   (word) init_mul_tables::sqr#3 ← phi( init_mul_tables::@1/(word) init_mul_tables::sqr#4 init_mul_tables::@3/(word) init_mul_tables::sqr#2 )
   (byte~) init_mul_tables::$5 ← < (word) init_mul_tables::sqr#3
   *((byte*) init_mul_tables::sqr_lo#2) ← (byte~) init_mul_tables::$5
-  (byte*) init_mul_tables::sqr_lo#1 ← ++ (byte*) init_mul_tables::sqr_lo#2
   (byte~) init_mul_tables::$6 ← > (word) init_mul_tables::sqr#3
   *((byte*) init_mul_tables::sqr_hi#2) ← (byte~) init_mul_tables::$6
   (byte*) init_mul_tables::sqr_hi#1 ← ++ (byte*) init_mul_tables::sqr_hi#2
   (word) init_mul_tables::sqr#1 ← (word) init_mul_tables::sqr#3 + (byte) init_mul_tables::x_2#2
-  (word) init_mul_tables::x#1 ← ++ (word) init_mul_tables::x#2
-  if((word) init_mul_tables::x#1!=(word/signed word) 512) goto init_mul_tables::@1
+  (byte*) init_mul_tables::sqr_lo#1 ← ++ (byte*) init_mul_tables::sqr_lo#2
+  if((byte*) init_mul_tables::sqr_lo#1!=(const byte*) init_mul_tables::$8) goto init_mul_tables::@1
   to:init_mul_tables::@return
 init_mul_tables::@3: scope:[init_mul_tables]  from init_mul_tables::@1
   (word) init_mul_tables::sqr#2 ← ++ (word) init_mul_tables::sqr#4
@@ -2326,12 +2344,12 @@ Inlining constant with var siblings (const word) init_mul_tables::sqr#0
 Inlining constant with var siblings (const byte) init_mul_tables::x_2#0
 Inlining constant with var siblings (const byte) init_mul_tables::x_2#0
 Inlining constant with var siblings (const byte) init_mul_tables::x_2#0
-Inlining constant with var siblings (const word) init_mul_tables::x#0
-Inlining constant with var siblings (const word) init_mul_tables::x#0
-Inlining constant with var siblings (const byte*) init_mul_tables::sqr_lo#0
-Inlining constant with var siblings (const byte*) init_mul_tables::sqr_lo#0
+Inlining constant with var siblings (const byte) init_mul_tables::c#0
+Inlining constant with var siblings (const byte) init_mul_tables::c#0
 Inlining constant with var siblings (const byte*) init_mul_tables::sqr_hi#0
 Inlining constant with var siblings (const byte*) init_mul_tables::sqr_hi#0
+Inlining constant with var siblings (const byte*) init_mul_tables::sqr_lo#0
+Inlining constant with var siblings (const byte*) init_mul_tables::sqr_lo#0
 Inlining constant with var siblings (const byte) mul_tables_compare::i#0
 Inlining constant with var siblings (const byte) mul_tables_compare::i#0
 Constant inlined mul_tables_compare::i#0 = (byte/signed byte/word/signed word) 0
@@ -2339,11 +2357,12 @@ Constant inlined init_mul_tables::sqr_lo#0 = (const byte[512]) mul_sqr_lo#0+(byt
 Constant inlined init_mul_tables::sqr#0 = (byte/signed byte/word/signed word) 0
 Constant inlined mul_tables_compare::$3 = (const byte[512]) asm_mul_sqr_hi#0+(word/signed word) 256
 Constant inlined mul_tables_compare::$2 = (const byte[512]) mul_sqr_hi#0+(word/signed word) 256
+Constant inlined init_mul_tables::$8 = (const byte[512]) mul_sqr_lo#0+(word/signed word) 512
 Constant inlined init_mul_tables::x_2#0 = (byte/signed byte/word/signed word) 0
+Constant inlined init_mul_tables::c#0 = (byte/signed byte/word/signed word) 0
 Constant inlined mul_tables_compare::$9 = (const byte[512]) asm_mul_sqr_hi#0+(word/signed word) 256
 Constant inlined mul_tables_compare::$8 = (const byte[512]) mul_sqr_hi#0+(word/signed word) 256
 Constant inlined init_mul_tables::sqr_hi#0 = (const byte[512]) mul_sqr_hi#0+(byte/signed byte/word/signed word) 1
-Constant inlined init_mul_tables::x#0 = (byte/signed byte/word/signed word) 1
 Succesful SSA optimization Pass2ConstantInlining
 CONTROL FLOW GRAPH
 @begin: scope:[]  from
@@ -2367,8 +2386,9 @@ init_mul_tables::@1: scope:[init_mul_tables]  from init_mul_tables init_mul_tabl
   (byte*) init_mul_tables::sqr_hi#2 ← phi( init_mul_tables/(const byte[512]) mul_sqr_hi#0+(byte/signed byte/word/signed word) 1 init_mul_tables::@2/(byte*) init_mul_tables::sqr_hi#1 )
   (byte*) init_mul_tables::sqr_lo#2 ← phi( init_mul_tables/(const byte[512]) mul_sqr_lo#0+(byte/signed byte/word/signed word) 1 init_mul_tables::@2/(byte*) init_mul_tables::sqr_lo#1 )
   (word) init_mul_tables::sqr#4 ← phi( init_mul_tables/(byte/signed byte/word/signed word) 0 init_mul_tables::@2/(word) init_mul_tables::sqr#1 )
-  (word) init_mul_tables::x#2 ← phi( init_mul_tables/(byte/signed byte/word/signed word) 1 init_mul_tables::@2/(word) init_mul_tables::x#1 )
-  (byte~) init_mul_tables::$2 ← (word) init_mul_tables::x#2 & (byte/signed byte/word/signed word) 1
+  (byte) init_mul_tables::c#2 ← phi( init_mul_tables/(byte/signed byte/word/signed word) 0 init_mul_tables::@2/(byte) init_mul_tables::c#1 )
+  (byte) init_mul_tables::c#1 ← ++ (byte) init_mul_tables::c#2
+  (byte~) init_mul_tables::$2 ← (byte) init_mul_tables::c#1 & (byte/signed byte/word/signed word) 1
   if((byte~) init_mul_tables::$2!=(byte/signed byte/word/signed word) 0) goto init_mul_tables::@2
   to:init_mul_tables::@3
 init_mul_tables::@2: scope:[init_mul_tables]  from init_mul_tables::@1 init_mul_tables::@3
@@ -2376,13 +2396,12 @@ init_mul_tables::@2: scope:[init_mul_tables]  from init_mul_tables::@1 init_mul_
   (word) init_mul_tables::sqr#3 ← phi( init_mul_tables::@1/(word) init_mul_tables::sqr#4 init_mul_tables::@3/(word) init_mul_tables::sqr#2 )
   (byte~) init_mul_tables::$5 ← < (word) init_mul_tables::sqr#3
   *((byte*) init_mul_tables::sqr_lo#2) ← (byte~) init_mul_tables::$5
-  (byte*) init_mul_tables::sqr_lo#1 ← ++ (byte*) init_mul_tables::sqr_lo#2
   (byte~) init_mul_tables::$6 ← > (word) init_mul_tables::sqr#3
   *((byte*) init_mul_tables::sqr_hi#2) ← (byte~) init_mul_tables::$6
   (byte*) init_mul_tables::sqr_hi#1 ← ++ (byte*) init_mul_tables::sqr_hi#2
   (word) init_mul_tables::sqr#1 ← (word) init_mul_tables::sqr#3 + (byte) init_mul_tables::x_2#2
-  (word) init_mul_tables::x#1 ← ++ (word) init_mul_tables::x#2
-  if((word) init_mul_tables::x#1!=(word/signed word) 512) goto init_mul_tables::@1
+  (byte*) init_mul_tables::sqr_lo#1 ← ++ (byte*) init_mul_tables::sqr_lo#2
+  if((byte*) init_mul_tables::sqr_lo#1!=(const byte[512]) mul_sqr_lo#0+(word/signed word) 512) goto init_mul_tables::@1
   to:init_mul_tables::@return
 init_mul_tables::@3: scope:[init_mul_tables]  from init_mul_tables::@1
   (word) init_mul_tables::sqr#2 ← ++ (word) init_mul_tables::sqr#4
@@ -2455,6 +2474,9 @@ FINAL SYMBOL TABLE
 (label) init_mul_tables::@2
 (label) init_mul_tables::@3
 (label) init_mul_tables::@return
+(byte) init_mul_tables::c
+(byte) init_mul_tables::c#1
+(byte) init_mul_tables::c#2
 (word) init_mul_tables::sqr
 (word) init_mul_tables::sqr#1
 (word) init_mul_tables::sqr#2
@@ -2466,9 +2488,6 @@ FINAL SYMBOL TABLE
 (byte*) init_mul_tables::sqr_lo
 (byte*) init_mul_tables::sqr_lo#1
 (byte*) init_mul_tables::sqr_lo#2
-(word) init_mul_tables::x
-(word) init_mul_tables::x#1
-(word) init_mul_tables::x#2
 (byte) init_mul_tables::x_2
 (byte) init_mul_tables::x_2#1
 (byte) init_mul_tables::x_2#2
@@ -2573,8 +2592,9 @@ init_mul_tables::@1: scope:[init_mul_tables]  from init_mul_tables init_mul_tabl
   (byte*) init_mul_tables::sqr_hi#2 ← phi( init_mul_tables/(const byte[512]) mul_sqr_hi#0+(byte/signed byte/word/signed word) 1 init_mul_tables::@5/(byte*~) init_mul_tables::sqr_hi#5 )
   (byte*) init_mul_tables::sqr_lo#2 ← phi( init_mul_tables/(const byte[512]) mul_sqr_lo#0+(byte/signed byte/word/signed word) 1 init_mul_tables::@5/(byte*~) init_mul_tables::sqr_lo#5 )
   (word) init_mul_tables::sqr#4 ← phi( init_mul_tables/(byte/signed byte/word/signed word) 0 init_mul_tables::@5/(word~) init_mul_tables::sqr#6 )
-  (word) init_mul_tables::x#2 ← phi( init_mul_tables/(byte/signed byte/word/signed word) 1 init_mul_tables::@5/(word~) init_mul_tables::x#5 )
-  (byte~) init_mul_tables::$2 ← (word) init_mul_tables::x#2 & (byte/signed byte/word/signed word) 1
+  (byte) init_mul_tables::c#2 ← phi( init_mul_tables/(byte/signed byte/word/signed word) 0 init_mul_tables::@5/(byte~) init_mul_tables::c#5 )
+  (byte) init_mul_tables::c#1 ← ++ (byte) init_mul_tables::c#2
+  (byte~) init_mul_tables::$2 ← (byte) init_mul_tables::c#1 & (byte/signed byte/word/signed word) 1
   if((byte~) init_mul_tables::$2!=(byte/signed byte/word/signed word) 0) goto init_mul_tables::@6
   to:init_mul_tables::@3
 init_mul_tables::@3: scope:[init_mul_tables]  from init_mul_tables::@1
@@ -2588,19 +2608,18 @@ init_mul_tables::@2: scope:[init_mul_tables]  from init_mul_tables::@3 init_mul_
   (word) init_mul_tables::sqr#3 ← phi( init_mul_tables::@6/(word~) init_mul_tables::sqr#7 init_mul_tables::@3/(word~) init_mul_tables::sqr#8 )
   (byte~) init_mul_tables::$5 ← < (word) init_mul_tables::sqr#3
   *((byte*) init_mul_tables::sqr_lo#2) ← (byte~) init_mul_tables::$5
-  (byte*) init_mul_tables::sqr_lo#1 ← ++ (byte*) init_mul_tables::sqr_lo#2
   (byte~) init_mul_tables::$6 ← > (word) init_mul_tables::sqr#3
   *((byte*) init_mul_tables::sqr_hi#2) ← (byte~) init_mul_tables::$6
   (byte*) init_mul_tables::sqr_hi#1 ← ++ (byte*) init_mul_tables::sqr_hi#2
   (word) init_mul_tables::sqr#1 ← (word) init_mul_tables::sqr#3 + (byte) init_mul_tables::x_2#2
-  (word) init_mul_tables::x#1 ← ++ (word) init_mul_tables::x#2
-  if((word) init_mul_tables::x#1!=(word/signed word) 512) goto init_mul_tables::@5
+  (byte*) init_mul_tables::sqr_lo#1 ← ++ (byte*) init_mul_tables::sqr_lo#2
+  if((byte*) init_mul_tables::sqr_lo#1!=(const byte[512]) mul_sqr_lo#0+(word/signed word) 512) goto init_mul_tables::@5
   to:init_mul_tables::@return
 init_mul_tables::@return: scope:[init_mul_tables]  from init_mul_tables::@2
   return 
   to:@return
 init_mul_tables::@5: scope:[init_mul_tables]  from init_mul_tables::@2
-  (word~) init_mul_tables::x#5 ← (word) init_mul_tables::x#1
+  (byte~) init_mul_tables::c#5 ← (byte) init_mul_tables::c#1
   (word~) init_mul_tables::sqr#6 ← (word) init_mul_tables::sqr#1
   (byte*~) init_mul_tables::sqr_lo#5 ← (byte*) init_mul_tables::sqr_lo#1
   (byte*~) init_mul_tables::sqr_hi#5 ← (byte*) init_mul_tables::sqr_hi#1
@@ -2622,6 +2641,7 @@ CALL GRAPH
 Calls in [] to main:2 
 Calls in [main] to init_mul_tables:5 init_mul_tables_asm:7 mul_tables_compare:9 
 
+Propagating live ranges...
 Propagating live ranges...
 Propagating live ranges...
 Propagating live ranges...
@@ -2708,53 +2728,53 @@ init_mul_tables: scope:[init_mul_tables]  from main
   [27] phi() [ ]
   to:init_mul_tables::@1
 init_mul_tables::@1: scope:[init_mul_tables]  from init_mul_tables init_mul_tables::@5
-  [28] (byte) init_mul_tables::x_2#3 ← phi( init_mul_tables/(byte/signed byte/word/signed word) 0 init_mul_tables::@5/(byte~) init_mul_tables::x_2#5 ) [ init_mul_tables::x#2 init_mul_tables::sqr#4 init_mul_tables::sqr_lo#2 init_mul_tables::sqr_hi#2 init_mul_tables::x_2#3 ]
-  [28] (byte*) init_mul_tables::sqr_hi#2 ← phi( init_mul_tables/(const byte[512]) mul_sqr_hi#0+(byte/signed byte/word/signed word) 1 init_mul_tables::@5/(byte*~) init_mul_tables::sqr_hi#5 ) [ init_mul_tables::x#2 init_mul_tables::sqr#4 init_mul_tables::sqr_lo#2 init_mul_tables::sqr_hi#2 init_mul_tables::x_2#3 ]
-  [28] (byte*) init_mul_tables::sqr_lo#2 ← phi( init_mul_tables/(const byte[512]) mul_sqr_lo#0+(byte/signed byte/word/signed word) 1 init_mul_tables::@5/(byte*~) init_mul_tables::sqr_lo#5 ) [ init_mul_tables::x#2 init_mul_tables::sqr#4 init_mul_tables::sqr_lo#2 init_mul_tables::sqr_hi#2 init_mul_tables::x_2#3 ]
-  [28] (word) init_mul_tables::sqr#4 ← phi( init_mul_tables/(byte/signed byte/word/signed word) 0 init_mul_tables::@5/(word~) init_mul_tables::sqr#6 ) [ init_mul_tables::x#2 init_mul_tables::sqr#4 init_mul_tables::sqr_lo#2 init_mul_tables::sqr_hi#2 init_mul_tables::x_2#3 ]
-  [28] (word) init_mul_tables::x#2 ← phi( init_mul_tables/(byte/signed byte/word/signed word) 1 init_mul_tables::@5/(word~) init_mul_tables::x#5 ) [ init_mul_tables::x#2 init_mul_tables::sqr#4 init_mul_tables::sqr_lo#2 init_mul_tables::sqr_hi#2 init_mul_tables::x_2#3 ]
-  [29] (byte~) init_mul_tables::$2 ← (word) init_mul_tables::x#2 & (byte/signed byte/word/signed word) 1 [ init_mul_tables::x#2 init_mul_tables::sqr#4 init_mul_tables::sqr_lo#2 init_mul_tables::sqr_hi#2 init_mul_tables::x_2#3 init_mul_tables::$2 ]
-  [30] if((byte~) init_mul_tables::$2!=(byte/signed byte/word/signed word) 0) goto init_mul_tables::@6 [ init_mul_tables::x#2 init_mul_tables::sqr#4 init_mul_tables::sqr_lo#2 init_mul_tables::sqr_hi#2 init_mul_tables::x_2#3 ]
+  [28] (byte) init_mul_tables::x_2#3 ← phi( init_mul_tables/(byte/signed byte/word/signed word) 0 init_mul_tables::@5/(byte~) init_mul_tables::x_2#5 ) [ init_mul_tables::c#2 init_mul_tables::sqr#4 init_mul_tables::sqr_lo#2 init_mul_tables::sqr_hi#2 init_mul_tables::x_2#3 ]
+  [28] (byte*) init_mul_tables::sqr_hi#2 ← phi( init_mul_tables/(const byte[512]) mul_sqr_hi#0+(byte/signed byte/word/signed word) 1 init_mul_tables::@5/(byte*~) init_mul_tables::sqr_hi#5 ) [ init_mul_tables::c#2 init_mul_tables::sqr#4 init_mul_tables::sqr_lo#2 init_mul_tables::sqr_hi#2 init_mul_tables::x_2#3 ]
+  [28] (byte*) init_mul_tables::sqr_lo#2 ← phi( init_mul_tables/(const byte[512]) mul_sqr_lo#0+(byte/signed byte/word/signed word) 1 init_mul_tables::@5/(byte*~) init_mul_tables::sqr_lo#5 ) [ init_mul_tables::c#2 init_mul_tables::sqr#4 init_mul_tables::sqr_lo#2 init_mul_tables::sqr_hi#2 init_mul_tables::x_2#3 ]
+  [28] (word) init_mul_tables::sqr#4 ← phi( init_mul_tables/(byte/signed byte/word/signed word) 0 init_mul_tables::@5/(word~) init_mul_tables::sqr#6 ) [ init_mul_tables::c#2 init_mul_tables::sqr#4 init_mul_tables::sqr_lo#2 init_mul_tables::sqr_hi#2 init_mul_tables::x_2#3 ]
+  [28] (byte) init_mul_tables::c#2 ← phi( init_mul_tables/(byte/signed byte/word/signed word) 0 init_mul_tables::@5/(byte~) init_mul_tables::c#5 ) [ init_mul_tables::c#2 init_mul_tables::sqr#4 init_mul_tables::sqr_lo#2 init_mul_tables::sqr_hi#2 init_mul_tables::x_2#3 ]
+  [29] (byte) init_mul_tables::c#1 ← ++ (byte) init_mul_tables::c#2 [ init_mul_tables::sqr#4 init_mul_tables::sqr_lo#2 init_mul_tables::sqr_hi#2 init_mul_tables::x_2#3 init_mul_tables::c#1 ]
+  [30] (byte~) init_mul_tables::$2 ← (byte) init_mul_tables::c#1 & (byte/signed byte/word/signed word) 1 [ init_mul_tables::sqr#4 init_mul_tables::sqr_lo#2 init_mul_tables::sqr_hi#2 init_mul_tables::x_2#3 init_mul_tables::c#1 init_mul_tables::$2 ]
+  [31] if((byte~) init_mul_tables::$2!=(byte/signed byte/word/signed word) 0) goto init_mul_tables::@6 [ init_mul_tables::sqr#4 init_mul_tables::sqr_lo#2 init_mul_tables::sqr_hi#2 init_mul_tables::x_2#3 init_mul_tables::c#1 ]
   to:init_mul_tables::@3
 init_mul_tables::@3: scope:[init_mul_tables]  from init_mul_tables::@1
-  [31] (word) init_mul_tables::sqr#2 ← ++ (word) init_mul_tables::sqr#4 [ init_mul_tables::x#2 init_mul_tables::sqr_lo#2 init_mul_tables::sqr_hi#2 init_mul_tables::x_2#3 init_mul_tables::sqr#2 ]
-  [32] (byte) init_mul_tables::x_2#1 ← ++ (byte) init_mul_tables::x_2#3 [ init_mul_tables::x#2 init_mul_tables::sqr_lo#2 init_mul_tables::sqr_hi#2 init_mul_tables::sqr#2 init_mul_tables::x_2#1 ]
-  [33] (word~) init_mul_tables::sqr#8 ← (word) init_mul_tables::sqr#2 [ init_mul_tables::x#2 init_mul_tables::sqr_lo#2 init_mul_tables::sqr_hi#2 init_mul_tables::x_2#1 init_mul_tables::sqr#8 ]
-  [34] (byte~) init_mul_tables::x_2#7 ← (byte) init_mul_tables::x_2#1 [ init_mul_tables::x#2 init_mul_tables::sqr_lo#2 init_mul_tables::sqr_hi#2 init_mul_tables::sqr#8 init_mul_tables::x_2#7 ]
+  [32] (word) init_mul_tables::sqr#2 ← ++ (word) init_mul_tables::sqr#4 [ init_mul_tables::sqr_lo#2 init_mul_tables::sqr_hi#2 init_mul_tables::x_2#3 init_mul_tables::c#1 init_mul_tables::sqr#2 ]
+  [33] (byte) init_mul_tables::x_2#1 ← ++ (byte) init_mul_tables::x_2#3 [ init_mul_tables::sqr_lo#2 init_mul_tables::sqr_hi#2 init_mul_tables::c#1 init_mul_tables::sqr#2 init_mul_tables::x_2#1 ]
+  [34] (word~) init_mul_tables::sqr#8 ← (word) init_mul_tables::sqr#2 [ init_mul_tables::sqr_lo#2 init_mul_tables::sqr_hi#2 init_mul_tables::c#1 init_mul_tables::x_2#1 init_mul_tables::sqr#8 ]
+  [35] (byte~) init_mul_tables::x_2#7 ← (byte) init_mul_tables::x_2#1 [ init_mul_tables::sqr_lo#2 init_mul_tables::sqr_hi#2 init_mul_tables::c#1 init_mul_tables::sqr#8 init_mul_tables::x_2#7 ]
   to:init_mul_tables::@2
 init_mul_tables::@2: scope:[init_mul_tables]  from init_mul_tables::@3 init_mul_tables::@6
-  [35] (byte) init_mul_tables::x_2#2 ← phi( init_mul_tables::@6/(byte~) init_mul_tables::x_2#6 init_mul_tables::@3/(byte~) init_mul_tables::x_2#7 ) [ init_mul_tables::x#2 init_mul_tables::sqr_lo#2 init_mul_tables::sqr_hi#2 init_mul_tables::sqr#3 init_mul_tables::x_2#2 ]
-  [35] (word) init_mul_tables::sqr#3 ← phi( init_mul_tables::@6/(word~) init_mul_tables::sqr#7 init_mul_tables::@3/(word~) init_mul_tables::sqr#8 ) [ init_mul_tables::x#2 init_mul_tables::sqr_lo#2 init_mul_tables::sqr_hi#2 init_mul_tables::sqr#3 init_mul_tables::x_2#2 ]
-  [36] (byte~) init_mul_tables::$5 ← < (word) init_mul_tables::sqr#3 [ init_mul_tables::x#2 init_mul_tables::sqr_lo#2 init_mul_tables::sqr_hi#2 init_mul_tables::sqr#3 init_mul_tables::x_2#2 init_mul_tables::$5 ]
-  [37] *((byte*) init_mul_tables::sqr_lo#2) ← (byte~) init_mul_tables::$5 [ init_mul_tables::x#2 init_mul_tables::sqr_lo#2 init_mul_tables::sqr_hi#2 init_mul_tables::sqr#3 init_mul_tables::x_2#2 ]
-  [38] (byte*) init_mul_tables::sqr_lo#1 ← ++ (byte*) init_mul_tables::sqr_lo#2 [ init_mul_tables::x#2 init_mul_tables::sqr_hi#2 init_mul_tables::sqr#3 init_mul_tables::x_2#2 init_mul_tables::sqr_lo#1 ]
-  [39] (byte~) init_mul_tables::$6 ← > (word) init_mul_tables::sqr#3 [ init_mul_tables::x#2 init_mul_tables::sqr_hi#2 init_mul_tables::sqr#3 init_mul_tables::x_2#2 init_mul_tables::sqr_lo#1 init_mul_tables::$6 ]
-  [40] *((byte*) init_mul_tables::sqr_hi#2) ← (byte~) init_mul_tables::$6 [ init_mul_tables::x#2 init_mul_tables::sqr_hi#2 init_mul_tables::sqr#3 init_mul_tables::x_2#2 init_mul_tables::sqr_lo#1 ]
-  [41] (byte*) init_mul_tables::sqr_hi#1 ← ++ (byte*) init_mul_tables::sqr_hi#2 [ init_mul_tables::x#2 init_mul_tables::sqr#3 init_mul_tables::x_2#2 init_mul_tables::sqr_lo#1 init_mul_tables::sqr_hi#1 ]
-  [42] (word) init_mul_tables::sqr#1 ← (word) init_mul_tables::sqr#3 + (byte) init_mul_tables::x_2#2 [ init_mul_tables::x#2 init_mul_tables::x_2#2 init_mul_tables::sqr_lo#1 init_mul_tables::sqr_hi#1 init_mul_tables::sqr#1 ]
-  [43] (word) init_mul_tables::x#1 ← ++ (word) init_mul_tables::x#2 [ init_mul_tables::x_2#2 init_mul_tables::sqr_lo#1 init_mul_tables::sqr_hi#1 init_mul_tables::sqr#1 init_mul_tables::x#1 ]
-  [44] if((word) init_mul_tables::x#1!=(word/signed word) 512) goto init_mul_tables::@5 [ init_mul_tables::x_2#2 init_mul_tables::sqr_lo#1 init_mul_tables::sqr_hi#1 init_mul_tables::sqr#1 init_mul_tables::x#1 ]
+  [36] (byte) init_mul_tables::x_2#2 ← phi( init_mul_tables::@6/(byte~) init_mul_tables::x_2#6 init_mul_tables::@3/(byte~) init_mul_tables::x_2#7 ) [ init_mul_tables::sqr_lo#2 init_mul_tables::sqr_hi#2 init_mul_tables::c#1 init_mul_tables::sqr#3 init_mul_tables::x_2#2 ]
+  [36] (word) init_mul_tables::sqr#3 ← phi( init_mul_tables::@6/(word~) init_mul_tables::sqr#7 init_mul_tables::@3/(word~) init_mul_tables::sqr#8 ) [ init_mul_tables::sqr_lo#2 init_mul_tables::sqr_hi#2 init_mul_tables::c#1 init_mul_tables::sqr#3 init_mul_tables::x_2#2 ]
+  [37] (byte~) init_mul_tables::$5 ← < (word) init_mul_tables::sqr#3 [ init_mul_tables::sqr_lo#2 init_mul_tables::sqr_hi#2 init_mul_tables::c#1 init_mul_tables::sqr#3 init_mul_tables::x_2#2 init_mul_tables::$5 ]
+  [38] *((byte*) init_mul_tables::sqr_lo#2) ← (byte~) init_mul_tables::$5 [ init_mul_tables::sqr_lo#2 init_mul_tables::sqr_hi#2 init_mul_tables::c#1 init_mul_tables::sqr#3 init_mul_tables::x_2#2 ]
+  [39] (byte~) init_mul_tables::$6 ← > (word) init_mul_tables::sqr#3 [ init_mul_tables::sqr_lo#2 init_mul_tables::sqr_hi#2 init_mul_tables::c#1 init_mul_tables::sqr#3 init_mul_tables::x_2#2 init_mul_tables::$6 ]
+  [40] *((byte*) init_mul_tables::sqr_hi#2) ← (byte~) init_mul_tables::$6 [ init_mul_tables::sqr_lo#2 init_mul_tables::sqr_hi#2 init_mul_tables::c#1 init_mul_tables::sqr#3 init_mul_tables::x_2#2 ]
+  [41] (byte*) init_mul_tables::sqr_hi#1 ← ++ (byte*) init_mul_tables::sqr_hi#2 [ init_mul_tables::sqr_lo#2 init_mul_tables::c#1 init_mul_tables::sqr#3 init_mul_tables::x_2#2 init_mul_tables::sqr_hi#1 ]
+  [42] (word) init_mul_tables::sqr#1 ← (word) init_mul_tables::sqr#3 + (byte) init_mul_tables::x_2#2 [ init_mul_tables::sqr_lo#2 init_mul_tables::c#1 init_mul_tables::x_2#2 init_mul_tables::sqr_hi#1 init_mul_tables::sqr#1 ]
+  [43] (byte*) init_mul_tables::sqr_lo#1 ← ++ (byte*) init_mul_tables::sqr_lo#2 [ init_mul_tables::c#1 init_mul_tables::x_2#2 init_mul_tables::sqr_hi#1 init_mul_tables::sqr#1 init_mul_tables::sqr_lo#1 ]
+  [44] if((byte*) init_mul_tables::sqr_lo#1!=(const byte[512]) mul_sqr_lo#0+(word/signed word) 512) goto init_mul_tables::@5 [ init_mul_tables::c#1 init_mul_tables::x_2#2 init_mul_tables::sqr_hi#1 init_mul_tables::sqr#1 init_mul_tables::sqr_lo#1 ]
   to:init_mul_tables::@return
 init_mul_tables::@return: scope:[init_mul_tables]  from init_mul_tables::@2
   [45] return  [ ]
   to:@return
 init_mul_tables::@5: scope:[init_mul_tables]  from init_mul_tables::@2
-  [46] (word~) init_mul_tables::x#5 ← (word) init_mul_tables::x#1 [ init_mul_tables::x#5 init_mul_tables::x_2#2 init_mul_tables::sqr_lo#1 init_mul_tables::sqr_hi#1 init_mul_tables::sqr#1 ]
-  [47] (word~) init_mul_tables::sqr#6 ← (word) init_mul_tables::sqr#1 [ init_mul_tables::x#5 init_mul_tables::sqr#6 init_mul_tables::x_2#2 init_mul_tables::sqr_lo#1 init_mul_tables::sqr_hi#1 ]
-  [48] (byte*~) init_mul_tables::sqr_lo#5 ← (byte*) init_mul_tables::sqr_lo#1 [ init_mul_tables::x#5 init_mul_tables::sqr#6 init_mul_tables::sqr_lo#5 init_mul_tables::x_2#2 init_mul_tables::sqr_hi#1 ]
-  [49] (byte*~) init_mul_tables::sqr_hi#5 ← (byte*) init_mul_tables::sqr_hi#1 [ init_mul_tables::x#5 init_mul_tables::sqr#6 init_mul_tables::sqr_lo#5 init_mul_tables::sqr_hi#5 init_mul_tables::x_2#2 ]
-  [50] (byte~) init_mul_tables::x_2#5 ← (byte) init_mul_tables::x_2#2 [ init_mul_tables::x#5 init_mul_tables::sqr#6 init_mul_tables::sqr_lo#5 init_mul_tables::sqr_hi#5 init_mul_tables::x_2#5 ]
+  [46] (byte~) init_mul_tables::c#5 ← (byte) init_mul_tables::c#1 [ init_mul_tables::c#5 init_mul_tables::x_2#2 init_mul_tables::sqr_hi#1 init_mul_tables::sqr#1 init_mul_tables::sqr_lo#1 ]
+  [47] (word~) init_mul_tables::sqr#6 ← (word) init_mul_tables::sqr#1 [ init_mul_tables::c#5 init_mul_tables::sqr#6 init_mul_tables::x_2#2 init_mul_tables::sqr_hi#1 init_mul_tables::sqr_lo#1 ]
+  [48] (byte*~) init_mul_tables::sqr_lo#5 ← (byte*) init_mul_tables::sqr_lo#1 [ init_mul_tables::c#5 init_mul_tables::sqr#6 init_mul_tables::sqr_lo#5 init_mul_tables::x_2#2 init_mul_tables::sqr_hi#1 ]
+  [49] (byte*~) init_mul_tables::sqr_hi#5 ← (byte*) init_mul_tables::sqr_hi#1 [ init_mul_tables::c#5 init_mul_tables::sqr#6 init_mul_tables::sqr_lo#5 init_mul_tables::sqr_hi#5 init_mul_tables::x_2#2 ]
+  [50] (byte~) init_mul_tables::x_2#5 ← (byte) init_mul_tables::x_2#2 [ init_mul_tables::c#5 init_mul_tables::sqr#6 init_mul_tables::sqr_lo#5 init_mul_tables::sqr_hi#5 init_mul_tables::x_2#5 ]
   to:init_mul_tables::@1
 init_mul_tables::@6: scope:[init_mul_tables]  from init_mul_tables::@1
-  [51] (word~) init_mul_tables::sqr#7 ← (word) init_mul_tables::sqr#4 [ init_mul_tables::x#2 init_mul_tables::sqr_lo#2 init_mul_tables::sqr_hi#2 init_mul_tables::x_2#3 init_mul_tables::sqr#7 ]
-  [52] (byte~) init_mul_tables::x_2#6 ← (byte) init_mul_tables::x_2#3 [ init_mul_tables::x#2 init_mul_tables::sqr_lo#2 init_mul_tables::sqr_hi#2 init_mul_tables::sqr#7 init_mul_tables::x_2#6 ]
+  [51] (word~) init_mul_tables::sqr#7 ← (word) init_mul_tables::sqr#4 [ init_mul_tables::sqr_lo#2 init_mul_tables::sqr_hi#2 init_mul_tables::x_2#3 init_mul_tables::c#1 init_mul_tables::sqr#7 ]
+  [52] (byte~) init_mul_tables::x_2#6 ← (byte) init_mul_tables::x_2#3 [ init_mul_tables::sqr_lo#2 init_mul_tables::sqr_hi#2 init_mul_tables::c#1 init_mul_tables::sqr#7 init_mul_tables::x_2#6 ]
   to:init_mul_tables::@2
 
 Created 8 initial phi equivalence classes
 Coalesced [24] mul_tables_compare::i#11 ← mul_tables_compare::i#1
-Coalesced [33] init_mul_tables::sqr#8 ← init_mul_tables::sqr#2
-Coalesced [34] init_mul_tables::x_2#7 ← init_mul_tables::x_2#1
-Coalesced [46] init_mul_tables::x#5 ← init_mul_tables::x#1
+Coalesced [34] init_mul_tables::sqr#8 ← init_mul_tables::sqr#2
+Coalesced [35] init_mul_tables::x_2#7 ← init_mul_tables::x_2#1
+Coalesced [46] init_mul_tables::c#5 ← init_mul_tables::c#1
 Coalesced [47] init_mul_tables::sqr#6 ← init_mul_tables::sqr#1
 Coalesced [48] init_mul_tables::sqr_lo#5 ← init_mul_tables::sqr_lo#1
 Coalesced [49] init_mul_tables::sqr_hi#5 ← init_mul_tables::sqr_hi#1
@@ -2854,30 +2874,30 @@ init_mul_tables: scope:[init_mul_tables]  from main
   [26] phi() [ ]
   to:init_mul_tables::@1
 init_mul_tables::@1: scope:[init_mul_tables]  from init_mul_tables init_mul_tables::@2
-  [27] (byte) init_mul_tables::x_2#3 ← phi( init_mul_tables/(byte/signed byte/word/signed word) 0 init_mul_tables::@2/(byte) init_mul_tables::x_2#2 ) [ init_mul_tables::x#2 init_mul_tables::sqr#4 init_mul_tables::sqr_lo#2 init_mul_tables::sqr_hi#2 init_mul_tables::x_2#3 ]
-  [27] (byte*) init_mul_tables::sqr_hi#2 ← phi( init_mul_tables/(const byte[512]) mul_sqr_hi#0+(byte/signed byte/word/signed word) 1 init_mul_tables::@2/(byte*) init_mul_tables::sqr_hi#1 ) [ init_mul_tables::x#2 init_mul_tables::sqr#4 init_mul_tables::sqr_lo#2 init_mul_tables::sqr_hi#2 init_mul_tables::x_2#3 ]
-  [27] (byte*) init_mul_tables::sqr_lo#2 ← phi( init_mul_tables/(const byte[512]) mul_sqr_lo#0+(byte/signed byte/word/signed word) 1 init_mul_tables::@2/(byte*) init_mul_tables::sqr_lo#1 ) [ init_mul_tables::x#2 init_mul_tables::sqr#4 init_mul_tables::sqr_lo#2 init_mul_tables::sqr_hi#2 init_mul_tables::x_2#3 ]
-  [27] (word) init_mul_tables::sqr#4 ← phi( init_mul_tables/(byte/signed byte/word/signed word) 0 init_mul_tables::@2/(word) init_mul_tables::sqr#1 ) [ init_mul_tables::x#2 init_mul_tables::sqr#4 init_mul_tables::sqr_lo#2 init_mul_tables::sqr_hi#2 init_mul_tables::x_2#3 ]
-  [27] (word) init_mul_tables::x#2 ← phi( init_mul_tables/(byte/signed byte/word/signed word) 1 init_mul_tables::@2/(word) init_mul_tables::x#1 ) [ init_mul_tables::x#2 init_mul_tables::sqr#4 init_mul_tables::sqr_lo#2 init_mul_tables::sqr_hi#2 init_mul_tables::x_2#3 ]
-  [28] (byte~) init_mul_tables::$2 ← (word) init_mul_tables::x#2 & (byte/signed byte/word/signed word) 1 [ init_mul_tables::x#2 init_mul_tables::sqr#4 init_mul_tables::sqr_lo#2 init_mul_tables::sqr_hi#2 init_mul_tables::x_2#3 init_mul_tables::$2 ]
-  [29] if((byte~) init_mul_tables::$2!=(byte/signed byte/word/signed word) 0) goto init_mul_tables::@2 [ init_mul_tables::x#2 init_mul_tables::sqr#4 init_mul_tables::sqr_lo#2 init_mul_tables::sqr_hi#2 init_mul_tables::x_2#3 ]
+  [27] (byte) init_mul_tables::x_2#3 ← phi( init_mul_tables/(byte/signed byte/word/signed word) 0 init_mul_tables::@2/(byte) init_mul_tables::x_2#2 ) [ init_mul_tables::c#2 init_mul_tables::sqr#4 init_mul_tables::sqr_lo#2 init_mul_tables::sqr_hi#2 init_mul_tables::x_2#3 ]
+  [27] (byte*) init_mul_tables::sqr_hi#2 ← phi( init_mul_tables/(const byte[512]) mul_sqr_hi#0+(byte/signed byte/word/signed word) 1 init_mul_tables::@2/(byte*) init_mul_tables::sqr_hi#1 ) [ init_mul_tables::c#2 init_mul_tables::sqr#4 init_mul_tables::sqr_lo#2 init_mul_tables::sqr_hi#2 init_mul_tables::x_2#3 ]
+  [27] (byte*) init_mul_tables::sqr_lo#2 ← phi( init_mul_tables/(const byte[512]) mul_sqr_lo#0+(byte/signed byte/word/signed word) 1 init_mul_tables::@2/(byte*) init_mul_tables::sqr_lo#1 ) [ init_mul_tables::c#2 init_mul_tables::sqr#4 init_mul_tables::sqr_lo#2 init_mul_tables::sqr_hi#2 init_mul_tables::x_2#3 ]
+  [27] (word) init_mul_tables::sqr#4 ← phi( init_mul_tables/(byte/signed byte/word/signed word) 0 init_mul_tables::@2/(word) init_mul_tables::sqr#1 ) [ init_mul_tables::c#2 init_mul_tables::sqr#4 init_mul_tables::sqr_lo#2 init_mul_tables::sqr_hi#2 init_mul_tables::x_2#3 ]
+  [27] (byte) init_mul_tables::c#2 ← phi( init_mul_tables/(byte/signed byte/word/signed word) 0 init_mul_tables::@2/(byte) init_mul_tables::c#1 ) [ init_mul_tables::c#2 init_mul_tables::sqr#4 init_mul_tables::sqr_lo#2 init_mul_tables::sqr_hi#2 init_mul_tables::x_2#3 ]
+  [28] (byte) init_mul_tables::c#1 ← ++ (byte) init_mul_tables::c#2 [ init_mul_tables::sqr#4 init_mul_tables::sqr_lo#2 init_mul_tables::sqr_hi#2 init_mul_tables::x_2#3 init_mul_tables::c#1 ]
+  [29] (byte~) init_mul_tables::$2 ← (byte) init_mul_tables::c#1 & (byte/signed byte/word/signed word) 1 [ init_mul_tables::sqr#4 init_mul_tables::sqr_lo#2 init_mul_tables::sqr_hi#2 init_mul_tables::x_2#3 init_mul_tables::c#1 init_mul_tables::$2 ]
+  [30] if((byte~) init_mul_tables::$2!=(byte/signed byte/word/signed word) 0) goto init_mul_tables::@2 [ init_mul_tables::sqr#4 init_mul_tables::sqr_lo#2 init_mul_tables::sqr_hi#2 init_mul_tables::x_2#3 init_mul_tables::c#1 ]
   to:init_mul_tables::@3
 init_mul_tables::@3: scope:[init_mul_tables]  from init_mul_tables::@1
-  [30] (word) init_mul_tables::sqr#2 ← ++ (word) init_mul_tables::sqr#4 [ init_mul_tables::x#2 init_mul_tables::sqr_lo#2 init_mul_tables::sqr_hi#2 init_mul_tables::x_2#3 init_mul_tables::sqr#2 ]
-  [31] (byte) init_mul_tables::x_2#1 ← ++ (byte) init_mul_tables::x_2#3 [ init_mul_tables::x#2 init_mul_tables::sqr_lo#2 init_mul_tables::sqr_hi#2 init_mul_tables::sqr#2 init_mul_tables::x_2#1 ]
+  [31] (word) init_mul_tables::sqr#2 ← ++ (word) init_mul_tables::sqr#4 [ init_mul_tables::sqr_lo#2 init_mul_tables::sqr_hi#2 init_mul_tables::x_2#3 init_mul_tables::c#1 init_mul_tables::sqr#2 ]
+  [32] (byte) init_mul_tables::x_2#1 ← ++ (byte) init_mul_tables::x_2#3 [ init_mul_tables::sqr_lo#2 init_mul_tables::sqr_hi#2 init_mul_tables::c#1 init_mul_tables::sqr#2 init_mul_tables::x_2#1 ]
   to:init_mul_tables::@2
 init_mul_tables::@2: scope:[init_mul_tables]  from init_mul_tables::@1 init_mul_tables::@3
-  [32] (byte) init_mul_tables::x_2#2 ← phi( init_mul_tables::@1/(byte) init_mul_tables::x_2#3 init_mul_tables::@3/(byte) init_mul_tables::x_2#1 ) [ init_mul_tables::x#2 init_mul_tables::sqr_lo#2 init_mul_tables::sqr_hi#2 init_mul_tables::x_2#2 init_mul_tables::sqr#3 ]
-  [32] (word) init_mul_tables::sqr#3 ← phi( init_mul_tables::@1/(word) init_mul_tables::sqr#4 init_mul_tables::@3/(word) init_mul_tables::sqr#2 ) [ init_mul_tables::x#2 init_mul_tables::sqr_lo#2 init_mul_tables::sqr_hi#2 init_mul_tables::x_2#2 init_mul_tables::sqr#3 ]
-  [33] (byte~) init_mul_tables::$5 ← < (word) init_mul_tables::sqr#3 [ init_mul_tables::x#2 init_mul_tables::sqr_lo#2 init_mul_tables::sqr_hi#2 init_mul_tables::x_2#2 init_mul_tables::sqr#3 init_mul_tables::$5 ]
-  [34] *((byte*) init_mul_tables::sqr_lo#2) ← (byte~) init_mul_tables::$5 [ init_mul_tables::x#2 init_mul_tables::sqr_lo#2 init_mul_tables::sqr_hi#2 init_mul_tables::x_2#2 init_mul_tables::sqr#3 ]
-  [35] (byte*) init_mul_tables::sqr_lo#1 ← ++ (byte*) init_mul_tables::sqr_lo#2 [ init_mul_tables::x#2 init_mul_tables::sqr_hi#2 init_mul_tables::sqr_lo#1 init_mul_tables::x_2#2 init_mul_tables::sqr#3 ]
-  [36] (byte~) init_mul_tables::$6 ← > (word) init_mul_tables::sqr#3 [ init_mul_tables::x#2 init_mul_tables::sqr_hi#2 init_mul_tables::sqr_lo#1 init_mul_tables::x_2#2 init_mul_tables::sqr#3 init_mul_tables::$6 ]
-  [37] *((byte*) init_mul_tables::sqr_hi#2) ← (byte~) init_mul_tables::$6 [ init_mul_tables::x#2 init_mul_tables::sqr_hi#2 init_mul_tables::sqr_lo#1 init_mul_tables::x_2#2 init_mul_tables::sqr#3 ]
-  [38] (byte*) init_mul_tables::sqr_hi#1 ← ++ (byte*) init_mul_tables::sqr_hi#2 [ init_mul_tables::x#2 init_mul_tables::sqr_lo#1 init_mul_tables::sqr_hi#1 init_mul_tables::x_2#2 init_mul_tables::sqr#3 ]
-  [39] (word) init_mul_tables::sqr#1 ← (word) init_mul_tables::sqr#3 + (byte) init_mul_tables::x_2#2 [ init_mul_tables::x#2 init_mul_tables::sqr#1 init_mul_tables::sqr_lo#1 init_mul_tables::sqr_hi#1 init_mul_tables::x_2#2 ]
-  [40] (word) init_mul_tables::x#1 ← ++ (word) init_mul_tables::x#2 [ init_mul_tables::x#1 init_mul_tables::sqr#1 init_mul_tables::sqr_lo#1 init_mul_tables::sqr_hi#1 init_mul_tables::x_2#2 ]
-  [41] if((word) init_mul_tables::x#1!=(word/signed word) 512) goto init_mul_tables::@1 [ init_mul_tables::x#1 init_mul_tables::sqr#1 init_mul_tables::sqr_lo#1 init_mul_tables::sqr_hi#1 init_mul_tables::x_2#2 ]
+  [33] (byte) init_mul_tables::x_2#2 ← phi( init_mul_tables::@1/(byte) init_mul_tables::x_2#3 init_mul_tables::@3/(byte) init_mul_tables::x_2#1 ) [ init_mul_tables::sqr_lo#2 init_mul_tables::sqr_hi#2 init_mul_tables::c#1 init_mul_tables::x_2#2 init_mul_tables::sqr#3 ]
+  [33] (word) init_mul_tables::sqr#3 ← phi( init_mul_tables::@1/(word) init_mul_tables::sqr#4 init_mul_tables::@3/(word) init_mul_tables::sqr#2 ) [ init_mul_tables::sqr_lo#2 init_mul_tables::sqr_hi#2 init_mul_tables::c#1 init_mul_tables::x_2#2 init_mul_tables::sqr#3 ]
+  [34] (byte~) init_mul_tables::$5 ← < (word) init_mul_tables::sqr#3 [ init_mul_tables::sqr_lo#2 init_mul_tables::sqr_hi#2 init_mul_tables::c#1 init_mul_tables::x_2#2 init_mul_tables::sqr#3 init_mul_tables::$5 ]
+  [35] *((byte*) init_mul_tables::sqr_lo#2) ← (byte~) init_mul_tables::$5 [ init_mul_tables::sqr_lo#2 init_mul_tables::sqr_hi#2 init_mul_tables::c#1 init_mul_tables::x_2#2 init_mul_tables::sqr#3 ]
+  [36] (byte~) init_mul_tables::$6 ← > (word) init_mul_tables::sqr#3 [ init_mul_tables::sqr_lo#2 init_mul_tables::sqr_hi#2 init_mul_tables::c#1 init_mul_tables::x_2#2 init_mul_tables::sqr#3 init_mul_tables::$6 ]
+  [37] *((byte*) init_mul_tables::sqr_hi#2) ← (byte~) init_mul_tables::$6 [ init_mul_tables::sqr_lo#2 init_mul_tables::sqr_hi#2 init_mul_tables::c#1 init_mul_tables::x_2#2 init_mul_tables::sqr#3 ]
+  [38] (byte*) init_mul_tables::sqr_hi#1 ← ++ (byte*) init_mul_tables::sqr_hi#2 [ init_mul_tables::sqr_lo#2 init_mul_tables::c#1 init_mul_tables::sqr_hi#1 init_mul_tables::x_2#2 init_mul_tables::sqr#3 ]
+  [39] (word) init_mul_tables::sqr#1 ← (word) init_mul_tables::sqr#3 + (byte) init_mul_tables::x_2#2 [ init_mul_tables::sqr_lo#2 init_mul_tables::c#1 init_mul_tables::sqr#1 init_mul_tables::sqr_hi#1 init_mul_tables::x_2#2 ]
+  [40] (byte*) init_mul_tables::sqr_lo#1 ← ++ (byte*) init_mul_tables::sqr_lo#2 [ init_mul_tables::c#1 init_mul_tables::sqr#1 init_mul_tables::sqr_lo#1 init_mul_tables::sqr_hi#1 init_mul_tables::x_2#2 ]
+  [41] if((byte*) init_mul_tables::sqr_lo#1!=(const byte[512]) mul_sqr_lo#0+(word/signed word) 512) goto init_mul_tables::@1 [ init_mul_tables::c#1 init_mul_tables::sqr#1 init_mul_tables::sqr_lo#1 init_mul_tables::sqr_hi#1 init_mul_tables::x_2#2 ]
   to:init_mul_tables::@return
 init_mul_tables::@return: scope:[init_mul_tables]  from init_mul_tables::@2
   [42] return  [ ]
@@ -2953,30 +2973,30 @@ init_mul_tables: scope:[init_mul_tables]  from main
   [26] phi() [ ] ( main:2::init_mul_tables:5 [ ] )
   to:init_mul_tables::@1
 init_mul_tables::@1: scope:[init_mul_tables]  from init_mul_tables init_mul_tables::@2
-  [27] (byte) init_mul_tables::x_2#3 ← phi( init_mul_tables/(byte/signed byte/word/signed word) 0 init_mul_tables::@2/(byte) init_mul_tables::x_2#2 ) [ init_mul_tables::x#2 init_mul_tables::sqr#4 init_mul_tables::sqr_lo#2 init_mul_tables::sqr_hi#2 init_mul_tables::x_2#3 ] ( main:2::init_mul_tables:5 [ init_mul_tables::x#2 init_mul_tables::sqr#4 init_mul_tables::sqr_lo#2 init_mul_tables::sqr_hi#2 init_mul_tables::x_2#3 ] )
-  [27] (byte*) init_mul_tables::sqr_hi#2 ← phi( init_mul_tables/(const byte[512]) mul_sqr_hi#0+(byte/signed byte/word/signed word) 1 init_mul_tables::@2/(byte*) init_mul_tables::sqr_hi#1 ) [ init_mul_tables::x#2 init_mul_tables::sqr#4 init_mul_tables::sqr_lo#2 init_mul_tables::sqr_hi#2 init_mul_tables::x_2#3 ] ( main:2::init_mul_tables:5 [ init_mul_tables::x#2 init_mul_tables::sqr#4 init_mul_tables::sqr_lo#2 init_mul_tables::sqr_hi#2 init_mul_tables::x_2#3 ] )
-  [27] (byte*) init_mul_tables::sqr_lo#2 ← phi( init_mul_tables/(const byte[512]) mul_sqr_lo#0+(byte/signed byte/word/signed word) 1 init_mul_tables::@2/(byte*) init_mul_tables::sqr_lo#1 ) [ init_mul_tables::x#2 init_mul_tables::sqr#4 init_mul_tables::sqr_lo#2 init_mul_tables::sqr_hi#2 init_mul_tables::x_2#3 ] ( main:2::init_mul_tables:5 [ init_mul_tables::x#2 init_mul_tables::sqr#4 init_mul_tables::sqr_lo#2 init_mul_tables::sqr_hi#2 init_mul_tables::x_2#3 ] )
-  [27] (word) init_mul_tables::sqr#4 ← phi( init_mul_tables/(byte/signed byte/word/signed word) 0 init_mul_tables::@2/(word) init_mul_tables::sqr#1 ) [ init_mul_tables::x#2 init_mul_tables::sqr#4 init_mul_tables::sqr_lo#2 init_mul_tables::sqr_hi#2 init_mul_tables::x_2#3 ] ( main:2::init_mul_tables:5 [ init_mul_tables::x#2 init_mul_tables::sqr#4 init_mul_tables::sqr_lo#2 init_mul_tables::sqr_hi#2 init_mul_tables::x_2#3 ] )
-  [27] (word) init_mul_tables::x#2 ← phi( init_mul_tables/(byte/signed byte/word/signed word) 1 init_mul_tables::@2/(word) init_mul_tables::x#1 ) [ init_mul_tables::x#2 init_mul_tables::sqr#4 init_mul_tables::sqr_lo#2 init_mul_tables::sqr_hi#2 init_mul_tables::x_2#3 ] ( main:2::init_mul_tables:5 [ init_mul_tables::x#2 init_mul_tables::sqr#4 init_mul_tables::sqr_lo#2 init_mul_tables::sqr_hi#2 init_mul_tables::x_2#3 ] )
-  [28] (byte~) init_mul_tables::$2 ← (word) init_mul_tables::x#2 & (byte/signed byte/word/signed word) 1 [ init_mul_tables::x#2 init_mul_tables::sqr#4 init_mul_tables::sqr_lo#2 init_mul_tables::sqr_hi#2 init_mul_tables::x_2#3 init_mul_tables::$2 ] ( main:2::init_mul_tables:5 [ init_mul_tables::x#2 init_mul_tables::sqr#4 init_mul_tables::sqr_lo#2 init_mul_tables::sqr_hi#2 init_mul_tables::x_2#3 init_mul_tables::$2 ] )
-  [29] if((byte~) init_mul_tables::$2!=(byte/signed byte/word/signed word) 0) goto init_mul_tables::@2 [ init_mul_tables::x#2 init_mul_tables::sqr#4 init_mul_tables::sqr_lo#2 init_mul_tables::sqr_hi#2 init_mul_tables::x_2#3 ] ( main:2::init_mul_tables:5 [ init_mul_tables::x#2 init_mul_tables::sqr#4 init_mul_tables::sqr_lo#2 init_mul_tables::sqr_hi#2 init_mul_tables::x_2#3 ] )
+  [27] (byte) init_mul_tables::x_2#3 ← phi( init_mul_tables/(byte/signed byte/word/signed word) 0 init_mul_tables::@2/(byte) init_mul_tables::x_2#2 ) [ init_mul_tables::c#2 init_mul_tables::sqr#4 init_mul_tables::sqr_lo#2 init_mul_tables::sqr_hi#2 init_mul_tables::x_2#3 ] ( main:2::init_mul_tables:5 [ init_mul_tables::c#2 init_mul_tables::sqr#4 init_mul_tables::sqr_lo#2 init_mul_tables::sqr_hi#2 init_mul_tables::x_2#3 ] )
+  [27] (byte*) init_mul_tables::sqr_hi#2 ← phi( init_mul_tables/(const byte[512]) mul_sqr_hi#0+(byte/signed byte/word/signed word) 1 init_mul_tables::@2/(byte*) init_mul_tables::sqr_hi#1 ) [ init_mul_tables::c#2 init_mul_tables::sqr#4 init_mul_tables::sqr_lo#2 init_mul_tables::sqr_hi#2 init_mul_tables::x_2#3 ] ( main:2::init_mul_tables:5 [ init_mul_tables::c#2 init_mul_tables::sqr#4 init_mul_tables::sqr_lo#2 init_mul_tables::sqr_hi#2 init_mul_tables::x_2#3 ] )
+  [27] (byte*) init_mul_tables::sqr_lo#2 ← phi( init_mul_tables/(const byte[512]) mul_sqr_lo#0+(byte/signed byte/word/signed word) 1 init_mul_tables::@2/(byte*) init_mul_tables::sqr_lo#1 ) [ init_mul_tables::c#2 init_mul_tables::sqr#4 init_mul_tables::sqr_lo#2 init_mul_tables::sqr_hi#2 init_mul_tables::x_2#3 ] ( main:2::init_mul_tables:5 [ init_mul_tables::c#2 init_mul_tables::sqr#4 init_mul_tables::sqr_lo#2 init_mul_tables::sqr_hi#2 init_mul_tables::x_2#3 ] )
+  [27] (word) init_mul_tables::sqr#4 ← phi( init_mul_tables/(byte/signed byte/word/signed word) 0 init_mul_tables::@2/(word) init_mul_tables::sqr#1 ) [ init_mul_tables::c#2 init_mul_tables::sqr#4 init_mul_tables::sqr_lo#2 init_mul_tables::sqr_hi#2 init_mul_tables::x_2#3 ] ( main:2::init_mul_tables:5 [ init_mul_tables::c#2 init_mul_tables::sqr#4 init_mul_tables::sqr_lo#2 init_mul_tables::sqr_hi#2 init_mul_tables::x_2#3 ] )
+  [27] (byte) init_mul_tables::c#2 ← phi( init_mul_tables/(byte/signed byte/word/signed word) 0 init_mul_tables::@2/(byte) init_mul_tables::c#1 ) [ init_mul_tables::c#2 init_mul_tables::sqr#4 init_mul_tables::sqr_lo#2 init_mul_tables::sqr_hi#2 init_mul_tables::x_2#3 ] ( main:2::init_mul_tables:5 [ init_mul_tables::c#2 init_mul_tables::sqr#4 init_mul_tables::sqr_lo#2 init_mul_tables::sqr_hi#2 init_mul_tables::x_2#3 ] )
+  [28] (byte) init_mul_tables::c#1 ← ++ (byte) init_mul_tables::c#2 [ init_mul_tables::sqr#4 init_mul_tables::sqr_lo#2 init_mul_tables::sqr_hi#2 init_mul_tables::x_2#3 init_mul_tables::c#1 ] ( main:2::init_mul_tables:5 [ init_mul_tables::sqr#4 init_mul_tables::sqr_lo#2 init_mul_tables::sqr_hi#2 init_mul_tables::x_2#3 init_mul_tables::c#1 ] )
+  [29] (byte~) init_mul_tables::$2 ← (byte) init_mul_tables::c#1 & (byte/signed byte/word/signed word) 1 [ init_mul_tables::sqr#4 init_mul_tables::sqr_lo#2 init_mul_tables::sqr_hi#2 init_mul_tables::x_2#3 init_mul_tables::c#1 init_mul_tables::$2 ] ( main:2::init_mul_tables:5 [ init_mul_tables::sqr#4 init_mul_tables::sqr_lo#2 init_mul_tables::sqr_hi#2 init_mul_tables::x_2#3 init_mul_tables::c#1 init_mul_tables::$2 ] )
+  [30] if((byte~) init_mul_tables::$2!=(byte/signed byte/word/signed word) 0) goto init_mul_tables::@2 [ init_mul_tables::sqr#4 init_mul_tables::sqr_lo#2 init_mul_tables::sqr_hi#2 init_mul_tables::x_2#3 init_mul_tables::c#1 ] ( main:2::init_mul_tables:5 [ init_mul_tables::sqr#4 init_mul_tables::sqr_lo#2 init_mul_tables::sqr_hi#2 init_mul_tables::x_2#3 init_mul_tables::c#1 ] )
   to:init_mul_tables::@3
 init_mul_tables::@3: scope:[init_mul_tables]  from init_mul_tables::@1
-  [30] (word) init_mul_tables::sqr#2 ← ++ (word) init_mul_tables::sqr#4 [ init_mul_tables::x#2 init_mul_tables::sqr_lo#2 init_mul_tables::sqr_hi#2 init_mul_tables::x_2#3 init_mul_tables::sqr#2 ] ( main:2::init_mul_tables:5 [ init_mul_tables::x#2 init_mul_tables::sqr_lo#2 init_mul_tables::sqr_hi#2 init_mul_tables::x_2#3 init_mul_tables::sqr#2 ] )
-  [31] (byte) init_mul_tables::x_2#1 ← ++ (byte) init_mul_tables::x_2#3 [ init_mul_tables::x#2 init_mul_tables::sqr_lo#2 init_mul_tables::sqr_hi#2 init_mul_tables::sqr#2 init_mul_tables::x_2#1 ] ( main:2::init_mul_tables:5 [ init_mul_tables::x#2 init_mul_tables::sqr_lo#2 init_mul_tables::sqr_hi#2 init_mul_tables::sqr#2 init_mul_tables::x_2#1 ] )
+  [31] (word) init_mul_tables::sqr#2 ← ++ (word) init_mul_tables::sqr#4 [ init_mul_tables::sqr_lo#2 init_mul_tables::sqr_hi#2 init_mul_tables::x_2#3 init_mul_tables::c#1 init_mul_tables::sqr#2 ] ( main:2::init_mul_tables:5 [ init_mul_tables::sqr_lo#2 init_mul_tables::sqr_hi#2 init_mul_tables::x_2#3 init_mul_tables::c#1 init_mul_tables::sqr#2 ] )
+  [32] (byte) init_mul_tables::x_2#1 ← ++ (byte) init_mul_tables::x_2#3 [ init_mul_tables::sqr_lo#2 init_mul_tables::sqr_hi#2 init_mul_tables::c#1 init_mul_tables::sqr#2 init_mul_tables::x_2#1 ] ( main:2::init_mul_tables:5 [ init_mul_tables::sqr_lo#2 init_mul_tables::sqr_hi#2 init_mul_tables::c#1 init_mul_tables::sqr#2 init_mul_tables::x_2#1 ] )
   to:init_mul_tables::@2
 init_mul_tables::@2: scope:[init_mul_tables]  from init_mul_tables::@1 init_mul_tables::@3
-  [32] (byte) init_mul_tables::x_2#2 ← phi( init_mul_tables::@1/(byte) init_mul_tables::x_2#3 init_mul_tables::@3/(byte) init_mul_tables::x_2#1 ) [ init_mul_tables::x#2 init_mul_tables::sqr_lo#2 init_mul_tables::sqr_hi#2 init_mul_tables::x_2#2 init_mul_tables::sqr#3 ] ( main:2::init_mul_tables:5 [ init_mul_tables::x#2 init_mul_tables::sqr_lo#2 init_mul_tables::sqr_hi#2 init_mul_tables::x_2#2 init_mul_tables::sqr#3 ] )
-  [32] (word) init_mul_tables::sqr#3 ← phi( init_mul_tables::@1/(word) init_mul_tables::sqr#4 init_mul_tables::@3/(word) init_mul_tables::sqr#2 ) [ init_mul_tables::x#2 init_mul_tables::sqr_lo#2 init_mul_tables::sqr_hi#2 init_mul_tables::x_2#2 init_mul_tables::sqr#3 ] ( main:2::init_mul_tables:5 [ init_mul_tables::x#2 init_mul_tables::sqr_lo#2 init_mul_tables::sqr_hi#2 init_mul_tables::x_2#2 init_mul_tables::sqr#3 ] )
-  [33] (byte~) init_mul_tables::$5 ← < (word) init_mul_tables::sqr#3 [ init_mul_tables::x#2 init_mul_tables::sqr_lo#2 init_mul_tables::sqr_hi#2 init_mul_tables::x_2#2 init_mul_tables::sqr#3 init_mul_tables::$5 ] ( main:2::init_mul_tables:5 [ init_mul_tables::x#2 init_mul_tables::sqr_lo#2 init_mul_tables::sqr_hi#2 init_mul_tables::x_2#2 init_mul_tables::sqr#3 init_mul_tables::$5 ] )
-  [34] *((byte*) init_mul_tables::sqr_lo#2) ← (byte~) init_mul_tables::$5 [ init_mul_tables::x#2 init_mul_tables::sqr_lo#2 init_mul_tables::sqr_hi#2 init_mul_tables::x_2#2 init_mul_tables::sqr#3 ] ( main:2::init_mul_tables:5 [ init_mul_tables::x#2 init_mul_tables::sqr_lo#2 init_mul_tables::sqr_hi#2 init_mul_tables::x_2#2 init_mul_tables::sqr#3 ] )
-  [35] (byte*) init_mul_tables::sqr_lo#1 ← ++ (byte*) init_mul_tables::sqr_lo#2 [ init_mul_tables::x#2 init_mul_tables::sqr_hi#2 init_mul_tables::sqr_lo#1 init_mul_tables::x_2#2 init_mul_tables::sqr#3 ] ( main:2::init_mul_tables:5 [ init_mul_tables::x#2 init_mul_tables::sqr_hi#2 init_mul_tables::sqr_lo#1 init_mul_tables::x_2#2 init_mul_tables::sqr#3 ] )
-  [36] (byte~) init_mul_tables::$6 ← > (word) init_mul_tables::sqr#3 [ init_mul_tables::x#2 init_mul_tables::sqr_hi#2 init_mul_tables::sqr_lo#1 init_mul_tables::x_2#2 init_mul_tables::sqr#3 init_mul_tables::$6 ] ( main:2::init_mul_tables:5 [ init_mul_tables::x#2 init_mul_tables::sqr_hi#2 init_mul_tables::sqr_lo#1 init_mul_tables::x_2#2 init_mul_tables::sqr#3 init_mul_tables::$6 ] )
-  [37] *((byte*) init_mul_tables::sqr_hi#2) ← (byte~) init_mul_tables::$6 [ init_mul_tables::x#2 init_mul_tables::sqr_hi#2 init_mul_tables::sqr_lo#1 init_mul_tables::x_2#2 init_mul_tables::sqr#3 ] ( main:2::init_mul_tables:5 [ init_mul_tables::x#2 init_mul_tables::sqr_hi#2 init_mul_tables::sqr_lo#1 init_mul_tables::x_2#2 init_mul_tables::sqr#3 ] )
-  [38] (byte*) init_mul_tables::sqr_hi#1 ← ++ (byte*) init_mul_tables::sqr_hi#2 [ init_mul_tables::x#2 init_mul_tables::sqr_lo#1 init_mul_tables::sqr_hi#1 init_mul_tables::x_2#2 init_mul_tables::sqr#3 ] ( main:2::init_mul_tables:5 [ init_mul_tables::x#2 init_mul_tables::sqr_lo#1 init_mul_tables::sqr_hi#1 init_mul_tables::x_2#2 init_mul_tables::sqr#3 ] )
-  [39] (word) init_mul_tables::sqr#1 ← (word) init_mul_tables::sqr#3 + (byte) init_mul_tables::x_2#2 [ init_mul_tables::x#2 init_mul_tables::sqr#1 init_mul_tables::sqr_lo#1 init_mul_tables::sqr_hi#1 init_mul_tables::x_2#2 ] ( main:2::init_mul_tables:5 [ init_mul_tables::x#2 init_mul_tables::sqr#1 init_mul_tables::sqr_lo#1 init_mul_tables::sqr_hi#1 init_mul_tables::x_2#2 ] )
-  [40] (word) init_mul_tables::x#1 ← ++ (word) init_mul_tables::x#2 [ init_mul_tables::x#1 init_mul_tables::sqr#1 init_mul_tables::sqr_lo#1 init_mul_tables::sqr_hi#1 init_mul_tables::x_2#2 ] ( main:2::init_mul_tables:5 [ init_mul_tables::x#1 init_mul_tables::sqr#1 init_mul_tables::sqr_lo#1 init_mul_tables::sqr_hi#1 init_mul_tables::x_2#2 ] )
-  [41] if((word) init_mul_tables::x#1!=(word/signed word) 512) goto init_mul_tables::@1 [ init_mul_tables::x#1 init_mul_tables::sqr#1 init_mul_tables::sqr_lo#1 init_mul_tables::sqr_hi#1 init_mul_tables::x_2#2 ] ( main:2::init_mul_tables:5 [ init_mul_tables::x#1 init_mul_tables::sqr#1 init_mul_tables::sqr_lo#1 init_mul_tables::sqr_hi#1 init_mul_tables::x_2#2 ] )
+  [33] (byte) init_mul_tables::x_2#2 ← phi( init_mul_tables::@1/(byte) init_mul_tables::x_2#3 init_mul_tables::@3/(byte) init_mul_tables::x_2#1 ) [ init_mul_tables::sqr_lo#2 init_mul_tables::sqr_hi#2 init_mul_tables::c#1 init_mul_tables::x_2#2 init_mul_tables::sqr#3 ] ( main:2::init_mul_tables:5 [ init_mul_tables::sqr_lo#2 init_mul_tables::sqr_hi#2 init_mul_tables::c#1 init_mul_tables::x_2#2 init_mul_tables::sqr#3 ] )
+  [33] (word) init_mul_tables::sqr#3 ← phi( init_mul_tables::@1/(word) init_mul_tables::sqr#4 init_mul_tables::@3/(word) init_mul_tables::sqr#2 ) [ init_mul_tables::sqr_lo#2 init_mul_tables::sqr_hi#2 init_mul_tables::c#1 init_mul_tables::x_2#2 init_mul_tables::sqr#3 ] ( main:2::init_mul_tables:5 [ init_mul_tables::sqr_lo#2 init_mul_tables::sqr_hi#2 init_mul_tables::c#1 init_mul_tables::x_2#2 init_mul_tables::sqr#3 ] )
+  [34] (byte~) init_mul_tables::$5 ← < (word) init_mul_tables::sqr#3 [ init_mul_tables::sqr_lo#2 init_mul_tables::sqr_hi#2 init_mul_tables::c#1 init_mul_tables::x_2#2 init_mul_tables::sqr#3 init_mul_tables::$5 ] ( main:2::init_mul_tables:5 [ init_mul_tables::sqr_lo#2 init_mul_tables::sqr_hi#2 init_mul_tables::c#1 init_mul_tables::x_2#2 init_mul_tables::sqr#3 init_mul_tables::$5 ] )
+  [35] *((byte*) init_mul_tables::sqr_lo#2) ← (byte~) init_mul_tables::$5 [ init_mul_tables::sqr_lo#2 init_mul_tables::sqr_hi#2 init_mul_tables::c#1 init_mul_tables::x_2#2 init_mul_tables::sqr#3 ] ( main:2::init_mul_tables:5 [ init_mul_tables::sqr_lo#2 init_mul_tables::sqr_hi#2 init_mul_tables::c#1 init_mul_tables::x_2#2 init_mul_tables::sqr#3 ] )
+  [36] (byte~) init_mul_tables::$6 ← > (word) init_mul_tables::sqr#3 [ init_mul_tables::sqr_lo#2 init_mul_tables::sqr_hi#2 init_mul_tables::c#1 init_mul_tables::x_2#2 init_mul_tables::sqr#3 init_mul_tables::$6 ] ( main:2::init_mul_tables:5 [ init_mul_tables::sqr_lo#2 init_mul_tables::sqr_hi#2 init_mul_tables::c#1 init_mul_tables::x_2#2 init_mul_tables::sqr#3 init_mul_tables::$6 ] )
+  [37] *((byte*) init_mul_tables::sqr_hi#2) ← (byte~) init_mul_tables::$6 [ init_mul_tables::sqr_lo#2 init_mul_tables::sqr_hi#2 init_mul_tables::c#1 init_mul_tables::x_2#2 init_mul_tables::sqr#3 ] ( main:2::init_mul_tables:5 [ init_mul_tables::sqr_lo#2 init_mul_tables::sqr_hi#2 init_mul_tables::c#1 init_mul_tables::x_2#2 init_mul_tables::sqr#3 ] )
+  [38] (byte*) init_mul_tables::sqr_hi#1 ← ++ (byte*) init_mul_tables::sqr_hi#2 [ init_mul_tables::sqr_lo#2 init_mul_tables::c#1 init_mul_tables::sqr_hi#1 init_mul_tables::x_2#2 init_mul_tables::sqr#3 ] ( main:2::init_mul_tables:5 [ init_mul_tables::sqr_lo#2 init_mul_tables::c#1 init_mul_tables::sqr_hi#1 init_mul_tables::x_2#2 init_mul_tables::sqr#3 ] )
+  [39] (word) init_mul_tables::sqr#1 ← (word) init_mul_tables::sqr#3 + (byte) init_mul_tables::x_2#2 [ init_mul_tables::sqr_lo#2 init_mul_tables::c#1 init_mul_tables::sqr#1 init_mul_tables::sqr_hi#1 init_mul_tables::x_2#2 ] ( main:2::init_mul_tables:5 [ init_mul_tables::sqr_lo#2 init_mul_tables::c#1 init_mul_tables::sqr#1 init_mul_tables::sqr_hi#1 init_mul_tables::x_2#2 ] )
+  [40] (byte*) init_mul_tables::sqr_lo#1 ← ++ (byte*) init_mul_tables::sqr_lo#2 [ init_mul_tables::c#1 init_mul_tables::sqr#1 init_mul_tables::sqr_lo#1 init_mul_tables::sqr_hi#1 init_mul_tables::x_2#2 ] ( main:2::init_mul_tables:5 [ init_mul_tables::c#1 init_mul_tables::sqr#1 init_mul_tables::sqr_lo#1 init_mul_tables::sqr_hi#1 init_mul_tables::x_2#2 ] )
+  [41] if((byte*) init_mul_tables::sqr_lo#1!=(const byte[512]) mul_sqr_lo#0+(word/signed word) 512) goto init_mul_tables::@1 [ init_mul_tables::c#1 init_mul_tables::sqr#1 init_mul_tables::sqr_lo#1 init_mul_tables::sqr_hi#1 init_mul_tables::x_2#2 ] ( main:2::init_mul_tables:5 [ init_mul_tables::c#1 init_mul_tables::sqr#1 init_mul_tables::sqr_lo#1 init_mul_tables::sqr_hi#1 init_mul_tables::x_2#2 ] )
   to:init_mul_tables::@return
 init_mul_tables::@return: scope:[init_mul_tables]  from init_mul_tables::@2
   [42] return  [ ] ( main:2::init_mul_tables:5 [ ] )
@@ -3037,24 +3057,24 @@ VARIABLE REGISTER WEIGHTS
 (byte~) init_mul_tables::$2 22.0
 (byte~) init_mul_tables::$5 22.0
 (byte~) init_mul_tables::$6 22.0
+(byte) init_mul_tables::c
+(byte) init_mul_tables::c#1 2.357142857142857
+(byte) init_mul_tables::c#2 22.0
 (word) init_mul_tables::sqr
 (word) init_mul_tables::sqr#1 7.333333333333333
 (word) init_mul_tables::sqr#2 11.0
-(word) init_mul_tables::sqr#3 7.857142857142857
-(word) init_mul_tables::sqr#4 11.0
+(word) init_mul_tables::sqr#3 9.166666666666666
+(word) init_mul_tables::sqr#4 8.25
 (byte*) init_mul_tables::sqr_hi
 (byte*) init_mul_tables::sqr_hi#1 5.5
 (byte*) init_mul_tables::sqr_hi#2 3.0
 (byte*) init_mul_tables::sqr_lo
-(byte*) init_mul_tables::sqr_lo#1 3.142857142857143
-(byte*) init_mul_tables::sqr_lo#2 4.125
-(word) init_mul_tables::x
-(word) init_mul_tables::x#1 16.5
-(word) init_mul_tables::x#2 2.5384615384615383
+(byte*) init_mul_tables::sqr_lo#1 16.5
+(byte*) init_mul_tables::sqr_lo#2 2.5384615384615383
 (byte) init_mul_tables::x_2
 (byte) init_mul_tables::x_2#1 22.0
-(byte) init_mul_tables::x_2#2 4.4
-(byte) init_mul_tables::x_2#3 8.25
+(byte) init_mul_tables::x_2#2 4.888888888888889
+(byte) init_mul_tables::x_2#3 6.6000000000000005
 (void()) init_mul_tables_asm()
 (void()) main()
 (byte[512]) mul_sqr_hi
@@ -3066,7 +3086,7 @@ VARIABLE REGISTER WEIGHTS
 
 Initial phi equivalence classes
 [ mul_tables_compare::i#10 mul_tables_compare::i#1 ]
-[ init_mul_tables::x#2 init_mul_tables::x#1 ]
+[ init_mul_tables::c#2 init_mul_tables::c#1 ]
 [ init_mul_tables::sqr_lo#2 init_mul_tables::sqr_lo#1 ]
 [ init_mul_tables::sqr_hi#2 init_mul_tables::sqr_hi#1 ]
 [ init_mul_tables::x_2#3 init_mul_tables::x_2#2 init_mul_tables::x_2#1 ]
@@ -3076,7 +3096,7 @@ Added variable init_mul_tables::$5 to zero page equivalence class [ init_mul_tab
 Added variable init_mul_tables::$6 to zero page equivalence class [ init_mul_tables::$6 ]
 Complete equivalence classes
 [ mul_tables_compare::i#10 mul_tables_compare::i#1 ]
-[ init_mul_tables::x#2 init_mul_tables::x#1 ]
+[ init_mul_tables::c#2 init_mul_tables::c#1 ]
 [ init_mul_tables::sqr_lo#2 init_mul_tables::sqr_lo#1 ]
 [ init_mul_tables::sqr_hi#2 init_mul_tables::sqr_hi#1 ]
 [ init_mul_tables::x_2#3 init_mul_tables::x_2#2 init_mul_tables::x_2#1 ]
@@ -3085,14 +3105,14 @@ Complete equivalence classes
 [ init_mul_tables::$5 ]
 [ init_mul_tables::$6 ]
 Allocated zp ZP_BYTE:2 [ mul_tables_compare::i#10 mul_tables_compare::i#1 ]
-Allocated zp ZP_WORD:3 [ init_mul_tables::x#2 init_mul_tables::x#1 ]
-Allocated zp ZP_WORD:5 [ init_mul_tables::sqr_lo#2 init_mul_tables::sqr_lo#1 ]
-Allocated zp ZP_WORD:7 [ init_mul_tables::sqr_hi#2 init_mul_tables::sqr_hi#1 ]
-Allocated zp ZP_BYTE:9 [ init_mul_tables::x_2#3 init_mul_tables::x_2#2 init_mul_tables::x_2#1 ]
-Allocated zp ZP_WORD:10 [ init_mul_tables::sqr#3 init_mul_tables::sqr#4 init_mul_tables::sqr#1 init_mul_tables::sqr#2 ]
-Allocated zp ZP_BYTE:12 [ init_mul_tables::$2 ]
-Allocated zp ZP_BYTE:13 [ init_mul_tables::$5 ]
-Allocated zp ZP_BYTE:14 [ init_mul_tables::$6 ]
+Allocated zp ZP_BYTE:3 [ init_mul_tables::c#2 init_mul_tables::c#1 ]
+Allocated zp ZP_WORD:4 [ init_mul_tables::sqr_lo#2 init_mul_tables::sqr_lo#1 ]
+Allocated zp ZP_WORD:6 [ init_mul_tables::sqr_hi#2 init_mul_tables::sqr_hi#1 ]
+Allocated zp ZP_BYTE:8 [ init_mul_tables::x_2#3 init_mul_tables::x_2#2 init_mul_tables::x_2#1 ]
+Allocated zp ZP_WORD:9 [ init_mul_tables::sqr#3 init_mul_tables::sqr#4 init_mul_tables::sqr#1 init_mul_tables::sqr#2 ]
+Allocated zp ZP_BYTE:11 [ init_mul_tables::$2 ]
+Allocated zp ZP_BYTE:12 [ init_mul_tables::$5 ]
+Allocated zp ZP_BYTE:13 [ init_mul_tables::$6 ]
 INITIAL ASM
 //SEG0 Basic Upstart
 .pc = $801 "Basic"
@@ -3266,14 +3286,14 @@ init_mul_tables_asm: {
 }
 //SEG51 init_mul_tables
 init_mul_tables: {
-    .label _2 = $c
-    .label _5 = $d
-    .label _6 = $e
-    .label sqr_lo = 5
-    .label sqr_hi = 7
-    .label sqr = $a
-    .label x = 3
-    .label x_2 = 9
+    .label _2 = $b
+    .label _5 = $c
+    .label _6 = $d
+    .label c = 3
+    .label sqr_hi = 6
+    .label sqr = 9
+    .label sqr_lo = 4
+    .label x_2 = 8
   //SEG52 [27] phi from init_mul_tables to init_mul_tables::@1 [phi:init_mul_tables->init_mul_tables::@1]
   b1_from_init_mul_tables:
   //SEG53 [27] phi (byte) init_mul_tables::x_2#3 = (byte/signed byte/word/signed word) 0 [phi:init_mul_tables->init_mul_tables::@1#0] -- vbuz1=vbuc1 
@@ -3294,11 +3314,9 @@ init_mul_tables: {
     sta sqr
     lda #0
     sta sqr+1
-  //SEG57 [27] phi (word) init_mul_tables::x#2 = (byte/signed byte/word/signed word) 1 [phi:init_mul_tables->init_mul_tables::@1#4] -- vwuz1=vbuc1 
-    lda #1
-    sta x
+  //SEG57 [27] phi (byte) init_mul_tables::c#2 = (byte/signed byte/word/signed word) 0 [phi:init_mul_tables->init_mul_tables::@1#4] -- vbuz1=vbuc1 
     lda #0
-    sta x+1
+    sta c
     jmp b1
   //SEG58 [27] phi from init_mul_tables::@2 to init_mul_tables::@1 [phi:init_mul_tables::@2->init_mul_tables::@1]
   b1_from_b2:
@@ -3306,60 +3324,57 @@ init_mul_tables: {
   //SEG60 [27] phi (byte*) init_mul_tables::sqr_hi#2 = (byte*) init_mul_tables::sqr_hi#1 [phi:init_mul_tables::@2->init_mul_tables::@1#1] -- register_copy 
   //SEG61 [27] phi (byte*) init_mul_tables::sqr_lo#2 = (byte*) init_mul_tables::sqr_lo#1 [phi:init_mul_tables::@2->init_mul_tables::@1#2] -- register_copy 
   //SEG62 [27] phi (word) init_mul_tables::sqr#4 = (word) init_mul_tables::sqr#1 [phi:init_mul_tables::@2->init_mul_tables::@1#3] -- register_copy 
-  //SEG63 [27] phi (word) init_mul_tables::x#2 = (word) init_mul_tables::x#1 [phi:init_mul_tables::@2->init_mul_tables::@1#4] -- register_copy 
+  //SEG63 [27] phi (byte) init_mul_tables::c#2 = (byte) init_mul_tables::c#1 [phi:init_mul_tables::@2->init_mul_tables::@1#4] -- register_copy 
     jmp b1
   //SEG64 init_mul_tables::@1
   b1:
-  //SEG65 [28] (byte~) init_mul_tables::$2 ← (word) init_mul_tables::x#2 & (byte/signed byte/word/signed word) 1 [ init_mul_tables::x#2 init_mul_tables::sqr#4 init_mul_tables::sqr_lo#2 init_mul_tables::sqr_hi#2 init_mul_tables::x_2#3 init_mul_tables::$2 ] ( main:2::init_mul_tables:5 [ init_mul_tables::x#2 init_mul_tables::sqr#4 init_mul_tables::sqr_lo#2 init_mul_tables::sqr_hi#2 init_mul_tables::x_2#3 init_mul_tables::$2 ] ) -- vbuz1=vwuz2_band_vbuc1 
-    lda x
+  //SEG65 [28] (byte) init_mul_tables::c#1 ← ++ (byte) init_mul_tables::c#2 [ init_mul_tables::sqr#4 init_mul_tables::sqr_lo#2 init_mul_tables::sqr_hi#2 init_mul_tables::x_2#3 init_mul_tables::c#1 ] ( main:2::init_mul_tables:5 [ init_mul_tables::sqr#4 init_mul_tables::sqr_lo#2 init_mul_tables::sqr_hi#2 init_mul_tables::x_2#3 init_mul_tables::c#1 ] ) -- vbuz1=_inc_vbuz1 
+    inc c
+  //SEG66 [29] (byte~) init_mul_tables::$2 ← (byte) init_mul_tables::c#1 & (byte/signed byte/word/signed word) 1 [ init_mul_tables::sqr#4 init_mul_tables::sqr_lo#2 init_mul_tables::sqr_hi#2 init_mul_tables::x_2#3 init_mul_tables::c#1 init_mul_tables::$2 ] ( main:2::init_mul_tables:5 [ init_mul_tables::sqr#4 init_mul_tables::sqr_lo#2 init_mul_tables::sqr_hi#2 init_mul_tables::x_2#3 init_mul_tables::c#1 init_mul_tables::$2 ] ) -- vbuz1=vbuz2_band_vbuc1 
+    lda c
     and #1
     sta _2
-  //SEG66 [29] if((byte~) init_mul_tables::$2!=(byte/signed byte/word/signed word) 0) goto init_mul_tables::@2 [ init_mul_tables::x#2 init_mul_tables::sqr#4 init_mul_tables::sqr_lo#2 init_mul_tables::sqr_hi#2 init_mul_tables::x_2#3 ] ( main:2::init_mul_tables:5 [ init_mul_tables::x#2 init_mul_tables::sqr#4 init_mul_tables::sqr_lo#2 init_mul_tables::sqr_hi#2 init_mul_tables::x_2#3 ] ) -- vbuz1_neq_0_then_la1 
+  //SEG67 [30] if((byte~) init_mul_tables::$2!=(byte/signed byte/word/signed word) 0) goto init_mul_tables::@2 [ init_mul_tables::sqr#4 init_mul_tables::sqr_lo#2 init_mul_tables::sqr_hi#2 init_mul_tables::x_2#3 init_mul_tables::c#1 ] ( main:2::init_mul_tables:5 [ init_mul_tables::sqr#4 init_mul_tables::sqr_lo#2 init_mul_tables::sqr_hi#2 init_mul_tables::x_2#3 init_mul_tables::c#1 ] ) -- vbuz1_neq_0_then_la1 
     lda _2
     bne b2_from_b1
     jmp b3
-  //SEG67 init_mul_tables::@3
+  //SEG68 init_mul_tables::@3
   b3:
-  //SEG68 [30] (word) init_mul_tables::sqr#2 ← ++ (word) init_mul_tables::sqr#4 [ init_mul_tables::x#2 init_mul_tables::sqr_lo#2 init_mul_tables::sqr_hi#2 init_mul_tables::x_2#3 init_mul_tables::sqr#2 ] ( main:2::init_mul_tables:5 [ init_mul_tables::x#2 init_mul_tables::sqr_lo#2 init_mul_tables::sqr_hi#2 init_mul_tables::x_2#3 init_mul_tables::sqr#2 ] ) -- vwuz1=_inc_vwuz1 
+  //SEG69 [31] (word) init_mul_tables::sqr#2 ← ++ (word) init_mul_tables::sqr#4 [ init_mul_tables::sqr_lo#2 init_mul_tables::sqr_hi#2 init_mul_tables::x_2#3 init_mul_tables::c#1 init_mul_tables::sqr#2 ] ( main:2::init_mul_tables:5 [ init_mul_tables::sqr_lo#2 init_mul_tables::sqr_hi#2 init_mul_tables::x_2#3 init_mul_tables::c#1 init_mul_tables::sqr#2 ] ) -- vwuz1=_inc_vwuz1 
     inc sqr
     bne !+
     inc sqr+1
   !:
-  //SEG69 [31] (byte) init_mul_tables::x_2#1 ← ++ (byte) init_mul_tables::x_2#3 [ init_mul_tables::x#2 init_mul_tables::sqr_lo#2 init_mul_tables::sqr_hi#2 init_mul_tables::sqr#2 init_mul_tables::x_2#1 ] ( main:2::init_mul_tables:5 [ init_mul_tables::x#2 init_mul_tables::sqr_lo#2 init_mul_tables::sqr_hi#2 init_mul_tables::sqr#2 init_mul_tables::x_2#1 ] ) -- vbuz1=_inc_vbuz1 
+  //SEG70 [32] (byte) init_mul_tables::x_2#1 ← ++ (byte) init_mul_tables::x_2#3 [ init_mul_tables::sqr_lo#2 init_mul_tables::sqr_hi#2 init_mul_tables::c#1 init_mul_tables::sqr#2 init_mul_tables::x_2#1 ] ( main:2::init_mul_tables:5 [ init_mul_tables::sqr_lo#2 init_mul_tables::sqr_hi#2 init_mul_tables::c#1 init_mul_tables::sqr#2 init_mul_tables::x_2#1 ] ) -- vbuz1=_inc_vbuz1 
     inc x_2
-  //SEG70 [32] phi from init_mul_tables::@1 init_mul_tables::@3 to init_mul_tables::@2 [phi:init_mul_tables::@1/init_mul_tables::@3->init_mul_tables::@2]
+  //SEG71 [33] phi from init_mul_tables::@1 init_mul_tables::@3 to init_mul_tables::@2 [phi:init_mul_tables::@1/init_mul_tables::@3->init_mul_tables::@2]
   b2_from_b1:
   b2_from_b3:
-  //SEG71 [32] phi (byte) init_mul_tables::x_2#2 = (byte) init_mul_tables::x_2#3 [phi:init_mul_tables::@1/init_mul_tables::@3->init_mul_tables::@2#0] -- register_copy 
-  //SEG72 [32] phi (word) init_mul_tables::sqr#3 = (word) init_mul_tables::sqr#4 [phi:init_mul_tables::@1/init_mul_tables::@3->init_mul_tables::@2#1] -- register_copy 
+  //SEG72 [33] phi (byte) init_mul_tables::x_2#2 = (byte) init_mul_tables::x_2#3 [phi:init_mul_tables::@1/init_mul_tables::@3->init_mul_tables::@2#0] -- register_copy 
+  //SEG73 [33] phi (word) init_mul_tables::sqr#3 = (word) init_mul_tables::sqr#4 [phi:init_mul_tables::@1/init_mul_tables::@3->init_mul_tables::@2#1] -- register_copy 
     jmp b2
-  //SEG73 init_mul_tables::@2
+  //SEG74 init_mul_tables::@2
   b2:
-  //SEG74 [33] (byte~) init_mul_tables::$5 ← < (word) init_mul_tables::sqr#3 [ init_mul_tables::x#2 init_mul_tables::sqr_lo#2 init_mul_tables::sqr_hi#2 init_mul_tables::x_2#2 init_mul_tables::sqr#3 init_mul_tables::$5 ] ( main:2::init_mul_tables:5 [ init_mul_tables::x#2 init_mul_tables::sqr_lo#2 init_mul_tables::sqr_hi#2 init_mul_tables::x_2#2 init_mul_tables::sqr#3 init_mul_tables::$5 ] ) -- vbuz1=_lo_vwuz2 
+  //SEG75 [34] (byte~) init_mul_tables::$5 ← < (word) init_mul_tables::sqr#3 [ init_mul_tables::sqr_lo#2 init_mul_tables::sqr_hi#2 init_mul_tables::c#1 init_mul_tables::x_2#2 init_mul_tables::sqr#3 init_mul_tables::$5 ] ( main:2::init_mul_tables:5 [ init_mul_tables::sqr_lo#2 init_mul_tables::sqr_hi#2 init_mul_tables::c#1 init_mul_tables::x_2#2 init_mul_tables::sqr#3 init_mul_tables::$5 ] ) -- vbuz1=_lo_vwuz2 
     lda sqr
     sta _5
-  //SEG75 [34] *((byte*) init_mul_tables::sqr_lo#2) ← (byte~) init_mul_tables::$5 [ init_mul_tables::x#2 init_mul_tables::sqr_lo#2 init_mul_tables::sqr_hi#2 init_mul_tables::x_2#2 init_mul_tables::sqr#3 ] ( main:2::init_mul_tables:5 [ init_mul_tables::x#2 init_mul_tables::sqr_lo#2 init_mul_tables::sqr_hi#2 init_mul_tables::x_2#2 init_mul_tables::sqr#3 ] ) -- _deref_pbuz1=vbuz2 
+  //SEG76 [35] *((byte*) init_mul_tables::sqr_lo#2) ← (byte~) init_mul_tables::$5 [ init_mul_tables::sqr_lo#2 init_mul_tables::sqr_hi#2 init_mul_tables::c#1 init_mul_tables::x_2#2 init_mul_tables::sqr#3 ] ( main:2::init_mul_tables:5 [ init_mul_tables::sqr_lo#2 init_mul_tables::sqr_hi#2 init_mul_tables::c#1 init_mul_tables::x_2#2 init_mul_tables::sqr#3 ] ) -- _deref_pbuz1=vbuz2 
     ldy #0
     lda _5
     sta (sqr_lo),y
-  //SEG76 [35] (byte*) init_mul_tables::sqr_lo#1 ← ++ (byte*) init_mul_tables::sqr_lo#2 [ init_mul_tables::x#2 init_mul_tables::sqr_hi#2 init_mul_tables::sqr_lo#1 init_mul_tables::x_2#2 init_mul_tables::sqr#3 ] ( main:2::init_mul_tables:5 [ init_mul_tables::x#2 init_mul_tables::sqr_hi#2 init_mul_tables::sqr_lo#1 init_mul_tables::x_2#2 init_mul_tables::sqr#3 ] ) -- pbuz1=_inc_pbuz1 
-    inc sqr_lo
-    bne !+
-    inc sqr_lo+1
-  !:
-  //SEG77 [36] (byte~) init_mul_tables::$6 ← > (word) init_mul_tables::sqr#3 [ init_mul_tables::x#2 init_mul_tables::sqr_hi#2 init_mul_tables::sqr_lo#1 init_mul_tables::x_2#2 init_mul_tables::sqr#3 init_mul_tables::$6 ] ( main:2::init_mul_tables:5 [ init_mul_tables::x#2 init_mul_tables::sqr_hi#2 init_mul_tables::sqr_lo#1 init_mul_tables::x_2#2 init_mul_tables::sqr#3 init_mul_tables::$6 ] ) -- vbuz1=_hi_vwuz2 
+  //SEG77 [36] (byte~) init_mul_tables::$6 ← > (word) init_mul_tables::sqr#3 [ init_mul_tables::sqr_lo#2 init_mul_tables::sqr_hi#2 init_mul_tables::c#1 init_mul_tables::x_2#2 init_mul_tables::sqr#3 init_mul_tables::$6 ] ( main:2::init_mul_tables:5 [ init_mul_tables::sqr_lo#2 init_mul_tables::sqr_hi#2 init_mul_tables::c#1 init_mul_tables::x_2#2 init_mul_tables::sqr#3 init_mul_tables::$6 ] ) -- vbuz1=_hi_vwuz2 
     lda sqr+1
     sta _6
-  //SEG78 [37] *((byte*) init_mul_tables::sqr_hi#2) ← (byte~) init_mul_tables::$6 [ init_mul_tables::x#2 init_mul_tables::sqr_hi#2 init_mul_tables::sqr_lo#1 init_mul_tables::x_2#2 init_mul_tables::sqr#3 ] ( main:2::init_mul_tables:5 [ init_mul_tables::x#2 init_mul_tables::sqr_hi#2 init_mul_tables::sqr_lo#1 init_mul_tables::x_2#2 init_mul_tables::sqr#3 ] ) -- _deref_pbuz1=vbuz2 
+  //SEG78 [37] *((byte*) init_mul_tables::sqr_hi#2) ← (byte~) init_mul_tables::$6 [ init_mul_tables::sqr_lo#2 init_mul_tables::sqr_hi#2 init_mul_tables::c#1 init_mul_tables::x_2#2 init_mul_tables::sqr#3 ] ( main:2::init_mul_tables:5 [ init_mul_tables::sqr_lo#2 init_mul_tables::sqr_hi#2 init_mul_tables::c#1 init_mul_tables::x_2#2 init_mul_tables::sqr#3 ] ) -- _deref_pbuz1=vbuz2 
     ldy #0
     lda _6
     sta (sqr_hi),y
-  //SEG79 [38] (byte*) init_mul_tables::sqr_hi#1 ← ++ (byte*) init_mul_tables::sqr_hi#2 [ init_mul_tables::x#2 init_mul_tables::sqr_lo#1 init_mul_tables::sqr_hi#1 init_mul_tables::x_2#2 init_mul_tables::sqr#3 ] ( main:2::init_mul_tables:5 [ init_mul_tables::x#2 init_mul_tables::sqr_lo#1 init_mul_tables::sqr_hi#1 init_mul_tables::x_2#2 init_mul_tables::sqr#3 ] ) -- pbuz1=_inc_pbuz1 
+  //SEG79 [38] (byte*) init_mul_tables::sqr_hi#1 ← ++ (byte*) init_mul_tables::sqr_hi#2 [ init_mul_tables::sqr_lo#2 init_mul_tables::c#1 init_mul_tables::sqr_hi#1 init_mul_tables::x_2#2 init_mul_tables::sqr#3 ] ( main:2::init_mul_tables:5 [ init_mul_tables::sqr_lo#2 init_mul_tables::c#1 init_mul_tables::sqr_hi#1 init_mul_tables::x_2#2 init_mul_tables::sqr#3 ] ) -- pbuz1=_inc_pbuz1 
     inc sqr_hi
     bne !+
     inc sqr_hi+1
   !:
-  //SEG80 [39] (word) init_mul_tables::sqr#1 ← (word) init_mul_tables::sqr#3 + (byte) init_mul_tables::x_2#2 [ init_mul_tables::x#2 init_mul_tables::sqr#1 init_mul_tables::sqr_lo#1 init_mul_tables::sqr_hi#1 init_mul_tables::x_2#2 ] ( main:2::init_mul_tables:5 [ init_mul_tables::x#2 init_mul_tables::sqr#1 init_mul_tables::sqr_lo#1 init_mul_tables::sqr_hi#1 init_mul_tables::x_2#2 ] ) -- vwuz1=vwuz1_plus_vbuz2 
+  //SEG80 [39] (word) init_mul_tables::sqr#1 ← (word) init_mul_tables::sqr#3 + (byte) init_mul_tables::x_2#2 [ init_mul_tables::sqr_lo#2 init_mul_tables::c#1 init_mul_tables::sqr#1 init_mul_tables::sqr_hi#1 init_mul_tables::x_2#2 ] ( main:2::init_mul_tables:5 [ init_mul_tables::sqr_lo#2 init_mul_tables::c#1 init_mul_tables::sqr#1 init_mul_tables::sqr_hi#1 init_mul_tables::x_2#2 ] ) -- vwuz1=vwuz1_plus_vbuz2 
     lda x_2
     clc
     adc sqr
@@ -3367,17 +3382,17 @@ init_mul_tables: {
     bcc !+
     inc sqr+1
   !:
-  //SEG81 [40] (word) init_mul_tables::x#1 ← ++ (word) init_mul_tables::x#2 [ init_mul_tables::x#1 init_mul_tables::sqr#1 init_mul_tables::sqr_lo#1 init_mul_tables::sqr_hi#1 init_mul_tables::x_2#2 ] ( main:2::init_mul_tables:5 [ init_mul_tables::x#1 init_mul_tables::sqr#1 init_mul_tables::sqr_lo#1 init_mul_tables::sqr_hi#1 init_mul_tables::x_2#2 ] ) -- vwuz1=_inc_vwuz1 
-    inc x
+  //SEG81 [40] (byte*) init_mul_tables::sqr_lo#1 ← ++ (byte*) init_mul_tables::sqr_lo#2 [ init_mul_tables::c#1 init_mul_tables::sqr#1 init_mul_tables::sqr_lo#1 init_mul_tables::sqr_hi#1 init_mul_tables::x_2#2 ] ( main:2::init_mul_tables:5 [ init_mul_tables::c#1 init_mul_tables::sqr#1 init_mul_tables::sqr_lo#1 init_mul_tables::sqr_hi#1 init_mul_tables::x_2#2 ] ) -- pbuz1=_inc_pbuz1 
+    inc sqr_lo
     bne !+
-    inc x+1
+    inc sqr_lo+1
   !:
-  //SEG82 [41] if((word) init_mul_tables::x#1!=(word/signed word) 512) goto init_mul_tables::@1 [ init_mul_tables::x#1 init_mul_tables::sqr#1 init_mul_tables::sqr_lo#1 init_mul_tables::sqr_hi#1 init_mul_tables::x_2#2 ] ( main:2::init_mul_tables:5 [ init_mul_tables::x#1 init_mul_tables::sqr#1 init_mul_tables::sqr_lo#1 init_mul_tables::sqr_hi#1 init_mul_tables::x_2#2 ] ) -- vwuz1_neq_vwuc1_then_la1 
-    lda x
-    cmp #<$200
+  //SEG82 [41] if((byte*) init_mul_tables::sqr_lo#1!=(const byte[512]) mul_sqr_lo#0+(word/signed word) 512) goto init_mul_tables::@1 [ init_mul_tables::c#1 init_mul_tables::sqr#1 init_mul_tables::sqr_lo#1 init_mul_tables::sqr_hi#1 init_mul_tables::x_2#2 ] ( main:2::init_mul_tables:5 [ init_mul_tables::c#1 init_mul_tables::sqr#1 init_mul_tables::sqr_lo#1 init_mul_tables::sqr_hi#1 init_mul_tables::x_2#2 ] ) -- pbuz1_neq_pbuc1_then_la1 
+    lda sqr_lo+1
+    cmp #>mul_sqr_lo+$200
     bne b1_from_b2
-    lda x+1
-    cmp #>$200
+    lda sqr_lo
+    cmp #<mul_sqr_lo+$200
     bne b1_from_b2
     jmp breturn
   //SEG83 init_mul_tables::@return
@@ -3398,15 +3413,17 @@ Statement [18] *((const byte*) BGCOL#0) ← (byte/signed byte/word/signed word) 
 Statement [19] if(*((const byte[512]) mul_sqr_hi#0+(word/signed word) 256 + (byte) mul_tables_compare::i#10)==*((const byte[512]) asm_mul_sqr_hi#0+(word/signed word) 256 + (byte) mul_tables_compare::i#10)) goto mul_tables_compare::@5 [ mul_tables_compare::i#10 ] ( main:2::mul_tables_compare:9 [ mul_tables_compare::i#10 ] ) always clobbers reg byte a 
 Statement [20] *((const byte*) BGCOL#0) ← (byte/signed byte/word/signed word) 2 [ mul_tables_compare::i#10 ] ( main:2::mul_tables_compare:9 [ mul_tables_compare::i#10 ] ) always clobbers reg byte a 
 Statement asm { ldx#$00txa.byte$c9lb1:tyaadc#$00ml1:staasm_mul_sqr_hi,xtaycmp#$40txarorml9:adc#$00staml9+1inxml0:staasm_mul_sqr_lo,xbnelb1incml0+2incml1+2clcinybnelb1 } always clobbers reg byte a reg byte x reg byte y 
-Statement [28] (byte~) init_mul_tables::$2 ← (word) init_mul_tables::x#2 & (byte/signed byte/word/signed word) 1 [ init_mul_tables::x#2 init_mul_tables::sqr#4 init_mul_tables::sqr_lo#2 init_mul_tables::sqr_hi#2 init_mul_tables::x_2#3 init_mul_tables::$2 ] ( main:2::init_mul_tables:5 [ init_mul_tables::x#2 init_mul_tables::sqr#4 init_mul_tables::sqr_lo#2 init_mul_tables::sqr_hi#2 init_mul_tables::x_2#3 init_mul_tables::$2 ] ) always clobbers reg byte a 
-Removing always clobbered register reg byte a as potential for zp ZP_BYTE:9 [ init_mul_tables::x_2#3 init_mul_tables::x_2#2 init_mul_tables::x_2#1 ]
-Statement [33] (byte~) init_mul_tables::$5 ← < (word) init_mul_tables::sqr#3 [ init_mul_tables::x#2 init_mul_tables::sqr_lo#2 init_mul_tables::sqr_hi#2 init_mul_tables::x_2#2 init_mul_tables::sqr#3 init_mul_tables::$5 ] ( main:2::init_mul_tables:5 [ init_mul_tables::x#2 init_mul_tables::sqr_lo#2 init_mul_tables::sqr_hi#2 init_mul_tables::x_2#2 init_mul_tables::sqr#3 init_mul_tables::$5 ] ) always clobbers reg byte a 
-Statement [34] *((byte*) init_mul_tables::sqr_lo#2) ← (byte~) init_mul_tables::$5 [ init_mul_tables::x#2 init_mul_tables::sqr_lo#2 init_mul_tables::sqr_hi#2 init_mul_tables::x_2#2 init_mul_tables::sqr#3 ] ( main:2::init_mul_tables:5 [ init_mul_tables::x#2 init_mul_tables::sqr_lo#2 init_mul_tables::sqr_hi#2 init_mul_tables::x_2#2 init_mul_tables::sqr#3 ] ) always clobbers reg byte y 
-Removing always clobbered register reg byte y as potential for zp ZP_BYTE:9 [ init_mul_tables::x_2#3 init_mul_tables::x_2#2 init_mul_tables::x_2#1 ]
-Statement [36] (byte~) init_mul_tables::$6 ← > (word) init_mul_tables::sqr#3 [ init_mul_tables::x#2 init_mul_tables::sqr_hi#2 init_mul_tables::sqr_lo#1 init_mul_tables::x_2#2 init_mul_tables::sqr#3 init_mul_tables::$6 ] ( main:2::init_mul_tables:5 [ init_mul_tables::x#2 init_mul_tables::sqr_hi#2 init_mul_tables::sqr_lo#1 init_mul_tables::x_2#2 init_mul_tables::sqr#3 init_mul_tables::$6 ] ) always clobbers reg byte a 
-Statement [37] *((byte*) init_mul_tables::sqr_hi#2) ← (byte~) init_mul_tables::$6 [ init_mul_tables::x#2 init_mul_tables::sqr_hi#2 init_mul_tables::sqr_lo#1 init_mul_tables::x_2#2 init_mul_tables::sqr#3 ] ( main:2::init_mul_tables:5 [ init_mul_tables::x#2 init_mul_tables::sqr_hi#2 init_mul_tables::sqr_lo#1 init_mul_tables::x_2#2 init_mul_tables::sqr#3 ] ) always clobbers reg byte y 
-Statement [39] (word) init_mul_tables::sqr#1 ← (word) init_mul_tables::sqr#3 + (byte) init_mul_tables::x_2#2 [ init_mul_tables::x#2 init_mul_tables::sqr#1 init_mul_tables::sqr_lo#1 init_mul_tables::sqr_hi#1 init_mul_tables::x_2#2 ] ( main:2::init_mul_tables:5 [ init_mul_tables::x#2 init_mul_tables::sqr#1 init_mul_tables::sqr_lo#1 init_mul_tables::sqr_hi#1 init_mul_tables::x_2#2 ] ) always clobbers reg byte a 
-Statement [41] if((word) init_mul_tables::x#1!=(word/signed word) 512) goto init_mul_tables::@1 [ init_mul_tables::x#1 init_mul_tables::sqr#1 init_mul_tables::sqr_lo#1 init_mul_tables::sqr_hi#1 init_mul_tables::x_2#2 ] ( main:2::init_mul_tables:5 [ init_mul_tables::x#1 init_mul_tables::sqr#1 init_mul_tables::sqr_lo#1 init_mul_tables::sqr_hi#1 init_mul_tables::x_2#2 ] ) always clobbers reg byte a 
+Statement [29] (byte~) init_mul_tables::$2 ← (byte) init_mul_tables::c#1 & (byte/signed byte/word/signed word) 1 [ init_mul_tables::sqr#4 init_mul_tables::sqr_lo#2 init_mul_tables::sqr_hi#2 init_mul_tables::x_2#3 init_mul_tables::c#1 init_mul_tables::$2 ] ( main:2::init_mul_tables:5 [ init_mul_tables::sqr#4 init_mul_tables::sqr_lo#2 init_mul_tables::sqr_hi#2 init_mul_tables::x_2#3 init_mul_tables::c#1 init_mul_tables::$2 ] ) always clobbers reg byte a 
+Removing always clobbered register reg byte a as potential for zp ZP_BYTE:8 [ init_mul_tables::x_2#3 init_mul_tables::x_2#2 init_mul_tables::x_2#1 ]
+Removing always clobbered register reg byte a as potential for zp ZP_BYTE:3 [ init_mul_tables::c#2 init_mul_tables::c#1 ]
+Statement [34] (byte~) init_mul_tables::$5 ← < (word) init_mul_tables::sqr#3 [ init_mul_tables::sqr_lo#2 init_mul_tables::sqr_hi#2 init_mul_tables::c#1 init_mul_tables::x_2#2 init_mul_tables::sqr#3 init_mul_tables::$5 ] ( main:2::init_mul_tables:5 [ init_mul_tables::sqr_lo#2 init_mul_tables::sqr_hi#2 init_mul_tables::c#1 init_mul_tables::x_2#2 init_mul_tables::sqr#3 init_mul_tables::$5 ] ) always clobbers reg byte a 
+Statement [35] *((byte*) init_mul_tables::sqr_lo#2) ← (byte~) init_mul_tables::$5 [ init_mul_tables::sqr_lo#2 init_mul_tables::sqr_hi#2 init_mul_tables::c#1 init_mul_tables::x_2#2 init_mul_tables::sqr#3 ] ( main:2::init_mul_tables:5 [ init_mul_tables::sqr_lo#2 init_mul_tables::sqr_hi#2 init_mul_tables::c#1 init_mul_tables::x_2#2 init_mul_tables::sqr#3 ] ) always clobbers reg byte y 
+Removing always clobbered register reg byte y as potential for zp ZP_BYTE:3 [ init_mul_tables::c#2 init_mul_tables::c#1 ]
+Removing always clobbered register reg byte y as potential for zp ZP_BYTE:8 [ init_mul_tables::x_2#3 init_mul_tables::x_2#2 init_mul_tables::x_2#1 ]
+Statement [36] (byte~) init_mul_tables::$6 ← > (word) init_mul_tables::sqr#3 [ init_mul_tables::sqr_lo#2 init_mul_tables::sqr_hi#2 init_mul_tables::c#1 init_mul_tables::x_2#2 init_mul_tables::sqr#3 init_mul_tables::$6 ] ( main:2::init_mul_tables:5 [ init_mul_tables::sqr_lo#2 init_mul_tables::sqr_hi#2 init_mul_tables::c#1 init_mul_tables::x_2#2 init_mul_tables::sqr#3 init_mul_tables::$6 ] ) always clobbers reg byte a 
+Statement [37] *((byte*) init_mul_tables::sqr_hi#2) ← (byte~) init_mul_tables::$6 [ init_mul_tables::sqr_lo#2 init_mul_tables::sqr_hi#2 init_mul_tables::c#1 init_mul_tables::x_2#2 init_mul_tables::sqr#3 ] ( main:2::init_mul_tables:5 [ init_mul_tables::sqr_lo#2 init_mul_tables::sqr_hi#2 init_mul_tables::c#1 init_mul_tables::x_2#2 init_mul_tables::sqr#3 ] ) always clobbers reg byte y 
+Statement [39] (word) init_mul_tables::sqr#1 ← (word) init_mul_tables::sqr#3 + (byte) init_mul_tables::x_2#2 [ init_mul_tables::sqr_lo#2 init_mul_tables::c#1 init_mul_tables::sqr#1 init_mul_tables::sqr_hi#1 init_mul_tables::x_2#2 ] ( main:2::init_mul_tables:5 [ init_mul_tables::sqr_lo#2 init_mul_tables::c#1 init_mul_tables::sqr#1 init_mul_tables::sqr_hi#1 init_mul_tables::x_2#2 ] ) always clobbers reg byte a 
+Statement [41] if((byte*) init_mul_tables::sqr_lo#1!=(const byte[512]) mul_sqr_lo#0+(word/signed word) 512) goto init_mul_tables::@1 [ init_mul_tables::c#1 init_mul_tables::sqr#1 init_mul_tables::sqr_lo#1 init_mul_tables::sqr_hi#1 init_mul_tables::x_2#2 ] ( main:2::init_mul_tables:5 [ init_mul_tables::c#1 init_mul_tables::sqr#1 init_mul_tables::sqr_lo#1 init_mul_tables::sqr_hi#1 init_mul_tables::x_2#2 ] ) always clobbers reg byte a 
 Statement [11] *((const byte*) BGCOL#0) ← (byte/signed byte/word/signed word) 5 [ ] ( main:2::mul_tables_compare:9 [ ] ) always clobbers reg byte a 
 Statement [13] if(*((const byte[512]) mul_sqr_lo#0 + (byte) mul_tables_compare::i#10)==*((const byte[512]) asm_mul_sqr_lo#0 + (byte) mul_tables_compare::i#10)) goto mul_tables_compare::@2 [ mul_tables_compare::i#10 ] ( main:2::mul_tables_compare:9 [ mul_tables_compare::i#10 ] ) always clobbers reg byte a 
 Statement [14] *((const byte*) BGCOL#0) ← (byte/signed byte/word/signed word) 2 [ mul_tables_compare::i#10 ] ( main:2::mul_tables_compare:9 [ mul_tables_compare::i#10 ] ) always clobbers reg byte a 
@@ -3417,39 +3434,41 @@ Statement [18] *((const byte*) BGCOL#0) ← (byte/signed byte/word/signed word) 
 Statement [19] if(*((const byte[512]) mul_sqr_hi#0+(word/signed word) 256 + (byte) mul_tables_compare::i#10)==*((const byte[512]) asm_mul_sqr_hi#0+(word/signed word) 256 + (byte) mul_tables_compare::i#10)) goto mul_tables_compare::@5 [ mul_tables_compare::i#10 ] ( main:2::mul_tables_compare:9 [ mul_tables_compare::i#10 ] ) always clobbers reg byte a 
 Statement [20] *((const byte*) BGCOL#0) ← (byte/signed byte/word/signed word) 2 [ mul_tables_compare::i#10 ] ( main:2::mul_tables_compare:9 [ mul_tables_compare::i#10 ] ) always clobbers reg byte a 
 Statement asm { ldx#$00txa.byte$c9lb1:tyaadc#$00ml1:staasm_mul_sqr_hi,xtaycmp#$40txarorml9:adc#$00staml9+1inxml0:staasm_mul_sqr_lo,xbnelb1incml0+2incml1+2clcinybnelb1 } always clobbers reg byte a reg byte x reg byte y 
-Statement [28] (byte~) init_mul_tables::$2 ← (word) init_mul_tables::x#2 & (byte/signed byte/word/signed word) 1 [ init_mul_tables::x#2 init_mul_tables::sqr#4 init_mul_tables::sqr_lo#2 init_mul_tables::sqr_hi#2 init_mul_tables::x_2#3 init_mul_tables::$2 ] ( main:2::init_mul_tables:5 [ init_mul_tables::x#2 init_mul_tables::sqr#4 init_mul_tables::sqr_lo#2 init_mul_tables::sqr_hi#2 init_mul_tables::x_2#3 init_mul_tables::$2 ] ) always clobbers reg byte a 
-Statement [33] (byte~) init_mul_tables::$5 ← < (word) init_mul_tables::sqr#3 [ init_mul_tables::x#2 init_mul_tables::sqr_lo#2 init_mul_tables::sqr_hi#2 init_mul_tables::x_2#2 init_mul_tables::sqr#3 init_mul_tables::$5 ] ( main:2::init_mul_tables:5 [ init_mul_tables::x#2 init_mul_tables::sqr_lo#2 init_mul_tables::sqr_hi#2 init_mul_tables::x_2#2 init_mul_tables::sqr#3 init_mul_tables::$5 ] ) always clobbers reg byte a 
-Statement [34] *((byte*) init_mul_tables::sqr_lo#2) ← (byte~) init_mul_tables::$5 [ init_mul_tables::x#2 init_mul_tables::sqr_lo#2 init_mul_tables::sqr_hi#2 init_mul_tables::x_2#2 init_mul_tables::sqr#3 ] ( main:2::init_mul_tables:5 [ init_mul_tables::x#2 init_mul_tables::sqr_lo#2 init_mul_tables::sqr_hi#2 init_mul_tables::x_2#2 init_mul_tables::sqr#3 ] ) always clobbers reg byte y 
-Statement [36] (byte~) init_mul_tables::$6 ← > (word) init_mul_tables::sqr#3 [ init_mul_tables::x#2 init_mul_tables::sqr_hi#2 init_mul_tables::sqr_lo#1 init_mul_tables::x_2#2 init_mul_tables::sqr#3 init_mul_tables::$6 ] ( main:2::init_mul_tables:5 [ init_mul_tables::x#2 init_mul_tables::sqr_hi#2 init_mul_tables::sqr_lo#1 init_mul_tables::x_2#2 init_mul_tables::sqr#3 init_mul_tables::$6 ] ) always clobbers reg byte a 
-Statement [37] *((byte*) init_mul_tables::sqr_hi#2) ← (byte~) init_mul_tables::$6 [ init_mul_tables::x#2 init_mul_tables::sqr_hi#2 init_mul_tables::sqr_lo#1 init_mul_tables::x_2#2 init_mul_tables::sqr#3 ] ( main:2::init_mul_tables:5 [ init_mul_tables::x#2 init_mul_tables::sqr_hi#2 init_mul_tables::sqr_lo#1 init_mul_tables::x_2#2 init_mul_tables::sqr#3 ] ) always clobbers reg byte y 
-Statement [39] (word) init_mul_tables::sqr#1 ← (word) init_mul_tables::sqr#3 + (byte) init_mul_tables::x_2#2 [ init_mul_tables::x#2 init_mul_tables::sqr#1 init_mul_tables::sqr_lo#1 init_mul_tables::sqr_hi#1 init_mul_tables::x_2#2 ] ( main:2::init_mul_tables:5 [ init_mul_tables::x#2 init_mul_tables::sqr#1 init_mul_tables::sqr_lo#1 init_mul_tables::sqr_hi#1 init_mul_tables::x_2#2 ] ) always clobbers reg byte a 
-Statement [41] if((word) init_mul_tables::x#1!=(word/signed word) 512) goto init_mul_tables::@1 [ init_mul_tables::x#1 init_mul_tables::sqr#1 init_mul_tables::sqr_lo#1 init_mul_tables::sqr_hi#1 init_mul_tables::x_2#2 ] ( main:2::init_mul_tables:5 [ init_mul_tables::x#1 init_mul_tables::sqr#1 init_mul_tables::sqr_lo#1 init_mul_tables::sqr_hi#1 init_mul_tables::x_2#2 ] ) always clobbers reg byte a 
+Statement [29] (byte~) init_mul_tables::$2 ← (byte) init_mul_tables::c#1 & (byte/signed byte/word/signed word) 1 [ init_mul_tables::sqr#4 init_mul_tables::sqr_lo#2 init_mul_tables::sqr_hi#2 init_mul_tables::x_2#3 init_mul_tables::c#1 init_mul_tables::$2 ] ( main:2::init_mul_tables:5 [ init_mul_tables::sqr#4 init_mul_tables::sqr_lo#2 init_mul_tables::sqr_hi#2 init_mul_tables::x_2#3 init_mul_tables::c#1 init_mul_tables::$2 ] ) always clobbers reg byte a 
+Statement [34] (byte~) init_mul_tables::$5 ← < (word) init_mul_tables::sqr#3 [ init_mul_tables::sqr_lo#2 init_mul_tables::sqr_hi#2 init_mul_tables::c#1 init_mul_tables::x_2#2 init_mul_tables::sqr#3 init_mul_tables::$5 ] ( main:2::init_mul_tables:5 [ init_mul_tables::sqr_lo#2 init_mul_tables::sqr_hi#2 init_mul_tables::c#1 init_mul_tables::x_2#2 init_mul_tables::sqr#3 init_mul_tables::$5 ] ) always clobbers reg byte a 
+Statement [35] *((byte*) init_mul_tables::sqr_lo#2) ← (byte~) init_mul_tables::$5 [ init_mul_tables::sqr_lo#2 init_mul_tables::sqr_hi#2 init_mul_tables::c#1 init_mul_tables::x_2#2 init_mul_tables::sqr#3 ] ( main:2::init_mul_tables:5 [ init_mul_tables::sqr_lo#2 init_mul_tables::sqr_hi#2 init_mul_tables::c#1 init_mul_tables::x_2#2 init_mul_tables::sqr#3 ] ) always clobbers reg byte y 
+Statement [36] (byte~) init_mul_tables::$6 ← > (word) init_mul_tables::sqr#3 [ init_mul_tables::sqr_lo#2 init_mul_tables::sqr_hi#2 init_mul_tables::c#1 init_mul_tables::x_2#2 init_mul_tables::sqr#3 init_mul_tables::$6 ] ( main:2::init_mul_tables:5 [ init_mul_tables::sqr_lo#2 init_mul_tables::sqr_hi#2 init_mul_tables::c#1 init_mul_tables::x_2#2 init_mul_tables::sqr#3 init_mul_tables::$6 ] ) always clobbers reg byte a 
+Statement [37] *((byte*) init_mul_tables::sqr_hi#2) ← (byte~) init_mul_tables::$6 [ init_mul_tables::sqr_lo#2 init_mul_tables::sqr_hi#2 init_mul_tables::c#1 init_mul_tables::x_2#2 init_mul_tables::sqr#3 ] ( main:2::init_mul_tables:5 [ init_mul_tables::sqr_lo#2 init_mul_tables::sqr_hi#2 init_mul_tables::c#1 init_mul_tables::x_2#2 init_mul_tables::sqr#3 ] ) always clobbers reg byte y 
+Statement [39] (word) init_mul_tables::sqr#1 ← (word) init_mul_tables::sqr#3 + (byte) init_mul_tables::x_2#2 [ init_mul_tables::sqr_lo#2 init_mul_tables::c#1 init_mul_tables::sqr#1 init_mul_tables::sqr_hi#1 init_mul_tables::x_2#2 ] ( main:2::init_mul_tables:5 [ init_mul_tables::sqr_lo#2 init_mul_tables::c#1 init_mul_tables::sqr#1 init_mul_tables::sqr_hi#1 init_mul_tables::x_2#2 ] ) always clobbers reg byte a 
+Statement [41] if((byte*) init_mul_tables::sqr_lo#1!=(const byte[512]) mul_sqr_lo#0+(word/signed word) 512) goto init_mul_tables::@1 [ init_mul_tables::c#1 init_mul_tables::sqr#1 init_mul_tables::sqr_lo#1 init_mul_tables::sqr_hi#1 init_mul_tables::x_2#2 ] ( main:2::init_mul_tables:5 [ init_mul_tables::c#1 init_mul_tables::sqr#1 init_mul_tables::sqr_lo#1 init_mul_tables::sqr_hi#1 init_mul_tables::x_2#2 ] ) always clobbers reg byte a 
 Potential registers zp ZP_BYTE:2 [ mul_tables_compare::i#10 mul_tables_compare::i#1 ] : zp ZP_BYTE:2 , reg byte x , reg byte y , 
-Potential registers zp ZP_WORD:3 [ init_mul_tables::x#2 init_mul_tables::x#1 ] : zp ZP_WORD:3 , 
-Potential registers zp ZP_WORD:5 [ init_mul_tables::sqr_lo#2 init_mul_tables::sqr_lo#1 ] : zp ZP_WORD:5 , 
-Potential registers zp ZP_WORD:7 [ init_mul_tables::sqr_hi#2 init_mul_tables::sqr_hi#1 ] : zp ZP_WORD:7 , 
-Potential registers zp ZP_BYTE:9 [ init_mul_tables::x_2#3 init_mul_tables::x_2#2 init_mul_tables::x_2#1 ] : zp ZP_BYTE:9 , reg byte x , 
-Potential registers zp ZP_WORD:10 [ init_mul_tables::sqr#3 init_mul_tables::sqr#4 init_mul_tables::sqr#1 init_mul_tables::sqr#2 ] : zp ZP_WORD:10 , 
-Potential registers zp ZP_BYTE:12 [ init_mul_tables::$2 ] : zp ZP_BYTE:12 , reg byte a , reg byte x , reg byte y , 
-Potential registers zp ZP_BYTE:13 [ init_mul_tables::$5 ] : zp ZP_BYTE:13 , reg byte a , reg byte x , reg byte y , 
-Potential registers zp ZP_BYTE:14 [ init_mul_tables::$6 ] : zp ZP_BYTE:14 , reg byte a , reg byte x , reg byte y , 
+Potential registers zp ZP_BYTE:3 [ init_mul_tables::c#2 init_mul_tables::c#1 ] : zp ZP_BYTE:3 , reg byte x , 
+Potential registers zp ZP_WORD:4 [ init_mul_tables::sqr_lo#2 init_mul_tables::sqr_lo#1 ] : zp ZP_WORD:4 , 
+Potential registers zp ZP_WORD:6 [ init_mul_tables::sqr_hi#2 init_mul_tables::sqr_hi#1 ] : zp ZP_WORD:6 , 
+Potential registers zp ZP_BYTE:8 [ init_mul_tables::x_2#3 init_mul_tables::x_2#2 init_mul_tables::x_2#1 ] : zp ZP_BYTE:8 , reg byte x , 
+Potential registers zp ZP_WORD:9 [ init_mul_tables::sqr#3 init_mul_tables::sqr#4 init_mul_tables::sqr#1 init_mul_tables::sqr#2 ] : zp ZP_WORD:9 , 
+Potential registers zp ZP_BYTE:11 [ init_mul_tables::$2 ] : zp ZP_BYTE:11 , reg byte a , reg byte x , reg byte y , 
+Potential registers zp ZP_BYTE:12 [ init_mul_tables::$5 ] : zp ZP_BYTE:12 , reg byte a , reg byte x , reg byte y , 
+Potential registers zp ZP_BYTE:13 [ init_mul_tables::$6 ] : zp ZP_BYTE:13 , reg byte a , reg byte x , reg byte y , 
 
 REGISTER UPLIFT SCOPES
-Uplift Scope [init_mul_tables] 37.19: zp ZP_WORD:10 [ init_mul_tables::sqr#3 init_mul_tables::sqr#4 init_mul_tables::sqr#1 init_mul_tables::sqr#2 ] 34.65: zp ZP_BYTE:9 [ init_mul_tables::x_2#3 init_mul_tables::x_2#2 init_mul_tables::x_2#1 ] 22: zp ZP_BYTE:12 [ init_mul_tables::$2 ] 22: zp ZP_BYTE:13 [ init_mul_tables::$5 ] 22: zp ZP_BYTE:14 [ init_mul_tables::$6 ] 19.04: zp ZP_WORD:3 [ init_mul_tables::x#2 init_mul_tables::x#1 ] 8.5: zp ZP_WORD:7 [ init_mul_tables::sqr_hi#2 init_mul_tables::sqr_hi#1 ] 7.27: zp ZP_WORD:5 [ init_mul_tables::sqr_lo#2 init_mul_tables::sqr_lo#1 ] 
+Uplift Scope [init_mul_tables] 35.75: zp ZP_WORD:9 [ init_mul_tables::sqr#3 init_mul_tables::sqr#4 init_mul_tables::sqr#1 init_mul_tables::sqr#2 ] 33.49: zp ZP_BYTE:8 [ init_mul_tables::x_2#3 init_mul_tables::x_2#2 init_mul_tables::x_2#1 ] 24.36: zp ZP_BYTE:3 [ init_mul_tables::c#2 init_mul_tables::c#1 ] 22: zp ZP_BYTE:11 [ init_mul_tables::$2 ] 22: zp ZP_BYTE:12 [ init_mul_tables::$5 ] 22: zp ZP_BYTE:13 [ init_mul_tables::$6 ] 19.04: zp ZP_WORD:4 [ init_mul_tables::sqr_lo#2 init_mul_tables::sqr_lo#1 ] 8.5: zp ZP_WORD:6 [ init_mul_tables::sqr_hi#2 init_mul_tables::sqr_hi#1 ] 
 Uplift Scope [mul_tables_compare] 28.72: zp ZP_BYTE:2 [ mul_tables_compare::i#10 mul_tables_compare::i#1 ] 
 Uplift Scope [main] 
 Uplift Scope [init_mul_tables_asm] 
 Uplift Scope [] 
 
-Uplifting [init_mul_tables] best 3272 combination zp ZP_WORD:10 [ init_mul_tables::sqr#3 init_mul_tables::sqr#4 init_mul_tables::sqr#1 init_mul_tables::sqr#2 ] reg byte x [ init_mul_tables::x_2#3 init_mul_tables::x_2#2 init_mul_tables::x_2#1 ] reg byte a [ init_mul_tables::$2 ] reg byte a [ init_mul_tables::$5 ] reg byte a [ init_mul_tables::$6 ] zp ZP_WORD:3 [ init_mul_tables::x#2 init_mul_tables::x#1 ] zp ZP_WORD:7 [ init_mul_tables::sqr_hi#2 init_mul_tables::sqr_hi#1 ] zp ZP_WORD:5 [ init_mul_tables::sqr_lo#2 init_mul_tables::sqr_lo#1 ] 
-Uplifting [mul_tables_compare] best 3082 combination reg byte x [ mul_tables_compare::i#10 mul_tables_compare::i#1 ] 
-Uplifting [main] best 3082 combination 
-Uplifting [init_mul_tables_asm] best 3082 combination 
-Uplifting [] best 3082 combination 
-Allocated (was zp ZP_WORD:3) zp ZP_WORD:2 [ init_mul_tables::x#2 init_mul_tables::x#1 ]
-Allocated (was zp ZP_WORD:5) zp ZP_WORD:4 [ init_mul_tables::sqr_lo#2 init_mul_tables::sqr_lo#1 ]
-Allocated (was zp ZP_WORD:7) zp ZP_WORD:6 [ init_mul_tables::sqr_hi#2 init_mul_tables::sqr_hi#1 ]
-Allocated (was zp ZP_WORD:10) zp ZP_WORD:8 [ init_mul_tables::sqr#3 init_mul_tables::sqr#4 init_mul_tables::sqr#1 init_mul_tables::sqr#2 ]
+Uplifting [init_mul_tables] best 3127 combination zp ZP_WORD:9 [ init_mul_tables::sqr#3 init_mul_tables::sqr#4 init_mul_tables::sqr#1 init_mul_tables::sqr#2 ] reg byte x [ init_mul_tables::x_2#3 init_mul_tables::x_2#2 init_mul_tables::x_2#1 ] zp ZP_BYTE:3 [ init_mul_tables::c#2 init_mul_tables::c#1 ] reg byte a [ init_mul_tables::$2 ] reg byte a [ init_mul_tables::$5 ] reg byte a [ init_mul_tables::$6 ] zp ZP_WORD:4 [ init_mul_tables::sqr_lo#2 init_mul_tables::sqr_lo#1 ] zp ZP_WORD:6 [ init_mul_tables::sqr_hi#2 init_mul_tables::sqr_hi#1 ] 
+Uplifting [mul_tables_compare] best 2937 combination reg byte x [ mul_tables_compare::i#10 mul_tables_compare::i#1 ] 
+Uplifting [main] best 2937 combination 
+Uplifting [init_mul_tables_asm] best 2937 combination 
+Uplifting [] best 2937 combination 
+Attempting to uplift remaining variables inzp ZP_BYTE:3 [ init_mul_tables::c#2 init_mul_tables::c#1 ]
+Uplifting [init_mul_tables] best 2937 combination zp ZP_BYTE:3 [ init_mul_tables::c#2 init_mul_tables::c#1 ] 
+Allocated (was zp ZP_BYTE:3) zp ZP_BYTE:2 [ init_mul_tables::c#2 init_mul_tables::c#1 ]
+Allocated (was zp ZP_WORD:4) zp ZP_WORD:3 [ init_mul_tables::sqr_lo#2 init_mul_tables::sqr_lo#1 ]
+Allocated (was zp ZP_WORD:6) zp ZP_WORD:5 [ init_mul_tables::sqr_hi#2 init_mul_tables::sqr_hi#1 ]
+Allocated (was zp ZP_WORD:9) zp ZP_WORD:7 [ init_mul_tables::sqr#3 init_mul_tables::sqr#4 init_mul_tables::sqr#1 init_mul_tables::sqr#2 ]
 
 ASSEMBLER BEFORE OPTIMIZATION
 //SEG0 Basic Upstart
@@ -3618,10 +3637,10 @@ init_mul_tables_asm: {
 }
 //SEG51 init_mul_tables
 init_mul_tables: {
-    .label sqr_lo = 4
-    .label sqr_hi = 6
-    .label sqr = 8
-    .label x = 2
+    .label c = 2
+    .label sqr_hi = 5
+    .label sqr = 7
+    .label sqr_lo = 3
   //SEG52 [27] phi from init_mul_tables to init_mul_tables::@1 [phi:init_mul_tables->init_mul_tables::@1]
   b1_from_init_mul_tables:
   //SEG53 [27] phi (byte) init_mul_tables::x_2#3 = (byte/signed byte/word/signed word) 0 [phi:init_mul_tables->init_mul_tables::@1#0] -- vbuxx=vbuc1 
@@ -3641,11 +3660,9 @@ init_mul_tables: {
     sta sqr
     lda #0
     sta sqr+1
-  //SEG57 [27] phi (word) init_mul_tables::x#2 = (byte/signed byte/word/signed word) 1 [phi:init_mul_tables->init_mul_tables::@1#4] -- vwuz1=vbuc1 
-    lda #1
-    sta x
+  //SEG57 [27] phi (byte) init_mul_tables::c#2 = (byte/signed byte/word/signed word) 0 [phi:init_mul_tables->init_mul_tables::@1#4] -- vbuz1=vbuc1 
     lda #0
-    sta x+1
+    sta c
     jmp b1
   //SEG58 [27] phi from init_mul_tables::@2 to init_mul_tables::@1 [phi:init_mul_tables::@2->init_mul_tables::@1]
   b1_from_b2:
@@ -3653,55 +3670,52 @@ init_mul_tables: {
   //SEG60 [27] phi (byte*) init_mul_tables::sqr_hi#2 = (byte*) init_mul_tables::sqr_hi#1 [phi:init_mul_tables::@2->init_mul_tables::@1#1] -- register_copy 
   //SEG61 [27] phi (byte*) init_mul_tables::sqr_lo#2 = (byte*) init_mul_tables::sqr_lo#1 [phi:init_mul_tables::@2->init_mul_tables::@1#2] -- register_copy 
   //SEG62 [27] phi (word) init_mul_tables::sqr#4 = (word) init_mul_tables::sqr#1 [phi:init_mul_tables::@2->init_mul_tables::@1#3] -- register_copy 
-  //SEG63 [27] phi (word) init_mul_tables::x#2 = (word) init_mul_tables::x#1 [phi:init_mul_tables::@2->init_mul_tables::@1#4] -- register_copy 
+  //SEG63 [27] phi (byte) init_mul_tables::c#2 = (byte) init_mul_tables::c#1 [phi:init_mul_tables::@2->init_mul_tables::@1#4] -- register_copy 
     jmp b1
   //SEG64 init_mul_tables::@1
   b1:
-  //SEG65 [28] (byte~) init_mul_tables::$2 ← (word) init_mul_tables::x#2 & (byte/signed byte/word/signed word) 1 [ init_mul_tables::x#2 init_mul_tables::sqr#4 init_mul_tables::sqr_lo#2 init_mul_tables::sqr_hi#2 init_mul_tables::x_2#3 init_mul_tables::$2 ] ( main:2::init_mul_tables:5 [ init_mul_tables::x#2 init_mul_tables::sqr#4 init_mul_tables::sqr_lo#2 init_mul_tables::sqr_hi#2 init_mul_tables::x_2#3 init_mul_tables::$2 ] ) -- vbuaa=vwuz1_band_vbuc1 
-    lda x
+  //SEG65 [28] (byte) init_mul_tables::c#1 ← ++ (byte) init_mul_tables::c#2 [ init_mul_tables::sqr#4 init_mul_tables::sqr_lo#2 init_mul_tables::sqr_hi#2 init_mul_tables::x_2#3 init_mul_tables::c#1 ] ( main:2::init_mul_tables:5 [ init_mul_tables::sqr#4 init_mul_tables::sqr_lo#2 init_mul_tables::sqr_hi#2 init_mul_tables::x_2#3 init_mul_tables::c#1 ] ) -- vbuz1=_inc_vbuz1 
+    inc c
+  //SEG66 [29] (byte~) init_mul_tables::$2 ← (byte) init_mul_tables::c#1 & (byte/signed byte/word/signed word) 1 [ init_mul_tables::sqr#4 init_mul_tables::sqr_lo#2 init_mul_tables::sqr_hi#2 init_mul_tables::x_2#3 init_mul_tables::c#1 init_mul_tables::$2 ] ( main:2::init_mul_tables:5 [ init_mul_tables::sqr#4 init_mul_tables::sqr_lo#2 init_mul_tables::sqr_hi#2 init_mul_tables::x_2#3 init_mul_tables::c#1 init_mul_tables::$2 ] ) -- vbuaa=vbuz1_band_vbuc1 
+    lda c
     and #1
-  //SEG66 [29] if((byte~) init_mul_tables::$2!=(byte/signed byte/word/signed word) 0) goto init_mul_tables::@2 [ init_mul_tables::x#2 init_mul_tables::sqr#4 init_mul_tables::sqr_lo#2 init_mul_tables::sqr_hi#2 init_mul_tables::x_2#3 ] ( main:2::init_mul_tables:5 [ init_mul_tables::x#2 init_mul_tables::sqr#4 init_mul_tables::sqr_lo#2 init_mul_tables::sqr_hi#2 init_mul_tables::x_2#3 ] ) -- vbuaa_neq_0_then_la1 
+  //SEG67 [30] if((byte~) init_mul_tables::$2!=(byte/signed byte/word/signed word) 0) goto init_mul_tables::@2 [ init_mul_tables::sqr#4 init_mul_tables::sqr_lo#2 init_mul_tables::sqr_hi#2 init_mul_tables::x_2#3 init_mul_tables::c#1 ] ( main:2::init_mul_tables:5 [ init_mul_tables::sqr#4 init_mul_tables::sqr_lo#2 init_mul_tables::sqr_hi#2 init_mul_tables::x_2#3 init_mul_tables::c#1 ] ) -- vbuaa_neq_0_then_la1 
     cmp #0
     bne b2_from_b1
     jmp b3
-  //SEG67 init_mul_tables::@3
+  //SEG68 init_mul_tables::@3
   b3:
-  //SEG68 [30] (word) init_mul_tables::sqr#2 ← ++ (word) init_mul_tables::sqr#4 [ init_mul_tables::x#2 init_mul_tables::sqr_lo#2 init_mul_tables::sqr_hi#2 init_mul_tables::x_2#3 init_mul_tables::sqr#2 ] ( main:2::init_mul_tables:5 [ init_mul_tables::x#2 init_mul_tables::sqr_lo#2 init_mul_tables::sqr_hi#2 init_mul_tables::x_2#3 init_mul_tables::sqr#2 ] ) -- vwuz1=_inc_vwuz1 
+  //SEG69 [31] (word) init_mul_tables::sqr#2 ← ++ (word) init_mul_tables::sqr#4 [ init_mul_tables::sqr_lo#2 init_mul_tables::sqr_hi#2 init_mul_tables::x_2#3 init_mul_tables::c#1 init_mul_tables::sqr#2 ] ( main:2::init_mul_tables:5 [ init_mul_tables::sqr_lo#2 init_mul_tables::sqr_hi#2 init_mul_tables::x_2#3 init_mul_tables::c#1 init_mul_tables::sqr#2 ] ) -- vwuz1=_inc_vwuz1 
     inc sqr
     bne !+
     inc sqr+1
   !:
-  //SEG69 [31] (byte) init_mul_tables::x_2#1 ← ++ (byte) init_mul_tables::x_2#3 [ init_mul_tables::x#2 init_mul_tables::sqr_lo#2 init_mul_tables::sqr_hi#2 init_mul_tables::sqr#2 init_mul_tables::x_2#1 ] ( main:2::init_mul_tables:5 [ init_mul_tables::x#2 init_mul_tables::sqr_lo#2 init_mul_tables::sqr_hi#2 init_mul_tables::sqr#2 init_mul_tables::x_2#1 ] ) -- vbuxx=_inc_vbuxx 
+  //SEG70 [32] (byte) init_mul_tables::x_2#1 ← ++ (byte) init_mul_tables::x_2#3 [ init_mul_tables::sqr_lo#2 init_mul_tables::sqr_hi#2 init_mul_tables::c#1 init_mul_tables::sqr#2 init_mul_tables::x_2#1 ] ( main:2::init_mul_tables:5 [ init_mul_tables::sqr_lo#2 init_mul_tables::sqr_hi#2 init_mul_tables::c#1 init_mul_tables::sqr#2 init_mul_tables::x_2#1 ] ) -- vbuxx=_inc_vbuxx 
     inx
-  //SEG70 [32] phi from init_mul_tables::@1 init_mul_tables::@3 to init_mul_tables::@2 [phi:init_mul_tables::@1/init_mul_tables::@3->init_mul_tables::@2]
+  //SEG71 [33] phi from init_mul_tables::@1 init_mul_tables::@3 to init_mul_tables::@2 [phi:init_mul_tables::@1/init_mul_tables::@3->init_mul_tables::@2]
   b2_from_b1:
   b2_from_b3:
-  //SEG71 [32] phi (byte) init_mul_tables::x_2#2 = (byte) init_mul_tables::x_2#3 [phi:init_mul_tables::@1/init_mul_tables::@3->init_mul_tables::@2#0] -- register_copy 
-  //SEG72 [32] phi (word) init_mul_tables::sqr#3 = (word) init_mul_tables::sqr#4 [phi:init_mul_tables::@1/init_mul_tables::@3->init_mul_tables::@2#1] -- register_copy 
+  //SEG72 [33] phi (byte) init_mul_tables::x_2#2 = (byte) init_mul_tables::x_2#3 [phi:init_mul_tables::@1/init_mul_tables::@3->init_mul_tables::@2#0] -- register_copy 
+  //SEG73 [33] phi (word) init_mul_tables::sqr#3 = (word) init_mul_tables::sqr#4 [phi:init_mul_tables::@1/init_mul_tables::@3->init_mul_tables::@2#1] -- register_copy 
     jmp b2
-  //SEG73 init_mul_tables::@2
+  //SEG74 init_mul_tables::@2
   b2:
-  //SEG74 [33] (byte~) init_mul_tables::$5 ← < (word) init_mul_tables::sqr#3 [ init_mul_tables::x#2 init_mul_tables::sqr_lo#2 init_mul_tables::sqr_hi#2 init_mul_tables::x_2#2 init_mul_tables::sqr#3 init_mul_tables::$5 ] ( main:2::init_mul_tables:5 [ init_mul_tables::x#2 init_mul_tables::sqr_lo#2 init_mul_tables::sqr_hi#2 init_mul_tables::x_2#2 init_mul_tables::sqr#3 init_mul_tables::$5 ] ) -- vbuaa=_lo_vwuz1 
+  //SEG75 [34] (byte~) init_mul_tables::$5 ← < (word) init_mul_tables::sqr#3 [ init_mul_tables::sqr_lo#2 init_mul_tables::sqr_hi#2 init_mul_tables::c#1 init_mul_tables::x_2#2 init_mul_tables::sqr#3 init_mul_tables::$5 ] ( main:2::init_mul_tables:5 [ init_mul_tables::sqr_lo#2 init_mul_tables::sqr_hi#2 init_mul_tables::c#1 init_mul_tables::x_2#2 init_mul_tables::sqr#3 init_mul_tables::$5 ] ) -- vbuaa=_lo_vwuz1 
     lda sqr
-  //SEG75 [34] *((byte*) init_mul_tables::sqr_lo#2) ← (byte~) init_mul_tables::$5 [ init_mul_tables::x#2 init_mul_tables::sqr_lo#2 init_mul_tables::sqr_hi#2 init_mul_tables::x_2#2 init_mul_tables::sqr#3 ] ( main:2::init_mul_tables:5 [ init_mul_tables::x#2 init_mul_tables::sqr_lo#2 init_mul_tables::sqr_hi#2 init_mul_tables::x_2#2 init_mul_tables::sqr#3 ] ) -- _deref_pbuz1=vbuaa 
+  //SEG76 [35] *((byte*) init_mul_tables::sqr_lo#2) ← (byte~) init_mul_tables::$5 [ init_mul_tables::sqr_lo#2 init_mul_tables::sqr_hi#2 init_mul_tables::c#1 init_mul_tables::x_2#2 init_mul_tables::sqr#3 ] ( main:2::init_mul_tables:5 [ init_mul_tables::sqr_lo#2 init_mul_tables::sqr_hi#2 init_mul_tables::c#1 init_mul_tables::x_2#2 init_mul_tables::sqr#3 ] ) -- _deref_pbuz1=vbuaa 
     ldy #0
     sta (sqr_lo),y
-  //SEG76 [35] (byte*) init_mul_tables::sqr_lo#1 ← ++ (byte*) init_mul_tables::sqr_lo#2 [ init_mul_tables::x#2 init_mul_tables::sqr_hi#2 init_mul_tables::sqr_lo#1 init_mul_tables::x_2#2 init_mul_tables::sqr#3 ] ( main:2::init_mul_tables:5 [ init_mul_tables::x#2 init_mul_tables::sqr_hi#2 init_mul_tables::sqr_lo#1 init_mul_tables::x_2#2 init_mul_tables::sqr#3 ] ) -- pbuz1=_inc_pbuz1 
-    inc sqr_lo
-    bne !+
-    inc sqr_lo+1
-  !:
-  //SEG77 [36] (byte~) init_mul_tables::$6 ← > (word) init_mul_tables::sqr#3 [ init_mul_tables::x#2 init_mul_tables::sqr_hi#2 init_mul_tables::sqr_lo#1 init_mul_tables::x_2#2 init_mul_tables::sqr#3 init_mul_tables::$6 ] ( main:2::init_mul_tables:5 [ init_mul_tables::x#2 init_mul_tables::sqr_hi#2 init_mul_tables::sqr_lo#1 init_mul_tables::x_2#2 init_mul_tables::sqr#3 init_mul_tables::$6 ] ) -- vbuaa=_hi_vwuz1 
+  //SEG77 [36] (byte~) init_mul_tables::$6 ← > (word) init_mul_tables::sqr#3 [ init_mul_tables::sqr_lo#2 init_mul_tables::sqr_hi#2 init_mul_tables::c#1 init_mul_tables::x_2#2 init_mul_tables::sqr#3 init_mul_tables::$6 ] ( main:2::init_mul_tables:5 [ init_mul_tables::sqr_lo#2 init_mul_tables::sqr_hi#2 init_mul_tables::c#1 init_mul_tables::x_2#2 init_mul_tables::sqr#3 init_mul_tables::$6 ] ) -- vbuaa=_hi_vwuz1 
     lda sqr+1
-  //SEG78 [37] *((byte*) init_mul_tables::sqr_hi#2) ← (byte~) init_mul_tables::$6 [ init_mul_tables::x#2 init_mul_tables::sqr_hi#2 init_mul_tables::sqr_lo#1 init_mul_tables::x_2#2 init_mul_tables::sqr#3 ] ( main:2::init_mul_tables:5 [ init_mul_tables::x#2 init_mul_tables::sqr_hi#2 init_mul_tables::sqr_lo#1 init_mul_tables::x_2#2 init_mul_tables::sqr#3 ] ) -- _deref_pbuz1=vbuaa 
+  //SEG78 [37] *((byte*) init_mul_tables::sqr_hi#2) ← (byte~) init_mul_tables::$6 [ init_mul_tables::sqr_lo#2 init_mul_tables::sqr_hi#2 init_mul_tables::c#1 init_mul_tables::x_2#2 init_mul_tables::sqr#3 ] ( main:2::init_mul_tables:5 [ init_mul_tables::sqr_lo#2 init_mul_tables::sqr_hi#2 init_mul_tables::c#1 init_mul_tables::x_2#2 init_mul_tables::sqr#3 ] ) -- _deref_pbuz1=vbuaa 
     ldy #0
     sta (sqr_hi),y
-  //SEG79 [38] (byte*) init_mul_tables::sqr_hi#1 ← ++ (byte*) init_mul_tables::sqr_hi#2 [ init_mul_tables::x#2 init_mul_tables::sqr_lo#1 init_mul_tables::sqr_hi#1 init_mul_tables::x_2#2 init_mul_tables::sqr#3 ] ( main:2::init_mul_tables:5 [ init_mul_tables::x#2 init_mul_tables::sqr_lo#1 init_mul_tables::sqr_hi#1 init_mul_tables::x_2#2 init_mul_tables::sqr#3 ] ) -- pbuz1=_inc_pbuz1 
+  //SEG79 [38] (byte*) init_mul_tables::sqr_hi#1 ← ++ (byte*) init_mul_tables::sqr_hi#2 [ init_mul_tables::sqr_lo#2 init_mul_tables::c#1 init_mul_tables::sqr_hi#1 init_mul_tables::x_2#2 init_mul_tables::sqr#3 ] ( main:2::init_mul_tables:5 [ init_mul_tables::sqr_lo#2 init_mul_tables::c#1 init_mul_tables::sqr_hi#1 init_mul_tables::x_2#2 init_mul_tables::sqr#3 ] ) -- pbuz1=_inc_pbuz1 
     inc sqr_hi
     bne !+
     inc sqr_hi+1
   !:
-  //SEG80 [39] (word) init_mul_tables::sqr#1 ← (word) init_mul_tables::sqr#3 + (byte) init_mul_tables::x_2#2 [ init_mul_tables::x#2 init_mul_tables::sqr#1 init_mul_tables::sqr_lo#1 init_mul_tables::sqr_hi#1 init_mul_tables::x_2#2 ] ( main:2::init_mul_tables:5 [ init_mul_tables::x#2 init_mul_tables::sqr#1 init_mul_tables::sqr_lo#1 init_mul_tables::sqr_hi#1 init_mul_tables::x_2#2 ] ) -- vwuz1=vwuz1_plus_vbuxx 
+  //SEG80 [39] (word) init_mul_tables::sqr#1 ← (word) init_mul_tables::sqr#3 + (byte) init_mul_tables::x_2#2 [ init_mul_tables::sqr_lo#2 init_mul_tables::c#1 init_mul_tables::sqr#1 init_mul_tables::sqr_hi#1 init_mul_tables::x_2#2 ] ( main:2::init_mul_tables:5 [ init_mul_tables::sqr_lo#2 init_mul_tables::c#1 init_mul_tables::sqr#1 init_mul_tables::sqr_hi#1 init_mul_tables::x_2#2 ] ) -- vwuz1=vwuz1_plus_vbuxx 
     txa
     clc
     adc sqr
@@ -3709,17 +3723,17 @@ init_mul_tables: {
     bcc !+
     inc sqr+1
   !:
-  //SEG81 [40] (word) init_mul_tables::x#1 ← ++ (word) init_mul_tables::x#2 [ init_mul_tables::x#1 init_mul_tables::sqr#1 init_mul_tables::sqr_lo#1 init_mul_tables::sqr_hi#1 init_mul_tables::x_2#2 ] ( main:2::init_mul_tables:5 [ init_mul_tables::x#1 init_mul_tables::sqr#1 init_mul_tables::sqr_lo#1 init_mul_tables::sqr_hi#1 init_mul_tables::x_2#2 ] ) -- vwuz1=_inc_vwuz1 
-    inc x
+  //SEG81 [40] (byte*) init_mul_tables::sqr_lo#1 ← ++ (byte*) init_mul_tables::sqr_lo#2 [ init_mul_tables::c#1 init_mul_tables::sqr#1 init_mul_tables::sqr_lo#1 init_mul_tables::sqr_hi#1 init_mul_tables::x_2#2 ] ( main:2::init_mul_tables:5 [ init_mul_tables::c#1 init_mul_tables::sqr#1 init_mul_tables::sqr_lo#1 init_mul_tables::sqr_hi#1 init_mul_tables::x_2#2 ] ) -- pbuz1=_inc_pbuz1 
+    inc sqr_lo
     bne !+
-    inc x+1
+    inc sqr_lo+1
   !:
-  //SEG82 [41] if((word) init_mul_tables::x#1!=(word/signed word) 512) goto init_mul_tables::@1 [ init_mul_tables::x#1 init_mul_tables::sqr#1 init_mul_tables::sqr_lo#1 init_mul_tables::sqr_hi#1 init_mul_tables::x_2#2 ] ( main:2::init_mul_tables:5 [ init_mul_tables::x#1 init_mul_tables::sqr#1 init_mul_tables::sqr_lo#1 init_mul_tables::sqr_hi#1 init_mul_tables::x_2#2 ] ) -- vwuz1_neq_vwuc1_then_la1 
-    lda x
-    cmp #<$200
+  //SEG82 [41] if((byte*) init_mul_tables::sqr_lo#1!=(const byte[512]) mul_sqr_lo#0+(word/signed word) 512) goto init_mul_tables::@1 [ init_mul_tables::c#1 init_mul_tables::sqr#1 init_mul_tables::sqr_lo#1 init_mul_tables::sqr_hi#1 init_mul_tables::x_2#2 ] ( main:2::init_mul_tables:5 [ init_mul_tables::c#1 init_mul_tables::sqr#1 init_mul_tables::sqr_lo#1 init_mul_tables::sqr_hi#1 init_mul_tables::x_2#2 ] ) -- pbuz1_neq_pbuc1_then_la1 
+    lda sqr_lo+1
+    cmp #>mul_sqr_lo+$200
     bne b1_from_b2
-    lda x+1
-    cmp #>$200
+    lda sqr_lo
+    cmp #<mul_sqr_lo+$200
     bne b1_from_b2
     jmp breturn
   //SEG83 init_mul_tables::@return
@@ -3752,7 +3766,8 @@ Removing instruction jmp breturn
 Succesful ASM optimization Pass5NextJumpElimination
 Replacing instruction lda #0 with TXA
 Removing instruction lda #0
-Replacing instruction lda #0 with TXA
+Removing instruction lda #0
+Removing instruction ldy #0
 Succesful ASM optimization Pass5UnnecesaryLoadElimination
 Replacing label b1_from_b5 with b1
 Replacing label b2_from_b1 with b2
@@ -3808,24 +3823,24 @@ FINAL SYMBOL TABLE
 (label) init_mul_tables::@2
 (label) init_mul_tables::@3
 (label) init_mul_tables::@return
+(byte) init_mul_tables::c
+(byte) init_mul_tables::c#1 c zp ZP_BYTE:2 2.357142857142857
+(byte) init_mul_tables::c#2 c zp ZP_BYTE:2 22.0
 (word) init_mul_tables::sqr
-(word) init_mul_tables::sqr#1 sqr zp ZP_WORD:8 7.333333333333333
-(word) init_mul_tables::sqr#2 sqr zp ZP_WORD:8 11.0
-(word) init_mul_tables::sqr#3 sqr zp ZP_WORD:8 7.857142857142857
-(word) init_mul_tables::sqr#4 sqr zp ZP_WORD:8 11.0
+(word) init_mul_tables::sqr#1 sqr zp ZP_WORD:7 7.333333333333333
+(word) init_mul_tables::sqr#2 sqr zp ZP_WORD:7 11.0
+(word) init_mul_tables::sqr#3 sqr zp ZP_WORD:7 9.166666666666666
+(word) init_mul_tables::sqr#4 sqr zp ZP_WORD:7 8.25
 (byte*) init_mul_tables::sqr_hi
-(byte*) init_mul_tables::sqr_hi#1 sqr_hi zp ZP_WORD:6 5.5
-(byte*) init_mul_tables::sqr_hi#2 sqr_hi zp ZP_WORD:6 3.0
+(byte*) init_mul_tables::sqr_hi#1 sqr_hi zp ZP_WORD:5 5.5
+(byte*) init_mul_tables::sqr_hi#2 sqr_hi zp ZP_WORD:5 3.0
 (byte*) init_mul_tables::sqr_lo
-(byte*) init_mul_tables::sqr_lo#1 sqr_lo zp ZP_WORD:4 3.142857142857143
-(byte*) init_mul_tables::sqr_lo#2 sqr_lo zp ZP_WORD:4 4.125
-(word) init_mul_tables::x
-(word) init_mul_tables::x#1 x zp ZP_WORD:2 16.5
-(word) init_mul_tables::x#2 x zp ZP_WORD:2 2.5384615384615383
+(byte*) init_mul_tables::sqr_lo#1 sqr_lo zp ZP_WORD:3 16.5
+(byte*) init_mul_tables::sqr_lo#2 sqr_lo zp ZP_WORD:3 2.5384615384615383
 (byte) init_mul_tables::x_2
 (byte) init_mul_tables::x_2#1 reg byte x 22.0
-(byte) init_mul_tables::x_2#2 reg byte x 4.4
-(byte) init_mul_tables::x_2#3 reg byte x 8.25
+(byte) init_mul_tables::x_2#2 reg byte x 4.888888888888889
+(byte) init_mul_tables::x_2#3 reg byte x 6.6000000000000005
 (void()) init_mul_tables_asm()
 (label) init_mul_tables_asm::@return
 (void()) main()
@@ -3852,11 +3867,11 @@ FINAL SYMBOL TABLE
 (byte) mul_tables_compare::i#10 reg byte x 12.222222222222221
 
 reg byte x [ mul_tables_compare::i#10 mul_tables_compare::i#1 ]
-zp ZP_WORD:2 [ init_mul_tables::x#2 init_mul_tables::x#1 ]
-zp ZP_WORD:4 [ init_mul_tables::sqr_lo#2 init_mul_tables::sqr_lo#1 ]
-zp ZP_WORD:6 [ init_mul_tables::sqr_hi#2 init_mul_tables::sqr_hi#1 ]
+zp ZP_BYTE:2 [ init_mul_tables::c#2 init_mul_tables::c#1 ]
+zp ZP_WORD:3 [ init_mul_tables::sqr_lo#2 init_mul_tables::sqr_lo#1 ]
+zp ZP_WORD:5 [ init_mul_tables::sqr_hi#2 init_mul_tables::sqr_hi#1 ]
 reg byte x [ init_mul_tables::x_2#3 init_mul_tables::x_2#2 init_mul_tables::x_2#1 ]
-zp ZP_WORD:8 [ init_mul_tables::sqr#3 init_mul_tables::sqr#4 init_mul_tables::sqr#1 init_mul_tables::sqr#2 ]
+zp ZP_WORD:7 [ init_mul_tables::sqr#3 init_mul_tables::sqr#4 init_mul_tables::sqr#1 init_mul_tables::sqr#2 ]
 reg byte a [ init_mul_tables::$2 ]
 reg byte a [ init_mul_tables::$5 ]
 reg byte a [ init_mul_tables::$6 ]
@@ -3991,10 +4006,10 @@ init_mul_tables_asm: {
 }
 //SEG51 init_mul_tables
 init_mul_tables: {
-    .label sqr_lo = 4
-    .label sqr_hi = 6
-    .label sqr = 8
-    .label x = 2
+    .label c = 2
+    .label sqr_hi = 5
+    .label sqr = 7
+    .label sqr_lo = 3
   //SEG52 [27] phi from init_mul_tables to init_mul_tables::@1 [phi:init_mul_tables->init_mul_tables::@1]
   //SEG53 [27] phi (byte) init_mul_tables::x_2#3 = (byte/signed byte/word/signed word) 0 [phi:init_mul_tables->init_mul_tables::@1#0] -- vbuxx=vbuc1 
     ldx #0
@@ -4012,59 +4027,52 @@ init_mul_tables: {
     txa
     sta sqr
     sta sqr+1
-  //SEG57 [27] phi (word) init_mul_tables::x#2 = (byte/signed byte/word/signed word) 1 [phi:init_mul_tables->init_mul_tables::@1#4] -- vwuz1=vbuc1 
-    lda #1
-    sta x
-    txa
-    sta x+1
+  //SEG57 [27] phi (byte) init_mul_tables::c#2 = (byte/signed byte/word/signed word) 0 [phi:init_mul_tables->init_mul_tables::@1#4] -- vbuz1=vbuc1 
+    sta c
   //SEG58 [27] phi from init_mul_tables::@2 to init_mul_tables::@1 [phi:init_mul_tables::@2->init_mul_tables::@1]
   //SEG59 [27] phi (byte) init_mul_tables::x_2#3 = (byte) init_mul_tables::x_2#2 [phi:init_mul_tables::@2->init_mul_tables::@1#0] -- register_copy 
   //SEG60 [27] phi (byte*) init_mul_tables::sqr_hi#2 = (byte*) init_mul_tables::sqr_hi#1 [phi:init_mul_tables::@2->init_mul_tables::@1#1] -- register_copy 
   //SEG61 [27] phi (byte*) init_mul_tables::sqr_lo#2 = (byte*) init_mul_tables::sqr_lo#1 [phi:init_mul_tables::@2->init_mul_tables::@1#2] -- register_copy 
   //SEG62 [27] phi (word) init_mul_tables::sqr#4 = (word) init_mul_tables::sqr#1 [phi:init_mul_tables::@2->init_mul_tables::@1#3] -- register_copy 
-  //SEG63 [27] phi (word) init_mul_tables::x#2 = (word) init_mul_tables::x#1 [phi:init_mul_tables::@2->init_mul_tables::@1#4] -- register_copy 
+  //SEG63 [27] phi (byte) init_mul_tables::c#2 = (byte) init_mul_tables::c#1 [phi:init_mul_tables::@2->init_mul_tables::@1#4] -- register_copy 
   //SEG64 init_mul_tables::@1
   b1:
-  //SEG65 [28] (byte~) init_mul_tables::$2 ← (word) init_mul_tables::x#2 & (byte/signed byte/word/signed word) 1 [ init_mul_tables::x#2 init_mul_tables::sqr#4 init_mul_tables::sqr_lo#2 init_mul_tables::sqr_hi#2 init_mul_tables::x_2#3 init_mul_tables::$2 ] ( main:2::init_mul_tables:5 [ init_mul_tables::x#2 init_mul_tables::sqr#4 init_mul_tables::sqr_lo#2 init_mul_tables::sqr_hi#2 init_mul_tables::x_2#3 init_mul_tables::$2 ] ) -- vbuaa=vwuz1_band_vbuc1 
-    lda x
+  //SEG65 [28] (byte) init_mul_tables::c#1 ← ++ (byte) init_mul_tables::c#2 [ init_mul_tables::sqr#4 init_mul_tables::sqr_lo#2 init_mul_tables::sqr_hi#2 init_mul_tables::x_2#3 init_mul_tables::c#1 ] ( main:2::init_mul_tables:5 [ init_mul_tables::sqr#4 init_mul_tables::sqr_lo#2 init_mul_tables::sqr_hi#2 init_mul_tables::x_2#3 init_mul_tables::c#1 ] ) -- vbuz1=_inc_vbuz1 
+    inc c
+  //SEG66 [29] (byte~) init_mul_tables::$2 ← (byte) init_mul_tables::c#1 & (byte/signed byte/word/signed word) 1 [ init_mul_tables::sqr#4 init_mul_tables::sqr_lo#2 init_mul_tables::sqr_hi#2 init_mul_tables::x_2#3 init_mul_tables::c#1 init_mul_tables::$2 ] ( main:2::init_mul_tables:5 [ init_mul_tables::sqr#4 init_mul_tables::sqr_lo#2 init_mul_tables::sqr_hi#2 init_mul_tables::x_2#3 init_mul_tables::c#1 init_mul_tables::$2 ] ) -- vbuaa=vbuz1_band_vbuc1 
+    lda c
     and #1
-  //SEG66 [29] if((byte~) init_mul_tables::$2!=(byte/signed byte/word/signed word) 0) goto init_mul_tables::@2 [ init_mul_tables::x#2 init_mul_tables::sqr#4 init_mul_tables::sqr_lo#2 init_mul_tables::sqr_hi#2 init_mul_tables::x_2#3 ] ( main:2::init_mul_tables:5 [ init_mul_tables::x#2 init_mul_tables::sqr#4 init_mul_tables::sqr_lo#2 init_mul_tables::sqr_hi#2 init_mul_tables::x_2#3 ] ) -- vbuaa_neq_0_then_la1 
+  //SEG67 [30] if((byte~) init_mul_tables::$2!=(byte/signed byte/word/signed word) 0) goto init_mul_tables::@2 [ init_mul_tables::sqr#4 init_mul_tables::sqr_lo#2 init_mul_tables::sqr_hi#2 init_mul_tables::x_2#3 init_mul_tables::c#1 ] ( main:2::init_mul_tables:5 [ init_mul_tables::sqr#4 init_mul_tables::sqr_lo#2 init_mul_tables::sqr_hi#2 init_mul_tables::x_2#3 init_mul_tables::c#1 ] ) -- vbuaa_neq_0_then_la1 
     cmp #0
     bne b2
-  //SEG67 init_mul_tables::@3
-  //SEG68 [30] (word) init_mul_tables::sqr#2 ← ++ (word) init_mul_tables::sqr#4 [ init_mul_tables::x#2 init_mul_tables::sqr_lo#2 init_mul_tables::sqr_hi#2 init_mul_tables::x_2#3 init_mul_tables::sqr#2 ] ( main:2::init_mul_tables:5 [ init_mul_tables::x#2 init_mul_tables::sqr_lo#2 init_mul_tables::sqr_hi#2 init_mul_tables::x_2#3 init_mul_tables::sqr#2 ] ) -- vwuz1=_inc_vwuz1 
+  //SEG68 init_mul_tables::@3
+  //SEG69 [31] (word) init_mul_tables::sqr#2 ← ++ (word) init_mul_tables::sqr#4 [ init_mul_tables::sqr_lo#2 init_mul_tables::sqr_hi#2 init_mul_tables::x_2#3 init_mul_tables::c#1 init_mul_tables::sqr#2 ] ( main:2::init_mul_tables:5 [ init_mul_tables::sqr_lo#2 init_mul_tables::sqr_hi#2 init_mul_tables::x_2#3 init_mul_tables::c#1 init_mul_tables::sqr#2 ] ) -- vwuz1=_inc_vwuz1 
     inc sqr
     bne !+
     inc sqr+1
   !:
-  //SEG69 [31] (byte) init_mul_tables::x_2#1 ← ++ (byte) init_mul_tables::x_2#3 [ init_mul_tables::x#2 init_mul_tables::sqr_lo#2 init_mul_tables::sqr_hi#2 init_mul_tables::sqr#2 init_mul_tables::x_2#1 ] ( main:2::init_mul_tables:5 [ init_mul_tables::x#2 init_mul_tables::sqr_lo#2 init_mul_tables::sqr_hi#2 init_mul_tables::sqr#2 init_mul_tables::x_2#1 ] ) -- vbuxx=_inc_vbuxx 
+  //SEG70 [32] (byte) init_mul_tables::x_2#1 ← ++ (byte) init_mul_tables::x_2#3 [ init_mul_tables::sqr_lo#2 init_mul_tables::sqr_hi#2 init_mul_tables::c#1 init_mul_tables::sqr#2 init_mul_tables::x_2#1 ] ( main:2::init_mul_tables:5 [ init_mul_tables::sqr_lo#2 init_mul_tables::sqr_hi#2 init_mul_tables::c#1 init_mul_tables::sqr#2 init_mul_tables::x_2#1 ] ) -- vbuxx=_inc_vbuxx 
     inx
-  //SEG70 [32] phi from init_mul_tables::@1 init_mul_tables::@3 to init_mul_tables::@2 [phi:init_mul_tables::@1/init_mul_tables::@3->init_mul_tables::@2]
-  //SEG71 [32] phi (byte) init_mul_tables::x_2#2 = (byte) init_mul_tables::x_2#3 [phi:init_mul_tables::@1/init_mul_tables::@3->init_mul_tables::@2#0] -- register_copy 
-  //SEG72 [32] phi (word) init_mul_tables::sqr#3 = (word) init_mul_tables::sqr#4 [phi:init_mul_tables::@1/init_mul_tables::@3->init_mul_tables::@2#1] -- register_copy 
-  //SEG73 init_mul_tables::@2
+  //SEG71 [33] phi from init_mul_tables::@1 init_mul_tables::@3 to init_mul_tables::@2 [phi:init_mul_tables::@1/init_mul_tables::@3->init_mul_tables::@2]
+  //SEG72 [33] phi (byte) init_mul_tables::x_2#2 = (byte) init_mul_tables::x_2#3 [phi:init_mul_tables::@1/init_mul_tables::@3->init_mul_tables::@2#0] -- register_copy 
+  //SEG73 [33] phi (word) init_mul_tables::sqr#3 = (word) init_mul_tables::sqr#4 [phi:init_mul_tables::@1/init_mul_tables::@3->init_mul_tables::@2#1] -- register_copy 
+  //SEG74 init_mul_tables::@2
   b2:
-  //SEG74 [33] (byte~) init_mul_tables::$5 ← < (word) init_mul_tables::sqr#3 [ init_mul_tables::x#2 init_mul_tables::sqr_lo#2 init_mul_tables::sqr_hi#2 init_mul_tables::x_2#2 init_mul_tables::sqr#3 init_mul_tables::$5 ] ( main:2::init_mul_tables:5 [ init_mul_tables::x#2 init_mul_tables::sqr_lo#2 init_mul_tables::sqr_hi#2 init_mul_tables::x_2#2 init_mul_tables::sqr#3 init_mul_tables::$5 ] ) -- vbuaa=_lo_vwuz1 
+  //SEG75 [34] (byte~) init_mul_tables::$5 ← < (word) init_mul_tables::sqr#3 [ init_mul_tables::sqr_lo#2 init_mul_tables::sqr_hi#2 init_mul_tables::c#1 init_mul_tables::x_2#2 init_mul_tables::sqr#3 init_mul_tables::$5 ] ( main:2::init_mul_tables:5 [ init_mul_tables::sqr_lo#2 init_mul_tables::sqr_hi#2 init_mul_tables::c#1 init_mul_tables::x_2#2 init_mul_tables::sqr#3 init_mul_tables::$5 ] ) -- vbuaa=_lo_vwuz1 
     lda sqr
-  //SEG75 [34] *((byte*) init_mul_tables::sqr_lo#2) ← (byte~) init_mul_tables::$5 [ init_mul_tables::x#2 init_mul_tables::sqr_lo#2 init_mul_tables::sqr_hi#2 init_mul_tables::x_2#2 init_mul_tables::sqr#3 ] ( main:2::init_mul_tables:5 [ init_mul_tables::x#2 init_mul_tables::sqr_lo#2 init_mul_tables::sqr_hi#2 init_mul_tables::x_2#2 init_mul_tables::sqr#3 ] ) -- _deref_pbuz1=vbuaa 
+  //SEG76 [35] *((byte*) init_mul_tables::sqr_lo#2) ← (byte~) init_mul_tables::$5 [ init_mul_tables::sqr_lo#2 init_mul_tables::sqr_hi#2 init_mul_tables::c#1 init_mul_tables::x_2#2 init_mul_tables::sqr#3 ] ( main:2::init_mul_tables:5 [ init_mul_tables::sqr_lo#2 init_mul_tables::sqr_hi#2 init_mul_tables::c#1 init_mul_tables::x_2#2 init_mul_tables::sqr#3 ] ) -- _deref_pbuz1=vbuaa 
     ldy #0
     sta (sqr_lo),y
-  //SEG76 [35] (byte*) init_mul_tables::sqr_lo#1 ← ++ (byte*) init_mul_tables::sqr_lo#2 [ init_mul_tables::x#2 init_mul_tables::sqr_hi#2 init_mul_tables::sqr_lo#1 init_mul_tables::x_2#2 init_mul_tables::sqr#3 ] ( main:2::init_mul_tables:5 [ init_mul_tables::x#2 init_mul_tables::sqr_hi#2 init_mul_tables::sqr_lo#1 init_mul_tables::x_2#2 init_mul_tables::sqr#3 ] ) -- pbuz1=_inc_pbuz1 
-    inc sqr_lo
-    bne !+
-    inc sqr_lo+1
-  !:
-  //SEG77 [36] (byte~) init_mul_tables::$6 ← > (word) init_mul_tables::sqr#3 [ init_mul_tables::x#2 init_mul_tables::sqr_hi#2 init_mul_tables::sqr_lo#1 init_mul_tables::x_2#2 init_mul_tables::sqr#3 init_mul_tables::$6 ] ( main:2::init_mul_tables:5 [ init_mul_tables::x#2 init_mul_tables::sqr_hi#2 init_mul_tables::sqr_lo#1 init_mul_tables::x_2#2 init_mul_tables::sqr#3 init_mul_tables::$6 ] ) -- vbuaa=_hi_vwuz1 
+  //SEG77 [36] (byte~) init_mul_tables::$6 ← > (word) init_mul_tables::sqr#3 [ init_mul_tables::sqr_lo#2 init_mul_tables::sqr_hi#2 init_mul_tables::c#1 init_mul_tables::x_2#2 init_mul_tables::sqr#3 init_mul_tables::$6 ] ( main:2::init_mul_tables:5 [ init_mul_tables::sqr_lo#2 init_mul_tables::sqr_hi#2 init_mul_tables::c#1 init_mul_tables::x_2#2 init_mul_tables::sqr#3 init_mul_tables::$6 ] ) -- vbuaa=_hi_vwuz1 
     lda sqr+1
-  //SEG78 [37] *((byte*) init_mul_tables::sqr_hi#2) ← (byte~) init_mul_tables::$6 [ init_mul_tables::x#2 init_mul_tables::sqr_hi#2 init_mul_tables::sqr_lo#1 init_mul_tables::x_2#2 init_mul_tables::sqr#3 ] ( main:2::init_mul_tables:5 [ init_mul_tables::x#2 init_mul_tables::sqr_hi#2 init_mul_tables::sqr_lo#1 init_mul_tables::x_2#2 init_mul_tables::sqr#3 ] ) -- _deref_pbuz1=vbuaa 
-    ldy #0
+  //SEG78 [37] *((byte*) init_mul_tables::sqr_hi#2) ← (byte~) init_mul_tables::$6 [ init_mul_tables::sqr_lo#2 init_mul_tables::sqr_hi#2 init_mul_tables::c#1 init_mul_tables::x_2#2 init_mul_tables::sqr#3 ] ( main:2::init_mul_tables:5 [ init_mul_tables::sqr_lo#2 init_mul_tables::sqr_hi#2 init_mul_tables::c#1 init_mul_tables::x_2#2 init_mul_tables::sqr#3 ] ) -- _deref_pbuz1=vbuaa 
     sta (sqr_hi),y
-  //SEG79 [38] (byte*) init_mul_tables::sqr_hi#1 ← ++ (byte*) init_mul_tables::sqr_hi#2 [ init_mul_tables::x#2 init_mul_tables::sqr_lo#1 init_mul_tables::sqr_hi#1 init_mul_tables::x_2#2 init_mul_tables::sqr#3 ] ( main:2::init_mul_tables:5 [ init_mul_tables::x#2 init_mul_tables::sqr_lo#1 init_mul_tables::sqr_hi#1 init_mul_tables::x_2#2 init_mul_tables::sqr#3 ] ) -- pbuz1=_inc_pbuz1 
+  //SEG79 [38] (byte*) init_mul_tables::sqr_hi#1 ← ++ (byte*) init_mul_tables::sqr_hi#2 [ init_mul_tables::sqr_lo#2 init_mul_tables::c#1 init_mul_tables::sqr_hi#1 init_mul_tables::x_2#2 init_mul_tables::sqr#3 ] ( main:2::init_mul_tables:5 [ init_mul_tables::sqr_lo#2 init_mul_tables::c#1 init_mul_tables::sqr_hi#1 init_mul_tables::x_2#2 init_mul_tables::sqr#3 ] ) -- pbuz1=_inc_pbuz1 
     inc sqr_hi
     bne !+
     inc sqr_hi+1
   !:
-  //SEG80 [39] (word) init_mul_tables::sqr#1 ← (word) init_mul_tables::sqr#3 + (byte) init_mul_tables::x_2#2 [ init_mul_tables::x#2 init_mul_tables::sqr#1 init_mul_tables::sqr_lo#1 init_mul_tables::sqr_hi#1 init_mul_tables::x_2#2 ] ( main:2::init_mul_tables:5 [ init_mul_tables::x#2 init_mul_tables::sqr#1 init_mul_tables::sqr_lo#1 init_mul_tables::sqr_hi#1 init_mul_tables::x_2#2 ] ) -- vwuz1=vwuz1_plus_vbuxx 
+  //SEG80 [39] (word) init_mul_tables::sqr#1 ← (word) init_mul_tables::sqr#3 + (byte) init_mul_tables::x_2#2 [ init_mul_tables::sqr_lo#2 init_mul_tables::c#1 init_mul_tables::sqr#1 init_mul_tables::sqr_hi#1 init_mul_tables::x_2#2 ] ( main:2::init_mul_tables:5 [ init_mul_tables::sqr_lo#2 init_mul_tables::c#1 init_mul_tables::sqr#1 init_mul_tables::sqr_hi#1 init_mul_tables::x_2#2 ] ) -- vwuz1=vwuz1_plus_vbuxx 
     txa
     clc
     adc sqr
@@ -4072,17 +4080,17 @@ init_mul_tables: {
     bcc !+
     inc sqr+1
   !:
-  //SEG81 [40] (word) init_mul_tables::x#1 ← ++ (word) init_mul_tables::x#2 [ init_mul_tables::x#1 init_mul_tables::sqr#1 init_mul_tables::sqr_lo#1 init_mul_tables::sqr_hi#1 init_mul_tables::x_2#2 ] ( main:2::init_mul_tables:5 [ init_mul_tables::x#1 init_mul_tables::sqr#1 init_mul_tables::sqr_lo#1 init_mul_tables::sqr_hi#1 init_mul_tables::x_2#2 ] ) -- vwuz1=_inc_vwuz1 
-    inc x
+  //SEG81 [40] (byte*) init_mul_tables::sqr_lo#1 ← ++ (byte*) init_mul_tables::sqr_lo#2 [ init_mul_tables::c#1 init_mul_tables::sqr#1 init_mul_tables::sqr_lo#1 init_mul_tables::sqr_hi#1 init_mul_tables::x_2#2 ] ( main:2::init_mul_tables:5 [ init_mul_tables::c#1 init_mul_tables::sqr#1 init_mul_tables::sqr_lo#1 init_mul_tables::sqr_hi#1 init_mul_tables::x_2#2 ] ) -- pbuz1=_inc_pbuz1 
+    inc sqr_lo
     bne !+
-    inc x+1
+    inc sqr_lo+1
   !:
-  //SEG82 [41] if((word) init_mul_tables::x#1!=(word/signed word) 512) goto init_mul_tables::@1 [ init_mul_tables::x#1 init_mul_tables::sqr#1 init_mul_tables::sqr_lo#1 init_mul_tables::sqr_hi#1 init_mul_tables::x_2#2 ] ( main:2::init_mul_tables:5 [ init_mul_tables::x#1 init_mul_tables::sqr#1 init_mul_tables::sqr_lo#1 init_mul_tables::sqr_hi#1 init_mul_tables::x_2#2 ] ) -- vwuz1_neq_vwuc1_then_la1 
-    lda x
-    cmp #<$200
+  //SEG82 [41] if((byte*) init_mul_tables::sqr_lo#1!=(const byte[512]) mul_sqr_lo#0+(word/signed word) 512) goto init_mul_tables::@1 [ init_mul_tables::c#1 init_mul_tables::sqr#1 init_mul_tables::sqr_lo#1 init_mul_tables::sqr_hi#1 init_mul_tables::x_2#2 ] ( main:2::init_mul_tables:5 [ init_mul_tables::c#1 init_mul_tables::sqr#1 init_mul_tables::sqr_lo#1 init_mul_tables::sqr_hi#1 init_mul_tables::x_2#2 ] ) -- pbuz1_neq_pbuc1_then_la1 
+    lda sqr_lo+1
+    cmp #>mul_sqr_lo+$200
     bne b1
-    lda x+1
-    cmp #>$200
+    lda sqr_lo
+    cmp #<mul_sqr_lo+$200
     bne b1
   //SEG83 init_mul_tables::@return
   //SEG84 [42] return  [ ] ( main:2::init_mul_tables:5 [ ] )

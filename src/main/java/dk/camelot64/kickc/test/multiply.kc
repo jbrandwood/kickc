@@ -17,18 +17,18 @@ byte[512] mul_sqr_hi;
 // Initialize the mul_sqr multiplication tables with f(x)=int(x*x/4)
 void init_mul_tables() {
   // If f(x) = x*x/4 then f(x+1) = f(x) + x/2 + 1/4
-  byte* sqr_lo = mul_sqr_lo+1;
-  byte* sqr_hi = mul_sqr_hi+1;
   word sqr = 0; // sqr = (x*x)/4
   byte x_2 = 0; // x/2
-  for(word x : 1..511) {
-    if((x&1)==0) {
+  byte c = 0;   // Counter used for determining x%2==0
+  byte* sqr_hi = mul_sqr_hi+1;
+  for(byte* sqr_lo = mul_sqr_lo+1; sqr_lo!=mul_sqr_lo+512; sqr_lo++) {
+    if((++c&1)==0) {
         sqr++; // sqr++ on even numbers because 1 = 2*1/4 (from the two previous numbers) + 1/2 (half of the previous uneven number)
         x_2++; // increase i/2 on even numbers
     }
-    *sqr_lo++ = <sqr;
+    *sqr_lo = <sqr;
     *sqr_hi++ = >sqr;
-    sqr = sqr + x_2; // sqr = sqr + i/2 (when uneven the 1/2 is not added here )
+    sqr = sqr + x_2; // sqr = sqr + i/2 (when uneven the 1/2 is not added here - see above)
   }
 
 }

@@ -20,7 +20,7 @@ import java.util.regex.Pattern;
  */
 public class AsmFragmentManager {
 
-   static boolean verboseFragmentLog = true;
+   static boolean verboseFragmentLog = false;
 
    /**
     * Cache for fragment files. Maps signature to the parsed file.
@@ -165,10 +165,13 @@ public class AsmFragmentManager {
       synths.add(new FragmentSynthesis("(.*)=(.*)_derefidx_vbuz2(.*)", ".*=.*yy.*|.*z2.*z2.*", "ldy {z2}\n", "$1=$2_derefidx_vbuyy$3", null, mapZ3));
       synths.add(new FragmentSynthesis("(.*)=(.*)_derefidx_vbuz3(.*)", ".*=.*yy.*", "ldy {z3}\n", "$1=$2_derefidx_vbuyy$3", null, null));
       synths.add(new FragmentSynthesis("(.*)=(.*)_derefidx_vbuz3(.*)", ".*=.*xx.*", "ldx {z3}\n", "$1=$2_derefidx_vbuxx$3", null, null));
-      synths.add(new FragmentSynthesis("(.*)_derefidx_vbuz1(.*)_derefidx_vbuz1(.*)", ".*z1.*z1.*z1.*|.*xx.*", null, "$1_derefidx_vbuxx$2_derefidx_vbuxx$3", "ldx {z1}\n", mapZ));
-      synths.add(new FragmentSynthesis("(.*)_derefidx_vbuz1(.*)_derefidx_vbuz1(.*)", ".*z1.*z1.*z1.*|.*yy.*", null, "$1_derefidx_vbuyy$2_derefidx_vbuyy$3", "ldy {z1}\n", mapZ));
-      synths.add(new FragmentSynthesis("(.*)_derefidx_vbuz2(.*)_derefidx_vbuz2(.*)", ".*z2.*z2.*z2.*|.*xx.*", null, "$1_derefidx_vbuxx$2_derefidx_vbuxx$3", "ldx {z2}\n", mapZ));
-      synths.add(new FragmentSynthesis("(.*)_derefidx_vbuz2(.*)_derefidx_vbuz2(.*)", ".*z2.*z2.*z2.*|.*yy.*", null, "$1_derefidx_vbuyy$2_derefidx_vbuyy$3", "ldy {z2}\n", mapZ));
+      // Convert array indexing twice with A/zp1/zp2 to X/Y register
+      synths.add(new FragmentSynthesis("(.*)_derefidx_vbuaa(.*)_derefidx_vbuaa(.*)", ".*aa.*aa.*aa.*|.*xx.*|.*aa.*=.*", null, "$1_derefidx_vbuxx$2_derefidx_vbuxx$3", "tax\n", null));
+      synths.add(new FragmentSynthesis("(.*)_derefidx_vbuaa(.*)_derefidx_vbuaa(.*)", ".*aa.*aa.*aa.*|.*yy.*|.*aa.*=.*", null, "$1_derefidx_vbuyy$2_derefidx_vbuyy$3", "tay\n", null));
+      synths.add(new FragmentSynthesis("(.*)_derefidx_vbuz1(.*)_derefidx_vbuz1(.*)", ".*z1.*z1.*z1.*|.*xx.*|.*z1.*=.*", null, "$1_derefidx_vbuxx$2_derefidx_vbuxx$3", "ldx {z1}\n", mapZ));
+      synths.add(new FragmentSynthesis("(.*)_derefidx_vbuz1(.*)_derefidx_vbuz1(.*)", ".*z1.*z1.*z1.*|.*yy.*|.*z1.*=.*", null, "$1_derefidx_vbuyy$2_derefidx_vbuyy$3", "ldy {z1}\n", mapZ));
+      synths.add(new FragmentSynthesis("(.*)_derefidx_vbuz2(.*)_derefidx_vbuz2(.*)", ".*z2.*z2.*z2.*|.*xx.*|.*z2.*=.*", null, "$1_derefidx_vbuxx$2_derefidx_vbuxx$3", "ldx {z2}\n", mapZ));
+      synths.add(new FragmentSynthesis("(.*)_derefidx_vbuz2(.*)_derefidx_vbuz2(.*)", ".*z2.*z2.*z2.*|.*yy.*|.*z2.*=.*", null, "$1_derefidx_vbuyy$2_derefidx_vbuyy$3", "ldy {z2}\n", mapZ));
       // Convert X/Y-based array indexing of a constant pointer into A-register by prefixing lda cn,x / lda cn,y ( ...pb.c1_derefidx_vbuxx... / ...pb.c1_derefidx_vbuyy... -> ...vb.aa... )
       synths.add(new FragmentSynthesis("(.*)=(.*)pb(.)c1_derefidx_vbuxx(.*)", ".*=.*aa.*|.*c1.*c1.*", "lda {c1},x\n", "$1=$2vb$3aa$4", null, mapC));
       synths.add(new FragmentSynthesis("(.*)=(.*c1.*)pb(.)c1_derefidx_vbuxx(.*)", ".*=.*aa.*", "lda {c1},x\n", "$1=$2vb$3aa$4", null, null));

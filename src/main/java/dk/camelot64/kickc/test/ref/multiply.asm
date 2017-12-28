@@ -75,14 +75,28 @@ init_mul_tables_asm: {
     rts
 }
 init_mul_tables: {
-    .label _15 = 2
-    .label sqr = 2
+    .label _7 = $a
+    .label sqr_lo = 4
+    .label sqr_hi = 6
+    .label sqr = 8
+    .label i = 2
+    lda #<mul_sqr_hi+1
+    sta sqr_hi
+    lda #>mul_sqr_hi+1
+    sta sqr_hi+1
+    lda #<mul_sqr_lo+1
+    sta sqr_lo
+    lda #>mul_sqr_lo+1
+    sta sqr_lo+1
     lda #0
     sta sqr
     sta sqr+1
-    ldx #1
+    lda #1
+    sta i
+    lda #0
+    sta i+1
   b1:
-    txa
+    lda i
     and #1
     cmp #0
     bne b2
@@ -92,52 +106,41 @@ init_mul_tables: {
   !:
   b2:
     lda sqr
-    sta mul_sqr_lo,x
-    lda sqr+1
-    sta mul_sqr_hi,x
-    txa
-    lsr
-    clc
-    adc sqr
-    sta sqr
-    bcc !+
-    inc sqr+1
-  !:
-    inx
-    cpx #0
-    bne b1
-    ldx #0
-  b3:
-    txa
-    and #1
-    cmp #0
-    bne b4
-    inc sqr
+    ldy #0
+    sta (sqr_lo),y
+    inc sqr_lo
     bne !+
-    inc sqr+1
+    inc sqr_lo+1
   !:
-  b4:
-    lda sqr
-    sta mul_sqr_lo+$100,x
     lda sqr+1
-    sta mul_sqr_hi+$100,x
-    lda _15
-    clc
-    adc #<$80
-    sta _15
-    bcc !+
-    inc _15+1
+    ldy #0
+    sta (sqr_hi),y
+    inc sqr_hi
+    bne !+
+    inc sqr_hi+1
   !:
-    txa
-    lsr
+    lda i+1
+    ror
+    sta _7+1
+    lda i
+    ror
+    sta _7
+    lda sqr
     clc
-    adc sqr
+    adc _7
     sta sqr
-    bcc !+
-    inc sqr+1
+    lda sqr+1
+    adc _7+1
+    sta sqr+1
+    inc i
+    bne !+
+    inc i+1
   !:
-    inx
-    cpx #0
-    bne b3
+    lda i
+    cmp #<$200
+    bne b1
+    lda i+1
+    cmp #>$200
+    bne b1
     rts
 }

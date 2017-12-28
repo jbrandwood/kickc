@@ -78,7 +78,7 @@ init_mul_tables: {
     .label sqr_lo = 4
     .label sqr_hi = 6
     .label sqr = 8
-    .label i = 2
+    .label x = 2
     ldx #0
     lda #<mul_sqr_hi+1
     sta sqr_hi
@@ -92,11 +92,11 @@ init_mul_tables: {
     sta sqr
     sta sqr+1
     lda #1
-    sta i
+    sta x
     txa
-    sta i+1
+    sta x+1
   b1:
-    lda i
+    lda x
     and #1
     cmp #0
     bne b2
@@ -127,14 +127,14 @@ init_mul_tables: {
     bcc !+
     inc sqr+1
   !:
-    inc i
+    inc x
     bne !+
-    inc i+1
+    inc x+1
   !:
-    lda i
+    lda x
     cmp #<$200
     bne b1
-    lda i+1
+    lda x+1
     cmp #>$200
     bne b1
     rts

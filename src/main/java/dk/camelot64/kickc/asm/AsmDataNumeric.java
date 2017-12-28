@@ -2,7 +2,9 @@ package dk.camelot64.kickc.asm;
 
 import java.util.List;
 
-/** A labelled numeric data directive. */
+/**
+ * A labelled numeric data directive.
+ */
 public class AsmDataNumeric implements AsmLine {
 
    private String label;
@@ -37,7 +39,7 @@ public class AsmDataNumeric implements AsmLine {
 
    @Override
    public int getLineBytes() {
-      return values.size()*getElementBytes();
+      return values.size() * getElementBytes();
    }
 
    @Override
@@ -48,10 +50,12 @@ public class AsmDataNumeric implements AsmLine {
    @Override
    public String getAsm() {
       StringBuilder asm = new StringBuilder();
-      asm.append(label+": ");
-      asm.append("."+type.asm+" ");
+      if(label != null) {
+         asm.append(label + ": ");
+      }
+      asm.append("." + type.asm + " ");
       boolean first = true;
-      for (String value : values) {
+      for(String value : values) {
          if(!first)
             asm.append(", ");
          first = false;

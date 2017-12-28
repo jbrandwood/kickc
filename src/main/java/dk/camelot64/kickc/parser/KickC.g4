@@ -107,6 +107,7 @@ asmLines
 asmLine
     : asmLabel
     | asmInstruction
+    | asmBytes
     ;
 
 asmLabel
@@ -116,6 +117,10 @@ asmLabel
 
 asmInstruction
     : MNEMONIC (asmParamMode)?
+    ;
+
+asmBytes
+    : '.byte' asmExpr ( ',' asmExpr)*
     ;
 
 asmParamMode
@@ -142,7 +147,7 @@ MNEMONIC:
     'brk' | 'ora' | 'kil' | 'slo' | 'nop' | 'asl' | 'php' | 'anc' | 'bpl' | 'clc' | 'jsr' | 'and' | 'rla' | 'bit' | 'rol' | 'pla' | 'plp' | 'bmi' | 'sec' |
     'rti' | 'eor' | 'sre' | 'lsr' | 'pha' | 'alr' | 'jmp' | 'bvc' | 'cli' | 'rts' | 'adc' | 'rra' | 'bvs' | 'sei' | 'sax' | 'sty' | 'sta' | 'stx' | 'dey' |
     'txa' | 'xaa' | 'bcc' | 'ahx' | 'tya' | 'txs' | 'tas' | 'shy' | 'shx' | 'ldy' | 'lda' | 'ldx' | 'lax' | 'tay' | 'tax' | 'bcs' | 'clv' | 'tsx' | 'las' |
-    'cpy' | 'cmp' | 'cpx' | 'dcp' | 'dec' | 'inc' | 'axs' | 'bne' | 'cld' | 'sbc' | 'isc' | 'inx' | 'beq' | 'sed' | 'dex' | 'iny'
+    'cpy' | 'cmp' | 'cpx' | 'dcp' | 'dec' | 'inc' | 'axs' | 'bne' | 'cld' | 'sbc' | 'isc' | 'inx' | 'beq' | 'sed' | 'dex' | 'iny' | 'ror'
     ;
 
 SIMPLETYPE: 'byte' | 'word' | 'boolean' | 'void' ;

@@ -30,6 +30,10 @@ public abstract class Pass5AsmOptimization {
     */
    public abstract boolean optimize();
 
+   public Program getProgram() {
+      return program;
+   }
+
    public AsmProgram getAsmProgram() {
       return program.getAsm();
    }

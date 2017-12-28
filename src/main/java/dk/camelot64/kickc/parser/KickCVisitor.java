@@ -333,6 +333,12 @@ public interface KickCVisitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitAsmInstruction(KickCParser.AsmInstructionContext ctx);
 	/**
+	 * Visit a parse tree produced by {@link KickCParser#asmBytes}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitAsmBytes(KickCParser.AsmBytesContext ctx);
+	/**
 	 * Visit a parse tree produced by the {@code asmModeAbs}
 	 * labeled alternative in {@link KickCParser#asmParamMode}.
 	 * @param ctx the parse tree

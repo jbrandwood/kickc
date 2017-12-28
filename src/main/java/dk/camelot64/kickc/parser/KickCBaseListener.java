@@ -592,6 +592,18 @@ public class KickCBaseListener implements KickCListener {
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
+	@Override public void enterAsmBytes(KickCParser.AsmBytesContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitAsmBytes(KickCParser.AsmBytesContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
 	@Override public void enterAsmModeAbs(KickCParser.AsmModeAbsContext ctx) { }
 	/**
 	 * {@inheritDoc}

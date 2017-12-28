@@ -22,6 +22,10 @@ public class TestPrograms extends TestCase {
       helper = new ReferenceHelper("dk/camelot64/kickc/test/ref/");
    }
 
+   public void testMultiply() throws IOException, URISyntaxException {
+      compileAndCompare("multiply");
+   }
+
    public void testArraysInit() throws IOException, URISyntaxException {
       compileAndCompare("arrays-init");
    }

@@ -1,0 +1,66 @@
+// Implementation of the Seriously Fast Multiplication
+// See http://codebase64.org/doku.php?id=base:seriously_fast_multiplication
+// Utilizes the fact that a*b = ((a+b)/2)^2 - ((a-b)/2)^2
+
+byte* BGCOL = $d021;
+
+void main() {
+    init_mul_tables();
+    init_mul_tables_asm();
+    mul_tables_compare();
+}
+
+// mul_sqr tables will contain f(x)=int(x*x/4).
+byte[512] mul_sqr_lo;
+byte[512] mul_sqr_hi;
+
+void init_mul_tables() {
+  // If f(x) = x*x then f(x+1) = f(x) + 2*x + 1
+
+}
+
+// ASM based multiplication tables
+byte[512] asm_mul_sqr_lo;
+byte[512] asm_mul_sqr_hi;
+// Initialize the multiplication tables using ASM code from
+// http://codebase64.org/doku.php?id=base:seriously_fast_multiplication
+void init_mul_tables_asm() {
+    asm{
+        ldx #$00
+        txa
+        .byte $c9
+    lb1:
+        tya
+        adc #$00
+    ml1:
+        sta asm_mul_sqr_hi,x
+        tay
+        cmp #$40
+        txa
+        ror
+    ml9:
+        adc #$00
+        sta ml9+1
+        inx
+    ml0:
+        sta asm_mul_sqr_lo,x
+        bne lb1
+        inc ml0+2
+        inc ml1+2
+        clc
+        iny
+        bne lb1
+    }
+
+}
+
+void mul_tables_compare() {
+    for( byte i: 0..255) {
+        if(mul_sqr_lo[i]!=asm_mul_sqr_lo[i]) {
+            *BGCOL = 2;
+        }
+        if(mul_sqr_hi[i]!=asm_mul_sqr_hi[i]) {
+            *BGCOL = 2;
+        }
+    }
+}

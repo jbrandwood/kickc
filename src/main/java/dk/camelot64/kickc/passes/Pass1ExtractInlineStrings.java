@@ -40,17 +40,6 @@ public class Pass1ExtractInlineStrings extends Pass1Base {
       return false;
    }
 
-   private void execute(ValueReplacer.ReplaceableValue replaceable, Scope blockScope, String nameHint) {
-      RValue value = replaceable.get();
-      if(value instanceof ConstantString) {
-         ConstantVar strConst = createStringConstantVar(blockScope, (ConstantString) replaceable.get(), nameHint);
-         replaceable.set(strConst.getRef());
-      }
-      for (ValueReplacer.ReplaceableValue subValue : replaceable.getSubValues()) {
-         execute(subValue, blockScope, nameHint);
-      }
-   }
-
    private ConstantVar createStringConstantVar(Scope blockScope, ConstantString constantString, String nameHint) {
       String name;
       if (nameHint == null) {

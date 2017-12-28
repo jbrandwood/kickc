@@ -6,6 +6,7 @@ import dk.camelot64.kickc.model.*;
 import dk.camelot64.kickc.parser.KickCBaseVisitor;
 import dk.camelot64.kickc.parser.KickCParser;
 
+import java.util.ArrayList;
 import java.util.Map;
 
 /**
@@ -300,6 +301,16 @@ public class AsmFragment {
       @Override
       public Object visitAsmLabel(KickCParser.AsmLabelContext ctx) {
          program.addLine(new AsmLabel(ctx.getChild(0).getText()));
+         return null;
+      }
+
+      @Override
+      public Object visitAsmBytes(KickCParser.AsmBytesContext ctx) {
+         ArrayList<String> values = new ArrayList<>();
+         for(int i = 1; i < ctx.getChildCount(); i=i+2) {
+            values.add(ctx.getChild(i).getText());
+         }
+         program.addLine(new AsmDataNumeric(null, AsmDataNumeric.Type.BYTE, values));
          return null;
       }
 

@@ -2,6 +2,8 @@ package dk.camelot64.kickc.passes;
 
 import dk.camelot64.kickc.asm.*;
 import dk.camelot64.kickc.model.Program;
+import dk.camelot64.kickc.model.Statement;
+import dk.camelot64.kickc.model.StatementAsm;
 
 import java.util.ArrayList;
 import java.util.LinkedHashSet;
@@ -37,6 +39,14 @@ public class Pass5UnusedLabelElimination extends Pass5AsmOptimization {
       }
       List<AsmLine> removeLines = new ArrayList<>();
       for (AsmSegment segment : getAsmProgram().getSegments()) {
+         Integer statementIdx = segment.getStatementIdx();
+         if(statementIdx!=null) {
+            Statement statement = getProgram().getStatementInfos().getStatement(statementIdx);
+            if(statement instanceof StatementAsm) {
+               // Skip ASM statement
+               continue;
+            }
+         }
          for (AsmLine line : segment.getLines()) {
             if(line instanceof AsmScopeBegin) {
                currentScope = ((AsmScopeBegin) line).getLabel();

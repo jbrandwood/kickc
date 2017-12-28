@@ -75,11 +75,12 @@ init_mul_tables_asm: {
     rts
 }
 init_mul_tables: {
-    .label c = 2
-    .label sqr_hi = 5
+    .label sqr_hi = 4
     .label sqr = 7
-    .label sqr_lo = 3
-    ldx #0
+    .label sqr_lo = 2
+    .label x_2 = 6
+    lda #0
+    sta x_2
     lda #<mul_sqr_hi+1
     sta sqr_hi
     lda #>mul_sqr_hi+1
@@ -88,21 +89,21 @@ init_mul_tables: {
     sta sqr_lo
     lda #>mul_sqr_lo+1
     sta sqr_lo+1
-    txa
+    lda #0
     sta sqr
     sta sqr+1
-    sta c
+    tax
   b1:
-    inc c
-    lda c
+    inx
+    txa
     and #1
     cmp #0
     bne b2
+    inc x_2
     inc sqr
     bne !+
     inc sqr+1
   !:
-    inx
   b2:
     lda sqr
     ldy #0
@@ -113,7 +114,7 @@ init_mul_tables: {
     bne !+
     inc sqr_hi+1
   !:
-    txa
+    lda x_2
     clc
     adc sqr
     sta sqr

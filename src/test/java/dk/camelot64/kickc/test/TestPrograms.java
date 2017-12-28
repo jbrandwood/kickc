@@ -18,7 +18,7 @@ public class TestPrograms extends TestCase {
    String testPath;
 
    public TestPrograms() throws IOException {
-      testPath = "src/main/java/dk/camelot64/kickc/test/";
+      testPath = "src/test/java/dk/camelot64/kickc/test/";
       helper = new ReferenceHelper("dk/camelot64/kickc/test/ref/");
    }
 

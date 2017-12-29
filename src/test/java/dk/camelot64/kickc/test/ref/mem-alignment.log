@@ -1,0 +1,599 @@
+PARSING src/test/java/dk/camelot64/kickc/test/mem-alignment.kc
+// Test that memory alignment of arrays work
+
+byte[$100] align($100) bs;
+
+void main() {
+    byte[$100] align($100) cs;
+    for( byte i: 0..255) {
+        bs[i] = i;
+    }
+    byte j=255;
+    for( i: 0..255) {
+        cs[i] = bs[j--];
+    }
+
+
+}
+Adding pre/post-modifier (byte) main::j ← -- (byte) main::j
+
+STATEMENTS
+  (byte[256]) bs ← { fill( 256, 0) }
+proc (void()) main()
+  (byte[256]) main::cs ← { fill( 256, 0) }
+  (byte) main::i ← (byte/signed byte/word/signed word) 0
+main::@1:
+  *((byte[256]) bs + (byte) main::i) ← (byte) main::i
+  (byte) main::i ← ++ (byte) main::i
+  (boolean~) main::$0 ← (byte) main::i != (byte/signed byte/word/signed word) 0
+  if((boolean~) main::$0) goto main::@1
+  (byte) main::j ← (byte/word/signed word) 255
+  (byte) main::i ← (byte/signed byte/word/signed word) 0
+main::@2:
+  *((byte[256]) main::cs + (byte) main::i) ← *((byte[256]) bs + (byte) main::j)
+  (byte) main::j ← -- (byte) main::j
+  (byte) main::i ← ++ (byte) main::i
+  (boolean~) main::$1 ← (byte) main::i != (byte/signed byte/word/signed word) 0
+  if((boolean~) main::$1) goto main::@2
+main::@return:
+  return 
+endproc // main()
+  call main 
+
+SYMBOLS
+(byte[256]) bs
+(void()) main()
+(boolean~) main::$0
+(boolean~) main::$1
+(label) main::@1
+(label) main::@2
+(label) main::@return
+(byte[256]) main::cs
+(byte) main::i
+(byte) main::j
+
+INITIAL CONTROL FLOW GRAPH
+@begin: scope:[]  from
+  (byte[256]) bs ← { fill( 256, 0) }
+  to:@1
+main: scope:[main]  from
+  (byte[256]) main::cs ← { fill( 256, 0) }
+  (byte) main::i ← (byte/signed byte/word/signed word) 0
+  to:main::@1
+main::@1: scope:[main]  from main main::@1
+  *((byte[256]) bs + (byte) main::i) ← (byte) main::i
+  (byte) main::i ← ++ (byte) main::i
+  (boolean~) main::$0 ← (byte) main::i != (byte/signed byte/word/signed word) 0
+  if((boolean~) main::$0) goto main::@1
+  to:main::@3
+main::@3: scope:[main]  from main::@1
+  (byte) main::j ← (byte/word/signed word) 255
+  (byte) main::i ← (byte/signed byte/word/signed word) 0
+  to:main::@2
+main::@2: scope:[main]  from main::@2 main::@3
+  *((byte[256]) main::cs + (byte) main::i) ← *((byte[256]) bs + (byte) main::j)
+  (byte) main::j ← -- (byte) main::j
+  (byte) main::i ← ++ (byte) main::i
+  (boolean~) main::$1 ← (byte) main::i != (byte/signed byte/word/signed word) 0
+  if((boolean~) main::$1) goto main::@2
+  to:main::@4
+main::@4: scope:[main]  from main::@2
+  to:main::@return
+main::@return: scope:[main]  from main::@4
+  return 
+  to:@return
+@1: scope:[]  from @begin
+  call main 
+  to:@end
+@end: scope:[]  from @1
+
+Removing empty block main::@4
+PROCEDURE MODIFY VARIABLE ANALYSIS
+
+Completing Phi functions...
+
+CONTROL FLOW GRAPH SSA WITH ASSIGNMENT CALL & RETURN
+@begin: scope:[]  from
+  (byte[256]) bs#0 ← { fill( 256, 0) }
+  to:@1
+main: scope:[main]  from @1
+  (byte[256]) main::cs#0 ← { fill( 256, 0) }
+  (byte) main::i#0 ← (byte/signed byte/word/signed word) 0
+  to:main::@1
+main::@1: scope:[main]  from main main::@1
+  (byte) main::i#4 ← phi( main/(byte) main::i#0 main::@1/(byte) main::i#1 )
+  *((byte[256]) bs#0 + (byte) main::i#4) ← (byte) main::i#4
+  (byte) main::i#1 ← ++ (byte) main::i#4
+  (boolean~) main::$0 ← (byte) main::i#1 != (byte/signed byte/word/signed word) 0
+  if((boolean~) main::$0) goto main::@1
+  to:main::@3
+main::@3: scope:[main]  from main::@1
+  (byte) main::j#0 ← (byte/word/signed word) 255
+  (byte) main::i#2 ← (byte/signed byte/word/signed word) 0
+  to:main::@2
+main::@2: scope:[main]  from main::@2 main::@3
+  (byte) main::i#5 ← phi( main::@2/(byte) main::i#3 main::@3/(byte) main::i#2 )
+  (byte) main::j#2 ← phi( main::@2/(byte) main::j#1 main::@3/(byte) main::j#0 )
+  *((byte[256]) main::cs#0 + (byte) main::i#5) ← *((byte[256]) bs#0 + (byte) main::j#2)
+  (byte) main::j#1 ← -- (byte) main::j#2
+  (byte) main::i#3 ← ++ (byte) main::i#5
+  (boolean~) main::$1 ← (byte) main::i#3 != (byte/signed byte/word/signed word) 0
+  if((boolean~) main::$1) goto main::@2
+  to:main::@return
+main::@return: scope:[main]  from main::@2
+  return 
+  to:@return
+@1: scope:[]  from @begin
+  call main param-assignment
+  to:@2
+@2: scope:[]  from @1
+  to:@end
+@end: scope:[]  from @2
+
+SYMBOL TABLE SSA
+(label) @1
+(label) @2
+(label) @begin
+(label) @end
+(byte[256]) bs
+(byte[256]) bs#0
+(void()) main()
+(boolean~) main::$0
+(boolean~) main::$1
+(label) main::@1
+(label) main::@2
+(label) main::@3
+(label) main::@return
+(byte[256]) main::cs
+(byte[256]) main::cs#0
+(byte) main::i
+(byte) main::i#0
+(byte) main::i#1
+(byte) main::i#2
+(byte) main::i#3
+(byte) main::i#4
+(byte) main::i#5
+(byte) main::j
+(byte) main::j#0
+(byte) main::j#1
+(byte) main::j#2
+
+OPTIMIZING CONTROL FLOW GRAPH
+Culled Empty Block (label) @2
+Succesful SSA optimization Pass2CullEmptyBlocks
+Simple Condition (boolean~) main::$0 if((byte) main::i#1!=(byte/signed byte/word/signed word) 0) goto main::@1
+Simple Condition (boolean~) main::$1 if((byte) main::i#3!=(byte/signed byte/word/signed word) 0) goto main::@2
+Succesful SSA optimization Pass2ConditionalJumpSimplification
+Constant (const byte[256]) bs#0 = { fill( 256, 0) }
+Constant (const byte[256]) main::cs#0 = { fill( 256, 0) }
+Constant (const byte) main::i#0 = 0
+Constant (const byte) main::j#0 = 255
+Constant (const byte) main::i#2 = 0
+Succesful SSA optimization Pass2ConstantIdentification
+Multiple usages for variable. Not optimizing sub-constant (byte) main::i#4
+Culled Empty Block (label) main::@3
+Succesful SSA optimization Pass2CullEmptyBlocks
+Multiple usages for variable. Not optimizing sub-constant (byte) main::i#4
+Multiple usages for variable. Not optimizing sub-constant (byte) main::i#4
+OPTIMIZING CONTROL FLOW GRAPH
+Inlining constant with var siblings (const byte) main::i#0
+Inlining constant with var siblings (const byte) main::i#0
+Inlining constant with var siblings (const byte) main::i#0
+Inlining constant with var siblings (const byte) main::i#0
+Inlining constant with var siblings (const byte) main::j#0
+Inlining constant with var siblings (const byte) main::j#0
+Inlining constant with var siblings (const byte) main::i#2
+Inlining constant with var siblings (const byte) main::i#2
+Inlining constant with var siblings (const byte) main::i#2
+Inlining constant with var siblings (const byte) main::i#2
+Constant inlined main::i#0 = (byte/signed byte/word/signed word) 0
+Constant inlined main::i#2 = (byte/signed byte/word/signed word) 0
+Constant inlined main::j#0 = (byte/word/signed word) 255
+Succesful SSA optimization Pass2ConstantInlining
+Block Sequence Planned @begin @1 @end main main::@1 main::@2 main::@return 
+Added new block during phi lifting main::@5(between main::@1 and main::@1)
+Added new block during phi lifting main::@6(between main::@2 and main::@2)
+Block Sequence Planned @begin @1 @end main main::@1 main::@2 main::@return main::@6 main::@5 
+Adding NOP phi() at start of @begin
+Adding NOP phi() at start of @1
+Adding NOP phi() at start of @end
+Adding NOP phi() at start of main
+CALL GRAPH
+Calls in [] to main:2 
+
+Propagating live ranges...
+Propagating live ranges...
+Propagating live ranges...
+Propagating live ranges...
+Created 3 initial phi equivalence classes
+Coalesced [15] main::j#3 ← main::j#1
+Coalesced [16] main::i#7 ← main::i#3
+Coalesced [17] main::i#6 ← main::i#1
+Coalesced down to 3 phi equivalence classes
+Culled Empty Block (label) main::@6
+Culled Empty Block (label) main::@5
+Block Sequence Planned @begin @1 @end main main::@1 main::@2 main::@return 
+Adding NOP phi() at start of @begin
+Adding NOP phi() at start of @1
+Adding NOP phi() at start of @end
+Adding NOP phi() at start of main
+Propagating live ranges...
+Propagating live ranges...
+Propagating live ranges...
+
+FINAL CONTROL FLOW GRAPH
+@begin: scope:[]  from
+  [0] phi() [ ] ( )
+  to:@1
+@1: scope:[]  from @begin
+  [1] phi() [ ] ( )
+  [2] call main param-assignment [ ] ( )
+  to:@end
+@end: scope:[]  from @1
+  [3] phi() [ ] ( )
+main: scope:[main]  from @1
+  [4] phi() [ ] ( main:2 [ ] )
+  to:main::@1
+main::@1: scope:[main]  from main main::@1
+  [5] (byte) main::i#4 ← phi( main/(byte/signed byte/word/signed word) 0 main::@1/(byte) main::i#1 ) [ main::i#4 ] ( main:2 [ main::i#4 ] )
+  [6] *((const byte[256]) bs#0 + (byte) main::i#4) ← (byte) main::i#4 [ main::i#4 ] ( main:2 [ main::i#4 ] )
+  [7] (byte) main::i#1 ← ++ (byte) main::i#4 [ main::i#1 ] ( main:2 [ main::i#1 ] )
+  [8] if((byte) main::i#1!=(byte/signed byte/word/signed word) 0) goto main::@1 [ main::i#1 ] ( main:2 [ main::i#1 ] )
+  to:main::@2
+main::@2: scope:[main]  from main::@1 main::@2
+  [9] (byte) main::i#5 ← phi( main::@2/(byte) main::i#3 main::@1/(byte/signed byte/word/signed word) 0 ) [ main::j#2 main::i#5 ] ( main:2 [ main::j#2 main::i#5 ] )
+  [9] (byte) main::j#2 ← phi( main::@2/(byte) main::j#1 main::@1/(byte/word/signed word) 255 ) [ main::j#2 main::i#5 ] ( main:2 [ main::j#2 main::i#5 ] )
+  [10] *((const byte[256]) main::cs#0 + (byte) main::i#5) ← *((const byte[256]) bs#0 + (byte) main::j#2) [ main::j#2 main::i#5 ] ( main:2 [ main::j#2 main::i#5 ] )
+  [11] (byte) main::j#1 ← -- (byte) main::j#2 [ main::i#5 main::j#1 ] ( main:2 [ main::i#5 main::j#1 ] )
+  [12] (byte) main::i#3 ← ++ (byte) main::i#5 [ main::j#1 main::i#3 ] ( main:2 [ main::j#1 main::i#3 ] )
+  [13] if((byte) main::i#3!=(byte/signed byte/word/signed word) 0) goto main::@2 [ main::j#1 main::i#3 ] ( main:2 [ main::j#1 main::i#3 ] )
+  to:main::@return
+main::@return: scope:[main]  from main::@2
+  [14] return  [ ] ( main:2 [ ] )
+  to:@return
+
+DOMINATORS
+@begin dominated by  @begin 
+@1 dominated by  @1 @begin 
+@end dominated by  @1 @begin @end 
+main dominated by  @1 @begin main 
+main::@1 dominated by  @1 @begin main::@1 main 
+main::@2 dominated by  @1 @begin main::@1 main::@2 main 
+main::@return dominated by  main::@return @1 @begin main::@1 main::@2 main 
+
+NATURAL LOOPS
+Found back edge: Loop head: main::@1 tails: main::@1 blocks: null
+Found back edge: Loop head: main::@2 tails: main::@2 blocks: null
+Populated: Loop head: main::@1 tails: main::@1 blocks: main::@1 
+Populated: Loop head: main::@2 tails: main::@2 blocks: main::@2 
+Loop head: main::@1 tails: main::@1 blocks: main::@1 
+Loop head: main::@2 tails: main::@2 blocks: main::@2 
+
+NATURAL LOOPS WITH DEPTH
+Found 0 loops in scope []
+Found 2 loops in scope [main]
+  Loop head: main::@1 tails: main::@1 blocks: main::@1 
+  Loop head: main::@2 tails: main::@2 blocks: main::@2 
+Loop head: main::@1 tails: main::@1 blocks: main::@1  depth: 1
+Loop head: main::@2 tails: main::@2 blocks: main::@2  depth: 1
+
+
+VARIABLE REGISTER WEIGHTS
+(byte[256]) bs
+(void()) main()
+(byte[256]) main::cs
+(byte) main::i
+(byte) main::i#1 16.5
+(byte) main::i#3 16.5
+(byte) main::i#4 22.0
+(byte) main::i#5 11.0
+(byte) main::j
+(byte) main::j#1 7.333333333333333
+(byte) main::j#2 16.5
+
+Initial phi equivalence classes
+[ main::i#4 main::i#1 ]
+[ main::j#2 main::j#1 ]
+[ main::i#5 main::i#3 ]
+Complete equivalence classes
+[ main::i#4 main::i#1 ]
+[ main::j#2 main::j#1 ]
+[ main::i#5 main::i#3 ]
+Allocated zp ZP_BYTE:2 [ main::i#4 main::i#1 ]
+Allocated zp ZP_BYTE:3 [ main::j#2 main::j#1 ]
+Allocated zp ZP_BYTE:4 [ main::i#5 main::i#3 ]
+
+INITIAL ASM
+//SEG0 Basic Upstart
+.pc = $801 "Basic"
+:BasicUpstart(main)
+.pc = $80d "Program"
+//SEG1 Global Constants & labels
+//SEG2 @begin
+bbegin:
+//SEG3 [1] phi from @begin to @1 [phi:@begin->@1]
+b1_from_bbegin:
+  jmp b1
+//SEG4 @1
+b1:
+//SEG5 [2] call main param-assignment [ ] ( )
+//SEG6 [4] phi from @1 to main [phi:@1->main]
+main_from_b1:
+  jsr main
+//SEG7 [3] phi from @1 to @end [phi:@1->@end]
+bend_from_b1:
+  jmp bend
+//SEG8 @end
+bend:
+//SEG9 main
+main: {
+    .label i = 2
+    .label j = 3
+    .label i_3 = 4
+    .label i_5 = 4
+  //SEG10 [5] phi from main to main::@1 [phi:main->main::@1]
+  b1_from_main:
+  //SEG11 [5] phi (byte) main::i#4 = (byte/signed byte/word/signed word) 0 [phi:main->main::@1#0] -- vbuz1=vbuc1 
+    lda #0
+    sta i
+    jmp b1
+  //SEG12 [5] phi from main::@1 to main::@1 [phi:main::@1->main::@1]
+  b1_from_b1:
+  //SEG13 [5] phi (byte) main::i#4 = (byte) main::i#1 [phi:main::@1->main::@1#0] -- register_copy 
+    jmp b1
+  //SEG14 main::@1
+  b1:
+  //SEG15 [6] *((const byte[256]) bs#0 + (byte) main::i#4) ← (byte) main::i#4 [ main::i#4 ] ( main:2 [ main::i#4 ] ) -- pbuc1_derefidx_vbuz1=vbuz1 
+    ldx i
+    txa
+    sta bs,x
+  //SEG16 [7] (byte) main::i#1 ← ++ (byte) main::i#4 [ main::i#1 ] ( main:2 [ main::i#1 ] ) -- vbuz1=_inc_vbuz1 
+    inc i
+  //SEG17 [8] if((byte) main::i#1!=(byte/signed byte/word/signed word) 0) goto main::@1 [ main::i#1 ] ( main:2 [ main::i#1 ] ) -- vbuz1_neq_0_then_la1 
+    lda i
+    bne b1_from_b1
+  //SEG18 [9] phi from main::@1 to main::@2 [phi:main::@1->main::@2]
+  b2_from_b1:
+  //SEG19 [9] phi (byte) main::i#5 = (byte/signed byte/word/signed word) 0 [phi:main::@1->main::@2#0] -- vbuz1=vbuc1 
+    lda #0
+    sta i_5
+  //SEG20 [9] phi (byte) main::j#2 = (byte/word/signed word) 255 [phi:main::@1->main::@2#1] -- vbuz1=vbuc1 
+    lda #$ff
+    sta j
+    jmp b2
+  //SEG21 [9] phi from main::@2 to main::@2 [phi:main::@2->main::@2]
+  b2_from_b2:
+  //SEG22 [9] phi (byte) main::i#5 = (byte) main::i#3 [phi:main::@2->main::@2#0] -- register_copy 
+  //SEG23 [9] phi (byte) main::j#2 = (byte) main::j#1 [phi:main::@2->main::@2#1] -- register_copy 
+    jmp b2
+  //SEG24 main::@2
+  b2:
+  //SEG25 [10] *((const byte[256]) main::cs#0 + (byte) main::i#5) ← *((const byte[256]) bs#0 + (byte) main::j#2) [ main::j#2 main::i#5 ] ( main:2 [ main::j#2 main::i#5 ] ) -- pbuc1_derefidx_vbuz1=pbuc2_derefidx_vbuz2 
+    ldx j
+    lda bs,x
+    ldx i_5
+    sta cs,x
+  //SEG26 [11] (byte) main::j#1 ← -- (byte) main::j#2 [ main::i#5 main::j#1 ] ( main:2 [ main::i#5 main::j#1 ] ) -- vbuz1=_dec_vbuz1 
+    dec j
+  //SEG27 [12] (byte) main::i#3 ← ++ (byte) main::i#5 [ main::j#1 main::i#3 ] ( main:2 [ main::j#1 main::i#3 ] ) -- vbuz1=_inc_vbuz1 
+    inc i_3
+  //SEG28 [13] if((byte) main::i#3!=(byte/signed byte/word/signed word) 0) goto main::@2 [ main::j#1 main::i#3 ] ( main:2 [ main::j#1 main::i#3 ] ) -- vbuz1_neq_0_then_la1 
+    lda i_3
+    bne b2_from_b2
+    jmp breturn
+  //SEG29 main::@return
+  breturn:
+  //SEG30 [14] return  [ ] ( main:2 [ ] )
+    rts
+    .align $100
+    cs: .fill $100, 0
+}
+  .align $100
+  bs: .fill $100, 0
+
+REGISTER UPLIFT POTENTIAL REGISTERS
+Statement [10] *((const byte[256]) main::cs#0 + (byte) main::i#5) ← *((const byte[256]) bs#0 + (byte) main::j#2) [ main::j#2 main::i#5 ] ( main:2 [ main::j#2 main::i#5 ] ) always clobbers reg byte a 
+Removing always clobbered register reg byte a as potential for zp ZP_BYTE:3 [ main::j#2 main::j#1 ]
+Removing always clobbered register reg byte a as potential for zp ZP_BYTE:4 [ main::i#5 main::i#3 ]
+Statement [10] *((const byte[256]) main::cs#0 + (byte) main::i#5) ← *((const byte[256]) bs#0 + (byte) main::j#2) [ main::j#2 main::i#5 ] ( main:2 [ main::j#2 main::i#5 ] ) always clobbers reg byte a 
+Potential registers zp ZP_BYTE:2 [ main::i#4 main::i#1 ] : zp ZP_BYTE:2 , reg byte a , reg byte x , reg byte y , 
+Potential registers zp ZP_BYTE:3 [ main::j#2 main::j#1 ] : zp ZP_BYTE:3 , reg byte x , reg byte y , 
+Potential registers zp ZP_BYTE:4 [ main::i#5 main::i#3 ] : zp ZP_BYTE:4 , reg byte x , reg byte y , 
+
+REGISTER UPLIFT SCOPES
+Uplift Scope [main] 38.5: zp ZP_BYTE:2 [ main::i#4 main::i#1 ] 27.5: zp ZP_BYTE:4 [ main::i#5 main::i#3 ] 23.83: zp ZP_BYTE:3 [ main::j#2 main::j#1 ] 
+Uplift Scope [] 
+
+Uplifting [main] best 543 combination reg byte x [ main::i#4 main::i#1 ] reg byte y [ main::i#5 main::i#3 ] reg byte x [ main::j#2 main::j#1 ] 
+Uplifting [] best 543 combination 
+
+ASSEMBLER BEFORE OPTIMIZATION
+//SEG0 Basic Upstart
+.pc = $801 "Basic"
+:BasicUpstart(main)
+.pc = $80d "Program"
+//SEG1 Global Constants & labels
+//SEG2 @begin
+bbegin:
+//SEG3 [1] phi from @begin to @1 [phi:@begin->@1]
+b1_from_bbegin:
+  jmp b1
+//SEG4 @1
+b1:
+//SEG5 [2] call main param-assignment [ ] ( )
+//SEG6 [4] phi from @1 to main [phi:@1->main]
+main_from_b1:
+  jsr main
+//SEG7 [3] phi from @1 to @end [phi:@1->@end]
+bend_from_b1:
+  jmp bend
+//SEG8 @end
+bend:
+//SEG9 main
+main: {
+  //SEG10 [5] phi from main to main::@1 [phi:main->main::@1]
+  b1_from_main:
+  //SEG11 [5] phi (byte) main::i#4 = (byte/signed byte/word/signed word) 0 [phi:main->main::@1#0] -- vbuxx=vbuc1 
+    ldx #0
+    jmp b1
+  //SEG12 [5] phi from main::@1 to main::@1 [phi:main::@1->main::@1]
+  b1_from_b1:
+  //SEG13 [5] phi (byte) main::i#4 = (byte) main::i#1 [phi:main::@1->main::@1#0] -- register_copy 
+    jmp b1
+  //SEG14 main::@1
+  b1:
+  //SEG15 [6] *((const byte[256]) bs#0 + (byte) main::i#4) ← (byte) main::i#4 [ main::i#4 ] ( main:2 [ main::i#4 ] ) -- pbuc1_derefidx_vbuxx=vbuxx 
+    txa
+    sta bs,x
+  //SEG16 [7] (byte) main::i#1 ← ++ (byte) main::i#4 [ main::i#1 ] ( main:2 [ main::i#1 ] ) -- vbuxx=_inc_vbuxx 
+    inx
+  //SEG17 [8] if((byte) main::i#1!=(byte/signed byte/word/signed word) 0) goto main::@1 [ main::i#1 ] ( main:2 [ main::i#1 ] ) -- vbuxx_neq_0_then_la1 
+    cpx #0
+    bne b1_from_b1
+  //SEG18 [9] phi from main::@1 to main::@2 [phi:main::@1->main::@2]
+  b2_from_b1:
+  //SEG19 [9] phi (byte) main::i#5 = (byte/signed byte/word/signed word) 0 [phi:main::@1->main::@2#0] -- vbuyy=vbuc1 
+    ldy #0
+  //SEG20 [9] phi (byte) main::j#2 = (byte/word/signed word) 255 [phi:main::@1->main::@2#1] -- vbuxx=vbuc1 
+    ldx #$ff
+    jmp b2
+  //SEG21 [9] phi from main::@2 to main::@2 [phi:main::@2->main::@2]
+  b2_from_b2:
+  //SEG22 [9] phi (byte) main::i#5 = (byte) main::i#3 [phi:main::@2->main::@2#0] -- register_copy 
+  //SEG23 [9] phi (byte) main::j#2 = (byte) main::j#1 [phi:main::@2->main::@2#1] -- register_copy 
+    jmp b2
+  //SEG24 main::@2
+  b2:
+  //SEG25 [10] *((const byte[256]) main::cs#0 + (byte) main::i#5) ← *((const byte[256]) bs#0 + (byte) main::j#2) [ main::j#2 main::i#5 ] ( main:2 [ main::j#2 main::i#5 ] ) -- pbuc1_derefidx_vbuyy=pbuc2_derefidx_vbuxx 
+    lda bs,x
+    sta cs,y
+  //SEG26 [11] (byte) main::j#1 ← -- (byte) main::j#2 [ main::i#5 main::j#1 ] ( main:2 [ main::i#5 main::j#1 ] ) -- vbuxx=_dec_vbuxx 
+    dex
+  //SEG27 [12] (byte) main::i#3 ← ++ (byte) main::i#5 [ main::j#1 main::i#3 ] ( main:2 [ main::j#1 main::i#3 ] ) -- vbuyy=_inc_vbuyy 
+    iny
+  //SEG28 [13] if((byte) main::i#3!=(byte/signed byte/word/signed word) 0) goto main::@2 [ main::j#1 main::i#3 ] ( main:2 [ main::j#1 main::i#3 ] ) -- vbuyy_neq_0_then_la1 
+    cpy #0
+    bne b2_from_b2
+    jmp breturn
+  //SEG29 main::@return
+  breturn:
+  //SEG30 [14] return  [ ] ( main:2 [ ] )
+    rts
+    .align $100
+    cs: .fill $100, 0
+}
+  .align $100
+  bs: .fill $100, 0
+
+ASSEMBLER OPTIMIZATIONS
+Removing instruction jmp b1
+Removing instruction jmp bend
+Removing instruction jmp b1
+Removing instruction jmp b2
+Removing instruction jmp breturn
+Succesful ASM optimization Pass5NextJumpElimination
+Replacing label b1_from_b1 with b1
+Replacing label b2_from_b2 with b2
+Removing instruction bbegin:
+Removing instruction b1_from_bbegin:
+Removing instruction main_from_b1:
+Removing instruction bend_from_b1:
+Removing instruction b1_from_b1:
+Removing instruction b2_from_b2:
+Succesful ASM optimization Pass5RedundantLabelElimination
+Removing instruction b1:
+Removing instruction bend:
+Removing instruction b1_from_main:
+Removing instruction b2_from_b1:
+Removing instruction breturn:
+Succesful ASM optimization Pass5UnusedLabelElimination
+Removing instruction jmp b1
+Removing instruction jmp b2
+Succesful ASM optimization Pass5NextJumpElimination
+
+FINAL SYMBOL TABLE
+(label) @1
+(label) @begin
+(label) @end
+(byte[256]) bs
+(const byte[256]) bs#0 bs = { fill( 256, 0) }
+(void()) main()
+(label) main::@1
+(label) main::@2
+(label) main::@return
+(byte[256]) main::cs
+(const byte[256]) main::cs#0 cs = { fill( 256, 0) }
+(byte) main::i
+(byte) main::i#1 reg byte x 16.5
+(byte) main::i#3 reg byte y 16.5
+(byte) main::i#4 reg byte x 22.0
+(byte) main::i#5 reg byte y 11.0
+(byte) main::j
+(byte) main::j#1 reg byte x 7.333333333333333
+(byte) main::j#2 reg byte x 16.5
+
+reg byte x [ main::i#4 main::i#1 ]
+reg byte x [ main::j#2 main::j#1 ]
+reg byte y [ main::i#5 main::i#3 ]
+
+
+FINAL ASSEMBLER
+//SEG0 Basic Upstart
+.pc = $801 "Basic"
+:BasicUpstart(main)
+.pc = $80d "Program"
+//SEG1 Global Constants & labels
+//SEG2 @begin
+//SEG3 [1] phi from @begin to @1 [phi:@begin->@1]
+//SEG4 @1
+//SEG5 [2] call main param-assignment [ ] ( )
+//SEG6 [4] phi from @1 to main [phi:@1->main]
+  jsr main
+//SEG7 [3] phi from @1 to @end [phi:@1->@end]
+//SEG8 @end
+//SEG9 main
+main: {
+  //SEG10 [5] phi from main to main::@1 [phi:main->main::@1]
+  //SEG11 [5] phi (byte) main::i#4 = (byte/signed byte/word/signed word) 0 [phi:main->main::@1#0] -- vbuxx=vbuc1 
+    ldx #0
+  //SEG12 [5] phi from main::@1 to main::@1 [phi:main::@1->main::@1]
+  //SEG13 [5] phi (byte) main::i#4 = (byte) main::i#1 [phi:main::@1->main::@1#0] -- register_copy 
+  //SEG14 main::@1
+  b1:
+  //SEG15 [6] *((const byte[256]) bs#0 + (byte) main::i#4) ← (byte) main::i#4 [ main::i#4 ] ( main:2 [ main::i#4 ] ) -- pbuc1_derefidx_vbuxx=vbuxx 
+    txa
+    sta bs,x
+  //SEG16 [7] (byte) main::i#1 ← ++ (byte) main::i#4 [ main::i#1 ] ( main:2 [ main::i#1 ] ) -- vbuxx=_inc_vbuxx 
+    inx
+  //SEG17 [8] if((byte) main::i#1!=(byte/signed byte/word/signed word) 0) goto main::@1 [ main::i#1 ] ( main:2 [ main::i#1 ] ) -- vbuxx_neq_0_then_la1 
+    cpx #0
+    bne b1
+  //SEG18 [9] phi from main::@1 to main::@2 [phi:main::@1->main::@2]
+  //SEG19 [9] phi (byte) main::i#5 = (byte/signed byte/word/signed word) 0 [phi:main::@1->main::@2#0] -- vbuyy=vbuc1 
+    ldy #0
+  //SEG20 [9] phi (byte) main::j#2 = (byte/word/signed word) 255 [phi:main::@1->main::@2#1] -- vbuxx=vbuc1 
+    ldx #$ff
+  //SEG21 [9] phi from main::@2 to main::@2 [phi:main::@2->main::@2]
+  //SEG22 [9] phi (byte) main::i#5 = (byte) main::i#3 [phi:main::@2->main::@2#0] -- register_copy 
+  //SEG23 [9] phi (byte) main::j#2 = (byte) main::j#1 [phi:main::@2->main::@2#1] -- register_copy 
+  //SEG24 main::@2
+  b2:
+  //SEG25 [10] *((const byte[256]) main::cs#0 + (byte) main::i#5) ← *((const byte[256]) bs#0 + (byte) main::j#2) [ main::j#2 main::i#5 ] ( main:2 [ main::j#2 main::i#5 ] ) -- pbuc1_derefidx_vbuyy=pbuc2_derefidx_vbuxx 
+    lda bs,x
+    sta cs,y
+  //SEG26 [11] (byte) main::j#1 ← -- (byte) main::j#2 [ main::i#5 main::j#1 ] ( main:2 [ main::i#5 main::j#1 ] ) -- vbuxx=_dec_vbuxx 
+    dex
+  //SEG27 [12] (byte) main::i#3 ← ++ (byte) main::i#5 [ main::j#1 main::i#3 ] ( main:2 [ main::j#1 main::i#3 ] ) -- vbuyy=_inc_vbuyy 
+    iny
+  //SEG28 [13] if((byte) main::i#3!=(byte/signed byte/word/signed word) 0) goto main::@2 [ main::j#1 main::i#3 ] ( main:2 [ main::j#1 main::i#3 ] ) -- vbuyy_neq_0_then_la1 
+    cpy #0
+    bne b2
+  //SEG29 main::@return
+  //SEG30 [14] return  [ ] ( main:2 [ ] )
+    rts
+    .align $100
+    cs: .fill $100, 0
+}
+  .align $100
+  bs: .fill $100, 0
+

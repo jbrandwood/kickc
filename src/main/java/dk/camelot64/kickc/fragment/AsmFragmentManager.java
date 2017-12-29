@@ -20,7 +20,7 @@ import java.util.regex.Pattern;
  */
 public class AsmFragmentManager {
 
-   static boolean verboseFragmentLog = true;
+   static boolean verboseFragmentLog = false;
 
    /**
     * Cache for fragment files. Maps signature to the parsed file.

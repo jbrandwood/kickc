@@ -1,3 +1,4 @@
+PARSING /Users/jespergravgaard/c64/tmp/kickc/src/test/java/dk/camelot64/kickc/test/inline-string.kc
 // Inline Strings in method calls are automatically converted to local constant variables byte[] st = "..."; - generating an ASM .text).
 
 byte[] msg1 = "message 1 @";
@@ -17,7 +18,8 @@ void print(byte* msg) {
 
 Adding pre/post-modifier (byte*) screen ← ++ (byte*) screen
 Adding pre/post-modifier (byte*) print::msg ← ++ (byte*) print::msg
-PROGRAM
+
+STATEMENTS
   (byte[]) msg1 ← (string) "message 1 @"
 proc (void()) main()
   (byte[]) main::msg2 ← (string) "message 2 @"
@@ -115,167 +117,15 @@ Removing empty block print::@4
 Removing empty block print::@3
 Removing empty block print::@5
 Removing empty block print::@6
-CONTROL FLOW GRAPH
-@begin: scope:[]  from
-  (byte[]) msg1 ← (const string) $0
-  to:@1
-main: scope:[main]  from
-  (byte[]) main::msg2 ← (const string) main::$3
-  call print (byte[]) msg1 
-  call print (byte[]) main::msg2 
-  call print (const string) main::msg 
-  to:main::@return
-main::@return: scope:[main]  from main
-  return 
-  to:@return
-@1: scope:[]  from @begin
-  (byte*) screen ← ((byte*)) (word/signed word) 1024
-  to:@2
-print: scope:[print]  from
-  to:print::@1
-print::@1: scope:[print]  from print print::@2
-  (boolean~) print::$0 ← *((byte*) print::msg) != (byte) '@'
-  if((boolean~) print::$0) goto print::@2
-  to:print::@return
-print::@2: scope:[print]  from print::@1
-  *((byte*) screen) ← *((byte*) print::msg)
-  (byte*) screen ← ++ (byte*) screen
-  (byte*) print::msg ← ++ (byte*) print::msg
-  to:print::@1
-print::@return: scope:[print]  from print::@1
-  return 
-  to:@return
-@2: scope:[]  from @1
-  call main 
-  to:@end
-@end: scope:[]  from @2
-
 PROCEDURE MODIFY VARIABLE ANALYSIS
 main modifies screen
 print modifies screen
 
-CONTROL FLOW GRAPH WITH ASSIGNMENT CALL
-@begin: scope:[]  from
-  (byte[]) msg1 ← (const string) $0
-  to:@1
-main: scope:[main]  from @2
-  (byte[]) main::msg2 ← (const string) main::$3
-  (byte*) print::msg ← (byte[]) msg1
-  call print param-assignment
-  to:main::@1
-main::@1: scope:[main]  from main
-  (byte*) screen ← (byte*) screen
-  (byte*) print::msg ← (byte[]) main::msg2
-  call print param-assignment
-  to:main::@2
-main::@2: scope:[main]  from main::@1
-  (byte*) screen ← (byte*) screen
-  (byte*) print::msg ← (const string) main::msg
-  call print param-assignment
-  to:main::@3
-main::@3: scope:[main]  from main::@2
-  (byte*) screen ← (byte*) screen
-  to:main::@return
-main::@return: scope:[main]  from main::@3
-  (byte*) screen ← (byte*) screen
-  return 
-  to:@return
-@1: scope:[]  from @begin
-  (byte*) screen ← ((byte*)) (word/signed word) 1024
-  to:@2
-print: scope:[print]  from main main::@1 main::@2
-  to:print::@1
-print::@1: scope:[print]  from print print::@2
-  (boolean~) print::$0 ← *((byte*) print::msg) != (byte) '@'
-  if((boolean~) print::$0) goto print::@2
-  to:print::@return
-print::@2: scope:[print]  from print::@1
-  *((byte*) screen) ← *((byte*) print::msg)
-  (byte*) screen ← ++ (byte*) screen
-  (byte*) print::msg ← ++ (byte*) print::msg
-  to:print::@1
-print::@return: scope:[print]  from print::@1
-  (byte*) screen ← (byte*) screen
-  return 
-  to:@return
-@2: scope:[]  from @1
-  call main param-assignment
-  to:@3
-@3: scope:[]  from @2
-  (byte*) screen ← (byte*) screen
-  to:@end
-@end: scope:[]  from @3
+Completing Phi functions...
+Completing Phi functions...
+Completing Phi functions...
 
-Completing Phi functions...
-Completing Phi functions...
-Completing Phi functions...
-CONTROL FLOW GRAPH SSA
-@begin: scope:[]  from
-  (byte[]) msg1#0 ← (const string) $0
-  to:@1
-main: scope:[main]  from @2
-  (byte*) screen#15 ← phi( @2/(byte*) screen#17 )
-  (byte[]) main::msg2#0 ← (const string) main::$3
-  (byte*) print::msg#0 ← (byte[]) msg1#0
-  call print param-assignment
-  to:main::@1
-main::@1: scope:[main]  from main
-  (byte*) screen#8 ← phi( main/(byte*) screen#15 )
-  (byte*) screen#0 ← (byte*) screen#8
-  (byte*) print::msg#1 ← (byte[]) main::msg2#0
-  call print param-assignment
-  to:main::@2
-main::@2: scope:[main]  from main::@1
-  (byte*) screen#9 ← phi( main::@1/(byte*) screen#0 )
-  (byte*) screen#1 ← (byte*) screen#9
-  (byte*) print::msg#2 ← (const string) main::msg
-  call print param-assignment
-  to:main::@3
-main::@3: scope:[main]  from main::@2
-  (byte*) screen#10 ← phi( main::@2/(byte*) screen#1 )
-  (byte*) screen#2 ← (byte*) screen#10
-  to:main::@return
-main::@return: scope:[main]  from main::@3
-  (byte*) screen#11 ← phi( main::@3/(byte*) screen#2 )
-  (byte*) screen#3 ← (byte*) screen#11
-  return 
-  to:@return
-@1: scope:[]  from @begin
-  (byte*) screen#4 ← ((byte*)) (word/signed word) 1024
-  to:@2
-print: scope:[print]  from main main::@1 main::@2
-  (byte*) screen#18 ← phi( main/(byte*) screen#15 main::@1/(byte*) screen#0 main::@2/(byte*) screen#1 )
-  (byte*) print::msg#6 ← phi( main/(byte*) print::msg#0 main::@1/(byte*) print::msg#1 main::@2/(byte*) print::msg#2 )
-  to:print::@1
-print::@1: scope:[print]  from print print::@2
-  (byte*) screen#16 ← phi( print/(byte*) screen#18 print::@2/(byte*) screen#5 )
-  (byte*) print::msg#4 ← phi( print/(byte*) print::msg#6 print::@2/(byte*) print::msg#3 )
-  (boolean~) print::$0 ← *((byte*) print::msg#4) != (byte) '@'
-  if((boolean~) print::$0) goto print::@2
-  to:print::@return
-print::@2: scope:[print]  from print::@1
-  (byte*) screen#12 ← phi( print::@1/(byte*) screen#16 )
-  (byte*) print::msg#5 ← phi( print::@1/(byte*) print::msg#4 )
-  *((byte*) screen#12) ← *((byte*) print::msg#5)
-  (byte*) screen#5 ← ++ (byte*) screen#12
-  (byte*) print::msg#3 ← ++ (byte*) print::msg#5
-  to:print::@1
-print::@return: scope:[print]  from print::@1
-  (byte*) screen#13 ← phi( print::@1/(byte*) screen#16 )
-  (byte*) screen#6 ← (byte*) screen#13
-  return 
-  to:@return
-@2: scope:[]  from @1
-  (byte*) screen#17 ← phi( @1/(byte*) screen#4 )
-  call main param-assignment
-  to:@3
-@3: scope:[]  from @2
-  (byte*) screen#14 ← phi( @2/(byte*) screen#17 )
-  (byte*) screen#7 ← (byte*) screen#14
-  to:@end
-@end: scope:[]  from @3
-
-CONTROL FLOW GRAPH WITH ASSIGNMENT CALL & RETURN
+CONTROL FLOW GRAPH SSA WITH ASSIGNMENT CALL & RETURN
 @begin: scope:[]  from
   (byte[]) msg1#0 ← (const string) $0
   to:@1
@@ -341,7 +191,7 @@ print::@return: scope:[print]  from print::@1
   to:@end
 @end: scope:[]  from @3
 
-INITIAL SSA SYMBOL TABLE
+SYMBOL TABLE SSA
 (const string) $0 = (string) "message 1 @"
 (label) @1
 (label) @2
@@ -393,6 +243,7 @@ INITIAL SSA SYMBOL TABLE
 (byte*) screen#8
 (byte*) screen#9
 
+OPTIMIZING CONTROL FLOW GRAPH
 Not aliassing across scopes: screen#15 screen#17
 Not aliassing across scopes: print::msg#0 msg1#0
 Not aliassing across scopes: screen#8 screen#6
@@ -410,61 +261,6 @@ Alias (byte*) screen#12 = (byte*) screen#16 (byte*) screen#13 (byte*) screen#6
 Alias (byte*) screen#17 = (byte*) screen#4 
 Alias (byte*) screen#14 = (byte*) screen#7 
 Succesful SSA optimization Pass2AliasElimination
-CONTROL FLOW GRAPH
-@begin: scope:[]  from
-  (byte[]) msg1#0 ← (const string) $0
-  to:@1
-main: scope:[main]  from @2
-  (byte*) screen#15 ← phi( @2/(byte*) screen#17 )
-  (byte[]) main::msg2#0 ← (const string) main::$3
-  (byte*) print::msg#0 ← (byte[]) msg1#0
-  call print param-assignment
-  to:main::@1
-main::@1: scope:[main]  from main
-  (byte*) screen#0 ← phi( main/(byte*) screen#12 )
-  (byte*) print::msg#1 ← (byte[]) main::msg2#0
-  call print param-assignment
-  to:main::@2
-main::@2: scope:[main]  from main::@1
-  (byte*) screen#1 ← phi( main::@1/(byte*) screen#12 )
-  (byte*) print::msg#2 ← (const string) main::msg
-  call print param-assignment
-  to:main::@3
-main::@3: scope:[main]  from main::@2
-  (byte*) screen#10 ← phi( main::@2/(byte*) screen#12 )
-  to:main::@return
-main::@return: scope:[main]  from main::@3
-  return 
-  to:@return
-@1: scope:[]  from @begin
-  (byte*) screen#17 ← ((byte*)) (word/signed word) 1024
-  to:@2
-print: scope:[print]  from main main::@1 main::@2
-  (byte*) screen#18 ← phi( main/(byte*) screen#15 main::@1/(byte*) screen#0 main::@2/(byte*) screen#1 )
-  (byte*) print::msg#6 ← phi( main/(byte*) print::msg#0 main::@1/(byte*) print::msg#1 main::@2/(byte*) print::msg#2 )
-  to:print::@1
-print::@1: scope:[print]  from print print::@2
-  (byte*) screen#12 ← phi( print/(byte*) screen#18 print::@2/(byte*) screen#5 )
-  (byte*) print::msg#4 ← phi( print/(byte*) print::msg#6 print::@2/(byte*) print::msg#3 )
-  (boolean~) print::$0 ← *((byte*) print::msg#4) != (byte) '@'
-  if((boolean~) print::$0) goto print::@2
-  to:print::@return
-print::@2: scope:[print]  from print::@1
-  *((byte*) screen#12) ← *((byte*) print::msg#4)
-  (byte*) screen#5 ← ++ (byte*) screen#12
-  (byte*) print::msg#3 ← ++ (byte*) print::msg#4
-  to:print::@1
-print::@return: scope:[print]  from print::@1
-  return 
-  to:@return
-@2: scope:[]  from @1
-  call main param-assignment
-  to:@3
-@3: scope:[]  from @2
-  (byte*) screen#14 ← phi( @2/(byte*) screen#10 )
-  to:@end
-@end: scope:[]  from @3
-
 Not aliassing across scopes: screen#15 screen#17
 Not aliassing across scopes: print::msg#0 msg1#0
 Not aliassing across scopes: screen#0 screen#12
@@ -480,244 +276,21 @@ Redundant Phi (byte*) screen#1 (byte*) screen#12
 Redundant Phi (byte*) screen#10 (byte*) screen#12
 Redundant Phi (byte*) screen#14 (byte*) screen#10
 Succesful SSA optimization Pass2RedundantPhiElimination
-CONTROL FLOW GRAPH
-@begin: scope:[]  from
-  (byte[]) msg1#0 ← (const string) $0
-  to:@1
-main: scope:[main]  from @2
-  (byte[]) main::msg2#0 ← (const string) main::$3
-  (byte*) print::msg#0 ← (byte[]) msg1#0
-  call print param-assignment
-  to:main::@1
-main::@1: scope:[main]  from main
-  (byte*) print::msg#1 ← (byte[]) main::msg2#0
-  call print param-assignment
-  to:main::@2
-main::@2: scope:[main]  from main::@1
-  (byte*) print::msg#2 ← (const string) main::msg
-  call print param-assignment
-  to:main::@3
-main::@3: scope:[main]  from main::@2
-  to:main::@return
-main::@return: scope:[main]  from main::@3
-  return 
-  to:@return
-@1: scope:[]  from @begin
-  (byte*) screen#17 ← ((byte*)) (word/signed word) 1024
-  to:@2
-print: scope:[print]  from main main::@1 main::@2
-  (byte*) screen#18 ← phi( main/(byte*) screen#17 main::@1/(byte*) screen#12 main::@2/(byte*) screen#12 )
-  (byte*) print::msg#6 ← phi( main/(byte*) print::msg#0 main::@1/(byte*) print::msg#1 main::@2/(byte*) print::msg#2 )
-  to:print::@1
-print::@1: scope:[print]  from print print::@2
-  (byte*) screen#12 ← phi( print/(byte*) screen#18 print::@2/(byte*) screen#5 )
-  (byte*) print::msg#4 ← phi( print/(byte*) print::msg#6 print::@2/(byte*) print::msg#3 )
-  (boolean~) print::$0 ← *((byte*) print::msg#4) != (byte) '@'
-  if((boolean~) print::$0) goto print::@2
-  to:print::@return
-print::@2: scope:[print]  from print::@1
-  *((byte*) screen#12) ← *((byte*) print::msg#4)
-  (byte*) screen#5 ← ++ (byte*) screen#12
-  (byte*) print::msg#3 ← ++ (byte*) print::msg#4
-  to:print::@1
-print::@return: scope:[print]  from print::@1
-  return 
-  to:@return
-@2: scope:[]  from @1
-  call main param-assignment
-  to:@3
-@3: scope:[]  from @2
-  to:@end
-@end: scope:[]  from @3
-
 Simple Condition (boolean~) print::$0 if(*((byte*) print::msg#4)!=(byte) '@') goto print::@2
 Succesful SSA optimization Pass2ConditionalJumpSimplification
-CONTROL FLOW GRAPH
-@begin: scope:[]  from
-  (byte[]) msg1#0 ← (const string) $0
-  to:@1
-main: scope:[main]  from @2
-  (byte[]) main::msg2#0 ← (const string) main::$3
-  (byte*) print::msg#0 ← (byte[]) msg1#0
-  call print param-assignment
-  to:main::@1
-main::@1: scope:[main]  from main
-  (byte*) print::msg#1 ← (byte[]) main::msg2#0
-  call print param-assignment
-  to:main::@2
-main::@2: scope:[main]  from main::@1
-  (byte*) print::msg#2 ← (const string) main::msg
-  call print param-assignment
-  to:main::@3
-main::@3: scope:[main]  from main::@2
-  to:main::@return
-main::@return: scope:[main]  from main::@3
-  return 
-  to:@return
-@1: scope:[]  from @begin
-  (byte*) screen#17 ← ((byte*)) (word/signed word) 1024
-  to:@2
-print: scope:[print]  from main main::@1 main::@2
-  (byte*) screen#18 ← phi( main/(byte*) screen#17 main::@1/(byte*) screen#12 main::@2/(byte*) screen#12 )
-  (byte*) print::msg#6 ← phi( main/(byte*) print::msg#0 main::@1/(byte*) print::msg#1 main::@2/(byte*) print::msg#2 )
-  to:print::@1
-print::@1: scope:[print]  from print print::@2
-  (byte*) screen#12 ← phi( print/(byte*) screen#18 print::@2/(byte*) screen#5 )
-  (byte*) print::msg#4 ← phi( print/(byte*) print::msg#6 print::@2/(byte*) print::msg#3 )
-  if(*((byte*) print::msg#4)!=(byte) '@') goto print::@2
-  to:print::@return
-print::@2: scope:[print]  from print::@1
-  *((byte*) screen#12) ← *((byte*) print::msg#4)
-  (byte*) screen#5 ← ++ (byte*) screen#12
-  (byte*) print::msg#3 ← ++ (byte*) print::msg#4
-  to:print::@1
-print::@return: scope:[print]  from print::@1
-  return 
-  to:@return
-@2: scope:[]  from @1
-  call main param-assignment
-  to:@3
-@3: scope:[]  from @2
-  to:@end
-@end: scope:[]  from @3
-
 Constant (const string) msg1#0 = $0
 Constant (const string) main::msg2#0 = main::$3
 Constant (const string) print::msg#2 = main::msg
 Constant (const byte*) screen#17 = ((byte*))1024
 Succesful SSA optimization Pass2ConstantIdentification
-CONTROL FLOW GRAPH
-@begin: scope:[]  from
-  to:@1
-main: scope:[main]  from @2
-  (byte*) print::msg#0 ← (const string) msg1#0
-  call print param-assignment
-  to:main::@1
-main::@1: scope:[main]  from main
-  (byte*) print::msg#1 ← (const string) main::msg2#0
-  call print param-assignment
-  to:main::@2
-main::@2: scope:[main]  from main::@1
-  call print param-assignment
-  to:main::@3
-main::@3: scope:[main]  from main::@2
-  to:main::@return
-main::@return: scope:[main]  from main::@3
-  return 
-  to:@return
-@1: scope:[]  from @begin
-  to:@2
-print: scope:[print]  from main main::@1 main::@2
-  (byte*) screen#18 ← phi( main/(const byte*) screen#17 main::@1/(byte*) screen#12 main::@2/(byte*) screen#12 )
-  (byte*) print::msg#6 ← phi( main/(byte*) print::msg#0 main::@1/(byte*) print::msg#1 main::@2/(const string) print::msg#2 )
-  to:print::@1
-print::@1: scope:[print]  from print print::@2
-  (byte*) screen#12 ← phi( print/(byte*) screen#18 print::@2/(byte*) screen#5 )
-  (byte*) print::msg#4 ← phi( print/(byte*) print::msg#6 print::@2/(byte*) print::msg#3 )
-  if(*((byte*) print::msg#4)!=(byte) '@') goto print::@2
-  to:print::@return
-print::@2: scope:[print]  from print::@1
-  *((byte*) screen#12) ← *((byte*) print::msg#4)
-  (byte*) screen#5 ← ++ (byte*) screen#12
-  (byte*) print::msg#3 ← ++ (byte*) print::msg#4
-  to:print::@1
-print::@return: scope:[print]  from print::@1
-  return 
-  to:@return
-@2: scope:[]  from @1
-  call main param-assignment
-  to:@3
-@3: scope:[]  from @2
-  to:@end
-@end: scope:[]  from @3
-
 Constant (const string) print::msg#0 = msg1#0
 Constant (const string) print::msg#1 = main::msg2#0
 Succesful SSA optimization Pass2ConstantIdentification
-CONTROL FLOW GRAPH
-@begin: scope:[]  from
-  to:@1
-main: scope:[main]  from @2
-  call print param-assignment
-  to:main::@1
-main::@1: scope:[main]  from main
-  call print param-assignment
-  to:main::@2
-main::@2: scope:[main]  from main::@1
-  call print param-assignment
-  to:main::@3
-main::@3: scope:[main]  from main::@2
-  to:main::@return
-main::@return: scope:[main]  from main::@3
-  return 
-  to:@return
-@1: scope:[]  from @begin
-  to:@2
-print: scope:[print]  from main main::@1 main::@2
-  (byte*) screen#18 ← phi( main/(const byte*) screen#17 main::@1/(byte*) screen#12 main::@2/(byte*) screen#12 )
-  (byte*) print::msg#6 ← phi( main/(const string) print::msg#0 main::@1/(const string) print::msg#1 main::@2/(const string) print::msg#2 )
-  to:print::@1
-print::@1: scope:[print]  from print print::@2
-  (byte*) screen#12 ← phi( print/(byte*) screen#18 print::@2/(byte*) screen#5 )
-  (byte*) print::msg#4 ← phi( print/(byte*) print::msg#6 print::@2/(byte*) print::msg#3 )
-  if(*((byte*) print::msg#4)!=(byte) '@') goto print::@2
-  to:print::@return
-print::@2: scope:[print]  from print::@1
-  *((byte*) screen#12) ← *((byte*) print::msg#4)
-  (byte*) screen#5 ← ++ (byte*) screen#12
-  (byte*) print::msg#3 ← ++ (byte*) print::msg#4
-  to:print::@1
-print::@return: scope:[print]  from print::@1
-  return 
-  to:@return
-@2: scope:[]  from @1
-  call main param-assignment
-  to:@3
-@3: scope:[]  from @2
-  to:@end
-@end: scope:[]  from @3
-
 Culled Empty Block (label) main::@3
 Culled Empty Block (label) @1
 Culled Empty Block (label) @3
 Succesful SSA optimization Pass2CullEmptyBlocks
-CONTROL FLOW GRAPH
-@begin: scope:[]  from
-  to:@2
-main: scope:[main]  from @2
-  call print param-assignment
-  to:main::@1
-main::@1: scope:[main]  from main
-  call print param-assignment
-  to:main::@2
-main::@2: scope:[main]  from main::@1
-  call print param-assignment
-  to:main::@return
-main::@return: scope:[main]  from main::@2
-  return 
-  to:@return
-print: scope:[print]  from main main::@1 main::@2
-  (byte*) screen#18 ← phi( main/(const byte*) screen#17 main::@1/(byte*) screen#12 main::@2/(byte*) screen#12 )
-  (byte*) print::msg#6 ← phi( main/(const string) print::msg#0 main::@1/(const string) print::msg#1 main::@2/(const string) print::msg#2 )
-  to:print::@1
-print::@1: scope:[print]  from print print::@2
-  (byte*) screen#12 ← phi( print/(byte*) screen#18 print::@2/(byte*) screen#5 )
-  (byte*) print::msg#4 ← phi( print/(byte*) print::msg#6 print::@2/(byte*) print::msg#3 )
-  if(*((byte*) print::msg#4)!=(byte) '@') goto print::@2
-  to:print::@return
-print::@2: scope:[print]  from print::@1
-  *((byte*) screen#12) ← *((byte*) print::msg#4)
-  (byte*) screen#5 ← ++ (byte*) screen#12
-  (byte*) print::msg#3 ← ++ (byte*) print::msg#4
-  to:print::@1
-print::@return: scope:[print]  from print::@1
-  return 
-  to:@return
-@2: scope:[]  from @begin
-  call main param-assignment
-  to:@end
-@end: scope:[]  from @2
-
+OPTIMIZING CONTROL FLOW GRAPH
 Inlining constant with var siblings (const string) print::msg#2
 Inlining constant with var siblings (const string) print::msg#2
 Inlining constant with var siblings (const string) print::msg#2
@@ -737,114 +310,8 @@ Constant inlined print::msg#1 = (const string) main::msg2#0
 Constant inlined print::msg#0 = (const string) msg1#0
 Constant inlined screen#17 = ((byte*))(word/signed word) 1024
 Succesful SSA optimization Pass2ConstantInlining
-CONTROL FLOW GRAPH
-@begin: scope:[]  from
-  to:@2
-main: scope:[main]  from @2
-  call print param-assignment
-  to:main::@1
-main::@1: scope:[main]  from main
-  call print param-assignment
-  to:main::@2
-main::@2: scope:[main]  from main::@1
-  call print param-assignment
-  to:main::@return
-main::@return: scope:[main]  from main::@2
-  return 
-  to:@return
-print: scope:[print]  from main main::@1 main::@2
-  (byte*) screen#18 ← phi( main/((byte*))(word/signed word) 1024 main::@1/(byte*) screen#12 main::@2/(byte*) screen#12 )
-  (byte*) print::msg#6 ← phi( main/(const string) msg1#0 main::@1/(const string) main::msg2#0 main::@2/(const string) main::msg )
-  to:print::@1
-print::@1: scope:[print]  from print print::@2
-  (byte*) screen#12 ← phi( print/(byte*) screen#18 print::@2/(byte*) screen#5 )
-  (byte*) print::msg#4 ← phi( print/(byte*) print::msg#6 print::@2/(byte*) print::msg#3 )
-  if(*((byte*) print::msg#4)!=(byte) '@') goto print::@2
-  to:print::@return
-print::@2: scope:[print]  from print::@1
-  *((byte*) screen#12) ← *((byte*) print::msg#4)
-  (byte*) screen#5 ← ++ (byte*) screen#12
-  (byte*) print::msg#3 ← ++ (byte*) print::msg#4
-  to:print::@1
-print::@return: scope:[print]  from print::@1
-  return 
-  to:@return
-@2: scope:[]  from @begin
-  call main param-assignment
-  to:@end
-@end: scope:[]  from @2
-
-FINAL SYMBOL TABLE
-(label) @2
-(label) @begin
-(label) @end
-(void()) main()
-(label) main::@1
-(label) main::@2
-(label) main::@return
-(const string) main::msg = (string) "message 3 @"
-(byte[]) main::msg2
-(const string) main::msg2#0 = (string) "message 2 @"
-(byte[]) msg1
-(const string) msg1#0 = (string) "message 1 @"
-(void()) print((byte*) print::msg)
-(label) print::@1
-(label) print::@2
-(label) print::@return
-(byte*) print::msg
-(byte*) print::msg#3
-(byte*) print::msg#4
-(byte*) print::msg#6
-(byte*) screen
-(byte*) screen#12
-(byte*) screen#18
-(byte*) screen#5
-
 Block Sequence Planned @begin @2 @end main main::@1 main::@2 main::@return print print::@1 print::@return print::@2 
 Block Sequence Planned @begin @2 @end main main::@1 main::@2 main::@return print print::@1 print::@return print::@2 
-CONTROL FLOW GRAPH - PHI LIFTED
-@begin: scope:[]  from
-  to:@2
-@2: scope:[]  from @begin
-  call main param-assignment
-  to:@end
-@end: scope:[]  from @2
-main: scope:[main]  from @2
-  call print param-assignment
-  to:main::@1
-main::@1: scope:[main]  from main
-  (byte*~) screen#19 ← (byte*) screen#12
-  call print param-assignment
-  to:main::@2
-main::@2: scope:[main]  from main::@1
-  (byte*~) screen#20 ← (byte*) screen#12
-  call print param-assignment
-  to:main::@return
-main::@return: scope:[main]  from main::@2
-  return 
-  to:@return
-print: scope:[print]  from main main::@1 main::@2
-  (byte*) screen#18 ← phi( main/((byte*))(word/signed word) 1024 main::@1/(byte*~) screen#19 main::@2/(byte*~) screen#20 )
-  (byte*) print::msg#6 ← phi( main/(const string) msg1#0 main::@1/(const string) main::msg2#0 main::@2/(const string) main::msg )
-  (byte*~) print::msg#7 ← (byte*) print::msg#6
-  (byte*~) screen#21 ← (byte*) screen#18
-  to:print::@1
-print::@1: scope:[print]  from print print::@2
-  (byte*) screen#12 ← phi( print/(byte*~) screen#21 print::@2/(byte*~) screen#22 )
-  (byte*) print::msg#4 ← phi( print/(byte*~) print::msg#7 print::@2/(byte*~) print::msg#8 )
-  if(*((byte*) print::msg#4)!=(byte) '@') goto print::@2
-  to:print::@return
-print::@return: scope:[print]  from print::@1
-  return 
-  to:@return
-print::@2: scope:[print]  from print::@1
-  *((byte*) screen#12) ← *((byte*) print::msg#4)
-  (byte*) screen#5 ← ++ (byte*) screen#12
-  (byte*) print::msg#3 ← ++ (byte*) print::msg#4
-  (byte*~) print::msg#8 ← (byte*) print::msg#3
-  (byte*~) screen#22 ← (byte*) screen#5
-  to:print::@1
-
 Adding NOP phi() at start of @begin
 Adding NOP phi() at start of @2
 Adding NOP phi() at start of @end
@@ -857,53 +324,6 @@ Propagating live ranges...
 Propagating live ranges...
 Propagating live ranges...
 Propagating live ranges...
-CONTROL FLOW GRAPH - LIVE RANGES FOUND
-@begin: scope:[]  from
-  [0] phi() [ ]
-  to:@2
-@2: scope:[]  from @begin
-  [1] phi() [ ]
-  [2] call main param-assignment [ ]
-  to:@end
-@end: scope:[]  from @2
-  [3] phi() [ ]
-main: scope:[main]  from @2
-  [4] phi() [ ]
-  [5] call print param-assignment [ screen#12 ]
-  to:main::@1
-main::@1: scope:[main]  from main
-  [6] (byte*~) screen#19 ← (byte*) screen#12 [ screen#19 ]
-  [7] call print param-assignment [ screen#12 ]
-  to:main::@2
-main::@2: scope:[main]  from main::@1
-  [8] (byte*~) screen#20 ← (byte*) screen#12 [ screen#20 ]
-  [9] call print param-assignment [ ]
-  to:main::@return
-main::@return: scope:[main]  from main::@2
-  [10] return  [ ]
-  to:@return
-print: scope:[print]  from main main::@1 main::@2
-  [11] (byte*) screen#18 ← phi( main/((byte*))(word/signed word) 1024 main::@1/(byte*~) screen#19 main::@2/(byte*~) screen#20 ) [ print::msg#6 screen#18 ]
-  [11] (byte*) print::msg#6 ← phi( main/(const string) msg1#0 main::@1/(const string) main::msg2#0 main::@2/(const string) main::msg ) [ print::msg#6 screen#18 ]
-  [12] (byte*~) print::msg#7 ← (byte*) print::msg#6 [ screen#18 print::msg#7 ]
-  [13] (byte*~) screen#21 ← (byte*) screen#18 [ print::msg#7 screen#21 ]
-  to:print::@1
-print::@1: scope:[print]  from print print::@2
-  [14] (byte*) screen#12 ← phi( print/(byte*~) screen#21 print::@2/(byte*~) screen#22 ) [ screen#12 print::msg#4 ]
-  [14] (byte*) print::msg#4 ← phi( print/(byte*~) print::msg#7 print::@2/(byte*~) print::msg#8 ) [ screen#12 print::msg#4 ]
-  [15] if(*((byte*) print::msg#4)!=(byte) '@') goto print::@2 [ screen#12 print::msg#4 ]
-  to:print::@return
-print::@return: scope:[print]  from print::@1
-  [16] return  [ screen#12 ]
-  to:@return
-print::@2: scope:[print]  from print::@1
-  [17] *((byte*) screen#12) ← *((byte*) print::msg#4) [ screen#12 print::msg#4 ]
-  [18] (byte*) screen#5 ← ++ (byte*) screen#12 [ print::msg#4 screen#5 ]
-  [19] (byte*) print::msg#3 ← ++ (byte*) print::msg#4 [ screen#5 print::msg#3 ]
-  [20] (byte*~) print::msg#8 ← (byte*) print::msg#3 [ print::msg#8 screen#5 ]
-  [21] (byte*~) screen#22 ← (byte*) screen#5 [ print::msg#8 screen#22 ]
-  to:print::@1
-
 Created 4 initial phi equivalence classes
 Coalesced [6] screen#19 ← screen#12
 Coalesced (already) [8] screen#20 ← screen#12
@@ -923,50 +343,8 @@ Propagating live ranges...
 Propagating live ranges...
 Propagating live ranges...
 Propagating live ranges...
-CONTROL FLOW GRAPH - BEFORE EFFECTIVE LIVE RANGES
-@begin: scope:[]  from
-  [0] phi() [ ]
-  to:@2
-@2: scope:[]  from @begin
-  [1] phi() [ ]
-  [2] call main param-assignment [ ]
-  to:@end
-@end: scope:[]  from @2
-  [3] phi() [ ]
-main: scope:[main]  from @2
-  [4] phi() [ ]
-  [5] call print param-assignment [ screen#12 ]
-  to:main::@1
-main::@1: scope:[main]  from main
-  [6] phi() [ screen#12 ]
-  [7] call print param-assignment [ screen#12 ]
-  to:main::@2
-main::@2: scope:[main]  from main::@1
-  [8] phi() [ screen#12 ]
-  [9] call print param-assignment [ ]
-  to:main::@return
-main::@return: scope:[main]  from main::@2
-  [10] return  [ ]
-  to:@return
-print: scope:[print]  from main main::@1 main::@2
-  [11] (byte*) screen#18 ← phi( main/((byte*))(word/signed word) 1024 main::@1/(byte*) screen#12 main::@2/(byte*) screen#12 ) [ print::msg#6 screen#18 ]
-  [11] (byte*) print::msg#6 ← phi( main/(const string) msg1#0 main::@1/(const string) main::msg2#0 main::@2/(const string) main::msg ) [ print::msg#6 screen#18 ]
-  to:print::@1
-print::@1: scope:[print]  from print print::@2
-  [12] (byte*) screen#12 ← phi( print/(byte*) screen#18 print::@2/(byte*) screen#5 ) [ screen#12 print::msg#4 ]
-  [12] (byte*) print::msg#4 ← phi( print/(byte*) print::msg#6 print::@2/(byte*) print::msg#3 ) [ screen#12 print::msg#4 ]
-  [13] if(*((byte*) print::msg#4)!=(byte) '@') goto print::@2 [ screen#12 print::msg#4 ]
-  to:print::@return
-print::@return: scope:[print]  from print::@1
-  [14] return  [ screen#12 ]
-  to:@return
-print::@2: scope:[print]  from print::@1
-  [15] *((byte*) screen#12) ← *((byte*) print::msg#4) [ screen#12 print::msg#4 ]
-  [16] (byte*) screen#5 ← ++ (byte*) screen#12 [ print::msg#4 screen#5 ]
-  [17] (byte*) print::msg#3 ← ++ (byte*) print::msg#4 [ print::msg#3 screen#5 ]
-  to:print::@1
 
-CONTROL FLOW GRAPH - PHI MEM COALESCED
+FINAL CONTROL FLOW GRAPH
 @begin: scope:[]  from
   [0] phi() [ ] ( )
   to:@2
@@ -1057,6 +435,7 @@ Complete equivalence classes
 [ print::msg#4 print::msg#6 print::msg#3 ]
 Allocated zp ZP_WORD:2 [ screen#18 screen#12 screen#5 ]
 Allocated zp ZP_WORD:4 [ print::msg#4 print::msg#6 print::msg#3 ]
+
 INITIAL ASM
 //SEG0 Basic Upstart
 .pc = $801 "Basic"
@@ -1371,7 +750,8 @@ FINAL SYMBOL TABLE
 zp ZP_WORD:2 [ screen#18 screen#12 screen#5 ]
 zp ZP_WORD:4 [ print::msg#4 print::msg#6 print::msg#3 ]
 
-FINAL CODE
+
+FINAL ASSEMBLER
 //SEG0 Basic Upstart
 .pc = $801 "Basic"
 :BasicUpstart(main)

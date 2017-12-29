@@ -20,7 +20,7 @@ public class TestErrors extends TestCase {
    String testPath;
 
    public TestErrors() throws IOException {
-      testPath = "src/main/java/dk/camelot64/kickc/test/";
+      testPath = "src/test/java/dk/camelot64/kickc/test/";
       helper = new ReferenceHelper("dk/camelot64/kickc/test/ref/");
    }
 

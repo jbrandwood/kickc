@@ -1,3 +1,4 @@
+PARSING /Users/jespergravgaard/c64/tmp/kickc/src/test/java/dk/camelot64/kickc/test/ptrtestmin.kc
 // Test all types of pointers
 
 void main() {
@@ -16,7 +17,8 @@ void main() {
 }
 
 Adding pre/post-modifier (byte) main::i ← ++ (byte) main::i
-PROGRAM
+
+STATEMENTS
 proc (void()) main()
   (byte[1024]) main::SCREEN ← (word/signed word) 1024
   (byte) main::i ← (byte/signed byte/word/signed word) 2
@@ -83,54 +85,11 @@ Removing empty block main::@4
 Removing empty block main::@3
 Removing empty block main::@5
 Removing empty block main::@6
-CONTROL FLOW GRAPH
-@begin: scope:[]  from
-  to:@1
-main: scope:[main]  from
-  (byte) main::i ← (byte/signed byte/word/signed word) 2
-  to:main::@1
-main::@1: scope:[main]  from main main::@2
-  (boolean~) main::$0 ← (byte) main::i < (byte/signed byte/word/signed word) 10
-  if((boolean~) main::$0) goto main::@2
-  to:main::@return
-main::@2: scope:[main]  from main::@1
-  (byte) main::i ← ++ (byte) main::i
-  to:main::@1
-main::@return: scope:[main]  from main::@1
-  return 
-  to:@return
-@1: scope:[]  from @begin
-  call main 
-  to:@end
-@end: scope:[]  from @1
-
 PROCEDURE MODIFY VARIABLE ANALYSIS
 
-CONTROL FLOW GRAPH WITH ASSIGNMENT CALL
-@begin: scope:[]  from
-  to:@1
-main: scope:[main]  from @1
-  (byte) main::i ← (byte/signed byte/word/signed word) 2
-  to:main::@1
-main::@1: scope:[main]  from main main::@2
-  (boolean~) main::$0 ← (byte) main::i < (byte/signed byte/word/signed word) 10
-  if((boolean~) main::$0) goto main::@2
-  to:main::@return
-main::@2: scope:[main]  from main::@1
-  (byte) main::i ← ++ (byte) main::i
-  to:main::@1
-main::@return: scope:[main]  from main::@1
-  return 
-  to:@return
-@1: scope:[]  from @begin
-  call main param-assignment
-  to:@2
-@2: scope:[]  from @1
-  to:@end
-@end: scope:[]  from @2
-
 Completing Phi functions...
-CONTROL FLOW GRAPH SSA
+
+CONTROL FLOW GRAPH SSA WITH ASSIGNMENT CALL & RETURN
 @begin: scope:[]  from
   to:@1
 main: scope:[main]  from @1
@@ -155,32 +114,7 @@ main::@return: scope:[main]  from main::@1
   to:@end
 @end: scope:[]  from @2
 
-CONTROL FLOW GRAPH WITH ASSIGNMENT CALL & RETURN
-@begin: scope:[]  from
-  to:@1
-main: scope:[main]  from @1
-  (byte) main::i#0 ← (byte/signed byte/word/signed word) 2
-  to:main::@1
-main::@1: scope:[main]  from main main::@2
-  (byte) main::i#2 ← phi( main/(byte) main::i#0 main::@2/(byte) main::i#1 )
-  (boolean~) main::$0 ← (byte) main::i#2 < (byte/signed byte/word/signed word) 10
-  if((boolean~) main::$0) goto main::@2
-  to:main::@return
-main::@2: scope:[main]  from main::@1
-  (byte) main::i#3 ← phi( main::@1/(byte) main::i#2 )
-  (byte) main::i#1 ← ++ (byte) main::i#3
-  to:main::@1
-main::@return: scope:[main]  from main::@1
-  return 
-  to:@return
-@1: scope:[]  from @begin
-  call main param-assignment
-  to:@2
-@2: scope:[]  from @1
-  to:@end
-@end: scope:[]  from @2
-
-INITIAL SSA SYMBOL TABLE
+SYMBOL TABLE SSA
 (label) @1
 (label) @2
 (label) @begin
@@ -196,159 +130,22 @@ INITIAL SSA SYMBOL TABLE
 (byte) main::i#2
 (byte) main::i#3
 
+OPTIMIZING CONTROL FLOW GRAPH
 Culled Empty Block (label) @2
 Succesful SSA optimization Pass2CullEmptyBlocks
-CONTROL FLOW GRAPH
-@begin: scope:[]  from
-  to:@1
-main: scope:[main]  from @1
-  (byte) main::i#0 ← (byte/signed byte/word/signed word) 2
-  to:main::@1
-main::@1: scope:[main]  from main main::@2
-  (byte) main::i#2 ← phi( main/(byte) main::i#0 main::@2/(byte) main::i#1 )
-  (boolean~) main::$0 ← (byte) main::i#2 < (byte/signed byte/word/signed word) 10
-  if((boolean~) main::$0) goto main::@2
-  to:main::@return
-main::@2: scope:[main]  from main::@1
-  (byte) main::i#3 ← phi( main::@1/(byte) main::i#2 )
-  (byte) main::i#1 ← ++ (byte) main::i#3
-  to:main::@1
-main::@return: scope:[main]  from main::@1
-  return 
-  to:@return
-@1: scope:[]  from @begin
-  call main param-assignment
-  to:@end
-@end: scope:[]  from @1
-
 Alias (byte) main::i#2 = (byte) main::i#3 
 Succesful SSA optimization Pass2AliasElimination
-CONTROL FLOW GRAPH
-@begin: scope:[]  from
-  to:@1
-main: scope:[main]  from @1
-  (byte) main::i#0 ← (byte/signed byte/word/signed word) 2
-  to:main::@1
-main::@1: scope:[main]  from main main::@2
-  (byte) main::i#2 ← phi( main/(byte) main::i#0 main::@2/(byte) main::i#1 )
-  (boolean~) main::$0 ← (byte) main::i#2 < (byte/signed byte/word/signed word) 10
-  if((boolean~) main::$0) goto main::@2
-  to:main::@return
-main::@2: scope:[main]  from main::@1
-  (byte) main::i#1 ← ++ (byte) main::i#2
-  to:main::@1
-main::@return: scope:[main]  from main::@1
-  return 
-  to:@return
-@1: scope:[]  from @begin
-  call main param-assignment
-  to:@end
-@end: scope:[]  from @1
-
 Simple Condition (boolean~) main::$0 if((byte) main::i#2<(byte/signed byte/word/signed word) 10) goto main::@2
 Succesful SSA optimization Pass2ConditionalJumpSimplification
-CONTROL FLOW GRAPH
-@begin: scope:[]  from
-  to:@1
-main: scope:[main]  from @1
-  (byte) main::i#0 ← (byte/signed byte/word/signed word) 2
-  to:main::@1
-main::@1: scope:[main]  from main main::@2
-  (byte) main::i#2 ← phi( main/(byte) main::i#0 main::@2/(byte) main::i#1 )
-  if((byte) main::i#2<(byte/signed byte/word/signed word) 10) goto main::@2
-  to:main::@return
-main::@2: scope:[main]  from main::@1
-  (byte) main::i#1 ← ++ (byte) main::i#2
-  to:main::@1
-main::@return: scope:[main]  from main::@1
-  return 
-  to:@return
-@1: scope:[]  from @begin
-  call main param-assignment
-  to:@end
-@end: scope:[]  from @1
-
 Constant (const byte) main::i#0 = 2
 Succesful SSA optimization Pass2ConstantIdentification
-CONTROL FLOW GRAPH
-@begin: scope:[]  from
-  to:@1
-main: scope:[main]  from @1
-  to:main::@1
-main::@1: scope:[main]  from main main::@2
-  (byte) main::i#2 ← phi( main/(const byte) main::i#0 main::@2/(byte) main::i#1 )
-  if((byte) main::i#2<(byte/signed byte/word/signed word) 10) goto main::@2
-  to:main::@return
-main::@2: scope:[main]  from main::@1
-  (byte) main::i#1 ← ++ (byte) main::i#2
-  to:main::@1
-main::@return: scope:[main]  from main::@1
-  return 
-  to:@return
-@1: scope:[]  from @begin
-  call main param-assignment
-  to:@end
-@end: scope:[]  from @1
-
+OPTIMIZING CONTROL FLOW GRAPH
 Inlining constant with var siblings (const byte) main::i#0
 Inlining constant with var siblings (const byte) main::i#0
 Constant inlined main::i#0 = (byte/signed byte/word/signed word) 2
 Succesful SSA optimization Pass2ConstantInlining
-CONTROL FLOW GRAPH
-@begin: scope:[]  from
-  to:@1
-main: scope:[main]  from @1
-  to:main::@1
-main::@1: scope:[main]  from main main::@2
-  (byte) main::i#2 ← phi( main/(byte/signed byte/word/signed word) 2 main::@2/(byte) main::i#1 )
-  if((byte) main::i#2<(byte/signed byte/word/signed word) 10) goto main::@2
-  to:main::@return
-main::@2: scope:[main]  from main::@1
-  (byte) main::i#1 ← ++ (byte) main::i#2
-  to:main::@1
-main::@return: scope:[main]  from main::@1
-  return 
-  to:@return
-@1: scope:[]  from @begin
-  call main param-assignment
-  to:@end
-@end: scope:[]  from @1
-
-FINAL SYMBOL TABLE
-(label) @1
-(label) @begin
-(label) @end
-(void()) main()
-(label) main::@1
-(label) main::@2
-(label) main::@return
-(byte) main::i
-(byte) main::i#1
-(byte) main::i#2
-
 Block Sequence Planned @begin @1 @end main main::@1 main::@return main::@2 
 Block Sequence Planned @begin @1 @end main main::@1 main::@return main::@2 
-CONTROL FLOW GRAPH - PHI LIFTED
-@begin: scope:[]  from
-  to:@1
-@1: scope:[]  from @begin
-  call main param-assignment
-  to:@end
-@end: scope:[]  from @1
-main: scope:[main]  from @1
-  to:main::@1
-main::@1: scope:[main]  from main main::@2
-  (byte) main::i#2 ← phi( main/(byte/signed byte/word/signed word) 2 main::@2/(byte~) main::i#4 )
-  if((byte) main::i#2<(byte/signed byte/word/signed word) 10) goto main::@2
-  to:main::@return
-main::@return: scope:[main]  from main::@1
-  return 
-  to:@return
-main::@2: scope:[main]  from main::@1
-  (byte) main::i#1 ← ++ (byte) main::i#2
-  (byte~) main::i#4 ← (byte) main::i#1
-  to:main::@1
-
 Adding NOP phi() at start of @begin
 Adding NOP phi() at start of @1
 Adding NOP phi() at start of @end
@@ -358,31 +155,6 @@ Calls in [] to main:2
 
 Propagating live ranges...
 Propagating live ranges...
-CONTROL FLOW GRAPH - LIVE RANGES FOUND
-@begin: scope:[]  from
-  [0] phi() [ ]
-  to:@1
-@1: scope:[]  from @begin
-  [1] phi() [ ]
-  [2] call main param-assignment [ ]
-  to:@end
-@end: scope:[]  from @1
-  [3] phi() [ ]
-main: scope:[main]  from @1
-  [4] phi() [ ]
-  to:main::@1
-main::@1: scope:[main]  from main main::@2
-  [5] (byte) main::i#2 ← phi( main/(byte/signed byte/word/signed word) 2 main::@2/(byte~) main::i#4 ) [ main::i#2 ]
-  [6] if((byte) main::i#2<(byte/signed byte/word/signed word) 10) goto main::@2 [ main::i#2 ]
-  to:main::@return
-main::@return: scope:[main]  from main::@1
-  [7] return  [ ]
-  to:@return
-main::@2: scope:[main]  from main::@1
-  [8] (byte) main::i#1 ← ++ (byte) main::i#2 [ main::i#1 ]
-  [9] (byte~) main::i#4 ← (byte) main::i#1 [ main::i#4 ]
-  to:main::@1
-
 Created 1 initial phi equivalence classes
 Coalesced [9] main::i#4 ← main::i#1
 Coalesced down to 1 phi equivalence classes
@@ -393,31 +165,8 @@ Adding NOP phi() at start of @end
 Adding NOP phi() at start of main
 Propagating live ranges...
 Propagating live ranges...
-CONTROL FLOW GRAPH - BEFORE EFFECTIVE LIVE RANGES
-@begin: scope:[]  from
-  [0] phi() [ ]
-  to:@1
-@1: scope:[]  from @begin
-  [1] phi() [ ]
-  [2] call main param-assignment [ ]
-  to:@end
-@end: scope:[]  from @1
-  [3] phi() [ ]
-main: scope:[main]  from @1
-  [4] phi() [ ]
-  to:main::@1
-main::@1: scope:[main]  from main main::@2
-  [5] (byte) main::i#2 ← phi( main/(byte/signed byte/word/signed word) 2 main::@2/(byte) main::i#1 ) [ main::i#2 ]
-  [6] if((byte) main::i#2<(byte/signed byte/word/signed word) 10) goto main::@2 [ main::i#2 ]
-  to:main::@return
-main::@return: scope:[main]  from main::@1
-  [7] return  [ ]
-  to:@return
-main::@2: scope:[main]  from main::@1
-  [8] (byte) main::i#1 ← ++ (byte) main::i#2 [ main::i#1 ]
-  to:main::@1
 
-CONTROL FLOW GRAPH - PHI MEM COALESCED
+FINAL CONTROL FLOW GRAPH
 @begin: scope:[]  from
   [0] phi() [ ] ( )
   to:@1
@@ -473,6 +222,7 @@ Initial phi equivalence classes
 Complete equivalence classes
 [ main::i#2 main::i#1 ]
 Allocated zp ZP_BYTE:2 [ main::i#2 main::i#1 ]
+
 INITIAL ASM
 //SEG0 Basic Upstart
 .pc = $801 "Basic"
@@ -616,7 +366,8 @@ FINAL SYMBOL TABLE
 
 reg byte x [ main::i#2 main::i#1 ]
 
-FINAL CODE
+
+FINAL ASSEMBLER
 //SEG0 Basic Upstart
 .pc = $801 "Basic"
 :BasicUpstart(main)

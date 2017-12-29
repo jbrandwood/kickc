@@ -1,3 +1,4 @@
+PARSING /Users/jespergravgaard/c64/tmp/kickc/src/test/java/dk/camelot64/kickc/test/unused-vars.kc
 // used vars
 const byte* SCREEN = $0400;
 byte b=2>>1;
@@ -34,7 +35,8 @@ byte s() {
 
 Adding pre/post-modifier (byte) b ← ++ (byte) b
 Adding pre/post-modifier (byte) b ← ++ (byte) b
-PROGRAM
+
+STATEMENTS
   (byte*) SCREEN ← (word/signed word) 1024
   (byte~) $0 ← (byte/signed byte/word/signed word) 2 >> (byte/signed byte/word/signed word) 1
   (byte) b ← (byte~) $0
@@ -200,151 +202,14 @@ Eliminating unused variable (word/signed word~) main::$4 and assignment [8] (wor
 Removing empty block main::@2
 Removing empty block @1
 Removing empty block s::@1
-CONTROL FLOW GRAPH
-@begin: scope:[]  from
-  (byte*) SCREEN ← ((byte*)) (word/signed word) 1024
-  (byte~) $0 ← (byte/signed byte/word/signed word) 2 >> (byte/signed byte/word/signed word) 1
-  (byte) b ← (byte~) $0
-  to:@2
-main: scope:[main]  from
-  (byte) main::col ← (byte/signed byte/word/signed word) 2
-  (byte*) main::COLS ← ((byte*)) (word) 55296
-  call s 
-  (byte) b ← ++ (byte) b
-  (byte) main::i ← (byte/signed byte/word/signed word) 0
-  to:main::@1
-main::@1: scope:[main]  from main main::@1
-  *((byte*) main::COLS + (byte) main::i) ← (byte) main::col
-  *((byte*) SCREEN + (byte) main::i) ← (byte) b
-  (byte) main::i ← ++ (byte) main::i
-  (boolean~) main::$8 ← (byte) main::i != (byte/signed byte/word/signed word) 101
-  if((boolean~) main::$8) goto main::@1
-  to:main::@return
-main::@return: scope:[main]  from main::@1
-  return 
-  to:@return
-s: scope:[s]  from
-  (byte) b ← ++ (byte) b
-  (byte) s::return ← (byte/signed byte/word/signed word) 2
-  to:s::@return
-s::@return: scope:[s]  from s
-  (byte) s::return ← (byte) s::return
-  return (byte) s::return
-  to:@return
-@2: scope:[]  from @begin
-  call main 
-  to:@end
-@end: scope:[]  from @2
-
 PROCEDURE MODIFY VARIABLE ANALYSIS
 main modifies b
 s modifies b
 
-CONTROL FLOW GRAPH WITH ASSIGNMENT CALL
-@begin: scope:[]  from
-  (byte*) SCREEN ← ((byte*)) (word/signed word) 1024
-  (byte~) $0 ← (byte/signed byte/word/signed word) 2 >> (byte/signed byte/word/signed word) 1
-  (byte) b ← (byte~) $0
-  to:@2
-main: scope:[main]  from @2
-  (byte) main::col ← (byte/signed byte/word/signed word) 2
-  (byte*) main::COLS ← ((byte*)) (word) 55296
-  (byte) s::return ← call s param-assignment
-  to:main::@3
-main::@3: scope:[main]  from main
-  (byte) b ← (byte) b
-  (byte) b ← ++ (byte) b
-  (byte) main::i ← (byte/signed byte/word/signed word) 0
-  to:main::@1
-main::@1: scope:[main]  from main::@1 main::@3
-  *((byte*) main::COLS + (byte) main::i) ← (byte) main::col
-  *((byte*) SCREEN + (byte) main::i) ← (byte) b
-  (byte) main::i ← ++ (byte) main::i
-  (boolean~) main::$8 ← (byte) main::i != (byte/signed byte/word/signed word) 101
-  if((boolean~) main::$8) goto main::@1
-  to:main::@return
-main::@return: scope:[main]  from main::@1
-  (byte) b ← (byte) b
-  return 
-  to:@return
-s: scope:[s]  from main
-  (byte) b ← ++ (byte) b
-  (byte) s::return ← (byte/signed byte/word/signed word) 2
-  to:s::@return
-s::@return: scope:[s]  from s
-  (byte) s::return ← (byte) s::return
-  (byte) b ← (byte) b
-  return (byte) s::return
-  to:@return
-@2: scope:[]  from @begin
-  call main param-assignment
-  to:@3
-@3: scope:[]  from @2
-  (byte) b ← (byte) b
-  to:@end
-@end: scope:[]  from @3
-
 Completing Phi functions...
 Completing Phi functions...
-CONTROL FLOW GRAPH SSA
-@begin: scope:[]  from
-  (byte*) SCREEN#0 ← ((byte*)) (word/signed word) 1024
-  (byte~) $0 ← (byte/signed byte/word/signed word) 2 >> (byte/signed byte/word/signed word) 1
-  (byte) b#0 ← (byte~) $0
-  to:@2
-main: scope:[main]  from @2
-  (byte) b#13 ← phi( @2/(byte) b#14 )
-  (byte) main::col#0 ← (byte/signed byte/word/signed word) 2
-  (byte*) main::COLS#0 ← ((byte*)) (word) 55296
-  (byte) s::return#0 ← call s param-assignment
-  to:main::@3
-main::@3: scope:[main]  from main
-  (byte*) main::COLS#2 ← phi( main/(byte*) main::COLS#0 )
-  (byte) main::col#2 ← phi( main/(byte) main::col#0 )
-  (byte) b#7 ← phi( main/(byte) b#13 )
-  (byte) b#1 ← (byte) b#7
-  (byte) b#2 ← ++ (byte) b#1
-  (byte) main::i#0 ← (byte/signed byte/word/signed word) 0
-  to:main::@1
-main::@1: scope:[main]  from main::@1 main::@3
-  (byte) b#8 ← phi( main::@1/(byte) b#8 main::@3/(byte) b#2 )
-  (byte) main::i#2 ← phi( main::@1/(byte) main::i#1 main::@3/(byte) main::i#0 )
-  (byte*) main::COLS#1 ← phi( main::@1/(byte*) main::COLS#1 main::@3/(byte*) main::COLS#2 )
-  (byte) main::col#1 ← phi( main::@1/(byte) main::col#1 main::@3/(byte) main::col#2 )
-  *((byte*) main::COLS#1 + (byte) main::i#2) ← (byte) main::col#1
-  *((byte*) SCREEN#0 + (byte) main::i#2) ← (byte) b#8
-  (byte) main::i#1 ← ++ (byte) main::i#2
-  (boolean~) main::$8 ← (byte) main::i#1 != (byte/signed byte/word/signed word) 101
-  if((boolean~) main::$8) goto main::@1
-  to:main::@return
-main::@return: scope:[main]  from main::@1
-  (byte) b#9 ← phi( main::@1/(byte) b#8 )
-  (byte) b#3 ← (byte) b#9
-  return 
-  to:@return
-s: scope:[s]  from main
-  (byte) b#10 ← phi( main/(byte) b#13 )
-  (byte) b#4 ← ++ (byte) b#10
-  (byte) s::return#1 ← (byte/signed byte/word/signed word) 2
-  to:s::@return
-s::@return: scope:[s]  from s
-  (byte) b#11 ← phi( s/(byte) b#4 )
-  (byte) s::return#3 ← phi( s/(byte) s::return#1 )
-  (byte) s::return#2 ← (byte) s::return#3
-  (byte) b#5 ← (byte) b#11
-  return (byte) s::return#2
-  to:@return
-@2: scope:[]  from @begin
-  (byte) b#14 ← phi( @begin/(byte) b#0 )
-  call main param-assignment
-  to:@3
-@3: scope:[]  from @2
-  (byte) b#12 ← phi( @2/(byte) b#14 )
-  (byte) b#6 ← (byte) b#12
-  to:@end
-@end: scope:[]  from @3
 
-CONTROL FLOW GRAPH WITH ASSIGNMENT CALL & RETURN
+CONTROL FLOW GRAPH SSA WITH ASSIGNMENT CALL & RETURN
 @begin: scope:[]  from
   (byte*) SCREEN#0 ← ((byte*)) (word/signed word) 1024
   (byte~) $0 ← (byte/signed byte/word/signed word) 2 >> (byte/signed byte/word/signed word) 1
@@ -403,7 +268,7 @@ s::@return: scope:[s]  from s
   to:@end
 @end: scope:[]  from @3
 
-INITIAL SSA SYMBOL TABLE
+SYMBOL TABLE SSA
 (byte~) $0
 (label) @2
 (label) @3
@@ -452,6 +317,7 @@ INITIAL SSA SYMBOL TABLE
 (byte) s::return#2
 (byte) s::return#3
 
+OPTIMIZING CONTROL FLOW GRAPH
 Not aliassing across scopes: b#13 b#14
 Not aliassing across scopes: s::return#0 s::return#2
 Not aliassing across scopes: b#7 b#5
@@ -469,53 +335,6 @@ Alias (byte) s::return#1 = (byte) s::return#3 (byte) s::return#2
 Alias (byte) b#11 = (byte) b#4 (byte) b#5 
 Alias (byte) b#12 = (byte) b#6 
 Succesful SSA optimization Pass2AliasElimination
-CONTROL FLOW GRAPH
-@begin: scope:[]  from
-  (byte*) SCREEN#0 ← ((byte*)) (word/signed word) 1024
-  (byte) b#0 ← (byte/signed byte/word/signed word) 2 >> (byte/signed byte/word/signed word) 1
-  to:@2
-main: scope:[main]  from @2
-  (byte) b#13 ← phi( @2/(byte) b#0 )
-  (byte) main::col#0 ← (byte/signed byte/word/signed word) 2
-  (byte*) main::COLS#0 ← ((byte*)) (word) 55296
-  call s param-assignment
-  (byte) s::return#0 ← (byte) s::return#1
-  to:main::@3
-main::@3: scope:[main]  from main
-  (byte) b#1 ← phi( main/(byte) b#11 )
-  (byte) b#2 ← ++ (byte) b#1
-  (byte) main::i#0 ← (byte/signed byte/word/signed word) 0
-  to:main::@1
-main::@1: scope:[main]  from main::@1 main::@3
-  (byte) b#3 ← phi( main::@1/(byte) b#3 main::@3/(byte) b#2 )
-  (byte) main::i#2 ← phi( main::@1/(byte) main::i#1 main::@3/(byte) main::i#0 )
-  (byte*) main::COLS#1 ← phi( main::@1/(byte*) main::COLS#1 main::@3/(byte*) main::COLS#0 )
-  (byte) main::col#1 ← phi( main::@1/(byte) main::col#1 main::@3/(byte) main::col#0 )
-  *((byte*) main::COLS#1 + (byte) main::i#2) ← (byte) main::col#1
-  *((byte*) SCREEN#0 + (byte) main::i#2) ← (byte) b#3
-  (byte) main::i#1 ← ++ (byte) main::i#2
-  (boolean~) main::$8 ← (byte) main::i#1 != (byte/signed byte/word/signed word) 101
-  if((boolean~) main::$8) goto main::@1
-  to:main::@return
-main::@return: scope:[main]  from main::@1
-  return 
-  to:@return
-s: scope:[s]  from main
-  (byte) b#10 ← phi( main/(byte) b#13 )
-  (byte) b#11 ← ++ (byte) b#10
-  (byte) s::return#1 ← (byte/signed byte/word/signed word) 2
-  to:s::@return
-s::@return: scope:[s]  from s
-  return 
-  to:@return
-@2: scope:[]  from @begin
-  call main param-assignment
-  to:@3
-@3: scope:[]  from @2
-  (byte) b#12 ← phi( @2/(byte) b#3 )
-  to:@end
-@end: scope:[]  from @3
-
 Not aliassing across scopes: b#13 b#0
 Not aliassing across scopes: s::return#0 s::return#1
 Not aliassing across scopes: b#1 b#11
@@ -528,53 +347,6 @@ Self Phi Eliminated (byte) main::col#1
 Self Phi Eliminated (byte*) main::COLS#1
 Self Phi Eliminated (byte) b#3
 Succesful SSA optimization Pass2SelfPhiElimination
-CONTROL FLOW GRAPH
-@begin: scope:[]  from
-  (byte*) SCREEN#0 ← ((byte*)) (word/signed word) 1024
-  (byte) b#0 ← (byte/signed byte/word/signed word) 2 >> (byte/signed byte/word/signed word) 1
-  to:@2
-main: scope:[main]  from @2
-  (byte) b#13 ← phi( @2/(byte) b#0 )
-  (byte) main::col#0 ← (byte/signed byte/word/signed word) 2
-  (byte*) main::COLS#0 ← ((byte*)) (word) 55296
-  call s param-assignment
-  (byte) s::return#0 ← (byte) s::return#1
-  to:main::@3
-main::@3: scope:[main]  from main
-  (byte) b#1 ← phi( main/(byte) b#11 )
-  (byte) b#2 ← ++ (byte) b#1
-  (byte) main::i#0 ← (byte/signed byte/word/signed word) 0
-  to:main::@1
-main::@1: scope:[main]  from main::@1 main::@3
-  (byte) b#3 ← phi( main::@3/(byte) b#2 )
-  (byte) main::i#2 ← phi( main::@1/(byte) main::i#1 main::@3/(byte) main::i#0 )
-  (byte*) main::COLS#1 ← phi( main::@3/(byte*) main::COLS#0 )
-  (byte) main::col#1 ← phi( main::@3/(byte) main::col#0 )
-  *((byte*) main::COLS#1 + (byte) main::i#2) ← (byte) main::col#1
-  *((byte*) SCREEN#0 + (byte) main::i#2) ← (byte) b#3
-  (byte) main::i#1 ← ++ (byte) main::i#2
-  (boolean~) main::$8 ← (byte) main::i#1 != (byte/signed byte/word/signed word) 101
-  if((boolean~) main::$8) goto main::@1
-  to:main::@return
-main::@return: scope:[main]  from main::@1
-  return 
-  to:@return
-s: scope:[s]  from main
-  (byte) b#10 ← phi( main/(byte) b#13 )
-  (byte) b#11 ← ++ (byte) b#10
-  (byte) s::return#1 ← (byte/signed byte/word/signed word) 2
-  to:s::@return
-s::@return: scope:[s]  from s
-  return 
-  to:@return
-@2: scope:[]  from @begin
-  call main param-assignment
-  to:@3
-@3: scope:[]  from @2
-  (byte) b#12 ← phi( @2/(byte) b#3 )
-  to:@end
-@end: scope:[]  from @3
-
 Redundant Phi (byte) b#13 (byte) b#0
 Redundant Phi (byte) b#1 (byte) b#11
 Redundant Phi (byte) main::col#1 (byte) main::col#0
@@ -583,87 +355,8 @@ Redundant Phi (byte) b#3 (byte) b#2
 Redundant Phi (byte) b#10 (byte) b#13
 Redundant Phi (byte) b#12 (byte) b#3
 Succesful SSA optimization Pass2RedundantPhiElimination
-CONTROL FLOW GRAPH
-@begin: scope:[]  from
-  (byte*) SCREEN#0 ← ((byte*)) (word/signed word) 1024
-  (byte) b#0 ← (byte/signed byte/word/signed word) 2 >> (byte/signed byte/word/signed word) 1
-  to:@2
-main: scope:[main]  from @2
-  (byte) main::col#0 ← (byte/signed byte/word/signed word) 2
-  (byte*) main::COLS#0 ← ((byte*)) (word) 55296
-  call s param-assignment
-  (byte) s::return#0 ← (byte) s::return#1
-  to:main::@3
-main::@3: scope:[main]  from main
-  (byte) b#2 ← ++ (byte) b#11
-  (byte) main::i#0 ← (byte/signed byte/word/signed word) 0
-  to:main::@1
-main::@1: scope:[main]  from main::@1 main::@3
-  (byte) main::i#2 ← phi( main::@1/(byte) main::i#1 main::@3/(byte) main::i#0 )
-  *((byte*) main::COLS#0 + (byte) main::i#2) ← (byte) main::col#0
-  *((byte*) SCREEN#0 + (byte) main::i#2) ← (byte) b#2
-  (byte) main::i#1 ← ++ (byte) main::i#2
-  (boolean~) main::$8 ← (byte) main::i#1 != (byte/signed byte/word/signed word) 101
-  if((boolean~) main::$8) goto main::@1
-  to:main::@return
-main::@return: scope:[main]  from main::@1
-  return 
-  to:@return
-s: scope:[s]  from main
-  (byte) b#11 ← ++ (byte) b#0
-  (byte) s::return#1 ← (byte/signed byte/word/signed word) 2
-  to:s::@return
-s::@return: scope:[s]  from s
-  return 
-  to:@return
-@2: scope:[]  from @begin
-  call main param-assignment
-  to:@3
-@3: scope:[]  from @2
-  to:@end
-@end: scope:[]  from @3
-
 Simple Condition (boolean~) main::$8 if((byte) main::i#1!=(byte/signed byte/word/signed word) 101) goto main::@1
 Succesful SSA optimization Pass2ConditionalJumpSimplification
-CONTROL FLOW GRAPH
-@begin: scope:[]  from
-  (byte*) SCREEN#0 ← ((byte*)) (word/signed word) 1024
-  (byte) b#0 ← (byte/signed byte/word/signed word) 2 >> (byte/signed byte/word/signed word) 1
-  to:@2
-main: scope:[main]  from @2
-  (byte) main::col#0 ← (byte/signed byte/word/signed word) 2
-  (byte*) main::COLS#0 ← ((byte*)) (word) 55296
-  call s param-assignment
-  (byte) s::return#0 ← (byte) s::return#1
-  to:main::@3
-main::@3: scope:[main]  from main
-  (byte) b#2 ← ++ (byte) b#11
-  (byte) main::i#0 ← (byte/signed byte/word/signed word) 0
-  to:main::@1
-main::@1: scope:[main]  from main::@1 main::@3
-  (byte) main::i#2 ← phi( main::@1/(byte) main::i#1 main::@3/(byte) main::i#0 )
-  *((byte*) main::COLS#0 + (byte) main::i#2) ← (byte) main::col#0
-  *((byte*) SCREEN#0 + (byte) main::i#2) ← (byte) b#2
-  (byte) main::i#1 ← ++ (byte) main::i#2
-  if((byte) main::i#1!=(byte/signed byte/word/signed word) 101) goto main::@1
-  to:main::@return
-main::@return: scope:[main]  from main::@1
-  return 
-  to:@return
-s: scope:[s]  from main
-  (byte) b#11 ← ++ (byte) b#0
-  (byte) s::return#1 ← (byte/signed byte/word/signed word) 2
-  to:s::@return
-s::@return: scope:[s]  from s
-  return 
-  to:@return
-@2: scope:[]  from @begin
-  call main param-assignment
-  to:@3
-@3: scope:[]  from @2
-  to:@end
-@end: scope:[]  from @3
-
 Constant (const byte*) SCREEN#0 = ((byte*))1024
 Constant (const byte) b#0 = 2>>1
 Constant (const byte) main::col#0 = 2
@@ -671,198 +364,19 @@ Constant (const byte*) main::COLS#0 = ((byte*))55296
 Constant (const byte) main::i#0 = 0
 Constant (const byte) s::return#1 = 2
 Succesful SSA optimization Pass2ConstantIdentification
-CONTROL FLOW GRAPH
-@begin: scope:[]  from
-  to:@2
-main: scope:[main]  from @2
-  call s param-assignment
-  (byte) s::return#0 ← (const byte) s::return#1
-  to:main::@3
-main::@3: scope:[main]  from main
-  (byte) b#2 ← ++ (byte) b#11
-  to:main::@1
-main::@1: scope:[main]  from main::@1 main::@3
-  (byte) main::i#2 ← phi( main::@1/(byte) main::i#1 main::@3/(const byte) main::i#0 )
-  *((const byte*) main::COLS#0 + (byte) main::i#2) ← (const byte) main::col#0
-  *((const byte*) SCREEN#0 + (byte) main::i#2) ← (byte) b#2
-  (byte) main::i#1 ← ++ (byte) main::i#2
-  if((byte) main::i#1!=(byte/signed byte/word/signed word) 101) goto main::@1
-  to:main::@return
-main::@return: scope:[main]  from main::@1
-  return 
-  to:@return
-s: scope:[s]  from main
-  (byte) b#11 ← ++ (const byte) b#0
-  to:s::@return
-s::@return: scope:[s]  from s
-  return 
-  to:@return
-@2: scope:[]  from @begin
-  call main param-assignment
-  to:@3
-@3: scope:[]  from @2
-  to:@end
-@end: scope:[]  from @3
-
 Constant (const byte) s::return#0 = s::return#1
 Constant (const byte) b#11 = ++b#0
 Succesful SSA optimization Pass2ConstantIdentification
-CONTROL FLOW GRAPH
-@begin: scope:[]  from
-  to:@2
-main: scope:[main]  from @2
-  call s param-assignment
-  to:main::@3
-main::@3: scope:[main]  from main
-  (byte) b#2 ← ++ (const byte) b#11
-  to:main::@1
-main::@1: scope:[main]  from main::@1 main::@3
-  (byte) main::i#2 ← phi( main::@1/(byte) main::i#1 main::@3/(const byte) main::i#0 )
-  *((const byte*) main::COLS#0 + (byte) main::i#2) ← (const byte) main::col#0
-  *((const byte*) SCREEN#0 + (byte) main::i#2) ← (byte) b#2
-  (byte) main::i#1 ← ++ (byte) main::i#2
-  if((byte) main::i#1!=(byte/signed byte/word/signed word) 101) goto main::@1
-  to:main::@return
-main::@return: scope:[main]  from main::@1
-  return 
-  to:@return
-s: scope:[s]  from main
-  to:s::@return
-s::@return: scope:[s]  from s
-  return 
-  to:@return
-@2: scope:[]  from @begin
-  call main param-assignment
-  to:@3
-@3: scope:[]  from @2
-  to:@end
-@end: scope:[]  from @3
-
 Constant (const byte) b#2 = ++b#11
 Succesful SSA optimization Pass2ConstantIdentification
-CONTROL FLOW GRAPH
-@begin: scope:[]  from
-  to:@2
-main: scope:[main]  from @2
-  call s param-assignment
-  to:main::@3
-main::@3: scope:[main]  from main
-  to:main::@1
-main::@1: scope:[main]  from main::@1 main::@3
-  (byte) main::i#2 ← phi( main::@1/(byte) main::i#1 main::@3/(const byte) main::i#0 )
-  *((const byte*) main::COLS#0 + (byte) main::i#2) ← (const byte) main::col#0
-  *((const byte*) SCREEN#0 + (byte) main::i#2) ← (const byte) b#2
-  (byte) main::i#1 ← ++ (byte) main::i#2
-  if((byte) main::i#1!=(byte/signed byte/word/signed word) 101) goto main::@1
-  to:main::@return
-main::@return: scope:[main]  from main::@1
-  return 
-  to:@return
-s: scope:[s]  from main
-  to:s::@return
-s::@return: scope:[s]  from s
-  return 
-  to:@return
-@2: scope:[]  from @begin
-  call main param-assignment
-  to:@3
-@3: scope:[]  from @2
-  to:@end
-@end: scope:[]  from @3
-
 Eliminating unused constant (const byte) s::return#0
 Succesful SSA optimization PassNEliminateUnusedVars
-CONTROL FLOW GRAPH
-@begin: scope:[]  from
-  to:@2
-main: scope:[main]  from @2
-  call s param-assignment
-  to:main::@3
-main::@3: scope:[main]  from main
-  to:main::@1
-main::@1: scope:[main]  from main::@1 main::@3
-  (byte) main::i#2 ← phi( main::@1/(byte) main::i#1 main::@3/(const byte) main::i#0 )
-  *((const byte*) main::COLS#0 + (byte) main::i#2) ← (const byte) main::col#0
-  *((const byte*) SCREEN#0 + (byte) main::i#2) ← (const byte) b#2
-  (byte) main::i#1 ← ++ (byte) main::i#2
-  if((byte) main::i#1!=(byte/signed byte/word/signed word) 101) goto main::@1
-  to:main::@return
-main::@return: scope:[main]  from main::@1
-  return 
-  to:@return
-s: scope:[s]  from main
-  to:s::@return
-s::@return: scope:[s]  from s
-  return 
-  to:@return
-@2: scope:[]  from @begin
-  call main param-assignment
-  to:@3
-@3: scope:[]  from @2
-  to:@end
-@end: scope:[]  from @3
-
 Eliminating unused constant (const byte) s::return#1
 Succesful SSA optimization PassNEliminateUnusedVars
-CONTROL FLOW GRAPH
-@begin: scope:[]  from
-  to:@2
-main: scope:[main]  from @2
-  call s param-assignment
-  to:main::@3
-main::@3: scope:[main]  from main
-  to:main::@1
-main::@1: scope:[main]  from main::@1 main::@3
-  (byte) main::i#2 ← phi( main::@1/(byte) main::i#1 main::@3/(const byte) main::i#0 )
-  *((const byte*) main::COLS#0 + (byte) main::i#2) ← (const byte) main::col#0
-  *((const byte*) SCREEN#0 + (byte) main::i#2) ← (const byte) b#2
-  (byte) main::i#1 ← ++ (byte) main::i#2
-  if((byte) main::i#1!=(byte/signed byte/word/signed word) 101) goto main::@1
-  to:main::@return
-main::@return: scope:[main]  from main::@1
-  return 
-  to:@return
-s: scope:[s]  from main
-  to:s::@return
-s::@return: scope:[s]  from s
-  return 
-  to:@return
-@2: scope:[]  from @begin
-  call main param-assignment
-  to:@3
-@3: scope:[]  from @2
-  to:@end
-@end: scope:[]  from @3
-
 Culled Empty Block (label) main::@3
 Culled Empty Block (label) @3
 Succesful SSA optimization Pass2CullEmptyBlocks
-CONTROL FLOW GRAPH
-@begin: scope:[]  from
-  to:@2
-main: scope:[main]  from @2
-  call s param-assignment
-  to:main::@1
-main::@1: scope:[main]  from main main::@1
-  (byte) main::i#2 ← phi( main::@1/(byte) main::i#1 main/(const byte) main::i#0 )
-  *((const byte*) main::COLS#0 + (byte) main::i#2) ← (const byte) main::col#0
-  *((const byte*) SCREEN#0 + (byte) main::i#2) ← (const byte) b#2
-  (byte) main::i#1 ← ++ (byte) main::i#2
-  if((byte) main::i#1!=(byte/signed byte/word/signed word) 101) goto main::@1
-  to:main::@return
-main::@return: scope:[main]  from main::@1
-  return 
-  to:@return
-s: scope:[s]  from main
-  to:s::@return
-s::@return: scope:[s]  from s
-  return 
-  to:@return
-@2: scope:[]  from @begin
-  call main param-assignment
-  to:@end
-@end: scope:[]  from @2
-
+OPTIMIZING CONTROL FLOW GRAPH
 Inlining constant with var siblings (const byte) main::i#0
 Inlining constant with var siblings (const byte) main::i#0
 Inlining constant with different constant siblings (const byte) b#0
@@ -876,85 +390,9 @@ Constant inlined main::i#0 = (byte/signed byte/word/signed word) 0
 Constant inlined b#11 = ++(byte/signed byte/word/signed word) 2>>(byte/signed byte/word/signed word) 1
 Constant inlined b#0 = (byte/signed byte/word/signed word) 2>>(byte/signed byte/word/signed word) 1
 Succesful SSA optimization Pass2ConstantInlining
-CONTROL FLOW GRAPH
-@begin: scope:[]  from
-  to:@2
-main: scope:[main]  from @2
-  call s param-assignment
-  to:main::@1
-main::@1: scope:[main]  from main main::@1
-  (byte) main::i#2 ← phi( main::@1/(byte) main::i#1 main/(byte/signed byte/word/signed word) 0 )
-  *((const byte*) main::COLS#0 + (byte) main::i#2) ← (const byte) main::col#0
-  *((const byte*) SCREEN#0 + (byte) main::i#2) ← ++++(byte/signed byte/word/signed word) 2>>(byte/signed byte/word/signed word) 1
-  (byte) main::i#1 ← ++ (byte) main::i#2
-  if((byte) main::i#1!=(byte/signed byte/word/signed word) 101) goto main::@1
-  to:main::@return
-main::@return: scope:[main]  from main::@1
-  return 
-  to:@return
-s: scope:[s]  from main
-  to:s::@return
-s::@return: scope:[s]  from s
-  return 
-  to:@return
-@2: scope:[]  from @begin
-  call main param-assignment
-  to:@end
-@end: scope:[]  from @2
-
-FINAL SYMBOL TABLE
-(label) @2
-(label) @begin
-(label) @end
-(byte*) SCREEN
-(const byte*) SCREEN#0 = ((byte*))(word/signed word) 1024
-(byte) b
-(void()) main()
-(label) main::@1
-(label) main::@return
-(byte*) main::COLS
-(const byte*) main::COLS#0 = ((byte*))(word) 55296
-(byte) main::col
-(const byte) main::col#0 = (byte/signed byte/word/signed word) 2
-(byte) main::i
-(byte) main::i#1
-(byte) main::i#2
-(byte()) s()
-(label) s::@return
-(byte) s::return
-
 Block Sequence Planned @begin @2 @end main main::@1 main::@return s s::@return 
 Added new block during phi lifting main::@4(between main::@1 and main::@1)
 Block Sequence Planned @begin @2 @end main main::@1 main::@return main::@4 s s::@return 
-CONTROL FLOW GRAPH - PHI LIFTED
-@begin: scope:[]  from
-  to:@2
-@2: scope:[]  from @begin
-  call main param-assignment
-  to:@end
-@end: scope:[]  from @2
-main: scope:[main]  from @2
-  call s param-assignment
-  to:main::@1
-main::@1: scope:[main]  from main main::@4
-  (byte) main::i#2 ← phi( main::@4/(byte~) main::i#3 main/(byte/signed byte/word/signed word) 0 )
-  *((const byte*) main::COLS#0 + (byte) main::i#2) ← (const byte) main::col#0
-  *((const byte*) SCREEN#0 + (byte) main::i#2) ← ++++(byte/signed byte/word/signed word) 2>>(byte/signed byte/word/signed word) 1
-  (byte) main::i#1 ← ++ (byte) main::i#2
-  if((byte) main::i#1!=(byte/signed byte/word/signed word) 101) goto main::@4
-  to:main::@return
-main::@return: scope:[main]  from main::@1
-  return 
-  to:@return
-main::@4: scope:[main]  from main::@1
-  (byte~) main::i#3 ← (byte) main::i#1
-  to:main::@1
-s: scope:[s]  from main
-  to:s::@return
-s::@return: scope:[s]  from s
-  return 
-  to:@return
-
 Adding NOP phi() at start of @begin
 Adding NOP phi() at start of @2
 Adding NOP phi() at start of @end
@@ -966,40 +404,6 @@ Calls in [main] to s:5
 
 Propagating live ranges...
 Propagating live ranges...
-CONTROL FLOW GRAPH - LIVE RANGES FOUND
-@begin: scope:[]  from
-  [0] phi() [ ]
-  to:@2
-@2: scope:[]  from @begin
-  [1] phi() [ ]
-  [2] call main param-assignment [ ]
-  to:@end
-@end: scope:[]  from @2
-  [3] phi() [ ]
-main: scope:[main]  from @2
-  [4] phi() [ ]
-  [5] call s param-assignment [ ]
-  to:main::@1
-main::@1: scope:[main]  from main main::@4
-  [6] (byte) main::i#2 ← phi( main::@4/(byte~) main::i#3 main/(byte/signed byte/word/signed word) 0 ) [ main::i#2 ]
-  [7] *((const byte*) main::COLS#0 + (byte) main::i#2) ← (const byte) main::col#0 [ main::i#2 ]
-  [8] *((const byte*) SCREEN#0 + (byte) main::i#2) ← ++++(byte/signed byte/word/signed word) 2>>(byte/signed byte/word/signed word) 1 [ main::i#2 ]
-  [9] (byte) main::i#1 ← ++ (byte) main::i#2 [ main::i#1 ]
-  [10] if((byte) main::i#1!=(byte/signed byte/word/signed word) 101) goto main::@4 [ main::i#1 ]
-  to:main::@return
-main::@return: scope:[main]  from main::@1
-  [11] return  [ ]
-  to:@return
-main::@4: scope:[main]  from main::@1
-  [12] (byte~) main::i#3 ← (byte) main::i#1 [ main::i#3 ]
-  to:main::@1
-s: scope:[s]  from main
-  [13] phi() [ ]
-  to:s::@return
-s::@return: scope:[s]  from s
-  [14] return  [ ]
-  to:@return
-
 Created 1 initial phi equivalence classes
 Coalesced [12] main::i#3 ← main::i#1
 Coalesced down to 1 phi equivalence classes
@@ -1012,38 +416,8 @@ Adding NOP phi() at start of main
 Adding NOP phi() at start of s
 Propagating live ranges...
 Propagating live ranges...
-CONTROL FLOW GRAPH - BEFORE EFFECTIVE LIVE RANGES
-@begin: scope:[]  from
-  [0] phi() [ ]
-  to:@2
-@2: scope:[]  from @begin
-  [1] phi() [ ]
-  [2] call main param-assignment [ ]
-  to:@end
-@end: scope:[]  from @2
-  [3] phi() [ ]
-main: scope:[main]  from @2
-  [4] phi() [ ]
-  [5] call s param-assignment [ ]
-  to:main::@1
-main::@1: scope:[main]  from main main::@1
-  [6] (byte) main::i#2 ← phi( main::@1/(byte) main::i#1 main/(byte/signed byte/word/signed word) 0 ) [ main::i#2 ]
-  [7] *((const byte*) main::COLS#0 + (byte) main::i#2) ← (const byte) main::col#0 [ main::i#2 ]
-  [8] *((const byte*) SCREEN#0 + (byte) main::i#2) ← ++++(byte/signed byte/word/signed word) 2>>(byte/signed byte/word/signed word) 1 [ main::i#2 ]
-  [9] (byte) main::i#1 ← ++ (byte) main::i#2 [ main::i#1 ]
-  [10] if((byte) main::i#1!=(byte/signed byte/word/signed word) 101) goto main::@1 [ main::i#1 ]
-  to:main::@return
-main::@return: scope:[main]  from main::@1
-  [11] return  [ ]
-  to:@return
-s: scope:[s]  from main
-  [12] phi() [ ]
-  to:s::@return
-s::@return: scope:[s]  from s
-  [13] return  [ ]
-  to:@return
 
-CONTROL FLOW GRAPH - PHI MEM COALESCED
+FINAL CONTROL FLOW GRAPH
 @begin: scope:[]  from
   [0] phi() [ ] ( )
   to:@2
@@ -1114,6 +488,7 @@ Initial phi equivalence classes
 Complete equivalence classes
 [ main::i#2 main::i#1 ]
 Allocated zp ZP_BYTE:2 [ main::i#2 main::i#1 ]
+
 INITIAL ASM
 //SEG0 Basic Upstart
 .pc = $801 "Basic"
@@ -1319,7 +694,8 @@ FINAL SYMBOL TABLE
 
 reg byte x [ main::i#2 main::i#1 ]
 
-FINAL CODE
+
+FINAL ASSEMBLER
 //SEG0 Basic Upstart
 .pc = $801 "Basic"
 :BasicUpstart(main)

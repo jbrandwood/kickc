@@ -1,3 +1,4 @@
+PARSING /Users/jespergravgaard/c64/tmp/kickc/src/test/java/dk/camelot64/kickc/test/zpparammin.kc
 byte* SCREEN = $0400;
 byte* SCREEN2 = $0400+40;
 
@@ -16,7 +17,8 @@ byte sum(byte a, byte b, byte c) {
 byte sum2(byte a, byte b, byte c) {
   return a+b+c;
 }
-PROGRAM
+
+STATEMENTS
   (byte*) SCREEN ← (word/signed word) 1024
   (word/signed word~) $0 ← (word/signed word) 1024 + (byte/signed byte/word/signed word) 40
   (byte*) SCREEN2 ← (word/signed word~) $0
@@ -154,209 +156,15 @@ Removing empty block @1
 Removing empty block sum::@1
 Removing empty block @2
 Removing empty block sum2::@1
-CONTROL FLOW GRAPH
-@begin: scope:[]  from
-  (byte*) SCREEN ← ((byte*)) (word/signed word) 1024
-  (word/signed word~) $0 ← (word/signed word) 1024 + (byte/signed byte/word/signed word) 40
-  (byte*) SCREEN2 ← ((byte*)) (word/signed word~) $0
-  to:@3
-main: scope:[main]  from
-  (byte) main::i ← (byte/signed byte/word/signed word) 0
-  to:main::@1
-main::@1: scope:[main]  from main main::@1
-  (byte/word~) main::$0 ← (byte) main::i + (byte/signed byte/word/signed word) 1
-  (byte/word~) main::$1 ← (byte) main::i + (byte/signed byte/word/signed word) 2
-  (byte~) main::$2 ← call sum (byte) main::i (byte/word~) main::$0 (byte/word~) main::$1 
-  *((byte*) SCREEN + (byte) main::i) ← (byte~) main::$2
-  (byte/word~) main::$3 ← (byte) main::i + (byte/signed byte/word/signed word) 1
-  (byte/word~) main::$4 ← (byte) main::i + (byte/signed byte/word/signed word) 2
-  (byte~) main::$5 ← call sum2 (byte) main::i (byte/word~) main::$3 (byte/word~) main::$4 
-  *((byte*) SCREEN2 + (byte) main::i) ← (byte~) main::$5
-  (byte) main::i ← ++ (byte) main::i
-  (boolean~) main::$6 ← (byte) main::i != (byte/signed byte/word/signed word) 11
-  if((boolean~) main::$6) goto main::@1
-  to:main::@return
-main::@return: scope:[main]  from main::@1
-  return 
-  to:@return
-sum: scope:[sum]  from
-  (byte/word~) sum::$0 ← (byte) sum::a + (byte) sum::b
-  (byte/word~) sum::$1 ← (byte/word~) sum::$0 + (byte) sum::c
-  (byte) sum::return ← (byte/word~) sum::$1
-  to:sum::@return
-sum::@return: scope:[sum]  from sum
-  (byte) sum::return ← (byte) sum::return
-  return (byte) sum::return
-  to:@return
-sum2: scope:[sum2]  from
-  (byte/word~) sum2::$0 ← (byte) sum2::a + (byte) sum2::b
-  (byte/word~) sum2::$1 ← (byte/word~) sum2::$0 + (byte) sum2::c
-  (byte) sum2::return ← (byte/word~) sum2::$1
-  to:sum2::@return
-sum2::@return: scope:[sum2]  from sum2
-  (byte) sum2::return ← (byte) sum2::return
-  return (byte) sum2::return
-  to:@return
-@3: scope:[]  from @begin
-  call main 
-  to:@end
-@end: scope:[]  from @3
-
 PROCEDURE MODIFY VARIABLE ANALYSIS
 
-CONTROL FLOW GRAPH WITH ASSIGNMENT CALL
-@begin: scope:[]  from
-  (byte*) SCREEN ← ((byte*)) (word/signed word) 1024
-  (word/signed word~) $0 ← (word/signed word) 1024 + (byte/signed byte/word/signed word) 40
-  (byte*) SCREEN2 ← ((byte*)) (word/signed word~) $0
-  to:@3
-main: scope:[main]  from @3
-  (byte) main::i ← (byte/signed byte/word/signed word) 0
-  to:main::@1
-main::@1: scope:[main]  from main main::@4
-  (byte/word~) main::$0 ← (byte) main::i + (byte/signed byte/word/signed word) 1
-  (byte/word~) main::$1 ← (byte) main::i + (byte/signed byte/word/signed word) 2
-  (byte) sum::a ← (byte) main::i
-  (byte) sum::b ← (byte/word~) main::$0
-  (byte) sum::c ← (byte/word~) main::$1
-  (byte) sum::return ← call sum param-assignment
-  to:main::@3
-main::@3: scope:[main]  from main::@1
-  (byte~) main::$2 ← (byte) sum::return
-  *((byte*) SCREEN + (byte) main::i) ← (byte~) main::$2
-  (byte/word~) main::$3 ← (byte) main::i + (byte/signed byte/word/signed word) 1
-  (byte/word~) main::$4 ← (byte) main::i + (byte/signed byte/word/signed word) 2
-  (byte) sum2::a ← (byte) main::i
-  (byte) sum2::b ← (byte/word~) main::$3
-  (byte) sum2::c ← (byte/word~) main::$4
-  (byte) sum2::return ← call sum2 param-assignment
-  to:main::@4
-main::@4: scope:[main]  from main::@3
-  (byte~) main::$5 ← (byte) sum2::return
-  *((byte*) SCREEN2 + (byte) main::i) ← (byte~) main::$5
-  (byte) main::i ← ++ (byte) main::i
-  (boolean~) main::$6 ← (byte) main::i != (byte/signed byte/word/signed word) 11
-  if((boolean~) main::$6) goto main::@1
-  to:main::@return
-main::@return: scope:[main]  from main::@4
-  return 
-  to:@return
-sum: scope:[sum]  from main::@1
-  (byte/word~) sum::$0 ← (byte) sum::a + (byte) sum::b
-  (byte/word~) sum::$1 ← (byte/word~) sum::$0 + (byte) sum::c
-  (byte) sum::return ← (byte/word~) sum::$1
-  to:sum::@return
-sum::@return: scope:[sum]  from sum
-  (byte) sum::return ← (byte) sum::return
-  return (byte) sum::return
-  to:@return
-sum2: scope:[sum2]  from main::@3
-  (byte/word~) sum2::$0 ← (byte) sum2::a + (byte) sum2::b
-  (byte/word~) sum2::$1 ← (byte/word~) sum2::$0 + (byte) sum2::c
-  (byte) sum2::return ← (byte/word~) sum2::$1
-  to:sum2::@return
-sum2::@return: scope:[sum2]  from sum2
-  (byte) sum2::return ← (byte) sum2::return
-  return (byte) sum2::return
-  to:@return
-@3: scope:[]  from @begin
-  call main param-assignment
-  to:@4
-@4: scope:[]  from @3
-  to:@end
-@end: scope:[]  from @4
+Completing Phi functions...
+Completing Phi functions...
+Completing Phi functions...
+Completing Phi functions...
+Completing Phi functions...
 
-Completing Phi functions...
-Completing Phi functions...
-Completing Phi functions...
-Completing Phi functions...
-Completing Phi functions...
-CONTROL FLOW GRAPH SSA
-@begin: scope:[]  from
-  (byte*) SCREEN#0 ← ((byte*)) (word/signed word) 1024
-  (word/signed word~) $0 ← (word/signed word) 1024 + (byte/signed byte/word/signed word) 40
-  (byte*) SCREEN2#0 ← ((byte*)) (word/signed word~) $0
-  to:@3
-main: scope:[main]  from @3
-  (byte*) SCREEN2#4 ← phi( @3/(byte*) SCREEN2#5 )
-  (byte*) SCREEN#3 ← phi( @3/(byte*) SCREEN#5 )
-  (byte) main::i#0 ← (byte/signed byte/word/signed word) 0
-  to:main::@1
-main::@1: scope:[main]  from main main::@4
-  (byte*) SCREEN2#3 ← phi( main/(byte*) SCREEN2#4 main::@4/(byte*) SCREEN2#1 )
-  (byte*) SCREEN#2 ← phi( main/(byte*) SCREEN#3 main::@4/(byte*) SCREEN#4 )
-  (byte) main::i#2 ← phi( main/(byte) main::i#0 main::@4/(byte) main::i#1 )
-  (byte/word~) main::$0 ← (byte) main::i#2 + (byte/signed byte/word/signed word) 1
-  (byte/word~) main::$1 ← (byte) main::i#2 + (byte/signed byte/word/signed word) 2
-  (byte) sum::a#0 ← (byte) main::i#2
-  (byte) sum::b#0 ← (byte/word~) main::$0
-  (byte) sum::c#0 ← (byte/word~) main::$1
-  (byte) sum::return#0 ← call sum param-assignment
-  to:main::@3
-main::@3: scope:[main]  from main::@1
-  (byte*) SCREEN2#2 ← phi( main::@1/(byte*) SCREEN2#3 )
-  (byte) main::i#3 ← phi( main::@1/(byte) main::i#2 )
-  (byte*) SCREEN#1 ← phi( main::@1/(byte*) SCREEN#2 )
-  (byte) sum::return#3 ← phi( main::@1/(byte) sum::return#0 )
-  (byte~) main::$2 ← (byte) sum::return#3
-  *((byte*) SCREEN#1 + (byte) main::i#3) ← (byte~) main::$2
-  (byte/word~) main::$3 ← (byte) main::i#3 + (byte/signed byte/word/signed word) 1
-  (byte/word~) main::$4 ← (byte) main::i#3 + (byte/signed byte/word/signed word) 2
-  (byte) sum2::a#0 ← (byte) main::i#3
-  (byte) sum2::b#0 ← (byte/word~) main::$3
-  (byte) sum2::c#0 ← (byte/word~) main::$4
-  (byte) sum2::return#0 ← call sum2 param-assignment
-  to:main::@4
-main::@4: scope:[main]  from main::@3
-  (byte*) SCREEN#4 ← phi( main::@3/(byte*) SCREEN#1 )
-  (byte) main::i#4 ← phi( main::@3/(byte) main::i#3 )
-  (byte*) SCREEN2#1 ← phi( main::@3/(byte*) SCREEN2#2 )
-  (byte) sum2::return#3 ← phi( main::@3/(byte) sum2::return#0 )
-  (byte~) main::$5 ← (byte) sum2::return#3
-  *((byte*) SCREEN2#1 + (byte) main::i#4) ← (byte~) main::$5
-  (byte) main::i#1 ← ++ (byte) main::i#4
-  (boolean~) main::$6 ← (byte) main::i#1 != (byte/signed byte/word/signed word) 11
-  if((boolean~) main::$6) goto main::@1
-  to:main::@return
-main::@return: scope:[main]  from main::@4
-  return 
-  to:@return
-sum: scope:[sum]  from main::@1
-  (byte) sum::c#1 ← phi( main::@1/(byte) sum::c#0 )
-  (byte) sum::b#1 ← phi( main::@1/(byte) sum::b#0 )
-  (byte) sum::a#1 ← phi( main::@1/(byte) sum::a#0 )
-  (byte/word~) sum::$0 ← (byte) sum::a#1 + (byte) sum::b#1
-  (byte/word~) sum::$1 ← (byte/word~) sum::$0 + (byte) sum::c#1
-  (byte) sum::return#1 ← (byte/word~) sum::$1
-  to:sum::@return
-sum::@return: scope:[sum]  from sum
-  (byte) sum::return#4 ← phi( sum/(byte) sum::return#1 )
-  (byte) sum::return#2 ← (byte) sum::return#4
-  return (byte) sum::return#2
-  to:@return
-sum2: scope:[sum2]  from main::@3
-  (byte) sum2::c#1 ← phi( main::@3/(byte) sum2::c#0 )
-  (byte) sum2::b#1 ← phi( main::@3/(byte) sum2::b#0 )
-  (byte) sum2::a#1 ← phi( main::@3/(byte) sum2::a#0 )
-  (byte/word~) sum2::$0 ← (byte) sum2::a#1 + (byte) sum2::b#1
-  (byte/word~) sum2::$1 ← (byte/word~) sum2::$0 + (byte) sum2::c#1
-  (byte) sum2::return#1 ← (byte/word~) sum2::$1
-  to:sum2::@return
-sum2::@return: scope:[sum2]  from sum2
-  (byte) sum2::return#4 ← phi( sum2/(byte) sum2::return#1 )
-  (byte) sum2::return#2 ← (byte) sum2::return#4
-  return (byte) sum2::return#2
-  to:@return
-@3: scope:[]  from @begin
-  (byte*) SCREEN2#5 ← phi( @begin/(byte*) SCREEN2#0 )
-  (byte*) SCREEN#5 ← phi( @begin/(byte*) SCREEN#0 )
-  call main param-assignment
-  to:@4
-@4: scope:[]  from @3
-  to:@end
-@end: scope:[]  from @4
-
-CONTROL FLOW GRAPH WITH ASSIGNMENT CALL & RETURN
+CONTROL FLOW GRAPH SSA WITH ASSIGNMENT CALL & RETURN
 @begin: scope:[]  from
   (byte*) SCREEN#0 ← ((byte*)) (word/signed word) 1024
   (word/signed word~) $0 ← (word/signed word) 1024 + (byte/signed byte/word/signed word) 40
@@ -443,7 +251,7 @@ sum2::@return: scope:[sum2]  from sum2
   to:@end
 @end: scope:[]  from @4
 
-INITIAL SSA SYMBOL TABLE
+SYMBOL TABLE SSA
 (word/signed word~) $0
 (label) @3
 (label) @4
@@ -520,93 +328,9 @@ INITIAL SSA SYMBOL TABLE
 (byte) sum2::return#3
 (byte) sum2::return#4
 
+OPTIMIZING CONTROL FLOW GRAPH
 Culled Empty Block (label) @4
 Succesful SSA optimization Pass2CullEmptyBlocks
-CONTROL FLOW GRAPH
-@begin: scope:[]  from
-  (byte*) SCREEN#0 ← ((byte*)) (word/signed word) 1024
-  (word/signed word~) $0 ← (word/signed word) 1024 + (byte/signed byte/word/signed word) 40
-  (byte*) SCREEN2#0 ← ((byte*)) (word/signed word~) $0
-  to:@3
-main: scope:[main]  from @3
-  (byte*) SCREEN2#4 ← phi( @3/(byte*) SCREEN2#5 )
-  (byte*) SCREEN#3 ← phi( @3/(byte*) SCREEN#5 )
-  (byte) main::i#0 ← (byte/signed byte/word/signed word) 0
-  to:main::@1
-main::@1: scope:[main]  from main main::@4
-  (byte*) SCREEN2#3 ← phi( main/(byte*) SCREEN2#4 main::@4/(byte*) SCREEN2#1 )
-  (byte*) SCREEN#2 ← phi( main/(byte*) SCREEN#3 main::@4/(byte*) SCREEN#4 )
-  (byte) main::i#2 ← phi( main/(byte) main::i#0 main::@4/(byte) main::i#1 )
-  (byte/word~) main::$0 ← (byte) main::i#2 + (byte/signed byte/word/signed word) 1
-  (byte/word~) main::$1 ← (byte) main::i#2 + (byte/signed byte/word/signed word) 2
-  (byte) sum::a#0 ← (byte) main::i#2
-  (byte) sum::b#0 ← (byte/word~) main::$0
-  (byte) sum::c#0 ← (byte/word~) main::$1
-  call sum param-assignment
-  (byte) sum::return#0 ← (byte) sum::return#2
-  to:main::@3
-main::@3: scope:[main]  from main::@1
-  (byte*) SCREEN2#2 ← phi( main::@1/(byte*) SCREEN2#3 )
-  (byte) main::i#3 ← phi( main::@1/(byte) main::i#2 )
-  (byte*) SCREEN#1 ← phi( main::@1/(byte*) SCREEN#2 )
-  (byte) sum::return#3 ← phi( main::@1/(byte) sum::return#0 )
-  (byte~) main::$2 ← (byte) sum::return#3
-  *((byte*) SCREEN#1 + (byte) main::i#3) ← (byte~) main::$2
-  (byte/word~) main::$3 ← (byte) main::i#3 + (byte/signed byte/word/signed word) 1
-  (byte/word~) main::$4 ← (byte) main::i#3 + (byte/signed byte/word/signed word) 2
-  (byte) sum2::a#0 ← (byte) main::i#3
-  (byte) sum2::b#0 ← (byte/word~) main::$3
-  (byte) sum2::c#0 ← (byte/word~) main::$4
-  call sum2 param-assignment
-  (byte) sum2::return#0 ← (byte) sum2::return#2
-  to:main::@4
-main::@4: scope:[main]  from main::@3
-  (byte*) SCREEN#4 ← phi( main::@3/(byte*) SCREEN#1 )
-  (byte) main::i#4 ← phi( main::@3/(byte) main::i#3 )
-  (byte*) SCREEN2#1 ← phi( main::@3/(byte*) SCREEN2#2 )
-  (byte) sum2::return#3 ← phi( main::@3/(byte) sum2::return#0 )
-  (byte~) main::$5 ← (byte) sum2::return#3
-  *((byte*) SCREEN2#1 + (byte) main::i#4) ← (byte~) main::$5
-  (byte) main::i#1 ← ++ (byte) main::i#4
-  (boolean~) main::$6 ← (byte) main::i#1 != (byte/signed byte/word/signed word) 11
-  if((boolean~) main::$6) goto main::@1
-  to:main::@return
-main::@return: scope:[main]  from main::@4
-  return 
-  to:@return
-sum: scope:[sum]  from main::@1
-  (byte) sum::c#1 ← phi( main::@1/(byte) sum::c#0 )
-  (byte) sum::b#1 ← phi( main::@1/(byte) sum::b#0 )
-  (byte) sum::a#1 ← phi( main::@1/(byte) sum::a#0 )
-  (byte/word~) sum::$0 ← (byte) sum::a#1 + (byte) sum::b#1
-  (byte/word~) sum::$1 ← (byte/word~) sum::$0 + (byte) sum::c#1
-  (byte) sum::return#1 ← (byte/word~) sum::$1
-  to:sum::@return
-sum::@return: scope:[sum]  from sum
-  (byte) sum::return#4 ← phi( sum/(byte) sum::return#1 )
-  (byte) sum::return#2 ← (byte) sum::return#4
-  return 
-  to:@return
-sum2: scope:[sum2]  from main::@3
-  (byte) sum2::c#1 ← phi( main::@3/(byte) sum2::c#0 )
-  (byte) sum2::b#1 ← phi( main::@3/(byte) sum2::b#0 )
-  (byte) sum2::a#1 ← phi( main::@3/(byte) sum2::a#0 )
-  (byte/word~) sum2::$0 ← (byte) sum2::a#1 + (byte) sum2::b#1
-  (byte/word~) sum2::$1 ← (byte/word~) sum2::$0 + (byte) sum2::c#1
-  (byte) sum2::return#1 ← (byte/word~) sum2::$1
-  to:sum2::@return
-sum2::@return: scope:[sum2]  from sum2
-  (byte) sum2::return#4 ← phi( sum2/(byte) sum2::return#1 )
-  (byte) sum2::return#2 ← (byte) sum2::return#4
-  return 
-  to:@return
-@3: scope:[]  from @begin
-  (byte*) SCREEN2#5 ← phi( @begin/(byte*) SCREEN2#0 )
-  (byte*) SCREEN#5 ← phi( @begin/(byte*) SCREEN#0 )
-  call main param-assignment
-  to:@end
-@end: scope:[]  from @3
-
 Not aliassing across scopes: SCREEN#3 SCREEN#5
 Not aliassing across scopes: SCREEN2#4 SCREEN2#5
 Not aliassing across scopes: sum::a#0 main::i#2
@@ -635,71 +359,6 @@ Alias (byte) sum2::return#1 = (byte/word~) sum2::$1 (byte) sum2::return#4 (byte)
 Alias (byte*) SCREEN#0 = (byte*) SCREEN#5 
 Alias (byte*) SCREEN2#0 = (byte*) SCREEN2#5 
 Succesful SSA optimization Pass2AliasElimination
-CONTROL FLOW GRAPH
-@begin: scope:[]  from
-  (byte*) SCREEN#0 ← ((byte*)) (word/signed word) 1024
-  (word/signed word~) $0 ← (word/signed word) 1024 + (byte/signed byte/word/signed word) 40
-  (byte*) SCREEN2#0 ← ((byte*)) (word/signed word~) $0
-  to:@3
-main: scope:[main]  from @3
-  (byte*) SCREEN2#4 ← phi( @3/(byte*) SCREEN2#0 )
-  (byte*) SCREEN#3 ← phi( @3/(byte*) SCREEN#0 )
-  (byte) main::i#0 ← (byte/signed byte/word/signed word) 0
-  to:main::@1
-main::@1: scope:[main]  from main main::@4
-  (byte*) SCREEN2#1 ← phi( main/(byte*) SCREEN2#4 main::@4/(byte*) SCREEN2#1 )
-  (byte*) SCREEN#1 ← phi( main/(byte*) SCREEN#3 main::@4/(byte*) SCREEN#1 )
-  (byte) main::i#2 ← phi( main/(byte) main::i#0 main::@4/(byte) main::i#1 )
-  (byte) sum::b#0 ← (byte) main::i#2 + (byte/signed byte/word/signed word) 1
-  (byte) sum::c#0 ← (byte) main::i#2 + (byte/signed byte/word/signed word) 2
-  (byte) sum::a#0 ← (byte) main::i#2
-  call sum param-assignment
-  (byte) sum::return#0 ← (byte) sum::return#1
-  to:main::@3
-main::@3: scope:[main]  from main::@1
-  (byte~) main::$2 ← (byte) sum::return#0
-  *((byte*) SCREEN#1 + (byte) main::i#2) ← (byte~) main::$2
-  (byte) sum2::b#0 ← (byte) main::i#2 + (byte/signed byte/word/signed word) 1
-  (byte) sum2::c#0 ← (byte) main::i#2 + (byte/signed byte/word/signed word) 2
-  (byte) sum2::a#0 ← (byte) main::i#2
-  call sum2 param-assignment
-  (byte) sum2::return#0 ← (byte) sum2::return#1
-  to:main::@4
-main::@4: scope:[main]  from main::@3
-  (byte~) main::$5 ← (byte) sum2::return#0
-  *((byte*) SCREEN2#1 + (byte) main::i#2) ← (byte~) main::$5
-  (byte) main::i#1 ← ++ (byte) main::i#2
-  (boolean~) main::$6 ← (byte) main::i#1 != (byte/signed byte/word/signed word) 11
-  if((boolean~) main::$6) goto main::@1
-  to:main::@return
-main::@return: scope:[main]  from main::@4
-  return 
-  to:@return
-sum: scope:[sum]  from main::@1
-  (byte) sum::c#1 ← phi( main::@1/(byte) sum::c#0 )
-  (byte) sum::b#1 ← phi( main::@1/(byte) sum::b#0 )
-  (byte) sum::a#1 ← phi( main::@1/(byte) sum::a#0 )
-  (byte/word~) sum::$0 ← (byte) sum::a#1 + (byte) sum::b#1
-  (byte) sum::return#1 ← (byte/word~) sum::$0 + (byte) sum::c#1
-  to:sum::@return
-sum::@return: scope:[sum]  from sum
-  return 
-  to:@return
-sum2: scope:[sum2]  from main::@3
-  (byte) sum2::c#1 ← phi( main::@3/(byte) sum2::c#0 )
-  (byte) sum2::b#1 ← phi( main::@3/(byte) sum2::b#0 )
-  (byte) sum2::a#1 ← phi( main::@3/(byte) sum2::a#0 )
-  (byte/word~) sum2::$0 ← (byte) sum2::a#1 + (byte) sum2::b#1
-  (byte) sum2::return#1 ← (byte/word~) sum2::$0 + (byte) sum2::c#1
-  to:sum2::@return
-sum2::@return: scope:[sum2]  from sum2
-  return 
-  to:@return
-@3: scope:[]  from @begin
-  call main param-assignment
-  to:@end
-@end: scope:[]  from @3
-
 Not aliassing across scopes: SCREEN#3 SCREEN#0
 Not aliassing across scopes: SCREEN2#4 SCREEN2#0
 Not aliassing across scopes: sum::a#0 main::i#2
@@ -717,71 +376,6 @@ Not aliassing across scopes: sum2::c#1 sum2::c#0
 Self Phi Eliminated (byte*) SCREEN#1
 Self Phi Eliminated (byte*) SCREEN2#1
 Succesful SSA optimization Pass2SelfPhiElimination
-CONTROL FLOW GRAPH
-@begin: scope:[]  from
-  (byte*) SCREEN#0 ← ((byte*)) (word/signed word) 1024
-  (word/signed word~) $0 ← (word/signed word) 1024 + (byte/signed byte/word/signed word) 40
-  (byte*) SCREEN2#0 ← ((byte*)) (word/signed word~) $0
-  to:@3
-main: scope:[main]  from @3
-  (byte*) SCREEN2#4 ← phi( @3/(byte*) SCREEN2#0 )
-  (byte*) SCREEN#3 ← phi( @3/(byte*) SCREEN#0 )
-  (byte) main::i#0 ← (byte/signed byte/word/signed word) 0
-  to:main::@1
-main::@1: scope:[main]  from main main::@4
-  (byte*) SCREEN2#1 ← phi( main/(byte*) SCREEN2#4 )
-  (byte*) SCREEN#1 ← phi( main/(byte*) SCREEN#3 )
-  (byte) main::i#2 ← phi( main/(byte) main::i#0 main::@4/(byte) main::i#1 )
-  (byte) sum::b#0 ← (byte) main::i#2 + (byte/signed byte/word/signed word) 1
-  (byte) sum::c#0 ← (byte) main::i#2 + (byte/signed byte/word/signed word) 2
-  (byte) sum::a#0 ← (byte) main::i#2
-  call sum param-assignment
-  (byte) sum::return#0 ← (byte) sum::return#1
-  to:main::@3
-main::@3: scope:[main]  from main::@1
-  (byte~) main::$2 ← (byte) sum::return#0
-  *((byte*) SCREEN#1 + (byte) main::i#2) ← (byte~) main::$2
-  (byte) sum2::b#0 ← (byte) main::i#2 + (byte/signed byte/word/signed word) 1
-  (byte) sum2::c#0 ← (byte) main::i#2 + (byte/signed byte/word/signed word) 2
-  (byte) sum2::a#0 ← (byte) main::i#2
-  call sum2 param-assignment
-  (byte) sum2::return#0 ← (byte) sum2::return#1
-  to:main::@4
-main::@4: scope:[main]  from main::@3
-  (byte~) main::$5 ← (byte) sum2::return#0
-  *((byte*) SCREEN2#1 + (byte) main::i#2) ← (byte~) main::$5
-  (byte) main::i#1 ← ++ (byte) main::i#2
-  (boolean~) main::$6 ← (byte) main::i#1 != (byte/signed byte/word/signed word) 11
-  if((boolean~) main::$6) goto main::@1
-  to:main::@return
-main::@return: scope:[main]  from main::@4
-  return 
-  to:@return
-sum: scope:[sum]  from main::@1
-  (byte) sum::c#1 ← phi( main::@1/(byte) sum::c#0 )
-  (byte) sum::b#1 ← phi( main::@1/(byte) sum::b#0 )
-  (byte) sum::a#1 ← phi( main::@1/(byte) sum::a#0 )
-  (byte/word~) sum::$0 ← (byte) sum::a#1 + (byte) sum::b#1
-  (byte) sum::return#1 ← (byte/word~) sum::$0 + (byte) sum::c#1
-  to:sum::@return
-sum::@return: scope:[sum]  from sum
-  return 
-  to:@return
-sum2: scope:[sum2]  from main::@3
-  (byte) sum2::c#1 ← phi( main::@3/(byte) sum2::c#0 )
-  (byte) sum2::b#1 ← phi( main::@3/(byte) sum2::b#0 )
-  (byte) sum2::a#1 ← phi( main::@3/(byte) sum2::a#0 )
-  (byte/word~) sum2::$0 ← (byte) sum2::a#1 + (byte) sum2::b#1
-  (byte) sum2::return#1 ← (byte/word~) sum2::$0 + (byte) sum2::c#1
-  to:sum2::@return
-sum2::@return: scope:[sum2]  from sum2
-  return 
-  to:@return
-@3: scope:[]  from @begin
-  call main param-assignment
-  to:@end
-@end: scope:[]  from @3
-
 Redundant Phi (byte*) SCREEN#3 (byte*) SCREEN#0
 Redundant Phi (byte*) SCREEN2#4 (byte*) SCREEN2#0
 Redundant Phi (byte*) SCREEN#1 (byte*) SCREEN#3
@@ -793,224 +387,14 @@ Redundant Phi (byte) sum2::a#1 (byte) sum2::a#0
 Redundant Phi (byte) sum2::b#1 (byte) sum2::b#0
 Redundant Phi (byte) sum2::c#1 (byte) sum2::c#0
 Succesful SSA optimization Pass2RedundantPhiElimination
-CONTROL FLOW GRAPH
-@begin: scope:[]  from
-  (byte*) SCREEN#0 ← ((byte*)) (word/signed word) 1024
-  (word/signed word~) $0 ← (word/signed word) 1024 + (byte/signed byte/word/signed word) 40
-  (byte*) SCREEN2#0 ← ((byte*)) (word/signed word~) $0
-  to:@3
-main: scope:[main]  from @3
-  (byte) main::i#0 ← (byte/signed byte/word/signed word) 0
-  to:main::@1
-main::@1: scope:[main]  from main main::@4
-  (byte) main::i#2 ← phi( main/(byte) main::i#0 main::@4/(byte) main::i#1 )
-  (byte) sum::b#0 ← (byte) main::i#2 + (byte/signed byte/word/signed word) 1
-  (byte) sum::c#0 ← (byte) main::i#2 + (byte/signed byte/word/signed word) 2
-  (byte) sum::a#0 ← (byte) main::i#2
-  call sum param-assignment
-  (byte) sum::return#0 ← (byte) sum::return#1
-  to:main::@3
-main::@3: scope:[main]  from main::@1
-  (byte~) main::$2 ← (byte) sum::return#0
-  *((byte*) SCREEN#0 + (byte) main::i#2) ← (byte~) main::$2
-  (byte) sum2::b#0 ← (byte) main::i#2 + (byte/signed byte/word/signed word) 1
-  (byte) sum2::c#0 ← (byte) main::i#2 + (byte/signed byte/word/signed word) 2
-  (byte) sum2::a#0 ← (byte) main::i#2
-  call sum2 param-assignment
-  (byte) sum2::return#0 ← (byte) sum2::return#1
-  to:main::@4
-main::@4: scope:[main]  from main::@3
-  (byte~) main::$5 ← (byte) sum2::return#0
-  *((byte*) SCREEN2#0 + (byte) main::i#2) ← (byte~) main::$5
-  (byte) main::i#1 ← ++ (byte) main::i#2
-  (boolean~) main::$6 ← (byte) main::i#1 != (byte/signed byte/word/signed word) 11
-  if((boolean~) main::$6) goto main::@1
-  to:main::@return
-main::@return: scope:[main]  from main::@4
-  return 
-  to:@return
-sum: scope:[sum]  from main::@1
-  (byte/word~) sum::$0 ← (byte) sum::a#0 + (byte) sum::b#0
-  (byte) sum::return#1 ← (byte/word~) sum::$0 + (byte) sum::c#0
-  to:sum::@return
-sum::@return: scope:[sum]  from sum
-  return 
-  to:@return
-sum2: scope:[sum2]  from main::@3
-  (byte/word~) sum2::$0 ← (byte) sum2::a#0 + (byte) sum2::b#0
-  (byte) sum2::return#1 ← (byte/word~) sum2::$0 + (byte) sum2::c#0
-  to:sum2::@return
-sum2::@return: scope:[sum2]  from sum2
-  return 
-  to:@return
-@3: scope:[]  from @begin
-  call main param-assignment
-  to:@end
-@end: scope:[]  from @3
-
 Simple Condition (boolean~) main::$6 if((byte) main::i#1!=(byte/signed byte/word/signed word) 11) goto main::@1
 Succesful SSA optimization Pass2ConditionalJumpSimplification
-CONTROL FLOW GRAPH
-@begin: scope:[]  from
-  (byte*) SCREEN#0 ← ((byte*)) (word/signed word) 1024
-  (word/signed word~) $0 ← (word/signed word) 1024 + (byte/signed byte/word/signed word) 40
-  (byte*) SCREEN2#0 ← ((byte*)) (word/signed word~) $0
-  to:@3
-main: scope:[main]  from @3
-  (byte) main::i#0 ← (byte/signed byte/word/signed word) 0
-  to:main::@1
-main::@1: scope:[main]  from main main::@4
-  (byte) main::i#2 ← phi( main/(byte) main::i#0 main::@4/(byte) main::i#1 )
-  (byte) sum::b#0 ← (byte) main::i#2 + (byte/signed byte/word/signed word) 1
-  (byte) sum::c#0 ← (byte) main::i#2 + (byte/signed byte/word/signed word) 2
-  (byte) sum::a#0 ← (byte) main::i#2
-  call sum param-assignment
-  (byte) sum::return#0 ← (byte) sum::return#1
-  to:main::@3
-main::@3: scope:[main]  from main::@1
-  (byte~) main::$2 ← (byte) sum::return#0
-  *((byte*) SCREEN#0 + (byte) main::i#2) ← (byte~) main::$2
-  (byte) sum2::b#0 ← (byte) main::i#2 + (byte/signed byte/word/signed word) 1
-  (byte) sum2::c#0 ← (byte) main::i#2 + (byte/signed byte/word/signed word) 2
-  (byte) sum2::a#0 ← (byte) main::i#2
-  call sum2 param-assignment
-  (byte) sum2::return#0 ← (byte) sum2::return#1
-  to:main::@4
-main::@4: scope:[main]  from main::@3
-  (byte~) main::$5 ← (byte) sum2::return#0
-  *((byte*) SCREEN2#0 + (byte) main::i#2) ← (byte~) main::$5
-  (byte) main::i#1 ← ++ (byte) main::i#2
-  if((byte) main::i#1!=(byte/signed byte/word/signed word) 11) goto main::@1
-  to:main::@return
-main::@return: scope:[main]  from main::@4
-  return 
-  to:@return
-sum: scope:[sum]  from main::@1
-  (byte/word~) sum::$0 ← (byte) sum::a#0 + (byte) sum::b#0
-  (byte) sum::return#1 ← (byte/word~) sum::$0 + (byte) sum::c#0
-  to:sum::@return
-sum::@return: scope:[sum]  from sum
-  return 
-  to:@return
-sum2: scope:[sum2]  from main::@3
-  (byte/word~) sum2::$0 ← (byte) sum2::a#0 + (byte) sum2::b#0
-  (byte) sum2::return#1 ← (byte/word~) sum2::$0 + (byte) sum2::c#0
-  to:sum2::@return
-sum2::@return: scope:[sum2]  from sum2
-  return 
-  to:@return
-@3: scope:[]  from @begin
-  call main param-assignment
-  to:@end
-@end: scope:[]  from @3
-
 Constant (const byte*) SCREEN#0 = ((byte*))1024
 Constant (const word/signed word) $0 = 1024+40
 Constant (const byte) main::i#0 = 0
 Succesful SSA optimization Pass2ConstantIdentification
-CONTROL FLOW GRAPH
-@begin: scope:[]  from
-  (byte*) SCREEN2#0 ← ((byte*)) (const word/signed word) $0
-  to:@3
-main: scope:[main]  from @3
-  to:main::@1
-main::@1: scope:[main]  from main main::@4
-  (byte) main::i#2 ← phi( main/(const byte) main::i#0 main::@4/(byte) main::i#1 )
-  (byte) sum::b#0 ← (byte) main::i#2 + (byte/signed byte/word/signed word) 1
-  (byte) sum::c#0 ← (byte) main::i#2 + (byte/signed byte/word/signed word) 2
-  (byte) sum::a#0 ← (byte) main::i#2
-  call sum param-assignment
-  (byte) sum::return#0 ← (byte) sum::return#1
-  to:main::@3
-main::@3: scope:[main]  from main::@1
-  (byte~) main::$2 ← (byte) sum::return#0
-  *((const byte*) SCREEN#0 + (byte) main::i#2) ← (byte~) main::$2
-  (byte) sum2::b#0 ← (byte) main::i#2 + (byte/signed byte/word/signed word) 1
-  (byte) sum2::c#0 ← (byte) main::i#2 + (byte/signed byte/word/signed word) 2
-  (byte) sum2::a#0 ← (byte) main::i#2
-  call sum2 param-assignment
-  (byte) sum2::return#0 ← (byte) sum2::return#1
-  to:main::@4
-main::@4: scope:[main]  from main::@3
-  (byte~) main::$5 ← (byte) sum2::return#0
-  *((byte*) SCREEN2#0 + (byte) main::i#2) ← (byte~) main::$5
-  (byte) main::i#1 ← ++ (byte) main::i#2
-  if((byte) main::i#1!=(byte/signed byte/word/signed word) 11) goto main::@1
-  to:main::@return
-main::@return: scope:[main]  from main::@4
-  return 
-  to:@return
-sum: scope:[sum]  from main::@1
-  (byte/word~) sum::$0 ← (byte) sum::a#0 + (byte) sum::b#0
-  (byte) sum::return#1 ← (byte/word~) sum::$0 + (byte) sum::c#0
-  to:sum::@return
-sum::@return: scope:[sum]  from sum
-  return 
-  to:@return
-sum2: scope:[sum2]  from main::@3
-  (byte/word~) sum2::$0 ← (byte) sum2::a#0 + (byte) sum2::b#0
-  (byte) sum2::return#1 ← (byte/word~) sum2::$0 + (byte) sum2::c#0
-  to:sum2::@return
-sum2::@return: scope:[sum2]  from sum2
-  return 
-  to:@return
-@3: scope:[]  from @begin
-  call main param-assignment
-  to:@end
-@end: scope:[]  from @3
-
 Constant (const byte*) SCREEN2#0 = ((byte*))$0
 Succesful SSA optimization Pass2ConstantIdentification
-CONTROL FLOW GRAPH
-@begin: scope:[]  from
-  to:@3
-main: scope:[main]  from @3
-  to:main::@1
-main::@1: scope:[main]  from main main::@4
-  (byte) main::i#2 ← phi( main/(const byte) main::i#0 main::@4/(byte) main::i#1 )
-  (byte) sum::b#0 ← (byte) main::i#2 + (byte/signed byte/word/signed word) 1
-  (byte) sum::c#0 ← (byte) main::i#2 + (byte/signed byte/word/signed word) 2
-  (byte) sum::a#0 ← (byte) main::i#2
-  call sum param-assignment
-  (byte) sum::return#0 ← (byte) sum::return#1
-  to:main::@3
-main::@3: scope:[main]  from main::@1
-  (byte~) main::$2 ← (byte) sum::return#0
-  *((const byte*) SCREEN#0 + (byte) main::i#2) ← (byte~) main::$2
-  (byte) sum2::b#0 ← (byte) main::i#2 + (byte/signed byte/word/signed word) 1
-  (byte) sum2::c#0 ← (byte) main::i#2 + (byte/signed byte/word/signed word) 2
-  (byte) sum2::a#0 ← (byte) main::i#2
-  call sum2 param-assignment
-  (byte) sum2::return#0 ← (byte) sum2::return#1
-  to:main::@4
-main::@4: scope:[main]  from main::@3
-  (byte~) main::$5 ← (byte) sum2::return#0
-  *((const byte*) SCREEN2#0 + (byte) main::i#2) ← (byte~) main::$5
-  (byte) main::i#1 ← ++ (byte) main::i#2
-  if((byte) main::i#1!=(byte/signed byte/word/signed word) 11) goto main::@1
-  to:main::@return
-main::@return: scope:[main]  from main::@4
-  return 
-  to:@return
-sum: scope:[sum]  from main::@1
-  (byte/word~) sum::$0 ← (byte) sum::a#0 + (byte) sum::b#0
-  (byte) sum::return#1 ← (byte/word~) sum::$0 + (byte) sum::c#0
-  to:sum::@return
-sum::@return: scope:[sum]  from sum
-  return 
-  to:@return
-sum2: scope:[sum2]  from main::@3
-  (byte/word~) sum2::$0 ← (byte) sum2::a#0 + (byte) sum2::b#0
-  (byte) sum2::return#1 ← (byte/word~) sum2::$0 + (byte) sum2::c#0
-  to:sum2::@return
-sum2::@return: scope:[sum2]  from sum2
-  return 
-  to:@return
-@3: scope:[]  from @begin
-  call main param-assignment
-  to:@end
-@end: scope:[]  from @3
-
 Multiple usages for variable. Not optimizing sub-constant (byte) main::i#2
 Multiple usages for variable. Not optimizing sub-constant (byte) main::i#2
 Multiple usages for variable. Not optimizing sub-constant (byte) main::i#2
@@ -1029,160 +413,15 @@ Multiple usages for variable. Not optimizing sub-constant (byte) main::i#2
 Multiple usages for variable. Not optimizing sub-constant (byte) main::i#2
 Multiple usages for variable. Not optimizing sub-constant (byte) main::i#2
 Multiple usages for variable. Not optimizing sub-constant (byte) main::i#2
+OPTIMIZING CONTROL FLOW GRAPH
 Inlining constant with var siblings (const byte) main::i#0
 Inlining constant with var siblings (const byte) main::i#0
 Constant inlined $0 = (word/signed word) 1024+(byte/signed byte/word/signed word) 40
 Constant inlined main::i#0 = (byte/signed byte/word/signed word) 0
 Succesful SSA optimization Pass2ConstantInlining
-CONTROL FLOW GRAPH
-@begin: scope:[]  from
-  to:@3
-main: scope:[main]  from @3
-  to:main::@1
-main::@1: scope:[main]  from main main::@4
-  (byte) main::i#2 ← phi( main/(byte/signed byte/word/signed word) 0 main::@4/(byte) main::i#1 )
-  (byte) sum::b#0 ← (byte) main::i#2 + (byte/signed byte/word/signed word) 1
-  (byte) sum::c#0 ← (byte) main::i#2 + (byte/signed byte/word/signed word) 2
-  (byte) sum::a#0 ← (byte) main::i#2
-  call sum param-assignment
-  (byte) sum::return#0 ← (byte) sum::return#1
-  to:main::@3
-main::@3: scope:[main]  from main::@1
-  (byte~) main::$2 ← (byte) sum::return#0
-  *((const byte*) SCREEN#0 + (byte) main::i#2) ← (byte~) main::$2
-  (byte) sum2::b#0 ← (byte) main::i#2 + (byte/signed byte/word/signed word) 1
-  (byte) sum2::c#0 ← (byte) main::i#2 + (byte/signed byte/word/signed word) 2
-  (byte) sum2::a#0 ← (byte) main::i#2
-  call sum2 param-assignment
-  (byte) sum2::return#0 ← (byte) sum2::return#1
-  to:main::@4
-main::@4: scope:[main]  from main::@3
-  (byte~) main::$5 ← (byte) sum2::return#0
-  *((const byte*) SCREEN2#0 + (byte) main::i#2) ← (byte~) main::$5
-  (byte) main::i#1 ← ++ (byte) main::i#2
-  if((byte) main::i#1!=(byte/signed byte/word/signed word) 11) goto main::@1
-  to:main::@return
-main::@return: scope:[main]  from main::@4
-  return 
-  to:@return
-sum: scope:[sum]  from main::@1
-  (byte/word~) sum::$0 ← (byte) sum::a#0 + (byte) sum::b#0
-  (byte) sum::return#1 ← (byte/word~) sum::$0 + (byte) sum::c#0
-  to:sum::@return
-sum::@return: scope:[sum]  from sum
-  return 
-  to:@return
-sum2: scope:[sum2]  from main::@3
-  (byte/word~) sum2::$0 ← (byte) sum2::a#0 + (byte) sum2::b#0
-  (byte) sum2::return#1 ← (byte/word~) sum2::$0 + (byte) sum2::c#0
-  to:sum2::@return
-sum2::@return: scope:[sum2]  from sum2
-  return 
-  to:@return
-@3: scope:[]  from @begin
-  call main param-assignment
-  to:@end
-@end: scope:[]  from @3
-
-FINAL SYMBOL TABLE
-(label) @3
-(label) @begin
-(label) @end
-(byte*) SCREEN
-(const byte*) SCREEN#0 = ((byte*))(word/signed word) 1024
-(byte*) SCREEN2
-(const byte*) SCREEN2#0 = ((byte*))(word/signed word) 1024+(byte/signed byte/word/signed word) 40
-(void()) main()
-(byte~) main::$2
-(byte~) main::$5
-(label) main::@1
-(label) main::@3
-(label) main::@4
-(label) main::@return
-(byte) main::i
-(byte) main::i#1
-(byte) main::i#2
-(byte()) sum((byte) sum::a , (byte) sum::b , (byte) sum::c)
-(byte/word~) sum::$0
-(label) sum::@return
-(byte) sum::a
-(byte) sum::a#0
-(byte) sum::b
-(byte) sum::b#0
-(byte) sum::c
-(byte) sum::c#0
-(byte) sum::return
-(byte) sum::return#0
-(byte) sum::return#1
-(byte()) sum2((byte) sum2::a , (byte) sum2::b , (byte) sum2::c)
-(byte/word~) sum2::$0
-(label) sum2::@return
-(byte) sum2::a
-(byte) sum2::a#0
-(byte) sum2::b
-(byte) sum2::b#0
-(byte) sum2::c
-(byte) sum2::c#0
-(byte) sum2::return
-(byte) sum2::return#0
-(byte) sum2::return#1
-
 Block Sequence Planned @begin @3 @end main main::@1 main::@3 main::@4 main::@return sum2 sum2::@return sum sum::@return 
 Added new block during phi lifting main::@5(between main::@4 and main::@1)
 Block Sequence Planned @begin @3 @end main main::@1 main::@3 main::@4 main::@return main::@5 sum2 sum2::@return sum sum::@return 
-CONTROL FLOW GRAPH - PHI LIFTED
-@begin: scope:[]  from
-  to:@3
-@3: scope:[]  from @begin
-  call main param-assignment
-  to:@end
-@end: scope:[]  from @3
-main: scope:[main]  from @3
-  to:main::@1
-main::@1: scope:[main]  from main main::@5
-  (byte) main::i#2 ← phi( main/(byte/signed byte/word/signed word) 0 main::@5/(byte~) main::i#5 )
-  (byte) sum::b#0 ← (byte) main::i#2 + (byte/signed byte/word/signed word) 1
-  (byte) sum::c#0 ← (byte) main::i#2 + (byte/signed byte/word/signed word) 2
-  (byte) sum::a#0 ← (byte) main::i#2
-  call sum param-assignment
-  (byte) sum::return#0 ← (byte) sum::return#1
-  to:main::@3
-main::@3: scope:[main]  from main::@1
-  (byte~) main::$2 ← (byte) sum::return#0
-  *((const byte*) SCREEN#0 + (byte) main::i#2) ← (byte~) main::$2
-  (byte) sum2::b#0 ← (byte) main::i#2 + (byte/signed byte/word/signed word) 1
-  (byte) sum2::c#0 ← (byte) main::i#2 + (byte/signed byte/word/signed word) 2
-  (byte) sum2::a#0 ← (byte) main::i#2
-  call sum2 param-assignment
-  (byte) sum2::return#0 ← (byte) sum2::return#1
-  to:main::@4
-main::@4: scope:[main]  from main::@3
-  (byte~) main::$5 ← (byte) sum2::return#0
-  *((const byte*) SCREEN2#0 + (byte) main::i#2) ← (byte~) main::$5
-  (byte) main::i#1 ← ++ (byte) main::i#2
-  if((byte) main::i#1!=(byte/signed byte/word/signed word) 11) goto main::@5
-  to:main::@return
-main::@return: scope:[main]  from main::@4
-  return 
-  to:@return
-main::@5: scope:[main]  from main::@4
-  (byte~) main::i#5 ← (byte) main::i#1
-  to:main::@1
-sum2: scope:[sum2]  from main::@3
-  (byte/word~) sum2::$0 ← (byte) sum2::a#0 + (byte) sum2::b#0
-  (byte) sum2::return#1 ← (byte/word~) sum2::$0 + (byte) sum2::c#0
-  to:sum2::@return
-sum2::@return: scope:[sum2]  from sum2
-  return 
-  to:@return
-sum: scope:[sum]  from main::@1
-  (byte/word~) sum::$0 ← (byte) sum::a#0 + (byte) sum::b#0
-  (byte) sum::return#1 ← (byte/word~) sum::$0 + (byte) sum::c#0
-  to:sum::@return
-sum::@return: scope:[sum]  from sum
-  return 
-  to:@return
-
 Adding NOP phi() at start of @begin
 Adding NOP phi() at start of @3
 Adding NOP phi() at start of @end
@@ -1196,63 +435,6 @@ Propagating live ranges...
 Propagating live ranges...
 Propagating live ranges...
 Propagating live ranges...
-CONTROL FLOW GRAPH - LIVE RANGES FOUND
-@begin: scope:[]  from
-  [0] phi() [ ]
-  to:@3
-@3: scope:[]  from @begin
-  [1] phi() [ ]
-  [2] call main param-assignment [ ]
-  to:@end
-@end: scope:[]  from @3
-  [3] phi() [ ]
-main: scope:[main]  from @3
-  [4] phi() [ ]
-  to:main::@1
-main::@1: scope:[main]  from main main::@5
-  [5] (byte) main::i#2 ← phi( main/(byte/signed byte/word/signed word) 0 main::@5/(byte~) main::i#5 ) [ main::i#2 ]
-  [6] (byte) sum::b#0 ← (byte) main::i#2 + (byte/signed byte/word/signed word) 1 [ main::i#2 sum::b#0 ]
-  [7] (byte) sum::c#0 ← (byte) main::i#2 + (byte/signed byte/word/signed word) 2 [ main::i#2 sum::b#0 sum::c#0 ]
-  [8] (byte) sum::a#0 ← (byte) main::i#2 [ main::i#2 sum::b#0 sum::c#0 sum::a#0 ]
-  [9] call sum param-assignment [ main::i#2 sum::return#1 ]
-  [10] (byte) sum::return#0 ← (byte) sum::return#1 [ main::i#2 sum::return#0 ]
-  to:main::@3
-main::@3: scope:[main]  from main::@1
-  [11] (byte~) main::$2 ← (byte) sum::return#0 [ main::i#2 main::$2 ]
-  [12] *((const byte*) SCREEN#0 + (byte) main::i#2) ← (byte~) main::$2 [ main::i#2 ]
-  [13] (byte) sum2::b#0 ← (byte) main::i#2 + (byte/signed byte/word/signed word) 1 [ main::i#2 sum2::b#0 ]
-  [14] (byte) sum2::c#0 ← (byte) main::i#2 + (byte/signed byte/word/signed word) 2 [ main::i#2 sum2::b#0 sum2::c#0 ]
-  [15] (byte) sum2::a#0 ← (byte) main::i#2 [ main::i#2 sum2::b#0 sum2::c#0 sum2::a#0 ]
-  [16] call sum2 param-assignment [ main::i#2 sum2::return#1 ]
-  [17] (byte) sum2::return#0 ← (byte) sum2::return#1 [ main::i#2 sum2::return#0 ]
-  to:main::@4
-main::@4: scope:[main]  from main::@3
-  [18] (byte~) main::$5 ← (byte) sum2::return#0 [ main::i#2 main::$5 ]
-  [19] *((const byte*) SCREEN2#0 + (byte) main::i#2) ← (byte~) main::$5 [ main::i#2 ]
-  [20] (byte) main::i#1 ← ++ (byte) main::i#2 [ main::i#1 ]
-  [21] if((byte) main::i#1!=(byte/signed byte/word/signed word) 11) goto main::@5 [ main::i#1 ]
-  to:main::@return
-main::@return: scope:[main]  from main::@4
-  [22] return  [ ]
-  to:@return
-main::@5: scope:[main]  from main::@4
-  [23] (byte~) main::i#5 ← (byte) main::i#1 [ main::i#5 ]
-  to:main::@1
-sum2: scope:[sum2]  from main::@3
-  [24] (byte/word~) sum2::$0 ← (byte) sum2::a#0 + (byte) sum2::b#0 [ sum2::c#0 sum2::$0 ]
-  [25] (byte) sum2::return#1 ← (byte/word~) sum2::$0 + (byte) sum2::c#0 [ sum2::return#1 ]
-  to:sum2::@return
-sum2::@return: scope:[sum2]  from sum2
-  [26] return  [ sum2::return#1 ]
-  to:@return
-sum: scope:[sum]  from main::@1
-  [27] (byte/word~) sum::$0 ← (byte) sum::a#0 + (byte) sum::b#0 [ sum::c#0 sum::$0 ]
-  [28] (byte) sum::return#1 ← (byte/word~) sum::$0 + (byte) sum::c#0 [ sum::return#1 ]
-  to:sum::@return
-sum::@return: scope:[sum]  from sum
-  [29] return  [ sum::return#1 ]
-  to:@return
-
 Created 1 initial phi equivalence classes
 Coalesced [23] main::i#5 ← main::i#1
 Coalesced down to 1 phi equivalence classes
@@ -1267,61 +449,8 @@ Propagating live ranges...
 Propagating live ranges...
 Propagating live ranges...
 Propagating live ranges...
-CONTROL FLOW GRAPH - BEFORE EFFECTIVE LIVE RANGES
-@begin: scope:[]  from
-  [0] phi() [ ]
-  to:@3
-@3: scope:[]  from @begin
-  [1] phi() [ ]
-  [2] call main param-assignment [ ]
-  to:@end
-@end: scope:[]  from @3
-  [3] phi() [ ]
-main: scope:[main]  from @3
-  [4] phi() [ ]
-  to:main::@1
-main::@1: scope:[main]  from main main::@4
-  [5] (byte) main::i#2 ← phi( main/(byte/signed byte/word/signed word) 0 main::@4/(byte) main::i#1 ) [ main::i#2 ]
-  [6] (byte) sum::b#0 ← (byte) main::i#2 + (byte/signed byte/word/signed word) 1 [ main::i#2 sum::b#0 ]
-  [7] (byte) sum::c#0 ← (byte) main::i#2 + (byte/signed byte/word/signed word) 2 [ main::i#2 sum::b#0 sum::c#0 ]
-  [8] (byte) sum::a#0 ← (byte) main::i#2 [ main::i#2 sum::b#0 sum::c#0 sum::a#0 ]
-  [9] call sum param-assignment [ main::i#2 sum::return#1 ]
-  [10] (byte) sum::return#0 ← (byte) sum::return#1 [ main::i#2 sum::return#0 ]
-  to:main::@3
-main::@3: scope:[main]  from main::@1
-  [11] (byte~) main::$2 ← (byte) sum::return#0 [ main::i#2 main::$2 ]
-  [12] *((const byte*) SCREEN#0 + (byte) main::i#2) ← (byte~) main::$2 [ main::i#2 ]
-  [13] (byte) sum2::b#0 ← (byte) main::i#2 + (byte/signed byte/word/signed word) 1 [ main::i#2 sum2::b#0 ]
-  [14] (byte) sum2::c#0 ← (byte) main::i#2 + (byte/signed byte/word/signed word) 2 [ main::i#2 sum2::b#0 sum2::c#0 ]
-  [15] (byte) sum2::a#0 ← (byte) main::i#2 [ main::i#2 sum2::b#0 sum2::c#0 sum2::a#0 ]
-  [16] call sum2 param-assignment [ main::i#2 sum2::return#1 ]
-  [17] (byte) sum2::return#0 ← (byte) sum2::return#1 [ main::i#2 sum2::return#0 ]
-  to:main::@4
-main::@4: scope:[main]  from main::@3
-  [18] (byte~) main::$5 ← (byte) sum2::return#0 [ main::i#2 main::$5 ]
-  [19] *((const byte*) SCREEN2#0 + (byte) main::i#2) ← (byte~) main::$5 [ main::i#2 ]
-  [20] (byte) main::i#1 ← ++ (byte) main::i#2 [ main::i#1 ]
-  [21] if((byte) main::i#1!=(byte/signed byte/word/signed word) 11) goto main::@1 [ main::i#1 ]
-  to:main::@return
-main::@return: scope:[main]  from main::@4
-  [22] return  [ ]
-  to:@return
-sum2: scope:[sum2]  from main::@3
-  [23] (byte/word~) sum2::$0 ← (byte) sum2::a#0 + (byte) sum2::b#0 [ sum2::c#0 sum2::$0 ]
-  [24] (byte) sum2::return#1 ← (byte/word~) sum2::$0 + (byte) sum2::c#0 [ sum2::return#1 ]
-  to:sum2::@return
-sum2::@return: scope:[sum2]  from sum2
-  [25] return  [ sum2::return#1 ]
-  to:@return
-sum: scope:[sum]  from main::@1
-  [26] (byte/word~) sum::$0 ← (byte) sum::a#0 + (byte) sum::b#0 [ sum::c#0 sum::$0 ]
-  [27] (byte) sum::return#1 ← (byte/word~) sum::$0 + (byte) sum::c#0 [ sum::return#1 ]
-  to:sum::@return
-sum::@return: scope:[sum]  from sum
-  [28] return  [ sum::return#1 ]
-  to:@return
 
-CONTROL FLOW GRAPH - PHI MEM COALESCED
+FINAL CONTROL FLOW GRAPH
 @begin: scope:[]  from
   [0] phi() [ ] ( )
   to:@3
@@ -1482,6 +611,7 @@ Allocated zp ZP_BYTE:13 [ sum2::$0 ]
 Allocated zp ZP_BYTE:14 [ sum2::return#1 ]
 Allocated zp ZP_BYTE:15 [ sum::$0 ]
 Allocated zp ZP_BYTE:16 [ sum::return#1 ]
+
 INITIAL ASM
 //SEG0 Basic Upstart
 .pc = $801 "Basic"
@@ -1905,7 +1035,8 @@ reg byte a [ sum2::return#1 ]
 reg byte a [ sum::$0 ]
 reg byte a [ sum::return#1 ]
 
-FINAL CODE
+
+FINAL ASSEMBLER
 //SEG0 Basic Upstart
 .pc = $801 "Basic"
 :BasicUpstart(main)

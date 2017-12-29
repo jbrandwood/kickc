@@ -1,3 +1,4 @@
+PARSING /Users/jespergravgaard/c64/tmp/kickc/src/test/java/dk/camelot64/kickc/test/incd020.kc
 // Incrementing / decrementing pointer content should result in code modifying the memory location - eg. inc $d020.
 // Currently it does not but instead leads to just reading the value a few times.
 
@@ -10,7 +11,8 @@ void main() {
 }
 Adding pre/post-modifier *((byte*) BGCOL) ← ++ *((byte*) BGCOL)
 Adding pre/post-modifier *((byte*) BGCOL) ← -- *((byte*) BGCOL)
-PROGRAM
+
+STATEMENTS
   (byte*) BGCOL ← (word) 53280
 proc (void()) main()
 main::@1:
@@ -51,52 +53,13 @@ main::@return: scope:[main]  from main::@2
 @end: scope:[]  from @1
 
 Removing empty block main::@2
-CONTROL FLOW GRAPH
-@begin: scope:[]  from
-  (byte*) BGCOL ← ((byte*)) (word) 53280
-  to:@1
-main: scope:[main]  from
-  to:main::@1
-main::@1: scope:[main]  from main main::@1
-  *((byte*) BGCOL) ← ++ *((byte*) BGCOL)
-  *((byte*) BGCOL) ← -- *((byte*) BGCOL)
-  if(true) goto main::@1
-  to:main::@return
-main::@return: scope:[main]  from main::@1
-  return 
-  to:@return
-@1: scope:[]  from @begin
-  call main 
-  to:@end
-@end: scope:[]  from @1
-
 PROCEDURE MODIFY VARIABLE ANALYSIS
 
-CONTROL FLOW GRAPH WITH ASSIGNMENT CALL
-@begin: scope:[]  from
-  (byte*) BGCOL ← ((byte*)) (word) 53280
-  to:@1
-main: scope:[main]  from @1
-  to:main::@1
-main::@1: scope:[main]  from main main::@1
-  *((byte*) BGCOL) ← ++ *((byte*) BGCOL)
-  *((byte*) BGCOL) ← -- *((byte*) BGCOL)
-  if(true) goto main::@1
-  to:main::@return
-main::@return: scope:[main]  from main::@1
-  return 
-  to:@return
-@1: scope:[]  from @begin
-  call main param-assignment
-  to:@2
-@2: scope:[]  from @1
-  to:@end
-@end: scope:[]  from @2
+Completing Phi functions...
+Completing Phi functions...
+Completing Phi functions...
 
-Completing Phi functions...
-Completing Phi functions...
-Completing Phi functions...
-CONTROL FLOW GRAPH SSA
+CONTROL FLOW GRAPH SSA WITH ASSIGNMENT CALL & RETURN
 @begin: scope:[]  from
   (byte*) BGCOL#0 ← ((byte*)) (word) 53280
   to:@1
@@ -120,31 +83,7 @@ main::@return: scope:[main]  from main::@1
   to:@end
 @end: scope:[]  from @2
 
-CONTROL FLOW GRAPH WITH ASSIGNMENT CALL & RETURN
-@begin: scope:[]  from
-  (byte*) BGCOL#0 ← ((byte*)) (word) 53280
-  to:@1
-main: scope:[main]  from @1
-  (byte*) BGCOL#2 ← phi( @1/(byte*) BGCOL#3 )
-  to:main::@1
-main::@1: scope:[main]  from main main::@1
-  (byte*) BGCOL#1 ← phi( main/(byte*) BGCOL#2 main::@1/(byte*) BGCOL#1 )
-  *((byte*) BGCOL#1) ← ++ *((byte*) BGCOL#1)
-  *((byte*) BGCOL#1) ← -- *((byte*) BGCOL#1)
-  if(true) goto main::@1
-  to:main::@return
-main::@return: scope:[main]  from main::@1
-  return 
-  to:@return
-@1: scope:[]  from @begin
-  (byte*) BGCOL#3 ← phi( @begin/(byte*) BGCOL#0 )
-  call main param-assignment
-  to:@2
-@2: scope:[]  from @1
-  to:@end
-@end: scope:[]  from @2
-
-INITIAL SSA SYMBOL TABLE
+SYMBOL TABLE SSA
 (label) @1
 (label) @2
 (label) @begin
@@ -158,150 +97,23 @@ INITIAL SSA SYMBOL TABLE
 (label) main::@1
 (label) main::@return
 
+OPTIMIZING CONTROL FLOW GRAPH
 Culled Empty Block (label) @2
 Succesful SSA optimization Pass2CullEmptyBlocks
-CONTROL FLOW GRAPH
-@begin: scope:[]  from
-  (byte*) BGCOL#0 ← ((byte*)) (word) 53280
-  to:@1
-main: scope:[main]  from @1
-  (byte*) BGCOL#2 ← phi( @1/(byte*) BGCOL#3 )
-  to:main::@1
-main::@1: scope:[main]  from main main::@1
-  (byte*) BGCOL#1 ← phi( main/(byte*) BGCOL#2 main::@1/(byte*) BGCOL#1 )
-  *((byte*) BGCOL#1) ← ++ *((byte*) BGCOL#1)
-  *((byte*) BGCOL#1) ← -- *((byte*) BGCOL#1)
-  if(true) goto main::@1
-  to:main::@return
-main::@return: scope:[main]  from main::@1
-  return 
-  to:@return
-@1: scope:[]  from @begin
-  (byte*) BGCOL#3 ← phi( @begin/(byte*) BGCOL#0 )
-  call main param-assignment
-  to:@end
-@end: scope:[]  from @1
-
 Not aliassing across scopes: BGCOL#2 BGCOL#3
 Alias (byte*) BGCOL#0 = (byte*) BGCOL#3 
 Succesful SSA optimization Pass2AliasElimination
-CONTROL FLOW GRAPH
-@begin: scope:[]  from
-  (byte*) BGCOL#0 ← ((byte*)) (word) 53280
-  to:@1
-main: scope:[main]  from @1
-  (byte*) BGCOL#2 ← phi( @1/(byte*) BGCOL#0 )
-  to:main::@1
-main::@1: scope:[main]  from main main::@1
-  (byte*) BGCOL#1 ← phi( main/(byte*) BGCOL#2 main::@1/(byte*) BGCOL#1 )
-  *((byte*) BGCOL#1) ← ++ *((byte*) BGCOL#1)
-  *((byte*) BGCOL#1) ← -- *((byte*) BGCOL#1)
-  if(true) goto main::@1
-  to:main::@return
-main::@return: scope:[main]  from main::@1
-  return 
-  to:@return
-@1: scope:[]  from @begin
-  call main param-assignment
-  to:@end
-@end: scope:[]  from @1
-
 Not aliassing across scopes: BGCOL#2 BGCOL#0
 Self Phi Eliminated (byte*) BGCOL#1
 Succesful SSA optimization Pass2SelfPhiElimination
-CONTROL FLOW GRAPH
-@begin: scope:[]  from
-  (byte*) BGCOL#0 ← ((byte*)) (word) 53280
-  to:@1
-main: scope:[main]  from @1
-  (byte*) BGCOL#2 ← phi( @1/(byte*) BGCOL#0 )
-  to:main::@1
-main::@1: scope:[main]  from main main::@1
-  (byte*) BGCOL#1 ← phi( main/(byte*) BGCOL#2 )
-  *((byte*) BGCOL#1) ← ++ *((byte*) BGCOL#1)
-  *((byte*) BGCOL#1) ← -- *((byte*) BGCOL#1)
-  if(true) goto main::@1
-  to:main::@return
-main::@return: scope:[main]  from main::@1
-  return 
-  to:@return
-@1: scope:[]  from @begin
-  call main param-assignment
-  to:@end
-@end: scope:[]  from @1
-
 Redundant Phi (byte*) BGCOL#2 (byte*) BGCOL#0
 Redundant Phi (byte*) BGCOL#1 (byte*) BGCOL#2
 Succesful SSA optimization Pass2RedundantPhiElimination
-CONTROL FLOW GRAPH
-@begin: scope:[]  from
-  (byte*) BGCOL#0 ← ((byte*)) (word) 53280
-  to:@1
-main: scope:[main]  from @1
-  to:main::@1
-main::@1: scope:[main]  from main main::@1
-  *((byte*) BGCOL#0) ← ++ *((byte*) BGCOL#0)
-  *((byte*) BGCOL#0) ← -- *((byte*) BGCOL#0)
-  if(true) goto main::@1
-  to:main::@return
-main::@return: scope:[main]  from main::@1
-  return 
-  to:@return
-@1: scope:[]  from @begin
-  call main param-assignment
-  to:@end
-@end: scope:[]  from @1
-
 Constant (const byte*) BGCOL#0 = ((byte*))53280
 Succesful SSA optimization Pass2ConstantIdentification
-CONTROL FLOW GRAPH
-@begin: scope:[]  from
-  to:@1
-main: scope:[main]  from @1
-  to:main::@1
-main::@1: scope:[main]  from main main::@1
-  *((const byte*) BGCOL#0) ← ++ *((const byte*) BGCOL#0)
-  *((const byte*) BGCOL#0) ← -- *((const byte*) BGCOL#0)
-  if(true) goto main::@1
-  to:main::@return
-main::@return: scope:[main]  from main::@1
-  return 
-  to:@return
-@1: scope:[]  from @begin
-  call main param-assignment
-  to:@end
-@end: scope:[]  from @1
-
-FINAL SYMBOL TABLE
-(label) @1
-(label) @begin
-(label) @end
-(byte*) BGCOL
-(const byte*) BGCOL#0 = ((byte*))(word) 53280
-(void()) main()
-(label) main::@1
-(label) main::@return
-
+OPTIMIZING CONTROL FLOW GRAPH
 Block Sequence Planned @begin @1 @end main main::@1 main::@return 
 Block Sequence Planned @begin @1 @end main main::@1 main::@return 
-CONTROL FLOW GRAPH - PHI LIFTED
-@begin: scope:[]  from
-  to:@1
-@1: scope:[]  from @begin
-  call main param-assignment
-  to:@end
-@end: scope:[]  from @1
-main: scope:[main]  from @1
-  to:main::@1
-main::@1: scope:[main]  from main main::@1
-  *((const byte*) BGCOL#0) ← ++ *((const byte*) BGCOL#0)
-  *((const byte*) BGCOL#0) ← -- *((const byte*) BGCOL#0)
-  if(true) goto main::@1
-  to:main::@return
-main::@return: scope:[main]  from main::@1
-  return 
-  to:@return
-
 Adding NOP phi() at start of @begin
 Adding NOP phi() at start of @1
 Adding NOP phi() at start of @end
@@ -310,28 +122,6 @@ CALL GRAPH
 Calls in [] to main:2 
 
 Propagating live ranges...
-CONTROL FLOW GRAPH - LIVE RANGES FOUND
-@begin: scope:[]  from
-  [0] phi() [ ]
-  to:@1
-@1: scope:[]  from @begin
-  [1] phi() [ ]
-  [2] call main param-assignment [ ]
-  to:@end
-@end: scope:[]  from @1
-  [3] phi() [ ]
-main: scope:[main]  from @1
-  [4] phi() [ ]
-  to:main::@1
-main::@1: scope:[main]  from main main::@1
-  [5] *((const byte*) BGCOL#0) ← ++ *((const byte*) BGCOL#0) [ ]
-  [6] *((const byte*) BGCOL#0) ← -- *((const byte*) BGCOL#0) [ ]
-  [7] if(true) goto main::@1 [ ]
-  to:main::@return
-main::@return: scope:[main]  from main::@1
-  [8] return  [ ]
-  to:@return
-
 Created 0 initial phi equivalence classes
 Coalesced down to 0 phi equivalence classes
 Block Sequence Planned @begin @1 @end main main::@1 main::@return 
@@ -340,29 +130,8 @@ Adding NOP phi() at start of @1
 Adding NOP phi() at start of @end
 Adding NOP phi() at start of main
 Propagating live ranges...
-CONTROL FLOW GRAPH - BEFORE EFFECTIVE LIVE RANGES
-@begin: scope:[]  from
-  [0] phi() [ ]
-  to:@1
-@1: scope:[]  from @begin
-  [1] phi() [ ]
-  [2] call main param-assignment [ ]
-  to:@end
-@end: scope:[]  from @1
-  [3] phi() [ ]
-main: scope:[main]  from @1
-  [4] phi() [ ]
-  to:main::@1
-main::@1: scope:[main]  from main main::@1
-  [5] *((const byte*) BGCOL#0) ← ++ *((const byte*) BGCOL#0) [ ]
-  [6] *((const byte*) BGCOL#0) ← -- *((const byte*) BGCOL#0) [ ]
-  [7] if(true) goto main::@1 [ ]
-  to:main::@return
-main::@return: scope:[main]  from main::@1
-  [8] return  [ ]
-  to:@return
 
-CONTROL FLOW GRAPH - PHI MEM COALESCED
+FINAL CONTROL FLOW GRAPH
 @begin: scope:[]  from
   [0] phi() [ ] ( )
   to:@1
@@ -410,6 +179,7 @@ VARIABLE REGISTER WEIGHTS
 
 Initial phi equivalence classes
 Complete equivalence classes
+
 INITIAL ASM
 //SEG0 Basic Upstart
 .pc = $801 "Basic"
@@ -530,7 +300,8 @@ FINAL SYMBOL TABLE
 (label) main::@return
 
 
-FINAL CODE
+
+FINAL ASSEMBLER
 //SEG0 Basic Upstart
 .pc = $801 "Basic"
 :BasicUpstart(main)

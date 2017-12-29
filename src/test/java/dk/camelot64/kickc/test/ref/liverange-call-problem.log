@@ -1,3 +1,4 @@
+PARSING /Users/jespergravgaard/c64/tmp/kickc/src/test/java/dk/camelot64/kickc/test/liverange-call-problem.kc
 // Live ranges were not functioning properly, when multiple method calls were chained - each modifying different vars.
 // w1 and w2 ended up having the same zero-page register as their live range was not propagated properly
 
@@ -21,7 +22,8 @@ void incw2() {
 
 Adding pre/post-modifier (word) w1 ← ++ (word) w1
 Adding pre/post-modifier (word) w2 ← ++ (word) w2
-PROGRAM
+
+STATEMENTS
   (word) w1 ← (byte/signed byte/word/signed word) 0
   (word) w2 ← (byte/signed byte/word/signed word) 0
 proc (void()) main()
@@ -99,169 +101,17 @@ Eliminating unused variable - keeping the call (void~) main::$2
 Eliminating unused variable - keeping the call (void~) main::$3
 Removing empty block @1
 Removing empty block @2
-CONTROL FLOW GRAPH
-@begin: scope:[]  from
-  (word) w1 ← (byte/signed byte/word/signed word) 0
-  (word) w2 ← (byte/signed byte/word/signed word) 0
-  to:@3
-main: scope:[main]  from
-  call incw1 
-  call incw2 
-  call incw1 
-  call incw2 
-  to:main::@return
-main::@return: scope:[main]  from main
-  return 
-  to:@return
-incw1: scope:[incw1]  from
-  (word) w1 ← ++ (word) w1
-  to:incw1::@return
-incw1::@return: scope:[incw1]  from incw1
-  return 
-  to:@return
-incw2: scope:[incw2]  from
-  (word) w2 ← ++ (word) w2
-  to:incw2::@return
-incw2::@return: scope:[incw2]  from incw2
-  return 
-  to:@return
-@3: scope:[]  from @begin
-  call main 
-  to:@end
-@end: scope:[]  from @3
-
 PROCEDURE MODIFY VARIABLE ANALYSIS
 main modifies w1
 main modifies w2
 incw1 modifies w1
 incw2 modifies w2
 
-CONTROL FLOW GRAPH WITH ASSIGNMENT CALL
-@begin: scope:[]  from
-  (word) w1 ← (byte/signed byte/word/signed word) 0
-  (word) w2 ← (byte/signed byte/word/signed word) 0
-  to:@3
-main: scope:[main]  from @3
-  call incw1 param-assignment
-  to:main::@1
-main::@1: scope:[main]  from main
-  (word) w1 ← (word) w1
-  call incw2 param-assignment
-  to:main::@2
-main::@2: scope:[main]  from main::@1
-  (word) w2 ← (word) w2
-  call incw1 param-assignment
-  to:main::@3
-main::@3: scope:[main]  from main::@2
-  (word) w1 ← (word) w1
-  call incw2 param-assignment
-  to:main::@4
-main::@4: scope:[main]  from main::@3
-  (word) w2 ← (word) w2
-  to:main::@return
-main::@return: scope:[main]  from main::@4
-  (word) w1 ← (word) w1
-  (word) w2 ← (word) w2
-  return 
-  to:@return
-incw1: scope:[incw1]  from main main::@2
-  (word) w1 ← ++ (word) w1
-  to:incw1::@return
-incw1::@return: scope:[incw1]  from incw1
-  (word) w1 ← (word) w1
-  return 
-  to:@return
-incw2: scope:[incw2]  from main::@1 main::@3
-  (word) w2 ← ++ (word) w2
-  to:incw2::@return
-incw2::@return: scope:[incw2]  from incw2
-  (word) w2 ← (word) w2
-  return 
-  to:@return
-@3: scope:[]  from @begin
-  call main param-assignment
-  to:@4
-@4: scope:[]  from @3
-  (word) w1 ← (word) w1
-  (word) w2 ← (word) w2
-  to:@end
-@end: scope:[]  from @4
+Completing Phi functions...
+Completing Phi functions...
+Completing Phi functions...
 
-Completing Phi functions...
-Completing Phi functions...
-Completing Phi functions...
-CONTROL FLOW GRAPH SSA
-@begin: scope:[]  from
-  (word) w1#0 ← (byte/signed byte/word/signed word) 0
-  (word) w2#0 ← (byte/signed byte/word/signed word) 0
-  to:@3
-main: scope:[main]  from @3
-  (word) w2#16 ← phi( @3/(word) w2#15 )
-  (word) w1#13 ← phi( @3/(word) w1#16 )
-  call incw1 param-assignment
-  to:main::@1
-main::@1: scope:[main]  from main
-  (word) w2#13 ← phi( main/(word) w2#16 )
-  (word) w1#7 ← phi( main/(word) w1#13 )
-  (word) w1#1 ← (word) w1#7
-  call incw2 param-assignment
-  to:main::@2
-main::@2: scope:[main]  from main::@1
-  (word) w1#14 ← phi( main::@1/(word) w1#1 )
-  (word) w2#7 ← phi( main::@1/(word) w2#13 )
-  (word) w2#1 ← (word) w2#7
-  call incw1 param-assignment
-  to:main::@3
-main::@3: scope:[main]  from main::@2
-  (word) w2#14 ← phi( main::@2/(word) w2#1 )
-  (word) w1#8 ← phi( main::@2/(word) w1#14 )
-  (word) w1#2 ← (word) w1#8
-  call incw2 param-assignment
-  to:main::@4
-main::@4: scope:[main]  from main::@3
-  (word) w1#15 ← phi( main::@3/(word) w1#2 )
-  (word) w2#8 ← phi( main::@3/(word) w2#14 )
-  (word) w2#2 ← (word) w2#8
-  to:main::@return
-main::@return: scope:[main]  from main::@4
-  (word) w2#9 ← phi( main::@4/(word) w2#2 )
-  (word) w1#9 ← phi( main::@4/(word) w1#15 )
-  (word) w1#3 ← (word) w1#9
-  (word) w2#3 ← (word) w2#9
-  return 
-  to:@return
-incw1: scope:[incw1]  from main main::@2
-  (word) w1#10 ← phi( main/(word) w1#13 main::@2/(word) w1#14 )
-  (word) w1#4 ← ++ (word) w1#10
-  to:incw1::@return
-incw1::@return: scope:[incw1]  from incw1
-  (word) w1#11 ← phi( incw1/(word) w1#4 )
-  (word) w1#5 ← (word) w1#11
-  return 
-  to:@return
-incw2: scope:[incw2]  from main::@1 main::@3
-  (word) w2#10 ← phi( main::@1/(word) w2#13 main::@3/(word) w2#14 )
-  (word) w2#4 ← ++ (word) w2#10
-  to:incw2::@return
-incw2::@return: scope:[incw2]  from incw2
-  (word) w2#11 ← phi( incw2/(word) w2#4 )
-  (word) w2#5 ← (word) w2#11
-  return 
-  to:@return
-@3: scope:[]  from @begin
-  (word) w2#15 ← phi( @begin/(word) w2#0 )
-  (word) w1#16 ← phi( @begin/(word) w1#0 )
-  call main param-assignment
-  to:@4
-@4: scope:[]  from @3
-  (word) w2#12 ← phi( @3/(word) w2#15 )
-  (word) w1#12 ← phi( @3/(word) w1#16 )
-  (word) w1#6 ← (word) w1#12
-  (word) w2#6 ← (word) w2#12
-  to:@end
-@end: scope:[]  from @4
-
-CONTROL FLOW GRAPH WITH ASSIGNMENT CALL & RETURN
+CONTROL FLOW GRAPH SSA WITH ASSIGNMENT CALL & RETURN
 @begin: scope:[]  from
   (word) w1#0 ← (byte/signed byte/word/signed word) 0
   (word) w2#0 ← (byte/signed byte/word/signed word) 0
@@ -332,7 +182,7 @@ incw2::@return: scope:[incw2]  from incw2
   to:@end
 @end: scope:[]  from @4
 
-INITIAL SSA SYMBOL TABLE
+SYMBOL TABLE SSA
 (label) @3
 (label) @4
 (label) @begin
@@ -384,6 +234,7 @@ INITIAL SSA SYMBOL TABLE
 (word) w2#8
 (word) w2#9
 
+OPTIMIZING CONTROL FLOW GRAPH
 Not aliassing across scopes: w1#13 w1#16
 Not aliassing across scopes: w2#16 w2#15
 Not aliassing across scopes: w1#7 w1#5
@@ -406,57 +257,6 @@ Alias (word) w2#0 = (word) w2#15
 Alias (word) w1#12 = (word) w1#6 
 Alias (word) w2#12 = (word) w2#6 
 Succesful SSA optimization Pass2AliasElimination
-CONTROL FLOW GRAPH
-@begin: scope:[]  from
-  (word) w1#0 ← (byte/signed byte/word/signed word) 0
-  (word) w2#0 ← (byte/signed byte/word/signed word) 0
-  to:@3
-main: scope:[main]  from @3
-  (word) w2#13 ← phi( @3/(word) w2#0 )
-  (word) w1#13 ← phi( @3/(word) w1#0 )
-  call incw1 param-assignment
-  to:main::@1
-main::@1: scope:[main]  from main
-  (word) w1#1 ← phi( main/(word) w1#11 )
-  call incw2 param-assignment
-  to:main::@2
-main::@2: scope:[main]  from main::@1
-  (word) w2#1 ← phi( main::@1/(word) w2#11 )
-  call incw1 param-assignment
-  to:main::@3
-main::@3: scope:[main]  from main::@2
-  (word) w1#15 ← phi( main::@2/(word) w1#11 )
-  call incw2 param-assignment
-  to:main::@4
-main::@4: scope:[main]  from main::@3
-  (word) w2#2 ← phi( main::@3/(word) w2#11 )
-  to:main::@return
-main::@return: scope:[main]  from main::@4
-  return 
-  to:@return
-incw1: scope:[incw1]  from main main::@2
-  (word) w1#10 ← phi( main/(word) w1#13 main::@2/(word) w1#1 )
-  (word) w1#11 ← ++ (word) w1#10
-  to:incw1::@return
-incw1::@return: scope:[incw1]  from incw1
-  return 
-  to:@return
-incw2: scope:[incw2]  from main::@1 main::@3
-  (word) w2#10 ← phi( main::@1/(word) w2#13 main::@3/(word) w2#1 )
-  (word) w2#11 ← ++ (word) w2#10
-  to:incw2::@return
-incw2::@return: scope:[incw2]  from incw2
-  return 
-  to:@return
-@3: scope:[]  from @begin
-  call main param-assignment
-  to:@4
-@4: scope:[]  from @3
-  (word) w2#12 ← phi( @3/(word) w2#2 )
-  (word) w1#12 ← phi( @3/(word) w1#15 )
-  to:@end
-@end: scope:[]  from @4
-
 Not aliassing across scopes: w1#13 w1#0
 Not aliassing across scopes: w2#13 w2#0
 Not aliassing across scopes: w1#1 w1#11
@@ -476,133 +276,13 @@ Redundant Phi (word) w2#2 (word) w2#11
 Redundant Phi (word) w1#12 (word) w1#15
 Redundant Phi (word) w2#12 (word) w2#2
 Succesful SSA optimization Pass2RedundantPhiElimination
-CONTROL FLOW GRAPH
-@begin: scope:[]  from
-  (word) w1#0 ← (byte/signed byte/word/signed word) 0
-  (word) w2#0 ← (byte/signed byte/word/signed word) 0
-  to:@3
-main: scope:[main]  from @3
-  call incw1 param-assignment
-  to:main::@1
-main::@1: scope:[main]  from main
-  call incw2 param-assignment
-  to:main::@2
-main::@2: scope:[main]  from main::@1
-  call incw1 param-assignment
-  to:main::@3
-main::@3: scope:[main]  from main::@2
-  call incw2 param-assignment
-  to:main::@4
-main::@4: scope:[main]  from main::@3
-  to:main::@return
-main::@return: scope:[main]  from main::@4
-  return 
-  to:@return
-incw1: scope:[incw1]  from main main::@2
-  (word) w1#10 ← phi( main/(word) w1#0 main::@2/(word) w1#11 )
-  (word) w1#11 ← ++ (word) w1#10
-  to:incw1::@return
-incw1::@return: scope:[incw1]  from incw1
-  return 
-  to:@return
-incw2: scope:[incw2]  from main::@1 main::@3
-  (word) w2#10 ← phi( main::@1/(word) w2#0 main::@3/(word) w2#11 )
-  (word) w2#11 ← ++ (word) w2#10
-  to:incw2::@return
-incw2::@return: scope:[incw2]  from incw2
-  return 
-  to:@return
-@3: scope:[]  from @begin
-  call main param-assignment
-  to:@4
-@4: scope:[]  from @3
-  to:@end
-@end: scope:[]  from @4
-
 Constant (const word) w1#0 = 0
 Constant (const word) w2#0 = 0
 Succesful SSA optimization Pass2ConstantIdentification
-CONTROL FLOW GRAPH
-@begin: scope:[]  from
-  to:@3
-main: scope:[main]  from @3
-  call incw1 param-assignment
-  to:main::@1
-main::@1: scope:[main]  from main
-  call incw2 param-assignment
-  to:main::@2
-main::@2: scope:[main]  from main::@1
-  call incw1 param-assignment
-  to:main::@3
-main::@3: scope:[main]  from main::@2
-  call incw2 param-assignment
-  to:main::@4
-main::@4: scope:[main]  from main::@3
-  to:main::@return
-main::@return: scope:[main]  from main::@4
-  return 
-  to:@return
-incw1: scope:[incw1]  from main main::@2
-  (word) w1#10 ← phi( main/(const word) w1#0 main::@2/(word) w1#11 )
-  (word) w1#11 ← ++ (word) w1#10
-  to:incw1::@return
-incw1::@return: scope:[incw1]  from incw1
-  return 
-  to:@return
-incw2: scope:[incw2]  from main::@1 main::@3
-  (word) w2#10 ← phi( main::@1/(const word) w2#0 main::@3/(word) w2#11 )
-  (word) w2#11 ← ++ (word) w2#10
-  to:incw2::@return
-incw2::@return: scope:[incw2]  from incw2
-  return 
-  to:@return
-@3: scope:[]  from @begin
-  call main param-assignment
-  to:@4
-@4: scope:[]  from @3
-  to:@end
-@end: scope:[]  from @4
-
 Culled Empty Block (label) main::@4
 Culled Empty Block (label) @4
 Succesful SSA optimization Pass2CullEmptyBlocks
-CONTROL FLOW GRAPH
-@begin: scope:[]  from
-  to:@3
-main: scope:[main]  from @3
-  call incw1 param-assignment
-  to:main::@1
-main::@1: scope:[main]  from main
-  call incw2 param-assignment
-  to:main::@2
-main::@2: scope:[main]  from main::@1
-  call incw1 param-assignment
-  to:main::@3
-main::@3: scope:[main]  from main::@2
-  call incw2 param-assignment
-  to:main::@return
-main::@return: scope:[main]  from main::@3
-  return 
-  to:@return
-incw1: scope:[incw1]  from main main::@2
-  (word) w1#10 ← phi( main/(const word) w1#0 main::@2/(word) w1#11 )
-  (word) w1#11 ← ++ (word) w1#10
-  to:incw1::@return
-incw1::@return: scope:[incw1]  from incw1
-  return 
-  to:@return
-incw2: scope:[incw2]  from main::@1 main::@3
-  (word) w2#10 ← phi( main::@1/(const word) w2#0 main::@3/(word) w2#11 )
-  (word) w2#11 ← ++ (word) w2#10
-  to:incw2::@return
-incw2::@return: scope:[incw2]  from incw2
-  return 
-  to:@return
-@3: scope:[]  from @begin
-  call main param-assignment
-  to:@end
-@end: scope:[]  from @3
-
+OPTIMIZING CONTROL FLOW GRAPH
 Inlining constant with var siblings (const word) w1#0
 Inlining constant with var siblings (const word) w1#0
 Inlining constant with var siblings (const word) w2#0
@@ -610,104 +290,8 @@ Inlining constant with var siblings (const word) w2#0
 Constant inlined w1#0 = (byte/signed byte/word/signed word) 0
 Constant inlined w2#0 = (byte/signed byte/word/signed word) 0
 Succesful SSA optimization Pass2ConstantInlining
-CONTROL FLOW GRAPH
-@begin: scope:[]  from
-  to:@3
-main: scope:[main]  from @3
-  call incw1 param-assignment
-  to:main::@1
-main::@1: scope:[main]  from main
-  call incw2 param-assignment
-  to:main::@2
-main::@2: scope:[main]  from main::@1
-  call incw1 param-assignment
-  to:main::@3
-main::@3: scope:[main]  from main::@2
-  call incw2 param-assignment
-  to:main::@return
-main::@return: scope:[main]  from main::@3
-  return 
-  to:@return
-incw1: scope:[incw1]  from main main::@2
-  (word) w1#10 ← phi( main/(byte/signed byte/word/signed word) 0 main::@2/(word) w1#11 )
-  (word) w1#11 ← ++ (word) w1#10
-  to:incw1::@return
-incw1::@return: scope:[incw1]  from incw1
-  return 
-  to:@return
-incw2: scope:[incw2]  from main::@1 main::@3
-  (word) w2#10 ← phi( main::@1/(byte/signed byte/word/signed word) 0 main::@3/(word) w2#11 )
-  (word) w2#11 ← ++ (word) w2#10
-  to:incw2::@return
-incw2::@return: scope:[incw2]  from incw2
-  return 
-  to:@return
-@3: scope:[]  from @begin
-  call main param-assignment
-  to:@end
-@end: scope:[]  from @3
-
-FINAL SYMBOL TABLE
-(label) @3
-(label) @begin
-(label) @end
-(void()) incw1()
-(label) incw1::@return
-(void()) incw2()
-(label) incw2::@return
-(void()) main()
-(label) main::@1
-(label) main::@2
-(label) main::@3
-(label) main::@return
-(word) w1
-(word) w1#10
-(word) w1#11
-(word) w2
-(word) w2#10
-(word) w2#11
-
 Block Sequence Planned @begin @3 @end main main::@1 main::@2 main::@3 main::@return incw2 incw2::@return incw1 incw1::@return 
 Block Sequence Planned @begin @3 @end main main::@1 main::@2 main::@3 main::@return incw2 incw2::@return incw1 incw1::@return 
-CONTROL FLOW GRAPH - PHI LIFTED
-@begin: scope:[]  from
-  to:@3
-@3: scope:[]  from @begin
-  call main param-assignment
-  to:@end
-@end: scope:[]  from @3
-main: scope:[main]  from @3
-  call incw1 param-assignment
-  to:main::@1
-main::@1: scope:[main]  from main
-  call incw2 param-assignment
-  to:main::@2
-main::@2: scope:[main]  from main::@1
-  (word~) w1#17 ← (word) w1#11
-  call incw1 param-assignment
-  to:main::@3
-main::@3: scope:[main]  from main::@2
-  (word~) w2#17 ← (word) w2#11
-  call incw2 param-assignment
-  to:main::@return
-main::@return: scope:[main]  from main::@3
-  return 
-  to:@return
-incw2: scope:[incw2]  from main::@1 main::@3
-  (word) w2#10 ← phi( main::@1/(byte/signed byte/word/signed word) 0 main::@3/(word~) w2#17 )
-  (word) w2#11 ← ++ (word) w2#10
-  to:incw2::@return
-incw2::@return: scope:[incw2]  from incw2
-  return 
-  to:@return
-incw1: scope:[incw1]  from main main::@2
-  (word) w1#10 ← phi( main/(byte/signed byte/word/signed word) 0 main::@2/(word~) w1#17 )
-  (word) w1#11 ← ++ (word) w1#10
-  to:incw1::@return
-incw1::@return: scope:[incw1]  from incw1
-  return 
-  to:@return
-
 Adding NOP phi() at start of @begin
 Adding NOP phi() at start of @3
 Adding NOP phi() at start of @end
@@ -722,50 +306,6 @@ Propagating live ranges...
 Propagating live ranges...
 Propagating live ranges...
 Propagating live ranges...
-CONTROL FLOW GRAPH - LIVE RANGES FOUND
-@begin: scope:[]  from
-  [0] phi() [ ]
-  to:@3
-@3: scope:[]  from @begin
-  [1] phi() [ ]
-  [2] call main param-assignment [ ]
-  to:@end
-@end: scope:[]  from @3
-  [3] phi() [ ]
-main: scope:[main]  from @3
-  [4] phi() [ ]
-  [5] call incw1 param-assignment [ w1#11 ]
-  to:main::@1
-main::@1: scope:[main]  from main
-  [6] phi() [ w1#11 ]
-  [7] call incw2 param-assignment [ w1#11 w2#11 ]
-  to:main::@2
-main::@2: scope:[main]  from main::@1
-  [8] (word~) w1#17 ← (word) w1#11 [ w1#17 w2#11 ]
-  [9] call incw1 param-assignment [ w2#11 ]
-  to:main::@3
-main::@3: scope:[main]  from main::@2
-  [10] (word~) w2#17 ← (word) w2#11 [ w2#17 ]
-  [11] call incw2 param-assignment [ ]
-  to:main::@return
-main::@return: scope:[main]  from main::@3
-  [12] return  [ ]
-  to:@return
-incw2: scope:[incw2]  from main::@1 main::@3
-  [13] (word) w2#10 ← phi( main::@1/(byte/signed byte/word/signed word) 0 main::@3/(word~) w2#17 ) [ w2#10 ]
-  [14] (word) w2#11 ← ++ (word) w2#10 [ w2#11 ]
-  to:incw2::@return
-incw2::@return: scope:[incw2]  from incw2
-  [15] return  [ w2#11 ]
-  to:@return
-incw1: scope:[incw1]  from main main::@2
-  [16] (word) w1#10 ← phi( main/(byte/signed byte/word/signed word) 0 main::@2/(word~) w1#17 ) [ w1#10 ]
-  [17] (word) w1#11 ← ++ (word) w1#10 [ w1#11 ]
-  to:incw1::@return
-incw1::@return: scope:[incw1]  from incw1
-  [18] return  [ w1#11 ]
-  to:@return
-
 Created 2 initial phi equivalence classes
 Coalesced [8] w1#17 ← w1#11
 Coalesced [10] w2#17 ← w2#11
@@ -784,51 +324,8 @@ Propagating live ranges...
 Propagating live ranges...
 Propagating live ranges...
 Propagating live ranges...
-CONTROL FLOW GRAPH - BEFORE EFFECTIVE LIVE RANGES
-@begin: scope:[]  from
-  [0] phi() [ ]
-  to:@3
-@3: scope:[]  from @begin
-  [1] phi() [ ]
-  [2] call main param-assignment [ ]
-  to:@end
-@end: scope:[]  from @3
-  [3] phi() [ ]
-main: scope:[main]  from @3
-  [4] phi() [ ]
-  [5] call incw1 param-assignment [ w1#11 ]
-  to:main::@1
-main::@1: scope:[main]  from main
-  [6] phi() [ w1#11 ]
-  [7] call incw2 param-assignment [ w2#11 w1#11 ]
-  to:main::@2
-main::@2: scope:[main]  from main::@1
-  [8] phi() [ w2#11 w1#11 ]
-  [9] call incw1 param-assignment [ w2#11 ]
-  to:main::@3
-main::@3: scope:[main]  from main::@2
-  [10] phi() [ w2#11 ]
-  [11] call incw2 param-assignment [ ]
-  to:main::@return
-main::@return: scope:[main]  from main::@3
-  [12] return  [ ]
-  to:@return
-incw2: scope:[incw2]  from main::@1 main::@3
-  [13] (word) w2#10 ← phi( main::@1/(byte/signed byte/word/signed word) 0 main::@3/(word) w2#11 ) [ w2#10 ]
-  [14] (word) w2#11 ← ++ (word) w2#10 [ w2#11 ]
-  to:incw2::@return
-incw2::@return: scope:[incw2]  from incw2
-  [15] return  [ w2#11 ]
-  to:@return
-incw1: scope:[incw1]  from main main::@2
-  [16] (word) w1#10 ← phi( main/(byte/signed byte/word/signed word) 0 main::@2/(word) w1#11 ) [ w1#10 ]
-  [17] (word) w1#11 ← ++ (word) w1#10 [ w1#11 ]
-  to:incw1::@return
-incw1::@return: scope:[incw1]  from incw1
-  [18] return  [ w1#11 ]
-  to:@return
 
-CONTROL FLOW GRAPH - PHI MEM COALESCED
+FINAL CONTROL FLOW GRAPH
 @begin: scope:[]  from
   [0] phi() [ ] ( )
   to:@3
@@ -914,6 +411,7 @@ Complete equivalence classes
 [ w1#10 w1#11 ]
 Allocated zp ZP_WORD:2 [ w2#10 w2#11 ]
 Allocated zp ZP_WORD:4 [ w1#10 w1#11 ]
+
 INITIAL ASM
 //SEG0 Basic Upstart
 .pc = $801 "Basic"
@@ -1191,7 +689,8 @@ FINAL SYMBOL TABLE
 zp ZP_WORD:2 [ w2#10 w2#11 ]
 zp ZP_WORD:4 [ w1#10 w1#11 ]
 
-FINAL CODE
+
+FINAL ASSEMBLER
 //SEG0 Basic Upstart
 .pc = $801 "Basic"
 :BasicUpstart(main)

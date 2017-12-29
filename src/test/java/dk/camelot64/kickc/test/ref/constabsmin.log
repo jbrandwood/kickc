@@ -1,9 +1,11 @@
+PARSING /Users/jespergravgaard/c64/tmp/kickc/src/test/java/dk/camelot64/kickc/test/constabsmin.kc
 const byte* SCREEN = $0400;
 
 void main() {
     *SCREEN = 1;
 }
-PROGRAM
+
+STATEMENTS
   (byte*) SCREEN ← (word/signed word) 1024
 proc (void()) main()
   *((byte*) SCREEN) ← (byte/signed byte/word/signed word) 1
@@ -33,42 +35,11 @@ main::@return: scope:[main]  from main
   to:@end
 @end: scope:[]  from @1
 
-CONTROL FLOW GRAPH
-@begin: scope:[]  from
-  (byte*) SCREEN ← ((byte*)) (word/signed word) 1024
-  to:@1
-main: scope:[main]  from
-  *((byte*) SCREEN) ← (byte/signed byte/word/signed word) 1
-  to:main::@return
-main::@return: scope:[main]  from main
-  return 
-  to:@return
-@1: scope:[]  from @begin
-  call main 
-  to:@end
-@end: scope:[]  from @1
-
 PROCEDURE MODIFY VARIABLE ANALYSIS
 
-CONTROL FLOW GRAPH WITH ASSIGNMENT CALL
-@begin: scope:[]  from
-  (byte*) SCREEN ← ((byte*)) (word/signed word) 1024
-  to:@1
-main: scope:[main]  from @1
-  *((byte*) SCREEN) ← (byte/signed byte/word/signed word) 1
-  to:main::@return
-main::@return: scope:[main]  from main
-  return 
-  to:@return
-@1: scope:[]  from @begin
-  call main param-assignment
-  to:@2
-@2: scope:[]  from @1
-  to:@end
-@end: scope:[]  from @2
-
 Completing Phi functions...
-CONTROL FLOW GRAPH SSA
+
+CONTROL FLOW GRAPH SSA WITH ASSIGNMENT CALL & RETURN
 @begin: scope:[]  from
   (byte*) SCREEN#0 ← ((byte*)) (word/signed word) 1024
   to:@1
@@ -85,24 +56,7 @@ main::@return: scope:[main]  from main
   to:@end
 @end: scope:[]  from @2
 
-CONTROL FLOW GRAPH WITH ASSIGNMENT CALL & RETURN
-@begin: scope:[]  from
-  (byte*) SCREEN#0 ← ((byte*)) (word/signed word) 1024
-  to:@1
-main: scope:[main]  from @1
-  *((byte*) SCREEN#0) ← (byte/signed byte/word/signed word) 1
-  to:main::@return
-main::@return: scope:[main]  from main
-  return 
-  to:@return
-@1: scope:[]  from @begin
-  call main param-assignment
-  to:@2
-@2: scope:[]  from @1
-  to:@end
-@end: scope:[]  from @2
-
-INITIAL SSA SYMBOL TABLE
+SYMBOL TABLE SSA
 (label) @1
 (label) @2
 (label) @begin
@@ -112,64 +66,14 @@ INITIAL SSA SYMBOL TABLE
 (void()) main()
 (label) main::@return
 
+OPTIMIZING CONTROL FLOW GRAPH
 Culled Empty Block (label) @2
 Succesful SSA optimization Pass2CullEmptyBlocks
-CONTROL FLOW GRAPH
-@begin: scope:[]  from
-  (byte*) SCREEN#0 ← ((byte*)) (word/signed word) 1024
-  to:@1
-main: scope:[main]  from @1
-  *((byte*) SCREEN#0) ← (byte/signed byte/word/signed word) 1
-  to:main::@return
-main::@return: scope:[main]  from main
-  return 
-  to:@return
-@1: scope:[]  from @begin
-  call main param-assignment
-  to:@end
-@end: scope:[]  from @1
-
 Constant (const byte*) SCREEN#0 = ((byte*))1024
 Succesful SSA optimization Pass2ConstantIdentification
-CONTROL FLOW GRAPH
-@begin: scope:[]  from
-  to:@1
-main: scope:[main]  from @1
-  *((const byte*) SCREEN#0) ← (byte/signed byte/word/signed word) 1
-  to:main::@return
-main::@return: scope:[main]  from main
-  return 
-  to:@return
-@1: scope:[]  from @begin
-  call main param-assignment
-  to:@end
-@end: scope:[]  from @1
-
-FINAL SYMBOL TABLE
-(label) @1
-(label) @begin
-(label) @end
-(byte*) SCREEN
-(const byte*) SCREEN#0 = ((byte*))(word/signed word) 1024
-(void()) main()
-(label) main::@return
-
+OPTIMIZING CONTROL FLOW GRAPH
 Block Sequence Planned @begin @1 @end main main::@return 
 Block Sequence Planned @begin @1 @end main main::@return 
-CONTROL FLOW GRAPH - PHI LIFTED
-@begin: scope:[]  from
-  to:@1
-@1: scope:[]  from @begin
-  call main param-assignment
-  to:@end
-@end: scope:[]  from @1
-main: scope:[main]  from @1
-  *((const byte*) SCREEN#0) ← (byte/signed byte/word/signed word) 1
-  to:main::@return
-main::@return: scope:[main]  from main
-  return 
-  to:@return
-
 Adding NOP phi() at start of @begin
 Adding NOP phi() at start of @1
 Adding NOP phi() at start of @end
@@ -177,23 +81,6 @@ CALL GRAPH
 Calls in [] to main:2 
 
 Propagating live ranges...
-CONTROL FLOW GRAPH - LIVE RANGES FOUND
-@begin: scope:[]  from
-  [0] phi() [ ]
-  to:@1
-@1: scope:[]  from @begin
-  [1] phi() [ ]
-  [2] call main param-assignment [ ]
-  to:@end
-@end: scope:[]  from @1
-  [3] phi() [ ]
-main: scope:[main]  from @1
-  [4] *((const byte*) SCREEN#0) ← (byte/signed byte/word/signed word) 1 [ ]
-  to:main::@return
-main::@return: scope:[main]  from main
-  [5] return  [ ]
-  to:@return
-
 Created 0 initial phi equivalence classes
 Coalesced down to 0 phi equivalence classes
 Block Sequence Planned @begin @1 @end main main::@return 
@@ -201,24 +88,8 @@ Adding NOP phi() at start of @begin
 Adding NOP phi() at start of @1
 Adding NOP phi() at start of @end
 Propagating live ranges...
-CONTROL FLOW GRAPH - BEFORE EFFECTIVE LIVE RANGES
-@begin: scope:[]  from
-  [0] phi() [ ]
-  to:@1
-@1: scope:[]  from @begin
-  [1] phi() [ ]
-  [2] call main param-assignment [ ]
-  to:@end
-@end: scope:[]  from @1
-  [3] phi() [ ]
-main: scope:[main]  from @1
-  [4] *((const byte*) SCREEN#0) ← (byte/signed byte/word/signed word) 1 [ ]
-  to:main::@return
-main::@return: scope:[main]  from main
-  [5] return  [ ]
-  to:@return
 
-CONTROL FLOW GRAPH - PHI MEM COALESCED
+FINAL CONTROL FLOW GRAPH
 @begin: scope:[]  from
   [0] phi() [ ] ( )
   to:@1
@@ -255,6 +126,7 @@ VARIABLE REGISTER WEIGHTS
 
 Initial phi equivalence classes
 Complete equivalence classes
+
 INITIAL ASM
 //SEG0 Basic Upstart
 .pc = $801 "Basic"
@@ -355,7 +227,8 @@ FINAL SYMBOL TABLE
 (label) main::@return
 
 
-FINAL CODE
+
+FINAL ASSEMBLER
 //SEG0 Basic Upstart
 .pc = $801 "Basic"
 :BasicUpstart(main)

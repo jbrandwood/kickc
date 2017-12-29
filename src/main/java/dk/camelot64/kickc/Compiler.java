@@ -39,18 +39,11 @@ public class Compiler {
          program.setStatementSequence(sequence);
          pass1GenerateSSA();
          pass2OptimizeSSA();
-         getLog().append("FINAL SYMBOL TABLE");
-         getLog().append(program.getScope().getSymbolTableContents(program));
          pass3Analysis();
          pass4RegisterAllocation();
          pass5GenerateAndOptimizeAsm();
-         getLog().append("\nFINAL SYMBOL TABLE");
-         getLog().append(program.getScope().getSymbolTableContents(program));
-         getLog().append("FINAL CODE");
-         getLog().append(program.getAsm().toString());
          return program;
       } catch (Exception e) {
-         //System.out.println(log.getLog());
          throw e;
       }
    }
@@ -64,6 +57,7 @@ public class Compiler {
          }
          final CharStream fileStream = CharStreams.fromPath(file.toPath());
          imported.add(file.getAbsolutePath());
+         program.getLog().append("PARSING "+file.getAbsolutePath());
          program.getLog().append(fileStream.toString());
          KickCLexer lexer = new KickCLexer(fileStream);
          KickCParser parser = new KickCParser(new CommonTokenStream(lexer));
@@ -107,7 +101,7 @@ public class Compiler {
    private Program pass1GenerateSSA() {
 
       new Pass1TypeInference(program).execute();
-      getLog().append("PROGRAM");
+      getLog().append("\nSTATEMENTS");
       getLog().append(program.getStatementSequence().toString(program));
       getLog().append("SYMBOLS");
       getLog().append(program.getScope().getSymbolTableContents(program));
@@ -129,27 +123,27 @@ public class Compiler {
       new Pass1ExtractInlineStrings(program).execute();
       new Pass1EliminateEmptyBlocks(program).execute();
 
-      getLog().append("CONTROL FLOW GRAPH");
-      getLog().append(program.getGraph().toString(program));
+      //getLog().append("CONTROL FLOW GRAPH");
+      //getLog().append(program.getGraph().toString(program));
 
       new Pass1ModifiedVarsAnalysis(program).execute();
       getLog().append("PROCEDURE MODIFY VARIABLE ANALYSIS");
       getLog().append(program.getProcedureModifiedVars().toString(program));
 
       new Pass1ProcedureCallParameters(program).generate();
-      getLog().append("CONTROL FLOW GRAPH WITH ASSIGNMENT CALL");
-      getLog().append(program.getGraph().toString(program));
+      //getLog().append("CONTROL FLOW GRAPH WITH ASSIGNMENT CALL");
+      //getLog().append(program.getGraph().toString(program));
 
       new Pass1GenerateSingleStaticAssignmentForm(program).execute();
 
-      getLog().append("CONTROL FLOW GRAPH SSA");
-      getLog().append(program.getGraph().toString(program));
+      //getLog().append("CONTROL FLOW GRAPH SSA");
+      //getLog().append(program.getGraph().toString(program));
 
       program.setGraph(new Pass1ProcedureCallsReturnValue(program).generate());
-      getLog().append("CONTROL FLOW GRAPH WITH ASSIGNMENT CALL & RETURN");
+      getLog().append("\nCONTROL FLOW GRAPH SSA WITH ASSIGNMENT CALL & RETURN");
       getLog().append(program.getGraph().toString(program));
 
-      getLog().append("INITIAL SSA SYMBOL TABLE");
+      getLog().append("SYMBOL TABLE SSA");
       getLog().append(program.getScope().getSymbolTableContents(program));
 
       return program;
@@ -193,6 +187,7 @@ public class Compiler {
    }
 
    private void pass2OptimizeSSA(List<Pass2SsaOptimization> optimizations) {
+      getLog().append("OPTIMIZING CONTROL FLOW GRAPH");
       boolean ssaOptimized = true;
       while (ssaOptimized) {
          pass2AssertSSA();
@@ -204,8 +199,8 @@ public class Compiler {
                if (stepOptimized) {
                   getLog().append("Succesful SSA optimization " + optimization.getClass().getSimpleName() + "");
                   ssaOptimized = true;
-                  getLog().append("CONTROL FLOW GRAPH");
-                  getLog().append(program.getGraph().toString(program));
+                  //getLog().append("CONTROL FLOW GRAPH");
+                  //getLog().append(program.getGraph().toString(program));
                }
             }
          }
@@ -219,8 +214,8 @@ public class Compiler {
       // Phi lifting ensures that all variables in phi-blocks are in different live range equivalence classes
       new Pass3PhiLifting(program).perform();
       new Pass3BlockSequencePlanner(program).plan();
-      getLog().append("CONTROL FLOW GRAPH - PHI LIFTED");
-      getLog().append(program.getGraph().toString(program));
+      //getLog().append("CONTROL FLOW GRAPH - PHI LIFTED");
+      //getLog().append(program.getGraph().toString(program));
       pass2AssertSSA();
       new Pass3AddNopBeforeCallOns(program).generate();
       new PassNStatementIndices(program).generateStatementIndices();
@@ -234,8 +229,8 @@ public class Compiler {
       new Pass3StatementInfos(program).generateStatementInfos();
       new PassNVariableReferenceInfos(program).generateVariableReferenceInfos();
       new Pass3LiveRangesAnalysis(program).findLiveRanges();
-      getLog().append("CONTROL FLOW GRAPH - LIVE RANGES FOUND");
-      getLog().append(program.getGraph().toString(program));
+      //getLog().append("CONTROL FLOW GRAPH - LIVE RANGES FOUND");
+      //getLog().append(program.getGraph().toString(program));
       pass2AssertSSA();
 
       //getLog().setVerboseLiveRanges(false);
@@ -251,12 +246,18 @@ public class Compiler {
       new PassNVariableReferenceInfos(program).generateVariableReferenceInfos();
       new Pass3SymbolInfos(program).generateSymbolInfos();
       new Pass3LiveRangesAnalysis(program).findLiveRanges();
-      getLog().append("CONTROL FLOW GRAPH - BEFORE EFFECTIVE LIVE RANGES");
-      getLog().append(program.getGraph().toString(program));
+      //getLog().append("CONTROL FLOW GRAPH - BEFORE EFFECTIVE LIVE RANGES");
+      //getLog().append(program.getGraph().toString(program));
       new Pass3LiveRangesEffectiveAnalysis(program).findLiveRangesEffective();
-      getLog().append("CONTROL FLOW GRAPH - PHI MEM COALESCED");
-      getLog().append(program.getGraph().toString(program));
       pass2AssertSSA();
+
+      getLog().append("\nFINAL CONTROL FLOW GRAPH");
+      getLog().append(program.getGraph().toString(program));
+
+
+   }
+
+   private void pass4RegisterAllocation() {
 
       new Pass3DominatorsAnalysis(program).findDominators();
       getLog().append("DOMINATORS");
@@ -274,17 +275,13 @@ public class Compiler {
       getLog().append("\nVARIABLE REGISTER WEIGHTS");
       getLog().append(program.getScope().toString(program, Variable.class));
 
-   }
-
-   private void pass4RegisterAllocation() {
-
       new Pass4LiveRangeEquivalenceClassesFinalize(program).allocate();
       new Pass4RegistersFinalize(program).allocate(true);
 
       // Initial Code generation
       new Pass4CodeGeneration(program, true).generate();
       new Pass4AssertNoCpuClobber(program).check();
-      getLog().append("INITIAL ASM");
+      getLog().append("\nINITIAL ASM");
       getLog().append(program.getAsm().toString());
 
       // Find potential registers for each live range equivalence class - based on clobbering of fragments
@@ -351,6 +348,11 @@ public class Compiler {
          }
       }
 
+      getLog().append("\nFINAL SYMBOL TABLE");
+      getLog().append(program.getScope().getSymbolTableContents(program));
+
+      getLog().append("\nFINAL ASSEMBLER");
+      getLog().append(program.getAsm().toString());
 
    }
 

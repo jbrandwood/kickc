@@ -1,3 +1,4 @@
+PARSING /Users/jespergravgaard/c64/tmp/kickc/src/test/java/dk/camelot64/kickc/test/liverange.kc
 byte i=0;
 
 void main() {
@@ -13,7 +14,8 @@ byte inci() {
   i = i+7;
   return i;
 }
-PROGRAM
+
+STATEMENTS
   (byte) i ← (byte/signed byte/word/signed word) 0
 proc (void()) main()
   (byte) main::a ← (byte/signed byte/word/signed word) 4
@@ -98,154 +100,14 @@ inci::@1: scope:[inci]  from
 
 Removing empty block @1
 Removing empty block inci::@1
-CONTROL FLOW GRAPH
-@begin: scope:[]  from
-  (byte) i ← (byte/signed byte/word/signed word) 0
-  to:@2
-main: scope:[main]  from
-  (byte) main::a ← (byte/signed byte/word/signed word) 4
-  (byte~) main::$0 ← call inci 
-  (byte/word~) main::$1 ← (byte) main::a + (byte~) main::$0
-  (byte) main::a ← (byte/word~) main::$1
-  (byte~) main::$2 ← call inci 
-  (byte/word~) main::$3 ← (byte) main::a + (byte~) main::$2
-  (byte) main::a ← (byte/word~) main::$3
-  (byte*) main::SCREEN ← ((byte*)) (word/signed word) 1024
-  *((byte*) main::SCREEN) ← (byte) i
-  (byte*~) main::$4 ← (byte*) main::SCREEN + (byte/signed byte/word/signed word) 1
-  *((byte*~) main::$4) ← (byte) main::a
-  to:main::@return
-main::@return: scope:[main]  from main
-  return 
-  to:@return
-inci: scope:[inci]  from
-  (byte/word~) inci::$0 ← (byte) i + (byte/signed byte/word/signed word) 7
-  (byte) i ← (byte/word~) inci::$0
-  (byte) inci::return ← (byte) i
-  to:inci::@return
-inci::@return: scope:[inci]  from inci
-  (byte) inci::return ← (byte) inci::return
-  return (byte) inci::return
-  to:@return
-@2: scope:[]  from @begin
-  call main 
-  to:@end
-@end: scope:[]  from @2
-
 PROCEDURE MODIFY VARIABLE ANALYSIS
 main modifies i
 inci modifies i
 
-CONTROL FLOW GRAPH WITH ASSIGNMENT CALL
-@begin: scope:[]  from
-  (byte) i ← (byte/signed byte/word/signed word) 0
-  to:@2
-main: scope:[main]  from @2
-  (byte) main::a ← (byte/signed byte/word/signed word) 4
-  (byte) inci::return ← call inci param-assignment
-  to:main::@1
-main::@1: scope:[main]  from main
-  (byte~) main::$0 ← (byte) inci::return
-  (byte) i ← (byte) i
-  (byte/word~) main::$1 ← (byte) main::a + (byte~) main::$0
-  (byte) main::a ← (byte/word~) main::$1
-  (byte) inci::return ← call inci param-assignment
-  to:main::@2
-main::@2: scope:[main]  from main::@1
-  (byte~) main::$2 ← (byte) inci::return
-  (byte) i ← (byte) i
-  (byte/word~) main::$3 ← (byte) main::a + (byte~) main::$2
-  (byte) main::a ← (byte/word~) main::$3
-  (byte*) main::SCREEN ← ((byte*)) (word/signed word) 1024
-  *((byte*) main::SCREEN) ← (byte) i
-  (byte*~) main::$4 ← (byte*) main::SCREEN + (byte/signed byte/word/signed word) 1
-  *((byte*~) main::$4) ← (byte) main::a
-  to:main::@return
-main::@return: scope:[main]  from main::@2
-  (byte) i ← (byte) i
-  return 
-  to:@return
-inci: scope:[inci]  from main main::@1
-  (byte/word~) inci::$0 ← (byte) i + (byte/signed byte/word/signed word) 7
-  (byte) i ← (byte/word~) inci::$0
-  (byte) inci::return ← (byte) i
-  to:inci::@return
-inci::@return: scope:[inci]  from inci
-  (byte) inci::return ← (byte) inci::return
-  (byte) i ← (byte) i
-  return (byte) inci::return
-  to:@return
-@2: scope:[]  from @begin
-  call main param-assignment
-  to:@3
-@3: scope:[]  from @2
-  (byte) i ← (byte) i
-  to:@end
-@end: scope:[]  from @3
-
 Completing Phi functions...
 Completing Phi functions...
-CONTROL FLOW GRAPH SSA
-@begin: scope:[]  from
-  (byte) i#0 ← (byte/signed byte/word/signed word) 0
-  to:@2
-main: scope:[main]  from @2
-  (byte) i#13 ← phi( @2/(byte) i#14 )
-  (byte) main::a#0 ← (byte/signed byte/word/signed word) 4
-  (byte) inci::return#0 ← call inci param-assignment
-  to:main::@1
-main::@1: scope:[main]  from main
-  (byte) main::a#3 ← phi( main/(byte) main::a#0 )
-  (byte) i#7 ← phi( main/(byte) i#13 )
-  (byte) inci::return#4 ← phi( main/(byte) inci::return#0 )
-  (byte~) main::$0 ← (byte) inci::return#4
-  (byte) i#1 ← (byte) i#7
-  (byte/word~) main::$1 ← (byte) main::a#3 + (byte~) main::$0
-  (byte) main::a#1 ← (byte/word~) main::$1
-  (byte) inci::return#1 ← call inci param-assignment
-  to:main::@2
-main::@2: scope:[main]  from main::@1
-  (byte) main::a#4 ← phi( main::@1/(byte) main::a#1 )
-  (byte) i#8 ← phi( main::@1/(byte) i#1 )
-  (byte) inci::return#5 ← phi( main::@1/(byte) inci::return#1 )
-  (byte~) main::$2 ← (byte) inci::return#5
-  (byte) i#2 ← (byte) i#8
-  (byte/word~) main::$3 ← (byte) main::a#4 + (byte~) main::$2
-  (byte) main::a#2 ← (byte/word~) main::$3
-  (byte*) main::SCREEN#0 ← ((byte*)) (word/signed word) 1024
-  *((byte*) main::SCREEN#0) ← (byte) i#2
-  (byte*~) main::$4 ← (byte*) main::SCREEN#0 + (byte/signed byte/word/signed word) 1
-  *((byte*~) main::$4) ← (byte) main::a#2
-  to:main::@return
-main::@return: scope:[main]  from main::@2
-  (byte) i#9 ← phi( main::@2/(byte) i#2 )
-  (byte) i#3 ← (byte) i#9
-  return 
-  to:@return
-inci: scope:[inci]  from main main::@1
-  (byte) i#10 ← phi( main/(byte) i#13 main::@1/(byte) i#1 )
-  (byte/word~) inci::$0 ← (byte) i#10 + (byte/signed byte/word/signed word) 7
-  (byte) i#4 ← (byte/word~) inci::$0
-  (byte) inci::return#2 ← (byte) i#4
-  to:inci::@return
-inci::@return: scope:[inci]  from inci
-  (byte) i#11 ← phi( inci/(byte) i#4 )
-  (byte) inci::return#6 ← phi( inci/(byte) inci::return#2 )
-  (byte) inci::return#3 ← (byte) inci::return#6
-  (byte) i#5 ← (byte) i#11
-  return (byte) inci::return#3
-  to:@return
-@2: scope:[]  from @begin
-  (byte) i#14 ← phi( @begin/(byte) i#0 )
-  call main param-assignment
-  to:@3
-@3: scope:[]  from @2
-  (byte) i#12 ← phi( @2/(byte) i#14 )
-  (byte) i#6 ← (byte) i#12
-  to:@end
-@end: scope:[]  from @3
 
-CONTROL FLOW GRAPH WITH ASSIGNMENT CALL & RETURN
+CONTROL FLOW GRAPH SSA WITH ASSIGNMENT CALL & RETURN
 @begin: scope:[]  from
   (byte) i#0 ← (byte/signed byte/word/signed word) 0
   to:@2
@@ -307,7 +169,7 @@ inci::@return: scope:[inci]  from inci
   to:@end
 @end: scope:[]  from @3
 
-INITIAL SSA SYMBOL TABLE
+SYMBOL TABLE SSA
 (label) @2
 (label) @3
 (label) @begin
@@ -357,6 +219,7 @@ INITIAL SSA SYMBOL TABLE
 (byte) main::a#3
 (byte) main::a#4
 
+OPTIMIZING CONTROL FLOW GRAPH
 Not aliassing across scopes: i#13 i#14
 Not aliassing across scopes: inci::return#0 inci::return#3
 Not aliassing across scopes: i#7 i#5
@@ -379,51 +242,6 @@ Alias (byte) inci::return#2 = (byte) inci::return#6 (byte) inci::return#3
 Alias (byte) i#0 = (byte) i#14 
 Alias (byte) i#12 = (byte) i#6 
 Succesful SSA optimization Pass2AliasElimination
-CONTROL FLOW GRAPH
-@begin: scope:[]  from
-  (byte) i#0 ← (byte/signed byte/word/signed word) 0
-  to:@2
-main: scope:[main]  from @2
-  (byte) i#13 ← phi( @2/(byte) i#0 )
-  (byte) main::a#0 ← (byte/signed byte/word/signed word) 4
-  call inci param-assignment
-  (byte) inci::return#0 ← (byte) inci::return#2
-  to:main::@1
-main::@1: scope:[main]  from main
-  (byte) i#1 ← phi( main/(byte) i#11 )
-  (byte~) main::$0 ← (byte) inci::return#0
-  (byte) main::a#1 ← (byte) main::a#0 + (byte~) main::$0
-  call inci param-assignment
-  (byte) inci::return#1 ← (byte) inci::return#2
-  to:main::@2
-main::@2: scope:[main]  from main::@1
-  (byte) i#2 ← phi( main::@1/(byte) i#11 )
-  (byte~) main::$2 ← (byte) inci::return#1
-  (byte) main::a#2 ← (byte) main::a#1 + (byte~) main::$2
-  (byte*) main::SCREEN#0 ← ((byte*)) (word/signed word) 1024
-  *((byte*) main::SCREEN#0) ← (byte) i#2
-  (byte*~) main::$4 ← (byte*) main::SCREEN#0 + (byte/signed byte/word/signed word) 1
-  *((byte*~) main::$4) ← (byte) main::a#2
-  to:main::@return
-main::@return: scope:[main]  from main::@2
-  return 
-  to:@return
-inci: scope:[inci]  from main main::@1
-  (byte) i#10 ← phi( main/(byte) i#13 main::@1/(byte) i#1 )
-  (byte) i#11 ← (byte) i#10 + (byte/signed byte/word/signed word) 7
-  (byte) inci::return#2 ← (byte) i#11
-  to:inci::@return
-inci::@return: scope:[inci]  from inci
-  return 
-  to:@return
-@2: scope:[]  from @begin
-  call main param-assignment
-  to:@3
-@3: scope:[]  from @2
-  (byte) i#12 ← phi( @2/(byte) i#2 )
-  to:@end
-@end: scope:[]  from @3
-
 Not aliassing across scopes: i#13 i#0
 Not aliassing across scopes: inci::return#0 inci::return#2
 Not aliassing across scopes: i#1 i#11
@@ -439,165 +257,14 @@ Redundant Phi (byte) i#1 (byte) i#11
 Redundant Phi (byte) i#2 (byte) i#11
 Redundant Phi (byte) i#12 (byte) i#2
 Succesful SSA optimization Pass2RedundantPhiElimination
-CONTROL FLOW GRAPH
-@begin: scope:[]  from
-  (byte) i#0 ← (byte/signed byte/word/signed word) 0
-  to:@2
-main: scope:[main]  from @2
-  (byte) main::a#0 ← (byte/signed byte/word/signed word) 4
-  call inci param-assignment
-  (byte) inci::return#0 ← (byte) inci::return#2
-  to:main::@1
-main::@1: scope:[main]  from main
-  (byte~) main::$0 ← (byte) inci::return#0
-  (byte) main::a#1 ← (byte) main::a#0 + (byte~) main::$0
-  call inci param-assignment
-  (byte) inci::return#1 ← (byte) inci::return#2
-  to:main::@2
-main::@2: scope:[main]  from main::@1
-  (byte~) main::$2 ← (byte) inci::return#1
-  (byte) main::a#2 ← (byte) main::a#1 + (byte~) main::$2
-  (byte*) main::SCREEN#0 ← ((byte*)) (word/signed word) 1024
-  *((byte*) main::SCREEN#0) ← (byte) i#11
-  (byte*~) main::$4 ← (byte*) main::SCREEN#0 + (byte/signed byte/word/signed word) 1
-  *((byte*~) main::$4) ← (byte) main::a#2
-  to:main::@return
-main::@return: scope:[main]  from main::@2
-  return 
-  to:@return
-inci: scope:[inci]  from main main::@1
-  (byte) i#10 ← phi( main/(byte) i#0 main::@1/(byte) i#11 )
-  (byte) i#11 ← (byte) i#10 + (byte/signed byte/word/signed word) 7
-  (byte) inci::return#2 ← (byte) i#11
-  to:inci::@return
-inci::@return: scope:[inci]  from inci
-  return 
-  to:@return
-@2: scope:[]  from @begin
-  call main param-assignment
-  to:@3
-@3: scope:[]  from @2
-  to:@end
-@end: scope:[]  from @3
-
 Constant (const byte) i#0 = 0
 Constant (const byte) main::a#0 = 4
 Constant (const byte*) main::SCREEN#0 = ((byte*))1024
 Succesful SSA optimization Pass2ConstantIdentification
-CONTROL FLOW GRAPH
-@begin: scope:[]  from
-  to:@2
-main: scope:[main]  from @2
-  call inci param-assignment
-  (byte) inci::return#0 ← (byte) inci::return#2
-  to:main::@1
-main::@1: scope:[main]  from main
-  (byte~) main::$0 ← (byte) inci::return#0
-  (byte) main::a#1 ← (const byte) main::a#0 + (byte~) main::$0
-  call inci param-assignment
-  (byte) inci::return#1 ← (byte) inci::return#2
-  to:main::@2
-main::@2: scope:[main]  from main::@1
-  (byte~) main::$2 ← (byte) inci::return#1
-  (byte) main::a#2 ← (byte) main::a#1 + (byte~) main::$2
-  *((const byte*) main::SCREEN#0) ← (byte) i#11
-  (byte*~) main::$4 ← (const byte*) main::SCREEN#0 + (byte/signed byte/word/signed word) 1
-  *((byte*~) main::$4) ← (byte) main::a#2
-  to:main::@return
-main::@return: scope:[main]  from main::@2
-  return 
-  to:@return
-inci: scope:[inci]  from main main::@1
-  (byte) i#10 ← phi( main/(const byte) i#0 main::@1/(byte) i#11 )
-  (byte) i#11 ← (byte) i#10 + (byte/signed byte/word/signed word) 7
-  (byte) inci::return#2 ← (byte) i#11
-  to:inci::@return
-inci::@return: scope:[inci]  from inci
-  return 
-  to:@return
-@2: scope:[]  from @begin
-  call main param-assignment
-  to:@3
-@3: scope:[]  from @2
-  to:@end
-@end: scope:[]  from @3
-
 Constant (const byte*) main::$4 = main::SCREEN#0+1
 Succesful SSA optimization Pass2ConstantIdentification
-CONTROL FLOW GRAPH
-@begin: scope:[]  from
-  to:@2
-main: scope:[main]  from @2
-  call inci param-assignment
-  (byte) inci::return#0 ← (byte) inci::return#2
-  to:main::@1
-main::@1: scope:[main]  from main
-  (byte~) main::$0 ← (byte) inci::return#0
-  (byte) main::a#1 ← (const byte) main::a#0 + (byte~) main::$0
-  call inci param-assignment
-  (byte) inci::return#1 ← (byte) inci::return#2
-  to:main::@2
-main::@2: scope:[main]  from main::@1
-  (byte~) main::$2 ← (byte) inci::return#1
-  (byte) main::a#2 ← (byte) main::a#1 + (byte~) main::$2
-  *((const byte*) main::SCREEN#0) ← (byte) i#11
-  *((const byte*) main::$4) ← (byte) main::a#2
-  to:main::@return
-main::@return: scope:[main]  from main::@2
-  return 
-  to:@return
-inci: scope:[inci]  from main main::@1
-  (byte) i#10 ← phi( main/(const byte) i#0 main::@1/(byte) i#11 )
-  (byte) i#11 ← (byte) i#10 + (byte/signed byte/word/signed word) 7
-  (byte) inci::return#2 ← (byte) i#11
-  to:inci::@return
-inci::@return: scope:[inci]  from inci
-  return 
-  to:@return
-@2: scope:[]  from @begin
-  call main param-assignment
-  to:@3
-@3: scope:[]  from @2
-  to:@end
-@end: scope:[]  from @3
-
 Culled Empty Block (label) @3
 Succesful SSA optimization Pass2CullEmptyBlocks
-CONTROL FLOW GRAPH
-@begin: scope:[]  from
-  to:@2
-main: scope:[main]  from @2
-  call inci param-assignment
-  (byte) inci::return#0 ← (byte) inci::return#2
-  to:main::@1
-main::@1: scope:[main]  from main
-  (byte~) main::$0 ← (byte) inci::return#0
-  (byte) main::a#1 ← (const byte) main::a#0 + (byte~) main::$0
-  call inci param-assignment
-  (byte) inci::return#1 ← (byte) inci::return#2
-  to:main::@2
-main::@2: scope:[main]  from main::@1
-  (byte~) main::$2 ← (byte) inci::return#1
-  (byte) main::a#2 ← (byte) main::a#1 + (byte~) main::$2
-  *((const byte*) main::SCREEN#0) ← (byte) i#11
-  *((const byte*) main::$4) ← (byte) main::a#2
-  to:main::@return
-main::@return: scope:[main]  from main::@2
-  return 
-  to:@return
-inci: scope:[inci]  from main main::@1
-  (byte) i#10 ← phi( main/(const byte) i#0 main::@1/(byte) i#11 )
-  (byte) i#11 ← (byte) i#10 + (byte/signed byte/word/signed word) 7
-  (byte) inci::return#2 ← (byte) i#11
-  to:inci::@return
-inci::@return: scope:[inci]  from inci
-  return 
-  to:@return
-@2: scope:[]  from @begin
-  call main param-assignment
-  to:@end
-@end: scope:[]  from @2
-
 Not aliassing across scopes: inci::return#0 inci::return#2
 Not aliassing across scopes: main::$0 inci::return#0
 Not aliassing across scopes: inci::return#1 inci::return#2
@@ -608,6 +275,7 @@ Not aliassing across scopes: main::$0 inci::return#0
 Not aliassing across scopes: inci::return#1 inci::return#2
 Not aliassing across scopes: main::$2 inci::return#1
 Not aliassing across scopes: inci::return#2 i#11
+OPTIMIZING CONTROL FLOW GRAPH
 Inlining constant with var siblings (const byte) main::a#0
 Inlining constant with var siblings (const byte) main::a#0
 Inlining constant with var siblings (const byte) i#0
@@ -616,104 +284,8 @@ Constant inlined main::a#0 = (byte/signed byte/word/signed word) 4
 Constant inlined main::$4 = (const byte*) main::SCREEN#0+(byte/signed byte/word/signed word) 1
 Constant inlined i#0 = (byte/signed byte/word/signed word) 0
 Succesful SSA optimization Pass2ConstantInlining
-CONTROL FLOW GRAPH
-@begin: scope:[]  from
-  to:@2
-main: scope:[main]  from @2
-  call inci param-assignment
-  (byte) inci::return#0 ← (byte) inci::return#2
-  to:main::@1
-main::@1: scope:[main]  from main
-  (byte~) main::$0 ← (byte) inci::return#0
-  (byte) main::a#1 ← (byte/signed byte/word/signed word) 4 + (byte~) main::$0
-  call inci param-assignment
-  (byte) inci::return#1 ← (byte) inci::return#2
-  to:main::@2
-main::@2: scope:[main]  from main::@1
-  (byte~) main::$2 ← (byte) inci::return#1
-  (byte) main::a#2 ← (byte) main::a#1 + (byte~) main::$2
-  *((const byte*) main::SCREEN#0) ← (byte) i#11
-  *((const byte*) main::SCREEN#0+(byte/signed byte/word/signed word) 1) ← (byte) main::a#2
-  to:main::@return
-main::@return: scope:[main]  from main::@2
-  return 
-  to:@return
-inci: scope:[inci]  from main main::@1
-  (byte) i#10 ← phi( main/(byte/signed byte/word/signed word) 0 main::@1/(byte) i#11 )
-  (byte) i#11 ← (byte) i#10 + (byte/signed byte/word/signed word) 7
-  (byte) inci::return#2 ← (byte) i#11
-  to:inci::@return
-inci::@return: scope:[inci]  from inci
-  return 
-  to:@return
-@2: scope:[]  from @begin
-  call main param-assignment
-  to:@end
-@end: scope:[]  from @2
-
-FINAL SYMBOL TABLE
-(label) @2
-(label) @begin
-(label) @end
-(byte) i
-(byte) i#10
-(byte) i#11
-(byte()) inci()
-(label) inci::@return
-(byte) inci::return
-(byte) inci::return#0
-(byte) inci::return#1
-(byte) inci::return#2
-(void()) main()
-(byte~) main::$0
-(byte~) main::$2
-(label) main::@1
-(label) main::@2
-(label) main::@return
-(byte*) main::SCREEN
-(const byte*) main::SCREEN#0 = ((byte*))(word/signed word) 1024
-(byte) main::a
-(byte) main::a#1
-(byte) main::a#2
-
 Block Sequence Planned @begin @2 @end main main::@1 main::@2 main::@return inci inci::@return 
 Block Sequence Planned @begin @2 @end main main::@1 main::@2 main::@return inci inci::@return 
-CONTROL FLOW GRAPH - PHI LIFTED
-@begin: scope:[]  from
-  to:@2
-@2: scope:[]  from @begin
-  call main param-assignment
-  to:@end
-@end: scope:[]  from @2
-main: scope:[main]  from @2
-  call inci param-assignment
-  (byte) inci::return#0 ← (byte) inci::return#2
-  to:main::@1
-main::@1: scope:[main]  from main
-  (byte~) main::$0 ← (byte) inci::return#0
-  (byte) main::a#1 ← (byte/signed byte/word/signed word) 4 + (byte~) main::$0
-  (byte~) i#15 ← (byte) i#11
-  call inci param-assignment
-  (byte) inci::return#1 ← (byte) inci::return#2
-  to:main::@2
-main::@2: scope:[main]  from main::@1
-  (byte~) main::$2 ← (byte) inci::return#1
-  (byte) main::a#2 ← (byte) main::a#1 + (byte~) main::$2
-  *((const byte*) main::SCREEN#0) ← (byte) i#11
-  *((const byte*) main::SCREEN#0+(byte/signed byte/word/signed word) 1) ← (byte) main::a#2
-  to:main::@return
-main::@return: scope:[main]  from main::@2
-  return 
-  to:@return
-inci: scope:[inci]  from main main::@1
-  (byte) i#10 ← phi( main/(byte/signed byte/word/signed word) 0 main::@1/(byte~) i#15 )
-  (byte) i#11 ← (byte) i#10 + (byte/signed byte/word/signed word) 7
-  (byte) inci::return#2 ← (byte) i#11
-  to:inci::@return
-inci::@return: scope:[inci]  from inci
-  return 
-  to:@return
-
 Adding NOP phi() at start of @begin
 Adding NOP phi() at start of @2
 Adding NOP phi() at start of @end
@@ -728,46 +300,6 @@ Propagating live ranges...
 Propagating live ranges...
 Propagating live ranges...
 Propagating live ranges...
-CONTROL FLOW GRAPH - LIVE RANGES FOUND
-@begin: scope:[]  from
-  [0] phi() [ ]
-  to:@2
-@2: scope:[]  from @begin
-  [1] phi() [ ]
-  [2] call main param-assignment [ ]
-  to:@end
-@end: scope:[]  from @2
-  [3] phi() [ ]
-main: scope:[main]  from @2
-  [4] phi() [ ]
-  [5] call inci param-assignment [ inci::return#2 i#11 ]
-  [6] (byte) inci::return#0 ← (byte) inci::return#2 [ inci::return#0 i#11 ]
-  to:main::@1
-main::@1: scope:[main]  from main
-  [7] (byte~) main::$0 ← (byte) inci::return#0 [ main::$0 i#11 ]
-  [8] (byte) main::a#1 ← (byte/signed byte/word/signed word) 4 + (byte~) main::$0 [ main::a#1 i#11 ]
-  [9] (byte~) i#15 ← (byte) i#11 [ main::a#1 i#15 ]
-  [10] call inci param-assignment [ inci::return#2 main::a#1 i#11 ]
-  [11] (byte) inci::return#1 ← (byte) inci::return#2 [ main::a#1 i#11 inci::return#1 ]
-  to:main::@2
-main::@2: scope:[main]  from main::@1
-  [12] (byte~) main::$2 ← (byte) inci::return#1 [ main::a#1 i#11 main::$2 ]
-  [13] (byte) main::a#2 ← (byte) main::a#1 + (byte~) main::$2 [ i#11 main::a#2 ]
-  [14] *((const byte*) main::SCREEN#0) ← (byte) i#11 [ main::a#2 ]
-  [15] *((const byte*) main::SCREEN#0+(byte/signed byte/word/signed word) 1) ← (byte) main::a#2 [ ]
-  to:main::@return
-main::@return: scope:[main]  from main::@2
-  [16] return  [ ]
-  to:@return
-inci: scope:[inci]  from main main::@1
-  [17] (byte) i#10 ← phi( main/(byte/signed byte/word/signed word) 0 main::@1/(byte~) i#15 ) [ i#10 ]
-  [18] (byte) i#11 ← (byte) i#10 + (byte/signed byte/word/signed word) 7 [ i#11 ]
-  [19] (byte) inci::return#2 ← (byte) i#11 [ inci::return#2 i#11 ]
-  to:inci::@return
-inci::@return: scope:[inci]  from inci
-  [20] return  [ inci::return#2 i#11 ]
-  to:@return
-
 Created 1 initial phi equivalence classes
 Coalesced [9] i#15 ← i#11
 Coalesced down to 1 phi equivalence classes
@@ -782,46 +314,8 @@ Propagating live ranges...
 Propagating live ranges...
 Propagating live ranges...
 Propagating live ranges...
-CONTROL FLOW GRAPH - BEFORE EFFECTIVE LIVE RANGES
-@begin: scope:[]  from
-  [0] phi() [ ]
-  to:@2
-@2: scope:[]  from @begin
-  [1] phi() [ ]
-  [2] call main param-assignment [ ]
-  to:@end
-@end: scope:[]  from @2
-  [3] phi() [ ]
-main: scope:[main]  from @2
-  [4] phi() [ ]
-  [5] call inci param-assignment [ inci::return#2 i#11 ]
-  [6] (byte) inci::return#0 ← (byte) inci::return#2 [ inci::return#0 i#11 ]
-  to:main::@1
-main::@1: scope:[main]  from main
-  [7] (byte~) main::$0 ← (byte) inci::return#0 [ main::$0 i#11 ]
-  [8] (byte) main::a#1 ← (byte/signed byte/word/signed word) 4 + (byte~) main::$0 [ main::a#1 i#11 ]
-  [9] call inci param-assignment [ inci::return#2 main::a#1 i#11 ]
-  [10] (byte) inci::return#1 ← (byte) inci::return#2 [ main::a#1 inci::return#1 i#11 ]
-  to:main::@2
-main::@2: scope:[main]  from main::@1
-  [11] (byte~) main::$2 ← (byte) inci::return#1 [ main::a#1 main::$2 i#11 ]
-  [12] (byte) main::a#2 ← (byte) main::a#1 + (byte~) main::$2 [ main::a#2 i#11 ]
-  [13] *((const byte*) main::SCREEN#0) ← (byte) i#11 [ main::a#2 ]
-  [14] *((const byte*) main::SCREEN#0+(byte/signed byte/word/signed word) 1) ← (byte) main::a#2 [ ]
-  to:main::@return
-main::@return: scope:[main]  from main::@2
-  [15] return  [ ]
-  to:@return
-inci: scope:[inci]  from main main::@1
-  [16] (byte) i#10 ← phi( main/(byte/signed byte/word/signed word) 0 main::@1/(byte) i#11 ) [ i#10 ]
-  [17] (byte) i#11 ← (byte) i#10 + (byte/signed byte/word/signed word) 7 [ i#11 ]
-  [18] (byte) inci::return#2 ← (byte) i#11 [ inci::return#2 i#11 ]
-  to:inci::@return
-inci::@return: scope:[inci]  from inci
-  [19] return  [ inci::return#2 i#11 ]
-  to:@return
 
-CONTROL FLOW GRAPH - PHI MEM COALESCED
+FINAL CONTROL FLOW GRAPH
 @begin: scope:[]  from
   [0] phi() [ ] ( )
   to:@2
@@ -922,6 +416,7 @@ Allocated zp ZP_BYTE:6 [ inci::return#1 ]
 Allocated zp ZP_BYTE:7 [ main::$2 ]
 Allocated zp ZP_BYTE:8 [ main::a#2 ]
 Allocated zp ZP_BYTE:9 [ inci::return#2 ]
+
 INITIAL ASM
 //SEG0 Basic Upstart
 .pc = $801 "Basic"
@@ -1195,7 +690,8 @@ reg byte a [ main::$2 ]
 reg byte x [ main::a#2 ]
 reg byte a [ inci::return#2 ]
 
-FINAL CODE
+
+FINAL ASSEMBLER
 //SEG0 Basic Upstart
 .pc = $801 "Basic"
 :BasicUpstart(main)

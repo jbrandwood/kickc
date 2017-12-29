@@ -1,3 +1,4 @@
+PARSING /Users/jespergravgaard/c64/tmp/kickc/src/test/java/dk/camelot64/kickc/test/printmsg.kc
 import "print"
 
 byte[] msg = "hello world! @";
@@ -14,6 +15,7 @@ void main() {
 }
 
 Importing print
+PARSING /Users/jespergravgaard/c64/tmp/kickc/src/test/java/dk/camelot64/kickc/test/print.kc
 
 byte* line_cursor = $0400;
 byte* char_cursor = line_cursor;
@@ -65,7 +67,8 @@ Adding pre/post-modifier (byte*) char_cursor ← ++ (byte*) char_cursor
 Adding pre/post-modifier (byte*) print_str::str ← ++ (byte*) print_str::str
 Adding pre/post-modifier (byte*) char_cursor ← ++ (byte*) char_cursor
 Adding pre/post-modifier (byte*) print_cls::sc ← ++ (byte*) print_cls::sc
-PROGRAM
+
+STATEMENTS
   (byte*) line_cursor ← (word/signed word) 1024
   (byte*) char_cursor ← (byte*) line_cursor
 proc (void()) print_str((byte*) print_str::str)
@@ -329,60 +332,6 @@ Removing empty block @2
 Removing empty block @3
 Removing empty block @4
 Removing empty block @5
-CONTROL FLOW GRAPH
-@begin: scope:[]  from
-  (byte*) line_cursor ← ((byte*)) (word/signed word) 1024
-  (byte*) char_cursor ← (byte*) line_cursor
-  to:@6
-print_str: scope:[print_str]  from
-  to:print_str::@1
-print_str::@1: scope:[print_str]  from print_str print_str::@2
-  (boolean~) print_str::$0 ← *((byte*) print_str::str) != (byte) '@'
-  if((boolean~) print_str::$0) goto print_str::@2
-  to:print_str::@return
-print_str::@2: scope:[print_str]  from print_str::@1
-  *((byte*) char_cursor) ← *((byte*) print_str::str)
-  (byte*) char_cursor ← ++ (byte*) char_cursor
-  (byte*) print_str::str ← ++ (byte*) print_str::str
-  to:print_str::@1
-print_str::@return: scope:[print_str]  from print_str::@1
-  return 
-  to:@return
-print_ln: scope:[print_ln]  from
-  to:print_ln::@1
-print_ln::@1: scope:[print_ln]  from print_ln print_ln::@1
-  (byte*~) print_ln::$0 ← (byte*) line_cursor + (byte/signed byte/word/signed word) 40
-  (byte*) line_cursor ← (byte*~) print_ln::$0
-  (boolean~) print_ln::$1 ← (byte*) line_cursor < (byte*) char_cursor
-  if((boolean~) print_ln::$1) goto print_ln::@1
-  to:print_ln::@2
-print_ln::@2: scope:[print_ln]  from print_ln::@1
-  (byte*) char_cursor ← (byte*) line_cursor
-  to:print_ln::@return
-print_ln::@return: scope:[print_ln]  from print_ln::@2
-  return 
-  to:@return
-@6: scope:[]  from @begin
-  (byte[]) msg ← (const string) $0
-  (byte[]) msg2 ← (const string) $1
-  (byte[]) msg3 ← (const string) $2
-  to:@7
-main: scope:[main]  from
-  call print_str (byte[]) msg 
-  call print_ln 
-  call print_str (byte[]) msg2 
-  call print_ln 
-  call print_str (byte[]) msg3 
-  call print_ln 
-  to:main::@return
-main::@return: scope:[main]  from main
-  return 
-  to:@return
-@7: scope:[]  from @6
-  call main 
-  to:@end
-@end: scope:[]  from @7
-
 PROCEDURE MODIFY VARIABLE ANALYSIS
 print_str modifies char_cursor
 print_ln modifies line_cursor
@@ -390,220 +339,11 @@ print_ln modifies char_cursor
 main modifies char_cursor
 main modifies line_cursor
 
-CONTROL FLOW GRAPH WITH ASSIGNMENT CALL
-@begin: scope:[]  from
-  (byte*) line_cursor ← ((byte*)) (word/signed word) 1024
-  (byte*) char_cursor ← (byte*) line_cursor
-  to:@6
-print_str: scope:[print_str]  from main main::@2 main::@4
-  to:print_str::@1
-print_str::@1: scope:[print_str]  from print_str print_str::@2
-  (boolean~) print_str::$0 ← *((byte*) print_str::str) != (byte) '@'
-  if((boolean~) print_str::$0) goto print_str::@2
-  to:print_str::@return
-print_str::@2: scope:[print_str]  from print_str::@1
-  *((byte*) char_cursor) ← *((byte*) print_str::str)
-  (byte*) char_cursor ← ++ (byte*) char_cursor
-  (byte*) print_str::str ← ++ (byte*) print_str::str
-  to:print_str::@1
-print_str::@return: scope:[print_str]  from print_str::@1
-  (byte*) char_cursor ← (byte*) char_cursor
-  return 
-  to:@return
-print_ln: scope:[print_ln]  from main::@1 main::@3 main::@5
-  to:print_ln::@1
-print_ln::@1: scope:[print_ln]  from print_ln print_ln::@1
-  (byte*~) print_ln::$0 ← (byte*) line_cursor + (byte/signed byte/word/signed word) 40
-  (byte*) line_cursor ← (byte*~) print_ln::$0
-  (boolean~) print_ln::$1 ← (byte*) line_cursor < (byte*) char_cursor
-  if((boolean~) print_ln::$1) goto print_ln::@1
-  to:print_ln::@2
-print_ln::@2: scope:[print_ln]  from print_ln::@1
-  (byte*) char_cursor ← (byte*) line_cursor
-  to:print_ln::@return
-print_ln::@return: scope:[print_ln]  from print_ln::@2
-  (byte*) line_cursor ← (byte*) line_cursor
-  (byte*) char_cursor ← (byte*) char_cursor
-  return 
-  to:@return
-@6: scope:[]  from @begin
-  (byte[]) msg ← (const string) $0
-  (byte[]) msg2 ← (const string) $1
-  (byte[]) msg3 ← (const string) $2
-  to:@7
-main: scope:[main]  from @7
-  (byte*) print_str::str ← (byte[]) msg
-  call print_str param-assignment
-  to:main::@1
-main::@1: scope:[main]  from main
-  (byte*) char_cursor ← (byte*) char_cursor
-  call print_ln param-assignment
-  to:main::@2
-main::@2: scope:[main]  from main::@1
-  (byte*) line_cursor ← (byte*) line_cursor
-  (byte*) char_cursor ← (byte*) char_cursor
-  (byte*) print_str::str ← (byte[]) msg2
-  call print_str param-assignment
-  to:main::@3
-main::@3: scope:[main]  from main::@2
-  (byte*) char_cursor ← (byte*) char_cursor
-  call print_ln param-assignment
-  to:main::@4
-main::@4: scope:[main]  from main::@3
-  (byte*) line_cursor ← (byte*) line_cursor
-  (byte*) char_cursor ← (byte*) char_cursor
-  (byte*) print_str::str ← (byte[]) msg3
-  call print_str param-assignment
-  to:main::@5
-main::@5: scope:[main]  from main::@4
-  (byte*) char_cursor ← (byte*) char_cursor
-  call print_ln param-assignment
-  to:main::@6
-main::@6: scope:[main]  from main::@5
-  (byte*) line_cursor ← (byte*) line_cursor
-  (byte*) char_cursor ← (byte*) char_cursor
-  to:main::@return
-main::@return: scope:[main]  from main::@6
-  (byte*) char_cursor ← (byte*) char_cursor
-  (byte*) line_cursor ← (byte*) line_cursor
-  return 
-  to:@return
-@7: scope:[]  from @6
-  call main param-assignment
-  to:@8
-@8: scope:[]  from @7
-  (byte*) char_cursor ← (byte*) char_cursor
-  (byte*) line_cursor ← (byte*) line_cursor
-  to:@end
-@end: scope:[]  from @8
+Completing Phi functions...
+Completing Phi functions...
+Completing Phi functions...
 
-Completing Phi functions...
-Completing Phi functions...
-Completing Phi functions...
-CONTROL FLOW GRAPH SSA
-@begin: scope:[]  from
-  (byte*) line_cursor#0 ← ((byte*)) (word/signed word) 1024
-  (byte*) char_cursor#0 ← (byte*) line_cursor#0
-  to:@6
-print_str: scope:[print_str]  from main main::@2 main::@4
-  (byte*) char_cursor#29 ← phi( main/(byte*) char_cursor#27 main::@2/(byte*) char_cursor#6 main::@4/(byte*) char_cursor#8 )
-  (byte*) print_str::str#6 ← phi( main/(byte*) print_str::str#1 main::@2/(byte*) print_str::str#2 main::@4/(byte*) print_str::str#3 )
-  to:print_str::@1
-print_str::@1: scope:[print_str]  from print_str print_str::@2
-  (byte*) char_cursor#25 ← phi( print_str/(byte*) char_cursor#29 print_str::@2/(byte*) char_cursor#1 )
-  (byte*) print_str::str#4 ← phi( print_str/(byte*) print_str::str#6 print_str::@2/(byte*) print_str::str#0 )
-  (boolean~) print_str::$0 ← *((byte*) print_str::str#4) != (byte) '@'
-  if((boolean~) print_str::$0) goto print_str::@2
-  to:print_str::@return
-print_str::@2: scope:[print_str]  from print_str::@1
-  (byte*) char_cursor#13 ← phi( print_str::@1/(byte*) char_cursor#25 )
-  (byte*) print_str::str#5 ← phi( print_str::@1/(byte*) print_str::str#4 )
-  *((byte*) char_cursor#13) ← *((byte*) print_str::str#5)
-  (byte*) char_cursor#1 ← ++ (byte*) char_cursor#13
-  (byte*) print_str::str#0 ← ++ (byte*) print_str::str#5
-  to:print_str::@1
-print_str::@return: scope:[print_str]  from print_str::@1
-  (byte*) char_cursor#14 ← phi( print_str::@1/(byte*) char_cursor#25 )
-  (byte*) char_cursor#2 ← (byte*) char_cursor#14
-  return 
-  to:@return
-print_ln: scope:[print_ln]  from main::@1 main::@3 main::@5
-  (byte*) char_cursor#26 ← phi( main::@1/(byte*) char_cursor#5 main::@3/(byte*) char_cursor#7 main::@5/(byte*) char_cursor#9 )
-  (byte*) line_cursor#16 ← phi( main::@1/(byte*) line_cursor#17 main::@3/(byte*) line_cursor#18 main::@5/(byte*) line_cursor#19 )
-  to:print_ln::@1
-print_ln::@1: scope:[print_ln]  from print_ln print_ln::@1
-  (byte*) char_cursor#15 ← phi( print_ln/(byte*) char_cursor#26 print_ln::@1/(byte*) char_cursor#15 )
-  (byte*) line_cursor#8 ← phi( print_ln/(byte*) line_cursor#16 print_ln::@1/(byte*) line_cursor#1 )
-  (byte*~) print_ln::$0 ← (byte*) line_cursor#8 + (byte/signed byte/word/signed word) 40
-  (byte*) line_cursor#1 ← (byte*~) print_ln::$0
-  (boolean~) print_ln::$1 ← (byte*) line_cursor#1 < (byte*) char_cursor#15
-  if((boolean~) print_ln::$1) goto print_ln::@1
-  to:print_ln::@2
-print_ln::@2: scope:[print_ln]  from print_ln::@1
-  (byte*) line_cursor#9 ← phi( print_ln::@1/(byte*) line_cursor#1 )
-  (byte*) char_cursor#3 ← (byte*) line_cursor#9
-  to:print_ln::@return
-print_ln::@return: scope:[print_ln]  from print_ln::@2
-  (byte*) char_cursor#16 ← phi( print_ln::@2/(byte*) char_cursor#3 )
-  (byte*) line_cursor#10 ← phi( print_ln::@2/(byte*) line_cursor#9 )
-  (byte*) line_cursor#2 ← (byte*) line_cursor#10
-  (byte*) char_cursor#4 ← (byte*) char_cursor#16
-  return 
-  to:@return
-@6: scope:[]  from @begin
-  (byte*) line_cursor#22 ← phi( @begin/(byte*) line_cursor#0 )
-  (byte*) char_cursor#30 ← phi( @begin/(byte*) char_cursor#0 )
-  (byte[]) msg#0 ← (const string) $0
-  (byte[]) msg2#0 ← (const string) $1
-  (byte[]) msg3#0 ← (const string) $2
-  to:@7
-main: scope:[main]  from @7
-  (byte*) line_cursor#21 ← phi( @7/(byte*) line_cursor#20 )
-  (byte*) char_cursor#27 ← phi( @7/(byte*) char_cursor#28 )
-  (byte*) print_str::str#1 ← (byte[]) msg#0
-  call print_str param-assignment
-  to:main::@1
-main::@1: scope:[main]  from main
-  (byte*) line_cursor#17 ← phi( main/(byte*) line_cursor#21 )
-  (byte*) char_cursor#17 ← phi( main/(byte*) char_cursor#27 )
-  (byte*) char_cursor#5 ← (byte*) char_cursor#17
-  call print_ln param-assignment
-  to:main::@2
-main::@2: scope:[main]  from main::@1
-  (byte*) char_cursor#18 ← phi( main::@1/(byte*) char_cursor#5 )
-  (byte*) line_cursor#11 ← phi( main::@1/(byte*) line_cursor#17 )
-  (byte*) line_cursor#3 ← (byte*) line_cursor#11
-  (byte*) char_cursor#6 ← (byte*) char_cursor#18
-  (byte*) print_str::str#2 ← (byte[]) msg2#0
-  call print_str param-assignment
-  to:main::@3
-main::@3: scope:[main]  from main::@2
-  (byte*) line_cursor#18 ← phi( main::@2/(byte*) line_cursor#3 )
-  (byte*) char_cursor#19 ← phi( main::@2/(byte*) char_cursor#6 )
-  (byte*) char_cursor#7 ← (byte*) char_cursor#19
-  call print_ln param-assignment
-  to:main::@4
-main::@4: scope:[main]  from main::@3
-  (byte*) char_cursor#20 ← phi( main::@3/(byte*) char_cursor#7 )
-  (byte*) line_cursor#12 ← phi( main::@3/(byte*) line_cursor#18 )
-  (byte*) line_cursor#4 ← (byte*) line_cursor#12
-  (byte*) char_cursor#8 ← (byte*) char_cursor#20
-  (byte*) print_str::str#3 ← (byte[]) msg3#0
-  call print_str param-assignment
-  to:main::@5
-main::@5: scope:[main]  from main::@4
-  (byte*) line_cursor#19 ← phi( main::@4/(byte*) line_cursor#4 )
-  (byte*) char_cursor#21 ← phi( main::@4/(byte*) char_cursor#8 )
-  (byte*) char_cursor#9 ← (byte*) char_cursor#21
-  call print_ln param-assignment
-  to:main::@6
-main::@6: scope:[main]  from main::@5
-  (byte*) char_cursor#22 ← phi( main::@5/(byte*) char_cursor#9 )
-  (byte*) line_cursor#13 ← phi( main::@5/(byte*) line_cursor#19 )
-  (byte*) line_cursor#5 ← (byte*) line_cursor#13
-  (byte*) char_cursor#10 ← (byte*) char_cursor#22
-  to:main::@return
-main::@return: scope:[main]  from main::@6
-  (byte*) line_cursor#14 ← phi( main::@6/(byte*) line_cursor#5 )
-  (byte*) char_cursor#23 ← phi( main::@6/(byte*) char_cursor#10 )
-  (byte*) char_cursor#11 ← (byte*) char_cursor#23
-  (byte*) line_cursor#6 ← (byte*) line_cursor#14
-  return 
-  to:@return
-@7: scope:[]  from @6
-  (byte*) line_cursor#20 ← phi( @6/(byte*) line_cursor#22 )
-  (byte*) char_cursor#28 ← phi( @6/(byte*) char_cursor#30 )
-  call main param-assignment
-  to:@8
-@8: scope:[]  from @7
-  (byte*) line_cursor#15 ← phi( @7/(byte*) line_cursor#20 )
-  (byte*) char_cursor#24 ← phi( @7/(byte*) char_cursor#28 )
-  (byte*) char_cursor#12 ← (byte*) char_cursor#24
-  (byte*) line_cursor#7 ← (byte*) line_cursor#15
-  to:@end
-@end: scope:[]  from @8
-
-CONTROL FLOW GRAPH WITH ASSIGNMENT CALL & RETURN
+CONTROL FLOW GRAPH SSA WITH ASSIGNMENT CALL & RETURN
 @begin: scope:[]  from
   (byte*) line_cursor#0 ← ((byte*)) (word/signed word) 1024
   (byte*) char_cursor#0 ← (byte*) line_cursor#0
@@ -726,7 +466,7 @@ main::@return: scope:[main]  from main::@6
   to:@end
 @end: scope:[]  from @8
 
-INITIAL SSA SYMBOL TABLE
+SYMBOL TABLE SSA
 (const string) $0 = (string) "hello world! @"
 (const string) $1 = (string) "hello c64! @"
 (const string) $2 = (string) "hello 2017! @"
@@ -825,6 +565,7 @@ INITIAL SSA SYMBOL TABLE
 (byte*) print_str::str#5
 (byte*) print_str::str#6
 
+OPTIMIZING CONTROL FLOW GRAPH
 Not aliassing across scopes: print_str::str#6 print_str::str#1
 Not aliassing across scopes: char_cursor#29 char_cursor#27
 Not aliassing across scopes: line_cursor#16 line_cursor#17
@@ -862,95 +603,6 @@ Alias (byte*) char_cursor#10 = (byte*) char_cursor#22 (byte*) char_cursor#23 (by
 Alias (byte*) char_cursor#12 = (byte*) char_cursor#24 
 Alias (byte*) line_cursor#15 = (byte*) line_cursor#7 
 Succesful SSA optimization Pass2AliasElimination
-CONTROL FLOW GRAPH
-@begin: scope:[]  from
-  (byte*) char_cursor#0 ← ((byte*)) (word/signed word) 1024
-  to:@6
-print_str: scope:[print_str]  from main main::@2 main::@4
-  (byte*) char_cursor#29 ← phi( main/(byte*) char_cursor#27 main::@2/(byte*) char_cursor#18 main::@4/(byte*) char_cursor#20 )
-  (byte*) print_str::str#6 ← phi( main/(byte*) print_str::str#1 main::@2/(byte*) print_str::str#2 main::@4/(byte*) print_str::str#3 )
-  to:print_str::@1
-print_str::@1: scope:[print_str]  from print_str print_str::@2
-  (byte*) char_cursor#13 ← phi( print_str/(byte*) char_cursor#29 print_str::@2/(byte*) char_cursor#1 )
-  (byte*) print_str::str#4 ← phi( print_str/(byte*) print_str::str#6 print_str::@2/(byte*) print_str::str#0 )
-  (boolean~) print_str::$0 ← *((byte*) print_str::str#4) != (byte) '@'
-  if((boolean~) print_str::$0) goto print_str::@2
-  to:print_str::@return
-print_str::@2: scope:[print_str]  from print_str::@1
-  *((byte*) char_cursor#13) ← *((byte*) print_str::str#4)
-  (byte*) char_cursor#1 ← ++ (byte*) char_cursor#13
-  (byte*) print_str::str#0 ← ++ (byte*) print_str::str#4
-  to:print_str::@1
-print_str::@return: scope:[print_str]  from print_str::@1
-  return 
-  to:@return
-print_ln: scope:[print_ln]  from main::@1 main::@3 main::@5
-  (byte*) char_cursor#26 ← phi( main::@1/(byte*) char_cursor#17 main::@3/(byte*) char_cursor#19 main::@5/(byte*) char_cursor#21 )
-  (byte*) line_cursor#16 ← phi( main::@1/(byte*) line_cursor#17 main::@3/(byte*) line_cursor#11 main::@5/(byte*) line_cursor#12 )
-  to:print_ln::@1
-print_ln::@1: scope:[print_ln]  from print_ln print_ln::@1
-  (byte*) char_cursor#15 ← phi( print_ln/(byte*) char_cursor#26 print_ln::@1/(byte*) char_cursor#15 )
-  (byte*) line_cursor#8 ← phi( print_ln/(byte*) line_cursor#16 print_ln::@1/(byte*) line_cursor#1 )
-  (byte*) line_cursor#1 ← (byte*) line_cursor#8 + (byte/signed byte/word/signed word) 40
-  (boolean~) print_ln::$1 ← (byte*) line_cursor#1 < (byte*) char_cursor#15
-  if((boolean~) print_ln::$1) goto print_ln::@1
-  to:print_ln::@2
-print_ln::@2: scope:[print_ln]  from print_ln::@1
-  to:print_ln::@return
-print_ln::@return: scope:[print_ln]  from print_ln::@2
-  return 
-  to:@return
-@6: scope:[]  from @begin
-  (byte[]) msg#0 ← (const string) $0
-  (byte[]) msg2#0 ← (const string) $1
-  (byte[]) msg3#0 ← (const string) $2
-  to:@7
-main: scope:[main]  from @7
-  (byte*) line_cursor#17 ← phi( @7/(byte*) char_cursor#0 )
-  (byte*) char_cursor#27 ← phi( @7/(byte*) char_cursor#0 )
-  (byte*) print_str::str#1 ← (byte[]) msg#0
-  call print_str param-assignment
-  to:main::@1
-main::@1: scope:[main]  from main
-  (byte*) char_cursor#17 ← phi( main/(byte*) char_cursor#13 )
-  call print_ln param-assignment
-  to:main::@2
-main::@2: scope:[main]  from main::@1
-  (byte*) char_cursor#18 ← phi( main::@1/(byte*) line_cursor#1 )
-  (byte*) line_cursor#11 ← phi( main::@1/(byte*) line_cursor#1 )
-  (byte*) print_str::str#2 ← (byte[]) msg2#0
-  call print_str param-assignment
-  to:main::@3
-main::@3: scope:[main]  from main::@2
-  (byte*) char_cursor#19 ← phi( main::@2/(byte*) char_cursor#13 )
-  call print_ln param-assignment
-  to:main::@4
-main::@4: scope:[main]  from main::@3
-  (byte*) char_cursor#20 ← phi( main::@3/(byte*) line_cursor#1 )
-  (byte*) line_cursor#12 ← phi( main::@3/(byte*) line_cursor#1 )
-  (byte*) print_str::str#3 ← (byte[]) msg3#0
-  call print_str param-assignment
-  to:main::@5
-main::@5: scope:[main]  from main::@4
-  (byte*) char_cursor#21 ← phi( main::@4/(byte*) char_cursor#13 )
-  call print_ln param-assignment
-  to:main::@6
-main::@6: scope:[main]  from main::@5
-  (byte*) char_cursor#10 ← phi( main::@5/(byte*) line_cursor#1 )
-  (byte*) line_cursor#13 ← phi( main::@5/(byte*) line_cursor#1 )
-  to:main::@return
-main::@return: scope:[main]  from main::@6
-  return 
-  to:@return
-@7: scope:[]  from @6
-  call main param-assignment
-  to:@8
-@8: scope:[]  from @7
-  (byte*) line_cursor#15 ← phi( @7/(byte*) line_cursor#13 )
-  (byte*) char_cursor#12 ← phi( @7/(byte*) char_cursor#10 )
-  to:@end
-@end: scope:[]  from @8
-
 Not aliassing across scopes: print_str::str#6 print_str::str#1
 Not aliassing across scopes: char_cursor#29 char_cursor#27
 Not aliassing across scopes: line_cursor#16 line_cursor#17
@@ -973,95 +625,6 @@ Not aliassing across scopes: char_cursor#12 char_cursor#10
 Not aliassing across scopes: line_cursor#15 line_cursor#13
 Self Phi Eliminated (byte*) char_cursor#15
 Succesful SSA optimization Pass2SelfPhiElimination
-CONTROL FLOW GRAPH
-@begin: scope:[]  from
-  (byte*) char_cursor#0 ← ((byte*)) (word/signed word) 1024
-  to:@6
-print_str: scope:[print_str]  from main main::@2 main::@4
-  (byte*) char_cursor#29 ← phi( main/(byte*) char_cursor#27 main::@2/(byte*) char_cursor#18 main::@4/(byte*) char_cursor#20 )
-  (byte*) print_str::str#6 ← phi( main/(byte*) print_str::str#1 main::@2/(byte*) print_str::str#2 main::@4/(byte*) print_str::str#3 )
-  to:print_str::@1
-print_str::@1: scope:[print_str]  from print_str print_str::@2
-  (byte*) char_cursor#13 ← phi( print_str/(byte*) char_cursor#29 print_str::@2/(byte*) char_cursor#1 )
-  (byte*) print_str::str#4 ← phi( print_str/(byte*) print_str::str#6 print_str::@2/(byte*) print_str::str#0 )
-  (boolean~) print_str::$0 ← *((byte*) print_str::str#4) != (byte) '@'
-  if((boolean~) print_str::$0) goto print_str::@2
-  to:print_str::@return
-print_str::@2: scope:[print_str]  from print_str::@1
-  *((byte*) char_cursor#13) ← *((byte*) print_str::str#4)
-  (byte*) char_cursor#1 ← ++ (byte*) char_cursor#13
-  (byte*) print_str::str#0 ← ++ (byte*) print_str::str#4
-  to:print_str::@1
-print_str::@return: scope:[print_str]  from print_str::@1
-  return 
-  to:@return
-print_ln: scope:[print_ln]  from main::@1 main::@3 main::@5
-  (byte*) char_cursor#26 ← phi( main::@1/(byte*) char_cursor#17 main::@3/(byte*) char_cursor#19 main::@5/(byte*) char_cursor#21 )
-  (byte*) line_cursor#16 ← phi( main::@1/(byte*) line_cursor#17 main::@3/(byte*) line_cursor#11 main::@5/(byte*) line_cursor#12 )
-  to:print_ln::@1
-print_ln::@1: scope:[print_ln]  from print_ln print_ln::@1
-  (byte*) char_cursor#15 ← phi( print_ln/(byte*) char_cursor#26 )
-  (byte*) line_cursor#8 ← phi( print_ln/(byte*) line_cursor#16 print_ln::@1/(byte*) line_cursor#1 )
-  (byte*) line_cursor#1 ← (byte*) line_cursor#8 + (byte/signed byte/word/signed word) 40
-  (boolean~) print_ln::$1 ← (byte*) line_cursor#1 < (byte*) char_cursor#15
-  if((boolean~) print_ln::$1) goto print_ln::@1
-  to:print_ln::@2
-print_ln::@2: scope:[print_ln]  from print_ln::@1
-  to:print_ln::@return
-print_ln::@return: scope:[print_ln]  from print_ln::@2
-  return 
-  to:@return
-@6: scope:[]  from @begin
-  (byte[]) msg#0 ← (const string) $0
-  (byte[]) msg2#0 ← (const string) $1
-  (byte[]) msg3#0 ← (const string) $2
-  to:@7
-main: scope:[main]  from @7
-  (byte*) line_cursor#17 ← phi( @7/(byte*) char_cursor#0 )
-  (byte*) char_cursor#27 ← phi( @7/(byte*) char_cursor#0 )
-  (byte*) print_str::str#1 ← (byte[]) msg#0
-  call print_str param-assignment
-  to:main::@1
-main::@1: scope:[main]  from main
-  (byte*) char_cursor#17 ← phi( main/(byte*) char_cursor#13 )
-  call print_ln param-assignment
-  to:main::@2
-main::@2: scope:[main]  from main::@1
-  (byte*) char_cursor#18 ← phi( main::@1/(byte*) line_cursor#1 )
-  (byte*) line_cursor#11 ← phi( main::@1/(byte*) line_cursor#1 )
-  (byte*) print_str::str#2 ← (byte[]) msg2#0
-  call print_str param-assignment
-  to:main::@3
-main::@3: scope:[main]  from main::@2
-  (byte*) char_cursor#19 ← phi( main::@2/(byte*) char_cursor#13 )
-  call print_ln param-assignment
-  to:main::@4
-main::@4: scope:[main]  from main::@3
-  (byte*) char_cursor#20 ← phi( main::@3/(byte*) line_cursor#1 )
-  (byte*) line_cursor#12 ← phi( main::@3/(byte*) line_cursor#1 )
-  (byte*) print_str::str#3 ← (byte[]) msg3#0
-  call print_str param-assignment
-  to:main::@5
-main::@5: scope:[main]  from main::@4
-  (byte*) char_cursor#21 ← phi( main::@4/(byte*) char_cursor#13 )
-  call print_ln param-assignment
-  to:main::@6
-main::@6: scope:[main]  from main::@5
-  (byte*) char_cursor#10 ← phi( main::@5/(byte*) line_cursor#1 )
-  (byte*) line_cursor#13 ← phi( main::@5/(byte*) line_cursor#1 )
-  to:main::@return
-main::@return: scope:[main]  from main::@6
-  return 
-  to:@return
-@7: scope:[]  from @6
-  call main param-assignment
-  to:@8
-@8: scope:[]  from @7
-  (byte*) line_cursor#15 ← phi( @7/(byte*) line_cursor#13 )
-  (byte*) char_cursor#12 ← phi( @7/(byte*) char_cursor#10 )
-  to:@end
-@end: scope:[]  from @8
-
 Redundant Phi (byte*) char_cursor#15 (byte*) char_cursor#26
 Redundant Phi (byte*) char_cursor#27 (byte*) char_cursor#0
 Redundant Phi (byte*) line_cursor#17 (byte*) char_cursor#0
@@ -1077,436 +640,26 @@ Redundant Phi (byte*) char_cursor#10 (byte*) line_cursor#1
 Redundant Phi (byte*) char_cursor#12 (byte*) char_cursor#10
 Redundant Phi (byte*) line_cursor#15 (byte*) line_cursor#13
 Succesful SSA optimization Pass2RedundantPhiElimination
-CONTROL FLOW GRAPH
-@begin: scope:[]  from
-  (byte*) char_cursor#0 ← ((byte*)) (word/signed word) 1024
-  to:@6
-print_str: scope:[print_str]  from main main::@2 main::@4
-  (byte*) char_cursor#29 ← phi( main/(byte*) char_cursor#0 main::@2/(byte*) line_cursor#1 main::@4/(byte*) line_cursor#1 )
-  (byte*) print_str::str#6 ← phi( main/(byte*) print_str::str#1 main::@2/(byte*) print_str::str#2 main::@4/(byte*) print_str::str#3 )
-  to:print_str::@1
-print_str::@1: scope:[print_str]  from print_str print_str::@2
-  (byte*) char_cursor#13 ← phi( print_str/(byte*) char_cursor#29 print_str::@2/(byte*) char_cursor#1 )
-  (byte*) print_str::str#4 ← phi( print_str/(byte*) print_str::str#6 print_str::@2/(byte*) print_str::str#0 )
-  (boolean~) print_str::$0 ← *((byte*) print_str::str#4) != (byte) '@'
-  if((boolean~) print_str::$0) goto print_str::@2
-  to:print_str::@return
-print_str::@2: scope:[print_str]  from print_str::@1
-  *((byte*) char_cursor#13) ← *((byte*) print_str::str#4)
-  (byte*) char_cursor#1 ← ++ (byte*) char_cursor#13
-  (byte*) print_str::str#0 ← ++ (byte*) print_str::str#4
-  to:print_str::@1
-print_str::@return: scope:[print_str]  from print_str::@1
-  return 
-  to:@return
-print_ln: scope:[print_ln]  from main::@1 main::@3 main::@5
-  (byte*) char_cursor#26 ← phi( main::@1/(byte*) char_cursor#13 main::@3/(byte*) char_cursor#13 main::@5/(byte*) char_cursor#13 )
-  (byte*) line_cursor#16 ← phi( main::@1/(byte*) char_cursor#0 main::@3/(byte*) line_cursor#1 main::@5/(byte*) line_cursor#1 )
-  to:print_ln::@1
-print_ln::@1: scope:[print_ln]  from print_ln print_ln::@1
-  (byte*) line_cursor#8 ← phi( print_ln/(byte*) line_cursor#16 print_ln::@1/(byte*) line_cursor#1 )
-  (byte*) line_cursor#1 ← (byte*) line_cursor#8 + (byte/signed byte/word/signed word) 40
-  (boolean~) print_ln::$1 ← (byte*) line_cursor#1 < (byte*) char_cursor#26
-  if((boolean~) print_ln::$1) goto print_ln::@1
-  to:print_ln::@2
-print_ln::@2: scope:[print_ln]  from print_ln::@1
-  to:print_ln::@return
-print_ln::@return: scope:[print_ln]  from print_ln::@2
-  return 
-  to:@return
-@6: scope:[]  from @begin
-  (byte[]) msg#0 ← (const string) $0
-  (byte[]) msg2#0 ← (const string) $1
-  (byte[]) msg3#0 ← (const string) $2
-  to:@7
-main: scope:[main]  from @7
-  (byte*) print_str::str#1 ← (byte[]) msg#0
-  call print_str param-assignment
-  to:main::@1
-main::@1: scope:[main]  from main
-  call print_ln param-assignment
-  to:main::@2
-main::@2: scope:[main]  from main::@1
-  (byte*) print_str::str#2 ← (byte[]) msg2#0
-  call print_str param-assignment
-  to:main::@3
-main::@3: scope:[main]  from main::@2
-  call print_ln param-assignment
-  to:main::@4
-main::@4: scope:[main]  from main::@3
-  (byte*) print_str::str#3 ← (byte[]) msg3#0
-  call print_str param-assignment
-  to:main::@5
-main::@5: scope:[main]  from main::@4
-  call print_ln param-assignment
-  to:main::@6
-main::@6: scope:[main]  from main::@5
-  to:main::@return
-main::@return: scope:[main]  from main::@6
-  return 
-  to:@return
-@7: scope:[]  from @6
-  call main param-assignment
-  to:@8
-@8: scope:[]  from @7
-  to:@end
-@end: scope:[]  from @8
-
 Redundant Phi (byte*) char_cursor#26 (byte*) char_cursor#13
 Succesful SSA optimization Pass2RedundantPhiElimination
-CONTROL FLOW GRAPH
-@begin: scope:[]  from
-  (byte*) char_cursor#0 ← ((byte*)) (word/signed word) 1024
-  to:@6
-print_str: scope:[print_str]  from main main::@2 main::@4
-  (byte*) char_cursor#29 ← phi( main/(byte*) char_cursor#0 main::@2/(byte*) line_cursor#1 main::@4/(byte*) line_cursor#1 )
-  (byte*) print_str::str#6 ← phi( main/(byte*) print_str::str#1 main::@2/(byte*) print_str::str#2 main::@4/(byte*) print_str::str#3 )
-  to:print_str::@1
-print_str::@1: scope:[print_str]  from print_str print_str::@2
-  (byte*) char_cursor#13 ← phi( print_str/(byte*) char_cursor#29 print_str::@2/(byte*) char_cursor#1 )
-  (byte*) print_str::str#4 ← phi( print_str/(byte*) print_str::str#6 print_str::@2/(byte*) print_str::str#0 )
-  (boolean~) print_str::$0 ← *((byte*) print_str::str#4) != (byte) '@'
-  if((boolean~) print_str::$0) goto print_str::@2
-  to:print_str::@return
-print_str::@2: scope:[print_str]  from print_str::@1
-  *((byte*) char_cursor#13) ← *((byte*) print_str::str#4)
-  (byte*) char_cursor#1 ← ++ (byte*) char_cursor#13
-  (byte*) print_str::str#0 ← ++ (byte*) print_str::str#4
-  to:print_str::@1
-print_str::@return: scope:[print_str]  from print_str::@1
-  return 
-  to:@return
-print_ln: scope:[print_ln]  from main::@1 main::@3 main::@5
-  (byte*) line_cursor#16 ← phi( main::@1/(byte*) char_cursor#0 main::@3/(byte*) line_cursor#1 main::@5/(byte*) line_cursor#1 )
-  to:print_ln::@1
-print_ln::@1: scope:[print_ln]  from print_ln print_ln::@1
-  (byte*) line_cursor#8 ← phi( print_ln/(byte*) line_cursor#16 print_ln::@1/(byte*) line_cursor#1 )
-  (byte*) line_cursor#1 ← (byte*) line_cursor#8 + (byte/signed byte/word/signed word) 40
-  (boolean~) print_ln::$1 ← (byte*) line_cursor#1 < (byte*) char_cursor#13
-  if((boolean~) print_ln::$1) goto print_ln::@1
-  to:print_ln::@2
-print_ln::@2: scope:[print_ln]  from print_ln::@1
-  to:print_ln::@return
-print_ln::@return: scope:[print_ln]  from print_ln::@2
-  return 
-  to:@return
-@6: scope:[]  from @begin
-  (byte[]) msg#0 ← (const string) $0
-  (byte[]) msg2#0 ← (const string) $1
-  (byte[]) msg3#0 ← (const string) $2
-  to:@7
-main: scope:[main]  from @7
-  (byte*) print_str::str#1 ← (byte[]) msg#0
-  call print_str param-assignment
-  to:main::@1
-main::@1: scope:[main]  from main
-  call print_ln param-assignment
-  to:main::@2
-main::@2: scope:[main]  from main::@1
-  (byte*) print_str::str#2 ← (byte[]) msg2#0
-  call print_str param-assignment
-  to:main::@3
-main::@3: scope:[main]  from main::@2
-  call print_ln param-assignment
-  to:main::@4
-main::@4: scope:[main]  from main::@3
-  (byte*) print_str::str#3 ← (byte[]) msg3#0
-  call print_str param-assignment
-  to:main::@5
-main::@5: scope:[main]  from main::@4
-  call print_ln param-assignment
-  to:main::@6
-main::@6: scope:[main]  from main::@5
-  to:main::@return
-main::@return: scope:[main]  from main::@6
-  return 
-  to:@return
-@7: scope:[]  from @6
-  call main param-assignment
-  to:@8
-@8: scope:[]  from @7
-  to:@end
-@end: scope:[]  from @8
-
 Simple Condition (boolean~) print_str::$0 if(*((byte*) print_str::str#4)!=(byte) '@') goto print_str::@2
 Simple Condition (boolean~) print_ln::$1 if((byte*) line_cursor#1<(byte*) char_cursor#13) goto print_ln::@1
 Succesful SSA optimization Pass2ConditionalJumpSimplification
-CONTROL FLOW GRAPH
-@begin: scope:[]  from
-  (byte*) char_cursor#0 ← ((byte*)) (word/signed word) 1024
-  to:@6
-print_str: scope:[print_str]  from main main::@2 main::@4
-  (byte*) char_cursor#29 ← phi( main/(byte*) char_cursor#0 main::@2/(byte*) line_cursor#1 main::@4/(byte*) line_cursor#1 )
-  (byte*) print_str::str#6 ← phi( main/(byte*) print_str::str#1 main::@2/(byte*) print_str::str#2 main::@4/(byte*) print_str::str#3 )
-  to:print_str::@1
-print_str::@1: scope:[print_str]  from print_str print_str::@2
-  (byte*) char_cursor#13 ← phi( print_str/(byte*) char_cursor#29 print_str::@2/(byte*) char_cursor#1 )
-  (byte*) print_str::str#4 ← phi( print_str/(byte*) print_str::str#6 print_str::@2/(byte*) print_str::str#0 )
-  if(*((byte*) print_str::str#4)!=(byte) '@') goto print_str::@2
-  to:print_str::@return
-print_str::@2: scope:[print_str]  from print_str::@1
-  *((byte*) char_cursor#13) ← *((byte*) print_str::str#4)
-  (byte*) char_cursor#1 ← ++ (byte*) char_cursor#13
-  (byte*) print_str::str#0 ← ++ (byte*) print_str::str#4
-  to:print_str::@1
-print_str::@return: scope:[print_str]  from print_str::@1
-  return 
-  to:@return
-print_ln: scope:[print_ln]  from main::@1 main::@3 main::@5
-  (byte*) line_cursor#16 ← phi( main::@1/(byte*) char_cursor#0 main::@3/(byte*) line_cursor#1 main::@5/(byte*) line_cursor#1 )
-  to:print_ln::@1
-print_ln::@1: scope:[print_ln]  from print_ln print_ln::@1
-  (byte*) line_cursor#8 ← phi( print_ln/(byte*) line_cursor#16 print_ln::@1/(byte*) line_cursor#1 )
-  (byte*) line_cursor#1 ← (byte*) line_cursor#8 + (byte/signed byte/word/signed word) 40
-  if((byte*) line_cursor#1<(byte*) char_cursor#13) goto print_ln::@1
-  to:print_ln::@2
-print_ln::@2: scope:[print_ln]  from print_ln::@1
-  to:print_ln::@return
-print_ln::@return: scope:[print_ln]  from print_ln::@2
-  return 
-  to:@return
-@6: scope:[]  from @begin
-  (byte[]) msg#0 ← (const string) $0
-  (byte[]) msg2#0 ← (const string) $1
-  (byte[]) msg3#0 ← (const string) $2
-  to:@7
-main: scope:[main]  from @7
-  (byte*) print_str::str#1 ← (byte[]) msg#0
-  call print_str param-assignment
-  to:main::@1
-main::@1: scope:[main]  from main
-  call print_ln param-assignment
-  to:main::@2
-main::@2: scope:[main]  from main::@1
-  (byte*) print_str::str#2 ← (byte[]) msg2#0
-  call print_str param-assignment
-  to:main::@3
-main::@3: scope:[main]  from main::@2
-  call print_ln param-assignment
-  to:main::@4
-main::@4: scope:[main]  from main::@3
-  (byte*) print_str::str#3 ← (byte[]) msg3#0
-  call print_str param-assignment
-  to:main::@5
-main::@5: scope:[main]  from main::@4
-  call print_ln param-assignment
-  to:main::@6
-main::@6: scope:[main]  from main::@5
-  to:main::@return
-main::@return: scope:[main]  from main::@6
-  return 
-  to:@return
-@7: scope:[]  from @6
-  call main param-assignment
-  to:@8
-@8: scope:[]  from @7
-  to:@end
-@end: scope:[]  from @8
-
 Constant (const byte*) char_cursor#0 = ((byte*))1024
 Constant (const string) msg#0 = $0
 Constant (const string) msg2#0 = $1
 Constant (const string) msg3#0 = $2
 Succesful SSA optimization Pass2ConstantIdentification
-CONTROL FLOW GRAPH
-@begin: scope:[]  from
-  to:@6
-print_str: scope:[print_str]  from main main::@2 main::@4
-  (byte*) char_cursor#29 ← phi( main/(const byte*) char_cursor#0 main::@2/(byte*) line_cursor#1 main::@4/(byte*) line_cursor#1 )
-  (byte*) print_str::str#6 ← phi( main/(byte*) print_str::str#1 main::@2/(byte*) print_str::str#2 main::@4/(byte*) print_str::str#3 )
-  to:print_str::@1
-print_str::@1: scope:[print_str]  from print_str print_str::@2
-  (byte*) char_cursor#13 ← phi( print_str/(byte*) char_cursor#29 print_str::@2/(byte*) char_cursor#1 )
-  (byte*) print_str::str#4 ← phi( print_str/(byte*) print_str::str#6 print_str::@2/(byte*) print_str::str#0 )
-  if(*((byte*) print_str::str#4)!=(byte) '@') goto print_str::@2
-  to:print_str::@return
-print_str::@2: scope:[print_str]  from print_str::@1
-  *((byte*) char_cursor#13) ← *((byte*) print_str::str#4)
-  (byte*) char_cursor#1 ← ++ (byte*) char_cursor#13
-  (byte*) print_str::str#0 ← ++ (byte*) print_str::str#4
-  to:print_str::@1
-print_str::@return: scope:[print_str]  from print_str::@1
-  return 
-  to:@return
-print_ln: scope:[print_ln]  from main::@1 main::@3 main::@5
-  (byte*) line_cursor#16 ← phi( main::@1/(const byte*) char_cursor#0 main::@3/(byte*) line_cursor#1 main::@5/(byte*) line_cursor#1 )
-  to:print_ln::@1
-print_ln::@1: scope:[print_ln]  from print_ln print_ln::@1
-  (byte*) line_cursor#8 ← phi( print_ln/(byte*) line_cursor#16 print_ln::@1/(byte*) line_cursor#1 )
-  (byte*) line_cursor#1 ← (byte*) line_cursor#8 + (byte/signed byte/word/signed word) 40
-  if((byte*) line_cursor#1<(byte*) char_cursor#13) goto print_ln::@1
-  to:print_ln::@2
-print_ln::@2: scope:[print_ln]  from print_ln::@1
-  to:print_ln::@return
-print_ln::@return: scope:[print_ln]  from print_ln::@2
-  return 
-  to:@return
-@6: scope:[]  from @begin
-  to:@7
-main: scope:[main]  from @7
-  (byte*) print_str::str#1 ← (const string) msg#0
-  call print_str param-assignment
-  to:main::@1
-main::@1: scope:[main]  from main
-  call print_ln param-assignment
-  to:main::@2
-main::@2: scope:[main]  from main::@1
-  (byte*) print_str::str#2 ← (const string) msg2#0
-  call print_str param-assignment
-  to:main::@3
-main::@3: scope:[main]  from main::@2
-  call print_ln param-assignment
-  to:main::@4
-main::@4: scope:[main]  from main::@3
-  (byte*) print_str::str#3 ← (const string) msg3#0
-  call print_str param-assignment
-  to:main::@5
-main::@5: scope:[main]  from main::@4
-  call print_ln param-assignment
-  to:main::@6
-main::@6: scope:[main]  from main::@5
-  to:main::@return
-main::@return: scope:[main]  from main::@6
-  return 
-  to:@return
-@7: scope:[]  from @6
-  call main param-assignment
-  to:@8
-@8: scope:[]  from @7
-  to:@end
-@end: scope:[]  from @8
-
 Constant (const string) print_str::str#1 = msg#0
 Constant (const string) print_str::str#2 = msg2#0
 Constant (const string) print_str::str#3 = msg3#0
 Succesful SSA optimization Pass2ConstantIdentification
-CONTROL FLOW GRAPH
-@begin: scope:[]  from
-  to:@6
-print_str: scope:[print_str]  from main main::@2 main::@4
-  (byte*) char_cursor#29 ← phi( main/(const byte*) char_cursor#0 main::@2/(byte*) line_cursor#1 main::@4/(byte*) line_cursor#1 )
-  (byte*) print_str::str#6 ← phi( main/(const string) print_str::str#1 main::@2/(const string) print_str::str#2 main::@4/(const string) print_str::str#3 )
-  to:print_str::@1
-print_str::@1: scope:[print_str]  from print_str print_str::@2
-  (byte*) char_cursor#13 ← phi( print_str/(byte*) char_cursor#29 print_str::@2/(byte*) char_cursor#1 )
-  (byte*) print_str::str#4 ← phi( print_str/(byte*) print_str::str#6 print_str::@2/(byte*) print_str::str#0 )
-  if(*((byte*) print_str::str#4)!=(byte) '@') goto print_str::@2
-  to:print_str::@return
-print_str::@2: scope:[print_str]  from print_str::@1
-  *((byte*) char_cursor#13) ← *((byte*) print_str::str#4)
-  (byte*) char_cursor#1 ← ++ (byte*) char_cursor#13
-  (byte*) print_str::str#0 ← ++ (byte*) print_str::str#4
-  to:print_str::@1
-print_str::@return: scope:[print_str]  from print_str::@1
-  return 
-  to:@return
-print_ln: scope:[print_ln]  from main::@1 main::@3 main::@5
-  (byte*) line_cursor#16 ← phi( main::@1/(const byte*) char_cursor#0 main::@3/(byte*) line_cursor#1 main::@5/(byte*) line_cursor#1 )
-  to:print_ln::@1
-print_ln::@1: scope:[print_ln]  from print_ln print_ln::@1
-  (byte*) line_cursor#8 ← phi( print_ln/(byte*) line_cursor#16 print_ln::@1/(byte*) line_cursor#1 )
-  (byte*) line_cursor#1 ← (byte*) line_cursor#8 + (byte/signed byte/word/signed word) 40
-  if((byte*) line_cursor#1<(byte*) char_cursor#13) goto print_ln::@1
-  to:print_ln::@2
-print_ln::@2: scope:[print_ln]  from print_ln::@1
-  to:print_ln::@return
-print_ln::@return: scope:[print_ln]  from print_ln::@2
-  return 
-  to:@return
-@6: scope:[]  from @begin
-  to:@7
-main: scope:[main]  from @7
-  call print_str param-assignment
-  to:main::@1
-main::@1: scope:[main]  from main
-  call print_ln param-assignment
-  to:main::@2
-main::@2: scope:[main]  from main::@1
-  call print_str param-assignment
-  to:main::@3
-main::@3: scope:[main]  from main::@2
-  call print_ln param-assignment
-  to:main::@4
-main::@4: scope:[main]  from main::@3
-  call print_str param-assignment
-  to:main::@5
-main::@5: scope:[main]  from main::@4
-  call print_ln param-assignment
-  to:main::@6
-main::@6: scope:[main]  from main::@5
-  to:main::@return
-main::@return: scope:[main]  from main::@6
-  return 
-  to:@return
-@7: scope:[]  from @6
-  call main param-assignment
-  to:@8
-@8: scope:[]  from @7
-  to:@end
-@end: scope:[]  from @8
-
 Culled Empty Block (label) print_ln::@2
 Culled Empty Block (label) @6
 Culled Empty Block (label) main::@6
 Culled Empty Block (label) @8
 Succesful SSA optimization Pass2CullEmptyBlocks
-CONTROL FLOW GRAPH
-@begin: scope:[]  from
-  to:@7
-print_str: scope:[print_str]  from main main::@2 main::@4
-  (byte*) char_cursor#29 ← phi( main/(const byte*) char_cursor#0 main::@2/(byte*) line_cursor#1 main::@4/(byte*) line_cursor#1 )
-  (byte*) print_str::str#6 ← phi( main/(const string) print_str::str#1 main::@2/(const string) print_str::str#2 main::@4/(const string) print_str::str#3 )
-  to:print_str::@1
-print_str::@1: scope:[print_str]  from print_str print_str::@2
-  (byte*) char_cursor#13 ← phi( print_str/(byte*) char_cursor#29 print_str::@2/(byte*) char_cursor#1 )
-  (byte*) print_str::str#4 ← phi( print_str/(byte*) print_str::str#6 print_str::@2/(byte*) print_str::str#0 )
-  if(*((byte*) print_str::str#4)!=(byte) '@') goto print_str::@2
-  to:print_str::@return
-print_str::@2: scope:[print_str]  from print_str::@1
-  *((byte*) char_cursor#13) ← *((byte*) print_str::str#4)
-  (byte*) char_cursor#1 ← ++ (byte*) char_cursor#13
-  (byte*) print_str::str#0 ← ++ (byte*) print_str::str#4
-  to:print_str::@1
-print_str::@return: scope:[print_str]  from print_str::@1
-  return 
-  to:@return
-print_ln: scope:[print_ln]  from main::@1 main::@3 main::@5
-  (byte*) line_cursor#16 ← phi( main::@1/(const byte*) char_cursor#0 main::@3/(byte*) line_cursor#1 main::@5/(byte*) line_cursor#1 )
-  to:print_ln::@1
-print_ln::@1: scope:[print_ln]  from print_ln print_ln::@1
-  (byte*) line_cursor#8 ← phi( print_ln/(byte*) line_cursor#16 print_ln::@1/(byte*) line_cursor#1 )
-  (byte*) line_cursor#1 ← (byte*) line_cursor#8 + (byte/signed byte/word/signed word) 40
-  if((byte*) line_cursor#1<(byte*) char_cursor#13) goto print_ln::@1
-  to:print_ln::@return
-print_ln::@return: scope:[print_ln]  from print_ln::@1
-  return 
-  to:@return
-main: scope:[main]  from @7
-  call print_str param-assignment
-  to:main::@1
-main::@1: scope:[main]  from main
-  call print_ln param-assignment
-  to:main::@2
-main::@2: scope:[main]  from main::@1
-  call print_str param-assignment
-  to:main::@3
-main::@3: scope:[main]  from main::@2
-  call print_ln param-assignment
-  to:main::@4
-main::@4: scope:[main]  from main::@3
-  call print_str param-assignment
-  to:main::@5
-main::@5: scope:[main]  from main::@4
-  call print_ln param-assignment
-  to:main::@return
-main::@return: scope:[main]  from main::@5
-  return 
-  to:@return
-@7: scope:[]  from @begin
-  call main param-assignment
-  to:@end
-@end: scope:[]  from @7
-
+OPTIMIZING CONTROL FLOW GRAPH
 Inlining constant with var siblings (const string) print_str::str#1
 Inlining constant with var siblings (const string) print_str::str#1
 Inlining constant with var siblings (const string) print_str::str#1
@@ -1527,172 +680,9 @@ Constant inlined $0 = (const string) msg#0
 Constant inlined $1 = (const string) msg2#0
 Constant inlined $2 = (const string) msg3#0
 Succesful SSA optimization Pass2ConstantInlining
-CONTROL FLOW GRAPH
-@begin: scope:[]  from
-  to:@7
-print_str: scope:[print_str]  from main main::@2 main::@4
-  (byte*) char_cursor#29 ← phi( main/((byte*))(word/signed word) 1024 main::@2/(byte*) line_cursor#1 main::@4/(byte*) line_cursor#1 )
-  (byte*) print_str::str#6 ← phi( main/(const string) msg#0 main::@2/(const string) msg2#0 main::@4/(const string) msg3#0 )
-  to:print_str::@1
-print_str::@1: scope:[print_str]  from print_str print_str::@2
-  (byte*) char_cursor#13 ← phi( print_str/(byte*) char_cursor#29 print_str::@2/(byte*) char_cursor#1 )
-  (byte*) print_str::str#4 ← phi( print_str/(byte*) print_str::str#6 print_str::@2/(byte*) print_str::str#0 )
-  if(*((byte*) print_str::str#4)!=(byte) '@') goto print_str::@2
-  to:print_str::@return
-print_str::@2: scope:[print_str]  from print_str::@1
-  *((byte*) char_cursor#13) ← *((byte*) print_str::str#4)
-  (byte*) char_cursor#1 ← ++ (byte*) char_cursor#13
-  (byte*) print_str::str#0 ← ++ (byte*) print_str::str#4
-  to:print_str::@1
-print_str::@return: scope:[print_str]  from print_str::@1
-  return 
-  to:@return
-print_ln: scope:[print_ln]  from main::@1 main::@3 main::@5
-  (byte*) line_cursor#16 ← phi( main::@1/((byte*))(word/signed word) 1024 main::@3/(byte*) line_cursor#1 main::@5/(byte*) line_cursor#1 )
-  to:print_ln::@1
-print_ln::@1: scope:[print_ln]  from print_ln print_ln::@1
-  (byte*) line_cursor#8 ← phi( print_ln/(byte*) line_cursor#16 print_ln::@1/(byte*) line_cursor#1 )
-  (byte*) line_cursor#1 ← (byte*) line_cursor#8 + (byte/signed byte/word/signed word) 40
-  if((byte*) line_cursor#1<(byte*) char_cursor#13) goto print_ln::@1
-  to:print_ln::@return
-print_ln::@return: scope:[print_ln]  from print_ln::@1
-  return 
-  to:@return
-main: scope:[main]  from @7
-  call print_str param-assignment
-  to:main::@1
-main::@1: scope:[main]  from main
-  call print_ln param-assignment
-  to:main::@2
-main::@2: scope:[main]  from main::@1
-  call print_str param-assignment
-  to:main::@3
-main::@3: scope:[main]  from main::@2
-  call print_ln param-assignment
-  to:main::@4
-main::@4: scope:[main]  from main::@3
-  call print_str param-assignment
-  to:main::@5
-main::@5: scope:[main]  from main::@4
-  call print_ln param-assignment
-  to:main::@return
-main::@return: scope:[main]  from main::@5
-  return 
-  to:@return
-@7: scope:[]  from @begin
-  call main param-assignment
-  to:@end
-@end: scope:[]  from @7
-
-FINAL SYMBOL TABLE
-(label) @7
-(label) @begin
-(label) @end
-(byte*) char_cursor
-(byte*) char_cursor#1
-(byte*) char_cursor#13
-(byte*) char_cursor#29
-(byte*) line_cursor
-(byte*) line_cursor#1
-(byte*) line_cursor#16
-(byte*) line_cursor#8
-(void()) main()
-(label) main::@1
-(label) main::@2
-(label) main::@3
-(label) main::@4
-(label) main::@5
-(label) main::@return
-(byte[]) msg
-(const string) msg#0 = (string) "hello world! @"
-(byte[]) msg2
-(const string) msg2#0 = (string) "hello c64! @"
-(byte[]) msg3
-(const string) msg3#0 = (string) "hello 2017! @"
-(void()) print_ln()
-(label) print_ln::@1
-(label) print_ln::@return
-(void()) print_str((byte*) print_str::str)
-(label) print_str::@1
-(label) print_str::@2
-(label) print_str::@return
-(byte*) print_str::str
-(byte*) print_str::str#0
-(byte*) print_str::str#4
-(byte*) print_str::str#6
-
 Block Sequence Planned @begin @7 @end main main::@1 main::@2 main::@3 main::@4 main::@5 main::@return print_ln print_ln::@1 print_ln::@return print_str print_str::@1 print_str::@return print_str::@2 
 Added new block during phi lifting print_ln::@3(between print_ln::@1 and print_ln::@1)
 Block Sequence Planned @begin @7 @end main main::@1 main::@2 main::@3 main::@4 main::@5 main::@return print_ln print_ln::@1 print_ln::@return print_ln::@3 print_str print_str::@1 print_str::@return print_str::@2 
-CONTROL FLOW GRAPH - PHI LIFTED
-@begin: scope:[]  from
-  to:@7
-@7: scope:[]  from @begin
-  call main param-assignment
-  to:@end
-@end: scope:[]  from @7
-main: scope:[main]  from @7
-  call print_str param-assignment
-  to:main::@1
-main::@1: scope:[main]  from main
-  call print_ln param-assignment
-  to:main::@2
-main::@2: scope:[main]  from main::@1
-  (byte*~) char_cursor#31 ← (byte*) line_cursor#1
-  call print_str param-assignment
-  to:main::@3
-main::@3: scope:[main]  from main::@2
-  (byte*~) line_cursor#23 ← (byte*) line_cursor#1
-  call print_ln param-assignment
-  to:main::@4
-main::@4: scope:[main]  from main::@3
-  (byte*~) char_cursor#32 ← (byte*) line_cursor#1
-  call print_str param-assignment
-  to:main::@5
-main::@5: scope:[main]  from main::@4
-  (byte*~) line_cursor#24 ← (byte*) line_cursor#1
-  call print_ln param-assignment
-  to:main::@return
-main::@return: scope:[main]  from main::@5
-  return 
-  to:@return
-print_ln: scope:[print_ln]  from main::@1 main::@3 main::@5
-  (byte*) line_cursor#16 ← phi( main::@1/((byte*))(word/signed word) 1024 main::@3/(byte*~) line_cursor#23 main::@5/(byte*~) line_cursor#24 )
-  (byte*~) line_cursor#25 ← (byte*) line_cursor#16
-  to:print_ln::@1
-print_ln::@1: scope:[print_ln]  from print_ln print_ln::@3
-  (byte*) line_cursor#8 ← phi( print_ln/(byte*~) line_cursor#25 print_ln::@3/(byte*~) line_cursor#26 )
-  (byte*) line_cursor#1 ← (byte*) line_cursor#8 + (byte/signed byte/word/signed word) 40
-  if((byte*) line_cursor#1<(byte*) char_cursor#13) goto print_ln::@3
-  to:print_ln::@return
-print_ln::@return: scope:[print_ln]  from print_ln::@1
-  return 
-  to:@return
-print_ln::@3: scope:[print_ln]  from print_ln::@1
-  (byte*~) line_cursor#26 ← (byte*) line_cursor#1
-  to:print_ln::@1
-print_str: scope:[print_str]  from main main::@2 main::@4
-  (byte*) char_cursor#29 ← phi( main/((byte*))(word/signed word) 1024 main::@2/(byte*~) char_cursor#31 main::@4/(byte*~) char_cursor#32 )
-  (byte*) print_str::str#6 ← phi( main/(const string) msg#0 main::@2/(const string) msg2#0 main::@4/(const string) msg3#0 )
-  (byte*~) print_str::str#7 ← (byte*) print_str::str#6
-  (byte*~) char_cursor#33 ← (byte*) char_cursor#29
-  to:print_str::@1
-print_str::@1: scope:[print_str]  from print_str print_str::@2
-  (byte*) char_cursor#13 ← phi( print_str/(byte*~) char_cursor#33 print_str::@2/(byte*~) char_cursor#34 )
-  (byte*) print_str::str#4 ← phi( print_str/(byte*~) print_str::str#7 print_str::@2/(byte*~) print_str::str#8 )
-  if(*((byte*) print_str::str#4)!=(byte) '@') goto print_str::@2
-  to:print_str::@return
-print_str::@return: scope:[print_str]  from print_str::@1
-  return 
-  to:@return
-print_str::@2: scope:[print_str]  from print_str::@1
-  *((byte*) char_cursor#13) ← *((byte*) print_str::str#4)
-  (byte*) char_cursor#1 ← ++ (byte*) char_cursor#13
-  (byte*) print_str::str#0 ← ++ (byte*) print_str::str#4
-  (byte*~) print_str::str#8 ← (byte*) print_str::str#0
-  (byte*~) char_cursor#34 ← (byte*) char_cursor#1
-  to:print_str::@1
-
 Adding NOP phi() at start of @begin
 Adding NOP phi() at start of @7
 Adding NOP phi() at start of @end
@@ -1710,80 +700,6 @@ Propagating live ranges...
 Propagating live ranges...
 Propagating live ranges...
 Propagating live ranges...
-CONTROL FLOW GRAPH - LIVE RANGES FOUND
-@begin: scope:[]  from
-  [0] phi() [ ]
-  to:@7
-@7: scope:[]  from @begin
-  [1] phi() [ ]
-  [2] call main param-assignment [ ]
-  to:@end
-@end: scope:[]  from @7
-  [3] phi() [ ]
-main: scope:[main]  from @7
-  [4] phi() [ ]
-  [5] call print_str param-assignment [ char_cursor#13 ]
-  to:main::@1
-main::@1: scope:[main]  from main
-  [6] phi() [ char_cursor#13 ]
-  [7] call print_ln param-assignment [ line_cursor#1 ]
-  to:main::@2
-main::@2: scope:[main]  from main::@1
-  [8] (byte*~) char_cursor#31 ← (byte*) line_cursor#1 [ char_cursor#31 line_cursor#1 ]
-  [9] call print_str param-assignment [ line_cursor#1 char_cursor#13 ]
-  to:main::@3
-main::@3: scope:[main]  from main::@2
-  [10] (byte*~) line_cursor#23 ← (byte*) line_cursor#1 [ line_cursor#23 char_cursor#13 ]
-  [11] call print_ln param-assignment [ line_cursor#1 ]
-  to:main::@4
-main::@4: scope:[main]  from main::@3
-  [12] (byte*~) char_cursor#32 ← (byte*) line_cursor#1 [ line_cursor#1 char_cursor#32 ]
-  [13] call print_str param-assignment [ line_cursor#1 char_cursor#13 ]
-  to:main::@5
-main::@5: scope:[main]  from main::@4
-  [14] (byte*~) line_cursor#24 ← (byte*) line_cursor#1 [ line_cursor#24 char_cursor#13 ]
-  [15] call print_ln param-assignment [ ]
-  to:main::@return
-main::@return: scope:[main]  from main::@5
-  [16] return  [ ]
-  to:@return
-print_ln: scope:[print_ln]  from main::@1 main::@3 main::@5
-  [17] (byte*) line_cursor#16 ← phi( main::@1/((byte*))(word/signed word) 1024 main::@3/(byte*~) line_cursor#23 main::@5/(byte*~) line_cursor#24 ) [ line_cursor#16 char_cursor#13 ]
-  [18] (byte*~) line_cursor#25 ← (byte*) line_cursor#16 [ line_cursor#25 char_cursor#13 ]
-  to:print_ln::@1
-print_ln::@1: scope:[print_ln]  from print_ln print_ln::@3
-  [19] (byte*) line_cursor#8 ← phi( print_ln/(byte*~) line_cursor#25 print_ln::@3/(byte*~) line_cursor#26 ) [ line_cursor#8 char_cursor#13 ]
-  [20] (byte*) line_cursor#1 ← (byte*) line_cursor#8 + (byte/signed byte/word/signed word) 40 [ line_cursor#1 char_cursor#13 ]
-  [21] if((byte*) line_cursor#1<(byte*) char_cursor#13) goto print_ln::@3 [ line_cursor#1 char_cursor#13 ]
-  to:print_ln::@return
-print_ln::@return: scope:[print_ln]  from print_ln::@1
-  [22] return  [ line_cursor#1 ]
-  to:@return
-print_ln::@3: scope:[print_ln]  from print_ln::@1
-  [23] (byte*~) line_cursor#26 ← (byte*) line_cursor#1 [ line_cursor#26 char_cursor#13 ]
-  to:print_ln::@1
-print_str: scope:[print_str]  from main main::@2 main::@4
-  [24] (byte*) char_cursor#29 ← phi( main/((byte*))(word/signed word) 1024 main::@2/(byte*~) char_cursor#31 main::@4/(byte*~) char_cursor#32 ) [ print_str::str#6 char_cursor#29 ]
-  [24] (byte*) print_str::str#6 ← phi( main/(const string) msg#0 main::@2/(const string) msg2#0 main::@4/(const string) msg3#0 ) [ print_str::str#6 char_cursor#29 ]
-  [25] (byte*~) print_str::str#7 ← (byte*) print_str::str#6 [ char_cursor#29 print_str::str#7 ]
-  [26] (byte*~) char_cursor#33 ← (byte*) char_cursor#29 [ print_str::str#7 char_cursor#33 ]
-  to:print_str::@1
-print_str::@1: scope:[print_str]  from print_str print_str::@2
-  [27] (byte*) char_cursor#13 ← phi( print_str/(byte*~) char_cursor#33 print_str::@2/(byte*~) char_cursor#34 ) [ char_cursor#13 print_str::str#4 ]
-  [27] (byte*) print_str::str#4 ← phi( print_str/(byte*~) print_str::str#7 print_str::@2/(byte*~) print_str::str#8 ) [ char_cursor#13 print_str::str#4 ]
-  [28] if(*((byte*) print_str::str#4)!=(byte) '@') goto print_str::@2 [ char_cursor#13 print_str::str#4 ]
-  to:print_str::@return
-print_str::@return: scope:[print_str]  from print_str::@1
-  [29] return  [ char_cursor#13 ]
-  to:@return
-print_str::@2: scope:[print_str]  from print_str::@1
-  [30] *((byte*) char_cursor#13) ← *((byte*) print_str::str#4) [ char_cursor#13 print_str::str#4 ]
-  [31] (byte*) char_cursor#1 ← ++ (byte*) char_cursor#13 [ print_str::str#4 char_cursor#1 ]
-  [32] (byte*) print_str::str#0 ← ++ (byte*) print_str::str#4 [ char_cursor#1 print_str::str#0 ]
-  [33] (byte*~) print_str::str#8 ← (byte*) print_str::str#0 [ print_str::str#8 char_cursor#1 ]
-  [34] (byte*~) char_cursor#34 ← (byte*) char_cursor#1 [ print_str::str#8 char_cursor#34 ]
-  to:print_str::@1
-
 Created 6 initial phi equivalence classes
 Not coalescing [8] char_cursor#31 ← line_cursor#1
 Coalesced [10] line_cursor#23 ← line_cursor#1
@@ -1812,73 +728,8 @@ Propagating live ranges...
 Propagating live ranges...
 Propagating live ranges...
 Propagating live ranges...
-CONTROL FLOW GRAPH - BEFORE EFFECTIVE LIVE RANGES
-@begin: scope:[]  from
-  [0] phi() [ ]
-  to:@7
-@7: scope:[]  from @begin
-  [1] phi() [ ]
-  [2] call main param-assignment [ ]
-  to:@end
-@end: scope:[]  from @7
-  [3] phi() [ ]
-main: scope:[main]  from @7
-  [4] phi() [ ]
-  [5] call print_str param-assignment [ char_cursor#13 ]
-  to:main::@1
-main::@1: scope:[main]  from main
-  [6] phi() [ char_cursor#13 ]
-  [7] call print_ln param-assignment [ line_cursor#1 ]
-  to:main::@2
-main::@2: scope:[main]  from main::@1
-  [8] (byte*~) char_cursor#31 ← (byte*) line_cursor#1 [ char_cursor#31 line_cursor#1 ]
-  [9] call print_str param-assignment [ line_cursor#1 char_cursor#13 ]
-  to:main::@3
-main::@3: scope:[main]  from main::@2
-  [10] phi() [ line_cursor#1 char_cursor#13 ]
-  [11] call print_ln param-assignment [ line_cursor#1 ]
-  to:main::@4
-main::@4: scope:[main]  from main::@3
-  [12] (byte*~) char_cursor#32 ← (byte*) line_cursor#1 [ line_cursor#1 char_cursor#32 ]
-  [13] call print_str param-assignment [ line_cursor#1 char_cursor#13 ]
-  to:main::@5
-main::@5: scope:[main]  from main::@4
-  [14] phi() [ line_cursor#1 char_cursor#13 ]
-  [15] call print_ln param-assignment [ ]
-  to:main::@return
-main::@return: scope:[main]  from main::@5
-  [16] return  [ ]
-  to:@return
-print_ln: scope:[print_ln]  from main::@1 main::@3 main::@5
-  [17] (byte*) line_cursor#16 ← phi( main::@1/((byte*))(word/signed word) 1024 main::@3/(byte*) line_cursor#1 main::@5/(byte*) line_cursor#1 ) [ line_cursor#16 char_cursor#13 ]
-  to:print_ln::@1
-print_ln::@1: scope:[print_ln]  from print_ln print_ln::@1
-  [18] (byte*) line_cursor#8 ← phi( print_ln/(byte*) line_cursor#16 print_ln::@1/(byte*) line_cursor#1 ) [ line_cursor#8 char_cursor#13 ]
-  [19] (byte*) line_cursor#1 ← (byte*) line_cursor#8 + (byte/signed byte/word/signed word) 40 [ line_cursor#1 char_cursor#13 ]
-  [20] if((byte*) line_cursor#1<(byte*) char_cursor#13) goto print_ln::@1 [ line_cursor#1 char_cursor#13 ]
-  to:print_ln::@return
-print_ln::@return: scope:[print_ln]  from print_ln::@1
-  [21] return  [ line_cursor#1 ]
-  to:@return
-print_str: scope:[print_str]  from main main::@2 main::@4
-  [22] (byte*) char_cursor#29 ← phi( main/((byte*))(word/signed word) 1024 main::@2/(byte*~) char_cursor#31 main::@4/(byte*~) char_cursor#32 ) [ print_str::str#6 char_cursor#29 ]
-  [22] (byte*) print_str::str#6 ← phi( main/(const string) msg#0 main::@2/(const string) msg2#0 main::@4/(const string) msg3#0 ) [ print_str::str#6 char_cursor#29 ]
-  to:print_str::@1
-print_str::@1: scope:[print_str]  from print_str print_str::@2
-  [23] (byte*) char_cursor#13 ← phi( print_str/(byte*) char_cursor#29 print_str::@2/(byte*) char_cursor#1 ) [ char_cursor#13 print_str::str#4 ]
-  [23] (byte*) print_str::str#4 ← phi( print_str/(byte*) print_str::str#6 print_str::@2/(byte*) print_str::str#0 ) [ char_cursor#13 print_str::str#4 ]
-  [24] if(*((byte*) print_str::str#4)!=(byte) '@') goto print_str::@2 [ char_cursor#13 print_str::str#4 ]
-  to:print_str::@return
-print_str::@return: scope:[print_str]  from print_str::@1
-  [25] return  [ char_cursor#13 ]
-  to:@return
-print_str::@2: scope:[print_str]  from print_str::@1
-  [26] *((byte*) char_cursor#13) ← *((byte*) print_str::str#4) [ char_cursor#13 print_str::str#4 ]
-  [27] (byte*) char_cursor#1 ← ++ (byte*) char_cursor#13 [ print_str::str#4 char_cursor#1 ]
-  [28] (byte*) print_str::str#0 ← ++ (byte*) print_str::str#4 [ print_str::str#0 char_cursor#1 ]
-  to:print_str::@1
 
-CONTROL FLOW GRAPH - PHI MEM COALESCED
+FINAL CONTROL FLOW GRAPH
 @begin: scope:[]  from
   [0] phi() [ ] ( )
   to:@7
@@ -2015,6 +866,7 @@ Complete equivalence classes
 Allocated zp ZP_WORD:2 [ line_cursor#8 line_cursor#16 line_cursor#1 ]
 Allocated zp ZP_WORD:4 [ print_str::str#4 print_str::str#6 print_str::str#0 ]
 Allocated zp ZP_WORD:6 [ char_cursor#13 char_cursor#29 char_cursor#31 char_cursor#32 char_cursor#1 ]
+
 INITIAL ASM
 //SEG0 Basic Upstart
 .pc = $801 "Basic"
@@ -2513,7 +1365,8 @@ zp ZP_WORD:2 [ line_cursor#8 line_cursor#16 line_cursor#1 ]
 zp ZP_WORD:4 [ print_str::str#4 print_str::str#6 print_str::str#0 ]
 zp ZP_WORD:6 [ char_cursor#13 char_cursor#29 char_cursor#31 char_cursor#32 char_cursor#1 ]
 
-FINAL CODE
+
+FINAL ASSEMBLER
 //SEG0 Basic Upstart
 .pc = $801 "Basic"
 :BasicUpstart(main)

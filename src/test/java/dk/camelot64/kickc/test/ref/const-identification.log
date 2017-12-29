@@ -1,3 +1,4 @@
+PARSING /Users/jespergravgaard/c64/tmp/kickc/src/test/java/dk/camelot64/kickc/test/const-identification.kc
 const byte* plots = $1000;
 const byte* SCREEN = $0400;
 
@@ -27,7 +28,8 @@ void plot(byte x) {
 }
 
 Adding pre/post-modifier (byte) line::x ← ++ (byte) line::x
-PROGRAM
+
+STATEMENTS
   (byte*) plots ← (word/signed word) 4096
   (byte*) SCREEN ← (word/signed word) 1024
 proc (void()) main()
@@ -180,134 +182,13 @@ Removing empty block line::@5
 Removing empty block line::@3
 Removing empty block line::@6
 Removing empty block @2
-CONTROL FLOW GRAPH
-@begin: scope:[]  from
-  (byte*) plots ← ((byte*)) (word/signed word) 4096
-  (byte*) SCREEN ← ((byte*)) (word/signed word) 1024
-  to:@3
-main: scope:[main]  from
-  (byte) main::i ← (byte/signed byte/word/signed word) 0
-  to:main::@1
-main::@1: scope:[main]  from main main::@1
-  *((byte*) plots + (byte) main::i) ← (byte) main::i
-  *((byte*) SCREEN + (byte) main::i) ← (byte/signed byte/word/signed word) 0
-  (byte) main::i ← ++ (byte) main::i
-  (boolean~) main::$0 ← (byte) main::i != (byte/signed byte/word/signed word) 40
-  if((boolean~) main::$0) goto main::@1
-  to:main::@2
-main::@2: scope:[main]  from main::@1 main::@2
-  call line (byte/signed byte/word/signed word) 0 (byte/signed byte/word/signed word) 10 
-  if(true) goto main::@2
-  to:main::@return
-main::@return: scope:[main]  from main::@2
-  return 
-  to:@return
-line: scope:[line]  from
-  (boolean~) line::$0 ← (byte) line::x0 < (byte) line::x1
-  (boolean~) line::$1 ← ! (boolean~) line::$0
-  if((boolean~) line::$1) goto line::@1
-  to:line::@4
-line::@1: scope:[line]  from line
-  call plot (byte) line::x0 
-  to:line::@return
-line::@4: scope:[line]  from line
-  (byte) line::x ← (byte) line::x0
-  to:line::@2
-line::@2: scope:[line]  from line::@2 line::@4
-  call plot (byte) line::x 
-  (byte) line::x ← ++ (byte) line::x
-  (boolean~) line::$3 ← (byte) line::x <= (byte) line::x1
-  if((boolean~) line::$3) goto line::@2
-  to:line::@return
-line::@return: scope:[line]  from line::@1 line::@2
-  return 
-  to:@return
-plot: scope:[plot]  from
-  (byte) plot::idx ← *((byte*) plots + (byte) plot::x)
-  (byte/word~) plot::$0 ← *((byte*) SCREEN + (byte) plot::idx) + (byte/signed byte/word/signed word) 1
-  *((byte*) SCREEN + (byte) plot::idx) ← (byte/word~) plot::$0
-  to:plot::@return
-plot::@return: scope:[plot]  from plot
-  return 
-  to:@return
-@3: scope:[]  from @begin
-  call main 
-  to:@end
-@end: scope:[]  from @3
-
 PROCEDURE MODIFY VARIABLE ANALYSIS
 
-CONTROL FLOW GRAPH WITH ASSIGNMENT CALL
-@begin: scope:[]  from
-  (byte*) plots ← ((byte*)) (word/signed word) 4096
-  (byte*) SCREEN ← ((byte*)) (word/signed word) 1024
-  to:@3
-main: scope:[main]  from @3
-  (byte) main::i ← (byte/signed byte/word/signed word) 0
-  to:main::@1
-main::@1: scope:[main]  from main main::@1
-  *((byte*) plots + (byte) main::i) ← (byte) main::i
-  *((byte*) SCREEN + (byte) main::i) ← (byte/signed byte/word/signed word) 0
-  (byte) main::i ← ++ (byte) main::i
-  (boolean~) main::$0 ← (byte) main::i != (byte/signed byte/word/signed word) 40
-  if((boolean~) main::$0) goto main::@1
-  to:main::@2
-main::@2: scope:[main]  from main::@1 main::@5
-  (byte) line::x0 ← (byte/signed byte/word/signed word) 0
-  (byte) line::x1 ← (byte/signed byte/word/signed word) 10
-  call line param-assignment
-  to:main::@5
-main::@5: scope:[main]  from main::@2
-  if(true) goto main::@2
-  to:main::@return
-main::@return: scope:[main]  from main::@5
-  return 
-  to:@return
-line: scope:[line]  from main::@2
-  (boolean~) line::$0 ← (byte) line::x0 < (byte) line::x1
-  (boolean~) line::$1 ← ! (boolean~) line::$0
-  if((boolean~) line::$1) goto line::@1
-  to:line::@4
-line::@1: scope:[line]  from line
-  (byte) plot::x ← (byte) line::x0
-  call plot param-assignment
-  to:line::@7
-line::@7: scope:[line]  from line::@1
-  to:line::@return
-line::@4: scope:[line]  from line
-  (byte) line::x ← (byte) line::x0
-  to:line::@2
-line::@2: scope:[line]  from line::@4 line::@8
-  (byte) plot::x ← (byte) line::x
-  call plot param-assignment
-  to:line::@8
-line::@8: scope:[line]  from line::@2
-  (byte) line::x ← ++ (byte) line::x
-  (boolean~) line::$3 ← (byte) line::x <= (byte) line::x1
-  if((boolean~) line::$3) goto line::@2
-  to:line::@return
-line::@return: scope:[line]  from line::@7 line::@8
-  return 
-  to:@return
-plot: scope:[plot]  from line::@1 line::@2
-  (byte) plot::idx ← *((byte*) plots + (byte) plot::x)
-  (byte/word~) plot::$0 ← *((byte*) SCREEN + (byte) plot::idx) + (byte/signed byte/word/signed word) 1
-  *((byte*) SCREEN + (byte) plot::idx) ← (byte/word~) plot::$0
-  to:plot::@return
-plot::@return: scope:[plot]  from plot
-  return 
-  to:@return
-@3: scope:[]  from @begin
-  call main param-assignment
-  to:@4
-@4: scope:[]  from @3
-  to:@end
-@end: scope:[]  from @4
+Completing Phi functions...
+Completing Phi functions...
+Completing Phi functions...
 
-Completing Phi functions...
-Completing Phi functions...
-Completing Phi functions...
-CONTROL FLOW GRAPH SSA
+CONTROL FLOW GRAPH SSA WITH ASSIGNMENT CALL & RETURN
 @begin: scope:[]  from
   (byte*) plots#0 ← ((byte*)) (word/signed word) 4096
   (byte*) SCREEN#0 ← ((byte*)) (word/signed word) 1024
@@ -385,85 +266,7 @@ plot::@return: scope:[plot]  from plot
   to:@end
 @end: scope:[]  from @4
 
-CONTROL FLOW GRAPH WITH ASSIGNMENT CALL & RETURN
-@begin: scope:[]  from
-  (byte*) plots#0 ← ((byte*)) (word/signed word) 4096
-  (byte*) SCREEN#0 ← ((byte*)) (word/signed word) 1024
-  to:@3
-main: scope:[main]  from @3
-  (byte) main::i#0 ← (byte/signed byte/word/signed word) 0
-  to:main::@1
-main::@1: scope:[main]  from main main::@1
-  (byte) main::i#2 ← phi( main/(byte) main::i#0 main::@1/(byte) main::i#1 )
-  *((byte*) plots#0 + (byte) main::i#2) ← (byte) main::i#2
-  *((byte*) SCREEN#0 + (byte) main::i#2) ← (byte/signed byte/word/signed word) 0
-  (byte) main::i#1 ← ++ (byte) main::i#2
-  (boolean~) main::$0 ← (byte) main::i#1 != (byte/signed byte/word/signed word) 40
-  if((boolean~) main::$0) goto main::@1
-  to:main::@2
-main::@2: scope:[main]  from main::@1 main::@5
-  (byte) line::x0#0 ← (byte/signed byte/word/signed word) 0
-  (byte) line::x1#0 ← (byte/signed byte/word/signed word) 10
-  call line param-assignment
-  to:main::@5
-main::@5: scope:[main]  from main::@2
-  if(true) goto main::@2
-  to:main::@return
-main::@return: scope:[main]  from main::@5
-  return 
-  to:@return
-line: scope:[line]  from main::@2
-  (byte) line::x1#1 ← phi( main::@2/(byte) line::x1#0 )
-  (byte) line::x0#1 ← phi( main::@2/(byte) line::x0#0 )
-  (boolean~) line::$0 ← (byte) line::x0#1 < (byte) line::x1#1
-  (boolean~) line::$1 ← ! (boolean~) line::$0
-  if((boolean~) line::$1) goto line::@1
-  to:line::@4
-line::@1: scope:[line]  from line
-  (byte) line::x0#2 ← phi( line/(byte) line::x0#1 )
-  (byte) plot::x#0 ← (byte) line::x0#2
-  call plot param-assignment
-  to:line::@7
-line::@7: scope:[line]  from line::@1
-  to:line::@return
-line::@4: scope:[line]  from line
-  (byte) line::x1#4 ← phi( line/(byte) line::x1#1 )
-  (byte) line::x0#3 ← phi( line/(byte) line::x0#1 )
-  (byte) line::x#0 ← (byte) line::x0#3
-  to:line::@2
-line::@2: scope:[line]  from line::@4 line::@8
-  (byte) line::x1#3 ← phi( line::@4/(byte) line::x1#4 line::@8/(byte) line::x1#2 )
-  (byte) line::x#2 ← phi( line::@4/(byte) line::x#0 line::@8/(byte) line::x#1 )
-  (byte) plot::x#1 ← (byte) line::x#2
-  call plot param-assignment
-  to:line::@8
-line::@8: scope:[line]  from line::@2
-  (byte) line::x1#2 ← phi( line::@2/(byte) line::x1#3 )
-  (byte) line::x#3 ← phi( line::@2/(byte) line::x#2 )
-  (byte) line::x#1 ← ++ (byte) line::x#3
-  (boolean~) line::$3 ← (byte) line::x#1 <= (byte) line::x1#2
-  if((boolean~) line::$3) goto line::@2
-  to:line::@return
-line::@return: scope:[line]  from line::@7 line::@8
-  return 
-  to:@return
-plot: scope:[plot]  from line::@1 line::@2
-  (byte) plot::x#2 ← phi( line::@1/(byte) plot::x#0 line::@2/(byte) plot::x#1 )
-  (byte) plot::idx#0 ← *((byte*) plots#0 + (byte) plot::x#2)
-  (byte/word~) plot::$0 ← *((byte*) SCREEN#0 + (byte) plot::idx#0) + (byte/signed byte/word/signed word) 1
-  *((byte*) SCREEN#0 + (byte) plot::idx#0) ← (byte/word~) plot::$0
-  to:plot::@return
-plot::@return: scope:[plot]  from plot
-  return 
-  to:@return
-@3: scope:[]  from @begin
-  call main param-assignment
-  to:@4
-@4: scope:[]  from @3
-  to:@end
-@end: scope:[]  from @4
-
-INITIAL SSA SYMBOL TABLE
+SYMBOL TABLE SSA
 (label) @3
 (label) @4
 (label) @begin
@@ -518,158 +321,12 @@ INITIAL SSA SYMBOL TABLE
 (byte*) plots
 (byte*) plots#0
 
+OPTIMIZING CONTROL FLOW GRAPH
 Culled Empty Block (label) line::@7
 Culled Empty Block (label) @4
 Succesful SSA optimization Pass2CullEmptyBlocks
-CONTROL FLOW GRAPH
-@begin: scope:[]  from
-  (byte*) plots#0 ← ((byte*)) (word/signed word) 4096
-  (byte*) SCREEN#0 ← ((byte*)) (word/signed word) 1024
-  to:@3
-main: scope:[main]  from @3
-  (byte) main::i#0 ← (byte/signed byte/word/signed word) 0
-  to:main::@1
-main::@1: scope:[main]  from main main::@1
-  (byte) main::i#2 ← phi( main/(byte) main::i#0 main::@1/(byte) main::i#1 )
-  *((byte*) plots#0 + (byte) main::i#2) ← (byte) main::i#2
-  *((byte*) SCREEN#0 + (byte) main::i#2) ← (byte/signed byte/word/signed word) 0
-  (byte) main::i#1 ← ++ (byte) main::i#2
-  (boolean~) main::$0 ← (byte) main::i#1 != (byte/signed byte/word/signed word) 40
-  if((boolean~) main::$0) goto main::@1
-  to:main::@2
-main::@2: scope:[main]  from main::@1 main::@5
-  (byte) line::x0#0 ← (byte/signed byte/word/signed word) 0
-  (byte) line::x1#0 ← (byte/signed byte/word/signed word) 10
-  call line param-assignment
-  to:main::@5
-main::@5: scope:[main]  from main::@2
-  if(true) goto main::@2
-  to:main::@return
-main::@return: scope:[main]  from main::@5
-  return 
-  to:@return
-line: scope:[line]  from main::@2
-  (byte) line::x1#1 ← phi( main::@2/(byte) line::x1#0 )
-  (byte) line::x0#1 ← phi( main::@2/(byte) line::x0#0 )
-  (boolean~) line::$0 ← (byte) line::x0#1 < (byte) line::x1#1
-  (boolean~) line::$1 ← ! (boolean~) line::$0
-  if((boolean~) line::$1) goto line::@1
-  to:line::@4
-line::@1: scope:[line]  from line
-  (byte) line::x0#2 ← phi( line/(byte) line::x0#1 )
-  (byte) plot::x#0 ← (byte) line::x0#2
-  call plot param-assignment
-  to:line::@return
-line::@4: scope:[line]  from line
-  (byte) line::x1#4 ← phi( line/(byte) line::x1#1 )
-  (byte) line::x0#3 ← phi( line/(byte) line::x0#1 )
-  (byte) line::x#0 ← (byte) line::x0#3
-  to:line::@2
-line::@2: scope:[line]  from line::@4 line::@8
-  (byte) line::x1#3 ← phi( line::@4/(byte) line::x1#4 line::@8/(byte) line::x1#2 )
-  (byte) line::x#2 ← phi( line::@4/(byte) line::x#0 line::@8/(byte) line::x#1 )
-  (byte) plot::x#1 ← (byte) line::x#2
-  call plot param-assignment
-  to:line::@8
-line::@8: scope:[line]  from line::@2
-  (byte) line::x1#2 ← phi( line::@2/(byte) line::x1#3 )
-  (byte) line::x#3 ← phi( line::@2/(byte) line::x#2 )
-  (byte) line::x#1 ← ++ (byte) line::x#3
-  (boolean~) line::$3 ← (byte) line::x#1 <= (byte) line::x1#2
-  if((boolean~) line::$3) goto line::@2
-  to:line::@return
-line::@return: scope:[line]  from line::@1 line::@8
-  return 
-  to:@return
-plot: scope:[plot]  from line::@1 line::@2
-  (byte) plot::x#2 ← phi( line::@1/(byte) plot::x#0 line::@2/(byte) plot::x#1 )
-  (byte) plot::idx#0 ← *((byte*) plots#0 + (byte) plot::x#2)
-  (byte/word~) plot::$0 ← *((byte*) SCREEN#0 + (byte) plot::idx#0) + (byte/signed byte/word/signed word) 1
-  *((byte*) SCREEN#0 + (byte) plot::idx#0) ← (byte/word~) plot::$0
-  to:plot::@return
-plot::@return: scope:[plot]  from plot
-  return 
-  to:@return
-@3: scope:[]  from @begin
-  call main param-assignment
-  to:@end
-@end: scope:[]  from @3
-
 Inversing boolean not (boolean~) line::$1 ← (byte) line::x0#1 >= (byte) line::x1#1 from (boolean~) line::$0 ← (byte) line::x0#1 < (byte) line::x1#1
 Succesful SSA optimization Pass2UnaryNotSimplification
-CONTROL FLOW GRAPH
-@begin: scope:[]  from
-  (byte*) plots#0 ← ((byte*)) (word/signed word) 4096
-  (byte*) SCREEN#0 ← ((byte*)) (word/signed word) 1024
-  to:@3
-main: scope:[main]  from @3
-  (byte) main::i#0 ← (byte/signed byte/word/signed word) 0
-  to:main::@1
-main::@1: scope:[main]  from main main::@1
-  (byte) main::i#2 ← phi( main/(byte) main::i#0 main::@1/(byte) main::i#1 )
-  *((byte*) plots#0 + (byte) main::i#2) ← (byte) main::i#2
-  *((byte*) SCREEN#0 + (byte) main::i#2) ← (byte/signed byte/word/signed word) 0
-  (byte) main::i#1 ← ++ (byte) main::i#2
-  (boolean~) main::$0 ← (byte) main::i#1 != (byte/signed byte/word/signed word) 40
-  if((boolean~) main::$0) goto main::@1
-  to:main::@2
-main::@2: scope:[main]  from main::@1 main::@5
-  (byte) line::x0#0 ← (byte/signed byte/word/signed word) 0
-  (byte) line::x1#0 ← (byte/signed byte/word/signed word) 10
-  call line param-assignment
-  to:main::@5
-main::@5: scope:[main]  from main::@2
-  if(true) goto main::@2
-  to:main::@return
-main::@return: scope:[main]  from main::@5
-  return 
-  to:@return
-line: scope:[line]  from main::@2
-  (byte) line::x1#1 ← phi( main::@2/(byte) line::x1#0 )
-  (byte) line::x0#1 ← phi( main::@2/(byte) line::x0#0 )
-  (boolean~) line::$1 ← (byte) line::x0#1 >= (byte) line::x1#1
-  if((boolean~) line::$1) goto line::@1
-  to:line::@4
-line::@1: scope:[line]  from line
-  (byte) line::x0#2 ← phi( line/(byte) line::x0#1 )
-  (byte) plot::x#0 ← (byte) line::x0#2
-  call plot param-assignment
-  to:line::@return
-line::@4: scope:[line]  from line
-  (byte) line::x1#4 ← phi( line/(byte) line::x1#1 )
-  (byte) line::x0#3 ← phi( line/(byte) line::x0#1 )
-  (byte) line::x#0 ← (byte) line::x0#3
-  to:line::@2
-line::@2: scope:[line]  from line::@4 line::@8
-  (byte) line::x1#3 ← phi( line::@4/(byte) line::x1#4 line::@8/(byte) line::x1#2 )
-  (byte) line::x#2 ← phi( line::@4/(byte) line::x#0 line::@8/(byte) line::x#1 )
-  (byte) plot::x#1 ← (byte) line::x#2
-  call plot param-assignment
-  to:line::@8
-line::@8: scope:[line]  from line::@2
-  (byte) line::x1#2 ← phi( line::@2/(byte) line::x1#3 )
-  (byte) line::x#3 ← phi( line::@2/(byte) line::x#2 )
-  (byte) line::x#1 ← ++ (byte) line::x#3
-  (boolean~) line::$3 ← (byte) line::x#1 <= (byte) line::x1#2
-  if((boolean~) line::$3) goto line::@2
-  to:line::@return
-line::@return: scope:[line]  from line::@1 line::@8
-  return 
-  to:@return
-plot: scope:[plot]  from line::@1 line::@2
-  (byte) plot::x#2 ← phi( line::@1/(byte) plot::x#0 line::@2/(byte) plot::x#1 )
-  (byte) plot::idx#0 ← *((byte*) plots#0 + (byte) plot::x#2)
-  (byte/word~) plot::$0 ← *((byte*) SCREEN#0 + (byte) plot::idx#0) + (byte/signed byte/word/signed word) 1
-  *((byte*) SCREEN#0 + (byte) plot::idx#0) ← (byte/word~) plot::$0
-  to:plot::@return
-plot::@return: scope:[plot]  from plot
-  return 
-  to:@return
-@3: scope:[]  from @begin
-  call main param-assignment
-  to:@end
-@end: scope:[]  from @3
-
 Not aliassing across scopes: line::x0#1 line::x0#0
 Not aliassing across scopes: line::x1#1 line::x1#0
 Not aliassing across scopes: plot::x#0 line::x0#2
@@ -680,73 +337,6 @@ Alias (byte) line::x1#1 = (byte) line::x1#4
 Alias (byte) line::x#2 = (byte) line::x#3 
 Alias (byte) line::x1#2 = (byte) line::x1#3 
 Succesful SSA optimization Pass2AliasElimination
-CONTROL FLOW GRAPH
-@begin: scope:[]  from
-  (byte*) plots#0 ← ((byte*)) (word/signed word) 4096
-  (byte*) SCREEN#0 ← ((byte*)) (word/signed word) 1024
-  to:@3
-main: scope:[main]  from @3
-  (byte) main::i#0 ← (byte/signed byte/word/signed word) 0
-  to:main::@1
-main::@1: scope:[main]  from main main::@1
-  (byte) main::i#2 ← phi( main/(byte) main::i#0 main::@1/(byte) main::i#1 )
-  *((byte*) plots#0 + (byte) main::i#2) ← (byte) main::i#2
-  *((byte*) SCREEN#0 + (byte) main::i#2) ← (byte/signed byte/word/signed word) 0
-  (byte) main::i#1 ← ++ (byte) main::i#2
-  (boolean~) main::$0 ← (byte) main::i#1 != (byte/signed byte/word/signed word) 40
-  if((boolean~) main::$0) goto main::@1
-  to:main::@2
-main::@2: scope:[main]  from main::@1 main::@5
-  (byte) line::x0#0 ← (byte/signed byte/word/signed word) 0
-  (byte) line::x1#0 ← (byte/signed byte/word/signed word) 10
-  call line param-assignment
-  to:main::@5
-main::@5: scope:[main]  from main::@2
-  if(true) goto main::@2
-  to:main::@return
-main::@return: scope:[main]  from main::@5
-  return 
-  to:@return
-line: scope:[line]  from main::@2
-  (byte) line::x1#1 ← phi( main::@2/(byte) line::x1#0 )
-  (byte) line::x0#1 ← phi( main::@2/(byte) line::x0#0 )
-  (boolean~) line::$1 ← (byte) line::x0#1 >= (byte) line::x1#1
-  if((boolean~) line::$1) goto line::@1
-  to:line::@4
-line::@1: scope:[line]  from line
-  (byte) plot::x#0 ← (byte) line::x0#1
-  call plot param-assignment
-  to:line::@return
-line::@4: scope:[line]  from line
-  to:line::@2
-line::@2: scope:[line]  from line::@4 line::@8
-  (byte) line::x1#2 ← phi( line::@4/(byte) line::x1#1 line::@8/(byte) line::x1#2 )
-  (byte) line::x#2 ← phi( line::@4/(byte) line::x0#1 line::@8/(byte) line::x#1 )
-  (byte) plot::x#1 ← (byte) line::x#2
-  call plot param-assignment
-  to:line::@8
-line::@8: scope:[line]  from line::@2
-  (byte) line::x#1 ← ++ (byte) line::x#2
-  (boolean~) line::$3 ← (byte) line::x#1 <= (byte) line::x1#2
-  if((boolean~) line::$3) goto line::@2
-  to:line::@return
-line::@return: scope:[line]  from line::@1 line::@8
-  return 
-  to:@return
-plot: scope:[plot]  from line::@1 line::@2
-  (byte) plot::x#2 ← phi( line::@1/(byte) plot::x#0 line::@2/(byte) plot::x#1 )
-  (byte) plot::idx#0 ← *((byte*) plots#0 + (byte) plot::x#2)
-  (byte/word~) plot::$0 ← *((byte*) SCREEN#0 + (byte) plot::idx#0) + (byte/signed byte/word/signed word) 1
-  *((byte*) SCREEN#0 + (byte) plot::idx#0) ← (byte/word~) plot::$0
-  to:plot::@return
-plot::@return: scope:[plot]  from plot
-  return 
-  to:@return
-@3: scope:[]  from @begin
-  call main param-assignment
-  to:@end
-@end: scope:[]  from @3
-
 Not aliassing across scopes: line::x0#1 line::x0#0
 Not aliassing across scopes: line::x1#1 line::x1#0
 Not aliassing across scopes: plot::x#0 line::x0#1
@@ -754,388 +344,33 @@ Not aliassing across scopes: plot::x#1 line::x#2
 Not aliassing across scopes: plot::x#2 plot::x#0
 Self Phi Eliminated (byte) line::x1#2
 Succesful SSA optimization Pass2SelfPhiElimination
-CONTROL FLOW GRAPH
-@begin: scope:[]  from
-  (byte*) plots#0 ← ((byte*)) (word/signed word) 4096
-  (byte*) SCREEN#0 ← ((byte*)) (word/signed word) 1024
-  to:@3
-main: scope:[main]  from @3
-  (byte) main::i#0 ← (byte/signed byte/word/signed word) 0
-  to:main::@1
-main::@1: scope:[main]  from main main::@1
-  (byte) main::i#2 ← phi( main/(byte) main::i#0 main::@1/(byte) main::i#1 )
-  *((byte*) plots#0 + (byte) main::i#2) ← (byte) main::i#2
-  *((byte*) SCREEN#0 + (byte) main::i#2) ← (byte/signed byte/word/signed word) 0
-  (byte) main::i#1 ← ++ (byte) main::i#2
-  (boolean~) main::$0 ← (byte) main::i#1 != (byte/signed byte/word/signed word) 40
-  if((boolean~) main::$0) goto main::@1
-  to:main::@2
-main::@2: scope:[main]  from main::@1 main::@5
-  (byte) line::x0#0 ← (byte/signed byte/word/signed word) 0
-  (byte) line::x1#0 ← (byte/signed byte/word/signed word) 10
-  call line param-assignment
-  to:main::@5
-main::@5: scope:[main]  from main::@2
-  if(true) goto main::@2
-  to:main::@return
-main::@return: scope:[main]  from main::@5
-  return 
-  to:@return
-line: scope:[line]  from main::@2
-  (byte) line::x1#1 ← phi( main::@2/(byte) line::x1#0 )
-  (byte) line::x0#1 ← phi( main::@2/(byte) line::x0#0 )
-  (boolean~) line::$1 ← (byte) line::x0#1 >= (byte) line::x1#1
-  if((boolean~) line::$1) goto line::@1
-  to:line::@4
-line::@1: scope:[line]  from line
-  (byte) plot::x#0 ← (byte) line::x0#1
-  call plot param-assignment
-  to:line::@return
-line::@4: scope:[line]  from line
-  to:line::@2
-line::@2: scope:[line]  from line::@4 line::@8
-  (byte) line::x1#2 ← phi( line::@4/(byte) line::x1#1 )
-  (byte) line::x#2 ← phi( line::@4/(byte) line::x0#1 line::@8/(byte) line::x#1 )
-  (byte) plot::x#1 ← (byte) line::x#2
-  call plot param-assignment
-  to:line::@8
-line::@8: scope:[line]  from line::@2
-  (byte) line::x#1 ← ++ (byte) line::x#2
-  (boolean~) line::$3 ← (byte) line::x#1 <= (byte) line::x1#2
-  if((boolean~) line::$3) goto line::@2
-  to:line::@return
-line::@return: scope:[line]  from line::@1 line::@8
-  return 
-  to:@return
-plot: scope:[plot]  from line::@1 line::@2
-  (byte) plot::x#2 ← phi( line::@1/(byte) plot::x#0 line::@2/(byte) plot::x#1 )
-  (byte) plot::idx#0 ← *((byte*) plots#0 + (byte) plot::x#2)
-  (byte/word~) plot::$0 ← *((byte*) SCREEN#0 + (byte) plot::idx#0) + (byte/signed byte/word/signed word) 1
-  *((byte*) SCREEN#0 + (byte) plot::idx#0) ← (byte/word~) plot::$0
-  to:plot::@return
-plot::@return: scope:[plot]  from plot
-  return 
-  to:@return
-@3: scope:[]  from @begin
-  call main param-assignment
-  to:@end
-@end: scope:[]  from @3
-
 Redundant Phi (byte) line::x0#1 (byte) line::x0#0
 Redundant Phi (byte) line::x1#1 (byte) line::x1#0
 Redundant Phi (byte) line::x1#2 (byte) line::x1#1
 Succesful SSA optimization Pass2RedundantPhiElimination
-CONTROL FLOW GRAPH
-@begin: scope:[]  from
-  (byte*) plots#0 ← ((byte*)) (word/signed word) 4096
-  (byte*) SCREEN#0 ← ((byte*)) (word/signed word) 1024
-  to:@3
-main: scope:[main]  from @3
-  (byte) main::i#0 ← (byte/signed byte/word/signed word) 0
-  to:main::@1
-main::@1: scope:[main]  from main main::@1
-  (byte) main::i#2 ← phi( main/(byte) main::i#0 main::@1/(byte) main::i#1 )
-  *((byte*) plots#0 + (byte) main::i#2) ← (byte) main::i#2
-  *((byte*) SCREEN#0 + (byte) main::i#2) ← (byte/signed byte/word/signed word) 0
-  (byte) main::i#1 ← ++ (byte) main::i#2
-  (boolean~) main::$0 ← (byte) main::i#1 != (byte/signed byte/word/signed word) 40
-  if((boolean~) main::$0) goto main::@1
-  to:main::@2
-main::@2: scope:[main]  from main::@1 main::@5
-  (byte) line::x0#0 ← (byte/signed byte/word/signed word) 0
-  (byte) line::x1#0 ← (byte/signed byte/word/signed word) 10
-  call line param-assignment
-  to:main::@5
-main::@5: scope:[main]  from main::@2
-  if(true) goto main::@2
-  to:main::@return
-main::@return: scope:[main]  from main::@5
-  return 
-  to:@return
-line: scope:[line]  from main::@2
-  (boolean~) line::$1 ← (byte) line::x0#0 >= (byte) line::x1#0
-  if((boolean~) line::$1) goto line::@1
-  to:line::@4
-line::@1: scope:[line]  from line
-  (byte) plot::x#0 ← (byte) line::x0#0
-  call plot param-assignment
-  to:line::@return
-line::@4: scope:[line]  from line
-  to:line::@2
-line::@2: scope:[line]  from line::@4 line::@8
-  (byte) line::x#2 ← phi( line::@4/(byte) line::x0#0 line::@8/(byte) line::x#1 )
-  (byte) plot::x#1 ← (byte) line::x#2
-  call plot param-assignment
-  to:line::@8
-line::@8: scope:[line]  from line::@2
-  (byte) line::x#1 ← ++ (byte) line::x#2
-  (boolean~) line::$3 ← (byte) line::x#1 <= (byte) line::x1#0
-  if((boolean~) line::$3) goto line::@2
-  to:line::@return
-line::@return: scope:[line]  from line::@1 line::@8
-  return 
-  to:@return
-plot: scope:[plot]  from line::@1 line::@2
-  (byte) plot::x#2 ← phi( line::@1/(byte) plot::x#0 line::@2/(byte) plot::x#1 )
-  (byte) plot::idx#0 ← *((byte*) plots#0 + (byte) plot::x#2)
-  (byte/word~) plot::$0 ← *((byte*) SCREEN#0 + (byte) plot::idx#0) + (byte/signed byte/word/signed word) 1
-  *((byte*) SCREEN#0 + (byte) plot::idx#0) ← (byte/word~) plot::$0
-  to:plot::@return
-plot::@return: scope:[plot]  from plot
-  return 
-  to:@return
-@3: scope:[]  from @begin
-  call main param-assignment
-  to:@end
-@end: scope:[]  from @3
-
 Simple Condition (boolean~) main::$0 if((byte) main::i#1!=(byte/signed byte/word/signed word) 40) goto main::@1
 Simple Condition (boolean~) line::$1 if((byte) line::x0#0>=(byte) line::x1#0) goto line::@1
 Simple Condition (boolean~) line::$3 if((byte) line::x#1<=(byte) line::x1#0) goto line::@2
 Succesful SSA optimization Pass2ConditionalJumpSimplification
-CONTROL FLOW GRAPH
-@begin: scope:[]  from
-  (byte*) plots#0 ← ((byte*)) (word/signed word) 4096
-  (byte*) SCREEN#0 ← ((byte*)) (word/signed word) 1024
-  to:@3
-main: scope:[main]  from @3
-  (byte) main::i#0 ← (byte/signed byte/word/signed word) 0
-  to:main::@1
-main::@1: scope:[main]  from main main::@1
-  (byte) main::i#2 ← phi( main/(byte) main::i#0 main::@1/(byte) main::i#1 )
-  *((byte*) plots#0 + (byte) main::i#2) ← (byte) main::i#2
-  *((byte*) SCREEN#0 + (byte) main::i#2) ← (byte/signed byte/word/signed word) 0
-  (byte) main::i#1 ← ++ (byte) main::i#2
-  if((byte) main::i#1!=(byte/signed byte/word/signed word) 40) goto main::@1
-  to:main::@2
-main::@2: scope:[main]  from main::@1 main::@5
-  (byte) line::x0#0 ← (byte/signed byte/word/signed word) 0
-  (byte) line::x1#0 ← (byte/signed byte/word/signed word) 10
-  call line param-assignment
-  to:main::@5
-main::@5: scope:[main]  from main::@2
-  if(true) goto main::@2
-  to:main::@return
-main::@return: scope:[main]  from main::@5
-  return 
-  to:@return
-line: scope:[line]  from main::@2
-  if((byte) line::x0#0>=(byte) line::x1#0) goto line::@1
-  to:line::@4
-line::@1: scope:[line]  from line
-  (byte) plot::x#0 ← (byte) line::x0#0
-  call plot param-assignment
-  to:line::@return
-line::@4: scope:[line]  from line
-  to:line::@2
-line::@2: scope:[line]  from line::@4 line::@8
-  (byte) line::x#2 ← phi( line::@4/(byte) line::x0#0 line::@8/(byte) line::x#1 )
-  (byte) plot::x#1 ← (byte) line::x#2
-  call plot param-assignment
-  to:line::@8
-line::@8: scope:[line]  from line::@2
-  (byte) line::x#1 ← ++ (byte) line::x#2
-  if((byte) line::x#1<=(byte) line::x1#0) goto line::@2
-  to:line::@return
-line::@return: scope:[line]  from line::@1 line::@8
-  return 
-  to:@return
-plot: scope:[plot]  from line::@1 line::@2
-  (byte) plot::x#2 ← phi( line::@1/(byte) plot::x#0 line::@2/(byte) plot::x#1 )
-  (byte) plot::idx#0 ← *((byte*) plots#0 + (byte) plot::x#2)
-  (byte/word~) plot::$0 ← *((byte*) SCREEN#0 + (byte) plot::idx#0) + (byte/signed byte/word/signed word) 1
-  *((byte*) SCREEN#0 + (byte) plot::idx#0) ← (byte/word~) plot::$0
-  to:plot::@return
-plot::@return: scope:[plot]  from plot
-  return 
-  to:@return
-@3: scope:[]  from @begin
-  call main param-assignment
-  to:@end
-@end: scope:[]  from @3
-
 Constant (const byte*) plots#0 = ((byte*))4096
 Constant (const byte*) SCREEN#0 = ((byte*))1024
 Constant (const byte) main::i#0 = 0
 Constant (const byte) line::x0#0 = 0
 Constant (const byte) line::x1#0 = 10
 Succesful SSA optimization Pass2ConstantIdentification
-CONTROL FLOW GRAPH
-@begin: scope:[]  from
-  to:@3
-main: scope:[main]  from @3
-  to:main::@1
-main::@1: scope:[main]  from main main::@1
-  (byte) main::i#2 ← phi( main/(const byte) main::i#0 main::@1/(byte) main::i#1 )
-  *((const byte*) plots#0 + (byte) main::i#2) ← (byte) main::i#2
-  *((const byte*) SCREEN#0 + (byte) main::i#2) ← (byte/signed byte/word/signed word) 0
-  (byte) main::i#1 ← ++ (byte) main::i#2
-  if((byte) main::i#1!=(byte/signed byte/word/signed word) 40) goto main::@1
-  to:main::@2
-main::@2: scope:[main]  from main::@1 main::@5
-  call line param-assignment
-  to:main::@5
-main::@5: scope:[main]  from main::@2
-  if(true) goto main::@2
-  to:main::@return
-main::@return: scope:[main]  from main::@5
-  return 
-  to:@return
-line: scope:[line]  from main::@2
-  if((const byte) line::x0#0>=(const byte) line::x1#0) goto line::@1
-  to:line::@4
-line::@1: scope:[line]  from line
-  (byte) plot::x#0 ← (const byte) line::x0#0
-  call plot param-assignment
-  to:line::@return
-line::@4: scope:[line]  from line
-  to:line::@2
-line::@2: scope:[line]  from line::@4 line::@8
-  (byte) line::x#2 ← phi( line::@4/(const byte) line::x0#0 line::@8/(byte) line::x#1 )
-  (byte) plot::x#1 ← (byte) line::x#2
-  call plot param-assignment
-  to:line::@8
-line::@8: scope:[line]  from line::@2
-  (byte) line::x#1 ← ++ (byte) line::x#2
-  if((byte) line::x#1<=(const byte) line::x1#0) goto line::@2
-  to:line::@return
-line::@return: scope:[line]  from line::@1 line::@8
-  return 
-  to:@return
-plot: scope:[plot]  from line::@1 line::@2
-  (byte) plot::x#2 ← phi( line::@1/(byte) plot::x#0 line::@2/(byte) plot::x#1 )
-  (byte) plot::idx#0 ← *((const byte*) plots#0 + (byte) plot::x#2)
-  (byte/word~) plot::$0 ← *((const byte*) SCREEN#0 + (byte) plot::idx#0) + (byte/signed byte/word/signed word) 1
-  *((const byte*) SCREEN#0 + (byte) plot::idx#0) ← (byte/word~) plot::$0
-  to:plot::@return
-plot::@return: scope:[plot]  from plot
-  return 
-  to:@return
-@3: scope:[]  from @begin
-  call main param-assignment
-  to:@end
-@end: scope:[]  from @3
-
 Constant (const byte) plot::x#0 = line::x0#0
 Succesful SSA optimization Pass2ConstantIdentification
-CONTROL FLOW GRAPH
-@begin: scope:[]  from
-  to:@3
-main: scope:[main]  from @3
-  to:main::@1
-main::@1: scope:[main]  from main main::@1
-  (byte) main::i#2 ← phi( main/(const byte) main::i#0 main::@1/(byte) main::i#1 )
-  *((const byte*) plots#0 + (byte) main::i#2) ← (byte) main::i#2
-  *((const byte*) SCREEN#0 + (byte) main::i#2) ← (byte/signed byte/word/signed word) 0
-  (byte) main::i#1 ← ++ (byte) main::i#2
-  if((byte) main::i#1!=(byte/signed byte/word/signed word) 40) goto main::@1
-  to:main::@2
-main::@2: scope:[main]  from main::@1 main::@5
-  call line param-assignment
-  to:main::@5
-main::@5: scope:[main]  from main::@2
-  if(true) goto main::@2
-  to:main::@return
-main::@return: scope:[main]  from main::@5
-  return 
-  to:@return
-line: scope:[line]  from main::@2
-  if((const byte) line::x0#0>=(const byte) line::x1#0) goto line::@1
-  to:line::@4
-line::@1: scope:[line]  from line
-  call plot param-assignment
-  to:line::@return
-line::@4: scope:[line]  from line
-  to:line::@2
-line::@2: scope:[line]  from line::@4 line::@8
-  (byte) line::x#2 ← phi( line::@4/(const byte) line::x0#0 line::@8/(byte) line::x#1 )
-  (byte) plot::x#1 ← (byte) line::x#2
-  call plot param-assignment
-  to:line::@8
-line::@8: scope:[line]  from line::@2
-  (byte) line::x#1 ← ++ (byte) line::x#2
-  if((byte) line::x#1<=(const byte) line::x1#0) goto line::@2
-  to:line::@return
-line::@return: scope:[line]  from line::@1 line::@8
-  return 
-  to:@return
-plot: scope:[plot]  from line::@1 line::@2
-  (byte) plot::x#2 ← phi( line::@1/(const byte) plot::x#0 line::@2/(byte) plot::x#1 )
-  (byte) plot::idx#0 ← *((const byte*) plots#0 + (byte) plot::x#2)
-  (byte/word~) plot::$0 ← *((const byte*) SCREEN#0 + (byte) plot::idx#0) + (byte/signed byte/word/signed word) 1
-  *((const byte*) SCREEN#0 + (byte) plot::idx#0) ← (byte/word~) plot::$0
-  to:plot::@return
-plot::@return: scope:[plot]  from plot
-  return 
-  to:@return
-@3: scope:[]  from @begin
-  call main param-assignment
-  to:@end
-@end: scope:[]  from @3
-
 Multiple usages for variable. Not optimizing sub-constant (byte) main::i#2
 Multiple usages for variable. Not optimizing sub-constant (byte) main::i#2
 Culled Empty Block (label) line::@4
 Succesful SSA optimization Pass2CullEmptyBlocks
-CONTROL FLOW GRAPH
-@begin: scope:[]  from
-  to:@3
-main: scope:[main]  from @3
-  to:main::@1
-main::@1: scope:[main]  from main main::@1
-  (byte) main::i#2 ← phi( main/(const byte) main::i#0 main::@1/(byte) main::i#1 )
-  *((const byte*) plots#0 + (byte) main::i#2) ← (byte) main::i#2
-  *((const byte*) SCREEN#0 + (byte) main::i#2) ← (byte/signed byte/word/signed word) 0
-  (byte) main::i#1 ← ++ (byte) main::i#2
-  if((byte) main::i#1!=(byte/signed byte/word/signed word) 40) goto main::@1
-  to:main::@2
-main::@2: scope:[main]  from main::@1 main::@5
-  call line param-assignment
-  to:main::@5
-main::@5: scope:[main]  from main::@2
-  if(true) goto main::@2
-  to:main::@return
-main::@return: scope:[main]  from main::@5
-  return 
-  to:@return
-line: scope:[line]  from main::@2
-  if((const byte) line::x0#0>=(const byte) line::x1#0) goto line::@1
-  to:line::@2
-line::@1: scope:[line]  from line
-  call plot param-assignment
-  to:line::@return
-line::@2: scope:[line]  from line line::@8
-  (byte) line::x#2 ← phi( line/(const byte) line::x0#0 line::@8/(byte) line::x#1 )
-  (byte) plot::x#1 ← (byte) line::x#2
-  call plot param-assignment
-  to:line::@8
-line::@8: scope:[line]  from line::@2
-  (byte) line::x#1 ← ++ (byte) line::x#2
-  if((byte) line::x#1<=(const byte) line::x1#0) goto line::@2
-  to:line::@return
-line::@return: scope:[line]  from line::@1 line::@8
-  return 
-  to:@return
-plot: scope:[plot]  from line::@1 line::@2
-  (byte) plot::x#2 ← phi( line::@1/(const byte) plot::x#0 line::@2/(byte) plot::x#1 )
-  (byte) plot::idx#0 ← *((const byte*) plots#0 + (byte) plot::x#2)
-  (byte/word~) plot::$0 ← *((const byte*) SCREEN#0 + (byte) plot::idx#0) + (byte/signed byte/word/signed word) 1
-  *((const byte*) SCREEN#0 + (byte) plot::idx#0) ← (byte/word~) plot::$0
-  to:plot::@return
-plot::@return: scope:[plot]  from plot
-  return 
-  to:@return
-@3: scope:[]  from @begin
-  call main param-assignment
-  to:@end
-@end: scope:[]  from @3
-
 Not aliassing across scopes: plot::x#1 line::x#2
 Multiple usages for variable. Not optimizing sub-constant (byte) main::i#2
 Multiple usages for variable. Not optimizing sub-constant (byte) main::i#2
 Not aliassing across scopes: plot::x#1 line::x#2
 Multiple usages for variable. Not optimizing sub-constant (byte) main::i#2
 Multiple usages for variable. Not optimizing sub-constant (byte) main::i#2
+OPTIMIZING CONTROL FLOW GRAPH
 Inlining constant with var siblings (const byte) main::i#0
 Inlining constant with var siblings (const byte) main::i#0
 Inlining constant with var siblings (const byte) plot::x#0
@@ -1143,160 +378,10 @@ Inlining constant with var siblings (const byte) plot::x#0
 Constant inlined main::i#0 = (byte/signed byte/word/signed word) 0
 Constant inlined plot::x#0 = (const byte) line::x0#0
 Succesful SSA optimization Pass2ConstantInlining
-CONTROL FLOW GRAPH
-@begin: scope:[]  from
-  to:@3
-main: scope:[main]  from @3
-  to:main::@1
-main::@1: scope:[main]  from main main::@1
-  (byte) main::i#2 ← phi( main/(byte/signed byte/word/signed word) 0 main::@1/(byte) main::i#1 )
-  *((const byte*) plots#0 + (byte) main::i#2) ← (byte) main::i#2
-  *((const byte*) SCREEN#0 + (byte) main::i#2) ← (byte/signed byte/word/signed word) 0
-  (byte) main::i#1 ← ++ (byte) main::i#2
-  if((byte) main::i#1!=(byte/signed byte/word/signed word) 40) goto main::@1
-  to:main::@2
-main::@2: scope:[main]  from main::@1 main::@5
-  call line param-assignment
-  to:main::@5
-main::@5: scope:[main]  from main::@2
-  if(true) goto main::@2
-  to:main::@return
-main::@return: scope:[main]  from main::@5
-  return 
-  to:@return
-line: scope:[line]  from main::@2
-  if((const byte) line::x0#0>=(const byte) line::x1#0) goto line::@1
-  to:line::@2
-line::@1: scope:[line]  from line
-  call plot param-assignment
-  to:line::@return
-line::@2: scope:[line]  from line line::@8
-  (byte) line::x#2 ← phi( line/(const byte) line::x0#0 line::@8/(byte) line::x#1 )
-  (byte) plot::x#1 ← (byte) line::x#2
-  call plot param-assignment
-  to:line::@8
-line::@8: scope:[line]  from line::@2
-  (byte) line::x#1 ← ++ (byte) line::x#2
-  if((byte) line::x#1<=(const byte) line::x1#0) goto line::@2
-  to:line::@return
-line::@return: scope:[line]  from line::@1 line::@8
-  return 
-  to:@return
-plot: scope:[plot]  from line::@1 line::@2
-  (byte) plot::x#2 ← phi( line::@1/(const byte) line::x0#0 line::@2/(byte) plot::x#1 )
-  (byte) plot::idx#0 ← *((const byte*) plots#0 + (byte) plot::x#2)
-  (byte/word~) plot::$0 ← *((const byte*) SCREEN#0 + (byte) plot::idx#0) + (byte/signed byte/word/signed word) 1
-  *((const byte*) SCREEN#0 + (byte) plot::idx#0) ← (byte/word~) plot::$0
-  to:plot::@return
-plot::@return: scope:[plot]  from plot
-  return 
-  to:@return
-@3: scope:[]  from @begin
-  call main param-assignment
-  to:@end
-@end: scope:[]  from @3
-
-FINAL SYMBOL TABLE
-(label) @3
-(label) @begin
-(label) @end
-(byte*) SCREEN
-(const byte*) SCREEN#0 = ((byte*))(word/signed word) 1024
-(void()) line((byte) line::x0 , (byte) line::x1)
-(label) line::@1
-(label) line::@2
-(label) line::@8
-(label) line::@return
-(byte) line::x
-(byte) line::x#1
-(byte) line::x#2
-(byte) line::x0
-(const byte) line::x0#0 = (byte/signed byte/word/signed word) 0
-(byte) line::x1
-(const byte) line::x1#0 = (byte/signed byte/word/signed word) 10
-(void()) main()
-(label) main::@1
-(label) main::@2
-(label) main::@5
-(label) main::@return
-(byte) main::i
-(byte) main::i#1
-(byte) main::i#2
-(void()) plot((byte) plot::x)
-(byte/word~) plot::$0
-(label) plot::@return
-(byte) plot::idx
-(byte) plot::idx#0
-(byte) plot::x
-(byte) plot::x#1
-(byte) plot::x#2
-(byte*) plots
-(const byte*) plots#0 = ((byte*))(word/signed word) 4096
-
 Block Sequence Planned @begin @3 @end main main::@1 main::@2 main::@5 main::@return line line::@2 line::@8 line::@return line::@1 plot plot::@return 
 Added new block during phi lifting main::@6(between main::@1 and main::@1)
 Added new block during phi lifting line::@9(between line::@8 and line::@2)
 Block Sequence Planned @begin @3 @end main main::@1 main::@2 main::@5 main::@return main::@6 line line::@2 line::@8 line::@return line::@9 line::@1 plot plot::@return 
-CONTROL FLOW GRAPH - PHI LIFTED
-@begin: scope:[]  from
-  to:@3
-@3: scope:[]  from @begin
-  call main param-assignment
-  to:@end
-@end: scope:[]  from @3
-main: scope:[main]  from @3
-  to:main::@1
-main::@1: scope:[main]  from main main::@6
-  (byte) main::i#2 ← phi( main/(byte/signed byte/word/signed word) 0 main::@6/(byte~) main::i#3 )
-  *((const byte*) plots#0 + (byte) main::i#2) ← (byte) main::i#2
-  *((const byte*) SCREEN#0 + (byte) main::i#2) ← (byte/signed byte/word/signed word) 0
-  (byte) main::i#1 ← ++ (byte) main::i#2
-  if((byte) main::i#1!=(byte/signed byte/word/signed word) 40) goto main::@6
-  to:main::@2
-main::@2: scope:[main]  from main::@1 main::@5
-  call line param-assignment
-  to:main::@5
-main::@5: scope:[main]  from main::@2
-  if(true) goto main::@2
-  to:main::@return
-main::@return: scope:[main]  from main::@5
-  return 
-  to:@return
-main::@6: scope:[main]  from main::@1
-  (byte~) main::i#3 ← (byte) main::i#1
-  to:main::@1
-line: scope:[line]  from main::@2
-  if((const byte) line::x0#0>=(const byte) line::x1#0) goto line::@1
-  to:line::@2
-line::@2: scope:[line]  from line line::@9
-  (byte) line::x#2 ← phi( line/(const byte) line::x0#0 line::@9/(byte~) line::x#4 )
-  (byte) plot::x#1 ← (byte) line::x#2
-  (byte~) plot::x#3 ← (byte) plot::x#1
-  call plot param-assignment
-  to:line::@8
-line::@8: scope:[line]  from line::@2
-  (byte) line::x#1 ← ++ (byte) line::x#2
-  if((byte) line::x#1<=(const byte) line::x1#0) goto line::@9
-  to:line::@return
-line::@return: scope:[line]  from line::@1 line::@8
-  return 
-  to:@return
-line::@9: scope:[line]  from line::@8
-  (byte~) line::x#4 ← (byte) line::x#1
-  to:line::@2
-line::@1: scope:[line]  from line
-  call plot param-assignment
-  to:line::@return
-plot: scope:[plot]  from line::@1 line::@2
-  (byte) plot::x#2 ← phi( line::@1/(const byte) line::x0#0 line::@2/(byte~) plot::x#3 )
-  (byte) plot::idx#0 ← *((const byte*) plots#0 + (byte) plot::x#2)
-  (byte/word~) plot::$0 ← *((const byte*) SCREEN#0 + (byte) plot::idx#0) + (byte/signed byte/word/signed word) 1
-  *((const byte*) SCREEN#0 + (byte) plot::idx#0) ← (byte/word~) plot::$0
-  to:plot::@return
-plot::@return: scope:[plot]  from plot
-  return 
-  to:@return
-
 Adding NOP phi() at start of @begin
 Adding NOP phi() at start of @3
 Adding NOP phi() at start of @end
@@ -1312,72 +397,6 @@ Propagating live ranges...
 Propagating live ranges...
 Propagating live ranges...
 Propagating live ranges...
-CONTROL FLOW GRAPH - LIVE RANGES FOUND
-@begin: scope:[]  from
-  [0] phi() [ ]
-  to:@3
-@3: scope:[]  from @begin
-  [1] phi() [ ]
-  [2] call main param-assignment [ ]
-  to:@end
-@end: scope:[]  from @3
-  [3] phi() [ ]
-main: scope:[main]  from @3
-  [4] phi() [ ]
-  to:main::@1
-main::@1: scope:[main]  from main main::@6
-  [5] (byte) main::i#2 ← phi( main/(byte/signed byte/word/signed word) 0 main::@6/(byte~) main::i#3 ) [ main::i#2 ]
-  [6] *((const byte*) plots#0 + (byte) main::i#2) ← (byte) main::i#2 [ main::i#2 ]
-  [7] *((const byte*) SCREEN#0 + (byte) main::i#2) ← (byte/signed byte/word/signed word) 0 [ main::i#2 ]
-  [8] (byte) main::i#1 ← ++ (byte) main::i#2 [ main::i#1 ]
-  [9] if((byte) main::i#1!=(byte/signed byte/word/signed word) 40) goto main::@6 [ main::i#1 ]
-  to:main::@2
-main::@2: scope:[main]  from main::@1 main::@5
-  [10] phi() [ ]
-  [11] call line param-assignment [ ]
-  to:main::@5
-main::@5: scope:[main]  from main::@2
-  [12] if(true) goto main::@2 [ ]
-  to:main::@return
-main::@return: scope:[main]  from main::@5
-  [13] return  [ ]
-  to:@return
-main::@6: scope:[main]  from main::@1
-  [14] (byte~) main::i#3 ← (byte) main::i#1 [ main::i#3 ]
-  to:main::@1
-line: scope:[line]  from main::@2
-  [15] if((const byte) line::x0#0>=(const byte) line::x1#0) goto line::@1 [ ]
-  to:line::@2
-line::@2: scope:[line]  from line line::@9
-  [16] (byte) line::x#2 ← phi( line/(const byte) line::x0#0 line::@9/(byte~) line::x#4 ) [ line::x#2 ]
-  [17] (byte) plot::x#1 ← (byte) line::x#2 [ line::x#2 plot::x#1 ]
-  [18] (byte~) plot::x#3 ← (byte) plot::x#1 [ line::x#2 plot::x#3 ]
-  [19] call plot param-assignment [ line::x#2 ]
-  to:line::@8
-line::@8: scope:[line]  from line::@2
-  [20] (byte) line::x#1 ← ++ (byte) line::x#2 [ line::x#1 ]
-  [21] if((byte) line::x#1<=(const byte) line::x1#0) goto line::@9 [ line::x#1 ]
-  to:line::@return
-line::@return: scope:[line]  from line::@1 line::@8
-  [22] return  [ ]
-  to:@return
-line::@9: scope:[line]  from line::@8
-  [23] (byte~) line::x#4 ← (byte) line::x#1 [ line::x#4 ]
-  to:line::@2
-line::@1: scope:[line]  from line
-  [24] phi() [ ]
-  [25] call plot param-assignment [ ]
-  to:line::@return
-plot: scope:[plot]  from line::@1 line::@2
-  [26] (byte) plot::x#2 ← phi( line::@1/(const byte) line::x0#0 line::@2/(byte~) plot::x#3 ) [ plot::x#2 ]
-  [27] (byte) plot::idx#0 ← *((const byte*) plots#0 + (byte) plot::x#2) [ plot::idx#0 ]
-  [28] (byte/word~) plot::$0 ← *((const byte*) SCREEN#0 + (byte) plot::idx#0) + (byte/signed byte/word/signed word) 1 [ plot::idx#0 plot::$0 ]
-  [29] *((const byte*) SCREEN#0 + (byte) plot::idx#0) ← (byte/word~) plot::$0 [ ]
-  to:plot::@return
-plot::@return: scope:[plot]  from plot
-  [30] return  [ ]
-  to:@return
-
 Created 3 initial phi equivalence classes
 Coalesced [14] main::i#3 ← main::i#1
 Coalesced [18] plot::x#3 ← plot::x#1
@@ -1395,66 +414,8 @@ Adding NOP phi() at start of line::@1
 Propagating live ranges...
 Propagating live ranges...
 Propagating live ranges...
-CONTROL FLOW GRAPH - BEFORE EFFECTIVE LIVE RANGES
-@begin: scope:[]  from
-  [0] phi() [ ]
-  to:@3
-@3: scope:[]  from @begin
-  [1] phi() [ ]
-  [2] call main param-assignment [ ]
-  to:@end
-@end: scope:[]  from @3
-  [3] phi() [ ]
-main: scope:[main]  from @3
-  [4] phi() [ ]
-  to:main::@1
-main::@1: scope:[main]  from main main::@1
-  [5] (byte) main::i#2 ← phi( main/(byte/signed byte/word/signed word) 0 main::@1/(byte) main::i#1 ) [ main::i#2 ]
-  [6] *((const byte*) plots#0 + (byte) main::i#2) ← (byte) main::i#2 [ main::i#2 ]
-  [7] *((const byte*) SCREEN#0 + (byte) main::i#2) ← (byte/signed byte/word/signed word) 0 [ main::i#2 ]
-  [8] (byte) main::i#1 ← ++ (byte) main::i#2 [ main::i#1 ]
-  [9] if((byte) main::i#1!=(byte/signed byte/word/signed word) 40) goto main::@1 [ main::i#1 ]
-  to:main::@2
-main::@2: scope:[main]  from main::@1 main::@5
-  [10] phi() [ ]
-  [11] call line param-assignment [ ]
-  to:main::@5
-main::@5: scope:[main]  from main::@2
-  [12] if(true) goto main::@2 [ ]
-  to:main::@return
-main::@return: scope:[main]  from main::@5
-  [13] return  [ ]
-  to:@return
-line: scope:[line]  from main::@2
-  [14] if((const byte) line::x0#0>=(const byte) line::x1#0) goto line::@1 [ ]
-  to:line::@2
-line::@2: scope:[line]  from line line::@8
-  [15] (byte) line::x#2 ← phi( line/(const byte) line::x0#0 line::@8/(byte) line::x#1 ) [ line::x#2 ]
-  [16] (byte) plot::x#1 ← (byte) line::x#2 [ line::x#2 plot::x#1 ]
-  [17] call plot param-assignment [ line::x#2 ]
-  to:line::@8
-line::@8: scope:[line]  from line::@2
-  [18] (byte) line::x#1 ← ++ (byte) line::x#2 [ line::x#1 ]
-  [19] if((byte) line::x#1<=(const byte) line::x1#0) goto line::@2 [ line::x#1 ]
-  to:line::@return
-line::@return: scope:[line]  from line::@1 line::@8
-  [20] return  [ ]
-  to:@return
-line::@1: scope:[line]  from line
-  [21] phi() [ ]
-  [22] call plot param-assignment [ ]
-  to:line::@return
-plot: scope:[plot]  from line::@1 line::@2
-  [23] (byte) plot::x#2 ← phi( line::@1/(const byte) line::x0#0 line::@2/(byte) plot::x#1 ) [ plot::x#2 ]
-  [24] (byte) plot::idx#0 ← *((const byte*) plots#0 + (byte) plot::x#2) [ plot::idx#0 ]
-  [25] (byte/word~) plot::$0 ← *((const byte*) SCREEN#0 + (byte) plot::idx#0) + (byte/signed byte/word/signed word) 1 [ plot::idx#0 plot::$0 ]
-  [26] *((const byte*) SCREEN#0 + (byte) plot::idx#0) ← (byte/word~) plot::$0 [ ]
-  to:plot::@return
-plot::@return: scope:[plot]  from plot
-  [27] return  [ ]
-  to:@return
 
-CONTROL FLOW GRAPH - PHI MEM COALESCED
+FINAL CONTROL FLOW GRAPH
 @begin: scope:[]  from
   [0] phi() [ ] ( )
   to:@3
@@ -1592,6 +553,7 @@ Allocated zp ZP_BYTE:3 [ line::x#2 line::x#1 ]
 Allocated zp ZP_BYTE:4 [ plot::x#2 plot::x#1 ]
 Allocated zp ZP_BYTE:5 [ plot::idx#0 ]
 Allocated zp ZP_BYTE:6 [ plot::$0 ]
+
 INITIAL ASM
 //SEG0 Basic Upstart
 .pc = $801 "Basic"
@@ -2009,7 +971,8 @@ reg byte y [ plot::x#2 plot::x#1 ]
 reg byte x [ plot::idx#0 ]
 reg byte a [ plot::$0 ]
 
-FINAL CODE
+
+FINAL ASSEMBLER
 //SEG0 Basic Upstart
 .pc = $801 "Basic"
 :BasicUpstart(main)

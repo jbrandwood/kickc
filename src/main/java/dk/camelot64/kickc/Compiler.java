@@ -57,7 +57,7 @@ public class Compiler {
          }
          final CharStream fileStream = CharStreams.fromPath(file.toPath());
          imported.add(file.getAbsolutePath());
-         program.getLog().append("PARSING "+file.getAbsolutePath());
+         program.getLog().append("PARSING "+file.getPath());
          program.getLog().append(fileStream.toString());
          KickCLexer lexer = new KickCLexer(fileStream);
          KickCParser parser = new KickCParser(new CommonTokenStream(lexer));

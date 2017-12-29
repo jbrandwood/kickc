@@ -126,8 +126,8 @@ public class Compiler {
       //getLog().append("CONTROL FLOW GRAPH");
       //getLog().append(program.getGraph().toString(program));
 
-      new Pass1ModifiedVarsAnalysis(program).execute();
       getLog().append("PROCEDURE MODIFY VARIABLE ANALYSIS");
+      new Pass1ModifiedVarsAnalysis(program).execute();
       getLog().append(program.getProcedureModifiedVars().toString(program));
 
       new Pass1ProcedureCallParameters(program).generate();
@@ -140,6 +140,7 @@ public class Compiler {
       //getLog().append(program.getGraph().toString(program));
 
       program.setGraph(new Pass1ProcedureCallsReturnValue(program).generate());
+
       getLog().append("\nCONTROL FLOW GRAPH SSA WITH ASSIGNMENT CALL & RETURN");
       getLog().append(program.getGraph().toString(program));
 
@@ -220,8 +221,8 @@ public class Compiler {
       new Pass3AddNopBeforeCallOns(program).generate();
       new PassNStatementIndices(program).generateStatementIndices();
 
-      new Pass3CallGraphAnalysis(program).findCallGraph();
       getLog().append("CALL GRAPH");
+      new Pass3CallGraphAnalysis(program).findCallGraph();
       getLog().append(program.getCallGraph().toString());
 
       //getLog().setVerboseLiveRanges(true);
@@ -259,20 +260,20 @@ public class Compiler {
 
    private void pass4RegisterAllocation() {
 
-      new Pass3DominatorsAnalysis(program).findDominators();
       getLog().append("DOMINATORS");
+      new Pass3DominatorsAnalysis(program).findDominators();
       getLog().append(program.getDominators().toString());
 
-      new Pass3LoopAnalysis(program).findLoops();
       getLog().append("NATURAL LOOPS");
+      new Pass3LoopAnalysis(program).findLoops();
       getLog().append(program.getLoopSet().toString());
 
-      new Pass3LoopDepthAnalysis(program).findLoopDepths();
       getLog().append("NATURAL LOOPS WITH DEPTH");
+      new Pass3LoopDepthAnalysis(program).findLoopDepths();
       getLog().append(program.getLoopSet().toString());
 
-      new Pass3VariableRegisterWeightAnalysis(program).findWeights();
       getLog().append("\nVARIABLE REGISTER WEIGHTS");
+      new Pass3VariableRegisterWeightAnalysis(program).findWeights();
       getLog().append(program.getScope().toString(program, Variable.class));
 
       new Pass4LiveRangeEquivalenceClassesFinalize(program).allocate();
@@ -295,8 +296,8 @@ public class Compiler {
       getLog().append(program.getRegisterPotentials().toString());
 
       // Find register uplift scopes
-      new Pass4RegisterUpliftScopeAnalysis(program).findScopes();
       getLog().append("REGISTER UPLIFT SCOPES");
+      new Pass4RegisterUpliftScopeAnalysis(program).findScopes();
       getLog().append(program.getRegisterUpliftProgram().toString((program.getVariableRegisterWeights())));
 
       // Attempt uplifting registers through a lot of combinations

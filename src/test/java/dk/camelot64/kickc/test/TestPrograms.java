@@ -392,6 +392,8 @@ public class TestPrograms extends TestCase {
       success &= helper.testOutput(fileName, ".cfg", program.getGraph().toString(program));
       success &= helper.testOutput(fileName, ".log", program.getLog().toString());
       if (!success) {
+         System.out.println("\nCOMPILE LOG");
+         System.out.println(program.getLog().toString());
          fail("Output does not match reference!");
       }
    }

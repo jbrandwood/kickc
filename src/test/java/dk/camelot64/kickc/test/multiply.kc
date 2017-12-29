@@ -7,9 +7,23 @@ import "print.kc"
 byte* BGCOL = $d021;
 
 void main() {
+    *BGCOL = 5;
+    print_cls();
     init_mul_tables();
     init_mul_tables_asm();
     mul_tables_compare();
+    mul_results_compare();
+}
+
+// Perform a slow multiplication by repeated addition
+word slow_multiply(byte a, byte b) {
+    word m = 0;
+    if(a>0) {
+        for(byte i = 0; i!=a; i++) {
+            m = m + b;
+        }
+    }
+    return m;
 }
 
 // mul_sqr tables will contain f(x)=int(x*x/4) and g(x) = f(x-255).
@@ -114,19 +128,45 @@ void init_mul_tables_asm() {
     *mem = *asm_mul_sqr1_hi;
     *mem = *asm_mul_sqr2_lo;
     *mem = *asm_mul_sqr2_hi;
+}
 
+// Fast multiply two bytes using ASM
+word asm_multiply(byte a, byte b) {
+    const byte* memA = $fe;
+    const byte* memB = $ff;
+    *memA = a;
+    *memB = b;
+    asm {
+        lda memA
+        sta sm1+1
+        sta sm3+1
+        eor #$ff
+        sta sm2+1
+        sta sm4+1
+        ldx memB
+        sec
+    sm1:
+        lda asm_mul_sqr1_lo,x
+    sm2:
+        sbc asm_mul_sqr2_lo,x
+        sta memA
+    sm3:
+        lda asm_mul_sqr1_hi,x
+    sm4:
+        sbc asm_mul_sqr2_hi,x
+        sta memB
+    }
+    return { *memB, *memA };
 }
 
 // Compare the ASM-based mul tables with the KC-based mul tables
 // Red screen on failure - green on success
 void mul_tables_compare() {
-    *BGCOL = 5;
     byte* asm_sqr = asm_mul_sqr1_lo;
     for( byte* kc_sqr=mul_sqr1_lo; kc_sqr<mul_sqr1_lo+512*4; kc_sqr++) {
         if(*kc_sqr != *asm_sqr) {
             *BGCOL = 2;
-            print_cls();
-            print_str("mul table mismatch at @");
+            print_str("multiply table mismatch at @");
             print_word((word)asm_sqr);
             print_str(" / @");
             print_word((word)kc_sqr);
@@ -134,4 +174,26 @@ void mul_tables_compare() {
         }
         asm_sqr++;
     }
+    print_str("multiply tables match!@");
+    print_ln();
+}
+
+// Perform all possible byte-multiplications (slow and ASM) and compare the results
+void mul_results_compare() {
+    for(byte a: 0..255) {
+        for(byte b: 0..255) {
+            word ms = slow_multiply(a, b);
+            word ma = asm_multiply(a,b);
+            if(ms!=ma) {
+                *BGCOL = 2;
+                print_str("multiply mismatch slow:@");
+                print_word(ms);
+                print_str(" / fast asm:");
+                print_word(ma);
+                return;
+            }
+        }
+    }
+    print_str("multiply results match!@");
+    print_ln();
 }

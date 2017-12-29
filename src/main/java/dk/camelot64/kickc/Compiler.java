@@ -44,6 +44,8 @@ public class Compiler {
          pass5GenerateAndOptimizeAsm();
          return program;
       } catch (Exception e) {
+         System.out.println("EXCEPTION DURING COMPILE "+e.getMessage());
+         System.out.println(getLog().toString());
          throw e;
       }
    }

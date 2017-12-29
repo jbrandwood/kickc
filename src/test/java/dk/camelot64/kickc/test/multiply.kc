@@ -2,6 +2,8 @@
 // See http://codebase64.org/doku.php?id=base:seriously_fast_multiplication
 // Utilizes the fact that a*b = ((a+b)/2)^2 - ((a-b)/2)^2
 
+import "print.kc"
+
 byte* BGCOL = $d021;
 
 void main() {
@@ -10,32 +12,59 @@ void main() {
     mul_tables_compare();
 }
 
-// mul_sqr tables will contain f(x)=int(x*x/4).
-byte[512] mul_sqr_lo;
-byte[512] mul_sqr_hi;
+// mul_sqr tables will contain f(x)=int(x*x/4) and g(x) = f(x-255).
+// <f(x) = <(( x * x )/4)
+byte[512] mul_sqr1_lo;
+// >f(x) = >(( x * x )/4)
+byte[512] mul_sqr1_hi;
+// <g(x) =  <((( x - 255) * ( x - 255 ))/4)
+byte[512] mul_sqr2_lo;
+// >g(x) = >((( x - 255) * ( x - 255 ))/4)
+byte[512] mul_sqr2_hi;
 
 // Initialize the mul_sqr multiplication tables with f(x)=int(x*x/4)
 void init_mul_tables() {
-  // If f(x) = x*x/4 then f(x+1) = f(x) + x/2 + 1/4
+  // Fill mul_sqr1 = f(x) = int(x*x/4): If f(x) = x*x/4 then f(x+1) = f(x) + x/2 + 1/4
   word sqr = 0; // sqr = (x*x)/4
   byte x_2 = 0; // x/2
   byte c = 0;   // Counter used for determining x%2==0
-  byte* sqr_hi = mul_sqr_hi+1;
-  for(byte* sqr_lo = mul_sqr_lo+1; sqr_lo!=mul_sqr_lo+512; sqr_lo++) {
+  byte* sqr1_hi = mul_sqr1_hi+1;
+  for(byte* sqr1_lo = mul_sqr1_lo+1; sqr1_lo!=mul_sqr1_lo+512; sqr1_lo++) {
     if((++c&1)==0) {
         x_2++; // increase i/2 on even numbers
         sqr++; // sqr++ on even numbers because 1 = 2*1/4 (from the two previous numbers) + 1/2 (half of the previous uneven number)
     }
-    *sqr_lo = <sqr;
-    *sqr_hi++ = >sqr;
+    *sqr1_lo = <sqr;
+    *sqr1_hi++ = >sqr;
     sqr = sqr + x_2; // sqr = sqr + i/2 (when uneven the 1/2 is not added here - see above)
   }
-
+  // Fill mul_sqr2 = g(x) = f(x-255) : If x-255<0 then g(x)=f(255-x) (because x*x = -x*-x)
+  // g(0) = f(255), g(1) = f(254), ..., g(254) = f(1), g(255) = f(0), g(256) = f(1), ..., g(510) = f(255), g(511) = f(256)
+  byte x_255 = (byte)-1; //Start with g(0)=f(255)
+  byte dir = $ff;  // Decrease or increase x_255 - initially we decrease
+  byte* sqr2_hi = mul_sqr2_hi;
+  for(byte* sqr2_lo = mul_sqr2_lo; sqr2_lo!=mul_sqr2_lo+511; sqr2_lo++) {
+    *sqr2_lo = mul_sqr1_lo[x_255];
+    *sqr2_hi++ = mul_sqr1_hi[x_255];
+    x_255 = x_255 + dir;
+    if(x_255==0) {
+      dir = 1; // when x_255=0 then start counting up
+    }
+  }
+  // Set the very last value g(511) = f(256)
+  *(mul_sqr2_lo+511) = *(mul_sqr1_lo+256);
+  *(mul_sqr2_hi+511) = *(mul_sqr1_hi+256);
 }
 
 // ASM based multiplication tables
-byte[512] asm_mul_sqr_lo;
-byte[512] asm_mul_sqr_hi;
+// <(( x * x )/4)
+byte[512] asm_mul_sqr1_lo;
+// >(( x * x )/4)
+byte[512] asm_mul_sqr1_hi;
+// <((( x - 255) * ( x - 255 ))/4)
+byte[512] asm_mul_sqr2_lo;
+// >((( x - 255) * ( x - 255 ))/4)
+byte[512] asm_mul_sqr2_hi;
 // Initialize the multiplication tables using ASM code from
 // http://codebase64.org/doku.php?id=base:seriously_fast_multiplication
 void init_mul_tables_asm() {
@@ -47,7 +76,7 @@ void init_mul_tables_asm() {
         tya
         adc #$00
     ml1:
-        sta asm_mul_sqr_hi,x
+        sta asm_mul_sqr1_hi,x
         tay
         cmp #$40
         txa
@@ -57,28 +86,52 @@ void init_mul_tables_asm() {
         sta ml9+1
         inx
     ml0:
-        sta asm_mul_sqr_lo,x
+        sta asm_mul_sqr1_lo,x
         bne lb1
         inc ml0+2
         inc ml1+2
         clc
         iny
         bne lb1
+        ldx #$00
+        ldy #$ff
+    !:
+        lda asm_mul_sqr1_hi+1,x
+        sta asm_mul_sqr2_hi+$100,x
+        lda asm_mul_sqr1_hi,x
+        sta asm_mul_sqr2_hi,y
+        lda asm_mul_sqr1_lo+1,x
+        sta asm_mul_sqr2_lo+$100,x
+        lda asm_mul_sqr1_lo,x
+        sta asm_mul_sqr2_lo,y
+        dey
+        inx
+        bne !-
     }
+    // Ensure the ASM tables are not detected as unused by the optimizer
+    byte* mem = $ff;
+    *mem = *asm_mul_sqr1_lo;
+    *mem = *asm_mul_sqr1_hi;
+    *mem = *asm_mul_sqr2_lo;
+    *mem = *asm_mul_sqr2_hi;
+
 }
 
 // Compare the ASM-based mul tables with the KC-based mul tables
 // Red screen on failure - green on success
 void mul_tables_compare() {
-     *BGCOL = 5;
-    for( byte i: 0..255) {
-        if(mul_sqr_lo[i] != asm_mul_sqr_lo[i])
+    *BGCOL = 5;
+    byte* asm_sqr = asm_mul_sqr1_lo;
+    for( byte* kc_sqr=mul_sqr1_lo; kc_sqr<mul_sqr1_lo+512*4; kc_sqr++) {
+        if(*kc_sqr != *asm_sqr) {
             *BGCOL = 2;
-        if((mul_sqr_hi+$100)[i] != (asm_mul_sqr_hi+$100)[i])
-            *BGCOL = 2;
-        if(mul_sqr_lo[i] != asm_mul_sqr_lo[i])
-            *BGCOL = 2;
-        if((mul_sqr_hi+$100)[i] != (asm_mul_sqr_hi+$100)[i])
-            *BGCOL = 2;
+            print_cls();
+            print_str("mul table mismatch at @");
+            print_word((word)asm_sqr);
+            print_str(" / @");
+            print_word((word)kc_sqr);
+            return;
+        }
+        asm_sqr++;
     }
 }

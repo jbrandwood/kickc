@@ -27,7 +27,7 @@ public class TestPrograms extends TestCase {
    }
 
    public void testMultiply() throws IOException, URISyntaxException {
-      compileAndCompare("multiply");
+      compileAndCompare("test-multiply");
    }
 
    public void testArraysInit() throws IOException, URISyntaxException {

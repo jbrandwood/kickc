@@ -9,13 +9,13 @@ main: {
     lda #5
     sta BGCOL
     jsr print_cls
-    jsr init_mul_tables
-    jsr init_mul_tables_asm
-    jsr mul_tables_compare
-    jsr mul_results_compare
+    jsr init_multiply
+    jsr init_multiply_asm
+    jsr multiply_tables_compare
+    jsr multiply_results_compare
     rts
 }
-mul_results_compare: {
+multiply_results_compare: {
     .label ms = $a
     .label ma = $c
     .label b = 3
@@ -34,10 +34,10 @@ mul_results_compare: {
     sta ms+1
     ldx a
     lda b
-    jsr asm_multiply
-    lda asm_multiply.return
+    jsr multiply
+    lda multiply.return
     sta ma
-    lda asm_multiply.return+1
+    lda multiply.return+1
     sta ma+1
     lda ms
     cmp ma
@@ -169,7 +169,7 @@ print_char: {
   !:
     rts
 }
-asm_multiply: {
+multiply: {
     .const memA = $fe
     .const memB = $ff
     .label return = 6
@@ -184,14 +184,14 @@ asm_multiply: {
     ldx memB
     sec
   sm1:
-    lda asm_mul_sqr1_lo,x
+    lda mul_sqr1_lo,x
   sm2:
-    sbc asm_mul_sqr2_lo,x
+    sbc mul_sqr2_lo,x
     sta memA
   sm3:
-    lda asm_mul_sqr1_hi,x
+    lda mul_sqr1_hi,x
   sm4:
-    sbc asm_mul_sqr2_hi,x
+    sbc mul_sqr2_hi,x
     sta memB
     lda memA
     sta return
@@ -229,7 +229,7 @@ slow_multiply: {
   b1:
     rts
 }
-mul_tables_compare: {
+multiply_tables_compare: {
     .label asm_sqr = $a
     .label kc_sqr = 4
     lda #<asm_mul_sqr1_lo
@@ -317,7 +317,7 @@ mul_tables_compare: {
     str1: .text " / @"
     str2: .text "multiply tables match!@"
 }
-init_mul_tables_asm: {
+init_multiply_asm: {
     .const mem = $ff
     ldx #0
     txa
@@ -367,7 +367,7 @@ init_mul_tables_asm: {
     sta mem
     rts
 }
-init_mul_tables: {
+init_multiply: {
     .label sqr1_hi = 6
     .label sqr = 8
     .label sqr1_lo = 4

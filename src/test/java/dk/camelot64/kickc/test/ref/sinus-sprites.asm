@@ -23,8 +23,6 @@
   .label progress_cursor = $a
   .label sin_idx_x = 2
   .label sin_idx_y = 3
-  sintab_x: .fill 221, 0
-  sintab_y: .fill 197, 0
   jsr main
 main: {
     jsr init
@@ -571,3 +569,5 @@ place_sprites: {
     bne b1
     rts
 }
+  sintab_x: .fill $dd, 0
+  sintab_y: .fill $c5, 0

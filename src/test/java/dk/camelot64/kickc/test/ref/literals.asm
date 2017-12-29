@@ -4,8 +4,6 @@
   .const SCREEN = $400
   .const char = 'a'
   .const num = 1
-  nums: .byte 2, 3, 4, 5
-  str: .text "bc"+"d"+'e'
   jsr main
 main: {
     lda #char
@@ -23,3 +21,5 @@ main: {
     bne b1
     rts
 }
+  nums: .byte 2, 3, 4, 5
+  str: .text "bc"+"d"+'e'

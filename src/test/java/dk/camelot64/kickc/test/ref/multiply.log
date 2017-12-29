@@ -15,13 +15,13 @@ void main() {
 
 // mul_sqr tables will contain f(x)=int(x*x/4) and g(x) = f(x-255).
 // <f(x) = <(( x * x )/4)
-byte[512] mul_sqr1_lo;
+byte[512] align($100) mul_sqr1_lo;
 // >f(x) = >(( x * x )/4)
-byte[512] mul_sqr1_hi;
+byte[512] align($100) mul_sqr1_hi;
 // <g(x) =  <((( x - 255) * ( x - 255 ))/4)
-byte[512] mul_sqr2_lo;
+byte[512] align($100) mul_sqr2_lo;
 // >g(x) = >((( x - 255) * ( x - 255 ))/4)
-byte[512] mul_sqr2_hi;
+byte[512] align($100) mul_sqr2_hi;
 
 // Initialize the mul_sqr multiplication tables with f(x)=int(x*x/4)
 void init_mul_tables() {
@@ -59,13 +59,13 @@ void init_mul_tables() {
 
 // ASM based multiplication tables
 // <(( x * x )/4)
-byte[512] asm_mul_sqr1_lo;
+byte[512] align($100) asm_mul_sqr1_lo;
 // >(( x * x )/4)
-byte[512] asm_mul_sqr1_hi;
+byte[512] align($100) asm_mul_sqr1_hi;
 // <((( x - 255) * ( x - 255 ))/4)
-byte[512] asm_mul_sqr2_lo;
+byte[512] align($100) asm_mul_sqr2_lo;
 // >((( x - 255) * ( x - 255 ))/4)
-byte[512] asm_mul_sqr2_hi;
+byte[512] align($100) asm_mul_sqr2_hi;
 // Initialize the multiplication tables using ASM code from
 // http://codebase64.org/doku.php?id=base:seriously_fast_multiplication
 void init_mul_tables_asm() {
@@ -2234,14 +2234,6 @@ INITIAL ASM
 //SEG1 Global Constants & labels
   .const BGCOL = $d021
   .label char_cursor = $a
-  mul_sqr1_lo: .fill 512, 0
-  mul_sqr1_hi: .fill 512, 0
-  mul_sqr2_lo: .fill 512, 0
-  mul_sqr2_hi: .fill 512, 0
-  asm_mul_sqr1_lo: .fill 512, 0
-  asm_mul_sqr1_hi: .fill 512, 0
-  asm_mul_sqr2_lo: .fill 512, 0
-  asm_mul_sqr2_hi: .fill 512, 0
 //SEG2 @begin
 bbegin:
 //SEG3 [1] phi from @begin to @10 [phi:@begin->@10]
@@ -2869,6 +2861,22 @@ init_mul_tables: {
   //SEG193 [88] phi (byte) init_mul_tables::dir#3 = (byte) init_mul_tables::dir#2 [phi:init_mul_tables::@12->init_mul_tables::@4#0] -- register_copy 
     jmp b4
 }
+  .align $100
+  mul_sqr1_lo: .fill $200, 0
+  .align $100
+  mul_sqr1_hi: .fill $200, 0
+  .align $100
+  mul_sqr2_lo: .fill $200, 0
+  .align $100
+  mul_sqr2_hi: .fill $200, 0
+  .align $100
+  asm_mul_sqr1_lo: .fill $200, 0
+  .align $100
+  asm_mul_sqr1_hi: .fill $200, 0
+  .align $100
+  asm_mul_sqr2_lo: .fill $200, 0
+  .align $100
+  asm_mul_sqr2_hi: .fill $200, 0
 
 REGISTER UPLIFT POTENTIAL REGISTERS
 Statement [11] *((const byte*) BGCOL#0) ← (byte/signed byte/word/signed word) 5 [ ] ( main:2::mul_tables_compare:9 [ ] ) always clobbers reg byte a 
@@ -3013,14 +3021,6 @@ ASSEMBLER BEFORE OPTIMIZATION
 //SEG1 Global Constants & labels
   .const BGCOL = $d021
   .label char_cursor = 6
-  mul_sqr1_lo: .fill 512, 0
-  mul_sqr1_hi: .fill 512, 0
-  mul_sqr2_lo: .fill 512, 0
-  mul_sqr2_hi: .fill 512, 0
-  asm_mul_sqr1_lo: .fill 512, 0
-  asm_mul_sqr1_hi: .fill 512, 0
-  asm_mul_sqr2_lo: .fill 512, 0
-  asm_mul_sqr2_hi: .fill 512, 0
 //SEG2 @begin
 bbegin:
 //SEG3 [1] phi from @begin to @10 [phi:@begin->@10]
@@ -3621,6 +3621,22 @@ init_mul_tables: {
   //SEG193 [88] phi (byte) init_mul_tables::dir#3 = (byte) init_mul_tables::dir#2 [phi:init_mul_tables::@12->init_mul_tables::@4#0] -- register_copy 
     jmp b4
 }
+  .align $100
+  mul_sqr1_lo: .fill $200, 0
+  .align $100
+  mul_sqr1_hi: .fill $200, 0
+  .align $100
+  mul_sqr2_lo: .fill $200, 0
+  .align $100
+  mul_sqr2_hi: .fill $200, 0
+  .align $100
+  asm_mul_sqr1_lo: .fill $200, 0
+  .align $100
+  asm_mul_sqr1_hi: .fill $200, 0
+  .align $100
+  asm_mul_sqr2_lo: .fill $200, 0
+  .align $100
+  asm_mul_sqr2_hi: .fill $200, 0
 
 ASSEMBLER OPTIMIZATIONS
 Removing instruction jmp b10
@@ -3903,14 +3919,6 @@ FINAL ASSEMBLER
 //SEG1 Global Constants & labels
   .const BGCOL = $d021
   .label char_cursor = 6
-  mul_sqr1_lo: .fill 512, 0
-  mul_sqr1_hi: .fill 512, 0
-  mul_sqr2_lo: .fill 512, 0
-  mul_sqr2_hi: .fill 512, 0
-  asm_mul_sqr1_lo: .fill 512, 0
-  asm_mul_sqr1_hi: .fill 512, 0
-  asm_mul_sqr2_lo: .fill 512, 0
-  asm_mul_sqr2_hi: .fill 512, 0
 //SEG2 @begin
 //SEG3 [1] phi from @begin to @10 [phi:@begin->@10]
 //SEG4 @10
@@ -4414,4 +4422,20 @@ init_mul_tables: {
   //SEG192 [88] phi from init_mul_tables::@12 to init_mul_tables::@4 [phi:init_mul_tables::@12->init_mul_tables::@4]
   //SEG193 [88] phi (byte) init_mul_tables::dir#3 = (byte) init_mul_tables::dir#2 [phi:init_mul_tables::@12->init_mul_tables::@4#0] -- register_copy 
 }
+  .align $100
+  mul_sqr1_lo: .fill $200, 0
+  .align $100
+  mul_sqr1_hi: .fill $200, 0
+  .align $100
+  mul_sqr2_lo: .fill $200, 0
+  .align $100
+  mul_sqr2_hi: .fill $200, 0
+  .align $100
+  asm_mul_sqr1_lo: .fill $200, 0
+  .align $100
+  asm_mul_sqr1_hi: .fill $200, 0
+  .align $100
+  asm_mul_sqr2_lo: .fill $200, 0
+  .align $100
+  asm_mul_sqr2_hi: .fill $200, 0
 

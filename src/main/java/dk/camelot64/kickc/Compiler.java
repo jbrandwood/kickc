@@ -32,9 +32,9 @@ public class Compiler {
 
    public Program compile(String fileName) throws IOException {
       try {
-         StatementSequenceGenerator statementSequenceGenerator = new StatementSequenceGenerator(program);
-         loadAndParseFile(fileName, program, statementSequenceGenerator);
-         StatementSequence sequence = statementSequenceGenerator.getSequence();
+         Pass0GenerateStatementSequence pass0GenerateStatementSequence = new Pass0GenerateStatementSequence(program);
+         loadAndParseFile(fileName, program, pass0GenerateStatementSequence);
+         StatementSequence sequence = pass0GenerateStatementSequence.getSequence();
          sequence.addStatement(new StatementCall(null, "main", new ArrayList<>()));
          program.setStatementSequence(sequence);
          pass1GenerateSSA();
@@ -50,7 +50,7 @@ public class Compiler {
       }
    }
 
-   public static void loadAndParseFile(String fileName, Program program, StatementSequenceGenerator statementSequenceGenerator) {
+   public static void loadAndParseFile(String fileName, Program program, Pass0GenerateStatementSequence pass0GenerateStatementSequence) {
       try {
          File file = loadFile(fileName, program);
          List<String> imported = program.getImported();
@@ -76,7 +76,7 @@ public class Compiler {
                throw new CompileError("Error parsing  file " + fileStream.getSourceName() + "\n - Line: " + line + "\n - Message: " + msg);
             }
          });
-         statementSequenceGenerator.generate(parser.file());
+         pass0GenerateStatementSequence.generate(parser.file());
       } catch (IOException e) {
          throw new CompileError("Error loading file " + fileName, e);
       }

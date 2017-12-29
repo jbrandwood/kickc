@@ -21,6 +21,8 @@ public class ConstantVar implements Symbol {
    /** A short name used for the variable in ASM code. If possible variable names of ZP variables are shortened in ASM code. This is possible, when all versions of the var use the same register. */
    private String asmName;
 
+   /** Specifies that the variable must be aligned in memory. Only allowed for arrays & strings. */
+   private Integer declaredAlignment;
 
    public ConstantVar(String name, Scope scope, SymbolType type, ConstantValue value) {
       this.name = name;
@@ -50,7 +52,6 @@ public class ConstantVar implements Symbol {
    public void setAsmName(String asmName) {
       this.asmName = asmName;
    }
-
 
    @Override
    public SymbolType getType() {
@@ -88,6 +89,13 @@ public class ConstantVar implements Symbol {
       return new ConstantRef(this);
    }
 
+   public Integer getDeclaredAlignment() {
+      return declaredAlignment;
+   }
+
+   public void setDeclaredAlignment(Integer declaredAlignment) {
+      this.declaredAlignment = declaredAlignment;
+   }
 
    @Override
    public String toString(Program program) {

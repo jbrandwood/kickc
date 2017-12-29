@@ -103,14 +103,21 @@ public class AsmProgram {
       addLine(new AsmDataFill(label, type, size, fillValue));
    }
 
-
    /**
-    * Add a string data declaration tot the ASM
+    * Add a string data declaration to the ASM
     * @param label The label of the data
     * @param value The value of the string
     */
    public void addDataString(String label, String value) {
       addLine(new AsmDataString(label, value));
+   }
+
+   /**
+    * Add data alignment to the ASM
+    * @param alignment The number to align the address of the next data to
+    */
+   public void addDataAlignment(String alignment) {
+      addLine(new AsmDataAlignment(alignment));
    }
 
 

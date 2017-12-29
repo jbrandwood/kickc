@@ -6,7 +6,6 @@
   .const PROCPORT = 1
   .const D018 = $d018
   .const CHARSET4 = $2800
-  bits_count: .byte 0, 1, 1, 2, 1, 2, 2, 3, 1, 2, 2, 3, 2, 3, 3, 4
   jsr main
 main: {
     .label _1 = 6
@@ -144,3 +143,4 @@ main: {
     sta D018
     rts
 }
+  bits_count: .byte 0, 1, 1, 2, 1, 2, 2, 3, 1, 2, 2, 3, 2, 3, 3, 4

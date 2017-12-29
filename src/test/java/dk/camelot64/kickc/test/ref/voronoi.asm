@@ -5,9 +5,6 @@
   .const COLORS = $d800
   .const FILL = $e6
   .const numpoints = 6
-  XPOS: .byte 5, $f, 6, $22, $15, $1f
-  YPOS: .byte 5, 8, $e, 2, $11, $16
-  COLS: .byte 1, 2, 3, 4, 5, 7
   jsr main
 main: {
     jsr initscreen
@@ -203,3 +200,6 @@ initscreen: {
   !:
     rts
 }
+  XPOS: .byte 5, $f, 6, $22, $15, $1f
+  YPOS: .byte 5, 8, $e, 2, $11, $16
+  COLS: .byte 1, 2, 3, 4, 5, 7

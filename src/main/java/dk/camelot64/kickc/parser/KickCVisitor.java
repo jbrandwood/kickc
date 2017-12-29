@@ -1,4 +1,4 @@
-// Generated from /Users/jespergravgaard/c64/src/kickc/src/main/java/dk/camelot64/kickc/parser/KickC.g4 by ANTLR 4.7
+// Generated from /Users/jespergravgaard/c64/kickc/src/main/java/dk/camelot64/kickc/parser/KickC.g4 by ANTLR 4.7
 package dk.camelot64.kickc.parser;
 import org.antlr.v4.runtime.tree.ParseTreeVisitor;
 
@@ -72,6 +72,26 @@ public interface KickCVisitor<T> extends ParseTreeVisitor<T> {
 	 * @return the visitor result
 	 */
 	T visitDeclVar(KickCParser.DeclVarContext ctx);
+	/**
+	 * Visit a parse tree produced by {@link KickCParser#directives}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitDirectives(KickCParser.DirectivesContext ctx);
+	/**
+	 * Visit a parse tree produced by the {@code directiveConst}
+	 * labeled alternative in {@link KickCParser#directive}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitDirectiveConst(KickCParser.DirectiveConstContext ctx);
+	/**
+	 * Visit a parse tree produced by the {@code directiveAlign}
+	 * labeled alternative in {@link KickCParser#directive}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitDirectiveAlign(KickCParser.DirectiveAlignContext ctx);
 	/**
 	 * Visit a parse tree produced by {@link KickCParser#stmtSeq}.
 	 * @param ctx the parse tree

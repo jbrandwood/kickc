@@ -22,6 +22,10 @@ public class TestPrograms extends TestCase {
       helper = new ReferenceHelper("dk/camelot64/kickc/test/ref/");
    }
 
+   public void testMemAlignment() throws IOException, URISyntaxException {
+      compileAndCompare("mem-alignment");
+   }
+
    public void testMultiply() throws IOException, URISyntaxException {
       compileAndCompare("multiply");
    }
@@ -361,6 +365,10 @@ public class TestPrograms extends TestCase {
 
    public void testStringLengthMismatch() throws IOException, URISyntaxException {
       assertError("string-length-mismatch", "Array length mismatch");
+   }
+
+   public void testIllegalAlignment() throws IOException, URISyntaxException {
+      assertError("illegal-alignment", "Cannot align variable");
    }
 
    private void assertError(String kcFile, String expectError) throws IOException, URISyntaxException {

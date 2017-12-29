@@ -2,7 +2,6 @@
 :BasicUpstart(main)
 .pc = $80d "Program"
   .const SCREEN = $400
-  TEXT: .text "camelot "
   jsr main
 main: {
     .label cursor = 2
@@ -34,3 +33,4 @@ main: {
   !:
     rts
 }
+  TEXT: .text "camelot "

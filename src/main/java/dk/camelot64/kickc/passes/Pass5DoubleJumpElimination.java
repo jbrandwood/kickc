@@ -36,7 +36,7 @@ public class Pass5DoubleJumpElimination extends Pass5AsmOptimization {
                currentLabel = ((AsmLabel) line).getLabel();
             } else if (line instanceof AsmComment || line instanceof AsmConstant || line instanceof AsmLabelDecl) {
                // ignore
-            } else if (line instanceof AsmBasicUpstart || line instanceof AsmDataNumeric || line instanceof AsmDataFill || line instanceof AsmDataString || line instanceof AsmSetPc) {
+            } else if (line instanceof AsmBasicUpstart || line instanceof AsmDataNumeric || line instanceof AsmDataFill || line instanceof AsmDataString || line instanceof AsmDataAlignment || line instanceof AsmSetPc) {
                currentLabel = null;
             } else if (line instanceof AsmInstruction) {
                if (currentLabel != null) {

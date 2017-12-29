@@ -11,13 +11,6 @@
   .const SCREEN = $400
   .const BITMAP = $2000
   .const lines_cnt = 8
-  plot_xlo: .fill 256, 0
-  plot_xhi: .fill 256, 0
-  plot_ylo: .fill 256, 0
-  plot_yhi: .fill 256, 0
-  plot_bit: .fill 256, 0
-  lines_x: .byte $3c, $50, $6e, $50, $3c, $28, $a, $28, $3c
-  lines_y: .byte $a, $28, $3c, $50, $6e, $50, $3c, $28, $a
   jsr main
 main: {
     lda #0
@@ -444,3 +437,10 @@ init_screen: {
     bne b2
     rts
 }
+  plot_xlo: .fill $100, 0
+  plot_xhi: .fill $100, 0
+  plot_ylo: .fill $100, 0
+  plot_yhi: .fill $100, 0
+  plot_bit: .fill $100, 0
+  lines_x: .byte $3c, $50, $6e, $50, $3c, $28, $a, $28, $3c
+  lines_y: .byte $a, $28, $3c, $50, $6e, $50, $3c, $28, $a

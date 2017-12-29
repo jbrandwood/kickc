@@ -9,19 +9,20 @@ import org.antlr.v4.runtime.ParserRuleContext;
 import org.antlr.v4.runtime.tree.TerminalNode;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.Stack;
 
 /**
  * Generates program SSA form by visiting the ANTLR4 parse tree
  */
-public class StatementSequenceGenerator extends KickCBaseVisitor<Object> {
+public class Pass0GenerateStatementSequence extends KickCBaseVisitor<Object> {
 
    private Program program;
    private Stack<Scope> scopeStack;
    private StatementSequence sequence;
 
-   public StatementSequenceGenerator(Program program) {
+   public Pass0GenerateStatementSequence(Program program) {
       this.program = program;
       this.scopeStack = new Stack<>();
       scopeStack.push(program.getScope());
@@ -139,9 +140,25 @@ public class StatementSequenceGenerator extends KickCBaseVisitor<Object> {
       SymbolType type = (SymbolType) visit(ctx.typeDecl());
       String varName = ctx.NAME().getText();
       VariableUnversioned lValue = getCurrentSymbols().addVariable(varName, type);
-      if(ctx.getChild(0).getText().equals("const")) {
-         lValue.setDeclaredConstant(true);
+
+      List<Directive> directives = new ArrayList<>();
+      for(KickCParser.DirectivesContext directivesContext : ctx.directives()) {
+         directives.addAll((Collection<? extends Directive>) this.visit(directivesContext));
       }
+      for(Directive directive : directives) {
+         if(directive instanceof DirectiveConst) {
+            lValue.setDeclaredConstant(true);
+         } else if(directive instanceof DirectiveAlign) {
+            if(type instanceof SymbolTypeArray || type.equals(SymbolType.STRING)) {
+               lValue.setDeclaredAlignment(((DirectiveAlign) directive).getAlignment());
+            } else {
+               throw new CompileError("Error! Cannot align variable that is not a string or an array " +lValue.toString(program));
+            }
+         } else {
+            throw new CompileError("Unknown directive " + directive);
+         }
+      }
+      // Array / String variables are implicitly constant
       if(type instanceof SymbolTypeArray || type.equals(SymbolType.STRING)) {
          lValue.setDeclaredConstant(true);
       }
@@ -152,13 +169,52 @@ public class StatementSequenceGenerator extends KickCBaseVisitor<Object> {
          // Add an zero-array initializer
          SymbolTypeArray typeArray = (SymbolTypeArray) type;
          Integer size = typeArray.getSize();
-         if(size==null) {
-            throw new CompileError("Error! Cannot determine array size. "+lValue.toString(program));
+         if(size == null) {
+            throw new CompileError("Error! Cannot determine array size. " + lValue.toString(program));
          }
          Statement stmt = new StatementAssignment(lValue, new ConstantArrayFilled(typeArray.getElementType(), size));
          sequence.addStatement(stmt);
       }
       return null;
+   }
+
+   /** A declaration directive.*/
+   private interface Directive {}
+
+   @Override
+   public List<Directive> visitDirectives(KickCParser.DirectivesContext ctx) {
+      ArrayList<Directive> directives = new ArrayList<>();
+      for(KickCParser.DirectiveContext directiveContext : ctx.directive()) {
+         directives.add((Directive) this.visit(directiveContext));
+      }
+      return directives;
+   }
+
+   /** Variable declared constant. */
+   private static class DirectiveConst implements Directive { }
+
+   @Override
+   public Directive visitDirectiveConst(KickCParser.DirectiveConstContext ctx) {
+      return new DirectiveConst();
+   }
+
+   /** Variable memory alignment. */
+   private static class DirectiveAlign implements Directive {
+      private int alignment;
+
+      public DirectiveAlign(int alignment) {
+         this.alignment = alignment;
+      }
+
+      public int getAlignment() {
+         return alignment;
+      }
+   }
+
+   @Override
+   public Directive visitDirectiveAlign(KickCParser.DirectiveAlignContext ctx) {
+      Number alignment = NumberParser.parseLiteral(ctx.NUMBER().getText());
+      return new DirectiveAlign(alignment.intValue());
    }
 
    @Override
@@ -599,9 +655,9 @@ public class StatementSequenceGenerator extends KickCBaseVisitor<Object> {
 
       private List<PrePostModifier> postMods;
       private List<PrePostModifier> preMods;
-      private StatementSequenceGenerator mainParser;
+      private Pass0GenerateStatementSequence mainParser;
 
-      public PrePostModifierHandler(StatementSequenceGenerator mainParser) {
+      public PrePostModifierHandler(Pass0GenerateStatementSequence mainParser) {
          this.mainParser = mainParser;
          preMods = new ArrayList<>();
          postMods = new ArrayList<>();
@@ -615,14 +671,14 @@ public class StatementSequenceGenerator extends KickCBaseVisitor<Object> {
          return postMods;
       }
 
-      public static void addPostModifiers(StatementSequenceGenerator parser, ParserRuleContext ctx) {
+      public static void addPostModifiers(Pass0GenerateStatementSequence parser, ParserRuleContext ctx) {
          PrePostModifierHandler prePostModifierHandler = new PrePostModifierHandler(parser);
          prePostModifierHandler.visit(ctx);
          List<PrePostModifier> modifiers = prePostModifierHandler.getPostMods();
          addModifierStatements(parser, modifiers);
       }
 
-      public static void addPreModifiers(StatementSequenceGenerator parser, ParserRuleContext ctx) {
+      public static void addPreModifiers(Pass0GenerateStatementSequence parser, ParserRuleContext ctx) {
          PrePostModifierHandler modifierHandler = new PrePostModifierHandler(parser);
          modifierHandler.visit(ctx);
          List<PrePostModifier> modifiers = modifierHandler.getPreMods();
@@ -630,7 +686,7 @@ public class StatementSequenceGenerator extends KickCBaseVisitor<Object> {
       }
 
       private static void addModifierStatements(
-            StatementSequenceGenerator parser,
+            Pass0GenerateStatementSequence parser,
             List<PrePostModifier> modifiers) {
          for(PrePostModifier mod : modifiers) {
             Statement stmt = new StatementAssignment((LValue) mod.child, mod.operator, mod.child);

@@ -3,7 +3,6 @@
 .pc = $80d "Program"
   .label char_cursor = 6
   .label line_cursor = 2
-  txt: .text "camelot@"
   jsr main
 main: {
     jsr print_cls
@@ -101,3 +100,4 @@ print_cls: {
     bne b1
     rts
 }
+  txt: .text "camelot@"

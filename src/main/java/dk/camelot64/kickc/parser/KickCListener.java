@@ -1,4 +1,4 @@
-// Generated from /Users/jespergravgaard/c64/src/kickc/src/main/java/dk/camelot64/kickc/parser/KickC.g4 by ANTLR 4.7
+// Generated from /Users/jespergravgaard/c64/kickc/src/main/java/dk/camelot64/kickc/parser/KickC.g4 by ANTLR 4.7
 package dk.camelot64.kickc.parser;
 import org.antlr.v4.runtime.tree.ParseTreeListener;
 
@@ -111,6 +111,40 @@ public interface KickCListener extends ParseTreeListener {
 	 * @param ctx the parse tree
 	 */
 	void exitDeclVar(KickCParser.DeclVarContext ctx);
+	/**
+	 * Enter a parse tree produced by {@link KickCParser#directives}.
+	 * @param ctx the parse tree
+	 */
+	void enterDirectives(KickCParser.DirectivesContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link KickCParser#directives}.
+	 * @param ctx the parse tree
+	 */
+	void exitDirectives(KickCParser.DirectivesContext ctx);
+	/**
+	 * Enter a parse tree produced by the {@code directiveConst}
+	 * labeled alternative in {@link KickCParser#directive}.
+	 * @param ctx the parse tree
+	 */
+	void enterDirectiveConst(KickCParser.DirectiveConstContext ctx);
+	/**
+	 * Exit a parse tree produced by the {@code directiveConst}
+	 * labeled alternative in {@link KickCParser#directive}.
+	 * @param ctx the parse tree
+	 */
+	void exitDirectiveConst(KickCParser.DirectiveConstContext ctx);
+	/**
+	 * Enter a parse tree produced by the {@code directiveAlign}
+	 * labeled alternative in {@link KickCParser#directive}.
+	 * @param ctx the parse tree
+	 */
+	void enterDirectiveAlign(KickCParser.DirectiveAlignContext ctx);
+	/**
+	 * Exit a parse tree produced by the {@code directiveAlign}
+	 * labeled alternative in {@link KickCParser#directive}.
+	 * @param ctx the parse tree
+	 */
+	void exitDirectiveAlign(KickCParser.DirectiveAlignContext ctx);
 	/**
 	 * Enter a parse tree produced by {@link KickCParser#stmtSeq}.
 	 * @param ctx the parse tree

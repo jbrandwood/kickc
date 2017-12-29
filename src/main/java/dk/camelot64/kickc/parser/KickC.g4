@@ -33,7 +33,16 @@ parameterDecl
     : typeDecl NAME ;
 
 declVar
-    : ('const')? typeDecl NAME ('=' expr)? ';'
+    :  directives? typeDecl directives? NAME ('=' expr)? ';'
+    ;
+
+directives
+    : directive+
+    ;
+
+directive
+    : 'const' #directiveConst
+    | 'align' '(' NUMBER ')' #directiveAlign
     ;
 
 stmtSeq

@@ -2,7 +2,6 @@
 :BasicUpstart(main)
 .pc = $80d "Program"
   .const SCREEN = $400
-  TEXT: .text "01234567@"
   jsr main
 main: {
     .label nxt = 2
@@ -32,3 +31,4 @@ main: {
   !:
     jmp b1
 }
+  TEXT: .text "01234567@"

@@ -2,7 +2,6 @@
 :BasicUpstart(main)
 .pc = $80d "Program"
   .const SCREEN = $400
-  TXT: .byte 3, 1, $d, 5, $c, $f, $14, $20
   jsr main
 main: {
     ldx #0
@@ -20,3 +19,4 @@ main: {
     bne b1
     rts
 }
+  TXT: .byte 3, 1, $d, 5, $c, $f, $14, $20

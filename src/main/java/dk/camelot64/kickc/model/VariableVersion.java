@@ -11,6 +11,7 @@ public class VariableVersion extends Variable {
 
    public VariableVersion(VariableUnversioned versionOf, int version) {
       super(versionOf.getLocalName()+"#"+version, versionOf.getScope(), versionOf.getType());
+      this.setDeclaredAlignment(versionOf.getDeclaredAlignment());
       this.versionOfName = versionOf.getLocalName();
    }
 

@@ -5,9 +5,7 @@ package dk.camelot64.kickc.model;
  */
 public class VariableUnversioned extends Variable {
 
-   /**
-    * The number of the next version
-    */
+   /** The number of the next version */
    private Integer nextVersionNumber;
 
    public VariableUnversioned(

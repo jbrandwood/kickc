@@ -3,14 +3,6 @@
 .pc = $80d "Program"
   .const BGCOL = $d021
   .label char_cursor = 6
-  mul_sqr1_lo: .fill 512, 0
-  mul_sqr1_hi: .fill 512, 0
-  mul_sqr2_lo: .fill 512, 0
-  mul_sqr2_hi: .fill 512, 0
-  asm_mul_sqr1_lo: .fill 512, 0
-  asm_mul_sqr1_hi: .fill 512, 0
-  asm_mul_sqr2_lo: .fill 512, 0
-  asm_mul_sqr2_hi: .fill 512, 0
   jsr main
 main: {
     jsr init_mul_tables
@@ -322,3 +314,19 @@ init_mul_tables: {
     sta mul_sqr2_hi+$1ff
     rts
 }
+  .align $100
+  mul_sqr1_lo: .fill $200, 0
+  .align $100
+  mul_sqr1_hi: .fill $200, 0
+  .align $100
+  mul_sqr2_lo: .fill $200, 0
+  .align $100
+  mul_sqr2_hi: .fill $200, 0
+  .align $100
+  asm_mul_sqr1_lo: .fill $200, 0
+  .align $100
+  asm_mul_sqr1_hi: .fill $200, 0
+  .align $100
+  asm_mul_sqr2_lo: .fill $200, 0
+  .align $100
+  asm_mul_sqr2_hi: .fill $200, 0

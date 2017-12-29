@@ -3,9 +3,6 @@
 .pc = $80d "Program"
   .label char_cursor = 6
   .label line_cursor = 2
-  msg: .text "hello world! @"
-  msg2: .text "hello c64! @"
-  msg3: .text "hello 2017! @"
   jsr main
 main: {
     lda #<$400
@@ -85,3 +82,6 @@ print_str: {
   !:
     jmp b1
 }
+  msg: .text "hello world! @"
+  msg2: .text "hello c64! @"
+  msg3: .text "hello 2017! @"

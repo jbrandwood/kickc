@@ -2,7 +2,6 @@
 :BasicUpstart(main)
 .pc = $80d "Program"
   .label screen = 2
-  msg1: .text "message 1 @"
   jsr main
 main: {
     lda #<$400
@@ -50,3 +49,4 @@ print: {
   !:
     jmp b1
 }
+  msg1: .text "message 1 @"

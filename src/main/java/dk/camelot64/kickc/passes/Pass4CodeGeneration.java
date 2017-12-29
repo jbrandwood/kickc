@@ -44,7 +44,6 @@ public class Pass4CodeGeneration {
       asm.startSegment(null, "Global Constants & labels");
       addConstants(asm, currentScope);
       addZpLabels(asm, currentScope);
-      addData(asm, currentScope);
       for (ControlFlowBlock block : getGraph().getAllBlocks()) {
          if (!block.getScope().equals(currentScope)) {
             if (!ScopeRef.ROOT.equals(currentScope)) {
@@ -90,6 +89,7 @@ public class Pass4CodeGeneration {
          addData(asm, currentScope);
          asm.addScopeEnd();
       }
+      addData(asm, ScopeRef.ROOT);
       program.setAsm(asm);
    }
 
@@ -125,6 +125,11 @@ public class Pass4CodeGeneration {
       Collection<ConstantVar> scopeConstants = scope.getAllConstants(false);
       Set<String> added = new LinkedHashSet<>();
       for (ConstantVar constantVar : scopeConstants) {
+         Integer declaredAlignment = constantVar.getDeclaredAlignment();
+         if(declaredAlignment !=null) {
+            String alignment = AsmFragment.getAsmNumber(declaredAlignment);
+            asm.addDataAlignment(alignment);
+         }
          if(constantVar.getValue() instanceof ConstantArrayList) {
             ConstantArrayList constantArrayList = (ConstantArrayList) constantVar.getValue();
             String asmName = constantVar.getAsmName() == null ? constantVar.getLocalName() : constantVar.getAsmName();

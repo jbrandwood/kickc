@@ -24,8 +24,11 @@ public abstract class Variable implements Symbol {
    /** A short name used for the variable in ASM code. If possible variable names of ZP variables are shortened in ASM code. This is possible, when all versions of the var use the same register. */
    private String asmName;
 
-   /** Speciies that the variableis declared a constant. It willb replaced by a ConstantVar when possible. */
+   /** Specifies that the variable is declared a constant. It will be replaced by a ConstantVar when possible. */
    private boolean declaredConstant;
+
+   /** Specifies that the variable must be aligned in memory. Only allowed for arrays & strings. */
+   private Integer declaredAlignment;
 
    public Variable(String name, Scope scope, SymbolType type) {
       this.name = name;
@@ -124,6 +127,14 @@ public abstract class Variable implements Symbol {
 
    public void setDeclaredConstant(boolean declaredConstant) {
       this.declaredConstant = declaredConstant;
+   }
+
+   public Integer getDeclaredAlignment() {
+      return declaredAlignment;
+   }
+
+   public void setDeclaredAlignment(Integer declaredAlignment) {
+      this.declaredAlignment = declaredAlignment;
    }
 
    @Override

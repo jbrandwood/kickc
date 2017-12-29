@@ -3,8 +3,6 @@
 .pc = $80d "Program"
   .const RASTER = $d012
   .const SCREEN = $400
-  buffer1: .fill 256, 0
-  buffer2: .fill 256, 0
   jsr main
 main: {
     jsr prepare
@@ -100,3 +98,5 @@ prepare: {
     bne b1
     rts
 }
+  buffer1: .fill $100, 0
+  buffer2: .fill $100, 0

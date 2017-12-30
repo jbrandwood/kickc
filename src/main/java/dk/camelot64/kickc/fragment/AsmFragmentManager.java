@@ -273,8 +273,6 @@ public class AsmFragmentManager {
       synths.add(new FragmentSynthesis("p..([cz].)=(.*)_(sethi|setlo|plus|minus)_(.*)", null, null, "vwu$1=$2_$3_$4", null, null));
       synths.add(new FragmentSynthesis("(.*)=p..([cz].)_(sethi|setlo|plus|minus)_(.*)", null, null, "$1=vwu$2_$3_$4", null, null));
 
-
-
       for (FragmentSynthesis synth : synths) {
          CharStream synthesized = synth.synthesize(signature, log);
          if (synthesized != null) {
@@ -284,29 +282,8 @@ public class AsmFragmentManager {
             return synthesized;
          }
       }
-
       return null;
-
    }
-
-   /**
-    * Bindings/mappings used when synthesizing one fragment from another fragment.
-    * Eg. when synthesizing vbuz1=vbuz2_plus_vbuz3 from vbuaa=vbuz1_plus_vbuz2 the bindings (vbuz2->vbuz1, vbuz3->vbuz2) are used.
-    * <p>
-    * Often the same bindings are used in the signature-name and in the asm-code, but the bindings can be different.
-    * Eg. when synthesizing zpptrby1=zpptrby2_plus_zpwo1 from zpwo1=zpwo2_plus_zpwo3 the bindings (zpptrby1->zpwo1, zpptrby2->zpwo2, zpwo1->zpwo3)
-    * are used in the asm, but not in the signature.
-    */
-   private static class FragmentBindings {
-
-      /** Bindings used for renaming in the sub-signature. */
-      private Map<String, String> sigBindings;
-      /** Bindings used for renaming in the assembler-code. */
-      private Map<String, String> asmBindings;
-
-
-   }
-
 
 
    /**

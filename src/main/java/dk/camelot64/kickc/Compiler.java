@@ -355,6 +355,7 @@ public class Compiler {
       getLog().append(program.getScope().getSymbolTableContents(program));
 
       getLog().append("\nFINAL ASSEMBLER");
+      getLog().append("Score: "+Pass4RegisterUpliftCombinations.getAsmScore(program)+"\n");
       getLog().append(program.getAsm().toString());
 
    }

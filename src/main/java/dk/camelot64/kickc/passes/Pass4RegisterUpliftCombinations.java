@@ -174,7 +174,6 @@ public class Pass4RegisterUpliftCombinations extends Pass2Base {
    public static int getAsmScore(Program program) {
       int score = 0;
       AsmProgram asm = program.getAsm();
-      ControlFlowGraph graph = program.getGraph();
       NaturalLoopSet loopSet = program.getLoopSet();
       for (AsmSegment asmSegment : asm.getSegments()) {
          double asmSegmentCycles = asmSegment.getCycles();

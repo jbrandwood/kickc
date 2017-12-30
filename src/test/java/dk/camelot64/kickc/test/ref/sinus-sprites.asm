@@ -93,9 +93,8 @@ anim: {
   b3:
     lda j2
     sec
-    sbc #1
+    sbc #2
     sta j2
-    dec j2
     inc j
     lda j
     cmp #7
@@ -408,8 +407,7 @@ gen_sprites: {
     sta i
   b1:
     ldx i
-    lda cml,x
-    tax
+    ldy cml,x
     lda spr
     sta gen_chargen_sprite.sprite
     lda spr+1
@@ -439,7 +437,7 @@ gen_chargen_sprite: {
     .label x = 5
     .label y = 3
     .label c = 6
-    txa
+    tya
     sta _0
     lda #0
     sta _0+1

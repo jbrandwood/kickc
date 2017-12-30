@@ -15,7 +15,13 @@ public class StatementAsm extends StatementBase {
 
    @Override
    public String toString(Program program, boolean aliveInfo) {
-      return "asm { "+asmLines.getText()+" }";
+      StringBuilder txt = new StringBuilder();
+      txt.append("asm { ");
+      for(KickCParser.AsmLineContext line : asmLines.asmLine()) {
+         txt.append(line.getText()).append(" ");
+      }
+      txt.append(" }");
+      return txt.toString();
    }
 
    public KickCParser.AsmLinesContext getAsmLines() {

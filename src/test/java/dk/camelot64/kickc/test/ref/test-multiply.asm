@@ -27,15 +27,13 @@ signed_multiply_results_compare: {
     lda #-$80
     sta b
   b2:
-    lda b
-    tax
+    ldx b
     jsr slow_signed_multiply
     lda slow_signed_multiply.return
     sta ms
     lda slow_signed_multiply.return+1
     sta ms+1
-    lda a
-    tay
+    ldy a
     jsr signed_multiply
     lda ms
     cmp ma
@@ -46,8 +44,7 @@ signed_multiply_results_compare: {
   !:
     lda #2
     sta BGCOL
-    lda a
-    tax
+    ldx a
     lda b
     sta signed_multiply_error.b
     lda ms
@@ -143,8 +140,7 @@ signed_multiply_error: {
     lda #>str1
     sta print_str.str+1
     jsr print_str
-    lda b
-    tax
+    ldx b
     jsr print_sbyte
     lda #<str2
     sta print_str.str
@@ -247,8 +243,8 @@ signed_multiply: {
     .label m = 6
     .label return = 6
     .label b = 3
-    sty $ff
-    ldx $ff
+    tya
+    tax
     lda b
     jsr multiply
     cpy #0

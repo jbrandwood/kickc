@@ -23,8 +23,7 @@ test_sbytes: {
     .const be = -bd
     lda #0
     sta assert_sbyte.c
-    lda #bb
-    tax
+    ldx #bb
     lda #<msg
     sta assert_sbyte.msg
     lda #>msg
@@ -32,8 +31,7 @@ test_sbytes: {
     jsr assert_sbyte
     lda #2
     sta assert_sbyte.c
-    lda #bc
-    tax
+    ldx #bc
     lda #<msg1
     sta assert_sbyte.msg
     lda #>msg1
@@ -41,8 +39,7 @@ test_sbytes: {
     jsr assert_sbyte
     lda #-2
     sta assert_sbyte.c
-    lda #bd
-    tax
+    ldx #bd
     lda #<msg2
     sta assert_sbyte.msg
     lda #>msg2
@@ -50,8 +47,7 @@ test_sbytes: {
     jsr assert_sbyte
     lda #2
     sta assert_sbyte.c
-    lda #be
-    tax
+    ldx #be
     lda #<msg3
     sta assert_sbyte.msg
     lda #>msg3
@@ -59,8 +55,7 @@ test_sbytes: {
     jsr assert_sbyte
     lda #2
     sta assert_sbyte.c
-    lda #bf
-    tax
+    ldx #bf
     lda #<msg4
     sta assert_sbyte.msg
     lda #>msg4

@@ -349,4 +349,16 @@ public class AsmFragmentSignature {
    public Map<String, Value> getBindings() {
       return bindings;
    }
+
+   @Override
+   public String toString() {
+      StringBuilder str = new StringBuilder();
+      str.append(signature).append("(");
+      str.append(codeScopeRef).append(":: ");
+      for(String bound : bindings.keySet()) {
+         str.append(bound).append("=").append(bindings.get(bound).toString(getProgram())).append(" ");
+      }
+      str.append(") ");
+      return str.toString();
+   }
 }

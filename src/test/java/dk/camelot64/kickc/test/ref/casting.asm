@@ -9,10 +9,10 @@
 main: {
     ldx #0
   b1:
-    stx $ff
-    lda #$c8
-    sec
-    sbc $ff
+    txa
+    eor #$ff
+    clc
+    adc #$c8+1
     sta SCREEN,x
     txa
     eor #$ff

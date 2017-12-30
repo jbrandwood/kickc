@@ -37,9 +37,8 @@ lines: {
     lda lines_x+1,x
     sta line.x1
     lda lines_y,x
-    tay
-    lda lines_y+1,x
-    sta line.y1
+    sta line.y0
+    ldy lines_y+1,x
     jsr line
     inc l
     lda l
@@ -50,7 +49,7 @@ lines: {
 line: {
     .label x0 = 3
     .label x1 = 4
-    .label y1 = 5
+    .label y0 = 5
     .label xd = 7
     .label yd = $a
     lda x0
@@ -60,17 +59,17 @@ line: {
     sec
     sbc x0
     sta xd
-    cpy y1
-    bcs b2
-    sty $ff
-    lda y1
+    cpy y0
+    bcc b2
+    tya
     sec
-    sbc $ff
+    sbc y0
     sta yd
     cmp xd
     bcs b3
     ldx x0
-    sty line_xdyi.y
+    lda y0
+    sta line_xdyi.y
     lda x1
     sta line_xdyi.x1
     lda xd
@@ -81,8 +80,10 @@ line: {
   breturn:
     rts
   b3:
-    sty line_ydxi.y
+    lda y0
+    sta line_ydxi.y
     ldx x0
+    sty line_ydxi.y1
     lda yd
     sta line_ydxi.yd
     lda xd
@@ -91,13 +92,15 @@ line: {
     jmp breturn
   b2:
     tya
+    eor #$ff
     sec
-    sbc y1
+    adc y0
     sta yd
     cmp xd
     bcs b6
     ldx x0
-    sty line_xdyd.y
+    lda y0
+    sta line_xdyd.y
     lda x1
     sta line_xdyd.x1
     lda xd
@@ -107,10 +110,8 @@ line: {
     jsr line_xdyd
     jmp breturn
   b6:
-    lda y1
-    sta line_ydxd.y
+    sty line_ydxd.y
     ldx x1
-    sty line_ydxd.y1
     lda yd
     sta line_ydxd.yd
     lda xd
@@ -122,18 +123,16 @@ line: {
     sec
     sbc x1
     sta xd
-    cpy y1
-    bcs b9
-    sty $ff
-    lda y1
+    cpy y0
+    bcc b9
+    tya
     sec
-    sbc $ff
+    sbc y0
     sta yd
     cmp xd
     bcs b10
     ldx x1
-    lda y1
-    sta line_xdyd.y
+    sty line_xdyd.y
     lda x0
     sta line_xdyd.x1
     lda xd
@@ -143,8 +142,10 @@ line: {
     jsr line_xdyd
     jmp breturn
   b10:
-    sty line_ydxd.y
+    lda y0
+    sta line_ydxd.y
     ldx x0
+    sty line_ydxd.y1
     lda yd
     sta line_ydxd.yd
     lda xd
@@ -153,14 +154,14 @@ line: {
     jmp breturn
   b9:
     tya
+    eor #$ff
     sec
-    sbc y1
+    adc y0
     sta yd
     cmp xd
     bcs b13
     ldx x1
-    lda y1
-    sta line_xdyi.y
+    sty line_xdyi.y
     lda x0
     sta line_xdyi.x1
     lda xd
@@ -170,10 +171,8 @@ line: {
     jsr line_xdyi
     jmp breturn
   b13:
-    lda y1
-    sta line_ydxi.y
+    sty line_ydxi.y
     ldx x1
-    sty line_ydxi.y1
     lda yd
     sta line_ydxi.yd
     lda xd

@@ -38,8 +38,7 @@ plots: {
     sta i
   b1:
     ldx i
-    lda plots_x,x
-    tay
+    ldy plots_x,x
     lda plots_y,x
     tax
     jsr plot

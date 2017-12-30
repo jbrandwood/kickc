@@ -1,3 +1,0 @@
-tya
-lsr
-lsr

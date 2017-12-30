@@ -8,7 +8,6 @@ import org.antlr.v4.runtime.CharStreams;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
-import java.text.NumberFormat;
 import java.util.*;
 
 /**
@@ -103,10 +102,12 @@ public class AsmFragmentManager {
      * @param log The compile log to add the output to
      */
     public static void logUsages(CompileLog log) {
-        log.append("ASM FRAGMENT USAGES");
 
         ArrayList<String> signatures = new ArrayList<>(fragmentTemplateCache.keySet());
         Collections.sort(signatures);
+
+        /*
+        log.append("ASM FRAGMENT USAGES");
         for (String signature : signatures) {
             List<AsmFragmentTemplate> templates = fragmentTemplateCache.get(signature);
             for (AsmFragmentTemplate template : templates) {
@@ -115,6 +116,34 @@ public class AsmFragmentManager {
                 log.append(String.format("%8d", usage)+"  "+template.getName());
             }
         }
+        */
+
+        // Find all file fragments that were bested by a synthesized fragment
+        log.append("\nREDUNDANT ASM FRAGMENT FILES - REMOVE FROM DISK");
+        for (String signature : signatures) {
+            List<AsmFragmentTemplate> templates = fragmentTemplateCache.get(signature);
+            AsmFragmentTemplate fileTemplate = null;
+            int fileUsage = 0;
+            AsmFragmentTemplate maxTemplate = null;
+            int maxUsage = 0;
+            for (AsmFragmentTemplate template : templates) {
+                Integer usage = fragmentTemplateUsage.get(template);
+                if(usage==null) usage = 0;
+                if(template.isFile()) {
+                    fileTemplate = template;
+                    fileUsage = usage;
+                }
+                if(usage>maxUsage) {
+                    maxUsage = usage;
+                    maxTemplate = template;
+                }
+            }
+            if(fileTemplate!=null && fileUsage==0 && maxUsage>0) {
+                log.append("rm "+fileTemplate.getName()+".asm #synthesized by "+maxTemplate.getName()+" - usages: "+maxUsage);
+            }
+        }
+
+
 
     }
 

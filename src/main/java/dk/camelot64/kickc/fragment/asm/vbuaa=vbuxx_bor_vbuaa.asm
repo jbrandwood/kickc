@@ -1,2 +1,0 @@
-stx $ff
-ora $ff

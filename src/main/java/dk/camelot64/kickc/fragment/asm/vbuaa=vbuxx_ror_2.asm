@@ -1,3 +1,0 @@
-txa
-lsr
-lsr

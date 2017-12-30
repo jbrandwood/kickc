@@ -20,7 +20,7 @@ public class AsmFragmentTemplate {
     private KickCParser.AsmLinesContext bodyAsm;
 
     /** true if the fragment was loaded from disk. */
-    boolean loaded;
+    boolean file;
 
     /** The synthesis that created the fragment. null if the fragment template was loaded. */
     private AsmFragmentSynthesis synthesis;
@@ -31,7 +31,7 @@ public class AsmFragmentTemplate {
     public AsmFragmentTemplate(String signature, String body) {
         this.signature = signature;
         this.body = body;
-        this.loaded = true;
+        this.file = true;
     }
 
     AsmFragmentTemplate(String signature, String body, AsmFragmentSynthesis synthesis, AsmFragmentTemplate subFragment) {
@@ -39,7 +39,7 @@ public class AsmFragmentTemplate {
         this.body = body;
         this.synthesis = synthesis;
         this.subFragment = subFragment;
-        this.loaded = false;
+        this.file = false;
     }
 
     /**
@@ -90,8 +90,8 @@ public class AsmFragmentTemplate {
     }
 
 
-    public boolean isLoaded() {
-        return loaded;
+    public boolean isFile() {
+        return file;
     }
 
     public AsmFragmentSynthesis getSynthesis() {

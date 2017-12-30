@@ -183,8 +183,8 @@ initscreen: {
     lda #>SCREEN
     sta screen+1
   b1:
-    ldy #0
     lda #FILL
+    ldy #0
     sta (screen),y
     inc screen
     bne !+

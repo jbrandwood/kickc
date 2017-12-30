@@ -64,8 +64,8 @@ fillscreen: {
     lda #>SCREEN
     sta cursor+1
   b1:
-    ldy #0
     lda #fill
+    ldy #0
     sta (cursor),y
     inc cursor
     bne !+

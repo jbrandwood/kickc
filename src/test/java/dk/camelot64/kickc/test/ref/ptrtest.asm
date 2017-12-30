@@ -22,8 +22,8 @@ lvaluevar: {
     bcc b2
     rts
   b2:
-    ldy #0
     lda #b
+    ldy #0
     sta (screen),y
     inc screen
     bne !+

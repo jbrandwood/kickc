@@ -1,10 +1,7 @@
 package dk.camelot64.kickc.passes;
 
 import dk.camelot64.kickc.asm.*;
-import dk.camelot64.kickc.fragment.AsmFormat;
-import dk.camelot64.kickc.fragment.AsmFragment;
-import dk.camelot64.kickc.fragment.AsmFragmentManager;
-import dk.camelot64.kickc.fragment.AsmFragmentSignature;
+import dk.camelot64.kickc.fragment.*;
 import dk.camelot64.kickc.model.*;
 
 import java.util.*;
@@ -276,7 +273,7 @@ public class Pass4CodeGeneration {
          } else if (statement instanceof StatementAsm) {
             StatementAsm statementAsm = (StatementAsm) statement;
             HashMap<String, Value> bindings = new HashMap<>();
-            AsmFragment asmFragment = new AsmFragment(program, "inline", block.getScope(), statementAsm.getAsmLines(), bindings);
+            AsmFragment asmFragment = new AsmFragment(program, "inline", block.getScope(), new AsmFragmentTemplate(statementAsm.getAsmLines()), bindings);
             asmFragment.generate(asm);
          } else {
             throw new RuntimeException("Statement not supported " + statement);

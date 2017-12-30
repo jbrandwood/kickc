@@ -6,7 +6,7 @@ file
     ;
 
 asmFile
-    : asmLines EOF
+    : bodyAsm EOF
     ;
 
 importSeq
@@ -58,7 +58,7 @@ stmt
     | 'do' stmt 'while' '(' expr ')' ';' #stmtDoWhile
     | 'for' '(' forDeclaration? forIteration ')' stmt  #stmtFor
     | 'return' expr? ';' #stmtReturn
-    | 'asm' '{' asmLines '}' #stmtAsm
+    | 'asm' '{' bodyAsm '}' #stmtAsm
     ;
 
 forDeclaration
@@ -109,7 +109,7 @@ parameterList
     : expr (',' expr)*
     ;
 
-asmLines
+bodyAsm
     : asmLine*
     ;
 

@@ -193,9 +193,9 @@ line_ydxi: {
     ldy y
     jsr plot
     inc y
-    lda e
+    lda xd
     clc
-    adc xd
+    adc e
     sta e
     lda yd
     cmp e
@@ -253,9 +253,9 @@ line_xdyi: {
     ldy y
     jsr plot
     inx
-    lda e
+    lda yd
     clc
-    adc yd
+    adc e
     sta e
     lda xd
     cmp e
@@ -287,9 +287,9 @@ line_ydxd: {
     ldy y
     jsr plot
     inc y
-    lda e
+    lda xd
     clc
-    adc xd
+    adc e
     sta e
     lda yd
     cmp e
@@ -321,9 +321,9 @@ line_xdyd: {
     ldy y
     jsr plot
     inx
-    lda e
+    lda yd
     clc
-    adc yd
+    adc e
     sta e
     lda xd
     cmp e
@@ -403,8 +403,8 @@ init_screen: {
     lda #>BITMAP
     sta b+1
   b1:
-    ldy #0
-    tya
+    lda #0
+    tay
     sta (b),y
     inc b
     bne !+
@@ -421,8 +421,8 @@ init_screen: {
     lda #>SCREEN
     sta c+1
   b2:
-    ldy #0
     lda #$14
+    ldy #0
     sta (c),y
     inc c
     bne !+

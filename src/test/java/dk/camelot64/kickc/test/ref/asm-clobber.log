@@ -594,11 +594,11 @@ REGISTER UPLIFT SCOPES
 Uplift Scope [main] 303: zp ZP_BYTE:3 [ main::j#2 main::j#1 ] 252.5: zp ZP_BYTE:5 [ main::l#2 main::l#1 ] 41.1: zp ZP_BYTE:2 [ main::i#4 main::i#1 ] 37: zp ZP_BYTE:4 [ main::k#4 main::k#1 ] 
 Uplift Scope [] 
 
-Uplifting [main] best 6638 combination reg byte a [ main::j#2 main::j#1 ] zp ZP_BYTE:5 [ main::l#2 main::l#1 ] reg byte x [ main::i#4 main::i#1 ] reg byte y [ main::k#4 main::k#1 ] 
-Uplifting [] best 6638 combination 
-Attempting to uplift remaining variables inzp ZP_BYTE:5 [ main::l#2 main::l#1 ]
-Uplifting [main] best 6638 combination zp ZP_BYTE:5 [ main::l#2 main::l#1 ] 
-Allocated (was zp ZP_BYTE:5) zp ZP_BYTE:2 [ main::l#2 main::l#1 ]
+Uplifting [main] best 6028 combination reg byte a [ main::j#2 main::j#1 ] reg byte y [ main::l#2 main::l#1 ] reg byte x [ main::i#4 main::i#1 ] zp ZP_BYTE:4 [ main::k#4 main::k#1 ] 
+Uplifting [] best 6028 combination 
+Attempting to uplift remaining variables inzp ZP_BYTE:4 [ main::k#4 main::k#1 ]
+Uplifting [main] best 6028 combination zp ZP_BYTE:4 [ main::k#4 main::k#1 ] 
+Allocated (was zp ZP_BYTE:4) zp ZP_BYTE:2 [ main::k#4 main::k#1 ]
 
 ASSEMBLER BEFORE OPTIMIZATION
 //SEG0 Basic Upstart
@@ -625,7 +625,7 @@ bend_from_b1:
 bend:
 //SEG9 main
 main: {
-    .label l = 2
+    .label k = 2
   //SEG10 [5] phi from main to main::@1 [phi:main->main::@1]
   b1_from_main:
   //SEG11 [5] phi (byte) main::i#4 = (byte/signed byte/word/signed word) 0 [phi:main->main::@1#0] -- vbuxx=vbuc1 
@@ -666,8 +666,9 @@ main: {
     bne b1_from_b5
   //SEG26 [12] phi from main::@5 to main::@3 [phi:main::@5->main::@3]
   b3_from_b5:
-  //SEG27 [12] phi (byte) main::k#4 = (byte/signed byte/word/signed word) 0 [phi:main::@5->main::@3#0] -- vbuyy=vbuc1 
-    ldy #0
+  //SEG27 [12] phi (byte) main::k#4 = (byte/signed byte/word/signed word) 0 [phi:main::@5->main::@3#0] -- vbuz1=vbuc1 
+    lda #0
+    sta k
     jmp b3
   //SEG28 [12] phi from main::@7 to main::@3 [phi:main::@7->main::@3]
   b3_from_b7:
@@ -677,9 +678,8 @@ main: {
   b3:
   //SEG31 [13] phi from main::@3 to main::@4 [phi:main::@3->main::@4]
   b4_from_b3:
-  //SEG32 [13] phi (byte) main::l#2 = (byte/signed byte/word/signed word) 0 [phi:main::@3->main::@4#0] -- vbuz1=vbuc1 
-    lda #0
-    sta l
+  //SEG32 [13] phi (byte) main::l#2 = (byte/signed byte/word/signed word) 0 [phi:main::@3->main::@4#0] -- vbuyy=vbuc1 
+    ldy #0
     jmp b4
   //SEG33 [13] phi from main::@4 to main::@4 [phi:main::@4->main::@4]
   b4_from_b4:
@@ -690,22 +690,23 @@ main: {
   //SEG36 asm { eor#$55 tax  }
     eor #$55
     tax
-  //SEG37 [15] *((const byte*) SCREEN#0 + (byte) main::k#4) ← (byte) main::l#2 [ main::k#4 main::l#2 ] ( main:2 [ main::k#4 main::l#2 ] ) -- pbuc1_derefidx_vbuyy=vbuz1 
-    lda l
-    sta SCREEN,y
-  //SEG38 [16] (byte) main::l#1 ← ++ (byte) main::l#2 [ main::k#4 main::l#1 ] ( main:2 [ main::k#4 main::l#1 ] ) -- vbuz1=_inc_vbuz1 
-    inc l
-  //SEG39 [17] if((byte) main::l#1!=(byte/signed byte/word/signed word) 101) goto main::@4 [ main::k#4 main::l#1 ] ( main:2 [ main::k#4 main::l#1 ] ) -- vbuz1_neq_vbuc1_then_la1 
-    lda l
-    cmp #$65
+  //SEG37 [15] *((const byte*) SCREEN#0 + (byte) main::k#4) ← (byte) main::l#2 [ main::k#4 main::l#2 ] ( main:2 [ main::k#4 main::l#2 ] ) -- pbuc1_derefidx_vbuz1=vbuyy 
+    tya
+    ldx k
+    sta SCREEN,x
+  //SEG38 [16] (byte) main::l#1 ← ++ (byte) main::l#2 [ main::k#4 main::l#1 ] ( main:2 [ main::k#4 main::l#1 ] ) -- vbuyy=_inc_vbuyy 
+    iny
+  //SEG39 [17] if((byte) main::l#1!=(byte/signed byte/word/signed word) 101) goto main::@4 [ main::k#4 main::l#1 ] ( main:2 [ main::k#4 main::l#1 ] ) -- vbuyy_neq_vbuc1_then_la1 
+    cpy #$65
     bne b4_from_b4
     jmp b7
   //SEG40 main::@7
   b7:
-  //SEG41 [18] (byte) main::k#1 ← ++ (byte) main::k#4 [ main::k#1 ] ( main:2 [ main::k#1 ] ) -- vbuyy=_inc_vbuyy 
-    iny
-  //SEG42 [19] if((byte) main::k#1!=(byte/signed byte/word/signed word) 101) goto main::@3 [ main::k#1 ] ( main:2 [ main::k#1 ] ) -- vbuyy_neq_vbuc1_then_la1 
-    cpy #$65
+  //SEG41 [18] (byte) main::k#1 ← ++ (byte) main::k#4 [ main::k#1 ] ( main:2 [ main::k#1 ] ) -- vbuz1=_inc_vbuz1 
+    inc k
+  //SEG42 [19] if((byte) main::k#1!=(byte/signed byte/word/signed word) 101) goto main::@3 [ main::k#1 ] ( main:2 [ main::k#1 ] ) -- vbuz1_neq_vbuc1_then_la1 
+    lda k
+    cmp #$65
     bne b3_from_b7
     jmp breturn
   //SEG43 main::@return
@@ -775,20 +776,20 @@ FINAL SYMBOL TABLE
 (byte) main::j#1 reg byte a 151.5
 (byte) main::j#2 reg byte a 151.5
 (byte) main::k
-(byte) main::k#1 reg byte y 16.5
-(byte) main::k#4 reg byte y 20.499999999999996
+(byte) main::k#1 k zp ZP_BYTE:2 16.5
+(byte) main::k#4 k zp ZP_BYTE:2 20.499999999999996
 (byte) main::l
-(byte) main::l#1 l zp ZP_BYTE:2 151.5
-(byte) main::l#2 l zp ZP_BYTE:2 101.0
+(byte) main::l#1 reg byte y 151.5
+(byte) main::l#2 reg byte y 101.0
 
 reg byte x [ main::i#4 main::i#1 ]
 reg byte a [ main::j#2 main::j#1 ]
-reg byte y [ main::k#4 main::k#1 ]
-zp ZP_BYTE:2 [ main::l#2 main::l#1 ]
+zp ZP_BYTE:2 [ main::k#4 main::k#1 ]
+reg byte y [ main::l#2 main::l#1 ]
 
 
 FINAL ASSEMBLER
-Score: 4682
+Score: 4072
 
 //SEG0 Basic Upstart
 .pc = $801 "Basic"
@@ -806,7 +807,7 @@ Score: 4682
 //SEG8 @end
 //SEG9 main
 main: {
-    .label l = 2
+    .label k = 2
   //SEG10 [5] phi from main to main::@1 [phi:main->main::@1]
   //SEG11 [5] phi (byte) main::i#4 = (byte/signed byte/word/signed word) 0 [phi:main->main::@1#0] -- vbuxx=vbuc1 
     ldx #0
@@ -836,16 +837,16 @@ main: {
     cpx #$65
     bne b1
   //SEG26 [12] phi from main::@5 to main::@3 [phi:main::@5->main::@3]
-  //SEG27 [12] phi (byte) main::k#4 = (byte/signed byte/word/signed word) 0 [phi:main::@5->main::@3#0] -- vbuyy=vbuc1 
-    ldy #0
+  //SEG27 [12] phi (byte) main::k#4 = (byte/signed byte/word/signed word) 0 [phi:main::@5->main::@3#0] -- vbuz1=vbuc1 
+    lda #0
+    sta k
   //SEG28 [12] phi from main::@7 to main::@3 [phi:main::@7->main::@3]
   //SEG29 [12] phi (byte) main::k#4 = (byte) main::k#1 [phi:main::@7->main::@3#0] -- register_copy 
   //SEG30 main::@3
   b3:
   //SEG31 [13] phi from main::@3 to main::@4 [phi:main::@3->main::@4]
-  //SEG32 [13] phi (byte) main::l#2 = (byte/signed byte/word/signed word) 0 [phi:main::@3->main::@4#0] -- vbuz1=vbuc1 
-    lda #0
-    sta l
+  //SEG32 [13] phi (byte) main::l#2 = (byte/signed byte/word/signed word) 0 [phi:main::@3->main::@4#0] -- vbuyy=vbuc1 
+    ldy #0
   //SEG33 [13] phi from main::@4 to main::@4 [phi:main::@4->main::@4]
   //SEG34 [13] phi (byte) main::l#2 = (byte) main::l#1 [phi:main::@4->main::@4#0] -- register_copy 
   //SEG35 main::@4
@@ -853,20 +854,21 @@ main: {
   //SEG36 asm { eor#$55 tax  }
     eor #$55
     tax
-  //SEG37 [15] *((const byte*) SCREEN#0 + (byte) main::k#4) ← (byte) main::l#2 [ main::k#4 main::l#2 ] ( main:2 [ main::k#4 main::l#2 ] ) -- pbuc1_derefidx_vbuyy=vbuz1 
-    lda l
-    sta SCREEN,y
-  //SEG38 [16] (byte) main::l#1 ← ++ (byte) main::l#2 [ main::k#4 main::l#1 ] ( main:2 [ main::k#4 main::l#1 ] ) -- vbuz1=_inc_vbuz1 
-    inc l
-  //SEG39 [17] if((byte) main::l#1!=(byte/signed byte/word/signed word) 101) goto main::@4 [ main::k#4 main::l#1 ] ( main:2 [ main::k#4 main::l#1 ] ) -- vbuz1_neq_vbuc1_then_la1 
-    lda l
-    cmp #$65
+  //SEG37 [15] *((const byte*) SCREEN#0 + (byte) main::k#4) ← (byte) main::l#2 [ main::k#4 main::l#2 ] ( main:2 [ main::k#4 main::l#2 ] ) -- pbuc1_derefidx_vbuz1=vbuyy 
+    tya
+    ldx k
+    sta SCREEN,x
+  //SEG38 [16] (byte) main::l#1 ← ++ (byte) main::l#2 [ main::k#4 main::l#1 ] ( main:2 [ main::k#4 main::l#1 ] ) -- vbuyy=_inc_vbuyy 
+    iny
+  //SEG39 [17] if((byte) main::l#1!=(byte/signed byte/word/signed word) 101) goto main::@4 [ main::k#4 main::l#1 ] ( main:2 [ main::k#4 main::l#1 ] ) -- vbuyy_neq_vbuc1_then_la1 
+    cpy #$65
     bne b4
   //SEG40 main::@7
-  //SEG41 [18] (byte) main::k#1 ← ++ (byte) main::k#4 [ main::k#1 ] ( main:2 [ main::k#1 ] ) -- vbuyy=_inc_vbuyy 
-    iny
-  //SEG42 [19] if((byte) main::k#1!=(byte/signed byte/word/signed word) 101) goto main::@3 [ main::k#1 ] ( main:2 [ main::k#1 ] ) -- vbuyy_neq_vbuc1_then_la1 
-    cpy #$65
+  //SEG41 [18] (byte) main::k#1 ← ++ (byte) main::k#4 [ main::k#1 ] ( main:2 [ main::k#1 ] ) -- vbuz1=_inc_vbuz1 
+    inc k
+  //SEG42 [19] if((byte) main::k#1!=(byte/signed byte/word/signed word) 101) goto main::@3 [ main::k#1 ] ( main:2 [ main::k#1 ] ) -- vbuz1_neq_vbuc1_then_la1 
+    lda k
+    cmp #$65
     bne b3
   //SEG43 main::@return
   //SEG44 [20] return  [ ] ( main:2 [ ] )

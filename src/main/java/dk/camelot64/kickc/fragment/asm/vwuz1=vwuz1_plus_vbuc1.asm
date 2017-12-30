@@ -1,7 +1,7 @@
 lda {z1}
 clc
-adc #<{c1}
+adc #{c1}
 sta {z1}
-bcc !+
-inc {z1}+1
-!:
+lda {z1}+1
+adc #0
+sta {z1}+1

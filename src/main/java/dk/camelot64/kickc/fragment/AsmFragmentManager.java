@@ -2,16 +2,14 @@ package dk.camelot64.kickc.fragment;
 
 import dk.camelot64.kickc.CompileLog;
 import dk.camelot64.kickc.asm.AsmProgram;
-import dk.camelot64.kickc.parser.KickCLexer;
-import dk.camelot64.kickc.parser.KickCParser;
-import org.antlr.v4.runtime.*;
+import org.antlr.v4.runtime.CharStream;
+import org.antlr.v4.runtime.CharStreams;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
+import java.text.NumberFormat;
 import java.util.*;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 /**
  * Provides fragments from their signature.
@@ -21,60 +19,103 @@ import java.util.regex.Pattern;
  */
 public class AsmFragmentManager {
 
-    /** Cache for fragment files. Maps signature to the parsed file. */
-    private static Map<String, KickCParser.AsmLinesContext> fragmentFileCache = new HashMap<>();
+    /** Cache for the best fragment templates. Maps signature to the best fragment template for the signature. */
+    private static Map<String, AsmFragmentTemplate> bestFragmentCache = new HashMap<>();
 
-    private static KickCParser.AsmLinesContext UNKNOWN = new KickCParser.AsmLinesContext(null, 0);
+    /** Caches all asm fragment templates for all encountered signatures. */
+    private static Map<String, List<AsmFragmentTemplate>> fragmentTemplateCache = new LinkedHashMap<>();
+
+    /** Usage Statistics for fragment templates. */
+    private static Map<AsmFragmentTemplate, Integer> fragmentTemplateUsage = new HashMap<>();
+
+    /** Special singleton representing that the fragment can not be synthesized or loaded. */
+    private static AsmFragmentTemplate UNKNOWN = new AsmFragmentTemplate("UNKNOWN", null);
 
     public static AsmFragment getFragment(AsmFragmentSignature signature, CompileLog log) {
-        KickCParser.AsmLinesContext fragmentAsmLines = fragmentFileCache.get(signature.getSignature());
-        if (fragmentAsmLines == UNKNOWN) {
+        AsmFragmentTemplate bestTemplate = bestFragmentCache.get(signature.getSignature());
+        if (bestTemplate == UNKNOWN) {
             if (log.isVerboseFragmentLog()) {
                 log.append("Unknown fragment " + signature.getSignature());
             }
             throw new UnknownFragmentException(signature.toString());
         }
-        if (fragmentAsmLines == null) {
+        if (bestTemplate == null) {
             AsmFragmentTemplateSynthesizer synthesizer = new AsmFragmentTemplateSynthesizer(signature, log);
             List<AsmFragmentTemplate> candidates = synthesizer.loadOrSynthesizeFragment(signature.getSignature());
             if (candidates.size() == 0) {
                 if (log.isVerboseFragmentLog()) {
                     log.append("Unknown fragment " + signature.toString());
                 }
-                fragmentFileCache.put(signature.getSignature(), UNKNOWN);
+                bestFragmentCache.put(signature.getSignature(), UNKNOWN);
                 throw new UnknownFragmentException(signature.toString());
-
             }
             double minScore = Double.MAX_VALUE;
-            for (AsmFragmentTemplate candidate : candidates) {
-                KickCParser.AsmLinesContext candidateAsmLines =
-                        parseFragment(candidate.getBody(), signature.getSignature());
+            for (AsmFragmentTemplate candidateTemplate : candidates) {
                 AsmFragment candidateFragment = new AsmFragment(
                         signature.getProgram(),
                         signature.getSignature(),
                         signature.getCodeScope(),
-                        candidateAsmLines,
+                        candidateTemplate,
                         signature.getBindings());
-                AsmProgram condidateAsm = new AsmProgram();
-                condidateAsm.startSegment(null, signature.toString());
-                candidateFragment.generate(condidateAsm);
-                double score = condidateAsm.getCycles();
+                AsmProgram candidateAsm = new AsmProgram();
+                candidateAsm.startSegment(null, signature.toString());
+                candidateFragment.generate(candidateAsm);
+                double score = candidateAsm.getCycles();
                 if (score < minScore) {
                     minScore = score;
-                    fragmentAsmLines = candidateAsmLines;
+                    bestTemplate = candidateTemplate;
                 }
             }
             if (log.isVerboseFragmentLog()) {
                 log.append("Found fragment   " + signature + " score: " + minScore + " from " + candidates.size() + " candidates");
             }
-            fragmentFileCache.put(signature.getSignature(), fragmentAsmLines);
+            bestFragmentCache.put(signature.getSignature(), bestTemplate);
         }
+        // Count usages
+        incUsage(bestTemplate);
+        // Return the resulting fragment instance
         return new AsmFragment(
                 signature.getProgram(),
                 signature.getSignature(),
                 signature.getCodeScope(),
-                fragmentAsmLines,
+                bestTemplate,
                 signature.getBindings());
+    }
+
+    /**
+     * Count one usage of ASM fragment templates - directly or through synthesis
+     * @param fragmentTemplate The template to increment usage of
+     */
+    private static void incUsage(AsmFragmentTemplate fragmentTemplate) {
+        Integer usage = fragmentTemplateUsage.get(fragmentTemplate);
+        if (usage == null) {
+            usage = 0;
+        }
+        fragmentTemplateUsage.put(fragmentTemplate, usage + 1);
+        AsmFragmentTemplate subFragment = fragmentTemplate.getSubFragment();
+        if (subFragment != null) {
+            incUsage(subFragment);
+        }
+    }
+
+    /**
+     * Log the usage of all template fragemnts (both loaded and synthesized).
+     * @param log The compile log to add the output to
+     */
+    public static void logUsages(CompileLog log) {
+        log.append("ASM FRAGMENT USAGES");
+
+        ArrayList<String> signatures = new ArrayList<>(fragmentTemplateCache.keySet());
+        Collections.sort(signatures);
+        for (String signature : signatures) {
+            List<AsmFragmentTemplate> templates = fragmentTemplateCache.get(signature);
+            for (AsmFragmentTemplate template : templates) {
+                Integer usage = fragmentTemplateUsage.get(template);
+                if(usage==null) usage = 0;
+                log.append(String.format("%8d", usage)+"  "+template.getName());
+            }
+        }
+
     }
 
     /**
@@ -82,7 +123,7 @@ public class AsmFragmentManager {
      * <p>
      * The synthesizer tries a lot of different combinations and keeps track of what has already been attempted.
      */
-    public static class AsmFragmentTemplateSynthesizer {
+    static class AsmFragmentTemplateSynthesizer {
 
         /** Signature of the fragment being synthesized. */
         private AsmFragmentSignature signature;
@@ -90,27 +131,16 @@ public class AsmFragmentManager {
         /** The log. */
         private CompileLog log;
 
-        /** Caches all asm fragment templates for all encountered signatures. */
-        private static Map<String, List<AsmFragmentTemplate>> templateCache = new LinkedHashMap<>();
-
-        public AsmFragmentTemplateSynthesizer(AsmFragmentSignature signature, CompileLog log) {
+        AsmFragmentTemplateSynthesizer(AsmFragmentSignature signature, CompileLog log) {
             this.signature = signature;
             this.log = log;
         }
 
-        public List<AsmFragmentTemplate> loadOrSynthesizeFragment(String signature) {
-            if (templateCache.get(signature) != null) {
-                return templateCache.get(signature);
+        List<AsmFragmentTemplate> loadOrSynthesizeFragment(String signature) {
+            if (fragmentTemplateCache.get(signature) != null) {
+                return fragmentTemplateCache.get(signature);
             }
             List<AsmFragmentTemplate> candidates = new ArrayList<>();
-            // Load the fragment from disk
-            CharStream fragmentCharStream = loadFragment(signature);
-            if (fragmentCharStream != null) {
-                candidates.add(new AsmFragmentTemplate(signature, fragmentCharStream.toString()));
-                if (log.isVerboseFragmentLog()) {
-                    log.append("Finding fragment " + this.signature.getSignature() + " - Successfully loaded fragment " + signature);
-                }
-            }
             // Synthesize the fragment from other fragments
             List<AsmFragmentSynthesis> synths = getFragmentSyntheses();
             for (AsmFragmentSynthesis synth : synths) {
@@ -122,156 +152,17 @@ public class AsmFragmentManager {
                     candidates.addAll(synthesized);
                 }
             }
-            templateCache.put(signature, candidates);
-            return candidates;
-        }
-    }
-
-    /**
-     * An ASM fragment template usable for generating KickAssembler code for different bindings.
-     * The AsmFragmentTemplateSynthesizer can generate multiple different templates usable for a specific fragment signature.
-     */
-    public static class AsmFragmentTemplate {
-
-        /** The fragment template signature name. */
-        private String signature;
-
-        /** The fragment template body */
-        private String body;
-
-        /** true if the fragment was loaded from disk. */
-        boolean loaded;
-
-        /** The synthesis that created the fragment. null if the fragment template was loaded. */
-        private AsmFragmentSynthesis synthesis;
-
-        /** The sub fragment template that the synthesis modified to create this. null if the fragment template was loaded. */
-        private AsmFragmentTemplate subFragment;
-
-        public AsmFragmentTemplate(String signature, String body) {
-            this.signature = signature;
-            this.body = body;
-            this.loaded = true;
-        }
-
-        public AsmFragmentTemplate(String signature, String body, AsmFragmentSynthesis synthesis, AsmFragmentTemplate subFragment) {
-            this.signature = signature;
-            this.body = body;
-            this.synthesis = synthesis;
-            this.subFragment = subFragment;
-            this.loaded = false;
-        }
-
-        public String getSignature() {
-            return signature;
-        }
-
-        public String getBody() {
-            return body;
-        }
-
-        public boolean isLoaded() {
-            return loaded;
-        }
-
-        public AsmFragmentSynthesis getSynthesis() {
-            return synthesis;
-        }
-
-        public AsmFragmentTemplate getSubFragment() {
-            return subFragment;
-        }
-    }
-
-    /** AsmFragment synthesis mechanism based on matching fragment signature and reusing another fragment with added prefix/postfix and some bind-mappings */
-    private static class AsmFragmentSynthesis {
-
-        private String sigMatch;
-        private String sigAvoid;
-        private String asmPrefix;
-        private String sigReplace;
-        private String asmPostfix;
-        private Map<String, String> bindMappings;
-        private boolean mapSignature;
-        private String subSignature;
-
-        public AsmFragmentSynthesis(String sigMatch, String sigAvoid, String asmPrefix, String sigReplace, String asmPostfix, Map<String, String> bindMappings, boolean mapSignature) {
-            this.sigMatch = sigMatch;
-            this.sigAvoid = sigAvoid;
-            this.asmPrefix = asmPrefix;
-            this.sigReplace = sigReplace;
-            this.asmPostfix = asmPostfix;
-            this.bindMappings = bindMappings;
-            this.mapSignature = mapSignature;
-        }
-
-        public AsmFragmentSynthesis(String sigMatch, String sigAvoid, String asmPrefix, String sigReplace, String asmPostfix, Map<String, String> bindMappings) {
-            this(sigMatch, sigAvoid, asmPrefix, sigReplace, asmPostfix, bindMappings, true);
-        }
-
-        public List<AsmFragmentTemplate> synthesize(String signature, AsmFragmentTemplateSynthesizer synthesizer) {
-            ArrayList<AsmFragmentTemplate> candidates = new ArrayList<>();
-            if (signature.matches(sigMatch)) {
-                if (sigAvoid == null || !signature.matches(sigAvoid)) {
-                    subSignature = regexpRewriteSignature(signature, sigMatch, sigReplace);
-                    if (mapSignature && bindMappings != null) {
-                        // When mapping the signature we do the map replacement in the signature
-                        for (String bound : bindMappings.keySet()) {
-                            subSignature = subSignature.replace(bound, bindMappings.get(bound));
-                        }
-                    }
-                    List<AsmFragmentTemplate> subFragmentTemplates = synthesizer.loadOrSynthesizeFragment(subSignature);
-                    for (AsmFragmentTemplate subFragmentTemplate : subFragmentTemplates) {
-                        if (subFragmentTemplate != null) {
-                            StringBuilder newFragment = new StringBuilder();
-                            if (asmPrefix != null) {
-                                newFragment.append(asmPrefix);
-                            }
-                            String subFragment = subFragmentTemplate.getBody();
-                            if (bindMappings != null) {
-                                if (mapSignature) {
-                                    // When mapping the signature we do the reverse replacement in the ASM
-                                    List<String> reverse = new ArrayList<>(bindMappings.keySet());
-                                    Collections.reverse(reverse);
-                                    for (String bound : reverse) {
-                                        subFragment = subFragment.replace("{" + bindMappings.get(bound) + "}", "{" + bound + "}");
-                                    }
-                                } else {
-                                    // When not mapping the signature we do the replacement directly in the ASM
-                                    for (String bound : bindMappings.keySet()) {
-                                        subFragment = subFragment.replace("{" + bound + "}", "{" + bindMappings.get(bound) + "}");
-                                    }
-                                }
-                            }
-                            newFragment.append(subFragment);
-                            if (asmPostfix != null) {
-                                newFragment.append("\n");
-                                newFragment.append(asmPostfix);
-                            }
-                            candidates.add(new AsmFragmentTemplate(signature, newFragment.toString(), this, subFragmentTemplate));
-                        }
-                    }
+            // Load the fragment from disk
+            CharStream fragmentCharStream = loadFragment(signature);
+            if (fragmentCharStream != null) {
+                candidates.add(new AsmFragmentTemplate(signature, fragmentCharStream.toString()));
+                if (log.isVerboseFragmentLog()) {
+                    log.append("Finding fragment " + this.signature.getSignature() + " - Successfully loaded fragment " + signature);
                 }
             }
+            fragmentTemplateCache.put(signature, candidates);
             return candidates;
         }
-
-        public String getSubSignature() {
-            return subSignature;
-        }
-
-    }
-
-
-    private static String regexpRewriteSignature(String signature, String match, String replace) {
-        Pattern p = Pattern.compile(match);
-        Matcher m = p.matcher(signature);
-        String output = signature;
-        if (m.find()) {
-            // getReplacement first number with "number" and second number with the first
-            output = m.replaceAll(replace);
-        }
-        return output;
     }
 
 
@@ -295,34 +186,11 @@ public class AsmFragmentManager {
         }
     }
 
-    /**
-     * Parse an ASM fragment.
-     *
-     * @param fragmentCharStream The stream containing the fragment syntax
-     * @param fragmentFileName The filename (used in error messages)
-     * @return The parsed fragment ready for generating
-     * @throws IOException if the parsing/loading fails
-     */
-    public static KickCParser.AsmLinesContext parseFragment(String fragmentBody, final String fragmentFileName) {
-        CodePointCharStream fragmentCharStream = CharStreams.fromString(fragmentBody);
-        KickCLexer kickCLexer = new KickCLexer(fragmentCharStream);
-        KickCParser kickCParser = new KickCParser(new CommonTokenStream(kickCLexer));
-        kickCParser.addErrorListener(new BaseErrorListener() {
-            @Override
-            public void syntaxError(Recognizer<?, ?> recognizer, Object offendingSymbol, int line, int charPositionInLine, String msg, RecognitionException e) {
-                throw new RuntimeException("Error parsing fragment " + fragmentFileName + "\n - Line: " + line + "\n - Message: " + msg);
-            }
-        });
-        kickCParser.setBuildParseTree(true);
-        KickCParser.AsmFileContext asmFile = kickCParser.asmFile();
-        return asmFile.asmLines();
-    }
-
     public static class UnknownFragmentException extends RuntimeException {
 
         private String fragmentSignature;
 
-        public UnknownFragmentException(String signature) {
+        UnknownFragmentException(String signature) {
             super("Fragment not found " + signature + ".asm");
             this.fragmentSignature = signature;
         }
@@ -533,6 +401,7 @@ public class AsmFragmentManager {
         synths.add(new AsmFragmentSynthesis("(.*)=p..([cz].)_(plus|minus|bor|bxor)_(.*)", null, null, "$1=vwu$2_$3_$4", null, null));
         synths.add(new AsmFragmentSynthesis("p..([cz].)=(.*)_(sethi|setlo|plus|minus)_(.*)", null, null, "vwu$1=$2_$3_$4", null, null));
         synths.add(new AsmFragmentSynthesis("(.*)=p..([cz].)_(sethi|setlo|plus|minus)_(.*)", null, null, "$1=vwu$2_$3_$4", null, null));
+
         return synths;
     }
 

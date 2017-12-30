@@ -171,8 +171,8 @@ clear_screen: {
     lda #>SCREEN
     sta sc+1
   b1:
-    ldy #0
     lda #' '
+    ldy #0
     sta (sc),y
     inc sc
     bne !+

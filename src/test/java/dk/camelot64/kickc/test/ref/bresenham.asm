@@ -21,8 +21,8 @@ main: {
     lda #>SCREEN+4*$28+4
     sta cursor+1
   b1:
-    ldy #0
     lda #STAR
+    ldy #0
     sta (cursor),y
     inc x
     inc cursor

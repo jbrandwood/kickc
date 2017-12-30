@@ -16,8 +16,8 @@ main: {
     lda his,y
     sta w+1
     stx w
-    ldy #0
     lda #'*'
+    ldy #0
     sta (sc),y
     inx
     cpx #8

@@ -138,8 +138,8 @@ init_screen: {
     lda #>BITMAP
     sta b+1
   b1:
-    ldy #0
-    tya
+    lda #0
+    tay
     sta (b),y
     inc b
     bne !+
@@ -156,8 +156,8 @@ init_screen: {
     lda #>SCREEN
     sta c+1
   b2:
-    ldy #0
     lda #$14
+    ldy #0
     sta (c),y
     inc c
     bne !+

@@ -18,8 +18,8 @@ public class AsmFragment {
     /** The name of the fragment used in error messages. */
     private String name;
 
-    /** The fragment template ASM code. */
-    private KickCParser.AsmLinesContext fragmentFile;
+    /** The fragment template for the ASM code. */
+    private AsmFragmentTemplate fragmentTemplate;
 
     /** Binding of named values in the fragment to values (constants, variables, ...) . */
     private Map<String, Value> bindings;
@@ -31,11 +31,11 @@ public class AsmFragment {
             Program program,
             String name,
             ScopeRef codeScopeRef,
-            KickCParser.AsmLinesContext fragmentFile,
+            AsmFragmentTemplate fragmentTemplate,
             Map<String, Value> bindings) {
         this.program = program;
         this.name = name;
-        this.fragmentFile = fragmentFile;
+        this.fragmentTemplate = fragmentTemplate;
         this.bindings = bindings;
         this.codeScopeRef = codeScopeRef;
     }
@@ -127,7 +127,7 @@ public class AsmFragment {
      */
     public void generate(AsmProgram asm) {
         AsmSequenceGenerator asmSequenceGenerator = new AsmSequenceGenerator(name, this, asm);
-        asmSequenceGenerator.generate(fragmentFile);
+        asmSequenceGenerator.generate(fragmentTemplate.getBodyAsm());
     }
 
     private static class AsmSequenceGenerator extends KickCBaseVisitor {

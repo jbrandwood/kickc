@@ -46,9 +46,9 @@ main: {
     clc
     adc #<$28
     sta idx
-    bcc !+
-    inc idx+1
-  !:
+    lda idx+1
+    adc #>$28
+    sta idx+1
     tya
     sec
     sbc #xd

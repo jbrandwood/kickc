@@ -21,8 +21,6 @@ import java.util.regex.Pattern;
  */
 public class AsmFragmentManager {
 
-   static boolean verboseFragmentLog = false;
-
    /**
     * Cache for fragment files. Maps signature to the parsed file.
     */
@@ -44,7 +42,7 @@ public class AsmFragmentManager {
    private static KickCParser.AsmFileContext getFragmentFile(AsmFragmentSignature signature, CompileLog log) {
       KickCParser.AsmFileContext fragmentCtx = fragmentFileCache.get(signature.getSignature());
       if(fragmentCtx == UNKNOWN) {
-         if(verboseFragmentLog) {
+         if(log.isVerboseFragmentLog()) {
             log.append("Unknown fragment " + signature.getSignature());
          }
          throw new UnknownFragmentException(signature.toString());
@@ -53,7 +51,7 @@ public class AsmFragmentManager {
          FragmentSynthesizer synthesizer = new FragmentSynthesizer(signature, log);
          List<CharStream> candidates = synthesizer.loadOrSynthesizeFragment(signature.getSignature());
          if(candidates.size() == 0) {
-            if(verboseFragmentLog) {
+            if(log.isVerboseFragmentLog()) {
                log.append("Unknown fragment " + signature.toString());
             }
             fragmentFileCache.put(signature.getSignature(), UNKNOWN);
@@ -78,7 +76,7 @@ public class AsmFragmentManager {
                fragmentCtx = candidateCtx;
             }
          }
-         if(verboseFragmentLog) {
+         if(log.isVerboseFragmentLog()) {
             log.append("Found fragment   " + signature + " score: " + minScore + " from " + candidates.size() + " candidates");
          }
          fragmentFileCache.put(signature.getSignature(), fragmentCtx);
@@ -114,7 +112,7 @@ public class AsmFragmentManager {
          CharStream fragmentCharStream = loadFragment(signature);
          if(fragmentCharStream != null) {
             candidates.add(fragmentCharStream);
-            if(verboseFragmentLog) {
+            if(log.isVerboseFragmentLog()) {
                log.append("Finding fragment "+this.signature.getSignature()+" - Successfully loaded fragment " + signature);
             }
          }
@@ -123,7 +121,7 @@ public class AsmFragmentManager {
          for(FragmentSynthesis synth : synths) {
             List<CharStream> synthesized = synth.synthesize(signature, this);
             if(synthesized != null) {
-               if(verboseFragmentLog && synthesized.size() > 0) {
+               if(log.isVerboseFragmentLog() && synthesized.size() > 0) {
                   log.append("Finding fragment "+this.signature.getSignature()+" - Successfully synthesized " + synthesized.size() + " fragments " + signature + " (from " + synth.getSubSignature() + ")");
                }
                candidates.addAll(synthesized);

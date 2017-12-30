@@ -43,8 +43,8 @@ public class Compiler {
          pass4RegisterAllocation();
          pass5GenerateAndOptimizeAsm();
          return program;
-      } catch (Exception e) {
-         System.out.println("EXCEPTION DURING COMPILE "+e.getMessage());
+      } catch(Exception e) {
+         System.out.println("EXCEPTION DURING COMPILE " + e.getMessage());
          System.out.println(getLog().toString());
          throw e;
       }
@@ -54,12 +54,12 @@ public class Compiler {
       try {
          File file = loadFile(fileName, program);
          List<String> imported = program.getImported();
-         if (imported.contains(file.getAbsolutePath())) {
+         if(imported.contains(file.getAbsolutePath())) {
             return;
          }
          final CharStream fileStream = CharStreams.fromPath(file.toPath());
          imported.add(file.getAbsolutePath());
-         program.getLog().append("PARSING "+file.getPath());
+         program.getLog().append("PARSING " + file.getPath());
          program.getLog().append(fileStream.toString());
          KickCLexer lexer = new KickCLexer(fileStream);
          KickCParser parser = new KickCParser(new CommonTokenStream(lexer));
@@ -77,23 +77,23 @@ public class Compiler {
             }
          });
          pass0GenerateStatementSequence.generate(parser.file());
-      } catch (IOException e) {
+      } catch(IOException e) {
          throw new CompileError("Error loading file " + fileName, e);
       }
    }
 
    private static File loadFile(String fileName, Program program) {
-      if (!fileName.endsWith(".kc")) {
+      if(!fileName.endsWith(".kc")) {
          fileName += ".kc";
       }
       List<String> importPaths = program.getImportPaths();
-      for (String importPath : importPaths) {
-         if (!importPath.endsWith("/")) {
+      for(String importPath : importPaths) {
+         if(!importPath.endsWith("/")) {
             importPath += "/";
          }
          String filePath = importPath + fileName;
          File file = new File(filePath);
-         if (file.exists()) {
+         if(file.exists()) {
             return file;
          }
       }
@@ -163,7 +163,7 @@ public class Compiler {
       assertions.add(new Pass2AssertNoProcs(program));
       assertions.add(new Pass2AssertNoLabels(program));
       assertions.add(new Pass2AssertSingleAssignment(program));
-      for (Pass2SsaAssertion assertion : assertions) {
+      for(Pass2SsaAssertion assertion : assertions) {
          assertion.check();
       }
    }
@@ -192,18 +192,20 @@ public class Compiler {
    private void pass2OptimizeSSA(List<Pass2SsaOptimization> optimizations) {
       getLog().append("OPTIMIZING CONTROL FLOW GRAPH");
       boolean ssaOptimized = true;
-      while (ssaOptimized) {
+      while(ssaOptimized) {
          pass2AssertSSA();
          ssaOptimized = false;
-         for (Pass2SsaOptimization optimization : optimizations) {
+         for(Pass2SsaOptimization optimization : optimizations) {
             boolean stepOptimized = true;
-            while (stepOptimized) {
+            while(stepOptimized) {
                stepOptimized = optimization.step();
-               if (stepOptimized) {
+               if(stepOptimized) {
                   getLog().append("Succesful SSA optimization " + optimization.getClass().getSimpleName() + "");
                   ssaOptimized = true;
-                  //getLog().append("CONTROL FLOW GRAPH");
-                  //getLog().append(program.getGraph().toString(program));
+                  if(getLog().isVerboseSSAOptimize()) {
+                     getLog().append("CONTROL FLOW GRAPH");
+                     getLog().append(program.getGraph().toString(program));
+                  }
                }
             }
          }
@@ -294,7 +296,7 @@ public class Compiler {
       boolean change;
       do {
          change = new Pass4RegisterUpliftPotentialRegisterAnalysis(program).findPotentialRegisters();
-      } while (change);
+      } while(change);
       getLog().append(program.getRegisterPotentials().toString());
 
       // Find register uplift scopes
@@ -338,15 +340,17 @@ public class Compiler {
       pass5Optimizations.add(new Pass5UnreachableCodeElimination(program));
       pass5Optimizations.add(new Pass5RelabelLongLabels(program));
       boolean asmOptimized = true;
-      while (asmOptimized) {
+      while(asmOptimized) {
          asmOptimized = false;
-         for (Pass5AsmOptimization optimization : pass5Optimizations) {
+         for(Pass5AsmOptimization optimization : pass5Optimizations) {
             boolean stepOptimized = optimization.optimize();
-            if (stepOptimized) {
+            if(stepOptimized) {
                getLog().append("Succesful ASM optimization " + optimization.getClass().getSimpleName());
                asmOptimized = true;
-               //getLog().append("ASSEMBLER");
-               //getLog().append(program.getAsm().toString());
+               if(getLog().isVerboseAsmOptimize()) {
+                  getLog().append("ASSEMBLER");
+                  getLog().append(program.getAsm().toString());
+               }
             }
          }
       }
@@ -355,7 +359,7 @@ public class Compiler {
       getLog().append(program.getScope().getSymbolTableContents(program));
 
       getLog().append("\nFINAL ASSEMBLER");
-      getLog().append("Score: "+Pass4RegisterUpliftCombinations.getAsmScore(program)+"\n");
+      getLog().append("Score: " + Pass4RegisterUpliftCombinations.getAsmScore(program) + "\n");
       getLog().append(program.getAsm().toString());
 
    }

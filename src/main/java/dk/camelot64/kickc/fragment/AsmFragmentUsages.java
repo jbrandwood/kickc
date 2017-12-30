@@ -5,7 +5,7 @@ import dk.camelot64.kickc.CompileLog;
 import java.io.File;
 import java.util.*;
 
-/** Statistics for usage of the ASM fragments */
+/** Statistics for usage of the ASM fragments. Also contains a methos for identifying redundant/unused files. */
 public class AsmFragmentUsages {
 
     /** Usage Statistics for fragment templates. */

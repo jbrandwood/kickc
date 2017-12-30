@@ -1,6 +1,6 @@
 package dk.camelot64.kickc.asm;
 
-import dk.camelot64.kickc.fragment.AsmFragment;
+import dk.camelot64.kickc.fragment.AsmFormat;
 
 /** A labelled numeric data directive. */
 public class AsmDataFill implements AsmLine {
@@ -38,7 +38,7 @@ public class AsmDataFill implements AsmLine {
       StringBuilder asm = new StringBuilder();
       asm.append(label+": ");
       asm.append(".fill ");
-      asm.append(AsmFragment.getAsmNumber(size*type.bytes));
+      asm.append(AsmFormat.getAsmNumber(size*type.bytes));
       asm.append(", ");
       asm.append(fillValue);
       return asm.toString();

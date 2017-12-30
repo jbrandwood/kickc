@@ -1,7 +1,6 @@
 package dk.camelot64.kickc.asm;
 
-import dk.camelot64.kickc.NumberParser;
-import dk.camelot64.kickc.fragment.AsmFragment;
+import dk.camelot64.kickc.fragment.AsmFormat;
 
 /** Set the program counter */
 public class AsmSetPc implements AsmLine {
@@ -27,7 +26,7 @@ public class AsmSetPc implements AsmLine {
 
    @Override
    public String getAsm() {
-      return ".pc = "+ AsmFragment.getAsmNumber(address)+" \""+name+"\"";
+      return ".pc = "+ AsmFormat.getAsmNumber(address)+" \""+name+"\"";
    }
 
    @Override

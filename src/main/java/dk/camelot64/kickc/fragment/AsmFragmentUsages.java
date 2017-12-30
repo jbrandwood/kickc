@@ -33,7 +33,7 @@ public class AsmFragmentUsages {
      *
      * @param log The compile log to add the output to
      */
-    public static void logUsages(CompileLog log, boolean logRedundantFiles, boolean logUnusedFiles, boolean logDetails) {
+    public static void logUsages(CompileLog log, boolean logRedundantFiles, boolean logUnusedFiles, boolean logFileDetails, boolean logAllDetails) {
 
         Map<String, List<AsmFragmentTemplate>> fragmentTemplateCache = AsmFragmentManager.getFragmentTemplateCache();
         ArrayList<String> signatures = new ArrayList<>(fragmentTemplateCache.keySet());
@@ -132,22 +132,54 @@ public class AsmFragmentUsages {
             }
         }
 
-        if (logDetails) {
-            log.append("\nDETAILED ASM FRAGMENT USAGES");
+        if (logFileDetails) {
+            log.append("\nDETAILED ASM FILE USAGES");
+            // Find all file templates
+            List<AsmFragmentTemplate> fileTemplates = new ArrayList<>();
             for (String signature : signatures) {
                 List<AsmFragmentTemplate> templates = fragmentTemplateCache.get(signature);
                 for (AsmFragmentTemplate template : templates) {
-                    Integer usage = fragmentTemplateUsage.get(template);
-                    if (usage == null) usage = 0;
-                    log.append(String.format("%8d", usage) + "  " + template.getName());
+                    if (template.isFile()) {
+                        fileTemplates.add(template);
+                    }
                 }
             }
+            logTemplatesByUsage(log, fileTemplates);
+
+        }
+
+        if (logAllDetails) {
+            log.append("\nDETAILED ASM FRAGMENT USAGES");
+            List<AsmFragmentTemplate> allTemplates = new ArrayList<>();
+            for (String signature : signatures) {
+                List<AsmFragmentTemplate> templates = fragmentTemplateCache.get(signature);
+                for (AsmFragmentTemplate template : templates) {
+                    allTemplates.add(template);
+                }
+            }
+            logTemplatesByUsage(log, allTemplates);
         }
 
 
     }
 
-
+    private static void logTemplatesByUsage(CompileLog log, List<AsmFragmentTemplate> fileTemplates) {
+        // Sort by usage
+        Collections.sort(fileTemplates, (o1, o2) -> {
+                    Integer u1 = fragmentTemplateUsage.get(o1);
+                    Integer u2 = fragmentTemplateUsage.get(o2);
+                    if (u1 == null) u1 = 0;
+                    if (u2 == null) u2 = 0;
+                    return u2 - u1;
+                }
+        );
+        // Output
+        for (AsmFragmentTemplate template : fileTemplates) {
+            Integer usage = fragmentTemplateUsage.get(template);
+            if (usage == null) usage = 0;
+            log.append(String.format("%8d", usage) + "  " + (template.isFile()?"*":"")+template.getName());
+        }
+    }
 
 
 }

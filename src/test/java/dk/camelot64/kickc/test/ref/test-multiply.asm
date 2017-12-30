@@ -34,7 +34,7 @@ signed_multiply_results_compare: {
     sta ms
     lda slow_signed_multiply.return+1
     sta ms+1
-    lda b
+    lda a
     tay
     jsr signed_multiply
     lda ms
@@ -244,33 +244,30 @@ print_sbyte: {
 }
 signed_multiply: {
     .label _6 = $e
-    .label _12 = $e
     .label m = 6
     .label return = 6
-    .label a = 2
-    lda a
-    tax
-    tya
+    .label b = 3
+    sty $ff
+    ldx $ff
+    lda b
     jsr multiply
-    lda a
-    cmp #0
+    cpy #0
     bpl b1
     lda m+1
     sta _6
-    tya
+    lda b
     eor #$ff
     sec
     adc _6
     sta m+1
   b1:
-    cpy #0
+    lda b
+    cmp #0
     bpl b2
     lda m+1
-    sta _12
-    lda a
-    eor #$ff
+    sty $ff
     sec
-    adc _12
+    sbc $ff
     sta m+1
   b2:
     rts

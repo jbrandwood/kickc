@@ -411,15 +411,20 @@ public class AsmFragment {
       @Override
       public AsmParameter visitAsmExprUnary(KickCParser.AsmExprUnaryContext ctx) {
          AsmParameter sub = (AsmParameter) this.visit(ctx.asmExpr());
-         String param = ctx.getChild(0).getText() + sub.getParam();
-         return new AsmParameter(param, sub.isZp());
+         String operator = ctx.getChild(0).getText();
+         String param = operator + sub.getParam();
+         boolean isZp = sub.isZp();
+         if(operator.equals("<") || operator.equals(">")) {
+            isZp = true;
+         }
+         return new AsmParameter(param, isZp);
       }
 
       @Override
       public AsmParameter visitAsmExprInt(KickCParser.AsmExprIntContext ctx) {
          Number number = NumberParser.parseLiteral(ctx.NUMBER().getText());
          ConstantInteger intVal = new ConstantInteger(number.intValue());
-         boolean isZp = SymbolType.BYTE.equals(intVal.getType());
+         boolean isZp = SymbolType.isByte(intVal.getType()) || SymbolType.isSByte(intVal.getType()) ;
          String param = getAsmNumber(number);
          return new AsmParameter(param, isZp);
       }

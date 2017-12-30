@@ -47,6 +47,7 @@ void init_multiply() {
 }
 
 // Fast multiply two unsigned bytes to a word result
+// Done in assembler to utilize fast addition A+X
 word multiply(byte a, byte b) {
     const byte* memA = $fe;
     const byte* memB = $ff;
@@ -73,4 +74,17 @@ word multiply(byte a, byte b) {
         sta memB
     }
     return { *memB, *memA };
+}
+
+// Fast multiply of two signed bytes to a signed word
+// Fixes offsets introduced by using unsigned multiplication
+signed word signed_multiply(signed byte a, signed byte b) {
+    word m = multiply((byte)a, (byte) b);
+    if(a<0) {
+        >m = (>m)-(byte)b;
+    }
+    if(b<0) {
+        >m = (>m)-(byte)a;
+    }
+    return (signed word)m;
 }

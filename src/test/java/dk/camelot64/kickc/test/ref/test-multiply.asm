@@ -13,32 +13,30 @@ main: {
     jsr init_multiply_asm
     jsr multiply_tables_compare
     jsr multiply_results_compare
+    jsr signed_multiply_results_compare
     rts
 }
-multiply_results_compare: {
-    .label ms = $a
-    .label ma = $c
+signed_multiply_results_compare: {
+    .label ms = 8
+    .label ma = 6
     .label b = 3
     .label a = 2
-    lda #0
+    lda #-$80
     sta a
   b1:
-    lda #0
+    lda #-$80
     sta b
   b2:
-    ldx b
-    jsr slow_multiply
-    lda slow_multiply.return
-    sta ms
-    lda slow_multiply.return+1
-    sta ms+1
-    ldx a
     lda b
-    jsr multiply
-    lda multiply.return
-    sta ma
-    lda multiply.return+1
-    sta ma+1
+    tax
+    jsr slow_signed_multiply
+    lda slow_signed_multiply.return
+    sta ms
+    lda slow_signed_multiply.return+1
+    sta ms+1
+    lda b
+    tay
+    jsr signed_multiply
     lda ms
     cmp ma
     bne !+
@@ -48,49 +46,42 @@ multiply_results_compare: {
   !:
     lda #2
     sta BGCOL
-    lda #<str
-    sta print_str.str
-    lda #>str
-    sta print_str.str+1
-    jsr print_str
+    lda a
+    tax
+    lda b
+    sta signed_multiply_error.b
     lda ms
-    sta print_word.w
+    sta signed_multiply_error.ms
     lda ms+1
-    sta print_word.w+1
-    jsr print_word
-    lda #<str1
-    sta print_str.str
-    lda #>str1
-    sta print_str.str+1
-    jsr print_str
+    sta signed_multiply_error.ms+1
     lda ma
-    sta print_word.w
+    sta signed_multiply_error.ma
     lda ma+1
-    sta print_word.w+1
-    jsr print_word
+    sta signed_multiply_error.ma+1
+    jsr signed_multiply_error
   breturn:
     rts
   b3:
     inc b
     lda b
+    cmp #-$80
     bne b2
     inc a
     lda a
+    cmp #-$80
     bne b1
-    lda #<str2
-    sta print_str.str
-    lda #>str2
-    sta print_str.str+1
-    jsr print_str
-    jsr print_ln
     lda line_cursor
     sta char_cursor
     lda line_cursor+1
     sta char_cursor+1
+    lda #<str
+    sta print_str.str
+    lda #>str
+    sta print_str.str+1
+    jsr print_str
+    jsr print_ln
     jmp breturn
-    str: .text "multiply mismatch slow:@"
-    str1: .text " / fast asm:"
-    str2: .text "multiply results match!@"
+    str: .text "signed multiply results match!@"
 }
 print_ln: {
   b1:
@@ -133,6 +124,74 @@ print_str: {
   !:
     jmp b1
 }
+signed_multiply_error: {
+    .label b = 2
+    .label ms = $a
+    .label ma = $c
+    lda line_cursor
+    sta char_cursor
+    lda line_cursor+1
+    sta char_cursor+1
+    lda #<str
+    sta print_str.str
+    lda #>str
+    sta print_str.str+1
+    jsr print_str
+    jsr print_sbyte
+    lda #<str1
+    sta print_str.str
+    lda #>str1
+    sta print_str.str+1
+    jsr print_str
+    lda b
+    tax
+    jsr print_sbyte
+    lda #<str2
+    sta print_str.str
+    lda #>str2
+    sta print_str.str+1
+    jsr print_str
+    lda ms
+    sta print_sword.w
+    lda ms+1
+    sta print_sword.w+1
+    jsr print_sword
+    lda #<str3
+    sta print_str.str
+    lda #>str3
+    sta print_str.str+1
+    jsr print_str
+    lda ma
+    sta print_sword.w
+    lda ma+1
+    sta print_sword.w+1
+    jsr print_sword
+    jsr print_ln
+    rts
+    str: .text "signed multiply mismatch @"
+    str1: .text "*@"
+    str2: .text " slow:@"
+    str3: .text " / fast asm:@"
+}
+print_sword: {
+    .label w = 6
+    lda w+1
+    bpl b1
+    lda #'-'
+    jsr print_char
+    sec
+    lda w
+    eor #$ff
+    adc #0
+    sta w
+    lda w+1
+    eor #$ff
+    adc #0
+    sta w+1
+  b1:
+    jsr print_word
+    rts
+}
 print_word: {
     .label w = 6
     lda w+1
@@ -158,7 +217,7 @@ print_byte: {
     lda hextab,x
     jsr print_char
     rts
-    hextab: .byte '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'a', 'b', 'c', 'd', 'e', 'f'
+    hextab: .text "0123456789abcdef"
 }
 print_char: {
     ldy #0
@@ -167,6 +226,53 @@ print_char: {
     bne !+
     inc char_cursor+1
   !:
+    rts
+}
+print_sbyte: {
+    cpx #0
+    bpl b1
+    lda #'-'
+    jsr print_char
+    txa
+    eor #$ff
+    clc
+    adc #1
+    tax
+  b1:
+    jsr print_byte
+    rts
+}
+signed_multiply: {
+    .label _6 = $e
+    .label _12 = $e
+    .label m = 6
+    .label return = 6
+    .label a = 2
+    lda a
+    tax
+    tya
+    jsr multiply
+    lda a
+    cmp #0
+    bpl b1
+    lda m+1
+    sta _6
+    tya
+    eor #$ff
+    sec
+    adc _6
+    sta m+1
+  b1:
+    cpy #0
+    bpl b2
+    lda m+1
+    sta _12
+    lda a
+    eor #$ff
+    sec
+    adc _12
+    sta m+1
+  b2:
     rts
 }
 multiply: {
@@ -199,12 +305,174 @@ multiply: {
     sta return+1
     rts
 }
+slow_signed_multiply: {
+    .label m = 6
+    .label return = 6
+    .label a = 2
+    lda a
+    cmp #0
+    bpl b1
+    lda #0
+    tay
+    sta m
+    sta m+1
+  b2:
+    txa
+    sta $fe
+    ora #$7f
+    bmi !+
+    lda #0
+  !:
+    sta $ff
+    sec
+    lda m
+    sbc $fe
+    sta m
+    lda m+1
+    sbc $ff
+    sta m+1
+    dey
+    cpy a
+    bne b2
+    jmp b3
+  b6:
+    lda #0
+    sta return
+    sta return+1
+  b3:
+    rts
+  b1:
+    lda a
+    cmp #1
+    bmi b6
+    lda #0
+    tay
+    sta m
+    sta m+1
+  b5:
+    txa
+    sta $fe
+    ora #$7f
+    bmi !+
+    lda #0
+  !:
+    sta $ff
+    clc
+    lda m
+    adc $fe
+    sta m
+    lda m+1
+    adc $ff
+    sta m+1
+    iny
+    cpy a
+    bne b5
+    jmp b3
+}
+multiply_results_compare: {
+    .label ms = $a
+    .label ma = 6
+    .label b = 3
+    .label a = 2
+    lda #0
+    sta a
+  b1:
+    lda #0
+    sta b
+  b2:
+    ldx b
+    jsr slow_multiply
+    lda slow_multiply.return
+    sta ms
+    lda slow_multiply.return+1
+    sta ms+1
+    ldx a
+    lda b
+    jsr multiply
+    lda ms
+    cmp ma
+    bne !+
+    lda ms+1
+    cmp ma+1
+    beq b3
+  !:
+    lda #2
+    sta BGCOL
+    ldx a
+    lda b
+    sta multiply_error.b
+    lda ma
+    sta multiply_error.ma
+    lda ma+1
+    sta multiply_error.ma+1
+    jsr multiply_error
+  breturn:
+    rts
+  b3:
+    inc b
+    lda b
+    bne b2
+    inc a
+    lda a
+    bne b1
+    lda #<str
+    sta print_str.str
+    lda #>str
+    sta print_str.str+1
+    jsr print_str
+    jsr print_ln
+    jmp breturn
+    str: .text "multiply results match!@"
+}
+multiply_error: {
+    .label b = 2
+    .label ms = $a
+    .label ma = $c
+    lda #<str
+    sta print_str.str
+    lda #>str
+    sta print_str.str+1
+    jsr print_str
+    jsr print_byte
+    lda #<str1
+    sta print_str.str
+    lda #>str1
+    sta print_str.str+1
+    jsr print_str
+    ldx b
+    jsr print_byte
+    lda #<str2
+    sta print_str.str
+    lda #>str2
+    sta print_str.str+1
+    jsr print_str
+    lda ms
+    sta print_word.w
+    lda ms+1
+    sta print_word.w+1
+    jsr print_word
+    lda #<str3
+    sta print_str.str
+    lda #>str3
+    sta print_str.str+1
+    jsr print_str
+    lda ma
+    sta print_word.w
+    lda ma+1
+    sta print_word.w+1
+    jsr print_word
+    jsr print_ln
+    rts
+    str: .text "multiply mismatch @"
+    str1: .text "*@"
+    str2: .text " slow:@"
+    str3: .text " / fast asm:@"
+}
 slow_multiply: {
     .label return = 6
     .label m = 6
     .label a = 2
     lda a
-    cmp #0
     beq b3
     ldy #0
     tya
@@ -215,9 +483,9 @@ slow_multiply: {
     clc
     adc m
     sta m
-    bcc !+
-    inc m+1
-  !:
+    lda #0
+    adc m+1
+    sta m+1
     iny
     cpy a
     bne b2
@@ -414,9 +682,9 @@ init_multiply: {
     clc
     adc sqr
     sta sqr
-    bcc !+
-    inc sqr+1
-  !:
+    lda #0
+    adc sqr+1
+    sta sqr+1
     inc sqr1_lo
     bne !+
     inc sqr1_lo+1

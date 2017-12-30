@@ -231,13 +231,13 @@ public class SymbolTypeInference {
       if(SymbolType.isSByte(type1) && SymbolType.isSByte(type2)) {
          return SymbolTypeInline.NUMERIC;
       }
-      if(SymbolType.isWord(type1) && SymbolType.isWord(type2)) {
-         return SymbolTypeInline.NUMERIC;
+      if(SymbolType.isWord(type1) && (SymbolType.isWord(type2) || SymbolType.isByte(type2))) {
+         return SymbolType.WORD;
       }
-      if(SymbolType.isSWord(type1) && SymbolType.isSWord(type2)) {
-         return SymbolTypeInline.NUMERIC;
+      if(SymbolType.isSWord(type1) && (SymbolType.isSWord(type2) || SymbolType.isSByte(type2))) {
+         return SymbolType.SWORD;
       }
-      throw new RuntimeException("Type inference case not handled " + type1 + " " + "+" + " " + type2);
+      throw new RuntimeException("Type inference case not handled " + type1 + " - " + type2);
    }
 
 

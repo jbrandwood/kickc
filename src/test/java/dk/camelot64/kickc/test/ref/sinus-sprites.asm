@@ -37,7 +37,6 @@ main: {
     jmp b2
 }
 anim: {
-    .label _2 = 5
     .label xidx = 4
     .label x = 8
     .label x_msb = 5
@@ -62,8 +61,9 @@ anim: {
     lda #>$1e
     adc #0
     sta x+1
-    asl _2
-    ora x_msb
+    lda x_msb
+    asl
+    ora x+1
     sta x_msb
     lda x
     ldx j2

@@ -15,8 +15,8 @@ main: {
     clc
     adc #<screen+$28
     sta _2
-    lda #0
-    adc #>screen+$28
+    lda #>screen+$28
+    adc #0
     sta _2+1
     ldy #0
     lda (_2),y
@@ -34,15 +34,15 @@ main: {
     clc
     adc #<screen+$a0
     sta _9
-    lda #0
-    adc #>screen+$a0
+    lda #>screen+$a0
+    adc #0
     sta _9+1
     txa
     clc
     adc #<screen+$c8
     sta _11
-    lda #0
-    adc #>screen+$c8
+    lda #>screen+$c8
+    adc #0
     sta _11+1
     ldy #0
     lda (_11),y

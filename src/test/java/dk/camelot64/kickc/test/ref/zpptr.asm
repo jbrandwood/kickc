@@ -16,9 +16,9 @@ main: {
   b2:
     ldx #0
   b3:
-    lda #<zpptr
+    lda i
     clc
-    adc i
+    adc #<zpptr
     sta zpptr2
     lda #>zpptr
     adc #0

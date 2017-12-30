@@ -733,7 +733,7 @@ Uplift Scope [line] 252.5: zp ZP_BYTE:3 [ line::x#2 line::x#1 ]
 Uplift Scope [main] 34.83: zp ZP_BYTE:2 [ main::i#2 main::i#1 ] 
 Uplift Scope [] 
 
-Uplifting [plot] best 3894 combination reg byte y [ plot::x#2 plot::x#1 ] reg byte a [ plot::$0 ] reg byte x [ plot::idx#0 ] 
+Uplifting [plot] best 3894 combination reg byte x [ plot::x#2 plot::x#1 ] reg byte a [ plot::$0 ] reg byte y [ plot::idx#0 ] 
 Uplifting [line] best 3894 combination zp ZP_BYTE:3 [ line::x#2 line::x#1 ] 
 Uplifting [main] best 3744 combination reg byte x [ main::i#2 main::i#1 ] 
 Uplifting [] best 3744 combination 
@@ -829,8 +829,8 @@ line: {
     jmp b2
   //SEG32 line::@2
   b2:
-  //SEG33 [16] (byte) plot::x#1 ← (byte) line::x#2 [ line::x#2 plot::x#1 ] ( main:2::line:11 [ line::x#2 plot::x#1 ] ) -- vbuyy=vbuz1 
-    ldy x
+  //SEG33 [16] (byte) plot::x#1 ← (byte) line::x#2 [ line::x#2 plot::x#1 ] ( main:2::line:11 [ line::x#2 plot::x#1 ] ) -- vbuxx=vbuz1 
+    ldx x
   //SEG34 [17] call plot param-assignment [ line::x#2 ] ( main:2::line:11 [ line::x#2 ] )
   //SEG35 [23] phi from line::@2 to plot [phi:line::@2->plot]
   plot_from_b2:
@@ -859,21 +859,21 @@ line: {
   //SEG44 [22] call plot param-assignment [ ] ( main:2::line:11 [ ] )
   //SEG45 [23] phi from line::@1 to plot [phi:line::@1->plot]
   plot_from_b1:
-  //SEG46 [23] phi (byte) plot::x#2 = (const byte) line::x0#0 [phi:line::@1->plot#0] -- vbuyy=vbuc1 
-    ldy #x0
+  //SEG46 [23] phi (byte) plot::x#2 = (const byte) line::x0#0 [phi:line::@1->plot#0] -- vbuxx=vbuc1 
+    ldx #x0
     jsr plot
     jmp breturn
 }
 //SEG47 plot
 plot: {
-  //SEG48 [24] (byte) plot::idx#0 ← *((const byte*) plots#0 + (byte) plot::x#2) [ plot::idx#0 ] ( main:2::line:11::plot:17 [ line::x#2 plot::idx#0 ] main:2::line:11::plot:22 [ plot::idx#0 ] ) -- vbuxx=pbuc1_derefidx_vbuyy 
-    ldx plots,y
-  //SEG49 [25] (byte/word~) plot::$0 ← *((const byte*) SCREEN#0 + (byte) plot::idx#0) + (byte/signed byte/word/signed word) 1 [ plot::idx#0 plot::$0 ] ( main:2::line:11::plot:17 [ line::x#2 plot::idx#0 plot::$0 ] main:2::line:11::plot:22 [ plot::idx#0 plot::$0 ] ) -- vbuaa=pbuc1_derefidx_vbuxx_plus_1 
-    lda SCREEN,x
+  //SEG48 [24] (byte) plot::idx#0 ← *((const byte*) plots#0 + (byte) plot::x#2) [ plot::idx#0 ] ( main:2::line:11::plot:17 [ line::x#2 plot::idx#0 ] main:2::line:11::plot:22 [ plot::idx#0 ] ) -- vbuyy=pbuc1_derefidx_vbuxx 
+    ldy plots,x
+  //SEG49 [25] (byte/word~) plot::$0 ← *((const byte*) SCREEN#0 + (byte) plot::idx#0) + (byte/signed byte/word/signed word) 1 [ plot::idx#0 plot::$0 ] ( main:2::line:11::plot:17 [ line::x#2 plot::idx#0 plot::$0 ] main:2::line:11::plot:22 [ plot::idx#0 plot::$0 ] ) -- vbuaa=pbuc1_derefidx_vbuyy_plus_1 
+    lda SCREEN,y
     clc
     adc #1
-  //SEG50 [26] *((const byte*) SCREEN#0 + (byte) plot::idx#0) ← (byte/word~) plot::$0 [ ] ( main:2::line:11::plot:17 [ line::x#2 ] main:2::line:11::plot:22 [ ] ) -- pbuc1_derefidx_vbuxx=vbuaa 
-    sta SCREEN,x
+  //SEG50 [26] *((const byte*) SCREEN#0 + (byte) plot::idx#0) ← (byte/word~) plot::$0 [ ] ( main:2::line:11::plot:17 [ line::x#2 ] main:2::line:11::plot:22 [ ] ) -- pbuc1_derefidx_vbuyy=vbuaa 
+    sta SCREEN,y
     jmp breturn
   //SEG51 plot::@return
   breturn:
@@ -958,17 +958,17 @@ FINAL SYMBOL TABLE
 (byte/word~) plot::$0 reg byte a 4.0
 (label) plot::@return
 (byte) plot::idx
-(byte) plot::idx#0 reg byte x 3.0
+(byte) plot::idx#0 reg byte y 3.0
 (byte) plot::x
-(byte) plot::x#1 reg byte y 202.0
-(byte) plot::x#2 reg byte y 103.0
+(byte) plot::x#1 reg byte x 202.0
+(byte) plot::x#2 reg byte x 103.0
 (byte*) plots
 (const byte*) plots#0 plots = ((byte*))(word/signed word) 4096
 
 reg byte x [ main::i#2 main::i#1 ]
 zp ZP_BYTE:2 [ line::x#2 line::x#1 ]
-reg byte y [ plot::x#2 plot::x#1 ]
-reg byte x [ plot::idx#0 ]
+reg byte x [ plot::x#2 plot::x#1 ]
+reg byte y [ plot::idx#0 ]
 reg byte a [ plot::$0 ]
 
 
@@ -1035,8 +1035,8 @@ line: {
   //SEG31 [15] phi (byte) line::x#2 = (byte) line::x#1 [phi:line::@8->line::@2#0] -- register_copy 
   //SEG32 line::@2
   b2:
-  //SEG33 [16] (byte) plot::x#1 ← (byte) line::x#2 [ line::x#2 plot::x#1 ] ( main:2::line:11 [ line::x#2 plot::x#1 ] ) -- vbuyy=vbuz1 
-    ldy x
+  //SEG33 [16] (byte) plot::x#1 ← (byte) line::x#2 [ line::x#2 plot::x#1 ] ( main:2::line:11 [ line::x#2 plot::x#1 ] ) -- vbuxx=vbuz1 
+    ldx x
   //SEG34 [17] call plot param-assignment [ line::x#2 ] ( main:2::line:11 [ line::x#2 ] )
   //SEG35 [23] phi from line::@2 to plot [phi:line::@2->plot]
   //SEG36 [23] phi (byte) plot::x#2 = (byte) plot::x#1 [phi:line::@2->plot#0] -- register_copy 
@@ -1058,21 +1058,21 @@ line: {
   b1:
   //SEG44 [22] call plot param-assignment [ ] ( main:2::line:11 [ ] )
   //SEG45 [23] phi from line::@1 to plot [phi:line::@1->plot]
-  //SEG46 [23] phi (byte) plot::x#2 = (const byte) line::x0#0 [phi:line::@1->plot#0] -- vbuyy=vbuc1 
-    ldy #x0
+  //SEG46 [23] phi (byte) plot::x#2 = (const byte) line::x0#0 [phi:line::@1->plot#0] -- vbuxx=vbuc1 
+    ldx #x0
     jsr plot
     jmp breturn
 }
 //SEG47 plot
 plot: {
-  //SEG48 [24] (byte) plot::idx#0 ← *((const byte*) plots#0 + (byte) plot::x#2) [ plot::idx#0 ] ( main:2::line:11::plot:17 [ line::x#2 plot::idx#0 ] main:2::line:11::plot:22 [ plot::idx#0 ] ) -- vbuxx=pbuc1_derefidx_vbuyy 
-    ldx plots,y
-  //SEG49 [25] (byte/word~) plot::$0 ← *((const byte*) SCREEN#0 + (byte) plot::idx#0) + (byte/signed byte/word/signed word) 1 [ plot::idx#0 plot::$0 ] ( main:2::line:11::plot:17 [ line::x#2 plot::idx#0 plot::$0 ] main:2::line:11::plot:22 [ plot::idx#0 plot::$0 ] ) -- vbuaa=pbuc1_derefidx_vbuxx_plus_1 
-    lda SCREEN,x
+  //SEG48 [24] (byte) plot::idx#0 ← *((const byte*) plots#0 + (byte) plot::x#2) [ plot::idx#0 ] ( main:2::line:11::plot:17 [ line::x#2 plot::idx#0 ] main:2::line:11::plot:22 [ plot::idx#0 ] ) -- vbuyy=pbuc1_derefidx_vbuxx 
+    ldy plots,x
+  //SEG49 [25] (byte/word~) plot::$0 ← *((const byte*) SCREEN#0 + (byte) plot::idx#0) + (byte/signed byte/word/signed word) 1 [ plot::idx#0 plot::$0 ] ( main:2::line:11::plot:17 [ line::x#2 plot::idx#0 plot::$0 ] main:2::line:11::plot:22 [ plot::idx#0 plot::$0 ] ) -- vbuaa=pbuc1_derefidx_vbuyy_plus_1 
+    lda SCREEN,y
     clc
     adc #1
-  //SEG50 [26] *((const byte*) SCREEN#0 + (byte) plot::idx#0) ← (byte/word~) plot::$0 [ ] ( main:2::line:11::plot:17 [ line::x#2 ] main:2::line:11::plot:22 [ ] ) -- pbuc1_derefidx_vbuxx=vbuaa 
-    sta SCREEN,x
+  //SEG50 [26] *((const byte*) SCREEN#0 + (byte) plot::idx#0) ← (byte/word~) plot::$0 [ ] ( main:2::line:11::plot:17 [ line::x#2 ] main:2::line:11::plot:22 [ ] ) -- pbuc1_derefidx_vbuyy=vbuaa 
+    sta SCREEN,y
   //SEG51 plot::@return
   //SEG52 [27] return  [ ] ( main:2::line:11::plot:17 [ line::x#2 ] main:2::line:11::plot:22 [ ] )
     rts

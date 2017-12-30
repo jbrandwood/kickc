@@ -13,9 +13,9 @@ main: {
     clc
     adc w
     sta w
-    bcc !+
-    inc w+1
-  !:
+    lda #0
+    adc w+1
+    sta w+1
     inx
     cpx #$b
     bne b1

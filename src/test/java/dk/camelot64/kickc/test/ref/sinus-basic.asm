@@ -120,7 +120,7 @@ print_byte: {
     lda hextab,x
     jsr print_char
     rts
-    hextab: .byte '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'a', 'b', 'c', 'd', 'e', 'f'
+    hextab: .text "0123456789abcdef"
 }
 print_char: {
     ldy #0

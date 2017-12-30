@@ -14,13 +14,29 @@ void main() {
     init_multiply_asm();
     multiply_tables_compare();
     multiply_results_compare();
+    signed_multiply_results_compare();
 }
 
-// Perform a slow multiplication by repeated addition
+// Calculate an unsigned multiplication by repeated addition
 word slow_multiply(byte a, byte b) {
     word m = 0;
-    if(a>0) {
+    if(a!=0) {
         for(byte i = 0; i!=a; i++) {
+            m = m + b;
+        }
+    }
+    return m;
+}
+
+// Perform a signed multiplication by repeated addition/
+signed word slow_signed_multiply(signed byte a, signed byte b) {
+    signed word m = 0;
+    if(a<0) {
+        for(signed byte i = 0; i!=a; i--) {
+            m = m - b;
+        }
+    } else if (a>0) {
+        for(signed byte j = 0; j!=a; j++) {
             m = m + b;
         }
     }
@@ -106,7 +122,7 @@ void multiply_tables_compare() {
     print_ln();
 }
 
-// Perform all possible byte-multiplications (slow and ASM) and compare the results
+// Perform all possible byte multiplications (slow and fast) and compare the results
 void multiply_results_compare() {
     for(byte a: 0..255) {
         for(byte b: 0..255) {
@@ -114,14 +130,52 @@ void multiply_results_compare() {
             word ma = multiply(a,b);
             if(ms!=ma) {
                 *BGCOL = 2;
-                print_str("multiply mismatch slow:@");
-                print_word(ms);
-                print_str(" / fast asm:");
-                print_word(ma);
+                multiply_error(a,b, ms, ma);
                 return;
             }
         }
     }
     print_str("multiply results match!@");
     print_ln();
+}
+
+void multiply_error(byte a, byte b, word ms, word ma) {
+  print_str("multiply mismatch @");
+  print_byte(a);
+  print_str("*@");
+  print_byte(b);
+  print_str(" slow:@");
+  print_word(ms);
+  print_str(" / fast asm:@");
+  print_word(ma);
+  print_ln();
+}
+
+// Perform all possible signed byte multiplications (slow and fast) and compare the results
+void signed_multiply_results_compare() {
+    for(signed byte a = -128; a!=-128; a++) {
+        for(signed byte b = -128; b!=-128; b++) {
+            signed word ms = slow_signed_multiply(a, b);
+            signed word ma = signed_multiply(a,b);
+            if(ms!=ma) {
+                *BGCOL = 2;
+                signed_multiply_error(a,b, ms, ma);
+                return;
+            }
+        }
+    }
+    print_str("signed multiply results match!@");
+    print_ln();
+}
+
+void signed_multiply_error(signed byte a, signed byte b, signed word ms, signed word ma) {
+  print_str("signed multiply mismatch @");
+  print_sbyte(a);
+  print_str("*@");
+  print_sbyte(b);
+  print_str(" slow:@");
+  print_sword(ms);
+  print_str(" / fast asm:@");
+  print_sword(ma);
+  print_ln();
 }

@@ -1,2 +1,2 @@
 stx $ff
-xor $ff
+eor $ff

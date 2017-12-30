@@ -102,15 +102,15 @@ anim: {
     lda yvel_10+1
     adc #>g
     sta yvel_10+1
-    lda xpos
     clc
+    lda xpos
     adc xvel
     sta xpos
     lda xpos+1
     adc xvel+1
     sta xpos+1
-    lda ypos
     clc
+    lda ypos
     adc yvel_10
     sta ypos
     lda ypos+1

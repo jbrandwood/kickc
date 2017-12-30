@@ -27,7 +27,7 @@ line: {
     bcs b1
     sta x
   b2:
-    ldy x
+    ldx x
     jsr plot
     inc x
     lda x
@@ -37,15 +37,15 @@ line: {
   breturn:
     rts
   b1:
-    ldy #x0
+    ldx #x0
     jsr plot
     jmp breturn
 }
 plot: {
-    ldx plots,y
-    lda SCREEN,x
+    ldy plots,x
+    lda SCREEN,y
     clc
     adc #1
-    sta SCREEN,x
+    sta SCREEN,y
     rts
 }

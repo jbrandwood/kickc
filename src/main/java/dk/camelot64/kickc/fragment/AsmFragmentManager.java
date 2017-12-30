@@ -5,6 +5,7 @@ import dk.camelot64.kickc.asm.AsmProgram;
 import org.antlr.v4.runtime.CharStream;
 import org.antlr.v4.runtime.CharStreams;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
@@ -24,11 +25,12 @@ public class AsmFragmentManager {
     /** Caches all asm fragment templates for all encountered signatures. */
     private static Map<String, List<AsmFragmentTemplate>> fragmentTemplateCache = new LinkedHashMap<>();
 
-    /** Usage Statistics for fragment templates. */
-    private static Map<AsmFragmentTemplate, Integer> fragmentTemplateUsage = new HashMap<>();
-
     /** Special singleton representing that the fragment can not be synthesized or loaded. */
     private static AsmFragmentTemplate UNKNOWN = new AsmFragmentTemplate("UNKNOWN", null);
+
+    static Map<String, List<AsmFragmentTemplate>> getFragmentTemplateCache() {
+        return fragmentTemplateCache;
+    }
 
     public static AsmFragment getFragment(AsmFragmentSignature signature, CompileLog log) {
         AsmFragmentTemplate bestTemplate = bestFragmentCache.get(signature.getSignature());
@@ -39,7 +41,7 @@ public class AsmFragmentManager {
             throw new UnknownFragmentException(signature.toString());
         }
         if (bestTemplate == null) {
-            AsmFragmentTemplateSynthesizer synthesizer = new AsmFragmentTemplateSynthesizer(signature, log);
+            AsmFragmentTemplateSynthesizer synthesizer = new AsmFragmentTemplateSynthesizer(signature.getSignature(), log);
             List<AsmFragmentTemplate> candidates = synthesizer.loadOrSynthesizeFragment(signature.getSignature());
             if (candidates.size() == 0) {
                 if (log.isVerboseFragmentLog()) {
@@ -71,7 +73,7 @@ public class AsmFragmentManager {
             bestFragmentCache.put(signature.getSignature(), bestTemplate);
         }
         // Count usages
-        incUsage(bestTemplate);
+        AsmFragmentUsages.incUsage(bestTemplate);
         // Return the resulting fragment instance
         return new AsmFragment(
                 signature.getProgram(),
@@ -82,72 +84,6 @@ public class AsmFragmentManager {
     }
 
     /**
-     * Count one usage of ASM fragment templates - directly or through synthesis
-     * @param fragmentTemplate The template to increment usage of
-     */
-    private static void incUsage(AsmFragmentTemplate fragmentTemplate) {
-        Integer usage = fragmentTemplateUsage.get(fragmentTemplate);
-        if (usage == null) {
-            usage = 0;
-        }
-        fragmentTemplateUsage.put(fragmentTemplate, usage + 1);
-        AsmFragmentTemplate subFragment = fragmentTemplate.getSubFragment();
-        if (subFragment != null) {
-            incUsage(subFragment);
-        }
-    }
-
-    /**
-     * Log the usage of all template fragemnts (both loaded and synthesized).
-     * @param log The compile log to add the output to
-     */
-    public static void logUsages(CompileLog log) {
-
-        ArrayList<String> signatures = new ArrayList<>(fragmentTemplateCache.keySet());
-        Collections.sort(signatures);
-
-        /*
-        log.append("ASM FRAGMENT USAGES");
-        for (String signature : signatures) {
-            List<AsmFragmentTemplate> templates = fragmentTemplateCache.get(signature);
-            for (AsmFragmentTemplate template : templates) {
-                Integer usage = fragmentTemplateUsage.get(template);
-                if(usage==null) usage = 0;
-                log.append(String.format("%8d", usage)+"  "+template.getName());
-            }
-        }
-        */
-
-        // Find all file fragments that were bested by a synthesized fragment
-        log.append("\nREDUNDANT ASM FRAGMENT FILES - REMOVE FROM DISK");
-        for (String signature : signatures) {
-            List<AsmFragmentTemplate> templates = fragmentTemplateCache.get(signature);
-            AsmFragmentTemplate fileTemplate = null;
-            int fileUsage = 0;
-            AsmFragmentTemplate maxTemplate = null;
-            int maxUsage = 0;
-            for (AsmFragmentTemplate template : templates) {
-                Integer usage = fragmentTemplateUsage.get(template);
-                if(usage==null) usage = 0;
-                if(template.isFile()) {
-                    fileTemplate = template;
-                    fileUsage = usage;
-                }
-                if(usage>maxUsage) {
-                    maxUsage = usage;
-                    maxTemplate = template;
-                }
-            }
-            if(fileTemplate!=null && fileUsage==0 && maxUsage>0) {
-                log.append("rm "+fileTemplate.getName()+".asm #synthesized by "+maxTemplate.getName()+" - usages: "+maxUsage);
-            }
-        }
-
-
-
-    }
-
-    /**
      * Capable of creating fragments from signatures by loading them or synthesizing them from other smaller fragments.
      * <p>
      * The synthesizer tries a lot of different combinations and keeps track of what has already been attempted.
@@ -155,13 +91,13 @@ public class AsmFragmentManager {
     static class AsmFragmentTemplateSynthesizer {
 
         /** Signature of the fragment being synthesized. */
-        private AsmFragmentSignature signature;
+        private String creating;
 
         /** The log. */
         private CompileLog log;
 
-        AsmFragmentTemplateSynthesizer(AsmFragmentSignature signature, CompileLog log) {
-            this.signature = signature;
+        AsmFragmentTemplateSynthesizer(String creating, CompileLog log) {
+            this.creating = creating;
             this.log = log;
         }
 
@@ -176,7 +112,7 @@ public class AsmFragmentManager {
                 List<AsmFragmentTemplate> synthesized = synth.synthesize(signature, this);
                 if (synthesized != null) {
                     if (log.isVerboseFragmentLog() && synthesized.size() > 0) {
-                        log.append("Finding fragment " + this.signature.getSignature() + " - Successfully synthesized " + synthesized.size() + " fragments " + signature + " (from " + synth.getSubSignature() + ")");
+                        log.append("Finding fragment " + this.creating + " - Successfully synthesized " + synthesized.size() + " fragments " + signature + " (from " + synth.getSubSignature() + ")");
                     }
                     candidates.addAll(synthesized);
                 }
@@ -184,9 +120,14 @@ public class AsmFragmentManager {
             // Load the fragment from disk
             CharStream fragmentCharStream = loadFragment(signature);
             if (fragmentCharStream != null) {
-                candidates.add(new AsmFragmentTemplate(signature, fragmentCharStream.toString()));
+                try {
+                    String body = fragmentCharStream.toString();
+                    candidates.add(new AsmFragmentTemplate(signature, body));
+                } catch (StringIndexOutOfBoundsException e) {
+                    throw new RuntimeException("Problem reading fragment file " + signature, e);
+                }
                 if (log.isVerboseFragmentLog()) {
-                    log.append("Finding fragment " + this.signature.getSignature() + " - Successfully loaded fragment " + signature);
+                    log.append("Finding fragment " + this.creating + " - Successfully loaded fragment " + signature);
                 }
             }
             fragmentTemplateCache.put(signature, candidates);
@@ -213,6 +154,14 @@ public class AsmFragmentManager {
         } catch (IOException e) {
             throw new RuntimeException("Error loading fragment file " + fragmentUrl);
         }
+    }
+
+
+    static File[] allFragmentFiles() {
+        ClassLoader classLoader = AsmFragmentManager.class.getClassLoader();
+        String path = classLoader.getResource("dk/camelot64/kickc/fragment/asm/").getPath();
+        return new File(path).listFiles((dir, name) -> name.endsWith(".asm"));
+
     }
 
     public static class UnknownFragmentException extends RuntimeException {

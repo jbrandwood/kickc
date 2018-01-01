@@ -378,6 +378,9 @@ public class Pass0GenerateStatementSequence extends KickCBaseVisitor<Object> {
       } else {
          lValue = getCurrentSymbols().getVariable(varName);
       }
+      if(lValue==null) {
+         throw new CompileError("Unknown variable! "+varName);
+      }
       KickCParser.ExprContext rangeFirstCtx = ctx.expr(0);
       KickCParser.ExprContext rangeLastCtx = ctx.expr(1);
       // Find the iteration first/last & direction by evaluating first/last as constants

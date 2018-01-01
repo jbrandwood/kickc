@@ -8,12 +8,11 @@
   .const CHARSET4 = $2800
   jsr main
 main: {
-    .label _1 = 6
-    .label _11 = 9
-    .label _21 = 9
-    .label _30 = 9
-    .label chargen1 = 7
-    .label bits_gen = 6
+    .label _1 = 8
+    .label _11 = 8
+    .label _21 = 8
+    .label _30 = 8
+    .label chargen1 = 6
     .label charset4 = 4
     .label chargen = 2
     sei
@@ -57,7 +56,7 @@ main: {
     lda #0
   b2:
     asl
-    sta bits_gen
+    tax
     ldy #0
     lda (chargen),y
     and #$18
@@ -68,13 +67,15 @@ main: {
     lsr
     ora _11
     lsr
-    tax
-    lda bits_count,x
+    tay
+    lda bits_count,y
     cmp #2
     bcc b3
-    inc bits_gen
+    inx
   b3:
-    asl bits_gen
+    txa
+    asl
+    tax
     ldy #0
     lda (chargen),y
     and #6
@@ -84,13 +85,15 @@ main: {
     and #6
     lsr
     ora _21
-    tax
-    lda bits_count,x
+    tay
+    lda bits_count,y
     cmp #2
     bcc b4
-    inc bits_gen
+    inx
   b4:
-    asl bits_gen
+    txa
+    asl
+    tax
     ldy #0
     lda (chargen),y
     and #1
@@ -100,13 +103,13 @@ main: {
     lda (chargen1),y
     and #1
     ora _30
-    tax
-    lda bits_count,x
+    tay
+    lda bits_count,y
     cmp #2
     bcc b5
-    inc bits_gen
+    inx
   b5:
-    lda bits_gen
+    txa
     asl
     ldy #0
     sta (charset4),y

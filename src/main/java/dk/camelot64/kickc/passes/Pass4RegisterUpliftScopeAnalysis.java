@@ -13,6 +13,7 @@ public class Pass4RegisterUpliftScopeAnalysis extends Pass2Base {
 
    /*** Find the variable equivalence classes to attempt to uplift in each scope */
    public void findScopes() {
+
       LiveRangeEquivalenceClassSet equivalenceClassSet = getProgram().getLiveRangeEquivalenceClassSet();
       final VariableRegisterWeights registerWeights = getProgram().getVariableRegisterWeights();
 
@@ -32,23 +33,13 @@ public class Pass4RegisterUpliftScopeAnalysis extends Pass2Base {
                equivalenceClasses.add(equivalenceClass);
             }
          }
-         Collections.sort(equivalenceClasses, new Comparator<LiveRangeEquivalenceClass>() {
-            @Override
-            public int compare(LiveRangeEquivalenceClass o1, LiveRangeEquivalenceClass o2) {
-               return Double.compare(registerWeights.getTotalWeight(o2), registerWeights.getTotalWeight(o1));
-            }
-         });
+         Collections.sort(equivalenceClasses, (o1, o2) -> Double.compare(registerWeights.getTotalWeight(o2), registerWeights.getTotalWeight(o1)));
          registerUpliftScope.setEquivalenceClasses(equivalenceClasses);
       }
 
 
       List<RegisterUpliftScope> upliftScopes = registerUpliftProgram.getRegisterUpliftScopes();
-      Collections.sort(upliftScopes, new Comparator<RegisterUpliftScope>() {
-         @Override
-         public int compare(RegisterUpliftScope o1, RegisterUpliftScope o2) {
-            return Double.compare(registerWeights.getTotalWeights(o2),registerWeights.getTotalWeights(o1));
-         }
-      });
+      Collections.sort(upliftScopes, (o1, o2) -> Double.compare(registerWeights.getTotalWeights(o2),registerWeights.getTotalWeights(o1)));
       registerUpliftProgram.setRegisterUpliftScopes(upliftScopes);
 
       getProgram().setRegisterUpliftProgram(registerUpliftProgram);

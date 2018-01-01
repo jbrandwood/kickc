@@ -24,8 +24,8 @@ main: {
   b4:
     eor #$55
     tax
-    tya
     ldx k
+    tya
     sta SCREEN,x
     iny
     cpy #$65

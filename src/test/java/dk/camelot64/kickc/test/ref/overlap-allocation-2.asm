@@ -4,32 +4,33 @@
   .const SCREEN = $400
   jsr main
 main: {
-    ldy #0
+    ldx #0
   b1:
     jsr line
-    iny
-    cpy #9
+    inx
+    cpx #9
     bne b1
-    ldy #$a
+    ldx #$a
   b2:
     jsr line
-    iny
-    cpy #$13
+    inx
+    cpx #$13
     bne b2
     rts
 }
 line: {
-    tya
+    txa
+    tay
     jsr plot
-    tya
+    txa
     clc
     adc #$14
+    tay
     jsr plot
     rts
 }
 plot: {
-    tax
     lda #'*'
-    sta SCREEN,x
+    sta SCREEN,y
     rts
 }

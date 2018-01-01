@@ -124,4 +124,5 @@ public class AsmFragmentTemplate {
     public int hashCode() {
         return getName().hashCode();
     }
+
 }

@@ -20,8 +20,8 @@ main: {
     lda #0
     sta y
   b1:
-    ldx y
-    lda CHAR_A,x
+    ldy y
+    lda CHAR_A,y
     sta bits
     ldx #0
   b2:

@@ -66,15 +66,13 @@ public class AsmFragmentUsages {
                 }
             }
 
-            log.append("\nMORE REDUNDANT ASM FRAGMENT FILE ANALYSIS (if found remove them from disk)");
-
             Set<String> redundantSignatures = new LinkedHashSet<>();
             for (File file : files) {
                 String fileName = file.getName();
                 String signature = fileName.substring(0, fileName.length() - 4);
                 // Try to synthesize the fragment - and check if the synthesis is as good as the file body
                 AsmFragmentManager.AsmFragmentTemplateSynthesizer synthesizer = new AsmFragmentManager.AsmFragmentTemplateSynthesizer(signature, log);
-                List<AsmFragmentTemplate> templates = synthesizer.loadOrSynthesizeFragment(signature);
+                List<AsmFragmentTemplate> templates = synthesizer.loadOrSynthesizeFragment(signature, new AsmFragmentManager.AsmSynthesisPath());
                 AsmFragmentTemplate fileTemplate = null;
                 for (AsmFragmentTemplate template : templates) {
                     if (template.isFile()) {

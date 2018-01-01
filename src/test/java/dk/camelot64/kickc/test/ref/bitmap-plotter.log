@@ -1843,12 +1843,12 @@ plots: {
   //SEG35 plots::@1
   b1:
   //SEG36 [19] (byte) plot::x#0 ← *((const byte[]) plots_x#0 + (byte) plots::i#2) [ plots::i#2 plot::x#0 ] ( main:2::plots:13 [ plots::i#2 plot::x#0 ] ) -- vbuz1=pbuc1_derefidx_vbuz2 
-    ldx i
-    lda plots_x,x
+    ldy i
+    lda plots_x,y
     sta plot.x
   //SEG37 [20] (byte) plot::y#0 ← *((const byte[]) plots_y#0 + (byte) plots::i#2) [ plots::i#2 plot::x#0 plot::y#0 ] ( main:2::plots:13 [ plots::i#2 plot::x#0 plot::y#0 ] ) -- vbuz1=pbuc1_derefidx_vbuz2 
-    ldx i
-    lda plots_y,x
+    ldy i
+    lda plots_y,y
     sta plot.y
   //SEG38 [21] call plot param-assignment [ plots::i#2 ] ( main:2::plots:13 [ plots::i#2 ] )
     jsr plot
@@ -1882,8 +1882,8 @@ plot: {
     .label plotter_y_2 = $18
     .label plotter = $1a
   //SEG45 [25] (byte~) plot::$6 ← *((const byte[256]) plot_xhi#0 + (byte) plot::x#0) [ plot::x#0 plot::y#0 plot::$6 ] ( main:2::plots:13::plot:21 [ plots::i#2 plot::x#0 plot::y#0 plot::$6 ] ) -- vbuz1=pbuc1_derefidx_vbuz2 
-    ldx x
-    lda plot_xhi,x
+    ldy x
+    lda plot_xhi,y
     sta _6
   //SEG46 [26] (byte*) plot::plotter_x#1 ← ((byte*))(byte/signed byte/word/signed word) 0 hi= (byte~) plot::$6 [ plot::x#0 plot::y#0 plot::plotter_x#1 ] ( main:2::plots:13::plot:21 [ plots::i#2 plot::x#0 plot::y#0 plot::plotter_x#1 ] ) -- pbuz1=pbuc1_sethi_vbuz2 
     lda _6
@@ -1891,8 +1891,8 @@ plot: {
     lda #<0
     sta plotter_x
   //SEG47 [27] (byte~) plot::$7 ← *((const byte[256]) plot_xlo#0 + (byte) plot::x#0) [ plot::x#0 plot::y#0 plot::plotter_x#1 plot::$7 ] ( main:2::plots:13::plot:21 [ plots::i#2 plot::x#0 plot::y#0 plot::plotter_x#1 plot::$7 ] ) -- vbuz1=pbuc1_derefidx_vbuz2 
-    ldx x
-    lda plot_xlo,x
+    ldy x
+    lda plot_xlo,y
     sta _7
   //SEG48 [28] (byte*) plot::plotter_x#2 ← (byte*) plot::plotter_x#1 lo= (byte~) plot::$7 [ plot::x#0 plot::y#0 plot::plotter_x#2 ] ( main:2::plots:13::plot:21 [ plots::i#2 plot::x#0 plot::y#0 plot::plotter_x#2 ] ) -- pbuz1=pbuz2_setlo_vbuz3 
     lda _7
@@ -1900,8 +1900,8 @@ plot: {
     lda plotter_x+1
     sta plotter_x_2+1
   //SEG49 [29] (byte~) plot::$8 ← *((const byte[256]) plot_yhi#0 + (byte) plot::y#0) [ plot::x#0 plot::y#0 plot::plotter_x#2 plot::$8 ] ( main:2::plots:13::plot:21 [ plots::i#2 plot::x#0 plot::y#0 plot::plotter_x#2 plot::$8 ] ) -- vbuz1=pbuc1_derefidx_vbuz2 
-    ldx y
-    lda plot_yhi,x
+    ldy y
+    lda plot_yhi,y
     sta _8
   //SEG50 [30] (word) plot::plotter_y#1 ← (byte/signed byte/word/signed word) 0 hi= (byte~) plot::$8 [ plot::x#0 plot::y#0 plot::plotter_x#2 plot::plotter_y#1 ] ( main:2::plots:13::plot:21 [ plots::i#2 plot::x#0 plot::y#0 plot::plotter_x#2 plot::plotter_y#1 ] ) -- vwuz1=vbuc1_sethi_vbuz2 
     lda _8
@@ -1909,8 +1909,8 @@ plot: {
     lda #<0
     sta plotter_y
   //SEG51 [31] (byte~) plot::$9 ← *((const byte[256]) plot_ylo#0 + (byte) plot::y#0) [ plot::x#0 plot::plotter_x#2 plot::plotter_y#1 plot::$9 ] ( main:2::plots:13::plot:21 [ plots::i#2 plot::x#0 plot::plotter_x#2 plot::plotter_y#1 plot::$9 ] ) -- vbuz1=pbuc1_derefidx_vbuz2 
-    ldx y
-    lda plot_ylo,x
+    ldy y
+    lda plot_ylo,y
     sta _9
   //SEG52 [32] (word) plot::plotter_y#2 ← (word) plot::plotter_y#1 lo= (byte~) plot::$9 [ plot::x#0 plot::plotter_x#2 plot::plotter_y#2 ] ( main:2::plots:13::plot:21 [ plots::i#2 plot::x#0 plot::plotter_x#2 plot::plotter_y#2 ] ) -- vwuz1=vwuz2_setlo_vbuz3 
     lda _9
@@ -1926,10 +1926,10 @@ plot: {
     adc plotter_x_2+1
     sta plotter_y_2+1
   //SEG54 [34] (byte~) plot::$5 ← *((byte*) plot::plotter#0) | *((const byte[256]) plot_bit#0 + (byte) plot::x#0) [ plot::plotter#0 plot::$5 ] ( main:2::plots:13::plot:21 [ plots::i#2 plot::plotter#0 plot::$5 ] ) -- vbuz1=_deref_pbuz2_bor_pbuc1_derefidx_vbuz3 
+    ldy x
+    lda plot_bit,y
     ldy #0
-    lda (plotter),y
-    ldx x
-    ora plot_bit,x
+    ora (plotter),y
     sta _5
   //SEG55 [35] *((byte*) plot::plotter#0) ← (byte~) plot::$5 [ ] ( main:2::plots:13::plot:21 [ plots::i#2 ] ) -- _deref_pbuz1=vbuz2 
     lda _5
@@ -1974,17 +1974,17 @@ init_plot_tables: {
     and #$f8
     sta _0
   //SEG67 [40] *((const byte[256]) plot_xlo#0 + (byte) init_plot_tables::x#2) ← (byte~) init_plot_tables::$0 [ init_plot_tables::x#2 init_plot_tables::bits#3 ] ( main:2::init_plot_tables:10 [ init_plot_tables::x#2 init_plot_tables::bits#3 ] ) -- pbuc1_derefidx_vbuz1=vbuz2 
+    ldy x
     lda _0
-    ldx x
-    sta plot_xlo,x
+    sta plot_xlo,y
   //SEG68 [41] *((const byte[256]) plot_xhi#0 + (byte) init_plot_tables::x#2) ← >(const byte*) BITMAP#0 [ init_plot_tables::x#2 init_plot_tables::bits#3 ] ( main:2::init_plot_tables:10 [ init_plot_tables::x#2 init_plot_tables::bits#3 ] ) -- pbuc1_derefidx_vbuz1=vbuc2 
+    ldy x
     lda #>BITMAP
-    ldx x
-    sta plot_xhi,x
+    sta plot_xhi,y
   //SEG69 [42] *((const byte[256]) plot_bit#0 + (byte) init_plot_tables::x#2) ← (byte) init_plot_tables::bits#3 [ init_plot_tables::x#2 init_plot_tables::bits#3 ] ( main:2::init_plot_tables:10 [ init_plot_tables::x#2 init_plot_tables::bits#3 ] ) -- pbuc1_derefidx_vbuz1=vbuz2 
+    ldy x
     lda bits
-    ldx x
-    sta plot_bit,x
+    sta plot_bit,y
   //SEG70 [43] (byte) init_plot_tables::bits#1 ← (byte) init_plot_tables::bits#3 >> (byte/signed byte/word/signed word) 1 [ init_plot_tables::x#2 init_plot_tables::bits#1 ] ( main:2::init_plot_tables:10 [ init_plot_tables::x#2 init_plot_tables::bits#1 ] ) -- vbuz1=vbuz1_ror_1 
     lsr bits
   //SEG71 [44] if((byte) init_plot_tables::bits#1!=(byte/signed byte/word/signed word) 0) goto init_plot_tables::@10 [ init_plot_tables::x#2 init_plot_tables::bits#1 ] ( main:2::init_plot_tables:10 [ init_plot_tables::x#2 init_plot_tables::bits#1 ] ) -- vbuz1_neq_0_then_la1 
@@ -2033,16 +2033,16 @@ init_plot_tables: {
     ora _7
     sta _8
   //SEG87 [52] *((const byte[256]) plot_ylo#0 + (byte) init_plot_tables::y#2) ← (byte~) init_plot_tables::$8 [ init_plot_tables::y#2 init_plot_tables::yoffs#2 ] ( main:2::init_plot_tables:10 [ init_plot_tables::y#2 init_plot_tables::yoffs#2 ] ) -- pbuc1_derefidx_vbuz1=vbuz2 
+    ldy y
     lda _8
-    ldx y
-    sta plot_ylo,x
+    sta plot_ylo,y
   //SEG88 [53] (byte~) init_plot_tables::$9 ← > (byte*) init_plot_tables::yoffs#2 [ init_plot_tables::y#2 init_plot_tables::yoffs#2 init_plot_tables::$9 ] ( main:2::init_plot_tables:10 [ init_plot_tables::y#2 init_plot_tables::yoffs#2 init_plot_tables::$9 ] ) -- vbuz1=_hi_pbuz2 
     lda yoffs+1
     sta _9
   //SEG89 [54] *((const byte[256]) plot_yhi#0 + (byte) init_plot_tables::y#2) ← (byte~) init_plot_tables::$9 [ init_plot_tables::y#2 init_plot_tables::yoffs#2 ] ( main:2::init_plot_tables:10 [ init_plot_tables::y#2 init_plot_tables::yoffs#2 ] ) -- pbuc1_derefidx_vbuz1=vbuz2 
+    ldy y
     lda _9
-    ldx y
-    sta plot_yhi,x
+    sta plot_yhi,y
   //SEG90 [55] (byte~) init_plot_tables::$10 ← (byte) init_plot_tables::y#2 & (byte/signed byte/word/signed word) 7 [ init_plot_tables::y#2 init_plot_tables::yoffs#2 init_plot_tables::$10 ] ( main:2::init_plot_tables:10 [ init_plot_tables::y#2 init_plot_tables::yoffs#2 init_plot_tables::$10 ] ) -- vbuz1=vbuz2_band_vbuc1 
     lda y
     and #7
@@ -2252,29 +2252,33 @@ Uplift Scope [plot] 15: zp ZP_BYTE:13 [ plot::y#0 ] 9.73: zp ZP_BYTE:12 [ plot::
 Uplift Scope [main] 
 Uplift Scope [] 
 
-Uplifting [plots] best 10471 combination zp ZP_BYTE:2 [ plots::i#2 plots::i#1 ] 
+Uplifting [plots] best 8971 combination reg byte x [ plots::i#2 plots::i#1 ] 
 Uplift attempts [init_plot_tables] 10000/138240 (limiting to 10000)
-Uplifting [init_plot_tables] best 9841 combination zp ZP_WORD:6 [ init_plot_tables::yoffs#2 init_plot_tables::yoffs#4 init_plot_tables::yoffs#1 ] reg byte y [ init_plot_tables::bits#3 init_plot_tables::bits#4 init_plot_tables::bits#1 ] reg byte x [ init_plot_tables::x#2 init_plot_tables::x#1 ] reg byte x [ init_plot_tables::y#2 init_plot_tables::y#1 ] reg byte a [ init_plot_tables::$0 ] reg byte a [ init_plot_tables::$7 ] reg byte a [ init_plot_tables::$8 ] reg byte a [ init_plot_tables::$9 ] zp ZP_BYTE:34 [ init_plot_tables::$10 ] zp ZP_BYTE:30 [ init_plot_tables::$6 ] 
+Uplifting [init_plot_tables] best 8341 combination zp ZP_WORD:6 [ init_plot_tables::yoffs#2 init_plot_tables::yoffs#4 init_plot_tables::yoffs#1 ] reg byte y [ init_plot_tables::bits#3 init_plot_tables::bits#4 init_plot_tables::bits#1 ] reg byte x [ init_plot_tables::x#2 init_plot_tables::x#1 ] reg byte x [ init_plot_tables::y#2 init_plot_tables::y#1 ] reg byte a [ init_plot_tables::$0 ] reg byte a [ init_plot_tables::$7 ] reg byte a [ init_plot_tables::$8 ] reg byte a [ init_plot_tables::$9 ] zp ZP_BYTE:34 [ init_plot_tables::$10 ] zp ZP_BYTE:30 [ init_plot_tables::$6 ] 
 Limited combination testing to 10000 combinations of 138240 possible.
-Uplifting [init_screen] best 9841 combination zp ZP_WORD:8 [ init_screen::b#2 init_screen::b#1 ] zp ZP_WORD:10 [ init_screen::c#2 init_screen::c#1 ] 
-Uplifting [plot] best 9396 combination reg byte x [ plot::y#0 ] reg byte y [ plot::x#0 ] reg byte a [ plot::$6 ] reg byte a [ plot::$7 ] reg byte a [ plot::$8 ] reg byte a [ plot::$9 ] zp ZP_WORD:24 [ plot::plotter_y#2 ] reg byte a [ plot::$5 ] zp ZP_WORD:26 [ plot::plotter#0 ] zp ZP_WORD:15 [ plot::plotter_x#1 ] zp ZP_WORD:21 [ plot::plotter_y#1 ] zp ZP_WORD:18 [ plot::plotter_x#2 ] 
-Uplifting [main] best 9396 combination 
-Uplifting [] best 9396 combination 
-Attempting to uplift remaining variables inzp ZP_BYTE:2 [ plots::i#2 plots::i#1 ]
-Uplifting [plots] best 9396 combination zp ZP_BYTE:2 [ plots::i#2 plots::i#1 ] 
+Uplifting [init_screen] best 8341 combination zp ZP_WORD:8 [ init_screen::b#2 init_screen::b#1 ] zp ZP_WORD:10 [ init_screen::c#2 init_screen::c#1 ] 
+Uplifting [plot] best 8311 combination zp ZP_BYTE:13 [ plot::y#0 ] zp ZP_BYTE:12 [ plot::x#0 ] reg byte a [ plot::$6 ] reg byte a [ plot::$7 ] reg byte a [ plot::$8 ] reg byte a [ plot::$9 ] zp ZP_WORD:24 [ plot::plotter_y#2 ] reg byte a [ plot::$5 ] zp ZP_WORD:26 [ plot::plotter#0 ] zp ZP_WORD:15 [ plot::plotter_x#1 ] zp ZP_WORD:21 [ plot::plotter_y#1 ] zp ZP_WORD:18 [ plot::plotter_x#2 ] 
+Uplifting [main] best 8311 combination 
+Uplifting [] best 8311 combination 
 Attempting to uplift remaining variables inzp ZP_BYTE:34 [ init_plot_tables::$10 ]
-Uplifting [init_plot_tables] best 9336 combination reg byte a [ init_plot_tables::$10 ] 
+Uplifting [init_plot_tables] best 8251 combination reg byte a [ init_plot_tables::$10 ] 
+Attempting to uplift remaining variables inzp ZP_BYTE:13 [ plot::y#0 ]
+Uplifting [plot] best 8251 combination zp ZP_BYTE:13 [ plot::y#0 ] 
 Attempting to uplift remaining variables inzp ZP_BYTE:30 [ init_plot_tables::$6 ]
-Uplifting [init_plot_tables] best 9336 combination zp ZP_BYTE:30 [ init_plot_tables::$6 ] 
-Coalescing zero page register [ zp ZP_BYTE:2 [ plots::i#2 plots::i#1 ] ] with [ zp ZP_BYTE:30 [ init_plot_tables::$6 ] ]
+Uplifting [init_plot_tables] best 8251 combination zp ZP_BYTE:30 [ init_plot_tables::$6 ] 
+Attempting to uplift remaining variables inzp ZP_BYTE:12 [ plot::x#0 ]
+Uplifting [plot] best 8251 combination zp ZP_BYTE:12 [ plot::x#0 ] 
 Coalescing zero page register [ zp ZP_WORD:6 [ init_plot_tables::yoffs#2 init_plot_tables::yoffs#4 init_plot_tables::yoffs#1 ] ] with [ zp ZP_WORD:8 [ init_screen::b#2 init_screen::b#1 ] ]
 Coalescing zero page register [ zp ZP_WORD:6 [ init_plot_tables::yoffs#2 init_plot_tables::yoffs#4 init_plot_tables::yoffs#1 init_screen::b#2 init_screen::b#1 ] ] with [ zp ZP_WORD:10 [ init_screen::c#2 init_screen::c#1 ] ]
 Coalescing zero page register [ zp ZP_WORD:6 [ init_plot_tables::yoffs#2 init_plot_tables::yoffs#4 init_plot_tables::yoffs#1 init_screen::b#2 init_screen::b#1 init_screen::c#2 init_screen::c#1 ] ] with [ zp ZP_WORD:15 [ plot::plotter_x#1 ] ]
 Coalescing zero page register [ zp ZP_WORD:6 [ init_plot_tables::yoffs#2 init_plot_tables::yoffs#4 init_plot_tables::yoffs#1 init_screen::b#2 init_screen::b#1 init_screen::c#2 init_screen::c#1 plot::plotter_x#1 ] ] with [ zp ZP_WORD:18 [ plot::plotter_x#2 ] ]
 Coalescing zero page register [ zp ZP_WORD:6 [ init_plot_tables::yoffs#2 init_plot_tables::yoffs#4 init_plot_tables::yoffs#1 init_screen::b#2 init_screen::b#1 init_screen::c#2 init_screen::c#1 plot::plotter_x#1 plot::plotter_x#2 ] ] with [ zp ZP_WORD:26 [ plot::plotter#0 ] ]
+Coalescing zero page register [ zp ZP_BYTE:12 [ plot::x#0 ] ] with [ zp ZP_BYTE:30 [ init_plot_tables::$6 ] ]
 Coalescing zero page register [ zp ZP_WORD:21 [ plot::plotter_y#1 ] ] with [ zp ZP_WORD:24 [ plot::plotter_y#2 ] ]
-Allocated (was zp ZP_WORD:6) zp ZP_WORD:3 [ init_plot_tables::yoffs#2 init_plot_tables::yoffs#4 init_plot_tables::yoffs#1 init_screen::b#2 init_screen::b#1 init_screen::c#2 init_screen::c#1 plot::plotter_x#1 plot::plotter_x#2 plot::plotter#0 ]
-Allocated (was zp ZP_WORD:21) zp ZP_WORD:5 [ plot::plotter_y#1 plot::plotter_y#2 ]
+Allocated (was zp ZP_WORD:6) zp ZP_WORD:2 [ init_plot_tables::yoffs#2 init_plot_tables::yoffs#4 init_plot_tables::yoffs#1 init_screen::b#2 init_screen::b#1 init_screen::c#2 init_screen::c#1 plot::plotter_x#1 plot::plotter_x#2 plot::plotter#0 ]
+Allocated (was zp ZP_BYTE:12) zp ZP_BYTE:4 [ plot::x#0 init_plot_tables::$6 ]
+Allocated (was zp ZP_BYTE:13) zp ZP_BYTE:5 [ plot::y#0 ]
+Allocated (was zp ZP_WORD:21) zp ZP_WORD:6 [ plot::plotter_y#1 plot::plotter_y#2 ]
 
 ASSEMBLER BEFORE OPTIMIZATION
 //SEG0 Basic Upstart
@@ -2365,12 +2369,10 @@ main: {
 }
 //SEG30 plots
 plots: {
-    .label i = 2
   //SEG31 [18] phi from plots to plots::@1 [phi:plots->plots::@1]
   b1_from_plots:
-  //SEG32 [18] phi (byte) plots::i#2 = (byte/signed byte/word/signed word) 0 [phi:plots->plots::@1#0] -- vbuz1=vbuc1 
-    lda #0
-    sta i
+  //SEG32 [18] phi (byte) plots::i#2 = (byte/signed byte/word/signed word) 0 [phi:plots->plots::@1#0] -- vbuxx=vbuc1 
+    ldx #0
     jmp b1
   //SEG33 [18] phi from plots::@3 to plots::@1 [phi:plots::@3->plots::@1]
   b1_from_b3:
@@ -2378,23 +2380,21 @@ plots: {
     jmp b1
   //SEG35 plots::@1
   b1:
-  //SEG36 [19] (byte) plot::x#0 ← *((const byte[]) plots_x#0 + (byte) plots::i#2) [ plots::i#2 plot::x#0 ] ( main:2::plots:13 [ plots::i#2 plot::x#0 ] ) -- vbuyy=pbuc1_derefidx_vbuz1 
-    ldx i
-    ldy plots_x,x
-  //SEG37 [20] (byte) plot::y#0 ← *((const byte[]) plots_y#0 + (byte) plots::i#2) [ plots::i#2 plot::x#0 plot::y#0 ] ( main:2::plots:13 [ plots::i#2 plot::x#0 plot::y#0 ] ) -- vbuxx=pbuc1_derefidx_vbuz1 
-    ldx i
+  //SEG36 [19] (byte) plot::x#0 ← *((const byte[]) plots_x#0 + (byte) plots::i#2) [ plots::i#2 plot::x#0 ] ( main:2::plots:13 [ plots::i#2 plot::x#0 ] ) -- vbuz1=pbuc1_derefidx_vbuxx 
+    lda plots_x,x
+    sta plot.x
+  //SEG37 [20] (byte) plot::y#0 ← *((const byte[]) plots_y#0 + (byte) plots::i#2) [ plots::i#2 plot::x#0 plot::y#0 ] ( main:2::plots:13 [ plots::i#2 plot::x#0 plot::y#0 ] ) -- vbuz1=pbuc1_derefidx_vbuxx 
     lda plots_y,x
-    tax
+    sta plot.y
   //SEG38 [21] call plot param-assignment [ plots::i#2 ] ( main:2::plots:13 [ plots::i#2 ] )
     jsr plot
     jmp b3
   //SEG39 plots::@3
   b3:
-  //SEG40 [22] (byte) plots::i#1 ← ++ (byte) plots::i#2 [ plots::i#1 ] ( main:2::plots:13 [ plots::i#1 ] ) -- vbuz1=_inc_vbuz1 
-    inc i
-  //SEG41 [23] if((byte) plots::i#1<(const byte) plots_cnt#0) goto plots::@1 [ plots::i#1 ] ( main:2::plots:13 [ plots::i#1 ] ) -- vbuz1_lt_vbuc1_then_la1 
-    lda i
-    cmp #plots_cnt
+  //SEG40 [22] (byte) plots::i#1 ← ++ (byte) plots::i#2 [ plots::i#1 ] ( main:2::plots:13 [ plots::i#1 ] ) -- vbuxx=_inc_vbuxx 
+    inx
+  //SEG41 [23] if((byte) plots::i#1<(const byte) plots_cnt#0) goto plots::@1 [ plots::i#1 ] ( main:2::plots:13 [ plots::i#1 ] ) -- vbuxx_lt_vbuc1_then_la1 
+    cpx #plots_cnt
     bcc b1_from_b3
     jmp breturn
   //SEG42 plots::@return
@@ -2404,27 +2404,33 @@ plots: {
 }
 //SEG44 plot
 plot: {
-    .label plotter_x = 3
-    .label plotter_y = 5
-    .label plotter = 3
-  //SEG45 [25] (byte~) plot::$6 ← *((const byte[256]) plot_xhi#0 + (byte) plot::x#0) [ plot::x#0 plot::y#0 plot::$6 ] ( main:2::plots:13::plot:21 [ plots::i#2 plot::x#0 plot::y#0 plot::$6 ] ) -- vbuaa=pbuc1_derefidx_vbuyy 
+    .label x = 4
+    .label y = 5
+    .label plotter_x = 2
+    .label plotter_y = 6
+    .label plotter = 2
+  //SEG45 [25] (byte~) plot::$6 ← *((const byte[256]) plot_xhi#0 + (byte) plot::x#0) [ plot::x#0 plot::y#0 plot::$6 ] ( main:2::plots:13::plot:21 [ plots::i#2 plot::x#0 plot::y#0 plot::$6 ] ) -- vbuaa=pbuc1_derefidx_vbuz1 
+    ldy x
     lda plot_xhi,y
   //SEG46 [26] (byte*) plot::plotter_x#1 ← ((byte*))(byte/signed byte/word/signed word) 0 hi= (byte~) plot::$6 [ plot::x#0 plot::y#0 plot::plotter_x#1 ] ( main:2::plots:13::plot:21 [ plots::i#2 plot::x#0 plot::y#0 plot::plotter_x#1 ] ) -- pbuz1=pbuc1_sethi_vbuaa 
     sta plotter_x+1
     lda #<0
     sta plotter_x
-  //SEG47 [27] (byte~) plot::$7 ← *((const byte[256]) plot_xlo#0 + (byte) plot::x#0) [ plot::x#0 plot::y#0 plot::plotter_x#1 plot::$7 ] ( main:2::plots:13::plot:21 [ plots::i#2 plot::x#0 plot::y#0 plot::plotter_x#1 plot::$7 ] ) -- vbuaa=pbuc1_derefidx_vbuyy 
+  //SEG47 [27] (byte~) plot::$7 ← *((const byte[256]) plot_xlo#0 + (byte) plot::x#0) [ plot::x#0 plot::y#0 plot::plotter_x#1 plot::$7 ] ( main:2::plots:13::plot:21 [ plots::i#2 plot::x#0 plot::y#0 plot::plotter_x#1 plot::$7 ] ) -- vbuaa=pbuc1_derefidx_vbuz1 
+    ldy x
     lda plot_xlo,y
   //SEG48 [28] (byte*) plot::plotter_x#2 ← (byte*) plot::plotter_x#1 lo= (byte~) plot::$7 [ plot::x#0 plot::y#0 plot::plotter_x#2 ] ( main:2::plots:13::plot:21 [ plots::i#2 plot::x#0 plot::y#0 plot::plotter_x#2 ] ) -- pbuz1=pbuz1_setlo_vbuaa 
     sta plotter_x
-  //SEG49 [29] (byte~) plot::$8 ← *((const byte[256]) plot_yhi#0 + (byte) plot::y#0) [ plot::x#0 plot::y#0 plot::plotter_x#2 plot::$8 ] ( main:2::plots:13::plot:21 [ plots::i#2 plot::x#0 plot::y#0 plot::plotter_x#2 plot::$8 ] ) -- vbuaa=pbuc1_derefidx_vbuxx 
-    lda plot_yhi,x
+  //SEG49 [29] (byte~) plot::$8 ← *((const byte[256]) plot_yhi#0 + (byte) plot::y#0) [ plot::x#0 plot::y#0 plot::plotter_x#2 plot::$8 ] ( main:2::plots:13::plot:21 [ plots::i#2 plot::x#0 plot::y#0 plot::plotter_x#2 plot::$8 ] ) -- vbuaa=pbuc1_derefidx_vbuz1 
+    ldy y
+    lda plot_yhi,y
   //SEG50 [30] (word) plot::plotter_y#1 ← (byte/signed byte/word/signed word) 0 hi= (byte~) plot::$8 [ plot::x#0 plot::y#0 plot::plotter_x#2 plot::plotter_y#1 ] ( main:2::plots:13::plot:21 [ plots::i#2 plot::x#0 plot::y#0 plot::plotter_x#2 plot::plotter_y#1 ] ) -- vwuz1=vbuc1_sethi_vbuaa 
     sta plotter_y+1
     lda #<0
     sta plotter_y
-  //SEG51 [31] (byte~) plot::$9 ← *((const byte[256]) plot_ylo#0 + (byte) plot::y#0) [ plot::x#0 plot::plotter_x#2 plot::plotter_y#1 plot::$9 ] ( main:2::plots:13::plot:21 [ plots::i#2 plot::x#0 plot::plotter_x#2 plot::plotter_y#1 plot::$9 ] ) -- vbuaa=pbuc1_derefidx_vbuxx 
-    lda plot_ylo,x
+  //SEG51 [31] (byte~) plot::$9 ← *((const byte[256]) plot_ylo#0 + (byte) plot::y#0) [ plot::x#0 plot::plotter_x#2 plot::plotter_y#1 plot::$9 ] ( main:2::plots:13::plot:21 [ plots::i#2 plot::x#0 plot::plotter_x#2 plot::plotter_y#1 plot::$9 ] ) -- vbuaa=pbuc1_derefidx_vbuz1 
+    ldy y
+    lda plot_ylo,y
   //SEG52 [32] (word) plot::plotter_y#2 ← (word) plot::plotter_y#1 lo= (byte~) plot::$9 [ plot::x#0 plot::plotter_x#2 plot::plotter_y#2 ] ( main:2::plots:13::plot:21 [ plots::i#2 plot::x#0 plot::plotter_x#2 plot::plotter_y#2 ] ) -- vwuz1=vwuz1_setlo_vbuaa 
     sta plotter_y
   //SEG53 [33] (byte*) plot::plotter#0 ← (byte*) plot::plotter_x#2 + (word) plot::plotter_y#2 [ plot::x#0 plot::plotter#0 ] ( main:2::plots:13::plot:21 [ plots::i#2 plot::x#0 plot::plotter#0 ] ) -- pbuz1=pbuz1_plus_vwuz2 
@@ -2435,7 +2441,8 @@ plot: {
     lda plotter+1
     adc plotter_y+1
     sta plotter+1
-  //SEG54 [34] (byte~) plot::$5 ← *((byte*) plot::plotter#0) | *((const byte[256]) plot_bit#0 + (byte) plot::x#0) [ plot::plotter#0 plot::$5 ] ( main:2::plots:13::plot:21 [ plots::i#2 plot::plotter#0 plot::$5 ] ) -- vbuaa=_deref_pbuz1_bor_pbuc1_derefidx_vbuyy 
+  //SEG54 [34] (byte~) plot::$5 ← *((byte*) plot::plotter#0) | *((const byte[256]) plot_bit#0 + (byte) plot::x#0) [ plot::plotter#0 plot::$5 ] ( main:2::plots:13::plot:21 [ plots::i#2 plot::plotter#0 plot::$5 ] ) -- vbuaa=_deref_pbuz1_bor_pbuc1_derefidx_vbuz2 
+    ldy x
     lda plot_bit,y
     ldy #0
     ora (plotter),y
@@ -2450,8 +2457,8 @@ plot: {
 }
 //SEG58 init_plot_tables
 init_plot_tables: {
-    .label _6 = 2
-    .label yoffs = 3
+    .label _6 = 4
+    .label yoffs = 2
   //SEG59 [38] phi from init_plot_tables to init_plot_tables::@1 [phi:init_plot_tables->init_plot_tables::@1]
   b1_from_init_plot_tables:
   //SEG60 [38] phi (byte) init_plot_tables::bits#3 = (byte/word/signed word) 128 [phi:init_plot_tables->init_plot_tables::@1#0] -- vbuyy=vbuc1 
@@ -2573,8 +2580,8 @@ init_plot_tables: {
 }
 //SEG105 init_screen
 init_screen: {
-    .label b = 3
-    .label c = 3
+    .label b = 2
+    .label c = 2
   //SEG106 [64] phi from init_screen to init_screen::@1 [phi:init_screen->init_screen::@1]
   b1_from_init_screen:
   //SEG107 [64] phi (byte*) init_screen::b#2 = (const byte*) BITMAP#0 [phi:init_screen->init_screen::@1#0] -- pbuz1=pbuc1 
@@ -2673,7 +2680,8 @@ Removing instruction jmp b2
 Removing instruction jmp breturn
 Succesful ASM optimization Pass5NextJumpElimination
 Removing instruction lda #0
-Removing instruction ldx i
+Removing instruction ldy x
+Removing instruction ldy y
 Removing instruction ldy #0
 Removing instruction lda #>0
 Replacing instruction ldx #0 with TAX
@@ -2766,7 +2774,7 @@ FINAL SYMBOL TABLE
 (void()) init_plot_tables()
 (byte~) init_plot_tables::$0 reg byte a 22.0
 (byte~) init_plot_tables::$10 reg byte a 22.0
-(byte~) init_plot_tables::$6 $6 zp ZP_BYTE:2 11.0
+(byte~) init_plot_tables::$6 $6 zp ZP_BYTE:4 11.0
 (byte~) init_plot_tables::$7 reg byte a 22.0
 (byte~) init_plot_tables::$8 reg byte a 22.0
 (byte~) init_plot_tables::$9 reg byte a 22.0
@@ -2788,19 +2796,19 @@ FINAL SYMBOL TABLE
 (byte) init_plot_tables::y#1 reg byte x 16.5
 (byte) init_plot_tables::y#2 reg byte x 6.0
 (byte*) init_plot_tables::yoffs
-(byte*) init_plot_tables::yoffs#1 yoffs zp ZP_WORD:3 22.0
-(byte*) init_plot_tables::yoffs#2 yoffs zp ZP_WORD:3 6.111111111111112
-(byte*) init_plot_tables::yoffs#4 yoffs zp ZP_WORD:3 11.0
+(byte*) init_plot_tables::yoffs#1 yoffs zp ZP_WORD:2 22.0
+(byte*) init_plot_tables::yoffs#2 yoffs zp ZP_WORD:2 6.111111111111112
+(byte*) init_plot_tables::yoffs#4 yoffs zp ZP_WORD:2 11.0
 (void()) init_screen()
 (label) init_screen::@1
 (label) init_screen::@2
 (label) init_screen::@return
 (byte*) init_screen::b
-(byte*) init_screen::b#1 b zp ZP_WORD:3 16.5
-(byte*) init_screen::b#2 b zp ZP_WORD:3 16.5
+(byte*) init_screen::b#1 b zp ZP_WORD:2 16.5
+(byte*) init_screen::b#2 b zp ZP_WORD:2 16.5
 (byte*) init_screen::c
-(byte*) init_screen::c#1 c zp ZP_WORD:3 16.5
-(byte*) init_screen::c#2 c zp ZP_WORD:3 16.5
+(byte*) init_screen::c#1 c zp ZP_WORD:2 16.5
+(byte*) init_screen::c#2 c zp ZP_WORD:2 16.5
 (void()) main()
 (label) main::@2
 (label) main::@3
@@ -2815,17 +2823,17 @@ FINAL SYMBOL TABLE
 (byte~) plot::$9 reg byte a 4.0
 (label) plot::@return
 (byte*) plot::plotter
-(byte*) plot::plotter#0 plotter zp ZP_WORD:3 3.0
+(byte*) plot::plotter#0 plotter zp ZP_WORD:2 3.0
 (byte*) plot::plotter_x
-(byte*) plot::plotter_x#1 plotter_x zp ZP_WORD:3 2.0
-(byte*) plot::plotter_x#2 plotter_x zp ZP_WORD:3 0.8
+(byte*) plot::plotter_x#1 plotter_x zp ZP_WORD:2 2.0
+(byte*) plot::plotter_x#2 plotter_x zp ZP_WORD:2 0.8
 (word) plot::plotter_y
-(word) plot::plotter_y#1 plotter_y zp ZP_WORD:5 2.0
-(word) plot::plotter_y#2 plotter_y zp ZP_WORD:5 4.0
+(word) plot::plotter_y#1 plotter_y zp ZP_WORD:6 2.0
+(word) plot::plotter_y#2 plotter_y zp ZP_WORD:6 4.0
 (byte) plot::x
-(byte) plot::x#0 reg byte y 9.727272727272727
+(byte) plot::x#0 x zp ZP_BYTE:4 9.727272727272727
 (byte) plot::y
-(byte) plot::y#0 reg byte x 15.000000000000002
+(byte) plot::y#0 y zp ZP_BYTE:5 15.000000000000002
 (byte[256]) plot_bit
 (const byte[256]) plot_bit#0 plot_bit = { fill( 256, 0) }
 (byte[256]) plot_xhi
@@ -2841,8 +2849,8 @@ FINAL SYMBOL TABLE
 (label) plots::@3
 (label) plots::@return
 (byte) plots::i
-(byte) plots::i#1 i zp ZP_BYTE:2 151.5
-(byte) plots::i#2 i zp ZP_BYTE:2 101.0
+(byte) plots::i#1 reg byte x 151.5
+(byte) plots::i#2 reg byte x 101.0
 (byte) plots_cnt
 (const byte) plots_cnt#0 plots_cnt = (byte/signed byte/word/signed word) 8
 (byte[]) plots_x
@@ -2850,17 +2858,17 @@ FINAL SYMBOL TABLE
 (byte[]) plots_y
 (const byte[]) plots_y#0 plots_y = { (byte/signed byte/word/signed word) 10, (byte/signed byte/word/signed word) 40, (byte/signed byte/word/signed word) 60, (byte/signed byte/word/signed word) 80, (byte/signed byte/word/signed word) 110, (byte/signed byte/word/signed word) 80, (byte/signed byte/word/signed word) 60, (byte/signed byte/word/signed word) 40 }
 
-zp ZP_BYTE:2 [ plots::i#2 plots::i#1 init_plot_tables::$6 ]
+reg byte x [ plots::i#2 plots::i#1 ]
 reg byte x [ init_plot_tables::x#2 init_plot_tables::x#1 ]
 reg byte y [ init_plot_tables::bits#3 init_plot_tables::bits#4 init_plot_tables::bits#1 ]
 reg byte x [ init_plot_tables::y#2 init_plot_tables::y#1 ]
-zp ZP_WORD:3 [ init_plot_tables::yoffs#2 init_plot_tables::yoffs#4 init_plot_tables::yoffs#1 init_screen::b#2 init_screen::b#1 init_screen::c#2 init_screen::c#1 plot::plotter_x#1 plot::plotter_x#2 plot::plotter#0 ]
-reg byte y [ plot::x#0 ]
-reg byte x [ plot::y#0 ]
+zp ZP_WORD:2 [ init_plot_tables::yoffs#2 init_plot_tables::yoffs#4 init_plot_tables::yoffs#1 init_screen::b#2 init_screen::b#1 init_screen::c#2 init_screen::c#1 plot::plotter_x#1 plot::plotter_x#2 plot::plotter#0 ]
+zp ZP_BYTE:4 [ plot::x#0 init_plot_tables::$6 ]
+zp ZP_BYTE:5 [ plot::y#0 ]
 reg byte a [ plot::$6 ]
 reg byte a [ plot::$7 ]
 reg byte a [ plot::$8 ]
-zp ZP_WORD:5 [ plot::plotter_y#1 plot::plotter_y#2 ]
+zp ZP_WORD:6 [ plot::plotter_y#1 plot::plotter_y#2 ]
 reg byte a [ plot::$9 ]
 reg byte a [ plot::$5 ]
 reg byte a [ init_plot_tables::$0 ]
@@ -2871,7 +2879,7 @@ reg byte a [ init_plot_tables::$10 ]
 
 
 FINAL ASSEMBLER
-Score: 6996
+Score: 6205
 
 //SEG0 Basic Upstart
 .pc = $801 "Basic"
@@ -2939,29 +2947,26 @@ main: {
 }
 //SEG30 plots
 plots: {
-    .label i = 2
   //SEG31 [18] phi from plots to plots::@1 [phi:plots->plots::@1]
-  //SEG32 [18] phi (byte) plots::i#2 = (byte/signed byte/word/signed word) 0 [phi:plots->plots::@1#0] -- vbuz1=vbuc1 
-    lda #0
-    sta i
+  //SEG32 [18] phi (byte) plots::i#2 = (byte/signed byte/word/signed word) 0 [phi:plots->plots::@1#0] -- vbuxx=vbuc1 
+    ldx #0
   //SEG33 [18] phi from plots::@3 to plots::@1 [phi:plots::@3->plots::@1]
   //SEG34 [18] phi (byte) plots::i#2 = (byte) plots::i#1 [phi:plots::@3->plots::@1#0] -- register_copy 
   //SEG35 plots::@1
   b1:
-  //SEG36 [19] (byte) plot::x#0 ← *((const byte[]) plots_x#0 + (byte) plots::i#2) [ plots::i#2 plot::x#0 ] ( main:2::plots:13 [ plots::i#2 plot::x#0 ] ) -- vbuyy=pbuc1_derefidx_vbuz1 
-    ldx i
-    ldy plots_x,x
-  //SEG37 [20] (byte) plot::y#0 ← *((const byte[]) plots_y#0 + (byte) plots::i#2) [ plots::i#2 plot::x#0 plot::y#0 ] ( main:2::plots:13 [ plots::i#2 plot::x#0 plot::y#0 ] ) -- vbuxx=pbuc1_derefidx_vbuz1 
+  //SEG36 [19] (byte) plot::x#0 ← *((const byte[]) plots_x#0 + (byte) plots::i#2) [ plots::i#2 plot::x#0 ] ( main:2::plots:13 [ plots::i#2 plot::x#0 ] ) -- vbuz1=pbuc1_derefidx_vbuxx 
+    lda plots_x,x
+    sta plot.x
+  //SEG37 [20] (byte) plot::y#0 ← *((const byte[]) plots_y#0 + (byte) plots::i#2) [ plots::i#2 plot::x#0 plot::y#0 ] ( main:2::plots:13 [ plots::i#2 plot::x#0 plot::y#0 ] ) -- vbuz1=pbuc1_derefidx_vbuxx 
     lda plots_y,x
-    tax
+    sta plot.y
   //SEG38 [21] call plot param-assignment [ plots::i#2 ] ( main:2::plots:13 [ plots::i#2 ] )
     jsr plot
   //SEG39 plots::@3
-  //SEG40 [22] (byte) plots::i#1 ← ++ (byte) plots::i#2 [ plots::i#1 ] ( main:2::plots:13 [ plots::i#1 ] ) -- vbuz1=_inc_vbuz1 
-    inc i
-  //SEG41 [23] if((byte) plots::i#1<(const byte) plots_cnt#0) goto plots::@1 [ plots::i#1 ] ( main:2::plots:13 [ plots::i#1 ] ) -- vbuz1_lt_vbuc1_then_la1 
-    lda i
-    cmp #plots_cnt
+  //SEG40 [22] (byte) plots::i#1 ← ++ (byte) plots::i#2 [ plots::i#1 ] ( main:2::plots:13 [ plots::i#1 ] ) -- vbuxx=_inc_vbuxx 
+    inx
+  //SEG41 [23] if((byte) plots::i#1<(const byte) plots_cnt#0) goto plots::@1 [ plots::i#1 ] ( main:2::plots:13 [ plots::i#1 ] ) -- vbuxx_lt_vbuc1_then_la1 
+    cpx #plots_cnt
     bcc b1
   //SEG42 plots::@return
   //SEG43 [24] return  [ ] ( main:2::plots:13 [ ] )
@@ -2969,27 +2974,31 @@ plots: {
 }
 //SEG44 plot
 plot: {
-    .label plotter_x = 3
-    .label plotter_y = 5
-    .label plotter = 3
-  //SEG45 [25] (byte~) plot::$6 ← *((const byte[256]) plot_xhi#0 + (byte) plot::x#0) [ plot::x#0 plot::y#0 plot::$6 ] ( main:2::plots:13::plot:21 [ plots::i#2 plot::x#0 plot::y#0 plot::$6 ] ) -- vbuaa=pbuc1_derefidx_vbuyy 
+    .label x = 4
+    .label y = 5
+    .label plotter_x = 2
+    .label plotter_y = 6
+    .label plotter = 2
+  //SEG45 [25] (byte~) plot::$6 ← *((const byte[256]) plot_xhi#0 + (byte) plot::x#0) [ plot::x#0 plot::y#0 plot::$6 ] ( main:2::plots:13::plot:21 [ plots::i#2 plot::x#0 plot::y#0 plot::$6 ] ) -- vbuaa=pbuc1_derefidx_vbuz1 
+    ldy x
     lda plot_xhi,y
   //SEG46 [26] (byte*) plot::plotter_x#1 ← ((byte*))(byte/signed byte/word/signed word) 0 hi= (byte~) plot::$6 [ plot::x#0 plot::y#0 plot::plotter_x#1 ] ( main:2::plots:13::plot:21 [ plots::i#2 plot::x#0 plot::y#0 plot::plotter_x#1 ] ) -- pbuz1=pbuc1_sethi_vbuaa 
     sta plotter_x+1
     lda #<0
     sta plotter_x
-  //SEG47 [27] (byte~) plot::$7 ← *((const byte[256]) plot_xlo#0 + (byte) plot::x#0) [ plot::x#0 plot::y#0 plot::plotter_x#1 plot::$7 ] ( main:2::plots:13::plot:21 [ plots::i#2 plot::x#0 plot::y#0 plot::plotter_x#1 plot::$7 ] ) -- vbuaa=pbuc1_derefidx_vbuyy 
+  //SEG47 [27] (byte~) plot::$7 ← *((const byte[256]) plot_xlo#0 + (byte) plot::x#0) [ plot::x#0 plot::y#0 plot::plotter_x#1 plot::$7 ] ( main:2::plots:13::plot:21 [ plots::i#2 plot::x#0 plot::y#0 plot::plotter_x#1 plot::$7 ] ) -- vbuaa=pbuc1_derefidx_vbuz1 
     lda plot_xlo,y
   //SEG48 [28] (byte*) plot::plotter_x#2 ← (byte*) plot::plotter_x#1 lo= (byte~) plot::$7 [ plot::x#0 plot::y#0 plot::plotter_x#2 ] ( main:2::plots:13::plot:21 [ plots::i#2 plot::x#0 plot::y#0 plot::plotter_x#2 ] ) -- pbuz1=pbuz1_setlo_vbuaa 
     sta plotter_x
-  //SEG49 [29] (byte~) plot::$8 ← *((const byte[256]) plot_yhi#0 + (byte) plot::y#0) [ plot::x#0 plot::y#0 plot::plotter_x#2 plot::$8 ] ( main:2::plots:13::plot:21 [ plots::i#2 plot::x#0 plot::y#0 plot::plotter_x#2 plot::$8 ] ) -- vbuaa=pbuc1_derefidx_vbuxx 
-    lda plot_yhi,x
+  //SEG49 [29] (byte~) plot::$8 ← *((const byte[256]) plot_yhi#0 + (byte) plot::y#0) [ plot::x#0 plot::y#0 plot::plotter_x#2 plot::$8 ] ( main:2::plots:13::plot:21 [ plots::i#2 plot::x#0 plot::y#0 plot::plotter_x#2 plot::$8 ] ) -- vbuaa=pbuc1_derefidx_vbuz1 
+    ldy y
+    lda plot_yhi,y
   //SEG50 [30] (word) plot::plotter_y#1 ← (byte/signed byte/word/signed word) 0 hi= (byte~) plot::$8 [ plot::x#0 plot::y#0 plot::plotter_x#2 plot::plotter_y#1 ] ( main:2::plots:13::plot:21 [ plots::i#2 plot::x#0 plot::y#0 plot::plotter_x#2 plot::plotter_y#1 ] ) -- vwuz1=vbuc1_sethi_vbuaa 
     sta plotter_y+1
     lda #<0
     sta plotter_y
-  //SEG51 [31] (byte~) plot::$9 ← *((const byte[256]) plot_ylo#0 + (byte) plot::y#0) [ plot::x#0 plot::plotter_x#2 plot::plotter_y#1 plot::$9 ] ( main:2::plots:13::plot:21 [ plots::i#2 plot::x#0 plot::plotter_x#2 plot::plotter_y#1 plot::$9 ] ) -- vbuaa=pbuc1_derefidx_vbuxx 
-    lda plot_ylo,x
+  //SEG51 [31] (byte~) plot::$9 ← *((const byte[256]) plot_ylo#0 + (byte) plot::y#0) [ plot::x#0 plot::plotter_x#2 plot::plotter_y#1 plot::$9 ] ( main:2::plots:13::plot:21 [ plots::i#2 plot::x#0 plot::plotter_x#2 plot::plotter_y#1 plot::$9 ] ) -- vbuaa=pbuc1_derefidx_vbuz1 
+    lda plot_ylo,y
   //SEG52 [32] (word) plot::plotter_y#2 ← (word) plot::plotter_y#1 lo= (byte~) plot::$9 [ plot::x#0 plot::plotter_x#2 plot::plotter_y#2 ] ( main:2::plots:13::plot:21 [ plots::i#2 plot::x#0 plot::plotter_x#2 plot::plotter_y#2 ] ) -- vwuz1=vwuz1_setlo_vbuaa 
     sta plotter_y
   //SEG53 [33] (byte*) plot::plotter#0 ← (byte*) plot::plotter_x#2 + (word) plot::plotter_y#2 [ plot::x#0 plot::plotter#0 ] ( main:2::plots:13::plot:21 [ plots::i#2 plot::x#0 plot::plotter#0 ] ) -- pbuz1=pbuz1_plus_vwuz2 
@@ -3000,7 +3009,8 @@ plot: {
     lda plotter+1
     adc plotter_y+1
     sta plotter+1
-  //SEG54 [34] (byte~) plot::$5 ← *((byte*) plot::plotter#0) | *((const byte[256]) plot_bit#0 + (byte) plot::x#0) [ plot::plotter#0 plot::$5 ] ( main:2::plots:13::plot:21 [ plots::i#2 plot::plotter#0 plot::$5 ] ) -- vbuaa=_deref_pbuz1_bor_pbuc1_derefidx_vbuyy 
+  //SEG54 [34] (byte~) plot::$5 ← *((byte*) plot::plotter#0) | *((const byte[256]) plot_bit#0 + (byte) plot::x#0) [ plot::plotter#0 plot::$5 ] ( main:2::plots:13::plot:21 [ plots::i#2 plot::plotter#0 plot::$5 ] ) -- vbuaa=_deref_pbuz1_bor_pbuc1_derefidx_vbuz2 
+    ldy x
     lda plot_bit,y
     ldy #0
     ora (plotter),y
@@ -3012,8 +3022,8 @@ plot: {
 }
 //SEG58 init_plot_tables
 init_plot_tables: {
-    .label _6 = 2
-    .label yoffs = 3
+    .label _6 = 4
+    .label yoffs = 2
   //SEG59 [38] phi from init_plot_tables to init_plot_tables::@1 [phi:init_plot_tables->init_plot_tables::@1]
   //SEG60 [38] phi (byte) init_plot_tables::bits#3 = (byte/word/signed word) 128 [phi:init_plot_tables->init_plot_tables::@1#0] -- vbuyy=vbuc1 
     ldy #$80
@@ -3112,8 +3122,8 @@ init_plot_tables: {
 }
 //SEG105 init_screen
 init_screen: {
-    .label b = 3
-    .label c = 3
+    .label b = 2
+    .label c = 2
   //SEG106 [64] phi from init_screen to init_screen::@1 [phi:init_screen->init_screen::@1]
   //SEG107 [64] phi (byte*) init_screen::b#2 = (const byte*) BITMAP#0 [phi:init_screen->init_screen::@1#0] -- pbuz1=pbuc1 
     lda #<BITMAP

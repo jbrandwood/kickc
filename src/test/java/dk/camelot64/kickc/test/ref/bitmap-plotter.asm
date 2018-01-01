@@ -33,36 +33,37 @@ main: {
     jmp b2
 }
 plots: {
-    .label i = 2
-    lda #0
-    sta i
+    ldx #0
   b1:
-    ldx i
-    ldy plots_x,x
+    lda plots_x,x
+    sta plot.x
     lda plots_y,x
-    tax
+    sta plot.y
     jsr plot
-    inc i
-    lda i
-    cmp #plots_cnt
+    inx
+    cpx #plots_cnt
     bcc b1
     rts
 }
 plot: {
-    .label plotter_x = 3
-    .label plotter_y = 5
-    .label plotter = 3
+    .label x = 4
+    .label y = 5
+    .label plotter_x = 2
+    .label plotter_y = 6
+    .label plotter = 2
+    ldy x
     lda plot_xhi,y
     sta plotter_x+1
     lda #<0
     sta plotter_x
     lda plot_xlo,y
     sta plotter_x
-    lda plot_yhi,x
+    ldy y
+    lda plot_yhi,y
     sta plotter_y+1
     lda #<0
     sta plotter_y
-    lda plot_ylo,x
+    lda plot_ylo,y
     sta plotter_y
     lda plotter
     clc
@@ -71,6 +72,7 @@ plot: {
     lda plotter+1
     adc plotter_y+1
     sta plotter+1
+    ldy x
     lda plot_bit,y
     ldy #0
     ora (plotter),y
@@ -78,8 +80,8 @@ plot: {
     rts
 }
 init_plot_tables: {
-    .label _6 = 2
-    .label yoffs = 3
+    .label _6 = 4
+    .label yoffs = 2
     ldy #$80
     ldx #0
   b1:
@@ -131,8 +133,8 @@ init_plot_tables: {
     rts
 }
 init_screen: {
-    .label b = 3
-    .label c = 3
+    .label b = 2
+    .label c = 2
     lda #<BITMAP
     sta b
     lda #>BITMAP

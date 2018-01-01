@@ -19,7 +19,7 @@
   .const sinlen_x = $dd
   .const sinlen_y = $c5
   .const sprites = $2000
-  .label progress_idx = 4
+  .label progress_idx = 3
   .label progress_cursor = $a
   .label sin_idx_x = 2
   .label sin_idx_y = 3
@@ -38,23 +38,22 @@ main: {
 }
 anim: {
     .label xidx = 4
+    .label yidx = 6
     .label x = 8
     .label x_msb = 5
-    .label j2 = 6
     .label j = 7
     inc BORDERCOL
     lda sin_idx_x
     sta xidx
-    ldy sin_idx_y
+    lda sin_idx_y
+    sta yidx
     lda #0
     sta j
-    lda #$c
-    sta j2
-    lda #0
+    ldx #$c
     sta x_msb
   b1:
-    ldx xidx
-    lda sintab_x,x
+    ldy xidx
+    lda sintab_x,y
     clc
     adc #<$1e
     sta x
@@ -66,8 +65,8 @@ anim: {
     ora x+1
     sta x_msb
     lda x
-    ldx j2
     sta SPRITES_XPOS,x
+    ldy yidx
     lda sintab_y,y
     sta SPRITES_YPOS,x
     lda xidx
@@ -80,21 +79,20 @@ anim: {
     sbc #sinlen_x
     sta xidx
   b2:
-    tya
+    lda yidx
     clc
     adc #8
-    tay
-    cpy #sinlen_y
+    sta yidx
+    cmp #sinlen_y
     bcc b3
-    tya
     sec
     sbc #sinlen_y
-    tay
+    sta yidx
   b3:
-    lda j2
+    txa
     sec
     sbc #2
-    sta j2
+    tax
     inc j
     lda j
     cmp #7
@@ -144,7 +142,8 @@ init: {
     sta gen_sintab.length
     lda #0
     sta gen_sintab.min
-    ldx #$ff
+    lda #$ff
+    sta gen_sintab.max
     jsr gen_sintab
     lda #<SCREEN+$28
     sta progress_init.line
@@ -159,7 +158,8 @@ init: {
     sta gen_sintab.length
     lda #$32
     sta gen_sintab.min
-    ldx #$d0
+    lda #$d0
+    sta gen_sintab.max
     jsr gen_sintab
     jsr clear_screen
     rts
@@ -192,10 +192,11 @@ gen_sintab: {
     .const f_2pi = $e2e5
     .label _23 = $c
     .label i = 2
-    .label min = 2
-    .label length = 3
+    .label max = 2
+    .label min = 3
+    .label length = 4
     .label sintab = 8
-    txa
+    lda max
     sta setFAC.w
     lda #0
     sta setFAC.w+1
@@ -314,8 +315,8 @@ progress_inc: {
     lda #0
     sta progress_idx
   b1:
-    ldx progress_idx
-    lda progress_chars,x
+    ldy progress_idx
+    lda progress_chars,y
     ldy #0
     sta (progress_cursor),y
     rts
@@ -406,8 +407,9 @@ gen_sprites: {
     lda #0
     sta i
   b1:
-    ldx i
-    ldy cml,x
+    ldy i
+    lda cml,y
+    sta gen_chargen_sprite.ch
     lda spr
     sta gen_chargen_sprite.sprite
     lda spr+1
@@ -430,6 +432,7 @@ gen_sprites: {
 gen_chargen_sprite: {
     .label _0 = $c
     .label _1 = $c
+    .label ch = 3
     .label sprite = $a
     .label chargen = $c
     .label bits = 4
@@ -437,7 +440,7 @@ gen_chargen_sprite: {
     .label x = 5
     .label y = 3
     .label c = 6
-    tya
+    lda ch
     sta _0
     lda #0
     sta _0+1

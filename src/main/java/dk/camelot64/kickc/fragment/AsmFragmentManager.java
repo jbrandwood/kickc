@@ -42,7 +42,7 @@ public class AsmFragmentManager {
         }
         if (bestTemplate == null) {
             AsmFragmentTemplateSynthesizer synthesizer = new AsmFragmentTemplateSynthesizer(signature.getSignature(), log);
-            List<AsmFragmentTemplate> candidates = synthesizer.loadOrSynthesizeFragment(signature.getSignature());
+            List<AsmFragmentTemplate> candidates = synthesizer.loadOrSynthesizeFragment(signature.getSignature(), new AsmSynthesisPath());
             if (candidates.size() == 0) {
                 if (log.isVerboseFragmentLog()) {
                     log.append("Unknown fragment " + signature.toString());
@@ -51,6 +51,8 @@ public class AsmFragmentManager {
                 throw new UnknownFragmentException(signature.toString());
             }
             double minScore = Double.MAX_VALUE;
+            double maxScore = Double.MIN_VALUE;
+            AsmFragmentTemplate maxTemplate = null;
             for (AsmFragmentTemplate candidateTemplate : candidates) {
                 AsmFragment candidateFragment = new AsmFragment(
                         signature.getProgram(),
@@ -66,9 +68,13 @@ public class AsmFragmentManager {
                     minScore = score;
                     bestTemplate = candidateTemplate;
                 }
+                if (score > maxScore) {
+                    maxScore = score;
+                    maxTemplate = candidateTemplate;
+                }
             }
             if (log.isVerboseFragmentLog()) {
-                log.append("Found fragment   " + signature + " score: " + minScore + " from " + candidates.size() + " candidates");
+                log.append("Found fragment   " + bestTemplate.getName() + " score: " + minScore + " from " + candidates.size() + " candidates");
             }
             bestFragmentCache.put(signature.getSignature(), bestTemplate);
         }
@@ -81,6 +87,49 @@ public class AsmFragmentManager {
                 signature.getCodeScope(),
                 bestTemplate,
                 signature.getBindings());
+    }
+
+
+    /**
+     * The synthesis path describes the different signatures being attempted to synthesize a fragment.
+     * Used to avoid infinite loops during synthesis.
+     */
+    static class AsmSynthesisPath {
+
+        private ArrayDeque<String> signatures;
+
+        public AsmSynthesisPath() {
+            this.signatures = new ArrayDeque<>();
+        }
+
+        private AsmSynthesisPath(ArrayDeque<String> signatures) {
+            this.signatures = signatures;
+        }
+
+        AsmSynthesisPath add(String signature) {
+            ArrayDeque<String> signatures = new ArrayDeque<>(this.signatures);
+            signatures.add(signature);
+            return new AsmSynthesisPath(signatures);
+        }
+
+        boolean has(String signature) {
+            return signatures.contains(signature);
+        }
+
+        @Override
+        public String toString() {
+            StringBuilder str = new StringBuilder();
+            boolean first = true;
+            for (String signature : signatures) {
+                if (first) {
+                    first = false;
+                } else {
+                    str.append(" < ");
+                }
+                str.append(signature);
+            }
+            return str.toString();
+        }
     }
 
     /**
@@ -101,18 +150,33 @@ public class AsmFragmentManager {
             this.log = log;
         }
 
-        List<AsmFragmentTemplate> loadOrSynthesizeFragment(String signature) {
+        List<AsmFragmentTemplate> loadOrSynthesizeFragment(String signature, AsmSynthesisPath path) {
+            if (path.has(signature)) {
+                // Synthesis loop - stop it here
+                if (log.isVerboseFragmentLog()) {
+                    log.append("Finding fragment " + path.toString() + " - Stopping synthesis loop at " + signature);
+                }
+                return new ArrayList<>();
+            }
+            // Add the current signature to the path
+            path = path.add(signature);
             if (fragmentTemplateCache.get(signature) != null) {
+                if (log.isVerboseFragmentLog()) {
+                    log.append("Finding fragment " + path.toString() + " - Using cached " + signature);
+                }
                 return fragmentTemplateCache.get(signature);
+            }
+            if (log.isVerboseFragmentLog()) {
+                log.append("Finding fragment " + path.toString() + " - Attempting  " + signature);
             }
             List<AsmFragmentTemplate> candidates = new ArrayList<>();
             // Synthesize the fragment from other fragments
             List<AsmFragmentSynthesis> synths = getFragmentSyntheses();
             for (AsmFragmentSynthesis synth : synths) {
-                List<AsmFragmentTemplate> synthesized = synth.synthesize(signature, this);
+                List<AsmFragmentTemplate> synthesized = synth.synthesize(signature, path, this);
                 if (synthesized != null) {
                     if (log.isVerboseFragmentLog() && synthesized.size() > 0) {
-                        log.append("Finding fragment " + this.creating + " - Successfully synthesized " + synthesized.size() + " fragments " + signature + " (from " + synth.getSubSignature() + ")");
+                        log.append("Finding fragment " + path.toString() + " - Successfully synthesized " + synthesized.size() + " fragments ");
                     }
                     candidates.addAll(synthesized);
                 }
@@ -123,15 +187,29 @@ public class AsmFragmentManager {
                 try {
                     String body = fragmentCharStream.toString();
                     candidates.add(new AsmFragmentTemplate(signature, body));
+
                 } catch (StringIndexOutOfBoundsException e) {
                     throw new RuntimeException("Problem reading fragment file " + signature, e);
                 }
                 if (log.isVerboseFragmentLog()) {
-                    log.append("Finding fragment " + this.creating + " - Successfully loaded fragment " + signature);
+                    log.append("Finding fragment " + path.toString() + " - Successfully loaded " + signature + ".asm");
+                }
+            }
+            if (candidates.size() == 0) {
+                if(log.isVerboseFragmentLog()) {
+                    log.append("Finding fragment " + path.toString() + " - No synthesis/file found!");
                 }
             }
             fragmentTemplateCache.put(signature, candidates);
             return candidates;
+        }
+
+        public String getCreating() {
+            return creating;
+        }
+
+        public CompileLog getLog() {
+            return log;
         }
     }
 
@@ -225,6 +303,93 @@ public class AsmFragmentManager {
 
         List<AsmFragmentSynthesis> synths = new ArrayList<>();
 
+        // NEW STYLE REWRITES - Utilizes that all combinations are tried
+
+        // Replace first AA with XX
+        synths.add(new AsmFragmentSynthesis("(.*vb.)aa(.*)", "...aa=.*|.*xx.*", "tax", "$1xx$2", null, null));
+        // Replace two AAs with XX
+        synths.add(new AsmFragmentSynthesis("(.*vb.)aa(.*vb.)aa(.*)", "...aa=.*|.*xx.*", "tax", "$1xx$2xx$3", null, null));
+        // Replace second (not first) AA with XX
+        synths.add(new AsmFragmentSynthesis("(.*)aa(.*vb.)aa(.*)", "...aa=.*|.*xx.*", "tax", "$1aa$2xx$3", null, null));
+
+        // Replace first AA with YY
+        synths.add(new AsmFragmentSynthesis("(.*vb.)aa(.*)", "...aa=.*|.*yy.*", "tay", "$1yy$2", null, null));
+        // Replace two AAs with YY
+        synths.add(new AsmFragmentSynthesis("(.*vb.)aa(.*vb.)aa(.*)", "...aa=.*|.*yy.*", "tay", "$1yy$2yy$3", null, null));
+        // Replace second (not first) AA with YY
+        synths.add(new AsmFragmentSynthesis("(.*)aa(.*vb.)aa(.*)", "...aa=.*|.*yy.*", "tay", "$1aa$2yy$3", null, null));
+
+        // Replace first XX with AA
+        synths.add(new AsmFragmentSynthesis("(.*vb.)xx(.*)", "...xx=.*|.*aa.*", "txa", "$1aa$2", null, null));
+        // Replace two XXs with AA
+        synths.add(new AsmFragmentSynthesis("(.*vb.)xx(.*vb.)xx(.*)", "...xx=.*|.*aa.*", "txa", "$1aa$2aa$3", null, null));
+        // Replace second (not first) XX with AA
+        synths.add(new AsmFragmentSynthesis("(.*)xx(.*vb.)xx(.*)", "...xx=.*|.*aa.*", "txa", "$1xx$2aa$3", null, null));
+
+        // Replace first YY with AA
+        synths.add(new AsmFragmentSynthesis("(.*vb.)yy(.*)", "...yy=.*|.*aa.*", "tya", "$1aa$2", null, null));
+        // Replace two YYs with AA
+        synths.add(new AsmFragmentSynthesis("(.*vb.)yy(.*vb.)yy(.*)", "...yy=.*|.*aa.*", "tya", "$1aa$2aa$3", null, null));
+        // Replace second (not first) YY with AA
+        synths.add(new AsmFragmentSynthesis("(.*)yy(.*vb.)yy(.*)", "...yy=.*|.*aa.*", "tya", "$1yy$2aa$3", null, null));
+
+        // Replace Z1 with AA (only one)
+        synths.add(new AsmFragmentSynthesis("(.*vb.)z1(.*)", "...z1=.*|.*z1.*z1.*|.*aa.*", "lda {z1}", "$1aa$2", null, mapZ));
+        // Replace two Z1s with AA
+        synths.add(new AsmFragmentSynthesis("(.*vb.)z1(.*vb.)z1(.*)", "...z1=.*|.*z1.*z1.*z1.*|.*aa.*", "lda {z1}", "$1aa$2aa$3", null, mapZ));
+        // Replace first (not second) Z1 with AA
+        synths.add(new AsmFragmentSynthesis("(.*vb.)z1(.*)z1(.*)", "...z1=.*|.*aa.*", "lda {z1}", "$1aa$2z1$3", null, null));
+        // Replace second (not first) Z1 with AA
+        synths.add(new AsmFragmentSynthesis("(.*)z1(.*vb.)z1(.*)", "...z1=.*|.*aa.*", "lda {z1}", "$1z1$2aa$3", null, null));
+
+        // Replace Z1 with YY (only one)
+        synths.add(new AsmFragmentSynthesis("(.*vb.)z1(.*)", "...z1=.*|.*z1.*z1.*|.*yy.*", "ldy {z1}", "$1yy$2", null, mapZ));
+        // Replace two Z1s with YY
+        synths.add(new AsmFragmentSynthesis("(.*vb.)z1(.*vb.)z1(.*)", "...z1=.*|.*z1.*z1.*z1.*|.*yy.*", "ldy {z1}", "$1yy$2yy$3", null, mapZ));
+        // Replace first (not second) Z1 with YY
+        synths.add(new AsmFragmentSynthesis("(.*vb.)z1(.*)z1(.*)", "...z1=.*|.*yy.*", "ldy {z1}", "$1yy$2z1$3", null, null));
+        // Replace second (not first) Z1 with YY
+        synths.add(new AsmFragmentSynthesis("(.*)z1(.*vb.)z1(.*)", "...z1=.*|.*yy.*", "ldy {z1}", "$1z1$2yy$3", null, null));
+
+        // Replace Z1 with XX (only one)
+        synths.add(new AsmFragmentSynthesis("(.*vb.)z1(.*)", "...z1=.*|.*z1.*z1.*|.*xx.*", "ldx {z1}", "$1xx$2", null, mapZ));
+        // Replace two Z1s with XX
+        synths.add(new AsmFragmentSynthesis("(.*vb.)z1(.*vb.)z1(.*)", "...z1=.*|.*z1.*z1.*z1.*|.*xx.*", "ldx {z1}", "$1xx$2xx$3", null, mapZ));
+        // Replace first (not second) Z1 with XX
+        synths.add(new AsmFragmentSynthesis("(.*vb.)z1(.*)z1(.*)", "...z1=.*|.*xx.*", "ldx {z1}", "$1xx$2z1$3", null, null));
+        // Replace second (not first) Z1 with XX
+        synths.add(new AsmFragmentSynthesis("(.*)z1(.*vb.)z1(.*)", "...z1=.*|.*xx.*", "ldx {z1}", "$1z1$2xx$3", null, null));
+
+        // Replace Z2 with AA (only one)
+        synths.add(new AsmFragmentSynthesis("(.*vb.)z2(.*)", "...z2=.*|.*z2.*z2.*|.*aa.*", "lda {z2}", "$1aa$2", null, mapZ3));
+        // Replace two Z2s with AA
+        synths.add(new AsmFragmentSynthesis("(.*vb.)z2(.*vb.)z2(.*)", "...z2=.*|.*z2.*z2.*z2.*|.*aa.*", "lda {z2}", "$1aa$2aa$3", null, mapZ3));
+        // Replace first (of 2) Z2 with AA
+        synths.add(new AsmFragmentSynthesis("(.*vb.)z2(.*)z2(.*)", "...z2=.*|.*aa.*", "lda {z2}", "$1aa$2z2$3", null, null));
+        // Replace second (of 2) Z2 with AA
+        synths.add(new AsmFragmentSynthesis("(.*)z2(.*vb.)z2(.*)", "...z2=.*|.*aa.*", "lda {z2}", "$1z2$2aa$3", null, null));
+
+        // Replace Z2 with YY (only one)
+        synths.add(new AsmFragmentSynthesis("(.*vb.)z2(.*)", "...z2=.*|.*z2.*z2.*|.*yy.*", "ldy {z2}", "$1yy$2", null, mapZ3));
+        // Replace two Z2s with YY
+        synths.add(new AsmFragmentSynthesis("(.*vb.)z2(.*vb.)z2(.*)", "...z2=.*|.*z2.*z2.*z2.*|.*yy.*", "ldy {z2}", "$1yy$2yy$3", null, mapZ3));
+        // Replace first (of 2) Z2 with YY
+        synths.add(new AsmFragmentSynthesis("(.*vb.)z2(.*)z2(.*)", "...z2=.*|.*yy.*", "ldy {z2}", "$1yy$2z2$3", null, null));
+        // Replace second (of 2) Z2 with YY
+        synths.add(new AsmFragmentSynthesis("(.*)z2(.*vb.)z2(.*)", "...z2=.*|.*yy.*", "ldy {z2}", "$1z2$2yy$3", null, null));
+
+        // Replace Z2 with XX(only one)
+        synths.add(new AsmFragmentSynthesis("(.*vb.)z2(.*)", "...z2=.*|.*z2.*z2.*|.*xx.*", "ldx {z2}", "$1xx$2", null, mapZ3));
+        // Replace two Z2s with XX
+        synths.add(new AsmFragmentSynthesis("(.*vb.)z2(.*vb.)z2(.*)", "...z2=.*|.*z2.*z2.*z2.*|.*xx.*", "ldx {z2}", "$1xx$2xx$3", null, mapZ3));
+        // Replace first (of 2) Z2 with XX
+        synths.add(new AsmFragmentSynthesis("(.*vb.)z2(.*)z2(.*)", "...z2=.*|.*xx.*", "ldx {z2}", "$1xx$2z2$3", null, null));
+        // Replace second (of 2) Z2 with XX
+        synths.add(new AsmFragmentSynthesis("(.*)z2(.*vb.)z2(.*)", "...z2=.*|.*xx.*", "ldx {z2}", "$1z2$2xx$3", null, null));
+
+
+        // OLD STYLE REWRITES - written when only one rule could be taken
+
         synths.add(new AsmFragmentSynthesis("(.*)=(.*)_(band|bor|bxor|plus)_(vb.aa)", ".*=vb.aa_.*", null, "$1=$4_$3_$2", null, null));
         synths.add(new AsmFragmentSynthesis("(.*)=(.*)_(band|bor|bxor|plus)_(vb.xx)", ".*=vb.[ax][ax]_.*", null, "$1=$4_$3_$2", null, null));
         synths.add(new AsmFragmentSynthesis("(.*)=(.*)_(band|bor|bxor|plus)_(vb.yy)", ".*=vb.[axy][axy]_.*", null, "$1=$4_$3_$2", null, null));
@@ -302,12 +467,14 @@ public class AsmFragmentManager {
         synths.add(new AsmFragmentSynthesis("vbuz1=vbuz1(.*)", ".*=.*vb.aa.*|.*z1.*z1.*z1.*", "lda {z1}\n", "vbuaa=vbuaa$1", "sta {z1}\n", mapZ));
         synths.add(new AsmFragmentSynthesis("vbsz1=vbsz1(.*)", ".*=.*vb.aa.*|.*z1.*z1.*z1.*", "lda {z1}\n", "vbsaa=vbsaa$1", "sta {z1}\n", mapZ));
 
-        synths.add(new AsmFragmentSynthesis("vbuz1_(lt|gt|le|ge|eq|neq)_(.*)", ".*vb.aa.*", "lda {z1}\n", "vbuaa_$1_$2", null, mapZ));
-        synths.add(new AsmFragmentSynthesis("vbsz1_(lt|gt|le|ge|eq|neq)_(.*)", ".*vb.aa.*", "lda {z1}\n", "vbsaa_$1_$2", null, mapZ));
+        synths.add(new AsmFragmentSynthesis("vbuz1_(lt|gt|le|ge|eq|neq)_(.*)", ".*vb.aa.*|.*z1.*z1.*", "lda {z1}\n", "vbuaa_$1_$2", null, mapZ));
+        synths.add(new AsmFragmentSynthesis("vbsz1_(lt|gt|le|ge|eq|neq)_(.*)", ".*vb.aa.*|.*z1.*z1.*", "lda {z1}\n", "vbsaa_$1_$2", null, mapZ));
         synths.add(new AsmFragmentSynthesis("_deref_pb(.)c1_(lt|gt|le|ge|eq|neq)_(.*)", ".*vb.aa.*", "lda {c1}\n", "vb$1aa_$2_$3", null, mapC));
         synths.add(new AsmFragmentSynthesis("_deref_pb(.)z1_(lt|gt|le|ge|eq|neq)_(.*)", ".*vb.aa.*|.*vb.yy.*|.*z1.*z1.*", "ldy #0\n" + "lda ({z1}),y\n", "vb$1aa_$2_$3", null, mapZ));
 
-        synths.add(new AsmFragmentSynthesis("(.*)_derefidx_vbuz1_(lt|gt|le|ge|eq|neq)_(.*)", ".*z1.*z1.*|.*vb.yy.*", "ldy {z1}\n", "$1_derefidx_vbuyy_$2_$3", null, mapZ));
+        synths.add(new AsmFragmentSynthesis("(.*)_derefidx_vbuz1_(.*)", ".*z1.*z1.*|.*.yy.*", "ldy {z1}\n", "$1_derefidx_vbuyy_$2", null, mapZ));
+
+
         synths.add(new AsmFragmentSynthesis("(.*)_derefidx_vbuz1_(lt|gt|le|ge|eq|neq)_(.*)", ".*z1.*z1.*|.*vb.xx.*", "ldx {z1}\n", "$1_derefidx_vbuxx_$2_$3", null, mapZ));
         synths.add(new AsmFragmentSynthesis("pb(.)c1_derefidx_vbuyy_(lt|gt|le|ge|eq|neq)_(.*)", ".*c1.*c1.*|.*aa.*", "lda {c1},y\n", "vb$1aa_$2_$3", null, mapC));
         synths.add(new AsmFragmentSynthesis("pb(.)c1_derefidx_vbuyy_(lt|gt|le|ge|eq|neq)_(.*c1.*)", ".*aa.*", "lda {c1},y\n", "vb$1aa_$2_$3", null, null));

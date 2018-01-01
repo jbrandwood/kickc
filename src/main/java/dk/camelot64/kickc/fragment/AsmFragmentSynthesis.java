@@ -37,7 +37,7 @@ class AsmFragmentSynthesis {
         return sigMatch + (sigAvoid == null ? "" : ("/" + sigAvoid));
     }
 
-    public List<AsmFragmentTemplate> synthesize(String signature, AsmFragmentManager.AsmFragmentTemplateSynthesizer synthesizer) {
+    public List<AsmFragmentTemplate> synthesize(String signature, AsmFragmentManager.AsmSynthesisPath path, AsmFragmentManager.AsmFragmentTemplateSynthesizer synthesizer) {
         ArrayList<AsmFragmentTemplate> candidates = new ArrayList<>();
         if (signature.matches(sigMatch)) {
             if (sigAvoid == null || !signature.matches(sigAvoid)) {
@@ -48,12 +48,12 @@ class AsmFragmentSynthesis {
                         subSignature = subSignature.replace(bound, bindMappings.get(bound));
                     }
                 }
-                List<AsmFragmentTemplate> subFragmentTemplates = synthesizer.loadOrSynthesizeFragment(subSignature);
+                List<AsmFragmentTemplate> subFragmentTemplates = synthesizer.loadOrSynthesizeFragment(subSignature, path);
                 for (AsmFragmentTemplate subFragmentTemplate : subFragmentTemplates) {
                     if (subFragmentTemplate != null) {
                         StringBuilder newFragment = new StringBuilder();
                         if (asmPrefix != null) {
-                            newFragment.append(asmPrefix);
+                            newFragment.append(asmPrefix).append("\n");
                         }
                         String subFragment = subFragmentTemplate.getBody();
                         if (bindMappings != null) {

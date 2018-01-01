@@ -246,6 +246,19 @@ public class AsmFragmentManager {
       // Replace second (of 2) Z2 with XX
       synths.add(new AsmFragmentSynthesis("(.*)z2(.*vb.)z2(.*)", "...z2=.*|.*xx.*", "ldx {z2}", "$1z2$2xx$3", null, null));
 
+      // Rewrite comparisons < to >
+      //synths.add(new AsmFragmentSynthesis("(.*)_gt_(.*)_then_(.*)", null, null, "$2_lt_$1_then_$3", null, null));
+      // Rewrite comparisons > to <
+      //synths.add(new AsmFragmentSynthesis("(.*)_lt_(.*)_then_(.*)", null, null, "$2_gt_$1_then_$3", null, null));
+      // Rewrite comparisons <= to >=
+      //synths.add(new AsmFragmentSynthesis("(.*)_le_(.*)_then_(.*)", null, null, "$2_ge_$1_then_$3", null, null));
+      // Rewrite comparisons >= to <=
+      //synths.add(new AsmFragmentSynthesis("(.*)_ge_(.*)_then_(.*)", null, null, "$2_le_$1_then_$3", null, null));
+      // Rewrite comparisons swap ==
+      //synths.add(new AsmFragmentSynthesis("(.*)_eq_(.*)_then_(.*)", null, null, "$2_eq_$1_then_$3", null, null));
+      // Rewrite comparisons swap !=
+      //synths.add(new AsmFragmentSynthesis("(.*)_neq_(.*)_then_(.*)", null, null, "$2_neq_$1_then_$3", null, null));
+
 
       // OLD STYLE REWRITES - written when only one rule could be taken
 
@@ -340,18 +353,18 @@ public class AsmFragmentManager {
       synths.add(new AsmFragmentSynthesis("pb(.)c1_derefidx_vbuxx_(lt|gt|le|ge|eq|neq)_(.*)", ".*c1.*c1.*|.*aa.*", "lda {c1},x\n", "vb$1aa_$2_$3", null, mapC));
       synths.add(new AsmFragmentSynthesis("pb(.)c1_derefidx_vbuxx_(lt|gt|le|ge|eq|neq)_(.*c1.*)", ".*aa.*", "lda {c1},x\n", "vb$1aa_$2_$3", null, null));
 
-      synths.add(new AsmFragmentSynthesis("(.*)_ge_(vb.aa)_then_(.*)", ".*vb.aa.*_ge.*", null, "$2_lt_$1_then_$3", null, null));
-      synths.add(new AsmFragmentSynthesis("(.*)_ge_(vb.xx)_then_(.*)", ".*vb.[ax][ax].*_ge.*", null, "$2_lt_$1_then_$3", null, null));
-      synths.add(new AsmFragmentSynthesis("(.*)_ge_(vb.yy)_then_(.*)", ".*vb.[axy][axy].*_ge.*", null, "$2_lt_$1_then_$3", null, null));
-      synths.add(new AsmFragmentSynthesis("(.*)_lt_(vb.aa)_then_(.*)", ".*vb.aa.*_lt.*", null, "$2_ge_$1_then_$3", null, null));
-      synths.add(new AsmFragmentSynthesis("(.*)_lt_(vb.xx)_then_(.*)", ".*vb.[ax][ax].*_lt.*", null, "$2_ge_$1_then_$3", null, null));
-      synths.add(new AsmFragmentSynthesis("(.*)_lt_(vb.yy)_then_(.*)", ".*vb.[axy][axy].*_lt.*", null, "$2_ge_$1_then_$3", null, null));
-      synths.add(new AsmFragmentSynthesis("(.*)_gt_(vb.aa)_then_(.*)", ".*vb.aa.*_gt.*", null, "$2_le_$1_then_$3", null, null));
-      synths.add(new AsmFragmentSynthesis("(.*)_gt_(vb.xx)_then_(.*)", ".*vb.[ax][ax].*_gt.*", null, "$2_le_$1_then_$3", null, null));
-      synths.add(new AsmFragmentSynthesis("(.*)_gt_(vb.yy)_then_(.*)", ".*vb.[axy][axy].*_gt.*", null, "$2_le_$1_then_$3", null, null));
-      synths.add(new AsmFragmentSynthesis("(.*)_le_(vb.aa)_then_(.*)", ".*vb.aa.*_le.*", null, "$2_gt_$1_then_$3", null, null));
-      synths.add(new AsmFragmentSynthesis("(.*)_le_(vb.xx)_then_(.*)", ".*vb.[ax][ax].*_le.*", null, "$2_gt_$1_then_$3", null, null));
-      synths.add(new AsmFragmentSynthesis("(.*)_le_(vb.yy)_then_(.*)", ".*vb.[axy][axy].*_le.*", null, "$2_gt_$1_then_$3", null, null));
+      synths.add(new AsmFragmentSynthesis("(.*)_ge_(vb.aa)_then_(.*)", ".*vb.aa.*_ge.*", null, "$2_le_$1_then_$3", null, null));
+      synths.add(new AsmFragmentSynthesis("(.*)_ge_(vb.xx)_then_(.*)", ".*vb.[ax][ax].*_ge.*", null, "$2_le_$1_then_$3", null, null));
+      synths.add(new AsmFragmentSynthesis("(.*)_ge_(vb.yy)_then_(.*)", ".*vb.[axy][axy].*_ge.*", null, "$2_le_$1_then_$3", null, null));
+      synths.add(new AsmFragmentSynthesis("(.*)_lt_(vb.aa)_then_(.*)", ".*vb.aa.*_lt.*", null, "$2_gt_$1_then_$3", null, null));
+      synths.add(new AsmFragmentSynthesis("(.*)_lt_(vb.xx)_then_(.*)", ".*vb.[ax][ax].*_lt.*", null, "$2_gt_$1_then_$3", null, null));
+      synths.add(new AsmFragmentSynthesis("(.*)_lt_(vb.yy)_then_(.*)", ".*vb.[axy][axy].*_lt.*", null, "$2_gt_$1_then_$3", null, null));
+      synths.add(new AsmFragmentSynthesis("(.*)_gt_(vb.aa)_then_(.*)", ".*vb.aa.*_gt.*", null, "$2_lt_$1_then_$3", null, null));
+      synths.add(new AsmFragmentSynthesis("(.*)_gt_(vb.xx)_then_(.*)", ".*vb.[ax][ax].*_gt.*", null, "$2_lt_$1_then_$3", null, null));
+      synths.add(new AsmFragmentSynthesis("(.*)_gt_(vb.yy)_then_(.*)", ".*vb.[axy][axy].*_gt.*", null, "$2_lt_$1_then_$3", null, null));
+      synths.add(new AsmFragmentSynthesis("(.*)_le_(vb.aa)_then_(.*)", ".*vb.aa.*_le.*", null, "$2_ge_$1_then_$3", null, null));
+      synths.add(new AsmFragmentSynthesis("(.*)_le_(vb.xx)_then_(.*)", ".*vb.[ax][ax].*_le.*", null, "$2_ge_$1_then_$3", null, null));
+      synths.add(new AsmFragmentSynthesis("(.*)_le_(vb.yy)_then_(.*)", ".*vb.[axy][axy].*_le.*", null, "$2_ge_$1_then_$3", null, null));
       synths.add(new AsmFragmentSynthesis("(.*)_neq_(vb.aa)_then_(.*)", ".*vb.aa.*_neq.*", null, "$2_neq_$1_then_$3", null, null));
       synths.add(new AsmFragmentSynthesis("(.*)_neq_(vb.xx)_then_(.*)", ".*vb.[ax][ax].*_neq.*", null, "$2_neq_$1_then_$3", null, null));
       synths.add(new AsmFragmentSynthesis("(.*)_neq_(vb.yy)_then_(.*)", ".*vb.[axy][axy].*_neq.*", null, "$2_neq_$1_then_$3", null, null));

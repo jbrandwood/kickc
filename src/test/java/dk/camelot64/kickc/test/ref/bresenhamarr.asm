@@ -41,6 +41,7 @@ main: {
     tay
     cpy #xd
     bcc b2
+    beq b2
     inc y
     lda idx
     clc

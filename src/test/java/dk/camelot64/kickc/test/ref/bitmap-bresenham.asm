@@ -33,9 +33,9 @@ lines: {
     sta line.x0
     lda lines_x+1,x
     sta line.x1
-    lda lines_y,x
-    sta line.y0
-    ldy lines_y+1,x
+    ldy lines_y,x
+    lda lines_y+1,x
+    sta line.y1
     jsr line
     inx
     cpx #lines_cnt
@@ -45,7 +45,7 @@ lines: {
 line: {
     .label x0 = 2
     .label x1 = 3
-    .label y0 = 4
+    .label y1 = 4
     .label xd = 7
     .label yd = $a
     lda x0
@@ -55,18 +55,18 @@ line: {
     sec
     sbc x0
     sta xd
-    cpy y0
-    bcc b2
+    cpy y1
+    bcs b2
     tya
+    eor #$ff
     sec
-    sbc y0
+    adc y1
     sta yd
     cmp xd
     bcs b3
     lda x0
     sta line_xdyi.x
-    lda y0
-    sta line_xdyi.y
+    sty line_xdyi.y
     lda x1
     sta line_xdyi.x1
     lda xd
@@ -77,11 +77,9 @@ line: {
   breturn:
     rts
   b3:
-    lda y0
-    sta line_ydxi.y
+    sty line_ydxi.y
     lda x0
     sta line_ydxi.x
-    sty line_ydxi.y1
     lda yd
     sta line_ydxi.yd
     lda xd
@@ -90,16 +88,14 @@ line: {
     jmp breturn
   b2:
     tya
-    eor #$ff
     sec
-    adc y0
+    sbc y1
     sta yd
     cmp xd
     bcs b6
     lda x0
     sta line_xdyd.x
-    lda y0
-    sta line_xdyd.y
+    sty line_xdyd.y
     lda x1
     sta line_xdyd.x1
     lda xd
@@ -109,9 +105,11 @@ line: {
     jsr line_xdyd
     jmp breturn
   b6:
-    sty line_ydxd.y
+    lda y1
+    sta line_ydxd.y
     lda x1
     sta line_ydxd.x
+    sty line_ydxd.y1
     lda yd
     sta line_ydxd.yd
     lda xd
@@ -123,17 +121,19 @@ line: {
     sec
     sbc x1
     sta xd
-    cpy y0
-    bcc b9
+    cpy y1
+    bcs b9
     tya
+    eor #$ff
     sec
-    sbc y0
+    adc y1
     sta yd
     cmp xd
     bcs b10
     lda x1
     sta line_xdyd.x
-    sty line_xdyd.y
+    lda y1
+    sta line_xdyd.y
     lda x0
     sta line_xdyd.x1
     lda xd
@@ -143,11 +143,9 @@ line: {
     jsr line_xdyd
     jmp breturn
   b10:
-    lda y0
-    sta line_ydxd.y
+    sty line_ydxd.y
     lda x0
     sta line_ydxd.x
-    sty line_ydxd.y1
     lda yd
     sta line_ydxd.yd
     lda xd
@@ -156,15 +154,15 @@ line: {
     jmp breturn
   b9:
     tya
-    eor #$ff
     sec
-    adc y0
+    sbc y1
     sta yd
     cmp xd
     bcs b13
     lda x1
     sta line_xdyi.x
-    sty line_xdyi.y
+    lda y1
+    sta line_xdyi.y
     lda x0
     sta line_xdyi.x1
     lda xd
@@ -174,9 +172,11 @@ line: {
     jsr line_xdyi
     jmp breturn
   b13:
-    sty line_ydxi.y
+    lda y1
+    sta line_ydxi.y
     lda x1
     sta line_ydxi.x
+    sty line_ydxi.y1
     lda yd
     sta line_ydxi.yd
     lda xd
@@ -214,7 +214,7 @@ line_ydxi: {
     clc
     adc #1
     cmp y
-    bcs b1
+    bne b1
     rts
 }
 plot: {
@@ -278,7 +278,7 @@ line_xdyi: {
     clc
     adc #1
     cmp x
-    bcs b1
+    bne b1
     rts
 }
 line_ydxd: {
@@ -311,7 +311,7 @@ line_ydxd: {
     clc
     adc #1
     cmp y
-    bcs b1
+    bne b1
     rts
 }
 line_xdyd: {
@@ -344,7 +344,7 @@ line_xdyd: {
     clc
     adc #1
     cmp x
-    bcs b1
+    bne b1
     rts
 }
 init_plot_tables: {

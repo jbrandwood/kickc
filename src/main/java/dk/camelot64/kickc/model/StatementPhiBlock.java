@@ -4,7 +4,9 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 /**
  * The Phi Block initializing the necessary SSA-variables of a predecessor.
@@ -38,7 +40,7 @@ public class StatementPhiBlock extends StatementBase {
    @JsonIgnore
    public List<VariableRef> getVariables() {
       ArrayList<VariableRef> vars = new ArrayList<>();
-      for (PhiVariable phiVariable : phiVariables) {
+      for(PhiVariable phiVariable : phiVariables) {
          vars.add(phiVariable.getVariable());
       }
       return vars;
@@ -46,8 +48,8 @@ public class StatementPhiBlock extends StatementBase {
    }
 
    public PhiVariable getPhiVariable(VariableRef variable) {
-      for (PhiVariable phiVariable : phiVariables) {
-         if (phiVariable.getVariable().equals(variable)) {
+      for(PhiVariable phiVariable : phiVariables) {
+         if(phiVariable.getVariable().equals(variable)) {
             return phiVariable;
          }
       }
@@ -67,7 +69,7 @@ public class StatementPhiBlock extends StatementBase {
       StringBuilder s = new StringBuilder();
       List<PhiVariable> variables = new ArrayList<>(phiVariables);
       Collections.reverse(variables);
-      if(phiVariables.size()==0) {
+      if(phiVariables.size() == 0) {
          s.append(super.idxString());
          s.append("phi()");
          if(aliveInfo) {
@@ -75,16 +77,16 @@ public class StatementPhiBlock extends StatementBase {
          }
          s.append("\n  ");
       }
-      for (PhiVariable phiVariable : variables) {
+      for(PhiVariable phiVariable : variables) {
          s.append(super.idxString());
          s.append(phiVariable.getVariable().toString(program));
          s.append(" ← phi(");
-         for (PhiRValue phiRValue : phiVariable.getValues()) {
+         for(PhiRValue phiRValue : phiVariable.getValues()) {
             s.append(" ");
             s.append(phiRValue.getPredecessor().toString(null));
             s.append("/");
             RValue rValue = phiRValue.getrValue();
-            s.append(rValue==null?"null":rValue.toString(program));
+            s.append(rValue == null ? "null" : rValue.toString(program));
          }
          s.append(" )");
          if(aliveInfo) {
@@ -92,7 +94,7 @@ public class StatementPhiBlock extends StatementBase {
          }
          s.append("\n  ");
       }
-      if(s.length()>0) {
+      if(s.length() > 0) {
          return s.toString().substring(0, s.length() - 3);
       } else {
          return s.toString();
@@ -112,9 +114,9 @@ public class StatementPhiBlock extends StatementBase {
 
    @Override
    public boolean equals(Object o) {
-      if (this == o) return true;
-      if (o == null || getClass() != o.getClass()) return false;
-      if (!super.equals(o)) return false;
+      if(this == o) return true;
+      if(o == null || getClass() != o.getClass()) return false;
+      if(!super.equals(o)) return false;
 
       StatementPhiBlock phiBlock = (StatementPhiBlock) o;
 
@@ -167,18 +169,17 @@ public class StatementPhiBlock extends StatementBase {
          this.variable = variable;
       }
 
-      public void setValues(List<PhiRValue> values) {
-         this.values = values;
-      }
-
       public List<PhiRValue> getValues() {
          return values;
       }
 
+      public void setValues(List<PhiRValue> values) {
+         this.values = values;
+      }
 
       public RValue getrValue(LabelRef predecessor) {
-         for (PhiRValue phiRValue : values) {
-            if (phiRValue.getPredecessor().equals(predecessor)) {
+         for(PhiRValue phiRValue : values) {
+            if(phiRValue.getPredecessor().equals(predecessor)) {
                return phiRValue.getrValue();
             }
          }
@@ -193,8 +194,8 @@ public class StatementPhiBlock extends StatementBase {
        * @return The rValue assigned to the phi variable when entering from the passed block.
        */
       public PhiRValue getPhirValue(LabelRef predecessor) {
-         for (PhiRValue phiRValue : values) {
-            if (phiRValue.getPredecessor().equals(predecessor)) {
+         for(PhiRValue phiRValue : values) {
+            if(phiRValue.getPredecessor().equals(predecessor)) {
                return phiRValue;
             }
          }
@@ -215,12 +216,12 @@ public class StatementPhiBlock extends StatementBase {
 
       @Override
       public boolean equals(Object o) {
-         if (this == o) return true;
-         if (o == null || getClass() != o.getClass()) return false;
+         if(this == o) return true;
+         if(o == null || getClass() != o.getClass()) return false;
 
          PhiVariable that = (PhiVariable) o;
 
-         if (!variable.equals(that.variable)) return false;
+         if(!variable.equals(that.variable)) return false;
          return values.equals(that.values);
       }
 
@@ -263,6 +264,10 @@ public class StatementPhiBlock extends StatementBase {
          return predecessor;
       }
 
+      public void setPredecessor(LabelRef predecessor) {
+         this.predecessor = predecessor;
+      }
+
       public RValue getrValue() {
          return rValue;
       }
@@ -271,18 +276,14 @@ public class StatementPhiBlock extends StatementBase {
          this.rValue = rValue;
       }
 
-      public void setPredecessor(LabelRef predecessor) {
-         this.predecessor = predecessor;
-      }
-
       @Override
       public boolean equals(Object o) {
-         if (this == o) return true;
-         if (o == null || getClass() != o.getClass()) return false;
+         if(this == o) return true;
+         if(o == null || getClass() != o.getClass()) return false;
 
          PhiRValue phiRValue = (PhiRValue) o;
 
-         if (!predecessor.equals(phiRValue.predecessor)) return false;
+         if(!predecessor.equals(phiRValue.predecessor)) return false;
          return rValue != null ? rValue.equals(phiRValue.rValue) : phiRValue.rValue == null;
       }
 

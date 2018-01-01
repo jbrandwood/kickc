@@ -4,7 +4,7 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-/**  A function returning another type */
+/** A function returning another type */
 public class SymbolTypeProcedure implements SymbolType {
 
    private SymbolType returnType;

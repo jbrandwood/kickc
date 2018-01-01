@@ -3,7 +3,7 @@ package dk.camelot64.kickc.model;
 import java.util.Collection;
 import java.util.List;
 
-/** Statement base class implementing shared properties and logic  */
+/** Statement base class implementing shared properties and logic */
 public abstract class StatementBase implements Statement {
 
    private Integer index;
@@ -24,8 +24,8 @@ public abstract class StatementBase implements Statement {
 
    @Override
    public boolean equals(Object o) {
-      if (this == o) return true;
-      if (o == null || getClass() != o.getClass()) return false;
+      if(this == o) return true;
+      if(o == null || getClass() != o.getClass()) return false;
       StatementBase that = (StatementBase) o;
       return index != null ? index.equals(that.index) : that.index == null;
    }
@@ -36,7 +36,7 @@ public abstract class StatementBase implements Statement {
    }
 
    public String idxString() {
-      return index==null?"":("["+index+"] ");
+      return index == null ? "" : ("[" + index + "] ");
    }
 
    @Override
@@ -45,17 +45,17 @@ public abstract class StatementBase implements Statement {
    }
 
    public String aliveString(Program program) {
-      if(program==null || program.getLiveRangeVariables()==null) {
+      if(program == null || program.getLiveRangeVariables() == null) {
          return "";
       }
       LiveRangeVariables liveRanges = program.getLiveRangeVariables();
       StringBuilder alive = new StringBuilder();
       alive.append(getAliveString(liveRanges.getAlive(this)));
       LiveRangeVariablesEffective liveRangeVariablesEffective = program.getLiveRangeVariablesEffective();
-      if(liveRangeVariablesEffective!=null) {
+      if(liveRangeVariablesEffective != null) {
          LiveRangeVariablesEffective.AliveCombinations aliveCombinations = liveRangeVariablesEffective.getAliveCombinations(this);
          alive.append(" ( ");
-         for (LiveRangeVariablesEffective.CallPath callPath : aliveCombinations.getCallPaths().getCallPaths()) {
+         for(LiveRangeVariablesEffective.CallPath callPath : aliveCombinations.getCallPaths().getCallPaths()) {
             alive.append(getCallPathString(callPath.getPath()));
             alive.append(getAliveString(aliveCombinations.getEffectiveAliveAtStmt(callPath)));
             alive.append(" ");
@@ -68,7 +68,7 @@ public abstract class StatementBase implements Statement {
    private String getCallPathString(List<CallGraph.CallBlock.Call> path) {
       StringBuilder out = new StringBuilder();
       boolean first = true;
-      for (CallGraph.CallBlock.Call call : path) {
+      for(CallGraph.CallBlock.Call call : path) {
          if(!first) {
             out.append("::");
          }
@@ -81,7 +81,7 @@ public abstract class StatementBase implements Statement {
    private String getAliveString(Collection<VariableRef> alive) {
       StringBuilder str = new StringBuilder();
       str.append(" [ ");
-      for (VariableRef variableRef : alive) {
+      for(VariableRef variableRef : alive) {
          str.append(variableRef.getFullName());
          str.append(" ");
       }

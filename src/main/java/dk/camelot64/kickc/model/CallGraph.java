@@ -25,7 +25,7 @@ public class CallGraph {
     */
    public CallBlock getOrCreateCallBlock(LabelRef scopeLabel) {
       CallBlock callBlock = getCallBlock(scopeLabel);
-      if (callBlock != null) {
+      if(callBlock != null) {
          return callBlock;
       }
       // Not found - create it
@@ -41,8 +41,8 @@ public class CallGraph {
     * @return The call block for the scope. Null if the call block does not exist (no calls are made from it).
     */
    private CallBlock getCallBlock(LabelRef scopeLabel) {
-      for (CallBlock callBlock : callBlocks) {
-         if (callBlock.getScopeLabel().equals(scopeLabel)) {
+      for(CallBlock callBlock : callBlocks) {
+         if(callBlock.getScopeLabel().equals(scopeLabel)) {
             return callBlock;
          }
       }
@@ -55,13 +55,14 @@ public class CallGraph {
 
    /**
     * Get sub call blocks called from a specific call block.
+    *
     * @param block The block to find subs for
     * @return The sub call blocks called from the passed block
     */
    public Collection<CallBlock> getCalledBlocks(CallBlock block) {
       Collection<LabelRef> calledLabels = block.getCalledBlocks();
       LinkedHashSet<CallBlock> called = new LinkedHashSet<>();
-      for (LabelRef calledLabel : calledLabels) {
+      for(LabelRef calledLabel : calledLabels) {
          called.add(getOrCreateCallBlock(calledLabel));
       }
       return called;
@@ -69,13 +70,14 @@ public class CallGraph {
 
    /**
     * Get all call blocks that call a specific call block
+    *
     * @param scopeLabel The label of scope (the call block)
     * @return The scope labels of call blocks that call the passed block
     */
    public Collection<LabelRef> getCallingBlocks(LabelRef scopeLabel) {
       ArrayList<LabelRef> callingBlocks = new ArrayList<>();
-      for (CallBlock callBlock : callBlocks) {
-         if (callBlock.getCalledBlocks().contains(scopeLabel)) {
+      for(CallBlock callBlock : callBlocks) {
+         if(callBlock.getCalledBlocks().contains(scopeLabel)) {
             callingBlocks.add(callBlock.getScopeLabel());
          }
       }
@@ -85,7 +87,7 @@ public class CallGraph {
    @Override
    public String toString() {
       StringBuilder out = new StringBuilder();
-      for (CallBlock callBlock : callBlocks) {
+      for(CallBlock callBlock : callBlocks) {
          out.append(callBlock.toString()).append("\n");
       }
       return out.toString();
@@ -93,14 +95,15 @@ public class CallGraph {
 
    /**
     * Get all calls of a specific procedure
+    *
     * @param label The label of the procedure
     * @return All calls
     */
    public Collection<CallBlock.Call> getCallers(LabelRef label) {
       Collection<CallBlock.Call> callers = new ArrayList<>();
-      for (CallBlock callBlock : callBlocks) {
-         for (CallBlock.Call call : callBlock.getCalls()) {
-            if (call.getProcedure().equals(label)) {
+      for(CallBlock callBlock : callBlocks) {
+         for(CallBlock.Call call : callBlock.getCalls()) {
+            if(call.getProcedure().equals(label)) {
                callers.add(call);
             }
          }
@@ -140,7 +143,7 @@ public class CallGraph {
        */
       public Collection<LabelRef> getCalledBlocks() {
          LinkedHashSet<LabelRef> called = new LinkedHashSet<>();
-         for (Call call : calls) {
+         for(Call call : calls) {
             called.add(call.getProcedure());
          }
          return called;
@@ -150,7 +153,7 @@ public class CallGraph {
       public String toString() {
          StringBuilder out = new StringBuilder();
          out.append("Calls in [").append(scopeLabel.toString()).append("] to ");
-         for (Call call : calls) {
+         for(Call call : calls) {
             out.append(call.toString()).append(" ");
          }
          return out.toString();
@@ -158,6 +161,7 @@ public class CallGraph {
 
       /**
        * Get all calls
+       *
        * @return The calls
        */
       public List<Call> getCalls() {
@@ -166,13 +170,14 @@ public class CallGraph {
 
       /**
        * Get all calls to a specific call block
+       *
        * @param scope The scope label of the block
        * @return All calls to the passed scope
        */
       public Collection<Call> getCalls(LabelRef scope) {
          ArrayList<Call> callsToScope = new ArrayList<>();
-         for (Call call : calls) {
-            if (call.getProcedure().equals(scope)) {
+         for(Call call : calls) {
+            if(call.getProcedure().equals(scope)) {
                callsToScope.add(call);
             }
          }
@@ -211,7 +216,7 @@ public class CallGraph {
          public String toString() {
             StringBuilder out = new StringBuilder();
             out.append(procedure);
-            if (callStatementIdx != null) {
+            if(callStatementIdx != null) {
                out.append(":").append(callStatementIdx);
             }
             return out.toString();

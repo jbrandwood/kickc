@@ -17,15 +17,15 @@ public class Pass2AssertSingleAssignment extends Pass2SsaAssertion {
 
       Map<VariableRef, Statement> assignments = new LinkedHashMap<>();
 
-      for (ControlFlowBlock block : getGraph().getAllBlocks()) {
-         for (Statement statement : block.getStatements()) {
+      for(ControlFlowBlock block : getGraph().getAllBlocks()) {
+         for(Statement statement : block.getStatements()) {
             if(statement instanceof StatementLValue) {
                LValue lValue = ((StatementLValue) statement).getlValue();
                if(lValue instanceof VariableRef) {
                   checkAssignment(assignments, lValue, statement);
                }
             } else if(statement instanceof StatementPhiBlock) {
-               for (StatementPhiBlock.PhiVariable phiVariable : ((StatementPhiBlock) statement).getPhiVariables()) {
+               for(StatementPhiBlock.PhiVariable phiVariable : ((StatementPhiBlock) statement).getPhiVariables()) {
                   checkAssignment(assignments, phiVariable.getVariable(), statement);
                }
             }
@@ -35,8 +35,8 @@ public class Pass2AssertSingleAssignment extends Pass2SsaAssertion {
    }
 
    private void checkAssignment(Map<VariableRef, Statement> assignments, LValue lValue, Statement statement) {
-      if(assignments.get(lValue)!=null) {
-         throw  new AssertionFailed("Multiple assignments to variable "+lValue+" 1: "+assignments.get(lValue)+" 2:"+statement);
+      if(assignments.get(lValue) != null) {
+         throw new AssertionFailed("Multiple assignments to variable " + lValue + " 1: " + assignments.get(lValue) + " 2:" + statement);
       } else {
          assignments.put((VariableRef) lValue, statement);
       }

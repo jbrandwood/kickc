@@ -38,7 +38,7 @@ public enum AsmAddressingMode {
 
    public String getAsm(String mnemnonic, String parameter) {
       String replaced = template.replace("%i", mnemnonic);
-      if(parameter!=null) {
+      if(parameter != null) {
          replaced = replaced.replace("%p", parameter);
       }
       return replaced;

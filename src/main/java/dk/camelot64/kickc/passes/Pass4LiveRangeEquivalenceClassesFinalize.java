@@ -21,7 +21,7 @@ public class Pass4LiveRangeEquivalenceClassesFinalize extends Pass2Base {
       equivalenceClassPhiInitializer.visitGraph(getGraph());
       LiveRangeEquivalenceClassSet liveRangeEquivalenceClassSet = equivalenceClassPhiInitializer.getPhiEquivalenceClasses();
       getLog().append("Initial phi equivalence classes");
-      for (LiveRangeEquivalenceClass liveRangeEquivalenceClass : liveRangeEquivalenceClassSet.getEquivalenceClasses()) {
+      for(LiveRangeEquivalenceClass liveRangeEquivalenceClass : liveRangeEquivalenceClassSet.getEquivalenceClasses()) {
          getLog().append(liveRangeEquivalenceClass.toString());
       }
 
@@ -29,7 +29,7 @@ public class Pass4LiveRangeEquivalenceClassesFinalize extends Pass2Base {
       EquivalenceClassAdder equivalenceClassAdder = new EquivalenceClassAdder(liveRangeEquivalenceClassSet);
       equivalenceClassAdder.visitGraph(getGraph());
       getLog().append("Complete equivalence classes");
-      for (LiveRangeEquivalenceClass liveRangeEquivalenceClass : liveRangeEquivalenceClassSet.getEquivalenceClasses()) {
+      for(LiveRangeEquivalenceClass liveRangeEquivalenceClass : liveRangeEquivalenceClassSet.getEquivalenceClasses()) {
          getLog().append(liveRangeEquivalenceClass.toString());
       }
 
@@ -49,7 +49,7 @@ public class Pass4LiveRangeEquivalenceClassesFinalize extends Pass2Base {
 
       @Override
       public Void visitAssignment(StatementAssignment assignment) {
-         if (assignment.getlValue() instanceof VariableRef) {
+         if(assignment.getlValue() instanceof VariableRef) {
             VariableRef lValVar = (VariableRef) assignment.getlValue();
             List<VariableRef> preferences = new ArrayList<>();
             addToEquivalenceClassSet(lValVar, preferences);
@@ -61,17 +61,17 @@ public class Pass4LiveRangeEquivalenceClassesFinalize extends Pass2Base {
          LiveRangeVariables liveRangeVariables = getProgram().getLiveRangeVariables();
          LiveRangeEquivalenceClass lValEquivalenceClass =
                liveRangeEquivalenceClassSet.getEquivalenceClass(lValVar);
-         if (lValEquivalenceClass == null) {
+         if(lValEquivalenceClass == null) {
             LiveRange lValLiveRange = liveRangeVariables.getLiveRange(lValVar);
             // Variable in need of an equivalence class - Look through preferences
             LiveRangeEquivalenceClass chosen = null;
-            for (VariableRef preference : preferences) {
+            for(VariableRef preference : preferences) {
                LiveRangeEquivalenceClass preferenceEquivalenceClass = liveRangeEquivalenceClassSet.getEquivalenceClass(preference);
-               if (preferenceEquivalenceClass != null) {
+               if(preferenceEquivalenceClass != null) {
                   Variable potentialVariable = getProgram().getSymbolInfos().getVariable(preference);
                   Variable lValVariable = getProgram().getSymbolInfos().getVariable(lValVar);
-                  if (lValVariable.getType().equals(potentialVariable.getType())) {
-                     if (!lValLiveRange.overlaps(preferenceEquivalenceClass.getLiveRange())) {
+                  if(lValVariable.getType().equals(potentialVariable.getType())) {
+                     if(!lValLiveRange.overlaps(preferenceEquivalenceClass.getLiveRange())) {
                         chosen = preferenceEquivalenceClass;
                         chosen.addVariable(lValVar);
                         break;
@@ -79,7 +79,7 @@ public class Pass4LiveRangeEquivalenceClassesFinalize extends Pass2Base {
                   }
                }
             }
-            if (chosen == null) {
+            if(chosen == null) {
                // No preference usable - create a new one
                chosen = liveRangeEquivalenceClassSet.getOrCreateEquivalenceClass(lValVar);
             }

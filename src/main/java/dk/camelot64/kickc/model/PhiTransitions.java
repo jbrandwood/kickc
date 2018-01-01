@@ -25,7 +25,7 @@ public class PhiTransitions {
       this.program = program;
       this.toBlock = toBlock;
       this.transitions = new LinkedHashMap<>();
-      if (toBlock.hasPhiBlock()) {
+      if(toBlock.hasPhiBlock()) {
          this.phiBlock = toBlock.getPhiBlock();
          List<ControlFlowBlock> predecessors = new ArrayList<>(program.getGraph().getPredecessors(toBlock));
          Collections.sort(predecessors, new Comparator<ControlFlowBlock>() {
@@ -34,7 +34,7 @@ public class PhiTransitions {
                return o1.getLabel().getFullName().compareTo(o2.getLabel().getFullName());
             }
          });
-         for (ControlFlowBlock predecessor : predecessors) {
+         for(ControlFlowBlock predecessor : predecessors) {
             PhiTransition transition = findTransition(predecessor);
             transitions.put(predecessor, transition);
          }
@@ -51,10 +51,10 @@ public class PhiTransitions {
    private PhiTransition findTransition(ControlFlowBlock fromBlock) {
       PhiTransition transition = new PhiTransition(fromBlock);
       boolean isCallTransition = toBlock.getLabel().equals(fromBlock.getCallSuccessor());
-      if (!isCallTransition) {
+      if(!isCallTransition) {
          // If the transition is not a call - then attempt to join with other equal transition(s)
-         for (PhiTransition candidate : transitions.values()) {
-            if (candidate.equalAssignments(transition)) {
+         for(PhiTransition candidate : transitions.values()) {
+            if(candidate.equalAssignments(transition)) {
                candidate.addFromBlock(fromBlock);
                return candidate;
             }
@@ -80,11 +80,12 @@ public class PhiTransitions {
 
    /**
     * Get a phi transition from it's phi transition ID.
+    *
     * @param transitionId The ID to look for
     * @return The transition with the given ID, or nulll if not found.
     */
    public PhiTransition getTransition(String transitionId) {
-      for (PhiTransition phiTransition : transitions.values()) {
+      for(PhiTransition phiTransition : transitions.values()) {
          if(transitionId.equals(phiTransition.getTransitionId())) {
             return phiTransition;
          }
@@ -117,10 +118,10 @@ public class PhiTransitions {
 
       private void initAssignments(ControlFlowBlock fromBlock) {
          this.assignments = new ArrayList<>();
-         if (phiBlock != null) {
+         if(phiBlock != null) {
             List<StatementPhiBlock.PhiVariable> phiVariables = new ArrayList<>(phiBlock.getPhiVariables());
             Collections.reverse(phiVariables);
-            for (StatementPhiBlock.PhiVariable phiVariable : phiVariables) {
+            for(StatementPhiBlock.PhiVariable phiVariable : phiVariables) {
                List<StatementPhiBlock.PhiRValue> phiRValues = new ArrayList<>(phiVariable.getValues());
                Collections.sort(phiRValues, new Comparator<StatementPhiBlock.PhiRValue>() {
                   @Override
@@ -128,8 +129,8 @@ public class PhiTransitions {
                      return o1.getPredecessor().getFullName().compareTo(o2.getPredecessor().getFullName());
                   }
                });
-               for (StatementPhiBlock.PhiRValue phiRValue : phiRValues) {
-                  if (phiRValue.getPredecessor().equals(fromBlock.getLabel())) {
+               for(StatementPhiBlock.PhiRValue phiRValue : phiRValues) {
+                  if(phiRValue.getPredecessor().equals(fromBlock.getLabel())) {
                      this.assignments.add(new PhiTransition.PhiAssignment(phiVariable, phiRValue, nextIdx++));
                   }
                }
@@ -139,13 +140,14 @@ public class PhiTransitions {
 
       /**
        * Get a string ID uniquely identifying the PHI transition within the program
+       *
        * @return Transition ID
        */
       public String getTransitionId() {
          StringBuilder id = new StringBuilder();
          id.append("phi:");
          boolean first = true;
-         for (ControlFlowBlock fromBlock : fromBlocks) {
+         for(ControlFlowBlock fromBlock : fromBlocks) {
             if(!first) {
                id.append("/");
             }
@@ -180,28 +182,28 @@ public class PhiTransitions {
        */
       public boolean equalAssignments(PhiTransition other) {
          List<PhiTransition.PhiAssignment> otherAssignments = other.getAssignments();
-         if (assignments.size() != otherAssignments.size()) {
+         if(assignments.size() != otherAssignments.size()) {
             return false;
          }
-         for (int i = 0; i < assignments.size(); i++) {
+         for(int i = 0; i < assignments.size(); i++) {
             PhiTransition.PhiAssignment assignment = assignments.get(i);
             PhiTransition.PhiAssignment otherAssignment = otherAssignments.get(i);
-            if (assignment.getVariable() != null && otherAssignment.getVariable() != null) {
+            if(assignment.getVariable() != null && otherAssignment.getVariable() != null) {
                Variable var = program.getSymbolInfos().getVariable(assignment.getVariable());
                Variable otherVar = program.getSymbolInfos().getVariable(otherAssignment.getVariable());
-               if (!var.getAllocation().equals(otherVar.getAllocation())) {
+               if(!var.getAllocation().equals(otherVar.getAllocation())) {
                   return false;
                }
-            } else if (!assignment.getVariable().equals(otherAssignment.getVariable())) {
+            } else if(!assignment.getVariable().equals(otherAssignment.getVariable())) {
                return false;
             }
-            if (assignment.getrValue() instanceof VariableRef && otherAssignment.getrValue() instanceof VariableRef) {
+            if(assignment.getrValue() instanceof VariableRef && otherAssignment.getrValue() instanceof VariableRef) {
                Variable var = program.getSymbolInfos().getVariable((VariableRef) assignment.getrValue());
                Variable otherVar = program.getSymbolInfos().getVariable((VariableRef) otherAssignment.getrValue());
-               if (!var.getAllocation().equals(otherVar.getAllocation())) {
+               if(!var.getAllocation().equals(otherVar.getAllocation())) {
                   return false;
                }
-            } else if (!assignment.getrValue().equals(otherAssignment.getrValue())) {
+            } else if(!assignment.getrValue().equals(otherAssignment.getrValue())) {
                return false;
             }
          }

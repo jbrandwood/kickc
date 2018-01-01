@@ -29,14 +29,14 @@ public class ConstantUnary implements ConstantValue {
 
    @Override
    public boolean equals(Object o) {
-      if (this == o) {
+      if(this == o) {
          return true;
       }
-      if (o == null || getClass() != o.getClass()) {
+      if(o == null || getClass() != o.getClass()) {
          return false;
       }
       ConstantUnary that = (ConstantUnary) o;
-      if (!operator.equals(that.operator)) {
+      if(!operator.equals(that.operator)) {
          return false;
       }
       return operand.equals(that.operand);
@@ -51,7 +51,7 @@ public class ConstantUnary implements ConstantValue {
 
    @Override
    public String toString(Program program) {
-      return operator.toString()+operand.toString(program);
+      return operator.toString() + operand.toString(program);
    }
 
    @Override

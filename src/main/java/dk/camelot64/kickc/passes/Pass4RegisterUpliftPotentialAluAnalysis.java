@@ -28,28 +28,28 @@ public class Pass4RegisterUpliftPotentialAluAnalysis extends Pass2Base {
       RegisterPotentials registerPotentials = getProgram().getRegisterPotentials();
       this.liveRangeEquivalenceClassSet = getProgram().getLiveRangeEquivalenceClassSet();
 
-      for (ControlFlowBlock block : getProgram().getGraph().getAllBlocks()) {
+      for(ControlFlowBlock block : getProgram().getGraph().getAllBlocks()) {
 
          VariableRef potentialAluVar = null;
 
-         for (Statement statement : block.getStatements()) {
-            if (potentialAluVar != null) {
+         for(Statement statement : block.getStatements()) {
+            if(potentialAluVar != null) {
                // Previous assignment has ALU potential - check if current statement can use it
-               if (statement instanceof StatementAssignment) {
+               if(statement instanceof StatementAssignment) {
                   StatementAssignment assignment = (StatementAssignment) statement;
-                  if (assignment.getOperator()!=null && "-".equals(assignment.getOperator().getOperator())) {
+                  if(assignment.getOperator() != null && "-".equals(assignment.getOperator().getOperator())) {
                      // ALU applicable if the variable is the second lValue and the first lValue is non-null
-                     if (assignment.getrValue2().equals(potentialAluVar) && assignment.getrValue1() != null) {
+                     if(assignment.getrValue2().equals(potentialAluVar) && assignment.getrValue1() != null) {
                         // The variable has ALU potential
                         setHasAluPotential(registerPotentials, potentialAluVar);
                      }
-                  } else if (assignment.getOperator()!=null && (Operator.PLUS.equals(assignment.getOperator()) || Operator.BOOL_OR.equals(assignment.getOperator())|| Operator.WORD.equals(assignment.getOperator()))) {
+                  } else if(assignment.getOperator() != null && (Operator.PLUS.equals(assignment.getOperator()) || Operator.BOOL_OR.equals(assignment.getOperator()) || Operator.WORD.equals(assignment.getOperator()))) {
                      // ALU applicable if the variable is one of the two values
-                     if (assignment.getrValue2().equals(potentialAluVar) && assignment.getrValue1() != null) {
+                     if(assignment.getrValue2().equals(potentialAluVar) && assignment.getrValue1() != null) {
                         // The variable has ALU potential
                         setHasAluPotential(registerPotentials, potentialAluVar);
                      }
-                     if (assignment.getrValue1().equals(potentialAluVar) && assignment.getrValue2() != null) {
+                     if(assignment.getrValue1().equals(potentialAluVar) && assignment.getrValue2() != null) {
                         // The variable has ALU potential
                         setHasAluPotential(registerPotentials, potentialAluVar);
                      }
@@ -57,18 +57,18 @@ public class Pass4RegisterUpliftPotentialAluAnalysis extends Pass2Base {
                }
             }
             potentialAluVar = null;
-            if (statement instanceof StatementAssignment) {
+            if(statement instanceof StatementAssignment) {
                StatementAssignment assignment = (StatementAssignment) statement;
-               if (assignment.getOperator()!=null && "*".equals(assignment.getOperator().getOperator()) && assignment.getrValue1() == null) {
+               if(assignment.getOperator() != null && "*".equals(assignment.getOperator().getOperator()) && assignment.getrValue1() == null) {
                   potentialAluVar = findAluPotential(assignment);
                }
-               if (assignment.getOperator()!=null && "*idx".equals(assignment.getOperator().getOperator())) {
+               if(assignment.getOperator() != null && "*idx".equals(assignment.getOperator().getOperator())) {
                   potentialAluVar = findAluPotential(assignment);
                }
-               if (assignment.getOperator()!=null && Operator.LOWBYTE.equals(assignment.getOperator()) && assignment.getrValue1()==null) {
+               if(assignment.getOperator() != null && Operator.LOWBYTE.equals(assignment.getOperator()) && assignment.getrValue1() == null) {
                   potentialAluVar = findAluPotential(assignment);
                }
-               if (assignment.getOperator()!=null && Operator.HIBYTE.equals(assignment.getOperator()) && assignment.getrValue1()==null) {
+               if(assignment.getOperator() != null && Operator.HIBYTE.equals(assignment.getOperator()) && assignment.getrValue1() == null) {
                   potentialAluVar = findAluPotential(assignment);
                }
             }
@@ -78,13 +78,13 @@ public class Pass4RegisterUpliftPotentialAluAnalysis extends Pass2Base {
 
    private VariableRef findAluPotential(StatementAssignment assignment) {
       VariableRef potentialAluVar = null;
-      if (assignment.getlValue() instanceof VariableRef) {
+      if(assignment.getlValue() instanceof VariableRef) {
          VariableRef var = (VariableRef) assignment.getlValue();
          LiveRangeEquivalenceClass varEquivalenceClass = liveRangeEquivalenceClassSet.getEquivalenceClass(var);
-         if (varEquivalenceClass.getVariables().size() == 1) {
+         if(varEquivalenceClass.getVariables().size() == 1) {
             // Alone in equivalence class
             LiveRange liveRange = varEquivalenceClass.getLiveRange();
-            if (liveRange.size() == 1) {
+            if(liveRange.size() == 1) {
                // Only used in the following statement
                potentialAluVar = var;
             }
@@ -96,7 +96,7 @@ public class Pass4RegisterUpliftPotentialAluAnalysis extends Pass2Base {
    private void setHasAluPotential(RegisterPotentials registerPotentials, VariableRef ref) {
       LiveRangeEquivalenceClass potentialAluEquivalenceClass = liveRangeEquivalenceClassSet.getEquivalenceClass(ref);
       registerPotentials.addPotentialRegister(potentialAluEquivalenceClass, Registers.getRegisterALU());
-      getLog().append("Equivalence Class "+potentialAluEquivalenceClass+" has ALU potential.");
+      getLog().append("Equivalence Class " + potentialAluEquivalenceClass + " has ALU potential.");
    }
 
 }

@@ -22,6 +22,7 @@ public class StatementInfos {
 
    /**
     * Get the label of the block containing a statement
+    *
     * @param stmtIdx The statement index
     * @return The block label
     */
@@ -31,6 +32,7 @@ public class StatementInfos {
 
    /**
     * Get the label of the block containing a statement
+    *
     * @param stmt The statement
     * @return The block label
     */
@@ -40,6 +42,7 @@ public class StatementInfos {
 
    /**
     * Get the block containing a statement
+    *
     * @param stmt The statement
     * @return The containing block
     */
@@ -49,6 +52,7 @@ public class StatementInfos {
 
    /**
     * Get the block containing a statement
+    *
     * @param stmtIdx The statement index
     * @return The containing block
     */
@@ -58,6 +62,7 @@ public class StatementInfos {
 
    /**
     * Get statement from index
+    *
     * @param Statement index
     * @return The statement with the passed index
     */

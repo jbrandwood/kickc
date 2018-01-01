@@ -29,14 +29,14 @@ public class Program {
    private ProcedureModifiedVars procedureModifiedVars;
    /** Information about calls. */
    private CallGraph callGraph;
-   /** Information about dominators of all blocks*/
+   /** Information about dominators of all blocks */
    private DominatorsGraph dominators;
    /** Information about loops. */
    private NaturalLoopSet loopSet;
 
    /** Which block is each statement a part of. */
    private StatementInfos statementInfos;
-   /** Cached information about symbols. Contains a symbol table cache for fast access.*/
+   /** Cached information about symbols. Contains a symbol table cache for fast access. */
    private SymbolInfos symbolInfos;
    /** The variables referenced by blocks/statements. */
    private VariableReferenceInfos variableReferenceInfos;
@@ -92,12 +92,12 @@ public class Program {
       this.graph = graph;
    }
 
-   public void setProcedureModifiedVars(ProcedureModifiedVars procedureModifiedVars) {
-      this.procedureModifiedVars = procedureModifiedVars;
-   }
-
    public ProcedureModifiedVars getProcedureModifiedVars() {
       return procedureModifiedVars;
+   }
+
+   public void setProcedureModifiedVars(ProcedureModifiedVars procedureModifiedVars) {
+      this.procedureModifiedVars = procedureModifiedVars;
    }
 
    public AsmProgram getAsm() {
@@ -116,20 +116,20 @@ public class Program {
       this.callGraph = callGraph;
    }
 
-   public void setDominators(DominatorsGraph dominators) {
-      this.dominators = dominators;
-   }
-
    public DominatorsGraph getDominators() {
       return dominators;
    }
 
-   public void setLoopSet(NaturalLoopSet loopSet) {
-      this.loopSet = loopSet;
+   public void setDominators(DominatorsGraph dominators) {
+      this.dominators = dominators;
    }
 
    public NaturalLoopSet getLoopSet() {
       return loopSet;
+   }
+
+   public void setLoopSet(NaturalLoopSet loopSet) {
+      this.loopSet = loopSet;
    }
 
    public VariableReferenceInfos getVariableReferenceInfos() {
@@ -156,12 +156,12 @@ public class Program {
       this.symbolInfos = symbolInfos;
    }
 
-   public void setLiveRangeVariables(LiveRangeVariables liveRangeVariables) {
-      this.liveRangeVariables = liveRangeVariables;
-   }
-
    public LiveRangeVariables getLiveRangeVariables() {
       return liveRangeVariables;
+   }
+
+   public void setLiveRangeVariables(LiveRangeVariables liveRangeVariables) {
+      this.liveRangeVariables = liveRangeVariables;
    }
 
    public LiveRangeVariablesEffective getLiveRangeVariablesEffective() {
@@ -172,36 +172,36 @@ public class Program {
       this.liveRangeVariablesEffective = liveRangeVariablesEffective;
    }
 
-   public void setLiveRangeEquivalenceClassSet(LiveRangeEquivalenceClassSet liveRangeEquivalenceClassSet) {
-      this.liveRangeEquivalenceClassSet = liveRangeEquivalenceClassSet;
-   }
-
    public LiveRangeEquivalenceClassSet getLiveRangeEquivalenceClassSet() {
       return liveRangeEquivalenceClassSet;
    }
 
-   public void setVariableRegisterWeights(VariableRegisterWeights variableRegisterWeights) {
-      this.variableRegisterWeights = variableRegisterWeights;
+   public void setLiveRangeEquivalenceClassSet(LiveRangeEquivalenceClassSet liveRangeEquivalenceClassSet) {
+      this.liveRangeEquivalenceClassSet = liveRangeEquivalenceClassSet;
    }
 
    public VariableRegisterWeights getVariableRegisterWeights() {
       return variableRegisterWeights;
    }
 
-   public void setRegisterPotentials(RegisterPotentials registerPotentials) {
-      this.registerPotentials = registerPotentials;
+   public void setVariableRegisterWeights(VariableRegisterWeights variableRegisterWeights) {
+      this.variableRegisterWeights = variableRegisterWeights;
    }
 
    public RegisterPotentials getRegisterPotentials() {
       return registerPotentials;
    }
 
-   public void setRegisterUpliftProgram(RegisterUpliftProgram registerUpliftProgram) {
-      this.registerUpliftProgram = registerUpliftProgram;
+   public void setRegisterPotentials(RegisterPotentials registerPotentials) {
+      this.registerPotentials = registerPotentials;
    }
 
    public RegisterUpliftProgram getRegisterUpliftProgram() {
       return registerUpliftProgram;
+   }
+
+   public void setRegisterUpliftProgram(RegisterUpliftProgram registerUpliftProgram) {
+      this.registerUpliftProgram = registerUpliftProgram;
    }
 
    public CompileLog getLog() {
@@ -215,13 +215,13 @@ public class Program {
 
    @Override
    public boolean equals(Object o) {
-      if (this == o) return true;
-      if (o == null || getClass() != o.getClass()) return false;
+      if(this == o) return true;
+      if(o == null || getClass() != o.getClass()) return false;
 
       Program program = (Program) o;
 
-      if (scope != null ? !scope.equals(program.scope) : program.scope != null) return false;
-      if (graph != null ? !graph.equals(program.graph) : program.graph != null) return false;
+      if(scope != null ? !scope.equals(program.scope) : program.scope != null) return false;
+      if(graph != null ? !graph.equals(program.graph) : program.graph != null) return false;
       return asm != null ? asm.equals(program.asm) : program.asm == null;
    }
 

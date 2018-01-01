@@ -4,7 +4,9 @@ package dk.camelot64.kickc.passes;
  * Identify the alive intervals for all variables. Add the intervals to the ProgramScope.
  */
 
-import dk.camelot64.kickc.model.*;
+import dk.camelot64.kickc.model.ControlFlowBlock;
+import dk.camelot64.kickc.model.Program;
+import dk.camelot64.kickc.model.Statement;
 
 public class PassNStatementIndices extends Pass2Base {
 
@@ -17,8 +19,8 @@ public class PassNStatementIndices extends Pass2Base {
     */
    public void generateStatementIndices() {
       int currentIdx = 0;
-      for (ControlFlowBlock block : getProgram().getGraph().getAllBlocks()) {
-         for (Statement statement : block.getStatements()) {
+      for(ControlFlowBlock block : getProgram().getGraph().getAllBlocks()) {
+         for(Statement statement : block.getStatements()) {
             statement.setIndex(currentIdx++);
          }
       }
@@ -28,8 +30,8 @@ public class PassNStatementIndices extends Pass2Base {
     * Clear index numbers for all statements in the control flow graph.
     */
    public void clearStatementIndices() {
-      for (ControlFlowBlock block : getProgram().getGraph().getAllBlocks()) {
-         for (Statement statement : block.getStatements()) {
+      for(ControlFlowBlock block : getProgram().getGraph().getAllBlocks()) {
+         for(Statement statement : block.getStatements()) {
             statement.setIndex(null);
          }
       }

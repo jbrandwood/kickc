@@ -2,7 +2,10 @@ package dk.camelot64.kickc.passes;
 
 import dk.camelot64.kickc.model.*;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
 
 /** Pass that culls empty control flow blocks from the program */
 public class Pass2CullEmptyBlocks extends Pass2SsaOptimization {
@@ -14,15 +17,15 @@ public class Pass2CullEmptyBlocks extends Pass2SsaOptimization {
    @Override
    public boolean step() {
       final List<ControlFlowBlock> remove = new ArrayList<>();
-      for (ControlFlowBlock block : getGraph().getAllBlocks()) {
-         if (block.getStatements().isEmpty() && block.getLabel().isIntermediate()) {
+      for(ControlFlowBlock block : getGraph().getAllBlocks()) {
+         if(block.getStatements().isEmpty() && block.getLabel().isIntermediate()) {
             remove.add(block);
          }
       }
 
       List<ControlFlowBlock> dontRemove = new ArrayList<>();
 
-      for (final ControlFlowBlock removeBlock : remove) {
+      for(final ControlFlowBlock removeBlock : remove) {
          ControlFlowBlock successor = getGraph().getDefaultSuccessor(removeBlock);
          LabelRef successorRef = successor.getLabel();
          // Replace all jumps (default/conditional/call) to @removeBlock with a jump to the default successor
@@ -32,9 +35,9 @@ public class Pass2CullEmptyBlocks extends Pass2SsaOptimization {
          // Do not remove it - because this will result in problems in distinguishing the default successor and
          // the conditional successor when generating the phi-block of the successor
          boolean dontCull = false;
-         for (ControlFlowBlock predecessor : predecessors) {
+         for(ControlFlowBlock predecessor : predecessors) {
             if(successorRef.equals(predecessor.getConditionalSuccessor()) || successorRef.equals(predecessor.getDefaultSuccessor())) {
-               getLog().append("Not culling empty block because it shares successor with its predecessor. "+removeBlock.getLabel().toString(getProgram()));
+               getLog().append("Not culling empty block because it shares successor with its predecessor. " + removeBlock.getLabel().toString(getProgram()));
                dontCull = true;
                dontRemove.add(removeBlock);
             }
@@ -42,16 +45,16 @@ public class Pass2CullEmptyBlocks extends Pass2SsaOptimization {
          if(dontCull)
             continue;
 
-         for (ControlFlowBlock predecessor : predecessors) {
+         for(ControlFlowBlock predecessor : predecessors) {
             Map<LabelRef, LabelRef> replace = new LinkedHashMap<>();
             replace.put(removeBlock.getLabel(), successorRef);
-            if (removeBlock.getLabel().equals(predecessor.getDefaultSuccessor())) {
+            if(removeBlock.getLabel().equals(predecessor.getDefaultSuccessor())) {
                predecessor.setDefaultSuccessor(successorRef);
             }
-            if (removeBlock.getLabel().equals(predecessor.getConditionalSuccessor())) {
+            if(removeBlock.getLabel().equals(predecessor.getConditionalSuccessor())) {
                predecessor.setConditionalSuccessor(successorRef);
             }
-            if (removeBlock.getLabel().equals(predecessor.getCallSuccessor())) {
+            if(removeBlock.getLabel().equals(predecessor.getCallSuccessor())) {
                predecessor.setCallSuccessor(successorRef);
             }
             replaceLabels(predecessor, replace);
@@ -60,13 +63,13 @@ public class Pass2CullEmptyBlocks extends Pass2SsaOptimization {
          ControlFlowGraphBaseVisitor<Void> phiFixVisitor = new ControlFlowGraphBaseVisitor<Void>() {
             @Override
             public Void visitPhiBlock(StatementPhiBlock phi) {
-               for (StatementPhiBlock.PhiVariable phiVariable : phi.getPhiVariables()) {
-                  for (StatementPhiBlock.PhiRValue phiRValue : phiVariable.getValues()) {
+               for(StatementPhiBlock.PhiVariable phiVariable : phi.getPhiVariables()) {
+                  for(StatementPhiBlock.PhiRValue phiRValue : phiVariable.getValues()) {
                      if(phiRValue.getPredecessor().equals(removeBlock.getLabel())) {
                         // Found a phi function referencing the remove block - add copies for each predecessor
                         RValue previousRValue = phiRValue.getrValue();
-                        for (ControlFlowBlock predecessor : predecessors) {
-                           if(phiRValue!=null) {
+                        for(ControlFlowBlock predecessor : predecessors) {
+                           if(phiRValue != null) {
                               phiRValue.setPredecessor(predecessor.getLabel());
                               phiRValue = null;
                            } else {
@@ -88,7 +91,7 @@ public class Pass2CullEmptyBlocks extends Pass2SsaOptimization {
          getLog().append("Culled Empty Block " + removeBlockLabel.toString(getProgram()));
       }
       remove.removeAll(dontRemove);
-      return remove.size()>0;
+      return remove.size() > 0;
    }
 
 }

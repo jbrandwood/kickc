@@ -30,7 +30,7 @@ public class RegisterCombinationIterator implements Iterator<RegisterCombination
 
    public int getNumIterations() {
       int numIterations = 1;
-      for (LiveRangeEquivalenceClass equivalenceClass : equivalenceClasses) {
+      for(LiveRangeEquivalenceClass equivalenceClass : equivalenceClasses) {
          List<Registers.Register> registers = registerPotentials.getPotentialRegisters(equivalenceClass);
          numIterations = numIterations * registers.size();
       }
@@ -41,7 +41,7 @@ public class RegisterCombinationIterator implements Iterator<RegisterCombination
    public RegisterCombination next() {
       RegisterCombination combination = new RegisterCombination();
       int combinationIdRest = nextIterationId;
-      for (LiveRangeEquivalenceClass equivalenceClass : equivalenceClasses) {
+      for(LiveRangeEquivalenceClass equivalenceClass : equivalenceClasses) {
          List<Registers.Register> potentials = registerPotentials.getPotentialRegisters(equivalenceClass);
          int registerIdx = (combinationIdRest % potentials.size());
          Registers.Register register = potentials.get(registerIdx);

@@ -12,21 +12,6 @@ public class AsmDataNumeric implements AsmLine {
    private List<String> values;
    private int index;
 
-   public static enum Type {
-      BYTE("byte", 1),
-      WORD("word", 2),
-      DWORD("dword", 4);
-
-      public final String asm;
-      public final int bytes;
-
-      Type(String asm, int bytes) {
-         this.asm = asm;
-         this.bytes = bytes;
-      }
-
-   }
-
    public AsmDataNumeric(String label, Type type, List<String> values) {
       this.label = label;
       this.type = type;
@@ -72,6 +57,21 @@ public class AsmDataNumeric implements AsmLine {
    @Override
    public void setIndex(int index) {
       this.index = index;
+   }
+
+   public static enum Type {
+      BYTE("byte", 1),
+      WORD("word", 2),
+      DWORD("dword", 4);
+
+      public final String asm;
+      public final int bytes;
+
+      Type(String asm, int bytes) {
+         this.asm = asm;
+         this.bytes = bytes;
+      }
+
    }
 
 }

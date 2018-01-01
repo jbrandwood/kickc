@@ -7,14 +7,14 @@ public class ControlFlowGraphBaseVisitor<T> {
 
    public T visitGraph(ControlFlowGraph graph) {
       Collection<ControlFlowBlock> blocks = graph.getAllBlocks();
-      for (ControlFlowBlock block : blocks) {
+      for(ControlFlowBlock block : blocks) {
          this.visitBlock(block);
       }
       return null;
    }
 
    public T visitBlock(ControlFlowBlock block) {
-      for (Statement statement : block.getStatements()) {
+      for(Statement statement : block.getStatements()) {
          this.visitStatement(statement);
       }
       return null;
@@ -42,7 +42,7 @@ public class ControlFlowGraphBaseVisitor<T> {
       } else if(statement instanceof StatementAsm) {
          return visitAsm((StatementAsm) statement);
       } else {
-         throw new RuntimeException("Unhandled statement type "+statement);
+         throw new RuntimeException("Unhandled statement type " + statement);
       }
    }
 

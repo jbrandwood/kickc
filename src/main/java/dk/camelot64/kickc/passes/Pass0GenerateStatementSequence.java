@@ -152,7 +152,7 @@ public class Pass0GenerateStatementSequence extends KickCBaseVisitor<Object> {
             if(type instanceof SymbolTypeArray || type.equals(SymbolType.STRING)) {
                lValue.setDeclaredAlignment(((DirectiveAlign) directive).getAlignment());
             } else {
-               throw new CompileError("Error! Cannot align variable that is not a string or an array " +lValue.toString(program));
+               throw new CompileError("Error! Cannot align variable that is not a string or an array " + lValue.toString(program));
             }
          } else {
             throw new CompileError("Unknown directive " + directive);
@@ -178,9 +178,6 @@ public class Pass0GenerateStatementSequence extends KickCBaseVisitor<Object> {
       return null;
    }
 
-   /** A declaration directive.*/
-   private interface Directive {}
-
    @Override
    public List<Directive> visitDirectives(KickCParser.DirectivesContext ctx) {
       ArrayList<Directive> directives = new ArrayList<>();
@@ -190,25 +187,9 @@ public class Pass0GenerateStatementSequence extends KickCBaseVisitor<Object> {
       return directives;
    }
 
-   /** Variable declared constant. */
-   private static class DirectiveConst implements Directive { }
-
    @Override
    public Directive visitDirectiveConst(KickCParser.DirectiveConstContext ctx) {
       return new DirectiveConst();
-   }
-
-   /** Variable memory alignment. */
-   private static class DirectiveAlign implements Directive {
-      private int alignment;
-
-      public DirectiveAlign(int alignment) {
-         this.alignment = alignment;
-      }
-
-      public int getAlignment() {
-         return alignment;
-      }
    }
 
    @Override
@@ -378,8 +359,8 @@ public class Pass0GenerateStatementSequence extends KickCBaseVisitor<Object> {
       } else {
          lValue = getCurrentSymbols().getVariable(varName);
       }
-      if(lValue==null) {
-         throw new CompileError("Unknown variable! "+varName);
+      if(lValue == null) {
+         throw new CompileError("Unknown variable! " + varName);
       }
       KickCParser.ExprContext rangeFirstCtx = ctx.expr(0);
       KickCParser.ExprContext rangeLastCtx = ctx.expr(1);
@@ -428,7 +409,6 @@ public class Pass0GenerateStatementSequence extends KickCBaseVisitor<Object> {
       sequence.addStatement(doJmpStmt);
       return null;
    }
-
 
    @Override
    public Object visitStmtAsm(KickCParser.StmtAsmContext ctx) {
@@ -654,6 +634,27 @@ public class Pass0GenerateStatementSequence extends KickCBaseVisitor<Object> {
       return sequence;
    }
 
+   /** A declaration directive. */
+   private interface Directive {
+   }
+
+   /** Variable declared constant. */
+   private static class DirectiveConst implements Directive {
+   }
+
+   /** Variable memory alignment. */
+   private static class DirectiveAlign implements Directive {
+      private int alignment;
+
+      public DirectiveAlign(int alignment) {
+         this.alignment = alignment;
+      }
+
+      public int getAlignment() {
+         return alignment;
+      }
+   }
+
    private static class PrePostModifierHandler extends KickCBaseVisitor<Void> {
 
       private List<PrePostModifier> postMods;
@@ -664,14 +665,6 @@ public class Pass0GenerateStatementSequence extends KickCBaseVisitor<Object> {
          this.mainParser = mainParser;
          preMods = new ArrayList<>();
          postMods = new ArrayList<>();
-      }
-
-      public List<PrePostModifier> getPreMods() {
-         return preMods;
-      }
-
-      public List<PrePostModifier> getPostMods() {
-         return postMods;
       }
 
       public static void addPostModifiers(Pass0GenerateStatementSequence parser, ParserRuleContext ctx) {
@@ -696,6 +689,14 @@ public class Pass0GenerateStatementSequence extends KickCBaseVisitor<Object> {
             parser.sequence.addStatement(stmt);
             parser.program.getLog().append("Adding pre/post-modifier " + stmt.toString(parser.program, true));
          }
+      }
+
+      public List<PrePostModifier> getPreMods() {
+         return preMods;
+      }
+
+      public List<PrePostModifier> getPostMods() {
+         return postMods;
       }
 
       @Override

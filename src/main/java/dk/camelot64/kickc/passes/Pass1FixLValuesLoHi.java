@@ -19,19 +19,19 @@ public class Pass1FixLValuesLoHi extends Pass1Base {
    @Override
    public boolean step() {
       ProgramScope programScope = getProgram().getScope();
-      for (ControlFlowBlock block : getProgram().getGraph().getAllBlocks()) {
+      for(ControlFlowBlock block : getProgram().getGraph().getAllBlocks()) {
          List<Statement> statements = block.getStatements();
          ListIterator<Statement> statementsIt = statements.listIterator();
-         while (statementsIt.hasNext()) {
+         while(statementsIt.hasNext()) {
             Statement statement = statementsIt.next();
-            if (statement instanceof StatementLValue && ((StatementLValue) statement).getlValue() instanceof LvalueIntermediate) {
+            if(statement instanceof StatementLValue && ((StatementLValue) statement).getlValue() instanceof LvalueIntermediate) {
                StatementLValue statementLValue = (StatementLValue) statement;
                LvalueIntermediate intermediate = (LvalueIntermediate) statementLValue.getlValue();
                StatementAssignment intermediateAssignment = getProgram().getGraph().getAssignment(intermediate.getVariable());
-               if (Operator.LOWBYTE.equals(intermediateAssignment.getOperator()) && intermediateAssignment.getrValue1() == null) {
+               if(Operator.LOWBYTE.equals(intermediateAssignment.getOperator()) && intermediateAssignment.getrValue1() == null) {
                   // Found assignment to an intermediate low byte lValue <x = ...
                   fixLoHiLValue(programScope, statementsIt, statementLValue, intermediate, intermediateAssignment, Operator.SET_LOWBYTE);
-               } else if (Operator.HIBYTE.equals(intermediateAssignment.getOperator()) && intermediateAssignment.getrValue1() == null) {
+               } else if(Operator.HIBYTE.equals(intermediateAssignment.getOperator()) && intermediateAssignment.getrValue1() == null) {
                   // Found assignment to an intermediate low byte lValue >x = ...
                   fixLoHiLValue(programScope, statementsIt, statementLValue, intermediate, intermediateAssignment, Operator.SET_HIBYTE);
                }

@@ -76,15 +76,17 @@ public class AsmProgram {
 
    /**
     * Add a constant declararion to the ASM
+    *
     * @param name The name of the constant
     * @param value The value of the constant
     */
-    public void addConstant(String name, String value) {
-       addLine(new AsmConstant(name, value));
-    }
+   public void addConstant(String name, String value) {
+      addLine(new AsmConstant(name, value));
+   }
 
    /**
     * Add a BYTE/WORD/DWORD data declaration tot the ASM
+    *
     * @param label The label of the data
     * @param type The type of the data
     * @param asmElements The value of the elements
@@ -95,6 +97,7 @@ public class AsmProgram {
 
    /**
     * Add a FILL data declaration to the ASM
+    *
     * @param label The label of the data
     * @param type The type of the data
     * @param size The size of data to fill
@@ -105,6 +108,7 @@ public class AsmProgram {
 
    /**
     * Add a string data declaration to the ASM
+    *
     * @param label The label of the data
     * @param value The value of the string
     */
@@ -114,6 +118,7 @@ public class AsmProgram {
 
    /**
     * Add data alignment to the ASM
+    *
     * @param alignment The number to align the address of the next data to
     */
    public void addDataAlignment(String alignment) {
@@ -129,7 +134,7 @@ public class AsmProgram {
     */
    public int getBytes() {
       int bytes = 0;
-      for (AsmSegment segment : segments) {
+      for(AsmSegment segment : segments) {
          bytes += segment.getBytes();
       }
       return bytes;
@@ -143,7 +148,7 @@ public class AsmProgram {
     */
    public double getCycles() {
       double cycles = 0.0;
-      for (AsmSegment segment : segments) {
+      for(AsmSegment segment : segments) {
          cycles += segment.getCycles();
       }
       return cycles;
@@ -157,7 +162,7 @@ public class AsmProgram {
     */
    public AsmClobber getClobber() {
       AsmClobber clobber = new AsmClobber();
-      for (AsmSegment segment : segments) {
+      for(AsmSegment segment : segments) {
          clobber.add(segment.getClobber());
       }
       return clobber;
@@ -169,10 +174,15 @@ public class AsmProgram {
 
    public String toString(AsmPrintState printState) {
       StringBuilder out = new StringBuilder();
-      for (AsmSegment segment : segments) {
+      for(AsmSegment segment : segments) {
          out.append(segment.toString(printState));
       }
       return out.toString();
+   }
+
+   @Override
+   public String toString() {
+      return toString(true);
    }
 
    static class AsmPrintState {
@@ -193,7 +203,7 @@ public class AsmProgram {
       }
 
       public void decIndent() {
-         if(this.indent.length()>=2) {
+         if(this.indent.length() >= 2) {
             this.indent = this.indent.substring(0, this.indent.length() - 2);
          }
       }
@@ -202,12 +212,6 @@ public class AsmProgram {
          return indent;
       }
 
-   }
-
-
-   @Override
-   public String toString() {
-      return toString(true);
    }
 
 

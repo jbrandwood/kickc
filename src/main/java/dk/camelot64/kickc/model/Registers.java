@@ -1,6 +1,6 @@
 package dk.camelot64.kickc.model;
 
-/** The different registers available for a program  */
+/** The different registers available for a program */
 public class Registers {
 
 
@@ -71,10 +71,10 @@ public class Registers {
 
       @Override
       public boolean equals(Object o) {
-         if (this == o) {
+         if(this == o) {
             return true;
          }
-         if (o == null || getClass() != o.getClass()) {
+         if(o == null || getClass() != o.getClass()) {
             return false;
          }
 
@@ -150,10 +150,10 @@ public class Registers {
 
       @Override
       public boolean equals(Object obj) {
-         if (this == obj) {
+         if(this == obj) {
             return true;
          }
-         if (obj == null || getClass() != obj.getClass()) {
+         if(obj == null || getClass() != obj.getClass()) {
             return false;
          }
          return true;
@@ -253,7 +253,7 @@ public class Registers {
 
       @Override
       public String toString(Program program) {
-         return "const "+constantValue.toString(program);
+         return "const " + constantValue.toString(program);
       }
 
       @Override
@@ -263,8 +263,8 @@ public class Registers {
 
       @Override
       public boolean equals(Object o) {
-         if (this == o) return true;
-         if (o == null || getClass() != o.getClass()) return false;
+         if(this == o) return true;
+         if(o == null || getClass() != o.getClass()) return false;
          RegisterConstant that = (RegisterConstant) o;
          return constantValue != null ? constantValue.equals(that.constantValue) : that.constantValue == null;
       }

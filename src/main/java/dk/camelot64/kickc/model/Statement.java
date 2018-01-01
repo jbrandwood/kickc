@@ -23,9 +23,9 @@ public interface Statement {
 
    String toString(Program program, boolean aliveInfo);
 
-   /** Set the index of the statement. Indexes are used during live range analysis. */
-   void setIndex(Integer idx);
-
    /** Get the index of the statement. Indexes are used during live range analysis. */
    Integer getIndex();
+
+   /** Set the index of the statement. Indexes are used during live range analysis. */
+   void setIndex(Integer idx);
 }

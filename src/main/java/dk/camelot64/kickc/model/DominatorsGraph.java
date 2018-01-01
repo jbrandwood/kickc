@@ -3,13 +3,13 @@ package dk.camelot64.kickc.model;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-/** Dominators for a control flow graph.
+/**
+ * Dominators for a control flow graph.
  * <p>
  * Definition: Block d dominates block i if all paths from entry to block i includes block d
  * <p>
  * See http://www.cs.colostate.edu/~cs553/ClassNotes/lecture09-control-dominators.ppt.pdf
- *
- * */
+ */
 public class DominatorsGraph {
 
    /**
@@ -47,7 +47,7 @@ public class DominatorsGraph {
    /**
     * Set the dominators for a specific block
     *
-    * @param block      The block
+    * @param block The block
     * @param dominators The new dominators
     */
    public void setDominators(LabelRef block, DominatorsBlock dominators) {
@@ -57,7 +57,7 @@ public class DominatorsGraph {
    @Override
    public String toString() {
       StringBuilder out = new StringBuilder();
-      for (LabelRef block : blockDominators.keySet()) {
+      for(LabelRef block : blockDominators.keySet()) {
          DominatorsBlock dominators = getDominators(block);
          out.append(block);
          out.append(" dominated by  ");

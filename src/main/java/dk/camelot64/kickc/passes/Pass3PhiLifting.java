@@ -9,7 +9,7 @@ import java.util.Map;
 
 /**
  * Perform PhiLifting to greatly reduce overlapping of alive intervals for variables.
- *
+ * <p>
  * After phi lifting it is guaranteed that variables in different phi blocks are in different live range equivalence classes.
  * <p>
  * PhiLifting introduces a large number of new virtual variables (one for each rvalue in phi-functions).
@@ -29,14 +29,14 @@ public class Pass3PhiLifting {
       ControlFlowGraph graph = program.getGraph();
       ProgramScope programScope = program.getScope();
       Collection<ControlFlowBlock> blocks = graph.getAllBlocks();
-      for (ControlFlowBlock block : blocks) {
+      for(ControlFlowBlock block : blocks) {
          // Maps old predecessors to new blocks created
          Map<LabelRef, LabelRef> newBlocks = new HashMap<>();
-         if (block.hasPhiBlock()) {
+         if(block.hasPhiBlock()) {
             StatementPhiBlock phiBlock = block.getPhiBlock();
-            for (StatementPhiBlock.PhiVariable phiVariable : phiBlock.getPhiVariables()) {
-               for (StatementPhiBlock.PhiRValue phiRValue : phiVariable.getValues()) {
-                  if (!(phiRValue.getrValue() instanceof ConstantValue)) {
+            for(StatementPhiBlock.PhiVariable phiVariable : phiBlock.getPhiVariables()) {
+               for(StatementPhiBlock.PhiRValue phiRValue : phiVariable.getValues()) {
+                  if(!(phiRValue.getrValue() instanceof ConstantValue)) {
                      LabelRef predecessorRef = phiRValue.getPredecessor();
                      ControlFlowBlock predecessorBlock = graph.getBlock(predecessorRef);
                      VariableRef rValVarRef = (VariableRef) phiRValue.getrValue();
@@ -45,7 +45,7 @@ public class Pass3PhiLifting {
                         Variable lValVar = program.getScope().getVariable(phiVariable.getVariable());
                         newVar = ((VariableVersion) lValVar).getVersionOf().createVersion();
                      } else {
-                        throw new RuntimeException("Only versions! "+phiVariable.getVariable());
+                        throw new RuntimeException("Only versions! " + phiVariable.getVariable());
                         //   Symbol predecessorSymbol = programScope.getSymbol(predecessorRef);
                         //   newVar = predecessorSymbol.getScope().addVariableIntermediate();
                      }
@@ -62,15 +62,15 @@ public class Pass3PhiLifting {
                      newVar.setInferredType(true);
                      List<Statement> predecessorStatements = predecessorBlock.getStatements();
                      Statement lastPredecessorStatement = null;
-                     if(predecessorStatements.size()>0) {
+                     if(predecessorStatements.size() > 0) {
                         lastPredecessorStatement = predecessorStatements.get(predecessorStatements.size() - 1);
                      }
                      StatementAssignment newAssignment = new StatementAssignment(newVar, phiRValue.getrValue());
-                     if (lastPredecessorStatement instanceof StatementConditionalJump) {
+                     if(lastPredecessorStatement instanceof StatementConditionalJump) {
                         // Use or Create a new block between the predecessor and this one - getReplacement labels where appropriate
                         ControlFlowBlock newBlock;
                         LabelRef newBlockRef = newBlocks.get(predecessorRef);
-                        if(newBlockRef==null) {
+                        if(newBlockRef == null) {
                            // Create new block
                            LabelRef currentBlockLabel = block.getLabel();
                            Scope currentScope = programScope.getSymbol(currentBlockLabel).getScope();
@@ -88,8 +88,8 @@ public class Pass3PhiLifting {
                            if(block.getLabel().equals(predecessorBlock.getDefaultSuccessor())) {
                               predecessorBlock.setDefaultSuccessor(newBlock.getLabel());
                            }
-                           program.getLog().append("Added new block during phi lifting "+newBlock.getLabel() + "(between "+predecessorRef+" and "+block.getLabel()+")");
-                        }  else {
+                           program.getLog().append("Added new block during phi lifting " + newBlock.getLabel() + "(between " + predecessorRef + " and " + block.getLabel() + ")");
+                        } else {
                            newBlock = graph.getBlock(newBlockRef);
                         }
                         List<Statement> newBlockStatements = newBlock.getStatements();

@@ -33,12 +33,12 @@ public class RegisterPotentials {
    @Override
    public String toString() {
       StringBuilder out = new StringBuilder();
-      for (LiveRangeEquivalenceClass liveRangeEquivalenceClass : potentials.keySet()) {
+      for(LiveRangeEquivalenceClass liveRangeEquivalenceClass : potentials.keySet()) {
          out.append("Potential registers ");
          out.append(liveRangeEquivalenceClass.toString());
          out.append(" : ");
          List<Registers.Register> registers = potentials.get(liveRangeEquivalenceClass);
-         for (Registers.Register register : registers) {
+         for(Registers.Register register : registers) {
             out.append(register.toString());
             out.append(" , ");
          }
@@ -49,11 +49,11 @@ public class RegisterPotentials {
 
    public void addPotentialRegister(LiveRangeEquivalenceClass equivalenceClass, Registers.Register register) {
       List<Registers.Register> registers = potentials.get(equivalenceClass);
-      if(registers==null) {
-         registers= new ArrayList<>();
+      if(registers == null) {
+         registers = new ArrayList<>();
          potentials.put(equivalenceClass, registers);
       }
-      if (!registers.contains(register)) {
+      if(!registers.contains(register)) {
          registers.add(register);
       }
    }

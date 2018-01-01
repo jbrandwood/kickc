@@ -3,7 +3,7 @@ package dk.camelot64.kickc.model;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-/**  A reference to a label */
+/** A reference to a label */
 public class LabelRef extends SymbolRef {
 
    @JsonCreator

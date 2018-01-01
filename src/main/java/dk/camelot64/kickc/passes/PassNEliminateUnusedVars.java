@@ -20,15 +20,15 @@ public class PassNEliminateUnusedVars extends Pass2SsaOptimization {
       new PassNVariableReferenceInfos(getProgram()).generateVariableReferenceInfos();
       VariableReferenceInfos referenceInfos = getProgram().getVariableReferenceInfos();
       boolean modified = false;
-      for (ControlFlowBlock block : getGraph().getAllBlocks()) {
+      for(ControlFlowBlock block : getGraph().getAllBlocks()) {
          ListIterator<Statement> stmtIt = block.getStatements().listIterator();
-         while (stmtIt.hasNext()) {
+         while(stmtIt.hasNext()) {
             Statement statement = stmtIt.next();
-            if (statement instanceof StatementAssignment) {
+            if(statement instanceof StatementAssignment) {
                StatementAssignment assignment = (StatementAssignment) statement;
                LValue lValue = assignment.getlValue();
-               if (lValue instanceof VariableRef && referenceInfos.isUnused((VariableRef) lValue)) {
-                  getLog().append("Eliminating unused variable "+ lValue.toString(getProgram()) + " and assignment "+ assignment.toString(getProgram(), false));
+               if(lValue instanceof VariableRef && referenceInfos.isUnused((VariableRef) lValue)) {
+                  getLog().append("Eliminating unused variable " + lValue.toString(getProgram()) + " and assignment " + assignment.toString(getProgram(), false));
                   stmtIt.remove();
                   Variable variable = getScope().getVariable((VariableRef) lValue);
                   variable.getScope().remove(variable);
@@ -38,7 +38,7 @@ public class PassNEliminateUnusedVars extends Pass2SsaOptimization {
                StatementCall call = (StatementCall) statement;
                LValue lValue = call.getlValue();
                if(lValue instanceof VariableRef && referenceInfos.isUnused((VariableRef) lValue)) {
-                  getLog().append("Eliminating unused variable - keeping the call "+ lValue.toString(getProgram()));
+                  getLog().append("Eliminating unused variable - keeping the call " + lValue.toString(getProgram()));
                   Variable variable = getScope().getVariable((VariableRef) lValue);
                   variable.getScope().remove(variable);
                   call.setlValue(null);
@@ -51,7 +51,7 @@ public class PassNEliminateUnusedVars extends Pass2SsaOptimization {
       Collection<ConstantVar> allConstants = getScope().getAllConstants(true);
       for(ConstantVar constant : allConstants) {
          if(referenceInfos.isUnused(constant.getRef())) {
-            getLog().append("Eliminating unused constant "+ constant.toString(getProgram()));
+            getLog().append("Eliminating unused constant " + constant.toString(getProgram()));
             constant.getScope().remove(constant);
             modified = true;
          }

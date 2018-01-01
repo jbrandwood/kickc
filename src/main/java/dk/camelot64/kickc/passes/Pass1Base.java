@@ -1,7 +1,9 @@
 package dk.camelot64.kickc.passes;
 
 import dk.camelot64.kickc.CompileLog;
-import dk.camelot64.kickc.model.*;
+import dk.camelot64.kickc.model.ControlFlowGraph;
+import dk.camelot64.kickc.model.Program;
+import dk.camelot64.kickc.model.ProgramScope;
 
 /**
  * Pass 1 (before SSA optimizations) base class
@@ -19,7 +21,7 @@ public abstract class Pass1Base {
     */
    public void execute() {
       boolean again = true;
-      while (again) {
+      while(again) {
          again = step();
       }
    }

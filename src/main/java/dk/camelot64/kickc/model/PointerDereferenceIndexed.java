@@ -1,6 +1,6 @@
 package dk.camelot64.kickc.model;
 
-/** A dereferenced variable pointer plus an index (used for array writes)*/
+/** A dereferenced variable pointer plus an index (used for array writes) */
 public class PointerDereferenceIndexed implements PointerDereference {
 
    private RValue pointer;
@@ -35,7 +35,7 @@ public class PointerDereferenceIndexed implements PointerDereference {
 
    @Override
    public String toString(Program program) {
-      return "*(" + pointer.toString(program) + " + " +index.toString(program) + ')';
+      return "*(" + pointer.toString(program) + " + " + index.toString(program) + ')';
    }
 
 }

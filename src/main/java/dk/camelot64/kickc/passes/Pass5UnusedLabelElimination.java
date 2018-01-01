@@ -22,8 +22,8 @@ public class Pass5UnusedLabelElimination extends Pass5AsmOptimization {
    public boolean optimize() {
       Set<String> usedLabels = new LinkedHashSet<>();
       String currentScope = "";
-      for (AsmSegment segment : getAsmProgram().getSegments()) {
-         for (AsmLine line : segment.getLines()) {
+      for(AsmSegment segment : getAsmProgram().getSegments()) {
+         for(AsmLine line : segment.getLines()) {
             if(line instanceof AsmScopeBegin) {
                currentScope = ((AsmScopeBegin) line).getLabel();
             } else if(line instanceof AsmScopeEnd) {
@@ -31,30 +31,30 @@ public class Pass5UnusedLabelElimination extends Pass5AsmOptimization {
             } else if(line instanceof AsmInstruction) {
                AsmInstruction instruction = (AsmInstruction) line;
                if(instruction.getType().isJump()) {
-                  String labelStr = currentScope+"::"+instruction.getParameter();
+                  String labelStr = currentScope + "::" + instruction.getParameter();
                   usedLabels.add(labelStr);
                }
             }
          }
       }
       List<AsmLine> removeLines = new ArrayList<>();
-      for (AsmSegment segment : getAsmProgram().getSegments()) {
+      for(AsmSegment segment : getAsmProgram().getSegments()) {
          Integer statementIdx = segment.getStatementIdx();
-         if(statementIdx!=null) {
+         if(statementIdx != null) {
             Statement statement = getProgram().getStatementInfos().getStatement(statementIdx);
             if(statement instanceof StatementAsm) {
                // Skip ASM statement
                continue;
             }
          }
-         for (AsmLine line : segment.getLines()) {
+         for(AsmLine line : segment.getLines()) {
             if(line instanceof AsmScopeBegin) {
                currentScope = ((AsmScopeBegin) line).getLabel();
             } else if(line instanceof AsmScopeEnd) {
                currentScope = "";
             } else if(line instanceof AsmLabel) {
                AsmLabel label = (AsmLabel) line;
-               String labelStr = currentScope+"::"+label.getLabel();
+               String labelStr = currentScope + "::" + label.getLabel();
                if(!labelStr.contains("!") && !usedLabels.contains(labelStr)) {
                   removeLines.add(label);
                }

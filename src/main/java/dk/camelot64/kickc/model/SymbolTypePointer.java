@@ -26,15 +26,15 @@ public class SymbolTypePointer implements SymbolType {
    @Override
    @JsonIgnore
    public String getTypeName() {
-      return elementType.getTypeName()+"*";
+      return elementType.getTypeName() + "*";
    }
 
    @Override
    public boolean equals(Object o) {
-      if (this == o) {
+      if(this == o) {
          return true;
       }
-      if (o == null || getClass() != o.getClass()) {
+      if(o == null || getClass() != o.getClass()) {
          return false;
       }
 

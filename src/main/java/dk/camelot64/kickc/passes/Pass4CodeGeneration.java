@@ -11,10 +11,15 @@ import java.util.*;
  */
 public class Pass4CodeGeneration {
 
-   private Program program;
-
    /** Should the generated ASM contain verbose alive info for the statements (costs a bit more to generate). */
    boolean verboseAliveInfo;
+   private Program program;
+   /**
+    * Keeps track of the phi transitions into blocks during code generation.
+    * Used to ensure that duplicate transitions are only code generated once.
+    * Maps to-blocks to the transition information for the block
+    */
+   private Map<ControlFlowBlock, PhiTransitions> blockTransitions = new LinkedHashMap<>();
 
    public Pass4CodeGeneration(Program program, boolean verboseAliveInfo) {
       this.program = program;
@@ -42,9 +47,9 @@ public class Pass4CodeGeneration {
       asm.startSegment(null, "Global Constants & labels");
       addConstants(asm, currentScope);
       addZpLabels(asm, currentScope);
-      for (ControlFlowBlock block : getGraph().getAllBlocks()) {
-         if (!block.getScope().equals(currentScope)) {
-            if (!ScopeRef.ROOT.equals(currentScope)) {
+      for(ControlFlowBlock block : getGraph().getAllBlocks()) {
+         if(!block.getScope().equals(currentScope)) {
+            if(!ScopeRef.ROOT.equals(currentScope)) {
                addData(asm, currentScope);
                asm.addScopeEnd();
             }
@@ -57,7 +62,7 @@ public class Pass4CodeGeneration {
          }
          // Generate entry points (if needed)
          genBlockEntryPoints(asm, block);
-         if (!block.isProcedureEntry(program)) {
+         if(!block.isProcedureEntry(program)) {
             // Generate label
             asm.startSegment(null, block.getLabel().getFullName());
             asm.addLabel(block.getLabel().getLocalName().replace('@', 'b').replace(':', '_'));
@@ -66,10 +71,10 @@ public class Pass4CodeGeneration {
          genStatements(asm, block);
          // Generate exit
          ControlFlowBlock defaultSuccessor = getGraph().getDefaultSuccessor(block);
-         if (defaultSuccessor != null) {
-            if (defaultSuccessor.hasPhiBlock()) {
+         if(defaultSuccessor != null) {
+            if(defaultSuccessor.hasPhiBlock()) {
                PhiTransitions.PhiTransition transition = getTransitions(defaultSuccessor).getTransition(block);
-               if (!transition.isGenerated()) {
+               if(!transition.isGenerated()) {
                   genBlockPhiTransition(asm, block, defaultSuccessor, defaultSuccessor.getScope());
                   String label = defaultSuccessor.getLabel().getLocalName().replace('@', 'b').replace(':', '_');
                   asm.addInstruction("JMP", AsmAddressingMode.ABS, label, false);
@@ -83,7 +88,7 @@ public class Pass4CodeGeneration {
             }
          }
       }
-      if (!ScopeRef.ROOT.equals(currentScope)) {
+      if(!ScopeRef.ROOT.equals(currentScope)) {
          addData(asm, currentScope);
          asm.addScopeEnd();
       }
@@ -94,17 +99,17 @@ public class Pass4CodeGeneration {
    /**
     * Add constant declarations for all scope constants
     *
-    * @param asm      The ASM program
+    * @param asm The ASM program
     * @param scopeRef The scope
     */
    private void addConstants(AsmProgram asm, ScopeRef scopeRef) {
       Scope scope = program.getScope().getScope(scopeRef);
       Collection<ConstantVar> scopeConstants = scope.getAllConstants(false);
       Set<String> added = new LinkedHashSet<>();
-      for (ConstantVar constantVar : scopeConstants) {
-         if(!(constantVar.getValue() instanceof ConstantArrayList || constantVar.getValue() instanceof ConstantArrayFilled|| constantVar.getType().equals(SymbolType.STRING))) {
+      for(ConstantVar constantVar : scopeConstants) {
+         if(!(constantVar.getValue() instanceof ConstantArrayList || constantVar.getValue() instanceof ConstantArrayFilled || constantVar.getType().equals(SymbolType.STRING))) {
             String asmName = constantVar.getAsmName() == null ? constantVar.getLocalName() : constantVar.getAsmName();
-            if (asmName != null && !added.contains(asmName)) {
+            if(asmName != null && !added.contains(asmName)) {
                asm.addConstant(asmName.replace("#", "_").replace("$", "_"), AsmFormat.getAsmConstant(program, constantVar.getValue(), 99, scopeRef));
                added.add(asmName);
             }
@@ -115,25 +120,25 @@ public class Pass4CodeGeneration {
    /**
     * Add data directives for constants declarations
     *
-    * @param asm      The ASM program
+    * @param asm The ASM program
     * @param scopeRef The scope
     */
    private void addData(AsmProgram asm, ScopeRef scopeRef) {
       Scope scope = program.getScope().getScope(scopeRef);
       Collection<ConstantVar> scopeConstants = scope.getAllConstants(false);
       Set<String> added = new LinkedHashSet<>();
-      for (ConstantVar constantVar : scopeConstants) {
+      for(ConstantVar constantVar : scopeConstants) {
          Integer declaredAlignment = constantVar.getDeclaredAlignment();
-         if(declaredAlignment !=null) {
+         if(declaredAlignment != null) {
             String alignment = AsmFormat.getAsmNumber(declaredAlignment);
             asm.addDataAlignment(alignment);
          }
          if(constantVar.getValue() instanceof ConstantArrayList) {
             ConstantArrayList constantArrayList = (ConstantArrayList) constantVar.getValue();
             String asmName = constantVar.getAsmName() == null ? constantVar.getLocalName() : constantVar.getAsmName();
-            if (asmName != null && !added.contains(asmName)) {
+            if(asmName != null && !added.contains(asmName)) {
                List<String> asmElements = new ArrayList<>();
-               for (ConstantValue element : constantArrayList.getElements()) {
+               for(ConstantValue element : constantArrayList.getElements()) {
                   String asmElement = AsmFormat.getAsmConstant(program, element, 99, scopeRef);
                   asmElements.add(asmElement);
                }
@@ -141,7 +146,7 @@ public class Pass4CodeGeneration {
                   asm.addDataNumeric(asmName.replace("#", "_").replace("$", "_"), AsmDataNumeric.Type.BYTE, asmElements);
                   added.add(asmName);
                } else {
-                  throw new RuntimeException("Unhandled constant array element type "+ constantArrayList.toString(program));
+                  throw new RuntimeException("Unhandled constant array element type " + constantArrayList.toString(program));
                }
             }
          } else if(constantVar.getValue() instanceof ConstantArrayFilled) {
@@ -151,7 +156,7 @@ public class Pass4CodeGeneration {
                asm.addDataFilled(asmName.replace("#", "_").replace("$", "_"), AsmDataNumeric.Type.BYTE, constantArrayFilled.getSize(), "0");
                added.add(asmName);
             } else {
-               throw new RuntimeException("Unhandled constant array element type "+ constantArrayFilled.toString(program));
+               throw new RuntimeException("Unhandled constant array element type " + constantArrayFilled.toString(program));
             }
          } else if(constantVar.getType().equals(SymbolType.STRING)) {
             String asmName = constantVar.getAsmName() == null ? constantVar.getLocalName() : constantVar.getAsmName();
@@ -162,23 +167,21 @@ public class Pass4CodeGeneration {
       }
    }
 
-
-
    /**
     * Add label declarations for all scope variables assigned to ZP registers
     *
-    * @param asm   The ASM program
+    * @param asm The ASM program
     * @param scope The scope
     */
    private void addZpLabels(AsmProgram asm, ScopeRef scope) {
       Collection<Variable> scopeVars = program.getScope().getScope(scope).getAllVariables(false);
       Set<String> added = new LinkedHashSet<>();
-      for (Variable scopeVar : scopeVars) {
+      for(Variable scopeVar : scopeVars) {
          Registers.Register register = scopeVar.getAllocation();
-         if (register != null && register.isZp()) {
+         if(register != null && register.isZp()) {
             Registers.RegisterZp registerZp = (Registers.RegisterZp) register;
             String asmName = scopeVar.getAsmName();
-            if (asmName != null && !added.contains(asmName)) {
+            if(asmName != null && !added.contains(asmName)) {
                asm.addLabelDecl(asmName.replace("#", "_").replace("$", "_"), registerZp.getZp());
                added.add(asmName);
             }
@@ -189,9 +192,9 @@ public class Pass4CodeGeneration {
    private void genStatements(AsmProgram asm, ControlFlowBlock block) {
       Iterator<Statement> statementsIt = block.getStatements().iterator();
       AsmCodegenAluState aluState = new AsmCodegenAluState();
-      while (statementsIt.hasNext()) {
+      while(statementsIt.hasNext()) {
          Statement statement = statementsIt.next();
-         if (!(statement instanceof StatementPhiBlock)) {
+         if(!(statement instanceof StatementPhiBlock)) {
             generateStatementAsm(asm, block, statement, aluState, true);
          }
       }
@@ -200,20 +203,20 @@ public class Pass4CodeGeneration {
    /**
     * Generate ASM code for a single statement
     *
-    * @param asm       The ASM program to generate into
-    * @param block     The block containing the statement
+    * @param asm The ASM program to generate into
+    * @param block The block containing the statement
     * @param statement The statement to generate ASM code for
-    * @param aluState  State of the special ALU register. Used to generate composite fragments when two consecutive statements can be executed effectively.
-    *                  For example ADC $1100,x combines two statements $0 = $1100 staridx X, A = A+$0 .
+    * @param aluState State of the special ALU register. Used to generate composite fragments when two consecutive statements can be executed effectively.
+    * For example ADC $1100,x combines two statements $0 = $1100 staridx X, A = A+$0 .
     */
    public void generateStatementAsm(AsmProgram asm, ControlFlowBlock block, Statement statement, AsmCodegenAluState aluState, boolean genCallPhiEntry) {
 
       asm.startSegment(statement.getIndex(), statement.toString(program, verboseAliveInfo));
 
       // IF the previous statement was added to the ALU register - generate the composite ASM fragment
-      if (aluState.hasAluAssignment()) {
+      if(aluState.hasAluAssignment()) {
          StatementAssignment assignmentAlu = aluState.getAluAssignment();
-         if (!(statement instanceof StatementAssignment)) {
+         if(!(statement instanceof StatementAssignment)) {
             throw new AsmFragment.AluNotApplicableException();
          }
          StatementAssignment assignment = (StatementAssignment) statement;
@@ -225,23 +228,23 @@ public class Pass4CodeGeneration {
          return;
       }
 
-      if (!(statement instanceof StatementPhiBlock)) {
-         if (statement instanceof StatementAssignment) {
+      if(!(statement instanceof StatementPhiBlock)) {
+         if(statement instanceof StatementAssignment) {
             StatementAssignment assignment = (StatementAssignment) statement;
             LValue lValue = assignment.getlValue();
             boolean isAlu = false;
-            if (lValue instanceof VariableRef) {
+            if(lValue instanceof VariableRef) {
                VariableRef lValueRef = (VariableRef) lValue;
                Registers.Register lValRegister = program.getSymbolInfos().getVariable(lValueRef).getAllocation();
-               if (lValRegister.getType().equals(Registers.RegisterType.REG_ALU)) {
+               if(lValRegister.getType().equals(Registers.RegisterType.REG_ALU)) {
                   asm.addComment(statement + "  //  ALU");
                   StatementAssignment assignmentAlu = assignment;
                   aluState.setAluAssignment(assignmentAlu);
                   isAlu = true;
                }
             }
-            if (!isAlu) {
-               if (assignment.getOperator() == null && assignment.getrValue1() == null && isRegisterCopy(lValue, assignment.getrValue2())) {
+            if(!isAlu) {
+               if(assignment.getOperator() == null && assignment.getrValue1() == null && isRegisterCopy(lValue, assignment.getrValue2())) {
                   asm.addComment(lValue.toString(program) + " = " + assignment.getrValue2().toString(program) + "  // register copy " + getRegister(lValue));
                } else {
                   AsmFragmentSignature asmFragmentSignature = new AsmFragmentSignature(assignment, program);
@@ -250,27 +253,27 @@ public class Pass4CodeGeneration {
                   asmFragment.generate(asm);
                }
             }
-         } else if (statement instanceof StatementConditionalJump) {
+         } else if(statement instanceof StatementConditionalJump) {
             AsmFragmentSignature asmSignature = new AsmFragmentSignature((StatementConditionalJump) statement, block, program, getGraph());
             AsmFragment asmFragment = AsmFragmentManager.getFragment(asmSignature, program.getLog());
             asm.getCurrentSegment().setFragment(asmFragment.getFragmentName());
             asmFragment.generate(asm);
-         } else if (statement instanceof StatementCall) {
+         } else if(statement instanceof StatementCall) {
             StatementCall call = (StatementCall) statement;
-            if (genCallPhiEntry) {
+            if(genCallPhiEntry) {
                ControlFlowBlock callSuccessor = getGraph().getCallSuccessor(block);
-               if (callSuccessor != null && callSuccessor.hasPhiBlock()) {
+               if(callSuccessor != null && callSuccessor.hasPhiBlock()) {
                   PhiTransitions.PhiTransition transition = getTransitions(callSuccessor).getTransition(block);
-                  if (transition.isGenerated()) {
+                  if(transition.isGenerated()) {
                      throw new RuntimeException("Error! JSR transition already generated. Must modify PhiTransitions code to ensure this does not happen.");
                   }
                   genBlockPhiTransition(asm, block, callSuccessor, block.getScope());
                }
             }
             asm.addInstruction("jsr", AsmAddressingMode.ABS, call.getProcedure().getFullName(), false);
-         } else if (statement instanceof StatementReturn) {
+         } else if(statement instanceof StatementReturn) {
             asm.addInstruction("rts", AsmAddressingMode.NON, null, false);
-         } else if (statement instanceof StatementAsm) {
+         } else if(statement instanceof StatementAsm) {
             StatementAsm statementAsm = (StatementAsm) statement;
             HashMap<String, Value> bindings = new HashMap<>();
             AsmFragment asmFragment = new AsmFragment(program, "inline", block.getScope(), new AsmFragmentTemplate(statementAsm.getAsmLines()), bindings);
@@ -282,40 +285,16 @@ public class Pass4CodeGeneration {
    }
 
    /**
-    * Contains previous assignment added to the ALU register between calls to generateStatementAsm
-    */
-   public static class AsmCodegenAluState {
-
-      private StatementAssignment aluAssignment;
-
-      public void setAluAssignment(StatementAssignment aluAssignment) {
-         this.aluAssignment = aluAssignment;
-      }
-
-      public StatementAssignment getAluAssignment() {
-         return aluAssignment;
-      }
-
-      public boolean hasAluAssignment() {
-         return aluAssignment != null;
-      }
-
-      public void clear() {
-         aluAssignment = null;
-      }
-   }
-
-   /**
     * Generate all block entry points (phi transitions) which have not already been generated.
     *
-    * @param asm     The ASM program to generate into
+    * @param asm The ASM program to generate into
     * @param toBlock The block to generate remaining entry points for.
     */
    private void genBlockEntryPoints(AsmProgram asm, ControlFlowBlock toBlock) {
       PhiTransitions transitions = getTransitions(toBlock);
-      for (ControlFlowBlock fromBlock : transitions.getFromBlocks()) {
+      for(ControlFlowBlock fromBlock : transitions.getFromBlocks()) {
          PhiTransitions.PhiTransition transition = transitions.getTransition(fromBlock);
-         if (!transition.isGenerated() && toBlock.getLabel().equals(fromBlock.getConditionalSuccessor())) {
+         if(!transition.isGenerated() && toBlock.getLabel().equals(fromBlock.getConditionalSuccessor())) {
             genBlockPhiTransition(asm, fromBlock, toBlock, toBlock.getScope());
             asm.addInstruction("JMP", AsmAddressingMode.ABS, toBlock.getLabel().getLocalName().replace('@', 'b').replace(':', '_'), false);
          }
@@ -327,30 +306,30 @@ public class Pass4CodeGeneration {
     * The transition can be inserted either at the start of the to-block (used for conditional jumps)
     * or at the end of the from-block ( used at default block transitions and before JMP/JSR)
     *
-    * @param asm       The ASP program to generate the transition into.
+    * @param asm The ASP program to generate the transition into.
     * @param fromBlock The from-block
-    * @param toBlock   The to-block
-    * @param scope     The scope where the ASM code is being inserted. Used to ensure that labels inserted in the code reference the right variables.
-    *                  If the transition code is inserted in the to-block, this is the scope of the to-block.
-    *                  If the transition code is inserted in the from-block this is the scope of the from-block.
+    * @param toBlock The to-block
+    * @param scope The scope where the ASM code is being inserted. Used to ensure that labels inserted in the code reference the right variables.
+    * If the transition code is inserted in the to-block, this is the scope of the to-block.
+    * If the transition code is inserted in the from-block this is the scope of the from-block.
     */
    private void genBlockPhiTransition(AsmProgram asm, ControlFlowBlock fromBlock, ControlFlowBlock toBlock, ScopeRef scope) {
       PhiTransitions transitions = getTransitions(toBlock);
       PhiTransitions.PhiTransition transition = transitions.getTransition(fromBlock);
-      if (!transition.isGenerated()) {
+      if(!transition.isGenerated()) {
          Statement toFirstStatement = toBlock.getStatements().get(0);
          String segmentSrc = "[" + toFirstStatement.getIndex() + "] phi from ";
-         for (ControlFlowBlock fBlock : transition.getFromBlocks()) {
+         for(ControlFlowBlock fBlock : transition.getFromBlocks()) {
             segmentSrc += fBlock.getLabel().getFullName() + " ";
          }
          segmentSrc += "to " + toBlock.getLabel().getFullName();
          asm.startSegment(toFirstStatement.getIndex(), segmentSrc);
          asm.getCurrentSegment().setPhiTransitionId(transition.getTransitionId());
-         for (ControlFlowBlock fBlock : transition.getFromBlocks()) {
+         for(ControlFlowBlock fBlock : transition.getFromBlocks()) {
             asm.addLabel((toBlock.getLabel().getLocalName() + "_from_" + fBlock.getLabel().getLocalName()).replace('@', 'b').replace(':', '_'));
          }
          List<PhiTransitions.PhiTransition.PhiAssignment> assignments = transition.getAssignments();
-         for (PhiTransitions.PhiTransition.PhiAssignment assignment : assignments) {
+         for(PhiTransitions.PhiTransition.PhiAssignment assignment : assignments) {
             LValue lValue = assignment.getVariable();
             RValue rValue = assignment.getrValue();
             Statement statement = assignment.getPhiBlock();
@@ -358,7 +337,7 @@ public class Pass4CodeGeneration {
             asm.startSegment(statement.getIndex(), "[" + statement.getIndex() + "] phi " + lValue.toString(program) + " = " + rValue.toString(program));
             asm.getCurrentSegment().setPhiTransitionId(transition.getTransitionId());
             asm.getCurrentSegment().setPhiTransitionAssignmentIdx(assignment.getAssignmentIdx());
-            if (isRegisterCopy(lValue, rValue)) {
+            if(isRegisterCopy(lValue, rValue)) {
                asm.getCurrentSegment().setFragment("register_copy");
             } else {
                AsmFragmentSignature asmSignature = new AsmFragmentSignature(lValue, rValue, program, scope);
@@ -373,14 +352,6 @@ public class Pass4CodeGeneration {
       }
    }
 
-
-   /**
-    * Keeps track of the phi transitions into blocks during code generation.
-    * Used to ensure that duplicate transitions are only code generated once.
-    * Maps to-blocks to the transition information for the block
-    */
-   private Map<ControlFlowBlock, PhiTransitions> blockTransitions = new LinkedHashMap<>();
-
    /**
     * Get phi transitions for a specific to-block.
     *
@@ -389,7 +360,7 @@ public class Pass4CodeGeneration {
     */
    private PhiTransitions getTransitions(ControlFlowBlock toBlock) {
       PhiTransitions transitions = this.blockTransitions.get(toBlock);
-      if (transitions == null) {
+      if(transitions == null) {
          transitions = new PhiTransitions(program, toBlock);
          this.blockTransitions.put(toBlock, transitions);
       }
@@ -397,7 +368,7 @@ public class Pass4CodeGeneration {
    }
 
    private Registers.Register getRegister(RValue rValue) {
-      if (rValue instanceof VariableRef) {
+      if(rValue instanceof VariableRef) {
          VariableRef rValueRef = (VariableRef) rValue;
          return program.getSymbolInfos().getVariable(rValueRef).getAllocation();
       } else {
@@ -410,6 +381,30 @@ public class Pass4CodeGeneration {
             getRegister(lValue) != null &&
                   getRegister(rValue) != null &&
                   getRegister(lValue).equals(getRegister(rValue));
+   }
+
+   /**
+    * Contains previous assignment added to the ALU register between calls to generateStatementAsm
+    */
+   public static class AsmCodegenAluState {
+
+      private StatementAssignment aluAssignment;
+
+      public StatementAssignment getAluAssignment() {
+         return aluAssignment;
+      }
+
+      public void setAluAssignment(StatementAssignment aluAssignment) {
+         this.aluAssignment = aluAssignment;
+      }
+
+      public boolean hasAluAssignment() {
+         return aluAssignment != null;
+      }
+
+      public void clear() {
+         aluAssignment = null;
+      }
    }
 
 }

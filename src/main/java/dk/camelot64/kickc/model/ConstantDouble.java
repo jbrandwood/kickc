@@ -27,9 +27,9 @@ public class ConstantDouble implements ConstantValue {
 
    @Override
    public String toString(Program program) {
-      if(program ==null) {
+      if(program == null) {
          return Double.toString(number);
-      }  else {
+      } else {
          return "(" + SymbolType.VOID.getTypeName() + ") " + Double.toString(number);
       }
    }

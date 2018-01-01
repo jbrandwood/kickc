@@ -26,7 +26,7 @@ public class AsmSetPc implements AsmLine {
 
    @Override
    public String getAsm() {
-      return ".pc = "+ AsmFormat.getAsmNumber(address)+" \""+name+"\"";
+      return ".pc = " + AsmFormat.getAsmNumber(address) + " \"" + name + "\"";
    }
 
    @Override

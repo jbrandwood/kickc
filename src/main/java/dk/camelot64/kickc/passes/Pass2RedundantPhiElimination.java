@@ -2,10 +2,8 @@ package dk.camelot64.kickc.passes;
 
 import dk.camelot64.kickc.model.*;
 
-import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.Map;
-import java.util.Set;
 
 /** Compiler Pass eliminating redundant phi functions */
 public class Pass2RedundantPhiElimination extends Pass2SsaOptimization {
@@ -22,16 +20,17 @@ public class Pass2RedundantPhiElimination extends Pass2SsaOptimization {
       final Map<VariableRef, RValue> aliases = findRedundantPhis();
       removeAssignments(aliases.keySet());
       replaceVariables(aliases);
-      for (VariableRef var : aliases.keySet()) {
+      for(VariableRef var : aliases.keySet()) {
          RValue alias = aliases.get(var);
          getLog().append("Redundant Phi " + var.toString(getProgram()) + " " + alias.toString(getProgram()));
       }
       deleteSymbols(aliases.keySet());
-      return aliases.size()>0;
+      return aliases.size() > 0;
    }
 
    /**
     * Find phi variables where all previous symbols are identical.
+    *
     * @return Map from (phi) Variable to the previous value
     */
    private Map<VariableRef, RValue> findRedundantPhis() {
@@ -40,11 +39,11 @@ public class Pass2RedundantPhiElimination extends Pass2SsaOptimization {
 
          @Override
          public Void visitPhiBlock(StatementPhiBlock phi) {
-            for (StatementPhiBlock.PhiVariable phiVariable : phi.getPhiVariables()) {
+            for(StatementPhiBlock.PhiVariable phiVariable : phi.getPhiVariables()) {
                boolean found = true;
                RValue rValue = null;
-               for (StatementPhiBlock.PhiRValue phiRValue : phiVariable.getValues()) {
-                  if(rValue==null) {
+               for(StatementPhiBlock.PhiRValue phiRValue : phiVariable.getValues()) {
+                  if(rValue == null) {
                      rValue = phiRValue.getrValue();
                   } else {
                      if(!rValue.equals(phiRValue.getrValue())) {
@@ -55,7 +54,9 @@ public class Pass2RedundantPhiElimination extends Pass2SsaOptimization {
                }
                if(found) {
                   VariableRef variable = phiVariable.getVariable();
-                  if(rValue==null) {rValue = LValue.VOID;}
+                  if(rValue == null) {
+                     rValue = LValue.VOID;
+                  }
                   aliases.put(variable, rValue);
                }
             }

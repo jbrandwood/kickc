@@ -18,8 +18,8 @@ public class Pass2AssertNoCallLvalues extends Pass2SsaAssertion {
 
          @Override
          public Void visitCall(StatementCall call) {
-            if(call.getlValue()!=null) {
-               throw new AssertionFailed("No call lValue allowed! "+ call);
+            if(call.getlValue() != null) {
+               throw new AssertionFailed("No call lValue allowed! " + call);
             }
             return null;
          }

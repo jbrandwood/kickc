@@ -46,7 +46,7 @@ public class LiveRangeEquivalenceClass {
       }
       LiveRangeVariables liveRanges = set.getProgram().getLiveRangeVariables();
       LiveRange varLiveRange = liveRanges.getLiveRange(variable);
-      if (liveRange.overlaps(varLiveRange)) {
+      if(liveRange.overlaps(varLiveRange)) {
          throw new RuntimeException("Compilation error! Variable live range overlaps live range equivalence class live range. " + variable);
       }
       liveRange.add(varLiveRange);
@@ -75,15 +75,15 @@ public class LiveRangeEquivalenceClass {
    public void addAll(LiveRangeEquivalenceClass other) {
       liveRange.add(other.liveRange);
       variables.addAll(other.variables);
-      for (VariableRef variable : other.variables) {
+      for(VariableRef variable : other.variables) {
          set.setVarClass(variable, this);
       }
    }
 
    @Override
    public boolean equals(Object o) {
-      if (this == o) return true;
-      if (o == null || getClass() != o.getClass()) return false;
+      if(this == o) return true;
+      if(o == null || getClass() != o.getClass()) return false;
       LiveRangeEquivalenceClass that = (LiveRangeEquivalenceClass) o;
       return variables.equals(that.variables);
    }
@@ -100,11 +100,11 @@ public class LiveRangeEquivalenceClass {
 
    public String toString(boolean includeRegister) {
       StringBuilder s = new StringBuilder();
-      if(includeRegister && register!=null) {
+      if(includeRegister && register != null) {
          s.append(register.toString()).append(" ");
       }
       s.append("[ ");
-      for (VariableRef variable : variables) {
+      for(VariableRef variable : variables) {
          s.append(variable.toString());
          s.append(" ");
       }

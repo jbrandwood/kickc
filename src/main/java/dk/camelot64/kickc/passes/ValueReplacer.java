@@ -11,18 +11,6 @@ import java.util.ListIterator;
  */
 public class ValueReplacer {
 
-   /** A replacer that receives a replaceable value and has the potential to replace the value or recurse into sub-values. */
-   public interface Replacer {
-      /**
-       * Execute replacement of a replaceable value.
-       * @param replaceable The replaceable value
-       * @param currentStmt The statement iterator - just past the current statement that the value is a part of. Current statment can be retrieved by calling
-       * @param stmtIt The statement iterator - just past the current statement. Can be used for modifying the control flow block.
-       * @param currentBlock The current block that the value is a part of
-       */
-      void execute(ReplaceableValue replaceable, Statement currentStmt, ListIterator<Statement> stmtIt, ControlFlowBlock currentBlock);
-   }
-
    /**
     * Execute a replacer on all replaceable values in the program control flow graph
     *
@@ -30,33 +18,33 @@ public class ValueReplacer {
     * @param replacer The replacer to execute
     */
    public static void executeAll(ControlFlowGraph graph, Replacer replacer) {
-      for (ControlFlowBlock block : graph.getAllBlocks()) {
+      for(ControlFlowBlock block : graph.getAllBlocks()) {
          ListIterator<Statement> statementsIt = block.getStatements().listIterator();
          while(statementsIt.hasNext()) {
             Statement statement = statementsIt.next();
-            if (statement instanceof StatementAssignment) {
+            if(statement instanceof StatementAssignment) {
                executeAll(new ReplaceableLValue((StatementLValue) statement), replacer, statement, statementsIt, block);
                executeAll(new ReplaceableRValue1((StatementAssignment) statement), replacer, statement, statementsIt, block);
-               executeAll(new ReplaceableRValue2((StatementAssignment) statement), replacer, statement,statementsIt, block);
-            } else if (statement instanceof StatementCall) {
+               executeAll(new ReplaceableRValue2((StatementAssignment) statement), replacer, statement, statementsIt, block);
+            } else if(statement instanceof StatementCall) {
                executeAll(new ReplaceableLValue((StatementLValue) statement), replacer, statement, statementsIt, block);
                StatementCall call = (StatementCall) statement;
-               if (call.getParameters() != null) {
+               if(call.getParameters() != null) {
                   int size = call.getParameters().size();
-                  for (int i = 0; i < size; i++) {
+                  for(int i = 0; i < size; i++) {
                      executeAll(new ReplaceableCallParameter(call, i), replacer, statement, statementsIt, block);
                   }
                }
-            } else if (statement instanceof StatementConditionalJump) {
+            } else if(statement instanceof StatementConditionalJump) {
                executeAll(new ReplaceableCondRValue1((StatementConditionalJump) statement), replacer, statement, statementsIt, block);
                executeAll(new ReplaceableCondRValue2((StatementConditionalJump) statement), replacer, statement, statementsIt, block);
-            } else if (statement instanceof StatementReturn) {
+            } else if(statement instanceof StatementReturn) {
                executeAll(new ReplaceableReturn((StatementReturn) statement), replacer, statement, statementsIt, block);
-            } else if (statement instanceof StatementPhiBlock) {
-               for (StatementPhiBlock.PhiVariable phiVariable : ((StatementPhiBlock) statement).getPhiVariables()) {
+            } else if(statement instanceof StatementPhiBlock) {
+               for(StatementPhiBlock.PhiVariable phiVariable : ((StatementPhiBlock) statement).getPhiVariables()) {
                   executeAll(new ReplaceablePhiVariable(phiVariable), replacer, statement, statementsIt, block);
                   int size = phiVariable.getValues().size();
-                  for (int i = 0; i < size; i++) {
+                  for(int i = 0; i < size; i++) {
                      executeAll(new ReplaceablePhiValue(phiVariable, i), replacer, statement, statementsIt, block);
                   }
                }
@@ -67,14 +55,28 @@ public class ValueReplacer {
 
    /**
     * Execute the a replacer on a replaceable value and all sub-values of the value.
+    *
     * @param replaceable The replaceable value
     * @param replacer The value replacer
     */
-   public static void executeAll(ReplaceableValue replaceable, Replacer replacer, Statement currentStmt, ListIterator<Statement> stmtIt, ControlFlowBlock currentBlock ) {
+   public static void executeAll(ReplaceableValue replaceable, Replacer replacer, Statement currentStmt, ListIterator<Statement> stmtIt, ControlFlowBlock currentBlock) {
       replacer.execute(replaceable, currentStmt, stmtIt, currentBlock);
-      for (ReplaceableValue subValue : replaceable.getSubValues()) {
+      for(ReplaceableValue subValue : replaceable.getSubValues()) {
          executeAll(subValue, replacer, currentStmt, stmtIt, currentBlock);
       }
+   }
+
+   /** A replacer that receives a replaceable value and has the potential to replace the value or recurse into sub-values. */
+   public interface Replacer {
+      /**
+       * Execute replacement of a replaceable value.
+       *
+       * @param replaceable The replaceable value
+       * @param currentStmt The statement iterator - just past the current statement that the value is a part of. Current statment can be retrieved by calling
+       * @param stmtIt The statement iterator - just past the current statement. Can be used for modifying the control flow block.
+       * @param currentBlock The current block that the value is a part of
+       */
+      void execute(ReplaceableValue replaceable, Statement currentStmt, ListIterator<Statement> stmtIt, ControlFlowBlock currentBlock);
    }
 
    /**
@@ -90,15 +92,15 @@ public class ValueReplacer {
       public Collection<ReplaceableValue> getSubValues() {
          RValue value = get();
          ArrayList<ReplaceableValue> subValues = new ArrayList<>();
-         if (value instanceof PointerDereferenceIndexed) {
+         if(value instanceof PointerDereferenceIndexed) {
             subValues.add(new ReplaceablePointer((PointerDereference) value));
             subValues.add(new ReplaceablePointerIndex((PointerDereferenceIndexed) value));
-         } else if (value instanceof PointerDereferenceSimple) {
+         } else if(value instanceof PointerDereferenceSimple) {
             subValues.add(new ReplaceablePointer((PointerDereference) value));
-         } else if (value instanceof ValueList) {
+         } else if(value instanceof ValueList) {
             ValueList valueList = (ValueList) value;
             int size = valueList.getList().size();
-            for (int i = 0; i < size; i++) {
+            for(int i = 0; i < size; i++) {
                subValues.add(new ReplaceableListElement(valueList, i));
             }
          }

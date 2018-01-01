@@ -23,9 +23,9 @@ public class ConstantBool implements ConstantValue {
 
    @Override
    public String toString(Program program) {
-      if(program ==null) {
+      if(program == null) {
          return Boolean.toString(value);
-      }  else {
+      } else {
          return //"("+SymbolTypeBasic.BOOLEAN.getTypeName()+") "+
                Boolean.toString(value);
       }

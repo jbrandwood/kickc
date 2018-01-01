@@ -22,35 +22,35 @@ public class Pass1EliminateEmptyBlocks extends Pass1Base {
       ControlFlowGraph graph = getProgram().getGraph();
       Collection<ControlFlowBlock> blocks = graph.getAllBlocks();
       List<LabelRef> removeList = new ArrayList<>();
-      for (ControlFlowBlock block : blocks) {
+      for(ControlFlowBlock block : blocks) {
          if(block.getLabel().getFullName().equals(SymbolRef.END_BLOCK_NAME)) {
             continue;
          } else if(block.getLabel().getFullName().equals(SymbolRef.BEGIN_BLOCK_NAME)) {
             continue;
          }
-         if (block.getStatements().isEmpty()) {
+         if(block.getStatements().isEmpty()) {
             List<ControlFlowBlock> predecessors = graph.getPredecessors(block);
             boolean remove = true;
-            for (ControlFlowBlock predecessor : predecessors) {
+            for(ControlFlowBlock predecessor : predecessors) {
                if(predecessor.getDefaultSuccessor().equals(block.getLabel())) {
                   predecessor.setDefaultSuccessor(block.getDefaultSuccessor());
                } else {
                   remove = false;
                }
             }
-            if (remove) {
+            if(remove) {
                removeList.add(block.getLabel());
             }
          }
       }
       boolean modified = false;
-      for (LabelRef labelRef : removeList) {
+      for(LabelRef labelRef : removeList) {
          Symbol removeSymbol = getScope().getSymbol(labelRef);
          if(removeSymbol instanceof Label) {
             Label label = (Label) removeSymbol;
             graph.remove(labelRef);
             label.getScope().remove(label);
-            log.append("Removing empty block "+labelRef);
+            log.append("Removing empty block " + labelRef);
             modified = true;
          }
       }

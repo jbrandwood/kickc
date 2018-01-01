@@ -22,7 +22,7 @@ public class AsmBasicUpstart implements AsmLine {
 
    @Override
    public String getAsm() {
-      return ":BasicUpstart("+function+")";
+      return ":BasicUpstart(" + function + ")";
    }
 
    @Override

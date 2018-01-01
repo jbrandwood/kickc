@@ -13,9 +13,9 @@ public class Pass2AssertTypeMatch extends Pass2SsaAssertion {
 
    @Override
    public void check() throws AssertionFailed {
-      for (ControlFlowBlock block : getGraph().getAllBlocks()) {
-         for (Statement statement : block.getStatements()) {
-            if (statement instanceof StatementAssignment) {
+      for(ControlFlowBlock block : getGraph().getAllBlocks()) {
+         for(Statement statement : block.getStatements()) {
+            if(statement instanceof StatementAssignment) {
                checkAssignment((StatementAssignment) statement);
             }
             // TODO: Implement checking for calls / conditional jumps / ...

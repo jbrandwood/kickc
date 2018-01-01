@@ -7,7 +7,7 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 
-/**  Eliminate uncalled methods  */
+/** Eliminate uncalled methods */
 public class Pass1EliminateUncalledProcedures extends Pass1Base {
 
    public Pass1EliminateUncalledProcedures(Program program) {
@@ -17,8 +17,8 @@ public class Pass1EliminateUncalledProcedures extends Pass1Base {
    @Override
    public boolean step() {
       Set<ProcedureRef> calledProcedures = new LinkedHashSet<>();
-      for (ControlFlowBlock block : getProgram().getGraph().getAllBlocks()) {
-         for (Statement statement : block.getStatements()) {
+      for(ControlFlowBlock block : getProgram().getGraph().getAllBlocks()) {
+         for(Statement statement : block.getStatements()) {
             if(statement instanceof StatementCall) {
                StatementCall call = (StatementCall) statement;
                ProcedureRef procedureRef = call.getProcedure();
@@ -29,24 +29,24 @@ public class Pass1EliminateUncalledProcedures extends Pass1Base {
 
       Set<ProcedureRef> unusedProcedures = new LinkedHashSet<>();
       Collection<Procedure> allProcedures = getProgram().getScope().getAllProcedures(true);
-      for (Procedure procedure : allProcedures) {
+      for(Procedure procedure : allProcedures) {
          if(!calledProcedures.contains(procedure.getRef())) {
             // The procedure is not used - mark for removal!
             unusedProcedures.add(procedure.getRef());
          }
       }
 
-      for (ProcedureRef unusedProcedure : unusedProcedures) {
-         getLog().append("Removing unused procedure "+unusedProcedure);
+      for(ProcedureRef unusedProcedure : unusedProcedures) {
+         getLog().append("Removing unused procedure " + unusedProcedure);
          Procedure procedure = getProgram().getScope().getProcedure(unusedProcedure);
          List<ControlFlowBlock> procedureBlocks = getProgram().getGraph().getScopeBlocks(unusedProcedure);
-         for (ControlFlowBlock procedureBlock : procedureBlocks) {
+         for(ControlFlowBlock procedureBlock : procedureBlocks) {
             getProgram().getGraph().remove(procedureBlock.getLabel());
          }
          procedure.getScope().remove(procedure);
       }
 
-      return unusedProcedures.size()>0;
+      return unusedProcedures.size() > 0;
    }
 
 }

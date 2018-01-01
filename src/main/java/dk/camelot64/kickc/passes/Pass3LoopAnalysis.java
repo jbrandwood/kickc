@@ -28,20 +28,20 @@ public class Pass3LoopAnalysis extends Pass2Base {
 
       // Look through graph for natural loop back edges
       NaturalLoopSet loopSet = new NaturalLoopSet();
-      for (ControlFlowBlock block : blocks) {
+      for(ControlFlowBlock block : blocks) {
          DominatorsBlock blockDominators = dominators.getDominators(block.getLabel());
-         for (LabelRef successor : block.getSuccessors()) {
-            if (blockDominators.contains(successor)) {
+         for(LabelRef successor : block.getSuccessors()) {
+            if(blockDominators.contains(successor)) {
                // Found a loop back edge!
                NaturalLoop loop = new NaturalLoop(successor, block.getLabel());
-               getLog().append("Found back edge: "+loop.toString());
+               getLog().append("Found back edge: " + loop.toString());
                loopSet.addLoop(loop);
             }
          }
       }
 
       // Find all blocks for each loop
-      for (NaturalLoop loop : loopSet.getLoops()) {
+      for(NaturalLoop loop : loopSet.getLoops()) {
          Deque<LabelRef> todo = new ArrayDeque<>();
          Set<LabelRef> loopBlocks = new LinkedHashSet<>();
          todo.addAll(loop.getTails());
@@ -53,20 +53,20 @@ public class Pass3LoopAnalysis extends Pass2Base {
             }
             ControlFlowBlock controlFlowBlock = getGraph().getBlock(block);
             List<ControlFlowBlock> predecessors = getGraph().getPredecessors(controlFlowBlock);
-            for (ControlFlowBlock predecessor : predecessors) {
+            for(ControlFlowBlock predecessor : predecessors) {
                if(!loopBlocks.contains(predecessor.getLabel()) && !todo.contains(predecessor.getLabel())) {
                   todo.add(predecessor.getLabel());
                }
             }
          }
          loop.setBlocks(loopBlocks);
-         getLog().append("Populated: "+loop.toString());
+         getLog().append("Populated: " + loop.toString());
       }
 
       // Coalesce loops that are neither nested, nor disjoint
-      for (NaturalLoop loop : loopSet.getLoops()) {
+      for(NaturalLoop loop : loopSet.getLoops()) {
          Set<NaturalLoop> headLoops = loopSet.getLoopsFromHead(loop.getHead());
-         for (NaturalLoop other : headLoops) {
+         for(NaturalLoop other : headLoops) {
             if(other.equals(loop)) {
                // Same loop - do not process
                continue;
@@ -78,7 +78,7 @@ public class Pass3LoopAnalysis extends Pass2Base {
                loop.addTails(other.getTails());
                loop.addBlocks(other.getBlocks());
                loopSet.remove(other);
-               getLog().append("Coalesced: "+loop.toString()) ;
+               getLog().append("Coalesced: " + loop.toString());
             }
          }
       }

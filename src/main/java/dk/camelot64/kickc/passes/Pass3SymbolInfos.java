@@ -25,7 +25,7 @@ public class Pass3SymbolInfos extends Pass2Base {
    }
 
    private void generateCache(LinkedHashMap<SymbolRef, Symbol> symbolCache, Scope scope) {
-      for (Symbol symbol : scope.getAllSymbols()) {
+      for(Symbol symbol : scope.getAllSymbols()) {
          symbolCache.put(symbol.getRef(), symbol);
          if(symbol instanceof Scope) {
             generateCache(symbolCache, (Scope) symbol);

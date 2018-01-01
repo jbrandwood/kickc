@@ -16,12 +16,12 @@ public class Pass1AddTypePromotions extends Pass1Base {
 
    @Override
    public boolean step() {
-      for (ControlFlowBlock block : getProgram().getGraph().getAllBlocks()) {
+      for(ControlFlowBlock block : getProgram().getGraph().getAllBlocks()) {
          List<Statement> statements = block.getStatements();
          ListIterator<Statement> stmtIt = statements.listIterator();
-         while (stmtIt.hasNext()) {
-            Statement statement =  stmtIt.next();
-            if (statement instanceof StatementAssignment) {
+         while(stmtIt.hasNext()) {
+            Statement statement = stmtIt.next();
+            if(statement instanceof StatementAssignment) {
                getPromotionAssignment((StatementAssignment) statement, stmtIt);
             }
             // TODO: Implement promotion for calls
@@ -33,7 +33,7 @@ public class Pass1AddTypePromotions extends Pass1Base {
    /**
     * Examines an assignment to determine if a cast of the rValue is needed (the lvalue type and the rvalue type is not equal)
     * and possible (the types are promotion compatible).
-    *
+    * <p>
     * If a promotion is needed it is added by adding a new tmp-var with a cast and modifying the statement.
     *
     * @param assignment The assignment to examine
@@ -43,18 +43,18 @@ public class Pass1AddTypePromotions extends Pass1Base {
       LValue lValue = assignment.getlValue();
       SymbolType lValueType = SymbolTypeInference.inferType(getScope(), lValue);
       SymbolType rValueType = SymbolTypeInference.inferTypeRValue(getScope(), assignment);
-      if (SymbolTypeInference.typeMatch(lValueType, rValueType)) {
+      if(SymbolTypeInference.typeMatch(lValueType, rValueType)) {
          return;
       }
       // No direct type match - attempt promotion
       if(canPromote(lValueType, rValueType)) {
          // Promotion possible - add tmp-var and a cast
-         if(assignment.getOperator()==null) {
+         if(assignment.getOperator() == null) {
             // No operator - add cast directly!
             assignment.setOperator(Operator.getCastUnary(lValueType));
-            getProgram().getLog().append("Promoting "+rValueType+" to "+lValueType+" in "+assignment);
+            getProgram().getLog().append("Promoting " + rValueType + " to " + lValueType + " in " + assignment);
          } else {
-            throw new RuntimeException("Tmp-var promotions not implemented yet "+assignment);
+            throw new RuntimeException("Tmp-var promotions not implemented yet " + assignment);
          }
       } else {
          String msg = "ERROR! Type mismatch (" + lValueType.getTypeName() + ") cannot be assigned from (" + rValueType.getTypeName() + "). " +
@@ -66,6 +66,7 @@ public class Pass1AddTypePromotions extends Pass1Base {
 
    /**
     * Determines if it is possible to promote (cast without loss) one type to another
+    *
     * @param lValueType The type of the lValue
     * @param rValueType The type of the rValue (that will be cast)
     * @return True if a cast is possible without any loss

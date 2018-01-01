@@ -9,9 +9,11 @@ import java.util.Collection;
 import java.util.List;
 import java.util.ListIterator;
 
-/** A named/labelled sequence of SSA statements connected to other basic blocks.
+/**
+ * A named/labelled sequence of SSA statements connected to other basic blocks.
  * The connections defines the control flow of the program.
- * The block only knows its own successors. To find predecessor blocks access to the entire graph is needed.*/
+ * The block only knows its own successors. To find predecessor blocks access to the entire graph is needed.
+ */
 public class ControlFlowBlock {
 
    /** The label representing the block. */
@@ -70,14 +72,14 @@ public class ControlFlowBlock {
 
    /**
     * Add a statement just before the call statement.
-    *
+    * <p>
     * Fails if there is no call statement
     *
     * @param statement The statement to add.
     */
    public void addStatementBeforeCall(Statement newStatement) {
       ListIterator<Statement> listIterator = statements.listIterator();
-      while (listIterator.hasNext()) {
+      while(listIterator.hasNext()) {
          Statement statement = listIterator.next();
          if(statement instanceof StatementCall) {
             listIterator.previous();
@@ -85,15 +87,15 @@ public class ControlFlowBlock {
             return;
          }
       }
-      throw new RuntimeException("No call statement in block "+getLabel().getFullName());
-   }
-
-   public void setDefaultSuccessor(LabelRef defaultSuccessor) {
-      this.defaultSuccessor = defaultSuccessor;
+      throw new RuntimeException("No call statement in block " + getLabel().getFullName());
    }
 
    public LabelRef getDefaultSuccessor() {
       return defaultSuccessor;
+   }
+
+   public void setDefaultSuccessor(LabelRef defaultSuccessor) {
+      this.defaultSuccessor = defaultSuccessor;
    }
 
    public LabelRef getConditionalSuccessor() {
@@ -118,6 +120,7 @@ public class ControlFlowBlock {
 
    /**
     * Is the block the entry of a procedure, ie. the first block of the code of the procedure.
+    *
     * @return true if this is the entry of a procedure
     */
    public boolean isProcedureEntry(Program program) {
@@ -126,7 +129,8 @@ public class ControlFlowBlock {
    }
 
    /**
-    *  Is the block the exit of a procedure, ie. the last block of code of the the procedure
+    * Is the block the exit of a procedure, ie. the last block of code of the the procedure
+    *
     * @param program
     * @return true if this is the exit of a procedure
     */
@@ -139,12 +143,12 @@ public class ControlFlowBlock {
       ControlFlowGraph graph = program.getGraph();
       StringBuffer out = new StringBuffer();
       out.append(label.getFullName() + ":");
-      out.append(" scope:["+scope.getFullName()+"] ");
+      out.append(" scope:[" + scope.getFullName() + "] ");
       out.append(" from");
-      if (graph != null) {
+      if(graph != null) {
          List<ControlFlowBlock> predecessors = graph.getPredecessors(this);
-         if (predecessors.size() > 0) {
-            for (ControlFlowBlock predecessor : predecessors) {
+         if(predecessors.size() > 0) {
+            for(ControlFlowBlock predecessor : predecessors) {
                out.append(" " + predecessor.getLabel().getFullName());
             }
          }
@@ -152,10 +156,10 @@ public class ControlFlowBlock {
          out.append(" @UNKNOWN");
       }
       out.append("\n");
-      for (Statement statement : statements) {
+      for(Statement statement : statements) {
          out.append("  " + statement.toString(program, true) + "\n");
       }
-      if (defaultSuccessor != null) {
+      if(defaultSuccessor != null) {
          out.append("  to:");
          out.append(defaultSuccessor.getFullName());
          out.append("\n");
@@ -165,16 +169,16 @@ public class ControlFlowBlock {
 
    @Override
    public boolean equals(Object o) {
-      if (this == o) return true;
-      if (o == null || getClass() != o.getClass()) return false;
+      if(this == o) return true;
+      if(o == null || getClass() != o.getClass()) return false;
 
       ControlFlowBlock that = (ControlFlowBlock) o;
 
-      if (!label.equals(that.label)) return false;
-      if (statements != null ? !statements.equals(that.statements) : that.statements != null) return false;
-      if (defaultSuccessor != null ? !defaultSuccessor.equals(that.defaultSuccessor) : that.defaultSuccessor != null)
+      if(!label.equals(that.label)) return false;
+      if(statements != null ? !statements.equals(that.statements) : that.statements != null) return false;
+      if(defaultSuccessor != null ? !defaultSuccessor.equals(that.defaultSuccessor) : that.defaultSuccessor != null)
          return false;
-      if (conditionalSuccessor != null ? !conditionalSuccessor.equals(that.conditionalSuccessor) : that.conditionalSuccessor != null)
+      if(conditionalSuccessor != null ? !conditionalSuccessor.equals(that.conditionalSuccessor) : that.conditionalSuccessor != null)
          return false;
       return callSuccessor != null ? callSuccessor.equals(that.callSuccessor) : that.callSuccessor == null;
    }
@@ -191,15 +195,16 @@ public class ControlFlowBlock {
 
    /**
     * Get the phi block for the block. If the phi block has not yet been created it is created.
+    *
     * @return
     */
    @JsonIgnore
    public StatementPhiBlock getPhiBlock() {
       StatementPhiBlock phiBlock = null;
-      if (statements.size() > 0 && statements.get(0) instanceof StatementPhiBlock) {
+      if(statements.size() > 0 && statements.get(0) instanceof StatementPhiBlock) {
          phiBlock = (StatementPhiBlock) statements.get(0);
       }
-      if (phiBlock == null) {
+      if(phiBlock == null) {
          phiBlock = new StatementPhiBlock();
          statements.add(0, phiBlock);
       }
@@ -207,8 +212,8 @@ public class ControlFlowBlock {
    }
 
    public boolean hasPhiBlock() {
-      if (statements.size() > 0) {
-         if (statements.get(0) instanceof StatementPhiBlock) {
+      if(statements.size() > 0) {
+         if(statements.get(0) instanceof StatementPhiBlock) {
             return true;
          }
       }
@@ -216,20 +221,21 @@ public class ControlFlowBlock {
    }
 
 
-   /** Get all successors of the block
+   /**
+    * Get all successors of the block
     *
     * @return All successors
     */
    @JsonIgnore
    public Collection<LabelRef> getSuccessors() {
       List<LabelRef> successors = new ArrayList<>();
-      if (defaultSuccessor != null) {
+      if(defaultSuccessor != null) {
          successors.add(defaultSuccessor);
       }
-      if (conditionalSuccessor != null) {
+      if(conditionalSuccessor != null) {
          successors.add(conditionalSuccessor);
       }
-      if (callSuccessor != null) {
+      if(callSuccessor != null) {
          successors.add(callSuccessor);
       }
       return successors;

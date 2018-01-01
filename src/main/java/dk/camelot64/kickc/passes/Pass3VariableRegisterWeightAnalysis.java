@@ -30,30 +30,30 @@ public class Pass3VariableRegisterWeightAnalysis extends Pass2Base {
       loopSet = getProgram().getLoopSet();
       liveRangeVariables = getProgram().getLiveRangeVariables();
 
-      for (ControlFlowBlock block : getProgram().getGraph().getAllBlocks()) {
-         for (Statement statement : block.getStatements()) {
-            if (statement instanceof StatementPhiBlock) {
-               for (StatementPhiBlock.PhiVariable phiVariable : ((StatementPhiBlock) statement).getPhiVariables()) {
+      for(ControlFlowBlock block : getProgram().getGraph().getAllBlocks()) {
+         for(Statement statement : block.getStatements()) {
+            if(statement instanceof StatementPhiBlock) {
+               for(StatementPhiBlock.PhiVariable phiVariable : ((StatementPhiBlock) statement).getPhiVariables()) {
                   // Add weights for the definition of the phi variable
                   VariableRef philVariable = phiVariable.getVariable();
-                  for (StatementPhiBlock.PhiRValue phiRValue : phiVariable.getValues()) {
-                     if (phiRValue.getrValue() instanceof VariableRef) {
+                  for(StatementPhiBlock.PhiRValue phiRValue : phiVariable.getValues()) {
+                     if(phiRValue.getrValue() instanceof VariableRef) {
                         double w = addWeight(philVariable, phiRValue.getPredecessor());
                         //log.append("Definition of " + philVariable + " w+:" + w + " - [" + statement.getIndex()+"]");
                      }
                   }
                   // Add weights for each usage of a variable
-                  for (StatementPhiBlock.PhiRValue phiRValue : phiVariable.getValues()) {
+                  for(StatementPhiBlock.PhiRValue phiRValue : phiVariable.getValues()) {
                      addUsageWeightRValue(phiRValue.getrValue(), statement, phiRValue.getPredecessor());
                   }
                }
-            } else if (statement instanceof StatementAssignment) {
+            } else if(statement instanceof StatementAssignment) {
                // Add weights for the definition of the variable
                addUsageWeightRValue(((StatementAssignment) statement).getlValue(), statement, block.getLabel());
                // Add weights for each usage of variables
                addUsageWeightRValue(((StatementAssignment) statement).getrValue1(), statement, block.getLabel());
                addUsageWeightRValue(((StatementAssignment) statement).getrValue2(), statement, block.getLabel());
-            } else if (statement instanceof StatementConditionalJump) {
+            } else if(statement instanceof StatementConditionalJump) {
                // Add weights for each usage of variables
                addUsageWeightRValue(((StatementConditionalJump) statement).getrValue1(), statement, block.getLabel());
                addUsageWeightRValue(((StatementConditionalJump) statement).getrValue2(), statement, block.getLabel());
@@ -66,7 +66,7 @@ public class Pass3VariableRegisterWeightAnalysis extends Pass2Base {
    }
 
    private void addUsageWeightRValue(Value rValue, Statement statement, LabelRef block) {
-      if (rValue instanceof VariableRef) {
+      if(rValue instanceof VariableRef) {
          double w = addWeight((VariableRef) rValue, block);
          //log.append("Usage of " + rValue + " w+:" + w + " - [" + statement.getIndex()+"]");
       } else if(rValue instanceof PointerDereferenceSimple) {
@@ -83,11 +83,11 @@ public class Pass3VariableRegisterWeightAnalysis extends Pass2Base {
       double w = 1.0 + Math.pow(10.0, depth);
       LiveRange liveRange = liveRangeVariables.getLiveRange(variable);
       double s = liveRange.size();
-      if(s<0.01) {
+      if(s < 0.01) {
          s = 0.1;
       }
-      variableRegisterWeights.addWeight(variable, w/s);
-      return w/s;
+      variableRegisterWeights.addWeight(variable, w / s);
+      return w / s;
    }
 
 

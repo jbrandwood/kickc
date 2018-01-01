@@ -2,7 +2,7 @@ package dk.camelot64.kickc.passes;
 
 import dk.camelot64.kickc.model.*;
 
-import java.util.*;
+import java.util.List;
 
 /**
  * All inline strings in the code are extracted into constants.
@@ -42,12 +42,12 @@ public class Pass1ExtractInlineStrings extends Pass1Base {
 
    private ConstantVar createStringConstantVar(Scope blockScope, ConstantString constantString, String nameHint) {
       String name;
-      if (nameHint == null) {
+      if(nameHint == null) {
          name = blockScope.allocateIntermediateVariableName();
       } else {
          int nameHintIdx = 1;
          name = nameHint;
-         while (blockScope.getSymbol(name) != null) {
+         while(blockScope.getSymbol(name) != null) {
             name = nameHint + nameHintIdx++;
          }
       }

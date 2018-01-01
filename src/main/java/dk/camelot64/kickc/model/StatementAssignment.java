@@ -97,24 +97,24 @@ public class StatementAssignment extends StatementBase implements StatementLValu
    public String toString(Program program, boolean aliveInfo) {
       return
             super.idxString() +
-            lValue.toString(program) + " ← " +
-                  (rValue1==null?"":rValue1.toString(program)+" ") +
-                  (operator==null?"":operator+" ") +
+                  lValue.toString(program) + " ← " +
+                  (rValue1 == null ? "" : rValue1.toString(program) + " ") +
+                  (operator == null ? "" : operator + " ") +
                   rValue2.toString(program) +
-                  (aliveInfo?super.aliveString(program):"");
+                  (aliveInfo ? super.aliveString(program) : "");
    }
 
    @Override
    public boolean equals(Object o) {
-      if (this == o) return true;
-      if (o == null || getClass() != o.getClass()) return false;
-      if (!super.equals(o)) return false;
+      if(this == o) return true;
+      if(o == null || getClass() != o.getClass()) return false;
+      if(!super.equals(o)) return false;
 
       StatementAssignment that = (StatementAssignment) o;
 
-      if (!lValue.equals(that.lValue)) return false;
-      if (rValue1 != null ? !rValue1.equals(that.rValue1) : that.rValue1 != null) return false;
-      if (operator != null ? !operator.equals(that.operator) : that.operator != null) return false;
+      if(!lValue.equals(that.lValue)) return false;
+      if(rValue1 != null ? !rValue1.equals(that.rValue1) : that.rValue1 != null) return false;
+      if(operator != null ? !operator.equals(that.operator) : that.operator != null) return false;
       return rValue2 != null ? rValue2.equals(that.rValue2) : that.rValue2 == null;
    }
 

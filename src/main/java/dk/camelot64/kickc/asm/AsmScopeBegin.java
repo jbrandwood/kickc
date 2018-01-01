@@ -27,7 +27,7 @@ public class AsmScopeBegin implements AsmLine {
 
    @Override
    public String getAsm() {
-      return label+":"+" {";
+      return label + ":" + " {";
    }
 
    @Override

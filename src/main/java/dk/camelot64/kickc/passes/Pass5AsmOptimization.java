@@ -44,10 +44,10 @@ public abstract class Pass5AsmOptimization {
 
    public void remove(List<AsmLine> remove) {
       Collection<AsmSegment> segments = getAsmProgram().getSegments();
-      for (AsmSegment segment : segments) {
-         for (Iterator<AsmLine> iterator = segment.getLines().iterator(); iterator.hasNext(); ) {
+      for(AsmSegment segment : segments) {
+         for(Iterator<AsmLine> iterator = segment.getLines().iterator(); iterator.hasNext(); ) {
             AsmLine line = iterator.next();
-            if (remove.contains(line)) {
+            if(remove.contains(line)) {
                getLog().append("Removing instruction " + line.getAsm());
                iterator.remove();
             }

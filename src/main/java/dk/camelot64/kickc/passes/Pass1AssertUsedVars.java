@@ -33,6 +33,7 @@ public class Pass1AssertUsedVars extends Pass1Base {
    /**
     * Assert that all used vars have been assigned values before the use.
     * Follow the control flow of the graph recursively.
+    *
     * @param block The block to examine
     * @param referenceInfos Information about assigned/used variables in statements
     * @param defined Variables already assigned a value at the point of the first execution of the block
@@ -43,34 +44,34 @@ public class Pass1AssertUsedVars extends Pass1Base {
          return;
       }
       visited.add(block.getLabel());
-      for (Statement statement : block.getStatements()) {
-         Collection<VariableRef> used =  referenceInfos.getUsedVars(statement);
-         for (VariableRef usedRef : used) {
+      for(Statement statement : block.getStatements()) {
+         Collection<VariableRef> used = referenceInfos.getUsedVars(statement);
+         for(VariableRef usedRef : used) {
             if(!defined.contains(usedRef)) {
-               throw new CompileError("Error! Variable used before being defined "+usedRef.toString(getProgram())+" in "+statement.toString(getProgram(), false));
+               throw new CompileError("Error! Variable used before being defined " + usedRef.toString(getProgram()) + " in " + statement.toString(getProgram(), false));
             }
          }
          Collection<VariableRef> defd = referenceInfos.getDefinedVars(statement);
-         for (VariableRef definedRef : defd) {
+         for(VariableRef definedRef : defd) {
             defined.add(definedRef);
          }
          if(statement instanceof StatementCall) {
             StatementCall call = (StatementCall) statement;
             Procedure procedure = getProgram().getScope().getProcedure(call.getProcedure());
-            for (String paramName : procedure.getParameterNames()) {
+            for(String paramName : procedure.getParameterNames()) {
                defined.add(procedure.getVariable(paramName).getRef());
             }
             ControlFlowBlock procedureStart = getProgram().getGraph().getBlock(call.getProcedure().getLabelRef());
 
             assertUsedVars(procedureStart, referenceInfos, defined, visited);
          } else if(statement instanceof StatementConditionalJump) {
-            StatementConditionalJump cond= (StatementConditionalJump) statement;
-            ControlFlowBlock jumpTo  = getProgram().getGraph().getBlock(cond.getDestination());
+            StatementConditionalJump cond = (StatementConditionalJump) statement;
+            ControlFlowBlock jumpTo = getProgram().getGraph().getBlock(cond.getDestination());
             assertUsedVars(jumpTo, referenceInfos, defined, visited);
          }
       }
-      ControlFlowBlock successor  = getProgram().getGraph().getBlock(block.getDefaultSuccessor());
-      if(successor!=null) {
+      ControlFlowBlock successor = getProgram().getGraph().getBlock(block.getDefaultSuccessor());
+      if(successor != null) {
          assertUsedVars(successor, referenceInfos, defined, visited);
       }
    }

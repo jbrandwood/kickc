@@ -33,9 +33,9 @@ public class ControlFlowGraphCopyVisitor extends ControlFlowGraphBaseVisitor<Obj
       this.origGraph = origGraph;
       // Copy all blocks
       this.copyBlockMap = new LinkedHashMap<>();
-      for (ControlFlowBlock origBlock : origGraph.getAllBlocks()) {
+      for(ControlFlowBlock origBlock : origGraph.getAllBlocks()) {
          ControlFlowBlock copyBlock = visitBlock(origBlock);
-         if (copyBlock != null) {
+         if(copyBlock != null) {
             copyBlockMap.put(copyBlock.getLabel(), copyBlock);
          }
       }
@@ -52,20 +52,20 @@ public class ControlFlowGraphCopyVisitor extends ControlFlowGraphBaseVisitor<Obj
       this.copyBlock = copyBlock;
       // Handle statements
       List<Statement> origBlockStatements = origBlock.getStatements();
-      for (Statement origStatement : origBlockStatements) {
+      for(Statement origStatement : origBlockStatements) {
          Statement copyStatement = visitStatement(origStatement);
-         if (copyStatement != null) {
+         if(copyStatement != null) {
             this.copyBlock.addStatement(copyStatement);
          }
       }
       // Handle successors
-      if (origBlock.getDefaultSuccessor() != null) {
+      if(origBlock.getDefaultSuccessor() != null) {
          this.copyBlock.setDefaultSuccessor(origBlock.getDefaultSuccessor());
       }
-      if (origBlock.getConditionalSuccessor() != null) {
+      if(origBlock.getConditionalSuccessor() != null) {
          this.copyBlock.setConditionalSuccessor(origBlock.getConditionalSuccessor());
       }
-      if (origBlock.getCallSuccessor() != null) {
+      if(origBlock.getCallSuccessor() != null) {
          this.copyBlock.setCallSuccessor(origBlock.getCallSuccessor());
       }
       ControlFlowBlock result = this.copyBlock;
@@ -120,10 +120,10 @@ public class ControlFlowGraphCopyVisitor extends ControlFlowGraphBaseVisitor<Obj
    @Override
    public StatementPhiBlock visitPhiBlock(StatementPhiBlock phi) {
       StatementPhiBlock copyPhi = new StatementPhiBlock();
-      for (StatementPhiBlock.PhiVariable phiVariable : phi.getPhiVariables()) {
+      for(StatementPhiBlock.PhiVariable phiVariable : phi.getPhiVariables()) {
          VariableRef variable = phiVariable.getVariable();
          StatementPhiBlock.PhiVariable copyVar = copyPhi.addPhiVariable(variable);
-         for (StatementPhiBlock.PhiRValue phiRValue : phiVariable.getValues()) {
+         for(StatementPhiBlock.PhiRValue phiRValue : phiVariable.getValues()) {
             copyVar.setrValue(phiRValue.getPredecessor(), phiRValue.getrValue());
          }
       }

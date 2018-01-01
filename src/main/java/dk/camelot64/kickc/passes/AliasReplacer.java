@@ -24,52 +24,52 @@ public class AliasReplacer implements ValueReplacer.Replacer {
     * @return The alias to use. Null if no alias exists.
     */
    public static RValue getReplacement(RValue rValue, Map<? extends SymbolRef, ? extends RValue> aliases) {
-      if (rValue instanceof SymbolRef) {
+      if(rValue instanceof SymbolRef) {
          RValue alias = aliases.get(rValue);
-         if (alias != null) {
-            if (alias.equals(rValue)) {
+         if(alias != null) {
+            if(alias.equals(rValue)) {
                return alias;
             }
             RValue replacement = getReplacement(alias, aliases);
-            if (replacement != null) {
+            if(replacement != null) {
                return replacement;
             } else {
                return alias;
             }
          }
-      } else if (rValue instanceof ConstantUnary) {
+      } else if(rValue instanceof ConstantUnary) {
          ConstantUnary constantUnary = (ConstantUnary) rValue;
          ConstantValue alias = (ConstantValue) getReplacement(constantUnary.getOperand(), aliases);
-         if (alias != null) {
+         if(alias != null) {
             return new ConstantUnary(constantUnary.getOperator(), alias);
          }
-      } else if (rValue instanceof ConstantBinary) {
+      } else if(rValue instanceof ConstantBinary) {
          ConstantBinary constantBinary = (ConstantBinary) rValue;
          ConstantValue aliasLeft = (ConstantValue) getReplacement(constantBinary.getLeft(), aliases);
          ConstantValue aliasRight = (ConstantValue) getReplacement(constantBinary.getRight(), aliases);
-         if (aliasLeft != null || aliasRight != null) {
-            if (aliasLeft == null) {
+         if(aliasLeft != null || aliasRight != null) {
+            if(aliasLeft == null) {
                aliasLeft = constantBinary.getLeft();
             }
-            if (aliasRight == null) {
+            if(aliasRight == null) {
                aliasRight = constantBinary.getRight();
             }
             return new ConstantBinary(aliasLeft, constantBinary.getOperator(), aliasRight);
          }
-      } else if (rValue instanceof ConstantArrayList) {
+      } else if(rValue instanceof ConstantArrayList) {
          ConstantArrayList constantArrayList = (ConstantArrayList) rValue;
          ArrayList<ConstantValue> replacementList = new ArrayList<>();
          boolean any = false;
-         for (ConstantValue elemValue : constantArrayList.getElements()) {
+         for(ConstantValue elemValue : constantArrayList.getElements()) {
             RValue elemReplacement = getReplacement(elemValue, aliases);
-            if (elemReplacement != null) {
+            if(elemReplacement != null) {
                replacementList.add((ConstantValue) elemReplacement);
                any = true;
             } else {
                replacementList.add(elemValue);
             }
          }
-         if (any) {
+         if(any) {
             return new ConstantArrayList(replacementList, constantArrayList.getElementType());
          }
       }
@@ -81,13 +81,14 @@ public class AliasReplacer implements ValueReplacer.Replacer {
 
    /**
     * Execute alias replacement on a replaceable value
+    *
     * @param replaceable The replaceable value
     */
    @Override
    public void execute(ValueReplacer.ReplaceableValue replaceable, Statement currentStmt, ListIterator<Statement> stmtIt, ControlFlowBlock currentBlock) {
-      if (replaceable.get() != null) {
+      if(replaceable.get() != null) {
          RValue replacement = getReplacement(replaceable.get(), aliases);
-         if (replacement != null) {
+         if(replacement != null) {
             replaceable.set(replacement);
          }
       }

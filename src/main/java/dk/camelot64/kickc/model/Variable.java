@@ -51,6 +51,10 @@ public abstract class Variable implements Symbol {
       return type;
    }
 
+   public void setType(SymbolType type) {
+      this.type = type;
+   }
+
    public void setTypeInferred(SymbolType type) {
       this.type = type;
       this.inferredType = true;
@@ -64,20 +68,12 @@ public abstract class Variable implements Symbol {
       this.inferredType = inferredType;
    }
 
-   public void setScope(Scope scope) {
-      this.scope = scope;
-   }
-
-   public void setType(SymbolType type) {
-      this.type = type;
+   public String getName() {
+      return name;
    }
 
    public void setName(String name) {
       this.name = name;
-   }
-
-   public String getName() {
-      return name;
    }
 
    public Registers.Register getAllocation() {
@@ -102,17 +98,20 @@ public abstract class Variable implements Symbol {
    @JsonIgnore
    public abstract boolean isIntermediate();
 
-
    public Scope getScope() {
       return scope;
    }
 
+   public void setScope(Scope scope) {
+      this.scope = scope;
+   }
+
    @Override
    public int getScopeDepth() {
-      if(scope==null) {
+      if(scope == null) {
          return 0;
       } else {
-         return scope.getScopeDepth()+1;
+         return scope.getScopeDepth() + 1;
       }
    }
 
@@ -155,28 +154,28 @@ public abstract class Variable implements Symbol {
 
    @Override
    public boolean equals(Object o) {
-      if (this == o) {
+      if(this == o) {
          return true;
       }
-      if (o == null || getClass() != o.getClass()) {
+      if(o == null || getClass() != o.getClass()) {
          return false;
       }
 
       Variable variable = (Variable) o;
 
-      if (inferredType != variable.inferredType) {
+      if(inferredType != variable.inferredType) {
          return false;
       }
-      if (name != null ? !name.equals(variable.name) : variable.name != null) {
+      if(name != null ? !name.equals(variable.name) : variable.name != null) {
          return false;
       }
-      if (scope != null ? !scope.equals(variable.scope) : variable.scope != null) {
+      if(scope != null ? !scope.equals(variable.scope) : variable.scope != null) {
          return false;
       }
-      if (type != null ? !type.equals(variable.type) : variable.type != null) {
+      if(type != null ? !type.equals(variable.type) : variable.type != null) {
          return false;
       }
-      if (allocation != null ? !allocation.equals(variable.allocation) : variable.allocation != null) {
+      if(allocation != null ? !allocation.equals(variable.allocation) : variable.allocation != null) {
          return false;
       }
       return asmName != null ? asmName.equals(variable.asmName) : variable.asmName == null;

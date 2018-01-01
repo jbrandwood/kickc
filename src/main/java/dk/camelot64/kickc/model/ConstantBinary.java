@@ -37,7 +37,7 @@ public class ConstantBinary implements ConstantValue {
 
    @Override
    public String toString(Program program) {
-      return left.toString(program)+operator.toString()+right.toString(program);
+      return left.toString(program) + operator.toString() + right.toString(program);
    }
 
    @Override

@@ -11,20 +11,22 @@ import java.util.*;
 public class Pass3BlockSequencePlanner extends Pass2Base {
 
 
+   Deque<ScopeTodo> todoScopes = new ArrayDeque<>();
+
    public Pass3BlockSequencePlanner(Program program) {
       super(program);
    }
 
    public void plan() {
       ControlFlowBlock mainBlock = getGraph().getMainBlock();
-      if (mainBlock != null) {
+      if(mainBlock != null) {
          pushTodo(mainBlock);
       }
       pushTodo(getGraph().getFirstBlock());
       List<LabelRef> sequence = new ArrayList<>();
-      while(hasTodo()){
+      while(hasTodo()) {
          ControlFlowBlock block = popTodo();
-         if(block==null) {
+         if(block == null) {
             break;
          }
          if(sequence.contains(block.getLabel())) {
@@ -32,13 +34,13 @@ public class Pass3BlockSequencePlanner extends Pass2Base {
             continue;
          }
          sequence.add(block.getLabel());
-         if(block.getCallSuccessor()!=null) {
+         if(block.getCallSuccessor() != null) {
             pushTodo(getGraph().getCallSuccessor(block));
          }
-         if(block.getConditionalSuccessor()!=null) {
+         if(block.getConditionalSuccessor() != null) {
             pushTodo(getGraph().getConditionalSuccessor(block));
          }
-         if(getGraph().getDefaultSuccessor(block)!=null) {
+         if(getGraph().getDefaultSuccessor(block) != null) {
             pushTodo(getGraph().getDefaultSuccessor(block));
          }
 
@@ -47,20 +49,17 @@ public class Pass3BlockSequencePlanner extends Pass2Base {
 
       StringBuilder entry = new StringBuilder();
       entry.append("Block Sequence Planned ");
-      for (LabelRef labelRef : sequence) {
+      for(LabelRef labelRef : sequence) {
          entry.append(labelRef.getFullName() + " ");
 
       }
       getLog().append(entry.toString());
    }
 
-
-   Deque<ScopeTodo> todoScopes = new ArrayDeque<>();
-
    void pushTodo(ControlFlowBlock block) {
       LabelRef blockRef = block.getLabel();
       Scope blockScope = getSymbols().getSymbol(blockRef).getScope();
-      for (ScopeTodo todoScope : todoScopes) {
+      for(ScopeTodo todoScope : todoScopes) {
          if(todoScope.scope.equals(blockScope)) {
             todoScope.addTodo(block);
             return;
@@ -70,7 +69,7 @@ public class Pass3BlockSequencePlanner extends Pass2Base {
       todoScopes.push(newScopeTodo);
       newScopeTodo.addTodo(block);
    }
-   
+
    boolean hasTodo() {
       return !todoScopes.isEmpty();
    }
@@ -85,9 +84,9 @@ public class Pass3BlockSequencePlanner extends Pass2Base {
    }
 
    private static class ScopeTodo {
-      
+
       Scope scope;
-      
+
       Stack<ControlFlowBlock> todo;
 
       public ScopeTodo(Scope scope) {
@@ -99,6 +98,6 @@ public class Pass3BlockSequencePlanner extends Pass2Base {
          todo.push(block);
       }
    }
-   
-   
+
+
 }

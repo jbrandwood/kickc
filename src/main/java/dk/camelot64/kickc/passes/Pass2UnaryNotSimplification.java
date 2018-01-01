@@ -32,21 +32,21 @@ public class Pass2UnaryNotSimplification extends Pass2SsaOptimization {
     * Examine all unary nots. If they are the only usage of a reversable unary not getReplacement the unary not with the reversed comparison - and eliminate the riginal variable.
     *
     * @param assignments Assignments to examine
-    * @param usages      All variable usages
+    * @param usages All variable usages
     * @return Unused comparisons (because they have been replaced with reversed comparisions)
     */
    private List<VariableRef> optimizeUnaryNots(final Map<LValue, StatementAssignment> assignments, final Map<VariableRef, Integer> usages) {
 
       final List<VariableRef> unused = new ArrayList<>();
-      for (StatementAssignment assignment : assignments.values()) {
-         if (assignment.getrValue1() == null
+      for(StatementAssignment assignment : assignments.values()) {
+         if(assignment.getrValue1() == null
                && assignment.getOperator() != null
                && ("!".equals(assignment.getOperator().getOperator()) || "not".equals(assignment.getOperator().getOperator()))
                && assignment.getrValue2() instanceof VariableRef
                ) {
             VariableRef tempVar = (VariableRef) assignment.getrValue2();
             StatementAssignment tempAssignment = assignments.get(tempVar);
-            if (usages.get(tempVar) == 1 && tempAssignment.getOperator() != null) {
+            if(usages.get(tempVar) == 1 && tempAssignment.getOperator() != null) {
                switch(tempAssignment.getOperator().getOperator()) {
                   case "<":
                      createInverse(">=", assignment, tempAssignment);
@@ -96,9 +96,9 @@ public class Pass2UnaryNotSimplification extends Pass2SsaOptimization {
     */
    private void createInverse(String newOperator, StatementAssignment assignment, StatementAssignment tempAssignment) {
       assignment.setrValue1(tempAssignment.getrValue1());
-      assignment.setOperator(newOperator==null?null:Operator.getBinary(newOperator));
+      assignment.setOperator(newOperator == null ? null : Operator.getBinary(newOperator));
       assignment.setrValue2(tempAssignment.getrValue2());
-      getLog().append("Inversing boolean not "+assignment.toString(getProgram(), true) +" from "+tempAssignment.toString(getProgram(), true));
+      getLog().append("Inversing boolean not " + assignment.toString(getProgram(), true) + " from " + tempAssignment.toString(getProgram(), true));
    }
 
 

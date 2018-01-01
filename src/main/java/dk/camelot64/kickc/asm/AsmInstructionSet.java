@@ -1,7 +1,5 @@
 package dk.camelot64.kickc.asm;
 
-import dk.camelot64.kickc.NumberParser;
-
 import java.util.*;
 
 /**
@@ -10,37 +8,9 @@ import java.util.*;
 public class AsmInstructionSet {
 
    private static AsmInstructionSet set = new AsmInstructionSet();
-
-   public static AsmInstructionType getInstructionType(String mnemonic, AsmAddressingMode mode, boolean isZp) {
-      AsmInstructionType type = null;
-      if (AsmAddressingMode.ABS.equals(mode) && isZp) {
-         type = set.getType(mnemonic, AsmAddressingMode.ZP);
-      }
-      if (AsmAddressingMode.ABX.equals(mode) && isZp) {
-         type = set.getType(mnemonic, AsmAddressingMode.ZPX);
-      }
-      if (AsmAddressingMode.ABY.equals(mode) && isZp) {
-         type = set.getType(mnemonic, AsmAddressingMode.ZPY);
-      }
-      if (type == null) {
-         type = set.getType(mnemonic, mode);
-      }
-      if (type == null && AsmAddressingMode.ABS.equals(mode)) {
-         type = set.getType(mnemonic, AsmAddressingMode.REL);
-      }
-      return type;
-   }
-
    private List<AsmInstructionType> instructions;
-
    /** Maps mnemonic_addressingmMode to  the instruction type */
    private Map<String, AsmInstructionType> instructionsMap;
-
-   private void add(int opcode, String mnemonic, AsmAddressingMode addressingmMode, double cycles) {
-      AsmInstructionType instructionType = new AsmInstructionType(opcode, mnemonic, addressingmMode, cycles);
-      instructions.add(instructionType);
-      instructionsMap.put(mnemonic+"_"+addressingmMode.getName(), instructionType);
-   }
 
    public AsmInstructionSet() {
       this.instructions = new ArrayList<>();
@@ -315,43 +285,43 @@ public class AsmInstructionSet {
       add(0xfe, "inc", abx, 7.0);
       add(0xff, "isc", abx, 7.0);
       List<String> jumps = Arrays.asList("jmp", "beq", "bne", "bcc", "bcs", "bvs", "bvc", "bmi", "bpl", "jsr");
-      for (AsmInstructionType instruction : instructions) {
+      for(AsmInstructionType instruction : instructions) {
          if(jumps.contains(instruction.getMnemnonic())) {
             instruction.setJump(true);
          }
       }
-      List<String> cxs = Arrays.asList("dex", "inx",  "ldx", "tax", "tsx", "las", "lax", "axs");
-      for (AsmInstructionType instruction : instructions) {
+      List<String> cxs = Arrays.asList("dex", "inx", "ldx", "tax", "tsx", "las", "lax", "axs");
+      for(AsmInstructionType instruction : instructions) {
          if(cxs.contains(instruction.getMnemnonic())) {
             instruction.getClobber().setClobberX(true);
          }
       }
-      List<String> cys = Arrays.asList("dey", "iny", "ldy", "tay" );
-      for (AsmInstructionType instruction : instructions) {
+      List<String> cys = Arrays.asList("dey", "iny", "ldy", "tay");
+      for(AsmInstructionType instruction : instructions) {
          if(cys.contains(instruction.getMnemnonic())) {
             instruction.getClobber().setClobberY(true);
          }
       }
       List<String> cas = Arrays.asList("ora", "and", "eor", "adc", "sbc", "lda", "txa", "tya", "pla", "slo", "rla", "sre", "rra", "isc", "anc", "alr", "arr", "xaa", "lax", "las");
-      for (AsmInstructionType instruction : instructions) {
+      for(AsmInstructionType instruction : instructions) {
          if(cas.contains(instruction.getMnemnonic())) {
             instruction.getClobber().setClobberA(true);
          }
       }
       List<String> ccs = Arrays.asList("adc", "sbc", "cmp", "cpx", "cpy", "asl", "rol", "lsr", "ror", "plp", "rti", "clc", "sec", "slo", "rla", "sre", "rra", "dcp", "isc", "anc", "alr", "arr", "axs");
-      for (AsmInstructionType instruction : instructions) {
+      for(AsmInstructionType instruction : instructions) {
          if(ccs.contains(instruction.getMnemnonic())) {
             instruction.getClobber().setClobberC(true);
          }
       }
       List<String> cvs = Arrays.asList("adc", "sbc", "plp", "rti", "bit", "rra", "isc", "arr");
-      for (AsmInstructionType instruction : instructions) {
+      for(AsmInstructionType instruction : instructions) {
          if(cvs.contains(instruction.getMnemnonic())) {
             instruction.getClobber().setClobberV(true);
          }
       }
       List<String> czs = Arrays.asList("ora", "and", "eor", "adc", "sbc", "cmp", "cpx", "cpy", "dec", "dex", "dey", "inc", "inx", "iny", "asl", "rol", "lsr", "ror", "lda", "ldx", "ldy", "tax", "txa", "tay", "tya", "tsx", "txs", "pla", "plp", "rti", "bit", "slo", "rla", "sre", "rra", "lax", "dcp", "isc", "anc", "alr", "arr", "xaa", "lax", "axs", "las");
-      for (AsmInstructionType instruction : instructions) {
+      for(AsmInstructionType instruction : instructions) {
          if(czs.contains(instruction.getMnemnonic())) {
             instruction.getClobber().setClobberZ(true);
             instruction.getClobber().setClobberN(true);
@@ -359,8 +329,34 @@ public class AsmInstructionSet {
       }
    }
 
+   public static AsmInstructionType getInstructionType(String mnemonic, AsmAddressingMode mode, boolean isZp) {
+      AsmInstructionType type = null;
+      if(AsmAddressingMode.ABS.equals(mode) && isZp) {
+         type = set.getType(mnemonic, AsmAddressingMode.ZP);
+      }
+      if(AsmAddressingMode.ABX.equals(mode) && isZp) {
+         type = set.getType(mnemonic, AsmAddressingMode.ZPX);
+      }
+      if(AsmAddressingMode.ABY.equals(mode) && isZp) {
+         type = set.getType(mnemonic, AsmAddressingMode.ZPY);
+      }
+      if(type == null) {
+         type = set.getType(mnemonic, mode);
+      }
+      if(type == null && AsmAddressingMode.ABS.equals(mode)) {
+         type = set.getType(mnemonic, AsmAddressingMode.REL);
+      }
+      return type;
+   }
+
+   private void add(int opcode, String mnemonic, AsmAddressingMode addressingmMode, double cycles) {
+      AsmInstructionType instructionType = new AsmInstructionType(opcode, mnemonic, addressingmMode, cycles);
+      instructions.add(instructionType);
+      instructionsMap.put(mnemonic + "_" + addressingmMode.getName(), instructionType);
+   }
+
    public AsmInstructionType getType(String mnemonic, AsmAddressingMode addressingMode) {
-      String key = mnemonic.toLowerCase()+"_"+addressingMode.getName();
+      String key = mnemonic.toLowerCase() + "_" + addressingMode.getName();
       return instructionsMap.get(key);
    }
 

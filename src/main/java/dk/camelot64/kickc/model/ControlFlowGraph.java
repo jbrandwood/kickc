@@ -50,9 +50,9 @@ public class ControlFlowGraph {
 
    @JsonIgnore
    public Collection<ControlFlowBlock> getAllBlocks() {
-      if (sequence != null) {
+      if(sequence != null) {
          ArrayList<ControlFlowBlock> blocks = new ArrayList<>();
-         for (LabelRef labelRef : sequence) {
+         for(LabelRef labelRef : sequence) {
             blocks.add(getBlock(labelRef));
          }
          return blocks;
@@ -72,11 +72,11 @@ public class ControlFlowGraph {
     * @return The assignment. null if the variable is not assigned. The variable is assigned by a Phi-statement instead.
     */
    public StatementAssignment getAssignment(VariableRef variable) {
-      for (ControlFlowBlock block : getAllBlocks()) {
-         for (Statement statement : block.getStatements()) {
-            if (statement instanceof StatementAssignment) {
+      for(ControlFlowBlock block : getAllBlocks()) {
+         for(Statement statement : block.getStatements()) {
+            if(statement instanceof StatementAssignment) {
                StatementAssignment assignment = (StatementAssignment) statement;
-               if (assignment.getlValue().equals(variable)) {
+               if(assignment.getlValue().equals(variable)) {
                   return assignment;
                }
             }
@@ -92,15 +92,15 @@ public class ControlFlowGraph {
     * @return The block containing the assignment. null if the variable is not assigned.
     */
    public ControlFlowBlock getAssignmentBlock(VariableRef variable) {
-      for (ControlFlowBlock block : getAllBlocks()) {
-         for (Statement statement : block.getStatements()) {
-            if (statement instanceof StatementAssignment) {
+      for(ControlFlowBlock block : getAllBlocks()) {
+         for(Statement statement : block.getStatements()) {
+            if(statement instanceof StatementAssignment) {
                StatementAssignment assignment = (StatementAssignment) statement;
-               if (assignment.getlValue().equals(variable)) {
+               if(assignment.getlValue().equals(variable)) {
                   return block;
                }
             } else if(statement instanceof StatementPhiBlock) {
-               for (StatementPhiBlock.PhiVariable phiVariable : ((StatementPhiBlock) statement).getPhiVariables()) {
+               for(StatementPhiBlock.PhiVariable phiVariable : ((StatementPhiBlock) statement).getPhiVariables()) {
                   if(phiVariable.getVariable().equals(variable)) {
                      return block;
                   }
@@ -113,7 +113,7 @@ public class ControlFlowGraph {
 
 
    public ControlFlowBlock getDefaultSuccessor(ControlFlowBlock block) {
-      if (block.getDefaultSuccessor() != null) {
+      if(block.getDefaultSuccessor() != null) {
          return blocks.get(block.getDefaultSuccessor());
       } else {
          return null;
@@ -121,7 +121,7 @@ public class ControlFlowGraph {
    }
 
    public ControlFlowBlock getCallSuccessor(ControlFlowBlock block) {
-      if (block.getCallSuccessor() != null) {
+      if(block.getCallSuccessor() != null) {
          return blocks.get(block.getCallSuccessor());
       } else {
          return null;
@@ -129,7 +129,7 @@ public class ControlFlowGraph {
    }
 
    public ControlFlowBlock getConditionalSuccessor(ControlFlowBlock block) {
-      if (block.getConditionalSuccessor() != null) {
+      if(block.getConditionalSuccessor() != null) {
          return blocks.get(block.getConditionalSuccessor());
       } else {
          return null;
@@ -139,14 +139,14 @@ public class ControlFlowGraph {
 
    public List<ControlFlowBlock> getPredecessors(ControlFlowBlock block) {
       ArrayList<ControlFlowBlock> predecessorBlocks = new ArrayList<>();
-      for (ControlFlowBlock other : getAllBlocks()) {
-         if (block.getLabel().equals(other.getDefaultSuccessor())) {
+      for(ControlFlowBlock other : getAllBlocks()) {
+         if(block.getLabel().equals(other.getDefaultSuccessor())) {
             predecessorBlocks.add(other);
          }
-         if (block.getLabel().equals(other.getConditionalSuccessor())) {
+         if(block.getLabel().equals(other.getConditionalSuccessor())) {
             predecessorBlocks.add(other);
          }
-         if (block.getLabel().equals(other.getCallSuccessor())) {
+         if(block.getLabel().equals(other.getCallSuccessor())) {
             predecessorBlocks.add(other);
          }
       }
@@ -164,9 +164,9 @@ public class ControlFlowGraph {
 
    @JsonIgnore
    public ControlFlowBlock getMainBlock() {
-      for (ControlFlowBlock block : getAllBlocks()) {
+      for(ControlFlowBlock block : getAllBlocks()) {
          LabelRef label = block.getLabel();
-         if (label.getFullName().equals("main")) {
+         if(label.getFullName().equals("main")) {
             return block;
          }
       }
@@ -180,7 +180,7 @@ public class ControlFlowGraph {
 
    public String toString(Program program) {
       StringBuffer out = new StringBuffer();
-      for (ControlFlowBlock block : getAllBlocks()) {
+      for(ControlFlowBlock block : getAllBlocks()) {
          out.append(block.toString(program));
       }
       return out.toString();
@@ -188,13 +188,13 @@ public class ControlFlowGraph {
 
    @Override
    public boolean equals(Object o) {
-      if (this == o) return true;
-      if (o == null || getClass() != o.getClass()) return false;
+      if(this == o) return true;
+      if(o == null || getClass() != o.getClass()) return false;
 
       ControlFlowGraph that = (ControlFlowGraph) o;
 
-      if (!blocks.equals(that.blocks)) return false;
-      if (!firstBlockRef.equals(that.firstBlockRef)) return false;
+      if(!blocks.equals(that.blocks)) return false;
+      if(!firstBlockRef.equals(that.firstBlockRef)) return false;
       return sequence != null ? sequence.equals(that.sequence) : that.sequence == null;
    }
 
@@ -213,9 +213,9 @@ public class ControlFlowGraph {
     * @return The statement
     */
    public Statement getStatementByIndex(int statementIdx) {
-      for (ControlFlowBlock block : getAllBlocks()) {
-         for (Statement statement : block.getStatements()) {
-            if (statementIdx == statement.getIndex()) {
+      for(ControlFlowBlock block : getAllBlocks()) {
+         for(Statement statement : block.getStatements()) {
+            if(statementIdx == statement.getIndex()) {
                return statement;
             }
          }
@@ -231,8 +231,8 @@ public class ControlFlowGraph {
     */
    public List<ControlFlowBlock> getScopeBlocks(ScopeRef scope) {
       ArrayList<ControlFlowBlock> scopeBlocks = new ArrayList<>();
-      for (ControlFlowBlock block : getAllBlocks()) {
-         if (block.getScope().equals(scope)) {
+      for(ControlFlowBlock block : getAllBlocks()) {
+         if(block.getScope().equals(scope)) {
             scopeBlocks.add(block);
          }
       }

@@ -5,12 +5,13 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
 
-/** The Dominators for a specific block.
+/**
+ * The Dominators for a specific block.
  * <p>
  * Definition: Block d dominates block i if all paths from entry to block i includes block d
  * <p>
  * See http://www.cs.colostate.edu/~cs553/ClassNotes/lecture09-control-dominators.ppt.pdf
- * */
+ */
 public class DominatorsBlock {
 
    /**
@@ -37,7 +38,7 @@ public class DominatorsBlock {
     * @param dominators The dominators to add
     */
    public void addAll(Collection<LabelRef> dominators) {
-      for (LabelRef dominator : dominators) {
+      for(LabelRef dominator : dominators) {
          add(dominator);
       }
 
@@ -51,9 +52,9 @@ public class DominatorsBlock {
     */
    public void intersect(DominatorsBlock other) {
       Iterator<LabelRef> iterator = dominators.iterator();
-      while (iterator.hasNext()) {
+      while(iterator.hasNext()) {
          LabelRef dominator = iterator.next();
-         if (!other.contains(dominator)) {
+         if(!other.contains(dominator)) {
             iterator.remove();
          }
       }
@@ -75,8 +76,8 @@ public class DominatorsBlock {
 
    @Override
    public boolean equals(Object o) {
-      if (this == o) return true;
-      if (o == null || getClass() != o.getClass()) return false;
+      if(this == o) return true;
+      if(o == null || getClass() != o.getClass()) return false;
 
       DominatorsBlock that = (DominatorsBlock) o;
 
@@ -91,7 +92,7 @@ public class DominatorsBlock {
    @Override
    public String toString() {
       StringBuilder out = new StringBuilder();
-      for (LabelRef dominator : dominators) {
+      for(LabelRef dominator : dominators) {
          out.append(dominator);
          out.append(" ");
       }

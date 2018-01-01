@@ -8,7 +8,7 @@ import java.util.ListIterator;
  * Identifies word constructors <code>{ b1, b2 }</code> and replaces
  * them with a binary operator <code>word w = b1 w= b2 ;</code>
  */
-public class Pass2FixWordConstructors extends Pass2SsaOptimization{
+public class Pass2FixWordConstructors extends Pass2SsaOptimization {
 
    public Pass2FixWordConstructors(Program program) {
       super(program);

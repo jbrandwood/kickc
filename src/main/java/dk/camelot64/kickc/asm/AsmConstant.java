@@ -1,6 +1,6 @@
 package dk.camelot64.kickc.asm;
 
-/** ASM constant declaration  */
+/** ASM constant declaration */
 public class AsmConstant implements AsmLine {
    private final String name;
    private final String value;
@@ -24,7 +24,7 @@ public class AsmConstant implements AsmLine {
 
    @Override
    public String getAsm() {
-      return ".const "+name+" = "+value;
+      return ".const " + name + " = " + value;
    }
 
    @Override

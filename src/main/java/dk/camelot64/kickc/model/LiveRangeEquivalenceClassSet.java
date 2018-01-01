@@ -11,19 +11,17 @@ import java.util.Map;
 public class LiveRangeEquivalenceClassSet {
 
    /**
+    * Maps variables to their containing class.
+    */
+   Map<VariableRef, LiveRangeEquivalenceClass> varClass;
+   /**
     * The containing program.
     */
    private Program program;
-
    /**
     * The equivalence classes of the set.
     */
    private List<LiveRangeEquivalenceClass> equivalenceClasses;
-
-   /**
-    * Maps variables to their containing class.
-    */
-   Map<VariableRef, LiveRangeEquivalenceClass> varClass;
 
    public LiveRangeEquivalenceClassSet(Program program) {
       this.program = program;
@@ -49,7 +47,7 @@ public class LiveRangeEquivalenceClassSet {
     */
    public LiveRangeEquivalenceClass getOrCreateEquivalenceClass(VariableRef variable) {
       LiveRangeEquivalenceClass equivalenceClass = getEquivalenceClass(variable);
-      if (equivalenceClass != null) {
+      if(equivalenceClass != null) {
          return equivalenceClass;
       }
       // Not found - create it
@@ -62,6 +60,7 @@ public class LiveRangeEquivalenceClassSet {
    /**
     * Consolidates two live range equivalence calsses into one.
     * All variables and live ranges from the other class is added to the first one - and the other one is deleted.
+    *
     * @param equivalenceClass The first live range equivalence class.
     * @param otherEquivalenceClass The other live range equivalence class, that is added to the first and deleted.
     */
@@ -73,7 +72,7 @@ public class LiveRangeEquivalenceClassSet {
    /**
     * Informs the set that class of a variable has ben set - called by add/remove methods inside LiveRangeEquivalenceClass
     *
-    * @param variable         The variable
+    * @param variable The variable
     * @param equivalenceClass The class
     */
    void setVarClass(VariableRef variable, LiveRangeEquivalenceClass equivalenceClass) {
@@ -102,9 +101,9 @@ public class LiveRangeEquivalenceClassSet {
     * Store the register allocation of the live range equivalence classes into the variables in the symbol table (program scope).
     */
    public void storeRegisterAllocation() {
-      for (LiveRangeEquivalenceClass equivalenceClass : getEquivalenceClasses()) {
+      for(LiveRangeEquivalenceClass equivalenceClass : getEquivalenceClasses()) {
          Registers.Register register = equivalenceClass.getRegister();
-         for (VariableRef variable : equivalenceClass.getVariables()) {
+         for(VariableRef variable : equivalenceClass.getVariables()) {
             Variable var = program.getSymbolInfos().getVariable(variable);
             var.setAllocation(register);
          }

@@ -1,6 +1,7 @@
 package dk.camelot64.kickc.model;
 
-import java.util.*;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * Contains all variables modified inside procedures. Contain the unversioned VariableRefs.
@@ -20,9 +21,9 @@ public class ProcedureModifiedVars {
 
    public String toString(Program program) {
       StringBuilder out = new StringBuilder();
-      for (ProcedureRef procedureRef : modified.keySet()) {
-         for (VariableRef variableRef : getModifiedVars(procedureRef)) {
-            out.append(procedureRef.getFullName()).append(" modifies "+variableRef.getFullName()).append("\n");
+      for(ProcedureRef procedureRef : modified.keySet()) {
+         for(VariableRef variableRef : getModifiedVars(procedureRef)) {
+            out.append(procedureRef.getFullName()).append(" modifies " + variableRef.getFullName()).append("\n");
          }
       }
       return out.toString();

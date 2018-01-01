@@ -64,19 +64,19 @@ public class NaturalLoop {
       out.append("Loop head: ")
             .append(head)
             .append(" tails: ");
-      for (LabelRef tail : tails) {
+      for(LabelRef tail : tails) {
          out.append(tail).append(" ");
       }
       out.append("blocks: ");
-      if (blocks != null) {
-         for (LabelRef block : blocks) {
+      if(blocks != null) {
+         for(LabelRef block : blocks) {
             out.append(block.toString()).append(" ");
          }
       } else {
          out.append("null");
       }
-      if(depth!=null) {
-         out.append(" depth: "+depth);
+      if(depth != null) {
+         out.append(" depth: " + depth);
       }
       return out.toString();
    }
@@ -88,8 +88,8 @@ public class NaturalLoop {
     * @return true if this loop contains the other loop
     */
    public boolean nests(NaturalLoop other) {
-      for (LabelRef otherBlock : other.getBlocks()) {
-         if (!blocks.contains(otherBlock)) {
+      for(LabelRef otherBlock : other.getBlocks()) {
+         if(!blocks.contains(otherBlock)) {
             return false;
          }
       }
@@ -98,6 +98,7 @@ public class NaturalLoop {
 
    /**
     * Add more tails to the loop
+    *
     * @param tails The tails to add
     */
    public void addTails(Set<LabelRef> tails) {
@@ -106,6 +107,7 @@ public class NaturalLoop {
 
    /**
     * Add more blocks to the loop
+    *
     * @param blocks The blocks to add
     */
    public void addBlocks(Set<LabelRef> blocks) {
@@ -122,13 +124,13 @@ public class NaturalLoop {
 
    @Override
    public boolean equals(Object o) {
-      if (this == o) return true;
-      if (o == null || getClass() != o.getClass()) return false;
+      if(this == o) return true;
+      if(o == null || getClass() != o.getClass()) return false;
 
       NaturalLoop that = (NaturalLoop) o;
 
-      if (head != null ? !head.equals(that.head) : that.head != null) return false;
-      if (tails != null ? !tails.equals(that.tails) : that.tails != null) return false;
+      if(head != null ? !head.equals(that.head) : that.head != null) return false;
+      if(tails != null ? !tails.equals(that.tails) : that.tails != null) return false;
       return blocks != null ? blocks.equals(that.blocks) : that.blocks == null;
    }
 

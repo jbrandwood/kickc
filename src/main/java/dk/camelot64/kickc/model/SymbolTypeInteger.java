@@ -1,6 +1,6 @@
 package dk.camelot64.kickc.model;
 
-/** Integer symbol types (byte, signed byte, word, ...).  */
+/** Integer symbol types (byte, signed byte, word, ...). */
 public class SymbolTypeInteger implements SymbolType {
 
    private final String typeName;

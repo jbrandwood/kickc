@@ -20,11 +20,11 @@ public class VariableRegisterWeights {
     * Add to the weight of a variable
     *
     * @param variableRef The variable
-    * @param w           The amount to add to the weight
+    * @param w The amount to add to the weight
     */
    public void addWeight(VariableRef variableRef, double w) {
       Double weight = this.registerWeights.get(variableRef);
-      if (weight == null) {
+      if(weight == null) {
          weight = 0.0;
       }
       weight = weight + w;
@@ -38,7 +38,7 @@ public class VariableRegisterWeights {
    public double getTotalWeight(LiveRangeEquivalenceClass equivalenceClass) {
       double totalWeight = 0.0;
       List<VariableRef> vars = equivalenceClass.getVariables();
-      for (VariableRef var : vars) {
+      for(VariableRef var : vars) {
          Double varWeight = getWeight(var);
          totalWeight += varWeight;
       }
@@ -47,7 +47,7 @@ public class VariableRegisterWeights {
 
    public double getTotalWeights(RegisterUpliftScope upliftScope) {
       double totalWeight = 0.0;
-      for (LiveRangeEquivalenceClass equivalenceClass : upliftScope.getEquivalenceClasses()) {
+      for(LiveRangeEquivalenceClass equivalenceClass : upliftScope.getEquivalenceClasses()) {
          totalWeight += getTotalWeight(equivalenceClass);
       }
       return totalWeight;

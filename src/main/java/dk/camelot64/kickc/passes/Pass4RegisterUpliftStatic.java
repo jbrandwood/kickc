@@ -90,10 +90,10 @@ public class Pass4RegisterUpliftStatic extends Pass2Base {
             new HashSet<String>(),
             null);
 
-      if (success) {
+      if(success) {
          // If no clobber - Find value of the resulting allocation
          int combinationScore = Pass4RegisterUpliftCombinations.getAsmScore(getProgram());
-         if (getLog().isVerboseUplift()) {
+         if(getLog().isVerboseUplift()) {
             StringBuilder msg = new StringBuilder();
             msg.append("Static Uplift ");
             msg.append(combinationScore);

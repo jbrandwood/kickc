@@ -9,6 +9,8 @@ import java.util.Collection;
  */
 public class SymbolTypeInline implements SymbolType {
 
+   /** All numeric types. */
+   public static final SymbolTypeInline NUMERIC = new SymbolTypeInline(Arrays.asList(BYTE, SBYTE, WORD, SWORD));
    /**
     * All potential types for the inline constant.
     */
@@ -22,15 +24,12 @@ public class SymbolTypeInline implements SymbolType {
       return types;
    }
 
-   /** All numeric types. */
-   public static final SymbolTypeInline NUMERIC = new SymbolTypeInline(Arrays.asList(BYTE, SBYTE, WORD, SWORD) );
-
    @Override
    public String getTypeName() {
       StringBuilder name = new StringBuilder();
       boolean first = true;
-      for (SymbolType type : types) {
-         if (first) {
+      for(SymbolType type : types) {
+         if(first) {
             first = false;
          } else {
             name.append("/");
@@ -42,10 +41,10 @@ public class SymbolTypeInline implements SymbolType {
 
    @Override
    public boolean equals(Object o) {
-      if (this == o) {
+      if(this == o) {
          return true;
       }
-      if (o == null || getClass() != o.getClass()) {
+      if(o == null || getClass() != o.getClass()) {
          return false;
       }
       SymbolTypeInline that = (SymbolTypeInline) o;
@@ -64,6 +63,7 @@ public class SymbolTypeInline implements SymbolType {
 
    /**
     * Is unsigned byte one of the potential types
+    *
     * @return true if unsigned byte is a potential type
     */
    public boolean isByte() {
@@ -72,6 +72,7 @@ public class SymbolTypeInline implements SymbolType {
 
    /**
     * Is signed byte one of the potential types
+    *
     * @return true if signed byte is a potential type
     */
    public boolean isSByte() {
@@ -80,6 +81,7 @@ public class SymbolTypeInline implements SymbolType {
 
    /**
     * Is unsigned word one of the potential types
+    *
     * @return true if unsigned word is a potential type
     */
    public boolean isWord() {
@@ -88,6 +90,7 @@ public class SymbolTypeInline implements SymbolType {
 
    /**
     * Is signed word one of the potential types
+    *
     * @return true if signed word is a potential type
     */
    public boolean isSWord() {

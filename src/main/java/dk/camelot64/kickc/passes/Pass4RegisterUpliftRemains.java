@@ -25,9 +25,9 @@ public class Pass4RegisterUpliftRemains extends Pass2Base {
 
       Set<String> unknownFragments = new LinkedHashSet<>();
 
-      for (LiveRangeEquivalenceClass equivalenceClass : equivalenceClasses) {
-         if (equivalenceClass.getRegister().getType().equals(Registers.RegisterType.ZP_BYTE)) {
-            getLog().append("Attempting to uplift remaining variables in"+equivalenceClass);
+      for(LiveRangeEquivalenceClass equivalenceClass : equivalenceClasses) {
+         if(equivalenceClass.getRegister().getType().equals(Registers.RegisterType.ZP_BYTE)) {
+            getLog().append("Attempting to uplift remaining variables in" + equivalenceClass);
             RegisterCombinationIterator combinationIterator = new RegisterCombinationIterator(Arrays.asList(equivalenceClass), getProgram().getRegisterPotentials());
             VariableRef variableRef = equivalenceClass.getVariables().get(0);
             Scope testedScope = getProgram().getSymbolInfos().getVariable(variableRef).getScope();
@@ -35,9 +35,9 @@ public class Pass4RegisterUpliftRemains extends Pass2Base {
          }
       }
 
-      if (unknownFragments.size() > 0) {
+      if(unknownFragments.size() > 0) {
          getLog().append("MISSING FRAGMENTS");
-         for (String unknownFragment : unknownFragments) {
+         for(String unknownFragment : unknownFragments) {
             getLog().append("  " + unknownFragment);
          }
       }

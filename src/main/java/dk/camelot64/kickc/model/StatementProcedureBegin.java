@@ -7,11 +7,6 @@ public class StatementProcedureBegin extends StatementBase {
 
    private Strategy strategy;
 
-   public static enum Strategy {
-      PASS_BY_REGISTER,
-      INLINE
-   }
-
    public StatementProcedureBegin(ProcedureRef procedure) {
       super(null);
       this.procedure = procedure;
@@ -31,7 +26,12 @@ public class StatementProcedureBegin extends StatementBase {
 
    @Override
    public String toString(Program program, boolean aliveInfo) {
-      return super.idxString() + "proc " + procedure.toString(program) + (aliveInfo?super.aliveString(program):"");
+      return super.idxString() + "proc " + procedure.toString(program) + (aliveInfo ? super.aliveString(program) : "");
+   }
+
+   public static enum Strategy {
+      PASS_BY_REGISTER,
+      INLINE
    }
 
 }

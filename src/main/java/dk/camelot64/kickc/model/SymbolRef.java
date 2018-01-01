@@ -26,10 +26,10 @@ public class SymbolRef implements Value {
 
    @Override
    public boolean equals(Object o) {
-      if (this == o) {
+      if(this == o) {
          return true;
       }
-      if (o == null || getClass() != o.getClass()) {
+      if(o == null || getClass() != o.getClass()) {
          return false;
       }
 
@@ -45,12 +45,12 @@ public class SymbolRef implements Value {
 
    @Override
    public String toString(Program program) {
-      if (program == null) {
+      if(program == null) {
          return fullName;
       } else {
          try {
             return program.getScope().getSymbol(fullName).toString(program);
-         } catch (NullPointerException e) {
+         } catch(NullPointerException e) {
             throw e;
          }
       }
@@ -60,10 +60,10 @@ public class SymbolRef implements Value {
    public int getScopeDepth() {
       int depth = 0;
       char[] chars = fullName.toCharArray();
-      for (char c : chars) {
-         if(c==':') depth++;
+      for(char c : chars) {
+         if(c == ':') depth++;
       }
-      return depth/2;
+      return depth / 2;
    }
 
    @JsonIgnore
@@ -75,7 +75,7 @@ public class SymbolRef implements Value {
    public boolean isIntermediate() {
       if(
             fullName.contains(BEGIN_BLOCK_NAME) ||
-                  fullName.contains(END_BLOCK_NAME) ) return false;
+                  fullName.contains(END_BLOCK_NAME)) return false;
       return fullName.contains("$") || fullName.contains("@");
    }
 
@@ -87,17 +87,17 @@ public class SymbolRef implements Value {
    @JsonIgnore
    public String getLocalName() {
       int lastScopeIdx = fullName.lastIndexOf("::");
-      if(lastScopeIdx==-1) {
+      if(lastScopeIdx == -1) {
          return fullName;
       } else {
-         return fullName.substring(lastScopeIdx+2);
+         return fullName.substring(lastScopeIdx + 2);
       }
    }
 
    @JsonIgnore
    public String getScopeNames() {
       int lastScopeIdx = fullName.lastIndexOf("::");
-      if(lastScopeIdx==-1) {
+      if(lastScopeIdx == -1) {
          return "";
       } else {
          return fullName.substring(0, lastScopeIdx);
@@ -112,7 +112,7 @@ public class SymbolRef implements Value {
    public String getFullNameUnversioned() {
       if(isVersion()) {
          return fullName.substring(0, fullName.indexOf("#"));
-      }  else {
+      } else {
          return fullName;
       }
 

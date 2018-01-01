@@ -1,6 +1,6 @@
 package dk.camelot64.kickc.asm;
 
-/** The end of a scope  */
+/** The end of a scope */
 public class AsmScopeEnd implements AsmLine {
 
    private int index;

@@ -22,34 +22,6 @@ public class Compiler {
       this.program = new Program();
    }
 
-   public CompileLog getLog() {
-      return program.getLog();
-   }
-
-   public void addImportPath(String path) {
-      program.getImportPaths().add(path);
-   }
-
-   public Program compile(String fileName) throws IOException {
-      try {
-         Pass0GenerateStatementSequence pass0GenerateStatementSequence = new Pass0GenerateStatementSequence(program);
-         loadAndParseFile(fileName, program, pass0GenerateStatementSequence);
-         StatementSequence sequence = pass0GenerateStatementSequence.getSequence();
-         sequence.addStatement(new StatementCall(null, "main", new ArrayList<>()));
-         program.setStatementSequence(sequence);
-         pass1GenerateSSA();
-         pass2OptimizeSSA();
-         pass3Analysis();
-         pass4RegisterAllocation();
-         pass5GenerateAndOptimizeAsm();
-         return program;
-      } catch(Exception e) {
-         System.out.println("EXCEPTION DURING COMPILE " + e.getMessage());
-         System.out.println(getLog().toString());
-         throw e;
-      }
-   }
-
    public static void loadAndParseFile(String fileName, Program program, Pass0GenerateStatementSequence pass0GenerateStatementSequence) {
       try {
          File file = loadFile(fileName, program);
@@ -98,6 +70,34 @@ public class Compiler {
          }
       }
       throw new CompileError("File  not found " + fileName);
+   }
+
+   public CompileLog getLog() {
+      return program.getLog();
+   }
+
+   public void addImportPath(String path) {
+      program.getImportPaths().add(path);
+   }
+
+   public Program compile(String fileName) throws IOException {
+      try {
+         Pass0GenerateStatementSequence pass0GenerateStatementSequence = new Pass0GenerateStatementSequence(program);
+         loadAndParseFile(fileName, program, pass0GenerateStatementSequence);
+         StatementSequence sequence = pass0GenerateStatementSequence.getSequence();
+         sequence.addStatement(new StatementCall(null, "main", new ArrayList<>()));
+         program.setStatementSequence(sequence);
+         pass1GenerateSSA();
+         pass2OptimizeSSA();
+         pass3Analysis();
+         pass4RegisterAllocation();
+         pass5GenerateAndOptimizeAsm();
+         return program;
+      } catch(Exception e) {
+         System.out.println("EXCEPTION DURING COMPILE " + e.getMessage());
+         System.out.println(getLog().toString());
+         throw e;
+      }
    }
 
    private Program pass1GenerateSSA() {

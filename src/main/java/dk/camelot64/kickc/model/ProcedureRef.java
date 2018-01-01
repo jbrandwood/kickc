@@ -8,12 +8,13 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 public class ProcedureRef extends ScopeRef {
 
    @JsonCreator
-   public ProcedureRef( @JsonProperty("fullName") String fullName) {
+   public ProcedureRef(@JsonProperty("fullName") String fullName) {
       super(fullName);
    }
 
    /**
     * Get the label of the block where the procedure code starts
+    *
     * @return The label of the code block
     */
    @JsonIgnore
@@ -23,10 +24,11 @@ public class ProcedureRef extends ScopeRef {
 
    /**
     * Get the label of the block containing the final procedure return
+    *
     * @return The label of the code block
     */
    @JsonIgnore
    public LabelRef getReturnBlock() {
-      return new LabelRef(getFullName()+"::"+SymbolRef.PROCEXIT_BLOCK_NAME);
+      return new LabelRef(getFullName() + "::" + SymbolRef.PROCEXIT_BLOCK_NAME);
    }
 }

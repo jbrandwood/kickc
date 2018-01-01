@@ -64,17 +64,17 @@ public class ConstantVar implements Symbol {
    }
 
    @Override
-   public int getScopeDepth() {
-      if(scope==null) {
-         return 0;
-      } else {
-         return scope.getScopeDepth()+1;
-      }
+   public void setScope(Scope scope) {
+      this.scope = scope;
    }
 
    @Override
-   public void setScope(Scope scope) {
-      this.scope = scope;
+   public int getScopeDepth() {
+      if(scope == null) {
+         return 0;
+      } else {
+         return scope.getScopeDepth() + 1;
+      }
    }
 
    public ConstantValue getValue() {
@@ -101,7 +101,7 @@ public class ConstantVar implements Symbol {
    public String toString(Program program) {
       String s = new StringBuilder()
             .append("(")
-            .append("const"+" ")
+            .append("const" + " ")
             .append(type.getTypeName())
             .append(") ")
             .append(getFullName()).toString();
@@ -115,22 +115,22 @@ public class ConstantVar implements Symbol {
 
    @Override
    public boolean equals(Object o) {
-      if (this == o) {
+      if(this == o) {
          return true;
       }
-      if (o == null || getClass() != o.getClass()) {
+      if(o == null || getClass() != o.getClass()) {
          return false;
       }
 
       ConstantVar that = (ConstantVar) o;
 
-      if (name != null ? !name.equals(that.name) : that.name != null) {
+      if(name != null ? !name.equals(that.name) : that.name != null) {
          return false;
       }
-      if (scope != null ? !scope.equals(that.scope) : that.scope != null) {
+      if(scope != null ? !scope.equals(that.scope) : that.scope != null) {
          return false;
       }
-      if (type != null ? !type.equals(that.type) : that.type != null) {
+      if(type != null ? !type.equals(that.type) : that.type != null) {
          return false;
       }
       return value != null ? value.equals(that.value) : that.value == null;

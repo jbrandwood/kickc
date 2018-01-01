@@ -1,10 +1,12 @@
 package dk.camelot64.kickc.passes;
 
-import dk.camelot64.kickc.model.*;
+import dk.camelot64.kickc.model.ControlFlowGraphBaseVisitor;
+import dk.camelot64.kickc.model.Program;
+import dk.camelot64.kickc.model.StatementPhiBlock;
 
 import java.util.Iterator;
 
-/** Compiler Pass eliminating phi self assignments  */
+/** Compiler Pass eliminating phi self assignments */
 public class Pass2SelfPhiElimination extends Pass2SsaOptimization {
 
    public Pass2SelfPhiElimination(Program program) {
@@ -20,14 +22,14 @@ public class Pass2SelfPhiElimination extends Pass2SsaOptimization {
       ControlFlowGraphBaseVisitor<Void> visitor = new ControlFlowGraphBaseVisitor<Void>() {
          @Override
          public Void visitPhiBlock(StatementPhiBlock phi) {
-            for (StatementPhiBlock.PhiVariable phiVariable : phi.getPhiVariables()) {
+            for(StatementPhiBlock.PhiVariable phiVariable : phi.getPhiVariables()) {
                Iterator<StatementPhiBlock.PhiRValue> iterator = phiVariable.getValues().iterator();
-               while (iterator.hasNext()) {
+               while(iterator.hasNext()) {
                   StatementPhiBlock.PhiRValue phiRValue = iterator.next();
-                  if (phiRValue.getrValue().equals(phiVariable.getVariable())) {
+                  if(phiRValue.getrValue().equals(phiVariable.getVariable())) {
                      iterator.remove();
                      optimized[0] = Boolean.TRUE;
-                     getLog().append("Self Phi Eliminated "+phiVariable.getVariable().toString(getProgram()));
+                     getLog().append("Self Phi Eliminated " + phiVariable.getVariable().toString(getProgram()));
                   }
                }
             }

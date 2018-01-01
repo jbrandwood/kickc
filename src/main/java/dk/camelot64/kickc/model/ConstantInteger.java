@@ -29,8 +29,8 @@ public class ConstantInteger implements ConstantValue {
    public SymbolType getType() {
       ArrayList<SymbolType> potentialTypes = new ArrayList<>();
       Integer number = getNumber();
-      for (SymbolTypeInteger typeInteger : SymbolType.getIntegerTypes()) {
-         if(number>=typeInteger.getMinValue() && number<= typeInteger.getMaxValue()) {
+      for(SymbolTypeInteger typeInteger : SymbolType.getIntegerTypes()) {
+         if(number >= typeInteger.getMinValue() && number <= typeInteger.getMaxValue()) {
             potentialTypes.add(typeInteger);
          }
       }
@@ -44,7 +44,7 @@ public class ConstantInteger implements ConstantValue {
 
    @Override
    public String toString(Program program) {
-      if (program == null) {
+      if(program == null) {
          return Integer.toString(number);
       } else {
          return "(" + getType(program.getScope()).getTypeName() + ") " + Integer.toString(number);
@@ -53,8 +53,8 @@ public class ConstantInteger implements ConstantValue {
 
    @Override
    public boolean equals(Object o) {
-      if (this == o) return true;
-      if (o == null || getClass() != o.getClass()) return false;
+      if(this == o) return true;
+      if(o == null || getClass() != o.getClass()) return false;
       ConstantInteger that = (ConstantInteger) o;
       return number != null ? number.equals(that.number) : that.number == null;
    }

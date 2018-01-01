@@ -10,22 +10,6 @@ public class Pass3CallGraphAnalysis extends Pass2Base {
       super(program);
    }
 
-   public void findCallGraph() {
-      CallGraph callGraph = new CallGraph();
-      for (ControlFlowBlock block : getGraph().getAllBlocks()) {
-         LabelRef scopeRef = getScopeRef(block, getProgram());
-         for (Statement statement : block.getStatements()) {
-            if(statement instanceof StatementCall) {
-               ProcedureRef procedure = ((StatementCall) statement).getProcedure();
-               LabelRef procedureLabel = procedure.getLabelRef();
-               CallGraph.CallBlock callBlock = callGraph.getOrCreateCallBlock(scopeRef);
-               callBlock.addCall(procedureLabel, (StatementCall) statement);
-            }
-         }
-      }
-      getProgram().setCallGraph(callGraph);
-   }
-
    /**
     * Gets a label reference representing the scope of a block
     *
@@ -37,11 +21,27 @@ public class Pass3CallGraphAnalysis extends Pass2Base {
       LabelRef scopeRef;
       if(blockSymbol instanceof Procedure) {
          scopeRef = ((Procedure) blockSymbol).getRef().getLabelRef();
-      }  else {
+      } else {
          Scope blockScope = blockSymbol.getScope();
          scopeRef = new LabelRef(blockScope.getFullName());
       }
       return scopeRef;
+   }
+
+   public void findCallGraph() {
+      CallGraph callGraph = new CallGraph();
+      for(ControlFlowBlock block : getGraph().getAllBlocks()) {
+         LabelRef scopeRef = getScopeRef(block, getProgram());
+         for(Statement statement : block.getStatements()) {
+            if(statement instanceof StatementCall) {
+               ProcedureRef procedure = ((StatementCall) statement).getProcedure();
+               LabelRef procedureLabel = procedure.getLabelRef();
+               CallGraph.CallBlock callBlock = callGraph.getOrCreateCallBlock(scopeRef);
+               callBlock.addCall(procedureLabel, (StatementCall) statement);
+            }
+         }
+      }
+      getProgram().setCallGraph(callGraph);
    }
 
 }

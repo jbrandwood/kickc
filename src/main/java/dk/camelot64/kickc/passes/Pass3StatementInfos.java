@@ -20,8 +20,8 @@ public class Pass3StatementInfos extends Pass2Base {
    public void generateStatementInfos() {
       LinkedHashMap<Integer, LabelRef> stmtBlocks = new LinkedHashMap<>();
       LinkedHashMap<Integer, Statement> stmtIdx = new LinkedHashMap<>();
-      for (ControlFlowBlock block : getProgram().getGraph().getAllBlocks()) {
-         for (Statement statement : block.getStatements()) {
+      for(ControlFlowBlock block : getProgram().getGraph().getAllBlocks()) {
+         for(Statement statement : block.getStatements()) {
             stmtBlocks.put(statement.getIndex(), block.getLabel());
             stmtIdx.put(statement.getIndex(), statement);
          }

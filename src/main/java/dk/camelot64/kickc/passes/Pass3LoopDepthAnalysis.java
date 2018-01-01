@@ -31,24 +31,24 @@ public class Pass3LoopDepthAnalysis extends Pass2Base {
          CallGraph.CallBlock currentCallBlock = callGraph.getOrCreateCallBlock(currentScope);
          // Add called sub blocks for later processing
          Collection<LabelRef> subBlocks = currentCallBlock.getCalledBlocks();
-         for (LabelRef subBlock : subBlocks) {
-            if (!done.contains(subBlock) && !todo.contains(subBlock)) {
+         for(LabelRef subBlock : subBlocks) {
+            if(!done.contains(subBlock) && !todo.contains(subBlock)) {
                todo.add(subBlock);
             }
          }
          // Find the scope blocks calling the current scope block - and the loop depth of the blocks where the call statement is
          int callingDepth = 1;
          Collection<LabelRef> callingScopes = callGraph.getCallingBlocks(currentScope);
-         for (LabelRef callingScope : callingScopes) {
+         for(LabelRef callingScope : callingScopes) {
             CallGraph.CallBlock callingBlock = callGraph.getOrCreateCallBlock(callingScope);
             Collection<CallGraph.CallBlock.Call> calls = callingBlock.getCalls(currentScope);
-            for (CallGraph.CallBlock.Call call : calls) {
+            for(CallGraph.CallBlock.Call call : calls) {
                int callStatementIdx = call.getCallStatementIdx();
                ControlFlowBlock callingControlBlock = getProgram().getStatementInfos().getBlock(callStatementIdx);
                Collection<NaturalLoop> callingLoops = loopSet.getLoopsContainingBlock(callingControlBlock.getLabel());
-               for (NaturalLoop callingLoop : callingLoops) {
-                  int potentialDepth = callingLoop.getDepth()+1;
-                  if(potentialDepth >callingDepth) {
+               for(NaturalLoop callingLoop : callingLoops) {
+                  int potentialDepth = callingLoop.getDepth() + 1;
+                  if(potentialDepth > callingDepth) {
                      callingDepth = potentialDepth;
                   }
                }
@@ -62,7 +62,7 @@ public class Pass3LoopDepthAnalysis extends Pass2Base {
       NaturalLoopSet loopSet = getProgram().getLoopSet();
       // Find loops in the current scope block
       List<NaturalLoop> currentScopeLoops = new ArrayList<>();
-      for (NaturalLoop loop : loopSet.getLoops()) {
+      for(NaturalLoop loop : loopSet.getLoops()) {
          LabelRef loopHead = loop.getHead();
          ControlFlowBlock loopHeadBlock = getGraph().getBlock(loopHead);
          LabelRef scopeRef = Pass3CallGraphAnalysis.getScopeRef(loopHeadBlock, getProgram());
@@ -72,9 +72,9 @@ public class Pass3LoopDepthAnalysis extends Pass2Base {
          }
       }
 
-      getLog().append("Found "+currentScopeLoops.size()+" loops in scope ["+currentScope.toString()+"]");
-      for (NaturalLoop loop : currentScopeLoops) {
-         getLog().append("  "+loop.toString());
+      getLog().append("Found " + currentScopeLoops.size() + " loops in scope [" + currentScope.toString() + "]");
+      for(NaturalLoop loop : currentScopeLoops) {
+         getLog().append("  " + loop.toString());
       }
 
       // Find loop nesting depths in current scope loops
@@ -86,7 +86,7 @@ public class Pass3LoopDepthAnalysis extends Pass2Base {
          todo.removeFirst();
          // Does any unprocessed loop nest this one?
          boolean postpone = false;
-         for (NaturalLoop otherLoop : todo) {
+         for(NaturalLoop otherLoop : todo) {
             if(otherLoop.nests(loop)) {
                // postpone this loop and move on
                postpone = true;
@@ -99,10 +99,10 @@ public class Pass3LoopDepthAnalysis extends Pass2Base {
          }
          int depth = initialDepth;
          // Does any already processed loop nest this one?
-         for (NaturalLoop otherLoop : done) {
+         for(NaturalLoop otherLoop : done) {
             if(otherLoop.nests(loop)) {
-               int potentialDepth = otherLoop.getDepth()+1;
-               if(potentialDepth>depth) {
+               int potentialDepth = otherLoop.getDepth() + 1;
+               if(potentialDepth > depth) {
                   depth = potentialDepth;
                }
             }

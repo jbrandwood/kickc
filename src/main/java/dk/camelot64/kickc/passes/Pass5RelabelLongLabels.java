@@ -24,16 +24,16 @@ public class Pass5RelabelLongLabels extends Pass5AsmOptimization {
       // Scope->Set<Labels>
       Map<String, Set<String>> allLabels = new LinkedHashMap<>();
       String currentScope = "";
-      for (AsmSegment asmSegment : getAsmProgram().getSegments()) {
-         for (AsmLine asmLine : asmSegment.getLines()) {
-            if (asmLine instanceof AsmScopeBegin) {
+      for(AsmSegment asmSegment : getAsmProgram().getSegments()) {
+         for(AsmLine asmLine : asmSegment.getLines()) {
+            if(asmLine instanceof AsmScopeBegin) {
                currentScope = ((AsmScopeBegin) asmLine).getLabel();
-            } else if (asmLine instanceof AsmScopeEnd) {
+            } else if(asmLine instanceof AsmScopeEnd) {
                currentScope = "";
-            } else if (asmLine instanceof AsmLabel) {
+            } else if(asmLine instanceof AsmLabel) {
                AsmLabel asmLabel = (AsmLabel) asmLine;
                Set<String> scopeLabels = allLabels.get(currentScope);
-               if (scopeLabels == null) {
+               if(scopeLabels == null) {
                   scopeLabels = new LinkedHashSet<>();
                   allLabels.put(currentScope, scopeLabels);
                }
@@ -47,26 +47,26 @@ public class Pass5RelabelLongLabels extends Pass5AsmOptimization {
       // Find relabels for all long labels
       // Scope->(Label->NewLabel)
       Map<String, Map<String, String>> relabels = new LinkedHashMap<>();
-      for (AsmSegment asmSegment : getAsmProgram().getSegments()) {
-         for (AsmLine asmLine : asmSegment.getLines()) {
-            if (asmLine instanceof AsmScopeBegin) {
+      for(AsmSegment asmSegment : getAsmProgram().getSegments()) {
+         for(AsmLine asmLine : asmSegment.getLines()) {
+            if(asmLine instanceof AsmScopeBegin) {
                currentScope = ((AsmScopeBegin) asmLine).getLabel();
-            } else if (asmLine instanceof AsmScopeEnd) {
+            } else if(asmLine instanceof AsmScopeEnd) {
                currentScope = "";
-            } else if (asmLine instanceof AsmLabel) {
+            } else if(asmLine instanceof AsmLabel) {
                AsmLabel asmLabel = (AsmLabel) asmLine;
-               if (asmLabel.getLabel().contains("_from_")) {
+               if(asmLabel.getLabel().contains("_from_")) {
                   // Found a long label
                   Set<String> scopeLabels = allLabels.get(currentScope);
                   Map<String, String> scopeRelabels = relabels.get(currentScope);
-                  if (scopeRelabels == null) {
+                  if(scopeRelabels == null) {
                      scopeRelabels = new LinkedHashMap<>();
                      relabels.put(currentScope, scopeRelabels);
                   }
                   // Find new short unused label
                   int labelIdx = 1;
                   String newLabel = "b" + labelIdx;
-                  while (scopeLabels.contains(newLabel) || scopeRelabels.containsValue(newLabel)) {
+                  while(scopeLabels.contains(newLabel) || scopeRelabels.containsValue(newLabel)) {
                      newLabel = "b" + labelIdx++;
                   }
                   getLog().append("Relabelling long label " + asmLabel.getLabel() + " to " + newLabel);
@@ -78,29 +78,29 @@ public class Pass5RelabelLongLabels extends Pass5AsmOptimization {
       }
 
       // Execute relabelling
-      for (AsmSegment asmSegment : getAsmProgram().getSegments()) {
-         for (AsmLine asmLine : asmSegment.getLines()) {
-            if (asmLine instanceof AsmScopeBegin) {
+      for(AsmSegment asmSegment : getAsmProgram().getSegments()) {
+         for(AsmLine asmLine : asmSegment.getLines()) {
+            if(asmLine instanceof AsmScopeBegin) {
                currentScope = ((AsmScopeBegin) asmLine).getLabel();
-            } else if (asmLine instanceof AsmScopeEnd) {
+            } else if(asmLine instanceof AsmScopeEnd) {
                currentScope = "";
-            } else if (asmLine instanceof AsmLabel) {
+            } else if(asmLine instanceof AsmLabel) {
                AsmLabel asmLabel = (AsmLabel) asmLine;
                Map<String, String> scopeRelabels = relabels.get(currentScope);
-               if (scopeRelabels != null) {
+               if(scopeRelabels != null) {
                   String newLabel = scopeRelabels.get(asmLabel.getLabel());
-                  if (newLabel != null) {
+                  if(newLabel != null) {
                      asmLabel.setLabel(newLabel);
                   }
                }
-            } else if (asmLine instanceof AsmInstruction) {
+            } else if(asmLine instanceof AsmInstruction) {
                AsmInstruction asmInstruction = (AsmInstruction) asmLine;
-               if (asmInstruction.getType().isJump()) {
+               if(asmInstruction.getType().isJump()) {
                   String parameter = asmInstruction.getParameter();
                   Map<String, String> scopeRelabels = relabels.get(currentScope);
-                  if (scopeRelabels != null) {
+                  if(scopeRelabels != null) {
                      String newLabel = scopeRelabels.get(parameter);
-                     if (newLabel != null) {
+                     if(newLabel != null) {
                         asmInstruction.setParameter(newLabel);
                      }
                   }

@@ -100,22 +100,22 @@ public class StatementCall extends StatementBase implements StatementLValue {
    public String toString(Program program, boolean aliveInfo) {
       StringBuilder res = new StringBuilder();
       res.append(super.idxString());
-      if (lValue != null) {
+      if(lValue != null) {
          res.append(lValue.toString(program));
          res.append(" ← ");
       }
       res.append("call ");
-      if (procedure != null) {
+      if(procedure != null) {
          res.append(procedure.getFullName() + " ");
       } else {
          res.append(procedureName + " ");
       }
-      if (parameters != null) {
-         for (RValue parameter : parameters) {
+      if(parameters != null) {
+         for(RValue parameter : parameters) {
             res.append(parameter.toString(program) + " ");
          }
       }
-      if (parametersByAssignment) {
+      if(parametersByAssignment) {
          res.append("param-assignment");
       }
       if(aliveInfo) {
@@ -126,16 +126,16 @@ public class StatementCall extends StatementBase implements StatementLValue {
 
    @Override
    public boolean equals(Object o) {
-      if (this == o) return true;
-      if (o == null || getClass() != o.getClass()) return false;
-      if (!super.equals(o)) return false;
+      if(this == o) return true;
+      if(o == null || getClass() != o.getClass()) return false;
+      if(!super.equals(o)) return false;
 
       StatementCall that = (StatementCall) o;
 
-      if (parametersByAssignment != that.parametersByAssignment) return false;
-      if (lValue != null ? !lValue.equals(that.lValue) : that.lValue != null) return false;
-      if (!procedureName.equals(that.procedureName)) return false;
-      if (procedure != null ? !procedure.equals(that.procedure) : that.procedure != null) return false;
+      if(parametersByAssignment != that.parametersByAssignment) return false;
+      if(lValue != null ? !lValue.equals(that.lValue) : that.lValue != null) return false;
+      if(!procedureName.equals(that.procedureName)) return false;
+      if(procedure != null ? !procedure.equals(that.procedure) : that.procedure != null) return false;
       return parameters != null ? parameters.equals(that.parameters) : that.parameters == null;
    }
 

@@ -21,9 +21,9 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo;
       @JsonSubTypes.Type(value = PointerDereferenceSimple.class, name = "pointer_simple"),
       @JsonSubTypes.Type(value = ProgramScope.class, name = "program"),
       @JsonSubTypes.Type(value = Procedure.class, name = "procedure")
-      })
+})
 public interface Value {
 
-      String toString(Program program);
+   String toString(Program program);
 
 }

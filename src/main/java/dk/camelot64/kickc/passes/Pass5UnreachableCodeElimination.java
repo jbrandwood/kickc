@@ -23,22 +23,22 @@ public class Pass5UnreachableCodeElimination extends Pass5AsmOptimization {
 
       // Find RTS/JMP followed by code
       boolean afterExit = false;
-      for (AsmSegment segment : getAsmProgram().getSegments()) {
+      for(AsmSegment segment : getAsmProgram().getSegments()) {
          ListIterator<AsmLine> lineIt = segment.getLines().listIterator();
-         while (lineIt.hasNext()) {
+         while(lineIt.hasNext()) {
             AsmLine line = lineIt.next();
-            if (line instanceof AsmInstruction) {
-               if (afterExit) {
-                  getLog().append("Removing unreachable instruction "+line.toString());
+            if(line instanceof AsmInstruction) {
+               if(afterExit) {
+                  getLog().append("Removing unreachable instruction " + line.toString());
                   lineIt.remove();
                   optimized = true;
                } else {
                   AsmInstruction asmInstruction = (AsmInstruction) line;
-                  if (asmInstruction.getType().getMnemnonic().equals("rts") || asmInstruction.getType().getMnemnonic().equals("jmp")) {
+                  if(asmInstruction.getType().getMnemnonic().equals("rts") || asmInstruction.getType().getMnemnonic().equals("jmp")) {
                      afterExit = true;
                   }
                }
-            } else if(line instanceof AsmComment ) {
+            } else if(line instanceof AsmComment) {
                // ignore comments
             } else {
                afterExit = false;

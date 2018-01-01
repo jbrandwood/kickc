@@ -2,7 +2,10 @@ package dk.camelot64.kickc.passes;
 
 import dk.camelot64.kickc.model.*;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
 
 /*** Find the variable equivalence classes to attempt to uplift in each scope */
 public class Pass4RegisterUpliftScopeAnalysis extends Pass2Base {
@@ -21,15 +24,15 @@ public class Pass4RegisterUpliftScopeAnalysis extends Pass2Base {
 
       Collection<Scope> allScopes = getProgram().getScope().getAllScopes(true);
       allScopes.add(getSymbols());
-      for (Scope scope : allScopes) {
+      for(Scope scope : allScopes) {
          ScopeRef scopeRef = scope.getRef();
          RegisterUpliftScope registerUpliftScope = registerUpliftProgram.addRegisterUpliftScope(scopeRef);
 
          // Find live range equivalence classes for the scope
          List<LiveRangeEquivalenceClass> equivalenceClasses = new ArrayList<>();
-         for (LiveRangeEquivalenceClass equivalenceClass : equivalenceClassSet.getEquivalenceClasses()) {
+         for(LiveRangeEquivalenceClass equivalenceClass : equivalenceClassSet.getEquivalenceClasses()) {
             VariableRef variableRef = equivalenceClass.getVariables().get(0);
-            if (variableRef.getScopeNames().equals(scopeRef.getFullName())) {
+            if(variableRef.getScopeNames().equals(scopeRef.getFullName())) {
                equivalenceClasses.add(equivalenceClass);
             }
          }
@@ -39,7 +42,7 @@ public class Pass4RegisterUpliftScopeAnalysis extends Pass2Base {
 
 
       List<RegisterUpliftScope> upliftScopes = registerUpliftProgram.getRegisterUpliftScopes();
-      Collections.sort(upliftScopes, (o1, o2) -> Double.compare(registerWeights.getTotalWeights(o2),registerWeights.getTotalWeights(o1)));
+      Collections.sort(upliftScopes, (o1, o2) -> Double.compare(registerWeights.getTotalWeights(o2), registerWeights.getTotalWeights(o1)));
       registerUpliftProgram.setRegisterUpliftScopes(upliftScopes);
 
       getProgram().setRegisterUpliftProgram(registerUpliftProgram);

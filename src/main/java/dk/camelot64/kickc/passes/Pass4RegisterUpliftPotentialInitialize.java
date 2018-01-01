@@ -20,10 +20,10 @@ public class Pass4RegisterUpliftPotentialInitialize extends Pass2Base {
    public void initPotentialRegisters() {
       LiveRangeEquivalenceClassSet liveRangeEquivalenceClassSet = getProgram().getLiveRangeEquivalenceClassSet();
       RegisterPotentials registerPotentials = new RegisterPotentials();
-      for (LiveRangeEquivalenceClass equivalenceClass : liveRangeEquivalenceClassSet.getEquivalenceClasses()) {
+      for(LiveRangeEquivalenceClass equivalenceClass : liveRangeEquivalenceClassSet.getEquivalenceClasses()) {
          Registers.Register defaultRegister = equivalenceClass.getRegister();
          Registers.RegisterType registerType = defaultRegister.getType();
-         if (registerType.equals(Registers.RegisterType.ZP_BYTE)) {
+         if(registerType.equals(Registers.RegisterType.ZP_BYTE)) {
             List<Registers.Register> potentials = Arrays.asList(
                   defaultRegister,
                   Registers.getRegisterA(),

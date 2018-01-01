@@ -1,6 +1,8 @@
 package dk.camelot64.kickc.passes;
 
-import dk.camelot64.kickc.model.*;
+import dk.camelot64.kickc.model.ControlFlowGraphBaseVisitor;
+import dk.camelot64.kickc.model.Program;
+import dk.camelot64.kickc.model.StatementLabel;
 
 /** Asserts that the graph contains no label statements */
 public class Pass2AssertNoLabels extends Pass2SsaAssertion {
@@ -16,7 +18,7 @@ public class Pass2AssertNoLabels extends Pass2SsaAssertion {
 
          @Override
          public Void visitJumpTarget(StatementLabel jumpTarget) {
-            throw new AssertionFailed("No label statements allowed! "+jumpTarget);
+            throw new AssertionFailed("No label statements allowed! " + jumpTarget);
          }
       };
       checkCalls.visitGraph(getGraph());

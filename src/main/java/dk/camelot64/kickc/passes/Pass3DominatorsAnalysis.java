@@ -29,11 +29,11 @@ public class Pass3DominatorsAnalysis extends Pass2Base {
       DominatorsBlock firstDominators = dominatorsGraph.addDominators(firstBlock);
       firstDominators.add(firstBlock);
       List<LabelRef> allBlocks = new ArrayList<>();
-      for (ControlFlowBlock block : getGraph().getAllBlocks()) {
+      for(ControlFlowBlock block : getGraph().getAllBlocks()) {
          allBlocks.add(block.getLabel());
       }
-      for (ControlFlowBlock block : getGraph().getAllBlocks()) {
-         if (!block.getLabel().equals(firstBlock)) {
+      for(ControlFlowBlock block : getGraph().getAllBlocks()) {
+         if(!block.getLabel().equals(firstBlock)) {
             DominatorsBlock dominatorsBlock = dominatorsGraph.addDominators(block.getLabel());
             dominatorsBlock.addAll(allBlocks);
          }
@@ -45,25 +45,25 @@ public class Pass3DominatorsAnalysis extends Pass2Base {
       boolean change = false;
       do {
          change = false;
-         for (ControlFlowBlock block : getGraph().getAllBlocks()) {
-            if (!block.getLabel().equals(firstBlock)) {
+         for(ControlFlowBlock block : getGraph().getAllBlocks()) {
+            if(!block.getLabel().equals(firstBlock)) {
                List<ControlFlowBlock> predecessors = getGraph().getPredecessors(block);
                DominatorsBlock newDominators = new DominatorsBlock();
                newDominators.addAll(allBlocks);
-               for (ControlFlowBlock predecessor : predecessors) {
+               for(ControlFlowBlock predecessor : predecessors) {
                   DominatorsBlock predecessorDominators = dominatorsGraph.getDominators(predecessor.getLabel());
                   newDominators.intersect(predecessorDominators);
                }
                newDominators.add(block.getLabel());
                DominatorsBlock currentDominators = dominatorsGraph.getDominators(block.getLabel());
-               if (!currentDominators.equals(newDominators)) {
+               if(!currentDominators.equals(newDominators)) {
                   change = true;
                   dominatorsGraph.setDominators(block.getLabel(), newDominators);
                }
             }
          }
 
-      } while (change);
+      } while(change);
       getProgram().setDominators(dominatorsGraph);
    }
 

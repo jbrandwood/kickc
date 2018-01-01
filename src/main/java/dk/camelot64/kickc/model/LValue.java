@@ -1,6 +1,6 @@
 package dk.camelot64.kickc.model;
 
-/** Assignable value (capable of being on the left part of an assignment)*/
+/** Assignable value (capable of being on the left part of an assignment) */
 public interface LValue extends RValue {
 
    /**

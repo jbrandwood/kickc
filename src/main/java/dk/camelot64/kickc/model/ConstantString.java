@@ -22,12 +22,12 @@ public class ConstantString implements ConstantValue {
 
    @Override
    public String toString() {
-       return toString(null);
+      return toString(null);
    }
 
    @Override
    public String toString(Program program) {
-      if (program == null) {
+      if(program == null) {
          return "\"" + value + "\"";
       } else {
          return "(" + SymbolType.STRING.getTypeName() + ") " + "\"" + value + "\"";

@@ -18,22 +18,22 @@ public class Pass5NextJumpElimination extends Pass5AsmOptimization {
    public boolean optimize() {
       List<AsmLine> removeLines = new ArrayList<>();
       AsmInstruction candidate = null;
-      for (AsmSegment segment : getAsmProgram().getSegments()) {
-         for (AsmLine line : segment.getLines()) {
+      for(AsmSegment segment : getAsmProgram().getSegments()) {
+         for(AsmLine line : segment.getLines()) {
             if(line instanceof AsmScopeBegin || line instanceof AsmScopeEnd) {
                candidate = null;
             }
-            if (candidate != null) {
-               if (line instanceof AsmLabel) {
-                  if (((AsmLabel) line).getLabel().equals(candidate.getParameter())) {
+            if(candidate != null) {
+               if(line instanceof AsmLabel) {
+                  if(((AsmLabel) line).getLabel().equals(candidate.getParameter())) {
                      removeLines.add(candidate);
                   }
                }
             }
-            if (line instanceof AsmInstruction) {
+            if(line instanceof AsmInstruction) {
                candidate = null;
                AsmInstruction instruction = (AsmInstruction) line;
-               if (instruction.getType().isJump() && !instruction.getType().getMnemnonic().equals("jsr")) {
+               if(instruction.getType().isJump() && !instruction.getType().getMnemnonic().equals("jsr")) {
                   candidate = instruction;
                }
             }

@@ -70,7 +70,7 @@ public class AsmSegment {
    }
 
    public void setFragment(String fragment) {
-      this.fragment  = fragment;
+      this.fragment = fragment;
    }
 
    public String getPhiTransitionId() {
@@ -97,7 +97,7 @@ public class AsmSegment {
     */
    public int getBytes() {
       int bytes = 0;
-      for (AsmLine line : lines) {
+      for(AsmLine line : lines) {
          bytes += line.getLineBytes();
       }
       return bytes;
@@ -111,7 +111,7 @@ public class AsmSegment {
     */
    public double getCycles() {
       double cycles = 0.0;
-      for (AsmLine line : lines) {
+      for(AsmLine line : lines) {
          cycles += line.getLineCycles();
       }
       return cycles;
@@ -125,8 +125,8 @@ public class AsmSegment {
     */
    public AsmClobber getClobber() {
       AsmClobber clobber = new AsmClobber();
-      for (AsmLine line : lines) {
-         if (line instanceof AsmInstruction) {
+      for(AsmLine line : lines) {
+         if(line instanceof AsmInstruction) {
             AsmInstruction asmInstruction = (AsmInstruction) line;
             AsmInstructionType asmInstructionType = asmInstruction.getType();
             AsmClobber asmClobber = asmInstructionType.getClobber();
@@ -138,27 +138,27 @@ public class AsmSegment {
 
    public String toString(AsmProgram.AsmPrintState printState) {
       StringBuffer out = new StringBuffer();
-      if (printState.isComments()) {
+      if(printState.isComments()) {
          out.append(printState.getIndent()).append("//SEG").append(getIndex());
-         if (source != null) {
+         if(source != null) {
             out.append(" ").append(source);
          }
-         if(phiTransitionId!=null) {
+         if(phiTransitionId != null) {
             out.append(" [").append(phiTransitionId);
-            if(phiTransitionAssignmentIdx!=null) {
+            if(phiTransitionAssignmentIdx != null) {
                out.append("#").append(phiTransitionAssignmentIdx);
             }
             out.append("]");
          }
-         if (fragment!=null) {
+         if(fragment != null) {
             out.append(" -- ");
             out.append(fragment).append(" ");
          }
          out.append("\n");
       }
-      for (AsmLine line : lines) {
-         if (line instanceof AsmComment && !printState.isComments()) {
-            if (!((AsmComment) line).getComment().contains("Fragment")) {
+      for(AsmLine line : lines) {
+         if(line instanceof AsmComment && !printState.isComments()) {
+            if(!((AsmComment) line).getComment().contains("Fragment")) {
                continue;
             }
          }
@@ -166,7 +166,7 @@ public class AsmSegment {
             printState.decIndent();
          }
          out.append(printState.getIndent());
-         if (line instanceof AsmComment || line instanceof AsmInstruction || line instanceof AsmLabelDecl || line instanceof AsmConstant || line instanceof AsmDataNumeric || line instanceof AsmDataFill || line instanceof AsmDataString|| line instanceof AsmDataAlignment) {
+         if(line instanceof AsmComment || line instanceof AsmInstruction || line instanceof AsmLabelDecl || line instanceof AsmConstant || line instanceof AsmDataNumeric || line instanceof AsmDataFill || line instanceof AsmDataString || line instanceof AsmDataAlignment) {
             out.append("  ");
          }
          out.append(line.getAsm() + "\n");

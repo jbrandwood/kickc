@@ -47,10 +47,10 @@ public class Label implements Symbol {
 
    @Override
    public int getScopeDepth() {
-      if(scope==null) {
+      if(scope == null) {
          return 0;
       } else {
-         return scope.getScopeDepth()+1;
+         return scope.getScopeDepth() + 1;
       }
    }
 
@@ -70,13 +70,13 @@ public class Label implements Symbol {
 
    @Override
    public boolean equals(Object o) {
-      if (this == o) return true;
-      if (o == null || getClass() != o.getClass()) return false;
+      if(this == o) return true;
+      if(o == null || getClass() != o.getClass()) return false;
 
       Label label = (Label) o;
 
-      if (intermediate != label.intermediate) return false;
-      if (!name.equals(label.name)) return false;
+      if(intermediate != label.intermediate) return false;
+      if(!name.equals(label.name)) return false;
       return getFullName().equals(label.getFullName());
    }
 
@@ -94,10 +94,10 @@ public class Label implements Symbol {
 
    @Override
    public String toString(Program program) {
-      if(program ==null) {
+      if(program == null) {
          return getFullName();
-      }  else {
-         return "("+getType().getTypeName() + ") "+getFullName();
+      } else {
+         return "(" + getType().getTypeName() + ") " + getFullName();
       }
    }
 

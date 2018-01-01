@@ -2,7 +2,9 @@ package dk.camelot64.kickc.passes;
 
 import dk.camelot64.kickc.model.*;
 
-import java.util.*;
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.Set;
 
 /** Assert that all referenced blocks exist in the program */
 public class Pass2AssertBlocks extends Pass2SsaAssertion {
@@ -18,7 +20,7 @@ public class Pass2AssertBlocks extends Pass2SsaAssertion {
 
       Set<LabelRef> seenBlocks = blockReferenceFinder.getSeenBlocks();
       Collection<ControlFlowBlock> allBlocks = getGraph().getAllBlocks();
-      for (LabelRef seenBlock : seenBlocks) {
+      for(LabelRef seenBlock : seenBlocks) {
          ControlFlowBlock block = getGraph().getBlock(seenBlock);
          if(!allBlocks.contains(block)) {
             throw new AssertionFailed("Compilation Process Error! A block in the program is not contained in the allBocks list (probably a block sequence problem). " + seenBlock);
@@ -28,9 +30,8 @@ public class Pass2AssertBlocks extends Pass2SsaAssertion {
 
    private static class BlockReferenceChecker extends ControlFlowGraphBaseVisitor<Void> {
 
-      private ControlFlowGraph graph;
-
       Set<LabelRef> seenBlocks;
+      private ControlFlowGraph graph;
 
       public BlockReferenceChecker(ControlFlowGraph graph) {
          this.graph = graph;
@@ -42,15 +43,15 @@ public class Pass2AssertBlocks extends Pass2SsaAssertion {
       }
 
       private void assertBlock(LabelRef blockLabel) throws AssertionFailed {
-         if (blockLabel == null) {
+         if(blockLabel == null) {
             return;
          }
-         if (blockLabel.getFullName().equals(SymbolRef.PROCEXIT_BLOCK_NAME)) {
+         if(blockLabel.getFullName().equals(SymbolRef.PROCEXIT_BLOCK_NAME)) {
             return;
          }
          seenBlocks.add(blockLabel);
          ControlFlowBlock block = graph.getBlock(blockLabel);
-         if (block == null) {
+         if(block == null) {
             throw new AssertionFailed("Compilation Process Error! Block referenced, but not found in program. " + blockLabel);
          }
       }
@@ -80,8 +81,8 @@ public class Pass2AssertBlocks extends Pass2SsaAssertion {
 
       @Override
       public Void visitPhiBlock(StatementPhiBlock phi) {
-         for (StatementPhiBlock.PhiVariable phiVariable : phi.getPhiVariables()) {
-            for (StatementPhiBlock.PhiRValue phiRValue : phiVariable.getValues()) {
+         for(StatementPhiBlock.PhiVariable phiVariable : phi.getPhiVariables()) {
+            for(StatementPhiBlock.PhiRValue phiRValue : phiVariable.getValues()) {
                assertBlock(phiRValue.getPredecessor());
             }
          }

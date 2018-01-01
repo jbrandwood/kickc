@@ -39,8 +39,8 @@ public class ConstantArrayList implements ConstantValue {
       StringBuilder out = new StringBuilder();
       boolean first = true;
       out.append("{ ");
-      for (ConstantValue constantValue : list) {
-         if (!first) {
+      for(ConstantValue constantValue : list) {
+         if(!first) {
             out.append(", ");
          }
          first = false;

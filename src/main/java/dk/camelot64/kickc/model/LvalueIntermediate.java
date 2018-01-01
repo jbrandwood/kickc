@@ -15,13 +15,13 @@ public class LvalueIntermediate implements LValue {
       return variable;
    }
 
+   public void setVariable(VariableRef variable) {
+      this.variable = variable;
+   }
+
    @Override
    public String toString(Program program) {
       return "lval" + "(" + variable.toString(program) + ")";
-   }
-
-   public void setVariable(VariableRef variable) {
-      this.variable = variable;
    }
 
 }

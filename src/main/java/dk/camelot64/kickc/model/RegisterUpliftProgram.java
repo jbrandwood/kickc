@@ -30,7 +30,7 @@ public class RegisterUpliftProgram {
 
    public String toString(VariableRegisterWeights variableRegisterWeights) {
       StringBuilder out = new StringBuilder();
-      for (RegisterUpliftScope upliftScope : registerUpliftScopes) {
+      for(RegisterUpliftScope upliftScope : registerUpliftScopes) {
          out.append(upliftScope.toString(variableRegisterWeights)).append("\n");
       }
       return out.toString();

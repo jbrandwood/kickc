@@ -16,10 +16,10 @@ public interface Symbol extends Value {
    @JsonIgnore
    Scope getScope();
 
+   void setScope(Scope scope);
+
    @JsonIgnore
    int getScopeDepth();
-
-   void setScope(Scope scope);
 
    SymbolRef getRef();
 }

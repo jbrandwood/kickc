@@ -25,7 +25,7 @@ public class AsmDataFill implements AsmLine {
 
    @Override
    public int getLineBytes() {
-      return size*getElementBytes();
+      return size * getElementBytes();
    }
 
    @Override
@@ -36,9 +36,9 @@ public class AsmDataFill implements AsmLine {
    @Override
    public String getAsm() {
       StringBuilder asm = new StringBuilder();
-      asm.append(label+": ");
+      asm.append(label + ": ");
       asm.append(".fill ");
-      asm.append(AsmFormat.getAsmNumber(size*type.bytes));
+      asm.append(AsmFormat.getAsmNumber(size * type.bytes));
       asm.append(", ");
       asm.append(fillValue);
       return asm.toString();

@@ -14,8 +14,8 @@ public class SymbolTypeInference {
     * Infer the type of a unary operator on a value
     *
     * @param programScope The program scope usable for accessing the symbol table
-    * @param operator     The unary operator
-    * @param rValue       The value
+    * @param operator The unary operator
+    * @param rValue The value
     * @return The type of the resulting value
     */
    public static SymbolType inferType(ProgramScope programScope, Operator operator, RValue rValue) {
@@ -179,7 +179,7 @@ public class SymbolTypeInference {
          return SymbolType.STRING;
       } else if(type1.equals(SymbolType.STRING) && type2 instanceof SymbolTypeArray && SymbolType.isByte(((SymbolTypeArray) type2).getElementType())) {
          return SymbolType.STRING;
-      } else if(type1 instanceof SymbolTypeArray && SymbolType.isByte(((SymbolTypeArray) type1).getElementType()) && type2.equals(SymbolType.STRING) ) {
+      } else if(type1 instanceof SymbolTypeArray && SymbolType.isByte(((SymbolTypeArray) type1).getElementType()) && type2.equals(SymbolType.STRING)) {
          return SymbolType.STRING;
       } else if(type1 instanceof SymbolTypeArray && type2 instanceof SymbolTypeArray) {
          SymbolType elemType1 = ((SymbolTypeArray) type1).getElementType();
@@ -287,7 +287,7 @@ public class SymbolTypeInference {
          type = inferTypeList(symbols, (ValueList) rValue);
       } else if(rValue instanceof PointerDereference) {
          SymbolType pointerType = inferType(symbols, ((PointerDereference) rValue).getPointer());
-         if(pointerType instanceof SymbolTypePointer ) {
+         if(pointerType instanceof SymbolTypePointer) {
             return ((SymbolTypePointer) pointerType).getElementType();
          } else if(pointerType.equals(SymbolType.STRING)) {
             return SymbolType.BYTE;
@@ -380,7 +380,7 @@ public class SymbolTypeInference {
          if(SymbolType.isByte(((SymbolTypePointer) lValueType).getElementType())) {
             return true;
          }
-      } else if(SymbolType.STRING.equals(lValueType) && rValueType instanceof SymbolTypePointer ) {
+      } else if(SymbolType.STRING.equals(lValueType) && rValueType instanceof SymbolTypePointer) {
          if(SymbolType.isByte(((SymbolTypePointer) rValueType).getElementType())) {
             return true;
          }
@@ -401,7 +401,7 @@ public class SymbolTypeInference {
     * Determine is a list of potential inferred types contains a match for another type
     *
     * @param lValueType The type (rValue) we want to find a match for in the list
-    * @param rTypes     The list of inferred potential types
+    * @param rTypes The list of inferred potential types
     * @return true if the list has a match
     */
    private static boolean typeContainsMatch(SymbolType lValueType, Collection<SymbolType> rTypes) {

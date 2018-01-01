@@ -34,7 +34,7 @@ public abstract class Scope implements Symbol {
       this.symbols = symbols;
       this.intermediateVarCount = intermediateVarCount;
       this.intermediateLabelCount = intermediateLabelCount;
-      for (Symbol symbol : symbols.values()) {
+      for(Symbol symbol : symbols.values()) {
          symbol.setScope(this);
       }
    }
@@ -43,6 +43,16 @@ public abstract class Scope implements Symbol {
       this.name = "";
       this.parentScope = null;
       this.symbols = new LinkedHashMap<>();
+   }
+
+   public static String getFullName(Symbol symbol) {
+      if(symbol.getScope() != null) {
+         String scopeName = symbol.getScope().getFullName();
+         if(scopeName.length() > 0) {
+            return scopeName + "::" + symbol.getLocalName();
+         }
+      }
+      return symbol.getLocalName();
    }
 
    public HashMap<String, Symbol> getSymbols() {
@@ -59,16 +69,6 @@ public abstract class Scope implements Symbol {
       return getFullName(this);
    }
 
-   public static String getFullName(Symbol symbol) {
-      if (symbol.getScope() != null) {
-         String scopeName = symbol.getScope().getFullName();
-         if (scopeName.length() > 0) {
-            return scopeName + "::" + symbol.getLocalName();
-         }
-      }
-      return symbol.getLocalName();
-   }
-
    public ScopeRef getRef() {
       return new ScopeRef(this);
    }
@@ -80,13 +80,18 @@ public abstract class Scope implements Symbol {
    }
 
    @Override
+   public void setScope(Scope scope) {
+      this.parentScope = scope;
+   }
+
+   @Override
    @JsonIgnore
    public abstract SymbolType getType();
 
    @Override
    @JsonIgnore
    public int getScopeDepth() {
-      if (parentScope == null) {
+      if(parentScope == null) {
          return 0;
       } else {
          return parentScope.getScopeDepth() + 1;
@@ -94,7 +99,7 @@ public abstract class Scope implements Symbol {
    }
 
    public Symbol add(Symbol symbol) {
-      if (symbols.get(symbol.getLocalName()) != null) {
+      if(symbols.get(symbol.getLocalName()) != null) {
          throw new RuntimeException("Symbol already declared " + symbol.getLocalName());
       }
       symbols.put(symbol.getLocalName(), symbol);
@@ -120,12 +125,13 @@ public abstract class Scope implements Symbol {
 
    /**
     * Get all versions of an unversioned variable
+    *
     * @param unversioned The unversioned variable
     * @return All versions of the variable
     */
    public Collection<VariableVersion> getVersions(VariableUnversioned unversioned) {
       LinkedHashSet<VariableVersion> versions = new LinkedHashSet<>();
-      for (Symbol symbol : symbols.values()) {
+      for(Symbol symbol : symbols.values()) {
          if(symbol instanceof VariableVersion) {
             if(((VariableVersion) symbol).isVersioned()) {
                if(((VariableVersion) symbol).getVersionOf().equals(unversioned)) {
@@ -137,7 +143,6 @@ public abstract class Scope implements Symbol {
       return versions;
    }
 
-
    public String allocateIntermediateVariableName() {
       return "$" + intermediateVarCount++;
    }
@@ -148,11 +153,11 @@ public abstract class Scope implements Symbol {
 
    public Symbol getSymbol(String name) {
       int pos = name.indexOf("::");
-      if (pos >= 0) {
+      if(pos >= 0) {
          String scopeName = name.substring(0, pos);
          String rest = name.substring(pos + 2);
          Symbol scopeSym = getSymbol(scopeName);
-         if (scopeSym instanceof Scope) {
+         if(scopeSym instanceof Scope) {
             return ((Scope) scopeSym).getSymbol(rest);
          } else {
             return null;
@@ -160,8 +165,8 @@ public abstract class Scope implements Symbol {
          }
       } else {
          Symbol symbol = symbols.get(name);
-         if (symbol == null) {
-            if (parentScope != null) {
+         if(symbol == null) {
+            if(parentScope != null) {
                symbol = parentScope.getSymbol(name);
             }
          }
@@ -188,11 +193,11 @@ public abstract class Scope implements Symbol {
    @JsonIgnore
    public Collection<Variable> getAllVariables(boolean includeSubScopes) {
       Collection<Variable> vars = new ArrayList<>();
-      for (Symbol symbol : symbols.values()) {
-         if (symbol instanceof Variable) {
+      for(Symbol symbol : symbols.values()) {
+         if(symbol instanceof Variable) {
             vars.add((Variable) symbol);
          }
-         if (includeSubScopes && symbol instanceof Scope) {
+         if(includeSubScopes && symbol instanceof Scope) {
             Scope subScope = (Scope) symbol;
             vars.addAll(subScope.getAllVariables(true));
          }
@@ -203,11 +208,11 @@ public abstract class Scope implements Symbol {
 
    public Collection<ConstantVar> getAllConstants(boolean includeSubScopes) {
       Collection<ConstantVar> vars = new ArrayList<>();
-      for (Symbol symbol : symbols.values()) {
-         if (symbol instanceof ConstantVar) {
+      for(Symbol symbol : symbols.values()) {
+         if(symbol instanceof ConstantVar) {
             vars.add((ConstantVar) symbol);
          }
-         if (includeSubScopes && symbol instanceof Scope) {
+         if(includeSubScopes && symbol instanceof Scope) {
             Scope subScope = (Scope) symbol;
             vars.addAll(subScope.getAllConstants(true));
          }
@@ -216,19 +221,19 @@ public abstract class Scope implements Symbol {
       return vars;
    }
 
-
    /**
     * Get all scopes contained in the scope. This does not include this scope itself.
+    *
     * @param includeSubScopes Include sub-scopes og sub-scopes
     * @return The scopes
     */
    @JsonIgnore
    public Collection<Scope> getAllScopes(boolean includeSubScopes) {
       Collection<Scope> scopes = new ArrayList<>();
-      for (Symbol symbol : symbols.values()) {
-         if (symbol instanceof Scope) {
+      for(Symbol symbol : symbols.values()) {
+         if(symbol instanceof Scope) {
             scopes.add((Scope) symbol);
-            if (includeSubScopes) {
+            if(includeSubScopes) {
                Scope subScope = (Scope) symbol;
                scopes.addAll(subScope.getAllScopes(true));
             }
@@ -239,14 +244,13 @@ public abstract class Scope implements Symbol {
 
    public Collection<Procedure> getAllProcedures(boolean includeSubScopes) {
       Collection<Procedure> procedures = new ArrayList<>();
-      for (Scope scope : getAllScopes(includeSubScopes)) {
-         if (scope instanceof Procedure) {
+      for(Scope scope : getAllScopes(includeSubScopes)) {
+         if(scope instanceof Procedure) {
             procedures.add((Procedure) scope);
          }
       }
       return procedures;
    }
-
 
    public Label addLabel(String name) {
       Label symbol = new Label(name, this, false);
@@ -271,7 +275,7 @@ public abstract class Scope implements Symbol {
 
    public Procedure addProcedure(String name, SymbolType type) {
       Symbol symbol = symbols.get(name);
-      if (symbol != null) {
+      if(symbol != null) {
          throw new RuntimeException("Error! Symbol already defined " + symbol);
       }
       Procedure procedure = new Procedure(name, type, this);
@@ -281,7 +285,7 @@ public abstract class Scope implements Symbol {
 
    public Procedure getProcedure(String name) {
       Symbol symbol = getSymbol(name);
-      if (symbol != null && symbol instanceof Procedure) {
+      if(symbol != null && symbol instanceof Procedure) {
          return (Procedure) symbol;
       } else {
          return null;
@@ -289,18 +293,17 @@ public abstract class Scope implements Symbol {
    }
 
    public Scope getScope(ScopeRef scopeRef) {
-      if (scopeRef.getFullName().equals("") && this instanceof ProgramScope) {
+      if(scopeRef.getFullName().equals("") && this instanceof ProgramScope) {
          // Special case for the outer program scope
          return this;
       }
       Symbol symbol = getSymbol(scopeRef);
-      if (symbol instanceof Scope) {
+      if(symbol instanceof Scope) {
          return (Scope) symbol;
       } else {
          return null;
       }
    }
-
 
    public Procedure getProcedure(ProcedureRef ref) {
       return (Procedure) getSymbol(ref);
@@ -313,35 +316,35 @@ public abstract class Scope implements Symbol {
       Set<String> names = symbols.keySet();
       List<String> sortedNames = new ArrayList<>(names);
       Collections.sort(sortedNames);
-      for (String name : sortedNames) {
+      for(String name : sortedNames) {
          Symbol symbol = symbols.get(name);
-         if (symbol instanceof Scope) {
+         if(symbol instanceof Scope) {
             res.append(((Scope) symbol).toString(program, symbolClass));
          } else {
-            if (symbolClass == null || symbolClass.isInstance(symbol)) {
+            if(symbolClass == null || symbolClass.isInstance(symbol)) {
                res.append(symbol.toString(program));
-               if (symbol instanceof Variable) {
+               if(symbol instanceof Variable) {
                   Variable var = (Variable) symbol;
                   String asmName = var.getAsmName();
-                  if (asmName != null) {
+                  if(asmName != null) {
                      res.append(" " + asmName);
                   }
                   Registers.Register register = var.getAllocation();
-                  if (register != null) {
+                  if(register != null) {
                      res.append(" " + register);
                   }
                }
-               if (symbol instanceof Variable && registerWeights != null) {
+               if(symbol instanceof Variable && registerWeights != null) {
                   Variable var = (Variable) symbol;
                   Double weight = registerWeights.getWeight(var.getRef());
-                  if (weight != null) {
+                  if(weight != null) {
                      res.append(" " + weight);
                   }
                }
-               if (symbol instanceof ConstantVar) {
+               if(symbol instanceof ConstantVar) {
                   ConstantVar constantVar = (ConstantVar) symbol;
                   String asmName = constantVar.getAsmName();
-                  if (asmName != null) {
+                  if(asmName != null) {
                      res.append(" " + asmName);
                   }
                   res.append(" = " + constantVar.getValue().toString(program));
@@ -359,31 +362,26 @@ public abstract class Scope implements Symbol {
    }
 
    @Override
-   public void setScope(Scope scope) {
-      this.parentScope = scope;
-   }
-
-   @Override
    public boolean equals(Object o) {
-      if (this == o) {
+      if(this == o) {
          return true;
       }
-      if (o == null || getClass() != o.getClass()) {
+      if(o == null || getClass() != o.getClass()) {
          return false;
       }
 
       Scope scope = (Scope) o;
 
-      if (intermediateVarCount != scope.intermediateVarCount) {
+      if(intermediateVarCount != scope.intermediateVarCount) {
          return false;
       }
-      if (intermediateLabelCount != scope.intermediateLabelCount) {
+      if(intermediateLabelCount != scope.intermediateLabelCount) {
          return false;
       }
-      if (!name.equals(scope.name)) {
+      if(!name.equals(scope.name)) {
          return false;
       }
-      if (!symbols.equals(scope.symbols)) {
+      if(!symbols.equals(scope.symbols)) {
          return false;
       }
       return true;

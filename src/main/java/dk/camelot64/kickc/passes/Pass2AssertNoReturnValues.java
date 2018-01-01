@@ -18,8 +18,8 @@ public class Pass2AssertNoReturnValues extends Pass2SsaAssertion {
 
          @Override
          public Void visitReturn(StatementReturn aReturn) {
-            if(aReturn.getValue()!=null) {
-               throw new AssertionFailed("No return values allowed! "+ aReturn);
+            if(aReturn.getValue() != null) {
+               throw new AssertionFailed("No return values allowed! " + aReturn);
             }
             return null;
          }

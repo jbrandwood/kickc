@@ -42,7 +42,7 @@ public class Pass3LiveRangesEffectiveAnalysis extends Pass2Base {
    private void populateProcedureCallPaths() {
       this.procedureCallPaths = new LinkedHashMap<>();
       Collection<Procedure> procedures = getProgram().getScope().getAllProcedures(true);
-      for (Procedure procedure : procedures) {
+      for(Procedure procedure : procedures) {
          populateProcedureCallPaths(procedure);
       }
    }
@@ -50,18 +50,18 @@ public class Pass3LiveRangesEffectiveAnalysis extends Pass2Base {
    private void populateProcedureCallPaths(Procedure procedure) {
       ProcedureRef procedureRef = procedure.getRef();
       LiveRangeVariablesEffective.CallPaths callPaths = procedureCallPaths.get(procedureRef);
-      if (callPaths == null) {
+      if(callPaths == null) {
          callPaths = new LiveRangeVariablesEffective.CallPaths(procedureRef);
          Collection<CallGraph.CallBlock.Call> callers =
                getProgram().getCallGraph().getCallers(procedure.getLabel().getRef());
-         for (CallGraph.CallBlock.Call caller : callers) {
+         for(CallGraph.CallBlock.Call caller : callers) {
             // Each caller creates its own call-paths
             StatementCall callStatement =
                   (StatementCall) getProgram().getStatementInfos().getStatement(caller.getCallStatementIdx());
             ControlFlowBlock callBlock = getProgram().getStatementInfos().getBlock(callStatement);
             ScopeRef callScopeRef = callBlock.getScope();
             Scope callScope = getProgram().getScope().getScope(callScopeRef);
-            if (callScope instanceof Procedure) {
+            if(callScope instanceof Procedure) {
                // Found calling procedure!
                Procedure callerProcedure = (Procedure) callScope;
                // Make sure we have populated the call-paths of the calling procedure
@@ -70,7 +70,7 @@ public class Pass3LiveRangesEffectiveAnalysis extends Pass2Base {
                Collection<VariableRef> referencedInCaller = referenceInfo.getReferencedVars(callerProcedure.getRef().getLabelRef());
                // For each caller path - create a new call-path
                LiveRangeVariablesEffective.CallPaths callerPaths = procedureCallPaths.get(callerProcedure.getRef());
-               for (LiveRangeVariablesEffective.CallPath callerPath : callerPaths.getCallPaths()) {
+               for(LiveRangeVariablesEffective.CallPath callerPath : callerPaths.getCallPaths()) {
                   ArrayList<CallGraph.CallBlock.Call> path = new ArrayList<>(callerPath.getPath());
                   path.add(caller);
                   Collection<VariableRef> alive = new LinkedHashSet<>();
@@ -101,6 +101,7 @@ public class Pass3LiveRangesEffectiveAnalysis extends Pass2Base {
 
    /**
     * Find aliases defined when taking a specific call - meaning call parameters that have specific values when taking the specific call.
+    *
     * @param procedure The called procedure
     * @param callBlock The block performing the call
     * @return Aliases defined by the specific call.
@@ -113,16 +114,16 @@ public class Pass3LiveRangesEffectiveAnalysis extends Pass2Base {
       }
       Pass2AliasElimination.Aliases aliases = new Pass2AliasElimination.Aliases();
       // Find aliases inside the phi-block of the called method
-      if(procedurePhiBlock!=null) {
-         for (StatementPhiBlock.PhiVariable phiVariable : procedurePhiBlock.getPhiVariables()) {
+      if(procedurePhiBlock != null) {
+         for(StatementPhiBlock.PhiVariable phiVariable : procedurePhiBlock.getPhiVariables()) {
             RValue phiRvalue = phiVariable.getrValue(callBlock.getLabel());
-            if (phiRvalue instanceof VariableRef) {
+            if(phiRvalue instanceof VariableRef) {
                aliases.add(phiVariable.getVariable(), (VariableRef) phiRvalue);
             }
          }
       }
       // Find call parameter aliases in the calling block before the call
-      for (Statement statement : callBlock.getStatements()) {
+      for(Statement statement : callBlock.getStatements()) {
          if(statement instanceof StatementAssignment) {
             StatementAssignment assignment = (StatementAssignment) statement;
             LValue lValue = assignment.getlValue();
@@ -130,7 +131,7 @@ public class Pass3LiveRangesEffectiveAnalysis extends Pass2Base {
                Variable lValueVar = getProgram().getScope().getVariable((VariableRef) lValue);
                if(lValueVar.getScope().equals(procedure)) {
                   // Assigning into the procedure scope
-                  if(assignment.getrValue1()==null && assignment.getOperator()==null && assignment.getrValue2() instanceof VariableRef) {
+                  if(assignment.getrValue1() == null && assignment.getOperator() == null && assignment.getrValue2() instanceof VariableRef) {
                      aliases.add((VariableRef) lValue, (VariableRef) assignment.getrValue2());
                   }
                }

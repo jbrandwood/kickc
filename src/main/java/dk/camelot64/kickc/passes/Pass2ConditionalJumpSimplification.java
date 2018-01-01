@@ -25,23 +25,23 @@ public class Pass2ConditionalJumpSimplification extends Pass2SsaOptimization {
       final List<VariableRef> simpleConditionVars = getSimpleConditions(assignments, usages);
       removeAssignments(simpleConditionVars);
       deleteSymbols(simpleConditionVars);
-      return (simpleConditionVars.size()>0);
+      return (simpleConditionVars.size() > 0);
    }
 
-   private List<VariableRef>  getSimpleConditions(final Map<LValue, StatementAssignment> assignments, final Map<RValue, List<Statement>> usages) {
+   private List<VariableRef> getSimpleConditions(final Map<LValue, StatementAssignment> assignments, final Map<RValue, List<Statement>> usages) {
 
-      final List<VariableRef>  simpleConditionVars = new ArrayList<>();
+      final List<VariableRef> simpleConditionVars = new ArrayList<>();
 
       ControlFlowGraphBaseVisitor<Void> visitor = new ControlFlowGraphBaseVisitor<Void>() {
          @Override
          public Void visitConditionalJump(StatementConditionalJump conditionalJump) {
-            if(conditionalJump.getrValue1()==null && conditionalJump.getOperator()==null) {
+            if(conditionalJump.getrValue1() == null && conditionalJump.getOperator() == null) {
                RValue conditionRValue = conditionalJump.getrValue2();
-               if(conditionRValue instanceof VariableRef && usages.get(conditionRValue).size()==1) {
+               if(conditionRValue instanceof VariableRef && usages.get(conditionRValue).size() == 1) {
                   VariableRef conditionVar = (VariableRef) conditionRValue;
                   StatementAssignment conditionAssignment = assignments.get(conditionVar);
-                  if(conditionAssignment.getOperator()!=null) {
-                     switch (conditionAssignment.getOperator().getOperator()) {
+                  if(conditionAssignment.getOperator() != null) {
+                     switch(conditionAssignment.getOperator().getOperator()) {
                         case "==":
                         case "<>":
                         case "!=":
@@ -51,12 +51,12 @@ public class Pass2ConditionalJumpSimplification extends Pass2SsaOptimization {
                         case "=<":
                         case ">=":
                         case "=>":
-                        conditionalJump.setrValue1(conditionAssignment.getrValue1());
-                        conditionalJump.setOperator(conditionAssignment.getOperator());
-                        conditionalJump.setrValue2(conditionAssignment.getrValue2());
-                        simpleConditionVars.add(conditionVar);
-                        getLog().append("Simple Condition " + conditionVar.toString(getProgram()) + " " + conditionalJump.toString(getProgram(), true));
-                        break;
+                           conditionalJump.setrValue1(conditionAssignment.getrValue1());
+                           conditionalJump.setOperator(conditionAssignment.getOperator());
+                           conditionalJump.setrValue2(conditionAssignment.getrValue2());
+                           simpleConditionVars.add(conditionVar);
+                           getLog().append("Simple Condition " + conditionVar.toString(getProgram()) + " " + conditionalJump.toString(getProgram(), true));
+                           break;
                         default:
                      }
                   }

@@ -1,6 +1,6 @@
 package dk.camelot64.kickc.model;
 
-/** Can calculate the exact value for constants (used for type inference).*/
+/** Can calculate the exact value for constants (used for type inference). */
 public class ConstantValueCalculator {
 
 
@@ -28,7 +28,7 @@ public class ConstantValueCalculator {
          // Cannot calculate value of inline array
          return null;
       } else {
-         throw new RuntimeException("Unknown constant value "+value);
+         throw new RuntimeException("Unknown constant value " + value);
       }
    }
 
@@ -52,28 +52,28 @@ public class ConstantValueCalculator {
 
    private static ConstantValue castWord(ConstantValue value) {
       if(value instanceof ConstantInteger) {
-         return new ConstantInteger(0xffff&((ConstantInteger) value).getNumber());
+         return new ConstantInteger(0xffff & ((ConstantInteger) value).getNumber());
       }
       return null;
    }
 
    private static ConstantValue castSWord(ConstantValue value) {
       if(value instanceof ConstantInteger) {
-         return new ConstantInteger(0xffff&((ConstantInteger) value).getNumber());
+         return new ConstantInteger(0xffff & ((ConstantInteger) value).getNumber());
       }
       return null;
    }
 
    private static ConstantValue castByte(ConstantValue value) {
       if(value instanceof ConstantInteger) {
-         return new ConstantInteger(0xff&((ConstantInteger) value).getNumber());
+         return new ConstantInteger(0xff & ((ConstantInteger) value).getNumber());
       }
       return null;
    }
 
    private static ConstantValue castSByte(ConstantValue value) {
       if(value instanceof ConstantInteger) {
-         return new ConstantInteger(0xff&((ConstantInteger) value).getNumber());
+         return new ConstantInteger(0xff & ((ConstantInteger) value).getNumber());
       }
       return null;
    }
@@ -81,7 +81,6 @@ public class ConstantValueCalculator {
    private static ConstantValue castPtrByte(ConstantValue value) {
       return value;
    }
-
 
 
    public static ConstantValue calcValue(ProgramScope programScope, ConstantValue value1, Operator operator, ConstantValue value2) {
@@ -113,21 +112,25 @@ public class ConstantValueCalculator {
 
    private static ConstantValue multiply(ConstantValue value1, ConstantValue value2) {
       if(value1 instanceof ConstantInteger && value2 instanceof ConstantInteger) {
-         return new ConstantInteger(((ConstantInteger) value1).getNumber()*((ConstantInteger) value2).getNumber());
+         return new ConstantInteger(((ConstantInteger) value1).getNumber() * ((ConstantInteger) value2).getNumber());
       }
       return null;
    }
 
    private static ConstantValue plus(ConstantValue value1, ConstantValue value2) {
       if(value1 instanceof ConstantInteger && value2 instanceof ConstantInteger) {
-         return new ConstantInteger(((ConstantInteger) value1).getNumber()+((ConstantInteger) value2).getNumber());
-      } if(value1 instanceof ConstantInteger && value2 instanceof ConstantChar) {
-         return new ConstantInteger(((ConstantInteger) value1).getNumber()+((ConstantChar) value2).getValue());
-      } if(value1 instanceof ConstantChar && value2 instanceof ConstantInteger) {
-         return new ConstantInteger(((ConstantChar) value1).getValue()+((ConstantInteger) value2).getNumber());
-      } if(value1 instanceof ConstantString && value2 instanceof ConstantString) {
+         return new ConstantInteger(((ConstantInteger) value1).getNumber() + ((ConstantInteger) value2).getNumber());
+      }
+      if(value1 instanceof ConstantInteger && value2 instanceof ConstantChar) {
+         return new ConstantInteger(((ConstantInteger) value1).getNumber() + ((ConstantChar) value2).getValue());
+      }
+      if(value1 instanceof ConstantChar && value2 instanceof ConstantInteger) {
+         return new ConstantInteger(((ConstantChar) value1).getValue() + ((ConstantInteger) value2).getNumber());
+      }
+      if(value1 instanceof ConstantString && value2 instanceof ConstantString) {
          return new ConstantString(((ConstantString) value1).getValue() + ((ConstantString) value2).getValue());
-      } if(value1 instanceof ConstantString && value2 instanceof ConstantChar) {
+      }
+      if(value1 instanceof ConstantString && value2 instanceof ConstantChar) {
          return new ConstantString(((ConstantString) value1).getValue() + ((ConstantChar) value2).getValue());
       }
       return null;
@@ -135,14 +138,14 @@ public class ConstantValueCalculator {
 
    private static ConstantValue minus(ConstantValue value1, ConstantValue value2) {
       if(value1 instanceof ConstantInteger && value2 instanceof ConstantInteger) {
-         return new ConstantInteger(((ConstantInteger) value1).getNumber()-((ConstantInteger) value2).getNumber());
+         return new ConstantInteger(((ConstantInteger) value1).getNumber() - ((ConstantInteger) value2).getNumber());
       }
       return null;
    }
 
    private static ConstantValue div(ConstantValue value1, ConstantValue value2) {
       if(value1 instanceof ConstantInteger && value2 instanceof ConstantInteger) {
-         return new ConstantInteger(((ConstantInteger) value1).getNumber()/((ConstantInteger) value2).getNumber());
+         return new ConstantInteger(((ConstantInteger) value1).getNumber() / ((ConstantInteger) value2).getNumber());
       }
       return null;
    }

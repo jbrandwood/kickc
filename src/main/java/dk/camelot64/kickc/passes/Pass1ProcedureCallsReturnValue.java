@@ -32,21 +32,21 @@ public class Pass1ProcedureCallsReturnValue extends ControlFlowGraphCopyVisitor 
       copyCall.setProcedure(procedureRef);
       addStatementToCurrentBlock(copyCall);
       getCurrentBlock().setCallSuccessor(procedure.getLabel().getRef());
-      if (!SymbolType.VOID.equals(procedure.getReturnType())) {
+      if(!SymbolType.VOID.equals(procedure.getReturnType())) {
          // Find return variable final version
          Label returnBlockLabel = procedure.getLabel(SymbolRef.PROCEXIT_BLOCK_NAME);
          ControlFlowBlock returnBlock = program.getGraph().getBlock(returnBlockLabel.getRef());
          VariableRef returnVarFinal = null;
-         for (Statement statement : returnBlock.getStatements()) {
-            if (statement instanceof StatementReturn) {
+         for(Statement statement : returnBlock.getStatements()) {
+            if(statement instanceof StatementReturn) {
                StatementReturn statementReturn = (StatementReturn) statement;
                RValue returnValue = statementReturn.getValue();
-               if (returnValue instanceof VariableRef) {
+               if(returnValue instanceof VariableRef) {
                   returnVarFinal = (VariableRef) returnValue;
                }
             }
          }
-         if (returnVarFinal == null) {
+         if(returnVarFinal == null) {
             throw new RuntimeException("Error! Cannot find final return variable for " + procedure.getFullName());
          }
          StatementAssignment returnAssignment = new StatementAssignment(origCall.getlValue(), returnVarFinal);
@@ -57,15 +57,15 @@ public class Pass1ProcedureCallsReturnValue extends ControlFlowGraphCopyVisitor 
       LabelRef successor = getOrigBlock().getDefaultSuccessor();
       ControlFlowBlock successorBlock = program.getGraph().getBlock(successor);
       Set<VariableRef> modifiedVars = program.getProcedureModifiedVars().getModifiedVars(procedure.getRef());
-      for (Statement statement : successorBlock.getStatements()) {
-         if (statement instanceof StatementPhiBlock) {
+      for(Statement statement : successorBlock.getStatements()) {
+         if(statement instanceof StatementPhiBlock) {
             StatementPhiBlock phiBlock = (StatementPhiBlock) statement;
-            for (StatementPhiBlock.PhiVariable phiVariable : phiBlock.getPhiVariables()) {
+            for(StatementPhiBlock.PhiVariable phiVariable : phiBlock.getPhiVariables()) {
                VariableRef phiVar = phiVariable.getVariable();
                VariableRef unversionedVar = new VariableRef(phiVar.getFullNameUnversioned());
-               if (modifiedVars.contains(unversionedVar)) {
-                  for (StatementPhiBlock.PhiRValue phiRValue : phiVariable.getValues()) {
-                     if (phiRValue.getPredecessor().equals(getOrigBlock().getLabel())) {
+               if(modifiedVars.contains(unversionedVar)) {
+                  for(StatementPhiBlock.PhiRValue phiRValue : phiVariable.getValues()) {
+                     if(phiRValue.getPredecessor().equals(getOrigBlock().getLabel())) {
                         VariableRef procReturnVersion = findReturnVersion(procedure, unversionedVar);
                         phiRValue.setrValue(procReturnVersion);
                      }
@@ -82,12 +82,12 @@ public class Pass1ProcedureCallsReturnValue extends ControlFlowGraphCopyVisitor 
       String unversionedName = assignedVar.getFullNameUnversioned();
       LabelRef returnBlock = new LabelRef(procedure.getRef().getFullName() + "::@return");
       ControlFlowBlock block = program.getGraph().getBlock(returnBlock);
-      for (Statement statement : block.getStatements()) {
-         if (statement instanceof StatementAssignment) {
+      for(Statement statement : block.getStatements()) {
+         if(statement instanceof StatementAssignment) {
             StatementAssignment assignment = (StatementAssignment) statement;
-            if (assignment.getlValue() instanceof VariableRef) {
+            if(assignment.getlValue() instanceof VariableRef) {
                VariableRef lValue = (VariableRef) assignment.getlValue();
-               if (lValue.getFullNameUnversioned().equals(unversionedName)) {
+               if(lValue.getFullNameUnversioned().equals(unversionedName)) {
                   return lValue;
                }
             }

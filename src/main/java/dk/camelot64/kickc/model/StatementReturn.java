@@ -36,14 +36,14 @@ public class StatementReturn extends StatementBase {
 
    @Override
    public String toString(Program program, boolean aliveInfo) {
-      return super.idxString() + "return " + (value == null ? "" : value.toString(program)) + (aliveInfo?super.aliveString(program):"");
+      return super.idxString() + "return " + (value == null ? "" : value.toString(program)) + (aliveInfo ? super.aliveString(program) : "");
    }
 
    @Override
    public boolean equals(Object o) {
-      if (this == o) return true;
-      if (o == null || getClass() != o.getClass()) return false;
-      if (!super.equals(o)) return false;
+      if(this == o) return true;
+      if(o == null || getClass() != o.getClass()) return false;
+      if(!super.equals(o)) return false;
 
       StatementReturn that = (StatementReturn) o;
 

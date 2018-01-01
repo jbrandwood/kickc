@@ -26,12 +26,12 @@ public class Pass1AssertArrayLengths extends Pass1Base {
                         if(assignment.getrValue1() == null && assignment.getOperator() == null) {
                            RValue value = assignment.getrValue2();
                            if(value instanceof ValueList) {
-                              if(((ValueList) value).getList().size()!=declaredSize) {
-                                 throw new CompileError("Error! Array length mismatch "+statement.toString(getProgram(), false));
+                              if(((ValueList) value).getList().size() != declaredSize) {
+                                 throw new CompileError("Error! Array length mismatch " + statement.toString(getProgram(), false));
                               }
                            } else if(value instanceof ConstantString) {
-                              if(((ConstantString) value).getValue().length()!=declaredSize) {
-                                 throw new CompileError("Error! Array length mismatch "+statement.toString(getProgram(), false));
+                              if(((ConstantString) value).getValue().length() != declaredSize) {
+                                 throw new CompileError("Error! Array length mismatch " + statement.toString(getProgram(), false));
                               }
                            }
                         }

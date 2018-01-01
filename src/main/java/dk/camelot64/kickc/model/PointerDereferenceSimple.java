@@ -1,6 +1,6 @@
 package dk.camelot64.kickc.model;
 
-/** A dereferenced pointer (based on a variable or a constant pointer)*/
+/** A dereferenced pointer (based on a variable or a constant pointer) */
 public class PointerDereferenceSimple implements PointerDereference {
 
    private RValue pointer;

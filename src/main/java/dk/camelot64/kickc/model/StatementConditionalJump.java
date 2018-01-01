@@ -10,7 +10,6 @@ import com.fasterxml.jackson.annotation.JsonProperty;
  * <i> if ( Y<sub>j</sub> ) goto XX </i>
  * <br>
  * The condition may be a single boolean variable, or a comparison between two variables (==, &lt;&gt;, &lt;, &gt;, &lt;=, &gt;= )
- *
  */
 public class StatementConditionalJump extends StatementBase {
 
@@ -53,28 +52,28 @@ public class StatementConditionalJump extends StatementBase {
       return rValue1;
    }
 
-   public Operator getOperator() {
-      return operator;
-   }
-
-   public RValue getrValue2() {
-      return rValue2;
-   }
-
-   public LabelRef getDestination() {
-      return destination;
-   }
-
    public void setrValue1(RValue rValue1) {
       this.rValue1 = rValue1;
+   }
+
+   public Operator getOperator() {
+      return operator;
    }
 
    public void setOperator(Operator operator) {
       this.operator = operator;
    }
 
+   public RValue getrValue2() {
+      return rValue2;
+   }
+
    public void setrValue2(RValue rValue2) {
       this.rValue2 = rValue2;
+   }
+
+   public LabelRef getDestination() {
+      return destination;
    }
 
    public void setDestination(LabelRef destination) {
@@ -86,7 +85,7 @@ public class StatementConditionalJump extends StatementBase {
       StringBuilder out = new StringBuilder();
       out.append(super.idxString());
       out.append("if(");
-      if(rValue1!=null) {
+      if(rValue1 != null) {
          out.append(rValue1.toString(program));
          out.append(operator.getOperator());
       }
@@ -101,15 +100,15 @@ public class StatementConditionalJump extends StatementBase {
 
    @Override
    public boolean equals(Object o) {
-      if (this == o) return true;
-      if (o == null || getClass() != o.getClass()) return false;
-      if (!super.equals(o)) return false;
+      if(this == o) return true;
+      if(o == null || getClass() != o.getClass()) return false;
+      if(!super.equals(o)) return false;
 
       StatementConditionalJump that = (StatementConditionalJump) o;
 
-      if (rValue1 != null ? !rValue1.equals(that.rValue1) : that.rValue1 != null) return false;
-      if (operator != null ? !operator.equals(that.operator) : that.operator != null) return false;
-      if (rValue2 != null ? !rValue2.equals(that.rValue2) : that.rValue2 != null) return false;
+      if(rValue1 != null ? !rValue1.equals(that.rValue1) : that.rValue1 != null) return false;
+      if(operator != null ? !operator.equals(that.operator) : that.operator != null) return false;
+      if(rValue2 != null ? !rValue2.equals(that.rValue2) : that.rValue2 != null) return false;
       return destination.equals(that.destination);
    }
 

@@ -19,10 +19,99 @@ public class ParseTreeConstantEvaluator extends KickCBaseVisitor<ConstantValue> 
       return (new ParseTreeConstantEvaluator()).visit(expr);
    }
 
+   static ConstantValue calculateBinary(Operator operator, ConstantValue c1, ConstantValue c2) {
+      switch(operator.getOperator()) {
+         case "-": {
+            if(c1 instanceof ConstantInteger && c2 instanceof ConstantInteger) {
+               return new ConstantInteger(getInteger(c1) - getInteger(c2));
+            } else {
+               return new ConstantDouble(getDouble(c1) - getDouble(c2));
+            }
+         }
+         case "+": {
+            if(c1 instanceof ConstantInteger && c2 instanceof ConstantInteger) {
+               return new ConstantInteger(getInteger(c1) + getInteger(c2));
+            } else {
+               return new ConstantDouble(getDouble(c1) + getDouble(c2));
+            }
+         }
+         case "*": {
+            if(c1 instanceof ConstantInteger && c2 instanceof ConstantInteger) {
+               return new ConstantInteger(getInteger(c1) * getInteger(c2));
+            } else {
+               return new ConstantDouble(getDouble(c1) * getDouble(c2));
+            }
+         }
+         case "/": {
+            if(c1 instanceof ConstantInteger && c2 instanceof ConstantInteger) {
+               return new ConstantInteger(getInteger(c1) / getInteger(c2));
+            } else {
+               return new ConstantDouble(getDouble(c1) / getDouble(c2));
+            }
+         }
+         case "*idx": {
+            // Cannot be directly propagated
+            return null;
+         }
+         default:
+            throw new RuntimeException("Unhandled Binary Operator " + operator.getOperator());
+      }
+   }
+
+   private static Integer getInteger(ConstantValue constant) {
+      if(constant instanceof ConstantInteger) {
+         return ((ConstantInteger) constant).getNumber();
+      } else {
+         throw new RuntimeException("Type Mismatch. Constant is not an integer number " + constant);
+      }
+   }
+
+   private static Double getDouble(ConstantValue constant) {
+      if(constant instanceof ConstantDouble) {
+         return ((ConstantDouble) constant).getNumber();
+      } else if(constant instanceof ConstantInteger) {
+         return ((ConstantInteger) constant).getNumber().doubleValue();
+      } else {
+         throw new RuntimeException("Type Mismatch. Constant is not a number " + constant);
+      }
+   }
+
+   public static ConstantValue calculateUnary(Operator operator, ConstantValue c) {
+      switch(operator.getOperator()) {
+         case "-": {
+            if(c instanceof ConstantInteger) {
+               ConstantInteger cInt = (ConstantInteger) c;
+               return new ConstantInteger(-cInt.getNumber());
+            } else if(c instanceof ConstantDouble) {
+               ConstantDouble cDoub = (ConstantDouble) c;
+               return new ConstantDouble(-cDoub.getNumber());
+            } else {
+               throw new RuntimeException("Type mismatch. Unary Minus cannot handle value " + c);
+            }
+         }
+         case "+": {
+            return c;
+         }
+         case "++": {
+            ConstantInteger cInt = (ConstantInteger) c;
+            return new ConstantInteger(cInt.getNumber() + 1);
+         }
+         case "--": {
+            ConstantInteger cInt = (ConstantInteger) c;
+            return new ConstantInteger(cInt.getNumber() - 1);
+         }
+         case "*": { // pointer dereference
+            return null;
+         }
+         default:
+            throw new RuntimeException("Unhandled Unary Operator " + operator.getOperator());
+      }
+   }
+
    @Override
    public ConstantValue visitExprNumber(KickCParser.ExprNumberContext ctx) {
       Number number = NumberParser.parseLiteral(ctx.getText());
-      if(number instanceof Integer)  {
+      if(number instanceof Integer) {
          return new ConstantInteger((Integer) number);
       } else {
          return new ConstantDouble((Double) number);
@@ -72,7 +161,7 @@ public class ParseTreeConstantEvaluator extends KickCBaseVisitor<ConstantValue> 
    @Override
    public ConstantValue visitExprUnary(KickCParser.ExprUnaryContext ctx) {
       ConstantValue sub = visit(ctx.expr());
-      String op = ((TerminalNode)ctx.getChild(0)).getSymbol().getText();
+      String op = ((TerminalNode) ctx.getChild(0)).getSymbol().getText();
       Operator operator = Operator.getUnary(op);
       return calculateUnary(operator, sub);
    }
@@ -81,7 +170,7 @@ public class ParseTreeConstantEvaluator extends KickCBaseVisitor<ConstantValue> 
    public ConstantValue visitExprBinary(KickCParser.ExprBinaryContext ctx) {
       ConstantValue left = this.visit(ctx.expr(0));
       ConstantValue right = this.visit(ctx.expr(1));
-      String op = ((TerminalNode)ctx.getChild(1)).getSymbol().getText();
+      String op = ((TerminalNode) ctx.getChild(1)).getSymbol().getText();
       Operator operator = Operator.getBinary(op);
       return calculateBinary(operator, left, right);
    }
@@ -89,95 +178,6 @@ public class ParseTreeConstantEvaluator extends KickCBaseVisitor<ConstantValue> 
    /** Thrown if the expression is not a constant. */
    public static class NotConstantException extends RuntimeException {
       public NotConstantException() {
-      }
-   }
-
-   static ConstantValue calculateBinary(Operator operator, ConstantValue c1, ConstantValue c2) {
-      switch (operator.getOperator()) {
-         case "-": {
-            if (c1 instanceof ConstantInteger && c2 instanceof ConstantInteger) {
-               return new ConstantInteger(getInteger(c1) - getInteger(c2));
-            } else {
-               return new ConstantDouble(getDouble(c1) - getDouble(c2));
-            }
-         }
-         case "+": {
-            if (c1 instanceof ConstantInteger && c2 instanceof ConstantInteger) {
-               return new ConstantInteger(getInteger(c1) + getInteger(c2));
-            } else {
-               return new ConstantDouble(getDouble(c1) + getDouble(c2));
-            }
-         }
-         case "*": {
-            if (c1 instanceof ConstantInteger && c2 instanceof ConstantInteger) {
-               return new ConstantInteger(getInteger(c1) * getInteger(c2));
-            } else {
-               return new ConstantDouble(getDouble(c1) * getDouble(c2));
-            }
-         }
-         case "/": {
-            if (c1 instanceof ConstantInteger && c2 instanceof ConstantInteger) {
-               return new ConstantInteger(getInteger(c1) / getInteger(c2));
-            } else {
-               return new ConstantDouble(getDouble(c1) / getDouble(c2));
-            }
-         }
-         case "*idx": {
-            // Cannot be directly propagated
-            return null;
-         }
-         default:
-            throw new RuntimeException("Unhandled Binary Operator " + operator.getOperator());
-      }
-   }
-
-   private static Integer getInteger(ConstantValue constant) {
-      if (constant instanceof ConstantInteger) {
-         return ((ConstantInteger) constant).getNumber();
-      } else {
-         throw new RuntimeException("Type Mismatch. Constant is not an integer number " + constant);
-      }
-   }
-
-   private static Double getDouble(ConstantValue constant) {
-      if (constant instanceof ConstantDouble) {
-         return ((ConstantDouble) constant).getNumber();
-      } else if (constant instanceof ConstantInteger) {
-         return ((ConstantInteger) constant).getNumber().doubleValue();
-      } else {
-         throw new RuntimeException("Type Mismatch. Constant is not a number " + constant);
-      }
-   }
-
-   public static ConstantValue calculateUnary(Operator operator, ConstantValue c) {
-      switch (operator.getOperator()) {
-         case "-": {
-            if (c instanceof ConstantInteger) {
-               ConstantInteger cInt = (ConstantInteger) c;
-               return new ConstantInteger(-cInt.getNumber());
-            } else if (c instanceof ConstantDouble) {
-               ConstantDouble cDoub = (ConstantDouble) c;
-               return new ConstantDouble(-cDoub.getNumber());
-            } else {
-               throw new RuntimeException("Type mismatch. Unary Minus cannot handle value " + c);
-            }
-         }
-         case "+": {
-            return c;
-         }
-         case "++": {
-            ConstantInteger cInt = (ConstantInteger) c;
-            return new ConstantInteger(cInt.getNumber()+1);
-         }
-         case "--": {
-            ConstantInteger cInt = (ConstantInteger) c;
-            return new ConstantInteger(cInt.getNumber()-1);
-         }
-         case "*": { // pointer dereference
-            return null;
-         }
-         default:
-            throw new RuntimeException("Unhandled Unary Operator " + operator.getOperator());
       }
    }
 

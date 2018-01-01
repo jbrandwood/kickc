@@ -2,7 +2,7 @@ package dk.camelot64.kickc.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
-/**  A program */
+/** A program */
 public class SymbolTypeProgram implements SymbolType {
 
    public SymbolTypeProgram() {

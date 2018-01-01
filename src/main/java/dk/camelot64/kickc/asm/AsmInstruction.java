@@ -18,8 +18,16 @@ public class AsmInstruction implements AsmLine {
       return parameter;
    }
 
+   public void setParameter(String parameter) {
+      this.parameter = parameter;
+   }
+
    public AsmInstructionType getType() {
       return type;
+   }
+
+   public void setType(AsmInstructionType type) {
+      this.type = type;
    }
 
    @Override
@@ -50,13 +58,5 @@ public class AsmInstruction implements AsmLine {
    @Override
    public void setIndex(int index) {
       this.index = index;
-   }
-
-   public void setParameter(String parameter) {
-      this.parameter = parameter;
-   }
-
-   public void setType(AsmInstructionType type) {
-      this.type = type;
    }
 }

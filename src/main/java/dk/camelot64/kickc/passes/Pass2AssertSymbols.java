@@ -17,35 +17,35 @@ public class Pass2AssertSymbols extends Pass2SsaAssertion {
       symbolFinder.visitGraph(getGraph());
       HashSet<Symbol> codeSymbols = symbolFinder.getSymbols();
       // Check that all symbols found in the code is also oin the symbol tabel
-      for (Symbol codeSymbol : codeSymbols) {
+      for(Symbol codeSymbol : codeSymbols) {
          if(codeSymbol.getFullName().equals(SymbolRef.PROCEXIT_BLOCK_NAME)) continue;
          Symbol tableSymbol = getSymbols().getSymbol(codeSymbol.getFullName());
-         if(tableSymbol==null) {
-            throw new AssertionFailed("Compile process error. Symbol found in code, but not in symbol table. "+codeSymbol.getFullName());
+         if(tableSymbol == null) {
+            throw new AssertionFailed("Compile process error. Symbol found in code, but not in symbol table. " + codeSymbol.getFullName());
          }
       }
       // Check that all symbols in the symbol table is also in the code
       HashSet<Symbol> tableSymbols = getAllSymbols(getSymbols());
-      for (Symbol tableSymbol : tableSymbols) {
+      for(Symbol tableSymbol : tableSymbols) {
          if(tableSymbol instanceof VariableUnversioned) continue;
          if(tableSymbol instanceof ConstantVar) continue;
          Symbol codeSymbol = null;
          String codeSymbolFullName = tableSymbol.getFullName();
-         for (Symbol symbol : codeSymbols) {
+         for(Symbol symbol : codeSymbols) {
             if(codeSymbolFullName.equals(symbol.getFullName())) {
                codeSymbol = symbol;
                break;
             }
          }
-         if(codeSymbol==null) {
-            throw new AssertionFailed("Compile process error. Symbol found in symbol table, but not in code. "+ codeSymbolFullName);
+         if(codeSymbol == null) {
+            throw new AssertionFailed("Compile process error. Symbol found in symbol table, but not in code. " + codeSymbolFullName);
          }
       }
    }
 
    private HashSet<Symbol> getAllSymbols(Scope symbols) {
       HashSet<Symbol> allSymbols = new HashSet<>();
-      for (Symbol symbol : symbols.getAllSymbols()) {
+      for(Symbol symbol : symbols.getAllSymbols()) {
          allSymbols.add(symbol);
          if(symbol instanceof Scope) {
             HashSet<Symbol> subSymbols = getAllSymbols((Scope) symbol);
@@ -58,19 +58,18 @@ public class Pass2AssertSymbols extends Pass2SsaAssertion {
    private static class SymbolFinder extends ControlFlowGraphBaseVisitor<Void> {
 
       private ProgramScope programScope;
+      private HashSet<Symbol> symbols = new HashSet<>();
 
       public SymbolFinder(ProgramScope programScope) {
          this.programScope = programScope;
       }
-
-      private HashSet<Symbol> symbols = new HashSet<>();
 
       public HashSet<Symbol> getSymbols() {
          return symbols;
       }
 
       private void addSymbol(Value symbol) {
-         if (symbol instanceof Symbol) {
+         if(symbol instanceof Symbol) {
             symbols.add((Symbol) symbol);
          } else if(symbol instanceof SymbolRef) {
             addSymbol(programScope.getSymbol((SymbolRef) symbol));
@@ -145,8 +144,8 @@ public class Pass2AssertSymbols extends Pass2SsaAssertion {
       public Void visitCall(StatementCall call) {
          addSymbol(call.getlValue());
          addSymbol(call.getProcedure());
-         if(call.getParameters()!=null) {
-            for (RValue param : call.getParameters()) {
+         if(call.getParameters() != null) {
+            for(RValue param : call.getParameters()) {
                addSymbol(param);
             }
          }
@@ -155,9 +154,9 @@ public class Pass2AssertSymbols extends Pass2SsaAssertion {
 
       @Override
       public Void visitPhiBlock(StatementPhiBlock phi) {
-         for (StatementPhiBlock.PhiVariable phiVariable : phi.getPhiVariables()) {
+         for(StatementPhiBlock.PhiVariable phiVariable : phi.getPhiVariables()) {
             addSymbol(phiVariable.getVariable());
-            for (StatementPhiBlock.PhiRValue phiRValue : phiVariable.getValues()) {
+            for(StatementPhiBlock.PhiRValue phiRValue : phiVariable.getValues()) {
                addSymbol(phiRValue.getrValue());
             }
          }

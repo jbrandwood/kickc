@@ -27,7 +27,7 @@ public class AsmComment implements AsmLine {
 
    @Override
    public String getAsm() {
-      return "// "+comment;
+      return "// " + comment;
    }
 
    @Override

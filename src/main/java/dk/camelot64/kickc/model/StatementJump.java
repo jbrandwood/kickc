@@ -25,7 +25,7 @@ public class StatementJump extends StatementBase {
 
    @Override
    public String toString(Program program, boolean aliveInfo) {
-      return super.idxString() + "goto " + destination.getFullName()+ (aliveInfo?super.aliveString(program):"");
+      return super.idxString() + "goto " + destination.getFullName() + (aliveInfo ? super.aliveString(program) : "");
    }
 
 }

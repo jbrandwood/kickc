@@ -1,6 +1,6 @@
 package dk.camelot64.kickc.asm;
 
-/** A label / jump target  */
+/** A label / jump target */
 public class AsmLabel implements AsmLine {
 
    private String label;
@@ -15,6 +15,10 @@ public class AsmLabel implements AsmLine {
       return label;
    }
 
+   public void setLabel(String label) {
+      this.label = label;
+   }
+
    @Override
    public int getLineBytes() {
       return 0;
@@ -27,7 +31,7 @@ public class AsmLabel implements AsmLine {
 
    @Override
    public String getAsm() {
-      return label+":";
+      return label + ":";
    }
 
    @Override
@@ -43,9 +47,5 @@ public class AsmLabel implements AsmLine {
    @Override
    public String toString() {
       return getAsm();
-   }
-
-   public void setLabel(String label) {
-      this.label = label;
    }
 }

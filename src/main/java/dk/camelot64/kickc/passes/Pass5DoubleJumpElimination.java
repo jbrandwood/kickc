@@ -62,7 +62,7 @@ public class Pass5DoubleJumpElimination extends Pass5AsmOptimization {
                AsmInstruction asmInstruction = (AsmInstruction) line;
                if(asmInstruction.getType().isJump()) {
                   String immediateJmpTarget = immediateJumps.get(currentScope + "::" + asmInstruction.getParameter());
-                  if(immediateJmpTarget != null) {
+                  if(immediateJmpTarget != null && !immediateJmpTarget.equals(asmInstruction.getParameter())) {
                      getLog().append("Skipping double jump to " + immediateJmpTarget + " in " + asmInstruction.toString());
                      asmInstruction.setParameter(immediateJmpTarget);
                      optimized = true;

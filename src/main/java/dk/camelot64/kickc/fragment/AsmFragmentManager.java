@@ -42,7 +42,7 @@ public class AsmFragmentManager {
          if(log.isVerboseFragmentLog()) {
             log.append("Unknown fragment " + signature.getSignature());
          }
-         throw new UnknownFragmentException(signature.toString());
+         throw new UnknownFragmentException(signature.getSignature());
       }
       if(bestTemplate == null) {
          AsmFragmentTemplateSynthesizer synthesizer = new AsmFragmentTemplateSynthesizer(signature.getSignature(), log);
@@ -52,7 +52,7 @@ public class AsmFragmentManager {
                log.append("Unknown fragment " + signature.toString());
             }
             bestFragmentCache.put(signature.getSignature(), UNKNOWN);
-            throw new UnknownFragmentException(signature.toString());
+            throw new UnknownFragmentException(signature.getSignature());
          }
          double minScore = Double.MAX_VALUE;
          double maxScore = Double.MIN_VALUE;
@@ -550,7 +550,7 @@ public class AsmFragmentManager {
       private String fragmentSignature;
 
       UnknownFragmentException(String signature) {
-         super("Fragment not found " + signature + ".asm");
+         super("Fragment not found " + signature );
          this.fragmentSignature = signature;
       }
 

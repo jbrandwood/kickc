@@ -10,7 +10,7 @@ import java.util.ArrayList;
 import java.util.Map;
 
 /** ASM Code Fragment with register/variable bindings that can be used for generating ASM code for a specific statement . */
-public class AsmFragment {
+public class AsmFragmentInstance {
 
    /** The symbol table. */
    private Program program;
@@ -27,7 +27,7 @@ public class AsmFragment {
    /** The scope containing the fragment. Used when referencing symbols defined in other scopes. */
    private ScopeRef codeScopeRef;
 
-   public AsmFragment(
+   public AsmFragmentInstance(
          Program program,
          String name,
          ScopeRef codeScopeRef,
@@ -134,9 +134,9 @@ public class AsmFragment {
 
       private String name;
       private AsmProgram program;
-      private AsmFragment bindings;
+      private AsmFragmentInstance bindings;
 
-      public AsmSequenceGenerator(String name, AsmFragment bindings, AsmProgram program) {
+      public AsmSequenceGenerator(String name, AsmFragmentInstance bindings, AsmProgram program) {
          this.name = name;
          this.bindings = bindings;
          this.program = program;

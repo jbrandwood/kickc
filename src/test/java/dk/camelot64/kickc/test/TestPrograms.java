@@ -2,7 +2,7 @@ package dk.camelot64.kickc.test;
 
 import dk.camelot64.kickc.CompileLog;
 import dk.camelot64.kickc.Compiler;
-import dk.camelot64.kickc.fragment.AsmFragmentUsages;
+import dk.camelot64.kickc.fragment.AsmFragmentTemplateUsages;
 import dk.camelot64.kickc.model.CompileError;
 import dk.camelot64.kickc.model.Program;
 import org.junit.AfterClass;
@@ -32,7 +32,7 @@ public class TestPrograms {
    public static void tearDown() throws Exception {
       CompileLog log = new CompileLog();
       log.setSysOut(true);
-      AsmFragmentUsages.logUsages(log, false, false, false, false);
+      AsmFragmentTemplateUsages.logUsages(log, false, false, false, false);
    }
 
     @Test

@@ -1,5 +1,6 @@
 package dk.camelot64.kickc.passes;
 
+import dk.camelot64.kickc.fragment.AsmFragmentInstanceSpec;
 import dk.camelot64.kickc.model.*;
 
 import java.util.HashSet;
@@ -87,7 +88,7 @@ public class Pass4RegisterUpliftStatic extends Pass2Base {
       boolean success = Pass4RegisterUpliftCombinations.generateCombinationAsm(
             combination,
             getProgram(),
-            new HashSet<String>(),
+            new HashSet<>(),
             null);
 
       if(success) {

@@ -8,7 +8,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /** AsmFragment synthesis mechanism based on matching fragment signature and reusing another fragment with added prefix/postfix and some bind-mappings */
-class AsmFragmentSynthesis {
+class AsmFragmentTemplateSynthesisRule {
 
    private String sigMatch;
    private String sigAvoid;
@@ -19,7 +19,7 @@ class AsmFragmentSynthesis {
    private boolean mapSignature;
    private String subSignature;
 
-   AsmFragmentSynthesis(String sigMatch, String sigAvoid, String asmPrefix, String sigReplace, String asmPostfix, Map<String, String> bindMappings, boolean mapSignature) {
+   AsmFragmentTemplateSynthesisRule(String sigMatch, String sigAvoid, String asmPrefix, String sigReplace, String asmPostfix, Map<String, String> bindMappings, boolean mapSignature) {
       this.sigMatch = sigMatch;
       this.sigAvoid = sigAvoid;
       this.asmPrefix = asmPrefix;
@@ -29,7 +29,7 @@ class AsmFragmentSynthesis {
       this.mapSignature = mapSignature;
    }
 
-   public AsmFragmentSynthesis(String sigMatch, String sigAvoid, String asmPrefix, String sigReplace, String asmPostfix, Map<String, String> bindMappings) {
+   public AsmFragmentTemplateSynthesisRule(String sigMatch, String sigAvoid, String asmPrefix, String sigReplace, String asmPostfix, Map<String, String> bindMappings) {
       this(sigMatch, sigAvoid, asmPrefix, sigReplace, asmPostfix, bindMappings, true);
    }
 
@@ -48,7 +48,7 @@ class AsmFragmentSynthesis {
       return sigMatch + (sigAvoid == null ? "" : ("/" + sigAvoid));
    }
 
-   public List<AsmFragmentTemplate> synthesize(String signature, AsmFragmentManager.AsmSynthesisPath path, AsmFragmentManager.AsmFragmentTemplateSynthesizer synthesizer) {
+   public List<AsmFragmentTemplate> synthesize(String signature, AsmFragmentTemplateManager.AsmSynthesisPath path, AsmFragmentTemplateManager.AsmFragmentTemplateSynthesizer synthesizer) {
       ArrayList<AsmFragmentTemplate> candidates = new ArrayList<>();
       if(signature.matches(sigMatch)) {
          if(sigAvoid == null || !signature.matches(sigAvoid)) {

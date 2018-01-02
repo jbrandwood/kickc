@@ -2,8 +2,8 @@ package dk.camelot64.kickc.passes;
 
 import dk.camelot64.kickc.asm.AsmClobber;
 import dk.camelot64.kickc.asm.AsmProgram;
-import dk.camelot64.kickc.fragment.AsmFragment;
-import dk.camelot64.kickc.fragment.AsmFragmentManager;
+import dk.camelot64.kickc.fragment.AsmFragmentInstance;
+import dk.camelot64.kickc.fragment.AsmFragmentTemplateManager;
 import dk.camelot64.kickc.model.*;
 
 import java.util.*;
@@ -196,15 +196,15 @@ public class Pass4RegisterUpliftPotentialRegisterAnalysis extends Pass2Base {
          Pass4CodeGeneration.AsmCodegenAluState aluState = new Pass4CodeGeneration.AsmCodegenAluState();
          try {
             (new Pass4CodeGeneration(getProgram(), false)).generateStatementAsm(asm, block, statement, aluState, false);
-         } catch(AsmFragmentManager.UnknownFragmentException e) {
-            unknownFragments.add(e.getFragmentSignature());
+         } catch(AsmFragmentTemplateManager.UnknownFragmentException e) {
+            unknownFragments.add(e.getFragmentDescription());
             StringBuilder msg = new StringBuilder();
             msg.append("Potential register analysis " + statement);
             msg.append(" missing fragment " + e.getFragmentSignature());
             msg.append(" allocation: ").append(combination.toString());
             getLog().append(msg.toString());
             continue;
-         } catch(AsmFragment.AluNotApplicableException e) {
+         } catch(AsmFragmentInstance.AluNotApplicableException e) {
             if(getProgram().getLog().isVerboseUplift()) {
                StringBuilder msg = new StringBuilder();
                msg.append("Potential register analysis ");

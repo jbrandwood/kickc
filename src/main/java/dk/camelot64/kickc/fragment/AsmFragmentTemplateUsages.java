@@ -5,8 +5,8 @@ import dk.camelot64.kickc.CompileLog;
 import java.io.File;
 import java.util.*;
 
-/** Statistics for usage of the ASM fragments. Also contains a methos for identifying redundant/unused files. */
-public class AsmFragmentUsages {
+/** Statistics for usage of the ASM fragments. Also contains a methods for identifying redundant/unused files. */
+public class AsmFragmentTemplateUsages {
 
    /** Usage Statistics for fragment templates. */
    private static Map<AsmFragmentTemplate, Integer> fragmentTemplateUsage = new HashMap<>();
@@ -35,10 +35,10 @@ public class AsmFragmentUsages {
     */
    public static void logUsages(CompileLog log, boolean logRedundantFiles, boolean logUnusedFiles, boolean logFileDetails, boolean logAllDetails) {
 
-      Map<String, List<AsmFragmentTemplate>> fragmentTemplateCache = AsmFragmentManager.getFragmentTemplateCache();
+      Map<String, List<AsmFragmentTemplate>> fragmentTemplateCache = AsmFragmentTemplateManager.getFragmentTemplateCache();
       ArrayList<String> signatures = new ArrayList<>(fragmentTemplateCache.keySet());
       Collections.sort(signatures);
-      File[] files = AsmFragmentManager.allFragmentFiles();
+      File[] files = AsmFragmentTemplateManager.allFragmentFiles();
 
       if(logRedundantFiles) {
          // Find all file fragments that were bested by a synthesized fragment
@@ -71,8 +71,8 @@ public class AsmFragmentUsages {
             String fileName = file.getName();
             String signature = fileName.substring(0, fileName.length() - 4);
             // Try to synthesize the fragment - and check if the synthesis is as good as the file body
-            AsmFragmentManager.AsmFragmentTemplateSynthesizer synthesizer = new AsmFragmentManager.AsmFragmentTemplateSynthesizer(signature, log);
-            List<AsmFragmentTemplate> templates = synthesizer.loadOrSynthesizeFragment(signature, new AsmFragmentManager.AsmSynthesisPath());
+            AsmFragmentTemplateManager.AsmFragmentTemplateSynthesizer synthesizer = new AsmFragmentTemplateManager.AsmFragmentTemplateSynthesizer(signature, log);
+            List<AsmFragmentTemplate> templates = synthesizer.loadOrSynthesizeFragment(signature, new AsmFragmentTemplateManager.AsmSynthesisPath());
             AsmFragmentTemplate fileTemplate = null;
             for(AsmFragmentTemplate template : templates) {
                if(template.isFile()) {

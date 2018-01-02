@@ -19,7 +19,7 @@ public class AsmFragmentTemplate {
    /** The parsed ASM lines. Initially null. Will be non-null, is the template is ever used to generate ASM code. */
    private KickCParser.AsmLinesContext bodyAsm;
    /** The synthesis that created the fragment. null if the fragment template was loaded. */
-   private AsmFragmentSynthesis synthesis;
+   private AsmFragmentTemplateSynthesisRule synthesis;
 
    /** The sub fragment template that the synthesis modified to create this. null if the fragment template was loaded. */
    private AsmFragmentTemplate subFragment;
@@ -30,7 +30,7 @@ public class AsmFragmentTemplate {
       this.file = true;
    }
 
-   AsmFragmentTemplate(String signature, String body, AsmFragmentSynthesis synthesis, AsmFragmentTemplate subFragment) {
+   AsmFragmentTemplate(String signature, String body, AsmFragmentTemplateSynthesisRule synthesis, AsmFragmentTemplate subFragment) {
       this.signature = signature;
       this.body = body;
       this.synthesis = synthesis;
@@ -89,7 +89,7 @@ public class AsmFragmentTemplate {
       return file;
    }
 
-   public AsmFragmentSynthesis getSynthesis() {
+   public AsmFragmentTemplateSynthesisRule getSynthesis() {
       return synthesis;
    }
 

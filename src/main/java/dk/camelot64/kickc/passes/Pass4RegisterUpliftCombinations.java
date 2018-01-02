@@ -2,8 +2,9 @@ package dk.camelot64.kickc.passes;
 
 import dk.camelot64.kickc.asm.AsmProgram;
 import dk.camelot64.kickc.asm.AsmSegment;
-import dk.camelot64.kickc.fragment.AsmFragment;
-import dk.camelot64.kickc.fragment.AsmFragmentManager;
+import dk.camelot64.kickc.fragment.AsmFragmentInstance;
+import dk.camelot64.kickc.fragment.AsmFragmentInstanceSpec;
+import dk.camelot64.kickc.fragment.AsmFragmentTemplateManager;
 import dk.camelot64.kickc.model.*;
 
 import java.util.*;
@@ -27,7 +28,7 @@ public class Pass4RegisterUpliftCombinations extends Pass2Base {
     */
    static void chooseBestUpliftCombination(
          RegisterCombinationIterator combinationIterator, int maxCombinations,
-         Set<String> unknownFragments,
+         Set<AsmFragmentInstanceSpec> unknownFragments,
          ScopeRef scope,
          Program program
    ) {
@@ -85,7 +86,7 @@ public class Pass4RegisterUpliftCombinations extends Pass2Base {
    public static boolean generateCombinationAsm(
          RegisterCombination combination,
          Program program,
-         Set<String> unknownFragments,
+         Set<AsmFragmentInstanceSpec> unknownFragments,
          ScopeRef scope) {
       // Reset register allocation to original zero page allocation
       new Pass4RegistersFinalize(program).allocate(false);
@@ -106,8 +107,8 @@ public class Pass4RegisterUpliftCombinations extends Pass2Base {
       // Generate ASM
       try {
          new Pass4CodeGeneration(program, false).generate();
-      } catch(AsmFragmentManager.UnknownFragmentException e) {
-         unknownFragments.add(e.getFragmentSignature());
+      } catch(AsmFragmentTemplateManager.UnknownFragmentException e) {
+         unknownFragments.add(e.getFragmentInstanceSpec());
          if(program.getLog().isVerboseUplift()) {
             StringBuilder msg = new StringBuilder();
             msg.append("Uplift attempt [" + (scope == null ? "" : scope) + "] ");
@@ -116,7 +117,7 @@ public class Pass4RegisterUpliftCombinations extends Pass2Base {
             program.getLog().append(msg.toString());
          }
          return false;
-      } catch(AsmFragment.AluNotApplicableException e) {
+      } catch(AsmFragmentInstance.AluNotApplicableException e) {
          if(program.getLog().isVerboseUplift()) {
             StringBuilder msg = new StringBuilder();
             msg.append("Uplift attempt [" + (scope == null ? "" : scope) + "] ");
@@ -234,7 +235,7 @@ public class Pass4RegisterUpliftCombinations extends Pass2Base {
 
    public void performUplift(int maxCombinations) {
       // Test uplift combinations to find the best one.
-      Set<String> unknownFragments = new LinkedHashSet<>();
+      Set<AsmFragmentInstanceSpec> unknownFragments = new LinkedHashSet<>();
       List<RegisterUpliftScope> registerUpliftScopes = getProgram().getRegisterUpliftProgram().getRegisterUpliftScopes();
       for(RegisterUpliftScope upliftScope : registerUpliftScopes) {
          RegisterCombinationIterator combinationIterator = upliftScope.getCombinationIterator(getProgram().getRegisterPotentials());
@@ -248,8 +249,8 @@ public class Pass4RegisterUpliftCombinations extends Pass2Base {
 
       if(unknownFragments.size() > 0) {
          getLog().append("MISSING FRAGMENTS");
-         for(String unknownFragment : unknownFragments) {
-            getLog().append("  " + unknownFragment);
+         for(AsmFragmentInstanceSpec unknownFragment : unknownFragments) {
+            getLog().append("  " + unknownFragment.toString());
          }
       }
    }

@@ -6,9 +6,9 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 
 /**
- * A fragment signature generated from a {@link Statement} used to load/synthesize an AsmFragent for creating ASM code for the statement
+ * A fragment specification generated from a {@link Statement} used to load/synthesize an {@link AsmFragmentInstance} for creating ASM code for the statement
  */
-public class AsmFragmentSignature {
+public class AsmFragmentInstanceSpec {
 
    /**
     * The symbol table.
@@ -16,7 +16,7 @@ public class AsmFragmentSignature {
    private Program program;
 
    /**
-    * The string signature/name of the fragment fragment.
+    * The string signature/name of the fragment template.
     */
    private String signature;
 
@@ -37,7 +37,7 @@ public class AsmFragmentSignature {
    private int nextConstByteIdx = 1;
    private int nextLabelIdx = 1;
 
-   public AsmFragmentSignature(
+   public AsmFragmentInstanceSpec(
          StatementConditionalJump conditionalJump,
          ControlFlowBlock block,
          Program program,
@@ -49,7 +49,7 @@ public class AsmFragmentSignature {
       setSignature(conditionalJumpSignature);
    }
 
-   public AsmFragmentSignature(StatementAssignment assignment, Program program) {
+   public AsmFragmentInstanceSpec(StatementAssignment assignment, Program program) {
       this.codeScopeRef = program.getStatementInfos().getBlock(assignment).getScope();
       this.bindings = new LinkedHashMap<>();
       this.program = program;
@@ -60,14 +60,14 @@ public class AsmFragmentSignature {
             assignment.getrValue2()));
    }
 
-   public AsmFragmentSignature(LValue lValue, RValue rValue, Program program, ScopeRef codeScopeRef) {
+   public AsmFragmentInstanceSpec(LValue lValue, RValue rValue, Program program, ScopeRef codeScopeRef) {
       this.codeScopeRef = codeScopeRef;
       this.bindings = new LinkedHashMap<>();
       this.program = program;
       setSignature(assignmentSignature(lValue, null, null, rValue));
    }
 
-   public AsmFragmentSignature(StatementAssignment assignment, StatementAssignment assignmentAlu, Program program) {
+   public AsmFragmentInstanceSpec(StatementAssignment assignment, StatementAssignment assignmentAlu, Program program) {
       this.codeScopeRef = program.getStatementInfos().getBlock(assignment).getScope();
       this.bindings = new LinkedHashMap<>();
       this.program = program;
@@ -81,14 +81,14 @@ public class AsmFragmentSignature {
    private String assignmentWithAluSignature(StatementAssignment assignment, StatementAssignment assignmentAlu) {
       this.codeScopeRef = program.getStatementInfos().getBlock(assignment).getScope();
       if(!(assignment.getrValue2() instanceof VariableRef)) {
-         throw new AsmFragment.AluNotApplicableException("Error! ALU register only allowed as rValue2. " + assignment);
+         throw new AsmFragmentInstance.AluNotApplicableException("Error! ALU register only allowed as rValue2. " + assignment);
       }
       VariableRef assignmentRValue2 = (VariableRef) assignment.getrValue2();
       Variable assignmentRValue2Var = program.getSymbolInfos().getVariable(assignmentRValue2);
       Registers.Register rVal2Register = assignmentRValue2Var.getAllocation();
 
       if(!rVal2Register.getType().equals(Registers.RegisterType.REG_ALU)) {
-         throw new AsmFragment.AluNotApplicableException("Error! ALU register only allowed as rValue2. " + assignment);
+         throw new AsmFragmentInstance.AluNotApplicableException("Error! ALU register only allowed as rValue2. " + assignment);
       }
       StringBuilder signature = new StringBuilder();
       signature.append(bind(assignment.getlValue()));
@@ -309,7 +309,7 @@ public class AsmFragmentSignature {
       } else if(Registers.RegisterType.REG_Y_BYTE.equals(register.getType())) {
          return "yy";
       } else if(Registers.RegisterType.REG_ALU.equals(register.getType())) {
-         throw new AsmFragment.AluNotApplicableException();
+         throw new AsmFragmentInstance.AluNotApplicableException();
       } else {
          throw new RuntimeException("Not implemented " + register.getType());
       }
@@ -362,5 +362,25 @@ public class AsmFragmentSignature {
       }
       str.append(") ");
       return str.toString();
+   }
+
+   @Override
+   public boolean equals(Object o) {
+      if(this == o) return true;
+      if(o == null || getClass() != o.getClass()) return false;
+
+      AsmFragmentInstanceSpec that = (AsmFragmentInstanceSpec) o;
+
+      if(signature != null ? !signature.equals(that.signature) : that.signature != null) return false;
+      if(bindings != null ? !bindings.equals(that.bindings) : that.bindings != null) return false;
+      return codeScopeRef != null ? codeScopeRef.equals(that.codeScopeRef) : that.codeScopeRef == null;
+   }
+
+   @Override
+   public int hashCode() {
+      int result = signature != null ? signature.hashCode() : 0;
+      result = 31 * result + (bindings != null ? bindings.hashCode() : 0);
+      result = 31 * result + (codeScopeRef != null ? codeScopeRef.hashCode() : 0);
+      return result;
    }
 }

@@ -217,13 +217,13 @@ public class Pass4CodeGeneration {
       if(aluState.hasAluAssignment()) {
          StatementAssignment assignmentAlu = aluState.getAluAssignment();
          if(!(statement instanceof StatementAssignment)) {
-            throw new AsmFragment.AluNotApplicableException();
+            throw new AsmFragmentInstance.AluNotApplicableException();
          }
          StatementAssignment assignment = (StatementAssignment) statement;
-         AsmFragmentSignature signature = new AsmFragmentSignature(assignment, assignmentAlu, program);
-         AsmFragment asmFragment = AsmFragmentManager.getFragment(signature, program.getLog());
-         asm.getCurrentSegment().setFragment(asmFragment.getFragmentName());
-         asmFragment.generate(asm);
+         AsmFragmentInstanceSpec signature = new AsmFragmentInstanceSpec(assignment, assignmentAlu, program);
+         AsmFragmentInstance asmFragmentInstance = AsmFragmentTemplateManager.getFragment(signature, program.getLog());
+         asm.getCurrentSegment().setFragment(asmFragmentInstance.getFragmentName());
+         asmFragmentInstance.generate(asm);
          aluState.clear();
          return;
       }
@@ -247,17 +247,17 @@ public class Pass4CodeGeneration {
                if(assignment.getOperator() == null && assignment.getrValue1() == null && isRegisterCopy(lValue, assignment.getrValue2())) {
                   asm.addComment(lValue.toString(program) + " = " + assignment.getrValue2().toString(program) + "  // register copy " + getRegister(lValue));
                } else {
-                  AsmFragmentSignature asmFragmentSignature = new AsmFragmentSignature(assignment, program);
-                  AsmFragment asmFragment = AsmFragmentManager.getFragment(asmFragmentSignature, program.getLog());
-                  asm.getCurrentSegment().setFragment(asmFragment.getFragmentName());
-                  asmFragment.generate(asm);
+                  AsmFragmentInstanceSpec asmFragmentInstanceSpec = new AsmFragmentInstanceSpec(assignment, program);
+                  AsmFragmentInstance asmFragmentInstance = AsmFragmentTemplateManager.getFragment(asmFragmentInstanceSpec, program.getLog());
+                  asm.getCurrentSegment().setFragment(asmFragmentInstance.getFragmentName());
+                  asmFragmentInstance.generate(asm);
                }
             }
          } else if(statement instanceof StatementConditionalJump) {
-            AsmFragmentSignature asmSignature = new AsmFragmentSignature((StatementConditionalJump) statement, block, program, getGraph());
-            AsmFragment asmFragment = AsmFragmentManager.getFragment(asmSignature, program.getLog());
-            asm.getCurrentSegment().setFragment(asmFragment.getFragmentName());
-            asmFragment.generate(asm);
+            AsmFragmentInstanceSpec asmSignature = new AsmFragmentInstanceSpec((StatementConditionalJump) statement, block, program, getGraph());
+            AsmFragmentInstance asmFragmentInstance = AsmFragmentTemplateManager.getFragment(asmSignature, program.getLog());
+            asm.getCurrentSegment().setFragment(asmFragmentInstance.getFragmentName());
+            asmFragmentInstance.generate(asm);
          } else if(statement instanceof StatementCall) {
             StatementCall call = (StatementCall) statement;
             if(genCallPhiEntry) {
@@ -276,8 +276,8 @@ public class Pass4CodeGeneration {
          } else if(statement instanceof StatementAsm) {
             StatementAsm statementAsm = (StatementAsm) statement;
             HashMap<String, Value> bindings = new HashMap<>();
-            AsmFragment asmFragment = new AsmFragment(program, "inline", block.getScope(), new AsmFragmentTemplate(statementAsm.getAsmLines()), bindings);
-            asmFragment.generate(asm);
+            AsmFragmentInstance asmFragmentInstance = new AsmFragmentInstance(program, "inline", block.getScope(), new AsmFragmentTemplate(statementAsm.getAsmLines()), bindings);
+            asmFragmentInstance.generate(asm);
          } else {
             throw new RuntimeException("Statement not supported " + statement);
          }
@@ -340,10 +340,10 @@ public class Pass4CodeGeneration {
             if(isRegisterCopy(lValue, rValue)) {
                asm.getCurrentSegment().setFragment("register_copy");
             } else {
-               AsmFragmentSignature asmSignature = new AsmFragmentSignature(lValue, rValue, program, scope);
-               AsmFragment asmFragment = AsmFragmentManager.getFragment(asmSignature, program.getLog());
-               asm.getCurrentSegment().setFragment(asmFragment.getFragmentName());
-               asmFragment.generate(asm);
+               AsmFragmentInstanceSpec asmSignature = new AsmFragmentInstanceSpec(lValue, rValue, program, scope);
+               AsmFragmentInstance asmFragmentInstance = AsmFragmentTemplateManager.getFragment(asmSignature, program.getLog());
+               asm.getCurrentSegment().setFragment(asmFragmentInstance.getFragmentName());
+               asmFragmentInstance.generate(asm);
             }
          }
          transition.setGenerated(true);

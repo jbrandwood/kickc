@@ -1,5 +1,6 @@
 package dk.camelot64.kickc.passes;
 
+import dk.camelot64.kickc.fragment.AsmFragmentInstanceSpec;
 import dk.camelot64.kickc.model.*;
 
 import java.util.*;
@@ -23,7 +24,7 @@ public class Pass4RegisterUpliftRemains extends Pass2Base {
          }
       });
 
-      Set<String> unknownFragments = new LinkedHashSet<>();
+      Set<AsmFragmentInstanceSpec> unknownFragments = new LinkedHashSet<>();
 
       for(LiveRangeEquivalenceClass equivalenceClass : equivalenceClasses) {
          if(equivalenceClass.getRegister().getType().equals(Registers.RegisterType.ZP_BYTE)) {
@@ -37,8 +38,8 @@ public class Pass4RegisterUpliftRemains extends Pass2Base {
 
       if(unknownFragments.size() > 0) {
          getLog().append("MISSING FRAGMENTS");
-         for(String unknownFragment : unknownFragments) {
-            getLog().append("  " + unknownFragment);
+         for(AsmFragmentInstanceSpec unknownFragment : unknownFragments) {
+            getLog().append("  " + unknownFragment.toString());
          }
       }
 

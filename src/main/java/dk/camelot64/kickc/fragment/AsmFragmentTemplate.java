@@ -11,7 +11,7 @@ import org.antlr.v4.runtime.*;
 public class AsmFragmentTemplate {
 
    /** true if the fragment was loaded from disk. */
-   boolean file;
+   private boolean file;
    /** The fragment template signature name. */
    private String signature;
    /** The fragment template body */

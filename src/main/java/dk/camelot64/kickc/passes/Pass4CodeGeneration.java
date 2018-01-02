@@ -220,8 +220,8 @@ public class Pass4CodeGeneration {
             throw new AsmFragmentInstance.AluNotApplicableException();
          }
          StatementAssignment assignment = (StatementAssignment) statement;
-         AsmFragmentInstanceSpec signature = new AsmFragmentInstanceSpec(assignment, assignmentAlu, program);
-         AsmFragmentInstance asmFragmentInstance = AsmFragmentTemplateManager.getFragment(signature, program.getLog());
+         AsmFragmentInstanceSpec asmFragmentInstanceSpec = new AsmFragmentInstanceSpec(assignment, assignmentAlu, program);
+         AsmFragmentInstance asmFragmentInstance = AsmFragmentTemplateManager.getFragment(asmFragmentInstanceSpec, program.getLog());
          asm.getCurrentSegment().setFragment(asmFragmentInstance.getFragmentName());
          asmFragmentInstance.generate(asm);
          aluState.clear();
@@ -254,8 +254,8 @@ public class Pass4CodeGeneration {
                }
             }
          } else if(statement instanceof StatementConditionalJump) {
-            AsmFragmentInstanceSpec asmSignature = new AsmFragmentInstanceSpec((StatementConditionalJump) statement, block, program, getGraph());
-            AsmFragmentInstance asmFragmentInstance = AsmFragmentTemplateManager.getFragment(asmSignature, program.getLog());
+            AsmFragmentInstanceSpec asmFragmentInstanceSpec = new AsmFragmentInstanceSpec((StatementConditionalJump) statement, block, program, getGraph());
+            AsmFragmentInstance asmFragmentInstance = AsmFragmentTemplateManager.getFragment(asmFragmentInstanceSpec, program.getLog());
             asm.getCurrentSegment().setFragment(asmFragmentInstance.getFragmentName());
             asmFragmentInstance.generate(asm);
          } else if(statement instanceof StatementCall) {
@@ -340,8 +340,8 @@ public class Pass4CodeGeneration {
             if(isRegisterCopy(lValue, rValue)) {
                asm.getCurrentSegment().setFragment("register_copy");
             } else {
-               AsmFragmentInstanceSpec asmSignature = new AsmFragmentInstanceSpec(lValue, rValue, program, scope);
-               AsmFragmentInstance asmFragmentInstance = AsmFragmentTemplateManager.getFragment(asmSignature, program.getLog());
+               AsmFragmentInstanceSpec asmFragmentInstanceSpec = new AsmFragmentInstanceSpec(lValue, rValue, program, scope);
+               AsmFragmentInstance asmFragmentInstance = AsmFragmentTemplateManager.getFragment(asmFragmentInstanceSpec, program.getLog());
                asm.getCurrentSegment().setFragment(asmFragmentInstance.getFragmentName());
                asmFragmentInstance.generate(asm);
             }

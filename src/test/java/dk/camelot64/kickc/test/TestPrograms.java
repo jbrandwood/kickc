@@ -32,7 +32,7 @@ public class TestPrograms {
    public static void tearDown() throws Exception {
       CompileLog log = new CompileLog();
       log.setSysOut(true);
-      AsmFragmentTemplateUsages.logUsages(log, false, false, false, false);
+      AsmFragmentTemplateUsages.logUsages(log, false, false, false, true);
    }
 
     @Test

@@ -221,7 +221,7 @@ public class Pass4CodeGeneration {
          }
          StatementAssignment assignment = (StatementAssignment) statement;
          AsmFragmentInstanceSpec asmFragmentInstanceSpec = new AsmFragmentInstanceSpec(assignment, assignmentAlu, program);
-         AsmFragmentInstance asmFragmentInstance = AsmFragmentTemplateManager.getFragment(asmFragmentInstanceSpec, program.getLog());
+         AsmFragmentInstance asmFragmentInstance = AsmFragmentTemplateSynthesizer.getFragmentInstance(asmFragmentInstanceSpec, program.getLog());
          asm.getCurrentSegment().setFragment(asmFragmentInstance.getFragmentName());
          asmFragmentInstance.generate(asm);
          aluState.clear();
@@ -248,14 +248,14 @@ public class Pass4CodeGeneration {
                   asm.addComment(lValue.toString(program) + " = " + assignment.getrValue2().toString(program) + "  // register copy " + getRegister(lValue));
                } else {
                   AsmFragmentInstanceSpec asmFragmentInstanceSpec = new AsmFragmentInstanceSpec(assignment, program);
-                  AsmFragmentInstance asmFragmentInstance = AsmFragmentTemplateManager.getFragment(asmFragmentInstanceSpec, program.getLog());
+                  AsmFragmentInstance asmFragmentInstance = AsmFragmentTemplateSynthesizer.getFragmentInstance(asmFragmentInstanceSpec, program.getLog());
                   asm.getCurrentSegment().setFragment(asmFragmentInstance.getFragmentName());
                   asmFragmentInstance.generate(asm);
                }
             }
          } else if(statement instanceof StatementConditionalJump) {
             AsmFragmentInstanceSpec asmFragmentInstanceSpec = new AsmFragmentInstanceSpec((StatementConditionalJump) statement, block, program, getGraph());
-            AsmFragmentInstance asmFragmentInstance = AsmFragmentTemplateManager.getFragment(asmFragmentInstanceSpec, program.getLog());
+            AsmFragmentInstance asmFragmentInstance = AsmFragmentTemplateSynthesizer.getFragmentInstance(asmFragmentInstanceSpec, program.getLog());
             asm.getCurrentSegment().setFragment(asmFragmentInstance.getFragmentName());
             asmFragmentInstance.generate(asm);
          } else if(statement instanceof StatementCall) {
@@ -341,7 +341,7 @@ public class Pass4CodeGeneration {
                asm.getCurrentSegment().setFragment("register_copy");
             } else {
                AsmFragmentInstanceSpec asmFragmentInstanceSpec = new AsmFragmentInstanceSpec(lValue, rValue, program, scope);
-               AsmFragmentInstance asmFragmentInstance = AsmFragmentTemplateManager.getFragment(asmFragmentInstanceSpec, program.getLog());
+               AsmFragmentInstance asmFragmentInstance = AsmFragmentTemplateSynthesizer.getFragmentInstance(asmFragmentInstanceSpec, program.getLog());
                asm.getCurrentSegment().setFragment(asmFragmentInstance.getFragmentName());
                asmFragmentInstance.generate(asm);
             }

@@ -35,7 +35,7 @@ public class CompileLog {
    /**
     * Should the log be output to System.out while being built
     */
-   private boolean sysOut = false;
+   private boolean sysOut = true;
 
    public CompileLog() {
       this.log = new StringBuilder();

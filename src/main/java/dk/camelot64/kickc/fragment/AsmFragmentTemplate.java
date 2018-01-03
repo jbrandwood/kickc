@@ -1,8 +1,13 @@
 package dk.camelot64.kickc.fragment;
 
+import dk.camelot64.kickc.asm.AsmClobber;
+import dk.camelot64.kickc.asm.AsmProgram;
+import dk.camelot64.kickc.model.*;
 import dk.camelot64.kickc.parser.KickCLexer;
 import dk.camelot64.kickc.parser.KickCParser;
 import org.antlr.v4.runtime.*;
+
+import java.util.LinkedHashMap;
 
 /**
  * An ASM fragment template usable for generating KickAssembler code for different bindings.
@@ -16,13 +21,17 @@ public class AsmFragmentTemplate {
    private String signature;
    /** The fragment template body */
    private String body;
-   /** The parsed ASM lines. Initially null. Will be non-null, is the template is ever used to generate ASM code. */
-   private KickCParser.AsmLinesContext bodyAsm;
    /** The synthesis that created the fragment. null if the fragment template was loaded. */
    private AsmFragmentTemplateSynthesisRule synthesis;
-
    /** The sub fragment template that the synthesis modified to create this. null if the fragment template was loaded. */
    private AsmFragmentTemplate subFragment;
+
+   /** The parsed ASM lines. Initially null. Will be non-null, is the template is ever used to generate ASM code. */
+   private KickCParser.AsmLinesContext bodyAsm;
+   /** The ASM clobber of the fragment. */
+   private AsmFragmentClobber clobber;
+   /** The cycles consumed by the ASM of the fragment. */
+   private Double cycles;
 
    public AsmFragmentTemplate(String signature, String body) {
       this.signature = signature;
@@ -49,25 +58,50 @@ public class AsmFragmentTemplate {
    }
 
    /**
-    * Parse an ASM fragment.
+    * Initialize the fields that require parsing the ASM (bodyAsm, clobber, clobber).
     *
-    * @param fragmentBody The stream containing the fragment syntax
-    * @param fragmentFileName The filename (used in error messages)
     * @return The parsed fragment ready for generating
     */
-   private static KickCParser.AsmLinesContext parseBody(String fragmentBody, final String fragmentFileName) {
-      CodePointCharStream fragmentCharStream = CharStreams.fromString(fragmentBody);
+   private void initAsm() {
+      // Parse the body ASM
+      CodePointCharStream fragmentCharStream = CharStreams.fromString(body);
       KickCLexer kickCLexer = new KickCLexer(fragmentCharStream);
       KickCParser kickCParser = new KickCParser(new CommonTokenStream(kickCLexer));
       kickCParser.addErrorListener(new BaseErrorListener() {
          @Override
          public void syntaxError(Recognizer<?, ?> recognizer, Object offendingSymbol, int line, int charPositionInLine, String msg, RecognitionException e) {
-            throw new RuntimeException("Error parsing fragment " + fragmentFileName + "\n - Line: " + line + "\n - Message: " + msg);
+            throw new RuntimeException("Error parsing fragment " + signature + "\n - Line: " + line + "\n - Message: " + msg);
          }
       });
       kickCParser.setBuildParseTree(true);
-      KickCParser.AsmFileContext asmFile = kickCParser.asmFile();
-      return asmFile.asmLines();
+      this.bodyAsm = kickCParser.asmFile().asmLines();
+      // Generate a dummy instance to find clobber & cycles
+      ProgramScope scope = new ProgramScope();
+      LinkedHashMap<String, Value> bindings = new LinkedHashMap<>();
+      VariableVersion v1 = new VariableVersion("$tmp1", SymbolType.BYTE, null);
+      VariableVersion v2 = new VariableVersion("$tmp2", SymbolType.BYTE, null);
+      VariableVersion v3 = new VariableVersion("$tmp3", SymbolType.BYTE, null);
+      v1.setScope(scope);
+      v2.setScope(scope);
+      v3.setScope(scope);
+      v1.setAllocation(new Registers.RegisterZpByte(2));
+      v2.setAllocation(new Registers.RegisterZpByte(4));
+      v3.setAllocation(new Registers.RegisterZpByte(6));
+      if(signature.contains("z1")) bindings.put("z1", v1);
+      if(signature.contains("z2")) bindings.put("z2", v2);
+      if(signature.contains("z3")) bindings.put("z3", v3);
+      if(signature.contains("c1")) bindings.put("c1", new ConstantInteger(10));
+      if(signature.contains("c2")) bindings.put("c2", new ConstantInteger(20));
+      if(signature.contains("c3")) bindings.put("c3", new ConstantInteger(30));
+      if(signature.contains("la1")) bindings.put("la1", new Label("@1", scope, true));
+      AsmFragmentInstance fragmentInstance =
+            new AsmFragmentInstance(new Program(), signature, ScopeRef.ROOT, this, bindings);
+      AsmProgram asm = new AsmProgram();
+      asm.startSegment(null, signature);
+      fragmentInstance.generate(asm);
+      AsmClobber asmClobber = asm.getClobber();
+      this.clobber = new AsmFragmentClobber(asmClobber);
+      this.cycles = asm.getCycles();
    }
 
    public String getSignature() {
@@ -80,9 +114,23 @@ public class AsmFragmentTemplate {
 
    public KickCParser.AsmLinesContext getBodyAsm() {
       if(bodyAsm == null) {
-         bodyAsm = parseBody(body, signature);
+         initAsm();
       }
       return bodyAsm;
+   }
+
+   public AsmFragmentClobber getClobber() {
+      if(clobber == null) {
+         initAsm();
+      }
+      return clobber;
+   }
+
+   public double getCycles() {
+      if(cycles == null) {
+         initAsm();
+      }
+      return cycles;
    }
 
    public boolean isFile() {

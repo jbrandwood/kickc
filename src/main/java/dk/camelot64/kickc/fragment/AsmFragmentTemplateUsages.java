@@ -35,12 +35,14 @@ public class AsmFragmentTemplateUsages {
     */
    public static void logUsages(CompileLog log, boolean logRedundantFiles, boolean logUnusedFiles, boolean logFileDetails, boolean logAllDetails) {
 
-      Map<String, List<AsmFragmentTemplate>> fragmentTemplateCache = AsmFragmentTemplateManager.getFragmentTemplateCache();
-      ArrayList<String> signatures = new ArrayList<>(fragmentTemplateCache.keySet());
+      Map<String, AsmFragmentTemplateSynthesizer.AsmFragmentSynthesis> synthesisGraph =
+            AsmFragmentTemplateSynthesizer.SYNTHESIZER.getSynthesisGraph();
+      ArrayList<String> signatures = new ArrayList<>(synthesisGraph.keySet());
       Collections.sort(signatures);
-      File[] files = AsmFragmentTemplateManager.allFragmentFiles();
+      File[] files = AsmFragmentTemplateSynthesizer.SYNTHESIZER.allFragmentFiles();
 
       if(logRedundantFiles) {
+         /*
          // Find all file fragments that were bested by a synthesized fragment
          log.append("\nREDUNDANT ASM FRAGMENT FILE ANALYSIS (if found remove them from disk)");
          for(String signature : signatures) {
@@ -65,34 +67,26 @@ public class AsmFragmentTemplateUsages {
                log.append("rm " + fileTemplate.getName() + ".asm #synthesized by " + maxTemplate.getName() + " - usages: " + maxUsage);
             }
          }
+         */
 
          Set<String> redundantSignatures = new LinkedHashSet<>();
          for(File file : files) {
             String fileName = file.getName();
             String signature = fileName.substring(0, fileName.length() - 4);
-            // Try to synthesize the fragment - and check if the synthesis is as good as the file body
-            AsmFragmentTemplateManager.AsmFragmentTemplateSynthesizer synthesizer = new AsmFragmentTemplateManager.AsmFragmentTemplateSynthesizer(signature, log);
-            List<AsmFragmentTemplate> templates = synthesizer.loadOrSynthesizeFragment(signature, new AsmFragmentTemplateManager.AsmSynthesisPath());
-            AsmFragmentTemplate fileTemplate = null;
-            for(AsmFragmentTemplate template : templates) {
-               if(template.isFile()) {
-                  fileTemplate = template;
+            // Synthesize the fragment - and check if the synthesis is as good as the file body
+            AsmFragmentTemplate template =
+                  AsmFragmentTemplateSynthesizer.SYNTHESIZER.getFragmentTemplate(signature, log);
+            if(!template.isFile()) {
+               // Check if the synthesis uses a file marked as redundant
+               AsmFragmentTemplate sourceFileTemplate = template;
+               while(!sourceFileTemplate.isFile()) {
+                  sourceFileTemplate = sourceFileTemplate.getSubFragment();
                }
-            }
-            for(AsmFragmentTemplate template : templates) {
-               if(!template.isFile() && template.getBody().equals(fileTemplate.getBody())) {
-                  // Check if the synthesis uses a file marked as redundant
-                  AsmFragmentTemplate sourceFileTemplate = template;
-                  while(!sourceFileTemplate.isFile()) {
-                     sourceFileTemplate = sourceFileTemplate.getSubFragment();
-                  }
-                  if(redundantSignatures.contains(sourceFileTemplate.getSignature())) {
-                     throw new RuntimeException("Problem in redundancy analysis! " + sourceFileTemplate.getSignature() + ".asm seems redundant but is needed for synthesis of " + signature);
-                  }
-                  log.append("rm " + fileTemplate.getName() + ".asm #synthesized same ASM by " + template.getName());
-                  redundantSignatures.add(signature);
-                  break;
+               if(redundantSignatures.contains(sourceFileTemplate.getSignature())) {
+                  throw new RuntimeException("Problem in redundancy analysis! " + sourceFileTemplate.getSignature() + ".asm seems redundant but is needed for synthesis of " + signature);
                }
+               log.append("rm " + template.getName() + ".asm #synthesized better ASM by " + template.getName());
+               redundantSignatures.add(signature);
             }
          }
       }
@@ -102,7 +96,8 @@ public class AsmFragmentTemplateUsages {
          for(File file : files) {
             String fileName = file.getName();
             String signature = fileName.substring(0, fileName.length() - 4);
-            List<AsmFragmentTemplate> templates = fragmentTemplateCache.get(signature);
+            AsmFragmentTemplateSynthesizer.AsmFragmentSynthesis asmFragmentSynthesis = synthesisGraph.get(signature);
+            Collection<AsmFragmentTemplate> templates = asmFragmentSynthesis.getBestTemplates();
             if(templates != null && templates.size() > 0) {
                // The template has been loaded / synthesized - is the usage count zero?
                boolean allZero = true;
@@ -135,7 +130,7 @@ public class AsmFragmentTemplateUsages {
          // Find all file templates
          List<AsmFragmentTemplate> fileTemplates = new ArrayList<>();
          for(String signature : signatures) {
-            List<AsmFragmentTemplate> templates = fragmentTemplateCache.get(signature);
+            Collection<AsmFragmentTemplate> templates = synthesisGraph.get(signature).getBestTemplates();
             for(AsmFragmentTemplate template : templates) {
                if(template.isFile()) {
                   fileTemplates.add(template);
@@ -150,10 +145,8 @@ public class AsmFragmentTemplateUsages {
          log.append("\nDETAILED ASM FRAGMENT USAGES");
          List<AsmFragmentTemplate> allTemplates = new ArrayList<>();
          for(String signature : signatures) {
-            List<AsmFragmentTemplate> templates = fragmentTemplateCache.get(signature);
-            for(AsmFragmentTemplate template : templates) {
-               allTemplates.add(template);
-            }
+            Collection<AsmFragmentTemplate> templates = synthesisGraph.get(signature).getBestTemplates();
+            allTemplates.addAll(templates);
          }
          logTemplatesByUsage(log, allTemplates);
       }

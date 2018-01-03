@@ -48,4 +48,28 @@ public class AsmFragmentClobber {
       result = 31 * result + (clobberY ? 1 : 0);
       return result;
    }
+
+   /**
+    * Determines if this clobber is a subset of the passed clobber.
+    * If this clobber clobbers the same or fewer registers than the passed clobber it is a subset.
+    * The empty clobber (clobbers no registers) is a subset of all clobbers.
+    * @param other The other clobber to examine
+    * @return true if this clobber clobbers the same or fewer registers than the passed clobber.
+    */
+   public boolean isSubset(AsmFragmentClobber other) {
+      if(!other.isClobberA() && this.isClobberA()) {
+         // This clobber clobbers A, while the other does not - not a subset
+         return false;
+      }
+      if(!other.isClobberX() && this.isClobberX()) {
+         // This clobber clobbers A, while the other does not - not a subset
+         return false;
+      }
+      if(!other.isClobberY() && this.isClobberY()) {
+         // This clobber clobbers A, while the other does not - not a subset
+         return false;
+      }
+      // This is a subset
+      return true;
+   }
 }

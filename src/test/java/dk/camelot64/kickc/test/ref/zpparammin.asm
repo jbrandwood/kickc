@@ -32,8 +32,8 @@ main: {
 }
 sum2: {
     .label c = 2
-    tya
-    stx $ff
+    txa
+    sty $ff
     clc
     adc $ff
     clc
@@ -42,8 +42,8 @@ sum2: {
 }
 sum: {
     .label c = 2
-    tya
-    stx $ff
+    txa
+    sty $ff
     clc
     adc $ff
     clc

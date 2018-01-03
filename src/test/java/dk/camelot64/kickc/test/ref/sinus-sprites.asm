@@ -19,7 +19,7 @@
   .const sinlen_x = $dd
   .const sinlen_y = $c5
   .const sprites = $2000
-  .label progress_idx = 3
+  .label progress_idx = 4
   .label progress_cursor = $a
   .label sin_idx_x = 2
   .label sin_idx_y = 3
@@ -142,8 +142,7 @@ init: {
     sta gen_sintab.length
     lda #0
     sta gen_sintab.min
-    lda #$ff
-    sta gen_sintab.max
+    ldx #$ff
     jsr gen_sintab
     lda #<SCREEN+$28
     sta progress_init.line
@@ -158,8 +157,7 @@ init: {
     sta gen_sintab.length
     lda #$32
     sta gen_sintab.min
-    lda #$d0
-    sta gen_sintab.max
+    ldx #$d0
     jsr gen_sintab
     jsr clear_screen
     rts
@@ -192,11 +190,10 @@ gen_sintab: {
     .const f_2pi = $e2e5
     .label _23 = $c
     .label i = 2
-    .label max = 2
-    .label min = 3
-    .label length = 4
+    .label min = 2
+    .label length = 3
     .label sintab = 8
-    lda max
+    txa
     sta setFAC.w
     lda #0
     sta setFAC.w+1
@@ -407,9 +404,8 @@ gen_sprites: {
     lda #0
     sta i
   b1:
-    ldy i
-    lda cml,y
-    sta gen_chargen_sprite.ch
+    ldx i
+    ldy cml,x
     lda spr
     sta gen_chargen_sprite.sprite
     lda spr+1
@@ -432,7 +428,6 @@ gen_sprites: {
 gen_chargen_sprite: {
     .label _0 = $c
     .label _1 = $c
-    .label ch = 3
     .label sprite = $a
     .label chargen = $c
     .label bits = 4
@@ -440,7 +435,7 @@ gen_chargen_sprite: {
     .label x = 5
     .label y = 3
     .label c = 6
-    lda ch
+    tya
     sta _0
     lda #0
     sta _0+1
@@ -471,8 +466,8 @@ gen_chargen_sprite: {
     tay
     sta s_gen
   b2:
-    lda bits
-    and #$80
+    lda #$80
+    and bits
     cmp #0
     beq b6
     lda #1

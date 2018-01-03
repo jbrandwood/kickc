@@ -4,12 +4,10 @@
   jsr main
 main: {
     .const screen = $400
-    .label i = 2
-    ldx #0
-    lda #-$7f
-    sta i
+    ldy #0
+    ldx #-$7f
   b1:
-    lda i
+    txa
     sec
     sbc #$7f
     bvc !+
@@ -18,9 +16,9 @@ main: {
     bmi b2
     rts
   b2:
-    lda i
-    sta screen,x
-    inc i
+    txa
+    sta screen,y
     inx
+    iny
     jmp b1
 }

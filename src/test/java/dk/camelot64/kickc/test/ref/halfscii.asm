@@ -46,8 +46,8 @@ main: {
     lsr
     lsr
     lsr
-    tax
-    lda bits_count,x
+    tay
+    lda bits_count,y
     cmp #2
     bcc b7
     lda #0+1

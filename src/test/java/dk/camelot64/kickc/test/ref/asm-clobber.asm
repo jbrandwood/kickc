@@ -4,7 +4,7 @@
   .const SCREEN = $400
   jsr main
 main: {
-    .label k = 2
+    .label l = 2
     ldx #0
   b1:
     lda #0
@@ -17,22 +17,21 @@ main: {
     inx
     cpx #$65
     bne b1
-    lda #0
-    sta k
-  b3:
     ldy #0
+  b3:
+    lda #0
+    sta l
   b4:
     eor #$55
     tax
-    ldx k
-    tya
-    sta SCREEN,x
+    lda l
+    sta SCREEN,y
+    inc l
+    lda l
+    cmp #$65
+    bne b4
     iny
     cpy #$65
-    bne b4
-    inc k
-    lda k
-    cmp #$65
     bne b3
     rts
 }

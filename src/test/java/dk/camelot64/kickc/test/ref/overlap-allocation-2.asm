@@ -20,16 +20,15 @@ main: {
 }
 line: {
     txa
-    tay
     jsr plot
     txa
     clc
     adc #$14
-    tay
     jsr plot
     rts
 }
 plot: {
+    tay
     lda #'*'
     sta SCREEN,y
     rts

@@ -209,8 +209,8 @@ print_byte: {
     jsr print_char
     txa
     and #$f
-    tax
-    lda hextab,x
+    tay
+    lda hextab,y
     jsr print_char
     rts
     hextab: .text "0123456789abcdef"

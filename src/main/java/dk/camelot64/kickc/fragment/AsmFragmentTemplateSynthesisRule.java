@@ -9,15 +9,32 @@ import java.util.regex.Pattern;
 /** AsmFragment synthesis mechanism based on matching fragment signature and reusing another fragment with added prefix/postfix and some bind-mappings */
 class AsmFragmentTemplateSynthesisRule {
 
+   /** Regular expression that matches the signature of fragments that the synthesis rule can handle.
+    * Contains matching groups (parenthesis) that are used in sigReplace to build the signature of the sub-fragment to synthesize from. */
    final private String sigMatch;
+
+   /** Regular expression that limits which fragments the synthesize rule can handle. */
    final private String sigAvoid;
+
+   /** ASM code prefixed to the sub-fragment when synthesizing. */
    final private String asmPrefix;
+
+   /** Signature of the sub-fragment to use for synthesizing the fragment. References the matching groups from sigMatch (via $1, $2, ...). */
    final private String sigReplace;
+
+   /** ASM code postfixed to the sub-fragment when synthesizing. */
    final private String asmPostfix;
+
+   /** Bindings for mapping replacing parameter names in the signature & ASM of the sub-fragment. */
    final private Map<String, String> bindMappings;
+
+   /** Indicates whether to map parameters in the signature. If false only the parameters in the ASM are mapped.*/
    final private boolean mapSignature;
 
-   AsmFragmentTemplateSynthesisRule(String sigMatch, String sigAvoid, String asmPrefix, String sigReplace, String asmPostfix, Map<String, String> bindMappings, boolean mapSignature) {
+   /** Names of registers ("aa", "xx", "yy") that the sub-fragment is not allowed to clobber. Limits which sub-fragments the rule can use for creating the synthesis. */
+   final String subDontClobber;
+
+   AsmFragmentTemplateSynthesisRule(String sigMatch, String sigAvoid, String asmPrefix, String sigReplace, String asmPostfix, Map<String, String> bindMappings, boolean mapSignature, String subDontClobber) {
       this.sigMatch = sigMatch;
       this.sigAvoid = sigAvoid;
       this.asmPrefix = asmPrefix;
@@ -25,10 +42,19 @@ class AsmFragmentTemplateSynthesisRule {
       this.asmPostfix = asmPostfix;
       this.bindMappings = bindMappings;
       this.mapSignature = mapSignature;
+      this.subDontClobber = subDontClobber;
    }
 
    AsmFragmentTemplateSynthesisRule(String sigMatch, String sigAvoid, String asmPrefix, String sigReplace, String asmPostfix, Map<String, String> bindMappings) {
-      this(sigMatch, sigAvoid, asmPrefix, sigReplace, asmPostfix, bindMappings, true);
+      this(sigMatch, sigAvoid, asmPrefix, sigReplace, asmPostfix, bindMappings, true, null);
+   }
+
+   AsmFragmentTemplateSynthesisRule(String sigMatch, String sigAvoid, String asmPrefix, String sigReplace, String asmPostfix, Map<String, String> bindMappings, boolean mapSignature) {
+      this(sigMatch, sigAvoid, asmPrefix, sigReplace, asmPostfix, bindMappings, mapSignature, null);
+   }
+
+   AsmFragmentTemplateSynthesisRule(String sigMatch, String sigAvoid, String asmPrefix, String sigReplace, String asmPostfix, Map<String, String> bindMappings, String subDontClobber) {
+      this(sigMatch, sigAvoid, asmPrefix, sigReplace, asmPostfix, bindMappings, true, subDontClobber);
    }
 
    /**
@@ -69,6 +95,12 @@ class AsmFragmentTemplateSynthesisRule {
       if(!subTemplate.getSignature().equals(getSubSignature(signature))) {
          throw new RuntimeException("Synthesis error! Attempting to synthesize on non-matching sub template sub-signature:"+subTemplate.getSignature()+" expecting:"+getSubSignature(signature));
       }
+      if(subDontClobber!=null) {
+         if(subDontClobber.contains("aa") && subTemplate.getClobber().isClobberA()) return null;
+         if(subDontClobber.contains("xx") && subTemplate.getClobber().isClobberX()) return null;
+         if(subDontClobber.contains("yy") && subTemplate.getClobber().isClobberY()) return null;
+      }
+
       StringBuilder newFragment = new StringBuilder();
       if(asmPrefix != null) {
          newFragment.append(asmPrefix).append("\n");
@@ -296,8 +328,8 @@ class AsmFragmentTemplateSynthesisRule {
       synths.add(new AsmFragmentTemplateSynthesisRule("_deref_pbuz1=(.*z1.*)", null, null, "vbuaa=$1", "ldy #0\n" + "sta ({z1}),y\n", null));
 
       synths.add(new AsmFragmentTemplateSynthesisRule("pb(.)c1_derefidx_vbuz1=(.*)", ".*z1.*z1.*|.*c1.*c1.*", null, "vb$1aa=$2", "ldx {z1}\n" + "sta {c1},x\n", mapZC));
-      //synths.add(new AsmFragmentTemplateSynthesisRule("pb(.)c1_derefidx_vbuyy=(.*)", ".*c1.*c1.*", null, "vb$1aa=$2", "sta {c1},y\n", mapC));
-      //synths.add(new AsmFragmentTemplateSynthesisRule("pb(.)c1_derefidx_vbuxx=(.*)", ".*c1.*c1.*", null, "vb$1aa=$2", "sta {c1},x\n", mapC));
+      synths.add(new AsmFragmentTemplateSynthesisRule("pb(.)c1_derefidx_vbuyy=(.*)", ".*c1.*c1.*", null, "vb$1aa=$2", "sta {c1},y\n", mapC, "yy"));
+      synths.add(new AsmFragmentTemplateSynthesisRule("pb(.)c1_derefidx_vbuxx=(.*)", ".*c1.*c1.*", null, "vb$1aa=$2", "sta {c1},x\n", mapC, "xx"));
       synths.add(new AsmFragmentTemplateSynthesisRule("pb(.)z1_derefidx_vbuz2=(.*)", ".*z1.*z1.*|.*z2.*z2.*", null, "vb$1aa=$2", "ldy {z2}\n" + "sta ({z1}),y\n", mapZ2));
 
       synths.add(new AsmFragmentTemplateSynthesisRule("(.*)=_deref_pb(.)c1(.*)", ".*=.*aa.*", "lda {c1}\n", "$1=vb$2aa$3", null, mapC));

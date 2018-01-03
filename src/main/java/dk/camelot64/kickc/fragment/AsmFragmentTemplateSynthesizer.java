@@ -194,18 +194,37 @@ public class AsmFragmentTemplateSynthesizer {
        * Handle a candidate for best template.
        * If the candidate is better than the current best for its clobber profile update the best template
        *
-       * @param template The template candidate to examine
+       * @param candidate The template candidate to examine
        * @return true if the best template was updated
        */
-      public boolean bestTemplateCandidate(AsmFragmentTemplate template) {
-         AsmFragmentClobber clobber = template.getClobber();
-         AsmFragmentTemplate bestTemplate = bestTemplates.get(clobber);
-         if(bestTemplate == null || bestTemplate.getCycles() > template.getCycles()) {
-            bestTemplates.put(clobber, template);
-            return true;
-         } else {
-            return false;
+      public boolean bestTemplateCandidate(AsmFragmentTemplate candidate) {
+         AsmFragmentClobber candidateClobber = candidate.getClobber();
+         double candidateCycles = candidate.getCycles();
+
+         // Check if any current best templates are better
+         Set<AsmFragmentClobber> bestClobbers = new LinkedHashSet<>(bestTemplates.keySet());
+         for(AsmFragmentClobber bestClobber : bestClobbers) {
+            AsmFragmentTemplate bestTemplate = bestTemplates.get(bestClobber);
+            double bestCycles = bestTemplate.getCycles();
+            if(bestClobber.isSubset(candidateClobber) && bestCycles <= candidateCycles) {
+               // A better template already found - don't update
+               return false;
+            }
          }
+         // The candidate is better than some of the current best!
+
+         // Remove any current templates that are worse
+         for(AsmFragmentClobber bestClobber : bestClobbers) {
+            AsmFragmentTemplate bestTemplate = bestTemplates.get(bestClobber);
+            double bestCycles = bestTemplate.getCycles();
+            if(candidateClobber.isSubset(bestClobber) && candidateCycles < bestCycles) {
+               // The candidate is better - remove the current template
+               bestTemplates.remove(bestClobber);
+            }
+         }
+         // Update the current best
+         bestTemplates.put(candidateClobber, candidate);
+         return true;
       }
 
       /**
@@ -397,10 +416,14 @@ public class AsmFragmentTemplateSynthesizer {
             Collection<AsmFragmentTemplate> subTemplates = subSynthesis.getBestTemplates();
             for(AsmFragmentTemplate subTemplate : subTemplates) {
                AsmFragmentTemplate synthesized = rule.synthesize(synthesis.getSignature(), subTemplate);
-               if(log.isVerboseFragmentLog()) {
-                  log.append("Fragment synthesis " + synthesis.getSignature() + " - Successfully synthesized from " + subSignature);
+               if(synthesized!=null) {
+                  if(log.isVerboseFragmentLog()) {
+                     log.append("Fragment synthesis " + synthesis.getSignature() + " - Successfully synthesized from " + subSignature);
+                  }
+                  modified |= synthesis.bestTemplateCandidate(synthesized);
+               } else {
+                  log.append("Fragment synthesis " + synthesis.getSignature() + " - Sub clobber prevents synthesis from " + subSignature);
                }
-               modified |= synthesis.bestTemplateCandidate(synthesized);
             }
          }
          if(modified) {

@@ -220,13 +220,17 @@ class AsmFragmentTemplateSynthesisRule {
       synths.add(new AsmFragmentTemplateSynthesisRule("(.*vb.)aa(.*vb.)aa(.*)", "...aa=.*|.*xx.*", "tax", "$1xx$2xx$3", null, null));
       // Replace second (not first) AA with XX
       synths.add(new AsmFragmentTemplateSynthesisRule("(.*)aa(.*vb.)aa(.*)", "...aa=.*|.*xx.*", "tax", "$1aa$2xx$3", null, null));
+      // Replace two AAs with XX (not assigned)
+      synths.add(new AsmFragmentTemplateSynthesisRule("(.*)=(.*vb.)aa(.*vb.)aa(.*)", ".*xx.*", "tax", "$1=$2xx$3xx$4", null, null));
 
       // Replace first AA with YY
       synths.add(new AsmFragmentTemplateSynthesisRule("(.*vb.)aa(.*)", "...aa=.*|.*yy.*", "tay", "$1yy$2", null, null));
-      // Replace two AAs with YY
-      synths.add(new AsmFragmentTemplateSynthesisRule("(.*vb.)aa(.*vb.)aa(.*)", "...aa=.*|.*yy.*", "tay", "$1yy$2yy$3", null, null));
       // Replace second (not first) AA with YY
       synths.add(new AsmFragmentTemplateSynthesisRule("(.*)aa(.*vb.)aa(.*)", "...aa=.*|.*yy.*", "tay", "$1aa$2yy$3", null, null));
+      // Replace two AAs with YY
+      synths.add(new AsmFragmentTemplateSynthesisRule("(.*vb.)aa(.*vb.)aa(.*)", "...aa=.*|.*yy.*", "tay", "$1yy$2yy$3", null, null));
+      // Replace two AAs with YY (not assigned)
+      synths.add(new AsmFragmentTemplateSynthesisRule("(.*)=(.*vb.)aa(.*vb.)aa(.*)", ".*yy.*", "tay", "$1=$2yy$3yy$4", null, null));
 
       // Replace first XX with AA
       synths.add(new AsmFragmentTemplateSynthesisRule("(.*vb.)xx(.*)", "...xx=.*|.*aa.*", "txa", "$1aa$2", null, null));
@@ -234,6 +238,8 @@ class AsmFragmentTemplateSynthesisRule {
       synths.add(new AsmFragmentTemplateSynthesisRule("(.*vb.)xx(.*vb.)xx(.*)", "...xx=.*|.*aa.*", "txa", "$1aa$2aa$3", null, null));
       // Replace second (not first) XX with AA
       synths.add(new AsmFragmentTemplateSynthesisRule("(.*)xx(.*vb.)xx(.*)", "...xx=.*|.*aa.*", "txa", "$1xx$2aa$3", null, null));
+      // Replace two XXs with AA (not assigned)
+      synths.add(new AsmFragmentTemplateSynthesisRule("(.*)=(.*vb.)xx(.*vb.)xx(.*)", ".*aa.*", "txa", "$1=$2aa$3aa$4", null, null));
 
       // Replace first YY with AA
       synths.add(new AsmFragmentTemplateSynthesisRule("(.*vb.)yy(.*)", "...yy=.*|.*aa.*", "tya", "$1aa$2", null, null));
@@ -241,6 +247,8 @@ class AsmFragmentTemplateSynthesisRule {
       synths.add(new AsmFragmentTemplateSynthesisRule("(.*vb.)yy(.*vb.)yy(.*)", "...yy=.*|.*aa.*", "tya", "$1aa$2aa$3", null, null));
       // Replace second (not first) YY with AA
       synths.add(new AsmFragmentTemplateSynthesisRule("(.*)yy(.*vb.)yy(.*)", "...yy=.*|.*aa.*", "tya", "$1yy$2aa$3", null, null));
+      // Replace two YYs with AA (not assigned)
+      synths.add(new AsmFragmentTemplateSynthesisRule("(.*)=(.*vb.)yy(.*vb.)yy(.*)", ".*aa.*", "tya", "$1=$2aa$3aa$4", null, null));
 
       // Replace Z1 with AA (only one)
       synths.add(new AsmFragmentTemplateSynthesisRule("(.*vb.)z1(.*)", "...z1=.*|.*z1.*z1.*|.*aa.*", "lda {z1}", "$1aa$2", null, mapZ));
@@ -250,6 +258,8 @@ class AsmFragmentTemplateSynthesisRule {
       synths.add(new AsmFragmentTemplateSynthesisRule("(.*vb.)z1(.*)z1(.*)", "...z1=.*|.*aa.*", "lda {z1}", "$1aa$2z1$3", null, null));
       // Replace second (not first) Z1 with AA
       synths.add(new AsmFragmentTemplateSynthesisRule("(.*)z1(.*vb.)z1(.*)", "...z1=.*|.*aa.*", "lda {z1}", "$1z1$2aa$3", null, null));
+      // Replace non-assigned Z1 with AA
+      synths.add(new AsmFragmentTemplateSynthesisRule("(...aa)=(.*vb.)z1(.*)", ".*z1.*z1.*|.*=.*aa.*", "lda {z1}", "$1=$2aa$3", null, mapZ));
 
       // Replace Z1 with YY (only one)
       synths.add(new AsmFragmentTemplateSynthesisRule("(.*vb.)z1(.*)", "...z1=.*|.*z1.*z1.*|.*yy.*", "ldy {z1}", "$1yy$2", null, mapZ));
@@ -259,6 +269,8 @@ class AsmFragmentTemplateSynthesisRule {
       synths.add(new AsmFragmentTemplateSynthesisRule("(.*vb.)z1(.*)z1(.*)", "...z1=.*|.*yy.*", "ldy {z1}", "$1yy$2z1$3", null, null));
       // Replace second (not first) Z1 with YY
       synths.add(new AsmFragmentTemplateSynthesisRule("(.*)z1(.*vb.)z1(.*)", "...z1=.*|.*yy.*", "ldy {z1}", "$1z1$2yy$3", null, null));
+      // Replace non-assigned Z1 with YY
+      synths.add(new AsmFragmentTemplateSynthesisRule("(...yy)=(.*vb.)z1(.*)", ".*z1.*z1.*|.*=.*yy.*", "ldy {z1}", "$1=$2yy$3", null, mapZ));
 
       // Replace Z1 with XX (only one)
       synths.add(new AsmFragmentTemplateSynthesisRule("(.*vb.)z1(.*)", "...z1=.*|.*z1.*z1.*|.*xx.*", "ldx {z1}", "$1xx$2", null, mapZ));
@@ -268,6 +280,8 @@ class AsmFragmentTemplateSynthesisRule {
       synths.add(new AsmFragmentTemplateSynthesisRule("(.*vb.)z1(.*)z1(.*)", "...z1=.*|.*xx.*", "ldx {z1}", "$1xx$2z1$3", null, null));
       // Replace second (not first) Z1 with XX
       synths.add(new AsmFragmentTemplateSynthesisRule("(.*)z1(.*vb.)z1(.*)", "...z1=.*|.*xx.*", "ldx {z1}", "$1z1$2xx$3", null, null));
+      // Replace non-assigned Z1 with XX
+      synths.add(new AsmFragmentTemplateSynthesisRule("(...xx)=(.*vb.)z1(.*)", ".*z1.*z1.*|.*=.*xx.*", "ldx {z1}", "$1=$2xx$3", null, mapZ));
 
       // Replace Z2 with AA (only one)
       synths.add(new AsmFragmentTemplateSynthesisRule("(.*vb.)z2(.*)", "...z2=.*|.*z2.*z2.*|.*aa.*", "lda {z2}", "$1aa$2", null, mapZ3));
@@ -297,35 +311,50 @@ class AsmFragmentTemplateSynthesisRule {
       synths.add(new AsmFragmentTemplateSynthesisRule("(.*)z2(.*vb.)z2(.*)", "...z2=.*|.*xx.*", "ldx {z2}", "$1z2$2xx$3", null, null));
 
       // Rewrite comparisons < to >
-      //synths.add(new AsmFragmentTemplateSynthesisRule("(.*)_gt_(.*)_then_(.*)", null, null, "$2_lt_$1_then_$3", null, null));
+      synths.add(new AsmFragmentTemplateSynthesisRule("(.*)_gt_(.*)_then_(.*)", null, null, "$2_lt_$1_then_$3", null, null));
       // Rewrite comparisons > to <
-      //synths.add(new AsmFragmentTemplateSynthesisRule("(.*)_lt_(.*)_then_(.*)", null, null, "$2_gt_$1_then_$3", null, null));
+      synths.add(new AsmFragmentTemplateSynthesisRule("(.*)_lt_(.*)_then_(.*)", null, null, "$2_gt_$1_then_$3", null, null));
       // Rewrite comparisons <= to >=
-      //synths.add(new AsmFragmentTemplateSynthesisRule("(.*)_le_(.*)_then_(.*)", null, null, "$2_ge_$1_then_$3", null, null));
+      synths.add(new AsmFragmentTemplateSynthesisRule("(.*)_le_(.*)_then_(.*)", null, null, "$2_ge_$1_then_$3", null, null));
       // Rewrite comparisons >= to <=
-      //synths.add(new AsmFragmentTemplateSynthesisRule("(.*)_ge_(.*)_then_(.*)", null, null, "$2_le_$1_then_$3", null, null));
+      synths.add(new AsmFragmentTemplateSynthesisRule("(.*)_ge_(.*)_then_(.*)", null, null, "$2_le_$1_then_$3", null, null));
       // Rewrite comparisons swap ==
-      //synths.add(new AsmFragmentTemplateSynthesisRule("(.*)_eq_(.*)_then_(.*)", null, null, "$2_eq_$1_then_$3", null, null));
+      synths.add(new AsmFragmentTemplateSynthesisRule("(.*)_eq_(.*)_then_(.*)", null, null, "$2_eq_$1_then_$3", null, null));
       // Rewrite comparisons swap !=
-      //synths.add(new AsmFragmentTemplateSynthesisRule("(.*)_neq_(.*)_then_(.*)", null, null, "$2_neq_$1_then_$3", null, null));
+      synths.add(new AsmFragmentTemplateSynthesisRule("(.*)_neq_(.*)_then_(.*)", null, null, "$2_neq_$1_then_$3", null, null));
 
+      // Swap parameters on commutative operators
+      synths.add(new AsmFragmentTemplateSynthesisRule("(.*)=(.*)_(band|bor|bxor|plus)_(.*)", null, null, "$1=$4_$3_$2", null, null));
+      // Swap parameters on commutative comparators
+      synths.add(new AsmFragmentTemplateSynthesisRule("(.*)_(eq|neq)_(.*)_then_(.*)", null, null, "$3_$2_$1_then_$4", null, null));
+
+      // Rewrite Assignments to X from A
+      synths.add(new AsmFragmentTemplateSynthesisRule("vb(.)xx=(.*)", null, null, "vb$1aa=$2", "tax\n", null));
+      // Rewrite Assignments to Y from A
+      synths.add(new AsmFragmentTemplateSynthesisRule("vb(.)yy=(.*)", null, null, "vb$1aa=$2", "tay\n", null));
+      // Rewrite Assignments to Z1 from A
+      synths.add(new AsmFragmentTemplateSynthesisRule("vb(.)z1=(.*)", ".*z1.*z1.*", null, "vb$1aa=$2", "sta {z1}\n", mapZ));
+      // Rewrite Assignments to Z1 from A
+      synths.add(new AsmFragmentTemplateSynthesisRule("vb(.)z1=(.*z1.*)", null, null, "vb$1aa=$2", "sta {z1}\n", null));
+      // Rewrite Assignments to *C1 from A
+      synths.add(new AsmFragmentTemplateSynthesisRule("_deref_pb(.)c1=(.*)", ".*c1.*c1.*", null, "vb$1aa=$2", "sta {c1}\n", mapC));
+      // Rewrite Assignments to *C1 from A
+      synths.add(new AsmFragmentTemplateSynthesisRule("_deref_pb(.)c1=(.*c1.*)", null, null, "vb$1aa=$2", "sta {c1}\n", null));
+      // Rewrite Assignments to *Z1 from A
+      synths.add(new AsmFragmentTemplateSynthesisRule("_deref_pbuz1=(.*)", ".*z1.*z1.*", null, "vbuaa=$1", "ldy #0\n" + "sta ({z1}),y\n", mapZ));
+      // Rewrite Assignments to *Z1 from A
+      synths.add(new AsmFragmentTemplateSynthesisRule("_deref_pbuz1=(.*z1.*)", null, null, "vbuaa=$1", "ldy #0\n" + "sta ({z1}),y\n", null));
 
       // OLD STYLE REWRITES - written when only one rule could be taken
 
-      synths.add(new AsmFragmentTemplateSynthesisRule("(.*)=(.*)_(band|bor|bxor|plus)_(vb.aa)", ".*=vb.aa_.*", null, "$1=$4_$3_$2", null, null));
-      synths.add(new AsmFragmentTemplateSynthesisRule("(.*)=(.*)_(band|bor|bxor|plus)_(vb.xx)", ".*=vb.[ax][ax]_.*", null, "$1=$4_$3_$2", null, null));
-      synths.add(new AsmFragmentTemplateSynthesisRule("(.*)=(.*)_(band|bor|bxor|plus)_(vb.yy)", ".*=vb.[axy][axy]_.*", null, "$1=$4_$3_$2", null, null));
+      //synths.add(new AsmFragmentTemplateSynthesisRule("(.*)=(.*)_(band|bor|bxor|plus)_(vb.aa)", ".*=vb.aa_.*", null, "$1=$4_$3_$2", null, null));
+      //synths.add(new AsmFragmentTemplateSynthesisRule("(.*)=(.*)_(band|bor|bxor|plus)_(vb.xx)", ".*=vb.[ax][ax]_.*", null, "$1=$4_$3_$2", null, null));
+      //synths.add(new AsmFragmentTemplateSynthesisRule("(.*)=(.*)_(band|bor|bxor|plus)_(vb.yy)", ".*=vb.[axy][axy]_.*", null, "$1=$4_$3_$2", null, null));
 
-      synths.add(new AsmFragmentTemplateSynthesisRule("vbuxx=(.*)", null, null, "vbuaa=$1", "tax\n", null));
-      synths.add(new AsmFragmentTemplateSynthesisRule("vbsxx=(.*)", null, null, "vbsaa=$1", "tax\n", null));
-      synths.add(new AsmFragmentTemplateSynthesisRule("vbuyy=(.*)", null, null, "vbuaa=$1", "tay\n", null));
-      synths.add(new AsmFragmentTemplateSynthesisRule("vbsyy=(.*)", null, null, "vbsaa=$1", "tay\n", null));
-      synths.add(new AsmFragmentTemplateSynthesisRule("vbuz1=(.*)", ".*=.*vb.z1.*", null, "vbuaa=$1", "sta {z1}\n", mapZ));
-      synths.add(new AsmFragmentTemplateSynthesisRule("vbsz1=(.*)", ".*=.*vb.z1.*", null, "vbsaa=$1", "sta {z1}\n", mapZ));
-      synths.add(new AsmFragmentTemplateSynthesisRule("_deref_pb(.)c1=(.*)", ".*c1.*c1.*", null, "vb$1aa=$2", "sta {c1}\n", mapC));
-      synths.add(new AsmFragmentTemplateSynthesisRule("_deref_pb(.)c1=(.*c1.*)", null, null, "vb$1aa=$2", "sta {c1}\n", null));
-      synths.add(new AsmFragmentTemplateSynthesisRule("_deref_pbuz1=(.*)", ".*z1.*z1.*", null, "vbuaa=$1", "ldy #0\n" + "sta ({z1}),y\n", mapZ));
-      synths.add(new AsmFragmentTemplateSynthesisRule("_deref_pbuz1=(.*z1.*)", null, null, "vbuaa=$1", "ldy #0\n" + "sta ({z1}),y\n", null));
+      //synths.add(new AsmFragmentTemplateSynthesisRule("vbsxx=(.*)", null, null, "vbsaa=$1", "tax\n", null));
+      //synths.add(new AsmFragmentTemplateSynthesisRule("vbuyy=(.*)", null, null, "vbuaa=$1", "tay\n", null));
+      //synths.add(new AsmFragmentTemplateSynthesisRule("vbsyy=(.*)", null, null, "vbsaa=$1", "tay\n", null));
+      //synths.add(new AsmFragmentTemplateSynthesisRule("vbsz1=(.*)", ".*=.*vb.z1.*", null, "vbsaa=$1", "sta {z1}\n", mapZ));
 
       synths.add(new AsmFragmentTemplateSynthesisRule("pb(.)c1_derefidx_vbuz1=(.*)", ".*z1.*z1.*|.*c1.*c1.*", null, "vb$1aa=$2", "ldx {z1}\n" + "sta {c1},x\n", mapZC));
       synths.add(new AsmFragmentTemplateSynthesisRule("pb(.)c1_derefidx_vbuyy=(.*)", ".*c1.*c1.*", null, "vb$1aa=$2", "sta {c1},y\n", mapC, "yy"));

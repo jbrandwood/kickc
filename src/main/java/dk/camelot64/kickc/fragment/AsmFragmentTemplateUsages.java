@@ -33,7 +33,7 @@ public class AsmFragmentTemplateUsages {
     *
     * @param log The compile log to add the output to
     */
-   public static void logUsages(CompileLog log, boolean logRedundantFiles, boolean logUnusedFiles, boolean logFileDetails, boolean logAllDetails) {
+   public static void logUsages(CompileLog log, boolean logRedundantFiles, boolean logUnusedFiles, boolean logFileDetails, boolean logAllDetails, boolean logDetailsBody) {
 
       Map<String, AsmFragmentTemplateSynthesizer.AsmFragmentSynthesis> synthesisGraph =
             AsmFragmentTemplateSynthesizer.SYNTHESIZER.getSynthesisGraph();
@@ -137,7 +137,7 @@ public class AsmFragmentTemplateUsages {
                }
             }
          }
-         logTemplatesByUsage(log, fileTemplates);
+         logTemplatesByUsage(log, fileTemplates, logDetailsBody);
 
       }
 
@@ -148,15 +148,15 @@ public class AsmFragmentTemplateUsages {
             Collection<AsmFragmentTemplate> templates = synthesisGraph.get(signature).getBestTemplates();
             allTemplates.addAll(templates);
          }
-         logTemplatesByUsage(log, allTemplates);
+         logTemplatesByUsage(log, allTemplates, logDetailsBody);
       }
 
 
    }
 
-   private static void logTemplatesByUsage(CompileLog log, List<AsmFragmentTemplate> fileTemplates) {
+   private static void logTemplatesByUsage(CompileLog log, List<AsmFragmentTemplate> templates, boolean logBody) {
       // Sort by usage
-      Collections.sort(fileTemplates, (o1, o2) -> {
+      Collections.sort(templates, (o1, o2) -> {
                Integer u1 = fragmentTemplateUsage.get(o1);
                Integer u2 = fragmentTemplateUsage.get(o2);
                if(u1 == null) u1 = 0;
@@ -165,10 +165,14 @@ public class AsmFragmentTemplateUsages {
             }
       );
       // Output
-      for(AsmFragmentTemplate template : fileTemplates) {
+      for(AsmFragmentTemplate template : templates) {
          Integer usage = fragmentTemplateUsage.get(template);
          if(usage == null) usage = 0;
          log.append(String.format("%8d", usage) + "  " + (template.isFile() ? "*" : "") + template.getName());
+         if(logBody) {
+            log.append("          clobber:"+template.getClobber().toString()+" cycles:"+template.getCycles());
+            log.append("          "+template.getBody().replace("\n", "\n          "));
+         }
       }
    }
 

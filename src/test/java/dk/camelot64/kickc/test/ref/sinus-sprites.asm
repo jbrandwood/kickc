@@ -69,9 +69,9 @@ anim: {
     ldy yidx
     lda sintab_y,y
     sta SPRITES_YPOS,x
-    lda xidx
+    lda #$a
     clc
-    adc #$a
+    adc xidx
     sta xidx
     cmp #sinlen_x
     bcc b2
@@ -79,9 +79,9 @@ anim: {
     sbc #sinlen_x
     sta xidx
   b2:
-    lda yidx
+    lda #8
     clc
-    adc #8
+    adc yidx
     sta yidx
     cmp #sinlen_y
     bcc b3
@@ -551,9 +551,9 @@ place_sprites: {
     sta SPRITES_YPOS,x
     lda col
     sta SPRITES_COLS,y
-    lda spr_x
+    lda #$20
     clc
-    adc #$20
+    adc spr_x
     sta spr_x
     lda col
     eor #7^5

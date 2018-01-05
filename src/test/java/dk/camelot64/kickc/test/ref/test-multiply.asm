@@ -239,22 +239,19 @@ print_sbyte: {
     rts
 }
 signed_multiply: {
-    .label _6 = $e
     .label m = 6
     .label return = 6
     .label b = 3
     tya
-    tax
-    lda b
+    ldx b
     jsr multiply
     cpy #0
     bpl b1
     lda m+1
-    sta _6
-    lda b
-    eor #$ff
+    ldx b
+    stx $ff
     sec
-    adc _6
+    sbc $ff
     sta m+1
   b1:
     lda b
@@ -272,15 +269,13 @@ multiply: {
     .const memA = $fe
     .const memB = $ff
     .label return = 6
-    stx memA
-    sta memB
-    txa
+    sta memA
+    stx memB
     sta sm1+1
     sta sm3+1
     eor #$ff
     sta sm2+1
     sta sm4+1
-    ldx memB
     sec
   sm1:
     lda mul_sqr1_lo,x
@@ -379,8 +374,8 @@ multiply_results_compare: {
     sta ms
     lda slow_multiply.return+1
     sta ms+1
-    ldx a
-    lda b
+    lda a
+    ldx b
     jsr multiply
     lda ms
     cmp ma

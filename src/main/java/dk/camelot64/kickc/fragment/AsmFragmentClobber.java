@@ -72,4 +72,9 @@ public class AsmFragmentClobber {
       // This is a subset
       return true;
    }
+
+   @Override
+   public String toString() {
+      return (clobberA?"A ":"")+(clobberX?"X ":"")+(clobberY?"Y ":" ");
+   }
 }

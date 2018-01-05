@@ -210,10 +210,9 @@ line_ydxi: {
     sbc yd
     sta e
   b2:
-    lda y1
-    clc
-    adc #1
-    cmp y
+    ldy y1
+    iny
+    cpy y
     bne b1
     rts
 }
@@ -274,10 +273,9 @@ line_xdyi: {
     sbc xd
     sta e
   b2:
-    lda x1
-    clc
-    adc #1
-    cmp x
+    ldy x1
+    iny
+    cpy x
     bne b1
     rts
 }
@@ -307,10 +305,9 @@ line_ydxd: {
     sbc yd
     sta e
   b2:
-    lda y1
-    clc
-    adc #1
-    cmp y
+    ldy y1
+    iny
+    cpy y
     bne b1
     rts
 }
@@ -340,10 +337,9 @@ line_xdyd: {
     sbc xd
     sta e
   b2:
-    lda x1
-    clc
-    adc #1
-    cmp x
+    ldy x1
+    iny
+    cpy x
     bne b1
     rts
 }

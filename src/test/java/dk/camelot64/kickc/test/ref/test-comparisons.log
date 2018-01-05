@@ -7540,10 +7540,9 @@ main: {
   //SEG118 main::@51
   b51:
   //SEG119 [45] if((byte) main::a#10<=(byte/signed byte/word/signed word) 55) goto main::@7 [ main::a#10 main::i#10 line_cursor#1 main::b#0 char_cursor#52 ] ( main:2 [ main::a#10 main::i#10 line_cursor#1 main::b#0 char_cursor#52 ] ) -- vbuz1_le_vbuc1_then_la1 
-    lda a
-    cmp #$37
-    bcc b7_from_b51
-    beq b7_from_b51
+    lda #$37
+    cmp a
+    bcs b7_from_b51
   //SEG120 [46] phi from main::@51 to main::@28 [phi:main::@51->main::@28]
   b28_from_b51:
     jmp b28
@@ -7588,11 +7587,10 @@ main: {
   //SEG136 main::@52
   b52:
   //SEG137 [51] if((byte) main::a#10<=*((const byte[5]) main::cs#0 + (byte) main::i#10)) goto main::@8 [ main::a#10 main::i#10 line_cursor#1 main::b#0 char_cursor#52 ] ( main:2 [ main::a#10 main::i#10 line_cursor#1 main::b#0 char_cursor#52 ] ) -- vbuz1_le_pbuc1_derefidx_vbuz2_then_la1 
-    lda a
     ldy i
-    cmp cs,y
-    bcc b8_from_b52
-    beq b8_from_b52
+    lda cs,y
+    cmp a
+    bcs b8_from_b52
   //SEG138 [52] phi from main::@52 to main::@29 [phi:main::@52->main::@29]
   b29_from_b52:
     jmp b29
@@ -7799,12 +7797,10 @@ main: {
   //SEG217 main::@57
   b57:
   //SEG218 [81] if((byte) main::a#10>*((const byte[5]) main::cs#0 + (byte) main::i#10)) goto main::@12 [ main::a#10 main::i#10 line_cursor#1 main::b#0 char_cursor#52 ] ( main:2 [ main::a#10 main::i#10 line_cursor#1 main::b#0 char_cursor#52 ] ) -- vbuz1_gt_pbuc1_derefidx_vbuz2_then_la1 
-    lda a
     ldy i
-    cmp cs,y
-    beq !+
-    bcs b12_from_b57
-  !:
+    lda cs,y
+    cmp a
+    bcc b12_from_b57
   //SEG219 [82] phi from main::@57 to main::@33 [phi:main::@57->main::@33]
   b33_from_b57:
     jmp b33
@@ -8325,9 +8321,9 @@ main: {
   //SEG422 main::@70
   b70:
   //SEG423 [157] (byte) main::a#1 ← (byte) main::a#10 + (byte/signed byte/word/signed word) 48 [ main::i#10 main::a#1 line_cursor#1 ] ( main:2 [ main::i#10 main::a#1 line_cursor#1 ] ) -- vbuz1=vbuz1_plus_vbuc1 
-    lda a
+    lda #$30
     clc
-    adc #$30
+    adc a
     sta a
   //SEG424 [158] (byte) main::i#1 ← ++ (byte) main::i#10 [ main::a#1 main::i#1 line_cursor#1 ] ( main:2 [ main::a#1 main::i#1 line_cursor#1 ] ) -- vbuz1=_inc_vbuz1 
     inc i
@@ -8642,9 +8638,6 @@ REGISTER UPLIFT POTENTIAL REGISTERS
 Statement [7] (byte) main::b#0 ← (byte/word/signed word) 206 - (byte) main::a#10 [ main::a#10 char_cursor#114 main::i#10 line_cursor#21 main::b#0 ] ( main:2 [ main::a#10 char_cursor#114 main::i#10 line_cursor#21 main::b#0 ] ) always clobbers reg byte a 
 Removing always clobbered register reg byte a as potential for zp ZP_BYTE:2 [ main::a#10 main::a#1 ]
 Removing always clobbered register reg byte a as potential for zp ZP_BYTE:3 [ main::i#10 main::i#1 ]
-Potential register analysis [21] if(main::a#10>=*(main::cs#0 + main::i#10)) goto main::@4 missing fragment vbuyy_ge_pbuc1_derefidx_vbuxx_then_la1 allocation: reg byte x [ main::i#10 main::i#1 ] reg byte y [ main::a#10 main::a#1 ] 
-MISSING FRAGMENTS
-  vbuyy_ge_pbuc1_derefidx_vbuxx_then_la1
 Statement [21] if((byte) main::a#10>=*((const byte[5]) main::cs#0 + (byte) main::i#10)) goto main::@4 [ main::a#10 main::i#10 line_cursor#21 main::b#0 char_cursor#52 ] ( main:2 [ main::a#10 main::i#10 line_cursor#21 main::b#0 char_cursor#52 ] ) always clobbers reg byte a 
 Removing always clobbered register reg byte a as potential for zp ZP_BYTE:39 [ main::b#0 ]
 Statement [28] if((byte) main::a#10>=(byte) main::a#10) goto main::@5 [ main::a#10 main::i#10 line_cursor#21 main::b#0 char_cursor#52 ] ( main:2 [ main::a#10 main::i#10 line_cursor#21 main::b#0 char_cursor#52 ] ) always clobbers reg byte a 
@@ -8652,28 +8645,16 @@ Statement [43] (byte*~) char_cursor#154 ← (byte*) line_cursor#1 [ main::a#10 m
 Removing always clobbered register reg byte a as potential for zp ZP_BYTE:26 [ printu::a#20 printu::a#8 printu::a#9 printu::a#10 printu::a#11 printu::a#12 printu::a#13 printu::a#14 printu::a#15 printu::a#16 printu::a#17 printu::a#0 printu::a#18 printu::a#19 printu::a#1 printu::a#2 printu::a#3 printu::a#4 printu::a#5 printu::a#6 printu::a#7 ]
 Removing always clobbered register reg byte a as potential for zp ZP_BYTE:29 [ printu::b#20 printu::b#8 printu::b#10 printu::b#11 printu::b#12 printu::b#14 printu::b#15 printu::b#16 printu::b#0 printu::b#18 printu::b#19 printu::b#2 printu::b#3 printu::b#4 printu::b#6 printu::b#7 ]
 Removing always clobbered register reg byte a as potential for zp ZP_BYTE:30 [ printu::res#20 printu::res#8 printu::res#9 printu::res#10 printu::res#11 printu::res#12 printu::res#13 printu::res#14 printu::res#15 printu::res#16 printu::res#17 printu::res#0 printu::res#18 printu::res#19 printu::res#1 printu::res#2 printu::res#3 printu::res#4 printu::res#5 printu::res#6 printu::res#7 ]
-Potential register analysis [51] if(main::a#10<=*(main::cs#0 + main::i#10)) goto main::@8 missing fragment vbuyy_le_pbuc1_derefidx_vbuxx_then_la1 allocation: reg byte x [ main::i#10 main::i#1 ] reg byte y [ main::a#10 main::a#1 ] 
-MISSING FRAGMENTS
-  vbuyy_le_pbuc1_derefidx_vbuxx_then_la1
 Statement [51] if((byte) main::a#10<=*((const byte[5]) main::cs#0 + (byte) main::i#10)) goto main::@8 [ main::a#10 main::i#10 line_cursor#1 main::b#0 char_cursor#52 ] ( main:2 [ main::a#10 main::i#10 line_cursor#1 main::b#0 char_cursor#52 ] ) always clobbers reg byte a 
 Statement [58] if((byte) main::a#10<=(byte) main::a#10) goto main::@9 [ main::a#10 main::i#10 line_cursor#1 main::b#0 char_cursor#52 ] ( main:2 [ main::a#10 main::i#10 line_cursor#1 main::b#0 char_cursor#52 ] ) always clobbers reg byte a 
 Statement [73] (byte*~) char_cursor#138 ← (byte*) line_cursor#1 [ main::a#10 main::i#10 line_cursor#1 main::b#0 printu::a#8 printu::b#8 printu::res#8 char_cursor#138 ] ( main:2 [ main::a#10 main::i#10 line_cursor#1 main::b#0 printu::a#8 printu::b#8 printu::res#8 char_cursor#138 ] ) always clobbers reg byte a 
 Statement [75] if((byte) main::a#10>(byte/signed byte/word/signed word) 55) goto main::@11 [ main::a#10 main::i#10 line_cursor#1 main::b#0 char_cursor#52 ] ( main:2 [ main::a#10 main::i#10 line_cursor#1 main::b#0 char_cursor#52 ] ) always clobbers reg byte a 
-Potential register analysis [81] if(main::a#10>*(main::cs#0 + main::i#10)) goto main::@12 missing fragment vbuyy_gt_pbuc1_derefidx_vbuxx_then_la1 allocation: reg byte x [ main::i#10 main::i#1 ] reg byte y [ main::a#10 main::a#1 ] 
-MISSING FRAGMENTS
-  vbuyy_gt_pbuc1_derefidx_vbuxx_then_la1
 Statement [81] if((byte) main::a#10>*((const byte[5]) main::cs#0 + (byte) main::i#10)) goto main::@12 [ main::a#10 main::i#10 line_cursor#1 main::b#0 char_cursor#52 ] ( main:2 [ main::a#10 main::i#10 line_cursor#1 main::b#0 char_cursor#52 ] ) always clobbers reg byte a 
 Statement [88] if((byte) main::a#10>(byte) main::a#10) goto main::@13 [ main::a#10 main::i#10 line_cursor#1 main::b#0 char_cursor#52 ] ( main:2 [ main::a#10 main::i#10 line_cursor#1 main::b#0 char_cursor#52 ] ) always clobbers reg byte a 
 Statement [103] (byte*~) char_cursor#142 ← (byte*) line_cursor#1 [ main::a#10 main::i#10 line_cursor#1 main::b#0 printu::a#12 printu::b#12 printu::res#12 char_cursor#142 ] ( main:2 [ main::a#10 main::i#10 line_cursor#1 main::b#0 printu::a#12 printu::b#12 printu::res#12 char_cursor#142 ] ) always clobbers reg byte a 
-Potential register analysis [111] if(main::a#10<*(main::cs#0 + main::i#10)) goto main::@16 missing fragment vbuyy_lt_pbuc1_derefidx_vbuxx_then_la1 allocation: reg byte x [ main::i#10 main::i#1 ] reg byte y [ main::a#10 main::a#1 ] 
-MISSING FRAGMENTS
-  vbuyy_lt_pbuc1_derefidx_vbuxx_then_la1
 Statement [111] if((byte) main::a#10<*((const byte[5]) main::cs#0 + (byte) main::i#10)) goto main::@16 [ main::a#10 main::i#10 line_cursor#1 main::b#0 char_cursor#52 ] ( main:2 [ main::a#10 main::i#10 line_cursor#1 main::b#0 char_cursor#52 ] ) always clobbers reg byte a 
 Statement [118] if((byte) main::a#10<(byte) main::a#10) goto main::@17 [ main::a#10 main::i#10 line_cursor#1 main::b#0 char_cursor#52 ] ( main:2 [ main::a#10 main::i#10 line_cursor#1 main::b#0 char_cursor#52 ] ) always clobbers reg byte a 
 Statement [133] (byte*~) char_cursor#146 ← (byte*) line_cursor#1 [ main::a#10 main::i#10 line_cursor#1 printu::a#16 printu::b#16 printu::res#16 char_cursor#146 ] ( main:2 [ main::a#10 main::i#10 line_cursor#1 printu::a#16 printu::b#16 printu::res#16 char_cursor#146 ] ) always clobbers reg byte a 
-Potential register analysis [141] if(main::a#10!=*(main::cs#0 + main::i#10)) goto main::@20 missing fragment vbuyy_neq_pbuc1_derefidx_vbuxx_then_la1 allocation: reg byte x [ main::i#10 main::i#1 ] reg byte y [ main::a#10 main::a#1 ] 
-MISSING FRAGMENTS
-  vbuyy_neq_pbuc1_derefidx_vbuxx_then_la1
 Statement [141] if((byte) main::a#10!=*((const byte[5]) main::cs#0 + (byte) main::i#10)) goto main::@20 [ main::a#10 main::i#10 line_cursor#1 char_cursor#52 ] ( main:2 [ main::a#10 main::i#10 line_cursor#1 char_cursor#52 ] ) always clobbers reg byte a 
 Statement [148] if((byte) main::a#10!=(byte) main::a#10) goto main::@21 [ main::a#10 main::i#10 line_cursor#1 char_cursor#52 ] ( main:2 [ main::a#10 main::i#10 line_cursor#1 char_cursor#52 ] ) always clobbers reg byte a 
 Statement [157] (byte) main::a#1 ← (byte) main::a#10 + (byte/signed byte/word/signed word) 48 [ main::i#10 main::a#1 line_cursor#1 ] ( main:2 [ main::i#10 main::a#1 line_cursor#1 ] ) always clobbers reg byte a 
@@ -8700,23 +8681,23 @@ Statement [25] (byte) printu::b#2 ← *((const byte[5]) main::cs#0 + (byte) main
 Removing always clobbered register reg byte a as potential for zp ZP_BYTE:6 [ main::r#42 ]
 Statement [28] if((byte) main::a#10>=(byte) main::a#10) goto main::@5 [ main::a#10 main::i#10 line_cursor#21 main::b#0 char_cursor#52 ] ( main:2 [ main::a#10 main::i#10 line_cursor#21 main::b#0 char_cursor#52 ] ) always clobbers reg byte a 
 Statement [43] (byte*~) char_cursor#154 ← (byte*) line_cursor#1 [ main::a#10 main::i#10 line_cursor#1 main::b#0 printu::a#4 printu::b#4 printu::res#4 char_cursor#154 ] ( main:2 [ main::a#10 main::i#10 line_cursor#1 main::b#0 printu::a#4 printu::b#4 printu::res#4 char_cursor#154 ] ) always clobbers reg byte a 
-Statement [51] if((byte) main::a#10<=*((const byte[5]) main::cs#0 + (byte) main::i#10)) goto main::@8 [ main::a#10 main::i#10 line_cursor#1 main::b#0 char_cursor#52 ] ( main:2 [ main::a#10 main::i#10 line_cursor#1 main::b#0 char_cursor#52 ] ) always clobbers reg byte a reg byte y 
+Statement [51] if((byte) main::a#10<=*((const byte[5]) main::cs#0 + (byte) main::i#10)) goto main::@8 [ main::a#10 main::i#10 line_cursor#1 main::b#0 char_cursor#52 ] ( main:2 [ main::a#10 main::i#10 line_cursor#1 main::b#0 char_cursor#52 ] ) always clobbers reg byte a 
 Statement [55] (byte) printu::b#6 ← *((const byte[5]) main::cs#0 + (byte) main::i#10) [ main::a#10 main::i#10 line_cursor#1 main::b#0 main::r#46 printu::a#6 printu::b#6 char_cursor#52 ] ( main:2 [ main::a#10 main::i#10 line_cursor#1 main::b#0 main::r#46 printu::a#6 printu::b#6 char_cursor#52 ] ) always clobbers reg byte a 
 Removing always clobbered register reg byte a as potential for zp ZP_BYTE:10 [ main::r#46 ]
 Statement [58] if((byte) main::a#10<=(byte) main::a#10) goto main::@9 [ main::a#10 main::i#10 line_cursor#1 main::b#0 char_cursor#52 ] ( main:2 [ main::a#10 main::i#10 line_cursor#1 main::b#0 char_cursor#52 ] ) always clobbers reg byte a 
 Statement [73] (byte*~) char_cursor#138 ← (byte*) line_cursor#1 [ main::a#10 main::i#10 line_cursor#1 main::b#0 printu::a#8 printu::b#8 printu::res#8 char_cursor#138 ] ( main:2 [ main::a#10 main::i#10 line_cursor#1 main::b#0 printu::a#8 printu::b#8 printu::res#8 char_cursor#138 ] ) always clobbers reg byte a 
 Statement [75] if((byte) main::a#10>(byte/signed byte/word/signed word) 55) goto main::@11 [ main::a#10 main::i#10 line_cursor#1 main::b#0 char_cursor#52 ] ( main:2 [ main::a#10 main::i#10 line_cursor#1 main::b#0 char_cursor#52 ] ) always clobbers reg byte a 
-Statement [81] if((byte) main::a#10>*((const byte[5]) main::cs#0 + (byte) main::i#10)) goto main::@12 [ main::a#10 main::i#10 line_cursor#1 main::b#0 char_cursor#52 ] ( main:2 [ main::a#10 main::i#10 line_cursor#1 main::b#0 char_cursor#52 ] ) always clobbers reg byte a reg byte y 
+Statement [81] if((byte) main::a#10>*((const byte[5]) main::cs#0 + (byte) main::i#10)) goto main::@12 [ main::a#10 main::i#10 line_cursor#1 main::b#0 char_cursor#52 ] ( main:2 [ main::a#10 main::i#10 line_cursor#1 main::b#0 char_cursor#52 ] ) always clobbers reg byte a 
 Statement [85] (byte) printu::b#10 ← *((const byte[5]) main::cs#0 + (byte) main::i#10) [ main::a#10 main::i#10 line_cursor#1 main::b#0 main::r#50 printu::a#10 printu::b#10 char_cursor#52 ] ( main:2 [ main::a#10 main::i#10 line_cursor#1 main::b#0 main::r#50 printu::a#10 printu::b#10 char_cursor#52 ] ) always clobbers reg byte a 
 Removing always clobbered register reg byte a as potential for zp ZP_BYTE:14 [ main::r#50 ]
 Statement [88] if((byte) main::a#10>(byte) main::a#10) goto main::@13 [ main::a#10 main::i#10 line_cursor#1 main::b#0 char_cursor#52 ] ( main:2 [ main::a#10 main::i#10 line_cursor#1 main::b#0 char_cursor#52 ] ) always clobbers reg byte a 
 Statement [103] (byte*~) char_cursor#142 ← (byte*) line_cursor#1 [ main::a#10 main::i#10 line_cursor#1 main::b#0 printu::a#12 printu::b#12 printu::res#12 char_cursor#142 ] ( main:2 [ main::a#10 main::i#10 line_cursor#1 main::b#0 printu::a#12 printu::b#12 printu::res#12 char_cursor#142 ] ) always clobbers reg byte a 
-Statement [111] if((byte) main::a#10<*((const byte[5]) main::cs#0 + (byte) main::i#10)) goto main::@16 [ main::a#10 main::i#10 line_cursor#1 main::b#0 char_cursor#52 ] ( main:2 [ main::a#10 main::i#10 line_cursor#1 main::b#0 char_cursor#52 ] ) always clobbers reg byte a reg byte y 
+Statement [111] if((byte) main::a#10<*((const byte[5]) main::cs#0 + (byte) main::i#10)) goto main::@16 [ main::a#10 main::i#10 line_cursor#1 main::b#0 char_cursor#52 ] ( main:2 [ main::a#10 main::i#10 line_cursor#1 main::b#0 char_cursor#52 ] ) always clobbers reg byte a 
 Statement [115] (byte) printu::b#14 ← *((const byte[5]) main::cs#0 + (byte) main::i#10) [ main::a#10 main::i#10 line_cursor#1 main::b#0 main::r#54 printu::a#14 printu::b#14 char_cursor#52 ] ( main:2 [ main::a#10 main::i#10 line_cursor#1 main::b#0 main::r#54 printu::a#14 printu::b#14 char_cursor#52 ] ) always clobbers reg byte a 
 Removing always clobbered register reg byte a as potential for zp ZP_BYTE:18 [ main::r#54 ]
 Statement [118] if((byte) main::a#10<(byte) main::a#10) goto main::@17 [ main::a#10 main::i#10 line_cursor#1 main::b#0 char_cursor#52 ] ( main:2 [ main::a#10 main::i#10 line_cursor#1 main::b#0 char_cursor#52 ] ) always clobbers reg byte a 
 Statement [133] (byte*~) char_cursor#146 ← (byte*) line_cursor#1 [ main::a#10 main::i#10 line_cursor#1 printu::a#16 printu::b#16 printu::res#16 char_cursor#146 ] ( main:2 [ main::a#10 main::i#10 line_cursor#1 printu::a#16 printu::b#16 printu::res#16 char_cursor#146 ] ) always clobbers reg byte a 
-Statement [141] if((byte) main::a#10!=*((const byte[5]) main::cs#0 + (byte) main::i#10)) goto main::@20 [ main::a#10 main::i#10 line_cursor#1 char_cursor#52 ] ( main:2 [ main::a#10 main::i#10 line_cursor#1 char_cursor#52 ] ) always clobbers reg byte a reg byte y 
+Statement [141] if((byte) main::a#10!=*((const byte[5]) main::cs#0 + (byte) main::i#10)) goto main::@20 [ main::a#10 main::i#10 line_cursor#1 char_cursor#52 ] ( main:2 [ main::a#10 main::i#10 line_cursor#1 char_cursor#52 ] ) always clobbers reg byte a 
 Statement [145] (byte) printu::b#18 ← *((const byte[5]) main::cs#0 + (byte) main::i#10) [ main::a#10 main::i#10 line_cursor#1 main::r#58 printu::a#18 printu::b#18 char_cursor#52 ] ( main:2 [ main::a#10 main::i#10 line_cursor#1 main::r#58 printu::a#18 printu::b#18 char_cursor#52 ] ) always clobbers reg byte a 
 Removing always clobbered register reg byte a as potential for zp ZP_BYTE:22 [ main::r#58 ]
 Statement [148] if((byte) main::a#10!=(byte) main::a#10) goto main::@21 [ main::a#10 main::i#10 line_cursor#1 char_cursor#52 ] ( main:2 [ main::a#10 main::i#10 line_cursor#1 char_cursor#52 ] ) always clobbers reg byte a 
@@ -8736,20 +8717,20 @@ Statement [21] if((byte) main::a#10>=*((const byte[5]) main::cs#0 + (byte) main:
 Statement [25] (byte) printu::b#2 ← *((const byte[5]) main::cs#0 + (byte) main::i#10) [ main::a#10 main::i#10 line_cursor#21 main::b#0 main::r#42 printu::a#2 printu::b#2 char_cursor#52 ] ( main:2 [ main::a#10 main::i#10 line_cursor#21 main::b#0 main::r#42 printu::a#2 printu::b#2 char_cursor#52 ] ) always clobbers reg byte a 
 Statement [28] if((byte) main::a#10>=(byte) main::a#10) goto main::@5 [ main::a#10 main::i#10 line_cursor#21 main::b#0 char_cursor#52 ] ( main:2 [ main::a#10 main::i#10 line_cursor#21 main::b#0 char_cursor#52 ] ) always clobbers reg byte a 
 Statement [43] (byte*~) char_cursor#154 ← (byte*) line_cursor#1 [ main::a#10 main::i#10 line_cursor#1 main::b#0 printu::a#4 printu::b#4 printu::res#4 char_cursor#154 ] ( main:2 [ main::a#10 main::i#10 line_cursor#1 main::b#0 printu::a#4 printu::b#4 printu::res#4 char_cursor#154 ] ) always clobbers reg byte a 
-Statement [51] if((byte) main::a#10<=*((const byte[5]) main::cs#0 + (byte) main::i#10)) goto main::@8 [ main::a#10 main::i#10 line_cursor#1 main::b#0 char_cursor#52 ] ( main:2 [ main::a#10 main::i#10 line_cursor#1 main::b#0 char_cursor#52 ] ) always clobbers reg byte a reg byte y 
+Statement [51] if((byte) main::a#10<=*((const byte[5]) main::cs#0 + (byte) main::i#10)) goto main::@8 [ main::a#10 main::i#10 line_cursor#1 main::b#0 char_cursor#52 ] ( main:2 [ main::a#10 main::i#10 line_cursor#1 main::b#0 char_cursor#52 ] ) always clobbers reg byte a 
 Statement [55] (byte) printu::b#6 ← *((const byte[5]) main::cs#0 + (byte) main::i#10) [ main::a#10 main::i#10 line_cursor#1 main::b#0 main::r#46 printu::a#6 printu::b#6 char_cursor#52 ] ( main:2 [ main::a#10 main::i#10 line_cursor#1 main::b#0 main::r#46 printu::a#6 printu::b#6 char_cursor#52 ] ) always clobbers reg byte a 
 Statement [58] if((byte) main::a#10<=(byte) main::a#10) goto main::@9 [ main::a#10 main::i#10 line_cursor#1 main::b#0 char_cursor#52 ] ( main:2 [ main::a#10 main::i#10 line_cursor#1 main::b#0 char_cursor#52 ] ) always clobbers reg byte a 
 Statement [73] (byte*~) char_cursor#138 ← (byte*) line_cursor#1 [ main::a#10 main::i#10 line_cursor#1 main::b#0 printu::a#8 printu::b#8 printu::res#8 char_cursor#138 ] ( main:2 [ main::a#10 main::i#10 line_cursor#1 main::b#0 printu::a#8 printu::b#8 printu::res#8 char_cursor#138 ] ) always clobbers reg byte a 
 Statement [75] if((byte) main::a#10>(byte/signed byte/word/signed word) 55) goto main::@11 [ main::a#10 main::i#10 line_cursor#1 main::b#0 char_cursor#52 ] ( main:2 [ main::a#10 main::i#10 line_cursor#1 main::b#0 char_cursor#52 ] ) always clobbers reg byte a 
-Statement [81] if((byte) main::a#10>*((const byte[5]) main::cs#0 + (byte) main::i#10)) goto main::@12 [ main::a#10 main::i#10 line_cursor#1 main::b#0 char_cursor#52 ] ( main:2 [ main::a#10 main::i#10 line_cursor#1 main::b#0 char_cursor#52 ] ) always clobbers reg byte a reg byte y 
+Statement [81] if((byte) main::a#10>*((const byte[5]) main::cs#0 + (byte) main::i#10)) goto main::@12 [ main::a#10 main::i#10 line_cursor#1 main::b#0 char_cursor#52 ] ( main:2 [ main::a#10 main::i#10 line_cursor#1 main::b#0 char_cursor#52 ] ) always clobbers reg byte a 
 Statement [85] (byte) printu::b#10 ← *((const byte[5]) main::cs#0 + (byte) main::i#10) [ main::a#10 main::i#10 line_cursor#1 main::b#0 main::r#50 printu::a#10 printu::b#10 char_cursor#52 ] ( main:2 [ main::a#10 main::i#10 line_cursor#1 main::b#0 main::r#50 printu::a#10 printu::b#10 char_cursor#52 ] ) always clobbers reg byte a 
 Statement [88] if((byte) main::a#10>(byte) main::a#10) goto main::@13 [ main::a#10 main::i#10 line_cursor#1 main::b#0 char_cursor#52 ] ( main:2 [ main::a#10 main::i#10 line_cursor#1 main::b#0 char_cursor#52 ] ) always clobbers reg byte a 
 Statement [103] (byte*~) char_cursor#142 ← (byte*) line_cursor#1 [ main::a#10 main::i#10 line_cursor#1 main::b#0 printu::a#12 printu::b#12 printu::res#12 char_cursor#142 ] ( main:2 [ main::a#10 main::i#10 line_cursor#1 main::b#0 printu::a#12 printu::b#12 printu::res#12 char_cursor#142 ] ) always clobbers reg byte a 
-Statement [111] if((byte) main::a#10<*((const byte[5]) main::cs#0 + (byte) main::i#10)) goto main::@16 [ main::a#10 main::i#10 line_cursor#1 main::b#0 char_cursor#52 ] ( main:2 [ main::a#10 main::i#10 line_cursor#1 main::b#0 char_cursor#52 ] ) always clobbers reg byte a reg byte y 
+Statement [111] if((byte) main::a#10<*((const byte[5]) main::cs#0 + (byte) main::i#10)) goto main::@16 [ main::a#10 main::i#10 line_cursor#1 main::b#0 char_cursor#52 ] ( main:2 [ main::a#10 main::i#10 line_cursor#1 main::b#0 char_cursor#52 ] ) always clobbers reg byte a 
 Statement [115] (byte) printu::b#14 ← *((const byte[5]) main::cs#0 + (byte) main::i#10) [ main::a#10 main::i#10 line_cursor#1 main::b#0 main::r#54 printu::a#14 printu::b#14 char_cursor#52 ] ( main:2 [ main::a#10 main::i#10 line_cursor#1 main::b#0 main::r#54 printu::a#14 printu::b#14 char_cursor#52 ] ) always clobbers reg byte a 
 Statement [118] if((byte) main::a#10<(byte) main::a#10) goto main::@17 [ main::a#10 main::i#10 line_cursor#1 main::b#0 char_cursor#52 ] ( main:2 [ main::a#10 main::i#10 line_cursor#1 main::b#0 char_cursor#52 ] ) always clobbers reg byte a 
 Statement [133] (byte*~) char_cursor#146 ← (byte*) line_cursor#1 [ main::a#10 main::i#10 line_cursor#1 printu::a#16 printu::b#16 printu::res#16 char_cursor#146 ] ( main:2 [ main::a#10 main::i#10 line_cursor#1 printu::a#16 printu::b#16 printu::res#16 char_cursor#146 ] ) always clobbers reg byte a 
-Statement [141] if((byte) main::a#10!=*((const byte[5]) main::cs#0 + (byte) main::i#10)) goto main::@20 [ main::a#10 main::i#10 line_cursor#1 char_cursor#52 ] ( main:2 [ main::a#10 main::i#10 line_cursor#1 char_cursor#52 ] ) always clobbers reg byte a reg byte y 
+Statement [141] if((byte) main::a#10!=*((const byte[5]) main::cs#0 + (byte) main::i#10)) goto main::@20 [ main::a#10 main::i#10 line_cursor#1 char_cursor#52 ] ( main:2 [ main::a#10 main::i#10 line_cursor#1 char_cursor#52 ] ) always clobbers reg byte a 
 Statement [145] (byte) printu::b#18 ← *((const byte[5]) main::cs#0 + (byte) main::i#10) [ main::a#10 main::i#10 line_cursor#1 main::r#58 printu::a#18 printu::b#18 char_cursor#52 ] ( main:2 [ main::a#10 main::i#10 line_cursor#1 main::r#58 printu::a#18 printu::b#18 char_cursor#52 ] ) always clobbers reg byte a 
 Statement [148] if((byte) main::a#10!=(byte) main::a#10) goto main::@21 [ main::a#10 main::i#10 line_cursor#1 char_cursor#52 ] ( main:2 [ main::a#10 main::i#10 line_cursor#1 char_cursor#52 ] ) always clobbers reg byte a 
 Statement [157] (byte) main::a#1 ← (byte) main::a#10 + (byte/signed byte/word/signed word) 48 [ main::i#10 main::a#1 line_cursor#1 ] ( main:2 [ main::i#10 main::a#1 line_cursor#1 ] ) always clobbers reg byte a 
@@ -8809,65 +8790,65 @@ Uplift Scope [print_char] 20: zp ZP_BYTE:31 [ print_char::ch#5 print_char::ch#0 
 Uplift Scope [print_byte] 10: zp ZP_BYTE:34 [ print_byte::b#2 print_byte::b#0 print_byte::b#1 ] 4: zp ZP_BYTE:40 [ print_byte::$0 ] 4: zp ZP_BYTE:41 [ print_byte::$2 ] 
 Uplift Scope [print_ln] 
 
-Uplifting [printu] best 16377 combination reg byte x [ printu::res#20 printu::res#8 printu::res#9 printu::res#10 printu::res#11 printu::res#12 printu::res#13 printu::res#14 printu::res#15 printu::res#16 printu::res#17 printu::res#0 printu::res#18 printu::res#19 printu::res#1 printu::res#2 printu::res#3 printu::res#4 printu::res#5 printu::res#6 printu::res#7 ] zp ZP_BYTE:26 [ printu::a#20 printu::a#8 printu::a#9 printu::a#10 printu::a#11 printu::a#12 printu::a#13 printu::a#14 printu::a#15 printu::a#16 printu::a#17 printu::a#0 printu::a#18 printu::a#19 printu::a#1 printu::a#2 printu::a#3 printu::a#4 printu::a#5 printu::a#6 printu::a#7 ] zp ZP_BYTE:29 [ printu::b#20 printu::b#8 printu::b#10 printu::b#11 printu::b#12 printu::b#14 printu::b#15 printu::b#16 printu::b#0 printu::b#18 printu::b#19 printu::b#2 printu::b#3 printu::b#4 printu::b#6 printu::b#7 ] zp ZP_WORD:27 [ printu::op#20 ] 
-Uplifting [] best 16377 combination zp ZP_WORD:32 [ char_cursor#51 char_cursor#89 char_cursor#90 char_cursor#138 char_cursor#52 char_cursor#142 char_cursor#146 char_cursor#114 char_cursor#137 char_cursor#154 char_cursor#2 char_cursor#1 ] zp ZP_WORD:24 [ line_cursor#10 line_cursor#20 line_cursor#21 line_cursor#1 ] 
-Uplifting [print_str] best 16377 combination zp ZP_WORD:35 [ print_str::str#2 print_str::str#1 print_str::str#0 ] 
-Uplifting [print_cls] best 16377 combination zp ZP_WORD:37 [ print_cls::sc#2 print_cls::sc#1 ] 
-Uplifting [print_char] best 16361 combination reg byte a [ print_char::ch#5 print_char::ch#0 print_char::ch#1 print_char::ch#4 ] 
-Uplifting [print_byte] best 16353 combination zp ZP_BYTE:34 [ print_byte::b#2 print_byte::b#0 print_byte::b#1 ] reg byte a [ print_byte::$0 ] reg byte a [ print_byte::$2 ] 
-Uplifting [print_ln] best 16353 combination 
+Uplifting [printu] best 16302 combination reg byte x [ printu::res#20 printu::res#8 printu::res#9 printu::res#10 printu::res#11 printu::res#12 printu::res#13 printu::res#14 printu::res#15 printu::res#16 printu::res#17 printu::res#0 printu::res#18 printu::res#19 printu::res#1 printu::res#2 printu::res#3 printu::res#4 printu::res#5 printu::res#6 printu::res#7 ] zp ZP_BYTE:26 [ printu::a#20 printu::a#8 printu::a#9 printu::a#10 printu::a#11 printu::a#12 printu::a#13 printu::a#14 printu::a#15 printu::a#16 printu::a#17 printu::a#0 printu::a#18 printu::a#19 printu::a#1 printu::a#2 printu::a#3 printu::a#4 printu::a#5 printu::a#6 printu::a#7 ] zp ZP_BYTE:29 [ printu::b#20 printu::b#8 printu::b#10 printu::b#11 printu::b#12 printu::b#14 printu::b#15 printu::b#16 printu::b#0 printu::b#18 printu::b#19 printu::b#2 printu::b#3 printu::b#4 printu::b#6 printu::b#7 ] zp ZP_WORD:27 [ printu::op#20 ] 
+Uplifting [] best 16302 combination zp ZP_WORD:32 [ char_cursor#51 char_cursor#89 char_cursor#90 char_cursor#138 char_cursor#52 char_cursor#142 char_cursor#146 char_cursor#114 char_cursor#137 char_cursor#154 char_cursor#2 char_cursor#1 ] zp ZP_WORD:24 [ line_cursor#10 line_cursor#20 line_cursor#21 line_cursor#1 ] 
+Uplifting [print_str] best 16302 combination zp ZP_WORD:35 [ print_str::str#2 print_str::str#1 print_str::str#0 ] 
+Uplifting [print_cls] best 16302 combination zp ZP_WORD:37 [ print_cls::sc#2 print_cls::sc#1 ] 
+Uplifting [print_char] best 16286 combination reg byte a [ print_char::ch#5 print_char::ch#0 print_char::ch#1 print_char::ch#4 ] 
+Uplifting [print_byte] best 16278 combination zp ZP_BYTE:34 [ print_byte::b#2 print_byte::b#0 print_byte::b#1 ] reg byte a [ print_byte::$0 ] reg byte a [ print_byte::$2 ] 
+Uplifting [print_ln] best 16278 combination 
 Attempting to uplift remaining variables inzp ZP_BYTE:26 [ printu::a#20 printu::a#8 printu::a#9 printu::a#10 printu::a#11 printu::a#12 printu::a#13 printu::a#14 printu::a#15 printu::a#16 printu::a#17 printu::a#0 printu::a#18 printu::a#19 printu::a#1 printu::a#2 printu::a#3 printu::a#4 printu::a#5 printu::a#6 printu::a#7 ]
-Uplifting [printu] best 16353 combination zp ZP_BYTE:26 [ printu::a#20 printu::a#8 printu::a#9 printu::a#10 printu::a#11 printu::a#12 printu::a#13 printu::a#14 printu::a#15 printu::a#16 printu::a#17 printu::a#0 printu::a#18 printu::a#19 printu::a#1 printu::a#2 printu::a#3 printu::a#4 printu::a#5 printu::a#6 printu::a#7 ] 
+Uplifting [printu] best 16278 combination zp ZP_BYTE:26 [ printu::a#20 printu::a#8 printu::a#9 printu::a#10 printu::a#11 printu::a#12 printu::a#13 printu::a#14 printu::a#15 printu::a#16 printu::a#17 printu::a#0 printu::a#18 printu::a#19 printu::a#1 printu::a#2 printu::a#3 printu::a#4 printu::a#5 printu::a#6 printu::a#7 ] 
 Attempting to uplift remaining variables inzp ZP_BYTE:29 [ printu::b#20 printu::b#8 printu::b#10 printu::b#11 printu::b#12 printu::b#14 printu::b#15 printu::b#16 printu::b#0 printu::b#18 printu::b#19 printu::b#2 printu::b#3 printu::b#4 printu::b#6 printu::b#7 ]
-Uplifting [printu] best 16353 combination zp ZP_BYTE:29 [ printu::b#20 printu::b#8 printu::b#10 printu::b#11 printu::b#12 printu::b#14 printu::b#15 printu::b#16 printu::b#0 printu::b#18 printu::b#19 printu::b#2 printu::b#3 printu::b#4 printu::b#6 printu::b#7 ] 
+Uplifting [printu] best 16278 combination zp ZP_BYTE:29 [ printu::b#20 printu::b#8 printu::b#10 printu::b#11 printu::b#12 printu::b#14 printu::b#15 printu::b#16 printu::b#0 printu::b#18 printu::b#19 printu::b#2 printu::b#3 printu::b#4 printu::b#6 printu::b#7 ] 
 Attempting to uplift remaining variables inzp ZP_BYTE:3 [ main::i#10 main::i#1 ]
-Uplifting [main] best 16353 combination zp ZP_BYTE:3 [ main::i#10 main::i#1 ] 
+Uplifting [main] best 16278 combination zp ZP_BYTE:3 [ main::i#10 main::i#1 ] 
 Attempting to uplift remaining variables inzp ZP_BYTE:34 [ print_byte::b#2 print_byte::b#0 print_byte::b#1 ]
-Uplifting [print_byte] best 16353 combination zp ZP_BYTE:34 [ print_byte::b#2 print_byte::b#0 print_byte::b#1 ] 
+Uplifting [print_byte] best 16278 combination zp ZP_BYTE:34 [ print_byte::b#2 print_byte::b#0 print_byte::b#1 ] 
 Attempting to uplift remaining variables inzp ZP_BYTE:2 [ main::a#10 main::a#1 ]
-Uplifting [main] best 16353 combination zp ZP_BYTE:2 [ main::a#10 main::a#1 ] 
+Uplifting [main] best 16278 combination zp ZP_BYTE:2 [ main::a#10 main::a#1 ] 
 Attempting to uplift remaining variables inzp ZP_BYTE:5 [ main::r#41 ]
-Uplifting [main] best 16263 combination reg byte x [ main::r#41 ] 
+Uplifting [main] best 16188 combination reg byte x [ main::r#41 ] 
 Attempting to uplift remaining variables inzp ZP_BYTE:9 [ main::r#45 ]
-Uplifting [main] best 16173 combination reg byte x [ main::r#45 ] 
+Uplifting [main] best 16098 combination reg byte x [ main::r#45 ] 
 Attempting to uplift remaining variables inzp ZP_BYTE:13 [ main::r#49 ]
-Uplifting [main] best 16083 combination reg byte x [ main::r#49 ] 
+Uplifting [main] best 16008 combination reg byte x [ main::r#49 ] 
 Attempting to uplift remaining variables inzp ZP_BYTE:17 [ main::r#53 ]
-Uplifting [main] best 15993 combination reg byte x [ main::r#53 ] 
+Uplifting [main] best 15918 combination reg byte x [ main::r#53 ] 
 Attempting to uplift remaining variables inzp ZP_BYTE:21 [ main::r#57 ]
-Uplifting [main] best 15903 combination reg byte x [ main::r#57 ] 
+Uplifting [main] best 15828 combination reg byte x [ main::r#57 ] 
 Attempting to uplift remaining variables inzp ZP_BYTE:4 [ main::r#40 ]
-Uplifting [main] best 15813 combination reg byte x [ main::r#40 ] 
+Uplifting [main] best 15738 combination reg byte x [ main::r#40 ] 
 Attempting to uplift remaining variables inzp ZP_BYTE:6 [ main::r#42 ]
-Uplifting [main] best 15723 combination reg byte x [ main::r#42 ] 
+Uplifting [main] best 15648 combination reg byte x [ main::r#42 ] 
 Attempting to uplift remaining variables inzp ZP_BYTE:7 [ main::r#43 ]
-Uplifting [main] best 15633 combination reg byte x [ main::r#43 ] 
+Uplifting [main] best 15558 combination reg byte x [ main::r#43 ] 
 Attempting to uplift remaining variables inzp ZP_BYTE:8 [ main::r#44 ]
-Uplifting [main] best 15543 combination reg byte x [ main::r#44 ] 
+Uplifting [main] best 15468 combination reg byte x [ main::r#44 ] 
 Attempting to uplift remaining variables inzp ZP_BYTE:10 [ main::r#46 ]
-Uplifting [main] best 15453 combination reg byte x [ main::r#46 ] 
+Uplifting [main] best 15378 combination reg byte x [ main::r#46 ] 
 Attempting to uplift remaining variables inzp ZP_BYTE:11 [ main::r#47 ]
-Uplifting [main] best 15363 combination reg byte x [ main::r#47 ] 
+Uplifting [main] best 15288 combination reg byte x [ main::r#47 ] 
 Attempting to uplift remaining variables inzp ZP_BYTE:12 [ main::r#48 ]
-Uplifting [main] best 15273 combination reg byte x [ main::r#48 ] 
+Uplifting [main] best 15198 combination reg byte x [ main::r#48 ] 
 Attempting to uplift remaining variables inzp ZP_BYTE:14 [ main::r#50 ]
-Uplifting [main] best 15183 combination reg byte x [ main::r#50 ] 
+Uplifting [main] best 15108 combination reg byte x [ main::r#50 ] 
 Attempting to uplift remaining variables inzp ZP_BYTE:15 [ main::r#51 ]
-Uplifting [main] best 15093 combination reg byte x [ main::r#51 ] 
+Uplifting [main] best 15018 combination reg byte x [ main::r#51 ] 
 Attempting to uplift remaining variables inzp ZP_BYTE:16 [ main::r#52 ]
-Uplifting [main] best 15003 combination reg byte x [ main::r#52 ] 
+Uplifting [main] best 14928 combination reg byte x [ main::r#52 ] 
 Attempting to uplift remaining variables inzp ZP_BYTE:18 [ main::r#54 ]
-Uplifting [main] best 14913 combination reg byte x [ main::r#54 ] 
+Uplifting [main] best 14838 combination reg byte x [ main::r#54 ] 
 Attempting to uplift remaining variables inzp ZP_BYTE:19 [ main::r#55 ]
-Uplifting [main] best 14823 combination reg byte x [ main::r#55 ] 
+Uplifting [main] best 14748 combination reg byte x [ main::r#55 ] 
 Attempting to uplift remaining variables inzp ZP_BYTE:20 [ main::r#56 ]
-Uplifting [main] best 14733 combination reg byte x [ main::r#56 ] 
+Uplifting [main] best 14658 combination reg byte x [ main::r#56 ] 
 Attempting to uplift remaining variables inzp ZP_BYTE:22 [ main::r#58 ]
-Uplifting [main] best 14643 combination reg byte x [ main::r#58 ] 
+Uplifting [main] best 14568 combination reg byte x [ main::r#58 ] 
 Attempting to uplift remaining variables inzp ZP_BYTE:23 [ main::r#59 ]
-Uplifting [main] best 14553 combination reg byte x [ main::r#59 ] 
+Uplifting [main] best 14478 combination reg byte x [ main::r#59 ] 
 Attempting to uplift remaining variables inzp ZP_BYTE:39 [ main::b#0 ]
-Uplifting [main] best 14553 combination zp ZP_BYTE:39 [ main::b#0 ] 
+Uplifting [main] best 14478 combination zp ZP_BYTE:39 [ main::b#0 ] 
 Coalescing zero page register [ zp ZP_BYTE:2 [ main::a#10 main::a#1 ] ] with [ zp ZP_BYTE:26 [ printu::a#20 printu::a#8 printu::a#9 printu::a#10 printu::a#11 printu::a#12 printu::a#13 printu::a#14 printu::a#15 printu::a#16 printu::a#17 printu::a#0 printu::a#18 printu::a#19 printu::a#1 printu::a#2 printu::a#3 printu::a#4 printu::a#5 printu::a#6 printu::a#7 ] ]
 Coalescing zero page register [ zp ZP_WORD:24 [ line_cursor#10 line_cursor#20 line_cursor#21 line_cursor#1 ] ] with [ zp ZP_WORD:37 [ print_cls::sc#2 print_cls::sc#1 ] ]
 Coalescing zero page register [ zp ZP_WORD:27 [ printu::op#20 ] ] with [ zp ZP_WORD:35 [ print_str::str#2 print_str::str#1 print_str::str#0 ] ]
@@ -9174,10 +9155,9 @@ main: {
   //SEG118 main::@51
   b51:
   //SEG119 [45] if((byte) main::a#10<=(byte/signed byte/word/signed word) 55) goto main::@7 [ main::a#10 main::i#10 line_cursor#1 main::b#0 char_cursor#52 ] ( main:2 [ main::a#10 main::i#10 line_cursor#1 main::b#0 char_cursor#52 ] ) -- vbuz1_le_vbuc1_then_la1 
-    lda a
-    cmp #$37
-    bcc b7_from_b51
-    beq b7_from_b51
+    lda #$37
+    cmp a
+    bcs b7_from_b51
   //SEG120 [46] phi from main::@51 to main::@28 [phi:main::@51->main::@28]
   b28_from_b51:
     jmp b28
@@ -9218,11 +9198,10 @@ main: {
   //SEG136 main::@52
   b52:
   //SEG137 [51] if((byte) main::a#10<=*((const byte[5]) main::cs#0 + (byte) main::i#10)) goto main::@8 [ main::a#10 main::i#10 line_cursor#1 main::b#0 char_cursor#52 ] ( main:2 [ main::a#10 main::i#10 line_cursor#1 main::b#0 char_cursor#52 ] ) -- vbuz1_le_pbuc1_derefidx_vbuz2_then_la1 
-    lda a
     ldy i
-    cmp cs,y
-    bcc b8_from_b52
-    beq b8_from_b52
+    lda cs,y
+    cmp a
+    bcs b8_from_b52
   //SEG138 [52] phi from main::@52 to main::@29 [phi:main::@52->main::@29]
   b29_from_b52:
     jmp b29
@@ -9413,12 +9392,10 @@ main: {
   //SEG217 main::@57
   b57:
   //SEG218 [81] if((byte) main::a#10>*((const byte[5]) main::cs#0 + (byte) main::i#10)) goto main::@12 [ main::a#10 main::i#10 line_cursor#1 main::b#0 char_cursor#52 ] ( main:2 [ main::a#10 main::i#10 line_cursor#1 main::b#0 char_cursor#52 ] ) -- vbuz1_gt_pbuc1_derefidx_vbuz2_then_la1 
-    lda a
     ldy i
-    cmp cs,y
-    beq !+
-    bcs b12_from_b57
-  !:
+    lda cs,y
+    cmp a
+    bcc b12_from_b57
   //SEG219 [82] phi from main::@57 to main::@33 [phi:main::@57->main::@33]
   b33_from_b57:
     jmp b33
@@ -9899,9 +9876,9 @@ main: {
   //SEG422 main::@70
   b70:
   //SEG423 [157] (byte) main::a#1 ← (byte) main::a#10 + (byte/signed byte/word/signed word) 48 [ main::i#10 main::a#1 line_cursor#1 ] ( main:2 [ main::i#10 main::a#1 line_cursor#1 ] ) -- vbuz1=vbuz1_plus_vbuc1 
-    lda a
+    lda #$30
     clc
-    adc #$30
+    adc a
     sta a
   //SEG424 [158] (byte) main::i#1 ← ++ (byte) main::i#10 [ main::a#1 main::i#1 line_cursor#1 ] ( main:2 [ main::a#1 main::i#1 line_cursor#1 ] ) -- vbuz1=_inc_vbuz1 
     inc i
@@ -10755,7 +10732,7 @@ reg byte a [ print_byte::$2 ]
 
 
 FINAL ASSEMBLER
-Score: 11032
+Score: 10957
 
 //SEG0 Basic Upstart
 .pc = $801 "Basic"
@@ -10997,10 +10974,9 @@ main: {
     jsr printu
   //SEG118 main::@51
   //SEG119 [45] if((byte) main::a#10<=(byte/signed byte/word/signed word) 55) goto main::@7 [ main::a#10 main::i#10 line_cursor#1 main::b#0 char_cursor#52 ] ( main:2 [ main::a#10 main::i#10 line_cursor#1 main::b#0 char_cursor#52 ] ) -- vbuz1_le_vbuc1_then_la1 
-    lda a
-    cmp #$37
-    bcc b28
-    beq b28
+    lda #$37
+    cmp a
+    bcs b28
   //SEG120 [46] phi from main::@51 to main::@28 [phi:main::@51->main::@28]
   //SEG121 main::@28
   //SEG122 [47] phi from main::@28 to main::@7 [phi:main::@28->main::@7]
@@ -11033,11 +11009,10 @@ main: {
     jsr printu
   //SEG136 main::@52
   //SEG137 [51] if((byte) main::a#10<=*((const byte[5]) main::cs#0 + (byte) main::i#10)) goto main::@8 [ main::a#10 main::i#10 line_cursor#1 main::b#0 char_cursor#52 ] ( main:2 [ main::a#10 main::i#10 line_cursor#1 main::b#0 char_cursor#52 ] ) -- vbuz1_le_pbuc1_derefidx_vbuz2_then_la1 
-    lda a
     ldy i
-    cmp cs,y
-    bcc b29
-    beq b29
+    lda cs,y
+    cmp a
+    bcs b29
   //SEG138 [52] phi from main::@52 to main::@29 [phi:main::@52->main::@29]
   //SEG139 main::@29
   //SEG140 [53] phi from main::@29 to main::@8 [phi:main::@29->main::@8]
@@ -11192,12 +11167,10 @@ main: {
     jsr printu
   //SEG217 main::@57
   //SEG218 [81] if((byte) main::a#10>*((const byte[5]) main::cs#0 + (byte) main::i#10)) goto main::@12 [ main::a#10 main::i#10 line_cursor#1 main::b#0 char_cursor#52 ] ( main:2 [ main::a#10 main::i#10 line_cursor#1 main::b#0 char_cursor#52 ] ) -- vbuz1_gt_pbuc1_derefidx_vbuz2_then_la1 
-    lda a
     ldy i
-    cmp cs,y
-    beq !+
-    bcs b33
-  !:
+    lda cs,y
+    cmp a
+    bcc b33
   //SEG219 [82] phi from main::@57 to main::@33 [phi:main::@57->main::@33]
   //SEG220 main::@33
   //SEG221 [83] phi from main::@33 to main::@12 [phi:main::@33->main::@12]
@@ -11586,9 +11559,9 @@ main: {
     jsr print_ln
   //SEG422 main::@70
   //SEG423 [157] (byte) main::a#1 ← (byte) main::a#10 + (byte/signed byte/word/signed word) 48 [ main::i#10 main::a#1 line_cursor#1 ] ( main:2 [ main::i#10 main::a#1 line_cursor#1 ] ) -- vbuz1=vbuz1_plus_vbuc1 
-    lda a
+    lda #$30
     clc
-    adc #$30
+    adc a
     sta a
   //SEG424 [158] (byte) main::i#1 ← ++ (byte) main::i#10 [ main::a#1 main::i#1 line_cursor#1 ] ( main:2 [ main::a#1 main::i#1 line_cursor#1 ] ) -- vbuz1=_inc_vbuz1 
     inc i

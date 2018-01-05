@@ -30,10 +30,9 @@ line: {
     ldx x
     jsr plot
     inc x
-    lda x
-    cmp #x1
-    bcc b2
-    beq b2
+    lda #x1
+    cmp x
+    bcs b2
   breturn:
     rts
   b1:

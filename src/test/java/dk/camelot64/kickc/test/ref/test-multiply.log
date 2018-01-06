@@ -8365,7 +8365,7 @@ Uplifting [slow_signed_multiply] best 214496 combination zp ZP_WORD:22 [ slow_si
 Uplifting [slow_multiply] best 204196 combination zp ZP_WORD:28 [ slow_multiply::return#0 slow_multiply::m#3 slow_multiply::m#1 ] reg byte y [ slow_multiply::i#2 slow_multiply::i#1 ] zp ZP_WORD:84 [ slow_multiply::return#2 ] reg byte x [ slow_multiply::b#0 ] zp ZP_BYTE:82 [ slow_multiply::a#0 ] 
 Uplifting [multiply] best 203584 combination reg byte x [ multiply::b#2 multiply::b#1 multiply::b#0 ] reg byte a [ multiply::a#2 multiply::a#1 multiply::a#0 ] zp ZP_WORD:88 [ multiply::return#3 ] zp ZP_WORD:80 [ multiply::return#0 ] zp ZP_WORD:70 [ multiply::return#2 ] 
 Uplift attempts [signed_multiply] 10000/16384 (limiting to 10000)
-Uplifting [signed_multiply] best 203253 combination zp ZP_WORD:58 [ signed_multiply::return#2 ] zp ZP_WORD:78 [ signed_multiply::return#0 ] zp ZP_WORD:17 [ signed_multiply::m#4 signed_multiply::m#5 signed_multiply::m#1 signed_multiply::m#0 signed_multiply::m#2 ] zp ZP_BYTE:57 [ signed_multiply::b#0 ] reg byte y [ signed_multiply::a#0 ] reg byte x [ signed_multiply::$7 ] reg byte a [ signed_multiply::$16 ] reg byte y [ signed_multiply::$13 ] reg byte a [ signed_multiply::$17 ] reg byte a [ signed_multiply::$6 ] reg byte a [ signed_multiply::$12 ] 
+Uplifting [signed_multiply] best 203253 combination zp ZP_WORD:58 [ signed_multiply::return#2 ] zp ZP_WORD:78 [ signed_multiply::return#0 ] zp ZP_WORD:17 [ signed_multiply::m#4 signed_multiply::m#5 signed_multiply::m#1 signed_multiply::m#0 signed_multiply::m#2 ] zp ZP_BYTE:57 [ signed_multiply::b#0 ] reg byte y [ signed_multiply::a#0 ] reg byte x [ signed_multiply::$7 ] reg byte a [ signed_multiply::$16 ] zp ZP_BYTE:76 [ signed_multiply::$13 ] reg byte a [ signed_multiply::$17 ] reg byte a [ signed_multiply::$6 ] reg byte a [ signed_multiply::$12 ] 
 Limited combination testing to 10000 combinations of 16384 possible.
 Uplifting [multiply_results_compare] best 203253 combination zp ZP_BYTE:26 [ multiply_results_compare::b#2 multiply_results_compare::b#1 ] zp ZP_WORD:90 [ multiply_results_compare::ma#0 ] zp ZP_BYTE:25 [ multiply_results_compare::a#6 multiply_results_compare::a#1 ] zp ZP_WORD:86 [ multiply_results_compare::ms#0 ] 
 Uplifting [signed_multiply_results_compare] best 203253 combination zp ZP_BYTE:3 [ signed_multiply_results_compare::b#2 signed_multiply_results_compare::b#1 ] zp ZP_WORD:60 [ signed_multiply_results_compare::ma#0 ] zp ZP_BYTE:2 [ signed_multiply_results_compare::a#6 signed_multiply_results_compare::a#1 ] zp ZP_WORD:54 [ signed_multiply_results_compare::ms#0 ] 
@@ -8402,6 +8402,8 @@ Attempting to uplift remaining variables inzp ZP_BYTE:47 [ init_multiply::dir#2 
 Uplifting [init_multiply] best 202841 combination zp ZP_BYTE:47 [ init_multiply::dir#2 init_multiply::dir#3 ] 
 Attempting to uplift remaining variables inzp ZP_BYTE:57 [ signed_multiply::b#0 ]
 Uplifting [signed_multiply] best 202841 combination zp ZP_BYTE:57 [ signed_multiply::b#0 ] 
+Attempting to uplift remaining variables inzp ZP_BYTE:76 [ signed_multiply::$13 ]
+Uplifting [signed_multiply] best 202841 combination zp ZP_BYTE:76 [ signed_multiply::$13 ] 
 Attempting to uplift remaining variables inzp ZP_BYTE:63 [ signed_multiply_error::b#0 ]
 Uplifting [signed_multiply_error] best 202841 combination zp ZP_BYTE:63 [ signed_multiply_error::b#0 ] 
 Attempting to uplift remaining variables inzp ZP_BYTE:93 [ multiply_error::b#0 ]
@@ -8444,6 +8446,7 @@ Coalescing zero page register [ zp ZP_WORD:66 [ signed_multiply_error::ma#0 ] ] 
 Allocated (was zp ZP_WORD:14) zp ZP_WORD:8 [ char_cursor#75 char_cursor#124 char_cursor#123 char_cursor#119 char_cursor#135 char_cursor#27 char_cursor#118 char_cursor#17 char_cursor#117 char_cursor#172 char_cursor#176 char_cursor#1 char_cursor#121 char_cursor#197 init_multiply::sqr#3 init_multiply::sqr#4 init_multiply::sqr#1 init_multiply::sqr#2 signed_multiply_results_compare::ms#0 ]
 Allocated (was zp ZP_WORD:32) zp ZP_WORD:10 [ multiply_tables_compare::asm_sqr#2 multiply_tables_compare::asm_sqr#1 signed_multiply_error::ms#0 multiply_results_compare::ms#0 multiply_error::ms#0 ]
 Allocated (was zp ZP_WORD:66) zp ZP_WORD:12 [ signed_multiply_error::ma#0 multiply_error::ma#0 ]
+Allocated (was zp ZP_BYTE:76) zp ZP_BYTE:14 [ signed_multiply::$13 ]
 
 ASSEMBLER BEFORE OPTIMIZATION
 //SEG0 Basic Upstart
@@ -9060,6 +9063,7 @@ print_sbyte: {
 }
 //SEG233 signed_multiply
 signed_multiply: {
+    .label _13 = $e
     .label m = 6
     .label return = 6
     .label b = 3
@@ -9112,11 +9116,11 @@ signed_multiply: {
   b4:
   //SEG254 [125] (byte~) signed_multiply::$12 ← > (word) signed_multiply::m#5 [ signed_multiply::a#0 signed_multiply::m#5 signed_multiply::$12 ] ( main:2::signed_multiply_results_compare:15::signed_multiply:27 [ signed_multiply_results_compare::a#6 signed_multiply_results_compare::b#2 signed_multiply_results_compare::ms#0 line_cursor#1 signed_multiply::a#0 signed_multiply::m#5 signed_multiply::$12 ] ) -- vbuaa=_hi_vwuz1 
     lda m+1
-  //SEG255 [126] (byte~) signed_multiply::$13 ← ((byte)) (signed byte) signed_multiply::a#0 [ signed_multiply::m#5 signed_multiply::$12 signed_multiply::$13 ] ( main:2::signed_multiply_results_compare:15::signed_multiply:27 [ signed_multiply_results_compare::a#6 signed_multiply_results_compare::b#2 signed_multiply_results_compare::ms#0 line_cursor#1 signed_multiply::m#5 signed_multiply::$12 signed_multiply::$13 ] ) -- vbuyy=_byte_vbsyy 
-  //SEG256 [127] (byte/signed byte/word/signed word~) signed_multiply::$17 ← (byte~) signed_multiply::$12 - (byte~) signed_multiply::$13 [ signed_multiply::m#5 signed_multiply::$17 ] ( main:2::signed_multiply_results_compare:15::signed_multiply:27 [ signed_multiply_results_compare::a#6 signed_multiply_results_compare::b#2 signed_multiply_results_compare::ms#0 line_cursor#1 signed_multiply::m#5 signed_multiply::$17 ] ) -- vbuaa=vbuaa_minus_vbuyy 
-    sty $ff
+  //SEG255 [126] (byte~) signed_multiply::$13 ← ((byte)) (signed byte) signed_multiply::a#0 [ signed_multiply::m#5 signed_multiply::$12 signed_multiply::$13 ] ( main:2::signed_multiply_results_compare:15::signed_multiply:27 [ signed_multiply_results_compare::a#6 signed_multiply_results_compare::b#2 signed_multiply_results_compare::ms#0 line_cursor#1 signed_multiply::m#5 signed_multiply::$12 signed_multiply::$13 ] ) -- vbuz1=_byte_vbsyy 
+    sty _13
+  //SEG256 [127] (byte/signed byte/word/signed word~) signed_multiply::$17 ← (byte~) signed_multiply::$12 - (byte~) signed_multiply::$13 [ signed_multiply::m#5 signed_multiply::$17 ] ( main:2::signed_multiply_results_compare:15::signed_multiply:27 [ signed_multiply_results_compare::a#6 signed_multiply_results_compare::b#2 signed_multiply_results_compare::ms#0 line_cursor#1 signed_multiply::m#5 signed_multiply::$17 ] ) -- vbuaa=vbuaa_minus_vbuz1 
     sec
-    sbc $ff
+    sbc _13
   //SEG257 [128] (word) signed_multiply::m#2 ← (word) signed_multiply::m#5 hi= (byte/signed byte/word/signed word~) signed_multiply::$17 [ signed_multiply::m#2 ] ( main:2::signed_multiply_results_compare:15::signed_multiply:27 [ signed_multiply_results_compare::a#6 signed_multiply_results_compare::b#2 signed_multiply_results_compare::ms#0 line_cursor#1 signed_multiply::m#2 ] ) -- vwuz1=vwuz1_sethi_vbuaa 
     sta m+1
   //SEG258 [129] phi from signed_multiply::@1 signed_multiply::@4 to signed_multiply::@2 [phi:signed_multiply::@1/signed_multiply::@4->signed_multiply::@2]
@@ -10693,7 +10697,7 @@ FINAL SYMBOL TABLE
 (word) print_word::w#5 w zp ZP_WORD:6 4.666666666666666
 (signed word()) signed_multiply((signed byte) signed_multiply::a , (signed byte) signed_multiply::b)
 (byte~) signed_multiply::$12 reg byte a 2.0
-(byte~) signed_multiply::$13 reg byte y 4.0
+(byte~) signed_multiply::$13 $13 zp ZP_BYTE:14 4.0
 (byte/signed byte/word/signed word~) signed_multiply::$16 reg byte a 4.0
 (byte/signed byte/word/signed word~) signed_multiply::$17 reg byte a 4.0
 (byte~) signed_multiply::$6 reg byte a 2.0
@@ -10829,7 +10833,7 @@ reg byte a [ signed_multiply::$6 ]
 reg byte x [ signed_multiply::$7 ]
 reg byte a [ signed_multiply::$16 ]
 reg byte a [ signed_multiply::$12 ]
-reg byte y [ signed_multiply::$13 ]
+zp ZP_BYTE:14 [ signed_multiply::$13 ]
 reg byte a [ signed_multiply::$17 ]
 reg byte x [ slow_multiply::b#0 ]
 reg byte x [ multiply_error::a#0 ]
@@ -11322,6 +11326,7 @@ print_sbyte: {
 }
 //SEG233 signed_multiply
 signed_multiply: {
+    .label _13 = $e
     .label m = 6
     .label return = 6
     .label b = 3
@@ -11364,11 +11369,11 @@ signed_multiply: {
   //SEG253 signed_multiply::@4
   //SEG254 [125] (byte~) signed_multiply::$12 ← > (word) signed_multiply::m#5 [ signed_multiply::a#0 signed_multiply::m#5 signed_multiply::$12 ] ( main:2::signed_multiply_results_compare:15::signed_multiply:27 [ signed_multiply_results_compare::a#6 signed_multiply_results_compare::b#2 signed_multiply_results_compare::ms#0 line_cursor#1 signed_multiply::a#0 signed_multiply::m#5 signed_multiply::$12 ] ) -- vbuaa=_hi_vwuz1 
     lda m+1
-  //SEG255 [126] (byte~) signed_multiply::$13 ← ((byte)) (signed byte) signed_multiply::a#0 [ signed_multiply::m#5 signed_multiply::$12 signed_multiply::$13 ] ( main:2::signed_multiply_results_compare:15::signed_multiply:27 [ signed_multiply_results_compare::a#6 signed_multiply_results_compare::b#2 signed_multiply_results_compare::ms#0 line_cursor#1 signed_multiply::m#5 signed_multiply::$12 signed_multiply::$13 ] ) -- vbuyy=_byte_vbsyy 
-  //SEG256 [127] (byte/signed byte/word/signed word~) signed_multiply::$17 ← (byte~) signed_multiply::$12 - (byte~) signed_multiply::$13 [ signed_multiply::m#5 signed_multiply::$17 ] ( main:2::signed_multiply_results_compare:15::signed_multiply:27 [ signed_multiply_results_compare::a#6 signed_multiply_results_compare::b#2 signed_multiply_results_compare::ms#0 line_cursor#1 signed_multiply::m#5 signed_multiply::$17 ] ) -- vbuaa=vbuaa_minus_vbuyy 
-    sty $ff
+  //SEG255 [126] (byte~) signed_multiply::$13 ← ((byte)) (signed byte) signed_multiply::a#0 [ signed_multiply::m#5 signed_multiply::$12 signed_multiply::$13 ] ( main:2::signed_multiply_results_compare:15::signed_multiply:27 [ signed_multiply_results_compare::a#6 signed_multiply_results_compare::b#2 signed_multiply_results_compare::ms#0 line_cursor#1 signed_multiply::m#5 signed_multiply::$12 signed_multiply::$13 ] ) -- vbuz1=_byte_vbsyy 
+    sty _13
+  //SEG256 [127] (byte/signed byte/word/signed word~) signed_multiply::$17 ← (byte~) signed_multiply::$12 - (byte~) signed_multiply::$13 [ signed_multiply::m#5 signed_multiply::$17 ] ( main:2::signed_multiply_results_compare:15::signed_multiply:27 [ signed_multiply_results_compare::a#6 signed_multiply_results_compare::b#2 signed_multiply_results_compare::ms#0 line_cursor#1 signed_multiply::m#5 signed_multiply::$17 ] ) -- vbuaa=vbuaa_minus_vbuz1 
     sec
-    sbc $ff
+    sbc _13
   //SEG257 [128] (word) signed_multiply::m#2 ← (word) signed_multiply::m#5 hi= (byte/signed byte/word/signed word~) signed_multiply::$17 [ signed_multiply::m#2 ] ( main:2::signed_multiply_results_compare:15::signed_multiply:27 [ signed_multiply_results_compare::a#6 signed_multiply_results_compare::b#2 signed_multiply_results_compare::ms#0 line_cursor#1 signed_multiply::m#2 ] ) -- vwuz1=vwuz1_sethi_vbuaa 
     sta m+1
   //SEG258 [129] phi from signed_multiply::@1 signed_multiply::@4 to signed_multiply::@2 [phi:signed_multiply::@1/signed_multiply::@4->signed_multiply::@2]

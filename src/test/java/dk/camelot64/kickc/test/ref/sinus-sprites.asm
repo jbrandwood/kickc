@@ -466,8 +466,8 @@ gen_chargen_sprite: {
     tay
     sta s_gen
   b2:
-    lda #$80
-    and bits
+    lda bits
+    and #$80
     cmp #0
     beq b6
     lda #1

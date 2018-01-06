@@ -25,8 +25,8 @@ main: {
     sta bits
     ldx #0
   b2:
-    lda #$80
-    and bits
+    lda bits
+    and #$80
     cmp #0
     beq b4
     lda #'*'

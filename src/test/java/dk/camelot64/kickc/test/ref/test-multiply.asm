@@ -239,6 +239,7 @@ print_sbyte: {
     rts
 }
 signed_multiply: {
+    .label _13 = $e
     .label m = 6
     .label return = 6
     .label b = 3
@@ -258,9 +259,9 @@ signed_multiply: {
     cmp #0
     bpl b2
     lda m+1
-    sty $ff
+    sty _13
     sec
-    sbc $ff
+    sbc _13
     sta m+1
   b2:
     rts

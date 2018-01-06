@@ -454,8 +454,8 @@ print_byte: {
     tay
     lda hextab,y
     jsr print_char
-    lda #$f
-    and b
+    lda b
+    and #$f
     tay
     lda hextab,y
     jsr print_char

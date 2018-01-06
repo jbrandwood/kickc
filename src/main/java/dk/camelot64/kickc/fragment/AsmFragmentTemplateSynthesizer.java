@@ -55,6 +55,16 @@ public class AsmFragmentTemplateSynthesizer {
             instanceSpec.getBindings());
    }
 
+   /**
+    * Get the best fragment templates for a signature
+    * @param signature The signature
+    * @param log The log
+    * @return The best templates (with different clobber profiles) for the signature
+    */
+   public static Collection<AsmFragmentTemplate> getFragmentTemplates(String signature, CompileLog log) {
+      return SYNTHESIZER.getBestTemplates(signature, log);
+   }
+
    public AsmFragmentTemplate getFragmentTemplate(String signature, CompileLog log) {
       AsmFragmentTemplate bestTemplate = bestFragmentCache.get(signature);
       if(bestTemplate == UNKNOWN) {
@@ -459,8 +469,13 @@ public class AsmFragmentTemplateSynthesizer {
          URL fragmentUrl = classLoader.getResource(FRAGMENT_RESOURCE_FOLDER + signature + ".asm");
          if(fragmentUrl == null) return null;
          InputStream fragmentStream = fragmentUrl.openStream();
-         CharStream fragmentCharStream = CharStreams.fromStream(fragmentStream);
-         String body = fragmentCharStream.toString();
+         String body;
+         if(fragmentStream.available()==0) {
+            body = "";
+         }  else {
+            CharStream fragmentCharStream = CharStreams.fromStream(fragmentStream);
+            body = fragmentCharStream.toString();
+         }
          return new AsmFragmentTemplate(signature, body);
       } catch(IOException e) {
          throw new RuntimeException("Error loading fragment file " + signature, e);

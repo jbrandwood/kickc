@@ -24,7 +24,7 @@ public class TestPrograms {
    String testPath;
 
    public TestPrograms() throws IOException {
-      testPath = "src/test/java/dk/camelot64/kickc/test/";
+      testPath = "src/test/java/dk/camelot64/kickc/test/kc";
       helper = new ReferenceHelper("dk/camelot64/kickc/test/ref/");
    }
 
@@ -32,7 +32,7 @@ public class TestPrograms {
    public static void tearDown() throws Exception {
       CompileLog log = new CompileLog();
       log.setSysOut(true);
-      AsmFragmentTemplateUsages.logUsages(log, false, false,  false, false, false, false);
+      AsmFragmentTemplateUsages.logUsages(log, false, false,  false, false, true, true);
    }
 
     @Test

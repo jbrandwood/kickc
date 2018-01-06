@@ -227,7 +227,7 @@ public class AsmFragmentTemplateSynthesizer {
          for(AsmFragmentClobber bestClobber : bestClobbers) {
             AsmFragmentTemplate bestTemplate = bestTemplates.get(bestClobber);
             double bestCycles = bestTemplate.getCycles();
-            if(candidateClobber.isSubset(bestClobber) && candidateCycles < bestCycles) {
+            if(candidateClobber.isSubset(bestClobber) && candidateCycles <= bestCycles) {
                // The candidate is better - remove the current template
                bestTemplates.remove(bestClobber);
             }

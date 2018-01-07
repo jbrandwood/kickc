@@ -437,7 +437,9 @@ public class AsmFragmentTemplateSynthesizer {
                   }
                   modified |= synthesis.bestTemplateCandidate(synthesized);
                } else {
-                  log.append("Fragment synthesis " + synthesis.getSignature() + " - Sub clobber prevents synthesis from " + subSignature);
+                  if(log.isVerboseFragmentLog()) {
+                     log.append("Fragment synthesis " + synthesis.getSignature() + " - Sub clobber prevents synthesis from " + subSignature);
+                  }
                }
             }
          }

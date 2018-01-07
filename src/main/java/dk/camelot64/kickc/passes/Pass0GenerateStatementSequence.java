@@ -227,7 +227,7 @@ public class Pass0GenerateStatementSequence extends KickCBaseVisitor<Object> {
       PrePostModifierHandler.addPreModifiers(this, ctx.expr());
       RValue rValue = (RValue) this.visit(ctx.expr());
       VariableRef notExprVar = getCurrentSymbols().addVariableIntermediate().getRef();
-      sequence.addStatement(new StatementAssignment(notExprVar, null, Operator.NOT, rValue));
+      sequence.addStatement(new StatementAssignment(notExprVar, null, Operator.LOGIC_NOT, rValue));
       PrePostModifierHandler.addPostModifiers(this, ctx.expr());
 
       Label elseJumpLabel = getCurrentSymbols().addLabelIntermediate();

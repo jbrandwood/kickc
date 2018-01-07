@@ -10,7 +10,7 @@ public class Operator {
    public static final Operator POS = new Operator("+", "_pos_", Type.UNARY, 2);
    public static final Operator NEG = new Operator("-", "_neg_", Type.UNARY, 2);
    public static final Operator BOOL_NOT = new Operator("~", "_not_", Type.UNARY, 2);
-   public static final Operator NOT = new Operator("!", "_not_", Type.UNARY, 2);
+   public static final Operator LOGIC_NOT = new Operator("!", "_not_", Type.UNARY, 2);
    public static final Operator DEREF = new Operator("*", "_deref_", Type.UNARY, 2);
    public static final Operator WORD = new Operator("w=", "_word_", Type.BINARY, 2);
    public static final Operator DEREF_IDX = new Operator("*idx", "_derefidx_", Type.BINARY, 2);
@@ -109,7 +109,7 @@ public class Operator {
          case "--":
             return DECREMENT;
          case "!":
-            return NOT;
+            return LOGIC_NOT;
          case "~":
             return BOOL_NOT;
          case "*":

@@ -66,7 +66,7 @@ public class AsmFragmentInstance {
       }
 
       if(boundValue == null) {
-         throw new RuntimeException("Binding '" + name + "' not found in fragment " + this.name + ".asm");
+         throw new RuntimeException("Binding '" + name + "' not found in fragment " + this.name );
       }
       if(boundValue instanceof Variable) {
          Variable boundVar = (Variable) boundValue;

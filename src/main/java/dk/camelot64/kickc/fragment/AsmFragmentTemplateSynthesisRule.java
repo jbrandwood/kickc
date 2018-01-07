@@ -379,7 +379,7 @@ class AsmFragmentTemplateSynthesisRule {
       synths.add(new AsmFragmentTemplateSynthesisRule("pb(.)c1_derefidx_vbuxx=(.*)", ".*c1.*c1.*", null, "vb$1aa=$2", "sta {c1},x", mapC, "xx"));
       synths.add(new AsmFragmentTemplateSynthesisRule("pb(.)z1_derefidx_vbuz2=(.*)", ".*z1.*z1.*|.*z2.*z2.*", null, "vb$1aa=$2", "ldy {z2}\n" + "sta ({z1}),y", mapZ2));
 
-      synths.add(new AsmFragmentTemplateSynthesisRule("(.*)=_deref_pb(.)c1(.*)", ".*=.*aa.*", "lda {c1}", "$1=vb$2aa$3", null, mapC));
+      synths.add(new AsmFragmentTemplateSynthesisRule("(.*)=_deref_pb(.)c1(.*)", ".*=.*aa.*|.*c1.*c1.*", "lda {c1}", "$1=vb$2aa$3", null, mapC));
       synths.add(new AsmFragmentTemplateSynthesisRule("(.*)=_deref_pb(.)z1(.*)", ".*z1.*z1.*|.*=.*aa.*|.*yy.*", "ldy #0\n" + "lda ({z1}),y", "$1=vb$2aa$3", null, mapZ));
 
       // Convert array indexing with A register to X/Y register by prefixing tax/tay (..._derefidx_vbuaa... -> ..._derefidx_vbuxx... /... _derefidx_vbuyy... )

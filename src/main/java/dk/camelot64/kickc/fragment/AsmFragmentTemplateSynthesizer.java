@@ -43,7 +43,12 @@ public class AsmFragmentTemplateSynthesizer {
    /** Special singleton representing that the fragment can not be synthesized or loaded. */
    private AsmFragmentTemplate UNKNOWN = new AsmFragmentTemplate("UNKNOWN", null);
 
-   public static AsmFragmentInstance getFragmentInstance(AsmFragmentInstanceSpec instanceSpec, CompileLog log) {
+   public static void clearCaches() {
+      SYNTHESIZER = new AsmFragmentTemplateSynthesizer();
+   }
+
+
+      public static AsmFragmentInstance getFragmentInstance(AsmFragmentInstanceSpec instanceSpec, CompileLog log) {
       String signature = instanceSpec.getSignature();
       AsmFragmentTemplate fragmentTemplate = SYNTHESIZER.getFragmentTemplate(signature, log);
       // Return the resulting fragment instance

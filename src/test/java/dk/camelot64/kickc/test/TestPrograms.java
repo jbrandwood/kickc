@@ -2,10 +2,12 @@ package dk.camelot64.kickc.test;
 
 import dk.camelot64.kickc.CompileLog;
 import dk.camelot64.kickc.Compiler;
+import dk.camelot64.kickc.fragment.AsmFragmentTemplateSynthesizer;
 import dk.camelot64.kickc.fragment.AsmFragmentTemplateUsages;
 import dk.camelot64.kickc.model.CompileError;
 import dk.camelot64.kickc.model.Program;
 import org.junit.AfterClass;
+import org.junit.BeforeClass;
 import org.junit.Test;
 
 import java.io.IOException;
@@ -26,6 +28,11 @@ public class TestPrograms {
    public TestPrograms() throws IOException {
       testPath = "src/test/java/dk/camelot64/kickc/test/kc";
       helper = new ReferenceHelper("dk/camelot64/kickc/test/ref/");
+   }
+
+   @BeforeClass
+   public static void setUp() {
+      AsmFragmentTemplateSynthesizer.clearCaches();
    }
 
    @AfterClass

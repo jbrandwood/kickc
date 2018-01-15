@@ -363,6 +363,10 @@ class AsmFragmentTemplateSynthesisRule {
       // Rewrite Assignments to *Z1 from A
       synths.add(new AsmFragmentTemplateSynthesisRule("_deref_pbuz1=(.*z1.*)", null, null, "vbuaa=$1", "ldy #0\n" + "sta ({z1}),y", null));
 
+      // Rewrite _deref_pb.z1_ to _vb.aa_ (if no other Z1s)
+      synths.add(new AsmFragmentTemplateSynthesisRule("(.*)_deref_pb(.)z1_(.*)", ".*z1.*z1.*|.*z1.*=.*|.*yy.*", "ldy #0\n"+"lda ({z1}),y", "$1vb$2aa_$3", null, mapZ));
+
+
       // OLD STYLE REWRITES - written when only one rule could be taken
 
       //synths.add(new AsmFragmentTemplateSynthesisRule("(.*)=(.*)_(band|bor|bxor|plus)_(vb.aa)", ".*=vb.aa_.*", null, "$1=$4_$3_$2", null, null));
@@ -496,6 +500,7 @@ class AsmFragmentTemplateSynthesisRule {
       // Convert INC/DEC to +1/-1 ( ..._inc_xxx... -> ...xxx_plus_1_... / ..._dec_xxx... -> ...xxx_minus_1_... )
       synths.add(new AsmFragmentTemplateSynthesisRule("vb(.)aa=_inc_(.*)", null, null, "vb$1aa=$2_plus_1", null, null));
       synths.add(new AsmFragmentTemplateSynthesisRule("vb(.)aa=_dec_(.*)", null, null, "vb$1aa=$2_minus_1", null, null));
+      synths.add(new AsmFragmentTemplateSynthesisRule("vw(.)z1=_inc_vw(.z.)", null, null, "vw$1z1=vw$2_plus_1", null, null));
 
       // Synthesize XX/YY using AA
       synths.add(new AsmFragmentTemplateSynthesisRule("(.*)=(.*)vbuxx(.*)", ".*=.*aa.*|.*derefidx_vb.xx.*", "txa", "$1=$2vbuaa$3", null, null));
@@ -515,6 +520,7 @@ class AsmFragmentTemplateSynthesisRule {
       synths.add(new AsmFragmentTemplateSynthesisRule("(.*)=p..([cz].)_(plus|minus|bor|bxor)_(.*)", null, null, "$1=vwu$2_$3_$4", null, null));
       synths.add(new AsmFragmentTemplateSynthesisRule("p..([cz].)=(.*)_(sethi|setlo|plus|minus)_(.*)", null, null, "vwu$1=$2_$3_$4", null, null));
       synths.add(new AsmFragmentTemplateSynthesisRule("(.*)=p..([cz].)_(sethi|setlo|plus|minus)_(.*)", null, null, "$1=vwu$2_$3_$4", null, null));
+      synths.add(new AsmFragmentTemplateSynthesisRule("p..([cz].)=_(inc|dec)_p..([cz].)", null, null, "vwu$1=_$2_vwu$3", null, null));
 
       return synths;
    }

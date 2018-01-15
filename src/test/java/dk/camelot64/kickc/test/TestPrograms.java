@@ -42,11 +42,15 @@ public class TestPrograms {
       AsmFragmentTemplateUsages.logUsages(log, false, false,  false, false, false, false);
    }
 
-    @Test
+   @Test
+   public void testRasterBars() throws IOException, URISyntaxException {
+      compileAndCompare("raster-bars");
+   }
+
+   @Test
     public void testComparisons() throws IOException, URISyntaxException {
         compileAndCompare("test-comparisons");
     }
-
 
     @Test
    public void testMemAlignment() throws IOException, URISyntaxException {

@@ -27,25 +27,30 @@ main: {
     jmp b1
 }
 lines: {
-    ldx #0
+    .label l = 2
+    lda #0
+    sta l
   b1:
-    lda lines_x,x
+    ldy l
+    lda lines_x,y
     sta line.x0
-    lda lines_x+1,x
+    lda lines_x+1,y
     sta line.x1
-    ldy lines_y,x
-    lda lines_y+1,x
-    sta line.y1
+    lda lines_y,y
+    sta line.y0
+    ldx l
+    ldy lines_y+1,x
     jsr line
-    inx
-    cpx #lines_cnt
+    inc l
+    lda l
+    cmp #lines_cnt
     bcc b1
     rts
 }
 line: {
-    .label x0 = 2
-    .label x1 = 3
-    .label y1 = 4
+    .label x0 = 3
+    .label x1 = 4
+    .label y0 = 5
     .label xd = 7
     .label yd = $a
     lda x0
@@ -55,18 +60,19 @@ line: {
     sec
     sbc x0
     sta xd
-    cpy y1
+    lda y0
+    sty $ff
+    cmp $ff
     bcs b2
     tya
-    eor #$ff
     sec
-    adc y1
+    sbc y0
     sta yd
     cmp xd
     bcs b3
-    lda x0
-    sta line_xdyi.x
-    sty line_xdyi.y
+    ldx x0
+    lda y0
+    sta line_xdyi.y
     lda x1
     sta line_xdyi.x1
     lda xd
@@ -77,9 +83,10 @@ line: {
   breturn:
     rts
   b3:
-    sty line_ydxi.y
-    lda x0
-    sta line_ydxi.x
+    lda y0
+    sta line_ydxi.y
+    ldx x0
+    sty line_ydxi.y1
     lda yd
     sta line_ydxi.yd
     lda xd
@@ -88,14 +95,15 @@ line: {
     jmp breturn
   b2:
     tya
+    eor #$ff
     sec
-    sbc y1
+    adc y0
     sta yd
     cmp xd
     bcs b6
-    lda x0
-    sta line_xdyd.x
-    sty line_xdyd.y
+    ldx x0
+    lda y0
+    sta line_xdyd.y
     lda x1
     sta line_xdyd.x1
     lda xd
@@ -105,11 +113,8 @@ line: {
     jsr line_xdyd
     jmp breturn
   b6:
-    lda y1
-    sta line_ydxd.y
-    lda x1
-    sta line_ydxd.x
-    sty line_ydxd.y1
+    sty line_ydxd.y
+    ldx x1
     lda yd
     sta line_ydxd.yd
     lda xd
@@ -121,19 +126,18 @@ line: {
     sec
     sbc x1
     sta xd
-    cpy y1
+    lda y0
+    sty $ff
+    cmp $ff
     bcs b9
     tya
-    eor #$ff
     sec
-    adc y1
+    sbc y0
     sta yd
     cmp xd
     bcs b10
-    lda x1
-    sta line_xdyd.x
-    lda y1
-    sta line_xdyd.y
+    ldx x1
+    sty line_xdyd.y
     lda x0
     sta line_xdyd.x1
     lda xd
@@ -143,9 +147,10 @@ line: {
     jsr line_xdyd
     jmp breturn
   b10:
-    sty line_ydxd.y
-    lda x0
-    sta line_ydxd.x
+    lda y0
+    sta line_ydxd.y
+    ldx x0
+    sty line_ydxd.y1
     lda yd
     sta line_ydxd.yd
     lda xd
@@ -154,15 +159,14 @@ line: {
     jmp breturn
   b9:
     tya
+    eor #$ff
     sec
-    sbc y1
+    adc y0
     sta yd
     cmp xd
     bcs b13
-    lda x1
-    sta line_xdyi.x
-    lda y1
-    sta line_xdyi.y
+    ldx x1
+    sty line_xdyi.y
     lda x0
     sta line_xdyi.x1
     lda xd
@@ -172,11 +176,8 @@ line: {
     jsr line_xdyi
     jmp breturn
   b13:
-    lda y1
-    sta line_ydxi.y
-    lda x1
-    sta line_ydxi.x
-    sty line_ydxi.y1
+    sty line_ydxi.y
+    ldx x1
     lda yd
     sta line_ydxi.yd
     lda xd
@@ -186,15 +187,15 @@ line: {
 }
 line_ydxi: {
     .label y = 6
-    .label x = 5
-    .label y1 = 4
-    .label yd = 3
-    .label xd = 2
+    .label y1 = 5
+    .label yd = 4
+    .label xd = 3
     .label e = 7
     lda xd
     lsr
     sta e
   b1:
+    ldy y
     jsr plot
     inc y
     lda xd
@@ -204,7 +205,7 @@ line_ydxi: {
     lda yd
     cmp e
     bcs b2
-    inc x
+    inx
     lda e
     sec
     sbc yd
@@ -218,17 +219,13 @@ line_ydxi: {
 }
 plot: {
     .label _0 = 8
-    .label x = 5
-    .label y = 6
     .label plotter_x = 8
     .label plotter_y = $b
     .label plotter = 8
-    ldy x
-    lda plot_xhi,y
+    lda plot_xhi,x
     sta plotter_x+1
-    lda plot_xlo,y
+    lda plot_xlo,x
     sta plotter_x
-    ldy y
     lda plot_yhi,y
     sta plotter_y+1
     lda plot_ylo,y
@@ -240,26 +237,26 @@ plot: {
     lda _0+1
     adc plotter_y+1
     sta _0+1
-    ldy x
-    lda plot_bit,y
     ldy #0
-    ora (plotter),y
+    lda (plotter),y
+    ora plot_bit,x
     sta (plotter),y
     rts
 }
 line_xdyi: {
-    .label x = 5
+    .label _6 = $a
     .label y = 6
-    .label x1 = 4
-    .label xd = 3
-    .label yd = 2
+    .label x1 = 5
+    .label xd = 4
+    .label yd = 3
     .label e = 7
     lda yd
     lsr
     sta e
   b1:
+    ldy y
     jsr plot
-    inc x
+    inx
     lda yd
     clc
     adc e
@@ -275,21 +272,22 @@ line_xdyi: {
   b2:
     ldy x1
     iny
-    cpy x
+    sty _6
+    cpx _6
     bne b1
     rts
 }
 line_ydxd: {
     .label y = 6
-    .label x = 5
-    .label y1 = 4
-    .label yd = 3
-    .label xd = 2
+    .label y1 = 5
+    .label yd = 4
+    .label xd = 3
     .label e = 7
     lda xd
     lsr
     sta e
   b1:
+    ldy y
     jsr plot
     inc y
     lda xd
@@ -299,7 +297,7 @@ line_ydxd: {
     lda yd
     cmp e
     bcs b2
-    dec x
+    dex
     lda e
     sec
     sbc yd
@@ -312,18 +310,19 @@ line_ydxd: {
     rts
 }
 line_xdyd: {
-    .label x = 5
+    .label _6 = $a
     .label y = 6
-    .label x1 = 4
-    .label xd = 3
-    .label yd = 2
+    .label x1 = 5
+    .label xd = 4
+    .label yd = 3
     .label e = 7
     lda yd
     lsr
     sta e
   b1:
+    ldy y
     jsr plot
-    inc x
+    inx
     lda yd
     clc
     adc e
@@ -339,7 +338,8 @@ line_xdyd: {
   b2:
     ldy x1
     iny
-    cpy x
+    sty _6
+    cpx _6
     bne b1
     rts
 }

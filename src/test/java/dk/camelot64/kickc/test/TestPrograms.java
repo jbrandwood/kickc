@@ -354,8 +354,13 @@ public class TestPrograms {
    }
 
    @Test
-  public void testLoopNest2() throws IOException, URISyntaxException {
+   public void testLoopNest2() throws IOException, URISyntaxException {
       compileAndCompare("loopnest2");
+   }
+
+   @Test
+   public void testLoopNest3() throws IOException, URISyntaxException {
+      compileAndCompare("loopnest3");
    }
 
    @Test

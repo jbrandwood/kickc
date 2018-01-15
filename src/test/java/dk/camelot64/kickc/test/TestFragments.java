@@ -26,7 +26,6 @@ public class TestFragments {
       AsmFragmentTemplateUsages.logUsages(log, false, false,  false, false, false, false);
    }
 
-
    @Test
    public void testAssignmentsBu() throws IOException, URISyntaxException {
       testFragments("fragments-assignment-copy", assignmentsBu());

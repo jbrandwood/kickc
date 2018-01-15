@@ -40,7 +40,7 @@ public class CallGraph {
     * @param scopeLabel The label for the scope.
     * @return The call block for the scope. Null if the call block does not exist (no calls are made from it).
     */
-   private CallBlock getCallBlock(LabelRef scopeLabel) {
+   public CallBlock getCallBlock(LabelRef scopeLabel) {
       for(CallBlock callBlock : callBlocks) {
          if(callBlock.getScopeLabel().equals(scopeLabel)) {
             return callBlock;

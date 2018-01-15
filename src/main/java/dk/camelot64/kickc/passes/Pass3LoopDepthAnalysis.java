@@ -10,8 +10,13 @@ import java.util.*;
  */
 public class Pass3LoopDepthAnalysis extends Pass2Base {
 
+   private CallGraph callGraph;
+   private NaturalLoopSet loopSet;
+
    public Pass3LoopDepthAnalysis(Program program) {
       super(program);
+      callGraph = getProgram().getCallGraph();
+      loopSet = getProgram().getLoopSet();
    }
 
    /**
@@ -19,9 +24,6 @@ public class Pass3LoopDepthAnalysis extends Pass2Base {
     * Uses the call graph and natural loops of the control flow graph.
     */
    public void findLoopDepths() {
-      CallGraph callGraph = getProgram().getCallGraph();
-      NaturalLoopSet loopSet = getProgram().getLoopSet();
-
       Deque<LabelRef> todo = new ArrayDeque<>();
       Set<LabelRef> done = new LinkedHashSet<>();
       todo.push(callGraph.getFirstCallBlock());
@@ -37,25 +39,36 @@ public class Pass3LoopDepthAnalysis extends Pass2Base {
             }
          }
          // Find the scope blocks calling the current scope block - and the loop depth of the blocks where the call statement is
-         int callingDepth = 1;
-         Collection<LabelRef> callingScopes = callGraph.getCallingBlocks(currentScope);
-         for(LabelRef callingScope : callingScopes) {
-            CallGraph.CallBlock callingBlock = callGraph.getOrCreateCallBlock(callingScope);
-            Collection<CallGraph.CallBlock.Call> calls = callingBlock.getCalls(currentScope);
-            for(CallGraph.CallBlock.Call call : calls) {
-               int callStatementIdx = call.getCallStatementIdx();
-               ControlFlowBlock callingControlBlock = getProgram().getStatementInfos().getBlock(callStatementIdx);
-               Collection<NaturalLoop> callingLoops = loopSet.getLoopsContainingBlock(callingControlBlock.getLabel());
-               for(NaturalLoop callingLoop : callingLoops) {
-                  int potentialDepth = callingLoop.getDepth() + 1;
-                  if(potentialDepth > callingDepth) {
-                     callingDepth = potentialDepth;
-                  }
-               }
-            }
-         }
+         int callingDepth = getCallingDepth(currentScope);
          findLoopDepth(currentScope, callingDepth);
       }
+   }
+
+   private int getCallingDepth(LabelRef currentScope) {
+      int callingDepth = 1;
+      Collection<LabelRef> callingScopes = callGraph.getCallingBlocks(currentScope);
+      for(LabelRef callingScope : callingScopes) {
+         CallGraph.CallBlock callingBlock = callGraph.getCallBlock(callingScope);
+         Collection<CallGraph.CallBlock.Call> calls = callingBlock.getCalls(currentScope);
+         for(CallGraph.CallBlock.Call call : calls) {
+            // First look for loops containing the call
+            int callStatementIdx = call.getCallStatementIdx();
+            ControlFlowBlock callingControlBlock = getProgram().getStatementInfos().getBlock(callStatementIdx);
+            Collection<NaturalLoop> callingLoops = loopSet.getLoopsContainingBlock(callingControlBlock.getLabel());
+            for(NaturalLoop callingLoop : callingLoops) {
+               int potentialDepth = callingLoop.getDepth() + 1;
+               if(potentialDepth > callingDepth) {
+                  callingDepth = potentialDepth;
+               }
+            }
+            // Also look through all callers
+            int superCallingDepth = getCallingDepth(callingScope);
+            if(superCallingDepth>callingDepth)  {
+               callingDepth= superCallingDepth;
+            }
+         }
+      }
+      return callingDepth;
    }
 
    private void findLoopDepth(LabelRef currentScope, int initialDepth) {

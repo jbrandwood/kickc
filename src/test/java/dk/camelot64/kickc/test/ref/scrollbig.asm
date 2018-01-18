@@ -113,32 +113,24 @@ scroll_bit: {
     rts
 }
 scroll_hard: {
-    .const line0 = SCREEN+$28*0
-    .const line1 = SCREEN+$28*1
-    .const line2 = SCREEN+$28*2
-    .const line3 = SCREEN+$28*3
-    .const line4 = SCREEN+$28*4
-    .const line5 = SCREEN+$28*5
-    .const line6 = SCREEN+$28*6
-    .const line7 = SCREEN+$28*7
     ldx #0
   b1:
-    lda line0+1,x
-    sta line0,x
-    lda line1+1,x
-    sta line1,x
-    lda line2+1,x
-    sta line2,x
-    lda line3+1,x
-    sta line3,x
-    lda line4+1,x
-    sta line4,x
-    lda line5+1,x
-    sta line5,x
-    lda line6+1,x
-    sta line6,x
-    lda line7+1,x
-    sta line7,x
+    lda SCREEN+$28*0+1,x
+    sta SCREEN+$28*0,x
+    lda SCREEN+$28*1+1,x
+    sta SCREEN+$28*1,x
+    lda SCREEN+$28*2+1,x
+    sta SCREEN+$28*2,x
+    lda SCREEN+$28*3+1,x
+    sta SCREEN+$28*3,x
+    lda SCREEN+$28*4+1,x
+    sta SCREEN+$28*4,x
+    lda SCREEN+$28*5+1,x
+    sta SCREEN+$28*5,x
+    lda SCREEN+$28*6+1,x
+    sta SCREEN+$28*6,x
+    lda SCREEN+$28*7+1,x
+    sta SCREEN+$28*7,x
     inx
     cpx #$27
     bne b1

@@ -14,46 +14,46 @@ main: {
     jmp b1
 }
 animate: {
-    lda XPOS+0
-    clc
-    adc #1
-    sta XPOS+0
+    ldx XPOS+0
+    inx
+    stx XPOS+0
+    txa
     cmp #$28
     bne b1
     lda #0
     sta XPOS+0
   b1:
-    lda YPOS+0
-    clc
-    adc #1
-    sta YPOS+0
+    ldx YPOS+0
+    inx
+    stx YPOS+0
+    txa
     cmp #$19
     bne b2
     lda #0
     sta YPOS+0
   b2:
-    lda XPOS+1
-    sec
-    sbc #1
-    sta XPOS+1
+    ldx XPOS+1
+    dex
+    stx XPOS+1
+    txa
     cmp #$ff
     bne b3
     lda #$28
     sta XPOS+1
   b3:
-    lda YPOS+2
-    clc
-    adc #1
-    sta YPOS+2
+    ldx YPOS+2
+    inx
+    stx YPOS+2
+    txa
     cmp #$19
     bne b4
     lda #0
     sta YPOS+2
   b4:
-    lda YPOS+3
-    sec
-    sbc #1
-    sta YPOS+3
+    ldx YPOS+3
+    dex
+    stx YPOS+3
+    txa
     cmp #$ff
     bne breturn
     lda #$19

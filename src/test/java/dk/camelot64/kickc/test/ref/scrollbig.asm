@@ -84,8 +84,8 @@ scroll_bit: {
     sta sc+1
     ldx #0
   b2:
-    stx $ff
-    ldy $ff
+    txa
+    tay
     lda (current_chargen),y
     and current_bit
     cmp #0

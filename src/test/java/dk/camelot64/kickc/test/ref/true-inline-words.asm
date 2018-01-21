@@ -8,9 +8,8 @@ main: {
     .const bgcol = $d021
     .const w = b*$100+0
     .const w2 = 1*$100+1+w+0*$100+0
-    .const sc = w2
     lda bs+1
-    sta sc
+    sta w2
     lda pos
     cmp #'m'
     bne b1

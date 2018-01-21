@@ -221,7 +221,6 @@ plot: {
     .label _0 = 8
     .label plotter_x = 8
     .label plotter_y = $b
-    .label plotter = 8
     lda plot_xhi,x
     sta plotter_x+1
     lda plot_xlo,x
@@ -239,8 +238,8 @@ plot: {
     sta _0+1
     lda plot_bit,x
     ldy #0
-    ora (plotter),y
-    sta (plotter),y
+    ora (_0),y
+    sta (_0),y
     rts
 }
 line_xdyi: {

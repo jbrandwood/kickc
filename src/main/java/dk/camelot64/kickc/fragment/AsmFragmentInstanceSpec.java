@@ -236,21 +236,29 @@ public class AsmFragmentInstanceSpec {
          CastValue castVal = (CastValue) value;
          SymbolType toType = castVal.getToType();
          value = castVal.getValue();
-         // Assume cast value is a var-ref
-         value = program.getSymbolInfos().getVariable((VariableRef) value);
-         // Find the register
-         Variable variable = (Variable) value;
-         Registers.Register register = variable.getAllocation();
-         // Examine if the register is already bound (with the cast to type) - and reuse it
-         String bound = findBound(toType, register);
-         if(bound != null)  {
-            String name = getTypePrefix(toType) + getRegisterName(register);
-            return name;
-         }  else {
-            // Bind the register
-            String name = getTypePrefix(toType) + getRegisterName(register);
+         // Assume cast value is a symbol-ref
+         value = program.getSymbolInfos().getSymbol((SymbolRef) value);
+         if(value instanceof ConstantVar || value instanceof ConstantValue) {
+            String name = getTypePrefix(toType) + "c" + nextConstByteIdx++;
             bindings.put(name, value);
             return name;
+         } else if(value instanceof Variable) {
+            // Find the register
+            Variable variable = (Variable) value;
+            Registers.Register register = variable.getAllocation();
+            // Examine if the register is already bound (with the cast to type) - and reuse it
+            String bound = findBound(toType, register);
+            if(bound != null) {
+               String name = getTypePrefix(toType) + getRegisterName(register);
+               return name;
+            } else {
+               // Bind the register
+               String name = getTypePrefix(toType) + getRegisterName(register);
+               bindings.put(name, value);
+               return name;
+            }
+         } else {
+            throw new RuntimeException("Unhandled cast to type " + value);
          }
       } else if(value instanceof ConstantVar || value instanceof ConstantValue) {
          SymbolType constType;

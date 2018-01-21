@@ -103,6 +103,8 @@ public class ValueReplacer {
             for(int i = 0; i < size; i++) {
                subValues.add(new ReplaceableListElement(valueList, i));
             }
+         } else if(value instanceof CastValue) {
+            subValues.add(new ReplaceableCastValue((CastValue) value));
          }
          return subValues;
       }
@@ -152,6 +154,30 @@ public class ValueReplacer {
       }
 
    }
+
+   /**
+    * Replaceable pointer inside a pointer dererence value.
+    */
+   public static class ReplaceableCastValue extends ReplaceableValue {
+      private final CastValue castValue;
+
+
+      public ReplaceableCastValue(CastValue castValue) {
+         this.castValue = castValue;
+      }
+
+      @Override
+      public RValue get() {
+         return castValue.getValue();
+      }
+
+      @Override
+      public void set(RValue val) {
+         castValue.setValue(val);
+      }
+
+   }
+
 
    public static class ReplaceableListElement extends ReplaceableValue {
       private ValueList list;

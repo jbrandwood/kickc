@@ -30,22 +30,28 @@ public class Pass2NopCastElimination extends Pass2SsaOptimization {
                if(assignment.getlValue() instanceof VariableRef && assignment.getrValue1()==null && assignment.getOperator()!=null ) {
                   // It is a simple cast assignment - check if it is no-op
                   SymbolType rValType = SymbolTypeInference.inferType(getScope(), assignment.getrValue2());
-                  boolean isSimpleCast = false;
+                  boolean isNopCast = false;
                   SymbolType toType = null;
                   if(SymbolType.isByte(rValType) && Operator.CAST_SBYTE.equals(assignment.getOperator())) {
-                     isSimpleCast = true;
+                     isNopCast = true;
                      toType = SymbolType.SBYTE;
                   } else if(SymbolType.isSByte(rValType) && Operator.CAST_BYTE.equals(assignment.getOperator())) {
-                     isSimpleCast = true;
+                     isNopCast = true;
                      toType = SymbolType.BYTE;
                   } else if(SymbolType.isWord(rValType) && Operator.CAST_SWORD.equals(assignment.getOperator())) {
-                     isSimpleCast = true;
+                     isNopCast = true;
                      toType = SymbolType.SWORD;
                   } else if(SymbolType.isSWord(rValType) && Operator.CAST_WORD.equals(assignment.getOperator())) {
-                     isSimpleCast = true;
+                     isNopCast = true;
+                     toType = SymbolType.WORD;
+                  } else if(SymbolType.isWord(rValType) && Operator.CAST_PTRBY.equals(assignment.getOperator())) {
+                     isNopCast = true;
+                     toType = new SymbolTypePointer(SymbolType.BYTE);
+                  } else if(rValType instanceof SymbolTypePointer  && Operator.CAST_WORD.equals(assignment.getOperator())) {
+                     isNopCast = true;
                      toType = SymbolType.WORD;
                   }
-                  if(isSimpleCast) {
+                  if(isNopCast) {
                      getLog().append("Eliminating Noop Cast "+assignment.toString(getProgram(), false));
                      // Add the alias for replacement
                      castAliasses.put((VariableRef) assignment.getlValue(), new CastValue(toType, assignment.getrValue2()));

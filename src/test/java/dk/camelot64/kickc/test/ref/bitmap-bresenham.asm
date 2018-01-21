@@ -198,9 +198,9 @@ line_ydxi: {
     ldy y
     jsr plot
     inc y
-    lda xd
+    lda e
     clc
-    adc e
+    adc xd
     sta e
     lda yd
     cmp e
@@ -237,9 +237,9 @@ plot: {
     lda _0+1
     adc plotter_y+1
     sta _0+1
+    lda plot_bit,x
     ldy #0
-    lda (plotter),y
-    ora plot_bit,x
+    ora (plotter),y
     sta (plotter),y
     rts
 }
@@ -257,9 +257,9 @@ line_xdyi: {
     ldy y
     jsr plot
     inx
-    lda yd
+    lda e
     clc
-    adc e
+    adc yd
     sta e
     lda xd
     cmp e
@@ -290,9 +290,9 @@ line_ydxd: {
     ldy y
     jsr plot
     inc y
-    lda xd
+    lda e
     clc
-    adc e
+    adc xd
     sta e
     lda yd
     cmp e
@@ -323,9 +323,9 @@ line_xdyd: {
     ldy y
     jsr plot
     inx
-    lda yd
+    lda e
     clc
-    adc e
+    adc yd
     sta e
     lda xd
     cmp e

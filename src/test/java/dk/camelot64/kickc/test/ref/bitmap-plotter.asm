@@ -72,10 +72,11 @@ plot: {
     lda plotter+1
     adc plotter_y+1
     sta plotter+1
-    ldy x
-    lda plot_bit,y
     ldy #0
-    ora (plotter),y
+    lda (plotter),y
+    ldy x
+    ora plot_bit,y
+    ldy #0
     sta (plotter),y
     rts
 }

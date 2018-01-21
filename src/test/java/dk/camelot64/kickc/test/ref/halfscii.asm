@@ -34,12 +34,12 @@ main: {
     lda chargen+1
     adc #0
     sta chargen1+1
+    lda #$60
     ldy #0
-    lda (chargen),y
-    and #$60
+    and (chargen),y
     sta _1
-    lda (chargen1),y
-    and #$60
+    lda #$60
+    and (chargen1),y
     lsr
     lsr
     ora _1
@@ -57,12 +57,12 @@ main: {
   b2:
     asl
     tax
+    lda #$18
     ldy #0
-    lda (chargen),y
-    and #$18
+    and (chargen),y
     sta _11
-    lda (chargen1),y
-    and #$18
+    lda #$18
+    and (chargen1),y
     lsr
     lsr
     ora _11
@@ -76,13 +76,13 @@ main: {
     txa
     asl
     tax
+    lda #6
     ldy #0
-    lda (chargen),y
-    and #6
+    and (chargen),y
     asl
     sta _21
-    lda (chargen1),y
-    and #6
+    lda #6
+    and (chargen1),y
     lsr
     ora _21
     tay
@@ -94,14 +94,14 @@ main: {
     txa
     asl
     tax
+    lda #1
     ldy #0
-    lda (chargen),y
-    and #1
+    and (chargen),y
     asl
     asl
     sta _30
-    lda (chargen1),y
-    and #1
+    lda #1
+    and (chargen1),y
     ora _30
     tay
     lda bits_count,y

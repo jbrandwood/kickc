@@ -1926,10 +1926,10 @@ plot: {
     adc plotter_x_2+1
     sta plotter_y_2+1
   //SEG54 [34] (byte~) plot::$5 ← *((byte*) plot::plotter#0) | *((const byte[256]) plot_bit#0 + (byte) plot::x#0) [ plot::plotter#0 plot::$5 ] ( main:2::plots:13::plot:21 [ plots::i#2 plot::plotter#0 plot::$5 ] ) -- vbuz1=_deref_pbuz2_bor_pbuc1_derefidx_vbuz3 
-    ldy x
-    lda plot_bit,y
     ldy #0
-    ora (plotter),y
+    lda (plotter),y
+    ldy x
+    ora plot_bit,y
     sta _5
   //SEG55 [35] *((byte*) plot::plotter#0) ← (byte~) plot::$5 [ ] ( main:2::plots:13::plot:21 [ plots::i#2 ] ) -- _deref_pbuz1=vbuz2 
     lda _5
@@ -1970,20 +1970,20 @@ init_plot_tables: {
   //SEG65 init_plot_tables::@1
   b1:
   //SEG66 [39] (byte~) init_plot_tables::$0 ← (byte) init_plot_tables::x#2 & (byte/word/signed word) 248 [ init_plot_tables::x#2 init_plot_tables::bits#3 init_plot_tables::$0 ] ( main:2::init_plot_tables:10 [ init_plot_tables::x#2 init_plot_tables::bits#3 init_plot_tables::$0 ] ) -- vbuz1=vbuz2_band_vbuc1 
-    lda x
-    and #$f8
+    lda #$f8
+    and x
     sta _0
   //SEG67 [40] *((const byte[256]) plot_xlo#0 + (byte) init_plot_tables::x#2) ← (byte~) init_plot_tables::$0 [ init_plot_tables::x#2 init_plot_tables::bits#3 ] ( main:2::init_plot_tables:10 [ init_plot_tables::x#2 init_plot_tables::bits#3 ] ) -- pbuc1_derefidx_vbuz1=vbuz2 
-    ldy x
     lda _0
+    ldy x
     sta plot_xlo,y
   //SEG68 [41] *((const byte[256]) plot_xhi#0 + (byte) init_plot_tables::x#2) ← >(const byte*) BITMAP#0 [ init_plot_tables::x#2 init_plot_tables::bits#3 ] ( main:2::init_plot_tables:10 [ init_plot_tables::x#2 init_plot_tables::bits#3 ] ) -- pbuc1_derefidx_vbuz1=vbuc2 
     ldy x
     lda #>BITMAP
     sta plot_xhi,y
   //SEG69 [42] *((const byte[256]) plot_bit#0 + (byte) init_plot_tables::x#2) ← (byte) init_plot_tables::bits#3 [ init_plot_tables::x#2 init_plot_tables::bits#3 ] ( main:2::init_plot_tables:10 [ init_plot_tables::x#2 init_plot_tables::bits#3 ] ) -- pbuc1_derefidx_vbuz1=vbuz2 
-    ldy x
     lda bits
+    ldy x
     sta plot_bit,y
   //SEG70 [43] (byte) init_plot_tables::bits#1 ← (byte) init_plot_tables::bits#3 >> (byte/signed byte/word/signed word) 1 [ init_plot_tables::x#2 init_plot_tables::bits#1 ] ( main:2::init_plot_tables:10 [ init_plot_tables::x#2 init_plot_tables::bits#1 ] ) -- vbuz1=vbuz1_ror_1 
     lsr bits
@@ -2022,8 +2022,8 @@ init_plot_tables: {
   //SEG83 init_plot_tables::@3
   b3:
   //SEG84 [49] (byte~) init_plot_tables::$6 ← (byte) init_plot_tables::y#2 & (byte/signed byte/word/signed word) 7 [ init_plot_tables::y#2 init_plot_tables::yoffs#2 init_plot_tables::$6 ] ( main:2::init_plot_tables:10 [ init_plot_tables::y#2 init_plot_tables::yoffs#2 init_plot_tables::$6 ] ) -- vbuz1=vbuz2_band_vbuc1 
-    lda y
-    and #7
+    lda #7
+    and y
     sta _6
   //SEG85 [50] (byte~) init_plot_tables::$7 ← < (byte*) init_plot_tables::yoffs#2 [ init_plot_tables::y#2 init_plot_tables::yoffs#2 init_plot_tables::$6 init_plot_tables::$7 ] ( main:2::init_plot_tables:10 [ init_plot_tables::y#2 init_plot_tables::yoffs#2 init_plot_tables::$6 init_plot_tables::$7 ] ) -- vbuz1=_lo_pbuz2 
     lda yoffs
@@ -2033,19 +2033,19 @@ init_plot_tables: {
     ora _7
     sta _8
   //SEG87 [52] *((const byte[256]) plot_ylo#0 + (byte) init_plot_tables::y#2) ← (byte~) init_plot_tables::$8 [ init_plot_tables::y#2 init_plot_tables::yoffs#2 ] ( main:2::init_plot_tables:10 [ init_plot_tables::y#2 init_plot_tables::yoffs#2 ] ) -- pbuc1_derefidx_vbuz1=vbuz2 
-    ldy y
     lda _8
+    ldy y
     sta plot_ylo,y
   //SEG88 [53] (byte~) init_plot_tables::$9 ← > (byte*) init_plot_tables::yoffs#2 [ init_plot_tables::y#2 init_plot_tables::yoffs#2 init_plot_tables::$9 ] ( main:2::init_plot_tables:10 [ init_plot_tables::y#2 init_plot_tables::yoffs#2 init_plot_tables::$9 ] ) -- vbuz1=_hi_pbuz2 
     lda yoffs+1
     sta _9
   //SEG89 [54] *((const byte[256]) plot_yhi#0 + (byte) init_plot_tables::y#2) ← (byte~) init_plot_tables::$9 [ init_plot_tables::y#2 init_plot_tables::yoffs#2 ] ( main:2::init_plot_tables:10 [ init_plot_tables::y#2 init_plot_tables::yoffs#2 ] ) -- pbuc1_derefidx_vbuz1=vbuz2 
-    ldy y
     lda _9
+    ldy y
     sta plot_yhi,y
   //SEG90 [55] (byte~) init_plot_tables::$10 ← (byte) init_plot_tables::y#2 & (byte/signed byte/word/signed word) 7 [ init_plot_tables::y#2 init_plot_tables::yoffs#2 init_plot_tables::$10 ] ( main:2::init_plot_tables:10 [ init_plot_tables::y#2 init_plot_tables::yoffs#2 init_plot_tables::$10 ] ) -- vbuz1=vbuz2_band_vbuc1 
-    lda y
-    and #7
+    lda #7
+    and y
     sta _10
   //SEG91 [56] if((byte~) init_plot_tables::$10!=(byte/signed byte/word/signed word) 7) goto init_plot_tables::@4 [ init_plot_tables::y#2 init_plot_tables::yoffs#2 ] ( main:2::init_plot_tables:10 [ init_plot_tables::y#2 init_plot_tables::yoffs#2 ] ) -- vbuz1_neq_vbuc1_then_la1 
     lda _10
@@ -2440,10 +2440,10 @@ plot: {
     adc plotter_y+1
     sta plotter+1
   //SEG54 [34] (byte~) plot::$5 ← *((byte*) plot::plotter#0) | *((const byte[256]) plot_bit#0 + (byte) plot::x#0) [ plot::plotter#0 plot::$5 ] ( main:2::plots:13::plot:21 [ plots::i#2 plot::plotter#0 plot::$5 ] ) -- vbuaa=_deref_pbuz1_bor_pbuc1_derefidx_vbuz2 
-    ldy x
-    lda plot_bit,y
     ldy #0
-    ora (plotter),y
+    lda (plotter),y
+    ldy x
+    ora plot_bit,y
   //SEG55 [35] *((byte*) plot::plotter#0) ← (byte~) plot::$5 [ ] ( main:2::plots:13::plot:21 [ plots::i#2 ] ) -- _deref_pbuz1=vbuaa 
     ldy #0
     sta (plotter),y
@@ -2680,7 +2680,6 @@ Succesful ASM optimization Pass5NextJumpElimination
 Removing instruction lda #0
 Removing instruction ldy x
 Removing instruction ldy y
-Removing instruction ldy #0
 Removing instruction lda #>0
 Replacing instruction ldx #0 with TAX
 Replacing instruction ldy #0 with TAY
@@ -2877,7 +2876,7 @@ reg byte a [ init_plot_tables::$10 ]
 
 
 FINAL ASSEMBLER
-Score: 6205
+Score: 6207
 
 //SEG0 Basic Upstart
 .pc = $801 "Basic"
@@ -3008,11 +3007,12 @@ plot: {
     adc plotter_y+1
     sta plotter+1
   //SEG54 [34] (byte~) plot::$5 ← *((byte*) plot::plotter#0) | *((const byte[256]) plot_bit#0 + (byte) plot::x#0) [ plot::plotter#0 plot::$5 ] ( main:2::plots:13::plot:21 [ plots::i#2 plot::plotter#0 plot::$5 ] ) -- vbuaa=_deref_pbuz1_bor_pbuc1_derefidx_vbuz2 
-    ldy x
-    lda plot_bit,y
     ldy #0
-    ora (plotter),y
+    lda (plotter),y
+    ldy x
+    ora plot_bit,y
   //SEG55 [35] *((byte*) plot::plotter#0) ← (byte~) plot::$5 [ ] ( main:2::plots:13::plot:21 [ plots::i#2 ] ) -- _deref_pbuz1=vbuaa 
+    ldy #0
     sta (plotter),y
   //SEG56 plot::@return
   //SEG57 [36] return  [ ] ( main:2::plots:13::plot:21 [ plots::i#2 ] )

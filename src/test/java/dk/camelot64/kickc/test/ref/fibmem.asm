@@ -10,9 +10,9 @@ main: {
     sta fibs+1
     ldx #0
   b1:
-    lda fibs+1,x
+    lda fibs,x
     clc
-    adc fibs,x
+    adc fibs+1,x
     sta fibs+2,x
     inx
     cpx #$f

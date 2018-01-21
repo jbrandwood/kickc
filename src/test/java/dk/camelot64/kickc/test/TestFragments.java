@@ -10,9 +10,7 @@ import org.junit.Test;
 
 import java.io.IOException;
 import java.net.URISyntaxException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
+import java.util.*;
 
 import static junit.framework.TestCase.fail;
 
@@ -46,11 +44,13 @@ public class TestFragments {
       int cnt = 0;
       for(String signature : signatures) {
          if(++cnt % 1000 == 0) System.out.println(""+cnt+"/"+signatures.size());
-         Collection<AsmFragmentTemplate> templates =
-               AsmFragmentTemplateSynthesizer.getFragmentTemplates(signature, log);
+         List<AsmFragmentTemplate> templates =
+               new ArrayList<>(AsmFragmentTemplateSynthesizer.getFragmentTemplates(signature, log));
+         Collections.sort(templates, Comparator.comparing(AsmFragmentTemplate::getClobber));
          if(templates.size() == 0) {
             log.append("CANNOT SYNTHESIZE " + signature);
          }
+
          for(AsmFragmentTemplate template : templates) {
             log.append((template.isFile() ? "*" : "") + template.getName() + " - clobber:" + template.getClobber().toString() + " cycles:" + template.getCycles());
             log.append("  " + template.getBody().replace("\n", "\n  "));

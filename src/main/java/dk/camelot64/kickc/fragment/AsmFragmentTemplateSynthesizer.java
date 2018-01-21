@@ -48,7 +48,7 @@ public class AsmFragmentTemplateSynthesizer {
    }
 
 
-      public static AsmFragmentInstance getFragmentInstance(AsmFragmentInstanceSpec instanceSpec, CompileLog log) {
+   public static AsmFragmentInstance getFragmentInstance(AsmFragmentInstanceSpec instanceSpec, CompileLog log) {
       String signature = instanceSpec.getSignature();
       AsmFragmentTemplate fragmentTemplate = SYNTHESIZER.getFragmentTemplate(signature, log);
       // Return the resulting fragment instance
@@ -62,6 +62,7 @@ public class AsmFragmentTemplateSynthesizer {
 
    /**
     * Get the best fragment templates for a signature
+    *
     * @param signature The signature
     * @param log The log
     * @return The best templates (with different clobber profiles) for the signature
@@ -90,9 +91,9 @@ public class AsmFragmentTemplateSynthesizer {
          double minScore = Double.MAX_VALUE;
          for(AsmFragmentTemplate candidateTemplate : candidates) {
             double score = candidateTemplate.getCycles();
-            if(candidateTemplate.getClobber().isClobberA()) score+=0.5;
-            if(candidateTemplate.getClobber().isClobberY()) score+=1.0;
-            if(candidateTemplate.getClobber().isClobberX()) score+=1.5;
+            if(candidateTemplate.getClobber().isClobberA()) score += 0.5;
+            if(candidateTemplate.getClobber().isClobberY()) score += 1.0;
+            if(candidateTemplate.getClobber().isClobberX()) score += 1.5;
             if(score < minScore) {
                minScore = score;
                bestTemplate = candidateTemplate;
@@ -221,21 +222,41 @@ public class AsmFragmentTemplateSynthesizer {
          for(AsmFragmentClobber bestClobber : bestClobbers) {
             AsmFragmentTemplate bestTemplate = bestTemplates.get(bestClobber);
             double bestCycles = bestTemplate.getCycles();
-            if(bestClobber.isSubset(candidateClobber) && bestCycles <= candidateCycles) {
+            if(bestClobber.isTrueSubset(candidateClobber) && bestCycles <= candidateCycles) {
                // A better template already found - don't update
                return false;
             }
+            if(bestClobber.isSubset(candidateClobber) && bestCycles < candidateCycles) {
+               // A better template already found - don't update
+               return false;
+            }
+            if(bestClobber.equals(candidateClobber) && bestCycles == candidateCycles && bestTemplate.getBody().compareTo(candidate.getBody()) <= 0) {
+               // A better template already found - don't update
+               return false;
+            }
+
          }
+
          // The candidate is better than some of the current best!
 
          // Remove any current templates that are worse
          for(AsmFragmentClobber bestClobber : bestClobbers) {
             AsmFragmentTemplate bestTemplate = bestTemplates.get(bestClobber);
             double bestCycles = bestTemplate.getCycles();
-            if(candidateClobber.isSubset(bestClobber) && candidateCycles <= bestCycles) {
+
+            if(candidateClobber.isTrueSubset(bestClobber) && candidateCycles <= bestCycles) {
                // The candidate is better - remove the current template
                bestTemplates.remove(bestClobber);
             }
+            if(candidateClobber.isSubset(bestClobber) && candidateCycles < bestCycles) {
+               // The candidate is better - remove the current template
+               bestTemplates.remove(bestClobber);
+            }
+            if(candidateClobber.equals(bestClobber) && candidateCycles == bestCycles && candidate.getBody().compareTo(bestTemplate.getBody()) < 0) {
+               // The candidate is better - remove the current template
+               bestTemplates.remove(bestClobber);
+            }
+
          }
          // Update the current best
          bestTemplates.put(candidateClobber, candidate);
@@ -325,7 +346,8 @@ public class AsmFragmentTemplateSynthesizer {
       }
    }
 
-   /** Get the entire synthesis graph. Called by the usage statistics.
+   /**
+    * Get the entire synthesis graph. Called by the usage statistics.
     *
     * @return The entire synthesis graph
     */
@@ -431,7 +453,7 @@ public class AsmFragmentTemplateSynthesizer {
             Collection<AsmFragmentTemplate> subTemplates = subSynthesis.getBestTemplates();
             for(AsmFragmentTemplate subTemplate : subTemplates) {
                AsmFragmentTemplate synthesized = rule.synthesize(synthesis.getSignature(), subTemplate);
-               if(synthesized!=null) {
+               if(synthesized != null) {
                   if(log.isVerboseFragmentLog()) {
                      log.append("Fragment synthesis " + synthesis.getSignature() + " - Successfully synthesized from " + subSignature);
                   }
@@ -477,11 +499,15 @@ public class AsmFragmentTemplateSynthesizer {
          if(fragmentUrl == null) return null;
          InputStream fragmentStream = fragmentUrl.openStream();
          String body;
-         if(fragmentStream.available()==0) {
+         if(fragmentStream.available() == 0) {
             body = "";
-         }  else {
+         } else {
             CharStream fragmentCharStream = CharStreams.fromStream(fragmentStream);
             body = fragmentCharStream.toString();
+            if(body.length() > 0 && body.charAt(body.length() - 1) == '\n') {
+               body = body.substring(0, body.length() - 1);
+            }
+
          }
          return new AsmFragmentTemplate(signature, body);
       } catch(IOException e) {

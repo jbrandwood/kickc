@@ -3,7 +3,7 @@ package dk.camelot64.kickc.fragment;
 import dk.camelot64.kickc.asm.AsmClobber;
 
 /** The clobber profile for a fragment template. Only distinguishes the 3 registers A/X/Y and not the flags. */
-public class AsmFragmentClobber {
+public class AsmFragmentClobber implements Comparable<AsmFragmentClobber> {
 
    private boolean clobberA;
    private boolean clobberX;
@@ -73,8 +73,24 @@ public class AsmFragmentClobber {
       return true;
    }
 
+   /**
+    * Determines if this clobber is a true subset of the passed clobber.
+    * If this clobber clobbers the fewer registers than the passed clobber it is a subset.
+    * If the two clobbers are equal they are not true subsets of each other.
+    * @param other The other clobber to examine
+    * @return true if this clobber clobbers the same or fewer registers than the passed clobber.
+    */
+   public boolean isTrueSubset(AsmFragmentClobber other) {
+      return isSubset(other) && !equals(other);
+   }
+
    @Override
    public String toString() {
       return (clobberA?"A ":"")+(clobberX?"X ":"")+(clobberY?"Y ":" ");
+   }
+
+   @Override
+   public int compareTo(AsmFragmentClobber o) {
+      return toString().compareTo(o.toString());
    }
 }

@@ -126,6 +126,9 @@ class AsmFragmentTemplateSynthesisRule {
          }
          newFragment.append(asmPostfix);
       }
+      if(newFragment.length()>0 && newFragment.charAt(newFragment.length()-1)=='\n') {
+         newFragment = new StringBuilder(newFragment.substring(0, newFragment.length()-1));
+      }
       return new AsmFragmentTemplate(signature, newFragment.toString(), this, subTemplate);
    }
 

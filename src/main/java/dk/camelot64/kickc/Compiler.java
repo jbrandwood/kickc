@@ -180,6 +180,7 @@ public class Compiler {
       optimizations.add(new Pass2ConstantAdditionElimination(program));
       optimizations.add(new Pass2FixWordConstructors(program));
       optimizations.add(new PassNEliminateUnusedVars(program));
+      optimizations.add(new Pass2NopCastElimination(program));
       pass2OptimizeSSA(optimizations);
 
       // Constant inlining optimizations - as the last step to ensure that constant identification has been completed

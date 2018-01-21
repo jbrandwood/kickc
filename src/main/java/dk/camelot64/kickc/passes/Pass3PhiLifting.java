@@ -39,7 +39,7 @@ public class Pass3PhiLifting {
                   if(!(phiRValue.getrValue() instanceof ConstantValue)) {
                      LabelRef predecessorRef = phiRValue.getPredecessor();
                      ControlFlowBlock predecessorBlock = graph.getBlock(predecessorRef);
-                     VariableRef rValVarRef = (VariableRef) phiRValue.getrValue();
+                     //VariableRef rValVarRef = (VariableRef) phiRValue.getrValue();
                      Variable newVar;
                      if(phiVariable.getVariable().isVersion()) {
                         Variable lValVar = program.getScope().getVariable(phiVariable.getVariable());

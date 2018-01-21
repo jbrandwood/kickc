@@ -94,6 +94,8 @@ public class PassNVariableReferenceInfos extends Pass2Base {
             used.addAll(getReferenced(value));
          }
          return used;
+      } else if(rValue instanceof CastValue) {
+         return getReferenced(((CastValue) rValue).getValue());
       } else {
          throw new RuntimeException("Unhandled RValue type " + rValue);
       }

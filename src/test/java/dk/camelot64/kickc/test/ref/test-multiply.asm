@@ -239,29 +239,26 @@ print_sbyte: {
     rts
 }
 signed_multiply: {
-    .label _13 = $e
     .label m = 6
-    .label return = 6
     .label b = 3
+    .label return = 6
     tya
     ldx b
     jsr multiply
     cpy #0
     bpl b1
     lda m+1
-    ldx b
-    stx $ff
     sec
-    sbc $ff
+    sbc b
     sta m+1
   b1:
     lda b
     cmp #0
     bpl b2
     lda m+1
-    sty _13
+    sty $ff
     sec
-    sbc _13
+    sbc $ff
     sta m+1
   b2:
     rts

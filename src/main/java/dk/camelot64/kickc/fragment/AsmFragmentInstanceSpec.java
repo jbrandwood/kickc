@@ -222,23 +222,36 @@ public class AsmFragmentInstanceSpec {
 
       if(value instanceof Variable) {
          Variable variable = (Variable) value;
+         SymbolType varType = variable.getType();
+         // Find the register
          Registers.Register register = variable.getAllocation();
-         // Find value if it is already bound
-         for(String name : bindings.keySet()) {
-            Value bound = bindings.get(name);
-            if(bound instanceof Variable) {
-               Registers.Register boundRegister = ((Variable) bound).getAllocation();
-               if(boundRegister != null && boundRegister.equals(register)) {
-                  if(SymbolTypeInference.typeMatch(((Variable) bound).getType(), variable.getType())) {
-                     return name;
-                  }
-               }
-            }
-         }
-         SymbolType varType = ((Variable) value).getType();
+         // Examine if the register is already bound - and reuse it
+         String bound = findBound(varType, register);
+         if(bound != null) return bound;
+         // Bind the register
          String name = getTypePrefix(varType) + getRegisterName(register);
          bindings.put(name, value);
          return name;
+      } else if(value instanceof CastValue) {
+         CastValue castVal = (CastValue) value;
+         SymbolType toType = castVal.getToType();
+         value = castVal.getValue();
+         // Assume cast value is a var-ref
+         value = program.getSymbolInfos().getVariable((VariableRef) value);
+         // Find the register
+         Variable variable = (Variable) value;
+         Registers.Register register = variable.getAllocation();
+         // Examine if the register is already bound (with the cast to type) - and reuse it
+         String bound = findBound(toType, register);
+         if(bound != null)  {
+            String name = getTypePrefix(toType) + getRegisterName(register);
+            return name;
+         }  else {
+            // Bind the register
+            String name = getTypePrefix(toType) + getRegisterName(register);
+            bindings.put(name, value);
+            return name;
+         }
       } else if(value instanceof ConstantVar || value instanceof ConstantValue) {
          SymbolType constType;
          if(value instanceof ConstantVar) {
@@ -255,6 +268,22 @@ public class AsmFragmentInstanceSpec {
          return name;
       }
       throw new RuntimeException("Binding of value type not supported " + value);
+   }
+
+   private String findBound(SymbolType varType, Registers.Register register) {
+      // Find value if it is already bound
+      for(String name : bindings.keySet()) {
+         Value bound = bindings.get(name);
+         if(bound instanceof Variable) {
+            Registers.Register boundRegister = ((Variable) bound).getAllocation();
+            if(boundRegister != null && boundRegister.equals(register)) {
+               if(SymbolTypeInference.typeMatch(((Variable) bound).getType(), varType)) {
+                  return name;
+               }
+            }
+         }
+      }
+      return null;
    }
 
    /**

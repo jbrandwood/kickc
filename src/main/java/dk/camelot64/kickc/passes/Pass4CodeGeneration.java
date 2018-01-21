@@ -371,6 +371,8 @@ public class Pass4CodeGeneration {
       if(rValue instanceof VariableRef) {
          VariableRef rValueRef = (VariableRef) rValue;
          return program.getSymbolInfos().getVariable(rValueRef).getAllocation();
+      } else if(rValue instanceof CastValue) {
+         return getRegister(((CastValue) rValue).getValue());
       } else {
          return null;
       }

@@ -298,9 +298,11 @@ public class SymbolTypeInference {
          return new SymbolTypeArray(((ConstantArrayList) rValue).getElementType());
       } else if(rValue instanceof ConstantArrayFilled) {
          return new SymbolTypeArray(((ConstantArrayFilled) rValue).getElementType(), ((ConstantArrayFilled) rValue).getSize());
+      } else if(rValue instanceof CastValue) {
+         return ((CastValue) rValue).getToType();
       }
       if(type == null) {
-         throw new RuntimeException("Cannot infer type for " + rValue);
+         throw new RuntimeException("Cannot infer type for " + rValue.toString());
       }
       return type;
    }

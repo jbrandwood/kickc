@@ -6,6 +6,7 @@ import dk.camelot64.kickc.fragment.AsmFragmentTemplateSynthesizer;
 import dk.camelot64.kickc.fragment.AsmFragmentTemplateUsages;
 import dk.camelot64.kickc.model.Operator;
 import org.junit.AfterClass;
+import org.junit.BeforeClass;
 import org.junit.Test;
 
 import java.io.IOException;
@@ -16,6 +17,11 @@ import static junit.framework.TestCase.fail;
 
 /** Test the ASM fragment sub-system by loading/synthesizing a lot of different fragments and comparing with reference fragments. */
 public class TestFragments {
+
+   @BeforeClass
+   public static void setUp() {
+      AsmFragmentTemplateSynthesizer.clearCaches();
+   }
 
    @AfterClass
    public static void tearDown() throws Exception {

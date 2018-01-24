@@ -43,6 +43,11 @@ public class TestPrograms {
    }
 
    @Test
+   public void testCastDeref() throws IOException, URISyntaxException {
+      compileAndCompare("cast-deref");
+   }
+
+   @Test
    public void testRasterBars() throws IOException, URISyntaxException {
       compileAndCompare("raster-bars");
    }

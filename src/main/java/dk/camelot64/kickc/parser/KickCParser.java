@@ -2063,7 +2063,7 @@ public class KickCParser extends Parser {
 				setState(234);
 				match(T__2);
 				setState(235);
-				expr(23);
+				expr(22);
 				}
 				break;
 			case 4:
@@ -2388,7 +2388,7 @@ public class KickCParser extends Parser {
 						_localctx = new ExprArrayContext(new ExprContext(_parentctx, _parentState));
 						pushNewRecursionContext(_localctx, _startState, RULE_expr);
 						setState(293);
-						if (!(precpred(_ctx, 22))) throw new FailedPredicateException(this, "precpred(_ctx, 22)");
+						if (!(precpred(_ctx, 23))) throw new FailedPredicateException(this, "precpred(_ctx, 23)");
 						setState(294);
 						match(T__21);
 						setState(295);
@@ -3384,7 +3384,7 @@ public class KickCParser extends Parser {
 		case 11:
 			return precpred(_ctx, 7);
 		case 12:
-			return precpred(_ctx, 22);
+			return precpred(_ctx, 23);
 		case 13:
 			return precpred(_ctx, 20);
 		}
@@ -3489,7 +3489,7 @@ public class KickCParser extends Parser {
 		"\7\5\2\2\u00e3\u0108\3\2\2\2\u00e4\u00e5\7B\2\2\u00e5\u00e7\7\4\2\2\u00e6"+
 		"\u00e8\5$\23\2\u00e7\u00e6\3\2\2\2\u00e7\u00e8\3\2\2\2\u00e8\u00e9\3\2"+
 		"\2\2\u00e9\u0108\7\5\2\2\u00ea\u00eb\7\4\2\2\u00eb\u00ec\5 \21\2\u00ec"+
-		"\u00ed\7\5\2\2\u00ed\u00ee\5\"\22\31\u00ee\u0108\3\2\2\2\u00ef\u00f0\t"+
+		"\u00ed\7\5\2\2\u00ed\u00ee\5\"\22\30\u00ee\u0108\3\2\2\2\u00ef\u00f0\t"+
 		"\2\2\2\u00f0\u0108\5\"\22\27\u00f1\u00f2\7\27\2\2\u00f2\u0108\5\"\22\25"+
 		"\u00f3\u00f4\t\3\2\2\u00f4\u0108\5\"\22\24\u00f5\u00f6\t\4\2\2\u00f6\u0108"+
 		"\5\"\22\20\u00f7\u00f8\7\6\2\2\u00f8\u00fd\5\"\22\2\u00f9\u00fa\7\b\2"+
@@ -3510,7 +3510,7 @@ public class KickCParser extends Parser {
 		"\u012f\5\"\22\r\u011e\u011f\f\13\2\2\u011f\u0120\7\60\2\2\u0120\u012f"+
 		"\5\"\22\f\u0121\u0122\f\n\2\2\u0122\u0123\7\61\2\2\u0123\u012f\5\"\22"+
 		"\13\u0124\u0125\f\t\2\2\u0125\u0126\7\t\2\2\u0126\u012f\5\"\22\t\u0127"+
-		"\u0128\f\30\2\2\u0128\u0129\7\30\2\2\u0129\u012a\5\"\22\2\u012a\u012b"+
+		"\u0128\f\31\2\2\u0128\u0129\7\30\2\2\u0129\u012a\5\"\22\2\u012a\u012b"+
 		"\7\31\2\2\u012b\u012f\3\2\2\2\u012c\u012d\f\26\2\2\u012d\u012f\t\2\2\2"+
 		"\u012e\u0109\3\2\2\2\u012e\u010c\3\2\2\2\u012e\u010f\3\2\2\2\u012e\u0112"+
 		"\3\2\2\2\u012e\u0115\3\2\2\2\u012e\u0118\3\2\2\2\u012e\u011b\3\2\2\2\u012e"+

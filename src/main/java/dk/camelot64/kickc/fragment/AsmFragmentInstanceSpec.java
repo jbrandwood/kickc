@@ -190,6 +190,7 @@ public class AsmFragmentInstanceSpec {
       this.signature = signature;
    }
 
+
    /**
     * Add bindings of a value.
     *
@@ -197,101 +198,68 @@ public class AsmFragmentInstanceSpec {
     * @return The bound name of the value. If the value has already been bound the existing bound name is returned.
     */
    public String bind(Value value) {
-      if(value instanceof PointerDereferenceSimple) {
-         PointerDereferenceSimple deref = (PointerDereferenceSimple) value;
-         return "_deref_" + bind(deref.getPointer());
-      } else if(value instanceof PointerDereferenceIndexed) {
-         PointerDereferenceIndexed deref = (PointerDereferenceIndexed) value;
-         return bind(deref.getPointer()) + "_derefidx_" + bind(deref.getIndex());
-      }
+      return bind(value, null);
+   }
 
-      if(value instanceof VariableRef) {
-         value = program.getSymbolInfos().getVariable((VariableRef) value);
-      }
-      if(value instanceof ConstantRef) {
-         value = program.getScope().getConstant((ConstantRef) value);
-      }
+   /**
+    * Add bindings of a value.
+    *
+    * @param value The value to bind.
+    * @return The bound name of the value. If the value has already been bound the existing bound name is returned.
+    */
+   public String bind(Value value, SymbolType type) {
 
-      // Find value if it is already bound
-      for(String name : bindings.keySet()) {
-         Value bound = bindings.get(name);
-         if(bound.equals(value)) {
-            return name;
-         }
-      }
-
-      if(value instanceof Variable) {
-         Variable variable = (Variable) value;
-         SymbolType varType = variable.getType();
-         // Find the register
-         Registers.Register register = variable.getAllocation();
-         // Examine if the register is already bound - and reuse it
-         String bound = findBound(varType, register);
-         if(bound != null) return bound;
-         // Bind the register
-         String name = getTypePrefix(varType) + getRegisterName(register);
-         bindings.put(name, value);
-         return name;
-      } else if(value instanceof CastValue) {
+      if(value instanceof CastValue) {
          CastValue castVal = (CastValue) value;
          SymbolType toType = castVal.getToType();
          value = castVal.getValue();
-         // Assume cast value is a symbol-ref
-         value = program.getSymbolInfos().getSymbol((SymbolRef) value);
-         if(value instanceof ConstantVar || value instanceof ConstantValue) {
-            String name = getTypePrefix(toType) + "c" + nextConstByteIdx++;
-            bindings.put(name, value);
-            return name;
-         } else if(value instanceof Variable) {
-            // Find the register
-            Variable variable = (Variable) value;
-            Registers.Register register = variable.getAllocation();
-            // Examine if the register is already bound (with the cast to type) - and reuse it
-            String bound = findBound(toType, register);
-            if(bound != null) {
-               String name = getTypePrefix(toType) + getRegisterName(register);
-               return name;
-            } else {
-               // Bind the register
-               String name = getTypePrefix(toType) + getRegisterName(register);
-               bindings.put(name, value);
-               return name;
-            }
-         } else {
-            throw new RuntimeException("Unhandled cast to type " + value);
+         return bind(value, toType);
+      } else if(value instanceof PointerDereference) {
+         PointerDereference deref = (PointerDereference) value;
+         SymbolType ptrType = null;
+         if(type != null) {
+            ptrType = new SymbolTypePointer(type);
          }
-      } else if(value instanceof ConstantVar || value instanceof ConstantValue) {
-         SymbolType constType;
-         if(value instanceof ConstantVar) {
-            constType = ((ConstantVar) value).getType();
-         } else {
-            constType = SymbolTypeInference.inferType(program.getScope(), (ConstantValue) value);
+         if(value instanceof PointerDereferenceSimple) {
+            return "_deref_" + bind(deref.getPointer(), ptrType);
+         } else if(value instanceof PointerDereferenceIndexed) {
+            PointerDereferenceIndexed derefIdx = (PointerDereferenceIndexed) value;
+            return bind(derefIdx.getPointer(), ptrType) + "_derefidx_" + bind(derefIdx.getIndex());
          }
-         String name = getTypePrefix(constType) + "c" + nextConstByteIdx++;
-         bindings.put(name, value);
+      } else if(value instanceof VariableRef) {
+         Variable variable = program.getSymbolInfos().getVariable((VariableRef) value);
+         if(type == null) {
+            type = variable.getType();
+         }
+         Registers.Register register = variable.getAllocation();
+         String name = getTypePrefix(type) + getRegisterName(register);
+         bind(name, variable);
+         return name;
+      } else if(value instanceof ConstantValue) {
+         if(type == null) {
+            type = SymbolTypeInference.inferType(program.getScope(), (RValue) value);
+         }
+         String name = getTypePrefix(type) + getConstName(value);
+         bind(name, value);
          return name;
       } else if(value instanceof Label) {
          String name = "la" + nextLabelIdx++;
-         bindings.put(name, value);
+         bind(name, value);
          return name;
       }
       throw new RuntimeException("Binding of value type not supported " + value);
    }
 
-   private String findBound(SymbolType varType, Registers.Register register) {
-      // Find value if it is already bound
-      for(String name : bindings.keySet()) {
-         Value bound = bindings.get(name);
-         if(bound instanceof Variable) {
-            Registers.Register boundRegister = ((Variable) bound).getAllocation();
-            if(boundRegister != null && boundRegister.equals(register)) {
-               if(SymbolTypeInference.typeMatch(((Variable) bound).getType(), varType)) {
-                  return name;
-               }
-            }
-         }
+   /**
+    * Add binding for a name/value pair if it is not already bound.
+    *
+    * @param name The name
+    * @param value The value
+    */
+   private void bind(String name, Value value) {
+      if(bindings.get(name) == null) {
+         bindings.put(name, value);
       }
-      return null;
    }
 
    /**
@@ -335,10 +303,29 @@ public class AsmFragmentInstanceSpec {
     * @return The register part of the binding name.
     */
    private String getRegisterName(Registers.Register register) {
-      if(Registers.RegisterType.ZP_BYTE.equals(register.getType())) {
-         return "z" + getRegisterZpNameIdx((Registers.RegisterZp) register);
-      } else if(Registers.RegisterType.ZP_WORD.equals(register.getType())) {
-         return "z" + getRegisterZpNameIdx((Registers.RegisterZp) register);
+      if(Registers.RegisterType.ZP_BYTE.equals(register.getType()) || Registers.RegisterType.ZP_WORD.equals(register.getType())) {
+         // Examine if the ZP register is already bound
+         Registers.RegisterZp registerZp = (Registers.RegisterZp) register;
+         String zpNameIdx = null;
+         for(String boundName : bindings.keySet()) {
+            Value boundValue = bindings.get(boundName);
+            if(boundValue instanceof Variable) {
+               Registers.Register boundRegister = ((Variable) boundValue).getAllocation();
+               if(boundRegister != null && boundRegister.isZp()) {
+                  Registers.RegisterZp boundRegisterZp = (Registers.RegisterZp) boundRegister;
+                  if(registerZp.getZp() == boundRegisterZp.getZp()) {
+                     // Found other register with same ZP address!
+                     zpNameIdx = boundName.substring(boundName.length() - 1);
+                     break;
+                  }
+               }
+            }
+         }
+         // If not create a new one
+         if(zpNameIdx == null) {
+            zpNameIdx = Integer.toString(nextZpByteIdx++);
+         }
+         return "z" + zpNameIdx;
       } else if(Registers.RegisterType.REG_A_BYTE.equals(register.getType())) {
          return "aa";
       } else if(Registers.RegisterType.REG_X_BYTE.equals(register.getType())) {
@@ -352,30 +339,19 @@ public class AsmFragmentInstanceSpec {
       }
    }
 
-   /**
-    * Get the register ZP name index to use for a specific register.
-    * Examines all previous bindings to reuse register index if the same register is bound multiple times.
-    *
-    * @param register The register to find an index for
-    * @return The index. Either reused ot allocated from {@link #nextZpByteIdx}
-    */
-   private String getRegisterZpNameIdx(Registers.RegisterZp register) {
+   private String getConstName(Value constant) {
+      // If the constant is already bound - reuse the index
       for(String boundName : bindings.keySet()) {
          Value boundValue = bindings.get(boundName);
-         if(boundValue instanceof Variable) {
-            Registers.Register boundRegister = ((Variable) boundValue).getAllocation();
-            if(boundRegister != null && boundRegister.isZp()) {
-               Registers.RegisterZp boundRegisterZp = (Registers.RegisterZp) boundRegister;
-               if(register.getZp() == boundRegisterZp.getZp()) {
-                  // Found other register with same ZP address!
-                  return boundName.substring(boundName.length() - 1);
-               }
+         if(boundValue instanceof ConstantValue || boundValue instanceof ConstantVar) {
+            if(boundValue.equals(constant)) {
+               return "c" + boundName.substring(boundName.length() - 1);
             }
          }
       }
-      return Integer.toString(nextZpByteIdx++);
+      // Otherwise use a new index
+      return "c" + nextConstByteIdx++;
    }
-
 
    public Program getProgram() {
       return program;

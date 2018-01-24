@@ -205,6 +205,7 @@ public class AsmFragmentInstanceSpec {
     * Add bindings of a value.
     *
     * @param value The value to bind.
+    * @param type The type to bind the value as (used for casting). null if not casting, will use the actual type of the value.
     * @return The bound name of the value. If the value has already been bound the existing bound name is returned.
     */
    public String bind(Value value, SymbolType type) {

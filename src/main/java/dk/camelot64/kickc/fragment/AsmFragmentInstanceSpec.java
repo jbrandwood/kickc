@@ -279,9 +279,9 @@ public class AsmFragmentInstanceSpec {
       } else if(SymbolType.isSWord(type)) {
          return "vws";
       } else if(SymbolType.isDWord(type)) {
-         return "vlu";
+         return "vdu";
       } else if(SymbolType.isSDWord(type)) {
-         return "vls";
+         return "vds";
       } else if(SymbolType.STRING.equals(type)) {
          return "pbu";
       } else if(type instanceof SymbolTypePointer) {

@@ -10,7 +10,7 @@ import java.util.Collection;
 public class SymbolTypeInline implements SymbolType {
 
    /** All numeric types. */
-   public static final SymbolTypeInline NUMERIC = new SymbolTypeInline(Arrays.asList(BYTE, SBYTE, WORD, SWORD));
+   public static final SymbolTypeInline NUMERIC = new SymbolTypeInline(Arrays.asList(BYTE, SBYTE, WORD, SWORD, DWORD, SDWORD));
    /**
     * All potential types for the inline constant.
     */

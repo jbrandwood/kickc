@@ -128,12 +128,18 @@ public class SymbolTypeInference {
             if(type1 == null && type2 instanceof SymbolTypePointer) {
                return ((SymbolTypePointer) type2).getElementType();
             }
-            if(SymbolType.WORD.equals(type1) || SymbolType.WORD.equals(type2)) {
-               return SymbolType.WORD;
-            } else if(SymbolType.isByte(type1) && SymbolType.isByte(type2)) {
+            if(SymbolType.isByte(type1) && SymbolType.isByte(type2)) {
                return SymbolType.BYTE;
             } else if(SymbolType.SBYTE.equals(type1) && SymbolType.SBYTE.equals(type2)) {
                return SymbolType.SBYTE;
+            } else if(SymbolType.isWord(type1) && SymbolType.isWord(type2)) {
+               return SymbolType.WORD;
+            } else if(SymbolType.isSWord(type1) && SymbolType.isSWord(type2)) {
+               return SymbolType.SWORD;
+            } else if(SymbolType.isDWord(type1) && SymbolType.isDWord(type2)) {
+               return SymbolType.DWORD;
+            } else if(SymbolType.isSDWord(type1) && SymbolType.isSDWord(type2)) {
+               return SymbolType.SDWORD;
             }
             throw new RuntimeException("Type inference case not handled " + type1 + " " + operator + " " + type2);
          case "*idx":
@@ -148,12 +154,13 @@ public class SymbolTypeInference {
          case "&":
          case "|":
          case "^":
-            if(SymbolType.WORD.equals(type1) || SymbolType.WORD.equals(type2)) {
-               return SymbolType.WORD;
-            } else if(SymbolType.isByte(type1) && SymbolType.isByte(type2)) {
+            if(SymbolType.isByte(type1) && SymbolType.isByte(type2)) {
                return SymbolType.BYTE;
+            } else if(SymbolType.isWord(type1) && SymbolType.isWord(type2)) {
+               return SymbolType.WORD;
+            } else if(SymbolType.isDWord(type1) || SymbolType.isSDWord(type2)) {
+               return SymbolType.DWORD;
             }
-
             throw new RuntimeException("Type inference case not handled " + type1 + " " + operator + " " + type2);
          case "<<":
          case ">>":
@@ -165,6 +172,10 @@ public class SymbolTypeInference {
                return SymbolType.WORD;
             } else if(SymbolType.isSWord(type1)) {
                return SymbolType.SWORD;
+            } else if(SymbolType.isDWord(type1)) {
+               return SymbolType.DWORD;
+            } else if(SymbolType.isSDWord(type1)) {
+               return SymbolType.SDWORD;
             }
             throw new RuntimeException("Type inference case not handled " + type1 + " " + operator + " " + type2);
          default:
@@ -201,9 +212,9 @@ public class SymbolTypeInference {
          return SymbolType.WORD;
       } else if(SymbolType.isSWord(type1) && (SymbolType.isSWord(type2) || SymbolType.isSByte(type2))) {
          return SymbolType.SWORD;
-      } else if(SymbolType.isDWord(type1) && (SymbolType.isDWord(type2) || SymbolType.isWord(type2))|| SymbolType.isByte(type2)) {
+      } else if(SymbolType.isDWord(type1) && (SymbolType.isDWord(type2) || SymbolType.isWord(type2)) || SymbolType.isByte(type2)) {
          return SymbolType.DWORD;
-      } else if(SymbolType.isSDWord(type1) && (SymbolType.isSDWord(type2) || SymbolType.isSWord(type2)|| SymbolType.isSByte(type2))) {
+      } else if(SymbolType.isSDWord(type1) && (SymbolType.isSDWord(type2) || SymbolType.isSWord(type2) || SymbolType.isSByte(type2))) {
          return SymbolType.SDWORD;
       }
       throw new RuntimeException("Type inference case not handled " + type1 + " " + "+" + " " + type2);
@@ -218,6 +229,10 @@ public class SymbolTypeInference {
          return SymbolType.SWORD;
       } else if(SymbolType.isWord(type1) || SymbolType.isWord(type2)) {
          return SymbolType.WORD;
+      } else if(SymbolType.isSDWord(type1) || SymbolType.isSDWord(type2)) {
+         return SymbolType.SDWORD;
+      } else if(SymbolType.isDWord(type1) || SymbolType.isDWord(type2)) {
+         return SymbolType.DWORD;
       }
       throw new RuntimeException("Type inference case not handled " + type1 + " " + "+" + " " + type2);
    }
@@ -241,6 +256,12 @@ public class SymbolTypeInference {
       if(SymbolType.isSWord(type1) && (SymbolType.isSWord(type2) || SymbolType.isSByte(type2))) {
          return SymbolType.SWORD;
       }
+      if(SymbolType.isDWord(type1) && (SymbolType.isDWord(type2) || SymbolType.isWord(type2) || SymbolType.isByte(type2))) {
+         return SymbolType.DWORD;
+      }
+      if(SymbolType.isSDWord(type1) && (SymbolType.isSDWord(type2) || SymbolType.isSWord(type2) || SymbolType.isSByte(type2))) {
+         return SymbolType.SDWORD;
+      }
       throw new RuntimeException("Type inference case not handled " + type1 + " - " + type2);
    }
 
@@ -256,7 +277,7 @@ public class SymbolTypeInference {
          return true;
       } else if(type instanceof SymbolTypeInline) {
          SymbolTypeInline typeInline = (SymbolTypeInline) type;
-         return typeInline.isByte() || typeInline.isSByte() || typeInline.isWord() || typeInline.isSWord();
+         return typeInline.isByte() || typeInline.isSByte() || typeInline.isWord() || typeInline.isSWord() || typeInline.isDWord() || typeInline.isSDWord();
       } else {
          return false;
       }

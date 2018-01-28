@@ -142,10 +142,11 @@ asmParamMode
     ;
 
 asmExpr
-    : asmExpr ( '<<' | '>>' ) asmExpr #asmExprBinary
-    | ('+' | '-' | '<' | '>') asmExpr #asmExprUnary
-    | asmExpr ('*' | '/' | '<<' | '>>' ) asmExpr #asmExprBinary
-    | asmExpr ( '+' | '-')  asmExpr #asmExprBinary
+    : '(' asmExpr ')' #asmExprPar
+    | asmExpr ( '<<' | '>>' ) asmExpr #asmExprBinary
+    | ('+' | '-' | '<' | '>' ) asmExpr #asmExprUnary
+    | asmExpr ('*' | '/' ) asmExpr #asmExprBinary
+    | asmExpr ( '+' | '-' )  asmExpr #asmExprBinary
     | NAME #asmExprLabel
     | ASMREL #asmExprLabelRel
     | '{' NAME '}' #asmExprReplace

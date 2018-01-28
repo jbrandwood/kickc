@@ -696,6 +696,18 @@ public interface KickCListener extends ParseTreeListener {
 	 */
 	void exitAsmExprLabelRel(KickCParser.AsmExprLabelRelContext ctx);
 	/**
+	 * Enter a parse tree produced by the {@code asmExprPar}
+	 * labeled alternative in {@link KickCParser#asmExpr}.
+	 * @param ctx the parse tree
+	 */
+	void enterAsmExprPar(KickCParser.AsmExprParContext ctx);
+	/**
+	 * Exit a parse tree produced by the {@code asmExprPar}
+	 * labeled alternative in {@link KickCParser#asmExpr}.
+	 * @param ctx the parse tree
+	 */
+	void exitAsmExprPar(KickCParser.AsmExprParContext ctx);
+	/**
 	 * Enter a parse tree produced by the {@code asmExprBinary}
 	 * labeled alternative in {@link KickCParser#asmExpr}.
 	 * @param ctx the parse tree

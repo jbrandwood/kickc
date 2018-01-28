@@ -273,6 +273,13 @@ public class AsmFragmentInstance {
       }
 
       @Override
+      public Object visitAsmExprPar(KickCParser.AsmExprParContext ctx) {
+         AsmParameter sub = (AsmParameter) this.visit(ctx.asmExpr());
+         String param = "(" + sub.getParam() + ")";
+         return new AsmParameter(param, sub.isZp());
+      }
+
+      @Override
       public AsmParameter visitAsmExprInt(KickCParser.AsmExprIntContext ctx) {
          Number number = NumberParser.parseLiteral(ctx.NUMBER().getText());
          ConstantInteger intVal = new ConstantInteger(number.longValue());

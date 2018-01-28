@@ -415,6 +415,13 @@ public interface KickCVisitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitAsmExprLabelRel(KickCParser.AsmExprLabelRelContext ctx);
 	/**
+	 * Visit a parse tree produced by the {@code asmExprPar}
+	 * labeled alternative in {@link KickCParser#asmExpr}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitAsmExprPar(KickCParser.AsmExprParContext ctx);
+	/**
 	 * Visit a parse tree produced by the {@code asmExprBinary}
 	 * labeled alternative in {@link KickCParser#asmExpr}.
 	 * @param ctx the parse tree

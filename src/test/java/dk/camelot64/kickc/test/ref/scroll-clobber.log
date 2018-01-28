@@ -21,12 +21,12 @@ Adding pre/post-modifier (byte) main::i ← ++ (byte) main::i
 Adding pre/post-modifier (byte*) main::nxt ← ++ (byte*) main::nxt
 
 STATEMENTS
-  (byte*) SCREEN ← (word/signed word) 1024
-  (byte*) SCROLL ← (word) 53270
+  (byte*) SCREEN ← (word/signed word/dword/signed dword) 1024
+  (byte*) SCROLL ← (word/dword/signed dword) 53270
   (byte[]) TEXT ← (string) "01234567@"
 proc (void()) main()
   (byte*) main::nxt ← (byte[]) TEXT
-  (byte) main::i ← (byte/signed byte/word/signed word) 0
+  (byte) main::i ← (byte/signed byte/word/signed word/dword/signed dword) 0
 main::@1:
   (byte) main::c ← *((byte*) main::nxt)
   (boolean~) main::$0 ← (byte) main::c == (byte) '@'
@@ -58,17 +58,17 @@ SYMBOLS
 (byte) main::i
 (byte*) main::nxt
 
-Promoting word/signed word to byte* in SCREEN ← ((byte*)) 1024
-Promoting word to byte* in SCROLL ← ((byte*)) 53270
+Promoting word/signed word/dword/signed dword to byte* in SCREEN ← ((byte*)) 1024
+Promoting word/dword/signed dword to byte* in SCROLL ← ((byte*)) 53270
 INITIAL CONTROL FLOW GRAPH
 @begin: scope:[]  from
-  (byte*) SCREEN ← ((byte*)) (word/signed word) 1024
-  (byte*) SCROLL ← ((byte*)) (word) 53270
+  (byte*) SCREEN ← ((byte*)) (word/signed word/dword/signed dword) 1024
+  (byte*) SCROLL ← ((byte*)) (word/dword/signed dword) 53270
   (byte[]) TEXT ← (string) "01234567@"
   to:@1
 main: scope:[main]  from
   (byte*) main::nxt ← (byte[]) TEXT
-  (byte) main::i ← (byte/signed byte/word/signed word) 0
+  (byte) main::i ← (byte/signed byte/word/signed word/dword/signed dword) 0
   to:main::@1
 main::@1: scope:[main]  from main main::@2
   (byte) main::c ← *((byte*) main::nxt)
@@ -96,7 +96,7 @@ main::@return: scope:[main]  from main::@4
   to:@end
 @end: scope:[]  from @1
 
-Eliminating unused variable (byte*) SCROLL and assignment [1] (byte*) SCROLL ← ((byte*)) (word) 53270
+Eliminating unused variable (byte*) SCROLL and assignment [1] (byte*) SCROLL ← ((byte*)) (word/dword/signed dword) 53270
 Creating constant string variable for inline (const string) $0 "01234567@"
 Removing empty block main::@4
 PROCEDURE MODIFY VARIABLE ANALYSIS
@@ -108,13 +108,13 @@ Completing Phi functions...
 
 CONTROL FLOW GRAPH SSA WITH ASSIGNMENT CALL & RETURN
 @begin: scope:[]  from
-  (byte*) SCREEN#0 ← ((byte*)) (word/signed word) 1024
+  (byte*) SCREEN#0 ← ((byte*)) (word/signed word/dword/signed dword) 1024
   (byte[]) TEXT#0 ← (const string) $0
   to:@1
 main: scope:[main]  from @1
   (byte*) SCREEN#4 ← phi( @1/(byte*) SCREEN#5 )
   (byte*) main::nxt#0 ← (byte[]) TEXT#0
-  (byte) main::i#0 ← (byte/signed byte/word/signed word) 0
+  (byte) main::i#0 ← (byte/signed byte/word/signed word/dword/signed dword) 0
   to:main::@1
 main::@1: scope:[main]  from main main::@2
   (byte*) SCREEN#2 ← phi( main/(byte*) SCREEN#4 main::@2/(byte*) SCREEN#1 )
@@ -235,7 +235,7 @@ Inlining constant with var siblings (const string) main::nxt#0
 Inlining constant with var siblings (const string) main::nxt#2
 Inlining constant with var siblings (const string) main::nxt#2
 Inlining constant with var siblings (const string) main::nxt#2
-Constant inlined main::i#0 = (byte/signed byte/word/signed word) 0
+Constant inlined main::i#0 = (byte/signed byte/word/signed word/dword/signed dword) 0
 Constant inlined main::nxt#0 = (const string) TEXT#0
 Constant inlined $0 = (const string) TEXT#0
 Constant inlined main::nxt#2 = (const string) TEXT#0
@@ -291,7 +291,7 @@ main: scope:[main]  from @1
   [4] phi() [ ] ( main:2 [ ] )
   to:main::@1
 main::@1: scope:[main]  from main main::@2
-  [5] (byte) main::i#2 ← phi( main/(byte/signed byte/word/signed word) 0 main::@2/(byte) main::i#1 ) [ main::nxt#3 main::i#2 ] ( main:2 [ main::nxt#3 main::i#2 ] )
+  [5] (byte) main::i#2 ← phi( main/(byte/signed byte/word/signed word/dword/signed dword) 0 main::@2/(byte) main::i#1 ) [ main::nxt#3 main::i#2 ] ( main:2 [ main::nxt#3 main::i#2 ] )
   [5] (byte*) main::nxt#3 ← phi( main/(const string) TEXT#0 main::@2/(byte*) main::nxt#1 ) [ main::nxt#3 main::i#2 ] ( main:2 [ main::nxt#3 main::i#2 ] )
   [6] (byte) main::c#0 ← *((byte*) main::nxt#3) [ main::nxt#3 main::i#2 main::c#0 ] ( main:2 [ main::nxt#3 main::i#2 main::c#0 ] )
   [7] if((byte) main::c#0!=(byte) '@') goto main::@2 [ main::nxt#3 main::i#2 main::c#0 ] ( main:2 [ main::nxt#3 main::i#2 main::c#0 ] )
@@ -391,7 +391,7 @@ main: {
     .label nxt = 4
   //SEG10 [5] phi from main to main::@1 [phi:main->main::@1]
   b1_from_main:
-  //SEG11 [5] phi (byte) main::i#2 = (byte/signed byte/word/signed word) 0 [phi:main->main::@1#0] -- vbuz1=vbuc1 
+  //SEG11 [5] phi (byte) main::i#2 = (byte/signed byte/word/signed word/dword/signed dword) 0 [phi:main->main::@1#0] -- vbuz1=vbuc1 
     lda #0
     sta i
   //SEG12 [5] phi (byte*) main::nxt#3 = (const string) TEXT#0 [phi:main->main::@1#1] -- pbuz1=pbuc1 
@@ -503,7 +503,7 @@ main: {
     .label nxt = 2
   //SEG10 [5] phi from main to main::@1 [phi:main->main::@1]
   b1_from_main:
-  //SEG11 [5] phi (byte) main::i#2 = (byte/signed byte/word/signed word) 0 [phi:main->main::@1#0] -- vbuxx=vbuc1 
+  //SEG11 [5] phi (byte) main::i#2 = (byte/signed byte/word/signed word/dword/signed dword) 0 [phi:main->main::@1#0] -- vbuxx=vbuc1 
     ldx #0
   //SEG12 [5] phi (byte*) main::nxt#3 = (const string) TEXT#0 [phi:main->main::@1#1] -- pbuz1=pbuc1 
     lda #<TEXT
@@ -601,7 +601,7 @@ FINAL SYMBOL TABLE
 (label) @begin
 (label) @end
 (byte*) SCREEN
-(const byte*) SCREEN#0 SCREEN = ((byte*))(word/signed word) 1024
+(const byte*) SCREEN#0 SCREEN = ((byte*))(word/signed word/dword/signed dword) 1024
 (byte[]) TEXT
 (const string) TEXT#0 TEXT = (string) "01234567@"
 (void()) main()
@@ -647,7 +647,7 @@ Score: 651
 main: {
     .label nxt = 2
   //SEG10 [5] phi from main to main::@1 [phi:main->main::@1]
-  //SEG11 [5] phi (byte) main::i#2 = (byte/signed byte/word/signed word) 0 [phi:main->main::@1#0] -- vbuxx=vbuc1 
+  //SEG11 [5] phi (byte) main::i#2 = (byte/signed byte/word/signed word/dword/signed dword) 0 [phi:main->main::@1#0] -- vbuxx=vbuc1 
     ldx #0
   //SEG12 [5] phi (byte*) main::nxt#3 = (const string) TEXT#0 [phi:main->main::@1#1] -- pbuz1=pbuc1 
     lda #<TEXT

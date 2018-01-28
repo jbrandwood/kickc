@@ -278,6 +278,10 @@ public class AsmFragmentInstanceSpec {
          return "vwu";
       } else if(SymbolType.isSWord(type)) {
          return "vws";
+      } else if(SymbolType.isDWord(type)) {
+         return "vlu";
+      } else if(SymbolType.isSDWord(type)) {
+         return "vls";
       } else if(SymbolType.STRING.equals(type)) {
          return "pbu";
       } else if(type instanceof SymbolTypePointer) {
@@ -304,7 +308,7 @@ public class AsmFragmentInstanceSpec {
     * @return The register part of the binding name.
     */
    private String getRegisterName(Registers.Register register) {
-      if(Registers.RegisterType.ZP_BYTE.equals(register.getType()) || Registers.RegisterType.ZP_WORD.equals(register.getType())) {
+      if(Registers.RegisterType.ZP_BYTE.equals(register.getType()) || Registers.RegisterType.ZP_WORD.equals(register.getType())|| Registers.RegisterType.ZP_DWORD.equals(register.getType())) {
          // Examine if the ZP register is already bound
          Registers.RegisterZp registerZp = (Registers.RegisterZp) register;
          String zpNameIdx = null;

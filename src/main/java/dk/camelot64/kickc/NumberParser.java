@@ -23,16 +23,16 @@ public class NumberParser {
       }
    }
 
-   private static Integer parseHexInt(String literal) {
-      return Integer.parseInt(literal, 16);
+   private static Long parseHexInt(String literal) {
+      return Long.parseLong(literal, 16);
    }
 
-   private static Integer parseBinInt(String literal) {
-      return Integer.parseInt(literal, 2);
+   private static Long parseBinInt(String literal) {
+      return Long.parseLong(literal, 2);
    }
 
-   private static Integer parseDecInt(String literal) {
-      return Integer.parseInt(literal);
+   private static Long parseDecInt(String literal) {
+      return Long.parseLong(literal);
    }
 
 

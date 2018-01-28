@@ -385,7 +385,7 @@ public class Pass0GenerateStatementSequence extends KickCBaseVisitor<Object> {
          Statement stmtInc = new StatementAssignment(lValue.getRef(), Operator.DECREMENT, lValue.getRef());
          sequence.addStatement(stmtInc);
          if(rangeLast.getNumber() == 0) {
-            beyondLastVal = new ConstantInteger(255);
+            beyondLastVal = new ConstantInteger(255L);
          } else {
             beyondLastVal = new ConstantInteger(rangeLast.getNumber() - 1);
          }
@@ -393,7 +393,7 @@ public class Pass0GenerateStatementSequence extends KickCBaseVisitor<Object> {
          Statement stmtInc = new StatementAssignment(lValue.getRef(), Operator.INCREMENT, lValue.getRef());
          sequence.addStatement(stmtInc);
          if(rangeLast.getNumber() == 255) {
-            beyondLastVal = new ConstantInteger(0);
+            beyondLastVal = new ConstantInteger(0L);
          } else {
             beyondLastVal = new ConstantInteger(rangeLast.getNumber() + 1);
          }
@@ -479,7 +479,7 @@ public class Pass0GenerateStatementSequence extends KickCBaseVisitor<Object> {
       if(ctx.expr() != null) {
          ConstantValue size = ParseTreeConstantEvaluator.evaluate(ctx.expr());
          if(size instanceof ConstantInteger) {
-            return new SymbolTypeArray(elementType, ((ConstantInteger) size).getNumber());
+            return new SymbolTypeArray(elementType, ((ConstantInteger) size).getNumber().intValue());
          } else {
             throw new RuntimeException("Array size not a constant integer " + ctx.getText());
          }
@@ -548,8 +548,8 @@ public class Pass0GenerateStatementSequence extends KickCBaseVisitor<Object> {
    @Override
    public RValue visitExprNumber(KickCParser.ExprNumberContext ctx) {
       Number number = NumberParser.parseLiteral(ctx.getText());
-      if(number instanceof Integer) {
-         return new ConstantInteger((Integer) number);
+      if(number instanceof Long) {
+         return new ConstantInteger((Long) number);
       } else {
          return new ConstantDouble((Double) number);
       }

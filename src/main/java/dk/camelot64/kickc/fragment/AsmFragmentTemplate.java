@@ -90,9 +90,9 @@ public class AsmFragmentTemplate {
       if(signature.contains("z1")) bindings.put("z1", v1);
       if(signature.contains("z2")) bindings.put("z2", v2);
       if(signature.contains("z3")) bindings.put("z3", v3);
-      if(signature.contains("c1")) bindings.put("c1", new ConstantInteger(10));
-      if(signature.contains("c2")) bindings.put("c2", new ConstantInteger(20));
-      if(signature.contains("c3")) bindings.put("c3", new ConstantInteger(30));
+      if(signature.contains("c1")) bindings.put("c1", new ConstantInteger(10L));
+      if(signature.contains("c2")) bindings.put("c2", new ConstantInteger(20L));
+      if(signature.contains("c3")) bindings.put("c3", new ConstantInteger(30L));
       if(signature.contains("la1")) bindings.put("la1", new Label("@1", scope, true));
       AsmFragmentInstance fragmentInstance =
             new AsmFragmentInstance(new Program(), signature, ScopeRef.ROOT, this, bindings);

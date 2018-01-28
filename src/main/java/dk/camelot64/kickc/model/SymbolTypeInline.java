@@ -5,7 +5,7 @@ import java.util.Collection;
 
 /**
  * Symbol Type of an inline expression. Inline expressions can match multiple types depending on the actual value,
- * eg. the value 27 matches both byte and signed byte (which can in turn be promoted to word/signed word), while the value -252 only matches signed word.
+ * eg. the value 27 matches both byte and signed byte (which can in turn be promoted to word/signed word, dword/signed dword), while the value -252 only matches signed word or signed dword.
  */
 public class SymbolTypeInline implements SymbolType {
 
@@ -96,5 +96,24 @@ public class SymbolTypeInline implements SymbolType {
    public boolean isSWord() {
       return types.contains(SWORD);
    }
+
+   /**
+    * Is unsigned dword one of the potential types
+    *
+    * @return true if unsigned dword is a potential type
+    */
+   public boolean isDWord() {
+      return types.contains(DWORD);
+   }
+
+   /**
+    * Is signed dword one of the potential types
+    *
+    * @return true if signed dword is a potential type
+    */
+   public boolean isSDWord() {
+      return types.contains(SDWORD);
+   }
+
 
 }

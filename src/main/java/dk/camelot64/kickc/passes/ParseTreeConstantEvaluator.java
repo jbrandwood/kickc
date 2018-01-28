@@ -58,7 +58,7 @@ public class ParseTreeConstantEvaluator extends KickCBaseVisitor<ConstantValue> 
       }
    }
 
-   private static Integer getInteger(ConstantValue constant) {
+   private static Long getInteger(ConstantValue constant) {
       if(constant instanceof ConstantInteger) {
          return ((ConstantInteger) constant).getNumber();
       } else {
@@ -111,8 +111,10 @@ public class ParseTreeConstantEvaluator extends KickCBaseVisitor<ConstantValue> 
    @Override
    public ConstantValue visitExprNumber(KickCParser.ExprNumberContext ctx) {
       Number number = NumberParser.parseLiteral(ctx.getText());
-      if(number instanceof Integer) {
-         return new ConstantInteger((Integer) number);
+      if(number instanceof Long) {
+         return new ConstantInteger((Long) number);
+      } else if(number instanceof Integer) {
+         return new ConstantInteger(number.longValue());
       } else {
          return new ConstantDouble((Double) number);
       }

@@ -13,9 +13,9 @@ Adding pre/post-modifier (byte) main::i ← ++ (byte) main::i
 
 STATEMENTS
 proc (void()) main()
-  (byte*) main::screen ← (word/signed word) 1024
+  (byte*) main::screen ← (word/signed word/dword/signed dword) 1024
   (byte[]) main::msg ← (string) "message 2 @"
-  (byte) main::i ← (byte/signed byte/word/signed word) 0
+  (byte) main::i ← (byte/signed byte/word/signed word/dword/signed dword) 0
 main::@1:
   (boolean~) main::$0 ← *((byte[]) main::msg + (byte) main::i) != (byte) '@'
   if((boolean~) main::$0) goto main::@2
@@ -41,14 +41,14 @@ SYMBOLS
 (byte[]) main::msg
 (byte*) main::screen
 
-Promoting word/signed word to byte* in main::screen ← ((byte*)) 1024
+Promoting word/signed word/dword/signed dword to byte* in main::screen ← ((byte*)) 1024
 INITIAL CONTROL FLOW GRAPH
 @begin: scope:[]  from
   to:@1
 main: scope:[main]  from
-  (byte*) main::screen ← ((byte*)) (word/signed word) 1024
+  (byte*) main::screen ← ((byte*)) (word/signed word/dword/signed dword) 1024
   (byte[]) main::msg ← (string) "message 2 @"
-  (byte) main::i ← (byte/signed byte/word/signed word) 0
+  (byte) main::i ← (byte/signed byte/word/signed word/dword/signed dword) 0
   to:main::@1
 main::@1: scope:[main]  from main main::@2
   (boolean~) main::$0 ← *((byte[]) main::msg + (byte) main::i) != (byte) '@'
@@ -88,9 +88,9 @@ CONTROL FLOW GRAPH SSA WITH ASSIGNMENT CALL & RETURN
 @begin: scope:[]  from
   to:@1
 main: scope:[main]  from @1
-  (byte*) main::screen#0 ← ((byte*)) (word/signed word) 1024
+  (byte*) main::screen#0 ← ((byte*)) (word/signed word/dword/signed dword) 1024
   (byte[]) main::msg#0 ← (const string) main::$1
-  (byte) main::i#0 ← (byte/signed byte/word/signed word) 0
+  (byte) main::i#0 ← (byte/signed byte/word/signed word/dword/signed dword) 0
   to:main::@1
 main::@1: scope:[main]  from main main::@2
   (byte*) main::screen#2 ← phi( main/(byte*) main::screen#0 main::@2/(byte*) main::screen#1 )
@@ -157,7 +157,7 @@ OPTIMIZING CONTROL FLOW GRAPH
 Inlining constant with var siblings (const byte) main::i#0
 Inlining constant with var siblings (const byte) main::i#0
 Constant inlined main::$1 = (const string) main::msg#0
-Constant inlined main::i#0 = (byte/signed byte/word/signed word) 0
+Constant inlined main::i#0 = (byte/signed byte/word/signed word/dword/signed dword) 0
 Succesful SSA optimization Pass2ConstantInlining
 Block Sequence Planned @begin @1 @end main main::@1 main::@return main::@2 
 Block Sequence Planned @begin @1 @end main main::@1 main::@return main::@2 
@@ -195,7 +195,7 @@ main: scope:[main]  from @1
   [4] phi() [ ] ( main:2 [ ] )
   to:main::@1
 main::@1: scope:[main]  from main main::@2
-  [5] (byte) main::i#2 ← phi( main/(byte/signed byte/word/signed word) 0 main::@2/(byte) main::i#1 ) [ main::i#2 ] ( main:2 [ main::i#2 ] )
+  [5] (byte) main::i#2 ← phi( main/(byte/signed byte/word/signed word/dword/signed dword) 0 main::@2/(byte) main::i#1 ) [ main::i#2 ] ( main:2 [ main::i#2 ] )
   [6] if(*((const string) main::msg#0 + (byte) main::i#2)!=(byte) '@') goto main::@2 [ main::i#2 ] ( main:2 [ main::i#2 ] )
   to:main::@return
 main::@return: scope:[main]  from main::@1
@@ -269,7 +269,7 @@ main: {
     .label i = 2
   //SEG10 [5] phi from main to main::@1 [phi:main->main::@1]
   b1_from_main:
-  //SEG11 [5] phi (byte) main::i#2 = (byte/signed byte/word/signed word) 0 [phi:main->main::@1#0] -- vbuz1=vbuc1 
+  //SEG11 [5] phi (byte) main::i#2 = (byte/signed byte/word/signed word/dword/signed dword) 0 [phi:main->main::@1#0] -- vbuz1=vbuc1 
     lda #0
     sta i
     jmp b1
@@ -342,7 +342,7 @@ main: {
     .const screen = $400
   //SEG10 [5] phi from main to main::@1 [phi:main->main::@1]
   b1_from_main:
-  //SEG11 [5] phi (byte) main::i#2 = (byte/signed byte/word/signed word) 0 [phi:main->main::@1#0] -- vbuxx=vbuc1 
+  //SEG11 [5] phi (byte) main::i#2 = (byte/signed byte/word/signed word/dword/signed dword) 0 [phi:main->main::@1#0] -- vbuxx=vbuc1 
     ldx #0
     jmp b1
   //SEG12 main::@1
@@ -402,7 +402,7 @@ FINAL SYMBOL TABLE
 (byte[]) main::msg
 (const string) main::msg#0 msg = (string) "message 2 @"
 (byte*) main::screen
-(const byte*) main::screen#0 screen = ((byte*))(word/signed word) 1024
+(const byte*) main::screen#0 screen = ((byte*))(word/signed word/dword/signed dword) 1024
 
 reg byte x [ main::i#2 main::i#1 ]
 
@@ -427,7 +427,7 @@ Score: 267
 main: {
     .const screen = $400
   //SEG10 [5] phi from main to main::@1 [phi:main->main::@1]
-  //SEG11 [5] phi (byte) main::i#2 = (byte/signed byte/word/signed word) 0 [phi:main->main::@1#0] -- vbuxx=vbuc1 
+  //SEG11 [5] phi (byte) main::i#2 = (byte/signed byte/word/signed word/dword/signed dword) 0 [phi:main->main::@1#0] -- vbuxx=vbuc1 
     ldx #0
   //SEG12 main::@1
   b1:

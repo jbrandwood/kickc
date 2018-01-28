@@ -275,7 +275,7 @@ public class AsmFragmentInstance {
       @Override
       public AsmParameter visitAsmExprInt(KickCParser.AsmExprIntContext ctx) {
          Number number = NumberParser.parseLiteral(ctx.NUMBER().getText());
-         ConstantInteger intVal = new ConstantInteger(number.intValue());
+         ConstantInteger intVal = new ConstantInteger(number.longValue());
          boolean isZp = SymbolType.isByte(intVal.getType()) || SymbolType.isSByte(intVal.getType());
          String param = AsmFormat.getAsmNumber(number);
          return new AsmParameter(param, isZp);

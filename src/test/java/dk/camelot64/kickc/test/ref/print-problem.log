@@ -26,8 +26,8 @@ Adding pre/post-modifier (byte) char ← ++ (byte) char
 Adding pre/post-modifier (byte) char ← ++ (byte) char
 
 STATEMENTS
-  (byte*) SCREEN ← (word/signed word) 1024
-  (byte) line ← (byte/signed byte/word/signed word) 64
+  (byte*) SCREEN ← (word/signed word/dword/signed dword) 1024
+  (byte) line ← (byte/signed byte/word/signed word/dword/signed dword) 64
   (byte) char ← (byte) line
 proc (void()) main()
   (void~) main::$0 ← call ln 
@@ -40,7 +40,7 @@ main::@return:
   return 
 endproc // main()
 proc (void()) ln()
-  (byte/word~) ln::$0 ← (byte) line + (byte/signed byte/word/signed word) 2
+  (byte/word~) ln::$0 ← (byte) line + (byte/signed byte/word/signed word/dword/signed dword) 2
   (byte) line ← (byte/word~) ln::$0
   (byte) char ← (byte) line
 ln::@return:
@@ -61,11 +61,11 @@ SYMBOLS
 (void~) main::$2
 (label) main::@return
 
-Promoting word/signed word to byte* in SCREEN ← ((byte*)) 1024
+Promoting word/signed word/dword/signed dword to byte* in SCREEN ← ((byte*)) 1024
 INITIAL CONTROL FLOW GRAPH
 @begin: scope:[]  from
-  (byte*) SCREEN ← ((byte*)) (word/signed word) 1024
-  (byte) line ← (byte/signed byte/word/signed word) 64
+  (byte*) SCREEN ← ((byte*)) (word/signed word/dword/signed dword) 1024
+  (byte) line ← (byte/signed byte/word/signed word/dword/signed dword) 64
   (byte) char ← (byte) line
   to:@1
 main: scope:[main]  from
@@ -82,7 +82,7 @@ main::@return: scope:[main]  from main
 @1: scope:[]  from @begin
   to:@2
 ln: scope:[ln]  from
-  (byte/word~) ln::$0 ← (byte) line + (byte/signed byte/word/signed word) 2
+  (byte/word~) ln::$0 ← (byte) line + (byte/signed byte/word/signed word/dword/signed dword) 2
   (byte) line ← (byte/word~) ln::$0
   (byte) char ← (byte) line
   to:ln::@return
@@ -112,8 +112,8 @@ Completing Phi functions...
 
 CONTROL FLOW GRAPH SSA WITH ASSIGNMENT CALL & RETURN
 @begin: scope:[]  from
-  (byte*) SCREEN#0 ← ((byte*)) (word/signed word) 1024
-  (byte) line#0 ← (byte/signed byte/word/signed word) 64
+  (byte*) SCREEN#0 ← ((byte*)) (word/signed word/dword/signed dword) 1024
+  (byte) line#0 ← (byte/signed byte/word/signed word/dword/signed dword) 64
   (byte) char#0 ← (byte) line#0
   to:@2
 main: scope:[main]  from @2
@@ -157,7 +157,7 @@ main::@return: scope:[main]  from main::@3
   to:@return
 ln: scope:[ln]  from main main::@1 main::@2
   (byte) line#12 ← phi( main/(byte) line#15 main::@1/(byte) line#1 main::@2/(byte) line#2 )
-  (byte/word~) ln::$0 ← (byte) line#12 + (byte/signed byte/word/signed word) 2
+  (byte/word~) ln::$0 ← (byte) line#12 + (byte/signed byte/word/signed word/dword/signed dword) 2
   (byte) line#5 ← (byte/word~) ln::$0
   (byte) char#7 ← (byte) line#5
   to:ln::@return
@@ -301,7 +301,7 @@ Succesful SSA optimization Pass2CullEmptyBlocks
 OPTIMIZING CONTROL FLOW GRAPH
 Inlining constant with var siblings (const byte) line#0
 Inlining constant with var siblings (const byte) line#0
-Constant inlined line#0 = (byte/signed byte/word/signed word) 64
+Constant inlined line#0 = (byte/signed byte/word/signed word/dword/signed dword) 64
 Succesful SSA optimization Pass2ConstantInlining
 Block Sequence Planned @begin @2 @end main main::@1 main::@2 main::@3 main::@return ln ln::@return 
 Block Sequence Planned @begin @2 @end main main::@1 main::@2 main::@3 main::@return ln ln::@return 
@@ -360,8 +360,8 @@ main::@return: scope:[main]  from main::@3
   [11] return  [ ] ( main:2 [ ] )
   to:@return
 ln: scope:[ln]  from main main::@1 main::@2
-  [12] (byte) line#12 ← phi( main/(byte/signed byte/word/signed word) 64 main::@1/(byte) line#13 main::@2/(byte) line#13 ) [ line#12 ] ( main:2::ln:5 [ line#12 ] main:2::ln:7 [ line#12 ] main:2::ln:9 [ line#12 ] )
-  [13] (byte) line#13 ← (byte) line#12 + (byte/signed byte/word/signed word) 2 [ line#13 ] ( main:2::ln:5 [ line#13 ] main:2::ln:7 [ line#13 ] main:2::ln:9 [ line#13 ] )
+  [12] (byte) line#12 ← phi( main/(byte/signed byte/word/signed word/dword/signed dword) 64 main::@1/(byte) line#13 main::@2/(byte) line#13 ) [ line#12 ] ( main:2::ln:5 [ line#12 ] main:2::ln:7 [ line#12 ] main:2::ln:9 [ line#12 ] )
+  [13] (byte) line#13 ← (byte) line#12 + (byte/signed byte/word/signed word/dword/signed dword) 2 [ line#13 ] ( main:2::ln:5 [ line#13 ] main:2::ln:7 [ line#13 ] main:2::ln:9 [ line#13 ] )
   to:ln::@return
 ln::@return: scope:[ln]  from ln
   [14] return  [ line#13 ] ( main:2::ln:5 [ line#13 ] main:2::ln:7 [ line#13 ] main:2::ln:9 [ line#13 ] )
@@ -431,7 +431,7 @@ main: {
   //SEG10 [5] call ln param-assignment [ line#13 ] ( main:2 [ line#13 ] )
   //SEG11 [12] phi from main to ln [phi:main->ln]
   ln_from_main:
-  //SEG12 [12] phi (byte) line#12 = (byte/signed byte/word/signed word) 64 [phi:main->ln#0] -- vbuz1=vbuc1 
+  //SEG12 [12] phi (byte) line#12 = (byte/signed byte/word/signed word/dword/signed dword) 64 [phi:main->ln#0] -- vbuz1=vbuc1 
     lda #$40
     sta line
     jsr ln
@@ -469,7 +469,7 @@ main: {
 }
 //SEG27 ln
 ln: {
-  //SEG28 [13] (byte) line#13 ← (byte) line#12 + (byte/signed byte/word/signed word) 2 [ line#13 ] ( main:2::ln:5 [ line#13 ] main:2::ln:7 [ line#13 ] main:2::ln:9 [ line#13 ] ) -- vbuz1=vbuz1_plus_vbuc1 
+  //SEG28 [13] (byte) line#13 ← (byte) line#12 + (byte/signed byte/word/signed word/dword/signed dword) 2 [ line#13 ] ( main:2::ln:5 [ line#13 ] main:2::ln:7 [ line#13 ] main:2::ln:9 [ line#13 ] ) -- vbuz1=vbuz1_plus_vbuc1 
     lda #2
     clc
     adc line
@@ -482,7 +482,7 @@ ln: {
 }
 
 REGISTER UPLIFT POTENTIAL REGISTERS
-Statement [13] (byte) line#13 ← (byte) line#12 + (byte/signed byte/word/signed word) 2 [ line#13 ] ( main:2::ln:5 [ line#13 ] main:2::ln:7 [ line#13 ] main:2::ln:9 [ line#13 ] ) always clobbers reg byte a 
+Statement [13] (byte) line#13 ← (byte) line#12 + (byte/signed byte/word/signed word/dword/signed dword) 2 [ line#13 ] ( main:2::ln:5 [ line#13 ] main:2::ln:7 [ line#13 ] main:2::ln:9 [ line#13 ] ) always clobbers reg byte a 
 Potential registers zp ZP_BYTE:2 [ line#12 line#13 ] : zp ZP_BYTE:2 , reg byte a , reg byte x , reg byte y , 
 
 REGISTER UPLIFT SCOPES
@@ -522,7 +522,7 @@ main: {
   //SEG10 [5] call ln param-assignment [ line#13 ] ( main:2 [ line#13 ] )
   //SEG11 [12] phi from main to ln [phi:main->ln]
   ln_from_main:
-  //SEG12 [12] phi (byte) line#12 = (byte/signed byte/word/signed word) 64 [phi:main->ln#0] -- vbuaa=vbuc1 
+  //SEG12 [12] phi (byte) line#12 = (byte/signed byte/word/signed word/dword/signed dword) 64 [phi:main->ln#0] -- vbuaa=vbuc1 
     lda #$40
     jsr ln
   //SEG13 [6] phi from main to main::@1 [phi:main->main::@1]
@@ -558,7 +558,7 @@ main: {
 }
 //SEG27 ln
 ln: {
-  //SEG28 [13] (byte) line#13 ← (byte) line#12 + (byte/signed byte/word/signed word) 2 [ line#13 ] ( main:2::ln:5 [ line#13 ] main:2::ln:7 [ line#13 ] main:2::ln:9 [ line#13 ] ) -- vbuaa=vbuaa_plus_vbuc1 
+  //SEG28 [13] (byte) line#13 ← (byte) line#12 + (byte/signed byte/word/signed word/dword/signed dword) 2 [ line#13 ] ( main:2::ln:5 [ line#13 ] main:2::ln:7 [ line#13 ] main:2::ln:9 [ line#13 ] ) -- vbuaa=vbuaa_plus_vbuc1 
     clc
     adc #2
     jmp breturn
@@ -601,7 +601,7 @@ FINAL SYMBOL TABLE
 (label) @begin
 (label) @end
 (byte*) SCREEN
-(const byte*) SCREEN#0 SCREEN = ((byte*))(word/signed word) 1024
+(const byte*) SCREEN#0 SCREEN = ((byte*))(word/signed word/dword/signed dword) 1024
 (byte) char
 (byte) line
 (byte) line#12 reg byte a 6.0
@@ -638,7 +638,7 @@ Score: 46
 main: {
   //SEG10 [5] call ln param-assignment [ line#13 ] ( main:2 [ line#13 ] )
   //SEG11 [12] phi from main to ln [phi:main->ln]
-  //SEG12 [12] phi (byte) line#12 = (byte/signed byte/word/signed word) 64 [phi:main->ln#0] -- vbuaa=vbuc1 
+  //SEG12 [12] phi (byte) line#12 = (byte/signed byte/word/signed word/dword/signed dword) 64 [phi:main->ln#0] -- vbuaa=vbuc1 
     lda #$40
     jsr ln
   //SEG13 [6] phi from main to main::@1 [phi:main->main::@1]
@@ -662,7 +662,7 @@ main: {
 }
 //SEG27 ln
 ln: {
-  //SEG28 [13] (byte) line#13 ← (byte) line#12 + (byte/signed byte/word/signed word) 2 [ line#13 ] ( main:2::ln:5 [ line#13 ] main:2::ln:7 [ line#13 ] main:2::ln:9 [ line#13 ] ) -- vbuaa=vbuaa_plus_vbuc1 
+  //SEG28 [13] (byte) line#13 ← (byte) line#12 + (byte/signed byte/word/signed word/dword/signed dword) 2 [ line#13 ] ( main:2::ln:5 [ line#13 ] main:2::ln:7 [ line#13 ] main:2::ln:9 [ line#13 ] ) -- vbuaa=vbuaa_plus_vbuc1 
     clc
     adc #2
   //SEG29 ln::@return

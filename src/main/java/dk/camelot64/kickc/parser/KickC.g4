@@ -142,8 +142,9 @@ asmParamMode
     ;
 
 asmExpr
-    : ('+' | '-' | '<' | '>') asmExpr #asmExprUnary
-    | asmExpr ('*' | '/' ) asmExpr #asmExprBinary
+    : asmExpr ( '<<' | '>>' ) asmExpr #asmExprBinary
+    | ('+' | '-' | '<' | '>') asmExpr #asmExprUnary
+    | asmExpr ('*' | '/' | '<<' | '>>' ) asmExpr #asmExprBinary
     | asmExpr ( '+' | '-')  asmExpr #asmExprBinary
     | NAME #asmExprLabel
     | ASMREL #asmExprLabelRel
@@ -159,7 +160,7 @@ MNEMONIC:
     'cpy' | 'cmp' | 'cpx' | 'dcp' | 'dec' | 'inc' | 'axs' | 'bne' | 'cld' | 'sbc' | 'isc' | 'inx' | 'beq' | 'sed' | 'dex' | 'iny' | 'ror'
     ;
 
-SIMPLETYPE: 'byte' | 'word' | 'boolean' | 'void' ;
+SIMPLETYPE: 'byte' | 'word' | 'dword' | 'boolean' | 'void' ;
 STRING : '"' ('\\"' | ~'"')* '"';
 CHAR : '\''  ('\\\'' | ~'\'' ) '\'';
 BOOLEAN : 'true' | 'false';

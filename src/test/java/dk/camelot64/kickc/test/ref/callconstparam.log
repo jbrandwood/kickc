@@ -21,10 +21,10 @@ Adding pre/post-modifier (byte*) screen ← ++ (byte*) screen
 Adding pre/post-modifier (byte) line::x ← ++ (byte) line::x
 
 STATEMENTS
-  (byte*) screen ← (word/signed word) 1024
+  (byte*) screen ← (word/signed word/dword/signed dword) 1024
 proc (void()) main()
-  (void~) main::$0 ← call line (byte/signed byte/word/signed word) 1 (byte/signed byte/word/signed word) 2 
-  (void~) main::$1 ← call line (byte/signed byte/word/signed word) 3 (byte/signed byte/word/signed word) 5 
+  (void~) main::$0 ← call line (byte/signed byte/word/signed word/dword/signed dword) 1 (byte/signed byte/word/signed word/dword/signed dword) 2 
+  (void~) main::$1 ← call line (byte/signed byte/word/signed word/dword/signed dword) 3 (byte/signed byte/word/signed word/dword/signed dword) 5 
 main::@return:
   return 
 endproc // main()
@@ -55,14 +55,14 @@ SYMBOLS
 (label) main::@return
 (byte*) screen
 
-Promoting word/signed word to byte* in screen ← ((byte*)) 1024
+Promoting word/signed word/dword/signed dword to byte* in screen ← ((byte*)) 1024
 INITIAL CONTROL FLOW GRAPH
 @begin: scope:[]  from
-  (byte*) screen ← ((byte*)) (word/signed word) 1024
+  (byte*) screen ← ((byte*)) (word/signed word/dword/signed dword) 1024
   to:@1
 main: scope:[main]  from
-  (void~) main::$0 ← call line (byte/signed byte/word/signed word) 1 (byte/signed byte/word/signed word) 2 
-  (void~) main::$1 ← call line (byte/signed byte/word/signed word) 3 (byte/signed byte/word/signed word) 5 
+  (void~) main::$0 ← call line (byte/signed byte/word/signed word/dword/signed dword) 1 (byte/signed byte/word/signed word/dword/signed dword) 2 
+  (void~) main::$1 ← call line (byte/signed byte/word/signed word/dword/signed dword) 3 (byte/signed byte/word/signed word/dword/signed dword) 5 
   to:main::@return
 main::@return: scope:[main]  from main
   return 
@@ -102,19 +102,19 @@ Completing Phi functions...
 
 CONTROL FLOW GRAPH SSA WITH ASSIGNMENT CALL & RETURN
 @begin: scope:[]  from
-  (byte*) screen#0 ← ((byte*)) (word/signed word) 1024
+  (byte*) screen#0 ← ((byte*)) (word/signed word/dword/signed dword) 1024
   to:@2
 main: scope:[main]  from @2
   (byte*) screen#13 ← phi( @2/(byte*) screen#15 )
-  (byte) line::x0#0 ← (byte/signed byte/word/signed word) 1
-  (byte) line::x1#0 ← (byte/signed byte/word/signed word) 2
+  (byte) line::x0#0 ← (byte/signed byte/word/signed word/dword/signed dword) 1
+  (byte) line::x1#0 ← (byte/signed byte/word/signed word/dword/signed dword) 2
   call line param-assignment
   to:main::@1
 main::@1: scope:[main]  from main
   (byte*) screen#7 ← phi( main/(byte*) screen#5 )
   (byte*) screen#1 ← (byte*) screen#7
-  (byte) line::x0#1 ← (byte/signed byte/word/signed word) 3
-  (byte) line::x1#1 ← (byte/signed byte/word/signed word) 5
+  (byte) line::x0#1 ← (byte/signed byte/word/signed word/dword/signed dword) 3
+  (byte) line::x1#1 ← (byte/signed byte/word/signed word/dword/signed dword) 5
   call line param-assignment
   to:main::@2
 main::@2: scope:[main]  from main::@1
@@ -252,11 +252,11 @@ Inlining constant with different constant siblings (const byte) line::x1#1
 Inlining constant with var siblings (const byte*) screen#0
 Inlining constant with var siblings (const byte*) screen#0
 Inlining constant with var siblings (const byte*) screen#0
-Constant inlined line::x0#0 = (byte/signed byte/word/signed word) 1
-Constant inlined line::x1#1 = (byte/signed byte/word/signed word) 5
-Constant inlined screen#0 = ((byte*))(word/signed word) 1024
-Constant inlined line::x1#0 = (byte/signed byte/word/signed word) 2
-Constant inlined line::x0#1 = (byte/signed byte/word/signed word) 3
+Constant inlined line::x0#0 = (byte/signed byte/word/signed word/dword/signed dword) 1
+Constant inlined line::x1#1 = (byte/signed byte/word/signed word/dword/signed dword) 5
+Constant inlined screen#0 = ((byte*))(word/signed word/dword/signed dword) 1024
+Constant inlined line::x1#0 = (byte/signed byte/word/signed word/dword/signed dword) 2
+Constant inlined line::x0#1 = (byte/signed byte/word/signed word/dword/signed dword) 3
 Succesful SSA optimization Pass2ConstantInlining
 Block Sequence Planned @begin @2 @end main main::@1 main::@return line line::@1 line::@return 
 Added new block during phi lifting line::@3(between line::@1 and line::@1)
@@ -320,9 +320,9 @@ main::@return: scope:[main]  from main::@1
   [8] return  [ ] ( main:2 [ ] )
   to:@return
 line: scope:[line]  from main main::@1
-  [9] (byte) line::x1#3 ← phi( main/(byte/signed byte/word/signed word) 2 main::@1/(byte/signed byte/word/signed word) 5 ) [ line::x#0 screen#14 line::x1#3 ] ( main:2::line:5 [ line::x#0 screen#14 line::x1#3 ] main:2::line:7 [ line::x#0 screen#14 line::x1#3 ] )
-  [9] (byte*) screen#14 ← phi( main/((byte*))(word/signed word) 1024 main::@1/(byte*) screen#11 ) [ line::x#0 screen#14 line::x1#3 ] ( main:2::line:5 [ line::x#0 screen#14 line::x1#3 ] main:2::line:7 [ line::x#0 screen#14 line::x1#3 ] )
-  [9] (byte) line::x#0 ← phi( main/(byte/signed byte/word/signed word) 1 main::@1/(byte/signed byte/word/signed word) 3 ) [ line::x#0 screen#14 line::x1#3 ] ( main:2::line:5 [ line::x#0 screen#14 line::x1#3 ] main:2::line:7 [ line::x#0 screen#14 line::x1#3 ] )
+  [9] (byte) line::x1#3 ← phi( main/(byte/signed byte/word/signed word/dword/signed dword) 2 main::@1/(byte/signed byte/word/signed word/dword/signed dword) 5 ) [ line::x#0 screen#14 line::x1#3 ] ( main:2::line:5 [ line::x#0 screen#14 line::x1#3 ] main:2::line:7 [ line::x#0 screen#14 line::x1#3 ] )
+  [9] (byte*) screen#14 ← phi( main/((byte*))(word/signed word/dword/signed dword) 1024 main::@1/(byte*) screen#11 ) [ line::x#0 screen#14 line::x1#3 ] ( main:2::line:5 [ line::x#0 screen#14 line::x1#3 ] main:2::line:7 [ line::x#0 screen#14 line::x1#3 ] )
+  [9] (byte) line::x#0 ← phi( main/(byte/signed byte/word/signed word/dword/signed dword) 1 main::@1/(byte/signed byte/word/signed word/dword/signed dword) 3 ) [ line::x#0 screen#14 line::x1#3 ] ( main:2::line:5 [ line::x#0 screen#14 line::x1#3 ] main:2::line:7 [ line::x#0 screen#14 line::x1#3 ] )
   to:line::@1
 line::@1: scope:[line]  from line line::@1
   [10] (byte*) screen#10 ← phi( line/(byte*) screen#14 line::@1/(byte*) screen#11 ) [ line::x1#3 line::x#2 screen#10 ] ( main:2::line:5 [ line::x1#3 line::x#2 screen#10 ] main:2::line:7 [ line::x1#3 line::x#2 screen#10 ] )
@@ -415,15 +415,15 @@ main: {
   //SEG10 [5] call line param-assignment [ screen#11 ] ( main:2 [ screen#11 ] )
   //SEG11 [9] phi from main to line [phi:main->line]
   line_from_main:
-  //SEG12 [9] phi (byte) line::x1#3 = (byte/signed byte/word/signed word) 2 [phi:main->line#0] -- vbuz1=vbuc1 
+  //SEG12 [9] phi (byte) line::x1#3 = (byte/signed byte/word/signed word/dword/signed dword) 2 [phi:main->line#0] -- vbuz1=vbuc1 
     lda #2
     sta line.x1
-  //SEG13 [9] phi (byte*) screen#14 = ((byte*))(word/signed word) 1024 [phi:main->line#1] -- pbuz1=pbuc1 
+  //SEG13 [9] phi (byte*) screen#14 = ((byte*))(word/signed word/dword/signed dword) 1024 [phi:main->line#1] -- pbuz1=pbuc1 
     lda #<$400
     sta screen
     lda #>$400
     sta screen+1
-  //SEG14 [9] phi (byte) line::x#0 = (byte/signed byte/word/signed word) 1 [phi:main->line#2] -- vbuz1=vbuc1 
+  //SEG14 [9] phi (byte) line::x#0 = (byte/signed byte/word/signed word/dword/signed dword) 1 [phi:main->line#2] -- vbuz1=vbuc1 
     lda #1
     sta line.x
     jsr line
@@ -435,11 +435,11 @@ main: {
   //SEG17 [7] call line param-assignment [ ] ( main:2 [ ] )
   //SEG18 [9] phi from main::@1 to line [phi:main::@1->line]
   line_from_b1:
-  //SEG19 [9] phi (byte) line::x1#3 = (byte/signed byte/word/signed word) 5 [phi:main::@1->line#0] -- vbuz1=vbuc1 
+  //SEG19 [9] phi (byte) line::x1#3 = (byte/signed byte/word/signed word/dword/signed dword) 5 [phi:main::@1->line#0] -- vbuz1=vbuc1 
     lda #5
     sta line.x1
   //SEG20 [9] phi (byte*) screen#14 = (byte*) screen#11 [phi:main::@1->line#1] -- register_copy 
-  //SEG21 [9] phi (byte) line::x#0 = (byte/signed byte/word/signed word) 3 [phi:main::@1->line#2] -- vbuz1=vbuc1 
+  //SEG21 [9] phi (byte) line::x#0 = (byte/signed byte/word/signed word/dword/signed dword) 3 [phi:main::@1->line#2] -- vbuz1=vbuc1 
     lda #3
     sta line.x
     jsr line
@@ -532,15 +532,15 @@ main: {
   //SEG10 [5] call line param-assignment [ screen#11 ] ( main:2 [ screen#11 ] )
   //SEG11 [9] phi from main to line [phi:main->line]
   line_from_main:
-  //SEG12 [9] phi (byte) line::x1#3 = (byte/signed byte/word/signed word) 2 [phi:main->line#0] -- vbuz1=vbuc1 
+  //SEG12 [9] phi (byte) line::x1#3 = (byte/signed byte/word/signed word/dword/signed dword) 2 [phi:main->line#0] -- vbuz1=vbuc1 
     lda #2
     sta line.x1
-  //SEG13 [9] phi (byte*) screen#14 = ((byte*))(word/signed word) 1024 [phi:main->line#1] -- pbuz1=pbuc1 
+  //SEG13 [9] phi (byte*) screen#14 = ((byte*))(word/signed word/dword/signed dword) 1024 [phi:main->line#1] -- pbuz1=pbuc1 
     lda #<$400
     sta screen
     lda #>$400
     sta screen+1
-  //SEG14 [9] phi (byte) line::x#0 = (byte/signed byte/word/signed word) 1 [phi:main->line#2] -- vbuxx=vbuc1 
+  //SEG14 [9] phi (byte) line::x#0 = (byte/signed byte/word/signed word/dword/signed dword) 1 [phi:main->line#2] -- vbuxx=vbuc1 
     ldx #1
     jsr line
   //SEG15 [6] phi from main to main::@1 [phi:main->main::@1]
@@ -551,11 +551,11 @@ main: {
   //SEG17 [7] call line param-assignment [ ] ( main:2 [ ] )
   //SEG18 [9] phi from main::@1 to line [phi:main::@1->line]
   line_from_b1:
-  //SEG19 [9] phi (byte) line::x1#3 = (byte/signed byte/word/signed word) 5 [phi:main::@1->line#0] -- vbuz1=vbuc1 
+  //SEG19 [9] phi (byte) line::x1#3 = (byte/signed byte/word/signed word/dword/signed dword) 5 [phi:main::@1->line#0] -- vbuz1=vbuc1 
     lda #5
     sta line.x1
   //SEG20 [9] phi (byte*) screen#14 = (byte*) screen#11 [phi:main::@1->line#1] -- register_copy 
-  //SEG21 [9] phi (byte) line::x#0 = (byte/signed byte/word/signed word) 3 [phi:main::@1->line#2] -- vbuxx=vbuc1 
+  //SEG21 [9] phi (byte) line::x#0 = (byte/signed byte/word/signed word/dword/signed dword) 3 [phi:main::@1->line#2] -- vbuxx=vbuc1 
     ldx #3
     jsr line
     jmp breturn
@@ -670,26 +670,26 @@ Score: 354
 main: {
   //SEG10 [5] call line param-assignment [ screen#11 ] ( main:2 [ screen#11 ] )
   //SEG11 [9] phi from main to line [phi:main->line]
-  //SEG12 [9] phi (byte) line::x1#3 = (byte/signed byte/word/signed word) 2 [phi:main->line#0] -- vbuz1=vbuc1 
+  //SEG12 [9] phi (byte) line::x1#3 = (byte/signed byte/word/signed word/dword/signed dword) 2 [phi:main->line#0] -- vbuz1=vbuc1 
     lda #2
     sta line.x1
-  //SEG13 [9] phi (byte*) screen#14 = ((byte*))(word/signed word) 1024 [phi:main->line#1] -- pbuz1=pbuc1 
+  //SEG13 [9] phi (byte*) screen#14 = ((byte*))(word/signed word/dword/signed dword) 1024 [phi:main->line#1] -- pbuz1=pbuc1 
     lda #<$400
     sta screen
     lda #>$400
     sta screen+1
-  //SEG14 [9] phi (byte) line::x#0 = (byte/signed byte/word/signed word) 1 [phi:main->line#2] -- vbuxx=vbuc1 
+  //SEG14 [9] phi (byte) line::x#0 = (byte/signed byte/word/signed word/dword/signed dword) 1 [phi:main->line#2] -- vbuxx=vbuc1 
     ldx #1
     jsr line
   //SEG15 [6] phi from main to main::@1 [phi:main->main::@1]
   //SEG16 main::@1
   //SEG17 [7] call line param-assignment [ ] ( main:2 [ ] )
   //SEG18 [9] phi from main::@1 to line [phi:main::@1->line]
-  //SEG19 [9] phi (byte) line::x1#3 = (byte/signed byte/word/signed word) 5 [phi:main::@1->line#0] -- vbuz1=vbuc1 
+  //SEG19 [9] phi (byte) line::x1#3 = (byte/signed byte/word/signed word/dword/signed dword) 5 [phi:main::@1->line#0] -- vbuz1=vbuc1 
     lda #5
     sta line.x1
   //SEG20 [9] phi (byte*) screen#14 = (byte*) screen#11 [phi:main::@1->line#1] -- register_copy 
-  //SEG21 [9] phi (byte) line::x#0 = (byte/signed byte/word/signed word) 3 [phi:main::@1->line#2] -- vbuxx=vbuc1 
+  //SEG21 [9] phi (byte) line::x#0 = (byte/signed byte/word/signed word/dword/signed dword) 3 [phi:main::@1->line#2] -- vbuxx=vbuc1 
     ldx #3
     jsr line
   //SEG22 main::@return

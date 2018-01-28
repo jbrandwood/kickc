@@ -28,6 +28,7 @@ public class Registers {
       REG_ALU,
       ZP_BYTE,
       ZP_WORD,
+      ZP_DWORD,
       ZP_BOOL,
       CONSTANT
    }
@@ -115,6 +116,20 @@ public class Registers {
       @Override
       public RegisterType getType() {
          return RegisterType.ZP_WORD;
+      }
+
+   }
+
+   /** Four zero page addresses used as a register for a single unsigned word variable. */
+   public static class RegisterZpDWord extends RegisterZp {
+
+      public RegisterZpDWord(int zp) {
+         super(zp);
+      }
+
+      @Override
+      public RegisterType getType() {
+         return RegisterType.ZP_DWORD;
       }
 
    }

@@ -4,10 +4,10 @@ package dk.camelot64.kickc.model;
 public class SymbolTypeInteger implements SymbolType {
 
    private final String typeName;
-   private final int minValue;
-   private final int maxValue;
+   private final long minValue;
+   private final long maxValue;
 
-   SymbolTypeInteger(String typeName, int minValue, int maxValue) {
+   SymbolTypeInteger(String typeName, long minValue, long maxValue) {
       this.typeName = typeName;
       this.minValue = minValue;
       this.maxValue = maxValue;
@@ -18,11 +18,11 @@ public class SymbolTypeInteger implements SymbolType {
       return typeName;
    }
 
-   public int getMinValue() {
+   public long getMinValue() {
       return minValue;
    }
 
-   public int getMaxValue() {
+   public long getMaxValue() {
       return maxValue;
    }
 

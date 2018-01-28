@@ -1,23 +1,19 @@
 package dk.camelot64.kickc.model;
 
-import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonProperty;
 
 import java.util.ArrayList;
 
 /** SSA form constant integer value */
 public class ConstantInteger implements ConstantValue {
 
-   private Integer number;
+   private Long number;
 
-   @JsonCreator
-   public ConstantInteger(
-         @JsonProperty("number") Integer number) {
+   public ConstantInteger( Long number) {
       this.number = number;
    }
 
-   public Integer getNumber() {
+   public Long getNumber() {
       return number;
    }
 
@@ -28,7 +24,7 @@ public class ConstantInteger implements ConstantValue {
 
    public SymbolType getType() {
       ArrayList<SymbolType> potentialTypes = new ArrayList<>();
-      Integer number = getNumber();
+      Long number = getNumber();
       for(SymbolTypeInteger typeInteger : SymbolType.getIntegerTypes()) {
          if(number >= typeInteger.getMinValue() && number <= typeInteger.getMaxValue()) {
             potentialTypes.add(typeInteger);
@@ -45,9 +41,9 @@ public class ConstantInteger implements ConstantValue {
    @Override
    public String toString(Program program) {
       if(program == null) {
-         return Integer.toString(number);
+         return Long.toString(number);
       } else {
-         return "(" + getType(program.getScope()).getTypeName() + ") " + Integer.toString(number);
+         return "(" + getType(program.getScope()).getTypeName() + ") " + Long.toString(number);
       }
    }
 

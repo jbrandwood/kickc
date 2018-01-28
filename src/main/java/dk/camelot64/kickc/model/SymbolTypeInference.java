@@ -201,6 +201,10 @@ public class SymbolTypeInference {
          return SymbolType.WORD;
       } else if(SymbolType.isSWord(type1) && (SymbolType.isSWord(type2) || SymbolType.isSByte(type2))) {
          return SymbolType.SWORD;
+      } else if(SymbolType.isDWord(type1) && (SymbolType.isDWord(type2) || SymbolType.isWord(type2))|| SymbolType.isByte(type2)) {
+         return SymbolType.DWORD;
+      } else if(SymbolType.isSDWord(type1) && (SymbolType.isSDWord(type2) || SymbolType.isSWord(type2)|| SymbolType.isSByte(type2))) {
+         return SymbolType.SDWORD;
       }
       throw new RuntimeException("Type inference case not handled " + type1 + " " + "+" + " " + type2);
    }

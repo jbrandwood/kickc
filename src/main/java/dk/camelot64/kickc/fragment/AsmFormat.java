@@ -82,11 +82,11 @@ public class AsmFormat {
    }
 
    public static String getAsmNumber(Number number) {
-      if(number instanceof Integer) {
-         if(number.intValue() >= 0 && number.intValue() <= 9) {
-            return String.format("%d", number.intValue());
+      if(number instanceof Long || number instanceof Integer) {
+         if(number.longValue() >= 0L && number.longValue() <= 9L) {
+            return String.format("%d", number.longValue());
          } else {
-            return String.format("$%x", number);
+            return String.format("$%x", number.longValue());
          }
       }
       throw new RuntimeException("Unsupported number type " + number);

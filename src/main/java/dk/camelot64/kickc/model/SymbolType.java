@@ -14,6 +14,10 @@ public interface SymbolType {
    SymbolTypeInteger WORD = new SymbolTypeInteger("word", 0, 65_535);
    /** Signed word (2 bytes, 16 bits). */
    SymbolTypeInteger SWORD = new SymbolTypeInteger("signed word", -32_768, 32_767);
+   /** Unsigned double word (4 bytes, 32 bits). */
+   SymbolTypeInteger DWORD = new SymbolTypeInteger("dword", 0, 4_294_967_296L);
+   /** Signed double word (4 bytes, 32 bits). */
+   SymbolTypeInteger SDWORD = new SymbolTypeInteger("signed dword", -2_147_483_648, 2_147_483_647);
    /** String value (treated like byte* ). */
    SymbolTypeBasic STRING = new SymbolTypeBasic("string");
    /** Boolean value. */
@@ -43,6 +47,10 @@ public interface SymbolType {
             return WORD;
          case "signed word":
             return SWORD;
+         case "dword":
+            return DWORD;
+         case "signed dword":
+            return SDWORD;
          case "string":
             return STRING;
          case "boolean":
@@ -64,6 +72,8 @@ public interface SymbolType {
       types.add(SBYTE);
       types.add(WORD);
       types.add(SWORD);
+      types.add(DWORD);
+      types.add(SDWORD);
       return types;
    }
 
@@ -123,6 +133,38 @@ public interface SymbolType {
     */
    static boolean isSWord(SymbolType type) {
       if(SWORD.equals(type)) {
+         return true;
+      } else if(type instanceof SymbolTypeInline) {
+         return ((SymbolTypeInline) type).isSWord();
+      } else {
+         return false;
+      }
+   }
+
+   /**
+    * Is the type {@link #DWORD} or compatible {@link SymbolTypeInline}
+    *
+    * @param type The type to examine
+    * @return true if the type is DWORD compatible
+    */
+   static boolean isDWord(SymbolType type) {
+      if(DWORD.equals(type)) {
+         return true;
+      } else if(type instanceof SymbolTypeInline) {
+         return ((SymbolTypeInline) type).isDWord();
+      } else {
+         return false;
+      }
+   }
+
+   /**
+    * Is the type {@link #SDWORD} or compatible {@link SymbolTypeInline}
+    *
+    * @param type The type to examine
+    * @return true if the type is SDWORD compatible
+    */
+   static boolean isSDWord(SymbolType type) {
+      if(SDWORD.equals(type)) {
          return true;
       } else if(type instanceof SymbolTypeInline) {
          return ((SymbolTypeInline) type).isSWord();

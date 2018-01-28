@@ -20,10 +20,10 @@ Adding pre/post-modifier (byte) main::i ← ++ (byte) main::i
 
 STATEMENTS
 proc (void()) main()
-  (byte[1024]) main::SCREEN ← (word/signed word) 1024
-  (byte) main::i ← (byte/signed byte/word/signed word) 2
+  (byte[1024]) main::SCREEN ← (word/signed word/dword/signed dword) 1024
+  (byte) main::i ← (byte/signed byte/word/signed word/dword/signed dword) 2
 main::@1:
-  (boolean~) main::$0 ← (byte) main::i < (byte/signed byte/word/signed word) 10
+  (boolean~) main::$0 ← (byte) main::i < (byte/signed byte/word/signed word/dword/signed dword) 10
   if((boolean~) main::$0) goto main::@2
   goto main::@3
 main::@2:
@@ -47,16 +47,16 @@ SYMBOLS
 (byte) main::b
 (byte) main::i
 
-Promoting word/signed word to byte[1024] in main::SCREEN ← ((byte*)) 1024
+Promoting word/signed word/dword/signed dword to byte[1024] in main::SCREEN ← ((byte*)) 1024
 INITIAL CONTROL FLOW GRAPH
 @begin: scope:[]  from
   to:@1
 main: scope:[main]  from
-  (byte[1024]) main::SCREEN ← ((byte*)) (word/signed word) 1024
-  (byte) main::i ← (byte/signed byte/word/signed word) 2
+  (byte[1024]) main::SCREEN ← ((byte*)) (word/signed word/dword/signed dword) 1024
+  (byte) main::i ← (byte/signed byte/word/signed word/dword/signed dword) 2
   to:main::@1
 main::@1: scope:[main]  from main main::@2
-  (boolean~) main::$0 ← (byte) main::i < (byte/signed byte/word/signed word) 10
+  (boolean~) main::$0 ← (byte) main::i < (byte/signed byte/word/signed word/dword/signed dword) 10
   if((boolean~) main::$0) goto main::@2
   to:main::@4
 main::@2: scope:[main]  from main::@1 main::@5
@@ -80,7 +80,7 @@ main::@return: scope:[main]  from main::@3
 @end: scope:[]  from @1
 
 Eliminating unused variable (byte) main::b and assignment [4] (byte) main::b ← *((byte[1024]) main::SCREEN + (byte) main::i)
-Eliminating unused variable (byte[1024]) main::SCREEN and assignment [0] (byte[1024]) main::SCREEN ← ((byte*)) (word/signed word) 1024
+Eliminating unused variable (byte[1024]) main::SCREEN and assignment [0] (byte[1024]) main::SCREEN ← ((byte*)) (word/signed word/dword/signed dword) 1024
 Removing empty block main::@4
 Removing empty block main::@3
 Removing empty block main::@5
@@ -93,11 +93,11 @@ CONTROL FLOW GRAPH SSA WITH ASSIGNMENT CALL & RETURN
 @begin: scope:[]  from
   to:@1
 main: scope:[main]  from @1
-  (byte) main::i#0 ← (byte/signed byte/word/signed word) 2
+  (byte) main::i#0 ← (byte/signed byte/word/signed word/dword/signed dword) 2
   to:main::@1
 main::@1: scope:[main]  from main main::@2
   (byte) main::i#2 ← phi( main/(byte) main::i#0 main::@2/(byte) main::i#1 )
-  (boolean~) main::$0 ← (byte) main::i#2 < (byte/signed byte/word/signed word) 10
+  (boolean~) main::$0 ← (byte) main::i#2 < (byte/signed byte/word/signed word/dword/signed dword) 10
   if((boolean~) main::$0) goto main::@2
   to:main::@return
 main::@2: scope:[main]  from main::@1
@@ -135,14 +135,14 @@ Culled Empty Block (label) @2
 Succesful SSA optimization Pass2CullEmptyBlocks
 Alias (byte) main::i#2 = (byte) main::i#3 
 Succesful SSA optimization Pass2AliasElimination
-Simple Condition (boolean~) main::$0 if((byte) main::i#2<(byte/signed byte/word/signed word) 10) goto main::@2
+Simple Condition (boolean~) main::$0 if((byte) main::i#2<(byte/signed byte/word/signed word/dword/signed dword) 10) goto main::@2
 Succesful SSA optimization Pass2ConditionalJumpSimplification
 Constant (const byte) main::i#0 = 2
 Succesful SSA optimization Pass2ConstantIdentification
 OPTIMIZING CONTROL FLOW GRAPH
 Inlining constant with var siblings (const byte) main::i#0
 Inlining constant with var siblings (const byte) main::i#0
-Constant inlined main::i#0 = (byte/signed byte/word/signed word) 2
+Constant inlined main::i#0 = (byte/signed byte/word/signed word/dword/signed dword) 2
 Succesful SSA optimization Pass2ConstantInlining
 Block Sequence Planned @begin @1 @end main main::@1 main::@return main::@2 
 Block Sequence Planned @begin @1 @end main main::@1 main::@return main::@2 
@@ -180,8 +180,8 @@ main: scope:[main]  from @1
   [4] phi() [ ] ( main:2 [ ] )
   to:main::@1
 main::@1: scope:[main]  from main main::@2
-  [5] (byte) main::i#2 ← phi( main/(byte/signed byte/word/signed word) 2 main::@2/(byte) main::i#1 ) [ main::i#2 ] ( main:2 [ main::i#2 ] )
-  [6] if((byte) main::i#2<(byte/signed byte/word/signed word) 10) goto main::@2 [ main::i#2 ] ( main:2 [ main::i#2 ] )
+  [5] (byte) main::i#2 ← phi( main/(byte/signed byte/word/signed word/dword/signed dword) 2 main::@2/(byte) main::i#1 ) [ main::i#2 ] ( main:2 [ main::i#2 ] )
+  [6] if((byte) main::i#2<(byte/signed byte/word/signed word/dword/signed dword) 10) goto main::@2 [ main::i#2 ] ( main:2 [ main::i#2 ] )
   to:main::@return
 main::@return: scope:[main]  from main::@1
   [7] return  [ ] ( main:2 [ ] )
@@ -250,13 +250,13 @@ main: {
     .label i = 2
   //SEG10 [5] phi from main to main::@1 [phi:main->main::@1]
   b1_from_main:
-  //SEG11 [5] phi (byte) main::i#2 = (byte/signed byte/word/signed word) 2 [phi:main->main::@1#0] -- vbuz1=vbuc1 
+  //SEG11 [5] phi (byte) main::i#2 = (byte/signed byte/word/signed word/dword/signed dword) 2 [phi:main->main::@1#0] -- vbuz1=vbuc1 
     lda #2
     sta i
     jmp b1
   //SEG12 main::@1
   b1:
-  //SEG13 [6] if((byte) main::i#2<(byte/signed byte/word/signed word) 10) goto main::@2 [ main::i#2 ] ( main:2 [ main::i#2 ] ) -- vbuz1_lt_vbuc1_then_la1 
+  //SEG13 [6] if((byte) main::i#2<(byte/signed byte/word/signed word/dword/signed dword) 10) goto main::@2 [ main::i#2 ] ( main:2 [ main::i#2 ] ) -- vbuz1_lt_vbuc1_then_la1 
     lda i
     cmp #$a
     bcc b2
@@ -311,12 +311,12 @@ bend:
 main: {
   //SEG10 [5] phi from main to main::@1 [phi:main->main::@1]
   b1_from_main:
-  //SEG11 [5] phi (byte) main::i#2 = (byte/signed byte/word/signed word) 2 [phi:main->main::@1#0] -- vbuxx=vbuc1 
+  //SEG11 [5] phi (byte) main::i#2 = (byte/signed byte/word/signed word/dword/signed dword) 2 [phi:main->main::@1#0] -- vbuxx=vbuc1 
     ldx #2
     jmp b1
   //SEG12 main::@1
   b1:
-  //SEG13 [6] if((byte) main::i#2<(byte/signed byte/word/signed word) 10) goto main::@2 [ main::i#2 ] ( main:2 [ main::i#2 ] ) -- vbuxx_lt_vbuc1_then_la1 
+  //SEG13 [6] if((byte) main::i#2<(byte/signed byte/word/signed word/dword/signed dword) 10) goto main::@2 [ main::i#2 ] ( main:2 [ main::i#2 ] ) -- vbuxx_lt_vbuc1_then_la1 
     cpx #$a
     bcc b2
     jmp breturn
@@ -386,11 +386,11 @@ Score: 127
 //SEG9 main
 main: {
   //SEG10 [5] phi from main to main::@1 [phi:main->main::@1]
-  //SEG11 [5] phi (byte) main::i#2 = (byte/signed byte/word/signed word) 2 [phi:main->main::@1#0] -- vbuxx=vbuc1 
+  //SEG11 [5] phi (byte) main::i#2 = (byte/signed byte/word/signed word/dword/signed dword) 2 [phi:main->main::@1#0] -- vbuxx=vbuc1 
     ldx #2
   //SEG12 main::@1
   b1:
-  //SEG13 [6] if((byte) main::i#2<(byte/signed byte/word/signed word) 10) goto main::@2 [ main::i#2 ] ( main:2 [ main::i#2 ] ) -- vbuxx_lt_vbuc1_then_la1 
+  //SEG13 [6] if((byte) main::i#2<(byte/signed byte/word/signed word/dword/signed dword) 10) goto main::@2 [ main::i#2 ] ( main:2 [ main::i#2 ] ) -- vbuxx_lt_vbuc1_then_la1 
     cpx #$a
     bcc b2
   //SEG14 main::@return

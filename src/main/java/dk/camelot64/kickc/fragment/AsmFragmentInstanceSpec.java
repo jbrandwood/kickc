@@ -238,7 +238,7 @@ public class AsmFragmentInstanceSpec {
          return name;
       } else if(value instanceof ConstantValue) {
          if(type == null) {
-            type = SymbolTypeInference.inferType(program.getScope(), (RValue) value);
+            type = SymbolTypeInference.inferType(program.getScope(), (ConstantValue) value);
          }
          String name = getTypePrefix(type) + getConstName(value);
          bind(name, value);

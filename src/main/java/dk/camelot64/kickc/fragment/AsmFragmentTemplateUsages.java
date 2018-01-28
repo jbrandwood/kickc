@@ -99,7 +99,7 @@ public class AsmFragmentTemplateUsages {
                   }
                }
                if(fileUsage == null) {
-                  throw new RuntimeException("Error! Template file never loaded according to usage stats " + fileName);
+                  log.append("Error! Template file never loaded according to usage stats " + fileName);
                }
                if(allZero) {
                   log.append("git mv " + fileName + " unused # Loaded but never used");

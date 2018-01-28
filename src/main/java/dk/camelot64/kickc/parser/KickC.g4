@@ -142,7 +142,7 @@ asmParamMode
     ;
 
 asmExpr
-    : '(' asmExpr ')' #asmExprPar
+    : '[' asmExpr ']' #asmExprPar
     | asmExpr ( '<<' | '>>' ) asmExpr #asmExprBinary
     | ('+' | '-' | '<' | '>' ) asmExpr #asmExprUnary
     | asmExpr ('*' | '/' ) asmExpr #asmExprBinary

@@ -275,7 +275,7 @@ public class AsmFragmentInstance {
       @Override
       public Object visitAsmExprPar(KickCParser.AsmExprParContext ctx) {
          AsmParameter sub = (AsmParameter) this.visit(ctx.asmExpr());
-         String param = "(" + sub.getParam() + ")";
+         String param = "[" + sub.getParam() + "]";
          return new AsmParameter(param, sub.isZp());
       }
 

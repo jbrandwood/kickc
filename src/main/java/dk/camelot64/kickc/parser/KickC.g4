@@ -30,7 +30,7 @@ parameterListDecl
     : parameterDecl (',' parameterDecl)* ;
 
 parameterDecl
-    : typeDecl NAME ;
+    : directives? typeDecl NAME ;
 
 declVar
     :  directives? typeDecl directives? NAME ('=' expr)? ';'
@@ -43,6 +43,7 @@ directives
 directive
     : 'const' #directiveConst
     | 'align' '(' NUMBER ')' #directiveAlign
+    | 'register' '(' NAME ')' #directiveRegister
     ;
 
 stmtSeq
@@ -62,7 +63,7 @@ stmt
     ;
 
 forDeclaration
-    : typeDecl? NAME ('=' expr)? #forDecl
+    : directives? typeDecl? NAME ('=' expr)? #forDecl
     ;
 
 forIteration

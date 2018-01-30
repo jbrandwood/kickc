@@ -93,6 +93,13 @@ public interface KickCVisitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitDirectiveAlign(KickCParser.DirectiveAlignContext ctx);
 	/**
+	 * Visit a parse tree produced by the {@code directiveRegister}
+	 * labeled alternative in {@link KickCParser#directive}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitDirectiveRegister(KickCParser.DirectiveRegisterContext ctx);
+	/**
 	 * Visit a parse tree produced by {@link KickCParser#stmtSeq}.
 	 * @param ctx the parse tree
 	 * @return the visitor result

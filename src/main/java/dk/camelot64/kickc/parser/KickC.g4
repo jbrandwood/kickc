@@ -30,14 +30,10 @@ parameterListDecl
     : parameterDecl (',' parameterDecl)* ;
 
 parameterDecl
-    : directives? typeDecl NAME ;
+    : directive* typeDecl directive* NAME ;
 
 declVar
-    :  directives? typeDecl directives? NAME ('=' expr)? ';'
-    ;
-
-directives
-    : directive+
+    :  directive* typeDecl directive* NAME ('=' expr)? ';'
     ;
 
 directive
@@ -63,7 +59,7 @@ stmt
     ;
 
 forDeclaration
-    : directives? typeDecl? NAME ('=' expr)? #forDecl
+    : directive* typeDecl? directive* NAME ('=' expr)? #forDecl
     ;
 
 forIteration

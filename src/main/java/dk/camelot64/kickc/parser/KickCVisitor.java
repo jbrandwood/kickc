@@ -73,12 +73,6 @@ public interface KickCVisitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitDeclVar(KickCParser.DeclVarContext ctx);
 	/**
-	 * Visit a parse tree produced by {@link KickCParser#directives}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitDirectives(KickCParser.DirectivesContext ctx);
-	/**
 	 * Visit a parse tree produced by the {@code directiveConst}
 	 * labeled alternative in {@link KickCParser#directive}.
 	 * @param ctx the parse tree

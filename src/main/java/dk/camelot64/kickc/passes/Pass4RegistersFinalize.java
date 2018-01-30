@@ -23,6 +23,23 @@ public class Pass4RegistersFinalize extends Pass2Base {
 
    public void allocate(boolean reallocateZp) {
       LiveRangeEquivalenceClassSet liveRangeEquivalenceClassSet = getProgram().getLiveRangeEquivalenceClassSet();
+      for(LiveRangeEquivalenceClass equivalenceClass : liveRangeEquivalenceClassSet.getEquivalenceClasses()) {
+         for(VariableRef variableRef : equivalenceClass.getVariables()) {
+            Variable variable = getProgram().getScope().getVariable(variableRef);
+            if(variable.getDeclaredRegister()!=null) {
+               if(equivalenceClass.getRegister()!=null && !variable.getDeclaredRegister().equals(equivalenceClass.getRegister())) {
+                  throw new CompileError("Equivalence class has variables with different declared registers \n" +
+                        " - equivalence class: " + equivalenceClass.toString(true) + "\n" +
+                        " - one register: " + equivalenceClass.getRegister().toString() + "\n" +
+                        " - other register: " + variable.getDeclaredRegister().toString()
+                  );
+               }
+               equivalenceClass.setRegister(variable.getDeclaredRegister());
+            }
+         }
+      }
+
+      
       if(reallocateZp) {
          reallocateZpRegisters(liveRangeEquivalenceClassSet);
       }

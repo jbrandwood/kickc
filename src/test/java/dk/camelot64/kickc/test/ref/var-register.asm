@@ -3,39 +3,32 @@
 .pc = $80d "Program"
   jsr main
 main: {
-    .label y = 3
-    .label x = 2
-    lda #0
-    sta x
+    .label a = 2
+    ldy #0
   b1:
-    lda #0
-    sta y
-  b2:
     ldx #0
+  b2:
+    lda #0
+    sta a
   b3:
-    txa
+    tya
     clc
-    adc x
-    tay
+    adc a
     jsr print
+    inc a
+    lda a
+    cmp #$65
+    bne b3
     inx
     cpx #$65
-    bne b3
-    inc y
-    lda y
-    cmp #$65
     bne b2
-    inc x
-    lda x
-    cmp #$65
+    iny
+    cpy #$65
     bne b1
     rts
 }
 print: {
     .const SCREEN = $400
-    .label idx = 3
-    tya
-    ldy idx
-    sta SCREEN,y
+    sta SCREEN,x
     rts
 }

@@ -21,43 +21,6 @@ public class Pass4RegisterUpliftPotentialRegisterAnalysis extends Pass2Base {
    }
 
    /**
-    * Get all variables referenced (or assigned) in a statement.
-    *
-    * @param statement The statement
-    * @return All variables referenced (or assigned) in the statement
-    */
-   public static Set<VariableRef> getReferencedVars(Statement statement) {
-      Set<VariableRef> referenced = new LinkedHashSet<>();
-      if(statement instanceof StatementAssignment) {
-         addReferenced(referenced, ((StatementAssignment) statement).getlValue());
-         addReferenced(referenced, ((StatementAssignment) statement).getrValue1());
-         addReferenced(referenced, ((StatementAssignment) statement).getrValue2());
-      } else if(statement instanceof StatementPhiBlock) {
-         for(StatementPhiBlock.PhiVariable phiVariable : ((StatementPhiBlock) statement).getPhiVariables()) {
-            addReferenced(referenced, phiVariable.getVariable());
-            for(StatementPhiBlock.PhiRValue phiRValue : phiVariable.getValues()) {
-               addReferenced(referenced, phiRValue.getrValue());
-            }
-         }
-      } else if(statement instanceof StatementConditionalJump) {
-         addReferenced(referenced, ((StatementConditionalJump) statement).getrValue1());
-         addReferenced(referenced, ((StatementConditionalJump) statement).getrValue2());
-      }
-      return referenced;
-   }
-
-   private static void addReferenced(Set<VariableRef> referenced, RValue rValue) {
-      if(rValue instanceof VariableRef) {
-         referenced.add((VariableRef) rValue);
-      } else if(rValue instanceof PointerDereferenceSimple) {
-         addReferenced(referenced, ((PointerDereferenceSimple) rValue).getPointer());
-      } else if(rValue instanceof PointerDereferenceIndexed) {
-         addReferenced(referenced, ((PointerDereferenceIndexed) rValue).getPointer());
-         addReferenced(referenced, ((PointerDereferenceIndexed) rValue).getIndex());
-      }
-   }
-
-   /**
     * Get all variables assigned a value in a statement
     *
     * @param statement The statement

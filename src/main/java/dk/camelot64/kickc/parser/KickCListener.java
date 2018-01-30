@@ -112,16 +112,6 @@ public interface KickCListener extends ParseTreeListener {
 	 */
 	void exitDeclVar(KickCParser.DeclVarContext ctx);
 	/**
-	 * Enter a parse tree produced by {@link KickCParser#directives}.
-	 * @param ctx the parse tree
-	 */
-	void enterDirectives(KickCParser.DirectivesContext ctx);
-	/**
-	 * Exit a parse tree produced by {@link KickCParser#directives}.
-	 * @param ctx the parse tree
-	 */
-	void exitDirectives(KickCParser.DirectivesContext ctx);
-	/**
 	 * Enter a parse tree produced by the {@code directiveConst}
 	 * labeled alternative in {@link KickCParser#directive}.
 	 * @param ctx the parse tree

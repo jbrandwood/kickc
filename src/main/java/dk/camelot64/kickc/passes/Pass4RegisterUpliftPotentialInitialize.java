@@ -21,17 +21,35 @@ public class Pass4RegisterUpliftPotentialInitialize extends Pass2Base {
       LiveRangeEquivalenceClassSet liveRangeEquivalenceClassSet = getProgram().getLiveRangeEquivalenceClassSet();
       RegisterPotentials registerPotentials = new RegisterPotentials();
       for(LiveRangeEquivalenceClass equivalenceClass : liveRangeEquivalenceClassSet.getEquivalenceClasses()) {
-         Registers.Register defaultRegister = equivalenceClass.getRegister();
-         Registers.RegisterType registerType = defaultRegister.getType();
-         if(registerType.equals(Registers.RegisterType.ZP_BYTE)) {
-            List<Registers.Register> potentials = Arrays.asList(
-                  defaultRegister,
-                  Registers.getRegisterA(),
-                  Registers.getRegisterX(),
-                  Registers.getRegisterY());
-            registerPotentials.setPotentialRegisters(equivalenceClass, potentials);
+         Registers.Register declaredRegister = null;
+         for(VariableRef varRef : equivalenceClass.getVariables()) {
+            Variable variable = getProgram().getScope().getVariable(varRef);
+            if(variable.getDeclaredRegister() != null) {
+               if(declaredRegister != null && !declaredRegister.equals(variable.getDeclaredRegister())) {
+                  throw new CompileError("Equivalence class has variables with different declared registers \n" +
+                        " - equivalence class: " + equivalenceClass.toString(true) + "\n" +
+                        " - one register: " + declaredRegister.toString() + "\n" +
+                        " - other register: " + variable.getDeclaredRegister().toString()
+                  );
+               }
+               declaredRegister = variable.getDeclaredRegister();
+            }
+         }
+         if(declaredRegister != null) {
+            registerPotentials.setPotentialRegisters(equivalenceClass, Arrays.asList(declaredRegister));
          } else {
-            registerPotentials.setPotentialRegisters(equivalenceClass, Arrays.asList(defaultRegister));
+            Registers.Register defaultRegister = equivalenceClass.getRegister();
+            Registers.RegisterType registerType = defaultRegister.getType();
+            if(registerType.equals(Registers.RegisterType.ZP_BYTE)) {
+               List<Registers.Register> potentials = Arrays.asList(
+                     defaultRegister,
+                     Registers.getRegisterA(),
+                     Registers.getRegisterX(),
+                     Registers.getRegisterY());
+               registerPotentials.setPotentialRegisters(equivalenceClass, potentials);
+            } else {
+               registerPotentials.setPotentialRegisters(equivalenceClass, Arrays.asList(defaultRegister));
+            }
          }
       }
       getProgram().setRegisterPotentials(registerPotentials);

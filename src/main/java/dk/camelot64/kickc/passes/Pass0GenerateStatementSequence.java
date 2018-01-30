@@ -9,7 +9,6 @@ import org.antlr.v4.runtime.ParserRuleContext;
 import org.antlr.v4.runtime.tree.TerminalNode;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 import java.util.Stack;
 
@@ -126,6 +125,8 @@ public class Pass0GenerateStatementSequence extends KickCBaseVisitor<Object> {
    public Variable visitParameterDecl(KickCParser.ParameterDeclContext ctx) {
       SymbolType type = (SymbolType) this.visit(ctx.typeDecl());
       VariableUnversioned param = new VariableUnversioned(ctx.NAME().getText(), getCurrentSymbols(), type);
+      // Add directives
+      addDirectives(type, param, ctx.directive());
       return param;
    }
 
@@ -140,31 +141,8 @@ public class Pass0GenerateStatementSequence extends KickCBaseVisitor<Object> {
       SymbolType type = (SymbolType) visit(ctx.typeDecl());
       String varName = ctx.NAME().getText();
       VariableUnversioned lValue = getCurrentSymbols().addVariable(varName, type);
-
-      List<Directive> directives = new ArrayList<>();
-      for(KickCParser.DirectivesContext directivesContext : ctx.directives()) {
-         directives.addAll((Collection<? extends Directive>) this.visit(directivesContext));
-      }
-      for(Directive directive : directives) {
-         if(directive instanceof DirectiveConst) {
-            lValue.setDeclaredConstant(true);
-         } else if(directive instanceof DirectiveAlign) {
-            if(type instanceof SymbolTypeArray || type.equals(SymbolType.STRING)) {
-               lValue.setDeclaredAlignment(((DirectiveAlign) directive).getAlignment());
-            } else {
-               throw new CompileError("Error! Cannot align variable that is not a string or an array " + lValue.toString(program));
-            }
-         } else if(directive instanceof DirectiveRegister) {
-            DirectiveRegister directiveRegister = (DirectiveRegister) directive;
-            Registers.Register register = Registers.getRegister(directiveRegister.getName());
-            if(register==null) {
-               throw new CompileError("Error! Unknown register " + directiveRegister.getName());
-            }
-            lValue.setDeclaredRegister(register);
-         } else {
-            throw new CompileError("Unknown directive " + directive);
-         }
-      }
+      // Add directives
+      addDirectives(type, lValue, ctx.directive());
       // Array / String variables are implicitly constant
       if(type instanceof SymbolTypeArray || type.equals(SymbolType.STRING)) {
          lValue.setDeclaredConstant(true);
@@ -185,13 +163,38 @@ public class Pass0GenerateStatementSequence extends KickCBaseVisitor<Object> {
       return null;
    }
 
-   @Override
-   public List<Directive> visitDirectives(KickCParser.DirectivesContext ctx) {
-      ArrayList<Directive> directives = new ArrayList<>();
-      for(KickCParser.DirectiveContext directiveContext : ctx.directive()) {
+   /**
+    * Add declared directives to an lValue (typically a variable).
+    *
+    * @param type The type of the lValue
+    * @param lValue The lValue
+    * @param directivesCtx The directives to add
+    */
+   private void addDirectives(SymbolType type, SymbolVariable lValue, List<KickCParser.DirectiveContext> directivesCtx) {
+      List<Directive> directives = new ArrayList<>();
+      for(KickCParser.DirectiveContext directiveContext : directivesCtx) {
          directives.add((Directive) this.visit(directiveContext));
       }
-      return directives;
+      for(Directive directive : directives) {
+         if(directive instanceof DirectiveConst) {
+            lValue.setDeclaredConstant(true);
+         } else if(directive instanceof DirectiveAlign) {
+            if(type instanceof SymbolTypeArray || type.equals(SymbolType.STRING)) {
+               lValue.setDeclaredAlignment(((DirectiveAlign) directive).getAlignment());
+            } else {
+               throw new CompileError("Error! Cannot align variable that is not a string or an array " + lValue.toString(program));
+            }
+         } else if(directive instanceof DirectiveRegister) {
+            DirectiveRegister directiveRegister = (DirectiveRegister) directive;
+            Registers.Register register = Registers.getRegister(directiveRegister.getName());
+            if(register == null) {
+               throw new CompileError("Error! Unknown register " + directiveRegister.getName());
+            }
+            lValue.setDeclaredRegister(register);
+         } else {
+            throw new CompileError("Unknown directive " + directive);
+         }
+      }
    }
 
    @Override
@@ -328,9 +331,13 @@ public class Pass0GenerateStatementSequence extends KickCBaseVisitor<Object> {
       if(forDeclCtx.typeDecl() != null) {
          SymbolType type = (SymbolType) visit(forDeclCtx.typeDecl());
          lValue = getCurrentSymbols().addVariable(varName, type);
+         // Add directives
+         addDirectives(type, lValue, forDeclCtx.directive());
       } else {
          lValue = getCurrentSymbols().getVariable(varName);
       }
+
+
       KickCParser.ExprContext initializer = forDeclCtx.expr();
       if(initializer != null) {
          addInitialAssignment(initializer, lValue);
@@ -369,6 +376,8 @@ public class Pass0GenerateStatementSequence extends KickCBaseVisitor<Object> {
       if(forDeclCtx.typeDecl() != null) {
          SymbolType type = (SymbolType) visit(forDeclCtx.typeDecl());
          lValue = getCurrentSymbols().addVariable(varName, type);
+         // Add directives
+         addDirectives(type, lValue, forDeclCtx.directive());
       } else {
          lValue = getCurrentSymbols().getVariable(varName);
       }

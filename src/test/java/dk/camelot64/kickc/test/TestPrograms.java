@@ -507,6 +507,11 @@ public class TestPrograms {
       assertError("illegal-alignment", "Cannot align variable");
    }
 
+   @Test
+   public void testRegisterClobber() throws IOException, URISyntaxException {
+      assertError("register-clobber", "CLOBBER ERROR");
+   }
+
    private void assertError(String kcFile, String expectError) throws IOException, URISyntaxException {
       try {
          compileAndCompare(kcFile);

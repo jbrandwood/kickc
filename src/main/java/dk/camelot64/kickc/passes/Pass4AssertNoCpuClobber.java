@@ -41,7 +41,7 @@ public class Pass4AssertNoCpuClobber extends Pass2Base {
     */
    public void check() {
       if(hasClobberProblem(true)) {
-         throw new RuntimeException("CLOBBER ERROR! See log for more info.");
+         throw new CompileError("CLOBBER ERROR! See log for more info.");
       }
    }
 

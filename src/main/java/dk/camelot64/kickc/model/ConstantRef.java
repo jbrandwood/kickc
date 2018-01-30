@@ -19,7 +19,7 @@ public class ConstantRef extends SymbolRef implements ConstantValue {
    @Override
    public SymbolType getType(ProgramScope scope) {
       ConstantVar constant = scope.getConstant(this);
-      return constant.getType(scope);
+      return constant.getType();
    }
 
 }

@@ -1,0 +1,858 @@
+PARSING src/test/java/dk/camelot64/kickc/test/kc/var-register.kc
+
+
+void main() {
+    for( register(X) byte x: 0..100 ) {
+        for( byte y: 0..100 ) {
+            for( byte a: 0..100 ) {
+                print(y, a+x);
+            }
+        }
+    }
+}
+
+void print(byte idx, register(y) byte val) {
+    byte* SCREEN  = $0400;
+    SCREEN[idx] = val;
+}
+
+STATEMENTS
+proc (void()) main()
+  (byte) main::x ← (byte/signed byte/word/signed word/dword/signed dword) 0
+main::@1:
+  (byte) main::y ← (byte/signed byte/word/signed word/dword/signed dword) 0
+main::@2:
+  (byte) main::a ← (byte/signed byte/word/signed word/dword/signed dword) 0
+main::@3:
+  (byte/word~) main::$0 ← (byte) main::a + (byte) main::x
+  (void~) main::$1 ← call print (byte) main::y (byte/word~) main::$0 
+  (byte) main::a ← ++ (byte) main::a
+  (boolean~) main::$2 ← (byte) main::a != (byte/signed byte/word/signed word/dword/signed dword) 101
+  if((boolean~) main::$2) goto main::@3
+  (byte) main::y ← ++ (byte) main::y
+  (boolean~) main::$3 ← (byte) main::y != (byte/signed byte/word/signed word/dword/signed dword) 101
+  if((boolean~) main::$3) goto main::@2
+  (byte) main::x ← ++ (byte) main::x
+  (boolean~) main::$4 ← (byte) main::x != (byte/signed byte/word/signed word/dword/signed dword) 101
+  if((boolean~) main::$4) goto main::@1
+main::@return:
+  return 
+endproc // main()
+proc (void()) print((byte) print::idx , (byte) print::val)
+  (byte*) print::SCREEN ← (word/signed word/dword/signed dword) 1024
+  *((byte*) print::SCREEN + (byte) print::idx) ← (byte) print::val
+print::@return:
+  return 
+endproc // print()
+  call main 
+
+SYMBOLS
+(void()) main()
+(byte/word~) main::$0
+(void~) main::$1
+(boolean~) main::$2
+(boolean~) main::$3
+(boolean~) main::$4
+(label) main::@1
+(label) main::@2
+(label) main::@3
+(label) main::@return
+(byte) main::a
+(byte) main::x
+(byte) main::y
+(void()) print((byte) print::idx , (byte) print::val)
+(label) print::@return
+(byte*) print::SCREEN
+(byte) print::idx
+(byte) print::val
+
+Promoting word/signed word/dword/signed dword to byte* in print::SCREEN ← ((byte*)) 1024
+INITIAL CONTROL FLOW GRAPH
+@begin: scope:[]  from
+  to:@1
+main: scope:[main]  from
+  (byte) main::x ← (byte/signed byte/word/signed word/dword/signed dword) 0
+  to:main::@1
+main::@1: scope:[main]  from main main::@5
+  (byte) main::y ← (byte/signed byte/word/signed word/dword/signed dword) 0
+  to:main::@2
+main::@2: scope:[main]  from main::@1 main::@4
+  (byte) main::a ← (byte/signed byte/word/signed word/dword/signed dword) 0
+  to:main::@3
+main::@3: scope:[main]  from main::@2 main::@3
+  (byte/word~) main::$0 ← (byte) main::a + (byte) main::x
+  (void~) main::$1 ← call print (byte) main::y (byte/word~) main::$0 
+  (byte) main::a ← ++ (byte) main::a
+  (boolean~) main::$2 ← (byte) main::a != (byte/signed byte/word/signed word/dword/signed dword) 101
+  if((boolean~) main::$2) goto main::@3
+  to:main::@4
+main::@4: scope:[main]  from main::@3
+  (byte) main::y ← ++ (byte) main::y
+  (boolean~) main::$3 ← (byte) main::y != (byte/signed byte/word/signed word/dword/signed dword) 101
+  if((boolean~) main::$3) goto main::@2
+  to:main::@5
+main::@5: scope:[main]  from main::@4
+  (byte) main::x ← ++ (byte) main::x
+  (boolean~) main::$4 ← (byte) main::x != (byte/signed byte/word/signed word/dword/signed dword) 101
+  if((boolean~) main::$4) goto main::@1
+  to:main::@6
+main::@6: scope:[main]  from main::@5
+  to:main::@return
+main::@return: scope:[main]  from main::@6
+  return 
+  to:@return
+@1: scope:[]  from @begin
+  to:@2
+print: scope:[print]  from
+  (byte*) print::SCREEN ← ((byte*)) (word/signed word/dword/signed dword) 1024
+  *((byte*) print::SCREEN + (byte) print::idx) ← (byte) print::val
+  to:print::@return
+print::@return: scope:[print]  from print
+  return 
+  to:@return
+@2: scope:[]  from @1
+  call main 
+  to:@end
+@end: scope:[]  from @2
+
+Eliminating unused variable - keeping the call (void~) main::$1
+Removing empty block main::@6
+Removing empty block @1
+PROCEDURE MODIFY VARIABLE ANALYSIS
+
+Completing Phi functions...
+Completing Phi functions...
+Completing Phi functions...
+
+CONTROL FLOW GRAPH SSA WITH ASSIGNMENT CALL & RETURN
+@begin: scope:[]  from
+  to:@2
+main: scope:[main]  from @2
+  (byte) main::x#0 ← (byte/signed byte/word/signed word/dword/signed dword) 0
+  to:main::@1
+main::@1: scope:[main]  from main main::@5
+  (byte) main::x#7 ← phi( main/(byte) main::x#0 main::@5/(byte) main::x#1 )
+  (byte) main::y#0 ← (byte/signed byte/word/signed word/dword/signed dword) 0
+  to:main::@2
+main::@2: scope:[main]  from main::@1 main::@4
+  (byte) main::y#4 ← phi( main::@1/(byte) main::y#0 main::@4/(byte) main::y#1 )
+  (byte) main::x#4 ← phi( main::@1/(byte) main::x#7 main::@4/(byte) main::x#6 )
+  (byte) main::a#0 ← (byte/signed byte/word/signed word/dword/signed dword) 0
+  to:main::@3
+main::@3: scope:[main]  from main::@2 main::@7
+  (byte) main::y#2 ← phi( main::@2/(byte) main::y#4 main::@7/(byte) main::y#5 )
+  (byte) main::x#2 ← phi( main::@2/(byte) main::x#4 main::@7/(byte) main::x#5 )
+  (byte) main::a#2 ← phi( main::@2/(byte) main::a#0 main::@7/(byte) main::a#1 )
+  (byte/word~) main::$0 ← (byte) main::a#2 + (byte) main::x#2
+  (byte) print::idx#0 ← (byte) main::y#2
+  (byte) print::val#0 ← (byte/word~) main::$0
+  call print param-assignment
+  to:main::@7
+main::@7: scope:[main]  from main::@3
+  (byte) main::y#5 ← phi( main::@3/(byte) main::y#2 )
+  (byte) main::x#5 ← phi( main::@3/(byte) main::x#2 )
+  (byte) main::a#3 ← phi( main::@3/(byte) main::a#2 )
+  (byte) main::a#1 ← ++ (byte) main::a#3
+  (boolean~) main::$2 ← (byte) main::a#1 != (byte/signed byte/word/signed word/dword/signed dword) 101
+  if((boolean~) main::$2) goto main::@3
+  to:main::@4
+main::@4: scope:[main]  from main::@7
+  (byte) main::x#6 ← phi( main::@7/(byte) main::x#5 )
+  (byte) main::y#3 ← phi( main::@7/(byte) main::y#5 )
+  (byte) main::y#1 ← ++ (byte) main::y#3
+  (boolean~) main::$3 ← (byte) main::y#1 != (byte/signed byte/word/signed word/dword/signed dword) 101
+  if((boolean~) main::$3) goto main::@2
+  to:main::@5
+main::@5: scope:[main]  from main::@4
+  (byte) main::x#3 ← phi( main::@4/(byte) main::x#6 )
+  (byte) main::x#1 ← ++ (byte) main::x#3
+  (boolean~) main::$4 ← (byte) main::x#1 != (byte/signed byte/word/signed word/dword/signed dword) 101
+  if((boolean~) main::$4) goto main::@1
+  to:main::@return
+main::@return: scope:[main]  from main::@5
+  return 
+  to:@return
+print: scope:[print]  from main::@3
+  (byte) print::idx#1 ← phi( main::@3/(byte) print::idx#0 )
+  (byte) print::val#1 ← phi( main::@3/(byte) print::val#0 )
+  (byte*) print::SCREEN#0 ← ((byte*)) (word/signed word/dword/signed dword) 1024
+  *((byte*) print::SCREEN#0 + (byte) print::idx#1) ← (byte) print::val#1
+  to:print::@return
+print::@return: scope:[print]  from print
+  return 
+  to:@return
+@2: scope:[]  from @begin
+  call main param-assignment
+  to:@3
+@3: scope:[]  from @2
+  to:@end
+@end: scope:[]  from @3
+
+SYMBOL TABLE SSA
+(label) @2
+(label) @3
+(label) @begin
+(label) @end
+(void()) main()
+(byte/word~) main::$0
+(boolean~) main::$2
+(boolean~) main::$3
+(boolean~) main::$4
+(label) main::@1
+(label) main::@2
+(label) main::@3
+(label) main::@4
+(label) main::@5
+(label) main::@7
+(label) main::@return
+(byte) main::a
+(byte) main::a#0
+(byte) main::a#1
+(byte) main::a#2
+(byte) main::a#3
+(byte) main::x
+(byte) main::x#0
+(byte) main::x#1
+(byte) main::x#2
+(byte) main::x#3
+(byte) main::x#4
+(byte) main::x#5
+(byte) main::x#6
+(byte) main::x#7
+(byte) main::y
+(byte) main::y#0
+(byte) main::y#1
+(byte) main::y#2
+(byte) main::y#3
+(byte) main::y#4
+(byte) main::y#5
+(void()) print((byte) print::idx , (byte) print::val)
+(label) print::@return
+(byte*) print::SCREEN
+(byte*) print::SCREEN#0
+(byte) print::idx
+(byte) print::idx#0
+(byte) print::idx#1
+(byte) print::val
+(byte) print::val#0
+(byte) print::val#1
+
+OPTIMIZING CONTROL FLOW GRAPH
+Culled Empty Block (label) @3
+Succesful SSA optimization Pass2CullEmptyBlocks
+Not aliassing across scopes: print::idx#0 main::y#2
+Not aliassing across scopes: print::val#1 print::val#0
+Not aliassing across scopes: print::idx#1 print::idx#0
+Alias (byte) print::val#0 = (byte/word~) main::$0 
+Alias (byte) main::a#2 = (byte) main::a#3 
+Alias (byte) main::x#2 = (byte) main::x#5 (byte) main::x#6 (byte) main::x#3 
+Alias (byte) main::y#2 = (byte) main::y#5 (byte) main::y#3 
+Succesful SSA optimization Pass2AliasElimination
+Not aliassing across scopes: print::idx#0 main::y#2
+Not aliassing across scopes: print::val#1 print::val#0
+Not aliassing across scopes: print::idx#1 print::idx#0
+Self Phi Eliminated (byte) main::x#2
+Self Phi Eliminated (byte) main::y#2
+Succesful SSA optimization Pass2SelfPhiElimination
+Redundant Phi (byte) main::x#2 (byte) main::x#4
+Redundant Phi (byte) main::y#2 (byte) main::y#4
+Redundant Phi (byte) print::val#1 (byte) print::val#0
+Redundant Phi (byte) print::idx#1 (byte) print::idx#0
+Succesful SSA optimization Pass2RedundantPhiElimination
+Simple Condition (boolean~) main::$2 if((byte) main::a#1!=(byte/signed byte/word/signed word/dword/signed dword) 101) goto main::@3
+Simple Condition (boolean~) main::$3 if((byte) main::y#1!=(byte/signed byte/word/signed word/dword/signed dword) 101) goto main::@2
+Simple Condition (boolean~) main::$4 if((byte) main::x#1!=(byte/signed byte/word/signed word/dword/signed dword) 101) goto main::@1
+Succesful SSA optimization Pass2ConditionalJumpSimplification
+Constant (const byte) main::x#0 = 0
+Constant (const byte) main::y#0 = 0
+Constant (const byte) main::a#0 = 0
+Constant (const byte*) print::SCREEN#0 = ((byte*))1024
+Succesful SSA optimization Pass2ConstantIdentification
+Not aliassing across scopes: print::idx#0 main::y#4
+Self Phi Eliminated (byte) main::x#4
+Succesful SSA optimization Pass2SelfPhiElimination
+Redundant Phi (byte) main::x#4 (byte) main::x#7
+Succesful SSA optimization Pass2RedundantPhiElimination
+Not aliassing across scopes: print::idx#0 main::y#4
+OPTIMIZING CONTROL FLOW GRAPH
+Inlining constant with var siblings (const byte) main::x#0
+Inlining constant with var siblings (const byte) main::x#0
+Inlining constant with var siblings (const byte) main::y#0
+Inlining constant with var siblings (const byte) main::y#0
+Inlining constant with var siblings (const byte) main::a#0
+Inlining constant with var siblings (const byte) main::a#0
+Constant inlined main::a#0 = (byte/signed byte/word/signed word/dword/signed dword) 0
+Constant inlined main::x#0 = (byte/signed byte/word/signed word/dword/signed dword) 0
+Constant inlined main::y#0 = (byte/signed byte/word/signed word/dword/signed dword) 0
+Succesful SSA optimization Pass2ConstantInlining
+Block Sequence Planned @begin @2 @end main main::@1 main::@2 main::@3 main::@7 main::@4 main::@5 main::@return print print::@return 
+Added new block during phi lifting main::@8(between main::@5 and main::@1)
+Added new block during phi lifting main::@9(between main::@4 and main::@2)
+Added new block during phi lifting main::@10(between main::@7 and main::@3)
+Block Sequence Planned @begin @2 @end main main::@1 main::@2 main::@3 main::@7 main::@4 main::@5 main::@return main::@8 main::@9 main::@10 print print::@return 
+Adding NOP phi() at start of @begin
+Adding NOP phi() at start of @2
+Adding NOP phi() at start of @end
+Adding NOP phi() at start of main
+CALL GRAPH
+Calls in [] to main:2 
+Calls in [main] to print:10 
+
+Propagating live ranges...
+Propagating live ranges...
+Propagating live ranges...
+Propagating live ranges...
+Propagating live ranges...
+Propagating live ranges...
+Propagating live ranges...
+Created 3 initial phi equivalence classes
+Coalesced [18] main::x#8 ← main::x#1
+Coalesced [19] main::y#6 ← main::y#1
+Coalesced [20] main::a#4 ← main::a#1
+Coalesced down to 3 phi equivalence classes
+Culled Empty Block (label) main::@8
+Culled Empty Block (label) main::@9
+Culled Empty Block (label) main::@10
+Block Sequence Planned @begin @2 @end main main::@1 main::@2 main::@3 main::@7 main::@4 main::@5 main::@return print print::@return 
+Adding NOP phi() at start of @begin
+Adding NOP phi() at start of @2
+Adding NOP phi() at start of @end
+Adding NOP phi() at start of main
+Propagating live ranges...
+Propagating live ranges...
+Propagating live ranges...
+Propagating live ranges...
+Propagating live ranges...
+Propagating live ranges...
+
+FINAL CONTROL FLOW GRAPH
+@begin: scope:[]  from
+  [0] phi() [ ] ( )
+  to:@2
+@2: scope:[]  from @begin
+  [1] phi() [ ] ( )
+  [2] call main param-assignment [ ] ( )
+  to:@end
+@end: scope:[]  from @2
+  [3] phi() [ ] ( )
+main: scope:[main]  from @2
+  [4] phi() [ ] ( main:2 [ ] )
+  to:main::@1
+main::@1: scope:[main]  from main main::@5
+  [5] (byte) main::x#7 ← phi( main/(byte/signed byte/word/signed word/dword/signed dword) 0 main::@5/(byte) main::x#1 ) [ main::x#7 ] ( main:2 [ main::x#7 ] )
+  to:main::@2
+main::@2: scope:[main]  from main::@1 main::@4
+  [6] (byte) main::y#4 ← phi( main::@1/(byte/signed byte/word/signed word/dword/signed dword) 0 main::@4/(byte) main::y#1 ) [ main::x#7 main::y#4 ] ( main:2 [ main::x#7 main::y#4 ] )
+  to:main::@3
+main::@3: scope:[main]  from main::@2 main::@7
+  [7] (byte) main::a#2 ← phi( main::@2/(byte/signed byte/word/signed word/dword/signed dword) 0 main::@7/(byte) main::a#1 ) [ main::x#7 main::y#4 main::a#2 ] ( main:2 [ main::x#7 main::y#4 main::a#2 ] )
+  [8] (byte) print::val#0 ← (byte) main::a#2 + (byte) main::x#7 [ main::x#7 main::y#4 main::a#2 print::val#0 ] ( main:2 [ main::x#7 main::y#4 main::a#2 print::val#0 ] )
+  [9] (byte) print::idx#0 ← (byte) main::y#4 [ main::x#7 main::y#4 main::a#2 print::val#0 print::idx#0 ] ( main:2 [ main::x#7 main::y#4 main::a#2 print::val#0 print::idx#0 ] )
+  [10] call print param-assignment [ main::x#7 main::y#4 main::a#2 ] ( main:2 [ main::x#7 main::y#4 main::a#2 ] )
+  to:main::@7
+main::@7: scope:[main]  from main::@3
+  [11] (byte) main::a#1 ← ++ (byte) main::a#2 [ main::x#7 main::y#4 main::a#1 ] ( main:2 [ main::x#7 main::y#4 main::a#1 ] )
+  [12] if((byte) main::a#1!=(byte/signed byte/word/signed word/dword/signed dword) 101) goto main::@3 [ main::x#7 main::y#4 main::a#1 ] ( main:2 [ main::x#7 main::y#4 main::a#1 ] )
+  to:main::@4
+main::@4: scope:[main]  from main::@7
+  [13] (byte) main::y#1 ← ++ (byte) main::y#4 [ main::x#7 main::y#1 ] ( main:2 [ main::x#7 main::y#1 ] )
+  [14] if((byte) main::y#1!=(byte/signed byte/word/signed word/dword/signed dword) 101) goto main::@2 [ main::x#7 main::y#1 ] ( main:2 [ main::x#7 main::y#1 ] )
+  to:main::@5
+main::@5: scope:[main]  from main::@4
+  [15] (byte) main::x#1 ← ++ (byte) main::x#7 [ main::x#1 ] ( main:2 [ main::x#1 ] )
+  [16] if((byte) main::x#1!=(byte/signed byte/word/signed word/dword/signed dword) 101) goto main::@1 [ main::x#1 ] ( main:2 [ main::x#1 ] )
+  to:main::@return
+main::@return: scope:[main]  from main::@5
+  [17] return  [ ] ( main:2 [ ] )
+  to:@return
+print: scope:[print]  from main::@3
+  [18] *((const byte*) print::SCREEN#0 + (byte) print::idx#0) ← (byte) print::val#0 [ ] ( main:2::print:10 [ main::x#7 main::y#4 main::a#2 ] )
+  to:print::@return
+print::@return: scope:[print]  from print
+  [19] return  [ ] ( main:2::print:10 [ main::x#7 main::y#4 main::a#2 ] )
+  to:@return
+
+DOMINATORS
+@begin dominated by  @begin 
+@2 dominated by  @begin @2 
+@end dominated by  @begin @end @2 
+main dominated by  @begin main @2 
+main::@1 dominated by  @begin main @2 main::@1 
+main::@2 dominated by  @begin main @2 main::@1 main::@2 
+main::@3 dominated by  @begin main @2 main::@1 main::@2 main::@3 
+main::@7 dominated by  main::@7 @begin main @2 main::@1 main::@2 main::@3 
+main::@4 dominated by  main::@7 @begin main @2 main::@1 main::@2 main::@3 main::@4 
+main::@5 dominated by  main::@7 @begin main @2 main::@1 main::@2 main::@5 main::@3 main::@4 
+main::@return dominated by  main::@return main::@7 @begin main @2 main::@1 main::@2 main::@5 main::@3 main::@4 
+print dominated by  @begin main @2 print main::@1 main::@2 main::@3 
+print::@return dominated by  @begin main print::@return @2 print main::@1 main::@2 main::@3 
+
+NATURAL LOOPS
+Found back edge: Loop head: main::@3 tails: main::@7 blocks: null
+Found back edge: Loop head: main::@2 tails: main::@4 blocks: null
+Found back edge: Loop head: main::@1 tails: main::@5 blocks: null
+Populated: Loop head: main::@3 tails: main::@7 blocks: main::@7 main::@3 
+Populated: Loop head: main::@2 tails: main::@4 blocks: main::@4 main::@7 main::@3 main::@2 
+Populated: Loop head: main::@1 tails: main::@5 blocks: main::@5 main::@4 main::@7 main::@3 main::@2 main::@1 
+Loop head: main::@3 tails: main::@7 blocks: main::@7 main::@3 
+Loop head: main::@2 tails: main::@4 blocks: main::@4 main::@7 main::@3 main::@2 
+Loop head: main::@1 tails: main::@5 blocks: main::@5 main::@4 main::@7 main::@3 main::@2 main::@1 
+
+NATURAL LOOPS WITH DEPTH
+Found 0 loops in scope []
+Found 3 loops in scope [main]
+  Loop head: main::@3 tails: main::@7 blocks: main::@7 main::@3 
+  Loop head: main::@2 tails: main::@4 blocks: main::@4 main::@7 main::@3 main::@2 
+  Loop head: main::@1 tails: main::@5 blocks: main::@5 main::@4 main::@7 main::@3 main::@2 main::@1 
+Found 0 loops in scope [print]
+Loop head: main::@3 tails: main::@7 blocks: main::@7 main::@3  depth: 3
+Loop head: main::@2 tails: main::@4 blocks: main::@4 main::@7 main::@3 main::@2  depth: 2
+Loop head: main::@1 tails: main::@5 blocks: main::@5 main::@4 main::@7 main::@3 main::@2 main::@1  depth: 1
+
+
+VARIABLE REGISTER WEIGHTS
+(void()) main()
+(byte) main::a
+(byte) main::a#1 1501.5
+(byte) main::a#2 750.75
+(byte) main::x
+(byte) main::x#1 16.5
+(byte) main::x#7 102.29999999999998
+(byte) main::y
+(byte) main::y#1 151.5
+(byte) main::y#4 171.85714285714283
+(void()) print((byte) print::idx , (byte) print::val)
+(byte*) print::SCREEN
+(byte) print::idx
+(byte) print::idx#0 1003.0
+(byte) print::val
+(byte) print::val#0 501.5
+
+Initial phi equivalence classes
+[ main::x#7 main::x#1 ]
+[ main::y#4 main::y#1 ]
+[ main::a#2 main::a#1 ]
+Added variable print::val#0 to zero page equivalence class [ print::val#0 ]
+Added variable print::idx#0 to zero page equivalence class [ print::idx#0 ]
+Complete equivalence classes
+[ main::x#7 main::x#1 ]
+[ main::y#4 main::y#1 ]
+[ main::a#2 main::a#1 ]
+[ print::val#0 ]
+[ print::idx#0 ]
+Allocated zp ZP_BYTE:2 [ main::x#7 main::x#1 ]
+Allocated zp ZP_BYTE:3 [ main::y#4 main::y#1 ]
+Allocated zp ZP_BYTE:4 [ main::a#2 main::a#1 ]
+Allocated zp ZP_BYTE:5 [ print::val#0 ]
+Allocated zp ZP_BYTE:6 [ print::idx#0 ]
+
+INITIAL ASM
+//SEG0 Basic Upstart
+.pc = $801 "Basic"
+:BasicUpstart(main)
+.pc = $80d "Program"
+//SEG1 Global Constants & labels
+//SEG2 @begin
+bbegin:
+//SEG3 [1] phi from @begin to @2 [phi:@begin->@2]
+b2_from_bbegin:
+  jmp b2
+//SEG4 @2
+b2:
+//SEG5 [2] call main param-assignment [ ] ( )
+//SEG6 [4] phi from @2 to main [phi:@2->main]
+main_from_b2:
+  jsr main
+//SEG7 [3] phi from @2 to @end [phi:@2->@end]
+bend_from_b2:
+  jmp bend
+//SEG8 @end
+bend:
+//SEG9 main
+main: {
+    .label a = 4
+    .label y = 3
+    .label x = 2
+  //SEG10 [5] phi from main to main::@1 [phi:main->main::@1]
+  b1_from_main:
+  //SEG11 [5] phi (byte) main::x#7 = (byte/signed byte/word/signed word/dword/signed dword) 0 [phi:main->main::@1#0] -- vbuz1=vbuc1 
+    lda #0
+    sta x
+    jmp b1
+  //SEG12 [5] phi from main::@5 to main::@1 [phi:main::@5->main::@1]
+  b1_from_b5:
+  //SEG13 [5] phi (byte) main::x#7 = (byte) main::x#1 [phi:main::@5->main::@1#0] -- register_copy 
+    jmp b1
+  //SEG14 main::@1
+  b1:
+  //SEG15 [6] phi from main::@1 to main::@2 [phi:main::@1->main::@2]
+  b2_from_b1:
+  //SEG16 [6] phi (byte) main::y#4 = (byte/signed byte/word/signed word/dword/signed dword) 0 [phi:main::@1->main::@2#0] -- vbuz1=vbuc1 
+    lda #0
+    sta y
+    jmp b2
+  //SEG17 [6] phi from main::@4 to main::@2 [phi:main::@4->main::@2]
+  b2_from_b4:
+  //SEG18 [6] phi (byte) main::y#4 = (byte) main::y#1 [phi:main::@4->main::@2#0] -- register_copy 
+    jmp b2
+  //SEG19 main::@2
+  b2:
+  //SEG20 [7] phi from main::@2 to main::@3 [phi:main::@2->main::@3]
+  b3_from_b2:
+  //SEG21 [7] phi (byte) main::a#2 = (byte/signed byte/word/signed word/dword/signed dword) 0 [phi:main::@2->main::@3#0] -- vbuz1=vbuc1 
+    lda #0
+    sta a
+    jmp b3
+  //SEG22 [7] phi from main::@7 to main::@3 [phi:main::@7->main::@3]
+  b3_from_b7:
+  //SEG23 [7] phi (byte) main::a#2 = (byte) main::a#1 [phi:main::@7->main::@3#0] -- register_copy 
+    jmp b3
+  //SEG24 main::@3
+  b3:
+  //SEG25 [8] (byte) print::val#0 ← (byte) main::a#2 + (byte) main::x#7 [ main::x#7 main::y#4 main::a#2 print::val#0 ] ( main:2 [ main::x#7 main::y#4 main::a#2 print::val#0 ] ) -- vbuz1=vbuz2_plus_vbuz3 
+    lda a
+    clc
+    adc x
+    sta print.val
+  //SEG26 [9] (byte) print::idx#0 ← (byte) main::y#4 [ main::x#7 main::y#4 main::a#2 print::val#0 print::idx#0 ] ( main:2 [ main::x#7 main::y#4 main::a#2 print::val#0 print::idx#0 ] ) -- vbuz1=vbuz2 
+    lda y
+    sta print.idx
+  //SEG27 [10] call print param-assignment [ main::x#7 main::y#4 main::a#2 ] ( main:2 [ main::x#7 main::y#4 main::a#2 ] )
+    jsr print
+    jmp b7
+  //SEG28 main::@7
+  b7:
+  //SEG29 [11] (byte) main::a#1 ← ++ (byte) main::a#2 [ main::x#7 main::y#4 main::a#1 ] ( main:2 [ main::x#7 main::y#4 main::a#1 ] ) -- vbuz1=_inc_vbuz1 
+    inc a
+  //SEG30 [12] if((byte) main::a#1!=(byte/signed byte/word/signed word/dword/signed dword) 101) goto main::@3 [ main::x#7 main::y#4 main::a#1 ] ( main:2 [ main::x#7 main::y#4 main::a#1 ] ) -- vbuz1_neq_vbuc1_then_la1 
+    lda a
+    cmp #$65
+    bne b3_from_b7
+    jmp b4
+  //SEG31 main::@4
+  b4:
+  //SEG32 [13] (byte) main::y#1 ← ++ (byte) main::y#4 [ main::x#7 main::y#1 ] ( main:2 [ main::x#7 main::y#1 ] ) -- vbuz1=_inc_vbuz1 
+    inc y
+  //SEG33 [14] if((byte) main::y#1!=(byte/signed byte/word/signed word/dword/signed dword) 101) goto main::@2 [ main::x#7 main::y#1 ] ( main:2 [ main::x#7 main::y#1 ] ) -- vbuz1_neq_vbuc1_then_la1 
+    lda y
+    cmp #$65
+    bne b2_from_b4
+    jmp b5
+  //SEG34 main::@5
+  b5:
+  //SEG35 [15] (byte) main::x#1 ← ++ (byte) main::x#7 [ main::x#1 ] ( main:2 [ main::x#1 ] ) -- vbuz1=_inc_vbuz1 
+    inc x
+  //SEG36 [16] if((byte) main::x#1!=(byte/signed byte/word/signed word/dword/signed dword) 101) goto main::@1 [ main::x#1 ] ( main:2 [ main::x#1 ] ) -- vbuz1_neq_vbuc1_then_la1 
+    lda x
+    cmp #$65
+    bne b1_from_b5
+    jmp breturn
+  //SEG37 main::@return
+  breturn:
+  //SEG38 [17] return  [ ] ( main:2 [ ] )
+    rts
+}
+//SEG39 print
+print: {
+    .const SCREEN = $400
+    .label idx = 6
+    .label val = 5
+  //SEG40 [18] *((const byte*) print::SCREEN#0 + (byte) print::idx#0) ← (byte) print::val#0 [ ] ( main:2::print:10 [ main::x#7 main::y#4 main::a#2 ] ) -- pbuc1_derefidx_vbuz1=vbuz2 
+    lda val
+    ldy idx
+    sta SCREEN,y
+    jmp breturn
+  //SEG41 print::@return
+  breturn:
+  //SEG42 [19] return  [ ] ( main:2::print:10 [ main::x#7 main::y#4 main::a#2 ] )
+    rts
+}
+
+REGISTER UPLIFT POTENTIAL REGISTERS
+Potential registers zp ZP_BYTE:2 [ main::x#7 main::x#1 ] : zp ZP_BYTE:2 , reg byte a , reg byte x , reg byte y , 
+Potential registers zp ZP_BYTE:3 [ main::y#4 main::y#1 ] : zp ZP_BYTE:3 , reg byte a , reg byte x , reg byte y , 
+Potential registers zp ZP_BYTE:4 [ main::a#2 main::a#1 ] : zp ZP_BYTE:4 , reg byte a , reg byte x , reg byte y , 
+Potential registers zp ZP_BYTE:5 [ print::val#0 ] : zp ZP_BYTE:5 , reg byte a , reg byte x , reg byte y , 
+Potential registers zp ZP_BYTE:6 [ print::idx#0 ] : zp ZP_BYTE:6 , reg byte a , reg byte x , reg byte y , 
+
+REGISTER UPLIFT SCOPES
+Uplift Scope [main] 2,252.25: zp ZP_BYTE:4 [ main::a#2 main::a#1 ] 323.36: zp ZP_BYTE:3 [ main::y#4 main::y#1 ] 118.8: zp ZP_BYTE:2 [ main::x#7 main::x#1 ] 
+Uplift Scope [print] 1,003: zp ZP_BYTE:6 [ print::idx#0 ] 501.5: zp ZP_BYTE:5 [ print::val#0 ] 
+Uplift Scope [] 
+
+Uplifting [main] best 45453 combination reg byte x [ main::a#2 main::a#1 ] zp ZP_BYTE:3 [ main::y#4 main::y#1 ] zp ZP_BYTE:2 [ main::x#7 main::x#1 ] 
+Uplifting [print] best 39447 combination reg byte y [ print::idx#0 ] reg byte a [ print::val#0 ] 
+Uplifting [] best 39447 combination 
+Attempting to uplift remaining variables inzp ZP_BYTE:3 [ main::y#4 main::y#1 ]
+Uplifting [main] best 35547 combination reg byte y [ main::y#4 main::y#1 ] 
+Attempting to uplift remaining variables inzp ZP_BYTE:2 [ main::x#7 main::x#1 ]
+Uplifting [main] best 35547 combination zp ZP_BYTE:2 [ main::x#7 main::x#1 ] 
+
+ASSEMBLER BEFORE OPTIMIZATION
+//SEG0 Basic Upstart
+.pc = $801 "Basic"
+:BasicUpstart(main)
+.pc = $80d "Program"
+//SEG1 Global Constants & labels
+//SEG2 @begin
+bbegin:
+//SEG3 [1] phi from @begin to @2 [phi:@begin->@2]
+b2_from_bbegin:
+  jmp b2
+//SEG4 @2
+b2:
+//SEG5 [2] call main param-assignment [ ] ( )
+//SEG6 [4] phi from @2 to main [phi:@2->main]
+main_from_b2:
+  jsr main
+//SEG7 [3] phi from @2 to @end [phi:@2->@end]
+bend_from_b2:
+  jmp bend
+//SEG8 @end
+bend:
+//SEG9 main
+main: {
+    .label x = 2
+  //SEG10 [5] phi from main to main::@1 [phi:main->main::@1]
+  b1_from_main:
+  //SEG11 [5] phi (byte) main::x#7 = (byte/signed byte/word/signed word/dword/signed dword) 0 [phi:main->main::@1#0] -- vbuz1=vbuc1 
+    lda #0
+    sta x
+    jmp b1
+  //SEG12 [5] phi from main::@5 to main::@1 [phi:main::@5->main::@1]
+  b1_from_b5:
+  //SEG13 [5] phi (byte) main::x#7 = (byte) main::x#1 [phi:main::@5->main::@1#0] -- register_copy 
+    jmp b1
+  //SEG14 main::@1
+  b1:
+  //SEG15 [6] phi from main::@1 to main::@2 [phi:main::@1->main::@2]
+  b2_from_b1:
+  //SEG16 [6] phi (byte) main::y#4 = (byte/signed byte/word/signed word/dword/signed dword) 0 [phi:main::@1->main::@2#0] -- vbuyy=vbuc1 
+    ldy #0
+    jmp b2
+  //SEG17 [6] phi from main::@4 to main::@2 [phi:main::@4->main::@2]
+  b2_from_b4:
+  //SEG18 [6] phi (byte) main::y#4 = (byte) main::y#1 [phi:main::@4->main::@2#0] -- register_copy 
+    jmp b2
+  //SEG19 main::@2
+  b2:
+  //SEG20 [7] phi from main::@2 to main::@3 [phi:main::@2->main::@3]
+  b3_from_b2:
+  //SEG21 [7] phi (byte) main::a#2 = (byte/signed byte/word/signed word/dword/signed dword) 0 [phi:main::@2->main::@3#0] -- vbuxx=vbuc1 
+    ldx #0
+    jmp b3
+  //SEG22 [7] phi from main::@7 to main::@3 [phi:main::@7->main::@3]
+  b3_from_b7:
+  //SEG23 [7] phi (byte) main::a#2 = (byte) main::a#1 [phi:main::@7->main::@3#0] -- register_copy 
+    jmp b3
+  //SEG24 main::@3
+  b3:
+  //SEG25 [8] (byte) print::val#0 ← (byte) main::a#2 + (byte) main::x#7 [ main::x#7 main::y#4 main::a#2 print::val#0 ] ( main:2 [ main::x#7 main::y#4 main::a#2 print::val#0 ] ) -- vbuaa=vbuxx_plus_vbuz1 
+    txa
+    clc
+    adc x
+  //SEG26 [9] (byte) print::idx#0 ← (byte) main::y#4 [ main::x#7 main::y#4 main::a#2 print::val#0 print::idx#0 ] ( main:2 [ main::x#7 main::y#4 main::a#2 print::val#0 print::idx#0 ] )
+    // (byte) print::idx#0 = (byte) main::y#4  // register copy reg byte y
+  //SEG27 [10] call print param-assignment [ main::x#7 main::y#4 main::a#2 ] ( main:2 [ main::x#7 main::y#4 main::a#2 ] )
+    jsr print
+    jmp b7
+  //SEG28 main::@7
+  b7:
+  //SEG29 [11] (byte) main::a#1 ← ++ (byte) main::a#2 [ main::x#7 main::y#4 main::a#1 ] ( main:2 [ main::x#7 main::y#4 main::a#1 ] ) -- vbuxx=_inc_vbuxx 
+    inx
+  //SEG30 [12] if((byte) main::a#1!=(byte/signed byte/word/signed word/dword/signed dword) 101) goto main::@3 [ main::x#7 main::y#4 main::a#1 ] ( main:2 [ main::x#7 main::y#4 main::a#1 ] ) -- vbuxx_neq_vbuc1_then_la1 
+    cpx #$65
+    bne b3_from_b7
+    jmp b4
+  //SEG31 main::@4
+  b4:
+  //SEG32 [13] (byte) main::y#1 ← ++ (byte) main::y#4 [ main::x#7 main::y#1 ] ( main:2 [ main::x#7 main::y#1 ] ) -- vbuyy=_inc_vbuyy 
+    iny
+  //SEG33 [14] if((byte) main::y#1!=(byte/signed byte/word/signed word/dword/signed dword) 101) goto main::@2 [ main::x#7 main::y#1 ] ( main:2 [ main::x#7 main::y#1 ] ) -- vbuyy_neq_vbuc1_then_la1 
+    cpy #$65
+    bne b2_from_b4
+    jmp b5
+  //SEG34 main::@5
+  b5:
+  //SEG35 [15] (byte) main::x#1 ← ++ (byte) main::x#7 [ main::x#1 ] ( main:2 [ main::x#1 ] ) -- vbuz1=_inc_vbuz1 
+    inc x
+  //SEG36 [16] if((byte) main::x#1!=(byte/signed byte/word/signed word/dword/signed dword) 101) goto main::@1 [ main::x#1 ] ( main:2 [ main::x#1 ] ) -- vbuz1_neq_vbuc1_then_la1 
+    lda x
+    cmp #$65
+    bne b1_from_b5
+    jmp breturn
+  //SEG37 main::@return
+  breturn:
+  //SEG38 [17] return  [ ] ( main:2 [ ] )
+    rts
+}
+//SEG39 print
+print: {
+    .const SCREEN = $400
+  //SEG40 [18] *((const byte*) print::SCREEN#0 + (byte) print::idx#0) ← (byte) print::val#0 [ ] ( main:2::print:10 [ main::x#7 main::y#4 main::a#2 ] ) -- pbuc1_derefidx_vbuyy=vbuaa 
+    sta SCREEN,y
+    jmp breturn
+  //SEG41 print::@return
+  breturn:
+  //SEG42 [19] return  [ ] ( main:2::print:10 [ main::x#7 main::y#4 main::a#2 ] )
+    rts
+}
+
+ASSEMBLER OPTIMIZATIONS
+Removing instruction jmp b2
+Removing instruction jmp bend
+Removing instruction jmp b1
+Removing instruction jmp b2
+Removing instruction jmp b3
+Removing instruction jmp b7
+Removing instruction jmp b4
+Removing instruction jmp b5
+Removing instruction jmp breturn
+Removing instruction jmp breturn
+Succesful ASM optimization Pass5NextJumpElimination
+Replacing label b3_from_b7 with b3
+Replacing label b2_from_b4 with b2
+Replacing label b1_from_b5 with b1
+Removing instruction bbegin:
+Removing instruction b2_from_bbegin:
+Removing instruction main_from_b2:
+Removing instruction bend_from_b2:
+Removing instruction b1_from_b5:
+Removing instruction b2_from_b1:
+Removing instruction b2_from_b4:
+Removing instruction b3_from_b2:
+Removing instruction b3_from_b7:
+Succesful ASM optimization Pass5RedundantLabelElimination
+Removing instruction b2:
+Removing instruction bend:
+Removing instruction b1_from_main:
+Removing instruction b7:
+Removing instruction b4:
+Removing instruction b5:
+Removing instruction breturn:
+Removing instruction breturn:
+Succesful ASM optimization Pass5UnusedLabelElimination
+Removing instruction jmp b1
+Removing instruction jmp b2
+Removing instruction jmp b3
+Succesful ASM optimization Pass5NextJumpElimination
+
+FINAL SYMBOL TABLE
+(label) @2
+(label) @begin
+(label) @end
+(void()) main()
+(label) main::@1
+(label) main::@2
+(label) main::@3
+(label) main::@4
+(label) main::@5
+(label) main::@7
+(label) main::@return
+(byte) main::a
+(byte) main::a#1 reg byte x 1501.5
+(byte) main::a#2 reg byte x 750.75
+(byte) main::x
+(byte) main::x#1 x zp ZP_BYTE:2 16.5
+(byte) main::x#7 x zp ZP_BYTE:2 102.29999999999998
+(byte) main::y
+(byte) main::y#1 reg byte y 151.5
+(byte) main::y#4 reg byte y 171.85714285714283
+(void()) print((byte) print::idx , (byte) print::val)
+(label) print::@return
+(byte*) print::SCREEN
+(const byte*) print::SCREEN#0 SCREEN = ((byte*))(word/signed word/dword/signed dword) 1024
+(byte) print::idx
+(byte) print::idx#0 reg byte y 1003.0
+(byte) print::val
+(byte) print::val#0 reg byte a 501.5
+
+zp ZP_BYTE:2 [ main::x#7 main::x#1 ]
+reg byte y [ main::y#4 main::y#1 ]
+reg byte x [ main::a#2 main::a#1 ]
+reg byte a [ print::val#0 ]
+reg byte y [ print::idx#0 ]
+
+
+FINAL ASSEMBLER
+Score: 22548
+
+//SEG0 Basic Upstart
+.pc = $801 "Basic"
+:BasicUpstart(main)
+.pc = $80d "Program"
+//SEG1 Global Constants & labels
+//SEG2 @begin
+//SEG3 [1] phi from @begin to @2 [phi:@begin->@2]
+//SEG4 @2
+//SEG5 [2] call main param-assignment [ ] ( )
+//SEG6 [4] phi from @2 to main [phi:@2->main]
+  jsr main
+//SEG7 [3] phi from @2 to @end [phi:@2->@end]
+//SEG8 @end
+//SEG9 main
+main: {
+    .label x = 2
+  //SEG10 [5] phi from main to main::@1 [phi:main->main::@1]
+  //SEG11 [5] phi (byte) main::x#7 = (byte/signed byte/word/signed word/dword/signed dword) 0 [phi:main->main::@1#0] -- vbuz1=vbuc1 
+    lda #0
+    sta x
+  //SEG12 [5] phi from main::@5 to main::@1 [phi:main::@5->main::@1]
+  //SEG13 [5] phi (byte) main::x#7 = (byte) main::x#1 [phi:main::@5->main::@1#0] -- register_copy 
+  //SEG14 main::@1
+  b1:
+  //SEG15 [6] phi from main::@1 to main::@2 [phi:main::@1->main::@2]
+  //SEG16 [6] phi (byte) main::y#4 = (byte/signed byte/word/signed word/dword/signed dword) 0 [phi:main::@1->main::@2#0] -- vbuyy=vbuc1 
+    ldy #0
+  //SEG17 [6] phi from main::@4 to main::@2 [phi:main::@4->main::@2]
+  //SEG18 [6] phi (byte) main::y#4 = (byte) main::y#1 [phi:main::@4->main::@2#0] -- register_copy 
+  //SEG19 main::@2
+  b2:
+  //SEG20 [7] phi from main::@2 to main::@3 [phi:main::@2->main::@3]
+  //SEG21 [7] phi (byte) main::a#2 = (byte/signed byte/word/signed word/dword/signed dword) 0 [phi:main::@2->main::@3#0] -- vbuxx=vbuc1 
+    ldx #0
+  //SEG22 [7] phi from main::@7 to main::@3 [phi:main::@7->main::@3]
+  //SEG23 [7] phi (byte) main::a#2 = (byte) main::a#1 [phi:main::@7->main::@3#0] -- register_copy 
+  //SEG24 main::@3
+  b3:
+  //SEG25 [8] (byte) print::val#0 ← (byte) main::a#2 + (byte) main::x#7 [ main::x#7 main::y#4 main::a#2 print::val#0 ] ( main:2 [ main::x#7 main::y#4 main::a#2 print::val#0 ] ) -- vbuaa=vbuxx_plus_vbuz1 
+    txa
+    clc
+    adc x
+  //SEG26 [9] (byte) print::idx#0 ← (byte) main::y#4 [ main::x#7 main::y#4 main::a#2 print::val#0 print::idx#0 ] ( main:2 [ main::x#7 main::y#4 main::a#2 print::val#0 print::idx#0 ] )
+    // (byte) print::idx#0 = (byte) main::y#4  // register copy reg byte y
+  //SEG27 [10] call print param-assignment [ main::x#7 main::y#4 main::a#2 ] ( main:2 [ main::x#7 main::y#4 main::a#2 ] )
+    jsr print
+  //SEG28 main::@7
+  //SEG29 [11] (byte) main::a#1 ← ++ (byte) main::a#2 [ main::x#7 main::y#4 main::a#1 ] ( main:2 [ main::x#7 main::y#4 main::a#1 ] ) -- vbuxx=_inc_vbuxx 
+    inx
+  //SEG30 [12] if((byte) main::a#1!=(byte/signed byte/word/signed word/dword/signed dword) 101) goto main::@3 [ main::x#7 main::y#4 main::a#1 ] ( main:2 [ main::x#7 main::y#4 main::a#1 ] ) -- vbuxx_neq_vbuc1_then_la1 
+    cpx #$65
+    bne b3
+  //SEG31 main::@4
+  //SEG32 [13] (byte) main::y#1 ← ++ (byte) main::y#4 [ main::x#7 main::y#1 ] ( main:2 [ main::x#7 main::y#1 ] ) -- vbuyy=_inc_vbuyy 
+    iny
+  //SEG33 [14] if((byte) main::y#1!=(byte/signed byte/word/signed word/dword/signed dword) 101) goto main::@2 [ main::x#7 main::y#1 ] ( main:2 [ main::x#7 main::y#1 ] ) -- vbuyy_neq_vbuc1_then_la1 
+    cpy #$65
+    bne b2
+  //SEG34 main::@5
+  //SEG35 [15] (byte) main::x#1 ← ++ (byte) main::x#7 [ main::x#1 ] ( main:2 [ main::x#1 ] ) -- vbuz1=_inc_vbuz1 
+    inc x
+  //SEG36 [16] if((byte) main::x#1!=(byte/signed byte/word/signed word/dword/signed dword) 101) goto main::@1 [ main::x#1 ] ( main:2 [ main::x#1 ] ) -- vbuz1_neq_vbuc1_then_la1 
+    lda x
+    cmp #$65
+    bne b1
+  //SEG37 main::@return
+  //SEG38 [17] return  [ ] ( main:2 [ ] )
+    rts
+}
+//SEG39 print
+print: {
+    .const SCREEN = $400
+  //SEG40 [18] *((const byte*) print::SCREEN#0 + (byte) print::idx#0) ← (byte) print::val#0 [ ] ( main:2::print:10 [ main::x#7 main::y#4 main::a#2 ] ) -- pbuc1_derefidx_vbuyy=vbuaa 
+    sta SCREEN,y
+  //SEG41 print::@return
+  //SEG42 [19] return  [ ] ( main:2::print:10 [ main::x#7 main::y#4 main::a#2 ] )
+    rts
+}
+

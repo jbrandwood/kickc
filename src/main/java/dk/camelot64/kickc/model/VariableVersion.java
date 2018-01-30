@@ -1,9 +1,5 @@
 package dk.camelot64.kickc.model;
 
-import com.fasterxml.jackson.annotation.JsonCreator;
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonProperty;
-
 /** A Symbol (variable, jump label, etc.) */
 public class VariableVersion extends Variable {
 
@@ -15,11 +11,10 @@ public class VariableVersion extends Variable {
       this.versionOfName = versionOf.getLocalName();
    }
 
-   @JsonCreator
    public VariableVersion(
-         @JsonProperty("name") String name,
-         @JsonProperty("type") SymbolType type,
-         @JsonProperty("versionOfName") String versionOfName) {
+         String name,
+         SymbolType type,
+         String versionOfName) {
       super(name, null, type);
       this.versionOfName = versionOfName;
    }
@@ -29,12 +24,6 @@ public class VariableVersion extends Variable {
       return true;
    }
 
-   @Override
-   public boolean isIntermediate() {
-      return false;
-   }
-
-   @JsonIgnore
    public VariableUnversioned getVersionOf() {
       return (VariableUnversioned) getScope().getVariable(versionOfName);
    }

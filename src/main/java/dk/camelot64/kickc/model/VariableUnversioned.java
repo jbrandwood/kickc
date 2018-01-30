@@ -28,11 +28,6 @@ public class VariableUnversioned extends Variable {
       return false;
    }
 
-   @Override
-   public boolean isIntermediate() {
-      return false;
-   }
-
    public VariableVersion createVersion() {
       VariableVersion version = new VariableVersion(this, this.getNextVersionNumber());
       getScope().add(version);

@@ -323,31 +323,34 @@ public abstract class Scope implements Symbol {
          } else {
             if(symbolClass == null || symbolClass.isInstance(symbol)) {
                res.append(symbol.toString(program));
-               if(symbol instanceof Variable) {
-                  Variable var = (Variable) symbol;
-                  String asmName = var.getAsmName();
+               if(symbol instanceof SymbolVariable) {
+                  SymbolVariable symVar = (SymbolVariable) symbol;
+                  String asmName = symVar.getAsmName();
                   if(asmName != null) {
                      res.append(" " + asmName);
                   }
-                  Registers.Register register = var.getAllocation();
-                  if(register != null) {
-                     res.append(" " + register);
+
+                  Registers.Register declRegister = symVar.getDeclaredRegister();
+                  if(declRegister != null) {
+                     res.append(" !" + declRegister);
                   }
-               }
-               if(symbol instanceof Variable && registerWeights != null) {
-                  Variable var = (Variable) symbol;
-                  Double weight = registerWeights.getWeight(var.getRef());
-                  if(weight != null) {
-                     res.append(" " + weight);
+                  if(symbol instanceof Variable) {
+                     Variable var = (Variable) symVar;
+                     Registers.Register register = var.getAllocation();
+                     if(register != null && !register.equals(declRegister)) {
+                        res.append(" " + register);
+                     }
+                     if(registerWeights != null) {
+                        Double weight = registerWeights.getWeight(var.getRef());
+                        if(weight != null) {
+                           res.append(" " + weight);
+                        }
+                     }
                   }
-               }
-               if(symbol instanceof ConstantVar) {
-                  ConstantVar constantVar = (ConstantVar) symbol;
-                  String asmName = constantVar.getAsmName();
-                  if(asmName != null) {
-                     res.append(" " + asmName);
+                  if(symbol instanceof ConstantVar) {
+                     ConstantVar constVar = (ConstantVar) symbol;
+                     res.append(" = " + constVar.getValue().toString(program));
                   }
-                  res.append(" = " + constantVar.getValue().toString(program));
                }
                res.append("\n");
             }

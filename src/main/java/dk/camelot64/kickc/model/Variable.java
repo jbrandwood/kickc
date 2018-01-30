@@ -29,9 +29,7 @@ public abstract class Variable extends SymbolVariable {
       if(this == o) return true;
       if(o == null || getClass() != o.getClass()) return false;
       if(!super.equals(o)) return false;
-
       Variable variable = (Variable) o;
-
       return allocation != null ? allocation.equals(variable.allocation) : variable.allocation == null;
    }
 

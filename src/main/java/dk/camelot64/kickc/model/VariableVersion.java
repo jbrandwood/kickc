@@ -8,6 +8,7 @@ public class VariableVersion extends Variable {
    public VariableVersion(VariableUnversioned versionOf, int version) {
       super(versionOf.getLocalName() + "#" + version, versionOf.getScope(), versionOf.getType());
       this.setDeclaredAlignment(versionOf.getDeclaredAlignment());
+      this.setDeclaredRegister(versionOf.getDeclaredRegister());
       this.versionOfName = versionOf.getLocalName();
    }
 
@@ -47,9 +48,7 @@ public class VariableVersion extends Variable {
       if(!super.equals(o)) {
          return false;
       }
-
       VariableVersion that = (VariableVersion) o;
-
       return versionOfName != null ? versionOfName.equals(that.versionOfName) : that.versionOfName == null;
    }
 

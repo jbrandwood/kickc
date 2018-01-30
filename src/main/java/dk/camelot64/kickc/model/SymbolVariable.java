@@ -24,6 +24,9 @@ public abstract class SymbolVariable implements Symbol {
    /** Specifies that the variable must be aligned in memory. Only allowed for arrays & strings. */
    private Integer declaredAlignment;
 
+   /** Specifies the register the variable must be put into during execution. */
+   private Registers.Register declaredRegister;
+
    public SymbolVariable(String name, Scope scope, SymbolType type) {
       this.name = name;
       this.scope = scope;
@@ -109,6 +112,14 @@ public abstract class SymbolVariable implements Symbol {
 
    public void setDeclaredAlignment(Integer declaredAlignment) {
       this.declaredAlignment = declaredAlignment;
+   }
+
+   public Registers.Register getDeclaredRegister() {
+      return declaredRegister;
+   }
+
+   public void setDeclaredRegister(Registers.Register declaredRegister) {
+      this.declaredRegister = declaredRegister;
    }
 
    @Override

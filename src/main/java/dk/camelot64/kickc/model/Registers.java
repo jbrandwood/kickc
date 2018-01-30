@@ -20,6 +20,19 @@ public class Registers {
       return new RegisterALUByte();
    }
 
+   public static Register getRegister(String name) {
+      switch(name.toUpperCase()) {
+         case "A":
+            return getRegisterA();
+         case "X":
+            return getRegisterX();
+         case "Y":
+            return getRegisterY();
+         default:
+            return null;
+      }
+   }
+
    /** The register type. */
    public enum RegisterType {
       REG_A_BYTE,

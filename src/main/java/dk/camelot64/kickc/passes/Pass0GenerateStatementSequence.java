@@ -154,6 +154,13 @@ public class Pass0GenerateStatementSequence extends KickCBaseVisitor<Object> {
             } else {
                throw new CompileError("Error! Cannot align variable that is not a string or an array " + lValue.toString(program));
             }
+         } else if(directive instanceof DirectiveRegister) {
+            DirectiveRegister directiveRegister = (DirectiveRegister) directive;
+            Registers.Register register = Registers.getRegister(directiveRegister.getName());
+            if(register==null) {
+               throw new CompileError("Error! Unknown register " + directiveRegister.getName());
+            }
+            lValue.setDeclaredRegister(register);
          } else {
             throw new CompileError("Unknown directive " + directive);
          }
@@ -196,6 +203,12 @@ public class Pass0GenerateStatementSequence extends KickCBaseVisitor<Object> {
    public Directive visitDirectiveAlign(KickCParser.DirectiveAlignContext ctx) {
       Number alignment = NumberParser.parseLiteral(ctx.NUMBER().getText());
       return new DirectiveAlign(alignment.intValue());
+   }
+
+   @Override
+   public Directive visitDirectiveRegister(KickCParser.DirectiveRegisterContext ctx) {
+      String name = ctx.NAME().getText();
+      return new DirectiveRegister(name);
    }
 
    @Override
@@ -654,6 +667,24 @@ public class Pass0GenerateStatementSequence extends KickCBaseVisitor<Object> {
          return alignment;
       }
    }
+
+   /** Variable memory alignment. */
+   private static class DirectiveRegister implements Directive {
+      private String name;
+
+      public DirectiveRegister(String name) {
+         this.name = name;
+      }
+
+      public String getName() {
+         return name;
+      }
+
+      public void setName(String name) {
+         this.name = name;
+      }
+   }
+
 
    private static class PrePostModifierHandler extends KickCBaseVisitor<Void> {
 

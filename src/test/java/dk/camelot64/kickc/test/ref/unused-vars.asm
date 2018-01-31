@@ -1,11 +1,11 @@
 .pc = $801 "Basic"
 :BasicUpstart(main)
 .pc = $80d "Program"
-  .const SCREEN = $400
+  .label SCREEN = $400
   jsr main
 main: {
     .const col = 2
-    .const COLS = $d800
+    .label COLS = $d800
     jsr s
     ldx #0
   b1:

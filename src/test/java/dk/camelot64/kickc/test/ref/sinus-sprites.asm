@@ -1,24 +1,24 @@
 .pc = $801 "Basic"
 :BasicUpstart(main)
 .pc = $80d "Program"
-  .const PROCPORT = 1
-  .const CHARGEN = $d000
-  .const SPRITES_XPOS = $d000
-  .const SPRITES_YPOS = $d001
-  .const SPRITES_XMSB = $d010
-  .const RASTER = $d012
-  .const SPRITES_ENABLE = $d015
-  .const SPRITES_EXPAND_Y = $d017
-  .const SPRITES_EXPAND_X = $d01d
-  .const BORDERCOL = $d020
-  .const SPRITES_COLS = $d027
-  .const COLS = $d800
-  .const memLo = $fe
-  .const memHi = $ff
-  .const SCREEN = $400
+  .label PROCPORT = 1
+  .label CHARGEN = $d000
+  .label SPRITES_XPOS = $d000
+  .label SPRITES_YPOS = $d001
+  .label SPRITES_XMSB = $d010
+  .label RASTER = $d012
+  .label SPRITES_ENABLE = $d015
+  .label SPRITES_EXPAND_Y = $d017
+  .label SPRITES_EXPAND_X = $d01d
+  .label BORDERCOL = $d020
+  .label SPRITES_COLS = $d027
+  .label COLS = $d800
+  .label memLo = $fe
+  .label memHi = $ff
+  .label SCREEN = $400
   .const sinlen_x = $dd
   .const sinlen_y = $c5
-  .const sprites = $2000
+  .label sprites = $2000
   .label progress_idx = 4
   .label progress_cursor = $a
   .label sin_idx_x = 2
@@ -187,7 +187,7 @@ clear_screen: {
     rts
 }
 gen_sintab: {
-    .const f_2pi = $e2e5
+    .label f_2pi = $e2e5
     .label _23 = $c
     .label i = 2
     .label min = 2
@@ -525,7 +525,7 @@ gen_chargen_sprite: {
     rts
 }
 place_sprites: {
-    .const sprites_ptr = SCREEN+$3f8
+    .label sprites_ptr = SCREEN+$3f8
     .label spr_id = 2
     .label spr_x = 3
     .label col = 4

@@ -62,7 +62,7 @@ rvalue: {
     jmp b1
 }
 lvalue: {
-    .const SCREEN = $400
+    .label SCREEN = $400
     lda #1
     sta SCREEN
     lda #2

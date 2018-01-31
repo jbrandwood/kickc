@@ -1,8 +1,8 @@
 .pc = $801 "Basic"
 :BasicUpstart(main)
 .pc = $80d "Program"
-  .const SCREEN = $400
-  .const SCREEN2 = $400+$28
+  .label SCREEN = $400
+  .label SCREEN2 = $400+$28
   jsr main
 main: {
     .label i = 2

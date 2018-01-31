@@ -28,7 +28,7 @@ main: {
     rts
 }
 print: {
-    .const SCREEN = $400
+    .label SCREEN = $400
     sta SCREEN,x
     rts
 }

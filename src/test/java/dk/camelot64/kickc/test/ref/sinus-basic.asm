@@ -1,13 +1,13 @@
 .pc = $801 "Basic"
 :BasicUpstart(main)
 .pc = $80d "Program"
-  .const memLo = $fe
-  .const memHi = $ff
+  .label memLo = $fe
+  .label memHi = $ff
   .label line_cursor = 3
   .label char_cursor = 5
   jsr main
 main: {
-    .const f_2pi = $e2e5
+    .label f_2pi = $e2e5
     .label i = 2
     lda #<$4fb
     sta setFAC.w

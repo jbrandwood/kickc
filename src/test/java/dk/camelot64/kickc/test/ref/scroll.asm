@@ -1,13 +1,13 @@
 .pc = $801 "Basic"
 :BasicUpstart(main)
 .pc = $80d "Program"
-  .const SCREEN = $400
-  .const RASTER = $d012
-  .const BGCOL = $d020
-  .const SCROLL = $d016
+  .label SCREEN = $400
+  .label RASTER = $d012
+  .label BGCOL = $d020
+  .label SCROLL = $d016
   jsr main
 main: {
-    .const line = SCREEN+$28
+    .label line = SCREEN+$28
     .label nxt = 2
     jsr fillscreen
     lda #<TEXT

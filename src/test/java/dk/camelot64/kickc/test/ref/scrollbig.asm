@@ -1,12 +1,12 @@
 .pc = $801 "Basic"
 :BasicUpstart(main)
 .pc = $80d "Program"
-  .const PROCPORT = 1
-  .const CHARGEN = $d000
-  .const SCREEN = $400
-  .const RASTER = $d012
-  .const BGCOL = $d020
-  .const SCROLL = $d016
+  .label PROCPORT = 1
+  .label CHARGEN = $d000
+  .label SCREEN = $400
+  .label RASTER = $d012
+  .label BGCOL = $d020
+  .label SCROLL = $d016
   .label current_bit = 2
   .label current_chargen = 3
   .label nxt = 7

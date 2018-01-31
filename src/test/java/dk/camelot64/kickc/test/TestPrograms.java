@@ -43,6 +43,12 @@ public class TestPrograms {
    }
 
    @Test
+   public void testDivision() throws IOException, URISyntaxException {
+      compileAndCompare("division");
+   }
+
+
+   @Test
    public void testVarRegister() throws IOException, URISyntaxException {
       compileAndCompare("var-register");
    }

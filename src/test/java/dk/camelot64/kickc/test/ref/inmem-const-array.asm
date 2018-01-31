@@ -6,8 +6,8 @@
   .const GREEN = 5
   jsr main
 main: {
-    .const screen = $400
-    .const cols = $d800
+    .label screen = $400
+    .label cols = $d800
     ldy #0
     ldx #0
   b1:

@@ -1,7 +1,7 @@
 .pc = $801 "Basic"
 :BasicUpstart(main)
 .pc = $80d "Program"
-  .const SCREEN = $400
+  .label SCREEN = $400
   jsr main
 main: {
     lda SCREEN
@@ -9,9 +9,9 @@ main: {
     rts
 }
 fillscreen: {
-    .const SCREEN2 = SCREEN+$100
-    .const SCREEN3 = SCREEN+$200
-    .const SCREEN4 = SCREEN+$3e8
+    .label SCREEN2 = SCREEN+$100
+    .label SCREEN3 = SCREEN+$200
+    .label SCREEN4 = SCREEN+$3e8
     ldx #0
   b1:
     sta SCREEN,x

@@ -1,0 +1,48 @@
+import "print.kc"
+
+const byte* NULL = 0;
+
+void main() {
+    byte* rem = $ff;
+
+    byte[] dividends = { 255, 255, 255, 255, 255, 255};
+    byte[] divisors = { 5, 7, 11, 13, 17, 19 };
+
+    print_cls();
+    for( byte i: 0..5 ) {
+        byte dividend = dividends[i];
+        byte divisor = divisors[i];
+        byte res = div8u(dividend, divisor, rem);
+        print_byte(dividend);
+        print_str(" / @");
+        print_byte(divisor);
+        print_str(" = @");
+        print_byte(res);
+        print_str(" @");
+        print_byte(*rem);
+        print_ln();
+    }
+}
+
+// Performs division on two 8 bit unsigned bytes
+// Returns dividend/divisor.
+// If remainder is non-null it will be set to the remainder.
+// Implemented using simple binary division
+byte div8u(byte dividend, byte divisor, byte* remainder) {
+    byte rem = 0;
+    byte quotient = 0;
+    for( byte i : 0..7) {
+        rem = rem << 1;
+        if( (dividend & $80) != 0 ) {
+            rem++;
+        }
+        dividend = dividend << 1;
+        quotient = quotient << 1;
+        if(rem>=divisor) {
+            quotient++;
+            rem = rem - divisor;
+        }
+    }
+    *remainder = rem;
+    return quotient;
+}

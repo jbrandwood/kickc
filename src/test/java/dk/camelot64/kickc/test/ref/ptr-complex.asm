@@ -3,9 +3,9 @@
 .pc = $80d "Program"
   jsr main
 main: {
-    .const screen = $400
-    .const BGCOL = $d020
-    .const sc2 = screen+$51
+    .label screen = $400
+    .label BGCOL = $d020
+    .label sc2 = screen+$51
     .label _2 = 2
     .label _9 = 2
     .label _11 = 4

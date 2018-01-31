@@ -4,7 +4,7 @@
   jsr main
 main: {
     .const STAR = $51
-    .const screen = $400
+    .label screen = $400
     .const x1 = $27
     .const y1 = $18
     .const xd = x1-0

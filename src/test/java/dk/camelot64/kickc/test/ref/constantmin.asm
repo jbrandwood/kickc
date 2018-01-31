@@ -1,11 +1,11 @@
 .pc = $801 "Basic"
 :BasicUpstart(main)
 .pc = $80d "Program"
-  .const SCREEN = $400
+  .label SCREEN = $400
   .const STAR = $51
-  .const VIC = $d000
+  .label VIC = $d000
   .const RED = 2
-  .const BGCOL = VIC+$10*2+1
+  .label BGCOL = VIC+$10*2+1
   jsr main
 main: {
     lda #STAR

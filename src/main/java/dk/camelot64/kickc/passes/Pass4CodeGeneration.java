@@ -110,8 +110,15 @@ public class Pass4CodeGeneration {
          if(!(constantVar.getValue() instanceof ConstantArrayList || constantVar.getValue() instanceof ConstantArrayFilled || constantVar.getType().equals(SymbolType.STRING))) {
             String asmName = constantVar.getAsmName() == null ? constantVar.getLocalName() : constantVar.getAsmName();
             if(asmName != null && !added.contains(asmName)) {
-               asm.addConstant(asmName.replace("#", "_").replace("$", "_"), AsmFormat.getAsmConstant(program, constantVar.getValue(), 99, scopeRef));
                added.add(asmName);
+               String asmConstant = AsmFormat.getAsmConstant(program, constantVar.getValue(), 99, scopeRef);
+               if(constantVar.getType() instanceof SymbolTypePointer) {
+                  // Must use a label for pointers
+                  asm.addLabelDecl(asmName.replace("#", "_").replace("$", "_"), asmConstant);
+               } else {
+                  // Use constant for non-pointers
+                  asm.addConstant(asmName.replace("#", "_").replace("$", "_"), asmConstant);
+               }
             }
          }
       }

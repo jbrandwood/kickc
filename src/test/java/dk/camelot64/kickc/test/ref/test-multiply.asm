@@ -1,7 +1,7 @@
 .pc = $801 "Basic"
 :BasicUpstart(main)
 .pc = $80d "Program"
-  .const BGCOL = $d021
+  .label BGCOL = $d021
   .label char_cursor = 8
   .label line_cursor = 4
   jsr main
@@ -264,8 +264,8 @@ signed_multiply: {
     rts
 }
 multiply: {
-    .const memA = $fe
-    .const memB = $ff
+    .label memA = $fe
+    .label memB = $ff
     .label return = 6
     sta memA
     stx memB
@@ -572,7 +572,7 @@ multiply_tables_compare: {
     str2: .text "multiply tables match!@"
 }
 init_multiply_asm: {
-    .const mem = $ff
+    .label mem = $ff
     ldx #0
     txa
     .byte $c9

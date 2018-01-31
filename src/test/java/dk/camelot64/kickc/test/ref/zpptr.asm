@@ -3,7 +3,7 @@
 .pc = $80d "Program"
   jsr main
 main: {
-    .const zpptr = $1000
+    .label zpptr = $1000
     .label zpptr2 = 4
     .label w = 6
     .label i = 3

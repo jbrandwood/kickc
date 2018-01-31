@@ -1,7 +1,7 @@
 .pc = $801 "Basic"
 :BasicUpstart(main)
 .pc = $80d "Program"
-  .const fibs = $1100
+  .label fibs = $1100
   jsr main
 main: {
     lda #0

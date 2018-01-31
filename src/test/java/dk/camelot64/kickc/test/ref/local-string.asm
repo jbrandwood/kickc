@@ -3,7 +3,7 @@
 .pc = $80d "Program"
   jsr main
 main: {
-    .const screen = $400
+    .label screen = $400
     ldx #0
   b1:
     lda msg,x

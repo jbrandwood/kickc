@@ -1,12 +1,12 @@
 .pc = $801 "Basic"
 :BasicUpstart(main)
 .pc = $80d "Program"
-  .const PROCPORT = 1
-  .const CHARGEN = $d000
-  .const SCREEN = $400
+  .label PROCPORT = 1
+  .label CHARGEN = $d000
+  .label SCREEN = $400
   jsr main
 main: {
-    .const CHAR_A = CHARGEN+8
+    .label CHAR_A = CHARGEN+8
     .label bits = 3
     .label sc = 4
     .label y = 2

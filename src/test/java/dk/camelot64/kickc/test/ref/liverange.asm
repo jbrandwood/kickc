@@ -3,7 +3,7 @@
 .pc = $80d "Program"
   jsr main
 main: {
-    .const SCREEN = $400
+    .label SCREEN = $400
     .label a = 2
     ldy #0
     jsr inci

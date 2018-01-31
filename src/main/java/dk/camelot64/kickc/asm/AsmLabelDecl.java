@@ -1,17 +1,15 @@
 package dk.camelot64.kickc.asm;
 
-import dk.camelot64.kickc.fragment.AsmFormat;
-
 /** A label declaration .label lbl = val */
 public class AsmLabelDecl implements AsmLine {
    private final String name;
-   private final int address;
+   private final String value;
    private int index;
 
 
-   public AsmLabelDecl(String name, int address) {
+   public AsmLabelDecl(String name, String value) {
       this.name = name;
-      this.address = address;
+      this.value = value;
    }
 
    @Override
@@ -26,7 +24,7 @@ public class AsmLabelDecl implements AsmLine {
 
    @Override
    public String getAsm() {
-      return ".label " + name + " = " + AsmFormat.getAsmNumber(address);
+      return ".label " + name + " = " + value;
    }
 
    @Override

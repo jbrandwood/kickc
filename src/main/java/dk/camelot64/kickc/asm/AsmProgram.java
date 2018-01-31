@@ -1,5 +1,7 @@
 package dk.camelot64.kickc.asm;
 
+import dk.camelot64.kickc.fragment.AsmFormat;
+
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -71,7 +73,11 @@ public class AsmProgram {
    }
 
    public void addLabelDecl(String name, int address) {
-      addLine(new AsmLabelDecl(name, address));
+      addLabelDecl(name, AsmFormat.getAsmNumber(address));
+   }
+
+   public void addLabelDecl(String name, String value) {
+      addLine(new AsmLabelDecl(name, value));
    }
 
    /**

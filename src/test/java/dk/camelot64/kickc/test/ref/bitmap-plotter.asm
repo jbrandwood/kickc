@@ -1,16 +1,16 @@
 .pc = $801 "Basic"
 :BasicUpstart(main)
 .pc = $80d "Program"
-  .const D011 = $d011
+  .label D011 = $d011
   .const BMM = $20
   .const DEN = $10
   .const RSEL = 8
-  .const RASTER = $d012
-  .const D018 = $d018
-  .const BGCOL = $d020
-  .const FGCOL = $d021
-  .const SCREEN = $400
-  .const BITMAP = $2000
+  .label RASTER = $d012
+  .label D018 = $d018
+  .label BGCOL = $d020
+  .label FGCOL = $d021
+  .label SCREEN = $400
+  .label BITMAP = $2000
   .const plots_cnt = 8
   jsr main
 main: {

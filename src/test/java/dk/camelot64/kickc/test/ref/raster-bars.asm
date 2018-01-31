@@ -1,9 +1,9 @@
 .pc = $801 "Basic"
 :BasicUpstart(main)
 .pc = $80d "Program"
-  .const RASTER = $d012
-  .const BORDERCOL = $d020
-  .const BGCOL = $d021
+  .label RASTER = $d012
+  .label BORDERCOL = $d020
+  .label BGCOL = $d021
   jsr main
 main: {
     sei

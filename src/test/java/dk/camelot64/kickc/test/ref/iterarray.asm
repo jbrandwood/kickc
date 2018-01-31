@@ -3,7 +3,7 @@
 .pc = $80d "Program"
   jsr main
 main: {
-    .const buf = $1100
+    .label buf = $1100
     ldx #5
   b1:
     txa

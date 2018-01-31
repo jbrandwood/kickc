@@ -4,7 +4,7 @@
   jsr main
 main: {
     .const a = $ee6b2800
-    .const SCREEN = $400
+    .label SCREEN = $400
     .label b = 2
     ldx #0
   b1:

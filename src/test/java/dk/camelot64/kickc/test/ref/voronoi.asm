@@ -1,8 +1,8 @@
 .pc = $801 "Basic"
 :BasicUpstart(main)
 .pc = $80d "Program"
-  .const SCREEN = $400
-  .const COLORS = $d800
+  .label SCREEN = $400
+  .label COLORS = $d800
   .const FILL = $e6
   .const numpoints = 6
   jsr main

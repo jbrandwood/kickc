@@ -2,13 +2,36 @@ import "print.kc"
 
 const byte* NULL = 0;
 
-void main() {
-    byte* rem = $ff;
+word rem16u = 0;
 
+void main() {
+    print_cls();
+    test_8u();
+    test_16u();
+}
+
+void test_16u() {
+    word[] dividends = { $ffff, $ffff, $ffff, $ffff, $ffff, $ffff};
+    word[] divisors = { 5, 7, 11, 13, 17, 19 };
+    for( byte i=0;i!=12;i=i+2) {
+        word dividend = dividends[i];
+        word divisor = divisors[i];
+        word res = div16u(dividend, divisor);
+        print_word(dividend);
+        print_str(" / @");
+        print_word(divisor);
+        print_str(" = @");
+        print_word(res);
+        print_str(" @");
+        print_word(rem16u);
+        print_ln();
+    }
+}
+
+void test_8u() {
+    byte* rem = $ff;
     byte[] dividends = { 255, 255, 255, 255, 255, 255};
     byte[] divisors = { 5, 7, 11, 13, 17, 19 };
-
-    print_cls();
     for( byte i: 0..5 ) {
         byte dividend = dividends[i];
         byte divisor = divisors[i];
@@ -44,5 +67,29 @@ byte div8u(byte dividend, byte divisor, byte* remainder) {
         }
     }
     *remainder = rem;
+    return quotient;
+}
+
+
+// Performs division on two 16 bit unsigned bytes
+// Returns dividend/divisor.
+// If remainder is non-null it will be set to the remainder.
+// Implemented using simple binary division
+word div16u(word dividend, word divisor) {
+    word rem = 0;
+    word quotient = 0;
+    for( byte i : 0..15) {
+        rem = rem << 1;
+        if( (>dividend & $80) != 0 ) {
+            rem++;
+        }
+        dividend = dividend << 1;
+        quotient = quotient << 1;
+        if(rem>=divisor) {
+            quotient++;
+            rem = rem - divisor;
+        }
+    }
+    rem16u = rem;
     return quotient;
 }

@@ -1,16 +1,238 @@
 .pc = $801 "Basic"
 :BasicUpstart(main)
 .pc = $80d "Program"
-  .label char_cursor = 5
+  .label char_cursor = 7
   .label line_cursor = 3
+  .label rem16u = 9
   jsr main
 main: {
-    .label rem = $ff
-    .label dividend = $b
-    .label divisor = $c
-    .label res = 9
-    .label i = 2
     jsr print_cls
+    jsr test_8u
+    jsr test_16u
+    rts
+}
+test_16u: {
+    .label dividend = $d
+    .label divisor = $f
+    .label res = $11
+    .label i = 2
+    lda #0
+    sta rem16u
+    sta rem16u+1
+    sta i
+  b1:
+    ldy i
+    lda dividends,y
+    sta dividend
+    lda dividends+1,y
+    sta dividend+1
+    lda divisors,y
+    sta divisor
+    lda divisors+1,y
+    sta divisor+1
+    lda dividend
+    sta div16u.dividend
+    lda dividend+1
+    sta div16u.dividend+1
+    jsr div16u
+    lda div16u.return_1
+    sta div16u.return
+    lda div16u.return_1+1
+    sta div16u.return+1
+    lda div16u.return
+    sta res
+    lda div16u.return+1
+    sta res+1
+    lda dividend
+    sta print_word.w
+    lda dividend+1
+    sta print_word.w+1
+    lda line_cursor
+    sta char_cursor
+    lda line_cursor+1
+    sta char_cursor+1
+    jsr print_word
+    lda #<str
+    sta print_str.str
+    lda #>str
+    sta print_str.str+1
+    jsr print_str
+    lda divisor
+    sta print_word.w
+    lda divisor+1
+    sta print_word.w+1
+    jsr print_word
+    lda #<str1
+    sta print_str.str
+    lda #>str1
+    sta print_str.str+1
+    jsr print_str
+    lda res
+    sta print_word.w
+    lda res+1
+    sta print_word.w+1
+    jsr print_word
+    lda #<str2
+    sta print_str.str
+    lda #>str2
+    sta print_str.str+1
+    jsr print_str
+    lda div16u.rem
+    sta print_word.w
+    lda div16u.rem+1
+    sta print_word.w+1
+    jsr print_word
+    jsr print_ln
+    lda #2
+    clc
+    adc i
+    sta i
+    cmp #$c
+    bne b1
+    rts
+    str: .text " / @"
+    str1: .text " = @"
+    str2: .text " @"
+    dividends: .word $ffff, $ffff, $ffff, $ffff, $ffff, $ffff
+    divisors: .word 5, 7, $b, $d, $11, $13
+}
+print_ln: {
+  b1:
+    lda line_cursor
+    clc
+    adc #$28
+    sta line_cursor
+    bcc !+
+    inc line_cursor+1
+  !:
+    lda line_cursor+1
+    cmp char_cursor+1
+    bcc b1
+    bne !+
+    lda line_cursor
+    cmp char_cursor
+    bcc b1
+  !:
+    rts
+}
+print_word: {
+    .label w = 5
+    lda w+1
+    tax
+    jsr print_byte
+    lda w
+    tax
+    jsr print_byte
+    rts
+}
+print_byte: {
+    txa
+    lsr
+    lsr
+    lsr
+    lsr
+    tay
+    lda hextab,y
+    jsr print_char
+    txa
+    and #$f
+    tay
+    lda hextab,y
+    jsr print_char
+    rts
+    hextab: .text "0123456789abcdef"
+}
+print_char: {
+    ldy #0
+    sta (char_cursor),y
+    inc char_cursor
+    bne !+
+    inc char_cursor+1
+  !:
+    rts
+}
+print_str: {
+    .label str = 5
+  b1:
+    ldy #0
+    lda (str),y
+    cmp #'@'
+    bne b2
+    rts
+  b2:
+    ldy #0
+    lda (str),y
+    sta (char_cursor),y
+    inc char_cursor
+    bne !+
+    inc char_cursor+1
+  !:
+    inc str
+    bne !+
+    inc str+1
+  !:
+    jmp b1
+}
+div16u: {
+    .label dividend = 5
+    .label divisor = $f
+    .label return = 5
+    .label rem = 9
+    .label quotient = 7
+    .label return_1 = 7
+    ldx #0
+    txa
+    sta quotient
+    sta quotient+1
+    sta rem
+    sta rem+1
+  b1:
+    asl rem
+    rol rem+1
+    lda dividend+1
+    and #$80
+    cmp #0
+    beq b2
+    inc rem
+    bne !+
+    inc rem+1
+  !:
+  b2:
+    asl dividend
+    rol dividend+1
+    asl quotient
+    rol quotient+1
+    lda rem+1
+    cmp divisor+1
+    bcc b3
+    bne !+
+    lda rem
+    cmp divisor
+    bcc b3
+  !:
+    inc quotient
+    bne !+
+    inc quotient+1
+  !:
+    lda rem
+    sec
+    sbc divisor
+    sta rem
+    lda rem+1
+    sbc divisor+1
+    sta rem+1
+  b3:
+    inx
+    cpx #$10
+    bne b1
+    rts
+}
+test_8u: {
+    .label rem = $ff
+    .label dividend = $13
+    .label divisor = $14
+    .label res = $b
+    .label i = 2
     lda #<$400
     sta line_cursor
     lda #>$400
@@ -59,9 +281,9 @@ main: {
     inc i
     lda i
     cmp #6
-    bne b13
+    bne b12
     rts
-  b13:
+  b12:
     lda line_cursor
     sta char_cursor
     lda line_cursor+1
@@ -73,78 +295,11 @@ main: {
     dividends: .byte $ff, $ff, $ff, $ff, $ff, $ff
     divisors: .byte 5, 7, $b, $d, $11, $13
 }
-print_ln: {
-  b1:
-    lda line_cursor
-    clc
-    adc #$28
-    sta line_cursor
-    bcc !+
-    inc line_cursor+1
-  !:
-    lda line_cursor+1
-    cmp char_cursor+1
-    bcc b1
-    bne !+
-    lda line_cursor
-    cmp char_cursor
-    bcc b1
-  !:
-    rts
-}
-print_byte: {
-    txa
-    lsr
-    lsr
-    lsr
-    lsr
-    tay
-    lda hextab,y
-    jsr print_char
-    txa
-    and #$f
-    tay
-    lda hextab,y
-    jsr print_char
-    rts
-    hextab: .text "0123456789abcdef"
-}
-print_char: {
-    ldy #0
-    sta (char_cursor),y
-    inc char_cursor
-    bne !+
-    inc char_cursor+1
-  !:
-    rts
-}
-print_str: {
-    .label str = 7
-  b1:
-    ldy #0
-    lda (str),y
-    cmp #'@'
-    bne b2
-    rts
-  b2:
-    ldy #0
-    lda (str),y
-    sta (char_cursor),y
-    inc char_cursor
-    bne !+
-    inc char_cursor+1
-  !:
-    inc str
-    bne !+
-    inc str+1
-  !:
-    jmp b1
-}
 div8u: {
-    .label dividend = 9
-    .label divisor = $c
-    .label quotient = $a
-    .label return = $a
+    .label dividend = $b
+    .label divisor = $14
+    .label quotient = $c
+    .label return = $c
     ldx #0
     txa
     sta quotient
@@ -172,7 +327,7 @@ div8u: {
     inx
     cpx #8
     bne b1
-    sty main.rem
+    sty test_8u.rem
     rts
 }
 print_cls: {

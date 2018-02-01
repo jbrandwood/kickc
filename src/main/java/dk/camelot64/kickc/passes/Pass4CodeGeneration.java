@@ -141,6 +141,8 @@ public class Pass4CodeGeneration {
             asm.addDataAlignment(alignment);
          }
          if(constantVar.getValue() instanceof ConstantArrayList) {
+            SymbolTypeArray constTypeArray = (SymbolTypeArray) constantVar.getType();
+            SymbolType elementType = constTypeArray.getElementType();
             ConstantArrayList constantArrayList = (ConstantArrayList) constantVar.getValue();
             String asmName = constantVar.getAsmName() == null ? constantVar.getLocalName() : constantVar.getAsmName();
             if(asmName != null && !added.contains(asmName)) {
@@ -149,11 +151,11 @@ public class Pass4CodeGeneration {
                   String asmElement = AsmFormat.getAsmConstant(program, element, 99, scopeRef);
                   asmElements.add(asmElement);
                }
-               if(SymbolType.isByte(constantArrayList.getElementType())) {
+               if(SymbolType.isByte(elementType) || SymbolType.isSByte(elementType)) {
                   asm.addDataNumeric(asmName.replace("#", "_").replace("$", "_"), AsmDataNumeric.Type.BYTE, asmElements);
                   added.add(asmName);
-               } else if(SymbolType.isSByte(constantArrayList.getElementType())) {
-                  asm.addDataNumeric(asmName.replace("#", "_").replace("$", "_"), AsmDataNumeric.Type.BYTE, asmElements);
+               } else if(SymbolType.isWord(elementType) || SymbolType.isSWord(elementType)) {
+                  asm.addDataNumeric(asmName.replace("#", "_").replace("$", "_"), AsmDataNumeric.Type.WORD, asmElements);
                   added.add(asmName);
                } else {
                   throw new RuntimeException("Unhandled constant array element type " + constantArrayList.toString(program));

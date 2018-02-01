@@ -7,8 +7,8 @@ main: {
     .label BGCOL = $d020
     .label sc2 = screen+$51
     .label _2 = 2
-    .label _9 = 2
-    .label _11 = 4
+    .label _9 = 4
+    .label _11 = 6
     ldx #0
   b1:
     txa

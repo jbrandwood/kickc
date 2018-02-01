@@ -55,8 +55,8 @@ plot: {
     rts
 }
 flip: {
-    .label c = 5
-    .label r = 4
+    .label c = 6
+    .label r = 5
     lda #$10
     sta r
     ldx #$f

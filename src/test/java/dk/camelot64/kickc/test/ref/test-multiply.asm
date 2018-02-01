@@ -2,7 +2,7 @@
 :BasicUpstart(main)
 .pc = $80d "Program"
   .label BGCOL = $d021
-  .label char_cursor = 8
+  .label char_cursor = $a
   .label line_cursor = 4
   jsr main
 main: {
@@ -18,7 +18,7 @@ main: {
 }
 signed_multiply_results_compare: {
     .label ms = 8
-    .label ma = 6
+    .label ma = $c
     .label b = 3
     .label a = 2
     lda #-$80
@@ -29,10 +29,6 @@ signed_multiply_results_compare: {
   b2:
     ldx b
     jsr slow_signed_multiply
-    lda slow_signed_multiply.return
-    sta ms
-    lda slow_signed_multiply.return+1
-    sta ms+1
     ldy a
     jsr signed_multiply
     lda ms
@@ -45,16 +41,6 @@ signed_multiply_results_compare: {
     lda #2
     sta BGCOL
     ldx a
-    lda b
-    sta signed_multiply_error.b
-    lda ms
-    sta signed_multiply_error.ms
-    lda ms+1
-    sta signed_multiply_error.ms+1
-    lda ma
-    sta signed_multiply_error.ma
-    lda ma+1
-    sta signed_multiply_error.ma+1
     jsr signed_multiply_error
   breturn:
     rts
@@ -122,8 +108,8 @@ print_str: {
     jmp b1
 }
 signed_multiply_error: {
-    .label b = 2
-    .label ms = $a
+    .label b = 3
+    .label ms = 8
     .label ma = $c
     lda line_cursor
     sta char_cursor
@@ -147,10 +133,6 @@ signed_multiply_error: {
     lda #>str2
     sta print_str.str+1
     jsr print_str
-    lda ms
-    sta print_sword.w
-    lda ms+1
-    sta print_sword.w+1
     jsr print_sword
     lda #<str3
     sta print_str.str
@@ -170,7 +152,7 @@ signed_multiply_error: {
     str3: .text " / fast asm:@"
 }
 print_sword: {
-    .label w = 6
+    .label w = 8
     lda w+1
     bpl b1
     lda #'-'
@@ -189,7 +171,7 @@ print_sword: {
     rts
 }
 print_word: {
-    .label w = 6
+    .label w = 8
     lda w+1
     tax
     jsr print_byte
@@ -239,9 +221,9 @@ print_sbyte: {
     rts
 }
 signed_multiply: {
-    .label m = 6
+    .label m = $c
     .label b = 3
-    .label return = 6
+    .label return = $c
     tya
     ldx b
     jsr multiply
@@ -266,7 +248,7 @@ signed_multiply: {
 multiply: {
     .label memA = $fe
     .label memB = $ff
-    .label return = 6
+    .label return = $c
     sta memA
     stx memB
     sta sm1+1
@@ -292,8 +274,8 @@ multiply: {
     rts
 }
 slow_signed_multiply: {
-    .label m = 6
-    .label return = 6
+    .label m = 8
+    .label return = 8
     .label a = 2
     lda a
     cmp #0
@@ -356,10 +338,10 @@ slow_signed_multiply: {
     jmp b3
 }
 multiply_results_compare: {
-    .label ms = $a
-    .label ma = 6
-    .label b = 3
-    .label a = 2
+    .label ms = 8
+    .label ma = $c
+    .label b = $f
+    .label a = $e
     lda #0
     sta a
   b1:
@@ -368,10 +350,6 @@ multiply_results_compare: {
   b2:
     ldx b
     jsr slow_multiply
-    lda slow_multiply.return
-    sta ms
-    lda slow_multiply.return+1
-    sta ms+1
     lda a
     ldx b
     jsr multiply
@@ -385,12 +363,6 @@ multiply_results_compare: {
     lda #2
     sta BGCOL
     ldx a
-    lda b
-    sta multiply_error.b
-    lda ma
-    sta multiply_error.ma
-    lda ma+1
-    sta multiply_error.ma+1
     jsr multiply_error
   breturn:
     rts
@@ -411,8 +383,8 @@ multiply_results_compare: {
     str: .text "multiply results match!@"
 }
 multiply_error: {
-    .label b = 2
-    .label ms = $a
+    .label b = $f
+    .label ms = 8
     .label ma = $c
     lda #<str
     sta print_str.str
@@ -432,10 +404,6 @@ multiply_error: {
     lda #>str2
     sta print_str.str+1
     jsr print_str
-    lda ms
-    sta print_word.w
-    lda ms+1
-    sta print_word.w+1
     jsr print_word
     lda #<str3
     sta print_str.str
@@ -455,9 +423,9 @@ multiply_error: {
     str3: .text " / fast asm:@"
 }
 slow_multiply: {
-    .label return = 6
-    .label m = 6
-    .label a = 2
+    .label return = 8
+    .label m = 8
+    .label a = $e
     lda a
     beq b3
     ldy #0
@@ -484,8 +452,8 @@ slow_multiply: {
     rts
 }
 multiply_tables_compare: {
-    .label asm_sqr = $a
-    .label kc_sqr = 4
+    .label asm_sqr = 8
+    .label kc_sqr = $10
     lda #<asm_mul_sqr1_lo
     sta asm_sqr
     lda #>asm_mul_sqr1_lo
@@ -510,10 +478,6 @@ multiply_tables_compare: {
     lda #>str
     sta print_str.str+1
     jsr print_str
-    lda asm_sqr
-    sta print_word.w
-    lda asm_sqr+1
-    sta print_word.w+1
     jsr print_word
     lda #<str1
     sta print_str.str
@@ -622,13 +586,13 @@ init_multiply_asm: {
     rts
 }
 init_multiply: {
-    .label sqr1_hi = 6
-    .label sqr = 8
-    .label sqr1_lo = 4
-    .label x_2 = 2
-    .label sqr2_hi = 6
-    .label sqr2_lo = 4
-    .label dir = 2
+    .label sqr1_hi = $14
+    .label sqr = $17
+    .label sqr1_lo = $12
+    .label x_2 = $16
+    .label sqr2_hi = $1b
+    .label sqr2_lo = $19
+    .label dir = $1d
     lda #0
     sta x_2
     lda #<mul_sqr1_hi+1
@@ -728,7 +692,7 @@ init_multiply: {
     rts
 }
 print_cls: {
-    .label sc = 4
+    .label sc = $1e
     lda #<$400
     sta sc
     lda #>$400

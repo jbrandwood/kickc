@@ -2991,13 +2991,13 @@ Attempting to uplift remaining variables inzp ZP_BYTE:15 [ assert_byte::c#3 ]
 Uplifting [assert_byte] best 2175 combination zp ZP_BYTE:15 [ assert_byte::c#3 ] 
 Attempting to uplift remaining variables inzp ZP_BYTE:5 [ assert_sbyte::c#5 ]
 Uplifting [assert_sbyte] best 2175 combination zp ZP_BYTE:5 [ assert_sbyte::c#5 ] 
-Coalescing zero page register [ zp ZP_WORD:2 [ assert_sbyte::msg#5 ] ] with [ zp ZP_WORD:6 [ char_cursor#75 char_cursor#65 char_cursor#2 char_cursor#82 char_cursor#1 char_cursor#88 char_cursor#89 ] ]
-Coalescing zero page register [ zp ZP_WORD:2 [ assert_sbyte::msg#5 char_cursor#75 char_cursor#65 char_cursor#2 char_cursor#82 char_cursor#1 char_cursor#88 char_cursor#89 ] ] with [ zp ZP_WORD:16 [ print_cls::sc#2 print_cls::sc#1 ] ]
-Coalescing zero page register [ zp ZP_BYTE:5 [ assert_sbyte::c#5 ] ] with [ zp ZP_BYTE:15 [ assert_byte::c#3 ] ]
-Coalescing zero page register [ zp ZP_WORD:8 [ print_str::str#10 print_str::str#11 print_str::str#1 print_str::str#5 print_str::str#0 ] ] with [ zp ZP_WORD:12 [ assert_byte::msg#3 ] ]
-Allocated (was zp ZP_BYTE:5) zp ZP_BYTE:4 [ assert_sbyte::c#5 assert_byte::c#3 ]
-Allocated (was zp ZP_WORD:8) zp ZP_WORD:5 [ print_str::str#10 print_str::str#11 print_str::str#1 print_str::str#5 print_str::str#0 assert_byte::msg#3 ]
+Coalescing zero page register [ zp ZP_WORD:2 [ assert_sbyte::msg#5 ] ] with [ zp ZP_WORD:8 [ print_str::str#10 print_str::str#11 print_str::str#1 print_str::str#5 print_str::str#0 ] ]
+Coalescing zero page register [ zp ZP_WORD:2 [ assert_sbyte::msg#5 print_str::str#10 print_str::str#11 print_str::str#1 print_str::str#5 print_str::str#0 ] ] with [ zp ZP_WORD:12 [ assert_byte::msg#3 ] ]
+Allocated (was zp ZP_BYTE:5) zp ZP_BYTE:4 [ assert_sbyte::c#5 ]
+Allocated (was zp ZP_WORD:6) zp ZP_WORD:5 [ char_cursor#75 char_cursor#65 char_cursor#2 char_cursor#82 char_cursor#1 char_cursor#88 char_cursor#89 ]
 Allocated (was zp ZP_WORD:10) zp ZP_WORD:7 [ line_cursor#21 line_cursor#42 line_cursor#45 line_cursor#1 ]
+Allocated (was zp ZP_BYTE:15) zp ZP_BYTE:9 [ assert_byte::c#3 ]
+Allocated (was zp ZP_WORD:16) zp ZP_WORD:10 [ print_cls::sc#2 print_cls::sc#1 ]
 
 ASSEMBLER BEFORE OPTIMIZATION
 //SEG0 Basic Upstart
@@ -3008,7 +3008,7 @@ ASSEMBLER BEFORE OPTIMIZATION
   .label BGCOL = $d021
   .const GREEN = 5
   .const RED = 2
-  .label char_cursor = 2
+  .label char_cursor = 5
   .label line_cursor = 7
 //SEG2 @begin
 bbegin:
@@ -3169,11 +3169,8 @@ test_sbytes: {
 assert_sbyte: {
     .label msg = 2
     .label c = 4
-  //SEG59 [23] (byte*) print_str::str#5 ← (byte*) assert_sbyte::msg#5 [ assert_sbyte::b#5 assert_sbyte::c#5 print_str::str#5 line_cursor#1 ] ( main:2::test_sbytes:9::assert_sbyte:12 [ assert_sbyte::b#5 assert_sbyte::c#5 print_str::str#5 line_cursor#1 ] main:2::test_sbytes:9::assert_sbyte:14 [ assert_sbyte::b#5 assert_sbyte::c#5 print_str::str#5 line_cursor#1 ] main:2::test_sbytes:9::assert_sbyte:16 [ assert_sbyte::b#5 assert_sbyte::c#5 print_str::str#5 line_cursor#1 ] main:2::test_sbytes:9::assert_sbyte:18 [ assert_sbyte::b#5 assert_sbyte::c#5 print_str::str#5 line_cursor#1 ] main:2::test_sbytes:9::assert_sbyte:20 [ assert_sbyte::b#5 assert_sbyte::c#5 print_str::str#5 line_cursor#1 ] ) -- pbuz1=pbuz2 
-    lda msg
-    sta print_str.str
-    lda msg+1
-    sta print_str.str+1
+  //SEG59 [23] (byte*) print_str::str#5 ← (byte*) assert_sbyte::msg#5 [ assert_sbyte::b#5 assert_sbyte::c#5 print_str::str#5 line_cursor#1 ] ( main:2::test_sbytes:9::assert_sbyte:12 [ assert_sbyte::b#5 assert_sbyte::c#5 print_str::str#5 line_cursor#1 ] main:2::test_sbytes:9::assert_sbyte:14 [ assert_sbyte::b#5 assert_sbyte::c#5 print_str::str#5 line_cursor#1 ] main:2::test_sbytes:9::assert_sbyte:16 [ assert_sbyte::b#5 assert_sbyte::c#5 print_str::str#5 line_cursor#1 ] main:2::test_sbytes:9::assert_sbyte:18 [ assert_sbyte::b#5 assert_sbyte::c#5 print_str::str#5 line_cursor#1 ] main:2::test_sbytes:9::assert_sbyte:20 [ assert_sbyte::b#5 assert_sbyte::c#5 print_str::str#5 line_cursor#1 ] )
+    // (byte*) print_str::str#5 = (byte*) assert_sbyte::msg#5  // register copy zp ZP_WORD:2
   //SEG60 [24] (byte*~) char_cursor#82 ← (byte*) line_cursor#1 [ assert_sbyte::b#5 assert_sbyte::c#5 print_str::str#5 char_cursor#82 line_cursor#1 ] ( main:2::test_sbytes:9::assert_sbyte:12 [ assert_sbyte::b#5 assert_sbyte::c#5 print_str::str#5 char_cursor#82 line_cursor#1 ] main:2::test_sbytes:9::assert_sbyte:14 [ assert_sbyte::b#5 assert_sbyte::c#5 print_str::str#5 char_cursor#82 line_cursor#1 ] main:2::test_sbytes:9::assert_sbyte:16 [ assert_sbyte::b#5 assert_sbyte::c#5 print_str::str#5 char_cursor#82 line_cursor#1 ] main:2::test_sbytes:9::assert_sbyte:18 [ assert_sbyte::b#5 assert_sbyte::c#5 print_str::str#5 char_cursor#82 line_cursor#1 ] main:2::test_sbytes:9::assert_sbyte:20 [ assert_sbyte::b#5 assert_sbyte::c#5 print_str::str#5 char_cursor#82 line_cursor#1 ] ) -- pbuz1=pbuz2 
     lda line_cursor
     sta char_cursor
@@ -3260,7 +3257,7 @@ assert_sbyte: {
 }
 //SEG92 print_str
 print_str: {
-    .label str = 5
+    .label str = 2
   //SEG93 [37] phi from print_str print_str::@2 to print_str::@1 [phi:print_str/print_str::@2->print_str::@1]
   b1_from_print_str:
   b1_from_b2:
@@ -3418,10 +3415,10 @@ test_bytes: {
 }
 //SEG140 assert_byte
 assert_byte: {
-    .label msg = 5
-    .label c = 4
+    .label msg = 2
+    .label c = 9
   //SEG141 [56] (byte*) print_str::str#1 ← (byte*) assert_byte::msg#3 [ print_str::str#1 char_cursor#65 line_cursor#45 assert_byte::b#3 assert_byte::c#3 ] ( main:2::test_bytes:7::assert_byte:49 [ print_str::str#1 char_cursor#65 line_cursor#45 assert_byte::b#3 assert_byte::c#3 ] main:2::test_bytes:7::assert_byte:51 [ print_str::str#1 char_cursor#65 line_cursor#45 assert_byte::b#3 assert_byte::c#3 ] main:2::test_bytes:7::assert_byte:53 [ print_str::str#1 char_cursor#65 line_cursor#45 assert_byte::b#3 assert_byte::c#3 ] )
-    // (byte*) print_str::str#1 = (byte*) assert_byte::msg#3  // register copy zp ZP_WORD:5
+    // (byte*) print_str::str#1 = (byte*) assert_byte::msg#3  // register copy zp ZP_WORD:2
   //SEG142 [57] call print_str param-assignment [ char_cursor#2 line_cursor#45 assert_byte::b#3 assert_byte::c#3 ] ( main:2::test_bytes:7::assert_byte:49 [ char_cursor#2 line_cursor#45 assert_byte::b#3 assert_byte::c#3 ] main:2::test_bytes:7::assert_byte:51 [ char_cursor#2 line_cursor#45 assert_byte::b#3 assert_byte::c#3 ] main:2::test_bytes:7::assert_byte:53 [ char_cursor#2 line_cursor#45 assert_byte::b#3 assert_byte::c#3 ] )
   //SEG143 [36] phi from assert_byte to print_str [phi:assert_byte->print_str]
   print_str_from_assert_byte:
@@ -3503,7 +3500,7 @@ assert_byte: {
 }
 //SEG173 print_cls
 print_cls: {
-    .label sc = 2
+    .label sc = $a
   //SEG174 [69] phi from print_cls to print_cls::@1 [phi:print_cls->print_cls::@1]
   b1_from_print_cls:
   //SEG175 [69] phi (byte*) print_cls::sc#2 = ((byte*))(word/signed word/dword/signed dword) 1024 [phi:print_cls->print_cls::@1#0] -- pbuz1=pbuc1 
@@ -3678,9 +3675,9 @@ FINAL SYMBOL TABLE
 (byte) assert_byte::b
 (byte) assert_byte::b#3 reg byte x 0.4
 (byte) assert_byte::c
-(byte) assert_byte::c#3 c zp ZP_BYTE:4 0.4
+(byte) assert_byte::c#3 c zp ZP_BYTE:9 0.4
 (byte*) assert_byte::msg
-(byte*) assert_byte::msg#3 msg zp ZP_WORD:5 2.0
+(byte*) assert_byte::msg#3 msg zp ZP_WORD:2 2.0
 (const string) assert_byte::str str = (string) " @"
 (const string) assert_byte::str1 str1 = (string) "ok@"
 (const string) assert_byte::str2 str2 = (string) "fail!@"
@@ -3701,13 +3698,13 @@ FINAL SYMBOL TABLE
 (const string) assert_sbyte::str1 str1 = (string) "ok@"
 (const string) assert_sbyte::str2 str2 = (string) "fail!@"
 (byte*) char_cursor
-(byte*) char_cursor#1 char_cursor zp ZP_WORD:2 11.0
-(byte*) char_cursor#2 char_cursor zp ZP_WORD:2 2.230769230769231
-(byte*) char_cursor#65 char_cursor zp ZP_WORD:2 3.0
-(byte*) char_cursor#75 char_cursor zp ZP_WORD:2 18.0
-(byte*~) char_cursor#82 char_cursor zp ZP_WORD:2 4.0
-(byte*~) char_cursor#88 char_cursor zp ZP_WORD:2 4.0
-(byte*~) char_cursor#89 char_cursor zp ZP_WORD:2 4.0
+(byte*) char_cursor#1 char_cursor zp ZP_WORD:5 11.0
+(byte*) char_cursor#2 char_cursor zp ZP_WORD:5 2.230769230769231
+(byte*) char_cursor#65 char_cursor zp ZP_WORD:5 3.0
+(byte*) char_cursor#75 char_cursor zp ZP_WORD:5 18.0
+(byte*~) char_cursor#82 char_cursor zp ZP_WORD:5 4.0
+(byte*~) char_cursor#88 char_cursor zp ZP_WORD:5 4.0
+(byte*~) char_cursor#89 char_cursor zp ZP_WORD:5 4.0
 (byte*) line_cursor
 (byte*) line_cursor#1 line_cursor zp ZP_WORD:7 1.2500000000000002
 (byte*) line_cursor#21 line_cursor zp ZP_WORD:7 24.0
@@ -3721,8 +3718,8 @@ FINAL SYMBOL TABLE
 (label) print_cls::@1
 (label) print_cls::@return
 (byte*) print_cls::sc
-(byte*) print_cls::sc#1 sc zp ZP_WORD:2 16.5
-(byte*) print_cls::sc#2 sc zp ZP_WORD:2 16.5
+(byte*) print_cls::sc#1 sc zp ZP_WORD:10 16.5
+(byte*) print_cls::sc#2 sc zp ZP_WORD:10 16.5
 (void()) print_ln()
 (label) print_ln::@1
 (label) print_ln::@return
@@ -3731,11 +3728,11 @@ FINAL SYMBOL TABLE
 (label) print_str::@2
 (label) print_str::@return
 (byte*) print_str::str
-(byte*) print_str::str#0 str zp ZP_WORD:5 22.0
-(byte*) print_str::str#1 str zp ZP_WORD:5 4.0
-(byte*) print_str::str#10 str zp ZP_WORD:5 11.5
-(byte*) print_str::str#11 str zp ZP_WORD:5 6.0
-(byte*) print_str::str#5 str zp ZP_WORD:5 2.0
+(byte*) print_str::str#0 str zp ZP_WORD:2 22.0
+(byte*) print_str::str#1 str zp ZP_WORD:2 4.0
+(byte*) print_str::str#10 str zp ZP_WORD:2 11.5
+(byte*) print_str::str#11 str zp ZP_WORD:2 6.0
+(byte*) print_str::str#5 str zp ZP_WORD:2 2.0
 (void()) test_bytes()
 (label) test_bytes::@1
 (label) test_bytes::@2
@@ -3771,16 +3768,18 @@ FINAL SYMBOL TABLE
 (const string) test_sbytes::msg3 msg3 = (string) "-(0+2-4)=2@"
 (const string) test_sbytes::msg4 msg4 = (string) "-127-127=2@"
 
-zp ZP_WORD:2 [ assert_sbyte::msg#5 char_cursor#75 char_cursor#65 char_cursor#2 char_cursor#82 char_cursor#1 char_cursor#88 char_cursor#89 print_cls::sc#2 print_cls::sc#1 ]
+zp ZP_WORD:2 [ assert_sbyte::msg#5 print_str::str#10 print_str::str#11 print_str::str#1 print_str::str#5 print_str::str#0 assert_byte::msg#3 ]
 reg byte x [ assert_sbyte::b#5 ]
-zp ZP_BYTE:4 [ assert_sbyte::c#5 assert_byte::c#3 ]
-zp ZP_WORD:5 [ print_str::str#10 print_str::str#11 print_str::str#1 print_str::str#5 print_str::str#0 assert_byte::msg#3 ]
+zp ZP_BYTE:4 [ assert_sbyte::c#5 ]
+zp ZP_WORD:5 [ char_cursor#75 char_cursor#65 char_cursor#2 char_cursor#82 char_cursor#1 char_cursor#88 char_cursor#89 ]
 zp ZP_WORD:7 [ line_cursor#21 line_cursor#42 line_cursor#45 line_cursor#1 ]
 reg byte x [ assert_byte::b#3 ]
+zp ZP_BYTE:9 [ assert_byte::c#3 ]
+zp ZP_WORD:10 [ print_cls::sc#2 print_cls::sc#1 ]
 
 
 FINAL ASSEMBLER
-Score: 1858
+Score: 1846
 
 //SEG0 Basic Upstart
 .pc = $801 "Basic"
@@ -3790,7 +3789,7 @@ Score: 1858
   .label BGCOL = $d021
   .const GREEN = 5
   .const RED = 2
-  .label char_cursor = 2
+  .label char_cursor = 5
   .label line_cursor = 7
 //SEG2 @begin
 //SEG3 [1] phi from @begin to @13 [phi:@begin->@13]
@@ -3914,11 +3913,8 @@ test_sbytes: {
 assert_sbyte: {
     .label msg = 2
     .label c = 4
-  //SEG59 [23] (byte*) print_str::str#5 ← (byte*) assert_sbyte::msg#5 [ assert_sbyte::b#5 assert_sbyte::c#5 print_str::str#5 line_cursor#1 ] ( main:2::test_sbytes:9::assert_sbyte:12 [ assert_sbyte::b#5 assert_sbyte::c#5 print_str::str#5 line_cursor#1 ] main:2::test_sbytes:9::assert_sbyte:14 [ assert_sbyte::b#5 assert_sbyte::c#5 print_str::str#5 line_cursor#1 ] main:2::test_sbytes:9::assert_sbyte:16 [ assert_sbyte::b#5 assert_sbyte::c#5 print_str::str#5 line_cursor#1 ] main:2::test_sbytes:9::assert_sbyte:18 [ assert_sbyte::b#5 assert_sbyte::c#5 print_str::str#5 line_cursor#1 ] main:2::test_sbytes:9::assert_sbyte:20 [ assert_sbyte::b#5 assert_sbyte::c#5 print_str::str#5 line_cursor#1 ] ) -- pbuz1=pbuz2 
-    lda msg
-    sta print_str.str
-    lda msg+1
-    sta print_str.str+1
+  //SEG59 [23] (byte*) print_str::str#5 ← (byte*) assert_sbyte::msg#5 [ assert_sbyte::b#5 assert_sbyte::c#5 print_str::str#5 line_cursor#1 ] ( main:2::test_sbytes:9::assert_sbyte:12 [ assert_sbyte::b#5 assert_sbyte::c#5 print_str::str#5 line_cursor#1 ] main:2::test_sbytes:9::assert_sbyte:14 [ assert_sbyte::b#5 assert_sbyte::c#5 print_str::str#5 line_cursor#1 ] main:2::test_sbytes:9::assert_sbyte:16 [ assert_sbyte::b#5 assert_sbyte::c#5 print_str::str#5 line_cursor#1 ] main:2::test_sbytes:9::assert_sbyte:18 [ assert_sbyte::b#5 assert_sbyte::c#5 print_str::str#5 line_cursor#1 ] main:2::test_sbytes:9::assert_sbyte:20 [ assert_sbyte::b#5 assert_sbyte::c#5 print_str::str#5 line_cursor#1 ] )
+    // (byte*) print_str::str#5 = (byte*) assert_sbyte::msg#5  // register copy zp ZP_WORD:2
   //SEG60 [24] (byte*~) char_cursor#82 ← (byte*) line_cursor#1 [ assert_sbyte::b#5 assert_sbyte::c#5 print_str::str#5 char_cursor#82 line_cursor#1 ] ( main:2::test_sbytes:9::assert_sbyte:12 [ assert_sbyte::b#5 assert_sbyte::c#5 print_str::str#5 char_cursor#82 line_cursor#1 ] main:2::test_sbytes:9::assert_sbyte:14 [ assert_sbyte::b#5 assert_sbyte::c#5 print_str::str#5 char_cursor#82 line_cursor#1 ] main:2::test_sbytes:9::assert_sbyte:16 [ assert_sbyte::b#5 assert_sbyte::c#5 print_str::str#5 char_cursor#82 line_cursor#1 ] main:2::test_sbytes:9::assert_sbyte:18 [ assert_sbyte::b#5 assert_sbyte::c#5 print_str::str#5 char_cursor#82 line_cursor#1 ] main:2::test_sbytes:9::assert_sbyte:20 [ assert_sbyte::b#5 assert_sbyte::c#5 print_str::str#5 char_cursor#82 line_cursor#1 ] ) -- pbuz1=pbuz2 
     lda line_cursor
     sta char_cursor
@@ -3986,7 +3982,7 @@ assert_sbyte: {
 }
 //SEG92 print_str
 print_str: {
-    .label str = 5
+    .label str = 2
   //SEG93 [37] phi from print_str print_str::@2 to print_str::@1 [phi:print_str/print_str::@2->print_str::@1]
   //SEG94 [37] phi (byte*) char_cursor#2 = (byte*) char_cursor#75 [phi:print_str/print_str::@2->print_str::@1#0] -- register_copy 
   //SEG95 [37] phi (byte*) print_str::str#10 = (byte*) print_str::str#11 [phi:print_str/print_str::@2->print_str::@1#1] -- register_copy 
@@ -4124,10 +4120,10 @@ test_bytes: {
 }
 //SEG140 assert_byte
 assert_byte: {
-    .label msg = 5
-    .label c = 4
+    .label msg = 2
+    .label c = 9
   //SEG141 [56] (byte*) print_str::str#1 ← (byte*) assert_byte::msg#3 [ print_str::str#1 char_cursor#65 line_cursor#45 assert_byte::b#3 assert_byte::c#3 ] ( main:2::test_bytes:7::assert_byte:49 [ print_str::str#1 char_cursor#65 line_cursor#45 assert_byte::b#3 assert_byte::c#3 ] main:2::test_bytes:7::assert_byte:51 [ print_str::str#1 char_cursor#65 line_cursor#45 assert_byte::b#3 assert_byte::c#3 ] main:2::test_bytes:7::assert_byte:53 [ print_str::str#1 char_cursor#65 line_cursor#45 assert_byte::b#3 assert_byte::c#3 ] )
-    // (byte*) print_str::str#1 = (byte*) assert_byte::msg#3  // register copy zp ZP_WORD:5
+    // (byte*) print_str::str#1 = (byte*) assert_byte::msg#3  // register copy zp ZP_WORD:2
   //SEG142 [57] call print_str param-assignment [ char_cursor#2 line_cursor#45 assert_byte::b#3 assert_byte::c#3 ] ( main:2::test_bytes:7::assert_byte:49 [ char_cursor#2 line_cursor#45 assert_byte::b#3 assert_byte::c#3 ] main:2::test_bytes:7::assert_byte:51 [ char_cursor#2 line_cursor#45 assert_byte::b#3 assert_byte::c#3 ] main:2::test_bytes:7::assert_byte:53 [ char_cursor#2 line_cursor#45 assert_byte::b#3 assert_byte::c#3 ] )
   //SEG143 [36] phi from assert_byte to print_str [phi:assert_byte->print_str]
   //SEG144 [36] phi (byte*) char_cursor#75 = (byte*) char_cursor#65 [phi:assert_byte->print_str#0] -- register_copy 
@@ -4190,7 +4186,7 @@ assert_byte: {
 }
 //SEG173 print_cls
 print_cls: {
-    .label sc = 2
+    .label sc = $a
   //SEG174 [69] phi from print_cls to print_cls::@1 [phi:print_cls->print_cls::@1]
   //SEG175 [69] phi (byte*) print_cls::sc#2 = ((byte*))(word/signed word/dword/signed dword) 1024 [phi:print_cls->print_cls::@1#0] -- pbuz1=pbuc1 
     lda #<$400

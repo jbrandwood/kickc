@@ -2,6 +2,9 @@ package dk.camelot64.kickc.passes;
 
 import dk.camelot64.kickc.model.*;
 
+import java.util.Collection;
+import java.util.List;
+
 /**
  * Coalesces zero page registers where their live ranges do not overlap.
  * A final step done after all other register optimizations and before ASM generation.
@@ -23,26 +26,71 @@ public class Pass4ZeroPageCoalesce extends Pass2Base {
    }
 
    /**
-    * Find two equivalence classes that can be coalesced into one - and perform the coalescence.
+    * Find the best two equivalence classes that can be coalesced into one - and perform the coalescence.
     *
     * @param liveRangeEquivalenceClassSet The set of live range equivalence classes
     * @return true if any classes were coalesced. False otherwise.
     */
    private boolean coalesce(LiveRangeEquivalenceClassSet liveRangeEquivalenceClassSet) {
-      for(LiveRangeEquivalenceClass myEquivalenceClass : liveRangeEquivalenceClassSet.getEquivalenceClasses()) {
+      double maxScore = Double.MIN_VALUE;
+      LiveRangeEquivalenceClass maxThis = null;
+      LiveRangeEquivalenceClass maxOther = null;
+
+      for(LiveRangeEquivalenceClass thisEquivalenceClass : liveRangeEquivalenceClassSet.getEquivalenceClasses()) {
          for(LiveRangeEquivalenceClass otherEquivalenceClass : liveRangeEquivalenceClassSet.getEquivalenceClasses()) {
-            if(!myEquivalenceClass.equals(otherEquivalenceClass)) {
-               if(canCoalesce(myEquivalenceClass, otherEquivalenceClass)) {
-                  getLog().append("Coalescing zero page register [ " + myEquivalenceClass + " ] with [ " + otherEquivalenceClass + " ]");
-                  liveRangeEquivalenceClassSet.consolidate(myEquivalenceClass, otherEquivalenceClass);
-                  // Reset the program register allocation
-                  getProgram().getLiveRangeEquivalenceClassSet().storeRegisterAllocation();
-                  return true;
+            if(!thisEquivalenceClass.equals(otherEquivalenceClass)) {
+               if(canCoalesce(thisEquivalenceClass, otherEquivalenceClass)) {
+                  double coalesceScore = getCoalesceScore(thisEquivalenceClass, otherEquivalenceClass);
+                  if(coalesceScore>maxScore) {
+                     maxScore = coalesceScore;
+                     maxThis = thisEquivalenceClass;
+                     maxOther = otherEquivalenceClass;
+                  }
                }
             }
          }
       }
+
+      if(maxOther!=null) {
+         getLog().append("Coalescing zero page register [ " + maxThis+ " ] with [ " + maxOther + " ]");
+         liveRangeEquivalenceClassSet.consolidate(maxThis, maxOther);
+         // Reset the program register allocation
+         getProgram().getLiveRangeEquivalenceClassSet().storeRegisterAllocation();
+         return true;
+      }
+
       return false;
+   }
+
+   private double getCoalesceScore(LiveRangeEquivalenceClass thisEquivalenceClass, LiveRangeEquivalenceClass otherEquivalenceClass) {
+      double score = 0.0;
+      List<VariableRef> thisClassVars = thisEquivalenceClass.getVariables();
+      List<VariableRef> otherClassVars = otherEquivalenceClass.getVariables();
+      VariableReferenceInfos variableReferenceInfos = getProgram().getVariableReferenceInfos();
+      for(ControlFlowBlock block : getProgram().getGraph().getAllBlocks()) {
+         for(Statement statement : block.getStatements()) {
+            Collection<VariableRef> definedVars = variableReferenceInfos.getDefinedVars(statement);
+            Collection<VariableRef> usedVars = variableReferenceInfos.getUsedVars(statement);
+            if(definedVars!=null && definedVars.size()>0) {
+               for(VariableRef definedVar : definedVars) {
+                  if(thisClassVars.contains(definedVar)) {
+                     for(VariableRef usedVar : usedVars) {
+                        if(otherClassVars.contains(usedVar)) {
+                           score += 1.0;
+                        }
+                     }
+                  } else if(otherClassVars.contains(definedVar)) {
+                     for(VariableRef usedVar : usedVars) {
+                        if(thisClassVars.contains(usedVar)) {
+                           score += 1.0;
+                        }
+                     }
+                  }
+               }
+            }
+         }
+      }
+      return score;
    }
 
    private boolean canCoalesce(LiveRangeEquivalenceClass myEquivalenceClass, LiveRangeEquivalenceClass otherEquivalenceClass) {

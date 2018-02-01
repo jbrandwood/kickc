@@ -5,7 +5,7 @@
   .label line_cursor = 4
   jsr main
 main: {
-    .label b = $c
+    .label b = $e
     .label a = 2
     .label i = 3
     jsr print_cls
@@ -485,7 +485,7 @@ print_str: {
     jmp b1
 }
 print_cls: {
-    .label sc = 4
+    .label sc = $c
     lda #<$400
     sta sc
     lda #>$400

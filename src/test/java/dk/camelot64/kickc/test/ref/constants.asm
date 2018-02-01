@@ -4,7 +4,7 @@
   .label BGCOL = $d021
   .const GREEN = 5
   .const RED = 2
-  .label char_cursor = 2
+  .label char_cursor = 5
   .label line_cursor = 7
   jsr main
 main: {
@@ -71,10 +71,6 @@ test_sbytes: {
 assert_sbyte: {
     .label msg = 2
     .label c = 4
-    lda msg
-    sta print_str.str
-    lda msg+1
-    sta print_str.str+1
     lda line_cursor
     sta char_cursor
     lda line_cursor+1
@@ -109,7 +105,7 @@ assert_sbyte: {
     str2: .text "fail!@"
 }
 print_str: {
-    .label str = 5
+    .label str = 2
   b1:
     ldy #0
     lda (str),y
@@ -199,8 +195,8 @@ test_bytes: {
     msg2: .text "0+2-4=254@"
 }
 assert_byte: {
-    .label msg = 5
-    .label c = 4
+    .label msg = 2
+    .label c = 9
     jsr print_str
     lda #<str
     sta print_str.str
@@ -231,7 +227,7 @@ assert_byte: {
     str2: .text "fail!@"
 }
 print_cls: {
-    .label sc = 2
+    .label sc = $a
     lda #<$400
     sta sc
     lda #>$400

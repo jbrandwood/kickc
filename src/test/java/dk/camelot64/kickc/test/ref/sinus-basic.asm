@@ -96,7 +96,7 @@ print_ln: {
     rts
 }
 print_word: {
-    .label w = 7
+    .label w = 9
     lda w+1
     tax
     jsr print_byte
@@ -132,7 +132,7 @@ print_char: {
     rts
 }
 getFAC: {
-    .label return = 7
+    .label return = 9
     jsr $b1aa
     sty $fe
     sta $ff

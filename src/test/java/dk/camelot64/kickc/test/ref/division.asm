@@ -3,7 +3,7 @@
 .pc = $80d "Program"
   .label char_cursor = 7
   .label line_cursor = 3
-  .label rem16u = 9
+  .label rem16u = $b
   jsr main
 main: {
     jsr print_cls
@@ -12,9 +12,9 @@ main: {
     rts
 }
 test_16u: {
-    .label dividend = $d
-    .label divisor = $f
-    .label res = $11
+    .label dividend = 5
+    .label divisor = $16
+    .label res = $f
     .label i = 2
     lda #0
     sta rem16u
@@ -35,18 +35,6 @@ test_16u: {
     lda dividend+1
     sta div16u.dividend+1
     jsr div16u
-    lda div16u.return_1
-    sta div16u.return
-    lda div16u.return_1+1
-    sta div16u.return+1
-    lda div16u.return
-    sta res
-    lda div16u.return+1
-    sta res+1
-    lda dividend
-    sta print_word.w
-    lda dividend+1
-    sta print_word.w+1
     lda line_cursor
     sta char_cursor
     lda line_cursor+1
@@ -152,7 +140,7 @@ print_char: {
     rts
 }
 print_str: {
-    .label str = 5
+    .label str = 9
   b1:
     ldy #0
     lda (str),y
@@ -174,12 +162,11 @@ print_str: {
     jmp b1
 }
 div16u: {
-    .label dividend = 5
-    .label divisor = $f
-    .label return = 5
-    .label rem = 9
-    .label quotient = 7
-    .label return_1 = 7
+    .label dividend = $d
+    .label divisor = $16
+    .label return = $f
+    .label rem = $b
+    .label quotient = $f
     ldx #0
     txa
     sta quotient
@@ -229,10 +216,10 @@ div16u: {
 }
 test_8u: {
     .label rem = $ff
-    .label dividend = $13
-    .label divisor = $14
-    .label res = $b
-    .label i = 2
+    .label dividend = $18
+    .label divisor = $19
+    .label res = $1a
+    .label i = $11
     lda #<$400
     sta line_cursor
     lda #>$400
@@ -296,10 +283,10 @@ test_8u: {
     divisors: .byte 5, 7, $b, $d, $11, $13
 }
 div8u: {
-    .label dividend = $b
-    .label divisor = $14
-    .label quotient = $c
-    .label return = $c
+    .label dividend = $12
+    .label divisor = $19
+    .label quotient = $13
+    .label return = $13
     ldx #0
     txa
     sta quotient
@@ -331,7 +318,7 @@ div8u: {
     rts
 }
 print_cls: {
-    .label sc = 3
+    .label sc = $14
     lda #<$400
     sta sc
     lda #>$400

@@ -50,10 +50,10 @@ main: {
     jmp b2
 }
 anim: {
-    .label _10 = $c
-    .label _12 = $e
-    .label sprite_x = $c
-    .label sprite_y = $e
+    .label _10 = $e
+    .label _12 = $10
+    .label sprite_x = $e
+    .label sprite_y = $10
     lda ypos+1
     bpl b1
     sec
@@ -171,7 +171,7 @@ anim: {
     rts
 }
 init: {
-    .label sc = 2
+    .label sc = $c
     lda #1
     sta SPRITES_ENABLE
     lda #0

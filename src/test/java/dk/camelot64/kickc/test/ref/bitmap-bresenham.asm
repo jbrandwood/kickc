@@ -48,11 +48,13 @@ lines: {
     rts
 }
 line: {
-    .label x0 = 3
-    .label x1 = 4
+    .label x0 = 8
+    .label x1 = $14
     .label y0 = 5
-    .label xd = 7
+    .label xd = 3
     .label yd = $a
+    .label yd_1 = 4
+    .label yd_10 = 4
     lda x0
     cmp x1
     bcs b1
@@ -67,18 +69,12 @@ line: {
     tya
     sec
     sbc y0
-    sta yd
+    sta yd_1
     cmp xd
     bcs b3
     ldx x0
-    lda y0
-    sta line_xdyi.y
     lda x1
     sta line_xdyi.x1
-    lda xd
-    sta line_xdyi.xd
-    lda yd
-    sta line_xdyi.yd
     jsr line_xdyi
   breturn:
     rts
@@ -87,10 +83,6 @@ line: {
     sta line_ydxi.y
     ldx x0
     sty line_ydxi.y1
-    lda yd
-    sta line_ydxi.yd
-    lda xd
-    sta line_ydxi.xd
     jsr line_ydxi
     jmp breturn
   b2:
@@ -102,23 +94,13 @@ line: {
     cmp xd
     bcs b6
     ldx x0
-    lda y0
-    sta line_xdyd.y
     lda x1
     sta line_xdyd.x1
-    lda xd
-    sta line_xdyd.xd
-    lda yd
-    sta line_xdyd.yd
     jsr line_xdyd
     jmp breturn
   b6:
     sty line_ydxd.y
     ldx x1
-    lda yd
-    sta line_ydxd.yd
-    lda xd
-    sta line_ydxd.xd
     jsr line_ydxd
     jmp breturn
   b1:
@@ -138,12 +120,6 @@ line: {
     bcs b10
     ldx x1
     sty line_xdyd.y
-    lda x0
-    sta line_xdyd.x1
-    lda xd
-    sta line_xdyd.xd
-    lda yd
-    sta line_xdyd.yd
     jsr line_xdyd
     jmp breturn
   b10:
@@ -151,10 +127,6 @@ line: {
     sta line_ydxd.y
     ldx x0
     sty line_ydxd.y1
-    lda yd
-    sta line_ydxd.yd
-    lda xd
-    sta line_ydxd.xd
     jsr line_ydxd
     jmp breturn
   b9:
@@ -162,26 +134,16 @@ line: {
     eor #$ff
     sec
     adc y0
-    sta yd
+    sta yd_10
     cmp xd
     bcs b13
     ldx x1
     sty line_xdyi.y
-    lda x0
-    sta line_xdyi.x1
-    lda xd
-    sta line_xdyi.xd
-    lda yd
-    sta line_xdyi.yd
     jsr line_xdyi
     jmp breturn
   b13:
     sty line_ydxi.y
     ldx x1
-    lda yd
-    sta line_ydxi.yd
-    lda xd
-    sta line_ydxi.xd
     jsr line_ydxi
     jmp breturn
 }
@@ -218,9 +180,9 @@ line_ydxi: {
     rts
 }
 plot: {
-    .label _0 = 8
-    .label plotter_x = 8
-    .label plotter_y = $b
+    .label _0 = $15
+    .label plotter_x = $15
+    .label plotter_y = $17
     lda plot_xhi,x
     sta plotter_x+1
     lda plot_xlo,x
@@ -243,12 +205,12 @@ plot: {
     rts
 }
 line_xdyi: {
-    .label _6 = $a
-    .label y = 6
-    .label x1 = 5
-    .label xd = 4
-    .label yd = 3
-    .label e = 7
+    .label _6 = $19
+    .label y = 5
+    .label x1 = 8
+    .label xd = 3
+    .label yd = 4
+    .label e = 9
     lda yd
     lsr
     sta e
@@ -277,11 +239,11 @@ line_xdyi: {
     rts
 }
 line_ydxd: {
-    .label y = 6
+    .label y = $b
     .label y1 = 5
-    .label yd = 4
+    .label yd = $a
     .label xd = 3
-    .label e = 7
+    .label e = $c
     lda xd
     lsr
     sta e
@@ -309,12 +271,12 @@ line_ydxd: {
     rts
 }
 line_xdyd: {
-    .label _6 = $a
-    .label y = 6
-    .label x1 = 5
-    .label xd = 4
-    .label yd = 3
-    .label e = 7
+    .label _6 = $1a
+    .label y = 5
+    .label x1 = 8
+    .label xd = 3
+    .label yd = $a
+    .label e = $d
     lda yd
     lsr
     sta e
@@ -343,8 +305,8 @@ line_xdyd: {
     rts
 }
 init_plot_tables: {
-    .label _6 = 2
-    .label yoffs = 8
+    .label _6 = $1b
+    .label yoffs = $e
     ldy #$80
     ldx #0
   b1:
@@ -396,8 +358,8 @@ init_plot_tables: {
     rts
 }
 init_screen: {
-    .label b = 8
-    .label c = 8
+    .label b = $10
+    .label c = $12
     lda #<BITMAP
     sta b
     lda #>BITMAP

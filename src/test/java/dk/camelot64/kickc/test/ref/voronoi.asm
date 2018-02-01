@@ -109,7 +109,7 @@ findcol: {
     .label x = 5
     .label y = 2
     .label xp = 7
-    .label yp = 8
+    .label yp = $a
     .label diff = 7
     .label mindiff = 6
     ldy #0
@@ -177,7 +177,7 @@ findcol: {
     jmp b5
 }
 initscreen: {
-    .label screen = 3
+    .label screen = 8
     lda #<SCREEN
     sta screen
     lda #>SCREEN

@@ -19,8 +19,8 @@
   .const sinlen_x = $dd
   .const sinlen_y = $c5
   .label sprites = $2000
-  .label progress_idx = 4
-  .label progress_cursor = $a
+  .label progress_idx = $f
+  .label progress_cursor = $10
   .label sin_idx_x = 2
   .label sin_idx_y = 3
   jsr main
@@ -39,7 +39,7 @@ main: {
 anim: {
     .label xidx = 4
     .label yidx = 6
-    .label x = 8
+    .label x = $21
     .label x_msb = 5
     .label j = 7
     inc BORDERCOL
@@ -188,11 +188,11 @@ clear_screen: {
 }
 gen_sintab: {
     .label f_2pi = $e2e5
-    .label _23 = $c
-    .label i = 2
-    .label min = 2
-    .label length = 3
-    .label sintab = 8
+    .label _23 = $23
+    .label i = $e
+    .label min = $a
+    .label length = $b
+    .label sintab = $c
     txa
     sta setFAC.w
     lda #0
@@ -320,7 +320,7 @@ progress_inc: {
     progress_chars: .byte $20, $65, $74, $75, $61, $f6, $e7, $ea, $e0
 }
 getFAC: {
-    .label return = $c
+    .label return = $23
     jsr $b1aa
     sty $fe
     sta $ff
@@ -331,7 +331,7 @@ getFAC: {
     rts
 }
 addMEMtoFAC: {
-    .label mem = $c
+    .label mem = $12
     jsr prepareMEM
     lda $fe
     ldy $ff
@@ -339,7 +339,7 @@ addMEMtoFAC: {
     rts
 }
 prepareMEM: {
-    .label mem = $c
+    .label mem = $12
     lda mem
     sta memLo
     lda mem+1
@@ -347,7 +347,7 @@ prepareMEM: {
     rts
 }
 mulFACbyMEM: {
-    .label mem = $c
+    .label mem = $12
     jsr prepareMEM
     lda $fe
     ldy $ff
@@ -359,7 +359,7 @@ sinFAC: {
     rts
 }
 divMEMbyFAC: {
-    .label mem = $c
+    .label mem = $12
     jsr prepareMEM
     lda $fe
     ldy $ff
@@ -367,7 +367,7 @@ divMEMbyFAC: {
     rts
 }
 setFAC: {
-    .label w = $c
+    .label w = $12
     jsr prepareMEM
     ldy $fe
     lda $ff
@@ -375,7 +375,7 @@ setFAC: {
     rts
 }
 setMEMtoFAC: {
-    .label mem = $c
+    .label mem = $12
     jsr prepareMEM
     ldx $fe
     ldy $ff
@@ -391,12 +391,12 @@ setARGtoFAC: {
     rts
 }
 progress_init: {
-    .label line = $a
+    .label line = $10
     rts
 }
 gen_sprites: {
-    .label spr = 8
-    .label i = 2
+    .label spr = $15
+    .label i = $14
     lda #<sprites
     sta spr
     lda #>sprites
@@ -426,15 +426,15 @@ gen_sprites: {
     cml: .text "camelot"
 }
 gen_chargen_sprite: {
-    .label _0 = $c
-    .label _1 = $c
-    .label sprite = $a
-    .label chargen = $c
-    .label bits = 4
-    .label s_gen = 7
-    .label x = 5
-    .label y = 3
-    .label c = 6
+    .label _0 = $25
+    .label _1 = $25
+    .label sprite = $1c
+    .label chargen = $25
+    .label bits = $18
+    .label s_gen = $1b
+    .label x = $19
+    .label y = $17
+    .label c = $1a
     tya
     sta _0
     lda #0
@@ -526,9 +526,9 @@ gen_chargen_sprite: {
 }
 place_sprites: {
     .label sprites_ptr = SCREEN+$3f8
-    .label spr_id = 2
-    .label spr_x = 3
-    .label col = 4
+    .label spr_id = $1e
+    .label spr_x = $1f
+    .label col = $20
     lda #$7f
     sta SPRITES_ENABLE
     sta SPRITES_EXPAND_X

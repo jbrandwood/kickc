@@ -9,9 +9,9 @@
   jsr main
 main: {
     .label _1 = 8
-    .label _11 = 8
-    .label _21 = 8
-    .label _30 = 8
+    .label _11 = 9
+    .label _21 = $a
+    .label _30 = $b
     .label chargen1 = 6
     .label charset4 = 4
     .label chargen = 2

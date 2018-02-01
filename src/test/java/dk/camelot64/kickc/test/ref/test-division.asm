@@ -162,11 +162,11 @@ print_str: {
     jmp b1
 }
 div16u: {
-    .label dividend = $d
-    .label divisor = $16
-    .label return = $f
     .label rem = $b
+    .label dividend = $d
     .label quotient = $f
+    .label return = $f
+    .label divisor = $16
     ldx #0
     txa
     sta quotient
@@ -284,9 +284,9 @@ test_8u: {
 }
 div8u: {
     .label dividend = $12
-    .label divisor = $19
     .label quotient = $13
     .label return = $13
+    .label divisor = $19
     ldx #0
     txa
     sta quotient

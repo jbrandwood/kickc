@@ -44,9 +44,8 @@ public class TestPrograms {
 
    @Test
    public void testDivision() throws IOException, URISyntaxException {
-      compileAndCompare("division");
+      compileAndCompare("test-division");
    }
-
 
    @Test
    public void testVarRegister() throws IOException, URISyntaxException {

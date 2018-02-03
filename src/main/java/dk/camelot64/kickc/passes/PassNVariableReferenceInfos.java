@@ -96,6 +96,8 @@ public class PassNVariableReferenceInfos extends Pass2Base {
          return used;
       } else if(rValue instanceof CastValue) {
          return getReferenced(((CastValue) rValue).getValue());
+      } else if(rValue instanceof ConstantVarPointer) {
+         return getReferenced(((ConstantVarPointer) rValue).getToVar());
       } else {
          throw new RuntimeException("Unhandled RValue type " + rValue);
       }

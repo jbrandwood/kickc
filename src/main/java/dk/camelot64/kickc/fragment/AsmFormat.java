@@ -40,6 +40,10 @@ public class AsmFormat {
                      operator.getOperator() +
                      getAsmConstant(program, binary.getRight(), operator.getPrecedence(), codeScope) +
                      (parenthesis ? ")" : "");
+      } else if(value instanceof ConstantVarPointer) {
+         VariableRef toVar = ((ConstantVarPointer) value).getToVar();
+         Variable variable = program.getScope().getVariable(toVar);
+         return getAsmParamName(variable, codeScope);
       } else {
          throw new RuntimeException("Constant type not supported " + value);
       }

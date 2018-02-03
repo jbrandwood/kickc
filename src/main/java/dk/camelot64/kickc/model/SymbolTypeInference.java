@@ -32,6 +32,9 @@ public class SymbolTypeInference {
          return SymbolType.SWORD;
       } else if(operator.equals(Operator.CAST_PTRBY)) {
          return new SymbolTypePointer(SymbolType.BYTE);
+      } else if(operator.equals(Operator.ADDRESS_OF)) {
+         SymbolType valueType = inferType(programScope, rValue);
+         return new SymbolTypePointer(valueType);
       }
       if(rValue instanceof ConstantValue) {
          ConstantValue value = ConstantValueCalculator.calcValue(programScope, operator, (ConstantValue) rValue);
@@ -323,6 +326,8 @@ public class SymbolTypeInference {
          return new SymbolTypeArray(((ConstantArrayList) rValue).getElementType());
       } else if(rValue instanceof ConstantArrayFilled) {
          return new SymbolTypeArray(((ConstantArrayFilled) rValue).getElementType(), ((ConstantArrayFilled) rValue).getSize());
+      } else if(rValue instanceof ConstantVarPointer) {
+         return ((ConstantVarPointer) rValue).getType(symbols);
       } else if(rValue instanceof CastValue) {
          return ((CastValue) rValue).getToType();
       }

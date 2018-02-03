@@ -158,6 +158,11 @@ public class Pass2ConstantIdentification extends Pass2SsaOptimization {
                         }
                      }
                   }
+               } else if(Operator.ADDRESS_OF.equals(assignment.getOperator()) && assignment.getrValue1()==null) {
+                  if(assignment.getrValue2() instanceof VariableRef) {
+                     ConstantVarPointer constantVarPointer = new ConstantVarPointer((VariableRef) assignment.getrValue2());
+                     constants.put(variable, constantVarPointer);
+                  }
                }
             }
             return null;

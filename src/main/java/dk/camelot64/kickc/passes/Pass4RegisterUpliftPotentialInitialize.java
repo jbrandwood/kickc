@@ -2,7 +2,9 @@ package dk.camelot64.kickc.passes;
 
 import dk.camelot64.kickc.model.*;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.List;
 
 /*** Initialize potential registers for each equivalence class.
@@ -40,19 +42,41 @@ public class Pass4RegisterUpliftPotentialInitialize extends Pass2Base {
          } else {
             Registers.Register defaultRegister = equivalenceClass.getRegister();
             Registers.RegisterType registerType = defaultRegister.getType();
-            if(registerType.equals(Registers.RegisterType.ZP_BYTE)) {
-               List<Registers.Register> potentials = Arrays.asList(
-                     defaultRegister,
-                     Registers.getRegisterA(),
-                     Registers.getRegisterX(),
-                     Registers.getRegisterY());
-               registerPotentials.setPotentialRegisters(equivalenceClass, potentials);
-            } else {
-               registerPotentials.setPotentialRegisters(equivalenceClass, Arrays.asList(defaultRegister));
+            List<Registers.Register> potentials = new ArrayList<>();
+            potentials.add(defaultRegister);
+            if(registerType.equals(Registers.RegisterType.ZP_BYTE) && !varRefExtracted(equivalenceClass)) {
+               potentials.add(Registers.getRegisterA());
+               potentials.add(Registers.getRegisterX());
+               potentials.add(Registers.getRegisterY());
             }
+            registerPotentials.setPotentialRegisters(equivalenceClass, potentials);
          }
       }
       getProgram().setRegisterPotentials(registerPotentials);
+   }
+
+   /**
+    * Determines if a variable reference is ever created for the variable using the address-of "&" operator
+    * @param equivalenceClass The equivalence class
+    * @return true if a variable reference is extracted
+    */
+   private boolean varRefExtracted(LiveRangeEquivalenceClass equivalenceClass) {
+      Collection<ConstantVar> allConstants = getProgram().getScope().getAllConstants(true);
+      for(ConstantVar allConstant : allConstants) {
+         if(allConstant.getValue() instanceof ConstantVarPointer) {
+            VariableRef toVar = ((ConstantVarPointer) allConstant.getValue()).getToVar();
+            if(equivalenceClass.getVariables().contains(toVar)) {
+               return true;
+            }
+         }
+      }
+      return false;
+   }
+
+   private boolean hasIntersection(Collection<VariableRef> vars1, List<VariableRef> vars2) {
+      ArrayList<VariableRef> set = new ArrayList<>(vars1);
+      set.retainAll(vars2);
+      return set.size() > 0;
    }
 
 }

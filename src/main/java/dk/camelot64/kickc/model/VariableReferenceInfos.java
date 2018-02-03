@@ -9,9 +9,6 @@ import java.util.Map;
 /** Cached information about which variables are defined/referenced/used in statements / blocks. */
 public class VariableReferenceInfos {
 
-   /** The congtaining program. */
-   private Program program;
-
    /** Variables referenced in each block. */
    private Map<LabelRef, Collection<VariableRef>> blockReferencedVars;
 

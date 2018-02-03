@@ -43,6 +43,11 @@ public class TestPrograms {
    }
 
    @Test
+   public void testAddressOf() throws IOException, URISyntaxException {
+      compileAndCompare("test-address-of");
+   }
+
+   @Test
    public void testDivision() throws IOException, URISyntaxException {
       compileAndCompare("test-division");
    }

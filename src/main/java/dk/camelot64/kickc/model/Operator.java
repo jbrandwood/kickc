@@ -12,6 +12,7 @@ public class Operator {
    public static final Operator BOOL_NOT = new Operator("~", "_not_", Type.UNARY, 2);
    public static final Operator LOGIC_NOT = new Operator("!", "_not_", Type.UNARY, 2);
    public static final Operator DEREF = new Operator("*", "_deref_", Type.UNARY, 2);
+   public static final Operator ADDRESS_OF = new Operator("&", "_addr_", Type.UNARY, 2);
    public static final Operator WORD = new Operator("w=", "_word_", Type.BINARY, 2);
    public static final Operator DEREF_IDX = new Operator("*idx", "_derefidx_", Type.BINARY, 2);
    public static final Operator SET_LOWBYTE = new Operator("lo=", "_setlo_", Type.BINARY, 2);
@@ -118,6 +119,8 @@ public class Operator {
             return LOWBYTE;
          case ">":
             return HIBYTE;
+         case "&":
+            return ADDRESS_OF;
          default:
             throw new RuntimeException("Unknown operator " + op);
       }

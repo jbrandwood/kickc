@@ -28,4 +28,9 @@ public class ConstantVarPointer implements ConstantValue {
    public String toString(Program program) {
       return "&" + toVar.toString(program);
    }
+
+   @Override
+   public String toString() {
+      return toString(null);
+   }
 }

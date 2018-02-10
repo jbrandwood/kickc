@@ -2,10 +2,7 @@ package dk.camelot64.kickc.passes;
 
 import dk.camelot64.kickc.model.*;
 
-import java.util.ArrayList;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * Compiler Pass propagating constants in expressions eliminating constant variables
@@ -14,29 +11,6 @@ public class Pass2ConstantIdentification extends Pass2SsaOptimization {
 
    public Pass2ConstantIdentification(Program program) {
       super(program);
-   }
-
-   static ConstantValue createUnary(Operator operator, ConstantValue c) {
-      switch(operator.getOperator()) {
-         case "-":
-         case "+":
-         case "++":
-         case "--":
-         case "<":
-         case ">":
-         case "((byte))":
-         case "((signed byte))":
-         case "((sbyte))":
-         case "((word))":
-         case "((signed word))":
-         case "((byte*))":
-            return new ConstantUnary(operator, c);
-         case "*": { // pointer dereference - not constant
-            return null;
-         }
-         default:
-            throw new RuntimeException("Unhandled Unary Operator " + operator.getOperator());
-      }
    }
 
    /**
@@ -49,8 +23,16 @@ public class Pass2ConstantIdentification extends Pass2SsaOptimization {
       Map<VariableRef, ConstantValue> constants = findConstantVariables();
       LinkedHashMap<VariableRef, RValue> constAliases = new LinkedHashMap<>();
       // Update symbol table with the constant value
-      for(VariableRef constRef : constants.keySet()) {
+      Set<VariableRef> constVars = new LinkedHashSet<>(constants.keySet());
+      for(VariableRef constRef : constVars) {
          Variable variable = getProgram().getScope().getVariable(constRef);
+
+         // Weed out all variables that are affected by the address-of operator
+         if(isAddressOfUsed(constRef)) {
+            constants.remove(constRef);
+            continue;
+         }
+
          ConstantValue constVal = constants.get(constRef);
          Scope constScope = variable.getScope();
 
@@ -205,6 +187,29 @@ public class Pass2ConstantIdentification extends Pass2SsaOptimization {
       return null;
    }
 
+   static ConstantValue createUnary(Operator operator, ConstantValue c) {
+      switch(operator.getOperator()) {
+         case "-":
+         case "+":
+         case "++":
+         case "--":
+         case "<":
+         case ">":
+         case "((byte))":
+         case "((signed byte))":
+         case "((sbyte))":
+         case "((word))":
+         case "((signed word))":
+         case "((byte*))":
+            return new ConstantUnary(operator, c);
+         case "*": { // pointer dereference - not constant
+            return null;
+         }
+         default:
+            throw new RuntimeException("Unhandled Unary Operator " + operator.getOperator());
+      }
+   }
+
    ConstantValue createBinary(ConstantValue c1, Operator operator, ConstantValue c2) {
       switch(operator.getOperator()) {
          case "-":
@@ -235,5 +240,36 @@ public class Pass2ConstantIdentification extends Pass2SsaOptimization {
             throw new RuntimeException("Unhandled Binary Operator " + operator.getOperator());
       }
    }
+
+
+   /**
+    * Determines if the variable is ever operated on by the address-of operator
+    * @param var tHe variable to examine
+    * @return true if the address-of operator is used on the variable
+    */
+   private boolean isAddressOfUsed(VariableRef var) {
+      for(ControlFlowBlock block : getGraph().getAllBlocks()) {
+         for(Statement statement : block.getStatements()) {
+            if(statement instanceof StatementAssignment) {
+               StatementAssignment assignment = (StatementAssignment) statement;
+               if(Operator.ADDRESS_OF.equals(assignment.getOperator()) && var.equals(assignment.getrValue2())) {
+                  return true;
+               }
+            }
+         }
+      }
+      for(ConstantVar constVar : getScope().getAllConstants(true)) {
+         ConstantValue constantValue = constVar.getValue();
+         if(constantValue instanceof ConstantVarPointer) {
+            ConstantVarPointer constantVarPointer = (ConstantVarPointer) constantValue;
+            if(constantVarPointer.getToVar().equals(var)) {
+               return true;
+            }
+         }
+      }
+      return false;
+   }
+
+
 
 }

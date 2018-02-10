@@ -43,6 +43,11 @@ public class TestPrograms {
    }
 
    @Test
+   public void testAddressOfParam() throws IOException, URISyntaxException {
+      compileAndCompare("test-address-of-param");
+   }
+
+   @Test
    public void testAddressOf() throws IOException, URISyntaxException {
       compileAndCompare("test-address-of");
    }

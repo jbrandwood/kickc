@@ -215,11 +215,13 @@ div16u: {
     rts
 }
 test_8u: {
-    .label rem = $ff
-    .label dividend = $18
-    .label divisor = $19
-    .label res = $1a
+    .label rem = $18
+    .label dividend = $19
+    .label divisor = $1a
+    .label res = $1b
     .label i = $11
+    lda #0
+    sta rem
     lda #<$400
     sta line_cursor
     lda #>$400
@@ -283,10 +285,11 @@ test_8u: {
     divisors: .byte 5, 7, $b, $d, $11, $13
 }
 div8u: {
+    .label remainder = test_8u.rem
     .label dividend = $12
     .label quotient = $13
     .label return = $13
-    .label divisor = $19
+    .label divisor = $1a
     ldx #0
     txa
     sta quotient
@@ -314,7 +317,7 @@ div8u: {
     inx
     cpx #8
     bne b1
-    sty test_8u.rem
+    sty remainder
     rts
 }
 print_cls: {

@@ -1,9 +1,5 @@
 package dk.camelot64.kickc.model;
 
-import com.fasterxml.jackson.annotation.JsonCreator;
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonProperty;
-
 import java.util.List;
 
 /**
@@ -28,22 +24,6 @@ public class StatementCall extends StatementBase implements StatementLValue {
       this.procedureName = procedureName;
       this.parameters = parameters;
       this.parametersByAssignment = false;
-   }
-
-   @JsonCreator
-   StatementCall(
-         @JsonProperty("lValue") LValue lValue,
-         @JsonProperty("procedureName") String procedureName,
-         @JsonProperty("procedure") ProcedureRef procedure,
-         @JsonProperty("parameters") List<RValue> parameters,
-         @JsonProperty("parametersByAssignment") boolean parametersByAssignment,
-         @JsonProperty("index") Integer index) {
-      super(index);
-      this.lValue = lValue;
-      this.procedureName = procedureName;
-      this.procedure = procedure;
-      this.parameters = parameters;
-      this.parametersByAssignment = parametersByAssignment;
    }
 
    public LValue getlValue() {
@@ -74,7 +54,6 @@ public class StatementCall extends StatementBase implements StatementLValue {
       this.parameters = parameters;
    }
 
-   @JsonIgnore
    public int getNumParameters() {
       return parameters.size();
    }

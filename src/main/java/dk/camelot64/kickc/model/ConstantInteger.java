@@ -1,7 +1,5 @@
 package dk.camelot64.kickc.model;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-
 import java.util.ArrayList;
 
 /** SSA form constant integer value */
@@ -17,7 +15,6 @@ public class ConstantInteger implements ConstantValue {
       return number;
    }
 
-   @JsonIgnore
    public SymbolType getType(ProgramScope scope) {
       return getType();
    }

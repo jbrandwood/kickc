@@ -1,9 +1,5 @@
 package dk.camelot64.kickc.model;
 
-import com.fasterxml.jackson.annotation.JsonCreator;
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonProperty;
-
 import java.util.HashMap;
 
 /** The program scope containing the symbols of a program */
@@ -14,12 +10,11 @@ public class ProgramScope extends Scope {
       super("", null);
    }
 
-   @JsonCreator
    private ProgramScope(
-         @JsonProperty("name") String name,
-         @JsonProperty("symbols") HashMap<String, Symbol> symbols,
-         @JsonProperty("intermediateVarCount") int intermediateVarCount,
-         @JsonProperty("intermediateLabelCount") int intermediateLabelCount) {
+         String name,
+         HashMap<String, Symbol> symbols,
+         int intermediateVarCount,
+         int intermediateLabelCount) {
       super(name, symbols, intermediateVarCount, intermediateLabelCount);
    }
 
@@ -28,7 +23,6 @@ public class ProgramScope extends Scope {
       return new SymbolTypeProgram();
    }
 
-   @JsonIgnore
    public String getSymbolTableContents(Program program) {
       return toString(program, null);
    }

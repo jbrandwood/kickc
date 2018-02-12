@@ -1,7 +1,5 @@
 package dk.camelot64.kickc.model;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-
 /** A program */
 public class SymbolTypeProgram implements SymbolType {
 
@@ -10,7 +8,6 @@ public class SymbolTypeProgram implements SymbolType {
    }
 
    @Override
-   @JsonIgnore
    public String getTypeName() {
       return "PROGRAM";
    }

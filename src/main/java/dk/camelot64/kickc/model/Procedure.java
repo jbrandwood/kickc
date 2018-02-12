@@ -1,9 +1,5 @@
 package dk.camelot64.kickc.model;
 
-import com.fasterxml.jackson.annotation.JsonCreator;
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonProperty;
-
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -20,14 +16,13 @@ public class Procedure extends Scope {
       this.returnType = returnType;
    }
 
-   @JsonCreator
    private Procedure(
-         @JsonProperty("name") String name,
-         @JsonProperty("returntype") SymbolType returnType,
-         @JsonProperty("parameterNames") List<String> parameterNames,
-         @JsonProperty("symbols") HashMap<String, Symbol> symbols,
-         @JsonProperty("intermediateVarCount") int intermediateVarCount,
-         @JsonProperty("intermediateLabelCount") int intermediateLabelCount) {
+         String name,
+         SymbolType returnType,
+         List<String> parameterNames,
+         HashMap<String, Symbol> symbols,
+         int intermediateVarCount,
+         int intermediateLabelCount) {
       super(name, symbols, intermediateVarCount, intermediateLabelCount);
       this.returnType = returnType;
       this.parameterNames = parameterNames;
@@ -41,7 +36,6 @@ public class Procedure extends Scope {
       this.parameterNames = parameterNames;
    }
 
-   @JsonIgnore
    public Label getLabel() {
       return new Label(getFullName(), getScope(), false);
    }
@@ -50,7 +44,6 @@ public class Procedure extends Scope {
       return returnType;
    }
 
-   @JsonIgnore
    public List<Variable> getParameters() {
       ArrayList<Variable> parameters = new ArrayList<>();
       for(String name : parameterNames) {
@@ -108,7 +101,6 @@ public class Procedure extends Scope {
       return res.toString();
    }
 
-   @JsonIgnore
    public ProcedureRef getRef() {
       return new ProcedureRef(this.getFullName());
    }

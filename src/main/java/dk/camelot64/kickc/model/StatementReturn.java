@@ -1,8 +1,5 @@
 package dk.camelot64.kickc.model;
 
-import com.fasterxml.jackson.annotation.JsonCreator;
-import com.fasterxml.jackson.annotation.JsonProperty;
-
 /**
  * Return Statement inside procedure in Single Static Assignment Form.
  */
@@ -15,14 +12,6 @@ public class StatementReturn extends StatementBase {
 
    public StatementReturn(RValue value) {
       super(null);
-      this.value = value;
-   }
-
-   @JsonCreator
-   StatementReturn(
-         @JsonProperty("value") RValue value,
-         @JsonProperty("index") Integer index) {
-      super(index);
       this.value = value;
    }
 

@@ -1,17 +1,11 @@
 package dk.camelot64.kickc.model;
 
-import com.fasterxml.jackson.annotation.JsonCreator;
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonProperty;
-
 /** A function returning another type */
 public class SymbolTypeProcedure implements SymbolType {
 
    private SymbolType returnType;
 
-   @JsonCreator
-   public SymbolTypeProcedure(
-         @JsonProperty("returnType") SymbolType returnType) {
+   public SymbolTypeProcedure(SymbolType returnType) {
       this.returnType = returnType;
    }
 
@@ -20,7 +14,6 @@ public class SymbolTypeProcedure implements SymbolType {
    }
 
    @Override
-   @JsonIgnore
    public String getTypeName() {
       return returnType.getTypeName() + "()";
    }

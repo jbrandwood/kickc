@@ -1,9 +1,5 @@
 package dk.camelot64.kickc.model;
 
-import com.fasterxml.jackson.annotation.JsonCreator;
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonProperty;
-
 import java.util.*;
 
 /**
@@ -25,11 +21,10 @@ public class ControlFlowGraph {
       this.firstBlockRef = firstBlockRef;
    }
 
-   @JsonCreator
    public ControlFlowGraph(
-         @JsonProperty("blocks") Map<LabelRef, ControlFlowBlock> blocks,
-         @JsonProperty("firstBlockRef") LabelRef firstBlockRef,
-         @JsonProperty("sequence") List<LabelRef> sequence) {
+         Map<LabelRef, ControlFlowBlock> blocks,
+         LabelRef firstBlockRef,
+         List<LabelRef> sequence) {
       this.blocks = blocks;
       this.firstBlockRef = firstBlockRef;
       this.sequence = sequence;
@@ -43,12 +38,10 @@ public class ControlFlowGraph {
       blocks.put(block.getLabel(), block);
    }
 
-   @JsonIgnore
    public ControlFlowBlock getFirstBlock() {
       return getBlock(firstBlockRef);
    }
 
-   @JsonIgnore
    public Collection<ControlFlowBlock> getAllBlocks() {
       if(sequence != null) {
          ArrayList<ControlFlowBlock> blocks = new ArrayList<>();
@@ -162,7 +155,6 @@ public class ControlFlowGraph {
       this.sequence = sequence;
    }
 
-   @JsonIgnore
    public ControlFlowBlock getMainBlock() {
       for(ControlFlowBlock block : getAllBlocks()) {
          LabelRef label = block.getLabel();

@@ -1,9 +1,5 @@
 package dk.camelot64.kickc.model;
 
-import com.fasterxml.jackson.annotation.JsonCreator;
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonProperty;
-
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -42,14 +38,13 @@ public class ControlFlowBlock {
       this.conditionalSuccessor = null;
    }
 
-   @JsonCreator
    public ControlFlowBlock(
-         @JsonProperty("label") LabelRef label,
-         @JsonProperty("scope") ScopeRef scope,
-         @JsonProperty("statements") List<Statement> statements,
-         @JsonProperty("defaultSuccessor") LabelRef defaultSuccessor,
-         @JsonProperty("conditionalSuccessor") LabelRef conditionalSuccessor,
-         @JsonProperty("callSuccessor") LabelRef callSuccessor) {
+         LabelRef label,
+         ScopeRef scope,
+         List<Statement> statements,
+         LabelRef defaultSuccessor,
+         LabelRef conditionalSuccessor,
+         LabelRef callSuccessor) {
       this.label = label;
       this.scope = scope;
       this.statements = statements;
@@ -75,7 +70,7 @@ public class ControlFlowBlock {
     * <p>
     * Fails if there is no call statement
     *
-    * @param statement The statement to add.
+    * @param newStatement The statement to add.
     */
    public void addStatementBeforeCall(Statement newStatement) {
       ListIterator<Statement> listIterator = statements.listIterator();
@@ -198,7 +193,6 @@ public class ControlFlowBlock {
     *
     * @return
     */
-   @JsonIgnore
    public StatementPhiBlock getPhiBlock() {
       StatementPhiBlock phiBlock = null;
       if(statements.size() > 0 && statements.get(0) instanceof StatementPhiBlock) {
@@ -226,7 +220,6 @@ public class ControlFlowBlock {
     *
     * @return All successors
     */
-   @JsonIgnore
    public Collection<LabelRef> getSuccessors() {
       List<LabelRef> successors = new ArrayList<>();
       if(defaultSuccessor != null) {

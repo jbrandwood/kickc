@@ -1,9 +1,5 @@
 package dk.camelot64.kickc.model;
 
-import com.fasterxml.jackson.annotation.JsonCreator;
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonProperty;
-
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -19,10 +15,9 @@ public class StatementPhiBlock extends StatementBase {
     */
    private List<PhiVariable> phiVariables;
 
-   @JsonCreator
    public StatementPhiBlock(
-         @JsonProperty("phiVariables") List<PhiVariable> phiVariables,
-         @JsonProperty("index") Integer index) {
+         List<PhiVariable> phiVariables,
+         Integer index) {
       super(index);
       this.phiVariables = phiVariables;
    }
@@ -37,7 +32,6 @@ public class StatementPhiBlock extends StatementBase {
     *
     * @return The variables defined
     */
-   @JsonIgnore
    public List<VariableRef> getVariables() {
       ArrayList<VariableRef> vars = new ArrayList<>();
       for(PhiVariable phiVariable : phiVariables) {
@@ -150,10 +144,9 @@ public class StatementPhiBlock extends StatementBase {
          this.values = new ArrayList<>();
       }
 
-      @JsonCreator
       public PhiVariable(
-            @JsonProperty("variable") VariableRef variable,
-            @JsonProperty("values") List<PhiRValue> values) {
+            VariableRef variable,
+            List<PhiRValue> values) {
          this.variable = variable;
          this.values = values;
       }
@@ -209,7 +202,6 @@ public class StatementPhiBlock extends StatementBase {
          getPhirValue(predecessor).setrValue(rValue);
       }
 
-      @JsonIgnore
       public boolean isEmpty() {
          return this.values.isEmpty();
       }
@@ -252,10 +244,9 @@ public class StatementPhiBlock extends StatementBase {
          this.predecessor = predecessor;
       }
 
-      @JsonCreator
       public PhiRValue(
-            @JsonProperty("predecessor") LabelRef predecessor,
-            @JsonProperty("rValue") RValue rValue) {
+            LabelRef predecessor,
+            RValue rValue) {
          this.predecessor = predecessor;
          this.rValue = rValue;
       }

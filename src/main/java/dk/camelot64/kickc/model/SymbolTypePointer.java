@@ -1,17 +1,12 @@
 package dk.camelot64.kickc.model;
 
-import com.fasterxml.jackson.annotation.JsonCreator;
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonProperty;
-
 /** A pointer */
 public class SymbolTypePointer implements SymbolType {
 
    private SymbolType elementType;
 
-   @JsonCreator
    public SymbolTypePointer(
-         @JsonProperty("elementType") SymbolType elementType) {
+         SymbolType elementType) {
       this.elementType = elementType;
    }
 
@@ -24,7 +19,6 @@ public class SymbolTypePointer implements SymbolType {
    }
 
    @Override
-   @JsonIgnore
    public String getTypeName() {
       return elementType.getTypeName() + "*";
    }

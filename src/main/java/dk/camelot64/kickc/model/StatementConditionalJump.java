@@ -1,8 +1,5 @@
 package dk.camelot64.kickc.model;
 
-import com.fasterxml.jackson.annotation.JsonCreator;
-import com.fasterxml.jackson.annotation.JsonProperty;
-
 /**
  * Intermediate Compiler Form Statement with a conditional jump.
  * Intermediate form used for compiler optimization.
@@ -34,13 +31,12 @@ public class StatementConditionalJump extends StatementBase {
       this(rValue1, operator, rValue2, destination, null);
    }
 
-   @JsonCreator
    public StatementConditionalJump(
-         @JsonProperty("rValue1") RValue rValue1,
-         @JsonProperty("operator") Operator operator,
-         @JsonProperty("rValue2") RValue rValue2,
-         @JsonProperty("destination") LabelRef destination,
-         @JsonProperty("index") Integer index) {
+         RValue rValue1,
+         Operator operator,
+         RValue rValue2,
+         LabelRef destination,
+         Integer index) {
       super(index);
       this.rValue1 = rValue1;
       this.operator = operator;

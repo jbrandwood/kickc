@@ -1,7 +1,5 @@
 package dk.camelot64.kickc.model;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-
 /** A reference to a symbol (variable, procedure or label) */
 public class SymbolRef implements Value {
 
@@ -56,7 +54,6 @@ public class SymbolRef implements Value {
       }
    }
 
-   @JsonIgnore
    public int getScopeDepth() {
       int depth = 0;
       char[] chars = fullName.toCharArray();
@@ -66,12 +63,10 @@ public class SymbolRef implements Value {
       return depth / 2;
    }
 
-   @JsonIgnore
    public boolean isVersion() {
       return fullName.contains("#");
    }
 
-   @JsonIgnore
    public boolean isIntermediate() {
       if(
             fullName.contains(BEGIN_BLOCK_NAME) ||
@@ -79,12 +74,10 @@ public class SymbolRef implements Value {
       return fullName.contains("$") || fullName.contains("@");
    }
 
-   @JsonIgnore
    public boolean isProcExit() {
       return fullName.endsWith(PROCEXIT_BLOCK_NAME);
    }
 
-   @JsonIgnore
    public String getLocalName() {
       int lastScopeIdx = fullName.lastIndexOf("::");
       if(lastScopeIdx == -1) {
@@ -94,7 +87,6 @@ public class SymbolRef implements Value {
       }
    }
 
-   @JsonIgnore
    public String getScopeNames() {
       int lastScopeIdx = fullName.lastIndexOf("::");
       if(lastScopeIdx == -1) {

@@ -1,9 +1,5 @@
 package dk.camelot64.kickc.model;
 
-import com.fasterxml.jackson.annotation.JsonCreator;
-import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.annotation.JsonPropertyOrder;
-
 /**
  * Single Static Assignment Form Statement.
  * Intermediate form used for compiler optimization.
@@ -12,7 +8,6 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder;
  * <br>
  * <i> lValue := rValue1 &lt;operator&gt; rValue2 </i>
  */
-@JsonPropertyOrder({"lValue", "rValue1", "operator", "rValue2"})
 public class StatementAssignment extends StatementBase implements StatementLValue {
 
    /** The variable being assigned a value by the statement. */
@@ -41,13 +36,12 @@ public class StatementAssignment extends StatementBase implements StatementLValu
       this(lValue.getRef(), rValue2);
    }
 
-   @JsonCreator
    public StatementAssignment(
-         @JsonProperty("lValue1") LValue lValue,
-         @JsonProperty("rValue1") RValue rValue1,
-         @JsonProperty("operator") Operator operator,
-         @JsonProperty("rValue2") RValue rValue2,
-         @JsonProperty("index") Integer index) {
+         LValue lValue,
+         RValue rValue1,
+         Operator operator,
+         RValue rValue2,
+         Integer index) {
       super(index);
       this.lValue = lValue;
       this.rValue1 = rValue1;

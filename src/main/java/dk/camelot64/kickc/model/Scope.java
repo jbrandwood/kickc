@@ -1,9 +1,5 @@
 package dk.camelot64.kickc.model;
 
-import com.fasterxml.jackson.annotation.JsonCreator;
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonProperty;
-
 import java.util.*;
 
 /**
@@ -15,7 +11,6 @@ public abstract class Scope implements Symbol {
    private HashMap<String, Symbol> symbols;
    private int intermediateVarCount = 0;
    private int intermediateLabelCount = 1;
-   @JsonIgnore
    private Scope parentScope;
 
    public Scope(String name, Scope parentScope) {
@@ -24,12 +19,11 @@ public abstract class Scope implements Symbol {
       this.symbols = new LinkedHashMap<>();
    }
 
-   @JsonCreator
    public Scope(
-         @JsonProperty("name") String name,
-         @JsonProperty("symbols") HashMap<String, Symbol> symbols,
-         @JsonProperty("intermediateVarCount") int intermediateVarCount,
-         @JsonProperty("intermediateLabelCount") int intermediateLabelCount) {
+         String name,
+         HashMap<String, Symbol> symbols,
+         int intermediateVarCount,
+         int intermediateLabelCount) {
       this.name = name;
       this.symbols = symbols;
       this.intermediateVarCount = intermediateVarCount;
@@ -74,7 +68,6 @@ public abstract class Scope implements Symbol {
    }
 
    @Override
-   @JsonIgnore
    public Scope getScope() {
       return parentScope;
    }
@@ -85,11 +78,9 @@ public abstract class Scope implements Symbol {
    }
 
    @Override
-   @JsonIgnore
    public abstract SymbolType getType();
 
    @Override
-   @JsonIgnore
    public int getScopeDepth() {
       if(parentScope == null) {
          return 0;
@@ -190,7 +181,6 @@ public abstract class Scope implements Symbol {
       return getConstant(constantRef.getFullName());
    }
 
-   @JsonIgnore
    public Collection<Variable> getAllVariables(boolean includeSubScopes) {
       Collection<Variable> vars = new ArrayList<>();
       for(Symbol symbol : symbols.values()) {
@@ -227,7 +217,6 @@ public abstract class Scope implements Symbol {
     * @param includeSubScopes Include sub-scopes og sub-scopes
     * @return The scopes
     */
-   @JsonIgnore
    public Collection<Scope> getAllScopes(boolean includeSubScopes) {
       Collection<Scope> scopes = new ArrayList<>();
       for(Symbol symbol : symbols.values()) {
@@ -309,7 +298,6 @@ public abstract class Scope implements Symbol {
       return (Procedure) getSymbol(ref);
    }
 
-   @JsonIgnore
    public String toString(Program program, Class symbolClass) {
       VariableRegisterWeights registerWeights = program.getVariableRegisterWeights();
       StringBuilder res = new StringBuilder();
@@ -359,7 +347,6 @@ public abstract class Scope implements Symbol {
       return res.toString();
    }
 
-   @JsonIgnore
    public Collection<Symbol> getAllSymbols() {
       return symbols.values();
    }

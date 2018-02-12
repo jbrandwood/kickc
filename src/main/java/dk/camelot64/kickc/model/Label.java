@@ -1,9 +1,5 @@
 package dk.camelot64.kickc.model;
 
-import com.fasterxml.jackson.annotation.JsonCreator;
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonProperty;
-
 /** A jump label */
 public class Label implements Symbol {
 
@@ -21,10 +17,7 @@ public class Label implements Symbol {
       this.intermediate = intermediate;
    }
 
-   @JsonCreator
-   public Label(
-         @JsonProperty("name") String name,
-         @JsonProperty("intermediate") boolean intermediate) {
+   public Label( String name, boolean intermediate) {
       this.name = name;
       this.scope = null;
       this.intermediate = intermediate;
@@ -63,7 +56,6 @@ public class Label implements Symbol {
       return intermediate;
    }
 
-   @JsonIgnore
    public SymbolType getType() {
       return SymbolType.LABEL;
    }
@@ -101,7 +93,6 @@ public class Label implements Symbol {
       }
    }
 
-   @JsonIgnore
    public LabelRef getRef() {
       return new LabelRef(this);
    }

@@ -7,10 +7,12 @@ import dk.camelot64.kickc.fragment.AsmFragmentTemplateSynthesizer;
 import dk.camelot64.kickc.fragment.AsmFragmentTemplateUsages;
 import dk.camelot64.kickc.model.CompileError;
 import dk.camelot64.kickc.model.Program;
+import kickass.KickAssembler;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
+import java.io.File;
 import java.io.IOException;
 import java.net.URISyntaxException;
 
@@ -551,6 +553,17 @@ public class TestPrograms {
       Compiler compiler = new Compiler();
       compiler.addImportPath(testPath);
       Program program = compiler.compile(fileName);
+
+      helper.writeOutputFile(fileName, ".asm", program.getAsm().toString(false));
+      File asmFile = helper.getTmpFile(fileName, ".asm");
+      File asmPrgFile = helper.getTmpFile(fileName, ".prg");
+      File asmLogFile = helper.getTmpFile(fileName, ".klog");
+
+      int asmRes = KickAssembler.main2(new String[]{asmFile.getAbsolutePath(), "-log", asmLogFile.getAbsolutePath(), "-o", asmPrgFile.getAbsolutePath(), "-vicesymbols", "-showmem"});
+      if(asmRes!=0) {
+         fail("KickAssembling file failed!");
+      }
+
       boolean success = true;
       success &= helper.testOutput(fileName, ".asm", program.getAsm().toString(false));
       success &= helper.testOutput(fileName, ".sym", program.getScope().getSymbolTableContents(program));

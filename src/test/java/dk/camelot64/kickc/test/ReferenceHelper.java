@@ -30,6 +30,10 @@ public class ReferenceHelper {
       this.refPath = refPath;
    }
 
+   public static Path getTempDir() {
+      return tempDir;
+   }
+
    public boolean testOutput(
          String fileName,
          String extension,
@@ -89,16 +93,20 @@ public class ReferenceHelper {
       return Files.readAllLines(Paths.get(refURI), Charset.defaultCharset());
    }
 
-   private void writeOutputFile(String fileName, String extension, String outputString) throws IOException {
+   public File writeOutputFile(String fileName, String extension, String outputString) throws IOException {
       // Write output file
-      File file = new File(tempDir.toFile(), fileName + extension);
+      File file = getTmpFile(fileName, extension);
       FileOutputStream outputStream = new FileOutputStream(file);
       OutputStreamWriter writer = new OutputStreamWriter(outputStream);
       writer.write(outputString);
       writer.close();
       outputStream.close();
       System.out.println("Output written to " + file.getAbsolutePath());
+      return file;
    }
 
+   public File getTmpFile(String fileName, String extension) {
+      return new File(tempDir.toFile(), fileName + extension);
+   }
 
 }

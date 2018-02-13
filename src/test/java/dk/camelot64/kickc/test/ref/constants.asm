@@ -1,6 +1,7 @@
 .pc = $801 "Basic"
 :BasicUpstart(main)
 .pc = $80d "Program"
+  .label SCREEN = $400
   .label BGCOL = $d021
   .const GREEN = 5
   .const RED = 2
@@ -149,16 +150,16 @@ test_bytes: {
     .const bb = 0
     .const bc = bb+2
     .const bd = bc-4
-    lda #<$400
+    lda #<SCREEN
     sta line_cursor
-    lda #>$400
+    lda #>SCREEN
     sta line_cursor+1
     lda #0
     sta assert_byte.c
     ldx #bb
-    lda #<$400
+    lda #<SCREEN
     sta char_cursor
-    lda #>$400
+    lda #>SCREEN
     sta char_cursor+1
     lda #<msg
     sta assert_byte.msg
@@ -228,9 +229,9 @@ assert_byte: {
 }
 print_cls: {
     .label sc = 2
-    lda #<$400
+    lda #<SCREEN
     sta sc
-    lda #>$400
+    lda #>SCREEN
     sta sc+1
   b1:
     lda #' '
@@ -241,10 +242,10 @@ print_cls: {
     inc sc+1
   !:
     lda sc+1
-    cmp #>$400+$3e8
+    cmp #>SCREEN+$3e8
     bne b1
     lda sc
-    cmp #<$400+$3e8
+    cmp #<SCREEN+$3e8
     bne b1
     rts
 }

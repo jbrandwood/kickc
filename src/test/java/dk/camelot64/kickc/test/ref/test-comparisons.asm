@@ -1,6 +1,7 @@
 .pc = $801 "Basic"
 :BasicUpstart(main)
 .pc = $80d "Program"
+  .label SCREEN = $400
   .label char_cursor = 9
   .label line_cursor = 4
   jsr main
@@ -9,15 +10,15 @@ main: {
     .label a = 2
     .label i = 3
     jsr print_cls
-    lda #<$400
+    lda #<SCREEN
     sta line_cursor
-    lda #>$400
+    lda #>SCREEN
     sta line_cursor+1
     lda #0
     sta i
-    lda #<$400
+    lda #<SCREEN
     sta char_cursor
-    lda #>$400
+    lda #>SCREEN
     sta char_cursor+1
     lda #7
     sta a
@@ -486,9 +487,9 @@ print_str: {
 }
 print_cls: {
     .label sc = 4
-    lda #<$400
+    lda #<SCREEN
     sta sc
-    lda #>$400
+    lda #>SCREEN
     sta sc+1
   b1:
     lda #' '
@@ -499,10 +500,10 @@ print_cls: {
     inc sc+1
   !:
     lda sc+1
-    cmp #>$400+$3e8
+    cmp #>SCREEN+$3e8
     bne b1
     lda sc
-    cmp #<$400+$3e8
+    cmp #<SCREEN+$3e8
     bne b1
     rts
 }

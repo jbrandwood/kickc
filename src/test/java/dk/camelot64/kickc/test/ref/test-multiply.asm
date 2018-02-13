@@ -1,6 +1,7 @@
 .pc = $801 "Basic"
 :BasicUpstart(main)
 .pc = $80d "Program"
+  .label SCREEN = $400
   .label BGCOL = $d021
   .label char_cursor = $a
   .label line_cursor = 4
@@ -469,9 +470,9 @@ multiply_tables_compare: {
     beq b2
     lda #2
     sta BGCOL
-    lda #<$400
+    lda #<SCREEN
     sta char_cursor
-    lda #>$400
+    lda #>SCREEN
     sta char_cursor+1
     lda #<str
     sta print_str.str
@@ -489,9 +490,9 @@ multiply_tables_compare: {
     lda kc_sqr+1
     sta print_word.w+1
     jsr print_word
-    lda #<$400
+    lda #<SCREEN
     sta line_cursor
-    lda #>$400
+    lda #>SCREEN
     sta line_cursor+1
   breturn:
     rts
@@ -512,18 +513,18 @@ multiply_tables_compare: {
     cmp #<mul_sqr1_lo+$200*4
     bcc b1
   !:
-    lda #<$400
+    lda #<SCREEN
     sta char_cursor
-    lda #>$400
+    lda #>SCREEN
     sta char_cursor+1
     lda #<str2
     sta print_str.str
     lda #>str2
     sta print_str.str+1
     jsr print_str
-    lda #<$400
+    lda #<SCREEN
     sta line_cursor
-    lda #>$400
+    lda #>SCREEN
     sta line_cursor+1
     jsr print_ln
     lda line_cursor
@@ -693,9 +694,9 @@ init_multiply: {
 }
 print_cls: {
     .label sc = 4
-    lda #<$400
+    lda #<SCREEN
     sta sc
-    lda #>$400
+    lda #>SCREEN
     sta sc+1
   b1:
     lda #' '
@@ -706,10 +707,10 @@ print_cls: {
     inc sc+1
   !:
     lda sc+1
-    cmp #>$400+$3e8
+    cmp #>SCREEN+$3e8
     bne b1
     lda sc
-    cmp #<$400+$3e8
+    cmp #<SCREEN+$3e8
     bne b1
     rts
 }

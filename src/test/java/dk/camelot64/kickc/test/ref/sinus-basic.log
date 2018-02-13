@@ -26,7 +26,9 @@ void main() {
 Importing print
 PARSING src/test/java/dk/camelot64/kickc/test/kc/print.kc
 
-byte* line_cursor = $0400;
+const byte* SCREEN = $0400;
+
+byte* line_cursor = SCREEN;
 byte* char_cursor = line_cursor;
 
 // Print a zero-terminated string
@@ -83,9 +85,11 @@ void print_char(byte ch) {
 
 // Clear the screen
 void print_cls() {
-    for(byte* sc=$0400; sc!=$0400+1000; sc++) {
+    for(byte* sc=SCREEN; sc!=SCREEN+1000; sc++) {
         *sc = ' ';
     }
+    line_cursor = SCREEN;
+    char_cursor = line_cursor;
 }
 
 
@@ -375,7 +379,8 @@ void mulFACby10() {
 
 
 STATEMENTS
-  (byte*) line_cursor ← (word/signed word/dword/signed dword) 1024
+  (byte*) SCREEN ← (word/signed word/dword/signed dword) 1024
+  (byte*) line_cursor ← (byte*) SCREEN
   (byte*) char_cursor ← (byte*) line_cursor
 proc (void()) print_str((byte*) print_str::str)
 print_str::@1:
@@ -451,13 +456,15 @@ print_char::@return:
   return 
 endproc // print_char()
 proc (void()) print_cls()
-  (byte*) print_cls::sc ← (word/signed word/dword/signed dword) 1024
+  (byte*) print_cls::sc ← (byte*) SCREEN
 print_cls::@1:
   *((byte*) print_cls::sc) ← (byte) ' '
   (byte*) print_cls::sc ← ++ (byte*) print_cls::sc
-  (word/signed word/dword/signed dword~) print_cls::$0 ← (word/signed word/dword/signed dword) 1024 + (word/signed word/dword/signed dword) 1000
-  (boolean~) print_cls::$1 ← (byte*) print_cls::sc != (word/signed word/dword/signed dword~) print_cls::$0
+  (byte*~) print_cls::$0 ← (byte*) SCREEN + (word/signed word/dword/signed dword) 1000
+  (boolean~) print_cls::$1 ← (byte*) print_cls::sc != (byte*~) print_cls::$0
   if((boolean~) print_cls::$1) goto print_cls::@1
+  (byte*) line_cursor ← (byte*) SCREEN
+  (byte*) char_cursor ← (byte*) line_cursor
 print_cls::@return:
   return 
 endproc // print_cls()
@@ -645,6 +652,7 @@ endproc // main()
   call main 
 
 SYMBOLS
+(byte*) SCREEN
 (void()) addARGtoFAC()
 (label) addARGtoFAC::@return
 (void()) addMEMtoFAC((byte*) addMEMtoFAC::mem)
@@ -721,7 +729,7 @@ SYMBOLS
 (label) print_char::@return
 (byte) print_char::ch
 (void()) print_cls()
-(word/signed word/dword/signed dword~) print_cls::$0
+(byte*~) print_cls::$0
 (boolean~) print_cls::$1
 (label) print_cls::@1
 (label) print_cls::@return
@@ -807,14 +815,14 @@ SYMBOLS
 (void()) tanFAC()
 (label) tanFAC::@return
 
-Promoting word/signed word/dword/signed dword to byte* in line_cursor ← ((byte*)) 1024
-Promoting word/signed word/dword/signed dword to byte* in print_cls::sc ← ((byte*)) 1024
+Promoting word/signed word/dword/signed dword to byte* in SCREEN ← ((byte*)) 1024
 Promoting byte/word/signed word/dword/signed dword to byte* in memLo ← ((byte*)) 254
 Promoting byte/word/signed word/dword/signed dword to byte* in memHi ← ((byte*)) 255
 Promoting word/dword/signed dword to byte* in main::f_2pi ← ((byte*)) 58085
 INITIAL CONTROL FLOW GRAPH
 @begin: scope:[]  from
-  (byte*) line_cursor ← ((byte*)) (word/signed word/dword/signed dword) 1024
+  (byte*) SCREEN ← ((byte*)) (word/signed word/dword/signed dword) 1024
+  (byte*) line_cursor ← (byte*) SCREEN
   (byte*) char_cursor ← (byte*) line_cursor
   to:@1
 print_str: scope:[print_str]  from
@@ -928,16 +936,18 @@ print_char::@return: scope:[print_char]  from print_char
 @7: scope:[]  from @6
   to:@8
 print_cls: scope:[print_cls]  from
-  (byte*) print_cls::sc ← ((byte*)) (word/signed word/dword/signed dword) 1024
+  (byte*) print_cls::sc ← (byte*) SCREEN
   to:print_cls::@1
 print_cls::@1: scope:[print_cls]  from print_cls print_cls::@1
   *((byte*) print_cls::sc) ← (byte) ' '
   (byte*) print_cls::sc ← ++ (byte*) print_cls::sc
-  (word/signed word/dword/signed dword~) print_cls::$0 ← (word/signed word/dword/signed dword) 1024 + (word/signed word/dword/signed dword) 1000
-  (boolean~) print_cls::$1 ← (byte*) print_cls::sc != (word/signed word/dword/signed dword~) print_cls::$0
+  (byte*~) print_cls::$0 ← (byte*) SCREEN + (word/signed word/dword/signed dword) 1000
+  (boolean~) print_cls::$1 ← (byte*) print_cls::sc != (byte*~) print_cls::$0
   if((boolean~) print_cls::$1) goto print_cls::@1
   to:print_cls::@2
 print_cls::@2: scope:[print_cls]  from print_cls::@1
+  (byte*) line_cursor ← (byte*) SCREEN
+  (byte*) char_cursor ← (byte*) line_cursor
   to:print_cls::@return
 print_cls::@return: scope:[print_cls]  from print_cls::@2
   return 
@@ -1325,7 +1335,8 @@ Completing Phi functions...
 
 CONTROL FLOW GRAPH SSA WITH ASSIGNMENT CALL & RETURN
 @begin: scope:[]  from
-  (byte*) line_cursor#0 ← ((byte*)) (word/signed word/dword/signed dword) 1024
+  (byte*) SCREEN#0 ← ((byte*)) (word/signed word/dword/signed dword) 1024
+  (byte*) line_cursor#0 ← (byte*) SCREEN#0
   (byte*) char_cursor#0 ← (byte*) line_cursor#0
   to:@8
 print_ln: scope:[print_ln]  from main::@15
@@ -1645,6 +1656,8 @@ SYMBOL TABLE SSA
 (label) @8
 (label) @begin
 (label) @end
+(byte*) SCREEN
+(byte*) SCREEN#0
 (void()) addMEMtoFAC((byte*) addMEMtoFAC::mem)
 (label) addMEMtoFAC::@1
 (label) addMEMtoFAC::@return
@@ -1905,7 +1918,7 @@ Not aliassing across scopes: line_cursor#9 line_cursor#2
 Not aliassing across scopes: char_cursor#26 char_cursor#2
 Not aliassing across scopes: char_cursor#28 char_cursor#13
 Not aliassing across scopes: line_cursor#11 line_cursor#4
-Alias (byte*) char_cursor#0 = (byte*) line_cursor#0 (byte*) char_cursor#35 (byte*) line_cursor#16 (byte*) char_cursor#33 (byte*) line_cursor#14 
+Alias (byte*) SCREEN#0 = (byte*) line_cursor#0 (byte*) char_cursor#0 (byte*) char_cursor#35 (byte*) line_cursor#16 (byte*) char_cursor#33 (byte*) line_cursor#14 
 Alias (byte*) line_cursor#1 = (byte*~) print_ln::$0 (byte*) line_cursor#7 (byte*) char_cursor#1 (byte*) line_cursor#8 (byte*) char_cursor#16 (byte*) line_cursor#2 (byte*) char_cursor#2 
 Alias (byte) print_byte::b#0 = (byte~) print_word::$0 
 Alias (word) print_word::w#1 = (word) print_word::w#2 
@@ -1954,8 +1967,8 @@ Not aliassing across scopes: divMEMbyFAC::mem#1 divMEMbyFAC::mem#0
 Not aliassing across scopes: prepareMEM::mem#3 divMEMbyFAC::mem#1
 Not aliassing across scopes: mulFACbyMEM::mem#2 mulFACbyMEM::mem#1
 Not aliassing across scopes: prepareMEM::mem#4 mulFACbyMEM::mem#2
-Not aliassing across scopes: char_cursor#44 char_cursor#0
-Not aliassing across scopes: line_cursor#26 char_cursor#0
+Not aliassing across scopes: char_cursor#44 SCREEN#0
+Not aliassing across scopes: line_cursor#26 SCREEN#0
 Not aliassing across scopes: setMEMtoFAC::mem#0 main::f_127#0
 Not aliassing across scopes: mulFACbyMEM::mem#0 main::f_2pi#0
 Not aliassing across scopes: setMEMtoFAC::mem#1 main::f_i#0
@@ -1982,8 +1995,8 @@ Redundant Phi (byte*) char_cursor#20 (byte*) char_cursor#10
 Redundant Phi (byte*) char_cursor#21 (byte*) char_cursor#10
 Redundant Phi (byte*) addMEMtoFAC::mem#1 (byte*) addMEMtoFAC::mem#0
 Redundant Phi (byte*) divMEMbyFAC::mem#1 (byte*) divMEMbyFAC::mem#0
-Redundant Phi (byte*) char_cursor#44 (byte*) char_cursor#0
-Redundant Phi (byte*) line_cursor#26 (byte*) char_cursor#0
+Redundant Phi (byte*) char_cursor#44 (byte*) SCREEN#0
+Redundant Phi (byte*) line_cursor#26 (byte*) SCREEN#0
 Redundant Phi (byte*) char_cursor#11 (byte*) char_cursor#18
 Redundant Phi (byte*) line_cursor#10 (byte*) line_cursor#1
 Redundant Phi (byte*) char_cursor#12 (byte*) line_cursor#1
@@ -1993,7 +2006,7 @@ Succesful SSA optimization Pass2RedundantPhiElimination
 Simple Condition (boolean~) print_ln::$1 if((byte*) line_cursor#1<(byte*) char_cursor#10) goto print_ln::@1
 Simple Condition (boolean~) main::$15 if((byte) main::i#1!=(byte/signed byte/word/signed word/dword/signed dword) 26) goto main::@1
 Succesful SSA optimization Pass2ConditionalJumpSimplification
-Constant (const byte*) char_cursor#0 = ((byte*))1024
+Constant (const byte*) SCREEN#0 = ((byte*))1024
 Constant (const string) print_byte::hextab#0 = print_byte::$4
 Constant (const byte*) memLo#0 = ((byte*))254
 Constant (const byte*) memHi#0 = ((byte*))255
@@ -2079,19 +2092,14 @@ Inlining constant with var siblings (const byte*) mulFACbyMEM::mem#0
 Inlining constant with var siblings (const byte[]) mulFACbyMEM::mem#1
 Inlining constant with var siblings (const byte) main::i#0
 Inlining constant with var siblings (const byte) main::i#0
-Inlining constant with var siblings (const byte*) char_cursor#0
-Inlining constant with var siblings (const byte*) char_cursor#0
-Inlining constant with var siblings (const byte*) char_cursor#0
-Inlining constant with var siblings (const byte*) char_cursor#0
 Constant inlined addMEMtoFAC::mem#0 = (const byte[]) main::f_127#0
 Constant inlined setFAC::w#2 = (byte/signed byte/word/signed word/dword/signed dword) 25
 Constant inlined prepareMEM::mem#2 = (const byte[]) main::f_127#0
-Constant inlined prepareMEM::mem#3 = (const byte[]) main::f_i#0
 Constant inlined divMEMbyFAC::mem#0 = (const byte[]) main::f_i#0
+Constant inlined prepareMEM::mem#3 = (const byte[]) main::f_i#0
 Constant inlined main::i#0 = (byte/signed byte/word/signed word/dword/signed dword) 1
 Constant inlined setMEMtoFAC::mem#1 = (const byte[]) main::f_i#0
 Constant inlined mulFACbyMEM::mem#0 = (const byte*) main::f_2pi#0
-Constant inlined char_cursor#0 = ((byte*))(word/signed word/dword/signed dword) 1024
 Constant inlined print_byte::$4 = (const string) print_byte::hextab#0
 Constant inlined setMEMtoFAC::mem#0 = (const byte[]) main::f_127#0
 Constant inlined mulFACbyMEM::mem#1 = (const byte[]) main::f_127#0
@@ -2241,8 +2249,8 @@ main::@4: scope:[main]  from main::@3
   [9] call setMEMtoFAC param-assignment [ ] ( main:2 [ ] )
   to:main::@1
 main::@1: scope:[main]  from main::@17 main::@4
-  [10] (byte*) line_cursor#13 ← phi( main::@17/(byte*) line_cursor#1 main::@4/((byte*))(word/signed word/dword/signed dword) 1024 ) [ main::i#10 char_cursor#32 line_cursor#13 ] ( main:2 [ main::i#10 char_cursor#32 line_cursor#13 ] )
-  [10] (byte*) char_cursor#32 ← phi( main::@17/(byte*~) char_cursor#48 main::@4/((byte*))(word/signed word/dword/signed dword) 1024 ) [ main::i#10 char_cursor#32 line_cursor#13 ] ( main:2 [ main::i#10 char_cursor#32 line_cursor#13 ] )
+  [10] (byte*) line_cursor#13 ← phi( main::@17/(byte*) line_cursor#1 main::@4/(const byte*) SCREEN#0 ) [ main::i#10 char_cursor#32 line_cursor#13 ] ( main:2 [ main::i#10 char_cursor#32 line_cursor#13 ] )
+  [10] (byte*) char_cursor#32 ← phi( main::@17/(byte*~) char_cursor#48 main::@4/(const byte*) SCREEN#0 ) [ main::i#10 char_cursor#32 line_cursor#13 ] ( main:2 [ main::i#10 char_cursor#32 line_cursor#13 ] )
   [10] (byte) main::i#10 ← phi( main::@17/(byte) main::i#1 main::@4/(byte/signed byte/word/signed word/dword/signed dword) 1 ) [ main::i#10 char_cursor#32 line_cursor#13 ] ( main:2 [ main::i#10 char_cursor#32 line_cursor#13 ] )
   [11] (word) setFAC::w#1 ← ((word)) (byte) main::i#10 [ main::i#10 char_cursor#32 line_cursor#13 setFAC::w#1 ] ( main:2 [ main::i#10 char_cursor#32 line_cursor#13 setFAC::w#1 ] )
   [12] call setFAC param-assignment [ main::i#10 char_cursor#32 line_cursor#13 ] ( main:2 [ main::i#10 char_cursor#32 line_cursor#13 ] )
@@ -2514,6 +2522,7 @@ Loop head: print_ln::@1 tails: print_ln::@1 blocks: print_ln::@1  depth: 2
 
 
 VARIABLE REGISTER WEIGHTS
+(byte*) SCREEN
 (void()) addMEMtoFAC((byte*) addMEMtoFAC::mem)
 (byte*) addMEMtoFAC::mem
 (byte*) char_cursor
@@ -2637,6 +2646,7 @@ INITIAL ASM
 :BasicUpstart(main)
 .pc = $80d "Program"
 //SEG1 Global Constants & labels
+  .label SCREEN = $400
   .label memLo = $fe
   .label memHi = $ff
   .label line_cursor = 3
@@ -2693,15 +2703,15 @@ main: {
     jsr setMEMtoFAC
   //SEG21 [10] phi from main::@4 to main::@1 [phi:main::@4->main::@1]
   b1_from_b4:
-  //SEG22 [10] phi (byte*) line_cursor#13 = ((byte*))(word/signed word/dword/signed dword) 1024 [phi:main::@4->main::@1#0] -- pbuz1=pbuc1 
-    lda #<$400
+  //SEG22 [10] phi (byte*) line_cursor#13 = (const byte*) SCREEN#0 [phi:main::@4->main::@1#0] -- pbuz1=pbuc1 
+    lda #<SCREEN
     sta line_cursor
-    lda #>$400
+    lda #>SCREEN
     sta line_cursor+1
-  //SEG23 [10] phi (byte*) char_cursor#32 = ((byte*))(word/signed word/dword/signed dword) 1024 [phi:main::@4->main::@1#1] -- pbuz1=pbuc1 
-    lda #<$400
+  //SEG23 [10] phi (byte*) char_cursor#32 = (const byte*) SCREEN#0 [phi:main::@4->main::@1#1] -- pbuz1=pbuc1 
+    lda #<SCREEN
     sta char_cursor
-    lda #>$400
+    lda #>SCREEN
     sta char_cursor+1
   //SEG24 [10] phi (byte) main::i#10 = (byte/signed byte/word/signed word/dword/signed dword) 1 [phi:main::@4->main::@1#2] -- vbuz1=vbuc1 
     lda #1
@@ -3286,6 +3296,7 @@ ASSEMBLER BEFORE OPTIMIZATION
 :BasicUpstart(main)
 .pc = $80d "Program"
 //SEG1 Global Constants & labels
+  .label SCREEN = $400
   .label memLo = $fe
   .label memHi = $ff
   .label line_cursor = 3
@@ -3342,15 +3353,15 @@ main: {
     jsr setMEMtoFAC
   //SEG21 [10] phi from main::@4 to main::@1 [phi:main::@4->main::@1]
   b1_from_b4:
-  //SEG22 [10] phi (byte*) line_cursor#13 = ((byte*))(word/signed word/dword/signed dword) 1024 [phi:main::@4->main::@1#0] -- pbuz1=pbuc1 
-    lda #<$400
+  //SEG22 [10] phi (byte*) line_cursor#13 = (const byte*) SCREEN#0 [phi:main::@4->main::@1#0] -- pbuz1=pbuc1 
+    lda #<SCREEN
     sta line_cursor
-    lda #>$400
+    lda #>SCREEN
     sta line_cursor+1
-  //SEG23 [10] phi (byte*) char_cursor#32 = ((byte*))(word/signed word/dword/signed dword) 1024 [phi:main::@4->main::@1#1] -- pbuz1=pbuc1 
-    lda #<$400
+  //SEG23 [10] phi (byte*) char_cursor#32 = (const byte*) SCREEN#0 [phi:main::@4->main::@1#1] -- pbuz1=pbuc1 
+    lda #<SCREEN
     sta char_cursor
-    lda #>$400
+    lda #>SCREEN
     sta char_cursor+1
   //SEG24 [10] phi (byte) main::i#10 = (byte/signed byte/word/signed word/dword/signed dword) 1 [phi:main::@4->main::@1#2] -- vbuz1=vbuc1 
     lda #1
@@ -3917,6 +3928,8 @@ FINAL SYMBOL TABLE
 (label) @36
 (label) @begin
 (label) @end
+(byte*) SCREEN
+(const byte*) SCREEN#0 SCREEN = ((byte*))(word/signed word/dword/signed dword) 1024
 (void()) addMEMtoFAC((byte*) addMEMtoFAC::mem)
 (label) addMEMtoFAC::@1
 (label) addMEMtoFAC::@return
@@ -4046,6 +4059,7 @@ Score: 4973
 :BasicUpstart(main)
 .pc = $80d "Program"
 //SEG1 Global Constants & labels
+  .label SCREEN = $400
   .label memLo = $fe
   .label memHi = $ff
   .label line_cursor = 3
@@ -4085,15 +4099,15 @@ main: {
     sta setMEMtoFAC.mem+1
     jsr setMEMtoFAC
   //SEG21 [10] phi from main::@4 to main::@1 [phi:main::@4->main::@1]
-  //SEG22 [10] phi (byte*) line_cursor#13 = ((byte*))(word/signed word/dword/signed dword) 1024 [phi:main::@4->main::@1#0] -- pbuz1=pbuc1 
-    lda #<$400
+  //SEG22 [10] phi (byte*) line_cursor#13 = (const byte*) SCREEN#0 [phi:main::@4->main::@1#0] -- pbuz1=pbuc1 
+    lda #<SCREEN
     sta line_cursor
-    lda #>$400
+    lda #>SCREEN
     sta line_cursor+1
-  //SEG23 [10] phi (byte*) char_cursor#32 = ((byte*))(word/signed word/dword/signed dword) 1024 [phi:main::@4->main::@1#1] -- pbuz1=pbuc1 
-    lda #<$400
+  //SEG23 [10] phi (byte*) char_cursor#32 = (const byte*) SCREEN#0 [phi:main::@4->main::@1#1] -- pbuz1=pbuc1 
+    lda #<SCREEN
     sta char_cursor
-    lda #>$400
+    lda #>SCREEN
     sta char_cursor+1
   //SEG24 [10] phi (byte) main::i#10 = (byte/signed byte/word/signed word/dword/signed dword) 1 [phi:main::@4->main::@1#2] -- vbuz1=vbuc1 
     lda #1

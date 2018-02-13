@@ -1,6 +1,7 @@
 .pc = $801 "Basic"
 :BasicUpstart(main)
 .pc = $80d "Program"
+  .label SCREEN = $400
   .label memLo = $fe
   .label memHi = $ff
   .label line_cursor = 3
@@ -20,13 +21,13 @@ main: {
     lda #>f_127
     sta setMEMtoFAC.mem+1
     jsr setMEMtoFAC
-    lda #<$400
+    lda #<SCREEN
     sta line_cursor
-    lda #>$400
+    lda #>SCREEN
     sta line_cursor+1
-    lda #<$400
+    lda #<SCREEN
     sta char_cursor
-    lda #>$400
+    lda #>SCREEN
     sta char_cursor+1
     lda #1
     sta i

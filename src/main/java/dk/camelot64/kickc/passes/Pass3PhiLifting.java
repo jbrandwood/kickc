@@ -46,17 +46,7 @@ public class Pass3PhiLifting {
                         newVar = ((VariableVersion) lValVar).getVersionOf().createVersion();
                      } else {
                         throw new RuntimeException("Only versions! " + phiVariable.getVariable());
-                        //   Symbol predecessorSymbol = programScope.getSymbol(predecessorRef);
-                        //   newVar = predecessorSymbol.getScope().addVariableIntermediate();
                      }
-                     // If the PHI LValue does not work when lifting - try the rValue instead! Original code below
-                     //if(rValVarRef.isVersion()) {
-                     //   Variable rValVar = program.getScope().getVariable(rValVarRef);
-                     //   newVar = ((VariableVersion) rValVar).getVersionOf().createVersion();
-                     //} else {
-                     //   Symbol predecessorSymbol = programScope.getSymbol(predecessorRef);
-                     //   newVar = predecessorSymbol.getScope().addVariableIntermediate();
-                     //}
                      Symbol phiLValue = programScope.getSymbol(phiVariable.getVariable());
                      newVar.setType(phiLValue.getType());
                      newVar.setInferredType(true);
@@ -102,6 +92,21 @@ public class Pass3PhiLifting {
                      } else {
                         predecessorBlock.addStatement(newAssignment);
                         phiRValue.setrValue(newVar.getRef());
+                     }
+                  }
+               }
+            }
+            if(newBlocks.size() > 0) {
+               // If new blocks have been inserted: Update the predecessors of all phi values
+               for(StatementPhiBlock.PhiVariable phiVariable : phiBlock.getPhiVariables()) {
+                  for(StatementPhiBlock.PhiRValue phiRValue : phiVariable.getValues()) {
+                     LabelRef predecessor = phiRValue.getPredecessor();
+                     LabelRef newBlock = newBlocks.get(predecessor);
+                     if(newBlock != null) {
+                        phiRValue.setPredecessor(newBlock);
+                        program.getLog().append("Fixing phi predecessor for " + phiVariable.getVariable().toString() +
+                              " to new block ( " + predecessor.toString() + " -> " + newBlock.toString() + " ) " +
+                              "during phi lifting.");
                      }
                   }
                }

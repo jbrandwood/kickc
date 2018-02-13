@@ -1,22 +1,23 @@
 .pc = $801 "Basic"
 :BasicUpstart(main)
 .pc = $80d "Program"
+  .label SCREEN = $400
   .label char_cursor = 6
   .label line_cursor = 2
   jsr main
 main: {
-    lda #<$400
+    lda #<SCREEN
     sta char_cursor
-    lda #>$400
+    lda #>SCREEN
     sta char_cursor+1
     lda #<msg
     sta print_str.str
     lda #>msg
     sta print_str.str+1
     jsr print_str
-    lda #<$400
+    lda #<SCREEN
     sta line_cursor
-    lda #>$400
+    lda #>SCREEN
     sta line_cursor+1
     jsr print_ln
     lda line_cursor

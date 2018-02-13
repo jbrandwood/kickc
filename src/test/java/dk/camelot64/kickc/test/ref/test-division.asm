@@ -4,6 +4,7 @@
   .label SCREEN = $400
   .label char_cursor = 8
   .label line_cursor = 3
+  .label rem8s = $e
   .label rem16u = $a
   jsr main
 main: {
@@ -220,12 +221,11 @@ div16u: {
     rts
 }
 test_8u: {
-    .label rem = $14
     .label dividend = 7
     .label divisor = $e
+    .label res = $f
     .label i = 2
     lda #0
-    sta rem
     sta i
   b1:
     ldy i
@@ -235,13 +235,9 @@ test_8u: {
     sta divisor
     lda dividend
     sta div8u.dividend
-    lda #<rem
-    sta div8u.remainder
-    lda #>rem
-    sta div8u.remainder+1
     jsr div8u
     lda div8u.return
-    tax
+    sta res
     lda line_cursor
     sta char_cursor
     lda line_cursor+1
@@ -260,15 +256,15 @@ test_8u: {
     lda #>str1
     sta print_str.str+1
     jsr print_str
-    stx print_byte.b
+    lda res
+    sta print_byte.b
     jsr print_byte
     lda #<str2
     sta print_str.str
     lda #>str2
     sta print_str.str+1
     jsr print_str
-    lda rem
-    sta print_byte.b
+    stx print_byte.b
     jsr print_byte
     jsr print_ln
     inc i
@@ -287,7 +283,6 @@ div8u: {
     .label quotient = $10
     .label return = $10
     .label divisor = $e
-    .label remainder = 5
     ldx #0
     txa
     sta quotient
@@ -316,14 +311,13 @@ div8u: {
     cpx #8
     bne b1
     tya
-    ldy #0
-    sta (remainder),y
+    tax
     rts
 }
 test_8s: {
     .label dividend = 7
-    .label divisor = $15
-    .label res = $e
+    .label divisor = $14
+    .label res = $f
     .label i = 2
     lda #<SCREEN
     sta line_cursor
@@ -334,6 +328,7 @@ test_8s: {
     lda #>SCREEN
     sta char_cursor+1
     lda #0
+    sta rem8s
     tax
     sta i
   b1:
@@ -368,7 +363,8 @@ test_8s: {
     lda #>str2
     sta print_str.str+1
     jsr print_str
-    stx print_sbyte.b
+    lda rem8s
+    sta print_sbyte.b
     jsr print_sbyte
     jsr print_ln
     inc i
@@ -406,7 +402,6 @@ print_sbyte: {
 }
 div8s: {
     .label neg = $11
-    .label rem8u = $16
     cmp #0
     bpl b16
     eor #$ff
@@ -427,29 +422,23 @@ div8s: {
     eor #1
     sta neg
   b4:
-    lda #0
-    sta rem8u
     sty div8u.dividend
     stx div8u.divisor
-    lda #<rem8u
-    sta div8u.remainder
-    lda #>rem8u
-    sta div8u.remainder+1
     jsr div8u
     lda div8u.return
     tay
     lda neg
     bne b5
     tya
-    ldx rem8u
+    stx rem8s
   breturn:
     rts
   b5:
-    lda rem8u
+    txa
     eor #$ff
     clc
     adc #1
-    tax
+    sta rem8s
     tya
     eor #$ff
     clc

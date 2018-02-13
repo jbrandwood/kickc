@@ -1,11 +1,13 @@
 // Binary division implementation
 
+// Remainder after signed 8 bit division
+byte rem8u =0;
 
 // Performs division on two 8 bit unsigned bytes
 // Returns dividend/divisor.
-// If remainder is non-null it will be set to the remainder.
+// The remainder will be set into the global variable rem8u
 // Implemented using simple binary division
-byte div8u(byte dividend, byte divisor, byte* remainder) {
+byte div8u(byte dividend, byte divisor) {
     byte rem = 0;
     byte quotient = 0;
     for( byte i : 0..7) {
@@ -20,7 +22,7 @@ byte div8u(byte dividend, byte divisor, byte* remainder) {
             rem = rem - divisor;
         }
     }
-    *remainder = rem;
+    rem8u = rem;
     return quotient;
 }
 
@@ -29,8 +31,10 @@ signed byte rem8s = 0;
 
 // Perform division on two signed 8-bit numbers
 // Returns dividend/divisor.
-// The remainder will be set into the global variable rem16u
+// The remainder will be set into the global variable rem8s.
 // Implemented using simple binary division
+// Follows the C99 standard by truncating toward zero on negative results.
+// See http://www.open-std.org/jtc1/sc22/wg14/www/docs/n1124.pdf section 6.5.5
 signed byte div8s(signed byte dividend, signed byte divisor) {
     byte neg = 0;
     byte dividendb = 0;
@@ -47,8 +51,7 @@ signed byte div8s(signed byte dividend, signed byte divisor) {
     } else {
         divisorb = (byte)divisor;
     }
-    byte rem8u = 0;
-    byte resultb = div8u(dividendb, divisorb, &rem8u);
+    byte resultb = div8u(dividendb, divisorb);
     if(neg==0) {
         rem8s = (signed byte)rem8u;
         return (signed byte)resultb;

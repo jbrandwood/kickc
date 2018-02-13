@@ -76,7 +76,9 @@ test_16u: {
     adc i
     sta i
     cmp #$c
-    bne b1
+    beq !b+
+    jmp b1
+  !b:
     rts
     str: .text " / @"
     str1: .text " = @"

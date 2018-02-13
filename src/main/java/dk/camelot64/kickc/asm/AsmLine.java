@@ -3,13 +3,13 @@ package dk.camelot64.kickc.asm;
 /** A line of 6502 assembler code */
 public interface AsmLine {
 
-   public int getLineBytes();
+   int getLineBytes();
 
-   public double getLineCycles();
+   double getLineCycles();
 
-   public String getAsm();
+   String getAsm();
 
-   public int getIndex();
+   int getIndex();
 
    void setIndex(int index);
 }

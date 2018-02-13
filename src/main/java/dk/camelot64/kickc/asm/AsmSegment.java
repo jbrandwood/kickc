@@ -4,6 +4,8 @@ import dk.camelot64.kickc.model.PhiTransitions;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.ListIterator;
+import java.util.NoSuchElementException;
 
 /**
  * A segment of an ASM program. The segment has a number of methods/attributes that describe the lines of the segment.
@@ -55,6 +57,23 @@ public class AsmSegment {
 
    public void addLine(AsmLine line) {
       lines.add(line);
+   }
+
+   /**
+    * Add a new line just after another line
+    * @param line The line to look for. If it is not found an Exception is thrown
+    * @param add The line to add
+    */
+   public void addLineAfter(AsmLine line, AsmLine add) {
+      ListIterator<AsmLine> it = lines.listIterator();
+      while(it.hasNext()) {
+         AsmLine asmLine = it.next();
+         if(line.equals(asmLine)) {
+            it.add(add);
+            return;
+         }
+      }
+      throw new NoSuchElementException("Item not found "+line);
    }
 
    public int getIndex() {
@@ -136,6 +155,21 @@ public class AsmSegment {
       return clobber;
    }
 
+   /**
+    * Get ASM line by index
+    * @param idx The index of the line to get
+    * @return The line with the passed index. Null if not found inside the segment.
+    */
+   public AsmLine getAsmLine(int idx) {
+      for(AsmLine asmLine : getLines()) {
+         if(asmLine.getIndex() == idx) {
+            return asmLine;
+         }
+      }
+      return null;
+   }
+
+
    public String toString(AsmProgram.AsmPrintState printState) {
       StringBuffer out = new StringBuffer();
       if(printState.isComments()) {
@@ -165,6 +199,9 @@ public class AsmSegment {
          if(line instanceof AsmScopeEnd) {
             printState.decIndent();
          }
+         if(printState.getLineIdx()) {
+            out.append("["+line.getIndex()+"]");
+         }
          out.append(printState.getIndent());
          if(line instanceof AsmComment || line instanceof AsmInstruction || line instanceof AsmLabelDecl || line instanceof AsmConstant || line instanceof AsmDataNumeric || line instanceof AsmDataFill || line instanceof AsmDataString || line instanceof AsmDataAlignment) {
             out.append("  ");
@@ -179,7 +216,7 @@ public class AsmSegment {
 
    @Override
    public String toString() {
-      return toString(new AsmProgram.AsmPrintState(true));
+      return toString(new AsmProgram.AsmPrintState(true, false));
    }
 
 }

@@ -81,6 +81,7 @@ public class Compiler {
    }
 
    public Program compile(String fileName) throws IOException {
+      program.setFileName(fileName);
       try {
          Pass0GenerateStatementSequence pass0GenerateStatementSequence = new Pass0GenerateStatementSequence(program);
          loadAndParseFile(fileName, program, pass0GenerateStatementSequence);
@@ -355,6 +356,9 @@ public class Compiler {
             }
          }
       }
+
+      new Pass5ReindexAsmLines(program).optimize();
+      new Pass5FixLongBranches(program).optimize();
 
       getLog().append("\nFINAL SYMBOL TABLE");
       getLog().append(program.getScope().getSymbolTableContents(program));

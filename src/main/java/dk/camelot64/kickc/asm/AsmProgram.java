@@ -175,8 +175,13 @@ public class AsmProgram {
    }
 
    public String toString(boolean comments) {
-      return toString(new AsmPrintState(comments));
+      return toString(new AsmPrintState(comments, false));
    }
+
+   public String toString(boolean comments, boolean lineIdx) {
+      return toString(new AsmPrintState(comments, lineIdx));
+   }
+
 
    public String toString(AsmPrintState printState) {
       StringBuilder out = new StringBuilder();
@@ -191,12 +196,38 @@ public class AsmProgram {
       return toString(true);
    }
 
+   /**
+    * Set the index of the next line
+    * @param nextIndex The index of the next line
+    */
+   public void setNextLineIndex(int nextIndex) {
+      this.nextLineIndex = nextIndex;
+   }
+
+   /**
+    * Get ASM segment by line index
+    * @param idx The index of the line to get the segment for
+    * @return The segment with the line that has the passed index. Null if not found
+    */
+   public AsmSegment getAsmSegment(int idx) {
+      for(AsmSegment segment : segments) {
+         for(AsmLine asmLine : segment.getLines()) {
+            if(asmLine.getIndex()==idx) {
+               return segment;
+            }
+         }
+      }
+      return null;
+   }
+
    static class AsmPrintState {
       boolean comments;
+      boolean lineIdx;
       String indent;
 
-      public AsmPrintState(boolean comments) {
+      public AsmPrintState(boolean comments, boolean lineIdx) {
          this.comments = comments;
+         this.lineIdx = lineIdx;
          this.indent = "";
       }
 
@@ -218,6 +249,9 @@ public class AsmProgram {
          return indent;
       }
 
+      public boolean getLineIdx() {
+         return lineIdx;
+      }
    }
 
 

@@ -12,9 +12,9 @@ import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-import java.io.File;
-import java.io.IOException;
+import java.io.*;
 import java.net.URISyntaxException;
+import java.nio.file.Path;
 
 import static junit.framework.TestCase.fail;
 import static org.junit.Assert.assertTrue;
@@ -43,6 +43,16 @@ public class TestPrograms {
       CompileLog log = new CompileLog();
       log.setSysOut(true);
       AsmFragmentTemplateUsages.logUsages(log, false, false,  false, false, false, false);
+   }
+
+   @Test
+   public void testLongJump2() throws IOException, URISyntaxException {
+      compileAndCompare("longjump2");
+   }
+
+   @Test
+   public void testLongJump() throws IOException, URISyntaxException {
+      compileAndCompare("longjump");
    }
 
    @Test
@@ -554,15 +564,7 @@ public class TestPrograms {
       compiler.addImportPath(testPath);
       Program program = compiler.compile(fileName);
 
-      helper.writeOutputFile(fileName, ".asm", program.getAsm().toString(false));
-      File asmFile = helper.getTmpFile(fileName, ".asm");
-      File asmPrgFile = helper.getTmpFile(fileName, ".prg");
-      File asmLogFile = helper.getTmpFile(fileName, ".klog");
-
-      int asmRes = KickAssembler.main2(new String[]{asmFile.getAbsolutePath(), "-log", asmLogFile.getAbsolutePath(), "-o", asmPrgFile.getAbsolutePath(), "-vicesymbols", "-showmem"});
-      if(asmRes!=0) {
-         fail("KickAssembling file failed!");
-      }
+      compileAsm(fileName, program);
 
       boolean success = true;
       success &= helper.testOutput(fileName, ".asm", program.getAsm().toString(false));
@@ -575,6 +577,47 @@ public class TestPrograms {
          fail("Output does not match reference!");
       }
    }
+
+   private void compileAsm(String fileName, Program program) throws IOException {
+      writeBinFile(fileName, ".asm", program.getAsm().toString(false));
+      File asmFile = getBinFile(fileName, ".asm");
+      File asmPrgFile = getBinFile(fileName, ".prg");
+      File asmLogFile = getBinFile(fileName, ".log");
+      ByteArrayOutputStream kickAssOut = new ByteArrayOutputStream();
+      System.setOut(new PrintStream(kickAssOut));
+      int asmRes = KickAssembler.main2(new String[]{asmFile.getAbsolutePath(), "-log", asmLogFile.getAbsolutePath(), "-o", asmPrgFile.getAbsolutePath(), "-vicesymbols", "-showmem"});
+      System.setOut(new PrintStream(new FileOutputStream(FileDescriptor.out)));
+      if(asmRes!=0) {
+         fail("KickAssembling file failed!");
+      }
+   }
+
+   public File writeBinFile(String fileName, String extension, String outputString) throws IOException {
+      // Write output file
+      File file = getBinFile(fileName, extension);
+      FileOutputStream outputStream = new FileOutputStream(file);
+      OutputStreamWriter writer = new OutputStreamWriter(outputStream);
+      writer.write(outputString);
+      writer.close();
+      outputStream.close();
+      System.out.println("ASM written to " + file.getAbsolutePath());
+      return file;
+   }
+
+   public File getBinFile(String fileName, String extension) {
+      return new File(getBinDir(), fileName + extension);
+   }
+
+   private File getBinDir() {
+      Path tempDir = helper.getTempDir();
+      File binDir = new File(tempDir.toFile(), "bin");
+      if(!binDir.exists()) {
+         binDir.mkdir();
+
+      }
+      return binDir;
+   }
+
 
 
 }

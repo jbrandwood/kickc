@@ -9,6 +9,8 @@ import java.util.List;
 /** A KickC Intermediate Compiler Language (ICL) Program */
 public class Program {
 
+   /** The name of the file being compiled. */
+   private String fileName;
    /** Paths used for importing files. */
    private List<String> importPaths;
    /** Imported files. */
@@ -233,4 +235,11 @@ public class Program {
       return result;
    }
 
+   public void setFileName(String fileName) {
+      this.fileName = fileName;
+   }
+
+   public String getFileName() {
+      return fileName;
+   }
 }

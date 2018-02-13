@@ -2173,6 +2173,8 @@ Succesful ASM optimization Pass5RelabelLongLabels
 Removing instruction jmp b1
 Removing instruction jmp b6
 Succesful ASM optimization Pass5NextJumpElimination
+Fixing long branch [128] bcc b1 to bcs
+Fixing long branch [134] bcc b1 to bcs
 
 FINAL SYMBOL TABLE
 (label) @1
@@ -2289,7 +2291,7 @@ reg byte a [ main::bits_gen#7 ]
 
 
 FINAL ASSEMBLER
-Score: 3054
+Score: 3114
 
 //SEG0 Basic Upstart
 .pc = $801 "Basic"
@@ -2496,11 +2498,15 @@ main: {
   //SEG76 [51] if((byte*) main::chargen#1<(const byte*) CHARGEN#0+(word/signed word/dword/signed dword) 2048) goto main::@1 [ main::chargen#1 main::charset4#1 ] ( main:2 [ main::chargen#1 main::charset4#1 ] ) -- pbuz1_lt_pbuc1_then_la1 
     lda chargen+1
     cmp #>CHARGEN+$800
-    bcc b1
+    bcs !b+
+    jmp b1
+  !b:
     bne !+
     lda chargen
     cmp #<CHARGEN+$800
-    bcc b1
+    bcs !b+
+    jmp b1
+  !b:
   !:
   //SEG77 main::@11
   //SEG78 [52] *((const byte*) PROCPORT#0) ← (byte/signed byte/word/signed word/dword/signed dword) 55 [ ] ( main:2 [ ] ) -- _deref_pbuc1=vbuc2 

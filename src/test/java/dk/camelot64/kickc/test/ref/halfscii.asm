@@ -126,11 +126,15 @@ main: {
   !:
     lda chargen+1
     cmp #>CHARGEN+$800
-    bcc b1
+    bcs !b+
+    jmp b1
+  !b:
     bne !+
     lda chargen
     cmp #<CHARGEN+$800
-    bcc b1
+    bcs !b+
+    jmp b1
+  !b:
   !:
     lda #$37
     sta PROCPORT

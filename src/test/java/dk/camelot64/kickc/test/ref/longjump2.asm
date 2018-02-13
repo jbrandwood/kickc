@@ -271,9 +271,9 @@ long2: {
     sta SCREEN,x
     inx
     cpx #$b
-    beq !b+
+    beq !b1+
     jmp b1
-  !b:
+  !b1:
     rts
 }
 long1: {
@@ -540,8 +540,8 @@ long1: {
     sta SCREEN,x
     inx
     cpx #$b
-    beq !b+
+    beq !b1+
     jmp b1
-  !b:
+  !b1:
     rts
 }

@@ -43,13 +43,12 @@ public class Pass5FixLongBranches extends Pass5AsmOptimization {
    }
 
    /**
-    * Perform
-    * @return
+    * Detect if any branch distance is to long, and fix it by rewriting the branch if it is.
+    * @return true if any branch was rewritten
     */
    private boolean step() {
       // Reindex ASM lines
       new Pass5ReindexAsmLines(getProgram()).optimize();
-
 
       // Create a temporary directory for the ASM file
       try {
@@ -68,7 +67,6 @@ public class Pass5FixLongBranches extends Pass5AsmOptimization {
          throw new CompileError("Error writing ASM temp file.", e);
       }
 
-
       // Compile using KickAssembler - catch the output in a String
       File asmFile = getTmpFile(fileName, ".asm");
       File asmPrgFile = getTmpFile(fileName, ".prg");
@@ -78,7 +76,7 @@ public class Pass5FixLongBranches extends Pass5AsmOptimization {
       System.setOut(new PrintStream(new FileOutputStream(FileDescriptor.out)));
       String output = kickAssOut.toString();
 
-      // Look for a long branch error
+      // Look for a long branch distance error
       if(asmRes != 0) {
          String outputLines[] = output.split("\\r?\\n");
          for(int i = 0; i < outputLines.length; i++) {
@@ -126,11 +124,11 @@ public class Pass5FixLongBranches extends Pass5AsmOptimization {
                getLog().append("Fixing long branch ["+idx+"] "+asmLine.toString() + " to "+inverseType.getMnemnonic());
                String branchDest = asmInstruction.getParameter();
                asmInstruction.setType(inverseType);
-               asmInstruction.setParameter("!b+");
+               asmInstruction.setParameter("!"+branchDest+"+");
                AsmInstructionType jmpType = AsmInstructionSet.getInstructionType("jmp", AsmAddressingMode.ABS, false);
                AsmInstruction jmpInstruction = new AsmInstruction(jmpType, branchDest);
                asmSegment.addLineAfter(asmInstruction, jmpInstruction);
-               asmSegment.addLineAfter(jmpInstruction, new AsmLabel("!b"));
+               asmSegment.addLineAfter(jmpInstruction, new AsmLabel("!"+branchDest));
                return true;
             }
          }

@@ -266,8 +266,8 @@ main: {
     sta SCREEN,x
     inx
     cpx #$b
-    beq !b+
+    beq !b1+
     jmp b1
-  !b:
+  !b1:
     rts
 }

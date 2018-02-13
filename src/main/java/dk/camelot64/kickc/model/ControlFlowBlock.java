@@ -38,21 +38,6 @@ public class ControlFlowBlock {
       this.conditionalSuccessor = null;
    }
 
-   public ControlFlowBlock(
-         LabelRef label,
-         ScopeRef scope,
-         List<Statement> statements,
-         LabelRef defaultSuccessor,
-         LabelRef conditionalSuccessor,
-         LabelRef callSuccessor) {
-      this.label = label;
-      this.scope = scope;
-      this.statements = statements;
-      this.defaultSuccessor = defaultSuccessor;
-      this.conditionalSuccessor = conditionalSuccessor;
-      this.callSuccessor = callSuccessor;
-   }
-
    public LabelRef getLabel() {
       return label;
    }
@@ -166,9 +151,7 @@ public class ControlFlowBlock {
    public boolean equals(Object o) {
       if(this == o) return true;
       if(o == null || getClass() != o.getClass()) return false;
-
       ControlFlowBlock that = (ControlFlowBlock) o;
-
       if(!label.equals(that.label)) return false;
       if(statements != null ? !statements.equals(that.statements) : that.statements != null) return false;
       if(defaultSuccessor != null ? !defaultSuccessor.equals(that.defaultSuccessor) : that.defaultSuccessor != null)

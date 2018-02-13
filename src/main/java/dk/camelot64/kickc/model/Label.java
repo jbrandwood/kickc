@@ -17,12 +17,6 @@ public class Label implements Symbol {
       this.intermediate = intermediate;
    }
 
-   public Label( String name, boolean intermediate) {
-      this.name = name;
-      this.scope = null;
-      this.intermediate = intermediate;
-   }
-
    @Override
    public String getLocalName() {
       return name;

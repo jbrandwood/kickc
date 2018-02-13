@@ -588,7 +588,7 @@ public class TestPrograms {
       int asmRes = KickAssembler.main2(new String[]{asmFile.getAbsolutePath(), "-log", asmLogFile.getAbsolutePath(), "-o", asmPrgFile.getAbsolutePath(), "-vicesymbols", "-showmem"});
       System.setOut(new PrintStream(new FileOutputStream(FileDescriptor.out)));
       if(asmRes!=0) {
-         fail("KickAssembling file failed!");
+         fail("KickAssembling file failed! "+kickAssOut.toString());
       }
    }
 

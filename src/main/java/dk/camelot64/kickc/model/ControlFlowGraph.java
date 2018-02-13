@@ -21,15 +21,6 @@ public class ControlFlowGraph {
       this.firstBlockRef = firstBlockRef;
    }
 
-   public ControlFlowGraph(
-         Map<LabelRef, ControlFlowBlock> blocks,
-         LabelRef firstBlockRef,
-         List<LabelRef> sequence) {
-      this.blocks = blocks;
-      this.firstBlockRef = firstBlockRef;
-      this.sequence = sequence;
-   }
-
    public ControlFlowBlock getBlock(LabelRef symbol) {
       return blocks.get(symbol);
    }

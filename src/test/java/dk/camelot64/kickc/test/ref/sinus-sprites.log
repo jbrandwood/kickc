@@ -3,8 +3,6 @@ import "c64"
 import "basic-floats"
 import "print"
 
-const byte* SCREEN = $0400;
-
 const byte sinlen_x = 221;
 const byte[221] sintab_x;
 const byte sinlen_y = 197;
@@ -538,7 +536,9 @@ void mulFACby10() {
 Importing print
 PARSING src/test/java/dk/camelot64/kickc/test/kc/print.kc
 
-byte* line_cursor = $0400;
+const byte* SCREEN = $0400;
+
+byte* line_cursor = SCREEN;
 byte* char_cursor = line_cursor;
 
 // Print a zero-terminated string
@@ -595,9 +595,11 @@ void print_char(byte ch) {
 
 // Clear the screen
 void print_cls() {
-    for(byte* sc=$0400; sc!=$0400+1000; sc++) {
+    for(byte* sc=SCREEN; sc!=SCREEN+1000; sc++) {
         *sc = ' ';
     }
+    line_cursor = SCREEN;
+    char_cursor = line_cursor;
 }
 
 
@@ -808,7 +810,8 @@ proc (void()) mulFACby10()
 mulFACby10::@return:
   return 
 endproc // mulFACby10()
-  (byte*) line_cursor ← (word/signed word/dword/signed dword) 1024
+  (byte*) SCREEN ← (word/signed word/dword/signed dword) 1024
+  (byte*) line_cursor ← (byte*) SCREEN
   (byte*) char_cursor ← (byte*) line_cursor
 proc (void()) print_str((byte*) print_str::str)
 print_str::@1:
@@ -884,17 +887,18 @@ print_char::@return:
   return 
 endproc // print_char()
 proc (void()) print_cls()
-  (byte*) print_cls::sc ← (word/signed word/dword/signed dword) 1024
+  (byte*) print_cls::sc ← (byte*) SCREEN
 print_cls::@1:
   *((byte*) print_cls::sc) ← (byte) ' '
   (byte*) print_cls::sc ← ++ (byte*) print_cls::sc
-  (word/signed word/dword/signed dword~) print_cls::$0 ← (word/signed word/dword/signed dword) 1024 + (word/signed word/dword/signed dword) 1000
-  (boolean~) print_cls::$1 ← (byte*) print_cls::sc != (word/signed word/dword/signed dword~) print_cls::$0
+  (byte*~) print_cls::$0 ← (byte*) SCREEN + (word/signed word/dword/signed dword) 1000
+  (boolean~) print_cls::$1 ← (byte*) print_cls::sc != (byte*~) print_cls::$0
   if((boolean~) print_cls::$1) goto print_cls::@1
+  (byte*) line_cursor ← (byte*) SCREEN
+  (byte*) char_cursor ← (byte*) line_cursor
 print_cls::@return:
   return 
 endproc // print_cls()
-  (byte*) SCREEN ← (word/signed word/dword/signed dword) 1024
   (byte) sinlen_x ← (byte/word/signed word/dword/signed dword) 221
   (byte[221]) sintab_x ← { fill( 221, 0) }
   (byte) sinlen_y ← (byte/word/signed word/dword/signed dword) 197
@@ -1412,7 +1416,7 @@ SYMBOLS
 (label) print_char::@return
 (byte) print_char::ch
 (void()) print_cls()
-(word/signed word/dword/signed dword~) print_cls::$0
+(byte*~) print_cls::$0
 (boolean~) print_cls::$1
 (label) print_cls::@1
 (label) print_cls::@return
@@ -1535,8 +1539,6 @@ Promoting word/dword/signed dword to byte* in SPRITES_COLS ← ((byte*)) 53287
 Promoting word/dword/signed dword to byte* in COLS ← ((byte*)) 55296
 Promoting byte/word/signed word/dword/signed dword to byte* in memLo ← ((byte*)) 254
 Promoting byte/word/signed word/dword/signed dword to byte* in memHi ← ((byte*)) 255
-Promoting word/signed word/dword/signed dword to byte* in line_cursor ← ((byte*)) 1024
-Promoting word/signed word/dword/signed dword to byte* in print_cls::sc ← ((byte*)) 1024
 Promoting word/signed word/dword/signed dword to byte* in SCREEN ← ((byte*)) 1024
 Promoting word/signed word/dword/signed dword to byte* in sprites ← ((byte*)) 8192
 Promoting word/dword/signed dword to byte* in gen_sintab::f_2pi ← ((byte*)) 58085
@@ -1811,7 +1813,8 @@ mulFACby10::@return: scope:[mulFACby10]  from mulFACby10
   return 
   to:@return
 @27: scope:[]  from @26
-  (byte*) line_cursor ← ((byte*)) (word/signed word/dword/signed dword) 1024
+  (byte*) SCREEN ← ((byte*)) (word/signed word/dword/signed dword) 1024
+  (byte*) line_cursor ← (byte*) SCREEN
   (byte*) char_cursor ← (byte*) line_cursor
   to:@28
 print_str: scope:[print_str]  from
@@ -1925,22 +1928,23 @@ print_char::@return: scope:[print_char]  from print_char
 @34: scope:[]  from @33
   to:@35
 print_cls: scope:[print_cls]  from
-  (byte*) print_cls::sc ← ((byte*)) (word/signed word/dword/signed dword) 1024
+  (byte*) print_cls::sc ← (byte*) SCREEN
   to:print_cls::@1
 print_cls::@1: scope:[print_cls]  from print_cls print_cls::@1
   *((byte*) print_cls::sc) ← (byte) ' '
   (byte*) print_cls::sc ← ++ (byte*) print_cls::sc
-  (word/signed word/dword/signed dword~) print_cls::$0 ← (word/signed word/dword/signed dword) 1024 + (word/signed word/dword/signed dword) 1000
-  (boolean~) print_cls::$1 ← (byte*) print_cls::sc != (word/signed word/dword/signed dword~) print_cls::$0
+  (byte*~) print_cls::$0 ← (byte*) SCREEN + (word/signed word/dword/signed dword) 1000
+  (boolean~) print_cls::$1 ← (byte*) print_cls::sc != (byte*~) print_cls::$0
   if((boolean~) print_cls::$1) goto print_cls::@1
   to:print_cls::@2
 print_cls::@2: scope:[print_cls]  from print_cls::@1
+  (byte*) line_cursor ← (byte*) SCREEN
+  (byte*) char_cursor ← (byte*) line_cursor
   to:print_cls::@return
 print_cls::@return: scope:[print_cls]  from print_cls::@2
   return 
   to:@return
 @35: scope:[]  from @34
-  (byte*) SCREEN ← ((byte*)) (word/signed word/dword/signed dword) 1024
   (byte) sinlen_x ← (byte/word/signed word/dword/signed dword) 221
   (byte[221]) sintab_x ← { fill( 221, 0) }
   (byte) sinlen_y ← (byte/word/signed word/dword/signed dword) 197
@@ -2350,7 +2354,7 @@ Eliminating unused variable - keeping the call (void~) setMEMtoFAC::$0
 Eliminating unused variable - keeping the call (void~) addMEMtoFAC::$0
 Eliminating unused variable - keeping the call (void~) divMEMbyFAC::$0
 Eliminating unused variable - keeping the call (void~) mulFACbyMEM::$0
-Eliminating unused variable (byte*) char_cursor and assignment [68] (byte*) char_cursor ← (byte*) line_cursor
+Eliminating unused variable (byte*) char_cursor and assignment [69] (byte*) char_cursor ← (byte*) line_cursor
 Eliminating unused variable - keeping the call (void~) main::$0
 Eliminating unused variable - keeping the call (void~) main::$2
 Eliminating unused variable - keeping the call (void~) init::$0
@@ -2382,7 +2386,7 @@ Eliminating unused variable - keeping the call (void~) gen_sintab::$20
 Eliminating unused variable - keeping the call (void~) gen_sintab::$21
 Eliminating unused variable - keeping the call (void~) gen_sintab::$22
 Eliminating unused variable - keeping the call (void~) gen_sintab::$25
-Eliminating unused variable (byte*) line_cursor and assignment [46] (byte*) line_cursor ← ((byte*)) (word/signed word/dword/signed dword) 1024
+Eliminating unused variable (byte*) line_cursor and assignment [47] (byte*) line_cursor ← (byte*) SCREEN
 Creating constant string variable for inline (const string) gen_sprites::$3 "camelot"
 Removing empty block @1
 Removing empty block @2
@@ -2411,7 +2415,6 @@ Removing empty block @23
 Removing empty block @24
 Removing empty block @25
 Removing empty block @26
-Removing empty block @27
 Removing empty block @28
 Removing empty block @29
 Removing empty block @30
@@ -2487,7 +2490,7 @@ CONTROL FLOW GRAPH SSA WITH ASSIGNMENT CALL & RETURN
   (byte*) COLS#0 ← ((byte*)) (word/dword/signed dword) 55296
   (byte*) memLo#0 ← ((byte*)) (byte/word/signed word/dword/signed dword) 254
   (byte*) memHi#0 ← ((byte*)) (byte/word/signed word/dword/signed dword) 255
-  to:@35
+  to:@27
 prepareMEM: scope:[prepareMEM]  from addMEMtoFAC divMEMbyFAC mulFACbyMEM setFAC setMEMtoFAC
   (byte*) prepareMEM::mem#5 ← phi( addMEMtoFAC/(byte*) prepareMEM::mem#2 divMEMbyFAC/(byte*) prepareMEM::mem#3 mulFACbyMEM/(byte*) prepareMEM::mem#4 setFAC/(byte*) prepareMEM::mem#0 setMEMtoFAC/(byte*) prepareMEM::mem#1 )
   (byte~) prepareMEM::$0 ← < (byte*) prepareMEM::mem#5
@@ -2582,8 +2585,10 @@ sinFAC: scope:[sinFAC]  from gen_sintab::@18
 sinFAC::@return: scope:[sinFAC]  from sinFAC
   return 
   to:@return
-@35: scope:[]  from @begin
+@27: scope:[]  from @begin
   (byte*) SCREEN#0 ← ((byte*)) (word/signed word/dword/signed dword) 1024
+  to:@35
+@35: scope:[]  from @27
   (byte) sinlen_x#0 ← (byte/word/signed word/dword/signed dword) 221
   (byte[221]) sintab_x#0 ← { fill( 221, 0) }
   (byte) sinlen_y#0 ← (byte/word/signed word/dword/signed dword) 197
@@ -3374,6 +3379,7 @@ gen_sintab::@return: scope:[gen_sintab]  from gen_sintab::@23
 @end: scope:[]  from @46
 
 SYMBOL TABLE SSA
+(label) @27
 (label) @35
 (label) @38
 (label) @40
@@ -4677,6 +4683,7 @@ Eliminating unused constant (const byte) progress_idx#35
 Succesful SSA optimization PassNEliminateUnusedVars
 Eliminating Noop Cast (byte*) prepareMEM::mem#0 ← ((byte*)) (word) setFAC::w#5
 Succesful SSA optimization Pass2NopCastElimination
+Culled Empty Block (label) @27
 Culled Empty Block (label) @35
 Culled Empty Block (label) main::@5
 Culled Empty Block (label) main::@1

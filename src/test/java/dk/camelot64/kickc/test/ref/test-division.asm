@@ -3,7 +3,7 @@
 .pc = $80d "Program"
   .label char_cursor = 7
   .label line_cursor = 3
-  .label rem16u = $b
+  .label rem16u = 9
   jsr main
 main: {
     jsr print_cls
@@ -13,8 +13,8 @@ main: {
 }
 test_16u: {
     .label dividend = 5
-    .label divisor = $16
-    .label res = $f
+    .label divisor = $f
+    .label res = $b
     .label i = 2
     lda #0
     sta rem16u
@@ -142,7 +142,7 @@ print_char: {
     rts
 }
 print_str: {
-    .label str = 9
+    .label str = 5
   b1:
     ldy #0
     lda (str),y
@@ -164,11 +164,11 @@ print_str: {
     jmp b1
 }
 div16u: {
-    .label rem = $b
-    .label dividend = $d
-    .label quotient = $f
-    .label return = $f
-    .label divisor = $16
+    .label rem = 9
+    .label dividend = 7
+    .label quotient = $b
+    .label return = $b
+    .label divisor = $f
     ldx #0
     txa
     sta quotient
@@ -217,11 +217,11 @@ div16u: {
     rts
 }
 test_8u: {
-    .label rem = $18
-    .label dividend = $19
-    .label divisor = $1a
-    .label res = $1b
-    .label i = $11
+    .label rem = $11
+    .label dividend = $12
+    .label divisor = $13
+    .label res = $d
+    .label i = 2
     lda #0
     sta rem
     lda #<$400
@@ -288,10 +288,10 @@ test_8u: {
 }
 div8u: {
     .label remainder = test_8u.rem
-    .label dividend = $12
-    .label quotient = $13
-    .label return = $13
-    .label divisor = $1a
+    .label dividend = $d
+    .label quotient = $e
+    .label return = $e
+    .label divisor = $13
     ldx #0
     txa
     sta quotient
@@ -323,7 +323,7 @@ div8u: {
     rts
 }
 print_cls: {
-    .label sc = $14
+    .label sc = 3
     lda #<$400
     sta sc
     lda #>$400

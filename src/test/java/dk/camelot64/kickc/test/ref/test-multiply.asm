@@ -340,8 +340,8 @@ slow_signed_multiply: {
 multiply_results_compare: {
     .label ms = 8
     .label ma = $c
-    .label b = $f
-    .label a = $e
+    .label b = 3
+    .label a = 2
     lda #0
     sta a
   b1:
@@ -383,7 +383,7 @@ multiply_results_compare: {
     str: .text "multiply results match!@"
 }
 multiply_error: {
-    .label b = $f
+    .label b = 3
     .label ms = 8
     .label ma = $c
     lda #<str
@@ -425,7 +425,7 @@ multiply_error: {
 slow_multiply: {
     .label return = 8
     .label m = 8
-    .label a = $e
+    .label a = 2
     lda a
     beq b3
     ldy #0
@@ -453,7 +453,7 @@ slow_multiply: {
 }
 multiply_tables_compare: {
     .label asm_sqr = 8
-    .label kc_sqr = $10
+    .label kc_sqr = 4
     lda #<asm_mul_sqr1_lo
     sta asm_sqr
     lda #>asm_mul_sqr1_lo
@@ -586,13 +586,13 @@ init_multiply_asm: {
     rts
 }
 init_multiply: {
-    .label sqr1_hi = $14
-    .label sqr = $17
-    .label sqr1_lo = $12
-    .label x_2 = $16
-    .label sqr2_hi = $1b
-    .label sqr2_lo = $19
-    .label dir = $1d
+    .label sqr1_hi = 6
+    .label sqr = 8
+    .label sqr1_lo = 4
+    .label x_2 = 2
+    .label sqr2_hi = 6
+    .label sqr2_lo = 4
+    .label dir = 2
     lda #0
     sta x_2
     lda #<mul_sqr1_hi+1
@@ -692,7 +692,7 @@ init_multiply: {
     rts
 }
 print_cls: {
-    .label sc = $1e
+    .label sc = 4
     lda #<$400
     sta sc
     lda #>$400

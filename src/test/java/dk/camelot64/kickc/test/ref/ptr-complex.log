@@ -644,9 +644,9 @@ Uplift Scope []
 
 Uplifting [main] best 1165 combination reg byte x [ main::i#2 main::i#1 ] reg byte x [ main::j#2 main::j#1 ] zp ZP_WORD:4 [ main::$2 ] zp ZP_WORD:8 [ main::$11 ] zp ZP_WORD:6 [ main::$9 ] 
 Uplifting [] best 1165 combination 
-Allocated (was zp ZP_WORD:4) zp ZP_WORD:2 [ main::$2 ]
-Allocated (was zp ZP_WORD:6) zp ZP_WORD:4 [ main::$9 ]
-Allocated (was zp ZP_WORD:8) zp ZP_WORD:6 [ main::$11 ]
+Coalescing zero page register [ zp ZP_WORD:4 [ main::$2 ] ] with [ zp ZP_WORD:6 [ main::$9 ] ]
+Allocated (was zp ZP_WORD:4) zp ZP_WORD:2 [ main::$2 main::$9 ]
+Allocated (was zp ZP_WORD:8) zp ZP_WORD:4 [ main::$11 ]
 
 ASSEMBLER BEFORE OPTIMIZATION
 //SEG0 Basic Upstart
@@ -676,8 +676,8 @@ main: {
     .label BGCOL = $d020
     .label sc2 = screen+$51
     .label _2 = 2
-    .label _9 = 4
-    .label _11 = 6
+    .label _9 = 2
+    .label _11 = 4
   //SEG10 [5] phi from main to main::@1 [phi:main->main::@1]
   b1_from_main:
   //SEG11 [5] phi (byte) main::i#2 = (byte/signed byte/word/signed word/dword/signed dword) 0 [phi:main->main::@1#0] -- vbuxx=vbuc1 
@@ -805,9 +805,9 @@ FINAL SYMBOL TABLE
 (label) @begin
 (label) @end
 (void()) main()
-(byte*~) main::$11 $11 zp ZP_WORD:6 22.0
+(byte*~) main::$11 $11 zp ZP_WORD:4 22.0
 (byte*~) main::$2 $2 zp ZP_WORD:2 22.0
-(byte*~) main::$9 $9 zp ZP_WORD:4 11.0
+(byte*~) main::$9 $9 zp ZP_WORD:2 11.0
 (label) main::@1
 (label) main::@2
 (label) main::@3
@@ -828,9 +828,8 @@ FINAL SYMBOL TABLE
 
 reg byte x [ main::i#2 main::i#1 ]
 reg byte x [ main::j#2 main::j#1 ]
-zp ZP_WORD:2 [ main::$2 ]
-zp ZP_WORD:4 [ main::$9 ]
-zp ZP_WORD:6 [ main::$11 ]
+zp ZP_WORD:2 [ main::$2 main::$9 ]
+zp ZP_WORD:4 [ main::$11 ]
 
 
 FINAL ASSEMBLER
@@ -855,8 +854,8 @@ main: {
     .label BGCOL = $d020
     .label sc2 = screen+$51
     .label _2 = 2
-    .label _9 = 4
-    .label _11 = 6
+    .label _9 = 2
+    .label _11 = 4
   //SEG10 [5] phi from main to main::@1 [phi:main->main::@1]
   //SEG11 [5] phi (byte) main::i#2 = (byte/signed byte/word/signed word/dword/signed dword) 0 [phi:main->main::@1#0] -- vbuxx=vbuc1 
     ldx #0

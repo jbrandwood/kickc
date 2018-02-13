@@ -196,7 +196,7 @@ test_bytes: {
 }
 assert_byte: {
     .label msg = 2
-    .label c = 9
+    .label c = 4
     jsr print_str
     lda #<str
     sta print_str.str
@@ -227,7 +227,7 @@ assert_byte: {
     str2: .text "fail!@"
 }
 print_cls: {
-    .label sc = $a
+    .label sc = 2
     lda #<$400
     sta sc
     lda #>$400

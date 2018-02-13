@@ -1237,10 +1237,10 @@ Uplifting [print_str] best 12807 combination zp ZP_WORD:5 [ print_str::str#2 pri
 Uplifting [print_cls] best 12807 combination zp ZP_WORD:9 [ print_cls::sc#2 print_cls::sc#1 ] 
 Uplifting [main] best 12717 combination reg byte x [ main::i#2 main::i#1 ] 
 Uplifting [print_ln] best 12717 combination 
-Allocated (was zp ZP_WORD:3) zp ZP_WORD:2 [ line_cursor#6 line_cursor#13 line_cursor#1 ]
+Coalescing zero page register [ zp ZP_WORD:3 [ line_cursor#6 line_cursor#13 line_cursor#1 ] ] with [ zp ZP_WORD:9 [ print_cls::sc#2 print_cls::sc#1 ] ]
+Allocated (was zp ZP_WORD:3) zp ZP_WORD:2 [ line_cursor#6 line_cursor#13 line_cursor#1 print_cls::sc#2 print_cls::sc#1 ]
 Allocated (was zp ZP_WORD:5) zp ZP_WORD:4 [ print_str::str#2 print_str::str#0 ]
 Allocated (was zp ZP_WORD:7) zp ZP_WORD:6 [ char_cursor#10 char_cursor#19 char_cursor#25 char_cursor#1 ]
-Allocated (was zp ZP_WORD:9) zp ZP_WORD:8 [ print_cls::sc#2 print_cls::sc#1 ]
 
 ASSEMBLER BEFORE OPTIMIZATION
 //SEG0 Basic Upstart
@@ -1415,7 +1415,7 @@ print_str: {
 }
 //SEG58 print_cls
 print_cls: {
-    .label sc = 8
+    .label sc = 2
   //SEG59 [28] phi from print_cls to print_cls::@1 [phi:print_cls->print_cls::@1]
   b1_from_print_cls:
   //SEG60 [28] phi (byte*) print_cls::sc#2 = ((byte*))(word/signed word/dword/signed dword) 1024 [phi:print_cls->print_cls::@1#0] -- pbuz1=pbuc1 
@@ -1529,8 +1529,8 @@ FINAL SYMBOL TABLE
 (label) print_cls::@1
 (label) print_cls::@return
 (byte*) print_cls::sc
-(byte*) print_cls::sc#1 sc zp ZP_WORD:8 16.5
-(byte*) print_cls::sc#2 sc zp ZP_WORD:8 16.5
+(byte*) print_cls::sc#1 sc zp ZP_WORD:2 16.5
+(byte*) print_cls::sc#2 sc zp ZP_WORD:2 16.5
 (void()) print_ln()
 (label) print_ln::@1
 (label) print_ln::@return
@@ -1545,10 +1545,9 @@ FINAL SYMBOL TABLE
 (const string) txt#0 txt = (string) "camelot@"
 
 reg byte x [ main::i#2 main::i#1 ]
-zp ZP_WORD:2 [ line_cursor#6 line_cursor#13 line_cursor#1 ]
+zp ZP_WORD:2 [ line_cursor#6 line_cursor#13 line_cursor#1 print_cls::sc#2 print_cls::sc#1 ]
 zp ZP_WORD:4 [ print_str::str#2 print_str::str#0 ]
 zp ZP_WORD:6 [ char_cursor#10 char_cursor#19 char_cursor#25 char_cursor#1 ]
-zp ZP_WORD:8 [ print_cls::sc#2 print_cls::sc#1 ]
 
 
 FINAL ASSEMBLER
@@ -1694,7 +1693,7 @@ print_str: {
 }
 //SEG58 print_cls
 print_cls: {
-    .label sc = 8
+    .label sc = 2
   //SEG59 [28] phi from print_cls to print_cls::@1 [phi:print_cls->print_cls::@1]
   //SEG60 [28] phi (byte*) print_cls::sc#2 = ((byte*))(word/signed word/dword/signed dword) 1024 [phi:print_cls->print_cls::@1#0] -- pbuz1=pbuc1 
     lda #<$400

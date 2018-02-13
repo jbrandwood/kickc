@@ -2993,11 +2993,11 @@ Attempting to uplift remaining variables inzp ZP_BYTE:5 [ assert_sbyte::c#5 ]
 Uplifting [assert_sbyte] best 2175 combination zp ZP_BYTE:5 [ assert_sbyte::c#5 ] 
 Coalescing zero page register [ zp ZP_WORD:2 [ assert_sbyte::msg#5 ] ] with [ zp ZP_WORD:8 [ print_str::str#10 print_str::str#11 print_str::str#1 print_str::str#5 print_str::str#0 ] ]
 Coalescing zero page register [ zp ZP_WORD:2 [ assert_sbyte::msg#5 print_str::str#10 print_str::str#11 print_str::str#1 print_str::str#5 print_str::str#0 ] ] with [ zp ZP_WORD:12 [ assert_byte::msg#3 ] ]
-Allocated (was zp ZP_BYTE:5) zp ZP_BYTE:4 [ assert_sbyte::c#5 ]
+Coalescing zero page register [ zp ZP_WORD:2 [ assert_sbyte::msg#5 print_str::str#10 print_str::str#11 print_str::str#1 print_str::str#5 print_str::str#0 assert_byte::msg#3 ] ] with [ zp ZP_WORD:16 [ print_cls::sc#2 print_cls::sc#1 ] ]
+Coalescing zero page register [ zp ZP_BYTE:5 [ assert_sbyte::c#5 ] ] with [ zp ZP_BYTE:15 [ assert_byte::c#3 ] ]
+Allocated (was zp ZP_BYTE:5) zp ZP_BYTE:4 [ assert_sbyte::c#5 assert_byte::c#3 ]
 Allocated (was zp ZP_WORD:6) zp ZP_WORD:5 [ char_cursor#75 char_cursor#65 char_cursor#2 char_cursor#82 char_cursor#1 char_cursor#88 char_cursor#89 ]
 Allocated (was zp ZP_WORD:10) zp ZP_WORD:7 [ line_cursor#21 line_cursor#42 line_cursor#45 line_cursor#1 ]
-Allocated (was zp ZP_BYTE:15) zp ZP_BYTE:9 [ assert_byte::c#3 ]
-Allocated (was zp ZP_WORD:16) zp ZP_WORD:10 [ print_cls::sc#2 print_cls::sc#1 ]
 
 ASSEMBLER BEFORE OPTIMIZATION
 //SEG0 Basic Upstart
@@ -3416,7 +3416,7 @@ test_bytes: {
 //SEG140 assert_byte
 assert_byte: {
     .label msg = 2
-    .label c = 9
+    .label c = 4
   //SEG141 [56] (byte*) print_str::str#1 ← (byte*) assert_byte::msg#3 [ print_str::str#1 char_cursor#65 line_cursor#45 assert_byte::b#3 assert_byte::c#3 ] ( main:2::test_bytes:7::assert_byte:49 [ print_str::str#1 char_cursor#65 line_cursor#45 assert_byte::b#3 assert_byte::c#3 ] main:2::test_bytes:7::assert_byte:51 [ print_str::str#1 char_cursor#65 line_cursor#45 assert_byte::b#3 assert_byte::c#3 ] main:2::test_bytes:7::assert_byte:53 [ print_str::str#1 char_cursor#65 line_cursor#45 assert_byte::b#3 assert_byte::c#3 ] )
     // (byte*) print_str::str#1 = (byte*) assert_byte::msg#3  // register copy zp ZP_WORD:2
   //SEG142 [57] call print_str param-assignment [ char_cursor#2 line_cursor#45 assert_byte::b#3 assert_byte::c#3 ] ( main:2::test_bytes:7::assert_byte:49 [ char_cursor#2 line_cursor#45 assert_byte::b#3 assert_byte::c#3 ] main:2::test_bytes:7::assert_byte:51 [ char_cursor#2 line_cursor#45 assert_byte::b#3 assert_byte::c#3 ] main:2::test_bytes:7::assert_byte:53 [ char_cursor#2 line_cursor#45 assert_byte::b#3 assert_byte::c#3 ] )
@@ -3500,7 +3500,7 @@ assert_byte: {
 }
 //SEG173 print_cls
 print_cls: {
-    .label sc = $a
+    .label sc = 2
   //SEG174 [69] phi from print_cls to print_cls::@1 [phi:print_cls->print_cls::@1]
   b1_from_print_cls:
   //SEG175 [69] phi (byte*) print_cls::sc#2 = ((byte*))(word/signed word/dword/signed dword) 1024 [phi:print_cls->print_cls::@1#0] -- pbuz1=pbuc1 
@@ -3675,7 +3675,7 @@ FINAL SYMBOL TABLE
 (byte) assert_byte::b
 (byte) assert_byte::b#3 reg byte x 0.4
 (byte) assert_byte::c
-(byte) assert_byte::c#3 c zp ZP_BYTE:9 0.4
+(byte) assert_byte::c#3 c zp ZP_BYTE:4 0.4
 (byte*) assert_byte::msg
 (byte*) assert_byte::msg#3 msg zp ZP_WORD:2 2.0
 (const string) assert_byte::str str = (string) " @"
@@ -3718,8 +3718,8 @@ FINAL SYMBOL TABLE
 (label) print_cls::@1
 (label) print_cls::@return
 (byte*) print_cls::sc
-(byte*) print_cls::sc#1 sc zp ZP_WORD:10 16.5
-(byte*) print_cls::sc#2 sc zp ZP_WORD:10 16.5
+(byte*) print_cls::sc#1 sc zp ZP_WORD:2 16.5
+(byte*) print_cls::sc#2 sc zp ZP_WORD:2 16.5
 (void()) print_ln()
 (label) print_ln::@1
 (label) print_ln::@return
@@ -3768,14 +3768,12 @@ FINAL SYMBOL TABLE
 (const string) test_sbytes::msg3 msg3 = (string) "-(0+2-4)=2@"
 (const string) test_sbytes::msg4 msg4 = (string) "-127-127=2@"
 
-zp ZP_WORD:2 [ assert_sbyte::msg#5 print_str::str#10 print_str::str#11 print_str::str#1 print_str::str#5 print_str::str#0 assert_byte::msg#3 ]
+zp ZP_WORD:2 [ assert_sbyte::msg#5 print_str::str#10 print_str::str#11 print_str::str#1 print_str::str#5 print_str::str#0 assert_byte::msg#3 print_cls::sc#2 print_cls::sc#1 ]
 reg byte x [ assert_sbyte::b#5 ]
-zp ZP_BYTE:4 [ assert_sbyte::c#5 ]
+zp ZP_BYTE:4 [ assert_sbyte::c#5 assert_byte::c#3 ]
 zp ZP_WORD:5 [ char_cursor#75 char_cursor#65 char_cursor#2 char_cursor#82 char_cursor#1 char_cursor#88 char_cursor#89 ]
 zp ZP_WORD:7 [ line_cursor#21 line_cursor#42 line_cursor#45 line_cursor#1 ]
 reg byte x [ assert_byte::b#3 ]
-zp ZP_BYTE:9 [ assert_byte::c#3 ]
-zp ZP_WORD:10 [ print_cls::sc#2 print_cls::sc#1 ]
 
 
 FINAL ASSEMBLER
@@ -4121,7 +4119,7 @@ test_bytes: {
 //SEG140 assert_byte
 assert_byte: {
     .label msg = 2
-    .label c = 9
+    .label c = 4
   //SEG141 [56] (byte*) print_str::str#1 ← (byte*) assert_byte::msg#3 [ print_str::str#1 char_cursor#65 line_cursor#45 assert_byte::b#3 assert_byte::c#3 ] ( main:2::test_bytes:7::assert_byte:49 [ print_str::str#1 char_cursor#65 line_cursor#45 assert_byte::b#3 assert_byte::c#3 ] main:2::test_bytes:7::assert_byte:51 [ print_str::str#1 char_cursor#65 line_cursor#45 assert_byte::b#3 assert_byte::c#3 ] main:2::test_bytes:7::assert_byte:53 [ print_str::str#1 char_cursor#65 line_cursor#45 assert_byte::b#3 assert_byte::c#3 ] )
     // (byte*) print_str::str#1 = (byte*) assert_byte::msg#3  // register copy zp ZP_WORD:2
   //SEG142 [57] call print_str param-assignment [ char_cursor#2 line_cursor#45 assert_byte::b#3 assert_byte::c#3 ] ( main:2::test_bytes:7::assert_byte:49 [ char_cursor#2 line_cursor#45 assert_byte::b#3 assert_byte::c#3 ] main:2::test_bytes:7::assert_byte:51 [ char_cursor#2 line_cursor#45 assert_byte::b#3 assert_byte::c#3 ] main:2::test_bytes:7::assert_byte:53 [ char_cursor#2 line_cursor#45 assert_byte::b#3 assert_byte::c#3 ] )
@@ -4186,7 +4184,7 @@ assert_byte: {
 }
 //SEG173 print_cls
 print_cls: {
-    .label sc = $a
+    .label sc = 2
   //SEG174 [69] phi from print_cls to print_cls::@1 [phi:print_cls->print_cls::@1]
   //SEG175 [69] phi (byte*) print_cls::sc#2 = ((byte*))(word/signed word/dword/signed dword) 1024 [phi:print_cls->print_cls::@1#0] -- pbuz1=pbuc1 
     lda #<$400

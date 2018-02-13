@@ -26,13 +26,14 @@ public class Pass4ZeroPageCoalesce extends Pass2Base {
    }
 
    /**
-    * Find the best two equivalence classes that can be coalesced into one - and perform the coalescence.
+    * Find two equivalence classes that can be coalesced into one - and perform the coalescence.
     *
     * @param liveRangeEquivalenceClassSet The set of live range equivalence classes
     * @return true if any classes were coalesced. False otherwise.
     */
    private boolean coalesce(LiveRangeEquivalenceClassSet liveRangeEquivalenceClassSet) {
-      double maxScore = Double.MIN_VALUE;
+
+      double maxScore = -1.0;
       LiveRangeEquivalenceClass maxThis = null;
       LiveRangeEquivalenceClass maxOther = null;
 
@@ -42,6 +43,9 @@ public class Pass4ZeroPageCoalesce extends Pass2Base {
                if(canCoalesce(thisEquivalenceClass, otherEquivalenceClass)) {
                   double coalesceScore = getCoalesceScore(thisEquivalenceClass, otherEquivalenceClass);
                   if(coalesceScore>maxScore) {
+                     if(otherEquivalenceClass==null) {
+                        throw new RuntimeException("EQC is null!"+otherEquivalenceClass);
+                     }
                      maxScore = coalesceScore;
                      maxThis = thisEquivalenceClass;
                      maxOther = otherEquivalenceClass;

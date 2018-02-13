@@ -79,7 +79,7 @@ print_str: {
     jmp b1
 }
 print_cls: {
-    .label sc = 8
+    .label sc = 2
     lda #<$400
     sta sc
     lda #>$400

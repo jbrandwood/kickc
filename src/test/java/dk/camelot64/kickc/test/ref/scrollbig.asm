@@ -155,7 +155,7 @@ next_char: {
 }
 fillscreen: {
     .const fill = $20
-    .label cursor = 9
+    .label cursor = 3
     lda #<SCREEN
     sta cursor
     lda #>SCREEN

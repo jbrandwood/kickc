@@ -33,7 +33,7 @@ lvaluevar: {
     jmp b1
 }
 rvaluevar: {
-    .label screen = 4
+    .label screen = 2
     lda #<$400
     sta screen
     lda #>$400

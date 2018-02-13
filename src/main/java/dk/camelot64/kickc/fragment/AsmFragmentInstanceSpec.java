@@ -292,6 +292,8 @@ public class AsmFragmentInstanceSpec {
             return "pbs";
          } else if(SymbolType.isWord(elementType)) {
             return "pwu";
+         } else if(SymbolType.isSWord(elementType)) {
+            return "pws";
          } else {
             throw new RuntimeException("Not implemented " + type);
          }

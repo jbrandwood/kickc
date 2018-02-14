@@ -1,21 +1,22 @@
 // Test the fast multiplication library
 import "print.kc"
-import "multiply.kc"
+import "fastmultiply.kc"
 
 byte* BGCOL = $d021;
 
 void main() {
     *BGCOL = 5;
     print_cls();
-    init_multiply();
-    init_multiply_asm();
+    mulf_init();
+    mulf_init_asm();
     multiply_tables_compare();
     multiply_results_compare();
     signed_multiply_results_compare();
 }
 
+// Slow multiplication of unsigned bytes
 // Calculate an unsigned multiplication by repeated addition
-word slow_multiply(byte a, byte b) {
+word muls8u(byte a, byte b) {
     word m = 0;
     if(a!=0) {
         for(byte i = 0; i!=a; i++) {
@@ -25,8 +26,9 @@ word slow_multiply(byte a, byte b) {
     return m;
 }
 
+// Slow multiplication of signed bytes
 // Perform a signed multiplication by repeated addition/
-signed word slow_signed_multiply(signed byte a, signed byte b) {
+signed word muls8s(signed byte a, signed byte b) {
     signed word m = 0;
     if(a<0) {
         for(signed byte i = 0; i!=a; i--) {
@@ -42,16 +44,16 @@ signed word slow_signed_multiply(signed byte a, signed byte b) {
 
 // ASM based multiplication tables
 // <(( x * x )/4)
-byte[512] align($100) asm_mul_sqr1_lo;
+byte[512] align($100) mula_sqr1_lo;
 // >(( x * x )/4)
-byte[512] align($100) asm_mul_sqr1_hi;
+byte[512] align($100) mula_sqr1_hi;
 // <((( x - 255) * ( x - 255 ))/4)
-byte[512] align($100) asm_mul_sqr2_lo;
+byte[512] align($100) mula_sqr2_lo;
 // >((( x - 255) * ( x - 255 ))/4)
-byte[512] align($100) asm_mul_sqr2_hi;
+byte[512] align($100) mula_sqr2_hi;
 // Initialize the multiplication tables using ASM code from
 // http://codebase64.org/doku.php?id=base:seriously_fast_multiplication
-void init_multiply_asm() {
+void mulf_init_asm() {
     asm{
         ldx #$00
         txa
@@ -60,7 +62,7 @@ void init_multiply_asm() {
         tya
         adc #$00
     ml1:
-        sta asm_mul_sqr1_hi,x
+        sta mula_sqr1_hi,x
         tay
         cmp #$40
         txa
@@ -70,7 +72,7 @@ void init_multiply_asm() {
         sta ml9+1
         inx
     ml0:
-        sta asm_mul_sqr1_lo,x
+        sta mula_sqr1_lo,x
         bne lb1
         inc ml0+2
         inc ml1+2
@@ -80,31 +82,31 @@ void init_multiply_asm() {
         ldx #$00
         ldy #$ff
     !:
-        lda asm_mul_sqr1_hi+1,x
-        sta asm_mul_sqr2_hi+$100,x
-        lda asm_mul_sqr1_hi,x
-        sta asm_mul_sqr2_hi,y
-        lda asm_mul_sqr1_lo+1,x
-        sta asm_mul_sqr2_lo+$100,x
-        lda asm_mul_sqr1_lo,x
-        sta asm_mul_sqr2_lo,y
+        lda mula_sqr1_hi+1,x
+        sta mula_sqr2_hi+$100,x
+        lda mula_sqr1_hi,x
+        sta mula_sqr2_hi,y
+        lda mula_sqr1_lo+1,x
+        sta mula_sqr2_lo+$100,x
+        lda mula_sqr1_lo,x
+        sta mula_sqr2_lo,y
         dey
         inx
         bne !-
     }
     // Ensure the ASM tables are not detected as unused by the optimizer
     byte* mem = $ff;
-    *mem = *asm_mul_sqr1_lo;
-    *mem = *asm_mul_sqr1_hi;
-    *mem = *asm_mul_sqr2_lo;
-    *mem = *asm_mul_sqr2_hi;
+    *mem = *mula_sqr1_lo;
+    *mem = *mula_sqr1_hi;
+    *mem = *mula_sqr2_lo;
+    *mem = *mula_sqr2_hi;
 }
 
 // Compare the ASM-based mul tables with the KC-based mul tables
 // Red screen on failure - green on success
 void multiply_tables_compare() {
-    byte* asm_sqr = asm_mul_sqr1_lo;
-    for( byte* kc_sqr=mul_sqr1_lo; kc_sqr<mul_sqr1_lo+512*4; kc_sqr++) {
+    byte* asm_sqr = mula_sqr1_lo;
+    for( byte* kc_sqr=mulf_sqr1_lo; kc_sqr<mulf_sqr1_lo+512*4; kc_sqr++) {
         if(*kc_sqr != *asm_sqr) {
             *BGCOL = 2;
             print_str("multiply table mismatch at @");
@@ -123,8 +125,8 @@ void multiply_tables_compare() {
 void multiply_results_compare() {
     for(byte a: 0..255) {
         for(byte b: 0..255) {
-            word ms = slow_multiply(a, b);
-            word ma = multiply(a,b);
+            word ms = muls8u(a, b);
+            word ma = mulf8u(a,b);
             if(ms!=ma) {
                 *BGCOL = 2;
                 multiply_error(a,b, ms, ma);
@@ -152,8 +154,8 @@ void multiply_error(byte a, byte b, word ms, word ma) {
 void signed_multiply_results_compare() {
     for(signed byte a = -128; a!=-128; a++) {
         for(signed byte b = -128; b!=-128; b++) {
-            signed word ms = slow_signed_multiply(a, b);
-            signed word ma = signed_multiply(a,b);
+            signed word ms = muls8s(a, b);
+            signed word ma = mulf8s(a,b);
             if(ms!=ma) {
                 *BGCOL = 2;
                 signed_multiply_error(a,b, ms, ma);

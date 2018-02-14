@@ -10,8 +10,8 @@ main: {
     lda #5
     sta BGCOL
     jsr print_cls
-    jsr init_multiply
-    jsr init_multiply_asm
+    jsr mulf_init
+    jsr mulf_init_asm
     jsr multiply_tables_compare
     jsr multiply_results_compare
     jsr signed_multiply_results_compare
@@ -29,9 +29,9 @@ signed_multiply_results_compare: {
     sta b
   b2:
     ldx b
-    jsr slow_signed_multiply
+    jsr muls8s
     ldy a
-    jsr signed_multiply
+    jsr mulf8s
     lda ms
     cmp ma
     bne !+
@@ -221,13 +221,13 @@ print_sbyte: {
     jsr print_byte
     rts
 }
-signed_multiply: {
+mulf8s: {
     .label m = $c
     .label b = 3
     .label return = $c
     tya
     ldx b
-    jsr multiply
+    jsr mulf8u
     cpy #0
     bpl b1
     lda m+1
@@ -246,7 +246,7 @@ signed_multiply: {
   b2:
     rts
 }
-multiply: {
+mulf8u: {
     .label memA = $fe
     .label memB = $ff
     .label return = $c
@@ -259,14 +259,14 @@ multiply: {
     sta sm4+1
     sec
   sm1:
-    lda mul_sqr1_lo,x
+    lda mulf_sqr1_lo,x
   sm2:
-    sbc mul_sqr2_lo,x
+    sbc mulf_sqr2_lo,x
     sta memA
   sm3:
-    lda mul_sqr1_hi,x
+    lda mulf_sqr1_hi,x
   sm4:
-    sbc mul_sqr2_hi,x
+    sbc mulf_sqr2_hi,x
     sta memB
     lda memA
     sta return
@@ -274,7 +274,7 @@ multiply: {
     sta return+1
     rts
 }
-slow_signed_multiply: {
+muls8s: {
     .label m = 8
     .label return = 8
     .label a = 2
@@ -350,10 +350,10 @@ multiply_results_compare: {
     sta b
   b2:
     ldx b
-    jsr slow_multiply
+    jsr muls8u
     lda a
     ldx b
-    jsr multiply
+    jsr mulf8u
     lda ms
     cmp ma
     bne !+
@@ -423,7 +423,7 @@ multiply_error: {
     str2: .text " slow:@"
     str3: .text " / fast asm:@"
 }
-slow_multiply: {
+muls8u: {
     .label return = 8
     .label m = 8
     .label a = 2
@@ -455,13 +455,13 @@ slow_multiply: {
 multiply_tables_compare: {
     .label asm_sqr = 8
     .label kc_sqr = 4
-    lda #<asm_mul_sqr1_lo
+    lda #<mula_sqr1_lo
     sta asm_sqr
-    lda #>asm_mul_sqr1_lo
+    lda #>mula_sqr1_lo
     sta asm_sqr+1
-    lda #<mul_sqr1_lo
+    lda #<mulf_sqr1_lo
     sta kc_sqr
-    lda #>mul_sqr1_lo
+    lda #>mulf_sqr1_lo
     sta kc_sqr+1
   b1:
     ldy #0
@@ -506,11 +506,11 @@ multiply_tables_compare: {
     inc kc_sqr+1
   !:
     lda kc_sqr+1
-    cmp #>mul_sqr1_lo+$200*4
+    cmp #>mulf_sqr1_lo+$200*4
     bcc b1
     bne !+
     lda kc_sqr
-    cmp #<mul_sqr1_lo+$200*4
+    cmp #<mulf_sqr1_lo+$200*4
     bcc b1
   !:
     lda #<SCREEN
@@ -536,7 +536,7 @@ multiply_tables_compare: {
     str1: .text " / @"
     str2: .text "multiply tables match!@"
 }
-init_multiply_asm: {
+mulf_init_asm: {
     .label mem = $ff
     ldx #0
     txa
@@ -545,7 +545,7 @@ init_multiply_asm: {
     tya
     adc #0
   ml1:
-    sta asm_mul_sqr1_hi,x
+    sta mula_sqr1_hi,x
     tay
     cmp #$40
     txa
@@ -555,7 +555,7 @@ init_multiply_asm: {
     sta ml9+1
     inx
   ml0:
-    sta asm_mul_sqr1_lo,x
+    sta mula_sqr1_lo,x
     bne lb1
     inc ml0+2
     inc ml1+2
@@ -565,28 +565,28 @@ init_multiply_asm: {
     ldx #0
     ldy #$ff
   !:
-    lda asm_mul_sqr1_hi+1,x
-    sta asm_mul_sqr2_hi+$100,x
-    lda asm_mul_sqr1_hi,x
-    sta asm_mul_sqr2_hi,y
-    lda asm_mul_sqr1_lo+1,x
-    sta asm_mul_sqr2_lo+$100,x
-    lda asm_mul_sqr1_lo,x
-    sta asm_mul_sqr2_lo,y
+    lda mula_sqr1_hi+1,x
+    sta mula_sqr2_hi+$100,x
+    lda mula_sqr1_hi,x
+    sta mula_sqr2_hi,y
+    lda mula_sqr1_lo+1,x
+    sta mula_sqr2_lo+$100,x
+    lda mula_sqr1_lo,x
+    sta mula_sqr2_lo,y
     dey
     inx
     bne !-
-    lda asm_mul_sqr1_lo
+    lda mula_sqr1_lo
     sta mem
-    lda asm_mul_sqr1_hi
+    lda mula_sqr1_hi
     sta mem
-    lda asm_mul_sqr2_lo
+    lda mula_sqr2_lo
     sta mem
-    lda asm_mul_sqr2_hi
+    lda mula_sqr2_hi
     sta mem
     rts
 }
-init_multiply: {
+mulf_init: {
     .label sqr1_hi = 6
     .label sqr = 8
     .label sqr1_lo = 4
@@ -596,13 +596,13 @@ init_multiply: {
     .label dir = 2
     lda #0
     sta x_2
-    lda #<mul_sqr1_hi+1
+    lda #<mulf_sqr1_hi+1
     sta sqr1_hi
-    lda #>mul_sqr1_hi+1
+    lda #>mulf_sqr1_hi+1
     sta sqr1_hi+1
-    lda #<mul_sqr1_lo+1
+    lda #<mulf_sqr1_lo+1
     sta sqr1_lo
-    lda #>mul_sqr1_lo+1
+    lda #>mulf_sqr1_lo+1
     sta sqr1_lo+1
     lda #0
     sta sqr
@@ -641,27 +641,27 @@ init_multiply: {
     inc sqr1_lo+1
   !:
     lda sqr1_lo+1
-    cmp #>mul_sqr1_lo+$200
+    cmp #>mulf_sqr1_lo+$200
     bne b1
     lda sqr1_lo
-    cmp #<mul_sqr1_lo+$200
+    cmp #<mulf_sqr1_lo+$200
     bne b1
     lda #$ff
     sta dir
-    lda #<mul_sqr2_hi
+    lda #<mulf_sqr2_hi
     sta sqr2_hi
-    lda #>mul_sqr2_hi
+    lda #>mulf_sqr2_hi
     sta sqr2_hi+1
-    lda #<mul_sqr2_lo
+    lda #<mulf_sqr2_lo
     sta sqr2_lo
-    lda #>mul_sqr2_lo
+    lda #>mulf_sqr2_lo
     sta sqr2_lo+1
     ldx #-1
   b3:
-    lda mul_sqr1_lo,x
+    lda mulf_sqr1_lo,x
     ldy #0
     sta (sqr2_lo),y
-    lda mul_sqr1_hi,x
+    lda mulf_sqr1_hi,x
     sta (sqr2_hi),y
     inc sqr2_hi
     bne !+
@@ -681,15 +681,15 @@ init_multiply: {
     inc sqr2_lo+1
   !:
     lda sqr2_lo+1
-    cmp #>mul_sqr2_lo+$1ff
+    cmp #>mulf_sqr2_lo+$1ff
     bne b3
     lda sqr2_lo
-    cmp #<mul_sqr2_lo+$1ff
+    cmp #<mulf_sqr2_lo+$1ff
     bne b3
-    lda mul_sqr1_lo+$100
-    sta mul_sqr2_lo+$1ff
-    lda mul_sqr1_hi+$100
-    sta mul_sqr2_hi+$1ff
+    lda mulf_sqr1_lo+$100
+    sta mulf_sqr2_lo+$1ff
+    lda mulf_sqr1_hi+$100
+    sta mulf_sqr2_hi+$1ff
     rts
 }
 print_cls: {
@@ -715,18 +715,18 @@ print_cls: {
     rts
 }
   .align $100
-  mul_sqr1_lo: .fill $200, 0
+  mulf_sqr1_lo: .fill $200, 0
   .align $100
-  mul_sqr1_hi: .fill $200, 0
+  mulf_sqr1_hi: .fill $200, 0
   .align $100
-  mul_sqr2_lo: .fill $200, 0
+  mulf_sqr2_lo: .fill $200, 0
   .align $100
-  mul_sqr2_hi: .fill $200, 0
+  mulf_sqr2_hi: .fill $200, 0
   .align $100
-  asm_mul_sqr1_lo: .fill $200, 0
+  mula_sqr1_lo: .fill $200, 0
   .align $100
-  asm_mul_sqr1_hi: .fill $200, 0
+  mula_sqr1_hi: .fill $200, 0
   .align $100
-  asm_mul_sqr2_lo: .fill $200, 0
+  mula_sqr2_lo: .fill $200, 0
   .align $100
-  asm_mul_sqr2_hi: .fill $200, 0
+  mula_sqr2_hi: .fill $200, 0

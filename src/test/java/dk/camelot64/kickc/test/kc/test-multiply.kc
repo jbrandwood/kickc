@@ -1,5 +1,6 @@
 // Test the fast multiplication library
 import "print.kc"
+import "multiply.kc"
 import "fastmultiply.kc"
 
 byte* BGCOL = $d021;
@@ -9,9 +10,9 @@ void main() {
     print_cls();
     mulf_init();
     mulf_init_asm();
-    multiply_tables_compare();
-    multiply_results_compare();
-    signed_multiply_results_compare();
+    mulf_tables_cmp();
+    mul8u_slowfast_compare();
+    mul8s_slowfast_compare();
 }
 
 // Slow multiplication of unsigned bytes
@@ -104,7 +105,7 @@ void mulf_init_asm() {
 
 // Compare the ASM-based mul tables with the KC-based mul tables
 // Red screen on failure - green on success
-void multiply_tables_compare() {
+void mulf_tables_cmp() {
     byte* asm_sqr = mula_sqr1_lo;
     for( byte* kc_sqr=mulf_sqr1_lo; kc_sqr<mulf_sqr1_lo+512*4; kc_sqr++) {
         if(*kc_sqr != *asm_sqr) {
@@ -122,14 +123,22 @@ void multiply_tables_compare() {
 }
 
 // Perform all possible byte multiplications (slow and fast) and compare the results
-void multiply_results_compare() {
+void mul8u_slowfast_compare() {
     for(byte a: 0..255) {
         for(byte b: 0..255) {
             word ms = muls8u(a, b);
-            word ma = mulf8u(a,b);
-            if(ms!=ma) {
+            word mf = mulf8u(a,b);
+            word mn = mul8u(a,b);
+            byte ok = 1;
+            if(ms!=mf) {
+                ok = 0;
+            }
+            if(ms!=mn) {
+                ok = 0;
+            }
+            if(ok==0) {
                 *BGCOL = 2;
-                multiply_error(a,b, ms, ma);
+                multiply_error(a,b, ms, mn, mf);
                 return;
             }
         }
@@ -138,20 +147,22 @@ void multiply_results_compare() {
     print_ln();
 }
 
-void multiply_error(byte a, byte b, word ms, word ma) {
+void multiply_error(byte a, byte b, word ms, word mn, word mf) {
   print_str("multiply mismatch @");
   print_byte(a);
   print_str("*@");
   print_byte(b);
   print_str(" slow:@");
   print_word(ms);
-  print_str(" / fast asm:@");
-  print_word(ma);
+  print_str(" / normal:@");
+  print_word(mn);
+  print_str(" / fast:@");
+  print_word(mf);
   print_ln();
 }
 
 // Perform all possible signed byte multiplications (slow and fast) and compare the results
-void signed_multiply_results_compare() {
+void mul8s_slowfast_compare() {
     for(signed byte a = -128; a!=-128; a++) {
         for(signed byte b = -128; b!=-128; b++) {
             signed word ms = muls8s(a, b);

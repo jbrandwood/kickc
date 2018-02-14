@@ -12,12 +12,12 @@ main: {
     jsr print_cls
     jsr mulf_init
     jsr mulf_init_asm
-    jsr multiply_tables_compare
-    jsr multiply_results_compare
-    jsr signed_multiply_results_compare
+    jsr mulf_tables_cmp
+    jsr mul8u_slowfast_compare
+    jsr mul8s_slowfast_compare
     rts
 }
-signed_multiply_results_compare: {
+mul8s_slowfast_compare: {
     .label ms = 8
     .label ma = $c
     .label b = 3
@@ -338,9 +338,10 @@ muls8s: {
     bne b5
     jmp b3
 }
-multiply_results_compare: {
+mul8u_slowfast_compare: {
     .label ms = 8
-    .label ma = $c
+    .label mf = $c
+    .label mn = $e
     .label b = 3
     .label a = 2
     lda #0
@@ -354,20 +355,39 @@ multiply_results_compare: {
     lda a
     ldx b
     jsr mulf8u
+    ldx a
+    lda b
+    jsr mul8u
     lda ms
-    cmp ma
+    cmp mf
     bne !+
     lda ms+1
-    cmp ma+1
-    beq b3
+    cmp mf+1
+    beq b6
   !:
+    ldx #0
+    jmp b3
+  b6:
+    ldx #1
+  b3:
+    lda ms
+    cmp mn
+    bne !+
+    lda ms+1
+    cmp mn+1
+    beq b4
+  !:
+    ldx #0
+  b4:
+    cpx #0
+    bne b5
     lda #2
     sta BGCOL
     ldx a
     jsr multiply_error
   breturn:
     rts
-  b3:
+  b5:
     inc b
     lda b
     bne b2
@@ -386,7 +406,8 @@ multiply_results_compare: {
 multiply_error: {
     .label b = 3
     .label ms = 8
-    .label ma = $c
+    .label mn = $e
+    .label mf = $c
     lda #<str
     sta print_str.str
     lda #>str
@@ -411,9 +432,19 @@ multiply_error: {
     lda #>str3
     sta print_str.str+1
     jsr print_str
-    lda ma
+    lda mn
     sta print_word.w
-    lda ma+1
+    lda mn+1
+    sta print_word.w+1
+    jsr print_word
+    lda #<str4
+    sta print_str.str
+    lda #>str4
+    sta print_str.str+1
+    jsr print_str
+    lda mf
+    sta print_word.w
+    lda mf+1
     sta print_word.w+1
     jsr print_word
     jsr print_ln
@@ -421,7 +452,41 @@ multiply_error: {
     str: .text "multiply mismatch @"
     str1: .text "*@"
     str2: .text " slow:@"
-    str3: .text " / fast asm:@"
+    str3: .text " / normal:@"
+    str4: .text " / fast:@"
+}
+mul8u: {
+    .label mb = 6
+    .label res = $e
+    .label return = $e
+    sta mb
+    lda #0
+    sta mb+1
+    sta res
+    sta res+1
+  b1:
+    cpx #0
+    bne b2
+    rts
+  b2:
+    txa
+    and #1
+    cmp #0
+    beq b4
+    lda res
+    clc
+    adc mb
+    sta res
+    lda res+1
+    adc mb+1
+    sta res+1
+  b4:
+    txa
+    lsr
+    tax
+    asl mb
+    rol mb+1
+    jmp b1
 }
 muls8u: {
     .label return = 8
@@ -452,7 +517,7 @@ muls8u: {
   b1:
     rts
 }
-multiply_tables_compare: {
+mulf_tables_cmp: {
     .label asm_sqr = 8
     .label kc_sqr = 4
     lda #<mula_sqr1_lo

@@ -13,13 +13,14 @@ main: {
     jsr mulf_init
     jsr mulf_init_asm
     jsr mulf_tables_cmp
-    jsr mul8u_slowfast_compare
-    jsr mul8s_slowfast_compare
+    jsr mul8u_compare
+    jsr mul8s_compare
     rts
 }
-mul8s_slowfast_compare: {
+mul8s_compare: {
     .label ms = 8
-    .label ma = $c
+    .label mf = $e
+    .label mn = $c
     .label b = 3
     .label a = 2
     lda #-$80
@@ -32,20 +33,38 @@ mul8s_slowfast_compare: {
     jsr muls8s
     ldy a
     jsr mulf8s
+    ldy b
+    jsr mul8s
     lda ms
-    cmp ma
+    cmp mf
     bne !+
     lda ms+1
-    cmp ma+1
-    beq b3
+    cmp mf+1
+    beq b6
   !:
+    ldx #0
+    jmp b3
+  b6:
+    ldx #1
+  b3:
+    lda ms
+    cmp mn
+    bne !+
+    lda ms+1
+    cmp mn+1
+    beq b4
+  !:
+    ldx #0
+  b4:
+    cpx #0
+    bne b5
     lda #2
     sta BGCOL
     ldx a
-    jsr signed_multiply_error
+    jsr mul8s_error
   breturn:
     rts
-  b3:
+  b5:
     inc b
     lda b
     cmp #-$80
@@ -108,10 +127,11 @@ print_str: {
   !:
     jmp b1
 }
-signed_multiply_error: {
+mul8s_error: {
     .label b = 3
     .label ms = 8
-    .label ma = $c
+    .label mn = $c
+    .label mf = $e
     lda line_cursor
     sta char_cursor
     lda line_cursor+1
@@ -140,9 +160,19 @@ signed_multiply_error: {
     lda #>str3
     sta print_str.str+1
     jsr print_str
-    lda ma
+    lda mn
     sta print_sword.w
-    lda ma+1
+    lda mn+1
+    sta print_sword.w+1
+    jsr print_sword
+    lda #<str4
+    sta print_str.str
+    lda #>str4
+    sta print_str.str+1
+    jsr print_str
+    lda mf
+    sta print_sword.w
+    lda mf+1
     sta print_sword.w+1
     jsr print_sword
     jsr print_ln
@@ -150,7 +180,8 @@ signed_multiply_error: {
     str: .text "signed multiply mismatch @"
     str1: .text "*@"
     str2: .text " slow:@"
-    str3: .text " / fast asm:@"
+    str3: .text " / normal:@"
+    str4: .text " / fast:@"
 }
 print_sword: {
     .label w = 8
@@ -221,10 +252,68 @@ print_sbyte: {
     jsr print_byte
     rts
 }
-mulf8s: {
+mul8s: {
     .label m = $c
-    .label b = 3
+    .label a = 2
     .label return = $c
+    tya
+    ldx a
+    jsr mul8u
+    lda a
+    cmp #0
+    bpl b1
+    lda m+1
+    sty $ff
+    sec
+    sbc $ff
+    sta m+1
+  b1:
+    cpy #0
+    bpl b2
+    lda m+1
+    sec
+    sbc a
+    sta m+1
+  b2:
+    rts
+}
+mul8u: {
+    .label mb = 6
+    .label res = $c
+    .label return = $c
+    sta mb
+    lda #0
+    sta mb+1
+    sta res
+    sta res+1
+  b1:
+    cpx #0
+    bne b2
+    rts
+  b2:
+    txa
+    and #1
+    cmp #0
+    beq b4
+    lda res
+    clc
+    adc mb
+    sta res
+    lda res+1
+    adc mb+1
+    sta res+1
+  b4:
+    txa
+    lsr
+    tax
+    asl mb
+    rol mb+1
+    jmp b1
+}
+mulf8s: {
+    .label m = $e
+    .label b = 3
+    .label return = $e
     tya
     ldx b
     jsr mulf8u
@@ -249,7 +338,7 @@ mulf8s: {
 mulf8u: {
     .label memA = $fe
     .label memB = $ff
-    .label return = $c
+    .label return = $e
     sta memA
     stx memB
     sta sm1+1
@@ -338,10 +427,10 @@ muls8s: {
     bne b5
     jmp b3
 }
-mul8u_slowfast_compare: {
+mul8u_compare: {
     .label ms = 8
-    .label mf = $c
-    .label mn = $e
+    .label mf = $e
+    .label mn = $c
     .label b = 3
     .label a = 2
     lda #0
@@ -384,7 +473,7 @@ mul8u_slowfast_compare: {
     lda #2
     sta BGCOL
     ldx a
-    jsr multiply_error
+    jsr mul8u_error
   breturn:
     rts
   b5:
@@ -403,11 +492,11 @@ mul8u_slowfast_compare: {
     jmp breturn
     str: .text "multiply results match!@"
 }
-multiply_error: {
+mul8u_error: {
     .label b = 3
     .label ms = 8
-    .label mn = $e
-    .label mf = $c
+    .label mn = $c
+    .label mf = $e
     lda #<str
     sta print_str.str
     lda #>str
@@ -454,39 +543,6 @@ multiply_error: {
     str2: .text " slow:@"
     str3: .text " / normal:@"
     str4: .text " / fast:@"
-}
-mul8u: {
-    .label mb = 6
-    .label res = $e
-    .label return = $e
-    sta mb
-    lda #0
-    sta mb+1
-    sta res
-    sta res+1
-  b1:
-    cpx #0
-    bne b2
-    rts
-  b2:
-    txa
-    and #1
-    cmp #0
-    beq b4
-    lda res
-    clc
-    adc mb
-    sta res
-    lda res+1
-    adc mb+1
-    sta res+1
-  b4:
-    txa
-    lsr
-    tax
-    asl mb
-    rol mb+1
-    jmp b1
 }
 muls8u: {
     .label return = 8

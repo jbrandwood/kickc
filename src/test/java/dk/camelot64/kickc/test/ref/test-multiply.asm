@@ -3,8 +3,8 @@
 .pc = $80d "Program"
   .label SCREEN = $400
   .label BGCOL = $d021
-  .label char_cursor = $a
-  .label line_cursor = 4
+  .label char_cursor = $e
+  .label line_cursor = 6
   jsr main
 main: {
     lda #5
@@ -15,14 +15,340 @@ main: {
     jsr mulf_tables_cmp
     jsr mul8u_compare
     jsr mul8s_compare
+    jsr mul16u_compare
+    rts
+}
+mul16u_compare: {
+    .label a = 2
+    .label b = 4
+    .label ms = $a
+    .label mn = $10
+    ldx #0
+    txa
+    sta b
+    sta b+1
+    sta a
+    sta a+1
+  b1:
+    ldy #0
+  b2:
+    lda a
+    clc
+    adc #<$d2b
+    sta a
+    lda a+1
+    adc #>$d2b
+    sta a+1
+    lda b
+    clc
+    adc #<$ffd
+    sta b
+    lda b+1
+    adc #>$ffd
+    sta b+1
+    jsr muls16u
+    lda a
+    sta mul16u.a
+    lda a+1
+    sta mul16u.a+1
+    jsr mul16u
+    lda ms
+    cmp mn
+    bne !+
+    lda ms+1
+    cmp mn+1
+    bne !+
+    lda ms+2
+    cmp mn+2
+    bne !+
+    lda ms+3
+    cmp mn+3
+    beq b5
+  !:
+    lda #0
+    jmp b3
+  b5:
+    lda #1
+  b3:
+    cmp #0
+    bne b4
+    lda #2
+    sta BGCOL
+    jsr mul16u_error
+  breturn:
+    rts
+  b4:
+    iny
+    cpy #$10
+    bne b2
+    inx
+    cpx #$10
+    bne b1
+    lda line_cursor
+    sta char_cursor
+    lda line_cursor+1
+    sta char_cursor+1
+    lda #<str
+    sta print_str.str
+    lda #>str
+    sta print_str.str+1
+    jsr print_str
+    jsr print_ln
+    jmp breturn
+    str: .text "word multiply results match!@"
+}
+print_ln: {
+  b1:
+    lda line_cursor
+    clc
+    adc #$28
+    sta line_cursor
+    bcc !+
+    inc line_cursor+1
+  !:
+    lda line_cursor+1
+    cmp char_cursor+1
+    bcc b1
+    bne !+
+    lda line_cursor
+    cmp char_cursor
+    bcc b1
+  !:
+    rts
+}
+print_str: {
+    .label str = 8
+  b1:
+    ldy #0
+    lda (str),y
+    cmp #'@'
+    bne b2
+    rts
+  b2:
+    ldy #0
+    lda (str),y
+    sta (char_cursor),y
+    inc char_cursor
+    bne !+
+    inc char_cursor+1
+  !:
+    inc str
+    bne !+
+    inc str+1
+  !:
+    jmp b1
+}
+mul16u_error: {
+    .label a = 2
+    .label b = 4
+    .label ms = $a
+    .label mn = $10
+    lda line_cursor
+    sta char_cursor
+    lda line_cursor+1
+    sta char_cursor+1
+    lda #<str
+    sta print_str.str
+    lda #>str
+    sta print_str.str+1
+    jsr print_str
+    jsr print_word
+    lda #<str1
+    sta print_str.str
+    lda #>str1
+    sta print_str.str+1
+    jsr print_str
+    lda b
+    sta print_word.w
+    lda b+1
+    sta print_word.w+1
+    jsr print_word
+    lda #<str2
+    sta print_str.str
+    lda #>str2
+    sta print_str.str+1
+    jsr print_str
+    jsr print_dword
+    lda #<str3
+    sta print_str.str
+    lda #>str3
+    sta print_str.str+1
+    jsr print_str
+    lda mn
+    sta print_dword.dw
+    lda mn+1
+    sta print_dword.dw+1
+    lda mn+2
+    sta print_dword.dw+2
+    lda mn+3
+    sta print_dword.dw+3
+    jsr print_dword
+    jsr print_ln
+    rts
+    str: .text "word multiply mismatch @"
+    str1: .text "*@"
+    str2: .text " slow:@"
+    str3: .text " / normal:@"
+}
+print_dword: {
+    .label dw = $a
+    lda dw+2
+    sta print_word.w
+    lda dw+3
+    sta print_word.w+1
+    jsr print_word
+    lda dw
+    sta print_word.w
+    lda dw+1
+    sta print_word.w+1
+    jsr print_word
+    rts
+}
+print_word: {
+    .label w = 2
+    lda w+1
+    tax
+    jsr print_byte
+    lda w
+    tax
+    jsr print_byte
+    rts
+}
+print_byte: {
+    txa
+    lsr
+    lsr
+    lsr
+    lsr
+    tay
+    lda hextab,y
+    jsr print_char
+    txa
+    and #$f
+    tay
+    lda hextab,y
+    jsr print_char
+    rts
+    hextab: .text "0123456789abcdef"
+}
+print_char: {
+    ldy #0
+    sta (char_cursor),y
+    inc char_cursor
+    bne !+
+    inc char_cursor+1
+  !:
+    rts
+}
+mul16u: {
+    .label mb = $14
+    .label a = 8
+    .label res = $10
+    .label b = 4
+    .label return = $10
+    lda b
+    sta mb
+    lda b+1
+    sta mb+1
+    lda #0
+    sta mb+2
+    sta mb+3
+    sta res
+    sta res+1
+    sta res+2
+    sta res+3
+  b1:
+    lda a
+    bne b2
+    lda a+1
+    bne b2
+    rts
+  b2:
+    lda a
+    and #1
+    cmp #0
+    beq b4
+    lda res
+    clc
+    adc mb
+    sta res
+    lda res+1
+    adc mb+1
+    sta res+1
+    lda res+2
+    adc mb+2
+    sta res+2
+    lda res+3
+    adc mb+3
+    sta res+3
+  b4:
+    clc
+    ror a+1
+    ror a
+    asl mb
+    rol mb+1
+    rol mb+2
+    rol mb+3
+    jmp b1
+}
+muls16u: {
+    .label return = $a
+    .label m = $a
+    .label i = 8
+    .label a = 2
+    .label b = 4
+    lda a
+    bne !+
+    lda a+1
+    beq b3
+  !:
+    lda #0
+    sta i
+    sta i+1
+    sta m
+    sta m+1
+    sta m+2
+    sta m+3
+  b2:
+    lda m
+    clc
+    adc b
+    sta m
+    lda m+1
+    adc b+1
+    sta m+1
+    lda m+2
+    adc #0
+    sta m+2
+    lda m+3
+    adc #0
+    sta m+3
+    inc i
+    bne !+
+    inc i+1
+  !:
+    lda i+1
+    cmp a+1
+    bne b2
+    lda i
+    cmp a
+    bne b2
+    jmp b1
+  b3:
+    lda #0
+    sta return
+    sta return+1
+    sta return+2
+    sta return+3
+  b1:
     rts
 }
 mul8s_compare: {
-    .label ms = 8
-    .label mf = $e
-    .label mn = $c
-    .label b = 3
-    .label a = 2
+    .label ms = 2
+    .label mf = $1a
+    .label mn = 4
+    .label b = $19
+    .label a = $18
     lda #-$80
     sta a
   b1:
@@ -86,52 +412,11 @@ mul8s_compare: {
     jmp breturn
     str: .text "signed multiply results match!@"
 }
-print_ln: {
-  b1:
-    lda line_cursor
-    clc
-    adc #$28
-    sta line_cursor
-    bcc !+
-    inc line_cursor+1
-  !:
-    lda line_cursor+1
-    cmp char_cursor+1
-    bcc b1
-    bne !+
-    lda line_cursor
-    cmp char_cursor
-    bcc b1
-  !:
-    rts
-}
-print_str: {
-    .label str = 6
-  b1:
-    ldy #0
-    lda (str),y
-    cmp #'@'
-    bne b2
-    rts
-  b2:
-    ldy #0
-    lda (str),y
-    sta (char_cursor),y
-    inc char_cursor
-    bne !+
-    inc char_cursor+1
-  !:
-    inc str
-    bne !+
-    inc str+1
-  !:
-    jmp b1
-}
 mul8s_error: {
-    .label b = 3
-    .label ms = 8
-    .label mn = $c
-    .label mf = $e
+    .label b = $19
+    .label ms = 2
+    .label mn = 4
+    .label mf = $1a
     lda line_cursor
     sta char_cursor
     lda line_cursor+1
@@ -184,7 +469,7 @@ mul8s_error: {
     str4: .text " / fast:@"
 }
 print_sword: {
-    .label w = 8
+    .label w = 2
     lda w+1
     bpl b1
     lda #'-'
@@ -202,42 +487,6 @@ print_sword: {
     jsr print_word
     rts
 }
-print_word: {
-    .label w = 8
-    lda w+1
-    tax
-    jsr print_byte
-    lda w
-    tax
-    jsr print_byte
-    rts
-}
-print_byte: {
-    txa
-    lsr
-    lsr
-    lsr
-    lsr
-    tay
-    lda hextab,y
-    jsr print_char
-    txa
-    and #$f
-    tay
-    lda hextab,y
-    jsr print_char
-    rts
-    hextab: .text "0123456789abcdef"
-}
-print_char: {
-    ldy #0
-    sta (char_cursor),y
-    inc char_cursor
-    bne !+
-    inc char_cursor+1
-  !:
-    rts
-}
 print_sbyte: {
     cpx #0
     bpl b1
@@ -253,9 +502,9 @@ print_sbyte: {
     rts
 }
 mul8s: {
-    .label m = $c
-    .label a = 2
-    .label return = $c
+    .label m = 4
+    .label a = $18
+    .label return = 4
     tya
     ldx a
     jsr mul8u
@@ -278,9 +527,9 @@ mul8s: {
     rts
 }
 mul8u: {
-    .label mb = 6
-    .label res = $c
-    .label return = $c
+    .label mb = 8
+    .label res = 4
+    .label return = 4
     sta mb
     lda #0
     sta mb+1
@@ -311,9 +560,9 @@ mul8u: {
     jmp b1
 }
 mulf8s: {
-    .label m = $e
-    .label b = 3
-    .label return = $e
+    .label m = $1a
+    .label b = $19
+    .label return = $1a
     tya
     ldx b
     jsr mulf8u
@@ -338,7 +587,7 @@ mulf8s: {
 mulf8u: {
     .label memA = $fe
     .label memB = $ff
-    .label return = $e
+    .label return = $1a
     sta memA
     stx memB
     sta sm1+1
@@ -364,9 +613,9 @@ mulf8u: {
     rts
 }
 muls8s: {
-    .label m = 8
-    .label return = 8
-    .label a = 2
+    .label m = 2
+    .label return = 2
+    .label a = $18
     lda a
     cmp #0
     bpl b1
@@ -428,11 +677,11 @@ muls8s: {
     jmp b3
 }
 mul8u_compare: {
-    .label ms = 8
-    .label mf = $e
-    .label mn = $c
-    .label b = 3
-    .label a = 2
+    .label ms = 2
+    .label mf = $1a
+    .label mn = 4
+    .label b = $19
+    .label a = $18
     lda #0
     sta a
   b1:
@@ -493,10 +742,10 @@ mul8u_compare: {
     str: .text "multiply results match!@"
 }
 mul8u_error: {
-    .label b = 3
-    .label ms = 8
-    .label mn = $c
-    .label mf = $e
+    .label b = $19
+    .label ms = 2
+    .label mn = 4
+    .label mf = $1a
     lda #<str
     sta print_str.str
     lda #>str
@@ -545,9 +794,9 @@ mul8u_error: {
     str4: .text " / fast:@"
 }
 muls8u: {
-    .label return = 8
-    .label m = 8
-    .label a = 2
+    .label return = 2
+    .label m = 2
+    .label a = $18
     lda a
     beq b3
     ldy #0
@@ -574,7 +823,7 @@ muls8u: {
     rts
 }
 mulf_tables_cmp: {
-    .label asm_sqr = 8
+    .label asm_sqr = 2
     .label kc_sqr = 4
     lda #<mula_sqr1_lo
     sta asm_sqr
@@ -708,13 +957,13 @@ mulf_init_asm: {
     rts
 }
 mulf_init: {
-    .label sqr1_hi = 6
-    .label sqr = 8
-    .label sqr1_lo = 4
-    .label x_2 = 2
-    .label sqr2_hi = 6
-    .label sqr2_lo = 4
-    .label dir = 2
+    .label sqr1_hi = 4
+    .label sqr = 6
+    .label sqr1_lo = 2
+    .label x_2 = $18
+    .label sqr2_hi = 4
+    .label sqr2_lo = 2
+    .label dir = $18
     lda #0
     sta x_2
     lda #<mulf_sqr1_hi+1
@@ -814,7 +1063,7 @@ mulf_init: {
     rts
 }
 print_cls: {
-    .label sc = 4
+    .label sc = 2
     lda #<SCREEN
     sta sc
     lda #>SCREEN

@@ -21,6 +21,8 @@ public class Operator {
    public static final Operator CAST_SBYTE = new Operator("((signed byte))", "_sbyte_", Type.UNARY, 2);
    public static final Operator CAST_WORD = new Operator("((word))", "_word_", Type.UNARY, 2);
    public static final Operator CAST_SWORD = new Operator("((signed word))", "_sword_", Type.UNARY, 2);
+   public static final Operator CAST_DWORD = new Operator("((dword))", "_dword_", Type.UNARY, 2);
+   public static final Operator CAST_SDWORD = new Operator("((signed dword))", "_sdword_", Type.UNARY, 2);
    public static final Operator CAST_PTRBY = new Operator("((byte*))", "_ptrby_", Type.UNARY, 2);
    public static final Operator MULTIPLY = new Operator("*", "_mul_", Type.BINARY, 3);
    public static final Operator DIVIDE = new Operator("/", "_div_", Type.BINARY, 3);
@@ -135,6 +137,10 @@ public class Operator {
          return CAST_WORD;
       } else if(SymbolType.SWORD.equals(castType)) {
          return CAST_SWORD;
+      } else if(SymbolType.DWORD.equals(castType)) {
+         return CAST_DWORD;
+      } else if(SymbolType.SDWORD.equals(castType)) {
+         return CAST_SDWORD;
       } else if(castType instanceof SymbolTypePointer && SymbolType.BYTE.equals(((SymbolTypePointer) castType).getElementType())) {
          return CAST_PTRBY;
       } else {

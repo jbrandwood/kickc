@@ -503,6 +503,8 @@ class AsmFragmentTemplateSynthesisRule {
       synths.add(new AsmFragmentTemplateSynthesisRule("(v..)z1=(.*)_(plus|minus|band|bxor|bor)_(v..)z1", oneZ2, null, "$1z1=$2_$3_$4z2", null, mapZ, false));
       synths.add(new AsmFragmentTemplateSynthesisRule("(v..)z1=_(neg|lo|hi)_(v..)z1", oneZ2, null, "$1z1=_$2_$3z2", null, mapZ, false));
 
+      //synths.add(new AsmFragmentTemplateSynthesisRule("(v..)z1=(v..)z1_(plus|minus|band|bxor|bor)_(v..)z2", null, null, "$1z1=$2z2_$3_$4z3", null, mapZ, false));
+
       // Convert INC/DEC to +1/-1 ( ..._inc_xxx... -> ...xxx_plus_1_... / ..._dec_xxx... -> ...xxx_minus_1_... )
       synths.add(new AsmFragmentTemplateSynthesisRule("vb(.)aa=_inc_(.*)", null, null, "vb$1aa=$2_plus_1", null, null));
       synths.add(new AsmFragmentTemplateSynthesisRule("vb(.)aa=_dec_(.*)", null, null, "vb$1aa=$2_minus_1", null, null));

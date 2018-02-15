@@ -30,6 +30,10 @@ public class SymbolTypeInference {
          return SymbolType.WORD;
       } else if(operator.equals(Operator.CAST_SWORD)) {
          return SymbolType.SWORD;
+      } else if(operator.equals(Operator.CAST_DWORD)) {
+         return SymbolType.DWORD;
+      } else if(operator.equals(Operator.CAST_SDWORD)) {
+         return SymbolType.SDWORD;
       } else if(operator.equals(Operator.CAST_PTRBY)) {
          return new SymbolTypePointer(SymbolType.BYTE);
       } else if(operator.equals(Operator.ADDRESS_OF)) {
@@ -76,10 +80,14 @@ public class SymbolTypeInference {
       } else if(Operator.LOWBYTE.equals(operator)) {
          if(subType instanceof SymbolTypePointer || SymbolType.isWord(subType) || SymbolType.isSWord(subType)) {
             return SymbolType.BYTE;
+         } else if(SymbolType.isDWord(subType) || SymbolType.isSDWord(subType)) {
+            return SymbolType.WORD;
          }
       } else if(Operator.HIBYTE.equals(operator)) {
          if(subType instanceof SymbolTypePointer || SymbolType.isWord(subType) || SymbolType.isSWord(subType)) {
             return SymbolType.BYTE;
+         } else if(SymbolType.isDWord(subType) || SymbolType.isSDWord(subType)) {
+            return SymbolType.WORD;
          }
       } else if(Operator.CAST_BYTE.equals(operator)) {
          return SymbolType.BYTE;

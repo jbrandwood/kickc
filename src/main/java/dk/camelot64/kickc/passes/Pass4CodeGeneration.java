@@ -207,7 +207,11 @@ public class Pass4CodeGeneration {
       while(statementsIt.hasNext()) {
          Statement statement = statementsIt.next();
          if(!(statement instanceof StatementPhiBlock)) {
-            generateStatementAsm(asm, block, statement, aluState, true);
+            try {
+               generateStatementAsm(asm, block, statement, aluState, true);
+            } catch(AsmFragmentTemplateSynthesizer.UnknownFragmentException e) {
+               throw new CompileError("Unknown fragment for statement "+statement.toString(program, false), e);
+            }
          }
       }
    }

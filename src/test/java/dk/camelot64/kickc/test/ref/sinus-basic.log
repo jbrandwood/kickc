@@ -70,6 +70,12 @@ void print_word(word w) {
     print_byte(<w);
 }
 
+// Print a dword as HEX
+void print_dword(dword dw) {
+    print_word(>dw);
+    print_word(<dw);
+}
+
 // Print a byte as HEX
 void print_byte(byte b) {
     // Table of hexadecimal digits
@@ -440,6 +446,14 @@ proc (void()) print_word((word) print_word::w)
 print_word::@return:
   return 
 endproc // print_word()
+proc (void()) print_dword((dword) print_dword::dw)
+  (word~) print_dword::$0 ← > (dword) print_dword::dw
+  (void~) print_dword::$1 ← call print_word (word~) print_dword::$0 
+  (word~) print_dword::$2 ← < (dword) print_dword::dw
+  (void~) print_dword::$3 ← call print_word (word~) print_dword::$2 
+print_dword::@return:
+  return 
+endproc // print_dword()
 proc (void()) print_byte((byte) print_byte::b)
   (byte[]) print_byte::hextab ← (string) "0123456789abcdef"
   (byte~) print_byte::$0 ← (byte) print_byte::b >> (byte/signed byte/word/signed word/dword/signed dword) 4
@@ -734,6 +748,13 @@ SYMBOLS
 (label) print_cls::@1
 (label) print_cls::@return
 (byte*) print_cls::sc
+(void()) print_dword((dword) print_dword::dw)
+(word~) print_dword::$0
+(void~) print_dword::$1
+(word~) print_dword::$2
+(void~) print_dword::$3
+(label) print_dword::@return
+(dword) print_dword::dw
 (void()) print_ln()
 (byte*~) print_ln::$0
 (boolean~) print_ln::$1
@@ -914,6 +935,17 @@ print_word::@return: scope:[print_word]  from print_word
   to:@return
 @5: scope:[]  from @4
   to:@6
+print_dword: scope:[print_dword]  from
+  (word~) print_dword::$0 ← > (dword) print_dword::dw
+  (void~) print_dword::$1 ← call print_word (word~) print_dword::$0 
+  (word~) print_dword::$2 ← < (dword) print_dword::dw
+  (void~) print_dword::$3 ← call print_word (word~) print_dword::$2 
+  to:print_dword::@return
+print_dword::@return: scope:[print_dword]  from print_dword
+  return 
+  to:@return
+@6: scope:[]  from @5
+  to:@7
 print_byte: scope:[print_byte]  from
   (byte[]) print_byte::hextab ← (string) "0123456789abcdef"
   (byte~) print_byte::$0 ← (byte) print_byte::b >> (byte/signed byte/word/signed word/dword/signed dword) 4
@@ -924,8 +956,8 @@ print_byte: scope:[print_byte]  from
 print_byte::@return: scope:[print_byte]  from print_byte
   return 
   to:@return
-@6: scope:[]  from @5
-  to:@7
+@7: scope:[]  from @6
+  to:@8
 print_char: scope:[print_char]  from
   *((byte*) char_cursor) ← (byte) print_char::ch
   (byte*) char_cursor ← ++ (byte*) char_cursor
@@ -933,8 +965,8 @@ print_char: scope:[print_char]  from
 print_char::@return: scope:[print_char]  from print_char
   return 
   to:@return
-@7: scope:[]  from @6
-  to:@8
+@8: scope:[]  from @7
+  to:@9
 print_cls: scope:[print_cls]  from
   (byte*) print_cls::sc ← (byte*) SCREEN
   to:print_cls::@1
@@ -952,10 +984,10 @@ print_cls::@2: scope:[print_cls]  from print_cls::@1
 print_cls::@return: scope:[print_cls]  from print_cls::@2
   return 
   to:@return
-@8: scope:[]  from @7
+@9: scope:[]  from @8
   (byte*) memLo ← ((byte*)) (byte/word/signed word/dword/signed dword) 254
   (byte*) memHi ← ((byte*)) (byte/word/signed word/dword/signed dword) 255
-  to:@9
+  to:@10
 prepareMEM: scope:[prepareMEM]  from
   (byte~) prepareMEM::$0 ← < (byte*) prepareMEM::mem
   *((byte*) memLo) ← (byte~) prepareMEM::$0
@@ -965,8 +997,8 @@ prepareMEM: scope:[prepareMEM]  from
 prepareMEM::@return: scope:[prepareMEM]  from prepareMEM
   return 
   to:@return
-@9: scope:[]  from @8
-  to:@10
+@10: scope:[]  from @9
+  to:@11
 setFAC: scope:[setFAC]  from
   (byte*~) setFAC::$0 ← ((byte*)) (word) setFAC::w
   (void~) setFAC::$1 ← call prepareMEM (byte*~) setFAC::$0 
@@ -975,8 +1007,8 @@ setFAC: scope:[setFAC]  from
 setFAC::@return: scope:[setFAC]  from setFAC
   return 
   to:@return
-@10: scope:[]  from @9
-  to:@11
+@11: scope:[]  from @10
+  to:@12
 getFAC: scope:[getFAC]  from
   asm { jsr$b1aa sty$fe sta$ff  }
   (word) getFAC::w ← { *((byte*) memHi), *((byte*) memLo) }
@@ -988,24 +1020,24 @@ getFAC::@return: scope:[getFAC]  from getFAC getFAC::@1
   to:@return
 getFAC::@1: scope:[getFAC]  from
   to:getFAC::@return
-@11: scope:[]  from @10
-  to:@12
+@12: scope:[]  from @11
+  to:@13
 setARGtoFAC: scope:[setARGtoFAC]  from
   asm { jsr$bc0f  }
   to:setARGtoFAC::@return
 setARGtoFAC::@return: scope:[setARGtoFAC]  from setARGtoFAC
   return 
   to:@return
-@12: scope:[]  from @11
-  to:@13
+@13: scope:[]  from @12
+  to:@14
 setFACtoARG: scope:[setFACtoARG]  from
   asm { jsr$bbfc  }
   to:setFACtoARG::@return
 setFACtoARG::@return: scope:[setFACtoARG]  from setFACtoARG
   return 
   to:@return
-@13: scope:[]  from @12
-  to:@14
+@14: scope:[]  from @13
+  to:@15
 setMEMtoFAC: scope:[setMEMtoFAC]  from
   (void~) setMEMtoFAC::$0 ← call prepareMEM (byte*) setMEMtoFAC::mem 
   asm { ldx$fe ldy$ff jsr$bbd4  }
@@ -1013,8 +1045,8 @@ setMEMtoFAC: scope:[setMEMtoFAC]  from
 setMEMtoFAC::@return: scope:[setMEMtoFAC]  from setMEMtoFAC
   return 
   to:@return
-@14: scope:[]  from @13
-  to:@15
+@15: scope:[]  from @14
+  to:@16
 setFACtoMEM: scope:[setFACtoMEM]  from
   (void~) setFACtoMEM::$0 ← call prepareMEM (byte*) setFACtoMEM::mem 
   asm { lda$fe ldy$ff jsr$bba2  }
@@ -1022,24 +1054,24 @@ setFACtoMEM: scope:[setFACtoMEM]  from
 setFACtoMEM::@return: scope:[setFACtoMEM]  from setFACtoMEM
   return 
   to:@return
-@15: scope:[]  from @14
-  to:@16
+@16: scope:[]  from @15
+  to:@17
 setFACtoPIhalf: scope:[setFACtoPIhalf]  from
   asm { lda#$e0 ldy#$e2 jsr$bba2  }
   to:setFACtoPIhalf::@return
 setFACtoPIhalf::@return: scope:[setFACtoPIhalf]  from setFACtoPIhalf
   return 
   to:@return
-@16: scope:[]  from @15
-  to:@17
+@17: scope:[]  from @16
+  to:@18
 setFACto2PI: scope:[setFACto2PI]  from
   asm { lda#$e5 ldy#$e2 jsr$bba2  }
   to:setFACto2PI::@return
 setFACto2PI::@return: scope:[setFACto2PI]  from setFACto2PI
   return 
   to:@return
-@17: scope:[]  from @16
-  to:@18
+@18: scope:[]  from @17
+  to:@19
 setARGtoMEM: scope:[setARGtoMEM]  from
   (void~) setARGtoMEM::$0 ← call prepareMEM (byte*) setARGtoMEM::mem 
   asm { lda$fe ldy$ff jsr$ba8c  }
@@ -1047,8 +1079,8 @@ setARGtoMEM: scope:[setARGtoMEM]  from
 setARGtoMEM::@return: scope:[setARGtoMEM]  from setARGtoMEM
   return 
   to:@return
-@18: scope:[]  from @17
-  to:@19
+@19: scope:[]  from @18
+  to:@20
 addMEMtoFAC: scope:[addMEMtoFAC]  from
   (void~) addMEMtoFAC::$0 ← call prepareMEM (byte*) addMEMtoFAC::mem 
   asm { lda$fe ldy$ff jsr$b867  }
@@ -1056,16 +1088,16 @@ addMEMtoFAC: scope:[addMEMtoFAC]  from
 addMEMtoFAC::@return: scope:[addMEMtoFAC]  from addMEMtoFAC
   return 
   to:@return
-@19: scope:[]  from @18
-  to:@20
+@20: scope:[]  from @19
+  to:@21
 addARGtoFAC: scope:[addARGtoFAC]  from
   asm { jsr$b86a  }
   to:addARGtoFAC::@return
 addARGtoFAC::@return: scope:[addARGtoFAC]  from addARGtoFAC
   return 
   to:@return
-@20: scope:[]  from @19
-  to:@21
+@21: scope:[]  from @20
+  to:@22
 subFACfromMEM: scope:[subFACfromMEM]  from
   (void~) subFACfromMEM::$0 ← call prepareMEM (byte*) subFACfromMEM::mem 
   asm { lda$fe ldy$ff jsr$b850  }
@@ -1073,16 +1105,16 @@ subFACfromMEM: scope:[subFACfromMEM]  from
 subFACfromMEM::@return: scope:[subFACfromMEM]  from subFACfromMEM
   return 
   to:@return
-@21: scope:[]  from @20
-  to:@22
+@22: scope:[]  from @21
+  to:@23
 subFACfromARG: scope:[subFACfromARG]  from
   asm { jsr$b853  }
   to:subFACfromARG::@return
 subFACfromARG::@return: scope:[subFACfromARG]  from subFACfromARG
   return 
   to:@return
-@22: scope:[]  from @21
-  to:@23
+@23: scope:[]  from @22
+  to:@24
 divMEMbyFAC: scope:[divMEMbyFAC]  from
   (void~) divMEMbyFAC::$0 ← call prepareMEM (byte*) divMEMbyFAC::mem 
   asm { lda$fe ldy$ff jsr$bb0f  }
@@ -1090,8 +1122,8 @@ divMEMbyFAC: scope:[divMEMbyFAC]  from
 divMEMbyFAC::@return: scope:[divMEMbyFAC]  from divMEMbyFAC
   return 
   to:@return
-@23: scope:[]  from @22
-  to:@24
+@24: scope:[]  from @23
+  to:@25
 mulFACbyMEM: scope:[mulFACbyMEM]  from
   (void~) mulFACbyMEM::$0 ← call prepareMEM (byte*) mulFACbyMEM::mem 
   asm { lda$fe ldy$ff jsr$ba28  }
@@ -1099,8 +1131,8 @@ mulFACbyMEM: scope:[mulFACbyMEM]  from
 mulFACbyMEM::@return: scope:[mulFACbyMEM]  from mulFACbyMEM
   return 
   to:@return
-@24: scope:[]  from @23
-  to:@25
+@25: scope:[]  from @24
+  to:@26
 pwrMEMbyFAC: scope:[pwrMEMbyFAC]  from
   (void~) pwrMEMbyFAC::$0 ← call prepareMEM (byte*) pwrMEMbyFAC::mem 
   asm { lda$fe ldy$ff jsr$bf78  }
@@ -1108,88 +1140,88 @@ pwrMEMbyFAC: scope:[pwrMEMbyFAC]  from
 pwrMEMbyFAC::@return: scope:[pwrMEMbyFAC]  from pwrMEMbyFAC
   return 
   to:@return
-@25: scope:[]  from @24
-  to:@26
+@26: scope:[]  from @25
+  to:@27
 intFAC: scope:[intFAC]  from
   asm { jsr$bccc  }
   to:intFAC::@return
 intFAC::@return: scope:[intFAC]  from intFAC
   return 
   to:@return
-@26: scope:[]  from @25
-  to:@27
+@27: scope:[]  from @26
+  to:@28
 sinFAC: scope:[sinFAC]  from
   asm { jsr$e26b  }
   to:sinFAC::@return
 sinFAC::@return: scope:[sinFAC]  from sinFAC
   return 
   to:@return
-@27: scope:[]  from @26
-  to:@28
+@28: scope:[]  from @27
+  to:@29
 cosFAC: scope:[cosFAC]  from
   asm { jsr$e264  }
   to:cosFAC::@return
 cosFAC::@return: scope:[cosFAC]  from cosFAC
   return 
   to:@return
-@28: scope:[]  from @27
-  to:@29
+@29: scope:[]  from @28
+  to:@30
 tanFAC: scope:[tanFAC]  from
   asm { jsr$e2b4  }
   to:tanFAC::@return
 tanFAC::@return: scope:[tanFAC]  from tanFAC
   return 
   to:@return
-@29: scope:[]  from @28
-  to:@30
+@30: scope:[]  from @29
+  to:@31
 atnFAC: scope:[atnFAC]  from
   asm { jsr$e303  }
   to:atnFAC::@return
 atnFAC::@return: scope:[atnFAC]  from atnFAC
   return 
   to:@return
-@30: scope:[]  from @29
-  to:@31
+@31: scope:[]  from @30
+  to:@32
 sqrFAC: scope:[sqrFAC]  from
   asm { jsr$bf71  }
   to:sqrFAC::@return
 sqrFAC::@return: scope:[sqrFAC]  from sqrFAC
   return 
   to:@return
-@31: scope:[]  from @30
-  to:@32
+@32: scope:[]  from @31
+  to:@33
 expFAC: scope:[expFAC]  from
   asm { jsr$bfed  }
   to:expFAC::@return
 expFAC::@return: scope:[expFAC]  from expFAC
   return 
   to:@return
-@32: scope:[]  from @31
-  to:@33
+@33: scope:[]  from @32
+  to:@34
 logFAC: scope:[logFAC]  from
   asm { jsr$b9ea  }
   to:logFAC::@return
 logFAC::@return: scope:[logFAC]  from logFAC
   return 
   to:@return
-@33: scope:[]  from @32
-  to:@34
+@34: scope:[]  from @33
+  to:@35
 divFACby10: scope:[divFACby10]  from
   asm { jsr$bafe  }
   to:divFACby10::@return
 divFACby10::@return: scope:[divFACby10]  from divFACby10
   return 
   to:@return
-@34: scope:[]  from @33
-  to:@35
+@35: scope:[]  from @34
+  to:@36
 mulFACby10: scope:[mulFACby10]  from
   asm { jsr$bae2  }
   to:mulFACby10::@return
 mulFACby10::@return: scope:[mulFACby10]  from mulFACby10
   return 
   to:@return
-@35: scope:[]  from @34
-  to:@36
+@36: scope:[]  from @35
+  to:@37
 main: scope:[main]  from
   (byte[]) main::f_i ← { (byte/signed byte/word/signed word/dword/signed dword) 0, (byte/signed byte/word/signed word/dword/signed dword) 0, (byte/signed byte/word/signed word/dword/signed dword) 0, (byte/signed byte/word/signed word/dword/signed dword) 0, (byte/signed byte/word/signed word/dword/signed dword) 0 }
   (byte[]) main::f_127 ← { (byte/signed byte/word/signed word/dword/signed dword) 0, (byte/signed byte/word/signed word/dword/signed dword) 0, (byte/signed byte/word/signed word/dword/signed dword) 0, (byte/signed byte/word/signed word/dword/signed dword) 0, (byte/signed byte/word/signed word/dword/signed dword) 0 }
@@ -1221,14 +1253,15 @@ main::@2: scope:[main]  from main::@1
 main::@return: scope:[main]  from main::@2
   return 
   to:@return
-@36: scope:[]  from @35
+@37: scope:[]  from @36
   call main 
   to:@end
-@end: scope:[]  from @36
+@end: scope:[]  from @37
 
 Removing unused procedure print_str
 Removing unused procedure print_sword
 Removing unused procedure print_sbyte
+Removing unused procedure print_dword
 Removing unused procedure print_cls
 Removing unused procedure setARGtoFAC
 Removing unused procedure setFACtoARG
@@ -1278,10 +1311,10 @@ Removing empty block @4
 Removing empty block @5
 Removing empty block @6
 Removing empty block @7
-Removing empty block @9
+Removing empty block @8
 Removing empty block @10
-Removing empty block getFAC::@1
 Removing empty block @11
+Removing empty block getFAC::@1
 Removing empty block @12
 Removing empty block @13
 Removing empty block @14
@@ -1306,6 +1339,7 @@ Removing empty block @32
 Removing empty block @33
 Removing empty block @34
 Removing empty block @35
+Removing empty block @36
 Removing empty block main::@2
 PROCEDURE MODIFY VARIABLE ANALYSIS
 print_ln modifies line_cursor
@@ -1338,7 +1372,7 @@ CONTROL FLOW GRAPH SSA WITH ASSIGNMENT CALL & RETURN
   (byte*) SCREEN#0 ← ((byte*)) (word/signed word/dword/signed dword) 1024
   (byte*) line_cursor#0 ← (byte*) SCREEN#0
   (byte*) char_cursor#0 ← (byte*) line_cursor#0
-  to:@8
+  to:@9
 print_ln: scope:[print_ln]  from main::@15
   (byte*) char_cursor#29 ← phi( main::@15/(byte*) char_cursor#11 )
   (byte*) line_cursor#12 ← phi( main::@15/(byte*) line_cursor#13 )
@@ -1422,12 +1456,12 @@ print_char::@return: scope:[print_char]  from print_char
   (byte*) char_cursor#10 ← (byte*) char_cursor#24
   return 
   to:@return
-@8: scope:[]  from @begin
+@9: scope:[]  from @begin
   (byte*) line_cursor#16 ← phi( @begin/(byte*) line_cursor#0 )
   (byte*) char_cursor#35 ← phi( @begin/(byte*) char_cursor#0 )
   (byte*) memLo#0 ← ((byte*)) (byte/word/signed word/dword/signed dword) 254
   (byte*) memHi#0 ← ((byte*)) (byte/word/signed word/dword/signed dword) 255
-  to:@36
+  to:@37
 prepareMEM: scope:[prepareMEM]  from addMEMtoFAC divMEMbyFAC mulFACbyMEM setFAC setMEMtoFAC
   (byte*) prepareMEM::mem#5 ← phi( addMEMtoFAC/(byte*) prepareMEM::mem#2 divMEMbyFAC/(byte*) prepareMEM::mem#3 mulFACbyMEM/(byte*) prepareMEM::mem#4 setFAC/(byte*) prepareMEM::mem#0 setMEMtoFAC/(byte*) prepareMEM::mem#1 )
   (byte~) prepareMEM::$0 ← < (byte*) prepareMEM::mem#5
@@ -1516,9 +1550,9 @@ divFACby10: scope:[divFACby10]  from main::@3
 divFACby10::@return: scope:[divFACby10]  from divFACby10
   return 
   to:@return
-main: scope:[main]  from @36
-  (byte*) line_cursor#29 ← phi( @36/(byte*) line_cursor#14 )
-  (byte*) char_cursor#47 ← phi( @36/(byte*) char_cursor#33 )
+main: scope:[main]  from @37
+  (byte*) line_cursor#29 ← phi( @37/(byte*) line_cursor#14 )
+  (byte*) char_cursor#47 ← phi( @37/(byte*) char_cursor#33 )
   (byte[]) main::f_i#0 ← { (byte/signed byte/word/signed word/dword/signed dword) 0, (byte/signed byte/word/signed word/dword/signed dword) 0, (byte/signed byte/word/signed word/dword/signed dword) 0, (byte/signed byte/word/signed word/dword/signed dword) 0, (byte/signed byte/word/signed word/dword/signed dword) 0 }
   (byte[]) main::f_127#0 ← { (byte/signed byte/word/signed word/dword/signed dword) 0, (byte/signed byte/word/signed word/dword/signed dword) 0, (byte/signed byte/word/signed word/dword/signed dword) 0, (byte/signed byte/word/signed word/dword/signed dword) 0, (byte/signed byte/word/signed word/dword/signed dword) 0 }
   (byte*) main::f_2pi#0 ← ((byte*)) (word/dword/signed dword) 58085
@@ -1637,23 +1671,23 @@ main::@return: scope:[main]  from main::@16
   (byte*) line_cursor#4 ← (byte*) line_cursor#10
   return 
   to:@return
-@36: scope:[]  from @8
-  (byte*) line_cursor#14 ← phi( @8/(byte*) line_cursor#16 )
-  (byte*) char_cursor#33 ← phi( @8/(byte*) char_cursor#35 )
+@37: scope:[]  from @9
+  (byte*) line_cursor#14 ← phi( @9/(byte*) line_cursor#16 )
+  (byte*) char_cursor#33 ← phi( @9/(byte*) char_cursor#35 )
   call main param-assignment
-  to:@37
-@37: scope:[]  from @36
-  (byte*) line_cursor#11 ← phi( @36/(byte*) line_cursor#4 )
-  (byte*) char_cursor#28 ← phi( @36/(byte*) char_cursor#13 )
+  to:@38
+@38: scope:[]  from @37
+  (byte*) line_cursor#11 ← phi( @37/(byte*) line_cursor#4 )
+  (byte*) char_cursor#28 ← phi( @37/(byte*) char_cursor#13 )
   (byte*) char_cursor#14 ← (byte*) char_cursor#28
   (byte*) line_cursor#5 ← (byte*) line_cursor#11
   to:@end
-@end: scope:[]  from @37
+@end: scope:[]  from @38
 
 SYMBOL TABLE SSA
-(label) @36
 (label) @37
-(label) @8
+(label) @38
+(label) @9
 (label) @begin
 (label) @end
 (byte*) SCREEN
@@ -2034,9 +2068,9 @@ Succesful SSA optimization Pass2NopCastElimination
 Culled Empty Block (label) print_ln::@2
 Culled Empty Block (label) print_word::@2
 Culled Empty Block (label) print_byte::@2
-Culled Empty Block (label) @8
+Culled Empty Block (label) @9
 Culled Empty Block (label) main::@5
-Culled Empty Block (label) @37
+Culled Empty Block (label) @38
 Succesful SSA optimization Pass2CullEmptyBlocks
 Not aliassing across scopes: line_cursor#6 line_cursor#13
 Not aliassing across scopes: print_byte::b#2 print_byte::b#0
@@ -2105,12 +2139,12 @@ Constant inlined setMEMtoFAC::mem#0 = (const byte[]) main::f_127#0
 Constant inlined mulFACbyMEM::mem#1 = (const byte[]) main::f_127#0
 Constant inlined setFAC::w#0 = (word/signed word/dword/signed dword) 1275
 Succesful SSA optimization Pass2ConstantInlining
-Block Sequence Planned @begin @36 @end main main::@3 main::@4 main::@1 main::@6 main::@7 main::@8 main::@9 main::@10 main::@11 main::@12 main::@13 main::@14 main::@15 main::@16 main::@return print_ln print_ln::@1 print_ln::@return print_word print_word::@1 print_word::@return print_byte print_byte::@1 print_byte::@return print_char print_char::@return getFAC getFAC::@return addMEMtoFAC addMEMtoFAC::@1 addMEMtoFAC::@return prepareMEM prepareMEM::@return mulFACbyMEM mulFACbyMEM::@1 mulFACbyMEM::@return sinFAC sinFAC::@return divMEMbyFAC divMEMbyFAC::@1 divMEMbyFAC::@return setFAC setFAC::@1 setFAC::@return setMEMtoFAC setMEMtoFAC::@1 setMEMtoFAC::@return divFACby10 divFACby10::@return 
+Block Sequence Planned @begin @37 @end main main::@3 main::@4 main::@1 main::@6 main::@7 main::@8 main::@9 main::@10 main::@11 main::@12 main::@13 main::@14 main::@15 main::@16 main::@return print_ln print_ln::@1 print_ln::@return print_word print_word::@1 print_word::@return print_byte print_byte::@1 print_byte::@return print_char print_char::@return getFAC getFAC::@return addMEMtoFAC addMEMtoFAC::@1 addMEMtoFAC::@return prepareMEM prepareMEM::@return mulFACbyMEM mulFACbyMEM::@1 mulFACbyMEM::@return sinFAC sinFAC::@return divMEMbyFAC divMEMbyFAC::@1 divMEMbyFAC::@return setFAC setFAC::@1 setFAC::@return setMEMtoFAC setMEMtoFAC::@1 setMEMtoFAC::@return divFACby10 divFACby10::@return 
 Added new block during phi lifting main::@17(between main::@16 and main::@1)
 Added new block during phi lifting print_ln::@3(between print_ln::@1 and print_ln::@1)
-Block Sequence Planned @begin @36 @end main main::@3 main::@4 main::@1 main::@6 main::@7 main::@8 main::@9 main::@10 main::@11 main::@12 main::@13 main::@14 main::@15 main::@16 main::@return main::@17 print_ln print_ln::@1 print_ln::@return print_ln::@3 print_word print_word::@1 print_word::@return print_byte print_byte::@1 print_byte::@return print_char print_char::@return getFAC getFAC::@return addMEMtoFAC addMEMtoFAC::@1 addMEMtoFAC::@return prepareMEM prepareMEM::@return mulFACbyMEM mulFACbyMEM::@1 mulFACbyMEM::@return sinFAC sinFAC::@return divMEMbyFAC divMEMbyFAC::@1 divMEMbyFAC::@return setFAC setFAC::@1 setFAC::@return setMEMtoFAC setMEMtoFAC::@1 setMEMtoFAC::@return divFACby10 divFACby10::@return 
+Block Sequence Planned @begin @37 @end main main::@3 main::@4 main::@1 main::@6 main::@7 main::@8 main::@9 main::@10 main::@11 main::@12 main::@13 main::@14 main::@15 main::@16 main::@return main::@17 print_ln print_ln::@1 print_ln::@return print_ln::@3 print_word print_word::@1 print_word::@return print_byte print_byte::@1 print_byte::@return print_char print_char::@return getFAC getFAC::@return addMEMtoFAC addMEMtoFAC::@1 addMEMtoFAC::@return prepareMEM prepareMEM::@return mulFACbyMEM mulFACbyMEM::@1 mulFACbyMEM::@return sinFAC sinFAC::@return divMEMbyFAC divMEMbyFAC::@1 divMEMbyFAC::@return setFAC setFAC::@1 setFAC::@return setMEMtoFAC setMEMtoFAC::@1 setMEMtoFAC::@return divFACby10 divFACby10::@return 
 Adding NOP phi() at start of @begin
-Adding NOP phi() at start of @36
+Adding NOP phi() at start of @37
 Adding NOP phi() at start of @end
 Adding NOP phi() at start of main
 Adding NOP phi() at start of main::@3
@@ -2181,9 +2215,9 @@ Coalesced [87] prepareMEM::mem#6 ← prepareMEM::mem#4
 Coalesced [104] prepareMEM::mem#8 ← prepareMEM::mem#1
 Coalesced down to 9 phi equivalence classes
 Culled Empty Block (label) print_ln::@3
-Block Sequence Planned @begin @36 @end main main::@3 main::@4 main::@1 main::@6 main::@7 main::@8 main::@9 main::@10 main::@11 main::@12 main::@13 main::@14 main::@15 main::@16 main::@return main::@17 print_ln print_ln::@1 print_ln::@return print_word print_word::@1 print_word::@return print_byte print_byte::@1 print_byte::@return print_char print_char::@return getFAC getFAC::@return addMEMtoFAC addMEMtoFAC::@1 addMEMtoFAC::@return prepareMEM prepareMEM::@return mulFACbyMEM mulFACbyMEM::@1 mulFACbyMEM::@return sinFAC sinFAC::@return divMEMbyFAC divMEMbyFAC::@1 divMEMbyFAC::@return setFAC setFAC::@1 setFAC::@return setMEMtoFAC setMEMtoFAC::@1 setMEMtoFAC::@return divFACby10 divFACby10::@return 
+Block Sequence Planned @begin @37 @end main main::@3 main::@4 main::@1 main::@6 main::@7 main::@8 main::@9 main::@10 main::@11 main::@12 main::@13 main::@14 main::@15 main::@16 main::@return main::@17 print_ln print_ln::@1 print_ln::@return print_word print_word::@1 print_word::@return print_byte print_byte::@1 print_byte::@return print_char print_char::@return getFAC getFAC::@return addMEMtoFAC addMEMtoFAC::@1 addMEMtoFAC::@return prepareMEM prepareMEM::@return mulFACbyMEM mulFACbyMEM::@1 mulFACbyMEM::@return sinFAC sinFAC::@return divMEMbyFAC divMEMbyFAC::@1 divMEMbyFAC::@return setFAC setFAC::@1 setFAC::@return setMEMtoFAC setMEMtoFAC::@1 setMEMtoFAC::@return divFACby10 divFACby10::@return 
 Adding NOP phi() at start of @begin
-Adding NOP phi() at start of @36
+Adding NOP phi() at start of @37
 Adding NOP phi() at start of @end
 Adding NOP phi() at start of main
 Adding NOP phi() at start of main::@3
@@ -2229,14 +2263,14 @@ Propagating live ranges...
 FINAL CONTROL FLOW GRAPH
 @begin: scope:[]  from
   [0] phi() [ ] ( )
-  to:@36
-@36: scope:[]  from @begin
+  to:@37
+@37: scope:[]  from @begin
   [1] phi() [ ] ( )
   [2] call main param-assignment [ ] ( )
   to:@end
-@end: scope:[]  from @36
+@end: scope:[]  from @37
   [3] phi() [ ] ( )
-main: scope:[main]  from @36
+main: scope:[main]  from @37
   [4] phi() [ ] ( main:2 [ ] )
   [5] call setFAC param-assignment [ ] ( main:2 [ ] )
   to:main::@3
@@ -2437,59 +2471,59 @@ divFACby10::@return: scope:[divFACby10]  from divFACby10
 
 DOMINATORS
 @begin dominated by  @begin 
-@36 dominated by  @begin @36 
-@end dominated by  @end @begin @36 
-main dominated by  main @begin @36 
-main::@3 dominated by  main main::@3 @begin @36 
-main::@4 dominated by  main main::@3 main::@4 @begin @36 
-main::@1 dominated by  main main::@1 main::@3 main::@4 @begin @36 
-main::@6 dominated by  main main::@1 main::@6 main::@3 main::@4 @begin @36 
-main::@7 dominated by  main::@7 main main::@1 main::@6 main::@3 main::@4 @begin @36 
-main::@8 dominated by  main::@7 main::@8 main main::@1 main::@6 main::@3 main::@4 @begin @36 
-main::@9 dominated by  main::@9 main::@7 main::@8 main main::@1 main::@6 main::@3 main::@4 @begin @36 
-main::@10 dominated by  main::@9 main::@7 main::@8 main main::@1 main::@6 main::@3 main::@4 @begin @36 main::@10 
-main::@11 dominated by  main::@9 main::@7 main::@8 main main::@1 main::@6 main::@3 main::@4 @begin @36 main::@11 main::@10 
-main::@12 dominated by  main::@9 main::@7 main::@8 main main::@1 main::@6 main::@3 main::@4 @begin @36 main::@11 main::@10 main::@12 
-main::@13 dominated by  main::@9 main::@7 main::@8 main main::@1 main::@6 main::@3 main::@4 @begin @36 main::@11 main::@10 main::@13 main::@12 
-main::@14 dominated by  main::@9 main::@7 main::@8 main main::@1 main::@6 main::@3 main::@4 @begin @36 main::@11 main::@10 main::@13 main::@12 main::@14 
-main::@15 dominated by  main::@9 main::@7 main::@8 main main::@1 main::@6 main::@3 main::@4 @begin @36 main::@11 main::@10 main::@13 main::@12 main::@15 main::@14 
-main::@16 dominated by  main::@9 main::@7 main::@8 main main::@1 main::@6 main::@3 main::@4 @begin @36 main::@11 main::@10 main::@16 main::@13 main::@12 main::@15 main::@14 
-main::@return dominated by  main::@9 main::@7 main::@8 main main::@1 main::@6 main::@3 main::@4 @begin @36 main::@return main::@11 main::@10 main::@16 main::@13 main::@12 main::@15 main::@14 
-main::@17 dominated by  main::@9 main::@7 main::@8 main main::@1 main::@6 main::@3 main::@4 @begin @36 main::@11 main::@10 main::@17 main::@16 main::@13 main::@12 main::@15 main::@14 
-print_ln dominated by  main::@9 main::@7 main::@8 main main::@1 main::@6 main::@3 main::@4 @begin @36 print_ln main::@11 main::@10 main::@13 main::@12 main::@15 main::@14 
-print_ln::@1 dominated by  main::@9 print_ln::@1 main::@7 main::@8 main main::@1 main::@6 main::@3 main::@4 @begin @36 print_ln main::@11 main::@10 main::@13 main::@12 main::@15 main::@14 
-print_ln::@return dominated by  main::@9 print_ln::@1 main::@7 main::@8 main print_ln::@return main::@1 main::@6 main::@3 main::@4 @begin @36 print_ln main::@11 main::@10 main::@13 main::@12 main::@15 main::@14 
-print_word dominated by  main::@9 main::@7 main::@8 main print_word main::@1 main::@6 main::@3 main::@4 @begin @36 main::@11 main::@10 main::@13 main::@12 main::@14 
-print_word::@1 dominated by  main::@9 main::@7 main::@8 main print_word main::@1 main::@6 main::@3 main::@4 @begin @36 print_word::@1 main::@11 main::@10 main::@13 main::@12 main::@14 
-print_word::@return dominated by  main::@9 main::@7 main::@8 main print_word main::@1 main::@6 main::@3 main::@4 @begin @36 print_word::@return print_word::@1 main::@11 main::@10 main::@13 main::@12 main::@14 
-print_byte dominated by  main::@9 main::@7 main::@8 main print_word main::@1 main::@6 main::@3 main::@4 @begin @36 main::@11 main::@10 print_byte main::@13 main::@12 main::@14 
-print_byte::@1 dominated by  main::@9 main::@7 main::@8 main print_word main::@1 main::@6 main::@3 main::@4 @begin @36 print_byte::@1 main::@11 main::@10 print_byte main::@13 main::@12 main::@14 
-print_byte::@return dominated by  main::@9 main::@7 main::@8 main print_word main::@1 main::@6 main::@3 main::@4 @begin @36 print_byte::@return print_byte::@1 main::@11 main::@10 print_byte main::@13 main::@12 main::@14 
-print_char dominated by  main::@9 main::@7 main::@8 main print_word print_char main::@1 main::@6 main::@3 main::@4 @begin @36 main::@11 main::@10 print_byte main::@13 main::@12 main::@14 
-print_char::@return dominated by  main::@9 main::@7 main::@8 main print_word print_char main::@1 main::@6 main::@3 main::@4 print_char::@return @begin @36 main::@11 main::@10 print_byte main::@13 main::@12 main::@14 
-getFAC dominated by  main::@9 main::@7 main::@8 main main::@1 main::@6 main::@3 main::@4 @begin @36 getFAC main::@11 main::@10 main::@13 main::@12 
-getFAC::@return dominated by  main::@9 main::@7 main::@8 main main::@1 main::@6 main::@3 main::@4 @begin @36 getFAC main::@11 main::@10 main::@13 main::@12 getFAC::@return 
-addMEMtoFAC dominated by  main::@9 main::@7 main::@8 main main::@1 main::@6 main::@3 main::@4 @begin @36 addMEMtoFAC main::@11 main::@10 main::@12 
-addMEMtoFAC::@1 dominated by  main::@9 main::@7 main::@8 main main::@1 main::@6 main::@3 main::@4 @begin @36 addMEMtoFAC::@1 addMEMtoFAC main::@11 main::@10 main::@12 
-addMEMtoFAC::@return dominated by  main::@9 main::@7 main::@8 main main::@1 main::@6 main::@3 main::@4 @begin @36 addMEMtoFAC::@1 addMEMtoFAC main::@11 main::@10 addMEMtoFAC::@return main::@12 
-prepareMEM dominated by  main @begin @36 prepareMEM 
-prepareMEM::@return dominated by  main @begin @36 prepareMEM::@return prepareMEM 
-mulFACbyMEM dominated by  main mulFACbyMEM main::@1 main::@6 main::@3 main::@4 @begin @36 
-mulFACbyMEM::@1 dominated by  main mulFACbyMEM main::@1 main::@6 main::@3 main::@4 @begin @36 mulFACbyMEM::@1 
-mulFACbyMEM::@return dominated by  main mulFACbyMEM::@return mulFACbyMEM main::@1 main::@6 main::@3 main::@4 @begin @36 mulFACbyMEM::@1 
-sinFAC dominated by  main::@9 main::@7 main::@8 main main::@1 main::@6 main::@3 main::@4 @begin @36 sinFAC main::@10 
-sinFAC::@return dominated by  main::@9 main::@7 main::@8 main main::@1 main::@6 main::@3 main::@4 @begin @36 sinFAC sinFAC::@return main::@10 
-divMEMbyFAC dominated by  main::@9 main::@7 main::@8 main main::@1 main::@6 main::@3 main::@4 @begin @36 divMEMbyFAC 
-divMEMbyFAC::@1 dominated by  main::@9 main::@7 main::@8 main main::@1 main::@6 main::@3 main::@4 @begin @36 divMEMbyFAC::@1 divMEMbyFAC 
-divMEMbyFAC::@return dominated by  main::@9 main::@7 main::@8 main main::@1 main::@6 main::@3 main::@4 @begin @36 divMEMbyFAC::@1 divMEMbyFAC divMEMbyFAC::@return 
-setFAC dominated by  main @begin @36 setFAC 
-setFAC::@1 dominated by  main @begin @36 setFAC setFAC::@1 
-setFAC::@return dominated by  setFAC::@return main @begin @36 setFAC setFAC::@1 
-setMEMtoFAC dominated by  main main::@3 main::@4 @begin @36 setMEMtoFAC 
-setMEMtoFAC::@1 dominated by  main main::@3 main::@4 @begin @36 setMEMtoFAC setMEMtoFAC::@1 
-setMEMtoFAC::@return dominated by  main main::@3 main::@4 @begin @36 setMEMtoFAC setMEMtoFAC::@1 setMEMtoFAC::@return 
-divFACby10 dominated by  main main::@3 @begin @36 divFACby10 
-divFACby10::@return dominated by  divFACby10::@return main main::@3 @begin @36 divFACby10 
+@37 dominated by  @begin @37 
+@end dominated by  @end @begin @37 
+main dominated by  main @begin @37 
+main::@3 dominated by  main main::@3 @begin @37 
+main::@4 dominated by  main main::@3 main::@4 @begin @37 
+main::@1 dominated by  main main::@1 main::@3 main::@4 @begin @37 
+main::@6 dominated by  main main::@1 main::@6 main::@3 main::@4 @begin @37 
+main::@7 dominated by  main::@7 main main::@1 main::@6 main::@3 main::@4 @begin @37 
+main::@8 dominated by  main::@7 main::@8 main main::@1 main::@6 main::@3 main::@4 @begin @37 
+main::@9 dominated by  main::@9 main::@7 main::@8 main main::@1 main::@6 main::@3 main::@4 @begin @37 
+main::@10 dominated by  main::@9 main::@7 main::@8 main main::@1 main::@6 main::@3 main::@4 @begin @37 main::@10 
+main::@11 dominated by  main::@9 main::@7 main::@8 main main::@1 main::@6 main::@3 main::@4 @begin @37 main::@11 main::@10 
+main::@12 dominated by  main::@9 main::@7 main::@8 main main::@1 main::@6 main::@3 main::@4 @begin @37 main::@11 main::@10 main::@12 
+main::@13 dominated by  main::@9 main::@7 main::@8 main main::@1 main::@6 main::@3 main::@4 @begin @37 main::@11 main::@10 main::@13 main::@12 
+main::@14 dominated by  main::@9 main::@7 main::@8 main main::@1 main::@6 main::@3 main::@4 @begin @37 main::@11 main::@10 main::@13 main::@12 main::@14 
+main::@15 dominated by  main::@9 main::@7 main::@8 main main::@1 main::@6 main::@3 main::@4 @begin @37 main::@11 main::@10 main::@13 main::@12 main::@15 main::@14 
+main::@16 dominated by  main::@9 main::@7 main::@8 main main::@1 main::@6 main::@3 main::@4 @begin @37 main::@11 main::@10 main::@16 main::@13 main::@12 main::@15 main::@14 
+main::@return dominated by  main::@9 main::@7 main::@8 main main::@1 main::@6 main::@3 main::@4 @begin @37 main::@return main::@11 main::@10 main::@16 main::@13 main::@12 main::@15 main::@14 
+main::@17 dominated by  main::@9 main::@7 main::@8 main main::@1 main::@6 main::@3 main::@4 @begin @37 main::@11 main::@10 main::@17 main::@16 main::@13 main::@12 main::@15 main::@14 
+print_ln dominated by  main::@9 main::@7 main::@8 main main::@1 main::@6 main::@3 main::@4 @begin @37 print_ln main::@11 main::@10 main::@13 main::@12 main::@15 main::@14 
+print_ln::@1 dominated by  main::@9 print_ln::@1 main::@7 main::@8 main main::@1 main::@6 main::@3 main::@4 @begin @37 print_ln main::@11 main::@10 main::@13 main::@12 main::@15 main::@14 
+print_ln::@return dominated by  main::@9 print_ln::@1 main::@7 main::@8 main print_ln::@return main::@1 main::@6 main::@3 main::@4 @begin @37 print_ln main::@11 main::@10 main::@13 main::@12 main::@15 main::@14 
+print_word dominated by  main::@9 main::@7 main::@8 main print_word main::@1 main::@6 main::@3 main::@4 @begin @37 main::@11 main::@10 main::@13 main::@12 main::@14 
+print_word::@1 dominated by  main::@9 main::@7 main::@8 main print_word main::@1 main::@6 main::@3 main::@4 @begin @37 print_word::@1 main::@11 main::@10 main::@13 main::@12 main::@14 
+print_word::@return dominated by  main::@9 main::@7 main::@8 main print_word main::@1 main::@6 main::@3 main::@4 @begin @37 print_word::@return print_word::@1 main::@11 main::@10 main::@13 main::@12 main::@14 
+print_byte dominated by  main::@9 main::@7 main::@8 main print_word main::@1 main::@6 main::@3 main::@4 @begin @37 main::@11 main::@10 print_byte main::@13 main::@12 main::@14 
+print_byte::@1 dominated by  main::@9 main::@7 main::@8 main print_word main::@1 main::@6 main::@3 main::@4 @begin @37 print_byte::@1 main::@11 main::@10 print_byte main::@13 main::@12 main::@14 
+print_byte::@return dominated by  main::@9 main::@7 main::@8 main print_word main::@1 main::@6 main::@3 main::@4 @begin @37 print_byte::@return print_byte::@1 main::@11 main::@10 print_byte main::@13 main::@12 main::@14 
+print_char dominated by  main::@9 main::@7 main::@8 main print_word print_char main::@1 main::@6 main::@3 main::@4 @begin @37 main::@11 main::@10 print_byte main::@13 main::@12 main::@14 
+print_char::@return dominated by  main::@9 main::@7 main::@8 main print_word print_char main::@1 main::@6 main::@3 main::@4 print_char::@return @begin @37 main::@11 main::@10 print_byte main::@13 main::@12 main::@14 
+getFAC dominated by  main::@9 main::@7 main::@8 main main::@1 main::@6 main::@3 main::@4 @begin @37 getFAC main::@11 main::@10 main::@13 main::@12 
+getFAC::@return dominated by  main::@9 main::@7 main::@8 main main::@1 main::@6 main::@3 main::@4 @begin @37 getFAC main::@11 main::@10 main::@13 main::@12 getFAC::@return 
+addMEMtoFAC dominated by  main::@9 main::@7 main::@8 main main::@1 main::@6 main::@3 main::@4 @begin @37 addMEMtoFAC main::@11 main::@10 main::@12 
+addMEMtoFAC::@1 dominated by  main::@9 main::@7 main::@8 main main::@1 main::@6 main::@3 main::@4 @begin @37 addMEMtoFAC::@1 addMEMtoFAC main::@11 main::@10 main::@12 
+addMEMtoFAC::@return dominated by  main::@9 main::@7 main::@8 main main::@1 main::@6 main::@3 main::@4 @begin @37 addMEMtoFAC::@1 addMEMtoFAC main::@11 main::@10 addMEMtoFAC::@return main::@12 
+prepareMEM dominated by  main @begin @37 prepareMEM 
+prepareMEM::@return dominated by  main @begin @37 prepareMEM::@return prepareMEM 
+mulFACbyMEM dominated by  main mulFACbyMEM main::@1 main::@6 main::@3 main::@4 @begin @37 
+mulFACbyMEM::@1 dominated by  main mulFACbyMEM main::@1 main::@6 main::@3 main::@4 @begin @37 mulFACbyMEM::@1 
+mulFACbyMEM::@return dominated by  main mulFACbyMEM::@return mulFACbyMEM main::@1 main::@6 main::@3 main::@4 @begin @37 mulFACbyMEM::@1 
+sinFAC dominated by  main::@9 main::@7 main::@8 main main::@1 main::@6 main::@3 main::@4 @begin @37 sinFAC main::@10 
+sinFAC::@return dominated by  main::@9 main::@7 main::@8 main main::@1 main::@6 main::@3 main::@4 @begin @37 sinFAC sinFAC::@return main::@10 
+divMEMbyFAC dominated by  main::@9 main::@7 main::@8 main main::@1 main::@6 main::@3 main::@4 @begin @37 divMEMbyFAC 
+divMEMbyFAC::@1 dominated by  main::@9 main::@7 main::@8 main main::@1 main::@6 main::@3 main::@4 @begin @37 divMEMbyFAC::@1 divMEMbyFAC 
+divMEMbyFAC::@return dominated by  main::@9 main::@7 main::@8 main main::@1 main::@6 main::@3 main::@4 @begin @37 divMEMbyFAC::@1 divMEMbyFAC divMEMbyFAC::@return 
+setFAC dominated by  main @begin @37 setFAC 
+setFAC::@1 dominated by  main @begin @37 setFAC setFAC::@1 
+setFAC::@return dominated by  setFAC::@return main @begin @37 setFAC setFAC::@1 
+setMEMtoFAC dominated by  main main::@3 main::@4 @begin @37 setMEMtoFAC 
+setMEMtoFAC::@1 dominated by  main main::@3 main::@4 @begin @37 setMEMtoFAC setMEMtoFAC::@1 
+setMEMtoFAC::@return dominated by  main main::@3 main::@4 @begin @37 setMEMtoFAC setMEMtoFAC::@1 setMEMtoFAC::@return 
+divFACby10 dominated by  main main::@3 @begin @37 divFACby10 
+divFACby10::@return dominated by  divFACby10::@return main main::@3 @begin @37 divFACby10 
 
 NATURAL LOOPS
 Found back edge: Loop head: main::@1 tails: main::@17 blocks: null
@@ -2653,17 +2687,17 @@ INITIAL ASM
   .label char_cursor = 7
 //SEG2 @begin
 bbegin:
-//SEG3 [1] phi from @begin to @36 [phi:@begin->@36]
-b36_from_bbegin:
-  jmp b36
-//SEG4 @36
-b36:
+//SEG3 [1] phi from @begin to @37 [phi:@begin->@37]
+b37_from_bbegin:
+  jmp b37
+//SEG4 @37
+b37:
 //SEG5 [2] call main param-assignment [ ] ( )
-//SEG6 [4] phi from @36 to main [phi:@36->main]
-main_from_b36:
+//SEG6 [4] phi from @37 to main [phi:@37->main]
+main_from_b37:
   jsr main
-//SEG7 [3] phi from @36 to @end [phi:@36->@end]
-bend_from_b36:
+//SEG7 [3] phi from @37 to @end [phi:@37->@end]
+bend_from_b37:
   jmp bend
 //SEG8 @end
 bend:
@@ -3303,17 +3337,17 @@ ASSEMBLER BEFORE OPTIMIZATION
   .label char_cursor = 5
 //SEG2 @begin
 bbegin:
-//SEG3 [1] phi from @begin to @36 [phi:@begin->@36]
-b36_from_bbegin:
-  jmp b36
-//SEG4 @36
-b36:
+//SEG3 [1] phi from @begin to @37 [phi:@begin->@37]
+b37_from_bbegin:
+  jmp b37
+//SEG4 @37
+b37:
 //SEG5 [2] call main param-assignment [ ] ( )
-//SEG6 [4] phi from @36 to main [phi:@36->main]
-main_from_b36:
+//SEG6 [4] phi from @37 to main [phi:@37->main]
+main_from_b37:
   jsr main
-//SEG7 [3] phi from @36 to @end [phi:@36->@end]
-bend_from_b36:
+//SEG7 [3] phi from @37 to @end [phi:@37->@end]
+bend_from_b37:
   jmp bend
 //SEG8 @end
 bend:
@@ -3806,7 +3840,7 @@ divFACby10: {
 }
 
 ASSEMBLER OPTIMIZATIONS
-Removing instruction jmp b36
+Removing instruction jmp b37
 Removing instruction jmp bend
 Removing instruction jmp b3
 Removing instruction jmp b4
@@ -3848,9 +3882,9 @@ Succesful ASM optimization Pass5NextJumpElimination
 Replacing label b1_from_b1 with b1
 Replacing label b1_from_b1 with b1
 Removing instruction bbegin:
-Removing instruction b36_from_bbegin:
-Removing instruction main_from_b36:
-Removing instruction bend_from_b36:
+Removing instruction b37_from_bbegin:
+Removing instruction main_from_b37:
+Removing instruction bend_from_b37:
 Removing instruction b3_from_main:
 Removing instruction b4_from_b3:
 Removing instruction setMEMtoFAC_from_b4:
@@ -3873,7 +3907,7 @@ Removing instruction print_ln_from_b15:
 Removing instruction b1_from_print_ln:
 Removing instruction b1_from_b1:
 Succesful ASM optimization Pass5RedundantLabelElimination
-Removing instruction b36:
+Removing instruction b37:
 Removing instruction bend:
 Removing instruction setFAC_from_main:
 Removing instruction b3:
@@ -3925,7 +3959,7 @@ Removing instruction breturn:
 Succesful ASM optimization Pass5UnusedLabelElimination
 
 FINAL SYMBOL TABLE
-(label) @36
+(label) @37
 (label) @begin
 (label) @end
 (byte*) SCREEN
@@ -4065,12 +4099,12 @@ Score: 4973
   .label line_cursor = 3
   .label char_cursor = 5
 //SEG2 @begin
-//SEG3 [1] phi from @begin to @36 [phi:@begin->@36]
-//SEG4 @36
+//SEG3 [1] phi from @begin to @37 [phi:@begin->@37]
+//SEG4 @37
 //SEG5 [2] call main param-assignment [ ] ( )
-//SEG6 [4] phi from @36 to main [phi:@36->main]
+//SEG6 [4] phi from @37 to main [phi:@37->main]
   jsr main
-//SEG7 [3] phi from @36 to @end [phi:@36->@end]
+//SEG7 [3] phi from @37 to @end [phi:@37->@end]
 //SEG8 @end
 //SEG9 main
 main: {

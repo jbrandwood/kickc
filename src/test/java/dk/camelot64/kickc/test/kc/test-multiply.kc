@@ -13,6 +13,7 @@ void main() {
     mulf_tables_cmp();
     mul8u_compare();
     mul8s_compare();
+    //mul16u_compare();
 }
 
 // Slow multiplication of unsigned bytes
@@ -37,6 +38,18 @@ signed word muls8s(signed byte a, signed byte b) {
         }
     } else if (a>0) {
         for(signed byte j = 0; j!=a; j++) {
+            m = m + b;
+        }
+    }
+    return m;
+}
+
+// Slow multiplication of unsigned words
+// Calculate an unsigned multiplication by repeated addition
+dword muls16u(word a, word b) {
+    dword m = 0;
+    if(a!=0) {
+        for(word i = 0; i!=a; i++) {
             m = m + b;
         }
     }
@@ -197,5 +210,42 @@ void mul8s_error(signed byte a, signed byte b, signed word ms, signed word mn, s
   print_sword(mn);
   print_str(" / fast:@");
   print_sword(mf);
+  print_ln();
+}
+
+// Perform many possible word multiplications (slow and fast) and compare the results
+void mul16u_compare() {
+    word a = 0;
+    word b = 0;
+    for(byte i: 0..15) {
+        for(byte j: 0..15) {
+            a=a+3371;
+            b=b+4093;
+            dword ms = muls16u(a, b);
+            dword mn = mul16u(a,b);
+            byte ok = 1;
+            if(ms!=mn) {
+                ok = 0;
+            }
+            if(ok==0) {
+                *BGCOL = 2;
+                mul16u_error(a,b, ms, mn);
+                return;
+            }
+        }
+    }
+    print_str("multiply results match!@");
+    print_ln();
+}
+
+void mul16u_error(word a, word b, dword ms, dword mn) {
+  print_str("multiply mismatch @");
+  print_word(a);
+  print_str("*@");
+  print_word(b);
+  print_str(" slow:@");
+  print_dword(ms);
+  print_str(" / normal:@");
+  print_dword(mn);
   print_ln();
 }

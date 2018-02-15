@@ -78,6 +78,12 @@ public class Pass1AddTypePromotions extends Pass1Base {
       if(lValueType.equals(SymbolType.WORD) && SymbolType.isByte(rValueType)) {
          return true;
       }
+      if(lValueType.equals(SymbolType.DWORD) && SymbolType.isWord(rValueType)) {
+         return true;
+      }
+      if(lValueType.equals(SymbolType.DWORD) && SymbolType.isByte(rValueType)) {
+         return true;
+      }
       // No type promotion found
       return false;
    }

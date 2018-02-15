@@ -106,6 +106,12 @@ void print_word(word w) {
     print_byte(<w);
 }
 
+// Print a dword as HEX
+void print_dword(dword dw) {
+    print_word(>dw);
+    print_word(<dw);
+}
+
 // Print a byte as HEX
 void print_byte(byte b) {
     // Table of hexadecimal digits
@@ -197,6 +203,14 @@ proc (void()) print_word((word) print_word::w)
 print_word::@return:
   return 
 endproc // print_word()
+proc (void()) print_dword((dword) print_dword::dw)
+  (word~) print_dword::$0 ← > (dword) print_dword::dw
+  (void~) print_dword::$1 ← call print_word (word~) print_dword::$0 
+  (word~) print_dword::$2 ← < (dword) print_dword::dw
+  (void~) print_dword::$3 ← call print_word (word~) print_dword::$2 
+print_dword::@return:
+  return 
+endproc // print_dword()
 proc (void()) print_byte((byte) print_byte::b)
   (byte[]) print_byte::hextab ← (string) "0123456789abcdef"
   (byte~) print_byte::$0 ← (byte) print_byte::b >> (byte/signed byte/word/signed word/dword/signed dword) 4
@@ -361,6 +375,13 @@ SYMBOLS
 (label) print_cls::@1
 (label) print_cls::@return
 (byte*) print_cls::sc
+(void()) print_dword((dword) print_dword::dw)
+(word~) print_dword::$0
+(void~) print_dword::$1
+(word~) print_dword::$2
+(void~) print_dword::$3
+(label) print_dword::@return
+(dword) print_dword::dw
 (void()) print_ln()
 (byte*~) print_ln::$0
 (boolean~) print_ln::$1
@@ -528,6 +549,17 @@ print_word::@return: scope:[print_word]  from print_word
   to:@return
 @5: scope:[]  from @4
   to:@6
+print_dword: scope:[print_dword]  from
+  (word~) print_dword::$0 ← > (dword) print_dword::dw
+  (void~) print_dword::$1 ← call print_word (word~) print_dword::$0 
+  (word~) print_dword::$2 ← < (dword) print_dword::dw
+  (void~) print_dword::$3 ← call print_word (word~) print_dword::$2 
+  to:print_dword::@return
+print_dword::@return: scope:[print_dword]  from print_dword
+  return 
+  to:@return
+@6: scope:[]  from @5
+  to:@7
 print_byte: scope:[print_byte]  from
   (byte[]) print_byte::hextab ← (string) "0123456789abcdef"
   (byte~) print_byte::$0 ← (byte) print_byte::b >> (byte/signed byte/word/signed word/dword/signed dword) 4
@@ -538,8 +570,8 @@ print_byte: scope:[print_byte]  from
 print_byte::@return: scope:[print_byte]  from print_byte
   return 
   to:@return
-@6: scope:[]  from @5
-  to:@7
+@7: scope:[]  from @6
+  to:@8
 print_char: scope:[print_char]  from
   *((byte*) char_cursor) ← (byte) print_char::ch
   (byte*) char_cursor ← ++ (byte*) char_cursor
@@ -547,8 +579,8 @@ print_char: scope:[print_char]  from
 print_char::@return: scope:[print_char]  from print_char
   return 
   to:@return
-@7: scope:[]  from @6
-  to:@8
+@8: scope:[]  from @7
+  to:@9
 print_cls: scope:[print_cls]  from
   (byte*) print_cls::sc ← (byte*) SCREEN
   to:print_cls::@1
@@ -566,11 +598,11 @@ print_cls::@2: scope:[print_cls]  from print_cls::@1
 print_cls::@return: scope:[print_cls]  from print_cls::@2
   return 
   to:@return
-@8: scope:[]  from @7
+@9: scope:[]  from @8
   (byte*) BGCOL ← ((byte*)) (word/dword/signed dword) 53281
   (byte) GREEN ← (byte/signed byte/word/signed word/dword/signed dword) 5
   (byte) RED ← (byte/signed byte/word/signed word/dword/signed dword) 2
-  to:@9
+  to:@10
 main: scope:[main]  from
   (void~) main::$0 ← call print_cls 
   *((byte*) BGCOL) ← (byte) GREEN
@@ -580,8 +612,8 @@ main: scope:[main]  from
 main::@return: scope:[main]  from main
   return 
   to:@return
-@9: scope:[]  from @8
-  to:@10
+@10: scope:[]  from @9
+  to:@11
 test_bytes: scope:[test_bytes]  from
   (byte) test_bytes::bb ← (byte/signed byte/word/signed word/dword/signed dword) 0
   (void~) test_bytes::$0 ← call assert_byte (string) "0=0@" (byte) test_bytes::bb (byte/signed byte/word/signed word/dword/signed dword) 0 
@@ -596,8 +628,8 @@ test_bytes: scope:[test_bytes]  from
 test_bytes::@return: scope:[test_bytes]  from test_bytes
   return 
   to:@return
-@10: scope:[]  from @9
-  to:@11
+@11: scope:[]  from @10
+  to:@12
 assert_byte: scope:[assert_byte]  from
   (void~) assert_byte::$0 ← call print_str (byte*) assert_byte::msg 
   (void~) assert_byte::$1 ← call print_str (string) " @" 
@@ -620,8 +652,8 @@ assert_byte::@4: scope:[assert_byte]  from
 assert_byte::@return: scope:[assert_byte]  from assert_byte::@2
   return 
   to:@return
-@11: scope:[]  from @10
-  to:@12
+@12: scope:[]  from @11
+  to:@13
 test_sbytes: scope:[test_sbytes]  from
   (signed byte) test_sbytes::bb ← (byte/signed byte/word/signed word/dword/signed dword) 0
   (void~) test_sbytes::$0 ← call assert_sbyte (string) "0=0@" (signed byte) test_sbytes::bb (byte/signed byte/word/signed word/dword/signed dword) 0 
@@ -644,8 +676,8 @@ test_sbytes: scope:[test_sbytes]  from
 test_sbytes::@return: scope:[test_sbytes]  from test_sbytes
   return 
   to:@return
-@12: scope:[]  from @11
-  to:@13
+@13: scope:[]  from @12
+  to:@14
 assert_sbyte: scope:[assert_sbyte]  from
   (void~) assert_sbyte::$0 ← call print_str (byte*) assert_sbyte::msg 
   (void~) assert_sbyte::$1 ← call print_str (string) " @" 
@@ -668,13 +700,14 @@ assert_sbyte::@4: scope:[assert_sbyte]  from
 assert_sbyte::@return: scope:[assert_sbyte]  from assert_sbyte::@2
   return 
   to:@return
-@13: scope:[]  from @12
+@14: scope:[]  from @13
   call main 
   to:@end
-@end: scope:[]  from @13
+@end: scope:[]  from @14
 
 Removing unused procedure print_sword
 Removing unused procedure print_sbyte
+Removing unused procedure print_dword
 Removing unused procedure print_word
 Removing unused procedure print_byte
 Removing unused procedure print_char
@@ -724,11 +757,12 @@ Removing empty block @4
 Removing empty block @5
 Removing empty block @6
 Removing empty block @7
-Removing empty block @9
+Removing empty block @8
 Removing empty block @10
-Removing empty block assert_byte::@4
 Removing empty block @11
+Removing empty block assert_byte::@4
 Removing empty block @12
+Removing empty block @13
 Removing empty block assert_sbyte::@4
 PROCEDURE MODIFY VARIABLE ANALYSIS
 print_str modifies char_cursor
@@ -760,7 +794,7 @@ CONTROL FLOW GRAPH SSA WITH ASSIGNMENT CALL & RETURN
   (byte*) SCREEN#0 ← ((byte*)) (word/signed word/dword/signed dword) 1024
   (byte*) line_cursor#0 ← (byte*) SCREEN#0
   (byte*) char_cursor#0 ← (byte*) line_cursor#0
-  to:@8
+  to:@9
 print_str: scope:[print_str]  from assert_byte assert_byte::@1 assert_byte::@3 assert_byte::@5 assert_sbyte assert_sbyte::@1 assert_sbyte::@3 assert_sbyte::@5
   (byte*) char_cursor#80 ← phi( assert_byte/(byte*) char_cursor#70 assert_byte::@1/(byte*) char_cursor#71 assert_byte::@3/(byte*) char_cursor#72 assert_byte::@5/(byte*) char_cursor#15 assert_sbyte/(byte*) char_cursor#75 assert_sbyte::@1/(byte*) char_cursor#76 assert_sbyte::@3/(byte*) char_cursor#77 assert_sbyte::@5/(byte*) char_cursor#27 )
   (byte*) print_str::str#11 ← phi( assert_byte/(byte*) print_str::str#1 assert_byte::@1/(byte*) print_str::str#3 assert_byte::@3/(byte*) print_str::str#4 assert_byte::@5/(byte*) print_str::str#2 assert_sbyte/(byte*) print_str::str#5 assert_sbyte::@1/(byte*) print_str::str#7 assert_sbyte::@3/(byte*) print_str::str#8 assert_sbyte::@5/(byte*) print_str::str#6 )
@@ -828,16 +862,16 @@ print_cls::@return: scope:[print_cls]  from print_cls::@2
   (byte*) char_cursor#6 ← (byte*) char_cursor#38
   return 
   to:@return
-@8: scope:[]  from @begin
+@9: scope:[]  from @begin
   (byte*) char_cursor#81 ← phi( @begin/(byte*) char_cursor#0 )
   (byte*) line_cursor#58 ← phi( @begin/(byte*) line_cursor#0 )
   (byte*) BGCOL#0 ← ((byte*)) (word/dword/signed dword) 53281
   (byte) GREEN#0 ← (byte/signed byte/word/signed word/dword/signed dword) 5
   (byte) RED#0 ← (byte/signed byte/word/signed word/dword/signed dword) 2
-  to:@13
-main: scope:[main]  from @13
-  (byte*) char_cursor#68 ← phi( @13/(byte*) char_cursor#79 )
-  (byte*) line_cursor#48 ← phi( @13/(byte*) line_cursor#53 )
+  to:@14
+main: scope:[main]  from @14
+  (byte*) char_cursor#68 ← phi( @14/(byte*) char_cursor#79 )
+  (byte*) line_cursor#48 ← phi( @14/(byte*) line_cursor#53 )
   call print_cls param-assignment
   to:main::@1
 main::@1: scope:[main]  from main
@@ -1131,23 +1165,23 @@ assert_sbyte::@return: scope:[assert_sbyte]  from assert_sbyte::@9
   (byte*) line_cursor#22 ← (byte*) line_cursor#45
   return 
   to:@return
-@13: scope:[]  from @8
-  (byte*) char_cursor#79 ← phi( @8/(byte*) char_cursor#81 )
-  (byte*) line_cursor#53 ← phi( @8/(byte*) line_cursor#58 )
+@14: scope:[]  from @9
+  (byte*) char_cursor#79 ← phi( @9/(byte*) char_cursor#81 )
+  (byte*) line_cursor#53 ← phi( @9/(byte*) line_cursor#58 )
   call main param-assignment
-  to:@14
-@14: scope:[]  from @13
-  (byte*) char_cursor#65 ← phi( @13/(byte*) char_cursor#10 )
-  (byte*) line_cursor#46 ← phi( @13/(byte*) line_cursor#8 )
+  to:@15
+@15: scope:[]  from @14
+  (byte*) char_cursor#65 ← phi( @14/(byte*) char_cursor#10 )
+  (byte*) line_cursor#46 ← phi( @14/(byte*) line_cursor#8 )
   (byte*) line_cursor#23 ← (byte*) line_cursor#46
   (byte*) char_cursor#33 ← (byte*) char_cursor#65
   to:@end
-@end: scope:[]  from @14
+@end: scope:[]  from @15
 
 SYMBOL TABLE SSA
-(label) @13
 (label) @14
-(label) @8
+(label) @15
+(label) @9
 (label) @begin
 (label) @end
 (byte*) BGCOL
@@ -1858,7 +1892,7 @@ Constant (const signed byte) assert_sbyte::b#3 = test_sbytes::be#0
 Succesful SSA optimization Pass2ConstantIdentification
 Culled Empty Block (label) print_ln::@2
 Culled Empty Block (label) print_cls::@2
-Culled Empty Block (label) @8
+Culled Empty Block (label) @9
 Culled Empty Block (label) main::@3
 Culled Empty Block (label) test_bytes::@3
 Culled Empty Block (label) assert_byte::@7
@@ -1868,7 +1902,7 @@ Culled Empty Block (label) test_sbytes::@5
 Culled Empty Block (label) assert_sbyte::@7
 Culled Empty Block (label) assert_sbyte::@8
 Culled Empty Block (label) assert_sbyte::@9
-Culled Empty Block (label) @14
+Culled Empty Block (label) @15
 Succesful SSA optimization Pass2CullEmptyBlocks
 Not aliassing across scopes: print_str::str#11 print_str::str#1
 Not aliassing across scopes: char_cursor#80 char_cursor#70
@@ -1998,12 +2032,12 @@ Constant inlined print_str::str#8 = (const string) assert_sbyte::str2
 Constant inlined print_str::str#7 = (const string) assert_sbyte::str1
 Constant inlined print_str::str#6 = (const string) assert_sbyte::str
 Succesful SSA optimization Pass2ConstantInlining
-Block Sequence Planned @begin @13 @end main main::@1 main::@2 main::@return test_sbytes test_sbytes::@1 test_sbytes::@2 test_sbytes::@3 test_sbytes::@4 test_sbytes::@return assert_sbyte assert_sbyte::@5 assert_sbyte::@6 assert_sbyte::@3 assert_sbyte::@2 assert_sbyte::@return assert_sbyte::@1 print_str print_str::@1 print_str::@return print_str::@2 print_ln print_ln::@1 print_ln::@return test_bytes test_bytes::@1 test_bytes::@2 test_bytes::@return assert_byte assert_byte::@5 assert_byte::@6 assert_byte::@3 assert_byte::@2 assert_byte::@return assert_byte::@1 print_cls print_cls::@1 print_cls::@return 
+Block Sequence Planned @begin @14 @end main main::@1 main::@2 main::@return test_sbytes test_sbytes::@1 test_sbytes::@2 test_sbytes::@3 test_sbytes::@4 test_sbytes::@return assert_sbyte assert_sbyte::@5 assert_sbyte::@6 assert_sbyte::@3 assert_sbyte::@2 assert_sbyte::@return assert_sbyte::@1 print_str print_str::@1 print_str::@return print_str::@2 print_ln print_ln::@1 print_ln::@return test_bytes test_bytes::@1 test_bytes::@2 test_bytes::@return assert_byte assert_byte::@5 assert_byte::@6 assert_byte::@3 assert_byte::@2 assert_byte::@return assert_byte::@1 print_cls print_cls::@1 print_cls::@return 
 Added new block during phi lifting print_ln::@3(between print_ln::@1 and print_ln::@1)
 Added new block during phi lifting print_cls::@3(between print_cls::@1 and print_cls::@1)
-Block Sequence Planned @begin @13 @end main main::@1 main::@2 main::@return test_sbytes test_sbytes::@1 test_sbytes::@2 test_sbytes::@3 test_sbytes::@4 test_sbytes::@return assert_sbyte assert_sbyte::@5 assert_sbyte::@6 assert_sbyte::@3 assert_sbyte::@2 assert_sbyte::@return assert_sbyte::@1 print_str print_str::@1 print_str::@return print_str::@2 print_ln print_ln::@1 print_ln::@return print_ln::@3 test_bytes test_bytes::@1 test_bytes::@2 test_bytes::@return assert_byte assert_byte::@5 assert_byte::@6 assert_byte::@3 assert_byte::@2 assert_byte::@return assert_byte::@1 print_cls print_cls::@1 print_cls::@return print_cls::@3 
+Block Sequence Planned @begin @14 @end main main::@1 main::@2 main::@return test_sbytes test_sbytes::@1 test_sbytes::@2 test_sbytes::@3 test_sbytes::@4 test_sbytes::@return assert_sbyte assert_sbyte::@5 assert_sbyte::@6 assert_sbyte::@3 assert_sbyte::@2 assert_sbyte::@return assert_sbyte::@1 print_str print_str::@1 print_str::@return print_str::@2 print_ln print_ln::@1 print_ln::@return print_ln::@3 test_bytes test_bytes::@1 test_bytes::@2 test_bytes::@return assert_byte assert_byte::@5 assert_byte::@6 assert_byte::@3 assert_byte::@2 assert_byte::@return assert_byte::@1 print_cls print_cls::@1 print_cls::@return print_cls::@3 
 Adding NOP phi() at start of @begin
-Adding NOP phi() at start of @13
+Adding NOP phi() at start of @14
 Adding NOP phi() at start of @end
 Adding NOP phi() at start of main
 Adding NOP phi() at start of main::@2
@@ -2059,9 +2093,9 @@ Coalesced [87] print_cls::sc#3 ← print_cls::sc#1
 Coalesced down to 10 phi equivalence classes
 Culled Empty Block (label) print_ln::@3
 Culled Empty Block (label) print_cls::@3
-Block Sequence Planned @begin @13 @end main main::@1 main::@2 main::@return test_sbytes test_sbytes::@1 test_sbytes::@2 test_sbytes::@3 test_sbytes::@4 test_sbytes::@return assert_sbyte assert_sbyte::@5 assert_sbyte::@6 assert_sbyte::@3 assert_sbyte::@2 assert_sbyte::@return assert_sbyte::@1 print_str print_str::@1 print_str::@return print_str::@2 print_ln print_ln::@1 print_ln::@return test_bytes test_bytes::@1 test_bytes::@2 test_bytes::@return assert_byte assert_byte::@5 assert_byte::@6 assert_byte::@3 assert_byte::@2 assert_byte::@return assert_byte::@1 print_cls print_cls::@1 print_cls::@return 
+Block Sequence Planned @begin @14 @end main main::@1 main::@2 main::@return test_sbytes test_sbytes::@1 test_sbytes::@2 test_sbytes::@3 test_sbytes::@4 test_sbytes::@return assert_sbyte assert_sbyte::@5 assert_sbyte::@6 assert_sbyte::@3 assert_sbyte::@2 assert_sbyte::@return assert_sbyte::@1 print_str print_str::@1 print_str::@return print_str::@2 print_ln print_ln::@1 print_ln::@return test_bytes test_bytes::@1 test_bytes::@2 test_bytes::@return assert_byte assert_byte::@5 assert_byte::@6 assert_byte::@3 assert_byte::@2 assert_byte::@return assert_byte::@1 print_cls print_cls::@1 print_cls::@return 
 Adding NOP phi() at start of @begin
-Adding NOP phi() at start of @13
+Adding NOP phi() at start of @14
 Adding NOP phi() at start of @end
 Adding NOP phi() at start of main
 Adding NOP phi() at start of main::@2
@@ -2090,14 +2124,14 @@ Propagating live ranges...
 FINAL CONTROL FLOW GRAPH
 @begin: scope:[]  from
   [0] phi() [ ] ( )
-  to:@13
-@13: scope:[]  from @begin
+  to:@14
+@14: scope:[]  from @begin
   [1] phi() [ ] ( )
   [2] call main param-assignment [ ] ( )
   to:@end
-@end: scope:[]  from @13
+@end: scope:[]  from @14
   [3] phi() [ ] ( )
-main: scope:[main]  from @13
+main: scope:[main]  from @14
   [4] phi() [ ] ( main:2 [ ] )
   [5] call print_cls param-assignment [ ] ( main:2 [ ] )
   to:main::@1
@@ -2254,46 +2288,46 @@ print_cls::@return: scope:[print_cls]  from print_cls::@1
 
 DOMINATORS
 @begin dominated by  @begin 
-@13 dominated by  @13 @begin 
-@end dominated by  @end @13 @begin 
-main dominated by  main @13 @begin 
-main::@1 dominated by  main main::@1 @13 @begin 
-main::@2 dominated by  main main::@1 main::@2 @13 @begin 
-main::@return dominated by  main::@return main main::@1 main::@2 @13 @begin 
-test_sbytes dominated by  main test_sbytes main::@1 main::@2 @13 @begin 
-test_sbytes::@1 dominated by  main test_sbytes main::@1 main::@2 @13 @begin test_sbytes::@1 
-test_sbytes::@2 dominated by  main test_sbytes main::@1 main::@2 @13 @begin test_sbytes::@1 test_sbytes::@2 
-test_sbytes::@3 dominated by  main test_sbytes main::@1 main::@2 @13 @begin test_sbytes::@1 test_sbytes::@2 test_sbytes::@3 
-test_sbytes::@4 dominated by  main test_sbytes main::@1 main::@2 @13 @begin test_sbytes::@1 test_sbytes::@2 test_sbytes::@3 test_sbytes::@4 
-test_sbytes::@return dominated by  test_sbytes::@return main test_sbytes main::@1 main::@2 @13 @begin test_sbytes::@1 test_sbytes::@2 test_sbytes::@3 test_sbytes::@4 
-assert_sbyte dominated by  assert_sbyte main test_sbytes main::@1 main::@2 @13 @begin 
-assert_sbyte::@5 dominated by  assert_sbyte main test_sbytes main::@1 main::@2 @13 @begin assert_sbyte::@5 
-assert_sbyte::@6 dominated by  assert_sbyte main test_sbytes main::@1 main::@2 @13 @begin assert_sbyte::@5 assert_sbyte::@6 
-assert_sbyte::@3 dominated by  assert_sbyte main test_sbytes main::@1 main::@2 @13 @begin assert_sbyte::@5 assert_sbyte::@3 assert_sbyte::@6 
-assert_sbyte::@2 dominated by  assert_sbyte main test_sbytes main::@1 main::@2 @13 @begin assert_sbyte::@5 assert_sbyte::@2 assert_sbyte::@6 
-assert_sbyte::@return dominated by  assert_sbyte assert_sbyte::@return main test_sbytes main::@1 main::@2 @13 @begin assert_sbyte::@5 assert_sbyte::@2 assert_sbyte::@6 
-assert_sbyte::@1 dominated by  assert_sbyte main test_sbytes main::@1 main::@2 @13 @begin assert_sbyte::@5 assert_sbyte::@1 assert_sbyte::@6 
-print_str dominated by  main main::@1 @13 @begin print_str 
-print_str::@1 dominated by  main print_str::@1 main::@1 @13 @begin print_str 
-print_str::@return dominated by  print_str::@return main print_str::@1 main::@1 @13 @begin print_str 
-print_str::@2 dominated by  main print_str::@1 print_str::@2 main::@1 @13 @begin print_str 
-print_ln dominated by  main main::@1 @13 @begin print_ln 
-print_ln::@1 dominated by  print_ln::@1 main main::@1 @13 @begin print_ln 
-print_ln::@return dominated by  print_ln::@1 main print_ln::@return main::@1 @13 @begin print_ln 
-test_bytes dominated by  test_bytes main main::@1 @13 @begin 
-test_bytes::@1 dominated by  test_bytes main main::@1 @13 @begin test_bytes::@1 
-test_bytes::@2 dominated by  test_bytes main main::@1 @13 @begin test_bytes::@2 test_bytes::@1 
-test_bytes::@return dominated by  test_bytes main main::@1 @13 @begin test_bytes::@2 test_bytes::@1 test_bytes::@return 
-assert_byte dominated by  test_bytes main main::@1 @13 @begin assert_byte 
-assert_byte::@5 dominated by  test_bytes main assert_byte::@5 main::@1 @13 @begin assert_byte 
-assert_byte::@6 dominated by  test_bytes main assert_byte::@5 assert_byte::@6 main::@1 @13 @begin assert_byte 
-assert_byte::@3 dominated by  test_bytes assert_byte::@3 main assert_byte::@5 assert_byte::@6 main::@1 @13 @begin assert_byte 
-assert_byte::@2 dominated by  test_bytes main assert_byte::@5 assert_byte::@6 assert_byte::@2 main::@1 @13 @begin assert_byte 
-assert_byte::@return dominated by  test_bytes main assert_byte::@5 assert_byte::@6 assert_byte::@2 main::@1 assert_byte::@return @13 @begin assert_byte 
-assert_byte::@1 dominated by  test_bytes main assert_byte::@5 assert_byte::@6 assert_byte::@1 main::@1 @13 @begin assert_byte 
-print_cls dominated by  main @13 @begin print_cls 
-print_cls::@1 dominated by  main @13 @begin print_cls::@1 print_cls 
-print_cls::@return dominated by  main print_cls::@return @13 @begin print_cls::@1 print_cls 
+@14 dominated by  @begin @14 
+@end dominated by  @end @begin @14 
+main dominated by  main @begin @14 
+main::@1 dominated by  main main::@1 @begin @14 
+main::@2 dominated by  main main::@1 main::@2 @begin @14 
+main::@return dominated by  main::@return main main::@1 main::@2 @begin @14 
+test_sbytes dominated by  main test_sbytes main::@1 main::@2 @begin @14 
+test_sbytes::@1 dominated by  main test_sbytes main::@1 main::@2 @begin @14 test_sbytes::@1 
+test_sbytes::@2 dominated by  main test_sbytes main::@1 main::@2 @begin @14 test_sbytes::@1 test_sbytes::@2 
+test_sbytes::@3 dominated by  main test_sbytes main::@1 main::@2 @begin @14 test_sbytes::@1 test_sbytes::@2 test_sbytes::@3 
+test_sbytes::@4 dominated by  main test_sbytes main::@1 main::@2 @begin @14 test_sbytes::@1 test_sbytes::@2 test_sbytes::@3 test_sbytes::@4 
+test_sbytes::@return dominated by  test_sbytes::@return main test_sbytes main::@1 main::@2 @begin @14 test_sbytes::@1 test_sbytes::@2 test_sbytes::@3 test_sbytes::@4 
+assert_sbyte dominated by  assert_sbyte main test_sbytes main::@1 main::@2 @begin @14 
+assert_sbyte::@5 dominated by  assert_sbyte main test_sbytes main::@1 main::@2 @begin @14 assert_sbyte::@5 
+assert_sbyte::@6 dominated by  assert_sbyte main test_sbytes main::@1 main::@2 @begin @14 assert_sbyte::@5 assert_sbyte::@6 
+assert_sbyte::@3 dominated by  assert_sbyte main test_sbytes main::@1 main::@2 @begin @14 assert_sbyte::@5 assert_sbyte::@3 assert_sbyte::@6 
+assert_sbyte::@2 dominated by  assert_sbyte main test_sbytes main::@1 main::@2 @begin @14 assert_sbyte::@5 assert_sbyte::@2 assert_sbyte::@6 
+assert_sbyte::@return dominated by  assert_sbyte assert_sbyte::@return main test_sbytes main::@1 main::@2 @begin @14 assert_sbyte::@5 assert_sbyte::@2 assert_sbyte::@6 
+assert_sbyte::@1 dominated by  assert_sbyte main test_sbytes main::@1 main::@2 @begin @14 assert_sbyte::@5 assert_sbyte::@1 assert_sbyte::@6 
+print_str dominated by  main main::@1 @begin @14 print_str 
+print_str::@1 dominated by  main print_str::@1 main::@1 @begin @14 print_str 
+print_str::@return dominated by  print_str::@return main print_str::@1 main::@1 @begin @14 print_str 
+print_str::@2 dominated by  main print_str::@1 print_str::@2 main::@1 @begin @14 print_str 
+print_ln dominated by  main main::@1 @begin @14 print_ln 
+print_ln::@1 dominated by  print_ln::@1 main main::@1 @begin @14 print_ln 
+print_ln::@return dominated by  print_ln::@1 main print_ln::@return main::@1 @begin @14 print_ln 
+test_bytes dominated by  test_bytes main main::@1 @begin @14 
+test_bytes::@1 dominated by  test_bytes main main::@1 @begin @14 test_bytes::@1 
+test_bytes::@2 dominated by  test_bytes main main::@1 @begin @14 test_bytes::@2 test_bytes::@1 
+test_bytes::@return dominated by  test_bytes main main::@1 @begin @14 test_bytes::@2 test_bytes::@1 test_bytes::@return 
+assert_byte dominated by  test_bytes main main::@1 @begin @14 assert_byte 
+assert_byte::@5 dominated by  test_bytes main assert_byte::@5 main::@1 @begin @14 assert_byte 
+assert_byte::@6 dominated by  test_bytes main assert_byte::@5 assert_byte::@6 main::@1 @begin @14 assert_byte 
+assert_byte::@3 dominated by  test_bytes assert_byte::@3 main assert_byte::@5 assert_byte::@6 main::@1 @begin @14 assert_byte 
+assert_byte::@2 dominated by  test_bytes main assert_byte::@5 assert_byte::@6 assert_byte::@2 main::@1 @begin @14 assert_byte 
+assert_byte::@return dominated by  test_bytes main assert_byte::@5 assert_byte::@6 assert_byte::@2 main::@1 assert_byte::@return @begin @14 assert_byte 
+assert_byte::@1 dominated by  test_bytes main assert_byte::@5 assert_byte::@6 assert_byte::@1 main::@1 @begin @14 assert_byte 
+print_cls dominated by  main @begin @14 print_cls 
+print_cls::@1 dominated by  main @begin @14 print_cls::@1 print_cls 
+print_cls::@return dominated by  main print_cls::@return @begin @14 print_cls::@1 print_cls 
 
 NATURAL LOOPS
 Found back edge: Loop head: print_str::@1 tails: print_str::@2 blocks: null
@@ -2427,17 +2461,17 @@ INITIAL ASM
   .label line_cursor = $a
 //SEG2 @begin
 bbegin:
-//SEG3 [1] phi from @begin to @13 [phi:@begin->@13]
-b13_from_bbegin:
-  jmp b13
-//SEG4 @13
-b13:
+//SEG3 [1] phi from @begin to @14 [phi:@begin->@14]
+b14_from_bbegin:
+  jmp b14
+//SEG4 @14
+b14:
 //SEG5 [2] call main param-assignment [ ] ( )
-//SEG6 [4] phi from @13 to main [phi:@13->main]
-main_from_b13:
+//SEG6 [4] phi from @14 to main [phi:@14->main]
+main_from_b14:
   jsr main
-//SEG7 [3] phi from @13 to @end [phi:@13->@end]
-bend_from_b13:
+//SEG7 [3] phi from @14 to @end [phi:@14->@end]
+bend_from_b14:
   jmp bend
 //SEG8 @end
 bend:
@@ -3065,17 +3099,17 @@ ASSEMBLER BEFORE OPTIMIZATION
   .label line_cursor = 7
 //SEG2 @begin
 bbegin:
-//SEG3 [1] phi from @begin to @13 [phi:@begin->@13]
-b13_from_bbegin:
-  jmp b13
-//SEG4 @13
-b13:
+//SEG3 [1] phi from @begin to @14 [phi:@begin->@14]
+b14_from_bbegin:
+  jmp b14
+//SEG4 @14
+b14:
 //SEG5 [2] call main param-assignment [ ] ( )
-//SEG6 [4] phi from @13 to main [phi:@13->main]
-main_from_b13:
+//SEG6 [4] phi from @14 to main [phi:@14->main]
+main_from_b14:
   jsr main
-//SEG7 [3] phi from @13 to @end [phi:@13->@end]
-bend_from_b13:
+//SEG7 [3] phi from @14 to @end [phi:@14->@end]
+bend_from_b14:
   jmp bend
 //SEG8 @end
 bend:
@@ -3592,7 +3626,7 @@ print_cls: {
 }
 
 ASSEMBLER OPTIMIZATIONS
-Removing instruction jmp b13
+Removing instruction jmp b14
 Removing instruction jmp bend
 Removing instruction jmp b1
 Removing instruction jmp b2
@@ -3636,9 +3670,9 @@ Replacing label b2_from_b1 with b2
 Replacing label b1_from_b1 with b1
 Replacing label b1_from_b1 with b1
 Removing instruction bbegin:
-Removing instruction b13_from_bbegin:
-Removing instruction main_from_b13:
-Removing instruction bend_from_b13:
+Removing instruction b14_from_bbegin:
+Removing instruction main_from_b14:
+Removing instruction bend_from_b14:
 Removing instruction b2_from_b1:
 Removing instruction test_sbytes_from_b2:
 Removing instruction b1_from_test_sbytes:
@@ -3669,7 +3703,7 @@ Removing instruction b1_from_b6:
 Removing instruction print_str_from_b1:
 Removing instruction b1_from_b1:
 Succesful ASM optimization Pass5RedundantLabelElimination
-Removing instruction b13:
+Removing instruction b14:
 Removing instruction bend:
 Removing instruction print_cls_from_main:
 Removing instruction b1:
@@ -3709,7 +3743,7 @@ Removing instruction jmp b1
 Succesful ASM optimization Pass5NextJumpElimination
 
 FINAL SYMBOL TABLE
-(label) @13
+(label) @14
 (label) @begin
 (label) @end
 (byte*) BGCOL
@@ -3846,12 +3880,12 @@ Score: 1846
   .label char_cursor = 5
   .label line_cursor = 7
 //SEG2 @begin
-//SEG3 [1] phi from @begin to @13 [phi:@begin->@13]
-//SEG4 @13
+//SEG3 [1] phi from @begin to @14 [phi:@begin->@14]
+//SEG4 @14
 //SEG5 [2] call main param-assignment [ ] ( )
-//SEG6 [4] phi from @13 to main [phi:@13->main]
+//SEG6 [4] phi from @14 to main [phi:@14->main]
   jsr main
-//SEG7 [3] phi from @13 to @end [phi:@13->@end]
+//SEG7 [3] phi from @14 to @end [phi:@14->@end]
 //SEG8 @end
 //SEG9 main
 main: {

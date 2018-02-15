@@ -97,6 +97,12 @@ void print_word(word w) {
     print_byte(<w);
 }
 
+// Print a dword as HEX
+void print_dword(dword dw) {
+    print_word(>dw);
+    print_word(<dw);
+}
+
 // Print a byte as HEX
 void print_byte(byte b) {
     // Table of hexadecimal digits
@@ -188,6 +194,14 @@ proc (void()) print_word((word) print_word::w)
 print_word::@return:
   return 
 endproc // print_word()
+proc (void()) print_dword((dword) print_dword::dw)
+  (word~) print_dword::$0 ← > (dword) print_dword::dw
+  (void~) print_dword::$1 ← call print_word (word~) print_dword::$0 
+  (word~) print_dword::$2 ← < (dword) print_dword::dw
+  (void~) print_dword::$3 ← call print_word (word~) print_dword::$2 
+print_dword::@return:
+  return 
+endproc // print_dword()
 proc (void()) print_byte((byte) print_byte::b)
   (byte[]) print_byte::hextab ← (string) "0123456789abcdef"
   (byte~) print_byte::$0 ← (byte) print_byte::b >> (byte/signed byte/word/signed word/dword/signed dword) 4
@@ -510,6 +524,13 @@ SYMBOLS
 (label) print_cls::@1
 (label) print_cls::@return
 (byte*) print_cls::sc
+(void()) print_dword((dword) print_dword::dw)
+(word~) print_dword::$0
+(void~) print_dword::$1
+(word~) print_dword::$2
+(void~) print_dword::$3
+(label) print_dword::@return
+(dword) print_dword::dw
 (void()) print_ln()
 (byte*~) print_ln::$0
 (boolean~) print_ln::$1
@@ -658,6 +679,17 @@ print_word::@return: scope:[print_word]  from print_word
   to:@return
 @5: scope:[]  from @4
   to:@6
+print_dword: scope:[print_dword]  from
+  (word~) print_dword::$0 ← > (dword) print_dword::dw
+  (void~) print_dword::$1 ← call print_word (word~) print_dword::$0 
+  (word~) print_dword::$2 ← < (dword) print_dword::dw
+  (void~) print_dword::$3 ← call print_word (word~) print_dword::$2 
+  to:print_dword::@return
+print_dword::@return: scope:[print_dword]  from print_dword
+  return 
+  to:@return
+@6: scope:[]  from @5
+  to:@7
 print_byte: scope:[print_byte]  from
   (byte[]) print_byte::hextab ← (string) "0123456789abcdef"
   (byte~) print_byte::$0 ← (byte) print_byte::b >> (byte/signed byte/word/signed word/dword/signed dword) 4
@@ -668,8 +700,8 @@ print_byte: scope:[print_byte]  from
 print_byte::@return: scope:[print_byte]  from print_byte
   return 
   to:@return
-@6: scope:[]  from @5
-  to:@7
+@7: scope:[]  from @6
+  to:@8
 print_char: scope:[print_char]  from
   *((byte*) char_cursor) ← (byte) print_char::ch
   (byte*) char_cursor ← ++ (byte*) char_cursor
@@ -677,8 +709,8 @@ print_char: scope:[print_char]  from
 print_char::@return: scope:[print_char]  from print_char
   return 
   to:@return
-@7: scope:[]  from @6
-  to:@8
+@8: scope:[]  from @7
+  to:@9
 print_cls: scope:[print_cls]  from
   (byte*) print_cls::sc ← (byte*) SCREEN
   to:print_cls::@1
@@ -696,8 +728,8 @@ print_cls::@2: scope:[print_cls]  from print_cls::@1
 print_cls::@return: scope:[print_cls]  from print_cls::@2
   return 
   to:@return
-@8: scope:[]  from @7
-  to:@9
+@9: scope:[]  from @8
+  to:@10
 main: scope:[main]  from
   (void~) main::$0 ← call print_cls 
   (byte) main::a ← (byte/signed byte/word/signed word/dword/signed dword) 7
@@ -928,8 +960,8 @@ main::@44: scope:[main]  from main::@22
 main::@return: scope:[main]  from main::@44
   return 
   to:@return
-@9: scope:[]  from @8
-  to:@10
+@10: scope:[]  from @9
+  to:@11
 printu: scope:[printu]  from
   (void~) printu::$0 ← call print_char (byte) ' ' 
   (void~) printu::$1 ← call print_byte (byte) printu::a 
@@ -941,13 +973,14 @@ printu: scope:[printu]  from
 printu::@return: scope:[printu]  from printu
   return 
   to:@return
-@10: scope:[]  from @9
+@11: scope:[]  from @10
   call main 
   to:@end
-@end: scope:[]  from @10
+@end: scope:[]  from @11
 
 Removing unused procedure print_sword
 Removing unused procedure print_sbyte
+Removing unused procedure print_dword
 Removing unused procedure print_word
 Eliminating unused variable - keeping the call (void~) print_byte::$1
 Eliminating unused variable - keeping the call (void~) print_byte::$3
@@ -1016,9 +1049,10 @@ Removing empty block @5
 Removing empty block @6
 Removing empty block @7
 Removing empty block @8
+Removing empty block @9
 Removing empty block main::@43
 Removing empty block main::@44
-Removing empty block @9
+Removing empty block @10
 PROCEDURE MODIFY VARIABLE ANALYSIS
 print_str modifies char_cursor
 print_ln modifies line_cursor
@@ -1047,7 +1081,7 @@ CONTROL FLOW GRAPH SSA WITH ASSIGNMENT CALL & RETURN
   (byte*) SCREEN#0 ← ((byte*)) (word/signed word/dword/signed dword) 1024
   (byte*) line_cursor#0 ← (byte*) SCREEN#0
   (byte*) char_cursor#0 ← (byte*) line_cursor#0
-  to:@10
+  to:@11
 print_str: scope:[print_str]  from printu::@2
   (byte*) char_cursor#119 ← phi( printu::@2/(byte*) char_cursor#40 )
   (byte*) print_str::str#4 ← phi( printu::@2/(byte*) print_str::str#1 )
@@ -1151,9 +1185,9 @@ print_cls::@return: scope:[print_cls]  from print_cls::@2
   (byte*) char_cursor#11 ← (byte*) char_cursor#56
   return 
   to:@return
-main: scope:[main]  from @10
-  (byte*) char_cursor#96 ← phi( @10/(byte*) char_cursor#118 )
-  (byte*) line_cursor#26 ← phi( @10/(byte*) line_cursor#33 )
+main: scope:[main]  from @11
+  (byte*) char_cursor#96 ← phi( @11/(byte*) char_cursor#118 )
+  (byte*) line_cursor#26 ← phi( @11/(byte*) line_cursor#33 )
   call print_cls param-assignment
   to:main::@45
 main::@45: scope:[main]  from main
@@ -1948,22 +1982,22 @@ printu::@return: scope:[printu]  from printu::@6
   (byte*) char_cursor#45 ← (byte*) char_cursor#90
   return 
   to:@return
-@10: scope:[]  from @begin
+@11: scope:[]  from @begin
   (byte*) char_cursor#118 ← phi( @begin/(byte*) char_cursor#0 )
   (byte*) line_cursor#33 ← phi( @begin/(byte*) line_cursor#0 )
   call main param-assignment
-  to:@11
-@11: scope:[]  from @10
-  (byte*) char_cursor#91 ← phi( @10/(byte*) char_cursor#38 )
-  (byte*) line_cursor#24 ← phi( @10/(byte*) line_cursor#11 )
+  to:@12
+@12: scope:[]  from @11
+  (byte*) char_cursor#91 ← phi( @11/(byte*) char_cursor#38 )
+  (byte*) line_cursor#24 ← phi( @11/(byte*) line_cursor#11 )
   (byte*) line_cursor#12 ← (byte*) line_cursor#24
   (byte*) char_cursor#46 ← (byte*) char_cursor#91
   to:@end
-@end: scope:[]  from @11
+@end: scope:[]  from @12
 
 SYMBOL TABLE SSA
-(label) @10
 (label) @11
+(label) @12
 (label) @begin
 (label) @end
 (byte*) SCREEN
@@ -3467,7 +3501,7 @@ Not culling empty block because it shares successor with its predecessor. (label
 Not culling empty block because it shares successor with its predecessor. (label) main::@41
 Not culling empty block because it shares successor with its predecessor. (label) main::@42
 Culled Empty Block (label) printu::@6
-Culled Empty Block (label) @11
+Culled Empty Block (label) @12
 Succesful SSA optimization Pass2CullEmptyBlocks
 Not culling empty block because it shares successor with its predecessor. (label) main::@23
 Not culling empty block because it shares successor with its predecessor. (label) main::@24
@@ -6196,13 +6230,13 @@ Constant inlined printu::op#16 = (const string) main::op16
 Constant inlined main::r#25 = (byte) '-'
 Constant inlined print_byte::$4 = (const string) print_byte::hextab#0
 Succesful SSA optimization Pass2ConstantInlining
-Block Sequence Planned @begin @10 @end main main::@1 main::@23 main::@2 main::@46 main::@24 main::@3 main::@47 main::@25 main::@4 main::@48 main::@26 main::@5 main::@49 main::@50 main::@27 main::@6 main::@51 main::@28 main::@7 main::@52 main::@29 main::@8 main::@53 main::@30 main::@9 main::@54 main::@55 main::@31 main::@10 main::@56 main::@32 main::@11 main::@57 main::@33 main::@12 main::@58 main::@34 main::@13 main::@59 main::@60 main::@35 main::@14 main::@61 main::@36 main::@15 main::@62 main::@37 main::@16 main::@63 main::@38 main::@17 main::@64 main::@65 main::@39 main::@18 main::@66 main::@40 main::@19 main::@67 main::@41 main::@20 main::@68 main::@42 main::@21 main::@69 main::@70 main::@22 main::@return print_ln print_ln::@1 print_ln::@return printu printu::@1 printu::@2 printu::@3 printu::@4 printu::@5 printu::@return print_char print_char::@return print_byte print_byte::@1 print_byte::@return print_str print_str::@1 print_str::@return print_str::@2 print_cls print_cls::@1 print_cls::@return 
+Block Sequence Planned @begin @11 @end main main::@1 main::@23 main::@2 main::@46 main::@24 main::@3 main::@47 main::@25 main::@4 main::@48 main::@26 main::@5 main::@49 main::@50 main::@27 main::@6 main::@51 main::@28 main::@7 main::@52 main::@29 main::@8 main::@53 main::@30 main::@9 main::@54 main::@55 main::@31 main::@10 main::@56 main::@32 main::@11 main::@57 main::@33 main::@12 main::@58 main::@34 main::@13 main::@59 main::@60 main::@35 main::@14 main::@61 main::@36 main::@15 main::@62 main::@37 main::@16 main::@63 main::@38 main::@17 main::@64 main::@65 main::@39 main::@18 main::@66 main::@40 main::@19 main::@67 main::@41 main::@20 main::@68 main::@42 main::@21 main::@69 main::@70 main::@22 main::@return print_ln print_ln::@1 print_ln::@return printu printu::@1 printu::@2 printu::@3 printu::@4 printu::@5 printu::@return print_char print_char::@return print_byte print_byte::@1 print_byte::@return print_str print_str::@1 print_str::@return print_str::@2 print_cls print_cls::@1 print_cls::@return 
 Added new block during phi lifting main::@71(between main::@70 and main::@1)
 Added new block during phi lifting print_ln::@3(between print_ln::@1 and print_ln::@1)
 Added new block during phi lifting print_cls::@3(between print_cls::@1 and print_cls::@1)
-Block Sequence Planned @begin @10 @end main main::@1 main::@23 main::@2 main::@46 main::@24 main::@3 main::@47 main::@25 main::@4 main::@48 main::@26 main::@5 main::@49 main::@50 main::@27 main::@6 main::@51 main::@28 main::@7 main::@52 main::@29 main::@8 main::@53 main::@30 main::@9 main::@54 main::@55 main::@31 main::@10 main::@56 main::@32 main::@11 main::@57 main::@33 main::@12 main::@58 main::@34 main::@13 main::@59 main::@60 main::@35 main::@14 main::@61 main::@36 main::@15 main::@62 main::@37 main::@16 main::@63 main::@38 main::@17 main::@64 main::@65 main::@39 main::@18 main::@66 main::@40 main::@19 main::@67 main::@41 main::@20 main::@68 main::@42 main::@21 main::@69 main::@70 main::@22 main::@return main::@71 print_ln print_ln::@1 print_ln::@return print_ln::@3 printu printu::@1 printu::@2 printu::@3 printu::@4 printu::@5 printu::@return print_char print_char::@return print_byte print_byte::@1 print_byte::@return print_str print_str::@1 print_str::@return print_str::@2 print_cls print_cls::@1 print_cls::@return print_cls::@3 
+Block Sequence Planned @begin @11 @end main main::@1 main::@23 main::@2 main::@46 main::@24 main::@3 main::@47 main::@25 main::@4 main::@48 main::@26 main::@5 main::@49 main::@50 main::@27 main::@6 main::@51 main::@28 main::@7 main::@52 main::@29 main::@8 main::@53 main::@30 main::@9 main::@54 main::@55 main::@31 main::@10 main::@56 main::@32 main::@11 main::@57 main::@33 main::@12 main::@58 main::@34 main::@13 main::@59 main::@60 main::@35 main::@14 main::@61 main::@36 main::@15 main::@62 main::@37 main::@16 main::@63 main::@38 main::@17 main::@64 main::@65 main::@39 main::@18 main::@66 main::@40 main::@19 main::@67 main::@41 main::@20 main::@68 main::@42 main::@21 main::@69 main::@70 main::@22 main::@return main::@71 print_ln print_ln::@1 print_ln::@return print_ln::@3 printu printu::@1 printu::@2 printu::@3 printu::@4 printu::@5 printu::@return print_char print_char::@return print_byte print_byte::@1 print_byte::@return print_str print_str::@1 print_str::@return print_str::@2 print_cls print_cls::@1 print_cls::@return print_cls::@3 
 Adding NOP phi() at start of @begin
-Adding NOP phi() at start of @10
+Adding NOP phi() at start of @11
 Adding NOP phi() at start of @end
 Adding NOP phi() at start of main
 Adding NOP phi() at start of main::@23
@@ -6400,9 +6434,9 @@ Not culling empty block because it shares successor with its predecessor. (label
 Not culling empty block because it shares successor with its predecessor. (label) main::@42
 Culled Empty Block (label) print_ln::@3
 Culled Empty Block (label) print_cls::@3
-Block Sequence Planned @begin @10 @end main main::@1 main::@23 main::@2 main::@46 main::@24 main::@3 main::@47 main::@25 main::@4 main::@48 main::@26 main::@5 main::@49 main::@50 main::@27 main::@6 main::@51 main::@28 main::@7 main::@52 main::@29 main::@8 main::@53 main::@30 main::@9 main::@54 main::@55 main::@31 main::@10 main::@56 main::@32 main::@11 main::@57 main::@33 main::@12 main::@58 main::@34 main::@13 main::@59 main::@60 main::@35 main::@14 main::@61 main::@36 main::@15 main::@62 main::@37 main::@16 main::@63 main::@38 main::@17 main::@64 main::@65 main::@39 main::@18 main::@66 main::@40 main::@19 main::@67 main::@41 main::@20 main::@68 main::@42 main::@21 main::@69 main::@70 main::@22 main::@return main::@71 print_ln print_ln::@1 print_ln::@return printu printu::@1 printu::@2 printu::@3 printu::@4 printu::@5 printu::@return print_char print_char::@return print_byte print_byte::@1 print_byte::@return print_str print_str::@1 print_str::@return print_str::@2 print_cls print_cls::@1 print_cls::@return 
+Block Sequence Planned @begin @11 @end main main::@1 main::@23 main::@2 main::@46 main::@24 main::@3 main::@47 main::@25 main::@4 main::@48 main::@26 main::@5 main::@49 main::@50 main::@27 main::@6 main::@51 main::@28 main::@7 main::@52 main::@29 main::@8 main::@53 main::@30 main::@9 main::@54 main::@55 main::@31 main::@10 main::@56 main::@32 main::@11 main::@57 main::@33 main::@12 main::@58 main::@34 main::@13 main::@59 main::@60 main::@35 main::@14 main::@61 main::@36 main::@15 main::@62 main::@37 main::@16 main::@63 main::@38 main::@17 main::@64 main::@65 main::@39 main::@18 main::@66 main::@40 main::@19 main::@67 main::@41 main::@20 main::@68 main::@42 main::@21 main::@69 main::@70 main::@22 main::@return main::@71 print_ln print_ln::@1 print_ln::@return printu printu::@1 printu::@2 printu::@3 printu::@4 printu::@5 printu::@return print_char print_char::@return print_byte print_byte::@1 print_byte::@return print_str print_str::@1 print_str::@return print_str::@2 print_cls print_cls::@1 print_cls::@return 
 Adding NOP phi() at start of @begin
-Adding NOP phi() at start of @10
+Adding NOP phi() at start of @11
 Adding NOP phi() at start of @end
 Adding NOP phi() at start of main
 Adding NOP phi() at start of main::@23
@@ -6464,14 +6498,14 @@ Propagating live ranges...
 FINAL CONTROL FLOW GRAPH
 @begin: scope:[]  from
   [0] phi() [ ] ( )
-  to:@10
-@10: scope:[]  from @begin
+  to:@11
+@11: scope:[]  from @begin
   [1] phi() [ ] ( )
   [2] call main param-assignment [ ] ( )
   to:@end
-@end: scope:[]  from @10
+@end: scope:[]  from @11
   [3] phi() [ ] ( )
-main: scope:[main]  from @10
+main: scope:[main]  from @11
   [4] phi() [ ] ( main:2 [ ] )
   [5] call print_cls param-assignment [ ] ( main:2 [ ] )
   to:main::@1
@@ -6870,100 +6904,100 @@ print_cls::@return: scope:[print_cls]  from print_cls::@1
 
 DOMINATORS
 @begin dominated by  @begin 
-@10 dominated by  @begin @10 
-@end dominated by  @end @begin @10 
-main dominated by  main @begin @10 
-main::@1 dominated by  main main::@1 @begin @10 
-main::@23 dominated by  main main::@1 @begin main::@23 @10 
-main::@2 dominated by  main main::@1 main::@2 @begin @10 
-main::@46 dominated by  main main::@46 main::@1 main::@2 @begin @10 
-main::@24 dominated by  main main::@46 main::@1 main::@2 @begin main::@24 @10 
-main::@3 dominated by  main main::@46 main::@1 main::@2 main::@3 @begin @10 
-main::@47 dominated by  main main::@46 main::@47 main::@1 main::@2 main::@3 @begin @10 
-main::@25 dominated by  main main::@46 main::@47 main::@1 main::@2 main::@3 @begin main::@25 @10 
-main::@4 dominated by  main main::@46 main::@47 main::@1 main::@2 main::@3 main::@4 @begin @10 
-main::@48 dominated by  main main::@46 main::@48 main::@47 main::@1 main::@2 main::@3 main::@4 @begin @10 
-main::@26 dominated by  main main::@46 main::@48 main::@47 main::@1 main::@2 main::@3 main::@4 @begin main::@26 @10 
-main::@5 dominated by  main main::@46 main::@48 main::@47 main::@1 main::@2 main::@5 main::@3 main::@4 @begin @10 
-main::@49 dominated by  main::@49 main main::@46 main::@48 main::@47 main::@1 main::@2 main::@5 main::@3 main::@4 @begin @10 
-main::@50 dominated by  main::@49 main main::@46 main::@48 main::@47 main::@1 main::@2 main::@5 main::@3 main::@4 @begin @10 main::@50 
-main::@27 dominated by  main::@49 main main::@46 main::@48 main::@47 main::@1 main::@2 main::@5 main::@3 main::@4 @begin main::@27 @10 main::@50 
-main::@6 dominated by  main::@49 main main::@46 main::@48 main::@47 main::@1 main::@2 main::@5 main::@6 main::@3 main::@4 @begin @10 main::@50 
-main::@51 dominated by  main::@49 main main::@46 main::@48 main::@47 main::@1 main::@2 main::@5 main::@6 main::@3 main::@4 @begin @10 main::@51 main::@50 
-main::@28 dominated by  main::@49 main main::@46 main::@48 main::@47 main::@1 main::@2 main::@5 main::@6 main::@3 main::@4 @begin main::@28 @10 main::@51 main::@50 
-main::@7 dominated by  main::@7 main::@49 main main::@46 main::@48 main::@47 main::@1 main::@2 main::@5 main::@6 main::@3 main::@4 @begin @10 main::@51 main::@50 
-main::@52 dominated by  main::@7 main::@49 main main::@46 main::@48 main::@47 main::@1 main::@2 main::@5 main::@6 main::@3 main::@4 @begin @10 main::@52 main::@51 main::@50 
-main::@29 dominated by  main::@7 main::@49 main main::@46 main::@48 main::@47 main::@1 main::@2 main::@5 main::@6 main::@3 main::@4 @begin main::@29 @10 main::@52 main::@51 main::@50 
-main::@8 dominated by  main::@7 main::@8 main::@49 main main::@46 main::@48 main::@47 main::@1 main::@2 main::@5 main::@6 main::@3 main::@4 @begin @10 main::@52 main::@51 main::@50 
-main::@53 dominated by  main::@7 main::@8 main::@49 main main::@46 main::@48 main::@47 main::@1 main::@2 main::@5 main::@6 main::@3 main::@4 @begin @10 main::@53 main::@52 main::@51 main::@50 
-main::@30 dominated by  main::@7 main::@8 main::@49 main main::@46 main::@48 main::@47 main::@1 main::@2 main::@5 main::@6 main::@3 main::@4 main::@30 @begin @10 main::@53 main::@52 main::@51 main::@50 
-main::@9 dominated by  main::@9 main::@7 main::@8 main::@49 main main::@46 main::@48 main::@47 main::@1 main::@2 main::@5 main::@6 main::@3 main::@4 @begin @10 main::@53 main::@52 main::@51 main::@50 
-main::@54 dominated by  main::@9 main::@7 main::@8 main::@49 main main::@46 main::@48 main::@47 main::@1 main::@2 main::@5 main::@6 main::@3 main::@4 @begin @10 main::@53 main::@52 main::@54 main::@51 main::@50 
-main::@55 dominated by  main::@9 main::@7 main::@8 main::@49 main main::@46 main::@48 main::@47 main::@1 main::@2 main::@5 main::@6 main::@3 main::@4 @begin @10 main::@53 main::@52 main::@55 main::@54 main::@51 main::@50 
-main::@31 dominated by  main::@9 main::@7 main::@8 main::@49 main main::@46 main::@48 main::@47 main::@1 main::@2 main::@5 main::@6 main::@3 main::@4 main::@31 @begin @10 main::@53 main::@52 main::@55 main::@54 main::@51 main::@50 
-main::@10 dominated by  main::@9 main::@7 main::@8 main::@49 main main::@46 main::@48 main::@47 main::@1 main::@2 main::@5 main::@6 main::@3 main::@4 @begin @10 main::@53 main::@52 main::@55 main::@54 main::@10 main::@51 main::@50 
-main::@56 dominated by  main::@9 main::@7 main::@8 main::@49 main main::@46 main::@48 main::@47 main::@1 main::@2 main::@5 main::@6 main::@3 main::@4 @begin @10 main::@53 main::@52 main::@55 main::@54 main::@10 main::@51 main::@50 main::@56 
-main::@32 dominated by  main::@9 main::@7 main::@8 main::@49 main main::@46 main::@48 main::@47 main::@1 main::@2 main::@5 main::@6 main::@3 main::@4 @begin main::@32 @10 main::@53 main::@52 main::@55 main::@54 main::@10 main::@51 main::@50 main::@56 
-main::@11 dominated by  main::@9 main::@7 main::@8 main::@49 main main::@46 main::@48 main::@47 main::@1 main::@2 main::@5 main::@6 main::@3 main::@4 @begin @10 main::@53 main::@52 main::@55 main::@11 main::@54 main::@10 main::@51 main::@50 main::@56 
-main::@57 dominated by  main::@9 main::@7 main::@8 main::@49 main main::@46 main::@48 main::@47 main::@1 main::@2 main::@5 main::@6 main::@3 main::@4 @begin @10 main::@53 main::@52 main::@55 main::@11 main::@54 main::@10 main::@51 main::@50 main::@57 main::@56 
-main::@33 dominated by  main::@9 main::@7 main::@8 main::@49 main main::@46 main::@48 main::@47 main::@1 main::@2 main::@5 main::@6 main::@3 main::@4 main::@33 @begin @10 main::@53 main::@52 main::@55 main::@11 main::@54 main::@10 main::@51 main::@50 main::@57 main::@56 
-main::@12 dominated by  main::@9 main::@7 main::@8 main::@49 main main::@46 main::@48 main::@47 main::@1 main::@2 main::@5 main::@6 main::@3 main::@4 @begin @10 main::@53 main::@52 main::@55 main::@11 main::@54 main::@10 main::@51 main::@50 main::@57 main::@56 main::@12 
-main::@58 dominated by  main::@9 main::@7 main::@8 main::@49 main main::@46 main::@48 main::@47 main::@1 main::@2 main::@5 main::@6 main::@3 main::@4 @begin @10 main::@53 main::@52 main::@55 main::@11 main::@54 main::@10 main::@51 main::@50 main::@57 main::@56 main::@12 main::@58 
-main::@34 dominated by  main::@9 main::@7 main::@8 main::@49 main main::@46 main::@48 main::@47 main::@1 main::@2 main::@5 main::@6 main::@3 main::@4 @begin main::@34 @10 main::@53 main::@52 main::@55 main::@11 main::@54 main::@10 main::@51 main::@50 main::@57 main::@56 main::@12 main::@58 
-main::@13 dominated by  main::@9 main::@7 main::@8 main::@49 main main::@46 main::@48 main::@47 main::@1 main::@2 main::@5 main::@6 main::@3 main::@4 @begin @10 main::@53 main::@52 main::@55 main::@11 main::@54 main::@10 main::@51 main::@50 main::@57 main::@13 main::@56 main::@12 main::@58 
-main::@59 dominated by  main::@9 main::@7 main::@8 main::@49 main main::@46 main::@48 main::@47 main::@1 main::@2 main::@5 main::@6 main::@3 main::@4 @begin @10 main::@53 main::@52 main::@55 main::@11 main::@54 main::@10 main::@51 main::@50 main::@57 main::@13 main::@56 main::@12 main::@59 main::@58 
-main::@60 dominated by  main::@9 main::@7 main::@8 main::@49 main main::@46 main::@48 main::@47 main::@1 main::@2 main::@5 main::@6 main::@3 main::@4 @begin main::@60 @10 main::@53 main::@52 main::@55 main::@11 main::@54 main::@10 main::@51 main::@50 main::@57 main::@13 main::@56 main::@12 main::@59 main::@58 
-main::@35 dominated by  main::@9 main::@7 main::@8 main::@49 main main::@46 main::@48 main::@47 main::@1 main::@2 main::@5 main::@6 main::@3 main::@4 @begin main::@35 main::@60 @10 main::@53 main::@52 main::@55 main::@11 main::@54 main::@10 main::@51 main::@50 main::@57 main::@13 main::@56 main::@12 main::@59 main::@58 
-main::@14 dominated by  main::@9 main::@7 main::@8 main::@49 main main::@46 main::@48 main::@47 main::@1 main::@2 main::@5 main::@6 main::@3 main::@4 @begin main::@60 @10 main::@53 main::@52 main::@55 main::@11 main::@54 main::@10 main::@51 main::@50 main::@57 main::@13 main::@56 main::@12 main::@59 main::@58 main::@14 
-main::@61 dominated by  main::@9 main::@7 main::@8 main::@49 main main::@46 main::@48 main::@47 main::@1 main::@2 main::@5 main::@6 main::@3 main::@4 @begin main::@60 main::@61 @10 main::@53 main::@52 main::@55 main::@11 main::@54 main::@10 main::@51 main::@50 main::@57 main::@13 main::@56 main::@12 main::@59 main::@58 main::@14 
-main::@36 dominated by  main::@9 main::@7 main::@8 main::@49 main main::@46 main::@48 main::@47 main::@1 main::@2 main::@5 main::@6 main::@3 main::@4 @begin main::@36 main::@60 main::@61 @10 main::@53 main::@52 main::@55 main::@11 main::@54 main::@10 main::@51 main::@50 main::@57 main::@13 main::@56 main::@12 main::@59 main::@58 main::@14 
-main::@15 dominated by  main::@9 main::@7 main::@8 main::@49 main main::@46 main::@48 main::@47 main::@1 main::@2 main::@5 main::@6 main::@3 main::@4 @begin main::@60 main::@61 @10 main::@53 main::@52 main::@55 main::@11 main::@54 main::@10 main::@51 main::@50 main::@57 main::@13 main::@56 main::@12 main::@59 main::@15 main::@58 main::@14 
-main::@62 dominated by  main::@9 main::@7 main::@8 main::@49 main main::@46 main::@48 main::@47 main::@1 main::@2 main::@5 main::@6 main::@3 main::@4 @begin main::@60 main::@62 main::@61 @10 main::@53 main::@52 main::@55 main::@11 main::@54 main::@10 main::@51 main::@50 main::@57 main::@13 main::@56 main::@12 main::@59 main::@15 main::@58 main::@14 
-main::@37 dominated by  main::@9 main::@7 main::@8 main::@49 main main::@46 main::@48 main::@47 main::@1 main::@2 main::@5 main::@6 main::@3 main::@4 @begin main::@37 main::@60 main::@62 main::@61 @10 main::@53 main::@52 main::@55 main::@11 main::@54 main::@10 main::@51 main::@50 main::@57 main::@13 main::@56 main::@12 main::@59 main::@15 main::@58 main::@14 
-main::@16 dominated by  main::@9 main::@7 main::@8 main::@49 main main::@46 main::@48 main::@47 main::@1 main::@2 main::@5 main::@6 main::@3 main::@4 @begin main::@60 main::@62 main::@61 @10 main::@53 main::@52 main::@55 main::@11 main::@54 main::@10 main::@51 main::@50 main::@16 main::@57 main::@13 main::@56 main::@12 main::@59 main::@15 main::@58 main::@14 
-main::@63 dominated by  main::@9 main::@7 main::@8 main::@49 main main::@46 main::@48 main::@47 main::@1 main::@2 main::@5 main::@6 main::@3 main::@4 @begin main::@63 main::@60 main::@62 main::@61 @10 main::@53 main::@52 main::@55 main::@11 main::@54 main::@10 main::@51 main::@50 main::@16 main::@57 main::@13 main::@56 main::@12 main::@59 main::@15 main::@58 main::@14 
-main::@38 dominated by  main::@9 main::@7 main::@8 main::@49 main main::@46 main::@48 main::@47 main::@1 main::@2 main::@5 main::@6 main::@3 main::@4 @begin main::@38 main::@63 main::@60 main::@62 main::@61 @10 main::@53 main::@52 main::@55 main::@11 main::@54 main::@10 main::@51 main::@50 main::@16 main::@57 main::@13 main::@56 main::@12 main::@59 main::@15 main::@58 main::@14 
-main::@17 dominated by  main::@9 main::@7 main::@8 main::@49 main main::@46 main::@48 main::@47 main::@1 main::@2 main::@5 main::@6 main::@3 main::@4 @begin main::@63 main::@60 main::@62 main::@61 @10 main::@53 main::@52 main::@55 main::@11 main::@54 main::@10 main::@51 main::@50 main::@17 main::@16 main::@57 main::@13 main::@56 main::@12 main::@59 main::@15 main::@58 main::@14 
-main::@64 dominated by  main::@9 main::@7 main::@8 main::@49 main main::@46 main::@48 main::@47 main::@1 main::@2 main::@5 main::@6 main::@3 main::@4 @begin main::@64 main::@63 main::@60 main::@62 main::@61 @10 main::@53 main::@52 main::@55 main::@11 main::@54 main::@10 main::@51 main::@50 main::@17 main::@16 main::@57 main::@13 main::@56 main::@12 main::@59 main::@15 main::@58 main::@14 
-main::@65 dominated by  main::@9 main::@7 main::@8 main::@49 main main::@46 main::@48 main::@47 main::@1 main::@2 main::@5 main::@6 main::@3 main::@4 @begin main::@64 main::@63 main::@65 main::@60 main::@62 main::@61 @10 main::@53 main::@52 main::@55 main::@11 main::@54 main::@10 main::@51 main::@50 main::@17 main::@16 main::@57 main::@13 main::@56 main::@12 main::@59 main::@15 main::@58 main::@14 
-main::@39 dominated by  main::@9 main::@7 main::@8 main::@49 main main::@46 main::@48 main::@47 main::@1 main::@2 main::@5 main::@6 main::@3 main::@4 @begin main::@39 main::@64 main::@63 main::@65 main::@60 main::@62 main::@61 @10 main::@53 main::@52 main::@55 main::@11 main::@54 main::@10 main::@51 main::@50 main::@17 main::@16 main::@57 main::@13 main::@56 main::@12 main::@59 main::@15 main::@58 main::@14 
-main::@18 dominated by  main::@9 main::@7 main::@8 main::@49 main main::@46 main::@48 main::@47 main::@1 main::@2 main::@5 main::@6 main::@3 main::@4 @begin main::@64 main::@63 main::@65 main::@60 main::@62 main::@61 @10 main::@53 main::@52 main::@55 main::@11 main::@54 main::@10 main::@51 main::@50 main::@17 main::@16 main::@18 main::@57 main::@13 main::@56 main::@12 main::@59 main::@15 main::@58 main::@14 
-main::@66 dominated by  main::@9 main::@7 main::@8 main::@49 main main::@46 main::@48 main::@47 main::@1 main::@2 main::@5 main::@6 main::@3 main::@4 @begin main::@64 main::@63 main::@66 main::@65 main::@60 main::@62 main::@61 @10 main::@53 main::@52 main::@55 main::@11 main::@54 main::@10 main::@51 main::@50 main::@17 main::@16 main::@18 main::@57 main::@13 main::@56 main::@12 main::@59 main::@15 main::@58 main::@14 
-main::@40 dominated by  main::@9 main::@7 main::@8 main::@40 main::@49 main main::@46 main::@48 main::@47 main::@1 main::@2 main::@5 main::@6 main::@3 main::@4 @begin main::@64 main::@63 main::@66 main::@65 main::@60 main::@62 main::@61 @10 main::@53 main::@52 main::@55 main::@11 main::@54 main::@10 main::@51 main::@50 main::@17 main::@16 main::@18 main::@57 main::@13 main::@56 main::@12 main::@59 main::@15 main::@58 main::@14 
-main::@19 dominated by  main::@9 main::@7 main::@8 main::@49 main main::@46 main::@48 main::@47 main::@1 main::@2 main::@5 main::@6 main::@3 main::@4 @begin main::@64 main::@63 main::@66 main::@65 main::@60 main::@62 main::@61 @10 main::@53 main::@52 main::@55 main::@11 main::@54 main::@10 main::@51 main::@50 main::@17 main::@16 main::@19 main::@18 main::@57 main::@13 main::@56 main::@12 main::@59 main::@15 main::@58 main::@14 
-main::@67 dominated by  main::@9 main::@7 main::@8 main::@49 main main::@46 main::@48 main::@47 main::@1 main::@2 main::@5 main::@6 main::@3 main::@4 @begin main::@64 main::@63 main::@66 main::@65 main::@60 main::@62 main::@61 main::@67 @10 main::@53 main::@52 main::@55 main::@11 main::@54 main::@10 main::@51 main::@50 main::@17 main::@16 main::@19 main::@18 main::@57 main::@13 main::@56 main::@12 main::@59 main::@15 main::@58 main::@14 
-main::@41 dominated by  main::@9 main::@41 main::@7 main::@8 main::@49 main main::@46 main::@48 main::@47 main::@1 main::@2 main::@5 main::@6 main::@3 main::@4 @begin main::@64 main::@63 main::@66 main::@65 main::@60 main::@62 main::@61 main::@67 @10 main::@53 main::@52 main::@55 main::@11 main::@54 main::@10 main::@51 main::@50 main::@17 main::@16 main::@19 main::@18 main::@57 main::@13 main::@56 main::@12 main::@59 main::@15 main::@58 main::@14 
-main::@20 dominated by  main::@9 main::@7 main::@8 main::@49 main main::@46 main::@48 main::@47 main::@1 main::@2 main::@5 main::@6 main::@3 main::@4 @begin main::@64 main::@20 main::@63 main::@66 main::@65 main::@60 main::@62 main::@61 main::@67 @10 main::@53 main::@52 main::@55 main::@11 main::@54 main::@10 main::@51 main::@50 main::@17 main::@16 main::@19 main::@18 main::@57 main::@13 main::@56 main::@12 main::@59 main::@15 main::@58 main::@14 
-main::@68 dominated by  main::@9 main::@7 main::@8 main::@49 main main::@46 main::@48 main::@47 main::@1 main::@2 main::@5 main::@6 main::@3 main::@4 @begin main::@64 main::@20 main::@63 main::@66 main::@65 main::@60 main::@62 main::@61 main::@68 main::@67 @10 main::@53 main::@52 main::@55 main::@11 main::@54 main::@10 main::@51 main::@50 main::@17 main::@16 main::@19 main::@18 main::@57 main::@13 main::@56 main::@12 main::@59 main::@15 main::@58 main::@14 
-main::@42 dominated by  main::@9 main::@42 main::@7 main::@8 main::@49 main main::@46 main::@48 main::@47 main::@1 main::@2 main::@5 main::@6 main::@3 main::@4 @begin main::@64 main::@20 main::@63 main::@66 main::@65 main::@60 main::@62 main::@61 main::@68 main::@67 @10 main::@53 main::@52 main::@55 main::@11 main::@54 main::@10 main::@51 main::@50 main::@17 main::@16 main::@19 main::@18 main::@57 main::@13 main::@56 main::@12 main::@59 main::@15 main::@58 main::@14 
-main::@21 dominated by  main::@9 main::@7 main::@8 main::@49 main main::@46 main::@48 main::@47 main::@1 main::@2 main::@5 main::@6 main::@3 main::@4 @begin main::@64 main::@20 main::@63 main::@66 main::@65 main::@21 main::@60 main::@62 main::@61 main::@68 main::@67 @10 main::@53 main::@52 main::@55 main::@11 main::@54 main::@10 main::@51 main::@50 main::@17 main::@16 main::@19 main::@18 main::@57 main::@13 main::@56 main::@12 main::@59 main::@15 main::@58 main::@14 
-main::@69 dominated by  main::@9 main::@7 main::@8 main::@49 main main::@46 main::@48 main::@47 main::@1 main::@2 main::@5 main::@6 main::@3 main::@4 @begin main::@64 main::@20 main::@63 main::@66 main::@65 main::@21 main::@60 main::@62 main::@61 main::@68 main::@67 main::@69 @10 main::@53 main::@52 main::@55 main::@11 main::@54 main::@10 main::@51 main::@50 main::@17 main::@16 main::@19 main::@18 main::@57 main::@13 main::@56 main::@12 main::@59 main::@15 main::@58 main::@14 
-main::@70 dominated by  main::@9 main::@7 main::@8 main::@49 main main::@46 main::@48 main::@47 main::@1 main::@2 main::@5 main::@6 main::@3 main::@4 @begin main::@70 main::@64 main::@20 main::@63 main::@66 main::@65 main::@21 main::@60 main::@62 main::@61 main::@68 main::@67 main::@69 @10 main::@53 main::@52 main::@55 main::@11 main::@54 main::@10 main::@51 main::@50 main::@17 main::@16 main::@19 main::@18 main::@57 main::@13 main::@56 main::@12 main::@59 main::@15 main::@58 main::@14 
-main::@22 dominated by  main::@9 main::@7 main::@8 main::@49 main main::@46 main::@48 main::@47 main::@1 main::@2 main::@5 main::@6 main::@3 main::@4 @begin main::@70 main::@64 main::@20 main::@63 main::@66 main::@22 main::@65 main::@21 main::@60 main::@62 main::@61 main::@68 main::@67 main::@69 @10 main::@53 main::@52 main::@55 main::@11 main::@54 main::@10 main::@51 main::@50 main::@17 main::@16 main::@19 main::@18 main::@57 main::@13 main::@56 main::@12 main::@59 main::@15 main::@58 main::@14 
-main::@return dominated by  main::@9 main::@7 main::@8 main::@49 main main::@46 main::@48 main::@47 main::@1 main::@2 main::@5 main::@6 main::@3 main::@4 @begin main::@70 main::@64 main::@20 main::@return main::@63 main::@66 main::@22 main::@65 main::@21 main::@60 main::@62 main::@61 main::@68 main::@67 main::@69 @10 main::@53 main::@52 main::@55 main::@11 main::@54 main::@10 main::@51 main::@50 main::@17 main::@16 main::@19 main::@18 main::@57 main::@13 main::@56 main::@12 main::@59 main::@15 main::@58 main::@14 
-main::@71 dominated by  main::@9 main::@7 main::@8 main::@49 main main::@46 main::@48 main::@47 main::@1 main::@2 main::@5 main::@6 main::@3 main::@4 @begin main::@71 main::@70 main::@64 main::@20 main::@63 main::@66 main::@65 main::@21 main::@60 main::@62 main::@61 main::@68 main::@67 main::@69 @10 main::@53 main::@52 main::@55 main::@11 main::@54 main::@10 main::@51 main::@50 main::@17 main::@16 main::@19 main::@18 main::@57 main::@13 main::@56 main::@12 main::@59 main::@15 main::@58 main::@14 
-print_ln dominated by  main::@49 main main::@46 main::@48 main::@47 main::@1 main::@2 main::@5 main::@3 main::@4 @begin print_ln @10 
-print_ln::@1 dominated by  print_ln::@1 main::@49 main main::@46 main::@48 main::@47 main::@1 main::@2 main::@5 main::@3 main::@4 @begin print_ln @10 
-print_ln::@return dominated by  print_ln::@1 main::@49 main main::@46 main::@48 main::@47 print_ln::@return main::@1 main::@2 main::@5 main::@3 main::@4 @begin print_ln @10 
-printu dominated by  main main::@1 main::@2 @begin @10 printu 
-printu::@1 dominated by  main main::@1 main::@2 @begin @10 printu::@1 printu 
-printu::@2 dominated by  main main::@1 main::@2 @begin @10 printu::@1 printu::@2 printu 
-printu::@3 dominated by  main main::@1 main::@2 @begin @10 printu::@1 printu::@3 printu::@2 printu 
-printu::@4 dominated by  main main::@1 main::@2 @begin @10 printu::@1 printu::@3 printu::@2 printu::@4 printu 
-printu::@5 dominated by  main main::@1 main::@2 @begin @10 printu::@1 printu::@3 printu::@2 printu::@5 printu::@4 printu 
-printu::@return dominated by  main main::@1 main::@2 printu::@return @begin @10 printu::@1 printu::@3 printu::@2 printu::@5 printu::@4 printu 
-print_char dominated by  main print_char main::@1 main::@2 @begin @10 printu 
-print_char::@return dominated by  main print_char main::@1 main::@2 print_char::@return @begin @10 printu 
-print_byte dominated by  main main::@1 main::@2 @begin @10 print_byte printu::@1 printu 
-print_byte::@1 dominated by  main main::@1 main::@2 @begin print_byte::@1 @10 print_byte printu::@1 printu 
-print_byte::@return dominated by  main main::@1 main::@2 @begin print_byte::@return print_byte::@1 @10 print_byte printu::@1 printu 
-print_str dominated by  main main::@1 main::@2 @begin @10 print_str printu::@1 printu::@2 printu 
-print_str::@1 dominated by  main main::@1 main::@2 @begin print_str::@1 @10 print_str printu::@1 printu::@2 printu 
-print_str::@return dominated by  main main::@1 main::@2 @begin print_str::@return print_str::@1 @10 print_str printu::@1 printu::@2 printu 
-print_str::@2 dominated by  main main::@1 main::@2 @begin print_str::@1 print_str::@2 @10 print_str printu::@1 printu::@2 printu 
-print_cls dominated by  main @begin @10 print_cls 
-print_cls::@1 dominated by  main @begin @10 print_cls::@1 print_cls 
-print_cls::@return dominated by  main @begin print_cls::@return @10 print_cls::@1 print_cls 
+@11 dominated by  @begin @11 
+@end dominated by  @end @begin @11 
+main dominated by  main @begin @11 
+main::@1 dominated by  main main::@1 @begin @11 
+main::@23 dominated by  main main::@1 @begin main::@23 @11 
+main::@2 dominated by  main main::@1 main::@2 @begin @11 
+main::@46 dominated by  main main::@46 main::@1 main::@2 @begin @11 
+main::@24 dominated by  main main::@46 main::@1 main::@2 @begin main::@24 @11 
+main::@3 dominated by  main main::@46 main::@1 main::@2 main::@3 @begin @11 
+main::@47 dominated by  main main::@46 main::@47 main::@1 main::@2 main::@3 @begin @11 
+main::@25 dominated by  main main::@46 main::@47 main::@1 main::@2 main::@3 @begin main::@25 @11 
+main::@4 dominated by  main main::@46 main::@47 main::@1 main::@2 main::@3 main::@4 @begin @11 
+main::@48 dominated by  main main::@46 main::@48 main::@47 main::@1 main::@2 main::@3 main::@4 @begin @11 
+main::@26 dominated by  main main::@46 main::@48 main::@47 main::@1 main::@2 main::@3 main::@4 @begin main::@26 @11 
+main::@5 dominated by  main main::@46 main::@48 main::@47 main::@1 main::@2 main::@5 main::@3 main::@4 @begin @11 
+main::@49 dominated by  main::@49 main main::@46 main::@48 main::@47 main::@1 main::@2 main::@5 main::@3 main::@4 @begin @11 
+main::@50 dominated by  main::@49 main main::@46 main::@48 main::@47 main::@1 main::@2 main::@5 main::@3 main::@4 @begin @11 main::@50 
+main::@27 dominated by  main::@49 main main::@46 main::@48 main::@47 main::@1 main::@2 main::@5 main::@3 main::@4 @begin main::@27 @11 main::@50 
+main::@6 dominated by  main::@49 main main::@46 main::@48 main::@47 main::@1 main::@2 main::@5 main::@6 main::@3 main::@4 @begin @11 main::@50 
+main::@51 dominated by  main::@49 main main::@46 main::@48 main::@47 main::@1 main::@2 main::@5 main::@6 main::@3 main::@4 @begin @11 main::@51 main::@50 
+main::@28 dominated by  main::@49 main main::@46 main::@48 main::@47 main::@1 main::@2 main::@5 main::@6 main::@3 main::@4 @begin main::@28 @11 main::@51 main::@50 
+main::@7 dominated by  main::@7 main::@49 main main::@46 main::@48 main::@47 main::@1 main::@2 main::@5 main::@6 main::@3 main::@4 @begin @11 main::@51 main::@50 
+main::@52 dominated by  main::@7 main::@49 main main::@46 main::@48 main::@47 main::@1 main::@2 main::@5 main::@6 main::@3 main::@4 @begin @11 main::@52 main::@51 main::@50 
+main::@29 dominated by  main::@7 main::@49 main main::@46 main::@48 main::@47 main::@1 main::@2 main::@5 main::@6 main::@3 main::@4 @begin main::@29 @11 main::@52 main::@51 main::@50 
+main::@8 dominated by  main::@7 main::@8 main::@49 main main::@46 main::@48 main::@47 main::@1 main::@2 main::@5 main::@6 main::@3 main::@4 @begin @11 main::@52 main::@51 main::@50 
+main::@53 dominated by  main::@7 main::@8 main::@49 main main::@46 main::@48 main::@47 main::@1 main::@2 main::@5 main::@6 main::@3 main::@4 @begin @11 main::@53 main::@52 main::@51 main::@50 
+main::@30 dominated by  main::@7 main::@8 main::@49 main main::@46 main::@48 main::@47 main::@1 main::@2 main::@5 main::@6 main::@3 main::@4 main::@30 @begin @11 main::@53 main::@52 main::@51 main::@50 
+main::@9 dominated by  main::@9 main::@7 main::@8 main::@49 main main::@46 main::@48 main::@47 main::@1 main::@2 main::@5 main::@6 main::@3 main::@4 @begin @11 main::@53 main::@52 main::@51 main::@50 
+main::@54 dominated by  main::@9 main::@7 main::@8 main::@49 main main::@46 main::@48 main::@47 main::@1 main::@2 main::@5 main::@6 main::@3 main::@4 @begin @11 main::@53 main::@52 main::@54 main::@51 main::@50 
+main::@55 dominated by  main::@9 main::@7 main::@8 main::@49 main main::@46 main::@48 main::@47 main::@1 main::@2 main::@5 main::@6 main::@3 main::@4 @begin @11 main::@53 main::@52 main::@55 main::@54 main::@51 main::@50 
+main::@31 dominated by  main::@9 main::@7 main::@8 main::@49 main main::@46 main::@48 main::@47 main::@1 main::@2 main::@5 main::@6 main::@3 main::@4 main::@31 @begin @11 main::@53 main::@52 main::@55 main::@54 main::@51 main::@50 
+main::@10 dominated by  main::@9 main::@7 main::@8 main::@49 main main::@46 main::@48 main::@47 main::@1 main::@2 main::@5 main::@6 main::@3 main::@4 @begin @11 main::@53 main::@52 main::@55 main::@54 main::@10 main::@51 main::@50 
+main::@56 dominated by  main::@9 main::@7 main::@8 main::@49 main main::@46 main::@48 main::@47 main::@1 main::@2 main::@5 main::@6 main::@3 main::@4 @begin @11 main::@53 main::@52 main::@55 main::@54 main::@10 main::@51 main::@50 main::@56 
+main::@32 dominated by  main::@9 main::@7 main::@8 main::@49 main main::@46 main::@48 main::@47 main::@1 main::@2 main::@5 main::@6 main::@3 main::@4 @begin main::@32 @11 main::@53 main::@52 main::@55 main::@54 main::@10 main::@51 main::@50 main::@56 
+main::@11 dominated by  main::@9 main::@7 main::@8 main::@49 main main::@46 main::@48 main::@47 main::@1 main::@2 main::@5 main::@6 main::@3 main::@4 @begin @11 main::@53 main::@52 main::@55 main::@11 main::@54 main::@10 main::@51 main::@50 main::@56 
+main::@57 dominated by  main::@9 main::@7 main::@8 main::@49 main main::@46 main::@48 main::@47 main::@1 main::@2 main::@5 main::@6 main::@3 main::@4 @begin @11 main::@53 main::@52 main::@55 main::@11 main::@54 main::@10 main::@51 main::@50 main::@57 main::@56 
+main::@33 dominated by  main::@9 main::@7 main::@8 main::@49 main main::@46 main::@48 main::@47 main::@1 main::@2 main::@5 main::@6 main::@3 main::@4 main::@33 @begin @11 main::@53 main::@52 main::@55 main::@11 main::@54 main::@10 main::@51 main::@50 main::@57 main::@56 
+main::@12 dominated by  main::@9 main::@7 main::@8 main::@49 main main::@46 main::@48 main::@47 main::@1 main::@2 main::@5 main::@6 main::@3 main::@4 @begin @11 main::@53 main::@52 main::@55 main::@11 main::@54 main::@10 main::@51 main::@50 main::@57 main::@56 main::@12 
+main::@58 dominated by  main::@9 main::@7 main::@8 main::@49 main main::@46 main::@48 main::@47 main::@1 main::@2 main::@5 main::@6 main::@3 main::@4 @begin @11 main::@53 main::@52 main::@55 main::@11 main::@54 main::@10 main::@51 main::@50 main::@57 main::@56 main::@12 main::@58 
+main::@34 dominated by  main::@9 main::@7 main::@8 main::@49 main main::@46 main::@48 main::@47 main::@1 main::@2 main::@5 main::@6 main::@3 main::@4 @begin main::@34 @11 main::@53 main::@52 main::@55 main::@11 main::@54 main::@10 main::@51 main::@50 main::@57 main::@56 main::@12 main::@58 
+main::@13 dominated by  main::@9 main::@7 main::@8 main::@49 main main::@46 main::@48 main::@47 main::@1 main::@2 main::@5 main::@6 main::@3 main::@4 @begin @11 main::@53 main::@52 main::@55 main::@11 main::@54 main::@10 main::@51 main::@50 main::@57 main::@13 main::@56 main::@12 main::@58 
+main::@59 dominated by  main::@9 main::@7 main::@8 main::@49 main main::@46 main::@48 main::@47 main::@1 main::@2 main::@5 main::@6 main::@3 main::@4 @begin @11 main::@53 main::@52 main::@55 main::@11 main::@54 main::@10 main::@51 main::@50 main::@57 main::@13 main::@56 main::@12 main::@59 main::@58 
+main::@60 dominated by  main::@9 main::@7 main::@8 main::@49 main main::@46 main::@48 main::@47 main::@1 main::@2 main::@5 main::@6 main::@3 main::@4 @begin main::@60 @11 main::@53 main::@52 main::@55 main::@11 main::@54 main::@10 main::@51 main::@50 main::@57 main::@13 main::@56 main::@12 main::@59 main::@58 
+main::@35 dominated by  main::@9 main::@7 main::@8 main::@49 main main::@46 main::@48 main::@47 main::@1 main::@2 main::@5 main::@6 main::@3 main::@4 @begin main::@35 main::@60 @11 main::@53 main::@52 main::@55 main::@11 main::@54 main::@10 main::@51 main::@50 main::@57 main::@13 main::@56 main::@12 main::@59 main::@58 
+main::@14 dominated by  main::@9 main::@7 main::@8 main::@49 main main::@46 main::@48 main::@47 main::@1 main::@2 main::@5 main::@6 main::@3 main::@4 @begin main::@60 @11 main::@53 main::@52 main::@55 main::@11 main::@54 main::@10 main::@51 main::@50 main::@57 main::@13 main::@56 main::@12 main::@59 main::@58 main::@14 
+main::@61 dominated by  main::@9 main::@7 main::@8 main::@49 main main::@46 main::@48 main::@47 main::@1 main::@2 main::@5 main::@6 main::@3 main::@4 @begin main::@60 main::@61 @11 main::@53 main::@52 main::@55 main::@11 main::@54 main::@10 main::@51 main::@50 main::@57 main::@13 main::@56 main::@12 main::@59 main::@58 main::@14 
+main::@36 dominated by  main::@9 main::@7 main::@8 main::@49 main main::@46 main::@48 main::@47 main::@1 main::@2 main::@5 main::@6 main::@3 main::@4 @begin main::@36 main::@60 main::@61 @11 main::@53 main::@52 main::@55 main::@11 main::@54 main::@10 main::@51 main::@50 main::@57 main::@13 main::@56 main::@12 main::@59 main::@58 main::@14 
+main::@15 dominated by  main::@9 main::@7 main::@8 main::@49 main main::@46 main::@48 main::@47 main::@1 main::@2 main::@5 main::@6 main::@3 main::@4 @begin main::@60 main::@61 @11 main::@53 main::@52 main::@55 main::@11 main::@54 main::@10 main::@51 main::@50 main::@57 main::@13 main::@56 main::@12 main::@59 main::@15 main::@58 main::@14 
+main::@62 dominated by  main::@9 main::@7 main::@8 main::@49 main main::@46 main::@48 main::@47 main::@1 main::@2 main::@5 main::@6 main::@3 main::@4 @begin main::@60 main::@62 main::@61 @11 main::@53 main::@52 main::@55 main::@11 main::@54 main::@10 main::@51 main::@50 main::@57 main::@13 main::@56 main::@12 main::@59 main::@15 main::@58 main::@14 
+main::@37 dominated by  main::@9 main::@7 main::@8 main::@49 main main::@46 main::@48 main::@47 main::@1 main::@2 main::@5 main::@6 main::@3 main::@4 @begin main::@37 main::@60 main::@62 main::@61 @11 main::@53 main::@52 main::@55 main::@11 main::@54 main::@10 main::@51 main::@50 main::@57 main::@13 main::@56 main::@12 main::@59 main::@15 main::@58 main::@14 
+main::@16 dominated by  main::@9 main::@7 main::@8 main::@49 main main::@46 main::@48 main::@47 main::@1 main::@2 main::@5 main::@6 main::@3 main::@4 @begin main::@60 main::@62 main::@61 @11 main::@53 main::@52 main::@55 main::@11 main::@54 main::@10 main::@51 main::@50 main::@16 main::@57 main::@13 main::@56 main::@12 main::@59 main::@15 main::@58 main::@14 
+main::@63 dominated by  main::@9 main::@7 main::@8 main::@49 main main::@46 main::@48 main::@47 main::@1 main::@2 main::@5 main::@6 main::@3 main::@4 @begin main::@63 main::@60 main::@62 main::@61 @11 main::@53 main::@52 main::@55 main::@11 main::@54 main::@10 main::@51 main::@50 main::@16 main::@57 main::@13 main::@56 main::@12 main::@59 main::@15 main::@58 main::@14 
+main::@38 dominated by  main::@9 main::@7 main::@8 main::@49 main main::@46 main::@48 main::@47 main::@1 main::@2 main::@5 main::@6 main::@3 main::@4 @begin main::@38 main::@63 main::@60 main::@62 main::@61 @11 main::@53 main::@52 main::@55 main::@11 main::@54 main::@10 main::@51 main::@50 main::@16 main::@57 main::@13 main::@56 main::@12 main::@59 main::@15 main::@58 main::@14 
+main::@17 dominated by  main::@9 main::@7 main::@8 main::@49 main main::@46 main::@48 main::@47 main::@1 main::@2 main::@5 main::@6 main::@3 main::@4 @begin main::@63 main::@60 main::@62 main::@61 @11 main::@53 main::@52 main::@55 main::@11 main::@54 main::@10 main::@51 main::@50 main::@17 main::@16 main::@57 main::@13 main::@56 main::@12 main::@59 main::@15 main::@58 main::@14 
+main::@64 dominated by  main::@9 main::@7 main::@8 main::@49 main main::@46 main::@48 main::@47 main::@1 main::@2 main::@5 main::@6 main::@3 main::@4 @begin main::@64 main::@63 main::@60 main::@62 main::@61 @11 main::@53 main::@52 main::@55 main::@11 main::@54 main::@10 main::@51 main::@50 main::@17 main::@16 main::@57 main::@13 main::@56 main::@12 main::@59 main::@15 main::@58 main::@14 
+main::@65 dominated by  main::@9 main::@7 main::@8 main::@49 main main::@46 main::@48 main::@47 main::@1 main::@2 main::@5 main::@6 main::@3 main::@4 @begin main::@64 main::@63 main::@65 main::@60 main::@62 main::@61 @11 main::@53 main::@52 main::@55 main::@11 main::@54 main::@10 main::@51 main::@50 main::@17 main::@16 main::@57 main::@13 main::@56 main::@12 main::@59 main::@15 main::@58 main::@14 
+main::@39 dominated by  main::@9 main::@7 main::@8 main::@49 main main::@46 main::@48 main::@47 main::@1 main::@2 main::@5 main::@6 main::@3 main::@4 @begin main::@39 main::@64 main::@63 main::@65 main::@60 main::@62 main::@61 @11 main::@53 main::@52 main::@55 main::@11 main::@54 main::@10 main::@51 main::@50 main::@17 main::@16 main::@57 main::@13 main::@56 main::@12 main::@59 main::@15 main::@58 main::@14 
+main::@18 dominated by  main::@9 main::@7 main::@8 main::@49 main main::@46 main::@48 main::@47 main::@1 main::@2 main::@5 main::@6 main::@3 main::@4 @begin main::@64 main::@63 main::@65 main::@60 main::@62 main::@61 @11 main::@53 main::@52 main::@55 main::@11 main::@54 main::@10 main::@51 main::@50 main::@17 main::@16 main::@18 main::@57 main::@13 main::@56 main::@12 main::@59 main::@15 main::@58 main::@14 
+main::@66 dominated by  main::@9 main::@7 main::@8 main::@49 main main::@46 main::@48 main::@47 main::@1 main::@2 main::@5 main::@6 main::@3 main::@4 @begin main::@64 main::@63 main::@66 main::@65 main::@60 main::@62 main::@61 @11 main::@53 main::@52 main::@55 main::@11 main::@54 main::@10 main::@51 main::@50 main::@17 main::@16 main::@18 main::@57 main::@13 main::@56 main::@12 main::@59 main::@15 main::@58 main::@14 
+main::@40 dominated by  main::@9 main::@7 main::@8 main::@40 main::@49 main main::@46 main::@48 main::@47 main::@1 main::@2 main::@5 main::@6 main::@3 main::@4 @begin main::@64 main::@63 main::@66 main::@65 main::@60 main::@62 main::@61 @11 main::@53 main::@52 main::@55 main::@11 main::@54 main::@10 main::@51 main::@50 main::@17 main::@16 main::@18 main::@57 main::@13 main::@56 main::@12 main::@59 main::@15 main::@58 main::@14 
+main::@19 dominated by  main::@9 main::@7 main::@8 main::@49 main main::@46 main::@48 main::@47 main::@1 main::@2 main::@5 main::@6 main::@3 main::@4 @begin main::@64 main::@63 main::@66 main::@65 main::@60 main::@62 main::@61 @11 main::@53 main::@52 main::@55 main::@11 main::@54 main::@10 main::@51 main::@50 main::@17 main::@16 main::@19 main::@18 main::@57 main::@13 main::@56 main::@12 main::@59 main::@15 main::@58 main::@14 
+main::@67 dominated by  main::@9 main::@7 main::@8 main::@49 main main::@46 main::@48 main::@47 main::@1 main::@2 main::@5 main::@6 main::@3 main::@4 @begin main::@64 main::@63 main::@66 main::@65 main::@60 main::@62 main::@61 main::@67 @11 main::@53 main::@52 main::@55 main::@11 main::@54 main::@10 main::@51 main::@50 main::@17 main::@16 main::@19 main::@18 main::@57 main::@13 main::@56 main::@12 main::@59 main::@15 main::@58 main::@14 
+main::@41 dominated by  main::@9 main::@41 main::@7 main::@8 main::@49 main main::@46 main::@48 main::@47 main::@1 main::@2 main::@5 main::@6 main::@3 main::@4 @begin main::@64 main::@63 main::@66 main::@65 main::@60 main::@62 main::@61 main::@67 @11 main::@53 main::@52 main::@55 main::@11 main::@54 main::@10 main::@51 main::@50 main::@17 main::@16 main::@19 main::@18 main::@57 main::@13 main::@56 main::@12 main::@59 main::@15 main::@58 main::@14 
+main::@20 dominated by  main::@9 main::@7 main::@8 main::@49 main main::@46 main::@48 main::@47 main::@1 main::@2 main::@5 main::@6 main::@3 main::@4 @begin main::@64 main::@20 main::@63 main::@66 main::@65 main::@60 main::@62 main::@61 main::@67 @11 main::@53 main::@52 main::@55 main::@11 main::@54 main::@10 main::@51 main::@50 main::@17 main::@16 main::@19 main::@18 main::@57 main::@13 main::@56 main::@12 main::@59 main::@15 main::@58 main::@14 
+main::@68 dominated by  main::@9 main::@7 main::@8 main::@49 main main::@46 main::@48 main::@47 main::@1 main::@2 main::@5 main::@6 main::@3 main::@4 @begin main::@64 main::@20 main::@63 main::@66 main::@65 main::@60 main::@62 main::@61 main::@68 main::@67 @11 main::@53 main::@52 main::@55 main::@11 main::@54 main::@10 main::@51 main::@50 main::@17 main::@16 main::@19 main::@18 main::@57 main::@13 main::@56 main::@12 main::@59 main::@15 main::@58 main::@14 
+main::@42 dominated by  main::@9 main::@42 main::@7 main::@8 main::@49 main main::@46 main::@48 main::@47 main::@1 main::@2 main::@5 main::@6 main::@3 main::@4 @begin main::@64 main::@20 main::@63 main::@66 main::@65 main::@60 main::@62 main::@61 main::@68 main::@67 @11 main::@53 main::@52 main::@55 main::@11 main::@54 main::@10 main::@51 main::@50 main::@17 main::@16 main::@19 main::@18 main::@57 main::@13 main::@56 main::@12 main::@59 main::@15 main::@58 main::@14 
+main::@21 dominated by  main::@9 main::@7 main::@8 main::@49 main main::@46 main::@48 main::@47 main::@1 main::@2 main::@5 main::@6 main::@3 main::@4 @begin main::@64 main::@20 main::@63 main::@66 main::@65 main::@21 main::@60 main::@62 main::@61 main::@68 main::@67 @11 main::@53 main::@52 main::@55 main::@11 main::@54 main::@10 main::@51 main::@50 main::@17 main::@16 main::@19 main::@18 main::@57 main::@13 main::@56 main::@12 main::@59 main::@15 main::@58 main::@14 
+main::@69 dominated by  main::@9 main::@7 main::@8 main::@49 main main::@46 main::@48 main::@47 main::@1 main::@2 main::@5 main::@6 main::@3 main::@4 @begin main::@64 main::@20 main::@63 main::@66 main::@65 main::@21 main::@60 main::@62 main::@61 main::@68 main::@67 main::@69 @11 main::@53 main::@52 main::@55 main::@11 main::@54 main::@10 main::@51 main::@50 main::@17 main::@16 main::@19 main::@18 main::@57 main::@13 main::@56 main::@12 main::@59 main::@15 main::@58 main::@14 
+main::@70 dominated by  main::@9 main::@7 main::@8 main::@49 main main::@46 main::@48 main::@47 main::@1 main::@2 main::@5 main::@6 main::@3 main::@4 @begin main::@70 main::@64 main::@20 main::@63 main::@66 main::@65 main::@21 main::@60 main::@62 main::@61 main::@68 main::@67 main::@69 @11 main::@53 main::@52 main::@55 main::@11 main::@54 main::@10 main::@51 main::@50 main::@17 main::@16 main::@19 main::@18 main::@57 main::@13 main::@56 main::@12 main::@59 main::@15 main::@58 main::@14 
+main::@22 dominated by  main::@9 main::@7 main::@8 main::@49 main main::@46 main::@48 main::@47 main::@1 main::@2 main::@5 main::@6 main::@3 main::@4 @begin main::@70 main::@64 main::@20 main::@63 main::@66 main::@22 main::@65 main::@21 main::@60 main::@62 main::@61 main::@68 main::@67 main::@69 @11 main::@53 main::@52 main::@55 main::@11 main::@54 main::@10 main::@51 main::@50 main::@17 main::@16 main::@19 main::@18 main::@57 main::@13 main::@56 main::@12 main::@59 main::@15 main::@58 main::@14 
+main::@return dominated by  main::@9 main::@7 main::@8 main::@49 main main::@46 main::@48 main::@47 main::@1 main::@2 main::@5 main::@6 main::@3 main::@4 @begin main::@70 main::@64 main::@20 main::@return main::@63 main::@66 main::@22 main::@65 main::@21 main::@60 main::@62 main::@61 main::@68 main::@67 main::@69 @11 main::@53 main::@52 main::@55 main::@11 main::@54 main::@10 main::@51 main::@50 main::@17 main::@16 main::@19 main::@18 main::@57 main::@13 main::@56 main::@12 main::@59 main::@15 main::@58 main::@14 
+main::@71 dominated by  main::@9 main::@7 main::@8 main::@49 main main::@46 main::@48 main::@47 main::@1 main::@2 main::@5 main::@6 main::@3 main::@4 @begin main::@71 main::@70 main::@64 main::@20 main::@63 main::@66 main::@65 main::@21 main::@60 main::@62 main::@61 main::@68 main::@67 main::@69 @11 main::@53 main::@52 main::@55 main::@11 main::@54 main::@10 main::@51 main::@50 main::@17 main::@16 main::@19 main::@18 main::@57 main::@13 main::@56 main::@12 main::@59 main::@15 main::@58 main::@14 
+print_ln dominated by  main::@49 main main::@46 main::@48 main::@47 main::@1 main::@2 main::@5 main::@3 main::@4 @begin print_ln @11 
+print_ln::@1 dominated by  print_ln::@1 main::@49 main main::@46 main::@48 main::@47 main::@1 main::@2 main::@5 main::@3 main::@4 @begin print_ln @11 
+print_ln::@return dominated by  print_ln::@1 main::@49 main main::@46 main::@48 main::@47 print_ln::@return main::@1 main::@2 main::@5 main::@3 main::@4 @begin print_ln @11 
+printu dominated by  main main::@1 main::@2 @begin @11 printu 
+printu::@1 dominated by  main main::@1 main::@2 @begin @11 printu::@1 printu 
+printu::@2 dominated by  main main::@1 main::@2 @begin @11 printu::@1 printu::@2 printu 
+printu::@3 dominated by  main main::@1 main::@2 @begin @11 printu::@1 printu::@3 printu::@2 printu 
+printu::@4 dominated by  main main::@1 main::@2 @begin @11 printu::@1 printu::@3 printu::@2 printu::@4 printu 
+printu::@5 dominated by  main main::@1 main::@2 @begin @11 printu::@1 printu::@3 printu::@2 printu::@5 printu::@4 printu 
+printu::@return dominated by  main main::@1 main::@2 printu::@return @begin @11 printu::@1 printu::@3 printu::@2 printu::@5 printu::@4 printu 
+print_char dominated by  main print_char main::@1 main::@2 @begin @11 printu 
+print_char::@return dominated by  main print_char main::@1 main::@2 print_char::@return @begin @11 printu 
+print_byte dominated by  main main::@1 main::@2 @begin @11 print_byte printu::@1 printu 
+print_byte::@1 dominated by  main main::@1 main::@2 @begin print_byte::@1 @11 print_byte printu::@1 printu 
+print_byte::@return dominated by  main main::@1 main::@2 @begin print_byte::@return print_byte::@1 @11 print_byte printu::@1 printu 
+print_str dominated by  main main::@1 main::@2 @begin @11 print_str printu::@1 printu::@2 printu 
+print_str::@1 dominated by  main main::@1 main::@2 @begin print_str::@1 @11 print_str printu::@1 printu::@2 printu 
+print_str::@return dominated by  main main::@1 main::@2 @begin print_str::@return print_str::@1 @11 print_str printu::@1 printu::@2 printu 
+print_str::@2 dominated by  main main::@1 main::@2 @begin print_str::@1 print_str::@2 @11 print_str printu::@1 printu::@2 printu 
+print_cls dominated by  main @begin @11 print_cls 
+print_cls::@1 dominated by  main @begin @11 print_cls::@1 print_cls 
+print_cls::@return dominated by  main @begin print_cls::@return @11 print_cls::@1 print_cls 
 
 NATURAL LOOPS
 Found back edge: Loop head: main::@22 tails: main::@22 blocks: null
@@ -7262,17 +7296,17 @@ INITIAL ASM
   .label line_cursor = $18
 //SEG2 @begin
 bbegin:
-//SEG3 [1] phi from @begin to @10 [phi:@begin->@10]
-b10_from_bbegin:
-  jmp b10
-//SEG4 @10
-b10:
+//SEG3 [1] phi from @begin to @11 [phi:@begin->@11]
+b11_from_bbegin:
+  jmp b11
+//SEG4 @11
+b11:
 //SEG5 [2] call main param-assignment [ ] ( )
-//SEG6 [4] phi from @10 to main [phi:@10->main]
-main_from_b10:
+//SEG6 [4] phi from @11 to main [phi:@11->main]
+main_from_b11:
   jsr main
-//SEG7 [3] phi from @10 to @end [phi:@10->@end]
-bend_from_b10:
+//SEG7 [3] phi from @11 to @end [phi:@11->@end]
+bend_from_b11:
   jmp bend
 //SEG8 @end
 bend:
@@ -8918,17 +8952,17 @@ ASSEMBLER BEFORE OPTIMIZATION
   .label line_cursor = 4
 //SEG2 @begin
 bbegin:
-//SEG3 [1] phi from @begin to @10 [phi:@begin->@10]
-b10_from_bbegin:
-  jmp b10
-//SEG4 @10
-b10:
+//SEG3 [1] phi from @begin to @11 [phi:@begin->@11]
+b11_from_bbegin:
+  jmp b11
+//SEG4 @11
+b11:
 //SEG5 [2] call main param-assignment [ ] ( )
-//SEG6 [4] phi from @10 to main [phi:@10->main]
-main_from_b10:
+//SEG6 [4] phi from @11 to main [phi:@11->main]
+main_from_b11:
   jsr main
-//SEG7 [3] phi from @10 to @end [phi:@10->@end]
-bend_from_b10:
+//SEG7 [3] phi from @11 to @end [phi:@11->@end]
+bend_from_b11:
   jmp bend
 //SEG8 @end
 bend:
@@ -10224,7 +10258,7 @@ print_cls: {
 }
 
 ASSEMBLER OPTIMIZATIONS
-Removing instruction jmp b10
+Removing instruction jmp b11
 Removing instruction jmp bend
 Removing instruction jmp b1
 Removing instruction jmp b23
@@ -10318,9 +10352,9 @@ Replacing label b1_from_b2 with b1
 Replacing label b1_from_b1 with b1
 Replacing label b1_from_b1 with b1
 Removing instruction bbegin:
-Removing instruction b10_from_bbegin:
-Removing instruction main_from_b10:
-Removing instruction bend_from_b10:
+Removing instruction b11_from_bbegin:
+Removing instruction main_from_b11:
+Removing instruction bend_from_b11:
 Removing instruction b23_from_b1:
 Removing instruction b2_from_b23:
 Removing instruction b24_from_b46:
@@ -10379,7 +10413,7 @@ Removing instruction b1_from_print_str:
 Removing instruction b1_from_b2:
 Removing instruction b1_from_b1:
 Succesful ASM optimization Pass5RedundantLabelElimination
-Removing instruction b10:
+Removing instruction b11:
 Removing instruction bend:
 Removing instruction print_cls_from_main:
 Removing instruction b1_from_main:
@@ -10498,7 +10532,7 @@ Removing instruction jmp b1
 Succesful ASM optimization Pass5NextJumpElimination
 
 FINAL SYMBOL TABLE
-(label) @10
+(label) @11
 (label) @begin
 (label) @end
 (byte*) SCREEN
@@ -10794,12 +10828,12 @@ Score: 15772
   .label char_cursor = 9
   .label line_cursor = 4
 //SEG2 @begin
-//SEG3 [1] phi from @begin to @10 [phi:@begin->@10]
-//SEG4 @10
+//SEG3 [1] phi from @begin to @11 [phi:@begin->@11]
+//SEG4 @11
 //SEG5 [2] call main param-assignment [ ] ( )
-//SEG6 [4] phi from @10 to main [phi:@10->main]
+//SEG6 [4] phi from @11 to main [phi:@11->main]
   jsr main
-//SEG7 [3] phi from @10 to @end [phi:@10->@end]
+//SEG7 [3] phi from @11 to @end [phi:@11->@end]
 //SEG8 @end
 //SEG9 main
 main: {

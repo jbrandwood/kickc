@@ -46,6 +46,12 @@ public class TestPrograms {
    }
 
    @Test
+   public void testLowHigh() throws IOException, URISyntaxException {
+      compileAndCompare("test-lowhigh");
+   }
+
+
+   @Test
    public void testLongJump2() throws IOException, URISyntaxException {
       compileAndCompare("longjump2");
    }

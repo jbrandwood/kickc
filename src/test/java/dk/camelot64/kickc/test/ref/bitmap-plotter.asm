@@ -120,8 +120,8 @@ init_plot_tables: {
     and #7
     cmp #7
     bne b4
-    lda yoffs
     clc
+    lda yoffs
     adc #<$28*8
     sta yoffs
     lda yoffs+1

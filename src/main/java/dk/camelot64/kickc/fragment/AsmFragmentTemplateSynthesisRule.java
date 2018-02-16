@@ -214,6 +214,12 @@ class AsmFragmentTemplateSynthesisRule {
       mapSToU.put("vwsc1", "vwuc1");
       mapSToU.put("vwsc2", "vwuc2");
       mapSToU.put("vwsc3", "vwuc3");
+      mapSToU.put("vdsz1", "vduz1");
+      mapSToU.put("vdsz2", "vduz2");
+      mapSToU.put("vdsz3", "vduz3");
+      mapSToU.put("vdsc1", "vduc1");
+      mapSToU.put("vdsc2", "vduc2");
+      mapSToU.put("vdsc3", "vduc3");
       mapSToU.put("pbsz1", "pbuz1");
       mapSToU.put("pbsz2", "pbuz2");
       mapSToU.put("pbsz3", "pbuz3");
@@ -491,12 +497,31 @@ class AsmFragmentTemplateSynthesisRule {
       synths.add(new AsmFragmentTemplateSynthesisRule("(vbuz.|vbuaa|vbuxx|vbuyy)=_(lo|hi)_vws(z.|c.)", null, null, "$1=_$2_vwu$3", null, mapSToU));
       synths.add(new AsmFragmentTemplateSynthesisRule("(vbs..)=(vbs..)_(plus)_(vbs..)", null, null, "$1=$2_$3_$4", null, mapSToU));
       synths.add(new AsmFragmentTemplateSynthesisRule("(vws..)=(vws..)_(plus)_(vws..)", null, null, "$1=$2_$3_$4", null, mapSToU));
+      synths.add(new AsmFragmentTemplateSynthesisRule("(vds..)=(vds..)_(plus)_(vds..)", null, null, "$1=$2_$3_$4", null, mapSToU));
 
       // Use constant word ASM to synthesize unsigned constant byte ASM ( ...vb.c... -> vw.c... )
       synths.add(new AsmFragmentTemplateSynthesisRule("(vwuz.)=(vwuz.)_(plus|minus|band|bxor|bor)_vb.c(.)", null, null, "$1=$2_$3_vwuc$4", null, null));
       synths.add(new AsmFragmentTemplateSynthesisRule("(vwuz.)=vb.c(.)_(plus|minus|band|bxor|bor)_(vwuz.)", null, null, "$1=vwuc$2_$3_$4", null, null));
       synths.add(new AsmFragmentTemplateSynthesisRule("(vwsz.)=(vwsz.)_(plus|minus|band|bxor|bor)_vb.c(.)", null, null, "$1=$2_$3_vwsc$4", null, null));
       synths.add(new AsmFragmentTemplateSynthesisRule("(vwsz.)=vb.c(.)_(plus|minus|band|bxor|bor)_(vwsz.)", null, null, "$1=vwsc$2_$3_$4", null, null));
+      synths.add(new AsmFragmentTemplateSynthesisRule("(vwuz.)=vb.c(.)", null, null, "$1=vwuc$2", null, null));
+      synths.add(new AsmFragmentTemplateSynthesisRule("(vwsz.)=vb.c(.)", null, null, "$1=vwsc$2", null, null));
+
+      // Use constant dword ASM to synthesize unsigned constant word ASM ( ...vw.c... -> vd.c... )
+      synths.add(new AsmFragmentTemplateSynthesisRule("(vduz.)=(vduz.)_(plus|minus|band|bxor|bor)_vw.c(.)", null, null, "$1=$2_$3_vduc$4", null, null));
+      synths.add(new AsmFragmentTemplateSynthesisRule("(vduz.)=vw.c(.)_(plus|minus|band|bxor|bor)_(vduz.)", null, null, "$1=vduc$2_$3_$4", null, null));
+      synths.add(new AsmFragmentTemplateSynthesisRule("(vdsz.)=(vdsz.)_(plus|minus|band|bxor|bor)_vw.c(.)", null, null, "$1=$2_$3_vdsc$4", null, null));
+      synths.add(new AsmFragmentTemplateSynthesisRule("(vdsz.)=vw.c(.)_(plus|minus|band|bxor|bor)_(vdsz.)", null, null, "$1=vdsc$2_$3_$4", null, null));
+      synths.add(new AsmFragmentTemplateSynthesisRule("(vduz.)=vw.c(.)", null, null, "$1=vduc$2", null, null));
+      synths.add(new AsmFragmentTemplateSynthesisRule("(vdsz.)=vw.c(.)", null, null, "$1=vdsc$2", null, null));
+
+      // Use constant dword ASM to synthesize unsigned constant byte ASM ( ...vb.c... -> vd.c... )
+      synths.add(new AsmFragmentTemplateSynthesisRule("(vduz.)=(vduz.)_(plus|minus|band|bxor|bor)_vb.c(.)", null, null, "$1=$2_$3_vduc$4", null, null));
+      synths.add(new AsmFragmentTemplateSynthesisRule("(vduz.)=vb.c(.)_(plus|minus|band|bxor|bor)_(vduz.)", null, null, "$1=vduc$2_$3_$4", null, null));
+      synths.add(new AsmFragmentTemplateSynthesisRule("(vdsz.)=(vdsz.)_(plus|minus|band|bxor|bor)_vb.c(.)", null, null, "$1=$2_$3_vdsc$4", null, null));
+      synths.add(new AsmFragmentTemplateSynthesisRule("(vdsz.)=vb.c(.)_(plus|minus|band|bxor|bor)_(vdsz.)", null, null, "$1=vdsc$2_$3_$4", null, null));
+      synths.add(new AsmFragmentTemplateSynthesisRule("(vduz.)=vb.c(.)", null, null, "$1=vduc$2", null, null));
+      synths.add(new AsmFragmentTemplateSynthesisRule("(vdsz.)=vb.c(.)", null, null, "$1=vdsc$2", null, null));
 
       // Use Z1/Z2 ASM to synthesize Z1-only code ( ...z1...z1... -> ...z1...z2... )
       synths.add(new AsmFragmentTemplateSynthesisRule("(v..)z1=(v..)z1_(plus|minus|band|bxor|bor)_(.*)", oneZ2, null, "$1z1=$2z2_$3_$4", null, mapZ, false));

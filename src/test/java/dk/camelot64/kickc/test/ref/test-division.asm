@@ -20,7 +20,7 @@ test_16s: {
     .label divisor = $14
     .label res = $e
     .label i = 2
-    lda #0
+    lda #<0
     sta rem16s
     sta rem16s+1
     sta i
@@ -474,7 +474,7 @@ test_16u: {
     .label divisor = $c
     .label res = $e
     .label i = 2
-    lda #0
+    lda #<0
     sta rem16u
     sta rem16u+1
     sta i

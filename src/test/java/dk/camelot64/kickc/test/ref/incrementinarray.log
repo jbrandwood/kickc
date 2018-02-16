@@ -65,6 +65,15 @@ void print_dword(dword dw) {
     print_word(<dw);
 }
 
+// Print a signed dword as HEX
+void print_sdword(signed dword dw) {
+    if(dw<0) {
+        print_char('-');
+        dw = -dw;
+    }
+    print_dword((dword)dw);
+}
+
 // Print a byte as HEX
 void print_byte(byte b) {
     // Table of hexadecimal digits
@@ -165,6 +174,19 @@ proc (void()) print_dword((dword) print_dword::dw)
 print_dword::@return:
   return 
 endproc // print_dword()
+proc (void()) print_sdword((signed dword) print_sdword::dw)
+  (boolean~) print_sdword::$0 ← (signed dword) print_sdword::dw < (byte/signed byte/word/signed word/dword/signed dword) 0
+  (boolean~) print_sdword::$1 ← ! (boolean~) print_sdword::$0
+  if((boolean~) print_sdword::$1) goto print_sdword::@1
+  (void~) print_sdword::$2 ← call print_char (byte) '-' 
+  (signed dword~) print_sdword::$3 ← - (signed dword) print_sdword::dw
+  (signed dword) print_sdword::dw ← (signed dword~) print_sdword::$3
+print_sdword::@1:
+  (dword~) print_sdword::$4 ← ((dword)) (signed dword) print_sdword::dw
+  (void~) print_sdword::$5 ← call print_dword (dword~) print_sdword::$4 
+print_sdword::@return:
+  return 
+endproc // print_sdword()
 proc (void()) print_byte((byte) print_byte::b)
   (byte[]) print_byte::hextab ← (string) "0123456789abcdef"
   (byte~) print_byte::$0 ← (byte) print_byte::b >> (byte/signed byte/word/signed word/dword/signed dword) 4
@@ -260,6 +282,16 @@ SYMBOLS
 (label) print_sbyte::@1
 (label) print_sbyte::@return
 (signed byte) print_sbyte::b
+(void()) print_sdword((signed dword) print_sdword::dw)
+(boolean~) print_sdword::$0
+(boolean~) print_sdword::$1
+(void~) print_sdword::$2
+(signed dword~) print_sdword::$3
+(dword~) print_sdword::$4
+(void~) print_sdword::$5
+(label) print_sdword::@1
+(label) print_sdword::@return
+(signed dword) print_sdword::dw
 (void()) print_str((byte*) print_str::str)
 (boolean~) print_str::$0
 (label) print_str::@1
@@ -393,6 +425,25 @@ print_dword::@return: scope:[print_dword]  from print_dword
   to:@return
 @6: scope:[]  from @5
   to:@7
+print_sdword: scope:[print_sdword]  from
+  (boolean~) print_sdword::$0 ← (signed dword) print_sdword::dw < (byte/signed byte/word/signed word/dword/signed dword) 0
+  (boolean~) print_sdword::$1 ← ! (boolean~) print_sdword::$0
+  if((boolean~) print_sdword::$1) goto print_sdword::@1
+  to:print_sdword::@2
+print_sdword::@1: scope:[print_sdword]  from print_sdword print_sdword::@2
+  (dword~) print_sdword::$4 ← ((dword)) (signed dword) print_sdword::dw
+  (void~) print_sdword::$5 ← call print_dword (dword~) print_sdword::$4 
+  to:print_sdword::@return
+print_sdword::@2: scope:[print_sdword]  from print_sdword
+  (void~) print_sdword::$2 ← call print_char (byte) '-' 
+  (signed dword~) print_sdword::$3 ← - (signed dword) print_sdword::dw
+  (signed dword) print_sdword::dw ← (signed dword~) print_sdword::$3
+  to:print_sdword::@1
+print_sdword::@return: scope:[print_sdword]  from print_sdword::@1
+  return 
+  to:@return
+@7: scope:[]  from @6
+  to:@8
 print_byte: scope:[print_byte]  from
   (byte[]) print_byte::hextab ← (string) "0123456789abcdef"
   (byte~) print_byte::$0 ← (byte) print_byte::b >> (byte/signed byte/word/signed word/dword/signed dword) 4
@@ -403,8 +454,8 @@ print_byte: scope:[print_byte]  from
 print_byte::@return: scope:[print_byte]  from print_byte
   return 
   to:@return
-@7: scope:[]  from @6
-  to:@8
+@8: scope:[]  from @7
+  to:@9
 print_char: scope:[print_char]  from
   *((byte*) char_cursor) ← (byte) print_char::ch
   (byte*) char_cursor ← ++ (byte*) char_cursor
@@ -412,8 +463,8 @@ print_char: scope:[print_char]  from
 print_char::@return: scope:[print_char]  from print_char
   return 
   to:@return
-@8: scope:[]  from @7
-  to:@9
+@9: scope:[]  from @8
+  to:@10
 print_cls: scope:[print_cls]  from
   (byte*) print_cls::sc ← (byte*) SCREEN
   to:print_cls::@1
@@ -431,9 +482,9 @@ print_cls::@2: scope:[print_cls]  from print_cls::@1
 print_cls::@return: scope:[print_cls]  from print_cls::@2
   return 
   to:@return
-@9: scope:[]  from @8
+@10: scope:[]  from @9
   (byte[]) txt ← (string) "camelot@"
-  to:@10
+  to:@11
 main: scope:[main]  from
   (void~) main::$0 ← call print_cls 
   (byte) main::i ← (byte/signed byte/word/signed word/dword/signed dword) 0
@@ -451,13 +502,14 @@ main::@2: scope:[main]  from main::@1
 main::@return: scope:[main]  from main::@2
   return 
   to:@return
-@10: scope:[]  from @9
+@11: scope:[]  from @10
   call main 
   to:@end
-@end: scope:[]  from @10
+@end: scope:[]  from @11
 
 Removing unused procedure print_sword
 Removing unused procedure print_sbyte
+Removing unused procedure print_sdword
 Removing unused procedure print_dword
 Removing unused procedure print_word
 Removing unused procedure print_byte
@@ -478,6 +530,7 @@ Removing empty block @5
 Removing empty block @6
 Removing empty block @7
 Removing empty block @8
+Removing empty block @9
 Removing empty block main::@2
 PROCEDURE MODIFY VARIABLE ANALYSIS
 print_str modifies char_cursor
@@ -497,7 +550,7 @@ CONTROL FLOW GRAPH SSA WITH ASSIGNMENT CALL & RETURN
   (byte*) SCREEN#0 ← ((byte*)) (word/signed word/dword/signed dword) 1024
   (byte*) line_cursor#0 ← (byte*) SCREEN#0
   (byte*) char_cursor#0 ← (byte*) line_cursor#0
-  to:@9
+  to:@10
 print_str: scope:[print_str]  from main::@1
   (byte*) char_cursor#27 ← phi( main::@1/(byte*) char_cursor#25 )
   (byte*) print_str::str#4 ← phi( main::@1/(byte*) print_str::str#1 )
@@ -565,14 +618,14 @@ print_cls::@return: scope:[print_cls]  from print_cls::@2
   (byte*) char_cursor#6 ← (byte*) char_cursor#16
   return 
   to:@return
-@9: scope:[]  from @begin
+@10: scope:[]  from @begin
   (byte*) char_cursor#28 ← phi( @begin/(byte*) char_cursor#0 )
   (byte*) line_cursor#22 ← phi( @begin/(byte*) line_cursor#0 )
   (byte[]) txt#0 ← (const string) $0
-  to:@10
-main: scope:[main]  from @10
-  (byte*) char_cursor#24 ← phi( @10/(byte*) char_cursor#26 )
-  (byte*) line_cursor#18 ← phi( @10/(byte*) line_cursor#20 )
+  to:@11
+main: scope:[main]  from @11
+  (byte*) char_cursor#24 ← phi( @11/(byte*) char_cursor#26 )
+  (byte*) line_cursor#18 ← phi( @11/(byte*) line_cursor#20 )
   call print_cls param-assignment
   to:main::@3
 main::@3: scope:[main]  from main
@@ -614,24 +667,24 @@ main::@return: scope:[main]  from main::@5
   (byte*) char_cursor#10 ← (byte*) char_cursor#20
   return 
   to:@return
-@10: scope:[]  from @9
-  (byte*) char_cursor#26 ← phi( @9/(byte*) char_cursor#28 )
-  (byte*) line_cursor#20 ← phi( @9/(byte*) line_cursor#22 )
-  call main param-assignment
-  to:@11
 @11: scope:[]  from @10
-  (byte*) char_cursor#21 ← phi( @10/(byte*) char_cursor#10 )
-  (byte*) line_cursor#16 ← phi( @10/(byte*) line_cursor#7 )
+  (byte*) char_cursor#26 ← phi( @10/(byte*) char_cursor#28 )
+  (byte*) line_cursor#20 ← phi( @10/(byte*) line_cursor#22 )
+  call main param-assignment
+  to:@12
+@12: scope:[]  from @11
+  (byte*) char_cursor#21 ← phi( @11/(byte*) char_cursor#10 )
+  (byte*) line_cursor#16 ← phi( @11/(byte*) line_cursor#7 )
   (byte*) line_cursor#8 ← (byte*) line_cursor#16
   (byte*) char_cursor#11 ← (byte*) char_cursor#21
   to:@end
-@end: scope:[]  from @11
+@end: scope:[]  from @12
 
 SYMBOL TABLE SSA
 (const string) $0 = (string) "camelot@"
 (label) @10
 (label) @11
-(label) @9
+(label) @12
 (label) @begin
 (label) @end
 (byte*) SCREEN
@@ -817,9 +870,9 @@ Consolidated array index constant in *(txt#0+1)
 Succesful SSA optimization Pass2ConstantAdditionElimination
 Culled Empty Block (label) print_ln::@2
 Culled Empty Block (label) print_cls::@2
-Culled Empty Block (label) @9
+Culled Empty Block (label) @10
 Culled Empty Block (label) main::@3
-Culled Empty Block (label) @11
+Culled Empty Block (label) @12
 Succesful SSA optimization Pass2CullEmptyBlocks
 Not aliassing across scopes: char_cursor#12 char_cursor#25
 Not aliassing across scopes: line_cursor#9 line_cursor#19
@@ -842,13 +895,13 @@ Constant inlined print_cls::$0 = (const byte*) SCREEN#0+(word/signed word/dword/
 Constant inlined print_cls::sc#0 = (const byte*) SCREEN#0
 Constant inlined $0 = (const string) txt#0
 Succesful SSA optimization Pass2ConstantInlining
-Block Sequence Planned @begin @10 @end main main::@1 main::@4 main::@5 main::@return print_ln print_ln::@1 print_ln::@return print_str print_str::@1 print_str::@return print_str::@2 print_cls print_cls::@1 print_cls::@return 
+Block Sequence Planned @begin @11 @end main main::@1 main::@4 main::@5 main::@return print_ln print_ln::@1 print_ln::@return print_str print_str::@1 print_str::@return print_str::@2 print_cls print_cls::@1 print_cls::@return 
 Added new block during phi lifting main::@6(between main::@5 and main::@1)
 Added new block during phi lifting print_ln::@3(between print_ln::@1 and print_ln::@1)
 Added new block during phi lifting print_cls::@3(between print_cls::@1 and print_cls::@1)
-Block Sequence Planned @begin @10 @end main main::@1 main::@4 main::@5 main::@return main::@6 print_ln print_ln::@1 print_ln::@return print_ln::@3 print_str print_str::@1 print_str::@return print_str::@2 print_cls print_cls::@1 print_cls::@return print_cls::@3 
+Block Sequence Planned @begin @11 @end main main::@1 main::@4 main::@5 main::@return main::@6 print_ln print_ln::@1 print_ln::@return print_ln::@3 print_str print_str::@1 print_str::@return print_str::@2 print_cls print_cls::@1 print_cls::@return print_cls::@3 
 Adding NOP phi() at start of @begin
-Adding NOP phi() at start of @10
+Adding NOP phi() at start of @11
 Adding NOP phi() at start of @end
 Adding NOP phi() at start of main
 Adding NOP phi() at start of main::@4
@@ -877,9 +930,9 @@ Coalesced [38] print_cls::sc#3 ← print_cls::sc#1
 Coalesced down to 5 phi equivalence classes
 Culled Empty Block (label) print_ln::@3
 Culled Empty Block (label) print_cls::@3
-Block Sequence Planned @begin @10 @end main main::@1 main::@4 main::@5 main::@return main::@6 print_ln print_ln::@1 print_ln::@return print_str print_str::@1 print_str::@return print_str::@2 print_cls print_cls::@1 print_cls::@return 
+Block Sequence Planned @begin @11 @end main main::@1 main::@4 main::@5 main::@return main::@6 print_ln print_ln::@1 print_ln::@return print_str print_str::@1 print_str::@return print_str::@2 print_cls print_cls::@1 print_cls::@return 
 Adding NOP phi() at start of @begin
-Adding NOP phi() at start of @10
+Adding NOP phi() at start of @11
 Adding NOP phi() at start of @end
 Adding NOP phi() at start of main
 Adding NOP phi() at start of main::@4
@@ -897,14 +950,14 @@ Propagating live ranges...
 FINAL CONTROL FLOW GRAPH
 @begin: scope:[]  from
   [0] phi() [ ] ( )
-  to:@10
-@10: scope:[]  from @begin
+  to:@11
+@11: scope:[]  from @begin
   [1] phi() [ ] ( )
   [2] call main param-assignment [ ] ( )
   to:@end
-@end: scope:[]  from @10
+@end: scope:[]  from @11
   [3] phi() [ ] ( )
-main: scope:[main]  from @10
+main: scope:[main]  from @11
   [4] phi() [ ] ( main:2 [ ] )
   [5] call print_cls param-assignment [ ] ( main:2 [ ] )
   to:main::@1
@@ -971,24 +1024,24 @@ print_cls::@return: scope:[print_cls]  from print_cls::@1
 
 DOMINATORS
 @begin dominated by  @begin 
-@10 dominated by  @begin @10 
-@end dominated by  @begin @end @10 
-main dominated by  @begin main @10 
-main::@1 dominated by  @begin main main::@1 @10 
-main::@4 dominated by  @begin main main::@1 @10 main::@4 
-main::@5 dominated by  @begin main main::@1 main::@5 @10 main::@4 
-main::@return dominated by  main::@return @begin main main::@1 main::@5 @10 main::@4 
-main::@6 dominated by  @begin main main::@1 main::@5 main::@6 @10 main::@4 
-print_ln dominated by  @begin main print_ln main::@1 @10 main::@4 
-print_ln::@1 dominated by  print_ln::@1 @begin main print_ln main::@1 @10 main::@4 
-print_ln::@return dominated by  print_ln::@1 @begin main print_ln print_ln::@return main::@1 @10 main::@4 
-print_str dominated by  @begin main print_str main::@1 @10 
-print_str::@1 dominated by  @begin main print_str::@1 print_str main::@1 @10 
-print_str::@return dominated by  @begin print_str::@return main print_str::@1 print_str main::@1 @10 
-print_str::@2 dominated by  @begin main print_str::@1 print_str::@2 print_str main::@1 @10 
-print_cls dominated by  @begin main print_cls @10 
-print_cls::@1 dominated by  @begin print_cls::@1 main print_cls @10 
-print_cls::@return dominated by  @begin print_cls::@1 main print_cls print_cls::@return @10 
+@11 dominated by  @11 @begin 
+@end dominated by  @11 @begin @end 
+main dominated by  @11 @begin main 
+main::@1 dominated by  @11 @begin main main::@1 
+main::@4 dominated by  @11 @begin main main::@1 main::@4 
+main::@5 dominated by  @11 @begin main main::@1 main::@5 main::@4 
+main::@return dominated by  @11 main::@return @begin main main::@1 main::@5 main::@4 
+main::@6 dominated by  @11 @begin main main::@1 main::@5 main::@6 main::@4 
+print_ln dominated by  @11 @begin main print_ln main::@1 main::@4 
+print_ln::@1 dominated by  @11 print_ln::@1 @begin main print_ln main::@1 main::@4 
+print_ln::@return dominated by  @11 print_ln::@1 @begin main print_ln print_ln::@return main::@1 main::@4 
+print_str dominated by  @11 @begin main print_str main::@1 
+print_str::@1 dominated by  @11 @begin main print_str::@1 print_str main::@1 
+print_str::@return dominated by  @11 @begin print_str::@return main print_str::@1 print_str main::@1 
+print_str::@2 dominated by  @11 @begin main print_str::@1 print_str::@2 print_str main::@1 
+print_cls dominated by  @11 @begin main print_cls 
+print_cls::@1 dominated by  @11 @begin print_cls::@1 main print_cls 
+print_cls::@return dominated by  @11 @begin print_cls::@1 main print_cls print_cls::@return 
 
 NATURAL LOOPS
 Found back edge: Loop head: main::@1 tails: main::@6 blocks: null
@@ -1075,17 +1128,17 @@ INITIAL ASM
   .label line_cursor = 3
 //SEG2 @begin
 bbegin:
-//SEG3 [1] phi from @begin to @10 [phi:@begin->@10]
-b10_from_bbegin:
-  jmp b10
-//SEG4 @10
-b10:
+//SEG3 [1] phi from @begin to @11 [phi:@begin->@11]
+b11_from_bbegin:
+  jmp b11
+//SEG4 @11
+b11:
 //SEG5 [2] call main param-assignment [ ] ( )
-//SEG6 [4] phi from @10 to main [phi:@10->main]
-main_from_b10:
+//SEG6 [4] phi from @11 to main [phi:@11->main]
+main_from_b11:
   jsr main
-//SEG7 [3] phi from @10 to @end [phi:@10->@end]
-bend_from_b10:
+//SEG7 [3] phi from @11 to @end [phi:@11->@end]
+bend_from_b11:
   jmp bend
 //SEG8 @end
 bend:
@@ -1333,17 +1386,17 @@ ASSEMBLER BEFORE OPTIMIZATION
   .label line_cursor = 2
 //SEG2 @begin
 bbegin:
-//SEG3 [1] phi from @begin to @10 [phi:@begin->@10]
-b10_from_bbegin:
-  jmp b10
-//SEG4 @10
-b10:
+//SEG3 [1] phi from @begin to @11 [phi:@begin->@11]
+b11_from_bbegin:
+  jmp b11
+//SEG4 @11
+b11:
 //SEG5 [2] call main param-assignment [ ] ( )
-//SEG6 [4] phi from @10 to main [phi:@10->main]
-main_from_b10:
+//SEG6 [4] phi from @11 to main [phi:@11->main]
+main_from_b11:
   jsr main
-//SEG7 [3] phi from @10 to @end [phi:@10->@end]
-bend_from_b10:
+//SEG7 [3] phi from @11 to @end [phi:@11->@end]
+bend_from_b11:
   jmp bend
 //SEG8 @end
 bend:
@@ -1536,7 +1589,7 @@ print_cls: {
   txt: .text "camelot@"
 
 ASSEMBLER OPTIMIZATIONS
-Removing instruction jmp b10
+Removing instruction jmp b11
 Removing instruction jmp bend
 Removing instruction jmp b1
 Removing instruction jmp b4
@@ -1556,9 +1609,9 @@ Replacing label b1_from_b1 with b1
 Replacing label b1_from_b1 with b1
 Replacing label b1_from_b1 with b1
 Removing instruction bbegin:
-Removing instruction b10_from_bbegin:
-Removing instruction main_from_b10:
-Removing instruction bend_from_b10:
+Removing instruction b11_from_bbegin:
+Removing instruction main_from_b11:
+Removing instruction bend_from_b11:
 Removing instruction print_str_from_b1:
 Removing instruction b4_from_b1:
 Removing instruction print_ln_from_b4:
@@ -1566,7 +1619,7 @@ Removing instruction b1_from_print_ln:
 Removing instruction b1_from_b1:
 Removing instruction b1_from_b1:
 Succesful ASM optimization Pass5RedundantLabelElimination
-Removing instruction b10:
+Removing instruction b11:
 Removing instruction bend:
 Removing instruction print_cls_from_main:
 Removing instruction b1_from_main:
@@ -1585,7 +1638,7 @@ Removing instruction jmp b1
 Succesful ASM optimization Pass5NextJumpElimination
 
 FINAL SYMBOL TABLE
-(label) @10
+(label) @11
 (label) @begin
 (label) @end
 (byte*) SCREEN
@@ -1645,12 +1698,12 @@ Score: 11128
   .label char_cursor = 6
   .label line_cursor = 2
 //SEG2 @begin
-//SEG3 [1] phi from @begin to @10 [phi:@begin->@10]
-//SEG4 @10
+//SEG3 [1] phi from @begin to @11 [phi:@begin->@11]
+//SEG4 @11
 //SEG5 [2] call main param-assignment [ ] ( )
-//SEG6 [4] phi from @10 to main [phi:@10->main]
+//SEG6 [4] phi from @11 to main [phi:@11->main]
   jsr main
-//SEG7 [3] phi from @10 to @end [phi:@10->@end]
+//SEG7 [3] phi from @11 to @end [phi:@11->@end]
 //SEG8 @end
 //SEG9 main
 main: {

@@ -218,9 +218,9 @@ gen_sintab: {
     lda #>f_amp
     sta setMEMtoFAC.mem+1
     jsr setMEMtoFAC
-    lda #2
+    lda #<2
     sta setFAC.w
-    lda #0
+    lda #>2
     sta setFAC.w+1
     jsr setFAC
     lda #<f_amp
@@ -445,8 +445,8 @@ gen_chargen_sprite: {
     rol _1+1
     asl _1
     rol _1+1
-    lda chargen
     clc
+    lda chargen
     adc #<CHARGEN
     sta chargen
     lda chargen+1

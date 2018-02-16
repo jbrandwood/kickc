@@ -9,8 +9,8 @@ main: {
     sta b
     sta b+1
   b1:
-    lda b
     clc
+    lda b
     adc #<$28*8
     sta b
     lda b+1

@@ -15,9 +15,9 @@ main: {
     sta y
     ldy #yd/2
     tax
-    lda #0+0*$28
+    lda #<0+0*$28
     sta idx
-    txa
+    lda #>0+0*$28
     sta idx+1
   b1:
     lda #<screen
@@ -43,12 +43,12 @@ main: {
     bcc b2
     beq b2
     inc y
-    lda #$28
     clc
-    adc idx
+    lda idx
+    adc #<$28
     sta idx
-    lda #0
-    adc idx+1
+    lda idx+1
+    adc #>$28
     sta idx+1
     tya
     sec

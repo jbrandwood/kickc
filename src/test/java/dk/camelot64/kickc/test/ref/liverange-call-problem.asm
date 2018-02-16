@@ -5,11 +5,11 @@
   .label w2 = 2
   jsr main
 main: {
-    lda #0
+    lda #<0
     sta w1
     sta w1+1
     jsr incw1
-    lda #0
+    lda #<0
     sta w2
     sta w2+1
     jsr incw2

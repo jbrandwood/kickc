@@ -137,6 +137,15 @@ void print_dword(dword dw) {
     print_word(<dw);
 }
 
+// Print a signed dword as HEX
+void print_sdword(signed dword dw) {
+    if(dw<0) {
+        print_char('-');
+        dw = -dw;
+    }
+    print_dword((dword)dw);
+}
+
 // Print a byte as HEX
 void print_byte(byte b) {
     // Table of hexadecimal digits
@@ -368,6 +377,19 @@ proc (void()) print_dword((dword) print_dword::dw)
 print_dword::@return:
   return 
 endproc // print_dword()
+proc (void()) print_sdword((signed dword) print_sdword::dw)
+  (boolean~) print_sdword::$0 ← (signed dword) print_sdword::dw < (byte/signed byte/word/signed word/dword/signed dword) 0
+  (boolean~) print_sdword::$1 ← ! (boolean~) print_sdword::$0
+  if((boolean~) print_sdword::$1) goto print_sdword::@1
+  (void~) print_sdword::$2 ← call print_char (byte) '-' 
+  (signed dword~) print_sdword::$3 ← - (signed dword) print_sdword::dw
+  (signed dword) print_sdword::dw ← (signed dword~) print_sdword::$3
+print_sdword::@1:
+  (dword~) print_sdword::$4 ← ((dword)) (signed dword) print_sdword::dw
+  (void~) print_sdword::$5 ← call print_dword (dword~) print_sdword::$4 
+print_sdword::@return:
+  return 
+endproc // print_sdword()
 proc (void()) print_byte((byte) print_byte::b)
   (byte[]) print_byte::hextab ← (string) "0123456789abcdef"
   (byte~) print_byte::$0 ← (byte) print_byte::b >> (byte/signed byte/word/signed word/dword/signed dword) 4
@@ -854,6 +876,16 @@ SYMBOLS
 (label) print_sbyte::@1
 (label) print_sbyte::@return
 (signed byte) print_sbyte::b
+(void()) print_sdword((signed dword) print_sdword::dw)
+(boolean~) print_sdword::$0
+(boolean~) print_sdword::$1
+(void~) print_sdword::$2
+(signed dword~) print_sdword::$3
+(dword~) print_sdword::$4
+(void~) print_sdword::$5
+(label) print_sdword::@1
+(label) print_sdword::@return
+(signed dword) print_sdword::dw
 (void()) print_str((byte*) print_str::str)
 (boolean~) print_str::$0
 (label) print_str::@1
@@ -1079,6 +1111,25 @@ print_dword::@return: scope:[print_dword]  from print_dword
   to:@return
 @6: scope:[]  from @5
   to:@7
+print_sdword: scope:[print_sdword]  from
+  (boolean~) print_sdword::$0 ← (signed dword) print_sdword::dw < (byte/signed byte/word/signed word/dword/signed dword) 0
+  (boolean~) print_sdword::$1 ← ! (boolean~) print_sdword::$0
+  if((boolean~) print_sdword::$1) goto print_sdword::@1
+  to:print_sdword::@2
+print_sdword::@1: scope:[print_sdword]  from print_sdword print_sdword::@2
+  (dword~) print_sdword::$4 ← ((dword)) (signed dword) print_sdword::dw
+  (void~) print_sdword::$5 ← call print_dword (dword~) print_sdword::$4 
+  to:print_sdword::@return
+print_sdword::@2: scope:[print_sdword]  from print_sdword
+  (void~) print_sdword::$2 ← call print_char (byte) '-' 
+  (signed dword~) print_sdword::$3 ← - (signed dword) print_sdword::dw
+  (signed dword) print_sdword::dw ← (signed dword~) print_sdword::$3
+  to:print_sdword::@1
+print_sdword::@return: scope:[print_sdword]  from print_sdword::@1
+  return 
+  to:@return
+@7: scope:[]  from @6
+  to:@8
 print_byte: scope:[print_byte]  from
   (byte[]) print_byte::hextab ← (string) "0123456789abcdef"
   (byte~) print_byte::$0 ← (byte) print_byte::b >> (byte/signed byte/word/signed word/dword/signed dword) 4
@@ -1089,8 +1140,8 @@ print_byte: scope:[print_byte]  from
 print_byte::@return: scope:[print_byte]  from print_byte
   return 
   to:@return
-@7: scope:[]  from @6
-  to:@8
+@8: scope:[]  from @7
+  to:@9
 print_char: scope:[print_char]  from
   *((byte*) char_cursor) ← (byte) print_char::ch
   (byte*) char_cursor ← ++ (byte*) char_cursor
@@ -1098,8 +1149,8 @@ print_char: scope:[print_char]  from
 print_char::@return: scope:[print_char]  from print_char
   return 
   to:@return
-@8: scope:[]  from @7
-  to:@9
+@9: scope:[]  from @8
+  to:@10
 print_cls: scope:[print_cls]  from
   (byte*) print_cls::sc ← (byte*) SCREEN
   to:print_cls::@1
@@ -1117,9 +1168,9 @@ print_cls::@2: scope:[print_cls]  from print_cls::@1
 print_cls::@return: scope:[print_cls]  from print_cls::@2
   return 
   to:@return
-@9: scope:[]  from @8
+@10: scope:[]  from @9
   (byte) rem8u ← (byte/signed byte/word/signed word/dword/signed dword) 0
-  to:@10
+  to:@11
 div8u: scope:[div8u]  from
   (byte) div8u::rem ← (byte/signed byte/word/signed word/dword/signed dword) 0
   (byte) div8u::quotient ← (byte/signed byte/word/signed word/dword/signed dword) 0
@@ -1165,9 +1216,9 @@ div8u::@return: scope:[div8u]  from div8u::@6 div8u::@7
   to:@return
 div8u::@7: scope:[div8u]  from
   to:div8u::@return
-@10: scope:[]  from @9
+@11: scope:[]  from @10
   (word) rem16u ← (byte/signed byte/word/signed word/dword/signed dword) 0
-  to:@11
+  to:@12
 div16u: scope:[div16u]  from
   (word) div16u::rem ← (byte/signed byte/word/signed word/dword/signed dword) 0
   (word) div16u::quotient ← (byte/signed byte/word/signed word/dword/signed dword) 0
@@ -1214,9 +1265,9 @@ div16u::@return: scope:[div16u]  from div16u::@6 div16u::@7
   to:@return
 div16u::@7: scope:[div16u]  from
   to:div16u::@return
-@11: scope:[]  from @10
+@12: scope:[]  from @11
   (signed byte) rem8s ← (byte/signed byte/word/signed word/dword/signed dword) 0
-  to:@12
+  to:@13
 div8s: scope:[div8s]  from
   (byte) div8s::neg ← (byte/signed byte/word/signed word/dword/signed dword) 0
   (byte) div8s::dividendu ← (byte/signed byte/word/signed word/dword/signed dword) 0
@@ -1288,9 +1339,9 @@ div8s::@13: scope:[div8s]  from
   to:div8s::@5
 div8s::@14: scope:[div8s]  from
   to:div8s::@6
-@12: scope:[]  from @11
+@13: scope:[]  from @12
   (signed word) rem16s ← (byte/signed byte/word/signed word/dword/signed dword) 0
-  to:@13
+  to:@14
 div16s: scope:[div16s]  from
   (byte) div16s::neg ← (byte/signed byte/word/signed word/dword/signed dword) 0
   (word) div16s::dividendu ← (byte/signed byte/word/signed word/dword/signed dword) 0
@@ -1362,8 +1413,8 @@ div16s::@13: scope:[div16s]  from
   to:div16s::@5
 div16s::@14: scope:[div16s]  from
   to:div16s::@6
-@13: scope:[]  from @12
-  to:@14
+@14: scope:[]  from @13
+  to:@15
 main: scope:[main]  from
   (void~) main::$0 ← call print_cls 
   (void~) main::$1 ← call test_8u 
@@ -1374,8 +1425,8 @@ main: scope:[main]  from
 main::@return: scope:[main]  from main
   return 
   to:@return
-@14: scope:[]  from @13
-  to:@15
+@15: scope:[]  from @14
+  to:@16
 test_8u: scope:[test_8u]  from
   (byte[]) test_8u::dividends ← { (byte/word/signed word/dword/signed dword) 255, (byte/word/signed word/dword/signed dword) 255, (byte/word/signed word/dword/signed dword) 255, (byte/word/signed word/dword/signed dword) 255, (byte/word/signed word/dword/signed dword) 255, (byte/word/signed word/dword/signed dword) 255 }
   (byte[]) test_8u::divisors ← { (byte/signed byte/word/signed word/dword/signed dword) 5, (byte/signed byte/word/signed word/dword/signed dword) 7, (byte/signed byte/word/signed word/dword/signed dword) 11, (byte/signed byte/word/signed word/dword/signed dword) 13, (byte/signed byte/word/signed word/dword/signed dword) 17, (byte/signed byte/word/signed word/dword/signed dword) 19 }
@@ -1404,8 +1455,8 @@ test_8u::@2: scope:[test_8u]  from test_8u::@1
 test_8u::@return: scope:[test_8u]  from test_8u::@2
   return 
   to:@return
-@15: scope:[]  from @14
-  to:@16
+@16: scope:[]  from @15
+  to:@17
 test_16u: scope:[test_16u]  from
   (word[]) test_16u::dividends ← { (word/dword/signed dword) 65535, (word/dword/signed dword) 65535, (word/dword/signed dword) 65535, (word/dword/signed dword) 65535, (word/dword/signed dword) 65535, (word/dword/signed dword) 65535 }
   (word[]) test_16u::divisors ← { (byte/signed byte/word/signed word/dword/signed dword) 5, (byte/signed byte/word/signed word/dword/signed dword) 7, (byte/signed byte/word/signed word/dword/signed dword) 11, (byte/signed byte/word/signed word/dword/signed dword) 13, (byte/signed byte/word/signed word/dword/signed dword) 17, (byte/signed byte/word/signed word/dword/signed dword) 19 }
@@ -1434,8 +1485,8 @@ test_16u::@2: scope:[test_16u]  from test_16u::@1
 test_16u::@return: scope:[test_16u]  from test_16u::@2
   return 
   to:@return
-@16: scope:[]  from @15
-  to:@17
+@17: scope:[]  from @16
+  to:@18
 test_8s: scope:[test_8s]  from
   (signed byte/signed word/signed dword~) test_8s::$0 ← - (byte/signed byte/word/signed word/dword/signed dword) 127
   (signed byte/signed word/signed dword~) test_8s::$1 ← - (byte/signed byte/word/signed word/dword/signed dword) 127
@@ -1467,8 +1518,8 @@ test_8s::@2: scope:[test_8s]  from test_8s::@1
 test_8s::@return: scope:[test_8s]  from test_8s::@2
   return 
   to:@return
-@17: scope:[]  from @16
-  to:@18
+@18: scope:[]  from @17
+  to:@19
 test_16s: scope:[test_16s]  from
   (signed word/signed dword~) test_16s::$0 ← - (word/signed word/dword/signed dword) 32767
   (signed word/signed dword~) test_16s::$1 ← - (word/signed word/dword/signed dword) 32767
@@ -1503,11 +1554,12 @@ test_16s::@2: scope:[test_16s]  from test_16s::@1
 test_16s::@return: scope:[test_16s]  from test_16s::@2
   return 
   to:@return
-@18: scope:[]  from @17
+@19: scope:[]  from @18
   call main 
   to:@end
-@end: scope:[]  from @18
+@end: scope:[]  from @19
 
+Removing unused procedure print_sdword
 Removing unused procedure print_dword
 Eliminating unused variable - keeping the call (void~) print_sword::$5
 Eliminating unused variable - keeping the call (void~) print_sword::$2
@@ -1580,6 +1632,7 @@ Removing empty block @5
 Removing empty block @6
 Removing empty block @7
 Removing empty block @8
+Removing empty block @9
 Removing empty block div8u::@7
 Removing empty block div16u::@7
 Removing empty block div8s::@8
@@ -1594,14 +1647,14 @@ Removing empty block div16s::@12
 Removing empty block div16s::@6
 Removing empty block div16s::@13
 Removing empty block div16s::@14
-Removing empty block @13
 Removing empty block @14
-Removing empty block test_8u::@2
 Removing empty block @15
-Removing empty block test_16u::@2
+Removing empty block test_8u::@2
 Removing empty block @16
-Removing empty block test_8s::@2
+Removing empty block test_16u::@2
 Removing empty block @17
+Removing empty block test_8s::@2
+Removing empty block @18
 Removing empty block test_16s::@2
 PROCEDURE MODIFY VARIABLE ANALYSIS
 print_str modifies char_cursor
@@ -1658,7 +1711,7 @@ CONTROL FLOW GRAPH SSA WITH ASSIGNMENT CALL & RETURN
   (byte*) SCREEN#0 ← ((byte*)) (word/signed word/dword/signed dword) 1024
   (byte*) line_cursor#0 ← (byte*) SCREEN#0
   (byte*) char_cursor#0 ← (byte*) line_cursor#0
-  to:@9
+  to:@10
 print_str: scope:[print_str]  from test_16s::@4 test_16s::@6 test_16s::@8 test_16u::@4 test_16u::@6 test_16u::@8 test_8s::@4 test_8s::@6 test_8s::@8 test_8u::@4 test_8u::@6 test_8u::@8
   (byte*) char_cursor#140 ← phi( test_16s::@4/(byte*) char_cursor#54 test_16s::@6/(byte*) char_cursor#56 test_16s::@8/(byte*) char_cursor#58 test_16u::@4/(byte*) char_cursor#36 test_16u::@6/(byte*) char_cursor#38 test_16u::@8/(byte*) char_cursor#40 test_8s::@4/(byte*) char_cursor#45 test_8s::@6/(byte*) char_cursor#47 test_8s::@8/(byte*) char_cursor#49 test_8u::@4/(byte*) char_cursor#27 test_8u::@6/(byte*) char_cursor#29 test_8u::@8/(byte*) char_cursor#31 )
   (byte*) print_str::str#15 ← phi( test_16s::@4/(byte*) print_str::str#10 test_16s::@6/(byte*) print_str::str#11 test_16s::@8/(byte*) print_str::str#12 test_16u::@4/(byte*) print_str::str#4 test_16u::@6/(byte*) print_str::str#5 test_16u::@8/(byte*) print_str::str#6 test_8s::@4/(byte*) print_str::str#7 test_8s::@6/(byte*) print_str::str#8 test_8s::@8/(byte*) print_str::str#9 test_8u::@4/(byte*) print_str::str#1 test_8u::@6/(byte*) print_str::str#2 test_8u::@8/(byte*) print_str::str#3 )
@@ -1858,11 +1911,11 @@ print_cls::@return: scope:[print_cls]  from print_cls::@2
   (byte*) char_cursor#20 ← (byte*) char_cursor#82
   return 
   to:@return
-@9: scope:[]  from @begin
+@10: scope:[]  from @begin
   (byte*) char_cursor#154 ← phi( @begin/(byte*) char_cursor#0 )
   (byte*) line_cursor#61 ← phi( @begin/(byte*) line_cursor#0 )
   (byte) rem8u#0 ← (byte/signed byte/word/signed word/dword/signed dword) 0
-  to:@10
+  to:@11
 div8u: scope:[div8u]  from div8s::@4 test_8u::@1
   (byte) div8u::divisor#6 ← phi( div8s::@4/(byte) div8u::divisor#0 test_8u::@1/(byte) div8u::divisor#1 )
   (byte) div8u::dividend#5 ← phi( div8s::@4/(byte) div8u::dividend#1 test_8u::@1/(byte) div8u::dividend#2 )
@@ -1938,12 +1991,12 @@ div8u::@return: scope:[div8u]  from div8u::@6
   (byte) rem8u#2 ← (byte) rem8u#13
   return 
   to:@return
-@10: scope:[]  from @9
-  (byte) rem8u#50 ← phi( @9/(byte) rem8u#0 )
-  (byte*) char_cursor#153 ← phi( @9/(byte*) char_cursor#154 )
-  (byte*) line_cursor#56 ← phi( @9/(byte*) line_cursor#61 )
+@11: scope:[]  from @10
+  (byte) rem8u#50 ← phi( @10/(byte) rem8u#0 )
+  (byte*) char_cursor#153 ← phi( @10/(byte*) char_cursor#154 )
+  (byte*) line_cursor#56 ← phi( @10/(byte*) line_cursor#61 )
   (word) rem16u#0 ← (byte/signed byte/word/signed word/dword/signed dword) 0
-  to:@11
+  to:@12
 div16u: scope:[div16u]  from div16s::@4 test_16u::@1
   (word) div16u::divisor#6 ← phi( div16s::@4/(word) div16u::divisor#0 test_16u::@1/(word) div16u::divisor#1 )
   (word) div16u::dividend#5 ← phi( div16s::@4/(word) div16u::dividend#1 test_16u::@1/(word) div16u::dividend#2 )
@@ -2020,13 +2073,13 @@ div16u::@return: scope:[div16u]  from div16u::@6
   (word) rem16u#2 ← (word) rem16u#13
   return 
   to:@return
-@11: scope:[]  from @10
-  (word) rem16u#45 ← phi( @10/(word) rem16u#0 )
-  (byte) rem8u#47 ← phi( @10/(byte) rem8u#50 )
-  (byte*) char_cursor#148 ← phi( @10/(byte*) char_cursor#153 )
-  (byte*) line_cursor#51 ← phi( @10/(byte*) line_cursor#56 )
+@12: scope:[]  from @11
+  (word) rem16u#45 ← phi( @11/(word) rem16u#0 )
+  (byte) rem8u#47 ← phi( @11/(byte) rem8u#50 )
+  (byte*) char_cursor#148 ← phi( @11/(byte*) char_cursor#153 )
+  (byte*) line_cursor#51 ← phi( @11/(byte*) line_cursor#56 )
   (signed byte) rem8s#0 ← (byte/signed byte/word/signed word/dword/signed dword) 0
-  to:@12
+  to:@13
 div8s: scope:[div8s]  from test_8s::@1
   (byte) rem8u#55 ← phi( test_8s::@1/(byte) rem8u#34 )
   (signed byte) div8s::divisor#6 ← phi( test_8s::@1/(signed byte) div8s::divisor#0 )
@@ -2131,14 +2184,14 @@ div8s::@return: scope:[div8s]  from div8s::@11 div8s::@5
   (signed byte) rem8s#3 ← (signed byte) rem8s#9
   return 
   to:@return
-@12: scope:[]  from @11
-  (signed byte) rem8s#26 ← phi( @11/(signed byte) rem8s#0 )
-  (word) rem16u#44 ← phi( @11/(word) rem16u#45 )
-  (byte) rem8u#45 ← phi( @11/(byte) rem8u#47 )
-  (byte*) char_cursor#147 ← phi( @11/(byte*) char_cursor#148 )
-  (byte*) line_cursor#50 ← phi( @11/(byte*) line_cursor#51 )
+@13: scope:[]  from @12
+  (signed byte) rem8s#26 ← phi( @12/(signed byte) rem8s#0 )
+  (word) rem16u#44 ← phi( @12/(word) rem16u#45 )
+  (byte) rem8u#45 ← phi( @12/(byte) rem8u#47 )
+  (byte*) char_cursor#147 ← phi( @12/(byte*) char_cursor#148 )
+  (byte*) line_cursor#50 ← phi( @12/(byte*) line_cursor#51 )
   (signed word) rem16s#0 ← (byte/signed byte/word/signed word/dword/signed dword) 0
-  to:@18
+  to:@19
 div16s: scope:[div16s]  from test_16s::@1
   (word) rem16u#54 ← phi( test_16s::@1/(word) rem16u#33 )
   (signed word) div16s::divisor#6 ← phi( test_16s::@1/(signed word) div16s::divisor#0 )
@@ -2243,13 +2296,13 @@ div16s::@return: scope:[div16s]  from div16s::@11 div16s::@5
   (signed word) rem16s#3 ← (signed word) rem16s#9
   return 
   to:@return
-main: scope:[main]  from @18
-  (signed word) rem16s#29 ← phi( @18/(signed word) rem16s#20 )
-  (signed byte) rem8s#29 ← phi( @18/(signed byte) rem8s#21 )
-  (word) rem16u#47 ← phi( @18/(word) rem16u#35 )
-  (byte) rem8u#39 ← phi( @18/(byte) rem8u#36 )
-  (byte*) char_cursor#134 ← phi( @18/(byte*) char_cursor#139 )
-  (byte*) line_cursor#40 ← phi( @18/(byte*) line_cursor#45 )
+main: scope:[main]  from @19
+  (signed word) rem16s#29 ← phi( @19/(signed word) rem16s#20 )
+  (signed byte) rem8s#29 ← phi( @19/(signed byte) rem8s#21 )
+  (word) rem16u#47 ← phi( @19/(word) rem16u#35 )
+  (byte) rem8u#39 ← phi( @19/(byte) rem8u#36 )
+  (byte*) char_cursor#134 ← phi( @19/(byte*) char_cursor#139 )
+  (byte*) line_cursor#40 ← phi( @19/(byte*) line_cursor#45 )
   call print_cls param-assignment
   to:main::@1
 main::@1: scope:[main]  from main
@@ -2855,22 +2908,22 @@ test_16s::@return: scope:[test_16s]  from test_16s::@11
   (byte*) line_cursor#18 ← (byte*) line_cursor#37
   return 
   to:@return
-@18: scope:[]  from @12
-  (signed word) rem16s#20 ← phi( @12/(signed word) rem16s#0 )
-  (signed byte) rem8s#21 ← phi( @12/(signed byte) rem8s#26 )
-  (word) rem16u#35 ← phi( @12/(word) rem16u#44 )
-  (byte) rem8u#36 ← phi( @12/(byte) rem8u#45 )
-  (byte*) char_cursor#139 ← phi( @12/(byte*) char_cursor#147 )
-  (byte*) line_cursor#45 ← phi( @12/(byte*) line_cursor#50 )
+@19: scope:[]  from @13
+  (signed word) rem16s#20 ← phi( @13/(signed word) rem16s#0 )
+  (signed byte) rem8s#21 ← phi( @13/(signed byte) rem8s#26 )
+  (word) rem16u#35 ← phi( @13/(word) rem16u#44 )
+  (byte) rem8u#36 ← phi( @13/(byte) rem8u#45 )
+  (byte*) char_cursor#139 ← phi( @13/(byte*) char_cursor#147 )
+  (byte*) line_cursor#45 ← phi( @13/(byte*) line_cursor#50 )
   call main param-assignment
-  to:@19
-@19: scope:[]  from @18
-  (signed word) rem16s#15 ← phi( @18/(signed word) rem16s#5 )
-  (signed byte) rem8s#15 ← phi( @18/(signed byte) rem8s#5 )
-  (word) rem16u#26 ← phi( @18/(word) rem16u#7 )
-  (byte) rem8u#26 ← phi( @18/(byte) rem8u#7 )
-  (byte*) char_cursor#125 ← phi( @18/(byte*) char_cursor#26 )
-  (byte*) line_cursor#38 ← phi( @18/(byte*) line_cursor#10 )
+  to:@20
+@20: scope:[]  from @19
+  (signed word) rem16s#15 ← phi( @19/(signed word) rem16s#5 )
+  (signed byte) rem8s#15 ← phi( @19/(signed byte) rem8s#5 )
+  (word) rem16u#26 ← phi( @19/(word) rem16u#7 )
+  (byte) rem8u#26 ← phi( @19/(byte) rem8u#7 )
+  (byte*) char_cursor#125 ← phi( @19/(byte*) char_cursor#26 )
+  (byte*) line_cursor#38 ← phi( @19/(byte*) line_cursor#10 )
   (byte*) line_cursor#19 ← (byte*) line_cursor#38
   (byte*) char_cursor#63 ← (byte*) char_cursor#125
   (byte) rem8u#12 ← (byte) rem8u#26
@@ -2878,15 +2931,15 @@ test_16s::@return: scope:[test_16s]  from test_16s::@11
   (signed byte) rem8s#8 ← (signed byte) rem8s#15
   (signed word) rem16s#8 ← (signed word) rem16s#15
   to:@end
-@end: scope:[]  from @19
+@end: scope:[]  from @20
 
 SYMBOL TABLE SSA
 (label) @10
 (label) @11
 (label) @12
-(label) @18
+(label) @13
 (label) @19
-(label) @9
+(label) @20
 (label) @begin
 (label) @end
 (byte*) SCREEN
@@ -4914,18 +4967,18 @@ Culled Empty Block (label) print_sbyte::@3
 Culled Empty Block (label) print_word::@2
 Culled Empty Block (label) print_byte::@2
 Culled Empty Block (label) print_cls::@2
-Culled Empty Block (label) @9
 Culled Empty Block (label) @10
 Culled Empty Block (label) @11
+Culled Empty Block (label) @12
 Culled Empty Block (label) div8s::@1
 Culled Empty Block (label) div8s::@3
 Culled Empty Block (label) div8s::@11
-Culled Empty Block (label) @12
+Culled Empty Block (label) @13
 Culled Empty Block (label) div16s::@1
 Culled Empty Block (label) div16s::@3
 Culled Empty Block (label) div16s::@11
 Culled Empty Block (label) main::@5
-Culled Empty Block (label) @19
+Culled Empty Block (label) @20
 Succesful SSA optimization Pass2CullEmptyBlocks
 Not aliassing across scopes: char_cursor#126 char_cursor#17
 Not aliassing across scopes: print_sword::w#5 print_sword::w#1
@@ -5191,7 +5244,7 @@ Constant inlined print_str::str#5 = (const string) test_16u::str1
 Constant inlined div8u::rem#0 = (byte/signed byte/word/signed word/dword/signed dword) 0
 Constant inlined rem8u#0 = (byte/signed byte/word/signed word/dword/signed dword) 0
 Succesful SSA optimization Pass2ConstantInlining
-Block Sequence Planned @begin @18 @end main main::@1 main::@2 main::@3 main::@4 main::@return test_16s test_16s::@1 test_16s::@3 test_16s::@4 test_16s::@5 test_16s::@6 test_16s::@7 test_16s::@8 test_16s::@9 test_16s::@10 test_16s::@11 test_16s::@return print_ln print_ln::@1 print_ln::@return print_sword print_sword::@2 print_sword::@4 print_sword::@1 print_sword::@return print_word print_word::@1 print_word::@return print_byte print_byte::@1 print_byte::@return print_char print_char::@return print_str print_str::@1 print_str::@return print_str::@2 div16s div16s::@7 div16s::@2 div16s::@9 div16s::@4 div16s::@15 div16s::@return div16s::@5 div16u div16u::@1 div16u::@4 div16u::@2 div16u::@5 div16u::@3 div16u::@6 div16u::@return test_8s test_8s::@1 test_8s::@3 test_8s::@4 test_8s::@5 test_8s::@6 test_8s::@7 test_8s::@8 test_8s::@9 test_8s::@10 test_8s::@11 test_8s::@return print_sbyte print_sbyte::@2 print_sbyte::@4 print_sbyte::@1 print_sbyte::@return div8s div8s::@7 div8s::@2 div8s::@9 div8s::@4 div8s::@15 div8s::@return div8s::@5 div8u div8u::@1 div8u::@4 div8u::@2 div8u::@5 div8u::@3 div8u::@6 div8u::@return test_16u test_16u::@1 test_16u::@3 test_16u::@4 test_16u::@5 test_16u::@6 test_16u::@7 test_16u::@8 test_16u::@9 test_16u::@10 test_16u::@11 test_16u::@return test_8u test_8u::@1 test_8u::@3 test_8u::@4 test_8u::@5 test_8u::@6 test_8u::@7 test_8u::@8 test_8u::@9 test_8u::@10 test_8u::@11 test_8u::@return print_cls print_cls::@1 print_cls::@return 
+Block Sequence Planned @begin @19 @end main main::@1 main::@2 main::@3 main::@4 main::@return test_16s test_16s::@1 test_16s::@3 test_16s::@4 test_16s::@5 test_16s::@6 test_16s::@7 test_16s::@8 test_16s::@9 test_16s::@10 test_16s::@11 test_16s::@return print_ln print_ln::@1 print_ln::@return print_sword print_sword::@2 print_sword::@4 print_sword::@1 print_sword::@return print_word print_word::@1 print_word::@return print_byte print_byte::@1 print_byte::@return print_char print_char::@return print_str print_str::@1 print_str::@return print_str::@2 div16s div16s::@7 div16s::@2 div16s::@9 div16s::@4 div16s::@15 div16s::@return div16s::@5 div16u div16u::@1 div16u::@4 div16u::@2 div16u::@5 div16u::@3 div16u::@6 div16u::@return test_8s test_8s::@1 test_8s::@3 test_8s::@4 test_8s::@5 test_8s::@6 test_8s::@7 test_8s::@8 test_8s::@9 test_8s::@10 test_8s::@11 test_8s::@return print_sbyte print_sbyte::@2 print_sbyte::@4 print_sbyte::@1 print_sbyte::@return div8s div8s::@7 div8s::@2 div8s::@9 div8s::@4 div8s::@15 div8s::@return div8s::@5 div8u div8u::@1 div8u::@4 div8u::@2 div8u::@5 div8u::@3 div8u::@6 div8u::@return test_16u test_16u::@1 test_16u::@3 test_16u::@4 test_16u::@5 test_16u::@6 test_16u::@7 test_16u::@8 test_16u::@9 test_16u::@10 test_16u::@11 test_16u::@return test_8u test_8u::@1 test_8u::@3 test_8u::@4 test_8u::@5 test_8u::@6 test_8u::@7 test_8u::@8 test_8u::@9 test_8u::@10 test_8u::@11 test_8u::@return print_cls print_cls::@1 print_cls::@return 
 Added new block during phi lifting test_16s::@12(between test_16s::@11 and test_16s::@1)
 Added new block during phi lifting print_ln::@3(between print_ln::@1 and print_ln::@1)
 Added new block during phi lifting print_sword::@5(between print_sword and print_sword::@1)
@@ -5214,9 +5267,9 @@ Added new block during phi lifting div8u::@10(between div8u::@2 and div8u::@3)
 Added new block during phi lifting test_16u::@12(between test_16u::@11 and test_16u::@1)
 Added new block during phi lifting test_8u::@12(between test_8u::@11 and test_8u::@1)
 Added new block during phi lifting print_cls::@3(between print_cls::@1 and print_cls::@1)
-Block Sequence Planned @begin @18 @end main main::@1 main::@2 main::@3 main::@4 main::@return test_16s test_16s::@1 test_16s::@3 test_16s::@4 test_16s::@5 test_16s::@6 test_16s::@7 test_16s::@8 test_16s::@9 test_16s::@10 test_16s::@11 test_16s::@return test_16s::@12 print_ln print_ln::@1 print_ln::@return print_ln::@3 print_sword print_sword::@2 print_sword::@4 print_sword::@1 print_sword::@return print_sword::@5 print_word print_word::@1 print_word::@return print_byte print_byte::@1 print_byte::@return print_char print_char::@return print_str print_str::@1 print_str::@return print_str::@2 div16s div16s::@7 div16s::@2 div16s::@9 div16s::@4 div16s::@15 div16s::@18 div16s::@return div16s::@5 div16s::@17 div16s::@16 div16u div16u::@1 div16u::@4 div16u::@2 div16u::@5 div16u::@3 div16u::@6 div16u::@return div16u::@8 div16u::@10 div16u::@9 test_8s test_8s::@1 test_8s::@3 test_8s::@4 test_8s::@5 test_8s::@6 test_8s::@7 test_8s::@8 test_8s::@9 test_8s::@10 test_8s::@11 test_8s::@return test_8s::@12 print_sbyte print_sbyte::@2 print_sbyte::@4 print_sbyte::@1 print_sbyte::@return print_sbyte::@5 div8s div8s::@7 div8s::@2 div8s::@9 div8s::@4 div8s::@15 div8s::@18 div8s::@return div8s::@5 div8s::@17 div8s::@16 div8u div8u::@1 div8u::@4 div8u::@2 div8u::@5 div8u::@3 div8u::@6 div8u::@return div8u::@8 div8u::@10 div8u::@9 test_16u test_16u::@1 test_16u::@3 test_16u::@4 test_16u::@5 test_16u::@6 test_16u::@7 test_16u::@8 test_16u::@9 test_16u::@10 test_16u::@11 test_16u::@return test_16u::@12 test_8u test_8u::@1 test_8u::@3 test_8u::@4 test_8u::@5 test_8u::@6 test_8u::@7 test_8u::@8 test_8u::@9 test_8u::@10 test_8u::@11 test_8u::@return test_8u::@12 print_cls print_cls::@1 print_cls::@return print_cls::@3 
+Block Sequence Planned @begin @19 @end main main::@1 main::@2 main::@3 main::@4 main::@return test_16s test_16s::@1 test_16s::@3 test_16s::@4 test_16s::@5 test_16s::@6 test_16s::@7 test_16s::@8 test_16s::@9 test_16s::@10 test_16s::@11 test_16s::@return test_16s::@12 print_ln print_ln::@1 print_ln::@return print_ln::@3 print_sword print_sword::@2 print_sword::@4 print_sword::@1 print_sword::@return print_sword::@5 print_word print_word::@1 print_word::@return print_byte print_byte::@1 print_byte::@return print_char print_char::@return print_str print_str::@1 print_str::@return print_str::@2 div16s div16s::@7 div16s::@2 div16s::@9 div16s::@4 div16s::@15 div16s::@18 div16s::@return div16s::@5 div16s::@17 div16s::@16 div16u div16u::@1 div16u::@4 div16u::@2 div16u::@5 div16u::@3 div16u::@6 div16u::@return div16u::@8 div16u::@10 div16u::@9 test_8s test_8s::@1 test_8s::@3 test_8s::@4 test_8s::@5 test_8s::@6 test_8s::@7 test_8s::@8 test_8s::@9 test_8s::@10 test_8s::@11 test_8s::@return test_8s::@12 print_sbyte print_sbyte::@2 print_sbyte::@4 print_sbyte::@1 print_sbyte::@return print_sbyte::@5 div8s div8s::@7 div8s::@2 div8s::@9 div8s::@4 div8s::@15 div8s::@18 div8s::@return div8s::@5 div8s::@17 div8s::@16 div8u div8u::@1 div8u::@4 div8u::@2 div8u::@5 div8u::@3 div8u::@6 div8u::@return div8u::@8 div8u::@10 div8u::@9 test_16u test_16u::@1 test_16u::@3 test_16u::@4 test_16u::@5 test_16u::@6 test_16u::@7 test_16u::@8 test_16u::@9 test_16u::@10 test_16u::@11 test_16u::@return test_16u::@12 test_8u test_8u::@1 test_8u::@3 test_8u::@4 test_8u::@5 test_8u::@6 test_8u::@7 test_8u::@8 test_8u::@9 test_8u::@10 test_8u::@11 test_8u::@return test_8u::@12 print_cls print_cls::@1 print_cls::@return print_cls::@3 
 Adding NOP phi() at start of @begin
-Adding NOP phi() at start of @18
+Adding NOP phi() at start of @19
 Adding NOP phi() at start of @end
 Adding NOP phi() at start of main
 Adding NOP phi() at start of main::@1
@@ -5413,9 +5466,9 @@ Culled Empty Block (label) div8u::@10
 Culled Empty Block (label) div8u::@9
 Culled Empty Block (label) test_16u::@12
 Culled Empty Block (label) print_cls::@3
-Block Sequence Planned @begin @18 @end main main::@1 main::@2 main::@3 main::@4 main::@return test_16s test_16s::@1 test_16s::@3 test_16s::@4 test_16s::@5 test_16s::@6 test_16s::@7 test_16s::@8 test_16s::@9 test_16s::@10 test_16s::@11 test_16s::@return print_ln print_ln::@1 print_ln::@return print_sword print_sword::@2 print_sword::@4 print_sword::@1 print_sword::@return print_word print_word::@1 print_word::@return print_byte print_byte::@1 print_byte::@return print_char print_char::@return print_str print_str::@1 print_str::@return print_str::@2 div16s div16s::@7 div16s::@2 div16s::@9 div16s::@4 div16s::@15 div16s::@18 div16s::@return div16s::@5 div16s::@17 div16s::@16 div16u div16u::@1 div16u::@4 div16u::@2 div16u::@5 div16u::@3 div16u::@6 div16u::@return test_8s test_8s::@1 test_8s::@3 test_8s::@4 test_8s::@5 test_8s::@6 test_8s::@7 test_8s::@8 test_8s::@9 test_8s::@10 test_8s::@11 test_8s::@return print_sbyte print_sbyte::@2 print_sbyte::@4 print_sbyte::@1 print_sbyte::@return div8s div8s::@7 div8s::@2 div8s::@9 div8s::@4 div8s::@15 div8s::@18 div8s::@return div8s::@5 div8s::@17 div8s::@16 div8u div8u::@1 div8u::@4 div8u::@2 div8u::@5 div8u::@3 div8u::@6 div8u::@return test_16u test_16u::@1 test_16u::@3 test_16u::@4 test_16u::@5 test_16u::@6 test_16u::@7 test_16u::@8 test_16u::@9 test_16u::@10 test_16u::@11 test_16u::@return test_8u test_8u::@1 test_8u::@3 test_8u::@4 test_8u::@5 test_8u::@6 test_8u::@7 test_8u::@8 test_8u::@9 test_8u::@10 test_8u::@11 test_8u::@return test_8u::@12 print_cls print_cls::@1 print_cls::@return 
+Block Sequence Planned @begin @19 @end main main::@1 main::@2 main::@3 main::@4 main::@return test_16s test_16s::@1 test_16s::@3 test_16s::@4 test_16s::@5 test_16s::@6 test_16s::@7 test_16s::@8 test_16s::@9 test_16s::@10 test_16s::@11 test_16s::@return print_ln print_ln::@1 print_ln::@return print_sword print_sword::@2 print_sword::@4 print_sword::@1 print_sword::@return print_word print_word::@1 print_word::@return print_byte print_byte::@1 print_byte::@return print_char print_char::@return print_str print_str::@1 print_str::@return print_str::@2 div16s div16s::@7 div16s::@2 div16s::@9 div16s::@4 div16s::@15 div16s::@18 div16s::@return div16s::@5 div16s::@17 div16s::@16 div16u div16u::@1 div16u::@4 div16u::@2 div16u::@5 div16u::@3 div16u::@6 div16u::@return test_8s test_8s::@1 test_8s::@3 test_8s::@4 test_8s::@5 test_8s::@6 test_8s::@7 test_8s::@8 test_8s::@9 test_8s::@10 test_8s::@11 test_8s::@return print_sbyte print_sbyte::@2 print_sbyte::@4 print_sbyte::@1 print_sbyte::@return div8s div8s::@7 div8s::@2 div8s::@9 div8s::@4 div8s::@15 div8s::@18 div8s::@return div8s::@5 div8s::@17 div8s::@16 div8u div8u::@1 div8u::@4 div8u::@2 div8u::@5 div8u::@3 div8u::@6 div8u::@return test_16u test_16u::@1 test_16u::@3 test_16u::@4 test_16u::@5 test_16u::@6 test_16u::@7 test_16u::@8 test_16u::@9 test_16u::@10 test_16u::@11 test_16u::@return test_8u test_8u::@1 test_8u::@3 test_8u::@4 test_8u::@5 test_8u::@6 test_8u::@7 test_8u::@8 test_8u::@9 test_8u::@10 test_8u::@11 test_8u::@return test_8u::@12 print_cls print_cls::@1 print_cls::@return 
 Adding NOP phi() at start of @begin
-Adding NOP phi() at start of @18
+Adding NOP phi() at start of @19
 Adding NOP phi() at start of @end
 Adding NOP phi() at start of main
 Adding NOP phi() at start of main::@1
@@ -5473,14 +5526,14 @@ Propagating live ranges...
 FINAL CONTROL FLOW GRAPH
 @begin: scope:[]  from
   [0] phi() [ ] ( )
-  to:@18
-@18: scope:[]  from @begin
+  to:@19
+@19: scope:[]  from @begin
   [1] phi() [ ] ( )
   [2] call main param-assignment [ ] ( )
   to:@end
-@end: scope:[]  from @18
+@end: scope:[]  from @19
   [3] phi() [ ] ( )
-main: scope:[main]  from @18
+main: scope:[main]  from @19
   [4] phi() [ ] ( main:2 [ ] )
   [5] call print_cls param-assignment [ ] ( main:2 [ ] )
   to:main::@1
@@ -6017,129 +6070,129 @@ print_cls::@return: scope:[print_cls]  from print_cls::@1
 
 DOMINATORS
 @begin dominated by  @begin 
-@18 dominated by  @18 @begin 
-@end dominated by  @18 @end @begin 
-main dominated by  @18 main @begin 
-main::@1 dominated by  main::@1 @18 main @begin 
-main::@2 dominated by  main::@1 main::@2 @18 main @begin 
-main::@3 dominated by  main::@1 main::@2 main::@3 @18 main @begin 
-main::@4 dominated by  main::@1 main::@2 main::@3 main::@4 @18 main @begin 
-main::@return dominated by  main::@1 main::@2 main::@3 main::@4 main::@return @18 main @begin 
-test_16s dominated by  main::@1 main::@2 main::@3 main::@4 @18 test_16s main @begin 
-test_16s::@1 dominated by  main::@1 main::@2 main::@3 main::@4 @18 test_16s test_16s::@1 main @begin 
-test_16s::@3 dominated by  main::@1 main::@2 main::@3 main::@4 @18 test_16s test_16s::@1 test_16s::@3 main @begin 
-test_16s::@4 dominated by  main::@1 main::@2 main::@3 main::@4 @18 test_16s test_16s::@1 test_16s::@3 test_16s::@4 main @begin 
-test_16s::@5 dominated by  main::@1 main::@2 main::@3 main::@4 @18 test_16s test_16s::@1 test_16s::@3 test_16s::@4 test_16s::@5 main @begin 
-test_16s::@6 dominated by  main::@1 main::@2 main::@3 main::@4 @18 test_16s test_16s::@1 test_16s::@3 test_16s::@4 test_16s::@5 test_16s::@6 main @begin 
-test_16s::@7 dominated by  main::@1 main::@2 main::@3 main::@4 @18 test_16s test_16s::@1 test_16s::@3 test_16s::@4 test_16s::@5 test_16s::@6 test_16s::@7 main @begin 
-test_16s::@8 dominated by  main::@1 main::@2 main::@3 main::@4 @18 test_16s test_16s::@1 test_16s::@3 test_16s::@4 test_16s::@5 test_16s::@6 test_16s::@7 test_16s::@8 main @begin 
-test_16s::@9 dominated by  main::@1 main::@2 main::@3 main::@4 @18 test_16s test_16s::@1 test_16s::@3 test_16s::@4 test_16s::@5 test_16s::@6 test_16s::@7 test_16s::@8 main test_16s::@9 @begin 
-test_16s::@10 dominated by  main::@1 main::@2 main::@3 main::@4 @18 test_16s test_16s::@1 test_16s::@3 test_16s::@4 test_16s::@5 test_16s::@6 test_16s::@7 test_16s::@8 main test_16s::@9 @begin test_16s::@10 
-test_16s::@11 dominated by  main::@1 main::@2 main::@3 main::@4 @18 test_16s test_16s::@1 test_16s::@3 test_16s::@4 test_16s::@5 test_16s::@6 test_16s::@7 test_16s::@8 main test_16s::@9 @begin test_16s::@11 test_16s::@10 
-test_16s::@return dominated by  main::@1 main::@2 main::@3 main::@4 test_16s::@return @18 test_16s test_16s::@1 test_16s::@3 test_16s::@4 test_16s::@5 test_16s::@6 test_16s::@7 test_16s::@8 main test_16s::@9 @begin test_16s::@11 test_16s::@10 
-print_ln dominated by  main::@1 print_ln @18 main @begin 
-print_ln::@1 dominated by  main::@1 print_ln @18 print_ln::@1 main @begin 
-print_ln::@return dominated by  print_ln::@return main::@1 print_ln @18 print_ln::@1 main @begin 
-print_sword dominated by  main::@1 main::@2 main::@3 main::@4 @18 test_16s print_sword test_16s::@1 test_16s::@3 main @begin 
-print_sword::@2 dominated by  main::@1 main::@2 main::@3 main::@4 @18 test_16s print_sword test_16s::@1 test_16s::@3 print_sword::@2 main @begin 
-print_sword::@4 dominated by  main::@1 main::@2 main::@3 main::@4 @18 test_16s print_sword test_16s::@1 test_16s::@3 print_sword::@2 print_sword::@4 main @begin 
-print_sword::@1 dominated by  main::@1 main::@2 main::@3 main::@4 @18 test_16s print_sword test_16s::@1 test_16s::@3 print_sword::@1 main @begin 
-print_sword::@return dominated by  main::@1 main::@2 main::@3 main::@4 @18 test_16s print_sword test_16s::@1 test_16s::@3 print_sword::@1 main @begin print_sword::@return 
-print_word dominated by  print_word main::@1 main::@2 @18 main @begin 
-print_word::@1 dominated by  print_word main::@1 main::@2 print_word::@1 @18 main @begin 
-print_word::@return dominated by  print_word main::@1 main::@2 print_word::@return print_word::@1 @18 main @begin 
-print_byte dominated by  main::@1 print_byte @18 main @begin 
-print_byte::@1 dominated by  main::@1 print_byte::@1 print_byte @18 main @begin 
-print_byte::@return dominated by  main::@1 print_byte::@1 print_byte @18 main @begin print_byte::@return 
-print_char dominated by  main::@1 @18 main print_char @begin 
-print_char::@return dominated by  main::@1 @18 main print_char print_char::@return @begin 
-print_str dominated by  main::@1 @18 print_str main @begin 
-print_str::@1 dominated by  main::@1 print_str::@1 @18 print_str main @begin 
-print_str::@return dominated by  main::@1 print_str::@return print_str::@1 @18 print_str main @begin 
-print_str::@2 dominated by  main::@1 print_str::@1 print_str::@2 @18 print_str main @begin 
-div16s dominated by  main::@1 main::@2 main::@3 main::@4 div16s @18 test_16s test_16s::@1 main @begin 
-div16s::@7 dominated by  main::@1 main::@2 main::@3 main::@4 div16s div16s::@7 @18 test_16s test_16s::@1 main @begin 
-div16s::@2 dominated by  main::@1 main::@2 main::@3 main::@4 div16s div16s::@2 @18 test_16s test_16s::@1 main @begin 
-div16s::@9 dominated by  main::@1 main::@2 main::@3 main::@4 div16s div16s::@9 div16s::@2 @18 test_16s test_16s::@1 main @begin 
-div16s::@4 dominated by  main::@1 main::@2 main::@3 main::@4 div16s div16s::@4 div16s::@2 @18 test_16s test_16s::@1 main @begin 
-div16s::@15 dominated by  main::@1 main::@2 main::@3 main::@4 div16s div16s::@4 div16s::@2 @18 test_16s test_16s::@1 main @begin div16s::@15 
-div16s::@18 dominated by  main::@1 main::@2 main::@3 main::@4 div16s div16s::@4 div16s::@2 @18 test_16s test_16s::@1 main @begin div16s::@15 div16s::@18 
-div16s::@return dominated by  main::@1 main::@2 main::@3 main::@4 div16s div16s::@4 div16s::@2 @18 test_16s test_16s::@1 main @begin div16s::@return div16s::@15 
-div16s::@5 dominated by  main::@1 main::@2 main::@3 main::@4 div16s div16s::@5 div16s::@4 div16s::@2 @18 test_16s test_16s::@1 main @begin div16s::@15 
-div16s::@17 dominated by  main::@1 main::@2 main::@3 main::@4 div16s div16s::@2 @18 test_16s test_16s::@1 main @begin div16s::@17 
-div16s::@16 dominated by  main::@1 main::@2 main::@3 main::@4 div16s @18 test_16s test_16s::@1 main @begin div16s::@16 
-div16u dominated by  main::@1 main::@2 div16u @18 main @begin 
-div16u::@1 dominated by  main::@1 main::@2 div16u div16u::@1 @18 main @begin 
-div16u::@4 dominated by  main::@1 main::@2 div16u div16u::@4 div16u::@1 @18 main @begin 
-div16u::@2 dominated by  main::@1 main::@2 div16u div16u::@2 div16u::@1 @18 main @begin 
-div16u::@5 dominated by  main::@1 main::@2 div16u div16u::@5 div16u::@2 div16u::@1 @18 main @begin 
-div16u::@3 dominated by  main::@1 main::@2 div16u div16u::@3 div16u::@2 div16u::@1 @18 main @begin 
-div16u::@6 dominated by  main::@1 main::@2 div16u div16u::@6 div16u::@3 div16u::@2 div16u::@1 @18 main @begin 
-div16u::@return dominated by  div16u::@return main::@1 main::@2 div16u div16u::@6 div16u::@3 div16u::@2 div16u::@1 @18 main @begin 
-test_8s dominated by  main::@1 main::@2 main::@3 test_8s @18 main @begin 
-test_8s::@1 dominated by  main::@1 main::@2 main::@3 test_8s @18 main @begin test_8s::@1 
-test_8s::@3 dominated by  main::@1 main::@2 main::@3 test_8s @18 main @begin test_8s::@1 test_8s::@3 
-test_8s::@4 dominated by  main::@1 main::@2 main::@3 test_8s @18 main @begin test_8s::@1 test_8s::@3 test_8s::@4 
-test_8s::@5 dominated by  main::@1 main::@2 main::@3 test_8s @18 main @begin test_8s::@1 test_8s::@3 test_8s::@4 test_8s::@5 
-test_8s::@6 dominated by  main::@1 main::@2 main::@3 test_8s @18 main @begin test_8s::@1 test_8s::@3 test_8s::@4 test_8s::@5 test_8s::@6 
-test_8s::@7 dominated by  main::@1 main::@2 main::@3 test_8s @18 main @begin test_8s::@1 test_8s::@3 test_8s::@4 test_8s::@5 test_8s::@6 test_8s::@7 
-test_8s::@8 dominated by  main::@1 main::@2 main::@3 test_8s @18 main test_8s::@8 @begin test_8s::@1 test_8s::@3 test_8s::@4 test_8s::@5 test_8s::@6 test_8s::@7 
-test_8s::@9 dominated by  main::@1 main::@2 main::@3 test_8s @18 main test_8s::@8 test_8s::@9 @begin test_8s::@1 test_8s::@3 test_8s::@4 test_8s::@5 test_8s::@6 test_8s::@7 
-test_8s::@10 dominated by  main::@1 main::@2 main::@3 test_8s::@10 test_8s @18 main test_8s::@8 test_8s::@9 @begin test_8s::@1 test_8s::@3 test_8s::@4 test_8s::@5 test_8s::@6 test_8s::@7 
-test_8s::@11 dominated by  main::@1 main::@2 main::@3 test_8s::@10 test_8s::@11 test_8s @18 main test_8s::@8 test_8s::@9 @begin test_8s::@1 test_8s::@3 test_8s::@4 test_8s::@5 test_8s::@6 test_8s::@7 
-test_8s::@return dominated by  main::@1 main::@2 main::@3 test_8s::@10 test_8s::@11 test_8s @18 main test_8s::@8 test_8s::@9 @begin test_8s::@return test_8s::@1 test_8s::@3 test_8s::@4 test_8s::@5 test_8s::@6 test_8s::@7 
-print_sbyte dominated by  main::@1 main::@2 main::@3 test_8s @18 print_sbyte main @begin test_8s::@1 test_8s::@3 
-print_sbyte::@2 dominated by  main::@1 main::@2 main::@3 test_8s @18 print_sbyte main print_sbyte::@2 @begin test_8s::@1 test_8s::@3 
-print_sbyte::@4 dominated by  main::@1 main::@2 main::@3 test_8s @18 print_sbyte main print_sbyte::@4 print_sbyte::@2 @begin test_8s::@1 test_8s::@3 
-print_sbyte::@1 dominated by  main::@1 main::@2 main::@3 test_8s @18 print_sbyte main print_sbyte::@1 @begin test_8s::@1 test_8s::@3 
-print_sbyte::@return dominated by  main::@1 main::@2 main::@3 test_8s @18 print_sbyte main print_sbyte::@1 @begin print_sbyte::@return test_8s::@1 test_8s::@3 
-div8s dominated by  main::@1 main::@2 main::@3 div8s test_8s @18 main @begin test_8s::@1 
-div8s::@7 dominated by  main::@1 main::@2 main::@3 div8s test_8s @18 main @begin test_8s::@1 div8s::@7 
-div8s::@2 dominated by  main::@1 main::@2 main::@3 div8s test_8s @18 main div8s::@2 @begin test_8s::@1 
-div8s::@9 dominated by  main::@1 main::@2 main::@3 div8s test_8s @18 main div8s::@2 @begin test_8s::@1 div8s::@9 
-div8s::@4 dominated by  main::@1 main::@2 main::@3 div8s test_8s @18 main div8s::@2 @begin test_8s::@1 div8s::@4 
-div8s::@15 dominated by  main::@1 main::@2 main::@3 div8s test_8s @18 div8s::@15 main div8s::@2 @begin test_8s::@1 div8s::@4 
-div8s::@18 dominated by  main::@1 main::@2 main::@3 div8s test_8s @18 div8s::@18 div8s::@15 main div8s::@2 @begin test_8s::@1 div8s::@4 
-div8s::@return dominated by  main::@1 main::@2 main::@3 div8s test_8s @18 div8s::@15 main div8s::@2 div8s::@return @begin test_8s::@1 div8s::@4 
-div8s::@5 dominated by  main::@1 main::@2 main::@3 div8s test_8s @18 div8s::@15 main div8s::@2 @begin test_8s::@1 div8s::@5 div8s::@4 
-div8s::@17 dominated by  main::@1 main::@2 main::@3 div8s test_8s @18 div8s::@17 main div8s::@2 @begin test_8s::@1 
-div8s::@16 dominated by  main::@1 main::@2 main::@3 div8s test_8s @18 div8s::@16 main @begin test_8s::@1 
-div8u dominated by  main::@1 div8u @18 main @begin 
-div8u::@1 dominated by  main::@1 div8u @18 main @begin div8u::@1 
-div8u::@4 dominated by  main::@1 div8u @18 main div8u::@4 @begin div8u::@1 
-div8u::@2 dominated by  main::@1 div8u @18 main div8u::@2 @begin div8u::@1 
-div8u::@5 dominated by  main::@1 div8u @18 main div8u::@2 div8u::@5 @begin div8u::@1 
-div8u::@3 dominated by  main::@1 div8u @18 main div8u::@3 div8u::@2 @begin div8u::@1 
-div8u::@6 dominated by  main::@1 div8u @18 main div8u::@3 div8u::@2 div8u::@6 @begin div8u::@1 
-div8u::@return dominated by  main::@1 div8u div8u::@return @18 main div8u::@3 div8u::@2 div8u::@6 @begin div8u::@1 
-test_16u dominated by  main::@1 main::@2 @18 test_16u main @begin 
-test_16u::@1 dominated by  main::@1 main::@2 @18 test_16u test_16u::@1 main @begin 
-test_16u::@3 dominated by  main::@1 main::@2 @18 test_16u test_16u::@1 test_16u::@3 main @begin 
-test_16u::@4 dominated by  main::@1 main::@2 @18 test_16u test_16u::@1 test_16u::@3 test_16u::@4 main @begin 
-test_16u::@5 dominated by  main::@1 main::@2 @18 test_16u test_16u::@5 test_16u::@1 test_16u::@3 test_16u::@4 main @begin 
-test_16u::@6 dominated by  main::@1 main::@2 @18 test_16u test_16u::@5 test_16u::@6 test_16u::@1 test_16u::@3 test_16u::@4 main @begin 
-test_16u::@7 dominated by  main::@1 main::@2 @18 test_16u test_16u::@5 test_16u::@6 test_16u::@7 test_16u::@1 test_16u::@3 test_16u::@4 main @begin 
-test_16u::@8 dominated by  main::@1 main::@2 @18 test_16u test_16u::@5 test_16u::@6 test_16u::@7 test_16u::@8 test_16u::@1 test_16u::@3 test_16u::@4 main @begin 
-test_16u::@9 dominated by  main::@1 main::@2 @18 test_16u test_16u::@9 test_16u::@5 test_16u::@6 test_16u::@7 test_16u::@8 test_16u::@1 test_16u::@3 test_16u::@4 main @begin 
-test_16u::@10 dominated by  main::@1 main::@2 test_16u::@10 @18 test_16u test_16u::@9 test_16u::@5 test_16u::@6 test_16u::@7 test_16u::@8 test_16u::@1 test_16u::@3 test_16u::@4 main @begin 
-test_16u::@11 dominated by  main::@1 main::@2 test_16u::@11 test_16u::@10 @18 test_16u test_16u::@9 test_16u::@5 test_16u::@6 test_16u::@7 test_16u::@8 test_16u::@1 test_16u::@3 test_16u::@4 main @begin 
-test_16u::@return dominated by  main::@1 main::@2 test_16u::@11 test_16u::@10 @18 test_16u test_16u::@9 test_16u::@5 test_16u::@6 test_16u::@7 test_16u::@8 test_16u::@1 test_16u::@3 test_16u::@4 main @begin test_16u::@return 
-test_8u dominated by  main::@1 test_8u @18 main @begin 
-test_8u::@1 dominated by  main::@1 test_8u @18 main @begin test_8u::@1 
-test_8u::@3 dominated by  main::@1 test_8u @18 main @begin test_8u::@3 test_8u::@1 
-test_8u::@4 dominated by  main::@1 test_8u @18 main @begin test_8u::@3 test_8u::@4 test_8u::@1 
-test_8u::@5 dominated by  main::@1 test_8u @18 main @begin test_8u::@3 test_8u::@4 test_8u::@5 test_8u::@1 
-test_8u::@6 dominated by  main::@1 test_8u @18 main @begin test_8u::@6 test_8u::@3 test_8u::@4 test_8u::@5 test_8u::@1 
-test_8u::@7 dominated by  main::@1 test_8u @18 main @begin test_8u::@6 test_8u::@7 test_8u::@3 test_8u::@4 test_8u::@5 test_8u::@1 
-test_8u::@8 dominated by  main::@1 test_8u @18 main @begin test_8u::@6 test_8u::@7 test_8u::@8 test_8u::@3 test_8u::@4 test_8u::@5 test_8u::@1 
-test_8u::@9 dominated by  main::@1 test_8u @18 main @begin test_8u::@6 test_8u::@7 test_8u::@8 test_8u::@9 test_8u::@3 test_8u::@4 test_8u::@5 test_8u::@1 
-test_8u::@10 dominated by  main::@1 test_8u @18 main @begin test_8u::@6 test_8u::@7 test_8u::@8 test_8u::@9 test_8u::@10 test_8u::@3 test_8u::@4 test_8u::@5 test_8u::@1 
-test_8u::@11 dominated by  main::@1 test_8u @18 main @begin test_8u::@6 test_8u::@7 test_8u::@8 test_8u::@9 test_8u::@10 test_8u::@11 test_8u::@3 test_8u::@4 test_8u::@5 test_8u::@1 
-test_8u::@return dominated by  main::@1 test_8u @18 main @begin test_8u::@6 test_8u::@7 test_8u::@8 test_8u::@9 test_8u::@10 test_8u::@11 test_8u::@3 test_8u::@4 test_8u::@5 test_8u::@1 test_8u::@return 
-test_8u::@12 dominated by  main::@1 test_8u @18 main @begin test_8u::@6 test_8u::@7 test_8u::@8 test_8u::@9 test_8u::@10 test_8u::@12 test_8u::@11 test_8u::@3 test_8u::@4 test_8u::@5 test_8u::@1 
-print_cls dominated by  @18 print_cls main @begin 
-print_cls::@1 dominated by  @18 print_cls main @begin print_cls::@1 
-print_cls::@return dominated by  @18 print_cls main @begin print_cls::@return print_cls::@1 
+@19 dominated by  @19 @begin 
+@end dominated by  @19 @end @begin 
+main dominated by  @19 main @begin 
+main::@1 dominated by  main::@1 @19 main @begin 
+main::@2 dominated by  main::@1 main::@2 @19 main @begin 
+main::@3 dominated by  main::@1 main::@2 main::@3 @19 main @begin 
+main::@4 dominated by  main::@1 main::@2 main::@3 main::@4 @19 main @begin 
+main::@return dominated by  main::@1 main::@2 main::@3 main::@4 main::@return @19 main @begin 
+test_16s dominated by  main::@1 main::@2 main::@3 main::@4 @19 test_16s main @begin 
+test_16s::@1 dominated by  main::@1 main::@2 main::@3 main::@4 @19 test_16s test_16s::@1 main @begin 
+test_16s::@3 dominated by  main::@1 main::@2 main::@3 main::@4 @19 test_16s test_16s::@1 test_16s::@3 main @begin 
+test_16s::@4 dominated by  main::@1 main::@2 main::@3 main::@4 @19 test_16s test_16s::@1 test_16s::@3 test_16s::@4 main @begin 
+test_16s::@5 dominated by  main::@1 main::@2 main::@3 main::@4 @19 test_16s test_16s::@1 test_16s::@3 test_16s::@4 test_16s::@5 main @begin 
+test_16s::@6 dominated by  main::@1 main::@2 main::@3 main::@4 @19 test_16s test_16s::@1 test_16s::@3 test_16s::@4 test_16s::@5 test_16s::@6 main @begin 
+test_16s::@7 dominated by  main::@1 main::@2 main::@3 main::@4 @19 test_16s test_16s::@1 test_16s::@3 test_16s::@4 test_16s::@5 test_16s::@6 test_16s::@7 main @begin 
+test_16s::@8 dominated by  main::@1 main::@2 main::@3 main::@4 @19 test_16s test_16s::@1 test_16s::@3 test_16s::@4 test_16s::@5 test_16s::@6 test_16s::@7 test_16s::@8 main @begin 
+test_16s::@9 dominated by  main::@1 main::@2 main::@3 main::@4 @19 test_16s test_16s::@1 test_16s::@3 test_16s::@4 test_16s::@5 test_16s::@6 test_16s::@7 test_16s::@8 main test_16s::@9 @begin 
+test_16s::@10 dominated by  main::@1 main::@2 main::@3 main::@4 @19 test_16s test_16s::@1 test_16s::@3 test_16s::@4 test_16s::@5 test_16s::@6 test_16s::@7 test_16s::@8 main test_16s::@9 @begin test_16s::@10 
+test_16s::@11 dominated by  main::@1 main::@2 main::@3 main::@4 @19 test_16s test_16s::@1 test_16s::@3 test_16s::@4 test_16s::@5 test_16s::@6 test_16s::@7 test_16s::@8 main test_16s::@9 @begin test_16s::@11 test_16s::@10 
+test_16s::@return dominated by  main::@1 main::@2 main::@3 main::@4 test_16s::@return @19 test_16s test_16s::@1 test_16s::@3 test_16s::@4 test_16s::@5 test_16s::@6 test_16s::@7 test_16s::@8 main test_16s::@9 @begin test_16s::@11 test_16s::@10 
+print_ln dominated by  main::@1 print_ln @19 main @begin 
+print_ln::@1 dominated by  main::@1 print_ln @19 print_ln::@1 main @begin 
+print_ln::@return dominated by  print_ln::@return main::@1 print_ln @19 print_ln::@1 main @begin 
+print_sword dominated by  main::@1 main::@2 main::@3 main::@4 @19 test_16s print_sword test_16s::@1 test_16s::@3 main @begin 
+print_sword::@2 dominated by  main::@1 main::@2 main::@3 main::@4 @19 test_16s print_sword test_16s::@1 test_16s::@3 print_sword::@2 main @begin 
+print_sword::@4 dominated by  main::@1 main::@2 main::@3 main::@4 @19 test_16s print_sword test_16s::@1 test_16s::@3 print_sword::@2 print_sword::@4 main @begin 
+print_sword::@1 dominated by  main::@1 main::@2 main::@3 main::@4 @19 test_16s print_sword test_16s::@1 test_16s::@3 print_sword::@1 main @begin 
+print_sword::@return dominated by  main::@1 main::@2 main::@3 main::@4 @19 test_16s print_sword test_16s::@1 test_16s::@3 print_sword::@1 main @begin print_sword::@return 
+print_word dominated by  print_word main::@1 main::@2 @19 main @begin 
+print_word::@1 dominated by  print_word main::@1 main::@2 print_word::@1 @19 main @begin 
+print_word::@return dominated by  print_word main::@1 main::@2 print_word::@return print_word::@1 @19 main @begin 
+print_byte dominated by  main::@1 print_byte @19 main @begin 
+print_byte::@1 dominated by  main::@1 print_byte::@1 print_byte @19 main @begin 
+print_byte::@return dominated by  main::@1 print_byte::@1 print_byte @19 main @begin print_byte::@return 
+print_char dominated by  main::@1 @19 main print_char @begin 
+print_char::@return dominated by  main::@1 @19 main print_char print_char::@return @begin 
+print_str dominated by  main::@1 @19 print_str main @begin 
+print_str::@1 dominated by  main::@1 print_str::@1 @19 print_str main @begin 
+print_str::@return dominated by  main::@1 print_str::@return print_str::@1 @19 print_str main @begin 
+print_str::@2 dominated by  main::@1 print_str::@1 print_str::@2 @19 print_str main @begin 
+div16s dominated by  main::@1 main::@2 main::@3 main::@4 div16s @19 test_16s test_16s::@1 main @begin 
+div16s::@7 dominated by  main::@1 main::@2 main::@3 main::@4 div16s div16s::@7 @19 test_16s test_16s::@1 main @begin 
+div16s::@2 dominated by  main::@1 main::@2 main::@3 main::@4 div16s div16s::@2 @19 test_16s test_16s::@1 main @begin 
+div16s::@9 dominated by  main::@1 main::@2 main::@3 main::@4 div16s div16s::@9 div16s::@2 @19 test_16s test_16s::@1 main @begin 
+div16s::@4 dominated by  main::@1 main::@2 main::@3 main::@4 div16s div16s::@4 div16s::@2 @19 test_16s test_16s::@1 main @begin 
+div16s::@15 dominated by  main::@1 main::@2 main::@3 main::@4 div16s div16s::@4 div16s::@2 @19 test_16s test_16s::@1 main @begin div16s::@15 
+div16s::@18 dominated by  main::@1 main::@2 main::@3 main::@4 div16s div16s::@4 div16s::@2 @19 test_16s test_16s::@1 main @begin div16s::@15 div16s::@18 
+div16s::@return dominated by  main::@1 main::@2 main::@3 main::@4 div16s div16s::@4 div16s::@2 @19 test_16s test_16s::@1 main @begin div16s::@return div16s::@15 
+div16s::@5 dominated by  main::@1 main::@2 main::@3 main::@4 div16s div16s::@5 div16s::@4 div16s::@2 @19 test_16s test_16s::@1 main @begin div16s::@15 
+div16s::@17 dominated by  main::@1 main::@2 main::@3 main::@4 div16s div16s::@2 @19 test_16s test_16s::@1 main @begin div16s::@17 
+div16s::@16 dominated by  main::@1 main::@2 main::@3 main::@4 div16s @19 test_16s test_16s::@1 main @begin div16s::@16 
+div16u dominated by  main::@1 main::@2 div16u @19 main @begin 
+div16u::@1 dominated by  main::@1 main::@2 div16u div16u::@1 @19 main @begin 
+div16u::@4 dominated by  main::@1 main::@2 div16u div16u::@4 div16u::@1 @19 main @begin 
+div16u::@2 dominated by  main::@1 main::@2 div16u div16u::@2 div16u::@1 @19 main @begin 
+div16u::@5 dominated by  main::@1 main::@2 div16u div16u::@5 div16u::@2 div16u::@1 @19 main @begin 
+div16u::@3 dominated by  main::@1 main::@2 div16u div16u::@3 div16u::@2 div16u::@1 @19 main @begin 
+div16u::@6 dominated by  main::@1 main::@2 div16u div16u::@6 div16u::@3 div16u::@2 div16u::@1 @19 main @begin 
+div16u::@return dominated by  div16u::@return main::@1 main::@2 div16u div16u::@6 div16u::@3 div16u::@2 div16u::@1 @19 main @begin 
+test_8s dominated by  main::@1 main::@2 main::@3 test_8s @19 main @begin 
+test_8s::@1 dominated by  main::@1 main::@2 main::@3 test_8s @19 main @begin test_8s::@1 
+test_8s::@3 dominated by  main::@1 main::@2 main::@3 test_8s @19 main @begin test_8s::@1 test_8s::@3 
+test_8s::@4 dominated by  main::@1 main::@2 main::@3 test_8s @19 main @begin test_8s::@1 test_8s::@3 test_8s::@4 
+test_8s::@5 dominated by  main::@1 main::@2 main::@3 test_8s @19 main @begin test_8s::@1 test_8s::@3 test_8s::@4 test_8s::@5 
+test_8s::@6 dominated by  main::@1 main::@2 main::@3 test_8s @19 main @begin test_8s::@1 test_8s::@3 test_8s::@4 test_8s::@5 test_8s::@6 
+test_8s::@7 dominated by  main::@1 main::@2 main::@3 test_8s @19 main @begin test_8s::@1 test_8s::@3 test_8s::@4 test_8s::@5 test_8s::@6 test_8s::@7 
+test_8s::@8 dominated by  main::@1 main::@2 main::@3 test_8s @19 main test_8s::@8 @begin test_8s::@1 test_8s::@3 test_8s::@4 test_8s::@5 test_8s::@6 test_8s::@7 
+test_8s::@9 dominated by  main::@1 main::@2 main::@3 test_8s @19 main test_8s::@8 test_8s::@9 @begin test_8s::@1 test_8s::@3 test_8s::@4 test_8s::@5 test_8s::@6 test_8s::@7 
+test_8s::@10 dominated by  main::@1 main::@2 main::@3 test_8s::@10 test_8s @19 main test_8s::@8 test_8s::@9 @begin test_8s::@1 test_8s::@3 test_8s::@4 test_8s::@5 test_8s::@6 test_8s::@7 
+test_8s::@11 dominated by  main::@1 main::@2 main::@3 test_8s::@10 test_8s::@11 test_8s @19 main test_8s::@8 test_8s::@9 @begin test_8s::@1 test_8s::@3 test_8s::@4 test_8s::@5 test_8s::@6 test_8s::@7 
+test_8s::@return dominated by  main::@1 main::@2 main::@3 test_8s::@10 test_8s::@11 test_8s @19 main test_8s::@8 test_8s::@9 @begin test_8s::@return test_8s::@1 test_8s::@3 test_8s::@4 test_8s::@5 test_8s::@6 test_8s::@7 
+print_sbyte dominated by  main::@1 main::@2 main::@3 test_8s @19 print_sbyte main @begin test_8s::@1 test_8s::@3 
+print_sbyte::@2 dominated by  main::@1 main::@2 main::@3 test_8s @19 print_sbyte main print_sbyte::@2 @begin test_8s::@1 test_8s::@3 
+print_sbyte::@4 dominated by  main::@1 main::@2 main::@3 test_8s @19 print_sbyte main print_sbyte::@4 print_sbyte::@2 @begin test_8s::@1 test_8s::@3 
+print_sbyte::@1 dominated by  main::@1 main::@2 main::@3 test_8s @19 print_sbyte main print_sbyte::@1 @begin test_8s::@1 test_8s::@3 
+print_sbyte::@return dominated by  main::@1 main::@2 main::@3 test_8s @19 print_sbyte main print_sbyte::@1 @begin print_sbyte::@return test_8s::@1 test_8s::@3 
+div8s dominated by  main::@1 main::@2 main::@3 div8s test_8s @19 main @begin test_8s::@1 
+div8s::@7 dominated by  main::@1 main::@2 main::@3 div8s test_8s @19 main @begin test_8s::@1 div8s::@7 
+div8s::@2 dominated by  main::@1 main::@2 main::@3 div8s test_8s @19 main div8s::@2 @begin test_8s::@1 
+div8s::@9 dominated by  main::@1 main::@2 main::@3 div8s test_8s @19 main div8s::@2 @begin test_8s::@1 div8s::@9 
+div8s::@4 dominated by  main::@1 main::@2 main::@3 div8s test_8s @19 main div8s::@2 @begin test_8s::@1 div8s::@4 
+div8s::@15 dominated by  main::@1 main::@2 main::@3 div8s test_8s @19 div8s::@15 main div8s::@2 @begin test_8s::@1 div8s::@4 
+div8s::@18 dominated by  main::@1 main::@2 main::@3 div8s test_8s @19 div8s::@18 div8s::@15 main div8s::@2 @begin test_8s::@1 div8s::@4 
+div8s::@return dominated by  main::@1 main::@2 main::@3 div8s test_8s @19 div8s::@15 main div8s::@2 div8s::@return @begin test_8s::@1 div8s::@4 
+div8s::@5 dominated by  main::@1 main::@2 main::@3 div8s test_8s @19 div8s::@15 main div8s::@2 @begin test_8s::@1 div8s::@5 div8s::@4 
+div8s::@17 dominated by  main::@1 main::@2 main::@3 div8s test_8s @19 div8s::@17 main div8s::@2 @begin test_8s::@1 
+div8s::@16 dominated by  main::@1 main::@2 main::@3 div8s test_8s @19 div8s::@16 main @begin test_8s::@1 
+div8u dominated by  main::@1 div8u @19 main @begin 
+div8u::@1 dominated by  main::@1 div8u @19 main @begin div8u::@1 
+div8u::@4 dominated by  main::@1 div8u @19 main div8u::@4 @begin div8u::@1 
+div8u::@2 dominated by  main::@1 div8u @19 main div8u::@2 @begin div8u::@1 
+div8u::@5 dominated by  main::@1 div8u @19 main div8u::@2 div8u::@5 @begin div8u::@1 
+div8u::@3 dominated by  main::@1 div8u @19 main div8u::@3 div8u::@2 @begin div8u::@1 
+div8u::@6 dominated by  main::@1 div8u @19 main div8u::@3 div8u::@2 div8u::@6 @begin div8u::@1 
+div8u::@return dominated by  main::@1 div8u div8u::@return @19 main div8u::@3 div8u::@2 div8u::@6 @begin div8u::@1 
+test_16u dominated by  main::@1 main::@2 @19 test_16u main @begin 
+test_16u::@1 dominated by  main::@1 main::@2 @19 test_16u test_16u::@1 main @begin 
+test_16u::@3 dominated by  main::@1 main::@2 @19 test_16u test_16u::@1 test_16u::@3 main @begin 
+test_16u::@4 dominated by  main::@1 main::@2 @19 test_16u test_16u::@1 test_16u::@3 test_16u::@4 main @begin 
+test_16u::@5 dominated by  main::@1 main::@2 @19 test_16u test_16u::@5 test_16u::@1 test_16u::@3 test_16u::@4 main @begin 
+test_16u::@6 dominated by  main::@1 main::@2 @19 test_16u test_16u::@5 test_16u::@6 test_16u::@1 test_16u::@3 test_16u::@4 main @begin 
+test_16u::@7 dominated by  main::@1 main::@2 @19 test_16u test_16u::@5 test_16u::@6 test_16u::@7 test_16u::@1 test_16u::@3 test_16u::@4 main @begin 
+test_16u::@8 dominated by  main::@1 main::@2 @19 test_16u test_16u::@5 test_16u::@6 test_16u::@7 test_16u::@8 test_16u::@1 test_16u::@3 test_16u::@4 main @begin 
+test_16u::@9 dominated by  main::@1 main::@2 @19 test_16u test_16u::@9 test_16u::@5 test_16u::@6 test_16u::@7 test_16u::@8 test_16u::@1 test_16u::@3 test_16u::@4 main @begin 
+test_16u::@10 dominated by  main::@1 main::@2 test_16u::@10 @19 test_16u test_16u::@9 test_16u::@5 test_16u::@6 test_16u::@7 test_16u::@8 test_16u::@1 test_16u::@3 test_16u::@4 main @begin 
+test_16u::@11 dominated by  main::@1 main::@2 test_16u::@11 test_16u::@10 @19 test_16u test_16u::@9 test_16u::@5 test_16u::@6 test_16u::@7 test_16u::@8 test_16u::@1 test_16u::@3 test_16u::@4 main @begin 
+test_16u::@return dominated by  main::@1 main::@2 test_16u::@11 test_16u::@10 @19 test_16u test_16u::@9 test_16u::@5 test_16u::@6 test_16u::@7 test_16u::@8 test_16u::@1 test_16u::@3 test_16u::@4 main @begin test_16u::@return 
+test_8u dominated by  main::@1 test_8u @19 main @begin 
+test_8u::@1 dominated by  main::@1 test_8u @19 main @begin test_8u::@1 
+test_8u::@3 dominated by  main::@1 test_8u @19 main @begin test_8u::@3 test_8u::@1 
+test_8u::@4 dominated by  main::@1 test_8u @19 main @begin test_8u::@3 test_8u::@4 test_8u::@1 
+test_8u::@5 dominated by  main::@1 test_8u @19 main @begin test_8u::@3 test_8u::@4 test_8u::@5 test_8u::@1 
+test_8u::@6 dominated by  main::@1 test_8u @19 main @begin test_8u::@6 test_8u::@3 test_8u::@4 test_8u::@5 test_8u::@1 
+test_8u::@7 dominated by  main::@1 test_8u @19 main @begin test_8u::@6 test_8u::@7 test_8u::@3 test_8u::@4 test_8u::@5 test_8u::@1 
+test_8u::@8 dominated by  main::@1 test_8u @19 main @begin test_8u::@6 test_8u::@7 test_8u::@8 test_8u::@3 test_8u::@4 test_8u::@5 test_8u::@1 
+test_8u::@9 dominated by  main::@1 test_8u @19 main @begin test_8u::@6 test_8u::@7 test_8u::@8 test_8u::@9 test_8u::@3 test_8u::@4 test_8u::@5 test_8u::@1 
+test_8u::@10 dominated by  main::@1 test_8u @19 main @begin test_8u::@6 test_8u::@7 test_8u::@8 test_8u::@9 test_8u::@10 test_8u::@3 test_8u::@4 test_8u::@5 test_8u::@1 
+test_8u::@11 dominated by  main::@1 test_8u @19 main @begin test_8u::@6 test_8u::@7 test_8u::@8 test_8u::@9 test_8u::@10 test_8u::@11 test_8u::@3 test_8u::@4 test_8u::@5 test_8u::@1 
+test_8u::@return dominated by  main::@1 test_8u @19 main @begin test_8u::@6 test_8u::@7 test_8u::@8 test_8u::@9 test_8u::@10 test_8u::@11 test_8u::@3 test_8u::@4 test_8u::@5 test_8u::@1 test_8u::@return 
+test_8u::@12 dominated by  main::@1 test_8u @19 main @begin test_8u::@6 test_8u::@7 test_8u::@8 test_8u::@9 test_8u::@10 test_8u::@12 test_8u::@11 test_8u::@3 test_8u::@4 test_8u::@5 test_8u::@1 
+print_cls dominated by  @19 print_cls main @begin 
+print_cls::@1 dominated by  @19 print_cls main @begin print_cls::@1 
+print_cls::@return dominated by  @19 print_cls main @begin print_cls::@return print_cls::@1 
 
 NATURAL LOOPS
 Found back edge: Loop head: test_16s::@1 tails: test_16s::@11 blocks: null
@@ -6687,17 +6740,17 @@ INITIAL ASM
   .label rem16s = 3
 //SEG2 @begin
 bbegin:
-//SEG3 [1] phi from @begin to @18 [phi:@begin->@18]
-b18_from_bbegin:
-  jmp b18
-//SEG4 @18
-b18:
+//SEG3 [1] phi from @begin to @19 [phi:@begin->@19]
+b19_from_bbegin:
+  jmp b19
+//SEG4 @19
+b19:
 //SEG5 [2] call main param-assignment [ ] ( )
-//SEG6 [4] phi from @18 to main [phi:@18->main]
-main_from_b18:
+//SEG6 [4] phi from @19 to main [phi:@19->main]
+main_from_b19:
   jsr main
-//SEG7 [3] phi from @18 to @end [phi:@18->@end]
-bend_from_b18:
+//SEG7 [3] phi from @19 to @end [phi:@19->@end]
+bend_from_b19:
   jmp bend
 //SEG8 @end
 bend:
@@ -6758,9 +6811,9 @@ test_16s: {
   //SEG31 [16] phi from test_16s to test_16s::@1 [phi:test_16s->test_16s::@1]
   b1_from_test_16s:
   //SEG32 [16] phi (signed word) rem16s#17 = (byte/signed byte/word/signed word/dword/signed dword) 0 [phi:test_16s->test_16s::@1#0] -- vwsz1=vbuc1 
-    lda #0
+    lda #<0
     sta rem16s
-    lda #0
+    lda #>0
     sta rem16s+1
   //SEG33 [16] phi (byte) test_16s::i#10 = (byte/signed byte/word/signed word/dword/signed dword) 0 [phi:test_16s->test_16s::@1#1] -- vbuz1=vbuc1 
     lda #0
@@ -7360,15 +7413,15 @@ div16u: {
     lda #0
     sta i
   //SEG220 [107] phi (word) div16u::quotient#3 = (byte/signed byte/word/signed word/dword/signed dword) 0 [phi:div16u->div16u::@1#1] -- vwuz1=vbuc1 
-    lda #0
+    lda #<0
     sta quotient
-    lda #0
+    lda #>0
     sta quotient+1
   //SEG221 [107] phi (word) div16u::dividend#3 = (word) div16u::dividend#5 [phi:div16u->div16u::@1#2] -- register_copy 
   //SEG222 [107] phi (word) div16u::rem#4 = (byte/signed byte/word/signed word/dword/signed dword) 0 [phi:div16u->div16u::@1#3] -- vwuz1=vbuc1 
-    lda #0
+    lda #<0
     sta rem
-    lda #0
+    lda #>0
     sta rem+1
     jmp b1
   //SEG223 [107] phi from div16u::@3 to div16u::@1 [phi:div16u::@3->div16u::@1]
@@ -7937,9 +7990,9 @@ test_16u: {
   //SEG423 [203] phi from test_16u to test_16u::@1 [phi:test_16u->test_16u::@1]
   b1_from_test_16u:
   //SEG424 [203] phi (word) rem16u#30 = (byte/signed byte/word/signed word/dword/signed dword) 0 [phi:test_16u->test_16u::@1#0] -- vwuz1=vbuc1 
-    lda #0
+    lda #<0
     sta rem16u
-    lda #0
+    lda #>0
     sta rem16u+1
   //SEG425 [203] phi (byte) test_16u::i#10 = (byte/signed byte/word/signed word/dword/signed dword) 0 [phi:test_16u->test_16u::@1#1] -- vbuz1=vbuc1 
     lda #0
@@ -8735,17 +8788,17 @@ ASSEMBLER BEFORE OPTIMIZATION
   .label rem16s = 3
 //SEG2 @begin
 bbegin:
-//SEG3 [1] phi from @begin to @18 [phi:@begin->@18]
-b18_from_bbegin:
-  jmp b18
-//SEG4 @18
-b18:
+//SEG3 [1] phi from @begin to @19 [phi:@begin->@19]
+b19_from_bbegin:
+  jmp b19
+//SEG4 @19
+b19:
 //SEG5 [2] call main param-assignment [ ] ( )
-//SEG6 [4] phi from @18 to main [phi:@18->main]
-main_from_b18:
+//SEG6 [4] phi from @19 to main [phi:@19->main]
+main_from_b19:
   jsr main
-//SEG7 [3] phi from @18 to @end [phi:@18->@end]
-bend_from_b18:
+//SEG7 [3] phi from @19 to @end [phi:@19->@end]
+bend_from_b19:
   jmp bend
 //SEG8 @end
 bend:
@@ -8806,9 +8859,9 @@ test_16s: {
   //SEG31 [16] phi from test_16s to test_16s::@1 [phi:test_16s->test_16s::@1]
   b1_from_test_16s:
   //SEG32 [16] phi (signed word) rem16s#17 = (byte/signed byte/word/signed word/dword/signed dword) 0 [phi:test_16s->test_16s::@1#0] -- vwsz1=vbuc1 
-    lda #0
+    lda #<0
     sta rem16s
-    lda #0
+    lda #>0
     sta rem16s+1
   //SEG33 [16] phi (byte) test_16s::i#10 = (byte/signed byte/word/signed word/dword/signed dword) 0 [phi:test_16s->test_16s::@1#1] -- vbuz1=vbuc1 
     lda #0
@@ -9347,15 +9400,15 @@ div16u: {
   //SEG219 [107] phi (byte) div16u::i#2 = (byte/signed byte/word/signed word/dword/signed dword) 0 [phi:div16u->div16u::@1#0] -- vbuxx=vbuc1 
     ldx #0
   //SEG220 [107] phi (word) div16u::quotient#3 = (byte/signed byte/word/signed word/dword/signed dword) 0 [phi:div16u->div16u::@1#1] -- vwuz1=vbuc1 
-    lda #0
+    lda #<0
     sta quotient
-    lda #0
+    lda #>0
     sta quotient+1
   //SEG221 [107] phi (word) div16u::dividend#3 = (word) div16u::dividend#5 [phi:div16u->div16u::@1#2] -- register_copy 
   //SEG222 [107] phi (word) div16u::rem#4 = (byte/signed byte/word/signed word/dword/signed dword) 0 [phi:div16u->div16u::@1#3] -- vwuz1=vbuc1 
-    lda #0
+    lda #<0
     sta rem
-    lda #0
+    lda #>0
     sta rem+1
     jmp b1
   //SEG223 [107] phi from div16u::@3 to div16u::@1 [phi:div16u::@3->div16u::@1]
@@ -9877,9 +9930,9 @@ test_16u: {
   //SEG423 [203] phi from test_16u to test_16u::@1 [phi:test_16u->test_16u::@1]
   b1_from_test_16u:
   //SEG424 [203] phi (word) rem16u#30 = (byte/signed byte/word/signed word/dword/signed dword) 0 [phi:test_16u->test_16u::@1#0] -- vwuz1=vbuc1 
-    lda #0
+    lda #<0
     sta rem16u
-    lda #0
+    lda #>0
     sta rem16u+1
   //SEG425 [203] phi (byte) test_16u::i#10 = (byte/signed byte/word/signed word/dword/signed dword) 0 [phi:test_16u->test_16u::@1#1] -- vbuz1=vbuc1 
     lda #0
@@ -10276,7 +10329,7 @@ print_cls: {
 }
 
 ASSEMBLER OPTIMIZATIONS
-Removing instruction jmp b18
+Removing instruction jmp b19
 Removing instruction jmp bend
 Removing instruction jmp b1
 Removing instruction jmp b2
@@ -10375,20 +10428,20 @@ Removing instruction jmp breturn
 Removing instruction jmp b1
 Removing instruction jmp breturn
 Succesful ASM optimization Pass5NextJumpElimination
-Removing instruction lda #0
+Removing instruction lda #>0
 Removing instruction lda #0
 Removing instruction ldy i
 Removing instruction lda i
 Removing instruction ldy #0
-Replacing instruction lda #0 with TXA
-Removing instruction lda #0
-Removing instruction lda #0
-Removing instruction lda #0
+Replacing instruction lda #<0 with TXA
+Removing instruction lda #>0
+Removing instruction lda #<0
+Removing instruction lda #>0
 Removing instruction lda #0
 Removing instruction ldy i
 Replacing instruction lda #0 with TXA
 Replacing instruction ldy #0 with TAY
-Removing instruction lda #0
+Removing instruction lda #>0
 Removing instruction lda #0
 Removing instruction ldy i
 Removing instruction lda i
@@ -10417,9 +10470,9 @@ Replacing label b1_from_b11 with b1
 Replacing label b1_from_b1 with b1
 Replacing label b1_from_b1 with b1
 Removing instruction bbegin:
-Removing instruction b18_from_bbegin:
-Removing instruction main_from_b18:
-Removing instruction bend_from_b18:
+Removing instruction b19_from_bbegin:
+Removing instruction main_from_b19:
+Removing instruction bend_from_b19:
 Removing instruction b1_from_main:
 Removing instruction test_8u_from_b1:
 Removing instruction b2_from_b1:
@@ -10495,7 +10548,7 @@ Removing instruction b10_from_b9:
 Removing instruction print_ln_from_b10:
 Removing instruction b1_from_b1:
 Succesful ASM optimization Pass5RedundantLabelElimination
-Removing instruction b18:
+Removing instruction b19:
 Removing instruction bend:
 Removing instruction print_cls_from_main:
 Removing instruction b1:
@@ -10631,7 +10684,7 @@ Succesful ASM optimization Pass5UnreachableCodeElimination
 Fixing long branch [82] bne b1 to beq
 
 FINAL SYMBOL TABLE
-(label) @18
+(label) @19
 (label) @begin
 (label) @end
 (byte*) SCREEN
@@ -11068,12 +11121,12 @@ Score: 33529
   .label rem16u = 3
   .label rem16s = 3
 //SEG2 @begin
-//SEG3 [1] phi from @begin to @18 [phi:@begin->@18]
-//SEG4 @18
+//SEG3 [1] phi from @begin to @19 [phi:@begin->@19]
+//SEG4 @19
 //SEG5 [2] call main param-assignment [ ] ( )
-//SEG6 [4] phi from @18 to main [phi:@18->main]
+//SEG6 [4] phi from @19 to main [phi:@19->main]
   jsr main
-//SEG7 [3] phi from @18 to @end [phi:@18->@end]
+//SEG7 [3] phi from @19 to @end [phi:@19->@end]
 //SEG8 @end
 //SEG9 main
 main: {
@@ -11112,7 +11165,7 @@ test_16s: {
     .label i = 2
   //SEG31 [16] phi from test_16s to test_16s::@1 [phi:test_16s->test_16s::@1]
   //SEG32 [16] phi (signed word) rem16s#17 = (byte/signed byte/word/signed word/dword/signed dword) 0 [phi:test_16s->test_16s::@1#0] -- vwsz1=vbuc1 
-    lda #0
+    lda #<0
     sta rem16s
     sta rem16s+1
   //SEG33 [16] phi (byte) test_16s::i#10 = (byte/signed byte/word/signed word/dword/signed dword) 0 [phi:test_16s->test_16s::@1#1] -- vbuz1=vbuc1 
@@ -11979,7 +12032,7 @@ test_16u: {
     .label i = 2
   //SEG423 [203] phi from test_16u to test_16u::@1 [phi:test_16u->test_16u::@1]
   //SEG424 [203] phi (word) rem16u#30 = (byte/signed byte/word/signed word/dword/signed dword) 0 [phi:test_16u->test_16u::@1#0] -- vwuz1=vbuc1 
-    lda #0
+    lda #<0
     sta rem16u
     sta rem16u+1
   //SEG425 [203] phi (byte) test_16u::i#10 = (byte/signed byte/word/signed word/dword/signed dword) 0 [phi:test_16u->test_16u::@1#1] -- vbuz1=vbuc1 

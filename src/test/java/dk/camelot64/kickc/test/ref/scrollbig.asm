@@ -64,8 +64,8 @@ scroll_bit: {
     rol _4+1
     asl _4
     rol _4+1
-    lda current_chargen
     clc
+    lda current_chargen
     adc #<CHARGEN
     sta current_chargen
     lda current_chargen+1

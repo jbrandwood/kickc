@@ -26,21 +26,22 @@
   jsr main
 main: {
     jsr init
-    lda #$64
+    lda #<$64
     sta yvel_init
-    lda #0
+    lda #>$64
     sta yvel_init+1
-    lda #$c8
+    lda #<$c8
     sta xvel
-    lda #0
+    lda #>$c8
     sta xvel+1
+    lda #<0
     sta ypos
     sta ypos+1
     sta xpos
     sta xpos+1
-    lda #$64
+    lda #<$64
     sta yvel_12
-    lda #0
+    lda #>$64
     sta yvel_12+1
   b2:
     lda RASTER
@@ -80,37 +81,37 @@ anim: {
     eor #$80
   !:
     bpl b2
-    lda #$c8
+    lda #<$c8
     sta yvel
-    lda #0
+    lda #>$c8
     sta yvel+1
   b2:
     lda yvel
     sta yvel_22
     lda yvel+1
     sta yvel_22+1
-    lda #0
+    lda #<0
     sta ypos
     sta ypos+1
     sta xpos
     sta xpos+1
   b1:
-    lda yvel_10
     clc
+    lda yvel_10
     adc #<g
     sta yvel_10
     lda yvel_10+1
     adc #>g
     sta yvel_10+1
-    clc
     lda xpos
+    clc
     adc xvel
     sta xpos
     lda xpos+1
     adc xvel+1
     sta xpos+1
-    clc
     lda ypos
+    clc
     adc yvel_10
     sta ypos
     lda ypos+1
@@ -129,8 +130,8 @@ anim: {
     rol $ff
     rol _10
     rol _10+1
-    lda sprite_x
     clc
+    lda sprite_x
     adc #<$a0
     sta sprite_x
     lda sprite_x+1

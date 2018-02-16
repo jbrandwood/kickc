@@ -38,8 +38,8 @@ main: {
     sta _2
     lda dw+3
     sta _2+1
-    lda _32
     clc
+    lda _32
     adc #<$1111
     sta _32
     lda _32+1
@@ -57,8 +57,8 @@ main: {
     sta _5
     lda dw+1
     sta _5+1
-    lda _33
     clc
+    lda _33
     adc #<$1111
     sta _33
     lda _33+1

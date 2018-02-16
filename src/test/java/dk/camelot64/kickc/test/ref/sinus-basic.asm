@@ -47,9 +47,9 @@ main: {
     lda #>f_i
     sta setMEMtoFAC.mem+1
     jsr setMEMtoFAC
-    lda #$19
+    lda #<$19
     sta setFAC.w
-    lda #0
+    lda #>$19
     sta setFAC.w+1
     jsr setFAC
     jsr divMEMbyFAC

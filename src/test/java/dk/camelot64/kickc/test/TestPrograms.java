@@ -107,8 +107,13 @@ public class TestPrograms {
    }
 
    @Test
-   public void testMultiply() throws IOException, URISyntaxException {
-      compileAndCompare("test-multiply");
+   public void testMultiply8Bit() throws IOException, URISyntaxException {
+      compileAndCompare("test-multiply-8bit");
+   }
+
+   @Test
+   public void testMultiply16Bit() throws IOException, URISyntaxException {
+      compileAndCompare("test-multiply-16bit");
    }
 
    @Test

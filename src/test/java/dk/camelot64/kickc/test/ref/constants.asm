@@ -17,11 +17,11 @@ main: {
     rts
 }
 test_sbytes: {
-    .label bb = 0
-    .label bc = bb+2
-    .label bd = bc-4
-    .label bf = $ff & -$7f-$7f
-    .label be = -bd
+    .const bb = 0
+    .const bc = bb+2
+    .const bd = bc-4
+    .const bf = $ff & -$7f-$7f
+    .const be = -bd
     lda #0
     sta assert_sbyte.c
     ldx #bb
@@ -147,9 +147,9 @@ print_ln: {
     rts
 }
 test_bytes: {
-    .label bb = 0
-    .label bc = bb+2
-    .label bd = bc-4
+    .const bb = 0
+    .const bc = bb+2
+    .const bd = bc-4
     lda #<SCREEN
     sta line_cursor
     lda #>SCREEN

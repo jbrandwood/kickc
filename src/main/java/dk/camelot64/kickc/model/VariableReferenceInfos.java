@@ -150,5 +150,13 @@ public class VariableReferenceInfos {
       return constRefStmts.get(constRef);
    }
 
+   /**
+    * Get all constatns referencing another constant
+    * @param constRef The constant to look for
+    * @return All constants that reference the constant in their value
+    */
+   public Collection<ConstantRef> getConstRefConsts(ConstantRef constRef) {
+      return constRefConsts.get(constRef);
+   }
 
 }

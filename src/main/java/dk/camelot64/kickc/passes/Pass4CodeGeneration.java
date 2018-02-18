@@ -117,20 +117,10 @@ public class Pass4CodeGeneration {
                   asm.addLabelDecl(asmName.replace("#", "_").replace("$", "_"), asmConstant);
                } else if(SymbolType.isInteger(constantVar.getType()) && constantVar.getRef().getScopeDepth()>0) {
                   // Use label for integers referenced in other scope - to allow cross-scope referencing
-                  boolean gen = false;
-                  Collection<Integer> constRefStatements = program.getVariableReferenceInfos().getConstRefStatements(constantVar.getRef());
-                  if(constRefStatements!=null) {
-                     for(Integer constRefStmtIdx : constRefStatements) {
-                        ScopeRef refScope = program.getStatementInfos().getBlock(constRefStmtIdx).getScope();
-                        if(!refScope.equals(scopeRef)) {
-                           // Use label for integers referenced in other scope - to allow cross-scope referencing
-                           asm.addLabelDecl(asmName.replace("#", "_").replace("$", "_"), asmConstant);
-                           gen = true;
-                           break;
-                        }
-                     }
-                  }
-                  if(!gen) {
+                  if(useLabelForConst(scopeRef, constantVar)) {
+                     // Use label for integers referenced in other scope - to allow cross-scope referencing
+                     asm.addLabelDecl(asmName.replace("#", "_").replace("$", "_"), asmConstant);
+                  } else {
                      // Use constant for constant integers not referenced outside scope
                      asm.addConstant(asmName.replace("#", "_").replace("$", "_"), asmConstant);
                   }
@@ -141,6 +131,67 @@ public class Pass4CodeGeneration {
             }
          }
       }
+   }
+
+   /**
+    * Determines whether to use a .label instead of .const for a constant.
+    * This can be necessary because KickAssembler does not allow constant references between scopes.
+    * If a constant in one scope is referenced from another scope a .label is generated in stead - to allow the cross-scope reference.
+    *
+    * @param scopeRef The current scope
+    * @param constantVar The constant to examine
+    * @return true if a .label should be used in the generated ASM
+    */
+   private boolean useLabelForConst(ScopeRef scopeRef, ConstantVar constantVar) {
+      boolean useLabel = false;
+      Collection<Integer> constRefStatements = program.getVariableReferenceInfos().getConstRefStatements(constantVar.getRef());
+      if(constRefStatements!=null) {
+         for(Integer constRefStmtIdx : constRefStatements) {
+            ScopeRef refScope = program.getStatementInfos().getBlock(constRefStmtIdx).getScope();
+            if(!refScope.equals(scopeRef)) {
+               Statement statement = program.getStatementInfos().getStatement(constRefStmtIdx);
+               if(statement instanceof StatementPhiBlock) {
+                  // Const reference in PHI block - examine if the only predecessor is current scope
+                  boolean found = false;
+                  for(StatementPhiBlock.PhiVariable phiVariable : ((StatementPhiBlock) statement).getPhiVariables()) {
+                     for(StatementPhiBlock.PhiRValue phiRValue : phiVariable.getValues()) {
+                        if(phiRValue.getrValue().equals(constantVar.getRef())) {
+                           found = true;
+                           // Found the constant
+                           LabelRef pred = phiRValue.getPredecessor();
+                           ControlFlowBlock predBlock = program.getGraph().getBlock(pred);
+                           ScopeRef predScope = predBlock.getScope();
+                           if(!predScope.equals(scopeRef)) {
+                              // Scopes in PHI RValue differs from const scope - generate label
+                              useLabel = true;
+                           }
+                        }
+                     }
+                  }
+                  if(!found ) {
+                     // PHI-reference is complex - generate label
+                     program.getLog().append("Warning: Complex PHI-value using constant. Using .label as fallback. "+statement);
+                     useLabel = true;
+                  }
+               } else {
+                  // Used in a non-PHI statement in another scope - generate label
+                  useLabel = true;
+               }
+            }
+         }
+      }
+      Collection<ConstantRef> constRefConsts = program.getVariableReferenceInfos().getConstRefConsts(constantVar.getRef());
+      if(constRefConsts!=null) {
+         for(ConstantRef constRefConst : constRefConsts) {
+            ConstantVar refConst = program.getScope().getConstant(constRefConst);
+            if(!refConst.getScope().getRef().equals(scopeRef)) {
+               // Used in constant in another scope - generate label
+               useLabel = true;
+               break;
+            }
+         }
+      }
+      return useLabel;
    }
 
    /**

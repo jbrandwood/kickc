@@ -58,7 +58,7 @@ byte divr8u(byte dividend, byte divisor, byte rem) {
     for( byte i : 0..7) {
         rem = rem << 1;
         if( (dividend & $80) != 0 ) {
-            rem++;
+            rem = rem | 1;
         }
         dividend = dividend << 1;
         quotient = quotient << 1;
@@ -91,7 +91,7 @@ word divr16u(word dividend, word divisor, word rem) {
     for( byte i : 0..15) {
         rem = rem << 1;
         if( (>dividend & $80) != 0 ) {
-            rem++;
+            rem = rem | 1;
         }
         dividend = dividend << 1;
         quotient = quotient << 1;
@@ -174,9 +174,7 @@ signed word div16s(signed word dividend, signed word divisor) {
     }
 }
 
-Adding pre/post-modifier (byte) divr8u::rem ← ++ (byte) divr8u::rem
 Adding pre/post-modifier (byte) divr8u::quotient ← ++ (byte) divr8u::quotient
-Adding pre/post-modifier (word) divr16u::rem ← ++ (word) divr16u::rem
 Adding pre/post-modifier (word) divr16u::quotient ← ++ (word) divr16u::quotient
 Importing print.kc
 PARSING src/test/java/dk/camelot64/kickc/test/kc/print.kc
@@ -290,22 +288,23 @@ divr8u::@1:
   (boolean~) divr8u::$2 ← (byte~) divr8u::$1 != (byte/signed byte/word/signed word/dword/signed dword) 0
   (boolean~) divr8u::$3 ← ! (boolean~) divr8u::$2
   if((boolean~) divr8u::$3) goto divr8u::@2
-  (byte) divr8u::rem ← ++ (byte) divr8u::rem
+  (byte~) divr8u::$4 ← (byte) divr8u::rem | (byte/signed byte/word/signed word/dword/signed dword) 1
+  (byte) divr8u::rem ← (byte~) divr8u::$4
 divr8u::@2:
-  (byte~) divr8u::$4 ← (byte) divr8u::dividend << (byte/signed byte/word/signed word/dword/signed dword) 1
-  (byte) divr8u::dividend ← (byte~) divr8u::$4
-  (byte~) divr8u::$5 ← (byte) divr8u::quotient << (byte/signed byte/word/signed word/dword/signed dword) 1
-  (byte) divr8u::quotient ← (byte~) divr8u::$5
-  (boolean~) divr8u::$6 ← (byte) divr8u::rem >= (byte) divr8u::divisor
-  (boolean~) divr8u::$7 ← ! (boolean~) divr8u::$6
-  if((boolean~) divr8u::$7) goto divr8u::@3
+  (byte~) divr8u::$5 ← (byte) divr8u::dividend << (byte/signed byte/word/signed word/dword/signed dword) 1
+  (byte) divr8u::dividend ← (byte~) divr8u::$5
+  (byte~) divr8u::$6 ← (byte) divr8u::quotient << (byte/signed byte/word/signed word/dword/signed dword) 1
+  (byte) divr8u::quotient ← (byte~) divr8u::$6
+  (boolean~) divr8u::$7 ← (byte) divr8u::rem >= (byte) divr8u::divisor
+  (boolean~) divr8u::$8 ← ! (boolean~) divr8u::$7
+  if((boolean~) divr8u::$8) goto divr8u::@3
   (byte) divr8u::quotient ← ++ (byte) divr8u::quotient
-  (byte/signed byte/word/signed word/dword/signed dword~) divr8u::$8 ← (byte) divr8u::rem - (byte) divr8u::divisor
-  (byte) divr8u::rem ← (byte/signed byte/word/signed word/dword/signed dword~) divr8u::$8
+  (byte/signed byte/word/signed word/dword/signed dword~) divr8u::$9 ← (byte) divr8u::rem - (byte) divr8u::divisor
+  (byte) divr8u::rem ← (byte/signed byte/word/signed word/dword/signed dword~) divr8u::$9
 divr8u::@3:
   (byte) divr8u::i ← ++ (byte) divr8u::i
-  (boolean~) divr8u::$9 ← (byte) divr8u::i != (byte/signed byte/word/signed word/dword/signed dword) 8
-  if((boolean~) divr8u::$9) goto divr8u::@1
+  (boolean~) divr8u::$10 ← (byte) divr8u::i != (byte/signed byte/word/signed word/dword/signed dword) 8
+  if((boolean~) divr8u::$10) goto divr8u::@1
   (byte) rem8u ← (byte) divr8u::rem
   (byte) divr8u::return ← (byte) divr8u::quotient
   goto divr8u::@return
@@ -333,22 +332,23 @@ divr16u::@1:
   (boolean~) divr16u::$3 ← (byte~) divr16u::$2 != (byte/signed byte/word/signed word/dword/signed dword) 0
   (boolean~) divr16u::$4 ← ! (boolean~) divr16u::$3
   if((boolean~) divr16u::$4) goto divr16u::@2
-  (word) divr16u::rem ← ++ (word) divr16u::rem
+  (word~) divr16u::$5 ← (word) divr16u::rem | (byte/signed byte/word/signed word/dword/signed dword) 1
+  (word) divr16u::rem ← (word~) divr16u::$5
 divr16u::@2:
-  (word~) divr16u::$5 ← (word) divr16u::dividend << (byte/signed byte/word/signed word/dword/signed dword) 1
-  (word) divr16u::dividend ← (word~) divr16u::$5
-  (word~) divr16u::$6 ← (word) divr16u::quotient << (byte/signed byte/word/signed word/dword/signed dword) 1
-  (word) divr16u::quotient ← (word~) divr16u::$6
-  (boolean~) divr16u::$7 ← (word) divr16u::rem >= (word) divr16u::divisor
-  (boolean~) divr16u::$8 ← ! (boolean~) divr16u::$7
-  if((boolean~) divr16u::$8) goto divr16u::@3
+  (word~) divr16u::$6 ← (word) divr16u::dividend << (byte/signed byte/word/signed word/dword/signed dword) 1
+  (word) divr16u::dividend ← (word~) divr16u::$6
+  (word~) divr16u::$7 ← (word) divr16u::quotient << (byte/signed byte/word/signed word/dword/signed dword) 1
+  (word) divr16u::quotient ← (word~) divr16u::$7
+  (boolean~) divr16u::$8 ← (word) divr16u::rem >= (word) divr16u::divisor
+  (boolean~) divr16u::$9 ← ! (boolean~) divr16u::$8
+  if((boolean~) divr16u::$9) goto divr16u::@3
   (word) divr16u::quotient ← ++ (word) divr16u::quotient
-  (word~) divr16u::$9 ← (word) divr16u::rem - (word) divr16u::divisor
-  (word) divr16u::rem ← (word~) divr16u::$9
+  (word~) divr16u::$10 ← (word) divr16u::rem - (word) divr16u::divisor
+  (word) divr16u::rem ← (word~) divr16u::$10
 divr16u::@3:
   (byte) divr16u::i ← ++ (byte) divr16u::i
-  (boolean~) divr16u::$10 ← (byte) divr16u::i != (byte/signed byte/word/signed word/dword/signed dword) 16
-  if((boolean~) divr16u::$10) goto divr16u::@1
+  (boolean~) divr16u::$11 ← (byte) divr16u::i != (byte/signed byte/word/signed word/dword/signed dword) 16
+  if((boolean~) divr16u::$11) goto divr16u::@1
   (word) rem16u ← (word) divr16u::rem
   (word) divr16u::return ← (word) divr16u::quotient
   goto divr16u::@return
@@ -707,15 +707,16 @@ SYMBOLS
 (word()) divr16u((word) divr16u::dividend , (word) divr16u::divisor , (word) divr16u::rem)
 (word~) divr16u::$0
 (byte~) divr16u::$1
-(boolean~) divr16u::$10
+(word~) divr16u::$10
+(boolean~) divr16u::$11
 (byte~) divr16u::$2
 (boolean~) divr16u::$3
 (boolean~) divr16u::$4
 (word~) divr16u::$5
 (word~) divr16u::$6
-(boolean~) divr16u::$7
+(word~) divr16u::$7
 (boolean~) divr16u::$8
-(word~) divr16u::$9
+(boolean~) divr16u::$9
 (label) divr16u::@1
 (label) divr16u::@2
 (label) divr16u::@3
@@ -729,14 +730,15 @@ SYMBOLS
 (byte()) divr8u((byte) divr8u::dividend , (byte) divr8u::divisor , (byte) divr8u::rem)
 (byte~) divr8u::$0
 (byte~) divr8u::$1
+(boolean~) divr8u::$10
 (boolean~) divr8u::$2
 (boolean~) divr8u::$3
 (byte~) divr8u::$4
 (byte~) divr8u::$5
-(boolean~) divr8u::$6
+(byte~) divr8u::$6
 (boolean~) divr8u::$7
-(byte/signed byte/word/signed word/dword/signed dword~) divr8u::$8
-(boolean~) divr8u::$9
+(boolean~) divr8u::$8
+(byte/signed byte/word/signed word/dword/signed dword~) divr8u::$9
 (label) divr8u::@1
 (label) divr8u::@2
 (label) divr8u::@3
@@ -892,26 +894,27 @@ divr8u::@1: scope:[divr8u]  from divr8u divr8u::@3
   if((boolean~) divr8u::$3) goto divr8u::@2
   to:divr8u::@4
 divr8u::@2: scope:[divr8u]  from divr8u::@1 divr8u::@4
-  (byte~) divr8u::$4 ← (byte) divr8u::dividend << (byte/signed byte/word/signed word/dword/signed dword) 1
-  (byte) divr8u::dividend ← (byte~) divr8u::$4
-  (byte~) divr8u::$5 ← (byte) divr8u::quotient << (byte/signed byte/word/signed word/dword/signed dword) 1
-  (byte) divr8u::quotient ← (byte~) divr8u::$5
-  (boolean~) divr8u::$6 ← (byte) divr8u::rem >= (byte) divr8u::divisor
-  (boolean~) divr8u::$7 ← ! (boolean~) divr8u::$6
-  if((boolean~) divr8u::$7) goto divr8u::@3
+  (byte~) divr8u::$5 ← (byte) divr8u::dividend << (byte/signed byte/word/signed word/dword/signed dword) 1
+  (byte) divr8u::dividend ← (byte~) divr8u::$5
+  (byte~) divr8u::$6 ← (byte) divr8u::quotient << (byte/signed byte/word/signed word/dword/signed dword) 1
+  (byte) divr8u::quotient ← (byte~) divr8u::$6
+  (boolean~) divr8u::$7 ← (byte) divr8u::rem >= (byte) divr8u::divisor
+  (boolean~) divr8u::$8 ← ! (boolean~) divr8u::$7
+  if((boolean~) divr8u::$8) goto divr8u::@3
   to:divr8u::@5
 divr8u::@4: scope:[divr8u]  from divr8u::@1
-  (byte) divr8u::rem ← ++ (byte) divr8u::rem
+  (byte~) divr8u::$4 ← (byte) divr8u::rem | (byte/signed byte/word/signed word/dword/signed dword) 1
+  (byte) divr8u::rem ← (byte~) divr8u::$4
   to:divr8u::@2
 divr8u::@3: scope:[divr8u]  from divr8u::@2 divr8u::@5
   (byte) divr8u::i ← ++ (byte) divr8u::i
-  (boolean~) divr8u::$9 ← (byte) divr8u::i != (byte/signed byte/word/signed word/dword/signed dword) 8
-  if((boolean~) divr8u::$9) goto divr8u::@1
+  (boolean~) divr8u::$10 ← (byte) divr8u::i != (byte/signed byte/word/signed word/dword/signed dword) 8
+  if((boolean~) divr8u::$10) goto divr8u::@1
   to:divr8u::@6
 divr8u::@5: scope:[divr8u]  from divr8u::@2
   (byte) divr8u::quotient ← ++ (byte) divr8u::quotient
-  (byte/signed byte/word/signed word/dword/signed dword~) divr8u::$8 ← (byte) divr8u::rem - (byte) divr8u::divisor
-  (byte) divr8u::rem ← (byte/signed byte/word/signed word/dword/signed dword~) divr8u::$8
+  (byte/signed byte/word/signed word/dword/signed dword~) divr8u::$9 ← (byte) divr8u::rem - (byte) divr8u::divisor
+  (byte) divr8u::rem ← (byte/signed byte/word/signed word/dword/signed dword~) divr8u::$9
   to:divr8u::@3
 divr8u::@6: scope:[divr8u]  from divr8u::@3
   (byte) rem8u ← (byte) divr8u::rem
@@ -952,26 +955,27 @@ divr16u::@1: scope:[divr16u]  from divr16u divr16u::@3
   if((boolean~) divr16u::$4) goto divr16u::@2
   to:divr16u::@4
 divr16u::@2: scope:[divr16u]  from divr16u::@1 divr16u::@4
-  (word~) divr16u::$5 ← (word) divr16u::dividend << (byte/signed byte/word/signed word/dword/signed dword) 1
-  (word) divr16u::dividend ← (word~) divr16u::$5
-  (word~) divr16u::$6 ← (word) divr16u::quotient << (byte/signed byte/word/signed word/dword/signed dword) 1
-  (word) divr16u::quotient ← (word~) divr16u::$6
-  (boolean~) divr16u::$7 ← (word) divr16u::rem >= (word) divr16u::divisor
-  (boolean~) divr16u::$8 ← ! (boolean~) divr16u::$7
-  if((boolean~) divr16u::$8) goto divr16u::@3
+  (word~) divr16u::$6 ← (word) divr16u::dividend << (byte/signed byte/word/signed word/dword/signed dword) 1
+  (word) divr16u::dividend ← (word~) divr16u::$6
+  (word~) divr16u::$7 ← (word) divr16u::quotient << (byte/signed byte/word/signed word/dword/signed dword) 1
+  (word) divr16u::quotient ← (word~) divr16u::$7
+  (boolean~) divr16u::$8 ← (word) divr16u::rem >= (word) divr16u::divisor
+  (boolean~) divr16u::$9 ← ! (boolean~) divr16u::$8
+  if((boolean~) divr16u::$9) goto divr16u::@3
   to:divr16u::@5
 divr16u::@4: scope:[divr16u]  from divr16u::@1
-  (word) divr16u::rem ← ++ (word) divr16u::rem
+  (word~) divr16u::$5 ← (word) divr16u::rem | (byte/signed byte/word/signed word/dword/signed dword) 1
+  (word) divr16u::rem ← (word~) divr16u::$5
   to:divr16u::@2
 divr16u::@3: scope:[divr16u]  from divr16u::@2 divr16u::@5
   (byte) divr16u::i ← ++ (byte) divr16u::i
-  (boolean~) divr16u::$10 ← (byte) divr16u::i != (byte/signed byte/word/signed word/dword/signed dword) 16
-  if((boolean~) divr16u::$10) goto divr16u::@1
+  (boolean~) divr16u::$11 ← (byte) divr16u::i != (byte/signed byte/word/signed word/dword/signed dword) 16
+  if((boolean~) divr16u::$11) goto divr16u::@1
   to:divr16u::@6
 divr16u::@5: scope:[divr16u]  from divr16u::@2
   (word) divr16u::quotient ← ++ (word) divr16u::quotient
-  (word~) divr16u::$9 ← (word) divr16u::rem - (word) divr16u::divisor
-  (word) divr16u::rem ← (word~) divr16u::$9
+  (word~) divr16u::$10 ← (word) divr16u::rem - (word) divr16u::divisor
+  (word) divr16u::rem ← (word~) divr16u::$10
   to:divr16u::@3
 divr16u::@6: scope:[divr16u]  from divr16u::@3
   (word) rem16u ← (word) divr16u::rem
@@ -1362,8 +1366,8 @@ Removing unused procedure div8u
 Removing unused procedure print_dword
 Removing unused procedure divr8u
 Eliminating unused variable (byte) rem8u and assignment [0] (byte) rem8u ← (byte/signed byte/word/signed word/dword/signed dword) 0
-Eliminating unused variable (signed byte) rem8s and assignment [33] (signed byte) rem8s ← (byte/signed byte/word/signed word/dword/signed dword) 0
-Eliminating unused variable (signed word) rem16s and assignment [34] (signed word) rem16s ← (byte/signed byte/word/signed word/dword/signed dword) 0
+Eliminating unused variable (signed byte) rem8s and assignment [34] (signed byte) rem8s ← (byte/signed byte/word/signed word/dword/signed dword) 0
+Eliminating unused variable (signed word) rem16s and assignment [35] (signed word) rem16s ← (byte/signed byte/word/signed word/dword/signed dword) 0
 Eliminating unused variable - keeping the call (void~) print_word::$1
 Eliminating unused variable - keeping the call (void~) print_word::$3
 Eliminating unused variable - keeping the call (void~) print_byte::$1
@@ -1480,13 +1484,13 @@ divr16u::@2: scope:[divr16u]  from divr16u::@1 divr16u::@4
   (word) divr16u::rem#6 ← phi( divr16u::@1/(word) divr16u::rem#1 divr16u::@4/(word) divr16u::rem#2 )
   (word) divr16u::quotient#3 ← phi( divr16u::@1/(word) divr16u::quotient#6 divr16u::@4/(word) divr16u::quotient#7 )
   (word) divr16u::dividend#4 ← phi( divr16u::@1/(word) divr16u::dividend#3 divr16u::@4/(word) divr16u::dividend#7 )
-  (word~) divr16u::$5 ← (word) divr16u::dividend#4 << (byte/signed byte/word/signed word/dword/signed dword) 1
-  (word) divr16u::dividend#1 ← (word~) divr16u::$5
-  (word~) divr16u::$6 ← (word) divr16u::quotient#3 << (byte/signed byte/word/signed word/dword/signed dword) 1
-  (word) divr16u::quotient#1 ← (word~) divr16u::$6
-  (boolean~) divr16u::$7 ← (word) divr16u::rem#6 >= (word) divr16u::divisor#2
-  (boolean~) divr16u::$8 ← ! (boolean~) divr16u::$7
-  if((boolean~) divr16u::$8) goto divr16u::@3
+  (word~) divr16u::$6 ← (word) divr16u::dividend#4 << (byte/signed byte/word/signed word/dword/signed dword) 1
+  (word) divr16u::dividend#1 ← (word~) divr16u::$6
+  (word~) divr16u::$7 ← (word) divr16u::quotient#3 << (byte/signed byte/word/signed word/dword/signed dword) 1
+  (word) divr16u::quotient#1 ← (word~) divr16u::$7
+  (boolean~) divr16u::$8 ← (word) divr16u::rem#6 >= (word) divr16u::divisor#2
+  (boolean~) divr16u::$9 ← ! (boolean~) divr16u::$8
+  if((boolean~) divr16u::$9) goto divr16u::@3
   to:divr16u::@5
 divr16u::@4: scope:[divr16u]  from divr16u::@1
   (byte) divr16u::i#6 ← phi( divr16u::@1/(byte) divr16u::i#5 )
@@ -1494,7 +1498,8 @@ divr16u::@4: scope:[divr16u]  from divr16u::@1
   (word) divr16u::quotient#7 ← phi( divr16u::@1/(word) divr16u::quotient#6 )
   (word) divr16u::dividend#7 ← phi( divr16u::@1/(word) divr16u::dividend#3 )
   (word) divr16u::rem#7 ← phi( divr16u::@1/(word) divr16u::rem#1 )
-  (word) divr16u::rem#2 ← ++ (word) divr16u::rem#7
+  (word~) divr16u::$5 ← (word) divr16u::rem#7 | (byte/signed byte/word/signed word/dword/signed dword) 1
+  (word) divr16u::rem#2 ← (word~) divr16u::$5
   to:divr16u::@2
 divr16u::@3: scope:[divr16u]  from divr16u::@2 divr16u::@5
   (word) divr16u::divisor#7 ← phi( divr16u::@2/(word) divr16u::divisor#2 divr16u::@5/(word) divr16u::divisor#3 )
@@ -1503,8 +1508,8 @@ divr16u::@3: scope:[divr16u]  from divr16u::@2 divr16u::@5
   (word) divr16u::rem#11 ← phi( divr16u::@2/(word) divr16u::rem#6 divr16u::@5/(word) divr16u::rem#3 )
   (byte) divr16u::i#2 ← phi( divr16u::@2/(byte) divr16u::i#3 divr16u::@5/(byte) divr16u::i#4 )
   (byte) divr16u::i#1 ← ++ (byte) divr16u::i#2
-  (boolean~) divr16u::$10 ← (byte) divr16u::i#1 != (byte/signed byte/word/signed word/dword/signed dword) 16
-  if((boolean~) divr16u::$10) goto divr16u::@1
+  (boolean~) divr16u::$11 ← (byte) divr16u::i#1 != (byte/signed byte/word/signed word/dword/signed dword) 16
+  if((boolean~) divr16u::$11) goto divr16u::@1
   to:divr16u::@6
 divr16u::@5: scope:[divr16u]  from divr16u::@2
   (word) divr16u::dividend#8 ← phi( divr16u::@2/(word) divr16u::dividend#1 )
@@ -1513,8 +1518,8 @@ divr16u::@5: scope:[divr16u]  from divr16u::@2
   (word) divr16u::rem#8 ← phi( divr16u::@2/(word) divr16u::rem#6 )
   (word) divr16u::quotient#4 ← phi( divr16u::@2/(word) divr16u::quotient#1 )
   (word) divr16u::quotient#2 ← ++ (word) divr16u::quotient#4
-  (word~) divr16u::$9 ← (word) divr16u::rem#8 - (word) divr16u::divisor#3
-  (word) divr16u::rem#3 ← (word~) divr16u::$9
+  (word~) divr16u::$10 ← (word) divr16u::rem#8 - (word) divr16u::divisor#3
+  (word) divr16u::rem#3 ← (word~) divr16u::$10
   to:divr16u::@3
 divr16u::@6: scope:[divr16u]  from divr16u::@3
   (word) divr16u::quotient#5 ← phi( divr16u::@3/(word) divr16u::quotient#8 )
@@ -1906,15 +1911,16 @@ SYMBOL TABLE SSA
 (word()) divr16u((word) divr16u::dividend , (word) divr16u::divisor , (word) divr16u::rem)
 (word~) divr16u::$0
 (byte~) divr16u::$1
-(boolean~) divr16u::$10
+(word~) divr16u::$10
+(boolean~) divr16u::$11
 (byte~) divr16u::$2
 (boolean~) divr16u::$3
 (boolean~) divr16u::$4
 (word~) divr16u::$5
 (word~) divr16u::$6
-(boolean~) divr16u::$7
+(word~) divr16u::$7
 (boolean~) divr16u::$8
-(word~) divr16u::$9
+(boolean~) divr16u::$9
 (label) divr16u::@1
 (label) divr16u::@2
 (label) divr16u::@3
@@ -2176,7 +2182,7 @@ SYMBOL TABLE SSA
 
 OPTIMIZING CONTROL FLOW GRAPH
 Inversing boolean not (boolean~) divr16u::$4 ← (byte~) divr16u::$2 == (byte/signed byte/word/signed word/dword/signed dword) 0 from (boolean~) divr16u::$3 ← (byte~) divr16u::$2 != (byte/signed byte/word/signed word/dword/signed dword) 0
-Inversing boolean not (boolean~) divr16u::$8 ← (word) divr16u::rem#6 < (word) divr16u::divisor#2 from (boolean~) divr16u::$7 ← (word) divr16u::rem#6 >= (word) divr16u::divisor#2
+Inversing boolean not (boolean~) divr16u::$9 ← (word) divr16u::rem#6 < (word) divr16u::divisor#2 from (boolean~) divr16u::$8 ← (word) divr16u::rem#6 >= (word) divr16u::divisor#2
 Succesful SSA optimization Pass2UnaryNotSimplification
 Not aliassing across scopes: div16u::dividend#1 div16u::dividend#0
 Not aliassing across scopes: div16u::divisor#1 div16u::divisor#0
@@ -2242,16 +2248,17 @@ Alias (word) divr16u::return#0 = (word) divr16u::return#4
 Alias (word) rem16u#1 = (word) rem16u#11 (word) rem16u#12 (word) rem16u#2 
 Alias (word) div16u::return#0 = (word~) div16u::$0 (word) div16u::return#3 (word) div16u::return#1 
 Alias (word) divr16u::rem#1 = (word~) divr16u::$0 (word) divr16u::rem#7 
-Alias (word) divr16u::dividend#1 = (word~) divr16u::$5 (word) divr16u::dividend#8 
-Alias (word) divr16u::quotient#1 = (word~) divr16u::$6 (word) divr16u::quotient#4 
+Alias (word) divr16u::dividend#1 = (word~) divr16u::$6 (word) divr16u::dividend#8 
+Alias (word) divr16u::quotient#1 = (word~) divr16u::$7 (word) divr16u::quotient#4 
 Alias (word) divr16u::dividend#3 = (word) divr16u::dividend#7 
 Alias (word) divr16u::quotient#6 = (word) divr16u::quotient#7 
 Alias (word) divr16u::divisor#4 = (word) divr16u::divisor#5 
 Alias (byte) divr16u::i#5 = (byte) divr16u::i#6 
+Alias (word) divr16u::rem#2 = (word~) divr16u::$5 
 Alias (word) divr16u::rem#6 = (word) divr16u::rem#8 
 Alias (word) divr16u::divisor#2 = (word) divr16u::divisor#3 
 Alias (byte) divr16u::i#3 = (byte) divr16u::i#4 
-Alias (word) divr16u::rem#3 = (word~) divr16u::$9 
+Alias (word) divr16u::rem#3 = (word~) divr16u::$10 
 Alias (word) divr16u::rem#11 = (word) divr16u::rem#9 
 Alias (word) divr16u::return#1 = (word) divr16u::quotient#5 (word) divr16u::quotient#8 (word) divr16u::return#5 (word) divr16u::return#2 
 Alias (word) rem16u#13 = (word) rem16u#3 (word) rem16u#4 
@@ -2479,8 +2486,8 @@ Redundant Phi (byte*) line_cursor#16 (byte*) line_cursor#14
 Redundant Phi (byte*) char_cursor#21 (byte*) char_cursor#19
 Succesful SSA optimization Pass2RedundantPhiElimination
 Simple Condition (boolean~) divr16u::$4 if((byte~) divr16u::$2==(byte/signed byte/word/signed word/dword/signed dword) 0) goto divr16u::@2
-Simple Condition (boolean~) divr16u::$8 if((word) divr16u::rem#6<(word) divr16u::divisor#6) goto divr16u::@3
-Simple Condition (boolean~) divr16u::$10 if((byte) divr16u::i#1!=(byte/signed byte/word/signed word/dword/signed dword) 16) goto divr16u::@1
+Simple Condition (boolean~) divr16u::$9 if((word) divr16u::rem#6<(word) divr16u::divisor#6) goto divr16u::@3
+Simple Condition (boolean~) divr16u::$11 if((byte) divr16u::i#1!=(byte/signed byte/word/signed word/dword/signed dword) 16) goto divr16u::@1
 Simple Condition (boolean~) print_str::$0 if(*((byte*) print_str::str#2)!=(byte) '@') goto print_str::@2
 Simple Condition (boolean~) print_ln::$1 if((byte*) line_cursor#1<(byte*) char_cursor#11) goto print_ln::@1
 Simple Condition (boolean~) print_cls::$1 if((byte*) print_cls::sc#1!=(byte*~) print_cls::$0) goto print_cls::@1
@@ -2924,7 +2931,7 @@ divr16u::@1: scope:[divr16u]  from divr16u divr16u::@3
   [78] if((byte~) divr16u::$2==(byte/signed byte/word/signed word/dword/signed dword) 0) goto divr16u::@2 [ divr16u::divisor#6 divr16u::dividend#3 divr16u::quotient#3 divr16u::i#2 divr16u::rem#1 ] ( main:2::lin16u_gen:5::divr16u:61 [ lin16u_gen::stepi#0 divr16u::divisor#6 divr16u::dividend#3 divr16u::quotient#3 divr16u::i#2 divr16u::rem#1 ] main:2::lin16u_gen:5::div16u:57::divr16u:92 [ divr16u::divisor#6 divr16u::dividend#3 divr16u::quotient#3 divr16u::i#2 divr16u::rem#1 ] )
   to:divr16u::@4
 divr16u::@4: scope:[divr16u]  from divr16u::@1
-  [79] (word) divr16u::rem#2 ← ++ (word) divr16u::rem#1 [ divr16u::divisor#6 divr16u::dividend#3 divr16u::quotient#3 divr16u::i#2 divr16u::rem#2 ] ( main:2::lin16u_gen:5::divr16u:61 [ lin16u_gen::stepi#0 divr16u::divisor#6 divr16u::dividend#3 divr16u::quotient#3 divr16u::i#2 divr16u::rem#2 ] main:2::lin16u_gen:5::div16u:57::divr16u:92 [ divr16u::divisor#6 divr16u::dividend#3 divr16u::quotient#3 divr16u::i#2 divr16u::rem#2 ] )
+  [79] (word) divr16u::rem#2 ← (word) divr16u::rem#1 | (byte/signed byte/word/signed word/dword/signed dword) 1 [ divr16u::divisor#6 divr16u::dividend#3 divr16u::quotient#3 divr16u::i#2 divr16u::rem#2 ] ( main:2::lin16u_gen:5::divr16u:61 [ lin16u_gen::stepi#0 divr16u::divisor#6 divr16u::dividend#3 divr16u::quotient#3 divr16u::i#2 divr16u::rem#2 ] main:2::lin16u_gen:5::div16u:57::divr16u:92 [ divr16u::divisor#6 divr16u::dividend#3 divr16u::quotient#3 divr16u::i#2 divr16u::rem#2 ] )
   to:divr16u::@2
 divr16u::@2: scope:[divr16u]  from divr16u::@1 divr16u::@4
   [80] (word) divr16u::rem#6 ← phi( divr16u::@1/(word) divr16u::rem#1 divr16u::@4/(word) divr16u::rem#2 ) [ divr16u::divisor#6 divr16u::dividend#3 divr16u::quotient#3 divr16u::i#2 divr16u::rem#6 ] ( main:2::lin16u_gen:5::divr16u:61 [ lin16u_gen::stepi#0 divr16u::divisor#6 divr16u::dividend#3 divr16u::quotient#3 divr16u::i#2 divr16u::rem#6 ] main:2::lin16u_gen:5::div16u:57::divr16u:92 [ divr16u::divisor#6 divr16u::dividend#3 divr16u::quotient#3 divr16u::i#2 divr16u::rem#6 ] )
@@ -3797,11 +3804,10 @@ divr16u: {
     jmp b4
   //SEG166 divr16u::@4
   b4:
-  //SEG167 [79] (word) divr16u::rem#2 ← ++ (word) divr16u::rem#1 [ divr16u::divisor#6 divr16u::dividend#3 divr16u::quotient#3 divr16u::i#2 divr16u::rem#2 ] ( main:2::lin16u_gen:5::divr16u:61 [ lin16u_gen::stepi#0 divr16u::divisor#6 divr16u::dividend#3 divr16u::quotient#3 divr16u::i#2 divr16u::rem#2 ] main:2::lin16u_gen:5::div16u:57::divr16u:92 [ divr16u::divisor#6 divr16u::dividend#3 divr16u::quotient#3 divr16u::i#2 divr16u::rem#2 ] ) -- vwuz1=_inc_vwuz1 
-    inc rem
-    bne !+
-    inc rem+1
-  !:
+  //SEG167 [79] (word) divr16u::rem#2 ← (word) divr16u::rem#1 | (byte/signed byte/word/signed word/dword/signed dword) 1 [ divr16u::divisor#6 divr16u::dividend#3 divr16u::quotient#3 divr16u::i#2 divr16u::rem#2 ] ( main:2::lin16u_gen:5::divr16u:61 [ lin16u_gen::stepi#0 divr16u::divisor#6 divr16u::dividend#3 divr16u::quotient#3 divr16u::i#2 divr16u::rem#2 ] main:2::lin16u_gen:5::div16u:57::divr16u:92 [ divr16u::divisor#6 divr16u::dividend#3 divr16u::quotient#3 divr16u::i#2 divr16u::rem#2 ] ) -- vwuz1=vwuz1_bor_vbuc1 
+    lda #1
+    ora rem
+    sta rem
   //SEG168 [80] phi from divr16u::@1 divr16u::@4 to divr16u::@2 [phi:divr16u::@1/divr16u::@4->divr16u::@2]
   b2_from_b1:
   b2_from_b4:
@@ -3870,7 +3876,7 @@ divr16u: {
 }
 //SEG187 div16u
 div16u: {
-    .label divisor = lin16u_gen.length-1
+    .const divisor = lin16u_gen.length-1
     .label return = $36
     .label return_2 = $22
   //SEG188 [92] call divr16u param-assignment [ rem16u#13 divr16u::return#1 ] ( main:2::lin16u_gen:5::div16u:57 [ rem16u#13 divr16u::return#1 ] )
@@ -3943,6 +3949,7 @@ Statement [71] if((word) lin16u_gen::i#1<(const word) lin16u_gen::length#0) goto
 Statement [76] (byte~) divr16u::$1 ← > (word) divr16u::dividend#3 [ divr16u::divisor#6 divr16u::dividend#3 divr16u::quotient#3 divr16u::i#2 divr16u::rem#1 divr16u::$1 ] ( main:2::lin16u_gen:5::divr16u:61 [ lin16u_gen::stepi#0 divr16u::divisor#6 divr16u::dividend#3 divr16u::quotient#3 divr16u::i#2 divr16u::rem#1 divr16u::$1 ] main:2::lin16u_gen:5::div16u:57::divr16u:92 [ divr16u::divisor#6 divr16u::dividend#3 divr16u::quotient#3 divr16u::i#2 divr16u::rem#1 divr16u::$1 ] ) always clobbers reg byte a 
 Removing always clobbered register reg byte a as potential for zp ZP_BYTE:29 [ divr16u::i#2 divr16u::i#1 ]
 Statement [77] (byte~) divr16u::$2 ← (byte~) divr16u::$1 & (byte/word/signed word/dword/signed dword) 128 [ divr16u::divisor#6 divr16u::dividend#3 divr16u::quotient#3 divr16u::i#2 divr16u::rem#1 divr16u::$2 ] ( main:2::lin16u_gen:5::divr16u:61 [ lin16u_gen::stepi#0 divr16u::divisor#6 divr16u::dividend#3 divr16u::quotient#3 divr16u::i#2 divr16u::rem#1 divr16u::$2 ] main:2::lin16u_gen:5::div16u:57::divr16u:92 [ divr16u::divisor#6 divr16u::dividend#3 divr16u::quotient#3 divr16u::i#2 divr16u::rem#1 divr16u::$2 ] ) always clobbers reg byte a 
+Statement [79] (word) divr16u::rem#2 ← (word) divr16u::rem#1 | (byte/signed byte/word/signed word/dword/signed dword) 1 [ divr16u::divisor#6 divr16u::dividend#3 divr16u::quotient#3 divr16u::i#2 divr16u::rem#2 ] ( main:2::lin16u_gen:5::divr16u:61 [ lin16u_gen::stepi#0 divr16u::divisor#6 divr16u::dividend#3 divr16u::quotient#3 divr16u::i#2 divr16u::rem#2 ] main:2::lin16u_gen:5::div16u:57::divr16u:92 [ divr16u::divisor#6 divr16u::dividend#3 divr16u::quotient#3 divr16u::i#2 divr16u::rem#2 ] ) always clobbers reg byte a 
 Statement [83] if((word) divr16u::rem#6<(word) divr16u::divisor#6) goto divr16u::@3 [ divr16u::divisor#6 divr16u::i#2 divr16u::dividend#1 divr16u::rem#6 divr16u::quotient#1 ] ( main:2::lin16u_gen:5::divr16u:61 [ lin16u_gen::stepi#0 divr16u::divisor#6 divr16u::i#2 divr16u::dividend#1 divr16u::rem#6 divr16u::quotient#1 ] main:2::lin16u_gen:5::div16u:57::divr16u:92 [ divr16u::divisor#6 divr16u::i#2 divr16u::dividend#1 divr16u::rem#6 divr16u::quotient#1 ] ) always clobbers reg byte a 
 Statement [85] (word) divr16u::rem#3 ← (word) divr16u::rem#6 - (word) divr16u::divisor#6 [ divr16u::divisor#6 divr16u::i#2 divr16u::dividend#1 divr16u::quotient#2 divr16u::rem#3 ] ( main:2::lin16u_gen:5::divr16u:61 [ lin16u_gen::stepi#0 divr16u::divisor#6 divr16u::i#2 divr16u::dividend#1 divr16u::quotient#2 divr16u::rem#3 ] main:2::lin16u_gen:5::div16u:57::divr16u:92 [ divr16u::divisor#6 divr16u::i#2 divr16u::dividend#1 divr16u::quotient#2 divr16u::rem#3 ] ) always clobbers reg byte a 
 Statement [89] (word) rem16u#13 ← (word) divr16u::rem#11 [ rem16u#13 divr16u::return#1 ] ( main:2::lin16u_gen:5::divr16u:61 [ lin16u_gen::stepi#0 rem16u#13 divr16u::return#1 ] main:2::lin16u_gen:5::div16u:57::divr16u:92 [ rem16u#13 divr16u::return#1 ] ) always clobbers reg byte a 
@@ -3974,6 +3981,7 @@ Statement [69] (word*) lin16u_gen::lintab#1 ← (word*) lin16u_gen::lintab#2 + (
 Statement [71] if((word) lin16u_gen::i#1<(const word) lin16u_gen::length#0) goto lin16u_gen::@1 [ lin16u_gen::step#0 lin16u_gen::val#1 lin16u_gen::lintab#1 lin16u_gen::i#1 ] ( main:2::lin16u_gen:5 [ lin16u_gen::step#0 lin16u_gen::val#1 lin16u_gen::lintab#1 lin16u_gen::i#1 ] ) always clobbers reg byte a 
 Statement [76] (byte~) divr16u::$1 ← > (word) divr16u::dividend#3 [ divr16u::divisor#6 divr16u::dividend#3 divr16u::quotient#3 divr16u::i#2 divr16u::rem#1 divr16u::$1 ] ( main:2::lin16u_gen:5::divr16u:61 [ lin16u_gen::stepi#0 divr16u::divisor#6 divr16u::dividend#3 divr16u::quotient#3 divr16u::i#2 divr16u::rem#1 divr16u::$1 ] main:2::lin16u_gen:5::div16u:57::divr16u:92 [ divr16u::divisor#6 divr16u::dividend#3 divr16u::quotient#3 divr16u::i#2 divr16u::rem#1 divr16u::$1 ] ) always clobbers reg byte a 
 Statement [77] (byte~) divr16u::$2 ← (byte~) divr16u::$1 & (byte/word/signed word/dword/signed dword) 128 [ divr16u::divisor#6 divr16u::dividend#3 divr16u::quotient#3 divr16u::i#2 divr16u::rem#1 divr16u::$2 ] ( main:2::lin16u_gen:5::divr16u:61 [ lin16u_gen::stepi#0 divr16u::divisor#6 divr16u::dividend#3 divr16u::quotient#3 divr16u::i#2 divr16u::rem#1 divr16u::$2 ] main:2::lin16u_gen:5::div16u:57::divr16u:92 [ divr16u::divisor#6 divr16u::dividend#3 divr16u::quotient#3 divr16u::i#2 divr16u::rem#1 divr16u::$2 ] ) always clobbers reg byte a 
+Statement [79] (word) divr16u::rem#2 ← (word) divr16u::rem#1 | (byte/signed byte/word/signed word/dword/signed dword) 1 [ divr16u::divisor#6 divr16u::dividend#3 divr16u::quotient#3 divr16u::i#2 divr16u::rem#2 ] ( main:2::lin16u_gen:5::divr16u:61 [ lin16u_gen::stepi#0 divr16u::divisor#6 divr16u::dividend#3 divr16u::quotient#3 divr16u::i#2 divr16u::rem#2 ] main:2::lin16u_gen:5::div16u:57::divr16u:92 [ divr16u::divisor#6 divr16u::dividend#3 divr16u::quotient#3 divr16u::i#2 divr16u::rem#2 ] ) always clobbers reg byte a 
 Statement [83] if((word) divr16u::rem#6<(word) divr16u::divisor#6) goto divr16u::@3 [ divr16u::divisor#6 divr16u::i#2 divr16u::dividend#1 divr16u::rem#6 divr16u::quotient#1 ] ( main:2::lin16u_gen:5::divr16u:61 [ lin16u_gen::stepi#0 divr16u::divisor#6 divr16u::i#2 divr16u::dividend#1 divr16u::rem#6 divr16u::quotient#1 ] main:2::lin16u_gen:5::div16u:57::divr16u:92 [ divr16u::divisor#6 divr16u::i#2 divr16u::dividend#1 divr16u::rem#6 divr16u::quotient#1 ] ) always clobbers reg byte a 
 Statement [85] (word) divr16u::rem#3 ← (word) divr16u::rem#6 - (word) divr16u::divisor#6 [ divr16u::divisor#6 divr16u::i#2 divr16u::dividend#1 divr16u::quotient#2 divr16u::rem#3 ] ( main:2::lin16u_gen:5::divr16u:61 [ lin16u_gen::stepi#0 divr16u::divisor#6 divr16u::i#2 divr16u::dividend#1 divr16u::quotient#2 divr16u::rem#3 ] main:2::lin16u_gen:5::div16u:57::divr16u:92 [ divr16u::divisor#6 divr16u::i#2 divr16u::dividend#1 divr16u::quotient#2 divr16u::rem#3 ] ) always clobbers reg byte a 
 Statement [89] (word) rem16u#13 ← (word) divr16u::rem#11 [ rem16u#13 divr16u::return#1 ] ( main:2::lin16u_gen:5::divr16u:61 [ lin16u_gen::stepi#0 rem16u#13 divr16u::return#1 ] main:2::lin16u_gen:5::div16u:57::divr16u:92 [ rem16u#13 divr16u::return#1 ] ) always clobbers reg byte a 
@@ -4022,19 +4030,19 @@ Uplift Scope [div16u] 4: zp ZP_WORD:34 [ div16u::return#2 ] 1.33: zp ZP_WORD:54 
 Uplift Scope [print_word] 5: zp ZP_WORD:30 [ print_word::w#0 ] 
 Uplift Scope [print_ln] 
 
-Uplifting [] best 16755 combination zp ZP_WORD:3 [ line_cursor#9 line_cursor#19 line_cursor#1 ] zp ZP_WORD:7 [ char_cursor#32 char_cursor#45 char_cursor#47 char_cursor#51 char_cursor#2 char_cursor#11 char_cursor#1 ] zp ZP_WORD:50 [ rem16u#13 ] 
-Uplifting [print_str] best 16755 combination zp ZP_WORD:9 [ print_str::str#2 print_str::str#0 ] 
-Uplifting [divr16u] best 16565 combination zp ZP_WORD:23 [ divr16u::rem#5 divr16u::rem#10 divr16u::rem#4 divr16u::rem#11 divr16u::rem#6 divr16u::rem#1 divr16u::rem#2 divr16u::rem#3 ] zp ZP_WORD:27 [ divr16u::quotient#3 divr16u::return#1 divr16u::quotient#1 divr16u::quotient#2 ] reg byte a [ divr16u::$1 ] reg byte a [ divr16u::$2 ] reg byte x [ divr16u::i#2 divr16u::i#1 ] zp ZP_WORD:25 [ divr16u::dividend#3 divr16u::dividend#5 divr16u::dividend#1 ] zp ZP_WORD:38 [ divr16u::return#3 ] zp ZP_WORD:52 [ divr16u::return#0 ] zp ZP_WORD:21 [ divr16u::divisor#6 ] 
-Uplifting [lin16u_gen] best 16565 combination zp ZP_WORD:46 [ lin16u_gen::$5 ] zp ZP_WORD:19 [ lin16u_gen::i#2 lin16u_gen::i#1 ] zp ZP_DWORD:13 [ lin16u_gen::val#2 lin16u_gen::val#1 ] zp ZP_WORD:17 [ lin16u_gen::lintab#2 lin16u_gen::lintab#1 ] zp ZP_WORD:40 [ lin16u_gen::stepf#0 ] zp ZP_DWORD:42 [ lin16u_gen::step#0 ] zp ZP_WORD:36 [ lin16u_gen::stepi#0 ] 
-Uplifting [print_byte] best 16523 combination reg byte x [ print_byte::b#3 print_byte::b#2 print_byte::b#0 print_byte::b#1 ] reg byte a [ print_byte::$0 ] reg byte a [ print_byte::$2 ] 
-Uplifting [print_cls] best 16523 combination zp ZP_WORD:11 [ print_cls::sc#2 print_cls::sc#1 ] 
-Uplifting [main] best 16523 combination zp ZP_BYTE:2 [ main::i#2 main::i#1 ] 
-Uplifting [print_char] best 16514 combination reg byte a [ print_char::ch#2 print_char::ch#0 print_char::ch#1 ] 
-Uplifting [div16u] best 16514 combination zp ZP_WORD:34 [ div16u::return#2 ] zp ZP_WORD:54 [ div16u::return#0 ] 
-Uplifting [print_word] best 16514 combination zp ZP_WORD:30 [ print_word::w#0 ] 
-Uplifting [print_ln] best 16514 combination 
+Uplifting [] best 16710 combination zp ZP_WORD:3 [ line_cursor#9 line_cursor#19 line_cursor#1 ] zp ZP_WORD:7 [ char_cursor#32 char_cursor#45 char_cursor#47 char_cursor#51 char_cursor#2 char_cursor#11 char_cursor#1 ] zp ZP_WORD:50 [ rem16u#13 ] 
+Uplifting [print_str] best 16710 combination zp ZP_WORD:9 [ print_str::str#2 print_str::str#0 ] 
+Uplifting [divr16u] best 16520 combination zp ZP_WORD:23 [ divr16u::rem#5 divr16u::rem#10 divr16u::rem#4 divr16u::rem#11 divr16u::rem#6 divr16u::rem#1 divr16u::rem#2 divr16u::rem#3 ] zp ZP_WORD:27 [ divr16u::quotient#3 divr16u::return#1 divr16u::quotient#1 divr16u::quotient#2 ] reg byte a [ divr16u::$1 ] reg byte a [ divr16u::$2 ] reg byte x [ divr16u::i#2 divr16u::i#1 ] zp ZP_WORD:25 [ divr16u::dividend#3 divr16u::dividend#5 divr16u::dividend#1 ] zp ZP_WORD:38 [ divr16u::return#3 ] zp ZP_WORD:52 [ divr16u::return#0 ] zp ZP_WORD:21 [ divr16u::divisor#6 ] 
+Uplifting [lin16u_gen] best 16520 combination zp ZP_WORD:46 [ lin16u_gen::$5 ] zp ZP_WORD:19 [ lin16u_gen::i#2 lin16u_gen::i#1 ] zp ZP_DWORD:13 [ lin16u_gen::val#2 lin16u_gen::val#1 ] zp ZP_WORD:17 [ lin16u_gen::lintab#2 lin16u_gen::lintab#1 ] zp ZP_WORD:40 [ lin16u_gen::stepf#0 ] zp ZP_DWORD:42 [ lin16u_gen::step#0 ] zp ZP_WORD:36 [ lin16u_gen::stepi#0 ] 
+Uplifting [print_byte] best 16478 combination reg byte x [ print_byte::b#3 print_byte::b#2 print_byte::b#0 print_byte::b#1 ] reg byte a [ print_byte::$0 ] reg byte a [ print_byte::$2 ] 
+Uplifting [print_cls] best 16478 combination zp ZP_WORD:11 [ print_cls::sc#2 print_cls::sc#1 ] 
+Uplifting [main] best 16478 combination zp ZP_BYTE:2 [ main::i#2 main::i#1 ] 
+Uplifting [print_char] best 16469 combination reg byte a [ print_char::ch#2 print_char::ch#0 print_char::ch#1 ] 
+Uplifting [div16u] best 16469 combination zp ZP_WORD:34 [ div16u::return#2 ] zp ZP_WORD:54 [ div16u::return#0 ] 
+Uplifting [print_word] best 16469 combination zp ZP_WORD:30 [ print_word::w#0 ] 
+Uplifting [print_ln] best 16469 combination 
 Attempting to uplift remaining variables inzp ZP_BYTE:2 [ main::i#2 main::i#1 ]
-Uplifting [main] best 16514 combination zp ZP_BYTE:2 [ main::i#2 main::i#1 ] 
+Uplifting [main] best 16469 combination zp ZP_BYTE:2 [ main::i#2 main::i#1 ] 
 Coalescing zero page register [ zp ZP_WORD:23 [ divr16u::rem#5 divr16u::rem#10 divr16u::rem#4 divr16u::rem#11 divr16u::rem#6 divr16u::rem#1 divr16u::rem#2 divr16u::rem#3 ] ] with [ zp ZP_WORD:50 [ rem16u#13 ] ]
 Coalescing zero page register [ zp ZP_WORD:27 [ divr16u::quotient#3 divr16u::return#1 divr16u::quotient#1 divr16u::quotient#2 ] ] with [ zp ZP_WORD:38 [ divr16u::return#3 ] ]
 Coalescing zero page register [ zp ZP_WORD:27 [ divr16u::quotient#3 divr16u::return#1 divr16u::quotient#1 divr16u::quotient#2 divr16u::return#3 ] ] with [ zp ZP_WORD:40 [ lin16u_gen::stepf#0 ] ]
@@ -4574,11 +4582,10 @@ divr16u: {
     jmp b4
   //SEG166 divr16u::@4
   b4:
-  //SEG167 [79] (word) divr16u::rem#2 ← ++ (word) divr16u::rem#1 [ divr16u::divisor#6 divr16u::dividend#3 divr16u::quotient#3 divr16u::i#2 divr16u::rem#2 ] ( main:2::lin16u_gen:5::divr16u:61 [ lin16u_gen::stepi#0 divr16u::divisor#6 divr16u::dividend#3 divr16u::quotient#3 divr16u::i#2 divr16u::rem#2 ] main:2::lin16u_gen:5::div16u:57::divr16u:92 [ divr16u::divisor#6 divr16u::dividend#3 divr16u::quotient#3 divr16u::i#2 divr16u::rem#2 ] ) -- vwuz1=_inc_vwuz1 
-    inc rem
-    bne !+
-    inc rem+1
-  !:
+  //SEG167 [79] (word) divr16u::rem#2 ← (word) divr16u::rem#1 | (byte/signed byte/word/signed word/dword/signed dword) 1 [ divr16u::divisor#6 divr16u::dividend#3 divr16u::quotient#3 divr16u::i#2 divr16u::rem#2 ] ( main:2::lin16u_gen:5::divr16u:61 [ lin16u_gen::stepi#0 divr16u::divisor#6 divr16u::dividend#3 divr16u::quotient#3 divr16u::i#2 divr16u::rem#2 ] main:2::lin16u_gen:5::div16u:57::divr16u:92 [ divr16u::divisor#6 divr16u::dividend#3 divr16u::quotient#3 divr16u::i#2 divr16u::rem#2 ] ) -- vwuz1=vwuz1_bor_vbuc1 
+    lda #1
+    ora rem
+    sta rem
   //SEG168 [80] phi from divr16u::@1 divr16u::@4 to divr16u::@2 [phi:divr16u::@1/divr16u::@4->divr16u::@2]
   b2_from_b1:
   b2_from_b4:
@@ -4643,7 +4650,7 @@ divr16u: {
 }
 //SEG187 div16u
 div16u: {
-    .label divisor = lin16u_gen.length-1
+    .const divisor = lin16u_gen.length-1
     .label return = $d
   //SEG188 [92] call divr16u param-assignment [ rem16u#13 divr16u::return#1 ] ( main:2::lin16u_gen:5::div16u:57 [ rem16u#13 divr16u::return#1 ] )
   //SEG189 [73] phi from div16u to divr16u [phi:div16u->divr16u]
@@ -4965,7 +4972,7 @@ reg byte a [ divr16u::$2 ]
 
 
 FINAL ASSEMBLER
-Score: 14401
+Score: 14356
 
 //SEG0 Basic Upstart
 .pc = $801 "Basic"
@@ -5400,11 +5407,10 @@ divr16u: {
     cmp #0
     beq b2
   //SEG166 divr16u::@4
-  //SEG167 [79] (word) divr16u::rem#2 ← ++ (word) divr16u::rem#1 [ divr16u::divisor#6 divr16u::dividend#3 divr16u::quotient#3 divr16u::i#2 divr16u::rem#2 ] ( main:2::lin16u_gen:5::divr16u:61 [ lin16u_gen::stepi#0 divr16u::divisor#6 divr16u::dividend#3 divr16u::quotient#3 divr16u::i#2 divr16u::rem#2 ] main:2::lin16u_gen:5::div16u:57::divr16u:92 [ divr16u::divisor#6 divr16u::dividend#3 divr16u::quotient#3 divr16u::i#2 divr16u::rem#2 ] ) -- vwuz1=_inc_vwuz1 
-    inc rem
-    bne !+
-    inc rem+1
-  !:
+  //SEG167 [79] (word) divr16u::rem#2 ← (word) divr16u::rem#1 | (byte/signed byte/word/signed word/dword/signed dword) 1 [ divr16u::divisor#6 divr16u::dividend#3 divr16u::quotient#3 divr16u::i#2 divr16u::rem#2 ] ( main:2::lin16u_gen:5::divr16u:61 [ lin16u_gen::stepi#0 divr16u::divisor#6 divr16u::dividend#3 divr16u::quotient#3 divr16u::i#2 divr16u::rem#2 ] main:2::lin16u_gen:5::div16u:57::divr16u:92 [ divr16u::divisor#6 divr16u::dividend#3 divr16u::quotient#3 divr16u::i#2 divr16u::rem#2 ] ) -- vwuz1=vwuz1_bor_vbuc1 
+    lda #1
+    ora rem
+    sta rem
   //SEG168 [80] phi from divr16u::@1 divr16u::@4 to divr16u::@2 [phi:divr16u::@1/divr16u::@4->divr16u::@2]
   //SEG169 [80] phi (word) divr16u::rem#6 = (word) divr16u::rem#1 [phi:divr16u::@1/divr16u::@4->divr16u::@2#0] -- register_copy 
   //SEG170 divr16u::@2
@@ -5457,7 +5463,7 @@ divr16u: {
 }
 //SEG187 div16u
 div16u: {
-    .label divisor = lin16u_gen.length-1
+    .const divisor = lin16u_gen.length-1
     .label return = $d
   //SEG188 [92] call divr16u param-assignment [ rem16u#13 divr16u::return#1 ] ( main:2::lin16u_gen:5::div16u:57 [ rem16u#13 divr16u::return#1 ] )
   //SEG189 [73] phi from div16u to divr16u [phi:div16u->divr16u]

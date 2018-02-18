@@ -19,7 +19,7 @@ main: {
     jmp b2
 }
 line: {
-    .label x0 = 0
+    .const x0 = 0
     .const x1 = $a
     .label x = 2
     lda #x0

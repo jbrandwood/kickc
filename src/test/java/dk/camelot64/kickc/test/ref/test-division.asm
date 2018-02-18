@@ -288,10 +288,9 @@ divr16u: {
     and #$80
     cmp #0
     beq b2
-    inc rem
-    bne !+
-    inc rem+1
-  !:
+    lda #1
+    ora rem
+    sta rem
   b2:
     asl dividend
     rol dividend+1
@@ -465,7 +464,9 @@ divr8u: {
     and dividend
     cmp #0
     beq b2
-    inc rem
+    lda #1
+    ora rem
+    sta rem
   b2:
     asl dividend
     txa

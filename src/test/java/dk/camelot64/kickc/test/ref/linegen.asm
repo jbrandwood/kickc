@@ -260,10 +260,9 @@ divr16u: {
     and #$80
     cmp #0
     beq b2
-    inc rem
-    bne !+
-    inc rem+1
-  !:
+    lda #1
+    ora rem
+    sta rem
   b2:
     asl dividend
     rol dividend+1
@@ -295,7 +294,7 @@ divr16u: {
     rts
 }
 div16u: {
-    .label divisor = lin16u_gen.length-1
+    .const divisor = lin16u_gen.length-1
     .label return = $d
     lda #<divisor
     sta divr16u.divisor

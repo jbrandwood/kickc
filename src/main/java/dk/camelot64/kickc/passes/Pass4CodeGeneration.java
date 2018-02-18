@@ -115,7 +115,7 @@ public class Pass4CodeGeneration {
                if(constantVar.getType() instanceof SymbolTypePointer) {
                   // Must use a label for pointers
                   asm.addLabelDecl(asmName.replace("#", "_").replace("$", "_"), asmConstant);
-               } else if(SymbolType.isInteger(constantVar.getType()) && constantVar.getRef().getScopeDepth()>0) {
+               } else if(SymbolType.isInteger(constantVar.getType()) && constantVar.getRef().getScopeDepth() > 0) {
                   // Use label for integers referenced in other scope - to allow cross-scope referencing
                   if(useLabelForConst(scopeRef, constantVar)) {
                      // Use label for integers referenced in other scope - to allow cross-scope referencing
@@ -145,7 +145,7 @@ public class Pass4CodeGeneration {
    private boolean useLabelForConst(ScopeRef scopeRef, ConstantVar constantVar) {
       boolean useLabel = false;
       Collection<Integer> constRefStatements = program.getVariableReferenceInfos().getConstRefStatements(constantVar.getRef());
-      if(constRefStatements!=null) {
+      if(constRefStatements != null) {
          for(Integer constRefStmtIdx : constRefStatements) {
             ScopeRef refScope = program.getStatementInfos().getBlock(constRefStmtIdx).getScope();
             if(!refScope.equals(scopeRef)) {
@@ -155,22 +155,26 @@ public class Pass4CodeGeneration {
                   boolean found = false;
                   for(StatementPhiBlock.PhiVariable phiVariable : ((StatementPhiBlock) statement).getPhiVariables()) {
                      for(StatementPhiBlock.PhiRValue phiRValue : phiVariable.getValues()) {
-                        if(phiRValue.getrValue().equals(constantVar.getRef())) {
-                           found = true;
-                           // Found the constant
-                           LabelRef pred = phiRValue.getPredecessor();
-                           ControlFlowBlock predBlock = program.getGraph().getBlock(pred);
-                           ScopeRef predScope = predBlock.getScope();
-                           if(!predScope.equals(scopeRef)) {
-                              // Scopes in PHI RValue differs from const scope - generate label
-                              useLabel = true;
+                        RValue phiRRValue = phiRValue.getrValue();
+                        Collection<ConstantRef> phiRValueConstRefs = PassNVariableReferenceInfos.getReferencedConsts(phiRRValue);
+                        for(ConstantRef phiRValueConstRef : phiRValueConstRefs) {
+                           if(phiRValueConstRef.equals(constantVar.getRef())) {
+                              found = true;
+                              // Found the constant
+                              LabelRef pred = phiRValue.getPredecessor();
+                              ControlFlowBlock predBlock = program.getGraph().getBlock(pred);
+                              ScopeRef predScope = predBlock.getScope();
+                              if(!predScope.equals(scopeRef)) {
+                                 // Scopes in PHI RValue differs from const scope - generate label
+                                 useLabel = true;
+                              }
                            }
                         }
                      }
                   }
-                  if(!found ) {
+                  if(!found) {
                      // PHI-reference is complex - generate label
-                     program.getLog().append("Warning: Complex PHI-value using constant. Using .label as fallback. "+statement);
+                     program.getLog().append("Warning: Complex PHI-value using constant. Using .label as fallback. " + statement);
                      useLabel = true;
                   }
                } else {
@@ -181,7 +185,7 @@ public class Pass4CodeGeneration {
          }
       }
       Collection<ConstantRef> constRefConsts = program.getVariableReferenceInfos().getConstRefConsts(constantVar.getRef());
-      if(constRefConsts!=null) {
+      if(constRefConsts != null) {
          for(ConstantRef constRefConst : constRefConsts) {
             ConstantVar refConst = program.getScope().getConstant(constRefConst);
             if(!refConst.getScope().getRef().equals(scopeRef)) {
@@ -283,7 +287,7 @@ public class Pass4CodeGeneration {
             try {
                generateStatementAsm(asm, block, statement, aluState, true);
             } catch(AsmFragmentTemplateSynthesizer.UnknownFragmentException e) {
-               throw new CompileError("Unknown fragment for statement "+statement.toString(program, false), e);
+               throw new CompileError("Unknown fragment for statement " + statement.toString(program, false), e);
             }
          }
       }

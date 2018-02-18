@@ -2,9 +2,9 @@
 :BasicUpstart(main)
 .pc = $80d "Program"
   .label SCREEN = $400
+  .label rem16u = 5
   .label char_cursor = 5
   .label line_cursor = 3
-  .label rem16u = 5
   jsr main
 main: {
     .label i = 2
@@ -153,8 +153,8 @@ print_cls: {
 lin16u_gen: {
     .const min = $22d
     .const max = $7461
-    .label length = $14
-    .label ampl = max-min
+    .const length = $14
+    .const ampl = max-min
     .label _5 = 7
     .label stepi = $f
     .label stepf = $d
@@ -162,10 +162,21 @@ lin16u_gen: {
     .label val = 9
     .label lintab = 3
     .label i = 5
-    jsr div16u
-    lda div16u.return
+    lda #<length-1
+    sta divr16u.divisor
+    lda #>length-1
+    sta divr16u.divisor+1
+    lda #<ampl
+    sta divr16u.dividend
+    lda #>ampl
+    sta divr16u.dividend+1
+    lda #<0
+    sta divr16u.rem
+    sta divr16u.rem+1
+    jsr divr16u
+    lda divr16u.return
     sta stepi
-    lda div16u.return+1
+    lda divr16u.return+1
     sta stepi+1
     lda #<length-1
     sta divr16u.divisor
@@ -244,10 +255,10 @@ lin16u_gen: {
     rts
 }
 divr16u: {
-    .label return = $d
     .label rem = 5
     .label dividend = 7
     .label quotient = $d
+    .label return = $d
     .label divisor = 3
     ldx #0
     txa
@@ -291,22 +302,5 @@ divr16u: {
     inx
     cpx #$10
     bne b1
-    rts
-}
-div16u: {
-    .const divisor = lin16u_gen.length-1
-    .label return = $d
-    lda #<divisor
-    sta divr16u.divisor
-    lda #>divisor
-    sta divr16u.divisor+1
-    lda #<lin16u_gen.ampl
-    sta divr16u.dividend
-    lda #>lin16u_gen.ampl
-    sta divr16u.dividend+1
-    lda #<0
-    sta divr16u.rem
-    sta divr16u.rem+1
-    jsr divr16u
     rts
 }

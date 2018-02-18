@@ -1,0 +1,30 @@
+// Linear table generator
+// Work in progress towards a sinus generator
+import "division.kc"
+import "print.kc"
+
+void main() {
+    word[20] lintab;
+    lin16u_gen(557, 29793, lintab, 20);
+    print_cls();
+    for(byte i=0; i<20*2; i=i+2) {
+        print_byte(i);
+        print_str(" @");
+        print_word(lintab[i]);
+        print_ln();
+    }
+}
+
+// Generate word linear table
+// lintab - the table to generate into
+// length - the number of points in a total sinus wavelength (the size of the table)
+void lin16u_gen(word min, word max, word* lintab, word length) {
+    word ampl = max-min;
+    dword step = { rem16u, div16u(ampl, length-1) };
+    dword val = { 0, min };
+    for(word i=0; i<length; i++) {
+        *lintab = >val;
+        val = val + step;
+        lintab = lintab+2;
+    }
+}

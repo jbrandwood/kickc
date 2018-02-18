@@ -14,6 +14,7 @@ public class Operator {
    public static final Operator DEREF = new Operator("*", "_deref_", Type.UNARY, 2);
    public static final Operator ADDRESS_OF = new Operator("&", "_addr_", Type.UNARY, 2);
    public static final Operator WORD = new Operator("w=", "_word_", Type.BINARY, 2);
+   public static final Operator DWORD = new Operator("dw=", "_dword_", Type.BINARY, 2);
    public static final Operator DEREF_IDX = new Operator("*idx", "_derefidx_", Type.BINARY, 2);
    public static final Operator SET_LOWBYTE = new Operator("lo=", "_setlo_", Type.BINARY, 2);
    public static final Operator SET_HIBYTE = new Operator("hi=", "_sethi_", Type.BINARY, 2);

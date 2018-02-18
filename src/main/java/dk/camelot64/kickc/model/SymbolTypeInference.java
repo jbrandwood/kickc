@@ -117,6 +117,8 @@ public class SymbolTypeInference {
          return type1;
       } else if(Operator.WORD.equals(operator)) {
          return SymbolType.WORD;
+      } else if(Operator.DWORD.equals(operator)) {
+         return SymbolType.DWORD;
       }
 
       String op = operator.getOperator();
@@ -368,6 +370,12 @@ public class SymbolTypeInference {
             ArrayList<SymbolType> types = new ArrayList<>();
             types.add(new SymbolTypeArray(elmType));
             types.add(SymbolType.WORD);
+            return new SymbolTypeInline(types);
+         } else if((list.getList().size() == 2 && SymbolType.isWord(elmType) )) {
+            // Potentially a dword constructor - return a composite type
+            ArrayList<SymbolType> types = new ArrayList<>();
+            types.add(new SymbolTypeArray(elmType));
+            types.add(SymbolType.DWORD);
             return new SymbolTypeInline(types);
          } else {
             return new SymbolTypeArray(elmType);

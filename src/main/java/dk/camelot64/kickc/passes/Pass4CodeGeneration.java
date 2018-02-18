@@ -167,6 +167,9 @@ public class Pass4CodeGeneration {
             if(SymbolType.isByte(constantArrayFilled.getElementType())) {
                asm.addDataFilled(asmName.replace("#", "_").replace("$", "_"), AsmDataNumeric.Type.BYTE, constantArrayFilled.getSize(), "0");
                added.add(asmName);
+            } else if(SymbolType.isWord(constantArrayFilled.getElementType())) {
+               asm.addDataFilled(asmName.replace("#", "_").replace("$", "_"), AsmDataNumeric.Type.WORD, constantArrayFilled.getSize(), "0");
+               added.add(asmName);
             } else {
                throw new RuntimeException("Unhandled constant array element type " + constantArrayFilled.toString(program));
             }

@@ -45,11 +45,15 @@ public class TestPrograms {
       AsmFragmentTemplateUsages.logUsages(log, false, false,  false, false, false, false);
    }
 
+   //@Test
+   //public void testLineGen() throws IOException, URISyntaxException {
+   //   compileAndCompare("linegen");
+   //}
+
    @Test
    public void testLowHigh() throws IOException, URISyntaxException {
       compileAndCompare("test-lowhigh");
    }
-
 
    @Test
    public void testLongJump2() throws IOException, URISyntaxException {

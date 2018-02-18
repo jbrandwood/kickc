@@ -2,32 +2,108 @@
 :BasicUpstart(main)
 .pc = $80d "Program"
   .label SCREEN = $400
-  .label rem16u = 5
-  .label char_cursor = 5
+  .label char_cursor = 7
   .label line_cursor = 3
+  .label rem16u = 3
   jsr main
 main: {
     .label i = 2
+    lda #<lintab1
+    sta lin16u_gen.lintab
+    lda #>lintab1
+    sta lin16u_gen.lintab+1
+    lda #<0
+    sta rem16u
+    sta rem16u+1
+    lda #<$14
+    sta lin16u_gen.length
+    lda #>$14
+    sta lin16u_gen.length+1
+    lda #<$22d
+    sta lin16u_gen.min
+    lda #>$22d
+    sta lin16u_gen.min+1
+    lda #<$7461
+    sta lin16u_gen.max
+    lda #>$7461
+    sta lin16u_gen.max+1
+    jsr lin16u_gen
+    lda #<lintab2
+    sta lin16u_gen.lintab
+    lda #>lintab2
+    sta lin16u_gen.lintab+1
+    lda #<$14
+    sta lin16u_gen.length
+    lda #>$14
+    sta lin16u_gen.length+1
+    lda #<$79cb
+    sta lin16u_gen.min
+    lda #>$79cb
+    sta lin16u_gen.min+1
+    lda #<$f781
+    sta lin16u_gen.max
+    lda #>$f781
+    sta lin16u_gen.max+1
     jsr lin16u_gen
     jsr print_cls
-    lda #<SCREEN
-    sta line_cursor
-    lda #>SCREEN
-    sta line_cursor+1
     lda #<SCREEN
     sta char_cursor
     lda #>SCREEN
     sta char_cursor+1
+    lda #<str
+    sta print_str.str
+    lda #>str
+    sta print_str.str+1
+    jsr print_str
+    lda #<$22d
+    sta print_word.w
+    lda #>$22d
+    sta print_word.w+1
+    jsr print_word
+    lda #<str1
+    sta print_str.str
+    lda #>str1
+    sta print_str.str+1
+    jsr print_str
+    lda #<$79cb
+    sta print_word.w
+    lda #>$79cb
+    sta print_word.w+1
+    jsr print_word
+    lda #<SCREEN
+    sta line_cursor
+    lda #>SCREEN
+    sta line_cursor+1
+    jsr print_ln
     lda #0
     sta i
   b1:
     ldx i
+    lda line_cursor
+    sta char_cursor
+    lda line_cursor+1
+    sta char_cursor+1
     jsr print_byte
+    lda #<str2
+    sta print_str.str
+    lda #>str2
+    sta print_str.str+1
     jsr print_str
     ldy i
-    lda lintab,y
+    lda lintab1,y
     sta print_word.w
-    lda lintab+1,y
+    lda lintab1+1,y
+    sta print_word.w+1
+    jsr print_word
+    lda #<str3
+    sta print_str.str
+    lda #>str3
+    sta print_str.str+1
+    jsr print_str
+    ldy i
+    lda lintab2,y
+    sta print_word.w
+    lda lintab2+1,y
     sta print_word.w+1
     jsr print_word
     jsr print_ln
@@ -36,16 +112,41 @@ main: {
     adc i
     sta i
     cmp #$14*2
-    bcc b9
-    rts
-  b9:
+    bcc b1
     lda line_cursor
     sta char_cursor
     lda line_cursor+1
     sta char_cursor+1
-    jmp b1
-    str: .text " @"
-    lintab: .fill $28, 0
+    lda #<str4
+    sta print_str.str
+    lda #>str4
+    sta print_str.str+1
+    jsr print_str
+    lda #<$7461
+    sta print_word.w
+    lda #>$7461
+    sta print_word.w+1
+    jsr print_word
+    lda #<str5
+    sta print_str.str
+    lda #>str5
+    sta print_str.str+1
+    jsr print_str
+    lda #<$f781
+    sta print_word.w
+    lda #>$f781
+    sta print_word.w+1
+    jsr print_word
+    jsr print_ln
+    rts
+    str: .text "   @"
+    str1: .text " @"
+    str2: .text " @"
+    str3: .text " @"
+    str4: .text "   @"
+    str5: .text " @"
+    lintab1: .fill $28, 0
+    lintab2: .fill $28, 0
 }
 print_ln: {
   b1:
@@ -67,7 +168,7 @@ print_ln: {
     rts
 }
 print_word: {
-    .label w = 7
+    .label w = 5
     lda w+1
     tax
     jsr print_byte
@@ -103,11 +204,7 @@ print_char: {
     rts
 }
 print_str: {
-    .label str = 7
-    lda #<main.str
-    sta str
-    lda #>main.str
-    sta str+1
+    .label str = 5
   b1:
     ldy #0
     lda (str),y
@@ -151,24 +248,34 @@ print_cls: {
     rts
 }
 lin16u_gen: {
-    .const min = $22d
-    .const max = $7461
-    .const length = $14
-    .const ampl = max-min
-    .label _5 = 7
-    .label stepi = $f
-    .label stepf = $d
-    .label step = $11
+    .label _5 = $f
+    .label ampl = 3
+    .label stepi = $15
+    .label stepf = $13
+    .label step = $17
     .label val = 9
-    .label lintab = 3
+    .label lintab = $d
     .label i = 5
-    lda #<length-1
+    .label max = 3
+    .label min = 5
+    .label length = 7
+    lda ampl
+    sec
+    sbc min
+    sta ampl
+    lda ampl+1
+    sbc min+1
+    sta ampl+1
+    lda length
+    sec
+    sbc #1
     sta divr16u.divisor
-    lda #>length-1
+    lda length+1
+    sbc #0
     sta divr16u.divisor+1
-    lda #<ampl
+    lda ampl
     sta divr16u.dividend
-    lda #>ampl
+    lda ampl+1
     sta divr16u.dividend+1
     lda #<0
     sta divr16u.rem
@@ -178,9 +285,12 @@ lin16u_gen: {
     sta stepi
     lda divr16u.return+1
     sta stepi+1
-    lda #<length-1
+    lda length
+    sec
+    sbc #1
     sta divr16u.divisor
-    lda #>length-1
+    lda length+1
+    sbc #0
     sta divr16u.divisor+1
     lda #<0
     sta divr16u.dividend
@@ -195,20 +305,15 @@ lin16u_gen: {
     lda stepf+1
     sta step+1
     lda #<0
+    sta val
+    sta val+1
+    lda min
+    sta val+2
+    lda min+1
+    sta val+3
+    lda #<0
     sta i
     sta i+1
-    lda #<main.lintab
-    sta lintab
-    lda #>main.lintab
-    sta lintab+1
-    lda #<min*$10000+0
-    sta val
-    lda #>min*$10000+0
-    sta val+1
-    lda #<min*$10000+0>>$10
-    sta val+2
-    lda #>min*$10000+0>>$10
-    sta val+3
   b1:
     lda val+2
     sta _5
@@ -245,21 +350,21 @@ lin16u_gen: {
     inc i+1
   !:
     lda i+1
-    cmp #>length
+    cmp length+1
     bcc b1
     bne !+
     lda i
-    cmp #<length
+    cmp length
     bcc b1
   !:
     rts
 }
 divr16u: {
-    .label rem = 5
-    .label dividend = 7
-    .label quotient = $d
-    .label return = $d
-    .label divisor = 3
+    .label rem = 3
+    .label dividend = $11
+    .label quotient = $13
+    .label return = $13
+    .label divisor = $f
     ldx #0
     txa
     sta quotient

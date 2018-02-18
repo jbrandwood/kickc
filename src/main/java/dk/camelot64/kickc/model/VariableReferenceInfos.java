@@ -141,5 +141,14 @@ public class VariableReferenceInfos {
       return unusedInStmts && unusedInConsts;
    }
 
+   /**
+    * Get all statements referencing constant
+    * @param constRef The constant to look for
+    * @return Index of all statements referencing the constant
+    */
+   public Collection<Integer> getConstRefStatements(ConstantRef constRef) {
+      return constRefStmts.get(constRef);
+   }
+
 
 }

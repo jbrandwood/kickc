@@ -115,8 +115,27 @@ public class Pass4CodeGeneration {
                if(constantVar.getType() instanceof SymbolTypePointer) {
                   // Must use a label for pointers
                   asm.addLabelDecl(asmName.replace("#", "_").replace("$", "_"), asmConstant);
+               } else if(SymbolType.isInteger(constantVar.getType()) && constantVar.getRef().getScopeDepth()>0) {
+                  // Use label for integers referenced in other scope - to allow cross-scope referencing
+                  boolean gen = false;
+                  Collection<Integer> constRefStatements = program.getVariableReferenceInfos().getConstRefStatements(constantVar.getRef());
+                  if(constRefStatements!=null) {
+                     for(Integer constRefStmtIdx : constRefStatements) {
+                        ScopeRef refScope = program.getStatementInfos().getBlock(constRefStmtIdx).getScope();
+                        if(!refScope.equals(scopeRef)) {
+                           // Use label for integers referenced in other scope - to allow cross-scope referencing
+                           asm.addLabelDecl(asmName.replace("#", "_").replace("$", "_"), asmConstant);
+                           gen = true;
+                           break;
+                        }
+                     }
+                  }
+                  if(!gen) {
+                     // Use constant for constant integers not referenced outside scope
+                     asm.addConstant(asmName.replace("#", "_").replace("$", "_"), asmConstant);
+                  }
                } else {
-                  // Use constant for non-pointers
+                  // Use constant otherwise
                   asm.addConstant(asmName.replace("#", "_").replace("$", "_"), asmConstant);
                }
             }

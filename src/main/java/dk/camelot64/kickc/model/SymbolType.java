@@ -174,6 +174,16 @@ public interface SymbolType {
    }
 
    /**
+    * Is the type an integer type or compatible {@link SymbolTypeInline}
+    *
+    * @param type The type to examine
+    * @return true if the type is integer
+    */
+   static boolean isInteger(SymbolType type) {
+      return isSDWord(type) || isDWord(type) || isSWord(type) || isWord(type) || isSByte(type) || isByte(type);
+   }
+
+   /**
     * Get the name of the type
     *
     * @return The type name

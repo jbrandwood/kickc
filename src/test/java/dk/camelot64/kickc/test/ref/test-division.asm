@@ -4,8 +4,9 @@
   .label SCREEN = $400
   .label char_cursor = $a
   .label line_cursor = 5
-  .label rem16u = 3
   .label rem16s = 3
+  .label rem8u = $13
+  .label rem16u = $10
   jsr main
 main: {
     jsr print_cls
@@ -17,7 +18,7 @@ main: {
 }
 test_16s: {
     .label dividend = 7
-    .label divisor = $14
+    .label divisor = $15
     .label res = $e
     .label i = 2
     lda #<0
@@ -188,13 +189,13 @@ print_str: {
     jmp b1
 }
 div16s: {
-    .label _2 = $a
+    .label _2 = 3
     .label _7 = $c
     .label resultu = $e
     .label return = $e
     .label dividend = 7
     .label divisor = $c
-    .label dividendu = $a
+    .label dividendu = 3
     .label divisoru = $c
     lda dividend+1
     bpl b16
@@ -227,15 +228,19 @@ div16s: {
     jsr div16u
     cpy #0
     bne b5
+    lda divr16u.rem
+    sta rem16s
+    lda divr16u.rem+1
+    sta rem16s+1
   breturn:
     rts
   b5:
     sec
-    lda rem16s
+    lda divr16u.rem
     eor #$ff
     adc #0
     sta rem16s
-    lda rem16s+1
+    lda divr16u.rem+1
     eor #$ff
     adc #0
     sta rem16s+1
@@ -258,11 +263,18 @@ div16s: {
     jmp b2
 }
 div16u: {
-    .label rem = 3
-    .label dividend = $a
-    .label quotient = $e
     .label return = $e
+    .label dividend = 3
     .label divisor = $c
+    jsr divr16u
+    rts
+}
+divr16u: {
+    .label dividend = 3
+    .label divisor = $c
+    .label return = $e
+    .label rem = $10
+    .label quotient = $e
     ldx #0
     txa
     sta quotient
@@ -312,8 +324,8 @@ div16u: {
 }
 test_8s: {
     .label dividend = 9
-    .label divisor = $16
-    .label res = $10
+    .label divisor = $17
+    .label res = $12
     .label i = 2
     lda #0
     tax
@@ -385,7 +397,7 @@ print_sbyte: {
     rts
 }
 div8s: {
-    .label neg = $10
+    .label neg = $12
     cmp #0
     bpl b16
     eor #$ff
@@ -406,18 +418,18 @@ div8s: {
     eor #1
     sta neg
   b4:
-    sty div8u.dividend
-    stx div8u.divisor
+    tya
     jsr div8u
-    lda div8u.return
+    txa
     tay
     lda neg
     bne b5
     tya
+    ldx divr8u.rem
   breturn:
     rts
   b5:
-    txa
+    lda divr8u.rem
     eor #$ff
     clc
     adc #1
@@ -434,39 +446,42 @@ div8s: {
     jmp b2
 }
 div8u: {
-    .label dividend = $12
-    .label quotient = $13
-    .label return = $13
-    .label divisor = $11
+    sta divr8u.dividend
+    stx divr8u.divisor
+    jsr divr8u
+    rts
+}
+divr8u: {
+    .label dividend = $14
+    .label divisor = $18
+    .label rem = $13
+    ldy #0
     ldx #0
     txa
-    sta quotient
-    tay
+    sta rem
   b1:
-    tya
-    asl
-    tay
+    asl rem
     lda #$80
     and dividend
     cmp #0
     beq b2
-    iny
+    inc rem
   b2:
     asl dividend
-    asl quotient
-    cpy divisor
+    txa
+    asl
+    tax
+    lda rem
+    cmp divisor
     bcc b3
-    inc quotient
-    tya
+    inx
     sec
     sbc divisor
-    tay
+    sta rem
   b3:
-    inx
-    cpx #8
+    iny
+    cpy #8
     bne b1
-    tya
-    tax
     rts
 }
 test_16u: {
@@ -523,9 +538,9 @@ test_16u: {
     lda #>str2
     sta print_str.str+1
     jsr print_str
-    lda rem16u
+    lda divr16u.rem
     sta print_word.w
-    lda rem16u+1
+    lda divr16u.rem+1
     sta print_word.w+1
     jsr print_word
     jsr print_ln
@@ -544,8 +559,7 @@ test_16u: {
 }
 test_8u: {
     .label dividend = 9
-    .label divisor = $11
-    .label res = $10
+    .label divisor = $12
     .label i = 2
     lda #<SCREEN
     sta line_cursor
@@ -555,8 +569,8 @@ test_8u: {
     sta char_cursor
     lda #>SCREEN
     sta char_cursor+1
-    ldx #0
-    txa
+    lda #0
+    sta rem8u
     sta i
   b1:
     ldy i
@@ -565,10 +579,8 @@ test_8u: {
     lda divisors,y
     sta divisor
     lda dividend
-    sta div8u.dividend
+    ldx divisor
     jsr div8u
-    lda div8u.return
-    sta res
     jsr print_byte
     lda #<str
     sta print_str.str
@@ -583,15 +595,15 @@ test_8u: {
     lda #>str1
     sta print_str.str+1
     jsr print_str
-    lda res
-    sta print_byte.b
+    stx print_byte.b
     jsr print_byte
     lda #<str2
     sta print_str.str
     lda #>str2
     sta print_str.str+1
     jsr print_str
-    stx print_byte.b
+    lda divr8u.rem
+    sta print_byte.b
     jsr print_byte
     jsr print_ln
     inc i

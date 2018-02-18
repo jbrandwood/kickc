@@ -235,6 +235,8 @@ public class Pass2ConstantIdentification extends Pass2SsaOptimization {
             return new ConstantBinary(c1, operator, c2);
          case "w=":
             return new ConstantBinary(new ConstantBinary(c1, Operator.MULTIPLY, new ConstantInteger(256L)), Operator.PLUS, c2);
+         case "dw=":
+            return new ConstantBinary(new ConstantBinary(c1, Operator.MULTIPLY, new ConstantInteger(65536L)), Operator.PLUS, c2);
          case "*idx":
             // Pointer dereference - not constant
             return null;

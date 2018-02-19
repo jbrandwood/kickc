@@ -45,6 +45,22 @@ main: {
     lda #>$f781
     sta lin16u_gen.max+1
     jsr lin16u_gen
+    lda #<lintab3
+    sta lin16u_gen.lintab
+    lda #>lintab3
+    sta lin16u_gen.lintab+1
+    lda #<$14
+    sta lin16u_gen.length
+    lda #>$14
+    sta lin16u_gen.length+1
+    lda #<0
+    sta lin16u_gen.min
+    sta lin16u_gen.min+1
+    lda #<$6488
+    sta lin16u_gen.max
+    lda #>$6488
+    sta lin16u_gen.max+1
+    jsr lin16u_gen
     jsr print_cls
     lda #<SCREEN
     sta char_cursor
@@ -70,6 +86,15 @@ main: {
     lda #>$79cb
     sta print_word.w+1
     jsr print_word
+    lda #<str2
+    sta print_str.str
+    lda #>str2
+    sta print_str.str+1
+    jsr print_str
+    lda #<0
+    sta print_word.w
+    sta print_word.w+1
+    jsr print_word
     lda #<SCREEN
     sta line_cursor
     lda #>SCREEN
@@ -84,9 +109,9 @@ main: {
     lda line_cursor+1
     sta char_cursor+1
     jsr print_byte
-    lda #<str2
+    lda #<str3
     sta print_str.str
-    lda #>str2
+    lda #>str3
     sta print_str.str+1
     jsr print_str
     ldy i
@@ -95,15 +120,26 @@ main: {
     lda lintab1+1,y
     sta print_word.w+1
     jsr print_word
-    lda #<str3
+    lda #<str4
     sta print_str.str
-    lda #>str3
+    lda #>str4
     sta print_str.str+1
     jsr print_str
     ldy i
     lda lintab2,y
     sta print_word.w
     lda lintab2+1,y
+    sta print_word.w+1
+    jsr print_word
+    lda #<str5
+    sta print_str.str
+    lda #>str5
+    sta print_str.str+1
+    jsr print_str
+    ldy i
+    lda lintab3,y
+    sta print_word.w
+    lda lintab3+1,y
     sta print_word.w+1
     jsr print_word
     jsr print_ln
@@ -117,9 +153,9 @@ main: {
     sta char_cursor
     lda line_cursor+1
     sta char_cursor+1
-    lda #<str4
+    lda #<str6
     sta print_str.str
-    lda #>str4
+    lda #>str6
     sta print_str.str+1
     jsr print_str
     lda #<$7461
@@ -127,14 +163,24 @@ main: {
     lda #>$7461
     sta print_word.w+1
     jsr print_word
-    lda #<str5
+    lda #<str7
     sta print_str.str
-    lda #>str5
+    lda #>str7
     sta print_str.str+1
     jsr print_str
     lda #<$f781
     sta print_word.w
     lda #>$f781
+    sta print_word.w+1
+    jsr print_word
+    lda #<str8
+    sta print_str.str
+    lda #>str8
+    sta print_str.str+1
+    jsr print_str
+    lda #<$6488
+    sta print_word.w
+    lda #>$6488
     sta print_word.w+1
     jsr print_word
     jsr print_ln
@@ -143,10 +189,14 @@ main: {
     str1: .text " @"
     str2: .text " @"
     str3: .text " @"
-    str4: .text "   @"
+    str4: .text " @"
     str5: .text " @"
+    str6: .text "   @"
+    str7: .text " @"
+    str8: .text " @"
     lintab1: .fill $28, 0
     lintab2: .fill $28, 0
+    lintab3: .fill $28, 0
 }
 print_ln: {
   b1:

@@ -1,49 +1,113 @@
 // Sinus Generator functions using only multiplication, addition and bit shifting
-// USes a single division for converting the wavelength to a reciprocal.
+// Uses a single division for converting the wavelength to a reciprocal.
 // Generates sinus using the series sin(x) = x - x^/3! + x^-5! - x^7/7! ...
 // Uses the approximation sin(x) = x - x^/6 + x^/128
 // Uses reciprocal
-// Generates the sinus value over the interval 0-PI/2 and uses mirroring to get the remaining values
+// Optimization possibility: Generate sinus value over the interval 0-PI/2 and uses mirroring to get the remaining values
 
 import "division.kc"
 import "multiply.kc"
 import "print.kc"
 
 void main() {
-
-    word[20] lintab;
-
-    lin16u_gen(1000, 30000, lintab, 20);
-
     print_cls();
-    for(byte i=0; i<20*2; i=i+2) {
-        print_byte(i);
-        print_str(" @");
-        print_word(lintab[i]);
-    }
-
+    signed word[20] sintab;
+    sin16s_gen(sintab, 20);
+    //for(byte i=0; i<20*2; i=i+2) {
+    //    print_byte(i);
+    //    print_str(" @");
+    //    print_sword(sintab[i]);
+    //    print_ln();
+    //}
 }
 
 // Generate signed word sinus table
 // sintab - the table to generate into
 // wavelength - the number of sinus points in a total sinus wavelength (the size of the table)
-void sin16s_gen(word* sintab, word wavelength) {
+void sin16s_gen(signed word* sintab, word wavelength) {
+    // PI/4 in 0.16 in [0.16] format
+    //const word PI_QUARTER = $c910;
+    // 2*PI in [16.16] format
+    //const dword PI2 = $6487f;
+    // 2*PI in [4.12] format
+    const word PI2 = $6488;
 
+    // PI*2 in [4.28] format
+    const dword PI2_u4f28 = $6487ed51;
+    // PI in [4.28] format
+    const dword PI_u4f28 = $3243f6a9;
+    // PI/2 in [4.28] format
+    const dword PI_HALF_u4f28 = $1921FB54;
+    // PI*2 in [4.12] format
+    const word PI2_u4f12 = $6488;
+    // PI in [4.12] format
+    const word PI_u4f12 = $3244;
+    // PI/2 in [4.12] format
+    const word PI_HALF_u4f12 = $1922;
+    // Another possible approximation - PI = 355/113
+    //word pi2_i = divr16u(2*355, 113, 0);
+    //word pi2_f = divr16u(0, 113, rem16u);
+    //dword pi2 = { pi2_i, pi2_f };
+
+    // Calculate step in [4.24]
+    word stepi = divr16u(PI2, wavelength, 0);
+    word stepf = divr16u(0, wavelength, rem16u);
+    dword step = { stepi, stepf };
+    print_str("2*pi @");
+    print_word(PI2);
+    print_ln();
+    print_str("step @");
+    print_dword(step);
+    print_ln();
+
+    dword x = 0; // u[4.28]
+    for( word i=0; i<wavelength; i++) {
+        word x1 = >x;
+        byte isUpper = 0;
+        if(x1>= PI_u4f12 ) {
+            x1 = x1-PI_u4f12;
+            isUpper = 1;
+        }
+        if(x1>= PI_HALF_u4f12 ) {
+            x1 = PI_u4f12 - x1;
+        }
+
+        // sinx = x - x3/6 + x5/128;
+        word x2 = mul_u4f12(x1, x1); // u[4.12]
+        word x3 = mul_u4f12(x2, x1); // u[4.12]
+        word x4 = mul_u4f12(x3, x1); // u[4.12]
+        word x5 = mul_u4f12(x4, x1); // u[4.12]
+        word x3_6i = divr16u(x3, 6, 0); // u[4.12]
+        word x5_128i = divr16u(x5, 128, 0); // u[4.12]
+        word usinx = x1 - x3_6i + x5_128i; // u[4.12]
+
+        signed word sinx = (signed word)usinx;
+        if(isUpper!=0) {
+            sinx = -sinx;
+        }
+        *sintab = sinx;
+        sintab = sintab +2;
+
+        print_word(i);
+        print_str(" @");
+        print_dword(x);
+        print_str(" @");
+        print_word(x1);
+        print_str(" @");
+        print_word(x3);
+        print_str(" @");
+        print_word(x5);
+        print_str(" @");
+        print_sword(sinx);
+        print_ln();
+
+        x = x + step;
+    }
 
 
 }
 
-// Generate word linear table
-// lintab - the table to generate into
-// length - the number of points in a total sinus wavelength (the size of the table)
-void lin16u_gen(word min, word max, word* lintab, word length) {
-    word ampl = max-min;
-    word dstep = div16u(ampl, length);
-
-    dword val = min<<16;
-    for(word i=0; i<length; i++) {
-        *lintab = >val;
-        val = val + step;
-    }
-
+// Calculate val*val for val u[4.12] to val*val u[4.28]
+word mul_u4f12(word v1, word v2) {
+    return >mul16u(v1, v2)<<4;
 }

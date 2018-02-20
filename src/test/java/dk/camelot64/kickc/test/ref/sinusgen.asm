@@ -5,43 +5,175 @@
   .const PI2_u4f12 = $6488
   .const PI_u4f12 = $3244
   .const PI_HALF_u4f12 = $1922
-  .label rem16u = 8
-  .label char_cursor = $12
-  .label line_cursor = $e
+  .label rem16u = 4
+  .label char_cursor = 6
   jsr main
 main: {
-    sei
-    jsr print_cls
+    .label wavelength = $80
+    .label st1 = 2
     jsr sin16s_gen
-    cli
+    jsr print_cls
+    lda #<SCREEN
+    sta char_cursor
+    lda #>SCREEN
+    sta char_cursor+1
+    lda #<sintab1
+    sta st1
+    lda #>sintab1
+    sta st1+1
+  b1:
+    ldy #0
+    lda (st1),y
+    sta print_sword.w
+    iny
+    lda (st1),y
+    sta print_sword.w+1
+    jsr print_sword
+    jsr print_str
+    clc
+    lda st1
+    adc #<2
+    sta st1
+    lda st1+1
+    adc #>2
+    sta st1+1
+    cmp #>sintab1+wavelength*2
+    bcc b1
+    bne !+
+    lda st1
+    cmp #<sintab1+wavelength*2
+    bcc b1
+  !:
     rts
-    sintab: .fill $28, 0
+    str: .text " @"
+    sintab1: .fill $100, 0
+}
+print_str: {
+    .label str = 4
+    lda #<main.str
+    sta str
+    lda #>main.str
+    sta str+1
+  b1:
+    ldy #0
+    lda (str),y
+    cmp #'@'
+    bne b2
+    rts
+  b2:
+    ldy #0
+    lda (str),y
+    sta (char_cursor),y
+    inc char_cursor
+    bne !+
+    inc char_cursor+1
+  !:
+    inc str
+    bne !+
+    inc str+1
+  !:
+    jmp b1
+}
+print_sword: {
+    .label w = 4
+    lda w+1
+    bpl b1
+    lda #'-'
+    jsr print_char
+    sec
+    lda w
+    eor #$ff
+    adc #0
+    sta w
+    lda w+1
+    eor #$ff
+    adc #0
+    sta w+1
+  b1:
+    jsr print_word
+    rts
+}
+print_word: {
+    lda print_sword.w+1
+    tax
+    jsr print_byte
+    lda print_sword.w
+    tax
+    jsr print_byte
+    rts
+}
+print_byte: {
+    txa
+    lsr
+    lsr
+    lsr
+    lsr
+    tay
+    lda hextab,y
+    jsr print_char
+    txa
+    and #$f
+    tay
+    lda hextab,y
+    jsr print_char
+    rts
+    hextab: .text "0123456789abcdef"
+}
+print_char: {
+    ldy #0
+    sta (char_cursor),y
+    inc char_cursor
+    bne !+
+    inc char_cursor+1
+  !:
+    rts
+}
+print_cls: {
+    .label sc = 2
+    lda #<SCREEN
+    sta sc
+    lda #>SCREEN
+    sta sc+1
+  b1:
+    lda #' '
+    ldy #0
+    sta (sc),y
+    inc sc
+    bne !+
+    inc sc+1
+  !:
+    lda sc+1
+    cmp #>SCREEN+$3e8
+    bne b1
+    lda sc
+    cmp #<SCREEN+$3e8
+    bne b1
+    rts
 }
 sin16s_gen: {
-    .const wavelength = $14
     .const div6 = $10000/6
     .const div128 = $10000/$80
-    .label _15 = $14
-    .label _17 = $14
-    .label _19 = $c
+    .label _15 = $10
+    .label _17 = $10
+    .label _19 = 6
     .label stepi = $e
     .label stepf = $c
-    .label step = $1c
-    .label x1 = $a
-    .label x2 = $10
-    .label x3 = $20
-    .label x4 = $10
-    .label x5 = $22
-    .label x3_6 = $20
-    .label x5_128 = $22
-    .label usinx = $c
-    .label sintab = 6
-    .label x = 2
-    .label i = 8
-    .label sinx = $c
-    lda #<wavelength
+    .label step = $18
+    .label x1 = 6
+    .label x2 = $e
+    .label x3 = $1c
+    .label x4 = $e
+    .label x5 = $1e
+    .label x3_6 = $1c
+    .label x5_128 = $c
+    .label usinx = 6
+    .label sintab = 2
+    .label x = 8
+    .label i = 4
+    .label sinx = 6
+    lda #<main.wavelength
     sta divr16u.divisor
-    lda #>wavelength
+    lda #>main.wavelength
     sta divr16u.divisor+1
     lda #<PI2_u4f12
     sta divr16u.dividend
@@ -55,9 +187,9 @@ sin16s_gen: {
     sta stepi
     lda divr16u.return+1
     sta stepi+1
-    lda #<wavelength
+    lda #<main.wavelength
     sta divr16u.divisor
-    lda #>wavelength
+    lda #>main.wavelength
     sta divr16u.divisor+1
     lda #<0
     sta divr16u.dividend
@@ -71,20 +203,12 @@ sin16s_gen: {
     sta step
     lda stepf+1
     sta step+1
-    lda #<SCREEN
-    sta line_cursor
-    lda #>SCREEN
-    sta line_cursor+1
-    lda #<SCREEN
-    sta char_cursor
-    lda #>SCREEN
-    sta char_cursor+1
     lda #<0
     sta i
     sta i+1
-    lda #<main.sintab
+    lda #<main.sintab1
     sta sintab
-    lda #>main.sintab
+    lda #>main.sintab1
     sta sintab+1
     lda #0
     sta x
@@ -177,11 +301,11 @@ sin16s_gen: {
     sta x5_128
     lda _17+3
     sta x5_128+1
-    lda x1
+    lda _19
     sec
     sbc x3_6
     sta _19
-    lda x1+1
+    lda _19+1
     sbc x3_6+1
     sta _19+1
     lda usinx
@@ -216,54 +340,6 @@ sin16s_gen: {
     lda sintab+1
     adc #>2
     sta sintab+1
-    lda i
-    sta print_word.w
-    lda i+1
-    sta print_word.w+1
-    jsr print_word
-    lda #<str
-    sta print_str.str
-    lda #>str
-    sta print_str.str+1
-    jsr print_str
-    jsr print_dword
-    lda #<str1
-    sta print_str.str
-    lda #>str1
-    sta print_str.str+1
-    jsr print_str
-    lda x1
-    sta print_word.w
-    lda x1+1
-    sta print_word.w+1
-    jsr print_word
-    lda #<str2
-    sta print_str.str
-    lda #>str2
-    sta print_str.str+1
-    jsr print_str
-    lda x3_6
-    sta print_word.w
-    lda x3_6+1
-    sta print_word.w+1
-    jsr print_word
-    lda #<str3
-    sta print_str.str
-    lda #>str3
-    sta print_str.str+1
-    jsr print_str
-    lda x5_128
-    sta print_word.w
-    lda x5_128+1
-    sta print_word.w+1
-    jsr print_word
-    lda #<str4
-    sta print_str.str
-    lda #>str4
-    sta print_str.str+1
-    jsr print_str
-    jsr print_sword
-    jsr print_ln
     lda x
     clc
     adc step
@@ -282,145 +358,24 @@ sin16s_gen: {
     inc i+1
   !:
     lda i+1
-    cmp #>wavelength
-    bcc b29
+    cmp #>main.wavelength
+    bcs !b1+
+    jmp b1
+  !b1:
     bne !+
     lda i
-    cmp #<wavelength
-    bcc b29
-  !:
-    rts
-  b29:
-    lda line_cursor
-    sta char_cursor
-    lda line_cursor+1
-    sta char_cursor+1
+    cmp #<main.wavelength
+    bcs !b1+
     jmp b1
-    str: .text " @"
-    str1: .text " @"
-    str2: .text " @"
-    str3: .text " @"
-    str4: .text " @"
-}
-print_ln: {
-  b1:
-    lda line_cursor
-    clc
-    adc #$28
-    sta line_cursor
-    bcc !+
-    inc line_cursor+1
+  !b1:
   !:
-    lda line_cursor+1
-    cmp char_cursor+1
-    bcc b1
-    bne !+
-    lda line_cursor
-    cmp char_cursor
-    bcc b1
-  !:
-    rts
-}
-print_sword: {
-    .label w = $c
-    lda w+1
-    bpl b1
-    lda #'-'
-    jsr print_char
-    sec
-    lda w
-    eor #$ff
-    adc #0
-    sta w
-    lda w+1
-    eor #$ff
-    adc #0
-    sta w+1
-  b1:
-    lda w
-    sta print_word.w
-    lda w+1
-    sta print_word.w+1
-    jsr print_word
-    rts
-}
-print_word: {
-    .label w = $10
-    lda w+1
-    tax
-    jsr print_byte
-    lda w
-    tax
-    jsr print_byte
-    rts
-}
-print_byte: {
-    txa
-    lsr
-    lsr
-    lsr
-    lsr
-    tay
-    lda hextab,y
-    jsr print_char
-    txa
-    and #$f
-    tay
-    lda hextab,y
-    jsr print_char
-    rts
-    hextab: .text "0123456789abcdef"
-}
-print_char: {
-    ldy #0
-    sta (char_cursor),y
-    inc char_cursor
-    bne !+
-    inc char_cursor+1
-  !:
-    rts
-}
-print_str: {
-    .label str = $10
-  b1:
-    ldy #0
-    lda (str),y
-    cmp #'@'
-    bne b2
-    rts
-  b2:
-    ldy #0
-    lda (str),y
-    sta (char_cursor),y
-    inc char_cursor
-    bne !+
-    inc char_cursor+1
-  !:
-    inc str
-    bne !+
-    inc str+1
-  !:
-    jmp b1
-}
-print_dword: {
-    .label dw = 2
-    lda dw+2
-    sta print_word.w
-    lda dw+3
-    sta print_word.w+1
-    jsr print_word
-    lda dw
-    sta print_word.w
-    lda dw+1
-    sta print_word.w+1
-    jsr print_word
     rts
 }
 mul16u: {
-    .label mb = $18
-    .label a = $10
-    .label res = $14
-    .label return = $14
+    .label mb = $14
+    .label a = $e
+    .label res = $10
+    .label return = $10
     .label b = $c
     lda b
     sta mb
@@ -468,11 +423,11 @@ mul16u: {
     jmp b1
 }
 mul_u4f12: {
-    .label _0 = $14
-    .label _1 = $14
-    .label v1 = $10
-    .label v2 = $a
-    .label return = $10
+    .label _0 = $10
+    .label _1 = $10
+    .label v1 = $e
+    .label v2 = 6
+    .label return = $e
     lda v2
     sta mul16u.b
     lda v2+1
@@ -501,11 +456,11 @@ mul_u4f12: {
     rts
 }
 divr16u: {
-    .label rem = 8
-    .label dividend = $a
+    .label rem = 4
+    .label dividend = 6
     .label quotient = $c
     .label return = $c
-    .label divisor = 6
+    .label divisor = 2
     ldx #0
     txa
     sta quotient
@@ -547,28 +502,6 @@ divr16u: {
   b3:
     inx
     cpx #$10
-    bne b1
-    rts
-}
-print_cls: {
-    .label sc = 6
-    lda #<SCREEN
-    sta sc
-    lda #>SCREEN
-    sta sc+1
-  b1:
-    lda #' '
-    ldy #0
-    sta (sc),y
-    inc sc
-    bne !+
-    inc sc+1
-  !:
-    lda sc+1
-    cmp #>SCREEN+$3e8
-    bne b1
-    lda sc
-    cmp #<SCREEN+$3e8
     bne b1
     rts
 }

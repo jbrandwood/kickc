@@ -9,17 +9,14 @@ import "multiply.kc"
 import "print.kc"
 
 void main() {
-    asm { sei }
+    word wavelength = 128;
+    signed word[128] sintab1;
+    sin16s_gen(sintab1, wavelength);
     print_cls();
-    signed word[20] sintab;
-    sin16s_gen(sintab, 20);
-    asm { cli }
-    //for(byte i=0; i<20*2; i=i+2) {
-    //    print_byte(i);
-    //    print_str(" @");
-    //    print_sword(sintab[i]);
-    //    print_ln();
-    //}
+    for(signed word* st1 = sintab1; st1<sintab1+wavelength*2; st1 = st1+2 ) {
+        print_sword(*st1);
+        print_str(" @");
+    }
 }
 
 // PI*2 in u[4.12] format
@@ -46,9 +43,6 @@ void sin16s_gen(signed word* sintab, word wavelength) {
     // Iterate over the table
     dword x = 0; // u[4.28]
     // u[0.16] div6 = 1/6 ;
-    //divr16u(1, 6, 0);
-    //word div6 = divr16u(0, 6, rem16u);
-    // u[0.16] div6 = 1/6 ;
     word div6 = $10000/6; //$2aab;
     // u[0.16] div128 = 1/128 ;
     word div128 = $10000/128; //$0200;
@@ -68,7 +62,7 @@ void sin16s_gen(signed word* sintab, word wavelength) {
         word x3 = mul_u4f12(x2, x1); // u[4.12]
         word x4 = mul_u4f12(x3, x1); // u[4.12]
         word x5 = mul_u4f12(x4, x1); // u[4.12]
-        word x3_6 = >mul16u(x3, div6);
+        word x3_6 = >mul16u(x3, div6);  // u[4.12]
         word x5_128 = >mul16u(x5, div128); // u[4.12]
         word usinx = x1 - x3_6 + x5_128; // u[4.12]
         signed word sinx = (signed word)usinx; // s[4.12]
@@ -76,21 +70,7 @@ void sin16s_gen(signed word* sintab, word wavelength) {
             sinx = -sinx;
         }
         *sintab = sinx;
-        sintab = sintab +2;
-
-        print_word(i);
-        print_str(" @");
-        print_dword(x);
-        print_str(" @");
-        print_word(x1);
-        print_str(" @");
-        print_word(x3_6);
-        print_str(" @");
-        print_word(x5_128);
-        print_str(" @");
-        print_sword(sinx);
-        print_ln();
-
+        sintab = sintab + 2;
         x = x + step;
     }
 

@@ -60,11 +60,12 @@ void sin16s_gen(signed word* sintab, word wavelength) {
         // s[4.12] sinx = x - x^3/6 + x5/128;
         word x2 = mul_u4f12(x1, x1); // u[4.12]
         word x3 = mul_u4f12(x2, x1); // u[4.12]
+        word x3_6 = >mul16u(x3, div6);  // u[4.12]
+        word usinx = x1 - x3_6; // u[4.12]
         word x4 = mul_u4f12(x3, x1); // u[4.12]
         word x5 = mul_u4f12(x4, x1); // u[4.12]
-        word x3_6 = >mul16u(x3, div6);  // u[4.12]
         word x5_128 = >mul16u(x5, div128); // u[4.12]
-        word usinx = x1 - x3_6 + x5_128; // u[4.12]
+        usinx = usinx + x5_128;
         signed word sinx = (signed word)usinx; // s[4.12]
         if(isUpper!=0) {
             sinx = -sinx;

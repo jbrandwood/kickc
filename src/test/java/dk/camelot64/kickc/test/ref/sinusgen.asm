@@ -153,24 +153,21 @@ print_cls: {
 sin16s_gen: {
     .const div6 = $10000/6
     .const div128 = $10000/$80
-    .label _15 = $10
-    .label _17 = $10
-    .label _19 = 6
+    .label _13 = $12
+    .label _18 = $12
     .label stepi = $e
     .label stepf = $c
-    .label step = $18
+    .label step = $1a
     .label x1 = 6
-    .label x2 = $e
-    .label x3 = $1c
-    .label x4 = $e
-    .label x5 = $1e
-    .label x3_6 = $1c
-    .label x5_128 = $c
-    .label usinx = 6
+    .label x2 = $10
+    .label x3 = $1e
+    .label usinx = $c
+    .label x4 = $10
+    .label x5 = $10
     .label sintab = 2
     .label x = 8
     .label i = 4
-    .label sinx = 6
+    .label sinx = $c
     lda #<main.wavelength
     sta divr16u.divisor
     lda #>main.wavelength
@@ -266,16 +263,6 @@ sin16s_gen: {
     lda mul_u4f12.return+1
     sta x3+1
     lda x3
-    sta mul_u4f12.v1
-    lda x3+1
-    sta mul_u4f12.v1+1
-    jsr mul_u4f12
-    jsr mul_u4f12
-    lda mul_u4f12.return
-    sta x5
-    lda mul_u4f12.return+1
-    sta x5+1
-    lda x3
     sta mul16u.a
     lda x3+1
     sta mul16u.a+1
@@ -284,36 +271,30 @@ sin16s_gen: {
     lda #>div6
     sta mul16u.b+1
     jsr mul16u
-    lda _15+2
-    sta x3_6
-    lda _15+3
-    sta x3_6+1
-    lda x5
-    sta mul16u.a
-    lda x5+1
-    sta mul16u.a+1
+    lda x1
+    sec
+    sbc _13+2
+    sta usinx
+    lda x1+1
+    sbc _13+3
+    sta usinx+1
+    lda x3
+    sta mul_u4f12.v1
+    lda x3+1
+    sta mul_u4f12.v1+1
+    jsr mul_u4f12
+    jsr mul_u4f12
     lda #<div128
     sta mul16u.b
     lda #>div128
     sta mul16u.b+1
     jsr mul16u
-    lda _17+2
-    sta x5_128
-    lda _17+3
-    sta x5_128+1
-    lda _19
-    sec
-    sbc x3_6
-    sta _19
-    lda _19+1
-    sbc x3_6+1
-    sta _19+1
     lda usinx
     clc
-    adc x5_128
+    adc _18+2
     sta usinx
     lda usinx+1
-    adc x5_128+1
+    adc _18+3
     sta usinx+1
     cpx #0
     beq b4
@@ -372,11 +353,11 @@ sin16s_gen: {
     rts
 }
 mul16u: {
-    .label mb = $14
-    .label a = $e
-    .label res = $10
-    .label return = $10
-    .label b = $c
+    .label mb = $16
+    .label a = $10
+    .label res = $12
+    .label return = $12
+    .label b = $e
     lda b
     sta mb
     lda b+1
@@ -423,11 +404,11 @@ mul16u: {
     jmp b1
 }
 mul_u4f12: {
-    .label _0 = $10
-    .label _1 = $10
-    .label v1 = $e
+    .label _0 = $12
+    .label _1 = $12
+    .label v1 = $10
     .label v2 = 6
-    .label return = $e
+    .label return = $10
     lda v2
     sta mul16u.b
     lda v2+1

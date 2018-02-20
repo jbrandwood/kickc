@@ -2,32 +2,38 @@
 :BasicUpstart(main)
 .pc = $80d "Program"
   .label SCREEN = $400
-  .label rem16u = $12
+  .const PI2_u4f12 = $6488
+  .const PI_u4f12 = $3244
+  .const PI_HALF_u4f12 = $1922
+  .label rem16u = 8
   .label char_cursor = $12
   .label line_cursor = $e
   jsr main
 main: {
+    sei
     jsr print_cls
     jsr sin16s_gen
+    cli
     rts
     sintab: .fill $28, 0
 }
 sin16s_gen: {
     .const wavelength = $14
-    .const PI2 = $6488
-    .const PI_u4f12 = $3244
-    .const PI_HALF_u4f12 = $1922
-    .label _21 = $26
-    .label stepi = 6
+    .const div6 = $10000/6
+    .const div128 = $10000/$80
+    .label _15 = $14
+    .label _17 = $14
+    .label _19 = $c
+    .label stepi = $e
     .label stepf = $c
-    .label step = $20
+    .label step = $1c
     .label x1 = $a
-    .label x2 = $16
-    .label x3 = $24
-    .label x4 = $16
-    .label x5 = $16
-    .label x3_6i = $26
-    .label x5_128i = $c
+    .label x2 = $10
+    .label x3 = $20
+    .label x4 = $10
+    .label x5 = $22
+    .label x3_6 = $20
+    .label x5_128 = $22
     .label usinx = $c
     .label sintab = 6
     .label x = 2
@@ -37,9 +43,9 @@ sin16s_gen: {
     sta divr16u.divisor
     lda #>wavelength
     sta divr16u.divisor+1
-    lda #<PI2
+    lda #<PI2_u4f12
     sta divr16u.dividend
-    lda #>PI2
+    lda #>PI2_u4f12
     sta divr16u.dividend+1
     lda #<0
     sta divr16u.rem
@@ -66,43 +72,13 @@ sin16s_gen: {
     lda stepf+1
     sta step+1
     lda #<SCREEN
-    sta char_cursor
-    lda #>SCREEN
-    sta char_cursor+1
-    lda #<str
-    sta print_str.str
-    lda #>str
-    sta print_str.str+1
-    jsr print_str
-    lda #<PI2
-    sta print_word.w
-    lda #>PI2
-    sta print_word.w+1
-    jsr print_word
-    lda #<SCREEN
     sta line_cursor
     lda #>SCREEN
     sta line_cursor+1
-    jsr print_ln
-    lda line_cursor
+    lda #<SCREEN
     sta char_cursor
-    lda line_cursor+1
+    lda #>SCREEN
     sta char_cursor+1
-    lda #<str1
-    sta print_str.str
-    lda #>str1
-    sta print_str.str+1
-    jsr print_str
-    lda step
-    sta print_dword.dw
-    lda step+1
-    sta print_dword.dw+1
-    lda step+2
-    sta print_dword.dw+2
-    lda step+3
-    sta print_dword.dw+3
-    jsr print_dword
-    jsr print_ln
     lda #<0
     sta i
     sta i+1
@@ -134,10 +110,10 @@ sin16s_gen: {
     lda x1+1
     sbc #>PI_u4f12
     sta x1+1
-    ldy #1
+    ldx #1
     jmp b2
   b5:
-    ldy #0
+    ldx #0
   b2:
     lda x1+1
     cmp #>PI_HALF_u4f12
@@ -171,48 +147,51 @@ sin16s_gen: {
     sta mul_u4f12.v1+1
     jsr mul_u4f12
     jsr mul_u4f12
+    lda mul_u4f12.return
+    sta x5
+    lda mul_u4f12.return+1
+    sta x5+1
     lda x3
-    sta divr16u.dividend
+    sta mul16u.a
     lda x3+1
-    sta divr16u.dividend+1
-    lda #<6
-    sta divr16u.divisor
-    lda #>6
-    sta divr16u.divisor+1
-    sta divr16u.rem
-    sta divr16u.rem+1
-    jsr divr16u
-    lda divr16u.return
-    sta x3_6i
-    lda divr16u.return+1
-    sta x3_6i+1
+    sta mul16u.a+1
+    lda #<div6
+    sta mul16u.b
+    lda #>div6
+    sta mul16u.b+1
+    jsr mul16u
+    lda _15+2
+    sta x3_6
+    lda _15+3
+    sta x3_6+1
     lda x5
-    sta divr16u.dividend
+    sta mul16u.a
     lda x5+1
-    sta divr16u.dividend+1
-    lda #<$80
-    sta divr16u.divisor
-    lda #>$80
-    sta divr16u.divisor+1
-    lda #<0
-    sta divr16u.rem
-    sta divr16u.rem+1
-    jsr divr16u
+    sta mul16u.a+1
+    lda #<div128
+    sta mul16u.b
+    lda #>div128
+    sta mul16u.b+1
+    jsr mul16u
+    lda _17+2
+    sta x5_128
+    lda _17+3
+    sta x5_128+1
     lda x1
     sec
-    sbc _21
-    sta _21
+    sbc x3_6
+    sta _19
     lda x1+1
-    sbc _21+1
-    sta _21+1
+    sbc x3_6+1
+    sta _19+1
     lda usinx
     clc
-    adc _21
+    adc x5_128
     sta usinx
     lda usinx+1
-    adc _21+1
+    adc x5_128+1
     sta usinx+1
-    cpy #0
+    cpx #0
     beq b4
     sec
     lda sinx
@@ -241,20 +220,16 @@ sin16s_gen: {
     sta print_word.w
     lda i+1
     sta print_word.w+1
-    lda line_cursor
-    sta char_cursor
-    lda line_cursor+1
-    sta char_cursor+1
     jsr print_word
-    lda #<str2
+    lda #<str
     sta print_str.str
-    lda #>str2
+    lda #>str
     sta print_str.str+1
     jsr print_str
     jsr print_dword
-    lda #<str3
+    lda #<str1
     sta print_str.str
-    lda #>str3
+    lda #>str1
     sta print_str.str+1
     jsr print_str
     lda x1
@@ -262,29 +237,29 @@ sin16s_gen: {
     lda x1+1
     sta print_word.w+1
     jsr print_word
+    lda #<str2
+    sta print_str.str
+    lda #>str2
+    sta print_str.str+1
+    jsr print_str
+    lda x3_6
+    sta print_word.w
+    lda x3_6+1
+    sta print_word.w+1
+    jsr print_word
+    lda #<str3
+    sta print_str.str
+    lda #>str3
+    sta print_str.str+1
+    jsr print_str
+    lda x5_128
+    sta print_word.w
+    lda x5_128+1
+    sta print_word.w+1
+    jsr print_word
     lda #<str4
     sta print_str.str
     lda #>str4
-    sta print_str.str+1
-    jsr print_str
-    lda x3
-    sta print_word.w
-    lda x3+1
-    sta print_word.w+1
-    jsr print_word
-    lda #<str5
-    sta print_str.str
-    lda #>str5
-    sta print_str.str+1
-    jsr print_str
-    lda x5
-    sta print_word.w
-    lda x5+1
-    sta print_word.w+1
-    jsr print_word
-    lda #<str6
-    sta print_str.str
-    lda #>str6
     sta print_str.str+1
     jsr print_str
     jsr print_sword
@@ -308,24 +283,24 @@ sin16s_gen: {
   !:
     lda i+1
     cmp #>wavelength
-    bcs !b1+
-    jmp b1
-  !b1:
+    bcc b29
     bne !+
     lda i
     cmp #<wavelength
-    bcs !b1+
-    jmp b1
-  !b1:
+    bcc b29
   !:
     rts
-    str: .text "2*pi @"
-    str1: .text "step @"
+  b29:
+    lda line_cursor
+    sta char_cursor
+    lda line_cursor+1
+    sta char_cursor+1
+    jmp b1
+    str: .text " @"
+    str1: .text " @"
     str2: .text " @"
     str3: .text " @"
     str4: .text " @"
-    str5: .text " @"
-    str6: .text " @"
 }
 print_ln: {
   b1:
@@ -441,91 +416,12 @@ print_dword: {
     jsr print_word
     rts
 }
-divr16u: {
-    .label rem = $12
-    .label dividend = $14
-    .label quotient = $c
-    .label return = $c
-    .label divisor = $10
-    ldx #0
-    txa
-    sta quotient
-    sta quotient+1
-  b1:
-    asl rem
-    rol rem+1
-    lda dividend+1
-    and #$80
-    cmp #0
-    beq b2
-    lda #1
-    ora rem
-    sta rem
-  b2:
-    asl dividend
-    rol dividend+1
-    asl quotient
-    rol quotient+1
-    lda rem+1
-    cmp divisor+1
-    bcc b3
-    bne !+
-    lda rem
-    cmp divisor
-    bcc b3
-  !:
-    inc quotient
-    bne !+
-    inc quotient+1
-  !:
-    lda rem
-    sec
-    sbc divisor
-    sta rem
-    lda rem+1
-    sbc divisor+1
-    sta rem+1
-  b3:
-    inx
-    cpx #$10
-    bne b1
-    rts
-}
-mul_u4f12: {
-    .label _0 = $18
-    .label _1 = $18
-    .label v1 = $16
-    .label v2 = $a
-    .label return = $16
-    jsr mul16u
-    asl _1
-    rol _1+1
-    rol _1+2
-    rol _1+3
-    asl _1
-    rol _1+1
-    rol _1+2
-    rol _1+3
-    asl _1
-    rol _1+1
-    rol _1+2
-    rol _1+3
-    asl _1
-    rol _1+1
-    rol _1+2
-    rol _1+3
-    lda _1+2
-    sta return
-    lda _1+3
-    sta return+1
-    rts
-}
 mul16u: {
-    .label mb = $1c
-    .label a = $16
-    .label res = $18
-    .label b = $a
-    .label return = $18
+    .label mb = $18
+    .label a = $10
+    .label res = $14
+    .label return = $14
+    .label b = $c
     lda b
     sta mb
     lda b+1
@@ -570,6 +466,89 @@ mul16u: {
     rol mb+2
     rol mb+3
     jmp b1
+}
+mul_u4f12: {
+    .label _0 = $14
+    .label _1 = $14
+    .label v1 = $10
+    .label v2 = $a
+    .label return = $10
+    lda v2
+    sta mul16u.b
+    lda v2+1
+    sta mul16u.b+1
+    jsr mul16u
+    asl _1
+    rol _1+1
+    rol _1+2
+    rol _1+3
+    asl _1
+    rol _1+1
+    rol _1+2
+    rol _1+3
+    asl _1
+    rol _1+1
+    rol _1+2
+    rol _1+3
+    asl _1
+    rol _1+1
+    rol _1+2
+    rol _1+3
+    lda _1+2
+    sta return
+    lda _1+3
+    sta return+1
+    rts
+}
+divr16u: {
+    .label rem = 8
+    .label dividend = $a
+    .label quotient = $c
+    .label return = $c
+    .label divisor = 6
+    ldx #0
+    txa
+    sta quotient
+    sta quotient+1
+  b1:
+    asl rem
+    rol rem+1
+    lda dividend+1
+    and #$80
+    cmp #0
+    beq b2
+    lda #1
+    ora rem
+    sta rem
+  b2:
+    asl dividend
+    rol dividend+1
+    asl quotient
+    rol quotient+1
+    lda rem+1
+    cmp divisor+1
+    bcc b3
+    bne !+
+    lda rem
+    cmp divisor
+    bcc b3
+  !:
+    inc quotient
+    bne !+
+    inc quotient+1
+  !:
+    lda rem
+    sec
+    sbc divisor
+    sta rem
+    lda rem+1
+    sbc divisor+1
+    sta rem+1
+  b3:
+    inx
+    cpx #$10
+    bne b1
+    rts
 }
 print_cls: {
     .label sc = 6

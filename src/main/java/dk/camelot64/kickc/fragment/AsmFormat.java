@@ -4,6 +4,7 @@ import dk.camelot64.kickc.model.*;
 
 /** Formatting of numbers, constants, names and more for KickAssembler */
 public class AsmFormat {
+
    /**
     * Get ASM code for a constant value
     *
@@ -82,6 +83,28 @@ public class AsmFormat {
             return getAsmConstant(program, operand, outerPrecedence, codeScope);
          } else {
             return "$ffffffff & " + getAsmConstant(program, operand, Operator.BOOL_AND.getPrecedence(), codeScope);
+         }
+      } else if(Operator.LOWBYTE.equals(operator)) {
+         SymbolType operandType = SymbolTypeInference.inferType(program.getScope(), operand);
+         if(SymbolType.isByte(operandType) || SymbolType.isSByte(operandType)) {
+            return getAsmConstant(program, operand, outerPrecedence, codeScope);
+         } else if(SymbolType.isWord(operandType) || SymbolType.isSWord(operandType)) {
+            return "<" + getAsmConstant(program, operand, outerPrecedence, codeScope);
+         } else if(SymbolType.isDWord(operandType) || SymbolType.isSDWord(operandType)) {
+            return getAsmConstant(program, operand, outerPrecedence, codeScope) + "&$ffff";
+         } else {
+            throw new CompileError("Unhandled type "+operand);
+         }
+      } else if(Operator.HIBYTE.equals(operator)) {
+         SymbolType operandType = SymbolTypeInference.inferType(program.getScope(), operand);
+         if(SymbolType.isByte(operandType) || SymbolType.isSByte(operandType)) {
+            return getAsmConstant(program, operand, outerPrecedence, codeScope);
+         } else if(SymbolType.isWord(operandType) || SymbolType.isSWord(operandType)) {
+            return ">" + getAsmConstant(program, operand, outerPrecedence, codeScope);
+         } else if(SymbolType.isDWord(operandType) || SymbolType.isSDWord(operandType)) {
+            return getAsmConstant(program, operand, outerPrecedence, codeScope) + ">>16";
+         } else {
+            throw new CompileError("Unhandled type "+operand);
          }
       } else if(Operator.INCREMENT.equals(operator)) {
          return getAsmConstant(program, operand, Operator.PLUS.getPrecedence(), codeScope) + "+1";

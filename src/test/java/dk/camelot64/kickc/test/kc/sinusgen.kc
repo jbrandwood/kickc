@@ -19,12 +19,6 @@ void main() {
     }
 }
 
-// PI*2 in u[4.12] format
-const word PI2_u4f12 = $6488;
-// PI in u[4.12] format
-const word PI_u4f12 = $3244;
-// PI/2 in u[4.12] format
-const word PI_HALF_u4f12 = $1922;
 // PI*2 in u[4.28] format
 const dword PI2_u4f28 = $6487ed51;
 // PI in u[4.28] format
@@ -32,26 +26,29 @@ const dword PI_u4f28 = $3243f6a9;
 // PI/2 in u[4.28] format
 const dword PI_HALF_u4f28 = $1921FB54;
 
+// PI*2 in u[4.12] format
+const word PI2_u4f12 = $6488;
+// PI in u[4.12] format
+const word PI_u4f12 = $3244;
+// PI/2 in u[4.12] format
+const word PI_HALF_u4f12 = $1922;
+
 // Generate signed word sinus table
 // sintab - the table to generate into
 // wavelength - the number of sinus points in a total sinus wavelength (the size of the table)
 void sin16s_gen(signed word* sintab, word wavelength) {
     // u[4.12] step = PI*2/wavelength
-    word stepi = divr16u(PI2_u4f12, wavelength, 0);
-    word stepf = divr16u(0, wavelength, rem16u);
+    word stepi = divr16u(>PI2_u4f28, wavelength, 0);
+    word stepf = divr16u(<PI2_u4f28, wavelength, rem16u);
     dword step = { stepi, stepf }; // u[4.12]
     // Iterate over the table
     dword x = 0; // u[4.28]
-    // u[0.16] div6 = 1/6 ;
-    word div6 = $10000/6; //$2aab;
-    // u[0.16] div128 = 1/128 ;
-    word div128 = $10000/128; //$0200;
     for( word i=0; i<wavelength; i++) {
         // Move x1 into the range 0-PI/2 using sinus mirror symmetries
         word x1 = >x; // u[4.12]
         byte isUpper = 0;
         if(x1 >= PI_u4f12 ) {
-            x1 = x1-PI_u4f12;
+            x1 = x1 - PI_u4f12;
             isUpper = 1;
         }
         if(x1 >= PI_HALF_u4f12 ) {
@@ -60,22 +57,22 @@ void sin16s_gen(signed word* sintab, word wavelength) {
         // s[4.12] sinx = x - x^3/6 + x5/128;
         word x2 = mul_u4f12(x1, x1); // u[4.12]
         word x3 = mul_u4f12(x2, x1); // u[4.12]
-        word x3_6 = >mul16u(x3, div6);  // u[4.12]
+        word x3_6 = >mul16u(x3, $10000/6);  // u[4.12] - u[0.16] div6 = 1/6;
         word usinx = x1 - x3_6; // u[4.12]
         word x4 = mul_u4f12(x3, x1); // u[4.12]
         word x5 = mul_u4f12(x4, x1); // u[4.12]
-        word x5_128 = >mul16u(x5, div128); // u[4.12]
+        word x5_128 = >mul16u(x5, $10000/128); // u[4.12] - u[0.16] div128 = 1/128;
         usinx = usinx + x5_128;
-        signed word sinx = (signed word)usinx; // s[4.12]
+        signed word sinx;
         if(isUpper!=0) {
-            sinx = -sinx;
-        }
+            sinx = -(signed word)usinx; // s[4.12];
+        } else {
+            sinx = (signed word)usinx; // s[4.12]
+         }
         *sintab = sinx;
         sintab = sintab + 2;
         x = x + step;
     }
-
-
 }
 
 // Calculate val*val for val u[4.12] to val*val u[4.28]

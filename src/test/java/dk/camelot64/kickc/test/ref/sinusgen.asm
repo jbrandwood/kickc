@@ -2,7 +2,7 @@
 :BasicUpstart(main)
 .pc = $80d "Program"
   .label SCREEN = $400
-  .const PI2_u4f12 = $6488
+  .const PI2_u4f28 = $6487ed51
   .const PI_u4f12 = $3244
   .const PI_HALF_u4f12 = $1922
   .label rem16u = 4
@@ -151,10 +151,8 @@ print_cls: {
     rts
 }
 sin16s_gen: {
-    .const div6 = $10000/6
-    .const div128 = $10000/$80
-    .label _13 = $12
-    .label _18 = $12
+    .label _14 = $12
+    .label _20 = $12
     .label stepi = $e
     .label stepf = $c
     .label step = $1a
@@ -164,17 +162,17 @@ sin16s_gen: {
     .label usinx = $c
     .label x4 = $10
     .label x5 = $10
+    .label sinx = $c
     .label sintab = 2
     .label x = 8
     .label i = 4
-    .label sinx = $c
     lda #<main.wavelength
     sta divr16u.divisor
     lda #>main.wavelength
     sta divr16u.divisor+1
-    lda #<PI2_u4f12
+    lda #<PI2_u4f28>>16
     sta divr16u.dividend
-    lda #>PI2_u4f12
+    lda #>PI2_u4f28>>16
     sta divr16u.dividend+1
     lda #<0
     sta divr16u.rem
@@ -188,8 +186,9 @@ sin16s_gen: {
     sta divr16u.divisor
     lda #>main.wavelength
     sta divr16u.divisor+1
-    lda #<0
+    lda #<PI2_u4f28&$ffff
     sta divr16u.dividend
+    lda #>PI2_u4f28&$ffff
     sta divr16u.dividend+1
     jsr divr16u
     lda stepi
@@ -218,11 +217,11 @@ sin16s_gen: {
     lda x+3
     sta x1+1
     cmp #>PI_u4f12
-    bcc b5
+    bcc b4
     bne !+
     lda x1
     cmp #<PI_u4f12
-    bcc b5
+    bcc b4
   !:
     lda x1
     sec
@@ -233,7 +232,7 @@ sin16s_gen: {
     sta x1+1
     ldx #1
     jmp b2
-  b5:
+  b4:
     ldx #0
   b2:
     lda x1+1
@@ -266,17 +265,17 @@ sin16s_gen: {
     sta mul16u.a
     lda x3+1
     sta mul16u.a+1
-    lda #<div6
+    lda #<$10000/6
     sta mul16u.b
-    lda #>div6
+    lda #>$10000/6
     sta mul16u.b+1
     jsr mul16u
     lda x1
     sec
-    sbc _13+2
+    sbc _14+2
     sta usinx
     lda x1+1
-    sbc _13+3
+    sbc _14+3
     sta usinx+1
     lda x3
     sta mul_u4f12.v1
@@ -284,20 +283,20 @@ sin16s_gen: {
     sta mul_u4f12.v1+1
     jsr mul_u4f12
     jsr mul_u4f12
-    lda #<div128
+    lda #<$10000/$80
     sta mul16u.b
-    lda #>div128
+    lda #>$10000/$80
     sta mul16u.b+1
     jsr mul16u
     lda usinx
     clc
-    adc _18+2
+    adc _20+2
     sta usinx
     lda usinx+1
-    adc _18+3
+    adc _20+3
     sta usinx+1
     cpx #0
-    beq b4
+    beq b5
     sec
     lda sinx
     eor #$ff
@@ -307,7 +306,7 @@ sin16s_gen: {
     eor #$ff
     adc #0
     sta sinx+1
-  b4:
+  b5:
     ldy #0
     lda sinx
     sta (sintab),y

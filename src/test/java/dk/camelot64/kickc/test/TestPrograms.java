@@ -46,6 +46,11 @@ public class TestPrograms {
    }
 
    @Test
+   public void testLoHiConst() throws IOException, URISyntaxException {
+      compileAndCompare("test-lohiconst");
+   }
+
+   @Test
    public void testSinusGen() throws IOException, URISyntaxException {
       compileAndCompare("sinusgen");
    }

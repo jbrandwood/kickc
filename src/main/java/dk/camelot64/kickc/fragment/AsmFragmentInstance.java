@@ -151,8 +151,18 @@ public class AsmFragmentInstance {
       }
 
       @Override
-      public Object visitAsmLabel(KickCParser.AsmLabelContext ctx) {
-         program.addLine(new AsmLabel(ctx.getChild(0).getText()));
+      public Object visitAsmLabelName(KickCParser.AsmLabelNameContext ctx) {
+         program.addLine(new AsmLabel(ctx.NAME().getText()));
+         return null;
+      }
+
+      @Override
+      public Object visitAsmLabelMulti(KickCParser.AsmLabelMultiContext ctx) {
+         String label = "!";
+         if(ctx.NAME()!=null) {
+            label = label + ctx.NAME().getText();
+         }
+         program.addLine(new AsmLabel(label));
          return null;
       }
 

@@ -117,8 +117,8 @@ asmLine
     ;
 
 asmLabel
-    : NAME ':'
-    | '!' ':'
+    : NAME ':'  #asmLabelName
+    | '!' NAME? ':' #asmLabelMulti
     ;
 
 asmInstruction
@@ -177,7 +177,7 @@ fragment HEXDIGIT : [0-9a-fA-F];
 NAME : NAME_START NAME_CHAR* ;
 fragment NAME_START : [a-zA-Z_];
 fragment NAME_CHAR : [a-zA-Z0-9_];
-ASMREL: '!' [+-]* ;
+ASMREL: '!' NAME_CHAR* [+-]+ ;
 
 WS : [ \t\r\n]+ -> skip ;
 COMMENT_LINE : '//' ~[\r\n]* -> skip ;

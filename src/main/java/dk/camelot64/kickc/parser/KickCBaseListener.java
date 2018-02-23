@@ -604,13 +604,25 @@ public class KickCBaseListener implements KickCListener {
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterAsmLabel(KickCParser.AsmLabelContext ctx) { }
+	@Override public void enterAsmLabelName(KickCParser.AsmLabelNameContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void exitAsmLabel(KickCParser.AsmLabelContext ctx) { }
+	@Override public void exitAsmLabelName(KickCParser.AsmLabelNameContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void enterAsmLabelMulti(KickCParser.AsmLabelMultiContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitAsmLabelMulti(KickCParser.AsmLabelMultiContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *

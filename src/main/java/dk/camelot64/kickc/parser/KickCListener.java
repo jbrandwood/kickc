@@ -572,15 +572,29 @@ public interface KickCListener extends ParseTreeListener {
 	 */
 	void exitAsmLine(KickCParser.AsmLineContext ctx);
 	/**
-	 * Enter a parse tree produced by {@link KickCParser#asmLabel}.
+	 * Enter a parse tree produced by the {@code asmLabelName}
+	 * labeled alternative in {@link KickCParser#asmLabel}.
 	 * @param ctx the parse tree
 	 */
-	void enterAsmLabel(KickCParser.AsmLabelContext ctx);
+	void enterAsmLabelName(KickCParser.AsmLabelNameContext ctx);
 	/**
-	 * Exit a parse tree produced by {@link KickCParser#asmLabel}.
+	 * Exit a parse tree produced by the {@code asmLabelName}
+	 * labeled alternative in {@link KickCParser#asmLabel}.
 	 * @param ctx the parse tree
 	 */
-	void exitAsmLabel(KickCParser.AsmLabelContext ctx);
+	void exitAsmLabelName(KickCParser.AsmLabelNameContext ctx);
+	/**
+	 * Enter a parse tree produced by the {@code asmLabelMulti}
+	 * labeled alternative in {@link KickCParser#asmLabel}.
+	 * @param ctx the parse tree
+	 */
+	void enterAsmLabelMulti(KickCParser.AsmLabelMultiContext ctx);
+	/**
+	 * Exit a parse tree produced by the {@code asmLabelMulti}
+	 * labeled alternative in {@link KickCParser#asmLabel}.
+	 * @param ctx the parse tree
+	 */
+	void exitAsmLabelMulti(KickCParser.AsmLabelMultiContext ctx);
 	/**
 	 * Enter a parse tree produced by {@link KickCParser#asmInstruction}.
 	 * @param ctx the parse tree

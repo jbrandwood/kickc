@@ -342,11 +342,19 @@ public interface KickCVisitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitAsmLine(KickCParser.AsmLineContext ctx);
 	/**
-	 * Visit a parse tree produced by {@link KickCParser#asmLabel}.
+	 * Visit a parse tree produced by the {@code asmLabelName}
+	 * labeled alternative in {@link KickCParser#asmLabel}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
-	T visitAsmLabel(KickCParser.AsmLabelContext ctx);
+	T visitAsmLabelName(KickCParser.AsmLabelNameContext ctx);
+	/**
+	 * Visit a parse tree produced by the {@code asmLabelMulti}
+	 * labeled alternative in {@link KickCParser#asmLabel}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitAsmLabelMulti(KickCParser.AsmLabelMultiContext ctx);
 	/**
 	 * Visit a parse tree produced by {@link KickCParser#asmInstruction}.
 	 * @param ctx the parse tree

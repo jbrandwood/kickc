@@ -3,13 +3,14 @@
 .pc = $80d "Program"
   .label SCREEN = $400
   .const PI2_u4f28 = $6487ed51
-  .const PI_u4f12 = $3244
-  .const PI_HALF_u4f12 = $1922
+  .const PI_u4f28 = $3243f6a9
+  .const PI_HALF_u4f28 = $1921fb54
   .label rem16u = 4
-  .label char_cursor = 6
+  .label char_cursor = 8
   jsr main
 main: {
-    .label wavelength = $80
+    .label wavelength = $78
+    .label sw = 6
     .label st1 = 2
     jsr sin16s_gen
     jsr print_cls
@@ -24,11 +25,22 @@ main: {
   b1:
     ldy #0
     lda (st1),y
-    sta print_sword.w
+    sta sw
     iny
     lda (st1),y
-    sta print_sword.w+1
+    sta sw+1
+    bmi b2
+    lda #<str1
+    sta print_str.str
+    lda #>str1
+    sta print_str.str+1
+    jsr print_str
+  b2:
     jsr print_sword
+    lda #<str
+    sta print_str.str
+    lda #>str
+    sta print_str.str+1
     jsr print_str
     clc
     lda st1
@@ -45,15 +57,12 @@ main: {
     bcc b1
   !:
     rts
-    str: .text " @"
-    sintab1: .fill $100, 0
+    str: .text "   @"
+    str1: .text " @"
+    sintab1: .fill $f0, 0
 }
 print_str: {
     .label str = 4
-    lda #<main.str
-    sta str
-    lda #>main.str
-    sta str+1
   b1:
     ldy #0
     lda (str),y
@@ -75,7 +84,7 @@ print_str: {
     jmp b1
 }
 print_sword: {
-    .label w = 4
+    .label w = 6
     lda w+1
     bpl b1
     lda #'-'
@@ -151,54 +160,22 @@ print_cls: {
     rts
 }
 sin16s_gen: {
-    .label _14 = $12
-    .label _20 = $12
-    .label stepi = $e
-    .label stepf = $c
+    .label _7 = $e
     .label step = $1a
-    .label x1 = 6
-    .label x2 = $10
-    .label x3 = $1e
-    .label usinx = $c
-    .label x4 = $10
-    .label x5 = $10
-    .label sinx = $c
+    .label xp = $e
+    .label x1 = $1e
+    .label x2 = 8
+    .label x3 = 8
+    .label x3_6 = 6
+    .label usinx = 6
+    .label x4 = 8
+    .label x5 = 8
+    .label x5_128 = $12
     .label sintab = 2
-    .label x = 8
+    .label x = $a
     .label i = 4
-    lda #<main.wavelength
-    sta divr16u.divisor
-    lda #>main.wavelength
-    sta divr16u.divisor+1
-    lda #<PI2_u4f28>>16
-    sta divr16u.dividend
-    lda #>PI2_u4f28>>16
-    sta divr16u.dividend+1
-    lda #<0
-    sta divr16u.rem
-    sta divr16u.rem+1
-    jsr divr16u
-    lda divr16u.return
-    sta stepi
-    lda divr16u.return+1
-    sta stepi+1
-    lda #<main.wavelength
-    sta divr16u.divisor
-    lda #>main.wavelength
-    sta divr16u.divisor+1
-    lda #<PI2_u4f28&$ffff
-    sta divr16u.dividend
-    lda #>PI2_u4f28&$ffff
-    sta divr16u.dividend+1
-    jsr divr16u
-    lda stepi
-    sta step+2
-    lda stepi+1
-    sta step+3
-    lda stepf
-    sta step
-    lda stepf+1
-    sta step+1
+    .label sinx = 6
+    jsr div32u16u
     lda #<0
     sta i
     sta i+1
@@ -212,91 +189,163 @@ sin16s_gen: {
     sta x+2
     sta x+3
   b1:
-    lda x+2
-    sta x1
     lda x+3
-    sta x1+1
-    cmp #>PI_u4f12
-    bcc b4
+    cmp #>PI_u4f28>>$10
+    bcs !b17+
+    jmp b17
+  !b17:
     bne !+
-    lda x1
-    cmp #<PI_u4f12
-    bcc b4
+    lda x+2
+    cmp #<PI_u4f28>>$10
+    bcs !b17+
+    jmp b17
+  !b17:
+    bne !+
+    lda x+1
+    cmp #>PI_u4f28
+    bcs !b17+
+    jmp b17
+  !b17:
+    bne !+
+    lda x
+    cmp #<PI_u4f28
+    bcs !b17+
+    jmp b17
+  !b17:
   !:
-    lda x1
+    lda x
     sec
-    sbc #<PI_u4f12
-    sta x1
-    lda x1+1
-    sbc #>PI_u4f12
-    sta x1+1
-    ldx #1
-    jmp b2
-  b4:
-    ldx #0
+    sbc #<PI_u4f28
+    sta xp
+    lda x+1
+    sbc #>PI_u4f28
+    sta xp+1
+    lda x+2
+    sbc #<PI_u4f28>>$10
+    sta xp+2
+    lda x+3
+    sbc #>PI_u4f28>>$10
+    sta xp+3
+    ldy #1
   b2:
-    lda x1+1
-    cmp #>PI_HALF_u4f12
+    lda xp+3
+    cmp #>PI_HALF_u4f28>>$10
     bcc b3
     bne !+
-    lda x1
-    cmp #<PI_HALF_u4f12
+    lda xp+2
+    cmp #<PI_HALF_u4f28>>$10
+    bcc b3
+    bne !+
+    lda xp+1
+    cmp #>PI_HALF_u4f28
+    bcc b3
+    bne !+
+    lda xp
+    cmp #<PI_HALF_u4f28
     bcc b3
   !:
+    lda #<PI_u4f28
     sec
-    lda #<PI_u4f12
-    sbc x1
-    sta x1
-    lda #>PI_u4f12
-    sbc x1+1
-    sta x1+1
+    sbc xp
+    sta xp
+    lda #>PI_u4f28
+    sbc xp+1
+    sta xp+1
+    lda #<PI_u4f28>>$10
+    sbc xp+2
+    sta xp+2
+    lda #>PI_u4f28>>$10
+    sbc xp+3
+    sta xp+3
   b3:
+    ldx #3
+  !:
+    asl _7
+    rol _7+1
+    rol _7+2
+    rol _7+3
+    dex
+    bne !-
+    lda _7+2
+    sta x1
+    lda _7+3
+    sta x1+1
     lda x1
-    sta mul_u4f12.v1
+    sta mul_u16_sel.v1
     lda x1+1
-    sta mul_u4f12.v1+1
-    jsr mul_u4f12
-    jsr mul_u4f12
-    lda mul_u4f12.return
-    sta x3
-    lda mul_u4f12.return+1
-    sta x3+1
-    lda x3
-    sta mul16u.a
-    lda x3+1
-    sta mul16u.a+1
+    sta mul_u16_sel.v1+1
+    lda x1
+    sta mul_u16_sel.v2
+    lda x1+1
+    sta mul_u16_sel.v2+1
+    ldx #0
+    jsr mul_u16_sel
+    lda mul_u16_sel.return_14
+    sta mul_u16_sel.return
+    lda mul_u16_sel.return_14+1
+    sta mul_u16_sel.return+1
+    lda x1
+    sta mul_u16_sel.v2
+    lda x1+1
+    sta mul_u16_sel.v2+1
+    ldx #1
+    jsr mul_u16_sel
+    lda mul_u16_sel.return_14
+    sta mul_u16_sel.return
+    lda mul_u16_sel.return_14+1
+    sta mul_u16_sel.return+1
+    ldx #1
     lda #<$10000/6
-    sta mul16u.b
+    sta mul_u16_sel.v2
     lda #>$10000/6
-    sta mul16u.b+1
-    jsr mul16u
+    sta mul_u16_sel.v2+1
+    jsr mul_u16_sel
+    lda mul_u16_sel.return_14
+    sta mul_u16_sel.return_10
+    lda mul_u16_sel.return_14+1
+    sta mul_u16_sel.return_10+1
     lda x1
     sec
-    sbc _14+2
+    sbc usinx
     sta usinx
     lda x1+1
-    sbc _14+3
+    sbc usinx+1
     sta usinx+1
-    lda x3
-    sta mul_u4f12.v1
-    lda x3+1
-    sta mul_u4f12.v1+1
-    jsr mul_u4f12
-    jsr mul_u4f12
+    lda x1
+    sta mul_u16_sel.v2
+    lda x1+1
+    sta mul_u16_sel.v2+1
+    ldx #0
+    jsr mul_u16_sel
+    lda mul_u16_sel.return_14
+    sta mul_u16_sel.return
+    lda mul_u16_sel.return_14+1
+    sta mul_u16_sel.return+1
+    lda x1
+    sta mul_u16_sel.v2
+    lda x1+1
+    sta mul_u16_sel.v2+1
+    ldx #0
+    jsr mul_u16_sel
+    lda mul_u16_sel.return_14
+    sta mul_u16_sel.return
+    lda mul_u16_sel.return_14+1
+    sta mul_u16_sel.return+1
+    ldx #3
     lda #<$10000/$80
-    sta mul16u.b
+    sta mul_u16_sel.v2
     lda #>$10000/$80
-    sta mul16u.b+1
-    jsr mul16u
+    sta mul_u16_sel.v2+1
+    jsr mul_u16_sel
     lda usinx
     clc
-    adc _20+2
+    adc x5_128
     sta usinx
     lda usinx+1
-    adc _20+3
+    adc x5_128+1
     sta usinx+1
-    cpx #0
-    beq b5
+    cpy #0
+    beq b4
     sec
     lda sinx
     eor #$ff
@@ -306,7 +355,7 @@ sin16s_gen: {
     eor #$ff
     adc #0
     sta sinx+1
-  b5:
+  b4:
     ldy #0
     lda sinx
     sta (sintab),y
@@ -350,13 +399,54 @@ sin16s_gen: {
   !b1:
   !:
     rts
+  b17:
+    lda x
+    sta xp
+    lda x+1
+    sta xp+1
+    lda x+2
+    sta xp+2
+    lda x+3
+    sta xp+3
+    ldy #0
+    jmp b2
+}
+mul_u16_sel: {
+    .label _0 = $e
+    .label _1 = $e
+    .label v1 = 8
+    .label v2 = $12
+    .label return = 8
+    .label return_10 = 6
+    .label return_13 = $12
+    .label return_14 = $12
+    lda v1
+    sta mul16u.a
+    lda v1+1
+    sta mul16u.a+1
+    jsr mul16u
+    cpx #0
+    beq !e+
+  !:
+    asl _1
+    rol _1+1
+    rol _1+2
+    rol _1+3
+    dex
+    bne !-
+  !e:
+    lda _1+2
+    sta return_14
+    lda _1+3
+    sta return_14+1
+    rts
 }
 mul16u: {
     .label mb = $16
-    .label a = $10
-    .label res = $12
-    .label return = $12
-    .label b = $e
+    .label a = $14
+    .label res = $e
+    .label b = $12
+    .label return = $e
     lda b
     sta mb
     lda b+1
@@ -402,44 +492,50 @@ mul16u: {
     rol mb+3
     jmp b1
 }
-mul_u4f12: {
-    .label _0 = $12
-    .label _1 = $12
-    .label v1 = $10
-    .label v2 = 6
-    .label return = $10
-    lda v2
-    sta mul16u.b
-    lda v2+1
-    sta mul16u.b+1
-    jsr mul16u
-    asl _1
-    rol _1+1
-    rol _1+2
-    rol _1+3
-    asl _1
-    rol _1+1
-    rol _1+2
-    rol _1+3
-    asl _1
-    rol _1+1
-    rol _1+2
-    rol _1+3
-    asl _1
-    rol _1+1
-    rol _1+2
-    rol _1+3
-    lda _1+2
+div32u16u: {
+    .label return = $1a
+    .label quotient_hi = $12
+    .label quotient_lo = 8
+    lda #<main.wavelength
+    sta divr16u.divisor
+    lda #>main.wavelength
+    sta divr16u.divisor+1
+    lda #<PI2_u4f28>>16
+    sta divr16u.dividend
+    lda #>PI2_u4f28>>16
+    sta divr16u.dividend+1
+    lda #<0
+    sta divr16u.rem
+    sta divr16u.rem+1
+    jsr divr16u
+    lda divr16u.return
+    sta quotient_hi
+    lda divr16u.return+1
+    sta quotient_hi+1
+    lda #<main.wavelength
+    sta divr16u.divisor
+    lda #>main.wavelength
+    sta divr16u.divisor+1
+    lda #<PI2_u4f28&$ffff
+    sta divr16u.dividend
+    lda #>PI2_u4f28&$ffff
+    sta divr16u.dividend+1
+    jsr divr16u
+    lda quotient_hi
+    sta return+2
+    lda quotient_hi+1
+    sta return+3
+    lda quotient_lo
     sta return
-    lda _1+3
+    lda quotient_lo+1
     sta return+1
     rts
 }
 divr16u: {
     .label rem = 4
     .label dividend = 6
-    .label quotient = $c
-    .label return = $c
+    .label quotient = 8
+    .label return = 8
     .label divisor = 2
     ldx #0
     txa

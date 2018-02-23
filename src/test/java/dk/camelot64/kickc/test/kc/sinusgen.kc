@@ -9,13 +9,17 @@ import "multiply.kc"
 import "print.kc"
 
 void main() {
-    word wavelength = 128;
-    signed word[128] sintab1;
+    word wavelength = 120;
+    signed word[120] sintab1;
     sin16s_gen(sintab1, wavelength);
     print_cls();
     for(signed word* st1 = sintab1; st1<sintab1+wavelength*2; st1 = st1+2 ) {
-        print_sword(*st1);
-        print_str(" @");
+        signed word sw = *st1;
+        if(sw>=0) {
+          print_str(" @");
+        }
+        print_sword(sw);
+        print_str("   @");
     }
 }
 
@@ -33,14 +37,51 @@ const word PI_u4f12 = $3244;
 // PI/2 in u[4.12] format
 const word PI_HALF_u4f12 = $1922;
 
-// Generate signed word sinus table
+// Generate signed (large) word sinus table - on the full -$7fff - $7fff range
 // sintab - the table to generate into
 // wavelength - the number of sinus points in a total sinus wavelength (the size of the table)
 void sin16s_gen(signed word* sintab, word wavelength) {
+    // u[4.28] step = PI*2/wavelength
+    dword step = div32u16u(PI2_u4f28, wavelength); // u[4.28]
+    // Iterate over the table
+    dword x = 0; // u[4.28]
+    for( word i=0; i<wavelength; i++) {
+        // Move x1 into the range 0-PI/2 using sinus mirror symmetries
+        dword xp = x; // u[4.28]
+        byte isUpper = 0;
+        if(xp >= PI_u4f28 ) {
+            xp = xp - PI_u4f28;
+            isUpper = 1;
+        }
+        if(xp >= PI_HALF_u4f28 ) {
+            xp = PI_u4f28 - xp;
+        }
+        // s[4.12] sinx = x - x^3/6 + x5/128;
+        word x1 = >xp<<3; // u[1.15]
+        word x2 = mul_u16_sel(x1, x1, 0); // u[2.14] x^2
+        word x3 = mul_u16_sel(x2, x1, 1); // u[2.14] x^3
+        word x3_6 = mul_u16_sel(x3, $10000/6, 1);  // u[1.15] x^3/6;
+        word usinx = x1 - x3_6; // u[1.15] x - x^3/6
+        word x4 = mul_u16_sel(x3, x1, 0); // u[3.13] x^4
+        word x5 = mul_u16_sel(x4, x1, 0); // u[4.12] x^5
+        word x5_128 = mul_u16_sel(x5, $10000/128, 3); // u[1.15] x^5/128;
+        usinx = usinx + x5_128; // u[1.15] (always an initial zero)
+        signed word sinx = (signed word)usinx; // s[0.15]
+        if(isUpper!=0) {
+            sinx = -(signed word)usinx; // s[0.15];
+         }
+        *sintab = sinx;
+        sintab = sintab + 2;
+        x = x + step;
+    }
+}
+
+// Generate (small) signed word sinus table - in the limited -$fff - $fff range
+// sintab - the table to generate into
+// wavelength - the number of sinus points in a total sinus wavelength (the size of the table)
+void sin16ss_gen(signed word* sintab, word wavelength) {
     // u[4.12] step = PI*2/wavelength
-    word stepi = divr16u(>PI2_u4f28, wavelength, 0);
-    word stepf = divr16u(<PI2_u4f28, wavelength, rem16u);
-    dword step = { stepi, stepf }; // u[4.12]
+    dword step = div32u16u(PI2_u4f28, wavelength); // u[4.28]
     // Iterate over the table
     dword x = 0; // u[4.28]
     for( word i=0; i<wavelength; i++) {
@@ -55,13 +96,13 @@ void sin16s_gen(signed word* sintab, word wavelength) {
             x1 = PI_u4f12 - x1;
         }
         // s[4.12] sinx = x - x^3/6 + x5/128;
-        word x2 = mul_u4f12(x1, x1); // u[4.12]
-        word x3 = mul_u4f12(x2, x1); // u[4.12]
-        word x3_6 = >mul16u(x3, $10000/6);  // u[4.12] - u[0.16] div6 = 1/6;
+        word x2 = mul_u16_sel(x1, x1, 4); // u[4.12]
+        word x3 = mul_u16_sel(x2, x1, 4); // u[4.12]
+        word x3_6 = mul_u16_sel(x3, $10000/6, 0);  // u[4.12] - u[0.16] div6 = 1/6;
         word usinx = x1 - x3_6; // u[4.12]
-        word x4 = mul_u4f12(x3, x1); // u[4.12]
-        word x5 = mul_u4f12(x4, x1); // u[4.12]
-        word x5_128 = >mul16u(x5, $10000/128); // u[4.12] - u[0.16] div128 = 1/128;
+        word x4 = mul_u16_sel(x3, x1, 4); // u[4.12]
+        word x5 = mul_u16_sel(x4, x1, 4); // u[4.12]
+        word x5_128 = mul_u16_sel(x5, $10000/128, 0); // u[4.12] - u[0.16] div128 = 1/128;
         usinx = usinx + x5_128;
         signed word sinx;
         if(isUpper!=0) {
@@ -75,7 +116,17 @@ void sin16s_gen(signed word* sintab, word wavelength) {
     }
 }
 
-// Calculate val*val for val u[4.12] to val*val u[4.28]
-word mul_u4f12(word v1, word v2) {
-    return >mul16u(v1, v2)<<4;
+// Calculate val*val for two unsigned word values - the result is 16 selected bits of the 32-bit result.
+// The select parameter indicates how many of the highest bits of the 32-bit result to skip
+word mul_u16_sel(word v1, word v2, byte select) {
+    return >mul16u(v1, v2)<<select;
+}
+
+// Divide unsigned 32-bit dword dividend with a 16-bit word divisor
+// The 16-bit word remainder can be found in rem16u after the division
+dword div32u16u(dword dividend, word divisor) {
+  word quotient_hi = divr16u(>dividend, divisor, 0);
+  word quotient_lo = divr16u(<dividend, divisor, rem16u);
+  dword quotient = { quotient_hi, quotient_lo};
+  return quotient;
 }

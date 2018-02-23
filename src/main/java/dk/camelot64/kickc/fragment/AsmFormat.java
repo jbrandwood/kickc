@@ -88,7 +88,7 @@ public class AsmFormat {
          SymbolType operandType = SymbolTypeInference.inferType(program.getScope(), operand);
          if(SymbolType.isByte(operandType) || SymbolType.isSByte(operandType)) {
             return getAsmConstant(program, operand, outerPrecedence, codeScope);
-         } else if(SymbolType.isWord(operandType) || SymbolType.isSWord(operandType)) {
+         } else if(SymbolType.isWord(operandType) || SymbolType.isSWord(operandType) || operandType instanceof SymbolTypePointer) {
             return "<" + getAsmConstant(program, operand, outerPrecedence, codeScope);
          } else if(SymbolType.isDWord(operandType) || SymbolType.isSDWord(operandType)) {
             return getAsmConstant(program, operand, outerPrecedence, codeScope) + "&$ffff";
@@ -99,7 +99,7 @@ public class AsmFormat {
          SymbolType operandType = SymbolTypeInference.inferType(program.getScope(), operand);
          if(SymbolType.isByte(operandType) || SymbolType.isSByte(operandType)) {
             return getAsmConstant(program, operand, outerPrecedence, codeScope);
-         } else if(SymbolType.isWord(operandType) || SymbolType.isSWord(operandType)) {
+         } else if(SymbolType.isWord(operandType) || SymbolType.isSWord(operandType) || operandType instanceof SymbolTypePointer) {
             return ">" + getAsmConstant(program, operand, outerPrecedence, codeScope);
          } else if(SymbolType.isDWord(operandType) || SymbolType.isSDWord(operandType)) {
             return getAsmConstant(program, operand, outerPrecedence, codeScope) + ">>16";

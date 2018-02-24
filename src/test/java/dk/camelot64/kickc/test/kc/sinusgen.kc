@@ -46,34 +46,40 @@ void sin16s_gen(signed word* sintab, word wavelength) {
     // Iterate over the table
     dword x = 0; // u[4.28]
     for( word i=0; i<wavelength; i++) {
-        // Move x1 into the range 0-PI/2 using sinus mirror symmetries
-        dword xp = x; // u[4.28]
-        byte isUpper = 0;
-        if(xp >= PI_u4f28 ) {
-            xp = xp - PI_u4f28;
-            isUpper = 1;
-        }
-        if(xp >= PI_HALF_u4f28 ) {
-            xp = PI_u4f28 - xp;
-        }
-        // s[4.12] sinx = x - x^3/6 + x5/128;
-        word x1 = >xp<<3; // u[1.15]
-        word x2 = mul_u16_sel(x1, x1, 0); // u[2.14] x^2
-        word x3 = mul_u16_sel(x2, x1, 1); // u[2.14] x^3
-        word x3_6 = mul_u16_sel(x3, $10000/6, 1);  // u[1.15] x^3/6;
-        word usinx = x1 - x3_6; // u[1.15] x - x^3/6
-        word x4 = mul_u16_sel(x3, x1, 0); // u[3.13] x^4
-        word x5 = mul_u16_sel(x4, x1, 0); // u[4.12] x^5
-        word x5_128 = mul_u16_sel(x5, $10000/128, 3); // u[1.15] x^5/128;
-        usinx = usinx + x5_128; // u[1.15] (always an initial zero)
-        signed word sinx = (signed word)usinx; // s[0.15]
-        if(isUpper!=0) {
-            sinx = -(signed word)usinx; // s[0.15];
-         }
-        *sintab = sinx;
+        *sintab = sin16s(x);
         sintab = sintab + 2;
         x = x + step;
     }
+}
+
+// Calculate signed word sinus sin(x)
+// x: unsigned dword input u[4.28] in the interval $00000000 - PI2_u4f28
+// result: signed word sin(x) s[0.15] - using the full range  -$7fff - $7fff
+signed word sin16s(dword x) {
+    // Move x1 into the range 0-PI/2 using sinus mirror symmetries
+    byte isUpper = 0;
+    if(x >= PI_u4f28 ) {
+        x = x - PI_u4f28;
+        isUpper = 1;
+    }
+    if(x >= PI_HALF_u4f28 ) {
+        x = PI_u4f28 - x;
+    }
+    // s[4.12] sinx = x - x^3/6 + x5/128;
+    word x1 = >x<<3; // u[1.15]
+    word x2 = mul_u16_sel(x1, x1, 0); // u[2.14] x^2
+    word x3 = mul_u16_sel(x2, x1, 1); // u[2.14] x^3
+    word x3_6 = mul_u16_sel(x3, $10000/6, 1);  // u[1.15] x^3/6;
+    word usinx = x1 - x3_6; // u[1.15] x - x^3/6
+    word x4 = mul_u16_sel(x3, x1, 0); // u[3.13] x^4
+    word x5 = mul_u16_sel(x4, x1, 0); // u[4.12] x^5
+    word x5_128 = mul_u16_sel(x5, $10000/128, 3); // u[1.15] x^5/128;
+    usinx = usinx + x5_128; // u[1.15] (always an initial zero)
+    signed word sinx = (signed word)usinx; // s[0.15]
+    if(isUpper!=0) {
+        sinx = -(signed word)usinx; // s[0.15];
+     }
+     return sinx;
 }
 
 // Generate (small) signed word sinus table - in the limited -$fff - $fff range

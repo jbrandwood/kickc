@@ -75,7 +75,7 @@ signed word sin16s(dword x) {
     word x4 = mul_u16_sel(x3, x1, 0); // u[3.13] x^4
     word x5 = mul_u16_sel(x4, x1, 0); // u[4.12] x^5
     word x5_128 = x5>>4; // // u[1.15] x^5/128 -- much more efficient than mul_u16_sel(x5, $10000/128, 3);
-    usinx = usinx + x5_128; // u[1.15] (always an initial zero)
+    usinx = usinx + x5_128; // u[1.15] (first bit is always zero)
     signed word sinx = (signed word)usinx; // s[0.15]
     if(isUpper!=0) {
         sinx = -(signed word)usinx; // s[0.15];
@@ -172,14 +172,6 @@ byte divr8u(byte dividend, byte divisor, byte rem) {
 // Remainder after unsigned 16-bit division
 word rem16u = 0;
 
-// Performs division on two 16 bit unsigned words
-// Returns the quotient dividend/divisor.
-// The remainder will be set into the global variable rem16u
-// Implemented using simple binary division
-word div16u(word dividend, word divisor) {
-    return divr16u(dividend, divisor, 0);
-}
-
 // Performs division on two 16 bit unsigned words and an initial remainder
 // Returns the quotient dividend/divisor.
 // The final remainder will be set into the global variable rem16u
@@ -200,6 +192,14 @@ word divr16u(word dividend, word divisor, word rem) {
     }
     rem16u = rem;
     return quotient;
+}
+
+// Performs division on two 16 bit unsigned words
+// Returns the quotient dividend/divisor.
+// The remainder will be set into the global variable rem16u
+// Implemented using simple binary division
+word div16u(word dividend, word divisor) {
+    return divr16u(dividend, divisor, 0);
 }
 
 // Divide unsigned 32-bit dword dividend with a 16-bit word divisor
@@ -479,14 +479,6 @@ divr8u::@return:
   return (byte) divr8u::return
 endproc // divr8u()
   (word) rem16u ← (byte/signed byte/word/signed word/dword/signed dword) 0
-proc (word()) div16u((word) div16u::dividend , (word) div16u::divisor)
-  (word~) div16u::$0 ← call divr16u (word) div16u::dividend (word) div16u::divisor (byte/signed byte/word/signed word/dword/signed dword) 0 
-  (word) div16u::return ← (word~) div16u::$0
-  goto div16u::@return
-div16u::@return:
-  (word) div16u::return ← (word) div16u::return
-  return (word) div16u::return
-endproc // div16u()
 proc (word()) divr16u((word) divr16u::dividend , (word) divr16u::divisor , (word) divr16u::rem)
   (word) divr16u::quotient ← (byte/signed byte/word/signed word/dword/signed dword) 0
   (byte) divr16u::i ← (byte/signed byte/word/signed word/dword/signed dword) 0
@@ -522,6 +514,14 @@ divr16u::@return:
   (word) divr16u::return ← (word) divr16u::return
   return (word) divr16u::return
 endproc // divr16u()
+proc (word()) div16u((word) div16u::dividend , (word) div16u::divisor)
+  (word~) div16u::$0 ← call divr16u (word) div16u::dividend (word) div16u::divisor (byte/signed byte/word/signed word/dword/signed dword) 0 
+  (word) div16u::return ← (word~) div16u::$0
+  goto div16u::@return
+div16u::@return:
+  (word) div16u::return ← (word) div16u::return
+  return (word) div16u::return
+endproc // div16u()
 proc (dword()) div32u16u((dword) div32u16u::dividend , (word) div32u16u::divisor)
   (word~) div32u16u::$0 ← > (dword) div32u16u::dividend
   (word~) div32u16u::$1 ← call divr16u (word~) div32u16u::$0 (word) div32u16u::divisor (byte/signed byte/word/signed word/dword/signed dword) 0 
@@ -1550,18 +1550,6 @@ divr8u::@7: scope:[divr8u]  from
 @2: scope:[]  from @1
   (word) rem16u ← (byte/signed byte/word/signed word/dword/signed dword) 0
   to:@3
-div16u: scope:[div16u]  from
-  (word~) div16u::$0 ← call divr16u (word) div16u::dividend (word) div16u::divisor (byte/signed byte/word/signed word/dword/signed dword) 0 
-  (word) div16u::return ← (word~) div16u::$0
-  to:div16u::@return
-div16u::@return: scope:[div16u]  from div16u div16u::@1
-  (word) div16u::return ← (word) div16u::return
-  return (word) div16u::return
-  to:@return
-div16u::@1: scope:[div16u]  from
-  to:div16u::@return
-@3: scope:[]  from @2
-  to:@4
 divr16u: scope:[divr16u]  from
   (word) divr16u::quotient ← (byte/signed byte/word/signed word/dword/signed dword) 0
   (byte) divr16u::i ← (byte/signed byte/word/signed word/dword/signed dword) 0
@@ -1608,6 +1596,18 @@ divr16u::@return: scope:[divr16u]  from divr16u::@6 divr16u::@7
   to:@return
 divr16u::@7: scope:[divr16u]  from
   to:divr16u::@return
+@3: scope:[]  from @2
+  to:@4
+div16u: scope:[div16u]  from
+  (word~) div16u::$0 ← call divr16u (word) div16u::dividend (word) div16u::divisor (byte/signed byte/word/signed word/dword/signed dword) 0 
+  (word) div16u::return ← (word~) div16u::$0
+  to:div16u::@return
+div16u::@return: scope:[div16u]  from div16u div16u::@1
+  (word) div16u::return ← (word) div16u::return
+  return (word) div16u::return
+  to:@return
+div16u::@1: scope:[div16u]  from
+  to:div16u::@return
 @4: scope:[]  from @3
   to:@5
 div32u16u: scope:[div32u16u]  from
@@ -2360,8 +2360,8 @@ Creating constant string variable for inline (const string) print_byte::$4 "0123
 Creating constant string variable for inline (const string) main::str "   @"
 Creating constant string variable for inline (const string) main::str1 " @"
 Removing empty block @1
-Removing empty block @3
 Removing empty block divr16u::@7
+Removing empty block @3
 Removing empty block @4
 Removing empty block div32u16u::@1
 Removing empty block @5

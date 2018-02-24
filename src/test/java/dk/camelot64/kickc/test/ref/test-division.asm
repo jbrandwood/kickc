@@ -270,11 +270,11 @@ div16u: {
     rts
 }
 divr16u: {
-    .label dividend = 3
-    .label divisor = $c
-    .label return = $e
     .label rem = $10
+    .label dividend = 3
     .label quotient = $e
+    .label return = $e
+    .label divisor = $c
     ldx #0
     txa
     sta quotient

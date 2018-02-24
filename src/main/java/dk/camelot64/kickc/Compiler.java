@@ -318,7 +318,8 @@ public class Compiler {
       new Pass4RegisterUpliftRemains(program).performUplift(10_000);
 
       // Final register coalesce and finalization
-      new Pass4ZeroPageCoalesce(program).allocate();
+      new Pass4ZeroPageCoalesceAssignment(program).coalesce();
+      new Pass4ZeroPageCoalesce(program).coalesce();
       new Pass4RegistersFinalize(program).allocate(true);
 
    }

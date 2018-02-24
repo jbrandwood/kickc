@@ -49,7 +49,7 @@ lines: {
 }
 line: {
     .label x0 = 7
-    .label x1 = $a
+    .label x1 = 8
     .label y0 = 5
     .label xd = 3
     .label yd = 4
@@ -92,8 +92,6 @@ line: {
     cmp xd
     bcs b6
     ldx x0
-    lda x1
-    sta line_xdyd.x1
     jsr line_xdyd
     jmp breturn
   b6:
@@ -118,6 +116,8 @@ line: {
     bcs b10
     ldx x1
     sty line_xdyd.y
+    lda x0
+    sta line_xdyd.x1
     jsr line_xdyd
     jmp breturn
   b10:
@@ -178,8 +178,8 @@ line_ydxi: {
     rts
 }
 plot: {
-    .label _0 = 8
-    .label plotter_x = 8
+    .label _0 = 9
+    .label plotter_x = 9
     .label plotter_y = $b
     lda plot_xhi,x
     sta plotter_x+1
@@ -203,7 +203,7 @@ plot: {
     rts
 }
 line_xdyi: {
-    .label _6 = $a
+    .label _6 = 8
     .label y = 5
     .label x1 = 7
     .label xd = 3
@@ -269,9 +269,9 @@ line_ydxd: {
     rts
 }
 line_xdyd: {
-    .label _6 = $a
+    .label _6 = 7
     .label y = 5
-    .label x1 = 7
+    .label x1 = 8
     .label xd = 3
     .label yd = 4
     .label e = 6
@@ -304,7 +304,7 @@ line_xdyd: {
 }
 init_plot_tables: {
     .label _6 = 2
-    .label yoffs = 8
+    .label yoffs = 9
     ldy #$80
     ldx #0
   b1:
@@ -356,8 +356,8 @@ init_plot_tables: {
     rts
 }
 init_screen: {
-    .label b = 8
-    .label c = 8
+    .label b = 9
+    .label c = 9
     lda #<BITMAP
     sta b
     lda #>BITMAP

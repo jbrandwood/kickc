@@ -35,6 +35,10 @@ test_16s: {
     sta divisor
     lda divisors+1,y
     sta divisor+1
+    lda dividend
+    sta div16s.dividend
+    lda dividend+1
+    sta div16s.dividend+1
     lda divisor
     sta div16s.divisor
     lda divisor+1
@@ -193,18 +197,18 @@ div16s: {
     .label _7 = $c
     .label resultu = $e
     .label return = $e
-    .label dividend = 7
+    .label dividend = 3
     .label divisor = $c
     .label dividendu = 3
     .label divisoru = $c
     lda dividend+1
     bpl b16
     sec
-    lda dividend
+    lda _2
     eor #$ff
     adc #0
     sta _2
-    lda dividend+1
+    lda _2+1
     eor #$ff
     adc #0
     sta _2+1
@@ -255,10 +259,6 @@ div16s: {
     sta return+1
     jmp breturn
   b16:
-    lda dividend
-    sta dividendu
-    lda dividend+1
-    sta dividendu+1
     ldy #0
     jmp b2
 }

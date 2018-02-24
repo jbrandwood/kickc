@@ -2,9 +2,7 @@ package dk.camelot64.kickc.passes;
 
 import dk.camelot64.kickc.model.*;
 
-import java.util.Collection;
 import java.util.LinkedHashSet;
-import java.util.List;
 import java.util.Set;
 
 /**
@@ -13,12 +11,11 @@ import java.util.Set;
  */
 public class Pass4ZeroPageCoalesce extends Pass2Base {
 
-
    public Pass4ZeroPageCoalesce(Program program) {
       super(program);
    }
 
-   public void allocate() {
+   public void coalesce() {
       LinkedHashSet<String> unknownFragments = new LinkedHashSet<>();
       LiveRangeEquivalenceClassSet liveRangeEquivalenceClassSet = getProgram().getLiveRangeEquivalenceClassSet();
       boolean change;
@@ -39,92 +36,45 @@ public class Pass4ZeroPageCoalesce extends Pass2Base {
     * Find two equivalence classes that can be coalesced into one - and perform the coalescence.
     *
     * @param liveRangeEquivalenceClassSet The set of live range equivalence classes
-    * @param unknownFragments
+    * @param unknownFragments Receives information about any unknown fragments encountered during ASM generation
     * @return true if any classes were coalesced. False otherwise.
     */
    private boolean coalesce(LiveRangeEquivalenceClassSet liveRangeEquivalenceClassSet, Set<String> unknownFragments) {
-
-      double maxScore = -1.0;
-      LiveRangeEquivalenceClass maxThis = null;
-      LiveRangeEquivalenceClass maxOther = null;
-
       for(LiveRangeEquivalenceClass thisEquivalenceClass : liveRangeEquivalenceClassSet.getEquivalenceClasses()) {
          for(LiveRangeEquivalenceClass otherEquivalenceClass : liveRangeEquivalenceClassSet.getEquivalenceClasses()) {
             if(!thisEquivalenceClass.equals(otherEquivalenceClass)) {
-               if(canCoalesce(thisEquivalenceClass, otherEquivalenceClass, unknownFragments)) {
-                  double coalesceScore = getCoalesceScore(thisEquivalenceClass, otherEquivalenceClass);
-                  if(coalesceScore>maxScore) {
-                     if(otherEquivalenceClass==null) {
-                        throw new RuntimeException("EQC is null!"+otherEquivalenceClass);
-                     }
-                     maxScore = coalesceScore;
-                     maxThis = thisEquivalenceClass;
-                     maxOther = otherEquivalenceClass;
-                  }
+               if(canCoalesce(thisEquivalenceClass, otherEquivalenceClass, unknownFragments, getProgram())) {
+                  getLog().append("Coalescing zero page register [ " + thisEquivalenceClass + " ] with [ " + otherEquivalenceClass + " ]");
+                  liveRangeEquivalenceClassSet.consolidate(thisEquivalenceClass, otherEquivalenceClass);
+                  // Reset the program register allocation
+                  getProgram().getLiveRangeEquivalenceClassSet().storeRegisterAllocation();
+                  return true;
                }
             }
          }
       }
-
-      if(maxOther!=null) {
-         getLog().append("Coalescing zero page register [ " + maxThis+ " ] with [ " + maxOther + " ]");
-         liveRangeEquivalenceClassSet.consolidate(maxThis, maxOther);
-         // Reset the program register allocation
-         getProgram().getLiveRangeEquivalenceClassSet().storeRegisterAllocation();
-         return true;
-      }
-
       return false;
    }
 
-   private double getCoalesceScore(LiveRangeEquivalenceClass thisEquivalenceClass, LiveRangeEquivalenceClass otherEquivalenceClass) {
-      double score = 0.0;
-      List<VariableRef> thisClassVars = thisEquivalenceClass.getVariables();
-      List<VariableRef> otherClassVars = otherEquivalenceClass.getVariables();
-      VariableReferenceInfos variableReferenceInfos = getProgram().getVariableReferenceInfos();
-      for(ControlFlowBlock block : getProgram().getGraph().getAllBlocks()) {
-         for(Statement statement : block.getStatements()) {
-            Collection<VariableRef> definedVars = variableReferenceInfos.getDefinedVars(statement);
-            Collection<VariableRef> usedVars = variableReferenceInfos.getUsedVars(statement);
-            if(definedVars!=null && definedVars.size()>0) {
-               for(VariableRef definedVar : definedVars) {
-                  if(thisClassVars.contains(definedVar)) {
-                     for(VariableRef usedVar : usedVars) {
-                        if(otherClassVars.contains(usedVar)) {
-                           score += 1.0;
-                        }
-                     }
-                  } else if(otherClassVars.contains(definedVar)) {
-                     for(VariableRef usedVar : usedVars) {
-                        if(thisClassVars.contains(usedVar)) {
-                           score += 1.0;
-                        }
-                     }
-                  }
-               }
-            }
-         }
-      }
-      return score;
-   }
-
-   private boolean canCoalesce(LiveRangeEquivalenceClass myEquivalenceClass, LiveRangeEquivalenceClass otherEquivalenceClass, Set<String> unknownFragments) {
-      VariableRef myVariableRef = myEquivalenceClass.getVariables().get(0);
-      Variable myVariable = getProgram().getSymbolInfos().getVariable(myVariableRef);
-      VariableRef otherVariableRef = otherEquivalenceClass.getVariables().get(0);
-      Variable otherVariable = getProgram().getSymbolInfos().getVariable(otherVariableRef);
-      // Types match
-      Registers.Register myRegister = myEquivalenceClass.getRegister();
-      Registers.Register otherRegister = otherEquivalenceClass.getRegister();
-      if(myRegister.isZp() && otherRegister.isZp()) {
-         // Both registers are on Zero Page
-         if(myRegister.getType().equals(otherRegister.getType())) {
-            // Both registers have the same Zero Page size
-            // Try out the coalesce to test if it works
-            RegisterCombination combination = new RegisterCombination();
-            combination.setRegister(otherEquivalenceClass, myRegister);
-            return Pass4RegisterUpliftCombinations.generateCombinationAsm(combination, getProgram(), unknownFragments, ScopeRef.ROOT);
-         }
+   /**
+    * Determines if two live range equivalence classes can be coalesced.
+    * This is possible if they are both allocated to zero page, have the same size and the resulting ASM has no live range overlaps or clobber issues.
+    *
+    * @param ec1 One equivalence class
+    * @param ec2 Another equivalence class
+    * @param unknownFragments Receives information about any unknown fragments encountered during ASM generation
+    * @param program The program
+    * @return True if the two equivalence classes can be coalesced into one without problems.
+    */
+   public static boolean canCoalesce(LiveRangeEquivalenceClass ec1, LiveRangeEquivalenceClass ec2, Set<String> unknownFragments, Program program) {
+      Registers.Register register1 = ec1.getRegister();
+      Registers.Register register2 = ec2.getRegister();
+      if(register1.isZp() && register2.isZp() && register1.getType().equals(register2.getType())) {
+         // Both registers are on Zero Page & have the same zero page size
+         // Try out the coalesce to test if it works
+         RegisterCombination combination = new RegisterCombination();
+         combination.setRegister(ec2, register1);
+         return Pass4RegisterUpliftCombinations.generateCombinationAsm(combination, program, unknownFragments, ScopeRef.ROOT);
       }
       return false;
    }

@@ -235,7 +235,7 @@ sin16s: {
     .label x1 = $1f
     .label x2 = 8
     .label x3 = 8
-    .label x3_6 = 6
+    .label x3_6 = $13
     .label usinx = 6
     .label x4 = 8
     .label x5 = 8
@@ -330,36 +330,32 @@ sin16s: {
     sta mul_u16_sel.v2+1
     ldx #0
     jsr mul_u16_sel
-    lda mul_u16_sel.return_14
-    sta mul_u16_sel.return
-    lda mul_u16_sel.return_14+1
-    sta mul_u16_sel.return+1
+    lda mul_u16_sel.return
+    sta x2
+    lda mul_u16_sel.return+1
+    sta x2+1
     lda x1
     sta mul_u16_sel.v2
     lda x1+1
     sta mul_u16_sel.v2+1
     ldx #1
     jsr mul_u16_sel
-    lda mul_u16_sel.return_14
-    sta mul_u16_sel.return
-    lda mul_u16_sel.return_14+1
-    sta mul_u16_sel.return+1
+    lda mul_u16_sel.return
+    sta mul_u16_sel.return_1
+    lda mul_u16_sel.return+1
+    sta mul_u16_sel.return_1+1
     ldx #1
     lda #<$10000/6
     sta mul_u16_sel.v2
     lda #>$10000/6
     sta mul_u16_sel.v2+1
     jsr mul_u16_sel
-    lda mul_u16_sel.return_14
-    sta mul_u16_sel.return_10
-    lda mul_u16_sel.return_14+1
-    sta mul_u16_sel.return_10+1
     lda x1
     sec
-    sbc usinx
+    sbc x3_6
     sta usinx
     lda x1+1
-    sbc usinx+1
+    sbc x3_6+1
     sta usinx+1
     lda x1
     sta mul_u16_sel.v2
@@ -367,20 +363,20 @@ sin16s: {
     sta mul_u16_sel.v2+1
     ldx #0
     jsr mul_u16_sel
-    lda mul_u16_sel.return_14
-    sta mul_u16_sel.return
-    lda mul_u16_sel.return_14+1
-    sta mul_u16_sel.return+1
+    lda mul_u16_sel.return
+    sta mul_u16_sel.return_11
+    lda mul_u16_sel.return+1
+    sta mul_u16_sel.return_11+1
     lda x1
     sta mul_u16_sel.v2
     lda x1+1
     sta mul_u16_sel.v2+1
     ldx #0
     jsr mul_u16_sel
-    lda mul_u16_sel.return_14
-    sta mul_u16_sel.return
-    lda mul_u16_sel.return_14+1
-    sta mul_u16_sel.return+1
+    lda mul_u16_sel.return
+    sta mul_u16_sel.return_12
+    lda mul_u16_sel.return+1
+    sta mul_u16_sel.return_12+1
     ldx #3
     lda #<$10000/$80
     sta mul_u16_sel.v2
@@ -413,10 +409,10 @@ mul_u16_sel: {
     .label _1 = $f
     .label v1 = 8
     .label v2 = $13
-    .label return = 8
-    .label return_10 = 6
-    .label return_13 = $13
-    .label return_14 = $13
+    .label return = $13
+    .label return_1 = 8
+    .label return_11 = 8
+    .label return_12 = 8
     lda v1
     sta mul16u.a
     lda v1+1
@@ -433,9 +429,9 @@ mul_u16_sel: {
     bne !-
   !e:
     lda _1+2
-    sta return_14
+    sta return
     lda _1+3
-    sta return_14+1
+    sta return+1
     rts
 }
 mul16u: {

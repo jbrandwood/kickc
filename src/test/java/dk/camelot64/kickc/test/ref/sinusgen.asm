@@ -238,7 +238,7 @@ sin16s: {
     .label x3_6 = $13
     .label usinx = 6
     .label x4 = 8
-    .label x5 = 8
+    .label x5 = $13
     .label x5_128 = $13
     .label sinx = 6
     .label isUpper = $e
@@ -364,25 +364,21 @@ sin16s: {
     ldx #0
     jsr mul_u16_sel
     lda mul_u16_sel.return
-    sta mul_u16_sel.return_11
+    sta mul_u16_sel.return_10
     lda mul_u16_sel.return+1
-    sta mul_u16_sel.return_11+1
+    sta mul_u16_sel.return_10+1
     lda x1
     sta mul_u16_sel.v2
     lda x1+1
     sta mul_u16_sel.v2+1
     ldx #0
     jsr mul_u16_sel
-    lda mul_u16_sel.return
-    sta mul_u16_sel.return_12
-    lda mul_u16_sel.return+1
-    sta mul_u16_sel.return_12+1
-    ldx #3
-    lda #<$10000/$80
-    sta mul_u16_sel.v2
-    lda #>$10000/$80
-    sta mul_u16_sel.v2+1
-    jsr mul_u16_sel
+    ldy #4
+  !:
+    lsr x5_128+1
+    ror x5_128
+    dey
+    bne !-
     lda usinx
     clc
     adc x5_128
@@ -411,8 +407,7 @@ mul_u16_sel: {
     .label v2 = $13
     .label return = $13
     .label return_1 = 8
-    .label return_11 = 8
-    .label return_12 = 8
+    .label return_10 = 8
     lda v1
     sta mul16u.a
     lda v1+1
@@ -486,9 +481,9 @@ mul16u: {
     jmp b1
 }
 div32u16u: {
-    .label return = $1b
     .label quotient_hi = $13
     .label quotient_lo = 8
+    .label return = $1b
     lda #<main.wavelength
     sta divr16u.divisor
     lda #>main.wavelength

@@ -73,7 +73,8 @@ signed word sin16s(dword x) {
     word usinx = x1 - x3_6; // u[1.15] x - x^3/6
     word x4 = mul_u16_sel(x3, x1, 0); // u[3.13] x^4
     word x5 = mul_u16_sel(x4, x1, 0); // u[4.12] x^5
-    word x5_128 = mul_u16_sel(x5, $10000/128, 3); // u[1.15] x^5/128;
+    //word x5_128 = mul_u16_sel(x5, $10000/128, 3); // u[1.15] x^5/128;
+    word x5_128 = x5>>4;
     usinx = usinx + x5_128; // u[1.15] (always an initial zero)
     signed word sinx = (signed word)usinx; // s[0.15]
     if(isUpper!=0) {
@@ -128,11 +129,3 @@ word mul_u16_sel(word v1, word v2, byte select) {
     return >mul16u(v1, v2)<<select;
 }
 
-// Divide unsigned 32-bit dword dividend with a 16-bit word divisor
-// The 16-bit word remainder can be found in rem16u after the division
-dword div32u16u(dword dividend, word divisor) {
-  word quotient_hi = divr16u(>dividend, divisor, 0);
-  word quotient_lo = divr16u(<dividend, divisor, rem16u);
-  dword quotient = { quotient_hi, quotient_lo};
-  return quotient;
-}

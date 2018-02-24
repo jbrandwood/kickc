@@ -3,7 +3,9 @@ package dk.camelot64.kickc.passes;
 import dk.camelot64.kickc.model.*;
 
 import java.util.Collection;
+import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Set;
 
 /**
  * Coalesces zero page registers where their live ranges do not overlap.
@@ -17,11 +19,19 @@ public class Pass4ZeroPageCoalesce extends Pass2Base {
    }
 
    public void allocate() {
+      LinkedHashSet<String> unknownFragments = new LinkedHashSet<>();
       LiveRangeEquivalenceClassSet liveRangeEquivalenceClassSet = getProgram().getLiveRangeEquivalenceClassSet();
       boolean change;
       do {
-         change = coalesce(liveRangeEquivalenceClassSet);
+         change = coalesce(liveRangeEquivalenceClassSet, unknownFragments);
       } while(change);
+
+      if(unknownFragments.size() > 0) {
+         getLog().append("MISSING FRAGMENTS");
+         for(String unknownFragment : unknownFragments) {
+            getLog().append("  " + unknownFragment);
+         }
+      }
 
    }
 
@@ -29,9 +39,10 @@ public class Pass4ZeroPageCoalesce extends Pass2Base {
     * Find two equivalence classes that can be coalesced into one - and perform the coalescence.
     *
     * @param liveRangeEquivalenceClassSet The set of live range equivalence classes
+    * @param unknownFragments
     * @return true if any classes were coalesced. False otherwise.
     */
-   private boolean coalesce(LiveRangeEquivalenceClassSet liveRangeEquivalenceClassSet) {
+   private boolean coalesce(LiveRangeEquivalenceClassSet liveRangeEquivalenceClassSet, Set<String> unknownFragments) {
 
       double maxScore = -1.0;
       LiveRangeEquivalenceClass maxThis = null;
@@ -40,7 +51,7 @@ public class Pass4ZeroPageCoalesce extends Pass2Base {
       for(LiveRangeEquivalenceClass thisEquivalenceClass : liveRangeEquivalenceClassSet.getEquivalenceClasses()) {
          for(LiveRangeEquivalenceClass otherEquivalenceClass : liveRangeEquivalenceClassSet.getEquivalenceClasses()) {
             if(!thisEquivalenceClass.equals(otherEquivalenceClass)) {
-               if(canCoalesce(thisEquivalenceClass, otherEquivalenceClass)) {
+               if(canCoalesce(thisEquivalenceClass, otherEquivalenceClass, unknownFragments)) {
                   double coalesceScore = getCoalesceScore(thisEquivalenceClass, otherEquivalenceClass);
                   if(coalesceScore>maxScore) {
                      if(otherEquivalenceClass==null) {
@@ -97,7 +108,7 @@ public class Pass4ZeroPageCoalesce extends Pass2Base {
       return score;
    }
 
-   private boolean canCoalesce(LiveRangeEquivalenceClass myEquivalenceClass, LiveRangeEquivalenceClass otherEquivalenceClass) {
+   private boolean canCoalesce(LiveRangeEquivalenceClass myEquivalenceClass, LiveRangeEquivalenceClass otherEquivalenceClass, Set<String> unknownFragments) {
       VariableRef myVariableRef = myEquivalenceClass.getVariables().get(0);
       Variable myVariable = getProgram().getSymbolInfos().getVariable(myVariableRef);
       VariableRef otherVariableRef = otherEquivalenceClass.getVariables().get(0);
@@ -107,22 +118,12 @@ public class Pass4ZeroPageCoalesce extends Pass2Base {
       Registers.Register otherRegister = otherEquivalenceClass.getRegister();
       if(myRegister.isZp() && otherRegister.isZp()) {
          // Both registers are on Zero Page
-
          if(myRegister.getType().equals(otherRegister.getType())) {
             // Both registers have the same Zero Page size
-
-            // Reset the program register allocation to the one specified in the equivalence class set
-            getProgram().getLiveRangeEquivalenceClassSet().storeRegisterAllocation();
             // Try out the coalesce to test if it works
-            for(VariableRef var : otherEquivalenceClass.getVariables()) {
-               Variable variable = getProgram().getSymbolInfos().getVariable(var);
-               variable.setAllocation(myRegister);
-            }
-            if(!Pass4RegisterUpliftCombinations.isAllocationOverlapping(getProgram())) {
-               // Live ranges do not overlap
-               // Perform coalesce!
-               return true;
-            }
+            RegisterCombination combination = new RegisterCombination();
+            combination.setRegister(otherEquivalenceClass, myRegister);
+            return Pass4RegisterUpliftCombinations.generateCombinationAsm(combination, getProgram(), unknownFragments, ScopeRef.ROOT);
          }
       }
       return false;

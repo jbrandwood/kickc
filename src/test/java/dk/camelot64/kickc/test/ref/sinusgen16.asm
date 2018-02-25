@@ -1,10 +1,10 @@
 .pc = $801 "Basic"
 :BasicUpstart(main)
 .pc = $80d "Program"
-  .label SCREEN = $400
   .const PI2_u4f28 = $6487ed51
   .const PI_u4f28 = $3243f6a9
   .const PI_HALF_u4f28 = $1921fb54
+  .label SCREEN = $400
   .label rem16u = 4
   .label char_cursor = 8
   jsr main
@@ -321,35 +321,35 @@ sin16s: {
     lda _6+3
     sta x1+1
     lda x1
-    sta mul_u16_sel.v1
+    sta mulu16_sel.v1
     lda x1+1
-    sta mul_u16_sel.v1+1
+    sta mulu16_sel.v1+1
     lda x1
-    sta mul_u16_sel.v2
+    sta mulu16_sel.v2
     lda x1+1
-    sta mul_u16_sel.v2+1
+    sta mulu16_sel.v2+1
     ldx #0
-    jsr mul_u16_sel
-    lda mul_u16_sel.return
+    jsr mulu16_sel
+    lda mulu16_sel.return
     sta x2
-    lda mul_u16_sel.return+1
+    lda mulu16_sel.return+1
     sta x2+1
     lda x1
-    sta mul_u16_sel.v2
+    sta mulu16_sel.v2
     lda x1+1
-    sta mul_u16_sel.v2+1
+    sta mulu16_sel.v2+1
     ldx #1
-    jsr mul_u16_sel
-    lda mul_u16_sel.return
-    sta mul_u16_sel.return_1
-    lda mul_u16_sel.return+1
-    sta mul_u16_sel.return_1+1
+    jsr mulu16_sel
+    lda mulu16_sel.return
+    sta mulu16_sel.return_1
+    lda mulu16_sel.return+1
+    sta mulu16_sel.return_1+1
     ldx #1
     lda #<$10000/6
-    sta mul_u16_sel.v2
+    sta mulu16_sel.v2
     lda #>$10000/6
-    sta mul_u16_sel.v2+1
-    jsr mul_u16_sel
+    sta mulu16_sel.v2+1
+    jsr mulu16_sel
     lda x1
     sec
     sbc x3_6
@@ -358,21 +358,21 @@ sin16s: {
     sbc x3_6+1
     sta usinx+1
     lda x1
-    sta mul_u16_sel.v2
+    sta mulu16_sel.v2
     lda x1+1
-    sta mul_u16_sel.v2+1
+    sta mulu16_sel.v2+1
     ldx #0
-    jsr mul_u16_sel
-    lda mul_u16_sel.return
-    sta mul_u16_sel.return_10
-    lda mul_u16_sel.return+1
-    sta mul_u16_sel.return_10+1
+    jsr mulu16_sel
+    lda mulu16_sel.return
+    sta mulu16_sel.return_10
+    lda mulu16_sel.return+1
+    sta mulu16_sel.return_10+1
     lda x1
-    sta mul_u16_sel.v2
+    sta mulu16_sel.v2
     lda x1+1
-    sta mul_u16_sel.v2+1
+    sta mulu16_sel.v2+1
     ldx #0
-    jsr mul_u16_sel
+    jsr mulu16_sel
     ldy #4
   !:
     lsr x5_128+1
@@ -400,7 +400,7 @@ sin16s: {
   b3:
     rts
 }
-mul_u16_sel: {
+mulu16_sel: {
     .label _0 = $f
     .label _1 = $f
     .label v1 = 8

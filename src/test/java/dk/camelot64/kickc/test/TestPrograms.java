@@ -51,8 +51,13 @@ public class TestPrograms {
    }
 
    @Test
-   public void testSinusGen() throws IOException, URISyntaxException {
-      compileAndCompare("sinusgen");
+   public void testSinusGen16() throws IOException, URISyntaxException {
+      compileAndCompare("sinusgen16");
+   }
+
+   @Test
+   public void testSinusGen8() throws IOException, URISyntaxException {
+      compileAndCompare("sinusgen8");
    }
 
    @Test

@@ -66,6 +66,11 @@ public class TestPrograms {
    }
 
    @Test
+   public void testSinusGen8b() throws IOException, URISyntaxException {
+      compileAndCompare("sinusgen8b");
+   }
+
+   @Test
    public void testLineGen() throws IOException, URISyntaxException {
       compileAndCompare("linegen");
    }

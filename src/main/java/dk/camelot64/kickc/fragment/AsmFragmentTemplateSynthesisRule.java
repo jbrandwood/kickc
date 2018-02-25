@@ -495,9 +495,9 @@ class AsmFragmentTemplateSynthesisRule {
       synths.add(new AsmFragmentTemplateSynthesisRule("(v.s..)=(p.s..)_derefidx_(vbu..)", null, null, "$1=$2_derefidx_$3", null, mapSToU));
       synths.add(new AsmFragmentTemplateSynthesisRule("(v.s..)=_(inc|dec)_(v.s..)", null, null, "$1=_$2_$3", null, mapSToU));
       synths.add(new AsmFragmentTemplateSynthesisRule("(vbuz.|vbuaa|vbuxx|vbuyy)=_(lo|hi)_vws(z.|c.)", null, null, "$1=_$2_vwu$3", null, mapSToU));
-      synths.add(new AsmFragmentTemplateSynthesisRule("(vbs..)=(vbs..)_(plus)_(vbs..)", null, null, "$1=$2_$3_$4", null, mapSToU));
-      synths.add(new AsmFragmentTemplateSynthesisRule("(vws..)=(vws..)_(plus)_(vws..)", null, null, "$1=$2_$3_$4", null, mapSToU));
-      synths.add(new AsmFragmentTemplateSynthesisRule("(vds..)=(vds..)_(plus)_(vds..)", null, null, "$1=$2_$3_$4", null, mapSToU));
+      synths.add(new AsmFragmentTemplateSynthesisRule("(vbs..)=(vbs..)_(plus|minus)_(vbs..)", null, null, "$1=$2_$3_$4", null, mapSToU));
+      synths.add(new AsmFragmentTemplateSynthesisRule("(vws..)=(vws..)_(plus|minus)_(vws..)", null, null, "$1=$2_$3_$4", null, mapSToU));
+      synths.add(new AsmFragmentTemplateSynthesisRule("(vds..)=(vds..)_(plus|minus)_(vds..)", null, null, "$1=$2_$3_$4", null, mapSToU));
 
       // Use constant word ASM to synthesize unsigned constant byte ASM ( ...vb.c... -> vw.c... )
       synths.add(new AsmFragmentTemplateSynthesisRule("(vwuz.)=(vwuz.)_(plus|minus|band|bxor|bor)_vb.c(.)", null, null, "$1=$2_$3_vwuc$4", null, null));

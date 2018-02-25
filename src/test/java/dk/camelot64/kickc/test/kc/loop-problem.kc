@@ -1,0 +1,97 @@
+// Results in NullPointerException during loop analysis
+// Problem is related to the print_str() in main.
+
+import "division.kc"
+import "multiply.kc"
+import "print.kc"
+
+void main() {
+    print_cls();
+    print_str("x    x'   x1 x2 x3 /6 x4 x5 /80 ux sin@");
+    word wavelength = 20;
+    signed byte[20] sintab2;
+    sin8s_gen(sintab2, wavelength);
+}
+
+// PI*2 in u[4.12] format
+const word PI2_u4f12 = $6488;
+// PI in u[4.12] format
+const word PI_u4f12 = $3244;
+// PI/2 in u[4.12] format
+const word PI_HALF_u4f12 = $1922;
+
+// Generate signed byte sinus table - on the full -$7f - $7f range
+// sintab - the table to generate into
+// wavelength - the number of sinus points in a total sinus wavelength (the size of the table)
+void sin8s_gen(signed byte* sintab, word wavelength) {
+    // u[4.28] step = PI*2/wavelength
+    word step = div16u(PI2_u4f12, wavelength); // u[4.12]
+    // Iterate over the table
+    word x = 0; // u[4.12]
+    for( word i=0; i<wavelength; i++) {
+        *sintab++ = sin8s(x);
+        x = x + step;
+    }
+}
+
+// Calculate signed byte sinus sin(x)
+// x: unsigned word input u[4.12] in the interval $0000 - PI2_u4f12
+// result: signed byte sin(x) s[0.7] - using the full range  -$7f - $7f
+signed byte sin8s(word x) {
+    print_word(x);
+    print_str(" @");
+    // Move x1 into the range 0-PI/2 using sinus mirror symmetries
+    byte isUpper = 0;
+    if(x >= PI_u4f12 ) {
+        x = x - PI_u4f12;
+        isUpper = 1;
+    }
+    if(x >= PI_HALF_u4f12 ) {
+        x = PI_u4f12 - x;
+    }
+    print_word(x);
+    print_str(" @");
+    // sinx = x - x^3/6 + x5/128;
+    byte x1 = >x<<3; // u[1.7]
+    print_byte(x1);
+    print_str(" @");
+    byte x2 = mulu8_sel(x1, x1, 0); // u[2.6] x^2
+    print_byte(x2);
+    print_str(" @");
+    byte x3 = mulu8_sel(x2, x1, 1); // u[2.6] x^3
+    print_byte(x3);
+    print_str(" @");
+    byte x3_6 = mulu8_sel(x3, $100/6, 1);  // u[1.7] x^3/6;
+    print_byte(x3_6);
+    print_str(" @");
+    byte usinx = x1 - x3_6; // u[1.7] x - x^3/6
+    byte x4 = mulu8_sel(x3, x1, 0); // u[3.5] x^4
+    print_byte(x4);
+    print_str(" @");
+    byte x5 = mulu8_sel(x4, x1, 0); // u[4.4] x^5
+    print_byte(x5);
+    print_str(" @");
+    byte x5_128 = x5>>4; // // u[1.7] x^5/128 -- much more efficient than mul_u16_sel(x5, $10000/128, 3);
+    print_byte(x5_128);
+    print_str(" @");
+    usinx = usinx + x5_128; // u[1.7] (first bit is always zero)
+    print_byte(usinx);
+    print_str(" @");
+    signed byte sinx = (signed byte)usinx; // s[0.7]
+    if(isUpper!=0) {
+        sinx = -(signed byte)usinx; // s[0.7];
+    }
+    if(sinx>=0) {
+      print_str(" @");
+    }
+    print_sbyte(sinx);
+    print_ln();
+    return sinx;
+}
+
+// Calculate val*val for two unsigned byte values - the result is 8 selected bits of the 16-bit result.
+// The select parameter indicates how many of the highest bits of the 16-bit result to skip
+byte mulu8_sel(byte v1, byte v2, byte select) {
+    return >mul8u(v1, v2)<<select;
+}
+

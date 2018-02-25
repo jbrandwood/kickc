@@ -45,6 +45,11 @@ public class TestPrograms {
       AsmFragmentTemplateUsages.logUsages(log, false, false,  false, false, false, false);
    }
 
+   //@Test
+   //public void testLoopProblem() throws IOException, URISyntaxException {
+   //   compileAndCompare("loop-problem");
+   //}
+
    @Test
    public void testLoHiConst() throws IOException, URISyntaxException {
       compileAndCompare("test-lohiconst");

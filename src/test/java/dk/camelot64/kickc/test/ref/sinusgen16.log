@@ -119,17 +119,19 @@ signed byte sin8s(word x) {
     byte x1 = >x<<3; // u[1.7]
     byte x2 = mulu8_sel(x1, x1, 0); // u[2.6] x^2
     byte x3 = mulu8_sel(x2, x1, 1); // u[2.6] x^3
-    byte x3_6 = mulu8_sel(x3, $100/6, 1);  // u[1.7] x^3/6;
+    const byte DIV_6 = $2b; // u[0.7] - $2a.aa rounded to $2b
+    byte x3_6 = mulu8_sel(x3, DIV_6, 1);  // u[1.7] x^3/6;
     byte usinx = x1 - x3_6; // u[1.7] x - x^3/6
     byte x4 = mulu8_sel(x3, x1, 0); // u[3.5] x^4
     byte x5 = mulu8_sel(x4, x1, 0); // u[4.4] x^5
     byte x5_128 = x5>>4; // // u[1.7] x^5/128 -- much more efficient than mul_u16_sel(x5, $10000/128, 3);
     usinx = usinx + x5_128; // u[1.7] (first bit is always zero)
+    if(usinx>=128) { usinx--; } // rounding may occasionally result in $80 - lower into range ($00-$7f)
     signed byte sinx = (signed byte)usinx; // s[0.7]
     if(isUpper!=0) {
         sinx = -(signed byte)usinx; // s[0.7];
-     }
-     return sinx;
+    }
+    return sinx;
 }
 
 
@@ -399,6 +401,7 @@ signed dword mul16s(signed word a, signed word b) {
 Adding pre/post-modifier (word) sin16s_gen::i ← ++ (word) sin16s_gen::i
 Adding pre/post-modifier (signed byte*) sin8s_gen::sintab ← ++ (signed byte*) sin8s_gen::sintab
 Adding pre/post-modifier (word) sin8s_gen::i ← ++ (word) sin8s_gen::i
+Adding pre/post-modifier (byte) sin8s::usinx ← -- (byte) sin8s::usinx
 Adding pre/post-modifier (word) sin16ss_gen::i ← ++ (word) sin16ss_gen::i
 Importing print.kc
 PARSING src/test/java/dk/camelot64/kickc/test/kc/print.kc
@@ -928,28 +931,33 @@ sin8s::@2:
   (byte) sin8s::x2 ← (byte~) sin8s::$8
   (byte~) sin8s::$9 ← call mulu8_sel (byte) sin8s::x2 (byte) sin8s::x1 (byte/signed byte/word/signed word/dword/signed dword) 1 
   (byte) sin8s::x3 ← (byte~) sin8s::$9
-  (byte/signed byte/word/signed word/dword/signed dword~) sin8s::$10 ← (word/signed word/dword/signed dword) 256 / (byte/signed byte/word/signed word/dword/signed dword) 6
-  (byte~) sin8s::$11 ← call mulu8_sel (byte) sin8s::x3 (byte/signed byte/word/signed word/dword/signed dword~) sin8s::$10 (byte/signed byte/word/signed word/dword/signed dword) 1 
-  (byte) sin8s::x3_6 ← (byte~) sin8s::$11
-  (byte/signed byte/word/signed word/dword/signed dword~) sin8s::$12 ← (byte) sin8s::x1 - (byte) sin8s::x3_6
-  (byte) sin8s::usinx ← (byte/signed byte/word/signed word/dword/signed dword~) sin8s::$12
-  (byte~) sin8s::$13 ← call mulu8_sel (byte) sin8s::x3 (byte) sin8s::x1 (byte/signed byte/word/signed word/dword/signed dword) 0 
-  (byte) sin8s::x4 ← (byte~) sin8s::$13
-  (byte~) sin8s::$14 ← call mulu8_sel (byte) sin8s::x4 (byte) sin8s::x1 (byte/signed byte/word/signed word/dword/signed dword) 0 
-  (byte) sin8s::x5 ← (byte~) sin8s::$14
-  (byte~) sin8s::$15 ← (byte) sin8s::x5 >> (byte/signed byte/word/signed word/dword/signed dword) 4
-  (byte) sin8s::x5_128 ← (byte~) sin8s::$15
-  (byte/word~) sin8s::$16 ← (byte) sin8s::usinx + (byte) sin8s::x5_128
-  (byte) sin8s::usinx ← (byte/word~) sin8s::$16
-  (signed byte~) sin8s::$17 ← ((signed byte)) (byte) sin8s::usinx
-  (signed byte) sin8s::sinx ← (signed byte~) sin8s::$17
-  (boolean~) sin8s::$18 ← (byte) sin8s::isUpper != (byte/signed byte/word/signed word/dword/signed dword) 0
-  (boolean~) sin8s::$19 ← ! (boolean~) sin8s::$18
-  if((boolean~) sin8s::$19) goto sin8s::@3
-  (signed byte~) sin8s::$20 ← ((signed byte)) (byte) sin8s::usinx
-  (signed byte~) sin8s::$21 ← - (signed byte~) sin8s::$20
-  (signed byte) sin8s::sinx ← (signed byte~) sin8s::$21
+  (byte) sin8s::DIV_6 ← (byte/signed byte/word/signed word/dword/signed dword) 43
+  (byte~) sin8s::$10 ← call mulu8_sel (byte) sin8s::x3 (byte) sin8s::DIV_6 (byte/signed byte/word/signed word/dword/signed dword) 1 
+  (byte) sin8s::x3_6 ← (byte~) sin8s::$10
+  (byte/signed byte/word/signed word/dword/signed dword~) sin8s::$11 ← (byte) sin8s::x1 - (byte) sin8s::x3_6
+  (byte) sin8s::usinx ← (byte/signed byte/word/signed word/dword/signed dword~) sin8s::$11
+  (byte~) sin8s::$12 ← call mulu8_sel (byte) sin8s::x3 (byte) sin8s::x1 (byte/signed byte/word/signed word/dword/signed dword) 0 
+  (byte) sin8s::x4 ← (byte~) sin8s::$12
+  (byte~) sin8s::$13 ← call mulu8_sel (byte) sin8s::x4 (byte) sin8s::x1 (byte/signed byte/word/signed word/dword/signed dword) 0 
+  (byte) sin8s::x5 ← (byte~) sin8s::$13
+  (byte~) sin8s::$14 ← (byte) sin8s::x5 >> (byte/signed byte/word/signed word/dword/signed dword) 4
+  (byte) sin8s::x5_128 ← (byte~) sin8s::$14
+  (byte/word~) sin8s::$15 ← (byte) sin8s::usinx + (byte) sin8s::x5_128
+  (byte) sin8s::usinx ← (byte/word~) sin8s::$15
+  (boolean~) sin8s::$16 ← (byte) sin8s::usinx >= (byte/word/signed word/dword/signed dword) 128
+  (boolean~) sin8s::$17 ← ! (boolean~) sin8s::$16
+  if((boolean~) sin8s::$17) goto sin8s::@3
+  (byte) sin8s::usinx ← -- (byte) sin8s::usinx
 sin8s::@3:
+  (signed byte~) sin8s::$18 ← ((signed byte)) (byte) sin8s::usinx
+  (signed byte) sin8s::sinx ← (signed byte~) sin8s::$18
+  (boolean~) sin8s::$19 ← (byte) sin8s::isUpper != (byte/signed byte/word/signed word/dword/signed dword) 0
+  (boolean~) sin8s::$20 ← ! (boolean~) sin8s::$19
+  if((boolean~) sin8s::$20) goto sin8s::@4
+  (signed byte~) sin8s::$21 ← ((signed byte)) (byte) sin8s::usinx
+  (signed byte~) sin8s::$22 ← - (signed byte~) sin8s::$21
+  (signed byte) sin8s::sinx ← (signed byte~) sin8s::$22
+sin8s::@4:
   (signed byte) sin8s::return ← (signed byte) sin8s::sinx
   goto sin8s::@return
 sin8s::@return:
@@ -1624,19 +1632,20 @@ SYMBOLS
 (signed byte()) sin8s((word) sin8s::x)
 (boolean~) sin8s::$0
 (boolean~) sin8s::$1
-(byte/signed byte/word/signed word/dword/signed dword~) sin8s::$10
-(byte~) sin8s::$11
-(byte/signed byte/word/signed word/dword/signed dword~) sin8s::$12
+(byte~) sin8s::$10
+(byte/signed byte/word/signed word/dword/signed dword~) sin8s::$11
+(byte~) sin8s::$12
 (byte~) sin8s::$13
 (byte~) sin8s::$14
-(byte~) sin8s::$15
-(byte/word~) sin8s::$16
-(signed byte~) sin8s::$17
-(boolean~) sin8s::$18
+(byte/word~) sin8s::$15
+(boolean~) sin8s::$16
+(boolean~) sin8s::$17
+(signed byte~) sin8s::$18
 (boolean~) sin8s::$19
 (word~) sin8s::$2
-(signed byte~) sin8s::$20
+(boolean~) sin8s::$20
 (signed byte~) sin8s::$21
+(signed byte~) sin8s::$22
 (boolean~) sin8s::$3
 (boolean~) sin8s::$4
 (word~) sin8s::$5
@@ -1647,7 +1656,9 @@ SYMBOLS
 (label) sin8s::@1
 (label) sin8s::@2
 (label) sin8s::@3
+(label) sin8s::@4
 (label) sin8s::@return
+(byte) sin8s::DIV_6
 (byte) sin8s::isUpper
 (signed byte) sin8s::return
 (signed byte) sin8s::sinx
@@ -2257,18 +2268,18 @@ sin8s: scope:[sin8s]  from
   (boolean~) sin8s::$0 ← (word) sin8s::x >= (word) PI_u4f12
   (boolean~) sin8s::$1 ← ! (boolean~) sin8s::$0
   if((boolean~) sin8s::$1) goto sin8s::@1
-  to:sin8s::@4
-sin8s::@1: scope:[sin8s]  from sin8s sin8s::@4
+  to:sin8s::@5
+sin8s::@1: scope:[sin8s]  from sin8s sin8s::@5
   (boolean~) sin8s::$3 ← (word) sin8s::x >= (word) PI_HALF_u4f12
   (boolean~) sin8s::$4 ← ! (boolean~) sin8s::$3
   if((boolean~) sin8s::$4) goto sin8s::@2
-  to:sin8s::@5
-sin8s::@4: scope:[sin8s]  from sin8s
+  to:sin8s::@6
+sin8s::@5: scope:[sin8s]  from sin8s
   (word~) sin8s::$2 ← (word) sin8s::x - (word) PI_u4f12
   (word) sin8s::x ← (word~) sin8s::$2
   (byte) sin8s::isUpper ← (byte/signed byte/word/signed word/dword/signed dword) 1
   to:sin8s::@1
-sin8s::@2: scope:[sin8s]  from sin8s::@1 sin8s::@5
+sin8s::@2: scope:[sin8s]  from sin8s::@1 sin8s::@6
   (word~) sin8s::$6 ← (word) sin8s::x << (byte/signed byte/word/signed word/dword/signed dword) 3
   (byte~) sin8s::$7 ← > (word~) sin8s::$6
   (byte) sin8s::x1 ← (byte~) sin8s::$7
@@ -2276,42 +2287,50 @@ sin8s::@2: scope:[sin8s]  from sin8s::@1 sin8s::@5
   (byte) sin8s::x2 ← (byte~) sin8s::$8
   (byte~) sin8s::$9 ← call mulu8_sel (byte) sin8s::x2 (byte) sin8s::x1 (byte/signed byte/word/signed word/dword/signed dword) 1 
   (byte) sin8s::x3 ← (byte~) sin8s::$9
-  (byte/signed byte/word/signed word/dword/signed dword~) sin8s::$10 ← (word/signed word/dword/signed dword) 256 / (byte/signed byte/word/signed word/dword/signed dword) 6
-  (byte~) sin8s::$11 ← call mulu8_sel (byte) sin8s::x3 (byte/signed byte/word/signed word/dword/signed dword~) sin8s::$10 (byte/signed byte/word/signed word/dword/signed dword) 1 
-  (byte) sin8s::x3_6 ← (byte~) sin8s::$11
-  (byte/signed byte/word/signed word/dword/signed dword~) sin8s::$12 ← (byte) sin8s::x1 - (byte) sin8s::x3_6
-  (byte) sin8s::usinx ← (byte/signed byte/word/signed word/dword/signed dword~) sin8s::$12
-  (byte~) sin8s::$13 ← call mulu8_sel (byte) sin8s::x3 (byte) sin8s::x1 (byte/signed byte/word/signed word/dword/signed dword) 0 
-  (byte) sin8s::x4 ← (byte~) sin8s::$13
-  (byte~) sin8s::$14 ← call mulu8_sel (byte) sin8s::x4 (byte) sin8s::x1 (byte/signed byte/word/signed word/dword/signed dword) 0 
-  (byte) sin8s::x5 ← (byte~) sin8s::$14
-  (byte~) sin8s::$15 ← (byte) sin8s::x5 >> (byte/signed byte/word/signed word/dword/signed dword) 4
-  (byte) sin8s::x5_128 ← (byte~) sin8s::$15
-  (byte/word~) sin8s::$16 ← (byte) sin8s::usinx + (byte) sin8s::x5_128
-  (byte) sin8s::usinx ← (byte/word~) sin8s::$16
-  (signed byte~) sin8s::$17 ← ((signed byte)) (byte) sin8s::usinx
-  (signed byte) sin8s::sinx ← (signed byte~) sin8s::$17
-  (boolean~) sin8s::$18 ← (byte) sin8s::isUpper != (byte/signed byte/word/signed word/dword/signed dword) 0
-  (boolean~) sin8s::$19 ← ! (boolean~) sin8s::$18
-  if((boolean~) sin8s::$19) goto sin8s::@3
-  to:sin8s::@6
-sin8s::@5: scope:[sin8s]  from sin8s::@1
+  (byte) sin8s::DIV_6 ← (byte/signed byte/word/signed word/dword/signed dword) 43
+  (byte~) sin8s::$10 ← call mulu8_sel (byte) sin8s::x3 (byte) sin8s::DIV_6 (byte/signed byte/word/signed word/dword/signed dword) 1 
+  (byte) sin8s::x3_6 ← (byte~) sin8s::$10
+  (byte/signed byte/word/signed word/dword/signed dword~) sin8s::$11 ← (byte) sin8s::x1 - (byte) sin8s::x3_6
+  (byte) sin8s::usinx ← (byte/signed byte/word/signed word/dword/signed dword~) sin8s::$11
+  (byte~) sin8s::$12 ← call mulu8_sel (byte) sin8s::x3 (byte) sin8s::x1 (byte/signed byte/word/signed word/dword/signed dword) 0 
+  (byte) sin8s::x4 ← (byte~) sin8s::$12
+  (byte~) sin8s::$13 ← call mulu8_sel (byte) sin8s::x4 (byte) sin8s::x1 (byte/signed byte/word/signed word/dword/signed dword) 0 
+  (byte) sin8s::x5 ← (byte~) sin8s::$13
+  (byte~) sin8s::$14 ← (byte) sin8s::x5 >> (byte/signed byte/word/signed word/dword/signed dword) 4
+  (byte) sin8s::x5_128 ← (byte~) sin8s::$14
+  (byte/word~) sin8s::$15 ← (byte) sin8s::usinx + (byte) sin8s::x5_128
+  (byte) sin8s::usinx ← (byte/word~) sin8s::$15
+  (boolean~) sin8s::$16 ← (byte) sin8s::usinx >= (byte/word/signed word/dword/signed dword) 128
+  (boolean~) sin8s::$17 ← ! (boolean~) sin8s::$16
+  if((boolean~) sin8s::$17) goto sin8s::@3
+  to:sin8s::@7
+sin8s::@6: scope:[sin8s]  from sin8s::@1
   (word~) sin8s::$5 ← (word) PI_u4f12 - (word) sin8s::x
   (word) sin8s::x ← (word~) sin8s::$5
   to:sin8s::@2
-sin8s::@3: scope:[sin8s]  from sin8s::@2 sin8s::@6
+sin8s::@3: scope:[sin8s]  from sin8s::@2 sin8s::@7
+  (signed byte~) sin8s::$18 ← ((signed byte)) (byte) sin8s::usinx
+  (signed byte) sin8s::sinx ← (signed byte~) sin8s::$18
+  (boolean~) sin8s::$19 ← (byte) sin8s::isUpper != (byte/signed byte/word/signed word/dword/signed dword) 0
+  (boolean~) sin8s::$20 ← ! (boolean~) sin8s::$19
+  if((boolean~) sin8s::$20) goto sin8s::@4
+  to:sin8s::@8
+sin8s::@7: scope:[sin8s]  from sin8s::@2
+  (byte) sin8s::usinx ← -- (byte) sin8s::usinx
+  to:sin8s::@3
+sin8s::@4: scope:[sin8s]  from sin8s::@3 sin8s::@8
   (signed byte) sin8s::return ← (signed byte) sin8s::sinx
   to:sin8s::@return
-sin8s::@6: scope:[sin8s]  from sin8s::@2
-  (signed byte~) sin8s::$20 ← ((signed byte)) (byte) sin8s::usinx
-  (signed byte~) sin8s::$21 ← - (signed byte~) sin8s::$20
-  (signed byte) sin8s::sinx ← (signed byte~) sin8s::$21
-  to:sin8s::@3
-sin8s::@return: scope:[sin8s]  from sin8s::@3 sin8s::@7
+sin8s::@8: scope:[sin8s]  from sin8s::@3
+  (signed byte~) sin8s::$21 ← ((signed byte)) (byte) sin8s::usinx
+  (signed byte~) sin8s::$22 ← - (signed byte~) sin8s::$21
+  (signed byte) sin8s::sinx ← (signed byte~) sin8s::$22
+  to:sin8s::@4
+sin8s::@return: scope:[sin8s]  from sin8s::@4 sin8s::@9
   (signed byte) sin8s::return ← (signed byte) sin8s::return
   return (signed byte) sin8s::return
   to:@return
-sin8s::@7: scope:[sin8s]  from
+sin8s::@9: scope:[sin8s]  from
   to:sin8s::@return
 @15: scope:[]  from @14
   to:@16

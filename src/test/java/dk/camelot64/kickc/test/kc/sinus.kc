@@ -97,17 +97,19 @@ signed byte sin8s(word x) {
     byte x1 = >x<<3; // u[1.7]
     byte x2 = mulu8_sel(x1, x1, 0); // u[2.6] x^2
     byte x3 = mulu8_sel(x2, x1, 1); // u[2.6] x^3
-    byte x3_6 = mulu8_sel(x3, $100/6, 1);  // u[1.7] x^3/6;
+    const byte DIV_6 = $2b; // u[0.7] - $2a.aa rounded to $2b
+    byte x3_6 = mulu8_sel(x3, DIV_6, 1);  // u[1.7] x^3/6;
     byte usinx = x1 - x3_6; // u[1.7] x - x^3/6
     byte x4 = mulu8_sel(x3, x1, 0); // u[3.5] x^4
     byte x5 = mulu8_sel(x4, x1, 0); // u[4.4] x^5
     byte x5_128 = x5>>4; // // u[1.7] x^5/128 -- much more efficient than mul_u16_sel(x5, $10000/128, 3);
     usinx = usinx + x5_128; // u[1.7] (first bit is always zero)
+    if(usinx>=128) { usinx--; } // rounding may occasionally result in $80 - lower into range ($00-$7f)
     signed byte sinx = (signed byte)usinx; // s[0.7]
     if(isUpper!=0) {
         sinx = -(signed byte)usinx; // s[0.7];
-     }
-     return sinx;
+    }
+    return sinx;
 }
 
 

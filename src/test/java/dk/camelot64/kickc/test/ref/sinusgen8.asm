@@ -8,7 +8,7 @@
   .label char_cursor = 5
   jsr main
 main: {
-    .label wavelength = $78
+    .label wavelength = $c0
     .label sb = 4
     jsr sin8s_gen
     jsr print_cls
@@ -18,7 +18,9 @@ main: {
     sta char_cursor+1
     ldx #0
   b1:
+    sec
     lda sintab2,x
+    sbc sintabref,x
     sta sb
     bmi b2
     lda #<str1
@@ -34,12 +36,13 @@ main: {
     sta print_str.str+1
     jsr print_str
     inx
-    cpx #$78
+    cpx #$c0
     bne b1
     rts
     str: .text "  @"
     str1: .text " @"
-    sintab2: .fill $78, 0
+    sintab2: .fill $c0, 0
+    sintabref: .byte 0, 4, 8, $c, $11, $15, $19, $1d, $21, $25, $29, $2d, $31, $35, $38, $3c, $40, $43, $47, $4a, $4e, $51, $54, $57, $5a, $5d, $60, $63, $65, $68, $6a, $6c, $6e, $70, $72, $74, $76, $77, $79, $7a, $7b, $7c, $7d, $7e, $7e, $7f, $7f, $7f, $80, $7f, $7f, $7f, $7e, $7e, $7d, $7c, $7b, $7a, $79, $77, $76, $74, $72, $70, $6e, $6c, $6a, $68, $65, $63, $60, $5d, $5a, $57, $54, $51, $4e, $4a, $47, $43, $40, $3c, $38, $35, $31, $2d, $29, $25, $21, $1d, $19, $15, $11, $c, 8, 4, 0, $fc, $f8, $f4, $ef, $eb, $e7, $e3, $df, $db, $d7, $d3, $cf, $cb, $c8, $c4, $c0, $bd, $b9, $b6, $b2, $af, $ac, $a9, $a6, $a3, $a0, $9d, $9b, $98, $96, $94, $92, $90, $8e, $8c, $8a, $89, $87, $86, $85, $84, $83, $82, $82, $81, $81, $81, $81, $81, $81, $81, $82, $82, $83, $84, $85, $86, $87, $89, $8a, $8c, $8e, $90, $92, $94, $96, $98, $9b, $9d, $a0, $a3, $a6, $a9, $ac, $af, $b2, $b6, $b9, $bd, $c0, $c4, $c8, $cb, $cf, $d3, $d7, $db, $df, $e3, $e7, $eb, $ef, $f4, $f8, $fc
 }
 print_str: {
     .label str = 2
@@ -177,6 +180,7 @@ sin8s_gen: {
     rts
 }
 sin8s: {
+    .const DIV_6 = $2b
     .label _6 = 9
     .label x = 9
     .label x1 = $10
@@ -185,11 +189,11 @@ sin8s: {
     .label isUpper = 4
     lda x+1
     cmp #>PI_u4f12
-    bcc b4
+    bcc b5
     bne !+
     lda x
     cmp #<PI_u4f12
-    bcc b4
+    bcc b5
   !:
     lda x
     sec
@@ -201,7 +205,7 @@ sin8s: {
     lda #1
     sta isUpper
     jmp b1
-  b4:
+  b5:
     lda #0
     sta isUpper
   b1:
@@ -243,7 +247,7 @@ sin8s: {
     tax
     lda #1
     sta mulu8_sel.select
-    ldy #$100/6
+    ldy #DIV_6
     jsr mulu8_sel
     eor #$ff
     sec
@@ -266,17 +270,21 @@ sin8s: {
     clc
     adc usinx
     tax
+    cpx #$80
+    bcc b3
+    dex
+  b3:
     lda isUpper
-    beq b15
+    beq b18
     txa
     eor #$ff
     clc
     adc #1
-  b3:
+  b4:
     rts
-  b15:
+  b18:
     txa
-    jmp b3
+    jmp b4
 }
 mulu8_sel: {
     .label _0 = 9

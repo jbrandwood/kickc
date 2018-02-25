@@ -134,47 +134,6 @@ signed byte sin8s(word x) {
     return sinx;
 }
 
-
-// Generate (small) signed word sinus table - in the limited -$fff - $fff range
-// sintab - the table to generate into
-// wavelength - the number of sinus points in a total sinus wavelength (the size of the table)
-void sin16ss_gen(signed word* sintab, word wavelength) {
-    // u[4.12] step = PI*2/wavelength
-    dword step = div32u16u(PI2_u4f28, wavelength); // u[4.28]
-    // Iterate over the table
-    dword x = 0; // u[4.28]
-    for( word i=0; i<wavelength; i++) {
-        // Move x1 into the range 0-PI/2 using sinus mirror symmetries
-        word x1 = >x; // u[4.12]
-        byte isUpper = 0;
-        if(x1 >= PI_u4f12 ) {
-            x1 = x1 - PI_u4f12;
-            isUpper = 1;
-        }
-        if(x1 >= PI_HALF_u4f12 ) {
-            x1 = PI_u4f12 - x1;
-        }
-        // s[4.12] sinx = x - x^3/6 + x5/128;
-        word x2 = mulu16_sel(x1, x1, 4); // u[4.12]
-        word x3 = mulu16_sel(x2, x1, 4); // u[4.12]
-        word x3_6 = mulu16_sel(x3, $10000/6, 0);  // u[4.12] - u[0.16] div6 = 1/6;
-        word usinx = x1 - x3_6; // u[4.12]
-        word x4 = mulu16_sel(x3, x1, 4); // u[4.12]
-        word x5 = mulu16_sel(x4, x1, 4); // u[4.12]
-        word x5_128 = mulu16_sel(x5, $10000/128, 0); // u[4.12] - u[0.16] div128 = 1/128;
-        usinx = usinx + x5_128;
-        signed word sinx;
-        if(isUpper!=0) {
-            sinx = -(signed word)usinx; // s[4.12];
-        } else {
-            sinx = (signed word)usinx; // s[4.12]
-         }
-        *sintab = sinx;
-        sintab = sintab + 2;
-        x = x + step;
-    }
-}
-
 // Calculate val*val for two unsigned word values - the result is 16 selected bits of the 32-bit result.
 // The select parameter indicates how many of the highest bits of the 32-bit result to skip
 word mulu16_sel(word v1, word v2, byte select) {
@@ -402,7 +361,6 @@ Adding pre/post-modifier (word) sin16s_gen::i ← ++ (word) sin16s_gen::i
 Adding pre/post-modifier (signed byte*) sin8s_gen::sintab ← ++ (signed byte*) sin8s_gen::sintab
 Adding pre/post-modifier (word) sin8s_gen::i ← ++ (word) sin8s_gen::i
 Adding pre/post-modifier (byte) sin8s::usinx ← -- (byte) sin8s::usinx
-Adding pre/post-modifier (word) sin16ss_gen::i ← ++ (word) sin16ss_gen::i
 Importing print.kc
 PARSING src/test/java/dk/camelot64/kickc/test/kc/print.kc
 
@@ -964,68 +922,6 @@ sin8s::@return:
   (signed byte) sin8s::return ← (signed byte) sin8s::return
   return (signed byte) sin8s::return
 endproc // sin8s()
-proc (void()) sin16ss_gen((signed word*) sin16ss_gen::sintab , (word) sin16ss_gen::wavelength)
-  (dword~) sin16ss_gen::$0 ← call div32u16u (dword) PI2_u4f28 (word) sin16ss_gen::wavelength 
-  (dword) sin16ss_gen::step ← (dword~) sin16ss_gen::$0
-  (dword) sin16ss_gen::x ← (byte/signed byte/word/signed word/dword/signed dword) 0
-  (word) sin16ss_gen::i ← (byte/signed byte/word/signed word/dword/signed dword) 0
-sin16ss_gen::@1:
-  (word~) sin16ss_gen::$1 ← > (dword) sin16ss_gen::x
-  (word) sin16ss_gen::x1 ← (word~) sin16ss_gen::$1
-  (byte) sin16ss_gen::isUpper ← (byte/signed byte/word/signed word/dword/signed dword) 0
-  (boolean~) sin16ss_gen::$2 ← (word) sin16ss_gen::x1 >= (word) PI_u4f12
-  (boolean~) sin16ss_gen::$3 ← ! (boolean~) sin16ss_gen::$2
-  if((boolean~) sin16ss_gen::$3) goto sin16ss_gen::@2
-  (word~) sin16ss_gen::$4 ← (word) sin16ss_gen::x1 - (word) PI_u4f12
-  (word) sin16ss_gen::x1 ← (word~) sin16ss_gen::$4
-  (byte) sin16ss_gen::isUpper ← (byte/signed byte/word/signed word/dword/signed dword) 1
-sin16ss_gen::@2:
-  (boolean~) sin16ss_gen::$5 ← (word) sin16ss_gen::x1 >= (word) PI_HALF_u4f12
-  (boolean~) sin16ss_gen::$6 ← ! (boolean~) sin16ss_gen::$5
-  if((boolean~) sin16ss_gen::$6) goto sin16ss_gen::@3
-  (word~) sin16ss_gen::$7 ← (word) PI_u4f12 - (word) sin16ss_gen::x1
-  (word) sin16ss_gen::x1 ← (word~) sin16ss_gen::$7
-sin16ss_gen::@3:
-  (word~) sin16ss_gen::$8 ← call mulu16_sel (word) sin16ss_gen::x1 (word) sin16ss_gen::x1 (byte/signed byte/word/signed word/dword/signed dword) 4 
-  (word) sin16ss_gen::x2 ← (word~) sin16ss_gen::$8
-  (word~) sin16ss_gen::$9 ← call mulu16_sel (word) sin16ss_gen::x2 (word) sin16ss_gen::x1 (byte/signed byte/word/signed word/dword/signed dword) 4 
-  (word) sin16ss_gen::x3 ← (word~) sin16ss_gen::$9
-  (word/signed word/dword/signed dword~) sin16ss_gen::$10 ← (dword/signed dword) 65536 / (byte/signed byte/word/signed word/dword/signed dword) 6
-  (word~) sin16ss_gen::$11 ← call mulu16_sel (word) sin16ss_gen::x3 (word/signed word/dword/signed dword~) sin16ss_gen::$10 (byte/signed byte/word/signed word/dword/signed dword) 0 
-  (word) sin16ss_gen::x3_6 ← (word~) sin16ss_gen::$11
-  (word~) sin16ss_gen::$12 ← (word) sin16ss_gen::x1 - (word) sin16ss_gen::x3_6
-  (word) sin16ss_gen::usinx ← (word~) sin16ss_gen::$12
-  (word~) sin16ss_gen::$13 ← call mulu16_sel (word) sin16ss_gen::x3 (word) sin16ss_gen::x1 (byte/signed byte/word/signed word/dword/signed dword) 4 
-  (word) sin16ss_gen::x4 ← (word~) sin16ss_gen::$13
-  (word~) sin16ss_gen::$14 ← call mulu16_sel (word) sin16ss_gen::x4 (word) sin16ss_gen::x1 (byte/signed byte/word/signed word/dword/signed dword) 4 
-  (word) sin16ss_gen::x5 ← (word~) sin16ss_gen::$14
-  (word/signed word/dword/signed dword~) sin16ss_gen::$15 ← (dword/signed dword) 65536 / (byte/word/signed word/dword/signed dword) 128
-  (word~) sin16ss_gen::$16 ← call mulu16_sel (word) sin16ss_gen::x5 (word/signed word/dword/signed dword~) sin16ss_gen::$15 (byte/signed byte/word/signed word/dword/signed dword) 0 
-  (word) sin16ss_gen::x5_128 ← (word~) sin16ss_gen::$16
-  (word~) sin16ss_gen::$17 ← (word) sin16ss_gen::usinx + (word) sin16ss_gen::x5_128
-  (word) sin16ss_gen::usinx ← (word~) sin16ss_gen::$17
-  (boolean~) sin16ss_gen::$18 ← (byte) sin16ss_gen::isUpper != (byte/signed byte/word/signed word/dword/signed dword) 0
-  (boolean~) sin16ss_gen::$19 ← ! (boolean~) sin16ss_gen::$18
-  if((boolean~) sin16ss_gen::$19) goto sin16ss_gen::@4
-  (signed word~) sin16ss_gen::$20 ← ((signed word)) (word) sin16ss_gen::usinx
-  (signed word~) sin16ss_gen::$21 ← - (signed word~) sin16ss_gen::$20
-  (signed word) sin16ss_gen::sinx ← (signed word~) sin16ss_gen::$21
-  goto sin16ss_gen::@5
-sin16ss_gen::@4:
-  (signed word~) sin16ss_gen::$22 ← ((signed word)) (word) sin16ss_gen::usinx
-  (signed word) sin16ss_gen::sinx ← (signed word~) sin16ss_gen::$22
-sin16ss_gen::@5:
-  *((signed word*) sin16ss_gen::sintab) ← (signed word) sin16ss_gen::sinx
-  (signed word*~) sin16ss_gen::$23 ← (signed word*) sin16ss_gen::sintab + (byte/signed byte/word/signed word/dword/signed dword) 2
-  (signed word*) sin16ss_gen::sintab ← (signed word*~) sin16ss_gen::$23
-  (dword~) sin16ss_gen::$24 ← (dword) sin16ss_gen::x + (dword) sin16ss_gen::step
-  (dword) sin16ss_gen::x ← (dword~) sin16ss_gen::$24
-  (word) sin16ss_gen::i ← ++ (word) sin16ss_gen::i
-  (boolean~) sin16ss_gen::$25 ← (word) sin16ss_gen::i < (word) sin16ss_gen::wavelength
-  if((boolean~) sin16ss_gen::$25) goto sin16ss_gen::@1
-sin16ss_gen::@return:
-  return 
-endproc // sin16ss_gen()
 proc (word()) mulu16_sel((word) mulu16_sel::v1 , (word) mulu16_sel::v2 , (byte) mulu16_sel::select)
   (dword~) mulu16_sel::$0 ← call mul16u (word) mulu16_sel::v1 (word) mulu16_sel::v2 
   (dword~) mulu16_sel::$1 ← (dword~) mulu16_sel::$0 << (byte) mulu16_sel::select
@@ -1581,54 +1477,6 @@ SYMBOLS
 (dword) sin16s_gen::step
 (word) sin16s_gen::wavelength
 (dword) sin16s_gen::x
-(void()) sin16ss_gen((signed word*) sin16ss_gen::sintab , (word) sin16ss_gen::wavelength)
-(dword~) sin16ss_gen::$0
-(word~) sin16ss_gen::$1
-(word/signed word/dword/signed dword~) sin16ss_gen::$10
-(word~) sin16ss_gen::$11
-(word~) sin16ss_gen::$12
-(word~) sin16ss_gen::$13
-(word~) sin16ss_gen::$14
-(word/signed word/dword/signed dword~) sin16ss_gen::$15
-(word~) sin16ss_gen::$16
-(word~) sin16ss_gen::$17
-(boolean~) sin16ss_gen::$18
-(boolean~) sin16ss_gen::$19
-(boolean~) sin16ss_gen::$2
-(signed word~) sin16ss_gen::$20
-(signed word~) sin16ss_gen::$21
-(signed word~) sin16ss_gen::$22
-(signed word*~) sin16ss_gen::$23
-(dword~) sin16ss_gen::$24
-(boolean~) sin16ss_gen::$25
-(boolean~) sin16ss_gen::$3
-(word~) sin16ss_gen::$4
-(boolean~) sin16ss_gen::$5
-(boolean~) sin16ss_gen::$6
-(word~) sin16ss_gen::$7
-(word~) sin16ss_gen::$8
-(word~) sin16ss_gen::$9
-(label) sin16ss_gen::@1
-(label) sin16ss_gen::@2
-(label) sin16ss_gen::@3
-(label) sin16ss_gen::@4
-(label) sin16ss_gen::@5
-(label) sin16ss_gen::@return
-(word) sin16ss_gen::i
-(byte) sin16ss_gen::isUpper
-(signed word*) sin16ss_gen::sintab
-(signed word) sin16ss_gen::sinx
-(dword) sin16ss_gen::step
-(word) sin16ss_gen::usinx
-(word) sin16ss_gen::wavelength
-(dword) sin16ss_gen::x
-(word) sin16ss_gen::x1
-(word) sin16ss_gen::x2
-(word) sin16ss_gen::x3
-(word) sin16ss_gen::x3_6
-(word) sin16ss_gen::x4
-(word) sin16ss_gen::x5
-(word) sin16ss_gen::x5_128
 (signed byte()) sin8s((word) sin8s::x)
 (boolean~) sin8s::$0
 (boolean~) sin8s::$1
@@ -2334,85 +2182,6 @@ sin8s::@9: scope:[sin8s]  from
   to:sin8s::@return
 @15: scope:[]  from @14
   to:@16
-sin16ss_gen: scope:[sin16ss_gen]  from
-  (dword~) sin16ss_gen::$0 ← call div32u16u (dword) PI2_u4f28 (word) sin16ss_gen::wavelength 
-  (dword) sin16ss_gen::step ← (dword~) sin16ss_gen::$0
-  (dword) sin16ss_gen::x ← (byte/signed byte/word/signed word/dword/signed dword) 0
-  (word) sin16ss_gen::i ← (byte/signed byte/word/signed word/dword/signed dword) 0
-  to:sin16ss_gen::@1
-sin16ss_gen::@1: scope:[sin16ss_gen]  from sin16ss_gen sin16ss_gen::@5
-  (word~) sin16ss_gen::$1 ← > (dword) sin16ss_gen::x
-  (word) sin16ss_gen::x1 ← (word~) sin16ss_gen::$1
-  (byte) sin16ss_gen::isUpper ← (byte/signed byte/word/signed word/dword/signed dword) 0
-  (boolean~) sin16ss_gen::$2 ← (word) sin16ss_gen::x1 >= (word) PI_u4f12
-  (boolean~) sin16ss_gen::$3 ← ! (boolean~) sin16ss_gen::$2
-  if((boolean~) sin16ss_gen::$3) goto sin16ss_gen::@2
-  to:sin16ss_gen::@6
-sin16ss_gen::@2: scope:[sin16ss_gen]  from sin16ss_gen::@1 sin16ss_gen::@6
-  (boolean~) sin16ss_gen::$5 ← (word) sin16ss_gen::x1 >= (word) PI_HALF_u4f12
-  (boolean~) sin16ss_gen::$6 ← ! (boolean~) sin16ss_gen::$5
-  if((boolean~) sin16ss_gen::$6) goto sin16ss_gen::@3
-  to:sin16ss_gen::@7
-sin16ss_gen::@6: scope:[sin16ss_gen]  from sin16ss_gen::@1
-  (word~) sin16ss_gen::$4 ← (word) sin16ss_gen::x1 - (word) PI_u4f12
-  (word) sin16ss_gen::x1 ← (word~) sin16ss_gen::$4
-  (byte) sin16ss_gen::isUpper ← (byte/signed byte/word/signed word/dword/signed dword) 1
-  to:sin16ss_gen::@2
-sin16ss_gen::@3: scope:[sin16ss_gen]  from sin16ss_gen::@2 sin16ss_gen::@7
-  (word~) sin16ss_gen::$8 ← call mulu16_sel (word) sin16ss_gen::x1 (word) sin16ss_gen::x1 (byte/signed byte/word/signed word/dword/signed dword) 4 
-  (word) sin16ss_gen::x2 ← (word~) sin16ss_gen::$8
-  (word~) sin16ss_gen::$9 ← call mulu16_sel (word) sin16ss_gen::x2 (word) sin16ss_gen::x1 (byte/signed byte/word/signed word/dword/signed dword) 4 
-  (word) sin16ss_gen::x3 ← (word~) sin16ss_gen::$9
-  (word/signed word/dword/signed dword~) sin16ss_gen::$10 ← (dword/signed dword) 65536 / (byte/signed byte/word/signed word/dword/signed dword) 6
-  (word~) sin16ss_gen::$11 ← call mulu16_sel (word) sin16ss_gen::x3 (word/signed word/dword/signed dword~) sin16ss_gen::$10 (byte/signed byte/word/signed word/dword/signed dword) 0 
-  (word) sin16ss_gen::x3_6 ← (word~) sin16ss_gen::$11
-  (word~) sin16ss_gen::$12 ← (word) sin16ss_gen::x1 - (word) sin16ss_gen::x3_6
-  (word) sin16ss_gen::usinx ← (word~) sin16ss_gen::$12
-  (word~) sin16ss_gen::$13 ← call mulu16_sel (word) sin16ss_gen::x3 (word) sin16ss_gen::x1 (byte/signed byte/word/signed word/dword/signed dword) 4 
-  (word) sin16ss_gen::x4 ← (word~) sin16ss_gen::$13
-  (word~) sin16ss_gen::$14 ← call mulu16_sel (word) sin16ss_gen::x4 (word) sin16ss_gen::x1 (byte/signed byte/word/signed word/dword/signed dword) 4 
-  (word) sin16ss_gen::x5 ← (word~) sin16ss_gen::$14
-  (word/signed word/dword/signed dword~) sin16ss_gen::$15 ← (dword/signed dword) 65536 / (byte/word/signed word/dword/signed dword) 128
-  (word~) sin16ss_gen::$16 ← call mulu16_sel (word) sin16ss_gen::x5 (word/signed word/dword/signed dword~) sin16ss_gen::$15 (byte/signed byte/word/signed word/dword/signed dword) 0 
-  (word) sin16ss_gen::x5_128 ← (word~) sin16ss_gen::$16
-  (word~) sin16ss_gen::$17 ← (word) sin16ss_gen::usinx + (word) sin16ss_gen::x5_128
-  (word) sin16ss_gen::usinx ← (word~) sin16ss_gen::$17
-  (boolean~) sin16ss_gen::$18 ← (byte) sin16ss_gen::isUpper != (byte/signed byte/word/signed word/dword/signed dword) 0
-  (boolean~) sin16ss_gen::$19 ← ! (boolean~) sin16ss_gen::$18
-  if((boolean~) sin16ss_gen::$19) goto sin16ss_gen::@4
-  to:sin16ss_gen::@8
-sin16ss_gen::@7: scope:[sin16ss_gen]  from sin16ss_gen::@2
-  (word~) sin16ss_gen::$7 ← (word) PI_u4f12 - (word) sin16ss_gen::x1
-  (word) sin16ss_gen::x1 ← (word~) sin16ss_gen::$7
-  to:sin16ss_gen::@3
-sin16ss_gen::@4: scope:[sin16ss_gen]  from sin16ss_gen::@3 sin16ss_gen::@9
-  (signed word~) sin16ss_gen::$22 ← ((signed word)) (word) sin16ss_gen::usinx
-  (signed word) sin16ss_gen::sinx ← (signed word~) sin16ss_gen::$22
-  to:sin16ss_gen::@5
-sin16ss_gen::@8: scope:[sin16ss_gen]  from sin16ss_gen::@3
-  (signed word~) sin16ss_gen::$20 ← ((signed word)) (word) sin16ss_gen::usinx
-  (signed word~) sin16ss_gen::$21 ← - (signed word~) sin16ss_gen::$20
-  (signed word) sin16ss_gen::sinx ← (signed word~) sin16ss_gen::$21
-  to:sin16ss_gen::@5
-sin16ss_gen::@5: scope:[sin16ss_gen]  from sin16ss_gen::@4 sin16ss_gen::@8
-  *((signed word*) sin16ss_gen::sintab) ← (signed word) sin16ss_gen::sinx
-  (signed word*~) sin16ss_gen::$23 ← (signed word*) sin16ss_gen::sintab + (byte/signed byte/word/signed word/dword/signed dword) 2
-  (signed word*) sin16ss_gen::sintab ← (signed word*~) sin16ss_gen::$23
-  (dword~) sin16ss_gen::$24 ← (dword) sin16ss_gen::x + (dword) sin16ss_gen::step
-  (dword) sin16ss_gen::x ← (dword~) sin16ss_gen::$24
-  (word) sin16ss_gen::i ← ++ (word) sin16ss_gen::i
-  (boolean~) sin16ss_gen::$25 ← (word) sin16ss_gen::i < (word) sin16ss_gen::wavelength
-  if((boolean~) sin16ss_gen::$25) goto sin16ss_gen::@1
-  to:sin16ss_gen::@10
-sin16ss_gen::@9: scope:[sin16ss_gen]  from
-  to:sin16ss_gen::@4
-sin16ss_gen::@10: scope:[sin16ss_gen]  from sin16ss_gen::@5
-  to:sin16ss_gen::@return
-sin16ss_gen::@return: scope:[sin16ss_gen]  from sin16ss_gen::@10
-  return 
-  to:@return
-@16: scope:[]  from @15
-  to:@17
 mulu16_sel: scope:[mulu16_sel]  from
   (dword~) mulu16_sel::$0 ← call mul16u (word) mulu16_sel::v1 (word) mulu16_sel::v2 
   (dword~) mulu16_sel::$1 ← (dword~) mulu16_sel::$0 << (byte) mulu16_sel::select
@@ -2425,8 +2194,8 @@ mulu16_sel::@return: scope:[mulu16_sel]  from mulu16_sel mulu16_sel::@1
   to:@return
 mulu16_sel::@1: scope:[mulu16_sel]  from
   to:mulu16_sel::@return
-@17: scope:[]  from @16
-  to:@18
+@16: scope:[]  from @15
+  to:@17
 mulu8_sel: scope:[mulu8_sel]  from
   (word~) mulu8_sel::$0 ← call mul8u (byte) mulu8_sel::v1 (byte) mulu8_sel::v2 
   (word~) mulu8_sel::$1 ← (word~) mulu8_sel::$0 << (byte) mulu8_sel::select
@@ -2439,11 +2208,11 @@ mulu8_sel::@return: scope:[mulu8_sel]  from mulu8_sel mulu8_sel::@1
   to:@return
 mulu8_sel::@1: scope:[mulu8_sel]  from
   to:mulu8_sel::@return
-@18: scope:[]  from @17
+@17: scope:[]  from @16
   (byte*) SCREEN ← ((byte*)) (word/signed word/dword/signed dword) 1024
   (byte*) line_cursor ← (byte*) SCREEN
   (byte*) char_cursor ← (byte*) line_cursor
-  to:@19
+  to:@18
 print_str: scope:[print_str]  from
   to:print_str::@1
 print_str::@1: scope:[print_str]  from print_str print_str::@2
@@ -2466,8 +2235,8 @@ print_str::@6: scope:[print_str]  from
 print_str::@return: scope:[print_str]  from print_str::@3
   return 
   to:@return
-@19: scope:[]  from @18
-  to:@20
+@18: scope:[]  from @17
+  to:@19
 print_ln: scope:[print_ln]  from
   to:print_ln::@1
 print_ln::@1: scope:[print_ln]  from print_ln print_ln::@1
@@ -2482,8 +2251,8 @@ print_ln::@2: scope:[print_ln]  from print_ln::@1
 print_ln::@return: scope:[print_ln]  from print_ln::@2
   return 
   to:@return
-@20: scope:[]  from @19
-  to:@21
+@19: scope:[]  from @18
+  to:@20
 print_sword: scope:[print_sword]  from
   (boolean~) print_sword::$0 ← (signed word) print_sword::w < (byte/signed byte/word/signed word/dword/signed dword) 0
   (boolean~) print_sword::$1 ← ! (boolean~) print_sword::$0
@@ -2501,8 +2270,8 @@ print_sword::@2: scope:[print_sword]  from print_sword
 print_sword::@return: scope:[print_sword]  from print_sword::@1
   return 
   to:@return
-@21: scope:[]  from @20
-  to:@22
+@20: scope:[]  from @19
+  to:@21
 print_sbyte: scope:[print_sbyte]  from
   (boolean~) print_sbyte::$0 ← (signed byte) print_sbyte::b < (byte/signed byte/word/signed word/dword/signed dword) 0
   (boolean~) print_sbyte::$1 ← ! (boolean~) print_sbyte::$0
@@ -2520,8 +2289,8 @@ print_sbyte::@2: scope:[print_sbyte]  from print_sbyte
 print_sbyte::@return: scope:[print_sbyte]  from print_sbyte::@1
   return 
   to:@return
-@22: scope:[]  from @21
-  to:@23
+@21: scope:[]  from @20
+  to:@22
 print_word: scope:[print_word]  from
   (byte~) print_word::$0 ← > (word) print_word::w
   (void~) print_word::$1 ← call print_byte (byte~) print_word::$0 
@@ -2531,8 +2300,8 @@ print_word: scope:[print_word]  from
 print_word::@return: scope:[print_word]  from print_word
   return 
   to:@return
-@23: scope:[]  from @22
-  to:@24
+@22: scope:[]  from @21
+  to:@23
 print_dword: scope:[print_dword]  from
   (word~) print_dword::$0 ← > (dword) print_dword::dw
   (void~) print_dword::$1 ← call print_word (word~) print_dword::$0 
@@ -2542,8 +2311,8 @@ print_dword: scope:[print_dword]  from
 print_dword::@return: scope:[print_dword]  from print_dword
   return 
   to:@return
-@24: scope:[]  from @23
-  to:@25
+@23: scope:[]  from @22
+  to:@24
 print_sdword: scope:[print_sdword]  from
   (boolean~) print_sdword::$0 ← (signed dword) print_sdword::dw < (byte/signed byte/word/signed word/dword/signed dword) 0
   (boolean~) print_sdword::$1 ← ! (boolean~) print_sdword::$0
@@ -2561,8 +2330,8 @@ print_sdword::@2: scope:[print_sdword]  from print_sdword
 print_sdword::@return: scope:[print_sdword]  from print_sdword::@1
   return 
   to:@return
-@25: scope:[]  from @24
-  to:@26
+@24: scope:[]  from @23
+  to:@25
 print_byte: scope:[print_byte]  from
   (byte[]) print_byte::hextab ← (string) "0123456789abcdef"
   (byte~) print_byte::$0 ← (byte) print_byte::b >> (byte/signed byte/word/signed word/dword/signed dword) 4
@@ -2573,8 +2342,8 @@ print_byte: scope:[print_byte]  from
 print_byte::@return: scope:[print_byte]  from print_byte
   return 
   to:@return
-@26: scope:[]  from @25
-  to:@27
+@25: scope:[]  from @24
+  to:@26
 print_char: scope:[print_char]  from
   *((byte*) char_cursor) ← (byte) print_char::ch
   (byte*) char_cursor ← ++ (byte*) char_cursor
@@ -2582,8 +2351,8 @@ print_char: scope:[print_char]  from
 print_char::@return: scope:[print_char]  from print_char
   return 
   to:@return
-@27: scope:[]  from @26
-  to:@28
+@26: scope:[]  from @25
+  to:@27
 print_cls: scope:[print_cls]  from
   (byte*) print_cls::sc ← (byte*) SCREEN
   to:print_cls::@1
@@ -2601,8 +2370,8 @@ print_cls::@2: scope:[print_cls]  from print_cls::@1
 print_cls::@return: scope:[print_cls]  from print_cls::@2
   return 
   to:@return
-@28: scope:[]  from @27
-  to:@29
+@27: scope:[]  from @26
+  to:@28
 main: scope:[main]  from
   (word) main::wavelength ← (byte/signed byte/word/signed word/dword/signed dword) 120
   (signed word[120]) main::sintab1 ← { fill( 120, 0) }
@@ -2634,17 +2403,16 @@ main::@4: scope:[main]  from main::@2
 main::@return: scope:[main]  from main::@4
   return 
   to:@return
-@29: scope:[]  from @28
+@28: scope:[]  from @27
   call main 
   to:@end
-@end: scope:[]  from @29
+@end: scope:[]  from @28
 
 Removing unused procedure div8s
 Removing unused procedure div16s
 Removing unused procedure mul8s
 Removing unused procedure mul16s
 Removing unused procedure sin8s_gen
-Removing unused procedure sin16ss_gen
 Removing unused procedure print_ln
 Removing unused procedure print_sbyte
 Removing unused procedure print_sdword
@@ -2696,13 +2464,13 @@ Removing empty block @13
 Removing empty block sin16s::@7
 Removing empty block @14
 Removing empty block @15
-Removing empty block @16
 Removing empty block mulu16_sel::@1
-Removing empty block @17
+Removing empty block @16
 Removing empty block print_str::@4
 Removing empty block print_str::@3
 Removing empty block print_str::@5
 Removing empty block print_str::@6
+Removing empty block @18
 Removing empty block @19
 Removing empty block @20
 Removing empty block @21
@@ -2712,7 +2480,6 @@ Removing empty block @24
 Removing empty block @25
 Removing empty block @26
 Removing empty block @27
-Removing empty block @28
 Removing empty block main::@4
 PROCEDURE MODIFY VARIABLE ANALYSIS
 divr16u modifies rem16u
@@ -2915,7 +2682,7 @@ mul16u::@return: scope:[mul16u]  from mul16u::@3
   (dword) PI2_u4f28#0 ← (dword/signed dword) 1686629713
   (dword) PI_u4f28#0 ← (dword/signed dword) 843314857
   (dword) PI_HALF_u4f28#0 ← (dword/signed dword) 421657428
-  to:@18
+  to:@17
 sin16s_gen: scope:[sin16s_gen]  from main
   (signed word*) sin16s_gen::sintab#5 ← phi( main/(signed word*) sin16s_gen::sintab#1 )
   (word) rem16u#21 ← phi( main/(word) rem16u#23 )
@@ -3114,12 +2881,12 @@ mulu16_sel::@return: scope:[mulu16_sel]  from mulu16_sel::@2
   (word) mulu16_sel::return#6 ← (word) mulu16_sel::return#12
   return 
   to:@return
-@18: scope:[]  from @11
+@17: scope:[]  from @11
   (word) rem16u#28 ← phi( @11/(word) rem16u#29 )
   (byte*) SCREEN#0 ← ((byte*)) (word/signed word/dword/signed dword) 1024
   (byte*) line_cursor#0 ← (byte*) SCREEN#0
   (byte*) char_cursor#0 ← (byte*) line_cursor#0
-  to:@29
+  to:@28
 print_str: scope:[print_str]  from main::@3 main::@7
   (byte*) char_cursor#51 ← phi( main::@3/(byte*) char_cursor#49 main::@7/(byte*) char_cursor#17 )
   (byte*) print_str::str#5 ← phi( main::@3/(byte*) print_str::str#2 main::@7/(byte*) print_str::str#1 )
@@ -3260,10 +3027,10 @@ print_cls::@return: scope:[print_cls]  from print_cls::@2
   (byte*) char_cursor#15 ← (byte*) char_cursor#35
   return 
   to:@return
-main: scope:[main]  from @29
-  (byte*) char_cursor#53 ← phi( @29/(byte*) char_cursor#50 )
-  (byte*) line_cursor#13 ← phi( @29/(byte*) line_cursor#12 )
-  (word) rem16u#23 ← phi( @29/(word) rem16u#25 )
+main: scope:[main]  from @28
+  (byte*) char_cursor#53 ← phi( @28/(byte*) char_cursor#50 )
+  (byte*) line_cursor#13 ← phi( @28/(byte*) line_cursor#12 )
+  (word) rem16u#23 ← phi( @28/(word) rem16u#25 )
   (word) main::wavelength#0 ← (byte/signed byte/word/signed word/dword/signed dword) 120
   (signed word[120]) main::sintab1#0 ← { fill( 120, 0) }
   (signed word*) sin16s_gen::sintab#1 ← (signed word[120]) main::sintab1#0
@@ -3360,28 +3127,28 @@ main::@return: scope:[main]  from main::@8
   (byte*) char_cursor#20 ← (byte*) char_cursor#40
   return 
   to:@return
-@29: scope:[]  from @18
-  (byte*) char_cursor#50 ← phi( @18/(byte*) char_cursor#0 )
-  (byte*) line_cursor#12 ← phi( @18/(byte*) line_cursor#0 )
-  (word) rem16u#25 ← phi( @18/(word) rem16u#28 )
+@28: scope:[]  from @17
+  (byte*) char_cursor#50 ← phi( @17/(byte*) char_cursor#0 )
+  (byte*) line_cursor#12 ← phi( @17/(byte*) line_cursor#0 )
+  (word) rem16u#25 ← phi( @17/(word) rem16u#28 )
   call main param-assignment
-  to:@30
-@30: scope:[]  from @29
-  (byte*) char_cursor#41 ← phi( @29/(byte*) char_cursor#20 )
-  (byte*) line_cursor#9 ← phi( @29/(byte*) line_cursor#4 )
-  (word) rem16u#19 ← phi( @29/(word) rem16u#9 )
+  to:@29
+@29: scope:[]  from @28
+  (byte*) char_cursor#41 ← phi( @28/(byte*) char_cursor#20 )
+  (byte*) line_cursor#9 ← phi( @28/(byte*) line_cursor#4 )
+  (word) rem16u#19 ← phi( @28/(word) rem16u#9 )
   (word) rem16u#10 ← (word) rem16u#19
   (byte*) line_cursor#5 ← (byte*) line_cursor#9
   (byte*) char_cursor#21 ← (byte*) char_cursor#41
   to:@end
-@end: scope:[]  from @30
+@end: scope:[]  from @29
 
 SYMBOL TABLE SSA
 (label) @11
-(label) @18
+(label) @17
 (label) @2
+(label) @28
 (label) @29
-(label) @30
 (label) @begin
 (label) @end
 (dword) PI2_u4f28
@@ -4469,14 +4236,14 @@ Succesful SSA optimization Pass2NopCastElimination
 Culled Empty Block (label) @2
 Culled Empty Block (label) mul16u::@3
 Culled Empty Block (label) @11
-Culled Empty Block (label) @18
+Culled Empty Block (label) @17
 Culled Empty Block (label) print_sword::@3
 Culled Empty Block (label) print_word::@2
 Culled Empty Block (label) print_byte::@2
 Culled Empty Block (label) print_cls::@2
 Culled Empty Block (label) main::@6
 Culled Empty Block (label) main::@9
-Culled Empty Block (label) @30
+Culled Empty Block (label) @29
 Succesful SSA optimization Pass2CullEmptyBlocks
 Not aliassing across scopes: rem16u#1 divr16u::rem#11
 Not aliassing across scopes: divr16u::return#2 divr16u::return#0
@@ -4722,7 +4489,7 @@ Constant inlined print_byte::$4 = (const string) print_byte::hextab#0
 Constant inlined main::$9 = (const signed word[120]) main::sintab1#0+(const word) main::wavelength#0*(byte/signed byte/word/signed word/dword/signed dword) 2
 Constant inlined main::$8 = (const word) main::wavelength#0*(byte/signed byte/word/signed word/dword/signed dword) 2
 Succesful SSA optimization Pass2ConstantInlining
-Block Sequence Planned @begin @29 @end main main::@5 main::@1 main::@3 main::@2 main::@7 main::@8 main::@return print_str print_str::@1 print_str::@return print_str::@2 print_sword print_sword::@2 print_sword::@4 print_sword::@1 print_sword::@return print_word print_word::@1 print_word::@return print_byte print_byte::@1 print_byte::@return print_char print_char::@return print_cls print_cls::@1 print_cls::@return sin16s_gen sin16s_gen::@3 sin16s_gen::@1 sin16s_gen::@4 sin16s_gen::@return sin16s sin16s::@4 sin16s::@1 sin16s::@5 sin16s::@2 sin16s::@8 sin16s::@9 sin16s::@10 sin16s::@11 sin16s::@12 sin16s::@6 sin16s::@3 sin16s::@return mulu16_sel mulu16_sel::@2 mulu16_sel::@return mul16u mul16u::@1 mul16u::@return mul16u::@2 mul16u::@7 mul16u::@4 div32u16u div32u16u::@2 div32u16u::@3 div32u16u::@return divr16u divr16u::@1 divr16u::@4 divr16u::@2 divr16u::@5 divr16u::@3 divr16u::@6 divr16u::@return 
+Block Sequence Planned @begin @28 @end main main::@5 main::@1 main::@3 main::@2 main::@7 main::@8 main::@return print_str print_str::@1 print_str::@return print_str::@2 print_sword print_sword::@2 print_sword::@4 print_sword::@1 print_sword::@return print_word print_word::@1 print_word::@return print_byte print_byte::@1 print_byte::@return print_char print_char::@return print_cls print_cls::@1 print_cls::@return sin16s_gen sin16s_gen::@3 sin16s_gen::@1 sin16s_gen::@4 sin16s_gen::@return sin16s sin16s::@4 sin16s::@1 sin16s::@5 sin16s::@2 sin16s::@8 sin16s::@9 sin16s::@10 sin16s::@11 sin16s::@12 sin16s::@6 sin16s::@3 sin16s::@return mulu16_sel mulu16_sel::@2 mulu16_sel::@return mul16u mul16u::@1 mul16u::@return mul16u::@2 mul16u::@7 mul16u::@4 div32u16u div32u16u::@2 div32u16u::@3 div32u16u::@return divr16u divr16u::@1 divr16u::@4 divr16u::@2 divr16u::@5 divr16u::@3 divr16u::@6 divr16u::@return 
 Added new block during phi lifting main::@10(between main::@8 and main::@1)
 Added new block during phi lifting main::@11(between main::@1 and main::@2)
 Added new block during phi lifting print_sword::@5(between print_sword and print_sword::@1)
@@ -4736,9 +4503,9 @@ Added new block during phi lifting mul16u::@10(between mul16u::@2 and mul16u::@4
 Added new block during phi lifting divr16u::@8(between divr16u::@3 and divr16u::@1)
 Added new block during phi lifting divr16u::@9(between divr16u::@1 and divr16u::@2)
 Added new block during phi lifting divr16u::@10(between divr16u::@2 and divr16u::@3)
-Block Sequence Planned @begin @29 @end main main::@5 main::@1 main::@3 main::@2 main::@7 main::@8 main::@return main::@10 main::@11 print_str print_str::@1 print_str::@return print_str::@2 print_sword print_sword::@2 print_sword::@4 print_sword::@1 print_sword::@return print_sword::@5 print_word print_word::@1 print_word::@return print_byte print_byte::@1 print_byte::@return print_char print_char::@return print_cls print_cls::@1 print_cls::@return print_cls::@3 sin16s_gen sin16s_gen::@3 sin16s_gen::@1 sin16s_gen::@4 sin16s_gen::@return sin16s_gen::@5 sin16s sin16s::@4 sin16s::@1 sin16s::@5 sin16s::@2 sin16s::@8 sin16s::@9 sin16s::@10 sin16s::@11 sin16s::@12 sin16s::@6 sin16s::@3 sin16s::@return sin16s::@15 sin16s::@14 sin16s::@13 mulu16_sel mulu16_sel::@2 mulu16_sel::@return mul16u mul16u::@1 mul16u::@return mul16u::@2 mul16u::@7 mul16u::@4 mul16u::@10 div32u16u div32u16u::@2 div32u16u::@3 div32u16u::@return divr16u divr16u::@1 divr16u::@4 divr16u::@2 divr16u::@5 divr16u::@3 divr16u::@6 divr16u::@return divr16u::@8 divr16u::@10 divr16u::@9 
+Block Sequence Planned @begin @28 @end main main::@5 main::@1 main::@3 main::@2 main::@7 main::@8 main::@return main::@10 main::@11 print_str print_str::@1 print_str::@return print_str::@2 print_sword print_sword::@2 print_sword::@4 print_sword::@1 print_sword::@return print_sword::@5 print_word print_word::@1 print_word::@return print_byte print_byte::@1 print_byte::@return print_char print_char::@return print_cls print_cls::@1 print_cls::@return print_cls::@3 sin16s_gen sin16s_gen::@3 sin16s_gen::@1 sin16s_gen::@4 sin16s_gen::@return sin16s_gen::@5 sin16s sin16s::@4 sin16s::@1 sin16s::@5 sin16s::@2 sin16s::@8 sin16s::@9 sin16s::@10 sin16s::@11 sin16s::@12 sin16s::@6 sin16s::@3 sin16s::@return sin16s::@15 sin16s::@14 sin16s::@13 mulu16_sel mulu16_sel::@2 mulu16_sel::@return mul16u mul16u::@1 mul16u::@return mul16u::@2 mul16u::@7 mul16u::@4 mul16u::@10 div32u16u div32u16u::@2 div32u16u::@3 div32u16u::@return divr16u divr16u::@1 divr16u::@4 divr16u::@2 divr16u::@5 divr16u::@3 divr16u::@6 divr16u::@return divr16u::@8 divr16u::@10 divr16u::@9 
 Adding NOP phi() at start of @begin
-Adding NOP phi() at start of @29
+Adding NOP phi() at start of @28
 Adding NOP phi() at start of @end
 Adding NOP phi() at start of main
 Adding NOP phi() at start of main::@5
@@ -4872,9 +4639,9 @@ Culled Empty Block (label) mul16u::@10
 Culled Empty Block (label) divr16u::@8
 Culled Empty Block (label) divr16u::@10
 Culled Empty Block (label) divr16u::@9
-Block Sequence Planned @begin @29 @end main main::@5 main::@1 main::@3 main::@2 main::@7 main::@8 main::@return print_str print_str::@1 print_str::@return print_str::@2 print_sword print_sword::@2 print_sword::@4 print_sword::@1 print_sword::@return print_word print_word::@1 print_word::@return print_byte print_byte::@1 print_byte::@return print_char print_char::@return print_cls print_cls::@1 print_cls::@return sin16s_gen sin16s_gen::@3 sin16s_gen::@1 sin16s_gen::@4 sin16s_gen::@return sin16s sin16s::@4 sin16s::@1 sin16s::@5 sin16s::@2 sin16s::@8 sin16s::@9 sin16s::@10 sin16s::@11 sin16s::@12 sin16s::@6 sin16s::@3 sin16s::@return sin16s::@15 mulu16_sel mulu16_sel::@2 mulu16_sel::@return mul16u mul16u::@1 mul16u::@return mul16u::@2 mul16u::@7 mul16u::@4 div32u16u div32u16u::@2 div32u16u::@3 div32u16u::@return divr16u divr16u::@1 divr16u::@4 divr16u::@2 divr16u::@5 divr16u::@3 divr16u::@6 divr16u::@return 
+Block Sequence Planned @begin @28 @end main main::@5 main::@1 main::@3 main::@2 main::@7 main::@8 main::@return print_str print_str::@1 print_str::@return print_str::@2 print_sword print_sword::@2 print_sword::@4 print_sword::@1 print_sword::@return print_word print_word::@1 print_word::@return print_byte print_byte::@1 print_byte::@return print_char print_char::@return print_cls print_cls::@1 print_cls::@return sin16s_gen sin16s_gen::@3 sin16s_gen::@1 sin16s_gen::@4 sin16s_gen::@return sin16s sin16s::@4 sin16s::@1 sin16s::@5 sin16s::@2 sin16s::@8 sin16s::@9 sin16s::@10 sin16s::@11 sin16s::@12 sin16s::@6 sin16s::@3 sin16s::@return sin16s::@15 mulu16_sel mulu16_sel::@2 mulu16_sel::@return mul16u mul16u::@1 mul16u::@return mul16u::@2 mul16u::@7 mul16u::@4 div32u16u div32u16u::@2 div32u16u::@3 div32u16u::@return divr16u divr16u::@1 divr16u::@4 divr16u::@2 divr16u::@5 divr16u::@3 divr16u::@6 divr16u::@return 
 Adding NOP phi() at start of @begin
-Adding NOP phi() at start of @29
+Adding NOP phi() at start of @28
 Adding NOP phi() at start of @end
 Adding NOP phi() at start of main
 Adding NOP phi() at start of main::@5
@@ -4921,14 +4688,14 @@ Propagating live ranges...
 FINAL CONTROL FLOW GRAPH
 @begin: scope:[]  from
   [0] phi() [ ] ( )
-  to:@29
-@29: scope:[]  from @begin
+  to:@28
+@28: scope:[]  from @begin
   [1] phi() [ ] ( )
   [2] call main param-assignment [ ] ( )
   to:@end
-@end: scope:[]  from @29
+@end: scope:[]  from @28
   [3] phi() [ ] ( )
-main: scope:[main]  from @29
+main: scope:[main]  from @28
   [4] phi() [ ] ( main:2 [ ] )
   [5] call sin16s_gen param-assignment [ ] ( main:2 [ ] )
   to:main::@5
@@ -5242,76 +5009,76 @@ divr16u::@return: scope:[divr16u]  from divr16u::@6
 
 DOMINATORS
 @begin dominated by  @begin 
-@29 dominated by  @29 @begin 
-@end dominated by  @end @29 @begin 
-main dominated by  @29 main @begin 
-main::@5 dominated by  @29 main main::@5 @begin 
-main::@1 dominated by  @29 main main::@1 main::@5 @begin 
-main::@3 dominated by  @29 main main::@1 main::@5 main::@3 @begin 
-main::@2 dominated by  @29 main main::@1 main::@2 main::@5 @begin 
-main::@7 dominated by  main::@7 @29 main main::@1 main::@2 main::@5 @begin 
-main::@8 dominated by  main::@7 main::@8 @29 main main::@1 main::@2 main::@5 @begin 
-main::@return dominated by  main::@7 main::@8 @29 main main::@1 main::@2 main::@5 @begin main::@return 
-print_str dominated by  @29 main main::@1 main::@5 @begin print_str 
-print_str::@1 dominated by  @29 main main::@1 main::@5 @begin print_str::@1 print_str 
-print_str::@return dominated by  @29 main main::@1 main::@5 @begin print_str::@return print_str::@1 print_str 
-print_str::@2 dominated by  @29 main main::@1 main::@5 @begin print_str::@1 print_str::@2 print_str 
-print_sword dominated by  @29 main main::@1 main::@2 main::@5 @begin print_sword 
-print_sword::@2 dominated by  print_sword::@2 @29 main main::@1 main::@2 main::@5 @begin print_sword 
-print_sword::@4 dominated by  print_sword::@2 print_sword::@4 @29 main main::@1 main::@2 main::@5 @begin print_sword 
-print_sword::@1 dominated by  print_sword::@1 @29 main main::@1 main::@2 main::@5 @begin print_sword 
-print_sword::@return dominated by  print_sword::@1 @29 main main::@1 main::@2 main::@5 @begin print_sword::@return print_sword 
-print_word dominated by  print_sword::@1 @29 main print_word main::@1 main::@2 main::@5 @begin print_sword 
-print_word::@1 dominated by  print_sword::@1 @29 main print_word main::@1 main::@2 main::@5 @begin print_word::@1 print_sword 
-print_word::@return dominated by  print_sword::@1 @29 main print_word main::@1 main::@2 main::@5 @begin print_word::@return print_word::@1 print_sword 
-print_byte dominated by  print_sword::@1 @29 main print_word main::@1 main::@2 main::@5 @begin print_byte print_sword 
-print_byte::@1 dominated by  print_sword::@1 @29 main print_word main::@1 main::@2 main::@5 @begin print_byte::@1 print_byte print_sword 
-print_byte::@return dominated by  print_sword::@1 @29 main print_word main::@1 main::@2 main::@5 @begin print_byte::@return print_byte::@1 print_byte print_sword 
-print_char dominated by  @29 main print_char main::@1 main::@2 main::@5 @begin print_sword 
-print_char::@return dominated by  @29 main print_char main::@1 main::@2 main::@5 print_char::@return @begin print_sword 
-print_cls dominated by  @29 main main::@5 @begin print_cls 
-print_cls::@1 dominated by  @29 main main::@5 @begin print_cls::@1 print_cls 
-print_cls::@return dominated by  @29 main main::@5 @begin print_cls::@return print_cls::@1 print_cls 
-sin16s_gen dominated by  @29 main @begin sin16s_gen 
-sin16s_gen::@3 dominated by  @29 main @begin sin16s_gen sin16s_gen::@3 
-sin16s_gen::@1 dominated by  @29 main @begin sin16s_gen sin16s_gen::@3 sin16s_gen::@1 
-sin16s_gen::@4 dominated by  @29 main @begin sin16s_gen sin16s_gen::@3 sin16s_gen::@4 sin16s_gen::@1 
-sin16s_gen::@return dominated by  @29 main sin16s_gen::@return @begin sin16s_gen sin16s_gen::@3 sin16s_gen::@4 sin16s_gen::@1 
-sin16s dominated by  @29 main sin16s @begin sin16s_gen sin16s_gen::@3 sin16s_gen::@1 
-sin16s::@4 dominated by  @29 main sin16s @begin sin16s_gen sin16s_gen::@3 sin16s_gen::@1 sin16s::@4 
-sin16s::@1 dominated by  @29 main sin16s @begin sin16s_gen sin16s_gen::@3 sin16s::@1 sin16s_gen::@1 
-sin16s::@5 dominated by  @29 main sin16s @begin sin16s_gen sin16s_gen::@3 sin16s::@1 sin16s_gen::@1 sin16s::@5 
-sin16s::@2 dominated by  @29 main sin16s @begin sin16s_gen sin16s_gen::@3 sin16s::@1 sin16s_gen::@1 sin16s::@2 
-sin16s::@8 dominated by  @29 main sin16s @begin sin16s_gen sin16s_gen::@3 sin16s::@1 sin16s_gen::@1 sin16s::@8 sin16s::@2 
-sin16s::@9 dominated by  @29 main sin16s @begin sin16s_gen sin16s_gen::@3 sin16s::@1 sin16s_gen::@1 sin16s::@9 sin16s::@8 sin16s::@2 
-sin16s::@10 dominated by  @29 main sin16s @begin sin16s_gen sin16s_gen::@3 sin16s::@1 sin16s_gen::@1 sin16s::@9 sin16s::@8 sin16s::@10 sin16s::@2 
-sin16s::@11 dominated by  @29 main sin16s @begin sin16s_gen sin16s_gen::@3 sin16s::@1 sin16s_gen::@1 sin16s::@9 sin16s::@8 sin16s::@11 sin16s::@10 sin16s::@2 
-sin16s::@12 dominated by  @29 main sin16s @begin sin16s_gen sin16s_gen::@3 sin16s::@1 sin16s_gen::@1 sin16s::@9 sin16s::@8 sin16s::@12 sin16s::@11 sin16s::@10 sin16s::@2 
-sin16s::@6 dominated by  @29 main sin16s @begin sin16s_gen sin16s_gen::@3 sin16s::@1 sin16s_gen::@1 sin16s::@9 sin16s::@8 sin16s::@6 sin16s::@12 sin16s::@11 sin16s::@10 sin16s::@2 
-sin16s::@3 dominated by  @29 main sin16s @begin sin16s_gen sin16s_gen::@3 sin16s::@1 sin16s_gen::@1 sin16s::@9 sin16s::@8 sin16s::@12 sin16s::@11 sin16s::@10 sin16s::@3 sin16s::@2 
-sin16s::@return dominated by  @29 main sin16s @begin sin16s::@return sin16s_gen sin16s_gen::@3 sin16s::@1 sin16s_gen::@1 sin16s::@9 sin16s::@8 sin16s::@12 sin16s::@11 sin16s::@10 sin16s::@3 sin16s::@2 
-sin16s::@15 dominated by  @29 main sin16s @begin sin16s_gen sin16s_gen::@3 sin16s::@1 sin16s_gen::@1 sin16s::@9 sin16s::@8 sin16s::@15 sin16s::@12 sin16s::@11 sin16s::@10 sin16s::@2 
-mulu16_sel dominated by  @29 main sin16s @begin sin16s_gen sin16s_gen::@3 sin16s::@1 sin16s_gen::@1 mulu16_sel sin16s::@2 
-mulu16_sel::@2 dominated by  @29 main sin16s @begin sin16s_gen sin16s_gen::@3 sin16s::@1 sin16s_gen::@1 mulu16_sel sin16s::@2 mulu16_sel::@2 
-mulu16_sel::@return dominated by  @29 main sin16s @begin sin16s_gen sin16s_gen::@3 sin16s::@1 sin16s_gen::@1 mulu16_sel sin16s::@2 mulu16_sel::@return mulu16_sel::@2 
-mul16u dominated by  @29 main mul16u sin16s @begin sin16s_gen sin16s_gen::@3 sin16s::@1 sin16s_gen::@1 mulu16_sel sin16s::@2 
-mul16u::@1 dominated by  @29 main mul16u mul16u::@1 sin16s @begin sin16s_gen sin16s_gen::@3 sin16s::@1 sin16s_gen::@1 mulu16_sel sin16s::@2 
-mul16u::@return dominated by  @29 main mul16u mul16u::@1 sin16s @begin sin16s_gen sin16s_gen::@3 sin16s::@1 sin16s_gen::@1 mulu16_sel sin16s::@2 mul16u::@return 
-mul16u::@2 dominated by  @29 main mul16u mul16u::@1 mul16u::@2 sin16s @begin sin16s_gen sin16s_gen::@3 sin16s::@1 sin16s_gen::@1 mulu16_sel sin16s::@2 
-mul16u::@7 dominated by  @29 main mul16u mul16u::@1 mul16u::@2 sin16s @begin mul16u::@7 sin16s_gen sin16s_gen::@3 sin16s::@1 sin16s_gen::@1 mulu16_sel sin16s::@2 
-mul16u::@4 dominated by  @29 main mul16u mul16u::@1 mul16u::@2 sin16s @begin mul16u::@4 sin16s_gen sin16s_gen::@3 sin16s::@1 sin16s_gen::@1 mulu16_sel sin16s::@2 
-div32u16u dominated by  @29 main @begin sin16s_gen div32u16u 
-div32u16u::@2 dominated by  @29 main div32u16u::@2 @begin sin16s_gen div32u16u 
-div32u16u::@3 dominated by  @29 main div32u16u::@2 div32u16u::@3 @begin sin16s_gen div32u16u 
-div32u16u::@return dominated by  @29 main div32u16u::@2 div32u16u::@3 @begin sin16s_gen div32u16u div32u16u::@return 
-divr16u dominated by  divr16u @29 main @begin sin16s_gen div32u16u 
-divr16u::@1 dominated by  divr16u @29 divr16u::@1 main @begin sin16s_gen div32u16u 
-divr16u::@4 dominated by  divr16u @29 divr16u::@1 main divr16u::@4 @begin sin16s_gen div32u16u 
-divr16u::@2 dominated by  divr16u @29 divr16u::@2 divr16u::@1 main @begin sin16s_gen div32u16u 
-divr16u::@5 dominated by  divr16u @29 divr16u::@2 divr16u::@1 main divr16u::@5 @begin sin16s_gen div32u16u 
-divr16u::@3 dominated by  divr16u @29 divr16u::@2 divr16u::@1 main divr16u::@3 @begin sin16s_gen div32u16u 
-divr16u::@6 dominated by  divr16u @29 divr16u::@2 divr16u::@1 main divr16u::@3 divr16u::@6 @begin sin16s_gen div32u16u 
-divr16u::@return dominated by  divr16u @29 divr16u::@2 divr16u::@1 main divr16u::@3 divr16u::@6 @begin sin16s_gen div32u16u divr16u::@return 
+@28 dominated by  @28 @begin 
+@end dominated by  @end @28 @begin 
+main dominated by  @28 main @begin 
+main::@5 dominated by  @28 main main::@5 @begin 
+main::@1 dominated by  @28 main main::@1 main::@5 @begin 
+main::@3 dominated by  @28 main main::@1 main::@5 main::@3 @begin 
+main::@2 dominated by  @28 main main::@1 main::@2 main::@5 @begin 
+main::@7 dominated by  main::@7 @28 main main::@1 main::@2 main::@5 @begin 
+main::@8 dominated by  main::@7 main::@8 @28 main main::@1 main::@2 main::@5 @begin 
+main::@return dominated by  main::@7 main::@8 @28 main main::@1 main::@2 main::@5 @begin main::@return 
+print_str dominated by  @28 main main::@1 main::@5 @begin print_str 
+print_str::@1 dominated by  @28 main main::@1 main::@5 @begin print_str::@1 print_str 
+print_str::@return dominated by  @28 main main::@1 main::@5 @begin print_str::@return print_str::@1 print_str 
+print_str::@2 dominated by  @28 main main::@1 main::@5 @begin print_str::@1 print_str::@2 print_str 
+print_sword dominated by  @28 main main::@1 main::@2 main::@5 @begin print_sword 
+print_sword::@2 dominated by  print_sword::@2 @28 main main::@1 main::@2 main::@5 @begin print_sword 
+print_sword::@4 dominated by  print_sword::@2 @28 print_sword::@4 main main::@1 main::@2 main::@5 @begin print_sword 
+print_sword::@1 dominated by  print_sword::@1 @28 main main::@1 main::@2 main::@5 @begin print_sword 
+print_sword::@return dominated by  print_sword::@1 @28 main main::@1 main::@2 main::@5 @begin print_sword::@return print_sword 
+print_word dominated by  print_sword::@1 @28 main print_word main::@1 main::@2 main::@5 @begin print_sword 
+print_word::@1 dominated by  print_sword::@1 @28 main print_word main::@1 main::@2 main::@5 @begin print_word::@1 print_sword 
+print_word::@return dominated by  print_sword::@1 @28 main print_word main::@1 main::@2 main::@5 @begin print_word::@return print_word::@1 print_sword 
+print_byte dominated by  print_sword::@1 @28 main print_word main::@1 main::@2 main::@5 @begin print_byte print_sword 
+print_byte::@1 dominated by  print_sword::@1 @28 main print_word main::@1 main::@2 main::@5 @begin print_byte::@1 print_byte print_sword 
+print_byte::@return dominated by  print_sword::@1 @28 main print_word main::@1 main::@2 main::@5 @begin print_byte::@return print_byte::@1 print_byte print_sword 
+print_char dominated by  @28 main print_char main::@1 main::@2 main::@5 @begin print_sword 
+print_char::@return dominated by  @28 main print_char main::@1 main::@2 main::@5 print_char::@return @begin print_sword 
+print_cls dominated by  @28 main main::@5 @begin print_cls 
+print_cls::@1 dominated by  @28 main main::@5 @begin print_cls::@1 print_cls 
+print_cls::@return dominated by  @28 main main::@5 @begin print_cls::@return print_cls::@1 print_cls 
+sin16s_gen dominated by  @28 main @begin sin16s_gen 
+sin16s_gen::@3 dominated by  @28 main @begin sin16s_gen sin16s_gen::@3 
+sin16s_gen::@1 dominated by  @28 main @begin sin16s_gen sin16s_gen::@3 sin16s_gen::@1 
+sin16s_gen::@4 dominated by  @28 main @begin sin16s_gen sin16s_gen::@3 sin16s_gen::@4 sin16s_gen::@1 
+sin16s_gen::@return dominated by  @28 main sin16s_gen::@return @begin sin16s_gen sin16s_gen::@3 sin16s_gen::@4 sin16s_gen::@1 
+sin16s dominated by  @28 main sin16s @begin sin16s_gen sin16s_gen::@3 sin16s_gen::@1 
+sin16s::@4 dominated by  @28 main sin16s @begin sin16s_gen sin16s_gen::@3 sin16s_gen::@1 sin16s::@4 
+sin16s::@1 dominated by  @28 main sin16s @begin sin16s_gen sin16s_gen::@3 sin16s::@1 sin16s_gen::@1 
+sin16s::@5 dominated by  @28 main sin16s @begin sin16s_gen sin16s_gen::@3 sin16s::@1 sin16s_gen::@1 sin16s::@5 
+sin16s::@2 dominated by  @28 main sin16s @begin sin16s_gen sin16s_gen::@3 sin16s::@1 sin16s_gen::@1 sin16s::@2 
+sin16s::@8 dominated by  @28 main sin16s @begin sin16s_gen sin16s_gen::@3 sin16s::@1 sin16s_gen::@1 sin16s::@8 sin16s::@2 
+sin16s::@9 dominated by  @28 main sin16s @begin sin16s_gen sin16s_gen::@3 sin16s::@1 sin16s_gen::@1 sin16s::@9 sin16s::@8 sin16s::@2 
+sin16s::@10 dominated by  @28 main sin16s @begin sin16s_gen sin16s_gen::@3 sin16s::@1 sin16s_gen::@1 sin16s::@9 sin16s::@8 sin16s::@10 sin16s::@2 
+sin16s::@11 dominated by  @28 main sin16s @begin sin16s_gen sin16s_gen::@3 sin16s::@1 sin16s_gen::@1 sin16s::@9 sin16s::@8 sin16s::@11 sin16s::@10 sin16s::@2 
+sin16s::@12 dominated by  @28 main sin16s @begin sin16s_gen sin16s_gen::@3 sin16s::@1 sin16s_gen::@1 sin16s::@9 sin16s::@8 sin16s::@12 sin16s::@11 sin16s::@10 sin16s::@2 
+sin16s::@6 dominated by  @28 main sin16s @begin sin16s_gen sin16s_gen::@3 sin16s::@1 sin16s_gen::@1 sin16s::@9 sin16s::@8 sin16s::@6 sin16s::@12 sin16s::@11 sin16s::@10 sin16s::@2 
+sin16s::@3 dominated by  @28 main sin16s @begin sin16s_gen sin16s_gen::@3 sin16s::@1 sin16s_gen::@1 sin16s::@9 sin16s::@8 sin16s::@12 sin16s::@11 sin16s::@10 sin16s::@3 sin16s::@2 
+sin16s::@return dominated by  @28 main sin16s @begin sin16s::@return sin16s_gen sin16s_gen::@3 sin16s::@1 sin16s_gen::@1 sin16s::@9 sin16s::@8 sin16s::@12 sin16s::@11 sin16s::@10 sin16s::@3 sin16s::@2 
+sin16s::@15 dominated by  @28 main sin16s @begin sin16s_gen sin16s_gen::@3 sin16s::@1 sin16s_gen::@1 sin16s::@9 sin16s::@8 sin16s::@15 sin16s::@12 sin16s::@11 sin16s::@10 sin16s::@2 
+mulu16_sel dominated by  @28 main sin16s @begin sin16s_gen sin16s_gen::@3 sin16s::@1 sin16s_gen::@1 mulu16_sel sin16s::@2 
+mulu16_sel::@2 dominated by  @28 main sin16s @begin sin16s_gen sin16s_gen::@3 sin16s::@1 sin16s_gen::@1 mulu16_sel sin16s::@2 mulu16_sel::@2 
+mulu16_sel::@return dominated by  @28 main sin16s @begin sin16s_gen sin16s_gen::@3 sin16s::@1 sin16s_gen::@1 mulu16_sel sin16s::@2 mulu16_sel::@return mulu16_sel::@2 
+mul16u dominated by  @28 main mul16u sin16s @begin sin16s_gen sin16s_gen::@3 sin16s::@1 sin16s_gen::@1 mulu16_sel sin16s::@2 
+mul16u::@1 dominated by  @28 main mul16u mul16u::@1 sin16s @begin sin16s_gen sin16s_gen::@3 sin16s::@1 sin16s_gen::@1 mulu16_sel sin16s::@2 
+mul16u::@return dominated by  @28 main mul16u mul16u::@1 sin16s @begin sin16s_gen sin16s_gen::@3 sin16s::@1 sin16s_gen::@1 mulu16_sel sin16s::@2 mul16u::@return 
+mul16u::@2 dominated by  @28 main mul16u mul16u::@1 mul16u::@2 sin16s @begin sin16s_gen sin16s_gen::@3 sin16s::@1 sin16s_gen::@1 mulu16_sel sin16s::@2 
+mul16u::@7 dominated by  @28 main mul16u mul16u::@1 mul16u::@2 sin16s @begin mul16u::@7 sin16s_gen sin16s_gen::@3 sin16s::@1 sin16s_gen::@1 mulu16_sel sin16s::@2 
+mul16u::@4 dominated by  @28 main mul16u mul16u::@1 mul16u::@2 sin16s @begin mul16u::@4 sin16s_gen sin16s_gen::@3 sin16s::@1 sin16s_gen::@1 mulu16_sel sin16s::@2 
+div32u16u dominated by  @28 main @begin sin16s_gen div32u16u 
+div32u16u::@2 dominated by  @28 main div32u16u::@2 @begin sin16s_gen div32u16u 
+div32u16u::@3 dominated by  @28 main div32u16u::@2 div32u16u::@3 @begin sin16s_gen div32u16u 
+div32u16u::@return dominated by  @28 main div32u16u::@2 div32u16u::@3 @begin sin16s_gen div32u16u div32u16u::@return 
+divr16u dominated by  divr16u @28 main @begin sin16s_gen div32u16u 
+divr16u::@1 dominated by  divr16u @28 divr16u::@1 main @begin sin16s_gen div32u16u 
+divr16u::@4 dominated by  divr16u @28 divr16u::@1 main divr16u::@4 @begin sin16s_gen div32u16u 
+divr16u::@2 dominated by  divr16u @28 divr16u::@2 divr16u::@1 main @begin sin16s_gen div32u16u 
+divr16u::@5 dominated by  divr16u @28 divr16u::@2 divr16u::@1 main divr16u::@5 @begin sin16s_gen div32u16u 
+divr16u::@3 dominated by  divr16u @28 divr16u::@2 divr16u::@1 main divr16u::@3 @begin sin16s_gen div32u16u 
+divr16u::@6 dominated by  divr16u @28 divr16u::@2 divr16u::@1 main divr16u::@3 divr16u::@6 @begin sin16s_gen div32u16u 
+divr16u::@return dominated by  divr16u @28 divr16u::@2 divr16u::@1 main divr16u::@3 divr16u::@6 @begin sin16s_gen div32u16u divr16u::@return 
 
 NATURAL LOOPS
 Found back edge: Loop head: main::@1 tails: main::@8 blocks: null
@@ -5745,17 +5512,17 @@ INITIAL ASM
   .label char_cursor = $a
 //SEG2 @begin
 bbegin:
-//SEG3 [1] phi from @begin to @29 [phi:@begin->@29]
-b29_from_bbegin:
-  jmp b29
-//SEG4 @29
-b29:
+//SEG3 [1] phi from @begin to @28 [phi:@begin->@28]
+b28_from_bbegin:
+  jmp b28
+//SEG4 @28
+b28:
 //SEG5 [2] call main param-assignment [ ] ( )
-//SEG6 [4] phi from @29 to main [phi:@29->main]
-main_from_b29:
+//SEG6 [4] phi from @28 to main [phi:@28->main]
+main_from_b28:
   jsr main
-//SEG7 [3] phi from @29 to @end [phi:@29->@end]
-bend_from_b29:
+//SEG7 [3] phi from @28 to @end [phi:@28->@end]
+bend_from_b28:
   jmp bend
 //SEG8 @end
 bend:
@@ -7275,17 +7042,17 @@ ASSEMBLER BEFORE OPTIMIZATION
   .label char_cursor = 8
 //SEG2 @begin
 bbegin:
-//SEG3 [1] phi from @begin to @29 [phi:@begin->@29]
-b29_from_bbegin:
-  jmp b29
-//SEG4 @29
-b29:
+//SEG3 [1] phi from @begin to @28 [phi:@begin->@28]
+b28_from_bbegin:
+  jmp b28
+//SEG4 @28
+b28:
 //SEG5 [2] call main param-assignment [ ] ( )
-//SEG6 [4] phi from @29 to main [phi:@29->main]
-main_from_b29:
+//SEG6 [4] phi from @28 to main [phi:@28->main]
+main_from_b28:
   jsr main
-//SEG7 [3] phi from @29 to @end [phi:@29->@end]
-bend_from_b29:
+//SEG7 [3] phi from @28 to @end [phi:@28->@end]
+bend_from_b28:
   jmp bend
 //SEG8 @end
 bend:
@@ -8344,7 +8111,7 @@ divr16u: {
 }
 
 ASSEMBLER OPTIMIZATIONS
-Removing instruction jmp b29
+Removing instruction jmp b28
 Removing instruction jmp bend
 Removing instruction jmp b5
 Removing instruction jmp b1
@@ -8429,9 +8196,9 @@ Replacing label b3_from_b2 with b3
 Replacing label b3_from_b2 with b3
 Replacing label b1_from_b3 with b1
 Removing instruction bbegin:
-Removing instruction b29_from_bbegin:
-Removing instruction main_from_b29:
-Removing instruction bend_from_b29:
+Removing instruction b28_from_bbegin:
+Removing instruction main_from_b28:
+Removing instruction bend_from_b28:
 Removing instruction b5_from_main:
 Removing instruction print_cls_from_b5:
 Removing instruction b1_from_b8:
@@ -8462,7 +8229,7 @@ Removing instruction b2_from_b4:
 Removing instruction b3_from_b2:
 Removing instruction b3_from_b5:
 Succesful ASM optimization Pass5RedundantLabelElimination
-Removing instruction b29:
+Removing instruction b28:
 Removing instruction bend:
 Removing instruction sin16s_gen_from_main:
 Removing instruction b5:
@@ -8539,7 +8306,7 @@ Removing unreachable instruction jmp b3
 Succesful ASM optimization Pass5UnreachableCodeElimination
 
 FINAL SYMBOL TABLE
-(label) @29
+(label) @28
 (label) @begin
 (label) @end
 (dword) PI2_u4f28
@@ -8829,12 +8596,12 @@ Score: 20907
   .label rem16u = 4
   .label char_cursor = 8
 //SEG2 @begin
-//SEG3 [1] phi from @begin to @29 [phi:@begin->@29]
-//SEG4 @29
+//SEG3 [1] phi from @begin to @28 [phi:@begin->@28]
+//SEG4 @28
 //SEG5 [2] call main param-assignment [ ] ( )
-//SEG6 [4] phi from @29 to main [phi:@29->main]
+//SEG6 [4] phi from @28 to main [phi:@28->main]
   jsr main
-//SEG7 [3] phi from @29 to @end [phi:@29->@end]
+//SEG7 [3] phi from @28 to @end [phi:@28->@end]
 //SEG8 @end
 //SEG9 main
 main: {

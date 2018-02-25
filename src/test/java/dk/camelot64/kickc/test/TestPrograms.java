@@ -42,13 +42,13 @@ public class TestPrograms {
    public static void tearDown() throws Exception {
       CompileLog log = new CompileLog();
       log.setSysOut(true);
-      AsmFragmentTemplateUsages.logUsages(log, false, false,  false, false, false, false);
+      AsmFragmentTemplateUsages.logUsages(log, true, false,  false, false, false, false);
    }
 
-   //@Test
-   //public void testLoopProblem() throws IOException, URISyntaxException {
-   //   compileAndCompare("loop-problem");
-   //}
+   @Test
+   public void testLoopProblem() throws IOException, URISyntaxException {
+      compileAndCompare("loop-problem");
+   }
 
    @Test
    public void testLoHiConst() throws IOException, URISyntaxException {

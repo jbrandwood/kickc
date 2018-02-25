@@ -56,9 +56,14 @@ public class Pass3LoopDepthAnalysis extends Pass2Base {
             ControlFlowBlock callingControlBlock = getProgram().getStatementInfos().getBlock(callStatementIdx);
             Collection<NaturalLoop> callingLoops = loopSet.getLoopsContainingBlock(callingControlBlock.getLabel());
             for(NaturalLoop callingLoop : callingLoops) {
-               int potentialDepth = callingLoop.getDepth() + 1;
-               if(potentialDepth > callingDepth) {
-                  callingDepth = potentialDepth;
+               Integer depth = callingLoop.getDepth();
+               if(depth!=null) {
+                  int potentialDepth = depth + 1;
+                  if(potentialDepth > callingDepth) {
+                     callingDepth = potentialDepth;
+                  }
+               } else {
+                  getLog().append("null depth in calling loop "+callingLoop.toString()+" in scope "+currentScope);
                }
             }
             // Also look through all callers

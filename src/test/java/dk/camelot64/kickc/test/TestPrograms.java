@@ -42,7 +42,7 @@ public class TestPrograms {
    public static void tearDown() throws Exception {
       CompileLog log = new CompileLog();
       log.setSysOut(true);
-      AsmFragmentTemplateUsages.logUsages(log, true, false,  false, false, false, false);
+      AsmFragmentTemplateUsages.logUsages(log, false, false,  false, false, false, false);
    }
 
    @Test
@@ -58,6 +58,11 @@ public class TestPrograms {
    @Test
    public void testSinusGen16() throws IOException, URISyntaxException {
       compileAndCompare("sinusgen16");
+   }
+
+   @Test
+   public void testSinusGenScale8() throws IOException, URISyntaxException {
+      compileAndCompare("sinusgenscale8");
    }
 
    @Test

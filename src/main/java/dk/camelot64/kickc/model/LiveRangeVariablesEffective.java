@@ -22,7 +22,7 @@ public class LiveRangeVariablesEffective {
    private Map<ProcedureRef, CallPaths> procedureCallPaths;
 
    /** Variables (normally) alive at each statement by index. */
-   private Map<Integer, Collection<VariableRef>> statementsLiveVariables;
+   private Map<Integer, Collection<VariableRef>> statementLiveVariables;
 
    /**
     * Information about which procedures reference which variables.
@@ -33,13 +33,16 @@ public class LiveRangeVariablesEffective {
       this.program = program;
       this.procedureCallPaths = procedureCallPaths;
       this.referenceInfo = referenceInfo;
-      this.statementsLiveVariables = new LinkedHashMap<>();
+      this.statementLiveVariables = new LinkedHashMap<>();
       for(ControlFlowBlock block : program.getGraph().getAllBlocks()) {
          for(Statement statement : block.getStatements()) {
-            statementsLiveVariables.put(statement.getIndex(), liveRangeVariables.getAlive(statement));
+            statementLiveVariables.put(statement.getIndex(), liveRangeVariables.getAlive(statement));
          }
       }
    }
+
+   /** Cached alive effective by statement index. */
+   Map<Integer, Collection<VariableRef>> statementAliveEffective = new LinkedHashMap<>();
 
    /**
     * Get all variables potentially alive at a statement.
@@ -50,14 +53,21 @@ public class LiveRangeVariablesEffective {
     * @return All variables potentially alive at the statement
     */
    public Collection<VariableRef> getAliveEffective(Statement statement) {
-      Set<VariableRef> effectiveAliveTotal = new LinkedHashSet<>();
-      AliveCombinations aliveCombinations = getAliveCombinations(statement);
-      for(CallPath callPath : aliveCombinations.getCallPaths().getCallPaths()) {
-         Collection<VariableRef> alive = aliveCombinations.getEffectiveAliveAtStmt(callPath);
-         effectiveAliveTotal.addAll(alive);
+      Collection<VariableRef> effectiveAliveTotal = statementAliveEffective.get(statement.getIndex());
+      if(effectiveAliveTotal==null) {
+         effectiveAliveTotal = new LinkedHashSet<>();
+         AliveCombinations aliveCombinations = getAliveCombinations(statement);
+         for(CallPath callPath : aliveCombinations.getCallPaths().getCallPaths()) {
+            Collection<VariableRef> alive = aliveCombinations.getEffectiveAliveAtStmt(callPath);
+            effectiveAliveTotal.addAll(alive);
+         }
+         statementAliveEffective.put(statement.getIndex(), effectiveAliveTotal);
       }
       return effectiveAliveTotal;
    }
+
+   /** Cached alive combinations. */
+   Map<Integer, AliveCombinations> statementAliveCombinations = new LinkedHashMap<>();
 
    /**
     * Get all combinations of variables alive at a statement.
@@ -71,45 +81,49 @@ public class LiveRangeVariablesEffective {
     * @return All combinations of variables alive at the statement
     */
    public AliveCombinations getAliveCombinations(Statement statement) {
-      Collection<VariableRef> aliveAtStmt = statementsLiveVariables.get(statement.getIndex());
-      CallPaths callPaths;
-      Collection<VariableRef> referencedInProcedure;
-      ControlFlowBlock block = program.getStatementInfos().getBlock(statement);
-      ScopeRef scopeRef = block.getScope();
-      Scope scope = program.getScope().getScope(scopeRef);
-      if(scope instanceof Procedure) {
-         Procedure procedure = (Procedure) scope;
-         callPaths = procedureCallPaths.get(procedure.getRef());
-         referencedInProcedure = referenceInfo.getReferencedVars(procedure.getRef().getLabelRef());
-      } else {
-         callPaths = new CallPaths(Procedure.ROOT);
-         referencedInProcedure = new ArrayList<>();
-      }
-      Pass2AliasElimination.Aliases callAliases = null;
-      // Examine if the statement is a parameter assignment before a call
-      LabelRef callSuccessor = block.getCallSuccessor();
-      if(callSuccessor != null) {
-         ProcedureRef calledRef = new ProcedureRef(callSuccessor.getFullName());
-         CallPaths calledRefs = procedureCallPaths.get(calledRef);
-         for(CallPath calledPath : calledRefs.getCallPaths()) {
-            List<CallGraph.CallBlock.Call> path = calledPath.getPath();
-            CallGraph.CallBlock.Call lastCall = path.get(path.size() - 1);
-            Integer lastCallStatementIdx = lastCall.getCallStatementIdx();
-            LabelRef lastCallBlockRef = program.getStatementInfos().getBlockRef(lastCallStatementIdx);
-            if(lastCallBlockRef.equals(block.getLabel())) {
-               if(callAliases == null) {
-                  // Found a matching call!
-                  callAliases = calledPath.getInnerAliases();
-               } else {
-                  // Found another matching call!
-                  callAliases = new Pass2AliasElimination.Aliases(callAliases);
-                  callAliases.addAll(calledPath.getInnerAliases());
+      AliveCombinations stmtCombinations = this.statementAliveCombinations.get(statement.getIndex());
+      if(stmtCombinations==null) {
+         Collection<VariableRef> aliveAtStmt = statementLiveVariables.get(statement.getIndex());
+         CallPaths callPaths;
+         Collection<VariableRef> referencedInProcedure;
+         ControlFlowBlock block = program.getStatementInfos().getBlock(statement);
+         ScopeRef scopeRef = block.getScope();
+         Scope scope = program.getScope().getScope(scopeRef);
+         if(scope instanceof Procedure) {
+            Procedure procedure = (Procedure) scope;
+            callPaths = procedureCallPaths.get(procedure.getRef());
+            referencedInProcedure = referenceInfo.getReferencedVars(procedure.getRef().getLabelRef());
+         } else {
+            callPaths = new CallPaths(Procedure.ROOT);
+            referencedInProcedure = new ArrayList<>();
+         }
+         Pass2AliasElimination.Aliases callAliases = null;
+         // Examine if the statement is a parameter assignment before a call
+         LabelRef callSuccessor = block.getCallSuccessor();
+         if(callSuccessor != null) {
+            ProcedureRef calledRef = new ProcedureRef(callSuccessor.getFullName());
+            CallPaths calledRefs = procedureCallPaths.get(calledRef);
+            for(CallPath calledPath : calledRefs.getCallPaths()) {
+               List<CallGraph.CallBlock.Call> path = calledPath.getPath();
+               CallGraph.CallBlock.Call lastCall = path.get(path.size() - 1);
+               Integer lastCallStatementIdx = lastCall.getCallStatementIdx();
+               LabelRef lastCallBlockRef = program.getStatementInfos().getBlockRef(lastCallStatementIdx);
+               if(lastCallBlockRef.equals(block.getLabel())) {
+                  if(callAliases == null) {
+                     // Found a matching call!
+                     callAliases = calledPath.getInnerAliases();
+                  } else {
+                     // Found another matching call!
+                     callAliases = new Pass2AliasElimination.Aliases(callAliases);
+                     callAliases.addAll(calledPath.getInnerAliases());
+                  }
                }
             }
          }
+         stmtCombinations = new AliveCombinations(callPaths, referencedInProcedure, aliveAtStmt, callAliases);
+         statementAliveCombinations.put(statement.getIndex(), stmtCombinations);
       }
-
-      return new AliveCombinations(callPaths, referencedInProcedure, aliveAtStmt, callAliases);
+      return stmtCombinations;
    }
 
    /**

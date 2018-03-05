@@ -10,7 +10,7 @@ main: {
     .const sumw = min+max
     .const sumb = min+max
     .const midb = (sumb>>1)+1
-    .const midw = $ff & sumw>>1+1
+    .const midw = ($ff&sumw>>1)+1
     lda #midw
     sta SCREEN+0
     lda #midb

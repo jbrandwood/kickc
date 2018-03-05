@@ -5,9 +5,9 @@
   jsr main
 main: {
     .label SCREEN = $400
-    lda #>PI_u4f28>>16
+    lda #>PI_u4f28>>$10
     sta SCREEN+0
-    lda #<PI_u4f28>>16
+    lda #<PI_u4f28>>$10
     sta SCREEN+1
     lda #>PI_u4f28&$ffff
     sta SCREEN+2

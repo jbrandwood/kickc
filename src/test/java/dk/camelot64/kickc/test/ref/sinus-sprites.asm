@@ -539,7 +539,7 @@ place_sprites: {
     lda #$3c
     sta spr_x
     ldy #0
-    lda #$ff & sprites/$40
+    lda #$ff&sprites/$40
     sta spr_id
   b1:
     lda spr_id

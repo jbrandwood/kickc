@@ -490,9 +490,9 @@ div32u16u: {
     sta divr16u.divisor
     lda #>main.wavelength
     sta divr16u.divisor+1
-    lda #<PI2_u4f28>>16
+    lda #<PI2_u4f28>>$10
     sta divr16u.dividend
-    lda #>PI2_u4f28>>16
+    lda #>PI2_u4f28>>$10
     sta divr16u.dividend+1
     lda #<0
     sta divr16u.rem

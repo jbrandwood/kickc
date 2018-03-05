@@ -183,7 +183,7 @@ init: {
     sta SPRITES_YPOS+0
     lda #WHITE
     sta SPRITES_COLS+0
-    lda #$ff & SPRITE/$40
+    lda #$ff&SPRITE/$40
     sta SPRITES_PTR+0
     lda #<SCREEN
     sta sc

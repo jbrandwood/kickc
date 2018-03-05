@@ -203,6 +203,7 @@ public class Pass2ConstantIdentification extends Pass2SsaOptimization {
          case "((dword))":
          case "((signed dword))":
          case "((byte*))":
+         case "!":
             return new ConstantUnary(operator, c);
          case "*": { // pointer dereference - not constant
             return null;
@@ -232,6 +233,12 @@ public class Pass2ConstantIdentification extends Pass2SsaOptimization {
          case "^":
          case "<<":
          case ">>":
+         case "==":
+         case "!=":
+         case ">":
+         case "<":
+         case ">=":
+         case "<=":
             return new ConstantBinary(c1, operator, c2);
          case "w=":
             return new ConstantBinary(new ConstantBinary(c1, Operator.MULTIPLY, new ConstantInteger(256L)), Operator.PLUS, c2);

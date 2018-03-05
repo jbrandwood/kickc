@@ -46,6 +46,11 @@ public class TestPrograms {
    }
 
    @Test
+   public void testCastPrecedenceProblem() throws IOException, URISyntaxException {
+      compileAndCompare("cast-precedence-problem");
+   }
+
+   @Test
    public void testLoopProblem() throws IOException, URISyntaxException {
       compileAndCompare("loop-problem");
    }
@@ -58,6 +63,11 @@ public class TestPrograms {
    @Test
    public void testSinusGen16() throws IOException, URISyntaxException {
       compileAndCompare("sinusgen16");
+   }
+
+   @Test
+   public void testSinusGen16b() throws IOException, URISyntaxException {
+      compileAndCompare("sinusgen16b");
    }
 
    @Test

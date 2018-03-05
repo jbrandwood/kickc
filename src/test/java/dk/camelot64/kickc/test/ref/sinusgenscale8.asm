@@ -5,7 +5,7 @@
   .const PI_u4f12 = $3244
   .const PI_HALF_u4f12 = $1922
   .label SCREEN = $400
-  .label char_cursor = $b
+  .label char_cursor = $d
   .label line_cursor = 8
   jsr main
 main: {
@@ -20,9 +20,10 @@ sin8u_table: {
     .const max = $ff
     .label amplitude = max-min
     .const sum = min+max
-    .const mid = $ff & sum>>1
-    .label _17 = $b
-    .label step = $10
+    .const mid = $ff & (sum>>1)+1
+    .label step = $12
+    .label sinx = $11
+    .label sinx_sc = $f
     .label sintab = 4
     .label x = 2
     .label i = 6
@@ -94,9 +95,10 @@ sin8u_table: {
     lda x+1
     sta sin8s.x+1
     jsr sin8s
+    sta sinx
     tay
     jsr mul8su
-    lda _17+1
+    lda sinx_sc+1
     clc
     adc #mid
     tax
@@ -116,10 +118,32 @@ sin8u_table: {
     lda #>str5
     sta print_str.str+1
     jsr print_str
+    lda x
+    sta print_word.w
+    lda x+1
+    sta print_word.w+1
     jsr print_word
     lda #<str6
     sta print_str.str
     lda #>str6
+    sta print_str.str+1
+    jsr print_str
+    lda sinx
+    sta print_sbyte.b
+    jsr print_sbyte
+    lda #<str7
+    sta print_str.str
+    lda #>str7
+    sta print_str.str+1
+    jsr print_str
+    lda sinx_sc
+    sta print_sword.w
+    lda sinx_sc+1
+    sta print_sword.w+1
+    jsr print_sword
+    lda #<str8
+    sta print_str.str
+    lda #>str8
     sta print_str.str+1
     jsr print_str
     stx print_byte.b
@@ -138,11 +162,15 @@ sin8u_table: {
   !:
     lda i+1
     cmp #>main.tabsize
-    bcc b1
+    bcs !b1+
+    jmp b1
+  !b1:
     bne !+
     lda i
     cmp #<main.tabsize
-    bcc b1
+    bcs !b1+
+    jmp b1
+  !b1:
   !:
     rts
     str: .text "step:@"
@@ -152,6 +180,8 @@ sin8u_table: {
     str4: .text " mid:@"
     str5: .text "x: @"
     str6: .text " sin: @"
+    str7: .text " scaled: @"
+    str8: .text " trans: @"
 }
 print_ln: {
   b1:
@@ -200,7 +230,7 @@ print_char: {
     rts
 }
 print_str: {
-    .label str = $d
+    .label str = $b
   b1:
     ldy #0
     lda (str),y
@@ -221,8 +251,27 @@ print_str: {
   !:
     jmp b1
 }
+print_sword: {
+    .label w = $b
+    lda w+1
+    bpl b1
+    lda #'-'
+    jsr print_char
+    sec
+    lda w
+    eor #$ff
+    adc #0
+    sta w
+    lda w+1
+    eor #$ff
+    adc #0
+    sta w+1
+  b1:
+    jsr print_word
+    rts
+}
 print_word: {
-    .label w = 2
+    .label w = $b
     lda w+1
     sta print_byte.b
     jsr print_byte
@@ -231,26 +280,43 @@ print_word: {
     jsr print_byte
     rts
 }
+print_sbyte: {
+    .label b = $a
+    lda b
+    cmp #0
+    bpl b1
+    lda #'-'
+    jsr print_char
+    lda b
+    eor #$ff
+    clc
+    adc #1
+    sta b
+  b1:
+    jsr print_byte
+    rts
+}
 mul8su: {
-    .label m = $b
-    .label return = $b
+    .const b = sin8u_table.amplitude+1
+    .label m = $f
+    .label return = $f
     tya
     tax
-    lda #sin8u_table.amplitude
+    lda #b
     jsr mul8u
     cpy #0
     bpl b1
     lda m+1
     sec
-    sbc #sin8u_table.amplitude
+    sbc #b
     sta m+1
   b1:
     rts
 }
 mul8u: {
-    .label mb = $d
-    .label res = $b
-    .label return = $b
+    .label mb = $b
+    .label res = $f
+    .label return = $f
     sta mb
     lda #0
     sta mb+1
@@ -284,9 +350,9 @@ sin8s: {
     .const DIV_6 = $2b
     .label _6 = $b
     .label x = $b
-    .label x1 = $12
-    .label x3 = $13
-    .label usinx = $14
+    .label x1 = $14
+    .label x3 = $15
+    .label usinx = $16
     .label isUpper = $a
     lda x+1
     cmp #>PI_u4f12
@@ -388,9 +454,9 @@ sin8s: {
     jmp b4
 }
 mulu8_sel: {
-    .label _0 = $b
-    .label _1 = $b
-    .label select = $f
+    .label _0 = $f
+    .label _1 = $f
+    .label select = $11
     tya
     jsr mul8u
     ldy select
@@ -405,15 +471,15 @@ mulu8_sel: {
     rts
 }
 div16u: {
-    .label return = $10
+    .label return = $12
     jsr divr16u
     rts
 }
 divr16u: {
     .label rem = 2
     .label dividend = 4
-    .label quotient = $10
-    .label return = $10
+    .label quotient = $12
+    .label return = $12
     ldx #0
     txa
     sta quotient

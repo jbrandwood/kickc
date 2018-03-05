@@ -1,0 +1,808 @@
+PARSING src/test/java/dk/camelot64/kickc/test/kc/cast-precedence-problem.kc
+// Tests that casting inside constants in the output handles precedence between rol >> and + correctly - should generate the following KA-expression ($ff & sumw>>1)+1
+
+void main() {
+    byte* SCREEN = $400;
+    byte min = 10;
+    byte max = 200;
+    word sumw = min+max;
+    byte midw = (byte)(sumw>>1)+1;
+    SCREEN[0] = midw;
+    byte sumb = min+max;
+    byte midb = (sumb>>1)+1;
+    SCREEN[1] = midb;
+    byte* BGCOL = $d021;
+    if(SCREEN[0]==SCREEN[1]) {
+        *BGCOL = 5;
+    } else {
+        *BGCOL = 2;
+    }
+}
+
+
+STATEMENTS
+proc (void()) main()
+  (byte*) main::SCREEN ← (word/signed word/dword/signed dword) 1024
+  (byte) main::min ← (byte/signed byte/word/signed word/dword/signed dword) 10
+  (byte) main::max ← (byte/word/signed word/dword/signed dword) 200
+  (byte/word~) main::$0 ← (byte) main::min + (byte) main::max
+  (word) main::sumw ← (byte/word~) main::$0
+  (word~) main::$1 ← (word) main::sumw >> (byte/signed byte/word/signed word/dword/signed dword) 1
+  (byte~) main::$2 ← ((byte)) (word~) main::$1
+  (byte/word~) main::$3 ← (byte~) main::$2 + (byte/signed byte/word/signed word/dword/signed dword) 1
+  (byte) main::midw ← (byte/word~) main::$3
+  *((byte*) main::SCREEN + (byte/signed byte/word/signed word/dword/signed dword) 0) ← (byte) main::midw
+  (byte/word~) main::$4 ← (byte) main::min + (byte) main::max
+  (byte) main::sumb ← (byte/word~) main::$4
+  (byte~) main::$5 ← (byte) main::sumb >> (byte/signed byte/word/signed word/dword/signed dword) 1
+  (byte/word~) main::$6 ← (byte~) main::$5 + (byte/signed byte/word/signed word/dword/signed dword) 1
+  (byte) main::midb ← (byte/word~) main::$6
+  *((byte*) main::SCREEN + (byte/signed byte/word/signed word/dword/signed dword) 1) ← (byte) main::midb
+  (byte*) main::BGCOL ← (word/dword/signed dword) 53281
+  (boolean~) main::$7 ← *((byte*) main::SCREEN + (byte/signed byte/word/signed word/dword/signed dword) 0) == *((byte*) main::SCREEN + (byte/signed byte/word/signed word/dword/signed dword) 1)
+  (boolean~) main::$8 ← ! (boolean~) main::$7
+  if((boolean~) main::$8) goto main::@1
+  *((byte*) main::BGCOL) ← (byte/signed byte/word/signed word/dword/signed dword) 5
+  goto main::@2
+main::@1:
+  *((byte*) main::BGCOL) ← (byte/signed byte/word/signed word/dword/signed dword) 2
+main::@2:
+main::@return:
+  return 
+endproc // main()
+  call main 
+
+SYMBOLS
+(void()) main()
+(byte/word~) main::$0
+(word~) main::$1
+(byte~) main::$2
+(byte/word~) main::$3
+(byte/word~) main::$4
+(byte~) main::$5
+(byte/word~) main::$6
+(boolean~) main::$7
+(boolean~) main::$8
+(label) main::@1
+(label) main::@2
+(label) main::@return
+(byte*) main::BGCOL
+(byte*) main::SCREEN
+(byte) main::max
+(byte) main::midb
+(byte) main::midw
+(byte) main::min
+(byte) main::sumb
+(word) main::sumw
+
+Promoting word/signed word/dword/signed dword to byte* in main::SCREEN ← ((byte*)) 1024
+Promoting word/dword/signed dword to byte* in main::BGCOL ← ((byte*)) 53281
+INITIAL CONTROL FLOW GRAPH
+@begin: scope:[]  from
+  to:@1
+main: scope:[main]  from
+  (byte*) main::SCREEN ← ((byte*)) (word/signed word/dword/signed dword) 1024
+  (byte) main::min ← (byte/signed byte/word/signed word/dword/signed dword) 10
+  (byte) main::max ← (byte/word/signed word/dword/signed dword) 200
+  (byte/word~) main::$0 ← (byte) main::min + (byte) main::max
+  (word) main::sumw ← (byte/word~) main::$0
+  (word~) main::$1 ← (word) main::sumw >> (byte/signed byte/word/signed word/dword/signed dword) 1
+  (byte~) main::$2 ← ((byte)) (word~) main::$1
+  (byte/word~) main::$3 ← (byte~) main::$2 + (byte/signed byte/word/signed word/dword/signed dword) 1
+  (byte) main::midw ← (byte/word~) main::$3
+  *((byte*) main::SCREEN + (byte/signed byte/word/signed word/dword/signed dword) 0) ← (byte) main::midw
+  (byte/word~) main::$4 ← (byte) main::min + (byte) main::max
+  (byte) main::sumb ← (byte/word~) main::$4
+  (byte~) main::$5 ← (byte) main::sumb >> (byte/signed byte/word/signed word/dword/signed dword) 1
+  (byte/word~) main::$6 ← (byte~) main::$5 + (byte/signed byte/word/signed word/dword/signed dword) 1
+  (byte) main::midb ← (byte/word~) main::$6
+  *((byte*) main::SCREEN + (byte/signed byte/word/signed word/dword/signed dword) 1) ← (byte) main::midb
+  (byte*) main::BGCOL ← ((byte*)) (word/dword/signed dword) 53281
+  (boolean~) main::$7 ← *((byte*) main::SCREEN + (byte/signed byte/word/signed word/dword/signed dword) 0) == *((byte*) main::SCREEN + (byte/signed byte/word/signed word/dword/signed dword) 1)
+  (boolean~) main::$8 ← ! (boolean~) main::$7
+  if((boolean~) main::$8) goto main::@1
+  to:main::@3
+main::@1: scope:[main]  from main main::@4
+  *((byte*) main::BGCOL) ← (byte/signed byte/word/signed word/dword/signed dword) 2
+  to:main::@2
+main::@3: scope:[main]  from main
+  *((byte*) main::BGCOL) ← (byte/signed byte/word/signed word/dword/signed dword) 5
+  to:main::@2
+main::@2: scope:[main]  from main::@1 main::@3
+  to:main::@return
+main::@4: scope:[main]  from
+  to:main::@1
+main::@return: scope:[main]  from main::@2
+  return 
+  to:@return
+@1: scope:[]  from @begin
+  call main 
+  to:@end
+@end: scope:[]  from @1
+
+Removing empty block main::@2
+Removing empty block main::@4
+PROCEDURE MODIFY VARIABLE ANALYSIS
+
+Completing Phi functions...
+
+CONTROL FLOW GRAPH SSA WITH ASSIGNMENT CALL & RETURN
+@begin: scope:[]  from
+  to:@1
+main: scope:[main]  from @1
+  (byte*) main::SCREEN#0 ← ((byte*)) (word/signed word/dword/signed dword) 1024
+  (byte) main::min#0 ← (byte/signed byte/word/signed word/dword/signed dword) 10
+  (byte) main::max#0 ← (byte/word/signed word/dword/signed dword) 200
+  (byte/word~) main::$0 ← (byte) main::min#0 + (byte) main::max#0
+  (word) main::sumw#0 ← (byte/word~) main::$0
+  (word~) main::$1 ← (word) main::sumw#0 >> (byte/signed byte/word/signed word/dword/signed dword) 1
+  (byte~) main::$2 ← ((byte)) (word~) main::$1
+  (byte/word~) main::$3 ← (byte~) main::$2 + (byte/signed byte/word/signed word/dword/signed dword) 1
+  (byte) main::midw#0 ← (byte/word~) main::$3
+  *((byte*) main::SCREEN#0 + (byte/signed byte/word/signed word/dword/signed dword) 0) ← (byte) main::midw#0
+  (byte/word~) main::$4 ← (byte) main::min#0 + (byte) main::max#0
+  (byte) main::sumb#0 ← (byte/word~) main::$4
+  (byte~) main::$5 ← (byte) main::sumb#0 >> (byte/signed byte/word/signed word/dword/signed dword) 1
+  (byte/word~) main::$6 ← (byte~) main::$5 + (byte/signed byte/word/signed word/dword/signed dword) 1
+  (byte) main::midb#0 ← (byte/word~) main::$6
+  *((byte*) main::SCREEN#0 + (byte/signed byte/word/signed word/dword/signed dword) 1) ← (byte) main::midb#0
+  (byte*) main::BGCOL#0 ← ((byte*)) (word/dword/signed dword) 53281
+  (boolean~) main::$7 ← *((byte*) main::SCREEN#0 + (byte/signed byte/word/signed word/dword/signed dword) 0) == *((byte*) main::SCREEN#0 + (byte/signed byte/word/signed word/dword/signed dword) 1)
+  (boolean~) main::$8 ← ! (boolean~) main::$7
+  if((boolean~) main::$8) goto main::@1
+  to:main::@3
+main::@1: scope:[main]  from main
+  (byte*) main::BGCOL#1 ← phi( main/(byte*) main::BGCOL#0 )
+  *((byte*) main::BGCOL#1) ← (byte/signed byte/word/signed word/dword/signed dword) 2
+  to:main::@return
+main::@3: scope:[main]  from main
+  (byte*) main::BGCOL#2 ← phi( main/(byte*) main::BGCOL#0 )
+  *((byte*) main::BGCOL#2) ← (byte/signed byte/word/signed word/dword/signed dword) 5
+  to:main::@return
+main::@return: scope:[main]  from main::@1 main::@3
+  return 
+  to:@return
+@1: scope:[]  from @begin
+  call main param-assignment
+  to:@2
+@2: scope:[]  from @1
+  to:@end
+@end: scope:[]  from @2
+
+SYMBOL TABLE SSA
+(label) @1
+(label) @2
+(label) @begin
+(label) @end
+(void()) main()
+(byte/word~) main::$0
+(word~) main::$1
+(byte~) main::$2
+(byte/word~) main::$3
+(byte/word~) main::$4
+(byte~) main::$5
+(byte/word~) main::$6
+(boolean~) main::$7
+(boolean~) main::$8
+(label) main::@1
+(label) main::@3
+(label) main::@return
+(byte*) main::BGCOL
+(byte*) main::BGCOL#0
+(byte*) main::BGCOL#1
+(byte*) main::BGCOL#2
+(byte*) main::SCREEN
+(byte*) main::SCREEN#0
+(byte) main::max
+(byte) main::max#0
+(byte) main::midb
+(byte) main::midb#0
+(byte) main::midw
+(byte) main::midw#0
+(byte) main::min
+(byte) main::min#0
+(byte) main::sumb
+(byte) main::sumb#0
+(word) main::sumw
+(word) main::sumw#0
+
+OPTIMIZING CONTROL FLOW GRAPH
+Culled Empty Block (label) @2
+Succesful SSA optimization Pass2CullEmptyBlocks
+Inversing boolean not (boolean~) main::$8 ← *((byte*) main::SCREEN#0 + (byte/signed byte/word/signed word/dword/signed dword) 0) != *((byte*) main::SCREEN#0 + (byte/signed byte/word/signed word/dword/signed dword) 1) from (boolean~) main::$7 ← *((byte*) main::SCREEN#0 + (byte/signed byte/word/signed word/dword/signed dword) 0) == *((byte*) main::SCREEN#0 + (byte/signed byte/word/signed word/dword/signed dword) 1)
+Succesful SSA optimization Pass2UnaryNotSimplification
+Alias (word) main::sumw#0 = (byte/word~) main::$0 
+Alias (byte) main::midw#0 = (byte/word~) main::$3 
+Alias (byte) main::sumb#0 = (byte/word~) main::$4 
+Alias (byte) main::midb#0 = (byte/word~) main::$6 
+Alias (byte*) main::BGCOL#0 = (byte*) main::BGCOL#1 (byte*) main::BGCOL#2 
+Succesful SSA optimization Pass2AliasElimination
+Simple Condition (boolean~) main::$8 if(*((byte*) main::SCREEN#0 + (byte/signed byte/word/signed word/dword/signed dword) 0)!=*((byte*) main::SCREEN#0 + (byte/signed byte/word/signed word/dword/signed dword) 1)) goto main::@1
+Succesful SSA optimization Pass2ConditionalJumpSimplification
+Constant (const byte*) main::SCREEN#0 = ((byte*))1024
+Constant (const byte) main::min#0 = 10
+Constant (const byte) main::max#0 = 200
+Constant (const byte*) main::BGCOL#0 = ((byte*))53281
+Succesful SSA optimization Pass2ConstantIdentification
+Constant (const word) main::sumw#0 = main::min#0+main::max#0
+Constant (const byte) main::sumb#0 = main::min#0+main::max#0
+Succesful SSA optimization Pass2ConstantIdentification
+Constant (const word) main::$1 = main::sumw#0>>1
+Constant (const byte) main::$5 = main::sumb#0>>1
+Succesful SSA optimization Pass2ConstantIdentification
+Constant (const byte) main::$2 = ((byte))main::$1
+Constant (const byte) main::midb#0 = main::$5+1
+Succesful SSA optimization Pass2ConstantIdentification
+Constant (const byte) main::midw#0 = main::$2+1
+Succesful SSA optimization Pass2ConstantIdentification
+Consolidated array index constant in *(main::SCREEN#0+0)
+Consolidated array index constant in *(main::SCREEN#0+1)
+Consolidated array index constant in *(main::SCREEN#0+0)
+Consolidated array index constant in *(main::SCREEN#0+1)
+Succesful SSA optimization Pass2ConstantAdditionElimination
+OPTIMIZING CONTROL FLOW GRAPH
+Constant inlined main::$5 = (const byte) main::sumb#0>>(byte/signed byte/word/signed word/dword/signed dword) 1
+Constant inlined main::$1 = (const word) main::sumw#0>>(byte/signed byte/word/signed word/dword/signed dword) 1
+Constant inlined main::$2 = ((byte))(const word) main::sumw#0>>(byte/signed byte/word/signed word/dword/signed dword) 1
+Succesful SSA optimization Pass2ConstantInlining
+Block Sequence Planned @begin @1 @end main main::@3 main::@return main::@1 
+Block Sequence Planned @begin @1 @end main main::@3 main::@return main::@1 
+Adding NOP phi() at start of @begin
+Adding NOP phi() at start of @1
+Adding NOP phi() at start of @end
+CALL GRAPH
+Calls in [] to main:2 
+
+Propagating live ranges...
+Created 0 initial phi equivalence classes
+Coalesced down to 0 phi equivalence classes
+Block Sequence Planned @begin @1 @end main main::@3 main::@return main::@1 
+Adding NOP phi() at start of @begin
+Adding NOP phi() at start of @1
+Adding NOP phi() at start of @end
+Propagating live ranges...
+
+FINAL CONTROL FLOW GRAPH
+@begin: scope:[]  from
+  [0] phi() [ ] ( )
+  to:@1
+@1: scope:[]  from @begin
+  [1] phi() [ ] ( )
+  [2] call main param-assignment [ ] ( )
+  to:@end
+@end: scope:[]  from @1
+  [3] phi() [ ] ( )
+main: scope:[main]  from @1
+  [4] *((const byte*) main::SCREEN#0+(byte/signed byte/word/signed word/dword/signed dword) 0) ← (const byte) main::midw#0 [ ] ( main:2 [ ] )
+  [5] *((const byte*) main::SCREEN#0+(byte/signed byte/word/signed word/dword/signed dword) 1) ← (const byte) main::midb#0 [ ] ( main:2 [ ] )
+  [6] if(*((const byte*) main::SCREEN#0+(byte/signed byte/word/signed word/dword/signed dword) 0)!=*((const byte*) main::SCREEN#0+(byte/signed byte/word/signed word/dword/signed dword) 1)) goto main::@1 [ ] ( main:2 [ ] )
+  to:main::@3
+main::@3: scope:[main]  from main
+  [7] *((const byte*) main::BGCOL#0) ← (byte/signed byte/word/signed word/dword/signed dword) 5 [ ] ( main:2 [ ] )
+  to:main::@return
+main::@return: scope:[main]  from main::@1 main::@3
+  [8] return  [ ] ( main:2 [ ] )
+  to:@return
+main::@1: scope:[main]  from main
+  [9] *((const byte*) main::BGCOL#0) ← (byte/signed byte/word/signed word/dword/signed dword) 2 [ ] ( main:2 [ ] )
+  to:main::@return
+
+DOMINATORS
+@begin dominated by  @begin 
+@1 dominated by  @1 @begin 
+@end dominated by  @1 @begin @end 
+main dominated by  @1 @begin main 
+main::@3 dominated by  @1 @begin main main::@3 
+main::@return dominated by  main::@return @1 @begin main 
+main::@1 dominated by  @1 @begin main::@1 main 
+
+NATURAL LOOPS
+
+NATURAL LOOPS WITH DEPTH
+Found 0 loops in scope []
+Found 0 loops in scope [main]
+
+
+VARIABLE REGISTER WEIGHTS
+(void()) main()
+(byte*) main::BGCOL
+(byte*) main::SCREEN
+(byte) main::max
+(byte) main::midb
+(byte) main::midw
+(byte) main::min
+(byte) main::sumb
+(word) main::sumw
+
+Initial phi equivalence classes
+Complete equivalence classes
+New fragment synthesis _deref_pbuc1=vbuc2
+New fragment synthesis _deref_pbuc1=vbuc2 - sub-option vbuaa=vbuc1
+New fragment synthesis vbuaa=vbuc1
+New fragment synthesis vbuaa=vbuc1 - Successfully loaded vbuaa=vbuc1.asm
+New fragment synthesis vbuaa=vbuc1 - sub-option vbuaa=vbuaa
+New fragment synthesis vbuaa=vbuaa
+New fragment synthesis vbuaa=vbuaa - Successfully loaded vbuaa=vbuaa.asm
+Fragment synthesis vbuaa=vbuaa - New best, scheduling parent vbuaa=vbuc1
+Fragment synthesis vbuaa=vbuc1 - Successfully synthesized from vbuaa=vbuaa
+Fragment synthesis vbuaa=vbuc1 - New best, scheduling parent _deref_pbuc1=vbuc2
+Fragment synthesis _deref_pbuc1=vbuc2 - Successfully synthesized from vbuaa=vbuc1
+Found best fragment  _deref_pbuc1=vbuc2 < vbuaa=vbuc1 score: 6.5
+New fragment synthesis _deref_pbuc1_neq__deref_pbuc2_then_la1
+New fragment synthesis _deref_pbuc1_neq__deref_pbuc2_then_la1 - sub-option _deref_pbuc2_neq__deref_pbuc1_then_la1
+New fragment synthesis _deref_pbuc1_neq__deref_pbuc2_then_la1 - sub-option _deref_pbuc2_neq__deref_pbuc1_then_la1
+New fragment synthesis _deref_pbuc1_neq__deref_pbuc2_then_la1 - sub-option vbuaa_neq__deref_pbuc1_then_la1
+New fragment synthesis _deref_pbuc1_neq__deref_pbuc2_then_la1 - sub-option vbuxx_neq__deref_pbuc1_then_la1
+New fragment synthesis _deref_pbuc1_neq__deref_pbuc2_then_la1 - sub-option vbuyy_neq__deref_pbuc1_then_la1
+New fragment synthesis _deref_pbuc2_neq__deref_pbuc1_then_la1
+New fragment synthesis _deref_pbuc2_neq__deref_pbuc1_then_la1 - sub-option _deref_pbuc1_neq__deref_pbuc2_then_la1
+New fragment synthesis _deref_pbuc2_neq__deref_pbuc1_then_la1 - sub-option _deref_pbuc1_neq__deref_pbuc2_then_la1
+New fragment synthesis _deref_pbuc2_neq__deref_pbuc1_then_la1 - sub-option _deref_pbuc1_neq_vbuaa_then_la1
+New fragment synthesis _deref_pbuc2_neq__deref_pbuc1_then_la1 - sub-option _deref_pbuc1_neq_vbuxx_then_la1
+New fragment synthesis _deref_pbuc2_neq__deref_pbuc1_then_la1 - sub-option _deref_pbuc1_neq_vbuyy_then_la1
+New fragment synthesis _deref_pbuc1_neq_vbuaa_then_la1
+New fragment synthesis _deref_pbuc1_neq_vbuaa_then_la1 - sub-option _deref_pbuc1_neq_vbuxx_then_la1
+New fragment synthesis _deref_pbuc1_neq_vbuaa_then_la1 - sub-option _deref_pbuc1_neq_vbuyy_then_la1
+New fragment synthesis _deref_pbuc1_neq_vbuaa_then_la1 - sub-option vbuaa_neq__deref_pbuc1_then_la1
+New fragment synthesis _deref_pbuc1_neq_vbuaa_then_la1 - sub-option vbuaa_neq__deref_pbuc1_then_la1
+New fragment synthesis _deref_pbuc1_neq_vbuaa_then_la1 - sub-option vbuxx_neq_vbuaa_then_la1
+New fragment synthesis _deref_pbuc1_neq_vbuaa_then_la1 - sub-option vbuyy_neq_vbuaa_then_la1
+New fragment synthesis _deref_pbuc1_neq_vbuxx_then_la1
+New fragment synthesis _deref_pbuc1_neq_vbuxx_then_la1 - sub-option _deref_pbuc1_neq_vbuaa_then_la1
+New fragment synthesis _deref_pbuc1_neq_vbuxx_then_la1 - sub-option vbuxx_neq__deref_pbuc1_then_la1
+New fragment synthesis _deref_pbuc1_neq_vbuxx_then_la1 - sub-option vbuxx_neq__deref_pbuc1_then_la1
+New fragment synthesis _deref_pbuc1_neq_vbuxx_then_la1 - sub-option vbuaa_neq_vbuxx_then_la1
+New fragment synthesis _deref_pbuc1_neq_vbuxx_then_la1 - sub-option vbuyy_neq_vbuxx_then_la1
+New fragment synthesis vbuxx_neq__deref_pbuc1_then_la1
+New fragment synthesis vbuxx_neq__deref_pbuc1_then_la1 - sub-option vbuaa_neq__deref_pbuc1_then_la1
+New fragment synthesis vbuxx_neq__deref_pbuc1_then_la1 - sub-option _deref_pbuc1_neq_vbuxx_then_la1
+New fragment synthesis vbuxx_neq__deref_pbuc1_then_la1 - sub-option _deref_pbuc1_neq_vbuxx_then_la1
+New fragment synthesis vbuxx_neq__deref_pbuc1_then_la1 - sub-option vbuxx_neq_vbuaa_then_la1
+New fragment synthesis vbuxx_neq__deref_pbuc1_then_la1 - sub-option vbuxx_neq_vbuyy_then_la1
+New fragment synthesis vbuaa_neq__deref_pbuc1_then_la1
+New fragment synthesis vbuaa_neq__deref_pbuc1_then_la1 - sub-option vbuxx_neq__deref_pbuc1_then_la1
+New fragment synthesis vbuaa_neq__deref_pbuc1_then_la1 - sub-option vbuyy_neq__deref_pbuc1_then_la1
+New fragment synthesis vbuaa_neq__deref_pbuc1_then_la1 - sub-option _deref_pbuc1_neq_vbuaa_then_la1
+New fragment synthesis vbuaa_neq__deref_pbuc1_then_la1 - sub-option _deref_pbuc1_neq_vbuaa_then_la1
+New fragment synthesis vbuaa_neq__deref_pbuc1_then_la1 - sub-option vbuaa_neq_vbuxx_then_la1
+New fragment synthesis vbuaa_neq__deref_pbuc1_then_la1 - sub-option vbuaa_neq_vbuyy_then_la1
+New fragment synthesis vbuyy_neq__deref_pbuc1_then_la1
+New fragment synthesis vbuyy_neq__deref_pbuc1_then_la1 - sub-option vbuaa_neq__deref_pbuc1_then_la1
+New fragment synthesis vbuyy_neq__deref_pbuc1_then_la1 - sub-option _deref_pbuc1_neq_vbuyy_then_la1
+New fragment synthesis vbuyy_neq__deref_pbuc1_then_la1 - sub-option _deref_pbuc1_neq_vbuyy_then_la1
+New fragment synthesis vbuyy_neq__deref_pbuc1_then_la1 - sub-option vbuyy_neq_vbuaa_then_la1
+New fragment synthesis vbuyy_neq__deref_pbuc1_then_la1 - sub-option vbuyy_neq_vbuxx_then_la1
+New fragment synthesis _deref_pbuc1_neq_vbuyy_then_la1
+New fragment synthesis _deref_pbuc1_neq_vbuyy_then_la1 - sub-option _deref_pbuc1_neq_vbuaa_then_la1
+New fragment synthesis _deref_pbuc1_neq_vbuyy_then_la1 - sub-option vbuyy_neq__deref_pbuc1_then_la1
+New fragment synthesis _deref_pbuc1_neq_vbuyy_then_la1 - sub-option vbuyy_neq__deref_pbuc1_then_la1
+New fragment synthesis _deref_pbuc1_neq_vbuyy_then_la1 - sub-option vbuaa_neq_vbuyy_then_la1
+New fragment synthesis _deref_pbuc1_neq_vbuyy_then_la1 - sub-option vbuxx_neq_vbuyy_then_la1
+New fragment synthesis vbuaa_neq_vbuyy_then_la1
+New fragment synthesis vbuaa_neq_vbuyy_then_la1 - sub-option vbuxx_neq_vbuyy_then_la1
+New fragment synthesis vbuaa_neq_vbuyy_then_la1 - sub-option vbuyy_neq_vbuaa_then_la1
+New fragment synthesis vbuaa_neq_vbuyy_then_la1 - sub-option vbuyy_neq_vbuaa_then_la1
+New fragment synthesis vbuxx_neq_vbuyy_then_la1
+New fragment synthesis vbuxx_neq_vbuyy_then_la1 - Successfully loaded vbuxx_neq_vbuyy_then_la1.asm
+New fragment synthesis vbuxx_neq_vbuyy_then_la1 - sub-option vbuaa_neq_vbuyy_then_la1
+New fragment synthesis vbuxx_neq_vbuyy_then_la1 - sub-option vbuxx_neq_vbuaa_then_la1
+New fragment synthesis vbuxx_neq_vbuyy_then_la1 - sub-option vbuyy_neq_vbuxx_then_la1
+New fragment synthesis vbuxx_neq_vbuyy_then_la1 - sub-option vbuyy_neq_vbuxx_then_la1
+New fragment synthesis vbuxx_neq_vbuaa_then_la1
+New fragment synthesis vbuxx_neq_vbuaa_then_la1 - sub-option vbuxx_neq_vbuyy_then_la1
+New fragment synthesis vbuxx_neq_vbuaa_then_la1 - sub-option vbuaa_neq_vbuxx_then_la1
+New fragment synthesis vbuxx_neq_vbuaa_then_la1 - sub-option vbuaa_neq_vbuxx_then_la1
+New fragment synthesis vbuaa_neq_vbuxx_then_la1
+New fragment synthesis vbuaa_neq_vbuxx_then_la1 - sub-option vbuyy_neq_vbuxx_then_la1
+New fragment synthesis vbuaa_neq_vbuxx_then_la1 - sub-option vbuxx_neq_vbuaa_then_la1
+New fragment synthesis vbuaa_neq_vbuxx_then_la1 - sub-option vbuxx_neq_vbuaa_then_la1
+New fragment synthesis vbuyy_neq_vbuxx_then_la1
+New fragment synthesis vbuyy_neq_vbuxx_then_la1 - sub-option vbuyy_neq_vbuaa_then_la1
+New fragment synthesis vbuyy_neq_vbuxx_then_la1 - sub-option vbuaa_neq_vbuxx_then_la1
+New fragment synthesis vbuyy_neq_vbuxx_then_la1 - sub-option vbuxx_neq_vbuyy_then_la1
+New fragment synthesis vbuyy_neq_vbuxx_then_la1 - sub-option vbuxx_neq_vbuyy_then_la1
+New fragment synthesis vbuyy_neq_vbuaa_then_la1
+New fragment synthesis vbuyy_neq_vbuaa_then_la1 - sub-option vbuyy_neq_vbuxx_then_la1
+New fragment synthesis vbuyy_neq_vbuaa_then_la1 - sub-option vbuaa_neq_vbuyy_then_la1
+New fragment synthesis vbuyy_neq_vbuaa_then_la1 - sub-option vbuaa_neq_vbuyy_then_la1
+Fragment synthesis vbuyy_neq_vbuaa_then_la1 - No file or synthesis results!
+Fragment synthesis vbuyy_neq_vbuxx_then_la1 - No file or synthesis results!
+Fragment synthesis vbuaa_neq_vbuxx_then_la1 - No file or synthesis results!
+Fragment synthesis vbuxx_neq_vbuaa_then_la1 - No file or synthesis results!
+Fragment synthesis vbuxx_neq_vbuyy_then_la1 - New best, scheduling parent vbuxx_neq_vbuaa_then_la1
+Fragment synthesis vbuxx_neq_vbuyy_then_la1 - New best, scheduling parent vbuyy_neq_vbuxx_then_la1
+Fragment synthesis vbuxx_neq_vbuyy_then_la1 - New best, scheduling parent vbuyy_neq_vbuxx_then_la1
+Fragment synthesis vbuxx_neq_vbuyy_then_la1 - New best, scheduling parent vbuaa_neq_vbuyy_then_la1
+Fragment synthesis vbuxx_neq_vbuyy_then_la1 - New best, scheduling parent _deref_pbuc1_neq_vbuyy_then_la1
+Fragment synthesis vbuxx_neq_vbuyy_then_la1 - New best, scheduling parent vbuxx_neq__deref_pbuc1_then_la1
+Fragment synthesis vbuyy_neq_vbuxx_then_la1 - Successfully synthesized from vbuxx_neq_vbuyy_then_la1
+Fragment synthesis vbuyy_neq_vbuxx_then_la1 - Successfully synthesized from vbuxx_neq_vbuyy_then_la1
+Fragment synthesis vbuyy_neq_vbuxx_then_la1 - New best, scheduling parent vbuyy_neq_vbuaa_then_la1
+Fragment synthesis vbuyy_neq_vbuxx_then_la1 - New best, scheduling parent vbuaa_neq_vbuxx_then_la1
+Fragment synthesis vbuyy_neq_vbuxx_then_la1 - New best, scheduling parent vbuxx_neq_vbuyy_then_la1
+Fragment synthesis vbuyy_neq_vbuxx_then_la1 - New best, scheduling parent vbuxx_neq_vbuyy_then_la1
+Fragment synthesis vbuyy_neq_vbuxx_then_la1 - New best, scheduling parent vbuyy_neq__deref_pbuc1_then_la1
+Fragment synthesis vbuyy_neq_vbuxx_then_la1 - New best, scheduling parent _deref_pbuc1_neq_vbuxx_then_la1
+Fragment synthesis vbuxx_neq_vbuyy_then_la1 - Successfully synthesized from vbuyy_neq_vbuxx_then_la1
+Fragment synthesis vbuxx_neq_vbuyy_then_la1 - Successfully synthesized from vbuyy_neq_vbuxx_then_la1
+Fragment synthesis vbuaa_neq_vbuxx_then_la1 - Successfully synthesized from vbuyy_neq_vbuxx_then_la1
+Fragment synthesis vbuaa_neq_vbuxx_then_la1 - New best, scheduling parent vbuyy_neq_vbuxx_then_la1
+Fragment synthesis vbuaa_neq_vbuxx_then_la1 - New best, scheduling parent vbuxx_neq_vbuaa_then_la1
+Fragment synthesis vbuaa_neq_vbuxx_then_la1 - New best, scheduling parent vbuxx_neq_vbuaa_then_la1
+Fragment synthesis vbuaa_neq_vbuxx_then_la1 - New best, scheduling parent vbuaa_neq__deref_pbuc1_then_la1
+Fragment synthesis vbuaa_neq_vbuxx_then_la1 - New best, scheduling parent _deref_pbuc1_neq_vbuxx_then_la1
+Fragment synthesis vbuyy_neq_vbuxx_then_la1 - Successfully synthesized from vbuaa_neq_vbuxx_then_la1
+Fragment synthesis vbuyy_neq_vbuxx_then_la1 - Successfully synthesized from vbuxx_neq_vbuyy_then_la1
+Fragment synthesis vbuyy_neq_vbuxx_then_la1 - Successfully synthesized from vbuxx_neq_vbuyy_then_la1
+Fragment synthesis vbuyy_neq_vbuaa_then_la1 - Successfully synthesized from vbuyy_neq_vbuxx_then_la1
+Fragment synthesis vbuyy_neq_vbuaa_then_la1 - New best, scheduling parent vbuyy_neq_vbuxx_then_la1
+Fragment synthesis vbuyy_neq_vbuaa_then_la1 - New best, scheduling parent vbuaa_neq_vbuyy_then_la1
+Fragment synthesis vbuyy_neq_vbuaa_then_la1 - New best, scheduling parent vbuaa_neq_vbuyy_then_la1
+Fragment synthesis vbuyy_neq_vbuaa_then_la1 - New best, scheduling parent vbuyy_neq__deref_pbuc1_then_la1
+Fragment synthesis vbuyy_neq_vbuaa_then_la1 - New best, scheduling parent _deref_pbuc1_neq_vbuaa_then_la1
+Fragment synthesis vbuyy_neq_vbuxx_then_la1 - Successfully synthesized from vbuyy_neq_vbuaa_then_la1
+Fragment synthesis vbuyy_neq_vbuxx_then_la1 - Successfully synthesized from vbuaa_neq_vbuxx_then_la1
+Fragment synthesis vbuyy_neq_vbuxx_then_la1 - Successfully synthesized from vbuxx_neq_vbuyy_then_la1
+Fragment synthesis vbuyy_neq_vbuxx_then_la1 - Successfully synthesized from vbuxx_neq_vbuyy_then_la1
+Fragment synthesis vbuxx_neq_vbuaa_then_la1 - Successfully synthesized from vbuxx_neq_vbuyy_then_la1
+Fragment synthesis vbuxx_neq_vbuaa_then_la1 - Successfully synthesized from vbuaa_neq_vbuxx_then_la1
+Fragment synthesis vbuxx_neq_vbuaa_then_la1 - Successfully synthesized from vbuaa_neq_vbuxx_then_la1
+Fragment synthesis vbuxx_neq_vbuaa_then_la1 - New best, scheduling parent vbuaa_neq_vbuxx_then_la1
+Fragment synthesis vbuxx_neq_vbuaa_then_la1 - New best, scheduling parent vbuaa_neq_vbuxx_then_la1
+Fragment synthesis vbuxx_neq_vbuaa_then_la1 - New best, scheduling parent vbuxx_neq_vbuyy_then_la1
+Fragment synthesis vbuxx_neq_vbuaa_then_la1 - New best, scheduling parent vbuxx_neq__deref_pbuc1_then_la1
+Fragment synthesis vbuxx_neq_vbuaa_then_la1 - New best, scheduling parent _deref_pbuc1_neq_vbuaa_then_la1
+Fragment synthesis vbuxx_neq_vbuyy_then_la1 - Successfully synthesized from vbuxx_neq_vbuaa_then_la1
+Fragment synthesis vbuxx_neq_vbuyy_then_la1 - Successfully synthesized from vbuyy_neq_vbuxx_then_la1
+Fragment synthesis vbuxx_neq_vbuyy_then_la1 - Successfully synthesized from vbuyy_neq_vbuxx_then_la1
+Fragment synthesis vbuaa_neq_vbuxx_then_la1 - Successfully synthesized from vbuyy_neq_vbuxx_then_la1
+Fragment synthesis vbuaa_neq_vbuxx_then_la1 - Successfully synthesized from vbuxx_neq_vbuaa_then_la1
+Fragment synthesis vbuaa_neq_vbuxx_then_la1 - Successfully synthesized from vbuxx_neq_vbuaa_then_la1
+Fragment synthesis vbuaa_neq_vbuyy_then_la1 - Successfully synthesized from vbuxx_neq_vbuyy_then_la1
+Fragment synthesis vbuaa_neq_vbuyy_then_la1 - Successfully synthesized from vbuyy_neq_vbuaa_then_la1
+Fragment synthesis vbuaa_neq_vbuyy_then_la1 - Successfully synthesized from vbuyy_neq_vbuaa_then_la1
+Fragment synthesis vbuaa_neq_vbuyy_then_la1 - New best, scheduling parent vbuxx_neq_vbuyy_then_la1
+Fragment synthesis vbuaa_neq_vbuyy_then_la1 - New best, scheduling parent vbuyy_neq_vbuaa_then_la1
+Fragment synthesis vbuaa_neq_vbuyy_then_la1 - New best, scheduling parent vbuyy_neq_vbuaa_then_la1
+Fragment synthesis vbuaa_neq_vbuyy_then_la1 - New best, scheduling parent _deref_pbuc1_neq_vbuyy_then_la1
+Fragment synthesis vbuaa_neq_vbuyy_then_la1 - New best, scheduling parent vbuaa_neq__deref_pbuc1_then_la1
+Fragment synthesis vbuyy_neq_vbuaa_then_la1 - Successfully synthesized from vbuyy_neq_vbuxx_then_la1
+Fragment synthesis vbuyy_neq_vbuaa_then_la1 - Successfully synthesized from vbuaa_neq_vbuyy_then_la1
+Fragment synthesis vbuyy_neq_vbuaa_then_la1 - Successfully synthesized from vbuaa_neq_vbuyy_then_la1
+Fragment synthesis vbuxx_neq_vbuyy_then_la1 - Successfully synthesized from vbuaa_neq_vbuyy_then_la1
+Fragment synthesis vbuxx_neq_vbuyy_then_la1 - Successfully synthesized from vbuxx_neq_vbuaa_then_la1
+Fragment synthesis vbuxx_neq_vbuyy_then_la1 - Successfully synthesized from vbuyy_neq_vbuxx_then_la1
+Fragment synthesis vbuxx_neq_vbuyy_then_la1 - Successfully synthesized from vbuyy_neq_vbuxx_then_la1
+Fragment synthesis _deref_pbuc1_neq_vbuyy_then_la1 - Successfully synthesized from vbuaa_neq_vbuyy_then_la1
+Fragment synthesis _deref_pbuc1_neq_vbuyy_then_la1 - Successfully synthesized from vbuxx_neq_vbuyy_then_la1
+Fragment synthesis _deref_pbuc1_neq_vbuyy_then_la1 - New best, scheduling parent vbuyy_neq__deref_pbuc1_then_la1
+Fragment synthesis _deref_pbuc1_neq_vbuyy_then_la1 - New best, scheduling parent vbuyy_neq__deref_pbuc1_then_la1
+Fragment synthesis _deref_pbuc1_neq_vbuyy_then_la1 - New best, scheduling parent _deref_pbuc1_neq_vbuaa_then_la1
+Fragment synthesis _deref_pbuc1_neq_vbuyy_then_la1 - New best, scheduling parent _deref_pbuc2_neq__deref_pbuc1_then_la1
+Fragment synthesis vbuyy_neq__deref_pbuc1_then_la1 - Successfully synthesized from _deref_pbuc1_neq_vbuyy_then_la1
+Fragment synthesis vbuyy_neq__deref_pbuc1_then_la1 - Successfully synthesized from _deref_pbuc1_neq_vbuyy_then_la1
+Fragment synthesis vbuyy_neq__deref_pbuc1_then_la1 - Successfully synthesized from vbuyy_neq_vbuaa_then_la1
+Fragment synthesis vbuyy_neq__deref_pbuc1_then_la1 - Successfully synthesized from vbuyy_neq_vbuxx_then_la1
+Fragment synthesis vbuyy_neq__deref_pbuc1_then_la1 - New best, scheduling parent _deref_pbuc1_neq_vbuyy_then_la1
+Fragment synthesis vbuyy_neq__deref_pbuc1_then_la1 - New best, scheduling parent _deref_pbuc1_neq_vbuyy_then_la1
+Fragment synthesis vbuyy_neq__deref_pbuc1_then_la1 - New best, scheduling parent vbuaa_neq__deref_pbuc1_then_la1
+Fragment synthesis vbuyy_neq__deref_pbuc1_then_la1 - New best, scheduling parent _deref_pbuc1_neq__deref_pbuc2_then_la1
+Fragment synthesis _deref_pbuc1_neq_vbuyy_then_la1 - Successfully synthesized from vbuyy_neq__deref_pbuc1_then_la1
+Fragment synthesis _deref_pbuc1_neq_vbuyy_then_la1 - Successfully synthesized from vbuyy_neq__deref_pbuc1_then_la1
+Fragment synthesis _deref_pbuc1_neq_vbuyy_then_la1 - Successfully synthesized from vbuaa_neq_vbuyy_then_la1
+Fragment synthesis _deref_pbuc1_neq_vbuyy_then_la1 - Successfully synthesized from vbuxx_neq_vbuyy_then_la1
+Fragment synthesis vbuaa_neq__deref_pbuc1_then_la1 - Successfully synthesized from vbuyy_neq__deref_pbuc1_then_la1
+Fragment synthesis vbuaa_neq__deref_pbuc1_then_la1 - Successfully synthesized from vbuaa_neq_vbuxx_then_la1
+Fragment synthesis vbuaa_neq__deref_pbuc1_then_la1 - Successfully synthesized from vbuaa_neq_vbuyy_then_la1
+Fragment synthesis vbuaa_neq__deref_pbuc1_then_la1 - New best, scheduling parent vbuyy_neq__deref_pbuc1_then_la1
+Fragment synthesis vbuaa_neq__deref_pbuc1_then_la1 - New best, scheduling parent vbuxx_neq__deref_pbuc1_then_la1
+Fragment synthesis vbuaa_neq__deref_pbuc1_then_la1 - New best, scheduling parent _deref_pbuc1_neq_vbuaa_then_la1
+Fragment synthesis vbuaa_neq__deref_pbuc1_then_la1 - New best, scheduling parent _deref_pbuc1_neq_vbuaa_then_la1
+Fragment synthesis vbuaa_neq__deref_pbuc1_then_la1 - New best, scheduling parent _deref_pbuc1_neq__deref_pbuc2_then_la1
+Fragment synthesis vbuyy_neq__deref_pbuc1_then_la1 - Successfully synthesized from vbuaa_neq__deref_pbuc1_then_la1
+Fragment synthesis vbuyy_neq__deref_pbuc1_then_la1 - Successfully synthesized from _deref_pbuc1_neq_vbuyy_then_la1
+Fragment synthesis vbuyy_neq__deref_pbuc1_then_la1 - Successfully synthesized from _deref_pbuc1_neq_vbuyy_then_la1
+Fragment synthesis vbuyy_neq__deref_pbuc1_then_la1 - Successfully synthesized from vbuyy_neq_vbuaa_then_la1
+Fragment synthesis vbuyy_neq__deref_pbuc1_then_la1 - Successfully synthesized from vbuyy_neq_vbuxx_then_la1
+Fragment synthesis vbuxx_neq__deref_pbuc1_then_la1 - Successfully synthesized from vbuaa_neq__deref_pbuc1_then_la1
+Fragment synthesis vbuxx_neq__deref_pbuc1_then_la1 - Successfully synthesized from vbuxx_neq_vbuaa_then_la1
+Fragment synthesis vbuxx_neq__deref_pbuc1_then_la1 - Successfully synthesized from vbuxx_neq_vbuyy_then_la1
+Fragment synthesis vbuxx_neq__deref_pbuc1_then_la1 - New best, scheduling parent vbuaa_neq__deref_pbuc1_then_la1
+Fragment synthesis vbuxx_neq__deref_pbuc1_then_la1 - New best, scheduling parent _deref_pbuc1_neq_vbuxx_then_la1
+Fragment synthesis vbuxx_neq__deref_pbuc1_then_la1 - New best, scheduling parent _deref_pbuc1_neq_vbuxx_then_la1
+Fragment synthesis vbuxx_neq__deref_pbuc1_then_la1 - New best, scheduling parent _deref_pbuc1_neq__deref_pbuc2_then_la1
+Fragment synthesis vbuaa_neq__deref_pbuc1_then_la1 - Successfully synthesized from vbuxx_neq__deref_pbuc1_then_la1
+Fragment synthesis vbuaa_neq__deref_pbuc1_then_la1 - Successfully synthesized from vbuyy_neq__deref_pbuc1_then_la1
+Fragment synthesis vbuaa_neq__deref_pbuc1_then_la1 - Successfully synthesized from vbuaa_neq_vbuxx_then_la1
+Fragment synthesis vbuaa_neq__deref_pbuc1_then_la1 - Successfully synthesized from vbuaa_neq_vbuyy_then_la1
+Fragment synthesis _deref_pbuc1_neq_vbuxx_then_la1 - Successfully synthesized from vbuxx_neq__deref_pbuc1_then_la1
+Fragment synthesis _deref_pbuc1_neq_vbuxx_then_la1 - Successfully synthesized from vbuxx_neq__deref_pbuc1_then_la1
+Fragment synthesis _deref_pbuc1_neq_vbuxx_then_la1 - Successfully synthesized from vbuaa_neq_vbuxx_then_la1
+Fragment synthesis _deref_pbuc1_neq_vbuxx_then_la1 - Successfully synthesized from vbuyy_neq_vbuxx_then_la1
+Fragment synthesis _deref_pbuc1_neq_vbuxx_then_la1 - New best, scheduling parent vbuxx_neq__deref_pbuc1_then_la1
+Fragment synthesis _deref_pbuc1_neq_vbuxx_then_la1 - New best, scheduling parent vbuxx_neq__deref_pbuc1_then_la1
+Fragment synthesis _deref_pbuc1_neq_vbuxx_then_la1 - New best, scheduling parent _deref_pbuc1_neq_vbuaa_then_la1
+Fragment synthesis _deref_pbuc1_neq_vbuxx_then_la1 - New best, scheduling parent _deref_pbuc2_neq__deref_pbuc1_then_la1
+Fragment synthesis vbuxx_neq__deref_pbuc1_then_la1 - Successfully synthesized from vbuaa_neq__deref_pbuc1_then_la1
+Fragment synthesis vbuxx_neq__deref_pbuc1_then_la1 - Successfully synthesized from _deref_pbuc1_neq_vbuxx_then_la1
+Fragment synthesis vbuxx_neq__deref_pbuc1_then_la1 - Successfully synthesized from _deref_pbuc1_neq_vbuxx_then_la1
+Fragment synthesis vbuxx_neq__deref_pbuc1_then_la1 - Successfully synthesized from vbuxx_neq_vbuaa_then_la1
+Fragment synthesis vbuxx_neq__deref_pbuc1_then_la1 - Successfully synthesized from vbuxx_neq_vbuyy_then_la1
+Fragment synthesis _deref_pbuc1_neq_vbuaa_then_la1 - Successfully synthesized from _deref_pbuc1_neq_vbuxx_then_la1
+Fragment synthesis _deref_pbuc1_neq_vbuaa_then_la1 - Successfully synthesized from _deref_pbuc1_neq_vbuyy_then_la1
+Fragment synthesis _deref_pbuc1_neq_vbuaa_then_la1 - Successfully synthesized from vbuaa_neq__deref_pbuc1_then_la1
+Fragment synthesis _deref_pbuc1_neq_vbuaa_then_la1 - Successfully synthesized from vbuaa_neq__deref_pbuc1_then_la1
+Fragment synthesis _deref_pbuc1_neq_vbuaa_then_la1 - Successfully synthesized from vbuxx_neq_vbuaa_then_la1
+Fragment synthesis _deref_pbuc1_neq_vbuaa_then_la1 - Successfully synthesized from vbuyy_neq_vbuaa_then_la1
+Fragment synthesis _deref_pbuc1_neq_vbuaa_then_la1 - New best, scheduling parent _deref_pbuc1_neq_vbuxx_then_la1
+Fragment synthesis _deref_pbuc1_neq_vbuaa_then_la1 - New best, scheduling parent _deref_pbuc1_neq_vbuyy_then_la1
+Fragment synthesis _deref_pbuc1_neq_vbuaa_then_la1 - New best, scheduling parent vbuaa_neq__deref_pbuc1_then_la1
+Fragment synthesis _deref_pbuc1_neq_vbuaa_then_la1 - New best, scheduling parent vbuaa_neq__deref_pbuc1_then_la1
+Fragment synthesis _deref_pbuc1_neq_vbuaa_then_la1 - New best, scheduling parent _deref_pbuc2_neq__deref_pbuc1_then_la1
+Fragment synthesis vbuaa_neq__deref_pbuc1_then_la1 - Successfully synthesized from vbuxx_neq__deref_pbuc1_then_la1
+Fragment synthesis vbuaa_neq__deref_pbuc1_then_la1 - Successfully synthesized from vbuyy_neq__deref_pbuc1_then_la1
+Fragment synthesis vbuaa_neq__deref_pbuc1_then_la1 - Successfully synthesized from _deref_pbuc1_neq_vbuaa_then_la1
+Fragment synthesis vbuaa_neq__deref_pbuc1_then_la1 - Successfully synthesized from _deref_pbuc1_neq_vbuaa_then_la1
+Fragment synthesis vbuaa_neq__deref_pbuc1_then_la1 - Successfully synthesized from vbuaa_neq_vbuxx_then_la1
+Fragment synthesis vbuaa_neq__deref_pbuc1_then_la1 - Successfully synthesized from vbuaa_neq_vbuyy_then_la1
+Fragment synthesis _deref_pbuc1_neq_vbuyy_then_la1 - Successfully synthesized from _deref_pbuc1_neq_vbuaa_then_la1
+Fragment synthesis _deref_pbuc1_neq_vbuyy_then_la1 - Successfully synthesized from vbuyy_neq__deref_pbuc1_then_la1
+Fragment synthesis _deref_pbuc1_neq_vbuyy_then_la1 - Successfully synthesized from vbuyy_neq__deref_pbuc1_then_la1
+Fragment synthesis _deref_pbuc1_neq_vbuyy_then_la1 - Successfully synthesized from vbuaa_neq_vbuyy_then_la1
+Fragment synthesis _deref_pbuc1_neq_vbuyy_then_la1 - Successfully synthesized from vbuxx_neq_vbuyy_then_la1
+Fragment synthesis _deref_pbuc1_neq_vbuxx_then_la1 - Successfully synthesized from _deref_pbuc1_neq_vbuaa_then_la1
+Fragment synthesis _deref_pbuc1_neq_vbuxx_then_la1 - Successfully synthesized from vbuxx_neq__deref_pbuc1_then_la1
+Fragment synthesis _deref_pbuc1_neq_vbuxx_then_la1 - Successfully synthesized from vbuxx_neq__deref_pbuc1_then_la1
+Fragment synthesis _deref_pbuc1_neq_vbuxx_then_la1 - Successfully synthesized from vbuaa_neq_vbuxx_then_la1
+Fragment synthesis _deref_pbuc1_neq_vbuxx_then_la1 - Successfully synthesized from vbuyy_neq_vbuxx_then_la1
+Fragment synthesis _deref_pbuc2_neq__deref_pbuc1_then_la1 - Successfully synthesized from _deref_pbuc1_neq_vbuaa_then_la1
+Fragment synthesis _deref_pbuc2_neq__deref_pbuc1_then_la1 - Successfully synthesized from _deref_pbuc1_neq_vbuxx_then_la1
+Fragment synthesis _deref_pbuc2_neq__deref_pbuc1_then_la1 - Successfully synthesized from _deref_pbuc1_neq_vbuyy_then_la1
+Fragment synthesis _deref_pbuc2_neq__deref_pbuc1_then_la1 - New best, scheduling parent _deref_pbuc1_neq__deref_pbuc2_then_la1
+Fragment synthesis _deref_pbuc2_neq__deref_pbuc1_then_la1 - New best, scheduling parent _deref_pbuc1_neq__deref_pbuc2_then_la1
+Fragment synthesis _deref_pbuc1_neq__deref_pbuc2_then_la1 - Successfully synthesized from _deref_pbuc2_neq__deref_pbuc1_then_la1
+Fragment synthesis _deref_pbuc1_neq__deref_pbuc2_then_la1 - Successfully synthesized from _deref_pbuc2_neq__deref_pbuc1_then_la1
+Fragment synthesis _deref_pbuc1_neq__deref_pbuc2_then_la1 - Successfully synthesized from vbuaa_neq__deref_pbuc1_then_la1
+Fragment synthesis _deref_pbuc1_neq__deref_pbuc2_then_la1 - Successfully synthesized from vbuxx_neq__deref_pbuc1_then_la1
+Fragment synthesis _deref_pbuc1_neq__deref_pbuc2_then_la1 - Successfully synthesized from vbuyy_neq__deref_pbuc1_then_la1
+Fragment synthesis _deref_pbuc1_neq__deref_pbuc2_then_la1 - New best, scheduling parent _deref_pbuc2_neq__deref_pbuc1_then_la1
+Fragment synthesis _deref_pbuc1_neq__deref_pbuc2_then_la1 - New best, scheduling parent _deref_pbuc2_neq__deref_pbuc1_then_la1
+Fragment synthesis _deref_pbuc2_neq__deref_pbuc1_then_la1 - Successfully synthesized from _deref_pbuc1_neq__deref_pbuc2_then_la1
+Fragment synthesis _deref_pbuc2_neq__deref_pbuc1_then_la1 - Successfully synthesized from _deref_pbuc1_neq__deref_pbuc2_then_la1
+Fragment synthesis _deref_pbuc2_neq__deref_pbuc1_then_la1 - Successfully synthesized from _deref_pbuc1_neq_vbuaa_then_la1
+Fragment synthesis _deref_pbuc2_neq__deref_pbuc1_then_la1 - Successfully synthesized from _deref_pbuc1_neq_vbuxx_then_la1
+Fragment synthesis _deref_pbuc2_neq__deref_pbuc1_then_la1 - Successfully synthesized from _deref_pbuc1_neq_vbuyy_then_la1
+Found best fragment  _deref_pbuc1_neq__deref_pbuc2_then_la1 < _deref_pbuc2_neq__deref_pbuc1_then_la1 < _deref_pbuc1_neq_vbuxx_then_la1 < vbuxx_neq__deref_pbuc1_then_la1 < vbuxx_neq_vbuyy_then_la1 score: 19.0
+
+INITIAL ASM
+//SEG0 Basic Upstart
+.pc = $801 "Basic"
+:BasicUpstart(main)
+.pc = $80d "Program"
+//SEG1 Global Constants & labels
+//SEG2 @begin
+bbegin:
+//SEG3 [1] phi from @begin to @1 [phi:@begin->@1]
+b1_from_bbegin:
+  jmp b1
+//SEG4 @1
+b1:
+//SEG5 [2] call main param-assignment [ ] ( )
+  jsr main
+//SEG6 [3] phi from @1 to @end [phi:@1->@end]
+bend_from_b1:
+  jmp bend
+//SEG7 @end
+bend:
+//SEG8 main
+main: {
+    .label SCREEN = $400
+    .const min = $a
+    .const max = $c8
+    .label BGCOL = $d021
+    .const sumw = min+max
+    .const sumb = min+max
+    .const midb = (sumb>>1)+1
+    .const midw = $ff & sumw>>1+1
+  //SEG9 [4] *((const byte*) main::SCREEN#0+(byte/signed byte/word/signed word/dword/signed dword) 0) ← (const byte) main::midw#0 [ ] ( main:2 [ ] ) -- _deref_pbuc1=vbuc2 
+    lda #midw
+    sta SCREEN+0
+  //SEG10 [5] *((const byte*) main::SCREEN#0+(byte/signed byte/word/signed word/dword/signed dword) 1) ← (const byte) main::midb#0 [ ] ( main:2 [ ] ) -- _deref_pbuc1=vbuc2 
+    lda #midb
+    sta SCREEN+1
+  //SEG11 [6] if(*((const byte*) main::SCREEN#0+(byte/signed byte/word/signed word/dword/signed dword) 0)!=*((const byte*) main::SCREEN#0+(byte/signed byte/word/signed word/dword/signed dword) 1)) goto main::@1 [ ] ( main:2 [ ] ) -- _deref_pbuc1_neq__deref_pbuc2_then_la1 
+    ldx SCREEN+0
+    ldy SCREEN+1
+    stx $ff
+    cpy $ff
+    bne b1
+    jmp b3
+  //SEG12 main::@3
+  b3:
+  //SEG13 [7] *((const byte*) main::BGCOL#0) ← (byte/signed byte/word/signed word/dword/signed dword) 5 [ ] ( main:2 [ ] ) -- _deref_pbuc1=vbuc2 
+    lda #5
+    sta BGCOL
+    jmp breturn
+  //SEG14 main::@return
+  breturn:
+  //SEG15 [8] return  [ ] ( main:2 [ ] )
+    rts
+  //SEG16 main::@1
+  b1:
+  //SEG17 [9] *((const byte*) main::BGCOL#0) ← (byte/signed byte/word/signed word/dword/signed dword) 2 [ ] ( main:2 [ ] ) -- _deref_pbuc1=vbuc2 
+    lda #2
+    sta BGCOL
+    jmp breturn
+}
+
+REGISTER UPLIFT POTENTIAL REGISTERS
+Statement [4] *((const byte*) main::SCREEN#0+(byte/signed byte/word/signed word/dword/signed dword) 0) ← (const byte) main::midw#0 [ ] ( main:2 [ ] ) always clobbers reg byte a 
+Statement [5] *((const byte*) main::SCREEN#0+(byte/signed byte/word/signed word/dword/signed dword) 1) ← (const byte) main::midb#0 [ ] ( main:2 [ ] ) always clobbers reg byte a 
+Statement [6] if(*((const byte*) main::SCREEN#0+(byte/signed byte/word/signed word/dword/signed dword) 0)!=*((const byte*) main::SCREEN#0+(byte/signed byte/word/signed word/dword/signed dword) 1)) goto main::@1 [ ] ( main:2 [ ] ) always clobbers reg byte x reg byte y 
+Statement [7] *((const byte*) main::BGCOL#0) ← (byte/signed byte/word/signed word/dword/signed dword) 5 [ ] ( main:2 [ ] ) always clobbers reg byte a 
+Statement [9] *((const byte*) main::BGCOL#0) ← (byte/signed byte/word/signed word/dword/signed dword) 2 [ ] ( main:2 [ ] ) always clobbers reg byte a 
+
+REGISTER UPLIFT SCOPES
+Uplift Scope [main] 
+Uplift Scope [] 
+
+Uplifting [main] best 67 combination 
+Uplifting [] best 67 combination 
+
+ASSEMBLER BEFORE OPTIMIZATION
+//SEG0 Basic Upstart
+.pc = $801 "Basic"
+:BasicUpstart(main)
+.pc = $80d "Program"
+//SEG1 Global Constants & labels
+//SEG2 @begin
+bbegin:
+//SEG3 [1] phi from @begin to @1 [phi:@begin->@1]
+b1_from_bbegin:
+  jmp b1
+//SEG4 @1
+b1:
+//SEG5 [2] call main param-assignment [ ] ( )
+  jsr main
+//SEG6 [3] phi from @1 to @end [phi:@1->@end]
+bend_from_b1:
+  jmp bend
+//SEG7 @end
+bend:
+//SEG8 main
+main: {
+    .label SCREEN = $400
+    .const min = $a
+    .const max = $c8
+    .label BGCOL = $d021
+    .const sumw = min+max
+    .const sumb = min+max
+    .const midb = (sumb>>1)+1
+    .const midw = $ff & sumw>>1+1
+  //SEG9 [4] *((const byte*) main::SCREEN#0+(byte/signed byte/word/signed word/dword/signed dword) 0) ← (const byte) main::midw#0 [ ] ( main:2 [ ] ) -- _deref_pbuc1=vbuc2 
+    lda #midw
+    sta SCREEN+0
+  //SEG10 [5] *((const byte*) main::SCREEN#0+(byte/signed byte/word/signed word/dword/signed dword) 1) ← (const byte) main::midb#0 [ ] ( main:2 [ ] ) -- _deref_pbuc1=vbuc2 
+    lda #midb
+    sta SCREEN+1
+  //SEG11 [6] if(*((const byte*) main::SCREEN#0+(byte/signed byte/word/signed word/dword/signed dword) 0)!=*((const byte*) main::SCREEN#0+(byte/signed byte/word/signed word/dword/signed dword) 1)) goto main::@1 [ ] ( main:2 [ ] ) -- _deref_pbuc1_neq__deref_pbuc2_then_la1 
+    ldx SCREEN+0
+    ldy SCREEN+1
+    stx $ff
+    cpy $ff
+    bne b1
+    jmp b3
+  //SEG12 main::@3
+  b3:
+  //SEG13 [7] *((const byte*) main::BGCOL#0) ← (byte/signed byte/word/signed word/dword/signed dword) 5 [ ] ( main:2 [ ] ) -- _deref_pbuc1=vbuc2 
+    lda #5
+    sta BGCOL
+    jmp breturn
+  //SEG14 main::@return
+  breturn:
+  //SEG15 [8] return  [ ] ( main:2 [ ] )
+    rts
+  //SEG16 main::@1
+  b1:
+  //SEG17 [9] *((const byte*) main::BGCOL#0) ← (byte/signed byte/word/signed word/dword/signed dword) 2 [ ] ( main:2 [ ] ) -- _deref_pbuc1=vbuc2 
+    lda #2
+    sta BGCOL
+    jmp breturn
+}
+
+ASSEMBLER OPTIMIZATIONS
+Removing instruction jmp b1
+Removing instruction jmp bend
+Removing instruction jmp b3
+Removing instruction jmp breturn
+Succesful ASM optimization Pass5NextJumpElimination
+Replacing instruction ldy SCREEN+1 with TAY
+Removing instruction bbegin:
+Removing instruction b1_from_bbegin:
+Removing instruction bend_from_b1:
+Succesful ASM optimization Pass5RedundantLabelElimination
+Removing instruction b1:
+Removing instruction bend:
+Removing instruction b3:
+Succesful ASM optimization Pass5UnusedLabelElimination
+
+FINAL SYMBOL TABLE
+(label) @1
+(label) @begin
+(label) @end
+(void()) main()
+(label) main::@1
+(label) main::@3
+(label) main::@return
+(byte*) main::BGCOL
+(const byte*) main::BGCOL#0 BGCOL = ((byte*))(word/dword/signed dword) 53281
+(byte*) main::SCREEN
+(const byte*) main::SCREEN#0 SCREEN = ((byte*))(word/signed word/dword/signed dword) 1024
+(byte) main::max
+(const byte) main::max#0 max = (byte/word/signed word/dword/signed dword) 200
+(byte) main::midb
+(const byte) main::midb#0 midb = (const byte) main::sumb#0>>(byte/signed byte/word/signed word/dword/signed dword) 1+(byte/signed byte/word/signed word/dword/signed dword) 1
+(byte) main::midw
+(const byte) main::midw#0 midw = ((byte))(const word) main::sumw#0>>(byte/signed byte/word/signed word/dword/signed dword) 1+(byte/signed byte/word/signed word/dword/signed dword) 1
+(byte) main::min
+(const byte) main::min#0 min = (byte/signed byte/word/signed word/dword/signed dword) 10
+(byte) main::sumb
+(const byte) main::sumb#0 sumb = (const byte) main::min#0+(const byte) main::max#0
+(word) main::sumw
+(const word) main::sumw#0 sumw = (const byte) main::min#0+(const byte) main::max#0
+
+
+
+FINAL ASSEMBLER
+Score: 53
+
+//SEG0 Basic Upstart
+.pc = $801 "Basic"
+:BasicUpstart(main)
+.pc = $80d "Program"
+//SEG1 Global Constants & labels
+//SEG2 @begin
+//SEG3 [1] phi from @begin to @1 [phi:@begin->@1]
+//SEG4 @1
+//SEG5 [2] call main param-assignment [ ] ( )
+  jsr main
+//SEG6 [3] phi from @1 to @end [phi:@1->@end]
+//SEG7 @end
+//SEG8 main
+main: {
+    .label SCREEN = $400
+    .const min = $a
+    .const max = $c8
+    .label BGCOL = $d021
+    .const sumw = min+max
+    .const sumb = min+max
+    .const midb = (sumb>>1)+1
+    .const midw = $ff & sumw>>1+1
+  //SEG9 [4] *((const byte*) main::SCREEN#0+(byte/signed byte/word/signed word/dword/signed dword) 0) ← (const byte) main::midw#0 [ ] ( main:2 [ ] ) -- _deref_pbuc1=vbuc2 
+    lda #midw
+    sta SCREEN+0
+  //SEG10 [5] *((const byte*) main::SCREEN#0+(byte/signed byte/word/signed word/dword/signed dword) 1) ← (const byte) main::midb#0 [ ] ( main:2 [ ] ) -- _deref_pbuc1=vbuc2 
+    lda #midb
+    sta SCREEN+1
+  //SEG11 [6] if(*((const byte*) main::SCREEN#0+(byte/signed byte/word/signed word/dword/signed dword) 0)!=*((const byte*) main::SCREEN#0+(byte/signed byte/word/signed word/dword/signed dword) 1)) goto main::@1 [ ] ( main:2 [ ] ) -- _deref_pbuc1_neq__deref_pbuc2_then_la1 
+    ldx SCREEN+0
+    tay
+    stx $ff
+    cpy $ff
+    bne b1
+  //SEG12 main::@3
+  //SEG13 [7] *((const byte*) main::BGCOL#0) ← (byte/signed byte/word/signed word/dword/signed dword) 5 [ ] ( main:2 [ ] ) -- _deref_pbuc1=vbuc2 
+    lda #5
+    sta BGCOL
+  //SEG14 main::@return
+  breturn:
+  //SEG15 [8] return  [ ] ( main:2 [ ] )
+    rts
+  //SEG16 main::@1
+  b1:
+  //SEG17 [9] *((const byte*) main::BGCOL#0) ← (byte/signed byte/word/signed word/dword/signed dword) 2 [ ] ( main:2 [ ] ) -- _deref_pbuc1=vbuc2 
+    lda #2
+    sta BGCOL
+    jmp breturn
+}
+

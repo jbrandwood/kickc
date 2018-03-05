@@ -1,53 +1,58 @@
 package dk.camelot64.kickc.model;
 
+import dk.camelot64.kickc.model.operators.*;
+
 /**
  * An Operator. The operation performed on the rvalues in a Statement.
  */
 public class Operator {
 
-   public static final Operator INCREMENT = new Operator("++", "_inc_", Type.UNARY, 1);
-   public static final Operator DECREMENT = new Operator("--", "_dec_", Type.UNARY, 1);
-   public static final Operator POS = new Operator("+", "_pos_", Type.UNARY, 2);
-   public static final Operator NEG = new Operator("-", "_neg_", Type.UNARY, 2);
-   public static final Operator BOOL_NOT = new Operator("~", "_not_", Type.UNARY, 2);
-   public static final Operator LOGIC_NOT = new Operator("!", "_not_", Type.UNARY, 2);
-   public static final Operator DEREF = new Operator("*", "_deref_", Type.UNARY, 2);
-   public static final Operator ADDRESS_OF = new Operator("&", "_addr_", Type.UNARY, 2);
-   public static final Operator WORD = new Operator("w=", "_word_", Type.BINARY, 2);
-   public static final Operator DWORD = new Operator("dw=", "_dword_", Type.BINARY, 2);
-   public static final Operator DEREF_IDX = new Operator("*idx", "_derefidx_", Type.BINARY, 2);
-   public static final Operator SET_LOWBYTE = new Operator("lo=", "_setlo_", Type.BINARY, 2);
-   public static final Operator SET_HIBYTE = new Operator("hi=", "_sethi_", Type.BINARY, 2);
-   public static final Operator CAST_BYTE = new Operator("((byte))", "_byte_", Type.UNARY, 2);
-   public static final Operator CAST_SBYTE = new Operator("((signed byte))", "_sbyte_", Type.UNARY, 2);
-   public static final Operator CAST_WORD = new Operator("((word))", "_word_", Type.UNARY, 2);
-   public static final Operator CAST_SWORD = new Operator("((signed word))", "_sword_", Type.UNARY, 2);
-   public static final Operator CAST_DWORD = new Operator("((dword))", "_dword_", Type.UNARY, 2);
-   public static final Operator CAST_SDWORD = new Operator("((signed dword))", "_sdword_", Type.UNARY, 2);
-   public static final Operator CAST_PTRBY = new Operator("((byte*))", "_ptrby_", Type.UNARY, 2);
-   public static final Operator MULTIPLY = new Operator("*", "_mul_", Type.BINARY, 3);
-   public static final Operator DIVIDE = new Operator("/", "_div_", Type.BINARY, 3);
-   public static final Operator PLUS = new Operator("+", "_plus_", Type.BINARY, 4);
-   public static final Operator MINUS = new Operator("-", "_minus_", Type.BINARY, 4);
-   public static final Operator SHIFT_LEFT = new Operator("<<", "_rol_", Type.BINARY, 5);
-   public static final Operator SHIFT_RIGHT = new Operator(">>", "_ror_", Type.BINARY, 5);
-   public static final Operator LOWBYTE = new Operator("<", "_lo_", Type.UNARY, 6);
-   public static final Operator HIBYTE = new Operator(">", "_hi_", Type.UNARY, 6);
-   public static final Operator LT = new Operator("<", "_lt_", Type.BINARY, 7);
-   public static final Operator LE = new Operator("<=", "_le_", Type.BINARY, 7);
-   public static final Operator GT = new Operator(">", "_gt_", Type.BINARY, 7);
-   public static final Operator GE = new Operator(">=", "_ge_", Type.BINARY, 7);
-   public static final Operator EQ = new Operator("==", "_eq_", Type.BINARY, 8);
-   public static final Operator NEQ = new Operator("!=", "_neq_", Type.BINARY, 8);
-   public static final Operator BOOL_AND = new Operator("&", "_band_", Type.BINARY, 9);
-   public static final Operator BOOL_XOR = new Operator("^", "_bxor_", Type.BINARY, 10);
-   public static final Operator BOOL_OR = new Operator("|", "_bor_", Type.BINARY, 11);
-   public static final Operator LOGIC_AND = new Operator("&&", "_and_", Type.BINARY, 12);
-   public static final Operator LOGIC_OR = new Operator("||", "_or_", Type.BINARY, 13);
+   public static final Operator INCREMENT = new OperatorIncrement(1);
+   public static final Operator DECREMENT = new OperatorDecrement(1);
+   public static final Operator POS = new OperatorPos(2);
+   public static final Operator NEG = new OperatorNeg(2);
+   public static final Operator BOOL_NOT = new OperatorBoolNot(2);
+   public static final Operator LOGIC_NOT = new OperatorLogicNot(2);
+   public static final Operator DEREF = new OperatorDeref(2);
+   public static final Operator ADDRESS_OF = new OperatorAddressOf(2);
+   public static final Operator WORD = new OperatorWord(2);
+   public static final Operator DWORD = new OperatorDWord(2);
+   public static final Operator DEREF_IDX = new OperatorDerefIdx(2);
+   public static final Operator SET_LOWBYTE = new OperatorSetLow(2);
+   public static final Operator SET_HIBYTE = new OperatorSetHigh(2);
+   public static final Operator CAST_BYTE = new OperatorCastByte(2);
+   public static final Operator CAST_SBYTE = new OperatorCastSByte(2);
+   public static final Operator CAST_WORD = new OperatorCastWord(2);
+   public static final Operator CAST_SWORD = new OperatorCastSWord(2);
+   public static final Operator CAST_DWORD = new OperatorCastDWord(2);
+   public static final Operator CAST_SDWORD = new OperatorCastSDWord(2);
+   public static final Operator CAST_PTRBY = new OperatorCastPtrByte(2);
+   public static final Operator MULTIPLY = new OperatorMultiply(3);
+   public static final Operator DIVIDE = new OperatorDivide(3);
+   public static final Operator PLUS = new OperatorPlus(4);
+   public static final Operator MINUS = new OperatorMinus(4);
+   public static final Operator SHIFT_LEFT = new OperatorShiftLeft(5);
+   public static final Operator SHIFT_RIGHT = new OperatorShiftRight(5);
+   public static final Operator LOWBYTE = new OperatorGetLow(6);
+   public static final Operator HIBYTE = new OperatorGetHigh(6);
+   public static final Operator LT = new OperatorLessThan(7);
+   public static final Operator LE = new OperatorLessThanEqual(7);
+   public static final Operator GT = new OperatorGreaterThan(7);
+   public static final Operator GE = new OperatorGreaterThanEqual(7);
+   public static final Operator EQ = new OperatorEqual(8);
+   public static final Operator NEQ = new OperatorNotEqual(8);
+   public static final Operator BOOL_AND = new OperatorBoolAnd(9);
+   public static final Operator BOOL_XOR = new OperatorBoolXor(10);
+   public static final Operator BOOL_OR = new OperatorBoolOr(11);
+   public static final Operator LOGIC_AND = new OperatorLogicAnd(12);
+   public static final Operator LOGIC_OR = new OperatorLogicOr(13);
+
+
    private String operator;
    private int precedence;
    private Type type;
    private String asmOperator;
+
    public Operator(String operator, String asmOperator, Type type, int precedence) {
       this.operator = operator;
       this.precedence = precedence;

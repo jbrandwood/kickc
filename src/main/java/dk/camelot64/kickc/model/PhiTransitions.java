@@ -123,12 +123,7 @@ public class PhiTransitions {
             Collections.reverse(phiVariables);
             for(StatementPhiBlock.PhiVariable phiVariable : phiVariables) {
                List<StatementPhiBlock.PhiRValue> phiRValues = new ArrayList<>(phiVariable.getValues());
-               Collections.sort(phiRValues, new Comparator<StatementPhiBlock.PhiRValue>() {
-                  @Override
-                  public int compare(StatementPhiBlock.PhiRValue o1, StatementPhiBlock.PhiRValue o2) {
-                     return o1.getPredecessor().getFullName().compareTo(o2.getPredecessor().getFullName());
-                  }
-               });
+               Collections.sort(phiRValues, Comparator.comparing(o -> o.getPredecessor().getFullName()));
                for(StatementPhiBlock.PhiRValue phiRValue : phiRValues) {
                   if(phiRValue.getPredecessor().equals(fromBlock.getLabel())) {
                      this.assignments.add(new PhiTransition.PhiAssignment(phiVariable, phiRValue, nextIdx++));

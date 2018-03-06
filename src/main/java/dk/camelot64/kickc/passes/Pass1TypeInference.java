@@ -1,6 +1,12 @@
 package dk.camelot64.kickc.passes;
 
 import dk.camelot64.kickc.model.*;
+import dk.camelot64.kickc.model.statements.*;
+import dk.camelot64.kickc.model.symbols.Procedure;
+import dk.camelot64.kickc.model.symbols.ProgramScope;
+import dk.camelot64.kickc.model.symbols.Scope;
+import dk.camelot64.kickc.model.types.SymbolTypeInference;
+import dk.camelot64.kickc.model.values.ProcedureRef;
 
 import java.util.Stack;
 

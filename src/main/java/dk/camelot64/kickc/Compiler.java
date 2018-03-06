@@ -1,6 +1,8 @@
 package dk.camelot64.kickc;
 
 import dk.camelot64.kickc.model.*;
+import dk.camelot64.kickc.model.statements.StatementCall;
+import dk.camelot64.kickc.model.symbols.Variable;
 import dk.camelot64.kickc.parser.KickCLexer;
 import dk.camelot64.kickc.parser.KickCParser;
 import dk.camelot64.kickc.passes.*;

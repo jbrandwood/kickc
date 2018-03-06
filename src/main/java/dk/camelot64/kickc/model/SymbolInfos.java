@@ -1,5 +1,10 @@
 package dk.camelot64.kickc.model;
 
+import dk.camelot64.kickc.model.values.SymbolRef;
+import dk.camelot64.kickc.model.values.VariableRef;
+import dk.camelot64.kickc.model.symbols.Symbol;
+import dk.camelot64.kickc.model.symbols.Variable;
+
 import java.util.Map;
 
 /** Cached information about symbols. Contains a symbol table cache for fast access. */

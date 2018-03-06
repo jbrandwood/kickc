@@ -1,6 +1,14 @@
 package dk.camelot64.kickc.passes;
 
 import dk.camelot64.kickc.model.*;
+import dk.camelot64.kickc.model.values.LabelRef;
+import dk.camelot64.kickc.model.values.SymbolRef;
+import dk.camelot64.kickc.model.values.VariableRef;
+import dk.camelot64.kickc.model.statements.Statement;
+import dk.camelot64.kickc.model.statements.StatementAssignment;
+import dk.camelot64.kickc.model.statements.StatementConditionalJump;
+import dk.camelot64.kickc.model.symbols.Procedure;
+import dk.camelot64.kickc.model.types.SymbolType;
 
 import java.util.Collection;
 import java.util.LinkedHashSet;

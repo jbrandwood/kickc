@@ -2,18 +2,20 @@ package dk.camelot64.kickc.model;
 
 import dk.camelot64.kickc.model.operators.Operator;
 import dk.camelot64.kickc.model.operators.Operators;
+import dk.camelot64.kickc.model.values.*;
+import dk.camelot64.kickc.model.symbols.ConstantVar;
+import dk.camelot64.kickc.model.symbols.ProgramScope;
 
 /** Can calculate the exact value for constants (used for type inference). */
 public class ConstantValueCalculator {
 
-
-   public static ConstantValue calcValue(ProgramScope programScope, ConstantValue value) {
+   public static ConstantLiteral calcValue(ProgramScope programScope, ConstantValue value) {
       if(value instanceof ConstantInteger) {
-         return value;
+         return (ConstantLiteral) value;
       } else if(value instanceof ConstantString) {
-         return value;
+         return (ConstantLiteral) value;
       } else if(value instanceof ConstantChar) {
-         return value;
+         return (ConstantLiteral) value;
       } else if(value instanceof ConstantRef) {
          ConstantVar constantVar = programScope.getConstant((ConstantRef) value);
          ConstantValue constantVarValue = constantVar.getValue();
@@ -36,7 +38,7 @@ public class ConstantValueCalculator {
    }
 
 
-   public static ConstantValue calcValue(ProgramScope programScope, Operator operator, ConstantValue value) {
+   public static ConstantLiteral calcValue(ProgramScope programScope, Operator operator, ConstantValue value) {
       if(operator.equals(Operators.NEG)) {
          return neg(calcValue(programScope, value));
       } else if(operator.equals(Operators.POS)) {
@@ -53,40 +55,39 @@ public class ConstantValueCalculator {
       return null;
    }
 
-   private static ConstantValue castWord(ConstantValue value) {
+   private static ConstantLiteral castWord(ConstantValue value) {
       if(value instanceof ConstantInteger) {
-         return new ConstantInteger(0xffff & ((ConstantInteger) value).getNumber());
+         return new ConstantInteger(0xffff & ((ConstantInteger) value).getValue());
       }
       return null;
    }
 
-   private static ConstantValue castSWord(ConstantValue value) {
+   private static ConstantLiteral castSWord(ConstantValue value) {
       if(value instanceof ConstantInteger) {
-         return new ConstantInteger(0xffff & ((ConstantInteger) value).getNumber());
+         return new ConstantInteger(0xffff & ((ConstantInteger) value).getValue());
       }
       return null;
    }
 
-   private static ConstantValue castByte(ConstantValue value) {
+   private static ConstantLiteral castByte(ConstantValue value) {
       if(value instanceof ConstantInteger) {
-         return new ConstantInteger(0xff & ((ConstantInteger) value).getNumber());
+         return new ConstantInteger(0xff & ((ConstantInteger) value).getValue());
       }
       return null;
    }
 
-   private static ConstantValue castSByte(ConstantValue value) {
+   private static ConstantLiteral castSByte(ConstantValue value) {
       if(value instanceof ConstantInteger) {
-         return new ConstantInteger(0xff & ((ConstantInteger) value).getNumber());
+         return new ConstantInteger(0xff & ((ConstantInteger) value).getValue());
       }
       return null;
    }
 
-   private static ConstantValue castPtrByte(ConstantValue value) {
+   private static ConstantLiteral castPtrByte(ConstantLiteral value) {
       return value;
    }
 
-
-   public static ConstantValue calcValue(ProgramScope programScope, ConstantValue value1, Operator operator, ConstantValue value2) {
+   public static ConstantLiteral calcValue(ProgramScope programScope, ConstantValue value1, Operator operator, ConstantValue value2) {
       if(operator.equals(Operators.MULTIPLY)) {
          return multiply(calcValue(programScope, value1), calcValue(programScope, value2));
       } else if(operator.equals(Operators.PLUS)) {
@@ -99,36 +100,36 @@ public class ConstantValueCalculator {
       return null;
    }
 
-   private static ConstantValue neg(ConstantValue value) {
+   private static ConstantLiteral neg(ConstantLiteral value) {
       if(value instanceof ConstantInteger) {
-         return new ConstantInteger(-((ConstantInteger) value).getNumber());
+         return new ConstantInteger(-((ConstantInteger) value).getValue());
       }
       return null;
    }
 
-   private static ConstantValue pos(ConstantValue value) {
+   private static ConstantLiteral pos(ConstantLiteral value) {
       if(value instanceof ConstantInteger) {
-         return new ConstantInteger(+((ConstantInteger) value).getNumber());
+         return new ConstantInteger(+((ConstantInteger) value).getValue());
       }
       return null;
    }
 
-   private static ConstantValue multiply(ConstantValue value1, ConstantValue value2) {
+   private static ConstantLiteral multiply(ConstantLiteral value1, ConstantLiteral value2) {
       if(value1 instanceof ConstantInteger && value2 instanceof ConstantInteger) {
-         return new ConstantInteger(((ConstantInteger) value1).getNumber() * ((ConstantInteger) value2).getNumber());
+         return new ConstantInteger(((ConstantInteger) value1).getValue() * ((ConstantInteger) value2).getValue());
       }
       return null;
    }
 
-   private static ConstantValue plus(ConstantValue value1, ConstantValue value2) {
+   private static ConstantLiteral plus(ConstantLiteral value1, ConstantLiteral value2) {
       if(value1 instanceof ConstantInteger && value2 instanceof ConstantInteger) {
-         return new ConstantInteger(((ConstantInteger) value1).getNumber() + ((ConstantInteger) value2).getNumber());
+         return new ConstantInteger(((ConstantInteger) value1).getValue() + ((ConstantInteger) value2).getValue());
       }
       if(value1 instanceof ConstantInteger && value2 instanceof ConstantChar) {
-         return new ConstantInteger(((ConstantInteger) value1).getNumber() + ((ConstantChar) value2).getValue());
+         return new ConstantInteger(((ConstantInteger) value1).getValue() + ((ConstantChar) value2).getValue());
       }
       if(value1 instanceof ConstantChar && value2 instanceof ConstantInteger) {
-         return new ConstantInteger(((ConstantChar) value1).getValue() + ((ConstantInteger) value2).getNumber());
+         return new ConstantInteger(((ConstantChar) value1).getValue() + ((ConstantInteger) value2).getValue());
       }
       if(value1 instanceof ConstantString && value2 instanceof ConstantString) {
          return new ConstantString(((ConstantString) value1).getValue() + ((ConstantString) value2).getValue());
@@ -139,16 +140,16 @@ public class ConstantValueCalculator {
       return null;
    }
 
-   private static ConstantValue minus(ConstantValue value1, ConstantValue value2) {
+   private static ConstantLiteral minus(ConstantLiteral value1, ConstantLiteral value2) {
       if(value1 instanceof ConstantInteger && value2 instanceof ConstantInteger) {
-         return new ConstantInteger(((ConstantInteger) value1).getNumber() - ((ConstantInteger) value2).getNumber());
+         return new ConstantInteger(((ConstantInteger) value1).getValue() - ((ConstantInteger) value2).getValue());
       }
       return null;
    }
 
-   private static ConstantValue div(ConstantValue value1, ConstantValue value2) {
+   private static ConstantLiteral div(ConstantLiteral value1, ConstantLiteral value2) {
       if(value1 instanceof ConstantInteger && value2 instanceof ConstantInteger) {
-         return new ConstantInteger(((ConstantInteger) value1).getNumber() / ((ConstantInteger) value2).getNumber());
+         return new ConstantInteger(((ConstantInteger) value1).getValue() / ((ConstantInteger) value2).getValue());
       }
       return null;
    }

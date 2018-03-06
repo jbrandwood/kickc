@@ -1,6 +1,8 @@
 package dk.camelot64.kickc.passes;
 
 import dk.camelot64.kickc.model.*;
+import dk.camelot64.kickc.model.values.*;
+import dk.camelot64.kickc.model.statements.*;
 
 import java.util.ArrayList;
 import java.util.Collection;

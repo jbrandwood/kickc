@@ -1,6 +1,15 @@
 package dk.camelot64.kickc.passes;
 
 import dk.camelot64.kickc.model.*;
+import dk.camelot64.kickc.model.values.LValue;
+import dk.camelot64.kickc.model.values.ProcedureRef;
+import dk.camelot64.kickc.model.values.RValue;
+import dk.camelot64.kickc.model.values.VariableRef;
+import dk.camelot64.kickc.model.statements.StatementAssignment;
+import dk.camelot64.kickc.model.statements.StatementCall;
+import dk.camelot64.kickc.model.statements.StatementReturn;
+import dk.camelot64.kickc.model.symbols.*;
+import dk.camelot64.kickc.model.types.SymbolType;
 
 import java.util.List;
 import java.util.Set;

@@ -2,6 +2,10 @@ package dk.camelot64.kickc.passes;
 
 import dk.camelot64.kickc.CompileLog;
 import dk.camelot64.kickc.model.*;
+import dk.camelot64.kickc.model.symbols.Label;
+import dk.camelot64.kickc.model.symbols.Symbol;
+import dk.camelot64.kickc.model.values.LabelRef;
+import dk.camelot64.kickc.model.values.SymbolRef;
 
 import java.util.ArrayList;
 import java.util.Collection;

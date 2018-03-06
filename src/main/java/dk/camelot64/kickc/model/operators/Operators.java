@@ -1,7 +1,7 @@
 package dk.camelot64.kickc.model.operators;
 
-import dk.camelot64.kickc.model.SymbolType;
-import dk.camelot64.kickc.model.SymbolTypePointer;
+import dk.camelot64.kickc.model.types.SymbolType;
+import dk.camelot64.kickc.model.types.SymbolTypePointer;
 
 /** Constainer for all the expression operators */
 public class Operators {

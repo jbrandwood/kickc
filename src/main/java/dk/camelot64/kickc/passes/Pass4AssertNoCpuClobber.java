@@ -4,6 +4,10 @@ import dk.camelot64.kickc.asm.AsmClobber;
 import dk.camelot64.kickc.asm.AsmProgram;
 import dk.camelot64.kickc.asm.AsmSegment;
 import dk.camelot64.kickc.model.*;
+import dk.camelot64.kickc.model.values.RValue;
+import dk.camelot64.kickc.model.values.VariableRef;
+import dk.camelot64.kickc.model.statements.Statement;
+import dk.camelot64.kickc.model.symbols.Variable;
 
 import java.util.ArrayList;
 import java.util.Collection;

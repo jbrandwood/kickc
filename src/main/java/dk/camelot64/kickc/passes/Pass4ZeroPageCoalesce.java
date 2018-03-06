@@ -1,6 +1,7 @@
 package dk.camelot64.kickc.passes;
 
 import dk.camelot64.kickc.model.*;
+import dk.camelot64.kickc.model.values.ScopeRef;
 
 import java.util.LinkedHashSet;
 import java.util.Set;

@@ -2,8 +2,8 @@ package dk.camelot64.kickc.passes;
 
 import dk.camelot64.kickc.asm.*;
 import dk.camelot64.kickc.model.Program;
-import dk.camelot64.kickc.model.Statement;
-import dk.camelot64.kickc.model.StatementAsm;
+import dk.camelot64.kickc.model.statements.Statement;
+import dk.camelot64.kickc.model.statements.StatementAsm;
 
 import java.util.ArrayList;
 import java.util.LinkedHashSet;

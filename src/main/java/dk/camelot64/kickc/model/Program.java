@@ -2,6 +2,8 @@ package dk.camelot64.kickc.model;
 
 import dk.camelot64.kickc.CompileLog;
 import dk.camelot64.kickc.asm.AsmProgram;
+import dk.camelot64.kickc.model.statements.StatementInfos;
+import dk.camelot64.kickc.model.symbols.ProgramScope;
 
 import java.util.ArrayList;
 import java.util.List;

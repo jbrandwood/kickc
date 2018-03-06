@@ -3,6 +3,12 @@ package dk.camelot64.kickc.fragment;
 import dk.camelot64.kickc.model.*;
 import dk.camelot64.kickc.model.operators.Operator;
 import dk.camelot64.kickc.model.operators.Operators;
+import dk.camelot64.kickc.model.values.*;
+import dk.camelot64.kickc.model.symbols.ConstantVar;
+import dk.camelot64.kickc.model.symbols.Variable;
+import dk.camelot64.kickc.model.types.SymbolType;
+import dk.camelot64.kickc.model.types.SymbolTypeInference;
+import dk.camelot64.kickc.model.types.SymbolTypePointer;
 
 /** Formatting of numbers, constants, names and more for KickAssembler */
 public class AsmFormat {
@@ -21,7 +27,7 @@ public class AsmFormat {
          String asmName = constantVar.getAsmName() == null ? constantVar.getLocalName() : constantVar.getAsmName();
          return getAsmParamName(constantVar.getScope().getRef(), asmName, codeScope);
       } else if(value instanceof ConstantInteger) {
-         return getAsmNumber(((ConstantInteger) value).getNumber());
+         return getAsmNumber(((ConstantInteger) value).getValue());
       } else if(value instanceof ConstantChar) {
          return "'" + ((ConstantChar) value).getValue() + "'";
       } else if(value instanceof ConstantString) {

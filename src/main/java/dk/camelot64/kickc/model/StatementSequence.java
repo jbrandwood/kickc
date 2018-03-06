@@ -1,5 +1,10 @@
 package dk.camelot64.kickc.model;
 
+import dk.camelot64.kickc.model.statements.Statement;
+import dk.camelot64.kickc.model.statements.StatementLabel;
+import dk.camelot64.kickc.model.statements.StatementProcedureBegin;
+import dk.camelot64.kickc.model.statements.StatementProcedureEnd;
+
 import java.util.ArrayList;
 import java.util.List;
 

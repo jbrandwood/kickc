@@ -1,5 +1,7 @@
 package dk.camelot64.kickc.model;
 
+import dk.camelot64.kickc.model.values.LabelRef;
+
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Iterator;

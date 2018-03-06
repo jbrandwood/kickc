@@ -1,5 +1,10 @@
 package dk.camelot64.kickc.model;
 
+import dk.camelot64.kickc.model.values.ConstantRef;
+import dk.camelot64.kickc.model.values.LabelRef;
+import dk.camelot64.kickc.model.values.RValue;
+import dk.camelot64.kickc.model.values.VariableRef;
+import dk.camelot64.kickc.model.statements.Statement;
 import dk.camelot64.kickc.passes.PassNVariableReferenceInfos;
 
 import java.util.Collection;

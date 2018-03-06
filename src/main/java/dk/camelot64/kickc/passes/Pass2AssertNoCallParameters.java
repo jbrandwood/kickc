@@ -2,8 +2,8 @@ package dk.camelot64.kickc.passes;
 
 import dk.camelot64.kickc.model.ControlFlowGraphBaseVisitor;
 import dk.camelot64.kickc.model.Program;
-import dk.camelot64.kickc.model.RValue;
-import dk.camelot64.kickc.model.StatementCall;
+import dk.camelot64.kickc.model.values.RValue;
+import dk.camelot64.kickc.model.statements.StatementCall;
 
 import java.util.List;
 

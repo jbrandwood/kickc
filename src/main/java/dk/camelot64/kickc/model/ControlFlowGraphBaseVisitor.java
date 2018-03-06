@@ -1,5 +1,7 @@
 package dk.camelot64.kickc.model;
 
+import dk.camelot64.kickc.model.statements.*;
+
 import java.util.Collection;
 
 /** Base visitor for iterating through a control flow graph */

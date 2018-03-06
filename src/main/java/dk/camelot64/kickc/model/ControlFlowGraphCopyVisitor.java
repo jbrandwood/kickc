@@ -1,6 +1,11 @@
 package dk.camelot64.kickc.model;
 
 import dk.camelot64.kickc.model.operators.Operator;
+import dk.camelot64.kickc.model.values.LValue;
+import dk.camelot64.kickc.model.values.LabelRef;
+import dk.camelot64.kickc.model.values.RValue;
+import dk.camelot64.kickc.model.values.VariableRef;
+import dk.camelot64.kickc.model.statements.*;
 
 import java.util.LinkedHashMap;
 import java.util.List;

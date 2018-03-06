@@ -1,6 +1,7 @@
 package dk.camelot64.kickc.model;
 
 import com.ibm.icu.text.NumberFormat;
+import dk.camelot64.kickc.model.values.ScopeRef;
 
 import java.util.ArrayList;
 import java.util.Collection;

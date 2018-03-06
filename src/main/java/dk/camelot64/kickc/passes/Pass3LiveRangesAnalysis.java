@@ -5,6 +5,13 @@ package dk.camelot64.kickc.passes;
  */
 
 import dk.camelot64.kickc.model.*;
+import dk.camelot64.kickc.model.values.LabelRef;
+import dk.camelot64.kickc.model.values.ProcedureRef;
+import dk.camelot64.kickc.model.values.VariableRef;
+import dk.camelot64.kickc.model.statements.Statement;
+import dk.camelot64.kickc.model.statements.StatementCall;
+import dk.camelot64.kickc.model.statements.StatementPhiBlock;
+import dk.camelot64.kickc.model.symbols.Procedure;
 
 import java.util.ArrayList;
 import java.util.Arrays;

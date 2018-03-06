@@ -1,5 +1,8 @@
 package dk.camelot64.kickc.model;
 
+import dk.camelot64.kickc.model.statements.StatementCall;
+import dk.camelot64.kickc.model.values.LabelRef;
+
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.LinkedHashSet;

@@ -3,7 +3,7 @@ package dk.camelot64.kickc.passes;
 import dk.camelot64.kickc.CompileLog;
 import dk.camelot64.kickc.model.ControlFlowGraph;
 import dk.camelot64.kickc.model.Program;
-import dk.camelot64.kickc.model.ProgramScope;
+import dk.camelot64.kickc.model.symbols.ProgramScope;
 
 /** Assertion checking that a pass 2 representation of the program is consistent */
 public abstract class Pass2SsaAssertion {

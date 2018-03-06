@@ -1,7 +1,8 @@
 package dk.camelot64.kickc.passes;
 
-import dk.camelot64.kickc.fragment.AsmFragmentInstanceSpec;
 import dk.camelot64.kickc.model.*;
+import dk.camelot64.kickc.model.values.VariableRef;
+import dk.camelot64.kickc.model.symbols.ProgramScope;
 
 import java.util.HashSet;
 

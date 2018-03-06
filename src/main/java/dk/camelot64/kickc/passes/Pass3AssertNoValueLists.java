@@ -2,8 +2,8 @@ package dk.camelot64.kickc.passes;
 
 import dk.camelot64.kickc.model.CompileError;
 import dk.camelot64.kickc.model.Program;
-import dk.camelot64.kickc.model.RValue;
-import dk.camelot64.kickc.model.ValueList;
+import dk.camelot64.kickc.model.values.RValue;
+import dk.camelot64.kickc.model.values.ValueList;
 
 /**
  * Assert that no value lists still exist inside the code.

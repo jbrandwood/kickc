@@ -1,6 +1,15 @@
 package dk.camelot64.kickc.passes;
 
 import dk.camelot64.kickc.model.*;
+import dk.camelot64.kickc.model.values.LValue;
+import dk.camelot64.kickc.model.values.LabelRef;
+import dk.camelot64.kickc.model.values.RValue;
+import dk.camelot64.kickc.model.values.VariableRef;
+import dk.camelot64.kickc.model.statements.*;
+import dk.camelot64.kickc.model.symbols.Scope;
+import dk.camelot64.kickc.model.symbols.Variable;
+import dk.camelot64.kickc.model.symbols.VariableUnversioned;
+import dk.camelot64.kickc.model.symbols.VariableVersion;
 
 import java.util.Collection;
 import java.util.LinkedHashMap;

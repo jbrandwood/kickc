@@ -3,6 +3,14 @@ package dk.camelot64.kickc.fragment;
 import dk.camelot64.kickc.NumberParser;
 import dk.camelot64.kickc.asm.*;
 import dk.camelot64.kickc.model.*;
+import dk.camelot64.kickc.model.values.ConstantInteger;
+import dk.camelot64.kickc.model.values.ConstantValue;
+import dk.camelot64.kickc.model.symbols.ConstantVar;
+import dk.camelot64.kickc.model.symbols.Label;
+import dk.camelot64.kickc.model.symbols.Variable;
+import dk.camelot64.kickc.model.types.SymbolType;
+import dk.camelot64.kickc.model.values.ScopeRef;
+import dk.camelot64.kickc.model.values.Value;
 import dk.camelot64.kickc.parser.KickCBaseVisitor;
 import dk.camelot64.kickc.parser.KickCParser;
 

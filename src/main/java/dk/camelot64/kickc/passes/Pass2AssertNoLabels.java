@@ -2,7 +2,7 @@ package dk.camelot64.kickc.passes;
 
 import dk.camelot64.kickc.model.ControlFlowGraphBaseVisitor;
 import dk.camelot64.kickc.model.Program;
-import dk.camelot64.kickc.model.StatementLabel;
+import dk.camelot64.kickc.model.statements.StatementLabel;
 
 /** Asserts that the graph contains no label statements */
 public class Pass2AssertNoLabels extends Pass2SsaAssertion {

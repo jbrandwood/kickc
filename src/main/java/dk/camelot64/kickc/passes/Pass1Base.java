@@ -3,7 +3,7 @@ package dk.camelot64.kickc.passes;
 import dk.camelot64.kickc.CompileLog;
 import dk.camelot64.kickc.model.ControlFlowGraph;
 import dk.camelot64.kickc.model.Program;
-import dk.camelot64.kickc.model.ProgramScope;
+import dk.camelot64.kickc.model.symbols.ProgramScope;
 
 /**
  * Pass 1 (before SSA optimizations) base class

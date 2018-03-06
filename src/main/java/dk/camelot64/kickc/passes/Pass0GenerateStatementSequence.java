@@ -5,6 +5,12 @@ import dk.camelot64.kickc.NumberParser;
 import dk.camelot64.kickc.model.*;
 import dk.camelot64.kickc.model.operators.Operator;
 import dk.camelot64.kickc.model.operators.Operators;
+import dk.camelot64.kickc.model.values.*;
+import dk.camelot64.kickc.model.statements.*;
+import dk.camelot64.kickc.model.symbols.*;
+import dk.camelot64.kickc.model.types.SymbolType;
+import dk.camelot64.kickc.model.types.SymbolTypeArray;
+import dk.camelot64.kickc.model.types.SymbolTypePointer;
 import dk.camelot64.kickc.parser.KickCBaseVisitor;
 import dk.camelot64.kickc.parser.KickCParser;
 import org.antlr.v4.runtime.ParserRuleContext;
@@ -405,21 +411,21 @@ public class Pass0GenerateStatementSequence extends KickCBaseVisitor<Object> {
       }
       // Add increment
       ConstantInteger beyondLastVal;
-      if(rangeFirst.getNumber() > rangeLast.getNumber()) {
+      if(rangeFirst.getValue() > rangeLast.getValue()) {
          Statement stmtInc = new StatementAssignment(lValue.getRef(), Operators.DECREMENT, lValue.getRef());
          sequence.addStatement(stmtInc);
-         if(rangeLast.getNumber() == 0) {
+         if(rangeLast.getValue() == 0) {
             beyondLastVal = new ConstantInteger(255L);
          } else {
-            beyondLastVal = new ConstantInteger(rangeLast.getNumber() - 1);
+            beyondLastVal = new ConstantInteger(rangeLast.getValue() - 1);
          }
       } else {
          Statement stmtInc = new StatementAssignment(lValue.getRef(), Operators.INCREMENT, lValue.getRef());
          sequence.addStatement(stmtInc);
-         if(rangeLast.getNumber() == 255) {
+         if(rangeLast.getValue() == 255) {
             beyondLastVal = new ConstantInteger(0L);
          } else {
-            beyondLastVal = new ConstantInteger(rangeLast.getNumber() + 1);
+            beyondLastVal = new ConstantInteger(rangeLast.getValue() + 1);
          }
       }
 
@@ -503,7 +509,7 @@ public class Pass0GenerateStatementSequence extends KickCBaseVisitor<Object> {
       if(ctx.expr() != null) {
          ConstantValue size = ParseTreeConstantEvaluator.evaluate(ctx.expr());
          if(size instanceof ConstantInteger) {
-            return new SymbolTypeArray(elementType, ((ConstantInteger) size).getNumber().intValue());
+            return new SymbolTypeArray(elementType, ((ConstantInteger) size).getValue().intValue());
          } else {
             throw new RuntimeException("Array size not a constant integer " + ctx.getText());
          }

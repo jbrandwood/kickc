@@ -1,5 +1,8 @@
 package dk.camelot64.kickc.model;
 
+import dk.camelot64.kickc.model.values.ConstantValue;
+import dk.camelot64.kickc.model.values.Value;
+
 /** The different registers available for a program */
 public class Registers {
 

@@ -1,5 +1,13 @@
 package dk.camelot64.kickc.model;
 
+import dk.camelot64.kickc.model.statements.Statement;
+import dk.camelot64.kickc.model.statements.StatementCall;
+import dk.camelot64.kickc.model.statements.StatementPhiBlock;
+import dk.camelot64.kickc.model.symbols.Procedure;
+import dk.camelot64.kickc.model.symbols.Symbol;
+import dk.camelot64.kickc.model.values.LabelRef;
+import dk.camelot64.kickc.model.values.ScopeRef;
+
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;

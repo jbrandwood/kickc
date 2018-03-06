@@ -3,6 +3,16 @@ package dk.camelot64.kickc.passes;
 import dk.camelot64.kickc.model.*;
 import dk.camelot64.kickc.model.operators.Operator;
 import dk.camelot64.kickc.model.operators.Operators;
+import dk.camelot64.kickc.model.values.LvalueIntermediate;
+import dk.camelot64.kickc.model.values.VariableRef;
+import dk.camelot64.kickc.model.statements.Statement;
+import dk.camelot64.kickc.model.statements.StatementAssignment;
+import dk.camelot64.kickc.model.statements.StatementLValue;
+import dk.camelot64.kickc.model.symbols.ProgramScope;
+import dk.camelot64.kickc.model.symbols.Scope;
+import dk.camelot64.kickc.model.symbols.Variable;
+import dk.camelot64.kickc.model.symbols.VariableIntermediate;
+import dk.camelot64.kickc.model.types.SymbolTypeInference;
 
 import java.util.List;
 import java.util.ListIterator;

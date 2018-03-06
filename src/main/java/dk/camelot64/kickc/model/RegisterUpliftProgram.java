@@ -1,5 +1,7 @@
 package dk.camelot64.kickc.model;
 
+import dk.camelot64.kickc.model.values.ScopeRef;
+
 import java.util.ArrayList;
 import java.util.List;
 

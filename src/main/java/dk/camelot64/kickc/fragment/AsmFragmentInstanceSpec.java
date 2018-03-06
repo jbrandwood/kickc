@@ -2,6 +2,17 @@ package dk.camelot64.kickc.fragment;
 
 import dk.camelot64.kickc.model.*;
 import dk.camelot64.kickc.model.operators.Operator;
+import dk.camelot64.kickc.model.values.*;
+import dk.camelot64.kickc.model.statements.Statement;
+import dk.camelot64.kickc.model.statements.StatementAssignment;
+import dk.camelot64.kickc.model.statements.StatementConditionalJump;
+import dk.camelot64.kickc.model.symbols.ConstantVar;
+import dk.camelot64.kickc.model.symbols.Label;
+import dk.camelot64.kickc.model.symbols.Symbol;
+import dk.camelot64.kickc.model.symbols.Variable;
+import dk.camelot64.kickc.model.types.SymbolType;
+import dk.camelot64.kickc.model.types.SymbolTypeInference;
+import dk.camelot64.kickc.model.types.SymbolTypePointer;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -125,19 +136,19 @@ public class AsmFragmentInstanceSpec {
       }
       if(
             rValue2 instanceof ConstantInteger &&
-                  ((ConstantInteger) rValue2).getNumber() == 1 &&
+                  ((ConstantInteger) rValue2).getValue() == 1 &&
                   operator != null &&
                   (operator.getOperator().equals("-") || operator.getOperator().equals("+"))) {
          signature.append("1");
       } else if(
             rValue2 instanceof ConstantInteger &&
-                  ((ConstantInteger) rValue2).getNumber() <= 7 &&
+                  ((ConstantInteger) rValue2).getValue() <= 7 &&
                   operator != null &&
                   (operator.getOperator().equals(">>") || operator.getOperator().equals("<<"))) {
-         signature.append(((ConstantInteger) rValue2).getNumber());
+         signature.append(((ConstantInteger) rValue2).getValue());
       } else if(
             rValue2 instanceof ConstantInteger &&
-                  ((ConstantInteger) rValue2).getNumber() == 0 &&
+                  ((ConstantInteger) rValue2).getValue() == 0 &&
                   operator != null &&
                   (operator.getOperator().equals("-") || operator.getOperator().equals("+"))) {
          signature.append("0");
@@ -158,7 +169,7 @@ public class AsmFragmentInstanceSpec {
       if(conditionalJump.getOperator() != null) {
          signature.append(getOperatorFragmentName(conditionalJump.getOperator()));
       }
-      if(conditionalJump.getrValue2() instanceof ConstantInteger && ((ConstantInteger) conditionalJump.getrValue2()).getNumber() == 0) {
+      if(conditionalJump.getrValue2() instanceof ConstantInteger && ((ConstantInteger) conditionalJump.getrValue2()).getValue() == 0) {
          signature.append("0");
       } else if(conditionalJump.getrValue2() instanceof ConstantBool) {
          ConstantBool boolValue = (ConstantBool) conditionalJump.getrValue2();

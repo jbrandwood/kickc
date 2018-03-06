@@ -1,9 +1,9 @@
 package dk.camelot64.kickc.passes;
 
 import dk.camelot64.kickc.NumberParser;
-import dk.camelot64.kickc.model.*;
 import dk.camelot64.kickc.model.operators.Operator;
 import dk.camelot64.kickc.model.operators.Operators;
+import dk.camelot64.kickc.model.values.*;
 import dk.camelot64.kickc.parser.KickCBaseVisitor;
 import dk.camelot64.kickc.parser.KickCParser;
 import org.antlr.v4.runtime.tree.TerminalNode;
@@ -62,7 +62,7 @@ public class ParseTreeConstantEvaluator extends KickCBaseVisitor<ConstantValue> 
 
    private static Long getInteger(ConstantValue constant) {
       if(constant instanceof ConstantInteger) {
-         return ((ConstantInteger) constant).getNumber();
+         return ((ConstantInteger) constant).getValue();
       } else {
          throw new RuntimeException("Type Mismatch. Constant is not an integer number " + constant);
       }
@@ -70,9 +70,9 @@ public class ParseTreeConstantEvaluator extends KickCBaseVisitor<ConstantValue> 
 
    private static Double getDouble(ConstantValue constant) {
       if(constant instanceof ConstantDouble) {
-         return ((ConstantDouble) constant).getNumber();
+         return ((ConstantDouble) constant).getValue();
       } else if(constant instanceof ConstantInteger) {
-         return ((ConstantInteger) constant).getNumber().doubleValue();
+         return ((ConstantInteger) constant).getValue().doubleValue();
       } else {
          throw new RuntimeException("Type Mismatch. Constant is not a number " + constant);
       }
@@ -83,10 +83,10 @@ public class ParseTreeConstantEvaluator extends KickCBaseVisitor<ConstantValue> 
          case "-": {
             if(c instanceof ConstantInteger) {
                ConstantInteger cInt = (ConstantInteger) c;
-               return new ConstantInteger(-cInt.getNumber());
+               return new ConstantInteger(-cInt.getValue());
             } else if(c instanceof ConstantDouble) {
                ConstantDouble cDoub = (ConstantDouble) c;
-               return new ConstantDouble(-cDoub.getNumber());
+               return new ConstantDouble(-cDoub.getValue());
             } else {
                throw new RuntimeException("Type mismatch. Unary Minus cannot handle value " + c);
             }
@@ -96,11 +96,11 @@ public class ParseTreeConstantEvaluator extends KickCBaseVisitor<ConstantValue> 
          }
          case "++": {
             ConstantInteger cInt = (ConstantInteger) c;
-            return new ConstantInteger(cInt.getNumber() + 1);
+            return new ConstantInteger(cInt.getValue() + 1);
          }
          case "--": {
             ConstantInteger cInt = (ConstantInteger) c;
-            return new ConstantInteger(cInt.getNumber() - 1);
+            return new ConstantInteger(cInt.getValue() - 1);
          }
          case "*": { // pointer dereference
             return null;

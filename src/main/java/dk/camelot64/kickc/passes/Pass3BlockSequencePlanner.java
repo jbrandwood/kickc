@@ -1,9 +1,9 @@
 package dk.camelot64.kickc.passes;
 
 import dk.camelot64.kickc.model.ControlFlowBlock;
-import dk.camelot64.kickc.model.LabelRef;
+import dk.camelot64.kickc.model.values.LabelRef;
 import dk.camelot64.kickc.model.Program;
-import dk.camelot64.kickc.model.Scope;
+import dk.camelot64.kickc.model.symbols.Scope;
 
 import java.util.*;
 

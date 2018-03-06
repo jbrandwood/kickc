@@ -1,5 +1,7 @@
 package dk.camelot64.kickc.model;
 
+import dk.camelot64.kickc.model.operators.Operator;
+
 import java.util.LinkedHashMap;
 import java.util.List;
 

@@ -1,4 +1,4 @@
-package dk.camelot64.kickc.model;
+package dk.camelot64.kickc.model.operators;
 
 /** A binary expression operator */
 public class OperatorBinary extends Operator {

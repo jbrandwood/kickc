@@ -1,7 +1,5 @@
 package dk.camelot64.kickc.model.operators;
 
-import dk.camelot64.kickc.model.OperatorBinary;
-
 /** Binary SetHighByte Operator ( w hi= b ) */
 public class OperatorSetHigh extends OperatorBinary {
 

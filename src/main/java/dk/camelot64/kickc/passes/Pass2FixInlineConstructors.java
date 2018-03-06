@@ -1,6 +1,8 @@
 package dk.camelot64.kickc.passes;
 
 import dk.camelot64.kickc.model.*;
+import dk.camelot64.kickc.model.operators.Operator;
+import dk.camelot64.kickc.model.operators.Operators;
 
 import java.util.ListIterator;
 
@@ -27,7 +29,7 @@ public class Pass2FixInlineConstructors extends Pass2SsaOptimization {
    private class WordConstructor extends InlineConstructor {
 
       public WordConstructor() {
-         super(SymbolType.WORD, Operator.WORD);
+         super(SymbolType.WORD, Operators.WORD);
       }
 
       @Override
@@ -40,7 +42,7 @@ public class Pass2FixInlineConstructors extends Pass2SsaOptimization {
    private class DWordConstructor extends InlineConstructor {
 
       public DWordConstructor() {
-         super(SymbolType.DWORD, Operator.DWORD);
+         super(SymbolType.DWORD, Operators.DWORD);
       }
 
       @Override

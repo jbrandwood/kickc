@@ -1,6 +1,8 @@
 package dk.camelot64.kickc.fragment;
 
 import dk.camelot64.kickc.model.*;
+import dk.camelot64.kickc.model.operators.Operator;
+import dk.camelot64.kickc.model.operators.Operators;
 
 /** Formatting of numbers, constants, names and more for KickAssembler */
 public class AsmFormat {
@@ -60,56 +62,56 @@ public class AsmFormat {
     * @return The ASM string representing the constant value
     */
    private static String getAsmConstantUnary(Program program, ScopeRef codeScope, Operator operator, ConstantValue operand, int outerPrecedence) {
-      if(Operator.CAST_BYTE.equals(operator) || Operator.CAST_SBYTE.equals(operator)) {
+      if(Operators.CAST_BYTE.equals(operator) || Operators.CAST_SBYTE.equals(operator)) {
          SymbolType operandType = SymbolTypeInference.inferType(program.getScope(), operand);
          if(SymbolType.isByte(operandType) || SymbolType.isSByte(operandType)) {
             // No cast needed
             return getAsmConstant(program, operand, outerPrecedence, codeScope);
          } else {
-            return getAsmConstant(program, new ConstantBinary(new ConstantInteger((long)0xff), Operator.BOOL_AND, operand), outerPrecedence, codeScope);
+            return getAsmConstant(program, new ConstantBinary(new ConstantInteger((long)0xff), Operators.BOOL_AND, operand), outerPrecedence, codeScope);
          }
-      } else if(Operator.CAST_WORD.equals(operator) || Operator.CAST_SWORD.equals(operator) || Operator.CAST_PTRBY.equals(operator)) {
+      } else if(Operators.CAST_WORD.equals(operator) || Operators.CAST_SWORD.equals(operator) || Operators.CAST_PTRBY.equals(operator)) {
          SymbolType operandType = SymbolTypeInference.inferType(program.getScope(), operand);
          if(SymbolType.isWord(operandType) || SymbolType.isSWord(operandType)) {
             // No cast needed
             return getAsmConstant(program, operand, outerPrecedence, codeScope);
          } else {
-            return getAsmConstant(program, new ConstantBinary(new ConstantInteger((long)0xffff), Operator.BOOL_AND, operand), outerPrecedence, codeScope);
+            return getAsmConstant(program, new ConstantBinary(new ConstantInteger((long)0xffff), Operators.BOOL_AND, operand), outerPrecedence, codeScope);
          }
-      } else if(Operator.CAST_DWORD.equals(operator) || Operator.CAST_SDWORD.equals(operator)) {
+      } else if(Operators.CAST_DWORD.equals(operator) || Operators.CAST_SDWORD.equals(operator)) {
          SymbolType operandType = SymbolTypeInference.inferType(program.getScope(), operand);
          if(SymbolType.isDWord(operandType) || SymbolType.isSDWord(operandType)) {
             // No cast needed
             return getAsmConstant(program, operand, outerPrecedence, codeScope);
          } else {
-            return getAsmConstant(program, new ConstantBinary(new ConstantInteger((long)0xffffffff), Operator.BOOL_AND, operand), outerPrecedence, codeScope);
+            return getAsmConstant(program, new ConstantBinary(new ConstantInteger((long)0xffffffff), Operators.BOOL_AND, operand), outerPrecedence, codeScope);
          }
-      } else if(Operator.LOWBYTE.equals(operator)) {
+      } else if(Operators.LOWBYTE.equals(operator)) {
          SymbolType operandType = SymbolTypeInference.inferType(program.getScope(), operand);
          if(SymbolType.isByte(operandType) || SymbolType.isSByte(operandType)) {
             return getAsmConstant(program, operand, outerPrecedence, codeScope);
          } else if(SymbolType.isWord(operandType) || SymbolType.isSWord(operandType) || operandType instanceof SymbolTypePointer) {
             return "<" + getAsmConstant(program, operand, outerPrecedence, codeScope);
          } else if(SymbolType.isDWord(operandType) || SymbolType.isSDWord(operandType)) {
-            return getAsmConstant(program, new ConstantBinary(operand, Operator.BOOL_AND, new ConstantInteger((long)0xffff)), outerPrecedence, codeScope);
+            return getAsmConstant(program, new ConstantBinary(operand, Operators.BOOL_AND, new ConstantInteger((long)0xffff)), outerPrecedence, codeScope);
          } else {
             throw new CompileError("Unhandled type "+operand);
          }
-      } else if(Operator.HIBYTE.equals(operator)) {
+      } else if(Operators.HIBYTE.equals(operator)) {
          SymbolType operandType = SymbolTypeInference.inferType(program.getScope(), operand);
          if(SymbolType.isByte(operandType) || SymbolType.isSByte(operandType)) {
             return getAsmConstant(program, operand, outerPrecedence, codeScope);
          } else if(SymbolType.isWord(operandType) || SymbolType.isSWord(operandType) || operandType instanceof SymbolTypePointer) {
             return ">" + getAsmConstant(program, operand, outerPrecedence, codeScope);
          } else if(SymbolType.isDWord(operandType) || SymbolType.isSDWord(operandType)) {
-            return getAsmConstant(program, new ConstantBinary(operand, Operator.SHIFT_RIGHT, new ConstantInteger((long)16)), outerPrecedence, codeScope);
+            return getAsmConstant(program, new ConstantBinary(operand, Operators.SHIFT_RIGHT, new ConstantInteger((long)16)), outerPrecedence, codeScope);
          } else {
             throw new CompileError("Unhandled type "+operand);
          }
-      } else if(Operator.INCREMENT.equals(operator)) {
-         return getAsmConstant(program, new ConstantBinary(operand, Operator.PLUS, new ConstantInteger((long)1)), outerPrecedence, codeScope);
-      } else if(Operator.DECREMENT.equals(operator)) {
-         return getAsmConstant(program, new ConstantBinary(operand, Operator.MINUS, new ConstantInteger((long)1)), outerPrecedence, codeScope);
+      } else if(Operators.INCREMENT.equals(operator)) {
+         return getAsmConstant(program, new ConstantBinary(operand, Operators.PLUS, new ConstantInteger((long)1)), outerPrecedence, codeScope);
+      } else if(Operators.DECREMENT.equals(operator)) {
+         return getAsmConstant(program, new ConstantBinary(operand, Operators.MINUS, new ConstantInteger((long)1)), outerPrecedence, codeScope);
       } else {
          return operator.getOperator() +
                getAsmConstant(program, operand, operator.getPrecedence(), codeScope);

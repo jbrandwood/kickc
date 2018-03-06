@@ -1,6 +1,7 @@
 package dk.camelot64.kickc.passes;
 
 import dk.camelot64.kickc.model.*;
+import dk.camelot64.kickc.model.operators.Operators;
 
 import java.util.LinkedHashMap;
 import java.util.ListIterator;
@@ -32,22 +33,22 @@ public class Pass2NopCastElimination extends Pass2SsaOptimization {
                   SymbolType rValType = SymbolTypeInference.inferType(getScope(), assignment.getrValue2());
                   boolean isNopCast = false;
                   SymbolType toType = null;
-                  if(SymbolType.isByte(rValType) && Operator.CAST_SBYTE.equals(assignment.getOperator())) {
+                  if(SymbolType.isByte(rValType) && Operators.CAST_SBYTE.equals(assignment.getOperator())) {
                      isNopCast = true;
                      toType = SymbolType.SBYTE;
-                  } else if(SymbolType.isSByte(rValType) && Operator.CAST_BYTE.equals(assignment.getOperator())) {
+                  } else if(SymbolType.isSByte(rValType) && Operators.CAST_BYTE.equals(assignment.getOperator())) {
                      isNopCast = true;
                      toType = SymbolType.BYTE;
-                  } else if(SymbolType.isWord(rValType) && Operator.CAST_SWORD.equals(assignment.getOperator())) {
+                  } else if(SymbolType.isWord(rValType) && Operators.CAST_SWORD.equals(assignment.getOperator())) {
                      isNopCast = true;
                      toType = SymbolType.SWORD;
-                  } else if(SymbolType.isSWord(rValType) && Operator.CAST_WORD.equals(assignment.getOperator())) {
+                  } else if(SymbolType.isSWord(rValType) && Operators.CAST_WORD.equals(assignment.getOperator())) {
                      isNopCast = true;
                      toType = SymbolType.WORD;
-                  } else if(SymbolType.isWord(rValType) && Operator.CAST_PTRBY.equals(assignment.getOperator())) {
+                  } else if(SymbolType.isWord(rValType) && Operators.CAST_PTRBY.equals(assignment.getOperator())) {
                      isNopCast = true;
                      toType = new SymbolTypePointer(SymbolType.BYTE);
-                  } else if(rValType instanceof SymbolTypePointer  && Operator.CAST_WORD.equals(assignment.getOperator())) {
+                  } else if(rValType instanceof SymbolTypePointer  && Operators.CAST_WORD.equals(assignment.getOperator())) {
                      isNopCast = true;
                      toType = SymbolType.WORD;
                   }

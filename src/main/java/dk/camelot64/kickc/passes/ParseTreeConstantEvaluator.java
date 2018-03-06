@@ -2,6 +2,8 @@ package dk.camelot64.kickc.passes;
 
 import dk.camelot64.kickc.NumberParser;
 import dk.camelot64.kickc.model.*;
+import dk.camelot64.kickc.model.operators.Operator;
+import dk.camelot64.kickc.model.operators.Operators;
 import dk.camelot64.kickc.parser.KickCBaseVisitor;
 import dk.camelot64.kickc.parser.KickCParser;
 import org.antlr.v4.runtime.tree.TerminalNode;
@@ -164,7 +166,7 @@ public class ParseTreeConstantEvaluator extends KickCBaseVisitor<ConstantValue> 
    public ConstantValue visitExprUnary(KickCParser.ExprUnaryContext ctx) {
       ConstantValue sub = visit(ctx.expr());
       String op = ((TerminalNode) ctx.getChild(0)).getSymbol().getText();
-      Operator operator = Operator.getUnary(op);
+      Operator operator = Operators.getUnary(op);
       return calculateUnary(operator, sub);
    }
 
@@ -173,7 +175,7 @@ public class ParseTreeConstantEvaluator extends KickCBaseVisitor<ConstantValue> 
       ConstantValue left = this.visit(ctx.expr(0));
       ConstantValue right = this.visit(ctx.expr(1));
       String op = ((TerminalNode) ctx.getChild(1)).getSymbol().getText();
-      Operator operator = Operator.getBinary(op);
+      Operator operator = Operators.getBinary(op);
       return calculateBinary(operator, left, right);
    }
 

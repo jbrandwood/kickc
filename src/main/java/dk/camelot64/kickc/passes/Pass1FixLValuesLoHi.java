@@ -1,6 +1,8 @@
 package dk.camelot64.kickc.passes;
 
 import dk.camelot64.kickc.model.*;
+import dk.camelot64.kickc.model.operators.Operator;
+import dk.camelot64.kickc.model.operators.Operators;
 
 import java.util.List;
 import java.util.ListIterator;
@@ -28,12 +30,12 @@ public class Pass1FixLValuesLoHi extends Pass1Base {
                StatementLValue statementLValue = (StatementLValue) statement;
                LvalueIntermediate intermediate = (LvalueIntermediate) statementLValue.getlValue();
                StatementAssignment intermediateAssignment = getProgram().getGraph().getAssignment(intermediate.getVariable());
-               if(Operator.LOWBYTE.equals(intermediateAssignment.getOperator()) && intermediateAssignment.getrValue1() == null) {
+               if(Operators.LOWBYTE.equals(intermediateAssignment.getOperator()) && intermediateAssignment.getrValue1() == null) {
                   // Found assignment to an intermediate low byte lValue <x = ...
-                  fixLoHiLValue(programScope, statementsIt, statementLValue, intermediate, intermediateAssignment, Operator.SET_LOWBYTE);
-               } else if(Operator.HIBYTE.equals(intermediateAssignment.getOperator()) && intermediateAssignment.getrValue1() == null) {
+                  fixLoHiLValue(programScope, statementsIt, statementLValue, intermediate, intermediateAssignment, Operators.SET_LOWBYTE);
+               } else if(Operators.HIBYTE.equals(intermediateAssignment.getOperator()) && intermediateAssignment.getrValue1() == null) {
                   // Found assignment to an intermediate low byte lValue >x = ...
-                  fixLoHiLValue(programScope, statementsIt, statementLValue, intermediate, intermediateAssignment, Operator.SET_HIBYTE);
+                  fixLoHiLValue(programScope, statementsIt, statementLValue, intermediate, intermediateAssignment, Operators.SET_HIBYTE);
                }
             }
          }

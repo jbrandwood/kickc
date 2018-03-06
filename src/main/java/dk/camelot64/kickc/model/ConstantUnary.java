@@ -1,5 +1,7 @@
 package dk.camelot64.kickc.model;
 
+import dk.camelot64.kickc.model.operators.Operator;
+
 /** A constant defined by a unary operator appied to another constant */
 public class ConstantUnary implements ConstantValue {
 

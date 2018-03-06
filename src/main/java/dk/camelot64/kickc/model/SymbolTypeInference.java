@@ -1,5 +1,8 @@
 package dk.camelot64.kickc.model;
 
+import dk.camelot64.kickc.model.operators.Operator;
+import dk.camelot64.kickc.model.operators.Operators;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -22,21 +25,21 @@ public class SymbolTypeInference {
       if(operator == null) {
          return inferType(programScope, rValue);
       }
-      if(operator.equals(Operator.CAST_BYTE)) {
+      if(operator.equals(Operators.CAST_BYTE)) {
          return SymbolType.BYTE;
-      } else if(operator.equals(Operator.CAST_SBYTE)) {
+      } else if(operator.equals(Operators.CAST_SBYTE)) {
          return SymbolType.SBYTE;
-      } else if(operator.equals(Operator.CAST_WORD)) {
+      } else if(operator.equals(Operators.CAST_WORD)) {
          return SymbolType.WORD;
-      } else if(operator.equals(Operator.CAST_SWORD)) {
+      } else if(operator.equals(Operators.CAST_SWORD)) {
          return SymbolType.SWORD;
-      } else if(operator.equals(Operator.CAST_DWORD)) {
+      } else if(operator.equals(Operators.CAST_DWORD)) {
          return SymbolType.DWORD;
-      } else if(operator.equals(Operator.CAST_SDWORD)) {
+      } else if(operator.equals(Operators.CAST_SDWORD)) {
          return SymbolType.SDWORD;
-      } else if(operator.equals(Operator.CAST_PTRBY)) {
+      } else if(operator.equals(Operators.CAST_PTRBY)) {
          return new SymbolTypePointer(SymbolType.BYTE);
-      } else if(operator.equals(Operator.ADDRESS_OF)) {
+      } else if(operator.equals(Operators.ADDRESS_OF)) {
          SymbolType valueType = inferType(programScope, rValue);
          return new SymbolTypePointer(valueType);
       }
@@ -71,31 +74,31 @@ public class SymbolTypeInference {
       if(operator == null) {
          return subType;
       }
-      if(Operator.DEREF.equals(operator)) {
+      if(Operators.DEREF.equals(operator)) {
          if(subType instanceof SymbolTypePointer) {
             return ((SymbolTypePointer) subType).getElementType();
          } else {
             throw new RuntimeException("Type error: Dereferencing a non-pointer " + subType);
          }
-      } else if(Operator.LOWBYTE.equals(operator)) {
+      } else if(Operators.LOWBYTE.equals(operator)) {
          if(subType instanceof SymbolTypePointer || SymbolType.isWord(subType) || SymbolType.isSWord(subType)) {
             return SymbolType.BYTE;
          } else if(SymbolType.isDWord(subType) || SymbolType.isSDWord(subType)) {
             return SymbolType.WORD;
          }
-      } else if(Operator.HIBYTE.equals(operator)) {
+      } else if(Operators.HIBYTE.equals(operator)) {
          if(subType instanceof SymbolTypePointer || SymbolType.isWord(subType) || SymbolType.isSWord(subType)) {
             return SymbolType.BYTE;
          } else if(SymbolType.isDWord(subType) || SymbolType.isSDWord(subType)) {
             return SymbolType.WORD;
          }
-      } else if(Operator.CAST_BYTE.equals(operator)) {
+      } else if(Operators.CAST_BYTE.equals(operator)) {
          return SymbolType.BYTE;
-      } else if(Operator.CAST_SBYTE.equals(operator)) {
+      } else if(Operators.CAST_SBYTE.equals(operator)) {
          return SymbolType.SBYTE;
-      } else if(Operator.CAST_WORD.equals(operator)) {
+      } else if(Operators.CAST_WORD.equals(operator)) {
          return SymbolType.WORD;
-      } else if(Operator.CAST_SWORD.equals(operator)) {
+      } else if(Operators.CAST_SWORD.equals(operator)) {
          return SymbolType.SWORD;
       } else {
          return subType;
@@ -105,19 +108,19 @@ public class SymbolTypeInference {
 
    public static SymbolType inferType(SymbolType type1, Operator operator, SymbolType type2) {
 
-      if(Operator.PLUS.equals(operator)) {
+      if(Operators.PLUS.equals(operator)) {
          return inferPlus(type1, type2);
-      } else if(Operator.MINUS.equals(operator)) {
+      } else if(Operators.MINUS.equals(operator)) {
          return inferMinus(type1, type2);
-      } else if(Operator.BOOL_AND.equals(operator)) {
+      } else if(Operators.BOOL_AND.equals(operator)) {
          return inferBoolAnd(type1, type2);
-      } else if(Operator.SET_HIBYTE.equals(operator)) {
+      } else if(Operators.SET_HIBYTE.equals(operator)) {
          return type1;
-      } else if(Operator.SET_LOWBYTE.equals(operator)) {
+      } else if(Operators.SET_LOWBYTE.equals(operator)) {
          return type1;
-      } else if(Operator.WORD.equals(operator)) {
+      } else if(Operators.WORD.equals(operator)) {
          return SymbolType.WORD;
-      } else if(Operator.DWORD.equals(operator)) {
+      } else if(Operators.DWORD.equals(operator)) {
          return SymbolType.DWORD;
       }
 

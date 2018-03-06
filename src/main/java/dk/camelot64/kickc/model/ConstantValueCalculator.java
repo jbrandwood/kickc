@@ -1,5 +1,8 @@
 package dk.camelot64.kickc.model;
 
+import dk.camelot64.kickc.model.operators.Operator;
+import dk.camelot64.kickc.model.operators.Operators;
+
 /** Can calculate the exact value for constants (used for type inference). */
 public class ConstantValueCalculator {
 
@@ -34,17 +37,17 @@ public class ConstantValueCalculator {
 
 
    public static ConstantValue calcValue(ProgramScope programScope, Operator operator, ConstantValue value) {
-      if(operator.equals(Operator.NEG)) {
+      if(operator.equals(Operators.NEG)) {
          return neg(calcValue(programScope, value));
-      } else if(operator.equals(Operator.POS)) {
+      } else if(operator.equals(Operators.POS)) {
          return pos(calcValue(programScope, value));
-      } else if(operator.equals(Operator.CAST_WORD)) {
+      } else if(operator.equals(Operators.CAST_WORD)) {
          return castWord(calcValue(programScope, value));
-      } else if(operator.equals(Operator.CAST_SWORD)) {
+      } else if(operator.equals(Operators.CAST_SWORD)) {
          return castSWord(calcValue(programScope, value));
-      } else if(operator.equals(Operator.CAST_BYTE)) {
+      } else if(operator.equals(Operators.CAST_BYTE)) {
          return castByte(calcValue(programScope, value));
-      } else if(operator.equals(Operator.CAST_SBYTE)) {
+      } else if(operator.equals(Operators.CAST_SBYTE)) {
          return castSByte(calcValue(programScope, value));
       }
       return null;
@@ -84,13 +87,13 @@ public class ConstantValueCalculator {
 
 
    public static ConstantValue calcValue(ProgramScope programScope, ConstantValue value1, Operator operator, ConstantValue value2) {
-      if(operator.equals(Operator.MULTIPLY)) {
+      if(operator.equals(Operators.MULTIPLY)) {
          return multiply(calcValue(programScope, value1), calcValue(programScope, value2));
-      } else if(operator.equals(Operator.PLUS)) {
+      } else if(operator.equals(Operators.PLUS)) {
          return plus(calcValue(programScope, value1), calcValue(programScope, value2));
-      } else if(operator.equals(Operator.MINUS)) {
+      } else if(operator.equals(Operators.MINUS)) {
          return minus(calcValue(programScope, value1), calcValue(programScope, value2));
-      } else if(operator.equals(Operator.DIVIDE)) {
+      } else if(operator.equals(Operators.DIVIDE)) {
          return div(calcValue(programScope, value1), calcValue(programScope, value2));
       }
       return null;

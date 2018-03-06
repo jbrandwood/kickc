@@ -1,11 +1,10 @@
-package dk.camelot64.kickc.model;
+package dk.camelot64.kickc.model.operators;
 
-import dk.camelot64.kickc.model.operators.*;
+import dk.camelot64.kickc.model.SymbolType;
+import dk.camelot64.kickc.model.SymbolTypePointer;
 
-/**
- * An Operator. The operation performed on the rvalues in a Statement.
- */
-public class Operator {
+/** Constainer for all the expression operators */
+public class Operators {
 
    public static final Operator INCREMENT = new OperatorIncrement(1);
    public static final Operator DECREMENT = new OperatorDecrement(1);
@@ -46,19 +45,6 @@ public class Operator {
    public static final Operator BOOL_OR = new OperatorBoolOr(11);
    public static final Operator LOGIC_AND = new OperatorLogicAnd(12);
    public static final Operator LOGIC_OR = new OperatorLogicOr(13);
-
-
-   private String operator;
-   private int precedence;
-   private Type type;
-   private String asmOperator;
-
-   public Operator(String operator, String asmOperator, Type type, int precedence) {
-      this.operator = operator;
-      this.precedence = precedence;
-      this.type = type;
-      this.asmOperator = asmOperator;
-   }
 
    public static Operator getBinary(String op) {
       switch(op) {
@@ -154,48 +140,4 @@ public class Operator {
 
       }
    }
-
-   public String getOperator() {
-      return operator;
-   }
-
-   public int getPrecedence() {
-      return precedence;
-   }
-
-   public Type getType() {
-      return type;
-   }
-
-   public String getAsmOperator() {
-      return asmOperator;
-   }
-
-   @Override
-   public String toString() {
-      return operator;
-   }
-
-   @Override
-   public boolean equals(Object o) {
-      if(this == o) return true;
-      if(o == null || getClass() != o.getClass()) return false;
-      Operator operator1 = (Operator) o;
-      if(precedence != operator1.precedence) return false;
-      if(!operator.equals(operator1.operator)) return false;
-      return type == operator1.type;
-   }
-
-   @Override
-   public int hashCode() {
-      int result = operator.hashCode();
-      result = 31 * result + precedence;
-      result = 31 * result + type.hashCode();
-      return result;
-   }
-
-   public enum Type {
-      UNARY, BINARY
-   }
-
 }

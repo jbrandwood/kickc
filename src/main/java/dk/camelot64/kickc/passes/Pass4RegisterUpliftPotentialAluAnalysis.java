@@ -1,6 +1,7 @@
 package dk.camelot64.kickc.passes;
 
 import dk.camelot64.kickc.model.*;
+import dk.camelot64.kickc.model.operators.Operators;
 
 /***
  * Find equivalence classes that could be assigned to the special ALU register.
@@ -43,7 +44,7 @@ public class Pass4RegisterUpliftPotentialAluAnalysis extends Pass2Base {
                         // The variable has ALU potential
                         setHasAluPotential(registerPotentials, potentialAluVar);
                      }
-                  } else if(assignment.getOperator() != null && (Operator.PLUS.equals(assignment.getOperator()) || Operator.BOOL_OR.equals(assignment.getOperator()) || Operator.WORD.equals(assignment.getOperator()))) {
+                  } else if(assignment.getOperator() != null && (Operators.PLUS.equals(assignment.getOperator()) || Operators.BOOL_OR.equals(assignment.getOperator()) || Operators.WORD.equals(assignment.getOperator()))) {
                      // ALU applicable if the variable is one of the two values
                      if(assignment.getrValue2().equals(potentialAluVar) && assignment.getrValue1() != null) {
                         // The variable has ALU potential
@@ -65,10 +66,10 @@ public class Pass4RegisterUpliftPotentialAluAnalysis extends Pass2Base {
                if(assignment.getOperator() != null && "*idx".equals(assignment.getOperator().getOperator())) {
                   potentialAluVar = findAluPotential(assignment);
                }
-               if(assignment.getOperator() != null && Operator.LOWBYTE.equals(assignment.getOperator()) && assignment.getrValue1() == null) {
+               if(assignment.getOperator() != null && Operators.LOWBYTE.equals(assignment.getOperator()) && assignment.getrValue1() == null) {
                   potentialAluVar = findAluPotential(assignment);
                }
-               if(assignment.getOperator() != null && Operator.HIBYTE.equals(assignment.getOperator()) && assignment.getrValue1() == null) {
+               if(assignment.getOperator() != null && Operators.HIBYTE.equals(assignment.getOperator()) && assignment.getrValue1() == null) {
                   potentialAluVar = findAluPotential(assignment);
                }
             }

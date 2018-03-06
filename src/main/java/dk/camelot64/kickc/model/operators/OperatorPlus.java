@@ -1,7 +1,5 @@
 package dk.camelot64.kickc.model.operators;
 
-import dk.camelot64.kickc.model.OperatorBinary;
-
 /** Binary plus Operator ( x + y ) */
 public class OperatorPlus extends OperatorBinary {
 

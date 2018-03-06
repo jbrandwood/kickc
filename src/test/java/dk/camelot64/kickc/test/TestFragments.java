@@ -4,7 +4,7 @@ import dk.camelot64.kickc.CompileLog;
 import dk.camelot64.kickc.fragment.AsmFragmentTemplate;
 import dk.camelot64.kickc.fragment.AsmFragmentTemplateSynthesizer;
 import dk.camelot64.kickc.fragment.AsmFragmentTemplateUsages;
-import dk.camelot64.kickc.model.Operator;
+import dk.camelot64.kickc.model.operators.Operators;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -119,21 +119,21 @@ public class TestFragments {
 
    private Collection<String> unaryBu() {
       ArrayList<String> unaries = new ArrayList<>();
-      unaries.add(Operator.BOOL_NOT.getAsmOperator());
-      unaries.add(Operator.DECREMENT.getAsmOperator());
-      unaries.add(Operator.INCREMENT.getAsmOperator());
-      unaries.add(Operator.NEG.getAsmOperator());
-      unaries.add(Operator.POS.getAsmOperator());
+      unaries.add(Operators.BOOL_NOT.getAsmOperator());
+      unaries.add(Operators.DECREMENT.getAsmOperator());
+      unaries.add(Operators.INCREMENT.getAsmOperator());
+      unaries.add(Operators.NEG.getAsmOperator());
+      unaries.add(Operators.POS.getAsmOperator());
       return unaries;
    }
 
    private Collection<String> binaryBu() {
       ArrayList<String> unaries = new ArrayList<>();
-      unaries.add(Operator.BOOL_AND.getAsmOperator());
-      unaries.add(Operator.BOOL_OR.getAsmOperator());
-      unaries.add(Operator.BOOL_XOR.getAsmOperator());
-      unaries.add(Operator.MINUS.getAsmOperator());
-      unaries.add(Operator.PLUS.getAsmOperator());
+      unaries.add(Operators.BOOL_AND.getAsmOperator());
+      unaries.add(Operators.BOOL_OR.getAsmOperator());
+      unaries.add(Operators.BOOL_XOR.getAsmOperator());
+      unaries.add(Operators.MINUS.getAsmOperator());
+      unaries.add(Operators.PLUS.getAsmOperator());
       return unaries;
    }
 

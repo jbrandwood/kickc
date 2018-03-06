@@ -1,4 +1,4 @@
-package dk.camelot64.kickc.model;
+package dk.camelot64.kickc.model.operators;
 
 /** A unary expression operator */
 public class OperatorUnary extends Operator {

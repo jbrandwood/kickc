@@ -1,5 +1,7 @@
 package dk.camelot64.kickc.model;
 
+import dk.camelot64.kickc.model.operators.Operator;
+
 /** A constant defined by a binary operator applied to two constants */
 public class ConstantBinary implements ConstantValue {
 

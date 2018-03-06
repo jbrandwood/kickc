@@ -1,5 +1,7 @@
 package dk.camelot64.kickc.model;
 
+import dk.camelot64.kickc.model.operators.Operator;
+
 /**
  * Single Static Assignment Form Statement.
  * Intermediate form used for compiler optimization.

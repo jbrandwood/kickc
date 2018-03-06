@@ -1,6 +1,8 @@
 package dk.camelot64.kickc.passes;
 
 import dk.camelot64.kickc.model.*;
+import dk.camelot64.kickc.model.operators.Operator;
+import dk.camelot64.kickc.model.operators.Operators;
 
 import java.util.*;
 
@@ -140,7 +142,7 @@ public class Pass2ConstantIdentification extends Pass2SsaOptimization {
                         }
                      }
                   }
-               } else if(Operator.ADDRESS_OF.equals(assignment.getOperator()) && assignment.getrValue1()==null) {
+               } else if(Operators.ADDRESS_OF.equals(assignment.getOperator()) && assignment.getrValue1()==null) {
                   if(assignment.getrValue2() instanceof VariableRef) {
                      ConstantVarPointer constantVarPointer = new ConstantVarPointer((VariableRef) assignment.getrValue2());
                      constants.put(variable, constantVarPointer);
@@ -241,9 +243,9 @@ public class Pass2ConstantIdentification extends Pass2SsaOptimization {
          case "<=":
             return new ConstantBinary(c1, operator, c2);
          case "w=":
-            return new ConstantBinary(new ConstantBinary(c1, Operator.MULTIPLY, new ConstantInteger(256L)), Operator.PLUS, c2);
+            return new ConstantBinary(new ConstantBinary(c1, Operators.MULTIPLY, new ConstantInteger(256L)), Operators.PLUS, c2);
          case "dw=":
-            return new ConstantBinary(new ConstantBinary(c1, Operator.MULTIPLY, new ConstantInteger(65536L)), Operator.PLUS, c2);
+            return new ConstantBinary(new ConstantBinary(c1, Operators.MULTIPLY, new ConstantInteger(65536L)), Operators.PLUS, c2);
          case "*idx":
             // Pointer dereference - not constant
             return null;
@@ -263,7 +265,7 @@ public class Pass2ConstantIdentification extends Pass2SsaOptimization {
          for(Statement statement : block.getStatements()) {
             if(statement instanceof StatementAssignment) {
                StatementAssignment assignment = (StatementAssignment) statement;
-               if(Operator.ADDRESS_OF.equals(assignment.getOperator()) && var.equals(assignment.getrValue2())) {
+               if(Operators.ADDRESS_OF.equals(assignment.getOperator()) && var.equals(assignment.getrValue2())) {
                   return true;
                }
             }

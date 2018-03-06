@@ -1,6 +1,7 @@
 package dk.camelot64.kickc.passes;
 
 import dk.camelot64.kickc.model.*;
+import dk.camelot64.kickc.model.operators.Operators;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -96,7 +97,7 @@ public class Pass2UnaryNotSimplification extends Pass2SsaOptimization {
     */
    private void createInverse(String newOperator, StatementAssignment assignment, StatementAssignment tempAssignment) {
       assignment.setrValue1(tempAssignment.getrValue1());
-      assignment.setOperator(newOperator == null ? null : Operator.getBinary(newOperator));
+      assignment.setOperator(newOperator == null ? null : Operators.getBinary(newOperator));
       assignment.setrValue2(tempAssignment.getrValue2());
       getLog().append("Inversing boolean not " + assignment.toString(getProgram(), true) + " from " + tempAssignment.toString(getProgram(), true));
    }

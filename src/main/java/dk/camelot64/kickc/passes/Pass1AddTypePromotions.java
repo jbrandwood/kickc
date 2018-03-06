@@ -1,6 +1,7 @@
 package dk.camelot64.kickc.passes;
 
 import dk.camelot64.kickc.model.*;
+import dk.camelot64.kickc.model.operators.Operators;
 
 import java.util.List;
 import java.util.ListIterator;
@@ -51,7 +52,7 @@ public class Pass1AddTypePromotions extends Pass1Base {
          // Promotion possible - add tmp-var and a cast
          if(assignment.getOperator() == null) {
             // No operator - add cast directly!
-            assignment.setOperator(Operator.getCastUnary(lValueType));
+            assignment.setOperator(Operators.getCastUnary(lValueType));
             getProgram().getLog().append("Promoting " + rValueType + " to " + lValueType + " in " + assignment);
          } else {
             throw new RuntimeException("Tmp-var promotions not implemented yet " + assignment);

@@ -1,5 +1,7 @@
 package dk.camelot64.kickc.model;
 
+import dk.camelot64.kickc.model.operators.Operator;
+
 /**
  * Intermediate Compiler Form Statement with a conditional jump.
  * Intermediate form used for compiler optimization.

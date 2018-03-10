@@ -12,7 +12,7 @@ public class OperatorNeg extends OperatorUnary {
    }
 
    @Override
-   public ConstantLiteral calculate(ConstantLiteral operand) {
+   public ConstantLiteral calculateLiteral(ConstantLiteral operand) {
       if(operand instanceof ConstantInteger) {
          return new ConstantInteger(-((ConstantInteger)operand).getInteger());
       }

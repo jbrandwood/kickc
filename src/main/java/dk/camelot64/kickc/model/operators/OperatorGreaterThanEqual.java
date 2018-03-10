@@ -13,7 +13,7 @@ public class OperatorGreaterThanEqual extends OperatorBinary {
    }
 
    @Override
-   public ConstantLiteral calculate(ConstantLiteral left, ConstantLiteral right) {
+   public ConstantLiteral calculateLiteral(ConstantLiteral left, ConstantLiteral right) {
       if(left instanceof ConstantInteger && right instanceof ConstantInteger) {
          return new ConstantBool(((ConstantInteger) left).getInteger() >= ((ConstantInteger) right).getInteger());
       }

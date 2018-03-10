@@ -9,6 +9,6 @@ public abstract class OperatorBinary extends Operator {
       super(operator, asmOperator, Type.BINARY, precedence);
    }
 
-   public abstract ConstantLiteral calculate(ConstantLiteral left, ConstantLiteral right);
+   public abstract ConstantLiteral calculateLiteral(ConstantLiteral left, ConstantLiteral right);
 
 }

@@ -14,7 +14,7 @@ public class OperatorGetLow extends OperatorUnary {
    }
 
    @Override
-   public ConstantLiteral calculate(ConstantLiteral operand) {
+   public ConstantLiteral calculateLiteral(ConstantLiteral operand) {
       if(operand instanceof ConstantInteger) {
          ConstantInteger operandInt = (ConstantInteger) operand;
          if(SymbolType.isWord(operandInt.getType())) {

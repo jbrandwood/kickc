@@ -12,7 +12,7 @@ public class OperatorCastSByte extends OperatorUnary {
    }
 
    @Override
-   public ConstantLiteral calculate(ConstantLiteral value) {
+   public ConstantLiteral calculateLiteral(ConstantLiteral value) {
       if(value instanceof ConstantInteger) {
          return new ConstantInteger(0xff & ((ConstantInteger) value).getValue());
       }

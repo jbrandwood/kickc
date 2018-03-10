@@ -12,7 +12,7 @@ public class OperatorBoolNot extends OperatorUnary {
    }
 
    @Override
-   public ConstantLiteral calculate(ConstantLiteral left) {
+   public ConstantLiteral calculateLiteral(ConstantLiteral left) {
       if(left instanceof ConstantInteger) {
          return new ConstantInteger(~((ConstantInteger) left).getInteger());
       }

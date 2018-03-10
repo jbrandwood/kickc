@@ -12,7 +12,7 @@ public class OperatorLogicOr extends OperatorBinary {
    }
 
    @Override
-   public ConstantLiteral calculate(ConstantLiteral left, ConstantLiteral right) {
+   public ConstantLiteral calculateLiteral(ConstantLiteral left, ConstantLiteral right) {
       if(left instanceof ConstantBool && right instanceof ConstantBool) {
          return new ConstantBool(((ConstantBool) left).getBool() || ((ConstantBool) right).getBool());
       }

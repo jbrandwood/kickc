@@ -11,7 +11,7 @@ public class OperatorDeref extends OperatorUnary {
    }
 
    @Override
-   public ConstantLiteral calculate(ConstantLiteral operand) {
+   public ConstantLiteral calculateLiteral(ConstantLiteral operand) {
       throw new CompileError("Not implemented");
    }
 

@@ -12,7 +12,7 @@ public class OperatorCastSWord extends OperatorUnary {
    }
 
    @Override
-   public ConstantLiteral calculate(ConstantLiteral value) {
+   public ConstantLiteral calculateLiteral(ConstantLiteral value) {
       if(value instanceof ConstantInteger) {
          return new ConstantInteger(0xffff & ((ConstantInteger) value).getValue());
       }

@@ -11,7 +11,7 @@ public class OperatorDerefIdx extends OperatorBinary {
    }
 
    @Override
-   public ConstantLiteral calculate(ConstantLiteral left, ConstantLiteral right) {
+   public ConstantLiteral calculateLiteral(ConstantLiteral left, ConstantLiteral right) {
       throw new CompileError("Not implemented");
    }
 }

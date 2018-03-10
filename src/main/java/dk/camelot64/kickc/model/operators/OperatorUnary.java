@@ -9,5 +9,5 @@ public abstract class OperatorUnary extends Operator {
       super(operator, asmOperator, Type.UNARY, precedence);
    }
 
-   public abstract ConstantLiteral calculate(ConstantLiteral operand);
+   public abstract ConstantLiteral calculateLiteral(ConstantLiteral operand);
 }

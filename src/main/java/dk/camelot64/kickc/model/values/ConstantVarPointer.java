@@ -31,6 +31,11 @@ public class ConstantVarPointer implements ConstantValue {
    }
 
    @Override
+   public ConstantLiteral calculate(ProgramScope scope) {
+      throw new CompileError("Cannot calculate literal var pointer");
+   }
+
+   @Override
    public String toString(Program program) {
       return "&" + toVar.toString(program);
    }

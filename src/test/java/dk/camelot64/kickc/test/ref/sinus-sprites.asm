@@ -55,9 +55,9 @@ anim: {
     ldy xidx
     lda sintab_x,y
     clc
-    adc #<$1e
+    adc #$1e
     sta x
-    lda #>$1e
+    lda #0
     adc #0
     sta x+1
     lda x_msb

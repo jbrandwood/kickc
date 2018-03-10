@@ -33,6 +33,11 @@ public class ConstantArrayFilled implements ConstantValue {
    }
 
    @Override
+   public ConstantLiteral calculate(ProgramScope scope) {
+      throw new CompileError("Cannot calculate literal array");
+   }
+
+   @Override
    public String toString() {
       return toString(null);
    }

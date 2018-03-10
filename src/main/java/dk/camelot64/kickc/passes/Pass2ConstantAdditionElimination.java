@@ -208,7 +208,7 @@ public class Pass2ConstantAdditionElimination extends Pass2SsaOptimization {
             assignment.setrValue2(assignment.getrValue1());
             assignment.setOperator(null);
             assignment.setrValue1(null);
-            return new ConstantUnary(Operators.MINUS, constant);
+            return new ConstantUnary(Operators.NEG, constant);
          } else {
             ConstantValue const1 = null;
             if(assignment.getrValue1() instanceof VariableRef) {

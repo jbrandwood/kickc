@@ -2,6 +2,7 @@ package dk.camelot64.kickc.model.values;
 
 import dk.camelot64.kickc.model.*;
 import dk.camelot64.kickc.model.operators.Operator;
+import dk.camelot64.kickc.model.operators.OperatorBinary;
 import dk.camelot64.kickc.model.symbols.ProgramScope;
 import dk.camelot64.kickc.model.types.SymbolType;
 import dk.camelot64.kickc.model.types.SymbolTypeInference;
@@ -13,18 +14,18 @@ public class ConstantBinary implements ConstantValue {
    private ConstantValue left;
 
    /** The operator, */
-   private Operator operator;
+   private OperatorBinary operator;
 
    /** The right constant operand. */
    private ConstantValue right;
 
-   public ConstantBinary(ConstantValue left, Operator operator, ConstantValue right) {
+   public ConstantBinary(ConstantValue left, OperatorBinary operator, ConstantValue right) {
       this.left = left;
       this.operator = operator;
       this.right = right;
    }
 
-   public Operator getOperator() {
+   public OperatorBinary getOperator() {
       return operator;
    }
 
@@ -34,6 +35,11 @@ public class ConstantBinary implements ConstantValue {
 
    public ConstantValue getRight() {
       return right;
+   }
+
+   @Override
+   public ConstantLiteral calculate(ProgramScope scope) {
+      return operator.calculate(left.calculate(scope), right.calculate(scope));
    }
 
    @Override

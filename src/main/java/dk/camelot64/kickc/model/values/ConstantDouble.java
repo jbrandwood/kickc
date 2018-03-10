@@ -25,6 +25,10 @@ public class ConstantDouble implements ConstantLiteral<Double> {
       return number;
    }
 
+   public Double getDouble() {
+      return number;
+   }
+
    @Override
    public String toString() {
       return toString(null);

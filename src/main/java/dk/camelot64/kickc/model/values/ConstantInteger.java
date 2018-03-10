@@ -22,6 +22,10 @@ public class ConstantInteger implements ConstantLiteral<Long> {
       return number;
    }
 
+   public Long getInteger() {
+      return number;
+   }
+
    public SymbolType getType(ProgramScope scope) {
       return getType();
    }

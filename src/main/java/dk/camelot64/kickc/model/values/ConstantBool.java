@@ -25,6 +25,10 @@ public class ConstantBool implements ConstantLiteral<Boolean> {
       return value;
    }
 
+   public Boolean getBool() {
+      return value;
+   }
+
    @Override
    public String toString() {
       return toString(null);
@@ -32,12 +36,7 @@ public class ConstantBool implements ConstantLiteral<Boolean> {
 
    @Override
    public String toString(Program program) {
-      if(program == null) {
-         return Boolean.toString(value);
-      } else {
-         return //"("+SymbolTypeBasic.BOOLEAN.getTypeName()+") "+
-               Boolean.toString(value);
-      }
+      return Boolean.toString(value);
    }
 
 }

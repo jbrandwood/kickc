@@ -25,6 +25,10 @@ public class ConstantChar implements ConstantLiteral<Character> {
       return value;
    }
 
+   public Character getChar() {
+      return value;
+   }
+
    @Override
    public String toString() {
       return toString(null);

@@ -2,6 +2,8 @@ package dk.camelot64.kickc.passes;
 
 import dk.camelot64.kickc.model.*;
 import dk.camelot64.kickc.model.operators.Operator;
+import dk.camelot64.kickc.model.operators.OperatorBinary;
+import dk.camelot64.kickc.model.operators.OperatorUnary;
 import dk.camelot64.kickc.model.operators.Operators;
 import dk.camelot64.kickc.model.values.*;
 import dk.camelot64.kickc.model.statements.Statement;
@@ -104,7 +106,10 @@ public class Pass2ConstantIdentification extends Pass2SsaOptimization {
                      constants.put(variable, constant);
                   } else {
                      // Constant unary expression
-                     ConstantValue constant = createUnary(assignment.getOperator(), getConstant(assignment.getrValue2()));
+                     ConstantValue constant = createUnary(
+                           (OperatorUnary) assignment.getOperator(),
+                           getConstant(assignment.getrValue2())
+                     );
                      if(constant != null) {
                         constants.put(variable, constant);
                      }
@@ -113,7 +118,7 @@ public class Pass2ConstantIdentification extends Pass2SsaOptimization {
                   // Constant binary expression
                   ConstantValue constant = createBinary(
                         getConstant(assignment.getrValue1()),
-                        assignment.getOperator(),
+                        (OperatorBinary) assignment.getOperator(),
                         getConstant(assignment.getrValue2()));
                   if(constant != null) {
 
@@ -199,7 +204,7 @@ public class Pass2ConstantIdentification extends Pass2SsaOptimization {
       return null;
    }
 
-   static ConstantValue createUnary(Operator operator, ConstantValue c) {
+   static ConstantValue createUnary(OperatorUnary operator, ConstantValue c) {
       switch(operator.getOperator()) {
          case "-":
          case "+":
@@ -225,7 +230,7 @@ public class Pass2ConstantIdentification extends Pass2SsaOptimization {
       }
    }
 
-   ConstantValue createBinary(ConstantValue c1, Operator operator, ConstantValue c2) {
+   ConstantValue createBinary(ConstantValue c1, OperatorBinary operator, ConstantValue c2) {
       switch(operator.getOperator()) {
          case "-":
          case "+":

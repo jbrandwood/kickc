@@ -19,7 +19,7 @@ main: {
     sta FGCOL
     lda #BMM|DEN|RSEL|3
     sta D011
-    lda #$ff&(($ffff&SCREEN)/$40|($ffff&BITMAP)/$400)
+    lda #($ffff&SCREEN)/$40|($ffff&BITMAP)/$400
     sta D018
     jsr init_screen
     jsr init_plot_tables

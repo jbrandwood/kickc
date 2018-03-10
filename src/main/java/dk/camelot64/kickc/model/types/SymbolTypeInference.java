@@ -1,6 +1,10 @@
 package dk.camelot64.kickc.model.types;
 
+import dk.camelot64.kickc.model.CompileError;
+import dk.camelot64.kickc.model.ConstantNotLiteral;
 import dk.camelot64.kickc.model.ConstantValueCalculator;
+import dk.camelot64.kickc.model.operators.OperatorBinary;
+import dk.camelot64.kickc.model.operators.OperatorUnary;
 import dk.camelot64.kickc.model.statements.StatementAssignment;
 import dk.camelot64.kickc.model.statements.StatementCall;
 import dk.camelot64.kickc.model.statements.StatementLValue;
@@ -27,9 +31,17 @@ public class SymbolTypeInference {
     * @param rValue The value
     * @return The type of the resulting value
     */
-   public static SymbolType inferType(ProgramScope programScope, Operator operator, RValue rValue) {
-      if(operator == null) {
-         return inferType(programScope, rValue);
+   public static SymbolType inferType(ProgramScope programScope, OperatorUnary operator, RValue rValue) {
+      if(rValue instanceof ConstantValue) {
+         ConstantValue value = null;
+         try {
+            value = operator.calculate(ConstantValueCalculator.calcValue(programScope, (ConstantValue) rValue));
+         } catch(ConstantNotLiteral e) {
+            value = null;
+         }
+         if(value != null) {
+            return value.getType(programScope);
+         }
       }
       if(operator.equals(Operators.CAST_BYTE)) {
          return SymbolType.BYTE;
@@ -49,23 +61,22 @@ public class SymbolTypeInference {
          SymbolType valueType = inferType(programScope, rValue);
          return new SymbolTypePointer(valueType);
       }
-      if(rValue instanceof ConstantValue) {
-         ConstantValue value = ConstantValueCalculator.calcValue(programScope, operator, (ConstantValue) rValue);
-         if(value != null) {
-            return value.getType(programScope);
-         }
-      }
       SymbolType valueType = inferType(programScope, rValue);
       return inferType(operator, valueType);
    }
 
-   public static SymbolType inferType(ProgramScope programScope, RValue rValue1, Operator operator, RValue rValue2) {
+   public static SymbolType inferType(ProgramScope programScope, RValue rValue1, OperatorBinary operator, RValue rValue2) {
       if(rValue1 instanceof ConstantValue && rValue2 instanceof ConstantValue) {
-         ConstantValue value = ConstantValueCalculator.calcValue(
-               programScope,
-               (ConstantValue) rValue1,
-               operator,
-               (ConstantValue) rValue2);
+         //ConstantValue value = ConstantValueCalculator.calcValue(programScope,(ConstantValue) rValue1,operator,(ConstantValue) rValue2);
+         ConstantValue value = null;
+         try {
+            value = operator.calculate(
+                  ConstantValueCalculator.calcValue(programScope, (ConstantValue) rValue1),
+                  ConstantValueCalculator.calcValue(programScope, (ConstantValue) rValue2)
+            );
+         } catch(ConstantNotLiteral e) {
+            value = null;
+         }
          if(value != null) {
             return value.getType(programScope);
          }
@@ -400,10 +411,12 @@ public class SymbolTypeInference {
       RValue rValue2 = assignment.getrValue2();
       if(assignment.getrValue1() == null && assignment.getOperator() == null) {
          rValueType = inferType(symbols, rValue2);
-      } else if(assignment.getrValue1() == null) {
-         rValueType = inferType(symbols, assignment.getOperator(), rValue2);
+      } else if(assignment.getrValue1() == null && assignment.getOperator() instanceof OperatorUnary) {
+         rValueType = inferType(symbols, (OperatorUnary) assignment.getOperator(), rValue2);
+      } else if(assignment.getOperator() instanceof OperatorBinary) {
+         rValueType = inferType(symbols, rValue1, (OperatorBinary) assignment.getOperator(), rValue2);
       } else {
-         rValueType = inferType(symbols, rValue1, assignment.getOperator(), rValue2);
+         throw new CompileError("Cannot infer type of "+assignment.toString());
       }
       return rValueType;
    }
@@ -488,15 +501,25 @@ public class SymbolTypeInference {
          if(SymbolType.VAR.equals(symbol.getType())) {
             // Unresolved symbol - perform inference
             Operator operator = assignment.getOperator();
-            if(operator == null || assignment.getrValue1() == null) {
-               // Copy operation or Unary operation
+            if(assignment.getrValue1()==null && operator == null ) {
+               // Copy operation
                RValue rValue = assignment.getrValue2();
-               SymbolType type = inferType(programScope, operator, rValue);
+               SymbolType type = inferType(programScope, rValue);
+               symbol.setTypeInferred(type);
+            } else if(assignment.getrValue1() == null && operator instanceof OperatorUnary) {
+               // Unary operation
+               RValue rValue = assignment.getrValue2();
+               SymbolType type = inferType(programScope, (OperatorUnary) operator, rValue);
+               symbol.setTypeInferred(type);
+            } else if(operator instanceof OperatorBinary){
+               // Binary operation
+               SymbolType type = inferType(
+                     programScope, assignment.getrValue1(),
+                     (OperatorBinary) assignment.getOperator(),
+                     assignment.getrValue2());
                symbol.setTypeInferred(type);
             } else {
-               // Binary operation
-               SymbolType type = inferType(programScope, assignment.getrValue1(), assignment.getOperator(), assignment.getrValue2());
-               symbol.setTypeInferred(type);
+               throw new CompileError("Cannot infer type of "+assignment);
             }
             // If the type is an array or a string the symbol is constant
             if(symbol.getType() instanceof SymbolTypeArray) {

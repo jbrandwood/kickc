@@ -1,7 +1,6 @@
 package dk.camelot64.kickc.model.values;
 
 import dk.camelot64.kickc.model.*;
-import dk.camelot64.kickc.model.operators.Operator;
 import dk.camelot64.kickc.model.operators.OperatorBinary;
 import dk.camelot64.kickc.model.symbols.ProgramScope;
 import dk.camelot64.kickc.model.types.SymbolType;
@@ -38,8 +37,8 @@ public class ConstantBinary implements ConstantValue {
    }
 
    @Override
-   public ConstantLiteral calculate(ProgramScope scope) {
-      return operator.calculate(left.calculate(scope), right.calculate(scope));
+   public ConstantLiteral calculateLiteral(ProgramScope scope) {
+      return operator.calculate(left.calculateLiteral(scope), right.calculateLiteral(scope));
    }
 
    @Override

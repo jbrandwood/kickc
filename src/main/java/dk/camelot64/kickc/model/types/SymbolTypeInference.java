@@ -2,16 +2,15 @@ package dk.camelot64.kickc.model.types;
 
 import dk.camelot64.kickc.model.CompileError;
 import dk.camelot64.kickc.model.ConstantNotLiteral;
-import dk.camelot64.kickc.model.ConstantValueCalculator;
+import dk.camelot64.kickc.model.operators.Operator;
 import dk.camelot64.kickc.model.operators.OperatorBinary;
 import dk.camelot64.kickc.model.operators.OperatorUnary;
+import dk.camelot64.kickc.model.operators.Operators;
 import dk.camelot64.kickc.model.statements.StatementAssignment;
 import dk.camelot64.kickc.model.statements.StatementCall;
 import dk.camelot64.kickc.model.statements.StatementLValue;
-import dk.camelot64.kickc.model.operators.Operator;
-import dk.camelot64.kickc.model.operators.Operators;
-import dk.camelot64.kickc.model.values.*;
 import dk.camelot64.kickc.model.symbols.*;
+import dk.camelot64.kickc.model.values.*;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -35,7 +34,7 @@ public class SymbolTypeInference {
       if(rValue instanceof ConstantValue) {
          ConstantValue value = null;
          try {
-            value = operator.calculate(ConstantValueCalculator.calcValue(programScope, (ConstantValue) rValue));
+            value = operator.calculate(((ConstantValue) rValue).calculateLiteral(programScope));
          } catch(ConstantNotLiteral e) {
             value = null;
          }
@@ -71,8 +70,8 @@ public class SymbolTypeInference {
          ConstantValue value = null;
          try {
             value = operator.calculate(
-                  ConstantValueCalculator.calcValue(programScope, (ConstantValue) rValue1),
-                  ConstantValueCalculator.calcValue(programScope, (ConstantValue) rValue2)
+                  ((ConstantValue) rValue1).calculateLiteral(programScope),
+                  ((ConstantValue) rValue2).calculateLiteral(programScope)
             );
          } catch(ConstantNotLiteral e) {
             value = null;

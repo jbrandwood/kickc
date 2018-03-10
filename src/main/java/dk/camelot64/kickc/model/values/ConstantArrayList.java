@@ -35,8 +35,8 @@ public class ConstantArrayList implements ConstantValue {
    }
 
    @Override
-   public ConstantLiteral calculate(ProgramScope scope) {
-      throw new CompileError("Cannot calculate literal array");
+   public ConstantLiteral calculateLiteral(ProgramScope scope) {
+      throw new ConstantNotLiteral("Cannot calculate literal array");
    }
 
    @Override

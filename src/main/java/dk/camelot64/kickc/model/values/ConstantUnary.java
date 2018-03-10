@@ -1,7 +1,6 @@
 package dk.camelot64.kickc.model.values;
 
 import dk.camelot64.kickc.model.*;
-import dk.camelot64.kickc.model.operators.Operator;
 import dk.camelot64.kickc.model.operators.OperatorUnary;
 import dk.camelot64.kickc.model.symbols.ProgramScope;
 import dk.camelot64.kickc.model.types.SymbolType;
@@ -30,8 +29,8 @@ public class ConstantUnary implements ConstantValue {
    }
 
    @Override
-   public ConstantLiteral calculate(ProgramScope scope) {
-      return operator.calculate(operand.calculate(scope));
+   public ConstantLiteral calculateLiteral(ProgramScope scope) {
+      return operator.calculate(operand.calculateLiteral(scope));
    }
 
    @Override

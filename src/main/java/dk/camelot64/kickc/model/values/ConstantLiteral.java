@@ -8,7 +8,7 @@ public interface ConstantLiteral<T> extends ConstantValue {
    T getValue();
 
    @Override
-   default ConstantLiteral calculate(ProgramScope scope) {
+   default ConstantLiteral calculateLiteral(ProgramScope scope) {
       return this;
    }
 }

@@ -1,7 +1,6 @@
 package dk.camelot64.kickc.passes;
 
 import dk.camelot64.kickc.model.*;
-import dk.camelot64.kickc.model.operators.Operator;
 import dk.camelot64.kickc.model.operators.OperatorBinary;
 import dk.camelot64.kickc.model.operators.OperatorUnary;
 import dk.camelot64.kickc.model.operators.Operators;
@@ -62,7 +61,7 @@ public class Pass2ConstantIdentification extends Pass2SsaOptimization {
             } else {
                throw new CompileError(
                      "Constant variable has a non-matching type \n variable: " + variable.toString(getProgram()) +
-                           "\n value: (" + valueType.toString() + ") " + ConstantValueCalculator.calcValue(getScope(), constVal) +
+                           "\n value: (" + valueType.toString() + ") " + constVal.calculateLiteral(getScope()) +
                            "\n value definition: " + constVal.toString(getProgram()));
             }
          }

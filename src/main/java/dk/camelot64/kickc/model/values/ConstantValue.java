@@ -8,6 +8,6 @@ public interface ConstantValue extends RValue {
 
    SymbolType getType(ProgramScope scope);
 
-   ConstantLiteral calculate(ProgramScope scope);
+   ConstantLiteral calculateLiteral(ProgramScope scope);
 
 }

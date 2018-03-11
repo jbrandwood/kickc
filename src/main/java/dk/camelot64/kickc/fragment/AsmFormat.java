@@ -78,7 +78,7 @@ public class AsmFormat {
          }
       } else if(Operators.CAST_WORD.equals(operator) || Operators.CAST_SWORD.equals(operator) || Operators.CAST_PTRBY.equals(operator)) {
          SymbolType operandType = SymbolTypeInference.inferType(program.getScope(), operand);
-         if(SymbolType.isWord(operandType) || SymbolType.isSWord(operandType)) {
+         if(SymbolType.isWord(operandType) || SymbolType.isSWord(operandType) || SymbolType.isByte(operandType) || SymbolType.isSByte(operandType) || operandType instanceof SymbolTypePointer) {
             // No cast needed
             return getAsmConstant(program, operand, outerPrecedence, codeScope);
          } else {

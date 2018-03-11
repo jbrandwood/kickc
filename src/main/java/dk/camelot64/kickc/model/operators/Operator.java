@@ -17,13 +17,7 @@ public class Operator {
       this.asmOperator = asmOperator;
    }
 
-   // Constant Evaluation / Calculation (ParseTreeConstantEvaluator / Pass2ConstantIdentification / ConstantValueCalculator)
-
-   // Type Inference (SymbolTypeInference)
-
    // Constant ASM formatting (AsmFormat)
-
-
 
    public String getOperator() {
       return operator;

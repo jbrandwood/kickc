@@ -17,7 +17,7 @@ void test_bytes() {
     assert_byte("0=0@", bb, 0);
     byte bc=bb+2;
     assert_byte("0+2=2@", bc, 2);
-    byte bd=(byte)(bc-4);
+    byte bd=(byte)((signed byte)bc-4);
     assert_byte("0+2-4=254@", bd, 254);
 }
 
@@ -275,13 +275,14 @@ endproc // main()
 proc (void()) test_bytes()
   (byte) test_bytes::bb ← (byte/signed byte/word/signed word/dword/signed dword) 0
   (void~) test_bytes::$0 ← call assert_byte (string) "0=0@" (byte) test_bytes::bb (byte/signed byte/word/signed word/dword/signed dword) 0 
-  (byte/word~) test_bytes::$1 ← (byte) test_bytes::bb + (byte/signed byte/word/signed word/dword/signed dword) 2
-  (byte) test_bytes::bc ← (byte/word~) test_bytes::$1
+  (byte/signed word/word/dword/signed dword~) test_bytes::$1 ← (byte) test_bytes::bb + (byte/signed byte/word/signed word/dword/signed dword) 2
+  (byte) test_bytes::bc ← (byte/signed word/word/dword/signed dword~) test_bytes::$1
   (void~) test_bytes::$2 ← call assert_byte (string) "0+2=2@" (byte) test_bytes::bc (byte/signed byte/word/signed word/dword/signed dword) 2 
-  (byte/signed byte/word/signed word/dword/signed dword~) test_bytes::$3 ← (byte) test_bytes::bc - (byte/signed byte/word/signed word/dword/signed dword) 4
-  (byte~) test_bytes::$4 ← ((byte)) (byte/signed byte/word/signed word/dword/signed dword~) test_bytes::$3
-  (byte) test_bytes::bd ← (byte~) test_bytes::$4
-  (void~) test_bytes::$5 ← call assert_byte (string) "0+2-4=254@" (byte) test_bytes::bd (byte/word/signed word/dword/signed dword) 254 
+  (signed byte~) test_bytes::$3 ← ((signed byte)) (byte) test_bytes::bc
+  (signed word/signed byte/signed dword~) test_bytes::$4 ← (signed byte~) test_bytes::$3 - (byte/signed byte/word/signed word/dword/signed dword) 4
+  (byte~) test_bytes::$5 ← ((byte)) (signed word/signed byte/signed dword~) test_bytes::$4
+  (byte) test_bytes::bd ← (byte~) test_bytes::$5
+  (void~) test_bytes::$6 ← call assert_byte (string) "0+2-4=254@" (byte) test_bytes::bd (byte/word/signed word/dword/signed dword) 254 
 test_bytes::@return:
   return 
 endproc // test_bytes()
@@ -304,19 +305,19 @@ endproc // assert_byte()
 proc (void()) test_sbytes()
   (signed byte) test_sbytes::bb ← (byte/signed byte/word/signed word/dword/signed dword) 0
   (void~) test_sbytes::$0 ← call assert_sbyte (string) "0=0@" (signed byte) test_sbytes::bb (byte/signed byte/word/signed word/dword/signed dword) 0 
-  (byte/signed byte/word/signed word/dword/signed dword~) test_sbytes::$1 ← (signed byte) test_sbytes::bb + (byte/signed byte/word/signed word/dword/signed dword) 2
-  (signed byte) test_sbytes::bc ← (byte/signed byte/word/signed word/dword/signed dword~) test_sbytes::$1
+  (signed word/signed byte/signed dword~) test_sbytes::$1 ← (signed byte) test_sbytes::bb + (byte/signed byte/word/signed word/dword/signed dword) 2
+  (signed byte) test_sbytes::bc ← (signed word/signed byte/signed dword~) test_sbytes::$1
   (void~) test_sbytes::$2 ← call assert_sbyte (string) "0+2=2@" (signed byte) test_sbytes::bc (byte/signed byte/word/signed word/dword/signed dword) 2 
-  (byte/signed byte/word/signed word/dword/signed dword~) test_sbytes::$3 ← (signed byte) test_sbytes::bc - (byte/signed byte/word/signed word/dword/signed dword) 4
-  (signed byte) test_sbytes::bd ← (byte/signed byte/word/signed word/dword/signed dword~) test_sbytes::$3
+  (signed word/signed byte/signed dword~) test_sbytes::$3 ← (signed byte) test_sbytes::bc - (byte/signed byte/word/signed word/dword/signed dword) 4
+  (signed byte) test_sbytes::bd ← (signed word/signed byte/signed dword~) test_sbytes::$3
   (signed byte/signed word/signed dword~) test_sbytes::$4 ← - (byte/signed byte/word/signed word/dword/signed dword) 2
   (void~) test_sbytes::$5 ← call assert_sbyte (string) "0+2-4=-2@" (signed byte) test_sbytes::bd (signed byte/signed word/signed dword~) test_sbytes::$4 
   (signed byte~) test_sbytes::$6 ← - (signed byte) test_sbytes::bd
   (signed byte) test_sbytes::be ← (signed byte~) test_sbytes::$6
   (void~) test_sbytes::$7 ← call assert_sbyte (string) "-(0+2-4)=2@" (signed byte) test_sbytes::be (byte/signed byte/word/signed word/dword/signed dword) 2 
   (signed byte/signed word/signed dword~) test_sbytes::$8 ← - (byte/signed byte/word/signed word/dword/signed dword) 127
-  (byte/signed byte/word/signed word/dword/signed dword~) test_sbytes::$9 ← (signed byte/signed word/signed dword~) test_sbytes::$8 - (byte/signed byte/word/signed word/dword/signed dword) 127
-  (signed byte~) test_sbytes::$10 ← ((signed byte)) (byte/signed byte/word/signed word/dword/signed dword~) test_sbytes::$9
+  (signed word/signed byte/signed dword~) test_sbytes::$9 ← (signed byte/signed word/signed dword~) test_sbytes::$8 - (byte/signed byte/word/signed word/dword/signed dword) 127
+  (signed byte~) test_sbytes::$10 ← ((signed byte)) (signed word/signed byte/signed dword~) test_sbytes::$9
   (signed byte) test_sbytes::bf ← (signed byte~) test_sbytes::$10
   (void~) test_sbytes::$11 ← call assert_sbyte (string) "-127-127=2@" (signed byte) test_sbytes::bf (byte/signed byte/word/signed word/dword/signed dword) 2 
 test_sbytes::@return:
@@ -455,28 +456,29 @@ SYMBOLS
 (word) print_word::w
 (void()) test_bytes()
 (void~) test_bytes::$0
-(byte/word~) test_bytes::$1
+(byte/signed word/word/dword/signed dword~) test_bytes::$1
 (void~) test_bytes::$2
-(byte/signed byte/word/signed word/dword/signed dword~) test_bytes::$3
-(byte~) test_bytes::$4
-(void~) test_bytes::$5
+(signed byte~) test_bytes::$3
+(signed word/signed byte/signed dword~) test_bytes::$4
+(byte~) test_bytes::$5
+(void~) test_bytes::$6
 (label) test_bytes::@return
 (byte) test_bytes::bb
 (byte) test_bytes::bc
 (byte) test_bytes::bd
 (void()) test_sbytes()
 (void~) test_sbytes::$0
-(byte/signed byte/word/signed word/dword/signed dword~) test_sbytes::$1
+(signed word/signed byte/signed dword~) test_sbytes::$1
 (signed byte~) test_sbytes::$10
 (void~) test_sbytes::$11
 (void~) test_sbytes::$2
-(byte/signed byte/word/signed word/dword/signed dword~) test_sbytes::$3
+(signed word/signed byte/signed dword~) test_sbytes::$3
 (signed byte/signed word/signed dword~) test_sbytes::$4
 (void~) test_sbytes::$5
 (signed byte~) test_sbytes::$6
 (void~) test_sbytes::$7
 (signed byte/signed word/signed dword~) test_sbytes::$8
-(byte/signed byte/word/signed word/dword/signed dword~) test_sbytes::$9
+(signed word/signed byte/signed dword~) test_sbytes::$9
 (label) test_sbytes::@return
 (signed byte) test_sbytes::bb
 (signed byte) test_sbytes::bc
@@ -668,13 +670,14 @@ main::@return: scope:[main]  from main
 test_bytes: scope:[test_bytes]  from
   (byte) test_bytes::bb ← (byte/signed byte/word/signed word/dword/signed dword) 0
   (void~) test_bytes::$0 ← call assert_byte (string) "0=0@" (byte) test_bytes::bb (byte/signed byte/word/signed word/dword/signed dword) 0 
-  (byte/word~) test_bytes::$1 ← (byte) test_bytes::bb + (byte/signed byte/word/signed word/dword/signed dword) 2
-  (byte) test_bytes::bc ← (byte/word~) test_bytes::$1
+  (byte/signed word/word/dword/signed dword~) test_bytes::$1 ← (byte) test_bytes::bb + (byte/signed byte/word/signed word/dword/signed dword) 2
+  (byte) test_bytes::bc ← (byte/signed word/word/dword/signed dword~) test_bytes::$1
   (void~) test_bytes::$2 ← call assert_byte (string) "0+2=2@" (byte) test_bytes::bc (byte/signed byte/word/signed word/dword/signed dword) 2 
-  (byte/signed byte/word/signed word/dword/signed dword~) test_bytes::$3 ← (byte) test_bytes::bc - (byte/signed byte/word/signed word/dword/signed dword) 4
-  (byte~) test_bytes::$4 ← ((byte)) (byte/signed byte/word/signed word/dword/signed dword~) test_bytes::$3
-  (byte) test_bytes::bd ← (byte~) test_bytes::$4
-  (void~) test_bytes::$5 ← call assert_byte (string) "0+2-4=254@" (byte) test_bytes::bd (byte/word/signed word/dword/signed dword) 254 
+  (signed byte~) test_bytes::$3 ← ((signed byte)) (byte) test_bytes::bc
+  (signed word/signed byte/signed dword~) test_bytes::$4 ← (signed byte~) test_bytes::$3 - (byte/signed byte/word/signed word/dword/signed dword) 4
+  (byte~) test_bytes::$5 ← ((byte)) (signed word/signed byte/signed dword~) test_bytes::$4
+  (byte) test_bytes::bd ← (byte~) test_bytes::$5
+  (void~) test_bytes::$6 ← call assert_byte (string) "0+2-4=254@" (byte) test_bytes::bd (byte/word/signed word/dword/signed dword) 254 
   to:test_bytes::@return
 test_bytes::@return: scope:[test_bytes]  from test_bytes
   return 
@@ -708,19 +711,19 @@ assert_byte::@return: scope:[assert_byte]  from assert_byte::@2
 test_sbytes: scope:[test_sbytes]  from
   (signed byte) test_sbytes::bb ← (byte/signed byte/word/signed word/dword/signed dword) 0
   (void~) test_sbytes::$0 ← call assert_sbyte (string) "0=0@" (signed byte) test_sbytes::bb (byte/signed byte/word/signed word/dword/signed dword) 0 
-  (byte/signed byte/word/signed word/dword/signed dword~) test_sbytes::$1 ← (signed byte) test_sbytes::bb + (byte/signed byte/word/signed word/dword/signed dword) 2
-  (signed byte) test_sbytes::bc ← (byte/signed byte/word/signed word/dword/signed dword~) test_sbytes::$1
+  (signed word/signed byte/signed dword~) test_sbytes::$1 ← (signed byte) test_sbytes::bb + (byte/signed byte/word/signed word/dword/signed dword) 2
+  (signed byte) test_sbytes::bc ← (signed word/signed byte/signed dword~) test_sbytes::$1
   (void~) test_sbytes::$2 ← call assert_sbyte (string) "0+2=2@" (signed byte) test_sbytes::bc (byte/signed byte/word/signed word/dword/signed dword) 2 
-  (byte/signed byte/word/signed word/dword/signed dword~) test_sbytes::$3 ← (signed byte) test_sbytes::bc - (byte/signed byte/word/signed word/dword/signed dword) 4
-  (signed byte) test_sbytes::bd ← (byte/signed byte/word/signed word/dword/signed dword~) test_sbytes::$3
+  (signed word/signed byte/signed dword~) test_sbytes::$3 ← (signed byte) test_sbytes::bc - (byte/signed byte/word/signed word/dword/signed dword) 4
+  (signed byte) test_sbytes::bd ← (signed word/signed byte/signed dword~) test_sbytes::$3
   (signed byte/signed word/signed dword~) test_sbytes::$4 ← - (byte/signed byte/word/signed word/dword/signed dword) 2
   (void~) test_sbytes::$5 ← call assert_sbyte (string) "0+2-4=-2@" (signed byte) test_sbytes::bd (signed byte/signed word/signed dword~) test_sbytes::$4 
   (signed byte~) test_sbytes::$6 ← - (signed byte) test_sbytes::bd
   (signed byte) test_sbytes::be ← (signed byte~) test_sbytes::$6
   (void~) test_sbytes::$7 ← call assert_sbyte (string) "-(0+2-4)=2@" (signed byte) test_sbytes::be (byte/signed byte/word/signed word/dword/signed dword) 2 
   (signed byte/signed word/signed dword~) test_sbytes::$8 ← - (byte/signed byte/word/signed word/dword/signed dword) 127
-  (byte/signed byte/word/signed word/dword/signed dword~) test_sbytes::$9 ← (signed byte/signed word/signed dword~) test_sbytes::$8 - (byte/signed byte/word/signed word/dword/signed dword) 127
-  (signed byte~) test_sbytes::$10 ← ((signed byte)) (byte/signed byte/word/signed word/dword/signed dword~) test_sbytes::$9
+  (signed word/signed byte/signed dword~) test_sbytes::$9 ← (signed byte/signed word/signed dword~) test_sbytes::$8 - (byte/signed byte/word/signed word/dword/signed dword) 127
+  (signed byte~) test_sbytes::$10 ← ((signed byte)) (signed word/signed byte/signed dword~) test_sbytes::$9
   (signed byte) test_sbytes::bf ← (signed byte~) test_sbytes::$10
   (void~) test_sbytes::$11 ← call assert_sbyte (string) "-127-127=2@" (signed byte) test_sbytes::bf (byte/signed byte/word/signed word/dword/signed dword) 2 
   to:test_sbytes::@return
@@ -768,7 +771,7 @@ Eliminating unused variable - keeping the call (void~) main::$1
 Eliminating unused variable - keeping the call (void~) main::$2
 Eliminating unused variable - keeping the call (void~) test_bytes::$0
 Eliminating unused variable - keeping the call (void~) test_bytes::$2
-Eliminating unused variable - keeping the call (void~) test_bytes::$5
+Eliminating unused variable - keeping the call (void~) test_bytes::$6
 Eliminating unused variable - keeping the call (void~) assert_byte::$0
 Eliminating unused variable - keeping the call (void~) assert_byte::$1
 Eliminating unused variable - keeping the call (void~) assert_byte::$5
@@ -970,8 +973,8 @@ test_bytes::@1: scope:[test_bytes]  from test_bytes
   (byte*) char_cursor#43 ← phi( test_bytes/(byte*) char_cursor#20 )
   (byte*) char_cursor#11 ← (byte*) char_cursor#43
   (byte*) line_cursor#9 ← (byte*) line_cursor#32
-  (byte/word~) test_bytes::$1 ← (byte) test_bytes::bb#1 + (byte/signed byte/word/signed word/dword/signed dword) 2
-  (byte) test_bytes::bc#0 ← (byte/word~) test_bytes::$1
+  (byte/signed word/word/dword/signed dword~) test_bytes::$1 ← (byte) test_bytes::bb#1 + (byte/signed byte/word/signed word/dword/signed dword) 2
+  (byte) test_bytes::bc#0 ← (byte/signed word/word/dword/signed dword~) test_bytes::$1
   (byte*) assert_byte::msg#1 ← (const string) test_bytes::msg1
   (byte) assert_byte::b#1 ← (byte) test_bytes::bc#0
   (byte) assert_byte::c#1 ← (byte/signed byte/word/signed word/dword/signed dword) 2
@@ -983,9 +986,10 @@ test_bytes::@2: scope:[test_bytes]  from test_bytes::@1
   (byte*) char_cursor#44 ← phi( test_bytes::@1/(byte*) char_cursor#20 )
   (byte*) char_cursor#12 ← (byte*) char_cursor#44
   (byte*) line_cursor#10 ← (byte*) line_cursor#33
-  (byte/signed byte/word/signed word/dword/signed dword~) test_bytes::$3 ← (byte) test_bytes::bc#1 - (byte/signed byte/word/signed word/dword/signed dword) 4
-  (byte~) test_bytes::$4 ← ((byte)) (byte/signed byte/word/signed word/dword/signed dword~) test_bytes::$3
-  (byte) test_bytes::bd#0 ← (byte~) test_bytes::$4
+  (signed byte~) test_bytes::$3 ← ((signed byte)) (byte) test_bytes::bc#1
+  (signed word/signed byte/signed dword~) test_bytes::$4 ← (signed byte~) test_bytes::$3 - (byte/signed byte/word/signed word/dword/signed dword) 4
+  (byte~) test_bytes::$5 ← ((byte)) (signed word/signed byte/signed dword~) test_bytes::$4
+  (byte) test_bytes::bd#0 ← (byte~) test_bytes::$5
   (byte*) assert_byte::msg#2 ← (const string) test_bytes::msg2
   (byte) assert_byte::b#2 ← (byte) test_bytes::bd#0
   (byte) assert_byte::c#2 ← (byte/word/signed word/dword/signed dword) 254
@@ -1088,8 +1092,8 @@ test_sbytes::@1: scope:[test_sbytes]  from test_sbytes
   (byte*) char_cursor#53 ← phi( test_sbytes/(byte*) char_cursor#32 )
   (byte*) char_cursor#21 ← (byte*) char_cursor#53
   (byte*) line_cursor#15 ← (byte*) line_cursor#38
-  (byte/signed byte/word/signed word/dword/signed dword~) test_sbytes::$1 ← (signed byte) test_sbytes::bb#1 + (byte/signed byte/word/signed word/dword/signed dword) 2
-  (signed byte) test_sbytes::bc#0 ← (byte/signed byte/word/signed word/dword/signed dword~) test_sbytes::$1
+  (signed word/signed byte/signed dword~) test_sbytes::$1 ← (signed byte) test_sbytes::bb#1 + (byte/signed byte/word/signed word/dword/signed dword) 2
+  (signed byte) test_sbytes::bc#0 ← (signed word/signed byte/signed dword~) test_sbytes::$1
   (byte*) assert_sbyte::msg#1 ← (const string) test_sbytes::msg1
   (signed byte) assert_sbyte::b#1 ← (signed byte) test_sbytes::bc#0
   (signed byte) assert_sbyte::c#1 ← (byte/signed byte/word/signed word/dword/signed dword) 2
@@ -1101,8 +1105,8 @@ test_sbytes::@2: scope:[test_sbytes]  from test_sbytes::@1
   (byte*) char_cursor#54 ← phi( test_sbytes::@1/(byte*) char_cursor#32 )
   (byte*) char_cursor#22 ← (byte*) char_cursor#54
   (byte*) line_cursor#16 ← (byte*) line_cursor#39
-  (byte/signed byte/word/signed word/dword/signed dword~) test_sbytes::$3 ← (signed byte) test_sbytes::bc#1 - (byte/signed byte/word/signed word/dword/signed dword) 4
-  (signed byte) test_sbytes::bd#0 ← (byte/signed byte/word/signed word/dword/signed dword~) test_sbytes::$3
+  (signed word/signed byte/signed dword~) test_sbytes::$3 ← (signed byte) test_sbytes::bc#1 - (byte/signed byte/word/signed word/dword/signed dword) 4
+  (signed byte) test_sbytes::bd#0 ← (signed word/signed byte/signed dword~) test_sbytes::$3
   (signed byte/signed word/signed dword~) test_sbytes::$4 ← - (byte/signed byte/word/signed word/dword/signed dword) 2
   (byte*) assert_sbyte::msg#2 ← (const string) test_sbytes::msg2
   (signed byte) assert_sbyte::b#2 ← (signed byte) test_sbytes::bd#0
@@ -1128,8 +1132,8 @@ test_sbytes::@4: scope:[test_sbytes]  from test_sbytes::@3
   (byte*) char_cursor#24 ← (byte*) char_cursor#56
   (byte*) line_cursor#18 ← (byte*) line_cursor#41
   (signed byte/signed word/signed dword~) test_sbytes::$8 ← - (byte/signed byte/word/signed word/dword/signed dword) 127
-  (byte/signed byte/word/signed word/dword/signed dword~) test_sbytes::$9 ← (signed byte/signed word/signed dword~) test_sbytes::$8 - (byte/signed byte/word/signed word/dword/signed dword) 127
-  (signed byte~) test_sbytes::$10 ← ((signed byte)) (byte/signed byte/word/signed word/dword/signed dword~) test_sbytes::$9
+  (signed word/signed byte/signed dword~) test_sbytes::$9 ← (signed byte/signed word/signed dword~) test_sbytes::$8 - (byte/signed byte/word/signed word/dword/signed dword) 127
+  (signed byte~) test_sbytes::$10 ← ((signed byte)) (signed word/signed byte/signed dword~) test_sbytes::$9
   (signed byte) test_sbytes::bf#0 ← (signed byte~) test_sbytes::$10
   (byte*) assert_sbyte::msg#4 ← (const string) test_sbytes::msg4
   (signed byte) assert_sbyte::b#4 ← (signed byte) test_sbytes::bf#0
@@ -1512,9 +1516,10 @@ SYMBOL TABLE SSA
 (byte*) print_str::str#8
 (byte*) print_str::str#9
 (void()) test_bytes()
-(byte/word~) test_bytes::$1
-(byte/signed byte/word/signed word/dword/signed dword~) test_bytes::$3
-(byte~) test_bytes::$4
+(byte/signed word/word/dword/signed dword~) test_bytes::$1
+(signed byte~) test_bytes::$3
+(signed word/signed byte/signed dword~) test_bytes::$4
+(byte~) test_bytes::$5
 (label) test_bytes::@1
 (label) test_bytes::@2
 (label) test_bytes::@3
@@ -1531,13 +1536,13 @@ SYMBOL TABLE SSA
 (const string) test_bytes::msg1 = (string) "0+2=2@"
 (const string) test_bytes::msg2 = (string) "0+2-4=254@"
 (void()) test_sbytes()
-(byte/signed byte/word/signed word/dword/signed dword~) test_sbytes::$1
+(signed word/signed byte/signed dword~) test_sbytes::$1
 (signed byte~) test_sbytes::$10
-(byte/signed byte/word/signed word/dword/signed dword~) test_sbytes::$3
+(signed word/signed byte/signed dword~) test_sbytes::$3
 (signed byte/signed word/signed dword~) test_sbytes::$4
 (signed byte~) test_sbytes::$6
 (signed byte/signed word/signed dword~) test_sbytes::$8
-(byte/signed byte/word/signed word/dword/signed dword~) test_sbytes::$9
+(signed word/signed byte/signed dword~) test_sbytes::$9
 (label) test_sbytes::@1
 (label) test_sbytes::@2
 (label) test_sbytes::@3
@@ -1649,10 +1654,10 @@ Alias (byte*) line_cursor#30 = (byte*) line_cursor#7 (byte*) line_cursor#31 (byt
 Alias (byte) test_bytes::bb#0 = (byte) test_bytes::bb#1 
 Alias (byte*) char_cursor#11 = (byte*) char_cursor#43 
 Alias (byte*) line_cursor#32 = (byte*) line_cursor#9 
-Alias (byte) test_bytes::bc#0 = (byte/word~) test_bytes::$1 (byte) test_bytes::bc#1 
+Alias (byte) test_bytes::bc#0 = (byte/signed word/word/dword/signed dword~) test_bytes::$1 (byte) test_bytes::bc#1 
 Alias (byte*) char_cursor#12 = (byte*) char_cursor#44 
 Alias (byte*) line_cursor#10 = (byte*) line_cursor#33 
-Alias (byte) test_bytes::bd#0 = (byte~) test_bytes::$4 
+Alias (byte) test_bytes::bd#0 = (byte~) test_bytes::$5 
 Alias (byte*) char_cursor#13 = (byte*) char_cursor#45 (byte*) char_cursor#46 (byte*) char_cursor#14 
 Alias (byte*) line_cursor#11 = (byte*) line_cursor#34 (byte*) line_cursor#35 (byte*) line_cursor#12 
 Alias (byte) assert_byte::b#3 = (byte) assert_byte::b#4 (byte) assert_byte::b#5 
@@ -1667,10 +1672,10 @@ Alias (byte*) char_cursor#19 = (byte*) char_cursor#51 (byte*) char_cursor#52 (by
 Alias (signed byte) test_sbytes::bb#0 = (signed byte) test_sbytes::bb#1 
 Alias (byte*) char_cursor#21 = (byte*) char_cursor#53 
 Alias (byte*) line_cursor#15 = (byte*) line_cursor#38 
-Alias (signed byte) test_sbytes::bc#0 = (byte/signed byte/word/signed word/dword/signed dword~) test_sbytes::$1 (signed byte) test_sbytes::bc#1 
+Alias (signed byte) test_sbytes::bc#0 = (signed word/signed byte/signed dword~) test_sbytes::$1 (signed byte) test_sbytes::bc#1 
 Alias (byte*) char_cursor#22 = (byte*) char_cursor#54 
 Alias (byte*) line_cursor#16 = (byte*) line_cursor#39 
-Alias (signed byte) test_sbytes::bd#0 = (byte/signed byte/word/signed word/dword/signed dword~) test_sbytes::$3 (signed byte) test_sbytes::bd#1 
+Alias (signed byte) test_sbytes::bd#0 = (signed word/signed byte/signed dword~) test_sbytes::$3 (signed byte) test_sbytes::bd#1 
 Alias (signed byte) assert_sbyte::c#2 = (signed byte/signed word/signed dword~) test_sbytes::$4 
 Alias (byte*) char_cursor#23 = (byte*) char_cursor#55 
 Alias (byte*) line_cursor#17 = (byte*) line_cursor#40 
@@ -1930,18 +1935,20 @@ Constant (const signed byte) test_sbytes::bc#0 = test_sbytes::bb#0+2
 Constant (const signed word/signed dword) test_sbytes::$9 = test_sbytes::$8-127
 Succesful SSA optimization Pass2ConstantIdentification
 Constant (const byte) assert_byte::b#1 = test_bytes::bc#0
-Constant (const signed byte/signed word/signed dword) test_bytes::$3 = test_bytes::bc#0-4
+Constant (const signed byte) test_bytes::$3 = ((signed byte))test_bytes::bc#0
 Constant (const signed byte) assert_sbyte::b#1 = test_sbytes::bc#0
 Constant (const signed byte) test_sbytes::bd#0 = test_sbytes::bc#0-4
 Constant (const signed byte) test_sbytes::bf#0 = ((signed byte))test_sbytes::$9
 Succesful SSA optimization Pass2ConstantIdentification
-Constant (const byte) test_bytes::bd#0 = ((byte))test_bytes::$3
+Constant (const signed byte/signed word/signed dword) test_bytes::$4 = test_bytes::$3-4
 Constant (const signed byte) assert_sbyte::b#2 = test_sbytes::bd#0
 Constant (const signed byte) test_sbytes::be#0 = -test_sbytes::bd#0
 Constant (const signed byte) assert_sbyte::b#4 = test_sbytes::bf#0
 Succesful SSA optimization Pass2ConstantIdentification
-Constant (const byte) assert_byte::b#2 = test_bytes::bd#0
+Constant (const byte) test_bytes::bd#0 = ((byte))test_bytes::$4
 Constant (const signed byte) assert_sbyte::b#3 = test_sbytes::be#0
+Succesful SSA optimization Pass2ConstantIdentification
+Constant (const byte) assert_byte::b#2 = test_bytes::bd#0
 Succesful SSA optimization Pass2ConstantIdentification
 Culled Empty Block (label) print_ln::@2
 Culled Empty Block (label) print_cls::@2
@@ -2059,9 +2066,10 @@ Constant inlined assert_byte::b#1 = (const byte) test_bytes::bc#0
 Constant inlined assert_byte::c#0 = (byte/signed byte/word/signed word/dword/signed dword) 0
 Constant inlined assert_byte::b#2 = (const byte) test_bytes::bd#0
 Constant inlined assert_byte::c#1 = (byte/signed byte/word/signed word/dword/signed dword) 2
-Constant inlined test_bytes::$3 = (const byte) test_bytes::bc#0-(byte/signed byte/word/signed word/dword/signed dword) 4
+Constant inlined test_bytes::$3 = ((signed byte))(const byte) test_bytes::bc#0
 Constant inlined assert_byte::c#2 = (byte/word/signed word/dword/signed dword) 254
 Constant inlined assert_sbyte::c#4 = (byte/signed byte/word/signed word/dword/signed dword) 2
+Constant inlined test_bytes::$4 = ((signed byte))(const byte) test_bytes::bc#0-(byte/signed byte/word/signed word/dword/signed dword) 4
 Constant inlined assert_sbyte::b#4 = (const signed byte) test_sbytes::bf#0
 Constant inlined assert_sbyte::c#3 = (byte/signed byte/word/signed word/dword/signed dword) 2
 Constant inlined assert_sbyte::b#3 = (const signed byte) test_sbytes::be#0
@@ -3884,7 +3892,7 @@ FINAL SYMBOL TABLE
 (byte) test_bytes::bc
 (const byte) test_bytes::bc#0 bc = (const byte) test_bytes::bb#0+(byte/signed byte/word/signed word/dword/signed dword) 2
 (byte) test_bytes::bd
-(const byte) test_bytes::bd#0 bd = ((byte))(const byte) test_bytes::bc#0-(byte/signed byte/word/signed word/dword/signed dword) 4
+(const byte) test_bytes::bd#0 bd = ((byte))((signed byte))(const byte) test_bytes::bc#0-(byte/signed byte/word/signed word/dword/signed dword) 4
 (const string) test_bytes::msg msg = (string) "0=0@"
 (const string) test_bytes::msg1 msg1 = (string) "0+2=2@"
 (const string) test_bytes::msg2 msg2 = (string) "0+2-4=254@"

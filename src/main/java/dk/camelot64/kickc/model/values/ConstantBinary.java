@@ -38,7 +38,7 @@ public class ConstantBinary implements ConstantValue {
 
    @Override
    public ConstantLiteral calculateLiteral(ProgramScope scope) {
-      return operator.calculate(left.calculateLiteral(scope), right.calculateLiteral(scope));
+      return operator.calculateLiteral(left.calculateLiteral(scope), right.calculateLiteral(scope));
    }
 
    @Override

@@ -1,7 +1,7 @@
 package dk.camelot64.kickc.model.types;
 
 /** A function returning another type */
-public class SymbolTypeProcedure implements SymbolType {
+public class SymbolTypeProcedure implements SymbolTypeSimple {
 
    private SymbolType returnType;
 

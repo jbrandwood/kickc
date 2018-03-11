@@ -30,7 +30,7 @@ public class ConstantUnary implements ConstantValue {
 
    @Override
    public ConstantLiteral calculateLiteral(ProgramScope scope) {
-      return operator.calculate(operand.calculateLiteral(scope));
+      return operator.calculateLiteral(operand.calculateLiteral(scope));
    }
 
    @Override

@@ -2,10 +2,10 @@ package dk.camelot64.kickc.model.types;
 
 import dk.camelot64.kickc.model.CompileError;
 import dk.camelot64.kickc.model.ConstantNotLiteral;
+import dk.camelot64.kickc.model.Program;
 import dk.camelot64.kickc.model.operators.Operator;
 import dk.camelot64.kickc.model.operators.OperatorBinary;
 import dk.camelot64.kickc.model.operators.OperatorUnary;
-import dk.camelot64.kickc.model.operators.Operators;
 import dk.camelot64.kickc.model.statements.StatementAssignment;
 import dk.camelot64.kickc.model.statements.StatementCall;
 import dk.camelot64.kickc.model.statements.StatementLValue;
@@ -21,7 +21,6 @@ import java.util.Collection;
  */
 public class SymbolTypeInference {
 
-
    /**
     * Infer the type of a unary operator on a value
     *
@@ -32,286 +31,103 @@ public class SymbolTypeInference {
     */
    public static SymbolType inferType(ProgramScope programScope, OperatorUnary operator, RValue rValue) {
       if(rValue instanceof ConstantValue) {
-         ConstantValue value = null;
+         // Calculate resulting constant literal
          try {
-            value = operator.calculate(((ConstantValue) rValue).calculateLiteral(programScope));
-         } catch(ConstantNotLiteral e) {
-            value = null;
-         }
-         if(value != null) {
+            ConstantValue value = operator.calculateLiteral(((ConstantValue) rValue).calculateLiteral(programScope));
             return value.getType(programScope);
+         } catch(ConstantNotLiteral e) {
+            // Value literal cannot be calculated
          }
       }
-      if(operator.equals(Operators.CAST_BYTE)) {
-         return SymbolType.BYTE;
-      } else if(operator.equals(Operators.CAST_SBYTE)) {
-         return SymbolType.SBYTE;
-      } else if(operator.equals(Operators.CAST_WORD)) {
-         return SymbolType.WORD;
-      } else if(operator.equals(Operators.CAST_SWORD)) {
-         return SymbolType.SWORD;
-      } else if(operator.equals(Operators.CAST_DWORD)) {
-         return SymbolType.DWORD;
-      } else if(operator.equals(Operators.CAST_SDWORD)) {
-         return SymbolType.SDWORD;
-      } else if(operator.equals(Operators.CAST_PTRBY)) {
-         return new SymbolTypePointer(SymbolType.BYTE);
-      } else if(operator.equals(Operators.ADDRESS_OF)) {
-         SymbolType valueType = inferType(programScope, rValue);
-         return new SymbolTypePointer(valueType);
-      }
+      // Infer value type - and then infer operator result type
       SymbolType valueType = inferType(programScope, rValue);
       return inferType(operator, valueType);
    }
 
-   public static SymbolType inferType(ProgramScope programScope, RValue rValue1, OperatorBinary operator, RValue rValue2) {
-      if(rValue1 instanceof ConstantValue && rValue2 instanceof ConstantValue) {
-         //ConstantValue value = ConstantValueCalculator.calcValue(programScope,(ConstantValue) rValue1,operator,(ConstantValue) rValue2);
-         ConstantValue value = null;
+   /**
+    * Infer the type of a unary operator on an operand type
+    *
+    * @param operator The unary operator
+    * @param operandType The operand type
+    * @return The type of the result from applying the operator on the operand
+    */
+   public static SymbolType inferType(OperatorUnary operator, SymbolType operandType) {
+      if(operandType instanceof SymbolTypeSimple) {
+         return operator.inferType((SymbolTypeSimple) operandType);
+      } else {
+         // Infer all resulting types for each sub-type of the multi-type
+         ArrayList<SymbolType> resultTypes = new ArrayList<>();
+         for(SymbolType opType : ((SymbolTypeMulti) operandType).getTypes()) {
+            SymbolType resType = inferType(operator, opType);
+            if(!resultTypes.contains(resType)) {
+               resultTypes.add(resType);
+            }
+         }
+         if(resultTypes.size() == 1) {
+            return resultTypes.get(0);
+         } else {
+            return new SymbolTypeMulti(resultTypes);
+         }
+      }
+   }
+
+   /**
+    * Infer the type of a binary operator on a value
+    *
+    * @param programScope The program scope usable for accessing the symbol table
+    * @param left The left value
+    * @param operator The binary operator
+    * @param rValue The right value
+    * @return The type of the resulting value
+    */
+   public static SymbolType inferType(ProgramScope programScope, RValue left, OperatorBinary operator, RValue right) {
+      if(left instanceof ConstantValue && right instanceof ConstantValue) {
+         // Calculate resulting constant literal
          try {
-            value = operator.calculate(
-                  ((ConstantValue) rValue1).calculateLiteral(programScope),
-                  ((ConstantValue) rValue2).calculateLiteral(programScope)
+            ConstantValue value = operator.calculateLiteral(
+                  ((ConstantValue) left).calculateLiteral(programScope),
+                  ((ConstantValue) right).calculateLiteral(programScope)
             );
-         } catch(ConstantNotLiteral e) {
-            value = null;
-         }
-         if(value != null) {
             return value.getType(programScope);
+         } catch(ConstantNotLiteral e) {
+            // Value literal cannot be calculated
          }
       }
-      SymbolType valueType1 = inferType(programScope, rValue1);
-      SymbolType valueType2 = inferType(programScope, rValue2);
-      return inferType(valueType1, operator, valueType2);
+      SymbolType leftType = inferType(programScope, left);
+      SymbolType rightType = inferType(programScope, right);
+      return inferType(leftType, operator, rightType);
    }
 
-
-   public static SymbolType inferType(Operator operator, SymbolType subType) {
-      if(operator == null) {
-         return subType;
-      }
-      if(Operators.DEREF.equals(operator)) {
-         if(subType instanceof SymbolTypePointer) {
-            return ((SymbolTypePointer) subType).getElementType();
-         } else {
-            throw new RuntimeException("Type error: Dereferencing a non-pointer " + subType);
-         }
-      } else if(Operators.LOWBYTE.equals(operator)) {
-         if(subType instanceof SymbolTypePointer || SymbolType.isWord(subType) || SymbolType.isSWord(subType)) {
-            return SymbolType.BYTE;
-         } else if(SymbolType.isDWord(subType) || SymbolType.isSDWord(subType)) {
-            return SymbolType.WORD;
-         }
-      } else if(Operators.HIBYTE.equals(operator)) {
-         if(subType instanceof SymbolTypePointer || SymbolType.isWord(subType) || SymbolType.isSWord(subType)) {
-            return SymbolType.BYTE;
-         } else if(SymbolType.isDWord(subType) || SymbolType.isSDWord(subType)) {
-            return SymbolType.WORD;
-         }
-      } else if(Operators.CAST_BYTE.equals(operator)) {
-         return SymbolType.BYTE;
-      } else if(Operators.CAST_SBYTE.equals(operator)) {
-         return SymbolType.SBYTE;
-      } else if(Operators.CAST_WORD.equals(operator)) {
-         return SymbolType.WORD;
-      } else if(Operators.CAST_SWORD.equals(operator)) {
-         return SymbolType.SWORD;
+   public static SymbolType inferType(SymbolType left, OperatorBinary operator, SymbolType right) {
+      if(left instanceof SymbolTypeSimple && right instanceof SymbolTypeSimple) {
+         return operator.inferType((SymbolTypeSimple) left, (SymbolTypeSimple) right);
       } else {
-         return subType;
-      }
-      throw new RuntimeException("Type inference problem unary " + operator + " " + subType);
-   }
-
-   public static SymbolType inferType(SymbolType type1, Operator operator, SymbolType type2) {
-
-      if(Operators.PLUS.equals(operator)) {
-         return inferPlus(type1, type2);
-      } else if(Operators.MINUS.equals(operator)) {
-         return inferMinus(type1, type2);
-      } else if(Operators.BOOL_AND.equals(operator)) {
-         return inferBoolAnd(type1, type2);
-      } else if(Operators.SET_HIBYTE.equals(operator)) {
-         return type1;
-      } else if(Operators.SET_LOWBYTE.equals(operator)) {
-         return type1;
-      } else if(Operators.WORD.equals(operator)) {
-         return SymbolType.WORD;
-      } else if(Operators.DWORD.equals(operator)) {
-         return SymbolType.DWORD;
-      }
-
-      String op = operator.getOperator();
-      switch(op) {
-         case "==":
-         case "<":
-         case "<=":
-         case "=<":
-         case ">":
-         case ">=":
-         case "=>":
-         case "<>":
-         case "!=":
-         case "&&":
-         case "||":
-         case "and":
-         case "or":
-            return SymbolType.BOOLEAN;
-         case "*":
-            if(type1 == null && type2 instanceof SymbolTypePointer) {
-               return ((SymbolTypePointer) type2).getElementType();
-            }
-            if(SymbolType.isByte(type1) && SymbolType.isByte(type2)) {
-               return SymbolType.BYTE;
-            } else if(SymbolType.SBYTE.equals(type1) && SymbolType.SBYTE.equals(type2)) {
-               return SymbolType.SBYTE;
-            } else if(SymbolType.isWord(type1) && SymbolType.isWord(type2)) {
-               return SymbolType.WORD;
-            } else if(SymbolType.isSWord(type1) && SymbolType.isSWord(type2)) {
-               return SymbolType.SWORD;
-            } else if(SymbolType.isDWord(type1) && SymbolType.isDWord(type2)) {
-               return SymbolType.DWORD;
-            } else if(SymbolType.isSDWord(type1) && SymbolType.isSDWord(type2)) {
-               return SymbolType.SDWORD;
-            }
-            throw new RuntimeException("Type inference case not handled " + type1 + " " + operator + " " + type2);
-         case "*idx":
-            if(type1 instanceof SymbolTypePointer) {
-               return ((SymbolTypePointer) type1).getElementType();
-            }
-            throw new RuntimeException("Type inference case not handled " + type1 + " " + operator + " " + type2);
-         case "/":
-            if(type1 instanceof SymbolTypePointer && SymbolType.isByte(type2)) {
-               return type1;
-            }
-         case "&":
-         case "|":
-         case "^":
-            if(SymbolType.isByte(type1) && SymbolType.isByte(type2)) {
-               return SymbolType.BYTE;
-            } else if(SymbolType.isWord(type1) && SymbolType.isWord(type2)) {
-               return SymbolType.WORD;
-            } else if(SymbolType.isDWord(type1) || SymbolType.isSDWord(type2)) {
-               return SymbolType.DWORD;
-            }
-            throw new RuntimeException("Type inference case not handled " + type1 + " " + operator + " " + type2);
-         case "<<":
-         case ">>":
-            if(SymbolType.isByte(type1)) {
-               return SymbolType.BYTE;
-            } else if(SymbolType.isSByte(type1)) {
-               return SymbolType.SBYTE;
-            } else if(SymbolType.isWord(type1)) {
-               return SymbolType.WORD;
-            } else if(SymbolType.isSWord(type1)) {
-               return SymbolType.SWORD;
-            } else if(SymbolType.isDWord(type1)) {
-               return SymbolType.DWORD;
-            } else if(SymbolType.isSDWord(type1)) {
-               return SymbolType.SDWORD;
-            }
-            throw new RuntimeException("Type inference case not handled " + type1 + " " + operator + " " + type2);
-         default:
-            throw new RuntimeException("Type inference case not handled " + type1 + " " + operator + " " + type2);
-      }
-   }
-
-   private static SymbolType inferPlus(SymbolType type1, SymbolType type2) {
-      if(type1.equals(SymbolType.STRING) && SymbolType.isByte(type2)) {
-         return SymbolType.STRING;
-      } else if(type1.equals(SymbolType.STRING) && SymbolType.STRING.equals(type2)) {
-         return SymbolType.STRING;
-      } else if(type1.equals(SymbolType.STRING) && type2 instanceof SymbolTypeArray && SymbolType.isByte(((SymbolTypeArray) type2).getElementType())) {
-         return SymbolType.STRING;
-      } else if(type1 instanceof SymbolTypeArray && SymbolType.isByte(((SymbolTypeArray) type1).getElementType()) && type2.equals(SymbolType.STRING)) {
-         return SymbolType.STRING;
-      } else if(type1 instanceof SymbolTypeArray && type2 instanceof SymbolTypeArray) {
-         SymbolType elemType1 = ((SymbolTypeArray) type1).getElementType();
-         SymbolType elemType2 = ((SymbolTypeArray) type2).getElementType();
-         if(typeMatch(elemType1, elemType2)) {
-            return new SymbolTypeArray(elemType1);
-         } else if(typeMatch(elemType2, elemType1)) {
-            return new SymbolTypeArray(elemType2);
-         } else {
-            throw new RuntimeException("Type inference case not handled " + type1 + " " + "+" + " " + type2);
+         // Infer all resulting types for each sub-type of the multi-type
+         if(left instanceof SymbolTypeSimple) {
+            left = new SymbolTypeMulti(Arrays.asList(left));
          }
-      } else if(type1 instanceof SymbolTypePointer && isInteger(type2)) {
-         return new SymbolTypePointer(((SymbolTypePointer) type1).getElementType());
-      } else if(SymbolType.isByte(type1) && SymbolType.isByte(type2)) {
-         return new SymbolTypeInline(Arrays.asList(SymbolType.BYTE, SymbolType.WORD));
-      } else if(SymbolType.isSByte(type1) && SymbolType.isSByte(type2)) {
-         return SymbolTypeInline.NUMERIC;
-      } else if(SymbolType.isWord(type1) && (SymbolType.isWord(type2) || SymbolType.isByte(type2))) {
-         return SymbolType.WORD;
-      } else if(SymbolType.isSWord(type1) && (SymbolType.isSWord(type2) || SymbolType.isSByte(type2))) {
-         return SymbolType.SWORD;
-      } else if(SymbolType.isDWord(type1) && (SymbolType.isDWord(type2) || SymbolType.isWord(type2)) || SymbolType.isByte(type2)) {
-         return SymbolType.DWORD;
-      } else if(SymbolType.isSDWord(type1) && (SymbolType.isSDWord(type2) || SymbolType.isSWord(type2) || SymbolType.isSByte(type2))) {
-         return SymbolType.SDWORD;
-      }
-      throw new RuntimeException("Type inference case not handled " + type1 + " " + "+" + " " + type2);
-   }
-
-   private static SymbolType inferBoolAnd(SymbolType type1, SymbolType type2) {
-      if(SymbolType.isSByte(type1) && SymbolType.isSByte(type2)) {
-         return SymbolTypeInline.SBYTE;
-      } else if(SymbolType.isByte(type1) || SymbolType.isByte(type2)) {
-         return SymbolType.BYTE;
-      } else if(SymbolType.isSWord(type1) && SymbolType.isSWord(type2)) {
-         return SymbolType.SWORD;
-      } else if(SymbolType.isWord(type1) || SymbolType.isWord(type2)) {
-         return SymbolType.WORD;
-      } else if(SymbolType.isSDWord(type1) || SymbolType.isSDWord(type2)) {
-         return SymbolType.SDWORD;
-      } else if(SymbolType.isDWord(type1) || SymbolType.isDWord(type2)) {
-         return SymbolType.DWORD;
-      }
-      throw new RuntimeException("Type inference case not handled " + type1 + " " + "+" + " " + type2);
-   }
-
-   private static SymbolType inferMinus(SymbolType type1, SymbolType type2) {
-      if(type1 instanceof SymbolTypePointer && isInteger(type2)) {
-         return new SymbolTypePointer(((SymbolTypePointer) type1).getElementType());
-      }
-      if(type1 instanceof SymbolTypePointer && type2 instanceof SymbolTypePointer) {
-         return SymbolType.WORD;
-      }
-      if(SymbolType.isByte(type1) && SymbolType.isByte(type2)) {
-         return SymbolTypeInline.NUMERIC;
-      }
-      if(SymbolType.isSByte(type1) && SymbolType.isSByte(type2)) {
-         return SymbolTypeInline.NUMERIC;
-      }
-      if(SymbolType.isWord(type1) && (SymbolType.isWord(type2) || SymbolType.isByte(type2))) {
-         return SymbolType.WORD;
-      }
-      if(SymbolType.isSWord(type1) && (SymbolType.isSWord(type2) || SymbolType.isSByte(type2))) {
-         return SymbolType.SWORD;
-      }
-      if(SymbolType.isDWord(type1) && (SymbolType.isDWord(type2) || SymbolType.isWord(type2) || SymbolType.isByte(type2))) {
-         return SymbolType.DWORD;
-      }
-      if(SymbolType.isSDWord(type1) && (SymbolType.isSDWord(type2) || SymbolType.isSWord(type2) || SymbolType.isSByte(type2))) {
-         return SymbolType.SDWORD;
-      }
-      throw new RuntimeException("Type inference case not handled " + type1 + " - " + type2);
-   }
-
-
-   private static boolean isInteger(SymbolType type) {
-      if(SymbolType.BYTE.equals(type)) {
-         return true;
-      } else if(SymbolType.WORD.equals(type)) {
-         return true;
-      } else if(SymbolType.SBYTE.equals(type)) {
-         return true;
-      } else if(SymbolType.SWORD.equals(type)) {
-         return true;
-      } else if(type instanceof SymbolTypeInline) {
-         SymbolTypeInline typeInline = (SymbolTypeInline) type;
-         return typeInline.isByte() || typeInline.isSByte() || typeInline.isWord() || typeInline.isSWord() || typeInline.isDWord() || typeInline.isSDWord();
-      } else {
-         return false;
+         if(right instanceof SymbolTypeSimple) {
+            right = new SymbolTypeMulti(Arrays.asList(right));
+         }
+         ArrayList<SymbolType> resultTypes = new ArrayList<>();
+         for(SymbolType leftType : ((SymbolTypeMulti) left).getTypes()) {
+            for(SymbolType rightType : ((SymbolTypeMulti) right).getTypes()) {
+               SymbolType resType;
+               try {
+                  resType = inferType(leftType, operator, rightType);
+                  if(!resultTypes.contains(resType)) {
+                     resultTypes.add(resType);
+                  }
+               } catch(NoMatchingType e) {
+                  // Cannot promote to common type - ignore!
+               }
+            }
+         }
+         if(resultTypes.size() == 1) {
+            return resultTypes.get(0);
+         } else {
+            return new SymbolTypeMulti(resultTypes);
+         }
       }
    }
 
@@ -389,13 +205,13 @@ public class SymbolTypeInference {
             ArrayList<SymbolType> types = new ArrayList<>();
             types.add(new SymbolTypeArray(elmType));
             types.add(SymbolType.WORD);
-            return new SymbolTypeInline(types);
-         } else if((list.getList().size() == 2 && SymbolType.isWord(elmType) )) {
+            return new SymbolTypeMulti(types);
+         } else if((list.getList().size() == 2 && SymbolType.isWord(elmType))) {
             // Potentially a dword constructor - return a composite type
             ArrayList<SymbolType> types = new ArrayList<>();
             types.add(new SymbolTypeArray(elmType));
             types.add(SymbolType.DWORD);
-            return new SymbolTypeInline(types);
+            return new SymbolTypeMulti(types);
          } else {
             return new SymbolTypeArray(elmType);
          }
@@ -415,7 +231,7 @@ public class SymbolTypeInference {
       } else if(assignment.getOperator() instanceof OperatorBinary) {
          rValueType = inferType(symbols, rValue1, (OperatorBinary) assignment.getOperator(), rValue2);
       } else {
-         throw new CompileError("Cannot infer type of "+assignment.toString());
+         throw new CompileError("Cannot infer type of " + assignment.toString());
       }
       return rValueType;
    }
@@ -431,11 +247,11 @@ public class SymbolTypeInference {
       if(lValueType.equals(rValueType)) {
          // Types match directly
          return true;
-      } else if(rValueType instanceof SymbolTypeInline) {
-         Collection<SymbolType> rTypes = ((SymbolTypeInline) rValueType).getTypes();
-         if(lValueType instanceof SymbolTypeInline) {
+      } else if(rValueType instanceof SymbolTypeMulti) {
+         Collection<SymbolType> rTypes = ((SymbolTypeMulti) rValueType).getTypes();
+         if(lValueType instanceof SymbolTypeMulti) {
             // Both are inline types - RValue type must be superset of LValue
-            Collection<SymbolType> lTypes = ((SymbolTypeInline) lValueType).getTypes();
+            Collection<SymbolType> lTypes = ((SymbolTypeMulti) lValueType).getTypes();
             return typeContainsMatchAll(lTypes, rTypes);
          } else {
             // Types match because the right side matches the left side
@@ -482,43 +298,46 @@ public class SymbolTypeInference {
       return false;
    }
 
-   public static void inferCallLValue(ProgramScope programScope, StatementCall call) {
+   public static void inferCallLValue(Program program, StatementCall call, boolean reinfer) {
+      ProgramScope programScope = program.getScope();
       LValue lValue = call.getlValue();
       if(lValue instanceof VariableRef) {
-         Variable lValueVar = programScope.getVariable((VariableRef) lValue);
-         if(SymbolType.VAR.equals(lValueVar.getType())) {
+         Variable symbol = programScope.getVariable((VariableRef) lValue);
+         if(SymbolType.VAR.equals(symbol.getType()) || (reinfer && symbol.isInferredType())) {
             Procedure procedure = programScope.getProcedure(call.getProcedure());
-            lValueVar.setTypeInferred(procedure.getReturnType());
+            SymbolType type = procedure.getReturnType();
+            setInferedType(program, call, symbol, type);
          }
       }
    }
 
-   public static void inferAssignmentLValue(ProgramScope programScope, StatementAssignment assignment) {
+   public static void inferAssignmentLValue(Program program, StatementAssignment assignment, boolean reinfer) {
+      ProgramScope programScope = program.getScope();
       LValue lValue = assignment.getlValue();
       if(lValue instanceof VariableRef) {
          Variable symbol = programScope.getVariable((VariableRef) lValue);
-         if(SymbolType.VAR.equals(symbol.getType())) {
+         if(SymbolType.VAR.equals(symbol.getType()) || (reinfer && symbol.isInferredType())) {
             // Unresolved symbol - perform inference
             Operator operator = assignment.getOperator();
-            if(assignment.getrValue1()==null && operator == null ) {
+            if(assignment.getrValue1() == null && operator == null) {
                // Copy operation
                RValue rValue = assignment.getrValue2();
                SymbolType type = inferType(programScope, rValue);
-               symbol.setTypeInferred(type);
+               setInferedType(program, assignment, symbol, type);
             } else if(assignment.getrValue1() == null && operator instanceof OperatorUnary) {
                // Unary operation
                RValue rValue = assignment.getrValue2();
                SymbolType type = inferType(programScope, (OperatorUnary) operator, rValue);
-               symbol.setTypeInferred(type);
-            } else if(operator instanceof OperatorBinary){
+               setInferedType(program, assignment, symbol, type);
+            } else if(operator instanceof OperatorBinary) {
                // Binary operation
                SymbolType type = inferType(
                      programScope, assignment.getrValue1(),
                      (OperatorBinary) assignment.getOperator(),
                      assignment.getrValue2());
-               symbol.setTypeInferred(type);
+               setInferedType(program, assignment, symbol, type);
             } else {
-               throw new CompileError("Cannot infer type of "+assignment);
+               throw new CompileError("Cannot infer type of " + assignment);
             }
             // If the type is an array or a string the symbol is constant
             if(symbol.getType() instanceof SymbolTypeArray) {
@@ -530,11 +349,18 @@ public class SymbolTypeInference {
       }
    }
 
-   public static void inferLValue(ProgramScope programScope, StatementLValue statementLValue) {
+   private static void setInferedType(Program program, StatementLValue statementLValue, Variable symbol, SymbolType type) {
+      if(!SymbolType.VAR.equals(symbol.getType()) && !type.equals(symbol.getType())) {
+         program.getLog().append("Inferred type updated to " + type + " in " + statementLValue.toString(program, false));
+      }
+      symbol.setTypeInferred(type);
+   }
+
+   public static void inferLValue(Program program, StatementLValue statementLValue, boolean reinfer) {
       if(statementLValue instanceof StatementAssignment) {
-         inferAssignmentLValue(programScope, (StatementAssignment) statementLValue);
+         inferAssignmentLValue(program, (StatementAssignment) statementLValue, reinfer);
       } else if(statementLValue instanceof StatementCall) {
-         inferCallLValue(programScope, (StatementCall) statementLValue);
+         inferCallLValue(program, (StatementCall) statementLValue, reinfer);
       } else {
          throw new RuntimeException("LValue statement not implemented " + statementLValue);
       }

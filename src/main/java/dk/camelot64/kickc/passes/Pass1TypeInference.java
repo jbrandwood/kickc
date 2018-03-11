@@ -35,7 +35,7 @@ public class Pass1TypeInference extends Pass1Base {
             scopes.pop();
          } else if(statement instanceof StatementAssignment) {
             StatementAssignment assignment = (StatementAssignment) statement;
-            SymbolTypeInference.inferAssignmentLValue(programScope, assignment);
+            SymbolTypeInference.inferAssignmentLValue(getProgram(), assignment, false);
          } else if(statement instanceof StatementCall) {
             StatementCall call = (StatementCall) statement;
             String procedureName = call.getProcedureName();
@@ -47,7 +47,7 @@ public class Pass1TypeInference extends Pass1Base {
             if(procedure.getParameters().size() != call.getParameters().size()) {
                throw new CompileError("Wrong number of parameters in call. Expected " + procedure.getParameters().size() + ". " + statement.toString());
             }
-            SymbolTypeInference.inferCallLValue(programScope, (StatementCall) statement);
+            SymbolTypeInference.inferCallLValue(getProgram(), (StatementCall) statement, false);
          }
       }
       return false;

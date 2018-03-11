@@ -3,7 +3,7 @@ package dk.camelot64.kickc.model.values;
 import dk.camelot64.kickc.model.*;
 import dk.camelot64.kickc.model.symbols.ProgramScope;
 import dk.camelot64.kickc.model.types.SymbolType;
-import dk.camelot64.kickc.model.types.SymbolTypeInline;
+import dk.camelot64.kickc.model.types.SymbolTypeMulti;
 import dk.camelot64.kickc.model.types.SymbolTypeInteger;
 
 import java.util.ArrayList;
@@ -38,7 +38,7 @@ public class ConstantInteger implements ConstantLiteral<Long> {
             potentialTypes.add(typeInteger);
          }
       }
-      return new SymbolTypeInline(potentialTypes);
+      return new SymbolTypeMulti(potentialTypes);
    }
 
    @Override

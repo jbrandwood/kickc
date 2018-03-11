@@ -1,7 +1,7 @@
 package dk.camelot64.kickc.model.types;
 
 /** A pointer */
-public class SymbolTypePointer implements SymbolType {
+public class SymbolTypePointer implements SymbolTypeSimple {
 
    private SymbolType elementType;
 

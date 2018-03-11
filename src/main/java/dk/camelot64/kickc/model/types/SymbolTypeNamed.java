@@ -1,11 +1,11 @@
 package dk.camelot64.kickc.model.types;
 
-/** Basic Symbol Types */
-public class SymbolTypeBasic implements SymbolType {
+/** Basic named (string, char, ...) Symbol Types */
+public class SymbolTypeNamed implements SymbolTypeSimple {
 
    private String typeName;
 
-   SymbolTypeBasic(String typeName) {
+   SymbolTypeNamed(String typeName) {
       this.typeName = typeName;
    }
 
@@ -22,7 +22,7 @@ public class SymbolTypeBasic implements SymbolType {
          return false;
       }
 
-      SymbolTypeBasic that = (SymbolTypeBasic) o;
+      SymbolTypeNamed that = (SymbolTypeNamed) o;
 
       return typeName != null ? typeName.equals(that.typeName) : that.typeName == null;
    }
@@ -38,3 +38,4 @@ public class SymbolTypeBasic implements SymbolType {
    }
 
 }
+

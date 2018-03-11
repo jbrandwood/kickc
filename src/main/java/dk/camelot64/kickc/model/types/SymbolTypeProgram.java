@@ -1,7 +1,7 @@
 package dk.camelot64.kickc.model.types;
 
 /** A program */
-public class SymbolTypeProgram implements SymbolType {
+public class SymbolTypeProgram implements SymbolTypeSimple {
 
    public SymbolTypeProgram() {
 

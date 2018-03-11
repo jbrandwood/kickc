@@ -3,11 +3,7 @@ package dk.camelot64.kickc.model.values;
 import dk.camelot64.kickc.model.Program;
 import dk.camelot64.kickc.model.symbols.ProgramScope;
 import dk.camelot64.kickc.model.types.SymbolType;
-import dk.camelot64.kickc.model.types.SymbolTypeInline;
-import dk.camelot64.kickc.model.types.SymbolTypeInteger;
 import dk.camelot64.kickc.model.types.SymbolTypePointer;
-
-import java.util.ArrayList;
 
 /** Constant pointer (meaning it points to a constant location)*/
 public class ConstantPointer implements ConstantLiteral<Long> {

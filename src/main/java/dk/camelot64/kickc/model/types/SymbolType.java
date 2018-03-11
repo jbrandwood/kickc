@@ -1,5 +1,7 @@
 package dk.camelot64.kickc.model.types;
 
+import dk.camelot64.kickc.model.CompileError;
+
 import java.util.ArrayList;
 import java.util.Collection;
 
@@ -7,29 +9,29 @@ import java.util.Collection;
 public interface SymbolType {
 
    /** Unsigned byte (8 bits)). */
-   SymbolTypeInteger BYTE = new SymbolTypeInteger("byte", 0, 255);
+   SymbolTypeInteger BYTE = new SymbolTypeInteger("byte", 0, 255, false, 8);
    /** Signed byte (8 bits). */
-   SymbolTypeInteger SBYTE = new SymbolTypeInteger("signed byte", -128, 127);
+   SymbolTypeInteger SBYTE = new SymbolTypeInteger("signed byte", -128, 127, true, 8);
    /** Unsigned word (2 bytes, 16 bits). */
-   SymbolTypeInteger WORD = new SymbolTypeInteger("word", 0, 65_535);
+   SymbolTypeInteger WORD = new SymbolTypeInteger("word", 0, 65_535, false, 16);
    /** Signed word (2 bytes, 16 bits). */
-   SymbolTypeInteger SWORD = new SymbolTypeInteger("signed word", -32_768, 32_767);
+   SymbolTypeInteger SWORD = new SymbolTypeInteger("signed word", -32_768, 32_767, true, 16);
    /** Unsigned double word (4 bytes, 32 bits). */
-   SymbolTypeInteger DWORD = new SymbolTypeInteger("dword", 0, 4_294_967_296L);
+   SymbolTypeInteger DWORD = new SymbolTypeInteger("dword", 0, 4_294_967_296L, false, 32);
    /** Signed double word (4 bytes, 32 bits). */
-   SymbolTypeInteger SDWORD = new SymbolTypeInteger("signed dword", -2_147_483_648, 2_147_483_647);
+   SymbolTypeInteger SDWORD = new SymbolTypeInteger("signed dword", -2_147_483_648, 2_147_483_647, true, 32);
    /** String value (treated like byte* ). */
-   SymbolTypeBasic STRING = new SymbolTypeBasic("string");
+   SymbolTypeNamed STRING = new SymbolTypeNamed("string");
    /** Boolean value. */
-   SymbolTypeBasic BOOLEAN = new SymbolTypeBasic("boolean");
+   SymbolTypeNamed BOOLEAN = new SymbolTypeNamed("boolean");
    /** Numeric floating point value. */
-   SymbolTypeBasic DOUBLE = new SymbolTypeBasic("double");
+   SymbolTypeNamed DOUBLE = new SymbolTypeNamed("double");
    /** A label. Name of functions of jump-targets. */
-   SymbolTypeBasic LABEL = new SymbolTypeBasic("label");
+   SymbolTypeNamed LABEL = new SymbolTypeNamed("label");
    /** Void type representing no value. */
-   SymbolTypeBasic VOID = new SymbolTypeBasic("void");
+   SymbolTypeNamed VOID = new SymbolTypeNamed("void");
    /** An unresolved type. Will be infered later. */
-   SymbolTypeBasic VAR = new SymbolTypeBasic("var");
+   SymbolTypeNamed VAR = new SymbolTypeNamed("var");
 
    /**
     * Get a simple symbol type from the type name.
@@ -61,6 +63,120 @@ public interface SymbolType {
       return null;
    }
 
+
+   /**
+    * Get the name of the type
+    *
+    * @return The type name
+    */
+   String getTypeName();
+
+   /**
+    * Is the type {@link #BYTE} or compatible {@link SymbolTypeMulti}
+    *
+    * @param type The type to examine
+    * @return true if the type is BYTE compatible
+    */
+   static boolean isByte(SymbolType type) {
+      if(BYTE.equals(type)) {
+         return true;
+      } else if(type instanceof SymbolTypeMulti) {
+         return ((SymbolTypeMulti) type).isByte();
+      } else {
+         return false;
+      }
+   }
+
+   /**
+    * Is the type {@link #SBYTE} or compatible {@link SymbolTypeMulti}
+    *
+    * @param type The type to examine
+    * @return true if the type is SBYTE compatible
+    */
+   static boolean isSByte(SymbolType type) {
+      if(SBYTE.equals(type)) {
+         return true;
+      } else if(type instanceof SymbolTypeMulti) {
+         return ((SymbolTypeMulti) type).isSByte();
+      } else {
+         return false;
+      }
+   }
+
+   /**
+    * Is the type {@link #WORD} or compatible {@link SymbolTypeMulti}
+    *
+    * @param type The type to examine
+    * @return true if the type is WORD compatible
+    */
+   static boolean isWord(SymbolType type) {
+      if(WORD.equals(type)) {
+         return true;
+      } else if(type instanceof SymbolTypeMulti) {
+         return ((SymbolTypeMulti) type).isWord();
+      } else {
+         return false;
+      }
+   }
+
+   /**
+    * Is the type {@link #SWORD} or compatible {@link SymbolTypeMulti}
+    *
+    * @param type The type to examine
+    * @return true if the type is SWORD compatible
+    */
+   static boolean isSWord(SymbolType type) {
+      if(SWORD.equals(type)) {
+         return true;
+      } else if(type instanceof SymbolTypeMulti) {
+         return ((SymbolTypeMulti) type).isSWord();
+      } else {
+         return false;
+      }
+   }
+
+   /**
+    * Is the type {@link #DWORD} or compatible {@link SymbolTypeMulti}
+    *
+    * @param type The type to examine
+    * @return true if the type is DWORD compatible
+    */
+   static boolean isDWord(SymbolType type) {
+      if(DWORD.equals(type)) {
+         return true;
+      } else if(type instanceof SymbolTypeMulti) {
+         return ((SymbolTypeMulti) type).isDWord();
+      } else {
+         return false;
+      }
+   }
+
+   /**
+    * Is the type {@link #SDWORD} or compatible {@link SymbolTypeMulti}
+    *
+    * @param type The type to examine
+    * @return true if the type is SDWORD compatible
+    */
+   static boolean isSDWord(SymbolType type) {
+      if(SDWORD.equals(type)) {
+         return true;
+      } else if(type instanceof SymbolTypeMulti) {
+         return ((SymbolTypeMulti) type).isSWord();
+      } else {
+         return false;
+      }
+   }
+
+   /**
+    * Is the type an integer type or compatible {@link SymbolTypeMulti}
+    *
+    * @param type The type to examine
+    * @return true if the type is integer
+    */
+   static boolean isInteger(SymbolType type) {
+      return isSDWord(type) || isDWord(type) || isSWord(type) || isWord(type) || isSByte(type) || isByte(type);
+   }
+
    /**
     * Get all integer types.
     *
@@ -78,116 +194,37 @@ public interface SymbolType {
    }
 
    /**
-    * Is the type {@link #BYTE} or compatible {@link SymbolTypeInline}
+    * Find the smallest integer type that contains both sub-types usable for math ( + - * / ).
     *
-    * @param type The type to examine
-    * @return true if the type is BYTE compatible
+    * @param type1 Left type in a binary expression
+    * @param type2 Right type in a binary expression
+    * @return
     */
-   static boolean isByte(SymbolType type) {
-      if(BYTE.equals(type)) {
-         return true;
-      } else if(type instanceof SymbolTypeInline) {
-         return ((SymbolTypeInline) type).isByte();
-      } else {
-         return false;
+   static SymbolType promotedMathType(SymbolTypeInteger type1, SymbolTypeInteger type2) {
+      for(SymbolTypeInteger candidate : getIntegerTypes()) {
+         boolean match1 = type1.getMinValue() >= candidate.getMinValue() && type1.getMaxValue() <= candidate.getMaxValue();
+         boolean match2 = type2.getMinValue() >= candidate.getMinValue() && type2.getMaxValue() <= candidate.getMaxValue();
+         if(match1 && match2) {
+            return candidate;
+         }
       }
+      throw new NoMatchingType("Cannot promote to a common type for "+type1.toString()+" and "+type2.toString());
    }
 
    /**
-    * Is the type {@link #SBYTE} or compatible {@link SymbolTypeInline}
+    * Find the unsigned integer type that contains both sub-types usable for binary operations ( & | ^ ).
     *
-    * @param type The type to examine
-    * @return true if the type is SBYTE compatible
+    * @param type1 Left type in a binary expression
+    * @param type2 Right type in a binary expression
+    * @return
     */
-   static boolean isSByte(SymbolType type) {
-      if(SBYTE.equals(type)) {
-         return true;
-      } else if(type instanceof SymbolTypeInline) {
-         return ((SymbolTypeInline) type).isSByte();
-      } else {
-         return false;
+   static SymbolType promotedBitwiseType(SymbolTypeInteger type1, SymbolTypeInteger type2) {
+      for(SymbolTypeInteger candidate : getIntegerTypes()) {
+         if(!candidate.isSigned() && type1.getBits()<=candidate.getBits() && type2.getBits()<=candidate.getBits()) {
+            return candidate;
+         }
       }
+      throw new CompileError("Cannot promote to a common type for "+type1.toString()+" and "+type2.toString());
    }
-
-   /**
-    * Is the type {@link #WORD} or compatible {@link SymbolTypeInline}
-    *
-    * @param type The type to examine
-    * @return true if the type is WORD compatible
-    */
-   static boolean isWord(SymbolType type) {
-      if(WORD.equals(type)) {
-         return true;
-      } else if(type instanceof SymbolTypeInline) {
-         return ((SymbolTypeInline) type).isWord();
-      } else {
-         return false;
-      }
-   }
-
-   /**
-    * Is the type {@link #SWORD} or compatible {@link SymbolTypeInline}
-    *
-    * @param type The type to examine
-    * @return true if the type is SWORD compatible
-    */
-   static boolean isSWord(SymbolType type) {
-      if(SWORD.equals(type)) {
-         return true;
-      } else if(type instanceof SymbolTypeInline) {
-         return ((SymbolTypeInline) type).isSWord();
-      } else {
-         return false;
-      }
-   }
-
-   /**
-    * Is the type {@link #DWORD} or compatible {@link SymbolTypeInline}
-    *
-    * @param type The type to examine
-    * @return true if the type is DWORD compatible
-    */
-   static boolean isDWord(SymbolType type) {
-      if(DWORD.equals(type)) {
-         return true;
-      } else if(type instanceof SymbolTypeInline) {
-         return ((SymbolTypeInline) type).isDWord();
-      } else {
-         return false;
-      }
-   }
-
-   /**
-    * Is the type {@link #SDWORD} or compatible {@link SymbolTypeInline}
-    *
-    * @param type The type to examine
-    * @return true if the type is SDWORD compatible
-    */
-   static boolean isSDWord(SymbolType type) {
-      if(SDWORD.equals(type)) {
-         return true;
-      } else if(type instanceof SymbolTypeInline) {
-         return ((SymbolTypeInline) type).isSWord();
-      } else {
-         return false;
-      }
-   }
-
-   /**
-    * Is the type an integer type or compatible {@link SymbolTypeInline}
-    *
-    * @param type The type to examine
-    * @return true if the type is integer
-    */
-   static boolean isInteger(SymbolType type) {
-      return isSDWord(type) || isDWord(type) || isSWord(type) || isWord(type) || isSByte(type) || isByte(type);
-   }
-
-   /**
-    * Get the name of the type
-    *
-    * @return The type name
-    */
-   String getTypeName();
 
 }

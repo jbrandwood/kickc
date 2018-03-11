@@ -7,16 +7,16 @@ import java.util.Collection;
  * Symbol Type of an inline expression. Inline expressions can match multiple types depending on the actual value,
  * eg. the value 27 matches both byte and signed byte (which can in turn be promoted to word/signed word, dword/signed dword), while the value -252 only matches signed word or signed dword.
  */
-public class SymbolTypeInline implements SymbolType {
+public class SymbolTypeMulti implements SymbolType {
 
    /** All numeric types. */
-   public static final SymbolTypeInline NUMERIC = new SymbolTypeInline(Arrays.asList(BYTE, SBYTE, WORD, SWORD, DWORD, SDWORD));
+   public static final SymbolTypeMulti NUMERIC = new SymbolTypeMulti(Arrays.asList(BYTE, SBYTE, WORD, SWORD, DWORD, SDWORD));
    /**
     * All potential types for the inline constant.
     */
    private Collection<SymbolType> types;
 
-   public SymbolTypeInline(Collection<SymbolType> types) {
+   public SymbolTypeMulti(Collection<SymbolType> types) {
       this.types = types;
    }
 
@@ -47,7 +47,7 @@ public class SymbolTypeInline implements SymbolType {
       if(o == null || getClass() != o.getClass()) {
          return false;
       }
-      SymbolTypeInline that = (SymbolTypeInline) o;
+      SymbolTypeMulti that = (SymbolTypeMulti) o;
       return types != null ? types.equals(that.types) : that.types == null;
    }
 

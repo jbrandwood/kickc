@@ -6,11 +6,11 @@ import dk.camelot64.kickc.model.types.SymbolTypeSimple;
 import dk.camelot64.kickc.model.values.ConstantInteger;
 import dk.camelot64.kickc.model.values.ConstantLiteral;
 
-/** Unary Boolean Not operator (~b) */
-public class OperatorBoolNot extends OperatorUnary {
+/** Unary bitwise Not operator (~b) */
+public class OperatorBitwiseNot extends OperatorUnary {
 
-   public OperatorBoolNot(int precedence) {
-      super("~", "_not_", precedence);
+   public OperatorBitwiseNot(int precedence) {
+      super("~", "_bnot_", precedence);
    }
 
    @Override

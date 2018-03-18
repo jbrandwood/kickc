@@ -8,17 +8,17 @@ import dk.camelot64.kickc.model.types.SymbolTypeSimple;
 import dk.camelot64.kickc.model.values.ConstantInteger;
 import dk.camelot64.kickc.model.values.ConstantLiteral;
 
-/** Binary boolean exclusive or Operator ( x ^ y ) */
-public class OperatorBoolXor extends OperatorBinary {
+/** Binary bitwise and Operator ( x & y ) */
+public class OperatorBitwiseAnd extends OperatorBinary {
 
-   public OperatorBoolXor(int precedence) {
-      super("^", "_bxor_", precedence);
+   public OperatorBitwiseAnd(int precedence) {
+      super("&", "_band_", precedence);
    }
 
    @Override
    public ConstantLiteral calculateLiteral(ConstantLiteral left, ConstantLiteral right) {
       if(left instanceof ConstantInteger && right instanceof ConstantInteger) {
-         return new ConstantInteger(((ConstantInteger) left).getInteger() ^ ((ConstantInteger) right).getInteger());
+         return new ConstantInteger(((ConstantInteger) left).getInteger() & ((ConstantInteger) right).getInteger());
       }
       throw new CompileError("Calculation not implemented " + left + " " + getOperator() + " " + right);
    }
@@ -32,12 +32,18 @@ public class OperatorBoolXor extends OperatorBinary {
       if(type2 instanceof SymbolTypePointer) {
          type2 = SymbolType.WORD;
       }
-      // Handle numeric types through proper promotion
-      if(SymbolType.isInteger(type1) && SymbolType.isInteger(type2)) {
-         return SymbolType.promotedBitwiseType((SymbolTypeInteger) type1, (SymbolTypeInteger) type2);
+      // Find smallest bitwise type
+      if(type1 instanceof SymbolTypeInteger && type2 instanceof SymbolTypeInteger) {
+
+         for(SymbolTypeInteger candidate : SymbolType.getIntegerTypes()) {
+            boolean match1 = ((SymbolTypeInteger) type1).getBits() <= candidate.getBits();
+            boolean match2 = ((SymbolTypeInteger) type2).getBits() <= candidate.getBits();
+            if(!candidate.isSigned() && (match1 || match2)) {
+               return candidate;
+            }
+         }
       }
+
       throw new CompileError("Type inference case not handled " + type1 + " " + getOperator() + " " + type2);
    }
-
-
 }

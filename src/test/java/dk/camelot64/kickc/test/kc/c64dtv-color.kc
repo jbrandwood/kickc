@@ -1,0 +1,29 @@
+// Test C64DTV v2 256-colors and the 16-color redefinable palette
+
+import "c64dtv.kc"
+
+void main() {
+    asm { sei }
+    *DTV_FEATURE = DTV_FEATURE_ENABLE;
+    *DTV_CONTROL = DTV_CONTROL_HIGHCOLOR_ON | DTV_CONTROL_BORDER_OFF | DTV_CONTROL_BADLINE_OFF;
+
+    byte[16] palette =  { $0, $1, $2, $3, $4, $5, $6, $7, $8, $9, $a, $b, $c, $d, $e, $f };
+
+    while(true) {
+        while(*RASTER!=$40) { }
+
+        // Create rasterbars
+        *BGCOL = 0;
+        for (byte r : $31..$ff) {
+            asm { nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop }
+            (*BGCOL)++;
+        }
+
+        // Rotate palette
+        for(byte c : 0..$f) {
+            DTV_PALETTE[c] = palette[c];
+            palette[c]++;
+        }
+
+    }
+}

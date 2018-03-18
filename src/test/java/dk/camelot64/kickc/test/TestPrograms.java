@@ -46,6 +46,11 @@ public class TestPrograms {
    }
 
    @Test
+   public void testC64DtvColor() throws IOException, URISyntaxException {
+      compileAndCompare("c64dtv-color");
+   }
+
+   @Test
    public void testCastPrecedenceProblem() throws IOException, URISyntaxException {
       compileAndCompare("cast-precedence-problem");
    }

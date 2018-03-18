@@ -35,7 +35,6 @@ public class OperatorPlus extends OperatorBinary {
 
    @Override
    public SymbolType inferType(SymbolTypeSimple type1, SymbolTypeSimple type2) {
-
       // Handle all non-numeric types
       if(type1.equals(SymbolType.STRING) && isStringLike(type2)) {
          return SymbolType.STRING;

@@ -8,17 +8,17 @@ import dk.camelot64.kickc.model.types.SymbolTypeSimple;
 import dk.camelot64.kickc.model.values.ConstantInteger;
 import dk.camelot64.kickc.model.values.ConstantLiteral;
 
-/** Binary boolean or Operator ( x | y ) */
-public class OperatorBoolOr extends OperatorBinary {
+/** Binary bitwise exclusive or Operator ( x ^ y ) */
+public class OperatorBitwiseXor extends OperatorBinary {
 
-   public OperatorBoolOr(int precedence) {
-      super("|", "_bor_", precedence);
+   public OperatorBitwiseXor(int precedence) {
+      super("^", "_bxor_", precedence);
    }
 
    @Override
    public ConstantLiteral calculateLiteral(ConstantLiteral left, ConstantLiteral right) {
       if(left instanceof ConstantInteger && right instanceof ConstantInteger) {
-         return new ConstantInteger(((ConstantInteger) left).getInteger() | ((ConstantInteger) right).getInteger());
+         return new ConstantInteger(((ConstantInteger) left).getInteger() ^ ((ConstantInteger) right).getInteger());
       }
       throw new CompileError("Calculation not implemented " + left + " " + getOperator() + " " + right);
    }
@@ -38,5 +38,6 @@ public class OperatorBoolOr extends OperatorBinary {
       }
       throw new CompileError("Type inference case not handled " + type1 + " " + getOperator() + " " + type2);
    }
+
 
 }

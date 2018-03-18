@@ -10,7 +10,7 @@ public class Operators {
    public static final OperatorUnary DECREMENT = new OperatorDecrement(1);
    public static final OperatorUnary POS = new OperatorPos(2);
    public static final OperatorUnary NEG = new OperatorNeg(2);
-   public static final OperatorUnary BOOL_NOT = new OperatorBoolNot(2);
+   public static final OperatorUnary BOOL_NOT = new OperatorBitwiseNot(2);
    public static final OperatorUnary LOGIC_NOT = new OperatorLogicNot(2);
    public static final OperatorUnary DEREF = new OperatorDeref(2);
    public static final OperatorUnary ADDRESS_OF = new OperatorAddressOf(2);
@@ -40,9 +40,9 @@ public class Operators {
    public static final OperatorBinary GE = new OperatorGreaterThanEqual(7);
    public static final OperatorBinary EQ = new OperatorEqual(8);
    public static final OperatorBinary NEQ = new OperatorNotEqual(8);
-   public static final OperatorBinary BOOL_AND = new OperatorBoolAnd(9);
-   public static final OperatorBinary BOOL_XOR = new OperatorBoolXor(10);
-   public static final OperatorBinary BOOL_OR = new OperatorBoolOr(11);
+   public static final OperatorBinary BOOL_AND = new OperatorBitwiseAnd(9);
+   public static final OperatorBinary BOOL_XOR = new OperatorBitwiseXor(10);
+   public static final OperatorBinary BOOL_OR = new OperatorBitwiseOr(11);
    public static final OperatorBinary LOGIC_AND = new OperatorLogicAnd(12);
    public static final OperatorBinary LOGIC_OR = new OperatorLogicOr(13);
 

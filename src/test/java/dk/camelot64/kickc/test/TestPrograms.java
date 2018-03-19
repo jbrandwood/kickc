@@ -46,6 +46,11 @@ public class TestPrograms {
    }
 
    @Test
+   public void testKeyboardSpace() throws IOException, URISyntaxException {
+      compileAndCompare("test-keyboard-space");
+   }
+
+   @Test
    public void testKeyboard() throws IOException, URISyntaxException {
       compileAndCompare("test-keyboard");
    }

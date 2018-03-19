@@ -46,6 +46,11 @@ public class TestPrograms {
    }
 
    @Test
+   public void testKeyboard() throws IOException, URISyntaxException {
+      compileAndCompare("test-keyboard");
+   }
+
+   @Test
    public void testC64DtvColor() throws IOException, URISyntaxException {
       compileAndCompare("c64dtv-color");
    }

@@ -130,28 +130,35 @@ public class Pass2ConstantIdentification extends Pass2SsaOptimization {
                         ValueList valueList = (ValueList) assignment.getrValue2();
                         List<RValue> values = valueList.getList();
                         boolean allConstant = true;
-                        SymbolType elementType = null;
+                        // Type of the elements of the list (deducted from the type of all elements)
+                        SymbolType listType = null;
                         List<ConstantValue> elements = new ArrayList<>();
-                        for(RValue value : values) {
-                           if(value instanceof ConstantValue) {
-                              ConstantValue constantValue = (ConstantValue) value;
-                              SymbolType type = constantValue.getType(getScope());
-                              if(elementType == null) {
-                                 elementType = type;
+                        for(RValue elmValue : values) {
+                           if(elmValue instanceof ConstantValue) {
+                              ConstantValue constantValue = (ConstantValue) elmValue;
+                              SymbolType elmType = constantValue.getType(getScope());
+                              if(listType == null) {
+                                 listType = elmType;
                               } else {
-                                 if(!SymbolTypeInference.typeMatch(type, elementType)) {
-                                    throw new RuntimeException("Array type mismatch " + elementType + " does not match " + type + " " + valueList.toString(getProgram()));
+                                 if(!SymbolTypeInference.typeMatch(listType, elmType)) {
+                                    SymbolType intersectType = SymbolTypeInference.intersectTypes(listType, elmType);
+                                    if(intersectType==null) {
+                                       // No overlap between list type and element type
+                                       throw new RuntimeException("Array type " + listType + " does not match element type" + elmType + ". Array: " + valueList.toString(getProgram()));
+                                    } else {
+                                       listType = intersectType;
+                                    }
                                  }
                               }
                               elements.add(constantValue);
                            } else {
                               allConstant = false;
-                              elementType = null;
+                              listType = null;
                               break;
                            }
                         }
-                        if(allConstant && elementType != null) {
-                           ConstantValue constant = new ConstantArrayList(elements, elementType);
+                        if(allConstant && listType != null) {
+                           ConstantValue constant = new ConstantArrayList(elements, listType);
                            constants.put(variable, constant);
                         }
                      }

@@ -1,0 +1,119 @@
+import "c64.kc"
+
+// CIA#1 Port A: keyboard matrix columns and joystick #2
+const byte* CIA1_PORT_A = $dc00;
+// CIA#1 Port B: keyboard matrix rows and joystick #1.
+const byte* CIA1_PORT_B = $dc01;
+// CIA #1 Port A data direction register.
+const byte* CIA1_PORT_A_DDR = $dc02;
+// CIA #1 Port B data direction register.
+const byte* CIA1_PORT_B_DDR = $dc03;
+
+void main() {
+    // Clear screen
+    for(byte* sc = $400; sc<$400+1000;sc++) {
+        *sc = ' ';
+    }
+    // Init keyboard
+    keyboard_init();
+    while(true) {
+        do {} while (*RASTER!=$ff);
+        byte* screen = $400;
+        // Read & print keyboard matrix
+        for(byte row : 0..7) {
+            byte row_pressed_bits = keyboard_matrix_read(row);
+            for(byte col : 0..7) {
+                if( (row_pressed_bits & $80) != 0) {
+                    screen[col] = '1';
+                } else {
+                    screen[col] = '0';
+                }
+                row_pressed_bits = row_pressed_bits << 1;
+            }
+            screen = screen + 40;
+        }
+        screen = screen + 40;
+        // Checks specific chars
+        byte[] chars = { '@', 'a', 'b', 'c', 'd', 'e' };
+        for( byte i : 0..5 ) {
+            byte ch = chars[i];
+            if(keyboard_char_pressed(ch)!=0) {
+                    screen[i] = ch;
+            } else {
+                    screen[i] = ' ';
+            }
+        }
+    }
+}
+
+// Initialize keyboard reading by setting CIA#$ Data Direction Registers
+void keyboard_init() {
+    // Keyboard Matrix Columns Write Mode
+    *CIA1_PORT_A_DDR = $ff;
+    // Keyboard Matrix Columns Read Mode
+    *CIA1_PORT_B_DDR = $00;
+}
+
+// Determines whether a specific key representing a PETSCII char is currently pressed
+// Returns zero if the key is not pressed and a non-zero value if the key is currently pressed
+byte keyboard_char_pressed(byte ch) {
+    return keyboard_matrix_read(keyboard_matrix_row(ch)) & keyboard_matrix_col(ch);
+}
+
+// Keyboard row bits as expected by CIA#1 Port A when reading a specific keyboard matrix row (rows are numbered 0-7)
+byte[8] keyboard_row_bits = { %11111110, %11111101, %11111011, %11110111, %11101111, %11011111, %10111111, %01111111 };
+
+// Read a single row of the keyboard matrix
+// The row ID (0-7) of the keyboard matrix row to read. See the C64 key matrix for row IDs.
+// Returns the keys pressed on the row as bits according to the C64 key matrix.
+byte keyboard_matrix_read(byte rowid) {
+    *CIA1_PORT_A = keyboard_row_bits[rowid];
+    byte row_pressed_bits = ~*CIA1_PORT_B;
+    return row_pressed_bits;
+}
+
+// Keyboard matrix column bitmasks for a specific keybooard matrix column when reading the keyboard. (columns are numbered 0-7)
+byte[] keyboard_matrix_col_bitmask = { %00000001, %00000010, %00000100, %00001000, %00010000, %00100000, %01000000, %10000000 };
+
+// The keyboard matrix position of each PETSCII char between $00 and $3f (lower case)
+// Matrix positions are encoded as column ID (0-7) in the high nibble and row ID (0-7) in the low nibble %ccccrrrr
+byte[] keyboard_matrix_chars = {
+//   CR     Char
+    $65, // ($00) @
+    $21, // ($01) a
+    $43, // ($02) b
+    $42, // ($03) c
+    $22, // ($04) d
+    $61 // ($05) e
+};
+
+// Get the row ID of the keyboard matrix row containing a specific PETSCII char
+// Returns the row ID (0-7) of the keyboard matrix row containing the passed char
+// The row ID is suitable for passing to keyboard_matrix_read(rowid)
+byte keyboard_matrix_row(byte ch) {
+    return keyboard_matrix_chars[ch] & $f;
+}
+
+// Get the column bit mask of the keyboard matrix column containing a specific PETSCII char.
+// Returns the keyboard matrix column bit mask of the passed char.
+// The returned bit is suitable for ANDing with the result of keyboard_matrix_read(rowid) to determine if the corresponding key is pressed.
+byte keyboard_matrix_col(byte ch) {
+    byte col_id = keyboard_matrix_chars[ch] >>4;
+    return keyboard_matrix_col_bitmask[col_id];
+}
+
+// C64 Keyboard Matrix Reference - from http://codebase64.org/doku.php?id=base:reading_the_keyboard
+// +----+----------------------+-------------------------------------------------------------------------------------------------------+
+// |    | Write                |                                Read $dc01 (PETSCII code in parenthesis):                              |
+// |row:| $dc00: row bits      +------------+------------+------------+------------+------------+------------+------------+------------+
+// |    |                      |   BIT 7    |   BIT 6    |   BIT 5    |   BIT 4    |   BIT 3    |   BIT 2    |   BIT 1    |   BIT 0    |
+// +----+----------------------+------------+------------+------------+------------+------------+------------+------------+------------+
+// |0.  | #%11111110 (254/$fe) | DOWN  ($  )|   F5  ($  )|   F3  ($  )|   F1  ($  )|   F7  ($  )| RIGHT ($  )| RETURN($  )|DELETE ($  )|
+// |1.  | #%11111101 (253/$fd) |LEFT-SH($  )|   e   ($05)|   s   ($13)|   z   ($1a)|   4   ($34)|   a   ($01)|   w   ($17)|   3   ($33)|
+// |2.  | #%11111011 (251/$fb) |   x   ($18)|   t   ($14)|   f   ($06)|   c   ($03)|   6   ($36)|   d   ($04)|   r   ($12)|   5   ($35)|
+// |3.  | #%11110111 (247/$f7) |   v   ($16)|   u   ($15)|   h   ($08)|   b   ($02)|   8   ($38)|   g   ($07)|   y   ($19)|   7   ($37)|
+// |4.  | #%11101111 (239/$ef) |   n   ($0e)|   o   ($0f)|   k   ($0b)|   m   ($0d)|   0   ($30)|   j   ($0a)|   i   ($09)|   9   ($39)|
+// |5.  | #%11011111 (223/$df) |   ,   ($2c)|   @   ($00)|   :   ($3a)|   .   ($2e)|   -   ($2d)|   l   ($0c)|   p   ($10)|   +   ($2b)|
+// |6.  | #%10111111 (191/$bf) |   /   ($2f)|   ^   ($1e)|   =   ($3d)|RGHT-SH($  )|  HOME ($  )|   ;   ($3b)|   *   ($2a)|   £   ($1c)|
+// |7.  | #%01111111 (127/$7f) | STOP  ($  )|   q   ($11)|COMMODR($  )| SPACE ($20)|   2   ($32)|CONTROL($  )|  <-   ($1f)|   1   ($31)|
+// +----+----------------------+------------+------------+------------+------------+------------+------------+------------+------------+

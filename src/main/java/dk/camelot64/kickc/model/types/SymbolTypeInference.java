@@ -15,6 +15,7 @@ import dk.camelot64.kickc.model.values.*;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.List;
 
 /**
  * Type inference of expressions (rValues & unary/binary operators)
@@ -363,6 +364,55 @@ public class SymbolTypeInference {
          inferCallLValue(program, (StatementCall) statementLValue, reinfer);
       } else {
          throw new RuntimeException("LValue statement not implemented " + statementLValue);
+      }
+   }
+
+   /**
+    * Find the symbol type that is the intersection between the two passed types.
+    * Handles SymbolTypeMulti by intersecting the sub type lists.
+    * @param type1 The first type
+    * @param type2 The second type
+    * @return The intersection between the two types (handling multi-types)
+    */
+   public static SymbolType intersectTypes(SymbolType type1, SymbolType type2) {
+      List<SymbolType> newSubTypes = new ArrayList<>();
+      if(type1 instanceof SymbolTypeMulti) {
+         Collection<SymbolType> subTypes1 = ((SymbolTypeMulti) type1).getTypes();
+         if(type2 instanceof SymbolTypeMulti) {
+            Collection<SymbolType> subTypes2 = ((SymbolTypeMulti) type2).getTypes();
+            for(SymbolType subType1 : subTypes1) {
+               if(subTypes2.contains(subType1)) {
+                  newSubTypes.add(subType1);
+               }
+            }
+         } else {
+            // Element type is not multi - check if the list type contains it
+            if(subTypes1.contains(type2)) {
+               newSubTypes.add(type2);
+            }
+         }
+      } else {
+         // List-type not multi - check if the element type contains it
+         if(type2 instanceof SymbolTypeMulti) {
+            Collection<SymbolType> subTypes2 = ((SymbolTypeMulti) type2).getTypes();
+            if(subTypes2.contains(type1)) {
+               newSubTypes.add(type1);
+            }
+         } else {
+            // Element type is not multi - check if the list type is the same
+            if(type1.equals(type2)) {
+               newSubTypes.add(type1);
+            }
+         }
+      }
+      if(newSubTypes.size()==0) {
+         return  null;
+      }  else if(newSubTypes.size()==1) {
+         // A single type matching - use it
+         return newSubTypes.get(0);
+      }  else {
+         // Multiple matches was found - use them
+         return new SymbolTypeMulti(newSubTypes);
       }
    }
 }

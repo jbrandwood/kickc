@@ -236,10 +236,10 @@ plot_chargen: {
     beq b1
     clc
     lda chargen
-    adc #<$1000
+    adc #<$800
     sta chargen
     lda chargen+1
-    adc #>$1000
+    adc #>$800
     sta chargen+1
   b1:
     lda #$32

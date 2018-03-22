@@ -1,0 +1,80 @@
+// Allows analysis of the CHARGEN ROM font
+import "c64.kc"
+import "multiply.kc"
+import "keyboard.kc"
+
+byte* SCREEN = $400;
+
+void main() {
+    // Clear screen
+    for( byte* sc=SCREEN;sc<SCREEN+1000;sc++) *sc = ' ';
+
+    // Plot 4 initial analysis chars
+    print_str_at("f1@", SCREEN+1);
+    print_str_at("f3@", SCREEN+1+10);
+    print_str_at("f5@", SCREEN+1+20);
+    print_str_at("f7@", SCREEN+1+30);
+    for(byte i : 0..3 ) {
+        plot_chargen(i, $20);
+    }
+
+    byte cur_idx = 0;
+
+    do{
+        // Set current index based on F-keys pressed
+        if(keyboard_key_pressed(KEY_F1)!=0) {
+            cur_idx = 0;
+        }
+        if(keyboard_key_pressed(KEY_F3)!=0) {
+            cur_idx = 1;
+        }
+        if(keyboard_key_pressed(KEY_F5)!=0) {
+            cur_idx = 2;
+        }
+        if(keyboard_key_pressed(KEY_F7)!=0) {
+            cur_idx = 3;
+        }
+
+        // Check for key presses
+        for( byte ch : 0..$3f) {
+            byte pressed = 0;
+            byte key = keyboard_get_keycode(ch);
+            if(key!=$3f) {
+                pressed = keyboard_key_pressed(key);
+            }
+            if(pressed!=0) {
+                plot_chargen(cur_idx, ch);
+            }
+        }
+    } while(true);
+}
+
+// Print a string at a specific screen position
+void print_str_at(byte* str, byte* at) {
+    while(*str!='@') {
+        *(at++) = *(str++);
+    }
+}
+
+// Plot 8x8
+void plot_chargen(byte pos, byte ch) {
+    asm { sei }
+    byte* chargen = CHARGEN+(word)ch<<3;
+    *PROCPORT = $32;
+    byte* sc = SCREEN+40+1+mul8u(pos, 10);
+    for(byte y:0..7) {
+      byte bits = chargen[y];
+      for(byte x:0..7) {
+        byte c = '.';
+        if((bits & $80) != 0) {
+           c = '*';
+        }
+        *sc = c;
+        sc++;
+        bits = bits<<1;
+      }
+      sc = sc+32;
+    }
+    *PROCPORT = $37;
+    asm { cli }
+}

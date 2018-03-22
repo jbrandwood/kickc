@@ -46,6 +46,11 @@ public class TestPrograms {
    }
 
    @Test
+   public void testChargenAnalysis() throws IOException, URISyntaxException {
+      compileAndCompare("chargen-analysis");
+   }
+
+   @Test
    public void testKeyboardSpace() throws IOException, URISyntaxException {
       compileAndCompare("test-keyboard-space");
    }

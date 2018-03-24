@@ -46,6 +46,11 @@ public class TestPrograms {
    }
 
    @Test
+   public void testNoromCharset() throws IOException, URISyntaxException {
+      compileAndCompare("norom-charset");
+   }
+
+   @Test
    public void testChargenAnalysis() throws IOException, URISyntaxException {
       compileAndCompare("chargen-analysis");
    }

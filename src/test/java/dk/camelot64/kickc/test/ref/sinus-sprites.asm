@@ -15,10 +15,10 @@
   .label COLS = $d800
   .label memLo = $fe
   .label memHi = $ff
-  .label SCREEN = $400
   .const sinlen_x = $dd
   .const sinlen_y = $c5
   .label sprites = $2000
+  .label SCREEN = $400
   .label progress_idx = 4
   .label progress_cursor = $a
   .label sin_idx_x = 2

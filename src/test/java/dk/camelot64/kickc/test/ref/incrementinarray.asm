@@ -1,21 +1,20 @@
 .pc = $801 "Basic"
 :BasicUpstart(main)
 .pc = $80d "Program"
-  .label SCREEN = $400
-  .label char_cursor = 6
-  .label line_cursor = 2
+  .label print_char_cursor = 6
+  .label print_line_cursor = 2
   jsr main
 main: {
     jsr print_cls
     ldx #0
-    lda #<SCREEN
-    sta line_cursor
-    lda #>SCREEN
-    sta line_cursor+1
-    lda #<SCREEN
-    sta char_cursor
-    lda #>SCREEN
-    sta char_cursor+1
+    lda #<$400
+    sta print_line_cursor
+    lda #>$400
+    sta print_line_cursor+1
+    lda #<$400
+    sta print_char_cursor
+    lda #>$400
+    sta print_char_cursor+1
   b1:
     jsr print_str
     jsr print_ln
@@ -28,27 +27,27 @@ main: {
     bne b6
     rts
   b6:
-    lda line_cursor
-    sta char_cursor
-    lda line_cursor+1
-    sta char_cursor+1
+    lda print_line_cursor
+    sta print_char_cursor
+    lda print_line_cursor+1
+    sta print_char_cursor+1
     jmp b1
 }
 print_ln: {
   b1:
-    lda line_cursor
+    lda print_line_cursor
     clc
     adc #$28
-    sta line_cursor
+    sta print_line_cursor
     bcc !+
-    inc line_cursor+1
+    inc print_line_cursor+1
   !:
-    lda line_cursor+1
-    cmp char_cursor+1
+    lda print_line_cursor+1
+    cmp print_char_cursor+1
     bcc b1
     bne !+
-    lda line_cursor
-    cmp char_cursor
+    lda print_line_cursor
+    cmp print_char_cursor
     bcc b1
   !:
     rts
@@ -68,10 +67,10 @@ print_str: {
   b2:
     ldy #0
     lda (str),y
-    sta (char_cursor),y
-    inc char_cursor
+    sta (print_char_cursor),y
+    inc print_char_cursor
     bne !+
-    inc char_cursor+1
+    inc print_char_cursor+1
   !:
     inc str
     bne !+
@@ -81,9 +80,9 @@ print_str: {
 }
 print_cls: {
     .label sc = 2
-    lda #<SCREEN
+    lda #<$400
     sta sc
-    lda #>SCREEN
+    lda #>$400
     sta sc+1
   b1:
     lda #' '
@@ -94,10 +93,10 @@ print_cls: {
     inc sc+1
   !:
     lda sc+1
-    cmp #>SCREEN+$3e8
+    cmp #>$400+$3e8
     bne b1
     lda sc
-    cmp #<SCREEN+$3e8
+    cmp #<$400+$3e8
     bne b1
     rts
 }

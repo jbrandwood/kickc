@@ -90,7 +90,7 @@ public class AsmFormat {
             // No cast needed
             return getAsmConstant(program, operand, outerPrecedence, codeScope);
          } else {
-            return getAsmConstant(program, new ConstantBinary(new ConstantInteger((long)0xffffffff), Operators.BOOL_AND, operand), outerPrecedence, codeScope);
+            return getAsmConstant(program, new ConstantBinary(new ConstantInteger((long)0xffffffffL), Operators.BOOL_AND, operand), outerPrecedence, codeScope);
          }
       } else if(Operators.LOWBYTE.equals(operator)) {
          SymbolType operandType = SymbolTypeInference.inferType(program.getScope(), operand);

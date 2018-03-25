@@ -4,9 +4,8 @@
   .const PI2_u4f12 = $6488
   .const PI_u4f12 = $3244
   .const PI_HALF_u4f12 = $1922
-  .label SCREEN = $400
-  .label char_cursor = $d
-  .label line_cursor = 8
+  .label print_char_cursor = $d
+  .label print_line_cursor = 8
   jsr main
 main: {
     .label tabsize = $14
@@ -28,10 +27,10 @@ sin8u_table: {
     .label x = 2
     .label i = 6
     jsr div16u
-    lda #<SCREEN
-    sta char_cursor
-    lda #>SCREEN
-    sta char_cursor+1
+    lda #<$400
+    sta print_char_cursor
+    lda #>$400
+    sta print_char_cursor+1
     lda #<str
     sta print_str.str
     lda #>str
@@ -74,10 +73,10 @@ sin8u_table: {
     lda #mid
     sta print_byte.b
     jsr print_byte
-    lda #<SCREEN
-    sta line_cursor
-    lda #>SCREEN
-    sta line_cursor+1
+    lda #<$400
+    sta print_line_cursor
+    lda #>$400
+    sta print_line_cursor+1
     jsr print_ln
     lda #<0
     sta i
@@ -109,10 +108,10 @@ sin8u_table: {
     bne !+
     inc sintab+1
   !:
-    lda line_cursor
-    sta char_cursor
-    lda line_cursor+1
-    sta char_cursor+1
+    lda print_line_cursor
+    sta print_char_cursor
+    lda print_line_cursor+1
+    sta print_char_cursor+1
     lda #<str5
     sta print_str.str
     lda #>str5
@@ -185,19 +184,19 @@ sin8u_table: {
 }
 print_ln: {
   b1:
-    lda line_cursor
+    lda print_line_cursor
     clc
     adc #$28
-    sta line_cursor
+    sta print_line_cursor
     bcc !+
-    inc line_cursor+1
+    inc print_line_cursor+1
   !:
-    lda line_cursor+1
-    cmp char_cursor+1
+    lda print_line_cursor+1
+    cmp print_char_cursor+1
     bcc b1
     bne !+
-    lda line_cursor
-    cmp char_cursor
+    lda print_line_cursor
+    cmp print_char_cursor
     bcc b1
   !:
     rts
@@ -222,10 +221,10 @@ print_byte: {
 }
 print_char: {
     ldy #0
-    sta (char_cursor),y
-    inc char_cursor
+    sta (print_char_cursor),y
+    inc print_char_cursor
     bne !+
-    inc char_cursor+1
+    inc print_char_cursor+1
   !:
     rts
 }
@@ -240,10 +239,10 @@ print_str: {
   b2:
     ldy #0
     lda (str),y
-    sta (char_cursor),y
-    inc char_cursor
+    sta (print_char_cursor),y
+    inc print_char_cursor
     bne !+
-    inc char_cursor+1
+    inc print_char_cursor+1
   !:
     inc str
     bne !+
@@ -533,9 +532,9 @@ divr16u: {
 }
 print_cls: {
     .label sc = 2
-    lda #<SCREEN
+    lda #<$400
     sta sc
-    lda #>SCREEN
+    lda #>$400
     sta sc+1
   b1:
     lda #' '
@@ -546,10 +545,10 @@ print_cls: {
     inc sc+1
   !:
     lda sc+1
-    cmp #>SCREEN+$3e8
+    cmp #>$400+$3e8
     bne b1
     lda sc
-    cmp #<SCREEN+$3e8
+    cmp #<$400+$3e8
     bne b1
     rts
 }

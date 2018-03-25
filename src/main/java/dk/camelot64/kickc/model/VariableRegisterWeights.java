@@ -42,6 +42,10 @@ public class VariableRegisterWeights {
       List<VariableRef> vars = equivalenceClass.getVariables();
       for(VariableRef var : vars) {
          Double varWeight = getWeight(var);
+         if(varWeight==null) {
+            varWeight = 0.0;
+
+         }
          totalWeight += varWeight;
       }
       return totalWeight;

@@ -46,6 +46,11 @@ public class TestPrograms {
    }
 
    @Test
+   public void testC64DtvGfxModes() throws IOException, URISyntaxException {
+      compileAndCompare("c64dtv-gfxmodes");
+   }
+
+   @Test
    public void testNoromCharset() throws IOException, URISyntaxException {
       compileAndCompare("norom-charset");
    }

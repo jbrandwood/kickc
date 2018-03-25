@@ -1,12 +1,11 @@
 .pc = $801 "Basic"
 :BasicUpstart(main)
 .pc = $80d "Program"
-  .label SCREEN = $400
   .label BGCOL = $d021
   .const GREEN = 5
   .const RED = 2
-  .label char_cursor = 5
-  .label line_cursor = 7
+  .label print_char_cursor = 5
+  .label print_line_cursor = 7
   jsr main
 main: {
     jsr print_cls
@@ -72,10 +71,10 @@ test_sbytes: {
 assert_sbyte: {
     .label msg = 2
     .label c = 4
-    lda line_cursor
-    sta char_cursor
-    lda line_cursor+1
-    sta char_cursor+1
+    lda print_line_cursor
+    sta print_char_cursor
+    lda print_line_cursor+1
+    sta print_char_cursor+1
     jsr print_str
     lda #<str
     sta print_str.str
@@ -116,10 +115,10 @@ print_str: {
   b2:
     ldy #0
     lda (str),y
-    sta (char_cursor),y
-    inc char_cursor
+    sta (print_char_cursor),y
+    inc print_char_cursor
     bne !+
-    inc char_cursor+1
+    inc print_char_cursor+1
   !:
     inc str
     bne !+
@@ -129,19 +128,19 @@ print_str: {
 }
 print_ln: {
   b1:
-    lda line_cursor
+    lda print_line_cursor
     clc
     adc #$28
-    sta line_cursor
+    sta print_line_cursor
     bcc !+
-    inc line_cursor+1
+    inc print_line_cursor+1
   !:
-    lda line_cursor+1
-    cmp char_cursor+1
+    lda print_line_cursor+1
+    cmp print_char_cursor+1
     bcc b1
     bne !+
-    lda line_cursor
-    cmp char_cursor
+    lda print_line_cursor
+    cmp print_char_cursor
     bcc b1
   !:
     rts
@@ -150,26 +149,26 @@ test_bytes: {
     .const bb = 0
     .const bc = bb+2
     .const bd = bc-4
-    lda #<SCREEN
-    sta line_cursor
-    lda #>SCREEN
-    sta line_cursor+1
+    lda #<$400
+    sta print_line_cursor
+    lda #>$400
+    sta print_line_cursor+1
     lda #0
     sta assert_byte.c
     ldx #bb
-    lda #<SCREEN
-    sta char_cursor
-    lda #>SCREEN
-    sta char_cursor+1
+    lda #<$400
+    sta print_char_cursor
+    lda #>$400
+    sta print_char_cursor+1
     lda #<msg
     sta assert_byte.msg
     lda #>msg
     sta assert_byte.msg+1
     jsr assert_byte
-    lda line_cursor
-    sta char_cursor
-    lda line_cursor+1
-    sta char_cursor+1
+    lda print_line_cursor
+    sta print_char_cursor
+    lda print_line_cursor+1
+    sta print_char_cursor+1
     lda #2
     sta assert_byte.c
     ldx #bc
@@ -178,10 +177,10 @@ test_bytes: {
     lda #>msg1
     sta assert_byte.msg+1
     jsr assert_byte
-    lda line_cursor
-    sta char_cursor
-    lda line_cursor+1
-    sta char_cursor+1
+    lda print_line_cursor
+    sta print_char_cursor
+    lda print_line_cursor+1
+    sta print_char_cursor+1
     lda #$fe
     sta assert_byte.c
     ldx #bd
@@ -229,9 +228,9 @@ assert_byte: {
 }
 print_cls: {
     .label sc = 2
-    lda #<SCREEN
+    lda #<$400
     sta sc
-    lda #>SCREEN
+    lda #>$400
     sta sc+1
   b1:
     lda #' '
@@ -242,10 +241,10 @@ print_cls: {
     inc sc+1
   !:
     lda sc+1
-    cmp #>SCREEN+$3e8
+    cmp #>$400+$3e8
     bne b1
     lda sc
-    cmp #<SCREEN+$3e8
+    cmp #<$400+$3e8
     bne b1
     rts
 }

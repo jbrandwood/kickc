@@ -1,0 +1,127 @@
+// Exploring C64DTV Screen Modes
+import "c64dtv.kc"
+import "print.kc"
+import "keyboard.kc"
+
+void main() {
+    *DTV_FEATURE = DTV_FEATURE_ENABLE;
+    while(true) {
+        menu();
+    }
+}
+
+const byte* MENU_SCREEN = $8000;
+const byte* MENU_CHARSET = $9800;
+
+void menu() {
+    // DTV Graphics Bank
+    *DTV_GRAPHICS_VIC_BANK = (byte)((dword)MENU_CHARSET/$10000);
+    // DTV Graphics Mode
+    *DTV_CONTROL = 0;
+    // VIC Graphics Bank
+    *CIA2_PORT_A_DDR = %00000011; // Set VIC Bank bits to output - all others to input
+    *CIA2_PORT_A = %00000011 ^ (byte)((word)MENU_CHARSET/$4000); // Set VIC Bank
+    // VIC Graphics Mode
+    *D011 = VIC_DEN|VIC_RSEL|3;
+    *D016 = VIC_CSEL;
+    // VIC Memory Pointers
+    *D018 =  (byte)((((word)MENU_SCREEN&$3fff)/$40)|(((word)MENU_CHARSET&$3fff)/$400));
+    // Char Colors
+    for(byte* c=COLS;c!=COLS+1000;c++) *c=LIGHT_GREEN;
+    // Screen colors
+    *BGCOL = 0;
+    *BORDERCOL = 0;
+
+    print_set_screen(MENU_SCREEN);
+    print_cls();
+    print_str_ln("C64DTV Graphics Modes            EMBLHCC@");
+    print_str_ln("                                 CCMIIHO@");
+    print_str_ln("                                 MMMNCUL@");
+    print_str_ln("----------------------------------------@");
+    print_str_ln("1. Standard Char             (V) 0000000@");
+    print_str_ln("2. Extended Color Char       (V) 1000000@");
+    print_str_ln("3. Multicolor Char           (V) 0100000@");
+    print_str_ln("4. Standard Bitmap           (V) 0010000@");
+    print_str_ln("5. Multicolor Bitmap         (V) 0110000@");
+    print_str_ln("6. High Color Standard Char  (H) 0000100@");
+    print_str_ln("7. High Extended Color Char  (H) 1000100@");
+    print_str_ln("8. High Multicolor Char      (H) 0100100@");
+    print_str_ln("9. High Multicolor Bitmap    (H) 0110100@");
+    print_str_ln("a. Sixs Fred                 (D) 1111100@");
+    print_str_ln("b. Sixs Fred 2               (D) 1111000@");
+    print_str_ln("c. Two Plane Bitmap          (D) 1011100@");
+    print_str_ln("d. Two Plane Multicol Bitmap (D) 1111100@");
+    print_str_ln("e. 8bpp Pixel Cell           (D) 1101110@");
+    print_str_ln("f. Chunky 8bpp Bitmap        (D) 1101111@");
+    print_str_ln("----------------------------------------@");
+    print_str_ln("    (V) vicII (H) vicII+hicol (D) c64dtv@");
+
+    while(true) {
+        if(keyboard_key_pressed(KEY_C)!=0) {
+            mode_twoplanebitmap();
+            return;
+        }
+        byte* last = MENU_SCREEN+999;
+        (*last)++;
+    }
+
+}
+
+const byte* TWOPLANE_PLANEA = $4000;
+const byte* TWOPLANE_PLANEB = $6000;
+
+// Test the Two Plane Bitmap - generated from the two DTV linear graphics plane counters
+// Two Plane Bitmap Mode (CHUNK/COLDIS/MCM = 0, ECM/BMM/HICOL/LINEAR = 1)
+void mode_twoplanebitmap() {
+    // DTV Graphics Mode
+    *DTV_CONTROL = DTV_CONTROL_HIGHCOLOR_ON | DTV_CONTROL_LINEAR_ADDRESSING_ON;
+    // VIC Graphics Mode
+    *D011 = VIC_ECM|VIC_BMM|VIC_DEN|VIC_RSEL|3;
+    *D016 = VIC_CSEL;
+    // Linear Graphics Plane A Counter
+    *DTV_PLANEA_START_LO = <TWOPLANE_PLANEA;
+    *DTV_PLANEA_START_MI = >TWOPLANE_PLANEA;
+    *DTV_PLANEA_START_HI = 0;
+    *DTV_PLANEA_STEP = 1;
+    *DTV_PLANEA_MODULO_LO = 0;
+    *DTV_PLANEA_MODULO_HI = 0;
+    // Linear Graphics Plane B Counter
+    *DTV_PLANEB_START_LO = <TWOPLANE_PLANEB;
+    *DTV_PLANEB_START_MI = >TWOPLANE_PLANEB;
+    *DTV_PLANEB_START_HI = 0;
+    *DTV_PLANEB_STEP = 1;
+    *DTV_PLANEB_MODULO_LO = 0;
+    *DTV_PLANEB_MODULO_HI = 0;
+
+    // Screen colors
+    *BORDERCOL = 0;
+    *BGCOL1 = GREEN; // Color for bits 00
+    *BGCOL2 = BLUE; // Color for bits 11
+    // Colors for bits 01 / 10
+    for(byte* c=COLS;c!=COLS+1000;c++) *c= <c;
+    // Graphics for Plane A - horizontal stripes
+    byte* gfxa = TWOPLANE_PLANEA;
+    for(byte ay : 0..199) {
+        for (byte ax : 0..39) {
+            if((ay&4)==0) {
+                *gfxa++ = $00;
+            } else {
+                *gfxa++ = $ff;
+            }
+        }
+    }
+    // Graphics for Plane B - vertical stripes
+    byte* gfxb = TWOPLANE_PLANEB;
+    for(byte by : 0..199) {
+        for ( byte bx : 0..39) {
+            *gfxb++ = $0f;
+        }
+    }
+    while(true) {
+        if(keyboard_key_pressed(KEY_SPACE)!=0) {
+            return;
+        }
+    }
+
+}
+

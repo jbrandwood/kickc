@@ -3,12 +3,12 @@
 .pc = $80d "Program"
   .label RASTER = $d012
   .label BGCOL = $d021
+  .label DTV_FEATURE = $d03f
+  .const DTV_FEATURE_ENABLE = 1
   .label DTV_CONTROL = $d03c
   .const DTV_CONTROL_BORDER_OFF = 2
   .const DTV_CONTROL_HIGHCOLOR_ON = 4
   .const DTV_CONTROL_BADLINE_OFF = $20
-  .label DTV_FEATURE = $d03f
-  .const DTV_FEATURE_ENABLE = 1
   .label DTV_PALETTE = $d200
   jsr main
 main: {

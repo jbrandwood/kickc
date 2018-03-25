@@ -1,22 +1,35 @@
 
-const byte* SCREEN = $0400;
-
-byte* line_cursor = SCREEN;
-byte* char_cursor = line_cursor;
+byte* print_screen = $0400;
+byte* print_line_cursor = print_screen;
+byte* print_char_cursor = print_line_cursor;
 
 // Print a zero-terminated string
 void print_str(byte* str) {
     while(*str!='@') {
-        *(char_cursor++) = *(str++);
+        *(print_char_cursor++) = *(str++);
     }
 }
+
+// Print a string at a specific screen position
+void print_str_at(byte* str, byte* at) {
+    while(*str!='@') {
+        *(at++) = *(str++);
+    }
+}
+
+// Print a zero-terminated string followed by a newline
+void print_str_ln(byte* str) {
+    print_str(str);
+    print_ln();
+}
+
 
 // Print a newline
 void print_ln() {
     do {
-        line_cursor = line_cursor + $28;
-    } while (line_cursor<char_cursor);
-    char_cursor = line_cursor;
+        print_line_cursor = print_line_cursor + $28;
+    } while (print_line_cursor<print_char_cursor);
+    print_char_cursor = print_line_cursor;
 }
 
 // Print a signed word as HEX
@@ -68,16 +81,21 @@ void print_byte(byte b) {
 
 // Print a single char
 void print_char(byte ch) {
-    *(char_cursor++) = ch;
+    *(print_char_cursor++) = ch;
 }
 
-// Clear the screen
+// Clear the screen. Also resets current line/char cursor.
 void print_cls() {
-    for(byte* sc=SCREEN; sc!=SCREEN+1000; sc++) {
+    for(byte* sc=print_screen; sc!=print_screen+1000; sc++) {
         *sc = ' ';
     }
-    line_cursor = SCREEN;
-    char_cursor = line_cursor;
+    print_line_cursor = print_screen;
+    print_char_cursor = print_line_cursor;
 }
 
-
+// Set the screen to print on. Also resets current line/char cursor.
+void print_set_screen(byte* screen) {
+    print_screen = screen;
+    print_line_cursor = print_screen;
+    print_char_cursor = print_line_cursor;
+}

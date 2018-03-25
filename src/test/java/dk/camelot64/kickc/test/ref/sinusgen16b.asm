@@ -6,8 +6,8 @@
   .const PI_HALF_u4f28 = $1921fb54
   .const PI_u4f12 = $3244
   .const PI_HALF_u4f12 = $1922
-  .label SCREEN = $400
-  .label char_cursor = $b
+  .label print_line_cursor = $400
+  .label print_char_cursor = $b
   .label rem16u = 4
   jsr main
 main: {
@@ -19,10 +19,10 @@ main: {
     jsr sin16s_genb
     jsr print_cls
     ldx #0
-    lda #<SCREEN
-    sta char_cursor
-    lda #>SCREEN
-    sta char_cursor+1
+    lda #<print_line_cursor
+    sta print_char_cursor
+    lda #>print_line_cursor
+    sta print_char_cursor+1
     lda #<sintab2
     sta st2
     lda #>sintab2
@@ -88,10 +88,10 @@ print_str: {
   b2:
     ldy #0
     lda (str),y
-    sta (char_cursor),y
-    inc char_cursor
+    sta (print_char_cursor),y
+    inc print_char_cursor
     bne !+
-    inc char_cursor+1
+    inc print_char_cursor+1
   !:
     inc str
     bne !+
@@ -147,18 +147,18 @@ print_byte: {
 }
 print_char: {
     ldy #0
-    sta (char_cursor),y
-    inc char_cursor
+    sta (print_char_cursor),y
+    inc print_char_cursor
     bne !+
-    inc char_cursor+1
+    inc print_char_cursor+1
   !:
     rts
 }
 print_cls: {
     .label sc = 2
-    lda #<SCREEN
+    lda #<print_line_cursor
     sta sc
-    lda #>SCREEN
+    lda #>print_line_cursor
     sta sc+1
   b1:
     lda #' '
@@ -169,10 +169,10 @@ print_cls: {
     inc sc+1
   !:
     lda sc+1
-    cmp #>SCREEN+$3e8
+    cmp #>print_line_cursor+$3e8
     bne b1
     lda sc
-    cmp #<SCREEN+$3e8
+    cmp #<print_line_cursor+$3e8
     bne b1
     rts
 }

@@ -209,6 +209,26 @@ byte* print_screen = $0400;
 byte* print_line_cursor = print_screen;
 byte* print_char_cursor = print_line_cursor;
 
+// Print a number of zero-terminated strings, each followed by a newline.
+// The sequence of lines is terminated by another zero.
+void print_str_lines(byte* str) {
+    while(*str!='@') {
+        do {
+            byte ch = *(str++);
+            if(ch!='@') {
+                *(print_char_cursor++) = ch;
+            }
+        } while (ch!='@');
+        print_ln();
+    }
+}
+
+// Print a zero-terminated string followed by a newline
+void print_str_ln(byte* str) {
+    print_str(str);
+    print_ln();
+}
+
 // Print a zero-terminated string
 void print_str(byte* str) {
     while(*str!='@') {
@@ -222,13 +242,6 @@ void print_str_at(byte* str, byte* at) {
         *(at++) = *(str++);
     }
 }
-
-// Print a zero-terminated string followed by a newline
-void print_str_ln(byte* str) {
-    print_str(str);
-    print_ln();
-}
-
 
 // Print a newline
 void print_ln() {
@@ -306,6 +319,8 @@ void print_set_screen(byte* screen) {
     print_char_cursor = print_line_cursor;
 }
 
+Adding pre/post-modifier (byte*) print_str_lines::str ← ++ (byte*) print_str_lines::str
+Adding pre/post-modifier (byte*) print_char_cursor ← ++ (byte*) print_char_cursor
 Adding pre/post-modifier (byte*) print_char_cursor ← ++ (byte*) print_char_cursor
 Adding pre/post-modifier (byte*) print_str::str ← ++ (byte*) print_str::str
 Adding pre/post-modifier (byte*) print_str_at::at ← ++ (byte*) print_str_at::at
@@ -491,6 +506,35 @@ STATEMENTS
   (byte*) print_screen ← (word/signed word/dword/signed dword) 1024
   (byte*) print_line_cursor ← (byte*) print_screen
   (byte*) print_char_cursor ← (byte*) print_line_cursor
+proc (void()) print_str_lines((byte*) print_str_lines::str)
+print_str_lines::@1:
+  (boolean~) print_str_lines::$0 ← *((byte*) print_str_lines::str) != (byte) '@'
+  if((boolean~) print_str_lines::$0) goto print_str_lines::@2
+  goto print_str_lines::@3
+print_str_lines::@2:
+print_str_lines::@4:
+  (byte) print_str_lines::ch ← *((byte*) print_str_lines::str)
+  (byte*) print_str_lines::str ← ++ (byte*) print_str_lines::str
+  (boolean~) print_str_lines::$1 ← (byte) print_str_lines::ch != (byte) '@'
+  (boolean~) print_str_lines::$2 ← ! (boolean~) print_str_lines::$1
+  if((boolean~) print_str_lines::$2) goto print_str_lines::@5
+  *((byte*) print_char_cursor) ← (byte) print_str_lines::ch
+  (byte*) print_char_cursor ← ++ (byte*) print_char_cursor
+print_str_lines::@5:
+  (boolean~) print_str_lines::$3 ← (byte) print_str_lines::ch != (byte) '@'
+  if((boolean~) print_str_lines::$3) goto print_str_lines::@4
+  (void~) print_str_lines::$4 ← call print_ln 
+  goto print_str_lines::@1
+print_str_lines::@3:
+print_str_lines::@return:
+  return 
+endproc // print_str_lines()
+proc (void()) print_str_ln((byte*) print_str_ln::str)
+  (void~) print_str_ln::$0 ← call print_str (byte*) print_str_ln::str 
+  (void~) print_str_ln::$1 ← call print_ln 
+print_str_ln::@return:
+  return 
+endproc // print_str_ln()
 proc (void()) print_str((byte*) print_str::str)
 print_str::@1:
   (boolean~) print_str::$0 ← *((byte*) print_str::str) != (byte) '@'
@@ -519,12 +563,6 @@ print_str_at::@3:
 print_str_at::@return:
   return 
 endproc // print_str_at()
-proc (void()) print_str_ln((byte*) print_str_ln::str)
-  (void~) print_str_ln::$0 ← call print_str (byte*) print_str_ln::str 
-  (void~) print_str_ln::$1 ← call print_ln 
-print_str_ln::@return:
-  return 
-endproc // print_str_ln()
 proc (void()) print_ln()
 print_ln::@1:
   (byte*~) print_ln::$0 ← (byte*) print_line_cursor + (byte/signed byte/word/signed word/dword/signed dword) 40
@@ -1490,6 +1528,20 @@ SYMBOLS
 (label) print_str_at::@return
 (byte*) print_str_at::at
 (byte*) print_str_at::str
+(void()) print_str_lines((byte*) print_str_lines::str)
+(boolean~) print_str_lines::$0
+(boolean~) print_str_lines::$1
+(boolean~) print_str_lines::$2
+(boolean~) print_str_lines::$3
+(void~) print_str_lines::$4
+(label) print_str_lines::@1
+(label) print_str_lines::@2
+(label) print_str_lines::@3
+(label) print_str_lines::@4
+(label) print_str_lines::@5
+(label) print_str_lines::@return
+(byte) print_str_lines::ch
+(byte*) print_str_lines::str
 (void()) print_str_ln((byte*) print_str_ln::str)
 (void~) print_str_ln::$0
 (void~) print_str_ln::$1
@@ -1533,6 +1585,54 @@ INITIAL CONTROL FLOW GRAPH
   (byte*) print_line_cursor ← (byte*) print_screen
   (byte*) print_char_cursor ← (byte*) print_line_cursor
   to:@1
+print_str_lines: scope:[print_str_lines]  from
+  to:print_str_lines::@1
+print_str_lines::@1: scope:[print_str_lines]  from print_str_lines print_str_lines::@9
+  (boolean~) print_str_lines::$0 ← *((byte*) print_str_lines::str) != (byte) '@'
+  if((boolean~) print_str_lines::$0) goto print_str_lines::@2
+  to:print_str_lines::@6
+print_str_lines::@2: scope:[print_str_lines]  from print_str_lines::@1 print_str_lines::@7
+  to:print_str_lines::@4
+print_str_lines::@6: scope:[print_str_lines]  from print_str_lines::@1
+  to:print_str_lines::@3
+print_str_lines::@3: scope:[print_str_lines]  from print_str_lines::@10 print_str_lines::@6
+  to:print_str_lines::@return
+print_str_lines::@7: scope:[print_str_lines]  from
+  to:print_str_lines::@2
+print_str_lines::@4: scope:[print_str_lines]  from print_str_lines::@2 print_str_lines::@5
+  (byte) print_str_lines::ch ← *((byte*) print_str_lines::str)
+  (byte*) print_str_lines::str ← ++ (byte*) print_str_lines::str
+  (boolean~) print_str_lines::$1 ← (byte) print_str_lines::ch != (byte) '@'
+  (boolean~) print_str_lines::$2 ← ! (boolean~) print_str_lines::$1
+  if((boolean~) print_str_lines::$2) goto print_str_lines::@5
+  to:print_str_lines::@8
+print_str_lines::@5: scope:[print_str_lines]  from print_str_lines::@4 print_str_lines::@8
+  (boolean~) print_str_lines::$3 ← (byte) print_str_lines::ch != (byte) '@'
+  if((boolean~) print_str_lines::$3) goto print_str_lines::@4
+  to:print_str_lines::@9
+print_str_lines::@8: scope:[print_str_lines]  from print_str_lines::@4
+  *((byte*) print_char_cursor) ← (byte) print_str_lines::ch
+  (byte*) print_char_cursor ← ++ (byte*) print_char_cursor
+  to:print_str_lines::@5
+print_str_lines::@9: scope:[print_str_lines]  from print_str_lines::@5
+  (void~) print_str_lines::$4 ← call print_ln 
+  to:print_str_lines::@1
+print_str_lines::@10: scope:[print_str_lines]  from
+  to:print_str_lines::@3
+print_str_lines::@return: scope:[print_str_lines]  from print_str_lines::@3
+  return 
+  to:@return
+@1: scope:[]  from @begin
+  to:@2
+print_str_ln: scope:[print_str_ln]  from
+  (void~) print_str_ln::$0 ← call print_str (byte*) print_str_ln::str 
+  (void~) print_str_ln::$1 ← call print_ln 
+  to:print_str_ln::@return
+print_str_ln::@return: scope:[print_str_ln]  from print_str_ln
+  return 
+  to:@return
+@2: scope:[]  from @1
+  to:@3
 print_str: scope:[print_str]  from
   to:print_str::@1
 print_str::@1: scope:[print_str]  from print_str print_str::@2
@@ -1555,8 +1655,8 @@ print_str::@6: scope:[print_str]  from
 print_str::@return: scope:[print_str]  from print_str::@3
   return 
   to:@return
-@1: scope:[]  from @begin
-  to:@2
+@3: scope:[]  from @2
+  to:@4
 print_str_at: scope:[print_str_at]  from
   to:print_str_at::@1
 print_str_at::@1: scope:[print_str_at]  from print_str_at print_str_at::@2
@@ -1579,17 +1679,8 @@ print_str_at::@6: scope:[print_str_at]  from
 print_str_at::@return: scope:[print_str_at]  from print_str_at::@3
   return 
   to:@return
-@2: scope:[]  from @1
-  to:@3
-print_str_ln: scope:[print_str_ln]  from
-  (void~) print_str_ln::$0 ← call print_str (byte*) print_str_ln::str 
-  (void~) print_str_ln::$1 ← call print_ln 
-  to:print_str_ln::@return
-print_str_ln::@return: scope:[print_str_ln]  from print_str_ln
-  return 
-  to:@return
-@3: scope:[]  from @2
-  to:@4
+@4: scope:[]  from @3
+  to:@5
 print_ln: scope:[print_ln]  from
   to:print_ln::@1
 print_ln::@1: scope:[print_ln]  from print_ln print_ln::@1
@@ -1604,8 +1695,8 @@ print_ln::@2: scope:[print_ln]  from print_ln::@1
 print_ln::@return: scope:[print_ln]  from print_ln::@2
   return 
   to:@return
-@4: scope:[]  from @3
-  to:@5
+@5: scope:[]  from @4
+  to:@6
 print_sword: scope:[print_sword]  from
   (boolean~) print_sword::$0 ← (signed word) print_sword::w < (byte/signed byte/word/signed word/dword/signed dword) 0
   (boolean~) print_sword::$1 ← ! (boolean~) print_sword::$0
@@ -1623,8 +1714,8 @@ print_sword::@2: scope:[print_sword]  from print_sword
 print_sword::@return: scope:[print_sword]  from print_sword::@1
   return 
   to:@return
-@5: scope:[]  from @4
-  to:@6
+@6: scope:[]  from @5
+  to:@7
 print_sbyte: scope:[print_sbyte]  from
   (boolean~) print_sbyte::$0 ← (signed byte) print_sbyte::b < (byte/signed byte/word/signed word/dword/signed dword) 0
   (boolean~) print_sbyte::$1 ← ! (boolean~) print_sbyte::$0
@@ -1642,8 +1733,8 @@ print_sbyte::@2: scope:[print_sbyte]  from print_sbyte
 print_sbyte::@return: scope:[print_sbyte]  from print_sbyte::@1
   return 
   to:@return
-@6: scope:[]  from @5
-  to:@7
+@7: scope:[]  from @6
+  to:@8
 print_word: scope:[print_word]  from
   (byte~) print_word::$0 ← > (word) print_word::w
   (void~) print_word::$1 ← call print_byte (byte~) print_word::$0 
@@ -1653,8 +1744,8 @@ print_word: scope:[print_word]  from
 print_word::@return: scope:[print_word]  from print_word
   return 
   to:@return
-@7: scope:[]  from @6
-  to:@8
+@8: scope:[]  from @7
+  to:@9
 print_dword: scope:[print_dword]  from
   (word~) print_dword::$0 ← > (dword) print_dword::dw
   (void~) print_dword::$1 ← call print_word (word~) print_dword::$0 
@@ -1664,8 +1755,8 @@ print_dword: scope:[print_dword]  from
 print_dword::@return: scope:[print_dword]  from print_dword
   return 
   to:@return
-@8: scope:[]  from @7
-  to:@9
+@9: scope:[]  from @8
+  to:@10
 print_sdword: scope:[print_sdword]  from
   (boolean~) print_sdword::$0 ← (signed dword) print_sdword::dw < (byte/signed byte/word/signed word/dword/signed dword) 0
   (boolean~) print_sdword::$1 ← ! (boolean~) print_sdword::$0
@@ -1683,8 +1774,8 @@ print_sdword::@2: scope:[print_sdword]  from print_sdword
 print_sdword::@return: scope:[print_sdword]  from print_sdword::@1
   return 
   to:@return
-@9: scope:[]  from @8
-  to:@10
+@10: scope:[]  from @9
+  to:@11
 print_byte: scope:[print_byte]  from
   (byte[]) print_byte::hextab ← (string) "0123456789abcdef"
   (byte~) print_byte::$0 ← (byte) print_byte::b >> (byte/signed byte/word/signed word/dword/signed dword) 4
@@ -1695,8 +1786,8 @@ print_byte: scope:[print_byte]  from
 print_byte::@return: scope:[print_byte]  from print_byte
   return 
   to:@return
-@10: scope:[]  from @9
-  to:@11
+@11: scope:[]  from @10
+  to:@12
 print_char: scope:[print_char]  from
   *((byte*) print_char_cursor) ← (byte) print_char::ch
   (byte*) print_char_cursor ← ++ (byte*) print_char_cursor
@@ -1704,8 +1795,8 @@ print_char: scope:[print_char]  from
 print_char::@return: scope:[print_char]  from print_char
   return 
   to:@return
-@11: scope:[]  from @10
-  to:@12
+@12: scope:[]  from @11
+  to:@13
 print_cls: scope:[print_cls]  from
   (byte*) print_cls::sc ← (byte*) print_screen
   to:print_cls::@1
@@ -1723,8 +1814,8 @@ print_cls::@2: scope:[print_cls]  from print_cls::@1
 print_cls::@return: scope:[print_cls]  from print_cls::@2
   return 
   to:@return
-@12: scope:[]  from @11
-  to:@13
+@13: scope:[]  from @12
+  to:@14
 print_set_screen: scope:[print_set_screen]  from
   (byte*) print_screen ← (byte*) print_set_screen::screen
   (byte*) print_line_cursor ← (byte*) print_screen
@@ -1733,8 +1824,8 @@ print_set_screen: scope:[print_set_screen]  from
 print_set_screen::@return: scope:[print_set_screen]  from print_set_screen
   return 
   to:@return
-@13: scope:[]  from @12
-  to:@14
+@14: scope:[]  from @13
+  to:@15
 mul8u: scope:[mul8u]  from
   (word) mul8u::res ← (byte/signed byte/word/signed word/dword/signed dword) 0
   (word) mul8u::mb ← ((word)) (byte) mul8u::b
@@ -1774,8 +1865,8 @@ mul8u::@return: scope:[mul8u]  from mul8u::@3 mul8u::@9
   to:@return
 mul8u::@9: scope:[mul8u]  from
   to:mul8u::@return
-@14: scope:[]  from @13
-  to:@15
+@15: scope:[]  from @14
+  to:@16
 mul8s: scope:[mul8s]  from
   (byte~) mul8s::$0 ← ((byte)) (signed byte) mul8s::a
   (byte~) mul8s::$1 ← ((byte)) (signed byte) mul8s::b
@@ -1816,8 +1907,8 @@ mul8s::@return: scope:[mul8s]  from mul8s::@2 mul8s::@5
   to:@return
 mul8s::@5: scope:[mul8s]  from
   to:mul8s::@return
-@15: scope:[]  from @14
-  to:@16
+@16: scope:[]  from @15
+  to:@17
 mul8su: scope:[mul8su]  from
   (byte~) mul8su::$0 ← ((byte)) (signed byte) mul8su::a
   (byte~) mul8su::$1 ← ((byte)) (byte) mul8su::b
@@ -1845,8 +1936,8 @@ mul8su::@return: scope:[mul8su]  from mul8su::@1 mul8su::@3
   to:@return
 mul8su::@3: scope:[mul8su]  from
   to:mul8su::@return
-@16: scope:[]  from @15
-  to:@17
+@17: scope:[]  from @16
+  to:@18
 mul16u: scope:[mul16u]  from
   (dword) mul16u::res ← (byte/signed byte/word/signed word/dword/signed dword) 0
   (dword) mul16u::mb ← ((dword)) (word) mul16u::b
@@ -1886,8 +1977,8 @@ mul16u::@return: scope:[mul16u]  from mul16u::@3 mul16u::@9
   to:@return
 mul16u::@9: scope:[mul16u]  from
   to:mul16u::@return
-@17: scope:[]  from @16
-  to:@18
+@18: scope:[]  from @17
+  to:@19
 mul16s: scope:[mul16s]  from
   (word~) mul16s::$0 ← ((word)) (signed word) mul16s::a
   (word~) mul16s::$1 ← ((word)) (signed word) mul16s::b
@@ -1928,12 +2019,12 @@ mul16s::@return: scope:[mul16s]  from mul16s::@2 mul16s::@5
   to:@return
 mul16s::@5: scope:[mul16s]  from
   to:mul16s::@return
-@18: scope:[]  from @17
+@19: scope:[]  from @18
   (byte[512]) mulf_sqr1_lo ← { fill( 512, 0) }
   (byte[512]) mulf_sqr1_hi ← { fill( 512, 0) }
   (byte[512]) mulf_sqr2_lo ← { fill( 512, 0) }
   (byte[512]) mulf_sqr2_hi ← { fill( 512, 0) }
-  to:@19
+  to:@20
 mulf_init: scope:[mulf_init]  from
   (word) mulf_init::sqr ← (byte/signed byte/word/signed word/dword/signed dword) 0
   (byte) mulf_init::x_2 ← (byte/signed byte/word/signed word/dword/signed dword) 0
@@ -2005,8 +2096,8 @@ mulf_init::@8: scope:[mulf_init]  from mulf_init::@4
 mulf_init::@return: scope:[mulf_init]  from mulf_init::@8
   return 
   to:@return
-@19: scope:[]  from @18
-  to:@20
+@20: scope:[]  from @19
+  to:@21
 mulf8u: scope:[mulf8u]  from
   (byte*) mulf8u::memA ← ((byte*)) (byte/word/signed word/dword/signed dword) 254
   (byte*) mulf8u::memB ← ((byte*)) (byte/word/signed word/dword/signed dword) 255
@@ -2021,8 +2112,8 @@ mulf8u::@return: scope:[mulf8u]  from mulf8u mulf8u::@1
   to:@return
 mulf8u::@1: scope:[mulf8u]  from
   to:mulf8u::@return
-@20: scope:[]  from @19
-  to:@21
+@21: scope:[]  from @20
+  to:@22
 mulf8s: scope:[mulf8s]  from
   (byte~) mulf8s::$0 ← ((byte)) (signed byte) mulf8s::a
   (byte~) mulf8s::$1 ← ((byte)) (signed byte) mulf8s::b
@@ -2063,9 +2154,9 @@ mulf8s::@return: scope:[mulf8s]  from mulf8s::@2 mulf8s::@5
   to:@return
 mulf8s::@5: scope:[mulf8s]  from
   to:mulf8s::@return
-@21: scope:[]  from @20
+@22: scope:[]  from @21
   (byte*) BGCOL ← ((byte*)) (word/dword/signed dword) 53281
-  to:@22
+  to:@23
 main: scope:[main]  from
   *((byte*) BGCOL) ← (byte/signed byte/word/signed word/dword/signed dword) 5
   (void~) main::$0 ← call print_cls 
@@ -2078,8 +2169,8 @@ main: scope:[main]  from
 main::@return: scope:[main]  from main
   return 
   to:@return
-@22: scope:[]  from @21
-  to:@23
+@23: scope:[]  from @22
+  to:@24
 muls8u: scope:[muls8u]  from
   (word) muls8u::m ← (byte/signed byte/word/signed word/dword/signed dword) 0
   (boolean~) muls8u::$0 ← (byte) muls8u::a != (byte/signed byte/word/signed word/dword/signed dword) 0
@@ -2107,8 +2198,8 @@ muls8u::@return: scope:[muls8u]  from muls8u::@1 muls8u::@5
   to:@return
 muls8u::@5: scope:[muls8u]  from
   to:muls8u::@return
-@23: scope:[]  from @22
-  to:@24
+@24: scope:[]  from @23
+  to:@25
 muls8s: scope:[muls8s]  from
   (signed word) muls8s::m ← (byte/signed byte/word/signed word/dword/signed dword) 0
   (boolean~) muls8s::$0 ← (signed byte) muls8s::a < (byte/signed byte/word/signed word/dword/signed dword) 0
@@ -2157,12 +2248,12 @@ muls8s::@return: scope:[muls8s]  from muls8s::@11 muls8s::@3
   to:@return
 muls8s::@11: scope:[muls8s]  from
   to:muls8s::@return
-@24: scope:[]  from @23
+@25: scope:[]  from @24
   (byte[512]) mula_sqr1_lo ← { fill( 512, 0) }
   (byte[512]) mula_sqr1_hi ← { fill( 512, 0) }
   (byte[512]) mula_sqr2_lo ← { fill( 512, 0) }
   (byte[512]) mula_sqr2_hi ← { fill( 512, 0) }
-  to:@25
+  to:@26
 mulf_init_asm: scope:[mulf_init_asm]  from
   asm { ldx#$00 txa .byte$c9 lb1: tya adc#$00 ml1: stamula_sqr1_hi,x tay cmp#$40 txa ror ml9: adc#$00 staml9+1 inx ml0: stamula_sqr1_lo,x bnelb1 incml0+2 incml1+2 clc iny bnelb1 ldx#$00 ldy#$ff !: ldamula_sqr1_hi+1,x stamula_sqr2_hi+$100,x ldamula_sqr1_hi,x stamula_sqr2_hi,y ldamula_sqr1_lo+1,x stamula_sqr2_lo+$100,x ldamula_sqr1_lo,x stamula_sqr2_lo,y dey inx bne!-  }
   (byte*) mulf_init_asm::mem ← ((byte*)) (byte/word/signed word/dword/signed dword) 255
@@ -2174,8 +2265,8 @@ mulf_init_asm: scope:[mulf_init_asm]  from
 mulf_init_asm::@return: scope:[mulf_init_asm]  from mulf_init_asm
   return 
   to:@return
-@25: scope:[]  from @24
-  to:@26
+@26: scope:[]  from @25
+  to:@27
 mulf_tables_cmp: scope:[mulf_tables_cmp]  from
   (byte*) mulf_tables_cmp::asm_sqr ← (byte[512]) mula_sqr1_lo
   (byte*) mulf_tables_cmp::kc_sqr ← (byte[512]) mulf_sqr1_lo
@@ -2211,8 +2302,8 @@ mulf_tables_cmp::@5: scope:[mulf_tables_cmp]  from mulf_tables_cmp::@2
   (void~) mulf_tables_cmp::$11 ← call print_str (string) "multiply tables match!@" 
   (void~) mulf_tables_cmp::$12 ← call print_ln 
   to:mulf_tables_cmp::@return
-@26: scope:[]  from @25
-  to:@27
+@27: scope:[]  from @26
+  to:@28
 mul8u_compare: scope:[mul8u_compare]  from
   (byte) mul8u_compare::a ← (byte/signed byte/word/signed word/dword/signed dword) 0
   to:mul8u_compare::@1
@@ -2270,8 +2361,8 @@ mul8u_compare::@11: scope:[mul8u_compare]  from mul8u_compare::@10
   (void~) mul8u_compare::$12 ← call print_str (string) "multiply results match!@" 
   (void~) mul8u_compare::$13 ← call print_ln 
   to:mul8u_compare::@return
-@27: scope:[]  from @26
-  to:@28
+@28: scope:[]  from @27
+  to:@29
 mul8u_error: scope:[mul8u_error]  from
   (void~) mul8u_error::$0 ← call print_str (string) "multiply mismatch @" 
   (void~) mul8u_error::$1 ← call print_byte (byte) mul8u_error::a 
@@ -2288,8 +2379,8 @@ mul8u_error: scope:[mul8u_error]  from
 mul8u_error::@return: scope:[mul8u_error]  from mul8u_error
   return 
   to:@return
-@28: scope:[]  from @27
-  to:@29
+@29: scope:[]  from @28
+  to:@30
 mul8s_compare: scope:[mul8s_compare]  from
   (signed byte/signed word/signed dword~) mul8s_compare::$0 ← - (byte/word/signed word/dword/signed dword) 128
   (signed byte) mul8s_compare::a ← (signed byte/signed word/signed dword~) mul8s_compare::$0
@@ -2351,8 +2442,8 @@ mul8s_compare::@11: scope:[mul8s_compare]  from mul8s_compare::@10
   (void~) mul8s_compare::$16 ← call print_str (string) "signed multiply results match!@" 
   (void~) mul8s_compare::$17 ← call print_ln 
   to:mul8s_compare::@return
-@29: scope:[]  from @28
-  to:@30
+@30: scope:[]  from @29
+  to:@31
 mul8s_error: scope:[mul8s_error]  from
   (void~) mul8s_error::$0 ← call print_str (string) "signed multiply mismatch @" 
   (void~) mul8s_error::$1 ← call print_sbyte (signed byte) mul8s_error::a 
@@ -2369,13 +2460,14 @@ mul8s_error: scope:[mul8s_error]  from
 mul8s_error::@return: scope:[mul8s_error]  from mul8s_error
   return 
   to:@return
-@30: scope:[]  from @29
+@31: scope:[]  from @30
   call main 
   to:@end
-@end: scope:[]  from @30
+@end: scope:[]  from @31
 
-Removing unused procedure print_str_at
+Removing unused procedure print_str_lines
 Removing unused procedure print_str_ln
+Removing unused procedure print_str_at
 Removing unused procedure print_sdword
 Removing unused procedure print_set_screen
 Removing unused procedure mul8su
@@ -2450,12 +2542,12 @@ Creating constant string variable for inline (const string) mul8s_error::str1 "*
 Creating constant string variable for inline (const string) mul8s_error::str2 " slow:@"
 Creating constant string variable for inline (const string) mul8s_error::str3 " / normal:@"
 Creating constant string variable for inline (const string) mul8s_error::str4 " / fast:@"
+Removing empty block @1
+Removing empty block @2
 Removing empty block print_str::@4
 Removing empty block print_str::@3
 Removing empty block print_str::@5
 Removing empty block print_str::@6
-Removing empty block @1
-Removing empty block @2
 Removing empty block @3
 Removing empty block @4
 Removing empty block @5
@@ -2467,35 +2559,36 @@ Removing empty block @10
 Removing empty block @11
 Removing empty block @12
 Removing empty block @13
+Removing empty block @14
 Removing empty block mul8u::@5
 Removing empty block mul8u::@6
 Removing empty block mul8u::@8
 Removing empty block mul8u::@9
-Removing empty block @14
-Removing empty block mul8s::@5
 Removing empty block @15
+Removing empty block mul8s::@5
 Removing empty block @16
 Removing empty block @17
-Removing empty block @19
-Removing empty block mulf8u::@1
+Removing empty block @18
 Removing empty block @20
+Removing empty block mulf8u::@1
+Removing empty block @21
 Removing empty block mulf8s::@5
-Removing empty block @22
+Removing empty block @23
 Removing empty block muls8u::@4
 Removing empty block muls8u::@5
-Removing empty block @23
+Removing empty block @24
 Removing empty block muls8s::@7
 Removing empty block muls8s::@8
 Removing empty block muls8s::@10
 Removing empty block muls8s::@11
-Removing empty block @25
-Removing empty block mulf_tables_cmp::@4
 Removing empty block @26
-Removing empty block mul8u_compare::@9
+Removing empty block mulf_tables_cmp::@4
 Removing empty block @27
+Removing empty block mul8u_compare::@9
 Removing empty block @28
-Removing empty block mul8s_compare::@9
 Removing empty block @29
+Removing empty block mul8s_compare::@9
+Removing empty block @30
 PROCEDURE MODIFY VARIABLE ANALYSIS
 print_str modifies print_char_cursor
 print_ln modifies print_line_cursor
@@ -2538,7 +2631,7 @@ CONTROL FLOW GRAPH SSA WITH ASSIGNMENT CALL & RETURN
   (byte*) print_screen#0 ← ((byte*)) (word/signed word/dword/signed dword) 1024
   (byte*) print_line_cursor#0 ← (byte*) print_screen#0
   (byte*) print_char_cursor#0 ← (byte*) print_line_cursor#0
-  to:@18
+  to:@19
 print_str: scope:[print_str]  from mul8s_compare::@11 mul8s_error mul8s_error::@2 mul8s_error::@4 mul8s_error::@6 mul8s_error::@8 mul8u_compare::@11 mul8u_error mul8u_error::@2 mul8u_error::@4 mul8u_error::@6 mul8u_error::@8 mulf_tables_cmp::@3 mulf_tables_cmp::@5 mulf_tables_cmp::@7
   (byte*) print_char_cursor#149 ← phi( mul8s_compare::@11/(byte*) print_char_cursor#146 mul8s_error/(byte*) print_char_cursor#147 mul8s_error::@2/(byte*) print_char_cursor#54 mul8s_error::@4/(byte*) print_char_cursor#56 mul8s_error::@6/(byte*) print_char_cursor#58 mul8s_error::@8/(byte*) print_char_cursor#60 mul8u_compare::@11/(byte*) print_char_cursor#143 mul8u_error/(byte*) print_char_cursor#144 mul8u_error::@2/(byte*) print_char_cursor#38 mul8u_error::@4/(byte*) print_char_cursor#40 mul8u_error::@6/(byte*) print_char_cursor#42 mul8u_error::@8/(byte*) print_char_cursor#44 mulf_tables_cmp::@3/(byte*) print_char_cursor#140 mulf_tables_cmp::@5/(byte*) print_char_cursor#141 mulf_tables_cmp::@7/(byte*) print_char_cursor#27 )
   (byte*) print_str::str#18 ← phi( mul8s_compare::@11/(byte*) print_str::str#10 mul8s_error/(byte*) print_str::str#11 mul8s_error::@2/(byte*) print_str::str#12 mul8s_error::@4/(byte*) print_str::str#13 mul8s_error::@6/(byte*) print_str::str#14 mul8s_error::@8/(byte*) print_str::str#15 mul8u_compare::@11/(byte*) print_str::str#4 mul8u_error/(byte*) print_str::str#5 mul8u_error::@2/(byte*) print_str::str#6 mul8u_error::@4/(byte*) print_str::str#7 mul8u_error::@6/(byte*) print_str::str#8 mul8u_error::@8/(byte*) print_str::str#9 mulf_tables_cmp::@3/(byte*) print_str::str#1 mulf_tables_cmp::@5/(byte*) print_str::str#3 mulf_tables_cmp::@7/(byte*) print_str::str#2 )
@@ -2845,7 +2938,7 @@ mul8s::@return: scope:[mul8s]  from mul8s::@2
   (signed word) mul8s::return#1 ← (signed word) mul8s::return#3
   return 
   to:@return
-@18: scope:[]  from @begin
+@19: scope:[]  from @begin
   (byte*) print_screen#8 ← phi( @begin/(byte*) print_screen#0 )
   (byte*) print_char_cursor#168 ← phi( @begin/(byte*) print_char_cursor#0 )
   (byte*) print_line_cursor#78 ← phi( @begin/(byte*) print_line_cursor#0 )
@@ -2853,7 +2946,7 @@ mul8s::@return: scope:[mul8s]  from mul8s::@2
   (byte[512]) mulf_sqr1_hi#0 ← { fill( 512, 0) }
   (byte[512]) mulf_sqr2_lo#0 ← { fill( 512, 0) }
   (byte[512]) mulf_sqr2_hi#0 ← { fill( 512, 0) }
-  to:@21
+  to:@22
 mulf_init: scope:[mulf_init]  from main::@1
   (word) mulf_init::sqr#0 ← (byte/signed byte/word/signed word/dword/signed dword) 0
   (byte) mulf_init::x_2#0 ← (byte/signed byte/word/signed word/dword/signed dword) 0
@@ -3023,17 +3116,17 @@ mulf8s::@return: scope:[mulf8s]  from mulf8s::@2
   (signed word) mulf8s::return#1 ← (signed word) mulf8s::return#3
   return 
   to:@return
-@21: scope:[]  from @18
-  (byte*) print_screen#7 ← phi( @18/(byte*) print_screen#8 )
-  (byte*) print_char_cursor#160 ← phi( @18/(byte*) print_char_cursor#168 )
-  (byte*) print_line_cursor#67 ← phi( @18/(byte*) print_line_cursor#78 )
+@22: scope:[]  from @19
+  (byte*) print_screen#7 ← phi( @19/(byte*) print_screen#8 )
+  (byte*) print_char_cursor#160 ← phi( @19/(byte*) print_char_cursor#168 )
+  (byte*) print_line_cursor#67 ← phi( @19/(byte*) print_line_cursor#78 )
   (byte*) BGCOL#0 ← ((byte*)) (word/dword/signed dword) 53281
-  to:@24
-main: scope:[main]  from @30
-  (byte*) print_char_cursor#138 ← phi( @30/(byte*) print_char_cursor#148 )
-  (byte*) print_line_cursor#46 ← phi( @30/(byte*) print_line_cursor#56 )
-  (byte*) print_screen#4 ← phi( @30/(byte*) print_screen#5 )
-  (byte*) BGCOL#1 ← phi( @30/(byte*) BGCOL#5 )
+  to:@25
+main: scope:[main]  from @31
+  (byte*) print_char_cursor#138 ← phi( @31/(byte*) print_char_cursor#148 )
+  (byte*) print_line_cursor#46 ← phi( @31/(byte*) print_line_cursor#56 )
+  (byte*) print_screen#4 ← phi( @31/(byte*) print_screen#5 )
+  (byte*) BGCOL#1 ← phi( @31/(byte*) BGCOL#5 )
   *((byte*) BGCOL#1) ← (byte/signed byte/word/signed word/dword/signed dword) 5
   call print_cls param-assignment
   to:main::@1
@@ -3182,16 +3275,16 @@ muls8s::@return: scope:[muls8s]  from muls8s::@3
   (signed word) muls8s::return#1 ← (signed word) muls8s::return#3
   return 
   to:@return
-@24: scope:[]  from @21
-  (byte*) print_screen#6 ← phi( @21/(byte*) print_screen#7 )
-  (byte*) print_char_cursor#159 ← phi( @21/(byte*) print_char_cursor#160 )
-  (byte*) print_line_cursor#66 ← phi( @21/(byte*) print_line_cursor#67 )
-  (byte*) BGCOL#15 ← phi( @21/(byte*) BGCOL#0 )
+@25: scope:[]  from @22
+  (byte*) print_screen#6 ← phi( @22/(byte*) print_screen#7 )
+  (byte*) print_char_cursor#159 ← phi( @22/(byte*) print_char_cursor#160 )
+  (byte*) print_line_cursor#66 ← phi( @22/(byte*) print_line_cursor#67 )
+  (byte*) BGCOL#15 ← phi( @22/(byte*) BGCOL#0 )
   (byte[512]) mula_sqr1_lo#0 ← { fill( 512, 0) }
   (byte[512]) mula_sqr1_hi#0 ← { fill( 512, 0) }
   (byte[512]) mula_sqr2_lo#0 ← { fill( 512, 0) }
   (byte[512]) mula_sqr2_hi#0 ← { fill( 512, 0) }
-  to:@30
+  to:@31
 mulf_init_asm: scope:[mulf_init_asm]  from main::@2
   asm { ldx#$00 txa .byte$c9 lb1: tya adc#$00 ml1: stamula_sqr1_hi,x tay cmp#$40 txa ror ml9: adc#$00 staml9+1 inx ml0: stamula_sqr1_lo,x bnelb1 incml0+2 incml1+2 clc iny bnelb1 ldx#$00 ldy#$ff !: ldamula_sqr1_hi+1,x stamula_sqr2_hi+$100,x ldamula_sqr1_hi,x stamula_sqr2_hi,y ldamula_sqr1_lo+1,x stamula_sqr2_lo+$100,x ldamula_sqr1_lo,x stamula_sqr2_lo,y dey inx bne!-  }
   (byte*) mulf_init_asm::mem#0 ← ((byte*)) (byte/word/signed word/dword/signed dword) 255
@@ -3912,27 +4005,27 @@ mul8s_error::@return: scope:[mul8s_error]  from mul8s_error::@11
   (byte*) print_line_cursor#21 ← (byte*) print_line_cursor#43
   return 
   to:@return
-@30: scope:[]  from @24
-  (byte*) print_screen#5 ← phi( @24/(byte*) print_screen#6 )
-  (byte*) print_char_cursor#148 ← phi( @24/(byte*) print_char_cursor#159 )
-  (byte*) print_line_cursor#56 ← phi( @24/(byte*) print_line_cursor#66 )
-  (byte*) BGCOL#5 ← phi( @24/(byte*) BGCOL#15 )
+@31: scope:[]  from @25
+  (byte*) print_screen#5 ← phi( @25/(byte*) print_screen#6 )
+  (byte*) print_char_cursor#148 ← phi( @25/(byte*) print_char_cursor#159 )
+  (byte*) print_line_cursor#56 ← phi( @25/(byte*) print_line_cursor#66 )
+  (byte*) BGCOL#5 ← phi( @25/(byte*) BGCOL#15 )
   call main param-assignment
-  to:@31
-@31: scope:[]  from @30
-  (byte*) print_char_cursor#129 ← phi( @30/(byte*) print_char_cursor#25 )
-  (byte*) print_line_cursor#44 ← phi( @30/(byte*) print_line_cursor#9 )
+  to:@32
+@32: scope:[]  from @31
+  (byte*) print_char_cursor#129 ← phi( @31/(byte*) print_char_cursor#25 )
+  (byte*) print_line_cursor#44 ← phi( @31/(byte*) print_line_cursor#9 )
   (byte*) print_line_cursor#22 ← (byte*) print_line_cursor#44
   (byte*) print_char_cursor#65 ← (byte*) print_char_cursor#129
   to:@end
-@end: scope:[]  from @31
+@end: scope:[]  from @32
 
 SYMBOL TABLE SSA
-(label) @18
-(label) @21
-(label) @24
-(label) @30
+(label) @19
+(label) @22
+(label) @25
 (label) @31
+(label) @32
 (label) @begin
 (label) @end
 (byte*) BGCOL
@@ -6169,16 +6262,16 @@ Culled Empty Block (label) print_word::@2
 Culled Empty Block (label) print_byte::@2
 Culled Empty Block (label) print_cls::@2
 Culled Empty Block (label) mul8u::@3
-Culled Empty Block (label) @18
+Culled Empty Block (label) @19
 Culled Empty Block (label) mulf_init::@6
 Not culling empty block because it shares successor with its predecessor. (label) mulf_init::@7
-Culled Empty Block (label) @21
+Culled Empty Block (label) @22
 Culled Empty Block (label) main::@6
 Culled Empty Block (label) muls8u::@3
 Culled Empty Block (label) muls8s::@6
 Culled Empty Block (label) muls8s::@4
 Culled Empty Block (label) muls8s::@9
-Culled Empty Block (label) @24
+Culled Empty Block (label) @25
 Culled Empty Block (label) mulf_tables_cmp::@9
 Culled Empty Block (label) mulf_tables_cmp::@11
 Not culling empty block because it shares successor with its predecessor. (label) mul8u_compare::@6
@@ -6191,7 +6284,7 @@ Not culling empty block because it shares successor with its predecessor. (label
 Culled Empty Block (label) mul8s_compare::@15
 Culled Empty Block (label) mul8s_compare::@17
 Culled Empty Block (label) mul8s_error::@11
-Culled Empty Block (label) @31
+Culled Empty Block (label) @32
 Succesful SSA optimization Pass2CullEmptyBlocks
 Not culling empty block because it shares successor with its predecessor. (label) mulf_init::@7
 Not culling empty block because it shares successor with its predecessor. (label) mul8u_compare::@6
@@ -6608,7 +6701,7 @@ Constant inlined print_char::ch#1 = (byte) '-'
 Constant inlined print_char::ch#0 = (byte) '-'
 Constant inlined print_byte::$4 = (const string) print_byte::hextab#0
 Succesful SSA optimization Pass2ConstantInlining
-Block Sequence Planned @begin @30 @end main main::@1 main::@2 main::@3 main::@4 main::@5 main::@return mul8s_compare mul8s_compare::@1 mul8s_compare::@2 mul8s_compare::@12 mul8s_compare::@13 mul8s_compare::@14 mul8s_compare::@6 mul8s_compare::@3 mul8s_compare::@7 mul8s_compare::@4 mul8s_compare::@8 mul8s_compare::@return mul8s_compare::@5 mul8s_compare::@10 mul8s_compare::@11 mul8s_compare::@16 print_ln print_ln::@1 print_ln::@return print_str print_str::@1 print_str::@return print_str::@2 mul8s_error mul8s_error::@1 mul8s_error::@2 mul8s_error::@3 mul8s_error::@4 mul8s_error::@5 mul8s_error::@6 mul8s_error::@7 mul8s_error::@8 mul8s_error::@9 mul8s_error::@10 mul8s_error::@return print_sword print_sword::@2 print_sword::@4 print_sword::@1 print_sword::@return print_word print_word::@1 print_word::@return print_byte print_byte::@1 print_byte::@return print_char print_char::@return print_sbyte print_sbyte::@2 print_sbyte::@4 print_sbyte::@1 print_sbyte::@return mul8s mul8s::@6 mul8s::@3 mul8s::@1 mul8s::@4 mul8s::@2 mul8s::@return mul8u mul8u::@1 mul8u::@return mul8u::@2 mul8u::@7 mul8u::@4 mulf8s mulf8s::@6 mulf8s::@3 mulf8s::@1 mulf8s::@4 mulf8s::@2 mulf8s::@return mulf8u mulf8u::@return muls8s muls8s::@2 muls8s::@3 muls8s::@return muls8s::@1 muls8s::@5 mul8u_compare mul8u_compare::@1 mul8u_compare::@2 mul8u_compare::@12 mul8u_compare::@13 mul8u_compare::@14 mul8u_compare::@6 mul8u_compare::@3 mul8u_compare::@7 mul8u_compare::@4 mul8u_compare::@8 mul8u_compare::@return mul8u_compare::@5 mul8u_compare::@10 mul8u_compare::@11 mul8u_compare::@16 mul8u_error mul8u_error::@1 mul8u_error::@2 mul8u_error::@3 mul8u_error::@4 mul8u_error::@5 mul8u_error::@6 mul8u_error::@7 mul8u_error::@8 mul8u_error::@9 mul8u_error::@10 mul8u_error::@return muls8u muls8u::@2 muls8u::@1 muls8u::@return mulf_tables_cmp mulf_tables_cmp::@1 mulf_tables_cmp::@3 mulf_tables_cmp::@6 mulf_tables_cmp::@7 mulf_tables_cmp::@8 mulf_tables_cmp::@return mulf_tables_cmp::@2 mulf_tables_cmp::@5 mulf_tables_cmp::@10 mulf_init_asm mulf_init_asm::@return mulf_init mulf_init::@1 mulf_init::@5 mulf_init::@2 mulf_init::@3 mulf_init::@7 mulf_init::@4 mulf_init::@8 mulf_init::@return print_cls print_cls::@1 print_cls::@return 
+Block Sequence Planned @begin @31 @end main main::@1 main::@2 main::@3 main::@4 main::@5 main::@return mul8s_compare mul8s_compare::@1 mul8s_compare::@2 mul8s_compare::@12 mul8s_compare::@13 mul8s_compare::@14 mul8s_compare::@6 mul8s_compare::@3 mul8s_compare::@7 mul8s_compare::@4 mul8s_compare::@8 mul8s_compare::@return mul8s_compare::@5 mul8s_compare::@10 mul8s_compare::@11 mul8s_compare::@16 print_ln print_ln::@1 print_ln::@return print_str print_str::@1 print_str::@return print_str::@2 mul8s_error mul8s_error::@1 mul8s_error::@2 mul8s_error::@3 mul8s_error::@4 mul8s_error::@5 mul8s_error::@6 mul8s_error::@7 mul8s_error::@8 mul8s_error::@9 mul8s_error::@10 mul8s_error::@return print_sword print_sword::@2 print_sword::@4 print_sword::@1 print_sword::@return print_word print_word::@1 print_word::@return print_byte print_byte::@1 print_byte::@return print_char print_char::@return print_sbyte print_sbyte::@2 print_sbyte::@4 print_sbyte::@1 print_sbyte::@return mul8s mul8s::@6 mul8s::@3 mul8s::@1 mul8s::@4 mul8s::@2 mul8s::@return mul8u mul8u::@1 mul8u::@return mul8u::@2 mul8u::@7 mul8u::@4 mulf8s mulf8s::@6 mulf8s::@3 mulf8s::@1 mulf8s::@4 mulf8s::@2 mulf8s::@return mulf8u mulf8u::@return muls8s muls8s::@2 muls8s::@3 muls8s::@return muls8s::@1 muls8s::@5 mul8u_compare mul8u_compare::@1 mul8u_compare::@2 mul8u_compare::@12 mul8u_compare::@13 mul8u_compare::@14 mul8u_compare::@6 mul8u_compare::@3 mul8u_compare::@7 mul8u_compare::@4 mul8u_compare::@8 mul8u_compare::@return mul8u_compare::@5 mul8u_compare::@10 mul8u_compare::@11 mul8u_compare::@16 mul8u_error mul8u_error::@1 mul8u_error::@2 mul8u_error::@3 mul8u_error::@4 mul8u_error::@5 mul8u_error::@6 mul8u_error::@7 mul8u_error::@8 mul8u_error::@9 mul8u_error::@10 mul8u_error::@return muls8u muls8u::@2 muls8u::@1 muls8u::@return mulf_tables_cmp mulf_tables_cmp::@1 mulf_tables_cmp::@3 mulf_tables_cmp::@6 mulf_tables_cmp::@7 mulf_tables_cmp::@8 mulf_tables_cmp::@return mulf_tables_cmp::@2 mulf_tables_cmp::@5 mulf_tables_cmp::@10 mulf_init_asm mulf_init_asm::@return mulf_init mulf_init::@1 mulf_init::@5 mulf_init::@2 mulf_init::@3 mulf_init::@7 mulf_init::@4 mulf_init::@8 mulf_init::@return print_cls print_cls::@1 print_cls::@return 
 Added new block during phi lifting mul8s_compare::@18(between mul8s_compare::@10 and mul8s_compare::@1)
 Added new block during phi lifting mul8s_compare::@19(between mul8s_compare::@5 and mul8s_compare::@2)
 Added new block during phi lifting mul8s_compare::@20(between mul8s_compare::@3 and mul8s_compare::@4)
@@ -6635,9 +6728,9 @@ Added new block during phi lifting mulf_init::@10(between mulf_init::@1 and mulf
 Added new block during phi lifting mulf_init::@11(between mulf_init::@4 and mulf_init::@3)
 Added new block during phi lifting mulf_init::@12(between mulf_init::@3 and mulf_init::@4)
 Added new block during phi lifting print_cls::@3(between print_cls::@1 and print_cls::@1)
-Block Sequence Planned @begin @30 @end main main::@1 main::@2 main::@3 main::@4 main::@5 main::@return mul8s_compare mul8s_compare::@1 mul8s_compare::@2 mul8s_compare::@12 mul8s_compare::@13 mul8s_compare::@14 mul8s_compare::@6 mul8s_compare::@3 mul8s_compare::@7 mul8s_compare::@4 mul8s_compare::@8 mul8s_compare::@return mul8s_compare::@5 mul8s_compare::@10 mul8s_compare::@11 mul8s_compare::@16 mul8s_compare::@18 mul8s_compare::@19 mul8s_compare::@20 print_ln print_ln::@1 print_ln::@return print_ln::@3 print_str print_str::@1 print_str::@return print_str::@2 mul8s_error mul8s_error::@1 mul8s_error::@2 mul8s_error::@3 mul8s_error::@4 mul8s_error::@5 mul8s_error::@6 mul8s_error::@7 mul8s_error::@8 mul8s_error::@9 mul8s_error::@10 mul8s_error::@return print_sword print_sword::@2 print_sword::@4 print_sword::@1 print_sword::@return print_sword::@5 print_word print_word::@1 print_word::@return print_byte print_byte::@1 print_byte::@return print_char print_char::@return print_sbyte print_sbyte::@2 print_sbyte::@4 print_sbyte::@1 print_sbyte::@return print_sbyte::@5 mul8s mul8s::@6 mul8s::@3 mul8s::@1 mul8s::@4 mul8s::@2 mul8s::@return mul8s::@8 mul8s::@7 mul8u mul8u::@1 mul8u::@return mul8u::@2 mul8u::@7 mul8u::@4 mul8u::@10 mulf8s mulf8s::@6 mulf8s::@3 mulf8s::@1 mulf8s::@4 mulf8s::@2 mulf8s::@return mulf8s::@8 mulf8s::@7 mulf8u mulf8u::@return muls8s muls8s::@2 muls8s::@13 muls8s::@3 muls8s::@return muls8s::@12 muls8s::@1 muls8s::@5 muls8s::@14 muls8s::@15 mul8u_compare mul8u_compare::@1 mul8u_compare::@2 mul8u_compare::@12 mul8u_compare::@13 mul8u_compare::@14 mul8u_compare::@6 mul8u_compare::@3 mul8u_compare::@7 mul8u_compare::@4 mul8u_compare::@8 mul8u_compare::@return mul8u_compare::@5 mul8u_compare::@10 mul8u_compare::@11 mul8u_compare::@16 mul8u_compare::@18 mul8u_compare::@19 mul8u_compare::@20 mul8u_error mul8u_error::@1 mul8u_error::@2 mul8u_error::@3 mul8u_error::@4 mul8u_error::@5 mul8u_error::@6 mul8u_error::@7 mul8u_error::@8 mul8u_error::@9 mul8u_error::@10 mul8u_error::@return muls8u muls8u::@2 muls8u::@7 muls8u::@1 muls8u::@return muls8u::@6 mulf_tables_cmp mulf_tables_cmp::@1 mulf_tables_cmp::@3 mulf_tables_cmp::@6 mulf_tables_cmp::@7 mulf_tables_cmp::@8 mulf_tables_cmp::@return mulf_tables_cmp::@2 mulf_tables_cmp::@5 mulf_tables_cmp::@10 mulf_tables_cmp::@12 mulf_init_asm mulf_init_asm::@return mulf_init mulf_init::@1 mulf_init::@5 mulf_init::@2 mulf_init::@3 mulf_init::@7 mulf_init::@4 mulf_init::@8 mulf_init::@return mulf_init::@11 mulf_init::@12 mulf_init::@9 mulf_init::@10 print_cls print_cls::@1 print_cls::@return print_cls::@3 
+Block Sequence Planned @begin @31 @end main main::@1 main::@2 main::@3 main::@4 main::@5 main::@return mul8s_compare mul8s_compare::@1 mul8s_compare::@2 mul8s_compare::@12 mul8s_compare::@13 mul8s_compare::@14 mul8s_compare::@6 mul8s_compare::@3 mul8s_compare::@7 mul8s_compare::@4 mul8s_compare::@8 mul8s_compare::@return mul8s_compare::@5 mul8s_compare::@10 mul8s_compare::@11 mul8s_compare::@16 mul8s_compare::@18 mul8s_compare::@19 mul8s_compare::@20 print_ln print_ln::@1 print_ln::@return print_ln::@3 print_str print_str::@1 print_str::@return print_str::@2 mul8s_error mul8s_error::@1 mul8s_error::@2 mul8s_error::@3 mul8s_error::@4 mul8s_error::@5 mul8s_error::@6 mul8s_error::@7 mul8s_error::@8 mul8s_error::@9 mul8s_error::@10 mul8s_error::@return print_sword print_sword::@2 print_sword::@4 print_sword::@1 print_sword::@return print_sword::@5 print_word print_word::@1 print_word::@return print_byte print_byte::@1 print_byte::@return print_char print_char::@return print_sbyte print_sbyte::@2 print_sbyte::@4 print_sbyte::@1 print_sbyte::@return print_sbyte::@5 mul8s mul8s::@6 mul8s::@3 mul8s::@1 mul8s::@4 mul8s::@2 mul8s::@return mul8s::@8 mul8s::@7 mul8u mul8u::@1 mul8u::@return mul8u::@2 mul8u::@7 mul8u::@4 mul8u::@10 mulf8s mulf8s::@6 mulf8s::@3 mulf8s::@1 mulf8s::@4 mulf8s::@2 mulf8s::@return mulf8s::@8 mulf8s::@7 mulf8u mulf8u::@return muls8s muls8s::@2 muls8s::@13 muls8s::@3 muls8s::@return muls8s::@12 muls8s::@1 muls8s::@5 muls8s::@14 muls8s::@15 mul8u_compare mul8u_compare::@1 mul8u_compare::@2 mul8u_compare::@12 mul8u_compare::@13 mul8u_compare::@14 mul8u_compare::@6 mul8u_compare::@3 mul8u_compare::@7 mul8u_compare::@4 mul8u_compare::@8 mul8u_compare::@return mul8u_compare::@5 mul8u_compare::@10 mul8u_compare::@11 mul8u_compare::@16 mul8u_compare::@18 mul8u_compare::@19 mul8u_compare::@20 mul8u_error mul8u_error::@1 mul8u_error::@2 mul8u_error::@3 mul8u_error::@4 mul8u_error::@5 mul8u_error::@6 mul8u_error::@7 mul8u_error::@8 mul8u_error::@9 mul8u_error::@10 mul8u_error::@return muls8u muls8u::@2 muls8u::@7 muls8u::@1 muls8u::@return muls8u::@6 mulf_tables_cmp mulf_tables_cmp::@1 mulf_tables_cmp::@3 mulf_tables_cmp::@6 mulf_tables_cmp::@7 mulf_tables_cmp::@8 mulf_tables_cmp::@return mulf_tables_cmp::@2 mulf_tables_cmp::@5 mulf_tables_cmp::@10 mulf_tables_cmp::@12 mulf_init_asm mulf_init_asm::@return mulf_init mulf_init::@1 mulf_init::@5 mulf_init::@2 mulf_init::@3 mulf_init::@7 mulf_init::@4 mulf_init::@8 mulf_init::@return mulf_init::@11 mulf_init::@12 mulf_init::@9 mulf_init::@10 print_cls print_cls::@1 print_cls::@return print_cls::@3 
 Adding NOP phi() at start of @begin
-Adding NOP phi() at start of @30
+Adding NOP phi() at start of @31
 Adding NOP phi() at start of @end
 Adding NOP phi() at start of main::@1
 Adding NOP phi() at start of main::@2
@@ -6859,9 +6952,9 @@ Not culling empty block because it shares successor with its predecessor. (label
 Culled Empty Block (label) mulf_init::@9
 Culled Empty Block (label) mulf_init::@10
 Culled Empty Block (label) print_cls::@3
-Block Sequence Planned @begin @30 @end main main::@1 main::@2 main::@3 main::@4 main::@5 main::@return mul8s_compare mul8s_compare::@1 mul8s_compare::@2 mul8s_compare::@12 mul8s_compare::@13 mul8s_compare::@14 mul8s_compare::@6 mul8s_compare::@3 mul8s_compare::@4 mul8s_compare::@8 mul8s_compare::@return mul8s_compare::@5 mul8s_compare::@10 mul8s_compare::@11 mul8s_compare::@16 mul8s_compare::@20 print_ln print_ln::@1 print_ln::@return print_str print_str::@1 print_str::@return print_str::@2 mul8s_error mul8s_error::@1 mul8s_error::@2 mul8s_error::@3 mul8s_error::@4 mul8s_error::@5 mul8s_error::@6 mul8s_error::@7 mul8s_error::@8 mul8s_error::@9 mul8s_error::@10 mul8s_error::@return print_sword print_sword::@2 print_sword::@4 print_sword::@1 print_sword::@return print_word print_word::@1 print_word::@return print_byte print_byte::@1 print_byte::@return print_char print_char::@return print_sbyte print_sbyte::@2 print_sbyte::@4 print_sbyte::@1 print_sbyte::@return mul8s mul8s::@6 mul8s::@3 mul8s::@1 mul8s::@4 mul8s::@2 mul8s::@return mul8u mul8u::@1 mul8u::@return mul8u::@2 mul8u::@7 mul8u::@4 mulf8s mulf8s::@6 mulf8s::@3 mulf8s::@1 mulf8s::@4 mulf8s::@2 mulf8s::@return mulf8u mulf8u::@return muls8s muls8s::@2 muls8s::@3 muls8s::@return muls8s::@1 muls8s::@5 mul8u_compare mul8u_compare::@1 mul8u_compare::@2 mul8u_compare::@12 mul8u_compare::@13 mul8u_compare::@14 mul8u_compare::@6 mul8u_compare::@3 mul8u_compare::@4 mul8u_compare::@8 mul8u_compare::@return mul8u_compare::@5 mul8u_compare::@10 mul8u_compare::@11 mul8u_compare::@16 mul8u_compare::@20 mul8u_error mul8u_error::@1 mul8u_error::@2 mul8u_error::@3 mul8u_error::@4 mul8u_error::@5 mul8u_error::@6 mul8u_error::@7 mul8u_error::@8 mul8u_error::@9 mul8u_error::@10 mul8u_error::@return muls8u muls8u::@2 muls8u::@1 muls8u::@return mulf_tables_cmp mulf_tables_cmp::@1 mulf_tables_cmp::@3 mulf_tables_cmp::@6 mulf_tables_cmp::@7 mulf_tables_cmp::@8 mulf_tables_cmp::@return mulf_tables_cmp::@2 mulf_tables_cmp::@5 mulf_tables_cmp::@10 mulf_init_asm mulf_init_asm::@return mulf_init mulf_init::@1 mulf_init::@5 mulf_init::@2 mulf_init::@3 mulf_init::@4 mulf_init::@8 mulf_init::@return mulf_init::@12 print_cls print_cls::@1 print_cls::@return 
+Block Sequence Planned @begin @31 @end main main::@1 main::@2 main::@3 main::@4 main::@5 main::@return mul8s_compare mul8s_compare::@1 mul8s_compare::@2 mul8s_compare::@12 mul8s_compare::@13 mul8s_compare::@14 mul8s_compare::@6 mul8s_compare::@3 mul8s_compare::@4 mul8s_compare::@8 mul8s_compare::@return mul8s_compare::@5 mul8s_compare::@10 mul8s_compare::@11 mul8s_compare::@16 mul8s_compare::@20 print_ln print_ln::@1 print_ln::@return print_str print_str::@1 print_str::@return print_str::@2 mul8s_error mul8s_error::@1 mul8s_error::@2 mul8s_error::@3 mul8s_error::@4 mul8s_error::@5 mul8s_error::@6 mul8s_error::@7 mul8s_error::@8 mul8s_error::@9 mul8s_error::@10 mul8s_error::@return print_sword print_sword::@2 print_sword::@4 print_sword::@1 print_sword::@return print_word print_word::@1 print_word::@return print_byte print_byte::@1 print_byte::@return print_char print_char::@return print_sbyte print_sbyte::@2 print_sbyte::@4 print_sbyte::@1 print_sbyte::@return mul8s mul8s::@6 mul8s::@3 mul8s::@1 mul8s::@4 mul8s::@2 mul8s::@return mul8u mul8u::@1 mul8u::@return mul8u::@2 mul8u::@7 mul8u::@4 mulf8s mulf8s::@6 mulf8s::@3 mulf8s::@1 mulf8s::@4 mulf8s::@2 mulf8s::@return mulf8u mulf8u::@return muls8s muls8s::@2 muls8s::@3 muls8s::@return muls8s::@1 muls8s::@5 mul8u_compare mul8u_compare::@1 mul8u_compare::@2 mul8u_compare::@12 mul8u_compare::@13 mul8u_compare::@14 mul8u_compare::@6 mul8u_compare::@3 mul8u_compare::@4 mul8u_compare::@8 mul8u_compare::@return mul8u_compare::@5 mul8u_compare::@10 mul8u_compare::@11 mul8u_compare::@16 mul8u_compare::@20 mul8u_error mul8u_error::@1 mul8u_error::@2 mul8u_error::@3 mul8u_error::@4 mul8u_error::@5 mul8u_error::@6 mul8u_error::@7 mul8u_error::@8 mul8u_error::@9 mul8u_error::@10 mul8u_error::@return muls8u muls8u::@2 muls8u::@1 muls8u::@return mulf_tables_cmp mulf_tables_cmp::@1 mulf_tables_cmp::@3 mulf_tables_cmp::@6 mulf_tables_cmp::@7 mulf_tables_cmp::@8 mulf_tables_cmp::@return mulf_tables_cmp::@2 mulf_tables_cmp::@5 mulf_tables_cmp::@10 mulf_init_asm mulf_init_asm::@return mulf_init mulf_init::@1 mulf_init::@5 mulf_init::@2 mulf_init::@3 mulf_init::@4 mulf_init::@8 mulf_init::@return mulf_init::@12 print_cls print_cls::@1 print_cls::@return 
 Adding NOP phi() at start of @begin
-Adding NOP phi() at start of @30
+Adding NOP phi() at start of @31
 Adding NOP phi() at start of @end
 Adding NOP phi() at start of main::@1
 Adding NOP phi() at start of main::@2
@@ -6934,14 +7027,14 @@ Propagating live ranges...
 FINAL CONTROL FLOW GRAPH
 @begin: scope:[]  from
   [0] phi() [ ] ( )
-  to:@30
-@30: scope:[]  from @begin
+  to:@31
+@31: scope:[]  from @begin
   [1] phi() [ ] ( )
   [2] call main param-assignment [ ] ( )
   to:@end
-@end: scope:[]  from @30
+@end: scope:[]  from @31
   [3] phi() [ ] ( )
-main: scope:[main]  from @30
+main: scope:[main]  from @31
   [4] *((const byte*) BGCOL#0) ← (byte/signed byte/word/signed word/dword/signed dword) 5 [ ] ( main:2 [ ] )
   [5] call print_cls param-assignment [ ] ( main:2 [ ] )
   to:main::@1
@@ -7576,152 +7669,152 @@ print_cls::@return: scope:[print_cls]  from print_cls::@1
 
 DOMINATORS
 @begin dominated by  @begin 
-@30 dominated by  @30 @begin 
-@end dominated by  @end @30 @begin 
-main dominated by  main @30 @begin 
-main::@1 dominated by  main::@1 main @30 @begin 
-main::@2 dominated by  main::@1 main::@2 main @30 @begin 
-main::@3 dominated by  main::@1 main::@2 main::@3 main @30 @begin 
-main::@4 dominated by  main::@1 main::@2 main::@3 main::@4 main @30 @begin 
-main::@5 dominated by  main::@1 main::@2 main::@5 main::@3 main::@4 main @30 @begin 
-main::@return dominated by  main::@1 main::@2 main::@5 main::@3 main::@4 main::@return main @30 @begin 
-mul8s_compare dominated by  main::@1 main::@2 main::@5 main::@3 main::@4 main @30 @begin mul8s_compare 
-mul8s_compare::@1 dominated by  main::@1 main::@2 main::@5 main::@3 main::@4 mul8s_compare::@1 main @30 @begin mul8s_compare 
-mul8s_compare::@2 dominated by  main::@1 main::@2 main::@5 main::@3 main::@4 mul8s_compare::@1 mul8s_compare::@2 main @30 @begin mul8s_compare 
-mul8s_compare::@12 dominated by  main::@1 main::@2 main::@5 main::@3 main::@4 mul8s_compare::@1 mul8s_compare::@2 mul8s_compare::@12 main @30 @begin mul8s_compare 
-mul8s_compare::@13 dominated by  main::@1 main::@2 main::@5 main::@3 main::@4 mul8s_compare::@1 mul8s_compare::@2 mul8s_compare::@12 mul8s_compare::@13 main @30 @begin mul8s_compare 
-mul8s_compare::@14 dominated by  main::@1 main::@2 main::@5 main::@3 main::@4 mul8s_compare::@1 mul8s_compare::@2 mul8s_compare::@14 mul8s_compare::@12 mul8s_compare::@13 main @30 @begin mul8s_compare 
-mul8s_compare::@6 dominated by  main::@1 main::@2 main::@5 main::@3 main::@4 mul8s_compare::@6 mul8s_compare::@1 mul8s_compare::@2 mul8s_compare::@14 mul8s_compare::@12 mul8s_compare::@13 main @30 @begin mul8s_compare 
-mul8s_compare::@3 dominated by  main::@1 main::@2 main::@5 main::@3 main::@4 mul8s_compare::@3 mul8s_compare::@1 mul8s_compare::@2 mul8s_compare::@14 mul8s_compare::@12 mul8s_compare::@13 main @30 @begin mul8s_compare 
-mul8s_compare::@4 dominated by  main::@1 main::@2 main::@5 main::@3 main::@4 mul8s_compare::@3 mul8s_compare::@4 mul8s_compare::@1 mul8s_compare::@2 mul8s_compare::@14 mul8s_compare::@12 mul8s_compare::@13 main @30 @begin mul8s_compare 
-mul8s_compare::@8 dominated by  main::@1 main::@2 main::@5 main::@3 main::@4 mul8s_compare::@3 mul8s_compare::@4 mul8s_compare::@8 mul8s_compare::@1 mul8s_compare::@2 mul8s_compare::@14 mul8s_compare::@12 mul8s_compare::@13 main @30 @begin mul8s_compare 
-mul8s_compare::@return dominated by  main::@1 main::@2 main::@5 main::@3 main::@4 mul8s_compare::@3 mul8s_compare::@4 mul8s_compare::@1 mul8s_compare::@2 mul8s_compare::@14 mul8s_compare::@12 mul8s_compare::@13 main @30 @begin mul8s_compare mul8s_compare::@return 
-mul8s_compare::@5 dominated by  main::@1 main::@2 main::@5 main::@3 main::@4 mul8s_compare::@5 mul8s_compare::@3 mul8s_compare::@4 mul8s_compare::@1 mul8s_compare::@2 mul8s_compare::@14 mul8s_compare::@12 mul8s_compare::@13 main @30 @begin mul8s_compare 
-mul8s_compare::@10 dominated by  main::@1 main::@2 main::@5 main::@3 main::@4 mul8s_compare::@5 mul8s_compare::@3 mul8s_compare::@4 mul8s_compare::@1 mul8s_compare::@2 mul8s_compare::@10 mul8s_compare::@14 mul8s_compare::@12 mul8s_compare::@13 main @30 @begin mul8s_compare 
-mul8s_compare::@11 dominated by  main::@1 main::@2 main::@5 main::@3 main::@4 mul8s_compare::@5 mul8s_compare::@3 mul8s_compare::@4 mul8s_compare::@1 mul8s_compare::@2 mul8s_compare::@10 mul8s_compare::@11 mul8s_compare::@14 mul8s_compare::@12 mul8s_compare::@13 main @30 @begin mul8s_compare 
-mul8s_compare::@16 dominated by  main::@1 main::@2 main::@5 main::@3 main::@4 mul8s_compare::@5 mul8s_compare::@3 mul8s_compare::@4 mul8s_compare::@1 mul8s_compare::@2 mul8s_compare::@10 mul8s_compare::@11 mul8s_compare::@14 mul8s_compare::@12 mul8s_compare::@13 main @30 @begin mul8s_compare::@16 mul8s_compare 
-mul8s_compare::@20 dominated by  main::@1 main::@2 main::@5 main::@3 main::@4 mul8s_compare::@3 mul8s_compare::@1 mul8s_compare::@2 mul8s_compare::@14 mul8s_compare::@12 mul8s_compare::@13 main @30 @begin mul8s_compare::@20 mul8s_compare 
-print_ln dominated by  main::@1 main::@2 main::@3 print_ln main @30 @begin 
-print_ln::@1 dominated by  main::@1 main::@2 main::@3 print_ln print_ln::@1 main @30 @begin 
-print_ln::@return dominated by  print_ln::@return main::@1 main::@2 main::@3 print_ln print_ln::@1 main @30 @begin 
-print_str dominated by  main::@1 main::@2 main::@3 print_str main @30 @begin 
-print_str::@1 dominated by  main::@1 main::@2 main::@3 print_str::@1 print_str main @30 @begin 
-print_str::@return dominated by  main::@1 main::@2 main::@3 print_str::@return print_str::@1 print_str main @30 @begin 
-print_str::@2 dominated by  main::@1 main::@2 main::@3 print_str::@1 print_str::@2 print_str main @30 @begin 
-mul8s_error dominated by  main::@1 main::@2 main::@5 main::@3 main::@4 mul8s_compare::@3 mul8s_compare::@4 mul8s_compare::@8 mul8s_compare::@1 mul8s_compare::@2 mul8s_compare::@14 mul8s_compare::@12 mul8s_compare::@13 main mul8s_error @30 @begin mul8s_compare 
-mul8s_error::@1 dominated by  main::@1 main::@2 main::@5 main::@3 main::@4 mul8s_compare::@3 mul8s_compare::@4 mul8s_compare::@8 mul8s_compare::@1 mul8s_compare::@2 mul8s_error::@1 mul8s_compare::@14 mul8s_compare::@12 mul8s_compare::@13 main mul8s_error @30 @begin mul8s_compare 
-mul8s_error::@2 dominated by  main::@1 main::@2 main::@5 main::@3 main::@4 mul8s_compare::@3 mul8s_compare::@4 mul8s_compare::@8 mul8s_compare::@1 mul8s_compare::@2 mul8s_error::@1 mul8s_error::@2 mul8s_compare::@14 mul8s_compare::@12 mul8s_compare::@13 main mul8s_error @30 @begin mul8s_compare 
-mul8s_error::@3 dominated by  main::@1 main::@2 main::@5 main::@3 main::@4 mul8s_compare::@3 mul8s_compare::@4 mul8s_compare::@8 mul8s_compare::@1 mul8s_compare::@2 mul8s_error::@1 mul8s_error::@3 mul8s_error::@2 mul8s_compare::@14 mul8s_compare::@12 mul8s_compare::@13 main mul8s_error @30 @begin mul8s_compare 
-mul8s_error::@4 dominated by  main::@1 main::@2 main::@5 main::@3 main::@4 mul8s_compare::@3 mul8s_compare::@4 mul8s_compare::@8 mul8s_compare::@1 mul8s_compare::@2 mul8s_error::@1 mul8s_error::@3 mul8s_error::@2 mul8s_error::@4 mul8s_compare::@14 mul8s_compare::@12 mul8s_compare::@13 main mul8s_error @30 @begin mul8s_compare 
-mul8s_error::@5 dominated by  main::@1 main::@2 main::@5 main::@3 main::@4 mul8s_compare::@3 mul8s_compare::@4 mul8s_compare::@8 mul8s_compare::@1 mul8s_compare::@2 mul8s_error::@1 mul8s_error::@3 mul8s_error::@2 mul8s_error::@5 mul8s_error::@4 mul8s_compare::@14 mul8s_compare::@12 mul8s_compare::@13 main mul8s_error @30 @begin mul8s_compare 
-mul8s_error::@6 dominated by  main::@1 main::@2 main::@5 main::@3 main::@4 mul8s_compare::@3 mul8s_compare::@4 mul8s_compare::@8 mul8s_compare::@1 mul8s_compare::@2 mul8s_error::@1 mul8s_error::@3 mul8s_error::@2 mul8s_error::@5 mul8s_error::@4 mul8s_error::@6 mul8s_compare::@14 mul8s_compare::@12 mul8s_compare::@13 main mul8s_error @30 @begin mul8s_compare 
-mul8s_error::@7 dominated by  main::@1 main::@2 main::@5 main::@3 main::@4 mul8s_compare::@3 mul8s_compare::@4 mul8s_compare::@8 mul8s_compare::@1 mul8s_compare::@2 mul8s_error::@1 mul8s_error::@3 mul8s_error::@2 mul8s_error::@5 mul8s_error::@4 mul8s_error::@7 mul8s_error::@6 mul8s_compare::@14 mul8s_compare::@12 mul8s_compare::@13 main mul8s_error @30 @begin mul8s_compare 
-mul8s_error::@8 dominated by  main::@1 main::@2 main::@5 main::@3 main::@4 mul8s_compare::@3 mul8s_compare::@4 mul8s_compare::@8 mul8s_compare::@1 mul8s_compare::@2 mul8s_error::@1 mul8s_error::@3 mul8s_error::@2 mul8s_error::@5 mul8s_error::@4 mul8s_error::@7 mul8s_error::@6 mul8s_error::@8 mul8s_compare::@14 mul8s_compare::@12 mul8s_compare::@13 main mul8s_error @30 @begin mul8s_compare 
-mul8s_error::@9 dominated by  main::@1 main::@2 main::@5 main::@3 main::@4 mul8s_compare::@3 mul8s_compare::@4 mul8s_compare::@8 mul8s_compare::@1 mul8s_compare::@2 mul8s_error::@1 mul8s_error::@3 mul8s_error::@2 mul8s_error::@5 mul8s_error::@4 mul8s_error::@7 mul8s_error::@6 mul8s_error::@9 mul8s_error::@8 mul8s_compare::@14 mul8s_compare::@12 mul8s_compare::@13 main mul8s_error @30 @begin mul8s_compare 
-mul8s_error::@10 dominated by  main::@1 main::@2 main::@5 main::@3 main::@4 mul8s_compare::@3 mul8s_compare::@4 mul8s_compare::@8 mul8s_compare::@1 mul8s_compare::@2 mul8s_error::@1 mul8s_error::@3 mul8s_error::@2 mul8s_error::@5 mul8s_error::@4 mul8s_error::@7 mul8s_error::@6 mul8s_error::@9 mul8s_error::@8 mul8s_compare::@14 mul8s_compare::@12 mul8s_compare::@13 main mul8s_error @30 @begin mul8s_compare mul8s_error::@10 
-mul8s_error::@return dominated by  main::@1 main::@2 main::@5 main::@3 main::@4 mul8s_compare::@3 mul8s_compare::@4 mul8s_compare::@8 mul8s_compare::@1 mul8s_compare::@2 mul8s_error::@1 mul8s_error::@3 mul8s_error::@2 mul8s_error::@5 mul8s_error::@4 mul8s_error::@7 mul8s_error::@6 mul8s_error::@9 mul8s_error::@8 mul8s_compare::@14 mul8s_compare::@12 mul8s_compare::@13 main mul8s_error @30 @begin mul8s_error::@return mul8s_compare mul8s_error::@10 
-print_sword dominated by  main::@1 main::@2 main::@5 main::@3 main::@4 mul8s_compare::@3 mul8s_compare::@4 mul8s_compare::@8 mul8s_compare::@1 mul8s_compare::@2 mul8s_error::@1 mul8s_error::@3 mul8s_error::@2 print_sword mul8s_error::@5 mul8s_error::@4 mul8s_compare::@14 mul8s_compare::@12 mul8s_compare::@13 main mul8s_error @30 @begin mul8s_compare 
-print_sword::@2 dominated by  main::@1 main::@2 main::@5 main::@3 main::@4 mul8s_compare::@3 mul8s_compare::@4 mul8s_compare::@8 mul8s_compare::@1 mul8s_compare::@2 mul8s_error::@1 mul8s_error::@3 mul8s_error::@2 print_sword mul8s_error::@5 mul8s_error::@4 mul8s_compare::@14 print_sword::@2 mul8s_compare::@12 mul8s_compare::@13 main mul8s_error @30 @begin mul8s_compare 
-print_sword::@4 dominated by  main::@1 main::@2 main::@5 main::@3 main::@4 mul8s_compare::@3 mul8s_compare::@4 mul8s_compare::@8 mul8s_compare::@1 mul8s_compare::@2 mul8s_error::@1 mul8s_error::@3 mul8s_error::@2 print_sword mul8s_error::@5 mul8s_error::@4 mul8s_compare::@14 print_sword::@2 mul8s_compare::@12 print_sword::@4 mul8s_compare::@13 main mul8s_error @30 @begin mul8s_compare 
-print_sword::@1 dominated by  main::@1 main::@2 main::@5 main::@3 main::@4 mul8s_compare::@3 mul8s_compare::@4 mul8s_compare::@8 mul8s_compare::@1 mul8s_compare::@2 mul8s_error::@1 mul8s_error::@3 mul8s_error::@2 print_sword mul8s_error::@5 mul8s_error::@4 mul8s_compare::@14 print_sword::@1 mul8s_compare::@12 mul8s_compare::@13 main mul8s_error @30 @begin mul8s_compare 
-print_sword::@return dominated by  main::@1 main::@2 main::@5 main::@3 main::@4 mul8s_compare::@3 mul8s_compare::@4 mul8s_compare::@8 mul8s_compare::@1 mul8s_compare::@2 mul8s_error::@1 mul8s_error::@3 mul8s_error::@2 print_sword mul8s_error::@5 mul8s_error::@4 mul8s_compare::@14 print_sword::@1 mul8s_compare::@12 mul8s_compare::@13 main mul8s_error @30 @begin print_sword::@return mul8s_compare 
-print_word dominated by  print_word main::@1 main::@2 main::@3 main @30 @begin 
-print_word::@1 dominated by  print_word main::@1 main::@2 main::@3 print_word::@1 main @30 @begin 
-print_word::@return dominated by  print_word main::@1 main::@2 main::@3 print_word::@return print_word::@1 main @30 @begin 
-print_byte dominated by  main::@1 main::@2 main::@3 print_byte main @30 @begin 
-print_byte::@1 dominated by  main::@1 main::@2 main::@3 print_byte::@1 print_byte main @30 @begin 
-print_byte::@return dominated by  main::@1 main::@2 main::@3 print_byte::@1 print_byte main @30 @begin print_byte::@return 
-print_char dominated by  main::@1 main::@2 main::@3 main print_char @30 @begin 
-print_char::@return dominated by  main::@1 main::@2 main::@3 main print_char @30 print_char::@return @begin 
-print_sbyte dominated by  main::@1 main::@2 main::@5 main::@3 main::@4 mul8s_compare::@3 mul8s_compare::@4 mul8s_compare::@8 mul8s_compare::@1 mul8s_compare::@2 print_sbyte mul8s_error::@1 mul8s_compare::@14 mul8s_compare::@12 mul8s_compare::@13 main mul8s_error @30 @begin mul8s_compare 
-print_sbyte::@2 dominated by  main::@1 main::@2 main::@5 main::@3 main::@4 mul8s_compare::@3 mul8s_compare::@4 mul8s_compare::@8 mul8s_compare::@1 mul8s_compare::@2 print_sbyte mul8s_error::@1 mul8s_compare::@14 mul8s_compare::@12 mul8s_compare::@13 main print_sbyte::@2 mul8s_error @30 @begin mul8s_compare 
-print_sbyte::@4 dominated by  main::@1 main::@2 main::@5 main::@3 main::@4 mul8s_compare::@3 mul8s_compare::@4 mul8s_compare::@8 mul8s_compare::@1 mul8s_compare::@2 print_sbyte mul8s_error::@1 mul8s_compare::@14 mul8s_compare::@12 mul8s_compare::@13 main print_sbyte::@4 print_sbyte::@2 mul8s_error @30 @begin mul8s_compare 
-print_sbyte::@1 dominated by  main::@1 main::@2 main::@5 main::@3 main::@4 mul8s_compare::@3 mul8s_compare::@4 mul8s_compare::@8 mul8s_compare::@1 mul8s_compare::@2 print_sbyte mul8s_error::@1 mul8s_compare::@14 mul8s_compare::@12 mul8s_compare::@13 main print_sbyte::@1 mul8s_error @30 @begin mul8s_compare 
-print_sbyte::@return dominated by  main::@1 main::@2 main::@5 main::@3 main::@4 mul8s_compare::@3 mul8s_compare::@4 mul8s_compare::@8 mul8s_compare::@1 mul8s_compare::@2 print_sbyte mul8s_error::@1 mul8s_compare::@14 mul8s_compare::@12 mul8s_compare::@13 main print_sbyte::@1 mul8s_error @30 @begin print_sbyte::@return mul8s_compare 
-mul8s dominated by  main::@1 main::@2 main::@5 main::@3 main::@4 mul8s_compare::@1 mul8s_compare::@2 mul8s_compare::@12 mul8s_compare::@13 main @30 @begin mul8s mul8s_compare 
-mul8s::@6 dominated by  main::@1 main::@2 main::@5 main::@3 main::@4 mul8s_compare::@1 mul8s_compare::@2 mul8s_compare::@12 mul8s_compare::@13 main mul8s::@6 @30 @begin mul8s mul8s_compare 
-mul8s::@3 dominated by  main::@1 main::@2 main::@5 main::@3 main::@4 mul8s_compare::@1 mul8s_compare::@2 mul8s_compare::@12 mul8s_compare::@13 main mul8s::@6 @30 mul8s::@3 @begin mul8s mul8s_compare 
-mul8s::@1 dominated by  main::@1 main::@2 main::@5 main::@3 main::@4 mul8s_compare::@1 mul8s_compare::@2 mul8s_compare::@12 mul8s_compare::@13 main mul8s::@6 mul8s::@1 @30 @begin mul8s mul8s_compare 
-mul8s::@4 dominated by  main::@1 main::@2 main::@5 main::@3 main::@4 mul8s_compare::@1 mul8s_compare::@2 mul8s_compare::@12 mul8s_compare::@13 main mul8s::@6 mul8s::@1 @30 mul8s::@4 @begin mul8s mul8s_compare 
-mul8s::@2 dominated by  main::@1 main::@2 main::@5 main::@3 main::@4 mul8s_compare::@1 mul8s_compare::@2 mul8s_compare::@12 mul8s_compare::@13 main mul8s::@6 mul8s::@1 @30 mul8s::@2 @begin mul8s mul8s_compare 
-mul8s::@return dominated by  main::@1 main::@2 main::@5 main::@3 main::@4 mul8s_compare::@1 mul8s_compare::@2 mul8s_compare::@12 mul8s_compare::@13 main mul8s::@6 mul8s::@1 @30 mul8s::@2 @begin mul8s::@return mul8s mul8s_compare 
-mul8u dominated by  main::@1 main::@2 main::@3 main::@4 mul8u main @30 @begin 
-mul8u::@1 dominated by  main::@1 main::@2 main::@3 main::@4 mul8u main @30 @begin mul8u::@1 
-mul8u::@return dominated by  main::@1 main::@2 main::@3 main::@4 mul8u mul8u::@return main @30 @begin mul8u::@1 
-mul8u::@2 dominated by  main::@1 main::@2 main::@3 main::@4 mul8u main @30 @begin mul8u::@2 mul8u::@1 
-mul8u::@7 dominated by  main::@1 main::@2 main::@3 main::@4 mul8u main @30 @begin mul8u::@7 mul8u::@2 mul8u::@1 
-mul8u::@4 dominated by  main::@1 main::@2 main::@3 main::@4 mul8u main @30 @begin mul8u::@2 mul8u::@1 mul8u::@4 
-mulf8s dominated by  main::@1 main::@2 main::@5 main::@3 main::@4 mul8s_compare::@1 mul8s_compare::@2 mulf8s mul8s_compare::@12 main @30 @begin mul8s_compare 
-mulf8s::@6 dominated by  main::@1 main::@2 main::@5 main::@3 main::@4 mul8s_compare::@1 mul8s_compare::@2 mulf8s mul8s_compare::@12 main @30 @begin mulf8s::@6 mul8s_compare 
-mulf8s::@3 dominated by  main::@1 main::@2 main::@5 main::@3 main::@4 mul8s_compare::@1 mul8s_compare::@2 mulf8s mul8s_compare::@12 main @30 @begin mulf8s::@3 mulf8s::@6 mul8s_compare 
-mulf8s::@1 dominated by  main::@1 main::@2 main::@5 main::@3 main::@4 mul8s_compare::@1 mul8s_compare::@2 mulf8s mul8s_compare::@12 main @30 @begin mulf8s::@1 mulf8s::@6 mul8s_compare 
-mulf8s::@4 dominated by  main::@1 main::@2 main::@5 main::@3 main::@4 mul8s_compare::@1 mul8s_compare::@2 mulf8s mul8s_compare::@12 main @30 @begin mulf8s::@1 mulf8s::@4 mulf8s::@6 mul8s_compare 
-mulf8s::@2 dominated by  main::@1 main::@2 main::@5 main::@3 main::@4 mul8s_compare::@1 mul8s_compare::@2 mulf8s mul8s_compare::@12 main @30 @begin mulf8s::@2 mulf8s::@1 mulf8s::@6 mul8s_compare 
-mulf8s::@return dominated by  main::@1 main::@2 main::@5 main::@3 main::@4 mul8s_compare::@1 mul8s_compare::@2 mulf8s mul8s_compare::@12 main @30 @begin mulf8s::@2 mulf8s::@1 mulf8s::@return mulf8s::@6 mul8s_compare 
-mulf8u dominated by  main::@1 main::@2 main::@3 main::@4 mulf8u main @30 @begin 
-mulf8u::@return dominated by  main::@1 main::@2 main::@3 main::@4 mulf8u main @30 @begin mulf8u::@return 
-muls8s dominated by  muls8s main::@1 main::@2 main::@5 main::@3 main::@4 mul8s_compare::@1 mul8s_compare::@2 main @30 @begin mul8s_compare 
-muls8s::@2 dominated by  muls8s main::@1 main::@2 main::@5 main::@3 main::@4 muls8s::@2 mul8s_compare::@1 mul8s_compare::@2 main @30 @begin mul8s_compare 
-muls8s::@3 dominated by  muls8s main::@1 main::@2 main::@5 main::@3 main::@4 muls8s::@3 mul8s_compare::@1 mul8s_compare::@2 main @30 @begin mul8s_compare 
-muls8s::@return dominated by  muls8s main::@1 main::@2 main::@5 main::@3 main::@4 muls8s::@3 mul8s_compare::@1 mul8s_compare::@2 muls8s::@return main @30 @begin mul8s_compare 
-muls8s::@1 dominated by  muls8s main::@1 main::@2 main::@5 main::@3 main::@4 muls8s::@1 mul8s_compare::@1 mul8s_compare::@2 main @30 @begin mul8s_compare 
-muls8s::@5 dominated by  muls8s main::@1 main::@2 main::@5 main::@3 main::@4 muls8s::@5 muls8s::@1 mul8s_compare::@1 mul8s_compare::@2 main @30 @begin mul8s_compare 
-mul8u_compare dominated by  main::@1 main::@2 main::@3 main::@4 main @30 @begin mul8u_compare 
-mul8u_compare::@1 dominated by  main::@1 mul8u_compare::@1 main::@2 main::@3 main::@4 main @30 @begin mul8u_compare 
-mul8u_compare::@2 dominated by  main::@1 mul8u_compare::@1 main::@2 mul8u_compare::@2 main::@3 main::@4 main @30 @begin mul8u_compare 
-mul8u_compare::@12 dominated by  mul8u_compare::@12 main::@1 mul8u_compare::@1 main::@2 mul8u_compare::@2 main::@3 main::@4 main @30 @begin mul8u_compare 
-mul8u_compare::@13 dominated by  mul8u_compare::@13 mul8u_compare::@12 main::@1 mul8u_compare::@1 main::@2 mul8u_compare::@2 main::@3 main::@4 main @30 @begin mul8u_compare 
-mul8u_compare::@14 dominated by  mul8u_compare::@14 mul8u_compare::@13 mul8u_compare::@12 main::@1 mul8u_compare::@1 main::@2 mul8u_compare::@2 main::@3 main::@4 main @30 @begin mul8u_compare 
-mul8u_compare::@6 dominated by  mul8u_compare::@14 mul8u_compare::@13 mul8u_compare::@12 main::@1 mul8u_compare::@1 main::@2 mul8u_compare::@2 mul8u_compare::@6 main::@3 main::@4 main @30 @begin mul8u_compare 
-mul8u_compare::@3 dominated by  mul8u_compare::@14 mul8u_compare::@13 mul8u_compare::@12 main::@1 mul8u_compare::@1 main::@2 mul8u_compare::@2 mul8u_compare::@3 main::@3 main::@4 main @30 @begin mul8u_compare 
-mul8u_compare::@4 dominated by  mul8u_compare::@14 mul8u_compare::@13 mul8u_compare::@12 main::@1 mul8u_compare::@1 main::@2 mul8u_compare::@2 mul8u_compare::@3 mul8u_compare::@4 main::@3 main::@4 main @30 @begin mul8u_compare 
-mul8u_compare::@8 dominated by  mul8u_compare::@14 mul8u_compare::@13 mul8u_compare::@12 main::@1 mul8u_compare::@1 main::@2 mul8u_compare::@2 mul8u_compare::@3 mul8u_compare::@4 main::@3 main::@4 mul8u_compare::@8 main @30 @begin mul8u_compare 
-mul8u_compare::@return dominated by  mul8u_compare::@14 mul8u_compare::@13 mul8u_compare::@12 main::@1 mul8u_compare::@1 main::@2 mul8u_compare::@2 mul8u_compare::@3 mul8u_compare::@4 main::@3 main::@4 mul8u_compare::@return main @30 @begin mul8u_compare 
-mul8u_compare::@5 dominated by  mul8u_compare::@14 mul8u_compare::@13 mul8u_compare::@12 main::@1 mul8u_compare::@1 main::@2 mul8u_compare::@2 mul8u_compare::@3 mul8u_compare::@4 mul8u_compare::@5 main::@3 main::@4 main @30 @begin mul8u_compare 
-mul8u_compare::@10 dominated by  mul8u_compare::@14 mul8u_compare::@10 mul8u_compare::@13 mul8u_compare::@12 main::@1 mul8u_compare::@1 main::@2 mul8u_compare::@2 mul8u_compare::@3 mul8u_compare::@4 mul8u_compare::@5 main::@3 main::@4 main @30 @begin mul8u_compare 
-mul8u_compare::@11 dominated by  mul8u_compare::@14 mul8u_compare::@11 mul8u_compare::@10 mul8u_compare::@13 mul8u_compare::@12 main::@1 mul8u_compare::@1 main::@2 mul8u_compare::@2 mul8u_compare::@3 mul8u_compare::@4 mul8u_compare::@5 main::@3 main::@4 main @30 @begin mul8u_compare 
-mul8u_compare::@16 dominated by  mul8u_compare::@14 mul8u_compare::@16 mul8u_compare::@11 mul8u_compare::@10 mul8u_compare::@13 mul8u_compare::@12 main::@1 mul8u_compare::@1 main::@2 mul8u_compare::@2 mul8u_compare::@3 mul8u_compare::@4 mul8u_compare::@5 main::@3 main::@4 main @30 @begin mul8u_compare 
-mul8u_compare::@20 dominated by  mul8u_compare::@14 mul8u_compare::@13 mul8u_compare::@12 main::@1 mul8u_compare::@1 main::@2 mul8u_compare::@2 mul8u_compare::@3 main::@3 main::@4 mul8u_compare::@20 main @30 @begin mul8u_compare 
-mul8u_error dominated by  mul8u_compare::@14 mul8u_compare::@13 mul8u_compare::@12 main::@1 mul8u_compare::@1 main::@2 mul8u_compare::@2 mul8u_compare::@3 mul8u_compare::@4 main::@3 main::@4 mul8u_compare::@8 mul8u_error main @30 @begin mul8u_compare 
-mul8u_error::@1 dominated by  mul8u_compare::@14 mul8u_compare::@13 mul8u_compare::@12 main::@1 mul8u_compare::@1 main::@2 mul8u_compare::@2 mul8u_compare::@3 mul8u_compare::@4 main::@3 main::@4 mul8u_compare::@8 mul8u_error::@1 mul8u_error main @30 @begin mul8u_compare 
-mul8u_error::@2 dominated by  mul8u_compare::@14 mul8u_compare::@13 mul8u_compare::@12 main::@1 mul8u_compare::@1 main::@2 mul8u_compare::@2 mul8u_compare::@3 mul8u_compare::@4 main::@3 main::@4 mul8u_compare::@8 mul8u_error::@1 mul8u_error::@2 mul8u_error main @30 @begin mul8u_compare 
-mul8u_error::@3 dominated by  mul8u_compare::@14 mul8u_compare::@13 mul8u_compare::@12 main::@1 mul8u_compare::@1 main::@2 mul8u_compare::@2 mul8u_compare::@3 mul8u_compare::@4 main::@3 main::@4 mul8u_compare::@8 mul8u_error::@1 mul8u_error::@2 mul8u_error::@3 mul8u_error main @30 @begin mul8u_compare 
-mul8u_error::@4 dominated by  mul8u_compare::@14 mul8u_compare::@13 mul8u_compare::@12 main::@1 mul8u_compare::@1 main::@2 mul8u_compare::@2 mul8u_compare::@3 mul8u_compare::@4 main::@3 main::@4 mul8u_compare::@8 mul8u_error::@1 mul8u_error::@4 mul8u_error::@2 mul8u_error::@3 mul8u_error main @30 @begin mul8u_compare 
-mul8u_error::@5 dominated by  mul8u_compare::@14 mul8u_compare::@13 mul8u_compare::@12 main::@1 mul8u_compare::@1 main::@2 mul8u_compare::@2 mul8u_compare::@3 mul8u_compare::@4 main::@3 main::@4 mul8u_compare::@8 mul8u_error::@1 mul8u_error::@4 mul8u_error::@5 mul8u_error::@2 mul8u_error::@3 mul8u_error main @30 @begin mul8u_compare 
-mul8u_error::@6 dominated by  mul8u_compare::@14 mul8u_compare::@13 mul8u_compare::@12 main::@1 mul8u_compare::@1 main::@2 mul8u_compare::@2 mul8u_compare::@3 mul8u_compare::@4 main::@3 main::@4 mul8u_compare::@8 mul8u_error::@1 mul8u_error::@4 mul8u_error::@5 mul8u_error::@2 mul8u_error::@3 mul8u_error main @30 @begin mul8u_compare mul8u_error::@6 
-mul8u_error::@7 dominated by  mul8u_compare::@14 mul8u_compare::@13 mul8u_compare::@12 main::@1 mul8u_compare::@1 main::@2 mul8u_compare::@2 mul8u_compare::@3 mul8u_compare::@4 main::@3 main::@4 mul8u_compare::@8 mul8u_error::@1 mul8u_error::@4 mul8u_error::@5 mul8u_error::@2 mul8u_error::@3 mul8u_error main @30 @begin mul8u_compare mul8u_error::@6 mul8u_error::@7 
-mul8u_error::@8 dominated by  mul8u_compare::@14 mul8u_compare::@13 mul8u_compare::@12 main::@1 mul8u_compare::@1 main::@2 mul8u_compare::@2 mul8u_compare::@3 mul8u_compare::@4 main::@3 main::@4 mul8u_compare::@8 mul8u_error::@1 mul8u_error::@4 mul8u_error::@5 mul8u_error::@2 mul8u_error::@3 mul8u_error main @30 @begin mul8u_compare mul8u_error::@8 mul8u_error::@6 mul8u_error::@7 
-mul8u_error::@9 dominated by  mul8u_compare::@14 mul8u_compare::@13 mul8u_compare::@12 main::@1 mul8u_compare::@1 main::@2 mul8u_compare::@2 mul8u_compare::@3 mul8u_compare::@4 main::@3 main::@4 mul8u_compare::@8 mul8u_error::@1 mul8u_error::@4 mul8u_error::@5 mul8u_error::@2 mul8u_error::@3 mul8u_error main @30 @begin mul8u_compare mul8u_error::@8 mul8u_error::@9 mul8u_error::@6 mul8u_error::@7 
-mul8u_error::@10 dominated by  mul8u_compare::@14 mul8u_compare::@13 mul8u_compare::@12 main::@1 mul8u_compare::@1 main::@2 mul8u_compare::@2 mul8u_compare::@3 mul8u_compare::@4 mul8u_error::@10 main::@3 main::@4 mul8u_compare::@8 mul8u_error::@1 mul8u_error::@4 mul8u_error::@5 mul8u_error::@2 mul8u_error::@3 mul8u_error main @30 @begin mul8u_compare mul8u_error::@8 mul8u_error::@9 mul8u_error::@6 mul8u_error::@7 
-mul8u_error::@return dominated by  mul8u_compare::@14 mul8u_compare::@13 mul8u_compare::@12 main::@1 mul8u_compare::@1 main::@2 mul8u_compare::@2 mul8u_compare::@3 mul8u_compare::@4 mul8u_error::@10 main::@3 main::@4 mul8u_compare::@8 mul8u_error::@1 mul8u_error::@4 mul8u_error::@5 mul8u_error::@2 mul8u_error::@3 mul8u_error main @30 @begin mul8u_compare mul8u_error::@8 mul8u_error::@9 mul8u_error::@6 mul8u_error::@7 mul8u_error::@return 
-muls8u dominated by  muls8u main::@1 mul8u_compare::@1 main::@2 mul8u_compare::@2 main::@3 main::@4 main @30 @begin mul8u_compare 
-muls8u::@2 dominated by  muls8u main::@1 mul8u_compare::@1 main::@2 mul8u_compare::@2 main::@3 main::@4 main @30 @begin mul8u_compare muls8u::@2 
-muls8u::@1 dominated by  muls8u main::@1 mul8u_compare::@1 main::@2 mul8u_compare::@2 main::@3 main::@4 main @30 @begin mul8u_compare muls8u::@1 
-muls8u::@return dominated by  muls8u main::@1 mul8u_compare::@1 main::@2 mul8u_compare::@2 main::@3 main::@4 main @30 @begin mul8u_compare muls8u::@1 muls8u::@return 
-mulf_tables_cmp dominated by  main::@1 main::@2 main::@3 main @30 @begin mulf_tables_cmp 
-mulf_tables_cmp::@1 dominated by  main::@1 main::@2 main::@3 main @30 @begin mulf_tables_cmp mulf_tables_cmp::@1 
-mulf_tables_cmp::@3 dominated by  main::@1 main::@2 main::@3 main @30 @begin mulf_tables_cmp mulf_tables_cmp::@1 mulf_tables_cmp::@3 
-mulf_tables_cmp::@6 dominated by  main::@1 main::@2 main::@3 main @30 @begin mulf_tables_cmp mulf_tables_cmp::@1 mulf_tables_cmp::@6 mulf_tables_cmp::@3 
-mulf_tables_cmp::@7 dominated by  main::@1 main::@2 main::@3 main @30 @begin mulf_tables_cmp mulf_tables_cmp::@7 mulf_tables_cmp::@1 mulf_tables_cmp::@6 mulf_tables_cmp::@3 
-mulf_tables_cmp::@8 dominated by  main::@1 main::@2 main::@3 main @30 @begin mulf_tables_cmp mulf_tables_cmp::@8 mulf_tables_cmp::@7 mulf_tables_cmp::@1 mulf_tables_cmp::@6 mulf_tables_cmp::@3 
-mulf_tables_cmp::@return dominated by  main::@1 main::@2 main::@3 main mulf_tables_cmp::@return @30 @begin mulf_tables_cmp mulf_tables_cmp::@1 
-mulf_tables_cmp::@2 dominated by  main::@1 main::@2 main::@3 main @30 @begin mulf_tables_cmp mulf_tables_cmp::@2 mulf_tables_cmp::@1 
-mulf_tables_cmp::@5 dominated by  main::@1 main::@2 main::@3 main @30 @begin mulf_tables_cmp mulf_tables_cmp::@2 mulf_tables_cmp::@1 mulf_tables_cmp::@5 
-mulf_tables_cmp::@10 dominated by  main::@1 main::@2 main::@3 main @30 @begin mulf_tables_cmp mulf_tables_cmp::@10 mulf_tables_cmp::@2 mulf_tables_cmp::@1 mulf_tables_cmp::@5 
-mulf_init_asm dominated by  main::@1 main::@2 mulf_init_asm main @30 @begin 
-mulf_init_asm::@return dominated by  main::@1 main::@2 mulf_init_asm::@return mulf_init_asm main @30 @begin 
-mulf_init dominated by  main::@1 main @30 @begin mulf_init 
-mulf_init::@1 dominated by  main::@1 main @30 @begin mulf_init mulf_init::@1 
-mulf_init::@5 dominated by  main::@1 main @30 @begin mulf_init mulf_init::@1 mulf_init::@5 
-mulf_init::@2 dominated by  main::@1 main @30 @begin mulf_init mulf_init::@2 mulf_init::@1 
-mulf_init::@3 dominated by  main::@1 main @30 @begin mulf_init mulf_init::@2 mulf_init::@1 mulf_init::@3 
-mulf_init::@4 dominated by  main::@1 main @30 @begin mulf_init mulf_init::@2 mulf_init::@1 mulf_init::@4 mulf_init::@3 
-mulf_init::@8 dominated by  main::@1 main @30 @begin mulf_init mulf_init::@2 mulf_init::@1 mulf_init::@4 mulf_init::@3 mulf_init::@8 
-mulf_init::@return dominated by  main::@1 mulf_init::@return main @30 @begin mulf_init mulf_init::@2 mulf_init::@1 mulf_init::@4 mulf_init::@3 mulf_init::@8 
-mulf_init::@12 dominated by  mulf_init::@12 main::@1 main @30 @begin mulf_init mulf_init::@2 mulf_init::@1 mulf_init::@3 
-print_cls dominated by  print_cls main @30 @begin 
-print_cls::@1 dominated by  print_cls main @30 @begin print_cls::@1 
-print_cls::@return dominated by  print_cls main @30 @begin print_cls::@return print_cls::@1 
+@31 dominated by  @31 @begin 
+@end dominated by  @end @31 @begin 
+main dominated by  main @31 @begin 
+main::@1 dominated by  main::@1 main @31 @begin 
+main::@2 dominated by  main::@1 main::@2 main @31 @begin 
+main::@3 dominated by  main::@1 main::@2 main::@3 main @31 @begin 
+main::@4 dominated by  main::@1 main::@2 main::@3 main::@4 main @31 @begin 
+main::@5 dominated by  main::@1 main::@2 main::@5 main::@3 main::@4 main @31 @begin 
+main::@return dominated by  main::@1 main::@2 main::@5 main::@3 main::@4 main::@return main @31 @begin 
+mul8s_compare dominated by  main::@1 main::@2 main::@5 main::@3 main::@4 main @31 @begin mul8s_compare 
+mul8s_compare::@1 dominated by  main::@1 main::@2 main::@5 main::@3 main::@4 mul8s_compare::@1 main @31 @begin mul8s_compare 
+mul8s_compare::@2 dominated by  main::@1 main::@2 main::@5 main::@3 main::@4 mul8s_compare::@1 mul8s_compare::@2 main @31 @begin mul8s_compare 
+mul8s_compare::@12 dominated by  main::@1 main::@2 main::@5 main::@3 main::@4 mul8s_compare::@1 mul8s_compare::@2 mul8s_compare::@12 main @31 @begin mul8s_compare 
+mul8s_compare::@13 dominated by  main::@1 main::@2 main::@5 main::@3 main::@4 mul8s_compare::@1 mul8s_compare::@2 mul8s_compare::@12 mul8s_compare::@13 main @31 @begin mul8s_compare 
+mul8s_compare::@14 dominated by  main::@1 main::@2 main::@5 main::@3 main::@4 mul8s_compare::@1 mul8s_compare::@2 mul8s_compare::@14 mul8s_compare::@12 mul8s_compare::@13 main @31 @begin mul8s_compare 
+mul8s_compare::@6 dominated by  main::@1 main::@2 main::@5 main::@3 main::@4 mul8s_compare::@6 mul8s_compare::@1 mul8s_compare::@2 mul8s_compare::@14 mul8s_compare::@12 mul8s_compare::@13 main @31 @begin mul8s_compare 
+mul8s_compare::@3 dominated by  main::@1 main::@2 main::@5 main::@3 main::@4 mul8s_compare::@3 mul8s_compare::@1 mul8s_compare::@2 mul8s_compare::@14 mul8s_compare::@12 mul8s_compare::@13 main @31 @begin mul8s_compare 
+mul8s_compare::@4 dominated by  main::@1 main::@2 main::@5 main::@3 main::@4 mul8s_compare::@3 mul8s_compare::@4 mul8s_compare::@1 mul8s_compare::@2 mul8s_compare::@14 mul8s_compare::@12 mul8s_compare::@13 main @31 @begin mul8s_compare 
+mul8s_compare::@8 dominated by  main::@1 main::@2 main::@5 main::@3 main::@4 mul8s_compare::@3 mul8s_compare::@4 mul8s_compare::@8 mul8s_compare::@1 mul8s_compare::@2 mul8s_compare::@14 mul8s_compare::@12 mul8s_compare::@13 main @31 @begin mul8s_compare 
+mul8s_compare::@return dominated by  main::@1 main::@2 main::@5 main::@3 main::@4 mul8s_compare::@3 mul8s_compare::@4 mul8s_compare::@1 mul8s_compare::@2 mul8s_compare::@14 mul8s_compare::@12 mul8s_compare::@13 main @31 @begin mul8s_compare mul8s_compare::@return 
+mul8s_compare::@5 dominated by  main::@1 main::@2 main::@5 main::@3 main::@4 mul8s_compare::@5 mul8s_compare::@3 mul8s_compare::@4 mul8s_compare::@1 mul8s_compare::@2 mul8s_compare::@14 mul8s_compare::@12 mul8s_compare::@13 main @31 @begin mul8s_compare 
+mul8s_compare::@10 dominated by  main::@1 main::@2 main::@5 main::@3 main::@4 mul8s_compare::@5 mul8s_compare::@3 mul8s_compare::@4 mul8s_compare::@1 mul8s_compare::@2 mul8s_compare::@10 mul8s_compare::@14 mul8s_compare::@12 mul8s_compare::@13 main @31 @begin mul8s_compare 
+mul8s_compare::@11 dominated by  main::@1 main::@2 main::@5 main::@3 main::@4 mul8s_compare::@5 mul8s_compare::@3 mul8s_compare::@4 mul8s_compare::@1 mul8s_compare::@2 mul8s_compare::@10 mul8s_compare::@11 mul8s_compare::@14 mul8s_compare::@12 mul8s_compare::@13 main @31 @begin mul8s_compare 
+mul8s_compare::@16 dominated by  main::@1 main::@2 main::@5 main::@3 main::@4 mul8s_compare::@5 mul8s_compare::@3 mul8s_compare::@4 mul8s_compare::@1 mul8s_compare::@2 mul8s_compare::@10 mul8s_compare::@11 mul8s_compare::@14 mul8s_compare::@12 mul8s_compare::@13 main @31 @begin mul8s_compare::@16 mul8s_compare 
+mul8s_compare::@20 dominated by  main::@1 main::@2 main::@5 main::@3 main::@4 mul8s_compare::@3 mul8s_compare::@1 mul8s_compare::@2 mul8s_compare::@14 mul8s_compare::@12 mul8s_compare::@13 main @31 @begin mul8s_compare::@20 mul8s_compare 
+print_ln dominated by  main::@1 main::@2 main::@3 print_ln main @31 @begin 
+print_ln::@1 dominated by  main::@1 main::@2 main::@3 print_ln print_ln::@1 main @31 @begin 
+print_ln::@return dominated by  print_ln::@return main::@1 main::@2 main::@3 print_ln print_ln::@1 main @31 @begin 
+print_str dominated by  main::@1 main::@2 main::@3 print_str main @31 @begin 
+print_str::@1 dominated by  main::@1 main::@2 main::@3 print_str::@1 print_str main @31 @begin 
+print_str::@return dominated by  main::@1 main::@2 main::@3 print_str::@return print_str::@1 print_str main @31 @begin 
+print_str::@2 dominated by  main::@1 main::@2 main::@3 print_str::@1 print_str::@2 print_str main @31 @begin 
+mul8s_error dominated by  main::@1 main::@2 main::@5 main::@3 main::@4 mul8s_compare::@3 mul8s_compare::@4 mul8s_compare::@8 mul8s_compare::@1 mul8s_compare::@2 mul8s_compare::@14 mul8s_compare::@12 mul8s_compare::@13 main mul8s_error @31 @begin mul8s_compare 
+mul8s_error::@1 dominated by  main::@1 main::@2 main::@5 main::@3 main::@4 mul8s_compare::@3 mul8s_compare::@4 mul8s_compare::@8 mul8s_compare::@1 mul8s_compare::@2 mul8s_error::@1 mul8s_compare::@14 mul8s_compare::@12 mul8s_compare::@13 main mul8s_error @31 @begin mul8s_compare 
+mul8s_error::@2 dominated by  main::@1 main::@2 main::@5 main::@3 main::@4 mul8s_compare::@3 mul8s_compare::@4 mul8s_compare::@8 mul8s_compare::@1 mul8s_compare::@2 mul8s_error::@1 mul8s_error::@2 mul8s_compare::@14 mul8s_compare::@12 mul8s_compare::@13 main mul8s_error @31 @begin mul8s_compare 
+mul8s_error::@3 dominated by  main::@1 main::@2 main::@5 main::@3 main::@4 mul8s_compare::@3 mul8s_compare::@4 mul8s_compare::@8 mul8s_compare::@1 mul8s_compare::@2 mul8s_error::@1 mul8s_error::@3 mul8s_error::@2 mul8s_compare::@14 mul8s_compare::@12 mul8s_compare::@13 main mul8s_error @31 @begin mul8s_compare 
+mul8s_error::@4 dominated by  main::@1 main::@2 main::@5 main::@3 main::@4 mul8s_compare::@3 mul8s_compare::@4 mul8s_compare::@8 mul8s_compare::@1 mul8s_compare::@2 mul8s_error::@1 mul8s_error::@3 mul8s_error::@2 mul8s_error::@4 mul8s_compare::@14 mul8s_compare::@12 mul8s_compare::@13 main mul8s_error @31 @begin mul8s_compare 
+mul8s_error::@5 dominated by  main::@1 main::@2 main::@5 main::@3 main::@4 mul8s_compare::@3 mul8s_compare::@4 mul8s_compare::@8 mul8s_compare::@1 mul8s_compare::@2 mul8s_error::@1 mul8s_error::@3 mul8s_error::@2 mul8s_error::@5 mul8s_error::@4 mul8s_compare::@14 mul8s_compare::@12 mul8s_compare::@13 main mul8s_error @31 @begin mul8s_compare 
+mul8s_error::@6 dominated by  main::@1 main::@2 main::@5 main::@3 main::@4 mul8s_compare::@3 mul8s_compare::@4 mul8s_compare::@8 mul8s_compare::@1 mul8s_compare::@2 mul8s_error::@1 mul8s_error::@3 mul8s_error::@2 mul8s_error::@5 mul8s_error::@4 mul8s_error::@6 mul8s_compare::@14 mul8s_compare::@12 mul8s_compare::@13 main mul8s_error @31 @begin mul8s_compare 
+mul8s_error::@7 dominated by  main::@1 main::@2 main::@5 main::@3 main::@4 mul8s_compare::@3 mul8s_compare::@4 mul8s_compare::@8 mul8s_compare::@1 mul8s_compare::@2 mul8s_error::@1 mul8s_error::@3 mul8s_error::@2 mul8s_error::@5 mul8s_error::@4 mul8s_error::@7 mul8s_error::@6 mul8s_compare::@14 mul8s_compare::@12 mul8s_compare::@13 main mul8s_error @31 @begin mul8s_compare 
+mul8s_error::@8 dominated by  main::@1 main::@2 main::@5 main::@3 main::@4 mul8s_compare::@3 mul8s_compare::@4 mul8s_compare::@8 mul8s_compare::@1 mul8s_compare::@2 mul8s_error::@1 mul8s_error::@3 mul8s_error::@2 mul8s_error::@5 mul8s_error::@4 mul8s_error::@7 mul8s_error::@6 mul8s_error::@8 mul8s_compare::@14 mul8s_compare::@12 mul8s_compare::@13 main mul8s_error @31 @begin mul8s_compare 
+mul8s_error::@9 dominated by  main::@1 main::@2 main::@5 main::@3 main::@4 mul8s_compare::@3 mul8s_compare::@4 mul8s_compare::@8 mul8s_compare::@1 mul8s_compare::@2 mul8s_error::@1 mul8s_error::@3 mul8s_error::@2 mul8s_error::@5 mul8s_error::@4 mul8s_error::@7 mul8s_error::@6 mul8s_error::@9 mul8s_error::@8 mul8s_compare::@14 mul8s_compare::@12 mul8s_compare::@13 main mul8s_error @31 @begin mul8s_compare 
+mul8s_error::@10 dominated by  main::@1 main::@2 main::@5 main::@3 main::@4 mul8s_compare::@3 mul8s_compare::@4 mul8s_compare::@8 mul8s_compare::@1 mul8s_compare::@2 mul8s_error::@1 mul8s_error::@3 mul8s_error::@2 mul8s_error::@5 mul8s_error::@4 mul8s_error::@7 mul8s_error::@6 mul8s_error::@9 mul8s_error::@8 mul8s_compare::@14 mul8s_compare::@12 mul8s_compare::@13 main mul8s_error @31 @begin mul8s_compare mul8s_error::@10 
+mul8s_error::@return dominated by  main::@1 main::@2 main::@5 main::@3 main::@4 mul8s_compare::@3 mul8s_compare::@4 mul8s_compare::@8 mul8s_compare::@1 mul8s_compare::@2 mul8s_error::@1 mul8s_error::@3 mul8s_error::@2 mul8s_error::@5 mul8s_error::@4 mul8s_error::@7 mul8s_error::@6 mul8s_error::@9 mul8s_error::@8 mul8s_compare::@14 mul8s_compare::@12 mul8s_compare::@13 main mul8s_error @31 @begin mul8s_error::@return mul8s_compare mul8s_error::@10 
+print_sword dominated by  main::@1 main::@2 main::@5 main::@3 main::@4 mul8s_compare::@3 mul8s_compare::@4 mul8s_compare::@8 mul8s_compare::@1 mul8s_compare::@2 mul8s_error::@1 mul8s_error::@3 mul8s_error::@2 print_sword mul8s_error::@5 mul8s_error::@4 mul8s_compare::@14 mul8s_compare::@12 mul8s_compare::@13 main mul8s_error @31 @begin mul8s_compare 
+print_sword::@2 dominated by  main::@1 main::@2 main::@5 main::@3 main::@4 mul8s_compare::@3 mul8s_compare::@4 mul8s_compare::@8 mul8s_compare::@1 mul8s_compare::@2 mul8s_error::@1 mul8s_error::@3 mul8s_error::@2 print_sword mul8s_error::@5 mul8s_error::@4 mul8s_compare::@14 print_sword::@2 mul8s_compare::@12 mul8s_compare::@13 main mul8s_error @31 @begin mul8s_compare 
+print_sword::@4 dominated by  main::@1 main::@2 main::@5 main::@3 main::@4 mul8s_compare::@3 mul8s_compare::@4 mul8s_compare::@8 mul8s_compare::@1 mul8s_compare::@2 mul8s_error::@1 mul8s_error::@3 mul8s_error::@2 print_sword mul8s_error::@5 mul8s_error::@4 mul8s_compare::@14 print_sword::@2 mul8s_compare::@12 print_sword::@4 mul8s_compare::@13 main mul8s_error @31 @begin mul8s_compare 
+print_sword::@1 dominated by  main::@1 main::@2 main::@5 main::@3 main::@4 mul8s_compare::@3 mul8s_compare::@4 mul8s_compare::@8 mul8s_compare::@1 mul8s_compare::@2 mul8s_error::@1 mul8s_error::@3 mul8s_error::@2 print_sword mul8s_error::@5 mul8s_error::@4 mul8s_compare::@14 print_sword::@1 mul8s_compare::@12 mul8s_compare::@13 main mul8s_error @31 @begin mul8s_compare 
+print_sword::@return dominated by  main::@1 main::@2 main::@5 main::@3 main::@4 mul8s_compare::@3 mul8s_compare::@4 mul8s_compare::@8 mul8s_compare::@1 mul8s_compare::@2 mul8s_error::@1 mul8s_error::@3 mul8s_error::@2 print_sword mul8s_error::@5 mul8s_error::@4 mul8s_compare::@14 print_sword::@1 mul8s_compare::@12 mul8s_compare::@13 main mul8s_error @31 @begin print_sword::@return mul8s_compare 
+print_word dominated by  print_word main::@1 main::@2 main::@3 main @31 @begin 
+print_word::@1 dominated by  print_word main::@1 main::@2 main::@3 print_word::@1 main @31 @begin 
+print_word::@return dominated by  print_word main::@1 main::@2 main::@3 print_word::@return print_word::@1 main @31 @begin 
+print_byte dominated by  main::@1 main::@2 main::@3 print_byte main @31 @begin 
+print_byte::@1 dominated by  main::@1 main::@2 main::@3 print_byte::@1 print_byte main @31 @begin 
+print_byte::@return dominated by  main::@1 main::@2 main::@3 print_byte::@1 print_byte main @31 @begin print_byte::@return 
+print_char dominated by  main::@1 main::@2 main::@3 main print_char @31 @begin 
+print_char::@return dominated by  main::@1 main::@2 main::@3 main print_char @31 print_char::@return @begin 
+print_sbyte dominated by  main::@1 main::@2 main::@5 main::@3 main::@4 mul8s_compare::@3 mul8s_compare::@4 mul8s_compare::@8 mul8s_compare::@1 mul8s_compare::@2 print_sbyte mul8s_error::@1 mul8s_compare::@14 mul8s_compare::@12 mul8s_compare::@13 main mul8s_error @31 @begin mul8s_compare 
+print_sbyte::@2 dominated by  main::@1 main::@2 main::@5 main::@3 main::@4 mul8s_compare::@3 mul8s_compare::@4 mul8s_compare::@8 mul8s_compare::@1 mul8s_compare::@2 print_sbyte mul8s_error::@1 mul8s_compare::@14 mul8s_compare::@12 mul8s_compare::@13 main print_sbyte::@2 mul8s_error @31 @begin mul8s_compare 
+print_sbyte::@4 dominated by  main::@1 main::@2 main::@5 main::@3 main::@4 mul8s_compare::@3 mul8s_compare::@4 mul8s_compare::@8 mul8s_compare::@1 mul8s_compare::@2 print_sbyte mul8s_error::@1 mul8s_compare::@14 mul8s_compare::@12 mul8s_compare::@13 main print_sbyte::@4 print_sbyte::@2 mul8s_error @31 @begin mul8s_compare 
+print_sbyte::@1 dominated by  main::@1 main::@2 main::@5 main::@3 main::@4 mul8s_compare::@3 mul8s_compare::@4 mul8s_compare::@8 mul8s_compare::@1 mul8s_compare::@2 print_sbyte mul8s_error::@1 mul8s_compare::@14 mul8s_compare::@12 mul8s_compare::@13 main print_sbyte::@1 mul8s_error @31 @begin mul8s_compare 
+print_sbyte::@return dominated by  main::@1 main::@2 main::@5 main::@3 main::@4 mul8s_compare::@3 mul8s_compare::@4 mul8s_compare::@8 mul8s_compare::@1 mul8s_compare::@2 print_sbyte mul8s_error::@1 mul8s_compare::@14 mul8s_compare::@12 mul8s_compare::@13 main print_sbyte::@1 mul8s_error @31 @begin print_sbyte::@return mul8s_compare 
+mul8s dominated by  main::@1 main::@2 main::@5 main::@3 main::@4 mul8s_compare::@1 mul8s_compare::@2 mul8s_compare::@12 mul8s_compare::@13 main @31 @begin mul8s mul8s_compare 
+mul8s::@6 dominated by  main::@1 main::@2 main::@5 main::@3 main::@4 mul8s_compare::@1 mul8s_compare::@2 mul8s_compare::@12 mul8s_compare::@13 main mul8s::@6 @31 @begin mul8s mul8s_compare 
+mul8s::@3 dominated by  main::@1 main::@2 main::@5 main::@3 main::@4 mul8s_compare::@1 mul8s_compare::@2 mul8s_compare::@12 mul8s_compare::@13 main mul8s::@6 @31 mul8s::@3 @begin mul8s mul8s_compare 
+mul8s::@1 dominated by  main::@1 main::@2 main::@5 main::@3 main::@4 mul8s_compare::@1 mul8s_compare::@2 mul8s_compare::@12 mul8s_compare::@13 main mul8s::@6 mul8s::@1 @31 @begin mul8s mul8s_compare 
+mul8s::@4 dominated by  main::@1 main::@2 main::@5 main::@3 main::@4 mul8s_compare::@1 mul8s_compare::@2 mul8s_compare::@12 mul8s_compare::@13 main mul8s::@6 mul8s::@1 @31 mul8s::@4 @begin mul8s mul8s_compare 
+mul8s::@2 dominated by  main::@1 main::@2 main::@5 main::@3 main::@4 mul8s_compare::@1 mul8s_compare::@2 mul8s_compare::@12 mul8s_compare::@13 main mul8s::@6 mul8s::@1 mul8s::@2 @31 @begin mul8s mul8s_compare 
+mul8s::@return dominated by  main::@1 main::@2 main::@5 main::@3 main::@4 mul8s_compare::@1 mul8s_compare::@2 mul8s_compare::@12 mul8s_compare::@13 main mul8s::@6 mul8s::@1 mul8s::@2 @31 @begin mul8s::@return mul8s mul8s_compare 
+mul8u dominated by  main::@1 main::@2 main::@3 main::@4 mul8u main @31 @begin 
+mul8u::@1 dominated by  main::@1 main::@2 main::@3 main::@4 mul8u main @31 @begin mul8u::@1 
+mul8u::@return dominated by  main::@1 main::@2 main::@3 main::@4 mul8u mul8u::@return main @31 @begin mul8u::@1 
+mul8u::@2 dominated by  main::@1 main::@2 main::@3 main::@4 mul8u main @31 @begin mul8u::@2 mul8u::@1 
+mul8u::@7 dominated by  main::@1 main::@2 main::@3 main::@4 mul8u main @31 @begin mul8u::@7 mul8u::@2 mul8u::@1 
+mul8u::@4 dominated by  main::@1 main::@2 main::@3 main::@4 mul8u main @31 @begin mul8u::@2 mul8u::@1 mul8u::@4 
+mulf8s dominated by  main::@1 main::@2 main::@5 main::@3 main::@4 mul8s_compare::@1 mul8s_compare::@2 mulf8s mul8s_compare::@12 main @31 @begin mul8s_compare 
+mulf8s::@6 dominated by  main::@1 main::@2 main::@5 main::@3 main::@4 mul8s_compare::@1 mul8s_compare::@2 mulf8s mul8s_compare::@12 main @31 @begin mulf8s::@6 mul8s_compare 
+mulf8s::@3 dominated by  main::@1 main::@2 main::@5 main::@3 main::@4 mul8s_compare::@1 mul8s_compare::@2 mulf8s mul8s_compare::@12 main @31 @begin mulf8s::@3 mulf8s::@6 mul8s_compare 
+mulf8s::@1 dominated by  main::@1 main::@2 main::@5 main::@3 main::@4 mul8s_compare::@1 mul8s_compare::@2 mulf8s mul8s_compare::@12 main @31 @begin mulf8s::@1 mulf8s::@6 mul8s_compare 
+mulf8s::@4 dominated by  main::@1 main::@2 main::@5 main::@3 main::@4 mul8s_compare::@1 mul8s_compare::@2 mulf8s mul8s_compare::@12 main @31 @begin mulf8s::@1 mulf8s::@4 mulf8s::@6 mul8s_compare 
+mulf8s::@2 dominated by  main::@1 main::@2 main::@5 main::@3 main::@4 mul8s_compare::@1 mul8s_compare::@2 mulf8s mul8s_compare::@12 main @31 @begin mulf8s::@2 mulf8s::@1 mulf8s::@6 mul8s_compare 
+mulf8s::@return dominated by  main::@1 main::@2 main::@5 main::@3 main::@4 mul8s_compare::@1 mul8s_compare::@2 mulf8s mul8s_compare::@12 main @31 @begin mulf8s::@2 mulf8s::@1 mulf8s::@return mulf8s::@6 mul8s_compare 
+mulf8u dominated by  main::@1 main::@2 main::@3 main::@4 mulf8u main @31 @begin 
+mulf8u::@return dominated by  main::@1 main::@2 main::@3 main::@4 mulf8u main @31 @begin mulf8u::@return 
+muls8s dominated by  muls8s main::@1 main::@2 main::@5 main::@3 main::@4 mul8s_compare::@1 mul8s_compare::@2 main @31 @begin mul8s_compare 
+muls8s::@2 dominated by  muls8s main::@1 main::@2 main::@5 main::@3 main::@4 muls8s::@2 mul8s_compare::@1 mul8s_compare::@2 main @31 @begin mul8s_compare 
+muls8s::@3 dominated by  muls8s main::@1 main::@2 main::@5 main::@3 main::@4 muls8s::@3 mul8s_compare::@1 mul8s_compare::@2 main @31 @begin mul8s_compare 
+muls8s::@return dominated by  muls8s main::@1 main::@2 main::@5 main::@3 main::@4 muls8s::@3 mul8s_compare::@1 mul8s_compare::@2 muls8s::@return main @31 @begin mul8s_compare 
+muls8s::@1 dominated by  muls8s main::@1 main::@2 main::@5 main::@3 main::@4 muls8s::@1 mul8s_compare::@1 mul8s_compare::@2 main @31 @begin mul8s_compare 
+muls8s::@5 dominated by  muls8s main::@1 main::@2 main::@5 main::@3 main::@4 muls8s::@5 muls8s::@1 mul8s_compare::@1 mul8s_compare::@2 main @31 @begin mul8s_compare 
+mul8u_compare dominated by  main::@1 main::@2 main::@3 main::@4 main @31 @begin mul8u_compare 
+mul8u_compare::@1 dominated by  main::@1 mul8u_compare::@1 main::@2 main::@3 main::@4 main @31 @begin mul8u_compare 
+mul8u_compare::@2 dominated by  main::@1 mul8u_compare::@1 main::@2 mul8u_compare::@2 main::@3 main::@4 main @31 @begin mul8u_compare 
+mul8u_compare::@12 dominated by  mul8u_compare::@12 main::@1 mul8u_compare::@1 main::@2 mul8u_compare::@2 main::@3 main::@4 main @31 @begin mul8u_compare 
+mul8u_compare::@13 dominated by  mul8u_compare::@13 mul8u_compare::@12 main::@1 mul8u_compare::@1 main::@2 mul8u_compare::@2 main::@3 main::@4 main @31 @begin mul8u_compare 
+mul8u_compare::@14 dominated by  mul8u_compare::@14 mul8u_compare::@13 mul8u_compare::@12 main::@1 mul8u_compare::@1 main::@2 mul8u_compare::@2 main::@3 main::@4 main @31 @begin mul8u_compare 
+mul8u_compare::@6 dominated by  mul8u_compare::@14 mul8u_compare::@13 mul8u_compare::@12 main::@1 mul8u_compare::@1 main::@2 mul8u_compare::@2 mul8u_compare::@6 main::@3 main::@4 main @31 @begin mul8u_compare 
+mul8u_compare::@3 dominated by  mul8u_compare::@14 mul8u_compare::@13 mul8u_compare::@12 main::@1 mul8u_compare::@1 main::@2 mul8u_compare::@2 mul8u_compare::@3 main::@3 main::@4 main @31 @begin mul8u_compare 
+mul8u_compare::@4 dominated by  mul8u_compare::@14 mul8u_compare::@13 mul8u_compare::@12 main::@1 mul8u_compare::@1 main::@2 mul8u_compare::@2 mul8u_compare::@3 mul8u_compare::@4 main::@3 main::@4 main @31 @begin mul8u_compare 
+mul8u_compare::@8 dominated by  mul8u_compare::@14 mul8u_compare::@13 mul8u_compare::@12 main::@1 mul8u_compare::@1 main::@2 mul8u_compare::@2 mul8u_compare::@3 mul8u_compare::@4 main::@3 main::@4 mul8u_compare::@8 main @31 @begin mul8u_compare 
+mul8u_compare::@return dominated by  mul8u_compare::@14 mul8u_compare::@13 mul8u_compare::@12 main::@1 mul8u_compare::@1 main::@2 mul8u_compare::@2 mul8u_compare::@3 mul8u_compare::@4 main::@3 main::@4 mul8u_compare::@return main @31 @begin mul8u_compare 
+mul8u_compare::@5 dominated by  mul8u_compare::@14 mul8u_compare::@13 mul8u_compare::@12 main::@1 mul8u_compare::@1 main::@2 mul8u_compare::@2 mul8u_compare::@3 mul8u_compare::@4 mul8u_compare::@5 main::@3 main::@4 main @31 @begin mul8u_compare 
+mul8u_compare::@10 dominated by  mul8u_compare::@14 mul8u_compare::@10 mul8u_compare::@13 mul8u_compare::@12 main::@1 mul8u_compare::@1 main::@2 mul8u_compare::@2 mul8u_compare::@3 mul8u_compare::@4 mul8u_compare::@5 main::@3 main::@4 main @31 @begin mul8u_compare 
+mul8u_compare::@11 dominated by  mul8u_compare::@14 mul8u_compare::@11 mul8u_compare::@10 mul8u_compare::@13 mul8u_compare::@12 main::@1 mul8u_compare::@1 main::@2 mul8u_compare::@2 mul8u_compare::@3 mul8u_compare::@4 mul8u_compare::@5 main::@3 main::@4 main @31 @begin mul8u_compare 
+mul8u_compare::@16 dominated by  mul8u_compare::@14 mul8u_compare::@16 mul8u_compare::@11 mul8u_compare::@10 mul8u_compare::@13 mul8u_compare::@12 main::@1 mul8u_compare::@1 main::@2 mul8u_compare::@2 mul8u_compare::@3 mul8u_compare::@4 mul8u_compare::@5 main::@3 main::@4 main @31 @begin mul8u_compare 
+mul8u_compare::@20 dominated by  mul8u_compare::@14 mul8u_compare::@13 mul8u_compare::@12 main::@1 mul8u_compare::@1 main::@2 mul8u_compare::@2 mul8u_compare::@3 main::@3 main::@4 mul8u_compare::@20 main @31 @begin mul8u_compare 
+mul8u_error dominated by  mul8u_compare::@14 mul8u_compare::@13 mul8u_compare::@12 main::@1 mul8u_compare::@1 main::@2 mul8u_compare::@2 mul8u_compare::@3 mul8u_compare::@4 main::@3 main::@4 mul8u_compare::@8 mul8u_error main @31 @begin mul8u_compare 
+mul8u_error::@1 dominated by  mul8u_compare::@14 mul8u_compare::@13 mul8u_compare::@12 main::@1 mul8u_compare::@1 main::@2 mul8u_compare::@2 mul8u_compare::@3 mul8u_compare::@4 main::@3 main::@4 mul8u_compare::@8 mul8u_error::@1 mul8u_error main @31 @begin mul8u_compare 
+mul8u_error::@2 dominated by  mul8u_compare::@14 mul8u_compare::@13 mul8u_compare::@12 main::@1 mul8u_compare::@1 main::@2 mul8u_compare::@2 mul8u_compare::@3 mul8u_compare::@4 main::@3 main::@4 mul8u_compare::@8 mul8u_error::@1 mul8u_error::@2 mul8u_error main @31 @begin mul8u_compare 
+mul8u_error::@3 dominated by  mul8u_compare::@14 mul8u_compare::@13 mul8u_compare::@12 main::@1 mul8u_compare::@1 main::@2 mul8u_compare::@2 mul8u_compare::@3 mul8u_compare::@4 main::@3 main::@4 mul8u_compare::@8 mul8u_error::@1 mul8u_error::@2 mul8u_error::@3 mul8u_error main @31 @begin mul8u_compare 
+mul8u_error::@4 dominated by  mul8u_compare::@14 mul8u_compare::@13 mul8u_compare::@12 main::@1 mul8u_compare::@1 main::@2 mul8u_compare::@2 mul8u_compare::@3 mul8u_compare::@4 main::@3 main::@4 mul8u_compare::@8 mul8u_error::@1 mul8u_error::@4 mul8u_error::@2 mul8u_error::@3 mul8u_error main @31 @begin mul8u_compare 
+mul8u_error::@5 dominated by  mul8u_compare::@14 mul8u_compare::@13 mul8u_compare::@12 main::@1 mul8u_compare::@1 main::@2 mul8u_compare::@2 mul8u_compare::@3 mul8u_compare::@4 main::@3 main::@4 mul8u_compare::@8 mul8u_error::@1 mul8u_error::@4 mul8u_error::@5 mul8u_error::@2 mul8u_error::@3 mul8u_error main @31 @begin mul8u_compare 
+mul8u_error::@6 dominated by  mul8u_compare::@14 mul8u_compare::@13 mul8u_compare::@12 main::@1 mul8u_compare::@1 main::@2 mul8u_compare::@2 mul8u_compare::@3 mul8u_compare::@4 main::@3 main::@4 mul8u_compare::@8 mul8u_error::@1 mul8u_error::@4 mul8u_error::@5 mul8u_error::@2 mul8u_error::@3 mul8u_error main @31 @begin mul8u_compare mul8u_error::@6 
+mul8u_error::@7 dominated by  mul8u_compare::@14 mul8u_compare::@13 mul8u_compare::@12 main::@1 mul8u_compare::@1 main::@2 mul8u_compare::@2 mul8u_compare::@3 mul8u_compare::@4 main::@3 main::@4 mul8u_compare::@8 mul8u_error::@1 mul8u_error::@4 mul8u_error::@5 mul8u_error::@2 mul8u_error::@3 mul8u_error main @31 @begin mul8u_compare mul8u_error::@6 mul8u_error::@7 
+mul8u_error::@8 dominated by  mul8u_compare::@14 mul8u_compare::@13 mul8u_compare::@12 main::@1 mul8u_compare::@1 main::@2 mul8u_compare::@2 mul8u_compare::@3 mul8u_compare::@4 main::@3 main::@4 mul8u_compare::@8 mul8u_error::@1 mul8u_error::@4 mul8u_error::@5 mul8u_error::@2 mul8u_error::@3 mul8u_error main @31 @begin mul8u_compare mul8u_error::@8 mul8u_error::@6 mul8u_error::@7 
+mul8u_error::@9 dominated by  mul8u_compare::@14 mul8u_compare::@13 mul8u_compare::@12 main::@1 mul8u_compare::@1 main::@2 mul8u_compare::@2 mul8u_compare::@3 mul8u_compare::@4 main::@3 main::@4 mul8u_compare::@8 mul8u_error::@1 mul8u_error::@4 mul8u_error::@5 mul8u_error::@2 mul8u_error::@3 mul8u_error main @31 @begin mul8u_compare mul8u_error::@8 mul8u_error::@9 mul8u_error::@6 mul8u_error::@7 
+mul8u_error::@10 dominated by  mul8u_compare::@14 mul8u_compare::@13 mul8u_compare::@12 main::@1 mul8u_compare::@1 main::@2 mul8u_compare::@2 mul8u_compare::@3 mul8u_compare::@4 mul8u_error::@10 main::@3 main::@4 mul8u_compare::@8 mul8u_error::@1 mul8u_error::@4 mul8u_error::@5 mul8u_error::@2 mul8u_error::@3 mul8u_error main @31 @begin mul8u_compare mul8u_error::@8 mul8u_error::@9 mul8u_error::@6 mul8u_error::@7 
+mul8u_error::@return dominated by  mul8u_compare::@14 mul8u_compare::@13 mul8u_compare::@12 main::@1 mul8u_compare::@1 main::@2 mul8u_compare::@2 mul8u_compare::@3 mul8u_compare::@4 mul8u_error::@10 main::@3 main::@4 mul8u_compare::@8 mul8u_error::@1 mul8u_error::@4 mul8u_error::@5 mul8u_error::@2 mul8u_error::@3 mul8u_error main @31 @begin mul8u_compare mul8u_error::@8 mul8u_error::@9 mul8u_error::@6 mul8u_error::@7 mul8u_error::@return 
+muls8u dominated by  muls8u main::@1 mul8u_compare::@1 main::@2 mul8u_compare::@2 main::@3 main::@4 main @31 @begin mul8u_compare 
+muls8u::@2 dominated by  muls8u main::@1 mul8u_compare::@1 main::@2 mul8u_compare::@2 main::@3 main::@4 main @31 @begin mul8u_compare muls8u::@2 
+muls8u::@1 dominated by  muls8u main::@1 mul8u_compare::@1 main::@2 mul8u_compare::@2 main::@3 main::@4 main @31 @begin mul8u_compare muls8u::@1 
+muls8u::@return dominated by  muls8u main::@1 mul8u_compare::@1 main::@2 mul8u_compare::@2 main::@3 main::@4 main @31 @begin mul8u_compare muls8u::@1 muls8u::@return 
+mulf_tables_cmp dominated by  main::@1 main::@2 main::@3 main @31 @begin mulf_tables_cmp 
+mulf_tables_cmp::@1 dominated by  main::@1 main::@2 main::@3 main @31 @begin mulf_tables_cmp mulf_tables_cmp::@1 
+mulf_tables_cmp::@3 dominated by  main::@1 main::@2 main::@3 main @31 @begin mulf_tables_cmp mulf_tables_cmp::@1 mulf_tables_cmp::@3 
+mulf_tables_cmp::@6 dominated by  main::@1 main::@2 main::@3 main @31 @begin mulf_tables_cmp mulf_tables_cmp::@1 mulf_tables_cmp::@6 mulf_tables_cmp::@3 
+mulf_tables_cmp::@7 dominated by  main::@1 main::@2 main::@3 main @31 @begin mulf_tables_cmp mulf_tables_cmp::@7 mulf_tables_cmp::@1 mulf_tables_cmp::@6 mulf_tables_cmp::@3 
+mulf_tables_cmp::@8 dominated by  main::@1 main::@2 main::@3 main @31 @begin mulf_tables_cmp mulf_tables_cmp::@8 mulf_tables_cmp::@7 mulf_tables_cmp::@1 mulf_tables_cmp::@6 mulf_tables_cmp::@3 
+mulf_tables_cmp::@return dominated by  main::@1 main::@2 main::@3 main mulf_tables_cmp::@return @31 @begin mulf_tables_cmp mulf_tables_cmp::@1 
+mulf_tables_cmp::@2 dominated by  main::@1 main::@2 main::@3 main @31 @begin mulf_tables_cmp mulf_tables_cmp::@2 mulf_tables_cmp::@1 
+mulf_tables_cmp::@5 dominated by  main::@1 main::@2 main::@3 main @31 @begin mulf_tables_cmp mulf_tables_cmp::@2 mulf_tables_cmp::@1 mulf_tables_cmp::@5 
+mulf_tables_cmp::@10 dominated by  main::@1 main::@2 main::@3 main @31 @begin mulf_tables_cmp mulf_tables_cmp::@10 mulf_tables_cmp::@2 mulf_tables_cmp::@1 mulf_tables_cmp::@5 
+mulf_init_asm dominated by  main::@1 main::@2 mulf_init_asm main @31 @begin 
+mulf_init_asm::@return dominated by  main::@1 main::@2 mulf_init_asm::@return mulf_init_asm main @31 @begin 
+mulf_init dominated by  main::@1 main @31 @begin mulf_init 
+mulf_init::@1 dominated by  main::@1 main @31 @begin mulf_init mulf_init::@1 
+mulf_init::@5 dominated by  main::@1 main @31 @begin mulf_init mulf_init::@1 mulf_init::@5 
+mulf_init::@2 dominated by  main::@1 main @31 @begin mulf_init mulf_init::@2 mulf_init::@1 
+mulf_init::@3 dominated by  main::@1 main @31 @begin mulf_init mulf_init::@2 mulf_init::@1 mulf_init::@3 
+mulf_init::@4 dominated by  main::@1 main @31 @begin mulf_init mulf_init::@2 mulf_init::@1 mulf_init::@4 mulf_init::@3 
+mulf_init::@8 dominated by  main::@1 main @31 @begin mulf_init mulf_init::@2 mulf_init::@1 mulf_init::@4 mulf_init::@3 mulf_init::@8 
+mulf_init::@return dominated by  main::@1 mulf_init::@return main @31 @begin mulf_init mulf_init::@2 mulf_init::@1 mulf_init::@4 mulf_init::@3 mulf_init::@8 
+mulf_init::@12 dominated by  mulf_init::@12 main::@1 main @31 @begin mulf_init mulf_init::@2 mulf_init::@1 mulf_init::@3 
+print_cls dominated by  print_cls main @31 @begin 
+print_cls::@1 dominated by  print_cls main @31 @begin print_cls::@1 
+print_cls::@return dominated by  print_cls main @31 @begin print_cls::@return print_cls::@1 
 
 NATURAL LOOPS
 Found back edge: Loop head: mul8s_compare::@2 tails: mul8s_compare::@5 blocks: null
@@ -8378,15 +8471,15 @@ INITIAL ASM
   .label print_line_cursor = 5
 //SEG2 @begin
 bbegin:
-//SEG3 [1] phi from @begin to @30 [phi:@begin->@30]
-b30_from_bbegin:
-  jmp b30
-//SEG4 @30
-b30:
+//SEG3 [1] phi from @begin to @31 [phi:@begin->@31]
+b31_from_bbegin:
+  jmp b31
+//SEG4 @31
+b31:
 //SEG5 [2] call main param-assignment [ ] ( )
   jsr main
-//SEG6 [3] phi from @30 to @end [phi:@30->@end]
-bend_from_b30:
+//SEG6 [3] phi from @31 to @end [phi:@31->@end]
+bend_from_b31:
   jmp bend
 //SEG7 @end
 bend:
@@ -10952,15 +11045,15 @@ ASSEMBLER BEFORE OPTIMIZATION
   .label print_line_cursor = 4
 //SEG2 @begin
 bbegin:
-//SEG3 [1] phi from @begin to @30 [phi:@begin->@30]
-b30_from_bbegin:
-  jmp b30
-//SEG4 @30
-b30:
+//SEG3 [1] phi from @begin to @31 [phi:@begin->@31]
+b31_from_bbegin:
+  jmp b31
+//SEG4 @31
+b31:
 //SEG5 [2] call main param-assignment [ ] ( )
   jsr main
-//SEG6 [3] phi from @30 to @end [phi:@30->@end]
-bend_from_b30:
+//SEG6 [3] phi from @31 to @end [phi:@31->@end]
+bend_from_b31:
   jmp bend
 //SEG7 @end
 bend:
@@ -12894,7 +12987,7 @@ print_cls: {
   mula_sqr2_hi: .fill $200, 0
 
 ASSEMBLER OPTIMIZATIONS
-Removing instruction jmp b30
+Removing instruction jmp b31
 Removing instruction jmp bend
 Removing instruction jmp b1
 Removing instruction jmp b2
@@ -13061,8 +13154,8 @@ Replacing label b3_from_b4 with b3
 Replacing label b1_from_b1 with b1
 Replacing label b1_from_b1 with b1
 Removing instruction bbegin:
-Removing instruction b30_from_bbegin:
-Removing instruction bend_from_b30:
+Removing instruction b31_from_bbegin:
+Removing instruction bend_from_b31:
 Removing instruction b1_from_main:
 Removing instruction mulf_init_from_b1:
 Removing instruction b2_from_b1:
@@ -13157,7 +13250,7 @@ Removing instruction b12_from_b3:
 Removing instruction b4_from_b12:
 Removing instruction b1_from_b1:
 Succesful ASM optimization Pass5RedundantLabelElimination
-Removing instruction b30:
+Removing instruction b31:
 Removing instruction bend:
 Removing instruction print_cls_from_main:
 Removing instruction b1:
@@ -13318,7 +13411,7 @@ Removing unreachable instruction jmp b4
 Succesful ASM optimization Pass5UnreachableCodeElimination
 
 FINAL SYMBOL TABLE
-(label) @30
+(label) @31
 (label) @begin
 (label) @end
 (byte*) BGCOL
@@ -13811,11 +13904,11 @@ Score: 224327
   .label print_char_cursor = $a
   .label print_line_cursor = 4
 //SEG2 @begin
-//SEG3 [1] phi from @begin to @30 [phi:@begin->@30]
-//SEG4 @30
+//SEG3 [1] phi from @begin to @31 [phi:@begin->@31]
+//SEG4 @31
 //SEG5 [2] call main param-assignment [ ] ( )
   jsr main
-//SEG6 [3] phi from @30 to @end [phi:@30->@end]
+//SEG6 [3] phi from @31 to @end [phi:@31->@end]
 //SEG7 @end
 //SEG8 main
 main: {

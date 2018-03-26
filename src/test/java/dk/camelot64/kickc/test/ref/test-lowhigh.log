@@ -30,6 +30,26 @@ byte* print_screen = $0400;
 byte* print_line_cursor = print_screen;
 byte* print_char_cursor = print_line_cursor;
 
+// Print a number of zero-terminated strings, each followed by a newline.
+// The sequence of lines is terminated by another zero.
+void print_str_lines(byte* str) {
+    while(*str!='@') {
+        do {
+            byte ch = *(str++);
+            if(ch!='@') {
+                *(print_char_cursor++) = ch;
+            }
+        } while (ch!='@');
+        print_ln();
+    }
+}
+
+// Print a zero-terminated string followed by a newline
+void print_str_ln(byte* str) {
+    print_str(str);
+    print_ln();
+}
+
 // Print a zero-terminated string
 void print_str(byte* str) {
     while(*str!='@') {
@@ -43,13 +63,6 @@ void print_str_at(byte* str, byte* at) {
         *(at++) = *(str++);
     }
 }
-
-// Print a zero-terminated string followed by a newline
-void print_str_ln(byte* str) {
-    print_str(str);
-    print_ln();
-}
-
 
 // Print a newline
 void print_ln() {
@@ -127,6 +140,8 @@ void print_set_screen(byte* screen) {
     print_char_cursor = print_line_cursor;
 }
 
+Adding pre/post-modifier (byte*) print_str_lines::str ← ++ (byte*) print_str_lines::str
+Adding pre/post-modifier (byte*) print_char_cursor ← ++ (byte*) print_char_cursor
 Adding pre/post-modifier (byte*) print_char_cursor ← ++ (byte*) print_char_cursor
 Adding pre/post-modifier (byte*) print_str::str ← ++ (byte*) print_str::str
 Adding pre/post-modifier (byte*) print_str_at::at ← ++ (byte*) print_str_at::at
@@ -139,6 +154,35 @@ STATEMENTS
   (byte*) print_screen ← (word/signed word/dword/signed dword) 1024
   (byte*) print_line_cursor ← (byte*) print_screen
   (byte*) print_char_cursor ← (byte*) print_line_cursor
+proc (void()) print_str_lines((byte*) print_str_lines::str)
+print_str_lines::@1:
+  (boolean~) print_str_lines::$0 ← *((byte*) print_str_lines::str) != (byte) '@'
+  if((boolean~) print_str_lines::$0) goto print_str_lines::@2
+  goto print_str_lines::@3
+print_str_lines::@2:
+print_str_lines::@4:
+  (byte) print_str_lines::ch ← *((byte*) print_str_lines::str)
+  (byte*) print_str_lines::str ← ++ (byte*) print_str_lines::str
+  (boolean~) print_str_lines::$1 ← (byte) print_str_lines::ch != (byte) '@'
+  (boolean~) print_str_lines::$2 ← ! (boolean~) print_str_lines::$1
+  if((boolean~) print_str_lines::$2) goto print_str_lines::@5
+  *((byte*) print_char_cursor) ← (byte) print_str_lines::ch
+  (byte*) print_char_cursor ← ++ (byte*) print_char_cursor
+print_str_lines::@5:
+  (boolean~) print_str_lines::$3 ← (byte) print_str_lines::ch != (byte) '@'
+  if((boolean~) print_str_lines::$3) goto print_str_lines::@4
+  (void~) print_str_lines::$4 ← call print_ln 
+  goto print_str_lines::@1
+print_str_lines::@3:
+print_str_lines::@return:
+  return 
+endproc // print_str_lines()
+proc (void()) print_str_ln((byte*) print_str_ln::str)
+  (void~) print_str_ln::$0 ← call print_str (byte*) print_str_ln::str 
+  (void~) print_str_ln::$1 ← call print_ln 
+print_str_ln::@return:
+  return 
+endproc // print_str_ln()
 proc (void()) print_str((byte*) print_str::str)
 print_str::@1:
   (boolean~) print_str::$0 ← *((byte*) print_str::str) != (byte) '@'
@@ -167,12 +211,6 @@ print_str_at::@3:
 print_str_at::@return:
   return 
 endproc // print_str_at()
-proc (void()) print_str_ln((byte*) print_str_ln::str)
-  (void~) print_str_ln::$0 ← call print_str (byte*) print_str_ln::str 
-  (void~) print_str_ln::$1 ← call print_ln 
-print_str_ln::@return:
-  return 
-endproc // print_str_ln()
 proc (void()) print_ln()
 print_ln::@1:
   (byte*~) print_ln::$0 ← (byte*) print_line_cursor + (byte/signed byte/word/signed word/dword/signed dword) 40
@@ -426,6 +464,20 @@ SYMBOLS
 (label) print_str_at::@return
 (byte*) print_str_at::at
 (byte*) print_str_at::str
+(void()) print_str_lines((byte*) print_str_lines::str)
+(boolean~) print_str_lines::$0
+(boolean~) print_str_lines::$1
+(boolean~) print_str_lines::$2
+(boolean~) print_str_lines::$3
+(void~) print_str_lines::$4
+(label) print_str_lines::@1
+(label) print_str_lines::@2
+(label) print_str_lines::@3
+(label) print_str_lines::@4
+(label) print_str_lines::@5
+(label) print_str_lines::@return
+(byte) print_str_lines::ch
+(byte*) print_str_lines::str
 (void()) print_str_ln((byte*) print_str_ln::str)
 (void~) print_str_ln::$0
 (void~) print_str_ln::$1
@@ -458,6 +510,54 @@ INITIAL CONTROL FLOW GRAPH
   (byte*) print_line_cursor ← (byte*) print_screen
   (byte*) print_char_cursor ← (byte*) print_line_cursor
   to:@1
+print_str_lines: scope:[print_str_lines]  from
+  to:print_str_lines::@1
+print_str_lines::@1: scope:[print_str_lines]  from print_str_lines print_str_lines::@9
+  (boolean~) print_str_lines::$0 ← *((byte*) print_str_lines::str) != (byte) '@'
+  if((boolean~) print_str_lines::$0) goto print_str_lines::@2
+  to:print_str_lines::@6
+print_str_lines::@2: scope:[print_str_lines]  from print_str_lines::@1 print_str_lines::@7
+  to:print_str_lines::@4
+print_str_lines::@6: scope:[print_str_lines]  from print_str_lines::@1
+  to:print_str_lines::@3
+print_str_lines::@3: scope:[print_str_lines]  from print_str_lines::@10 print_str_lines::@6
+  to:print_str_lines::@return
+print_str_lines::@7: scope:[print_str_lines]  from
+  to:print_str_lines::@2
+print_str_lines::@4: scope:[print_str_lines]  from print_str_lines::@2 print_str_lines::@5
+  (byte) print_str_lines::ch ← *((byte*) print_str_lines::str)
+  (byte*) print_str_lines::str ← ++ (byte*) print_str_lines::str
+  (boolean~) print_str_lines::$1 ← (byte) print_str_lines::ch != (byte) '@'
+  (boolean~) print_str_lines::$2 ← ! (boolean~) print_str_lines::$1
+  if((boolean~) print_str_lines::$2) goto print_str_lines::@5
+  to:print_str_lines::@8
+print_str_lines::@5: scope:[print_str_lines]  from print_str_lines::@4 print_str_lines::@8
+  (boolean~) print_str_lines::$3 ← (byte) print_str_lines::ch != (byte) '@'
+  if((boolean~) print_str_lines::$3) goto print_str_lines::@4
+  to:print_str_lines::@9
+print_str_lines::@8: scope:[print_str_lines]  from print_str_lines::@4
+  *((byte*) print_char_cursor) ← (byte) print_str_lines::ch
+  (byte*) print_char_cursor ← ++ (byte*) print_char_cursor
+  to:print_str_lines::@5
+print_str_lines::@9: scope:[print_str_lines]  from print_str_lines::@5
+  (void~) print_str_lines::$4 ← call print_ln 
+  to:print_str_lines::@1
+print_str_lines::@10: scope:[print_str_lines]  from
+  to:print_str_lines::@3
+print_str_lines::@return: scope:[print_str_lines]  from print_str_lines::@3
+  return 
+  to:@return
+@1: scope:[]  from @begin
+  to:@2
+print_str_ln: scope:[print_str_ln]  from
+  (void~) print_str_ln::$0 ← call print_str (byte*) print_str_ln::str 
+  (void~) print_str_ln::$1 ← call print_ln 
+  to:print_str_ln::@return
+print_str_ln::@return: scope:[print_str_ln]  from print_str_ln
+  return 
+  to:@return
+@2: scope:[]  from @1
+  to:@3
 print_str: scope:[print_str]  from
   to:print_str::@1
 print_str::@1: scope:[print_str]  from print_str print_str::@2
@@ -480,8 +580,8 @@ print_str::@6: scope:[print_str]  from
 print_str::@return: scope:[print_str]  from print_str::@3
   return 
   to:@return
-@1: scope:[]  from @begin
-  to:@2
+@3: scope:[]  from @2
+  to:@4
 print_str_at: scope:[print_str_at]  from
   to:print_str_at::@1
 print_str_at::@1: scope:[print_str_at]  from print_str_at print_str_at::@2
@@ -504,17 +604,8 @@ print_str_at::@6: scope:[print_str_at]  from
 print_str_at::@return: scope:[print_str_at]  from print_str_at::@3
   return 
   to:@return
-@2: scope:[]  from @1
-  to:@3
-print_str_ln: scope:[print_str_ln]  from
-  (void~) print_str_ln::$0 ← call print_str (byte*) print_str_ln::str 
-  (void~) print_str_ln::$1 ← call print_ln 
-  to:print_str_ln::@return
-print_str_ln::@return: scope:[print_str_ln]  from print_str_ln
-  return 
-  to:@return
-@3: scope:[]  from @2
-  to:@4
+@4: scope:[]  from @3
+  to:@5
 print_ln: scope:[print_ln]  from
   to:print_ln::@1
 print_ln::@1: scope:[print_ln]  from print_ln print_ln::@1
@@ -529,8 +620,8 @@ print_ln::@2: scope:[print_ln]  from print_ln::@1
 print_ln::@return: scope:[print_ln]  from print_ln::@2
   return 
   to:@return
-@4: scope:[]  from @3
-  to:@5
+@5: scope:[]  from @4
+  to:@6
 print_sword: scope:[print_sword]  from
   (boolean~) print_sword::$0 ← (signed word) print_sword::w < (byte/signed byte/word/signed word/dword/signed dword) 0
   (boolean~) print_sword::$1 ← ! (boolean~) print_sword::$0
@@ -548,8 +639,8 @@ print_sword::@2: scope:[print_sword]  from print_sword
 print_sword::@return: scope:[print_sword]  from print_sword::@1
   return 
   to:@return
-@5: scope:[]  from @4
-  to:@6
+@6: scope:[]  from @5
+  to:@7
 print_sbyte: scope:[print_sbyte]  from
   (boolean~) print_sbyte::$0 ← (signed byte) print_sbyte::b < (byte/signed byte/word/signed word/dword/signed dword) 0
   (boolean~) print_sbyte::$1 ← ! (boolean~) print_sbyte::$0
@@ -567,8 +658,8 @@ print_sbyte::@2: scope:[print_sbyte]  from print_sbyte
 print_sbyte::@return: scope:[print_sbyte]  from print_sbyte::@1
   return 
   to:@return
-@6: scope:[]  from @5
-  to:@7
+@7: scope:[]  from @6
+  to:@8
 print_word: scope:[print_word]  from
   (byte~) print_word::$0 ← > (word) print_word::w
   (void~) print_word::$1 ← call print_byte (byte~) print_word::$0 
@@ -578,8 +669,8 @@ print_word: scope:[print_word]  from
 print_word::@return: scope:[print_word]  from print_word
   return 
   to:@return
-@7: scope:[]  from @6
-  to:@8
+@8: scope:[]  from @7
+  to:@9
 print_dword: scope:[print_dword]  from
   (word~) print_dword::$0 ← > (dword) print_dword::dw
   (void~) print_dword::$1 ← call print_word (word~) print_dword::$0 
@@ -589,8 +680,8 @@ print_dword: scope:[print_dword]  from
 print_dword::@return: scope:[print_dword]  from print_dword
   return 
   to:@return
-@8: scope:[]  from @7
-  to:@9
+@9: scope:[]  from @8
+  to:@10
 print_sdword: scope:[print_sdword]  from
   (boolean~) print_sdword::$0 ← (signed dword) print_sdword::dw < (byte/signed byte/word/signed word/dword/signed dword) 0
   (boolean~) print_sdword::$1 ← ! (boolean~) print_sdword::$0
@@ -608,8 +699,8 @@ print_sdword::@2: scope:[print_sdword]  from print_sdword
 print_sdword::@return: scope:[print_sdword]  from print_sdword::@1
   return 
   to:@return
-@9: scope:[]  from @8
-  to:@10
+@10: scope:[]  from @9
+  to:@11
 print_byte: scope:[print_byte]  from
   (byte[]) print_byte::hextab ← (string) "0123456789abcdef"
   (byte~) print_byte::$0 ← (byte) print_byte::b >> (byte/signed byte/word/signed word/dword/signed dword) 4
@@ -620,8 +711,8 @@ print_byte: scope:[print_byte]  from
 print_byte::@return: scope:[print_byte]  from print_byte
   return 
   to:@return
-@10: scope:[]  from @9
-  to:@11
+@11: scope:[]  from @10
+  to:@12
 print_char: scope:[print_char]  from
   *((byte*) print_char_cursor) ← (byte) print_char::ch
   (byte*) print_char_cursor ← ++ (byte*) print_char_cursor
@@ -629,8 +720,8 @@ print_char: scope:[print_char]  from
 print_char::@return: scope:[print_char]  from print_char
   return 
   to:@return
-@11: scope:[]  from @10
-  to:@12
+@12: scope:[]  from @11
+  to:@13
 print_cls: scope:[print_cls]  from
   (byte*) print_cls::sc ← (byte*) print_screen
   to:print_cls::@1
@@ -648,8 +739,8 @@ print_cls::@2: scope:[print_cls]  from print_cls::@1
 print_cls::@return: scope:[print_cls]  from print_cls::@2
   return 
   to:@return
-@12: scope:[]  from @11
-  to:@13
+@13: scope:[]  from @12
+  to:@14
 print_set_screen: scope:[print_set_screen]  from
   (byte*) print_screen ← (byte*) print_set_screen::screen
   (byte*) print_line_cursor ← (byte*) print_screen
@@ -658,8 +749,8 @@ print_set_screen: scope:[print_set_screen]  from
 print_set_screen::@return: scope:[print_set_screen]  from print_set_screen
   return 
   to:@return
-@13: scope:[]  from @12
-  to:@14
+@14: scope:[]  from @13
+  to:@15
 main: scope:[main]  from
   (void~) main::$0 ← call print_cls 
   (dword) main::dw ← (dword/signed dword) 305419896
@@ -709,13 +800,14 @@ main::@2: scope:[main]  from main::@1
 main::@return: scope:[main]  from main::@2
   return 
   to:@return
-@14: scope:[]  from @13
+@15: scope:[]  from @14
   call main 
   to:@end
-@end: scope:[]  from @14
+@end: scope:[]  from @15
 
-Removing unused procedure print_str_at
+Removing unused procedure print_str_lines
 Removing unused procedure print_str_ln
+Removing unused procedure print_str_at
 Removing unused procedure print_sword
 Removing unused procedure print_sbyte
 Removing unused procedure print_sdword
@@ -758,6 +850,7 @@ Removing empty block @10
 Removing empty block @11
 Removing empty block @12
 Removing empty block @13
+Removing empty block @14
 Removing empty block main::@2
 PROCEDURE MODIFY VARIABLE ANALYSIS
 print_ln modifies print_line_cursor
@@ -792,7 +885,7 @@ CONTROL FLOW GRAPH SSA WITH ASSIGNMENT CALL & RETURN
   (byte*) print_screen#0 ← ((byte*)) (word/signed word/dword/signed dword) 1024
   (byte*) print_line_cursor#0 ← (byte*) print_screen#0
   (byte*) print_char_cursor#0 ← (byte*) print_line_cursor#0
-  to:@14
+  to:@15
 print_ln: scope:[print_ln]  from main::@16
   (byte*) print_char_cursor#64 ← phi( main::@16/(byte*) print_char_cursor#29 )
   (byte*) print_line_cursor#17 ← phi( main::@16/(byte*) print_line_cursor#19 )
@@ -925,10 +1018,10 @@ print_cls::@return: scope:[print_cls]  from print_cls::@2
   (byte*) print_char_cursor#15 ← (byte*) print_char_cursor#46
   return 
   to:@return
-main: scope:[main]  from @14
-  (byte*) print_char_cursor#68 ← phi( @14/(byte*) print_char_cursor#70 )
-  (byte*) print_line_cursor#18 ← phi( @14/(byte*) print_line_cursor#20 )
-  (byte*) print_screen#4 ← phi( @14/(byte*) print_screen#5 )
+main: scope:[main]  from @15
+  (byte*) print_char_cursor#68 ← phi( @15/(byte*) print_char_cursor#70 )
+  (byte*) print_line_cursor#18 ← phi( @15/(byte*) print_line_cursor#20 )
+  (byte*) print_screen#4 ← phi( @15/(byte*) print_screen#5 )
   call print_cls param-assignment
   to:main::@3
 main::@3: scope:[main]  from main
@@ -1096,23 +1189,23 @@ main::@return: scope:[main]  from main::@17
   (byte*) print_char_cursor#31 ← (byte*) print_char_cursor#62
   return 
   to:@return
-@14: scope:[]  from @begin
+@15: scope:[]  from @begin
   (byte*) print_screen#5 ← phi( @begin/(byte*) print_screen#0 )
   (byte*) print_char_cursor#70 ← phi( @begin/(byte*) print_char_cursor#0 )
   (byte*) print_line_cursor#20 ← phi( @begin/(byte*) print_line_cursor#0 )
   call main param-assignment
-  to:@15
-@15: scope:[]  from @14
-  (byte*) print_char_cursor#63 ← phi( @14/(byte*) print_char_cursor#31 )
-  (byte*) print_line_cursor#16 ← phi( @14/(byte*) print_line_cursor#7 )
+  to:@16
+@16: scope:[]  from @15
+  (byte*) print_char_cursor#63 ← phi( @15/(byte*) print_char_cursor#31 )
+  (byte*) print_line_cursor#16 ← phi( @15/(byte*) print_line_cursor#7 )
   (byte*) print_line_cursor#8 ← (byte*) print_line_cursor#16
   (byte*) print_char_cursor#32 ← (byte*) print_char_cursor#63
   to:@end
-@end: scope:[]  from @15
+@end: scope:[]  from @16
 
 SYMBOL TABLE SSA
-(label) @14
 (label) @15
+(label) @16
 (label) @begin
 (label) @end
 (void()) main()
@@ -1561,7 +1654,7 @@ Culled Empty Block (label) print_dword::@2
 Culled Empty Block (label) print_byte::@2
 Culled Empty Block (label) print_cls::@2
 Culled Empty Block (label) main::@3
-Culled Empty Block (label) @15
+Culled Empty Block (label) @16
 Succesful SSA optimization Pass2CullEmptyBlocks
 Not aliassing across scopes: print_line_cursor#9 print_line_cursor#19
 Not aliassing across scopes: print_word::w#4 print_word::w#2
@@ -1647,13 +1740,13 @@ Constant inlined print_char::ch#7 = (byte) ' '
 Constant inlined main::dw#0 = (dword/signed dword) 305419896
 Constant inlined print_char::ch#6 = (byte) ' '
 Succesful SSA optimization Pass2ConstantInlining
-Block Sequence Planned @begin @14 @end main main::@1 main::@4 main::@5 main::@6 main::@7 main::@8 main::@9 main::@10 main::@11 main::@12 main::@13 main::@14 main::@15 main::@16 main::@17 main::@return print_ln print_ln::@1 print_ln::@return print_byte print_byte::@1 print_byte::@return print_char print_char::@return print_word print_word::@1 print_word::@return print_dword print_dword::@1 print_dword::@return print_cls print_cls::@1 print_cls::@return 
+Block Sequence Planned @begin @15 @end main main::@1 main::@4 main::@5 main::@6 main::@7 main::@8 main::@9 main::@10 main::@11 main::@12 main::@13 main::@14 main::@15 main::@16 main::@17 main::@return print_ln print_ln::@1 print_ln::@return print_byte print_byte::@1 print_byte::@return print_char print_char::@return print_word print_word::@1 print_word::@return print_dword print_dword::@1 print_dword::@return print_cls print_cls::@1 print_cls::@return 
 Added new block during phi lifting main::@18(between main::@17 and main::@1)
 Added new block during phi lifting print_ln::@3(between print_ln::@1 and print_ln::@1)
 Added new block during phi lifting print_cls::@3(between print_cls::@1 and print_cls::@1)
-Block Sequence Planned @begin @14 @end main main::@1 main::@4 main::@5 main::@6 main::@7 main::@8 main::@9 main::@10 main::@11 main::@12 main::@13 main::@14 main::@15 main::@16 main::@17 main::@return main::@18 print_ln print_ln::@1 print_ln::@return print_ln::@3 print_byte print_byte::@1 print_byte::@return print_char print_char::@return print_word print_word::@1 print_word::@return print_dword print_dword::@1 print_dword::@return print_cls print_cls::@1 print_cls::@return print_cls::@3 
+Block Sequence Planned @begin @15 @end main main::@1 main::@4 main::@5 main::@6 main::@7 main::@8 main::@9 main::@10 main::@11 main::@12 main::@13 main::@14 main::@15 main::@16 main::@17 main::@return main::@18 print_ln print_ln::@1 print_ln::@return print_ln::@3 print_byte print_byte::@1 print_byte::@return print_char print_char::@return print_word print_word::@1 print_word::@return print_dword print_dword::@1 print_dword::@return print_cls print_cls::@1 print_cls::@return print_cls::@3 
 Adding NOP phi() at start of @begin
-Adding NOP phi() at start of @14
+Adding NOP phi() at start of @15
 Adding NOP phi() at start of @end
 Adding NOP phi() at start of main
 Adding NOP phi() at start of main::@16
@@ -1756,9 +1849,9 @@ Coalesced [110] print_cls::sc#3 ← print_cls::sc#1
 Coalesced down to 7 phi equivalence classes
 Culled Empty Block (label) print_ln::@3
 Culled Empty Block (label) print_cls::@3
-Block Sequence Planned @begin @14 @end main main::@1 main::@4 main::@5 main::@6 main::@7 main::@8 main::@9 main::@10 main::@11 main::@12 main::@13 main::@14 main::@15 main::@16 main::@17 main::@return main::@18 print_ln print_ln::@1 print_ln::@return print_byte print_byte::@1 print_byte::@return print_char print_char::@return print_word print_word::@1 print_word::@return print_dword print_dword::@1 print_dword::@return print_cls print_cls::@1 print_cls::@return 
+Block Sequence Planned @begin @15 @end main main::@1 main::@4 main::@5 main::@6 main::@7 main::@8 main::@9 main::@10 main::@11 main::@12 main::@13 main::@14 main::@15 main::@16 main::@17 main::@return main::@18 print_ln print_ln::@1 print_ln::@return print_byte print_byte::@1 print_byte::@return print_char print_char::@return print_word print_word::@1 print_word::@return print_dword print_dword::@1 print_dword::@return print_cls print_cls::@1 print_cls::@return 
 Adding NOP phi() at start of @begin
-Adding NOP phi() at start of @14
+Adding NOP phi() at start of @15
 Adding NOP phi() at start of @end
 Adding NOP phi() at start of main
 Adding NOP phi() at start of main::@4
@@ -1814,14 +1907,14 @@ Propagating live ranges...
 FINAL CONTROL FLOW GRAPH
 @begin: scope:[]  from
   [0] phi() [ ] ( )
-  to:@14
-@14: scope:[]  from @begin
+  to:@15
+@15: scope:[]  from @begin
   [1] phi() [ ] ( )
   [2] call main param-assignment [ ] ( )
   to:@end
-@end: scope:[]  from @14
+@end: scope:[]  from @15
   [3] phi() [ ] ( )
-main: scope:[main]  from @14
+main: scope:[main]  from @15
   [4] phi() [ ] ( main:2 [ ] )
   [5] call print_cls param-assignment [ ] ( main:2 [ ] )
   to:main::@1
@@ -1978,43 +2071,43 @@ print_cls::@return: scope:[print_cls]  from print_cls::@1
 
 DOMINATORS
 @begin dominated by  @begin 
-@14 dominated by  @begin @14 
-@end dominated by  @end @begin @14 
-main dominated by  main @begin @14 
-main::@1 dominated by  main main::@1 @begin @14 
-main::@4 dominated by  main main::@1 main::@4 @begin @14 
-main::@5 dominated by  main main::@1 main::@5 main::@4 @begin @14 
-main::@6 dominated by  main main::@1 main::@5 main::@6 main::@4 @begin @14 
-main::@7 dominated by  main::@7 main main::@1 main::@5 main::@6 main::@4 @begin @14 
-main::@8 dominated by  main::@7 main::@8 main main::@1 main::@5 main::@6 main::@4 @begin @14 
-main::@9 dominated by  main::@9 main::@7 main::@8 main main::@1 main::@5 main::@6 main::@4 @begin @14 
-main::@10 dominated by  main::@9 main::@7 main::@8 main main::@1 main::@5 main::@6 main::@4 @begin @14 main::@10 
-main::@11 dominated by  main::@9 main::@7 main::@8 main main::@1 main::@5 main::@6 main::@4 main::@11 @begin @14 main::@10 
-main::@12 dominated by  main::@9 main::@7 main::@8 main main::@1 main::@5 main::@6 main::@4 main::@11 @begin @14 main::@10 main::@12 
-main::@13 dominated by  main::@9 main::@7 main::@8 main main::@1 main::@5 main::@6 main::@4 main::@11 @begin @14 main::@10 main::@13 main::@12 
-main::@14 dominated by  main::@9 main::@7 main::@8 main main::@1 main::@5 main::@6 main::@4 main::@11 @begin @14 main::@10 main::@13 main::@12 main::@14 
-main::@15 dominated by  main::@9 main::@7 main::@8 main main::@1 main::@5 main::@6 main::@4 main::@11 @begin @14 main::@10 main::@13 main::@12 main::@15 main::@14 
-main::@16 dominated by  main::@9 main::@7 main::@8 main main::@1 main::@5 main::@6 main::@4 main::@11 @begin @14 main::@10 main::@16 main::@13 main::@12 main::@15 main::@14 
-main::@17 dominated by  main::@9 main::@7 main::@8 main main::@1 main::@5 main::@6 main::@4 main::@11 @begin @14 main::@10 main::@17 main::@16 main::@13 main::@12 main::@15 main::@14 
-main::@return dominated by  main::@9 main::@return main::@7 main::@8 main main::@1 main::@5 main::@6 main::@4 main::@11 @begin @14 main::@10 main::@17 main::@16 main::@13 main::@12 main::@15 main::@14 
-main::@18 dominated by  main::@9 main::@7 main::@8 main main::@1 main::@5 main::@6 main::@4 main::@11 @begin @14 main::@10 main::@17 main::@16 main::@18 main::@13 main::@12 main::@15 main::@14 
-print_ln dominated by  main::@9 main::@7 main::@8 main main::@1 main::@5 main::@6 main::@4 main::@11 @begin @14 main::@10 main::@16 main::@13 main::@12 main::@15 main::@14 print_ln 
-print_ln::@1 dominated by  main::@9 print_ln::@1 main::@7 main::@8 main main::@1 main::@5 main::@6 main::@4 main::@11 @begin @14 main::@10 main::@16 main::@13 main::@12 main::@15 main::@14 print_ln 
-print_ln::@return dominated by  main::@9 print_ln::@1 main::@7 main::@8 main print_ln::@return main::@1 main::@5 main::@6 main::@4 main::@11 @begin @14 main::@10 main::@16 main::@13 main::@12 main::@15 main::@14 print_ln 
-print_byte dominated by  main main::@1 @begin @14 print_byte 
-print_byte::@1 dominated by  main main::@1 print_byte::@1 @begin @14 print_byte 
-print_byte::@return dominated by  main main::@1 print_byte::@1 @begin @14 print_byte print_byte::@return 
-print_char dominated by  main print_char main::@1 @begin @14 
-print_char::@return dominated by  main print_char main::@1 print_char::@return @begin @14 
-print_word dominated by  main print_word main::@1 @begin @14 
-print_word::@1 dominated by  main print_word main::@1 print_word::@1 @begin @14 
-print_word::@return dominated by  main print_word main::@1 print_word::@1 @begin @14 print_word::@return 
-print_dword dominated by  main main::@1 print_dword @begin @14 
-print_dword::@1 dominated by  main main::@1 print_dword::@1 print_dword @begin @14 
-print_dword::@return dominated by  main print_dword::@return main::@1 print_dword::@1 print_dword @begin @14 
-print_cls dominated by  main @begin @14 print_cls 
-print_cls::@1 dominated by  main @begin @14 print_cls::@1 print_cls 
-print_cls::@return dominated by  main print_cls::@return @begin @14 print_cls::@1 print_cls 
+@15 dominated by  @begin @15 
+@end dominated by  @end @begin @15 
+main dominated by  main @begin @15 
+main::@1 dominated by  main main::@1 @begin @15 
+main::@4 dominated by  main main::@1 main::@4 @begin @15 
+main::@5 dominated by  main main::@1 main::@5 main::@4 @begin @15 
+main::@6 dominated by  main main::@1 main::@5 main::@6 main::@4 @begin @15 
+main::@7 dominated by  main::@7 main main::@1 main::@5 main::@6 main::@4 @begin @15 
+main::@8 dominated by  main::@7 main::@8 main main::@1 main::@5 main::@6 main::@4 @begin @15 
+main::@9 dominated by  main::@9 main::@7 main::@8 main main::@1 main::@5 main::@6 main::@4 @begin @15 
+main::@10 dominated by  main::@9 main::@7 main::@8 main main::@1 main::@5 main::@6 main::@4 @begin main::@10 @15 
+main::@11 dominated by  main::@9 main::@7 main::@8 main main::@1 main::@5 main::@6 main::@4 main::@11 @begin main::@10 @15 
+main::@12 dominated by  main::@9 main::@7 main::@8 main main::@1 main::@5 main::@6 main::@4 main::@11 @begin main::@10 @15 main::@12 
+main::@13 dominated by  main::@9 main::@7 main::@8 main main::@1 main::@5 main::@6 main::@4 main::@11 @begin main::@10 @15 main::@13 main::@12 
+main::@14 dominated by  main::@9 main::@7 main::@8 main main::@1 main::@5 main::@6 main::@4 main::@11 @begin main::@10 @15 main::@13 main::@12 main::@14 
+main::@15 dominated by  main::@9 main::@7 main::@8 main main::@1 main::@5 main::@6 main::@4 main::@11 @begin main::@10 @15 main::@13 main::@12 main::@15 main::@14 
+main::@16 dominated by  main::@9 main::@7 main::@8 main main::@1 main::@5 main::@6 main::@4 main::@11 @begin main::@10 @15 main::@16 main::@13 main::@12 main::@15 main::@14 
+main::@17 dominated by  main::@9 main::@7 main::@8 main main::@1 main::@5 main::@6 main::@4 main::@11 @begin main::@10 @15 main::@17 main::@16 main::@13 main::@12 main::@15 main::@14 
+main::@return dominated by  main::@9 main::@return main::@7 main::@8 main main::@1 main::@5 main::@6 main::@4 main::@11 @begin main::@10 @15 main::@17 main::@16 main::@13 main::@12 main::@15 main::@14 
+main::@18 dominated by  main::@9 main::@7 main::@8 main main::@1 main::@5 main::@6 main::@4 main::@11 @begin main::@10 @15 main::@17 main::@16 main::@18 main::@13 main::@12 main::@15 main::@14 
+print_ln dominated by  main::@9 main::@7 main::@8 main main::@1 main::@5 main::@6 main::@4 main::@11 @begin main::@10 @15 main::@16 main::@13 main::@12 main::@15 main::@14 print_ln 
+print_ln::@1 dominated by  main::@9 print_ln::@1 main::@7 main::@8 main main::@1 main::@5 main::@6 main::@4 main::@11 @begin main::@10 @15 main::@16 main::@13 main::@12 main::@15 main::@14 print_ln 
+print_ln::@return dominated by  main::@9 print_ln::@1 main::@7 main::@8 main print_ln::@return main::@1 main::@5 main::@6 main::@4 main::@11 @begin main::@10 @15 main::@16 main::@13 main::@12 main::@15 main::@14 print_ln 
+print_byte dominated by  main main::@1 @begin @15 print_byte 
+print_byte::@1 dominated by  main main::@1 print_byte::@1 @begin @15 print_byte 
+print_byte::@return dominated by  main main::@1 print_byte::@1 @begin @15 print_byte print_byte::@return 
+print_char dominated by  main print_char main::@1 @begin @15 
+print_char::@return dominated by  main print_char main::@1 print_char::@return @begin @15 
+print_word dominated by  main print_word main::@1 @begin @15 
+print_word::@1 dominated by  main print_word main::@1 print_word::@1 @begin @15 
+print_word::@return dominated by  main print_word main::@1 print_word::@1 @begin @15 print_word::@return 
+print_dword dominated by  main main::@1 print_dword @begin @15 
+print_dword::@1 dominated by  main main::@1 print_dword::@1 print_dword @begin @15 
+print_dword::@return dominated by  main print_dword::@return main::@1 print_dword::@1 print_dword @begin @15 
+print_cls dominated by  main @begin @15 print_cls 
+print_cls::@1 dominated by  main @begin @15 print_cls::@1 print_cls 
+print_cls::@return dominated by  main print_cls::@return @begin @15 print_cls::@1 print_cls 
 
 NATURAL LOOPS
 Found back edge: Loop head: main::@1 tails: main::@18 blocks: null
@@ -2178,17 +2271,17 @@ INITIAL ASM
   .label print_char_cursor = $a
 //SEG2 @begin
 bbegin:
-//SEG3 [1] phi from @begin to @14 [phi:@begin->@14]
-b14_from_bbegin:
-  jmp b14
-//SEG4 @14
-b14:
+//SEG3 [1] phi from @begin to @15 [phi:@begin->@15]
+b15_from_bbegin:
+  jmp b15
+//SEG4 @15
+b15:
 //SEG5 [2] call main param-assignment [ ] ( )
-//SEG6 [4] phi from @14 to main [phi:@14->main]
-main_from_b14:
+//SEG6 [4] phi from @15 to main [phi:@15->main]
+main_from_b15:
   jsr main
-//SEG7 [3] phi from @14 to @end [phi:@14->@end]
-bend_from_b14:
+//SEG7 [3] phi from @15 to @end [phi:@15->@end]
+bend_from_b15:
   jmp bend
 //SEG8 @end
 bend:
@@ -2837,17 +2930,17 @@ ASSEMBLER BEFORE OPTIMIZATION
   .label print_char_cursor = 8
 //SEG2 @begin
 bbegin:
-//SEG3 [1] phi from @begin to @14 [phi:@begin->@14]
-b14_from_bbegin:
-  jmp b14
-//SEG4 @14
-b14:
+//SEG3 [1] phi from @begin to @15 [phi:@begin->@15]
+b15_from_bbegin:
+  jmp b15
+//SEG4 @15
+b15:
 //SEG5 [2] call main param-assignment [ ] ( )
-//SEG6 [4] phi from @14 to main [phi:@14->main]
-main_from_b14:
+//SEG6 [4] phi from @15 to main [phi:@15->main]
+main_from_b15:
   jsr main
-//SEG7 [3] phi from @14 to @end [phi:@14->@end]
-bend_from_b14:
+//SEG7 [3] phi from @15 to @end [phi:@15->@end]
+bend_from_b15:
   jmp bend
 //SEG8 @end
 bend:
@@ -3348,7 +3441,7 @@ print_cls: {
 }
 
 ASSEMBLER OPTIMIZATIONS
-Removing instruction jmp b14
+Removing instruction jmp b15
 Removing instruction jmp bend
 Removing instruction jmp b1
 Removing instruction jmp b4
@@ -3386,9 +3479,9 @@ Replacing label b1_from_b1 with b1
 Replacing label b1_from_b1 with b1
 Replacing label b1_from_b1 with b1
 Removing instruction bbegin:
-Removing instruction b14_from_bbegin:
-Removing instruction main_from_b14:
-Removing instruction bend_from_b14:
+Removing instruction b15_from_bbegin:
+Removing instruction main_from_b15:
+Removing instruction bend_from_b15:
 Removing instruction b4_from_b1:
 Removing instruction print_char_from_b4:
 Removing instruction b6_from_b5:
@@ -3407,7 +3500,7 @@ Removing instruction b1_from_print_ln:
 Removing instruction b1_from_b1:
 Removing instruction b1_from_b1:
 Succesful ASM optimization Pass5RedundantLabelElimination
-Removing instruction b14:
+Removing instruction b15:
 Removing instruction bend:
 Removing instruction print_cls_from_main:
 Removing instruction b1_from_main:
@@ -3454,7 +3547,7 @@ Removing instruction jmp b1
 Succesful ASM optimization Pass5NextJumpElimination
 
 FINAL SYMBOL TABLE
-(label) @14
+(label) @15
 (label) @begin
 (label) @end
 (void()) main()
@@ -3568,12 +3661,12 @@ Score: 7440
   .label print_line_cursor = 6
   .label print_char_cursor = 8
 //SEG2 @begin
-//SEG3 [1] phi from @begin to @14 [phi:@begin->@14]
-//SEG4 @14
+//SEG3 [1] phi from @begin to @15 [phi:@begin->@15]
+//SEG4 @15
 //SEG5 [2] call main param-assignment [ ] ( )
-//SEG6 [4] phi from @14 to main [phi:@14->main]
+//SEG6 [4] phi from @15 to main [phi:@15->main]
   jsr main
-//SEG7 [3] phi from @14 to @end [phi:@14->@end]
+//SEG7 [3] phi from @15 to @end [phi:@15->@end]
 //SEG8 @end
 //SEG9 main
 main: {

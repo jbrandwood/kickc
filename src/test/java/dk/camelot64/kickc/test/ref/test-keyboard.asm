@@ -133,7 +133,7 @@ main: {
     jsr keyboard_get_keycode
     cmp #$3f
     beq b11
-    sta keyboard_key_pressed.key
+    tay
     jsr keyboard_key_pressed
     cmp #0
     beq b11
@@ -160,19 +160,17 @@ main: {
     jmp b9
 }
 keyboard_key_pressed: {
-    .label _1 = 6
-    .label key = 5
-    lda key
+    .label colidx = 5
+    tya
+    and #7
+    sta colidx
+    tya
     lsr
     lsr
     lsr
     jsr keyboard_matrix_read
-    sta _1
-    lda #7
-    and key
-    tay
-    lda keyboard_matrix_col_bitmask,y
-    and _1
+    ldy colidx
+    and keyboard_matrix_col_bitmask,y
     rts
 }
 keyboard_matrix_read: {

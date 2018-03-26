@@ -29,13 +29,14 @@ main: {
     jmp b4
 }
 keyboard_key_pressed: {
+    .const colidx = KEY_SPACE&7
+    .label rowidx = KEY_SPACE>>3
     jsr keyboard_matrix_read
-    and keyboard_matrix_col_bitmask+(KEY_SPACE&7)
+    and keyboard_matrix_col_bitmask+colidx
     rts
 }
 keyboard_matrix_read: {
-    .const rowid = KEY_SPACE>>3
-    lda keyboard_matrix_row_bitmask+rowid
+    lda keyboard_matrix_row_bitmask+keyboard_key_pressed.rowidx
     sta CIA1_PORT_A
     lda CIA1_PORT_B
     eor #$ff

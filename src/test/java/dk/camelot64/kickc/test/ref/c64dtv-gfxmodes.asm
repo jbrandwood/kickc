@@ -5,14 +5,14 @@
   .label BGCOL = $d021
   .label BGCOL1 = $d021
   .label BGCOL2 = $d022
-  .label D011 = $d011
+  .label VIC_CONTROL = $d011
   .const VIC_ECM = $40
   .const VIC_BMM = $20
   .const VIC_DEN = $10
   .const VIC_RSEL = 8
-  .label D016 = $d016
+  .label VIC_CONTROL2 = $d016
   .const VIC_CSEL = 8
-  .label D018 = $d018
+  .label VIC_MEMORY = $d018
   .label COLS = $d800
   .label CIA1_PORT_A = $dc00
   .label CIA1_PORT_B = $dc01
@@ -45,34 +45,27 @@
   .label MENU_CHARSET = $9800
   .label TWOPLANE_PLANEA = $4000
   .label TWOPLANE_PLANEB = $6000
-  .label print_char_cursor = 7
-  .label print_line_cursor = 5
-  .label print_line_cursor_10 = 2
-  .label print_char_cursor_13 = 5
+  .label print_char_cursor = 2
+  .label print_line_cursor = 7
   .label print_screen = 2
-  .label print_line_cursor_89 = 2
   jsr main
 main: {
     lda #DTV_FEATURE_ENABLE
     sta DTV_FEATURE
     lda #<$400
-    sta print_char_cursor_13
+    sta print_char_cursor
     lda #>$400
-    sta print_char_cursor_13+1
+    sta print_char_cursor+1
     lda #<$400
-    sta print_line_cursor_10
+    sta print_line_cursor
     lda #>$400
-    sta print_line_cursor_10+1
+    sta print_line_cursor+1
     lda #<$400
     sta print_screen
     lda #>$400
     sta print_screen+1
   b2:
     jsr menu
-    lda print_line_cursor
-    sta print_line_cursor_89
-    lda print_line_cursor+1
-    sta print_line_cursor_89+1
     lda #<MENU_SCREEN
     sta print_screen
     lda #>MENU_SCREEN
@@ -91,11 +84,11 @@ menu: {
     lda #3^MENU_CHARSET/$4000
     sta CIA2_PORT_A
     lda #VIC_DEN|VIC_RSEL|3
-    sta D011
+    sta VIC_CONTROL
     lda #VIC_CSEL
-    sta D016
+    sta VIC_CONTROL2
     lda #(MENU_SCREEN&$3fff)/$40|(MENU_CHARSET&$3fff)/$400
-    sta D018
+    sta VIC_MEMORY
     lda #<COLS
     sta c
     lda #>COLS
@@ -119,204 +112,12 @@ menu: {
     sta BORDERCOL
     jsr print_set_screen
     jsr print_cls
-    lda #<MENU_SCREEN
-    sta print_line_cursor
-    lda #>MENU_SCREEN
-    sta print_line_cursor+1
-    lda #<MENU_SCREEN
-    sta print_char_cursor
-    lda #>MENU_SCREEN
-    sta print_char_cursor+1
-    lda #<str
-    sta print_str_ln.str
-    lda #>str
-    sta print_str_ln.str+1
-    jsr print_str_ln
-    lda print_line_cursor
-    sta print_char_cursor
-    lda print_line_cursor+1
-    sta print_char_cursor+1
-    lda #<str1
-    sta print_str_ln.str
-    lda #>str1
-    sta print_str_ln.str+1
-    jsr print_str_ln
-    lda print_line_cursor
-    sta print_char_cursor
-    lda print_line_cursor+1
-    sta print_char_cursor+1
-    lda #<str2
-    sta print_str_ln.str
-    lda #>str2
-    sta print_str_ln.str+1
-    jsr print_str_ln
-    lda print_line_cursor
-    sta print_char_cursor
-    lda print_line_cursor+1
-    sta print_char_cursor+1
-    lda #<str3
-    sta print_str_ln.str
-    lda #>str3
-    sta print_str_ln.str+1
-    jsr print_str_ln
-    lda print_line_cursor
-    sta print_char_cursor
-    lda print_line_cursor+1
-    sta print_char_cursor+1
-    lda #<str4
-    sta print_str_ln.str
-    lda #>str4
-    sta print_str_ln.str+1
-    jsr print_str_ln
-    lda print_line_cursor
-    sta print_char_cursor
-    lda print_line_cursor+1
-    sta print_char_cursor+1
-    lda #<str5
-    sta print_str_ln.str
-    lda #>str5
-    sta print_str_ln.str+1
-    jsr print_str_ln
-    lda print_line_cursor
-    sta print_char_cursor
-    lda print_line_cursor+1
-    sta print_char_cursor+1
-    lda #<str6
-    sta print_str_ln.str
-    lda #>str6
-    sta print_str_ln.str+1
-    jsr print_str_ln
-    lda print_line_cursor
-    sta print_char_cursor
-    lda print_line_cursor+1
-    sta print_char_cursor+1
-    lda #<str7
-    sta print_str_ln.str
-    lda #>str7
-    sta print_str_ln.str+1
-    jsr print_str_ln
-    lda print_line_cursor
-    sta print_char_cursor
-    lda print_line_cursor+1
-    sta print_char_cursor+1
-    lda #<str8
-    sta print_str_ln.str
-    lda #>str8
-    sta print_str_ln.str+1
-    jsr print_str_ln
-    lda print_line_cursor
-    sta print_char_cursor
-    lda print_line_cursor+1
-    sta print_char_cursor+1
-    lda #<str9
-    sta print_str_ln.str
-    lda #>str9
-    sta print_str_ln.str+1
-    jsr print_str_ln
-    lda print_line_cursor
-    sta print_char_cursor
-    lda print_line_cursor+1
-    sta print_char_cursor+1
-    lda #<str10
-    sta print_str_ln.str
-    lda #>str10
-    sta print_str_ln.str+1
-    jsr print_str_ln
-    lda print_line_cursor
-    sta print_char_cursor
-    lda print_line_cursor+1
-    sta print_char_cursor+1
-    lda #<str11
-    sta print_str_ln.str
-    lda #>str11
-    sta print_str_ln.str+1
-    jsr print_str_ln
-    lda print_line_cursor
-    sta print_char_cursor
-    lda print_line_cursor+1
-    sta print_char_cursor+1
-    lda #<str12
-    sta print_str_ln.str
-    lda #>str12
-    sta print_str_ln.str+1
-    jsr print_str_ln
-    lda print_line_cursor
-    sta print_char_cursor
-    lda print_line_cursor+1
-    sta print_char_cursor+1
-    lda #<str13
-    sta print_str_ln.str
-    lda #>str13
-    sta print_str_ln.str+1
-    jsr print_str_ln
-    lda print_line_cursor
-    sta print_char_cursor
-    lda print_line_cursor+1
-    sta print_char_cursor+1
-    lda #<str14
-    sta print_str_ln.str
-    lda #>str14
-    sta print_str_ln.str+1
-    jsr print_str_ln
-    lda print_line_cursor
-    sta print_char_cursor
-    lda print_line_cursor+1
-    sta print_char_cursor+1
-    lda #<str15
-    sta print_str_ln.str
-    lda #>str15
-    sta print_str_ln.str+1
-    jsr print_str_ln
-    lda print_line_cursor
-    sta print_char_cursor
-    lda print_line_cursor+1
-    sta print_char_cursor+1
-    lda #<str16
-    sta print_str_ln.str
-    lda #>str16
-    sta print_str_ln.str+1
-    jsr print_str_ln
-    lda print_line_cursor
-    sta print_char_cursor
-    lda print_line_cursor+1
-    sta print_char_cursor+1
-    lda #<str17
-    sta print_str_ln.str
-    lda #>str17
-    sta print_str_ln.str+1
-    jsr print_str_ln
-    lda print_line_cursor
-    sta print_char_cursor
-    lda print_line_cursor+1
-    sta print_char_cursor+1
-    lda #<str18
-    sta print_str_ln.str
-    lda #>str18
-    sta print_str_ln.str+1
-    jsr print_str_ln
-    lda print_line_cursor
-    sta print_char_cursor
-    lda print_line_cursor+1
-    sta print_char_cursor+1
-    lda #<str19
-    sta print_str_ln.str
-    lda #>str19
-    sta print_str_ln.str+1
-    jsr print_str_ln
-    lda print_line_cursor
-    sta print_char_cursor
-    lda print_line_cursor+1
-    sta print_char_cursor+1
-    lda #<str20
-    sta print_str_ln.str
-    lda #>str20
-    sta print_str_ln.str+1
-    jsr print_str_ln
+    jsr print_str_lines
     jmp b3
   breturn:
     rts
   b3:
-    ldx #KEY_C
+    ldy #KEY_C
     jsr keyboard_key_pressed
     cmp #0
     beq b5
@@ -325,40 +126,19 @@ menu: {
   b5:
     inc last
     jmp b3
-    str: .text "C64DTV Graphics Modes            EMBLHCC@"
-    str1: .text "                                 CCMIIHO@"
-    str2: .text "                                 MMMNCUL@"
-    str3: .text "----------------------------------------@"
-    str4: .text "1. Standard Char             (V) 0000000@"
-    str5: .text "2. Extended Color Char       (V) 1000000@"
-    str6: .text "3. Multicolor Char           (V) 0100000@"
-    str7: .text "4. Standard Bitmap           (V) 0010000@"
-    str8: .text "5. Multicolor Bitmap         (V) 0110000@"
-    str9: .text "6. High Color Standard Char  (H) 0000100@"
-    str10: .text "7. High Extended Color Char  (H) 1000100@"
-    str11: .text "8. High Multicolor Char      (H) 0100100@"
-    str12: .text "9. High Multicolor Bitmap    (H) 0110100@"
-    str13: .text "a. Sixs Fred                 (D) 1111100@"
-    str14: .text "b. Sixs Fred 2               (D) 1111000@"
-    str15: .text "c. Two Plane Bitmap          (D) 1011100@"
-    str16: .text "d. Two Plane Multicol Bitmap (D) 1111100@"
-    str17: .text "e. 8bpp Pixel Cell           (D) 1101110@"
-    str18: .text "f. Chunky 8bpp Bitmap        (D) 1101111@"
-    str19: .text "----------------------------------------@"
-    str20: .text "    (V) vicII (H) vicII+hicol (D) c64dtv@"
 }
 mode_twoplanebitmap: {
-    .label c = 2
-    .label gfxa = 2
-    .label ay = 4
-    .label gfxb = 2
-    .label by = 4
+    .label c = 4
+    .label gfxa = 4
+    .label ay = 6
+    .label gfxb = 4
+    .label by = 6
     lda #DTV_CONTROL_HIGHCOLOR_ON|DTV_CONTROL_LINEAR_ADDRESSING_ON
     sta DTV_CONTROL
     lda #VIC_ECM|VIC_BMM|VIC_DEN|VIC_RSEL|3
-    sta D011
+    sta VIC_CONTROL
     lda #VIC_CSEL
-    sta D016
+    sta VIC_CONTROL2
     lda #<TWOPLANE_PLANEA
     sta DTV_PLANEA_START_LO
     lda #>TWOPLANE_PLANEA
@@ -459,7 +239,7 @@ mode_twoplanebitmap: {
   breturn:
     rts
   b9:
-    ldx #KEY_SPACE
+    ldy #KEY_SPACE
     jsr keyboard_key_pressed
     cmp #0
     beq b9
@@ -475,16 +255,14 @@ mode_twoplanebitmap: {
     jmp b5
 }
 keyboard_key_pressed: {
-    txa
+    tya
+    and #7
+    tax
+    tya
     lsr
     lsr
     lsr
     jsr keyboard_matrix_read
-    tay
-    txa
-    and #7
-    tax
-    tya
     and keyboard_matrix_col_bitmask,x
     rts
 }
@@ -496,11 +274,50 @@ keyboard_matrix_read: {
     eor #$ff
     rts
 }
-print_str_ln: {
-    .label str = 2
-    jsr print_str
-    jsr print_ln
+print_str_lines: {
+    .label str = 4
+    lda #<MENU_SCREEN
+    sta print_line_cursor
+    lda #>MENU_SCREEN
+    sta print_line_cursor+1
+    lda #<MENU_SCREEN
+    sta print_char_cursor
+    lda #>MENU_SCREEN
+    sta print_char_cursor+1
+    lda #<MENU_TEXT
+    sta str
+    lda #>MENU_TEXT
+    sta str+1
+  b1:
+    ldy #0
+    lda (str),y
+    cmp #'@'
+    bne b4
     rts
+  b4:
+    ldy #0
+    lda (str),y
+    inc str
+    bne !+
+    inc str+1
+  !:
+    cmp #'@'
+    beq b5
+    ldy #0
+    sta (print_char_cursor),y
+    inc print_char_cursor
+    bne !+
+    inc print_char_cursor+1
+  !:
+  b5:
+    cmp #'@'
+    bne b4
+    jsr print_ln
+    lda print_line_cursor
+    sta print_char_cursor
+    lda print_line_cursor+1
+    sta print_char_cursor+1
+    jmp b1
 }
 print_ln: {
   b1:
@@ -520,28 +337,6 @@ print_ln: {
     bcc b1
   !:
     rts
-}
-print_str: {
-    .label str = 2
-  b1:
-    ldy #0
-    lda (str),y
-    cmp #'@'
-    bne b2
-    rts
-  b2:
-    ldy #0
-    lda (str),y
-    sta (print_char_cursor),y
-    inc print_char_cursor
-    bne !+
-    inc print_char_cursor+1
-  !:
-    inc str
-    bne !+
-    inc str+1
-  !:
-    jmp b1
 }
 print_cls: {
     .label sc = 2
@@ -570,3 +365,4 @@ print_set_screen: {
 }
   keyboard_matrix_row_bitmask: .byte $fe, $fd, $fb, $f7, $ef, $df, $bf, $7f
   keyboard_matrix_col_bitmask: .byte 1, 2, 4, 8, $10, $20, $40, $80
+  MENU_TEXT: .text "C64DTV Graphics Modes            EMBLHCC@"+"                                 CCMIIHO@"+"                                 MMMNCUL@"+"----------------------------------------@"+"1. Standard Char             (V) 0000000@"+"2. Extended Color Char       (V) 1000000@"+"3. Multicolor Char           (V) 0100000@"+"4. Standard Bitmap           (V) 0010000@"+"5. Multicolor Bitmap         (V) 0110000@"+"6. High Color Standard Char  (H) 0000100@"+"7. High Extended Color Char  (H) 1000100@"+"8. High Multicolor Char      (H) 0100100@"+"9. High Multicolor Bitmap    (H) 0110100@"+"a. Sixs Fred                 (D) 1111100@"+"b. Sixs Fred 2               (D) 1111000@"+"c. Two Plane Bitmap          (D) 1011100@"+"d. Two Plane Multicol Bitmap (D) 1111100@"+"e. 8bpp Pixel Cell           (D) 1101110@"+"f. Chunky 8bpp Bitmap        (D) 1101111@"+"----------------------------------------@"+"    (V) vicII (H) vicII+hicol (D) c64dtv@"+"@"

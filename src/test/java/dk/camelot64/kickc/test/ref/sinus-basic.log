@@ -30,6 +30,26 @@ byte* print_screen = $0400;
 byte* print_line_cursor = print_screen;
 byte* print_char_cursor = print_line_cursor;
 
+// Print a number of zero-terminated strings, each followed by a newline.
+// The sequence of lines is terminated by another zero.
+void print_str_lines(byte* str) {
+    while(*str!='@') {
+        do {
+            byte ch = *(str++);
+            if(ch!='@') {
+                *(print_char_cursor++) = ch;
+            }
+        } while (ch!='@');
+        print_ln();
+    }
+}
+
+// Print a zero-terminated string followed by a newline
+void print_str_ln(byte* str) {
+    print_str(str);
+    print_ln();
+}
+
 // Print a zero-terminated string
 void print_str(byte* str) {
     while(*str!='@') {
@@ -43,13 +63,6 @@ void print_str_at(byte* str, byte* at) {
         *(at++) = *(str++);
     }
 }
-
-// Print a zero-terminated string followed by a newline
-void print_str_ln(byte* str) {
-    print_str(str);
-    print_ln();
-}
-
 
 // Print a newline
 void print_ln() {
@@ -127,6 +140,8 @@ void print_set_screen(byte* screen) {
     print_char_cursor = print_line_cursor;
 }
 
+Adding pre/post-modifier (byte*) print_str_lines::str ← ++ (byte*) print_str_lines::str
+Adding pre/post-modifier (byte*) print_char_cursor ← ++ (byte*) print_char_cursor
 Adding pre/post-modifier (byte*) print_char_cursor ← ++ (byte*) print_char_cursor
 Adding pre/post-modifier (byte*) print_str::str ← ++ (byte*) print_str::str
 Adding pre/post-modifier (byte*) print_str_at::at ← ++ (byte*) print_str_at::at
@@ -417,6 +432,35 @@ STATEMENTS
   (byte*) print_screen ← (word/signed word/dword/signed dword) 1024
   (byte*) print_line_cursor ← (byte*) print_screen
   (byte*) print_char_cursor ← (byte*) print_line_cursor
+proc (void()) print_str_lines((byte*) print_str_lines::str)
+print_str_lines::@1:
+  (boolean~) print_str_lines::$0 ← *((byte*) print_str_lines::str) != (byte) '@'
+  if((boolean~) print_str_lines::$0) goto print_str_lines::@2
+  goto print_str_lines::@3
+print_str_lines::@2:
+print_str_lines::@4:
+  (byte) print_str_lines::ch ← *((byte*) print_str_lines::str)
+  (byte*) print_str_lines::str ← ++ (byte*) print_str_lines::str
+  (boolean~) print_str_lines::$1 ← (byte) print_str_lines::ch != (byte) '@'
+  (boolean~) print_str_lines::$2 ← ! (boolean~) print_str_lines::$1
+  if((boolean~) print_str_lines::$2) goto print_str_lines::@5
+  *((byte*) print_char_cursor) ← (byte) print_str_lines::ch
+  (byte*) print_char_cursor ← ++ (byte*) print_char_cursor
+print_str_lines::@5:
+  (boolean~) print_str_lines::$3 ← (byte) print_str_lines::ch != (byte) '@'
+  if((boolean~) print_str_lines::$3) goto print_str_lines::@4
+  (void~) print_str_lines::$4 ← call print_ln 
+  goto print_str_lines::@1
+print_str_lines::@3:
+print_str_lines::@return:
+  return 
+endproc // print_str_lines()
+proc (void()) print_str_ln((byte*) print_str_ln::str)
+  (void~) print_str_ln::$0 ← call print_str (byte*) print_str_ln::str 
+  (void~) print_str_ln::$1 ← call print_ln 
+print_str_ln::@return:
+  return 
+endproc // print_str_ln()
 proc (void()) print_str((byte*) print_str::str)
 print_str::@1:
   (boolean~) print_str::$0 ← *((byte*) print_str::str) != (byte) '@'
@@ -445,12 +489,6 @@ print_str_at::@3:
 print_str_at::@return:
   return 
 endproc // print_str_at()
-proc (void()) print_str_ln((byte*) print_str_ln::str)
-  (void~) print_str_ln::$0 ← call print_str (byte*) print_str_ln::str 
-  (void~) print_str_ln::$1 ← call print_ln 
-print_str_ln::@return:
-  return 
-endproc // print_str_ln()
 proc (void()) print_ln()
 print_ln::@1:
   (byte*~) print_ln::$0 ← (byte*) print_line_cursor + (byte/signed byte/word/signed word/dword/signed dword) 40
@@ -867,6 +905,20 @@ SYMBOLS
 (label) print_str_at::@return
 (byte*) print_str_at::at
 (byte*) print_str_at::str
+(void()) print_str_lines((byte*) print_str_lines::str)
+(boolean~) print_str_lines::$0
+(boolean~) print_str_lines::$1
+(boolean~) print_str_lines::$2
+(boolean~) print_str_lines::$3
+(void~) print_str_lines::$4
+(label) print_str_lines::@1
+(label) print_str_lines::@2
+(label) print_str_lines::@3
+(label) print_str_lines::@4
+(label) print_str_lines::@5
+(label) print_str_lines::@return
+(byte) print_str_lines::ch
+(byte*) print_str_lines::str
 (void()) print_str_ln((byte*) print_str_ln::str)
 (void~) print_str_ln::$0
 (void~) print_str_ln::$1
@@ -941,6 +993,54 @@ INITIAL CONTROL FLOW GRAPH
   (byte*) print_line_cursor ← (byte*) print_screen
   (byte*) print_char_cursor ← (byte*) print_line_cursor
   to:@1
+print_str_lines: scope:[print_str_lines]  from
+  to:print_str_lines::@1
+print_str_lines::@1: scope:[print_str_lines]  from print_str_lines print_str_lines::@9
+  (boolean~) print_str_lines::$0 ← *((byte*) print_str_lines::str) != (byte) '@'
+  if((boolean~) print_str_lines::$0) goto print_str_lines::@2
+  to:print_str_lines::@6
+print_str_lines::@2: scope:[print_str_lines]  from print_str_lines::@1 print_str_lines::@7
+  to:print_str_lines::@4
+print_str_lines::@6: scope:[print_str_lines]  from print_str_lines::@1
+  to:print_str_lines::@3
+print_str_lines::@3: scope:[print_str_lines]  from print_str_lines::@10 print_str_lines::@6
+  to:print_str_lines::@return
+print_str_lines::@7: scope:[print_str_lines]  from
+  to:print_str_lines::@2
+print_str_lines::@4: scope:[print_str_lines]  from print_str_lines::@2 print_str_lines::@5
+  (byte) print_str_lines::ch ← *((byte*) print_str_lines::str)
+  (byte*) print_str_lines::str ← ++ (byte*) print_str_lines::str
+  (boolean~) print_str_lines::$1 ← (byte) print_str_lines::ch != (byte) '@'
+  (boolean~) print_str_lines::$2 ← ! (boolean~) print_str_lines::$1
+  if((boolean~) print_str_lines::$2) goto print_str_lines::@5
+  to:print_str_lines::@8
+print_str_lines::@5: scope:[print_str_lines]  from print_str_lines::@4 print_str_lines::@8
+  (boolean~) print_str_lines::$3 ← (byte) print_str_lines::ch != (byte) '@'
+  if((boolean~) print_str_lines::$3) goto print_str_lines::@4
+  to:print_str_lines::@9
+print_str_lines::@8: scope:[print_str_lines]  from print_str_lines::@4
+  *((byte*) print_char_cursor) ← (byte) print_str_lines::ch
+  (byte*) print_char_cursor ← ++ (byte*) print_char_cursor
+  to:print_str_lines::@5
+print_str_lines::@9: scope:[print_str_lines]  from print_str_lines::@5
+  (void~) print_str_lines::$4 ← call print_ln 
+  to:print_str_lines::@1
+print_str_lines::@10: scope:[print_str_lines]  from
+  to:print_str_lines::@3
+print_str_lines::@return: scope:[print_str_lines]  from print_str_lines::@3
+  return 
+  to:@return
+@1: scope:[]  from @begin
+  to:@2
+print_str_ln: scope:[print_str_ln]  from
+  (void~) print_str_ln::$0 ← call print_str (byte*) print_str_ln::str 
+  (void~) print_str_ln::$1 ← call print_ln 
+  to:print_str_ln::@return
+print_str_ln::@return: scope:[print_str_ln]  from print_str_ln
+  return 
+  to:@return
+@2: scope:[]  from @1
+  to:@3
 print_str: scope:[print_str]  from
   to:print_str::@1
 print_str::@1: scope:[print_str]  from print_str print_str::@2
@@ -963,8 +1063,8 @@ print_str::@6: scope:[print_str]  from
 print_str::@return: scope:[print_str]  from print_str::@3
   return 
   to:@return
-@1: scope:[]  from @begin
-  to:@2
+@3: scope:[]  from @2
+  to:@4
 print_str_at: scope:[print_str_at]  from
   to:print_str_at::@1
 print_str_at::@1: scope:[print_str_at]  from print_str_at print_str_at::@2
@@ -987,17 +1087,8 @@ print_str_at::@6: scope:[print_str_at]  from
 print_str_at::@return: scope:[print_str_at]  from print_str_at::@3
   return 
   to:@return
-@2: scope:[]  from @1
-  to:@3
-print_str_ln: scope:[print_str_ln]  from
-  (void~) print_str_ln::$0 ← call print_str (byte*) print_str_ln::str 
-  (void~) print_str_ln::$1 ← call print_ln 
-  to:print_str_ln::@return
-print_str_ln::@return: scope:[print_str_ln]  from print_str_ln
-  return 
-  to:@return
-@3: scope:[]  from @2
-  to:@4
+@4: scope:[]  from @3
+  to:@5
 print_ln: scope:[print_ln]  from
   to:print_ln::@1
 print_ln::@1: scope:[print_ln]  from print_ln print_ln::@1
@@ -1012,8 +1103,8 @@ print_ln::@2: scope:[print_ln]  from print_ln::@1
 print_ln::@return: scope:[print_ln]  from print_ln::@2
   return 
   to:@return
-@4: scope:[]  from @3
-  to:@5
+@5: scope:[]  from @4
+  to:@6
 print_sword: scope:[print_sword]  from
   (boolean~) print_sword::$0 ← (signed word) print_sword::w < (byte/signed byte/word/signed word/dword/signed dword) 0
   (boolean~) print_sword::$1 ← ! (boolean~) print_sword::$0
@@ -1031,8 +1122,8 @@ print_sword::@2: scope:[print_sword]  from print_sword
 print_sword::@return: scope:[print_sword]  from print_sword::@1
   return 
   to:@return
-@5: scope:[]  from @4
-  to:@6
+@6: scope:[]  from @5
+  to:@7
 print_sbyte: scope:[print_sbyte]  from
   (boolean~) print_sbyte::$0 ← (signed byte) print_sbyte::b < (byte/signed byte/word/signed word/dword/signed dword) 0
   (boolean~) print_sbyte::$1 ← ! (boolean~) print_sbyte::$0
@@ -1050,8 +1141,8 @@ print_sbyte::@2: scope:[print_sbyte]  from print_sbyte
 print_sbyte::@return: scope:[print_sbyte]  from print_sbyte::@1
   return 
   to:@return
-@6: scope:[]  from @5
-  to:@7
+@7: scope:[]  from @6
+  to:@8
 print_word: scope:[print_word]  from
   (byte~) print_word::$0 ← > (word) print_word::w
   (void~) print_word::$1 ← call print_byte (byte~) print_word::$0 
@@ -1061,8 +1152,8 @@ print_word: scope:[print_word]  from
 print_word::@return: scope:[print_word]  from print_word
   return 
   to:@return
-@7: scope:[]  from @6
-  to:@8
+@8: scope:[]  from @7
+  to:@9
 print_dword: scope:[print_dword]  from
   (word~) print_dword::$0 ← > (dword) print_dword::dw
   (void~) print_dword::$1 ← call print_word (word~) print_dword::$0 
@@ -1072,8 +1163,8 @@ print_dword: scope:[print_dword]  from
 print_dword::@return: scope:[print_dword]  from print_dword
   return 
   to:@return
-@8: scope:[]  from @7
-  to:@9
+@9: scope:[]  from @8
+  to:@10
 print_sdword: scope:[print_sdword]  from
   (boolean~) print_sdword::$0 ← (signed dword) print_sdword::dw < (byte/signed byte/word/signed word/dword/signed dword) 0
   (boolean~) print_sdword::$1 ← ! (boolean~) print_sdword::$0
@@ -1091,8 +1182,8 @@ print_sdword::@2: scope:[print_sdword]  from print_sdword
 print_sdword::@return: scope:[print_sdword]  from print_sdword::@1
   return 
   to:@return
-@9: scope:[]  from @8
-  to:@10
+@10: scope:[]  from @9
+  to:@11
 print_byte: scope:[print_byte]  from
   (byte[]) print_byte::hextab ← (string) "0123456789abcdef"
   (byte~) print_byte::$0 ← (byte) print_byte::b >> (byte/signed byte/word/signed word/dword/signed dword) 4
@@ -1103,8 +1194,8 @@ print_byte: scope:[print_byte]  from
 print_byte::@return: scope:[print_byte]  from print_byte
   return 
   to:@return
-@10: scope:[]  from @9
-  to:@11
+@11: scope:[]  from @10
+  to:@12
 print_char: scope:[print_char]  from
   *((byte*) print_char_cursor) ← (byte) print_char::ch
   (byte*) print_char_cursor ← ++ (byte*) print_char_cursor
@@ -1112,8 +1203,8 @@ print_char: scope:[print_char]  from
 print_char::@return: scope:[print_char]  from print_char
   return 
   to:@return
-@11: scope:[]  from @10
-  to:@12
+@12: scope:[]  from @11
+  to:@13
 print_cls: scope:[print_cls]  from
   (byte*) print_cls::sc ← (byte*) print_screen
   to:print_cls::@1
@@ -1131,8 +1222,8 @@ print_cls::@2: scope:[print_cls]  from print_cls::@1
 print_cls::@return: scope:[print_cls]  from print_cls::@2
   return 
   to:@return
-@12: scope:[]  from @11
-  to:@13
+@13: scope:[]  from @12
+  to:@14
 print_set_screen: scope:[print_set_screen]  from
   (byte*) print_screen ← (byte*) print_set_screen::screen
   (byte*) print_line_cursor ← (byte*) print_screen
@@ -1141,10 +1232,10 @@ print_set_screen: scope:[print_set_screen]  from
 print_set_screen::@return: scope:[print_set_screen]  from print_set_screen
   return 
   to:@return
-@13: scope:[]  from @12
+@14: scope:[]  from @13
   (byte*) memLo ← ((byte*)) (byte/word/signed word/dword/signed dword) 254
   (byte*) memHi ← ((byte*)) (byte/word/signed word/dword/signed dword) 255
-  to:@14
+  to:@15
 prepareMEM: scope:[prepareMEM]  from
   (byte~) prepareMEM::$0 ← < (byte*) prepareMEM::mem
   *((byte*) memLo) ← (byte~) prepareMEM::$0
@@ -1154,8 +1245,8 @@ prepareMEM: scope:[prepareMEM]  from
 prepareMEM::@return: scope:[prepareMEM]  from prepareMEM
   return 
   to:@return
-@14: scope:[]  from @13
-  to:@15
+@15: scope:[]  from @14
+  to:@16
 setFAC: scope:[setFAC]  from
   (byte*~) setFAC::$0 ← ((byte*)) (word) setFAC::w
   (void~) setFAC::$1 ← call prepareMEM (byte*~) setFAC::$0 
@@ -1164,8 +1255,8 @@ setFAC: scope:[setFAC]  from
 setFAC::@return: scope:[setFAC]  from setFAC
   return 
   to:@return
-@15: scope:[]  from @14
-  to:@16
+@16: scope:[]  from @15
+  to:@17
 getFAC: scope:[getFAC]  from
   asm { jsr$b1aa sty$fe sta$ff  }
   (word) getFAC::w ← { *((byte*) memHi), *((byte*) memLo) }
@@ -1177,24 +1268,24 @@ getFAC::@return: scope:[getFAC]  from getFAC getFAC::@1
   to:@return
 getFAC::@1: scope:[getFAC]  from
   to:getFAC::@return
-@16: scope:[]  from @15
-  to:@17
+@17: scope:[]  from @16
+  to:@18
 setARGtoFAC: scope:[setARGtoFAC]  from
   asm { jsr$bc0f  }
   to:setARGtoFAC::@return
 setARGtoFAC::@return: scope:[setARGtoFAC]  from setARGtoFAC
   return 
   to:@return
-@17: scope:[]  from @16
-  to:@18
+@18: scope:[]  from @17
+  to:@19
 setFACtoARG: scope:[setFACtoARG]  from
   asm { jsr$bbfc  }
   to:setFACtoARG::@return
 setFACtoARG::@return: scope:[setFACtoARG]  from setFACtoARG
   return 
   to:@return
-@18: scope:[]  from @17
-  to:@19
+@19: scope:[]  from @18
+  to:@20
 setMEMtoFAC: scope:[setMEMtoFAC]  from
   (void~) setMEMtoFAC::$0 ← call prepareMEM (byte*) setMEMtoFAC::mem 
   asm { ldx$fe ldy$ff jsr$bbd4  }
@@ -1202,8 +1293,8 @@ setMEMtoFAC: scope:[setMEMtoFAC]  from
 setMEMtoFAC::@return: scope:[setMEMtoFAC]  from setMEMtoFAC
   return 
   to:@return
-@19: scope:[]  from @18
-  to:@20
+@20: scope:[]  from @19
+  to:@21
 setFACtoMEM: scope:[setFACtoMEM]  from
   (void~) setFACtoMEM::$0 ← call prepareMEM (byte*) setFACtoMEM::mem 
   asm { lda$fe ldy$ff jsr$bba2  }
@@ -1211,24 +1302,24 @@ setFACtoMEM: scope:[setFACtoMEM]  from
 setFACtoMEM::@return: scope:[setFACtoMEM]  from setFACtoMEM
   return 
   to:@return
-@20: scope:[]  from @19
-  to:@21
+@21: scope:[]  from @20
+  to:@22
 setFACtoPIhalf: scope:[setFACtoPIhalf]  from
   asm { lda#$e0 ldy#$e2 jsr$bba2  }
   to:setFACtoPIhalf::@return
 setFACtoPIhalf::@return: scope:[setFACtoPIhalf]  from setFACtoPIhalf
   return 
   to:@return
-@21: scope:[]  from @20
-  to:@22
+@22: scope:[]  from @21
+  to:@23
 setFACto2PI: scope:[setFACto2PI]  from
   asm { lda#$e5 ldy#$e2 jsr$bba2  }
   to:setFACto2PI::@return
 setFACto2PI::@return: scope:[setFACto2PI]  from setFACto2PI
   return 
   to:@return
-@22: scope:[]  from @21
-  to:@23
+@23: scope:[]  from @22
+  to:@24
 setARGtoMEM: scope:[setARGtoMEM]  from
   (void~) setARGtoMEM::$0 ← call prepareMEM (byte*) setARGtoMEM::mem 
   asm { lda$fe ldy$ff jsr$ba8c  }
@@ -1236,8 +1327,8 @@ setARGtoMEM: scope:[setARGtoMEM]  from
 setARGtoMEM::@return: scope:[setARGtoMEM]  from setARGtoMEM
   return 
   to:@return
-@23: scope:[]  from @22
-  to:@24
+@24: scope:[]  from @23
+  to:@25
 addMEMtoFAC: scope:[addMEMtoFAC]  from
   (void~) addMEMtoFAC::$0 ← call prepareMEM (byte*) addMEMtoFAC::mem 
   asm { lda$fe ldy$ff jsr$b867  }
@@ -1245,16 +1336,16 @@ addMEMtoFAC: scope:[addMEMtoFAC]  from
 addMEMtoFAC::@return: scope:[addMEMtoFAC]  from addMEMtoFAC
   return 
   to:@return
-@24: scope:[]  from @23
-  to:@25
+@25: scope:[]  from @24
+  to:@26
 addARGtoFAC: scope:[addARGtoFAC]  from
   asm { jsr$b86a  }
   to:addARGtoFAC::@return
 addARGtoFAC::@return: scope:[addARGtoFAC]  from addARGtoFAC
   return 
   to:@return
-@25: scope:[]  from @24
-  to:@26
+@26: scope:[]  from @25
+  to:@27
 subFACfromMEM: scope:[subFACfromMEM]  from
   (void~) subFACfromMEM::$0 ← call prepareMEM (byte*) subFACfromMEM::mem 
   asm { lda$fe ldy$ff jsr$b850  }
@@ -1262,16 +1353,16 @@ subFACfromMEM: scope:[subFACfromMEM]  from
 subFACfromMEM::@return: scope:[subFACfromMEM]  from subFACfromMEM
   return 
   to:@return
-@26: scope:[]  from @25
-  to:@27
+@27: scope:[]  from @26
+  to:@28
 subFACfromARG: scope:[subFACfromARG]  from
   asm { jsr$b853  }
   to:subFACfromARG::@return
 subFACfromARG::@return: scope:[subFACfromARG]  from subFACfromARG
   return 
   to:@return
-@27: scope:[]  from @26
-  to:@28
+@28: scope:[]  from @27
+  to:@29
 divMEMbyFAC: scope:[divMEMbyFAC]  from
   (void~) divMEMbyFAC::$0 ← call prepareMEM (byte*) divMEMbyFAC::mem 
   asm { lda$fe ldy$ff jsr$bb0f  }
@@ -1279,8 +1370,8 @@ divMEMbyFAC: scope:[divMEMbyFAC]  from
 divMEMbyFAC::@return: scope:[divMEMbyFAC]  from divMEMbyFAC
   return 
   to:@return
-@28: scope:[]  from @27
-  to:@29
+@29: scope:[]  from @28
+  to:@30
 mulFACbyMEM: scope:[mulFACbyMEM]  from
   (void~) mulFACbyMEM::$0 ← call prepareMEM (byte*) mulFACbyMEM::mem 
   asm { lda$fe ldy$ff jsr$ba28  }
@@ -1288,8 +1379,8 @@ mulFACbyMEM: scope:[mulFACbyMEM]  from
 mulFACbyMEM::@return: scope:[mulFACbyMEM]  from mulFACbyMEM
   return 
   to:@return
-@29: scope:[]  from @28
-  to:@30
+@30: scope:[]  from @29
+  to:@31
 pwrMEMbyFAC: scope:[pwrMEMbyFAC]  from
   (void~) pwrMEMbyFAC::$0 ← call prepareMEM (byte*) pwrMEMbyFAC::mem 
   asm { lda$fe ldy$ff jsr$bf78  }
@@ -1297,88 +1388,88 @@ pwrMEMbyFAC: scope:[pwrMEMbyFAC]  from
 pwrMEMbyFAC::@return: scope:[pwrMEMbyFAC]  from pwrMEMbyFAC
   return 
   to:@return
-@30: scope:[]  from @29
-  to:@31
+@31: scope:[]  from @30
+  to:@32
 intFAC: scope:[intFAC]  from
   asm { jsr$bccc  }
   to:intFAC::@return
 intFAC::@return: scope:[intFAC]  from intFAC
   return 
   to:@return
-@31: scope:[]  from @30
-  to:@32
+@32: scope:[]  from @31
+  to:@33
 sinFAC: scope:[sinFAC]  from
   asm { jsr$e26b  }
   to:sinFAC::@return
 sinFAC::@return: scope:[sinFAC]  from sinFAC
   return 
   to:@return
-@32: scope:[]  from @31
-  to:@33
+@33: scope:[]  from @32
+  to:@34
 cosFAC: scope:[cosFAC]  from
   asm { jsr$e264  }
   to:cosFAC::@return
 cosFAC::@return: scope:[cosFAC]  from cosFAC
   return 
   to:@return
-@33: scope:[]  from @32
-  to:@34
+@34: scope:[]  from @33
+  to:@35
 tanFAC: scope:[tanFAC]  from
   asm { jsr$e2b4  }
   to:tanFAC::@return
 tanFAC::@return: scope:[tanFAC]  from tanFAC
   return 
   to:@return
-@34: scope:[]  from @33
-  to:@35
+@35: scope:[]  from @34
+  to:@36
 atnFAC: scope:[atnFAC]  from
   asm { jsr$e303  }
   to:atnFAC::@return
 atnFAC::@return: scope:[atnFAC]  from atnFAC
   return 
   to:@return
-@35: scope:[]  from @34
-  to:@36
+@36: scope:[]  from @35
+  to:@37
 sqrFAC: scope:[sqrFAC]  from
   asm { jsr$bf71  }
   to:sqrFAC::@return
 sqrFAC::@return: scope:[sqrFAC]  from sqrFAC
   return 
   to:@return
-@36: scope:[]  from @35
-  to:@37
+@37: scope:[]  from @36
+  to:@38
 expFAC: scope:[expFAC]  from
   asm { jsr$bfed  }
   to:expFAC::@return
 expFAC::@return: scope:[expFAC]  from expFAC
   return 
   to:@return
-@37: scope:[]  from @36
-  to:@38
+@38: scope:[]  from @37
+  to:@39
 logFAC: scope:[logFAC]  from
   asm { jsr$b9ea  }
   to:logFAC::@return
 logFAC::@return: scope:[logFAC]  from logFAC
   return 
   to:@return
-@38: scope:[]  from @37
-  to:@39
+@39: scope:[]  from @38
+  to:@40
 divFACby10: scope:[divFACby10]  from
   asm { jsr$bafe  }
   to:divFACby10::@return
 divFACby10::@return: scope:[divFACby10]  from divFACby10
   return 
   to:@return
-@39: scope:[]  from @38
-  to:@40
+@40: scope:[]  from @39
+  to:@41
 mulFACby10: scope:[mulFACby10]  from
   asm { jsr$bae2  }
   to:mulFACby10::@return
 mulFACby10::@return: scope:[mulFACby10]  from mulFACby10
   return 
   to:@return
-@40: scope:[]  from @39
-  to:@41
+@41: scope:[]  from @40
+  to:@42
 main: scope:[main]  from
   (byte[]) main::f_i ← { (byte/signed byte/word/signed word/dword/signed dword) 0, (byte/signed byte/word/signed word/dword/signed dword) 0, (byte/signed byte/word/signed word/dword/signed dword) 0, (byte/signed byte/word/signed word/dword/signed dword) 0, (byte/signed byte/word/signed word/dword/signed dword) 0 }
   (byte[]) main::f_127 ← { (byte/signed byte/word/signed word/dword/signed dword) 0, (byte/signed byte/word/signed word/dword/signed dword) 0, (byte/signed byte/word/signed word/dword/signed dword) 0, (byte/signed byte/word/signed word/dword/signed dword) 0, (byte/signed byte/word/signed word/dword/signed dword) 0 }
@@ -1410,13 +1501,14 @@ main::@2: scope:[main]  from main::@1
 main::@return: scope:[main]  from main::@2
   return 
   to:@return
-@41: scope:[]  from @40
+@42: scope:[]  from @41
   call main 
   to:@end
-@end: scope:[]  from @41
+@end: scope:[]  from @42
 
-Removing unused procedure print_str_at
+Removing unused procedure print_str_lines
 Removing unused procedure print_str_ln
+Removing unused procedure print_str_at
 Removing unused procedure print_sword
 Removing unused procedure print_sbyte
 Removing unused procedure print_sdword
@@ -1477,10 +1569,10 @@ Removing empty block @9
 Removing empty block @10
 Removing empty block @11
 Removing empty block @12
-Removing empty block @14
+Removing empty block @13
 Removing empty block @15
-Removing empty block getFAC::@1
 Removing empty block @16
+Removing empty block getFAC::@1
 Removing empty block @17
 Removing empty block @18
 Removing empty block @19
@@ -1505,6 +1597,7 @@ Removing empty block @37
 Removing empty block @38
 Removing empty block @39
 Removing empty block @40
+Removing empty block @41
 Removing empty block main::@2
 PROCEDURE MODIFY VARIABLE ANALYSIS
 print_ln modifies print_line_cursor
@@ -1537,7 +1630,7 @@ CONTROL FLOW GRAPH SSA WITH ASSIGNMENT CALL & RETURN
   (byte*) print_screen#0 ← ((byte*)) (word/signed word/dword/signed dword) 1024
   (byte*) print_line_cursor#0 ← (byte*) print_screen#0
   (byte*) print_char_cursor#0 ← (byte*) print_line_cursor#0
-  to:@13
+  to:@14
 print_ln: scope:[print_ln]  from main::@15
   (byte*) print_char_cursor#29 ← phi( main::@15/(byte*) print_char_cursor#11 )
   (byte*) print_line_cursor#12 ← phi( main::@15/(byte*) print_line_cursor#13 )
@@ -1621,12 +1714,12 @@ print_char::@return: scope:[print_char]  from print_char
   (byte*) print_char_cursor#10 ← (byte*) print_char_cursor#24
   return 
   to:@return
-@13: scope:[]  from @begin
+@14: scope:[]  from @begin
   (byte*) print_line_cursor#16 ← phi( @begin/(byte*) print_line_cursor#0 )
   (byte*) print_char_cursor#35 ← phi( @begin/(byte*) print_char_cursor#0 )
   (byte*) memLo#0 ← ((byte*)) (byte/word/signed word/dword/signed dword) 254
   (byte*) memHi#0 ← ((byte*)) (byte/word/signed word/dword/signed dword) 255
-  to:@41
+  to:@42
 prepareMEM: scope:[prepareMEM]  from addMEMtoFAC divMEMbyFAC mulFACbyMEM setFAC setMEMtoFAC
   (byte*) prepareMEM::mem#5 ← phi( addMEMtoFAC/(byte*) prepareMEM::mem#2 divMEMbyFAC/(byte*) prepareMEM::mem#3 mulFACbyMEM/(byte*) prepareMEM::mem#4 setFAC/(byte*) prepareMEM::mem#0 setMEMtoFAC/(byte*) prepareMEM::mem#1 )
   (byte~) prepareMEM::$0 ← < (byte*) prepareMEM::mem#5
@@ -1715,9 +1808,9 @@ divFACby10: scope:[divFACby10]  from main::@3
 divFACby10::@return: scope:[divFACby10]  from divFACby10
   return 
   to:@return
-main: scope:[main]  from @41
-  (byte*) print_line_cursor#29 ← phi( @41/(byte*) print_line_cursor#14 )
-  (byte*) print_char_cursor#47 ← phi( @41/(byte*) print_char_cursor#33 )
+main: scope:[main]  from @42
+  (byte*) print_line_cursor#29 ← phi( @42/(byte*) print_line_cursor#14 )
+  (byte*) print_char_cursor#47 ← phi( @42/(byte*) print_char_cursor#33 )
   (byte[]) main::f_i#0 ← { (byte/signed byte/word/signed word/dword/signed dword) 0, (byte/signed byte/word/signed word/dword/signed dword) 0, (byte/signed byte/word/signed word/dword/signed dword) 0, (byte/signed byte/word/signed word/dword/signed dword) 0, (byte/signed byte/word/signed word/dword/signed dword) 0 }
   (byte[]) main::f_127#0 ← { (byte/signed byte/word/signed word/dword/signed dword) 0, (byte/signed byte/word/signed word/dword/signed dword) 0, (byte/signed byte/word/signed word/dword/signed dword) 0, (byte/signed byte/word/signed word/dword/signed dword) 0, (byte/signed byte/word/signed word/dword/signed dword) 0 }
   (byte*) main::f_2pi#0 ← ((byte*)) (word/dword/signed dword) 58085
@@ -1836,23 +1929,23 @@ main::@return: scope:[main]  from main::@16
   (byte*) print_line_cursor#4 ← (byte*) print_line_cursor#10
   return 
   to:@return
-@41: scope:[]  from @13
-  (byte*) print_line_cursor#14 ← phi( @13/(byte*) print_line_cursor#16 )
-  (byte*) print_char_cursor#33 ← phi( @13/(byte*) print_char_cursor#35 )
+@42: scope:[]  from @14
+  (byte*) print_line_cursor#14 ← phi( @14/(byte*) print_line_cursor#16 )
+  (byte*) print_char_cursor#33 ← phi( @14/(byte*) print_char_cursor#35 )
   call main param-assignment
-  to:@42
-@42: scope:[]  from @41
-  (byte*) print_line_cursor#11 ← phi( @41/(byte*) print_line_cursor#4 )
-  (byte*) print_char_cursor#28 ← phi( @41/(byte*) print_char_cursor#13 )
+  to:@43
+@43: scope:[]  from @42
+  (byte*) print_line_cursor#11 ← phi( @42/(byte*) print_line_cursor#4 )
+  (byte*) print_char_cursor#28 ← phi( @42/(byte*) print_char_cursor#13 )
   (byte*) print_char_cursor#14 ← (byte*) print_char_cursor#28
   (byte*) print_line_cursor#5 ← (byte*) print_line_cursor#11
   to:@end
-@end: scope:[]  from @42
+@end: scope:[]  from @43
 
 SYMBOL TABLE SSA
-(label) @13
-(label) @41
+(label) @14
 (label) @42
+(label) @43
 (label) @begin
 (label) @end
 (void()) addMEMtoFAC((byte*) addMEMtoFAC::mem)
@@ -2233,9 +2326,9 @@ Succesful SSA optimization Pass2NopCastElimination
 Culled Empty Block (label) print_ln::@2
 Culled Empty Block (label) print_word::@2
 Culled Empty Block (label) print_byte::@2
-Culled Empty Block (label) @13
+Culled Empty Block (label) @14
 Culled Empty Block (label) main::@5
-Culled Empty Block (label) @42
+Culled Empty Block (label) @43
 Succesful SSA optimization Pass2CullEmptyBlocks
 Not aliassing across scopes: print_line_cursor#6 print_line_cursor#13
 Not aliassing across scopes: print_byte::b#2 print_byte::b#0
@@ -2309,12 +2402,12 @@ Constant inlined setMEMtoFAC::mem#0 = (const byte[]) main::f_127#0
 Constant inlined mulFACbyMEM::mem#1 = (const byte[]) main::f_127#0
 Constant inlined setFAC::w#0 = (word/signed word/dword/signed dword) 1275
 Succesful SSA optimization Pass2ConstantInlining
-Block Sequence Planned @begin @41 @end main main::@3 main::@4 main::@1 main::@6 main::@7 main::@8 main::@9 main::@10 main::@11 main::@12 main::@13 main::@14 main::@15 main::@16 main::@return print_ln print_ln::@1 print_ln::@return print_word print_word::@1 print_word::@return print_byte print_byte::@1 print_byte::@return print_char print_char::@return getFAC getFAC::@return addMEMtoFAC addMEMtoFAC::@1 addMEMtoFAC::@return prepareMEM prepareMEM::@return mulFACbyMEM mulFACbyMEM::@1 mulFACbyMEM::@return sinFAC sinFAC::@return divMEMbyFAC divMEMbyFAC::@1 divMEMbyFAC::@return setFAC setFAC::@1 setFAC::@return setMEMtoFAC setMEMtoFAC::@1 setMEMtoFAC::@return divFACby10 divFACby10::@return 
+Block Sequence Planned @begin @42 @end main main::@3 main::@4 main::@1 main::@6 main::@7 main::@8 main::@9 main::@10 main::@11 main::@12 main::@13 main::@14 main::@15 main::@16 main::@return print_ln print_ln::@1 print_ln::@return print_word print_word::@1 print_word::@return print_byte print_byte::@1 print_byte::@return print_char print_char::@return getFAC getFAC::@return addMEMtoFAC addMEMtoFAC::@1 addMEMtoFAC::@return prepareMEM prepareMEM::@return mulFACbyMEM mulFACbyMEM::@1 mulFACbyMEM::@return sinFAC sinFAC::@return divMEMbyFAC divMEMbyFAC::@1 divMEMbyFAC::@return setFAC setFAC::@1 setFAC::@return setMEMtoFAC setMEMtoFAC::@1 setMEMtoFAC::@return divFACby10 divFACby10::@return 
 Added new block during phi lifting main::@17(between main::@16 and main::@1)
 Added new block during phi lifting print_ln::@3(between print_ln::@1 and print_ln::@1)
-Block Sequence Planned @begin @41 @end main main::@3 main::@4 main::@1 main::@6 main::@7 main::@8 main::@9 main::@10 main::@11 main::@12 main::@13 main::@14 main::@15 main::@16 main::@return main::@17 print_ln print_ln::@1 print_ln::@return print_ln::@3 print_word print_word::@1 print_word::@return print_byte print_byte::@1 print_byte::@return print_char print_char::@return getFAC getFAC::@return addMEMtoFAC addMEMtoFAC::@1 addMEMtoFAC::@return prepareMEM prepareMEM::@return mulFACbyMEM mulFACbyMEM::@1 mulFACbyMEM::@return sinFAC sinFAC::@return divMEMbyFAC divMEMbyFAC::@1 divMEMbyFAC::@return setFAC setFAC::@1 setFAC::@return setMEMtoFAC setMEMtoFAC::@1 setMEMtoFAC::@return divFACby10 divFACby10::@return 
+Block Sequence Planned @begin @42 @end main main::@3 main::@4 main::@1 main::@6 main::@7 main::@8 main::@9 main::@10 main::@11 main::@12 main::@13 main::@14 main::@15 main::@16 main::@return main::@17 print_ln print_ln::@1 print_ln::@return print_ln::@3 print_word print_word::@1 print_word::@return print_byte print_byte::@1 print_byte::@return print_char print_char::@return getFAC getFAC::@return addMEMtoFAC addMEMtoFAC::@1 addMEMtoFAC::@return prepareMEM prepareMEM::@return mulFACbyMEM mulFACbyMEM::@1 mulFACbyMEM::@return sinFAC sinFAC::@return divMEMbyFAC divMEMbyFAC::@1 divMEMbyFAC::@return setFAC setFAC::@1 setFAC::@return setMEMtoFAC setMEMtoFAC::@1 setMEMtoFAC::@return divFACby10 divFACby10::@return 
 Adding NOP phi() at start of @begin
-Adding NOP phi() at start of @41
+Adding NOP phi() at start of @42
 Adding NOP phi() at start of @end
 Adding NOP phi() at start of main
 Adding NOP phi() at start of main::@3
@@ -2385,9 +2478,9 @@ Coalesced [87] prepareMEM::mem#6 ← prepareMEM::mem#4
 Coalesced [104] prepareMEM::mem#8 ← prepareMEM::mem#1
 Coalesced down to 9 phi equivalence classes
 Culled Empty Block (label) print_ln::@3
-Block Sequence Planned @begin @41 @end main main::@3 main::@4 main::@1 main::@6 main::@7 main::@8 main::@9 main::@10 main::@11 main::@12 main::@13 main::@14 main::@15 main::@16 main::@return main::@17 print_ln print_ln::@1 print_ln::@return print_word print_word::@1 print_word::@return print_byte print_byte::@1 print_byte::@return print_char print_char::@return getFAC getFAC::@return addMEMtoFAC addMEMtoFAC::@1 addMEMtoFAC::@return prepareMEM prepareMEM::@return mulFACbyMEM mulFACbyMEM::@1 mulFACbyMEM::@return sinFAC sinFAC::@return divMEMbyFAC divMEMbyFAC::@1 divMEMbyFAC::@return setFAC setFAC::@1 setFAC::@return setMEMtoFAC setMEMtoFAC::@1 setMEMtoFAC::@return divFACby10 divFACby10::@return 
+Block Sequence Planned @begin @42 @end main main::@3 main::@4 main::@1 main::@6 main::@7 main::@8 main::@9 main::@10 main::@11 main::@12 main::@13 main::@14 main::@15 main::@16 main::@return main::@17 print_ln print_ln::@1 print_ln::@return print_word print_word::@1 print_word::@return print_byte print_byte::@1 print_byte::@return print_char print_char::@return getFAC getFAC::@return addMEMtoFAC addMEMtoFAC::@1 addMEMtoFAC::@return prepareMEM prepareMEM::@return mulFACbyMEM mulFACbyMEM::@1 mulFACbyMEM::@return sinFAC sinFAC::@return divMEMbyFAC divMEMbyFAC::@1 divMEMbyFAC::@return setFAC setFAC::@1 setFAC::@return setMEMtoFAC setMEMtoFAC::@1 setMEMtoFAC::@return divFACby10 divFACby10::@return 
 Adding NOP phi() at start of @begin
-Adding NOP phi() at start of @41
+Adding NOP phi() at start of @42
 Adding NOP phi() at start of @end
 Adding NOP phi() at start of main
 Adding NOP phi() at start of main::@3
@@ -2433,14 +2526,14 @@ Propagating live ranges...
 FINAL CONTROL FLOW GRAPH
 @begin: scope:[]  from
   [0] phi() [ ] ( )
-  to:@41
-@41: scope:[]  from @begin
+  to:@42
+@42: scope:[]  from @begin
   [1] phi() [ ] ( )
   [2] call main param-assignment [ ] ( )
   to:@end
-@end: scope:[]  from @41
+@end: scope:[]  from @42
   [3] phi() [ ] ( )
-main: scope:[main]  from @41
+main: scope:[main]  from @42
   [4] phi() [ ] ( main:2 [ ] )
   [5] call setFAC param-assignment [ ] ( main:2 [ ] )
   to:main::@3
@@ -2641,59 +2734,59 @@ divFACby10::@return: scope:[divFACby10]  from divFACby10
 
 DOMINATORS
 @begin dominated by  @begin 
-@41 dominated by  @begin @41 
-@end dominated by  @end @begin @41 
-main dominated by  main @begin @41 
-main::@3 dominated by  main main::@3 @begin @41 
-main::@4 dominated by  main main::@3 main::@4 @begin @41 
-main::@1 dominated by  main main::@1 main::@3 main::@4 @begin @41 
-main::@6 dominated by  main main::@1 main::@6 main::@3 main::@4 @begin @41 
-main::@7 dominated by  main::@7 main main::@1 main::@6 main::@3 main::@4 @begin @41 
-main::@8 dominated by  main::@7 main::@8 main main::@1 main::@6 main::@3 main::@4 @begin @41 
-main::@9 dominated by  main::@9 main::@7 main::@8 main main::@1 main::@6 main::@3 main::@4 @begin @41 
-main::@10 dominated by  main::@9 main::@7 main::@8 main main::@1 main::@6 main::@3 main::@4 @begin @41 main::@10 
-main::@11 dominated by  main::@9 main::@7 main::@8 main main::@1 main::@6 main::@3 main::@4 @begin @41 main::@11 main::@10 
-main::@12 dominated by  main::@9 main::@7 main::@8 main main::@1 main::@6 main::@3 main::@4 @begin @41 main::@11 main::@10 main::@12 
-main::@13 dominated by  main::@9 main::@7 main::@8 main main::@1 main::@6 main::@3 main::@4 @begin @41 main::@11 main::@10 main::@13 main::@12 
-main::@14 dominated by  main::@9 main::@7 main::@8 main main::@1 main::@6 main::@3 main::@4 @begin @41 main::@11 main::@10 main::@13 main::@12 main::@14 
-main::@15 dominated by  main::@9 main::@7 main::@8 main main::@1 main::@6 main::@3 main::@4 @begin @41 main::@11 main::@10 main::@13 main::@12 main::@15 main::@14 
-main::@16 dominated by  main::@9 main::@7 main::@8 main main::@1 main::@6 main::@3 main::@4 @begin @41 main::@11 main::@10 main::@16 main::@13 main::@12 main::@15 main::@14 
-main::@return dominated by  main::@9 main::@7 main::@8 main main::@1 main::@6 main::@3 main::@4 @begin @41 main::@return main::@11 main::@10 main::@16 main::@13 main::@12 main::@15 main::@14 
-main::@17 dominated by  main::@9 main::@7 main::@8 main main::@1 main::@6 main::@3 main::@4 @begin @41 main::@11 main::@10 main::@17 main::@16 main::@13 main::@12 main::@15 main::@14 
-print_ln dominated by  main::@9 main::@7 main::@8 main main::@1 main::@6 main::@3 main::@4 @begin print_ln @41 main::@11 main::@10 main::@13 main::@12 main::@15 main::@14 
-print_ln::@1 dominated by  main::@9 print_ln::@1 main::@7 main::@8 main main::@1 main::@6 main::@3 main::@4 @begin print_ln @41 main::@11 main::@10 main::@13 main::@12 main::@15 main::@14 
-print_ln::@return dominated by  main::@9 print_ln::@1 main::@7 main::@8 main print_ln::@return main::@1 main::@6 main::@3 main::@4 @begin print_ln @41 main::@11 main::@10 main::@13 main::@12 main::@15 main::@14 
-print_word dominated by  main::@9 main::@7 main::@8 main print_word main::@1 main::@6 main::@3 main::@4 @begin @41 main::@11 main::@10 main::@13 main::@12 main::@14 
-print_word::@1 dominated by  main::@9 main::@7 main::@8 main print_word main::@1 main::@6 main::@3 main::@4 @begin @41 print_word::@1 main::@11 main::@10 main::@13 main::@12 main::@14 
-print_word::@return dominated by  main::@9 main::@7 main::@8 main print_word main::@1 main::@6 main::@3 main::@4 @begin print_word::@return @41 print_word::@1 main::@11 main::@10 main::@13 main::@12 main::@14 
-print_byte dominated by  main::@9 main::@7 main::@8 main print_word main::@1 main::@6 main::@3 main::@4 @begin @41 main::@11 main::@10 print_byte main::@13 main::@12 main::@14 
-print_byte::@1 dominated by  main::@9 main::@7 main::@8 main print_word main::@1 main::@6 main::@3 main::@4 @begin @41 print_byte::@1 main::@11 main::@10 print_byte main::@13 main::@12 main::@14 
-print_byte::@return dominated by  main::@9 main::@7 main::@8 main print_word main::@1 main::@6 main::@3 main::@4 @begin print_byte::@return @41 print_byte::@1 main::@11 main::@10 print_byte main::@13 main::@12 main::@14 
-print_char dominated by  main::@9 main::@7 main::@8 main print_word print_char main::@1 main::@6 main::@3 main::@4 @begin @41 main::@11 main::@10 print_byte main::@13 main::@12 main::@14 
-print_char::@return dominated by  main::@9 main::@7 main::@8 main print_word print_char main::@1 main::@6 main::@3 main::@4 print_char::@return @begin @41 main::@11 main::@10 print_byte main::@13 main::@12 main::@14 
-getFAC dominated by  main::@9 main::@7 main::@8 main main::@1 main::@6 main::@3 main::@4 @begin @41 getFAC main::@11 main::@10 main::@13 main::@12 
-getFAC::@return dominated by  main::@9 main::@7 main::@8 main main::@1 main::@6 main::@3 main::@4 @begin @41 getFAC main::@11 main::@10 main::@13 main::@12 getFAC::@return 
-addMEMtoFAC dominated by  main::@9 main::@7 main::@8 main main::@1 main::@6 main::@3 main::@4 @begin @41 addMEMtoFAC main::@11 main::@10 main::@12 
-addMEMtoFAC::@1 dominated by  main::@9 main::@7 main::@8 main main::@1 main::@6 main::@3 main::@4 @begin addMEMtoFAC::@1 @41 addMEMtoFAC main::@11 main::@10 main::@12 
-addMEMtoFAC::@return dominated by  main::@9 main::@7 main::@8 main main::@1 main::@6 main::@3 main::@4 @begin addMEMtoFAC::@1 @41 addMEMtoFAC main::@11 main::@10 addMEMtoFAC::@return main::@12 
-prepareMEM dominated by  main @begin @41 prepareMEM 
-prepareMEM::@return dominated by  main @begin @41 prepareMEM::@return prepareMEM 
-mulFACbyMEM dominated by  main mulFACbyMEM main::@1 main::@6 main::@3 main::@4 @begin @41 
-mulFACbyMEM::@1 dominated by  main mulFACbyMEM main::@1 main::@6 main::@3 main::@4 @begin @41 mulFACbyMEM::@1 
-mulFACbyMEM::@return dominated by  main mulFACbyMEM::@return mulFACbyMEM main::@1 main::@6 main::@3 main::@4 @begin @41 mulFACbyMEM::@1 
-sinFAC dominated by  main::@9 main::@7 main::@8 main main::@1 main::@6 main::@3 main::@4 @begin sinFAC @41 main::@10 
-sinFAC::@return dominated by  main::@9 main::@7 main::@8 main main::@1 main::@6 main::@3 main::@4 @begin sinFAC sinFAC::@return @41 main::@10 
-divMEMbyFAC dominated by  main::@9 main::@7 main::@8 main main::@1 main::@6 main::@3 main::@4 @begin @41 divMEMbyFAC 
-divMEMbyFAC::@1 dominated by  main::@9 main::@7 main::@8 main main::@1 main::@6 main::@3 main::@4 @begin @41 divMEMbyFAC::@1 divMEMbyFAC 
-divMEMbyFAC::@return dominated by  main::@9 main::@7 main::@8 main main::@1 main::@6 main::@3 main::@4 @begin @41 divMEMbyFAC::@1 divMEMbyFAC divMEMbyFAC::@return 
-setFAC dominated by  main @begin @41 setFAC 
-setFAC::@1 dominated by  main @begin @41 setFAC setFAC::@1 
-setFAC::@return dominated by  setFAC::@return main @begin @41 setFAC setFAC::@1 
-setMEMtoFAC dominated by  main main::@3 main::@4 @begin setMEMtoFAC @41 
-setMEMtoFAC::@1 dominated by  main main::@3 main::@4 @begin setMEMtoFAC @41 setMEMtoFAC::@1 
-setMEMtoFAC::@return dominated by  main main::@3 main::@4 @begin setMEMtoFAC @41 setMEMtoFAC::@1 setMEMtoFAC::@return 
-divFACby10 dominated by  main main::@3 @begin divFACby10 @41 
-divFACby10::@return dominated by  divFACby10::@return main main::@3 @begin divFACby10 @41 
+@42 dominated by  @begin @42 
+@end dominated by  @end @begin @42 
+main dominated by  main @begin @42 
+main::@3 dominated by  main main::@3 @begin @42 
+main::@4 dominated by  main main::@3 main::@4 @begin @42 
+main::@1 dominated by  main main::@1 main::@3 main::@4 @begin @42 
+main::@6 dominated by  main main::@1 main::@6 main::@3 main::@4 @begin @42 
+main::@7 dominated by  main::@7 main main::@1 main::@6 main::@3 main::@4 @begin @42 
+main::@8 dominated by  main::@7 main::@8 main main::@1 main::@6 main::@3 main::@4 @begin @42 
+main::@9 dominated by  main::@9 main::@7 main::@8 main main::@1 main::@6 main::@3 main::@4 @begin @42 
+main::@10 dominated by  main::@9 main::@7 main::@8 main main::@1 main::@6 main::@3 main::@4 @begin @42 main::@10 
+main::@11 dominated by  main::@9 main::@7 main::@8 main main::@1 main::@6 main::@3 main::@4 @begin @42 main::@11 main::@10 
+main::@12 dominated by  main::@9 main::@7 main::@8 main main::@1 main::@6 main::@3 main::@4 @begin @42 main::@11 main::@10 main::@12 
+main::@13 dominated by  main::@9 main::@7 main::@8 main main::@1 main::@6 main::@3 main::@4 @begin @42 main::@11 main::@10 main::@13 main::@12 
+main::@14 dominated by  main::@9 main::@7 main::@8 main main::@1 main::@6 main::@3 main::@4 @begin @42 main::@11 main::@10 main::@13 main::@12 main::@14 
+main::@15 dominated by  main::@9 main::@7 main::@8 main main::@1 main::@6 main::@3 main::@4 @begin @42 main::@11 main::@10 main::@13 main::@12 main::@15 main::@14 
+main::@16 dominated by  main::@9 main::@7 main::@8 main main::@1 main::@6 main::@3 main::@4 @begin @42 main::@11 main::@10 main::@16 main::@13 main::@12 main::@15 main::@14 
+main::@return dominated by  main::@9 main::@7 main::@8 main main::@1 main::@6 main::@3 main::@4 @begin @42 main::@return main::@11 main::@10 main::@16 main::@13 main::@12 main::@15 main::@14 
+main::@17 dominated by  main::@9 main::@7 main::@8 main main::@1 main::@6 main::@3 main::@4 @begin @42 main::@11 main::@10 main::@17 main::@16 main::@13 main::@12 main::@15 main::@14 
+print_ln dominated by  main::@9 main::@7 main::@8 main main::@1 main::@6 main::@3 main::@4 @begin print_ln @42 main::@11 main::@10 main::@13 main::@12 main::@15 main::@14 
+print_ln::@1 dominated by  main::@9 print_ln::@1 main::@7 main::@8 main main::@1 main::@6 main::@3 main::@4 @begin print_ln @42 main::@11 main::@10 main::@13 main::@12 main::@15 main::@14 
+print_ln::@return dominated by  main::@9 print_ln::@1 main::@7 main::@8 main print_ln::@return main::@1 main::@6 main::@3 main::@4 @begin print_ln @42 main::@11 main::@10 main::@13 main::@12 main::@15 main::@14 
+print_word dominated by  main::@9 main::@7 main::@8 main print_word main::@1 main::@6 main::@3 main::@4 @begin @42 main::@11 main::@10 main::@13 main::@12 main::@14 
+print_word::@1 dominated by  main::@9 main::@7 main::@8 main print_word main::@1 main::@6 main::@3 main::@4 @begin @42 print_word::@1 main::@11 main::@10 main::@13 main::@12 main::@14 
+print_word::@return dominated by  main::@9 main::@7 main::@8 main print_word main::@1 main::@6 main::@3 main::@4 @begin print_word::@return @42 print_word::@1 main::@11 main::@10 main::@13 main::@12 main::@14 
+print_byte dominated by  main::@9 main::@7 main::@8 main print_word main::@1 main::@6 main::@3 main::@4 @begin @42 main::@11 main::@10 print_byte main::@13 main::@12 main::@14 
+print_byte::@1 dominated by  main::@9 main::@7 main::@8 main print_word main::@1 main::@6 main::@3 main::@4 @begin @42 print_byte::@1 main::@11 main::@10 print_byte main::@13 main::@12 main::@14 
+print_byte::@return dominated by  main::@9 main::@7 main::@8 main print_word main::@1 main::@6 main::@3 main::@4 @begin print_byte::@return @42 print_byte::@1 main::@11 main::@10 print_byte main::@13 main::@12 main::@14 
+print_char dominated by  main::@9 main::@7 main::@8 main print_word print_char main::@1 main::@6 main::@3 main::@4 @begin @42 main::@11 main::@10 print_byte main::@13 main::@12 main::@14 
+print_char::@return dominated by  main::@9 main::@7 main::@8 main print_word print_char main::@1 main::@6 main::@3 main::@4 print_char::@return @begin @42 main::@11 main::@10 print_byte main::@13 main::@12 main::@14 
+getFAC dominated by  main::@9 main::@7 main::@8 main main::@1 main::@6 main::@3 main::@4 @begin @42 getFAC main::@11 main::@10 main::@13 main::@12 
+getFAC::@return dominated by  main::@9 main::@7 main::@8 main main::@1 main::@6 main::@3 main::@4 @begin @42 getFAC main::@11 main::@10 main::@13 main::@12 getFAC::@return 
+addMEMtoFAC dominated by  main::@9 main::@7 main::@8 main main::@1 main::@6 main::@3 main::@4 @begin @42 addMEMtoFAC main::@11 main::@10 main::@12 
+addMEMtoFAC::@1 dominated by  main::@9 main::@7 main::@8 main main::@1 main::@6 main::@3 main::@4 @begin addMEMtoFAC::@1 @42 addMEMtoFAC main::@11 main::@10 main::@12 
+addMEMtoFAC::@return dominated by  main::@9 main::@7 main::@8 main main::@1 main::@6 main::@3 main::@4 @begin addMEMtoFAC::@1 @42 addMEMtoFAC main::@11 main::@10 addMEMtoFAC::@return main::@12 
+prepareMEM dominated by  main @begin @42 prepareMEM 
+prepareMEM::@return dominated by  main @begin @42 prepareMEM::@return prepareMEM 
+mulFACbyMEM dominated by  main mulFACbyMEM main::@1 main::@6 main::@3 main::@4 @begin @42 
+mulFACbyMEM::@1 dominated by  main mulFACbyMEM main::@1 main::@6 main::@3 main::@4 @begin @42 mulFACbyMEM::@1 
+mulFACbyMEM::@return dominated by  main mulFACbyMEM::@return mulFACbyMEM main::@1 main::@6 main::@3 main::@4 @begin @42 mulFACbyMEM::@1 
+sinFAC dominated by  main::@9 main::@7 main::@8 main main::@1 main::@6 main::@3 main::@4 @begin sinFAC @42 main::@10 
+sinFAC::@return dominated by  main::@9 main::@7 main::@8 main main::@1 main::@6 main::@3 main::@4 @begin sinFAC sinFAC::@return @42 main::@10 
+divMEMbyFAC dominated by  main::@9 main::@7 main::@8 main main::@1 main::@6 main::@3 main::@4 @begin @42 divMEMbyFAC 
+divMEMbyFAC::@1 dominated by  main::@9 main::@7 main::@8 main main::@1 main::@6 main::@3 main::@4 @begin @42 divMEMbyFAC::@1 divMEMbyFAC 
+divMEMbyFAC::@return dominated by  main::@9 main::@7 main::@8 main main::@1 main::@6 main::@3 main::@4 @begin @42 divMEMbyFAC::@1 divMEMbyFAC divMEMbyFAC::@return 
+setFAC dominated by  main @begin @42 setFAC 
+setFAC::@1 dominated by  main @begin @42 setFAC setFAC::@1 
+setFAC::@return dominated by  setFAC::@return main @begin @42 setFAC setFAC::@1 
+setMEMtoFAC dominated by  main main::@3 main::@4 @begin setMEMtoFAC @42 
+setMEMtoFAC::@1 dominated by  main main::@3 main::@4 @begin setMEMtoFAC @42 setMEMtoFAC::@1 
+setMEMtoFAC::@return dominated by  main main::@3 main::@4 @begin setMEMtoFAC @42 setMEMtoFAC::@1 setMEMtoFAC::@return 
+divFACby10 dominated by  main main::@3 @begin divFACby10 @42 
+divFACby10::@return dominated by  divFACby10::@return main main::@3 @begin divFACby10 @42 
 
 NATURAL LOOPS
 Found back edge: Loop head: main::@1 tails: main::@17 blocks: null
@@ -2856,17 +2949,17 @@ INITIAL ASM
   .label print_char_cursor = 7
 //SEG2 @begin
 bbegin:
-//SEG3 [1] phi from @begin to @41 [phi:@begin->@41]
-b41_from_bbegin:
-  jmp b41
-//SEG4 @41
-b41:
+//SEG3 [1] phi from @begin to @42 [phi:@begin->@42]
+b42_from_bbegin:
+  jmp b42
+//SEG4 @42
+b42:
 //SEG5 [2] call main param-assignment [ ] ( )
-//SEG6 [4] phi from @41 to main [phi:@41->main]
-main_from_b41:
+//SEG6 [4] phi from @42 to main [phi:@42->main]
+main_from_b42:
   jsr main
-//SEG7 [3] phi from @41 to @end [phi:@41->@end]
-bend_from_b41:
+//SEG7 [3] phi from @42 to @end [phi:@42->@end]
+bend_from_b42:
   jmp bend
 //SEG8 @end
 bend:
@@ -3505,17 +3598,17 @@ ASSEMBLER BEFORE OPTIMIZATION
   .label print_char_cursor = 5
 //SEG2 @begin
 bbegin:
-//SEG3 [1] phi from @begin to @41 [phi:@begin->@41]
-b41_from_bbegin:
-  jmp b41
-//SEG4 @41
-b41:
+//SEG3 [1] phi from @begin to @42 [phi:@begin->@42]
+b42_from_bbegin:
+  jmp b42
+//SEG4 @42
+b42:
 //SEG5 [2] call main param-assignment [ ] ( )
-//SEG6 [4] phi from @41 to main [phi:@41->main]
-main_from_b41:
+//SEG6 [4] phi from @42 to main [phi:@42->main]
+main_from_b42:
   jsr main
-//SEG7 [3] phi from @41 to @end [phi:@41->@end]
-bend_from_b41:
+//SEG7 [3] phi from @42 to @end [phi:@42->@end]
+bend_from_b42:
   jmp bend
 //SEG8 @end
 bend:
@@ -4008,7 +4101,7 @@ divFACby10: {
 }
 
 ASSEMBLER OPTIMIZATIONS
-Removing instruction jmp b41
+Removing instruction jmp b42
 Removing instruction jmp bend
 Removing instruction jmp b3
 Removing instruction jmp b4
@@ -4050,9 +4143,9 @@ Succesful ASM optimization Pass5NextJumpElimination
 Replacing label b1_from_b1 with b1
 Replacing label b1_from_b1 with b1
 Removing instruction bbegin:
-Removing instruction b41_from_bbegin:
-Removing instruction main_from_b41:
-Removing instruction bend_from_b41:
+Removing instruction b42_from_bbegin:
+Removing instruction main_from_b42:
+Removing instruction bend_from_b42:
 Removing instruction b3_from_main:
 Removing instruction b4_from_b3:
 Removing instruction setMEMtoFAC_from_b4:
@@ -4075,7 +4168,7 @@ Removing instruction print_ln_from_b15:
 Removing instruction b1_from_print_ln:
 Removing instruction b1_from_b1:
 Succesful ASM optimization Pass5RedundantLabelElimination
-Removing instruction b41:
+Removing instruction b42:
 Removing instruction bend:
 Removing instruction setFAC_from_main:
 Removing instruction b3:
@@ -4127,7 +4220,7 @@ Removing instruction breturn:
 Succesful ASM optimization Pass5UnusedLabelElimination
 
 FINAL SYMBOL TABLE
-(label) @41
+(label) @42
 (label) @begin
 (label) @end
 (void()) addMEMtoFAC((byte*) addMEMtoFAC::mem)
@@ -4265,12 +4358,12 @@ Score: 4973
   .label print_line_cursor = 3
   .label print_char_cursor = 5
 //SEG2 @begin
-//SEG3 [1] phi from @begin to @41 [phi:@begin->@41]
-//SEG4 @41
+//SEG3 [1] phi from @begin to @42 [phi:@begin->@42]
+//SEG4 @42
 //SEG5 [2] call main param-assignment [ ] ( )
-//SEG6 [4] phi from @41 to main [phi:@41->main]
+//SEG6 [4] phi from @42 to main [phi:@42->main]
   jsr main
-//SEG7 [3] phi from @41 to @end [phi:@41->@end]
+//SEG7 [3] phi from @42 to @end [phi:@42->@end]
 //SEG8 @end
 //SEG9 main
 main: {

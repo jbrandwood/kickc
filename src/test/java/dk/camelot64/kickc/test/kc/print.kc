@@ -3,6 +3,26 @@ byte* print_screen = $0400;
 byte* print_line_cursor = print_screen;
 byte* print_char_cursor = print_line_cursor;
 
+// Print a number of zero-terminated strings, each followed by a newline.
+// The sequence of lines is terminated by another zero.
+void print_str_lines(byte* str) {
+    while(*str!='@') {
+        do {
+            byte ch = *(str++);
+            if(ch!='@') {
+                *(print_char_cursor++) = ch;
+            }
+        } while (ch!='@');
+        print_ln();
+    }
+}
+
+// Print a zero-terminated string followed by a newline
+void print_str_ln(byte* str) {
+    print_str(str);
+    print_ln();
+}
+
 // Print a zero-terminated string
 void print_str(byte* str) {
     while(*str!='@') {
@@ -16,13 +36,6 @@ void print_str_at(byte* str, byte* at) {
         *(at++) = *(str++);
     }
 }
-
-// Print a zero-terminated string followed by a newline
-void print_str_ln(byte* str) {
-    print_str(str);
-    print_ln();
-}
-
 
 // Print a newline
 void print_ln() {

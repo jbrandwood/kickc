@@ -1,6 +1,7 @@
 package dk.camelot64.kickc.passes;
 
 import dk.camelot64.kickc.model.*;
+import dk.camelot64.kickc.model.statements.StatementPhiBlock;
 import dk.camelot64.kickc.model.values.LValue;
 import dk.camelot64.kickc.model.values.VariableRef;
 import dk.camelot64.kickc.model.statements.Statement;
@@ -50,6 +51,20 @@ public class PassNEliminateUnusedVars extends Pass2SsaOptimization {
                   variable.getScope().remove(variable);
                   call.setlValue(null);
                   modified = true;
+               }
+            } else if(statement instanceof StatementPhiBlock) {
+               StatementPhiBlock statementPhi = (StatementPhiBlock) statement;
+               ListIterator<StatementPhiBlock.PhiVariable> phiVarIt = statementPhi.getPhiVariables().listIterator();
+               while(phiVarIt.hasNext()) {
+                  StatementPhiBlock.PhiVariable phiVariable = phiVarIt.next();
+                  VariableRef variableRef = phiVariable.getVariable();
+                  if(referenceInfos.isUnused(variableRef)) {
+                     getLog().append("Eliminating unused variable - keeping the phi block " + variableRef.toString(getProgram()));
+                     Variable variable = getScope().getVariable(variableRef);
+                     variable.getScope().remove(variable);
+                     phiVarIt.remove();
+                     modified = true;
+                  }
                }
             }
          }

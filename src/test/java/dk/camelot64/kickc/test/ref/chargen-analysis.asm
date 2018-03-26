@@ -333,21 +333,19 @@ mul8u: {
 }
 keyboard_key_pressed: {
     txa
-    lsr
-    lsr
-    lsr
-    jsr keyboard_matrix_read
+    and #7
     tay
     txa
-    and #7
+    lsr
+    lsr
+    lsr
     tax
-    tya
-    and keyboard_matrix_col_bitmask,x
+    jsr keyboard_matrix_read
+    and keyboard_matrix_col_bitmask,y
     rts
 }
 keyboard_matrix_read: {
-    tay
-    lda keyboard_matrix_row_bitmask,y
+    lda keyboard_matrix_row_bitmask,x
     sta CIA1_PORT_A
     lda CIA1_PORT_B
     eor #$ff

@@ -45,31 +45,14 @@
   .label MENU_CHARSET = $9800
   .label TWOPLANE_PLANEA = $4000
   .label TWOPLANE_PLANEB = $6000
-  .label print_char_cursor = 2
+  .label print_char_cursor = 5
   .label print_line_cursor = 7
-  .label print_screen = 2
   jsr main
 main: {
     lda #DTV_FEATURE_ENABLE
     sta DTV_FEATURE
-    lda #<$400
-    sta print_char_cursor
-    lda #>$400
-    sta print_char_cursor+1
-    lda #<$400
-    sta print_line_cursor
-    lda #>$400
-    sta print_line_cursor+1
-    lda #<$400
-    sta print_screen
-    lda #>$400
-    sta print_screen+1
   b2:
     jsr menu
-    lda #<MENU_SCREEN
-    sta print_screen
-    lda #>MENU_SCREEN
-    sta print_screen+1
     jmp b2
 }
 menu: {
@@ -128,11 +111,11 @@ menu: {
     jmp b3
 }
 mode_twoplanebitmap: {
-    .label c = 4
-    .label gfxa = 4
-    .label ay = 6
-    .label gfxb = 4
-    .label by = 6
+    .label c = 2
+    .label gfxa = 2
+    .label ay = 4
+    .label gfxb = 2
+    .label by = 4
     lda #DTV_CONTROL_HIGHCOLOR_ON|DTV_CONTROL_LINEAR_ADDRESSING_ON
     sta DTV_CONTROL
     lda #VIC_ECM|VIC_BMM|VIC_DEN|VIC_RSEL|3
@@ -275,7 +258,7 @@ keyboard_matrix_read: {
     rts
 }
 print_str_lines: {
-    .label str = 4
+    .label str = 2
     lda #<MENU_SCREEN
     sta print_line_cursor
     lda #>MENU_SCREEN

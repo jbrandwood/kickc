@@ -1,11 +1,10 @@
 .pc = $801 "Basic"
 :BasicUpstart(main)
 .pc = $80d "Program"
-  .label print_char_cursor = $a
-  .label print_line_cursor = 5
-  .label rem16s = 3
-  .label rem8u = $13
-  .label rem16u = $10
+  .label print_char_cursor = 8
+  .label print_line_cursor = 3
+  .label rem16u = $e
+  .label rem16s = $e
   jsr main
 main: {
     jsr print_cls
@@ -16,13 +15,11 @@ main: {
     rts
 }
 test_16s: {
-    .label dividend = 7
-    .label divisor = $15
-    .label res = $e
+    .label dividend = 5
+    .label divisor = $13
+    .label res = $c
     .label i = 2
-    lda #<0
-    sta rem16s
-    sta rem16s+1
+    lda #0
     sta i
   b1:
     ldy i
@@ -114,7 +111,7 @@ print_ln: {
     rts
 }
 print_sword: {
-    .label w = 7
+    .label w = 5
     lda w+1
     bpl b1
     lda #'-'
@@ -133,7 +130,7 @@ print_sword: {
     rts
 }
 print_word: {
-    .label w = 7
+    .label w = 5
     lda w+1
     sta print_byte.b
     jsr print_byte
@@ -143,7 +140,7 @@ print_word: {
     rts
 }
 print_byte: {
-    .label b = 9
+    .label b = 7
     lda b
     lsr
     lsr
@@ -170,7 +167,7 @@ print_char: {
     rts
 }
 print_str: {
-    .label str = 7
+    .label str = 5
   b1:
     ldy #0
     lda (str),y
@@ -192,14 +189,14 @@ print_str: {
     jmp b1
 }
 div16s: {
-    .label _2 = 3
-    .label _7 = $c
-    .label resultu = $e
-    .label return = $e
-    .label dividend = 3
-    .label divisor = $c
-    .label dividendu = 3
-    .label divisoru = $c
+    .label _2 = 8
+    .label _7 = $a
+    .label resultu = $c
+    .label return = $c
+    .label dividend = 8
+    .label divisor = $a
+    .label dividendu = 8
+    .label divisoru = $a
     lda dividend+1
     bpl b16
     sec
@@ -231,19 +228,15 @@ div16s: {
     jsr div16u
     cpy #0
     bne b5
-    lda divr16u.rem
-    sta rem16s
-    lda divr16u.rem+1
-    sta rem16s+1
   breturn:
     rts
   b5:
     sec
-    lda divr16u.rem
+    lda rem16s
     eor #$ff
     adc #0
     sta rem16s
-    lda divr16u.rem+1
+    lda rem16s+1
     eor #$ff
     adc #0
     sta rem16s+1
@@ -262,18 +255,18 @@ div16s: {
     jmp b2
 }
 div16u: {
-    .label return = $e
-    .label dividend = 3
-    .label divisor = $c
+    .label return = $c
+    .label dividend = 8
+    .label divisor = $a
     jsr divr16u
     rts
 }
 divr16u: {
-    .label rem = $10
-    .label dividend = 3
-    .label quotient = $e
-    .label return = $e
-    .label divisor = $c
+    .label rem = $e
+    .label dividend = 8
+    .label quotient = $c
+    .label return = $c
+    .label divisor = $a
     ldx #0
     txa
     sta quotient
@@ -321,12 +314,11 @@ divr16u: {
     rts
 }
 test_8s: {
-    .label dividend = 9
-    .label divisor = $17
-    .label res = $12
+    .label dividend = 7
+    .label divisor = $15
+    .label res = $10
     .label i = 2
     lda #0
-    tax
     sta i
   b1:
     ldy i
@@ -379,7 +371,7 @@ test_8s: {
     divisors: .byte 5, 7, -$b, -$d, $11, $13
 }
 print_sbyte: {
-    .label b = 9
+    .label b = 7
     lda b
     cmp #0
     bpl b1
@@ -395,7 +387,7 @@ print_sbyte: {
     rts
 }
 div8s: {
-    .label neg = $12
+    .label neg = $10
     cmp #0
     bpl b16
     eor #$ff
@@ -418,16 +410,14 @@ div8s: {
   b4:
     tya
     jsr div8u
-    txa
     tay
     lda neg
     bne b5
     tya
-    ldx divr8u.rem
   breturn:
     rts
   b5:
-    lda divr8u.rem
+    txa
     eor #$ff
     clc
     adc #1
@@ -447,51 +437,54 @@ div8u: {
     sta divr8u.dividend
     stx divr8u.divisor
     jsr divr8u
+    lda divr8u.return
     rts
 }
 divr8u: {
-    .label dividend = $14
-    .label divisor = $18
-    .label rem = $13
-    ldy #0
+    .label dividend = $11
+    .label divisor = $16
+    .label quotient = $12
+    .label return = $12
     ldx #0
     txa
-    sta rem
+    sta quotient
+    tay
   b1:
-    asl rem
+    tya
+    asl
+    tay
     lda #$80
     and dividend
     cmp #0
     beq b2
     lda #1
-    ora rem
-    sta rem
+    sty $ff
+    ora $ff
+    tay
   b2:
     asl dividend
-    txa
-    asl
-    tax
-    lda rem
-    cmp divisor
+    asl quotient
+    cpy divisor
     bcc b3
-    inx
+    inc quotient
+    tya
     sec
     sbc divisor
-    sta rem
+    tay
   b3:
-    iny
-    cpy #8
+    inx
+    cpx #8
     bne b1
+    tya
+    tax
     rts
 }
 test_16u: {
-    .label dividend = 7
-    .label divisor = $c
-    .label res = $e
+    .label dividend = 5
+    .label divisor = $a
+    .label res = $c
     .label i = 2
-    lda #<0
-    sta rem16u
-    sta rem16u+1
+    lda #0
     sta i
   b1:
     ldy i
@@ -538,9 +531,9 @@ test_16u: {
     lda #>str2
     sta print_str.str+1
     jsr print_str
-    lda divr16u.rem
+    lda rem16u
     sta print_word.w
-    lda divr16u.rem+1
+    lda rem16u+1
     sta print_word.w+1
     jsr print_word
     jsr print_ln
@@ -558,8 +551,9 @@ test_16u: {
     divisors: .word 5, 7, $b, $d, $11, $13
 }
 test_8u: {
-    .label dividend = 9
-    .label divisor = $12
+    .label dividend = 7
+    .label divisor = $10
+    .label res = $11
     .label i = 2
     lda #<$400
     sta print_line_cursor
@@ -570,7 +564,6 @@ test_8u: {
     lda #>$400
     sta print_char_cursor+1
     lda #0
-    sta rem8u
     sta i
   b1:
     ldy i
@@ -581,6 +574,7 @@ test_8u: {
     lda dividend
     ldx divisor
     jsr div8u
+    sta res
     jsr print_byte
     lda #<str
     sta print_str.str
@@ -595,15 +589,15 @@ test_8u: {
     lda #>str1
     sta print_str.str+1
     jsr print_str
-    stx print_byte.b
+    lda res
+    sta print_byte.b
     jsr print_byte
     lda #<str2
     sta print_str.str
     lda #>str2
     sta print_str.str+1
     jsr print_str
-    lda divr8u.rem
-    sta print_byte.b
+    stx print_byte.b
     jsr print_byte
     jsr print_ln
     inc i

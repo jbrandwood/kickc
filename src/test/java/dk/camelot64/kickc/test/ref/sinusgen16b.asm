@@ -7,8 +7,8 @@
   .const PI_u4f12 = $3244
   .const PI_HALF_u4f12 = $1922
   .label print_line_cursor = $400
-  .label print_char_cursor = $b
   .label rem16u = 4
+  .label print_char_cursor = $b
   jsr main
 main: {
     .label wavelength = $78
@@ -558,14 +558,11 @@ divr16u: {
     rts
 }
 sin16s_gen: {
-    .label _1 = 8
+    .label _1 = 6
     .label step = $1d
     .label sintab = 2
     .label x = $d
-    .label i = 6
-    lda #<0
-    sta rem16u
-    sta rem16u+1
+    .label i = 4
     lda #<main.wavelength
     sta div32u16u.divisor
     lda #>main.wavelength
@@ -644,16 +641,16 @@ sin16s_gen: {
 sin16s: {
     .label _6 = $15
     .label x = $15
-    .label return = 8
-    .label x1 = $21
+    .label return = 6
+    .label x1 = 8
     .label x2 = $b
     .label x3 = $b
     .label x3_6 = $11
-    .label usinx = 8
+    .label usinx = 6
     .label x4 = $b
     .label x5 = $11
     .label x5_128 = $11
-    .label sinx = 8
+    .label sinx = 6
     .label isUpper = $a
     lda x+3
     cmp #>PI_u4f28>>$10

@@ -1,9 +1,9 @@
 .pc = $801 "Basic"
 :BasicUpstart(main)
 .pc = $80d "Program"
+  .label rem16u = $11
   .label print_char_cursor = 7
   .label print_line_cursor = 3
-  .label rem16u = 3
   jsr main
 main: {
     .label i = 2
@@ -11,9 +11,6 @@ main: {
     sta lin16u_gen.lintab
     lda #>lintab1
     sta lin16u_gen.lintab+1
-    lda #<0
-    sta rem16u
-    sta rem16u+1
     lda #<$14
     sta lin16u_gen.length
     lda #>$14
@@ -297,14 +294,14 @@ print_cls: {
     rts
 }
 lin16u_gen: {
-    .label _5 = $f
+    .label _5 = 5
     .label ampl = 3
     .label stepi = $15
     .label stepf = $13
     .label step = $17
     .label val = 9
     .label lintab = $d
-    .label i = 5
+    .label i = 3
     .label max = 3
     .label min = 5
     .label length = 7
@@ -322,10 +319,6 @@ lin16u_gen: {
     lda length+1
     sbc #0
     sta divr16u.divisor+1
-    lda ampl
-    sta divr16u.dividend
-    lda ampl+1
-    sta divr16u.dividend+1
     lda #<0
     sta divr16u.rem
     sta divr16u.rem+1
@@ -409,8 +402,8 @@ lin16u_gen: {
     rts
 }
 divr16u: {
-    .label rem = 3
-    .label dividend = $11
+    .label rem = $11
+    .label dividend = 3
     .label quotient = $13
     .label return = $13
     .label divisor = $f

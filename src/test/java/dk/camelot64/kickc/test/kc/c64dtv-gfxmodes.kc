@@ -4,6 +4,7 @@ import "print.kc"
 import "keyboard.kc"
 
 void main() {
+    asm { sei }  // Disable normal interrupt (prevent keyboard reading glitches)
     *DTV_FEATURE = DTV_FEATURE_ENABLE;
     while(true) {
         menu();
@@ -36,9 +37,14 @@ byte[] MENU_TEXT =
      "    (V) vicII (H) vicII+hicol (D) c64dtv@" +
      "@" ;
 
+const dword DTV_COLOR_BANK_DEFAULT = $1d800;
+
 void menu() {
     // DTV Graphics Bank
     *DTV_GRAPHICS_VIC_BANK = (byte)((dword)MENU_CHARSET/$10000);
+    // DTV Color Bank
+     *DTV_COLOR_BANK_LO = <((word)(DTV_COLOR_BANK_DEFAULT/$400));
+     *DTV_COLOR_BANK_HI = 0; // >((word)(DTV_COLOR_BANK_DEFAULT/$400)) - fails currently because the high operator can't see the word type of the operand;
     // DTV Graphics Mode
     *DTV_CONTROL = 0;
     // VIC Graphics Bank
@@ -49,6 +55,10 @@ void menu() {
     *VIC_CONTROL2 = VIC_CSEL;
     // VIC Memory Pointers
     *VIC_MEMORY =  (byte)((((word)MENU_SCREEN&$3fff)/$40)|(((word)MENU_CHARSET&$3fff)/$400));
+    // DTV Palette - default
+    for(byte i : 0..$f) {
+        DTV_PALETTE[i] = DTV_PALETTE_DEFAULT[i];
+    }
     // Char Colors
     for(byte* c=COLS;c!=COLS+1000;c++) *c=LIGHT_GREEN;
     // Screen colors
@@ -64,14 +74,13 @@ void menu() {
             mode_twoplanebitmap();
             return;
         }
-        byte* last = MENU_SCREEN+999;
-        (*last)++;
     }
 
 }
 
 const byte* TWOPLANE_PLANEA = $4000;
 const byte* TWOPLANE_PLANEB = $6000;
+const byte* TWOPLANE_COLORS = $8000;
 
 // Test the Two Plane Bitmap - generated from the two DTV linear graphics plane counters
 // Two Plane Bitmap Mode (CHUNK/COLDIS/MCM = 0, ECM/BMM/HICOL/LINEAR = 1)
@@ -95,13 +104,26 @@ void mode_twoplanebitmap() {
     *DTV_PLANEB_STEP = 1;
     *DTV_PLANEB_MODULO_LO = 0;
     *DTV_PLANEB_MODULO_HI = 0;
-
+    // DTV Color Bank
+     *DTV_COLOR_BANK_LO = <(TWOPLANE_COLORS/$400);
+     *DTV_COLOR_BANK_HI = >(TWOPLANE_COLORS/$400);
+    // DTV Palette - Grey Tone
+    for(byte i : 0..$f) {
+        DTV_PALETTE[i] = i;
+    }
     // Screen colors
-    *BORDERCOL = 0;
-    *BGCOL1 = GREEN; // Color for bits 00
-    *BGCOL2 = BLUE; // Color for bits 11
+    *BORDERCOL = $00;
+    *BGCOL1 = $70; // Color for bits 00
+    *BGCOL2 = $d4; // Color for bits 11
     // Colors for bits 01 / 10
-    for(byte* c=COLS;c!=COLS+1000;c++) *c= <c;
+    byte* col=TWOPLANE_COLORS;
+    for(byte cy: 0..24 ) {
+        for(byte cx: 0..39) {
+            *col++ = (cy & $f)<<4 | (cx &$f);
+        }
+    }
+
+
     // Graphics for Plane A - horizontal stripes
     byte* gfxa = TWOPLANE_PLANEA;
     for(byte ay : 0..199) {

@@ -53,8 +53,11 @@ const byte DTV_CONTROL_COLORRAM_OFF = $10;
 const byte DTV_CONTROL_BADLINE_OFF = $20;
 const byte DTV_CONTROL_CHUNKY_ON = $40;
 
-// The contains colors for the 16 first colors ($00-$0f)
+// Defines colors for the 16 first colors ($00-$0f)
 const byte* DTV_PALETTE = $d200;
+
+// Default vallues for the palette
+byte[16] DTV_PALETTE_DEFAULT = { $00, $0f, $36, $be, $58, $db, $86, $ff, $29, $26, $3b, $05, $07, $df, $9a, $0a };
 
 // Linear Graphics Plane A Counter Control
 const byte* DTV_PLANEA_START_LO = $d03a;
@@ -239,6 +242,7 @@ STATEMENTS
   (byte) DTV_CONTROL_BADLINE_OFF ← (byte/signed byte/word/signed word/dword/signed dword) 32
   (byte) DTV_CONTROL_CHUNKY_ON ← (byte/signed byte/word/signed word/dword/signed dword) 64
   (byte*) DTV_PALETTE ← (word/dword/signed dword) 53760
+  (byte[16]) DTV_PALETTE_DEFAULT ← { (byte/signed byte/word/signed word/dword/signed dword) 0, (byte/signed byte/word/signed word/dword/signed dword) 15, (byte/signed byte/word/signed word/dword/signed dword) 54, (byte/word/signed word/dword/signed dword) 190, (byte/signed byte/word/signed word/dword/signed dword) 88, (byte/word/signed word/dword/signed dword) 219, (byte/word/signed word/dword/signed dword) 134, (byte/word/signed word/dword/signed dword) 255, (byte/signed byte/word/signed word/dword/signed dword) 41, (byte/signed byte/word/signed word/dword/signed dword) 38, (byte/signed byte/word/signed word/dword/signed dword) 59, (byte/signed byte/word/signed word/dword/signed dword) 5, (byte/signed byte/word/signed word/dword/signed dword) 7, (byte/word/signed word/dword/signed dword) 223, (byte/word/signed word/dword/signed dword) 154, (byte/signed byte/word/signed word/dword/signed dword) 10 }
   (byte*) DTV_PLANEA_START_LO ← (word/dword/signed dword) 53306
   (byte*) DTV_PLANEA_START_MI ← (word/dword/signed dword) 53307
   (byte*) DTV_PLANEA_START_HI ← (word/dword/signed dword) 53317
@@ -335,6 +339,7 @@ SYMBOLS
 (byte*) DTV_GRAPHICS_HICOL_BANK
 (byte*) DTV_GRAPHICS_VIC_BANK
 (byte*) DTV_PALETTE
+(byte[16]) DTV_PALETTE_DEFAULT
 (byte*) DTV_PLANEA_MODULO_HI
 (byte*) DTV_PLANEA_MODULO_LO
 (byte*) DTV_PLANEA_START_HI
@@ -524,6 +529,7 @@ INITIAL CONTROL FLOW GRAPH
   (byte) DTV_CONTROL_BADLINE_OFF ← (byte/signed byte/word/signed word/dword/signed dword) 32
   (byte) DTV_CONTROL_CHUNKY_ON ← (byte/signed byte/word/signed word/dword/signed dword) 64
   (byte*) DTV_PALETTE ← ((byte*)) (word/dword/signed dword) 53760
+  (byte[16]) DTV_PALETTE_DEFAULT ← { (byte/signed byte/word/signed word/dword/signed dword) 0, (byte/signed byte/word/signed word/dword/signed dword) 15, (byte/signed byte/word/signed word/dword/signed dword) 54, (byte/word/signed word/dword/signed dword) 190, (byte/signed byte/word/signed word/dword/signed dword) 88, (byte/word/signed word/dword/signed dword) 219, (byte/word/signed word/dword/signed dword) 134, (byte/word/signed word/dword/signed dword) 255, (byte/signed byte/word/signed word/dword/signed dword) 41, (byte/signed byte/word/signed word/dword/signed dword) 38, (byte/signed byte/word/signed word/dword/signed dword) 59, (byte/signed byte/word/signed word/dword/signed dword) 5, (byte/signed byte/word/signed word/dword/signed dword) 7, (byte/word/signed word/dword/signed dword) 223, (byte/word/signed word/dword/signed dword) 154, (byte/signed byte/word/signed word/dword/signed dword) 10 }
   (byte*) DTV_PLANEA_START_LO ← ((byte*)) (word/dword/signed dword) 53306
   (byte*) DTV_PLANEA_START_MI ← ((byte*)) (word/dword/signed dword) 53307
   (byte*) DTV_PLANEA_START_HI ← ((byte*)) (word/dword/signed dword) 53317
@@ -665,23 +671,24 @@ Eliminating unused variable (byte) DTV_CONTROL_LINEAR_ADDRESSING_ON and assignme
 Eliminating unused variable (byte) DTV_CONTROL_OVERSCAN_ON and assignment [63] (byte) DTV_CONTROL_OVERSCAN_ON ← (byte/signed byte/word/signed word/dword/signed dword) 8
 Eliminating unused variable (byte) DTV_CONTROL_COLORRAM_OFF and assignment [64] (byte) DTV_CONTROL_COLORRAM_OFF ← (byte/signed byte/word/signed word/dword/signed dword) 16
 Eliminating unused variable (byte) DTV_CONTROL_CHUNKY_ON and assignment [66] (byte) DTV_CONTROL_CHUNKY_ON ← (byte/signed byte/word/signed word/dword/signed dword) 64
-Eliminating unused variable (byte*) DTV_PLANEA_START_LO and assignment [68] (byte*) DTV_PLANEA_START_LO ← ((byte*)) (word/dword/signed dword) 53306
-Eliminating unused variable (byte*) DTV_PLANEA_START_MI and assignment [69] (byte*) DTV_PLANEA_START_MI ← ((byte*)) (word/dword/signed dword) 53307
-Eliminating unused variable (byte*) DTV_PLANEA_START_HI and assignment [70] (byte*) DTV_PLANEA_START_HI ← ((byte*)) (word/dword/signed dword) 53317
-Eliminating unused variable (byte*) DTV_PLANEA_STEP and assignment [71] (byte*) DTV_PLANEA_STEP ← ((byte*)) (word/dword/signed dword) 53318
-Eliminating unused variable (byte*) DTV_PLANEA_MODULO_LO and assignment [72] (byte*) DTV_PLANEA_MODULO_LO ← ((byte*)) (word/dword/signed dword) 53304
-Eliminating unused variable (byte*) DTV_PLANEA_MODULO_HI and assignment [73] (byte*) DTV_PLANEA_MODULO_HI ← ((byte*)) (word/dword/signed dword) 53305
-Eliminating unused variable (byte*) DTV_PLANEB_START_LO and assignment [74] (byte*) DTV_PLANEB_START_LO ← ((byte*)) (word/dword/signed dword) 53321
-Eliminating unused variable (byte*) DTV_PLANEB_START_MI and assignment [75] (byte*) DTV_PLANEB_START_MI ← ((byte*)) (word/dword/signed dword) 53322
-Eliminating unused variable (byte*) DTV_PLANEB_START_HI and assignment [76] (byte*) DTV_PLANEB_START_HI ← ((byte*)) (word/dword/signed dword) 53323
-Eliminating unused variable (byte*) DTV_PLANEB_STEP and assignment [77] (byte*) DTV_PLANEB_STEP ← ((byte*)) (word/dword/signed dword) 53324
-Eliminating unused variable (byte*) DTV_PLANEB_MODULO_LO and assignment [78] (byte*) DTV_PLANEB_MODULO_LO ← ((byte*)) (word/dword/signed dword) 53319
-Eliminating unused variable (byte*) DTV_PLANEB_MODULO_HI and assignment [79] (byte*) DTV_PLANEB_MODULO_HI ← ((byte*)) (word/dword/signed dword) 53320
-Eliminating unused variable (byte*) DTV_SPRITE_BANK and assignment [80] (byte*) DTV_SPRITE_BANK ← ((byte*)) (word/dword/signed dword) 53325
-Eliminating unused variable (byte*) DTV_COLOR_BANK_LO and assignment [81] (byte*) DTV_COLOR_BANK_LO ← ((byte*)) (word/dword/signed dword) 53302
-Eliminating unused variable (byte*) DTV_COLOR_BANK_HI and assignment [82] (byte*) DTV_COLOR_BANK_HI ← ((byte*)) (word/dword/signed dword) 53303
-Eliminating unused variable (byte*) DTV_GRAPHICS_VIC_BANK and assignment [83] (byte*) DTV_GRAPHICS_VIC_BANK ← ((byte*)) (word/dword/signed dword) 53309
-Eliminating unused variable (byte*) DTV_GRAPHICS_HICOL_BANK and assignment [84] (byte*) DTV_GRAPHICS_HICOL_BANK ← ((byte*)) (word/dword/signed dword) 53310
+Eliminating unused variable (byte[16]) DTV_PALETTE_DEFAULT and assignment [68] (byte[16]) DTV_PALETTE_DEFAULT ← { (byte/signed byte/word/signed word/dword/signed dword) 0, (byte/signed byte/word/signed word/dword/signed dword) 15, (byte/signed byte/word/signed word/dword/signed dword) 54, (byte/word/signed word/dword/signed dword) 190, (byte/signed byte/word/signed word/dword/signed dword) 88, (byte/word/signed word/dword/signed dword) 219, (byte/word/signed word/dword/signed dword) 134, (byte/word/signed word/dword/signed dword) 255, (byte/signed byte/word/signed word/dword/signed dword) 41, (byte/signed byte/word/signed word/dword/signed dword) 38, (byte/signed byte/word/signed word/dword/signed dword) 59, (byte/signed byte/word/signed word/dword/signed dword) 5, (byte/signed byte/word/signed word/dword/signed dword) 7, (byte/word/signed word/dword/signed dword) 223, (byte/word/signed word/dword/signed dword) 154, (byte/signed byte/word/signed word/dword/signed dword) 10 }
+Eliminating unused variable (byte*) DTV_PLANEA_START_LO and assignment [69] (byte*) DTV_PLANEA_START_LO ← ((byte*)) (word/dword/signed dword) 53306
+Eliminating unused variable (byte*) DTV_PLANEA_START_MI and assignment [70] (byte*) DTV_PLANEA_START_MI ← ((byte*)) (word/dword/signed dword) 53307
+Eliminating unused variable (byte*) DTV_PLANEA_START_HI and assignment [71] (byte*) DTV_PLANEA_START_HI ← ((byte*)) (word/dword/signed dword) 53317
+Eliminating unused variable (byte*) DTV_PLANEA_STEP and assignment [72] (byte*) DTV_PLANEA_STEP ← ((byte*)) (word/dword/signed dword) 53318
+Eliminating unused variable (byte*) DTV_PLANEA_MODULO_LO and assignment [73] (byte*) DTV_PLANEA_MODULO_LO ← ((byte*)) (word/dword/signed dword) 53304
+Eliminating unused variable (byte*) DTV_PLANEA_MODULO_HI and assignment [74] (byte*) DTV_PLANEA_MODULO_HI ← ((byte*)) (word/dword/signed dword) 53305
+Eliminating unused variable (byte*) DTV_PLANEB_START_LO and assignment [75] (byte*) DTV_PLANEB_START_LO ← ((byte*)) (word/dword/signed dword) 53321
+Eliminating unused variable (byte*) DTV_PLANEB_START_MI and assignment [76] (byte*) DTV_PLANEB_START_MI ← ((byte*)) (word/dword/signed dword) 53322
+Eliminating unused variable (byte*) DTV_PLANEB_START_HI and assignment [77] (byte*) DTV_PLANEB_START_HI ← ((byte*)) (word/dword/signed dword) 53323
+Eliminating unused variable (byte*) DTV_PLANEB_STEP and assignment [78] (byte*) DTV_PLANEB_STEP ← ((byte*)) (word/dword/signed dword) 53324
+Eliminating unused variable (byte*) DTV_PLANEB_MODULO_LO and assignment [79] (byte*) DTV_PLANEB_MODULO_LO ← ((byte*)) (word/dword/signed dword) 53319
+Eliminating unused variable (byte*) DTV_PLANEB_MODULO_HI and assignment [80] (byte*) DTV_PLANEB_MODULO_HI ← ((byte*)) (word/dword/signed dword) 53320
+Eliminating unused variable (byte*) DTV_SPRITE_BANK and assignment [81] (byte*) DTV_SPRITE_BANK ← ((byte*)) (word/dword/signed dword) 53325
+Eliminating unused variable (byte*) DTV_COLOR_BANK_LO and assignment [82] (byte*) DTV_COLOR_BANK_LO ← ((byte*)) (word/dword/signed dword) 53302
+Eliminating unused variable (byte*) DTV_COLOR_BANK_HI and assignment [83] (byte*) DTV_COLOR_BANK_HI ← ((byte*)) (word/dword/signed dword) 53303
+Eliminating unused variable (byte*) DTV_GRAPHICS_VIC_BANK and assignment [84] (byte*) DTV_GRAPHICS_VIC_BANK ← ((byte*)) (word/dword/signed dword) 53309
+Eliminating unused variable (byte*) DTV_GRAPHICS_HICOL_BANK and assignment [85] (byte*) DTV_GRAPHICS_HICOL_BANK ← ((byte*)) (word/dword/signed dword) 53310
 Removing empty block main::@9
 Removing empty block main::@3
 Removing empty block main::@10

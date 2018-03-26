@@ -18,14 +18,13 @@
   .label CIA1_PORT_B = $dc01
   .label CIA2_PORT_A = $dd00
   .label CIA2_PORT_A_DDR = $dd02
-  .const GREEN = 5
-  .const BLUE = 6
   .const LIGHT_GREEN = $d
   .label DTV_FEATURE = $d03f
   .const DTV_FEATURE_ENABLE = 1
   .label DTV_CONTROL = $d03c
   .const DTV_CONTROL_LINEAR_ADDRESSING_ON = 1
   .const DTV_CONTROL_HIGHCOLOR_ON = 4
+  .label DTV_PALETTE = $d200
   .label DTV_PLANEA_START_LO = $d03a
   .label DTV_PLANEA_START_MI = $d03b
   .label DTV_PLANEA_START_HI = $d045
@@ -38,17 +37,22 @@
   .label DTV_PLANEB_STEP = $d04c
   .label DTV_PLANEB_MODULO_LO = $d047
   .label DTV_PLANEB_MODULO_HI = $d048
+  .label DTV_COLOR_BANK_LO = $d036
+  .label DTV_COLOR_BANK_HI = $d037
   .label DTV_GRAPHICS_VIC_BANK = $d03d
   .const KEY_C = $14
   .const KEY_SPACE = $3c
   .label MENU_SCREEN = $8000
   .label MENU_CHARSET = $9800
+  .const DTV_COLOR_BANK_DEFAULT = $1d800
   .label TWOPLANE_PLANEA = $4000
   .label TWOPLANE_PLANEB = $6000
+  .label TWOPLANE_COLORS = $8000
   .label print_char_cursor = 5
   .label print_line_cursor = 7
   jsr main
 main: {
+    sei
     lda #DTV_FEATURE_ENABLE
     sta DTV_FEATURE
   b2:
@@ -56,11 +60,13 @@ main: {
     jmp b2
 }
 menu: {
-    .label last = MENU_SCREEN+$3e7
     .label c = 2
     lda #($ffffffff&MENU_CHARSET)/$10000
     sta DTV_GRAPHICS_VIC_BANK
+    lda #DTV_COLOR_BANK_DEFAULT/$400
+    sta DTV_COLOR_BANK_LO
     lda #0
+    sta DTV_COLOR_BANK_HI
     sta DTV_CONTROL
     lda #3
     sta CIA2_PORT_A_DDR
@@ -72,11 +78,18 @@ menu: {
     sta VIC_CONTROL2
     lda #(MENU_SCREEN&$3fff)/$40|(MENU_CHARSET&$3fff)/$400
     sta VIC_MEMORY
+    ldx #0
+  b1:
+    lda DTV_PALETTE_DEFAULT,x
+    sta DTV_PALETTE,x
+    inx
+    cpx #$10
+    bne b1
     lda #<COLS
     sta c
     lda #>COLS
     sta c+1
-  b1:
+  b2:
     lda #LIGHT_GREEN
     ldy #0
     sta (c),y
@@ -86,32 +99,31 @@ menu: {
   !:
     lda c+1
     cmp #>COLS+$3e8
-    bne b1
+    bne b2
     lda c
     cmp #<COLS+$3e8
-    bne b1
+    bne b2
     lda #0
     sta BGCOL
     sta BORDERCOL
     jsr print_set_screen
     jsr print_cls
     jsr print_str_lines
-    jmp b3
+    jmp b4
   breturn:
     rts
-  b3:
+  b4:
     ldy #KEY_C
     jsr keyboard_key_pressed
     cmp #0
-    beq b5
+    beq b4
     jsr mode_twoplanebitmap
     jmp breturn
-  b5:
-    inc last
-    jmp b3
 }
 mode_twoplanebitmap: {
-    .label c = 2
+    .label _15 = 9
+    .label col = 2
+    .label cy = 4
     .label gfxa = 2
     .label ay = 4
     .label gfxb = 2
@@ -144,42 +156,69 @@ mode_twoplanebitmap: {
     lda #0
     sta DTV_PLANEB_MODULO_LO
     sta DTV_PLANEB_MODULO_HI
-    sta BORDERCOL
-    lda #GREEN
-    sta BGCOL1
-    lda #BLUE
-    sta BGCOL2
-    lda #<COLS
-    sta c
-    lda #>COLS
-    sta c+1
+    lda #<TWOPLANE_COLORS/$400
+    sta DTV_COLOR_BANK_LO
+    lda #>TWOPLANE_COLORS/$400
+    sta DTV_COLOR_BANK_HI
+    lda #0
   b1:
-    lda c
+    tax
+    sta DTV_PALETTE,x
+    clc
+    adc #1
+    cmp #$10
+    bne b1
+    lda #0
+    sta BORDERCOL
+    lda #$70
+    sta BGCOL1
+    lda #$d4
+    sta BGCOL2
+    lda #<TWOPLANE_COLORS
+    sta col
+    lda #>TWOPLANE_COLORS
+    sta col+1
+    lda #0
+    sta cy
+  b2:
+    ldx #0
+  b3:
+    lda #$f
+    and cy
+    asl
+    asl
+    asl
+    asl
+    sta _15
+    txa
+    and #$f
+    ora _15
     ldy #0
-    sta (c),y
-    inc c
+    sta (col),y
+    inc col
     bne !+
-    inc c+1
+    inc col+1
   !:
-    lda c+1
-    cmp #>COLS+$3e8
-    bne b1
-    lda c
-    cmp #<COLS+$3e8
-    bne b1
+    inx
+    cpx #$28
+    bne b3
+    inc cy
+    lda cy
+    cmp #$19
+    bne b2
     lda #<TWOPLANE_PLANEA
     sta gfxa
     lda #>TWOPLANE_PLANEA
     sta gfxa+1
     lda #0
     sta ay
-  b2:
+  b4:
     ldx #0
-  b3:
+  b5:
     lda #4
     and ay
     cmp #0
-    bne b4
+    bne b6
     lda #0
     tay
     sta (gfxa),y
@@ -187,23 +226,23 @@ mode_twoplanebitmap: {
     bne !+
     inc gfxa+1
   !:
-  b5:
+  b7:
     inx
     cpx #$28
-    bne b3
+    bne b5
     inc ay
     lda ay
     cmp #$c8
-    bne b2
+    bne b4
     lda #0
     sta by
     lda #<TWOPLANE_PLANEB
     sta gfxb
     lda #>TWOPLANE_PLANEB
     sta gfxb+1
-  b6:
+  b8:
     ldx #0
-  b7:
+  b9:
     lda #$f
     ldy #0
     sta (gfxb),y
@@ -213,21 +252,21 @@ mode_twoplanebitmap: {
   !:
     inx
     cpx #$28
-    bne b7
+    bne b9
     inc by
     lda by
     cmp #$c8
-    bne b6
-    jmp b9
+    bne b8
+    jmp b11
   breturn:
     rts
-  b9:
+  b11:
     ldy #KEY_SPACE
     jsr keyboard_key_pressed
     cmp #0
-    beq b9
+    beq b11
     jmp breturn
-  b4:
+  b6:
     lda #$ff
     ldy #0
     sta (gfxa),y
@@ -235,7 +274,7 @@ mode_twoplanebitmap: {
     bne !+
     inc gfxa+1
   !:
-    jmp b5
+    jmp b7
 }
 keyboard_key_pressed: {
     tya
@@ -346,6 +385,7 @@ print_cls: {
 print_set_screen: {
     rts
 }
+  DTV_PALETTE_DEFAULT: .byte 0, $f, $36, $be, $58, $db, $86, $ff, $29, $26, $3b, 5, 7, $df, $9a, $a
   keyboard_matrix_row_bitmask: .byte $fe, $fd, $fb, $f7, $ef, $df, $bf, $7f
   keyboard_matrix_col_bitmask: .byte 1, 2, 4, 8, $10, $20, $40, $80
   MENU_TEXT: .text "C64DTV Graphics Modes            EMBLHCC@"+"                                 CCMIIHO@"+"                                 MMMNCUL@"+"----------------------------------------@"+"1. Standard Char             (V) 0000000@"+"2. Extended Color Char       (V) 1000000@"+"3. Multicolor Char           (V) 0100000@"+"4. Standard Bitmap           (V) 0010000@"+"5. Multicolor Bitmap         (V) 0110000@"+"6. High Color Standard Char  (H) 0000100@"+"7. High Extended Color Char  (H) 1000100@"+"8. High Multicolor Char      (H) 0100100@"+"9. High Multicolor Bitmap    (H) 0110100@"+"a. Sixs Fred                 (D) 1111100@"+"b. Sixs Fred 2               (D) 1111000@"+"c. Two Plane Bitmap          (D) 1011100@"+"d. Two Plane Multicol Bitmap (D) 1111100@"+"e. 8bpp Pixel Cell           (D) 1101110@"+"f. Chunky 8bpp Bitmap        (D) 1101111@"+"----------------------------------------@"+"    (V) vicII (H) vicII+hicol (D) c64dtv@"+"@"

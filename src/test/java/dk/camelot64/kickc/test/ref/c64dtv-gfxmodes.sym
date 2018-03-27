@@ -1,4 +1,4 @@
-(label) @22
+(label) @23
 (label) @begin
 (label) @end
 (byte*) BGCOL
@@ -27,6 +27,8 @@
 (const byte*) DTV_COLOR_BANK_LO#0 DTV_COLOR_BANK_LO = ((byte*))(word/dword/signed dword) 53302
 (byte*) DTV_CONTROL
 (const byte*) DTV_CONTROL#0 DTV_CONTROL = ((byte*))(word/dword/signed dword) 53308
+(byte) DTV_CONTROL_CHUNKY_ON
+(const byte) DTV_CONTROL_CHUNKY_ON#0 DTV_CONTROL_CHUNKY_ON = (byte/signed byte/word/signed word/dword/signed dword) 64
 (byte) DTV_CONTROL_HIGHCOLOR_ON
 (const byte) DTV_CONTROL_HIGHCOLOR_ON#0 DTV_CONTROL_HIGHCOLOR_ON = (byte/signed byte/word/signed word/dword/signed dword) 4
 (byte) DTV_CONTROL_LINEAR_ADDRESSING_ON
@@ -69,6 +71,8 @@
 (const byte) KEY_B#0 KEY_B = (byte/signed byte/word/signed word/dword/signed dword) 28
 (byte) KEY_C
 (const byte) KEY_C#0 KEY_C = (byte/signed byte/word/signed word/dword/signed dword) 20
+(byte) KEY_D
+(const byte) KEY_D#0 KEY_D = (byte/signed byte/word/signed word/dword/signed dword) 18
 (byte) KEY_SPACE
 (const byte) KEY_SPACE#0 KEY_SPACE = (byte/signed byte/word/signed word/dword/signed dword) 60
 (byte) LIGHT_GREEN
@@ -79,6 +83,12 @@
 (const byte*) MENU_SCREEN#0 MENU_SCREEN = ((byte*))(word/dword/signed dword) 32768
 (byte[]) MENU_TEXT
 (const string) MENU_TEXT#0 MENU_TEXT = (string) "C64DTV Graphics Modes            CCLHBME@"+(string) "                                 OHIIMCC@"+(string) "                                 LUNCMMM@"+(string) "----------------------------------------@"+(string) "1. Standard Char             (V) 0000000@"+(string) "2. Extended Color Char       (V) 0000001@"+(string) "3. Multicolor Char           (V) 0000010@"+(string) "4. Standard Bitmap           (V) 0000100@"+(string) "5. Multicolor Bitmap         (V) 0000110@"+(string) "6. High Color Standard Char  (H) 0001000@"+(string) "7. High Extended Color Char  (H) 0001001@"+(string) "8. High Multicolor Char      (H) 0001010@"+(string) "9. High Multicolor Bitmap    (H) 0001110@"+(string) "a. Sixs Fred 2               (D) 0010111@"+(string) "b. Two Plane Bitmap          (D) 0011101@"+(string) "c. Sixs Fred (2 Plane MC BM) (D) 0011111@"+(string) "d. 8bpp Pixel Cell           (D) 0111011@"+(string) "e. Chunky 8bpp Bitmap        (D) 1111011@"+(string) "----------------------------------------@"+(string) "    (V) vicII (H) vicII+hicol (D) c64dtv@"+(string) "@"
+(byte*) PIXELCELL8BPP_PLANEA
+(const byte*) PIXELCELL8BPP_PLANEA#0 PIXELCELL8BPP_PLANEA = ((byte*))(word/signed word/dword/signed dword) 15360
+(byte*) PIXELCELL8BPP_PLANEB
+(const byte*) PIXELCELL8BPP_PLANEB#0 PIXELCELL8BPP_PLANEB = ((byte*))(word/signed word/dword/signed dword) 16384
+(byte*) PROCPORT
+(const byte*) PROCPORT#0 PROCPORT = ((byte*))(byte/signed byte/word/signed word/dword/signed dword) 1
 (byte*) SIXSFRED_COLORS
 (const byte*) SIXSFRED_COLORS#0 SIXSFRED_COLORS = ((byte*))(word/dword/signed dword) 32768
 (byte*) SIXSFRED_PLANEA
@@ -114,15 +124,17 @@
 (label) keyboard_key_pressed::@2
 (label) keyboard_key_pressed::@return
 (byte) keyboard_key_pressed::colidx
-(byte) keyboard_key_pressed::colidx#0 colidx zp ZP_BYTE:4 0.6666666666666666
+(byte) keyboard_key_pressed::colidx#0 reg byte y 0.6666666666666666
 (byte) keyboard_key_pressed::key
-(byte) keyboard_key_pressed::key#4 reg byte x 2.0
+(byte) keyboard_key_pressed::key#6 reg byte x 2.0
 (byte) keyboard_key_pressed::return
-(byte) keyboard_key_pressed::return#0 reg byte a 67.66666666666667
+(byte) keyboard_key_pressed::return#0 reg byte a 76.0
 (byte) keyboard_key_pressed::return#10 reg byte a 202.0
+(byte) keyboard_key_pressed::return#11 reg byte a 202.0
+(byte) keyboard_key_pressed::return#12 reg byte a 202.0
+(byte) keyboard_key_pressed::return#13 reg byte a 202.0
+(byte) keyboard_key_pressed::return#14 reg byte a 202.0
 (byte) keyboard_key_pressed::return#2 reg byte a 202.0
-(byte) keyboard_key_pressed::return#3 reg byte a 202.0
-(byte) keyboard_key_pressed::return#4 reg byte a 202.0
 (byte) keyboard_key_pressed::rowidx
 (byte) keyboard_key_pressed::rowidx#0 reg byte a 4.0
 (byte[]) keyboard_matrix_col_bitmask
@@ -134,7 +146,7 @@
 (byte) keyboard_matrix_read::return#2 reg byte a 4.0
 (byte) keyboard_matrix_read::row_pressed_bits
 (byte) keyboard_matrix_read::rowid
-(byte) keyboard_matrix_read::rowid#0 reg byte a 4.0
+(byte) keyboard_matrix_read::rowid#0 reg byte x 4.0
 (byte[8]) keyboard_matrix_row_bitmask
 (const byte[8]) keyboard_matrix_row_bitmask#0 keyboard_matrix_row_bitmask = { (byte/word/signed word/dword/signed dword) 254, (byte/word/signed word/dword/signed dword) 253, (byte/word/signed word/dword/signed dword) 251, (byte/word/signed word/dword/signed dword) 247, (byte/word/signed word/dword/signed dword) 239, (byte/word/signed word/dword/signed dword) 223, (byte/word/signed word/dword/signed dword) 191, (byte/signed byte/word/signed word/dword/signed dword) 127 }
 (void()) main()
@@ -144,18 +156,22 @@
 (void()) menu()
 (byte~) menu::$29 reg byte a 202.0
 (byte~) menu::$33 reg byte a 202.0
+(byte~) menu::$37 reg byte a 202.0
 (label) menu::@1
-(label) menu::@12
-(label) menu::@14
+(label) menu::@10
+(label) menu::@13
+(label) menu::@15
 (label) menu::@17
-(label) menu::@18
 (label) menu::@2
 (label) menu::@20
 (label) menu::@21
+(label) menu::@23
+(label) menu::@24
+(label) menu::@26
 (label) menu::@3
 (label) menu::@4
 (label) menu::@6
-(label) menu::@9
+(label) menu::@7
 (label) menu::@return
 (byte*) menu::c
 (byte*) menu::c#1 c zp ZP_WORD:2 151.5
@@ -163,6 +179,74 @@
 (byte) menu::i
 (byte) menu::i#1 reg byte x 151.5
 (byte) menu::i#2 reg byte x 202.0
+(void()) mode_8bpppixelcell()
+(byte~) mode_8bpppixelcell::$11 reg byte a 2002.0
+(byte~) mode_8bpppixelcell::$12 $12 zp ZP_BYTE:5 1001.0
+(byte~) mode_8bpppixelcell::$13 reg byte a 2002.0
+(byte~) mode_8bpppixelcell::$14 reg byte a 2002.0
+(byte~) mode_8bpppixelcell::$17 reg byte a 20002.0
+(byte~) mode_8bpppixelcell::$24 reg byte a 202.0
+(label) mode_8bpppixelcell::@1
+(label) mode_8bpppixelcell::@13
+(label) mode_8bpppixelcell::@14
+(label) mode_8bpppixelcell::@15
+(label) mode_8bpppixelcell::@16
+(label) mode_8bpppixelcell::@17
+(label) mode_8bpppixelcell::@18
+(label) mode_8bpppixelcell::@2
+(label) mode_8bpppixelcell::@24
+(label) mode_8bpppixelcell::@3
+(label) mode_8bpppixelcell::@4
+(label) mode_8bpppixelcell::@5
+(label) mode_8bpppixelcell::@6
+(label) mode_8bpppixelcell::@7
+(label) mode_8bpppixelcell::@8
+(label) mode_8bpppixelcell::@9
+(label) mode_8bpppixelcell::@return
+(byte*) mode_8bpppixelcell::CHARGEN
+(byte) mode_8bpppixelcell::ax
+(byte) mode_8bpppixelcell::ax#1 reg byte x 1501.5
+(byte) mode_8bpppixelcell::ax#2 reg byte x 429.0
+(byte) mode_8bpppixelcell::ay
+(byte) mode_8bpppixelcell::ay#1 ay zp ZP_BYTE:4 151.5
+(byte) mode_8bpppixelcell::ay#4 ay zp ZP_BYTE:4 120.29999999999998
+(byte) mode_8bpppixelcell::bits
+(byte) mode_8bpppixelcell::bits#0 bits zp ZP_BYTE:6 1001.0
+(byte) mode_8bpppixelcell::bits#1 bits zp ZP_BYTE:6 5000.5
+(byte) mode_8bpppixelcell::bits#2 bits zp ZP_BYTE:6 4429.142857142857
+(byte) mode_8bpppixelcell::c
+(byte) mode_8bpppixelcell::c#2 reg byte a 20002.0
+(byte~) mode_8bpppixelcell::c#3 reg byte a 20002.0
+(byte) mode_8bpppixelcell::ch
+(byte) mode_8bpppixelcell::ch#1 ch zp ZP_BYTE:4 151.5
+(byte) mode_8bpppixelcell::ch#8 ch zp ZP_BYTE:4 11.882352941176471
+(byte*) mode_8bpppixelcell::chargen
+(byte*) mode_8bpppixelcell::chargen#1 chargen zp ZP_WORD:2 131.4375
+(byte*) mode_8bpppixelcell::chargen#2 chargen zp ZP_WORD:2 1552.0
+(byte*) mode_8bpppixelcell::chargen#4 chargen zp ZP_WORD:2 202.0
+(byte) mode_8bpppixelcell::col
+(byte) mode_8bpppixelcell::col#1 col zp ZP_BYTE:9 3014.857142857143
+(byte) mode_8bpppixelcell::col#2 col zp ZP_BYTE:9 3875.5
+(byte) mode_8bpppixelcell::col#5 col zp ZP_BYTE:9 701.0
+(byte) mode_8bpppixelcell::col#7 col zp ZP_BYTE:9 202.0
+(byte) mode_8bpppixelcell::cp
+(byte) mode_8bpppixelcell::cp#1 reg byte x 15001.5
+(byte) mode_8bpppixelcell::cp#2 reg byte x 2222.4444444444443
+(byte) mode_8bpppixelcell::cr
+(byte) mode_8bpppixelcell::cr#1 cr zp ZP_BYTE:5 1501.5
+(byte) mode_8bpppixelcell::cr#6 cr zp ZP_BYTE:5 143.0
+(byte*) mode_8bpppixelcell::gfxa
+(byte*) mode_8bpppixelcell::gfxa#1 gfxa zp ZP_WORD:2 420.59999999999997
+(byte*) mode_8bpppixelcell::gfxa#2 gfxa zp ZP_WORD:2 517.3333333333334
+(byte*) mode_8bpppixelcell::gfxa#3 gfxa zp ZP_WORD:2 202.0
+(byte*) mode_8bpppixelcell::gfxb
+(byte*) mode_8bpppixelcell::gfxb#1 gfxb zp ZP_WORD:7 2344.8888888888887
+(byte*) mode_8bpppixelcell::gfxb#2 gfxb zp ZP_WORD:7 5167.333333333333
+(byte*) mode_8bpppixelcell::gfxb#5 gfxb zp ZP_WORD:7 701.0
+(byte*) mode_8bpppixelcell::gfxb#7 gfxb zp ZP_WORD:7 202.0
+(byte) mode_8bpppixelcell::i
+(byte) mode_8bpppixelcell::i#1 reg byte x 151.5
+(byte) mode_8bpppixelcell::i#2 reg byte x 202.0
 (void()) mode_sixsfred()
 (byte~) mode_sixsfred::$15 reg byte a 2002.0
 (byte~) mode_sixsfred::$16 reg byte a 2002.0
@@ -222,7 +306,7 @@
 (const byte[]) mode_sixsfred::row_bitmask#0 row_bitmask = { (byte/signed byte/word/signed word/dword/signed dword) 0, (byte/signed byte/word/signed word/dword/signed dword) 85, (byte/word/signed word/dword/signed dword) 170, (byte/word/signed word/dword/signed dword) 255 }
 (void()) mode_twoplanebitmap()
 (byte~) mode_twoplanebitmap::$14 reg byte a 2002.0
-(byte~) mode_twoplanebitmap::$15 $15 zp ZP_BYTE:9 1001.0
+(byte~) mode_twoplanebitmap::$15 $15 zp ZP_BYTE:5 1001.0
 (byte~) mode_twoplanebitmap::$16 reg byte a 2002.0
 (byte~) mode_twoplanebitmap::$17 reg byte a 2002.0
 (byte~) mode_twoplanebitmap::$20 reg byte a 2002.0
@@ -281,11 +365,11 @@
 (byte) mode_twoplanebitmap::i#1 reg byte a 151.5
 (byte) mode_twoplanebitmap::i#2 reg byte a 202.0
 (byte*) print_char_cursor
-(byte*) print_char_cursor#1 print_char_cursor zp ZP_WORD:5 2002.0
-(byte*) print_char_cursor#17 print_char_cursor zp ZP_WORD:5 821.0
-(byte*) print_char_cursor#19 print_char_cursor zp ZP_WORD:5 101.0
-(byte*) print_char_cursor#32 print_char_cursor zp ZP_WORD:5 572.0
-(byte*~) print_char_cursor#61 print_char_cursor zp ZP_WORD:5 202.0
+(byte*) print_char_cursor#1 print_char_cursor zp ZP_WORD:7 2002.0
+(byte*) print_char_cursor#17 print_char_cursor zp ZP_WORD:7 821.0
+(byte*) print_char_cursor#19 print_char_cursor zp ZP_WORD:7 101.0
+(byte*) print_char_cursor#32 print_char_cursor zp ZP_WORD:7 572.0
+(byte*~) print_char_cursor#66 print_char_cursor zp ZP_WORD:7 202.0
 (void()) print_cls()
 (label) print_cls::@1
 (label) print_cls::@return
@@ -293,9 +377,9 @@
 (byte*) print_cls::sc#1 sc zp ZP_WORD:2 151.5
 (byte*) print_cls::sc#2 sc zp ZP_WORD:2 151.5
 (byte*) print_line_cursor
-(byte*) print_line_cursor#17 print_line_cursor zp ZP_WORD:7 8.583333333333332
-(byte*) print_line_cursor#18 print_line_cursor zp ZP_WORD:7 2004.0
-(byte*) print_line_cursor#19 print_line_cursor zp ZP_WORD:7 641.0
+(byte*) print_line_cursor#17 print_line_cursor zp ZP_WORD:10 8.583333333333332
+(byte*) print_line_cursor#18 print_line_cursor zp ZP_WORD:10 2004.0
+(byte*) print_line_cursor#19 print_line_cursor zp ZP_WORD:10 641.0
 (void()) print_ln()
 (label) print_ln::@1
 (label) print_ln::@return
@@ -318,40 +402,55 @@
 (byte*) print_str_lines::str#3 str zp ZP_WORD:2 1552.0
 
 reg byte x [ menu::i#2 menu::i#1 ]
-zp ZP_WORD:2 [ menu::c#2 menu::c#1 mode_sixsfred::col#2 mode_sixsfred::col#3 mode_sixsfred::col#1 mode_sixsfred::gfxa#2 mode_sixsfred::gfxa#3 mode_sixsfred::gfxa#1 mode_sixsfred::gfxb#2 mode_sixsfred::gfxb#3 mode_sixsfred::gfxb#1 mode_twoplanebitmap::col#2 mode_twoplanebitmap::col#3 mode_twoplanebitmap::col#1 mode_twoplanebitmap::gfxa#3 mode_twoplanebitmap::gfxa#6 mode_twoplanebitmap::gfxa#7 mode_twoplanebitmap::gfxa#2 mode_twoplanebitmap::gfxa#1 mode_twoplanebitmap::gfxb#2 mode_twoplanebitmap::gfxb#3 mode_twoplanebitmap::gfxb#1 print_str_lines::str#3 print_str_lines::str#2 print_str_lines::str#0 print_cls::sc#2 print_cls::sc#1 ]
+zp ZP_WORD:2 [ menu::c#2 menu::c#1 mode_8bpppixelcell::gfxa#2 mode_8bpppixelcell::gfxa#3 mode_8bpppixelcell::gfxa#1 mode_8bpppixelcell::chargen#2 mode_8bpppixelcell::chargen#4 mode_8bpppixelcell::chargen#1 mode_sixsfred::col#2 mode_sixsfred::col#3 mode_sixsfred::col#1 mode_sixsfred::gfxa#2 mode_sixsfred::gfxa#3 mode_sixsfred::gfxa#1 mode_sixsfred::gfxb#2 mode_sixsfred::gfxb#3 mode_sixsfred::gfxb#1 mode_twoplanebitmap::col#2 mode_twoplanebitmap::col#3 mode_twoplanebitmap::col#1 mode_twoplanebitmap::gfxa#3 mode_twoplanebitmap::gfxa#6 mode_twoplanebitmap::gfxa#7 mode_twoplanebitmap::gfxa#2 mode_twoplanebitmap::gfxa#1 mode_twoplanebitmap::gfxb#2 mode_twoplanebitmap::gfxb#3 mode_twoplanebitmap::gfxb#1 print_str_lines::str#3 print_str_lines::str#2 print_str_lines::str#0 print_cls::sc#2 print_cls::sc#1 ]
+reg byte x [ mode_8bpppixelcell::i#2 mode_8bpppixelcell::i#1 ]
+zp ZP_BYTE:4 [ mode_8bpppixelcell::ay#4 mode_8bpppixelcell::ay#1 mode_8bpppixelcell::ch#8 mode_8bpppixelcell::ch#1 mode_sixsfred::cy#4 mode_sixsfred::cy#1 mode_sixsfred::ay#4 mode_sixsfred::ay#1 mode_sixsfred::by#4 mode_sixsfred::by#1 mode_twoplanebitmap::cy#4 mode_twoplanebitmap::cy#1 mode_twoplanebitmap::ay#4 mode_twoplanebitmap::ay#1 mode_twoplanebitmap::by#4 mode_twoplanebitmap::by#1 ]
+reg byte x [ mode_8bpppixelcell::ax#2 mode_8bpppixelcell::ax#1 ]
+zp ZP_BYTE:5 [ mode_8bpppixelcell::cr#6 mode_8bpppixelcell::cr#1 mode_8bpppixelcell::$12 mode_twoplanebitmap::$15 ]
+zp ZP_BYTE:6 [ mode_8bpppixelcell::bits#2 mode_8bpppixelcell::bits#0 mode_8bpppixelcell::bits#1 ]
+zp ZP_WORD:7 [ mode_8bpppixelcell::gfxb#2 mode_8bpppixelcell::gfxb#5 mode_8bpppixelcell::gfxb#7 mode_8bpppixelcell::gfxb#1 print_char_cursor#17 print_char_cursor#19 print_char_cursor#66 print_char_cursor#32 print_char_cursor#1 ]
+zp ZP_BYTE:9 [ mode_8bpppixelcell::col#2 mode_8bpppixelcell::col#5 mode_8bpppixelcell::col#7 mode_8bpppixelcell::col#1 ]
+reg byte x [ mode_8bpppixelcell::cp#2 mode_8bpppixelcell::cp#1 ]
+reg byte a [ mode_8bpppixelcell::c#2 mode_8bpppixelcell::c#3 ]
+reg byte x [ keyboard_key_pressed::key#6 ]
 reg byte x [ mode_sixsfred::i#2 mode_sixsfred::i#1 ]
-zp ZP_BYTE:4 [ mode_sixsfred::cy#4 mode_sixsfred::cy#1 mode_sixsfred::ay#4 mode_sixsfred::ay#1 mode_sixsfred::by#4 mode_sixsfred::by#1 mode_twoplanebitmap::cy#4 mode_twoplanebitmap::cy#1 mode_twoplanebitmap::ay#4 mode_twoplanebitmap::ay#1 mode_twoplanebitmap::by#4 mode_twoplanebitmap::by#1 keyboard_key_pressed::colidx#0 ]
 reg byte x [ mode_sixsfred::cx#2 mode_sixsfred::cx#1 ]
 reg byte x [ mode_sixsfred::ax#2 mode_sixsfred::ax#1 ]
 reg byte x [ mode_sixsfred::bx#2 mode_sixsfred::bx#1 ]
-reg byte x [ keyboard_key_pressed::key#4 ]
 reg byte a [ mode_twoplanebitmap::i#2 mode_twoplanebitmap::i#1 ]
 reg byte x [ mode_twoplanebitmap::cx#2 mode_twoplanebitmap::cx#1 ]
 reg byte x [ mode_twoplanebitmap::ax#2 mode_twoplanebitmap::ax#1 ]
 reg byte x [ mode_twoplanebitmap::bx#2 mode_twoplanebitmap::bx#1 ]
-zp ZP_WORD:5 [ print_char_cursor#17 print_char_cursor#19 print_char_cursor#61 print_char_cursor#32 print_char_cursor#1 ]
-zp ZP_WORD:7 [ print_line_cursor#18 print_line_cursor#17 print_line_cursor#19 ]
+zp ZP_WORD:10 [ print_line_cursor#18 print_line_cursor#17 print_line_cursor#19 ]
 reg byte a [ keyboard_key_pressed::return#2 ]
 reg byte a [ menu::$29 ]
-reg byte a [ keyboard_key_pressed::return#3 ]
-reg byte a [ menu::$33 ]
-reg byte a [ mode_sixsfred::$15 ]
-reg byte a [ mode_sixsfred::$16 ]
-reg byte a [ mode_sixsfred::$19 ]
-reg byte a [ mode_sixsfred::row#0 ]
 reg byte a [ keyboard_key_pressed::return#10 ]
-reg byte a [ mode_sixsfred::$25 ]
+reg byte a [ menu::$33 ]
+reg byte a [ keyboard_key_pressed::return#11 ]
+reg byte a [ menu::$37 ]
+reg byte a [ mode_8bpppixelcell::$11 ]
+reg byte a [ mode_8bpppixelcell::$13 ]
+reg byte a [ mode_8bpppixelcell::$14 ]
+reg byte a [ mode_8bpppixelcell::$17 ]
+reg byte a [ keyboard_key_pressed::return#14 ]
+reg byte a [ mode_8bpppixelcell::$24 ]
+reg byte y [ keyboard_key_pressed::colidx#0 ]
 reg byte a [ keyboard_key_pressed::rowidx#0 ]
-reg byte a [ keyboard_matrix_read::rowid#0 ]
+reg byte x [ keyboard_matrix_read::rowid#0 ]
 reg byte a [ keyboard_matrix_read::return#2 ]
 reg byte a [ keyboard_key_pressed::$2 ]
 reg byte a [ keyboard_key_pressed::return#0 ]
 reg byte a [ keyboard_matrix_read::return#0 ]
+reg byte a [ mode_sixsfred::$15 ]
+reg byte a [ mode_sixsfred::$16 ]
+reg byte a [ mode_sixsfred::$19 ]
+reg byte a [ mode_sixsfred::row#0 ]
+reg byte a [ keyboard_key_pressed::return#13 ]
+reg byte a [ mode_sixsfred::$25 ]
 reg byte a [ mode_twoplanebitmap::$14 ]
-zp ZP_BYTE:9 [ mode_twoplanebitmap::$15 ]
 reg byte a [ mode_twoplanebitmap::$16 ]
 reg byte a [ mode_twoplanebitmap::$17 ]
 reg byte a [ mode_twoplanebitmap::$20 ]
-reg byte a [ keyboard_key_pressed::return#4 ]
+reg byte a [ keyboard_key_pressed::return#12 ]
 reg byte a [ mode_twoplanebitmap::$27 ]
 reg byte a [ print_str_lines::ch#0 ]

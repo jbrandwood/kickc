@@ -1,6 +1,7 @@
 .pc = $801 "Basic"
 :BasicUpstart(main)
 .pc = $80d "Program"
+  .label PROCPORT = 1
   .label BORDERCOL = $d020
   .label BGCOL = $d021
   .label BGCOL1 = $d021
@@ -25,6 +26,7 @@
   .label DTV_CONTROL = $d03c
   .const DTV_CONTROL_LINEAR_ADDRESSING_ON = 1
   .const DTV_CONTROL_HIGHCOLOR_ON = 4
+  .const DTV_CONTROL_CHUNKY_ON = $40
   .label DTV_PALETTE = $d200
   .label DTV_PLANEA_START_LO = $d03a
   .label DTV_PLANEA_START_MI = $d03b
@@ -41,6 +43,7 @@
   .label DTV_COLOR_BANK_LO = $d036
   .label DTV_COLOR_BANK_HI = $d037
   .label DTV_GRAPHICS_VIC_BANK = $d03d
+  .const KEY_D = $12
   .const KEY_C = $14
   .const KEY_B = $1c
   .const KEY_SPACE = $3c
@@ -53,8 +56,10 @@
   .label SIXSFRED_PLANEA = $4000
   .label SIXSFRED_PLANEB = $6000
   .label SIXSFRED_COLORS = $8000
-  .label print_char_cursor = 5
-  .label print_line_cursor = 7
+  .label PIXELCELL8BPP_PLANEA = $3c00
+  .label PIXELCELL8BPP_PLANEB = $4000
+  .label print_char_cursor = 7
+  .label print_line_cursor = $a
   jsr main
 main: {
     sei
@@ -128,9 +133,177 @@ menu: {
     ldx #KEY_C
     jsr keyboard_key_pressed
     cmp #0
-    beq b4
+    beq b7
     jsr mode_sixsfred
     jmp breturn
+  b7:
+    ldx #KEY_D
+    jsr keyboard_key_pressed
+    cmp #0
+    beq b4
+    jsr mode_8bpppixelcell
+    jmp breturn
+}
+mode_8bpppixelcell: {
+    .label _12 = 5
+    .label gfxa = 2
+    .label ay = 4
+    .label bits = 6
+    .label chargen = 2
+    .label gfxb = 7
+    .label col = 9
+    .label cr = 5
+    .label ch = 4
+    lda #DTV_CONTROL_HIGHCOLOR_ON|DTV_CONTROL_LINEAR_ADDRESSING_ON|DTV_CONTROL_CHUNKY_ON
+    sta DTV_CONTROL
+    lda #VIC_ECM|VIC_DEN|VIC_RSEL|3
+    sta VIC_CONTROL
+    lda #VIC_MCM|VIC_CSEL
+    sta VIC_CONTROL2
+    lda #<PIXELCELL8BPP_PLANEA
+    sta DTV_PLANEA_START_LO
+    lda #>PIXELCELL8BPP_PLANEA
+    sta DTV_PLANEA_START_MI
+    lda #0
+    sta DTV_PLANEA_START_HI
+    lda #1
+    sta DTV_PLANEA_STEP
+    lda #0
+    sta DTV_PLANEA_MODULO_LO
+    sta DTV_PLANEA_MODULO_HI
+    lda #<PIXELCELL8BPP_PLANEB
+    sta DTV_PLANEB_START_LO
+    lda #>PIXELCELL8BPP_PLANEB
+    sta DTV_PLANEB_START_MI
+    lda #0
+    sta DTV_PLANEB_START_HI
+    sta DTV_PLANEB_STEP
+    sta DTV_PLANEB_MODULO_LO
+    sta DTV_PLANEB_MODULO_HI
+    sta BORDERCOL
+    tax
+  b1:
+    txa
+    sta DTV_PALETTE,x
+    inx
+    cpx #$10
+    bne b1
+    lda #<PIXELCELL8BPP_PLANEA
+    sta gfxa
+    lda #>PIXELCELL8BPP_PLANEA
+    sta gfxa+1
+    lda #0
+    sta ay
+  b2:
+    ldx #0
+  b3:
+    lda #$f
+    and ay
+    asl
+    asl
+    asl
+    asl
+    sta _12
+    txa
+    and #$f
+    ora _12
+    ldy #0
+    sta (gfxa),y
+    inc gfxa
+    bne !+
+    inc gfxa+1
+  !:
+    inx
+    cpx #$28
+    bne b3
+    inc ay
+    lda ay
+    cmp #$19
+    bne b2
+    lda #$32
+    sta PROCPORT
+    lda #0
+    sta ch
+    sta col
+    lda #<PIXELCELL8BPP_PLANEB
+    sta gfxb
+    lda #>PIXELCELL8BPP_PLANEB
+    sta gfxb+1
+    lda #<$d000
+    sta chargen
+    lda #>$d000
+    sta chargen+1
+  b4:
+    lda #0
+    sta cr
+  b5:
+    ldy #0
+    lda (chargen),y
+    sta bits
+    inc chargen
+    bne !+
+    inc chargen+1
+  !:
+    ldx #0
+  b6:
+    lda #$80
+    and bits
+    cmp #0
+    beq b10
+    lda col
+    jmp b7
+  b10:
+    lda #0
+  b7:
+    ldy #0
+    sta (gfxb),y
+    inc gfxb
+    bne !+
+    inc gfxb+1
+  !:
+    asl bits
+    inc col
+    inx
+    cpx #8
+    bne b6
+    inc cr
+    lda cr
+    cmp #8
+    bne b5
+    inc ch
+    lda ch
+    bne b4
+    lda #$37
+    sta PROCPORT
+    jmp b9
+  breturn:
+    rts
+  b9:
+    ldx #KEY_SPACE
+    jsr keyboard_key_pressed
+    cmp #0
+    beq b9
+    jmp breturn
+}
+keyboard_key_pressed: {
+    txa
+    and #7
+    tay
+    txa
+    lsr
+    lsr
+    lsr
+    tax
+    jsr keyboard_matrix_read
+    and keyboard_matrix_col_bitmask,y
+    rts
+}
+keyboard_matrix_read: {
+    lda keyboard_matrix_row_bitmask,x
+    sta CIA1_PORT_A
+    lda CIA1_PORT_B
+    eor #$ff
+    rts
 }
 mode_sixsfred: {
     .label col = 2
@@ -267,30 +440,8 @@ mode_sixsfred: {
     jmp breturn
     row_bitmask: .byte 0, $55, $aa, $ff
 }
-keyboard_key_pressed: {
-    .label colidx = 4
-    txa
-    and #7
-    sta colidx
-    txa
-    lsr
-    lsr
-    lsr
-    jsr keyboard_matrix_read
-    ldy colidx
-    and keyboard_matrix_col_bitmask,y
-    rts
-}
-keyboard_matrix_read: {
-    tay
-    lda keyboard_matrix_row_bitmask,y
-    sta CIA1_PORT_A
-    lda CIA1_PORT_B
-    eor #$ff
-    rts
-}
 mode_twoplanebitmap: {
-    .label _15 = 9
+    .label _15 = 5
     .label col = 2
     .label cy = 4
     .label gfxa = 2

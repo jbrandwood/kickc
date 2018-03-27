@@ -14,25 +14,24 @@ void main() {
 const byte* MENU_SCREEN = $8000;
 const byte* MENU_CHARSET = $9800; // Charset ROM
 byte[] MENU_TEXT =
-     "C64DTV Graphics Modes            EMBLHCC@" +
-     "                                 CCMIIHO@" +
-     "                                 MMMNCUL@" +
+     "C64DTV Graphics Modes            CCLHBME@" +
+     "                                 OHIIMCC@" +
+     "                                 LUNCMMM@" +
      "----------------------------------------@" +
      "1. Standard Char             (V) 0000000@" +
-     "2. Extended Color Char       (V) 1000000@" +
-     "3. Multicolor Char           (V) 0100000@" +
-     "4. Standard Bitmap           (V) 0010000@" +
-     "5. Multicolor Bitmap         (V) 0110000@" +
-     "6. High Color Standard Char  (H) 0000100@" +
-     "7. High Extended Color Char  (H) 1000100@" +
-     "8. High Multicolor Char      (H) 0100100@" +
-     "9. High Multicolor Bitmap    (H) 0110100@" +
-     "a. Sixs Fred                 (D) 1111100@" +
-     "b. Sixs Fred 2               (D) 1111000@" +
-     "c. Two Plane Bitmap          (D) 1011100@" +
-     "d. Two Plane Multicol Bitmap (D) 1111100@" +
-     "e. 8bpp Pixel Cell           (D) 1101110@" +
-     "f. Chunky 8bpp Bitmap        (D) 1101111@" +
+     "2. Extended Color Char       (V) 0000001@" +
+     "3. Multicolor Char           (V) 0000010@" +
+     "4. Standard Bitmap           (V) 0000100@" +
+     "5. Multicolor Bitmap         (V) 0000110@" +
+     "6. High Color Standard Char  (H) 0001000@" +
+     "7. High Extended Color Char  (H) 0001001@" +
+     "8. High Multicolor Char      (H) 0001010@" +
+     "9. High Multicolor Bitmap    (H) 0001110@" +
+     "a. Sixs Fred 2               (D) 0010111@" +
+     "b. Two Plane Bitmap          (D) 0011101@" +
+     "c. Sixs Fred (2 Plane MC BM) (D) 0011111@" +
+     "d. 8bpp Pixel Cell           (D) 0111011@" +
+     "e. Chunky 8bpp Bitmap        (D) 1111011@" +
      "----------------------------------------@" +
      "    (V) vicII (H) vicII+hicol (D) c64dtv@" +
      "@" ;
@@ -70,8 +69,12 @@ void menu() {
     print_str_lines(MENU_TEXT);
     // Wait for key press
     while(true) {
-        if(keyboard_key_pressed(KEY_C)!=0) {
+        if(keyboard_key_pressed(KEY_B)!=0) {
             mode_twoplanebitmap();
+            return;
+        }
+        if(keyboard_key_pressed(KEY_C)!=0) {
+            mode_sixsfred();
             return;
         }
     }
@@ -82,8 +85,15 @@ const byte* TWOPLANE_PLANEA = $4000;
 const byte* TWOPLANE_PLANEB = $6000;
 const byte* TWOPLANE_COLORS = $8000;
 
-// Test the Two Plane Bitmap - generated from the two DTV linear graphics plane counters
+// Two Plane Bitmap - generated from the two DTV linear graphics plane counters
 // Two Plane Bitmap Mode (CHUNK/COLDIS/MCM = 0, ECM/BMM/HICOL/LINEAR = 1)
+// Resolution: 320x200
+// Linear Adressing
+// GfxData/PlaneA Pixel Shifter (1), CharData/PlaneB Pixel Shifter (1):
+// - Plane A = 0 Plane B = 0: 8bpp BgColor0[7:0]
+// - Plane A = 0 Plane B = 1: 8bpp "0000" & ColorData[7:4]
+// - Plane A = 1 Plane B = 0: 8bpp "0000" & ColorData[3:0]
+// - Plane A = 1 Plane B = 1: 8bpp BgColor1[7:0]
 void mode_twoplanebitmap() {
     // DTV Graphics Mode
     *DTV_CONTROL = DTV_CONTROL_HIGHCOLOR_ON | DTV_CONTROL_LINEAR_ADDRESSING_ON;
@@ -107,7 +117,7 @@ void mode_twoplanebitmap() {
     // DTV Color Bank
      *DTV_COLOR_BANK_LO = <(TWOPLANE_COLORS/$400);
      *DTV_COLOR_BANK_HI = >(TWOPLANE_COLORS/$400);
-    // DTV Palette - Grey Tone
+    // DTV Palette - Grey Tones
     for(byte i : 0..$f) {
         DTV_PALETTE[i] = i;
     }
@@ -122,16 +132,14 @@ void mode_twoplanebitmap() {
             *col++ = (cy & $f)<<4 | (cx &$f);
         }
     }
-
-
     // Graphics for Plane A - horizontal stripes
     byte* gfxa = TWOPLANE_PLANEA;
     for(byte ay : 0..199) {
         for (byte ax : 0..39) {
             if((ay&4)==0) {
-                *gfxa++ = $00;
+                *gfxa++ = %00000000;
             } else {
-                *gfxa++ = $ff;
+                *gfxa++ = %11111111;
             }
         }
     }
@@ -139,9 +147,10 @@ void mode_twoplanebitmap() {
     byte* gfxb = TWOPLANE_PLANEB;
     for(byte by : 0..199) {
         for ( byte bx : 0..39) {
-            *gfxb++ = $0f;
+            *gfxb++ = %00001111;
         }
     }
+    // Wait for keypress
     while(true) {
         if(keyboard_key_pressed(KEY_SPACE)!=0) {
             return;
@@ -149,4 +158,76 @@ void mode_twoplanebitmap() {
     }
 
 }
+
+const byte* SIXSFRED_PLANEA = $4000;
+const byte* SIXSFRED_PLANEB = $6000;
+const byte* SIXSFRED_COLORS = $8000;
+
+// Sixs Fred Mode - 8bpp Packed Bitmap - Generated from the two DTV linear graphics plane counters
+// Two Plane MultiColor Bitmap - 8bpp Packed Bitmap (CHUNK/COLDIS = 0, ECM/BMM/MCM/HICOL/LINEAR = 1)
+// Resolution: 160x200
+// Linear Adressing
+// GfxData/PlaneA Pixel Shifter (2), CharData/PlaneB Pixel Shifter (2):
+// - 8bpp color (ColorData[3:0],CharData/PlaneB[1:0], GfxData/PlaneA[1:0])
+void mode_sixsfred() {
+    // DTV Graphics Mode
+    *DTV_CONTROL = DTV_CONTROL_HIGHCOLOR_ON | DTV_CONTROL_LINEAR_ADDRESSING_ON;
+    // VIC Graphics Mode
+    *VIC_CONTROL = VIC_ECM|VIC_BMM|VIC_DEN|VIC_RSEL|3;
+    *VIC_CONTROL2 = VIC_MCM|VIC_CSEL;
+    // Linear Graphics Plane A Counter
+    *DTV_PLANEA_START_LO = <SIXSFRED_PLANEA;
+    *DTV_PLANEA_START_MI = >SIXSFRED_PLANEA;
+    *DTV_PLANEA_START_HI = 0;
+    *DTV_PLANEA_STEP = 1;
+    *DTV_PLANEA_MODULO_LO = 0;
+    *DTV_PLANEA_MODULO_HI = 0;
+    // Linear Graphics Plane B Counter
+    *DTV_PLANEB_START_LO = <SIXSFRED_PLANEB;
+    *DTV_PLANEB_START_MI = >SIXSFRED_PLANEB;
+    *DTV_PLANEB_START_HI = 0;
+    *DTV_PLANEB_STEP = 1;
+    *DTV_PLANEB_MODULO_LO = 0;
+    *DTV_PLANEB_MODULO_HI = 0;
+    // DTV Color Bank
+     *DTV_COLOR_BANK_LO = <(SIXSFRED_COLORS/$400);
+     *DTV_COLOR_BANK_HI = >(SIXSFRED_COLORS/$400);
+    // DTV Palette - Grey Tones
+    for(byte i : 0..$f) {
+        DTV_PALETTE[i] = i;
+    }
+    // Screen colors
+    *BORDERCOL = $00;
+    // Colors for high 4 bits of 8bpp
+    byte* col=TWOPLANE_COLORS;
+    for(byte cy: 0..24 ) {
+        for(byte cx: 0..39) {
+            *col++ = (cx+cy) & $f;
+        }
+    }
+    // Graphics for Plane A () - horizontal stripes every 2 pixels
+    byte* gfxa = SIXSFRED_PLANEA;
+    byte[] row_bitmask = { %00000000, %01010101, %10101010, %11111111 };
+    for(byte ay : 0..199) {
+        for (byte ax : 0..39) {
+            byte row = (ay>>1) & 3;
+            *gfxa++ = row_bitmask[row];
+        }
+    }
+    // Graphics for Plane B - vertical stripes every 2 pixels
+    byte* gfxb = SIXSFRED_PLANEB;
+    for(byte by : 0..199) {
+        for ( byte bx : 0..39) {
+                *gfxb++ = %00011011;
+        }
+    }
+    // Wait for keypress
+    while(true) {
+        if(keyboard_key_pressed(KEY_SPACE)!=0) {
+            return;
+        }
+    }
+
+}
+
 

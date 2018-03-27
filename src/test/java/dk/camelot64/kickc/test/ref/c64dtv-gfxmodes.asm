@@ -11,6 +11,7 @@
   .const VIC_DEN = $10
   .const VIC_RSEL = 8
   .label VIC_CONTROL2 = $d016
+  .const VIC_MCM = $10
   .const VIC_CSEL = 8
   .label VIC_MEMORY = $d018
   .label COLS = $d800
@@ -41,6 +42,7 @@
   .label DTV_COLOR_BANK_HI = $d037
   .label DTV_GRAPHICS_VIC_BANK = $d03d
   .const KEY_C = $14
+  .const KEY_B = $1c
   .const KEY_SPACE = $3c
   .label MENU_SCREEN = $8000
   .label MENU_CHARSET = $9800
@@ -48,6 +50,9 @@
   .label TWOPLANE_PLANEA = $4000
   .label TWOPLANE_PLANEB = $6000
   .label TWOPLANE_COLORS = $8000
+  .label SIXSFRED_PLANEA = $4000
+  .label SIXSFRED_PLANEB = $6000
+  .label SIXSFRED_COLORS = $8000
   .label print_char_cursor = 5
   .label print_line_cursor = 7
   jsr main
@@ -113,12 +118,176 @@ menu: {
   breturn:
     rts
   b4:
-    ldy #KEY_C
+    ldx #KEY_B
+    jsr keyboard_key_pressed
+    cmp #0
+    beq b6
+    jsr mode_twoplanebitmap
+    jmp breturn
+  b6:
+    ldx #KEY_C
     jsr keyboard_key_pressed
     cmp #0
     beq b4
-    jsr mode_twoplanebitmap
+    jsr mode_sixsfred
     jmp breturn
+}
+mode_sixsfred: {
+    .label col = 2
+    .label cy = 4
+    .label gfxa = 2
+    .label ay = 4
+    .label gfxb = 2
+    .label by = 4
+    lda #DTV_CONTROL_HIGHCOLOR_ON|DTV_CONTROL_LINEAR_ADDRESSING_ON
+    sta DTV_CONTROL
+    lda #VIC_ECM|VIC_BMM|VIC_DEN|VIC_RSEL|3
+    sta VIC_CONTROL
+    lda #VIC_MCM|VIC_CSEL
+    sta VIC_CONTROL2
+    lda #<SIXSFRED_PLANEA
+    sta DTV_PLANEA_START_LO
+    lda #>SIXSFRED_PLANEA
+    sta DTV_PLANEA_START_MI
+    lda #0
+    sta DTV_PLANEA_START_HI
+    lda #1
+    sta DTV_PLANEA_STEP
+    lda #0
+    sta DTV_PLANEA_MODULO_LO
+    sta DTV_PLANEA_MODULO_HI
+    lda #<SIXSFRED_PLANEB
+    sta DTV_PLANEB_START_LO
+    lda #>SIXSFRED_PLANEB
+    sta DTV_PLANEB_START_MI
+    lda #0
+    sta DTV_PLANEB_START_HI
+    lda #1
+    sta DTV_PLANEB_STEP
+    lda #0
+    sta DTV_PLANEB_MODULO_LO
+    sta DTV_PLANEB_MODULO_HI
+    lda #<SIXSFRED_COLORS/$400
+    sta DTV_COLOR_BANK_LO
+    lda #>SIXSFRED_COLORS/$400
+    sta DTV_COLOR_BANK_HI
+    ldx #0
+  b1:
+    txa
+    sta DTV_PALETTE,x
+    inx
+    cpx #$10
+    bne b1
+    lda #0
+    sta BORDERCOL
+    lda #<TWOPLANE_COLORS
+    sta col
+    lda #>TWOPLANE_COLORS
+    sta col+1
+    lda #0
+    sta cy
+  b2:
+    ldx #0
+  b3:
+    txa
+    clc
+    adc cy
+    and #$f
+    ldy #0
+    sta (col),y
+    inc col
+    bne !+
+    inc col+1
+  !:
+    inx
+    cpx #$28
+    bne b3
+    inc cy
+    lda cy
+    cmp #$19
+    bne b2
+    lda #<SIXSFRED_PLANEA
+    sta gfxa
+    lda #>SIXSFRED_PLANEA
+    sta gfxa+1
+    lda #0
+    sta ay
+  b4:
+    ldx #0
+  b5:
+    lda ay
+    lsr
+    and #3
+    tay
+    lda row_bitmask,y
+    ldy #0
+    sta (gfxa),y
+    inc gfxa
+    bne !+
+    inc gfxa+1
+  !:
+    inx
+    cpx #$28
+    bne b5
+    inc ay
+    lda ay
+    cmp #$c8
+    bne b4
+    lda #0
+    sta by
+    lda #<SIXSFRED_PLANEB
+    sta gfxb
+    lda #>SIXSFRED_PLANEB
+    sta gfxb+1
+  b6:
+    ldx #0
+  b7:
+    lda #$1b
+    ldy #0
+    sta (gfxb),y
+    inc gfxb
+    bne !+
+    inc gfxb+1
+  !:
+    inx
+    cpx #$28
+    bne b7
+    inc by
+    lda by
+    cmp #$c8
+    bne b6
+    jmp b9
+  breturn:
+    rts
+  b9:
+    ldx #KEY_SPACE
+    jsr keyboard_key_pressed
+    cmp #0
+    beq b9
+    jmp breturn
+    row_bitmask: .byte 0, $55, $aa, $ff
+}
+keyboard_key_pressed: {
+    .label colidx = 4
+    txa
+    and #7
+    sta colidx
+    txa
+    lsr
+    lsr
+    lsr
+    jsr keyboard_matrix_read
+    ldy colidx
+    and keyboard_matrix_col_bitmask,y
+    rts
+}
+keyboard_matrix_read: {
+    tay
+    lda keyboard_matrix_row_bitmask,y
+    sta CIA1_PORT_A
+    lda CIA1_PORT_B
+    eor #$ff
+    rts
 }
 mode_twoplanebitmap: {
     .label _15 = 9
@@ -261,7 +430,7 @@ mode_twoplanebitmap: {
   breturn:
     rts
   b11:
-    ldy #KEY_SPACE
+    ldx #KEY_SPACE
     jsr keyboard_key_pressed
     cmp #0
     beq b11
@@ -275,26 +444,6 @@ mode_twoplanebitmap: {
     inc gfxa+1
   !:
     jmp b7
-}
-keyboard_key_pressed: {
-    tya
-    and #7
-    tax
-    tya
-    lsr
-    lsr
-    lsr
-    jsr keyboard_matrix_read
-    and keyboard_matrix_col_bitmask,x
-    rts
-}
-keyboard_matrix_read: {
-    tay
-    lda keyboard_matrix_row_bitmask,y
-    sta CIA1_PORT_A
-    lda CIA1_PORT_B
-    eor #$ff
-    rts
 }
 print_str_lines: {
     .label str = 2
@@ -388,4 +537,4 @@ print_set_screen: {
   DTV_PALETTE_DEFAULT: .byte 0, $f, $36, $be, $58, $db, $86, $ff, $29, $26, $3b, 5, 7, $df, $9a, $a
   keyboard_matrix_row_bitmask: .byte $fe, $fd, $fb, $f7, $ef, $df, $bf, $7f
   keyboard_matrix_col_bitmask: .byte 1, 2, 4, 8, $10, $20, $40, $80
-  MENU_TEXT: .text "C64DTV Graphics Modes            EMBLHCC@"+"                                 CCMIIHO@"+"                                 MMMNCUL@"+"----------------------------------------@"+"1. Standard Char             (V) 0000000@"+"2. Extended Color Char       (V) 1000000@"+"3. Multicolor Char           (V) 0100000@"+"4. Standard Bitmap           (V) 0010000@"+"5. Multicolor Bitmap         (V) 0110000@"+"6. High Color Standard Char  (H) 0000100@"+"7. High Extended Color Char  (H) 1000100@"+"8. High Multicolor Char      (H) 0100100@"+"9. High Multicolor Bitmap    (H) 0110100@"+"a. Sixs Fred                 (D) 1111100@"+"b. Sixs Fred 2               (D) 1111000@"+"c. Two Plane Bitmap          (D) 1011100@"+"d. Two Plane Multicol Bitmap (D) 1111100@"+"e. 8bpp Pixel Cell           (D) 1101110@"+"f. Chunky 8bpp Bitmap        (D) 1101111@"+"----------------------------------------@"+"    (V) vicII (H) vicII+hicol (D) c64dtv@"+"@"
+  MENU_TEXT: .text "C64DTV Graphics Modes            CCLHBME@"+"                                 OHIIMCC@"+"                                 LUNCMMM@"+"----------------------------------------@"+"1. Standard Char             (V) 0000000@"+"2. Extended Color Char       (V) 0000001@"+"3. Multicolor Char           (V) 0000010@"+"4. Standard Bitmap           (V) 0000100@"+"5. Multicolor Bitmap         (V) 0000110@"+"6. High Color Standard Char  (H) 0001000@"+"7. High Extended Color Char  (H) 0001001@"+"8. High Multicolor Char      (H) 0001010@"+"9. High Multicolor Bitmap    (H) 0001110@"+"a. Sixs Fred 2               (D) 0010111@"+"b. Two Plane Bitmap          (D) 0011101@"+"c. Sixs Fred (2 Plane MC BM) (D) 0011111@"+"d. 8bpp Pixel Cell           (D) 0111011@"+"e. Chunky 8bpp Bitmap        (D) 1111011@"+"----------------------------------------@"+"    (V) vicII (H) vicII+hicol (D) c64dtv@"+"@"

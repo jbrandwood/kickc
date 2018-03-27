@@ -7,6 +7,7 @@
 main: {
     lda #DVAL/$400
     sta SCREEN+0
+    lda #0
     sta SCREEN+1
     rts
 }

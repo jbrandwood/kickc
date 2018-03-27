@@ -106,7 +106,7 @@ public class AsmFormat {
       } else if(Operators.HIBYTE.equals(operator)) {
          SymbolType operandType = SymbolTypeInference.inferType(program.getScope(), operand);
          if(SymbolType.isByte(operandType) || SymbolType.isSByte(operandType)) {
-            return getAsmConstant(program, operand, outerPrecedence, codeScope);
+            return getAsmConstant(program, new ConstantInteger(0l), outerPrecedence, codeScope);
          } else if(SymbolType.isWord(operandType) || SymbolType.isSWord(operandType) || operandType instanceof SymbolTypePointer) {
             return ">" + getAsmConstant(program, operand, outerPrecedence, codeScope);
          } else if(SymbolType.isDWord(operandType) || SymbolType.isSDWord(operandType)) {

@@ -44,7 +44,7 @@ void menu() {
     *DTV_GRAPHICS_VIC_BANK = (byte)((dword)MENU_CHARSET/$10000);
     // DTV Color Bank
      *DTV_COLOR_BANK_LO = <((word)(DTV_COLOR_BANK_DEFAULT/$400));
-     *DTV_COLOR_BANK_HI = 0; // >((word)(DTV_COLOR_BANK_DEFAULT/$400)) - fails currently because the high operator can't see the word type of the operand;
+     *DTV_COLOR_BANK_HI = >((word)(DTV_COLOR_BANK_DEFAULT/$400));
     // DTV Graphics Mode
     *DTV_CONTROL = 0;
     // VIC Graphics Bank
@@ -206,7 +206,7 @@ void mode_sixsfred() {
             *col++ = (cx+cy) & $f;
         }
     }
-    // Graphics for Plane A () - horizontal stripes
+    // Graphics for Plane A () - horizontal stripes every 2 pixels
     byte* gfxa = SIXSFRED_PLANEA;
     byte[] row_bitmask = { %00000000, %01010101, %10101010, %11111111 };
     for(byte ay : 0..199) {
@@ -215,7 +215,7 @@ void mode_sixsfred() {
             *gfxa++ = row_bitmask[row];
         }
     }
-    // Graphics for Plane B - vertical stripes
+    // Graphics for Plane B - vertical stripes every 2 pixels
     byte* gfxb = SIXSFRED_PLANEB;
     for(byte by : 0..199) {
         for ( byte bx : 0..39) {
@@ -1050,61 +1050,64 @@ proc (void()) menu()
   (word~) menu::$4 ← ((word)) (dword~) menu::$3
   (byte~) menu::$5 ← < (word~) menu::$4
   *((byte*) DTV_COLOR_BANK_LO) ← (byte~) menu::$5
-  *((byte*) DTV_COLOR_BANK_HI) ← (byte/signed byte/word/signed word/dword/signed dword) 0
+  (dword~) menu::$6 ← (dword) DTV_COLOR_BANK_DEFAULT / (word/signed word/dword/signed dword) 1024
+  (word~) menu::$7 ← ((word)) (dword~) menu::$6
+  (byte~) menu::$8 ← > (word~) menu::$7
+  *((byte*) DTV_COLOR_BANK_HI) ← (byte~) menu::$8
   *((byte*) DTV_CONTROL) ← (byte/signed byte/word/signed word/dword/signed dword) 0
   *((byte*) CIA2_PORT_A_DDR) ← (byte/signed byte/word/signed word/dword/signed dword) 3
-  (word~) menu::$6 ← ((word)) (byte*) MENU_CHARSET
-  (word/signed dword/dword~) menu::$7 ← (word~) menu::$6 / (word/signed word/dword/signed dword) 16384
-  (byte~) menu::$8 ← ((byte)) (word/signed dword/dword~) menu::$7
-  (byte/word/dword~) menu::$9 ← (byte/signed byte/word/signed word/dword/signed dword) 3 ^ (byte~) menu::$8
-  *((byte*) CIA2_PORT_A) ← (byte/word/dword~) menu::$9
-  (byte~) menu::$10 ← (byte) VIC_DEN | (byte) VIC_RSEL
-  (byte/word/dword~) menu::$11 ← (byte~) menu::$10 | (byte/signed byte/word/signed word/dword/signed dword) 3
-  *((byte*) VIC_CONTROL) ← (byte/word/dword~) menu::$11
+  (word~) menu::$9 ← ((word)) (byte*) MENU_CHARSET
+  (word/signed dword/dword~) menu::$10 ← (word~) menu::$9 / (word/signed word/dword/signed dword) 16384
+  (byte~) menu::$11 ← ((byte)) (word/signed dword/dword~) menu::$10
+  (byte/word/dword~) menu::$12 ← (byte/signed byte/word/signed word/dword/signed dword) 3 ^ (byte~) menu::$11
+  *((byte*) CIA2_PORT_A) ← (byte/word/dword~) menu::$12
+  (byte~) menu::$13 ← (byte) VIC_DEN | (byte) VIC_RSEL
+  (byte/word/dword~) menu::$14 ← (byte~) menu::$13 | (byte/signed byte/word/signed word/dword/signed dword) 3
+  *((byte*) VIC_CONTROL) ← (byte/word/dword~) menu::$14
   *((byte*) VIC_CONTROL2) ← (byte) VIC_CSEL
-  (word~) menu::$12 ← ((word)) (byte*) MENU_SCREEN
-  (word~) menu::$13 ← (word~) menu::$12 & (word/signed word/dword/signed dword) 16383
-  (word/signed dword/dword~) menu::$14 ← (word~) menu::$13 / (byte/signed byte/word/signed word/dword/signed dword) 64
-  (word~) menu::$15 ← ((word)) (byte*) MENU_CHARSET
+  (word~) menu::$15 ← ((word)) (byte*) MENU_SCREEN
   (word~) menu::$16 ← (word~) menu::$15 & (word/signed word/dword/signed dword) 16383
-  (word/signed dword/dword~) menu::$17 ← (word~) menu::$16 / (word/signed word/dword/signed dword) 1024
-  (word/dword~) menu::$18 ← (word/signed dword/dword~) menu::$14 | (word/signed dword/dword~) menu::$17
-  (byte~) menu::$19 ← ((byte)) (word/dword~) menu::$18
-  *((byte*) VIC_MEMORY) ← (byte~) menu::$19
+  (word/signed dword/dword~) menu::$17 ← (word~) menu::$16 / (byte/signed byte/word/signed word/dword/signed dword) 64
+  (word~) menu::$18 ← ((word)) (byte*) MENU_CHARSET
+  (word~) menu::$19 ← (word~) menu::$18 & (word/signed word/dword/signed dword) 16383
+  (word/signed dword/dword~) menu::$20 ← (word~) menu::$19 / (word/signed word/dword/signed dword) 1024
+  (word/dword~) menu::$21 ← (word/signed dword/dword~) menu::$17 | (word/signed dword/dword~) menu::$20
+  (byte~) menu::$22 ← ((byte)) (word/dword~) menu::$21
+  *((byte*) VIC_MEMORY) ← (byte~) menu::$22
   (byte) menu::i ← (byte/signed byte/word/signed word/dword/signed dword) 0
 menu::@1:
   *((byte*) DTV_PALETTE + (byte) menu::i) ← *((byte[16]) DTV_PALETTE_DEFAULT + (byte) menu::i)
   (byte) menu::i ← ++ (byte) menu::i
-  (boolean~) menu::$20 ← (byte) menu::i != (byte/signed byte/word/signed word/dword/signed dword) 16
-  if((boolean~) menu::$20) goto menu::@1
+  (boolean~) menu::$23 ← (byte) menu::i != (byte/signed byte/word/signed word/dword/signed dword) 16
+  if((boolean~) menu::$23) goto menu::@1
   (byte*) menu::c ← (byte*) COLS
 menu::@2:
   *((byte*) menu::c) ← (byte) LIGHT_GREEN
   (byte*) menu::c ← ++ (byte*) menu::c
-  (byte*~) menu::$21 ← (byte*) COLS + (word/signed word/dword/signed dword) 1000
-  (boolean~) menu::$22 ← (byte*) menu::c != (byte*~) menu::$21
-  if((boolean~) menu::$22) goto menu::@2
+  (byte*~) menu::$24 ← (byte*) COLS + (word/signed word/dword/signed dword) 1000
+  (boolean~) menu::$25 ← (byte*) menu::c != (byte*~) menu::$24
+  if((boolean~) menu::$25) goto menu::@2
   *((byte*) BGCOL) ← (byte/signed byte/word/signed word/dword/signed dword) 0
   *((byte*) BORDERCOL) ← (byte/signed byte/word/signed word/dword/signed dword) 0
-  (void~) menu::$23 ← call print_set_screen (byte*) MENU_SCREEN 
-  (void~) menu::$24 ← call print_cls 
-  (void~) menu::$25 ← call print_str_lines (byte[]) MENU_TEXT 
+  (void~) menu::$26 ← call print_set_screen (byte*) MENU_SCREEN 
+  (void~) menu::$27 ← call print_cls 
+  (void~) menu::$28 ← call print_str_lines (byte[]) MENU_TEXT 
 menu::@3:
   if(true) goto menu::@4
   goto menu::@5
 menu::@4:
-  (byte~) menu::$26 ← call keyboard_key_pressed (byte) KEY_B 
-  (boolean~) menu::$27 ← (byte~) menu::$26 != (byte/signed byte/word/signed word/dword/signed dword) 0
-  (boolean~) menu::$28 ← ! (boolean~) menu::$27
-  if((boolean~) menu::$28) goto menu::@6
-  (void~) menu::$29 ← call mode_twoplanebitmap 
+  (byte~) menu::$29 ← call keyboard_key_pressed (byte) KEY_B 
+  (boolean~) menu::$30 ← (byte~) menu::$29 != (byte/signed byte/word/signed word/dword/signed dword) 0
+  (boolean~) menu::$31 ← ! (boolean~) menu::$30
+  if((boolean~) menu::$31) goto menu::@6
+  (void~) menu::$32 ← call mode_twoplanebitmap 
   goto menu::@return
 menu::@6:
-  (byte~) menu::$30 ← call keyboard_key_pressed (byte) KEY_C 
-  (boolean~) menu::$31 ← (byte~) menu::$30 != (byte/signed byte/word/signed word/dword/signed dword) 0
-  (boolean~) menu::$32 ← ! (boolean~) menu::$31
-  if((boolean~) menu::$32) goto menu::@7
-  (void~) menu::$33 ← call mode_sixsfred 
+  (byte~) menu::$33 ← call keyboard_key_pressed (byte) KEY_C 
+  (boolean~) menu::$34 ← (byte~) menu::$33 != (byte/signed byte/word/signed word/dword/signed dword) 0
+  (boolean~) menu::$35 ← ! (boolean~) menu::$34
+  if((boolean~) menu::$35) goto menu::@7
+  (void~) menu::$36 ← call mode_sixsfred 
   goto menu::@return
 menu::@7:
   goto menu::@3
@@ -1541,38 +1544,41 @@ SYMBOLS
 (void()) menu()
 (dword~) menu::$0
 (dword~) menu::$1
-(byte~) menu::$10
-(byte/word/dword~) menu::$11
-(word~) menu::$12
-(word~) menu::$13
-(word/signed dword/dword~) menu::$14
+(word/signed dword/dword~) menu::$10
+(byte~) menu::$11
+(byte/word/dword~) menu::$12
+(byte~) menu::$13
+(byte/word/dword~) menu::$14
 (word~) menu::$15
 (word~) menu::$16
 (word/signed dword/dword~) menu::$17
-(word/dword~) menu::$18
-(byte~) menu::$19
+(word~) menu::$18
+(word~) menu::$19
 (byte~) menu::$2
-(boolean~) menu::$20
-(byte*~) menu::$21
-(boolean~) menu::$22
-(void~) menu::$23
-(void~) menu::$24
-(void~) menu::$25
-(byte~) menu::$26
-(boolean~) menu::$27
-(boolean~) menu::$28
-(void~) menu::$29
+(word/signed dword/dword~) menu::$20
+(word/dword~) menu::$21
+(byte~) menu::$22
+(boolean~) menu::$23
+(byte*~) menu::$24
+(boolean~) menu::$25
+(void~) menu::$26
+(void~) menu::$27
+(void~) menu::$28
+(byte~) menu::$29
 (dword~) menu::$3
-(byte~) menu::$30
+(boolean~) menu::$30
 (boolean~) menu::$31
-(boolean~) menu::$32
-(void~) menu::$33
+(void~) menu::$32
+(byte~) menu::$33
+(boolean~) menu::$34
+(boolean~) menu::$35
+(void~) menu::$36
 (word~) menu::$4
 (byte~) menu::$5
-(word~) menu::$6
-(word/signed dword/dword~) menu::$7
+(dword~) menu::$6
+(word~) menu::$7
 (byte~) menu::$8
-(byte/word/dword~) menu::$9
+(word~) menu::$9
 (label) menu::@1
 (label) menu::@2
 (label) menu::@3
@@ -2367,34 +2373,37 @@ menu: scope:[menu]  from
   (word~) menu::$4 ← ((word)) (dword~) menu::$3
   (byte~) menu::$5 ← < (word~) menu::$4
   *((byte*) DTV_COLOR_BANK_LO) ← (byte~) menu::$5
-  *((byte*) DTV_COLOR_BANK_HI) ← (byte/signed byte/word/signed word/dword/signed dword) 0
+  (dword~) menu::$6 ← (dword) DTV_COLOR_BANK_DEFAULT / (word/signed word/dword/signed dword) 1024
+  (word~) menu::$7 ← ((word)) (dword~) menu::$6
+  (byte~) menu::$8 ← > (word~) menu::$7
+  *((byte*) DTV_COLOR_BANK_HI) ← (byte~) menu::$8
   *((byte*) DTV_CONTROL) ← (byte/signed byte/word/signed word/dword/signed dword) 0
   *((byte*) CIA2_PORT_A_DDR) ← (byte/signed byte/word/signed word/dword/signed dword) 3
-  (word~) menu::$6 ← ((word)) (byte*) MENU_CHARSET
-  (word/signed dword/dword~) menu::$7 ← (word~) menu::$6 / (word/signed word/dword/signed dword) 16384
-  (byte~) menu::$8 ← ((byte)) (word/signed dword/dword~) menu::$7
-  (byte/word/dword~) menu::$9 ← (byte/signed byte/word/signed word/dword/signed dword) 3 ^ (byte~) menu::$8
-  *((byte*) CIA2_PORT_A) ← (byte/word/dword~) menu::$9
-  (byte~) menu::$10 ← (byte) VIC_DEN | (byte) VIC_RSEL
-  (byte/word/dword~) menu::$11 ← (byte~) menu::$10 | (byte/signed byte/word/signed word/dword/signed dword) 3
-  *((byte*) VIC_CONTROL) ← (byte/word/dword~) menu::$11
+  (word~) menu::$9 ← ((word)) (byte*) MENU_CHARSET
+  (word/signed dword/dword~) menu::$10 ← (word~) menu::$9 / (word/signed word/dword/signed dword) 16384
+  (byte~) menu::$11 ← ((byte)) (word/signed dword/dword~) menu::$10
+  (byte/word/dword~) menu::$12 ← (byte/signed byte/word/signed word/dword/signed dword) 3 ^ (byte~) menu::$11
+  *((byte*) CIA2_PORT_A) ← (byte/word/dword~) menu::$12
+  (byte~) menu::$13 ← (byte) VIC_DEN | (byte) VIC_RSEL
+  (byte/word/dword~) menu::$14 ← (byte~) menu::$13 | (byte/signed byte/word/signed word/dword/signed dword) 3
+  *((byte*) VIC_CONTROL) ← (byte/word/dword~) menu::$14
   *((byte*) VIC_CONTROL2) ← (byte) VIC_CSEL
-  (word~) menu::$12 ← ((word)) (byte*) MENU_SCREEN
-  (word~) menu::$13 ← (word~) menu::$12 & (word/signed word/dword/signed dword) 16383
-  (word/signed dword/dword~) menu::$14 ← (word~) menu::$13 / (byte/signed byte/word/signed word/dword/signed dword) 64
-  (word~) menu::$15 ← ((word)) (byte*) MENU_CHARSET
+  (word~) menu::$15 ← ((word)) (byte*) MENU_SCREEN
   (word~) menu::$16 ← (word~) menu::$15 & (word/signed word/dword/signed dword) 16383
-  (word/signed dword/dword~) menu::$17 ← (word~) menu::$16 / (word/signed word/dword/signed dword) 1024
-  (word/dword~) menu::$18 ← (word/signed dword/dword~) menu::$14 | (word/signed dword/dword~) menu::$17
-  (byte~) menu::$19 ← ((byte)) (word/dword~) menu::$18
-  *((byte*) VIC_MEMORY) ← (byte~) menu::$19
+  (word/signed dword/dword~) menu::$17 ← (word~) menu::$16 / (byte/signed byte/word/signed word/dword/signed dword) 64
+  (word~) menu::$18 ← ((word)) (byte*) MENU_CHARSET
+  (word~) menu::$19 ← (word~) menu::$18 & (word/signed word/dword/signed dword) 16383
+  (word/signed dword/dword~) menu::$20 ← (word~) menu::$19 / (word/signed word/dword/signed dword) 1024
+  (word/dword~) menu::$21 ← (word/signed dword/dword~) menu::$17 | (word/signed dword/dword~) menu::$20
+  (byte~) menu::$22 ← ((byte)) (word/dword~) menu::$21
+  *((byte*) VIC_MEMORY) ← (byte~) menu::$22
   (byte) menu::i ← (byte/signed byte/word/signed word/dword/signed dword) 0
   to:menu::@1
 menu::@1: scope:[menu]  from menu menu::@1
   *((byte*) DTV_PALETTE + (byte) menu::i) ← *((byte[16]) DTV_PALETTE_DEFAULT + (byte) menu::i)
   (byte) menu::i ← ++ (byte) menu::i
-  (boolean~) menu::$20 ← (byte) menu::i != (byte/signed byte/word/signed word/dword/signed dword) 16
-  if((boolean~) menu::$20) goto menu::@1
+  (boolean~) menu::$23 ← (byte) menu::i != (byte/signed byte/word/signed word/dword/signed dword) 16
+  if((boolean~) menu::$23) goto menu::@1
   to:menu::@8
 menu::@8: scope:[menu]  from menu::@1
   (byte*) menu::c ← (byte*) COLS
@@ -2402,25 +2411,25 @@ menu::@8: scope:[menu]  from menu::@1
 menu::@2: scope:[menu]  from menu::@2 menu::@8
   *((byte*) menu::c) ← (byte) LIGHT_GREEN
   (byte*) menu::c ← ++ (byte*) menu::c
-  (byte*~) menu::$21 ← (byte*) COLS + (word/signed word/dword/signed dword) 1000
-  (boolean~) menu::$22 ← (byte*) menu::c != (byte*~) menu::$21
-  if((boolean~) menu::$22) goto menu::@2
+  (byte*~) menu::$24 ← (byte*) COLS + (word/signed word/dword/signed dword) 1000
+  (boolean~) menu::$25 ← (byte*) menu::c != (byte*~) menu::$24
+  if((boolean~) menu::$25) goto menu::@2
   to:menu::@9
 menu::@9: scope:[menu]  from menu::@2
   *((byte*) BGCOL) ← (byte/signed byte/word/signed word/dword/signed dword) 0
   *((byte*) BORDERCOL) ← (byte/signed byte/word/signed word/dword/signed dword) 0
-  (void~) menu::$23 ← call print_set_screen (byte*) MENU_SCREEN 
-  (void~) menu::$24 ← call print_cls 
-  (void~) menu::$25 ← call print_str_lines (byte[]) MENU_TEXT 
+  (void~) menu::$26 ← call print_set_screen (byte*) MENU_SCREEN 
+  (void~) menu::$27 ← call print_cls 
+  (void~) menu::$28 ← call print_str_lines (byte[]) MENU_TEXT 
   to:menu::@3
 menu::@3: scope:[menu]  from menu::@7 menu::@9
   if(true) goto menu::@4
   to:menu::@10
 menu::@4: scope:[menu]  from menu::@11 menu::@3
-  (byte~) menu::$26 ← call keyboard_key_pressed (byte) KEY_B 
-  (boolean~) menu::$27 ← (byte~) menu::$26 != (byte/signed byte/word/signed word/dword/signed dword) 0
-  (boolean~) menu::$28 ← ! (boolean~) menu::$27
-  if((boolean~) menu::$28) goto menu::@6
+  (byte~) menu::$29 ← call keyboard_key_pressed (byte) KEY_B 
+  (boolean~) menu::$30 ← (byte~) menu::$29 != (byte/signed byte/word/signed word/dword/signed dword) 0
+  (boolean~) menu::$31 ← ! (boolean~) menu::$30
+  if((boolean~) menu::$31) goto menu::@6
   to:menu::@12
 menu::@10: scope:[menu]  from menu::@3
   to:menu::@5
@@ -2429,13 +2438,13 @@ menu::@5: scope:[menu]  from menu::@10 menu::@16
 menu::@11: scope:[menu]  from
   to:menu::@4
 menu::@6: scope:[menu]  from menu::@13 menu::@4
-  (byte~) menu::$30 ← call keyboard_key_pressed (byte) KEY_C 
-  (boolean~) menu::$31 ← (byte~) menu::$30 != (byte/signed byte/word/signed word/dword/signed dword) 0
-  (boolean~) menu::$32 ← ! (boolean~) menu::$31
-  if((boolean~) menu::$32) goto menu::@7
+  (byte~) menu::$33 ← call keyboard_key_pressed (byte) KEY_C 
+  (boolean~) menu::$34 ← (byte~) menu::$33 != (byte/signed byte/word/signed word/dword/signed dword) 0
+  (boolean~) menu::$35 ← ! (boolean~) menu::$34
+  if((boolean~) menu::$35) goto menu::@7
   to:menu::@14
 menu::@12: scope:[menu]  from menu::@4
-  (void~) menu::$29 ← call mode_twoplanebitmap 
+  (void~) menu::$32 ← call mode_twoplanebitmap 
   to:menu::@return
 menu::@return: scope:[menu]  from menu::@12 menu::@14 menu::@5
   return 
@@ -2445,7 +2454,7 @@ menu::@13: scope:[menu]  from
 menu::@7: scope:[menu]  from menu::@15 menu::@6
   to:menu::@3
 menu::@14: scope:[menu]  from menu::@6
-  (void~) menu::$33 ← call mode_sixsfred 
+  (void~) menu::$36 ← call mode_sixsfred 
   to:menu::@return
 menu::@15: scope:[menu]  from
   to:menu::@7
@@ -2817,11 +2826,11 @@ Eliminating unused variable (byte) KEY_COMMODORE and assignment [182] (byte) KEY
 Eliminating unused variable (byte) KEY_RUNSTOP and assignment [184] (byte) KEY_RUNSTOP ← (byte/signed byte/word/signed word/dword/signed dword) 63
 Eliminating unused variable (byte[]) keyboard_char_keycodes and assignment [185] (byte[]) keyboard_char_keycodes ← { (byte) KEY_AT, (byte) KEY_A, (byte) KEY_B, (byte) KEY_C, (byte) KEY_D, (byte) KEY_E, (byte) KEY_F, (byte) KEY_G, (byte) KEY_H, (byte) KEY_I, (byte) KEY_J, (byte) KEY_K, (byte) KEY_L, (byte) KEY_M, (byte) KEY_N, (byte) KEY_O, (byte) KEY_P, (byte) KEY_Q, (byte) KEY_R, (byte) KEY_S, (byte) KEY_T, (byte) KEY_U, (byte) KEY_V, (byte) KEY_W, (byte) KEY_X, (byte) KEY_Y, (byte) KEY_Z, (byte/signed byte/word/signed word/dword/signed dword) 63, (byte) KEY_POUND, (byte/signed byte/word/signed word/dword/signed dword) 63, (byte) KEY_ARROW_UP, (byte) KEY_ARROW_LEFT, (byte) KEY_SPACE, (byte/signed byte/word/signed word/dword/signed dword) 63, (byte/signed byte/word/signed word/dword/signed dword) 63, (byte/signed byte/word/signed word/dword/signed dword) 63, (byte/signed byte/word/signed word/dword/signed dword) 63, (byte/signed byte/word/signed word/dword/signed dword) 63, (byte/signed byte/word/signed word/dword/signed dword) 63, (byte/signed byte/word/signed word/dword/signed dword) 63, (byte/signed byte/word/signed word/dword/signed dword) 63, (byte/signed byte/word/signed word/dword/signed dword) 63, (byte) KEY_ASTERISK, (byte) KEY_PLUS, (byte) KEY_COMMA, (byte) KEY_MINUS, (byte) KEY_DOT, (byte) KEY_SLASH, (byte) KEY_0, (byte) KEY_1, (byte) KEY_2, (byte) KEY_3, (byte) KEY_4, (byte) KEY_5, (byte) KEY_6, (byte) KEY_7, (byte) KEY_8, (byte) KEY_9, (byte) KEY_COLON, (byte) KEY_SEMICOLON, (byte/signed byte/word/signed word/dword/signed dword) 63, (byte) KEY_EQUALS, (byte/signed byte/word/signed word/dword/signed dword) 63, (byte/signed byte/word/signed word/dword/signed dword) 63 }
 Eliminating unused variable - keeping the call (void~) main::$0
-Eliminating unused variable - keeping the call (void~) menu::$23
-Eliminating unused variable - keeping the call (void~) menu::$24
-Eliminating unused variable - keeping the call (void~) menu::$25
-Eliminating unused variable - keeping the call (void~) menu::$29
-Eliminating unused variable - keeping the call (void~) menu::$33
+Eliminating unused variable - keeping the call (void~) menu::$26
+Eliminating unused variable - keeping the call (void~) menu::$27
+Eliminating unused variable - keeping the call (void~) menu::$28
+Eliminating unused variable - keeping the call (void~) menu::$32
+Eliminating unused variable - keeping the call (void~) menu::$36
 Eliminating unused variable (byte) KEY_3 and assignment [76] (byte) KEY_3 ← (byte/signed byte/word/signed word/dword/signed dword) 8
 Eliminating unused variable (byte) KEY_W and assignment [77] (byte) KEY_W ← (byte/signed byte/word/signed word/dword/signed dword) 9
 Eliminating unused variable (byte) KEY_A and assignment [78] (byte) KEY_A ← (byte/signed byte/word/signed word/dword/signed dword) 10
@@ -3256,27 +3265,30 @@ menu: scope:[menu]  from main::@2
   (word~) menu::$4 ← ((word)) (dword~) menu::$3
   (byte~) menu::$5 ← < (word~) menu::$4
   *((byte*) DTV_COLOR_BANK_LO#0) ← (byte~) menu::$5
-  *((byte*) DTV_COLOR_BANK_HI#0) ← (byte/signed byte/word/signed word/dword/signed dword) 0
+  (dword~) menu::$6 ← (dword) DTV_COLOR_BANK_DEFAULT#0 / (word/signed word/dword/signed dword) 1024
+  (word~) menu::$7 ← ((word)) (dword~) menu::$6
+  (byte~) menu::$8 ← > (word~) menu::$7
+  *((byte*) DTV_COLOR_BANK_HI#0) ← (byte~) menu::$8
   *((byte*) DTV_CONTROL#0) ← (byte/signed byte/word/signed word/dword/signed dword) 0
   *((byte*) CIA2_PORT_A_DDR#0) ← (byte/signed byte/word/signed word/dword/signed dword) 3
-  (word~) menu::$6 ← ((word)) (byte*) MENU_CHARSET#0
-  (word/signed dword/dword~) menu::$7 ← (word~) menu::$6 / (word/signed word/dword/signed dword) 16384
-  (byte~) menu::$8 ← ((byte)) (word/signed dword/dword~) menu::$7
-  (byte/word/dword~) menu::$9 ← (byte/signed byte/word/signed word/dword/signed dword) 3 ^ (byte~) menu::$8
-  *((byte*) CIA2_PORT_A#0) ← (byte/word/dword~) menu::$9
-  (byte~) menu::$10 ← (byte) VIC_DEN#0 | (byte) VIC_RSEL#0
-  (byte/word/dword~) menu::$11 ← (byte~) menu::$10 | (byte/signed byte/word/signed word/dword/signed dword) 3
-  *((byte*) VIC_CONTROL#0) ← (byte/word/dword~) menu::$11
+  (word~) menu::$9 ← ((word)) (byte*) MENU_CHARSET#0
+  (word/signed dword/dword~) menu::$10 ← (word~) menu::$9 / (word/signed word/dword/signed dword) 16384
+  (byte~) menu::$11 ← ((byte)) (word/signed dword/dword~) menu::$10
+  (byte/word/dword~) menu::$12 ← (byte/signed byte/word/signed word/dword/signed dword) 3 ^ (byte~) menu::$11
+  *((byte*) CIA2_PORT_A#0) ← (byte/word/dword~) menu::$12
+  (byte~) menu::$13 ← (byte) VIC_DEN#0 | (byte) VIC_RSEL#0
+  (byte/word/dword~) menu::$14 ← (byte~) menu::$13 | (byte/signed byte/word/signed word/dword/signed dword) 3
+  *((byte*) VIC_CONTROL#0) ← (byte/word/dword~) menu::$14
   *((byte*) VIC_CONTROL2#0) ← (byte) VIC_CSEL#0
-  (word~) menu::$12 ← ((word)) (byte*) MENU_SCREEN#0
-  (word~) menu::$13 ← (word~) menu::$12 & (word/signed word/dword/signed dword) 16383
-  (word/signed dword/dword~) menu::$14 ← (word~) menu::$13 / (byte/signed byte/word/signed word/dword/signed dword) 64
-  (word~) menu::$15 ← ((word)) (byte*) MENU_CHARSET#0
+  (word~) menu::$15 ← ((word)) (byte*) MENU_SCREEN#0
   (word~) menu::$16 ← (word~) menu::$15 & (word/signed word/dword/signed dword) 16383
-  (word/signed dword/dword~) menu::$17 ← (word~) menu::$16 / (word/signed word/dword/signed dword) 1024
-  (word/dword~) menu::$18 ← (word/signed dword/dword~) menu::$14 | (word/signed dword/dword~) menu::$17
-  (byte~) menu::$19 ← ((byte)) (word/dword~) menu::$18
-  *((byte*) VIC_MEMORY#0) ← (byte~) menu::$19
+  (word/signed dword/dword~) menu::$17 ← (word~) menu::$16 / (byte/signed byte/word/signed word/dword/signed dword) 64
+  (word~) menu::$18 ← ((word)) (byte*) MENU_CHARSET#0
+  (word~) menu::$19 ← (word~) menu::$18 & (word/signed word/dword/signed dword) 16383
+  (word/signed dword/dword~) menu::$20 ← (word~) menu::$19 / (word/signed word/dword/signed dword) 1024
+  (word/dword~) menu::$21 ← (word/signed dword/dword~) menu::$17 | (word/signed dword/dword~) menu::$20
+  (byte~) menu::$22 ← ((byte)) (word/dword~) menu::$21
+  *((byte*) VIC_MEMORY#0) ← (byte~) menu::$22
   (byte) menu::i#0 ← (byte/signed byte/word/signed word/dword/signed dword) 0
   to:menu::@1
 menu::@1: scope:[menu]  from menu menu::@1
@@ -3286,8 +3298,8 @@ menu::@1: scope:[menu]  from menu menu::@1
   (byte) menu::i#2 ← phi( menu/(byte) menu::i#0 menu::@1/(byte) menu::i#1 )
   *((byte*) DTV_PALETTE#0 + (byte) menu::i#2) ← *((byte[16]) DTV_PALETTE_DEFAULT#0 + (byte) menu::i#2)
   (byte) menu::i#1 ← ++ (byte) menu::i#2
-  (boolean~) menu::$20 ← (byte) menu::i#1 != (byte/signed byte/word/signed word/dword/signed dword) 16
-  if((boolean~) menu::$20) goto menu::@1
+  (boolean~) menu::$23 ← (byte) menu::i#1 != (byte/signed byte/word/signed word/dword/signed dword) 16
+  if((boolean~) menu::$23) goto menu::@1
   to:menu::@8
 menu::@8: scope:[menu]  from menu::@1
   (byte*) print_char_cursor#51 ← phi( menu::@1/(byte*) print_char_cursor#55 )
@@ -3302,9 +3314,9 @@ menu::@2: scope:[menu]  from menu::@2 menu::@8
   (byte*) menu::c#2 ← phi( menu::@2/(byte*) menu::c#1 menu::@8/(byte*) menu::c#0 )
   *((byte*) menu::c#2) ← (byte) LIGHT_GREEN#0
   (byte*) menu::c#1 ← ++ (byte*) menu::c#2
-  (byte*~) menu::$21 ← (byte*) COLS#0 + (word/signed word/dword/signed dword) 1000
-  (boolean~) menu::$22 ← (byte*) menu::c#1 != (byte*~) menu::$21
-  if((boolean~) menu::$22) goto menu::@2
+  (byte*~) menu::$24 ← (byte*) COLS#0 + (word/signed word/dword/signed dword) 1000
+  (boolean~) menu::$25 ← (byte*) menu::c#1 != (byte*~) menu::$24
+  if((boolean~) menu::$25) goto menu::@2
   to:menu::@9
 menu::@9: scope:[menu]  from menu::@2
   (byte*) print_char_cursor#37 ← phi( menu::@2/(byte*) print_char_cursor#46 )
@@ -3359,10 +3371,10 @@ menu::@20: scope:[menu]  from menu::@4
   (byte*) print_line_cursor#51 ← phi( menu::@4/(byte*) print_line_cursor#56 )
   (byte*) print_screen#33 ← phi( menu::@4/(byte*) print_screen#37 )
   (byte) keyboard_key_pressed::return#7 ← phi( menu::@4/(byte) keyboard_key_pressed::return#2 )
-  (byte~) menu::$26 ← (byte) keyboard_key_pressed::return#7
-  (boolean~) menu::$27 ← (byte~) menu::$26 != (byte/signed byte/word/signed word/dword/signed dword) 0
-  (boolean~) menu::$28 ← ! (boolean~) menu::$27
-  if((boolean~) menu::$28) goto menu::@6
+  (byte~) menu::$29 ← (byte) keyboard_key_pressed::return#7
+  (boolean~) menu::$30 ← (byte~) menu::$29 != (byte/signed byte/word/signed word/dword/signed dword) 0
+  (boolean~) menu::$31 ← ! (boolean~) menu::$30
+  if((boolean~) menu::$31) goto menu::@6
   to:menu::@12
 menu::@6: scope:[menu]  from menu::@20
   (byte*) print_char_cursor#57 ← phi( menu::@20/(byte*) print_char_cursor#52 )
@@ -3377,10 +3389,10 @@ menu::@21: scope:[menu]  from menu::@6
   (byte*) print_line_cursor#52 ← phi( menu::@6/(byte*) print_line_cursor#57 )
   (byte*) print_screen#34 ← phi( menu::@6/(byte*) print_screen#38 )
   (byte) keyboard_key_pressed::return#8 ← phi( menu::@6/(byte) keyboard_key_pressed::return#3 )
-  (byte~) menu::$30 ← (byte) keyboard_key_pressed::return#8
-  (boolean~) menu::$31 ← (byte~) menu::$30 != (byte/signed byte/word/signed word/dword/signed dword) 0
-  (boolean~) menu::$32 ← ! (boolean~) menu::$31
-  if((boolean~) menu::$32) goto menu::@7
+  (byte~) menu::$33 ← (byte) keyboard_key_pressed::return#8
+  (boolean~) menu::$34 ← (byte~) menu::$33 != (byte/signed byte/word/signed word/dword/signed dword) 0
+  (boolean~) menu::$35 ← ! (boolean~) menu::$34
+  if((boolean~) menu::$35) goto menu::@7
   to:menu::@14
 menu::@12: scope:[menu]  from menu::@20
   (byte*) print_char_cursor#48 ← phi( menu::@20/(byte*) print_char_cursor#52 )
@@ -3976,33 +3988,36 @@ SYMBOL TABLE SSA
 (void()) menu()
 (dword~) menu::$0
 (dword~) menu::$1
-(byte~) menu::$10
-(byte/word/dword~) menu::$11
-(word~) menu::$12
-(word~) menu::$13
-(word/signed dword/dword~) menu::$14
+(word/signed dword/dword~) menu::$10
+(byte~) menu::$11
+(byte/word/dword~) menu::$12
+(byte~) menu::$13
+(byte/word/dword~) menu::$14
 (word~) menu::$15
 (word~) menu::$16
 (word/signed dword/dword~) menu::$17
-(word/dword~) menu::$18
-(byte~) menu::$19
+(word~) menu::$18
+(word~) menu::$19
 (byte~) menu::$2
-(boolean~) menu::$20
-(byte*~) menu::$21
-(boolean~) menu::$22
-(byte~) menu::$26
-(boolean~) menu::$27
-(boolean~) menu::$28
+(word/signed dword/dword~) menu::$20
+(word/dword~) menu::$21
+(byte~) menu::$22
+(boolean~) menu::$23
+(byte*~) menu::$24
+(boolean~) menu::$25
+(byte~) menu::$29
 (dword~) menu::$3
-(byte~) menu::$30
+(boolean~) menu::$30
 (boolean~) menu::$31
-(boolean~) menu::$32
+(byte~) menu::$33
+(boolean~) menu::$34
+(boolean~) menu::$35
 (word~) menu::$4
 (byte~) menu::$5
-(word~) menu::$6
-(word/signed dword/dword~) menu::$7
+(dword~) menu::$6
+(word~) menu::$7
 (byte~) menu::$8
-(byte/word/dword~) menu::$9
+(word~) menu::$9
 (label) menu::@1
 (label) menu::@12
 (label) menu::@14
@@ -4468,8 +4483,8 @@ Culled Empty Block (label) mode_twoplanebitmap::@13
 Culled Empty Block (label) mode_sixsfred::@11
 Succesful SSA optimization Pass2CullEmptyBlocks
 Inversing boolean not (boolean~) print_str_lines::$2 ← (byte) print_str_lines::ch#0 == (byte) '@' from (boolean~) print_str_lines::$1 ← (byte) print_str_lines::ch#0 != (byte) '@'
-Inversing boolean not (boolean~) menu::$28 ← (byte~) menu::$26 == (byte/signed byte/word/signed word/dword/signed dword) 0 from (boolean~) menu::$27 ← (byte~) menu::$26 != (byte/signed byte/word/signed word/dword/signed dword) 0
-Inversing boolean not (boolean~) menu::$32 ← (byte~) menu::$30 == (byte/signed byte/word/signed word/dword/signed dword) 0 from (boolean~) menu::$31 ← (byte~) menu::$30 != (byte/signed byte/word/signed word/dword/signed dword) 0
+Inversing boolean not (boolean~) menu::$31 ← (byte~) menu::$29 == (byte/signed byte/word/signed word/dword/signed dword) 0 from (boolean~) menu::$30 ← (byte~) menu::$29 != (byte/signed byte/word/signed word/dword/signed dword) 0
+Inversing boolean not (boolean~) menu::$35 ← (byte~) menu::$33 == (byte/signed byte/word/signed word/dword/signed dword) 0 from (boolean~) menu::$34 ← (byte~) menu::$33 != (byte/signed byte/word/signed word/dword/signed dword) 0
 Inversing boolean not (boolean~) mode_twoplanebitmap::$22 ← (byte~) mode_twoplanebitmap::$20 != (byte/signed byte/word/signed word/dword/signed dword) 0 from (boolean~) mode_twoplanebitmap::$21 ← (byte~) mode_twoplanebitmap::$20 == (byte/signed byte/word/signed word/dword/signed dword) 0
 Inversing boolean not (boolean~) mode_twoplanebitmap::$29 ← (byte~) mode_twoplanebitmap::$27 == (byte/signed byte/word/signed word/dword/signed dword) 0 from (boolean~) mode_twoplanebitmap::$28 ← (byte~) mode_twoplanebitmap::$27 != (byte/signed byte/word/signed word/dword/signed dword) 0
 Inversing boolean not (boolean~) mode_sixsfred::$27 ← (byte~) mode_sixsfred::$25 == (byte/signed byte/word/signed word/dword/signed dword) 0 from (boolean~) mode_sixsfred::$26 ← (byte~) mode_sixsfred::$25 != (byte/signed byte/word/signed word/dword/signed dword) 0
@@ -4514,10 +4529,10 @@ Not aliassing across scopes: print_char_cursor#28 print_char_cursor#3
 Not aliassing across scopes: print_line_cursor#27 print_line_cursor#2
 Not aliassing across scopes: keyboard_key_pressed::key#0 KEY_B#0
 Not aliassing across scopes: keyboard_key_pressed::return#2 keyboard_key_pressed::return#1
-Not aliassing across scopes: menu::$26 keyboard_key_pressed::return#7
+Not aliassing across scopes: menu::$29 keyboard_key_pressed::return#7
 Not aliassing across scopes: keyboard_key_pressed::key#1 KEY_C#0
 Not aliassing across scopes: keyboard_key_pressed::return#3 keyboard_key_pressed::return#1
-Not aliassing across scopes: menu::$30 keyboard_key_pressed::return#8
+Not aliassing across scopes: menu::$33 keyboard_key_pressed::return#8
 Not aliassing across scopes: mode_twoplanebitmap::col#0 TWOPLANE_COLORS#0
 Not aliassing across scopes: mode_twoplanebitmap::gfxa#0 TWOPLANE_PLANEA#0
 Not aliassing across scopes: mode_twoplanebitmap::gfxb#0 TWOPLANE_PLANEB#0
@@ -4644,10 +4659,10 @@ Not aliassing across scopes: print_char_cursor#14 print_char_cursor#19
 Not aliassing across scopes: print_line_cursor#13 print_line_cursor#17
 Not aliassing across scopes: keyboard_key_pressed::key#0 KEY_B#0
 Not aliassing across scopes: keyboard_key_pressed::return#2 keyboard_key_pressed::return#0
-Not aliassing across scopes: menu::$26 keyboard_key_pressed::return#2
+Not aliassing across scopes: menu::$29 keyboard_key_pressed::return#2
 Not aliassing across scopes: keyboard_key_pressed::key#1 KEY_C#0
 Not aliassing across scopes: keyboard_key_pressed::return#3 keyboard_key_pressed::return#0
-Not aliassing across scopes: menu::$30 keyboard_key_pressed::return#3
+Not aliassing across scopes: menu::$33 keyboard_key_pressed::return#3
 Not aliassing across scopes: mode_twoplanebitmap::col#0 TWOPLANE_COLORS#0
 Not aliassing across scopes: mode_twoplanebitmap::gfxa#0 TWOPLANE_PLANEA#0
 Not aliassing across scopes: mode_twoplanebitmap::gfxb#0 TWOPLANE_PLANEB#0
@@ -4712,10 +4727,10 @@ Not aliassing across scopes: print_char_cursor#14 print_char_cursor#19
 Not aliassing across scopes: print_line_cursor#13 print_line_cursor#17
 Not aliassing across scopes: keyboard_key_pressed::key#0 KEY_B#0
 Not aliassing across scopes: keyboard_key_pressed::return#2 keyboard_key_pressed::return#0
-Not aliassing across scopes: menu::$26 keyboard_key_pressed::return#2
+Not aliassing across scopes: menu::$29 keyboard_key_pressed::return#2
 Not aliassing across scopes: keyboard_key_pressed::key#1 KEY_C#0
 Not aliassing across scopes: keyboard_key_pressed::return#3 keyboard_key_pressed::return#0
-Not aliassing across scopes: menu::$30 keyboard_key_pressed::return#3
+Not aliassing across scopes: menu::$33 keyboard_key_pressed::return#3
 Not aliassing across scopes: mode_twoplanebitmap::col#0 TWOPLANE_COLORS#0
 Not aliassing across scopes: mode_twoplanebitmap::gfxa#0 TWOPLANE_PLANEA#0
 Not aliassing across scopes: mode_twoplanebitmap::gfxb#0 TWOPLANE_PLANEB#0
@@ -4803,10 +4818,10 @@ Simple Condition (boolean~) print_str_lines::$2 if((byte) print_str_lines::ch#0=
 Simple Condition (boolean~) print_str_lines::$3 if((byte) print_str_lines::ch#0!=(byte) '@') goto print_str_lines::@4
 Simple Condition (boolean~) print_ln::$1 if((byte*) print_line_cursor#19<(byte*) print_char_cursor#32) goto print_ln::@1
 Simple Condition (boolean~) print_cls::$1 if((byte*) print_cls::sc#1!=(byte*~) print_cls::$0) goto print_cls::@1
-Simple Condition (boolean~) menu::$20 if((byte) menu::i#1!=(byte/signed byte/word/signed word/dword/signed dword) 16) goto menu::@1
-Simple Condition (boolean~) menu::$22 if((byte*) menu::c#1!=(byte*~) menu::$21) goto menu::@2
-Simple Condition (boolean~) menu::$28 if((byte~) menu::$26==(byte/signed byte/word/signed word/dword/signed dword) 0) goto menu::@6
-Simple Condition (boolean~) menu::$32 if((byte~) menu::$30==(byte/signed byte/word/signed word/dword/signed dword) 0) goto menu::@7
+Simple Condition (boolean~) menu::$23 if((byte) menu::i#1!=(byte/signed byte/word/signed word/dword/signed dword) 16) goto menu::@1
+Simple Condition (boolean~) menu::$25 if((byte*) menu::c#1!=(byte*~) menu::$24) goto menu::@2
+Simple Condition (boolean~) menu::$31 if((byte~) menu::$29==(byte/signed byte/word/signed word/dword/signed dword) 0) goto menu::@6
+Simple Condition (boolean~) menu::$35 if((byte~) menu::$33==(byte/signed byte/word/signed word/dword/signed dword) 0) goto menu::@7
 Simple Condition (boolean~) mode_twoplanebitmap::$13 if((byte) mode_twoplanebitmap::i#1!=(byte/signed byte/word/signed word/dword/signed dword) 16) goto mode_twoplanebitmap::@1
 Simple Condition (boolean~) mode_twoplanebitmap::$18 if((byte) mode_twoplanebitmap::cx#1!=(byte/signed byte/word/signed word/dword/signed dword) 40) goto mode_twoplanebitmap::@3
 Simple Condition (boolean~) mode_twoplanebitmap::$19 if((byte) mode_twoplanebitmap::cy#1!=(byte/signed byte/word/signed word/dword/signed dword) 25) goto mode_twoplanebitmap::@2
@@ -4902,12 +4917,13 @@ Succesful SSA optimization Pass2ConstantIdentification
 Constant (const string) $1 = "C64DTV Graphics Modes            CCLHBME@"+"                                 OHIIMCC@"+"                                 LUNCMMM@"
 Constant (const dword) menu::$0 = ((dword))MENU_CHARSET#0
 Constant (const dword) menu::$3 = DTV_COLOR_BANK_DEFAULT#0/1024
-Constant (const word) menu::$6 = ((word))MENU_CHARSET#0
-Constant (const byte) menu::$10 = VIC_DEN#0|VIC_RSEL#0
-Constant (const word) menu::$12 = ((word))MENU_SCREEN#0
-Constant (const word) menu::$15 = ((word))MENU_CHARSET#0
+Constant (const dword) menu::$6 = DTV_COLOR_BANK_DEFAULT#0/1024
+Constant (const word) menu::$9 = ((word))MENU_CHARSET#0
+Constant (const byte) menu::$13 = VIC_DEN#0|VIC_RSEL#0
+Constant (const word) menu::$15 = ((word))MENU_SCREEN#0
+Constant (const word) menu::$18 = ((word))MENU_CHARSET#0
 Constant (const byte*) menu::c#0 = COLS#0
-Constant (const byte*) menu::$21 = COLS#0+1000
+Constant (const byte*) menu::$24 = COLS#0+1000
 Constant (const byte*) print_set_screen::screen#0 = MENU_SCREEN#0
 Constant (const byte) keyboard_key_pressed::key#0 = KEY_B#0
 Constant (const byte) keyboard_key_pressed::key#1 = KEY_C#0
@@ -4941,10 +4957,11 @@ Constant (const byte*) print_screen#1 = print_set_screen::screen#0
 Constant (const string) $2 = "C64DTV Graphics Modes            CCLHBME@"+"                                 OHIIMCC@"+"                                 LUNCMMM@"+"----------------------------------------@"
 Constant (const dword) menu::$1 = menu::$0/65536
 Constant (const word) menu::$4 = ((word))menu::$3
-Constant (const word/signed dword/dword) menu::$7 = menu::$6/16384
-Constant (const byte/word/dword) menu::$11 = menu::$10|3
-Constant (const word) menu::$13 = menu::$12&16383
+Constant (const word) menu::$7 = ((word))menu::$6
+Constant (const word/signed dword/dword) menu::$10 = menu::$9/16384
+Constant (const byte/word/dword) menu::$14 = menu::$13|3
 Constant (const word) menu::$16 = menu::$15&16383
+Constant (const word) menu::$19 = menu::$18&16383
 Constant (const byte) mode_twoplanebitmap::$2 = mode_twoplanebitmap::$1|VIC_DEN#0
 Constant (const byte) mode_twoplanebitmap::$10 = <mode_twoplanebitmap::$9
 Constant (const byte) mode_twoplanebitmap::$12 = >mode_twoplanebitmap::$11
@@ -4957,20 +4974,21 @@ Constant (const byte*) print_cls::$0 = print_screen#1+1000
 Constant (const string) $3 = "C64DTV Graphics Modes            CCLHBME@"+"                                 OHIIMCC@"+"                                 LUNCMMM@"+"----------------------------------------@"+"1. Standard Char             (V) 0000000@"
 Constant (const byte) menu::$2 = ((byte))menu::$1
 Constant (const byte) menu::$5 = <menu::$4
-Constant (const byte) menu::$8 = ((byte))menu::$7
-Constant (const word/signed dword/dword) menu::$14 = menu::$13/64
-Constant (const word/signed dword/dword) menu::$17 = menu::$16/1024
+Constant (const byte) menu::$8 = >menu::$7
+Constant (const byte) menu::$11 = ((byte))menu::$10
+Constant (const word/signed dword/dword) menu::$17 = menu::$16/64
+Constant (const word/signed dword/dword) menu::$20 = menu::$19/1024
 Constant (const byte) mode_twoplanebitmap::$3 = mode_twoplanebitmap::$2|VIC_RSEL#0
 Constant (const byte) mode_sixsfred::$3 = mode_sixsfred::$2|VIC_RSEL#0
 Succesful SSA optimization Pass2ConstantIdentification
 Constant (const string) $4 = "C64DTV Graphics Modes            CCLHBME@"+"                                 OHIIMCC@"+"                                 LUNCMMM@"+"----------------------------------------@"+"1. Standard Char             (V) 0000000@"+"2. Extended Color Char       (V) 0000001@"
-Constant (const byte/word/dword) menu::$9 = 3^menu::$8
-Constant (const word/dword) menu::$18 = menu::$14|menu::$17
+Constant (const byte/word/dword) menu::$12 = 3^menu::$11
+Constant (const word/dword) menu::$21 = menu::$17|menu::$20
 Constant (const byte/word/dword) mode_twoplanebitmap::$4 = mode_twoplanebitmap::$3|3
 Constant (const byte/word/dword) mode_sixsfred::$4 = mode_sixsfred::$3|3
 Succesful SSA optimization Pass2ConstantIdentification
 Constant (const string) $5 = "C64DTV Graphics Modes            CCLHBME@"+"                                 OHIIMCC@"+"                                 LUNCMMM@"+"----------------------------------------@"+"1. Standard Char             (V) 0000000@"+"2. Extended Color Char       (V) 0000001@"+"3. Multicolor Char           (V) 0000010@"
-Constant (const byte) menu::$19 = ((byte))menu::$18
+Constant (const byte) menu::$22 = ((byte))menu::$21
 Succesful SSA optimization Pass2ConstantIdentification
 Constant (const string) $6 = "C64DTV Graphics Modes            CCLHBME@"+"                                 OHIIMCC@"+"                                 LUNCMMM@"+"----------------------------------------@"+"1. Standard Char             (V) 0000000@"+"2. Extended Color Char       (V) 0000001@"+"3. Multicolor Char           (V) 0000010@"+"4. Standard Bitmap           (V) 0000100@"
 Succesful SSA optimization Pass2ConstantIdentification
@@ -5075,9 +5093,9 @@ Not aliassing across scopes: keyboard_matrix_read::rowid#0 keyboard_key_pressed:
 Not aliassing across scopes: keyboard_matrix_read::return#2 keyboard_matrix_read::return#0
 Not aliassing across scopes: keyboard_key_pressed::$2 keyboard_matrix_read::return#2
 Not aliassing across scopes: keyboard_key_pressed::return#2 keyboard_key_pressed::return#0
-Not aliassing across scopes: menu::$26 keyboard_key_pressed::return#2
+Not aliassing across scopes: menu::$29 keyboard_key_pressed::return#2
 Not aliassing across scopes: keyboard_key_pressed::return#3 keyboard_key_pressed::return#0
-Not aliassing across scopes: menu::$30 keyboard_key_pressed::return#3
+Not aliassing across scopes: menu::$33 keyboard_key_pressed::return#3
 Not aliassing across scopes: keyboard_key_pressed::return#4 keyboard_key_pressed::return#0
 Not aliassing across scopes: mode_twoplanebitmap::$27 keyboard_key_pressed::return#4
 Not aliassing across scopes: keyboard_key_pressed::return#10 keyboard_key_pressed::return#0
@@ -5089,9 +5107,9 @@ Not aliassing across scopes: keyboard_matrix_read::rowid#0 keyboard_key_pressed:
 Not aliassing across scopes: keyboard_matrix_read::return#2 keyboard_matrix_read::return#0
 Not aliassing across scopes: keyboard_key_pressed::$2 keyboard_matrix_read::return#2
 Not aliassing across scopes: keyboard_key_pressed::return#2 keyboard_key_pressed::return#0
-Not aliassing across scopes: menu::$26 keyboard_key_pressed::return#2
+Not aliassing across scopes: menu::$29 keyboard_key_pressed::return#2
 Not aliassing across scopes: keyboard_key_pressed::return#3 keyboard_key_pressed::return#0
-Not aliassing across scopes: menu::$30 keyboard_key_pressed::return#3
+Not aliassing across scopes: menu::$33 keyboard_key_pressed::return#3
 Not aliassing across scopes: keyboard_key_pressed::return#4 keyboard_key_pressed::return#0
 Not aliassing across scopes: mode_twoplanebitmap::$27 keyboard_key_pressed::return#4
 Not aliassing across scopes: keyboard_key_pressed::return#10 keyboard_key_pressed::return#0
@@ -5190,15 +5208,15 @@ Constant inlined mode_twoplanebitmap::cy#0 = (byte/signed byte/word/signed word/
 Constant inlined mode_twoplanebitmap::ax#0 = (byte/signed byte/word/signed word/dword/signed dword) 0
 Constant inlined mode_twoplanebitmap::$9 = (const byte*) TWOPLANE_COLORS#0/(word/signed word/dword/signed dword) 1024
 Constant inlined mode_sixsfred::by#0 = (byte/signed byte/word/signed word/dword/signed dword) 0
-Constant inlined menu::$9 = (byte/signed byte/word/signed word/dword/signed dword) 3^((byte))((word))(const byte*) MENU_CHARSET#0/(word/signed word/dword/signed dword) 16384
+Constant inlined menu::$9 = ((word))(const byte*) MENU_CHARSET#0
 Constant inlined print_cls::$0 = (const byte*) MENU_SCREEN#0+(word/signed word/dword/signed dword) 1000
-Constant inlined menu::$7 = ((word))(const byte*) MENU_CHARSET#0/(word/signed word/dword/signed dword) 16384
+Constant inlined menu::$7 = ((word))(const dword) DTV_COLOR_BANK_DEFAULT#0/(word/signed word/dword/signed dword) 1024
 Constant inlined mode_sixsfred::$1 = (const byte) VIC_ECM#0|(const byte) VIC_BMM#0
-Constant inlined menu::$8 = ((byte))((word))(const byte*) MENU_CHARSET#0/(word/signed word/dword/signed dword) 16384
+Constant inlined menu::$8 = >((word))(const dword) DTV_COLOR_BANK_DEFAULT#0/(word/signed word/dword/signed dword) 1024
 Constant inlined mode_sixsfred::$0 = (const byte) DTV_CONTROL_HIGHCOLOR_ON#0|(const byte) DTV_CONTROL_LINEAR_ADDRESSING_ON#0
 Constant inlined menu::$5 = <((word))(const dword) DTV_COLOR_BANK_DEFAULT#0/(word/signed word/dword/signed dword) 1024
 Constant inlined mode_sixsfred::$3 = (const byte) VIC_ECM#0|(const byte) VIC_BMM#0|(const byte) VIC_DEN#0|(const byte) VIC_RSEL#0
-Constant inlined menu::$6 = ((word))(const byte*) MENU_CHARSET#0
+Constant inlined menu::$6 = (const dword) DTV_COLOR_BANK_DEFAULT#0/(word/signed word/dword/signed dword) 1024
 Constant inlined mode_sixsfred::$2 = (const byte) VIC_ECM#0|(const byte) VIC_BMM#0|(const byte) VIC_DEN#0
 Constant inlined mode_sixsfred::$5 = (const byte) VIC_MCM#0|(const byte) VIC_CSEL#0
 Constant inlined mode_sixsfred::$4 = (const byte) VIC_ECM#0|(const byte) VIC_BMM#0|(const byte) VIC_DEN#0|(const byte) VIC_RSEL#0|(byte/signed byte/word/signed word/dword/signed dword) 3
@@ -5206,25 +5224,25 @@ Constant inlined mode_sixsfred::$7 = >(const byte*) SIXSFRED_PLANEA#0
 Constant inlined mode_sixsfred::$6 = <(const byte*) SIXSFRED_PLANEA#0
 Constant inlined mode_sixsfred::$9 = >(const byte*) SIXSFRED_PLANEB#0
 Constant inlined mode_sixsfred::$8 = <(const byte*) SIXSFRED_PLANEB#0
-Constant inlined menu::$16 = ((word))(const byte*) MENU_CHARSET#0&(word/signed word/dword/signed dword) 16383
-Constant inlined menu::$17 = ((word))(const byte*) MENU_CHARSET#0&(word/signed word/dword/signed dword) 16383/(word/signed word/dword/signed dword) 1024
+Constant inlined menu::$16 = ((word))(const byte*) MENU_SCREEN#0&(word/signed word/dword/signed dword) 16383
+Constant inlined menu::$17 = ((word))(const byte*) MENU_SCREEN#0&(word/signed word/dword/signed dword) 16383/(byte/signed byte/word/signed word/dword/signed dword) 64
 Constant inlined mode_twoplanebitmap::gfxa#0 = (const byte*) TWOPLANE_PLANEA#0
-Constant inlined menu::$14 = ((word))(const byte*) MENU_SCREEN#0&(word/signed word/dword/signed dword) 16383/(byte/signed byte/word/signed word/dword/signed dword) 64
-Constant inlined menu::$15 = ((word))(const byte*) MENU_CHARSET#0
-Constant inlined menu::$18 = ((word))(const byte*) MENU_SCREEN#0&(word/signed word/dword/signed dword) 16383/(byte/signed byte/word/signed word/dword/signed dword) 64|((word))(const byte*) MENU_CHARSET#0&(word/signed word/dword/signed dword) 16383/(word/signed word/dword/signed dword) 1024
+Constant inlined menu::$14 = (const byte) VIC_DEN#0|(const byte) VIC_RSEL#0|(byte/signed byte/word/signed word/dword/signed dword) 3
+Constant inlined menu::$15 = ((word))(const byte*) MENU_SCREEN#0
+Constant inlined menu::$18 = ((word))(const byte*) MENU_CHARSET#0
 Constant inlined print_set_screen::screen#0 = (const byte*) MENU_SCREEN#0
-Constant inlined menu::$19 = ((byte))((word))(const byte*) MENU_SCREEN#0&(word/signed word/dword/signed dword) 16383/(byte/signed byte/word/signed word/dword/signed dword) 64|((word))(const byte*) MENU_CHARSET#0&(word/signed word/dword/signed dword) 16383/(word/signed word/dword/signed dword) 1024
+Constant inlined menu::$19 = ((word))(const byte*) MENU_CHARSET#0&(word/signed word/dword/signed dword) 16383
 Constant inlined menu::$3 = (const dword) DTV_COLOR_BANK_DEFAULT#0/(word/signed word/dword/signed dword) 1024
 Constant inlined menu::$4 = ((word))(const dword) DTV_COLOR_BANK_DEFAULT#0/(word/signed word/dword/signed dword) 1024
 Constant inlined mode_twoplanebitmap::by#0 = (byte/signed byte/word/signed word/dword/signed dword) 0
 Constant inlined menu::$1 = ((dword))(const byte*) MENU_CHARSET#0/(dword/signed dword) 65536
 Constant inlined menu::$2 = ((byte))((dword))(const byte*) MENU_CHARSET#0/(dword/signed dword) 65536
 Constant inlined mode_twoplanebitmap::i#0 = (byte/signed byte/word/signed word/dword/signed dword) 0
-Constant inlined menu::$12 = ((word))(const byte*) MENU_SCREEN#0
+Constant inlined menu::$12 = (byte/signed byte/word/signed word/dword/signed dword) 3^((byte))((word))(const byte*) MENU_CHARSET#0/(word/signed word/dword/signed dword) 16384
 Constant inlined menu::$0 = ((dword))(const byte*) MENU_CHARSET#0
-Constant inlined menu::$13 = ((word))(const byte*) MENU_SCREEN#0&(word/signed word/dword/signed dword) 16383
-Constant inlined menu::$10 = (const byte) VIC_DEN#0|(const byte) VIC_RSEL#0
-Constant inlined menu::$11 = (const byte) VIC_DEN#0|(const byte) VIC_RSEL#0|(byte/signed byte/word/signed word/dword/signed dword) 3
+Constant inlined menu::$13 = (const byte) VIC_DEN#0|(const byte) VIC_RSEL#0
+Constant inlined menu::$10 = ((word))(const byte*) MENU_CHARSET#0/(word/signed word/dword/signed dword) 16384
+Constant inlined menu::$11 = ((byte))((word))(const byte*) MENU_CHARSET#0/(word/signed word/dword/signed dword) 16384
 Constant inlined mode_sixsfred::ay#0 = (byte/signed byte/word/signed word/dword/signed dword) 0
 Constant inlined mode_sixsfred::cx#0 = (byte/signed byte/word/signed word/dword/signed dword) 0
 Constant inlined mode_sixsfred::gfxa#0 = (const byte*) SIXSFRED_PLANEA#0
@@ -5237,8 +5255,11 @@ Constant inlined mode_sixsfred::$12 = (const byte*) SIXSFRED_COLORS#0/(word/sign
 Constant inlined mode_twoplanebitmap::$11 = (const byte*) TWOPLANE_COLORS#0/(word/signed word/dword/signed dword) 1024
 Constant inlined mode_sixsfred::$13 = >(const byte*) SIXSFRED_COLORS#0/(word/signed word/dword/signed dword) 1024
 Constant inlined mode_twoplanebitmap::$10 = <(const byte*) TWOPLANE_COLORS#0/(word/signed word/dword/signed dword) 1024
+Constant inlined menu::$20 = ((word))(const byte*) MENU_CHARSET#0&(word/signed word/dword/signed dword) 16383/(word/signed word/dword/signed dword) 1024
 Constant inlined mode_twoplanebitmap::cx#0 = (byte/signed byte/word/signed word/dword/signed dword) 0
-Constant inlined menu::$21 = (const byte*) COLS#0+(word/signed word/dword/signed dword) 1000
+Constant inlined menu::$24 = (const byte*) COLS#0+(word/signed word/dword/signed dword) 1000
+Constant inlined menu::$21 = ((word))(const byte*) MENU_SCREEN#0&(word/signed word/dword/signed dword) 16383/(byte/signed byte/word/signed word/dword/signed dword) 64|((word))(const byte*) MENU_CHARSET#0&(word/signed word/dword/signed dword) 16383/(word/signed word/dword/signed dword) 1024
+Constant inlined menu::$22 = ((byte))((word))(const byte*) MENU_SCREEN#0&(word/signed word/dword/signed dword) 16383/(byte/signed byte/word/signed word/dword/signed dword) 64|((word))(const byte*) MENU_CHARSET#0&(word/signed word/dword/signed dword) 16383/(word/signed word/dword/signed dword) 1024
 Succesful SSA optimization Pass2ConstantInlining
 Block Sequence Planned @begin @22 @end main main::@1 main::@return main::@2 menu menu::@1 menu::@2 menu::@9 menu::@17 menu::@18 menu::@3 menu::@return menu::@4 menu::@20 menu::@12 menu::@6 menu::@21 menu::@14 mode_sixsfred mode_sixsfred::@1 mode_sixsfred::@12 mode_sixsfred::@2 mode_sixsfred::@3 mode_sixsfred::@13 mode_sixsfred::@4 mode_sixsfred::@5 mode_sixsfred::@15 mode_sixsfred::@6 mode_sixsfred::@7 mode_sixsfred::@17 mode_sixsfred::@8 mode_sixsfred::@return mode_sixsfred::@9 mode_sixsfred::@24 keyboard_key_pressed keyboard_key_pressed::@2 keyboard_key_pressed::@return keyboard_matrix_read keyboard_matrix_read::@return mode_twoplanebitmap mode_twoplanebitmap::@1 mode_twoplanebitmap::@14 mode_twoplanebitmap::@2 mode_twoplanebitmap::@3 mode_twoplanebitmap::@15 mode_twoplanebitmap::@4 mode_twoplanebitmap::@5 mode_twoplanebitmap::@17 mode_twoplanebitmap::@7 mode_twoplanebitmap::@19 mode_twoplanebitmap::@8 mode_twoplanebitmap::@9 mode_twoplanebitmap::@21 mode_twoplanebitmap::@10 mode_twoplanebitmap::@return mode_twoplanebitmap::@11 mode_twoplanebitmap::@28 mode_twoplanebitmap::@6 print_str_lines print_str_lines::@1 print_str_lines::@return print_str_lines::@4 print_str_lines::@8 print_str_lines::@5 print_str_lines::@9 print_ln print_ln::@1 print_ln::@return print_cls print_cls::@1 print_cls::@return print_set_screen print_set_screen::@return 
 Added new block during phi lifting menu::@24(between menu::@1 and menu::@1)
@@ -5428,7 +5449,7 @@ main::@2: scope:[main]  from main::@1
 menu: scope:[menu]  from main::@2
   [10] *((const byte*) DTV_GRAPHICS_VIC_BANK#0) ← ((byte))((dword))(const byte*) MENU_CHARSET#0/(dword/signed dword) 65536 [ ] ( main:2::menu:9 [ ] )
   [11] *((const byte*) DTV_COLOR_BANK_LO#0) ← <((word))(const dword) DTV_COLOR_BANK_DEFAULT#0/(word/signed word/dword/signed dword) 1024 [ ] ( main:2::menu:9 [ ] )
-  [12] *((const byte*) DTV_COLOR_BANK_HI#0) ← (byte/signed byte/word/signed word/dword/signed dword) 0 [ ] ( main:2::menu:9 [ ] )
+  [12] *((const byte*) DTV_COLOR_BANK_HI#0) ← >((word))(const dword) DTV_COLOR_BANK_DEFAULT#0/(word/signed word/dword/signed dword) 1024 [ ] ( main:2::menu:9 [ ] )
   [13] *((const byte*) DTV_CONTROL#0) ← (byte/signed byte/word/signed word/dword/signed dword) 0 [ ] ( main:2::menu:9 [ ] )
   [14] *((const byte*) CIA2_PORT_A_DDR#0) ← (byte/signed byte/word/signed word/dword/signed dword) 3 [ ] ( main:2::menu:9 [ ] )
   [15] *((const byte*) CIA2_PORT_A#0) ← (byte/signed byte/word/signed word/dword/signed dword) 3^((byte))((word))(const byte*) MENU_CHARSET#0/(word/signed word/dword/signed dword) 16384 [ ] ( main:2::menu:9 [ ] )
@@ -5473,8 +5494,8 @@ menu::@4: scope:[menu]  from menu::@3
   [38] (byte) keyboard_key_pressed::return#2 ← (byte) keyboard_key_pressed::return#0 [ keyboard_key_pressed::return#2 ] ( main:2::menu:9 [ keyboard_key_pressed::return#2 ] )
   to:menu::@20
 menu::@20: scope:[menu]  from menu::@4
-  [39] (byte~) menu::$26 ← (byte) keyboard_key_pressed::return#2 [ menu::$26 ] ( main:2::menu:9 [ menu::$26 ] )
-  [40] if((byte~) menu::$26==(byte/signed byte/word/signed word/dword/signed dword) 0) goto menu::@6 [ ] ( main:2::menu:9 [ ] )
+  [39] (byte~) menu::$29 ← (byte) keyboard_key_pressed::return#2 [ menu::$29 ] ( main:2::menu:9 [ menu::$29 ] )
+  [40] if((byte~) menu::$29==(byte/signed byte/word/signed word/dword/signed dword) 0) goto menu::@6 [ ] ( main:2::menu:9 [ ] )
   to:menu::@12
 menu::@12: scope:[menu]  from menu::@20
   [41] phi() [ ] ( main:2::menu:9 [ ] )
@@ -5486,8 +5507,8 @@ menu::@6: scope:[menu]  from menu::@20
   [45] (byte) keyboard_key_pressed::return#3 ← (byte) keyboard_key_pressed::return#0 [ keyboard_key_pressed::return#3 ] ( main:2::menu:9 [ keyboard_key_pressed::return#3 ] )
   to:menu::@21
 menu::@21: scope:[menu]  from menu::@6
-  [46] (byte~) menu::$30 ← (byte) keyboard_key_pressed::return#3 [ menu::$30 ] ( main:2::menu:9 [ menu::$30 ] )
-  [47] if((byte~) menu::$30==(byte/signed byte/word/signed word/dword/signed dword) 0) goto menu::@3 [ ] ( main:2::menu:9 [ ] )
+  [46] (byte~) menu::$33 ← (byte) keyboard_key_pressed::return#3 [ menu::$33 ] ( main:2::menu:9 [ menu::$33 ] )
+  [47] if((byte~) menu::$33==(byte/signed byte/word/signed word/dword/signed dword) 0) goto menu::@3 [ ] ( main:2::menu:9 [ ] )
   to:menu::@14
 menu::@14: scope:[menu]  from menu::@21
   [48] phi() [ ] ( main:2::menu:9 [ ] )
@@ -6076,8 +6097,8 @@ VARIABLE REGISTER WEIGHTS
 (byte[8]) keyboard_matrix_row_bitmask
 (void()) main()
 (void()) menu()
-(byte~) menu::$26 202.0
-(byte~) menu::$30 202.0
+(byte~) menu::$29 202.0
+(byte~) menu::$33 202.0
 (byte*) menu::c
 (byte*) menu::c#1 151.5
 (byte*) menu::c#2 151.5
@@ -6222,9 +6243,9 @@ Initial phi equivalence classes
 [ print_line_cursor#18 print_line_cursor#17 print_line_cursor#19 ]
 [ print_cls::sc#2 print_cls::sc#1 ]
 Added variable keyboard_key_pressed::return#2 to zero page equivalence class [ keyboard_key_pressed::return#2 ]
-Added variable menu::$26 to zero page equivalence class [ menu::$26 ]
+Added variable menu::$29 to zero page equivalence class [ menu::$29 ]
 Added variable keyboard_key_pressed::return#3 to zero page equivalence class [ keyboard_key_pressed::return#3 ]
-Added variable menu::$30 to zero page equivalence class [ menu::$30 ]
+Added variable menu::$33 to zero page equivalence class [ menu::$33 ]
 Added variable mode_sixsfred::$15 to zero page equivalence class [ mode_sixsfred::$15 ]
 Added variable mode_sixsfred::$16 to zero page equivalence class [ mode_sixsfred::$16 ]
 Added variable mode_sixsfred::$19 to zero page equivalence class [ mode_sixsfred::$19 ]
@@ -6275,9 +6296,9 @@ Complete equivalence classes
 [ print_line_cursor#18 print_line_cursor#17 print_line_cursor#19 ]
 [ print_cls::sc#2 print_cls::sc#1 ]
 [ keyboard_key_pressed::return#2 ]
-[ menu::$26 ]
+[ menu::$29 ]
 [ keyboard_key_pressed::return#3 ]
-[ menu::$30 ]
+[ menu::$33 ]
 [ mode_sixsfred::$15 ]
 [ mode_sixsfred::$16 ]
 [ mode_sixsfred::$19 ]
@@ -6327,9 +6348,9 @@ Allocated zp ZP_WORD:34 [ print_char_cursor#17 print_char_cursor#19 print_char_c
 Allocated zp ZP_WORD:36 [ print_line_cursor#18 print_line_cursor#17 print_line_cursor#19 ]
 Allocated zp ZP_WORD:38 [ print_cls::sc#2 print_cls::sc#1 ]
 Allocated zp ZP_BYTE:40 [ keyboard_key_pressed::return#2 ]
-Allocated zp ZP_BYTE:41 [ menu::$26 ]
+Allocated zp ZP_BYTE:41 [ menu::$29 ]
 Allocated zp ZP_BYTE:42 [ keyboard_key_pressed::return#3 ]
-Allocated zp ZP_BYTE:43 [ menu::$30 ]
+Allocated zp ZP_BYTE:43 [ menu::$33 ]
 Allocated zp ZP_BYTE:44 [ mode_sixsfred::$15 ]
 Allocated zp ZP_BYTE:45 [ mode_sixsfred::$16 ]
 Allocated zp ZP_BYTE:46 [ mode_sixsfred::$19 ]
@@ -6454,8 +6475,8 @@ main: {
 }
 //SEG18 menu
 menu: {
-    .label _26 = $29
-    .label _30 = $2b
+    .label _29 = $29
+    .label _33 = $2b
     .label i = 2
     .label c = 3
   //SEG19 [10] *((const byte*) DTV_GRAPHICS_VIC_BANK#0) ← ((byte))((dword))(const byte*) MENU_CHARSET#0/(dword/signed dword) 65536 [ ] ( main:2::menu:9 [ ] ) -- _deref_pbuc1=vbuc2 
@@ -6464,7 +6485,7 @@ menu: {
   //SEG20 [11] *((const byte*) DTV_COLOR_BANK_LO#0) ← <((word))(const dword) DTV_COLOR_BANK_DEFAULT#0/(word/signed word/dword/signed dword) 1024 [ ] ( main:2::menu:9 [ ] ) -- _deref_pbuc1=vbuc2 
     lda #DTV_COLOR_BANK_DEFAULT/$400
     sta DTV_COLOR_BANK_LO
-  //SEG21 [12] *((const byte*) DTV_COLOR_BANK_HI#0) ← (byte/signed byte/word/signed word/dword/signed dword) 0 [ ] ( main:2::menu:9 [ ] ) -- _deref_pbuc1=vbuc2 
+  //SEG21 [12] *((const byte*) DTV_COLOR_BANK_HI#0) ← >((word))(const dword) DTV_COLOR_BANK_DEFAULT#0/(word/signed word/dword/signed dword) 1024 [ ] ( main:2::menu:9 [ ] ) -- _deref_pbuc1=vbuc2 
     lda #0
     sta DTV_COLOR_BANK_HI
   //SEG22 [13] *((const byte*) DTV_CONTROL#0) ← (byte/signed byte/word/signed word/dword/signed dword) 0 [ ] ( main:2::menu:9 [ ] ) -- _deref_pbuc1=vbuc2 
@@ -6596,11 +6617,11 @@ menu: {
     jmp b20
   //SEG67 menu::@20
   b20:
-  //SEG68 [39] (byte~) menu::$26 ← (byte) keyboard_key_pressed::return#2 [ menu::$26 ] ( main:2::menu:9 [ menu::$26 ] ) -- vbuz1=vbuz2 
+  //SEG68 [39] (byte~) menu::$29 ← (byte) keyboard_key_pressed::return#2 [ menu::$29 ] ( main:2::menu:9 [ menu::$29 ] ) -- vbuz1=vbuz2 
     lda keyboard_key_pressed.return_2
-    sta _26
-  //SEG69 [40] if((byte~) menu::$26==(byte/signed byte/word/signed word/dword/signed dword) 0) goto menu::@6 [ ] ( main:2::menu:9 [ ] ) -- vbuz1_eq_0_then_la1 
-    lda _26
+    sta _29
+  //SEG69 [40] if((byte~) menu::$29==(byte/signed byte/word/signed word/dword/signed dword) 0) goto menu::@6 [ ] ( main:2::menu:9 [ ] ) -- vbuz1_eq_0_then_la1 
+    lda _29
     beq b6_from_b20
   //SEG70 [41] phi from menu::@20 to menu::@12 [phi:menu::@20->menu::@12]
   b12_from_b20:
@@ -6628,11 +6649,11 @@ menu: {
     jmp b21
   //SEG79 menu::@21
   b21:
-  //SEG80 [46] (byte~) menu::$30 ← (byte) keyboard_key_pressed::return#3 [ menu::$30 ] ( main:2::menu:9 [ menu::$30 ] ) -- vbuz1=vbuz2 
+  //SEG80 [46] (byte~) menu::$33 ← (byte) keyboard_key_pressed::return#3 [ menu::$33 ] ( main:2::menu:9 [ menu::$33 ] ) -- vbuz1=vbuz2 
     lda keyboard_key_pressed.return_3
-    sta _30
-  //SEG81 [47] if((byte~) menu::$30==(byte/signed byte/word/signed word/dword/signed dword) 0) goto menu::@3 [ ] ( main:2::menu:9 [ ] ) -- vbuz1_eq_0_then_la1 
-    lda _30
+    sta _33
+  //SEG81 [47] if((byte~) menu::$33==(byte/signed byte/word/signed word/dword/signed dword) 0) goto menu::@3 [ ] ( main:2::menu:9 [ ] ) -- vbuz1_eq_0_then_la1 
+    lda _33
     beq b3
   //SEG82 [48] phi from menu::@21 to menu::@14 [phi:menu::@21->menu::@14]
   b14_from_b21:
@@ -7569,7 +7590,7 @@ REGISTER UPLIFT POTENTIAL REGISTERS
 Statement [5] *((const byte*) DTV_FEATURE#0) ← (const byte) DTV_FEATURE_ENABLE#0 [ ] ( main:2 [ ] ) always clobbers reg byte a 
 Statement [10] *((const byte*) DTV_GRAPHICS_VIC_BANK#0) ← ((byte))((dword))(const byte*) MENU_CHARSET#0/(dword/signed dword) 65536 [ ] ( main:2::menu:9 [ ] ) always clobbers reg byte a 
 Statement [11] *((const byte*) DTV_COLOR_BANK_LO#0) ← <((word))(const dword) DTV_COLOR_BANK_DEFAULT#0/(word/signed word/dword/signed dword) 1024 [ ] ( main:2::menu:9 [ ] ) always clobbers reg byte a 
-Statement [12] *((const byte*) DTV_COLOR_BANK_HI#0) ← (byte/signed byte/word/signed word/dword/signed dword) 0 [ ] ( main:2::menu:9 [ ] ) always clobbers reg byte a 
+Statement [12] *((const byte*) DTV_COLOR_BANK_HI#0) ← >((word))(const dword) DTV_COLOR_BANK_DEFAULT#0/(word/signed word/dword/signed dword) 1024 [ ] ( main:2::menu:9 [ ] ) always clobbers reg byte a 
 Statement [13] *((const byte*) DTV_CONTROL#0) ← (byte/signed byte/word/signed word/dword/signed dword) 0 [ ] ( main:2::menu:9 [ ] ) always clobbers reg byte a 
 Statement [14] *((const byte*) CIA2_PORT_A_DDR#0) ← (byte/signed byte/word/signed word/dword/signed dword) 3 [ ] ( main:2::menu:9 [ ] ) always clobbers reg byte a 
 Statement [15] *((const byte*) CIA2_PORT_A#0) ← (byte/signed byte/word/signed word/dword/signed dword) 3^((byte))((word))(const byte*) MENU_CHARSET#0/(word/signed word/dword/signed dword) 16384 [ ] ( main:2::menu:9 [ ] ) always clobbers reg byte a 
@@ -7676,7 +7697,7 @@ Statement [207] if((byte*) print_cls::sc#1!=(const byte*) MENU_SCREEN#0+(word/si
 Statement [5] *((const byte*) DTV_FEATURE#0) ← (const byte) DTV_FEATURE_ENABLE#0 [ ] ( main:2 [ ] ) always clobbers reg byte a 
 Statement [10] *((const byte*) DTV_GRAPHICS_VIC_BANK#0) ← ((byte))((dword))(const byte*) MENU_CHARSET#0/(dword/signed dword) 65536 [ ] ( main:2::menu:9 [ ] ) always clobbers reg byte a 
 Statement [11] *((const byte*) DTV_COLOR_BANK_LO#0) ← <((word))(const dword) DTV_COLOR_BANK_DEFAULT#0/(word/signed word/dword/signed dword) 1024 [ ] ( main:2::menu:9 [ ] ) always clobbers reg byte a 
-Statement [12] *((const byte*) DTV_COLOR_BANK_HI#0) ← (byte/signed byte/word/signed word/dword/signed dword) 0 [ ] ( main:2::menu:9 [ ] ) always clobbers reg byte a 
+Statement [12] *((const byte*) DTV_COLOR_BANK_HI#0) ← >((word))(const dword) DTV_COLOR_BANK_DEFAULT#0/(word/signed word/dword/signed dword) 1024 [ ] ( main:2::menu:9 [ ] ) always clobbers reg byte a 
 Statement [13] *((const byte*) DTV_CONTROL#0) ← (byte/signed byte/word/signed word/dword/signed dword) 0 [ ] ( main:2::menu:9 [ ] ) always clobbers reg byte a 
 Statement [14] *((const byte*) CIA2_PORT_A_DDR#0) ← (byte/signed byte/word/signed word/dword/signed dword) 3 [ ] ( main:2::menu:9 [ ] ) always clobbers reg byte a 
 Statement [15] *((const byte*) CIA2_PORT_A#0) ← (byte/signed byte/word/signed word/dword/signed dword) 3^((byte))((word))(const byte*) MENU_CHARSET#0/(word/signed word/dword/signed dword) 16384 [ ] ( main:2::menu:9 [ ] ) always clobbers reg byte a 
@@ -7781,9 +7802,9 @@ Potential registers zp ZP_WORD:34 [ print_char_cursor#17 print_char_cursor#19 pr
 Potential registers zp ZP_WORD:36 [ print_line_cursor#18 print_line_cursor#17 print_line_cursor#19 ] : zp ZP_WORD:36 , 
 Potential registers zp ZP_WORD:38 [ print_cls::sc#2 print_cls::sc#1 ] : zp ZP_WORD:38 , 
 Potential registers zp ZP_BYTE:40 [ keyboard_key_pressed::return#2 ] : zp ZP_BYTE:40 , reg byte a , reg byte x , reg byte y , 
-Potential registers zp ZP_BYTE:41 [ menu::$26 ] : zp ZP_BYTE:41 , reg byte a , reg byte x , reg byte y , 
+Potential registers zp ZP_BYTE:41 [ menu::$29 ] : zp ZP_BYTE:41 , reg byte a , reg byte x , reg byte y , 
 Potential registers zp ZP_BYTE:42 [ keyboard_key_pressed::return#3 ] : zp ZP_BYTE:42 , reg byte a , reg byte x , reg byte y , 
-Potential registers zp ZP_BYTE:43 [ menu::$30 ] : zp ZP_BYTE:43 , reg byte a , reg byte x , reg byte y , 
+Potential registers zp ZP_BYTE:43 [ menu::$33 ] : zp ZP_BYTE:43 , reg byte a , reg byte x , reg byte y , 
 Potential registers zp ZP_BYTE:44 [ mode_sixsfred::$15 ] : zp ZP_BYTE:44 , reg byte a , reg byte x , reg byte y , 
 Potential registers zp ZP_BYTE:45 [ mode_sixsfred::$16 ] : zp ZP_BYTE:45 , reg byte a , reg byte x , reg byte y , 
 Potential registers zp ZP_BYTE:46 [ mode_sixsfred::$19 ] : zp ZP_BYTE:46 , reg byte a , reg byte x , reg byte y , 
@@ -7811,7 +7832,7 @@ Uplift Scope [mode_twoplanebitmap] 5,848: zp ZP_WORD:25 [ mode_twoplanebitmap::g
 Uplift Scope [mode_sixsfred] 2,174.6: zp ZP_WORD:15 [ mode_sixsfred::gfxb#2 mode_sixsfred::gfxb#3 mode_sixsfred::gfxb#1 ] 2,168.83: zp ZP_BYTE:17 [ mode_sixsfred::bx#2 mode_sixsfred::bx#1 ] 2,102.1: zp ZP_BYTE:7 [ mode_sixsfred::cx#2 mode_sixsfred::cx#1 ] 2,002: zp ZP_BYTE:44 [ mode_sixsfred::$15 ] 2,002: zp ZP_BYTE:45 [ mode_sixsfred::$16 ] 2,002: zp ZP_BYTE:46 [ mode_sixsfred::$19 ] 2,002: zp ZP_BYTE:47 [ mode_sixsfred::row#0 ] 1,901.9: zp ZP_BYTE:13 [ mode_sixsfred::ax#2 mode_sixsfred::ax#1 ] 1,398.6: zp ZP_WORD:8 [ mode_sixsfred::col#2 mode_sixsfred::col#3 mode_sixsfred::col#1 ] 1,398.6: zp ZP_WORD:11 [ mode_sixsfred::gfxa#2 mode_sixsfred::gfxa#3 mode_sixsfred::gfxa#1 ] 353.5: zp ZP_BYTE:5 [ mode_sixsfred::i#2 mode_sixsfred::i#1 ] 301.88: zp ZP_BYTE:6 [ mode_sixsfred::cy#4 mode_sixsfred::cy#1 ] 301.88: zp ZP_BYTE:10 [ mode_sixsfred::ay#4 mode_sixsfred::ay#1 ] 202: zp ZP_BYTE:49 [ mode_sixsfred::$25 ] 185.17: zp ZP_BYTE:14 [ mode_sixsfred::by#4 mode_sixsfred::by#1 ] 
 Uplift Scope [] 3,698: zp ZP_WORD:34 [ print_char_cursor#17 print_char_cursor#19 print_char_cursor#61 print_char_cursor#32 print_char_cursor#1 ] 2,653.58: zp ZP_WORD:36 [ print_line_cursor#18 print_line_cursor#17 print_line_cursor#19 ] 
 Uplift Scope [print_str_lines] 1,937.17: zp ZP_WORD:32 [ print_str_lines::str#3 print_str_lines::str#2 print_str_lines::str#0 ] 667.33: zp ZP_BYTE:64 [ print_str_lines::ch#0 ] 
-Uplift Scope [menu] 353.5: zp ZP_BYTE:2 [ menu::i#2 menu::i#1 ] 303: zp ZP_WORD:3 [ menu::c#2 menu::c#1 ] 202: zp ZP_BYTE:41 [ menu::$26 ] 202: zp ZP_BYTE:43 [ menu::$30 ] 
+Uplift Scope [menu] 353.5: zp ZP_BYTE:2 [ menu::i#2 menu::i#1 ] 303: zp ZP_WORD:3 [ menu::c#2 menu::c#1 ] 202: zp ZP_BYTE:41 [ menu::$29 ] 202: zp ZP_BYTE:43 [ menu::$33 ] 
 Uplift Scope [keyboard_key_pressed] 202: zp ZP_BYTE:40 [ keyboard_key_pressed::return#2 ] 202: zp ZP_BYTE:42 [ keyboard_key_pressed::return#3 ] 202: zp ZP_BYTE:48 [ keyboard_key_pressed::return#10 ] 202: zp ZP_BYTE:62 [ keyboard_key_pressed::return#4 ] 67.67: zp ZP_BYTE:55 [ keyboard_key_pressed::return#0 ] 4: zp ZP_BYTE:51 [ keyboard_key_pressed::rowidx#0 ] 4: zp ZP_BYTE:54 [ keyboard_key_pressed::$2 ] 2: zp ZP_BYTE:18 [ keyboard_key_pressed::key#4 ] 0.67: zp ZP_BYTE:50 [ keyboard_key_pressed::colidx#0 ] 
 Uplift Scope [print_cls] 303: zp ZP_WORD:38 [ print_cls::sc#2 print_cls::sc#1 ] 
 Uplift Scope [keyboard_matrix_read] 4: zp ZP_BYTE:52 [ keyboard_matrix_read::rowid#0 ] 4: zp ZP_BYTE:53 [ keyboard_matrix_read::return#2 ] 1.33: zp ZP_BYTE:56 [ keyboard_matrix_read::return#0 ] 
@@ -7827,7 +7848,7 @@ Uplifting [mode_sixsfred] best 493874 combination zp ZP_WORD:15 [ mode_sixsfred:
 Limited combination testing to 10000 combinations of 262144 possible.
 Uplifting [] best 493874 combination zp ZP_WORD:34 [ print_char_cursor#17 print_char_cursor#19 print_char_cursor#61 print_char_cursor#32 print_char_cursor#1 ] zp ZP_WORD:36 [ print_line_cursor#18 print_line_cursor#17 print_line_cursor#19 ] 
 Uplifting [print_str_lines] best 481874 combination zp ZP_WORD:32 [ print_str_lines::str#3 print_str_lines::str#2 print_str_lines::str#0 ] reg byte a [ print_str_lines::ch#0 ] 
-Uplifting [menu] best 479874 combination reg byte x [ menu::i#2 menu::i#1 ] zp ZP_WORD:3 [ menu::c#2 menu::c#1 ] reg byte a [ menu::$26 ] reg byte a [ menu::$30 ] 
+Uplifting [menu] best 479874 combination reg byte x [ menu::i#2 menu::i#1 ] zp ZP_WORD:3 [ menu::c#2 menu::c#1 ] reg byte a [ menu::$29 ] reg byte a [ menu::$33 ] 
 Uplift attempts [keyboard_key_pressed] 10000/147456 (limiting to 10000)
 Uplifting [keyboard_key_pressed] best 476259 combination reg byte a [ keyboard_key_pressed::return#2 ] reg byte a [ keyboard_key_pressed::return#3 ] reg byte a [ keyboard_key_pressed::return#10 ] reg byte a [ keyboard_key_pressed::return#4 ] reg byte a [ keyboard_key_pressed::return#0 ] reg byte a [ keyboard_key_pressed::rowidx#0 ] reg byte a [ keyboard_key_pressed::$2 ] zp ZP_BYTE:18 [ keyboard_key_pressed::key#4 ] zp ZP_BYTE:50 [ keyboard_key_pressed::colidx#0 ] 
 Limited combination testing to 10000 combinations of 147456 possible.
@@ -7987,7 +8008,7 @@ menu: {
   //SEG20 [11] *((const byte*) DTV_COLOR_BANK_LO#0) ← <((word))(const dword) DTV_COLOR_BANK_DEFAULT#0/(word/signed word/dword/signed dword) 1024 [ ] ( main:2::menu:9 [ ] ) -- _deref_pbuc1=vbuc2 
     lda #DTV_COLOR_BANK_DEFAULT/$400
     sta DTV_COLOR_BANK_LO
-  //SEG21 [12] *((const byte*) DTV_COLOR_BANK_HI#0) ← (byte/signed byte/word/signed word/dword/signed dword) 0 [ ] ( main:2::menu:9 [ ] ) -- _deref_pbuc1=vbuc2 
+  //SEG21 [12] *((const byte*) DTV_COLOR_BANK_HI#0) ← >((word))(const dword) DTV_COLOR_BANK_DEFAULT#0/(word/signed word/dword/signed dword) 1024 [ ] ( main:2::menu:9 [ ] ) -- _deref_pbuc1=vbuc2 
     lda #0
     sta DTV_COLOR_BANK_HI
   //SEG22 [13] *((const byte*) DTV_CONTROL#0) ← (byte/signed byte/word/signed word/dword/signed dword) 0 [ ] ( main:2::menu:9 [ ] ) -- _deref_pbuc1=vbuc2 
@@ -8114,9 +8135,9 @@ menu: {
     jmp b20
   //SEG67 menu::@20
   b20:
-  //SEG68 [39] (byte~) menu::$26 ← (byte) keyboard_key_pressed::return#2 [ menu::$26 ] ( main:2::menu:9 [ menu::$26 ] )
-    // (byte~) menu::$26 = (byte) keyboard_key_pressed::return#2  // register copy reg byte a
-  //SEG69 [40] if((byte~) menu::$26==(byte/signed byte/word/signed word/dword/signed dword) 0) goto menu::@6 [ ] ( main:2::menu:9 [ ] ) -- vbuaa_eq_0_then_la1 
+  //SEG68 [39] (byte~) menu::$29 ← (byte) keyboard_key_pressed::return#2 [ menu::$29 ] ( main:2::menu:9 [ menu::$29 ] )
+    // (byte~) menu::$29 = (byte) keyboard_key_pressed::return#2  // register copy reg byte a
+  //SEG69 [40] if((byte~) menu::$29==(byte/signed byte/word/signed word/dword/signed dword) 0) goto menu::@6 [ ] ( main:2::menu:9 [ ] ) -- vbuaa_eq_0_then_la1 
     cmp #0
     beq b6_from_b20
   //SEG70 [41] phi from menu::@20 to menu::@12 [phi:menu::@20->menu::@12]
@@ -8143,9 +8164,9 @@ menu: {
     jmp b21
   //SEG79 menu::@21
   b21:
-  //SEG80 [46] (byte~) menu::$30 ← (byte) keyboard_key_pressed::return#3 [ menu::$30 ] ( main:2::menu:9 [ menu::$30 ] )
-    // (byte~) menu::$30 = (byte) keyboard_key_pressed::return#3  // register copy reg byte a
-  //SEG81 [47] if((byte~) menu::$30==(byte/signed byte/word/signed word/dword/signed dword) 0) goto menu::@3 [ ] ( main:2::menu:9 [ ] ) -- vbuaa_eq_0_then_la1 
+  //SEG80 [46] (byte~) menu::$33 ← (byte) keyboard_key_pressed::return#3 [ menu::$33 ] ( main:2::menu:9 [ menu::$33 ] )
+    // (byte~) menu::$33 = (byte) keyboard_key_pressed::return#3  // register copy reg byte a
+  //SEG81 [47] if((byte~) menu::$33==(byte/signed byte/word/signed word/dword/signed dword) 0) goto menu::@3 [ ] ( main:2::menu:9 [ ] ) -- vbuaa_eq_0_then_la1 
     cmp #0
     beq b3
   //SEG82 [48] phi from menu::@21 to menu::@14 [phi:menu::@21->menu::@14]
@@ -9380,8 +9401,8 @@ FINAL SYMBOL TABLE
 (label) main::@2
 (label) main::@return
 (void()) menu()
-(byte~) menu::$26 reg byte a 202.0
-(byte~) menu::$30 reg byte a 202.0
+(byte~) menu::$29 reg byte a 202.0
+(byte~) menu::$33 reg byte a 202.0
 (label) menu::@1
 (label) menu::@12
 (label) menu::@14
@@ -9570,9 +9591,9 @@ reg byte x [ mode_twoplanebitmap::bx#2 mode_twoplanebitmap::bx#1 ]
 zp ZP_WORD:5 [ print_char_cursor#17 print_char_cursor#19 print_char_cursor#61 print_char_cursor#32 print_char_cursor#1 ]
 zp ZP_WORD:7 [ print_line_cursor#18 print_line_cursor#17 print_line_cursor#19 ]
 reg byte a [ keyboard_key_pressed::return#2 ]
-reg byte a [ menu::$26 ]
+reg byte a [ menu::$29 ]
 reg byte a [ keyboard_key_pressed::return#3 ]
-reg byte a [ menu::$30 ]
+reg byte a [ menu::$33 ]
 reg byte a [ mode_sixsfred::$15 ]
 reg byte a [ mode_sixsfred::$16 ]
 reg byte a [ mode_sixsfred::$19 ]
@@ -9691,7 +9712,7 @@ menu: {
   //SEG20 [11] *((const byte*) DTV_COLOR_BANK_LO#0) ← <((word))(const dword) DTV_COLOR_BANK_DEFAULT#0/(word/signed word/dword/signed dword) 1024 [ ] ( main:2::menu:9 [ ] ) -- _deref_pbuc1=vbuc2 
     lda #DTV_COLOR_BANK_DEFAULT/$400
     sta DTV_COLOR_BANK_LO
-  //SEG21 [12] *((const byte*) DTV_COLOR_BANK_HI#0) ← (byte/signed byte/word/signed word/dword/signed dword) 0 [ ] ( main:2::menu:9 [ ] ) -- _deref_pbuc1=vbuc2 
+  //SEG21 [12] *((const byte*) DTV_COLOR_BANK_HI#0) ← >((word))(const dword) DTV_COLOR_BANK_DEFAULT#0/(word/signed word/dword/signed dword) 1024 [ ] ( main:2::menu:9 [ ] ) -- _deref_pbuc1=vbuc2 
     lda #0
     sta DTV_COLOR_BANK_HI
   //SEG22 [13] *((const byte*) DTV_CONTROL#0) ← (byte/signed byte/word/signed word/dword/signed dword) 0 [ ] ( main:2::menu:9 [ ] ) -- _deref_pbuc1=vbuc2 
@@ -9789,9 +9810,9 @@ menu: {
   //SEG66 [38] (byte) keyboard_key_pressed::return#2 ← (byte) keyboard_key_pressed::return#0 [ keyboard_key_pressed::return#2 ] ( main:2::menu:9 [ keyboard_key_pressed::return#2 ] )
     // (byte) keyboard_key_pressed::return#2 = (byte) keyboard_key_pressed::return#0  // register copy reg byte a
   //SEG67 menu::@20
-  //SEG68 [39] (byte~) menu::$26 ← (byte) keyboard_key_pressed::return#2 [ menu::$26 ] ( main:2::menu:9 [ menu::$26 ] )
-    // (byte~) menu::$26 = (byte) keyboard_key_pressed::return#2  // register copy reg byte a
-  //SEG69 [40] if((byte~) menu::$26==(byte/signed byte/word/signed word/dword/signed dword) 0) goto menu::@6 [ ] ( main:2::menu:9 [ ] ) -- vbuaa_eq_0_then_la1 
+  //SEG68 [39] (byte~) menu::$29 ← (byte) keyboard_key_pressed::return#2 [ menu::$29 ] ( main:2::menu:9 [ menu::$29 ] )
+    // (byte~) menu::$29 = (byte) keyboard_key_pressed::return#2  // register copy reg byte a
+  //SEG69 [40] if((byte~) menu::$29==(byte/signed byte/word/signed word/dword/signed dword) 0) goto menu::@6 [ ] ( main:2::menu:9 [ ] ) -- vbuaa_eq_0_then_la1 
     cmp #0
     beq b6
   //SEG70 [41] phi from menu::@20 to menu::@12 [phi:menu::@20->menu::@12]
@@ -9810,9 +9831,9 @@ menu: {
   //SEG78 [45] (byte) keyboard_key_pressed::return#3 ← (byte) keyboard_key_pressed::return#0 [ keyboard_key_pressed::return#3 ] ( main:2::menu:9 [ keyboard_key_pressed::return#3 ] )
     // (byte) keyboard_key_pressed::return#3 = (byte) keyboard_key_pressed::return#0  // register copy reg byte a
   //SEG79 menu::@21
-  //SEG80 [46] (byte~) menu::$30 ← (byte) keyboard_key_pressed::return#3 [ menu::$30 ] ( main:2::menu:9 [ menu::$30 ] )
-    // (byte~) menu::$30 = (byte) keyboard_key_pressed::return#3  // register copy reg byte a
-  //SEG81 [47] if((byte~) menu::$30==(byte/signed byte/word/signed word/dword/signed dword) 0) goto menu::@3 [ ] ( main:2::menu:9 [ ] ) -- vbuaa_eq_0_then_la1 
+  //SEG80 [46] (byte~) menu::$33 ← (byte) keyboard_key_pressed::return#3 [ menu::$33 ] ( main:2::menu:9 [ menu::$33 ] )
+    // (byte~) menu::$33 = (byte) keyboard_key_pressed::return#3  // register copy reg byte a
+  //SEG81 [47] if((byte~) menu::$33==(byte/signed byte/word/signed word/dword/signed dword) 0) goto menu::@3 [ ] ( main:2::menu:9 [ ] ) -- vbuaa_eq_0_then_la1 
     cmp #0
     beq b4
   //SEG82 [48] phi from menu::@21 to menu::@14 [phi:menu::@21->menu::@14]

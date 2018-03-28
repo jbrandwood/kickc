@@ -44,6 +44,7 @@
   .label DTV_COLOR_BANK_LO = $d036
   .label DTV_COLOR_BANK_HI = $d037
   .label DTV_GRAPHICS_VIC_BANK = $d03d
+  .const KEY_A = $a
   .const KEY_E = $e
   .const KEY_D = $12
   .const KEY_C = $14
@@ -58,6 +59,9 @@
   .label SIXSFRED_PLANEA = $4000
   .label SIXSFRED_PLANEB = $6000
   .label SIXSFRED_COLORS = $8000
+  .label SIXSFRED2_PLANEA = $4000
+  .label SIXSFRED2_PLANEB = $6000
+  .label SIXSFRED2_COLORS = $8000
   .label PIXELCELL8BPP_PLANEA = $3c00
   .label PIXELCELL8BPP_PLANEB = $4000
   .const CHUNKYBMM8BPP_PLANEB = $20000
@@ -126,27 +130,34 @@ menu: {
   breturn:
     rts
   b4:
-    ldx #KEY_B
+    ldx #KEY_A
     jsr keyboard_key_pressed
     cmp #0
     beq b6
-    jsr mode_twoplanebitmap
+    jsr mode_sixsfred2
     jmp breturn
   b6:
-    ldx #KEY_C
+    ldx #KEY_B
     jsr keyboard_key_pressed
     cmp #0
     beq b7
-    jsr mode_sixsfred
+    jsr mode_twoplanebitmap
     jmp breturn
   b7:
-    ldx #KEY_D
+    ldx #KEY_C
     jsr keyboard_key_pressed
     cmp #0
     beq b8
-    jsr mode_8bpppixelcell
+    jsr mode_sixsfred
     jmp breturn
   b8:
+    ldx #KEY_D
+    jsr keyboard_key_pressed
+    cmp #0
+    beq b9
+    jsr mode_8bpppixelcell
+    jmp breturn
+  b9:
     ldx #KEY_E
     jsr keyboard_key_pressed
     cmp #0
@@ -469,9 +480,9 @@ mode_sixsfred: {
     bne b1
     lda #0
     sta BORDERCOL
-    lda #<TWOPLANE_COLORS
+    lda #<SIXSFRED_COLORS
     sta col
-    lda #>TWOPLANE_COLORS
+    lda #>SIXSFRED_COLORS
     sta col+1
     lda #0
     sta cy
@@ -710,6 +721,148 @@ mode_twoplanebitmap: {
     inc gfxa+1
   !:
     jmp b7
+}
+mode_sixsfred2: {
+    .label _15 = 7
+    .label col = 2
+    .label cy = 4
+    .label gfxa = 2
+    .label ay = 4
+    .label gfxb = 2
+    .label by = 4
+    lda #DTV_CONTROL_LINEAR_ADDRESSING_ON
+    sta DTV_CONTROL
+    lda #VIC_ECM|VIC_BMM|VIC_DEN|VIC_RSEL|3
+    sta VIC_CONTROL
+    lda #VIC_MCM|VIC_CSEL
+    sta VIC_CONTROL2
+    lda #<SIXSFRED2_PLANEA
+    sta DTV_PLANEA_START_LO
+    lda #>SIXSFRED2_PLANEA
+    sta DTV_PLANEA_START_MI
+    lda #0
+    sta DTV_PLANEA_START_HI
+    lda #1
+    sta DTV_PLANEA_STEP
+    lda #0
+    sta DTV_PLANEA_MODULO_LO
+    sta DTV_PLANEA_MODULO_HI
+    lda #<SIXSFRED2_PLANEB
+    sta DTV_PLANEB_START_LO
+    lda #>SIXSFRED2_PLANEB
+    sta DTV_PLANEB_START_MI
+    lda #0
+    sta DTV_PLANEB_START_HI
+    lda #1
+    sta DTV_PLANEB_STEP
+    lda #0
+    sta DTV_PLANEB_MODULO_LO
+    sta DTV_PLANEB_MODULO_HI
+    lda #<SIXSFRED2_COLORS/$400
+    sta DTV_COLOR_BANK_LO
+    lda #>SIXSFRED2_COLORS/$400
+    sta DTV_COLOR_BANK_HI
+    ldx #0
+  b1:
+    txa
+    sta DTV_PALETTE,x
+    inx
+    cpx #$10
+    bne b1
+    lda #0
+    sta BORDERCOL
+    lda #<SIXSFRED2_COLORS
+    sta col
+    lda #>SIXSFRED2_COLORS
+    sta col+1
+    lda #0
+    sta cy
+  b2:
+    ldx #0
+  b3:
+    txa
+    and #3
+    asl
+    asl
+    asl
+    asl
+    sta _15
+    lda #3
+    and cy
+    ora _15
+    ldy #0
+    sta (col),y
+    inc col
+    bne !+
+    inc col+1
+  !:
+    inx
+    cpx #$28
+    bne b3
+    inc cy
+    lda cy
+    cmp #$19
+    bne b2
+    lda #<SIXSFRED2_PLANEA
+    sta gfxa
+    lda #>SIXSFRED2_PLANEA
+    sta gfxa+1
+    lda #0
+    sta ay
+  b4:
+    ldx #0
+  b5:
+    lda ay
+    lsr
+    and #3
+    tay
+    lda row_bitmask,y
+    ldy #0
+    sta (gfxa),y
+    inc gfxa
+    bne !+
+    inc gfxa+1
+  !:
+    inx
+    cpx #$28
+    bne b5
+    inc ay
+    lda ay
+    cmp #$c8
+    bne b4
+    lda #0
+    sta by
+    lda #<SIXSFRED2_PLANEB
+    sta gfxb
+    lda #>SIXSFRED2_PLANEB
+    sta gfxb+1
+  b6:
+    ldx #0
+  b7:
+    lda #$1b
+    ldy #0
+    sta (gfxb),y
+    inc gfxb
+    bne !+
+    inc gfxb+1
+  !:
+    inx
+    cpx #$28
+    bne b7
+    inc by
+    lda by
+    cmp #$c8
+    bne b6
+    jmp b9
+  breturn:
+    rts
+  b9:
+    ldx #KEY_SPACE
+    jsr keyboard_key_pressed
+    cmp #0
+    beq b9
+    jmp breturn
+    row_bitmask: .byte 0, $55, $aa, $ff
 }
 print_str_lines: {
     .label str = 2

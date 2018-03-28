@@ -127,8 +127,8 @@ main: {
     lda #0
     sta i
   b2:
-    ldx i
-    ldy #0
+    ldy i
+    ldx #0
     lda #$20
     jsr plot_chargen
     inc i
@@ -192,9 +192,9 @@ main: {
   b11:
     cmp #0
     beq b12
-    ldx cur_pos
+    ldy cur_pos
     lda ch
-    ldy shift
+    ldx shift
     jsr plot_chargen
   b12:
     inc ch
@@ -232,7 +232,7 @@ plot_chargen: {
     lda chargen+1
     adc #>CHARGEN
     sta chargen+1
-    cpy #0
+    cpx #0
     beq b1
     clc
     lda chargen
@@ -244,6 +244,8 @@ plot_chargen: {
   b1:
     lda #$32
     sta PROCPORT
+    tya
+    tax
     jsr mul8u
     clc
     lda sc

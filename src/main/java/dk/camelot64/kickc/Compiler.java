@@ -311,14 +311,14 @@ public class Compiler {
 
       // Attempt uplifting registers through a lot of combinations
       //getLog().setVerboseUplift(true);
-      new Pass4RegisterUpliftCombinations(program).performUplift(10_000);
+      new Pass4RegisterUpliftCombinations(program).performUplift(1_000);
 
       //getLog().setVerboseUplift(true);
       //new Pass4RegisterUpliftStatic(program).performUplift();
       //getLog().setVerboseUplift(false);
 
       // Attempt uplifting registers one at a time to catch remaining potential not realized by combination search
-      new Pass4RegisterUpliftRemains(program).performUplift(10_000);
+      new Pass4RegisterUpliftRemains(program).performUplift(1_000);
 
       // Final register coalesce and finalization
       new Pass4ZeroPageCoalesceAssignment(program).coalesce();

@@ -85,7 +85,7 @@ render: {
     sta x
   b2:
     jsr findcol
-    tya
+    txa
     ldy x
     sta (colline),y
     inc x
@@ -108,18 +108,21 @@ render: {
 findcol: {
     .label x = 5
     .label y = 2
-    .label xp = 7
-    .label yp = 8
-    .label diff = 7
-    .label mindiff = 6
-    ldy #0
+    .label xp = 8
+    .label yp = 9
+    .label diff = 8
+    .label i = 6
+    .label mindiff = 7
+    ldx #0
     lda #$ff
     sta mindiff
-    ldx #0
+    txa
+    sta i
   b1:
-    lda XPOS,x
+    ldy i
+    lda XPOS,y
     sta xp
-    lda YPOS,x
+    lda YPOS,y
     sta yp
     lda x
     cmp xp
@@ -127,7 +130,7 @@ findcol: {
     lda y
     cmp yp
     bne b2
-    ldy #0
+    ldx #0
   breturn:
     rts
   b2:
@@ -147,20 +150,24 @@ findcol: {
     sbc y
     clc
     adc diff
+    tay
   b7:
-    cmp mindiff
+    cpy mindiff
     bcs b21
-    ldy COLS,x
+    ldx i
+    lda COLS,x
+    tax
   b8:
-    inx
-    cpx #numpoints
+    inc i
+    lda i
+    cmp #numpoints
     bcc b19
     jmp breturn
   b19:
-    sta mindiff
+    sty mindiff
     jmp b1
   b21:
-    lda mindiff
+    ldy mindiff
     jmp b8
   b6:
     lda y
@@ -168,6 +175,7 @@ findcol: {
     sbc yp
     clc
     adc diff
+    tay
     jmp b7
   b4:
     lda x

@@ -54,22 +54,20 @@ menu: {
     jmp b2
 }
 keyboard_key_pressed: {
-    .label colidx = 2
     txa
     and #7
-    sta colidx
+    tay
     txa
     lsr
     lsr
     lsr
+    tax
     jsr keyboard_matrix_read
-    ldy colidx
     and keyboard_matrix_col_bitmask,y
     rts
 }
 keyboard_matrix_read: {
-    tay
-    lda keyboard_matrix_row_bitmask,y
+    lda keyboard_matrix_row_bitmask,x
     sta CIA1_PORT_A
     lda CIA1_PORT_B
     eor #$ff

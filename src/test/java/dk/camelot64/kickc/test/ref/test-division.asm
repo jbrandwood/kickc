@@ -326,8 +326,8 @@ test_8s: {
     sta dividend
     lda divisors,y
     sta divisor
-    lda dividend
-    ldx divisor
+    ldy dividend
+    tax
     jsr div8s
     sta res
     lda print_line_cursor
@@ -388,8 +388,9 @@ print_sbyte: {
 }
 div8s: {
     .label neg = $10
-    cmp #0
+    cpy #0
     bpl b16
+    tya
     eor #$ff
     clc
     adc #1
@@ -428,7 +429,6 @@ div8s: {
     adc #1
     jmp breturn
   b16:
-    tay
     lda #0
     sta neg
     jmp b2

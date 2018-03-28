@@ -596,13 +596,12 @@ mode_twoplanebitmap: {
     sta DTV_COLOR_BANK_LO
     lda #>TWOPLANE_COLORS/$400
     sta DTV_COLOR_BANK_HI
-    lda #0
+    ldx #0
   b1:
-    tax
+    txa
     sta DTV_PALETTE,x
-    clc
-    adc #1
-    cmp #$10
+    inx
+    cpx #$10
     bne b1
     lda #0
     sta BORDERCOL

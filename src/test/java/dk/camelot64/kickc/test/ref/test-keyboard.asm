@@ -59,8 +59,8 @@
   jsr main
 main: {
     .label sc = 2
-    .label row_pressed_bits = 4
     .label screen = 2
+    .label row = 4
     .label i = 4
     lda #<$400
     sta sc
@@ -91,21 +91,24 @@ main: {
     sta screen
     lda #>$400
     sta screen+1
-    ldx #0
+    lda #0
+    sta row
   b6:
-    txa
+    ldy row
     jsr keyboard_matrix_read
-    sta row_pressed_bits
+    tax
     ldy #0
   b7:
-    lda #$80
-    and row_pressed_bits
+    txa
+    and #$80
     cmp #0
     beq b8
     lda #'1'
     sta (screen),y
   b9:
-    asl row_pressed_bits
+    txa
+    asl
+    tax
     iny
     cpy #8
     bne b7
@@ -116,8 +119,9 @@ main: {
     bcc !+
     inc screen+1
   !:
-    inx
-    cpx #8
+    inc row
+    lda row
+    cmp #8
     bne b6
     lda screen
     clc
@@ -168,13 +172,13 @@ keyboard_key_pressed: {
     lsr
     lsr
     lsr
+    tay
     jsr keyboard_matrix_read
     ldy colidx
     and keyboard_matrix_col_bitmask,y
     rts
 }
 keyboard_matrix_read: {
-    tay
     lda keyboard_matrix_row_bitmask,y
     sta CIA1_PORT_A
     lda CIA1_PORT_B

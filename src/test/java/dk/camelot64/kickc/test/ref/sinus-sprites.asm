@@ -37,19 +37,21 @@ main: {
     jmp b2
 }
 anim: {
+    .label _2 = 5
     .label xidx = 4
-    .label yidx = 6
     .label x = 8
     .label x_msb = 5
+    .label j2 = 6
     .label j = 7
     inc BORDERCOL
     lda sin_idx_x
     sta xidx
-    lda sin_idx_y
-    sta yidx
+    ldx sin_idx_y
     lda #0
     sta j
-    ldx #$c
+    lda #$c
+    sta j2
+    lda #0
     sta x_msb
   b1:
     ldy xidx
@@ -60,15 +62,14 @@ anim: {
     lda #0
     adc #0
     sta x+1
-    lda x_msb
-    asl
-    ora x+1
+    asl _2
+    ora x_msb
     sta x_msb
     lda x
-    sta SPRITES_XPOS,x
-    ldy yidx
-    lda sintab_y,y
-    sta SPRITES_YPOS,x
+    ldy j2
+    sta SPRITES_XPOS,y
+    lda sintab_y,x
+    sta SPRITES_YPOS,y
     lda #$a
     clc
     adc xidx
@@ -79,20 +80,21 @@ anim: {
     sbc #sinlen_x
     sta xidx
   b2:
-    lda #8
+    txa
     clc
-    adc yidx
-    sta yidx
-    cmp #sinlen_y
+    adc #8
+    tax
+    cpx #sinlen_y
     bcc b3
-    sec
-    sbc #sinlen_y
-    sta yidx
-  b3:
     txa
     sec
-    sbc #2
+    sbc #sinlen_y
     tax
+  b3:
+    lda j2
+    sec
+    sbc #2
+    sta j2
     inc j
     lda j
     cmp #7

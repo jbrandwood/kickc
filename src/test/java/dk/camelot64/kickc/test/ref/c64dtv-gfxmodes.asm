@@ -6,6 +6,8 @@
   .label BGCOL = $d021
   .label BGCOL1 = $d021
   .label BGCOL2 = $d022
+  .label BGCOL3 = $d023
+  .label BGCOL4 = $d024
   .label VIC_CONTROL = $d011
   .const VIC_ECM = $40
   .const VIC_BMM = $20
@@ -43,28 +45,17 @@
   .label DTV_PLANEB_MODULO_HI = $d048
   .label DTV_COLOR_BANK_LO = $d036
   .label DTV_COLOR_BANK_HI = $d037
+  .const DTV_COLOR_BANK_DEFAULT = $1d800
   .label DTV_GRAPHICS_VIC_BANK = $d03d
   .const KEY_A = $a
   .const KEY_E = $e
   .const KEY_D = $12
+  .const KEY_6 = $13
   .const KEY_C = $14
   .const KEY_B = $1c
+  .const KEY_1 = $38
+  .const KEY_2 = $3b
   .const KEY_SPACE = $3c
-  .label MENU_SCREEN = $8000
-  .label MENU_CHARSET = $9800
-  .const DTV_COLOR_BANK_DEFAULT = $1d800
-  .label TWOPLANE_PLANEA = $4000
-  .label TWOPLANE_PLANEB = $6000
-  .label TWOPLANE_COLORS = $8000
-  .label SIXSFRED_PLANEA = $4000
-  .label SIXSFRED_PLANEB = $6000
-  .label SIXSFRED_COLORS = $8000
-  .label SIXSFRED2_PLANEA = $4000
-  .label SIXSFRED2_PLANEB = $6000
-  .label SIXSFRED2_COLORS = $8000
-  .label PIXELCELL8BPP_PLANEA = $3c00
-  .label PIXELCELL8BPP_PLANEB = $4000
-  .const CHUNKYBMM8BPP_PLANEB = $20000
   .label print_char_cursor = 5
   .label print_line_cursor = $a
   jsr main
@@ -77,6 +68,8 @@ main: {
     jmp b2
 }
 menu: {
+    .label MENU_SCREEN = $8000
+    .label MENU_CHARSET = $9800
     .label c = 2
     lda #($ffffffff&MENU_CHARSET)/$10000
     sta DTV_GRAPHICS_VIC_BANK
@@ -130,34 +123,55 @@ menu: {
   breturn:
     rts
   b4:
-    ldx #KEY_A
+    ldx #KEY_1
     jsr keyboard_key_pressed
     cmp #0
     beq b6
-    jsr mode_sixsfred2
+    jsr mode_stdchar
     jmp breturn
   b6:
-    ldx #KEY_B
+    ldx #KEY_2
     jsr keyboard_key_pressed
     cmp #0
     beq b7
-    jsr mode_twoplanebitmap
+    jsr mode_ecmchar
     jmp breturn
   b7:
-    ldx #KEY_C
+    ldx #KEY_6
     jsr keyboard_key_pressed
     cmp #0
     beq b8
-    jsr mode_sixsfred
+    jsr mode_hicolstdchar
     jmp breturn
   b8:
-    ldx #KEY_D
+    ldx #KEY_A
     jsr keyboard_key_pressed
     cmp #0
     beq b9
-    jsr mode_8bpppixelcell
+    jsr mode_sixsfred2
     jmp breturn
   b9:
+    ldx #KEY_B
+    jsr keyboard_key_pressed
+    cmp #0
+    beq b10
+    jsr mode_twoplanebitmap
+    jmp breturn
+  b10:
+    ldx #KEY_C
+    jsr keyboard_key_pressed
+    cmp #0
+    beq b11
+    jsr mode_sixsfred
+    jmp breturn
+  b11:
+    ldx #KEY_D
+    jsr keyboard_key_pressed
+    cmp #0
+    beq b12
+    jsr mode_8bpppixelcell
+    jmp breturn
+  b12:
     ldx #KEY_E
     jsr keyboard_key_pressed
     cmp #0
@@ -166,6 +180,7 @@ menu: {
     jmp breturn
 }
 mode_8bppchunkybmm: {
+    .const CHUNKYBMM8BPP_PLANEB = $20000
     .label _20 = $a
     .label gfxb = 5
     .label x = 2
@@ -292,6 +307,8 @@ dtvSetCpuBankSegment1: {
     rts
 }
 mode_8bpppixelcell: {
+    .label PIXELCELL8BPP_PLANEA = $3c00
+    .label PIXELCELL8BPP_PLANEB = $4000
     .label _12 = 7
     .label gfxa = 2
     .label ay = 4
@@ -433,6 +450,9 @@ mode_8bpppixelcell: {
     jmp breturn
 }
 mode_sixsfred: {
+    .label SIXSFRED_PLANEA = $4000
+    .label SIXSFRED_PLANEB = $6000
+    .label SIXSFRED_COLORS = $8000
     .label col = 2
     .label cy = 4
     .label gfxa = 2
@@ -568,6 +588,9 @@ mode_sixsfred: {
     row_bitmask: .byte 0, $55, $aa, $ff
 }
 mode_twoplanebitmap: {
+    .label TWOPLANE_PLANEA = $4000
+    .label TWOPLANE_PLANEB = $6000
+    .label TWOPLANE_COLORS = $8000
     .label _15 = 7
     .label col = 2
     .label cy = 4
@@ -723,6 +746,9 @@ mode_twoplanebitmap: {
     jmp b7
 }
 mode_sixsfred2: {
+    .label SIXSFRED2_PLANEA = $4000
+    .label SIXSFRED2_PLANEB = $6000
+    .label SIXSFRED2_COLORS = $8000
     .label _15 = 7
     .label col = 2
     .label cy = 4
@@ -864,15 +890,291 @@ mode_sixsfred2: {
     jmp breturn
     row_bitmask: .byte 0, $55, $aa, $ff
 }
+mode_hicolstdchar: {
+    .label HICOLSTDCHAR_SCREEN = $8000
+    .label HICOLSTDCHAR_CHARSET = $9000
+    .label HICOLSTDCHAR_COLORS = $8400
+    .label _25 = 7
+    .label col = 2
+    .label ch = 5
+    .label cy = 4
+    lda #($ffffffff&HICOLSTDCHAR_CHARSET)/$10000
+    sta DTV_GRAPHICS_VIC_BANK
+    lda #HICOLSTDCHAR_COLORS/$400
+    sta DTV_COLOR_BANK_LO
+    lda #0
+    sta DTV_COLOR_BANK_HI
+    lda #DTV_CONTROL_HIGHCOLOR_ON
+    sta DTV_CONTROL
+    lda #3
+    sta CIA2_PORT_A_DDR
+    lda #3^HICOLSTDCHAR_CHARSET/$4000
+    sta CIA2_PORT_A
+    lda #VIC_DEN|VIC_RSEL|3
+    sta VIC_CONTROL
+    lda #VIC_CSEL
+    sta VIC_CONTROL2
+    lda #(HICOLSTDCHAR_SCREEN&$3fff)/$40|(HICOLSTDCHAR_CHARSET&$3fff)/$400
+    sta VIC_MEMORY
+    ldx #0
+  b1:
+    txa
+    sta DTV_PALETTE,x
+    inx
+    cpx #$10
+    bne b1
+    lda #0
+    sta BGCOL
+    sta BORDERCOL
+    lda #<HICOLSTDCHAR_SCREEN
+    sta ch
+    lda #>HICOLSTDCHAR_SCREEN
+    sta ch+1
+    lda #<HICOLSTDCHAR_COLORS
+    sta col
+    lda #>HICOLSTDCHAR_COLORS
+    sta col+1
+    lda #0
+    sta cy
+  b2:
+    ldx #0
+  b3:
+    lda #$f
+    and cy
+    asl
+    asl
+    asl
+    asl
+    sta _25
+    txa
+    and #$f
+    ora _25
+    ldy #0
+    sta (col),y
+    inc col
+    bne !+
+    inc col+1
+  !:
+    ldy #0
+    sta (ch),y
+    inc ch
+    bne !+
+    inc ch+1
+  !:
+    inx
+    cpx #$28
+    bne b3
+    inc cy
+    lda cy
+    cmp #$19
+    bne b2
+    jmp b5
+  breturn:
+    rts
+  b5:
+    ldx #KEY_SPACE
+    jsr keyboard_key_pressed
+    cmp #0
+    beq b5
+    jmp breturn
+}
+mode_ecmchar: {
+    .label ECMCHAR_SCREEN = $8000
+    .label ECMCHAR_CHARSET = $9000
+    .label ECMCHAR_COLORS = $8400
+    .label _28 = 7
+    .label col = 2
+    .label ch = 5
+    .label cy = 4
+    lda #($ffffffff&ECMCHAR_CHARSET)/$10000
+    sta DTV_GRAPHICS_VIC_BANK
+    lda #ECMCHAR_COLORS/$400
+    sta DTV_COLOR_BANK_LO
+    lda #0
+    sta DTV_COLOR_BANK_HI
+    sta DTV_CONTROL
+    lda #3
+    sta CIA2_PORT_A_DDR
+    lda #3^ECMCHAR_CHARSET/$4000
+    sta CIA2_PORT_A
+    lda #VIC_DEN|VIC_RSEL|VIC_ECM|3
+    sta VIC_CONTROL
+    lda #VIC_CSEL
+    sta VIC_CONTROL2
+    lda #(ECMCHAR_SCREEN&$3fff)/$40|(ECMCHAR_CHARSET&$3fff)/$400
+    sta VIC_MEMORY
+    ldx #0
+  b1:
+    lda DTV_PALETTE_DEFAULT,x
+    sta DTV_PALETTE,x
+    inx
+    cpx #$10
+    bne b1
+    lda #0
+    sta BORDERCOL
+    sta BGCOL1
+    lda #2
+    sta BGCOL2
+    lda #5
+    sta BGCOL3
+    lda #6
+    sta BGCOL4
+    lda #<ECMCHAR_SCREEN
+    sta ch
+    lda #>ECMCHAR_SCREEN
+    sta ch+1
+    lda #<ECMCHAR_COLORS
+    sta col
+    lda #>ECMCHAR_COLORS
+    sta col+1
+    lda #0
+    sta cy
+  b2:
+    ldx #0
+  b3:
+    txa
+    clc
+    adc cy
+    and #$f
+    ldy #0
+    sta (col),y
+    inc col
+    bne !+
+    inc col+1
+  !:
+    lda #$f
+    and cy
+    asl
+    asl
+    asl
+    asl
+    sta _28
+    txa
+    and #$f
+    ora _28
+    ldy #0
+    sta (ch),y
+    inc ch
+    bne !+
+    inc ch+1
+  !:
+    inx
+    cpx #$28
+    bne b3
+    inc cy
+    lda cy
+    cmp #$19
+    bne b2
+    jmp b5
+  breturn:
+    rts
+  b5:
+    ldx #KEY_SPACE
+    jsr keyboard_key_pressed
+    cmp #0
+    beq b5
+    jmp breturn
+}
+mode_stdchar: {
+    .label STDCHAR_SCREEN = $8000
+    .label STDCHAR_CHARSET = $9000
+    .label STDCHAR_COLORS = $8400
+    .label _27 = 7
+    .label col = 2
+    .label ch = 5
+    .label cy = 4
+    lda #($ffffffff&STDCHAR_CHARSET)/$10000
+    sta DTV_GRAPHICS_VIC_BANK
+    lda #STDCHAR_COLORS/$400
+    sta DTV_COLOR_BANK_LO
+    lda #0
+    sta DTV_COLOR_BANK_HI
+    sta DTV_CONTROL
+    lda #3
+    sta CIA2_PORT_A_DDR
+    lda #3^STDCHAR_CHARSET/$4000
+    sta CIA2_PORT_A
+    lda #VIC_DEN|VIC_RSEL|3
+    sta VIC_CONTROL
+    lda #VIC_CSEL
+    sta VIC_CONTROL2
+    lda #(STDCHAR_SCREEN&$3fff)/$40|(STDCHAR_CHARSET&$3fff)/$400
+    sta VIC_MEMORY
+    ldx #0
+  b1:
+    lda DTV_PALETTE_DEFAULT,x
+    sta DTV_PALETTE,x
+    inx
+    cpx #$10
+    bne b1
+    lda #0
+    sta BGCOL
+    sta BORDERCOL
+    lda #<STDCHAR_SCREEN
+    sta ch
+    lda #>STDCHAR_SCREEN
+    sta ch+1
+    lda #<STDCHAR_COLORS
+    sta col
+    lda #>STDCHAR_COLORS
+    sta col+1
+    lda #0
+    sta cy
+  b2:
+    ldx #0
+  b3:
+    txa
+    clc
+    adc cy
+    and #$f
+    ldy #0
+    sta (col),y
+    inc col
+    bne !+
+    inc col+1
+  !:
+    lda #$f
+    and cy
+    asl
+    asl
+    asl
+    asl
+    sta _27
+    txa
+    and #$f
+    ora _27
+    ldy #0
+    sta (ch),y
+    inc ch
+    bne !+
+    inc ch+1
+  !:
+    inx
+    cpx #$28
+    bne b3
+    inc cy
+    lda cy
+    cmp #$19
+    bne b2
+    jmp b5
+  breturn:
+    rts
+  b5:
+    ldx #KEY_SPACE
+    jsr keyboard_key_pressed
+    cmp #0
+    beq b5
+    jmp breturn
+}
 print_str_lines: {
     .label str = 2
-    lda #<MENU_SCREEN
+    lda #<menu.MENU_SCREEN
     sta print_line_cursor
-    lda #>MENU_SCREEN
+    lda #>menu.MENU_SCREEN
     sta print_line_cursor+1
-    lda #<MENU_SCREEN
+    lda #<menu.MENU_SCREEN
     sta print_char_cursor
-    lda #>MENU_SCREEN
+    lda #>menu.MENU_SCREEN
     sta print_char_cursor+1
     lda #<MENU_TEXT
     sta str
@@ -930,9 +1232,9 @@ print_ln: {
 }
 print_cls: {
     .label sc = 2
-    lda #<MENU_SCREEN
+    lda #<menu.MENU_SCREEN
     sta sc
-    lda #>MENU_SCREEN
+    lda #>menu.MENU_SCREEN
     sta sc+1
   b1:
     lda #' '
@@ -943,10 +1245,10 @@ print_cls: {
     inc sc+1
   !:
     lda sc+1
-    cmp #>MENU_SCREEN+$3e8
+    cmp #>menu.MENU_SCREEN+$3e8
     bne b1
     lda sc
-    cmp #<MENU_SCREEN+$3e8
+    cmp #<menu.MENU_SCREEN+$3e8
     bne b1
     rts
 }

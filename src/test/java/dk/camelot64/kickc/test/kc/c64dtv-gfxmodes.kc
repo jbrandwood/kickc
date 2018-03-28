@@ -11,8 +11,6 @@ void main() {
     }
 }
 
-const byte* MENU_SCREEN = $8000;
-const byte* MENU_CHARSET = $9800; // Charset ROM
 byte[] MENU_TEXT =
      "C64DTV Graphics Modes            CCLHBME@" +
      "                                 OHIIMCC@" +
@@ -36,9 +34,9 @@ byte[] MENU_TEXT =
      "    (V) vicII (H) vicII+hicol (D) c64dtv@" +
      "@" ;
 
-const dword DTV_COLOR_BANK_DEFAULT = $1d800;
-
 void menu() {
+    const byte* MENU_SCREEN = $8000;
+    const byte* MENU_CHARSET = $9800; // Charset ROM
     // DTV Graphics Bank
     *DTV_GRAPHICS_VIC_BANK = (byte)((dword)MENU_CHARSET/$10000);
     // DTV Color Bank
@@ -69,6 +67,18 @@ void menu() {
     print_str_lines(MENU_TEXT);
     // Wait for key press
     while(true) {
+        if(keyboard_key_pressed(KEY_1)!=0) {
+            mode_stdchar();
+            return;
+        }
+        if(keyboard_key_pressed(KEY_2)!=0) {
+            mode_ecmchar();
+            return;
+        }
+        if(keyboard_key_pressed(KEY_6)!=0) {
+            mode_hicolstdchar();
+            return;
+        }
         if(keyboard_key_pressed(KEY_A)!=0) {
             mode_sixsfred2();
             return;
@@ -93,9 +103,166 @@ void menu() {
 
 }
 
-const byte* TWOPLANE_PLANEA = $4000;
-const byte* TWOPLANE_PLANEB = $6000;
-const byte* TWOPLANE_COLORS = $8000;
+// Standard Character Mode (LINEAR/HICOL/CHUNK/COLDIS/ECM/MCM/BMM = 0)
+// Resolution: 320x200
+// Normal VIC Adressing:
+// VicGfxData[16]: ( VicBank[1:0] & CharBase[2:0] & CharData[7:0] & RowCounter[2:0] )
+// Pixel Shifter (1)
+// - 0: 4bpp BgColor0[3:0]
+// - 1: 4bpp ColorData[3:0]
+void mode_stdchar() {
+    const byte* STDCHAR_SCREEN = $8000;
+    const byte* STDCHAR_CHARSET = $9000; // Charset ROM
+    const byte* STDCHAR_COLORS = $8400;
+    // DTV Graphics Bank
+    *DTV_GRAPHICS_VIC_BANK = (byte)((dword)STDCHAR_CHARSET/$10000);
+    // DTV Color Bank
+     *DTV_COLOR_BANK_LO = <((word)(STDCHAR_COLORS/$400));
+     *DTV_COLOR_BANK_HI = >((word)(STDCHAR_COLORS/$400));
+    // DTV Graphics Mode
+    *DTV_CONTROL = 0;
+    // VIC Graphics Bank
+    *CIA2_PORT_A_DDR = %00000011; // Set VIC Bank bits to output - all others to input
+    *CIA2_PORT_A = %00000011 ^ (byte)((word)STDCHAR_CHARSET/$4000); // Set VIC Bank
+    // VIC Graphics Mode
+    *VIC_CONTROL = VIC_DEN|VIC_RSEL|3;
+    *VIC_CONTROL2 = VIC_CSEL;
+    // VIC Memory Pointers
+    *VIC_MEMORY =  (byte)((((word)STDCHAR_SCREEN&$3fff)/$40)|(((word)STDCHAR_CHARSET&$3fff)/$400));
+    // DTV Palette - default
+    for(byte i : 0..$f) {
+        DTV_PALETTE[i] = DTV_PALETTE_DEFAULT[i];
+    }
+    // Screen colors
+    *BGCOL = 0;
+    *BORDERCOL = 0;
+    // Char Colors and screen chars
+    byte* col=STDCHAR_COLORS;
+    byte* ch=STDCHAR_SCREEN;
+    for(byte cy: 0..24 ) {
+        for(byte cx: 0..39) {
+            *col++ = (cx+cy)&$f;
+            *ch++ = (cy&$f)<<4|(cx&$f);
+        }
+    }
+    // Wait for keypress
+    while(true) {
+        if(keyboard_key_pressed(KEY_SPACE)!=0) {
+            return;
+        }
+    }
+}
+
+// Extended Background Color Character Mode (LINEAR/HICOL/CHUNK/COLDIS/MCM/BMM = 0, ECM = 1)
+// Resolution: 320x200
+// Normal VIC Adressing:
+// VicGfxData[16]: ( VicBank[1:0] & CharBase[2:0] & "00" & CharData[5:0] & RowCounter[2:0] ) 
+// GfxData Pixel Shifter (1)
+//  - 0: 4bpp Background Color
+//    - CharData[7:6] 00: 4bpp BgColor0[3:0]
+//    - CharData[7:6] 01: 4bpp BgColor1[3:0]
+//    - CharData[7:6] 10: 4bpp BgColor2[3:0]
+//    - CharData[7:6] 11: 4bpp BgColor3[3:0]
+//  - 1: 4bpp ColorData[3:0]
+void mode_ecmchar() {
+    const byte* ECMCHAR_SCREEN = $8000;
+    const byte* ECMCHAR_CHARSET = $9000; // Charset ROM
+    const byte* ECMCHAR_COLORS = $8400;
+    // DTV Graphics Bank
+    *DTV_GRAPHICS_VIC_BANK = (byte)((dword)ECMCHAR_CHARSET/$10000);
+    // DTV Color Bank
+     *DTV_COLOR_BANK_LO = <((word)(ECMCHAR_COLORS/$400));
+     *DTV_COLOR_BANK_HI = >((word)(ECMCHAR_COLORS/$400));
+    // DTV Graphics Mode
+    *DTV_CONTROL = 0;
+    // VIC Graphics Bank
+    *CIA2_PORT_A_DDR = %00000011; // Set VIC Bank bits to output - all others to input
+    *CIA2_PORT_A = %00000011 ^ (byte)((word)ECMCHAR_CHARSET/$4000); // Set VIC Bank
+    // VIC Graphics Mode
+    *VIC_CONTROL = VIC_DEN|VIC_RSEL|VIC_ECM|3;
+    *VIC_CONTROL2 = VIC_CSEL;
+    // VIC Memory Pointers
+    *VIC_MEMORY =  (byte)((((word)ECMCHAR_SCREEN&$3fff)/$40)|(((word)ECMCHAR_CHARSET&$3fff)/$400));
+    // DTV Palette - default
+    for(byte i : 0..$f) {
+        DTV_PALETTE[i] = DTV_PALETTE_DEFAULT[i];
+    }
+    // Screen colors
+    *BORDERCOL = 0;
+    *BGCOL1 = 0;
+    *BGCOL2 = 2;
+    *BGCOL3 = 5;
+    *BGCOL4 = 6;
+    // Char Colors and screen chars
+    byte* col=ECMCHAR_COLORS;
+    byte* ch=ECMCHAR_SCREEN;
+    for(byte cy: 0..24 ) {
+        for(byte cx: 0..39) {
+            *col++ = (cx+cy)&$f;
+            *ch++ = (cy&$f)<<4|(cx&$f);
+        }
+    }
+    // Wait for keypress
+    while(true) {
+        if(keyboard_key_pressed(KEY_SPACE)!=0) {
+            return;
+        }
+    }
+}
+
+
+// High Color Standard Character Mode (LINEAR/CHUNK/COLDIS/ECM/MCM/BMM = 0, HICOL = 1)
+// Resolution: 320x200
+// Normal VIC Adressing:
+// VicGfxData[16]: ( VicBank[1:0] & CharBase[2:0] & CharData[7:0] & RowCounter[2:0] )
+// Pixel Shifter (1)
+//  - 0: 8bpp BgColor0[7:0]
+//  - 1: 8bpp ColorData[7:0]
+void mode_hicolstdchar() {
+    const byte* HICOLSTDCHAR_SCREEN = $8000;
+    const byte* HICOLSTDCHAR_CHARSET = $9000; // Charset ROM
+    const byte* HICOLSTDCHAR_COLORS = $8400;
+    // DTV Graphics Bank
+    *DTV_GRAPHICS_VIC_BANK = (byte)((dword)HICOLSTDCHAR_CHARSET/$10000);
+    // DTV Color Bank
+     *DTV_COLOR_BANK_LO = <((word)(HICOLSTDCHAR_COLORS/$400));
+     *DTV_COLOR_BANK_HI = >((word)(HICOLSTDCHAR_COLORS/$400));
+    // DTV Graphics Mode
+    *DTV_CONTROL = DTV_CONTROL_HIGHCOLOR_ON;
+    // VIC Graphics Bank
+    *CIA2_PORT_A_DDR = %00000011; // Set VIC Bank bits to output - all others to input
+    *CIA2_PORT_A = %00000011 ^ (byte)((word)HICOLSTDCHAR_CHARSET/$4000); // Set VIC Bank
+    // VIC Graphics Mode
+    *VIC_CONTROL = VIC_DEN|VIC_RSEL|3;
+    *VIC_CONTROL2 = VIC_CSEL;
+    // VIC Memory Pointers
+    *VIC_MEMORY =  (byte)((((word)HICOLSTDCHAR_SCREEN&$3fff)/$40)|(((word)HICOLSTDCHAR_CHARSET&$3fff)/$400));
+    // DTV Palette - Grey Tones
+     for(byte i : 0..$f) {
+         DTV_PALETTE[i] = i;
+     }
+    // Screen colors
+    *BGCOL = 0;
+    *BORDERCOL = 0;
+    // Char Colors and screen chars
+    byte* col=HICOLSTDCHAR_COLORS;
+    byte* ch=HICOLSTDCHAR_SCREEN;
+    for(byte cy: 0..24 ) {
+        for(byte cx: 0..39) {
+            byte v = (cy&$f)<<4|(cx&$f);
+            *col++ = v;
+            *ch++ = v;
+        }
+    }
+    // Wait for keypress
+    while(true) {
+        if(keyboard_key_pressed(KEY_SPACE)!=0) {
+            return;
+        }
+    }
+}
+
+
 
 // Two Plane Bitmap - generated from the two DTV linear graphics plane counters
 // Two Plane Bitmap Mode (CHUNK/COLDIS/MCM = 0, ECM/BMM/HICOL/LINEAR = 1)
@@ -107,6 +274,9 @@ const byte* TWOPLANE_COLORS = $8000;
 // - Plane A = 1 Plane B = 0: 8bpp "0000" & ColorData[3:0]
 // - Plane A = 1 Plane B = 1: 8bpp BgColor1[7:0]
 void mode_twoplanebitmap() {
+    const byte* TWOPLANE_PLANEA = $4000;
+    const byte* TWOPLANE_PLANEB = $6000;
+    const byte* TWOPLANE_COLORS = $8000;
     // DTV Graphics Mode
     *DTV_CONTROL = DTV_CONTROL_HIGHCOLOR_ON | DTV_CONTROL_LINEAR_ADDRESSING_ON;
     // VIC Graphics Mode
@@ -171,10 +341,6 @@ void mode_twoplanebitmap() {
 
 }
 
-const byte* SIXSFRED_PLANEA = $4000;
-const byte* SIXSFRED_PLANEB = $6000;
-const byte* SIXSFRED_COLORS = $8000;
-
 // Sixs Fred Mode - 8bpp Packed Bitmap - Generated from the two DTV linear graphics plane counters
 // Two Plane MultiColor Bitmap - 8bpp Packed Bitmap (CHUNK/COLDIS = 0, ECM/BMM/MCM/HICOL/LINEAR = 1)
 // Resolution: 160x200
@@ -182,6 +348,9 @@ const byte* SIXSFRED_COLORS = $8000;
 // GfxData/PlaneA Pixel Shifter (2), CharData/PlaneB Pixel Shifter (2):
 // - 8bpp color (ColorData[3:0],CharData/PlaneB[1:0], GfxData/PlaneA[1:0])
 void mode_sixsfred() {
+    const byte* SIXSFRED_PLANEA = $4000;
+    const byte* SIXSFRED_PLANEB = $6000;
+    const byte* SIXSFRED_COLORS = $8000;
     // DTV Graphics Mode
     *DTV_CONTROL = DTV_CONTROL_HIGHCOLOR_ON | DTV_CONTROL_LINEAR_ADDRESSING_ON;
     // VIC Graphics Mode
@@ -242,10 +411,6 @@ void mode_sixsfred() {
 
 }
 
-const byte* SIXSFRED2_PLANEA = $4000;
-const byte* SIXSFRED2_PLANEB = $6000;
-const byte* SIXSFRED2_COLORS = $8000;
-
 // Sixs Fred Mode 2 - 8bpp Packed Bitmap - Generated from the two DTV linear graphics plane counters
 // Two Plane MultiColor Bitmap - 8bpp Packed Bitmap (CHUNK/COLDIS/HICOL = 0, ECM/BMM/MCM/LINEAR = 1)
 // Resolution: 160x200
@@ -253,6 +418,9 @@ const byte* SIXSFRED2_COLORS = $8000;
 // PlaneA Pixel Shifter (2), PlaneB Pixel Shifter (2):
 // - 8bpp color (PlaneB[1:0],ColorData[5:4],PlaneA[1:0],ColorData[1:0])
 void mode_sixsfred2() {
+    const byte* SIXSFRED2_PLANEA = $4000;
+    const byte* SIXSFRED2_PLANEB = $6000;
+    const byte* SIXSFRED2_COLORS = $8000;
     // DTV Graphics Mode
     *DTV_CONTROL = DTV_CONTROL_LINEAR_ADDRESSING_ON;
     // VIC Graphics Mode
@@ -313,10 +481,6 @@ void mode_sixsfred2() {
 
 }
 
-// 8BPP Pixel Cell Screen (contains 40x25=1000 chars)
-const byte* PIXELCELL8BPP_PLANEA = $3c00;
-// 8BPP Pixel Cell Charset (contains 256 64 byte chars)
-const byte* PIXELCELL8BPP_PLANEB = $4000;
 
 //8bpp Pixel Cell Mode (BMM/COLDIS = 0, ECM/MCM/HICOL/LINEAR/CHUNK = 1)
 //Pixel Cell Adressing
@@ -328,6 +492,10 @@ const byte* PIXELCELL8BPP_PLANEB = $4000;
 //The characters come from counter A and the font (or "cells") from counter B.
 //Counter B step and modulo should be set to 0, counter A modulo to 0 and counter A step to 1 for normal operation.
 void mode_8bpppixelcell() {
+    // 8BPP Pixel Cell Screen (contains 40x25=1000 chars)
+    const byte* PIXELCELL8BPP_PLANEA = $3c00;
+    // 8BPP Pixel Cell Charset (contains 256 64 byte chars)
+    const byte* PIXELCELL8BPP_PLANEB = $4000;
     // DTV Graphics Mode
     *DTV_CONTROL = DTV_CONTROL_HIGHCOLOR_ON | DTV_CONTROL_LINEAR_ADDRESSING_ON|DTV_CONTROL_CHUNKY_ON;
     // VIC Graphics Mode
@@ -389,8 +557,6 @@ void mode_8bpppixelcell() {
     }
 }
 
-// 8BPP Chunky Bitmap (contains 8bpp pixels)
-const dword CHUNKYBMM8BPP_PLANEB = $20000;
 
 //Chunky 8bpp Bitmap Mode (BMM = 0, ECM/MCM/HICOL/LINEAR/CHUNK/COLDIS = 1)
 // Resolution: 320x200
@@ -399,6 +565,8 @@ const dword CHUNKYBMM8BPP_PLANEB = $20000;
 // - 8bpp color PlaneB[7:0]
 // To set up a linear video frame buffer the step size must be set to 8.
 void mode_8bppchunkybmm() {
+    // 8BPP Chunky Bitmap (contains 8bpp pixels)
+    const dword CHUNKYBMM8BPP_PLANEB = $20000;
     // DTV Graphics Mode
     *DTV_CONTROL = DTV_CONTROL_HIGHCOLOR_ON | DTV_CONTROL_LINEAR_ADDRESSING_ON | DTV_CONTROL_CHUNKY_ON | DTV_CONTROL_COLORRAM_OFF;
     // VIC Graphics Mode
@@ -440,22 +608,5 @@ void mode_8bppchunkybmm() {
         if(keyboard_key_pressed(KEY_SPACE)!=0) {
             return;
         }
-    }
-}
-
-// Set the memory pointed to by CPU BANK 1 SEGMENT ($4000-$7fff)
-// This sets which actual memory is addressed when the CPU reads/writes to $4000-$7fff
-// The actual memory addressed will be $4000*cpuSegmentIdx
-void dtvSetCpuBankSegment1(byte cpuBankIdx) {
-    // Move CPU BANK 1 SEGMENT ($4000-$7fff)
-    byte* cpuBank = $ff;
-    *cpuBank = cpuBankIdx;
-    asm {
-        // SAC $dd - A register points to 13 BANK 1 segment
-        .byte $32, $dd
-        // LDA $ff - Set CPU BANK 1 SEGMENT ($4000-$7fff) to ($ff)*$4000
-        lda $ff
-        // SAC $00 - A register points to 0 ACCUMULATOR
-        .byte $32, $00
     }
 }

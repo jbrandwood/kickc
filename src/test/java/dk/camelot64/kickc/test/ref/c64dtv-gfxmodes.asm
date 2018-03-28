@@ -26,6 +26,7 @@
   .label DTV_CONTROL = $d03c
   .const DTV_CONTROL_LINEAR_ADDRESSING_ON = 1
   .const DTV_CONTROL_HIGHCOLOR_ON = 4
+  .const DTV_CONTROL_COLORRAM_OFF = $10
   .const DTV_CONTROL_CHUNKY_ON = $40
   .label DTV_PALETTE = $d200
   .label DTV_PLANEA_START_LO = $d03a
@@ -43,6 +44,7 @@
   .label DTV_COLOR_BANK_LO = $d036
   .label DTV_COLOR_BANK_HI = $d037
   .label DTV_GRAPHICS_VIC_BANK = $d03d
+  .const KEY_E = $e
   .const KEY_D = $12
   .const KEY_C = $14
   .const KEY_B = $1c
@@ -58,7 +60,8 @@
   .label SIXSFRED_COLORS = $8000
   .label PIXELCELL8BPP_PLANEA = $3c00
   .label PIXELCELL8BPP_PLANEB = $4000
-  .label print_char_cursor = 7
+  .const CHUNKYBMM8BPP_PLANEB = $20000
+  .label print_char_cursor = 5
   .label print_line_cursor = $a
   jsr main
 main: {
@@ -140,19 +143,152 @@ menu: {
     ldx #KEY_D
     jsr keyboard_key_pressed
     cmp #0
-    beq b4
+    beq b8
     jsr mode_8bpppixelcell
     jmp breturn
+  b8:
+    ldx #KEY_E
+    jsr keyboard_key_pressed
+    cmp #0
+    beq b4
+    jsr mode_8bppchunkybmm
+    jmp breturn
+}
+mode_8bppchunkybmm: {
+    .label _20 = $a
+    .label gfxb = 5
+    .label x = 2
+    .label y = 4
+    lda #DTV_CONTROL_HIGHCOLOR_ON|DTV_CONTROL_LINEAR_ADDRESSING_ON|DTV_CONTROL_CHUNKY_ON|DTV_CONTROL_COLORRAM_OFF
+    sta DTV_CONTROL
+    lda #VIC_ECM|VIC_DEN|VIC_RSEL|3
+    sta VIC_CONTROL
+    lda #VIC_MCM|VIC_CSEL
+    sta VIC_CONTROL2
+    lda #CHUNKYBMM8BPP_PLANEB&$ffff
+    sta DTV_PLANEB_START_LO
+    lda #0
+    sta DTV_PLANEB_START_MI
+    lda #CHUNKYBMM8BPP_PLANEB>>$10
+    sta DTV_PLANEB_START_HI
+    lda #8
+    sta DTV_PLANEB_STEP
+    lda #0
+    sta DTV_PLANEB_MODULO_LO
+    sta DTV_PLANEB_MODULO_HI
+    sta BORDERCOL
+    tax
+  b1:
+    txa
+    sta DTV_PALETTE,x
+    inx
+    cpx #$10
+    bne b1
+    lda #CHUNKYBMM8BPP_PLANEB/$4000
+    jsr dtvSetCpuBankSegment1
+    ldx #CHUNKYBMM8BPP_PLANEB/$4000+1
+    lda #0
+    sta y
+    lda #<$4000
+    sta gfxb
+    lda #>$4000
+    sta gfxb+1
+  b2:
+    lda #<0
+    sta x
+    sta x+1
+  b3:
+    lda gfxb+1
+    cmp #>$8000
+    bne b4
+    lda gfxb
+    cmp #<$8000
+    bne b4
+    txa
+    jsr dtvSetCpuBankSegment1
+    inx
+    lda #<$4000
+    sta gfxb
+    lda #>$4000
+    sta gfxb+1
+  b4:
+    lda y
+    clc
+    adc x
+    sta _20
+    lda #0
+    adc x+1
+    sta _20+1
+    lda _20
+    ldy #0
+    sta (gfxb),y
+    inc gfxb
+    bne !+
+    inc gfxb+1
+  !:
+    inc x
+    bne !+
+    inc x+1
+  !:
+    lda x+1
+    cmp #>$140
+    bne b3
+    lda x
+    cmp #<$140
+    bne b3
+    inc y
+    lda y
+    cmp #$c8
+    bne b2
+    lda #$4000/$4000
+    jsr dtvSetCpuBankSegment1
+    jmp b6
+  breturn:
+    rts
+  b6:
+    ldx #KEY_SPACE
+    jsr keyboard_key_pressed
+    cmp #0
+    beq b6
+    jmp breturn
+}
+keyboard_key_pressed: {
+    txa
+    and #7
+    tay
+    txa
+    lsr
+    lsr
+    lsr
+    tax
+    jsr keyboard_matrix_read
+    and keyboard_matrix_col_bitmask,y
+    rts
+}
+keyboard_matrix_read: {
+    lda keyboard_matrix_row_bitmask,x
+    sta CIA1_PORT_A
+    lda CIA1_PORT_B
+    eor #$ff
+    rts
+}
+dtvSetCpuBankSegment1: {
+    .label cpuBank = $ff
+    sta cpuBank
+    .byte $32, $dd
+    lda $ff
+    .byte $32, $00
+    rts
 }
 mode_8bpppixelcell: {
-    .label _12 = 5
+    .label _12 = 7
     .label gfxa = 2
     .label ay = 4
-    .label bits = 6
+    .label bits = 8
     .label chargen = 2
-    .label gfxb = 7
+    .label gfxb = 5
     .label col = 9
-    .label cr = 5
+    .label cr = 7
     .label ch = 4
     lda #DTV_CONTROL_HIGHCOLOR_ON|DTV_CONTROL_LINEAR_ADDRESSING_ON|DTV_CONTROL_CHUNKY_ON
     sta DTV_CONTROL
@@ -284,26 +420,6 @@ mode_8bpppixelcell: {
     cmp #0
     beq b9
     jmp breturn
-}
-keyboard_key_pressed: {
-    txa
-    and #7
-    tay
-    txa
-    lsr
-    lsr
-    lsr
-    tax
-    jsr keyboard_matrix_read
-    and keyboard_matrix_col_bitmask,y
-    rts
-}
-keyboard_matrix_read: {
-    lda keyboard_matrix_row_bitmask,x
-    sta CIA1_PORT_A
-    lda CIA1_PORT_B
-    eor #$ff
-    rts
 }
 mode_sixsfred: {
     .label col = 2
@@ -441,7 +557,7 @@ mode_sixsfred: {
     row_bitmask: .byte 0, $55, $aa, $ff
 }
 mode_twoplanebitmap: {
-    .label _15 = 5
+    .label _15 = 7
     .label col = 2
     .label cy = 4
     .label gfxa = 2

@@ -81,6 +81,10 @@ void menu() {
             mode_8bpppixelcell();
             return;
         }
+        if(keyboard_key_pressed(KEY_E)!=0) {
+            mode_8bppchunkybmm();
+            return;
+        }
     }
 
 }
@@ -284,7 +288,6 @@ void mode_8bpppixelcell() {
     // 8bpp cells for Plane B (charset) - ROM charset with 256 colors
     *PROCPORT = $32;
     byte* CHARGEN = $d000;
-
     byte* gfxb = PIXELCELL8BPP_PLANEB;
     byte* chargen = CHARGEN;
     byte col = 0;
@@ -308,5 +311,76 @@ void mode_8bpppixelcell() {
         if(keyboard_key_pressed(KEY_SPACE)!=0) {
             return;
         }
+    }
+}
+
+// 8BPP Chunky Bitmap (contains 8bpp pixels)
+const dword CHUNKYBMM8BPP_PLANEB = $20000;
+
+//Chunky 8bpp Bitmap Mode (BMM = 0, ECM/MCM/HICOL/LINEAR/CHUNK/COLDIS = 1)
+// Resolution: 320x200
+// Linear Adressing
+// CharData/PlaneB Pixel Shifter (8):
+// - 8bpp color PlaneB[7:0]
+// To set up a linear video frame buffer the step size must be set to 8.
+void mode_8bppchunkybmm() {
+    // DTV Graphics Mode
+    *DTV_CONTROL = DTV_CONTROL_HIGHCOLOR_ON | DTV_CONTROL_LINEAR_ADDRESSING_ON | DTV_CONTROL_CHUNKY_ON | DTV_CONTROL_COLORRAM_OFF;
+    // VIC Graphics Mode
+    *VIC_CONTROL = VIC_ECM | VIC_DEN | VIC_RSEL | 3;
+    *VIC_CONTROL2 = VIC_MCM | VIC_CSEL;
+    // Linear Graphics Plane B Counter
+    *DTV_PLANEB_START_LO = < < CHUNKYBMM8BPP_PLANEB;
+    *DTV_PLANEB_START_MI = > < CHUNKYBMM8BPP_PLANEB;
+    *DTV_PLANEB_START_HI = < > CHUNKYBMM8BPP_PLANEB;
+    *DTV_PLANEB_STEP = 8;
+    *DTV_PLANEB_MODULO_LO = 0;
+    *DTV_PLANEB_MODULO_HI = 0;
+    // Border color
+    *BORDERCOL = $00;
+    // DTV Palette - Grey Tones
+    for(byte i : 0..$f) {
+        DTV_PALETTE[i] = i;
+    }
+
+    // 320x200 8bpp pixels for Plane B
+    byte gfxbCpuBank = (byte)(CHUNKYBMM8BPP_PLANEB/$4000);
+    dtvSetCpuBankSegment1(gfxbCpuBank++);
+    byte* gfxb = $4000;
+    for(byte y : 0..199) {
+        for (word x : 0..319) {
+            // If we have crossed to $8000 increase the CPU BANK segment and reset to $4000
+            if(gfxb==$8000) {
+                dtvSetCpuBankSegment1(gfxbCpuBank++);
+                gfxb = $4000;
+            }
+            byte c = (byte)(x+y);
+            *gfxb++ = c;
+        }
+    }
+    // Reset CPU BANK segment to $4000
+    dtvSetCpuBankSegment1((byte)($4000/$4000));
+    // Wait for keypress
+    while(true) {
+        if(keyboard_key_pressed(KEY_SPACE)!=0) {
+            return;
+        }
+    }
+}
+
+// Set the memory pointed to by CPU BANK 1 SEGMENT ($4000-$7fff)
+// This sets which actual memory is addressed when the CPU reads/writes to $4000-$7fff
+// The actual memory addressed will be $4000*cpuSegmentIdx
+void dtvSetCpuBankSegment1(byte cpuBankIdx) {
+    // Move CPU BANK 1 SEGMENT ($4000-$7fff)
+    byte* cpuBank = $ff;
+    *cpuBank = cpuBankIdx;
+    asm {
+        // SAC $dd - A register points to 13 BANK 1 segment
+        .byte $32, $dd
+        // LDA $ff - Set CPU BANK 1 SEGMENT ($4000-$7fff) to ($ff)*$4000
+        lda $ff
+        // SAC $00 - A register points to 0 ACCUMULATOR
+        .byte $32, $00
     }
 }

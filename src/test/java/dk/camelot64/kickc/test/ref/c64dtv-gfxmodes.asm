@@ -57,6 +57,7 @@
   .const KEY_6 = $13
   .const KEY_C = $14
   .const KEY_7 = $18
+  .const KEY_8 = $1b
   .const KEY_B = $1c
   .const KEY_1 = $38
   .const KEY_2 = $3b
@@ -73,10 +74,10 @@ main: {
     jmp b2
 }
 menu: {
-    .label MENU_SCREEN = $8000
-    .label MENU_CHARSET = $9800
+    .label SCREEN = $8000
+    .label CHARSET = $9800
     .label c = 2
-    lda #($ffffffff&MENU_CHARSET)/$10000
+    lda #($ffffffff&CHARSET)/$10000
     sta DTV_GRAPHICS_VIC_BANK
     lda #DTV_COLOR_BANK_DEFAULT/$400
     sta DTV_COLOR_BANK_LO
@@ -85,13 +86,13 @@ menu: {
     sta DTV_CONTROL
     lda #3
     sta CIA2_PORT_A_DDR
-    lda #3^MENU_CHARSET/$4000
+    lda #3^CHARSET/$4000
     sta CIA2_PORT_A
     lda #VIC_DEN|VIC_RSEL|3
     sta VIC_CONTROL
     lda #VIC_CSEL
     sta VIC_CONTROL2
-    lda #(MENU_SCREEN&$3fff)/$40|(MENU_CHARSET&$3fff)/$400
+    lda #(SCREEN&$3fff)/$40|(CHARSET&$3fff)/$400
     sta VIC_MEMORY
     ldx #0
   b1:
@@ -146,7 +147,7 @@ menu: {
     jsr keyboard_key_pressed
     cmp #0
     beq b8
-    jsr mode_mcstdchar
+    jsr mode_mcchar
     jmp breturn
   b8:
     ldx #KEY_6
@@ -163,34 +164,41 @@ menu: {
     jsr mode_hicolecmchar
     jmp breturn
   b10:
-    ldx #KEY_A
+    ldx #KEY_8
     jsr keyboard_key_pressed
     cmp #0
     beq b11
-    jsr mode_sixsfred2
+    jsr mode_hicolmcchar
     jmp breturn
   b11:
-    ldx #KEY_B
+    ldx #KEY_A
     jsr keyboard_key_pressed
     cmp #0
     beq b12
-    jsr mode_twoplanebitmap
+    jsr mode_sixsfred2
     jmp breturn
   b12:
-    ldx #KEY_C
+    ldx #KEY_B
     jsr keyboard_key_pressed
     cmp #0
     beq b13
-    jsr mode_sixsfred
+    jsr mode_twoplanebitmap
     jmp breturn
   b13:
-    ldx #KEY_D
+    ldx #KEY_C
     jsr keyboard_key_pressed
     cmp #0
     beq b14
-    jsr mode_8bpppixelcell
+    jsr mode_sixsfred
     jmp breturn
   b14:
+    ldx #KEY_D
+    jsr keyboard_key_pressed
+    cmp #0
+    beq b15
+    jsr mode_8bpppixelcell
+    jmp breturn
+  b15:
     ldx #KEY_E
     jsr keyboard_key_pressed
     cmp #0
@@ -201,7 +209,7 @@ menu: {
     jmp breturn
 }
 mode_8bppchunkybmm: {
-    .const CHUNKYBMM8BPP_PLANEB = $20000
+    .const PLANEB = $20000
     .label _20 = $a
     .label gfxb = 5
     .label x = 2
@@ -212,11 +220,11 @@ mode_8bppchunkybmm: {
     sta VIC_CONTROL
     lda #VIC_MCM|VIC_CSEL
     sta VIC_CONTROL2
-    lda #CHUNKYBMM8BPP_PLANEB&$ffff
+    lda #PLANEB&$ffff
     sta DTV_PLANEB_START_LO
     lda #0
     sta DTV_PLANEB_START_MI
-    lda #CHUNKYBMM8BPP_PLANEB>>$10
+    lda #PLANEB>>$10
     sta DTV_PLANEB_START_HI
     lda #8
     sta DTV_PLANEB_STEP
@@ -231,9 +239,9 @@ mode_8bppchunkybmm: {
     inx
     cpx #$10
     bne b1
-    lda #CHUNKYBMM8BPP_PLANEB/$4000
+    lda #PLANEB/$4000
     jsr dtvSetCpuBankSegment1
-    ldx #CHUNKYBMM8BPP_PLANEB/$4000+1
+    ldx #PLANEB/$4000+1
     lda #0
     sta y
     lda #<$4000
@@ -328,8 +336,8 @@ dtvSetCpuBankSegment1: {
     rts
 }
 mode_8bpppixelcell: {
-    .label PIXELCELL8BPP_PLANEA = $3c00
-    .label PIXELCELL8BPP_PLANEB = $4000
+    .label PLANEA = $3c00
+    .label PLANEB = $4000
     .label _12 = 7
     .label gfxa = 2
     .label ay = 4
@@ -345,9 +353,9 @@ mode_8bpppixelcell: {
     sta VIC_CONTROL
     lda #VIC_MCM|VIC_CSEL
     sta VIC_CONTROL2
-    lda #<PIXELCELL8BPP_PLANEA
+    lda #<PLANEA
     sta DTV_PLANEA_START_LO
-    lda #>PIXELCELL8BPP_PLANEA
+    lda #>PLANEA
     sta DTV_PLANEA_START_MI
     lda #0
     sta DTV_PLANEA_START_HI
@@ -356,9 +364,9 @@ mode_8bpppixelcell: {
     lda #0
     sta DTV_PLANEA_MODULO_LO
     sta DTV_PLANEA_MODULO_HI
-    lda #<PIXELCELL8BPP_PLANEB
+    lda #<PLANEB
     sta DTV_PLANEB_START_LO
-    lda #>PIXELCELL8BPP_PLANEB
+    lda #>PLANEB
     sta DTV_PLANEB_START_MI
     lda #0
     sta DTV_PLANEB_START_HI
@@ -373,9 +381,9 @@ mode_8bpppixelcell: {
     inx
     cpx #$10
     bne b1
-    lda #<PIXELCELL8BPP_PLANEA
+    lda #<PLANEA
     sta gfxa
-    lda #>PIXELCELL8BPP_PLANEA
+    lda #>PLANEA
     sta gfxa+1
     lda #0
     sta ay
@@ -410,9 +418,9 @@ mode_8bpppixelcell: {
     lda #0
     sta ch
     sta col
-    lda #<PIXELCELL8BPP_PLANEB
+    lda #<PLANEB
     sta gfxb
-    lda #>PIXELCELL8BPP_PLANEB
+    lda #>PLANEB
     sta gfxb+1
     lda #<$d000
     sta chargen
@@ -471,9 +479,9 @@ mode_8bpppixelcell: {
     jmp breturn
 }
 mode_sixsfred: {
-    .label SIXSFRED_PLANEA = $4000
-    .label SIXSFRED_PLANEB = $6000
-    .label SIXSFRED_COLORS = $8000
+    .label PLANEA = $4000
+    .label PLANEB = $6000
+    .label COLORS = $8000
     .label col = 2
     .label cy = 4
     .label gfxa = 2
@@ -486,9 +494,9 @@ mode_sixsfred: {
     sta VIC_CONTROL
     lda #VIC_MCM|VIC_CSEL
     sta VIC_CONTROL2
-    lda #<SIXSFRED_PLANEA
+    lda #<PLANEA
     sta DTV_PLANEA_START_LO
-    lda #>SIXSFRED_PLANEA
+    lda #>PLANEA
     sta DTV_PLANEA_START_MI
     lda #0
     sta DTV_PLANEA_START_HI
@@ -497,9 +505,9 @@ mode_sixsfred: {
     lda #0
     sta DTV_PLANEA_MODULO_LO
     sta DTV_PLANEA_MODULO_HI
-    lda #<SIXSFRED_PLANEB
+    lda #<PLANEB
     sta DTV_PLANEB_START_LO
-    lda #>SIXSFRED_PLANEB
+    lda #>PLANEB
     sta DTV_PLANEB_START_MI
     lda #0
     sta DTV_PLANEB_START_HI
@@ -508,9 +516,9 @@ mode_sixsfred: {
     lda #0
     sta DTV_PLANEB_MODULO_LO
     sta DTV_PLANEB_MODULO_HI
-    lda #<SIXSFRED_COLORS/$400
+    lda #<COLORS/$400
     sta DTV_COLOR_BANK_LO
-    lda #>SIXSFRED_COLORS/$400
+    lda #>COLORS/$400
     sta DTV_COLOR_BANK_HI
     ldx #0
   b1:
@@ -521,9 +529,9 @@ mode_sixsfred: {
     bne b1
     lda #0
     sta BORDERCOL
-    lda #<SIXSFRED_COLORS
+    lda #<COLORS
     sta col
-    lda #>SIXSFRED_COLORS
+    lda #>COLORS
     sta col+1
     lda #0
     sta cy
@@ -547,9 +555,9 @@ mode_sixsfred: {
     lda cy
     cmp #$19
     bne b2
-    lda #<SIXSFRED_PLANEA
+    lda #<PLANEA
     sta gfxa
-    lda #>SIXSFRED_PLANEA
+    lda #>PLANEA
     sta gfxa+1
     lda #0
     sta ay
@@ -576,9 +584,9 @@ mode_sixsfred: {
     bne b4
     lda #0
     sta by
-    lda #<SIXSFRED_PLANEB
+    lda #<PLANEB
     sta gfxb
-    lda #>SIXSFRED_PLANEB
+    lda #>PLANEB
     sta gfxb+1
   b6:
     ldx #0
@@ -609,9 +617,9 @@ mode_sixsfred: {
     row_bitmask: .byte 0, $55, $aa, $ff
 }
 mode_twoplanebitmap: {
-    .label TWOPLANE_PLANEA = $4000
-    .label TWOPLANE_PLANEB = $6000
-    .label TWOPLANE_COLORS = $8000
+    .label PLANEA = $4000
+    .label PLANEB = $6000
+    .label COLORS = $8000
     .label _15 = 7
     .label col = 2
     .label cy = 4
@@ -625,9 +633,9 @@ mode_twoplanebitmap: {
     sta VIC_CONTROL
     lda #VIC_CSEL
     sta VIC_CONTROL2
-    lda #<TWOPLANE_PLANEA
+    lda #<PLANEA
     sta DTV_PLANEA_START_LO
-    lda #>TWOPLANE_PLANEA
+    lda #>PLANEA
     sta DTV_PLANEA_START_MI
     lda #0
     sta DTV_PLANEA_START_HI
@@ -636,9 +644,9 @@ mode_twoplanebitmap: {
     lda #0
     sta DTV_PLANEA_MODULO_LO
     sta DTV_PLANEA_MODULO_HI
-    lda #<TWOPLANE_PLANEB
+    lda #<PLANEB
     sta DTV_PLANEB_START_LO
-    lda #>TWOPLANE_PLANEB
+    lda #>PLANEB
     sta DTV_PLANEB_START_MI
     lda #0
     sta DTV_PLANEB_START_HI
@@ -647,9 +655,9 @@ mode_twoplanebitmap: {
     lda #0
     sta DTV_PLANEB_MODULO_LO
     sta DTV_PLANEB_MODULO_HI
-    lda #<TWOPLANE_COLORS/$400
+    lda #<COLORS/$400
     sta DTV_COLOR_BANK_LO
-    lda #>TWOPLANE_COLORS/$400
+    lda #>COLORS/$400
     sta DTV_COLOR_BANK_HI
     ldx #0
   b1:
@@ -664,9 +672,9 @@ mode_twoplanebitmap: {
     sta BGCOL1
     lda #$d4
     sta BGCOL2
-    lda #<TWOPLANE_COLORS
+    lda #<COLORS
     sta col
-    lda #>TWOPLANE_COLORS
+    lda #>COLORS
     sta col+1
     lda #0
     sta cy
@@ -696,9 +704,9 @@ mode_twoplanebitmap: {
     lda cy
     cmp #$19
     bne b2
-    lda #<TWOPLANE_PLANEA
+    lda #<PLANEA
     sta gfxa
-    lda #>TWOPLANE_PLANEA
+    lda #>PLANEA
     sta gfxa+1
     lda #0
     sta ay
@@ -726,9 +734,9 @@ mode_twoplanebitmap: {
     bne b4
     lda #0
     sta by
-    lda #<TWOPLANE_PLANEB
+    lda #<PLANEB
     sta gfxb
-    lda #>TWOPLANE_PLANEB
+    lda #>PLANEB
     sta gfxb+1
   b8:
     ldx #0
@@ -767,9 +775,9 @@ mode_twoplanebitmap: {
     jmp b7
 }
 mode_sixsfred2: {
-    .label SIXSFRED2_PLANEA = $4000
-    .label SIXSFRED2_PLANEB = $6000
-    .label SIXSFRED2_COLORS = $8000
+    .label PLANEA = $4000
+    .label PLANEB = $6000
+    .label COLORS = $8000
     .label _15 = 7
     .label col = 2
     .label cy = 4
@@ -783,9 +791,9 @@ mode_sixsfred2: {
     sta VIC_CONTROL
     lda #VIC_MCM|VIC_CSEL
     sta VIC_CONTROL2
-    lda #<SIXSFRED2_PLANEA
+    lda #<PLANEA
     sta DTV_PLANEA_START_LO
-    lda #>SIXSFRED2_PLANEA
+    lda #>PLANEA
     sta DTV_PLANEA_START_MI
     lda #0
     sta DTV_PLANEA_START_HI
@@ -794,9 +802,9 @@ mode_sixsfred2: {
     lda #0
     sta DTV_PLANEA_MODULO_LO
     sta DTV_PLANEA_MODULO_HI
-    lda #<SIXSFRED2_PLANEB
+    lda #<PLANEB
     sta DTV_PLANEB_START_LO
-    lda #>SIXSFRED2_PLANEB
+    lda #>PLANEB
     sta DTV_PLANEB_START_MI
     lda #0
     sta DTV_PLANEB_START_HI
@@ -805,9 +813,9 @@ mode_sixsfred2: {
     lda #0
     sta DTV_PLANEB_MODULO_LO
     sta DTV_PLANEB_MODULO_HI
-    lda #<SIXSFRED2_COLORS/$400
+    lda #<COLORS/$400
     sta DTV_COLOR_BANK_LO
-    lda #>SIXSFRED2_COLORS/$400
+    lda #>COLORS/$400
     sta DTV_COLOR_BANK_HI
     ldx #0
   b1:
@@ -818,9 +826,9 @@ mode_sixsfred2: {
     bne b1
     lda #0
     sta BORDERCOL
-    lda #<SIXSFRED2_COLORS
+    lda #<COLORS
     sta col
-    lda #>SIXSFRED2_COLORS
+    lda #>COLORS
     sta col+1
     lda #0
     sta cy
@@ -850,9 +858,9 @@ mode_sixsfred2: {
     lda cy
     cmp #$19
     bne b2
-    lda #<SIXSFRED2_PLANEA
+    lda #<PLANEA
     sta gfxa
-    lda #>SIXSFRED2_PLANEA
+    lda #>PLANEA
     sta gfxa+1
     lda #0
     sta ay
@@ -879,9 +887,9 @@ mode_sixsfred2: {
     bne b4
     lda #0
     sta by
-    lda #<SIXSFRED2_PLANEB
+    lda #<PLANEB
     sta gfxb
-    lda #>SIXSFRED2_PLANEB
+    lda #>PLANEB
     sta gfxb+1
   b6:
     ldx #0
@@ -911,18 +919,17 @@ mode_sixsfred2: {
     jmp breturn
     row_bitmask: .byte 0, $55, $aa, $ff
 }
-mode_hicolecmchar: {
-    .label ECMCHAR_SCREEN = $8000
-    .label ECMCHAR_CHARSET = $9000
-    .label ECMCHAR_COLORS = $8400
+mode_hicolmcchar: {
+    .label SCREEN = $8000
+    .label CHARSET = $9000
+    .label COLORS = $8400
     .label _26 = 7
-    .label _30 = 7
     .label col = 2
     .label ch = 5
     .label cy = 4
-    lda #($ffffffff&ECMCHAR_CHARSET)/$10000
+    lda #($ffffffff&CHARSET)/$10000
     sta DTV_GRAPHICS_VIC_BANK
-    lda #ECMCHAR_COLORS/$400
+    lda #COLORS/$400
     sta DTV_COLOR_BANK_LO
     lda #0
     sta DTV_COLOR_BANK_HI
@@ -930,13 +937,13 @@ mode_hicolecmchar: {
     sta DTV_CONTROL
     lda #3
     sta CIA2_PORT_A_DDR
-    lda #3^ECMCHAR_CHARSET/$4000
+    lda #3^CHARSET/$4000
     sta CIA2_PORT_A
-    lda #VIC_DEN|VIC_RSEL|VIC_ECM|3
+    lda #VIC_DEN|VIC_RSEL|3
     sta VIC_CONTROL
-    lda #VIC_CSEL
+    lda #VIC_CSEL|VIC_MCM
     sta VIC_CONTROL2
-    lda #(ECMCHAR_SCREEN&$3fff)/$40|(ECMCHAR_CHARSET&$3fff)/$400
+    lda #(SCREEN&$3fff)/$40|(CHARSET&$3fff)/$400
     sta VIC_MEMORY
     ldx #0
   b1:
@@ -953,15 +960,13 @@ mode_hicolecmchar: {
     sta BGCOL2
     lda #$58
     sta BGCOL3
-    lda #$5c
-    sta BGCOL4
-    lda #<ECMCHAR_SCREEN
+    lda #<SCREEN
     sta ch
-    lda #>ECMCHAR_SCREEN
+    lda #>SCREEN
     sta ch+1
-    lda #<ECMCHAR_COLORS
+    lda #<COLORS
     sta col
-    lda #>ECMCHAR_COLORS
+    lda #>COLORS
     sta col+1
     lda #0
     sta cy
@@ -984,16 +989,101 @@ mode_hicolecmchar: {
     bne !+
     inc col+1
   !:
+    ldy #0
+    sta (ch),y
+    inc ch
+    bne !+
+    inc ch+1
+  !:
+    inx
+    cpx #$28
+    bne b3
+    inc cy
+    lda cy
+    cmp #$19
+    bne b2
+    jmp b5
+  breturn:
+    rts
+  b5:
+    ldx #KEY_SPACE
+    jsr keyboard_key_pressed
+    cmp #0
+    beq b5
+    jmp breturn
+}
+mode_hicolecmchar: {
+    .label SCREEN = $8000
+    .label CHARSET = $9000
+    .label COLORS = $8400
+    .label _26 = 7
+    .label col = 2
+    .label ch = 5
+    .label cy = 4
+    lda #($ffffffff&CHARSET)/$10000
+    sta DTV_GRAPHICS_VIC_BANK
+    lda #COLORS/$400
+    sta DTV_COLOR_BANK_LO
+    lda #0
+    sta DTV_COLOR_BANK_HI
+    lda #DTV_CONTROL_HIGHCOLOR_ON
+    sta DTV_CONTROL
+    lda #3
+    sta CIA2_PORT_A_DDR
+    lda #3^CHARSET/$4000
+    sta CIA2_PORT_A
+    lda #VIC_DEN|VIC_RSEL|VIC_ECM|3
+    sta VIC_CONTROL
+    lda #VIC_CSEL
+    sta VIC_CONTROL2
+    lda #(SCREEN&$3fff)/$40|(CHARSET&$3fff)/$400
+    sta VIC_MEMORY
+    ldx #0
+  b1:
+    txa
+    sta DTV_PALETTE,x
+    inx
+    cpx #$10
+    bne b1
+    lda #0
+    sta BORDERCOL
+    lda #$50
+    sta BGCOL1
+    lda #$54
+    sta BGCOL2
+    lda #$58
+    sta BGCOL3
+    lda #$5c
+    sta BGCOL4
+    lda #<SCREEN
+    sta ch
+    lda #>SCREEN
+    sta ch+1
+    lda #<COLORS
+    sta col
+    lda #>COLORS
+    sta col+1
+    lda #0
+    sta cy
+  b2:
+    ldx #0
+  b3:
     lda #$f
     and cy
     asl
     asl
     asl
     asl
-    sta _30
+    sta _26
     txa
     and #$f
-    ora _30
+    ora _26
+    ldy #0
+    sta (col),y
+    inc col
+    bne !+
+    inc col+1
+  !:
     ldy #0
     sta (ch),y
     inc ch
@@ -1018,16 +1108,16 @@ mode_hicolecmchar: {
     jmp breturn
 }
 mode_hicolstdchar: {
-    .label HICOLSTDCHAR_SCREEN = $8000
-    .label HICOLSTDCHAR_CHARSET = $9000
-    .label HICOLSTDCHAR_COLORS = $8400
+    .label SCREEN = $8000
+    .label CHARSET = $9000
+    .label COLORS = $8400
     .label _25 = 7
     .label col = 2
     .label ch = 5
     .label cy = 4
-    lda #($ffffffff&HICOLSTDCHAR_CHARSET)/$10000
+    lda #($ffffffff&CHARSET)/$10000
     sta DTV_GRAPHICS_VIC_BANK
-    lda #HICOLSTDCHAR_COLORS/$400
+    lda #COLORS/$400
     sta DTV_COLOR_BANK_LO
     lda #0
     sta DTV_COLOR_BANK_HI
@@ -1035,13 +1125,13 @@ mode_hicolstdchar: {
     sta DTV_CONTROL
     lda #3
     sta CIA2_PORT_A_DDR
-    lda #3^HICOLSTDCHAR_CHARSET/$4000
+    lda #3^CHARSET/$4000
     sta CIA2_PORT_A
     lda #VIC_DEN|VIC_RSEL|3
     sta VIC_CONTROL
     lda #VIC_CSEL
     sta VIC_CONTROL2
-    lda #(HICOLSTDCHAR_SCREEN&$3fff)/$40|(HICOLSTDCHAR_CHARSET&$3fff)/$400
+    lda #(SCREEN&$3fff)/$40|(CHARSET&$3fff)/$400
     sta VIC_MEMORY
     ldx #0
   b1:
@@ -1053,13 +1143,13 @@ mode_hicolstdchar: {
     lda #0
     sta BGCOL
     sta BORDERCOL
-    lda #<HICOLSTDCHAR_SCREEN
+    lda #<SCREEN
     sta ch
-    lda #>HICOLSTDCHAR_SCREEN
+    lda #>SCREEN
     sta ch+1
-    lda #<HICOLSTDCHAR_COLORS
+    lda #<COLORS
     sta col
-    lda #>HICOLSTDCHAR_COLORS
+    lda #>COLORS
     sta col+1
     lda #0
     sta cy
@@ -1105,7 +1195,7 @@ mode_hicolstdchar: {
     beq b5
     jmp breturn
 }
-mode_mcstdchar: {
+mode_mcchar: {
     .label SCREEN = $8000
     .label CHARSET = $9000
     .label COLORS = $8400
@@ -1299,29 +1389,29 @@ mode_ecmchar: {
     jmp breturn
 }
 mode_stdchar: {
-    .label STDCHAR_SCREEN = $8000
-    .label STDCHAR_CHARSET = $9000
-    .label STDCHAR_COLORS = $8400
+    .label SCREEN = $8000
+    .label CHARSET = $9000
+    .label COLORS = $8400
     .label _27 = 7
     .label col = 2
     .label ch = 5
     .label cy = 4
-    lda #($ffffffff&STDCHAR_CHARSET)/$10000
+    lda #($ffffffff&CHARSET)/$10000
     sta DTV_GRAPHICS_VIC_BANK
-    lda #STDCHAR_COLORS/$400
+    lda #COLORS/$400
     sta DTV_COLOR_BANK_LO
     lda #0
     sta DTV_COLOR_BANK_HI
     sta DTV_CONTROL
     lda #3
     sta CIA2_PORT_A_DDR
-    lda #3^STDCHAR_CHARSET/$4000
+    lda #3^CHARSET/$4000
     sta CIA2_PORT_A
     lda #VIC_DEN|VIC_RSEL|3
     sta VIC_CONTROL
     lda #VIC_CSEL
     sta VIC_CONTROL2
-    lda #(STDCHAR_SCREEN&$3fff)/$40|(STDCHAR_CHARSET&$3fff)/$400
+    lda #(SCREEN&$3fff)/$40|(CHARSET&$3fff)/$400
     sta VIC_MEMORY
     ldx #0
   b1:
@@ -1333,13 +1423,13 @@ mode_stdchar: {
     lda #0
     sta BGCOL
     sta BORDERCOL
-    lda #<STDCHAR_SCREEN
+    lda #<SCREEN
     sta ch
-    lda #>STDCHAR_SCREEN
+    lda #>SCREEN
     sta ch+1
-    lda #<STDCHAR_COLORS
+    lda #<COLORS
     sta col
-    lda #>STDCHAR_COLORS
+    lda #>COLORS
     sta col+1
     lda #0
     sta cy
@@ -1391,13 +1481,13 @@ mode_stdchar: {
 }
 print_str_lines: {
     .label str = 2
-    lda #<menu.MENU_SCREEN
+    lda #<menu.SCREEN
     sta print_line_cursor
-    lda #>menu.MENU_SCREEN
+    lda #>menu.SCREEN
     sta print_line_cursor+1
-    lda #<menu.MENU_SCREEN
+    lda #<menu.SCREEN
     sta print_char_cursor
-    lda #>menu.MENU_SCREEN
+    lda #>menu.SCREEN
     sta print_char_cursor+1
     lda #<MENU_TEXT
     sta str
@@ -1455,9 +1545,9 @@ print_ln: {
 }
 print_cls: {
     .label sc = 2
-    lda #<menu.MENU_SCREEN
+    lda #<menu.SCREEN
     sta sc
-    lda #>menu.MENU_SCREEN
+    lda #>menu.SCREEN
     sta sc+1
   b1:
     lda #' '
@@ -1468,10 +1558,10 @@ print_cls: {
     inc sc+1
   !:
     lda sc+1
-    cmp #>menu.MENU_SCREEN+$3e8
+    cmp #>menu.SCREEN+$3e8
     bne b1
     lda sc
-    cmp #<menu.MENU_SCREEN+$3e8
+    cmp #<menu.SCREEN+$3e8
     bne b1
     rts
 }

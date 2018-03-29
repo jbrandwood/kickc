@@ -125,12 +125,12 @@ void menu() {
 void mode_stdchar() {
     const byte* SCREEN = $8000;
     const byte* CHARSET = $9000; // Charset ROM
-    const byte* COLORS = $8400;
+    const byte* COLORS = $d800;
     // DTV Graphics Bank
     *DTV_GRAPHICS_VIC_BANK = (byte)((dword)CHARSET/$10000);
     // DTV Color Bank
-     *DTV_COLOR_BANK_LO = <((word)(COLORS/$400));
-     *DTV_COLOR_BANK_HI = >((word)(COLORS/$400));
+     *DTV_COLOR_BANK_LO = <((word)(DTV_COLOR_BANK_DEFAULT/$400));
+     *DTV_COLOR_BANK_HI = >((word)(DTV_COLOR_BANK_DEFAULT/$400));
     // DTV Graphics Mode
     *DTV_CONTROL = 0;
     // VIC Graphics Bank
@@ -177,24 +177,24 @@ void mode_stdchar() {
 //    - CharData[7:6] 11: 4bpp BgColor3[3:0]
 //  - 1: 4bpp ColorData[3:0]
 void mode_ecmchar() {
-    const byte* ECMCHAR_SCREEN = $8000;
-    const byte* ECMCHAR_CHARSET = $9000; // Charset ROM
-    const byte* ECMCHAR_COLORS = $8400;
+    const byte* SCREEN = $8000;
+    const byte* CHARSET = $9000; // Charset ROM
+    const byte* COLORS = $d800;
     // DTV Graphics Bank
-    *DTV_GRAPHICS_VIC_BANK = (byte)((dword)ECMCHAR_CHARSET/$10000);
+    *DTV_GRAPHICS_VIC_BANK = (byte)((dword)CHARSET/$10000);
     // DTV Color Bank
-     *DTV_COLOR_BANK_LO = <((word)(ECMCHAR_COLORS/$400));
-     *DTV_COLOR_BANK_HI = >((word)(ECMCHAR_COLORS/$400));
+     *DTV_COLOR_BANK_LO = <((word)(DTV_COLOR_BANK_DEFAULT/$400));
+     *DTV_COLOR_BANK_HI = >((word)(DTV_COLOR_BANK_DEFAULT/$400));
     // DTV Graphics Mode
     *DTV_CONTROL = 0;
     // VIC Graphics Bank
     *CIA2_PORT_A_DDR = %00000011; // Set VIC Bank bits to output - all others to input
-    *CIA2_PORT_A = %00000011 ^ (byte)((word)ECMCHAR_CHARSET/$4000); // Set VIC Bank
+    *CIA2_PORT_A = %00000011 ^ (byte)((word)CHARSET/$4000); // Set VIC Bank
     // VIC Graphics Mode
     *VIC_CONTROL = VIC_DEN|VIC_RSEL|VIC_ECM|3;
     *VIC_CONTROL2 = VIC_CSEL;
     // VIC Memory Pointers
-    *VIC_MEMORY =  (byte)((((word)ECMCHAR_SCREEN&$3fff)/$40)|(((word)ECMCHAR_CHARSET&$3fff)/$400));
+    *VIC_MEMORY =  (byte)((((word)SCREEN&$3fff)/$40)|(((word)CHARSET&$3fff)/$400));
     // DTV Palette - default
     for(byte i : 0..$f) {
         DTV_PALETTE[i] = DTV_PALETTE_DEFAULT[i];
@@ -206,8 +206,8 @@ void mode_ecmchar() {
     *BGCOL3 = 5;
     *BGCOL4 = 6;
     // Char Colors and screen chars
-    byte* col=ECMCHAR_COLORS;
-    byte* ch=ECMCHAR_SCREEN;
+    byte* col=COLORS;
+    byte* ch=SCREEN;
     for(byte cy: 0..24 ) {
         for(byte cx: 0..39) {
             *col++ = (cx+cy)&$f;
@@ -237,12 +237,12 @@ void mode_ecmchar() {
 void mode_mcchar() {
     const byte* SCREEN = $8000;
     const byte* CHARSET = $9000; // Charset ROM
-    const byte* COLORS = $8400;
+    const byte* COLORS = $d800;
     // DTV Graphics Bank
     *DTV_GRAPHICS_VIC_BANK = (byte)((dword)CHARSET/$10000);
     // DTV Color Bank
-     *DTV_COLOR_BANK_LO = <((word)(COLORS/$400));
-     *DTV_COLOR_BANK_HI = >((word)(COLORS/$400));
+     *DTV_COLOR_BANK_LO = <((word)(DTV_COLOR_BANK_DEFAULT/$400));
+     *DTV_COLOR_BANK_HI = >((word)(DTV_COLOR_BANK_DEFAULT/$400));
     // DTV Graphics Mode
     *DTV_CONTROL = 0;
     // VIC Graphics Bank

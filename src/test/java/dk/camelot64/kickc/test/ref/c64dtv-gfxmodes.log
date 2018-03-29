@@ -126,12 +126,12 @@ void menu() {
 void mode_stdchar() {
     const byte* SCREEN = $8000;
     const byte* CHARSET = $9000; // Charset ROM
-    const byte* COLORS = $8400;
+    const byte* COLORS = $d800;
     // DTV Graphics Bank
     *DTV_GRAPHICS_VIC_BANK = (byte)((dword)CHARSET/$10000);
     // DTV Color Bank
-     *DTV_COLOR_BANK_LO = <((word)(COLORS/$400));
-     *DTV_COLOR_BANK_HI = >((word)(COLORS/$400));
+     *DTV_COLOR_BANK_LO = <((word)(DTV_COLOR_BANK_DEFAULT/$400));
+     *DTV_COLOR_BANK_HI = >((word)(DTV_COLOR_BANK_DEFAULT/$400));
     // DTV Graphics Mode
     *DTV_CONTROL = 0;
     // VIC Graphics Bank
@@ -178,24 +178,24 @@ void mode_stdchar() {
 //    - CharData[7:6] 11: 4bpp BgColor3[3:0]
 //  - 1: 4bpp ColorData[3:0]
 void mode_ecmchar() {
-    const byte* ECMCHAR_SCREEN = $8000;
-    const byte* ECMCHAR_CHARSET = $9000; // Charset ROM
-    const byte* ECMCHAR_COLORS = $8400;
+    const byte* SCREEN = $8000;
+    const byte* CHARSET = $9000; // Charset ROM
+    const byte* COLORS = $d800;
     // DTV Graphics Bank
-    *DTV_GRAPHICS_VIC_BANK = (byte)((dword)ECMCHAR_CHARSET/$10000);
+    *DTV_GRAPHICS_VIC_BANK = (byte)((dword)CHARSET/$10000);
     // DTV Color Bank
-     *DTV_COLOR_BANK_LO = <((word)(ECMCHAR_COLORS/$400));
-     *DTV_COLOR_BANK_HI = >((word)(ECMCHAR_COLORS/$400));
+     *DTV_COLOR_BANK_LO = <((word)(DTV_COLOR_BANK_DEFAULT/$400));
+     *DTV_COLOR_BANK_HI = >((word)(DTV_COLOR_BANK_DEFAULT/$400));
     // DTV Graphics Mode
     *DTV_CONTROL = 0;
     // VIC Graphics Bank
     *CIA2_PORT_A_DDR = %00000011; // Set VIC Bank bits to output - all others to input
-    *CIA2_PORT_A = %00000011 ^ (byte)((word)ECMCHAR_CHARSET/$4000); // Set VIC Bank
+    *CIA2_PORT_A = %00000011 ^ (byte)((word)CHARSET/$4000); // Set VIC Bank
     // VIC Graphics Mode
     *VIC_CONTROL = VIC_DEN|VIC_RSEL|VIC_ECM|3;
     *VIC_CONTROL2 = VIC_CSEL;
     // VIC Memory Pointers
-    *VIC_MEMORY =  (byte)((((word)ECMCHAR_SCREEN&$3fff)/$40)|(((word)ECMCHAR_CHARSET&$3fff)/$400));
+    *VIC_MEMORY =  (byte)((((word)SCREEN&$3fff)/$40)|(((word)CHARSET&$3fff)/$400));
     // DTV Palette - default
     for(byte i : 0..$f) {
         DTV_PALETTE[i] = DTV_PALETTE_DEFAULT[i];
@@ -207,8 +207,8 @@ void mode_ecmchar() {
     *BGCOL3 = 5;
     *BGCOL4 = 6;
     // Char Colors and screen chars
-    byte* col=ECMCHAR_COLORS;
-    byte* ch=ECMCHAR_SCREEN;
+    byte* col=COLORS;
+    byte* ch=SCREEN;
     for(byte cy: 0..24 ) {
         for(byte cx: 0..39) {
             *col++ = (cx+cy)&$f;
@@ -238,12 +238,12 @@ void mode_ecmchar() {
 void mode_mcchar() {
     const byte* SCREEN = $8000;
     const byte* CHARSET = $9000; // Charset ROM
-    const byte* COLORS = $8400;
+    const byte* COLORS = $d800;
     // DTV Graphics Bank
     *DTV_GRAPHICS_VIC_BANK = (byte)((dword)CHARSET/$10000);
     // DTV Color Bank
-     *DTV_COLOR_BANK_LO = <((word)(COLORS/$400));
-     *DTV_COLOR_BANK_HI = >((word)(COLORS/$400));
+     *DTV_COLOR_BANK_LO = <((word)(DTV_COLOR_BANK_DEFAULT/$400));
+     *DTV_COLOR_BANK_HI = >((word)(DTV_COLOR_BANK_DEFAULT/$400));
     // DTV Graphics Mode
     *DTV_CONTROL = 0;
     // VIC Graphics Bank
@@ -1792,17 +1792,17 @@ endproc // menu()
 proc (void()) mode_stdchar()
   (byte*) mode_stdchar::SCREEN ← (word/dword/signed dword) 32768
   (byte*) mode_stdchar::CHARSET ← (word/dword/signed dword) 36864
-  (byte*) mode_stdchar::COLORS ← (word/dword/signed dword) 33792
+  (byte*) mode_stdchar::COLORS ← (word/dword/signed dword) 55296
   (dword~) mode_stdchar::$0 ← ((dword)) (byte*) mode_stdchar::CHARSET
   (dword~) mode_stdchar::$1 ← (dword~) mode_stdchar::$0 / (dword/signed dword) 65536
   (byte~) mode_stdchar::$2 ← ((byte)) (dword~) mode_stdchar::$1
   *((byte*) DTV_GRAPHICS_VIC_BANK) ← (byte~) mode_stdchar::$2
-  (byte*~) mode_stdchar::$3 ← (byte*) mode_stdchar::COLORS / (word/signed word/dword/signed dword) 1024
-  (word~) mode_stdchar::$4 ← ((word)) (byte*~) mode_stdchar::$3
+  (dword~) mode_stdchar::$3 ← (dword) DTV_COLOR_BANK_DEFAULT / (word/signed word/dword/signed dword) 1024
+  (word~) mode_stdchar::$4 ← ((word)) (dword~) mode_stdchar::$3
   (byte~) mode_stdchar::$5 ← < (word~) mode_stdchar::$4
   *((byte*) DTV_COLOR_BANK_LO) ← (byte~) mode_stdchar::$5
-  (byte*~) mode_stdchar::$6 ← (byte*) mode_stdchar::COLORS / (word/signed word/dword/signed dword) 1024
-  (word~) mode_stdchar::$7 ← ((word)) (byte*~) mode_stdchar::$6
+  (dword~) mode_stdchar::$6 ← (dword) DTV_COLOR_BANK_DEFAULT / (word/signed word/dword/signed dword) 1024
+  (word~) mode_stdchar::$7 ← ((word)) (dword~) mode_stdchar::$6
   (byte~) mode_stdchar::$8 ← > (word~) mode_stdchar::$7
   *((byte*) DTV_COLOR_BANK_HI) ← (byte~) mode_stdchar::$8
   *((byte*) DTV_CONTROL) ← (byte/signed byte/word/signed word/dword/signed dword) 0
@@ -1871,24 +1871,24 @@ mode_stdchar::@return:
   return 
 endproc // mode_stdchar()
 proc (void()) mode_ecmchar()
-  (byte*) mode_ecmchar::ECMCHAR_SCREEN ← (word/dword/signed dword) 32768
-  (byte*) mode_ecmchar::ECMCHAR_CHARSET ← (word/dword/signed dword) 36864
-  (byte*) mode_ecmchar::ECMCHAR_COLORS ← (word/dword/signed dword) 33792
-  (dword~) mode_ecmchar::$0 ← ((dword)) (byte*) mode_ecmchar::ECMCHAR_CHARSET
+  (byte*) mode_ecmchar::SCREEN ← (word/dword/signed dword) 32768
+  (byte*) mode_ecmchar::CHARSET ← (word/dword/signed dword) 36864
+  (byte*) mode_ecmchar::COLORS ← (word/dword/signed dword) 55296
+  (dword~) mode_ecmchar::$0 ← ((dword)) (byte*) mode_ecmchar::CHARSET
   (dword~) mode_ecmchar::$1 ← (dword~) mode_ecmchar::$0 / (dword/signed dword) 65536
   (byte~) mode_ecmchar::$2 ← ((byte)) (dword~) mode_ecmchar::$1
   *((byte*) DTV_GRAPHICS_VIC_BANK) ← (byte~) mode_ecmchar::$2
-  (byte*~) mode_ecmchar::$3 ← (byte*) mode_ecmchar::ECMCHAR_COLORS / (word/signed word/dword/signed dword) 1024
-  (word~) mode_ecmchar::$4 ← ((word)) (byte*~) mode_ecmchar::$3
+  (dword~) mode_ecmchar::$3 ← (dword) DTV_COLOR_BANK_DEFAULT / (word/signed word/dword/signed dword) 1024
+  (word~) mode_ecmchar::$4 ← ((word)) (dword~) mode_ecmchar::$3
   (byte~) mode_ecmchar::$5 ← < (word~) mode_ecmchar::$4
   *((byte*) DTV_COLOR_BANK_LO) ← (byte~) mode_ecmchar::$5
-  (byte*~) mode_ecmchar::$6 ← (byte*) mode_ecmchar::ECMCHAR_COLORS / (word/signed word/dword/signed dword) 1024
-  (word~) mode_ecmchar::$7 ← ((word)) (byte*~) mode_ecmchar::$6
+  (dword~) mode_ecmchar::$6 ← (dword) DTV_COLOR_BANK_DEFAULT / (word/signed word/dword/signed dword) 1024
+  (word~) mode_ecmchar::$7 ← ((word)) (dword~) mode_ecmchar::$6
   (byte~) mode_ecmchar::$8 ← > (word~) mode_ecmchar::$7
   *((byte*) DTV_COLOR_BANK_HI) ← (byte~) mode_ecmchar::$8
   *((byte*) DTV_CONTROL) ← (byte/signed byte/word/signed word/dword/signed dword) 0
   *((byte*) CIA2_PORT_A_DDR) ← (byte/signed byte/word/signed word/dword/signed dword) 3
-  (word~) mode_ecmchar::$9 ← ((word)) (byte*) mode_ecmchar::ECMCHAR_CHARSET
+  (word~) mode_ecmchar::$9 ← ((word)) (byte*) mode_ecmchar::CHARSET
   (word/signed dword/dword~) mode_ecmchar::$10 ← (word~) mode_ecmchar::$9 / (word/signed word/dword/signed dword) 16384
   (byte~) mode_ecmchar::$11 ← ((byte)) (word/signed dword/dword~) mode_ecmchar::$10
   (byte/word/dword~) mode_ecmchar::$12 ← (byte/signed byte/word/signed word/dword/signed dword) 3 ^ (byte~) mode_ecmchar::$11
@@ -1898,10 +1898,10 @@ proc (void()) mode_ecmchar()
   (byte/word/dword~) mode_ecmchar::$15 ← (byte~) mode_ecmchar::$14 | (byte/signed byte/word/signed word/dword/signed dword) 3
   *((byte*) VIC_CONTROL) ← (byte/word/dword~) mode_ecmchar::$15
   *((byte*) VIC_CONTROL2) ← (byte) VIC_CSEL
-  (word~) mode_ecmchar::$16 ← ((word)) (byte*) mode_ecmchar::ECMCHAR_SCREEN
+  (word~) mode_ecmchar::$16 ← ((word)) (byte*) mode_ecmchar::SCREEN
   (word~) mode_ecmchar::$17 ← (word~) mode_ecmchar::$16 & (word/signed word/dword/signed dword) 16383
   (word/signed dword/dword~) mode_ecmchar::$18 ← (word~) mode_ecmchar::$17 / (byte/signed byte/word/signed word/dword/signed dword) 64
-  (word~) mode_ecmchar::$19 ← ((word)) (byte*) mode_ecmchar::ECMCHAR_CHARSET
+  (word~) mode_ecmchar::$19 ← ((word)) (byte*) mode_ecmchar::CHARSET
   (word~) mode_ecmchar::$20 ← (word~) mode_ecmchar::$19 & (word/signed word/dword/signed dword) 16383
   (word/signed dword/dword~) mode_ecmchar::$21 ← (word~) mode_ecmchar::$20 / (word/signed word/dword/signed dword) 1024
   (word/dword~) mode_ecmchar::$22 ← (word/signed dword/dword~) mode_ecmchar::$18 | (word/signed dword/dword~) mode_ecmchar::$21
@@ -1918,8 +1918,8 @@ mode_ecmchar::@1:
   *((byte*) BGCOL2) ← (byte/signed byte/word/signed word/dword/signed dword) 2
   *((byte*) BGCOL3) ← (byte/signed byte/word/signed word/dword/signed dword) 5
   *((byte*) BGCOL4) ← (byte/signed byte/word/signed word/dword/signed dword) 6
-  (byte*) mode_ecmchar::col ← (byte*) mode_ecmchar::ECMCHAR_COLORS
-  (byte*) mode_ecmchar::ch ← (byte*) mode_ecmchar::ECMCHAR_SCREEN
+  (byte*) mode_ecmchar::col ← (byte*) mode_ecmchar::COLORS
+  (byte*) mode_ecmchar::ch ← (byte*) mode_ecmchar::SCREEN
   (byte) mode_ecmchar::cy ← (byte/signed byte/word/signed word/dword/signed dword) 0
 mode_ecmchar::@2:
   (byte) mode_ecmchar::cx ← (byte/signed byte/word/signed word/dword/signed dword) 0
@@ -1958,17 +1958,17 @@ endproc // mode_ecmchar()
 proc (void()) mode_mcchar()
   (byte*) mode_mcchar::SCREEN ← (word/dword/signed dword) 32768
   (byte*) mode_mcchar::CHARSET ← (word/dword/signed dword) 36864
-  (byte*) mode_mcchar::COLORS ← (word/dword/signed dword) 33792
+  (byte*) mode_mcchar::COLORS ← (word/dword/signed dword) 55296
   (dword~) mode_mcchar::$0 ← ((dword)) (byte*) mode_mcchar::CHARSET
   (dword~) mode_mcchar::$1 ← (dword~) mode_mcchar::$0 / (dword/signed dword) 65536
   (byte~) mode_mcchar::$2 ← ((byte)) (dword~) mode_mcchar::$1
   *((byte*) DTV_GRAPHICS_VIC_BANK) ← (byte~) mode_mcchar::$2
-  (byte*~) mode_mcchar::$3 ← (byte*) mode_mcchar::COLORS / (word/signed word/dword/signed dword) 1024
-  (word~) mode_mcchar::$4 ← ((word)) (byte*~) mode_mcchar::$3
+  (dword~) mode_mcchar::$3 ← (dword) DTV_COLOR_BANK_DEFAULT / (word/signed word/dword/signed dword) 1024
+  (word~) mode_mcchar::$4 ← ((word)) (dword~) mode_mcchar::$3
   (byte~) mode_mcchar::$5 ← < (word~) mode_mcchar::$4
   *((byte*) DTV_COLOR_BANK_LO) ← (byte~) mode_mcchar::$5
-  (byte*~) mode_mcchar::$6 ← (byte*) mode_mcchar::COLORS / (word/signed word/dword/signed dword) 1024
-  (word~) mode_mcchar::$7 ← ((word)) (byte*~) mode_mcchar::$6
+  (dword~) mode_mcchar::$6 ← (dword) DTV_COLOR_BANK_DEFAULT / (word/signed word/dword/signed dword) 1024
+  (word~) mode_mcchar::$7 ← ((word)) (dword~) mode_mcchar::$6
   (byte~) mode_mcchar::$8 ← > (word~) mode_mcchar::$7
   *((byte*) DTV_COLOR_BANK_HI) ← (byte~) mode_mcchar::$8
   *((byte*) DTV_CONTROL) ← (byte/signed byte/word/signed word/dword/signed dword) 0
@@ -3213,7 +3213,7 @@ SYMBOLS
 (byte~) mode_ecmchar::$27
 (byte~) mode_ecmchar::$28
 (byte~) mode_ecmchar::$29
-(byte*~) mode_ecmchar::$3
+(dword~) mode_ecmchar::$3
 (byte~) mode_ecmchar::$30
 (boolean~) mode_ecmchar::$31
 (boolean~) mode_ecmchar::$32
@@ -3222,7 +3222,7 @@ SYMBOLS
 (boolean~) mode_ecmchar::$35
 (word~) mode_ecmchar::$4
 (byte~) mode_ecmchar::$5
-(byte*~) mode_ecmchar::$6
+(dword~) mode_ecmchar::$6
 (word~) mode_ecmchar::$7
 (byte~) mode_ecmchar::$8
 (word~) mode_ecmchar::$9
@@ -3234,9 +3234,9 @@ SYMBOLS
 (label) mode_ecmchar::@6
 (label) mode_ecmchar::@7
 (label) mode_ecmchar::@return
-(byte*) mode_ecmchar::ECMCHAR_CHARSET
-(byte*) mode_ecmchar::ECMCHAR_COLORS
-(byte*) mode_ecmchar::ECMCHAR_SCREEN
+(byte*) mode_ecmchar::CHARSET
+(byte*) mode_ecmchar::COLORS
+(byte*) mode_ecmchar::SCREEN
 (byte*) mode_ecmchar::ch
 (byte*) mode_ecmchar::col
 (byte) mode_ecmchar::cx
@@ -3421,7 +3421,7 @@ SYMBOLS
 (byte~) mode_mcchar::$27
 (byte~) mode_mcchar::$28
 (byte~) mode_mcchar::$29
-(byte*~) mode_mcchar::$3
+(dword~) mode_mcchar::$3
 (byte~) mode_mcchar::$30
 (boolean~) mode_mcchar::$31
 (boolean~) mode_mcchar::$32
@@ -3430,7 +3430,7 @@ SYMBOLS
 (boolean~) mode_mcchar::$35
 (word~) mode_mcchar::$4
 (byte~) mode_mcchar::$5
-(byte*~) mode_mcchar::$6
+(dword~) mode_mcchar::$6
 (word~) mode_mcchar::$7
 (byte~) mode_mcchar::$8
 (word~) mode_mcchar::$9
@@ -3587,7 +3587,7 @@ SYMBOLS
 (byte~) mode_stdchar::$27
 (byte~) mode_stdchar::$28
 (byte~) mode_stdchar::$29
-(byte*~) mode_stdchar::$3
+(dword~) mode_stdchar::$3
 (boolean~) mode_stdchar::$30
 (boolean~) mode_stdchar::$31
 (byte~) mode_stdchar::$32
@@ -3595,7 +3595,7 @@ SYMBOLS
 (boolean~) mode_stdchar::$34
 (word~) mode_stdchar::$4
 (byte~) mode_stdchar::$5
-(byte*~) mode_stdchar::$6
+(dword~) mode_stdchar::$6
 (word~) mode_stdchar::$7
 (byte~) mode_stdchar::$8
 (word~) mode_stdchar::$9
@@ -3841,13 +3841,13 @@ Promoting word/dword/signed dword to byte* in menu::SCREEN ← ((byte*)) 32768
 Promoting word/dword/signed dword to byte* in menu::CHARSET ← ((byte*)) 38912
 Promoting word/dword/signed dword to byte* in mode_stdchar::SCREEN ← ((byte*)) 32768
 Promoting word/dword/signed dword to byte* in mode_stdchar::CHARSET ← ((byte*)) 36864
-Promoting word/dword/signed dword to byte* in mode_stdchar::COLORS ← ((byte*)) 33792
-Promoting word/dword/signed dword to byte* in mode_ecmchar::ECMCHAR_SCREEN ← ((byte*)) 32768
-Promoting word/dword/signed dword to byte* in mode_ecmchar::ECMCHAR_CHARSET ← ((byte*)) 36864
-Promoting word/dword/signed dword to byte* in mode_ecmchar::ECMCHAR_COLORS ← ((byte*)) 33792
+Promoting word/dword/signed dword to byte* in mode_stdchar::COLORS ← ((byte*)) 55296
+Promoting word/dword/signed dword to byte* in mode_ecmchar::SCREEN ← ((byte*)) 32768
+Promoting word/dword/signed dword to byte* in mode_ecmchar::CHARSET ← ((byte*)) 36864
+Promoting word/dword/signed dword to byte* in mode_ecmchar::COLORS ← ((byte*)) 55296
 Promoting word/dword/signed dword to byte* in mode_mcchar::SCREEN ← ((byte*)) 32768
 Promoting word/dword/signed dword to byte* in mode_mcchar::CHARSET ← ((byte*)) 36864
-Promoting word/dword/signed dword to byte* in mode_mcchar::COLORS ← ((byte*)) 33792
+Promoting word/dword/signed dword to byte* in mode_mcchar::COLORS ← ((byte*)) 55296
 Promoting word/dword/signed dword to byte* in mode_hicolstdchar::SCREEN ← ((byte*)) 32768
 Promoting word/dword/signed dword to byte* in mode_hicolstdchar::CHARSET ← ((byte*)) 36864
 Promoting word/dword/signed dword to byte* in mode_hicolstdchar::COLORS ← ((byte*)) 33792
@@ -4581,17 +4581,17 @@ menu::@43: scope:[menu]  from
 mode_stdchar: scope:[mode_stdchar]  from
   (byte*) mode_stdchar::SCREEN ← ((byte*)) (word/dword/signed dword) 32768
   (byte*) mode_stdchar::CHARSET ← ((byte*)) (word/dword/signed dword) 36864
-  (byte*) mode_stdchar::COLORS ← ((byte*)) (word/dword/signed dword) 33792
+  (byte*) mode_stdchar::COLORS ← ((byte*)) (word/dword/signed dword) 55296
   (dword~) mode_stdchar::$0 ← ((dword)) (byte*) mode_stdchar::CHARSET
   (dword~) mode_stdchar::$1 ← (dword~) mode_stdchar::$0 / (dword/signed dword) 65536
   (byte~) mode_stdchar::$2 ← ((byte)) (dword~) mode_stdchar::$1
   *((byte*) DTV_GRAPHICS_VIC_BANK) ← (byte~) mode_stdchar::$2
-  (byte*~) mode_stdchar::$3 ← (byte*) mode_stdchar::COLORS / (word/signed word/dword/signed dword) 1024
-  (word~) mode_stdchar::$4 ← ((word)) (byte*~) mode_stdchar::$3
+  (dword~) mode_stdchar::$3 ← (dword) DTV_COLOR_BANK_DEFAULT / (word/signed word/dword/signed dword) 1024
+  (word~) mode_stdchar::$4 ← ((word)) (dword~) mode_stdchar::$3
   (byte~) mode_stdchar::$5 ← < (word~) mode_stdchar::$4
   *((byte*) DTV_COLOR_BANK_LO) ← (byte~) mode_stdchar::$5
-  (byte*~) mode_stdchar::$6 ← (byte*) mode_stdchar::COLORS / (word/signed word/dword/signed dword) 1024
-  (word~) mode_stdchar::$7 ← ((word)) (byte*~) mode_stdchar::$6
+  (dword~) mode_stdchar::$6 ← (dword) DTV_COLOR_BANK_DEFAULT / (word/signed word/dword/signed dword) 1024
+  (word~) mode_stdchar::$7 ← ((word)) (dword~) mode_stdchar::$6
   (byte~) mode_stdchar::$8 ← > (word~) mode_stdchar::$7
   *((byte*) DTV_COLOR_BANK_HI) ← (byte~) mode_stdchar::$8
   *((byte*) DTV_CONTROL) ← (byte/signed byte/word/signed word/dword/signed dword) 0
@@ -4683,24 +4683,24 @@ mode_stdchar::@15: scope:[mode_stdchar]  from
 @22: scope:[]  from @21
   to:@23
 mode_ecmchar: scope:[mode_ecmchar]  from
-  (byte*) mode_ecmchar::ECMCHAR_SCREEN ← ((byte*)) (word/dword/signed dword) 32768
-  (byte*) mode_ecmchar::ECMCHAR_CHARSET ← ((byte*)) (word/dword/signed dword) 36864
-  (byte*) mode_ecmchar::ECMCHAR_COLORS ← ((byte*)) (word/dword/signed dword) 33792
-  (dword~) mode_ecmchar::$0 ← ((dword)) (byte*) mode_ecmchar::ECMCHAR_CHARSET
+  (byte*) mode_ecmchar::SCREEN ← ((byte*)) (word/dword/signed dword) 32768
+  (byte*) mode_ecmchar::CHARSET ← ((byte*)) (word/dword/signed dword) 36864
+  (byte*) mode_ecmchar::COLORS ← ((byte*)) (word/dword/signed dword) 55296
+  (dword~) mode_ecmchar::$0 ← ((dword)) (byte*) mode_ecmchar::CHARSET
   (dword~) mode_ecmchar::$1 ← (dword~) mode_ecmchar::$0 / (dword/signed dword) 65536
   (byte~) mode_ecmchar::$2 ← ((byte)) (dword~) mode_ecmchar::$1
   *((byte*) DTV_GRAPHICS_VIC_BANK) ← (byte~) mode_ecmchar::$2
-  (byte*~) mode_ecmchar::$3 ← (byte*) mode_ecmchar::ECMCHAR_COLORS / (word/signed word/dword/signed dword) 1024
-  (word~) mode_ecmchar::$4 ← ((word)) (byte*~) mode_ecmchar::$3
+  (dword~) mode_ecmchar::$3 ← (dword) DTV_COLOR_BANK_DEFAULT / (word/signed word/dword/signed dword) 1024
+  (word~) mode_ecmchar::$4 ← ((word)) (dword~) mode_ecmchar::$3
   (byte~) mode_ecmchar::$5 ← < (word~) mode_ecmchar::$4
   *((byte*) DTV_COLOR_BANK_LO) ← (byte~) mode_ecmchar::$5
-  (byte*~) mode_ecmchar::$6 ← (byte*) mode_ecmchar::ECMCHAR_COLORS / (word/signed word/dword/signed dword) 1024
-  (word~) mode_ecmchar::$7 ← ((word)) (byte*~) mode_ecmchar::$6
+  (dword~) mode_ecmchar::$6 ← (dword) DTV_COLOR_BANK_DEFAULT / (word/signed word/dword/signed dword) 1024
+  (word~) mode_ecmchar::$7 ← ((word)) (dword~) mode_ecmchar::$6
   (byte~) mode_ecmchar::$8 ← > (word~) mode_ecmchar::$7
   *((byte*) DTV_COLOR_BANK_HI) ← (byte~) mode_ecmchar::$8
   *((byte*) DTV_CONTROL) ← (byte/signed byte/word/signed word/dword/signed dword) 0
   *((byte*) CIA2_PORT_A_DDR) ← (byte/signed byte/word/signed word/dword/signed dword) 3
-  (word~) mode_ecmchar::$9 ← ((word)) (byte*) mode_ecmchar::ECMCHAR_CHARSET
+  (word~) mode_ecmchar::$9 ← ((word)) (byte*) mode_ecmchar::CHARSET
   (word/signed dword/dword~) mode_ecmchar::$10 ← (word~) mode_ecmchar::$9 / (word/signed word/dword/signed dword) 16384
   (byte~) mode_ecmchar::$11 ← ((byte)) (word/signed dword/dword~) mode_ecmchar::$10
   (byte/word/dword~) mode_ecmchar::$12 ← (byte/signed byte/word/signed word/dword/signed dword) 3 ^ (byte~) mode_ecmchar::$11
@@ -4710,10 +4710,10 @@ mode_ecmchar: scope:[mode_ecmchar]  from
   (byte/word/dword~) mode_ecmchar::$15 ← (byte~) mode_ecmchar::$14 | (byte/signed byte/word/signed word/dword/signed dword) 3
   *((byte*) VIC_CONTROL) ← (byte/word/dword~) mode_ecmchar::$15
   *((byte*) VIC_CONTROL2) ← (byte) VIC_CSEL
-  (word~) mode_ecmchar::$16 ← ((word)) (byte*) mode_ecmchar::ECMCHAR_SCREEN
+  (word~) mode_ecmchar::$16 ← ((word)) (byte*) mode_ecmchar::SCREEN
   (word~) mode_ecmchar::$17 ← (word~) mode_ecmchar::$16 & (word/signed word/dword/signed dword) 16383
   (word/signed dword/dword~) mode_ecmchar::$18 ← (word~) mode_ecmchar::$17 / (byte/signed byte/word/signed word/dword/signed dword) 64
-  (word~) mode_ecmchar::$19 ← ((word)) (byte*) mode_ecmchar::ECMCHAR_CHARSET
+  (word~) mode_ecmchar::$19 ← ((word)) (byte*) mode_ecmchar::CHARSET
   (word~) mode_ecmchar::$20 ← (word~) mode_ecmchar::$19 & (word/signed word/dword/signed dword) 16383
   (word/signed dword/dword~) mode_ecmchar::$21 ← (word~) mode_ecmchar::$20 / (word/signed word/dword/signed dword) 1024
   (word/dword~) mode_ecmchar::$22 ← (word/signed dword/dword~) mode_ecmchar::$18 | (word/signed dword/dword~) mode_ecmchar::$21
@@ -4733,8 +4733,8 @@ mode_ecmchar::@8: scope:[mode_ecmchar]  from mode_ecmchar::@1
   *((byte*) BGCOL2) ← (byte/signed byte/word/signed word/dword/signed dword) 2
   *((byte*) BGCOL3) ← (byte/signed byte/word/signed word/dword/signed dword) 5
   *((byte*) BGCOL4) ← (byte/signed byte/word/signed word/dword/signed dword) 6
-  (byte*) mode_ecmchar::col ← (byte*) mode_ecmchar::ECMCHAR_COLORS
-  (byte*) mode_ecmchar::ch ← (byte*) mode_ecmchar::ECMCHAR_SCREEN
+  (byte*) mode_ecmchar::col ← (byte*) mode_ecmchar::COLORS
+  (byte*) mode_ecmchar::ch ← (byte*) mode_ecmchar::SCREEN
   (byte) mode_ecmchar::cy ← (byte/signed byte/word/signed word/dword/signed dword) 0
   to:mode_ecmchar::@2
 mode_ecmchar::@2: scope:[mode_ecmchar]  from mode_ecmchar::@8 mode_ecmchar::@9
@@ -4793,17 +4793,17 @@ mode_ecmchar::@15: scope:[mode_ecmchar]  from
 mode_mcchar: scope:[mode_mcchar]  from
   (byte*) mode_mcchar::SCREEN ← ((byte*)) (word/dword/signed dword) 32768
   (byte*) mode_mcchar::CHARSET ← ((byte*)) (word/dword/signed dword) 36864
-  (byte*) mode_mcchar::COLORS ← ((byte*)) (word/dword/signed dword) 33792
+  (byte*) mode_mcchar::COLORS ← ((byte*)) (word/dword/signed dword) 55296
   (dword~) mode_mcchar::$0 ← ((dword)) (byte*) mode_mcchar::CHARSET
   (dword~) mode_mcchar::$1 ← (dword~) mode_mcchar::$0 / (dword/signed dword) 65536
   (byte~) mode_mcchar::$2 ← ((byte)) (dword~) mode_mcchar::$1
   *((byte*) DTV_GRAPHICS_VIC_BANK) ← (byte~) mode_mcchar::$2
-  (byte*~) mode_mcchar::$3 ← (byte*) mode_mcchar::COLORS / (word/signed word/dword/signed dword) 1024
-  (word~) mode_mcchar::$4 ← ((word)) (byte*~) mode_mcchar::$3
+  (dword~) mode_mcchar::$3 ← (dword) DTV_COLOR_BANK_DEFAULT / (word/signed word/dword/signed dword) 1024
+  (word~) mode_mcchar::$4 ← ((word)) (dword~) mode_mcchar::$3
   (byte~) mode_mcchar::$5 ← < (word~) mode_mcchar::$4
   *((byte*) DTV_COLOR_BANK_LO) ← (byte~) mode_mcchar::$5
-  (byte*~) mode_mcchar::$6 ← (byte*) mode_mcchar::COLORS / (word/signed word/dword/signed dword) 1024
-  (word~) mode_mcchar::$7 ← ((word)) (byte*~) mode_mcchar::$6
+  (dword~) mode_mcchar::$6 ← (dword) DTV_COLOR_BANK_DEFAULT / (word/signed word/dword/signed dword) 1024
+  (word~) mode_mcchar::$7 ← ((word)) (dword~) mode_mcchar::$6
   (byte~) mode_mcchar::$8 ← > (word~) mode_mcchar::$7
   *((byte*) DTV_COLOR_BANK_HI) ← (byte~) mode_mcchar::$8
   *((byte*) DTV_CONTROL) ← (byte/signed byte/word/signed word/dword/signed dword) 0
@@ -6929,17 +6929,17 @@ menu::@68: scope:[menu]  from menu::@41
 mode_stdchar: scope:[mode_stdchar]  from menu::@21
   (byte*) mode_stdchar::SCREEN#0 ← ((byte*)) (word/dword/signed dword) 32768
   (byte*) mode_stdchar::CHARSET#0 ← ((byte*)) (word/dword/signed dword) 36864
-  (byte*) mode_stdchar::COLORS#0 ← ((byte*)) (word/dword/signed dword) 33792
+  (byte*) mode_stdchar::COLORS#0 ← ((byte*)) (word/dword/signed dword) 55296
   (dword~) mode_stdchar::$0 ← ((dword)) (byte*) mode_stdchar::CHARSET#0
   (dword~) mode_stdchar::$1 ← (dword~) mode_stdchar::$0 / (dword/signed dword) 65536
   (byte~) mode_stdchar::$2 ← ((byte)) (dword~) mode_stdchar::$1
   *((byte*) DTV_GRAPHICS_VIC_BANK#0) ← (byte~) mode_stdchar::$2
-  (byte*~) mode_stdchar::$3 ← (byte*) mode_stdchar::COLORS#0 / (word/signed word/dword/signed dword) 1024
-  (word~) mode_stdchar::$4 ← ((word)) (byte*~) mode_stdchar::$3
+  (dword~) mode_stdchar::$3 ← (dword) DTV_COLOR_BANK_DEFAULT#0 / (word/signed word/dword/signed dword) 1024
+  (word~) mode_stdchar::$4 ← ((word)) (dword~) mode_stdchar::$3
   (byte~) mode_stdchar::$5 ← < (word~) mode_stdchar::$4
   *((byte*) DTV_COLOR_BANK_LO#0) ← (byte~) mode_stdchar::$5
-  (byte*~) mode_stdchar::$6 ← (byte*) mode_stdchar::COLORS#0 / (word/signed word/dword/signed dword) 1024
-  (word~) mode_stdchar::$7 ← ((word)) (byte*~) mode_stdchar::$6
+  (dword~) mode_stdchar::$6 ← (dword) DTV_COLOR_BANK_DEFAULT#0 / (word/signed word/dword/signed dword) 1024
+  (word~) mode_stdchar::$7 ← ((word)) (dword~) mode_stdchar::$6
   (byte~) mode_stdchar::$8 ← > (word~) mode_stdchar::$7
   *((byte*) DTV_COLOR_BANK_HI#0) ← (byte~) mode_stdchar::$8
   *((byte*) DTV_CONTROL#0) ← (byte/signed byte/word/signed word/dword/signed dword) 0
@@ -7032,24 +7032,24 @@ mode_stdchar::@return: scope:[mode_stdchar]  from mode_stdchar::@16 mode_stdchar
   return 
   to:@return
 mode_ecmchar: scope:[mode_ecmchar]  from menu::@23
-  (byte*) mode_ecmchar::ECMCHAR_SCREEN#0 ← ((byte*)) (word/dword/signed dword) 32768
-  (byte*) mode_ecmchar::ECMCHAR_CHARSET#0 ← ((byte*)) (word/dword/signed dword) 36864
-  (byte*) mode_ecmchar::ECMCHAR_COLORS#0 ← ((byte*)) (word/dword/signed dword) 33792
-  (dword~) mode_ecmchar::$0 ← ((dword)) (byte*) mode_ecmchar::ECMCHAR_CHARSET#0
+  (byte*) mode_ecmchar::SCREEN#0 ← ((byte*)) (word/dword/signed dword) 32768
+  (byte*) mode_ecmchar::CHARSET#0 ← ((byte*)) (word/dword/signed dword) 36864
+  (byte*) mode_ecmchar::COLORS#0 ← ((byte*)) (word/dword/signed dword) 55296
+  (dword~) mode_ecmchar::$0 ← ((dword)) (byte*) mode_ecmchar::CHARSET#0
   (dword~) mode_ecmchar::$1 ← (dword~) mode_ecmchar::$0 / (dword/signed dword) 65536
   (byte~) mode_ecmchar::$2 ← ((byte)) (dword~) mode_ecmchar::$1
   *((byte*) DTV_GRAPHICS_VIC_BANK#0) ← (byte~) mode_ecmchar::$2
-  (byte*~) mode_ecmchar::$3 ← (byte*) mode_ecmchar::ECMCHAR_COLORS#0 / (word/signed word/dword/signed dword) 1024
-  (word~) mode_ecmchar::$4 ← ((word)) (byte*~) mode_ecmchar::$3
+  (dword~) mode_ecmchar::$3 ← (dword) DTV_COLOR_BANK_DEFAULT#0 / (word/signed word/dword/signed dword) 1024
+  (word~) mode_ecmchar::$4 ← ((word)) (dword~) mode_ecmchar::$3
   (byte~) mode_ecmchar::$5 ← < (word~) mode_ecmchar::$4
   *((byte*) DTV_COLOR_BANK_LO#0) ← (byte~) mode_ecmchar::$5
-  (byte*~) mode_ecmchar::$6 ← (byte*) mode_ecmchar::ECMCHAR_COLORS#0 / (word/signed word/dword/signed dword) 1024
-  (word~) mode_ecmchar::$7 ← ((word)) (byte*~) mode_ecmchar::$6
+  (dword~) mode_ecmchar::$6 ← (dword) DTV_COLOR_BANK_DEFAULT#0 / (word/signed word/dword/signed dword) 1024
+  (word~) mode_ecmchar::$7 ← ((word)) (dword~) mode_ecmchar::$6
   (byte~) mode_ecmchar::$8 ← > (word~) mode_ecmchar::$7
   *((byte*) DTV_COLOR_BANK_HI#0) ← (byte~) mode_ecmchar::$8
   *((byte*) DTV_CONTROL#0) ← (byte/signed byte/word/signed word/dword/signed dword) 0
   *((byte*) CIA2_PORT_A_DDR#0) ← (byte/signed byte/word/signed word/dword/signed dword) 3
-  (word~) mode_ecmchar::$9 ← ((word)) (byte*) mode_ecmchar::ECMCHAR_CHARSET#0
+  (word~) mode_ecmchar::$9 ← ((word)) (byte*) mode_ecmchar::CHARSET#0
   (word/signed dword/dword~) mode_ecmchar::$10 ← (word~) mode_ecmchar::$9 / (word/signed word/dword/signed dword) 16384
   (byte~) mode_ecmchar::$11 ← ((byte)) (word/signed dword/dword~) mode_ecmchar::$10
   (byte/word/dword~) mode_ecmchar::$12 ← (byte/signed byte/word/signed word/dword/signed dword) 3 ^ (byte~) mode_ecmchar::$11
@@ -7059,10 +7059,10 @@ mode_ecmchar: scope:[mode_ecmchar]  from menu::@23
   (byte/word/dword~) mode_ecmchar::$15 ← (byte~) mode_ecmchar::$14 | (byte/signed byte/word/signed word/dword/signed dword) 3
   *((byte*) VIC_CONTROL#0) ← (byte/word/dword~) mode_ecmchar::$15
   *((byte*) VIC_CONTROL2#0) ← (byte) VIC_CSEL#0
-  (word~) mode_ecmchar::$16 ← ((word)) (byte*) mode_ecmchar::ECMCHAR_SCREEN#0
+  (word~) mode_ecmchar::$16 ← ((word)) (byte*) mode_ecmchar::SCREEN#0
   (word~) mode_ecmchar::$17 ← (word~) mode_ecmchar::$16 & (word/signed word/dword/signed dword) 16383
   (word/signed dword/dword~) mode_ecmchar::$18 ← (word~) mode_ecmchar::$17 / (byte/signed byte/word/signed word/dword/signed dword) 64
-  (word~) mode_ecmchar::$19 ← ((word)) (byte*) mode_ecmchar::ECMCHAR_CHARSET#0
+  (word~) mode_ecmchar::$19 ← ((word)) (byte*) mode_ecmchar::CHARSET#0
   (word~) mode_ecmchar::$20 ← (word~) mode_ecmchar::$19 & (word/signed word/dword/signed dword) 16383
   (word/signed dword/dword~) mode_ecmchar::$21 ← (word~) mode_ecmchar::$20 / (word/signed word/dword/signed dword) 1024
   (word/dword~) mode_ecmchar::$22 ← (word/signed dword/dword~) mode_ecmchar::$18 | (word/signed dword/dword~) mode_ecmchar::$21
@@ -7083,8 +7083,8 @@ mode_ecmchar::@8: scope:[mode_ecmchar]  from mode_ecmchar::@1
   *((byte*) BGCOL2#0) ← (byte/signed byte/word/signed word/dword/signed dword) 2
   *((byte*) BGCOL3#0) ← (byte/signed byte/word/signed word/dword/signed dword) 5
   *((byte*) BGCOL4#0) ← (byte/signed byte/word/signed word/dword/signed dword) 6
-  (byte*) mode_ecmchar::col#0 ← (byte*) mode_ecmchar::ECMCHAR_COLORS#0
-  (byte*) mode_ecmchar::ch#0 ← (byte*) mode_ecmchar::ECMCHAR_SCREEN#0
+  (byte*) mode_ecmchar::col#0 ← (byte*) mode_ecmchar::COLORS#0
+  (byte*) mode_ecmchar::ch#0 ← (byte*) mode_ecmchar::SCREEN#0
   (byte) mode_ecmchar::cy#0 ← (byte/signed byte/word/signed word/dword/signed dword) 0
   to:mode_ecmchar::@2
 mode_ecmchar::@2: scope:[mode_ecmchar]  from mode_ecmchar::@8 mode_ecmchar::@9
@@ -7143,17 +7143,17 @@ mode_ecmchar::@return: scope:[mode_ecmchar]  from mode_ecmchar::@16 mode_ecmchar
 mode_mcchar: scope:[mode_mcchar]  from menu::@25
   (byte*) mode_mcchar::SCREEN#0 ← ((byte*)) (word/dword/signed dword) 32768
   (byte*) mode_mcchar::CHARSET#0 ← ((byte*)) (word/dword/signed dword) 36864
-  (byte*) mode_mcchar::COLORS#0 ← ((byte*)) (word/dword/signed dword) 33792
+  (byte*) mode_mcchar::COLORS#0 ← ((byte*)) (word/dword/signed dword) 55296
   (dword~) mode_mcchar::$0 ← ((dword)) (byte*) mode_mcchar::CHARSET#0
   (dword~) mode_mcchar::$1 ← (dword~) mode_mcchar::$0 / (dword/signed dword) 65536
   (byte~) mode_mcchar::$2 ← ((byte)) (dword~) mode_mcchar::$1
   *((byte*) DTV_GRAPHICS_VIC_BANK#0) ← (byte~) mode_mcchar::$2
-  (byte*~) mode_mcchar::$3 ← (byte*) mode_mcchar::COLORS#0 / (word/signed word/dword/signed dword) 1024
-  (word~) mode_mcchar::$4 ← ((word)) (byte*~) mode_mcchar::$3
+  (dword~) mode_mcchar::$3 ← (dword) DTV_COLOR_BANK_DEFAULT#0 / (word/signed word/dword/signed dword) 1024
+  (word~) mode_mcchar::$4 ← ((word)) (dword~) mode_mcchar::$3
   (byte~) mode_mcchar::$5 ← < (word~) mode_mcchar::$4
   *((byte*) DTV_COLOR_BANK_LO#0) ← (byte~) mode_mcchar::$5
-  (byte*~) mode_mcchar::$6 ← (byte*) mode_mcchar::COLORS#0 / (word/signed word/dword/signed dword) 1024
-  (word~) mode_mcchar::$7 ← ((word)) (byte*~) mode_mcchar::$6
+  (dword~) mode_mcchar::$6 ← (dword) DTV_COLOR_BANK_DEFAULT#0 / (word/signed word/dword/signed dword) 1024
+  (word~) mode_mcchar::$7 ← ((word)) (dword~) mode_mcchar::$6
   (byte~) mode_mcchar::$8 ← > (word~) mode_mcchar::$7
   *((byte*) DTV_COLOR_BANK_HI#0) ← (byte~) mode_mcchar::$8
   *((byte*) DTV_CONTROL#0) ← (byte/signed byte/word/signed word/dword/signed dword) 0
@@ -9019,7 +9019,7 @@ SYMBOL TABLE SSA
 (byte~) mode_ecmchar::$27
 (byte~) mode_ecmchar::$28
 (byte~) mode_ecmchar::$29
-(byte*~) mode_ecmchar::$3
+(dword~) mode_ecmchar::$3
 (byte~) mode_ecmchar::$30
 (boolean~) mode_ecmchar::$31
 (boolean~) mode_ecmchar::$32
@@ -9028,7 +9028,7 @@ SYMBOL TABLE SSA
 (boolean~) mode_ecmchar::$35
 (word~) mode_ecmchar::$4
 (byte~) mode_ecmchar::$5
-(byte*~) mode_ecmchar::$6
+(dword~) mode_ecmchar::$6
 (word~) mode_ecmchar::$7
 (byte~) mode_ecmchar::$8
 (word~) mode_ecmchar::$9
@@ -9042,12 +9042,12 @@ SYMBOL TABLE SSA
 (label) mode_ecmchar::@8
 (label) mode_ecmchar::@9
 (label) mode_ecmchar::@return
-(byte*) mode_ecmchar::ECMCHAR_CHARSET
-(byte*) mode_ecmchar::ECMCHAR_CHARSET#0
-(byte*) mode_ecmchar::ECMCHAR_COLORS
-(byte*) mode_ecmchar::ECMCHAR_COLORS#0
-(byte*) mode_ecmchar::ECMCHAR_SCREEN
-(byte*) mode_ecmchar::ECMCHAR_SCREEN#0
+(byte*) mode_ecmchar::CHARSET
+(byte*) mode_ecmchar::CHARSET#0
+(byte*) mode_ecmchar::COLORS
+(byte*) mode_ecmchar::COLORS#0
+(byte*) mode_ecmchar::SCREEN
+(byte*) mode_ecmchar::SCREEN#0
 (byte*) mode_ecmchar::ch
 (byte*) mode_ecmchar::ch#0
 (byte*) mode_ecmchar::ch#1
@@ -9334,7 +9334,7 @@ SYMBOL TABLE SSA
 (byte~) mode_mcchar::$27
 (byte~) mode_mcchar::$28
 (byte~) mode_mcchar::$29
-(byte*~) mode_mcchar::$3
+(dword~) mode_mcchar::$3
 (byte~) mode_mcchar::$30
 (boolean~) mode_mcchar::$31
 (boolean~) mode_mcchar::$32
@@ -9343,7 +9343,7 @@ SYMBOL TABLE SSA
 (boolean~) mode_mcchar::$35
 (word~) mode_mcchar::$4
 (byte~) mode_mcchar::$5
-(byte*~) mode_mcchar::$6
+(dword~) mode_mcchar::$6
 (word~) mode_mcchar::$7
 (byte~) mode_mcchar::$8
 (word~) mode_mcchar::$9
@@ -9632,7 +9632,7 @@ SYMBOL TABLE SSA
 (byte~) mode_stdchar::$27
 (byte~) mode_stdchar::$28
 (byte~) mode_stdchar::$29
-(byte*~) mode_stdchar::$3
+(dword~) mode_stdchar::$3
 (boolean~) mode_stdchar::$30
 (boolean~) mode_stdchar::$31
 (byte~) mode_stdchar::$32
@@ -9640,7 +9640,7 @@ SYMBOL TABLE SSA
 (boolean~) mode_stdchar::$34
 (word~) mode_stdchar::$4
 (byte~) mode_stdchar::$5
-(byte*~) mode_stdchar::$6
+(dword~) mode_stdchar::$6
 (word~) mode_stdchar::$7
 (byte~) mode_stdchar::$8
 (word~) mode_stdchar::$9
@@ -10337,8 +10337,8 @@ Alias (byte) mode_stdchar::cy#2 = (byte) mode_stdchar::cy#3
 Alias (byte*) mode_stdchar::col#1 = (byte*) mode_stdchar::col#4 
 Alias (byte*) mode_stdchar::ch#1 = (byte*) mode_stdchar::ch#4 
 Alias (byte) keyboard_key_pressed::return#13 = (byte) keyboard_key_pressed::return#36 
-Alias (byte*) mode_ecmchar::ECMCHAR_COLORS#0 = (byte*) mode_ecmchar::col#0 
-Alias (byte*) mode_ecmchar::ECMCHAR_SCREEN#0 = (byte*) mode_ecmchar::ch#0 
+Alias (byte*) mode_ecmchar::COLORS#0 = (byte*) mode_ecmchar::col#0 
+Alias (byte*) mode_ecmchar::SCREEN#0 = (byte*) mode_ecmchar::ch#0 
 Alias (byte) mode_ecmchar::cy#2 = (byte) mode_ecmchar::cy#3 
 Alias (byte*) mode_ecmchar::col#1 = (byte*) mode_ecmchar::col#4 
 Alias (byte*) mode_ecmchar::ch#1 = (byte*) mode_ecmchar::ch#4 
@@ -10924,19 +10924,19 @@ Constant (const byte*) menu::CHARSET#0 = ((byte*))38912
 Constant (const byte) menu::i#0 = 0
 Constant (const byte*) mode_stdchar::SCREEN#0 = ((byte*))32768
 Constant (const byte*) mode_stdchar::CHARSET#0 = ((byte*))36864
-Constant (const byte*) mode_stdchar::COLORS#0 = ((byte*))33792
+Constant (const byte*) mode_stdchar::COLORS#0 = ((byte*))55296
 Constant (const byte) mode_stdchar::i#0 = 0
 Constant (const byte) mode_stdchar::cy#0 = 0
 Constant (const byte) mode_stdchar::cx#0 = 0
-Constant (const byte*) mode_ecmchar::ECMCHAR_SCREEN#0 = ((byte*))32768
-Constant (const byte*) mode_ecmchar::ECMCHAR_CHARSET#0 = ((byte*))36864
-Constant (const byte*) mode_ecmchar::ECMCHAR_COLORS#0 = ((byte*))33792
+Constant (const byte*) mode_ecmchar::SCREEN#0 = ((byte*))32768
+Constant (const byte*) mode_ecmchar::CHARSET#0 = ((byte*))36864
+Constant (const byte*) mode_ecmchar::COLORS#0 = ((byte*))55296
 Constant (const byte) mode_ecmchar::i#0 = 0
 Constant (const byte) mode_ecmchar::cy#0 = 0
 Constant (const byte) mode_ecmchar::cx#0 = 0
 Constant (const byte*) mode_mcchar::SCREEN#0 = ((byte*))32768
 Constant (const byte*) mode_mcchar::CHARSET#0 = ((byte*))36864
-Constant (const byte*) mode_mcchar::COLORS#0 = ((byte*))33792
+Constant (const byte*) mode_mcchar::COLORS#0 = ((byte*))55296
 Constant (const byte) mode_mcchar::i#0 = 0
 Constant (const byte) mode_mcchar::cy#0 = 0
 Constant (const byte) mode_mcchar::cx#0 = 0
@@ -11032,24 +11032,24 @@ Constant (const byte) keyboard_key_pressed::key#8 = KEY_C#0
 Constant (const byte) keyboard_key_pressed::key#9 = KEY_D#0
 Constant (const byte) keyboard_key_pressed::key#10 = KEY_E#0
 Constant (const dword) mode_stdchar::$0 = ((dword))mode_stdchar::CHARSET#0
-Constant (const byte*) mode_stdchar::$3 = mode_stdchar::COLORS#0/1024
-Constant (const byte*) mode_stdchar::$6 = mode_stdchar::COLORS#0/1024
+Constant (const dword) mode_stdchar::$3 = DTV_COLOR_BANK_DEFAULT#0/1024
+Constant (const dword) mode_stdchar::$6 = DTV_COLOR_BANK_DEFAULT#0/1024
 Constant (const word) mode_stdchar::$9 = ((word))mode_stdchar::CHARSET#0
 Constant (const byte) mode_stdchar::$13 = VIC_DEN#0|VIC_RSEL#0
 Constant (const word) mode_stdchar::$15 = ((word))mode_stdchar::SCREEN#0
 Constant (const word) mode_stdchar::$18 = ((word))mode_stdchar::CHARSET#0
 Constant (const byte) keyboard_key_pressed::key#11 = KEY_SPACE#0
-Constant (const dword) mode_ecmchar::$0 = ((dword))mode_ecmchar::ECMCHAR_CHARSET#0
-Constant (const byte*) mode_ecmchar::$3 = mode_ecmchar::ECMCHAR_COLORS#0/1024
-Constant (const byte*) mode_ecmchar::$6 = mode_ecmchar::ECMCHAR_COLORS#0/1024
-Constant (const word) mode_ecmchar::$9 = ((word))mode_ecmchar::ECMCHAR_CHARSET#0
+Constant (const dword) mode_ecmchar::$0 = ((dword))mode_ecmchar::CHARSET#0
+Constant (const dword) mode_ecmchar::$3 = DTV_COLOR_BANK_DEFAULT#0/1024
+Constant (const dword) mode_ecmchar::$6 = DTV_COLOR_BANK_DEFAULT#0/1024
+Constant (const word) mode_ecmchar::$9 = ((word))mode_ecmchar::CHARSET#0
 Constant (const byte) mode_ecmchar::$13 = VIC_DEN#0|VIC_RSEL#0
-Constant (const word) mode_ecmchar::$16 = ((word))mode_ecmchar::ECMCHAR_SCREEN#0
-Constant (const word) mode_ecmchar::$19 = ((word))mode_ecmchar::ECMCHAR_CHARSET#0
+Constant (const word) mode_ecmchar::$16 = ((word))mode_ecmchar::SCREEN#0
+Constant (const word) mode_ecmchar::$19 = ((word))mode_ecmchar::CHARSET#0
 Constant (const byte) keyboard_key_pressed::key#12 = KEY_SPACE#0
 Constant (const dword) mode_mcchar::$0 = ((dword))mode_mcchar::CHARSET#0
-Constant (const byte*) mode_mcchar::$3 = mode_mcchar::COLORS#0/1024
-Constant (const byte*) mode_mcchar::$6 = mode_mcchar::COLORS#0/1024
+Constant (const dword) mode_mcchar::$3 = DTV_COLOR_BANK_DEFAULT#0/1024
+Constant (const dword) mode_mcchar::$6 = DTV_COLOR_BANK_DEFAULT#0/1024
 Constant (const word) mode_mcchar::$9 = ((word))mode_mcchar::CHARSET#0
 Constant (const byte) mode_mcchar::$13 = VIC_DEN#0|VIC_RSEL#0
 Constant (const byte) mode_mcchar::$15 = VIC_CSEL#0|VIC_MCM#0
@@ -11691,23 +11691,23 @@ Constant inlined mode_hicolecmchar::$8 = >((word))(const byte*) mode_hicolecmcha
 Constant inlined mode_hicolecmchar::$9 = ((word))(const byte*) mode_hicolecmchar::CHARSET#0
 Constant inlined mode_hicolecmchar::$6 = (const byte*) mode_hicolecmchar::COLORS#0/(word/signed word/dword/signed dword) 1024
 Constant inlined mode_hicolecmchar::$7 = ((word))(const byte*) mode_hicolecmchar::COLORS#0/(word/signed word/dword/signed dword) 1024
-Constant inlined mode_mcchar::$6 = (const byte*) mode_mcchar::COLORS#0/(word/signed word/dword/signed dword) 1024
+Constant inlined mode_mcchar::$6 = (const dword) DTV_COLOR_BANK_DEFAULT#0/(word/signed word/dword/signed dword) 1024
 Constant inlined mode_twoplanebitmap::$5 = <(const byte*) mode_twoplanebitmap::PLANEA#0
-Constant inlined mode_mcchar::$7 = ((word))(const byte*) mode_mcchar::COLORS#0/(word/signed word/dword/signed dword) 1024
+Constant inlined mode_mcchar::$7 = ((word))(const dword) DTV_COLOR_BANK_DEFAULT#0/(word/signed word/dword/signed dword) 1024
 Constant inlined mode_twoplanebitmap::$6 = >(const byte*) mode_twoplanebitmap::PLANEA#0
-Constant inlined mode_mcchar::$4 = ((word))(const byte*) mode_mcchar::COLORS#0/(word/signed word/dword/signed dword) 1024
+Constant inlined mode_mcchar::$4 = ((word))(const dword) DTV_COLOR_BANK_DEFAULT#0/(word/signed word/dword/signed dword) 1024
 Constant inlined mode_twoplanebitmap::$7 = <(const byte*) mode_twoplanebitmap::PLANEB#0
-Constant inlined mode_mcchar::$5 = <((word))(const byte*) mode_mcchar::COLORS#0/(word/signed word/dword/signed dword) 1024
+Constant inlined mode_mcchar::$5 = <((word))(const dword) DTV_COLOR_BANK_DEFAULT#0/(word/signed word/dword/signed dword) 1024
 Constant inlined mode_twoplanebitmap::$8 = >(const byte*) mode_twoplanebitmap::PLANEB#0
 Constant inlined mode_twoplanebitmap::$1 = (const byte) VIC_ECM#0|(const byte) VIC_BMM#0
 Constant inlined mode_twoplanebitmap::$2 = (const byte) VIC_ECM#0|(const byte) VIC_BMM#0|(const byte) VIC_DEN#0
-Constant inlined mode_mcchar::$8 = >((word))(const byte*) mode_mcchar::COLORS#0/(word/signed word/dword/signed dword) 1024
+Constant inlined mode_mcchar::$8 = >((word))(const dword) DTV_COLOR_BANK_DEFAULT#0/(word/signed word/dword/signed dword) 1024
 Constant inlined mode_twoplanebitmap::$3 = (const byte) VIC_ECM#0|(const byte) VIC_BMM#0|(const byte) VIC_DEN#0|(const byte) VIC_RSEL#0
 Constant inlined mode_mcchar::$9 = ((word))(const byte*) mode_mcchar::CHARSET#0
 Constant inlined mode_twoplanebitmap::$4 = (const byte) VIC_ECM#0|(const byte) VIC_BMM#0|(const byte) VIC_DEN#0|(const byte) VIC_RSEL#0|(byte/signed byte/word/signed word/dword/signed dword) 3
 Constant inlined mode_twoplanebitmap::$0 = (const byte) DTV_CONTROL_HIGHCOLOR_ON#0|(const byte) DTV_CONTROL_LINEAR_ADDRESSING_ON#0
 Constant inlined mode_mcchar::$2 = ((byte))((dword))(const byte*) mode_mcchar::CHARSET#0/(dword/signed dword) 65536
-Constant inlined mode_mcchar::$3 = (const byte*) mode_mcchar::COLORS#0/(word/signed word/dword/signed dword) 1024
+Constant inlined mode_mcchar::$3 = (const dword) DTV_COLOR_BANK_DEFAULT#0/(word/signed word/dword/signed dword) 1024
 Constant inlined mode_mcchar::$0 = ((dword))(const byte*) mode_mcchar::CHARSET#0
 Constant inlined mode_mcchar::$1 = ((dword))(const byte*) mode_mcchar::CHARSET#0/(dword/signed dword) 65536
 Constant inlined mode_hicolmcchar::$8 = >((word))(const byte*) mode_hicolmcchar::COLORS#0/(word/signed word/dword/signed dword) 1024
@@ -11769,14 +11769,14 @@ Constant inlined mode_hicolecmchar::$21 = ((word))(const byte*) mode_hicolecmcha
 Constant inlined mode_stdchar::$1 = ((dword))(const byte*) mode_stdchar::CHARSET#0/(dword/signed dword) 65536
 Constant inlined mode_stdchar::$2 = ((byte))((dword))(const byte*) mode_stdchar::CHARSET#0/(dword/signed dword) 65536
 Constant inlined mode_stdchar::$0 = ((dword))(const byte*) mode_stdchar::CHARSET#0
-Constant inlined mode_stdchar::$5 = <((word))(const byte*) mode_stdchar::COLORS#0/(word/signed word/dword/signed dword) 1024
+Constant inlined mode_stdchar::$5 = <((word))(const dword) DTV_COLOR_BANK_DEFAULT#0/(word/signed word/dword/signed dword) 1024
 Constant inlined print_cls::sc#0 = (const byte*) menu::SCREEN#0
-Constant inlined mode_stdchar::$6 = (const byte*) mode_stdchar::COLORS#0/(word/signed word/dword/signed dword) 1024
-Constant inlined mode_stdchar::$3 = (const byte*) mode_stdchar::COLORS#0/(word/signed word/dword/signed dword) 1024
-Constant inlined mode_stdchar::$4 = ((word))(const byte*) mode_stdchar::COLORS#0/(word/signed word/dword/signed dword) 1024
+Constant inlined mode_stdchar::$6 = (const dword) DTV_COLOR_BANK_DEFAULT#0/(word/signed word/dword/signed dword) 1024
+Constant inlined mode_stdchar::$3 = (const dword) DTV_COLOR_BANK_DEFAULT#0/(word/signed word/dword/signed dword) 1024
+Constant inlined mode_stdchar::$4 = ((word))(const dword) DTV_COLOR_BANK_DEFAULT#0/(word/signed word/dword/signed dword) 1024
 Constant inlined mode_stdchar::$9 = ((word))(const byte*) mode_stdchar::CHARSET#0
-Constant inlined mode_stdchar::$7 = ((word))(const byte*) mode_stdchar::COLORS#0/(word/signed word/dword/signed dword) 1024
-Constant inlined mode_stdchar::$8 = >((word))(const byte*) mode_stdchar::COLORS#0/(word/signed word/dword/signed dword) 1024
+Constant inlined mode_stdchar::$7 = ((word))(const dword) DTV_COLOR_BANK_DEFAULT#0/(word/signed word/dword/signed dword) 1024
+Constant inlined mode_stdchar::$8 = >((word))(const dword) DTV_COLOR_BANK_DEFAULT#0/(word/signed word/dword/signed dword) 1024
 Constant inlined mode_twoplanebitmap::$12 = >(const byte*) mode_twoplanebitmap::COLORS#0/(word/signed word/dword/signed dword) 1024
 Constant inlined mode_twoplanebitmap::$11 = (const byte*) mode_twoplanebitmap::COLORS#0/(word/signed word/dword/signed dword) 1024
 Constant inlined mode_twoplanebitmap::$10 = <(const byte*) mode_twoplanebitmap::COLORS#0/(word/signed word/dword/signed dword) 1024
@@ -11962,39 +11962,39 @@ Constant inlined mode_sixsfred::$2 = (const byte) VIC_ECM#0|(const byte) VIC_BMM
 Constant inlined mode_sixsfred::$5 = (const byte) VIC_MCM#0|(const byte) VIC_CSEL#0
 Constant inlined mode_sixsfred::$4 = (const byte) VIC_ECM#0|(const byte) VIC_BMM#0|(const byte) VIC_DEN#0|(const byte) VIC_RSEL#0|(byte/signed byte/word/signed word/dword/signed dword) 3
 Constant inlined mode_sixsfred::$7 = >(const byte*) mode_sixsfred::PLANEA#0
-Constant inlined mode_ecmchar::$23 = ((byte))((word))(const byte*) mode_ecmchar::ECMCHAR_SCREEN#0&(word/signed word/dword/signed dword) 16383/(byte/signed byte/word/signed word/dword/signed dword) 64|((word))(const byte*) mode_ecmchar::ECMCHAR_CHARSET#0&(word/signed word/dword/signed dword) 16383/(word/signed word/dword/signed dword) 1024
+Constant inlined mode_ecmchar::$23 = ((byte))((word))(const byte*) mode_ecmchar::SCREEN#0&(word/signed word/dword/signed dword) 16383/(byte/signed byte/word/signed word/dword/signed dword) 64|((word))(const byte*) mode_ecmchar::CHARSET#0&(word/signed word/dword/signed dword) 16383/(word/signed word/dword/signed dword) 1024
 Constant inlined mode_sixsfred::$6 = <(const byte*) mode_sixsfred::PLANEA#0
 Constant inlined mode_stdchar::cx#0 = (byte/signed byte/word/signed word/dword/signed dword) 0
-Constant inlined mode_ecmchar::$22 = ((word))(const byte*) mode_ecmchar::ECMCHAR_SCREEN#0&(word/signed word/dword/signed dword) 16383/(byte/signed byte/word/signed word/dword/signed dword) 64|((word))(const byte*) mode_ecmchar::ECMCHAR_CHARSET#0&(word/signed word/dword/signed dword) 16383/(word/signed word/dword/signed dword) 1024
+Constant inlined mode_ecmchar::$22 = ((word))(const byte*) mode_ecmchar::SCREEN#0&(word/signed word/dword/signed dword) 16383/(byte/signed byte/word/signed word/dword/signed dword) 64|((word))(const byte*) mode_ecmchar::CHARSET#0&(word/signed word/dword/signed dword) 16383/(word/signed word/dword/signed dword) 1024
 Constant inlined mode_sixsfred::$9 = >(const byte*) mode_sixsfred::PLANEB#0
-Constant inlined mode_ecmchar::$21 = ((word))(const byte*) mode_ecmchar::ECMCHAR_CHARSET#0&(word/signed word/dword/signed dword) 16383/(word/signed word/dword/signed dword) 1024
+Constant inlined mode_ecmchar::$21 = ((word))(const byte*) mode_ecmchar::CHARSET#0&(word/signed word/dword/signed dword) 16383/(word/signed word/dword/signed dword) 1024
 Constant inlined mode_sixsfred::$8 = <(const byte*) mode_sixsfred::PLANEB#0
-Constant inlined mode_ecmchar::$20 = ((word))(const byte*) mode_ecmchar::ECMCHAR_CHARSET#0&(word/signed word/dword/signed dword) 16383
-Constant inlined mode_ecmchar::$2 = ((byte))((dword))(const byte*) mode_ecmchar::ECMCHAR_CHARSET#0/(dword/signed dword) 65536
-Constant inlined mode_ecmchar::$1 = ((dword))(const byte*) mode_ecmchar::ECMCHAR_CHARSET#0/(dword/signed dword) 65536
-Constant inlined mode_ecmchar::$0 = ((dword))(const byte*) mode_ecmchar::ECMCHAR_CHARSET#0
-Constant inlined mode_ecmchar::$19 = ((word))(const byte*) mode_ecmchar::ECMCHAR_CHARSET#0
-Constant inlined mode_ecmchar::$18 = ((word))(const byte*) mode_ecmchar::ECMCHAR_SCREEN#0&(word/signed word/dword/signed dword) 16383/(byte/signed byte/word/signed word/dword/signed dword) 64
-Constant inlined mode_ecmchar::$17 = ((word))(const byte*) mode_ecmchar::ECMCHAR_SCREEN#0&(word/signed word/dword/signed dword) 16383
+Constant inlined mode_ecmchar::$20 = ((word))(const byte*) mode_ecmchar::CHARSET#0&(word/signed word/dword/signed dword) 16383
+Constant inlined mode_ecmchar::$2 = ((byte))((dword))(const byte*) mode_ecmchar::CHARSET#0/(dword/signed dword) 65536
+Constant inlined mode_ecmchar::$1 = ((dword))(const byte*) mode_ecmchar::CHARSET#0/(dword/signed dword) 65536
+Constant inlined mode_ecmchar::$0 = ((dword))(const byte*) mode_ecmchar::CHARSET#0
+Constant inlined mode_ecmchar::$19 = ((word))(const byte*) mode_ecmchar::CHARSET#0
+Constant inlined mode_ecmchar::$18 = ((word))(const byte*) mode_ecmchar::SCREEN#0&(word/signed word/dword/signed dword) 16383/(byte/signed byte/word/signed word/dword/signed dword) 64
+Constant inlined mode_ecmchar::$17 = ((word))(const byte*) mode_ecmchar::SCREEN#0&(word/signed word/dword/signed dword) 16383
 Constant inlined print_set_screen::screen#0 = (const byte*) menu::SCREEN#0
-Constant inlined mode_ecmchar::$16 = ((word))(const byte*) mode_ecmchar::ECMCHAR_SCREEN#0
-Constant inlined mode_ecmchar::$9 = ((word))(const byte*) mode_ecmchar::ECMCHAR_CHARSET#0
-Constant inlined mode_ecmchar::$8 = >((word))(const byte*) mode_ecmchar::ECMCHAR_COLORS#0/(word/signed word/dword/signed dword) 1024
-Constant inlined mode_ecmchar::$7 = ((word))(const byte*) mode_ecmchar::ECMCHAR_COLORS#0/(word/signed word/dword/signed dword) 1024
+Constant inlined mode_ecmchar::$16 = ((word))(const byte*) mode_ecmchar::SCREEN#0
+Constant inlined mode_ecmchar::$9 = ((word))(const byte*) mode_ecmchar::CHARSET#0
+Constant inlined mode_ecmchar::$8 = >((word))(const dword) DTV_COLOR_BANK_DEFAULT#0/(word/signed word/dword/signed dword) 1024
+Constant inlined mode_ecmchar::$7 = ((word))(const dword) DTV_COLOR_BANK_DEFAULT#0/(word/signed word/dword/signed dword) 1024
 Constant inlined mode_twoplanebitmap::i#0 = (byte/signed byte/word/signed word/dword/signed dword) 0
-Constant inlined mode_ecmchar::$6 = (const byte*) mode_ecmchar::ECMCHAR_COLORS#0/(word/signed word/dword/signed dword) 1024
-Constant inlined mode_ecmchar::$5 = <((word))(const byte*) mode_ecmchar::ECMCHAR_COLORS#0/(word/signed word/dword/signed dword) 1024
-Constant inlined mode_ecmchar::$4 = ((word))(const byte*) mode_ecmchar::ECMCHAR_COLORS#0/(word/signed word/dword/signed dword) 1024
-Constant inlined mode_ecmchar::$3 = (const byte*) mode_ecmchar::ECMCHAR_COLORS#0/(word/signed word/dword/signed dword) 1024
+Constant inlined mode_ecmchar::$6 = (const dword) DTV_COLOR_BANK_DEFAULT#0/(word/signed word/dword/signed dword) 1024
+Constant inlined mode_ecmchar::$5 = <((word))(const dword) DTV_COLOR_BANK_DEFAULT#0/(word/signed word/dword/signed dword) 1024
+Constant inlined mode_ecmchar::$4 = ((word))(const dword) DTV_COLOR_BANK_DEFAULT#0/(word/signed word/dword/signed dword) 1024
+Constant inlined mode_ecmchar::$3 = (const dword) DTV_COLOR_BANK_DEFAULT#0/(word/signed word/dword/signed dword) 1024
 Constant inlined mode_hicolmcchar::cx#0 = (byte/signed byte/word/signed word/dword/signed dword) 0
 Constant inlined mode_8bppchunkybmm::x#0 = (byte/signed byte/word/signed word/dword/signed dword) 0
 Constant inlined mode_sixsfred::cx#0 = (byte/signed byte/word/signed word/dword/signed dword) 0
 Constant inlined mode_ecmchar::$15 = (const byte) VIC_DEN#0|(const byte) VIC_RSEL#0|(const byte) VIC_ECM#0|(byte/signed byte/word/signed word/dword/signed dword) 3
 Constant inlined mode_ecmchar::$14 = (const byte) VIC_DEN#0|(const byte) VIC_RSEL#0|(const byte) VIC_ECM#0
 Constant inlined mode_ecmchar::$13 = (const byte) VIC_DEN#0|(const byte) VIC_RSEL#0
-Constant inlined mode_ecmchar::$12 = (byte/signed byte/word/signed word/dword/signed dword) 3^((byte))((word))(const byte*) mode_ecmchar::ECMCHAR_CHARSET#0/(word/signed word/dword/signed dword) 16384
-Constant inlined mode_ecmchar::$11 = ((byte))((word))(const byte*) mode_ecmchar::ECMCHAR_CHARSET#0/(word/signed word/dword/signed dword) 16384
-Constant inlined mode_ecmchar::$10 = ((word))(const byte*) mode_ecmchar::ECMCHAR_CHARSET#0/(word/signed word/dword/signed dword) 16384
+Constant inlined mode_ecmchar::$12 = (byte/signed byte/word/signed word/dword/signed dword) 3^((byte))((word))(const byte*) mode_ecmchar::CHARSET#0/(word/signed word/dword/signed dword) 16384
+Constant inlined mode_ecmchar::$11 = ((byte))((word))(const byte*) mode_ecmchar::CHARSET#0/(word/signed word/dword/signed dword) 16384
+Constant inlined mode_ecmchar::$10 = ((word))(const byte*) mode_ecmchar::CHARSET#0/(word/signed word/dword/signed dword) 16384
 Constant inlined mode_stdchar::cy#0 = (byte/signed byte/word/signed word/dword/signed dword) 0
 Succesful SSA optimization Pass2ConstantInlining
 Block Sequence Planned @begin @32 @end main main::@1 main::@return main::@2 menu menu::@1 menu::@2 menu::@18 menu::@44 menu::@45 menu::@3 menu::@return menu::@4 menu::@47 menu::@21 menu::@6 menu::@48 menu::@23 menu::@7 menu::@50 menu::@25 menu::@8 menu::@52 menu::@27 menu::@9 menu::@54 menu::@29 menu::@10 menu::@56 menu::@31 menu::@11 menu::@58 menu::@33 menu::@12 menu::@60 menu::@35 menu::@13 menu::@62 menu::@37 menu::@14 menu::@64 menu::@39 menu::@15 menu::@66 menu::@41 mode_8bppchunkybmm mode_8bppchunkybmm::@1 mode_8bppchunkybmm::@9 mode_8bppchunkybmm::@2 mode_8bppchunkybmm::@3 mode_8bppchunkybmm::@10 mode_8bppchunkybmm::@19 mode_8bppchunkybmm::@4 mode_8bppchunkybmm::@11 mode_8bppchunkybmm::@12 mode_8bppchunkybmm::@5 mode_8bppchunkybmm::@return mode_8bppchunkybmm::@6 mode_8bppchunkybmm::@21 keyboard_key_pressed keyboard_key_pressed::@2 keyboard_key_pressed::@return keyboard_matrix_read keyboard_matrix_read::@return dtvSetCpuBankSegment1 dtvSetCpuBankSegment1::@return mode_8bpppixelcell mode_8bpppixelcell::@1 mode_8bpppixelcell::@2 mode_8bpppixelcell::@3 mode_8bpppixelcell::@13 mode_8bpppixelcell::@14 mode_8bpppixelcell::@4 mode_8bpppixelcell::@5 mode_8bpppixelcell::@6 mode_8bpppixelcell::@15 mode_8bpppixelcell::@7 mode_8bpppixelcell::@16 mode_8bpppixelcell::@17 mode_8bpppixelcell::@18 mode_8bpppixelcell::@8 mode_8bpppixelcell::@return mode_8bpppixelcell::@9 mode_8bpppixelcell::@24 mode_sixsfred mode_sixsfred::@1 mode_sixsfred::@12 mode_sixsfred::@2 mode_sixsfred::@3 mode_sixsfred::@13 mode_sixsfred::@4 mode_sixsfred::@5 mode_sixsfred::@15 mode_sixsfred::@6 mode_sixsfred::@7 mode_sixsfred::@17 mode_sixsfred::@8 mode_sixsfred::@return mode_sixsfred::@9 mode_sixsfred::@24 mode_twoplanebitmap mode_twoplanebitmap::@1 mode_twoplanebitmap::@14 mode_twoplanebitmap::@2 mode_twoplanebitmap::@3 mode_twoplanebitmap::@15 mode_twoplanebitmap::@4 mode_twoplanebitmap::@5 mode_twoplanebitmap::@17 mode_twoplanebitmap::@7 mode_twoplanebitmap::@19 mode_twoplanebitmap::@8 mode_twoplanebitmap::@9 mode_twoplanebitmap::@21 mode_twoplanebitmap::@10 mode_twoplanebitmap::@return mode_twoplanebitmap::@11 mode_twoplanebitmap::@28 mode_twoplanebitmap::@6 mode_sixsfred2 mode_sixsfred2::@1 mode_sixsfred2::@12 mode_sixsfred2::@2 mode_sixsfred2::@3 mode_sixsfred2::@13 mode_sixsfred2::@4 mode_sixsfred2::@5 mode_sixsfred2::@15 mode_sixsfred2::@6 mode_sixsfred2::@7 mode_sixsfred2::@17 mode_sixsfred2::@8 mode_sixsfred2::@return mode_sixsfred2::@9 mode_sixsfred2::@24 mode_hicolmcchar mode_hicolmcchar::@1 mode_hicolmcchar::@8 mode_hicolmcchar::@2 mode_hicolmcchar::@3 mode_hicolmcchar::@9 mode_hicolmcchar::@4 mode_hicolmcchar::@return mode_hicolmcchar::@5 mode_hicolmcchar::@16 mode_hicolecmchar mode_hicolecmchar::@1 mode_hicolecmchar::@8 mode_hicolecmchar::@2 mode_hicolecmchar::@3 mode_hicolecmchar::@9 mode_hicolecmchar::@4 mode_hicolecmchar::@return mode_hicolecmchar::@5 mode_hicolecmchar::@16 mode_hicolstdchar mode_hicolstdchar::@1 mode_hicolstdchar::@8 mode_hicolstdchar::@2 mode_hicolstdchar::@3 mode_hicolstdchar::@9 mode_hicolstdchar::@4 mode_hicolstdchar::@return mode_hicolstdchar::@5 mode_hicolstdchar::@16 mode_mcchar mode_mcchar::@1 mode_mcchar::@8 mode_mcchar::@2 mode_mcchar::@3 mode_mcchar::@9 mode_mcchar::@4 mode_mcchar::@return mode_mcchar::@5 mode_mcchar::@16 mode_ecmchar mode_ecmchar::@1 mode_ecmchar::@8 mode_ecmchar::@2 mode_ecmchar::@3 mode_ecmchar::@9 mode_ecmchar::@4 mode_ecmchar::@return mode_ecmchar::@5 mode_ecmchar::@16 mode_stdchar mode_stdchar::@1 mode_stdchar::@8 mode_stdchar::@2 mode_stdchar::@3 mode_stdchar::@9 mode_stdchar::@4 mode_stdchar::@return mode_stdchar::@5 mode_stdchar::@16 print_str_lines print_str_lines::@1 print_str_lines::@return print_str_lines::@4 print_str_lines::@8 print_str_lines::@5 print_str_lines::@9 print_ln print_ln::@1 print_ln::@return print_cls print_cls::@1 print_cls::@return print_set_screen print_set_screen::@return 
@@ -13326,8 +13326,8 @@ mode_hicolstdchar::@16: scope:[mode_hicolstdchar]  from mode_hicolstdchar::@5
   to:mode_hicolstdchar::@return
 mode_mcchar: scope:[mode_mcchar]  from menu::@25
   [522] *((const byte*) DTV_GRAPHICS_VIC_BANK#0) ← ((byte))((dword))(const byte*) mode_mcchar::CHARSET#0/(dword/signed dword) 65536 [ ] ( main:2::menu:9::mode_mcchar:56 [ ] )
-  [523] *((const byte*) DTV_COLOR_BANK_LO#0) ← <((word))(const byte*) mode_mcchar::COLORS#0/(word/signed word/dword/signed dword) 1024 [ ] ( main:2::menu:9::mode_mcchar:56 [ ] )
-  [524] *((const byte*) DTV_COLOR_BANK_HI#0) ← >((word))(const byte*) mode_mcchar::COLORS#0/(word/signed word/dword/signed dword) 1024 [ ] ( main:2::menu:9::mode_mcchar:56 [ ] )
+  [523] *((const byte*) DTV_COLOR_BANK_LO#0) ← <((word))(const dword) DTV_COLOR_BANK_DEFAULT#0/(word/signed word/dword/signed dword) 1024 [ ] ( main:2::menu:9::mode_mcchar:56 [ ] )
+  [524] *((const byte*) DTV_COLOR_BANK_HI#0) ← >((word))(const dword) DTV_COLOR_BANK_DEFAULT#0/(word/signed word/dword/signed dword) 1024 [ ] ( main:2::menu:9::mode_mcchar:56 [ ] )
   [525] *((const byte*) DTV_CONTROL#0) ← (byte/signed byte/word/signed word/dword/signed dword) 0 [ ] ( main:2::menu:9::mode_mcchar:56 [ ] )
   [526] *((const byte*) CIA2_PORT_A_DDR#0) ← (byte/signed byte/word/signed word/dword/signed dword) 3 [ ] ( main:2::menu:9::mode_mcchar:56 [ ] )
   [527] *((const byte*) CIA2_PORT_A#0) ← (byte/signed byte/word/signed word/dword/signed dword) 3^((byte))((word))(const byte*) mode_mcchar::CHARSET#0/(word/signed word/dword/signed dword) 16384 [ ] ( main:2::menu:9::mode_mcchar:56 [ ] )
@@ -13389,15 +13389,15 @@ mode_mcchar::@16: scope:[mode_mcchar]  from mode_mcchar::@5
   [561] if((byte~) mode_mcchar::$33==(byte/signed byte/word/signed word/dword/signed dword) 0) goto mode_mcchar::@4 [ ] ( main:2::menu:9::mode_mcchar:56 [ ] )
   to:mode_mcchar::@return
 mode_ecmchar: scope:[mode_ecmchar]  from menu::@23
-  [562] *((const byte*) DTV_GRAPHICS_VIC_BANK#0) ← ((byte))((dword))(const byte*) mode_ecmchar::ECMCHAR_CHARSET#0/(dword/signed dword) 65536 [ ] ( main:2::menu:9::mode_ecmchar:49 [ ] )
-  [563] *((const byte*) DTV_COLOR_BANK_LO#0) ← <((word))(const byte*) mode_ecmchar::ECMCHAR_COLORS#0/(word/signed word/dword/signed dword) 1024 [ ] ( main:2::menu:9::mode_ecmchar:49 [ ] )
-  [564] *((const byte*) DTV_COLOR_BANK_HI#0) ← >((word))(const byte*) mode_ecmchar::ECMCHAR_COLORS#0/(word/signed word/dword/signed dword) 1024 [ ] ( main:2::menu:9::mode_ecmchar:49 [ ] )
+  [562] *((const byte*) DTV_GRAPHICS_VIC_BANK#0) ← ((byte))((dword))(const byte*) mode_ecmchar::CHARSET#0/(dword/signed dword) 65536 [ ] ( main:2::menu:9::mode_ecmchar:49 [ ] )
+  [563] *((const byte*) DTV_COLOR_BANK_LO#0) ← <((word))(const dword) DTV_COLOR_BANK_DEFAULT#0/(word/signed word/dword/signed dword) 1024 [ ] ( main:2::menu:9::mode_ecmchar:49 [ ] )
+  [564] *((const byte*) DTV_COLOR_BANK_HI#0) ← >((word))(const dword) DTV_COLOR_BANK_DEFAULT#0/(word/signed word/dword/signed dword) 1024 [ ] ( main:2::menu:9::mode_ecmchar:49 [ ] )
   [565] *((const byte*) DTV_CONTROL#0) ← (byte/signed byte/word/signed word/dword/signed dword) 0 [ ] ( main:2::menu:9::mode_ecmchar:49 [ ] )
   [566] *((const byte*) CIA2_PORT_A_DDR#0) ← (byte/signed byte/word/signed word/dword/signed dword) 3 [ ] ( main:2::menu:9::mode_ecmchar:49 [ ] )
-  [567] *((const byte*) CIA2_PORT_A#0) ← (byte/signed byte/word/signed word/dword/signed dword) 3^((byte))((word))(const byte*) mode_ecmchar::ECMCHAR_CHARSET#0/(word/signed word/dword/signed dword) 16384 [ ] ( main:2::menu:9::mode_ecmchar:49 [ ] )
+  [567] *((const byte*) CIA2_PORT_A#0) ← (byte/signed byte/word/signed word/dword/signed dword) 3^((byte))((word))(const byte*) mode_ecmchar::CHARSET#0/(word/signed word/dword/signed dword) 16384 [ ] ( main:2::menu:9::mode_ecmchar:49 [ ] )
   [568] *((const byte*) VIC_CONTROL#0) ← (const byte) VIC_DEN#0|(const byte) VIC_RSEL#0|(const byte) VIC_ECM#0|(byte/signed byte/word/signed word/dword/signed dword) 3 [ ] ( main:2::menu:9::mode_ecmchar:49 [ ] )
   [569] *((const byte*) VIC_CONTROL2#0) ← (const byte) VIC_CSEL#0 [ ] ( main:2::menu:9::mode_ecmchar:49 [ ] )
-  [570] *((const byte*) VIC_MEMORY#0) ← ((byte))((word))(const byte*) mode_ecmchar::ECMCHAR_SCREEN#0&(word/signed word/dword/signed dword) 16383/(byte/signed byte/word/signed word/dword/signed dword) 64|((word))(const byte*) mode_ecmchar::ECMCHAR_CHARSET#0&(word/signed word/dword/signed dword) 16383/(word/signed word/dword/signed dword) 1024 [ ] ( main:2::menu:9::mode_ecmchar:49 [ ] )
+  [570] *((const byte*) VIC_MEMORY#0) ← ((byte))((word))(const byte*) mode_ecmchar::SCREEN#0&(word/signed word/dword/signed dword) 16383/(byte/signed byte/word/signed word/dword/signed dword) 64|((word))(const byte*) mode_ecmchar::CHARSET#0&(word/signed word/dword/signed dword) 16383/(word/signed word/dword/signed dword) 1024 [ ] ( main:2::menu:9::mode_ecmchar:49 [ ] )
   to:mode_ecmchar::@1
 mode_ecmchar::@1: scope:[mode_ecmchar]  from mode_ecmchar mode_ecmchar::@1
   [571] (byte) mode_ecmchar::i#2 ← phi( mode_ecmchar/(byte/signed byte/word/signed word/dword/signed dword) 0 mode_ecmchar::@1/(byte) mode_ecmchar::i#1 ) [ mode_ecmchar::i#2 ] ( main:2::menu:9::mode_ecmchar:49 [ mode_ecmchar::i#2 ] )
@@ -13413,8 +13413,8 @@ mode_ecmchar::@8: scope:[mode_ecmchar]  from mode_ecmchar::@1
   [579] *((const byte*) BGCOL4#0) ← (byte/signed byte/word/signed word/dword/signed dword) 6 [ ] ( main:2::menu:9::mode_ecmchar:49 [ ] )
   to:mode_ecmchar::@2
 mode_ecmchar::@2: scope:[mode_ecmchar]  from mode_ecmchar::@8 mode_ecmchar::@9
-  [580] (byte*) mode_ecmchar::ch#3 ← phi( mode_ecmchar::@8/(const byte*) mode_ecmchar::ECMCHAR_SCREEN#0 mode_ecmchar::@9/(byte*) mode_ecmchar::ch#1 ) [ mode_ecmchar::cy#4 mode_ecmchar::col#3 mode_ecmchar::ch#3 ] ( main:2::menu:9::mode_ecmchar:49 [ mode_ecmchar::cy#4 mode_ecmchar::col#3 mode_ecmchar::ch#3 ] )
-  [580] (byte*) mode_ecmchar::col#3 ← phi( mode_ecmchar::@8/(const byte*) mode_ecmchar::ECMCHAR_COLORS#0 mode_ecmchar::@9/(byte*) mode_ecmchar::col#1 ) [ mode_ecmchar::cy#4 mode_ecmchar::col#3 mode_ecmchar::ch#3 ] ( main:2::menu:9::mode_ecmchar:49 [ mode_ecmchar::cy#4 mode_ecmchar::col#3 mode_ecmchar::ch#3 ] )
+  [580] (byte*) mode_ecmchar::ch#3 ← phi( mode_ecmchar::@8/(const byte*) mode_ecmchar::SCREEN#0 mode_ecmchar::@9/(byte*) mode_ecmchar::ch#1 ) [ mode_ecmchar::cy#4 mode_ecmchar::col#3 mode_ecmchar::ch#3 ] ( main:2::menu:9::mode_ecmchar:49 [ mode_ecmchar::cy#4 mode_ecmchar::col#3 mode_ecmchar::ch#3 ] )
+  [580] (byte*) mode_ecmchar::col#3 ← phi( mode_ecmchar::@8/(const byte*) mode_ecmchar::COLORS#0 mode_ecmchar::@9/(byte*) mode_ecmchar::col#1 ) [ mode_ecmchar::cy#4 mode_ecmchar::col#3 mode_ecmchar::ch#3 ] ( main:2::menu:9::mode_ecmchar:49 [ mode_ecmchar::cy#4 mode_ecmchar::col#3 mode_ecmchar::ch#3 ] )
   [580] (byte) mode_ecmchar::cy#4 ← phi( mode_ecmchar::@8/(byte/signed byte/word/signed word/dword/signed dword) 0 mode_ecmchar::@9/(byte) mode_ecmchar::cy#1 ) [ mode_ecmchar::cy#4 mode_ecmchar::col#3 mode_ecmchar::ch#3 ] ( main:2::menu:9::mode_ecmchar:49 [ mode_ecmchar::cy#4 mode_ecmchar::col#3 mode_ecmchar::ch#3 ] )
   to:mode_ecmchar::@3
 mode_ecmchar::@3: scope:[mode_ecmchar]  from mode_ecmchar::@2 mode_ecmchar::@3
@@ -13455,8 +13455,8 @@ mode_ecmchar::@16: scope:[mode_ecmchar]  from mode_ecmchar::@5
   to:mode_ecmchar::@return
 mode_stdchar: scope:[mode_stdchar]  from menu::@21
   [603] *((const byte*) DTV_GRAPHICS_VIC_BANK#0) ← ((byte))((dword))(const byte*) mode_stdchar::CHARSET#0/(dword/signed dword) 65536 [ ] ( main:2::menu:9::mode_stdchar:42 [ ] )
-  [604] *((const byte*) DTV_COLOR_BANK_LO#0) ← <((word))(const byte*) mode_stdchar::COLORS#0/(word/signed word/dword/signed dword) 1024 [ ] ( main:2::menu:9::mode_stdchar:42 [ ] )
-  [605] *((const byte*) DTV_COLOR_BANK_HI#0) ← >((word))(const byte*) mode_stdchar::COLORS#0/(word/signed word/dword/signed dword) 1024 [ ] ( main:2::menu:9::mode_stdchar:42 [ ] )
+  [604] *((const byte*) DTV_COLOR_BANK_LO#0) ← <((word))(const dword) DTV_COLOR_BANK_DEFAULT#0/(word/signed word/dword/signed dword) 1024 [ ] ( main:2::menu:9::mode_stdchar:42 [ ] )
+  [605] *((const byte*) DTV_COLOR_BANK_HI#0) ← >((word))(const dword) DTV_COLOR_BANK_DEFAULT#0/(word/signed word/dword/signed dword) 1024 [ ] ( main:2::menu:9::mode_stdchar:42 [ ] )
   [606] *((const byte*) DTV_CONTROL#0) ← (byte/signed byte/word/signed word/dword/signed dword) 0 [ ] ( main:2::menu:9::mode_stdchar:42 [ ] )
   [607] *((const byte*) CIA2_PORT_A_DDR#0) ← (byte/signed byte/word/signed word/dword/signed dword) 3 [ ] ( main:2::menu:9::mode_stdchar:42 [ ] )
   [608] *((const byte*) CIA2_PORT_A#0) ← (byte/signed byte/word/signed word/dword/signed dword) 3^((byte))((word))(const byte*) mode_stdchar::CHARSET#0/(word/signed word/dword/signed dword) 16384 [ ] ( main:2::menu:9::mode_stdchar:42 [ ] )
@@ -14381,9 +14381,9 @@ VARIABLE REGISTER WEIGHTS
 (byte~) mode_ecmchar::$29 2002.0
 (byte~) mode_ecmchar::$30 2002.0
 (byte~) mode_ecmchar::$33 202.0
-(byte*) mode_ecmchar::ECMCHAR_CHARSET
-(byte*) mode_ecmchar::ECMCHAR_COLORS
-(byte*) mode_ecmchar::ECMCHAR_SCREEN
+(byte*) mode_ecmchar::CHARSET
+(byte*) mode_ecmchar::COLORS
+(byte*) mode_ecmchar::SCREEN
 (byte*) mode_ecmchar::ch
 (byte*) mode_ecmchar::ch#1 420.59999999999997
 (byte*) mode_ecmchar::ch#2 310.4
@@ -18196,7 +18196,7 @@ mode_hicolstdchar: {
 mode_mcchar: {
     .label SCREEN = $8000
     .label CHARSET = $9000
-    .label COLORS = $8400
+    .label COLORS = $d800
     .label _25 = $c6
     .label _26 = $c7
     .label _27 = $c8
@@ -18212,10 +18212,10 @@ mode_mcchar: {
   //SEG959 [522] *((const byte*) DTV_GRAPHICS_VIC_BANK#0) ← ((byte))((dword))(const byte*) mode_mcchar::CHARSET#0/(dword/signed dword) 65536 [ ] ( main:2::menu:9::mode_mcchar:56 [ ] ) -- _deref_pbuc1=vbuc2 
     lda #($ffffffff&CHARSET)/$10000
     sta DTV_GRAPHICS_VIC_BANK
-  //SEG960 [523] *((const byte*) DTV_COLOR_BANK_LO#0) ← <((word))(const byte*) mode_mcchar::COLORS#0/(word/signed word/dword/signed dword) 1024 [ ] ( main:2::menu:9::mode_mcchar:56 [ ] ) -- _deref_pbuc1=vbuc2 
-    lda #COLORS/$400
+  //SEG960 [523] *((const byte*) DTV_COLOR_BANK_LO#0) ← <((word))(const dword) DTV_COLOR_BANK_DEFAULT#0/(word/signed word/dword/signed dword) 1024 [ ] ( main:2::menu:9::mode_mcchar:56 [ ] ) -- _deref_pbuc1=vbuc2 
+    lda #DTV_COLOR_BANK_DEFAULT/$400
     sta DTV_COLOR_BANK_LO
-  //SEG961 [524] *((const byte*) DTV_COLOR_BANK_HI#0) ← >((word))(const byte*) mode_mcchar::COLORS#0/(word/signed word/dword/signed dword) 1024 [ ] ( main:2::menu:9::mode_mcchar:56 [ ] ) -- _deref_pbuc1=vbuc2 
+  //SEG961 [524] *((const byte*) DTV_COLOR_BANK_HI#0) ← >((word))(const dword) DTV_COLOR_BANK_DEFAULT#0/(word/signed word/dword/signed dword) 1024 [ ] ( main:2::menu:9::mode_mcchar:56 [ ] ) -- _deref_pbuc1=vbuc2 
     lda #0
     sta DTV_COLOR_BANK_HI
   //SEG962 [525] *((const byte*) DTV_CONTROL#0) ← (byte/signed byte/word/signed word/dword/signed dword) 0 [ ] ( main:2::menu:9::mode_mcchar:56 [ ] ) -- _deref_pbuc1=vbuc2 
@@ -18412,9 +18412,9 @@ mode_mcchar: {
 }
 //SEG1027 mode_ecmchar
 mode_ecmchar: {
-    .label ECMCHAR_SCREEN = $8000
-    .label ECMCHAR_CHARSET = $9000
-    .label ECMCHAR_COLORS = $8400
+    .label SCREEN = $8000
+    .label CHARSET = $9000
+    .label COLORS = $d800
     .label _25 = $ce
     .label _26 = $cf
     .label _27 = $d0
@@ -18427,13 +18427,13 @@ mode_ecmchar: {
     .label ch = $65
     .label cx = $62
     .label cy = $61
-  //SEG1028 [562] *((const byte*) DTV_GRAPHICS_VIC_BANK#0) ← ((byte))((dword))(const byte*) mode_ecmchar::ECMCHAR_CHARSET#0/(dword/signed dword) 65536 [ ] ( main:2::menu:9::mode_ecmchar:49 [ ] ) -- _deref_pbuc1=vbuc2 
-    lda #($ffffffff&ECMCHAR_CHARSET)/$10000
+  //SEG1028 [562] *((const byte*) DTV_GRAPHICS_VIC_BANK#0) ← ((byte))((dword))(const byte*) mode_ecmchar::CHARSET#0/(dword/signed dword) 65536 [ ] ( main:2::menu:9::mode_ecmchar:49 [ ] ) -- _deref_pbuc1=vbuc2 
+    lda #($ffffffff&CHARSET)/$10000
     sta DTV_GRAPHICS_VIC_BANK
-  //SEG1029 [563] *((const byte*) DTV_COLOR_BANK_LO#0) ← <((word))(const byte*) mode_ecmchar::ECMCHAR_COLORS#0/(word/signed word/dword/signed dword) 1024 [ ] ( main:2::menu:9::mode_ecmchar:49 [ ] ) -- _deref_pbuc1=vbuc2 
-    lda #ECMCHAR_COLORS/$400
+  //SEG1029 [563] *((const byte*) DTV_COLOR_BANK_LO#0) ← <((word))(const dword) DTV_COLOR_BANK_DEFAULT#0/(word/signed word/dword/signed dword) 1024 [ ] ( main:2::menu:9::mode_ecmchar:49 [ ] ) -- _deref_pbuc1=vbuc2 
+    lda #DTV_COLOR_BANK_DEFAULT/$400
     sta DTV_COLOR_BANK_LO
-  //SEG1030 [564] *((const byte*) DTV_COLOR_BANK_HI#0) ← >((word))(const byte*) mode_ecmchar::ECMCHAR_COLORS#0/(word/signed word/dword/signed dword) 1024 [ ] ( main:2::menu:9::mode_ecmchar:49 [ ] ) -- _deref_pbuc1=vbuc2 
+  //SEG1030 [564] *((const byte*) DTV_COLOR_BANK_HI#0) ← >((word))(const dword) DTV_COLOR_BANK_DEFAULT#0/(word/signed word/dword/signed dword) 1024 [ ] ( main:2::menu:9::mode_ecmchar:49 [ ] ) -- _deref_pbuc1=vbuc2 
     lda #0
     sta DTV_COLOR_BANK_HI
   //SEG1031 [565] *((const byte*) DTV_CONTROL#0) ← (byte/signed byte/word/signed word/dword/signed dword) 0 [ ] ( main:2::menu:9::mode_ecmchar:49 [ ] ) -- _deref_pbuc1=vbuc2 
@@ -18442,8 +18442,8 @@ mode_ecmchar: {
   //SEG1032 [566] *((const byte*) CIA2_PORT_A_DDR#0) ← (byte/signed byte/word/signed word/dword/signed dword) 3 [ ] ( main:2::menu:9::mode_ecmchar:49 [ ] ) -- _deref_pbuc1=vbuc2 
     lda #3
     sta CIA2_PORT_A_DDR
-  //SEG1033 [567] *((const byte*) CIA2_PORT_A#0) ← (byte/signed byte/word/signed word/dword/signed dword) 3^((byte))((word))(const byte*) mode_ecmchar::ECMCHAR_CHARSET#0/(word/signed word/dword/signed dword) 16384 [ ] ( main:2::menu:9::mode_ecmchar:49 [ ] ) -- _deref_pbuc1=vbuc2 
-    lda #3^ECMCHAR_CHARSET/$4000
+  //SEG1033 [567] *((const byte*) CIA2_PORT_A#0) ← (byte/signed byte/word/signed word/dword/signed dword) 3^((byte))((word))(const byte*) mode_ecmchar::CHARSET#0/(word/signed word/dword/signed dword) 16384 [ ] ( main:2::menu:9::mode_ecmchar:49 [ ] ) -- _deref_pbuc1=vbuc2 
+    lda #3^CHARSET/$4000
     sta CIA2_PORT_A
   //SEG1034 [568] *((const byte*) VIC_CONTROL#0) ← (const byte) VIC_DEN#0|(const byte) VIC_RSEL#0|(const byte) VIC_ECM#0|(byte/signed byte/word/signed word/dword/signed dword) 3 [ ] ( main:2::menu:9::mode_ecmchar:49 [ ] ) -- _deref_pbuc1=vbuc2 
     lda #VIC_DEN|VIC_RSEL|VIC_ECM|3
@@ -18451,8 +18451,8 @@ mode_ecmchar: {
   //SEG1035 [569] *((const byte*) VIC_CONTROL2#0) ← (const byte) VIC_CSEL#0 [ ] ( main:2::menu:9::mode_ecmchar:49 [ ] ) -- _deref_pbuc1=vbuc2 
     lda #VIC_CSEL
     sta VIC_CONTROL2
-  //SEG1036 [570] *((const byte*) VIC_MEMORY#0) ← ((byte))((word))(const byte*) mode_ecmchar::ECMCHAR_SCREEN#0&(word/signed word/dword/signed dword) 16383/(byte/signed byte/word/signed word/dword/signed dword) 64|((word))(const byte*) mode_ecmchar::ECMCHAR_CHARSET#0&(word/signed word/dword/signed dword) 16383/(word/signed word/dword/signed dword) 1024 [ ] ( main:2::menu:9::mode_ecmchar:49 [ ] ) -- _deref_pbuc1=vbuc2 
-    lda #(ECMCHAR_SCREEN&$3fff)/$40|(ECMCHAR_CHARSET&$3fff)/$400
+  //SEG1036 [570] *((const byte*) VIC_MEMORY#0) ← ((byte))((word))(const byte*) mode_ecmchar::SCREEN#0&(word/signed word/dword/signed dword) 16383/(byte/signed byte/word/signed word/dword/signed dword) 64|((word))(const byte*) mode_ecmchar::CHARSET#0&(word/signed word/dword/signed dword) 16383/(word/signed word/dword/signed dword) 1024 [ ] ( main:2::menu:9::mode_ecmchar:49 [ ] ) -- _deref_pbuc1=vbuc2 
+    lda #(SCREEN&$3fff)/$40|(CHARSET&$3fff)/$400
     sta VIC_MEMORY
   //SEG1037 [571] phi from mode_ecmchar to mode_ecmchar::@1 [phi:mode_ecmchar->mode_ecmchar::@1]
   b1_from_mode_ecmchar:
@@ -18496,15 +18496,15 @@ mode_ecmchar: {
     sta BGCOL4
   //SEG1051 [580] phi from mode_ecmchar::@8 to mode_ecmchar::@2 [phi:mode_ecmchar::@8->mode_ecmchar::@2]
   b2_from_b8:
-  //SEG1052 [580] phi (byte*) mode_ecmchar::ch#3 = (const byte*) mode_ecmchar::ECMCHAR_SCREEN#0 [phi:mode_ecmchar::@8->mode_ecmchar::@2#0] -- pbuz1=pbuc1 
-    lda #<ECMCHAR_SCREEN
+  //SEG1052 [580] phi (byte*) mode_ecmchar::ch#3 = (const byte*) mode_ecmchar::SCREEN#0 [phi:mode_ecmchar::@8->mode_ecmchar::@2#0] -- pbuz1=pbuc1 
+    lda #<SCREEN
     sta ch
-    lda #>ECMCHAR_SCREEN
+    lda #>SCREEN
     sta ch+1
-  //SEG1053 [580] phi (byte*) mode_ecmchar::col#3 = (const byte*) mode_ecmchar::ECMCHAR_COLORS#0 [phi:mode_ecmchar::@8->mode_ecmchar::@2#1] -- pbuz1=pbuc1 
-    lda #<ECMCHAR_COLORS
+  //SEG1053 [580] phi (byte*) mode_ecmchar::col#3 = (const byte*) mode_ecmchar::COLORS#0 [phi:mode_ecmchar::@8->mode_ecmchar::@2#1] -- pbuz1=pbuc1 
+    lda #<COLORS
     sta col
-    lda #>ECMCHAR_COLORS
+    lda #>COLORS
     sta col+1
   //SEG1054 [580] phi (byte) mode_ecmchar::cy#4 = (byte/signed byte/word/signed word/dword/signed dword) 0 [phi:mode_ecmchar::@8->mode_ecmchar::@2#2] -- vbuz1=vbuc1 
     lda #0
@@ -18635,7 +18635,7 @@ mode_ecmchar: {
 mode_stdchar: {
     .label SCREEN = $8000
     .label CHARSET = $9000
-    .label COLORS = $8400
+    .label COLORS = $d800
     .label _24 = $d6
     .label _25 = $d7
     .label _26 = $d8
@@ -18651,10 +18651,10 @@ mode_stdchar: {
   //SEG1098 [603] *((const byte*) DTV_GRAPHICS_VIC_BANK#0) ← ((byte))((dword))(const byte*) mode_stdchar::CHARSET#0/(dword/signed dword) 65536 [ ] ( main:2::menu:9::mode_stdchar:42 [ ] ) -- _deref_pbuc1=vbuc2 
     lda #($ffffffff&CHARSET)/$10000
     sta DTV_GRAPHICS_VIC_BANK
-  //SEG1099 [604] *((const byte*) DTV_COLOR_BANK_LO#0) ← <((word))(const byte*) mode_stdchar::COLORS#0/(word/signed word/dword/signed dword) 1024 [ ] ( main:2::menu:9::mode_stdchar:42 [ ] ) -- _deref_pbuc1=vbuc2 
-    lda #COLORS/$400
+  //SEG1099 [604] *((const byte*) DTV_COLOR_BANK_LO#0) ← <((word))(const dword) DTV_COLOR_BANK_DEFAULT#0/(word/signed word/dword/signed dword) 1024 [ ] ( main:2::menu:9::mode_stdchar:42 [ ] ) -- _deref_pbuc1=vbuc2 
+    lda #DTV_COLOR_BANK_DEFAULT/$400
     sta DTV_COLOR_BANK_LO
-  //SEG1100 [605] *((const byte*) DTV_COLOR_BANK_HI#0) ← >((word))(const byte*) mode_stdchar::COLORS#0/(word/signed word/dword/signed dword) 1024 [ ] ( main:2::menu:9::mode_stdchar:42 [ ] ) -- _deref_pbuc1=vbuc2 
+  //SEG1100 [605] *((const byte*) DTV_COLOR_BANK_HI#0) ← >((word))(const dword) DTV_COLOR_BANK_DEFAULT#0/(word/signed word/dword/signed dword) 1024 [ ] ( main:2::menu:9::mode_stdchar:42 [ ] ) -- _deref_pbuc1=vbuc2 
     lda #0
     sta DTV_COLOR_BANK_HI
   //SEG1101 [606] *((const byte*) DTV_CONTROL#0) ← (byte/signed byte/word/signed word/dword/signed dword) 0 [ ] ( main:2::menu:9::mode_stdchar:42 [ ] ) -- _deref_pbuc1=vbuc2 
@@ -19290,8 +19290,8 @@ Removing always clobbered register reg byte y as potential for zp ZP_BYTE:84 [ m
 Removing always clobbered register reg byte y as potential for zp ZP_BYTE:195 [ mode_hicolstdchar::v#0 ]
 Statement [509] *((byte*) mode_hicolstdchar::ch#2) ← (byte) mode_hicolstdchar::v#0 [ mode_hicolstdchar::cy#4 mode_hicolstdchar::col#1 mode_hicolstdchar::cx#2 mode_hicolstdchar::ch#2 ] ( main:2::menu:9::mode_hicolstdchar:63 [ mode_hicolstdchar::cy#4 mode_hicolstdchar::col#1 mode_hicolstdchar::cx#2 mode_hicolstdchar::ch#2 ] ) always clobbers reg byte y 
 Statement [522] *((const byte*) DTV_GRAPHICS_VIC_BANK#0) ← ((byte))((dword))(const byte*) mode_mcchar::CHARSET#0/(dword/signed dword) 65536 [ ] ( main:2::menu:9::mode_mcchar:56 [ ] ) always clobbers reg byte a 
-Statement [523] *((const byte*) DTV_COLOR_BANK_LO#0) ← <((word))(const byte*) mode_mcchar::COLORS#0/(word/signed word/dword/signed dword) 1024 [ ] ( main:2::menu:9::mode_mcchar:56 [ ] ) always clobbers reg byte a 
-Statement [524] *((const byte*) DTV_COLOR_BANK_HI#0) ← >((word))(const byte*) mode_mcchar::COLORS#0/(word/signed word/dword/signed dword) 1024 [ ] ( main:2::menu:9::mode_mcchar:56 [ ] ) always clobbers reg byte a 
+Statement [523] *((const byte*) DTV_COLOR_BANK_LO#0) ← <((word))(const dword) DTV_COLOR_BANK_DEFAULT#0/(word/signed word/dword/signed dword) 1024 [ ] ( main:2::menu:9::mode_mcchar:56 [ ] ) always clobbers reg byte a 
+Statement [524] *((const byte*) DTV_COLOR_BANK_HI#0) ← >((word))(const dword) DTV_COLOR_BANK_DEFAULT#0/(word/signed word/dword/signed dword) 1024 [ ] ( main:2::menu:9::mode_mcchar:56 [ ] ) always clobbers reg byte a 
 Statement [525] *((const byte*) DTV_CONTROL#0) ← (byte/signed byte/word/signed word/dword/signed dword) 0 [ ] ( main:2::menu:9::mode_mcchar:56 [ ] ) always clobbers reg byte a 
 Statement [526] *((const byte*) CIA2_PORT_A_DDR#0) ← (byte/signed byte/word/signed word/dword/signed dword) 3 [ ] ( main:2::menu:9::mode_mcchar:56 [ ] ) always clobbers reg byte a 
 Statement [527] *((const byte*) CIA2_PORT_A#0) ← (byte/signed byte/word/signed word/dword/signed dword) 3^((byte))((word))(const byte*) mode_mcchar::CHARSET#0/(word/signed word/dword/signed dword) 16384 [ ] ( main:2::menu:9::mode_mcchar:56 [ ] ) always clobbers reg byte a 
@@ -19314,15 +19314,15 @@ Statement [545] (byte~) mode_mcchar::$27 ← (byte) mode_mcchar::cy#4 & (byte/si
 Statement [547] (byte~) mode_mcchar::$29 ← (byte) mode_mcchar::cx#2 & (byte/signed byte/word/signed word/dword/signed dword) 15 [ mode_mcchar::cy#4 mode_mcchar::col#1 mode_mcchar::cx#2 mode_mcchar::ch#2 mode_mcchar::$28 mode_mcchar::$29 ] ( main:2::menu:9::mode_mcchar:56 [ mode_mcchar::cy#4 mode_mcchar::col#1 mode_mcchar::cx#2 mode_mcchar::ch#2 mode_mcchar::$28 mode_mcchar::$29 ] ) always clobbers reg byte a 
 Removing always clobbered register reg byte a as potential for zp ZP_BYTE:201 [ mode_mcchar::$28 ]
 Statement [549] *((byte*) mode_mcchar::ch#2) ← (byte~) mode_mcchar::$30 [ mode_mcchar::cy#4 mode_mcchar::col#1 mode_mcchar::cx#2 mode_mcchar::ch#2 ] ( main:2::menu:9::mode_mcchar:56 [ mode_mcchar::cy#4 mode_mcchar::col#1 mode_mcchar::cx#2 mode_mcchar::ch#2 ] ) always clobbers reg byte y 
-Statement [562] *((const byte*) DTV_GRAPHICS_VIC_BANK#0) ← ((byte))((dword))(const byte*) mode_ecmchar::ECMCHAR_CHARSET#0/(dword/signed dword) 65536 [ ] ( main:2::menu:9::mode_ecmchar:49 [ ] ) always clobbers reg byte a 
-Statement [563] *((const byte*) DTV_COLOR_BANK_LO#0) ← <((word))(const byte*) mode_ecmchar::ECMCHAR_COLORS#0/(word/signed word/dword/signed dword) 1024 [ ] ( main:2::menu:9::mode_ecmchar:49 [ ] ) always clobbers reg byte a 
-Statement [564] *((const byte*) DTV_COLOR_BANK_HI#0) ← >((word))(const byte*) mode_ecmchar::ECMCHAR_COLORS#0/(word/signed word/dword/signed dword) 1024 [ ] ( main:2::menu:9::mode_ecmchar:49 [ ] ) always clobbers reg byte a 
+Statement [562] *((const byte*) DTV_GRAPHICS_VIC_BANK#0) ← ((byte))((dword))(const byte*) mode_ecmchar::CHARSET#0/(dword/signed dword) 65536 [ ] ( main:2::menu:9::mode_ecmchar:49 [ ] ) always clobbers reg byte a 
+Statement [563] *((const byte*) DTV_COLOR_BANK_LO#0) ← <((word))(const dword) DTV_COLOR_BANK_DEFAULT#0/(word/signed word/dword/signed dword) 1024 [ ] ( main:2::menu:9::mode_ecmchar:49 [ ] ) always clobbers reg byte a 
+Statement [564] *((const byte*) DTV_COLOR_BANK_HI#0) ← >((word))(const dword) DTV_COLOR_BANK_DEFAULT#0/(word/signed word/dword/signed dword) 1024 [ ] ( main:2::menu:9::mode_ecmchar:49 [ ] ) always clobbers reg byte a 
 Statement [565] *((const byte*) DTV_CONTROL#0) ← (byte/signed byte/word/signed word/dword/signed dword) 0 [ ] ( main:2::menu:9::mode_ecmchar:49 [ ] ) always clobbers reg byte a 
 Statement [566] *((const byte*) CIA2_PORT_A_DDR#0) ← (byte/signed byte/word/signed word/dword/signed dword) 3 [ ] ( main:2::menu:9::mode_ecmchar:49 [ ] ) always clobbers reg byte a 
-Statement [567] *((const byte*) CIA2_PORT_A#0) ← (byte/signed byte/word/signed word/dword/signed dword) 3^((byte))((word))(const byte*) mode_ecmchar::ECMCHAR_CHARSET#0/(word/signed word/dword/signed dword) 16384 [ ] ( main:2::menu:9::mode_ecmchar:49 [ ] ) always clobbers reg byte a 
+Statement [567] *((const byte*) CIA2_PORT_A#0) ← (byte/signed byte/word/signed word/dword/signed dword) 3^((byte))((word))(const byte*) mode_ecmchar::CHARSET#0/(word/signed word/dword/signed dword) 16384 [ ] ( main:2::menu:9::mode_ecmchar:49 [ ] ) always clobbers reg byte a 
 Statement [568] *((const byte*) VIC_CONTROL#0) ← (const byte) VIC_DEN#0|(const byte) VIC_RSEL#0|(const byte) VIC_ECM#0|(byte/signed byte/word/signed word/dword/signed dword) 3 [ ] ( main:2::menu:9::mode_ecmchar:49 [ ] ) always clobbers reg byte a 
 Statement [569] *((const byte*) VIC_CONTROL2#0) ← (const byte) VIC_CSEL#0 [ ] ( main:2::menu:9::mode_ecmchar:49 [ ] ) always clobbers reg byte a 
-Statement [570] *((const byte*) VIC_MEMORY#0) ← ((byte))((word))(const byte*) mode_ecmchar::ECMCHAR_SCREEN#0&(word/signed word/dword/signed dword) 16383/(byte/signed byte/word/signed word/dword/signed dword) 64|((word))(const byte*) mode_ecmchar::ECMCHAR_CHARSET#0&(word/signed word/dword/signed dword) 16383/(word/signed word/dword/signed dword) 1024 [ ] ( main:2::menu:9::mode_ecmchar:49 [ ] ) always clobbers reg byte a 
+Statement [570] *((const byte*) VIC_MEMORY#0) ← ((byte))((word))(const byte*) mode_ecmchar::SCREEN#0&(word/signed word/dword/signed dword) 16383/(byte/signed byte/word/signed word/dword/signed dword) 64|((word))(const byte*) mode_ecmchar::CHARSET#0&(word/signed word/dword/signed dword) 16383/(word/signed word/dword/signed dword) 1024 [ ] ( main:2::menu:9::mode_ecmchar:49 [ ] ) always clobbers reg byte a 
 Statement [572] *((const byte*) DTV_PALETTE#0 + (byte) mode_ecmchar::i#2) ← *((const byte[16]) DTV_PALETTE_DEFAULT#0 + (byte) mode_ecmchar::i#2) [ mode_ecmchar::i#2 ] ( main:2::menu:9::mode_ecmchar:49 [ mode_ecmchar::i#2 ] ) always clobbers reg byte a 
 Removing always clobbered register reg byte a as potential for zp ZP_BYTE:96 [ mode_ecmchar::i#2 mode_ecmchar::i#1 ]
 Statement [575] *((const byte*) BORDERCOL#0) ← (byte/signed byte/word/signed word/dword/signed dword) 0 [ ] ( main:2::menu:9::mode_ecmchar:49 [ ] ) always clobbers reg byte a 
@@ -19341,8 +19341,8 @@ Statement [588] (byte~) mode_ecmchar::$29 ← (byte) mode_ecmchar::cx#2 & (byte/
 Removing always clobbered register reg byte a as potential for zp ZP_BYTE:209 [ mode_ecmchar::$28 ]
 Statement [590] *((byte*) mode_ecmchar::ch#2) ← (byte~) mode_ecmchar::$30 [ mode_ecmchar::cy#4 mode_ecmchar::col#1 mode_ecmchar::cx#2 mode_ecmchar::ch#2 ] ( main:2::menu:9::mode_ecmchar:49 [ mode_ecmchar::cy#4 mode_ecmchar::col#1 mode_ecmchar::cx#2 mode_ecmchar::ch#2 ] ) always clobbers reg byte y 
 Statement [603] *((const byte*) DTV_GRAPHICS_VIC_BANK#0) ← ((byte))((dword))(const byte*) mode_stdchar::CHARSET#0/(dword/signed dword) 65536 [ ] ( main:2::menu:9::mode_stdchar:42 [ ] ) always clobbers reg byte a 
-Statement [604] *((const byte*) DTV_COLOR_BANK_LO#0) ← <((word))(const byte*) mode_stdchar::COLORS#0/(word/signed word/dword/signed dword) 1024 [ ] ( main:2::menu:9::mode_stdchar:42 [ ] ) always clobbers reg byte a 
-Statement [605] *((const byte*) DTV_COLOR_BANK_HI#0) ← >((word))(const byte*) mode_stdchar::COLORS#0/(word/signed word/dword/signed dword) 1024 [ ] ( main:2::menu:9::mode_stdchar:42 [ ] ) always clobbers reg byte a 
+Statement [604] *((const byte*) DTV_COLOR_BANK_LO#0) ← <((word))(const dword) DTV_COLOR_BANK_DEFAULT#0/(word/signed word/dword/signed dword) 1024 [ ] ( main:2::menu:9::mode_stdchar:42 [ ] ) always clobbers reg byte a 
+Statement [605] *((const byte*) DTV_COLOR_BANK_HI#0) ← >((word))(const dword) DTV_COLOR_BANK_DEFAULT#0/(word/signed word/dword/signed dword) 1024 [ ] ( main:2::menu:9::mode_stdchar:42 [ ] ) always clobbers reg byte a 
 Statement [606] *((const byte*) DTV_CONTROL#0) ← (byte/signed byte/word/signed word/dword/signed dword) 0 [ ] ( main:2::menu:9::mode_stdchar:42 [ ] ) always clobbers reg byte a 
 Statement [607] *((const byte*) CIA2_PORT_A_DDR#0) ← (byte/signed byte/word/signed word/dword/signed dword) 3 [ ] ( main:2::menu:9::mode_stdchar:42 [ ] ) always clobbers reg byte a 
 Statement [608] *((const byte*) CIA2_PORT_A#0) ← (byte/signed byte/word/signed word/dword/signed dword) 3^((byte))((word))(const byte*) mode_stdchar::CHARSET#0/(word/signed word/dword/signed dword) 16384 [ ] ( main:2::menu:9::mode_stdchar:42 [ ] ) always clobbers reg byte a 
@@ -19560,8 +19560,8 @@ Statement [505] (byte~) mode_hicolstdchar::$26 ← (byte) mode_hicolstdchar::cx#
 Statement [507] *((byte*) mode_hicolstdchar::col#2) ← (byte) mode_hicolstdchar::v#0 [ mode_hicolstdchar::cy#4 mode_hicolstdchar::cx#2 mode_hicolstdchar::col#2 mode_hicolstdchar::ch#2 mode_hicolstdchar::v#0 ] ( main:2::menu:9::mode_hicolstdchar:63 [ mode_hicolstdchar::cy#4 mode_hicolstdchar::cx#2 mode_hicolstdchar::col#2 mode_hicolstdchar::ch#2 mode_hicolstdchar::v#0 ] ) always clobbers reg byte y 
 Statement [509] *((byte*) mode_hicolstdchar::ch#2) ← (byte) mode_hicolstdchar::v#0 [ mode_hicolstdchar::cy#4 mode_hicolstdchar::col#1 mode_hicolstdchar::cx#2 mode_hicolstdchar::ch#2 ] ( main:2::menu:9::mode_hicolstdchar:63 [ mode_hicolstdchar::cy#4 mode_hicolstdchar::col#1 mode_hicolstdchar::cx#2 mode_hicolstdchar::ch#2 ] ) always clobbers reg byte y 
 Statement [522] *((const byte*) DTV_GRAPHICS_VIC_BANK#0) ← ((byte))((dword))(const byte*) mode_mcchar::CHARSET#0/(dword/signed dword) 65536 [ ] ( main:2::menu:9::mode_mcchar:56 [ ] ) always clobbers reg byte a 
-Statement [523] *((const byte*) DTV_COLOR_BANK_LO#0) ← <((word))(const byte*) mode_mcchar::COLORS#0/(word/signed word/dword/signed dword) 1024 [ ] ( main:2::menu:9::mode_mcchar:56 [ ] ) always clobbers reg byte a 
-Statement [524] *((const byte*) DTV_COLOR_BANK_HI#0) ← >((word))(const byte*) mode_mcchar::COLORS#0/(word/signed word/dword/signed dword) 1024 [ ] ( main:2::menu:9::mode_mcchar:56 [ ] ) always clobbers reg byte a 
+Statement [523] *((const byte*) DTV_COLOR_BANK_LO#0) ← <((word))(const dword) DTV_COLOR_BANK_DEFAULT#0/(word/signed word/dword/signed dword) 1024 [ ] ( main:2::menu:9::mode_mcchar:56 [ ] ) always clobbers reg byte a 
+Statement [524] *((const byte*) DTV_COLOR_BANK_HI#0) ← >((word))(const dword) DTV_COLOR_BANK_DEFAULT#0/(word/signed word/dword/signed dword) 1024 [ ] ( main:2::menu:9::mode_mcchar:56 [ ] ) always clobbers reg byte a 
 Statement [525] *((const byte*) DTV_CONTROL#0) ← (byte/signed byte/word/signed word/dword/signed dword) 0 [ ] ( main:2::menu:9::mode_mcchar:56 [ ] ) always clobbers reg byte a 
 Statement [526] *((const byte*) CIA2_PORT_A_DDR#0) ← (byte/signed byte/word/signed word/dword/signed dword) 3 [ ] ( main:2::menu:9::mode_mcchar:56 [ ] ) always clobbers reg byte a 
 Statement [527] *((const byte*) CIA2_PORT_A#0) ← (byte/signed byte/word/signed word/dword/signed dword) 3^((byte))((word))(const byte*) mode_mcchar::CHARSET#0/(word/signed word/dword/signed dword) 16384 [ ] ( main:2::menu:9::mode_mcchar:56 [ ] ) always clobbers reg byte a 
@@ -19579,15 +19579,15 @@ Statement [543] *((byte*) mode_mcchar::col#2) ← (byte~) mode_mcchar::$26 [ mod
 Statement [545] (byte~) mode_mcchar::$27 ← (byte) mode_mcchar::cy#4 & (byte/signed byte/word/signed word/dword/signed dword) 15 [ mode_mcchar::cy#4 mode_mcchar::col#1 mode_mcchar::cx#2 mode_mcchar::ch#2 mode_mcchar::$27 ] ( main:2::menu:9::mode_mcchar:56 [ mode_mcchar::cy#4 mode_mcchar::col#1 mode_mcchar::cx#2 mode_mcchar::ch#2 mode_mcchar::$27 ] ) always clobbers reg byte a 
 Statement [547] (byte~) mode_mcchar::$29 ← (byte) mode_mcchar::cx#2 & (byte/signed byte/word/signed word/dword/signed dword) 15 [ mode_mcchar::cy#4 mode_mcchar::col#1 mode_mcchar::cx#2 mode_mcchar::ch#2 mode_mcchar::$28 mode_mcchar::$29 ] ( main:2::menu:9::mode_mcchar:56 [ mode_mcchar::cy#4 mode_mcchar::col#1 mode_mcchar::cx#2 mode_mcchar::ch#2 mode_mcchar::$28 mode_mcchar::$29 ] ) always clobbers reg byte a 
 Statement [549] *((byte*) mode_mcchar::ch#2) ← (byte~) mode_mcchar::$30 [ mode_mcchar::cy#4 mode_mcchar::col#1 mode_mcchar::cx#2 mode_mcchar::ch#2 ] ( main:2::menu:9::mode_mcchar:56 [ mode_mcchar::cy#4 mode_mcchar::col#1 mode_mcchar::cx#2 mode_mcchar::ch#2 ] ) always clobbers reg byte y 
-Statement [562] *((const byte*) DTV_GRAPHICS_VIC_BANK#0) ← ((byte))((dword))(const byte*) mode_ecmchar::ECMCHAR_CHARSET#0/(dword/signed dword) 65536 [ ] ( main:2::menu:9::mode_ecmchar:49 [ ] ) always clobbers reg byte a 
-Statement [563] *((const byte*) DTV_COLOR_BANK_LO#0) ← <((word))(const byte*) mode_ecmchar::ECMCHAR_COLORS#0/(word/signed word/dword/signed dword) 1024 [ ] ( main:2::menu:9::mode_ecmchar:49 [ ] ) always clobbers reg byte a 
-Statement [564] *((const byte*) DTV_COLOR_BANK_HI#0) ← >((word))(const byte*) mode_ecmchar::ECMCHAR_COLORS#0/(word/signed word/dword/signed dword) 1024 [ ] ( main:2::menu:9::mode_ecmchar:49 [ ] ) always clobbers reg byte a 
+Statement [562] *((const byte*) DTV_GRAPHICS_VIC_BANK#0) ← ((byte))((dword))(const byte*) mode_ecmchar::CHARSET#0/(dword/signed dword) 65536 [ ] ( main:2::menu:9::mode_ecmchar:49 [ ] ) always clobbers reg byte a 
+Statement [563] *((const byte*) DTV_COLOR_BANK_LO#0) ← <((word))(const dword) DTV_COLOR_BANK_DEFAULT#0/(word/signed word/dword/signed dword) 1024 [ ] ( main:2::menu:9::mode_ecmchar:49 [ ] ) always clobbers reg byte a 
+Statement [564] *((const byte*) DTV_COLOR_BANK_HI#0) ← >((word))(const dword) DTV_COLOR_BANK_DEFAULT#0/(word/signed word/dword/signed dword) 1024 [ ] ( main:2::menu:9::mode_ecmchar:49 [ ] ) always clobbers reg byte a 
 Statement [565] *((const byte*) DTV_CONTROL#0) ← (byte/signed byte/word/signed word/dword/signed dword) 0 [ ] ( main:2::menu:9::mode_ecmchar:49 [ ] ) always clobbers reg byte a 
 Statement [566] *((const byte*) CIA2_PORT_A_DDR#0) ← (byte/signed byte/word/signed word/dword/signed dword) 3 [ ] ( main:2::menu:9::mode_ecmchar:49 [ ] ) always clobbers reg byte a 
-Statement [567] *((const byte*) CIA2_PORT_A#0) ← (byte/signed byte/word/signed word/dword/signed dword) 3^((byte))((word))(const byte*) mode_ecmchar::ECMCHAR_CHARSET#0/(word/signed word/dword/signed dword) 16384 [ ] ( main:2::menu:9::mode_ecmchar:49 [ ] ) always clobbers reg byte a 
+Statement [567] *((const byte*) CIA2_PORT_A#0) ← (byte/signed byte/word/signed word/dword/signed dword) 3^((byte))((word))(const byte*) mode_ecmchar::CHARSET#0/(word/signed word/dword/signed dword) 16384 [ ] ( main:2::menu:9::mode_ecmchar:49 [ ] ) always clobbers reg byte a 
 Statement [568] *((const byte*) VIC_CONTROL#0) ← (const byte) VIC_DEN#0|(const byte) VIC_RSEL#0|(const byte) VIC_ECM#0|(byte/signed byte/word/signed word/dword/signed dword) 3 [ ] ( main:2::menu:9::mode_ecmchar:49 [ ] ) always clobbers reg byte a 
 Statement [569] *((const byte*) VIC_CONTROL2#0) ← (const byte) VIC_CSEL#0 [ ] ( main:2::menu:9::mode_ecmchar:49 [ ] ) always clobbers reg byte a 
-Statement [570] *((const byte*) VIC_MEMORY#0) ← ((byte))((word))(const byte*) mode_ecmchar::ECMCHAR_SCREEN#0&(word/signed word/dword/signed dword) 16383/(byte/signed byte/word/signed word/dword/signed dword) 64|((word))(const byte*) mode_ecmchar::ECMCHAR_CHARSET#0&(word/signed word/dword/signed dword) 16383/(word/signed word/dword/signed dword) 1024 [ ] ( main:2::menu:9::mode_ecmchar:49 [ ] ) always clobbers reg byte a 
+Statement [570] *((const byte*) VIC_MEMORY#0) ← ((byte))((word))(const byte*) mode_ecmchar::SCREEN#0&(word/signed word/dword/signed dword) 16383/(byte/signed byte/word/signed word/dword/signed dword) 64|((word))(const byte*) mode_ecmchar::CHARSET#0&(word/signed word/dword/signed dword) 16383/(word/signed word/dword/signed dword) 1024 [ ] ( main:2::menu:9::mode_ecmchar:49 [ ] ) always clobbers reg byte a 
 Statement [572] *((const byte*) DTV_PALETTE#0 + (byte) mode_ecmchar::i#2) ← *((const byte[16]) DTV_PALETTE_DEFAULT#0 + (byte) mode_ecmchar::i#2) [ mode_ecmchar::i#2 ] ( main:2::menu:9::mode_ecmchar:49 [ mode_ecmchar::i#2 ] ) always clobbers reg byte a 
 Statement [575] *((const byte*) BORDERCOL#0) ← (byte/signed byte/word/signed word/dword/signed dword) 0 [ ] ( main:2::menu:9::mode_ecmchar:49 [ ] ) always clobbers reg byte a 
 Statement [576] *((const byte*) BGCOL1#0) ← (byte/signed byte/word/signed word/dword/signed dword) 0 [ ] ( main:2::menu:9::mode_ecmchar:49 [ ] ) always clobbers reg byte a 
@@ -19601,8 +19601,8 @@ Statement [586] (byte~) mode_ecmchar::$27 ← (byte) mode_ecmchar::cy#4 & (byte/
 Statement [588] (byte~) mode_ecmchar::$29 ← (byte) mode_ecmchar::cx#2 & (byte/signed byte/word/signed word/dword/signed dword) 15 [ mode_ecmchar::cy#4 mode_ecmchar::col#1 mode_ecmchar::cx#2 mode_ecmchar::ch#2 mode_ecmchar::$28 mode_ecmchar::$29 ] ( main:2::menu:9::mode_ecmchar:49 [ mode_ecmchar::cy#4 mode_ecmchar::col#1 mode_ecmchar::cx#2 mode_ecmchar::ch#2 mode_ecmchar::$28 mode_ecmchar::$29 ] ) always clobbers reg byte a 
 Statement [590] *((byte*) mode_ecmchar::ch#2) ← (byte~) mode_ecmchar::$30 [ mode_ecmchar::cy#4 mode_ecmchar::col#1 mode_ecmchar::cx#2 mode_ecmchar::ch#2 ] ( main:2::menu:9::mode_ecmchar:49 [ mode_ecmchar::cy#4 mode_ecmchar::col#1 mode_ecmchar::cx#2 mode_ecmchar::ch#2 ] ) always clobbers reg byte y 
 Statement [603] *((const byte*) DTV_GRAPHICS_VIC_BANK#0) ← ((byte))((dword))(const byte*) mode_stdchar::CHARSET#0/(dword/signed dword) 65536 [ ] ( main:2::menu:9::mode_stdchar:42 [ ] ) always clobbers reg byte a 
-Statement [604] *((const byte*) DTV_COLOR_BANK_LO#0) ← <((word))(const byte*) mode_stdchar::COLORS#0/(word/signed word/dword/signed dword) 1024 [ ] ( main:2::menu:9::mode_stdchar:42 [ ] ) always clobbers reg byte a 
-Statement [605] *((const byte*) DTV_COLOR_BANK_HI#0) ← >((word))(const byte*) mode_stdchar::COLORS#0/(word/signed word/dword/signed dword) 1024 [ ] ( main:2::menu:9::mode_stdchar:42 [ ] ) always clobbers reg byte a 
+Statement [604] *((const byte*) DTV_COLOR_BANK_LO#0) ← <((word))(const dword) DTV_COLOR_BANK_DEFAULT#0/(word/signed word/dword/signed dword) 1024 [ ] ( main:2::menu:9::mode_stdchar:42 [ ] ) always clobbers reg byte a 
+Statement [605] *((const byte*) DTV_COLOR_BANK_HI#0) ← >((word))(const dword) DTV_COLOR_BANK_DEFAULT#0/(word/signed word/dword/signed dword) 1024 [ ] ( main:2::menu:9::mode_stdchar:42 [ ] ) always clobbers reg byte a 
 Statement [606] *((const byte*) DTV_CONTROL#0) ← (byte/signed byte/word/signed word/dword/signed dword) 0 [ ] ( main:2::menu:9::mode_stdchar:42 [ ] ) always clobbers reg byte a 
 Statement [607] *((const byte*) CIA2_PORT_A_DDR#0) ← (byte/signed byte/word/signed word/dword/signed dword) 3 [ ] ( main:2::menu:9::mode_stdchar:42 [ ] ) always clobbers reg byte a 
 Statement [608] *((const byte*) CIA2_PORT_A#0) ← (byte/signed byte/word/signed word/dword/signed dword) 3^((byte))((word))(const byte*) mode_stdchar::CHARSET#0/(word/signed word/dword/signed dword) 16384 [ ] ( main:2::menu:9::mode_stdchar:42 [ ] ) always clobbers reg byte a 
@@ -22756,7 +22756,7 @@ mode_hicolstdchar: {
 mode_mcchar: {
     .label SCREEN = $8000
     .label CHARSET = $9000
-    .label COLORS = $8400
+    .label COLORS = $d800
     .label _28 = 7
     .label col = 2
     .label ch = 5
@@ -22764,10 +22764,10 @@ mode_mcchar: {
   //SEG959 [522] *((const byte*) DTV_GRAPHICS_VIC_BANK#0) ← ((byte))((dword))(const byte*) mode_mcchar::CHARSET#0/(dword/signed dword) 65536 [ ] ( main:2::menu:9::mode_mcchar:56 [ ] ) -- _deref_pbuc1=vbuc2 
     lda #($ffffffff&CHARSET)/$10000
     sta DTV_GRAPHICS_VIC_BANK
-  //SEG960 [523] *((const byte*) DTV_COLOR_BANK_LO#0) ← <((word))(const byte*) mode_mcchar::COLORS#0/(word/signed word/dword/signed dword) 1024 [ ] ( main:2::menu:9::mode_mcchar:56 [ ] ) -- _deref_pbuc1=vbuc2 
-    lda #COLORS/$400
+  //SEG960 [523] *((const byte*) DTV_COLOR_BANK_LO#0) ← <((word))(const dword) DTV_COLOR_BANK_DEFAULT#0/(word/signed word/dword/signed dword) 1024 [ ] ( main:2::menu:9::mode_mcchar:56 [ ] ) -- _deref_pbuc1=vbuc2 
+    lda #DTV_COLOR_BANK_DEFAULT/$400
     sta DTV_COLOR_BANK_LO
-  //SEG961 [524] *((const byte*) DTV_COLOR_BANK_HI#0) ← >((word))(const byte*) mode_mcchar::COLORS#0/(word/signed word/dword/signed dword) 1024 [ ] ( main:2::menu:9::mode_mcchar:56 [ ] ) -- _deref_pbuc1=vbuc2 
+  //SEG961 [524] *((const byte*) DTV_COLOR_BANK_HI#0) ← >((word))(const dword) DTV_COLOR_BANK_DEFAULT#0/(word/signed word/dword/signed dword) 1024 [ ] ( main:2::menu:9::mode_mcchar:56 [ ] ) -- _deref_pbuc1=vbuc2 
     lda #0
     sta DTV_COLOR_BANK_HI
   //SEG962 [525] *((const byte*) DTV_CONTROL#0) ← (byte/signed byte/word/signed word/dword/signed dword) 0 [ ] ( main:2::menu:9::mode_mcchar:56 [ ] ) -- _deref_pbuc1=vbuc2 
@@ -22946,20 +22946,20 @@ mode_mcchar: {
 }
 //SEG1027 mode_ecmchar
 mode_ecmchar: {
-    .label ECMCHAR_SCREEN = $8000
-    .label ECMCHAR_CHARSET = $9000
-    .label ECMCHAR_COLORS = $8400
+    .label SCREEN = $8000
+    .label CHARSET = $9000
+    .label COLORS = $d800
     .label _28 = 7
     .label col = 2
     .label ch = 5
     .label cy = 4
-  //SEG1028 [562] *((const byte*) DTV_GRAPHICS_VIC_BANK#0) ← ((byte))((dword))(const byte*) mode_ecmchar::ECMCHAR_CHARSET#0/(dword/signed dword) 65536 [ ] ( main:2::menu:9::mode_ecmchar:49 [ ] ) -- _deref_pbuc1=vbuc2 
-    lda #($ffffffff&ECMCHAR_CHARSET)/$10000
+  //SEG1028 [562] *((const byte*) DTV_GRAPHICS_VIC_BANK#0) ← ((byte))((dword))(const byte*) mode_ecmchar::CHARSET#0/(dword/signed dword) 65536 [ ] ( main:2::menu:9::mode_ecmchar:49 [ ] ) -- _deref_pbuc1=vbuc2 
+    lda #($ffffffff&CHARSET)/$10000
     sta DTV_GRAPHICS_VIC_BANK
-  //SEG1029 [563] *((const byte*) DTV_COLOR_BANK_LO#0) ← <((word))(const byte*) mode_ecmchar::ECMCHAR_COLORS#0/(word/signed word/dword/signed dword) 1024 [ ] ( main:2::menu:9::mode_ecmchar:49 [ ] ) -- _deref_pbuc1=vbuc2 
-    lda #ECMCHAR_COLORS/$400
+  //SEG1029 [563] *((const byte*) DTV_COLOR_BANK_LO#0) ← <((word))(const dword) DTV_COLOR_BANK_DEFAULT#0/(word/signed word/dword/signed dword) 1024 [ ] ( main:2::menu:9::mode_ecmchar:49 [ ] ) -- _deref_pbuc1=vbuc2 
+    lda #DTV_COLOR_BANK_DEFAULT/$400
     sta DTV_COLOR_BANK_LO
-  //SEG1030 [564] *((const byte*) DTV_COLOR_BANK_HI#0) ← >((word))(const byte*) mode_ecmchar::ECMCHAR_COLORS#0/(word/signed word/dword/signed dword) 1024 [ ] ( main:2::menu:9::mode_ecmchar:49 [ ] ) -- _deref_pbuc1=vbuc2 
+  //SEG1030 [564] *((const byte*) DTV_COLOR_BANK_HI#0) ← >((word))(const dword) DTV_COLOR_BANK_DEFAULT#0/(word/signed word/dword/signed dword) 1024 [ ] ( main:2::menu:9::mode_ecmchar:49 [ ] ) -- _deref_pbuc1=vbuc2 
     lda #0
     sta DTV_COLOR_BANK_HI
   //SEG1031 [565] *((const byte*) DTV_CONTROL#0) ← (byte/signed byte/word/signed word/dword/signed dword) 0 [ ] ( main:2::menu:9::mode_ecmchar:49 [ ] ) -- _deref_pbuc1=vbuc2 
@@ -22968,8 +22968,8 @@ mode_ecmchar: {
   //SEG1032 [566] *((const byte*) CIA2_PORT_A_DDR#0) ← (byte/signed byte/word/signed word/dword/signed dword) 3 [ ] ( main:2::menu:9::mode_ecmchar:49 [ ] ) -- _deref_pbuc1=vbuc2 
     lda #3
     sta CIA2_PORT_A_DDR
-  //SEG1033 [567] *((const byte*) CIA2_PORT_A#0) ← (byte/signed byte/word/signed word/dword/signed dword) 3^((byte))((word))(const byte*) mode_ecmchar::ECMCHAR_CHARSET#0/(word/signed word/dword/signed dword) 16384 [ ] ( main:2::menu:9::mode_ecmchar:49 [ ] ) -- _deref_pbuc1=vbuc2 
-    lda #3^ECMCHAR_CHARSET/$4000
+  //SEG1033 [567] *((const byte*) CIA2_PORT_A#0) ← (byte/signed byte/word/signed word/dword/signed dword) 3^((byte))((word))(const byte*) mode_ecmchar::CHARSET#0/(word/signed word/dword/signed dword) 16384 [ ] ( main:2::menu:9::mode_ecmchar:49 [ ] ) -- _deref_pbuc1=vbuc2 
+    lda #3^CHARSET/$4000
     sta CIA2_PORT_A
   //SEG1034 [568] *((const byte*) VIC_CONTROL#0) ← (const byte) VIC_DEN#0|(const byte) VIC_RSEL#0|(const byte) VIC_ECM#0|(byte/signed byte/word/signed word/dword/signed dword) 3 [ ] ( main:2::menu:9::mode_ecmchar:49 [ ] ) -- _deref_pbuc1=vbuc2 
     lda #VIC_DEN|VIC_RSEL|VIC_ECM|3
@@ -22977,8 +22977,8 @@ mode_ecmchar: {
   //SEG1035 [569] *((const byte*) VIC_CONTROL2#0) ← (const byte) VIC_CSEL#0 [ ] ( main:2::menu:9::mode_ecmchar:49 [ ] ) -- _deref_pbuc1=vbuc2 
     lda #VIC_CSEL
     sta VIC_CONTROL2
-  //SEG1036 [570] *((const byte*) VIC_MEMORY#0) ← ((byte))((word))(const byte*) mode_ecmchar::ECMCHAR_SCREEN#0&(word/signed word/dword/signed dword) 16383/(byte/signed byte/word/signed word/dword/signed dword) 64|((word))(const byte*) mode_ecmchar::ECMCHAR_CHARSET#0&(word/signed word/dword/signed dword) 16383/(word/signed word/dword/signed dword) 1024 [ ] ( main:2::menu:9::mode_ecmchar:49 [ ] ) -- _deref_pbuc1=vbuc2 
-    lda #(ECMCHAR_SCREEN&$3fff)/$40|(ECMCHAR_CHARSET&$3fff)/$400
+  //SEG1036 [570] *((const byte*) VIC_MEMORY#0) ← ((byte))((word))(const byte*) mode_ecmchar::SCREEN#0&(word/signed word/dword/signed dword) 16383/(byte/signed byte/word/signed word/dword/signed dword) 64|((word))(const byte*) mode_ecmchar::CHARSET#0&(word/signed word/dword/signed dword) 16383/(word/signed word/dword/signed dword) 1024 [ ] ( main:2::menu:9::mode_ecmchar:49 [ ] ) -- _deref_pbuc1=vbuc2 
+    lda #(SCREEN&$3fff)/$40|(CHARSET&$3fff)/$400
     sta VIC_MEMORY
   //SEG1037 [571] phi from mode_ecmchar to mode_ecmchar::@1 [phi:mode_ecmchar->mode_ecmchar::@1]
   b1_from_mode_ecmchar:
@@ -23019,15 +23019,15 @@ mode_ecmchar: {
     sta BGCOL4
   //SEG1051 [580] phi from mode_ecmchar::@8 to mode_ecmchar::@2 [phi:mode_ecmchar::@8->mode_ecmchar::@2]
   b2_from_b8:
-  //SEG1052 [580] phi (byte*) mode_ecmchar::ch#3 = (const byte*) mode_ecmchar::ECMCHAR_SCREEN#0 [phi:mode_ecmchar::@8->mode_ecmchar::@2#0] -- pbuz1=pbuc1 
-    lda #<ECMCHAR_SCREEN
+  //SEG1052 [580] phi (byte*) mode_ecmchar::ch#3 = (const byte*) mode_ecmchar::SCREEN#0 [phi:mode_ecmchar::@8->mode_ecmchar::@2#0] -- pbuz1=pbuc1 
+    lda #<SCREEN
     sta ch
-    lda #>ECMCHAR_SCREEN
+    lda #>SCREEN
     sta ch+1
-  //SEG1053 [580] phi (byte*) mode_ecmchar::col#3 = (const byte*) mode_ecmchar::ECMCHAR_COLORS#0 [phi:mode_ecmchar::@8->mode_ecmchar::@2#1] -- pbuz1=pbuc1 
-    lda #<ECMCHAR_COLORS
+  //SEG1053 [580] phi (byte*) mode_ecmchar::col#3 = (const byte*) mode_ecmchar::COLORS#0 [phi:mode_ecmchar::@8->mode_ecmchar::@2#1] -- pbuz1=pbuc1 
+    lda #<COLORS
     sta col
-    lda #>ECMCHAR_COLORS
+    lda #>COLORS
     sta col+1
   //SEG1054 [580] phi (byte) mode_ecmchar::cy#4 = (byte/signed byte/word/signed word/dword/signed dword) 0 [phi:mode_ecmchar::@8->mode_ecmchar::@2#2] -- vbuz1=vbuc1 
     lda #0
@@ -23143,7 +23143,7 @@ mode_ecmchar: {
 mode_stdchar: {
     .label SCREEN = $8000
     .label CHARSET = $9000
-    .label COLORS = $8400
+    .label COLORS = $d800
     .label _27 = 7
     .label col = 2
     .label ch = 5
@@ -23151,10 +23151,10 @@ mode_stdchar: {
   //SEG1098 [603] *((const byte*) DTV_GRAPHICS_VIC_BANK#0) ← ((byte))((dword))(const byte*) mode_stdchar::CHARSET#0/(dword/signed dword) 65536 [ ] ( main:2::menu:9::mode_stdchar:42 [ ] ) -- _deref_pbuc1=vbuc2 
     lda #($ffffffff&CHARSET)/$10000
     sta DTV_GRAPHICS_VIC_BANK
-  //SEG1099 [604] *((const byte*) DTV_COLOR_BANK_LO#0) ← <((word))(const byte*) mode_stdchar::COLORS#0/(word/signed word/dword/signed dword) 1024 [ ] ( main:2::menu:9::mode_stdchar:42 [ ] ) -- _deref_pbuc1=vbuc2 
-    lda #COLORS/$400
+  //SEG1099 [604] *((const byte*) DTV_COLOR_BANK_LO#0) ← <((word))(const dword) DTV_COLOR_BANK_DEFAULT#0/(word/signed word/dword/signed dword) 1024 [ ] ( main:2::menu:9::mode_stdchar:42 [ ] ) -- _deref_pbuc1=vbuc2 
+    lda #DTV_COLOR_BANK_DEFAULT/$400
     sta DTV_COLOR_BANK_LO
-  //SEG1100 [605] *((const byte*) DTV_COLOR_BANK_HI#0) ← >((word))(const byte*) mode_stdchar::COLORS#0/(word/signed word/dword/signed dword) 1024 [ ] ( main:2::menu:9::mode_stdchar:42 [ ] ) -- _deref_pbuc1=vbuc2 
+  //SEG1100 [605] *((const byte*) DTV_COLOR_BANK_HI#0) ← >((word))(const dword) DTV_COLOR_BANK_DEFAULT#0/(word/signed word/dword/signed dword) 1024 [ ] ( main:2::menu:9::mode_stdchar:42 [ ] ) -- _deref_pbuc1=vbuc2 
     lda #0
     sta DTV_COLOR_BANK_HI
   //SEG1101 [606] *((const byte*) DTV_CONTROL#0) ← (byte/signed byte/word/signed word/dword/signed dword) 0 [ ] ( main:2::menu:9::mode_stdchar:42 [ ] ) -- _deref_pbuc1=vbuc2 
@@ -24547,12 +24547,12 @@ FINAL SYMBOL TABLE
 (label) mode_ecmchar::@8
 (label) mode_ecmchar::@9
 (label) mode_ecmchar::@return
-(byte*) mode_ecmchar::ECMCHAR_CHARSET
-(const byte*) mode_ecmchar::ECMCHAR_CHARSET#0 ECMCHAR_CHARSET = ((byte*))(word/dword/signed dword) 36864
-(byte*) mode_ecmchar::ECMCHAR_COLORS
-(const byte*) mode_ecmchar::ECMCHAR_COLORS#0 ECMCHAR_COLORS = ((byte*))(word/dword/signed dword) 33792
-(byte*) mode_ecmchar::ECMCHAR_SCREEN
-(const byte*) mode_ecmchar::ECMCHAR_SCREEN#0 ECMCHAR_SCREEN = ((byte*))(word/dword/signed dword) 32768
+(byte*) mode_ecmchar::CHARSET
+(const byte*) mode_ecmchar::CHARSET#0 CHARSET = ((byte*))(word/dword/signed dword) 36864
+(byte*) mode_ecmchar::COLORS
+(const byte*) mode_ecmchar::COLORS#0 COLORS = ((byte*))(word/dword/signed dword) 55296
+(byte*) mode_ecmchar::SCREEN
+(const byte*) mode_ecmchar::SCREEN#0 SCREEN = ((byte*))(word/dword/signed dword) 32768
 (byte*) mode_ecmchar::ch
 (byte*) mode_ecmchar::ch#1 ch zp ZP_WORD:5 420.59999999999997
 (byte*) mode_ecmchar::ch#2 ch zp ZP_WORD:5 310.4
@@ -24707,7 +24707,7 @@ FINAL SYMBOL TABLE
 (byte*) mode_mcchar::CHARSET
 (const byte*) mode_mcchar::CHARSET#0 CHARSET = ((byte*))(word/dword/signed dword) 36864
 (byte*) mode_mcchar::COLORS
-(const byte*) mode_mcchar::COLORS#0 COLORS = ((byte*))(word/dword/signed dword) 33792
+(const byte*) mode_mcchar::COLORS#0 COLORS = ((byte*))(word/dword/signed dword) 55296
 (byte*) mode_mcchar::SCREEN
 (const byte*) mode_mcchar::SCREEN#0 SCREEN = ((byte*))(word/dword/signed dword) 32768
 (byte*) mode_mcchar::ch
@@ -24875,7 +24875,7 @@ FINAL SYMBOL TABLE
 (byte*) mode_stdchar::CHARSET
 (const byte*) mode_stdchar::CHARSET#0 CHARSET = ((byte*))(word/dword/signed dword) 36864
 (byte*) mode_stdchar::COLORS
-(const byte*) mode_stdchar::COLORS#0 COLORS = ((byte*))(word/dword/signed dword) 33792
+(const byte*) mode_stdchar::COLORS#0 COLORS = ((byte*))(word/dword/signed dword) 55296
 (byte*) mode_stdchar::SCREEN
 (const byte*) mode_stdchar::SCREEN#0 SCREEN = ((byte*))(word/dword/signed dword) 32768
 (byte*) mode_stdchar::ch
@@ -27336,7 +27336,7 @@ mode_hicolstdchar: {
 mode_mcchar: {
     .label SCREEN = $8000
     .label CHARSET = $9000
-    .label COLORS = $8400
+    .label COLORS = $d800
     .label _28 = 7
     .label col = 2
     .label ch = 5
@@ -27344,10 +27344,10 @@ mode_mcchar: {
   //SEG959 [522] *((const byte*) DTV_GRAPHICS_VIC_BANK#0) ← ((byte))((dword))(const byte*) mode_mcchar::CHARSET#0/(dword/signed dword) 65536 [ ] ( main:2::menu:9::mode_mcchar:56 [ ] ) -- _deref_pbuc1=vbuc2 
     lda #($ffffffff&CHARSET)/$10000
     sta DTV_GRAPHICS_VIC_BANK
-  //SEG960 [523] *((const byte*) DTV_COLOR_BANK_LO#0) ← <((word))(const byte*) mode_mcchar::COLORS#0/(word/signed word/dword/signed dword) 1024 [ ] ( main:2::menu:9::mode_mcchar:56 [ ] ) -- _deref_pbuc1=vbuc2 
-    lda #COLORS/$400
+  //SEG960 [523] *((const byte*) DTV_COLOR_BANK_LO#0) ← <((word))(const dword) DTV_COLOR_BANK_DEFAULT#0/(word/signed word/dword/signed dword) 1024 [ ] ( main:2::menu:9::mode_mcchar:56 [ ] ) -- _deref_pbuc1=vbuc2 
+    lda #DTV_COLOR_BANK_DEFAULT/$400
     sta DTV_COLOR_BANK_LO
-  //SEG961 [524] *((const byte*) DTV_COLOR_BANK_HI#0) ← >((word))(const byte*) mode_mcchar::COLORS#0/(word/signed word/dword/signed dword) 1024 [ ] ( main:2::menu:9::mode_mcchar:56 [ ] ) -- _deref_pbuc1=vbuc2 
+  //SEG961 [524] *((const byte*) DTV_COLOR_BANK_HI#0) ← >((word))(const dword) DTV_COLOR_BANK_DEFAULT#0/(word/signed word/dword/signed dword) 1024 [ ] ( main:2::menu:9::mode_mcchar:56 [ ] ) -- _deref_pbuc1=vbuc2 
     lda #0
     sta DTV_COLOR_BANK_HI
   //SEG962 [525] *((const byte*) DTV_CONTROL#0) ← (byte/signed byte/word/signed word/dword/signed dword) 0 [ ] ( main:2::menu:9::mode_mcchar:56 [ ] ) -- _deref_pbuc1=vbuc2 
@@ -27501,20 +27501,20 @@ mode_mcchar: {
 }
 //SEG1027 mode_ecmchar
 mode_ecmchar: {
-    .label ECMCHAR_SCREEN = $8000
-    .label ECMCHAR_CHARSET = $9000
-    .label ECMCHAR_COLORS = $8400
+    .label SCREEN = $8000
+    .label CHARSET = $9000
+    .label COLORS = $d800
     .label _28 = 7
     .label col = 2
     .label ch = 5
     .label cy = 4
-  //SEG1028 [562] *((const byte*) DTV_GRAPHICS_VIC_BANK#0) ← ((byte))((dword))(const byte*) mode_ecmchar::ECMCHAR_CHARSET#0/(dword/signed dword) 65536 [ ] ( main:2::menu:9::mode_ecmchar:49 [ ] ) -- _deref_pbuc1=vbuc2 
-    lda #($ffffffff&ECMCHAR_CHARSET)/$10000
+  //SEG1028 [562] *((const byte*) DTV_GRAPHICS_VIC_BANK#0) ← ((byte))((dword))(const byte*) mode_ecmchar::CHARSET#0/(dword/signed dword) 65536 [ ] ( main:2::menu:9::mode_ecmchar:49 [ ] ) -- _deref_pbuc1=vbuc2 
+    lda #($ffffffff&CHARSET)/$10000
     sta DTV_GRAPHICS_VIC_BANK
-  //SEG1029 [563] *((const byte*) DTV_COLOR_BANK_LO#0) ← <((word))(const byte*) mode_ecmchar::ECMCHAR_COLORS#0/(word/signed word/dword/signed dword) 1024 [ ] ( main:2::menu:9::mode_ecmchar:49 [ ] ) -- _deref_pbuc1=vbuc2 
-    lda #ECMCHAR_COLORS/$400
+  //SEG1029 [563] *((const byte*) DTV_COLOR_BANK_LO#0) ← <((word))(const dword) DTV_COLOR_BANK_DEFAULT#0/(word/signed word/dword/signed dword) 1024 [ ] ( main:2::menu:9::mode_ecmchar:49 [ ] ) -- _deref_pbuc1=vbuc2 
+    lda #DTV_COLOR_BANK_DEFAULT/$400
     sta DTV_COLOR_BANK_LO
-  //SEG1030 [564] *((const byte*) DTV_COLOR_BANK_HI#0) ← >((word))(const byte*) mode_ecmchar::ECMCHAR_COLORS#0/(word/signed word/dword/signed dword) 1024 [ ] ( main:2::menu:9::mode_ecmchar:49 [ ] ) -- _deref_pbuc1=vbuc2 
+  //SEG1030 [564] *((const byte*) DTV_COLOR_BANK_HI#0) ← >((word))(const dword) DTV_COLOR_BANK_DEFAULT#0/(word/signed word/dword/signed dword) 1024 [ ] ( main:2::menu:9::mode_ecmchar:49 [ ] ) -- _deref_pbuc1=vbuc2 
     lda #0
     sta DTV_COLOR_BANK_HI
   //SEG1031 [565] *((const byte*) DTV_CONTROL#0) ← (byte/signed byte/word/signed word/dword/signed dword) 0 [ ] ( main:2::menu:9::mode_ecmchar:49 [ ] ) -- _deref_pbuc1=vbuc2 
@@ -27522,8 +27522,8 @@ mode_ecmchar: {
   //SEG1032 [566] *((const byte*) CIA2_PORT_A_DDR#0) ← (byte/signed byte/word/signed word/dword/signed dword) 3 [ ] ( main:2::menu:9::mode_ecmchar:49 [ ] ) -- _deref_pbuc1=vbuc2 
     lda #3
     sta CIA2_PORT_A_DDR
-  //SEG1033 [567] *((const byte*) CIA2_PORT_A#0) ← (byte/signed byte/word/signed word/dword/signed dword) 3^((byte))((word))(const byte*) mode_ecmchar::ECMCHAR_CHARSET#0/(word/signed word/dword/signed dword) 16384 [ ] ( main:2::menu:9::mode_ecmchar:49 [ ] ) -- _deref_pbuc1=vbuc2 
-    lda #3^ECMCHAR_CHARSET/$4000
+  //SEG1033 [567] *((const byte*) CIA2_PORT_A#0) ← (byte/signed byte/word/signed word/dword/signed dword) 3^((byte))((word))(const byte*) mode_ecmchar::CHARSET#0/(word/signed word/dword/signed dword) 16384 [ ] ( main:2::menu:9::mode_ecmchar:49 [ ] ) -- _deref_pbuc1=vbuc2 
+    lda #3^CHARSET/$4000
     sta CIA2_PORT_A
   //SEG1034 [568] *((const byte*) VIC_CONTROL#0) ← (const byte) VIC_DEN#0|(const byte) VIC_RSEL#0|(const byte) VIC_ECM#0|(byte/signed byte/word/signed word/dword/signed dword) 3 [ ] ( main:2::menu:9::mode_ecmchar:49 [ ] ) -- _deref_pbuc1=vbuc2 
     lda #VIC_DEN|VIC_RSEL|VIC_ECM|3
@@ -27531,8 +27531,8 @@ mode_ecmchar: {
   //SEG1035 [569] *((const byte*) VIC_CONTROL2#0) ← (const byte) VIC_CSEL#0 [ ] ( main:2::menu:9::mode_ecmchar:49 [ ] ) -- _deref_pbuc1=vbuc2 
     lda #VIC_CSEL
     sta VIC_CONTROL2
-  //SEG1036 [570] *((const byte*) VIC_MEMORY#0) ← ((byte))((word))(const byte*) mode_ecmchar::ECMCHAR_SCREEN#0&(word/signed word/dword/signed dword) 16383/(byte/signed byte/word/signed word/dword/signed dword) 64|((word))(const byte*) mode_ecmchar::ECMCHAR_CHARSET#0&(word/signed word/dword/signed dword) 16383/(word/signed word/dword/signed dword) 1024 [ ] ( main:2::menu:9::mode_ecmchar:49 [ ] ) -- _deref_pbuc1=vbuc2 
-    lda #(ECMCHAR_SCREEN&$3fff)/$40|(ECMCHAR_CHARSET&$3fff)/$400
+  //SEG1036 [570] *((const byte*) VIC_MEMORY#0) ← ((byte))((word))(const byte*) mode_ecmchar::SCREEN#0&(word/signed word/dword/signed dword) 16383/(byte/signed byte/word/signed word/dword/signed dword) 64|((word))(const byte*) mode_ecmchar::CHARSET#0&(word/signed word/dword/signed dword) 16383/(word/signed word/dword/signed dword) 1024 [ ] ( main:2::menu:9::mode_ecmchar:49 [ ] ) -- _deref_pbuc1=vbuc2 
+    lda #(SCREEN&$3fff)/$40|(CHARSET&$3fff)/$400
     sta VIC_MEMORY
   //SEG1037 [571] phi from mode_ecmchar to mode_ecmchar::@1 [phi:mode_ecmchar->mode_ecmchar::@1]
   //SEG1038 [571] phi (byte) mode_ecmchar::i#2 = (byte/signed byte/word/signed word/dword/signed dword) 0 [phi:mode_ecmchar->mode_ecmchar::@1#0] -- vbuxx=vbuc1 
@@ -27565,15 +27565,15 @@ mode_ecmchar: {
     lda #6
     sta BGCOL4
   //SEG1051 [580] phi from mode_ecmchar::@8 to mode_ecmchar::@2 [phi:mode_ecmchar::@8->mode_ecmchar::@2]
-  //SEG1052 [580] phi (byte*) mode_ecmchar::ch#3 = (const byte*) mode_ecmchar::ECMCHAR_SCREEN#0 [phi:mode_ecmchar::@8->mode_ecmchar::@2#0] -- pbuz1=pbuc1 
-    lda #<ECMCHAR_SCREEN
+  //SEG1052 [580] phi (byte*) mode_ecmchar::ch#3 = (const byte*) mode_ecmchar::SCREEN#0 [phi:mode_ecmchar::@8->mode_ecmchar::@2#0] -- pbuz1=pbuc1 
+    lda #<SCREEN
     sta ch
-    lda #>ECMCHAR_SCREEN
+    lda #>SCREEN
     sta ch+1
-  //SEG1053 [580] phi (byte*) mode_ecmchar::col#3 = (const byte*) mode_ecmchar::ECMCHAR_COLORS#0 [phi:mode_ecmchar::@8->mode_ecmchar::@2#1] -- pbuz1=pbuc1 
-    lda #<ECMCHAR_COLORS
+  //SEG1053 [580] phi (byte*) mode_ecmchar::col#3 = (const byte*) mode_ecmchar::COLORS#0 [phi:mode_ecmchar::@8->mode_ecmchar::@2#1] -- pbuz1=pbuc1 
+    lda #<COLORS
     sta col
-    lda #>ECMCHAR_COLORS
+    lda #>COLORS
     sta col+1
   //SEG1054 [580] phi (byte) mode_ecmchar::cy#4 = (byte/signed byte/word/signed word/dword/signed dword) 0 [phi:mode_ecmchar::@8->mode_ecmchar::@2#2] -- vbuz1=vbuc1 
     lda #0
@@ -27672,7 +27672,7 @@ mode_ecmchar: {
 mode_stdchar: {
     .label SCREEN = $8000
     .label CHARSET = $9000
-    .label COLORS = $8400
+    .label COLORS = $d800
     .label _27 = 7
     .label col = 2
     .label ch = 5
@@ -27680,10 +27680,10 @@ mode_stdchar: {
   //SEG1098 [603] *((const byte*) DTV_GRAPHICS_VIC_BANK#0) ← ((byte))((dword))(const byte*) mode_stdchar::CHARSET#0/(dword/signed dword) 65536 [ ] ( main:2::menu:9::mode_stdchar:42 [ ] ) -- _deref_pbuc1=vbuc2 
     lda #($ffffffff&CHARSET)/$10000
     sta DTV_GRAPHICS_VIC_BANK
-  //SEG1099 [604] *((const byte*) DTV_COLOR_BANK_LO#0) ← <((word))(const byte*) mode_stdchar::COLORS#0/(word/signed word/dword/signed dword) 1024 [ ] ( main:2::menu:9::mode_stdchar:42 [ ] ) -- _deref_pbuc1=vbuc2 
-    lda #COLORS/$400
+  //SEG1099 [604] *((const byte*) DTV_COLOR_BANK_LO#0) ← <((word))(const dword) DTV_COLOR_BANK_DEFAULT#0/(word/signed word/dword/signed dword) 1024 [ ] ( main:2::menu:9::mode_stdchar:42 [ ] ) -- _deref_pbuc1=vbuc2 
+    lda #DTV_COLOR_BANK_DEFAULT/$400
     sta DTV_COLOR_BANK_LO
-  //SEG1100 [605] *((const byte*) DTV_COLOR_BANK_HI#0) ← >((word))(const byte*) mode_stdchar::COLORS#0/(word/signed word/dword/signed dword) 1024 [ ] ( main:2::menu:9::mode_stdchar:42 [ ] ) -- _deref_pbuc1=vbuc2 
+  //SEG1100 [605] *((const byte*) DTV_COLOR_BANK_HI#0) ← >((word))(const dword) DTV_COLOR_BANK_DEFAULT#0/(word/signed word/dword/signed dword) 1024 [ ] ( main:2::menu:9::mode_stdchar:42 [ ] ) -- _deref_pbuc1=vbuc2 
     lda #0
     sta DTV_COLOR_BANK_HI
   //SEG1101 [606] *((const byte*) DTV_CONTROL#0) ← (byte/signed byte/word/signed word/dword/signed dword) 0 [ ] ( main:2::menu:9::mode_stdchar:42 [ ] ) -- _deref_pbuc1=vbuc2 

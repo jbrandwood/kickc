@@ -1198,14 +1198,14 @@ mode_hicolstdchar: {
 mode_mcchar: {
     .label SCREEN = $8000
     .label CHARSET = $9000
-    .label COLORS = $8400
+    .label COLORS = $d800
     .label _28 = 7
     .label col = 2
     .label ch = 5
     .label cy = 4
     lda #($ffffffff&CHARSET)/$10000
     sta DTV_GRAPHICS_VIC_BANK
-    lda #COLORS/$400
+    lda #DTV_COLOR_BANK_DEFAULT/$400
     sta DTV_COLOR_BANK_LO
     lda #0
     sta DTV_COLOR_BANK_HI
@@ -1292,29 +1292,29 @@ mode_mcchar: {
     jmp breturn
 }
 mode_ecmchar: {
-    .label ECMCHAR_SCREEN = $8000
-    .label ECMCHAR_CHARSET = $9000
-    .label ECMCHAR_COLORS = $8400
+    .label SCREEN = $8000
+    .label CHARSET = $9000
+    .label COLORS = $d800
     .label _28 = 7
     .label col = 2
     .label ch = 5
     .label cy = 4
-    lda #($ffffffff&ECMCHAR_CHARSET)/$10000
+    lda #($ffffffff&CHARSET)/$10000
     sta DTV_GRAPHICS_VIC_BANK
-    lda #ECMCHAR_COLORS/$400
+    lda #DTV_COLOR_BANK_DEFAULT/$400
     sta DTV_COLOR_BANK_LO
     lda #0
     sta DTV_COLOR_BANK_HI
     sta DTV_CONTROL
     lda #3
     sta CIA2_PORT_A_DDR
-    lda #3^ECMCHAR_CHARSET/$4000
+    lda #3^CHARSET/$4000
     sta CIA2_PORT_A
     lda #VIC_DEN|VIC_RSEL|VIC_ECM|3
     sta VIC_CONTROL
     lda #VIC_CSEL
     sta VIC_CONTROL2
-    lda #(ECMCHAR_SCREEN&$3fff)/$40|(ECMCHAR_CHARSET&$3fff)/$400
+    lda #(SCREEN&$3fff)/$40|(CHARSET&$3fff)/$400
     sta VIC_MEMORY
     ldx #0
   b1:
@@ -1332,13 +1332,13 @@ mode_ecmchar: {
     sta BGCOL3
     lda #6
     sta BGCOL4
-    lda #<ECMCHAR_SCREEN
+    lda #<SCREEN
     sta ch
-    lda #>ECMCHAR_SCREEN
+    lda #>SCREEN
     sta ch+1
-    lda #<ECMCHAR_COLORS
+    lda #<COLORS
     sta col
-    lda #>ECMCHAR_COLORS
+    lda #>COLORS
     sta col+1
     lda #0
     sta cy
@@ -1391,14 +1391,14 @@ mode_ecmchar: {
 mode_stdchar: {
     .label SCREEN = $8000
     .label CHARSET = $9000
-    .label COLORS = $8400
+    .label COLORS = $d800
     .label _27 = 7
     .label col = 2
     .label ch = 5
     .label cy = 4
     lda #($ffffffff&CHARSET)/$10000
     sta DTV_GRAPHICS_VIC_BANK
-    lda #COLORS/$400
+    lda #DTV_COLOR_BANK_DEFAULT/$400
     sta DTV_COLOR_BANK_LO
     lda #0
     sta DTV_COLOR_BANK_HI

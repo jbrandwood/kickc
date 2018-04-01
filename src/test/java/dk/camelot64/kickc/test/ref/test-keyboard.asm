@@ -61,7 +61,7 @@ main: {
     .label sc = 2
     .label screen = 2
     .label row = 4
-    .label i = 4
+    .label ch = 4
     lda #<$400
     sta sc
     lda #>$400
@@ -130,10 +130,11 @@ main: {
     bcc !+
     inc screen+1
   !:
-    lda #0
-    sta i
-    tax
+    ldx #0
+    txa
+    sta ch
   b10:
+    ldy ch
     jsr keyboard_get_keycode
     cmp #$3f
     beq b11
@@ -141,21 +142,23 @@ main: {
     jsr keyboard_key_pressed
     cmp #0
     beq b11
-    ldy i
     txa
+    tay
+    lda ch
     sta (screen),y
-    inc i
-  b11:
     inx
-    cpx #$40
+  b11:
+    inc ch
+    lda ch
+    cmp #$40
     bne b10
   b13:
+    txa
+    tay
     lda #' '
-    ldy i
     sta (screen),y
-    inc i
-    lda i
-    cmp #5
+    inx
+    cpx #5
     bcc b13
     jmp b5
   b8:
@@ -186,7 +189,7 @@ keyboard_matrix_read: {
     rts
 }
 keyboard_get_keycode: {
-    lda keyboard_char_keycodes,x
+    lda keyboard_char_keycodes,y
     rts
 }
 keyboard_init: {

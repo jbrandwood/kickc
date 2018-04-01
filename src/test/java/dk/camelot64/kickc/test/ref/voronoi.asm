@@ -32,19 +32,19 @@ animate: {
     lda #0
     sta YPOS+0
   b2:
-    ldx XPOS+1
-    dex
-    stx XPOS+1
-    txa
+    lda XPOS+1
+    sec
+    sbc #1
+    sta XPOS+1
     cmp #$ff
     bne b3
     lda #$28
     sta XPOS+1
   b3:
-    ldx YPOS+2
-    inx
-    stx YPOS+2
-    txa
+    lda YPOS+2
+    clc
+    adc #1
+    sta YPOS+2
     cmp #$19
     bne b4
     lda #0
@@ -110,7 +110,6 @@ findcol: {
     .label y = 2
     .label xp = 8
     .label yp = 9
-    .label diff = 8
     .label i = 6
     .label mindiff = 7
     ldx #0
@@ -137,10 +136,10 @@ findcol: {
     lda x
     cmp xp
     bcs b4
-    lda diff
+    lda xp
     sec
     sbc x
-    sta diff
+    tay
   b5:
     lda y
     cmp yp
@@ -148,8 +147,9 @@ findcol: {
     lda yp
     sec
     sbc y
+    sty $ff
     clc
-    adc diff
+    adc $ff
     tay
   b7:
     cpy mindiff
@@ -173,15 +173,16 @@ findcol: {
     lda y
     sec
     sbc yp
+    sty $ff
     clc
-    adc diff
+    adc $ff
     tay
     jmp b7
   b4:
     lda x
     sec
-    sbc diff
-    sta diff
+    sbc xp
+    tay
     jmp b5
 }
 initscreen: {

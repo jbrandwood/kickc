@@ -2,24 +2,26 @@
 :BasicUpstart(main)
 .pc = $80d "Program"
   .label SCREEN = $400
-  .label cnt3 = 2
+  .label cnt = 2
   jsr main
 main: {
-    lda #0
-    sta cnt3
-    tay
-    tax
+    ldx #0
+    ldy #0
+    txa
     jsr inccnt
     sta SCREEN+0
-    inx
+    lda cnt
+    clc
+    adc #1
     jsr inccnt
     sta SCREEN+1
     rts
 }
 inccnt: {
-    inx
+    clc
+    adc #1
+    sta cnt
     iny
-    inc cnt3
-    txa
+    inx
     rts
 }

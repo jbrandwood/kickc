@@ -125,6 +125,9 @@ void menu() {
 
 }
 
+// The value of the DTV control register
+byte dtv_control = 0;
+
 // Allow the user to control the DTV graphics using different keys
 void mode_ctrl() {
     while(true) {
@@ -134,19 +137,7 @@ void mode_ctrl() {
         if(keyboard_key_pressed(KEY_SPACE)!=0) {
             return;
         }
-        mode_ctrl_keys();
-    }
-}
-
-// The value of the DTV control register
-byte dtv_control = 0;
-
-void mode_ctrl_keys() {
-    // Read the current control byte
-    if(dtv_control==$ff) {
-        *BORDERCOL = 2;
-    } else {
-        *BORDERCOL = dtv_control;
+        // Read the current control byte
         byte ctrl = dtv_control;
         // Test for control keys
         if(keyboard_key_pressed(KEY_L)!=0) {
@@ -177,6 +168,7 @@ void mode_ctrl_keys() {
             // DTV Graphics Mode - Reset
             ctrl = 0;
         }
+        // If the control byte is modified - write it
         if(ctrl != dtv_control) {
             dtv_control = ctrl;
             *DTV_CONTROL = ctrl;
@@ -184,6 +176,7 @@ void mode_ctrl_keys() {
         }
     }
 }
+
 
 // Standard Character Mode (LINEAR/HICOL/CHUNK/COLDIS/ECM/MCM/BMM = 0)
 // Resolution: 320x200

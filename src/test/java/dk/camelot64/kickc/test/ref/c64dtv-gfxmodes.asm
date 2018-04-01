@@ -76,6 +76,7 @@
   .const KEY_2 = $3b
   .const KEY_SPACE = $3c
   .label print_char_cursor = 5
+  .label dtv_control = 2
   .label print_line_cursor = $d
   jsr main
 main: {
@@ -86,7 +87,8 @@ main: {
     sta PROCPORT
     lda #DTV_FEATURE_ENABLE
     sta DTV_FEATURE
-    ldx #0
+    lda #0
+    sta dtv_control
   b2:
     jsr menu
     jmp b2
@@ -94,7 +96,7 @@ main: {
 menu: {
     .label SCREEN = $8000
     .label CHARSET = $9800
-    .label c = 2
+    .label c = 3
     lda #($ffffffff&CHARSET)/$10000
     sta DTV_GRAPHICS_VIC_BANK
     lda #DTV_COLOR_BANK_DEFAULT/$400
@@ -112,12 +114,12 @@ menu: {
     sta VIC_CONTROL2
     lda #(SCREEN&$3fff)/$40|(CHARSET&$3fff)/$400
     sta VIC_MEMORY
-    ldy #0
+    ldx #0
   b1:
-    lda DTV_PALETTE_DEFAULT,y
-    sta DTV_PALETTE,y
-    iny
-    cpy #$10
+    lda DTV_PALETTE_DEFAULT,x
+    sta DTV_PALETTE,x
+    inx
+    cpx #$10
     bne b1
     lda #<COLS
     sta c
@@ -237,8 +239,8 @@ mode_8bppchunkybmm: {
     .const PLANEB = $20000
     .label _23 = $d
     .label gfxb = 5
-    .label x = 2
-    .label y = 4
+    .label x = 3
+    .label y = 2
     lda #DTV_HIGHCOLOR|DTV_LINEAR|DTV_CHUNKY|DTV_COLORRAM_OFF
     sta DTV_CONTROL
     lda #VIC_ECM|VIC_DEN|VIC_RSEL|3
@@ -322,7 +324,8 @@ mode_8bppchunkybmm: {
     bne b2
     lda #$4000/$4000
     jsr dtvSetCpuBankSegment1
-    ldx #DTV_HIGHCOLOR|DTV_LINEAR|DTV_CHUNKY|DTV_COLORRAM_OFF
+    lda #DTV_HIGHCOLOR|DTV_LINEAR|DTV_CHUNKY|DTV_COLORRAM_OFF
+    sta dtv_control
     jsr mode_ctrl
     rts
 }
@@ -340,83 +343,67 @@ mode_ctrl: {
     beq b7
     jmp breturn
   b7:
-    jsr mode_ctrl_keys
-    jmp b4
-}
-mode_ctrl_keys: {
-    .label ctrl = 4
-    cpx #$ff
-    bne b1
-    lda #2
-    sta BORDERCOL
-  breturn:
-    rts
-  b1:
-    stx BORDERCOL
-    stx ctrl
+    ldx dtv_control
     ldy #KEY_L
     jsr keyboard_key_pressed
     cmp #0
-    beq b3
-    lda #DTV_LINEAR
-    ora ctrl
-    sta ctrl
-  b3:
+    beq b8
+    txa
+    ora #DTV_LINEAR
+    tax
+  b8:
     ldy #KEY_H
     jsr keyboard_key_pressed
     cmp #0
-    beq b4
-    lda #DTV_HIGHCOLOR
-    ora ctrl
-    sta ctrl
-  b4:
+    beq b9
+    txa
+    ora #DTV_HIGHCOLOR
+    tax
+  b9:
     ldy #KEY_O
     jsr keyboard_key_pressed
     cmp #0
-    beq b5
-    lda #DTV_OVERSCAN
-    ora ctrl
-    sta ctrl
-  b5:
+    beq b10
+    txa
+    ora #DTV_OVERSCAN
+    tax
+  b10:
     ldy #KEY_B
     jsr keyboard_key_pressed
     cmp #0
-    beq b6
-    lda #DTV_BORDER_OFF
-    ora ctrl
-    sta ctrl
-  b6:
+    beq b11
+    txa
+    ora #DTV_BORDER_OFF
+    tax
+  b11:
     ldy #KEY_U
     jsr keyboard_key_pressed
     cmp #0
-    beq b7
-    lda #DTV_CHUNKY
-    ora ctrl
-    sta ctrl
-  b7:
+    beq b12
+    txa
+    ora #DTV_CHUNKY
+    tax
+  b12:
     ldy #KEY_C
     jsr keyboard_key_pressed
     cmp #0
-    beq b8
-    lda #DTV_COLORRAM_OFF
-    ora ctrl
-    sta ctrl
-  b8:
+    beq b13
+    txa
+    ora #DTV_COLORRAM_OFF
+    tax
+  b13:
     ldy #KEY_0
     jsr keyboard_key_pressed
     cmp #0
-    beq b9
-    lda #0
-    sta ctrl
-  b9:
-    cpx ctrl
-    beq breturn
-    ldx ctrl
-    txa
-    sta DTV_CONTROL
-    txa
-    sta BORDERCOL
-    jmp breturn
+    beq b14
+    ldx #0
+  b14:
+    cpx dtv_control
+    beq b4
+    stx dtv_control
+    stx DTV_CONTROL
+    stx BORDERCOL
+    jmp b4
 }
 keyboard_key_pressed: {
     .label colidx = 7
@@ -452,14 +439,14 @@ mode_8bpppixelcell: {
     .label PLANEA = $3c00
     .label PLANEB = $4000
     .label _14 = 7
-    .label gfxa = 2
-    .label ay = 4
+    .label gfxa = 3
+    .label ay = 2
     .label bits = 8
-    .label chargen = 2
+    .label chargen = 3
     .label gfxb = 5
     .label col = 9
     .label cr = 7
-    .label ch = 4
+    .label ch = 2
     lda #DTV_HIGHCOLOR|DTV_LINEAR|DTV_CHUNKY
     sta DTV_CONTROL
     lda #VIC_ECM|VIC_DEN|VIC_RSEL|3
@@ -581,7 +568,8 @@ mode_8bpppixelcell: {
     bne b4
     lda #PROCPORT_RAM_IO
     sta PROCPORT
-    ldx #DTV_HIGHCOLOR|DTV_LINEAR|DTV_CHUNKY
+    lda #DTV_HIGHCOLOR|DTV_LINEAR|DTV_CHUNKY
+    sta dtv_control
     jsr mode_ctrl
     rts
 }
@@ -589,12 +577,12 @@ mode_sixsfred: {
     .label PLANEA = $4000
     .label PLANEB = $6000
     .label COLORS = $8000
-    .label col = 2
-    .label cy = 4
-    .label gfxa = 2
-    .label ay = 4
-    .label gfxb = 2
-    .label by = 4
+    .label col = 3
+    .label cy = 2
+    .label gfxa = 3
+    .label ay = 2
+    .label gfxb = 3
+    .label by = 2
     lda #DTV_HIGHCOLOR|DTV_LINEAR
     sta DTV_CONTROL
     lda #VIC_ECM|VIC_BMM|VIC_DEN|VIC_RSEL|3
@@ -712,7 +700,8 @@ mode_sixsfred: {
     lda by
     cmp #$c8
     bne b6
-    ldx #DTV_HIGHCOLOR|DTV_LINEAR
+    lda #DTV_HIGHCOLOR|DTV_LINEAR
+    sta dtv_control
     jsr mode_ctrl
     rts
     row_bitmask: .byte 0, $55, $aa, $ff
@@ -722,12 +711,12 @@ mode_twoplanebitmap: {
     .label PLANEB = $6000
     .label COLORS = $8000
     .label _16 = 7
-    .label col = 2
-    .label cy = 4
-    .label gfxa = 2
-    .label ay = 4
-    .label gfxb = 2
-    .label by = 4
+    .label col = 3
+    .label cy = 2
+    .label gfxa = 3
+    .label ay = 2
+    .label gfxb = 3
+    .label by = 2
     lda #DTV_HIGHCOLOR|DTV_LINEAR
     sta DTV_CONTROL
     lda #VIC_ECM|VIC_BMM|VIC_DEN|VIC_RSEL|3
@@ -856,7 +845,8 @@ mode_twoplanebitmap: {
     lda by
     cmp #$c8
     bne b8
-    ldx #DTV_HIGHCOLOR|DTV_LINEAR
+    lda #DTV_HIGHCOLOR|DTV_LINEAR
+    sta dtv_control
     jsr mode_ctrl
     rts
   b6:
@@ -874,12 +864,12 @@ mode_sixsfred2: {
     .label PLANEB = $6000
     .label COLORS = $8000
     .label _15 = 7
-    .label col = 2
-    .label cy = 4
-    .label gfxa = 2
-    .label ay = 4
-    .label gfxb = 2
-    .label by = 4
+    .label col = 3
+    .label cy = 2
+    .label gfxa = 3
+    .label ay = 2
+    .label gfxb = 3
+    .label by = 2
     lda #DTV_LINEAR
     sta DTV_CONTROL
     lda #VIC_ECM|VIC_BMM|VIC_DEN|VIC_RSEL|3
@@ -1003,7 +993,8 @@ mode_sixsfred2: {
     lda by
     cmp #$c8
     bne b6
-    ldx #DTV_LINEAR
+    lda #DTV_LINEAR
+    sta dtv_control
     jsr mode_ctrl
     rts
     row_bitmask: .byte 0, $55, $aa, $ff
@@ -1013,9 +1004,9 @@ mode_hicolmcchar: {
     .label CHARSET = $9000
     .label COLORS = $8400
     .label _26 = 7
-    .label col = 2
+    .label col = 3
     .label ch = 5
-    .label cy = 4
+    .label cy = 2
     lda #($ffffffff&CHARSET)/$10000
     sta DTV_GRAPHICS_VIC_BANK
     lda #COLORS/$400
@@ -1091,7 +1082,8 @@ mode_hicolmcchar: {
     lda cy
     cmp #$19
     bne b2
-    ldx #DTV_HIGHCOLOR
+    lda #DTV_HIGHCOLOR
+    sta dtv_control
     jsr mode_ctrl
     rts
 }
@@ -1100,9 +1092,9 @@ mode_hicolecmchar: {
     .label CHARSET = $9000
     .label COLORS = $8400
     .label _26 = 7
-    .label col = 2
+    .label col = 3
     .label ch = 5
-    .label cy = 4
+    .label cy = 2
     lda #($ffffffff&CHARSET)/$10000
     sta DTV_GRAPHICS_VIC_BANK
     lda #COLORS/$400
@@ -1180,7 +1172,8 @@ mode_hicolecmchar: {
     lda cy
     cmp #$19
     bne b2
-    ldx #DTV_HIGHCOLOR
+    lda #DTV_HIGHCOLOR
+    sta dtv_control
     jsr mode_ctrl
     rts
 }
@@ -1189,9 +1182,9 @@ mode_hicolstdchar: {
     .label CHARSET = $9000
     .label COLORS = $8400
     .label _25 = 7
-    .label col = 2
+    .label col = 3
     .label ch = 5
-    .label cy = 4
+    .label cy = 2
     lda #($ffffffff&CHARSET)/$10000
     sta DTV_GRAPHICS_VIC_BANK
     lda #COLORS/$400
@@ -1262,7 +1255,8 @@ mode_hicolstdchar: {
     lda cy
     cmp #$19
     bne b2
-    ldx #DTV_HIGHCOLOR
+    lda #DTV_HIGHCOLOR
+    sta dtv_control
     jsr mode_ctrl
     rts
 }
@@ -1271,9 +1265,9 @@ mode_stdbitmap: {
     .label BITMAP = $6000
     .const lines_cnt = 9
     .label col2 = 7
-    .label ch = 2
-    .label cy = 4
-    .label l = 4
+    .label ch = 3
+    .label cy = 2
+    .label l = 2
     lda #($ffffffff&BITMAP)/$10000
     sta DTV_GRAPHICS_VIC_BANK
     lda #0
@@ -1355,7 +1349,8 @@ mode_stdbitmap: {
     lda l
     cmp #lines_cnt
     bcc b4
-    ldx #0
+    lda #0
+    sta dtv_control
     jsr mode_ctrl
     rts
     lines_x: .byte 0, $ff, $ff, 0, 0, $80, $ff, $80, 0, $80
@@ -1492,8 +1487,8 @@ bitmap_line_ydxi: {
     rts
 }
 bitmap_plot: {
-    .label _0 = 2
-    .label plotter_x = 2
+    .label _0 = 3
+    .label plotter_x = 3
     .label plotter_y = 5
     lda bitmap_plot_xhi,x
     sta plotter_x+1
@@ -1617,9 +1612,9 @@ bitmap_line_xdyd: {
     rts
 }
 bitmap_clear: {
-    .label bitmap = 2
-    .label y = 4
-    .label _3 = 2
+    .label bitmap = 3
+    .label y = 2
+    .label _3 = 3
     lda bitmap_plot_xlo+0
     sta _3
     lda bitmap_plot_xhi+0
@@ -1646,8 +1641,8 @@ bitmap_clear: {
     rts
 }
 bitmap_init: {
-    .label _6 = 4
-    .label yoffs = 2
+    .label _6 = 2
+    .label yoffs = 3
     ldy #$80
     ldx #0
   b1:
@@ -1703,9 +1698,9 @@ mode_mcchar: {
     .label CHARSET = $9000
     .label COLORS = $d800
     .label _28 = 7
-    .label col = 2
+    .label col = 3
     .label ch = 5
-    .label cy = 4
+    .label cy = 2
     lda #($ffffffff&CHARSET)/$10000
     sta DTV_GRAPHICS_VIC_BANK
     lda #DTV_COLOR_BANK_DEFAULT/$400
@@ -1784,7 +1779,8 @@ mode_mcchar: {
     lda cy
     cmp #$19
     bne b2
-    ldx #0
+    lda #0
+    sta dtv_control
     jsr mode_ctrl
     rts
 }
@@ -1793,9 +1789,9 @@ mode_ecmchar: {
     .label CHARSET = $9000
     .label COLORS = $d800
     .label _28 = 7
-    .label col = 2
+    .label col = 3
     .label ch = 5
-    .label cy = 4
+    .label cy = 2
     lda #($ffffffff&CHARSET)/$10000
     sta DTV_GRAPHICS_VIC_BANK
     lda #DTV_COLOR_BANK_DEFAULT/$400
@@ -1875,7 +1871,8 @@ mode_ecmchar: {
     lda cy
     cmp #$19
     bne b2
-    ldx #0
+    lda #0
+    sta dtv_control
     jsr mode_ctrl
     rts
 }
@@ -1884,9 +1881,9 @@ mode_stdchar: {
     .label CHARSET = $9000
     .label COLORS = $d800
     .label _27 = 7
-    .label col = 2
+    .label col = 3
     .label ch = 5
-    .label cy = 4
+    .label cy = 2
     lda #($ffffffff&CHARSET)/$10000
     sta DTV_GRAPHICS_VIC_BANK
     lda #DTV_COLOR_BANK_DEFAULT/$400
@@ -1960,12 +1957,13 @@ mode_stdchar: {
     lda cy
     cmp #$19
     bne b2
-    ldx #0
+    lda #0
+    sta dtv_control
     jsr mode_ctrl
     rts
 }
 print_str_lines: {
-    .label str = 2
+    .label str = 3
     lda #<menu.SCREEN
     sta print_line_cursor
     lda #>menu.SCREEN
@@ -2029,7 +2027,7 @@ print_ln: {
     rts
 }
 print_cls: {
-    .label sc = 2
+    .label sc = 3
     lda #<menu.SCREEN
     sta sc
     lda #>menu.SCREEN

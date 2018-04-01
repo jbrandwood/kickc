@@ -48,12 +48,7 @@ public class TestPrograms {
 
    @Test
    public void testLoopProblem2() throws IOException, URISyntaxException {
-      try {
          compileAndCompare("loop-problem2");
-      } catch(ConcurrentModificationException e) {
-         return;
-      }
-      fail("Exception expected!");
    }
 
    @Test

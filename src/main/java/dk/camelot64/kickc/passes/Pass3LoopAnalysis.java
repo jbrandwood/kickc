@@ -64,7 +64,21 @@ public class Pass3LoopAnalysis extends Pass2Base {
          getLog().append("Populated: " + loop.toString());
       }
 
-      // Coalesce loops that are neither nested, nor disjoint
+      boolean coalesceMore = true;
+      while(coalesceMore) {
+         coalesceMore = coalesceLoops(loopSet);
+      }
+
+      getProgram().setLoopSet(loopSet);
+   }
+
+   /**
+    * Coalesce loops that are neither nested, nor disjoint
+    * @param loopSet The set of loops
+    * @return true if there might be more loops to coalesce - meaning the coalescer shoulbe be called again.
+    *         false if no loops can be coalesced.
+    */
+   private boolean coalesceLoops(NaturalLoopSet loopSet) {
       for(NaturalLoop loop : loopSet.getLoops()) {
          Set<NaturalLoop> headLoops = loopSet.getLoopsFromHead(loop.getHead());
          for(NaturalLoop other : headLoops) {
@@ -80,11 +94,11 @@ public class Pass3LoopAnalysis extends Pass2Base {
                loop.addBlocks(other.getBlocks());
                loopSet.remove(other);
                getLog().append("Coalesced: " + loop.toString());
+               return true;
             }
          }
       }
-
-      getProgram().setLoopSet(loopSet);
+      return false;
    }
 
 

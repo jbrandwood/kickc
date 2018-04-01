@@ -1,0 +1,856 @@
+PARSING src/test/java/dk/camelot64/kickc/test/kc/loop-problem2.kc
+const byte* BORDERCOL = $d020;
+const byte* SCREEN = $0400;
+
+void main() {
+    print_cls();
+    mode_ctrl();
+}
+
+void print_cls() {
+    for(byte* sc=SCREEN; sc!=SCREEN+1000; sc++) {
+        *sc = ' ';
+    }
+}
+
+void mode_ctrl() {
+    while(true) {
+        byte before = *BORDERCOL;
+        if(before==$ff) {
+            *BORDERCOL = 2;
+        } else {
+            *BORDERCOL = 3;
+        }
+    }
+}
+
+
+Adding pre/post-modifier (byte*) print_cls::sc ← ++ (byte*) print_cls::sc
+
+STATEMENTS
+  (byte*) BORDERCOL ← (word/dword/signed dword) 53280
+  (byte*) SCREEN ← (word/signed word/dword/signed dword) 1024
+proc (void()) main()
+  (void~) main::$0 ← call print_cls 
+  (void~) main::$1 ← call mode_ctrl 
+main::@return:
+  return 
+endproc // main()
+proc (void()) print_cls()
+  (byte*) print_cls::sc ← (byte*) SCREEN
+print_cls::@1:
+  *((byte*) print_cls::sc) ← (byte) ' '
+  (byte*) print_cls::sc ← ++ (byte*) print_cls::sc
+  (byte*~) print_cls::$0 ← (byte*) SCREEN + (word/signed word/dword/signed dword) 1000
+  (boolean~) print_cls::$1 ← (byte*) print_cls::sc != (byte*~) print_cls::$0
+  if((boolean~) print_cls::$1) goto print_cls::@1
+print_cls::@return:
+  return 
+endproc // print_cls()
+proc (void()) mode_ctrl()
+mode_ctrl::@1:
+  if(true) goto mode_ctrl::@2
+  goto mode_ctrl::@3
+mode_ctrl::@2:
+  (byte) mode_ctrl::before ← *((byte*) BORDERCOL)
+  (boolean~) mode_ctrl::$0 ← (byte) mode_ctrl::before == (byte/word/signed word/dword/signed dword) 255
+  (boolean~) mode_ctrl::$1 ← ! (boolean~) mode_ctrl::$0
+  if((boolean~) mode_ctrl::$1) goto mode_ctrl::@4
+  *((byte*) BORDERCOL) ← (byte/signed byte/word/signed word/dword/signed dword) 2
+  goto mode_ctrl::@5
+mode_ctrl::@4:
+  *((byte*) BORDERCOL) ← (byte/signed byte/word/signed word/dword/signed dword) 3
+mode_ctrl::@5:
+  goto mode_ctrl::@1
+mode_ctrl::@3:
+mode_ctrl::@return:
+  return 
+endproc // mode_ctrl()
+  call main 
+
+SYMBOLS
+(byte*) BORDERCOL
+(byte*) SCREEN
+(void()) main()
+(void~) main::$0
+(void~) main::$1
+(label) main::@return
+(void()) mode_ctrl()
+(boolean~) mode_ctrl::$0
+(boolean~) mode_ctrl::$1
+(label) mode_ctrl::@1
+(label) mode_ctrl::@2
+(label) mode_ctrl::@3
+(label) mode_ctrl::@4
+(label) mode_ctrl::@5
+(label) mode_ctrl::@return
+(byte) mode_ctrl::before
+(void()) print_cls()
+(byte*~) print_cls::$0
+(boolean~) print_cls::$1
+(label) print_cls::@1
+(label) print_cls::@return
+(byte*) print_cls::sc
+
+Promoting word/dword/signed dword to byte* in BORDERCOL ← ((byte*)) 53280
+Promoting word/signed word/dword/signed dword to byte* in SCREEN ← ((byte*)) 1024
+INITIAL CONTROL FLOW GRAPH
+@begin: scope:[]  from
+  (byte*) BORDERCOL ← ((byte*)) (word/dword/signed dword) 53280
+  (byte*) SCREEN ← ((byte*)) (word/signed word/dword/signed dword) 1024
+  to:@1
+main: scope:[main]  from
+  (void~) main::$0 ← call print_cls 
+  (void~) main::$1 ← call mode_ctrl 
+  to:main::@return
+main::@return: scope:[main]  from main
+  return 
+  to:@return
+@1: scope:[]  from @begin
+  to:@2
+print_cls: scope:[print_cls]  from
+  (byte*) print_cls::sc ← (byte*) SCREEN
+  to:print_cls::@1
+print_cls::@1: scope:[print_cls]  from print_cls print_cls::@1
+  *((byte*) print_cls::sc) ← (byte) ' '
+  (byte*) print_cls::sc ← ++ (byte*) print_cls::sc
+  (byte*~) print_cls::$0 ← (byte*) SCREEN + (word/signed word/dword/signed dword) 1000
+  (boolean~) print_cls::$1 ← (byte*) print_cls::sc != (byte*~) print_cls::$0
+  if((boolean~) print_cls::$1) goto print_cls::@1
+  to:print_cls::@2
+print_cls::@2: scope:[print_cls]  from print_cls::@1
+  to:print_cls::@return
+print_cls::@return: scope:[print_cls]  from print_cls::@2
+  return 
+  to:@return
+@2: scope:[]  from @1
+  to:@3
+mode_ctrl: scope:[mode_ctrl]  from
+  to:mode_ctrl::@1
+mode_ctrl::@1: scope:[mode_ctrl]  from mode_ctrl mode_ctrl::@5
+  if(true) goto mode_ctrl::@2
+  to:mode_ctrl::@6
+mode_ctrl::@2: scope:[mode_ctrl]  from mode_ctrl::@1 mode_ctrl::@7
+  (byte) mode_ctrl::before ← *((byte*) BORDERCOL)
+  (boolean~) mode_ctrl::$0 ← (byte) mode_ctrl::before == (byte/word/signed word/dword/signed dword) 255
+  (boolean~) mode_ctrl::$1 ← ! (boolean~) mode_ctrl::$0
+  if((boolean~) mode_ctrl::$1) goto mode_ctrl::@4
+  to:mode_ctrl::@8
+mode_ctrl::@6: scope:[mode_ctrl]  from mode_ctrl::@1
+  to:mode_ctrl::@3
+mode_ctrl::@3: scope:[mode_ctrl]  from mode_ctrl::@10 mode_ctrl::@6
+  to:mode_ctrl::@return
+mode_ctrl::@7: scope:[mode_ctrl]  from
+  to:mode_ctrl::@2
+mode_ctrl::@4: scope:[mode_ctrl]  from mode_ctrl::@2 mode_ctrl::@9
+  *((byte*) BORDERCOL) ← (byte/signed byte/word/signed word/dword/signed dword) 3
+  to:mode_ctrl::@5
+mode_ctrl::@8: scope:[mode_ctrl]  from mode_ctrl::@2
+  *((byte*) BORDERCOL) ← (byte/signed byte/word/signed word/dword/signed dword) 2
+  to:mode_ctrl::@5
+mode_ctrl::@5: scope:[mode_ctrl]  from mode_ctrl::@4 mode_ctrl::@8
+  to:mode_ctrl::@1
+mode_ctrl::@9: scope:[mode_ctrl]  from
+  to:mode_ctrl::@4
+mode_ctrl::@10: scope:[mode_ctrl]  from
+  to:mode_ctrl::@3
+mode_ctrl::@return: scope:[mode_ctrl]  from mode_ctrl::@3
+  return 
+  to:@return
+@3: scope:[]  from @2
+  call main 
+  to:@end
+@end: scope:[]  from @3
+
+Eliminating unused variable - keeping the call (void~) main::$0
+Eliminating unused variable - keeping the call (void~) main::$1
+Removing empty block @1
+Removing empty block print_cls::@2
+Removing empty block @2
+Removing empty block mode_ctrl::@6
+Removing empty block mode_ctrl::@3
+Removing empty block mode_ctrl::@7
+Removing empty block mode_ctrl::@5
+Removing empty block mode_ctrl::@9
+Removing empty block mode_ctrl::@10
+PROCEDURE MODIFY VARIABLE ANALYSIS
+
+Completing Phi functions...
+
+CONTROL FLOW GRAPH SSA WITH ASSIGNMENT CALL & RETURN
+@begin: scope:[]  from
+  (byte*) BORDERCOL#0 ← ((byte*)) (word/dword/signed dword) 53280
+  (byte*) SCREEN#0 ← ((byte*)) (word/signed word/dword/signed dword) 1024
+  to:@3
+main: scope:[main]  from @3
+  call print_cls param-assignment
+  to:main::@1
+main::@1: scope:[main]  from main
+  call mode_ctrl param-assignment
+  to:main::@2
+main::@2: scope:[main]  from main::@1
+  to:main::@return
+main::@return: scope:[main]  from main::@2
+  return 
+  to:@return
+print_cls: scope:[print_cls]  from main
+  (byte*) print_cls::sc#0 ← (byte*) SCREEN#0
+  to:print_cls::@1
+print_cls::@1: scope:[print_cls]  from print_cls print_cls::@1
+  (byte*) print_cls::sc#2 ← phi( print_cls/(byte*) print_cls::sc#0 print_cls::@1/(byte*) print_cls::sc#1 )
+  *((byte*) print_cls::sc#2) ← (byte) ' '
+  (byte*) print_cls::sc#1 ← ++ (byte*) print_cls::sc#2
+  (byte*~) print_cls::$0 ← (byte*) SCREEN#0 + (word/signed word/dword/signed dword) 1000
+  (boolean~) print_cls::$1 ← (byte*) print_cls::sc#1 != (byte*~) print_cls::$0
+  if((boolean~) print_cls::$1) goto print_cls::@1
+  to:print_cls::@return
+print_cls::@return: scope:[print_cls]  from print_cls::@1
+  return 
+  to:@return
+mode_ctrl: scope:[mode_ctrl]  from main::@1
+  to:mode_ctrl::@1
+mode_ctrl::@1: scope:[mode_ctrl]  from mode_ctrl mode_ctrl::@4 mode_ctrl::@8
+  if(true) goto mode_ctrl::@2
+  to:mode_ctrl::@return
+mode_ctrl::@2: scope:[mode_ctrl]  from mode_ctrl::@1
+  (byte) mode_ctrl::before#0 ← *((byte*) BORDERCOL#0)
+  (boolean~) mode_ctrl::$0 ← (byte) mode_ctrl::before#0 == (byte/word/signed word/dword/signed dword) 255
+  (boolean~) mode_ctrl::$1 ← ! (boolean~) mode_ctrl::$0
+  if((boolean~) mode_ctrl::$1) goto mode_ctrl::@4
+  to:mode_ctrl::@8
+mode_ctrl::@4: scope:[mode_ctrl]  from mode_ctrl::@2
+  *((byte*) BORDERCOL#0) ← (byte/signed byte/word/signed word/dword/signed dword) 3
+  to:mode_ctrl::@1
+mode_ctrl::@8: scope:[mode_ctrl]  from mode_ctrl::@2
+  *((byte*) BORDERCOL#0) ← (byte/signed byte/word/signed word/dword/signed dword) 2
+  to:mode_ctrl::@1
+mode_ctrl::@return: scope:[mode_ctrl]  from mode_ctrl::@1
+  return 
+  to:@return
+@3: scope:[]  from @begin
+  call main param-assignment
+  to:@4
+@4: scope:[]  from @3
+  to:@end
+@end: scope:[]  from @4
+
+SYMBOL TABLE SSA
+(label) @3
+(label) @4
+(label) @begin
+(label) @end
+(byte*) BORDERCOL
+(byte*) BORDERCOL#0
+(byte*) SCREEN
+(byte*) SCREEN#0
+(void()) main()
+(label) main::@1
+(label) main::@2
+(label) main::@return
+(void()) mode_ctrl()
+(boolean~) mode_ctrl::$0
+(boolean~) mode_ctrl::$1
+(label) mode_ctrl::@1
+(label) mode_ctrl::@2
+(label) mode_ctrl::@4
+(label) mode_ctrl::@8
+(label) mode_ctrl::@return
+(byte) mode_ctrl::before
+(byte) mode_ctrl::before#0
+(void()) print_cls()
+(byte*~) print_cls::$0
+(boolean~) print_cls::$1
+(label) print_cls::@1
+(label) print_cls::@return
+(byte*) print_cls::sc
+(byte*) print_cls::sc#0
+(byte*) print_cls::sc#1
+(byte*) print_cls::sc#2
+
+OPTIMIZING CONTROL FLOW GRAPH
+Culled Empty Block (label) main::@2
+Culled Empty Block (label) @4
+Succesful SSA optimization Pass2CullEmptyBlocks
+Inversing boolean not (boolean~) mode_ctrl::$1 ← (byte) mode_ctrl::before#0 != (byte/word/signed word/dword/signed dword) 255 from (boolean~) mode_ctrl::$0 ← (byte) mode_ctrl::before#0 == (byte/word/signed word/dword/signed dword) 255
+Succesful SSA optimization Pass2UnaryNotSimplification
+Not aliassing across scopes: print_cls::sc#0 SCREEN#0
+Simple Condition (boolean~) print_cls::$1 if((byte*) print_cls::sc#1!=(byte*~) print_cls::$0) goto print_cls::@1
+Simple Condition (boolean~) mode_ctrl::$1 if((byte) mode_ctrl::before#0!=(byte/word/signed word/dword/signed dword) 255) goto mode_ctrl::@4
+Succesful SSA optimization Pass2ConditionalJumpSimplification
+Constant (const byte*) BORDERCOL#0 = ((byte*))53280
+Constant (const byte*) SCREEN#0 = ((byte*))1024
+Succesful SSA optimization Pass2ConstantIdentification
+Constant (const byte*) print_cls::sc#0 = SCREEN#0
+Constant (const byte*) print_cls::$0 = SCREEN#0+1000
+Succesful SSA optimization Pass2ConstantIdentification
+OPTIMIZING CONTROL FLOW GRAPH
+Inlining constant with var siblings (const byte*) print_cls::sc#0
+Inlining constant with var siblings (const byte*) print_cls::sc#0
+Constant inlined print_cls::$0 = (const byte*) SCREEN#0+(word/signed word/dword/signed dword) 1000
+Constant inlined print_cls::sc#0 = (const byte*) SCREEN#0
+Succesful SSA optimization Pass2ConstantInlining
+Block Sequence Planned @begin @3 @end main main::@1 main::@return mode_ctrl mode_ctrl::@1 mode_ctrl::@return mode_ctrl::@2 mode_ctrl::@8 mode_ctrl::@4 print_cls print_cls::@1 print_cls::@return 
+Added new block during phi lifting print_cls::@3(between print_cls::@1 and print_cls::@1)
+Block Sequence Planned @begin @3 @end main main::@1 main::@return mode_ctrl mode_ctrl::@1 mode_ctrl::@return mode_ctrl::@2 mode_ctrl::@8 mode_ctrl::@4 print_cls print_cls::@1 print_cls::@return print_cls::@3 
+Adding NOP phi() at start of @begin
+Adding NOP phi() at start of @3
+Adding NOP phi() at start of @end
+Adding NOP phi() at start of main
+Adding NOP phi() at start of main::@1
+Adding NOP phi() at start of mode_ctrl
+Adding NOP phi() at start of print_cls
+CALL GRAPH
+Calls in [] to main:2 
+Calls in [main] to print_cls:5 mode_ctrl:7 
+
+Propagating live ranges...
+Propagating live ranges...
+Created 1 initial phi equivalence classes
+Coalesced [22] print_cls::sc#3 ← print_cls::sc#1
+Coalesced down to 1 phi equivalence classes
+Culled Empty Block (label) print_cls::@3
+Block Sequence Planned @begin @3 @end main main::@1 main::@return mode_ctrl mode_ctrl::@1 mode_ctrl::@return mode_ctrl::@2 mode_ctrl::@8 mode_ctrl::@4 print_cls print_cls::@1 print_cls::@return 
+Adding NOP phi() at start of @begin
+Adding NOP phi() at start of @3
+Adding NOP phi() at start of @end
+Adding NOP phi() at start of main
+Adding NOP phi() at start of main::@1
+Adding NOP phi() at start of mode_ctrl
+Adding NOP phi() at start of print_cls
+Propagating live ranges...
+Propagating live ranges...
+
+FINAL CONTROL FLOW GRAPH
+@begin: scope:[]  from
+  [0] phi() [ ] ( )
+  to:@3
+@3: scope:[]  from @begin
+  [1] phi() [ ] ( )
+  [2] call main param-assignment [ ] ( )
+  to:@end
+@end: scope:[]  from @3
+  [3] phi() [ ] ( )
+main: scope:[main]  from @3
+  [4] phi() [ ] ( main:2 [ ] )
+  [5] call print_cls param-assignment [ ] ( main:2 [ ] )
+  to:main::@1
+main::@1: scope:[main]  from main
+  [6] phi() [ ] ( main:2 [ ] )
+  [7] call mode_ctrl param-assignment [ ] ( main:2 [ ] )
+  to:main::@return
+main::@return: scope:[main]  from main::@1
+  [8] return  [ ] ( main:2 [ ] )
+  to:@return
+mode_ctrl: scope:[mode_ctrl]  from main::@1
+  [9] phi() [ ] ( main:2::mode_ctrl:7 [ ] )
+  to:mode_ctrl::@1
+mode_ctrl::@1: scope:[mode_ctrl]  from mode_ctrl mode_ctrl::@4 mode_ctrl::@8
+  [10] if(true) goto mode_ctrl::@2 [ ] ( main:2::mode_ctrl:7 [ ] )
+  to:mode_ctrl::@return
+mode_ctrl::@return: scope:[mode_ctrl]  from mode_ctrl::@1
+  [11] return  [ ] ( main:2::mode_ctrl:7 [ ] )
+  to:@return
+mode_ctrl::@2: scope:[mode_ctrl]  from mode_ctrl::@1
+  [12] (byte) mode_ctrl::before#0 ← *((const byte*) BORDERCOL#0) [ mode_ctrl::before#0 ] ( main:2::mode_ctrl:7 [ mode_ctrl::before#0 ] )
+  [13] if((byte) mode_ctrl::before#0!=(byte/word/signed word/dword/signed dword) 255) goto mode_ctrl::@4 [ ] ( main:2::mode_ctrl:7 [ ] )
+  to:mode_ctrl::@8
+mode_ctrl::@8: scope:[mode_ctrl]  from mode_ctrl::@2
+  [14] *((const byte*) BORDERCOL#0) ← (byte/signed byte/word/signed word/dword/signed dword) 2 [ ] ( main:2::mode_ctrl:7 [ ] )
+  to:mode_ctrl::@1
+mode_ctrl::@4: scope:[mode_ctrl]  from mode_ctrl::@2
+  [15] *((const byte*) BORDERCOL#0) ← (byte/signed byte/word/signed word/dword/signed dword) 3 [ ] ( main:2::mode_ctrl:7 [ ] )
+  to:mode_ctrl::@1
+print_cls: scope:[print_cls]  from main
+  [16] phi() [ ] ( main:2::print_cls:5 [ ] )
+  to:print_cls::@1
+print_cls::@1: scope:[print_cls]  from print_cls print_cls::@1
+  [17] (byte*) print_cls::sc#2 ← phi( print_cls/(const byte*) SCREEN#0 print_cls::@1/(byte*) print_cls::sc#1 ) [ print_cls::sc#2 ] ( main:2::print_cls:5 [ print_cls::sc#2 ] )
+  [18] *((byte*) print_cls::sc#2) ← (byte) ' ' [ print_cls::sc#2 ] ( main:2::print_cls:5 [ print_cls::sc#2 ] )
+  [19] (byte*) print_cls::sc#1 ← ++ (byte*) print_cls::sc#2 [ print_cls::sc#1 ] ( main:2::print_cls:5 [ print_cls::sc#1 ] )
+  [20] if((byte*) print_cls::sc#1!=(const byte*) SCREEN#0+(word/signed word/dword/signed dword) 1000) goto print_cls::@1 [ print_cls::sc#1 ] ( main:2::print_cls:5 [ print_cls::sc#1 ] )
+  to:print_cls::@return
+print_cls::@return: scope:[print_cls]  from print_cls::@1
+  [21] return  [ ] ( main:2::print_cls:5 [ ] )
+  to:@return
+
+DOMINATORS
+@begin dominated by  @begin 
+@3 dominated by  @begin @3 
+@end dominated by  @begin @end @3 
+main dominated by  @begin main @3 
+main::@1 dominated by  @begin main @3 main::@1 
+main::@return dominated by  main::@return @begin main @3 main::@1 
+mode_ctrl dominated by  @begin main mode_ctrl @3 main::@1 
+mode_ctrl::@1 dominated by  @begin main mode_ctrl @3 main::@1 mode_ctrl::@1 
+mode_ctrl::@return dominated by  @begin main mode_ctrl @3 mode_ctrl::@return main::@1 mode_ctrl::@1 
+mode_ctrl::@2 dominated by  @begin main mode_ctrl @3 main::@1 mode_ctrl::@2 mode_ctrl::@1 
+mode_ctrl::@8 dominated by  @begin main mode_ctrl @3 main::@1 mode_ctrl::@2 mode_ctrl::@1 mode_ctrl::@8 
+mode_ctrl::@4 dominated by  @begin main mode_ctrl @3 main::@1 mode_ctrl::@2 mode_ctrl::@1 mode_ctrl::@4 
+print_cls dominated by  @begin main print_cls @3 
+print_cls::@1 dominated by  @begin print_cls::@1 main print_cls @3 
+print_cls::@return dominated by  @begin print_cls::@1 main print_cls @3 print_cls::@return 
+
+NATURAL LOOPS
+Found back edge: Loop head: mode_ctrl::@1 tails: mode_ctrl::@8 blocks: null
+Found back edge: Loop head: mode_ctrl::@1 tails: mode_ctrl::@4 blocks: null
+Found back edge: Loop head: print_cls::@1 tails: print_cls::@1 blocks: null
+Populated: Loop head: mode_ctrl::@1 tails: mode_ctrl::@8 blocks: mode_ctrl::@8 mode_ctrl::@2 mode_ctrl::@1 
+Populated: Loop head: mode_ctrl::@1 tails: mode_ctrl::@4 blocks: mode_ctrl::@4 mode_ctrl::@2 mode_ctrl::@1 
+Populated: Loop head: print_cls::@1 tails: print_cls::@1 blocks: print_cls::@1 
+Coalesced: Loop head: mode_ctrl::@1 tails: mode_ctrl::@8 mode_ctrl::@4 blocks: mode_ctrl::@8 mode_ctrl::@2 mode_ctrl::@1 mode_ctrl::@4 
+Loop head: mode_ctrl::@1 tails: mode_ctrl::@8 mode_ctrl::@4 blocks: mode_ctrl::@8 mode_ctrl::@2 mode_ctrl::@1 mode_ctrl::@4 
+Loop head: print_cls::@1 tails: print_cls::@1 blocks: print_cls::@1 
+
+NATURAL LOOPS WITH DEPTH
+Found 0 loops in scope []
+Found 0 loops in scope [main]
+Found 1 loops in scope [print_cls]
+  Loop head: print_cls::@1 tails: print_cls::@1 blocks: print_cls::@1 
+Found 1 loops in scope [mode_ctrl]
+  Loop head: mode_ctrl::@1 tails: mode_ctrl::@8 mode_ctrl::@4 blocks: mode_ctrl::@8 mode_ctrl::@2 mode_ctrl::@1 mode_ctrl::@4 
+Loop head: mode_ctrl::@1 tails: mode_ctrl::@8 mode_ctrl::@4 blocks: mode_ctrl::@8 mode_ctrl::@2 mode_ctrl::@1 mode_ctrl::@4  depth: 1
+Loop head: print_cls::@1 tails: print_cls::@1 blocks: print_cls::@1  depth: 1
+
+
+VARIABLE REGISTER WEIGHTS
+(byte*) BORDERCOL
+(byte*) SCREEN
+(void()) main()
+(void()) mode_ctrl()
+(byte) mode_ctrl::before
+(byte) mode_ctrl::before#0 22.0
+(void()) print_cls()
+(byte*) print_cls::sc
+(byte*) print_cls::sc#1 16.5
+(byte*) print_cls::sc#2 16.5
+
+Initial phi equivalence classes
+[ print_cls::sc#2 print_cls::sc#1 ]
+Added variable mode_ctrl::before#0 to zero page equivalence class [ mode_ctrl::before#0 ]
+Complete equivalence classes
+[ print_cls::sc#2 print_cls::sc#1 ]
+[ mode_ctrl::before#0 ]
+Allocated zp ZP_WORD:2 [ print_cls::sc#2 print_cls::sc#1 ]
+Allocated zp ZP_BYTE:4 [ mode_ctrl::before#0 ]
+
+INITIAL ASM
+//SEG0 Basic Upstart
+.pc = $801 "Basic"
+:BasicUpstart(main)
+.pc = $80d "Program"
+//SEG1 Global Constants & labels
+  .label BORDERCOL = $d020
+  .label SCREEN = $400
+//SEG2 @begin
+bbegin:
+//SEG3 [1] phi from @begin to @3 [phi:@begin->@3]
+b3_from_bbegin:
+  jmp b3
+//SEG4 @3
+b3:
+//SEG5 [2] call main param-assignment [ ] ( )
+//SEG6 [4] phi from @3 to main [phi:@3->main]
+main_from_b3:
+  jsr main
+//SEG7 [3] phi from @3 to @end [phi:@3->@end]
+bend_from_b3:
+  jmp bend
+//SEG8 @end
+bend:
+//SEG9 main
+main: {
+  //SEG10 [5] call print_cls param-assignment [ ] ( main:2 [ ] )
+  //SEG11 [16] phi from main to print_cls [phi:main->print_cls]
+  print_cls_from_main:
+    jsr print_cls
+  //SEG12 [6] phi from main to main::@1 [phi:main->main::@1]
+  b1_from_main:
+    jmp b1
+  //SEG13 main::@1
+  b1:
+  //SEG14 [7] call mode_ctrl param-assignment [ ] ( main:2 [ ] )
+  //SEG15 [9] phi from main::@1 to mode_ctrl [phi:main::@1->mode_ctrl]
+  mode_ctrl_from_b1:
+    jsr mode_ctrl
+    jmp breturn
+  //SEG16 main::@return
+  breturn:
+  //SEG17 [8] return  [ ] ( main:2 [ ] )
+    rts
+}
+//SEG18 mode_ctrl
+mode_ctrl: {
+    .label before = 4
+    jmp b1
+  //SEG19 mode_ctrl::@1
+  b1:
+  //SEG20 [10] if(true) goto mode_ctrl::@2 [ ] ( main:2::mode_ctrl:7 [ ] ) -- true_then_la1 
+    jmp b2
+    jmp breturn
+  //SEG21 mode_ctrl::@return
+  breturn:
+  //SEG22 [11] return  [ ] ( main:2::mode_ctrl:7 [ ] )
+    rts
+  //SEG23 mode_ctrl::@2
+  b2:
+  //SEG24 [12] (byte) mode_ctrl::before#0 ← *((const byte*) BORDERCOL#0) [ mode_ctrl::before#0 ] ( main:2::mode_ctrl:7 [ mode_ctrl::before#0 ] ) -- vbuz1=_deref_pbuc1 
+    lda BORDERCOL
+    sta before
+  //SEG25 [13] if((byte) mode_ctrl::before#0!=(byte/word/signed word/dword/signed dword) 255) goto mode_ctrl::@4 [ ] ( main:2::mode_ctrl:7 [ ] ) -- vbuz1_neq_vbuc1_then_la1 
+    lda before
+    cmp #$ff
+    bne b4
+    jmp b8
+  //SEG26 mode_ctrl::@8
+  b8:
+  //SEG27 [14] *((const byte*) BORDERCOL#0) ← (byte/signed byte/word/signed word/dword/signed dword) 2 [ ] ( main:2::mode_ctrl:7 [ ] ) -- _deref_pbuc1=vbuc2 
+    lda #2
+    sta BORDERCOL
+    jmp b1
+  //SEG28 mode_ctrl::@4
+  b4:
+  //SEG29 [15] *((const byte*) BORDERCOL#0) ← (byte/signed byte/word/signed word/dword/signed dword) 3 [ ] ( main:2::mode_ctrl:7 [ ] ) -- _deref_pbuc1=vbuc2 
+    lda #3
+    sta BORDERCOL
+    jmp b1
+}
+//SEG30 print_cls
+print_cls: {
+    .label sc = 2
+  //SEG31 [17] phi from print_cls to print_cls::@1 [phi:print_cls->print_cls::@1]
+  b1_from_print_cls:
+  //SEG32 [17] phi (byte*) print_cls::sc#2 = (const byte*) SCREEN#0 [phi:print_cls->print_cls::@1#0] -- pbuz1=pbuc1 
+    lda #<SCREEN
+    sta sc
+    lda #>SCREEN
+    sta sc+1
+    jmp b1
+  //SEG33 [17] phi from print_cls::@1 to print_cls::@1 [phi:print_cls::@1->print_cls::@1]
+  b1_from_b1:
+  //SEG34 [17] phi (byte*) print_cls::sc#2 = (byte*) print_cls::sc#1 [phi:print_cls::@1->print_cls::@1#0] -- register_copy 
+    jmp b1
+  //SEG35 print_cls::@1
+  b1:
+  //SEG36 [18] *((byte*) print_cls::sc#2) ← (byte) ' ' [ print_cls::sc#2 ] ( main:2::print_cls:5 [ print_cls::sc#2 ] ) -- _deref_pbuz1=vbuc1 
+    lda #' '
+    ldy #0
+    sta (sc),y
+  //SEG37 [19] (byte*) print_cls::sc#1 ← ++ (byte*) print_cls::sc#2 [ print_cls::sc#1 ] ( main:2::print_cls:5 [ print_cls::sc#1 ] ) -- pbuz1=_inc_pbuz1 
+    inc sc
+    bne !+
+    inc sc+1
+  !:
+  //SEG38 [20] if((byte*) print_cls::sc#1!=(const byte*) SCREEN#0+(word/signed word/dword/signed dword) 1000) goto print_cls::@1 [ print_cls::sc#1 ] ( main:2::print_cls:5 [ print_cls::sc#1 ] ) -- pbuz1_neq_pbuc1_then_la1 
+    lda sc+1
+    cmp #>SCREEN+$3e8
+    bne b1_from_b1
+    lda sc
+    cmp #<SCREEN+$3e8
+    bne b1_from_b1
+    jmp breturn
+  //SEG39 print_cls::@return
+  breturn:
+  //SEG40 [21] return  [ ] ( main:2::print_cls:5 [ ] )
+    rts
+}
+
+REGISTER UPLIFT POTENTIAL REGISTERS
+Statement [14] *((const byte*) BORDERCOL#0) ← (byte/signed byte/word/signed word/dword/signed dword) 2 [ ] ( main:2::mode_ctrl:7 [ ] ) always clobbers reg byte a 
+Statement [15] *((const byte*) BORDERCOL#0) ← (byte/signed byte/word/signed word/dword/signed dword) 3 [ ] ( main:2::mode_ctrl:7 [ ] ) always clobbers reg byte a 
+Statement [18] *((byte*) print_cls::sc#2) ← (byte) ' ' [ print_cls::sc#2 ] ( main:2::print_cls:5 [ print_cls::sc#2 ] ) always clobbers reg byte a reg byte y 
+Statement [20] if((byte*) print_cls::sc#1!=(const byte*) SCREEN#0+(word/signed word/dword/signed dword) 1000) goto print_cls::@1 [ print_cls::sc#1 ] ( main:2::print_cls:5 [ print_cls::sc#1 ] ) always clobbers reg byte a 
+Potential registers zp ZP_WORD:2 [ print_cls::sc#2 print_cls::sc#1 ] : zp ZP_WORD:2 , 
+Potential registers zp ZP_BYTE:4 [ mode_ctrl::before#0 ] : zp ZP_BYTE:4 , reg byte a , reg byte x , reg byte y , 
+
+REGISTER UPLIFT SCOPES
+Uplift Scope [print_cls] 33: zp ZP_WORD:2 [ print_cls::sc#2 print_cls::sc#1 ] 
+Uplift Scope [mode_ctrl] 22: zp ZP_BYTE:4 [ mode_ctrl::before#0 ] 
+Uplift Scope [main] 
+Uplift Scope [] 
+
+Uplifting [print_cls] best 1058 combination zp ZP_WORD:2 [ print_cls::sc#2 print_cls::sc#1 ] 
+Uplifting [mode_ctrl] best 998 combination reg byte a [ mode_ctrl::before#0 ] 
+Uplifting [main] best 998 combination 
+Uplifting [] best 998 combination 
+
+ASSEMBLER BEFORE OPTIMIZATION
+//SEG0 Basic Upstart
+.pc = $801 "Basic"
+:BasicUpstart(main)
+.pc = $80d "Program"
+//SEG1 Global Constants & labels
+  .label BORDERCOL = $d020
+  .label SCREEN = $400
+//SEG2 @begin
+bbegin:
+//SEG3 [1] phi from @begin to @3 [phi:@begin->@3]
+b3_from_bbegin:
+  jmp b3
+//SEG4 @3
+b3:
+//SEG5 [2] call main param-assignment [ ] ( )
+//SEG6 [4] phi from @3 to main [phi:@3->main]
+main_from_b3:
+  jsr main
+//SEG7 [3] phi from @3 to @end [phi:@3->@end]
+bend_from_b3:
+  jmp bend
+//SEG8 @end
+bend:
+//SEG9 main
+main: {
+  //SEG10 [5] call print_cls param-assignment [ ] ( main:2 [ ] )
+  //SEG11 [16] phi from main to print_cls [phi:main->print_cls]
+  print_cls_from_main:
+    jsr print_cls
+  //SEG12 [6] phi from main to main::@1 [phi:main->main::@1]
+  b1_from_main:
+    jmp b1
+  //SEG13 main::@1
+  b1:
+  //SEG14 [7] call mode_ctrl param-assignment [ ] ( main:2 [ ] )
+  //SEG15 [9] phi from main::@1 to mode_ctrl [phi:main::@1->mode_ctrl]
+  mode_ctrl_from_b1:
+    jsr mode_ctrl
+    jmp breturn
+  //SEG16 main::@return
+  breturn:
+  //SEG17 [8] return  [ ] ( main:2 [ ] )
+    rts
+}
+//SEG18 mode_ctrl
+mode_ctrl: {
+    jmp b1
+  //SEG19 mode_ctrl::@1
+  b1:
+  //SEG20 [10] if(true) goto mode_ctrl::@2 [ ] ( main:2::mode_ctrl:7 [ ] ) -- true_then_la1 
+    jmp b2
+    jmp breturn
+  //SEG21 mode_ctrl::@return
+  breturn:
+  //SEG22 [11] return  [ ] ( main:2::mode_ctrl:7 [ ] )
+    rts
+  //SEG23 mode_ctrl::@2
+  b2:
+  //SEG24 [12] (byte) mode_ctrl::before#0 ← *((const byte*) BORDERCOL#0) [ mode_ctrl::before#0 ] ( main:2::mode_ctrl:7 [ mode_ctrl::before#0 ] ) -- vbuaa=_deref_pbuc1 
+    lda BORDERCOL
+  //SEG25 [13] if((byte) mode_ctrl::before#0!=(byte/word/signed word/dword/signed dword) 255) goto mode_ctrl::@4 [ ] ( main:2::mode_ctrl:7 [ ] ) -- vbuaa_neq_vbuc1_then_la1 
+    cmp #$ff
+    bne b4
+    jmp b8
+  //SEG26 mode_ctrl::@8
+  b8:
+  //SEG27 [14] *((const byte*) BORDERCOL#0) ← (byte/signed byte/word/signed word/dword/signed dword) 2 [ ] ( main:2::mode_ctrl:7 [ ] ) -- _deref_pbuc1=vbuc2 
+    lda #2
+    sta BORDERCOL
+    jmp b1
+  //SEG28 mode_ctrl::@4
+  b4:
+  //SEG29 [15] *((const byte*) BORDERCOL#0) ← (byte/signed byte/word/signed word/dword/signed dword) 3 [ ] ( main:2::mode_ctrl:7 [ ] ) -- _deref_pbuc1=vbuc2 
+    lda #3
+    sta BORDERCOL
+    jmp b1
+}
+//SEG30 print_cls
+print_cls: {
+    .label sc = 2
+  //SEG31 [17] phi from print_cls to print_cls::@1 [phi:print_cls->print_cls::@1]
+  b1_from_print_cls:
+  //SEG32 [17] phi (byte*) print_cls::sc#2 = (const byte*) SCREEN#0 [phi:print_cls->print_cls::@1#0] -- pbuz1=pbuc1 
+    lda #<SCREEN
+    sta sc
+    lda #>SCREEN
+    sta sc+1
+    jmp b1
+  //SEG33 [17] phi from print_cls::@1 to print_cls::@1 [phi:print_cls::@1->print_cls::@1]
+  b1_from_b1:
+  //SEG34 [17] phi (byte*) print_cls::sc#2 = (byte*) print_cls::sc#1 [phi:print_cls::@1->print_cls::@1#0] -- register_copy 
+    jmp b1
+  //SEG35 print_cls::@1
+  b1:
+  //SEG36 [18] *((byte*) print_cls::sc#2) ← (byte) ' ' [ print_cls::sc#2 ] ( main:2::print_cls:5 [ print_cls::sc#2 ] ) -- _deref_pbuz1=vbuc1 
+    lda #' '
+    ldy #0
+    sta (sc),y
+  //SEG37 [19] (byte*) print_cls::sc#1 ← ++ (byte*) print_cls::sc#2 [ print_cls::sc#1 ] ( main:2::print_cls:5 [ print_cls::sc#1 ] ) -- pbuz1=_inc_pbuz1 
+    inc sc
+    bne !+
+    inc sc+1
+  !:
+  //SEG38 [20] if((byte*) print_cls::sc#1!=(const byte*) SCREEN#0+(word/signed word/dword/signed dword) 1000) goto print_cls::@1 [ print_cls::sc#1 ] ( main:2::print_cls:5 [ print_cls::sc#1 ] ) -- pbuz1_neq_pbuc1_then_la1 
+    lda sc+1
+    cmp #>SCREEN+$3e8
+    bne b1_from_b1
+    lda sc
+    cmp #<SCREEN+$3e8
+    bne b1_from_b1
+    jmp breturn
+  //SEG39 print_cls::@return
+  breturn:
+  //SEG40 [21] return  [ ] ( main:2::print_cls:5 [ ] )
+    rts
+}
+
+ASSEMBLER OPTIMIZATIONS
+Removing instruction jmp b3
+Removing instruction jmp bend
+Removing instruction jmp b1
+Removing instruction jmp breturn
+Removing instruction jmp b1
+Removing instruction jmp breturn
+Removing instruction jmp b8
+Removing instruction jmp b1
+Removing instruction jmp breturn
+Succesful ASM optimization Pass5NextJumpElimination
+Replacing label b1_from_b1 with b1
+Replacing label b1_from_b1 with b1
+Removing instruction bbegin:
+Removing instruction b3_from_bbegin:
+Removing instruction main_from_b3:
+Removing instruction bend_from_b3:
+Removing instruction b1_from_main:
+Removing instruction mode_ctrl_from_b1:
+Removing instruction b1_from_b1:
+Succesful ASM optimization Pass5RedundantLabelElimination
+Removing instruction b3:
+Removing instruction bend:
+Removing instruction print_cls_from_main:
+Removing instruction b1:
+Removing instruction breturn:
+Removing instruction breturn:
+Removing instruction b8:
+Removing instruction b1_from_print_cls:
+Removing instruction breturn:
+Succesful ASM optimization Pass5UnusedLabelElimination
+Skipping double jump to b2 in jmp b1
+Skipping double jump to b2 in jmp b1
+Succesful ASM optimization Pass5DoubleJumpElimination
+Removing unreachable instruction rts
+Succesful ASM optimization Pass5UnreachableCodeElimination
+Removing instruction jmp b2
+Removing instruction jmp b1
+Succesful ASM optimization Pass5NextJumpElimination
+Removing instruction b1:
+Succesful ASM optimization Pass5RedundantLabelElimination
+
+FINAL SYMBOL TABLE
+(label) @3
+(label) @begin
+(label) @end
+(byte*) BORDERCOL
+(const byte*) BORDERCOL#0 BORDERCOL = ((byte*))(word/dword/signed dword) 53280
+(byte*) SCREEN
+(const byte*) SCREEN#0 SCREEN = ((byte*))(word/signed word/dword/signed dword) 1024
+(void()) main()
+(label) main::@1
+(label) main::@return
+(void()) mode_ctrl()
+(label) mode_ctrl::@1
+(label) mode_ctrl::@2
+(label) mode_ctrl::@4
+(label) mode_ctrl::@8
+(label) mode_ctrl::@return
+(byte) mode_ctrl::before
+(byte) mode_ctrl::before#0 reg byte a 22.0
+(void()) print_cls()
+(label) print_cls::@1
+(label) print_cls::@return
+(byte*) print_cls::sc
+(byte*) print_cls::sc#1 sc zp ZP_WORD:2 16.5
+(byte*) print_cls::sc#2 sc zp ZP_WORD:2 16.5
+
+zp ZP_WORD:2 [ print_cls::sc#2 print_cls::sc#1 ]
+reg byte a [ mode_ctrl::before#0 ]
+
+
+FINAL ASSEMBLER
+Score: 770
+
+//SEG0 Basic Upstart
+.pc = $801 "Basic"
+:BasicUpstart(main)
+.pc = $80d "Program"
+//SEG1 Global Constants & labels
+  .label BORDERCOL = $d020
+  .label SCREEN = $400
+//SEG2 @begin
+//SEG3 [1] phi from @begin to @3 [phi:@begin->@3]
+//SEG4 @3
+//SEG5 [2] call main param-assignment [ ] ( )
+//SEG6 [4] phi from @3 to main [phi:@3->main]
+  jsr main
+//SEG7 [3] phi from @3 to @end [phi:@3->@end]
+//SEG8 @end
+//SEG9 main
+main: {
+  //SEG10 [5] call print_cls param-assignment [ ] ( main:2 [ ] )
+  //SEG11 [16] phi from main to print_cls [phi:main->print_cls]
+    jsr print_cls
+  //SEG12 [6] phi from main to main::@1 [phi:main->main::@1]
+  //SEG13 main::@1
+  //SEG14 [7] call mode_ctrl param-assignment [ ] ( main:2 [ ] )
+  //SEG15 [9] phi from main::@1 to mode_ctrl [phi:main::@1->mode_ctrl]
+    jsr mode_ctrl
+  //SEG16 main::@return
+  //SEG17 [8] return  [ ] ( main:2 [ ] )
+    rts
+}
+//SEG18 mode_ctrl
+mode_ctrl: {
+  //SEG19 mode_ctrl::@1
+  //SEG20 [10] if(true) goto mode_ctrl::@2 [ ] ( main:2::mode_ctrl:7 [ ] ) -- true_then_la1 
+  //SEG21 mode_ctrl::@return
+  //SEG22 [11] return  [ ] ( main:2::mode_ctrl:7 [ ] )
+  //SEG23 mode_ctrl::@2
+  b2:
+  //SEG24 [12] (byte) mode_ctrl::before#0 ← *((const byte*) BORDERCOL#0) [ mode_ctrl::before#0 ] ( main:2::mode_ctrl:7 [ mode_ctrl::before#0 ] ) -- vbuaa=_deref_pbuc1 
+    lda BORDERCOL
+  //SEG25 [13] if((byte) mode_ctrl::before#0!=(byte/word/signed word/dword/signed dword) 255) goto mode_ctrl::@4 [ ] ( main:2::mode_ctrl:7 [ ] ) -- vbuaa_neq_vbuc1_then_la1 
+    cmp #$ff
+    bne b4
+  //SEG26 mode_ctrl::@8
+  //SEG27 [14] *((const byte*) BORDERCOL#0) ← (byte/signed byte/word/signed word/dword/signed dword) 2 [ ] ( main:2::mode_ctrl:7 [ ] ) -- _deref_pbuc1=vbuc2 
+    lda #2
+    sta BORDERCOL
+    jmp b2
+  //SEG28 mode_ctrl::@4
+  b4:
+  //SEG29 [15] *((const byte*) BORDERCOL#0) ← (byte/signed byte/word/signed word/dword/signed dword) 3 [ ] ( main:2::mode_ctrl:7 [ ] ) -- _deref_pbuc1=vbuc2 
+    lda #3
+    sta BORDERCOL
+    jmp b2
+}
+//SEG30 print_cls
+print_cls: {
+    .label sc = 2
+  //SEG31 [17] phi from print_cls to print_cls::@1 [phi:print_cls->print_cls::@1]
+  //SEG32 [17] phi (byte*) print_cls::sc#2 = (const byte*) SCREEN#0 [phi:print_cls->print_cls::@1#0] -- pbuz1=pbuc1 
+    lda #<SCREEN
+    sta sc
+    lda #>SCREEN
+    sta sc+1
+  //SEG33 [17] phi from print_cls::@1 to print_cls::@1 [phi:print_cls::@1->print_cls::@1]
+  //SEG34 [17] phi (byte*) print_cls::sc#2 = (byte*) print_cls::sc#1 [phi:print_cls::@1->print_cls::@1#0] -- register_copy 
+  //SEG35 print_cls::@1
+  b1:
+  //SEG36 [18] *((byte*) print_cls::sc#2) ← (byte) ' ' [ print_cls::sc#2 ] ( main:2::print_cls:5 [ print_cls::sc#2 ] ) -- _deref_pbuz1=vbuc1 
+    lda #' '
+    ldy #0
+    sta (sc),y
+  //SEG37 [19] (byte*) print_cls::sc#1 ← ++ (byte*) print_cls::sc#2 [ print_cls::sc#1 ] ( main:2::print_cls:5 [ print_cls::sc#1 ] ) -- pbuz1=_inc_pbuz1 
+    inc sc
+    bne !+
+    inc sc+1
+  !:
+  //SEG38 [20] if((byte*) print_cls::sc#1!=(const byte*) SCREEN#0+(word/signed word/dword/signed dword) 1000) goto print_cls::@1 [ print_cls::sc#1 ] ( main:2::print_cls:5 [ print_cls::sc#1 ] ) -- pbuz1_neq_pbuc1_then_la1 
+    lda sc+1
+    cmp #>SCREEN+$3e8
+    bne b1
+    lda sc
+    cmp #<SCREEN+$3e8
+    bne b1
+  //SEG39 print_cls::@return
+  //SEG40 [21] return  [ ] ( main:2::print_cls:5 [ ] )
+    rts
+}
+

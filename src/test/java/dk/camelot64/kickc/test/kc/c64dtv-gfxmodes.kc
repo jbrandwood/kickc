@@ -2,10 +2,16 @@
 import "c64dtv.kc"
 import "print.kc"
 import "keyboard.kc"
+import "bitmap-draw.kc"
 
 void main() {
-    asm { sei }  // Disable normal interrupt (prevent keyboard reading glitches)
+    asm { sei }  // Disable normal interrupt (prevent keyboard reading glitches and allows to hide basic/kernal)
+    // Disable kernal & basic
+    *PROCPORT_DDR = PROCPORT_DDR_MEMORY_MASK;
+    *PROCPORT = PROCPORT_RAM_IO;
+    // Enable DTV extended modes
     *DTV_FEATURE = DTV_FEATURE_ENABLE;
+    // Enter the menu for ever
     while(true) {
         menu();
     }
@@ -79,6 +85,10 @@ void menu() {
             mode_mcchar();
             return;
         }
+        if(keyboard_key_pressed(KEY_4)!=0) {
+            mode_stdbitmap();
+            return;
+        }
         if(keyboard_key_pressed(KEY_6)!=0) {
             mode_hicolstdchar();
             return;
@@ -115,6 +125,66 @@ void menu() {
 
 }
 
+// Allow the user to control the DTV graphics using different keys
+void mode_ctrl() {
+    while(true) {
+        // Wait for the raster
+        while(*RASTER!=$ff) { }
+        // Check for space to exit
+        if(keyboard_key_pressed(KEY_SPACE)!=0) {
+            return;
+        }
+        mode_ctrl_keys();
+    }
+}
+
+// The value of the DTV control register
+byte dtv_control = 0;
+
+void mode_ctrl_keys() {
+    // Read the current control byte
+    if(dtv_control==$ff) {
+        *BORDERCOL = 2;
+    } else {
+        *BORDERCOL = dtv_control;
+        byte ctrl = dtv_control;
+        // Test for control keys
+        if(keyboard_key_pressed(KEY_L)!=0) {
+            // DTV Graphics Mode - Linear
+            ctrl = ctrl|DTV_LINEAR;
+        }
+        if(keyboard_key_pressed(KEY_H)!=0) {
+            // DTV Graphics Mode - HighCol
+            ctrl = ctrl|DTV_HIGHCOLOR;
+        }
+        if(keyboard_key_pressed(KEY_O)!=0) {
+            // DTV Graphics Mode - Overscan
+            ctrl = ctrl|DTV_OVERSCAN;
+        }
+        if(keyboard_key_pressed(KEY_B)!=0) {
+            // DTV Graphics Mode - Border off
+            ctrl = ctrl|DTV_BORDER_OFF;
+        }
+        if(keyboard_key_pressed(KEY_U)!=0) {
+            // DTV Graphics Mode - chunky
+            ctrl = ctrl|DTV_CHUNKY;
+        }
+        if(keyboard_key_pressed(KEY_C)!=0) {
+            // DTV Graphics Mode - color ram off
+            ctrl = ctrl|DTV_COLORRAM_OFF;
+        }
+        if(keyboard_key_pressed(KEY_0)!=0) {
+            // DTV Graphics Mode - Reset
+            ctrl = 0;
+        }
+        if(ctrl != dtv_control) {
+            dtv_control = ctrl;
+            *DTV_CONTROL = ctrl;
+            *BORDERCOL = ctrl;
+        }
+    }
+}
+
 // Standard Character Mode (LINEAR/HICOL/CHUNK/COLDIS/ECM/MCM/BMM = 0)
 // Resolution: 320x200
 // Normal VIC Adressing:
@@ -132,6 +202,7 @@ void mode_stdchar() {
      *DTV_COLOR_BANK_LO = <((word)(DTV_COLOR_BANK_DEFAULT/$400));
      *DTV_COLOR_BANK_HI = >((word)(DTV_COLOR_BANK_DEFAULT/$400));
     // DTV Graphics Mode
+    dtv_control = 0;
     *DTV_CONTROL = 0;
     // VIC Graphics Bank
     *CIA2_PORT_A_DDR = %00000011; // Set VIC Bank bits to output - all others to input
@@ -157,12 +228,8 @@ void mode_stdchar() {
             *ch++ = (cy&$f)<<4|(cx&$f);
         }
     }
-    // Wait for keypress
-    while(true) {
-        if(keyboard_key_pressed(KEY_SPACE)!=0) {
-            return;
-        }
-    }
+    // Leave control to the user until exit
+    mode_ctrl();
 }
 
 // Extended Background Color Character Mode (LINEAR/HICOL/CHUNK/COLDIS/MCM/BMM = 0, ECM = 1)
@@ -186,6 +253,7 @@ void mode_ecmchar() {
      *DTV_COLOR_BANK_LO = <((word)(DTV_COLOR_BANK_DEFAULT/$400));
      *DTV_COLOR_BANK_HI = >((word)(DTV_COLOR_BANK_DEFAULT/$400));
     // DTV Graphics Mode
+    dtv_control = 0;
     *DTV_CONTROL = 0;
     // VIC Graphics Bank
     *CIA2_PORT_A_DDR = %00000011; // Set VIC Bank bits to output - all others to input
@@ -214,12 +282,9 @@ void mode_ecmchar() {
             *ch++ = (cy&$f)<<4|(cx&$f);
         }
     }
-    // Wait for keypress
-    while(true) {
-        if(keyboard_key_pressed(KEY_SPACE)!=0) {
-            return;
-        }
-    }
+    // Leave control to the user until exit
+    mode_ctrl();
+
 }
 
 // Multicolor Character Mode (LINEAR/HICOL/CHUNK/COLDIS/BMM/ECM = 0, MCM = 1)
@@ -244,6 +309,7 @@ void mode_mcchar() {
      *DTV_COLOR_BANK_LO = <((word)(DTV_COLOR_BANK_DEFAULT/$400));
      *DTV_COLOR_BANK_HI = >((word)(DTV_COLOR_BANK_DEFAULT/$400));
     // DTV Graphics Mode
+    dtv_control = 0;
     *DTV_CONTROL = 0;
     // VIC Graphics Bank
     *CIA2_PORT_A_DDR = %00000011; // Set VIC Bank bits to output - all others to input
@@ -271,13 +337,64 @@ void mode_mcchar() {
             *ch++ = (cy&$f)<<4|(cx&$f);
         }
     }
-    // Wait for keypress
-    while(true) {
-        if(keyboard_key_pressed(KEY_SPACE)!=0) {
-            return;
+    // Leave control to the user until exit
+    mode_ctrl();
+
+}
+
+// Standard Bitmap Mode (LINEAR/HICOL/CHUNK/COLDIS/MCM/ECM = 0, BMM = 1)
+// Resolution: 320x200
+// Normal VIC Adressing:
+// VicGfxData[16]: ( VicBank[1:0] & CharBase[2:2] & Matrix[9:0] & RowCounter[2:0] )
+// Pixel Shifter (1)
+//  - 0: 4bpp CharData[3:0]
+//  - 1: 4bpp CharData[7:4]
+void mode_stdbitmap() {
+    const byte* SCREEN = $4000;
+    const byte* BITMAP = $6000;
+    // DTV Graphics Bank
+    *DTV_GRAPHICS_VIC_BANK = (byte)((dword)BITMAP/$10000);
+    // DTV Graphics Mode
+    dtv_control = 0;
+    *DTV_CONTROL = 0;
+    // VIC Graphics Bank
+    *CIA2_PORT_A_DDR = %00000011; // Set VIC Bank bits to output - all others to input
+    *CIA2_PORT_A = %00000011 ^ (byte)((word)BITMAP/$4000); // Set VIC Bank
+    // VIC Graphics Mode
+    *VIC_CONTROL = VIC_BMM|VIC_DEN|VIC_RSEL|3;
+    *VIC_CONTROL2 = VIC_CSEL;
+    // VIC Memory Pointers
+    *VIC_MEMORY =  (byte)((((word)SCREEN&$3fff)/$40)|(((word)BITMAP&$3fff)/$400));
+    // DTV Palette - default
+    for(byte i : 0..$f) {
+        DTV_PALETTE[i] = DTV_PALETTE_DEFAULT[i];
+    }
+    // Screen colors
+    *BGCOL = BLACK;
+    *BORDERCOL = BLACK;
+    // Bitmap Colors
+    byte* ch=SCREEN;
+    for(byte cy: 0..24 ) {
+        for(byte cx: 0..39) {
+            byte col = (cx+cy)&$f;
+            byte col2 = ($f-col);
+            *ch++ = col<<4 | col2;
         }
     }
+    // Draw some lines on the bitmap
+    bitmap_init(BITMAP);
+    bitmap_clear();
+    byte[] lines_x = { $00, $ff, $ff, $00, $00, $80, $ff, $80, $00, $80 };
+    byte[] lines_y = { $00, $00, $c7, $c7, $00, $00, $64, $c7, $64, $00 };
+    byte lines_cnt = 9;
+    for(byte l=0; l<lines_cnt;l++) {
+        bitmap_line(lines_x[l], lines_x[l+1], lines_y[l], lines_y[l+1]);
+    }
+    // Leave control to the user until exit
+    mode_ctrl();
 }
+
+
 
 // High Color Standard Character Mode (LINEAR/CHUNK/COLDIS/ECM/MCM/BMM = 0, HICOL = 1)
 // Resolution: 320x200
@@ -296,7 +413,8 @@ void mode_hicolstdchar() {
      *DTV_COLOR_BANK_LO = <((word)(COLORS/$400));
      *DTV_COLOR_BANK_HI = >((word)(COLORS/$400));
     // DTV Graphics Mode
-    *DTV_CONTROL = DTV_CONTROL_HIGHCOLOR_ON;
+    dtv_control = DTV_HIGHCOLOR;
+    *DTV_CONTROL = DTV_HIGHCOLOR;
     // VIC Graphics Bank
     *CIA2_PORT_A_DDR = %00000011; // Set VIC Bank bits to output - all others to input
     *CIA2_PORT_A = %00000011 ^ (byte)((word)CHARSET/$4000); // Set VIC Bank
@@ -322,12 +440,9 @@ void mode_hicolstdchar() {
             *ch++ = v;
         }
     }
-    // Wait for keypress
-    while(true) {
-        if(keyboard_key_pressed(KEY_SPACE)!=0) {
-            return;
-        }
-    }
+    // Leave control to the user until exit
+    mode_ctrl();
+
 }
 
 // High Color Extended Background Color Character Mode (LINEAR/CHUNK/COLDIS/MCM/BMM = 0, ECM/HICOL = 1)
@@ -351,7 +466,8 @@ void mode_hicolecmchar() {
      *DTV_COLOR_BANK_LO = <((word)(COLORS/$400));
      *DTV_COLOR_BANK_HI = >((word)(COLORS/$400));
     // DTV Graphics Mode
-    *DTV_CONTROL = DTV_CONTROL_HIGHCOLOR_ON;
+    dtv_control = DTV_HIGHCOLOR;
+    *DTV_CONTROL = DTV_HIGHCOLOR;
     // VIC Graphics Bank
     *CIA2_PORT_A_DDR = %00000011; // Set VIC Bank bits to output - all others to input
     *CIA2_PORT_A = %00000011 ^ (byte)((word)CHARSET/$4000); // Set VIC Bank
@@ -380,12 +496,8 @@ void mode_hicolecmchar() {
             *ch++ = v;
         }
     }
-    // Wait for keypress
-    while(true) {
-        if(keyboard_key_pressed(KEY_SPACE)!=0) {
-            return;
-        }
-    }
+    // Leave control to the user until exit
+    mode_ctrl();
 }
 
 // High Color Multicolor Character Mode (LINEAR/CHUNK/COLDIS/BMM/ECM = 0, MCM/HICOL = 1)
@@ -410,7 +522,8 @@ void mode_hicolmcchar() {
      *DTV_COLOR_BANK_LO = <((word)(COLORS/$400));
      *DTV_COLOR_BANK_HI = >((word)(COLORS/$400));
     // DTV Graphics Mode
-    *DTV_CONTROL = DTV_CONTROL_HIGHCOLOR_ON;
+    dtv_control = DTV_HIGHCOLOR;
+    *DTV_CONTROL = DTV_HIGHCOLOR;
     // VIC Graphics Bank
     *CIA2_PORT_A_DDR = %00000011; // Set VIC Bank bits to output - all others to input
     *CIA2_PORT_A = %00000011 ^ (byte)((word)CHARSET/$4000); // Set VIC Bank
@@ -438,12 +551,8 @@ void mode_hicolmcchar() {
             *ch++ = v;
         }
     }
-    // Wait for keypress
-    while(true) {
-        if(keyboard_key_pressed(KEY_SPACE)!=0) {
-            return;
-        }
-    }
+    // Leave control to the user until exit
+    mode_ctrl();
 }
 
 // Two Plane Bitmap - generated from the two DTV linear graphics plane counters
@@ -460,7 +569,8 @@ void mode_twoplanebitmap() {
     const byte* PLANEB = $6000;
     const byte* COLORS = $8000;
     // DTV Graphics Mode
-    *DTV_CONTROL = DTV_CONTROL_HIGHCOLOR_ON | DTV_CONTROL_LINEAR_ADDRESSING_ON;
+    dtv_control = DTV_HIGHCOLOR | DTV_LINEAR;
+    *DTV_CONTROL = DTV_HIGHCOLOR | DTV_LINEAR;
     // VIC Graphics Mode
     *VIC_CONTROL = VIC_ECM|VIC_BMM|VIC_DEN|VIC_RSEL|3;
     *VIC_CONTROL2 = VIC_CSEL;
@@ -514,13 +624,8 @@ void mode_twoplanebitmap() {
             *gfxb++ = %00001111;
         }
     }
-    // Wait for keypress
-    while(true) {
-        if(keyboard_key_pressed(KEY_SPACE)!=0) {
-            return;
-        }
-    }
-
+    // Leave control to the user until exit
+    mode_ctrl();
 }
 
 // Sixs Fred Mode - 8bpp Packed Bitmap - Generated from the two DTV linear graphics plane counters
@@ -534,7 +639,8 @@ void mode_sixsfred() {
     const byte* PLANEB = $6000;
     const byte* COLORS = $8000;
     // DTV Graphics Mode
-    *DTV_CONTROL = DTV_CONTROL_HIGHCOLOR_ON | DTV_CONTROL_LINEAR_ADDRESSING_ON;
+    dtv_control = DTV_HIGHCOLOR | DTV_LINEAR;
+    *DTV_CONTROL = DTV_HIGHCOLOR | DTV_LINEAR;
     // VIC Graphics Mode
     *VIC_CONTROL = VIC_ECM|VIC_BMM|VIC_DEN|VIC_RSEL|3;
     *VIC_CONTROL2 = VIC_MCM|VIC_CSEL;
@@ -584,13 +690,8 @@ void mode_sixsfred() {
                 *gfxb++ = %00011011;
         }
     }
-    // Wait for keypress
-    while(true) {
-        if(keyboard_key_pressed(KEY_SPACE)!=0) {
-            return;
-        }
-    }
-
+    // Leave control to the user until exit
+    mode_ctrl();
 }
 
 // Sixs Fred Mode 2 - 8bpp Packed Bitmap - Generated from the two DTV linear graphics plane counters
@@ -604,7 +705,8 @@ void mode_sixsfred2() {
     const byte* PLANEB = $6000;
     const byte* COLORS = $8000;
     // DTV Graphics Mode
-    *DTV_CONTROL = DTV_CONTROL_LINEAR_ADDRESSING_ON;
+    dtv_control = DTV_LINEAR;
+    *DTV_CONTROL = DTV_LINEAR;
     // VIC Graphics Mode
     *VIC_CONTROL = VIC_ECM|VIC_BMM|VIC_DEN|VIC_RSEL|3;
     *VIC_CONTROL2 = VIC_MCM|VIC_CSEL;
@@ -654,13 +756,8 @@ void mode_sixsfred2() {
                 *gfxb++ = %00011011;
         }
     }
-    // Wait for keypress
-    while(true) {
-        if(keyboard_key_pressed(KEY_SPACE)!=0) {
-            return;
-        }
-    }
-
+    // Leave control to the user until exit
+    mode_ctrl();
 }
 
 
@@ -679,7 +776,8 @@ void mode_8bpppixelcell() {
     // 8BPP Pixel Cell Charset (contains 256 64 byte chars)
     const byte* PLANEB = $4000;
     // DTV Graphics Mode
-    *DTV_CONTROL = DTV_CONTROL_HIGHCOLOR_ON | DTV_CONTROL_LINEAR_ADDRESSING_ON|DTV_CONTROL_CHUNKY_ON;
+    dtv_control = DTV_HIGHCOLOR | DTV_LINEAR | DTV_CHUNKY;
+    *DTV_CONTROL = DTV_HIGHCOLOR | DTV_LINEAR | DTV_CHUNKY;
     // VIC Graphics Mode
     *VIC_CONTROL = VIC_ECM|VIC_DEN|VIC_RSEL|3;
     *VIC_CONTROL2 = VIC_MCM|VIC_CSEL;
@@ -711,7 +809,7 @@ void mode_8bpppixelcell() {
         }
     }
     // 8bpp cells for Plane B (charset) - ROM charset with 256 colors
-    *PROCPORT = $32;
+    *PROCPORT = PROCPORT_RAM_CHARROM;
     byte* CHARGEN = $d000;
     byte* gfxb = PLANEB;
     byte* chargen = CHARGEN;
@@ -730,13 +828,9 @@ void mode_8bpppixelcell() {
             }
         }
     }
-    *PROCPORT = $37;
-    // Wait for keypress
-    while(true) {
-        if(keyboard_key_pressed(KEY_SPACE)!=0) {
-            return;
-        }
-    }
+    *PROCPORT = PROCPORT_RAM_IO;
+    // Leave control to the user until exit
+    mode_ctrl();
 }
 
 
@@ -750,7 +844,8 @@ void mode_8bppchunkybmm() {
     // 8BPP Chunky Bitmap (contains 8bpp pixels)
     const dword PLANEB = $20000;
     // DTV Graphics Mode
-    *DTV_CONTROL = DTV_CONTROL_HIGHCOLOR_ON | DTV_CONTROL_LINEAR_ADDRESSING_ON | DTV_CONTROL_CHUNKY_ON | DTV_CONTROL_COLORRAM_OFF;
+    dtv_control = DTV_HIGHCOLOR | DTV_LINEAR | DTV_CHUNKY | DTV_COLORRAM_OFF;
+    *DTV_CONTROL = DTV_HIGHCOLOR | DTV_LINEAR | DTV_CHUNKY | DTV_COLORRAM_OFF;
     // VIC Graphics Mode
     *VIC_CONTROL = VIC_ECM | VIC_DEN | VIC_RSEL | 3;
     *VIC_CONTROL2 = VIC_MCM | VIC_CSEL;
@@ -785,10 +880,6 @@ void mode_8bppchunkybmm() {
     }
     // Reset CPU BANK segment to $4000
     dtvSetCpuBankSegment1((byte)($4000/$4000));
-    // Wait for keypress
-    while(true) {
-        if(keyboard_key_pressed(KEY_SPACE)!=0) {
-            return;
-        }
-    }
+    // Leave control to the user until exit
+    mode_ctrl();
 }

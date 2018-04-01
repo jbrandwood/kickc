@@ -457,9 +457,8 @@ divr8u: {
     and dividend
     cmp #0
     beq b2
-    lda #1
-    sty $ff
-    ora $ff
+    tya
+    ora #1
     tay
   b2:
     asl dividend

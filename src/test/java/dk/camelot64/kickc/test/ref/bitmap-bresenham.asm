@@ -1,27 +1,28 @@
 .pc = $801 "Basic"
 :BasicUpstart(main)
 .pc = $80d "Program"
-  .label BGCOL = $d020
-  .label FGCOL = $d021
-  .label D018 = $d018
+  .label BORDERCOL = $d020
+  .label BGCOL = $d021
   .label D011 = $d011
-  .const BMM = $20
-  .const DEN = $10
-  .const RSEL = 8
+  .const VIC_BMM = $20
+  .const VIC_DEN = $10
+  .const VIC_RSEL = 8
+  .label VIC_MEMORY = $d018
   .label SCREEN = $400
   .label BITMAP = $2000
   .const lines_cnt = 8
   jsr main
 main: {
     lda #0
+    sta BORDERCOL
     sta BGCOL
-    sta FGCOL
-    lda #BMM|DEN|RSEL|3
+    lda #VIC_BMM|VIC_DEN|VIC_RSEL|3
     sta D011
-    lda #SCREEN/$40|BITMAP/$400
-    sta D018
+    lda #(SCREEN&$3fff)/$40|(BITMAP&$3fff)/$400
+    sta VIC_MEMORY
+    jsr bitmap_init
+    jsr bitmap_clear
     jsr init_screen
-    jsr init_plot_tables
   b1:
     jsr lines
     jmp b1
@@ -33,26 +34,26 @@ lines: {
   b1:
     ldy l
     lda lines_x,y
-    sta line.x0
+    sta bitmap_line.x0
     lda lines_x+1,y
-    sta line.x1
+    sta bitmap_line.x1
     lda lines_y,y
-    sta line.y0
+    sta bitmap_line.y0
     ldx l
     ldy lines_y+1,x
-    jsr line
+    jsr bitmap_line
     inc l
     lda l
     cmp #lines_cnt
     bcc b1
     rts
 }
-line: {
+bitmap_line: {
+    .label xd = 3
+    .label yd = 4
     .label x0 = 7
     .label x1 = 8
     .label y0 = 5
-    .label xd = 3
-    .label yd = 4
     lda x0
     cmp x1
     bcs b1
@@ -72,16 +73,16 @@ line: {
     bcs b3
     ldx x0
     lda x1
-    sta line_xdyi.x1
-    jsr line_xdyi
+    sta bitmap_line_xdyi.x1
+    jsr bitmap_line_xdyi
   breturn:
     rts
   b3:
     lda y0
-    sta line_ydxi.y
+    sta bitmap_line_ydxi.y
     ldx x0
-    sty line_ydxi.y1
-    jsr line_ydxi
+    sty bitmap_line_ydxi.y1
+    jsr bitmap_line_ydxi
     jmp breturn
   b2:
     tya
@@ -92,12 +93,12 @@ line: {
     cmp xd
     bcs b6
     ldx x0
-    jsr line_xdyd
+    jsr bitmap_line_xdyd
     jmp breturn
   b6:
-    sty line_ydxd.y
+    sty bitmap_line_ydxd.y
     ldx x1
-    jsr line_ydxd
+    jsr bitmap_line_ydxd
     jmp breturn
   b1:
     lda x0
@@ -115,17 +116,17 @@ line: {
     cmp xd
     bcs b10
     ldx x1
-    sty line_xdyd.y
+    sty bitmap_line_xdyd.y
     lda x0
-    sta line_xdyd.x1
-    jsr line_xdyd
+    sta bitmap_line_xdyd.x1
+    jsr bitmap_line_xdyd
     jmp breturn
   b10:
     lda y0
-    sta line_ydxd.y
+    sta bitmap_line_ydxd.y
     ldx x0
-    sty line_ydxd.y1
-    jsr line_ydxd
+    sty bitmap_line_ydxd.y1
+    jsr bitmap_line_ydxd
     jmp breturn
   b9:
     tya
@@ -136,16 +137,16 @@ line: {
     cmp xd
     bcs b13
     ldx x1
-    sty line_xdyi.y
-    jsr line_xdyi
+    sty bitmap_line_xdyi.y
+    jsr bitmap_line_xdyi
     jmp breturn
   b13:
-    sty line_ydxi.y
+    sty bitmap_line_ydxi.y
     ldx x1
-    jsr line_ydxi
+    jsr bitmap_line_ydxi
     jmp breturn
 }
-line_ydxi: {
+bitmap_line_ydxi: {
     .label y = 6
     .label y1 = 5
     .label yd = 4
@@ -156,7 +157,7 @@ line_ydxi: {
     sta e
   b1:
     ldy y
-    jsr plot
+    jsr bitmap_plot
     inc y
     lda e
     clc
@@ -177,17 +178,17 @@ line_ydxi: {
     bne b1
     rts
 }
-plot: {
+bitmap_plot: {
     .label _0 = 9
     .label plotter_x = 9
     .label plotter_y = $b
-    lda plot_xhi,x
+    lda bitmap_plot_xhi,x
     sta plotter_x+1
-    lda plot_xlo,x
+    lda bitmap_plot_xlo,x
     sta plotter_x
-    lda plot_yhi,y
+    lda bitmap_plot_yhi,y
     sta plotter_y+1
-    lda plot_ylo,y
+    lda bitmap_plot_ylo,y
     sta plotter_y
     lda _0
     clc
@@ -196,13 +197,13 @@ plot: {
     lda _0+1
     adc plotter_y+1
     sta _0+1
-    lda plot_bit,x
+    lda bitmap_plot_bit,x
     ldy #0
     ora (_0),y
     sta (_0),y
     rts
 }
-line_xdyi: {
+bitmap_line_xdyi: {
     .label _6 = 8
     .label y = 5
     .label x1 = 7
@@ -214,7 +215,7 @@ line_xdyi: {
     sta e
   b1:
     ldy y
-    jsr plot
+    jsr bitmap_plot
     inx
     lda e
     clc
@@ -236,7 +237,7 @@ line_xdyi: {
     bne b1
     rts
 }
-line_ydxd: {
+bitmap_line_ydxd: {
     .label y = 6
     .label y1 = 5
     .label yd = 4
@@ -247,7 +248,7 @@ line_ydxd: {
     sta e
   b1:
     ldy y
-    jsr plot
+    jsr bitmap_plot
     inc y
     lda e
     clc
@@ -268,7 +269,7 @@ line_ydxd: {
     bne b1
     rts
 }
-line_xdyd: {
+bitmap_line_xdyd: {
     .label _6 = 7
     .label y = 5
     .label x1 = 8
@@ -280,7 +281,7 @@ line_xdyd: {
     sta e
   b1:
     ldy y
-    jsr plot
+    jsr bitmap_plot
     inx
     lda e
     clc
@@ -302,7 +303,58 @@ line_xdyd: {
     bne b1
     rts
 }
-init_plot_tables: {
+init_screen: {
+    .label c = 9
+    lda #<SCREEN
+    sta c
+    lda #>SCREEN
+    sta c+1
+  b1:
+    lda #$14
+    ldy #0
+    sta (c),y
+    inc c
+    bne !+
+    inc c+1
+  !:
+    lda c+1
+    cmp #>SCREEN+$400
+    bne b1
+    lda c
+    cmp #<SCREEN+$400
+    bne b1
+    rts
+}
+bitmap_clear: {
+    .label bitmap = 9
+    .label y = 2
+    .label _3 = 9
+    lda bitmap_plot_xlo+0
+    sta _3
+    lda bitmap_plot_xhi+0
+    sta _3+1
+    lda #0
+    sta y
+  b1:
+    ldx #0
+  b2:
+    lda #0
+    tay
+    sta (bitmap),y
+    inc bitmap
+    bne !+
+    inc bitmap+1
+  !:
+    inx
+    cpx #$c8
+    bne b2
+    inc y
+    lda y
+    cmp #$28
+    bne b1
+    rts
+}
+bitmap_init: {
     .label _6 = 2
     .label yoffs = 9
     ldy #$80
@@ -310,11 +362,11 @@ init_plot_tables: {
   b1:
     txa
     and #$f8
-    sta plot_xlo,x
+    sta bitmap_plot_xlo,x
     lda #>BITMAP
-    sta plot_xhi,x
+    sta bitmap_plot_xhi,x
     tya
-    sta plot_bit,x
+    sta bitmap_plot_bit,x
     tya
     lsr
     tay
@@ -335,9 +387,9 @@ init_plot_tables: {
     sta _6
     lda yoffs
     ora _6
-    sta plot_ylo,x
+    sta bitmap_plot_ylo,x
     lda yoffs+1
-    sta plot_yhi,x
+    sta bitmap_plot_yhi,x
     txa
     and #7
     cmp #7
@@ -355,51 +407,10 @@ init_plot_tables: {
     bne b3
     rts
 }
-init_screen: {
-    .label b = 9
-    .label c = 9
-    lda #<BITMAP
-    sta b
-    lda #>BITMAP
-    sta b+1
-  b1:
-    lda #0
-    tay
-    sta (b),y
-    inc b
-    bne !+
-    inc b+1
-  !:
-    lda b+1
-    cmp #>BITMAP+$2000
-    bne b1
-    lda b
-    cmp #<BITMAP+$2000
-    bne b1
-    lda #<SCREEN
-    sta c
-    lda #>SCREEN
-    sta c+1
-  b2:
-    lda #$14
-    ldy #0
-    sta (c),y
-    inc c
-    bne !+
-    inc c+1
-  !:
-    lda c+1
-    cmp #>SCREEN+$400
-    bne b2
-    lda c
-    cmp #<SCREEN+$400
-    bne b2
-    rts
-}
-  plot_xlo: .fill $100, 0
-  plot_xhi: .fill $100, 0
-  plot_ylo: .fill $100, 0
-  plot_yhi: .fill $100, 0
-  plot_bit: .fill $100, 0
+  bitmap_plot_xlo: .fill $100, 0
+  bitmap_plot_xhi: .fill $100, 0
+  bitmap_plot_ylo: .fill $100, 0
+  bitmap_plot_yhi: .fill $100, 0
+  bitmap_plot_bit: .fill $100, 0
   lines_x: .byte $3c, $50, $6e, $50, $3c, $28, $a, $28, $3c
   lines_y: .byte $a, $28, $3c, $50, $6e, $50, $3c, $28, $a

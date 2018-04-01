@@ -76,7 +76,23 @@ Importing c64
 PARSING src/test/java/dk/camelot64/kickc/test/kc/c64.kc
 // Commodore 64 Registers and Constants
 
+// Processor port data direction register
+const byte* PROCPORT_DDR = $00;
+// Mask for PROCESSOR_PORT_DDR which allows only memory configuration to be written
+const byte PROCPORT_DDR_MEMORY_MASK = %00000111;
+
+// Processor Port Register controlling RAM/ROM configuration and the datasette
 const byte* PROCPORT = $01;
+// RAM in all three areas $A000, $D000, $E000
+const byte PROCPORT_RAM_ALL         = %00110000;
+// RAM in $A000, $E000 I/O in $D000
+const byte PROCPORT_RAM_IO          = %00110101;
+// RAM in $A000, $E000 CHAR ROM in $D000
+const byte PROCPORT_RAM_CHARROM     = %00110001;
+// RAM in $A000, I/O in $D000, KERNEL in $E000
+const byte PROCPORT_KERNEL_IO       = %00110110;
+// BASIC in $A000, I/O in $D000, KERNEL in $E000
+const byte PROCPORT_BASIC_KERNEL_IO = %00110111;
 
 const byte* CHARGEN = $d000;
 
@@ -105,7 +121,7 @@ const byte VIC_RST8 = %10000000;
 const byte VIC_ECM =  %01000000;
 const byte VIC_BMM =  %00100000;
 const byte VIC_DEN =  %00010000;
-const byte VIC_RSEL =  %00001000;
+const byte VIC_RSEL = %00001000;
 
 const byte* VIC_CONTROL2 = $d016;
 const byte* D016 = $d016;
@@ -155,7 +171,14 @@ const byte LIGHT_GREY = $f;
 Adding pre/post-modifier (byte*) init::sc ← ++ (byte*) init::sc
 
 STATEMENTS
+  (byte*) PROCPORT_DDR ← (byte/signed byte/word/signed word/dword/signed dword) 0
+  (byte) PROCPORT_DDR_MEMORY_MASK ← (byte/signed byte/word/signed word/dword/signed dword) 7
   (byte*) PROCPORT ← (byte/signed byte/word/signed word/dword/signed dword) 1
+  (byte) PROCPORT_RAM_ALL ← (byte/signed byte/word/signed word/dword/signed dword) 48
+  (byte) PROCPORT_RAM_IO ← (byte/signed byte/word/signed word/dword/signed dword) 53
+  (byte) PROCPORT_RAM_CHARROM ← (byte/signed byte/word/signed word/dword/signed dword) 49
+  (byte) PROCPORT_KERNEL_IO ← (byte/signed byte/word/signed word/dword/signed dword) 54
+  (byte) PROCPORT_BASIC_KERNEL_IO ← (byte/signed byte/word/signed word/dword/signed dword) 55
   (byte*) CHARGEN ← (word/dword/signed dword) 53248
   (byte*) SPRITES_XPOS ← (word/dword/signed dword) 53248
   (byte*) SPRITES_YPOS ← (word/dword/signed dword) 53249
@@ -337,6 +360,13 @@ SYMBOLS
 (byte) ORANGE
 (byte) PINK
 (byte*) PROCPORT
+(byte) PROCPORT_BASIC_KERNEL_IO
+(byte*) PROCPORT_DDR
+(byte) PROCPORT_DDR_MEMORY_MASK
+(byte) PROCPORT_KERNEL_IO
+(byte) PROCPORT_RAM_ALL
+(byte) PROCPORT_RAM_CHARROM
+(byte) PROCPORT_RAM_IO
 (byte) PURPLE
 (byte*) RASTER
 (byte) RED
@@ -414,6 +444,7 @@ SYMBOLS
 (signed word) yvel
 (signed word) yvel_init
 
+Promoting byte/signed byte/word/signed word/dword/signed dword to byte* in PROCPORT_DDR ← ((byte*)) 0
 Promoting byte/signed byte/word/signed word/dword/signed dword to byte* in PROCPORT ← ((byte*)) 1
 Promoting word/dword/signed dword to byte* in CHARGEN ← ((byte*)) 53248
 Promoting word/dword/signed dword to byte* in SPRITES_XPOS ← ((byte*)) 53248
@@ -453,7 +484,14 @@ Promoting word/signed word/dword/signed dword to byte* in SCREEN ← ((byte*)) 1
 Promoting word/signed word/dword/signed dword to byte* in SPRITE ← ((byte*)) 8192
 INITIAL CONTROL FLOW GRAPH
 @begin: scope:[]  from
+  (byte*) PROCPORT_DDR ← ((byte*)) (byte/signed byte/word/signed word/dword/signed dword) 0
+  (byte) PROCPORT_DDR_MEMORY_MASK ← (byte/signed byte/word/signed word/dword/signed dword) 7
   (byte*) PROCPORT ← ((byte*)) (byte/signed byte/word/signed word/dword/signed dword) 1
+  (byte) PROCPORT_RAM_ALL ← (byte/signed byte/word/signed word/dword/signed dword) 48
+  (byte) PROCPORT_RAM_IO ← (byte/signed byte/word/signed word/dword/signed dword) 53
+  (byte) PROCPORT_RAM_CHARROM ← (byte/signed byte/word/signed word/dword/signed dword) 49
+  (byte) PROCPORT_KERNEL_IO ← (byte/signed byte/word/signed word/dword/signed dword) 54
+  (byte) PROCPORT_BASIC_KERNEL_IO ← (byte/signed byte/word/signed word/dword/signed dword) 55
   (byte*) CHARGEN ← ((byte*)) (word/dword/signed dword) 53248
   (byte*) SPRITES_XPOS ← ((byte*)) (word/dword/signed dword) 53248
   (byte*) SPRITES_YPOS ← ((byte*)) (word/dword/signed dword) 53249
@@ -629,55 +667,62 @@ anim::@return: scope:[anim]  from anim::@1
   to:@end
 @end: scope:[]  from @3
 
-Eliminating unused variable (byte*) PROCPORT and assignment [0] (byte*) PROCPORT ← ((byte*)) (byte/signed byte/word/signed word/dword/signed dword) 1
-Eliminating unused variable (byte*) CHARGEN and assignment [1] (byte*) CHARGEN ← ((byte*)) (word/dword/signed dword) 53248
-Eliminating unused variable (byte*) SPRITES_PRIORITY and assignment [8] (byte*) SPRITES_PRIORITY ← ((byte*)) (word/dword/signed dword) 53275
-Eliminating unused variable (byte*) SPRITES_MC and assignment [9] (byte*) SPRITES_MC ← ((byte*)) (word/dword/signed dword) 53276
-Eliminating unused variable (byte*) BORDERCOL and assignment [11] (byte*) BORDERCOL ← ((byte*)) (word/dword/signed dword) 53280
-Eliminating unused variable (byte*) BGCOL and assignment [12] (byte*) BGCOL ← ((byte*)) (word/dword/signed dword) 53281
-Eliminating unused variable (byte*) BGCOL1 and assignment [13] (byte*) BGCOL1 ← ((byte*)) (word/dword/signed dword) 53281
-Eliminating unused variable (byte*) BGCOL2 and assignment [14] (byte*) BGCOL2 ← ((byte*)) (word/dword/signed dword) 53282
-Eliminating unused variable (byte*) BGCOL3 and assignment [15] (byte*) BGCOL3 ← ((byte*)) (word/dword/signed dword) 53283
-Eliminating unused variable (byte*) BGCOL4 and assignment [16] (byte*) BGCOL4 ← ((byte*)) (word/dword/signed dword) 53284
-Eliminating unused variable (byte*) SPRITES_MC1 and assignment [17] (byte*) SPRITES_MC1 ← ((byte*)) (word/dword/signed dword) 53285
-Eliminating unused variable (byte*) SPRITES_MC2 and assignment [18] (byte*) SPRITES_MC2 ← ((byte*)) (word/dword/signed dword) 53286
-Eliminating unused variable (byte*) VIC_CONTROL and assignment [20] (byte*) VIC_CONTROL ← ((byte*)) (word/dword/signed dword) 53265
-Eliminating unused variable (byte*) D011 and assignment [21] (byte*) D011 ← ((byte*)) (word/dword/signed dword) 53265
-Eliminating unused variable (byte) VIC_RST8 and assignment [22] (byte) VIC_RST8 ← (byte/word/signed word/dword/signed dword) 128
-Eliminating unused variable (byte) VIC_ECM and assignment [23] (byte) VIC_ECM ← (byte/signed byte/word/signed word/dword/signed dword) 64
-Eliminating unused variable (byte) VIC_BMM and assignment [24] (byte) VIC_BMM ← (byte/signed byte/word/signed word/dword/signed dword) 32
-Eliminating unused variable (byte) VIC_DEN and assignment [25] (byte) VIC_DEN ← (byte/signed byte/word/signed word/dword/signed dword) 16
-Eliminating unused variable (byte) VIC_RSEL and assignment [26] (byte) VIC_RSEL ← (byte/signed byte/word/signed word/dword/signed dword) 8
-Eliminating unused variable (byte*) VIC_CONTROL2 and assignment [27] (byte*) VIC_CONTROL2 ← ((byte*)) (word/dword/signed dword) 53270
-Eliminating unused variable (byte*) D016 and assignment [28] (byte*) D016 ← ((byte*)) (word/dword/signed dword) 53270
-Eliminating unused variable (byte) VIC_MCM and assignment [29] (byte) VIC_MCM ← (byte/signed byte/word/signed word/dword/signed dword) 16
-Eliminating unused variable (byte) VIC_CSEL and assignment [30] (byte) VIC_CSEL ← (byte/signed byte/word/signed word/dword/signed dword) 8
-Eliminating unused variable (byte*) D018 and assignment [31] (byte*) D018 ← ((byte*)) (word/dword/signed dword) 53272
-Eliminating unused variable (byte*) VIC_MEMORY and assignment [32] (byte*) VIC_MEMORY ← ((byte*)) (word/dword/signed dword) 53272
-Eliminating unused variable (byte*) COLS and assignment [33] (byte*) COLS ← ((byte*)) (word/dword/signed dword) 55296
-Eliminating unused variable (byte*) CIA1_PORT_A and assignment [34] (byte*) CIA1_PORT_A ← ((byte*)) (word/dword/signed dword) 56320
-Eliminating unused variable (byte*) CIA1_PORT_B and assignment [35] (byte*) CIA1_PORT_B ← ((byte*)) (word/dword/signed dword) 56321
-Eliminating unused variable (byte*) CIA1_PORT_A_DDR and assignment [36] (byte*) CIA1_PORT_A_DDR ← ((byte*)) (word/dword/signed dword) 56322
-Eliminating unused variable (byte*) CIA1_PORT_B_DDR and assignment [37] (byte*) CIA1_PORT_B_DDR ← ((byte*)) (word/dword/signed dword) 56323
-Eliminating unused variable (byte*) CIA2_PORT_A and assignment [38] (byte*) CIA2_PORT_A ← ((byte*)) (word/dword/signed dword) 56576
-Eliminating unused variable (byte*) CIA2_PORT_B and assignment [39] (byte*) CIA2_PORT_B ← ((byte*)) (word/dword/signed dword) 56577
-Eliminating unused variable (byte*) CIA2_PORT_A_DDR and assignment [40] (byte*) CIA2_PORT_A_DDR ← ((byte*)) (word/dword/signed dword) 56578
-Eliminating unused variable (byte*) CIA2_PORT_B_DDR and assignment [41] (byte*) CIA2_PORT_B_DDR ← ((byte*)) (word/dword/signed dword) 56579
-Eliminating unused variable (byte) BLACK and assignment [42] (byte) BLACK ← (byte/signed byte/word/signed word/dword/signed dword) 0
-Eliminating unused variable (byte) RED and assignment [44] (byte) RED ← (byte/signed byte/word/signed word/dword/signed dword) 2
-Eliminating unused variable (byte) CYAN and assignment [45] (byte) CYAN ← (byte/signed byte/word/signed word/dword/signed dword) 3
-Eliminating unused variable (byte) PURPLE and assignment [46] (byte) PURPLE ← (byte/signed byte/word/signed word/dword/signed dword) 4
-Eliminating unused variable (byte) GREEN and assignment [47] (byte) GREEN ← (byte/signed byte/word/signed word/dword/signed dword) 5
-Eliminating unused variable (byte) BLUE and assignment [48] (byte) BLUE ← (byte/signed byte/word/signed word/dword/signed dword) 6
-Eliminating unused variable (byte) YELLOW and assignment [49] (byte) YELLOW ← (byte/signed byte/word/signed word/dword/signed dword) 7
-Eliminating unused variable (byte) ORANGE and assignment [50] (byte) ORANGE ← (byte/signed byte/word/signed word/dword/signed dword) 8
-Eliminating unused variable (byte) BROWN and assignment [51] (byte) BROWN ← (byte/signed byte/word/signed word/dword/signed dword) 9
-Eliminating unused variable (byte) PINK and assignment [52] (byte) PINK ← (byte/signed byte/word/signed word/dword/signed dword) 10
-Eliminating unused variable (byte) DARK_GREY and assignment [53] (byte) DARK_GREY ← (byte/signed byte/word/signed word/dword/signed dword) 11
-Eliminating unused variable (byte) GREY and assignment [54] (byte) GREY ← (byte/signed byte/word/signed word/dword/signed dword) 12
-Eliminating unused variable (byte) LIGHT_GREEN and assignment [55] (byte) LIGHT_GREEN ← (byte/signed byte/word/signed word/dword/signed dword) 13
-Eliminating unused variable (byte) LIGHT_BLUE and assignment [56] (byte) LIGHT_BLUE ← (byte/signed byte/word/signed word/dword/signed dword) 14
-Eliminating unused variable (byte) LIGHT_GREY and assignment [57] (byte) LIGHT_GREY ← (byte/signed byte/word/signed word/dword/signed dword) 15
+Eliminating unused variable (byte*) PROCPORT_DDR and assignment [0] (byte*) PROCPORT_DDR ← ((byte*)) (byte/signed byte/word/signed word/dword/signed dword) 0
+Eliminating unused variable (byte) PROCPORT_DDR_MEMORY_MASK and assignment [1] (byte) PROCPORT_DDR_MEMORY_MASK ← (byte/signed byte/word/signed word/dword/signed dword) 7
+Eliminating unused variable (byte*) PROCPORT and assignment [2] (byte*) PROCPORT ← ((byte*)) (byte/signed byte/word/signed word/dword/signed dword) 1
+Eliminating unused variable (byte) PROCPORT_RAM_ALL and assignment [3] (byte) PROCPORT_RAM_ALL ← (byte/signed byte/word/signed word/dword/signed dword) 48
+Eliminating unused variable (byte) PROCPORT_RAM_IO and assignment [4] (byte) PROCPORT_RAM_IO ← (byte/signed byte/word/signed word/dword/signed dword) 53
+Eliminating unused variable (byte) PROCPORT_RAM_CHARROM and assignment [5] (byte) PROCPORT_RAM_CHARROM ← (byte/signed byte/word/signed word/dword/signed dword) 49
+Eliminating unused variable (byte) PROCPORT_KERNEL_IO and assignment [6] (byte) PROCPORT_KERNEL_IO ← (byte/signed byte/word/signed word/dword/signed dword) 54
+Eliminating unused variable (byte) PROCPORT_BASIC_KERNEL_IO and assignment [7] (byte) PROCPORT_BASIC_KERNEL_IO ← (byte/signed byte/word/signed word/dword/signed dword) 55
+Eliminating unused variable (byte*) CHARGEN and assignment [8] (byte*) CHARGEN ← ((byte*)) (word/dword/signed dword) 53248
+Eliminating unused variable (byte*) SPRITES_PRIORITY and assignment [15] (byte*) SPRITES_PRIORITY ← ((byte*)) (word/dword/signed dword) 53275
+Eliminating unused variable (byte*) SPRITES_MC and assignment [16] (byte*) SPRITES_MC ← ((byte*)) (word/dword/signed dword) 53276
+Eliminating unused variable (byte*) BORDERCOL and assignment [18] (byte*) BORDERCOL ← ((byte*)) (word/dword/signed dword) 53280
+Eliminating unused variable (byte*) BGCOL and assignment [19] (byte*) BGCOL ← ((byte*)) (word/dword/signed dword) 53281
+Eliminating unused variable (byte*) BGCOL1 and assignment [20] (byte*) BGCOL1 ← ((byte*)) (word/dword/signed dword) 53281
+Eliminating unused variable (byte*) BGCOL2 and assignment [21] (byte*) BGCOL2 ← ((byte*)) (word/dword/signed dword) 53282
+Eliminating unused variable (byte*) BGCOL3 and assignment [22] (byte*) BGCOL3 ← ((byte*)) (word/dword/signed dword) 53283
+Eliminating unused variable (byte*) BGCOL4 and assignment [23] (byte*) BGCOL4 ← ((byte*)) (word/dword/signed dword) 53284
+Eliminating unused variable (byte*) SPRITES_MC1 and assignment [24] (byte*) SPRITES_MC1 ← ((byte*)) (word/dword/signed dword) 53285
+Eliminating unused variable (byte*) SPRITES_MC2 and assignment [25] (byte*) SPRITES_MC2 ← ((byte*)) (word/dword/signed dword) 53286
+Eliminating unused variable (byte*) VIC_CONTROL and assignment [27] (byte*) VIC_CONTROL ← ((byte*)) (word/dword/signed dword) 53265
+Eliminating unused variable (byte*) D011 and assignment [28] (byte*) D011 ← ((byte*)) (word/dword/signed dword) 53265
+Eliminating unused variable (byte) VIC_RST8 and assignment [29] (byte) VIC_RST8 ← (byte/word/signed word/dword/signed dword) 128
+Eliminating unused variable (byte) VIC_ECM and assignment [30] (byte) VIC_ECM ← (byte/signed byte/word/signed word/dword/signed dword) 64
+Eliminating unused variable (byte) VIC_BMM and assignment [31] (byte) VIC_BMM ← (byte/signed byte/word/signed word/dword/signed dword) 32
+Eliminating unused variable (byte) VIC_DEN and assignment [32] (byte) VIC_DEN ← (byte/signed byte/word/signed word/dword/signed dword) 16
+Eliminating unused variable (byte) VIC_RSEL and assignment [33] (byte) VIC_RSEL ← (byte/signed byte/word/signed word/dword/signed dword) 8
+Eliminating unused variable (byte*) VIC_CONTROL2 and assignment [34] (byte*) VIC_CONTROL2 ← ((byte*)) (word/dword/signed dword) 53270
+Eliminating unused variable (byte*) D016 and assignment [35] (byte*) D016 ← ((byte*)) (word/dword/signed dword) 53270
+Eliminating unused variable (byte) VIC_MCM and assignment [36] (byte) VIC_MCM ← (byte/signed byte/word/signed word/dword/signed dword) 16
+Eliminating unused variable (byte) VIC_CSEL and assignment [37] (byte) VIC_CSEL ← (byte/signed byte/word/signed word/dword/signed dword) 8
+Eliminating unused variable (byte*) D018 and assignment [38] (byte*) D018 ← ((byte*)) (word/dword/signed dword) 53272
+Eliminating unused variable (byte*) VIC_MEMORY and assignment [39] (byte*) VIC_MEMORY ← ((byte*)) (word/dword/signed dword) 53272
+Eliminating unused variable (byte*) COLS and assignment [40] (byte*) COLS ← ((byte*)) (word/dword/signed dword) 55296
+Eliminating unused variable (byte*) CIA1_PORT_A and assignment [41] (byte*) CIA1_PORT_A ← ((byte*)) (word/dword/signed dword) 56320
+Eliminating unused variable (byte*) CIA1_PORT_B and assignment [42] (byte*) CIA1_PORT_B ← ((byte*)) (word/dword/signed dword) 56321
+Eliminating unused variable (byte*) CIA1_PORT_A_DDR and assignment [43] (byte*) CIA1_PORT_A_DDR ← ((byte*)) (word/dword/signed dword) 56322
+Eliminating unused variable (byte*) CIA1_PORT_B_DDR and assignment [44] (byte*) CIA1_PORT_B_DDR ← ((byte*)) (word/dword/signed dword) 56323
+Eliminating unused variable (byte*) CIA2_PORT_A and assignment [45] (byte*) CIA2_PORT_A ← ((byte*)) (word/dword/signed dword) 56576
+Eliminating unused variable (byte*) CIA2_PORT_B and assignment [46] (byte*) CIA2_PORT_B ← ((byte*)) (word/dword/signed dword) 56577
+Eliminating unused variable (byte*) CIA2_PORT_A_DDR and assignment [47] (byte*) CIA2_PORT_A_DDR ← ((byte*)) (word/dword/signed dword) 56578
+Eliminating unused variable (byte*) CIA2_PORT_B_DDR and assignment [48] (byte*) CIA2_PORT_B_DDR ← ((byte*)) (word/dword/signed dword) 56579
+Eliminating unused variable (byte) BLACK and assignment [49] (byte) BLACK ← (byte/signed byte/word/signed word/dword/signed dword) 0
+Eliminating unused variable (byte) RED and assignment [51] (byte) RED ← (byte/signed byte/word/signed word/dword/signed dword) 2
+Eliminating unused variable (byte) CYAN and assignment [52] (byte) CYAN ← (byte/signed byte/word/signed word/dword/signed dword) 3
+Eliminating unused variable (byte) PURPLE and assignment [53] (byte) PURPLE ← (byte/signed byte/word/signed word/dword/signed dword) 4
+Eliminating unused variable (byte) GREEN and assignment [54] (byte) GREEN ← (byte/signed byte/word/signed word/dword/signed dword) 5
+Eliminating unused variable (byte) BLUE and assignment [55] (byte) BLUE ← (byte/signed byte/word/signed word/dword/signed dword) 6
+Eliminating unused variable (byte) YELLOW and assignment [56] (byte) YELLOW ← (byte/signed byte/word/signed word/dword/signed dword) 7
+Eliminating unused variable (byte) ORANGE and assignment [57] (byte) ORANGE ← (byte/signed byte/word/signed word/dword/signed dword) 8
+Eliminating unused variable (byte) BROWN and assignment [58] (byte) BROWN ← (byte/signed byte/word/signed word/dword/signed dword) 9
+Eliminating unused variable (byte) PINK and assignment [59] (byte) PINK ← (byte/signed byte/word/signed word/dword/signed dword) 10
+Eliminating unused variable (byte) DARK_GREY and assignment [60] (byte) DARK_GREY ← (byte/signed byte/word/signed word/dword/signed dword) 11
+Eliminating unused variable (byte) GREY and assignment [61] (byte) GREY ← (byte/signed byte/word/signed word/dword/signed dword) 12
+Eliminating unused variable (byte) LIGHT_GREEN and assignment [62] (byte) LIGHT_GREEN ← (byte/signed byte/word/signed word/dword/signed dword) 13
+Eliminating unused variable (byte) LIGHT_BLUE and assignment [63] (byte) LIGHT_BLUE ← (byte/signed byte/word/signed word/dword/signed dword) 14
+Eliminating unused variable (byte) LIGHT_GREY and assignment [64] (byte) LIGHT_GREY ← (byte/signed byte/word/signed word/dword/signed dword) 15
 Eliminating unused variable - keeping the call (void~) main::$0
 Eliminating unused variable - keeping the call (void~) main::$2
 Removing empty block main::@4

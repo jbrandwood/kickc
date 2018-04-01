@@ -1,0 +1,63 @@
+// Interactive Explorer for C64DTV Screen Modes
+import "c64dtv.kc"
+import "print.kc"
+import "keyboard.kc"
+
+void main() {
+    asm { sei }  // Disable normal interrupt (prevent keyboard reading glitches)
+    *DTV_FEATURE = DTV_FEATURE_ENABLE;
+    while(true) {
+        menu();
+    }
+}
+
+byte[] MENU_TEXT =
+     " DTV GfxExplorer PRESET 8bpp pixel cell @" +
+     " CONTROL  PLANE  A  PLANE  B  VIC II    @" +
+     " bmm   0  patt  p1  patt  p2  screen s3 @" +
+     " mcm   0  start 00  start 00  gfx    g4 @" +
+     " ecm   0  step  00  step  00  colors c5 @" +
+     " hicol 0  mod   00  mod   00  bgcol0 00 @" +
+     " line  0                      bgcol1 00 @" +
+     " colof 0  borof  0            bgcol2 00 @" +
+     " chunk 0  overs  0            bgcol3 00 @" +
+     "@" ;
+
+void menu() {
+    const byte* SCREEN = $8000;
+    const byte* CHARSET = $9800; // Charset ROM
+    // DTV Graphics Bank
+    *DTV_GRAPHICS_VIC_BANK = (byte)((dword)CHARSET/$10000);
+    // DTV Color Bank
+     *DTV_COLOR_BANK_LO = <((word)(DTV_COLOR_BANK_DEFAULT/$400));
+     *DTV_COLOR_BANK_HI = >((word)(DTV_COLOR_BANK_DEFAULT/$400));
+    // DTV Graphics Mode
+    *DTV_CONTROL = 0;
+    // VIC Graphics Bank
+    *CIA2_PORT_A_DDR = %00000011; // Set VIC Bank bits to output - all others to input
+    *CIA2_PORT_A = %00000011 ^ (byte)((word)CHARSET/$4000); // Set VIC Bank
+    // VIC Graphics Mode
+    *VIC_CONTROL = VIC_DEN|VIC_RSEL|3;
+    *VIC_CONTROL2 = VIC_CSEL;
+    // VIC Memory Pointers
+    *VIC_MEMORY =  (byte)((((word)SCREEN&$3fff)/$40)|(((word)CHARSET&$3fff)/$400));
+    // DTV Palette - default
+    for(byte i : 0..$f) {
+        DTV_PALETTE[i] = DTV_PALETTE_DEFAULT[i];
+    }
+    // Char Colors
+    for(byte* c=COLS;c!=COLS+1000;c++) *c=LIGHT_GREEN;
+    // Screen colors
+    *BGCOL = 0;
+    *BORDERCOL = 0;
+    // Display menu Text
+    print_set_screen(SCREEN);
+    print_cls();
+    print_str_lines(MENU_TEXT);
+   // Wait for keypress
+    while(true) {
+        if(keyboard_key_pressed(KEY_SPACE)!=0) {
+            return;
+        }
+    }
+}

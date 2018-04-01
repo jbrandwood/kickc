@@ -40,32 +40,36 @@ main: {
 }
 gen_char3: {
     .label dst = 2
-    .label spec = 5
-    .label b = 7
-    ldy #0
+    .label spec = 6
+    .label r = 5
+    lda #0
+    sta r
   b1:
     ldx #0
-    txa
-    sta b
+    ldy #0
   b2:
     lda spec+1
     and #$80
     cmp #0
     beq b3
-    lda #1
-    ora b
-    sta b
+    tya
+    ora #1
+    tay
   b3:
-    asl b
+    tya
+    asl
+    tay
     asl spec
     rol spec+1
     inx
     cpx #3
     bne b2
-    lda b
+    tya
+    ldy r
     sta (dst),y
-    iny
-    cpy #5
+    inc r
+    lda r
+    cmp #5
     bne b1
     rts
 }

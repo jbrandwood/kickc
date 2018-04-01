@@ -46,6 +46,16 @@ public class TestPrograms {
    }
 
    @Test
+   public void testLoopProblem2() throws IOException, URISyntaxException {
+      compileAndCompare("loop-problem2");
+   }
+
+   @Test
+   public void testC64DtvGfxExplorer() throws IOException, URISyntaxException {
+      compileAndCompare("c64dtv-gfxexplorer");
+   }
+
+   @Test
    public void testOperatorLoHiProblem() throws IOException, URISyntaxException {
       compileAndCompare("operator-lohi-problem");
    }

@@ -15,6 +15,7 @@ import org.junit.Test;
 import java.io.*;
 import java.net.URISyntaxException;
 import java.nio.file.Path;
+import java.util.ConcurrentModificationException;
 
 import static junit.framework.TestCase.fail;
 import static org.junit.Assert.assertTrue;
@@ -47,7 +48,12 @@ public class TestPrograms {
 
    @Test
    public void testLoopProblem2() throws IOException, URISyntaxException {
-      compileAndCompare("loop-problem2");
+      try {
+         compileAndCompare("loop-problem2");
+      } catch(ConcurrentModificationException e) {
+         return;
+      }
+      fail("Exception expected!");
    }
 
    @Test

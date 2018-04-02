@@ -1,4 +1,3 @@
-
 package dk.camelot64.kickc.test;
 
 import dk.camelot64.kickc.CompileLog;

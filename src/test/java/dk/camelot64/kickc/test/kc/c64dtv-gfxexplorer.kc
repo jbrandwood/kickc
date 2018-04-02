@@ -54,10 +54,124 @@ void menu() {
     print_set_screen(SCREEN);
     print_cls();
     print_str_lines(MENU_TEXT);
-   // Wait for keypress
+    form_set_screen(SCREEN);
+    form_render_values();
+   // Allow user to control the form
     while(true) {
-        if(keyboard_key_pressed(KEY_SPACE)!=0) {
+        while(*RASTER!=$ff) {}
+        form_control();
+    }
+}
+
+
+// Table with addresses of the y-lines of the form. The first line contains the address of the form screen.
+byte[25] form_line_lo;
+byte[25] form_line_hi;
+// Current selected field in the form
+byte form_field_idx = 0;
+// Number of form fields
+byte form_fields_cnt = 9;
+// Form fields x/y-positions
+byte[] form_fields_x   = { 7, 7, 7, 7, 7, 7, 7, 17, 17 };
+byte[] form_fields_y   = { 2, 3, 4, 5, 6, 7, 8,  7,  8 };
+// Form fields values
+byte[] form_fields_val = { 0, 0, 0, 0, 0, 0, 0,  0,  0 };
+
+// Press-status for the DOWN key from last frame - used for debounce
+byte key_down_debounce = 0;
+// Press-status for the right key from last frame - used for debounce
+byte key_right_debounce = 0;
+
+// The number of frames to use for a full blink cycle
+const signed byte FORM_CURSOR_BLINK = 40;
+// Counts down to blink for form cursor (it is inversed in the lower half)
+signed byte form_cursor_count = FORM_CURSOR_BLINK/2;
+
+// Set the screen to use for the form.
+// screen is the start address of the screen to use
+void form_set_screen(byte* screen) {
+    // Calculate the field line table
+    byte* line = screen;
+    for(byte y: 0..24) {
+        form_line_lo[y] = <line;
+        form_line_hi[y] = >line;
+        line = line + 40;
+    }
+}
+
+// Get the screen address of a form field
+// field_idx is the index of the field to get the screen address for
+byte* form_field_ptr(byte field_idx) {
+    byte y = form_fields_y[field_idx];
+    byte* line = (byte*) { form_line_hi[y], form_line_lo[y] };
+    byte x = form_fields_x[field_idx];
+    byte* field = line+x;
+    return field;
+}
+
+// Render all form values from the form_fields_val array
+void form_render_values() {
+    for( byte idx=0; idx<form_fields_cnt; idx++) {
+        byte* field = form_field_ptr(idx);
+        *field = print_hextab[form_fields_val[idx]];
+    }
+}
+
+// Reads keyboard and allows the user to navigate and change the fields of the form
+void form_control() {
+    byte* field = form_field_ptr(form_field_idx);
+
+    // Blinking cursor
+    if(--form_cursor_count < 0) {
+        form_cursor_count = FORM_CURSOR_BLINK;
+    }
+    if(form_cursor_count<FORM_CURSOR_BLINK/2) {
+        *field = *field | $80;
+    } else {
+        *field = *field & $7f;
+    }
+
+    // Navigation using cursor up/down
+    byte key_down = keyboard_key_pressed(KEY_CRSR_DOWN);
+    if(key_down!=key_down_debounce) {
+        key_down_debounce = key_down;
+        if(key_down!=0) {
+            // Unblink the cursor
+            *field = *field & $7f;
+            if(keyboard_key_pressed(KEY_RSHIFT)==0) {
+                // Move to next field
+                if(++form_field_idx==form_fields_cnt) {
+                    form_field_idx = 0;
+                }
+             } else {
+                // Move to previous field
+                if(--form_field_idx==$ff) {
+                    form_field_idx = form_fields_cnt-1;
+                }
+             }
+            // Always blink cursor in new field
+            form_cursor_count = FORM_CURSOR_BLINK/2;
+            // Return to refresh
             return;
         }
     }
+
+    // Change value with cursor left/right
+    // Navigation using cursor up/down
+    byte key_right = keyboard_key_pressed(KEY_CRSR_RIGHT);
+    if(key_right!=key_right_debounce) {
+        key_right_debounce = key_right;
+        if(key_right!=0) {
+            if(keyboard_key_pressed(KEY_RSHIFT)==0) {
+                // Increase value
+                form_fields_val[form_field_idx] = (form_fields_val[form_field_idx]+1) & $f;
+            } else {
+                // Decrease value
+                form_fields_val[form_field_idx] = (form_fields_val[form_field_idx]-1) & $f;
+            }
+            // Render field value
+            *field = print_hextab[form_fields_val[form_field_idx]];
+        }
+     }
+
 }

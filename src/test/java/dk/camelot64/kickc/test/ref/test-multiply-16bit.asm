@@ -243,15 +243,14 @@ print_byte: {
     lsr
     lsr
     tay
-    lda hextab,y
+    lda print_hextab,y
     jsr print_char
     txa
     and #$f
     tay
-    lda hextab,y
+    lda print_hextab,y
     jsr print_char
     rts
-    hextab: .text "0123456789abcdef"
 }
 print_char: {
     ldy #0
@@ -815,6 +814,7 @@ print_cls: {
     bne b1
     rts
 }
+  print_hextab: .text "0123456789abcdef"
   .align $100
   mulf_sqr1_lo: .fill $200, 0
   .align $100

@@ -135,15 +135,14 @@ print_byte: {
     lsr
     lsr
     tay
-    lda hextab,y
+    lda print_hextab,y
     jsr print_char
     lda #$f
     and b
     tay
-    lda hextab,y
+    lda print_hextab,y
     jsr print_char
     rts
-    hextab: .text "0123456789abcdef"
 }
 print_char: {
     ldy #0
@@ -810,3 +809,4 @@ sin16s: {
   b3:
     rts
 }
+  print_hextab: .text "0123456789abcdef"

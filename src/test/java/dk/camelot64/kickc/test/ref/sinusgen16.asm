@@ -118,15 +118,14 @@ print_byte: {
     lsr
     lsr
     tay
-    lda hextab,y
+    lda print_hextab,y
     jsr print_char
     txa
     and #$f
     tay
-    lda hextab,y
+    lda print_hextab,y
     jsr print_char
     rts
-    hextab: .text "0123456789abcdef"
 }
 print_char: {
     ldy #0
@@ -569,3 +568,4 @@ divr16u: {
     bne b1
     rts
 }
+  print_hextab: .text "0123456789abcdef"

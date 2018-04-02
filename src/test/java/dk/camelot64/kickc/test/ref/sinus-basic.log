@@ -111,12 +111,13 @@ void print_sdword(signed dword dw) {
     print_dword((dword)dw);
 }
 
+const byte[] print_hextab = "0123456789abcdef";
+
 // Print a byte as HEX
 void print_byte(byte b) {
     // Table of hexadecimal digits
-    const byte[] hextab = "0123456789abcdef";
-    print_char(hextab[b>>4]);
-    print_char(hextab[b&$f]);
+    print_char(print_hextab[b>>4]);
+    print_char(print_hextab[b&$f]);
 }
 
 // Print a single char
@@ -554,12 +555,12 @@ print_sdword::@1:
 print_sdword::@return:
   return 
 endproc // print_sdword()
+  (byte[]) print_hextab ← (string) "0123456789abcdef"
 proc (void()) print_byte((byte) print_byte::b)
-  (byte[]) print_byte::hextab ← (string) "0123456789abcdef"
   (byte~) print_byte::$0 ← (byte) print_byte::b >> (byte/signed byte/word/signed word/dword/signed dword) 4
-  (void~) print_byte::$1 ← call print_char *((byte[]) print_byte::hextab + (byte~) print_byte::$0) 
+  (void~) print_byte::$1 ← call print_char *((byte[]) print_hextab + (byte~) print_byte::$0) 
   (byte~) print_byte::$2 ← (byte) print_byte::b & (byte/signed byte/word/signed word/dword/signed dword) 15
-  (void~) print_byte::$3 ← call print_char *((byte[]) print_byte::hextab + (byte~) print_byte::$2) 
+  (void~) print_byte::$3 ← call print_char *((byte[]) print_hextab + (byte~) print_byte::$2) 
 print_byte::@return:
   return 
 endproc // print_byte()
@@ -842,7 +843,6 @@ SYMBOLS
 (void~) print_byte::$3
 (label) print_byte::@return
 (byte) print_byte::b
-(byte[]) print_byte::hextab
 (void()) print_char((byte) print_char::ch)
 (label) print_char::@return
 (byte) print_char::ch
@@ -860,6 +860,7 @@ SYMBOLS
 (void~) print_dword::$3
 (label) print_dword::@return
 (dword) print_dword::dw
+(byte[]) print_hextab
 (byte*) print_line_cursor
 (void()) print_ln()
 (byte*~) print_ln::$0
@@ -1183,13 +1184,13 @@ print_sdword::@return: scope:[print_sdword]  from print_sdword::@1
   return 
   to:@return
 @10: scope:[]  from @9
+  (byte[]) print_hextab ← (string) "0123456789abcdef"
   to:@11
 print_byte: scope:[print_byte]  from
-  (byte[]) print_byte::hextab ← (string) "0123456789abcdef"
   (byte~) print_byte::$0 ← (byte) print_byte::b >> (byte/signed byte/word/signed word/dword/signed dword) 4
-  (void~) print_byte::$1 ← call print_char *((byte[]) print_byte::hextab + (byte~) print_byte::$0) 
+  (void~) print_byte::$1 ← call print_char *((byte[]) print_hextab + (byte~) print_byte::$0) 
   (byte~) print_byte::$2 ← (byte) print_byte::b & (byte/signed byte/word/signed word/dword/signed dword) 15
-  (void~) print_byte::$3 ← call print_char *((byte[]) print_byte::hextab + (byte~) print_byte::$2) 
+  (void~) print_byte::$3 ← call print_char *((byte[]) print_hextab + (byte~) print_byte::$2) 
   to:print_byte::@return
 print_byte::@return: scope:[print_byte]  from print_byte
   return 
@@ -1556,7 +1557,7 @@ Eliminating unused variable - keeping the call (void~) main::$10
 Eliminating unused variable - keeping the call (void~) main::$11
 Eliminating unused variable - keeping the call (void~) main::$13
 Eliminating unused variable - keeping the call (void~) main::$14
-Creating constant string variable for inline (const string) print_byte::$4 "0123456789abcdef"
+Creating constant string variable for inline (const string) $0 "0123456789abcdef"
 Removing empty block @1
 Removing empty block @2
 Removing empty block @3
@@ -1566,7 +1567,6 @@ Removing empty block @6
 Removing empty block @7
 Removing empty block @8
 Removing empty block @9
-Removing empty block @10
 Removing empty block @11
 Removing empty block @12
 Removing empty block @13
@@ -1630,7 +1630,7 @@ CONTROL FLOW GRAPH SSA WITH ASSIGNMENT CALL & RETURN
   (byte*) print_screen#0 ← ((byte*)) (word/signed word/dword/signed dword) 1024
   (byte*) print_line_cursor#0 ← (byte*) print_screen#0
   (byte*) print_char_cursor#0 ← (byte*) print_line_cursor#0
-  to:@14
+  to:@10
 print_ln: scope:[print_ln]  from main::@15
   (byte*) print_char_cursor#29 ← phi( main::@15/(byte*) print_char_cursor#11 )
   (byte*) print_line_cursor#12 ← phi( main::@15/(byte*) print_line_cursor#13 )
@@ -1678,12 +1678,16 @@ print_word::@return: scope:[print_word]  from print_word::@2
   (byte*) print_char_cursor#5 ← (byte*) print_char_cursor#19
   return 
   to:@return
+@10: scope:[]  from @begin
+  (byte*) print_line_cursor#17 ← phi( @begin/(byte*) print_line_cursor#0 )
+  (byte*) print_char_cursor#36 ← phi( @begin/(byte*) print_char_cursor#0 )
+  (byte[]) print_hextab#0 ← (const string) $0
+  to:@14
 print_byte: scope:[print_byte]  from print_word print_word::@1
   (byte*) print_char_cursor#31 ← phi( print_word/(byte*) print_char_cursor#30 print_word::@1/(byte*) print_char_cursor#3 )
   (byte) print_byte::b#2 ← phi( print_word/(byte) print_byte::b#0 print_word::@1/(byte) print_byte::b#1 )
-  (byte[]) print_byte::hextab#0 ← (const string) print_byte::$4
   (byte~) print_byte::$0 ← (byte) print_byte::b#2 >> (byte/signed byte/word/signed word/dword/signed dword) 4
-  (byte) print_char::ch#0 ← *((byte[]) print_byte::hextab#0 + (byte~) print_byte::$0)
+  (byte) print_char::ch#0 ← *((byte[]) print_hextab#0 + (byte~) print_byte::$0)
   call print_char param-assignment
   to:print_byte::@1
 print_byte::@1: scope:[print_byte]  from print_byte
@@ -1691,7 +1695,7 @@ print_byte::@1: scope:[print_byte]  from print_byte
   (byte*) print_char_cursor#20 ← phi( print_byte/(byte*) print_char_cursor#10 )
   (byte*) print_char_cursor#6 ← (byte*) print_char_cursor#20
   (byte~) print_byte::$2 ← (byte) print_byte::b#3 & (byte/signed byte/word/signed word/dword/signed dword) 15
-  (byte) print_char::ch#1 ← *((byte[]) print_byte::hextab#0 + (byte~) print_byte::$2)
+  (byte) print_char::ch#1 ← *((byte[]) print_hextab#0 + (byte~) print_byte::$2)
   call print_char param-assignment
   to:print_byte::@2
 print_byte::@2: scope:[print_byte]  from print_byte::@1
@@ -1714,9 +1718,9 @@ print_char::@return: scope:[print_char]  from print_char
   (byte*) print_char_cursor#10 ← (byte*) print_char_cursor#24
   return 
   to:@return
-@14: scope:[]  from @begin
-  (byte*) print_line_cursor#16 ← phi( @begin/(byte*) print_line_cursor#0 )
-  (byte*) print_char_cursor#35 ← phi( @begin/(byte*) print_char_cursor#0 )
+@14: scope:[]  from @10
+  (byte*) print_line_cursor#16 ← phi( @10/(byte*) print_line_cursor#17 )
+  (byte*) print_char_cursor#35 ← phi( @10/(byte*) print_char_cursor#36 )
   (byte*) memLo#0 ← ((byte*)) (byte/word/signed word/dword/signed dword) 254
   (byte*) memHi#0 ← ((byte*)) (byte/word/signed word/dword/signed dword) 255
   to:@42
@@ -1809,8 +1813,8 @@ divFACby10::@return: scope:[divFACby10]  from divFACby10
   return 
   to:@return
 main: scope:[main]  from @42
-  (byte*) print_line_cursor#29 ← phi( @42/(byte*) print_line_cursor#14 )
-  (byte*) print_char_cursor#47 ← phi( @42/(byte*) print_char_cursor#33 )
+  (byte*) print_line_cursor#30 ← phi( @42/(byte*) print_line_cursor#14 )
+  (byte*) print_char_cursor#48 ← phi( @42/(byte*) print_char_cursor#33 )
   (byte[]) main::f_i#0 ← { (byte/signed byte/word/signed word/dword/signed dword) 0, (byte/signed byte/word/signed word/dword/signed dword) 0, (byte/signed byte/word/signed word/dword/signed dword) 0, (byte/signed byte/word/signed word/dword/signed dword) 0, (byte/signed byte/word/signed word/dword/signed dword) 0 }
   (byte[]) main::f_127#0 ← { (byte/signed byte/word/signed word/dword/signed dword) 0, (byte/signed byte/word/signed word/dword/signed dword) 0, (byte/signed byte/word/signed word/dword/signed dword) 0, (byte/signed byte/word/signed word/dword/signed dword) 0, (byte/signed byte/word/signed word/dword/signed dword) 0 }
   (byte*) main::f_2pi#0 ← ((byte*)) (word/dword/signed dword) 58085
@@ -1818,24 +1822,24 @@ main: scope:[main]  from @42
   call setFAC param-assignment
   to:main::@3
 main::@3: scope:[main]  from main
-  (byte*) print_line_cursor#28 ← phi( main/(byte*) print_line_cursor#29 )
-  (byte*) print_char_cursor#46 ← phi( main/(byte*) print_char_cursor#47 )
+  (byte*) print_line_cursor#29 ← phi( main/(byte*) print_line_cursor#30 )
+  (byte*) print_char_cursor#47 ← phi( main/(byte*) print_char_cursor#48 )
   call divFACby10 param-assignment
   to:main::@4
 main::@4: scope:[main]  from main::@3
-  (byte*) print_line_cursor#27 ← phi( main::@3/(byte*) print_line_cursor#28 )
-  (byte*) print_char_cursor#45 ← phi( main::@3/(byte*) print_char_cursor#46 )
+  (byte*) print_line_cursor#28 ← phi( main::@3/(byte*) print_line_cursor#29 )
+  (byte*) print_char_cursor#46 ← phi( main::@3/(byte*) print_char_cursor#47 )
   (byte*) setMEMtoFAC::mem#0 ← (byte[]) main::f_127#0
   call setMEMtoFAC param-assignment
   to:main::@5
 main::@5: scope:[main]  from main::@4
-  (byte*) print_line_cursor#26 ← phi( main::@4/(byte*) print_line_cursor#27 )
-  (byte*) print_char_cursor#44 ← phi( main::@4/(byte*) print_char_cursor#45 )
+  (byte*) print_line_cursor#27 ← phi( main::@4/(byte*) print_line_cursor#28 )
+  (byte*) print_char_cursor#45 ← phi( main::@4/(byte*) print_char_cursor#46 )
   (byte) main::i#0 ← (byte/signed byte/word/signed word/dword/signed dword) 1
   to:main::@1
 main::@1: scope:[main]  from main::@16 main::@5
-  (byte*) print_line_cursor#25 ← phi( main::@16/(byte*) print_line_cursor#3 main::@5/(byte*) print_line_cursor#26 )
-  (byte*) print_char_cursor#43 ← phi( main::@16/(byte*) print_char_cursor#12 main::@5/(byte*) print_char_cursor#44 )
+  (byte*) print_line_cursor#26 ← phi( main::@16/(byte*) print_line_cursor#3 main::@5/(byte*) print_line_cursor#27 )
+  (byte*) print_char_cursor#44 ← phi( main::@16/(byte*) print_char_cursor#12 main::@5/(byte*) print_char_cursor#45 )
   (byte) main::i#2 ← phi( main::@16/(byte) main::i#1 main::@5/(byte) main::i#0 )
   (word~) main::$3 ← ((word)) (byte) main::i#2
   (word) setFAC::w#1 ← (word~) main::$3
@@ -1843,62 +1847,62 @@ main::@1: scope:[main]  from main::@16 main::@5
   to:main::@6
 main::@6: scope:[main]  from main::@1
   (byte) main::i#13 ← phi( main::@1/(byte) main::i#2 )
-  (byte*) print_line_cursor#24 ← phi( main::@1/(byte*) print_line_cursor#25 )
-  (byte*) print_char_cursor#42 ← phi( main::@1/(byte*) print_char_cursor#43 )
+  (byte*) print_line_cursor#25 ← phi( main::@1/(byte*) print_line_cursor#26 )
+  (byte*) print_char_cursor#43 ← phi( main::@1/(byte*) print_char_cursor#44 )
   (byte*) mulFACbyMEM::mem#0 ← (byte*) main::f_2pi#0
   call mulFACbyMEM param-assignment
   to:main::@7
 main::@7: scope:[main]  from main::@6
   (byte) main::i#12 ← phi( main::@6/(byte) main::i#13 )
-  (byte*) print_line_cursor#23 ← phi( main::@6/(byte*) print_line_cursor#24 )
-  (byte*) print_char_cursor#41 ← phi( main::@6/(byte*) print_char_cursor#42 )
+  (byte*) print_line_cursor#24 ← phi( main::@6/(byte*) print_line_cursor#25 )
+  (byte*) print_char_cursor#42 ← phi( main::@6/(byte*) print_char_cursor#43 )
   (byte*) setMEMtoFAC::mem#1 ← (byte[]) main::f_i#0
   call setMEMtoFAC param-assignment
   to:main::@8
 main::@8: scope:[main]  from main::@7
   (byte) main::i#11 ← phi( main::@7/(byte) main::i#12 )
-  (byte*) print_line_cursor#22 ← phi( main::@7/(byte*) print_line_cursor#23 )
-  (byte*) print_char_cursor#40 ← phi( main::@7/(byte*) print_char_cursor#41 )
+  (byte*) print_line_cursor#23 ← phi( main::@7/(byte*) print_line_cursor#24 )
+  (byte*) print_char_cursor#41 ← phi( main::@7/(byte*) print_char_cursor#42 )
   (word) setFAC::w#2 ← (byte/signed byte/word/signed word/dword/signed dword) 25
   call setFAC param-assignment
   to:main::@9
 main::@9: scope:[main]  from main::@8
   (byte) main::i#10 ← phi( main::@8/(byte) main::i#11 )
-  (byte*) print_line_cursor#21 ← phi( main::@8/(byte*) print_line_cursor#22 )
-  (byte*) print_char_cursor#39 ← phi( main::@8/(byte*) print_char_cursor#40 )
+  (byte*) print_line_cursor#22 ← phi( main::@8/(byte*) print_line_cursor#23 )
+  (byte*) print_char_cursor#40 ← phi( main::@8/(byte*) print_char_cursor#41 )
   (byte*) divMEMbyFAC::mem#0 ← (byte[]) main::f_i#0
   call divMEMbyFAC param-assignment
   to:main::@10
 main::@10: scope:[main]  from main::@9
   (byte) main::i#9 ← phi( main::@9/(byte) main::i#10 )
-  (byte*) print_line_cursor#20 ← phi( main::@9/(byte*) print_line_cursor#21 )
-  (byte*) print_char_cursor#38 ← phi( main::@9/(byte*) print_char_cursor#39 )
+  (byte*) print_line_cursor#21 ← phi( main::@9/(byte*) print_line_cursor#22 )
+  (byte*) print_char_cursor#39 ← phi( main::@9/(byte*) print_char_cursor#40 )
   call sinFAC param-assignment
   to:main::@11
 main::@11: scope:[main]  from main::@10
   (byte) main::i#8 ← phi( main::@10/(byte) main::i#9 )
-  (byte*) print_line_cursor#19 ← phi( main::@10/(byte*) print_line_cursor#20 )
-  (byte*) print_char_cursor#37 ← phi( main::@10/(byte*) print_char_cursor#38 )
+  (byte*) print_line_cursor#20 ← phi( main::@10/(byte*) print_line_cursor#21 )
+  (byte*) print_char_cursor#38 ← phi( main::@10/(byte*) print_char_cursor#39 )
   (byte*) mulFACbyMEM::mem#1 ← (byte[]) main::f_127#0
   call mulFACbyMEM param-assignment
   to:main::@12
 main::@12: scope:[main]  from main::@11
   (byte) main::i#7 ← phi( main::@11/(byte) main::i#8 )
-  (byte*) print_line_cursor#18 ← phi( main::@11/(byte*) print_line_cursor#19 )
-  (byte*) print_char_cursor#36 ← phi( main::@11/(byte*) print_char_cursor#37 )
+  (byte*) print_line_cursor#19 ← phi( main::@11/(byte*) print_line_cursor#20 )
+  (byte*) print_char_cursor#37 ← phi( main::@11/(byte*) print_char_cursor#38 )
   (byte*) addMEMtoFAC::mem#0 ← (byte[]) main::f_127#0
   call addMEMtoFAC param-assignment
   to:main::@13
 main::@13: scope:[main]  from main::@12
   (byte) main::i#6 ← phi( main::@12/(byte) main::i#7 )
-  (byte*) print_line_cursor#17 ← phi( main::@12/(byte*) print_line_cursor#18 )
-  (byte*) print_char_cursor#34 ← phi( main::@12/(byte*) print_char_cursor#36 )
+  (byte*) print_line_cursor#18 ← phi( main::@12/(byte*) print_line_cursor#19 )
+  (byte*) print_char_cursor#34 ← phi( main::@12/(byte*) print_char_cursor#37 )
   call getFAC param-assignment
   (word) getFAC::return#2 ← (word) getFAC::return#1
   to:main::@14
 main::@14: scope:[main]  from main::@13
   (byte) main::i#5 ← phi( main::@13/(byte) main::i#6 )
-  (byte*) print_line_cursor#15 ← phi( main::@13/(byte*) print_line_cursor#17 )
+  (byte*) print_line_cursor#15 ← phi( main::@13/(byte*) print_line_cursor#18 )
   (byte*) print_char_cursor#32 ← phi( main::@13/(byte*) print_char_cursor#34 )
   (word) getFAC::return#4 ← phi( main::@13/(word) getFAC::return#2 )
   (word~) main::$12 ← (word) getFAC::return#4
@@ -1943,6 +1947,8 @@ main::@return: scope:[main]  from main::@16
 @end: scope:[]  from @43
 
 SYMBOL TABLE SSA
+(const string) $0 = (string) "0123456789abcdef"
+(label) @10
 (label) @14
 (label) @42
 (label) @43
@@ -2038,7 +2044,6 @@ SYMBOL TABLE SSA
 (void()) print_byte((byte) print_byte::b)
 (byte~) print_byte::$0
 (byte~) print_byte::$2
-(const string) print_byte::$4 = (string) "0123456789abcdef"
 (label) print_byte::@1
 (label) print_byte::@2
 (label) print_byte::@return
@@ -2047,8 +2052,6 @@ SYMBOL TABLE SSA
 (byte) print_byte::b#1
 (byte) print_byte::b#2
 (byte) print_byte::b#3
-(byte[]) print_byte::hextab
-(byte[]) print_byte::hextab#0
 (void()) print_char((byte) print_char::ch)
 (label) print_char::@return
 (byte) print_char::ch
@@ -2099,11 +2102,14 @@ SYMBOL TABLE SSA
 (byte*) print_char_cursor#45
 (byte*) print_char_cursor#46
 (byte*) print_char_cursor#47
+(byte*) print_char_cursor#48
 (byte*) print_char_cursor#5
 (byte*) print_char_cursor#6
 (byte*) print_char_cursor#7
 (byte*) print_char_cursor#8
 (byte*) print_char_cursor#9
+(byte[]) print_hextab
+(byte[]) print_hextab#0
 (byte*) print_line_cursor
 (byte*) print_line_cursor#0
 (byte*) print_line_cursor#1
@@ -2129,6 +2135,7 @@ SYMBOL TABLE SSA
 (byte*) print_line_cursor#28
 (byte*) print_line_cursor#29
 (byte*) print_line_cursor#3
+(byte*) print_line_cursor#30
 (byte*) print_line_cursor#4
 (byte*) print_line_cursor#5
 (byte*) print_line_cursor#6
@@ -2195,8 +2202,8 @@ Not aliassing across scopes: divMEMbyFAC::mem#1 divMEMbyFAC::mem#0
 Not aliassing across scopes: prepareMEM::mem#3 divMEMbyFAC::mem#1
 Not aliassing across scopes: mulFACbyMEM::mem#2 mulFACbyMEM::mem#1
 Not aliassing across scopes: prepareMEM::mem#4 mulFACbyMEM::mem#2
-Not aliassing across scopes: print_char_cursor#47 print_char_cursor#33
-Not aliassing across scopes: print_line_cursor#29 print_line_cursor#14
+Not aliassing across scopes: print_char_cursor#48 print_char_cursor#33
+Not aliassing across scopes: print_line_cursor#30 print_line_cursor#14
 Not aliassing across scopes: setMEMtoFAC::mem#0 main::f_127#0
 Not aliassing across scopes: mulFACbyMEM::mem#0 main::f_2pi#0
 Not aliassing across scopes: setMEMtoFAC::mem#1 main::f_i#0
@@ -2210,7 +2217,7 @@ Not aliassing across scopes: print_line_cursor#9 print_line_cursor#2
 Not aliassing across scopes: print_char_cursor#26 print_char_cursor#2
 Not aliassing across scopes: print_char_cursor#28 print_char_cursor#13
 Not aliassing across scopes: print_line_cursor#11 print_line_cursor#4
-Alias (byte*) print_char_cursor#0 = (byte*) print_line_cursor#0 (byte*) print_screen#0 (byte*) print_char_cursor#35 (byte*) print_line_cursor#16 (byte*) print_char_cursor#33 (byte*) print_line_cursor#14 
+Alias (byte*) print_char_cursor#0 = (byte*) print_line_cursor#0 (byte*) print_screen#0 (byte*) print_char_cursor#36 (byte*) print_line_cursor#17 (byte*) print_char_cursor#35 (byte*) print_line_cursor#16 (byte*) print_char_cursor#33 (byte*) print_line_cursor#14 
 Alias (byte*) print_line_cursor#1 = (byte*~) print_ln::$0 (byte*) print_line_cursor#7 (byte*) print_char_cursor#1 (byte*) print_line_cursor#8 (byte*) print_char_cursor#16 (byte*) print_line_cursor#2 (byte*) print_char_cursor#2 
 Alias (byte) print_byte::b#0 = (byte~) print_word::$0 
 Alias (word) print_word::w#1 = (word) print_word::w#2 
@@ -2223,11 +2230,11 @@ Alias (byte*) print_char_cursor#21 = (byte*) print_char_cursor#7 (byte*) print_c
 Alias (byte*) print_char_cursor#10 = (byte*) print_char_cursor#24 (byte*) print_char_cursor#9 
 Alias (byte*) prepareMEM::mem#0 = (byte*~) setFAC::$0 
 Alias (word) getFAC::return#0 = (word) getFAC::w#0 (word) getFAC::return#3 (word) getFAC::return#1 
-Alias (byte*) print_char_cursor#44 = (byte*) print_char_cursor#46 (byte*) print_char_cursor#47 (byte*) print_char_cursor#45 
-Alias (byte*) print_line_cursor#26 = (byte*) print_line_cursor#28 (byte*) print_line_cursor#29 (byte*) print_line_cursor#27 
+Alias (byte*) print_char_cursor#45 = (byte*) print_char_cursor#47 (byte*) print_char_cursor#48 (byte*) print_char_cursor#46 
+Alias (byte*) print_line_cursor#27 = (byte*) print_line_cursor#29 (byte*) print_line_cursor#30 (byte*) print_line_cursor#28 
 Alias (word) setFAC::w#1 = (word~) main::$3 
-Alias (byte*) print_char_cursor#32 = (byte*) print_char_cursor#42 (byte*) print_char_cursor#43 (byte*) print_char_cursor#41 (byte*) print_char_cursor#40 (byte*) print_char_cursor#39 (byte*) print_char_cursor#38 (byte*) print_char_cursor#37 (byte*) print_char_cursor#36 (byte*) print_char_cursor#34 
-Alias (byte*) print_line_cursor#13 = (byte*) print_line_cursor#24 (byte*) print_line_cursor#25 (byte*) print_line_cursor#23 (byte*) print_line_cursor#22 (byte*) print_line_cursor#21 (byte*) print_line_cursor#20 (byte*) print_line_cursor#19 (byte*) print_line_cursor#18 (byte*) print_line_cursor#17 (byte*) print_line_cursor#15 
+Alias (byte*) print_char_cursor#32 = (byte*) print_char_cursor#43 (byte*) print_char_cursor#44 (byte*) print_char_cursor#42 (byte*) print_char_cursor#41 (byte*) print_char_cursor#40 (byte*) print_char_cursor#39 (byte*) print_char_cursor#38 (byte*) print_char_cursor#37 (byte*) print_char_cursor#34 
+Alias (byte*) print_line_cursor#13 = (byte*) print_line_cursor#25 (byte*) print_line_cursor#26 (byte*) print_line_cursor#24 (byte*) print_line_cursor#23 (byte*) print_line_cursor#22 (byte*) print_line_cursor#21 (byte*) print_line_cursor#20 (byte*) print_line_cursor#19 (byte*) print_line_cursor#18 (byte*) print_line_cursor#15 
 Alias (byte) main::i#10 = (byte) main::i#13 (byte) main::i#2 (byte) main::i#12 (byte) main::i#11 (byte) main::i#9 (byte) main::i#8 (byte) main::i#7 (byte) main::i#6 (byte) main::i#5 (byte) main::i#4 (byte) main::i#3 
 Alias (word) getFAC::return#2 = (word) getFAC::return#4 
 Alias (word) print_word::w#0 = (word~) main::$12 
@@ -2259,8 +2266,8 @@ Not aliassing across scopes: divMEMbyFAC::mem#1 divMEMbyFAC::mem#0
 Not aliassing across scopes: prepareMEM::mem#3 divMEMbyFAC::mem#1
 Not aliassing across scopes: mulFACbyMEM::mem#2 mulFACbyMEM::mem#1
 Not aliassing across scopes: prepareMEM::mem#4 mulFACbyMEM::mem#2
-Not aliassing across scopes: print_char_cursor#44 print_char_cursor#0
-Not aliassing across scopes: print_line_cursor#26 print_char_cursor#0
+Not aliassing across scopes: print_char_cursor#45 print_char_cursor#0
+Not aliassing across scopes: print_line_cursor#27 print_char_cursor#0
 Not aliassing across scopes: setMEMtoFAC::mem#0 main::f_127#0
 Not aliassing across scopes: mulFACbyMEM::mem#0 main::f_2pi#0
 Not aliassing across scopes: setMEMtoFAC::mem#1 main::f_i#0
@@ -2287,8 +2294,8 @@ Redundant Phi (byte*) print_char_cursor#20 (byte*) print_char_cursor#10
 Redundant Phi (byte*) print_char_cursor#21 (byte*) print_char_cursor#10
 Redundant Phi (byte*) addMEMtoFAC::mem#1 (byte*) addMEMtoFAC::mem#0
 Redundant Phi (byte*) divMEMbyFAC::mem#1 (byte*) divMEMbyFAC::mem#0
-Redundant Phi (byte*) print_char_cursor#44 (byte*) print_char_cursor#0
-Redundant Phi (byte*) print_line_cursor#26 (byte*) print_char_cursor#0
+Redundant Phi (byte*) print_char_cursor#45 (byte*) print_char_cursor#0
+Redundant Phi (byte*) print_line_cursor#27 (byte*) print_char_cursor#0
 Redundant Phi (byte*) print_char_cursor#11 (byte*) print_char_cursor#18
 Redundant Phi (byte*) print_line_cursor#10 (byte*) print_line_cursor#1
 Redundant Phi (byte*) print_char_cursor#12 (byte*) print_line_cursor#1
@@ -2299,7 +2306,7 @@ Simple Condition (boolean~) print_ln::$1 if((byte*) print_line_cursor#1<(byte*) 
 Simple Condition (boolean~) main::$15 if((byte) main::i#1!=(byte/signed byte/word/signed word/dword/signed dword) 26) goto main::@1
 Succesful SSA optimization Pass2ConditionalJumpSimplification
 Constant (const byte*) print_char_cursor#0 = ((byte*))1024
-Constant (const string) print_byte::hextab#0 = print_byte::$4
+Constant (const string) print_hextab#0 = $0
 Constant (const byte*) memLo#0 = ((byte*))254
 Constant (const byte*) memHi#0 = ((byte*))255
 Constant (const byte[]) main::f_i#0 = { 0, 0, 0, 0, 0 }
@@ -2325,6 +2332,7 @@ Eliminating Noop Cast (byte*) prepareMEM::mem#0 ← ((byte*)) (word) setFAC::w#3
 Succesful SSA optimization Pass2NopCastElimination
 Culled Empty Block (label) print_ln::@2
 Culled Empty Block (label) print_word::@2
+Culled Empty Block (label) @10
 Culled Empty Block (label) print_byte::@2
 Culled Empty Block (label) @14
 Culled Empty Block (label) main::@5
@@ -2392,12 +2400,12 @@ Constant inlined addMEMtoFAC::mem#0 = (const byte[]) main::f_127#0
 Constant inlined setFAC::w#2 = (byte/signed byte/word/signed word/dword/signed dword) 25
 Constant inlined prepareMEM::mem#2 = (const byte[]) main::f_127#0
 Constant inlined prepareMEM::mem#3 = (const byte[]) main::f_i#0
+Constant inlined $0 = (const string) print_hextab#0
 Constant inlined print_char_cursor#0 = ((byte*))(word/signed word/dword/signed dword) 1024
 Constant inlined divMEMbyFAC::mem#0 = (const byte[]) main::f_i#0
 Constant inlined main::i#0 = (byte/signed byte/word/signed word/dword/signed dword) 1
 Constant inlined setMEMtoFAC::mem#1 = (const byte[]) main::f_i#0
 Constant inlined mulFACbyMEM::mem#0 = (const byte*) main::f_2pi#0
-Constant inlined print_byte::$4 = (const string) print_byte::hextab#0
 Constant inlined setMEMtoFAC::mem#0 = (const byte[]) main::f_127#0
 Constant inlined mulFACbyMEM::mem#1 = (const byte[]) main::f_127#0
 Constant inlined setFAC::w#0 = (word/signed word/dword/signed dword) 1275
@@ -2462,18 +2470,18 @@ Propagating live ranges...
 Created 12 initial phi equivalence classes
 Coalesced [12] setFAC::w#4 ← setFAC::w#1
 Coalesced [38] main::i#14 ← main::i#1
-Not coalescing [39] print_char_cursor#48 ← print_line_cursor#1
-Coalesced [40] print_line_cursor#30 ← print_line_cursor#1
-Coalesced [41] print_line_cursor#31 ← print_line_cursor#13
-Coalesced (already) [46] print_line_cursor#32 ← print_line_cursor#1
+Not coalescing [39] print_char_cursor#49 ← print_line_cursor#1
+Coalesced [40] print_line_cursor#31 ← print_line_cursor#1
+Coalesced [41] print_line_cursor#32 ← print_line_cursor#13
+Coalesced (already) [46] print_line_cursor#33 ← print_line_cursor#1
 Coalesced [48] print_byte::b#4 ← print_byte::b#0
-Coalesced [49] print_char_cursor#49 ← print_char_cursor#32
+Coalesced [49] print_char_cursor#50 ← print_char_cursor#32
 Coalesced [52] print_byte::b#5 ← print_byte::b#1
-Coalesced [53] print_char_cursor#50 ← print_char_cursor#10
+Coalesced [53] print_char_cursor#51 ← print_char_cursor#10
 Coalesced [59] print_char::ch#3 ← print_char::ch#0
-Coalesced [60] print_char_cursor#51 ← print_char_cursor#31
+Coalesced [60] print_char_cursor#52 ← print_char_cursor#31
 Coalesced [64] print_char::ch#4 ← print_char::ch#1
-Coalesced (already) [65] print_char_cursor#52 ← print_char_cursor#10
+Coalesced (already) [65] print_char_cursor#53 ← print_char_cursor#10
 Coalesced [87] prepareMEM::mem#6 ← prepareMEM::mem#4
 Coalesced [104] prepareMEM::mem#8 ← prepareMEM::mem#1
 Coalesced down to 9 phi equivalence classes
@@ -2547,7 +2555,7 @@ main::@4: scope:[main]  from main::@3
   to:main::@1
 main::@1: scope:[main]  from main::@17 main::@4
   [10] (byte*) print_line_cursor#13 ← phi( main::@17/(byte*) print_line_cursor#1 main::@4/((byte*))(word/signed word/dword/signed dword) 1024 ) [ main::i#10 print_char_cursor#32 print_line_cursor#13 ] ( main:2 [ main::i#10 print_char_cursor#32 print_line_cursor#13 ] )
-  [10] (byte*) print_char_cursor#32 ← phi( main::@17/(byte*~) print_char_cursor#48 main::@4/((byte*))(word/signed word/dword/signed dword) 1024 ) [ main::i#10 print_char_cursor#32 print_line_cursor#13 ] ( main:2 [ main::i#10 print_char_cursor#32 print_line_cursor#13 ] )
+  [10] (byte*) print_char_cursor#32 ← phi( main::@17/(byte*~) print_char_cursor#49 main::@4/((byte*))(word/signed word/dword/signed dword) 1024 ) [ main::i#10 print_char_cursor#32 print_line_cursor#13 ] ( main:2 [ main::i#10 print_char_cursor#32 print_line_cursor#13 ] )
   [10] (byte) main::i#10 ← phi( main::@17/(byte) main::i#1 main::@4/(byte/signed byte/word/signed word/dword/signed dword) 1 ) [ main::i#10 print_char_cursor#32 print_line_cursor#13 ] ( main:2 [ main::i#10 print_char_cursor#32 print_line_cursor#13 ] )
   [11] (word) setFAC::w#1 ← ((word)) (byte) main::i#10 [ main::i#10 print_char_cursor#32 print_line_cursor#13 setFAC::w#1 ] ( main:2 [ main::i#10 print_char_cursor#32 print_line_cursor#13 setFAC::w#1 ] )
   [12] call setFAC param-assignment [ main::i#10 print_char_cursor#32 print_line_cursor#13 ] ( main:2 [ main::i#10 print_char_cursor#32 print_line_cursor#13 ] )
@@ -2601,7 +2609,7 @@ main::@return: scope:[main]  from main::@16
   [36] return  [ ] ( main:2 [ ] )
   to:@return
 main::@17: scope:[main]  from main::@16
-  [37] (byte*~) print_char_cursor#48 ← (byte*) print_line_cursor#1 [ main::i#1 print_char_cursor#48 print_line_cursor#1 ] ( main:2 [ main::i#1 print_char_cursor#48 print_line_cursor#1 ] )
+  [37] (byte*~) print_char_cursor#49 ← (byte*) print_line_cursor#1 [ main::i#1 print_char_cursor#49 print_line_cursor#1 ] ( main:2 [ main::i#1 print_char_cursor#49 print_line_cursor#1 ] )
   to:main::@1
 print_ln: scope:[print_ln]  from main::@15
   [38] phi() [ print_line_cursor#13 print_char_cursor#10 ] ( main:2::print_ln:33 [ main::i#10 print_line_cursor#13 print_char_cursor#10 ] )
@@ -2629,12 +2637,12 @@ print_byte: scope:[print_byte]  from print_word print_word::@1
   [48] (byte*) print_char_cursor#31 ← phi( print_word/(byte*) print_char_cursor#32 print_word::@1/(byte*) print_char_cursor#10 ) [ print_byte::b#2 print_char_cursor#31 ] ( main:2::print_word:31::print_byte:44 [ main::i#10 print_line_cursor#13 print_word::w#0 print_byte::b#2 print_char_cursor#31 ] main:2::print_word:31::print_byte:46 [ main::i#10 print_line_cursor#13 print_byte::b#2 print_char_cursor#31 ] )
   [48] (byte) print_byte::b#2 ← phi( print_word/(byte) print_byte::b#0 print_word::@1/(byte) print_byte::b#1 ) [ print_byte::b#2 print_char_cursor#31 ] ( main:2::print_word:31::print_byte:44 [ main::i#10 print_line_cursor#13 print_word::w#0 print_byte::b#2 print_char_cursor#31 ] main:2::print_word:31::print_byte:46 [ main::i#10 print_line_cursor#13 print_byte::b#2 print_char_cursor#31 ] )
   [49] (byte~) print_byte::$0 ← (byte) print_byte::b#2 >> (byte/signed byte/word/signed word/dword/signed dword) 4 [ print_byte::b#2 print_char_cursor#31 print_byte::$0 ] ( main:2::print_word:31::print_byte:44 [ main::i#10 print_line_cursor#13 print_word::w#0 print_byte::b#2 print_char_cursor#31 print_byte::$0 ] main:2::print_word:31::print_byte:46 [ main::i#10 print_line_cursor#13 print_byte::b#2 print_char_cursor#31 print_byte::$0 ] )
-  [50] (byte) print_char::ch#0 ← *((const string) print_byte::hextab#0 + (byte~) print_byte::$0) [ print_byte::b#2 print_char_cursor#31 print_char::ch#0 ] ( main:2::print_word:31::print_byte:44 [ main::i#10 print_line_cursor#13 print_word::w#0 print_byte::b#2 print_char_cursor#31 print_char::ch#0 ] main:2::print_word:31::print_byte:46 [ main::i#10 print_line_cursor#13 print_byte::b#2 print_char_cursor#31 print_char::ch#0 ] )
+  [50] (byte) print_char::ch#0 ← *((const string) print_hextab#0 + (byte~) print_byte::$0) [ print_byte::b#2 print_char_cursor#31 print_char::ch#0 ] ( main:2::print_word:31::print_byte:44 [ main::i#10 print_line_cursor#13 print_word::w#0 print_byte::b#2 print_char_cursor#31 print_char::ch#0 ] main:2::print_word:31::print_byte:46 [ main::i#10 print_line_cursor#13 print_byte::b#2 print_char_cursor#31 print_char::ch#0 ] )
   [51] call print_char param-assignment [ print_char_cursor#10 print_byte::b#2 ] ( main:2::print_word:31::print_byte:44 [ main::i#10 print_line_cursor#13 print_word::w#0 print_char_cursor#10 print_byte::b#2 ] main:2::print_word:31::print_byte:46 [ main::i#10 print_line_cursor#13 print_char_cursor#10 print_byte::b#2 ] )
   to:print_byte::@1
 print_byte::@1: scope:[print_byte]  from print_byte
   [52] (byte~) print_byte::$2 ← (byte) print_byte::b#2 & (byte/signed byte/word/signed word/dword/signed dword) 15 [ print_char_cursor#10 print_byte::$2 ] ( main:2::print_word:31::print_byte:44 [ main::i#10 print_line_cursor#13 print_word::w#0 print_char_cursor#10 print_byte::$2 ] main:2::print_word:31::print_byte:46 [ main::i#10 print_line_cursor#13 print_char_cursor#10 print_byte::$2 ] )
-  [53] (byte) print_char::ch#1 ← *((const string) print_byte::hextab#0 + (byte~) print_byte::$2) [ print_char_cursor#10 print_char::ch#1 ] ( main:2::print_word:31::print_byte:44 [ main::i#10 print_line_cursor#13 print_word::w#0 print_char_cursor#10 print_char::ch#1 ] main:2::print_word:31::print_byte:46 [ main::i#10 print_line_cursor#13 print_char_cursor#10 print_char::ch#1 ] )
+  [53] (byte) print_char::ch#1 ← *((const string) print_hextab#0 + (byte~) print_byte::$2) [ print_char_cursor#10 print_char::ch#1 ] ( main:2::print_word:31::print_byte:44 [ main::i#10 print_line_cursor#13 print_word::w#0 print_char_cursor#10 print_char::ch#1 ] main:2::print_word:31::print_byte:46 [ main::i#10 print_line_cursor#13 print_char_cursor#10 print_char::ch#1 ] )
   [54] call print_char param-assignment [ print_char_cursor#10 ] ( main:2::print_word:31::print_byte:44 [ main::i#10 print_line_cursor#13 print_word::w#0 print_char_cursor#10 ] main:2::print_word:31::print_byte:46 [ main::i#10 print_line_cursor#13 print_char_cursor#10 ] )
   to:print_byte::@return
 print_byte::@return: scope:[print_byte]  from print_byte::@1
@@ -2856,7 +2864,6 @@ VARIABLE REGISTER WEIGHTS
 (byte) print_byte::b#0 4.0
 (byte) print_byte::b#1 4.0
 (byte) print_byte::b#2 2.0
-(byte[]) print_byte::hextab
 (void()) print_char((byte) print_char::ch)
 (byte) print_char::ch
 (byte) print_char::ch#0 4.0
@@ -2867,7 +2874,8 @@ VARIABLE REGISTER WEIGHTS
 (byte*) print_char_cursor#23 4.0
 (byte*) print_char_cursor#31 2.0
 (byte*) print_char_cursor#32 0.5909090909090909
-(byte*~) print_char_cursor#48 22.0
+(byte*~) print_char_cursor#49 22.0
+(byte[]) print_hextab
 (byte*) print_line_cursor
 (byte*) print_line_cursor#1 46.42857142857143
 (byte*) print_line_cursor#13 0.5416666666666666
@@ -2891,7 +2899,7 @@ Initial phi equivalence classes
 [ print_line_cursor#6 print_line_cursor#13 print_line_cursor#1 ]
 [ print_byte::b#2 print_byte::b#0 print_byte::b#1 ]
 [ print_char::ch#2 print_char::ch#0 print_char::ch#1 ]
-[ print_char_cursor#23 print_char_cursor#31 print_char_cursor#32 print_char_cursor#48 print_char_cursor#10 ]
+[ print_char_cursor#23 print_char_cursor#31 print_char_cursor#32 print_char_cursor#49 print_char_cursor#10 ]
 [ prepareMEM::mem#5 prepareMEM::mem#4 prepareMEM::mem#7 prepareMEM::mem#1 ]
 [ mulFACbyMEM::mem#2 ]
 [ setFAC::w#3 setFAC::w#1 ]
@@ -2908,7 +2916,7 @@ Complete equivalence classes
 [ print_line_cursor#6 print_line_cursor#13 print_line_cursor#1 ]
 [ print_byte::b#2 print_byte::b#0 print_byte::b#1 ]
 [ print_char::ch#2 print_char::ch#0 print_char::ch#1 ]
-[ print_char_cursor#23 print_char_cursor#31 print_char_cursor#32 print_char_cursor#48 print_char_cursor#10 ]
+[ print_char_cursor#23 print_char_cursor#31 print_char_cursor#32 print_char_cursor#49 print_char_cursor#10 ]
 [ prepareMEM::mem#5 prepareMEM::mem#4 prepareMEM::mem#7 prepareMEM::mem#1 ]
 [ mulFACbyMEM::mem#2 ]
 [ setFAC::w#3 setFAC::w#1 ]
@@ -2924,7 +2932,7 @@ Allocated zp ZP_BYTE:2 [ main::i#10 main::i#1 ]
 Allocated zp ZP_WORD:3 [ print_line_cursor#6 print_line_cursor#13 print_line_cursor#1 ]
 Allocated zp ZP_BYTE:5 [ print_byte::b#2 print_byte::b#0 print_byte::b#1 ]
 Allocated zp ZP_BYTE:6 [ print_char::ch#2 print_char::ch#0 print_char::ch#1 ]
-Allocated zp ZP_WORD:7 [ print_char_cursor#23 print_char_cursor#31 print_char_cursor#32 print_char_cursor#48 print_char_cursor#10 ]
+Allocated zp ZP_WORD:7 [ print_char_cursor#23 print_char_cursor#31 print_char_cursor#32 print_char_cursor#49 print_char_cursor#10 ]
 Allocated zp ZP_WORD:9 [ prepareMEM::mem#5 prepareMEM::mem#4 prepareMEM::mem#7 prepareMEM::mem#1 ]
 Allocated zp ZP_WORD:11 [ mulFACbyMEM::mem#2 ]
 Allocated zp ZP_WORD:13 [ setFAC::w#3 setFAC::w#1 ]
@@ -3153,7 +3161,7 @@ main: {
     rts
   //SEG77 main::@17
   b17:
-  //SEG78 [37] (byte*~) print_char_cursor#48 ← (byte*) print_line_cursor#1 [ main::i#1 print_char_cursor#48 print_line_cursor#1 ] ( main:2 [ main::i#1 print_char_cursor#48 print_line_cursor#1 ] ) -- pbuz1=pbuz2 
+  //SEG78 [37] (byte*~) print_char_cursor#49 ← (byte*) print_line_cursor#1 [ main::i#1 print_char_cursor#49 print_line_cursor#1 ] ( main:2 [ main::i#1 print_char_cursor#49 print_line_cursor#1 ] ) -- pbuz1=pbuz2 
     lda print_line_cursor
     sta print_char_cursor
     lda print_line_cursor+1
@@ -3161,7 +3169,7 @@ main: {
   //SEG79 [10] phi from main::@17 to main::@1 [phi:main::@17->main::@1]
   b1_from_b17:
   //SEG80 [10] phi (byte*) print_line_cursor#13 = (byte*) print_line_cursor#1 [phi:main::@17->main::@1#0] -- register_copy 
-  //SEG81 [10] phi (byte*) print_char_cursor#32 = (byte*~) print_char_cursor#48 [phi:main::@17->main::@1#1] -- register_copy 
+  //SEG81 [10] phi (byte*) print_char_cursor#32 = (byte*~) print_char_cursor#49 [phi:main::@17->main::@1#1] -- register_copy 
   //SEG82 [10] phi (byte) main::i#10 = (byte) main::i#1 [phi:main::@17->main::@1#2] -- register_copy 
     jmp b1
     f_i: .byte 0, 0, 0, 0, 0
@@ -3241,9 +3249,9 @@ print_byte: {
     lsr
     lsr
     sta _0
-  //SEG107 [50] (byte) print_char::ch#0 ← *((const string) print_byte::hextab#0 + (byte~) print_byte::$0) [ print_byte::b#2 print_char_cursor#31 print_char::ch#0 ] ( main:2::print_word:31::print_byte:44 [ main::i#10 print_line_cursor#13 print_word::w#0 print_byte::b#2 print_char_cursor#31 print_char::ch#0 ] main:2::print_word:31::print_byte:46 [ main::i#10 print_line_cursor#13 print_byte::b#2 print_char_cursor#31 print_char::ch#0 ] ) -- vbuz1=pbuc1_derefidx_vbuz2 
+  //SEG107 [50] (byte) print_char::ch#0 ← *((const string) print_hextab#0 + (byte~) print_byte::$0) [ print_byte::b#2 print_char_cursor#31 print_char::ch#0 ] ( main:2::print_word:31::print_byte:44 [ main::i#10 print_line_cursor#13 print_word::w#0 print_byte::b#2 print_char_cursor#31 print_char::ch#0 ] main:2::print_word:31::print_byte:46 [ main::i#10 print_line_cursor#13 print_byte::b#2 print_char_cursor#31 print_char::ch#0 ] ) -- vbuz1=pbuc1_derefidx_vbuz2 
     ldy _0
-    lda hextab,y
+    lda print_hextab,y
     sta print_char.ch
   //SEG108 [51] call print_char param-assignment [ print_char_cursor#10 print_byte::b#2 ] ( main:2::print_word:31::print_byte:44 [ main::i#10 print_line_cursor#13 print_word::w#0 print_char_cursor#10 print_byte::b#2 ] main:2::print_word:31::print_byte:46 [ main::i#10 print_line_cursor#13 print_char_cursor#10 print_byte::b#2 ] )
   //SEG109 [56] phi from print_byte to print_char [phi:print_byte->print_char]
@@ -3258,9 +3266,9 @@ print_byte: {
     lda #$f
     and b
     sta _2
-  //SEG114 [53] (byte) print_char::ch#1 ← *((const string) print_byte::hextab#0 + (byte~) print_byte::$2) [ print_char_cursor#10 print_char::ch#1 ] ( main:2::print_word:31::print_byte:44 [ main::i#10 print_line_cursor#13 print_word::w#0 print_char_cursor#10 print_char::ch#1 ] main:2::print_word:31::print_byte:46 [ main::i#10 print_line_cursor#13 print_char_cursor#10 print_char::ch#1 ] ) -- vbuz1=pbuc1_derefidx_vbuz2 
+  //SEG114 [53] (byte) print_char::ch#1 ← *((const string) print_hextab#0 + (byte~) print_byte::$2) [ print_char_cursor#10 print_char::ch#1 ] ( main:2::print_word:31::print_byte:44 [ main::i#10 print_line_cursor#13 print_word::w#0 print_char_cursor#10 print_char::ch#1 ] main:2::print_word:31::print_byte:46 [ main::i#10 print_line_cursor#13 print_char_cursor#10 print_char::ch#1 ] ) -- vbuz1=pbuc1_derefidx_vbuz2 
     ldy _2
-    lda hextab,y
+    lda print_hextab,y
     sta print_char.ch
   //SEG115 [54] call print_char param-assignment [ print_char_cursor#10 ] ( main:2::print_word:31::print_byte:44 [ main::i#10 print_line_cursor#13 print_word::w#0 print_char_cursor#10 ] main:2::print_word:31::print_byte:46 [ main::i#10 print_line_cursor#13 print_char_cursor#10 ] )
   //SEG116 [56] phi from print_byte::@1 to print_char [phi:print_byte::@1->print_char]
@@ -3273,7 +3281,6 @@ print_byte: {
   breturn:
   //SEG120 [55] return  [ print_char_cursor#10 ] ( main:2::print_word:31::print_byte:44 [ main::i#10 print_line_cursor#13 print_word::w#0 print_char_cursor#10 ] main:2::print_word:31::print_byte:46 [ main::i#10 print_line_cursor#13 print_char_cursor#10 ] )
     rts
-    hextab: .text "0123456789abcdef"
 }
 //SEG121 print_char
 print_char: {
@@ -3481,13 +3488,14 @@ divFACby10: {
   //SEG188 [95] return  [ ] ( main:2::divFACby10:7 [ ] )
     rts
 }
+  print_hextab: .text "0123456789abcdef"
 
 REGISTER UPLIFT POTENTIAL REGISTERS
 Statement [11] (word) setFAC::w#1 ← ((word)) (byte) main::i#10 [ main::i#10 print_char_cursor#32 print_line_cursor#13 setFAC::w#1 ] ( main:2 [ main::i#10 print_char_cursor#32 print_line_cursor#13 setFAC::w#1 ] ) always clobbers reg byte a 
 Removing always clobbered register reg byte a as potential for zp ZP_BYTE:2 [ main::i#10 main::i#1 ]
 Statement [29] (word) getFAC::return#2 ← (word) getFAC::return#0 [ main::i#10 print_char_cursor#32 print_line_cursor#13 getFAC::return#2 ] ( main:2 [ main::i#10 print_char_cursor#32 print_line_cursor#13 getFAC::return#2 ] ) always clobbers reg byte a 
 Statement [30] (word) print_word::w#0 ← (word) getFAC::return#2 [ main::i#10 print_char_cursor#32 print_line_cursor#13 print_word::w#0 ] ( main:2 [ main::i#10 print_char_cursor#32 print_line_cursor#13 print_word::w#0 ] ) always clobbers reg byte a 
-Statement [37] (byte*~) print_char_cursor#48 ← (byte*) print_line_cursor#1 [ main::i#1 print_char_cursor#48 print_line_cursor#1 ] ( main:2 [ main::i#1 print_char_cursor#48 print_line_cursor#1 ] ) always clobbers reg byte a 
+Statement [37] (byte*~) print_char_cursor#49 ← (byte*) print_line_cursor#1 [ main::i#1 print_char_cursor#49 print_line_cursor#1 ] ( main:2 [ main::i#1 print_char_cursor#49 print_line_cursor#1 ] ) always clobbers reg byte a 
 Statement [40] (byte*) print_line_cursor#1 ← (byte*) print_line_cursor#6 + (byte/signed byte/word/signed word/dword/signed dword) 40 [ print_line_cursor#1 print_char_cursor#10 ] ( main:2::print_ln:33 [ main::i#10 print_line_cursor#1 print_char_cursor#10 ] ) always clobbers reg byte a 
 Statement [41] if((byte*) print_line_cursor#1<(byte*) print_char_cursor#10) goto print_ln::@1 [ print_line_cursor#1 print_char_cursor#10 ] ( main:2::print_ln:33 [ main::i#10 print_line_cursor#1 print_char_cursor#10 ] ) always clobbers reg byte a 
 Statement [43] (byte) print_byte::b#0 ← > (word) print_word::w#0 [ print_char_cursor#32 print_word::w#0 print_byte::b#0 ] ( main:2::print_word:31 [ main::i#10 print_line_cursor#13 print_char_cursor#32 print_word::w#0 print_byte::b#0 ] ) always clobbers reg byte a 
@@ -3510,7 +3518,7 @@ Statement [11] (word) setFAC::w#1 ← ((word)) (byte) main::i#10 [ main::i#10 pr
 Statement [29] (word) getFAC::return#2 ← (word) getFAC::return#0 [ main::i#10 print_char_cursor#32 print_line_cursor#13 getFAC::return#2 ] ( main:2 [ main::i#10 print_char_cursor#32 print_line_cursor#13 getFAC::return#2 ] ) always clobbers reg byte a 
 Statement [30] (word) print_word::w#0 ← (word) getFAC::return#2 [ main::i#10 print_char_cursor#32 print_line_cursor#13 print_word::w#0 ] ( main:2 [ main::i#10 print_char_cursor#32 print_line_cursor#13 print_word::w#0 ] ) always clobbers reg byte a 
 Statement [35] if((byte) main::i#1!=(byte/signed byte/word/signed word/dword/signed dword) 26) goto main::@17 [ main::i#1 print_line_cursor#1 ] ( main:2 [ main::i#1 print_line_cursor#1 ] ) always clobbers reg byte a 
-Statement [37] (byte*~) print_char_cursor#48 ← (byte*) print_line_cursor#1 [ main::i#1 print_char_cursor#48 print_line_cursor#1 ] ( main:2 [ main::i#1 print_char_cursor#48 print_line_cursor#1 ] ) always clobbers reg byte a 
+Statement [37] (byte*~) print_char_cursor#49 ← (byte*) print_line_cursor#1 [ main::i#1 print_char_cursor#49 print_line_cursor#1 ] ( main:2 [ main::i#1 print_char_cursor#49 print_line_cursor#1 ] ) always clobbers reg byte a 
 Statement [40] (byte*) print_line_cursor#1 ← (byte*) print_line_cursor#6 + (byte/signed byte/word/signed word/dword/signed dword) 40 [ print_line_cursor#1 print_char_cursor#10 ] ( main:2::print_ln:33 [ main::i#10 print_line_cursor#1 print_char_cursor#10 ] ) always clobbers reg byte a 
 Statement [41] if((byte*) print_line_cursor#1<(byte*) print_char_cursor#10) goto print_ln::@1 [ print_line_cursor#1 print_char_cursor#10 ] ( main:2::print_ln:33 [ main::i#10 print_line_cursor#1 print_char_cursor#10 ] ) always clobbers reg byte a 
 Statement [43] (byte) print_byte::b#0 ← > (word) print_word::w#0 [ print_char_cursor#32 print_word::w#0 print_byte::b#0 ] ( main:2::print_word:31 [ main::i#10 print_line_cursor#13 print_char_cursor#32 print_word::w#0 print_byte::b#0 ] ) always clobbers reg byte a 
@@ -3530,7 +3538,7 @@ Potential registers zp ZP_BYTE:2 [ main::i#10 main::i#1 ] : zp ZP_BYTE:2 ,
 Potential registers zp ZP_WORD:3 [ print_line_cursor#6 print_line_cursor#13 print_line_cursor#1 ] : zp ZP_WORD:3 , 
 Potential registers zp ZP_BYTE:5 [ print_byte::b#2 print_byte::b#0 print_byte::b#1 ] : zp ZP_BYTE:5 , reg byte a , reg byte x , 
 Potential registers zp ZP_BYTE:6 [ print_char::ch#2 print_char::ch#0 print_char::ch#1 ] : zp ZP_BYTE:6 , reg byte a , reg byte x , reg byte y , 
-Potential registers zp ZP_WORD:7 [ print_char_cursor#23 print_char_cursor#31 print_char_cursor#32 print_char_cursor#48 print_char_cursor#10 ] : zp ZP_WORD:7 , 
+Potential registers zp ZP_WORD:7 [ print_char_cursor#23 print_char_cursor#31 print_char_cursor#32 print_char_cursor#49 print_char_cursor#10 ] : zp ZP_WORD:7 , 
 Potential registers zp ZP_WORD:9 [ prepareMEM::mem#5 prepareMEM::mem#4 prepareMEM::mem#7 prepareMEM::mem#1 ] : zp ZP_WORD:9 , 
 Potential registers zp ZP_WORD:11 [ mulFACbyMEM::mem#2 ] : zp ZP_WORD:11 , 
 Potential registers zp ZP_WORD:13 [ setFAC::w#3 setFAC::w#1 ] : zp ZP_WORD:13 , 
@@ -3544,7 +3552,7 @@ Potential registers zp ZP_BYTE:25 [ prepareMEM::$0 ] : zp ZP_BYTE:25 , reg byte 
 Potential registers zp ZP_BYTE:26 [ prepareMEM::$1 ] : zp ZP_BYTE:26 , reg byte a , reg byte x , reg byte y , 
 
 REGISTER UPLIFT SCOPES
-Uplift Scope [] 250.97: zp ZP_WORD:3 [ print_line_cursor#6 print_line_cursor#13 print_line_cursor#1 ] 34.89: zp ZP_WORD:7 [ print_char_cursor#23 print_char_cursor#31 print_char_cursor#32 print_char_cursor#48 print_char_cursor#10 ] 
+Uplift Scope [] 250.97: zp ZP_WORD:3 [ print_line_cursor#6 print_line_cursor#13 print_line_cursor#1 ] 34.89: zp ZP_WORD:7 [ print_char_cursor#23 print_char_cursor#31 print_char_cursor#32 print_char_cursor#49 print_char_cursor#10 ] 
 Uplift Scope [setFAC] 33: zp ZP_WORD:13 [ setFAC::w#3 setFAC::w#1 ] 
 Uplift Scope [getFAC] 22: zp ZP_WORD:17 [ getFAC::return#2 ] 4.33: zp ZP_WORD:23 [ getFAC::return#0 ] 
 Uplift Scope [prepareMEM] 15.33: zp ZP_WORD:9 [ prepareMEM::mem#5 prepareMEM::mem#4 prepareMEM::mem#7 prepareMEM::mem#1 ] 4: zp ZP_BYTE:25 [ prepareMEM::$0 ] 4: zp ZP_BYTE:26 [ prepareMEM::$1 ] 
@@ -3560,7 +3568,7 @@ Uplift Scope [divMEMbyFAC]
 Uplift Scope [sinFAC] 
 Uplift Scope [divFACby10] 
 
-Uplifting [] best 6314 combination zp ZP_WORD:3 [ print_line_cursor#6 print_line_cursor#13 print_line_cursor#1 ] zp ZP_WORD:7 [ print_char_cursor#23 print_char_cursor#31 print_char_cursor#32 print_char_cursor#48 print_char_cursor#10 ] 
+Uplifting [] best 6314 combination zp ZP_WORD:3 [ print_line_cursor#6 print_line_cursor#13 print_line_cursor#1 ] zp ZP_WORD:7 [ print_char_cursor#23 print_char_cursor#31 print_char_cursor#32 print_char_cursor#49 print_char_cursor#10 ] 
 Uplifting [setFAC] best 6314 combination zp ZP_WORD:13 [ setFAC::w#3 setFAC::w#1 ] 
 Uplifting [getFAC] best 6314 combination zp ZP_WORD:17 [ getFAC::return#2 ] zp ZP_WORD:23 [ getFAC::return#0 ] 
 Uplifting [prepareMEM] best 6302 combination zp ZP_WORD:9 [ prepareMEM::mem#5 prepareMEM::mem#4 prepareMEM::mem#7 prepareMEM::mem#1 ] reg byte a [ prepareMEM::$0 ] reg byte a [ prepareMEM::$1 ] 
@@ -3583,7 +3591,7 @@ Coalescing zero page register with common assignment [ zp ZP_WORD:9 [ prepareMEM
 Coalescing zero page register with common assignment [ zp ZP_WORD:17 [ getFAC::return#2 ] ] with [ zp ZP_WORD:19 [ print_word::w#0 ] ] - score: 1
 Coalescing zero page register with common assignment [ zp ZP_WORD:17 [ getFAC::return#2 print_word::w#0 ] ] with [ zp ZP_WORD:23 [ getFAC::return#0 ] ] - score: 1
 Coalescing zero page register [ zp ZP_WORD:9 [ prepareMEM::mem#5 prepareMEM::mem#4 prepareMEM::mem#7 prepareMEM::mem#1 mulFACbyMEM::mem#2 setFAC::w#3 setFAC::w#1 setMEMtoFAC::mem#2 ] ] with [ zp ZP_WORD:17 [ getFAC::return#2 print_word::w#0 getFAC::return#0 ] ]
-Allocated (was zp ZP_WORD:7) zp ZP_WORD:5 [ print_char_cursor#23 print_char_cursor#31 print_char_cursor#32 print_char_cursor#48 print_char_cursor#10 ]
+Allocated (was zp ZP_WORD:7) zp ZP_WORD:5 [ print_char_cursor#23 print_char_cursor#31 print_char_cursor#32 print_char_cursor#49 print_char_cursor#10 ]
 Allocated (was zp ZP_WORD:9) zp ZP_WORD:7 [ prepareMEM::mem#5 prepareMEM::mem#4 prepareMEM::mem#7 prepareMEM::mem#1 mulFACbyMEM::mem#2 setFAC::w#3 setFAC::w#1 setMEMtoFAC::mem#2 getFAC::return#2 print_word::w#0 getFAC::return#0 ]
 
 ASSEMBLER BEFORE OPTIMIZATION
@@ -3796,7 +3804,7 @@ main: {
     rts
   //SEG77 main::@17
   b17:
-  //SEG78 [37] (byte*~) print_char_cursor#48 ← (byte*) print_line_cursor#1 [ main::i#1 print_char_cursor#48 print_line_cursor#1 ] ( main:2 [ main::i#1 print_char_cursor#48 print_line_cursor#1 ] ) -- pbuz1=pbuz2 
+  //SEG78 [37] (byte*~) print_char_cursor#49 ← (byte*) print_line_cursor#1 [ main::i#1 print_char_cursor#49 print_line_cursor#1 ] ( main:2 [ main::i#1 print_char_cursor#49 print_line_cursor#1 ] ) -- pbuz1=pbuz2 
     lda print_line_cursor
     sta print_char_cursor
     lda print_line_cursor+1
@@ -3804,7 +3812,7 @@ main: {
   //SEG79 [10] phi from main::@17 to main::@1 [phi:main::@17->main::@1]
   b1_from_b17:
   //SEG80 [10] phi (byte*) print_line_cursor#13 = (byte*) print_line_cursor#1 [phi:main::@17->main::@1#0] -- register_copy 
-  //SEG81 [10] phi (byte*) print_char_cursor#32 = (byte*~) print_char_cursor#48 [phi:main::@17->main::@1#1] -- register_copy 
+  //SEG81 [10] phi (byte*) print_char_cursor#32 = (byte*~) print_char_cursor#49 [phi:main::@17->main::@1#1] -- register_copy 
   //SEG82 [10] phi (byte) main::i#10 = (byte) main::i#1 [phi:main::@17->main::@1#2] -- register_copy 
     jmp b1
     f_i: .byte 0, 0, 0, 0, 0
@@ -3880,9 +3888,9 @@ print_byte: {
     lsr
     lsr
     lsr
-  //SEG107 [50] (byte) print_char::ch#0 ← *((const string) print_byte::hextab#0 + (byte~) print_byte::$0) [ print_byte::b#2 print_char_cursor#31 print_char::ch#0 ] ( main:2::print_word:31::print_byte:44 [ main::i#10 print_line_cursor#13 print_word::w#0 print_byte::b#2 print_char_cursor#31 print_char::ch#0 ] main:2::print_word:31::print_byte:46 [ main::i#10 print_line_cursor#13 print_byte::b#2 print_char_cursor#31 print_char::ch#0 ] ) -- vbuaa=pbuc1_derefidx_vbuaa 
+  //SEG107 [50] (byte) print_char::ch#0 ← *((const string) print_hextab#0 + (byte~) print_byte::$0) [ print_byte::b#2 print_char_cursor#31 print_char::ch#0 ] ( main:2::print_word:31::print_byte:44 [ main::i#10 print_line_cursor#13 print_word::w#0 print_byte::b#2 print_char_cursor#31 print_char::ch#0 ] main:2::print_word:31::print_byte:46 [ main::i#10 print_line_cursor#13 print_byte::b#2 print_char_cursor#31 print_char::ch#0 ] ) -- vbuaa=pbuc1_derefidx_vbuaa 
     tay
-    lda hextab,y
+    lda print_hextab,y
   //SEG108 [51] call print_char param-assignment [ print_char_cursor#10 print_byte::b#2 ] ( main:2::print_word:31::print_byte:44 [ main::i#10 print_line_cursor#13 print_word::w#0 print_char_cursor#10 print_byte::b#2 ] main:2::print_word:31::print_byte:46 [ main::i#10 print_line_cursor#13 print_char_cursor#10 print_byte::b#2 ] )
   //SEG109 [56] phi from print_byte to print_char [phi:print_byte->print_char]
   print_char_from_print_byte:
@@ -3895,9 +3903,9 @@ print_byte: {
   //SEG113 [52] (byte~) print_byte::$2 ← (byte) print_byte::b#2 & (byte/signed byte/word/signed word/dword/signed dword) 15 [ print_char_cursor#10 print_byte::$2 ] ( main:2::print_word:31::print_byte:44 [ main::i#10 print_line_cursor#13 print_word::w#0 print_char_cursor#10 print_byte::$2 ] main:2::print_word:31::print_byte:46 [ main::i#10 print_line_cursor#13 print_char_cursor#10 print_byte::$2 ] ) -- vbuaa=vbuxx_band_vbuc1 
     txa
     and #$f
-  //SEG114 [53] (byte) print_char::ch#1 ← *((const string) print_byte::hextab#0 + (byte~) print_byte::$2) [ print_char_cursor#10 print_char::ch#1 ] ( main:2::print_word:31::print_byte:44 [ main::i#10 print_line_cursor#13 print_word::w#0 print_char_cursor#10 print_char::ch#1 ] main:2::print_word:31::print_byte:46 [ main::i#10 print_line_cursor#13 print_char_cursor#10 print_char::ch#1 ] ) -- vbuaa=pbuc1_derefidx_vbuaa 
+  //SEG114 [53] (byte) print_char::ch#1 ← *((const string) print_hextab#0 + (byte~) print_byte::$2) [ print_char_cursor#10 print_char::ch#1 ] ( main:2::print_word:31::print_byte:44 [ main::i#10 print_line_cursor#13 print_word::w#0 print_char_cursor#10 print_char::ch#1 ] main:2::print_word:31::print_byte:46 [ main::i#10 print_line_cursor#13 print_char_cursor#10 print_char::ch#1 ] ) -- vbuaa=pbuc1_derefidx_vbuaa 
     tay
-    lda hextab,y
+    lda print_hextab,y
   //SEG115 [54] call print_char param-assignment [ print_char_cursor#10 ] ( main:2::print_word:31::print_byte:44 [ main::i#10 print_line_cursor#13 print_word::w#0 print_char_cursor#10 ] main:2::print_word:31::print_byte:46 [ main::i#10 print_line_cursor#13 print_char_cursor#10 ] )
   //SEG116 [56] phi from print_byte::@1 to print_char [phi:print_byte::@1->print_char]
   print_char_from_b1:
@@ -3909,7 +3917,6 @@ print_byte: {
   breturn:
   //SEG120 [55] return  [ print_char_cursor#10 ] ( main:2::print_word:31::print_byte:44 [ main::i#10 print_line_cursor#13 print_word::w#0 print_char_cursor#10 ] main:2::print_word:31::print_byte:46 [ main::i#10 print_line_cursor#13 print_char_cursor#10 ] )
     rts
-    hextab: .text "0123456789abcdef"
 }
 //SEG121 print_char
 print_char: {
@@ -4099,6 +4106,7 @@ divFACby10: {
   //SEG188 [95] return  [ ] ( main:2::divFACby10:7 [ ] )
     rts
 }
+  print_hextab: .text "0123456789abcdef"
 
 ASSEMBLER OPTIMIZATIONS
 Removing instruction jmp b42
@@ -4292,8 +4300,6 @@ FINAL SYMBOL TABLE
 (byte) print_byte::b#0 reg byte x 4.0
 (byte) print_byte::b#1 reg byte x 4.0
 (byte) print_byte::b#2 reg byte x 2.0
-(byte[]) print_byte::hextab
-(const string) print_byte::hextab#0 hextab = (string) "0123456789abcdef"
 (void()) print_char((byte) print_char::ch)
 (label) print_char::@return
 (byte) print_char::ch
@@ -4305,7 +4311,9 @@ FINAL SYMBOL TABLE
 (byte*) print_char_cursor#23 print_char_cursor zp ZP_WORD:5 4.0
 (byte*) print_char_cursor#31 print_char_cursor zp ZP_WORD:5 2.0
 (byte*) print_char_cursor#32 print_char_cursor zp ZP_WORD:5 0.5909090909090909
-(byte*~) print_char_cursor#48 print_char_cursor zp ZP_WORD:5 22.0
+(byte*~) print_char_cursor#49 print_char_cursor zp ZP_WORD:5 22.0
+(byte[]) print_hextab
+(const string) print_hextab#0 print_hextab = (string) "0123456789abcdef"
 (byte*) print_line_cursor
 (byte*) print_line_cursor#1 print_line_cursor zp ZP_WORD:3 46.42857142857143
 (byte*) print_line_cursor#13 print_line_cursor zp ZP_WORD:3 0.5416666666666666
@@ -4337,7 +4345,7 @@ zp ZP_BYTE:2 [ main::i#10 main::i#1 ]
 zp ZP_WORD:3 [ print_line_cursor#6 print_line_cursor#13 print_line_cursor#1 ]
 reg byte x [ print_byte::b#2 print_byte::b#0 print_byte::b#1 ]
 reg byte a [ print_char::ch#2 print_char::ch#0 print_char::ch#1 ]
-zp ZP_WORD:5 [ print_char_cursor#23 print_char_cursor#31 print_char_cursor#32 print_char_cursor#48 print_char_cursor#10 ]
+zp ZP_WORD:5 [ print_char_cursor#23 print_char_cursor#31 print_char_cursor#32 print_char_cursor#49 print_char_cursor#10 ]
 zp ZP_WORD:7 [ prepareMEM::mem#5 prepareMEM::mem#4 prepareMEM::mem#7 prepareMEM::mem#1 mulFACbyMEM::mem#2 setFAC::w#3 setFAC::w#1 setMEMtoFAC::mem#2 getFAC::return#2 print_word::w#0 getFAC::return#0 ]
 reg byte a [ print_byte::$0 ]
 reg byte a [ print_byte::$2 ]
@@ -4498,14 +4506,14 @@ main: {
     rts
   //SEG77 main::@17
   b17:
-  //SEG78 [37] (byte*~) print_char_cursor#48 ← (byte*) print_line_cursor#1 [ main::i#1 print_char_cursor#48 print_line_cursor#1 ] ( main:2 [ main::i#1 print_char_cursor#48 print_line_cursor#1 ] ) -- pbuz1=pbuz2 
+  //SEG78 [37] (byte*~) print_char_cursor#49 ← (byte*) print_line_cursor#1 [ main::i#1 print_char_cursor#49 print_line_cursor#1 ] ( main:2 [ main::i#1 print_char_cursor#49 print_line_cursor#1 ] ) -- pbuz1=pbuz2 
     lda print_line_cursor
     sta print_char_cursor
     lda print_line_cursor+1
     sta print_char_cursor+1
   //SEG79 [10] phi from main::@17 to main::@1 [phi:main::@17->main::@1]
   //SEG80 [10] phi (byte*) print_line_cursor#13 = (byte*) print_line_cursor#1 [phi:main::@17->main::@1#0] -- register_copy 
-  //SEG81 [10] phi (byte*) print_char_cursor#32 = (byte*~) print_char_cursor#48 [phi:main::@17->main::@1#1] -- register_copy 
+  //SEG81 [10] phi (byte*) print_char_cursor#32 = (byte*~) print_char_cursor#49 [phi:main::@17->main::@1#1] -- register_copy 
   //SEG82 [10] phi (byte) main::i#10 = (byte) main::i#1 [phi:main::@17->main::@1#2] -- register_copy 
     jmp b1
     f_i: .byte 0, 0, 0, 0, 0
@@ -4570,9 +4578,9 @@ print_byte: {
     lsr
     lsr
     lsr
-  //SEG107 [50] (byte) print_char::ch#0 ← *((const string) print_byte::hextab#0 + (byte~) print_byte::$0) [ print_byte::b#2 print_char_cursor#31 print_char::ch#0 ] ( main:2::print_word:31::print_byte:44 [ main::i#10 print_line_cursor#13 print_word::w#0 print_byte::b#2 print_char_cursor#31 print_char::ch#0 ] main:2::print_word:31::print_byte:46 [ main::i#10 print_line_cursor#13 print_byte::b#2 print_char_cursor#31 print_char::ch#0 ] ) -- vbuaa=pbuc1_derefidx_vbuaa 
+  //SEG107 [50] (byte) print_char::ch#0 ← *((const string) print_hextab#0 + (byte~) print_byte::$0) [ print_byte::b#2 print_char_cursor#31 print_char::ch#0 ] ( main:2::print_word:31::print_byte:44 [ main::i#10 print_line_cursor#13 print_word::w#0 print_byte::b#2 print_char_cursor#31 print_char::ch#0 ] main:2::print_word:31::print_byte:46 [ main::i#10 print_line_cursor#13 print_byte::b#2 print_char_cursor#31 print_char::ch#0 ] ) -- vbuaa=pbuc1_derefidx_vbuaa 
     tay
-    lda hextab,y
+    lda print_hextab,y
   //SEG108 [51] call print_char param-assignment [ print_char_cursor#10 print_byte::b#2 ] ( main:2::print_word:31::print_byte:44 [ main::i#10 print_line_cursor#13 print_word::w#0 print_char_cursor#10 print_byte::b#2 ] main:2::print_word:31::print_byte:46 [ main::i#10 print_line_cursor#13 print_char_cursor#10 print_byte::b#2 ] )
   //SEG109 [56] phi from print_byte to print_char [phi:print_byte->print_char]
   //SEG110 [56] phi (byte*) print_char_cursor#23 = (byte*) print_char_cursor#31 [phi:print_byte->print_char#0] -- register_copy 
@@ -4582,9 +4590,9 @@ print_byte: {
   //SEG113 [52] (byte~) print_byte::$2 ← (byte) print_byte::b#2 & (byte/signed byte/word/signed word/dword/signed dword) 15 [ print_char_cursor#10 print_byte::$2 ] ( main:2::print_word:31::print_byte:44 [ main::i#10 print_line_cursor#13 print_word::w#0 print_char_cursor#10 print_byte::$2 ] main:2::print_word:31::print_byte:46 [ main::i#10 print_line_cursor#13 print_char_cursor#10 print_byte::$2 ] ) -- vbuaa=vbuxx_band_vbuc1 
     txa
     and #$f
-  //SEG114 [53] (byte) print_char::ch#1 ← *((const string) print_byte::hextab#0 + (byte~) print_byte::$2) [ print_char_cursor#10 print_char::ch#1 ] ( main:2::print_word:31::print_byte:44 [ main::i#10 print_line_cursor#13 print_word::w#0 print_char_cursor#10 print_char::ch#1 ] main:2::print_word:31::print_byte:46 [ main::i#10 print_line_cursor#13 print_char_cursor#10 print_char::ch#1 ] ) -- vbuaa=pbuc1_derefidx_vbuaa 
+  //SEG114 [53] (byte) print_char::ch#1 ← *((const string) print_hextab#0 + (byte~) print_byte::$2) [ print_char_cursor#10 print_char::ch#1 ] ( main:2::print_word:31::print_byte:44 [ main::i#10 print_line_cursor#13 print_word::w#0 print_char_cursor#10 print_char::ch#1 ] main:2::print_word:31::print_byte:46 [ main::i#10 print_line_cursor#13 print_char_cursor#10 print_char::ch#1 ] ) -- vbuaa=pbuc1_derefidx_vbuaa 
     tay
-    lda hextab,y
+    lda print_hextab,y
   //SEG115 [54] call print_char param-assignment [ print_char_cursor#10 ] ( main:2::print_word:31::print_byte:44 [ main::i#10 print_line_cursor#13 print_word::w#0 print_char_cursor#10 ] main:2::print_word:31::print_byte:46 [ main::i#10 print_line_cursor#13 print_char_cursor#10 ] )
   //SEG116 [56] phi from print_byte::@1 to print_char [phi:print_byte::@1->print_char]
   //SEG117 [56] phi (byte*) print_char_cursor#23 = (byte*) print_char_cursor#10 [phi:print_byte::@1->print_char#0] -- register_copy 
@@ -4593,7 +4601,6 @@ print_byte: {
   //SEG119 print_byte::@return
   //SEG120 [55] return  [ print_char_cursor#10 ] ( main:2::print_word:31::print_byte:44 [ main::i#10 print_line_cursor#13 print_word::w#0 print_char_cursor#10 ] main:2::print_word:31::print_byte:46 [ main::i#10 print_line_cursor#13 print_char_cursor#10 ] )
     rts
-    hextab: .text "0123456789abcdef"
 }
 //SEG121 print_char
 print_char: {
@@ -4748,4 +4755,5 @@ divFACby10: {
   //SEG188 [95] return  [ ] ( main:2::divFACby10:7 [ ] )
     rts
 }
+  print_hextab: .text "0123456789abcdef"
 

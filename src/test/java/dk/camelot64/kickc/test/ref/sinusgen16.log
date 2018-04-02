@@ -459,12 +459,13 @@ void print_sdword(signed dword dw) {
     print_dword((dword)dw);
 }
 
+const byte[] print_hextab = "0123456789abcdef";
+
 // Print a byte as HEX
 void print_byte(byte b) {
     // Table of hexadecimal digits
-    const byte[] hextab = "0123456789abcdef";
-    print_char(hextab[b>>4]);
-    print_char(hextab[b&$f]);
+    print_char(print_hextab[b>>4]);
+    print_char(print_hextab[b&$f]);
 }
 
 // Print a single char
@@ -1133,12 +1134,12 @@ print_sdword::@1:
 print_sdword::@return:
   return 
 endproc // print_sdword()
+  (byte[]) print_hextab ← (string) "0123456789abcdef"
 proc (void()) print_byte((byte) print_byte::b)
-  (byte[]) print_byte::hextab ← (string) "0123456789abcdef"
   (byte~) print_byte::$0 ← (byte) print_byte::b >> (byte/signed byte/word/signed word/dword/signed dword) 4
-  (void~) print_byte::$1 ← call print_char *((byte[]) print_byte::hextab + (byte~) print_byte::$0) 
+  (void~) print_byte::$1 ← call print_char *((byte[]) print_hextab + (byte~) print_byte::$0) 
   (byte~) print_byte::$2 ← (byte) print_byte::b & (byte/signed byte/word/signed word/dword/signed dword) 15
-  (void~) print_byte::$3 ← call print_char *((byte[]) print_byte::hextab + (byte~) print_byte::$2) 
+  (void~) print_byte::$3 ← call print_char *((byte[]) print_hextab + (byte~) print_byte::$2) 
 print_byte::@return:
   return 
 endproc // print_byte()
@@ -1485,7 +1486,6 @@ SYMBOLS
 (void~) print_byte::$3
 (label) print_byte::@return
 (byte) print_byte::b
-(byte[]) print_byte::hextab
 (void()) print_char((byte) print_char::ch)
 (label) print_char::@return
 (byte) print_char::ch
@@ -1503,6 +1503,7 @@ SYMBOLS
 (void~) print_dword::$3
 (label) print_dword::@return
 (dword) print_dword::dw
+(byte[]) print_hextab
 (byte*) print_line_cursor
 (void()) print_ln()
 (byte*~) print_ln::$0
@@ -2596,13 +2597,13 @@ print_sdword::@return: scope:[print_sdword]  from print_sdword::@1
   return 
   to:@return
 @28: scope:[]  from @27
+  (byte[]) print_hextab ← (string) "0123456789abcdef"
   to:@29
 print_byte: scope:[print_byte]  from
-  (byte[]) print_byte::hextab ← (string) "0123456789abcdef"
   (byte~) print_byte::$0 ← (byte) print_byte::b >> (byte/signed byte/word/signed word/dword/signed dword) 4
-  (void~) print_byte::$1 ← call print_char *((byte[]) print_byte::hextab + (byte~) print_byte::$0) 
+  (void~) print_byte::$1 ← call print_char *((byte[]) print_hextab + (byte~) print_byte::$0) 
   (byte~) print_byte::$2 ← (byte) print_byte::b & (byte/signed byte/word/signed word/dword/signed dword) 15
-  (void~) print_byte::$3 ← call print_char *((byte[]) print_byte::hextab + (byte~) print_byte::$2) 
+  (void~) print_byte::$3 ← call print_char *((byte[]) print_hextab + (byte~) print_byte::$2) 
   to:print_byte::@return
 print_byte::@return: scope:[print_byte]  from print_byte
   return 
@@ -2720,7 +2721,7 @@ Eliminating unused variable - keeping the call (void~) main::$1
 Eliminating unused variable - keeping the call (void~) main::$5
 Eliminating unused variable - keeping the call (void~) main::$6
 Eliminating unused variable - keeping the call (void~) main::$4
-Creating constant string variable for inline (const string) print_byte::$4 "0123456789abcdef"
+Creating constant string variable for inline (const string) $0 "0123456789abcdef"
 Creating constant string variable for inline (const string) main::str "   @"
 Creating constant string variable for inline (const string) main::str1 " @"
 Removing empty block @1
@@ -2760,7 +2761,6 @@ Removing empty block @24
 Removing empty block @25
 Removing empty block @26
 Removing empty block @27
-Removing empty block @28
 Removing empty block @29
 Removing empty block @30
 Removing empty block @31
@@ -2963,7 +2963,7 @@ mul16u::@return: scope:[mul16u]  from mul16u::@3
   return 
   to:@return
 @12: scope:[]  from @2
-  (word) rem16u#29 ← phi( @2/(word) rem16u#0 )
+  (word) rem16u#31 ← phi( @2/(word) rem16u#0 )
   (dword) PI2_u4f28#0 ← (dword/signed dword) 1686629713
   (dword) PI_u4f28#0 ← (dword/signed dword) 843314857
   (dword) PI_HALF_u4f28#0 ← (dword/signed dword) 421657428
@@ -3167,11 +3167,11 @@ mulu16_sel::@return: scope:[mulu16_sel]  from mulu16_sel::@2
   return 
   to:@return
 @18: scope:[]  from @12
-  (word) rem16u#28 ← phi( @12/(word) rem16u#29 )
+  (word) rem16u#29 ← phi( @12/(word) rem16u#31 )
   (byte*) print_screen#0 ← ((byte*)) (word/signed word/dword/signed dword) 1024
   (byte*) print_line_cursor#0 ← (byte*) print_screen#0
   (byte*) print_char_cursor#0 ← (byte*) print_line_cursor#0
-  to:@33
+  to:@28
 print_str: scope:[print_str]  from main::@3 main::@7
   (byte*) print_char_cursor#51 ← phi( main::@3/(byte*) print_char_cursor#49 main::@7/(byte*) print_char_cursor#17 )
   (byte*) print_str::str#5 ← phi( main::@3/(byte*) print_str::str#2 main::@7/(byte*) print_str::str#1 )
@@ -3254,12 +3254,18 @@ print_word::@return: scope:[print_word]  from print_word::@2
   (byte*) print_char_cursor#8 ← (byte*) print_char_cursor#29
   return 
   to:@return
+@28: scope:[]  from @18
+  (byte*) print_screen#7 ← phi( @18/(byte*) print_screen#0 )
+  (byte*) print_char_cursor#55 ← phi( @18/(byte*) print_char_cursor#0 )
+  (byte*) print_line_cursor#15 ← phi( @18/(byte*) print_line_cursor#0 )
+  (word) rem16u#28 ← phi( @18/(word) rem16u#29 )
+  (byte[]) print_hextab#0 ← (const string) $0
+  to:@33
 print_byte: scope:[print_byte]  from print_word print_word::@1
   (byte*) print_char_cursor#46 ← phi( print_word/(byte*) print_char_cursor#45 print_word::@1/(byte*) print_char_cursor#6 )
   (byte) print_byte::b#2 ← phi( print_word/(byte) print_byte::b#0 print_word::@1/(byte) print_byte::b#1 )
-  (byte[]) print_byte::hextab#0 ← (const string) print_byte::$4
   (byte~) print_byte::$0 ← (byte) print_byte::b#2 >> (byte/signed byte/word/signed word/dword/signed dword) 4
-  (byte) print_char::ch#1 ← *((byte[]) print_byte::hextab#0 + (byte~) print_byte::$0)
+  (byte) print_char::ch#1 ← *((byte[]) print_hextab#0 + (byte~) print_byte::$0)
   call print_char param-assignment
   to:print_byte::@1
 print_byte::@1: scope:[print_byte]  from print_byte
@@ -3267,7 +3273,7 @@ print_byte::@1: scope:[print_byte]  from print_byte
   (byte*) print_char_cursor#30 ← phi( print_byte/(byte*) print_char_cursor#13 )
   (byte*) print_char_cursor#9 ← (byte*) print_char_cursor#30
   (byte~) print_byte::$2 ← (byte) print_byte::b#3 & (byte/signed byte/word/signed word/dword/signed dword) 15
-  (byte) print_char::ch#2 ← *((byte[]) print_byte::hextab#0 + (byte~) print_byte::$2)
+  (byte) print_char::ch#2 ← *((byte[]) print_hextab#0 + (byte~) print_byte::$2)
   call print_char param-assignment
   to:print_byte::@2
 print_byte::@2: scope:[print_byte]  from print_byte::@1
@@ -3336,7 +3342,7 @@ main::@5: scope:[main]  from main
   call print_cls param-assignment
   to:main::@6
 main::@6: scope:[main]  from main::@5
-  (word) rem16u#33 ← phi( main::@5/(word) rem16u#8 )
+  (word) rem16u#34 ← phi( main::@5/(word) rem16u#8 )
   (word) main::wavelength#6 ← phi( main::@5/(word) main::wavelength#8 )
   (byte*) print_char_cursor#36 ← phi( main::@5/(byte*) print_char_cursor#15 )
   (byte*) print_line_cursor#7 ← phi( main::@5/(byte*) print_line_cursor#2 )
@@ -3345,8 +3351,8 @@ main::@6: scope:[main]  from main::@5
   (signed word*) main::st1#0 ← (signed word[120]) main::sintab1#0
   to:main::@1
 main::@1: scope:[main]  from main::@6 main::@8
-  (byte*) print_line_cursor#16 ← phi( main::@6/(byte*) print_line_cursor#3 main::@8/(byte*) print_line_cursor#11 )
-  (word) rem16u#31 ← phi( main::@6/(word) rem16u#33 main::@8/(word) rem16u#24 )
+  (byte*) print_line_cursor#17 ← phi( main::@6/(byte*) print_line_cursor#3 main::@8/(byte*) print_line_cursor#11 )
+  (word) rem16u#32 ← phi( main::@6/(word) rem16u#34 main::@8/(word) rem16u#24 )
   (word) main::wavelength#4 ← phi( main::@6/(word) main::wavelength#6 main::@8/(word) main::wavelength#1 )
   (byte*) print_char_cursor#54 ← phi( main::@6/(byte*) print_char_cursor#16 main::@8/(byte*) print_char_cursor#18 )
   (signed word*) main::st1#2 ← phi( main::@6/(signed word*) main::st1#0 main::@8/(signed word*) main::st1#1 )
@@ -3356,8 +3362,8 @@ main::@1: scope:[main]  from main::@6 main::@8
   if((boolean~) main::$3) goto main::@2
   to:main::@3
 main::@2: scope:[main]  from main::@1 main::@9
-  (byte*) print_line_cursor#15 ← phi( main::@1/(byte*) print_line_cursor#16 main::@9/(byte*) print_line_cursor#17 )
-  (word) rem16u#30 ← phi( main::@1/(word) rem16u#31 main::@9/(word) rem16u#32 )
+  (byte*) print_line_cursor#16 ← phi( main::@1/(byte*) print_line_cursor#17 main::@9/(byte*) print_line_cursor#18 )
+  (word) rem16u#30 ← phi( main::@1/(word) rem16u#32 main::@9/(word) rem16u#33 )
   (word) main::wavelength#3 ← phi( main::@1/(word) main::wavelength#4 main::@9/(word) main::wavelength#5 )
   (signed word*) main::st1#5 ← phi( main::@1/(signed word*) main::st1#2 main::@9/(signed word*) main::st1#6 )
   (byte*) print_char_cursor#48 ← phi( main::@1/(byte*) print_char_cursor#54 main::@9/(byte*) print_char_cursor#19 )
@@ -3366,7 +3372,7 @@ main::@2: scope:[main]  from main::@1 main::@9
   call print_sword param-assignment
   to:main::@7
 main::@7: scope:[main]  from main::@2
-  (byte*) print_line_cursor#14 ← phi( main::@2/(byte*) print_line_cursor#15 )
+  (byte*) print_line_cursor#14 ← phi( main::@2/(byte*) print_line_cursor#16 )
   (word) rem16u#27 ← phi( main::@2/(word) rem16u#30 )
   (word) main::wavelength#2 ← phi( main::@2/(word) main::wavelength#3 )
   (signed word*) main::st1#4 ← phi( main::@2/(signed word*) main::st1#5 )
@@ -3390,8 +3396,8 @@ main::@8: scope:[main]  from main::@7
   if((boolean~) main::$10) goto main::@1
   to:main::@return
 main::@3: scope:[main]  from main::@1
-  (byte*) print_line_cursor#18 ← phi( main::@1/(byte*) print_line_cursor#16 )
-  (word) rem16u#34 ← phi( main::@1/(word) rem16u#31 )
+  (byte*) print_line_cursor#19 ← phi( main::@1/(byte*) print_line_cursor#17 )
+  (word) rem16u#35 ← phi( main::@1/(word) rem16u#32 )
   (word) main::wavelength#7 ← phi( main::@1/(word) main::wavelength#4 )
   (signed word*) main::st1#7 ← phi( main::@1/(signed word*) main::st1#2 )
   (signed word) main::sw#3 ← phi( main::@1/(signed word) main::sw#0 )
@@ -3400,8 +3406,8 @@ main::@3: scope:[main]  from main::@1
   call print_str param-assignment
   to:main::@9
 main::@9: scope:[main]  from main::@3
-  (byte*) print_line_cursor#17 ← phi( main::@3/(byte*) print_line_cursor#18 )
-  (word) rem16u#32 ← phi( main::@3/(word) rem16u#34 )
+  (byte*) print_line_cursor#18 ← phi( main::@3/(byte*) print_line_cursor#19 )
+  (word) rem16u#33 ← phi( main::@3/(word) rem16u#35 )
   (word) main::wavelength#5 ← phi( main::@3/(word) main::wavelength#7 )
   (signed word*) main::st1#6 ← phi( main::@3/(signed word*) main::st1#7 )
   (signed word) main::sw#2 ← phi( main::@3/(signed word) main::sw#3 )
@@ -3417,11 +3423,11 @@ main::@return: scope:[main]  from main::@8
   (byte*) print_char_cursor#20 ← (byte*) print_char_cursor#40
   return 
   to:@return
-@33: scope:[]  from @18
-  (byte*) print_screen#6 ← phi( @18/(byte*) print_screen#0 )
-  (byte*) print_char_cursor#50 ← phi( @18/(byte*) print_char_cursor#0 )
-  (byte*) print_line_cursor#12 ← phi( @18/(byte*) print_line_cursor#0 )
-  (word) rem16u#25 ← phi( @18/(word) rem16u#28 )
+@33: scope:[]  from @28
+  (byte*) print_screen#6 ← phi( @28/(byte*) print_screen#7 )
+  (byte*) print_char_cursor#50 ← phi( @28/(byte*) print_char_cursor#55 )
+  (byte*) print_line_cursor#12 ← phi( @28/(byte*) print_line_cursor#15 )
+  (word) rem16u#25 ← phi( @28/(word) rem16u#28 )
   call main param-assignment
   to:@34
 @34: scope:[]  from @33
@@ -3435,9 +3441,11 @@ main::@return: scope:[main]  from main::@8
 @end: scope:[]  from @34
 
 SYMBOL TABLE SSA
+(const string) $0 = (string) "0123456789abcdef"
 (label) @12
 (label) @18
 (label) @2
+(label) @28
 (label) @33
 (label) @34
 (label) @begin
@@ -3690,7 +3698,6 @@ SYMBOL TABLE SSA
 (void()) print_byte((byte) print_byte::b)
 (byte~) print_byte::$0
 (byte~) print_byte::$2
-(const string) print_byte::$4 = (string) "0123456789abcdef"
 (label) print_byte::@1
 (label) print_byte::@2
 (label) print_byte::@return
@@ -3699,8 +3706,6 @@ SYMBOL TABLE SSA
 (byte) print_byte::b#1
 (byte) print_byte::b#2
 (byte) print_byte::b#3
-(byte[]) print_byte::hextab
-(byte[]) print_byte::hextab#0
 (void()) print_char((byte) print_char::ch)
 (label) print_char::@return
 (byte) print_char::ch
@@ -3760,6 +3765,7 @@ SYMBOL TABLE SSA
 (byte*) print_char_cursor#52
 (byte*) print_char_cursor#53
 (byte*) print_char_cursor#54
+(byte*) print_char_cursor#55
 (byte*) print_char_cursor#6
 (byte*) print_char_cursor#7
 (byte*) print_char_cursor#8
@@ -3774,6 +3780,8 @@ SYMBOL TABLE SSA
 (byte*) print_cls::sc#0
 (byte*) print_cls::sc#1
 (byte*) print_cls::sc#2
+(byte[]) print_hextab
+(byte[]) print_hextab#0
 (byte*) print_line_cursor
 (byte*) print_line_cursor#0
 (byte*) print_line_cursor#1
@@ -3786,6 +3794,7 @@ SYMBOL TABLE SSA
 (byte*) print_line_cursor#16
 (byte*) print_line_cursor#17
 (byte*) print_line_cursor#18
+(byte*) print_line_cursor#19
 (byte*) print_line_cursor#2
 (byte*) print_line_cursor#3
 (byte*) print_line_cursor#4
@@ -3802,6 +3811,7 @@ SYMBOL TABLE SSA
 (byte*) print_screen#4
 (byte*) print_screen#5
 (byte*) print_screen#6
+(byte*) print_screen#7
 (void()) print_str((byte*) print_str::str)
 (boolean~) print_str::$0
 (label) print_str::@1
@@ -3871,6 +3881,7 @@ SYMBOL TABLE SSA
 (word) rem16u#32
 (word) rem16u#33
 (word) rem16u#34
+(word) rem16u#35
 (word) rem16u#4
 (word) rem16u#5
 (word) rem16u#6
@@ -4137,7 +4148,7 @@ Alias (dword) mul16u::res#2 = (dword) mul16u::res#5 (dword) mul16u::res#4 (dword
 Alias (word) mul16u::a#0 = (word~) mul16u::$5 
 Alias (dword) mul16u::mb#1 = (dword~) mul16u::$6 
 Alias (dword) mul16u::res#1 = (dword~) mul16u::$4 
-Alias (word) rem16u#0 = (word) rem16u#29 (word) rem16u#28 (word) rem16u#25 
+Alias (word) rem16u#0 = (word) rem16u#31 (word) rem16u#29 (word) rem16u#28 (word) rem16u#25 
 Alias (dword) div32u16u::return#2 = (dword) div32u16u::return#4 
 Alias (signed word*) sin16s_gen::sintab#4 = (signed word*) sin16s_gen::sintab#5 
 Alias (word) sin16s_gen::wavelength#1 = (word) sin16s_gen::wavelength#4 
@@ -4179,7 +4190,7 @@ Alias (signed word) sin16s::sinx#1 = (signed word~) sin16s::$21
 Alias (dword) mul16u::return#2 = (dword) mul16u::return#4 
 Alias (byte) mulu16_sel::select#5 = (byte) mulu16_sel::select#6 
 Alias (word) mulu16_sel::return#12 = (word) mulu16_sel::return#5 (word~) mulu16_sel::$2 (word) mulu16_sel::return#6 
-Alias (byte*) print_line_cursor#0 = (byte*) print_screen#0 (byte*) print_char_cursor#0 (byte*) print_line_cursor#12 (byte*) print_char_cursor#50 (byte*) print_screen#6 
+Alias (byte*) print_line_cursor#0 = (byte*) print_screen#0 (byte*) print_char_cursor#0 (byte*) print_line_cursor#15 (byte*) print_char_cursor#55 (byte*) print_screen#7 (byte*) print_line_cursor#12 (byte*) print_char_cursor#50 (byte*) print_screen#6 
 Alias (byte*) print_str::str#3 = (byte*) print_str::str#4 
 Alias (byte*) print_char_cursor#2 = (byte*) print_char_cursor#22 (byte*) print_char_cursor#42 (byte*) print_char_cursor#23 
 Alias (word) print_word::w#0 = (word~) print_sword::$4 
@@ -4202,14 +4213,14 @@ Alias (byte*) print_screen#4 = (byte*) print_screen#5
 Alias (byte*) print_line_cursor#10 = (byte*) print_line_cursor#13 
 Alias (byte*) print_char_cursor#47 = (byte*) print_char_cursor#53 
 Alias (word) main::wavelength#0 = (word) main::wavelength#8 (word) main::wavelength#6 
-Alias (word) rem16u#17 = (word) rem16u#8 (word) rem16u#33 
+Alias (word) rem16u#17 = (word) rem16u#8 (word) rem16u#34 
 Alias (byte*) print_line_cursor#3 = (byte*) print_line_cursor#7 
 Alias (byte*) print_char_cursor#16 = (byte*) print_char_cursor#36 
 Alias (signed word[120]) main::sintab1#0 = (signed word*) main::st1#0 
 Alias (signed word*) main::st1#3 = (signed word*) main::st1#4 (signed word*) main::st1#5 
 Alias (word) main::wavelength#1 = (word) main::wavelength#2 (word) main::wavelength#3 
 Alias (word) rem16u#18 = (word) rem16u#27 (word) rem16u#30 (word) rem16u#24 (word) rem16u#9 
-Alias (byte*) print_line_cursor#11 = (byte*) print_line_cursor#14 (byte*) print_line_cursor#15 (byte*) print_line_cursor#8 (byte*) print_line_cursor#4 
+Alias (byte*) print_line_cursor#11 = (byte*) print_line_cursor#14 (byte*) print_line_cursor#16 (byte*) print_line_cursor#8 (byte*) print_line_cursor#4 
 Alias (byte*) print_char_cursor#17 = (byte*) print_char_cursor#37 
 Alias (byte*) print_char_cursor#18 = (byte*) print_char_cursor#38 (byte*) print_char_cursor#40 (byte*) print_char_cursor#20 
 Alias (signed word*) main::st1#1 = (signed word*~) main::$7 
@@ -4217,8 +4228,8 @@ Alias (byte*) print_char_cursor#49 = (byte*) print_char_cursor#54
 Alias (signed word) main::sw#0 = (signed word) main::sw#3 (signed word) main::sw#2 
 Alias (signed word*) main::st1#2 = (signed word*) main::st1#7 (signed word*) main::st1#6 
 Alias (word) main::wavelength#4 = (word) main::wavelength#7 (word) main::wavelength#5 
-Alias (word) rem16u#31 = (word) rem16u#34 (word) rem16u#32 
-Alias (byte*) print_line_cursor#16 = (byte*) print_line_cursor#18 (byte*) print_line_cursor#17 
+Alias (word) rem16u#32 = (word) rem16u#35 (word) rem16u#33 
+Alias (byte*) print_line_cursor#17 = (byte*) print_line_cursor#19 (byte*) print_line_cursor#18 
 Alias (byte*) print_char_cursor#19 = (byte*) print_char_cursor#39 
 Alias (word) rem16u#10 = (word) rem16u#19 
 Alias (byte*) print_line_cursor#5 = (byte*) print_line_cursor#9 
@@ -4325,8 +4336,8 @@ Alias (byte) sin16s::isUpper#2 = (byte) sin16s::isUpper#8
 Alias (signed word) main::sw#0 = (signed word) main::sw#1 
 Alias (signed word*) main::st1#2 = (signed word*) main::st1#3 
 Alias (word) main::wavelength#1 = (word) main::wavelength#4 
-Alias (word) rem16u#18 = (word) rem16u#31 
-Alias (byte*) print_line_cursor#11 = (byte*) print_line_cursor#16 
+Alias (word) rem16u#18 = (word) rem16u#32 
+Alias (byte*) print_line_cursor#11 = (byte*) print_line_cursor#17 
 Succesful SSA optimization Pass2AliasElimination
 Not aliassing across scopes: divr16u::rem#10 divr16u::rem#3
 Not aliassing across scopes: divr16u::dividend#5 divr16u::dividend#1
@@ -4507,7 +4518,7 @@ Constant (const byte) mulu16_sel::select#3 = 0
 Constant (const byte) mulu16_sel::select#4 = 0
 Constant (const byte*) print_line_cursor#0 = ((byte*))1024
 Constant (const byte) print_char::ch#0 = '-'
-Constant (const string) print_byte::hextab#0 = print_byte::$4
+Constant (const string) print_hextab#0 = $0
 Constant (const word) main::wavelength#0 = 120
 Constant (const signed word[120]) main::sintab1#0 = { fill( 120, 0) }
 Constant (const string) print_str::str#1 = main::str
@@ -4543,6 +4554,7 @@ Culled Empty Block (label) @12
 Culled Empty Block (label) @18
 Culled Empty Block (label) print_sword::@3
 Culled Empty Block (label) print_word::@2
+Culled Empty Block (label) @28
 Culled Empty Block (label) print_byte::@2
 Culled Empty Block (label) print_cls::@2
 Culled Empty Block (label) main::@6
@@ -4767,6 +4779,7 @@ Constant inlined divr16u::i#0 = (byte/signed byte/word/signed word/dword/signed 
 Constant inlined sin16s_gen::wavelength#0 = (const word) main::wavelength#0
 Constant inlined div32u16u::dividend#0 = (const dword) PI2_u4f28#0
 Constant inlined sin16s::isUpper#0 = (byte/signed byte/word/signed word/dword/signed dword) 0
+Constant inlined $0 = (const string) print_hextab#0
 Constant inlined mulu16_sel::select#4 = (byte/signed byte/word/signed word/dword/signed dword) 0
 Constant inlined divr16u::quotient#0 = (byte/signed byte/word/signed word/dword/signed dword) 0
 Constant inlined mulu16_sel::select#2 = (byte/signed byte/word/signed word/dword/signed dword) 1
@@ -4788,7 +4801,6 @@ Constant inlined sin16s_gen::x#0 = (byte/signed byte/word/signed word/dword/sign
 Constant inlined print_str::str#2 = (const string) main::str1
 Constant inlined div32u16u::divisor#0 = (const word) main::wavelength#0
 Constant inlined print_str::str#1 = (const string) main::str
-Constant inlined print_byte::$4 = (const string) print_byte::hextab#0
 Constant inlined main::$9 = (const signed word[120]) main::sintab1#0+(const word) main::wavelength#0*(byte/signed byte/word/signed word/dword/signed dword) 2
 Constant inlined main::$8 = (const word) main::wavelength#0*(byte/signed byte/word/signed word/dword/signed dword) 2
 Succesful SSA optimization Pass2ConstantInlining
@@ -4869,29 +4881,29 @@ Propagating live ranges...
 Propagating live ranges...
 Propagating live ranges...
 Created 38 initial phi equivalence classes
-Coalesced [11] print_char_cursor#58 ← print_char_cursor#49
-Coalesced [13] print_char_cursor#57 ← print_char_cursor#2
-Coalesced [17] print_char_cursor#59 ← print_char_cursor#12
+Coalesced [11] print_char_cursor#59 ← print_char_cursor#49
+Coalesced [13] print_char_cursor#58 ← print_char_cursor#2
+Coalesced [17] print_char_cursor#60 ← print_char_cursor#12
 Coalesced [22] main::st1#8 ← main::st1#1
-Coalesced [23] print_char_cursor#55 ← print_char_cursor#2
-Coalesced (already) [24] print_char_cursor#56 ← print_char_cursor#49
+Coalesced [23] print_char_cursor#56 ← print_char_cursor#2
+Coalesced (already) [24] print_char_cursor#57 ← print_char_cursor#49
 Coalesced [26] print_str::str#6 ← print_str::str#5
-Coalesced (already) [27] print_char_cursor#60 ← print_char_cursor#51
+Coalesced (already) [27] print_char_cursor#61 ← print_char_cursor#51
 Coalesced [34] print_str::str#7 ← print_str::str#0
-Coalesced [35] print_char_cursor#61 ← print_char_cursor#1
-Coalesced [37] print_char_cursor#68 ← print_char_cursor#48
+Coalesced [35] print_char_cursor#62 ← print_char_cursor#1
+Coalesced [37] print_char_cursor#69 ← print_char_cursor#48
 Coalesced [40] print_sword::w#7 ← print_sword::w#0
-Coalesced [41] print_char_cursor#63 ← print_char_cursor#12
+Coalesced [41] print_char_cursor#64 ← print_char_cursor#12
 Coalesced [45] print_sword::w#6 ← print_sword::w#1
-Coalesced (already) [46] print_char_cursor#62 ← print_char_cursor#48
+Coalesced (already) [46] print_char_cursor#63 ← print_char_cursor#48
 Coalesced [48] print_byte::b#4 ← print_byte::b#0
-Coalesced [49] print_char_cursor#64 ← print_char_cursor#43
+Coalesced [49] print_char_cursor#65 ← print_char_cursor#43
 Coalesced [52] print_byte::b#5 ← print_byte::b#1
-Coalesced (already) [53] print_char_cursor#65 ← print_char_cursor#12
+Coalesced (already) [53] print_char_cursor#66 ← print_char_cursor#12
 Coalesced [59] print_char::ch#4 ← print_char::ch#1
-Coalesced (already) [60] print_char_cursor#66 ← print_char_cursor#46
+Coalesced (already) [60] print_char_cursor#67 ← print_char_cursor#46
 Coalesced [64] print_char::ch#5 ← print_char::ch#2
-Coalesced (already) [65] print_char_cursor#67 ← print_char_cursor#12
+Coalesced (already) [65] print_char_cursor#68 ← print_char_cursor#12
 Coalesced [78] print_cls::sc#3 ← print_cls::sc#1
 Coalesced [94] sin16s_gen::x#4 ← sin16s_gen::x#1
 Coalesced [95] sin16s_gen::sintab#6 ← sin16s_gen::sintab#0
@@ -5082,12 +5094,12 @@ print_byte: scope:[print_byte]  from print_word print_word::@1
   [40] (byte*) print_char_cursor#46 ← phi( print_word/(byte*) print_char_cursor#43 print_word::@1/(byte*) print_char_cursor#12 ) [ print_byte::b#2 print_char_cursor#46 ] ( main:2::print_sword:15::print_word:33::print_byte:36 [ main::st1#2 print_sword::w#3 print_byte::b#2 print_char_cursor#46 ] main:2::print_sword:15::print_word:33::print_byte:38 [ main::st1#2 print_byte::b#2 print_char_cursor#46 ] )
   [40] (byte) print_byte::b#2 ← phi( print_word/(byte) print_byte::b#0 print_word::@1/(byte) print_byte::b#1 ) [ print_byte::b#2 print_char_cursor#46 ] ( main:2::print_sword:15::print_word:33::print_byte:36 [ main::st1#2 print_sword::w#3 print_byte::b#2 print_char_cursor#46 ] main:2::print_sword:15::print_word:33::print_byte:38 [ main::st1#2 print_byte::b#2 print_char_cursor#46 ] )
   [41] (byte~) print_byte::$0 ← (byte) print_byte::b#2 >> (byte/signed byte/word/signed word/dword/signed dword) 4 [ print_byte::b#2 print_char_cursor#46 print_byte::$0 ] ( main:2::print_sword:15::print_word:33::print_byte:36 [ main::st1#2 print_sword::w#3 print_byte::b#2 print_char_cursor#46 print_byte::$0 ] main:2::print_sword:15::print_word:33::print_byte:38 [ main::st1#2 print_byte::b#2 print_char_cursor#46 print_byte::$0 ] )
-  [42] (byte) print_char::ch#1 ← *((const string) print_byte::hextab#0 + (byte~) print_byte::$0) [ print_byte::b#2 print_char_cursor#46 print_char::ch#1 ] ( main:2::print_sword:15::print_word:33::print_byte:36 [ main::st1#2 print_sword::w#3 print_byte::b#2 print_char_cursor#46 print_char::ch#1 ] main:2::print_sword:15::print_word:33::print_byte:38 [ main::st1#2 print_byte::b#2 print_char_cursor#46 print_char::ch#1 ] )
+  [42] (byte) print_char::ch#1 ← *((const string) print_hextab#0 + (byte~) print_byte::$0) [ print_byte::b#2 print_char_cursor#46 print_char::ch#1 ] ( main:2::print_sword:15::print_word:33::print_byte:36 [ main::st1#2 print_sword::w#3 print_byte::b#2 print_char_cursor#46 print_char::ch#1 ] main:2::print_sword:15::print_word:33::print_byte:38 [ main::st1#2 print_byte::b#2 print_char_cursor#46 print_char::ch#1 ] )
   [43] call print_char param-assignment [ print_char_cursor#12 print_byte::b#2 ] ( main:2::print_sword:15::print_word:33::print_byte:36 [ main::st1#2 print_sword::w#3 print_char_cursor#12 print_byte::b#2 ] main:2::print_sword:15::print_word:33::print_byte:38 [ main::st1#2 print_char_cursor#12 print_byte::b#2 ] )
   to:print_byte::@1
 print_byte::@1: scope:[print_byte]  from print_byte
   [44] (byte~) print_byte::$2 ← (byte) print_byte::b#2 & (byte/signed byte/word/signed word/dword/signed dword) 15 [ print_char_cursor#12 print_byte::$2 ] ( main:2::print_sword:15::print_word:33::print_byte:36 [ main::st1#2 print_sword::w#3 print_char_cursor#12 print_byte::$2 ] main:2::print_sword:15::print_word:33::print_byte:38 [ main::st1#2 print_char_cursor#12 print_byte::$2 ] )
-  [45] (byte) print_char::ch#2 ← *((const string) print_byte::hextab#0 + (byte~) print_byte::$2) [ print_char_cursor#12 print_char::ch#2 ] ( main:2::print_sword:15::print_word:33::print_byte:36 [ main::st1#2 print_sword::w#3 print_char_cursor#12 print_char::ch#2 ] main:2::print_sword:15::print_word:33::print_byte:38 [ main::st1#2 print_char_cursor#12 print_char::ch#2 ] )
+  [45] (byte) print_char::ch#2 ← *((const string) print_hextab#0 + (byte~) print_byte::$2) [ print_char_cursor#12 print_char::ch#2 ] ( main:2::print_sword:15::print_word:33::print_byte:36 [ main::st1#2 print_sword::w#3 print_char_cursor#12 print_char::ch#2 ] main:2::print_sword:15::print_word:33::print_byte:38 [ main::st1#2 print_char_cursor#12 print_char::ch#2 ] )
   [46] call print_char param-assignment [ print_char_cursor#12 ] ( main:2::print_sword:15::print_word:33::print_byte:36 [ main::st1#2 print_sword::w#3 print_char_cursor#12 ] main:2::print_sword:15::print_word:33::print_byte:38 [ main::st1#2 print_char_cursor#12 ] )
   to:print_byte::@return
 print_byte::@return: scope:[print_byte]  from print_byte::@1
@@ -5534,7 +5546,6 @@ VARIABLE REGISTER WEIGHTS
 (byte) print_byte::b#0 4.0
 (byte) print_byte::b#1 4.0
 (byte) print_byte::b#2 2.0
-(byte[]) print_byte::hextab
 (void()) print_char((byte) print_char::ch)
 (byte) print_char::ch
 (byte) print_char::ch#1 4.0
@@ -5554,6 +5565,7 @@ VARIABLE REGISTER WEIGHTS
 (byte*) print_cls::sc
 (byte*) print_cls::sc#1 16.5
 (byte*) print_cls::sc#2 16.5
+(byte[]) print_hextab
 (byte*) print_line_cursor
 (byte*) print_screen
 (void()) print_str((byte*) print_str::str)
@@ -6079,9 +6091,9 @@ print_byte: {
     lsr
     lsr
     sta _0
-  //SEG92 [42] (byte) print_char::ch#1 ← *((const string) print_byte::hextab#0 + (byte~) print_byte::$0) [ print_byte::b#2 print_char_cursor#46 print_char::ch#1 ] ( main:2::print_sword:15::print_word:33::print_byte:36 [ main::st1#2 print_sword::w#3 print_byte::b#2 print_char_cursor#46 print_char::ch#1 ] main:2::print_sword:15::print_word:33::print_byte:38 [ main::st1#2 print_byte::b#2 print_char_cursor#46 print_char::ch#1 ] ) -- vbuz1=pbuc1_derefidx_vbuz2 
+  //SEG92 [42] (byte) print_char::ch#1 ← *((const string) print_hextab#0 + (byte~) print_byte::$0) [ print_byte::b#2 print_char_cursor#46 print_char::ch#1 ] ( main:2::print_sword:15::print_word:33::print_byte:36 [ main::st1#2 print_sword::w#3 print_byte::b#2 print_char_cursor#46 print_char::ch#1 ] main:2::print_sword:15::print_word:33::print_byte:38 [ main::st1#2 print_byte::b#2 print_char_cursor#46 print_char::ch#1 ] ) -- vbuz1=pbuc1_derefidx_vbuz2 
     ldy _0
-    lda hextab,y
+    lda print_hextab,y
     sta print_char.ch
   //SEG93 [43] call print_char param-assignment [ print_char_cursor#12 print_byte::b#2 ] ( main:2::print_sword:15::print_word:33::print_byte:36 [ main::st1#2 print_sword::w#3 print_char_cursor#12 print_byte::b#2 ] main:2::print_sword:15::print_word:33::print_byte:38 [ main::st1#2 print_char_cursor#12 print_byte::b#2 ] )
   //SEG94 [48] phi from print_byte to print_char [phi:print_byte->print_char]
@@ -6096,9 +6108,9 @@ print_byte: {
     lda #$f
     and b
     sta _2
-  //SEG99 [45] (byte) print_char::ch#2 ← *((const string) print_byte::hextab#0 + (byte~) print_byte::$2) [ print_char_cursor#12 print_char::ch#2 ] ( main:2::print_sword:15::print_word:33::print_byte:36 [ main::st1#2 print_sword::w#3 print_char_cursor#12 print_char::ch#2 ] main:2::print_sword:15::print_word:33::print_byte:38 [ main::st1#2 print_char_cursor#12 print_char::ch#2 ] ) -- vbuz1=pbuc1_derefidx_vbuz2 
+  //SEG99 [45] (byte) print_char::ch#2 ← *((const string) print_hextab#0 + (byte~) print_byte::$2) [ print_char_cursor#12 print_char::ch#2 ] ( main:2::print_sword:15::print_word:33::print_byte:36 [ main::st1#2 print_sword::w#3 print_char_cursor#12 print_char::ch#2 ] main:2::print_sword:15::print_word:33::print_byte:38 [ main::st1#2 print_char_cursor#12 print_char::ch#2 ] ) -- vbuz1=pbuc1_derefidx_vbuz2 
     ldy _2
-    lda hextab,y
+    lda print_hextab,y
     sta print_char.ch
   //SEG100 [46] call print_char param-assignment [ print_char_cursor#12 ] ( main:2::print_sword:15::print_word:33::print_byte:36 [ main::st1#2 print_sword::w#3 print_char_cursor#12 ] main:2::print_sword:15::print_word:33::print_byte:38 [ main::st1#2 print_char_cursor#12 ] )
   //SEG101 [48] phi from print_byte::@1 to print_char [phi:print_byte::@1->print_char]
@@ -6111,7 +6123,6 @@ print_byte: {
   breturn:
   //SEG105 [47] return  [ print_char_cursor#12 ] ( main:2::print_sword:15::print_word:33::print_byte:36 [ main::st1#2 print_sword::w#3 print_char_cursor#12 ] main:2::print_sword:15::print_word:33::print_byte:38 [ main::st1#2 print_char_cursor#12 ] )
     rts
-    hextab: .text "0123456789abcdef"
 }
 //SEG106 print_char
 print_char: {
@@ -7028,6 +7039,7 @@ divr16u: {
   //SEG322 [159] return  [ divr16u::return#0 rem16u#1 ] ( main:2::sin16s_gen:5::div32u16u:59::divr16u:133 [ divr16u::return#0 rem16u#1 ] main:2::sin16s_gen:5::div32u16u:59::divr16u:137 [ div32u16u::quotient_hi#0 divr16u::return#0 rem16u#1 ] )
     rts
 }
+  print_hextab: .text "0123456789abcdef"
 
 REGISTER UPLIFT POTENTIAL REGISTERS
 Statement [9] (signed word) main::sw#0 ← *((signed word*) main::st1#2) [ main::st1#2 print_char_cursor#49 main::sw#0 ] ( main:2 [ main::st1#2 print_char_cursor#49 main::sw#0 ] ) always clobbers reg byte a reg byte y 
@@ -7599,9 +7611,9 @@ print_byte: {
     lsr
     lsr
     lsr
-  //SEG92 [42] (byte) print_char::ch#1 ← *((const string) print_byte::hextab#0 + (byte~) print_byte::$0) [ print_byte::b#2 print_char_cursor#46 print_char::ch#1 ] ( main:2::print_sword:15::print_word:33::print_byte:36 [ main::st1#2 print_sword::w#3 print_byte::b#2 print_char_cursor#46 print_char::ch#1 ] main:2::print_sword:15::print_word:33::print_byte:38 [ main::st1#2 print_byte::b#2 print_char_cursor#46 print_char::ch#1 ] ) -- vbuaa=pbuc1_derefidx_vbuaa 
+  //SEG92 [42] (byte) print_char::ch#1 ← *((const string) print_hextab#0 + (byte~) print_byte::$0) [ print_byte::b#2 print_char_cursor#46 print_char::ch#1 ] ( main:2::print_sword:15::print_word:33::print_byte:36 [ main::st1#2 print_sword::w#3 print_byte::b#2 print_char_cursor#46 print_char::ch#1 ] main:2::print_sword:15::print_word:33::print_byte:38 [ main::st1#2 print_byte::b#2 print_char_cursor#46 print_char::ch#1 ] ) -- vbuaa=pbuc1_derefidx_vbuaa 
     tay
-    lda hextab,y
+    lda print_hextab,y
   //SEG93 [43] call print_char param-assignment [ print_char_cursor#12 print_byte::b#2 ] ( main:2::print_sword:15::print_word:33::print_byte:36 [ main::st1#2 print_sword::w#3 print_char_cursor#12 print_byte::b#2 ] main:2::print_sword:15::print_word:33::print_byte:38 [ main::st1#2 print_char_cursor#12 print_byte::b#2 ] )
   //SEG94 [48] phi from print_byte to print_char [phi:print_byte->print_char]
   print_char_from_print_byte:
@@ -7614,9 +7626,9 @@ print_byte: {
   //SEG98 [44] (byte~) print_byte::$2 ← (byte) print_byte::b#2 & (byte/signed byte/word/signed word/dword/signed dword) 15 [ print_char_cursor#12 print_byte::$2 ] ( main:2::print_sword:15::print_word:33::print_byte:36 [ main::st1#2 print_sword::w#3 print_char_cursor#12 print_byte::$2 ] main:2::print_sword:15::print_word:33::print_byte:38 [ main::st1#2 print_char_cursor#12 print_byte::$2 ] ) -- vbuaa=vbuxx_band_vbuc1 
     txa
     and #$f
-  //SEG99 [45] (byte) print_char::ch#2 ← *((const string) print_byte::hextab#0 + (byte~) print_byte::$2) [ print_char_cursor#12 print_char::ch#2 ] ( main:2::print_sword:15::print_word:33::print_byte:36 [ main::st1#2 print_sword::w#3 print_char_cursor#12 print_char::ch#2 ] main:2::print_sword:15::print_word:33::print_byte:38 [ main::st1#2 print_char_cursor#12 print_char::ch#2 ] ) -- vbuaa=pbuc1_derefidx_vbuaa 
+  //SEG99 [45] (byte) print_char::ch#2 ← *((const string) print_hextab#0 + (byte~) print_byte::$2) [ print_char_cursor#12 print_char::ch#2 ] ( main:2::print_sword:15::print_word:33::print_byte:36 [ main::st1#2 print_sword::w#3 print_char_cursor#12 print_char::ch#2 ] main:2::print_sword:15::print_word:33::print_byte:38 [ main::st1#2 print_char_cursor#12 print_char::ch#2 ] ) -- vbuaa=pbuc1_derefidx_vbuaa 
     tay
-    lda hextab,y
+    lda print_hextab,y
   //SEG100 [46] call print_char param-assignment [ print_char_cursor#12 ] ( main:2::print_sword:15::print_word:33::print_byte:36 [ main::st1#2 print_sword::w#3 print_char_cursor#12 ] main:2::print_sword:15::print_word:33::print_byte:38 [ main::st1#2 print_char_cursor#12 ] )
   //SEG101 [48] phi from print_byte::@1 to print_char [phi:print_byte::@1->print_char]
   print_char_from_b1:
@@ -7628,7 +7640,6 @@ print_byte: {
   breturn:
   //SEG105 [47] return  [ print_char_cursor#12 ] ( main:2::print_sword:15::print_word:33::print_byte:36 [ main::st1#2 print_sword::w#3 print_char_cursor#12 ] main:2::print_sword:15::print_word:33::print_byte:38 [ main::st1#2 print_char_cursor#12 ] )
     rts
-    hextab: .text "0123456789abcdef"
 }
 //SEG106 print_char
 print_char: {
@@ -8410,6 +8421,7 @@ divr16u: {
   //SEG322 [159] return  [ divr16u::return#0 rem16u#1 ] ( main:2::sin16s_gen:5::div32u16u:59::divr16u:133 [ divr16u::return#0 rem16u#1 ] main:2::sin16s_gen:5::div32u16u:59::divr16u:137 [ div32u16u::quotient_hi#0 divr16u::return#0 rem16u#1 ] )
     rts
 }
+  print_hextab: .text "0123456789abcdef"
 
 ASSEMBLER OPTIMIZATIONS
 Removing instruction jmp b33
@@ -8744,8 +8756,6 @@ FINAL SYMBOL TABLE
 (byte) print_byte::b#0 reg byte x 4.0
 (byte) print_byte::b#1 reg byte x 4.0
 (byte) print_byte::b#2 reg byte x 2.0
-(byte[]) print_byte::hextab
-(const string) print_byte::hextab#0 hextab = (string) "0123456789abcdef"
 (void()) print_char((byte) print_char::ch)
 (label) print_char::@return
 (byte) print_char::ch
@@ -8768,6 +8778,8 @@ FINAL SYMBOL TABLE
 (byte*) print_cls::sc
 (byte*) print_cls::sc#1 sc zp ZP_WORD:2 16.5
 (byte*) print_cls::sc#2 sc zp ZP_WORD:2 16.5
+(byte[]) print_hextab
+(const string) print_hextab#0 print_hextab = (string) "0123456789abcdef"
 (byte*) print_line_cursor
 (const byte*) print_line_cursor#0 print_line_cursor = ((byte*))(word/signed word/dword/signed dword) 1024
 (byte*) print_screen
@@ -9097,9 +9109,9 @@ print_byte: {
     lsr
     lsr
     lsr
-  //SEG92 [42] (byte) print_char::ch#1 ← *((const string) print_byte::hextab#0 + (byte~) print_byte::$0) [ print_byte::b#2 print_char_cursor#46 print_char::ch#1 ] ( main:2::print_sword:15::print_word:33::print_byte:36 [ main::st1#2 print_sword::w#3 print_byte::b#2 print_char_cursor#46 print_char::ch#1 ] main:2::print_sword:15::print_word:33::print_byte:38 [ main::st1#2 print_byte::b#2 print_char_cursor#46 print_char::ch#1 ] ) -- vbuaa=pbuc1_derefidx_vbuaa 
+  //SEG92 [42] (byte) print_char::ch#1 ← *((const string) print_hextab#0 + (byte~) print_byte::$0) [ print_byte::b#2 print_char_cursor#46 print_char::ch#1 ] ( main:2::print_sword:15::print_word:33::print_byte:36 [ main::st1#2 print_sword::w#3 print_byte::b#2 print_char_cursor#46 print_char::ch#1 ] main:2::print_sword:15::print_word:33::print_byte:38 [ main::st1#2 print_byte::b#2 print_char_cursor#46 print_char::ch#1 ] ) -- vbuaa=pbuc1_derefidx_vbuaa 
     tay
-    lda hextab,y
+    lda print_hextab,y
   //SEG93 [43] call print_char param-assignment [ print_char_cursor#12 print_byte::b#2 ] ( main:2::print_sword:15::print_word:33::print_byte:36 [ main::st1#2 print_sword::w#3 print_char_cursor#12 print_byte::b#2 ] main:2::print_sword:15::print_word:33::print_byte:38 [ main::st1#2 print_char_cursor#12 print_byte::b#2 ] )
   //SEG94 [48] phi from print_byte to print_char [phi:print_byte->print_char]
   //SEG95 [48] phi (byte*) print_char_cursor#33 = (byte*) print_char_cursor#46 [phi:print_byte->print_char#0] -- register_copy 
@@ -9109,9 +9121,9 @@ print_byte: {
   //SEG98 [44] (byte~) print_byte::$2 ← (byte) print_byte::b#2 & (byte/signed byte/word/signed word/dword/signed dword) 15 [ print_char_cursor#12 print_byte::$2 ] ( main:2::print_sword:15::print_word:33::print_byte:36 [ main::st1#2 print_sword::w#3 print_char_cursor#12 print_byte::$2 ] main:2::print_sword:15::print_word:33::print_byte:38 [ main::st1#2 print_char_cursor#12 print_byte::$2 ] ) -- vbuaa=vbuxx_band_vbuc1 
     txa
     and #$f
-  //SEG99 [45] (byte) print_char::ch#2 ← *((const string) print_byte::hextab#0 + (byte~) print_byte::$2) [ print_char_cursor#12 print_char::ch#2 ] ( main:2::print_sword:15::print_word:33::print_byte:36 [ main::st1#2 print_sword::w#3 print_char_cursor#12 print_char::ch#2 ] main:2::print_sword:15::print_word:33::print_byte:38 [ main::st1#2 print_char_cursor#12 print_char::ch#2 ] ) -- vbuaa=pbuc1_derefidx_vbuaa 
+  //SEG99 [45] (byte) print_char::ch#2 ← *((const string) print_hextab#0 + (byte~) print_byte::$2) [ print_char_cursor#12 print_char::ch#2 ] ( main:2::print_sword:15::print_word:33::print_byte:36 [ main::st1#2 print_sword::w#3 print_char_cursor#12 print_char::ch#2 ] main:2::print_sword:15::print_word:33::print_byte:38 [ main::st1#2 print_char_cursor#12 print_char::ch#2 ] ) -- vbuaa=pbuc1_derefidx_vbuaa 
     tay
-    lda hextab,y
+    lda print_hextab,y
   //SEG100 [46] call print_char param-assignment [ print_char_cursor#12 ] ( main:2::print_sword:15::print_word:33::print_byte:36 [ main::st1#2 print_sword::w#3 print_char_cursor#12 ] main:2::print_sword:15::print_word:33::print_byte:38 [ main::st1#2 print_char_cursor#12 ] )
   //SEG101 [48] phi from print_byte::@1 to print_char [phi:print_byte::@1->print_char]
   //SEG102 [48] phi (byte*) print_char_cursor#33 = (byte*) print_char_cursor#12 [phi:print_byte::@1->print_char#0] -- register_copy 
@@ -9120,7 +9132,6 @@ print_byte: {
   //SEG104 print_byte::@return
   //SEG105 [47] return  [ print_char_cursor#12 ] ( main:2::print_sword:15::print_word:33::print_byte:36 [ main::st1#2 print_sword::w#3 print_char_cursor#12 ] main:2::print_sword:15::print_word:33::print_byte:38 [ main::st1#2 print_char_cursor#12 ] )
     rts
-    hextab: .text "0123456789abcdef"
 }
 //SEG106 print_char
 print_char: {
@@ -9804,4 +9815,5 @@ divr16u: {
   //SEG322 [159] return  [ divr16u::return#0 rem16u#1 ] ( main:2::sin16s_gen:5::div32u16u:59::divr16u:133 [ divr16u::return#0 rem16u#1 ] main:2::sin16s_gen:5::div32u16u:59::divr16u:137 [ div32u16u::quotient_hi#0 divr16u::return#0 rem16u#1 ] )
     rts
 }
+  print_hextab: .text "0123456789abcdef"
 

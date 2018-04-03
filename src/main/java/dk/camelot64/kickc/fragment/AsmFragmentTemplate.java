@@ -88,18 +88,23 @@ public class AsmFragmentTemplate {
       VariableVersion v1 = new VariableVersion("$tmp1", SymbolType.BYTE, null);
       VariableVersion v2 = new VariableVersion("$tmp2", SymbolType.BYTE, null);
       VariableVersion v3 = new VariableVersion("$tmp3", SymbolType.BYTE, null);
+      VariableVersion v4 = new VariableVersion("$tmp4", SymbolType.BYTE, null);
       v1.setScope(scope);
       v2.setScope(scope);
       v3.setScope(scope);
+      v4.setScope(scope);
       v1.setAllocation(new Registers.RegisterZpByte(2));
       v2.setAllocation(new Registers.RegisterZpByte(4));
       v3.setAllocation(new Registers.RegisterZpByte(6));
+      v4.setAllocation(new Registers.RegisterZpByte(8));
       if(signature.contains("z1")) bindings.put("z1", v1);
       if(signature.contains("z2")) bindings.put("z2", v2);
       if(signature.contains("z3")) bindings.put("z3", v3);
+      if(signature.contains("z4")) bindings.put("z4", v4);
       if(signature.contains("c1")) bindings.put("c1", new ConstantInteger(10L));
       if(signature.contains("c2")) bindings.put("c2", new ConstantInteger(20L));
       if(signature.contains("c3")) bindings.put("c3", new ConstantInteger(30L));
+      if(signature.contains("c4")) bindings.put("c4", new ConstantInteger(40L));
       if(signature.contains("la1")) bindings.put("la1", new Label("@1", scope, true));
       AsmFragmentInstance fragmentInstance =
             new AsmFragmentInstance(new Program(), signature, ScopeRef.ROOT, this, bindings);

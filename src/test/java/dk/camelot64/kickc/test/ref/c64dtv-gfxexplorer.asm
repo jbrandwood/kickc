@@ -32,7 +32,8 @@
   .label print_char_cursor = 8
   .label form_cursor_count = 2
   .label key_down_debounce = 3
-  .label key_right_debounce = 4
+  .label form_field_idx = 4
+  .label key_right_debounce = 5
   .label print_line_cursor = $a
   jsr main
 main: {
@@ -41,7 +42,7 @@ main: {
     sta DTV_FEATURE
     lda #0
     sta key_right_debounce
-    tax
+    sta form_field_idx
     sta key_down_debounce
     lda #FORM_CURSOR_BLINK/2
     sta form_cursor_count
@@ -52,7 +53,7 @@ main: {
 menu: {
     .label SCREEN = $8000
     .label CHARSET = $9800
-    .label c = 5
+    .label c = 6
     lda #($ffffffff&CHARSET)/$10000
     sta DTV_GRAPHICS_VIC_BANK
     lda #DTV_COLOR_BANK_DEFAULT/$400
@@ -70,12 +71,12 @@ menu: {
     sta VIC_CONTROL2
     lda #(SCREEN&$3fff)/$40|(CHARSET&$3fff)/$400
     sta VIC_MEMORY
-    ldy #0
+    ldx #0
   b1:
-    lda DTV_PALETTE_DEFAULT,y
-    sta DTV_PALETTE,y
-    iny
-    cpy #$10
+    lda DTV_PALETTE_DEFAULT,x
+    sta DTV_PALETTE,x
+    inx
+    cpx #$10
     bne b1
     lda #<COLS
     sta c
@@ -111,8 +112,8 @@ menu: {
     jmp b6
 }
 form_control: {
-    .label field = 5
-    stx form_field_ptr.field_idx
+    .label field = 6
+    ldx form_field_idx
     jsr form_field_ptr
     dec form_cursor_count
     lda form_cursor_count
@@ -127,13 +128,15 @@ form_control: {
     bvc !+
     eor #$80
   !:
-    bpl b2
+    bmi !b2+
+    jmp b2
+  !b2:
     lda #$80
     ldy #0
     ora (field),y
     sta (field),y
   b3:
-    ldy #KEY_CRSR_DOWN
+    ldx #KEY_CRSR_DOWN
     jsr keyboard_key_pressed
     cmp key_down_debounce
     beq b4
@@ -144,56 +147,71 @@ form_control: {
     ldy #0
     and (field),y
     sta (field),y
-    ldy #KEY_RSHIFT
+    ldx #KEY_RSHIFT
     jsr keyboard_key_pressed
     cmp #0
     bne b6
-    inx
-    cpx #form_fields_cnt
+    inc form_field_idx
+    lda form_field_idx
+    cmp #form_fields_cnt
     bne b8
-    ldx #0
+    lda #0
+    sta form_field_idx
   b8:
     lda #FORM_CURSOR_BLINK/2
     sta form_cursor_count
   breturn:
     rts
   b6:
-    dex
-    cpx #$ff
+    dec form_field_idx
+    lda form_field_idx
+    cmp #$ff
     bne b8
-    ldx #form_fields_cnt-1
+    lda #form_fields_cnt-1
+    sta form_field_idx
     jmp b8
   b4:
-    ldy #KEY_CRSR_RIGHT
+    ldx #KEY_CRSR_RIGHT
     jsr keyboard_key_pressed
     cmp key_right_debounce
     beq breturn
     sta key_right_debounce
     cmp #0
     beq breturn
-    ldy #KEY_RSHIFT
+    ldx #KEY_RSHIFT
     jsr keyboard_key_pressed
     cmp #0
     bne b12
-    lda form_fields_val,x
-    clc
-    adc #1
-    and #$f
-    sta form_fields_val,x
-  b13:
-    lda form_fields_val,x
+    ldx form_field_idx
+    inc form_fields_val,x
+    ldy form_field_idx
+    lda form_fields_val,y
+    cmp form_fields_max,y
+    bcc b14
+    beq b14
+    lda #0
+    sta form_fields_val,y
+  b14:
+    ldy form_field_idx
+    lda form_fields_val,y
     tay
     lda print_hextab,y
     ldy #0
     sta (field),y
     jmp breturn
   b12:
+    ldx form_field_idx
     lda form_fields_val,x
     sec
     sbc #1
-    and #$f
     sta form_fields_val,x
-    jmp b13
+    ldy form_field_idx
+    lda form_fields_val,y
+    cmp #$ff
+    bne b14
+    lda form_fields_max,y
+    sta form_fields_val,y
+    jmp b14
   b2:
     lda #$7f
     ldy #0
@@ -202,40 +220,34 @@ form_control: {
     jmp b3
 }
 keyboard_key_pressed: {
-    .label colidx = 7
-    tya
+    txa
     and #7
-    sta colidx
-    tya
-    lsr
-    lsr
-    lsr
     tay
+    txa
+    lsr
+    lsr
+    lsr
+    tax
     jsr keyboard_matrix_read
-    ldy colidx
     and keyboard_matrix_col_bitmask,y
     rts
 }
 keyboard_matrix_read: {
-    lda keyboard_matrix_row_bitmask,y
+    lda keyboard_matrix_row_bitmask,x
     sta CIA1_PORT_A
     lda CIA1_PORT_B
     eor #$ff
     rts
 }
 form_field_ptr: {
-    .label return = 5
-    .label field_idx = 7
-    .label _2 = 5
-    ldy field_idx
-    lda form_fields_y,y
-    tay
+    .label return = 6
+    .label _2 = 6
+    ldy form_fields_y,x
     lda form_line_hi,y
     sta _2+1
     lda form_line_lo,y
     sta _2
-    ldy field_idx
-    lda form_fields_x,y
+    lda form_fields_x,x
     clc
     adc return
     sta return
@@ -245,36 +257,32 @@ form_field_ptr: {
     rts
 }
 form_render_values: {
-    .label field = 5
-    .label idx = 7
-    lda #0
-    sta idx
+    .label field = 6
+    ldx #0
   b1:
     jsr form_field_ptr
-    ldy idx
-    lda form_fields_val,y
+    lda form_fields_val,x
     tay
     lda print_hextab,y
     ldy #0
     sta (field),y
-    inc idx
-    lda idx
-    cmp #form_fields_cnt
+    inx
+    cpx #form_fields_cnt
     bcc b1
     rts
 }
 form_set_screen: {
-    .label line = 5
-    ldy #0
+    .label line = 6
+    ldx #0
     lda #<menu.SCREEN
     sta line
     lda #>menu.SCREEN
     sta line+1
   b1:
     lda line
-    sta form_line_lo,y
+    sta form_line_lo,x
     lda line+1
-    sta form_line_hi,y
+    sta form_line_hi,x
     lda line
     clc
     adc #$28
@@ -282,13 +290,13 @@ form_set_screen: {
     bcc !+
     inc line+1
   !:
-    iny
-    cpy #$19
+    inx
+    cpx #$19
     bne b1
     rts
 }
 print_str_lines: {
-    .label str = 5
+    .label str = 6
     lda #<menu.SCREEN
     sta print_line_cursor
     lda #>menu.SCREEN
@@ -352,7 +360,7 @@ print_ln: {
     rts
 }
 print_cls: {
-    .label sc = 5
+    .label sc = 6
     lda #<menu.SCREEN
     sta sc
     lda #>menu.SCREEN
@@ -384,5 +392,6 @@ print_set_screen: {
   form_line_hi: .fill $19, 0
   form_fields_x: .byte 7, 7, 7, 7, 7, 7, 7, $11, $11
   form_fields_y: .byte 2, 3, 4, 5, 6, 7, 8, 7, 8
+  form_fields_max: .byte 1, 1, 1, 1, 1, 2, 1, 1, 1
   form_fields_val: .byte 0, 0, 0, 0, 0, 0, 0, 0, 0
   MENU_TEXT: .text " DTV GfxExplorer PRESET 8bpp pixel cell @"+" CONTROL  PLANE  A  PLANE  B  VIC II    @"+" bmm   0  patt  p1  patt  p2  screen s3 @"+" mcm   0  start 00  start 00  gfx    g4 @"+" ecm   0  step  00  step  00  colors c5 @"+" hicol 0  mod   00  mod   00  bgcol0 00 @"+" line  0                      bgcol1 00 @"+" colof 0  borof  0            bgcol2 00 @"+" chunk 0  overs  0            bgcol3 00 @"+"@"

@@ -11,12 +11,23 @@ void main() {
     }
 }
 
+byte[] MENU_COLS =
+     "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa@" +
+     " nnnnnnn  mmmmmmmm  mmmmmmmm  ooooooooo @" +
+     " nnnnnnn  mmmmmmmm  mmmmmmmm  ooooooooo @" +
+     " nnnnnnn  mmmmmmmm  mmmmmmmm  ooooooooo @" +
+     " nnnnnnn  mmmmmmmm  mmmmmmmm  ooooooooo @" +
+     " nnnnnnn  mmmmmmmm  mmmmmmmm  ooooooooo @" +
+     " nnnnnnn                      ooooooooo @" +
+     " nnnnnnn  nnnnnnnn            ooooooooo @" +
+     " nnnnnnn  nnnnnnnn            ooooooooo @" +
+     "@" ;
 byte[] MENU_TEXT =
-     " DTV GfxExplorer PRESET 8bpp pixel cell @" +
+     " DTV GfxExplorer MODE 0 8bpp pixel cell @" +
      " CONTROL  PLANE  A  PLANE  B  VIC II    @" +
-     " bmm   0  patt  p1  patt  p2  screen s3 @" +
-     " mcm   0  start 00  start 00  gfx    g4 @" +
-     " ecm   0  step  00  step  00  colors c5 @" +
+     " bmm   0  patt  p0  patt  p0  screen s0 @" +
+     " mcm   0  start 00  start 00  gfx    g0 @" +
+     " ecm   0  step  00  step  00  colors c0 @" +
      " hicol 0  mod   00  mod   00  bgcol0 00 @" +
      " line  0                      bgcol1 00 @" +
      " colof 0  borof  0            bgcol2 00 @" +
@@ -45,12 +56,14 @@ void menu() {
     for(byte i : 0..$f) {
         DTV_PALETTE[i] = DTV_PALETTE_DEFAULT[i];
     }
-    // Char Colors
-    for(byte* c=COLS;c!=COLS+1000;c++) *c=LIGHT_GREEN;
     // Screen colors
     *BGCOL = 0;
     *BORDERCOL = 0;
-    // Display menu Text
+    // Menu Colors
+    print_set_screen(COLS);
+    print_cls();
+    print_str_lines(MENU_COLS);
+    // Menu Text
     print_set_screen(SCREEN);
     print_cls();
     print_str_lines(MENU_TEXT);
@@ -70,14 +83,14 @@ byte[25] form_line_hi;
 // Current selected field in the form
 byte form_field_idx = 0;
 // Number of form fields
-byte form_fields_cnt = 9;
+byte form_fields_cnt = 35;
 // Form fields x/y-positions
-byte[] form_fields_x   = { 7, 7, 7, 7, 7, 7, 7, 17, 17 };
-byte[] form_fields_y   = { 2, 3, 4, 5, 6, 7, 8,  7,  8 };
-// Form field max values (all values are in the interval 0 .. max-1)
-byte[] form_fields_max = { 1, 1, 1, 1, 1, 2, 1,  1,  1 };
+byte[] form_fields_x   = {  22, 7,  7,  7,  7,  7,  7,  7, 17, 17, 17, 16, 17, 16, 17, 16, 17, 27, 26, 27, 26, 27, 26, 27, 38, 38, 38, 37, 38, 37, 38, 37, 38, 37, 38 };
+byte[] form_fields_y   = {  0,  2,  3,  4,  5,  6,  7,  8,  7,  8,  2,  3,  3,  4,  4,  5,  5,  2,  3,  3,  4,  4,  5,  5,  2,  3,  4,  5,  5,  6,  6,  7,  7,  8,  8 };
+// Form field max values (all values are in the interval 0..max)
+byte[] form_fields_max = { $d,  1,  1,  1,  1,  1,  2,  1,  1,  1, $f, $f, $f, $f, $f, $f, $f, $f, $f, $f, $f, $f, $f, $f, $f, $f, $f, $f, $f, $f, $f, $f, $f, $f, $f };
 // Form fields values
-byte[] form_fields_val = { 0, 0, 0, 0, 0, 0, 0,  0,  0 };
+byte[] form_fields_val = {  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0 };
 
 // Press-status for the DOWN key from last frame - used for debounce
 byte key_down_debounce = 0;

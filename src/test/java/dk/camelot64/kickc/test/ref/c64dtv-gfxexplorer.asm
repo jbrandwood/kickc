@@ -15,7 +15,6 @@
   .label CIA1_PORT_B = $dc01
   .label CIA2_PORT_A = $dd00
   .label CIA2_PORT_A_DDR = $dd02
-  .const LIGHT_GREEN = $d
   .label DTV_FEATURE = $d03f
   .const DTV_FEATURE_ENABLE = 1
   .label DTV_CONTROL = $d03c
@@ -27,14 +26,14 @@
   .const KEY_CRSR_RIGHT = 2
   .const KEY_CRSR_DOWN = 7
   .const KEY_RSHIFT = $34
-  .const form_fields_cnt = 9
+  .const form_fields_cnt = $23
   .const FORM_CURSOR_BLINK = $28
   .label print_char_cursor = 8
+  .label print_line_cursor = $a
   .label form_cursor_count = 2
   .label key_down_debounce = 3
   .label form_field_idx = 4
   .label key_right_debounce = 5
-  .label print_line_cursor = $a
   jsr main
 main: {
     sei
@@ -53,7 +52,6 @@ main: {
 menu: {
     .label SCREEN = $8000
     .label CHARSET = $9800
-    .label c = 6
     lda #($ffffffff&CHARSET)/$10000
     sta DTV_GRAPHICS_VIC_BANK
     lda #DTV_COLOR_BANK_DEFAULT/$400
@@ -78,38 +76,39 @@ menu: {
     inx
     cpx #$10
     bne b1
-    lda #<COLS
-    sta c
-    lda #>COLS
-    sta c+1
-  b2:
-    lda #LIGHT_GREEN
-    ldy #0
-    sta (c),y
-    inc c
-    bne !+
-    inc c+1
-  !:
-    lda c+1
-    cmp #>COLS+$3e8
-    bne b2
-    lda c
-    cmp #<COLS+$3e8
-    bne b2
     lda #0
     sta BGCOL
     sta BORDERCOL
+    lda #<COLS
+    sta print_set_screen.screen
+    lda #>COLS
+    sta print_set_screen.screen+1
     jsr print_set_screen
     jsr print_cls
+    lda #<MENU_COLS
+    sta print_str_lines.str
+    lda #>MENU_COLS
+    sta print_str_lines.str+1
+    jsr print_str_lines
+    lda #<SCREEN
+    sta print_set_screen.screen
+    lda #>SCREEN
+    sta print_set_screen.screen+1
+    jsr print_set_screen
+    jsr print_cls
+    lda #<MENU_TEXT
+    sta print_str_lines.str
+    lda #>MENU_TEXT
+    sta print_str_lines.str+1
     jsr print_str_lines
     jsr form_set_screen
     jsr form_render_values
-  b6:
+  b5:
     lda RASTER
     cmp #$ff
-    bne b6
+    bne b5
     jsr form_control
-    jmp b6
+    jmp b5
 }
 form_control: {
     .label field = 6
@@ -297,18 +296,10 @@ form_set_screen: {
 }
 print_str_lines: {
     .label str = 6
-    lda #<menu.SCREEN
-    sta print_line_cursor
-    lda #>menu.SCREEN
-    sta print_line_cursor+1
-    lda #<menu.SCREEN
+    lda print_set_screen.screen
     sta print_char_cursor
-    lda #>menu.SCREEN
+    lda print_set_screen.screen+1
     sta print_char_cursor+1
-    lda #<MENU_TEXT
-    sta str
-    lda #>MENU_TEXT
-    sta str+1
   b1:
     ldy #0
     lda (str),y
@@ -360,10 +351,11 @@ print_ln: {
     rts
 }
 print_cls: {
+    .label _0 = 8
     .label sc = 6
-    lda #<menu.SCREEN
+    lda print_set_screen.screen
     sta sc
-    lda #>menu.SCREEN
+    lda print_set_screen.screen+1
     sta sc+1
   b1:
     lda #' '
@@ -373,15 +365,23 @@ print_cls: {
     bne !+
     inc sc+1
   !:
+    lda print_set_screen.screen
+    clc
+    adc #<$3e8
+    sta _0
+    lda print_set_screen.screen+1
+    adc #>$3e8
+    sta _0+1
     lda sc+1
-    cmp #>menu.SCREEN+$3e8
+    cmp _0+1
     bne b1
     lda sc
-    cmp #<menu.SCREEN+$3e8
+    cmp _0
     bne b1
     rts
 }
 print_set_screen: {
+    .label screen = $a
     rts
 }
   DTV_PALETTE_DEFAULT: .byte 0, $f, $36, $be, $58, $db, $86, $ff, $29, $26, $3b, 5, 7, $df, $9a, $a
@@ -390,8 +390,9 @@ print_set_screen: {
   keyboard_matrix_col_bitmask: .byte 1, 2, 4, 8, $10, $20, $40, $80
   form_line_lo: .fill $19, 0
   form_line_hi: .fill $19, 0
-  form_fields_x: .byte 7, 7, 7, 7, 7, 7, 7, $11, $11
-  form_fields_y: .byte 2, 3, 4, 5, 6, 7, 8, 7, 8
-  form_fields_max: .byte 1, 1, 1, 1, 1, 2, 1, 1, 1
-  form_fields_val: .byte 0, 0, 0, 0, 0, 0, 0, 0, 0
-  MENU_TEXT: .text " DTV GfxExplorer PRESET 8bpp pixel cell @"+" CONTROL  PLANE  A  PLANE  B  VIC II    @"+" bmm   0  patt  p1  patt  p2  screen s3 @"+" mcm   0  start 00  start 00  gfx    g4 @"+" ecm   0  step  00  step  00  colors c5 @"+" hicol 0  mod   00  mod   00  bgcol0 00 @"+" line  0                      bgcol1 00 @"+" colof 0  borof  0            bgcol2 00 @"+" chunk 0  overs  0            bgcol3 00 @"+"@"
+  form_fields_x: .byte $16, 7, 7, 7, 7, 7, 7, 7, $11, $11, $11, $10, $11, $10, $11, $10, $11, $1b, $1a, $1b, $1a, $1b, $1a, $1b, $26, $26, $26, $25, $26, $25, $26, $25, $26, $25, $26
+  form_fields_y: .byte 0, 2, 3, 4, 5, 6, 7, 8, 7, 8, 2, 3, 3, 4, 4, 5, 5, 2, 3, 3, 4, 4, 5, 5, 2, 3, 4, 5, 5, 6, 6, 7, 7, 8, 8
+  form_fields_max: .byte $d, 1, 1, 1, 1, 1, 2, 1, 1, 1, $f, $f, $f, $f, $f, $f, $f, $f, $f, $f, $f, $f, $f, $f, $f, $f, $f, $f, $f, $f, $f, $f, $f, $f, $f
+  form_fields_val: .byte 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
+  MENU_COLS: .text "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa@"+" nnnnnnn  mmmmmmmm  mmmmmmmm  ooooooooo @"+" nnnnnnn  mmmmmmmm  mmmmmmmm  ooooooooo @"+" nnnnnnn  mmmmmmmm  mmmmmmmm  ooooooooo @"+" nnnnnnn  mmmmmmmm  mmmmmmmm  ooooooooo @"+" nnnnnnn  mmmmmmmm  mmmmmmmm  ooooooooo @"+" nnnnnnn                      ooooooooo @"+" nnnnnnn  nnnnnnnn            ooooooooo @"+" nnnnnnn  nnnnnnnn            ooooooooo @"+"@"
+  MENU_TEXT: .text " DTV GfxExplorer MODE 0 8bpp pixel cell @"+" CONTROL  PLANE  A  PLANE  B  VIC II    @"+" bmm   0  patt  p0  patt  p0  screen s0 @"+" mcm   0  start 00  start 00  gfx    g0 @"+" ecm   0  step  00  step  00  colors c0 @"+" hicol 0  mod   00  mod   00  bgcol0 00 @"+" line  0                      bgcol1 00 @"+" colof 0  borof  0            bgcol2 00 @"+" chunk 0  overs  0            bgcol3 00 @"+"@"

@@ -6,12 +6,33 @@ import "keyboard.kc"
 void main() {
     asm { sei }  // Disable normal interrupt (prevent keyboard reading glitches)
     *DTV_FEATURE = DTV_FEATURE_ENABLE;
+    keyboard_init();
+    gfx_init();
+    form_init();
     while(true) {
-        menu();
+        // Render form at the bottom 9 lines of the screen
+        while(*RASTER != $30+8*16) {}
+        form_mode();
+        // Allow user to control the graphics through the form
+        while(*RASTER!=$ff) {}
+        form_control();
+        // Render graphics mode at the top 16 lines of the screen
+        gfx_mode();
     }
 }
 
-byte[] MENU_COLS =
+// 8BPP Chunky Bitmap (contains 8bpp pixels)
+const dword PLANE_8BPP_CHUNKY = $20000;
+
+// Screen containing the FORM
+const byte* FORM_SCREEN = $8000;
+// Charset used for the FORM
+const byte* FORM_CHARSET = $9800; // Charset ROM
+// Offset of the FORM from the top of the screen
+const word FORM_OFFSET = 16*40;
+
+
+byte[] FORM_COLS =
      "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa@" +
      " nnnnnnn  mmmmmmmm  mmmmmmmm  ooooooooo @" +
      " nnnnnnn  mmmmmmmm  mmmmmmmm  ooooooooo @" +
@@ -22,7 +43,7 @@ byte[] MENU_COLS =
      " nnnnnnn  nnnnnnnn            ooooooooo @" +
      " nnnnnnn  nnnnnnnn            ooooooooo @" +
      "@" ;
-byte[] MENU_TEXT =
+byte[] FORM_TEXT =
      " DTV GfxExplorer MODE 0 8bpp pixel cell @" +
      " CONTROL  PLANE  A  PLANE  B  VIC II    @" +
      " bmm   0  patt  p0  patt  p0  screen s0 @" +
@@ -34,63 +55,195 @@ byte[] MENU_TEXT =
      " chunk 0  overs  0            bgcol3 00 @" +
      "@" ;
 
-void menu() {
-    const byte* SCREEN = $8000;
-    const byte* CHARSET = $9800; // Charset ROM
-    // DTV Graphics Bank
-    *DTV_GRAPHICS_VIC_BANK = (byte)((dword)CHARSET/$10000);
-    // DTV Color Bank
-     *DTV_COLOR_BANK_LO = <((word)(DTV_COLOR_BANK_DEFAULT/$400));
-     *DTV_COLOR_BANK_HI = >((word)(DTV_COLOR_BANK_DEFAULT/$400));
-    // DTV Graphics Mode
-    *DTV_CONTROL = 0;
-    // VIC Graphics Bank
-    *CIA2_PORT_A_DDR = %00000011; // Set VIC Bank bits to output - all others to input
-    *CIA2_PORT_A = %00000011 ^ (byte)((word)CHARSET/$4000); // Set VIC Bank
-    // VIC Graphics Mode
-    *VIC_CONTROL = VIC_DEN|VIC_RSEL|3;
-    *VIC_CONTROL2 = VIC_CSEL;
-    // VIC Memory Pointers
-    *VIC_MEMORY =  (byte)((((word)SCREEN&$3fff)/$40)|(((word)CHARSET&$3fff)/$400));
-    // DTV Palette - default
-    for(byte i : 0..$f) {
-        DTV_PALETTE[i] = DTV_PALETTE_DEFAULT[i];
-    }
-    // Screen colors
-    *BGCOL = 0;
-    *BORDERCOL = 0;
-    // Menu Colors
-    print_set_screen(COLS);
-    print_cls();
-    print_str_lines(MENU_COLS);
-    // Menu Text
-    print_set_screen(SCREEN);
-    print_cls();
-    print_str_lines(MENU_TEXT);
-    form_set_screen(SCREEN);
-    form_render_values();
-   // Allow user to control the form
-    while(true) {
-        while(*RASTER!=$ff) {}
-        form_control();
-    }
-}
-
-
-// Table with addresses of the y-lines of the form. The first line contains the address of the form screen.
-byte[25] form_line_lo;
-byte[25] form_line_hi;
-// Current selected field in the form
-byte form_field_idx = 0;
 // Number of form fields
 byte form_fields_cnt = 35;
 // Form fields x/y-positions
 byte[] form_fields_x   = {  22, 7,  7,  7,  7,  7,  7,  7, 17, 17, 17, 16, 17, 16, 17, 16, 17, 27, 26, 27, 26, 27, 26, 27, 38, 38, 38, 37, 38, 37, 38, 37, 38, 37, 38 };
 byte[] form_fields_y   = {  0,  2,  3,  4,  5,  6,  7,  8,  7,  8,  2,  3,  3,  4,  4,  5,  5,  2,  3,  3,  4,  4,  5,  5,  2,  3,  4,  5,  5,  6,  6,  7,  7,  8,  8 };
 // Form field max values (all values are in the interval 0..max)
-byte[] form_fields_max = { $d,  1,  1,  1,  1,  1,  2,  1,  1,  1, $f, $f, $f, $f, $f, $f, $f, $f, $f, $f, $f, $f, $f, $f, $f, $f, $f, $f, $f, $f, $f, $f, $f, $f, $f };
+byte[] form_fields_max = { $d,  1,  1,  1,  1,  1,  1,  1,  1,  1, $f, $f, $f, $f, $f, $f, $f, $f, $f, $f, $f, $f, $f, $f, $f, $f, $f, $f, $f, $f, $f, $f, $f, $f, $f };
 // Form fields values
 byte[] form_fields_val = {  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0 };
+
+// Form fields direct addressing
+const byte* form_ctrl_mode  = form_fields_val+0;
+const byte* form_ctrl_bmm   = form_fields_val+1;
+const byte* form_ctrl_mcm   = form_fields_val+2;
+const byte* form_ctrl_ecm   = form_fields_val+3;
+const byte* form_ctrl_hicol = form_fields_val+4;
+const byte* form_ctrl_line  = form_fields_val+5;
+const byte* form_ctrl_colof = form_fields_val+6;
+const byte* form_ctrl_chunk = form_fields_val+7;
+const byte* form_ctrl_borof = form_fields_val+8;
+const byte* form_ctrl_overs = form_fields_val+9;
+const byte* form_a_pattern  = form_fields_val+10;
+const byte* form_a_start_hi = form_fields_val+11;
+const byte* form_a_start_lo = form_fields_val+12;
+const byte* form_a_step_hi  = form_fields_val+13;
+const byte* form_a_step_lo  = form_fields_val+14;
+const byte* form_a_mod_hi   = form_fields_val+15;
+const byte* form_a_mod_lo   = form_fields_val+16;
+const byte* form_b_pattern  = form_fields_val+17;
+const byte* form_b_start_hi = form_fields_val+18;
+const byte* form_b_start_lo = form_fields_val+19;
+const byte* form_b_step_hi  = form_fields_val+20;
+const byte* form_b_step_lo  = form_fields_val+21;
+const byte* form_b_mod_hi   = form_fields_val+22;
+const byte* form_b_mod_lo   = form_fields_val+23;
+const byte* form_vic_screen = form_fields_val+24;
+const byte* form_vic_gfx    = form_fields_val+25;
+const byte* form_vic_cols   = form_fields_val+26;
+const byte* form_vic_bg0_hi = form_fields_val+27;
+const byte* form_vic_bg0_lo = form_fields_val+28;
+const byte* form_vic_bg1_hi = form_fields_val+29;
+const byte* form_vic_bg1_lo = form_fields_val+30;
+const byte* form_vic_bg2_hi = form_fields_val+31;
+const byte* form_vic_bg2_lo = form_fields_val+32;
+const byte* form_vic_bg3_hi = form_fields_val+33;
+const byte* form_vic_bg3_lo = form_fields_val+34;
+
+// Change graphics mode to show the selected graphics mode
+void gfx_mode() {
+
+    // DTV Graphics Mode
+    byte dtv_control = 0;
+    if(*form_ctrl_line!=0) {
+        dtv_control = dtv_control | DTV_LINEAR;
+    }
+    if(*form_ctrl_borof!=0) {
+        dtv_control = dtv_control | DTV_BORDER_OFF;
+    }
+    if(*form_ctrl_hicol!=0) {
+        dtv_control = dtv_control | DTV_HIGHCOLOR;
+    }
+    if(*form_ctrl_overs!=0) {
+        dtv_control = dtv_control | DTV_OVERSCAN;
+    }
+    if(*form_ctrl_colof!=0) {
+        dtv_control = dtv_control | DTV_COLORRAM_OFF;
+    }
+    if(*form_ctrl_chunk!=0) {
+        dtv_control = dtv_control | DTV_CHUNKY;
+    }
+    *DTV_CONTROL = dtv_control;
+
+    // VIC Graphics Mode
+    byte vic_control = VIC_DEN | VIC_RSEL | 3;
+    if(*form_ctrl_ecm!=0) {
+        vic_control = vic_control | VIC_ECM;
+    }
+    if(*form_ctrl_bmm!=0) {
+        vic_control = vic_control | VIC_BMM;
+    }
+    *VIC_CONTROL = vic_control;
+    byte vic_control2 = VIC_CSEL;
+    if(*form_ctrl_mcm!=0) {
+        vic_control2 = vic_control2 | VIC_MCM;
+    }
+    *VIC_CONTROL2 = vic_control2;
+
+    // Linear Graphics Plane A Counter
+    byte plane_a_offs = *form_a_start_hi<<4|*form_a_start_lo;
+    dword plane_a = (dword)FORM_SCREEN + plane_a_offs;
+    *DTV_PLANEA_START_LO = < < plane_a;
+    *DTV_PLANEA_START_MI = > < plane_a;
+    *DTV_PLANEA_START_HI = < > plane_a;
+    *DTV_PLANEA_STEP = *form_a_step_hi<<4|*form_a_step_lo;
+    *DTV_PLANEA_MODULO_LO = *form_a_mod_hi<<4|*form_a_mod_lo;
+    *DTV_PLANEA_MODULO_HI = 0;
+
+    // Linear Graphics Plane B Counter
+    byte plane_b_offs = *form_b_start_hi<<4|*form_b_start_lo;
+    dword plane_b = PLANE_8BPP_CHUNKY + plane_b_offs;
+    *DTV_PLANEB_START_LO = < < plane_b;
+    *DTV_PLANEB_START_MI = > < plane_b;
+    *DTV_PLANEB_START_HI = < > plane_b;
+    *DTV_PLANEB_STEP = *form_b_step_hi<<4|*form_b_step_lo;
+    *DTV_PLANEB_MODULO_LO = *form_b_mod_hi<<4|*form_b_mod_lo;
+    *DTV_PLANEB_MODULO_HI = 0;
+
+    // Border colors
+    *BGCOL1 = *form_vic_bg0_hi<<4|*form_vic_bg0_lo;
+    *BGCOL2 = *form_vic_bg1_hi<<4|*form_vic_bg1_lo;
+    *BGCOL3 = *form_vic_bg2_hi<<4|*form_vic_bg2_lo;
+    *BGCOL4 = *form_vic_bg3_hi<<4|*form_vic_bg3_lo;
+
+    // DTV Palette - Grey Tones
+    for(byte i : 0..$f) {
+        DTV_PALETTE[i] = i;
+    }
+}
+
+
+// Initialize the different graphics in the memory
+void gfx_init() {
+    gfx_init_plane_8bppchunky();
+}
+
+// Initialize 8BPP Chunky Bitmap (contains 8bpp pixels)
+void gfx_init_plane_8bppchunky() {
+    // 320x200 8bpp pixels for Plane
+    byte gfxbCpuBank = (byte)(PLANE_8BPP_CHUNKY/$4000);
+    dtvSetCpuBankSegment1(gfxbCpuBank++);
+    byte* gfxb = $4000;
+    for(byte y : 0..199) {
+        for (word x : 0..319) {
+            // If we have crossed to $8000 increase the CPU BANK segment and reset to $4000
+            if(gfxb==$8000) {
+                dtvSetCpuBankSegment1(gfxbCpuBank++);
+                gfxb = $4000;
+            }
+            byte c = (byte)(x+y);
+            *gfxb++ = c;
+        }
+    }
+    // Reset CPU BANK segment to $4000
+    dtvSetCpuBankSegment1((byte)($4000/$4000));
+}
+// Initialize the form colors, screen & form
+void form_init() {
+    // Form Colors
+    print_set_screen(COLS+FORM_OFFSET);
+    print_str_lines(FORM_COLS);
+    // Form Text
+    print_set_screen(FORM_SCREEN+FORM_OFFSET);
+    print_str_lines(FORM_TEXT);
+    // Form Fields
+    form_set_screen(FORM_SCREEN+FORM_OFFSET);
+    form_render_values();
+}
+
+// Change graphics mode to show the form
+void form_mode() {
+    // DTV Graphics Bank
+    *DTV_GRAPHICS_VIC_BANK = (byte)((dword)FORM_CHARSET/$10000);
+    // DTV Color Bank
+     *DTV_COLOR_BANK_LO = <((word)(DTV_COLOR_BANK_DEFAULT/$400));
+     *DTV_COLOR_BANK_HI = >((word)(DTV_COLOR_BANK_DEFAULT/$400));
+    // VIC Graphics Bank
+    *CIA2_PORT_A_DDR = %00000011; // Set VIC Bank bits to output - all others to input
+    *CIA2_PORT_A = %00000011 ^ (byte)((word)FORM_CHARSET/$4000); // Set VIC Bank
+    // DTV Graphics Mode
+    *DTV_CONTROL = 0;
+    // VIC Graphics Mode
+    *VIC_CONTROL = VIC_DEN|VIC_RSEL|3;
+    *VIC_CONTROL2 = VIC_CSEL;
+    // VIC Memory Pointers
+    *VIC_MEMORY =  (byte)((((word)FORM_SCREEN&$3fff)/$40)|(((word)FORM_CHARSET&$3fff)/$400));
+    // DTV Palette - default
+    for(byte i : 0..$f) {
+        DTV_PALETTE[i] = DTV_PALETTE_DEFAULT[i];
+    }
+    // Screen colors
+    *BORDERCOL = 0;
+    *BGCOL = 0;
+}
+
+// Table with addresses of the y-lines of the form. The first line contains the address of the form screen.
+byte[25] form_line_lo;
+byte[25] form_line_hi;
+// Current selected field in the form
+byte form_field_idx = 0;
 
 // The number of frames to use for a full blink cycle
 const signed byte FORM_CURSOR_BLINK = 40;
@@ -181,6 +334,7 @@ void form_control() {
         }
         // Render field value
         *field = print_hextab[form_fields_val[form_field_idx]];
+        return;
      }
 
 }

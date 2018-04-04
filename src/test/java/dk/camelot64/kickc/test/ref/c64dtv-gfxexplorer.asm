@@ -25,24 +25,32 @@
   .label DTV_GRAPHICS_VIC_BANK = $d03d
   .const KEY_CRSR_RIGHT = 2
   .const KEY_CRSR_DOWN = 7
+  .const KEY_LSHIFT = $f
   .const KEY_RSHIFT = $34
+  .const KEY_CTRL = $3a
+  .const KEY_COMMODORE = $3d
+  .const KEY_MODIFIER_LSHIFT = 1
+  .const KEY_MODIFIER_RSHIFT = 2
+  .const KEY_MODIFIER_CTRL = 4
+  .const KEY_MODIFIER_COMMODORE = 8
   .const form_fields_cnt = $23
   .const FORM_CURSOR_BLINK = $28
-  .label print_char_cursor = 8
-  .label print_line_cursor = $a
+  .const KEY_MODIFIER_SHIFT = KEY_MODIFIER_LSHIFT|KEY_MODIFIER_RSHIFT
+  .label print_char_cursor = 9
+  .label print_line_cursor = $b
+  .label keyboard_events_size = 6
+  .label keyboard_modifiers = 3
   .label form_cursor_count = 2
-  .label key_down_debounce = 3
   .label form_field_idx = 4
-  .label key_right_debounce = 5
   jsr main
 main: {
     sei
     lda #DTV_FEATURE_ENABLE
     sta DTV_FEATURE
     lda #0
-    sta key_right_debounce
     sta form_field_idx
-    sta key_down_debounce
+    sta keyboard_modifiers
+    sta keyboard_events_size
     lda #FORM_CURSOR_BLINK/2
     sta form_cursor_count
   b2:
@@ -111,7 +119,7 @@ menu: {
     jmp b5
 }
 form_control: {
-    .label field = 6
+    .label field = 7
     ldx form_field_idx
     jsr form_field_ptr
     dec form_cursor_count
@@ -135,62 +143,54 @@ form_control: {
     ora (field),y
     sta (field),y
   b3:
-    ldx #KEY_CRSR_DOWN
-    jsr keyboard_key_pressed
-    cmp key_down_debounce
-    beq b4
-    sta key_down_debounce
-    cmp #0
-    beq b4
+    jsr keyboard_event_scan
+    jsr keyboard_event_get
+    cmp #KEY_CRSR_DOWN
+    bne b4
     lda #$7f
     ldy #0
     and (field),y
     sta (field),y
-    ldx #KEY_RSHIFT
-    jsr keyboard_key_pressed
+    lda #KEY_MODIFIER_SHIFT
+    and keyboard_modifiers
     cmp #0
-    bne b6
+    bne b5
     inc form_field_idx
     lda form_field_idx
     cmp #form_fields_cnt
-    bne b8
-    lda #0
+    bne b7
+    tya
     sta form_field_idx
-  b8:
+  b7:
     lda #FORM_CURSOR_BLINK/2
     sta form_cursor_count
   breturn:
     rts
-  b6:
+  b5:
     dec form_field_idx
     lda form_field_idx
     cmp #$ff
-    bne b8
+    bne b7
     lda #form_fields_cnt-1
     sta form_field_idx
-    jmp b8
+    jmp b7
   b4:
-    ldx #KEY_CRSR_RIGHT
-    jsr keyboard_key_pressed
-    cmp key_right_debounce
-    beq breturn
-    sta key_right_debounce
+    cmp #KEY_CRSR_RIGHT
+    bne breturn
+    lda #KEY_MODIFIER_SHIFT
+    and keyboard_modifiers
     cmp #0
-    beq breturn
-    ldx #KEY_RSHIFT
-    jsr keyboard_key_pressed
-    cmp #0
-    bne b12
+    bne b10
     ldx form_field_idx
     inc form_fields_val,x
     ldy form_field_idx
     lda form_fields_val,y
     cmp form_fields_max,y
-    bcc b14
-    beq b14
+    bcc b12
+    beq b12
     lda #0
     sta form_fields_val,y
-  b14:
+  b12:
     ldy form_field_idx
     lda form_fields_val,y
     tay
@@ -198,7 +198,7 @@ form_control: {
     ldy #0
     sta (field),y
     jmp breturn
-  b12:
+  b10:
     ldx form_field_idx
     lda form_fields_val,x
     sec
@@ -207,10 +207,10 @@ form_control: {
     ldy form_field_idx
     lda form_fields_val,y
     cmp #$ff
-    bne b14
+    bne b12
     lda form_fields_max,y
     sta form_fields_val,y
-    jmp b14
+    jmp b12
   b2:
     lda #$7f
     ldy #0
@@ -218,17 +218,134 @@ form_control: {
     sta (field),y
     jmp b3
 }
-keyboard_key_pressed: {
-    txa
-    and #7
-    tay
-    txa
+keyboard_event_get: {
+    lda keyboard_events_size
+    bne b1
+    lda #$ff
+  breturn:
+    rts
+  b1:
+    dec keyboard_events_size
+    ldy keyboard_events_size
+    lda keyboard_events,y
+    jmp breturn
+}
+keyboard_event_scan: {
+    .label row_scan = $d
+    .label keycode = 5
+    .label row = 3
+    lda #0
+    sta keycode
+    sta row
+  b1:
+    ldx row
+    jsr keyboard_matrix_read
+    sta row_scan
+    ldy row
+    lda keyboard_scan_values,y
+    cmp row_scan
+    bne !b2+
+    jmp b2
+  !b2:
+    ldx #0
+  b3:
+    lda row_scan
+    ldy row
+    eor keyboard_scan_values,y
+    and keyboard_matrix_col_bitmask,x
+    cmp #0
+    beq b4
+    lda keyboard_events_size
+    cmp #8
+    beq b4
+    lda keyboard_matrix_col_bitmask,x
+    and row_scan
+    cmp #0
+    bne b6
+    lda #$40
+    ora keycode
+    ldy keyboard_events_size
+    sta keyboard_events,y
+    inc keyboard_events_size
+  b4:
+    inc keycode
+    inx
+    cpx #8
+    bne b3
+    lda row_scan
+    ldy row
+    sta keyboard_scan_values,y
+  b8:
+    inc row
+    lda row
+    cmp #8
+    bne b1
+    lda #KEY_LSHIFT
+    sta keyboard_event_pressed.keycode
+    jsr keyboard_event_pressed
+    cmp #0
+    beq b5
+    lda #0|KEY_MODIFIER_LSHIFT
+    sta keyboard_modifiers
+    jmp b9
+  b5:
+    lda #0
+    sta keyboard_modifiers
+  b9:
+    lda #KEY_RSHIFT
+    sta keyboard_event_pressed.keycode
+    jsr keyboard_event_pressed
+    cmp #0
+    beq b10
+    lda #KEY_MODIFIER_RSHIFT
+    ora keyboard_modifiers
+    sta keyboard_modifiers
+  b10:
+    lda #KEY_CTRL
+    sta keyboard_event_pressed.keycode
+    jsr keyboard_event_pressed
+    cmp #0
+    beq b11
+    lda #KEY_MODIFIER_CTRL
+    ora keyboard_modifiers
+    sta keyboard_modifiers
+  b11:
+    lda #KEY_COMMODORE
+    sta keyboard_event_pressed.keycode
+    jsr keyboard_event_pressed
+    cmp #0
+    beq breturn
+    lda #KEY_MODIFIER_COMMODORE
+    ora keyboard_modifiers
+    sta keyboard_modifiers
+  breturn:
+    rts
+  b6:
+    lda keycode
+    ldy keyboard_events_size
+    sta keyboard_events,y
+    inc keyboard_events_size
+    jmp b4
+  b2:
+    lda #8
+    clc
+    adc keycode
+    sta keycode
+    jmp b8
+}
+keyboard_event_pressed: {
+    .label keycode = 5
+    lda keycode
     lsr
     lsr
     lsr
     tax
-    jsr keyboard_matrix_read
-    and keyboard_matrix_col_bitmask,y
+    ldy keyboard_scan_values,x
+    lda #7
+    and keycode
+    tax
+    tya
+    and keyboard_matrix_col_bitmask,x
     rts
 }
 keyboard_matrix_read: {
@@ -239,8 +356,8 @@ keyboard_matrix_read: {
     rts
 }
 form_field_ptr: {
-    .label return = 6
-    .label _2 = 6
+    .label return = 7
+    .label _2 = 7
     ldy form_fields_y,x
     lda form_line_hi,y
     sta _2+1
@@ -256,7 +373,7 @@ form_field_ptr: {
     rts
 }
 form_render_values: {
-    .label field = 6
+    .label field = 7
     ldx #0
   b1:
     jsr form_field_ptr
@@ -271,7 +388,7 @@ form_render_values: {
     rts
 }
 form_set_screen: {
-    .label line = 6
+    .label line = 7
     ldx #0
     lda #<menu.SCREEN
     sta line
@@ -295,7 +412,7 @@ form_set_screen: {
     rts
 }
 print_str_lines: {
-    .label str = 6
+    .label str = 7
     lda print_set_screen.screen
     sta print_char_cursor
     lda print_set_screen.screen+1
@@ -351,8 +468,8 @@ print_ln: {
     rts
 }
 print_cls: {
-    .label _0 = 8
-    .label sc = 6
+    .label _0 = 9
+    .label sc = 7
     lda print_set_screen.screen
     sta sc
     lda print_set_screen.screen+1
@@ -381,13 +498,15 @@ print_cls: {
     rts
 }
 print_set_screen: {
-    .label screen = $a
+    .label screen = $b
     rts
 }
   DTV_PALETTE_DEFAULT: .byte 0, $f, $36, $be, $58, $db, $86, $ff, $29, $26, $3b, 5, 7, $df, $9a, $a
   print_hextab: .text "0123456789abcdef"
   keyboard_matrix_row_bitmask: .byte $fe, $fd, $fb, $f7, $ef, $df, $bf, $7f
   keyboard_matrix_col_bitmask: .byte 1, 2, 4, 8, $10, $20, $40, $80
+  keyboard_events: .fill 8, 0
+  keyboard_scan_values: .fill 8, 0
   form_line_lo: .fill $19, 0
   form_line_hi: .fill $19, 0
   form_fields_x: .byte $16, 7, 7, 7, 7, 7, 7, 7, $11, $11, $11, $10, $11, $10, $11, $10, $11, $1b, $1a, $1b, $1a, $1b, $1a, $1b, $26, $26, $26, $25, $26, $25, $26, $25, $26, $25, $26

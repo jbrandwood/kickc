@@ -92,11 +92,6 @@ byte[] form_fields_max = { $d,  1,  1,  1,  1,  1,  2,  1,  1,  1, $f, $f, $f, $
 // Form fields values
 byte[] form_fields_val = {  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0 };
 
-// Press-status for the DOWN key from last frame - used for debounce
-byte key_down_debounce = 0;
-// Press-status for the right key from last frame - used for debounce
-byte key_right_debounce = 0;
-
 // The number of frames to use for a full blink cycle
 const signed byte FORM_CURSOR_BLINK = 40;
 // Counts down to blink for form cursor (it is inversed in the lower half)
@@ -146,50 +141,46 @@ void form_control() {
         *field = *field & $7f;
     }
 
+    // Scan the keyboard
+    keyboard_event_scan();
+    byte key_event = keyboard_event_get();
+
     // Navigation using cursor up/down
-    byte key_down = keyboard_key_pressed(KEY_CRSR_DOWN);
-    if(key_down!=key_down_debounce) {
-        key_down_debounce = key_down;
-        if(key_down!=0) {
-            // Unblink the cursor
-            *field = *field & $7f;
-            if(keyboard_key_pressed(KEY_RSHIFT)==0) {
-                // Move to next field
-                if(++form_field_idx==form_fields_cnt) {
-                    form_field_idx = 0;
-                }
-             } else {
-                // Move to previous field
-                if(--form_field_idx==$ff) {
-                    form_field_idx = form_fields_cnt-1;
-                }
-             }
-            // Always blink cursor in new field
-            form_cursor_count = FORM_CURSOR_BLINK/2;
-            // Return to refresh
-            return;
-        }
+    if(key_event==KEY_CRSR_DOWN) {
+        // Unblink the cursor
+        *field = *field & $7f;
+        if((keyboard_modifiers&KEY_MODIFIER_SHIFT)==0) {
+            // Move to next field
+            if(++form_field_idx==form_fields_cnt) {
+                form_field_idx = 0;
+            }
+         } else {
+            // Move to previous field
+            if(--form_field_idx==$ff) {
+                form_field_idx = form_fields_cnt-1;
+            }
+         }
+        // Always blink cursor in new field
+        form_cursor_count = FORM_CURSOR_BLINK/2;
+        // Return to refresh
+        return;
     }
 
     // Change value with cursor left/right
-    byte key_right = keyboard_key_pressed(KEY_CRSR_RIGHT);
-    if(key_right!=key_right_debounce) {
-        key_right_debounce = key_right;
-        if(key_right!=0) {
-            if(keyboard_key_pressed(KEY_RSHIFT)==0) {
-                // Increase value
-                if(++form_fields_val[form_field_idx]>form_fields_max[form_field_idx]) {
-                    form_fields_val[form_field_idx] = 0;
-                }
-            } else {
-                // Decrease value
-                if(--form_fields_val[form_field_idx]==$ff) {
-                    form_fields_val[form_field_idx] = form_fields_max[form_field_idx];
-                }
+    if(key_event==KEY_CRSR_RIGHT) {
+        if((keyboard_modifiers&KEY_MODIFIER_SHIFT)==0) {
+            // Increase value
+            if(++form_fields_val[form_field_idx]>form_fields_max[form_field_idx]) {
+                form_fields_val[form_field_idx] = 0;
             }
-            // Render field value
-            *field = print_hextab[form_fields_val[form_field_idx]];
+        } else {
+            // Decrease value
+            if(--form_fields_val[form_field_idx]==$ff) {
+                form_fields_val[form_field_idx] = form_fields_max[form_field_idx];
+            }
         }
+        // Render field value
+        *field = print_hextab[form_fields_val[form_field_idx]];
      }
 
 }

@@ -10,16 +10,15 @@ void main() {
     gfx_init();
     form_init();
     while(true) {
-        // Render form at the bottom 9 lines of the screen
-        while(*RASTER != $30+8*16) {}
+        // Let the user change the GFX configuration
         form_mode();
-        // Allow user to control the graphics through the form
-        while(*RASTER!=$ff) {}
-        form_control();
-        // Render graphics mode at the top 16 lines of the screen
+        // Show the GFX configuration
         gfx_mode();
     }
 }
+
+// Standard charset screen
+const byte* VIC_SCREEN_STDCHAR = $8400;
 
 // 8BPP Chunky Bitmap (contains 8bpp pixels)
 const dword PLANE_8BPP_CHUNKY = $20000;
@@ -28,8 +27,6 @@ const dword PLANE_8BPP_CHUNKY = $20000;
 const byte* FORM_SCREEN = $8000;
 // Charset used for the FORM
 const byte* FORM_CHARSET = $9800; // Charset ROM
-// Offset of the FORM from the top of the screen
-const word FORM_OFFSET = 16*40;
 
 
 byte[] FORM_COLS =
@@ -104,7 +101,7 @@ const byte* form_vic_bg3_lo = form_fields_val+34;
 
 // Change graphics mode to show the selected graphics mode
 void gfx_mode() {
-
+    // Show the GFX configuration
     // DTV Graphics Mode
     byte dtv_control = 0;
     if(*form_ctrl_line!=0) {
@@ -162,7 +159,7 @@ void gfx_mode() {
     *DTV_PLANEB_MODULO_LO = *form_b_mod_hi<<4|*form_b_mod_lo;
     *DTV_PLANEB_MODULO_HI = 0;
 
-    // Border colors
+    // Bakground colors
     *BGCOL1 = *form_vic_bg0_hi<<4|*form_vic_bg0_lo;
     *BGCOL2 = *form_vic_bg1_hi<<4|*form_vic_bg1_lo;
     *BGCOL3 = *form_vic_bg2_hi<<4|*form_vic_bg2_lo;
@@ -172,12 +169,35 @@ void gfx_mode() {
     for(byte i : 0..$f) {
         DTV_PALETTE[i] = i;
     }
+
+    // Wait for the user to press space
+    while(true) {
+        while(*RASTER!=$ff) {}
+        keyboard_event_scan();
+        byte keyboard_event = keyboard_event_get();
+        if(keyboard_event==KEY_SPACE) {
+            // If space pressed - change to form mode
+            return;
+        }
+    }
+
 }
 
 
 // Initialize the different graphics in the memory
 void gfx_init() {
+    gfx_init_screen_stdchar();
     gfx_init_plane_8bppchunky();
+}
+
+// Initialize std char screen
+void gfx_init_screen_stdchar() {
+    byte* ch=VIC_SCREEN_STDCHAR;
+    for(byte cy: 0..24 ) {
+        for(byte cx: 0..39) {
+            *ch++ = (cy&$f)<<4|(cx&$f);
+        }
+    }
 }
 
 // Initialize 8BPP Chunky Bitmap (contains 8bpp pixels)
@@ -203,18 +223,22 @@ void gfx_init_plane_8bppchunky() {
 // Initialize the form colors, screen & form
 void form_init() {
     // Form Colors
-    print_set_screen(COLS+FORM_OFFSET);
+    print_set_screen(COLS);
+    print_cls();
     print_str_lines(FORM_COLS);
     // Form Text
-    print_set_screen(FORM_SCREEN+FORM_OFFSET);
+    print_set_screen(FORM_SCREEN);
+    print_cls();
     print_str_lines(FORM_TEXT);
     // Form Fields
-    form_set_screen(FORM_SCREEN+FORM_OFFSET);
+    form_set_screen(FORM_SCREEN);
     form_render_values();
 }
 
-// Change graphics mode to show the form
+// Show the form - and let the user change values
 void form_mode() {
+    // Show the form
+
     // DTV Graphics Bank
     *DTV_GRAPHICS_VIC_BANK = (byte)((dword)FORM_CHARSET/$10000);
     // DTV Color Bank
@@ -235,8 +259,17 @@ void form_mode() {
         DTV_PALETTE[i] = DTV_PALETTE_DEFAULT[i];
     }
     // Screen colors
-    *BORDERCOL = 0;
     *BGCOL = 0;
+
+    // Let the user change values in the form
+    while(true) {
+        while(*RASTER!=$ff) {}
+        if(form_control()!=0) {
+            // Space pressed - change to GFX mode
+            return;
+        }
+    }
+    return;
 }
 
 // Table with addresses of the y-lines of the form. The first line contains the address of the form screen.
@@ -281,7 +314,8 @@ void form_render_values() {
 }
 
 // Reads keyboard and allows the user to navigate and change the fields of the form
-void form_control() {
+// Returns 0 if space is not pressed, non-0 if space is pressed
+byte form_control() {
     byte* field = form_field_ptr(form_field_idx);
 
     // Blinking cursor
@@ -316,7 +350,7 @@ void form_control() {
         // Always blink cursor in new field
         form_cursor_count = FORM_CURSOR_BLINK/2;
         // Return to refresh
-        return;
+        return 0;
     }
 
     // Change value with cursor left/right
@@ -334,7 +368,13 @@ void form_control() {
         }
         // Render field value
         *field = print_hextab[form_fields_val[form_field_idx]];
-        return;
+        return 0;
      }
+
+     // Check for space press
+     if(key_event==KEY_SPACE) {
+        return $ff;
+     }
+     return 0;
 
 }

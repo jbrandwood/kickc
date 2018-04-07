@@ -46,13 +46,24 @@ public class TestPrograms {
    }
 
    @Test
-   public void testLoopProblem2() throws IOException, URISyntaxException {
-         compileAndCompare("loop-problem2");
+   public void testC64DtvGfxExplorer() throws IOException, URISyntaxException {
+      compileAndCompare("c64dtv-gfxexplorer");
    }
 
    @Test
-   public void testC64DtvGfxExplorer() throws IOException, URISyntaxException {
-      compileAndCompare("c64dtv-gfxexplorer");
+   public void testVarForwardProblem() throws IOException, URISyntaxException {
+      try {
+         compileAndCompare("var-forward-problem");
+      } catch(CompileError e) {
+         // ignore & return
+         return;
+      }
+      fail("Expected compile error.");
+   }
+
+   @Test
+   public void testLoopProblem2() throws IOException, URISyntaxException {
+      compileAndCompare("loop-problem2");
    }
 
    @Test

@@ -1,4 +1,4 @@
-(label) @32
+(label) @33
 (label) @begin
 (label) @end
 (byte*) BGCOL
@@ -11,8 +11,6 @@
 (const byte*) BGCOL3#0 BGCOL3 = ((byte*))(word/dword/signed dword) 53283
 (byte*) BGCOL4
 (const byte*) BGCOL4#0 BGCOL4 = ((byte*))(word/dword/signed dword) 53284
-(byte*) BORDERCOL
-(const byte*) BORDERCOL#0 BORDERCOL = ((byte*))(word/dword/signed dword) 53280
 (byte*) CIA1_PORT_A
 (const byte*) CIA1_PORT_A#0 CIA1_PORT_A = ((byte*))(word/dword/signed dword) 56320
 (byte*) CIA1_PORT_A_DDR
@@ -87,8 +85,6 @@
 (const string) FORM_COLS#0 FORM_COLS = (string) "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa@"+(string) " nnnnnnn  mmmmmmmm  mmmmmmmm  ooooooooo @"+(string) " nnnnnnn  mmmmmmmm  mmmmmmmm  ooooooooo @"+(string) " nnnnnnn  mmmmmmmm  mmmmmmmm  ooooooooo @"+(string) " nnnnnnn  mmmmmmmm  mmmmmmmm  ooooooooo @"+(string) " nnnnnnn  mmmmmmmm  mmmmmmmm  ooooooooo @"+(string) " nnnnnnn                      ooooooooo @"+(string) " nnnnnnn  nnnnnnnn            ooooooooo @"+(string) " nnnnnnn  nnnnnnnn            ooooooooo @"+(string) "@"
 (signed byte) FORM_CURSOR_BLINK
 (const signed byte) FORM_CURSOR_BLINK#0 FORM_CURSOR_BLINK = (byte/signed byte/word/signed word/dword/signed dword) 40
-(word) FORM_OFFSET
-(const word) FORM_OFFSET#0 FORM_OFFSET = (byte/signed byte/word/signed word/dword/signed dword) 16*(byte/signed byte/word/signed word/dword/signed dword) 40
 (byte*) FORM_SCREEN
 (const byte*) FORM_SCREEN#0 FORM_SCREEN = ((byte*))(word/dword/signed dword) 32768
 (byte[]) FORM_TEXT
@@ -115,6 +111,8 @@
 (const byte) KEY_MODIFIER_SHIFT#0 KEY_MODIFIER_SHIFT = (const byte) KEY_MODIFIER_LSHIFT#0|(const byte) KEY_MODIFIER_RSHIFT#0
 (byte) KEY_RSHIFT
 (const byte) KEY_RSHIFT#0 KEY_RSHIFT = (byte/signed byte/word/signed word/dword/signed dword) 52
+(byte) KEY_SPACE
+(const byte) KEY_SPACE#0 KEY_SPACE = (byte/signed byte/word/signed word/dword/signed dword) 60
 (dword) PLANE_8BPP_CHUNKY
 (const dword) PLANE_8BPP_CHUNKY#0 PLANE_8BPP_CHUNKY = (dword/signed dword) 131072
 (byte*) RASTER
@@ -137,6 +135,8 @@
 (const byte*) VIC_MEMORY#0 VIC_MEMORY = ((byte*))(word/dword/signed dword) 53272
 (byte) VIC_RSEL
 (const byte) VIC_RSEL#0 VIC_RSEL = (byte/signed byte/word/signed word/dword/signed dword) 8
+(byte*) VIC_SCREEN_STDCHAR
+(const byte*) VIC_SCREEN_STDCHAR#0 VIC_SCREEN_STDCHAR = ((byte*))(word/dword/signed dword) 33792
 (void()) dtvSetCpuBankSegment1((byte) dtvSetCpuBankSegment1::cpuBankIdx)
 (label) dtvSetCpuBankSegment1::@return
 (byte*) dtvSetCpuBankSegment1::cpuBank
@@ -168,7 +168,7 @@
 (const byte*) form_b_step_hi#0 form_b_step_hi = (const byte[]) form_fields_val#0+(byte/signed byte/word/signed word/dword/signed dword) 20
 (byte*) form_b_step_lo
 (const byte*) form_b_step_lo#0 form_b_step_lo = (const byte[]) form_fields_val#0+(byte/signed byte/word/signed word/dword/signed dword) 21
-(void()) form_control()
+(byte()) form_control()
 (byte~) form_control::$12 reg byte a 4.0
 (byte~) form_control::$13 reg byte a 4.0
 (byte~) form_control::$24 reg byte a 4.0
@@ -177,29 +177,34 @@
 (label) form_control::@1
 (label) form_control::@10
 (label) form_control::@12
-(label) form_control::@15
-(label) form_control::@17
+(label) form_control::@16
 (label) form_control::@18
+(label) form_control::@19
 (label) form_control::@2
-(label) form_control::@23
 (label) form_control::@24
 (label) form_control::@25
-(label) form_control::@27
-(label) form_control::@29
+(label) form_control::@26
+(label) form_control::@28
 (label) form_control::@3
-(label) form_control::@30
-(label) form_control::@31
-(label) form_control::@32
 (label) form_control::@33
 (label) form_control::@34
+(label) form_control::@35
+(label) form_control::@36
+(label) form_control::@37
+(label) form_control::@38
+(label) form_control::@39
 (label) form_control::@4
 (label) form_control::@5
 (label) form_control::@7
+(label) form_control::@9
 (label) form_control::@return
 (byte*) form_control::field
 (byte*) form_control::field#0 field zp ZP_WORD:7 0.5925925925925926
 (byte) form_control::key_event
-(byte) form_control::key_event#0 reg byte a 3.0
+(byte) form_control::key_event#0 reg byte a 2.6666666666666665
+(byte) form_control::return
+(byte) form_control::return#0 reg byte a 202.0
+(byte) form_control::return#2 reg byte x 33.666666666666664
 (byte*) form_ctrl_bmm
 (const byte*) form_ctrl_bmm#0 form_ctrl_bmm = (const byte[]) form_fields_val#0+(byte/signed byte/word/signed word/dword/signed dword) 1
 (byte*) form_ctrl_borof
@@ -219,16 +224,20 @@
 (byte*) form_ctrl_overs
 (const byte*) form_ctrl_overs#0 form_ctrl_overs = (const byte[]) form_fields_val#0+(byte/signed byte/word/signed word/dword/signed dword) 9
 (signed byte) form_cursor_count
-(signed byte) form_cursor_count#1 form_cursor_count zp ZP_BYTE:2 1.1818181818181819
-(signed byte) form_cursor_count#11 form_cursor_count zp ZP_BYTE:2 0.34782608695652173
-(signed byte) form_cursor_count#12 form_cursor_count zp ZP_BYTE:2 3.0
-(signed byte) form_cursor_count#3 form_cursor_count zp ZP_BYTE:2 2.0
+(signed byte) form_cursor_count#1 form_cursor_count zp ZP_BYTE:5 0.7647058823529412
+(signed byte) form_cursor_count#13 form_cursor_count zp ZP_BYTE:5 42.599999999999994
+(signed byte) form_cursor_count#15 form_cursor_count zp ZP_BYTE:5 0.4
+(signed byte) form_cursor_count#16 form_cursor_count zp ZP_BYTE:5 34.66666666666667
+(signed byte) form_cursor_count#21 form_cursor_count zp ZP_BYTE:5 25.75
+(signed byte) form_cursor_count#5 form_cursor_count zp ZP_BYTE:5 2.0
 (byte) form_field_idx
-(byte) form_field_idx#1 form_field_idx zp ZP_BYTE:3 1.0487804878048785
-(byte) form_field_idx#14 form_field_idx zp ZP_BYTE:3 3.4
-(byte) form_field_idx#24 form_field_idx zp ZP_BYTE:3 6.0
-(byte) form_field_idx#3 form_field_idx zp ZP_BYTE:3 2.0
-(byte) form_field_idx#34 form_field_idx zp ZP_BYTE:3 2.0
+(byte) form_field_idx#1 form_field_idx zp ZP_BYTE:6 0.7647058823529412
+(byte) form_field_idx#14 form_field_idx zp ZP_BYTE:6 42.599999999999994
+(byte) form_field_idx#18 form_field_idx zp ZP_BYTE:6 35.00000000000001
+(byte) form_field_idx#28 form_field_idx zp ZP_BYTE:6 5.949999999999997
+(byte) form_field_idx#32 form_field_idx zp ZP_BYTE:6 6.0
+(byte) form_field_idx#43 form_field_idx zp ZP_BYTE:6 2.0
+(byte) form_field_idx#44 form_field_idx zp ZP_BYTE:6 2.0
 (byte*()) form_field_ptr((byte) form_field_ptr::field_idx)
 (word~) form_field_ptr::$2 $2 zp ZP_WORD:7 1.0
 (label) form_field_ptr::@return
@@ -262,14 +271,21 @@
 (label) form_init::@3
 (label) form_init::@4
 (label) form_init::@5
+(label) form_init::@6
+(label) form_init::@7
 (label) form_init::@return
 (byte[25]) form_line_hi
 (const byte[25]) form_line_hi#0 form_line_hi = { fill( 25, 0) }
 (byte[25]) form_line_lo
 (const byte[25]) form_line_lo#0 form_line_lo = { fill( 25, 0) }
 (void()) form_mode()
+(byte~) form_mode::$25 reg byte a 202.0
 (label) form_mode::@1
+(label) form_mode::@19
 (label) form_mode::@2
+(label) form_mode::@5
+(label) form_mode::@7
+(label) form_mode::@9
 (label) form_mode::@return
 (byte) form_mode::i
 (byte) form_mode::i#1 reg byte x 151.5
@@ -292,7 +308,6 @@
 (byte*) form_set_screen::line#1 line zp ZP_WORD:7 7.333333333333333
 (byte*) form_set_screen::line#2 line zp ZP_WORD:7 8.8
 (byte*) form_set_screen::screen
-(const byte*) form_set_screen::screen#0 screen = (const byte*) FORM_SCREEN#0+(const word) FORM_OFFSET#0
 (byte) form_set_screen::y
 (byte) form_set_screen::y#1 reg byte x 16.5
 (byte) form_set_screen::y#2 reg byte x 7.333333333333333
@@ -313,6 +328,7 @@
 (byte*) form_vic_bg3_lo
 (const byte*) form_vic_bg3_lo#0 form_vic_bg3_lo = (const byte[]) form_fields_val#0+(byte/signed byte/word/signed word/dword/signed dword) 34
 (void()) gfx_init()
+(label) gfx_init::@1
 (label) gfx_init::@return
 (void()) gfx_init_plane_8bppchunky()
 (word~) gfx_init_plane_8bppchunky::$6 $6 zp ZP_WORD:11 202.0
@@ -342,6 +358,25 @@
 (byte) gfx_init_plane_8bppchunky::y
 (byte) gfx_init_plane_8bppchunky::y#1 y zp ZP_BYTE:2 16.5
 (byte) gfx_init_plane_8bppchunky::y#6 y zp ZP_BYTE:2 9.461538461538462
+(void()) gfx_init_screen_stdchar()
+(byte~) gfx_init_screen_stdchar::$0 reg byte a 202.0
+(byte~) gfx_init_screen_stdchar::$1 $1 zp ZP_BYTE:3 101.0
+(byte~) gfx_init_screen_stdchar::$2 reg byte a 202.0
+(byte~) gfx_init_screen_stdchar::$3 reg byte a 202.0
+(label) gfx_init_screen_stdchar::@1
+(label) gfx_init_screen_stdchar::@2
+(label) gfx_init_screen_stdchar::@3
+(label) gfx_init_screen_stdchar::@return
+(byte*) gfx_init_screen_stdchar::ch
+(byte*) gfx_init_screen_stdchar::ch#1 ch zp ZP_WORD:7 42.599999999999994
+(byte*) gfx_init_screen_stdchar::ch#2 ch zp ZP_WORD:7 52.33333333333333
+(byte*) gfx_init_screen_stdchar::ch#3 ch zp ZP_WORD:7 22.0
+(byte) gfx_init_screen_stdchar::cx
+(byte) gfx_init_screen_stdchar::cx#1 reg byte x 151.5
+(byte) gfx_init_screen_stdchar::cx#2 reg byte x 43.285714285714285
+(byte) gfx_init_screen_stdchar::cy
+(byte) gfx_init_screen_stdchar::cy#1 cy zp ZP_BYTE:2 16.5
+(byte) gfx_init_screen_stdchar::cy#4 cy zp ZP_BYTE:2 12.299999999999999
 (void()) gfx_mode()
 (byte~) gfx_mode::$29 reg byte a 4.0
 (word~) gfx_mode::$33 $33 zp ZP_WORD:7 4.0
@@ -376,16 +411,21 @@
 (label) gfx_mode::@1
 (label) gfx_mode::@10
 (label) gfx_mode::@11
-(label) gfx_mode::@12
-(label) gfx_mode::@13
 (label) gfx_mode::@14
-(label) gfx_mode::@15
 (label) gfx_mode::@16
-(label) gfx_mode::@17
 (label) gfx_mode::@18
 (label) gfx_mode::@19
 (label) gfx_mode::@2
+(label) gfx_mode::@20
+(label) gfx_mode::@21
+(label) gfx_mode::@22
+(label) gfx_mode::@23
+(label) gfx_mode::@24
+(label) gfx_mode::@25
+(label) gfx_mode::@26
 (label) gfx_mode::@3
+(label) gfx_mode::@36
+(label) gfx_mode::@37
 (label) gfx_mode::@4
 (label) gfx_mode::@5
 (label) gfx_mode::@6
@@ -408,6 +448,8 @@
 (byte) gfx_mode::i
 (byte) gfx_mode::i#1 reg byte x 151.5
 (byte) gfx_mode::i#2 reg byte x 202.0
+(byte) gfx_mode::keyboard_event
+(byte) gfx_mode::keyboard_event#0 reg byte a 202.0
 (dword) gfx_mode::plane_a
 (dword) gfx_mode::plane_a#0 plane_a zp ZP_DWORD:13 1.1428571428571428
 (byte) gfx_mode::plane_a_offs
@@ -427,14 +469,15 @@
 (label) keyboard_event_get::@return
 (byte) keyboard_event_get::return
 (byte) keyboard_event_get::return#0 reg byte a 4.0
-(byte) keyboard_event_get::return#2 reg byte a 1.3333333333333333
-(byte) keyboard_event_get::return#3 reg byte a 4.0
+(byte) keyboard_event_get::return#2 reg byte a 26.25
+(byte) keyboard_event_get::return#3 reg byte a 202.0
+(byte) keyboard_event_get::return#4 reg byte a 4.0
 (byte()) keyboard_event_pressed((byte) keyboard_event_pressed::keycode)
 (byte~) keyboard_event_pressed::$0 reg byte a 4.0
 (byte~) keyboard_event_pressed::$1 reg byte a 4.0
 (label) keyboard_event_pressed::@return
 (byte) keyboard_event_pressed::keycode
-(byte) keyboard_event_pressed::keycode#4 keycode zp ZP_BYTE:4 1.3333333333333333
+(byte) keyboard_event_pressed::keycode#4 keycode zp ZP_BYTE:2 1.3333333333333333
 (byte) keyboard_event_pressed::return
 (byte) keyboard_event_pressed::return#0 reg byte a 4.0
 (byte) keyboard_event_pressed::return#1 reg byte a 4.0
@@ -442,15 +485,15 @@
 (byte) keyboard_event_pressed::return#2 reg byte a 4.0
 (byte) keyboard_event_pressed::return#3 reg byte a 4.0
 (byte) keyboard_event_pressed::row_bits
-(byte) keyboard_event_pressed::row_bits#0 row_bits zp ZP_BYTE:5 2.0
+(byte) keyboard_event_pressed::row_bits#0 reg byte y 2.0
 (void()) keyboard_event_scan()
-(byte/word/dword~) keyboard_event_scan::$12 reg byte a 2002.0
+(byte/word/dword~) keyboard_event_scan::$12 reg byte a 20002.0
 (byte~) keyboard_event_scan::$16 reg byte a 4.0
 (byte~) keyboard_event_scan::$20 reg byte a 4.0
 (byte~) keyboard_event_scan::$24 reg byte a 4.0
 (byte~) keyboard_event_scan::$28 reg byte a 4.0
-(byte~) keyboard_event_scan::$3 reg byte a 2002.0
-(byte~) keyboard_event_scan::$4 reg byte a 2002.0
+(byte~) keyboard_event_scan::$3 reg byte a 20002.0
+(byte~) keyboard_event_scan::$4 reg byte a 20002.0
 (label) keyboard_event_scan::@1
 (label) keyboard_event_scan::@10
 (label) keyboard_event_scan::@11
@@ -476,33 +519,38 @@
 (label) keyboard_event_scan::@9
 (label) keyboard_event_scan::@return
 (byte) keyboard_event_scan::col
-(byte) keyboard_event_scan::col#1 reg byte x 1501.5
-(byte) keyboard_event_scan::col#2 reg byte x 286.0
+(byte) keyboard_event_scan::col#1 reg byte x 15001.5
+(byte) keyboard_event_scan::col#2 reg byte x 2857.4285714285716
 (byte) keyboard_event_scan::event_type
-(byte) keyboard_event_scan::event_type#0 reg byte a 2002.0
+(byte) keyboard_event_scan::event_type#0 reg byte a 20002.0
 (byte) keyboard_event_scan::keycode
-(byte) keyboard_event_scan::keycode#1 keycode zp ZP_BYTE:5 202.0
-(byte) keyboard_event_scan::keycode#10 keycode zp ZP_BYTE:5 315.7692307692308
-(byte) keyboard_event_scan::keycode#11 keycode zp ZP_BYTE:5 50.5
-(byte) keyboard_event_scan::keycode#14 keycode zp ZP_BYTE:5 101.0
-(byte) keyboard_event_scan::keycode#15 keycode zp ZP_BYTE:5 525.75
+(byte) keyboard_event_scan::keycode#1 keycode zp ZP_BYTE:3 2002.0
+(byte) keyboard_event_scan::keycode#10 keycode zp ZP_BYTE:3 3154.230769230769
+(byte) keyboard_event_scan::keycode#11 keycode zp ZP_BYTE:3 500.5
+(byte) keyboard_event_scan::keycode#14 keycode zp ZP_BYTE:3 1001.0
+(byte) keyboard_event_scan::keycode#15 keycode zp ZP_BYTE:3 5250.75
 (byte) keyboard_event_scan::row
-(byte) keyboard_event_scan::row#1 row zp ZP_BYTE:4 151.5
-(byte) keyboard_event_scan::row#2 row zp ZP_BYTE:4 60.239999999999995
+(byte) keyboard_event_scan::row#1 row zp ZP_BYTE:2 1501.5
+(byte) keyboard_event_scan::row#2 row zp ZP_BYTE:2 600.24
 (byte) keyboard_event_scan::row_scan
-(byte) keyboard_event_scan::row_scan#0 row_scan zp ZP_BYTE:17 128.05555555555557
+(byte) keyboard_event_scan::row_scan#0 row_scan zp ZP_BYTE:17 1278.0555555555554
 (byte[8]) keyboard_events
 (const byte[8]) keyboard_events#0 keyboard_events = { fill( 8, 0) }
 (byte) keyboard_events_size
-(byte) keyboard_events_size#1 keyboard_events_size zp ZP_BYTE:6 2002.0
-(byte) keyboard_events_size#12 keyboard_events_size zp ZP_BYTE:6 810.9000000000001
-(byte) keyboard_events_size#15 keyboard_events_size zp ZP_BYTE:6 9.65625
-(byte) keyboard_events_size#18 keyboard_events_size zp ZP_BYTE:6 0.46875
-(byte) keyboard_events_size#2 keyboard_events_size zp ZP_BYTE:6 2002.0
-(byte) keyboard_events_size#20 keyboard_events_size zp ZP_BYTE:6 0.5909090909090909
-(byte) keyboard_events_size#37 keyboard_events_size zp ZP_BYTE:6 43.57142857142858
-(byte) keyboard_events_size#38 keyboard_events_size zp ZP_BYTE:6 1021.2
-(byte) keyboard_events_size#4 keyboard_events_size zp ZP_BYTE:6 3.0
+(byte) keyboard_events_size#1 keyboard_events_size zp ZP_BYTE:4 20002.0
+(byte) keyboard_events_size#104 keyboard_events_size zp ZP_BYTE:4 105.0
+(byte) keyboard_events_size#105 keyboard_events_size zp ZP_BYTE:4 88.5
+(byte) keyboard_events_size#11 keyboard_events_size zp ZP_BYTE:4 71.0
+(byte) keyboard_events_size#111 keyboard_events_size zp ZP_BYTE:4 10201.2
+(byte) keyboard_events_size#112 keyboard_events_size zp ZP_BYTE:4 429.2857142857143
+(byte) keyboard_events_size#13 keyboard_events_size zp ZP_BYTE:4 3.4431818181818183
+(byte) keyboard_events_size#18 keyboard_events_size zp ZP_BYTE:4 8100.9000000000015
+(byte) keyboard_events_size#2 keyboard_events_size zp ZP_BYTE:4 20002.0
+(byte) keyboard_events_size#24 keyboard_events_size zp ZP_BYTE:4 10.461538461538462
+(byte) keyboard_events_size#27 keyboard_events_size zp ZP_BYTE:4 0.7647058823529412
+(byte) keyboard_events_size#4 keyboard_events_size zp ZP_BYTE:4 3.0
+(byte) keyboard_events_size#45 keyboard_events_size zp ZP_BYTE:4 101.0
+(byte) keyboard_events_size#47 keyboard_events_size zp ZP_BYTE:4 11.444444444444443
 (void()) keyboard_init()
 (label) keyboard_init::@return
 (byte[8]) keyboard_matrix_col_bitmask
@@ -510,46 +558,56 @@
 (byte()) keyboard_matrix_read((byte) keyboard_matrix_read::rowid)
 (label) keyboard_matrix_read::@return
 (byte) keyboard_matrix_read::return
-(byte) keyboard_matrix_read::return#0 reg byte a 34.33333333333333
-(byte) keyboard_matrix_read::return#2 reg byte a 202.0
+(byte) keyboard_matrix_read::return#0 reg byte a 334.33333333333337
+(byte) keyboard_matrix_read::return#2 reg byte a 2002.0
 (byte) keyboard_matrix_read::row_pressed_bits
 (byte) keyboard_matrix_read::rowid
-(byte) keyboard_matrix_read::rowid#0 reg byte x 103.0
+(byte) keyboard_matrix_read::rowid#0 reg byte x 1003.0
 (byte[8]) keyboard_matrix_row_bitmask
 (const byte[8]) keyboard_matrix_row_bitmask#0 keyboard_matrix_row_bitmask = { (byte/word/signed word/dword/signed dword) 254, (byte/word/signed word/dword/signed dword) 253, (byte/word/signed word/dword/signed dword) 251, (byte/word/signed word/dword/signed dword) 247, (byte/word/signed word/dword/signed dword) 239, (byte/word/signed word/dword/signed dword) 223, (byte/word/signed word/dword/signed dword) 191, (byte/signed byte/word/signed word/dword/signed dword) 127 }
 (byte) keyboard_modifiers
-(byte) keyboard_modifiers#13 reg byte x 0.8
-(byte) keyboard_modifiers#14 reg byte x 1.6
-(byte) keyboard_modifiers#15 reg byte x 1.6
-(byte) keyboard_modifiers#16 reg byte x 0.7272727272727273
-(byte) keyboard_modifiers#3 reg byte x 4.0
-(byte) keyboard_modifiers#4 reg byte x 4.0
-(byte) keyboard_modifiers#5 reg byte x 4.0
+(byte) keyboard_modifiers#11 keyboard_modifiers zp ZP_BYTE:3 71.0
+(byte) keyboard_modifiers#13 keyboard_modifiers zp ZP_BYTE:3 3.4431818181818183
+(byte) keyboard_modifiers#18 keyboard_modifiers zp ZP_BYTE:3 0.8
+(byte) keyboard_modifiers#19 keyboard_modifiers zp ZP_BYTE:3 1.6
+(byte) keyboard_modifiers#20 keyboard_modifiers zp ZP_BYTE:3 1.6
+(byte) keyboard_modifiers#21 keyboard_modifiers zp ZP_BYTE:3 9.58139534883721
+(byte) keyboard_modifiers#24 keyboard_modifiers zp ZP_BYTE:3 0.7647058823529412
+(byte) keyboard_modifiers#3 keyboard_modifiers zp ZP_BYTE:3 4.0
+(byte) keyboard_modifiers#4 keyboard_modifiers zp ZP_BYTE:3 4.0
+(byte) keyboard_modifiers#42 keyboard_modifiers zp ZP_BYTE:3 151.5
+(byte) keyboard_modifiers#45 keyboard_modifiers zp ZP_BYTE:3 102.0
+(byte) keyboard_modifiers#5 keyboard_modifiers zp ZP_BYTE:3 4.0
 (byte[8]) keyboard_scan_values
 (const byte[8]) keyboard_scan_values#0 keyboard_scan_values = { fill( 8, 0) }
 (void()) main()
 (label) main::@1
-(label) main::@19
-(label) main::@20
-(label) main::@23
-(label) main::@4
-(label) main::@6
+(label) main::@10
+(label) main::@2
 (label) main::@7
-(label) main::@9
+(label) main::@8
 (label) main::@return
 (byte*) print_char_cursor
 (byte*) print_char_cursor#1 print_char_cursor zp ZP_WORD:9 202.0
-(byte*) print_char_cursor#16 print_char_cursor zp ZP_WORD:9 83.0
-(byte*) print_char_cursor#18 print_char_cursor zp ZP_WORD:9 12.0
-(byte*) print_char_cursor#31 print_char_cursor zp ZP_WORD:9 57.714285714285715
+(byte*) print_char_cursor#20 print_char_cursor zp ZP_WORD:9 83.0
+(byte*) print_char_cursor#22 print_char_cursor zp ZP_WORD:9 12.0
+(byte*) print_char_cursor#38 print_char_cursor zp ZP_WORD:9 57.714285714285715
 (byte*~) print_char_cursor#60 print_char_cursor zp ZP_WORD:9 4.0
 (byte*~) print_char_cursor#61 print_char_cursor zp ZP_WORD:9 22.0
+(void()) print_cls()
+(byte*~) print_cls::$0 $0 zp ZP_WORD:9 22.0
+(label) print_cls::@1
+(label) print_cls::@return
+(byte*) print_cls::sc
+(byte*) print_cls::sc#0 sc zp ZP_WORD:7 4.0
+(byte*) print_cls::sc#1 sc zp ZP_WORD:7 11.0
+(byte*) print_cls::sc#2 sc zp ZP_WORD:7 17.5
 (byte[]) print_hextab
 (const string) print_hextab#0 print_hextab = (string) "0123456789abcdef"
 (byte*) print_line_cursor
-(byte*) print_line_cursor#16 print_line_cursor zp ZP_WORD:11 1.25
-(byte*) print_line_cursor#17 print_line_cursor zp ZP_WORD:11 204.0
-(byte*) print_line_cursor#18 print_line_cursor zp ZP_WORD:11 65.0
+(byte*) print_line_cursor#2 print_line_cursor zp ZP_WORD:11 1.25
+(byte*) print_line_cursor#21 print_line_cursor zp ZP_WORD:11 204.0
+(byte*) print_line_cursor#22 print_line_cursor zp ZP_WORD:11 65.0
 (void()) print_ln()
 (label) print_ln::@1
 (label) print_ln::@return
@@ -557,7 +615,7 @@
 (void()) print_set_screen((byte*) print_set_screen::screen)
 (label) print_set_screen::@return
 (byte*) print_set_screen::screen
-(byte*) print_set_screen::screen#2 screen zp ZP_WORD:11 0.5
+(byte*) print_set_screen::screen#2 screen zp ZP_WORD:11 0.8947368421052632
 (void()) print_str_lines((byte*) print_str_lines::str)
 (label) print_str_lines::@1
 (label) print_str_lines::@4
@@ -573,27 +631,28 @@
 (byte*) print_str_lines::str#4 str zp ZP_WORD:7 157.0
 (byte*) print_str_lines::str#5 str zp ZP_WORD:7 1.0
 
-zp ZP_BYTE:2 [ form_cursor_count#1 form_cursor_count#12 form_cursor_count#11 form_cursor_count#3 gfx_init_plane_8bppchunky::y#6 gfx_init_plane_8bppchunky::y#1 ]
-zp ZP_BYTE:3 [ form_field_idx#1 form_field_idx#14 form_field_idx#24 form_field_idx#34 form_field_idx#3 ]
-reg byte x [ gfx_mode::dtv_control#12 gfx_mode::dtv_control#6 gfx_mode::dtv_control#13 gfx_mode::dtv_control#5 gfx_mode::dtv_control#11 gfx_mode::dtv_control#4 gfx_mode::dtv_control#10 gfx_mode::dtv_control#3 gfx_mode::dtv_control#15 gfx_mode::dtv_control#14 gfx_mode::dtv_control#2 ]
+reg byte x [ gfx_mode::dtv_control#12 gfx_mode::dtv_control#6 gfx_mode::dtv_control#13 gfx_mode::dtv_control#5 gfx_mode::dtv_control#11 gfx_mode::dtv_control#4 gfx_mode::dtv_control#10 gfx_mode::dtv_control#15 gfx_mode::dtv_control#14 gfx_mode::dtv_control#2 gfx_mode::dtv_control#3 ]
 reg byte x [ gfx_mode::vic_control#4 gfx_mode::vic_control#2 gfx_mode::vic_control#5 ]
 reg byte a [ gfx_mode::vic_control2#2 ]
 reg byte x [ gfx_mode::i#2 gfx_mode::i#1 ]
 reg byte a [ keyboard_event_get::return#2 keyboard_event_get::return#0 ]
-zp ZP_BYTE:4 [ keyboard_event_scan::row#2 keyboard_event_scan::row#1 keyboard_event_pressed::keycode#4 ]
+zp ZP_BYTE:2 [ keyboard_event_scan::row#2 keyboard_event_scan::row#1 keyboard_event_pressed::keycode#4 gfx_init_plane_8bppchunky::y#6 gfx_init_plane_8bppchunky::y#1 gfx_init_screen_stdchar::cy#4 gfx_init_screen_stdchar::cy#1 ]
 reg byte x [ keyboard_event_scan::col#2 keyboard_event_scan::col#1 ]
-zp ZP_BYTE:5 [ keyboard_event_scan::keycode#10 keyboard_event_scan::keycode#11 keyboard_event_scan::keycode#14 keyboard_event_scan::keycode#15 keyboard_event_scan::keycode#1 keyboard_event_pressed::row_bits#0 ]
-zp ZP_BYTE:6 [ keyboard_events_size#12 keyboard_events_size#37 keyboard_events_size#20 keyboard_events_size#18 keyboard_events_size#4 keyboard_events_size#15 keyboard_events_size#38 keyboard_events_size#2 keyboard_events_size#1 ]
-reg byte x [ keyboard_modifiers#16 keyboard_modifiers#15 keyboard_modifiers#4 keyboard_modifiers#14 keyboard_modifiers#3 keyboard_modifiers#13 keyboard_modifiers#5 ]
-reg byte x [ form_field_ptr::field_idx#2 form_field_ptr::field_idx#1 form_field_ptr::field_idx#0 ]
+zp ZP_BYTE:3 [ keyboard_event_scan::keycode#10 keyboard_event_scan::keycode#11 keyboard_event_scan::keycode#14 keyboard_event_scan::keycode#15 keyboard_event_scan::keycode#1 keyboard_modifiers#45 keyboard_modifiers#24 keyboard_modifiers#11 keyboard_modifiers#42 keyboard_modifiers#13 keyboard_modifiers#21 keyboard_modifiers#20 keyboard_modifiers#4 keyboard_modifiers#19 keyboard_modifiers#3 keyboard_modifiers#18 keyboard_modifiers#5 gfx_init_screen_stdchar::$1 ]
+zp ZP_BYTE:4 [ keyboard_events_size#18 keyboard_events_size#112 keyboard_events_size#104 keyboard_events_size#47 keyboard_events_size#27 keyboard_events_size#11 keyboard_events_size#45 keyboard_events_size#13 keyboard_events_size#24 keyboard_events_size#4 keyboard_events_size#105 keyboard_events_size#111 keyboard_events_size#2 keyboard_events_size#1 ]
 reg byte x [ form_mode::i#2 form_mode::i#1 ]
+zp ZP_BYTE:5 [ form_cursor_count#21 form_cursor_count#16 form_cursor_count#1 form_cursor_count#13 form_cursor_count#15 form_cursor_count#5 ]
+zp ZP_BYTE:6 [ form_field_idx#28 form_field_idx#18 form_field_idx#1 form_field_idx#14 form_field_idx#32 form_field_idx#43 form_field_idx#44 ]
+reg byte x [ form_control::return#2 ]
+reg byte x [ form_field_ptr::field_idx#2 form_field_ptr::field_idx#1 form_field_ptr::field_idx#0 ]
 reg byte x [ form_render_values::idx#2 form_render_values::idx#1 ]
-zp ZP_WORD:7 [ form_set_screen::line#2 form_set_screen::line#1 print_str_lines::str#4 print_str_lines::str#3 print_str_lines::str#5 print_str_lines::str#0 gfx_init_plane_8bppchunky::x#2 gfx_init_plane_8bppchunky::x#1 gfx_mode::$33 gfx_mode::$35 gfx_mode::$37 gfx_mode::$46 gfx_mode::$48 gfx_mode::$50 form_field_ptr::return#3 form_control::field#0 form_field_ptr::return#0 form_field_ptr::$2 form_field_ptr::return#2 form_render_values::field#0 ]
+zp ZP_WORD:7 [ form_set_screen::line#2 form_set_screen::line#1 print_str_lines::str#4 print_str_lines::str#3 print_str_lines::str#5 print_str_lines::str#0 print_cls::sc#2 print_cls::sc#0 print_cls::sc#1 gfx_init_plane_8bppchunky::x#2 gfx_init_plane_8bppchunky::x#1 gfx_init_screen_stdchar::ch#2 gfx_init_screen_stdchar::ch#3 gfx_init_screen_stdchar::ch#1 gfx_mode::$33 gfx_mode::$35 gfx_mode::$37 gfx_mode::$46 gfx_mode::$48 gfx_mode::$50 form_field_ptr::return#3 form_control::field#0 form_field_ptr::return#0 form_field_ptr::$2 form_field_ptr::return#2 form_render_values::field#0 ]
 reg byte x [ form_set_screen::y#2 form_set_screen::y#1 ]
-zp ZP_WORD:9 [ print_char_cursor#16 print_char_cursor#18 print_char_cursor#60 print_char_cursor#61 print_char_cursor#31 print_char_cursor#1 gfx_init_plane_8bppchunky::gfxb#4 gfx_init_plane_8bppchunky::gfxb#3 gfx_init_plane_8bppchunky::gfxb#5 gfx_init_plane_8bppchunky::gfxb#1 ]
-zp ZP_WORD:11 [ print_line_cursor#17 print_line_cursor#16 print_set_screen::screen#2 print_line_cursor#18 gfx_init_plane_8bppchunky::$6 ]
+zp ZP_WORD:9 [ print_char_cursor#20 print_char_cursor#22 print_char_cursor#60 print_char_cursor#61 print_char_cursor#38 print_char_cursor#1 gfx_init_plane_8bppchunky::gfxb#4 gfx_init_plane_8bppchunky::gfxb#3 gfx_init_plane_8bppchunky::gfxb#5 gfx_init_plane_8bppchunky::gfxb#1 print_cls::$0 ]
+zp ZP_WORD:11 [ print_line_cursor#21 print_line_cursor#2 print_set_screen::screen#2 print_line_cursor#22 gfx_init_plane_8bppchunky::$6 ]
 reg byte x [ gfx_init_plane_8bppchunky::gfxbCpuBank#4 gfx_init_plane_8bppchunky::gfxbCpuBank#7 gfx_init_plane_8bppchunky::gfxbCpuBank#8 gfx_init_plane_8bppchunky::gfxbCpuBank#2 ]
 reg byte a [ dtvSetCpuBankSegment1::cpuBankIdx#3 dtvSetCpuBankSegment1::cpuBankIdx#1 ]
+reg byte x [ gfx_init_screen_stdchar::cx#2 gfx_init_screen_stdchar::cx#1 ]
 reg byte a [ gfx_mode::$29 ]
 reg byte a [ gfx_mode::plane_a_offs#0 ]
 zp ZP_DWORD:13 [ gfx_mode::plane_a#0 gfx_mode::plane_b#0 ]
@@ -621,13 +680,8 @@ reg byte a [ gfx_mode::$60 ]
 reg byte a [ gfx_mode::$61 ]
 reg byte a [ gfx_mode::$62 ]
 reg byte a [ gfx_mode::$63 ]
-reg byte a [ form_control::$6 ]
 reg byte a [ keyboard_event_get::return#3 ]
-reg byte a [ form_control::key_event#0 ]
-reg byte a [ form_control::$12 ]
-reg byte a [ form_control::$13 ]
-reg byte a [ form_control::$24 ]
-reg byte a [ form_control::$7 ]
+reg byte a [ gfx_mode::keyboard_event#0 ]
 reg byte x [ keyboard_matrix_read::rowid#0 ]
 reg byte a [ keyboard_matrix_read::return#2 ]
 zp ZP_BYTE:17 [ keyboard_event_scan::row_scan#0 ]
@@ -644,12 +698,25 @@ reg byte a [ keyboard_event_scan::$24 ]
 reg byte a [ keyboard_event_pressed::return#3 ]
 reg byte a [ keyboard_event_scan::$28 ]
 reg byte a [ keyboard_event_pressed::$0 ]
+reg byte y [ keyboard_event_pressed::row_bits#0 ]
 reg byte a [ keyboard_event_pressed::$1 ]
 reg byte a [ keyboard_event_pressed::return#10 ]
 reg byte a [ keyboard_matrix_read::return#0 ]
+reg byte a [ form_control::return#0 ]
+reg byte a [ form_mode::$25 ]
+reg byte a [ form_control::$6 ]
+reg byte a [ keyboard_event_get::return#4 ]
+reg byte a [ form_control::key_event#0 ]
+reg byte a [ form_control::$12 ]
+reg byte a [ form_control::$13 ]
+reg byte a [ form_control::$24 ]
+reg byte a [ form_control::$7 ]
 reg byte y [ form_field_ptr::y#0 ]
 reg byte a [ form_field_ptr::x#0 ]
 reg byte a [ form_set_screen::$0 ]
 reg byte a [ form_set_screen::$1 ]
 reg byte a [ print_str_lines::ch#0 ]
 reg byte a [ gfx_init_plane_8bppchunky::c#0 ]
+reg byte a [ gfx_init_screen_stdchar::$0 ]
+reg byte a [ gfx_init_screen_stdchar::$2 ]
+reg byte a [ gfx_init_screen_stdchar::$3 ]

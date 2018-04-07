@@ -2,6 +2,7 @@
 :BasicUpstart(main)
 .pc = $80d "Program"
   .label RASTER = $d012
+  .label BORDERCOL = $d020
   .label BGCOL = $d021
   .label BGCOL1 = $d021
   .label BGCOL2 = $d022
@@ -61,6 +62,8 @@
   .const KEY_MODIFIER_CTRL = 4
   .const KEY_MODIFIER_COMMODORE = 8
   .label VIC_SCREEN_STDCHAR = $8400
+  .label VIC_SCREEN_BITMAP = $8800
+  .label VIC_BITMAP = $a000
   .const PLANE_8BPP_CHUNKY = $20000
   .label FORM_SCREEN = $8000
   .label FORM_CHARSET = $9800
@@ -128,8 +131,8 @@ gfx_mode: {
     .label _46 = 7
     .label _48 = 7
     .label _50 = 7
-    .label plane_a = $d
-    .label plane_b = $d
+    .label plane_a = $f
+    .label plane_b = $f
     lda form_ctrl_line
     cmp #0
     beq b12
@@ -300,6 +303,7 @@ gfx_mode: {
     sta DTV_PLANEB_MODULO_LO
     lda #0
     sta DTV_PLANEB_MODULO_HI
+    sta BORDERCOL
     lda form_vic_bg0_hi
     asl
     asl
@@ -361,7 +365,7 @@ keyboard_event_get: {
     jmp breturn
 }
 keyboard_event_scan: {
-    .label row_scan = $11
+    .label row_scan = $d
     .label keycode = 3
     .label row = 2
     lda #0
@@ -513,6 +517,7 @@ form_mode: {
     bne b1
     lda #0
     sta BGCOL
+    sta BORDERCOL
     jmp b5
   breturn:
     rts
@@ -808,8 +813,15 @@ print_set_screen: {
     rts
 }
 gfx_init: {
-    jsr gfx_init_screen_stdchar
+    inc BGCOL
+    jsr gfx_init_vic_screen_stdchar
+    inc BGCOL
+    jsr gfx_init_vic_screen_bitmap
+    inc BGCOL
+    jsr gfx_init_vic_bitmap
+    inc BGCOL
     jsr gfx_init_plane_8bppchunky
+    inc BGCOL
     rts
 }
 gfx_init_plane_8bppchunky: {
@@ -885,7 +897,414 @@ dtvSetCpuBankSegment1: {
     .byte $32, $00
     rts
 }
-gfx_init_screen_stdchar: {
+gfx_init_vic_bitmap: {
+    .const lines_cnt = 9
+    .label l = 2
+    jsr bitmap_init
+    jsr bitmap_clear
+    lda #0
+    sta l
+  b1:
+    ldy l
+    lda lines_x,y
+    sta bitmap_line.x0
+    lda lines_x+1,y
+    sta bitmap_line.x1
+    lda lines_y,y
+    sta bitmap_line.y0
+    ldx l
+    ldy lines_y+1,x
+    jsr bitmap_line
+    inc l
+    lda l
+    cmp #lines_cnt
+    bcc b1
+    rts
+    lines_x: .byte 0, $ff, $ff, 0, 0, $80, $ff, $80, 0, $80
+    lines_y: .byte 0, 0, $c7, $c7, 0, 0, $64, $c7, $64, 0
+}
+bitmap_line: {
+    .label xd = 3
+    .label yd = 4
+    .label x0 = $d
+    .label x1 = $e
+    .label y0 = 5
+    lda x0
+    cmp x1
+    bcs b1
+    lda x1
+    sec
+    sbc x0
+    sta xd
+    lda y0
+    sty $ff
+    cmp $ff
+    bcs b2
+    tya
+    sec
+    sbc y0
+    sta yd
+    cmp xd
+    bcs b3
+    ldx x0
+    lda x1
+    sta bitmap_line_xdyi.x1
+    jsr bitmap_line_xdyi
+  breturn:
+    rts
+  b3:
+    lda y0
+    sta bitmap_line_ydxi.y
+    ldx x0
+    sty bitmap_line_ydxi.y1
+    jsr bitmap_line_ydxi
+    jmp breturn
+  b2:
+    tya
+    eor #$ff
+    sec
+    adc y0
+    sta yd
+    cmp xd
+    bcs b6
+    ldx x0
+    jsr bitmap_line_xdyd
+    jmp breturn
+  b6:
+    sty bitmap_line_ydxd.y
+    ldx x1
+    jsr bitmap_line_ydxd
+    jmp breturn
+  b1:
+    lda x0
+    sec
+    sbc x1
+    sta xd
+    lda y0
+    sty $ff
+    cmp $ff
+    bcs b9
+    tya
+    sec
+    sbc y0
+    sta yd
+    cmp xd
+    bcs b10
+    ldx x1
+    sty bitmap_line_xdyd.y
+    lda x0
+    sta bitmap_line_xdyd.x1
+    jsr bitmap_line_xdyd
+    jmp breturn
+  b10:
+    lda y0
+    sta bitmap_line_ydxd.y
+    ldx x0
+    sty bitmap_line_ydxd.y1
+    jsr bitmap_line_ydxd
+    jmp breturn
+  b9:
+    tya
+    eor #$ff
+    sec
+    adc y0
+    sta yd
+    cmp xd
+    bcs b13
+    ldx x1
+    sty bitmap_line_xdyi.y
+    jsr bitmap_line_xdyi
+    jmp breturn
+  b13:
+    sty bitmap_line_ydxi.y
+    ldx x1
+    jsr bitmap_line_ydxi
+    jmp breturn
+}
+bitmap_line_ydxi: {
+    .label y = 6
+    .label y1 = 5
+    .label yd = 4
+    .label xd = 3
+    .label e = $d
+    lda xd
+    lsr
+    sta e
+  b1:
+    ldy y
+    jsr bitmap_plot
+    inc y
+    lda e
+    clc
+    adc xd
+    sta e
+    lda yd
+    cmp e
+    bcs b2
+    inx
+    lda e
+    sec
+    sbc yd
+    sta e
+  b2:
+    ldy y1
+    iny
+    cpy y
+    bne b1
+    rts
+}
+bitmap_plot: {
+    .label _0 = 7
+    .label plotter_x = 7
+    .label plotter_y = 9
+    lda bitmap_plot_xhi,x
+    sta plotter_x+1
+    lda bitmap_plot_xlo,x
+    sta plotter_x
+    lda bitmap_plot_yhi,y
+    sta plotter_y+1
+    lda bitmap_plot_ylo,y
+    sta plotter_y
+    lda _0
+    clc
+    adc plotter_y
+    sta _0
+    lda _0+1
+    adc plotter_y+1
+    sta _0+1
+    lda bitmap_plot_bit,x
+    ldy #0
+    ora (_0),y
+    sta (_0),y
+    rts
+}
+bitmap_line_xdyi: {
+    .label _6 = $e
+    .label y = 5
+    .label x1 = $d
+    .label xd = 3
+    .label yd = 4
+    .label e = 6
+    lda yd
+    lsr
+    sta e
+  b1:
+    ldy y
+    jsr bitmap_plot
+    inx
+    lda e
+    clc
+    adc yd
+    sta e
+    lda xd
+    cmp e
+    bcs b2
+    inc y
+    lda e
+    sec
+    sbc xd
+    sta e
+  b2:
+    ldy x1
+    iny
+    sty _6
+    cpx _6
+    bne b1
+    rts
+}
+bitmap_line_ydxd: {
+    .label y = 6
+    .label y1 = 5
+    .label yd = 4
+    .label xd = 3
+    .label e = $d
+    lda xd
+    lsr
+    sta e
+  b1:
+    ldy y
+    jsr bitmap_plot
+    inc y
+    lda e
+    clc
+    adc xd
+    sta e
+    lda yd
+    cmp e
+    bcs b2
+    dex
+    lda e
+    sec
+    sbc yd
+    sta e
+  b2:
+    ldy y1
+    iny
+    cpy y
+    bne b1
+    rts
+}
+bitmap_line_xdyd: {
+    .label _6 = $d
+    .label y = 5
+    .label x1 = $e
+    .label xd = 3
+    .label yd = 4
+    .label e = 6
+    lda yd
+    lsr
+    sta e
+  b1:
+    ldy y
+    jsr bitmap_plot
+    inx
+    lda e
+    clc
+    adc yd
+    sta e
+    lda xd
+    cmp e
+    bcs b2
+    dec y
+    lda e
+    sec
+    sbc xd
+    sta e
+  b2:
+    ldy x1
+    iny
+    sty _6
+    cpx _6
+    bne b1
+    rts
+}
+bitmap_clear: {
+    .label bitmap = 7
+    .label y = 2
+    .label _3 = 7
+    lda bitmap_plot_xlo+0
+    sta _3
+    lda bitmap_plot_xhi+0
+    sta _3+1
+    lda #0
+    sta y
+  b1:
+    ldx #0
+  b2:
+    lda #0
+    tay
+    sta (bitmap),y
+    inc bitmap
+    bne !+
+    inc bitmap+1
+  !:
+    inx
+    cpx #$c8
+    bne b2
+    inc y
+    lda y
+    cmp #$28
+    bne b1
+    rts
+}
+bitmap_init: {
+    .label _6 = 2
+    .label yoffs = 7
+    ldy #$80
+    ldx #0
+  b1:
+    txa
+    and #$f8
+    sta bitmap_plot_xlo,x
+    lda #>VIC_BITMAP
+    sta bitmap_plot_xhi,x
+    tya
+    sta bitmap_plot_bit,x
+    tya
+    lsr
+    tay
+    cpy #0
+    bne b2
+    ldy #$80
+  b2:
+    inx
+    cpx #0
+    bne b1
+    lda #<0
+    sta yoffs
+    sta yoffs+1
+    tax
+  b3:
+    txa
+    and #7
+    sta _6
+    lda yoffs
+    ora _6
+    sta bitmap_plot_ylo,x
+    lda yoffs+1
+    sta bitmap_plot_yhi,x
+    txa
+    and #7
+    cmp #7
+    bne b4
+    clc
+    lda yoffs
+    adc #<$28*8
+    sta yoffs
+    lda yoffs+1
+    adc #>$28*8
+    sta yoffs+1
+  b4:
+    inx
+    cpx #0
+    bne b3
+    rts
+}
+gfx_init_vic_screen_bitmap: {
+    .label col2 = 3
+    .label ch = 7
+    .label cy = 2
+    lda #<VIC_SCREEN_BITMAP
+    sta ch
+    lda #>VIC_SCREEN_BITMAP
+    sta ch+1
+    lda #0
+    sta cy
+  b1:
+    ldx #0
+  b2:
+    txa
+    clc
+    adc cy
+    and #$f
+    tay
+    tya
+    eor #$ff
+    clc
+    adc #$f+1
+    sta col2
+    tya
+    asl
+    asl
+    asl
+    asl
+    ora col2
+    ldy #0
+    sta (ch),y
+    inc ch
+    bne !+
+    inc ch+1
+  !:
+    inx
+    cpx #$28
+    bne b2
+    inc cy
+    lda cy
+    cmp #$19
+    bne b1
+    rts
+}
+gfx_init_vic_screen_stdchar: {
     .label _1 = 3
     .label ch = 7
     .label cy = 2
@@ -936,6 +1355,11 @@ keyboard_init: {
   keyboard_matrix_col_bitmask: .byte 1, 2, 4, 8, $10, $20, $40, $80
   keyboard_events: .fill 8, 0
   keyboard_scan_values: .fill 8, 0
+  bitmap_plot_xlo: .fill $100, 0
+  bitmap_plot_xhi: .fill $100, 0
+  bitmap_plot_ylo: .fill $100, 0
+  bitmap_plot_yhi: .fill $100, 0
+  bitmap_plot_bit: .fill $100, 0
   form_fields_x: .byte $16, 7, 7, 7, 7, 7, 7, 7, $11, $11, $11, $10, $11, $10, $11, $10, $11, $1b, $1a, $1b, $1a, $1b, $1a, $1b, $26, $26, $26, $25, $26, $25, $26, $25, $26, $25, $26
   form_fields_y: .byte 0, 2, 3, 4, 5, 6, 7, 8, 7, 8, 2, 3, 3, 4, 4, 5, 5, 2, 3, 3, 4, 4, 5, 5, 2, 3, 4, 5, 5, 6, 6, 7, 7, 8, 8
   form_fields_max: .byte $d, 1, 1, 1, 1, 1, 1, 1, 1, 1, $f, $f, $f, $f, $f, $f, $f, $f, $f, $f, $f, $f, $f, $f, $f, $f, $f, $f, $f, $f, $f, $f, $f, $f, $f

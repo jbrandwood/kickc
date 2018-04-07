@@ -2,6 +2,7 @@
 import "c64dtv.kc"
 import "print.kc"
 import "keyboard.kc"
+import "bitmap-draw.kc"
 
 void main() {
     asm { sei }  // Disable normal interrupt (prevent keyboard reading glitches)
@@ -17,8 +18,15 @@ void main() {
     }
 }
 
-// Standard charset screen
+// VIC Screen: standard charset screen
 const byte* VIC_SCREEN_STDCHAR = $8400;
+const byte* VIC_SCREEN_BITMAP = $8800;
+
+// VIC Charset from ROM
+const byte* VIC_CHARSET_ROM = $9800;
+
+// VIC Bitmap
+const byte* VIC_BITMAP = $a000;
 
 // 8BPP Chunky Bitmap (contains 8bpp pixels)
 const dword PLANE_8BPP_CHUNKY = $20000;
@@ -27,7 +35,6 @@ const dword PLANE_8BPP_CHUNKY = $20000;
 const byte* FORM_SCREEN = $8000;
 // Charset used for the FORM
 const byte* FORM_CHARSET = $9800; // Charset ROM
-
 
 byte[] FORM_COLS =
      "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa@" +
@@ -160,6 +167,7 @@ void gfx_mode() {
     *DTV_PLANEB_MODULO_HI = 0;
 
     // Bakground colors
+    *BORDERCOL = 0;
     *BGCOL1 = *form_vic_bg0_hi<<4|*form_vic_bg0_lo;
     *BGCOL2 = *form_vic_bg1_hi<<4|*form_vic_bg1_lo;
     *BGCOL3 = *form_vic_bg2_hi<<4|*form_vic_bg2_lo;
@@ -186,17 +194,49 @@ void gfx_mode() {
 
 // Initialize the different graphics in the memory
 void gfx_init() {
-    gfx_init_screen_stdchar();
+    (*BGCOL)++;
+    gfx_init_vic_screen_stdchar();
+    (*BGCOL)++;
+    gfx_init_vic_screen_bitmap();
+    (*BGCOL)++;
+    gfx_init_vic_bitmap();
+    (*BGCOL)++;
     gfx_init_plane_8bppchunky();
+    (*BGCOL)++;
 }
 
-// Initialize std char screen
-void gfx_init_screen_stdchar() {
+// Initialize VIC std char screen
+void gfx_init_vic_screen_stdchar() {
     byte* ch=VIC_SCREEN_STDCHAR;
     for(byte cy: 0..24 ) {
         for(byte cx: 0..39) {
             *ch++ = (cy&$f)<<4|(cx&$f);
         }
+    }
+}
+
+// Initialize VIC bitmap screen
+void gfx_init_vic_screen_bitmap() {
+    byte* ch=VIC_SCREEN_BITMAP;
+    for(byte cy: 0..24 ) {
+        for(byte cx: 0..39) {
+            byte col = (cx+cy)&$f;
+            byte col2 = ($f-col);
+            *ch++ = col<<4 | col2;
+        }
+    }
+}
+
+// Initialize VIC bitmap
+void gfx_init_vic_bitmap() {
+    // Draw some lines on the bitmap
+    bitmap_init(VIC_BITMAP);
+    bitmap_clear();
+    byte[] lines_x = { $00, $ff, $ff, $00, $00, $80, $ff, $80, $00, $80 };
+    byte[] lines_y = { $00, $00, $c7, $c7, $00, $00, $64, $c7, $64, $00 };
+    byte lines_cnt = 9;
+    for(byte l=0; l<lines_cnt;l++) {
+        bitmap_line(lines_x[l], lines_x[l+1], lines_y[l], lines_y[l+1]);
     }
 }
 
@@ -260,6 +300,7 @@ void form_mode() {
     }
     // Screen colors
     *BGCOL = 0;
+    *BORDERCOL = 0;
 
     // Let the user change values in the form
     while(true) {

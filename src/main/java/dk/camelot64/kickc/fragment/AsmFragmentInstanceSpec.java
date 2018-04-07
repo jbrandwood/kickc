@@ -270,9 +270,7 @@ public class AsmFragmentInstanceSpec {
     * @param value The value
     */
    private void bind(String name, Value value) {
-      if(bindings.get(name) == null) {
-         bindings.put(name, value);
-      }
+      bindings.putIfAbsent(name, value);
    }
 
    /**

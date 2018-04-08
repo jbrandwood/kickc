@@ -1,6 +1,10 @@
 .pc = $801 "Basic"
 :BasicUpstart(main)
 .pc = $80d "Program"
+  .label PROCPORT_DDR = 0
+  .const PROCPORT_DDR_MEMORY_MASK = 7
+  .label PROCPORT = 1
+  .const PROCPORT_RAM_IO = $35
   .label RASTER = $d012
   .label BORDERCOL = $d020
   .label BGCOL = $d021
@@ -61,13 +65,20 @@
   .const KEY_MODIFIER_RSHIFT = 2
   .const KEY_MODIFIER_CTRL = 4
   .const KEY_MODIFIER_COMMODORE = 8
-  .label VIC_SCREEN_STDCHAR = $8400
-  .label VIC_SCREEN_BITMAP = $8800
+  .label VIC_SCREEN0 = $8000
+  .label VIC_SCREEN1 = $8400
+  .label VIC_SCREEN2 = $8800
+  .label VIC_SCREEN3 = $8c00
+  .label VIC_CHARSET_ROM = $9800
   .label VIC_BITMAP = $a000
   .const PLANE_8BPP_CHUNKY = $20000
-  .label FORM_SCREEN = $8000
-  .label FORM_CHARSET = $9800
-  .const form_fields_cnt = $23
+  .const PLANE_HORISONTAL = $30000
+  .const PLANE_VERTICAL = $32000
+  .const PLANE_HORISONTAL2 = $34000
+  .const PLANE_VERTICAL2 = $36000
+  .label FORM_SCREEN = $400
+  .label FORM_CHARSET = $1800
+  .const form_fields_cnt = $24
   .const FORM_CURSOR_BLINK = $28
   .const KEY_MODIFIER_SHIFT = KEY_MODIFIER_LSHIFT|KEY_MODIFIER_RSHIFT
   .label form_ctrl_bmm = form_fields_val+1
@@ -79,18 +90,23 @@
   .label form_ctrl_chunk = form_fields_val+7
   .label form_ctrl_borof = form_fields_val+8
   .label form_ctrl_overs = form_fields_val+9
+  .label form_a_pattern = form_fields_val+$a
   .label form_a_start_hi = form_fields_val+$b
   .label form_a_start_lo = form_fields_val+$c
   .label form_a_step_hi = form_fields_val+$d
   .label form_a_step_lo = form_fields_val+$e
   .label form_a_mod_hi = form_fields_val+$f
   .label form_a_mod_lo = form_fields_val+$10
+  .label form_b_pattern = form_fields_val+$11
   .label form_b_start_hi = form_fields_val+$12
   .label form_b_start_lo = form_fields_val+$13
   .label form_b_step_hi = form_fields_val+$14
   .label form_b_step_lo = form_fields_val+$15
   .label form_b_mod_hi = form_fields_val+$16
   .label form_b_mod_lo = form_fields_val+$17
+  .label form_vic_screen = form_fields_val+$18
+  .label form_vic_gfx = form_fields_val+$19
+  .label form_vic_cols = form_fields_val+$1a
   .label form_vic_bg0_hi = form_fields_val+$1b
   .label form_vic_bg0_lo = form_fields_val+$1c
   .label form_vic_bg1_hi = form_fields_val+$1d
@@ -99,20 +115,24 @@
   .label form_vic_bg2_lo = form_fields_val+$20
   .label form_vic_bg3_hi = form_fields_val+$21
   .label form_vic_bg3_lo = form_fields_val+$22
-  .label print_char_cursor = 9
-  .label print_line_cursor = $b
-  .label keyboard_events_size = 4
-  .label keyboard_modifiers = 3
-  .label form_cursor_count = 5
-  .label form_field_idx = 6
+  .label form_dtv_palet = form_fields_val+$23
+  .label print_char_cursor = 5
+  .label print_line_cursor = $f
+  .label keyboard_events_size = 8
+  .label keyboard_modifiers = 7
+  .label form_cursor_count = $d
+  .label form_field_idx = $e
   jsr main
 main: {
     sei
+    lda #PROCPORT_DDR_MEMORY_MASK
+    sta PROCPORT_DDR
+    lda #PROCPORT_RAM_IO
+    sta PROCPORT
     lda #DTV_FEATURE_ENABLE
     sta DTV_FEATURE
     jsr keyboard_init
     jsr gfx_init
-    jsr form_init
     lda #0
     sta form_field_idx
     sta keyboard_modifiers
@@ -125,14 +145,25 @@ main: {
     jmp b2
 }
 gfx_mode: {
-    .label _33 = 7
-    .label _35 = 7
-    .label _37 = 7
-    .label _46 = 7
-    .label _48 = 7
-    .label _50 = 7
-    .label plane_a = $f
-    .label plane_b = $f
+    .label _31 = 9
+    .label _33 = 3
+    .label _35 = 3
+    .label _37 = 3
+    .label _45 = 9
+    .label _47 = 3
+    .label _49 = 3
+    .label _51 = 3
+    .label _61 = 3
+    .label _63 = 3
+    .label _64 = 3
+    .label _65 = 2
+    .label _66 = 3
+    .label _68 = 3
+    .label plane_a = 9
+    .label plane_b = 9
+    .label vic_colors = 3
+    .label col = 5
+    .label cy = 2
     lda form_ctrl_line
     cmp #0
     beq b12
@@ -179,10 +210,10 @@ gfx_mode: {
     stx DTV_CONTROL
     lda form_ctrl_ecm
     cmp #0
-    beq b13
+    beq b14
     ldx #VIC_DEN|VIC_RSEL|3|VIC_ECM
     jmp b7
-  b13:
+  b14:
     ldx #VIC_DEN|VIC_RSEL|3
   b7:
     lda form_ctrl_bmm
@@ -195,10 +226,10 @@ gfx_mode: {
     stx VIC_CONTROL
     lda form_ctrl_mcm
     cmp #0
-    beq b15
+    beq b17
     lda #VIC_CSEL|VIC_MCM
     jmp b9
-  b15:
+  b17:
     lda #VIC_CSEL
   b9:
     sta VIC_CONTROL2
@@ -208,16 +239,21 @@ gfx_mode: {
     asl
     asl
     ora form_a_start_lo
+    tax
+    lda form_a_pattern
+    jsr get_plane
+    txa
     clc
-    adc #<$ffffffff&FORM_SCREEN
+    adc plane_a
     sta plane_a
-    lda #0
-    adc #>$ffffffff&FORM_SCREEN
+    lda plane_a+1
+    adc #0
     sta plane_a+1
-    lda #0
+    lda plane_a+2
     adc #0
     sta plane_a+2
-    lda #0
+    lda plane_a+3
+    adc #0
     sta plane_a+3
     lda plane_a
     sta _33
@@ -258,34 +294,38 @@ gfx_mode: {
     asl
     asl
     ora form_b_start_lo
+    tax
+    lda form_b_pattern
+    jsr get_plane
+    txa
     clc
-    adc #<PLANE_8BPP_CHUNKY
+    adc plane_b
     sta plane_b
-    lda #>PLANE_8BPP_CHUNKY
+    lda plane_b+1
     adc #0
     sta plane_b+1
-    lda #<PLANE_8BPP_CHUNKY>>$10
+    lda plane_b+2
     adc #0
     sta plane_b+2
-    lda #>PLANE_8BPP_CHUNKY>>$10
+    lda plane_b+3
     adc #0
     sta plane_b+3
     lda plane_b
-    sta _46
+    sta _47
     lda plane_b+1
-    sta _46+1
-    lda _46
+    sta _47+1
+    lda _47
     sta DTV_PLANEB_START_LO
     lda plane_b
-    sta _48
+    sta _49
     lda plane_b+1
-    sta _48+1
+    sta _49+1
     sta DTV_PLANEB_START_MI
     lda plane_b+2
-    sta _50
+    sta _51
     lda plane_b+3
-    sta _50+1
-    lda _50
+    sta _51+1
+    lda _51
     sta DTV_PLANEB_START_HI
     lda form_b_step_hi
     asl
@@ -303,6 +343,68 @@ gfx_mode: {
     sta DTV_PLANEB_MODULO_LO
     lda #0
     sta DTV_PLANEB_MODULO_HI
+    lda #3
+    sta CIA2_PORT_A_DDR
+    lda #3^VIC_SCREEN0/$4000
+    sta CIA2_PORT_A
+    lda form_vic_screen
+    jsr get_vic_screen
+    lda _63
+    and #<$3fff
+    sta _63
+    lda _63+1
+    and #>$3fff
+    sta _63+1
+    ldy #6
+  !:
+    lsr _64+1
+    ror _64
+    dey
+    bne !-
+    lda _64
+    sta _65
+    lda form_vic_gfx
+    jsr get_vic_charset
+    lda _68
+    and #<$3fff
+    sta _68
+    lda _68+1
+    and #>$3fff
+    sta _68+1
+    lsr
+    lsr
+    ora _65
+    sta VIC_MEMORY
+    lda form_vic_cols
+    jsr get_vic_screen
+    lda #0
+    sta cy
+    lda #<COLS
+    sta col
+    lda #>COLS
+    sta col+1
+  b10:
+    ldx #0
+  b11:
+    ldy #0
+    lda (vic_colors),y
+    sta (col),y
+    inc col
+    bne !+
+    inc col+1
+  !:
+    inc vic_colors
+    bne !+
+    inc vic_colors+1
+  !:
+    inx
+    cpx #$28
+    bne b11
+    inc cy
+    lda cy
+    cmp #$19
+    bne b10
+    lda #0
     sta BORDERCOL
     lda form_vic_bg0_hi
     asl
@@ -332,25 +434,37 @@ gfx_mode: {
     asl
     ora form_vic_bg3_lo
     sta BGCOL4
+    lda form_dtv_palet
+    cmp #0
+    bne b20
     ldx #0
-  b10:
+  b13:
+    lda DTV_PALETTE_DEFAULT,x
+    sta DTV_PALETTE,x
+    inx
+    cpx #$10
+    bne b13
+    jmp b19
+  breturn:
+    rts
+  b19:
+    lda RASTER
+    cmp #$ff
+    bne b19
+    jsr keyboard_event_scan
+    jsr keyboard_event_get
+    cmp #KEY_SPACE
+    bne b19
+    jmp breturn
+  b20:
+    ldx #0
+  b15:
     txa
     sta DTV_PALETTE,x
     inx
     cpx #$10
-    bne b10
-    jmp b14
-  breturn:
-    rts
-  b14:
-    lda RASTER
-    cmp #$ff
-    bne b14
-    jsr keyboard_event_scan
-    jsr keyboard_event_get
-    cmp #KEY_SPACE
-    bne b14
-    jmp breturn
+    bne b15
+    jmp b19
 }
 keyboard_event_get: {
     lda keyboard_events_size
@@ -365,8 +479,8 @@ keyboard_event_get: {
     jmp breturn
 }
 keyboard_event_scan: {
-    .label row_scan = $d
-    .label keycode = 3
+    .label row_scan = $11
+    .label keycode = 7
     .label row = 2
     lda #0
     sta keycode
@@ -489,7 +603,225 @@ keyboard_matrix_read: {
     eor #$ff
     rts
 }
+get_vic_screen: {
+    .label return = 3
+    cmp #0
+    bne b1
+  b2:
+    lda #<VIC_SCREEN0
+    sta return
+    lda #>VIC_SCREEN0
+    sta return+1
+  breturn:
+    rts
+  b1:
+    cmp #1
+    bne b3
+    lda #<VIC_SCREEN1
+    sta return
+    lda #>VIC_SCREEN1
+    sta return+1
+    jmp breturn
+  b3:
+    cmp #2
+    bne b5
+    lda #<VIC_SCREEN2
+    sta return
+    lda #>VIC_SCREEN2
+    sta return+1
+    jmp breturn
+  b5:
+    cmp #3
+    bne b2
+    lda #<VIC_SCREEN3
+    sta return
+    lda #>VIC_SCREEN3
+    sta return+1
+    jmp breturn
+}
+get_vic_charset: {
+    .label return = 3
+    cmp #0
+    bne b1
+  b2:
+    lda #<VIC_CHARSET_ROM
+    sta return
+    lda #>VIC_CHARSET_ROM
+    sta return+1
+  breturn:
+    rts
+  b1:
+    cmp #1
+    bne b2
+    lda #<VIC_BITMAP
+    sta return
+    lda #>VIC_BITMAP
+    sta return+1
+    jmp breturn
+}
+get_plane: {
+    .label return = 9
+    cmp #0
+    bne b1
+  b2:
+    lda #<$ffffffff&VIC_SCREEN0
+    sta return
+    lda #>$ffffffff&VIC_SCREEN0
+    sta return+1
+    lda #<$ffffffff&VIC_SCREEN0>>$10
+    sta return+2
+    lda #>$ffffffff&VIC_SCREEN0>>$10
+    sta return+3
+  breturn:
+    rts
+  b1:
+    cmp #1
+    bne b3
+    lda #<$ffffffff&VIC_SCREEN1
+    sta return
+    lda #>$ffffffff&VIC_SCREEN1
+    sta return+1
+    lda #<$ffffffff&VIC_SCREEN1>>$10
+    sta return+2
+    lda #>$ffffffff&VIC_SCREEN1>>$10
+    sta return+3
+    jmp breturn
+  b3:
+    cmp #2
+    bne b5
+    lda #<$ffffffff&VIC_SCREEN2
+    sta return
+    lda #>$ffffffff&VIC_SCREEN2
+    sta return+1
+    lda #<$ffffffff&VIC_SCREEN2>>$10
+    sta return+2
+    lda #>$ffffffff&VIC_SCREEN2>>$10
+    sta return+3
+    jmp breturn
+  b5:
+    cmp #3
+    bne b7
+    lda #<$ffffffff&VIC_SCREEN3
+    sta return
+    lda #>$ffffffff&VIC_SCREEN3
+    sta return+1
+    lda #<$ffffffff&VIC_SCREEN3>>$10
+    sta return+2
+    lda #>$ffffffff&VIC_SCREEN3>>$10
+    sta return+3
+    jmp breturn
+  b7:
+    cmp #4
+    bne b9
+    lda #<$ffffffff&VIC_BITMAP
+    sta return
+    lda #>$ffffffff&VIC_BITMAP
+    sta return+1
+    lda #<$ffffffff&VIC_BITMAP>>$10
+    sta return+2
+    lda #>$ffffffff&VIC_BITMAP>>$10
+    sta return+3
+    jmp breturn
+  b9:
+    cmp #5
+    bne b11
+    lda #<$ffffffff&VIC_CHARSET_ROM
+    sta return
+    lda #>$ffffffff&VIC_CHARSET_ROM
+    sta return+1
+    lda #<$ffffffff&VIC_CHARSET_ROM>>$10
+    sta return+2
+    lda #>$ffffffff&VIC_CHARSET_ROM>>$10
+    sta return+3
+    jmp breturn
+  b11:
+    cmp #6
+    bne b13
+    lda #<PLANE_8BPP_CHUNKY
+    sta return
+    lda #>PLANE_8BPP_CHUNKY
+    sta return+1
+    lda #<PLANE_8BPP_CHUNKY>>$10
+    sta return+2
+    lda #>PLANE_8BPP_CHUNKY>>$10
+    sta return+3
+    jmp breturn
+  b13:
+    cmp #7
+    bne b15
+    lda #<PLANE_HORISONTAL
+    sta return
+    lda #>PLANE_HORISONTAL
+    sta return+1
+    lda #<PLANE_HORISONTAL>>$10
+    sta return+2
+    lda #>PLANE_HORISONTAL>>$10
+    sta return+3
+    jmp breturn
+  b15:
+    cmp #8
+    bne b17
+    lda #<PLANE_VERTICAL
+    sta return
+    lda #>PLANE_VERTICAL
+    sta return+1
+    lda #<PLANE_VERTICAL>>$10
+    sta return+2
+    lda #>PLANE_VERTICAL>>$10
+    sta return+3
+    jmp breturn
+  b17:
+    cmp #9
+    bne b19
+    lda #<PLANE_HORISONTAL2
+    sta return
+    lda #>PLANE_HORISONTAL2
+    sta return+1
+    lda #<PLANE_HORISONTAL2>>$10
+    sta return+2
+    lda #>PLANE_HORISONTAL2>>$10
+    sta return+3
+    jmp breturn
+  b19:
+    cmp #$a
+    beq !b2+
+    jmp b2
+  !b2:
+    lda #<PLANE_VERTICAL2
+    sta return
+    lda #>PLANE_VERTICAL2
+    sta return+1
+    lda #<PLANE_VERTICAL2>>$10
+    sta return+2
+    lda #>PLANE_VERTICAL2>>$10
+    sta return+3
+    jmp breturn
+}
 form_mode: {
+    lda #<COLS
+    sta print_set_screen.screen
+    lda #>COLS
+    sta print_set_screen.screen+1
+    jsr print_set_screen
+    jsr print_cls
+    lda #<FORM_COLS
+    sta print_str_lines.str
+    lda #>FORM_COLS
+    sta print_str_lines.str+1
+    jsr print_str_lines
+    lda #<FORM_SCREEN
+    sta print_set_screen.screen
+    lda #>FORM_SCREEN
+    sta print_set_screen.screen+1
+    jsr print_set_screen
+    jsr print_cls
+    lda #<FORM_TEXT
+    sta print_str_lines.str
+    lda #>FORM_TEXT
+    sta print_str_lines.str+1
+    jsr print_str_lines
+    jsr form_set_screen
+    jsr form_render_values
     lda #($ffffffff&FORM_CHARSET)/$10000
     sta DTV_GRAPHICS_VIC_BANK
     lda #DTV_COLOR_BANK_DEFAULT/$400
@@ -508,7 +840,13 @@ form_mode: {
     sta VIC_CONTROL2
     lda #(FORM_SCREEN&$3fff)/$40|(FORM_CHARSET&$3fff)/$400
     sta VIC_MEMORY
-    ldx #0
+    lda #<FORM_SCREEN
+    sta DTV_PLANEA_START_LO
+    lda #>FORM_SCREEN
+    sta DTV_PLANEA_START_MI
+    lda #0
+    sta DTV_PLANEA_START_HI
+    tax
   b1:
     lda DTV_PALETTE_DEFAULT,x
     sta DTV_PALETTE,x
@@ -532,7 +870,7 @@ form_mode: {
     jmp breturn
 }
 form_control: {
-    .label field = 7
+    .label field = 3
     ldx form_field_idx
     jsr form_field_ptr
     dec form_cursor_count
@@ -640,8 +978,8 @@ form_control: {
     jmp b3
 }
 form_field_ptr: {
-    .label return = 7
-    .label _2 = 7
+    .label return = 3
+    .label _2 = 3
     ldy form_fields_y,x
     lda form_line_hi,y
     sta _2+1
@@ -656,35 +994,8 @@ form_field_ptr: {
     sta return+1
     rts
 }
-form_init: {
-    lda #<COLS
-    sta print_set_screen.screen
-    lda #>COLS
-    sta print_set_screen.screen+1
-    jsr print_set_screen
-    jsr print_cls
-    lda #<FORM_COLS
-    sta print_str_lines.str
-    lda #>FORM_COLS
-    sta print_str_lines.str+1
-    jsr print_str_lines
-    lda #<FORM_SCREEN
-    sta print_set_screen.screen
-    lda #>FORM_SCREEN
-    sta print_set_screen.screen+1
-    jsr print_set_screen
-    jsr print_cls
-    lda #<FORM_TEXT
-    sta print_str_lines.str
-    lda #>FORM_TEXT
-    sta print_str_lines.str+1
-    jsr print_str_lines
-    jsr form_set_screen
-    jsr form_render_values
-    rts
-}
 form_render_values: {
-    .label field = 7
+    .label field = 3
     ldx #0
   b1:
     jsr form_field_ptr
@@ -699,7 +1010,7 @@ form_render_values: {
     rts
 }
 form_set_screen: {
-    .label line = 7
+    .label line = 3
     ldx #0
     lda #<FORM_SCREEN
     sta line
@@ -723,7 +1034,7 @@ form_set_screen: {
     rts
 }
 print_str_lines: {
-    .label str = 7
+    .label str = 3
     lda print_set_screen.screen
     sta print_char_cursor
     lda print_set_screen.screen+1
@@ -779,8 +1090,8 @@ print_ln: {
     rts
 }
 print_cls: {
-    .label _0 = 9
-    .label sc = 7
+    .label _0 = 5
+    .label sc = 3
     lda print_set_screen.screen
     sta sc
     lda print_set_screen.screen+1
@@ -809,25 +1120,185 @@ print_cls: {
     rts
 }
 print_set_screen: {
-    .label screen = $b
+    .label screen = $f
     rts
 }
 gfx_init: {
-    inc BGCOL
-    jsr gfx_init_vic_screen_stdchar
-    inc BGCOL
-    jsr gfx_init_vic_screen_bitmap
-    inc BGCOL
+    jsr gfx_init_screen0
+    jsr gfx_init_screen1
+    jsr gfx_init_screen2
+    jsr gfx_init_screen3
     jsr gfx_init_vic_bitmap
-    inc BGCOL
     jsr gfx_init_plane_8bppchunky
-    inc BGCOL
+    jsr gfx_init_plane_horisontal
+    jsr gfx_init_plane_vertical
+    jsr gfx_init_plane_horisontal2
+    jsr gfx_init_plane_vertical2
     rts
 }
+gfx_init_plane_vertical2: {
+    .const gfxbCpuBank = PLANE_VERTICAL2/$4000
+    .label gfxb = 3
+    .label by = 2
+    lda #gfxbCpuBank
+    jsr dtvSetCpuBankSegment1
+    lda #0
+    sta by
+    lda #<$4000+(PLANE_VERTICAL2&$3fff)
+    sta gfxb
+    lda #>$4000+(PLANE_VERTICAL2&$3fff)
+    sta gfxb+1
+  b1:
+    ldx #0
+  b2:
+    lda #$1b
+    ldy #0
+    sta (gfxb),y
+    inc gfxb
+    bne !+
+    inc gfxb+1
+  !:
+    inx
+    cpx #$28
+    bne b2
+    inc by
+    lda by
+    cmp #$c8
+    bne b1
+    lda #$4000/$4000
+    jsr dtvSetCpuBankSegment1
+    rts
+}
+dtvSetCpuBankSegment1: {
+    .label cpuBank = $ff
+    sta cpuBank
+    .byte $32, $dd
+    lda $ff
+    .byte $32, $00
+    rts
+}
+gfx_init_plane_horisontal2: {
+    .const gfxbCpuBank = PLANE_HORISONTAL2/$4000
+    .label gfxa = 3
+    .label ay = 2
+    lda #gfxbCpuBank
+    jsr dtvSetCpuBankSegment1
+    lda #<$4000+(PLANE_HORISONTAL2&$3fff)
+    sta gfxa
+    lda #>$4000+(PLANE_HORISONTAL2&$3fff)
+    sta gfxa+1
+    lda #0
+    sta ay
+  b1:
+    ldx #0
+  b2:
+    lda ay
+    lsr
+    and #3
+    tay
+    lda row_bitmask,y
+    ldy #0
+    sta (gfxa),y
+    inc gfxa
+    bne !+
+    inc gfxa+1
+  !:
+    inx
+    cpx #$28
+    bne b2
+    inc ay
+    lda ay
+    cmp #$c8
+    bne b1
+    lda #$4000/$4000
+    jsr dtvSetCpuBankSegment1
+    rts
+    row_bitmask: .byte 0, $55, $aa, $ff
+}
+gfx_init_plane_vertical: {
+    .const gfxbCpuBank = PLANE_VERTICAL/$4000
+    .label gfxb = 3
+    .label by = 2
+    lda #gfxbCpuBank
+    jsr dtvSetCpuBankSegment1
+    lda #0
+    sta by
+    lda #<$4000+(PLANE_VERTICAL&$3fff)
+    sta gfxb
+    lda #>$4000+(PLANE_VERTICAL&$3fff)
+    sta gfxb+1
+  b1:
+    ldx #0
+  b2:
+    lda #$f
+    ldy #0
+    sta (gfxb),y
+    inc gfxb
+    bne !+
+    inc gfxb+1
+  !:
+    inx
+    cpx #$28
+    bne b2
+    inc by
+    lda by
+    cmp #$c8
+    bne b1
+    lda #$4000/$4000
+    jsr dtvSetCpuBankSegment1
+    rts
+}
+gfx_init_plane_horisontal: {
+    .const gfxbCpuBank = PLANE_HORISONTAL/$4000
+    .label gfxa = 3
+    .label ay = 2
+    lda #gfxbCpuBank
+    jsr dtvSetCpuBankSegment1
+    lda #<$4000+(PLANE_HORISONTAL&$3fff)
+    sta gfxa
+    lda #>$4000+(PLANE_HORISONTAL&$3fff)
+    sta gfxa+1
+    lda #0
+    sta ay
+  b1:
+    ldx #0
+  b2:
+    lda #4
+    and ay
+    cmp #0
+    bne b3
+    lda #0
+    tay
+    sta (gfxa),y
+    inc gfxa
+    bne !+
+    inc gfxa+1
+  !:
+  b4:
+    inx
+    cpx #$28
+    bne b2
+    inc ay
+    lda ay
+    cmp #$c8
+    bne b1
+    lda #$4000/$4000
+    jsr dtvSetCpuBankSegment1
+    rts
+  b3:
+    lda #$ff
+    ldy #0
+    sta (gfxa),y
+    inc gfxa
+    bne !+
+    inc gfxa+1
+  !:
+    jmp b4
+}
 gfx_init_plane_8bppchunky: {
-    .label _6 = $b
-    .label gfxb = 9
-    .label x = 7
+    .label _6 = $f
+    .label gfxb = 5
+    .label x = 3
     .label y = 2
     lda #PLANE_8BPP_CHUNKY/$4000
     jsr dtvSetCpuBankSegment1
@@ -889,14 +1360,6 @@ gfx_init_plane_8bppchunky: {
     jsr dtvSetCpuBankSegment1
     rts
 }
-dtvSetCpuBankSegment1: {
-    .label cpuBank = $ff
-    sta cpuBank
-    .byte $32, $dd
-    lda $ff
-    .byte $32, $00
-    rts
-}
 gfx_init_vic_bitmap: {
     .const lines_cnt = 9
     .label l = 2
@@ -924,11 +1387,11 @@ gfx_init_vic_bitmap: {
     lines_y: .byte 0, 0, $c7, $c7, 0, 0, $64, $c7, $64, 0
 }
 bitmap_line: {
-    .label xd = 3
-    .label yd = 4
-    .label x0 = $d
-    .label x1 = $e
-    .label y0 = 5
+    .label xd = 7
+    .label yd = 8
+    .label x0 = $11
+    .label x1 = $12
+    .label y0 = $d
     lda x0
     cmp x1
     bcs b1
@@ -1022,11 +1485,11 @@ bitmap_line: {
     jmp breturn
 }
 bitmap_line_ydxi: {
-    .label y = 6
-    .label y1 = 5
-    .label yd = 4
-    .label xd = 3
-    .label e = $d
+    .label y = $e
+    .label y1 = $d
+    .label yd = 8
+    .label xd = 7
+    .label e = $11
     lda xd
     lsr
     sta e
@@ -1054,9 +1517,9 @@ bitmap_line_ydxi: {
     rts
 }
 bitmap_plot: {
-    .label _0 = 7
-    .label plotter_x = 7
-    .label plotter_y = 9
+    .label _0 = 3
+    .label plotter_x = 3
+    .label plotter_y = 5
     lda bitmap_plot_xhi,x
     sta plotter_x+1
     lda bitmap_plot_xlo,x
@@ -1079,12 +1542,12 @@ bitmap_plot: {
     rts
 }
 bitmap_line_xdyi: {
-    .label _6 = $e
-    .label y = 5
-    .label x1 = $d
-    .label xd = 3
-    .label yd = 4
-    .label e = 6
+    .label _6 = $12
+    .label y = $d
+    .label x1 = $11
+    .label xd = 7
+    .label yd = 8
+    .label e = $e
     lda yd
     lsr
     sta e
@@ -1113,11 +1576,11 @@ bitmap_line_xdyi: {
     rts
 }
 bitmap_line_ydxd: {
-    .label y = 6
-    .label y1 = 5
-    .label yd = 4
-    .label xd = 3
-    .label e = $d
+    .label y = $e
+    .label y1 = $d
+    .label yd = 8
+    .label xd = 7
+    .label e = $11
     lda xd
     lsr
     sta e
@@ -1145,12 +1608,12 @@ bitmap_line_ydxd: {
     rts
 }
 bitmap_line_xdyd: {
-    .label _6 = $d
-    .label y = 5
-    .label x1 = $e
-    .label xd = 3
-    .label yd = 4
-    .label e = 6
+    .label _6 = $11
+    .label y = $d
+    .label x1 = $12
+    .label xd = 7
+    .label yd = 8
+    .label e = $e
     lda yd
     lsr
     sta e
@@ -1179,9 +1642,9 @@ bitmap_line_xdyd: {
     rts
 }
 bitmap_clear: {
-    .label bitmap = 7
+    .label bitmap = 3
     .label y = 2
-    .label _3 = 7
+    .label _3 = 3
     lda bitmap_plot_xlo+0
     sta _3
     lda bitmap_plot_xhi+0
@@ -1209,7 +1672,7 @@ bitmap_clear: {
 }
 bitmap_init: {
     .label _6 = 2
-    .label yoffs = 7
+    .label yoffs = 3
     ldy #$80
     ldx #0
   b1:
@@ -1260,13 +1723,51 @@ bitmap_init: {
     bne b3
     rts
 }
-gfx_init_vic_screen_bitmap: {
-    .label col2 = 3
-    .label ch = 7
+gfx_init_screen3: {
+    .label _1 = 7
+    .label ch = 3
     .label cy = 2
-    lda #<VIC_SCREEN_BITMAP
+    lda #<VIC_SCREEN3
     sta ch
-    lda #>VIC_SCREEN_BITMAP
+    lda #>VIC_SCREEN3
+    sta ch+1
+    lda #0
+    sta cy
+  b1:
+    ldx #0
+  b2:
+    txa
+    and #3
+    asl
+    asl
+    asl
+    asl
+    sta _1
+    lda #3
+    and cy
+    ora _1
+    ldy #0
+    sta (ch),y
+    inc ch
+    bne !+
+    inc ch+1
+  !:
+    inx
+    cpx #$28
+    bne b2
+    inc cy
+    lda cy
+    cmp #$19
+    bne b1
+    rts
+}
+gfx_init_screen2: {
+    .label col2 = 7
+    .label ch = 3
+    .label cy = 2
+    lda #<VIC_SCREEN2
+    sta ch
+    lda #>VIC_SCREEN2
     sta ch+1
     lda #0
     sta cy
@@ -1304,13 +1805,44 @@ gfx_init_vic_screen_bitmap: {
     bne b1
     rts
 }
-gfx_init_vic_screen_stdchar: {
-    .label _1 = 3
-    .label ch = 7
+gfx_init_screen1: {
+    .label ch = 3
     .label cy = 2
-    lda #<VIC_SCREEN_STDCHAR
+    lda #<VIC_SCREEN1
     sta ch
-    lda #>VIC_SCREEN_STDCHAR
+    lda #>VIC_SCREEN1
+    sta ch+1
+    lda #0
+    sta cy
+  b1:
+    ldx #0
+  b2:
+    txa
+    clc
+    adc cy
+    and #$f
+    ldy #0
+    sta (ch),y
+    inc ch
+    bne !+
+    inc ch+1
+  !:
+    inx
+    cpx #$28
+    bne b2
+    inc cy
+    lda cy
+    cmp #$19
+    bne b1
+    rts
+}
+gfx_init_screen0: {
+    .label _1 = 7
+    .label ch = 3
+    .label cy = 2
+    lda #<VIC_SCREEN0
+    sta ch
+    lda #>VIC_SCREEN0
     sta ch+1
     lda #0
     sta cy
@@ -1360,11 +1892,11 @@ keyboard_init: {
   bitmap_plot_ylo: .fill $100, 0
   bitmap_plot_yhi: .fill $100, 0
   bitmap_plot_bit: .fill $100, 0
-  form_fields_x: .byte $16, 7, 7, 7, 7, 7, 7, 7, $11, $11, $11, $10, $11, $10, $11, $10, $11, $1b, $1a, $1b, $1a, $1b, $1a, $1b, $26, $26, $26, $25, $26, $25, $26, $25, $26, $25, $26
-  form_fields_y: .byte 0, 2, 3, 4, 5, 6, 7, 8, 7, 8, 2, 3, 3, 4, 4, 5, 5, 2, 3, 3, 4, 4, 5, 5, 2, 3, 4, 5, 5, 6, 6, 7, 7, 8, 8
-  form_fields_max: .byte $d, 1, 1, 1, 1, 1, 1, 1, 1, 1, $f, $f, $f, $f, $f, $f, $f, $f, $f, $f, $f, $f, $f, $f, $f, $f, $f, $f, $f, $f, $f, $f, $f, $f, $f
-  form_fields_val: .byte 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
+  form_fields_x: .byte $16, 7, 7, 7, 7, 7, 7, 7, 7, 7, $11, $10, $11, $10, $11, $10, $11, $1b, $1a, $1b, $1a, $1b, $1a, $1b, $26, $26, $26, $25, $26, $25, $26, $25, $26, $25, $26, $26
+  form_fields_y: .byte 0, 3, 4, 5, 6, 7, 8, 9, $a, $b, 3, 4, 4, 5, 5, 6, 6, 3, 4, 4, 5, 5, 6, 6, 3, 4, 5, 6, 6, 7, 7, 8, 8, 9, 9, $b
+  form_fields_max: .byte $d, 1, 1, 1, 1, 1, 1, 1, 1, 1, $a, $f, $f, $f, $f, $f, $f, $a, $f, $f, $f, $f, $f, $f, 3, 1, 3, $f, $f, $f, $f, $f, $f, $f, $f, 1
+  form_fields_val: .byte 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
   form_line_lo: .fill $19, 0
   form_line_hi: .fill $19, 0
-  FORM_COLS: .text "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa@"+" nnnnnnn  mmmmmmmm  mmmmmmmm  ooooooooo @"+" nnnnnnn  mmmmmmmm  mmmmmmmm  ooooooooo @"+" nnnnnnn  mmmmmmmm  mmmmmmmm  ooooooooo @"+" nnnnnnn  mmmmmmmm  mmmmmmmm  ooooooooo @"+" nnnnnnn  mmmmmmmm  mmmmmmmm  ooooooooo @"+" nnnnnnn                      ooooooooo @"+" nnnnnnn  nnnnnnnn            ooooooooo @"+" nnnnnnn  nnnnnnnn            ooooooooo @"+"@"
-  FORM_TEXT: .text " DTV GfxExplorer MODE 0 8bpp pixel cell @"+" CONTROL  PLANE  A  PLANE  B  VIC II    @"+" bmm   0  patt  p0  patt  p0  screen s0 @"+" mcm   0  start 00  start 00  gfx    g0 @"+" ecm   0  step  00  step  00  colors c0 @"+" hicol 0  mod   00  mod   00  bgcol0 00 @"+" line  0                      bgcol1 00 @"+" colof 0  borof  0            bgcol2 00 @"+" chunk 0  overs  0            bgcol3 00 @"+"@"
+  FORM_COLS: .text "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa@"+"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa@"+" nnnnnnn  mmmmmmmm  mmmmmmmm  ooooooooo @"+" nnnnnnn  mmmmmmmm  mmmmmmmm  ooooooooo @"+" nnnnnnn  mmmmmmmm  mmmmmmmm  ooooooooo @"+" nnnnnnn  mmmmmmmm  mmmmmmmm  ooooooooo @"+" nnnnnnn  mmmmmmmm  mmmmmmmm  ooooooooo @"+" nnnnnnn                      ooooooooo @"+" nnnnnnn                      ooooooooo @"+" nnnnnnn                      ooooooooo @"+" nnnnnnn                      ooooooooo @"+" nnnnnnn                      bbbbbbbbb @"+"@"
+  FORM_TEXT: .text " DTV GfxExplorer MODE 0 8bpp pixel cell @"+"                                        @"+" CONTROL  PLANE  A  PLANE  B  VIC II    @"+" bmm   0  patt  p0  patt  p0  screen s0 @"+" mcm   0  start 00  start 00  gfx    g0 @"+" ecm   0  step  00  step  00  colors c0 @"+" hicol 0  mod   00  mod   00  bgcol0 00 @"+" line  0                      bgcol1 00 @"+" colof 0                      bgcol2 00 @"+" chunk 0                      bgcol3 00 @"+" borof 0                                @"+" overs 0                      palet   0 @"+"@"

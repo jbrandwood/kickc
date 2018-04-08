@@ -5,11 +5,14 @@ import "keyboard.kc"
 import "bitmap-draw.kc"
 
 void main() {
-    asm { sei }  // Disable normal interrupt (prevent keyboard reading glitches)
+    asm { sei }  // Disable normal interrupt (prevent keyboard reading glitches and allows to hide basic/kernal)
+    // Disable kernal & basic
+    *PROCPORT_DDR = PROCPORT_DDR_MEMORY_MASK;
+    *PROCPORT = PROCPORT_RAM_IO;
+    // Enable DTV extended modes
     *DTV_FEATURE = DTV_FEATURE_ENABLE;
     keyboard_init();
     gfx_init();
-    form_init();
     while(true) {
         // Let the user change the GFX configuration
         form_mode();
@@ -18,25 +21,88 @@ void main() {
     }
 }
 
-// VIC Screen: standard charset screen
-const byte* VIC_SCREEN_STDCHAR = $8400;
-const byte* VIC_SCREEN_BITMAP = $8800;
-
+// VIC Screens
+const byte* VIC_SCREEN0 = $8000;
+const byte* VIC_SCREEN1 = $8400;
+const byte* VIC_SCREEN2 = $8800;
+const byte* VIC_SCREEN3 = $8c00;
 // VIC Charset from ROM
 const byte* VIC_CHARSET_ROM = $9800;
-
 // VIC Bitmap
 const byte* VIC_BITMAP = $a000;
 
 // 8BPP Chunky Bitmap (contains 8bpp pixels)
 const dword PLANE_8BPP_CHUNKY = $20000;
+// Plane with horisontal stripes
+const dword PLANE_HORISONTAL = $30000;
+// Plane with vertical stripes
+const dword PLANE_VERTICAL = $32000;
+// Plane with horisontal stripes every 2 pixels
+const dword PLANE_HORISONTAL2 = $34000;
+// Plane with vertical stripes every 2 pixels
+const dword PLANE_VERTICAL2 = $36000;
+
+// Get plane address from a plane index (from the form)
+dword get_plane(byte idx) {
+    if(idx==0) {
+        return (dword)VIC_SCREEN0;
+    } else if(idx==1) {
+        return (dword)VIC_SCREEN1;
+    } else if(idx==2) {
+        return (dword)VIC_SCREEN2;
+    } else if(idx==3) {
+        return (dword)VIC_SCREEN3;
+    } else if(idx==4) {
+        return (dword)VIC_BITMAP;
+    } else if(idx==5) {
+        return (dword)VIC_CHARSET_ROM;
+    } else if(idx==6) {
+        return (dword)PLANE_8BPP_CHUNKY;
+    } else if(idx==7) {
+        return (dword)PLANE_HORISONTAL;
+    } else if(idx==8) {
+        return (dword)PLANE_VERTICAL;
+    } else if(idx==9) {
+        return (dword)PLANE_HORISONTAL2;
+    } else if(idx==10) {
+        return (dword)PLANE_VERTICAL2;
+    }
+    return (dword)VIC_SCREEN0;
+}
+
+// Get the VIC screen address from the screen index
+byte* get_vic_screen(byte idx) {
+    if(idx==0) {
+        return VIC_SCREEN0;
+    } else if(idx==1) {
+        return VIC_SCREEN1;
+    } else if(idx==2) {
+        return VIC_SCREEN2;
+    } else if(idx==3) {
+        return VIC_SCREEN3;
+    }
+    return VIC_SCREEN0;
+}
+
+// Get the VIC charset/bitmap address from the index
+byte* get_vic_charset(byte idx) {
+    if(idx==0) {
+        return VIC_CHARSET_ROM;
+    } else if(idx==1) {
+        return VIC_BITMAP;
+    }
+    return VIC_CHARSET_ROM;
+}
+
+
 
 // Screen containing the FORM
-const byte* FORM_SCREEN = $8000;
+const byte* FORM_SCREEN = $0400;
 // Charset used for the FORM
-const byte* FORM_CHARSET = $9800; // Charset ROM
+const byte* FORM_CHARSET = $1800; // Charset ROM
 
 byte[] FORM_COLS =
+     "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa@" +
      "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa@" +
      " nnnnnnn  mmmmmmmm  mmmmmmmm  ooooooooo @" +
      " nnnnnnn  mmmmmmmm  mmmmmmmm  ooooooooo @" +
@@ -44,30 +110,35 @@ byte[] FORM_COLS =
      " nnnnnnn  mmmmmmmm  mmmmmmmm  ooooooooo @" +
      " nnnnnnn  mmmmmmmm  mmmmmmmm  ooooooooo @" +
      " nnnnnnn                      ooooooooo @" +
-     " nnnnnnn  nnnnnnnn            ooooooooo @" +
-     " nnnnnnn  nnnnnnnn            ooooooooo @" +
+     " nnnnnnn                      ooooooooo @" +
+     " nnnnnnn                      ooooooooo @" +
+     " nnnnnnn                      ooooooooo @" +
+     " nnnnnnn                      bbbbbbbbb @" +
      "@" ;
 byte[] FORM_TEXT =
      " DTV GfxExplorer MODE 0 8bpp pixel cell @" +
+     "                                        @" +
      " CONTROL  PLANE  A  PLANE  B  VIC II    @" +
      " bmm   0  patt  p0  patt  p0  screen s0 @" +
      " mcm   0  start 00  start 00  gfx    g0 @" +
      " ecm   0  step  00  step  00  colors c0 @" +
      " hicol 0  mod   00  mod   00  bgcol0 00 @" +
      " line  0                      bgcol1 00 @" +
-     " colof 0  borof  0            bgcol2 00 @" +
-     " chunk 0  overs  0            bgcol3 00 @" +
+     " colof 0                      bgcol2 00 @" +
+     " chunk 0                      bgcol3 00 @" +
+     " borof 0                                @" +
+     " overs 0                      palet   0 @" +
      "@" ;
 
 // Number of form fields
-byte form_fields_cnt = 35;
+byte form_fields_cnt = 36;
 // Form fields x/y-positions
-byte[] form_fields_x   = {  22, 7,  7,  7,  7,  7,  7,  7, 17, 17, 17, 16, 17, 16, 17, 16, 17, 27, 26, 27, 26, 27, 26, 27, 38, 38, 38, 37, 38, 37, 38, 37, 38, 37, 38 };
-byte[] form_fields_y   = {  0,  2,  3,  4,  5,  6,  7,  8,  7,  8,  2,  3,  3,  4,  4,  5,  5,  2,  3,  3,  4,  4,  5,  5,  2,  3,  4,  5,  5,  6,  6,  7,  7,  8,  8 };
+byte[] form_fields_x   = {  22, 7,  7,  7,  7,  7,  7,  7,  7,  7, 17, 16, 17, 16, 17, 16, 17, 27, 26, 27, 26, 27, 26, 27, 38, 38, 38, 37, 38, 37, 38, 37, 38, 37, 38, 38 };
+byte[] form_fields_y   = {  0,  3,  4,  5,  6,  7,  8,  9, 10, 11,  3,  4,  4,  5,  5,  6,  6,  3,  4,  4,  5,  5,  6,  6,  3,  4,  5,  6,  6,  7,  7,  8,  8,  9,  9, 11 };
 // Form field max values (all values are in the interval 0..max)
-byte[] form_fields_max = { $d,  1,  1,  1,  1,  1,  1,  1,  1,  1, $f, $f, $f, $f, $f, $f, $f, $f, $f, $f, $f, $f, $f, $f, $f, $f, $f, $f, $f, $f, $f, $f, $f, $f, $f };
+byte[] form_fields_max = { $d,  1,  1,  1,  1,  1,  1,  1,  1,  1, $a, $f, $f, $f, $f, $f, $f, $a, $f, $f, $f, $f, $f, $f, $3, $1, $3, $f, $f, $f, $f, $f, $f, $f, $f, $1 };
 // Form fields values
-byte[] form_fields_val = {  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0 };
+byte[] form_fields_val = {  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0 };
 
 // Form fields direct addressing
 const byte* form_ctrl_mode  = form_fields_val+0;
@@ -105,6 +176,7 @@ const byte* form_vic_bg2_hi = form_fields_val+31;
 const byte* form_vic_bg2_lo = form_fields_val+32;
 const byte* form_vic_bg3_hi = form_fields_val+33;
 const byte* form_vic_bg3_lo = form_fields_val+34;
+const byte* form_dtv_palet  = form_fields_val+35;
 
 // Change graphics mode to show the selected graphics mode
 void gfx_mode() {
@@ -148,7 +220,7 @@ void gfx_mode() {
 
     // Linear Graphics Plane A Counter
     byte plane_a_offs = *form_a_start_hi<<4|*form_a_start_lo;
-    dword plane_a = (dword)FORM_SCREEN + plane_a_offs;
+    dword plane_a = get_plane(*form_a_pattern) + plane_a_offs;
     *DTV_PLANEA_START_LO = < < plane_a;
     *DTV_PLANEA_START_MI = > < plane_a;
     *DTV_PLANEA_START_HI = < > plane_a;
@@ -158,7 +230,7 @@ void gfx_mode() {
 
     // Linear Graphics Plane B Counter
     byte plane_b_offs = *form_b_start_hi<<4|*form_b_start_lo;
-    dword plane_b = PLANE_8BPP_CHUNKY + plane_b_offs;
+    dword plane_b = get_plane(*form_b_pattern) + plane_b_offs;
     *DTV_PLANEB_START_LO = < < plane_b;
     *DTV_PLANEB_START_MI = > < plane_b;
     *DTV_PLANEB_START_HI = < > plane_b;
@@ -166,16 +238,39 @@ void gfx_mode() {
     *DTV_PLANEB_MODULO_LO = *form_b_mod_hi<<4|*form_b_mod_lo;
     *DTV_PLANEB_MODULO_HI = 0;
 
-    // Bakground colors
+    // VIC Graphics Bank
+    *CIA2_PORT_A_DDR = %00000011; // Set VIC Bank bits to output - all others to input
+    *CIA2_PORT_A = %00000011 ^ (byte)((word)VIC_SCREEN0/$4000); // Set VIC Bank
+    // VIC memory
+    *VIC_MEMORY = (byte)(((word)get_vic_screen(*form_vic_screen)&$3fff)>>6)  |   ((>((word)get_vic_charset(*form_vic_gfx)&$3fff))>>2);
+
+    // VIC Colors
+    byte* vic_colors = get_vic_screen(*form_vic_cols);
+    byte* col=COLS;
+    for(byte cy: 0..24 ) {
+        for(byte cx: 0..39) {
+            *col++ = *vic_colors++;
+        }
+    }
+
+    // Background colors
     *BORDERCOL = 0;
     *BGCOL1 = *form_vic_bg0_hi<<4|*form_vic_bg0_lo;
     *BGCOL2 = *form_vic_bg1_hi<<4|*form_vic_bg1_lo;
     *BGCOL3 = *form_vic_bg2_hi<<4|*form_vic_bg2_lo;
     *BGCOL4 = *form_vic_bg3_hi<<4|*form_vic_bg3_lo;
 
-    // DTV Palette - Grey Tones
-    for(byte i : 0..$f) {
-        DTV_PALETTE[i] = i;
+    // DTV Palette
+    if(*form_dtv_palet==0) {
+        // DTV Palette - default
+        for(byte i : 0..$f) {
+            DTV_PALETTE[i] = DTV_PALETTE_DEFAULT[i];
+        }
+    } else {
+        // DTV Palette - Grey Tones
+        for(byte j : 0..$f) {
+            DTV_PALETTE[j] = j;
+        }
     }
 
     // Wait for the user to press space
@@ -191,23 +286,23 @@ void gfx_mode() {
 
 }
 
-
 // Initialize the different graphics in the memory
 void gfx_init() {
-    (*BGCOL)++;
-    gfx_init_vic_screen_stdchar();
-    (*BGCOL)++;
-    gfx_init_vic_screen_bitmap();
-    (*BGCOL)++;
+    gfx_init_screen0();
+    gfx_init_screen1();
+    gfx_init_screen2();
+    gfx_init_screen3();
     gfx_init_vic_bitmap();
-    (*BGCOL)++;
     gfx_init_plane_8bppchunky();
-    (*BGCOL)++;
+    gfx_init_plane_horisontal();
+    gfx_init_plane_vertical();
+    gfx_init_plane_horisontal2();
+    gfx_init_plane_vertical2();
 }
 
-// Initialize VIC std char screen
-void gfx_init_vic_screen_stdchar() {
-    byte* ch=VIC_SCREEN_STDCHAR;
+// Initialize VIC screen 0 ( value is %yyyyxxxx where yyyy is ypos and xxxx is xpos)
+void gfx_init_screen0() {
+    byte* ch=VIC_SCREEN0;
     for(byte cy: 0..24 ) {
         for(byte cx: 0..39) {
             *ch++ = (cy&$f)<<4|(cx&$f);
@@ -215,14 +310,34 @@ void gfx_init_vic_screen_stdchar() {
     }
 }
 
-// Initialize VIC bitmap screen
-void gfx_init_vic_screen_bitmap() {
-    byte* ch=VIC_SCREEN_BITMAP;
+// Initialize VIC screen 1 ( value is %0000cccc where cccc is (x+y mod $f))
+void gfx_init_screen1() {
+    byte* ch=VIC_SCREEN1;
+    for(byte cy: 0..24 ) {
+        for(byte cx: 0..39) {
+            *ch++ = (cx+cy)&$f;
+        }
+    }
+}
+
+// Initialize VIC screen 2 ( value is %ccccrrrr where cccc is (x+y mod $f) and rrrr is %1111-%cccc)
+void gfx_init_screen2() {
+    byte* ch=VIC_SCREEN2;
     for(byte cy: 0..24 ) {
         for(byte cx: 0..39) {
             byte col = (cx+cy)&$f;
             byte col2 = ($f-col);
             *ch++ = col<<4 | col2;
+        }
+    }
+}
+
+// Initialize VIC screen 3 ( value is %00xx00yy where xx is xpos and yy is ypos
+void gfx_init_screen3() {
+    byte* ch=VIC_SCREEN3;
+    for(byte cy: 0..24 ) {
+        for(byte cx: 0..39) {
+            *ch++ = (cx&3)<<4|(cy&3);
         }
     }
 }
@@ -260,8 +375,73 @@ void gfx_init_plane_8bppchunky() {
     // Reset CPU BANK segment to $4000
     dtvSetCpuBankSegment1((byte)($4000/$4000));
 }
-// Initialize the form colors, screen & form
-void form_init() {
+
+// Initialize Plane with Horizontal Stripes
+void gfx_init_plane_horisontal() {
+    byte gfxbCpuBank = (byte)(PLANE_HORISONTAL/$4000);
+    dtvSetCpuBankSegment1(gfxbCpuBank++);
+    byte* gfxa = $4000 + (PLANE_HORISONTAL & $3fff);
+    for(byte ay : 0..199) {
+        for (byte ax : 0..39) {
+            if((ay&4)==0) {
+                *gfxa++ = %00000000;
+            } else {
+                *gfxa++ = %11111111;
+            }
+        }
+    }
+    // Reset CPU BANK segment to $4000
+    dtvSetCpuBankSegment1((byte)($4000/$4000));
+}
+
+// Initialize Plane with Horizontal Stripes every 2 pixels
+void gfx_init_plane_horisontal2() {
+    byte gfxbCpuBank = (byte)(PLANE_HORISONTAL2/$4000);
+    dtvSetCpuBankSegment1(gfxbCpuBank++);
+    byte* gfxa = $4000 + (PLANE_HORISONTAL2 & $3fff);
+    byte[] row_bitmask = { %00000000, %01010101, %10101010, %11111111 };
+    for(byte ay : 0..199) {
+        for (byte ax : 0..39) {
+            byte row = (ay>>1) & 3;
+            *gfxa++ = row_bitmask[row];
+        }
+    }
+    // Reset CPU BANK segment to $4000
+    dtvSetCpuBankSegment1((byte)($4000/$4000));
+}
+
+// Initialize Plane with Vertical Stripes
+void gfx_init_plane_vertical() {
+    byte gfxbCpuBank = (byte)(PLANE_VERTICAL/$4000);
+    dtvSetCpuBankSegment1(gfxbCpuBank++);
+    byte* gfxb = $4000 + (PLANE_VERTICAL & $3fff);
+    for(byte by : 0..199) {
+        for ( byte bx : 0..39) {
+            *gfxb++ = %00001111;
+        }
+    }
+    // Reset CPU BANK segment to $4000
+    dtvSetCpuBankSegment1((byte)($4000/$4000));
+}
+
+// Initialize Plane with Vertical Stripes every 2 pixels
+void gfx_init_plane_vertical2() {
+    byte gfxbCpuBank = (byte)(PLANE_VERTICAL2/$4000);
+    dtvSetCpuBankSegment1(gfxbCpuBank++);
+    byte* gfxb = $4000 + (PLANE_VERTICAL2 & $3fff);
+    for(byte by : 0..199) {
+        for ( byte bx : 0..39) {
+                *gfxb++ = %00011011;
+        }
+    }
+    // Reset CPU BANK segment to $4000
+    dtvSetCpuBankSegment1((byte)($4000/$4000));
+}
+
+// Show the form - and let the user change values
+void form_mode() {
+    // Show the form
+
     // Form Colors
     print_set_screen(COLS);
     print_cls();
@@ -273,17 +453,12 @@ void form_init() {
     // Form Fields
     form_set_screen(FORM_SCREEN);
     form_render_values();
-}
-
-// Show the form - and let the user change values
-void form_mode() {
-    // Show the form
 
     // DTV Graphics Bank
     *DTV_GRAPHICS_VIC_BANK = (byte)((dword)FORM_CHARSET/$10000);
     // DTV Color Bank
-     *DTV_COLOR_BANK_LO = <((word)(DTV_COLOR_BANK_DEFAULT/$400));
-     *DTV_COLOR_BANK_HI = >((word)(DTV_COLOR_BANK_DEFAULT/$400));
+    *DTV_COLOR_BANK_LO = <((word)(DTV_COLOR_BANK_DEFAULT/$400));
+    *DTV_COLOR_BANK_HI = >((word)(DTV_COLOR_BANK_DEFAULT/$400));
     // VIC Graphics Bank
     *CIA2_PORT_A_DDR = %00000011; // Set VIC Bank bits to output - all others to input
     *CIA2_PORT_A = %00000011 ^ (byte)((word)FORM_CHARSET/$4000); // Set VIC Bank
@@ -294,6 +469,10 @@ void form_mode() {
     *VIC_CONTROL2 = VIC_CSEL;
     // VIC Memory Pointers
     *VIC_MEMORY =  (byte)((((word)FORM_SCREEN&$3fff)/$40)|(((word)FORM_CHARSET&$3fff)/$400));
+    // DTV Plane A to FORM_SCREEN also
+    *DTV_PLANEA_START_LO = < FORM_SCREEN;
+    *DTV_PLANEA_START_MI = > FORM_SCREEN;
+    *DTV_PLANEA_START_HI = 0;
     // DTV Palette - default
     for(byte i : 0..$f) {
         DTV_PALETTE[i] = DTV_PALETTE_DEFAULT[i];

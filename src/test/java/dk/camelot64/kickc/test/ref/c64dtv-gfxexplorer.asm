@@ -919,15 +919,10 @@ apply_preset: {
     .label preset = 3
     cmp #0
     bne b1
+  b4:
     lda #<preset_stdchar
     sta preset
     lda #>preset_stdchar
-    sta preset+1
-    jmp b2
-  b4:
-    lda #<preset_chunky
-    sta preset
-    lda #>preset_chunky
     sta preset+1
   b2:
     ldx #0
@@ -935,7 +930,7 @@ apply_preset: {
     sta values
     lda #>form_fields_val
     sta values+1
-  b17:
+  b19:
     ldy #0
     lda (preset),y
     sta (values),y
@@ -949,7 +944,7 @@ apply_preset: {
   !:
     inx
     cpx #form_fields_cnt
-    bne b17
+    bne b19
     rts
   b1:
     cmp #1
@@ -1001,10 +996,22 @@ apply_preset: {
     jmp b2
   b13:
     cmp #7
+    bne b15
+    lda #<preset_chunky
+    sta preset
+    lda #>preset_chunky
+    sta preset+1
+    jmp b2
+  b15:
+    cmp #8
     beq !b4+
     jmp b4
   !b4:
-    jmp b4
+    lda #<preset_sixsfred
+    sta preset
+    lda #>preset_sixsfred
+    sta preset+1
+    jmp b2
 }
 form_control: {
     .label field = 3
@@ -1999,7 +2006,7 @@ keyboard_init: {
   bitmap_plot_bit: .fill $100, 0
   form_fields_x: .byte 8, $c, $c, $c, $c, $c, $c, $c, $c, $c, $19, $18, $19, $18, $19, $18, $19, $19, $18, $19, $18, $19, $18, $19, $25, $25, $25, $25, $24, $25, $24, $25, $24, $25, $24, $25
   form_fields_y: .byte 2, 5, 6, 7, 8, 9, $a, $b, $c, $d, 5, 6, 6, 7, 7, 8, 8, $b, $c, $c, $d, $d, $e, $e, 5, 6, 7, $a, $b, $b, $c, $c, $d, $d, $e, $e
-  form_fields_max: .byte 7, 1, 1, 1, 1, 1, 1, 1, 1, 1, $a, $f, $f, $f, $f, $f, $f, $a, $f, $f, $f, $f, $f, $f, 3, 1, 3, 1, $f, $f, $f, $f, $f, $f, $f, $f
+  form_fields_max: .byte 8, 1, 1, 1, 1, 1, 1, 1, 1, 1, $a, $f, $f, $f, $f, $f, $f, $a, $f, $f, $f, $f, $f, $f, 3, 1, 3, 1, $f, $f, $f, $f, $f, $f, $f, $f
   form_fields_val: .byte 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
   preset_stdchar: .byte 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0
   preset_ecmchar: .byte 1, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 2, 0, 5, 0, 6
@@ -2009,6 +2016,7 @@ keyboard_init: {
   preset_hi_ecmchar: .byte 5, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 3, 4, 6, 8, 9, $c, $c
   preset_twoplane: .byte 6, 1, 0, 1, 1, 1, 0, 0, 0, 0, 7, 0, 0, 0, 1, 0, 0, 8, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 7, 0, $d, 4, 0, 0, 0, 0
   preset_chunky: .byte 7, 0, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 6, 0, 0, 0, 8, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0
+  preset_sixsfred: .byte 8, 1, 1, 1, 1, 1, 0, 0, 0, 0, 9, 0, 0, 0, 1, 0, 0, $a, 0, 0, 0, 1, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0
   form_line_lo: .fill $19, 0
   form_line_hi: .fill $19, 0
   FORM_TEXT: .text " C64 DTV Graphics Mode Explorer         @"+"                                        @"+" PRESET 0 Standard Charset              @"+"                                        @"+" CONTROL        PLANE  A     VIC II     @"+" bmm        0   pattern p0   screen s0  @"+" mcm        0   start   00   gfx    g0  @"+" ecm        0   step    00   colors c0  @"+" hicolor    0   modulus 00              @"+" linear     0                COLORS     @"+" color off  0   PLANE  B     palet   0  @"+" chunky     0   pattern p0   bgcol0 00  @"+" border off 0   start   00   bgcol1 00  @"+" overscan   0   step    00   bgcol2 00  @"+"                modulus 00   bgcol3 00  @"+"@"

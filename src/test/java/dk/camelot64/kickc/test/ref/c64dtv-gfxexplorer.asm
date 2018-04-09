@@ -81,6 +81,7 @@
   .const form_fields_cnt = $24
   .const FORM_CURSOR_BLINK = $28
   .const KEY_MODIFIER_SHIFT = KEY_MODIFIER_LSHIFT|KEY_MODIFIER_RSHIFT
+  .label form_preset = form_fields_val+0
   .label form_ctrl_bmm = form_fields_val+1
   .label form_ctrl_mcm = form_fields_val+2
   .label form_ctrl_ecm = form_fields_val+3
@@ -107,17 +108,17 @@
   .label form_vic_screen = form_fields_val+$18
   .label form_vic_gfx = form_fields_val+$19
   .label form_vic_cols = form_fields_val+$1a
-  .label form_vic_bg0_hi = form_fields_val+$1b
-  .label form_vic_bg0_lo = form_fields_val+$1c
-  .label form_vic_bg1_hi = form_fields_val+$1d
-  .label form_vic_bg1_lo = form_fields_val+$1e
-  .label form_vic_bg2_hi = form_fields_val+$1f
-  .label form_vic_bg2_lo = form_fields_val+$20
-  .label form_vic_bg3_hi = form_fields_val+$21
-  .label form_vic_bg3_lo = form_fields_val+$22
-  .label form_dtv_palet = form_fields_val+$23
+  .label form_dtv_palet = form_fields_val+$1b
+  .label form_vic_bg0_hi = form_fields_val+$1c
+  .label form_vic_bg0_lo = form_fields_val+$1d
+  .label form_vic_bg1_hi = form_fields_val+$1e
+  .label form_vic_bg1_lo = form_fields_val+$1f
+  .label form_vic_bg2_hi = form_fields_val+$20
+  .label form_vic_bg2_lo = form_fields_val+$21
+  .label form_vic_bg3_hi = form_fields_val+$22
+  .label form_vic_bg3_lo = form_fields_val+$23
   .label print_char_cursor = 5
-  .label print_line_cursor = $f
+  .label print_line_cursor = $10
   .label keyboard_events_size = 8
   .label keyboard_modifiers = 7
   .label form_cursor_count = $d
@@ -479,7 +480,7 @@ keyboard_event_get: {
     jmp breturn
 }
 keyboard_event_scan: {
-    .label row_scan = $11
+    .label row_scan = $12
     .label keycode = 7
     .label row = 2
     lda #0
@@ -798,6 +799,7 @@ get_plane: {
     jmp breturn
 }
 form_mode: {
+    .label preset_current = $f
     lda #<COLS
     sta print_set_screen.screen
     lda #>COLS
@@ -856,6 +858,8 @@ form_mode: {
     lda #0
     sta BGCOL
     sta BORDERCOL
+    lda form_preset
+    sta preset_current
     jmp b5
   breturn:
     rts
@@ -866,8 +870,141 @@ form_mode: {
     jsr form_control
     txa
     cmp #0
-    beq b5
+    beq b8
     jmp breturn
+  b8:
+    lda form_preset
+    cmp preset_current
+    beq b5
+    jsr apply_preset
+    lda form_preset
+    sta preset_current
+    jsr form_render_values
+    jmp b5
+}
+form_render_values: {
+    .label field = 3
+    ldx #0
+  b1:
+    jsr form_field_ptr
+    lda form_fields_val,x
+    tay
+    lda print_hextab,y
+    ldy #0
+    sta (field),y
+    inx
+    cpx #form_fields_cnt
+    bcc b1
+    rts
+}
+form_field_ptr: {
+    .label return = 3
+    .label _2 = 3
+    ldy form_fields_y,x
+    lda form_line_hi,y
+    sta _2+1
+    lda form_line_lo,y
+    sta _2
+    lda form_fields_x,x
+    clc
+    adc return
+    sta return
+    lda #0
+    adc return+1
+    sta return+1
+    rts
+}
+apply_preset: {
+    .label values = 5
+    .label preset = 3
+    cmp #0
+    bne b1
+    lda #<preset_stdchar
+    sta preset
+    lda #>preset_stdchar
+    sta preset+1
+    jmp b2
+  b4:
+    lda #<preset_chunky
+    sta preset
+    lda #>preset_chunky
+    sta preset+1
+  b2:
+    ldx #0
+    lda #<form_fields_val
+    sta values
+    lda #>form_fields_val
+    sta values+1
+  b17:
+    ldy #0
+    lda (preset),y
+    sta (values),y
+    inc values
+    bne !+
+    inc values+1
+  !:
+    inc preset
+    bne !+
+    inc preset+1
+  !:
+    inx
+    cpx #form_fields_cnt
+    bne b17
+    rts
+  b1:
+    cmp #1
+    bne b3
+    lda #<preset_ecmchar
+    sta preset
+    lda #>preset_ecmchar
+    sta preset+1
+    jmp b2
+  b3:
+    cmp #2
+    bne b5
+    lda #<preset_stdbm
+    sta preset
+    lda #>preset_stdbm
+    sta preset+1
+    jmp b2
+  b5:
+    cmp #3
+    bne b7
+    lda #<preset_mcbm
+    sta preset
+    lda #>preset_mcbm
+    sta preset+1
+    jmp b2
+  b7:
+    cmp #4
+    bne b9
+    lda #<preset_hi_stdchar
+    sta preset
+    lda #>preset_hi_stdchar
+    sta preset+1
+    jmp b2
+  b9:
+    cmp #5
+    bne b11
+    lda #<preset_hi_ecmchar
+    sta preset
+    lda #>preset_hi_ecmchar
+    sta preset+1
+    jmp b2
+  b11:
+    cmp #6
+    bne b13
+    lda #<preset_twoplane
+    sta preset
+    lda #>preset_twoplane
+    sta preset+1
+    jmp b2
+  b13:
+    cmp #7
+    beq !b4+
+    jmp b4
+  !b4:
+    jmp b4
 }
 form_control: {
     .label field = 3
@@ -976,38 +1113,6 @@ form_control: {
     and (field),y
     sta (field),y
     jmp b3
-}
-form_field_ptr: {
-    .label return = 3
-    .label _2 = 3
-    ldy form_fields_y,x
-    lda form_line_hi,y
-    sta _2+1
-    lda form_line_lo,y
-    sta _2
-    lda form_fields_x,x
-    clc
-    adc return
-    sta return
-    lda #0
-    adc return+1
-    sta return+1
-    rts
-}
-form_render_values: {
-    .label field = 3
-    ldx #0
-  b1:
-    jsr form_field_ptr
-    lda form_fields_val,x
-    tay
-    lda print_hextab,y
-    ldy #0
-    sta (field),y
-    inx
-    cpx #form_fields_cnt
-    bcc b1
-    rts
 }
 form_set_screen: {
     .label line = 3
@@ -1120,7 +1225,7 @@ print_cls: {
     rts
 }
 print_set_screen: {
-    .label screen = $f
+    .label screen = $10
     rts
 }
 gfx_init: {
@@ -1296,7 +1401,7 @@ gfx_init_plane_horisontal: {
     jmp b4
 }
 gfx_init_plane_8bppchunky: {
-    .label _6 = $f
+    .label _6 = $10
     .label gfxb = 5
     .label x = 3
     .label y = 2
@@ -1389,7 +1494,7 @@ gfx_init_vic_bitmap: {
 bitmap_line: {
     .label xd = 7
     .label yd = 8
-    .label x0 = $11
+    .label x0 = $f
     .label x1 = $12
     .label y0 = $d
     lda x0
@@ -1489,7 +1594,7 @@ bitmap_line_ydxi: {
     .label y1 = $d
     .label yd = 8
     .label xd = 7
-    .label e = $11
+    .label e = $f
     lda xd
     lsr
     sta e
@@ -1544,7 +1649,7 @@ bitmap_plot: {
 bitmap_line_xdyi: {
     .label _6 = $12
     .label y = $d
-    .label x1 = $11
+    .label x1 = $f
     .label xd = 7
     .label yd = 8
     .label e = $e
@@ -1580,7 +1685,7 @@ bitmap_line_ydxd: {
     .label y1 = $d
     .label yd = 8
     .label xd = 7
-    .label e = $11
+    .label e = $f
     lda xd
     lsr
     sta e
@@ -1608,7 +1713,7 @@ bitmap_line_ydxd: {
     rts
 }
 bitmap_line_xdyd: {
-    .label _6 = $11
+    .label _6 = $f
     .label y = $d
     .label x1 = $12
     .label xd = 7
@@ -1892,11 +1997,19 @@ keyboard_init: {
   bitmap_plot_ylo: .fill $100, 0
   bitmap_plot_yhi: .fill $100, 0
   bitmap_plot_bit: .fill $100, 0
-  form_fields_x: .byte $16, 7, 7, 7, 7, 7, 7, 7, 7, 7, $11, $10, $11, $10, $11, $10, $11, $1b, $1a, $1b, $1a, $1b, $1a, $1b, $26, $26, $26, $25, $26, $25, $26, $25, $26, $25, $26, $26
-  form_fields_y: .byte 0, 3, 4, 5, 6, 7, 8, 9, $a, $b, 3, 4, 4, 5, 5, 6, 6, 3, 4, 4, 5, 5, 6, 6, 3, 4, 5, 6, 6, 7, 7, 8, 8, 9, 9, $b
-  form_fields_max: .byte $d, 1, 1, 1, 1, 1, 1, 1, 1, 1, $a, $f, $f, $f, $f, $f, $f, $a, $f, $f, $f, $f, $f, $f, 3, 1, 3, $f, $f, $f, $f, $f, $f, $f, $f, 1
+  form_fields_x: .byte 8, $c, $c, $c, $c, $c, $c, $c, $c, $c, $19, $18, $19, $18, $19, $18, $19, $19, $18, $19, $18, $19, $18, $19, $25, $25, $25, $25, $24, $25, $24, $25, $24, $25, $24, $25
+  form_fields_y: .byte 2, 5, 6, 7, 8, 9, $a, $b, $c, $d, 5, 6, 6, 7, 7, 8, 8, $b, $c, $c, $d, $d, $e, $e, 5, 6, 7, $a, $b, $b, $c, $c, $d, $d, $e, $e
+  form_fields_max: .byte 7, 1, 1, 1, 1, 1, 1, 1, 1, 1, $a, $f, $f, $f, $f, $f, $f, $a, $f, $f, $f, $f, $f, $f, 3, 1, 3, 1, $f, $f, $f, $f, $f, $f, $f, $f
   form_fields_val: .byte 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
+  preset_stdchar: .byte 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0
+  preset_ecmchar: .byte 1, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 2, 0, 5, 0, 6
+  preset_stdbm: .byte 2, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
+  preset_mcbm: .byte 3, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 1, 0, 0, 0, 9, 0, 0, 0, 0, 0, 0
+  preset_hi_stdchar: .byte 4, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0
+  preset_hi_ecmchar: .byte 5, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 3, 4, 6, 8, 9, $c, $c
+  preset_twoplane: .byte 6, 1, 0, 1, 1, 1, 0, 0, 0, 0, 7, 0, 0, 0, 1, 0, 0, 8, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 7, 0, $d, 4, 0, 0, 0, 0
+  preset_chunky: .byte 7, 0, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 6, 0, 0, 0, 8, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0
   form_line_lo: .fill $19, 0
   form_line_hi: .fill $19, 0
-  FORM_COLS: .text "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa@"+"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa@"+" nnnnnnn  mmmmmmmm  mmmmmmmm  ooooooooo @"+" nnnnnnn  mmmmmmmm  mmmmmmmm  ooooooooo @"+" nnnnnnn  mmmmmmmm  mmmmmmmm  ooooooooo @"+" nnnnnnn  mmmmmmmm  mmmmmmmm  ooooooooo @"+" nnnnnnn  mmmmmmmm  mmmmmmmm  ooooooooo @"+" nnnnnnn                      ooooooooo @"+" nnnnnnn                      ooooooooo @"+" nnnnnnn                      ooooooooo @"+" nnnnnnn                      ooooooooo @"+" nnnnnnn                      bbbbbbbbb @"+"@"
-  FORM_TEXT: .text " DTV GfxExplorer MODE 0 8bpp pixel cell @"+"                                        @"+" CONTROL  PLANE  A  PLANE  B  VIC II    @"+" bmm   0  patt  p0  patt  p0  screen s0 @"+" mcm   0  start 00  start 00  gfx    g0 @"+" ecm   0  step  00  step  00  colors c0 @"+" hicol 0  mod   00  mod   00  bgcol0 00 @"+" line  0                      bgcol1 00 @"+" colof 0                      bgcol2 00 @"+" chunk 0                      bgcol3 00 @"+" borof 0                                @"+" overs 0                      palet   0 @"+"@"
+  FORM_TEXT: .text " C64 DTV Graphics Mode Explorer         @"+"                                        @"+" PRESET 0 Standard Charset              @"+"                                        @"+" CONTROL        PLANE  A     VIC II     @"+" bmm        0   pattern p0   screen s0  @"+" mcm        0   start   00   gfx    g0  @"+" ecm        0   step    00   colors c0  @"+" hicolor    0   modulus 00              @"+" linear     0                COLORS     @"+" color off  0   PLANE  B     palet   0  @"+" chunky     0   pattern p0   bgcol0 00  @"+" border off 0   start   00   bgcol1 00  @"+" overscan   0   step    00   bgcol2 00  @"+"                modulus 00   bgcol3 00  @"+"@"
+  FORM_COLS: .text "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa@"+"                                        @"+"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa@"+"                                        @"+" nnnnnnnnnnnn   mmmmmmmmmm   ooooooooo  @"+" nnnnnnnnnnnn   mmmmmmmmmm   ooooooooo  @"+" nnnnnnnnnnnn   mmmmmmmmmm   ooooooooo  @"+" nnnnnnnnnnnn   mmmmmmmmmm   ooooooooo  @"+" nnnnnnnnnnnn   mmmmmmmmmm              @"+" nnnnnnnnnnnn                jjjjjjjjj  @"+" nnnnnnnnnnnn   mmmmmmmmmm   jjjjjjjjj  @"+" nnnnnnnnnnnn   mmmmmmmmmm   jjjjjjjjj  @"+" nnnnnnnnnnnn   mmmmmmmmmm   jjjjjjjjj  @"+" nnnnnnnnnnnn   mmmmmmmmmm   jjjjjjjjj  @"+" nnnnnnnnnnnn   mmmmmmmmmm   jjjjjjjjj  @"+" nnnnnnnnnnnn   mmmmmmmmmm   jjjjjjjjj  @"+"@"

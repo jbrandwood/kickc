@@ -94,54 +94,109 @@ byte* get_vic_charset(byte idx) {
     return VIC_CHARSET_ROM;
 }
 
-
-
 // Screen containing the FORM
 const byte* FORM_SCREEN = $0400;
 // Charset used for the FORM
 const byte* FORM_CHARSET = $1800; // Charset ROM
 
+byte[] FORM_TEXT =
+     " C64 DTV Graphics Mode Explorer         @" +
+     "                                        @" +
+     " PRESET 0 Standard Charset              @" +
+     "                                        @" +
+     " CONTROL        PLANE  A     VIC II     @" +
+     " bmm        0   pattern p0   screen s0  @" +
+     " mcm        0   start   00   gfx    g0  @" +
+     " ecm        0   step    00   colors c0  @" +
+     " hicolor    0   modulus 00              @" +
+     " linear     0                COLORS     @" +
+     " color off  0   PLANE  B     palet   0  @" +
+     " chunky     0   pattern p0   bgcol0 00  @" +
+     " border off 0   start   00   bgcol1 00  @" +
+     " overscan   0   step    00   bgcol2 00  @" +
+     "                modulus 00   bgcol3 00  @" +
+     "@" ;
 byte[] FORM_COLS =
      "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa@" +
-     "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa@" +
-     " nnnnnnn  mmmmmmmm  mmmmmmmm  ooooooooo @" +
-     " nnnnnnn  mmmmmmmm  mmmmmmmm  ooooooooo @" +
-     " nnnnnnn  mmmmmmmm  mmmmmmmm  ooooooooo @" +
-     " nnnnnnn  mmmmmmmm  mmmmmmmm  ooooooooo @" +
-     " nnnnnnn  mmmmmmmm  mmmmmmmm  ooooooooo @" +
-     " nnnnnnn                      ooooooooo @" +
-     " nnnnnnn                      ooooooooo @" +
-     " nnnnnnn                      ooooooooo @" +
-     " nnnnnnn                      ooooooooo @" +
-     " nnnnnnn                      bbbbbbbbb @" +
-     "@" ;
-byte[] FORM_TEXT =
-     " DTV GfxExplorer MODE 0 8bpp pixel cell @" +
      "                                        @" +
-     " CONTROL  PLANE  A  PLANE  B  VIC II    @" +
-     " bmm   0  patt  p0  patt  p0  screen s0 @" +
-     " mcm   0  start 00  start 00  gfx    g0 @" +
-     " ecm   0  step  00  step  00  colors c0 @" +
-     " hicol 0  mod   00  mod   00  bgcol0 00 @" +
-     " line  0                      bgcol1 00 @" +
-     " colof 0                      bgcol2 00 @" +
-     " chunk 0                      bgcol3 00 @" +
-     " borof 0                                @" +
-     " overs 0                      palet   0 @" +
+     "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa@" +
+     "                                        @" +
+     " nnnnnnnnnnnn   mmmmmmmmmm   ooooooooo  @" +
+     " nnnnnnnnnnnn   mmmmmmmmmm   ooooooooo  @" +
+     " nnnnnnnnnnnn   mmmmmmmmmm   ooooooooo  @" +
+     " nnnnnnnnnnnn   mmmmmmmmmm   ooooooooo  @" +
+     " nnnnnnnnnnnn   mmmmmmmmmm              @" +
+     " nnnnnnnnnnnn                jjjjjjjjj  @" +
+     " nnnnnnnnnnnn   mmmmmmmmmm   jjjjjjjjj  @" +
+     " nnnnnnnnnnnn   mmmmmmmmmm   jjjjjjjjj  @" +
+     " nnnnnnnnnnnn   mmmmmmmmmm   jjjjjjjjj  @" +
+     " nnnnnnnnnnnn   mmmmmmmmmm   jjjjjjjjj  @" +
+     " nnnnnnnnnnnn   mmmmmmmmmm   jjjjjjjjj  @" +
+     " nnnnnnnnnnnn   mmmmmmmmmm   jjjjjjjjj  @" +
      "@" ;
 
 // Number of form fields
 byte form_fields_cnt = 36;
 // Form fields x/y-positions
-byte[] form_fields_x   = {  22, 7,  7,  7,  7,  7,  7,  7,  7,  7, 17, 16, 17, 16, 17, 16, 17, 27, 26, 27, 26, 27, 26, 27, 38, 38, 38, 37, 38, 37, 38, 37, 38, 37, 38, 38 };
-byte[] form_fields_y   = {  0,  3,  4,  5,  6,  7,  8,  9, 10, 11,  3,  4,  4,  5,  5,  6,  6,  3,  4,  4,  5,  5,  6,  6,  3,  4,  5,  6,  6,  7,  7,  8,  8,  9,  9, 11 };
+byte[] form_fields_x        = {  8, 12, 12, 12, 12, 12, 12, 12, 12, 12, 25, 24, 25, 24, 25, 24, 25, 25, 24, 25, 24, 25, 24, 25, 37, 37, 37, 37, 36, 37, 36, 37, 36, 37, 36, 37 };
+byte[] form_fields_y        = {  2,  5,  6,  7,  8,  9, 10, 11, 12, 13,  5,  6,  6,  7,  7,  8,  8, 11, 12, 12, 13, 13, 14, 14,  5,  6,  7, 10, 11, 11, 12, 12, 13, 13, 14, 14 };
 // Form field max values (all values are in the interval 0..max)
-byte[] form_fields_max = { $d,  1,  1,  1,  1,  1,  1,  1,  1,  1, $a, $f, $f, $f, $f, $f, $f, $a, $f, $f, $f, $f, $f, $f, $3, $1, $3, $f, $f, $f, $f, $f, $f, $f, $f, $1 };
+byte[] form_fields_max      = {  7,  1,  1,  1,  1,  1,  1,  1,  1,  1, $a, $f, $f, $f, $f, $f, $f, $a, $f, $f, $f, $f, $f, $f, $3, $1, $3, $1, $f, $f, $f, $f, $f, $f, $f, $f };
 // Form fields values
-byte[] form_fields_val = {  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0 };
+byte[] form_fields_val      = {  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0 };
+
+// Preset: Standard Char Mode
+byte[] preset_stdchar       = {  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  1,  0,  0,  0,  0,  0,  0,  0,  0,  0 };
+// Preset: Extended Color Char Mode
+byte[] preset_ecmchar       = {  1,  0,  0,  1,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  1,  0,  0,  0,  0,  2,  0,  5,  0,  6 };
+// Preset: Standard Bitmap
+byte[] preset_stdbm         = {  2,  1,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  2,  1,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0 };
+// Preset: MC Bitmap
+byte[] preset_mcbm          = {  3,  1,  1,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  2,  1,  0,  0,  0,  9,  0,  0,  0,  0,  0,  0 };
+// Preset: Hicolor Standard Char Mode
+byte[] preset_hi_stdchar    = {  4,  0,  0,  0,  1,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  1,  0,  0,  0,  0,  0,  0,  0,  0 };
+// Preset: Hicolor Extended Color Char Mode
+byte[] preset_hi_ecmchar    = {  5,  0,  0,  1,  1,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  1,  0,  3,  4,  6,  8,  9, $c, $c };
+// Preset: Two plane mode
+byte[] preset_twoplane      = {  6,  1,  0,  1,  1,  1,  0,  0,  0,  0,  7,  0,  0,  0,  1,  0,  0,  8,  0,  0,  0,  1,  0,  0,  0,  0,  0,  1,  7,  0, $d,  4,  0,  0,  0,  0 };
+// Preset: Chunky 8bpp
+byte[] preset_chunky        = {  7,  0,  1,  1,  1,  1,  1,  1,  0,  0,  0,  0,  0,  0,  0,  0,  0,  6,  0,  0,  0,  8,  0,  0,  0,  0,  0,  1,  0,  0,  0,  0,  0,  0,  0,  0 };
+
+
+// Apply a form value preset to the form values
+// idx is the ID of the preset
+void apply_preset(byte idx) {
+    byte* preset;
+    if(idx==0) {
+        preset = preset_stdchar;
+    } else if(idx==1){
+        preset = preset_ecmchar;
+    } else if(idx==2){
+        preset = preset_stdbm;
+    } else if(idx==3){
+        preset = preset_mcbm;
+    } else if(idx==4){
+        preset = preset_hi_stdchar;
+    } else if(idx==5){
+        preset = preset_hi_ecmchar;
+    } else if(idx==6){
+        preset = preset_twoplane;
+    } else if(idx==7){
+        preset = preset_chunky;
+    } else {
+        preset = preset_chunky;
+    }
+
+    // Copy preset values into the fields
+    byte* values = form_fields_val;
+    for( byte i=0; i != form_fields_cnt; i++) {
+        *values++ = *preset++;
+    }
+
+}
 
 // Form fields direct addressing
-const byte* form_ctrl_mode  = form_fields_val+0;
+const byte* form_preset  = form_fields_val+0;
 const byte* form_ctrl_bmm   = form_fields_val+1;
 const byte* form_ctrl_mcm   = form_fields_val+2;
 const byte* form_ctrl_ecm   = form_fields_val+3;
@@ -168,15 +223,15 @@ const byte* form_b_mod_lo   = form_fields_val+23;
 const byte* form_vic_screen = form_fields_val+24;
 const byte* form_vic_gfx    = form_fields_val+25;
 const byte* form_vic_cols   = form_fields_val+26;
-const byte* form_vic_bg0_hi = form_fields_val+27;
-const byte* form_vic_bg0_lo = form_fields_val+28;
-const byte* form_vic_bg1_hi = form_fields_val+29;
-const byte* form_vic_bg1_lo = form_fields_val+30;
-const byte* form_vic_bg2_hi = form_fields_val+31;
-const byte* form_vic_bg2_lo = form_fields_val+32;
-const byte* form_vic_bg3_hi = form_fields_val+33;
-const byte* form_vic_bg3_lo = form_fields_val+34;
-const byte* form_dtv_palet  = form_fields_val+35;
+const byte* form_dtv_palet  = form_fields_val+27;
+const byte* form_vic_bg0_hi = form_fields_val+28;
+const byte* form_vic_bg0_lo = form_fields_val+29;
+const byte* form_vic_bg1_hi = form_fields_val+30;
+const byte* form_vic_bg1_lo = form_fields_val+31;
+const byte* form_vic_bg2_hi = form_fields_val+32;
+const byte* form_vic_bg2_lo = form_fields_val+33;
+const byte* form_vic_bg3_hi = form_fields_val+34;
+const byte* form_vic_bg3_lo = form_fields_val+35;
 
 // Change graphics mode to show the selected graphics mode
 void gfx_mode() {
@@ -279,7 +334,7 @@ void gfx_mode() {
         keyboard_event_scan();
         byte keyboard_event = keyboard_event_get();
         if(keyboard_event==KEY_SPACE) {
-            // If space pressed - change to form mode
+            // If space pressed - change to form mode         4
             return;
         }
     }
@@ -481,12 +536,20 @@ void form_mode() {
     *BGCOL = 0;
     *BORDERCOL = 0;
 
+    byte preset_current = *form_preset;
+
     // Let the user change values in the form
     while(true) {
         while(*RASTER!=$ff) {}
         if(form_control()!=0) {
             // Space pressed - change to GFX mode
             return;
+        }
+        if(preset_current!=*form_preset) {
+            // Preset changed - update field values and render
+            apply_preset(*form_preset);
+            preset_current = *form_preset;
+            form_render_values();
         }
     }
     return;

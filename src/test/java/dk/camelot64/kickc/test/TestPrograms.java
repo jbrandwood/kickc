@@ -51,6 +51,11 @@ public class TestPrograms {
    }
 
    @Test
+   public void testInlineString2() throws IOException, URISyntaxException {
+      compileAndCompare("inline-string-2");
+   }
+
+   @Test
    public void testVarForwardProblem() throws IOException, URISyntaxException {
       try {
          compileAndCompare("var-forward-problem");

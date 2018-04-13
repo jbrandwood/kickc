@@ -915,11 +915,25 @@ form_field_ptr: {
     rts
 }
 apply_preset: {
-    .label values = 5
-    .label preset = 3
+    .label values = $10
+    .label preset = 5
+    .label name = 3
     cmp #0
     bne b1
+    lda #<name_0
+    sta name
+    lda #>name_0
+    sta name+1
+    lda #<preset_stdchar
+    sta preset
+    lda #>preset_stdchar
+    sta preset+1
+    jmp b2
   b4:
+    lda #<name_8
+    sta name
+    lda #>name_8
+    sta name+1
     lda #<preset_stdchar
     sta preset
     lda #>preset_stdchar
@@ -945,10 +959,15 @@ apply_preset: {
     inx
     cpx #form_fields_cnt
     bne b19
+    jsr print_str_at
     rts
   b1:
     cmp #1
     bne b3
+    lda #<name_1
+    sta name
+    lda #>name_1
+    sta name+1
     lda #<preset_ecmchar
     sta preset
     lda #>preset_ecmchar
@@ -957,6 +976,10 @@ apply_preset: {
   b3:
     cmp #2
     bne b5
+    lda #<name_2
+    sta name
+    lda #>name_2
+    sta name+1
     lda #<preset_stdbm
     sta preset
     lda #>preset_stdbm
@@ -965,6 +988,10 @@ apply_preset: {
   b5:
     cmp #3
     bne b7
+    lda #<name_3
+    sta name
+    lda #>name_3
+    sta name+1
     lda #<preset_mcbm
     sta preset
     lda #>preset_mcbm
@@ -973,6 +1000,10 @@ apply_preset: {
   b7:
     cmp #4
     bne b9
+    lda #<name_4
+    sta name
+    lda #>name_4
+    sta name+1
     lda #<preset_hi_stdchar
     sta preset
     lda #>preset_hi_stdchar
@@ -981,6 +1012,10 @@ apply_preset: {
   b9:
     cmp #5
     bne b11
+    lda #<name_5
+    sta name
+    lda #>name_5
+    sta name+1
     lda #<preset_hi_ecmchar
     sta preset
     lda #>preset_hi_ecmchar
@@ -989,6 +1024,10 @@ apply_preset: {
   b11:
     cmp #6
     bne b13
+    lda #<name_6
+    sta name
+    lda #>name_6
+    sta name+1
     lda #<preset_twoplane
     sta preset
     lda #>preset_twoplane
@@ -997,6 +1036,10 @@ apply_preset: {
   b13:
     cmp #7
     bne b15
+    lda #<name_7
+    sta name
+    lda #>name_7
+    sta name+1
     lda #<preset_chunky
     sta preset
     lda #>preset_chunky
@@ -1007,11 +1050,52 @@ apply_preset: {
     beq !b4+
     jmp b4
   !b4:
+    lda #<name_9
+    sta name
+    lda #>name_9
+    sta name+1
     lda #<preset_sixsfred
     sta preset
     lda #>preset_sixsfred
     sta preset+1
     jmp b2
+    name_0: .text "Standard Charset              @"
+    name_1: .text "Extended Color Charset        @"
+    name_2: .text "Standard Bitmap               @"
+    name_3: .text "Multicolor Bitmap             @"
+    name_4: .text "Hicolor Charset               @"
+    name_5: .text "Hicolor Extended Color Charset@"
+    name_6: .text "Twoplane Bitmap               @"
+    name_7: .text "Chunky 8bpp                   @"
+    name_8: .text "Standard Charset              @"
+    name_9: .text "Sixs Fred                     @"
+}
+print_str_at: {
+    .label at = 5
+    .label str = 3
+    lda #<FORM_SCREEN+$28*2+$a
+    sta at
+    lda #>FORM_SCREEN+$28*2+$a
+    sta at+1
+  b1:
+    ldy #0
+    lda (str),y
+    cmp #'@'
+    bne b2
+    rts
+  b2:
+    ldy #0
+    lda (str),y
+    sta (at),y
+    inc at
+    bne !+
+    inc at+1
+  !:
+    inc str
+    bne !+
+    inc str+1
+  !:
+    jmp b1
 }
 form_control: {
     .label field = 3

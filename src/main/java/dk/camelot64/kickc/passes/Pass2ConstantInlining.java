@@ -8,9 +8,7 @@ import dk.camelot64.kickc.model.symbols.Symbol;
 import dk.camelot64.kickc.model.symbols.Variable;
 import dk.camelot64.kickc.model.types.SymbolType;
 
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 /**
  * Compiler Pass consolidating unnamed constants and constant aliasses into the place using them (instructions or the definition of another constant value).
@@ -36,6 +34,15 @@ public class Pass2ConstantInlining extends Pass2SsaOptimization {
       inline.putAll(findUnnamedConstants());
       inline.putAll(findAliasConstants());
       inline.putAll(findConstVarVersions());
+      
+      // Remove all string constants
+      List<ConstantRef> refs = new ArrayList(inline.keySet());
+      for(ConstantRef constantRef : refs) {
+         ConstantValue constantValue = inline.get(constantRef);
+         if(constantValue instanceof ConstantString) {
+            inline.remove(constantRef);
+         }
+      }
 
       // Perform alias replacement within the constant values inside the aliases
       replaceInValues(inline);

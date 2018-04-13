@@ -22,14 +22,15 @@ void main() {
 }
 
 // VIC Screens
-const byte* VIC_SCREEN0 = $8000;
-const byte* VIC_SCREEN1 = $8400;
-const byte* VIC_SCREEN2 = $8800;
-const byte* VIC_SCREEN3 = $8c00;
+const byte* VIC_SCREEN0 = $4000;
+const byte* VIC_SCREEN1 = $4400;
+const byte* VIC_SCREEN2 = $4800;
+const byte* VIC_SCREEN3 = $4c00;
+const byte* VIC_SCREEN4 = $5000;
 // VIC Charset from ROM
-const byte* VIC_CHARSET_ROM = $9800;
+const byte* VIC_CHARSET_ROM = $5800;
 // VIC Bitmap
-const byte* VIC_BITMAP = $a000;
+const byte* VIC_BITMAP = $6000;
 
 // 8BPP Chunky Bitmap (contains 8bpp pixels)
 const dword PLANE_8BPP_CHUNKY = $20000;
@@ -41,6 +42,12 @@ const dword PLANE_VERTICAL = $32000;
 const dword PLANE_HORISONTAL2 = $34000;
 // Plane with vertical stripes every 2 pixels
 const dword PLANE_VERTICAL2 = $36000;
+// Plane with blank pixels
+const dword PLANE_BLANK = $38000;
+// Plane with all pixels
+const dword PLANE_FULL = $3a000;
+// Plane with all pixels
+const dword PLANE_CHARSET8 = $3c000;
 
 // Get plane address from a plane index (from the form)
 dword get_plane(byte idx) {
@@ -66,6 +73,12 @@ dword get_plane(byte idx) {
         return (dword)PLANE_HORISONTAL2;
     } else if(idx==10) {
         return (dword)PLANE_VERTICAL2;
+    } else if(idx==11) {
+        return (dword)PLANE_CHARSET8;
+    } else if(idx==12) {
+        return (dword)PLANE_BLANK;
+    } else if(idx==13) {
+        return (dword)PLANE_FULL;
     }
     return (dword)VIC_SCREEN0;
 }
@@ -80,6 +93,8 @@ byte* get_vic_screen(byte idx) {
         return VIC_SCREEN2;
     } else if(idx==3) {
         return VIC_SCREEN3;
+    } else if(idx==4) {
+        return VIC_SCREEN4;
     }
     return VIC_SCREEN0;
 }
@@ -141,7 +156,7 @@ byte form_fields_cnt = 36;
 byte[] form_fields_x        = {  8, 12, 12, 12, 12, 12, 12, 12, 12, 12, 25, 24, 25, 24, 25, 24, 25, 25, 24, 25, 24, 25, 24, 25, 37, 37, 37, 37, 36, 37, 36, 37, 36, 37, 36, 37 };
 byte[] form_fields_y        = {  2,  5,  6,  7,  8,  9, 10, 11, 12, 13,  5,  6,  6,  7,  7,  8,  8, 11, 12, 12, 13, 13, 14, 14,  5,  6,  7, 10, 11, 11, 12, 12, 13, 13, 14, 14 };
 // Form field max values (all values are in the interval 0..max)
-byte[] form_fields_max      = {  8,  1,  1,  1,  1,  1,  1,  1,  1,  1, $a, $f, $f, $f, $f, $f, $f, $a, $f, $f, $f, $f, $f, $f, $3, $1, $3, $1, $f, $f, $f, $f, $f, $f, $f, $f };
+byte[] form_fields_max      = { 10,  1,  1,  1,  1,  1,  1,  1,  1,  1, $d, $f, $f, $f, $f, $f, $f, $d, $f, $f, $f, $f, $f, $f, $3, $1, $4, $1, $f, $f, $f, $f, $f, $f, $f, $f };
 // Form fields values
 byte[] form_fields_val      = {  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0 };
 
@@ -163,53 +178,81 @@ byte[] preset_twoplane      = {  6,  1,  0,  1,  1,  1,  0,  0,  0,  0,  7,  0, 
 byte[] preset_chunky        = {  7,  0,  1,  1,  1,  1,  1,  1,  0,  0,  0,  0,  0,  0,  0,  0,  0,  6,  0,  0,  0,  8,  0,  0,  0,  0,  0,  1,  0,  0,  0,  0,  0,  0,  0,  0 };
 // Preset: Sixs FREDs mode
 byte[] preset_sixsfred      = {  8,  1,  1,  1,  1,  1,  0,  0,  0,  0, $9,  0,  0,  0,  1,  0,  0, $a,  0,  0,  0,  1,  0,  0,  0,  0,  1,  1,  0,  0,  0,  0,  0,  0,  0,  0 };
+// Preset: Sixs FREDs 2 mode
+byte[] preset_sixsfred2     = {  9,  1,  1,  1,  0,  1,  0,  0,  0,  0, $9,  0,  0,  0,  1,  0,  0, $a,  0,  0,  0,  1,  0,  0,  0,  0,  0,  1,  0,  0,  0,  0,  0,  0,  0,  0 };
+// Preset: 8bpp Pixel Cell
+byte[] preset_8bpppixelcell = { 10,  0,  1,  1,  1,  1,  0,  1,  0,  0, $0,  0,  0,  0,  1,  0,  0, $b,  0,  0,  0,  0,  0,  0,  0,  0,  0,  1,  0,  0,  0,  0,  0,  0,  0,  0 };
 
 // Apply a form value preset to the form values
 // idx is the ID of the preset
 void apply_preset(byte idx) {
     byte* preset;
-    byte* name;
     if(idx==0) {
         preset = preset_stdchar;
-        name = "Standard Charset              @";
     } else if(idx==1){
         preset = preset_ecmchar;
-        name = "Extended Color Charset        @";
     } else if(idx==2){
         preset = preset_stdbm;
-        name = "Standard Bitmap               @";
     } else if(idx==3){
         preset = preset_mcbm;
-        name = "Multicolor Bitmap             @";
     } else if(idx==4){
         preset = preset_hi_stdchar;
-        name = "Hicolor Charset               @";
     } else if(idx==5){
         preset = preset_hi_ecmchar;
-        name = "Hicolor Extended Color Charset@";
     } else if(idx==6){
         preset = preset_twoplane;
-        name = "Twoplane Bitmap               @";
     } else if(idx==7){
         preset = preset_chunky;
-        name = "Chunky 8bpp                   @";
     } else if(idx==8){
         preset = preset_sixsfred;
-        name = "Sixs Fred                     @";
+    } else if(idx==9){
+        preset = preset_sixsfred2;
+    } else if(idx==10){
+        preset = preset_8bpppixelcell;
     } else {
         preset = preset_stdchar;
-        name = "Standard Charset              @";
     }
-
     // Copy preset values into the fields
     byte* values = form_fields_val;
     for( byte i=0; i != form_fields_cnt; i++) {
         *values++ = *preset++;
     }
 
-    print_str_at(name, FORM_SCREEN+40*2+10);
-
 }
+
+// Render form preset name in the form
+// idx is the ID of the preset
+void render_preset_name(byte idx) {
+    byte* name;
+    if(idx==0) {
+        name = "Standard Charset              @";
+    } else if(idx==1){
+        name = "Extended Color Charset        @";
+    } else if(idx==2){
+        name = "Standard Bitmap               @";
+    } else if(idx==3){
+        name = "Multicolor Bitmap             @";
+    } else if(idx==4){
+        name = "Hicolor Charset               @";
+    } else if(idx==5){
+        name = "Hicolor Extended Color Charset@";
+    } else if(idx==6){
+        name = "Twoplane Bitmap               @";
+    } else if(idx==7){
+        name = "Chunky 8bpp                   @";
+    } else if(idx==8){
+        name = "Sixs Fred                     @";
+    } else if(idx==9){
+        name = "Sixs Fred 2                   @";
+    } else if(idx==10){
+        name = "8bpp Pixel Cell               @";
+    } else {
+        name = "Standard Charset              @";
+    }
+    // Render it
+    print_str_at(name, FORM_SCREEN+40*2+10);
+}
+
 
 // Form fields direct addressing
 const byte* form_preset  = form_fields_val+0;
@@ -363,12 +406,29 @@ void gfx_init() {
     gfx_init_screen1();
     gfx_init_screen2();
     gfx_init_screen3();
+    gfx_init_screen4();
+    gfx_init_charset();
     gfx_init_vic_bitmap();
     gfx_init_plane_8bppchunky();
+    gfx_init_plane_charset8();
     gfx_init_plane_horisontal();
     gfx_init_plane_vertical();
     gfx_init_plane_horisontal2();
     gfx_init_plane_vertical2();
+    gfx_init_plane_blank();
+    gfx_init_plane_full();
+}
+
+void gfx_init_charset() {
+    *PROCPORT = $32;
+    byte* chargen = CHARGEN;
+    byte* charset = VIC_CHARSET_ROM;
+    for(byte c: 0..$ff) {
+        for( byte l: 0..7) {
+            *charset++ = *chargen++;
+        }
+    }
+    *PROCPORT = $37;
 }
 
 // Initialize VIC screen 0 ( value is %yyyyxxxx where yyyy is ypos and xxxx is xpos)
@@ -409,6 +469,16 @@ void gfx_init_screen3() {
     for(byte cy: 0..24 ) {
         for(byte cx: 0..39) {
             *ch++ = (cx&3)<<4|(cy&3);
+        }
+    }
+}
+
+// Initialize VIC screen 4 - all chars are 00
+void gfx_init_screen4() {
+    byte* ch=VIC_SCREEN4;
+    for(byte cy: 0..24 ) {
+        for(byte cx: 0..39) {
+            *ch++ = 0;
         }
     }
 }
@@ -495,14 +565,57 @@ void gfx_init_plane_vertical() {
     dtvSetCpuBankSegment1((byte)($4000/$4000));
 }
 
+// Initialize Plane with 8bpp charset
+void gfx_init_plane_charset8() {
+    // 8bpp cells for Plane B (charset) - ROM charset with 256 colors
+    byte gfxbCpuBank = (byte)(PLANE_CHARSET8/$4000);
+    dtvSetCpuBankSegment1(gfxbCpuBank++);
+    byte* gfxa = $4000 + (PLANE_CHARSET8 & $3fff);
+    byte* chargen = CHARGEN;
+    *PROCPORT = PROCPORT_RAM_CHARROM;
+    byte col = 0;
+    for(byte ch : $00..$ff) {
+        for ( byte cr : 0..7) {
+            byte bits = *chargen++;
+            for ( byte cp : 0..7) {
+                byte c = 0;
+                if((bits & $80) != 0) {
+                    c = col;
+                }
+                *gfxa++ = c;
+                bits = bits<<1;
+                col++;
+            }
+        }
+    }
+    *PROCPORT = PROCPORT_RAM_IO;
+    // Reset CPU BANK segment to $4000
+    dtvSetCpuBankSegment1((byte)($4000/$4000));
+}
+
 // Initialize Plane with Vertical Stripes every 2 pixels
 void gfx_init_plane_vertical2() {
-    byte gfxbCpuBank = (byte)(PLANE_VERTICAL2/$4000);
+    gfx_init_plane_fill(PLANE_VERTICAL2, %00011011);
+}
+
+// Initialize Plane with blank pixels
+void gfx_init_plane_blank() {
+    gfx_init_plane_fill(PLANE_BLANK, 0);
+}
+
+// Initialize Plane with all pixels
+void gfx_init_plane_full() {
+    gfx_init_plane_fill(PLANE_FULL, $ff);
+}
+
+// Initialize 320*200 1bpp pixel ($2000) plane with identical bytes
+void gfx_init_plane_fill(dword plane_addr, byte fill) {
+    byte gfxbCpuBank = < >(plane_addr<<2);
     dtvSetCpuBankSegment1(gfxbCpuBank++);
-    byte* gfxb = $4000 + (PLANE_VERTICAL2 & $3fff);
+    byte* gfxb = $4000 + (<plane_addr & $3fff);
     for(byte by : 0..199) {
         for ( byte bx : 0..39) {
-                *gfxb++ = %00011011;
+                *gfxb++ = fill;
         }
     }
     // Reset CPU BANK segment to $4000
@@ -524,6 +637,7 @@ void form_mode() {
     // Form Fields
     form_set_screen(FORM_SCREEN);
     form_render_values();
+    render_preset_name(*form_preset);
 
     // DTV Graphics Bank
     *DTV_GRAPHICS_VIC_BANK = (byte)((dword)FORM_CHARSET/$10000);
@@ -566,6 +680,7 @@ void form_mode() {
             apply_preset(*form_preset);
             preset_current = *form_preset;
             form_render_values();
+            render_preset_name(*form_preset);
         }
     }
     return;

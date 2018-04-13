@@ -5,6 +5,8 @@
   .const PROCPORT_DDR_MEMORY_MASK = 7
   .label PROCPORT = 1
   .const PROCPORT_RAM_IO = $35
+  .const PROCPORT_RAM_CHARROM = $31
+  .label CHARGEN = $d000
   .label RASTER = $d012
   .label BORDERCOL = $d020
   .label BGCOL = $d021
@@ -65,17 +67,21 @@
   .const KEY_MODIFIER_RSHIFT = 2
   .const KEY_MODIFIER_CTRL = 4
   .const KEY_MODIFIER_COMMODORE = 8
-  .label VIC_SCREEN0 = $8000
-  .label VIC_SCREEN1 = $8400
-  .label VIC_SCREEN2 = $8800
-  .label VIC_SCREEN3 = $8c00
-  .label VIC_CHARSET_ROM = $9800
-  .label VIC_BITMAP = $a000
+  .label VIC_SCREEN0 = $4000
+  .label VIC_SCREEN1 = $4400
+  .label VIC_SCREEN2 = $4800
+  .label VIC_SCREEN3 = $4c00
+  .label VIC_SCREEN4 = $5000
+  .label VIC_CHARSET_ROM = $5800
+  .label VIC_BITMAP = $6000
   .const PLANE_8BPP_CHUNKY = $20000
   .const PLANE_HORISONTAL = $30000
   .const PLANE_VERTICAL = $32000
   .const PLANE_HORISONTAL2 = $34000
   .const PLANE_VERTICAL2 = $36000
+  .const PLANE_BLANK = $38000
+  .const PLANE_FULL = $3a000
+  .const PLANE_CHARSET8 = $3c000
   .label FORM_SCREEN = $400
   .label FORM_CHARSET = $1800
   .const form_fields_cnt = $24
@@ -633,10 +639,18 @@ get_vic_screen: {
     jmp breturn
   b5:
     cmp #3
-    bne b2
+    bne b7
     lda #<VIC_SCREEN3
     sta return
     lda #>VIC_SCREEN3
+    sta return+1
+    jmp breturn
+  b7:
+    cmp #4
+    bne b2
+    lda #<VIC_SCREEN4
+    sta return
+    lda #>VIC_SCREEN4
     sta return+1
     jmp breturn
 }
@@ -785,9 +799,7 @@ get_plane: {
     jmp breturn
   b19:
     cmp #$a
-    beq !b2+
-    jmp b2
-  !b2:
+    bne b21
     lda #<PLANE_VERTICAL2
     sta return
     lda #>PLANE_VERTICAL2
@@ -795,6 +807,44 @@ get_plane: {
     lda #<PLANE_VERTICAL2>>$10
     sta return+2
     lda #>PLANE_VERTICAL2>>$10
+    sta return+3
+    jmp breturn
+  b21:
+    cmp #$b
+    bne b23
+    lda #<PLANE_CHARSET8
+    sta return
+    lda #>PLANE_CHARSET8
+    sta return+1
+    lda #<PLANE_CHARSET8>>$10
+    sta return+2
+    lda #>PLANE_CHARSET8>>$10
+    sta return+3
+    jmp breturn
+  b23:
+    cmp #$c
+    bne b25
+    lda #<PLANE_BLANK
+    sta return
+    lda #>PLANE_BLANK
+    sta return+1
+    lda #<PLANE_BLANK>>$10
+    sta return+2
+    lda #>PLANE_BLANK>>$10
+    sta return+3
+    jmp breturn
+  b25:
+    cmp #$d
+    beq !b2+
+    jmp b2
+  !b2:
+    lda #<PLANE_FULL
+    sta return
+    lda #>PLANE_FULL
+    sta return+1
+    lda #<PLANE_FULL>>$10
+    sta return+2
+    lda #>PLANE_FULL>>$10
     sta return+3
     jmp breturn
 }
@@ -824,6 +874,8 @@ form_mode: {
     jsr print_str_lines
     jsr form_set_screen
     jsr form_render_values
+    lda form_preset
+    jsr render_preset_name
     lda #($ffffffff&FORM_CHARSET)/$10000
     sta DTV_GRAPHICS_VIC_BANK
     lda #DTV_COLOR_BANK_DEFAULT/$400
@@ -880,7 +932,148 @@ form_mode: {
     lda form_preset
     sta preset_current
     jsr form_render_values
+    lda form_preset
+    jsr render_preset_name
     jmp b5
+}
+render_preset_name: {
+    .label name = 3
+    cmp #0
+    bne b1
+    lda #<name_0
+    sta name
+    lda #>name_0
+    sta name+1
+    jmp b2
+  b4:
+    lda #<name_10
+    sta name
+    lda #>name_10
+    sta name+1
+  b2:
+    jsr print_str_at
+    rts
+  b1:
+    cmp #1
+    bne b3
+    lda #<name_1
+    sta name
+    lda #>name_1
+    sta name+1
+    jmp b2
+  b3:
+    cmp #2
+    bne b5
+    lda #<name_2
+    sta name
+    lda #>name_2
+    sta name+1
+    jmp b2
+  b5:
+    cmp #3
+    bne b7
+    lda #<name_3
+    sta name
+    lda #>name_3
+    sta name+1
+    jmp b2
+  b7:
+    cmp #4
+    bne b9
+    lda #<name_4
+    sta name
+    lda #>name_4
+    sta name+1
+    jmp b2
+  b9:
+    cmp #5
+    bne b11
+    lda #<name_5
+    sta name
+    lda #>name_5
+    sta name+1
+    jmp b2
+  b11:
+    cmp #6
+    bne b13
+    lda #<name_6
+    sta name
+    lda #>name_6
+    sta name+1
+    jmp b2
+  b13:
+    cmp #7
+    bne b15
+    lda #<name_7
+    sta name
+    lda #>name_7
+    sta name+1
+    jmp b2
+  b15:
+    cmp #8
+    bne b17
+    lda #<name_8
+    sta name
+    lda #>name_8
+    sta name+1
+    jmp b2
+  b17:
+    cmp #9
+    bne b19
+    lda #<name_9
+    sta name
+    lda #>name_9
+    sta name+1
+    jmp b2
+  b19:
+    cmp #$a
+    beq !b4+
+    jmp b4
+  !b4:
+    lda #<name_11
+    sta name
+    lda #>name_11
+    sta name+1
+    jmp b2
+    name_0: .text "Standard Charset              @"
+    name_1: .text "Extended Color Charset        @"
+    name_2: .text "Standard Bitmap               @"
+    name_3: .text "Multicolor Bitmap             @"
+    name_4: .text "Hicolor Charset               @"
+    name_5: .text "Hicolor Extended Color Charset@"
+    name_6: .text "Twoplane Bitmap               @"
+    name_7: .text "Chunky 8bpp                   @"
+    name_8: .text "Sixs Fred                     @"
+    name_9: .text "Sixs Fred 2                   @"
+    name_10: .text "Standard Charset              @"
+    name_11: .text "8bpp Pixel Cell               @"
+}
+print_str_at: {
+    .label at = 5
+    .label str = 3
+    lda #<FORM_SCREEN+$28*2+$a
+    sta at
+    lda #>FORM_SCREEN+$28*2+$a
+    sta at+1
+  b1:
+    ldy #0
+    lda (str),y
+    cmp #'@'
+    bne b2
+    rts
+  b2:
+    ldy #0
+    lda (str),y
+    sta (at),y
+    inc at
+    bne !+
+    inc at+1
+  !:
+    inc str
+    bne !+
+    inc str+1
+  !:
+    jmp b1
 }
 form_render_values: {
     .label field = 3
@@ -915,25 +1108,11 @@ form_field_ptr: {
     rts
 }
 apply_preset: {
-    .label values = $10
-    .label preset = 5
-    .label name = 3
+    .label values = 5
+    .label preset = 3
     cmp #0
     bne b1
-    lda #<name_0
-    sta name
-    lda #>name_0
-    sta name+1
-    lda #<preset_stdchar
-    sta preset
-    lda #>preset_stdchar
-    sta preset+1
-    jmp b2
   b4:
-    lda #<name_8
-    sta name
-    lda #>name_8
-    sta name+1
     lda #<preset_stdchar
     sta preset
     lda #>preset_stdchar
@@ -944,7 +1123,7 @@ apply_preset: {
     sta values
     lda #>form_fields_val
     sta values+1
-  b19:
+  b23:
     ldy #0
     lda (preset),y
     sta (values),y
@@ -958,16 +1137,11 @@ apply_preset: {
   !:
     inx
     cpx #form_fields_cnt
-    bne b19
-    jsr print_str_at
+    bne b23
     rts
   b1:
     cmp #1
     bne b3
-    lda #<name_1
-    sta name
-    lda #>name_1
-    sta name+1
     lda #<preset_ecmchar
     sta preset
     lda #>preset_ecmchar
@@ -976,10 +1150,6 @@ apply_preset: {
   b3:
     cmp #2
     bne b5
-    lda #<name_2
-    sta name
-    lda #>name_2
-    sta name+1
     lda #<preset_stdbm
     sta preset
     lda #>preset_stdbm
@@ -988,10 +1158,6 @@ apply_preset: {
   b5:
     cmp #3
     bne b7
-    lda #<name_3
-    sta name
-    lda #>name_3
-    sta name+1
     lda #<preset_mcbm
     sta preset
     lda #>preset_mcbm
@@ -1000,10 +1166,6 @@ apply_preset: {
   b7:
     cmp #4
     bne b9
-    lda #<name_4
-    sta name
-    lda #>name_4
-    sta name+1
     lda #<preset_hi_stdchar
     sta preset
     lda #>preset_hi_stdchar
@@ -1012,10 +1174,6 @@ apply_preset: {
   b9:
     cmp #5
     bne b11
-    lda #<name_5
-    sta name
-    lda #>name_5
-    sta name+1
     lda #<preset_hi_ecmchar
     sta preset
     lda #>preset_hi_ecmchar
@@ -1024,10 +1182,6 @@ apply_preset: {
   b11:
     cmp #6
     bne b13
-    lda #<name_6
-    sta name
-    lda #>name_6
-    sta name+1
     lda #<preset_twoplane
     sta preset
     lda #>preset_twoplane
@@ -1036,10 +1190,6 @@ apply_preset: {
   b13:
     cmp #7
     bne b15
-    lda #<name_7
-    sta name
-    lda #>name_7
-    sta name+1
     lda #<preset_chunky
     sta preset
     lda #>preset_chunky
@@ -1047,55 +1197,30 @@ apply_preset: {
     jmp b2
   b15:
     cmp #8
-    beq !b4+
-    jmp b4
-  !b4:
-    lda #<name_9
-    sta name
-    lda #>name_9
-    sta name+1
+    bne b17
     lda #<preset_sixsfred
     sta preset
     lda #>preset_sixsfred
     sta preset+1
     jmp b2
-    name_0: .text "Standard Charset              @"
-    name_1: .text "Extended Color Charset        @"
-    name_2: .text "Standard Bitmap               @"
-    name_3: .text "Multicolor Bitmap             @"
-    name_4: .text "Hicolor Charset               @"
-    name_5: .text "Hicolor Extended Color Charset@"
-    name_6: .text "Twoplane Bitmap               @"
-    name_7: .text "Chunky 8bpp                   @"
-    name_8: .text "Standard Charset              @"
-    name_9: .text "Sixs Fred                     @"
-}
-print_str_at: {
-    .label at = 5
-    .label str = 3
-    lda #<FORM_SCREEN+$28*2+$a
-    sta at
-    lda #>FORM_SCREEN+$28*2+$a
-    sta at+1
-  b1:
-    ldy #0
-    lda (str),y
-    cmp #'@'
-    bne b2
-    rts
-  b2:
-    ldy #0
-    lda (str),y
-    sta (at),y
-    inc at
-    bne !+
-    inc at+1
-  !:
-    inc str
-    bne !+
-    inc str+1
-  !:
-    jmp b1
+  b17:
+    cmp #9
+    bne b19
+    lda #<preset_sixsfred2
+    sta preset
+    lda #>preset_sixsfred2
+    sta preset+1
+    jmp b2
+  b19:
+    cmp #$a
+    beq !b4+
+    jmp b4
+  !b4:
+    lda #<preset_8bpppixelcell
+    sta preset
+    lda #>preset_8bpppixelcell
+    sta preset+1
+    jmp b2
 }
 form_control: {
     .label field = 3
@@ -1324,30 +1449,88 @@ gfx_init: {
     jsr gfx_init_screen1
     jsr gfx_init_screen2
     jsr gfx_init_screen3
+    jsr gfx_init_screen4
+    jsr gfx_init_charset
     jsr gfx_init_vic_bitmap
     jsr gfx_init_plane_8bppchunky
+    jsr gfx_init_plane_charset8
     jsr gfx_init_plane_horisontal
     jsr gfx_init_plane_vertical
     jsr gfx_init_plane_horisontal2
     jsr gfx_init_plane_vertical2
+    jsr gfx_init_plane_blank
+    jsr gfx_init_plane_full
     rts
 }
-gfx_init_plane_vertical2: {
-    .const gfxbCpuBank = PLANE_VERTICAL2/$4000
+gfx_init_plane_full: {
+    lda #$ff
+    sta gfx_init_plane_fill.fill
+    lda #<PLANE_FULL
+    sta gfx_init_plane_fill.plane_addr
+    lda #>PLANE_FULL
+    sta gfx_init_plane_fill.plane_addr+1
+    lda #<PLANE_FULL>>$10
+    sta gfx_init_plane_fill.plane_addr+2
+    lda #>PLANE_FULL>>$10
+    sta gfx_init_plane_fill.plane_addr+3
+    jsr gfx_init_plane_fill
+    rts
+}
+gfx_init_plane_fill: {
+    .label _0 = $13
+    .label _1 = 3
+    .label _4 = 3
+    .label _5 = 3
+    .label _6 = 3
     .label gfxb = 3
-    .label by = 2
-    lda #gfxbCpuBank
+    .label by = 7
+    .label plane_addr = 9
+    .label fill = 2
+    lda plane_addr
+    sta _0
+    lda plane_addr+1
+    sta _0+1
+    lda plane_addr+2
+    sta _0+2
+    lda plane_addr+3
+    sta _0+3
+    asl _0
+    rol _0+1
+    rol _0+2
+    rol _0+3
+    asl _0
+    rol _0+1
+    rol _0+2
+    rol _0+3
+    lda _0+2
+    sta _1
+    lda _0+3
+    sta _1+1
+    lda _1
     jsr dtvSetCpuBankSegment1
+    lda plane_addr
+    sta _4
+    lda plane_addr+1
+    sta _4+1
+    lda _5
+    and #<$3fff
+    sta _5
+    lda _5+1
+    and #>$3fff
+    sta _5+1
+    clc
+    lda _6
+    adc #<$4000
+    sta _6
+    lda _6+1
+    adc #>$4000
+    sta _6+1
     lda #0
     sta by
-    lda #<$4000+(PLANE_VERTICAL2&$3fff)
-    sta gfxb
-    lda #>$4000+(PLANE_VERTICAL2&$3fff)
-    sta gfxb+1
   b1:
     ldx #0
   b2:
-    lda #$1b
+    lda fill
     ldy #0
     sta (gfxb),y
     inc gfxb
@@ -1371,6 +1554,34 @@ dtvSetCpuBankSegment1: {
     .byte $32, $dd
     lda $ff
     .byte $32, $00
+    rts
+}
+gfx_init_plane_blank: {
+    lda #0
+    sta gfx_init_plane_fill.fill
+    lda #<PLANE_BLANK
+    sta gfx_init_plane_fill.plane_addr
+    lda #>PLANE_BLANK
+    sta gfx_init_plane_fill.plane_addr+1
+    lda #<PLANE_BLANK>>$10
+    sta gfx_init_plane_fill.plane_addr+2
+    lda #>PLANE_BLANK>>$10
+    sta gfx_init_plane_fill.plane_addr+3
+    jsr gfx_init_plane_fill
+    rts
+}
+gfx_init_plane_vertical2: {
+    lda #$1b
+    sta gfx_init_plane_fill.fill
+    lda #<PLANE_VERTICAL2
+    sta gfx_init_plane_fill.plane_addr
+    lda #>PLANE_VERTICAL2
+    sta gfx_init_plane_fill.plane_addr+1
+    lda #<PLANE_VERTICAL2>>$10
+    sta gfx_init_plane_fill.plane_addr+2
+    lda #>PLANE_VERTICAL2>>$10
+    sta gfx_init_plane_fill.plane_addr+3
+    jsr gfx_init_plane_fill
     rts
 }
 gfx_init_plane_horisontal2: {
@@ -1490,6 +1701,75 @@ gfx_init_plane_horisontal: {
     inc gfxa+1
   !:
     jmp b4
+}
+gfx_init_plane_charset8: {
+    .const gfxbCpuBank = PLANE_CHARSET8/$4000
+    .label bits = 8
+    .label chargen = 3
+    .label gfxa = 5
+    .label col = $d
+    .label cr = 7
+    .label ch = 2
+    lda #gfxbCpuBank
+    jsr dtvSetCpuBankSegment1
+    lda #PROCPORT_RAM_CHARROM
+    sta PROCPORT
+    lda #0
+    sta ch
+    sta col
+    lda #<$4000+(PLANE_CHARSET8&$3fff)
+    sta gfxa
+    lda #>$4000+(PLANE_CHARSET8&$3fff)
+    sta gfxa+1
+    lda #<CHARGEN
+    sta chargen
+    lda #>CHARGEN
+    sta chargen+1
+  b1:
+    lda #0
+    sta cr
+  b2:
+    ldy #0
+    lda (chargen),y
+    sta bits
+    inc chargen
+    bne !+
+    inc chargen+1
+  !:
+    ldx #0
+  b3:
+    lda #$80
+    and bits
+    cmp #0
+    beq b5
+    lda col
+    jmp b4
+  b5:
+    lda #0
+  b4:
+    ldy #0
+    sta (gfxa),y
+    inc gfxa
+    bne !+
+    inc gfxa+1
+  !:
+    asl bits
+    inc col
+    inx
+    cpx #8
+    bne b3
+    inc cr
+    lda cr
+    cmp #8
+    bne b2
+    inc ch
+    lda ch
+    bne b1
+    lda #PROCPORT_RAM_IO
+    sta PROCPORT
+    lda #$4000/$4000
+    jsr dtvSetCpuBankSegment1
+    rts
 }
 gfx_init_plane_8bppchunky: {
     .label _6 = $10
@@ -1919,6 +2199,74 @@ bitmap_init: {
     bne b3
     rts
 }
+gfx_init_charset: {
+    .label charset = 5
+    .label chargen = 3
+    .label c = 2
+    lda #$32
+    sta PROCPORT
+    lda #0
+    sta c
+    lda #<VIC_CHARSET_ROM
+    sta charset
+    lda #>VIC_CHARSET_ROM
+    sta charset+1
+    lda #<CHARGEN
+    sta chargen
+    lda #>CHARGEN
+    sta chargen+1
+  b1:
+    ldx #0
+  b2:
+    ldy #0
+    lda (chargen),y
+    sta (charset),y
+    inc charset
+    bne !+
+    inc charset+1
+  !:
+    inc chargen
+    bne !+
+    inc chargen+1
+  !:
+    inx
+    cpx #8
+    bne b2
+    inc c
+    lda c
+    bne b1
+    lda #$37
+    sta PROCPORT
+    rts
+}
+gfx_init_screen4: {
+    .label ch = 3
+    .label cy = 2
+    lda #0
+    sta cy
+    lda #<VIC_SCREEN4
+    sta ch
+    lda #>VIC_SCREEN4
+    sta ch+1
+  b1:
+    ldx #0
+  b2:
+    lda #0
+    tay
+    sta (ch),y
+    inc ch
+    bne !+
+    inc ch+1
+  !:
+    inx
+    cpx #$28
+    bne b2
+    inc cy
+    lda cy
+    cmp #$19
+    bne b1
+    rts
+}
 gfx_init_screen3: {
     .label _1 = 7
     .label ch = 3
@@ -2090,7 +2438,7 @@ keyboard_init: {
   bitmap_plot_bit: .fill $100, 0
   form_fields_x: .byte 8, $c, $c, $c, $c, $c, $c, $c, $c, $c, $19, $18, $19, $18, $19, $18, $19, $19, $18, $19, $18, $19, $18, $19, $25, $25, $25, $25, $24, $25, $24, $25, $24, $25, $24, $25
   form_fields_y: .byte 2, 5, 6, 7, 8, 9, $a, $b, $c, $d, 5, 6, 6, 7, 7, 8, 8, $b, $c, $c, $d, $d, $e, $e, 5, 6, 7, $a, $b, $b, $c, $c, $d, $d, $e, $e
-  form_fields_max: .byte 8, 1, 1, 1, 1, 1, 1, 1, 1, 1, $a, $f, $f, $f, $f, $f, $f, $a, $f, $f, $f, $f, $f, $f, 3, 1, 3, 1, $f, $f, $f, $f, $f, $f, $f, $f
+  form_fields_max: .byte $a, 1, 1, 1, 1, 1, 1, 1, 1, 1, $d, $f, $f, $f, $f, $f, $f, $d, $f, $f, $f, $f, $f, $f, 3, 1, 4, 1, $f, $f, $f, $f, $f, $f, $f, $f
   form_fields_val: .byte 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
   preset_stdchar: .byte 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0
   preset_ecmchar: .byte 1, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 2, 0, 5, 0, 6
@@ -2101,6 +2449,8 @@ keyboard_init: {
   preset_twoplane: .byte 6, 1, 0, 1, 1, 1, 0, 0, 0, 0, 7, 0, 0, 0, 1, 0, 0, 8, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 7, 0, $d, 4, 0, 0, 0, 0
   preset_chunky: .byte 7, 0, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 6, 0, 0, 0, 8, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0
   preset_sixsfred: .byte 8, 1, 1, 1, 1, 1, 0, 0, 0, 0, 9, 0, 0, 0, 1, 0, 0, $a, 0, 0, 0, 1, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0
+  preset_sixsfred2: .byte 9, 1, 1, 1, 0, 1, 0, 0, 0, 0, 9, 0, 0, 0, 1, 0, 0, $a, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0
+  preset_8bpppixelcell: .byte $a, 0, 1, 1, 1, 1, 0, 1, 0, 0, 0, 0, 0, 0, 1, 0, 0, $b, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0
   form_line_lo: .fill $19, 0
   form_line_hi: .fill $19, 0
   FORM_TEXT: .text " C64 DTV Graphics Mode Explorer         @"+"                                        @"+" PRESET 0 Standard Charset              @"+"                                        @"+" CONTROL        PLANE  A     VIC II     @"+" bmm        0   pattern p0   screen s0  @"+" mcm        0   start   00   gfx    g0  @"+" ecm        0   step    00   colors c0  @"+" hicolor    0   modulus 00              @"+" linear     0                COLORS     @"+" color off  0   PLANE  B     palet   0  @"+" chunky     0   pattern p0   bgcol0 00  @"+" border off 0   start   00   bgcol1 00  @"+" overscan   0   step    00   bgcol2 00  @"+"                modulus 00   bgcol3 00  @"+"@"

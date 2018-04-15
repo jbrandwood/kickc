@@ -76,3 +76,109 @@ void dtvSetCpuBankSegment1(byte cpuBankIdx) {
         .byte $32, $00
     }
 }
+
+// Blitter Source A Start
+const byte* DTV_BLITTER_SRCA_LO = $d320;
+const byte* DTV_BLITTER_SRCA_MI = $d321;
+const byte* DTV_BLITTER_SRCA_HI = $d322;
+// Blitter Source A Modulo
+const byte* DTV_BLITTER_SRCA_MOD_LO = $d323;
+const byte* DTV_BLITTER_SRCA_MOD_HI = $d324;
+// Blitter Source A Line Length
+const byte* DTV_BLITTER_SRCA_LIN_LO = $d325;
+const byte* DTV_BLITTER_SRCA_LIN_HI = $d326;
+// Blitter Source A Step ([7:4] integral part, [3:0] fractional part)
+const byte* DTV_BLITTER_SRCA_STEP = $d327;
+// Blitter Source B Start
+const byte* DTV_BLITTER_SRCB_LO = $d328;
+const byte* DTV_BLITTER_SRCB_MI = $d329;
+const byte* DTV_BLITTER_SRCB_HI = $d32a;
+// Blitter Source B Modulo
+const byte* DTV_BLITTER_SRCB_MOD_LO = $d32b;
+const byte* DTV_BLITTER_SRCB_MOD_HI = $d32c;
+// Blitter Source B Line Length
+const byte* DTV_BLITTER_SRCB_LIN_LO = $d32d;
+const byte* DTV_BLITTER_SRCB_LIN_HI = $d32e;
+// Blitter Source B Step ([7:4] integral part, [3:0] fractional part)
+const byte* DTV_BLITTER_SRCB_STEP = $d32f;
+// Blitter Destination Start
+const byte* DTV_BLITTER_DEST_LO = $d330;
+const byte* DTV_BLITTER_DEST_MI = $d331;
+const byte* DTV_BLITTER_DEST_HI = $d332;
+// Blitter Source B Modulo
+const byte* DTV_BLITTER_DEST_MOD_LO = $d333;
+const byte* DTV_BLITTER_DEST_MOD_HI = $d334;
+// Blitter Source B Line Length
+const byte* DTV_BLITTER_DEST_LIN_LO = $d335;
+const byte* DTV_BLITTER_DEST_LIN_HI = $d336;
+// Blitter Source B Step ([7:4] integral part, [3:0] fractional part)
+const byte* DTV_BLITTER_DEST_STEP = $d337;
+// Blitter Blit Length
+const byte* DTV_BLITTER_LEN_LO = $d338;
+const byte* DTV_BLITTER_LEN_HI = $d339;
+// Blitter Control
+const byte* DTV_BLITTER_CONTROL = $d33a;
+// Bit[0] Force Start Strobe when set
+const byte  DTV_BLIT_FORCE_START    = %00000001;
+// Bit[1] Source A Direction Positive when set
+const byte  DTV_BLIT_SRCA_FWD       = %00000010;
+// Bit[2] Source B Direction Positive when set
+const byte  DTV_BLIT_SRCB_FWD       = %00000100;
+// Bit[3] Destination Direction Positive when set
+const byte  DTV_BLIT_DEST_FWD       = %00001000;
+// Bit[4] VIC IRQ Start when set
+const byte  DTV_BLIT_VIC_IRQ        = %00010000;
+// Bit[5] CIA IRQ Start when set($DCXX CIA)
+const byte  DTV_BLIT_CIA_IRQ        = %00100000;
+// Bit[6] V Blank Start when set
+const byte  DTV_BLIT_VBLANK         = %01000000;
+// Bit[7] Blitter IRQ Enable when set
+const byte  DTV_BLIT_IRQ_EN         = %10000000;
+// Blitter Transparency
+const byte* DTV_BLITTER_TRANSPARANCY = $d33b;
+// Bit[0]   Disable Channel B.
+// (data into b port of ALU is forced to %00000000. ALU functions as normal)
+const byte  DTV_BLIT_DISABLE_B          = %00000001;
+// Bit[1]   Write Transparent Data when set
+//(Data will be written if source a data *IS* %00000000.  This can be used with channel b and ALU set to OR to write Data masked by source A.) Cycles will be saved if No writes.
+const byte  DTV_BLIT_WRITE_TRANSPARENT     = %00000010;
+// Bit[2]   Write Non Transparent
+// when set (Data will be written if SourceA fetched data is *NOT* %00000000.  This may be used combined with channel b data and/or ALU) Cycles will be Saved if no write. Bit[2]==Bit[1]==0: write in any case
+const byte  DTV_BLIT_WRITE_NONTRANSPARENT  = %00000100;
+// No transparancy
+// Bit[2]==Bit[1]==0: write in any case
+const byte  DTV_BLIT_TRANSPARANCY_NONE     = %00000001;
+// Controls the ALU operation
+byte* DTV_BLITTER_ALU = $d33e;
+// Bit[2:0] Source A right Shift: 000 SourceA Data,  001 LastA[0],SourceA[7:1], ...,  111 LastA[6:0],SourceA[7]
+const byte DTV_BLIT_SHIFT0  = %00000000;
+const byte DTV_BLIT_SHIFT1  = %00000001;
+const byte DTV_BLIT_SHIFT2  = %00000010;
+const byte DTV_BLIT_SHIFT3  = %00000011;
+const byte DTV_BLIT_SHIFT4  = %00000100;
+const byte DTV_BLIT_SHIFT5  = %00000101;
+const byte DTV_BLIT_SHIFT6  = %00000110;
+const byte DTV_BLIT_SHIFT7  = %00000111;
+// Bit[5:3] Minterms/ALU
+const byte DTV_BLIT_AND     = %00000000;
+const byte DTV_BLIT_NAND    = %00001000;
+const byte DTV_BLIT_NOR     = %00010000;
+const byte DTV_BLIT_OR      = %00011000;
+const byte DTV_BLIT_XOR     = %00100000;
+const byte DTV_BLIT_XNOR    = %00101000;
+const byte DTV_BLIT_ADD     = %00110000;
+const byte DTV_BLIT_SUB     = %00111000;
+// Blitter Control 2
+const byte* DTV_BLITTER_CONTROL2 = $d33f;
+// Bit[0] Clear Blitter IRQ
+const byte  DTV_BLIT_CLEAR_IRQ      = %00000001;
+// Bit[1] Source A Continue
+const byte  DTV_BLIT_SRCA_CONT      = %00000010;
+// Bit[2] Source B Continue
+const byte  DTV_BLIT_SRCB_CONT      = %00000100;
+// Bit[3] Destination Continue
+const byte  DTV_BLIT_DEST_CONT      = %00001000;
+// Bit[0] Busy when set (When reading)
+const byte  DTV_BLIT_STATUS_BUSY    = %00000001;
+// Bit[1] IRQ when set (When reading)
+const byte  DTV_BLIT_STATUS_IRQ     = %00000010;

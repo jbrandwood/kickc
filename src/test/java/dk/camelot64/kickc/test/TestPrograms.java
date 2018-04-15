@@ -46,6 +46,21 @@ public class TestPrograms {
    }
 
    @Test
+   public void testC64DtvBlitterMin() throws IOException, URISyntaxException {
+      compileAndCompare("c64dtv-blittermin");
+   }
+
+   @Test
+   public void testC64Dtv8bppChunkyStretch() throws IOException, URISyntaxException {
+      compileAndCompare("c64dtv-8bppchunkystretch");
+   }
+
+   @Test
+   public void testC64Dtv8bppCharStretch() throws IOException, URISyntaxException {
+      compileAndCompare("c64dtv-8bppcharstretch");
+   }
+
+   @Test
    public void testC64DtvGfxExplorer() throws IOException, URISyntaxException {
       compileAndCompare("c64dtv-gfxexplorer");
    }

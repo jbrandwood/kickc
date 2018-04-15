@@ -208,9 +208,9 @@ gfx_init_plane_charset8: {
     sta gfxa
     lda #>$4000+(CHARSET8&$3fff)
     sta gfxa+1
-    lda #<CHARGEN
+    lda #<CHARGEN+1
     sta chargen
-    lda #>CHARGEN
+    lda #>CHARGEN+1
     sta chargen+1
   b1:
     lda #0

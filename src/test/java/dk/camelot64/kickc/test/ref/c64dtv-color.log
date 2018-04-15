@@ -109,6 +109,112 @@ void dtvSetCpuBankSegment1(byte cpuBankIdx) {
     }
 }
 
+// Blitter Source A Start
+const byte* DTV_BLITTER_SRCA_LO = $d320;
+const byte* DTV_BLITTER_SRCA_MI = $d321;
+const byte* DTV_BLITTER_SRCA_HI = $d322;
+// Blitter Source A Modulo
+const byte* DTV_BLITTER_SRCA_MOD_LO = $d323;
+const byte* DTV_BLITTER_SRCA_MOD_HI = $d324;
+// Blitter Source A Line Length
+const byte* DTV_BLITTER_SRCA_LIN_LO = $d325;
+const byte* DTV_BLITTER_SRCA_LIN_HI = $d326;
+// Blitter Source A Step ([7:4] integral part, [3:0] fractional part)
+const byte* DTV_BLITTER_SRCA_STEP = $d327;
+// Blitter Source B Start
+const byte* DTV_BLITTER_SRCB_LO = $d328;
+const byte* DTV_BLITTER_SRCB_MI = $d329;
+const byte* DTV_BLITTER_SRCB_HI = $d32a;
+// Blitter Source B Modulo
+const byte* DTV_BLITTER_SRCB_MOD_LO = $d32b;
+const byte* DTV_BLITTER_SRCB_MOD_HI = $d32c;
+// Blitter Source B Line Length
+const byte* DTV_BLITTER_SRCB_LIN_LO = $d32d;
+const byte* DTV_BLITTER_SRCB_LIN_HI = $d32e;
+// Blitter Source B Step ([7:4] integral part, [3:0] fractional part)
+const byte* DTV_BLITTER_SRCB_STEP = $d32f;
+// Blitter Destination Start
+const byte* DTV_BLITTER_DEST_LO = $d330;
+const byte* DTV_BLITTER_DEST_MI = $d331;
+const byte* DTV_BLITTER_DEST_HI = $d332;
+// Blitter Source B Modulo
+const byte* DTV_BLITTER_DEST_MOD_LO = $d333;
+const byte* DTV_BLITTER_DEST_MOD_HI = $d334;
+// Blitter Source B Line Length
+const byte* DTV_BLITTER_DEST_LIN_LO = $d335;
+const byte* DTV_BLITTER_DEST_LIN_HI = $d336;
+// Blitter Source B Step ([7:4] integral part, [3:0] fractional part)
+const byte* DTV_BLITTER_DEST_STEP = $d337;
+// Blitter Blit Length
+const byte* DTV_BLITTER_LEN_LO = $d338;
+const byte* DTV_BLITTER_LEN_HI = $d339;
+// Blitter Control
+const byte* DTV_BLITTER_CONTROL = $d33a;
+// Bit[0] Force Start Strobe when set
+const byte  DTV_BLIT_FORCE_START    = %00000001;
+// Bit[1] Source A Direction Positive when set
+const byte  DTV_BLIT_SRCA_FWD       = %00000010;
+// Bit[2] Source B Direction Positive when set
+const byte  DTV_BLIT_SRCB_FWD       = %00000100;
+// Bit[3] Destination Direction Positive when set
+const byte  DTV_BLIT_DEST_FWD       = %00001000;
+// Bit[4] VIC IRQ Start when set
+const byte  DTV_BLIT_VIC_IRQ        = %00010000;
+// Bit[5] CIA IRQ Start when set($DCXX CIA)
+const byte  DTV_BLIT_CIA_IRQ        = %00100000;
+// Bit[6] V Blank Start when set
+const byte  DTV_BLIT_VBLANK         = %01000000;
+// Bit[7] Blitter IRQ Enable when set
+const byte  DTV_BLIT_IRQ_EN         = %10000000;
+// Blitter Transparency
+const byte* DTV_BLITTER_TRANSPARANCY = $d33b;
+// Bit[0]   Disable Channel B.
+// (data into b port of ALU is forced to %00000000. ALU functions as normal)
+const byte  DTV_BLIT_DISABLE_B          = %00000001;
+// Bit[1]   Write Transparent Data when set
+//(Data will be written if source a data *IS* %00000000.  This can be used with channel b and ALU set to OR to write Data masked by source A.) Cycles will be saved if No writes.
+const byte  DTV_BLIT_WRITE_TRANSPARENT     = %00000010;
+// Bit[2]   Write Non Transparent
+// when set (Data will be written if SourceA fetched data is *NOT* %00000000.  This may be used combined with channel b data and/or ALU) Cycles will be Saved if no write. Bit[2]==Bit[1]==0: write in any case
+const byte  DTV_BLIT_WRITE_NONTRANSPARENT  = %00000100;
+// No transparancy
+// Bit[2]==Bit[1]==0: write in any case
+const byte  DTV_BLIT_TRANSPARANCY_NONE     = %00000000;
+// Controls the ALU operation
+byte* DTV_BLITTER_ALU = $d33e;
+// Bit[2:0] Source A right Shift: 000 SourceA Data,  001 LastA[0],SourceA[7:1], ...,  111 LastA[6:0],SourceA[7]
+const byte DTV_BLIT_SHIFT0  = %00000000;
+const byte DTV_BLIT_SHIFT1  = %00000001;
+const byte DTV_BLIT_SHIFT2  = %00000010;
+const byte DTV_BLIT_SHIFT3  = %00000011;
+const byte DTV_BLIT_SHIFT4  = %00000100;
+const byte DTV_BLIT_SHIFT5  = %00000101;
+const byte DTV_BLIT_SHIFT6  = %00000110;
+const byte DTV_BLIT_SHIFT7  = %00000111;
+// Bit[5:3] Minterms/ALU
+const byte DTV_BLIT_AND     = %00000000;
+const byte DTV_BLIT_NAND    = %00001000;
+const byte DTV_BLIT_NOR     = %00010000;
+const byte DTV_BLIT_OR      = %00011000;
+const byte DTV_BLIT_XOR     = %00100000;
+const byte DTV_BLIT_XNOR    = %00101000;
+const byte DTV_BLIT_ADD     = %00110000;
+const byte DTV_BLIT_SUB     = %00111000;
+// Blitter Control 2
+const byte* DTV_BLITTER_CONTROL2 = $d33f;
+// Bit[0] Clear Blitter IRQ
+const byte  DTV_BLIT_CLEAR_IRQ      = %00000001;
+// Bit[1] Source A Continue
+const byte  DTV_BLIT_SRCA_CONT      = %00000010;
+// Bit[2] Source B Continue
+const byte  DTV_BLIT_SRCB_CONT      = %00000100;
+// Bit[3] Destination Continue
+const byte  DTV_BLIT_DEST_CONT      = %00001000;
+// Bit[0] Busy when set (When reading)
+const byte  DTV_BLIT_STATUS_BUSY    = %00000001;
+// Bit[1] IRQ when set (When reading)
+const byte  DTV_BLIT_STATUS_IRQ     = %00000010;
+
 Importing c64.kc
 PARSING src/test/java/dk/camelot64/kickc/test/kc/c64.kc
 // Commodore 64 Registers and Constants
@@ -312,6 +418,70 @@ proc (void()) dtvSetCpuBankSegment1((byte) dtvSetCpuBankSegment1::cpuBankIdx)
 dtvSetCpuBankSegment1::@return:
   return 
 endproc // dtvSetCpuBankSegment1()
+  (byte*) DTV_BLITTER_SRCA_LO ← (word/dword/signed dword) 54048
+  (byte*) DTV_BLITTER_SRCA_MI ← (word/dword/signed dword) 54049
+  (byte*) DTV_BLITTER_SRCA_HI ← (word/dword/signed dword) 54050
+  (byte*) DTV_BLITTER_SRCA_MOD_LO ← (word/dword/signed dword) 54051
+  (byte*) DTV_BLITTER_SRCA_MOD_HI ← (word/dword/signed dword) 54052
+  (byte*) DTV_BLITTER_SRCA_LIN_LO ← (word/dword/signed dword) 54053
+  (byte*) DTV_BLITTER_SRCA_LIN_HI ← (word/dword/signed dword) 54054
+  (byte*) DTV_BLITTER_SRCA_STEP ← (word/dword/signed dword) 54055
+  (byte*) DTV_BLITTER_SRCB_LO ← (word/dword/signed dword) 54056
+  (byte*) DTV_BLITTER_SRCB_MI ← (word/dword/signed dword) 54057
+  (byte*) DTV_BLITTER_SRCB_HI ← (word/dword/signed dword) 54058
+  (byte*) DTV_BLITTER_SRCB_MOD_LO ← (word/dword/signed dword) 54059
+  (byte*) DTV_BLITTER_SRCB_MOD_HI ← (word/dword/signed dword) 54060
+  (byte*) DTV_BLITTER_SRCB_LIN_LO ← (word/dword/signed dword) 54061
+  (byte*) DTV_BLITTER_SRCB_LIN_HI ← (word/dword/signed dword) 54062
+  (byte*) DTV_BLITTER_SRCB_STEP ← (word/dword/signed dword) 54063
+  (byte*) DTV_BLITTER_DEST_LO ← (word/dword/signed dword) 54064
+  (byte*) DTV_BLITTER_DEST_MI ← (word/dword/signed dword) 54065
+  (byte*) DTV_BLITTER_DEST_HI ← (word/dword/signed dword) 54066
+  (byte*) DTV_BLITTER_DEST_MOD_LO ← (word/dword/signed dword) 54067
+  (byte*) DTV_BLITTER_DEST_MOD_HI ← (word/dword/signed dword) 54068
+  (byte*) DTV_BLITTER_DEST_LIN_LO ← (word/dword/signed dword) 54069
+  (byte*) DTV_BLITTER_DEST_LIN_HI ← (word/dword/signed dword) 54070
+  (byte*) DTV_BLITTER_DEST_STEP ← (word/dword/signed dword) 54071
+  (byte*) DTV_BLITTER_LEN_LO ← (word/dword/signed dword) 54072
+  (byte*) DTV_BLITTER_LEN_HI ← (word/dword/signed dword) 54073
+  (byte*) DTV_BLITTER_CONTROL ← (word/dword/signed dword) 54074
+  (byte) DTV_BLIT_FORCE_START ← (byte/signed byte/word/signed word/dword/signed dword) 1
+  (byte) DTV_BLIT_SRCA_FWD ← (byte/signed byte/word/signed word/dword/signed dword) 2
+  (byte) DTV_BLIT_SRCB_FWD ← (byte/signed byte/word/signed word/dword/signed dword) 4
+  (byte) DTV_BLIT_DEST_FWD ← (byte/signed byte/word/signed word/dword/signed dword) 8
+  (byte) DTV_BLIT_VIC_IRQ ← (byte/signed byte/word/signed word/dword/signed dword) 16
+  (byte) DTV_BLIT_CIA_IRQ ← (byte/signed byte/word/signed word/dword/signed dword) 32
+  (byte) DTV_BLIT_VBLANK ← (byte/signed byte/word/signed word/dword/signed dword) 64
+  (byte) DTV_BLIT_IRQ_EN ← (byte/word/signed word/dword/signed dword) 128
+  (byte*) DTV_BLITTER_TRANSPARANCY ← (word/dword/signed dword) 54075
+  (byte) DTV_BLIT_DISABLE_B ← (byte/signed byte/word/signed word/dword/signed dword) 1
+  (byte) DTV_BLIT_WRITE_TRANSPARENT ← (byte/signed byte/word/signed word/dword/signed dword) 2
+  (byte) DTV_BLIT_WRITE_NONTRANSPARENT ← (byte/signed byte/word/signed word/dword/signed dword) 4
+  (byte) DTV_BLIT_TRANSPARANCY_NONE ← (byte/signed byte/word/signed word/dword/signed dword) 0
+  (byte*) DTV_BLITTER_ALU ← (word/dword/signed dword) 54078
+  (byte) DTV_BLIT_SHIFT0 ← (byte/signed byte/word/signed word/dword/signed dword) 0
+  (byte) DTV_BLIT_SHIFT1 ← (byte/signed byte/word/signed word/dword/signed dword) 1
+  (byte) DTV_BLIT_SHIFT2 ← (byte/signed byte/word/signed word/dword/signed dword) 2
+  (byte) DTV_BLIT_SHIFT3 ← (byte/signed byte/word/signed word/dword/signed dword) 3
+  (byte) DTV_BLIT_SHIFT4 ← (byte/signed byte/word/signed word/dword/signed dword) 4
+  (byte) DTV_BLIT_SHIFT5 ← (byte/signed byte/word/signed word/dword/signed dword) 5
+  (byte) DTV_BLIT_SHIFT6 ← (byte/signed byte/word/signed word/dword/signed dword) 6
+  (byte) DTV_BLIT_SHIFT7 ← (byte/signed byte/word/signed word/dword/signed dword) 7
+  (byte) DTV_BLIT_AND ← (byte/signed byte/word/signed word/dword/signed dword) 0
+  (byte) DTV_BLIT_NAND ← (byte/signed byte/word/signed word/dword/signed dword) 8
+  (byte) DTV_BLIT_NOR ← (byte/signed byte/word/signed word/dword/signed dword) 16
+  (byte) DTV_BLIT_OR ← (byte/signed byte/word/signed word/dword/signed dword) 24
+  (byte) DTV_BLIT_XOR ← (byte/signed byte/word/signed word/dword/signed dword) 32
+  (byte) DTV_BLIT_XNOR ← (byte/signed byte/word/signed word/dword/signed dword) 40
+  (byte) DTV_BLIT_ADD ← (byte/signed byte/word/signed word/dword/signed dword) 48
+  (byte) DTV_BLIT_SUB ← (byte/signed byte/word/signed word/dword/signed dword) 56
+  (byte*) DTV_BLITTER_CONTROL2 ← (word/dword/signed dword) 54079
+  (byte) DTV_BLIT_CLEAR_IRQ ← (byte/signed byte/word/signed word/dword/signed dword) 1
+  (byte) DTV_BLIT_SRCA_CONT ← (byte/signed byte/word/signed word/dword/signed dword) 2
+  (byte) DTV_BLIT_SRCB_CONT ← (byte/signed byte/word/signed word/dword/signed dword) 4
+  (byte) DTV_BLIT_DEST_CONT ← (byte/signed byte/word/signed word/dword/signed dword) 8
+  (byte) DTV_BLIT_STATUS_BUSY ← (byte/signed byte/word/signed word/dword/signed dword) 1
+  (byte) DTV_BLIT_STATUS_IRQ ← (byte/signed byte/word/signed word/dword/signed dword) 2
 proc (void()) main()
   asm { sei  }
   *((byte*) DTV_FEATURE) ← (byte) DTV_FEATURE_ENABLE
@@ -378,6 +548,70 @@ SYMBOLS
 (byte*) D018
 (byte) DARK_GREY
 (byte) DTV_BADLINE_OFF
+(byte*) DTV_BLITTER_ALU
+(byte*) DTV_BLITTER_CONTROL
+(byte*) DTV_BLITTER_CONTROL2
+(byte*) DTV_BLITTER_DEST_HI
+(byte*) DTV_BLITTER_DEST_LIN_HI
+(byte*) DTV_BLITTER_DEST_LIN_LO
+(byte*) DTV_BLITTER_DEST_LO
+(byte*) DTV_BLITTER_DEST_MI
+(byte*) DTV_BLITTER_DEST_MOD_HI
+(byte*) DTV_BLITTER_DEST_MOD_LO
+(byte*) DTV_BLITTER_DEST_STEP
+(byte*) DTV_BLITTER_LEN_HI
+(byte*) DTV_BLITTER_LEN_LO
+(byte*) DTV_BLITTER_SRCA_HI
+(byte*) DTV_BLITTER_SRCA_LIN_HI
+(byte*) DTV_BLITTER_SRCA_LIN_LO
+(byte*) DTV_BLITTER_SRCA_LO
+(byte*) DTV_BLITTER_SRCA_MI
+(byte*) DTV_BLITTER_SRCA_MOD_HI
+(byte*) DTV_BLITTER_SRCA_MOD_LO
+(byte*) DTV_BLITTER_SRCA_STEP
+(byte*) DTV_BLITTER_SRCB_HI
+(byte*) DTV_BLITTER_SRCB_LIN_HI
+(byte*) DTV_BLITTER_SRCB_LIN_LO
+(byte*) DTV_BLITTER_SRCB_LO
+(byte*) DTV_BLITTER_SRCB_MI
+(byte*) DTV_BLITTER_SRCB_MOD_HI
+(byte*) DTV_BLITTER_SRCB_MOD_LO
+(byte*) DTV_BLITTER_SRCB_STEP
+(byte*) DTV_BLITTER_TRANSPARANCY
+(byte) DTV_BLIT_ADD
+(byte) DTV_BLIT_AND
+(byte) DTV_BLIT_CIA_IRQ
+(byte) DTV_BLIT_CLEAR_IRQ
+(byte) DTV_BLIT_DEST_CONT
+(byte) DTV_BLIT_DEST_FWD
+(byte) DTV_BLIT_DISABLE_B
+(byte) DTV_BLIT_FORCE_START
+(byte) DTV_BLIT_IRQ_EN
+(byte) DTV_BLIT_NAND
+(byte) DTV_BLIT_NOR
+(byte) DTV_BLIT_OR
+(byte) DTV_BLIT_SHIFT0
+(byte) DTV_BLIT_SHIFT1
+(byte) DTV_BLIT_SHIFT2
+(byte) DTV_BLIT_SHIFT3
+(byte) DTV_BLIT_SHIFT4
+(byte) DTV_BLIT_SHIFT5
+(byte) DTV_BLIT_SHIFT6
+(byte) DTV_BLIT_SHIFT7
+(byte) DTV_BLIT_SRCA_CONT
+(byte) DTV_BLIT_SRCA_FWD
+(byte) DTV_BLIT_SRCB_CONT
+(byte) DTV_BLIT_SRCB_FWD
+(byte) DTV_BLIT_STATUS_BUSY
+(byte) DTV_BLIT_STATUS_IRQ
+(byte) DTV_BLIT_SUB
+(byte) DTV_BLIT_TRANSPARANCY_NONE
+(byte) DTV_BLIT_VBLANK
+(byte) DTV_BLIT_VIC_IRQ
+(byte) DTV_BLIT_WRITE_NONTRANSPARENT
+(byte) DTV_BLIT_WRITE_TRANSPARENT
+(byte) DTV_BLIT_XNOR
+(byte) DTV_BLIT_XOR
 (byte) DTV_BORDER_OFF
 (byte) DTV_CHUNKY
 (byte) DTV_COLORRAM_OFF
@@ -529,6 +763,36 @@ Promoting word/dword/signed dword to byte* in DTV_COLOR_BANK_HI ← ((byte*)) 53
 Promoting word/dword/signed dword to byte* in DTV_GRAPHICS_VIC_BANK ← ((byte*)) 53309
 Promoting word/dword/signed dword to byte* in DTV_GRAPHICS_HICOL_BANK ← ((byte*)) 53310
 Promoting byte/word/signed word/dword/signed dword to byte* in dtvSetCpuBankSegment1::cpuBank ← ((byte*)) 255
+Promoting word/dword/signed dword to byte* in DTV_BLITTER_SRCA_LO ← ((byte*)) 54048
+Promoting word/dword/signed dword to byte* in DTV_BLITTER_SRCA_MI ← ((byte*)) 54049
+Promoting word/dword/signed dword to byte* in DTV_BLITTER_SRCA_HI ← ((byte*)) 54050
+Promoting word/dword/signed dword to byte* in DTV_BLITTER_SRCA_MOD_LO ← ((byte*)) 54051
+Promoting word/dword/signed dword to byte* in DTV_BLITTER_SRCA_MOD_HI ← ((byte*)) 54052
+Promoting word/dword/signed dword to byte* in DTV_BLITTER_SRCA_LIN_LO ← ((byte*)) 54053
+Promoting word/dword/signed dword to byte* in DTV_BLITTER_SRCA_LIN_HI ← ((byte*)) 54054
+Promoting word/dword/signed dword to byte* in DTV_BLITTER_SRCA_STEP ← ((byte*)) 54055
+Promoting word/dword/signed dword to byte* in DTV_BLITTER_SRCB_LO ← ((byte*)) 54056
+Promoting word/dword/signed dword to byte* in DTV_BLITTER_SRCB_MI ← ((byte*)) 54057
+Promoting word/dword/signed dword to byte* in DTV_BLITTER_SRCB_HI ← ((byte*)) 54058
+Promoting word/dword/signed dword to byte* in DTV_BLITTER_SRCB_MOD_LO ← ((byte*)) 54059
+Promoting word/dword/signed dword to byte* in DTV_BLITTER_SRCB_MOD_HI ← ((byte*)) 54060
+Promoting word/dword/signed dword to byte* in DTV_BLITTER_SRCB_LIN_LO ← ((byte*)) 54061
+Promoting word/dword/signed dword to byte* in DTV_BLITTER_SRCB_LIN_HI ← ((byte*)) 54062
+Promoting word/dword/signed dword to byte* in DTV_BLITTER_SRCB_STEP ← ((byte*)) 54063
+Promoting word/dword/signed dword to byte* in DTV_BLITTER_DEST_LO ← ((byte*)) 54064
+Promoting word/dword/signed dword to byte* in DTV_BLITTER_DEST_MI ← ((byte*)) 54065
+Promoting word/dword/signed dword to byte* in DTV_BLITTER_DEST_HI ← ((byte*)) 54066
+Promoting word/dword/signed dword to byte* in DTV_BLITTER_DEST_MOD_LO ← ((byte*)) 54067
+Promoting word/dword/signed dword to byte* in DTV_BLITTER_DEST_MOD_HI ← ((byte*)) 54068
+Promoting word/dword/signed dword to byte* in DTV_BLITTER_DEST_LIN_LO ← ((byte*)) 54069
+Promoting word/dword/signed dword to byte* in DTV_BLITTER_DEST_LIN_HI ← ((byte*)) 54070
+Promoting word/dword/signed dword to byte* in DTV_BLITTER_DEST_STEP ← ((byte*)) 54071
+Promoting word/dword/signed dword to byte* in DTV_BLITTER_LEN_LO ← ((byte*)) 54072
+Promoting word/dword/signed dword to byte* in DTV_BLITTER_LEN_HI ← ((byte*)) 54073
+Promoting word/dword/signed dword to byte* in DTV_BLITTER_CONTROL ← ((byte*)) 54074
+Promoting word/dword/signed dword to byte* in DTV_BLITTER_TRANSPARANCY ← ((byte*)) 54075
+Promoting word/dword/signed dword to byte* in DTV_BLITTER_ALU ← ((byte*)) 54078
+Promoting word/dword/signed dword to byte* in DTV_BLITTER_CONTROL2 ← ((byte*)) 54079
 INITIAL CONTROL FLOW GRAPH
 @begin: scope:[]  from
   (byte*) PROCPORT_DDR ← ((byte*)) (byte/signed byte/word/signed word/dword/signed dword) 0
@@ -637,6 +901,70 @@ dtvSetCpuBankSegment1::@return: scope:[dtvSetCpuBankSegment1]  from dtvSetCpuBan
   return 
   to:@return
 @1: scope:[]  from @begin
+  (byte*) DTV_BLITTER_SRCA_LO ← ((byte*)) (word/dword/signed dword) 54048
+  (byte*) DTV_BLITTER_SRCA_MI ← ((byte*)) (word/dword/signed dword) 54049
+  (byte*) DTV_BLITTER_SRCA_HI ← ((byte*)) (word/dword/signed dword) 54050
+  (byte*) DTV_BLITTER_SRCA_MOD_LO ← ((byte*)) (word/dword/signed dword) 54051
+  (byte*) DTV_BLITTER_SRCA_MOD_HI ← ((byte*)) (word/dword/signed dword) 54052
+  (byte*) DTV_BLITTER_SRCA_LIN_LO ← ((byte*)) (word/dword/signed dword) 54053
+  (byte*) DTV_BLITTER_SRCA_LIN_HI ← ((byte*)) (word/dword/signed dword) 54054
+  (byte*) DTV_BLITTER_SRCA_STEP ← ((byte*)) (word/dword/signed dword) 54055
+  (byte*) DTV_BLITTER_SRCB_LO ← ((byte*)) (word/dword/signed dword) 54056
+  (byte*) DTV_BLITTER_SRCB_MI ← ((byte*)) (word/dword/signed dword) 54057
+  (byte*) DTV_BLITTER_SRCB_HI ← ((byte*)) (word/dword/signed dword) 54058
+  (byte*) DTV_BLITTER_SRCB_MOD_LO ← ((byte*)) (word/dword/signed dword) 54059
+  (byte*) DTV_BLITTER_SRCB_MOD_HI ← ((byte*)) (word/dword/signed dword) 54060
+  (byte*) DTV_BLITTER_SRCB_LIN_LO ← ((byte*)) (word/dword/signed dword) 54061
+  (byte*) DTV_BLITTER_SRCB_LIN_HI ← ((byte*)) (word/dword/signed dword) 54062
+  (byte*) DTV_BLITTER_SRCB_STEP ← ((byte*)) (word/dword/signed dword) 54063
+  (byte*) DTV_BLITTER_DEST_LO ← ((byte*)) (word/dword/signed dword) 54064
+  (byte*) DTV_BLITTER_DEST_MI ← ((byte*)) (word/dword/signed dword) 54065
+  (byte*) DTV_BLITTER_DEST_HI ← ((byte*)) (word/dword/signed dword) 54066
+  (byte*) DTV_BLITTER_DEST_MOD_LO ← ((byte*)) (word/dword/signed dword) 54067
+  (byte*) DTV_BLITTER_DEST_MOD_HI ← ((byte*)) (word/dword/signed dword) 54068
+  (byte*) DTV_BLITTER_DEST_LIN_LO ← ((byte*)) (word/dword/signed dword) 54069
+  (byte*) DTV_BLITTER_DEST_LIN_HI ← ((byte*)) (word/dword/signed dword) 54070
+  (byte*) DTV_BLITTER_DEST_STEP ← ((byte*)) (word/dword/signed dword) 54071
+  (byte*) DTV_BLITTER_LEN_LO ← ((byte*)) (word/dword/signed dword) 54072
+  (byte*) DTV_BLITTER_LEN_HI ← ((byte*)) (word/dword/signed dword) 54073
+  (byte*) DTV_BLITTER_CONTROL ← ((byte*)) (word/dword/signed dword) 54074
+  (byte) DTV_BLIT_FORCE_START ← (byte/signed byte/word/signed word/dword/signed dword) 1
+  (byte) DTV_BLIT_SRCA_FWD ← (byte/signed byte/word/signed word/dword/signed dword) 2
+  (byte) DTV_BLIT_SRCB_FWD ← (byte/signed byte/word/signed word/dword/signed dword) 4
+  (byte) DTV_BLIT_DEST_FWD ← (byte/signed byte/word/signed word/dword/signed dword) 8
+  (byte) DTV_BLIT_VIC_IRQ ← (byte/signed byte/word/signed word/dword/signed dword) 16
+  (byte) DTV_BLIT_CIA_IRQ ← (byte/signed byte/word/signed word/dword/signed dword) 32
+  (byte) DTV_BLIT_VBLANK ← (byte/signed byte/word/signed word/dword/signed dword) 64
+  (byte) DTV_BLIT_IRQ_EN ← (byte/word/signed word/dword/signed dword) 128
+  (byte*) DTV_BLITTER_TRANSPARANCY ← ((byte*)) (word/dword/signed dword) 54075
+  (byte) DTV_BLIT_DISABLE_B ← (byte/signed byte/word/signed word/dword/signed dword) 1
+  (byte) DTV_BLIT_WRITE_TRANSPARENT ← (byte/signed byte/word/signed word/dword/signed dword) 2
+  (byte) DTV_BLIT_WRITE_NONTRANSPARENT ← (byte/signed byte/word/signed word/dword/signed dword) 4
+  (byte) DTV_BLIT_TRANSPARANCY_NONE ← (byte/signed byte/word/signed word/dword/signed dword) 0
+  (byte*) DTV_BLITTER_ALU ← ((byte*)) (word/dword/signed dword) 54078
+  (byte) DTV_BLIT_SHIFT0 ← (byte/signed byte/word/signed word/dword/signed dword) 0
+  (byte) DTV_BLIT_SHIFT1 ← (byte/signed byte/word/signed word/dword/signed dword) 1
+  (byte) DTV_BLIT_SHIFT2 ← (byte/signed byte/word/signed word/dword/signed dword) 2
+  (byte) DTV_BLIT_SHIFT3 ← (byte/signed byte/word/signed word/dword/signed dword) 3
+  (byte) DTV_BLIT_SHIFT4 ← (byte/signed byte/word/signed word/dword/signed dword) 4
+  (byte) DTV_BLIT_SHIFT5 ← (byte/signed byte/word/signed word/dword/signed dword) 5
+  (byte) DTV_BLIT_SHIFT6 ← (byte/signed byte/word/signed word/dword/signed dword) 6
+  (byte) DTV_BLIT_SHIFT7 ← (byte/signed byte/word/signed word/dword/signed dword) 7
+  (byte) DTV_BLIT_AND ← (byte/signed byte/word/signed word/dword/signed dword) 0
+  (byte) DTV_BLIT_NAND ← (byte/signed byte/word/signed word/dword/signed dword) 8
+  (byte) DTV_BLIT_NOR ← (byte/signed byte/word/signed word/dword/signed dword) 16
+  (byte) DTV_BLIT_OR ← (byte/signed byte/word/signed word/dword/signed dword) 24
+  (byte) DTV_BLIT_XOR ← (byte/signed byte/word/signed word/dword/signed dword) 32
+  (byte) DTV_BLIT_XNOR ← (byte/signed byte/word/signed word/dword/signed dword) 40
+  (byte) DTV_BLIT_ADD ← (byte/signed byte/word/signed word/dword/signed dword) 48
+  (byte) DTV_BLIT_SUB ← (byte/signed byte/word/signed word/dword/signed dword) 56
+  (byte*) DTV_BLITTER_CONTROL2 ← ((byte*)) (word/dword/signed dword) 54079
+  (byte) DTV_BLIT_CLEAR_IRQ ← (byte/signed byte/word/signed word/dword/signed dword) 1
+  (byte) DTV_BLIT_SRCA_CONT ← (byte/signed byte/word/signed word/dword/signed dword) 2
+  (byte) DTV_BLIT_SRCB_CONT ← (byte/signed byte/word/signed word/dword/signed dword) 4
+  (byte) DTV_BLIT_DEST_CONT ← (byte/signed byte/word/signed word/dword/signed dword) 8
+  (byte) DTV_BLIT_STATUS_BUSY ← (byte/signed byte/word/signed word/dword/signed dword) 1
+  (byte) DTV_BLIT_STATUS_IRQ ← (byte/signed byte/word/signed word/dword/signed dword) 2
   to:@2
 main: scope:[main]  from
   asm { sei  }
@@ -790,6 +1118,70 @@ Eliminating unused variable (byte*) DTV_COLOR_BANK_HI and assignment [92] (byte*
 Eliminating unused variable (dword) DTV_COLOR_BANK_DEFAULT and assignment [93] (dword) DTV_COLOR_BANK_DEFAULT ← (dword/signed dword) 120832
 Eliminating unused variable (byte*) DTV_GRAPHICS_VIC_BANK and assignment [94] (byte*) DTV_GRAPHICS_VIC_BANK ← ((byte*)) (word/dword/signed dword) 53309
 Eliminating unused variable (byte*) DTV_GRAPHICS_HICOL_BANK and assignment [95] (byte*) DTV_GRAPHICS_HICOL_BANK ← ((byte*)) (word/dword/signed dword) 53310
+Eliminating unused variable (byte*) DTV_BLITTER_SRCA_LO and assignment [96] (byte*) DTV_BLITTER_SRCA_LO ← ((byte*)) (word/dword/signed dword) 54048
+Eliminating unused variable (byte*) DTV_BLITTER_SRCA_MI and assignment [97] (byte*) DTV_BLITTER_SRCA_MI ← ((byte*)) (word/dword/signed dword) 54049
+Eliminating unused variable (byte*) DTV_BLITTER_SRCA_HI and assignment [98] (byte*) DTV_BLITTER_SRCA_HI ← ((byte*)) (word/dword/signed dword) 54050
+Eliminating unused variable (byte*) DTV_BLITTER_SRCA_MOD_LO and assignment [99] (byte*) DTV_BLITTER_SRCA_MOD_LO ← ((byte*)) (word/dword/signed dword) 54051
+Eliminating unused variable (byte*) DTV_BLITTER_SRCA_MOD_HI and assignment [100] (byte*) DTV_BLITTER_SRCA_MOD_HI ← ((byte*)) (word/dword/signed dword) 54052
+Eliminating unused variable (byte*) DTV_BLITTER_SRCA_LIN_LO and assignment [101] (byte*) DTV_BLITTER_SRCA_LIN_LO ← ((byte*)) (word/dword/signed dword) 54053
+Eliminating unused variable (byte*) DTV_BLITTER_SRCA_LIN_HI and assignment [102] (byte*) DTV_BLITTER_SRCA_LIN_HI ← ((byte*)) (word/dword/signed dword) 54054
+Eliminating unused variable (byte*) DTV_BLITTER_SRCA_STEP and assignment [103] (byte*) DTV_BLITTER_SRCA_STEP ← ((byte*)) (word/dword/signed dword) 54055
+Eliminating unused variable (byte*) DTV_BLITTER_SRCB_LO and assignment [104] (byte*) DTV_BLITTER_SRCB_LO ← ((byte*)) (word/dword/signed dword) 54056
+Eliminating unused variable (byte*) DTV_BLITTER_SRCB_MI and assignment [105] (byte*) DTV_BLITTER_SRCB_MI ← ((byte*)) (word/dword/signed dword) 54057
+Eliminating unused variable (byte*) DTV_BLITTER_SRCB_HI and assignment [106] (byte*) DTV_BLITTER_SRCB_HI ← ((byte*)) (word/dword/signed dword) 54058
+Eliminating unused variable (byte*) DTV_BLITTER_SRCB_MOD_LO and assignment [107] (byte*) DTV_BLITTER_SRCB_MOD_LO ← ((byte*)) (word/dword/signed dword) 54059
+Eliminating unused variable (byte*) DTV_BLITTER_SRCB_MOD_HI and assignment [108] (byte*) DTV_BLITTER_SRCB_MOD_HI ← ((byte*)) (word/dword/signed dword) 54060
+Eliminating unused variable (byte*) DTV_BLITTER_SRCB_LIN_LO and assignment [109] (byte*) DTV_BLITTER_SRCB_LIN_LO ← ((byte*)) (word/dword/signed dword) 54061
+Eliminating unused variable (byte*) DTV_BLITTER_SRCB_LIN_HI and assignment [110] (byte*) DTV_BLITTER_SRCB_LIN_HI ← ((byte*)) (word/dword/signed dword) 54062
+Eliminating unused variable (byte*) DTV_BLITTER_SRCB_STEP and assignment [111] (byte*) DTV_BLITTER_SRCB_STEP ← ((byte*)) (word/dword/signed dword) 54063
+Eliminating unused variable (byte*) DTV_BLITTER_DEST_LO and assignment [112] (byte*) DTV_BLITTER_DEST_LO ← ((byte*)) (word/dword/signed dword) 54064
+Eliminating unused variable (byte*) DTV_BLITTER_DEST_MI and assignment [113] (byte*) DTV_BLITTER_DEST_MI ← ((byte*)) (word/dword/signed dword) 54065
+Eliminating unused variable (byte*) DTV_BLITTER_DEST_HI and assignment [114] (byte*) DTV_BLITTER_DEST_HI ← ((byte*)) (word/dword/signed dword) 54066
+Eliminating unused variable (byte*) DTV_BLITTER_DEST_MOD_LO and assignment [115] (byte*) DTV_BLITTER_DEST_MOD_LO ← ((byte*)) (word/dword/signed dword) 54067
+Eliminating unused variable (byte*) DTV_BLITTER_DEST_MOD_HI and assignment [116] (byte*) DTV_BLITTER_DEST_MOD_HI ← ((byte*)) (word/dword/signed dword) 54068
+Eliminating unused variable (byte*) DTV_BLITTER_DEST_LIN_LO and assignment [117] (byte*) DTV_BLITTER_DEST_LIN_LO ← ((byte*)) (word/dword/signed dword) 54069
+Eliminating unused variable (byte*) DTV_BLITTER_DEST_LIN_HI and assignment [118] (byte*) DTV_BLITTER_DEST_LIN_HI ← ((byte*)) (word/dword/signed dword) 54070
+Eliminating unused variable (byte*) DTV_BLITTER_DEST_STEP and assignment [119] (byte*) DTV_BLITTER_DEST_STEP ← ((byte*)) (word/dword/signed dword) 54071
+Eliminating unused variable (byte*) DTV_BLITTER_LEN_LO and assignment [120] (byte*) DTV_BLITTER_LEN_LO ← ((byte*)) (word/dword/signed dword) 54072
+Eliminating unused variable (byte*) DTV_BLITTER_LEN_HI and assignment [121] (byte*) DTV_BLITTER_LEN_HI ← ((byte*)) (word/dword/signed dword) 54073
+Eliminating unused variable (byte*) DTV_BLITTER_CONTROL and assignment [122] (byte*) DTV_BLITTER_CONTROL ← ((byte*)) (word/dword/signed dword) 54074
+Eliminating unused variable (byte) DTV_BLIT_FORCE_START and assignment [123] (byte) DTV_BLIT_FORCE_START ← (byte/signed byte/word/signed word/dword/signed dword) 1
+Eliminating unused variable (byte) DTV_BLIT_SRCA_FWD and assignment [124] (byte) DTV_BLIT_SRCA_FWD ← (byte/signed byte/word/signed word/dword/signed dword) 2
+Eliminating unused variable (byte) DTV_BLIT_SRCB_FWD and assignment [125] (byte) DTV_BLIT_SRCB_FWD ← (byte/signed byte/word/signed word/dword/signed dword) 4
+Eliminating unused variable (byte) DTV_BLIT_DEST_FWD and assignment [126] (byte) DTV_BLIT_DEST_FWD ← (byte/signed byte/word/signed word/dword/signed dword) 8
+Eliminating unused variable (byte) DTV_BLIT_VIC_IRQ and assignment [127] (byte) DTV_BLIT_VIC_IRQ ← (byte/signed byte/word/signed word/dword/signed dword) 16
+Eliminating unused variable (byte) DTV_BLIT_CIA_IRQ and assignment [128] (byte) DTV_BLIT_CIA_IRQ ← (byte/signed byte/word/signed word/dword/signed dword) 32
+Eliminating unused variable (byte) DTV_BLIT_VBLANK and assignment [129] (byte) DTV_BLIT_VBLANK ← (byte/signed byte/word/signed word/dword/signed dword) 64
+Eliminating unused variable (byte) DTV_BLIT_IRQ_EN and assignment [130] (byte) DTV_BLIT_IRQ_EN ← (byte/word/signed word/dword/signed dword) 128
+Eliminating unused variable (byte*) DTV_BLITTER_TRANSPARANCY and assignment [131] (byte*) DTV_BLITTER_TRANSPARANCY ← ((byte*)) (word/dword/signed dword) 54075
+Eliminating unused variable (byte) DTV_BLIT_DISABLE_B and assignment [132] (byte) DTV_BLIT_DISABLE_B ← (byte/signed byte/word/signed word/dword/signed dword) 1
+Eliminating unused variable (byte) DTV_BLIT_WRITE_TRANSPARENT and assignment [133] (byte) DTV_BLIT_WRITE_TRANSPARENT ← (byte/signed byte/word/signed word/dword/signed dword) 2
+Eliminating unused variable (byte) DTV_BLIT_WRITE_NONTRANSPARENT and assignment [134] (byte) DTV_BLIT_WRITE_NONTRANSPARENT ← (byte/signed byte/word/signed word/dword/signed dword) 4
+Eliminating unused variable (byte) DTV_BLIT_TRANSPARANCY_NONE and assignment [135] (byte) DTV_BLIT_TRANSPARANCY_NONE ← (byte/signed byte/word/signed word/dword/signed dword) 0
+Eliminating unused variable (byte*) DTV_BLITTER_ALU and assignment [136] (byte*) DTV_BLITTER_ALU ← ((byte*)) (word/dword/signed dword) 54078
+Eliminating unused variable (byte) DTV_BLIT_SHIFT0 and assignment [137] (byte) DTV_BLIT_SHIFT0 ← (byte/signed byte/word/signed word/dword/signed dword) 0
+Eliminating unused variable (byte) DTV_BLIT_SHIFT1 and assignment [138] (byte) DTV_BLIT_SHIFT1 ← (byte/signed byte/word/signed word/dword/signed dword) 1
+Eliminating unused variable (byte) DTV_BLIT_SHIFT2 and assignment [139] (byte) DTV_BLIT_SHIFT2 ← (byte/signed byte/word/signed word/dword/signed dword) 2
+Eliminating unused variable (byte) DTV_BLIT_SHIFT3 and assignment [140] (byte) DTV_BLIT_SHIFT3 ← (byte/signed byte/word/signed word/dword/signed dword) 3
+Eliminating unused variable (byte) DTV_BLIT_SHIFT4 and assignment [141] (byte) DTV_BLIT_SHIFT4 ← (byte/signed byte/word/signed word/dword/signed dword) 4
+Eliminating unused variable (byte) DTV_BLIT_SHIFT5 and assignment [142] (byte) DTV_BLIT_SHIFT5 ← (byte/signed byte/word/signed word/dword/signed dword) 5
+Eliminating unused variable (byte) DTV_BLIT_SHIFT6 and assignment [143] (byte) DTV_BLIT_SHIFT6 ← (byte/signed byte/word/signed word/dword/signed dword) 6
+Eliminating unused variable (byte) DTV_BLIT_SHIFT7 and assignment [144] (byte) DTV_BLIT_SHIFT7 ← (byte/signed byte/word/signed word/dword/signed dword) 7
+Eliminating unused variable (byte) DTV_BLIT_AND and assignment [145] (byte) DTV_BLIT_AND ← (byte/signed byte/word/signed word/dword/signed dword) 0
+Eliminating unused variable (byte) DTV_BLIT_NAND and assignment [146] (byte) DTV_BLIT_NAND ← (byte/signed byte/word/signed word/dword/signed dword) 8
+Eliminating unused variable (byte) DTV_BLIT_NOR and assignment [147] (byte) DTV_BLIT_NOR ← (byte/signed byte/word/signed word/dword/signed dword) 16
+Eliminating unused variable (byte) DTV_BLIT_OR and assignment [148] (byte) DTV_BLIT_OR ← (byte/signed byte/word/signed word/dword/signed dword) 24
+Eliminating unused variable (byte) DTV_BLIT_XOR and assignment [149] (byte) DTV_BLIT_XOR ← (byte/signed byte/word/signed word/dword/signed dword) 32
+Eliminating unused variable (byte) DTV_BLIT_XNOR and assignment [150] (byte) DTV_BLIT_XNOR ← (byte/signed byte/word/signed word/dword/signed dword) 40
+Eliminating unused variable (byte) DTV_BLIT_ADD and assignment [151] (byte) DTV_BLIT_ADD ← (byte/signed byte/word/signed word/dword/signed dword) 48
+Eliminating unused variable (byte) DTV_BLIT_SUB and assignment [152] (byte) DTV_BLIT_SUB ← (byte/signed byte/word/signed word/dword/signed dword) 56
+Eliminating unused variable (byte*) DTV_BLITTER_CONTROL2 and assignment [153] (byte*) DTV_BLITTER_CONTROL2 ← ((byte*)) (word/dword/signed dword) 54079
+Eliminating unused variable (byte) DTV_BLIT_CLEAR_IRQ and assignment [154] (byte) DTV_BLIT_CLEAR_IRQ ← (byte/signed byte/word/signed word/dword/signed dword) 1
+Eliminating unused variable (byte) DTV_BLIT_SRCA_CONT and assignment [155] (byte) DTV_BLIT_SRCA_CONT ← (byte/signed byte/word/signed word/dword/signed dword) 2
+Eliminating unused variable (byte) DTV_BLIT_SRCB_CONT and assignment [156] (byte) DTV_BLIT_SRCB_CONT ← (byte/signed byte/word/signed word/dword/signed dword) 4
+Eliminating unused variable (byte) DTV_BLIT_DEST_CONT and assignment [157] (byte) DTV_BLIT_DEST_CONT ← (byte/signed byte/word/signed word/dword/signed dword) 8
+Eliminating unused variable (byte) DTV_BLIT_STATUS_BUSY and assignment [158] (byte) DTV_BLIT_STATUS_BUSY ← (byte/signed byte/word/signed word/dword/signed dword) 1
+Eliminating unused variable (byte) DTV_BLIT_STATUS_IRQ and assignment [159] (byte) DTV_BLIT_STATUS_IRQ ← (byte/signed byte/word/signed word/dword/signed dword) 2
 Removing empty block @1
 Removing empty block main::@9
 Removing empty block main::@3

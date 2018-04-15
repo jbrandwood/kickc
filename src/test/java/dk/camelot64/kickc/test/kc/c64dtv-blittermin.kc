@@ -1,9 +1,9 @@
 import "c64dtv.kc"
 
 const byte* SCREEN = $400;
-const byte[] SRCA = { 'C', 'a', 'm', 'e', 'l', 'o', 't', '!'};
-const byte SRCA_LEN = 8;
-const byte[] SRCB = { 1 };
+const byte[] SRCA = { 'c', 'a', 'm', 'e', 'l', 'o', 't', '!', ' '};
+const byte SRCA_LEN = 9;
+const byte[] SRCB = { $80 };
 
 void main() {
 
@@ -40,9 +40,20 @@ void main() {
     *DTV_BLITTER_LEN_HI = 0;
 
     *DTV_BLITTER_ALU = DTV_BLIT_ADD;
-    *DTV_BLITTER_CONTROL2 = DTV_BLIT_DEST_CONT | DTV_BLIT_CLEAR_IRQ;
     *DTV_BLITTER_TRANSPARANCY = DTV_BLIT_TRANSPARANCY_NONE;
 
+    // Start blitter
     *DTV_BLITTER_CONTROL = DTV_BLIT_FORCE_START | DTV_BLIT_SRCA_FWD | DTV_BLIT_SRCB_FWD| DTV_BLIT_DEST_FWD;
+    // Instruct blitter to continue at DEST and restart SRC A/B
+    *DTV_BLITTER_CONTROL2 = DTV_BLIT_DEST_CONT;
+
+    // Start a 8 more times when ready
+    for( byte r: 0..7 ) {
+        // wait til blitter is ready
+        do {} while((*DTV_BLITTER_CONTROL2 & DTV_BLIT_STATUS_BUSY)!=0);
+        // restart
+        *DTV_BLITTER_CONTROL = DTV_BLIT_FORCE_START | DTV_BLIT_SRCA_FWD | DTV_BLIT_SRCB_FWD| DTV_BLIT_DEST_FWD;
+     }
+
 
 }

@@ -1334,6 +1334,11 @@ Constant (const byte) main::$0 = DTV_HIGHCOLOR#0|DTV_BORDER_OFF#0
 Succesful SSA optimization Pass2ConstantIdentification
 Constant (const byte) main::$1 = main::$0|DTV_BADLINE_OFF#0
 Succesful SSA optimization Pass2ConstantIdentification
+if() condition always true - replacing block destination if(true) goto main::@4
+Succesful SSA optimization Pass2ConstantIfs
+Removing unused block main::@return
+Succesful SSA optimization Pass2EliminateUnusedBlocks
+Culled Empty Block (label) main::@1
 Culled Empty Block (label) main::@14
 Succesful SSA optimization Pass2CullEmptyBlocks
 OPTIMIZING CONTROL FLOW GRAPH
@@ -1346,10 +1351,10 @@ Constant inlined main::c#0 = (byte/signed byte/word/signed word/dword/signed dwo
 Constant inlined main::$1 = (const byte) DTV_HIGHCOLOR#0|(const byte) DTV_BORDER_OFF#0|(const byte) DTV_BADLINE_OFF#0
 Constant inlined main::$0 = (const byte) DTV_HIGHCOLOR#0|(const byte) DTV_BORDER_OFF#0
 Succesful SSA optimization Pass2ConstantInlining
-Block Sequence Planned @begin @2 @end main main::@1 main::@return main::@4 main::@6 main::@7 main::@8 
+Block Sequence Planned @begin @2 @end main main::@4 main::@6 main::@7 main::@8 
 Added new block during phi lifting main::@17(between main::@7 and main::@7)
 Added new block during phi lifting main::@18(between main::@8 and main::@8)
-Block Sequence Planned @begin @2 @end main main::@1 main::@return main::@4 main::@6 main::@7 main::@8 main::@18 main::@17 
+Block Sequence Planned @begin @2 @end main main::@4 main::@6 main::@7 main::@8 main::@18 main::@17 
 Adding NOP phi() at start of @begin
 Adding NOP phi() at start of @2
 Adding NOP phi() at start of @end
@@ -1361,12 +1366,12 @@ Propagating live ranges...
 Propagating live ranges...
 Propagating live ranges...
 Created 2 initial phi equivalence classes
-Coalesced [21] main::c#3 ← main::c#1
-Coalesced [22] main::r#3 ← main::r#1
+Coalesced [19] main::c#3 ← main::c#1
+Coalesced [20] main::r#3 ← main::r#1
 Coalesced down to 2 phi equivalence classes
 Culled Empty Block (label) main::@18
 Culled Empty Block (label) main::@17
-Block Sequence Planned @begin @2 @end main main::@1 main::@return main::@4 main::@6 main::@7 main::@8 
+Block Sequence Planned @begin @2 @end main main::@4 main::@6 main::@7 main::@8 
 Adding NOP phi() at start of @begin
 Adding NOP phi() at start of @2
 Adding NOP phi() at start of @end
@@ -1389,58 +1394,50 @@ main: scope:[main]  from @2
   asm { sei  }
   [5] *((const byte*) DTV_FEATURE#0) ← (const byte) DTV_FEATURE_ENABLE#0 [ ] ( main:2 [ ] )
   [6] *((const byte*) DTV_CONTROL#0) ← (const byte) DTV_HIGHCOLOR#0|(const byte) DTV_BORDER_OFF#0|(const byte) DTV_BADLINE_OFF#0 [ ] ( main:2 [ ] )
-  to:main::@1
-main::@1: scope:[main]  from main main::@8
-  [7] if(true) goto main::@4 [ ] ( main:2 [ ] )
-  to:main::@return
-main::@return: scope:[main]  from main::@1
-  [8] return  [ ] ( main:2 [ ] )
-  to:@return
-main::@4: scope:[main]  from main::@1 main::@4
-  [9] if(*((const byte*) RASTER#0)!=(byte/signed byte/word/signed word/dword/signed dword) 64) goto main::@4 [ ] ( main:2 [ ] )
+  to:main::@4
+main::@4: scope:[main]  from main main::@4 main::@8
+  [7] if(*((const byte*) RASTER#0)!=(byte/signed byte/word/signed word/dword/signed dword) 64) goto main::@4 [ ] ( main:2 [ ] )
   to:main::@6
 main::@6: scope:[main]  from main::@4
-  [10] *((const byte*) BGCOL#0) ← (byte/signed byte/word/signed word/dword/signed dword) 0 [ ] ( main:2 [ ] )
+  [8] *((const byte*) BGCOL#0) ← (byte/signed byte/word/signed word/dword/signed dword) 0 [ ] ( main:2 [ ] )
   to:main::@7
 main::@7: scope:[main]  from main::@6 main::@7
-  [11] (byte) main::r#2 ← phi( main::@6/(byte/signed byte/word/signed word/dword/signed dword) 49 main::@7/(byte) main::r#1 ) [ main::r#2 ] ( main:2 [ main::r#2 ] )
+  [9] (byte) main::r#2 ← phi( main::@6/(byte/signed byte/word/signed word/dword/signed dword) 49 main::@7/(byte) main::r#1 ) [ main::r#2 ] ( main:2 [ main::r#2 ] )
   asm { nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop  }
-  [13] *((const byte*) BGCOL#0) ← ++ *((const byte*) BGCOL#0) [ main::r#2 ] ( main:2 [ main::r#2 ] )
-  [14] (byte) main::r#1 ← ++ (byte) main::r#2 [ main::r#1 ] ( main:2 [ main::r#1 ] )
-  [15] if((byte) main::r#1!=(byte/signed byte/word/signed word/dword/signed dword) 0) goto main::@7 [ main::r#1 ] ( main:2 [ main::r#1 ] )
+  [11] *((const byte*) BGCOL#0) ← ++ *((const byte*) BGCOL#0) [ main::r#2 ] ( main:2 [ main::r#2 ] )
+  [12] (byte) main::r#1 ← ++ (byte) main::r#2 [ main::r#1 ] ( main:2 [ main::r#1 ] )
+  [13] if((byte) main::r#1!=(byte/signed byte/word/signed word/dword/signed dword) 0) goto main::@7 [ main::r#1 ] ( main:2 [ main::r#1 ] )
   to:main::@8
 main::@8: scope:[main]  from main::@7 main::@8
-  [16] (byte) main::c#2 ← phi( main::@7/(byte/signed byte/word/signed word/dword/signed dword) 0 main::@8/(byte) main::c#1 ) [ main::c#2 ] ( main:2 [ main::c#2 ] )
-  [17] *((const byte*) DTV_PALETTE#0 + (byte) main::c#2) ← *((const byte[16]) main::palette#0 + (byte) main::c#2) [ main::c#2 ] ( main:2 [ main::c#2 ] )
-  [18] *((const byte[16]) main::palette#0 + (byte) main::c#2) ← ++ *((const byte[16]) main::palette#0 + (byte) main::c#2) [ main::c#2 ] ( main:2 [ main::c#2 ] )
-  [19] (byte) main::c#1 ← ++ (byte) main::c#2 [ main::c#1 ] ( main:2 [ main::c#1 ] )
-  [20] if((byte) main::c#1!=(byte/signed byte/word/signed word/dword/signed dword) 16) goto main::@8 [ main::c#1 ] ( main:2 [ main::c#1 ] )
-  to:main::@1
+  [14] (byte) main::c#2 ← phi( main::@7/(byte/signed byte/word/signed word/dword/signed dword) 0 main::@8/(byte) main::c#1 ) [ main::c#2 ] ( main:2 [ main::c#2 ] )
+  [15] *((const byte*) DTV_PALETTE#0 + (byte) main::c#2) ← *((const byte[16]) main::palette#0 + (byte) main::c#2) [ main::c#2 ] ( main:2 [ main::c#2 ] )
+  [16] *((const byte[16]) main::palette#0 + (byte) main::c#2) ← ++ *((const byte[16]) main::palette#0 + (byte) main::c#2) [ main::c#2 ] ( main:2 [ main::c#2 ] )
+  [17] (byte) main::c#1 ← ++ (byte) main::c#2 [ main::c#1 ] ( main:2 [ main::c#1 ] )
+  [18] if((byte) main::c#1!=(byte/signed byte/word/signed word/dword/signed dword) 16) goto main::@8 [ main::c#1 ] ( main:2 [ main::c#1 ] )
+  to:main::@4
 
 DOMINATORS
 @begin dominated by  @begin 
 @2 dominated by  @2 @begin 
 @end dominated by  @2 @begin @end 
 main dominated by  @2 @begin main 
-main::@1 dominated by  @2 @begin main::@1 main 
-main::@return dominated by  main::@return @2 @begin main::@1 main 
-main::@4 dominated by  @2 @begin main::@1 main main::@4 
-main::@6 dominated by  @2 @begin main::@1 main main::@6 main::@4 
-main::@7 dominated by  @2 main::@7 @begin main::@1 main main::@6 main::@4 
-main::@8 dominated by  @2 main::@7 @begin main::@8 main::@1 main main::@6 main::@4 
+main::@4 dominated by  @2 @begin main main::@4 
+main::@6 dominated by  @2 @begin main main::@6 main::@4 
+main::@7 dominated by  @2 main::@7 @begin main main::@6 main::@4 
+main::@8 dominated by  @2 main::@7 @begin main::@8 main main::@6 main::@4 
 
 NATURAL LOOPS
 Found back edge: Loop head: main::@4 tails: main::@4 blocks: null
 Found back edge: Loop head: main::@7 tails: main::@7 blocks: null
-Found back edge: Loop head: main::@1 tails: main::@8 blocks: null
+Found back edge: Loop head: main::@4 tails: main::@8 blocks: null
 Found back edge: Loop head: main::@8 tails: main::@8 blocks: null
 Populated: Loop head: main::@4 tails: main::@4 blocks: main::@4 
 Populated: Loop head: main::@7 tails: main::@7 blocks: main::@7 
-Populated: Loop head: main::@1 tails: main::@8 blocks: main::@8 main::@7 main::@6 main::@4 main::@1 
+Populated: Loop head: main::@4 tails: main::@8 blocks: main::@8 main::@7 main::@6 main::@4 
 Populated: Loop head: main::@8 tails: main::@8 blocks: main::@8 
 Loop head: main::@4 tails: main::@4 blocks: main::@4 
 Loop head: main::@7 tails: main::@7 blocks: main::@7 
-Loop head: main::@1 tails: main::@8 blocks: main::@8 main::@7 main::@6 main::@4 main::@1 
+Loop head: main::@4 tails: main::@8 blocks: main::@8 main::@7 main::@6 main::@4 
 Loop head: main::@8 tails: main::@8 blocks: main::@8 
 
 NATURAL LOOPS WITH DEPTH
@@ -1448,11 +1445,11 @@ Found 0 loops in scope []
 Found 4 loops in scope [main]
   Loop head: main::@4 tails: main::@4 blocks: main::@4 
   Loop head: main::@7 tails: main::@7 blocks: main::@7 
-  Loop head: main::@1 tails: main::@8 blocks: main::@8 main::@7 main::@6 main::@4 main::@1 
+  Loop head: main::@4 tails: main::@8 blocks: main::@8 main::@7 main::@6 main::@4 
   Loop head: main::@8 tails: main::@8 blocks: main::@8 
 Loop head: main::@4 tails: main::@4 blocks: main::@4  depth: 2
 Loop head: main::@7 tails: main::@7 blocks: main::@7  depth: 2
-Loop head: main::@1 tails: main::@8 blocks: main::@8 main::@7 main::@6 main::@4 main::@1  depth: 1
+Loop head: main::@4 tails: main::@8 blocks: main::@8 main::@7 main::@6 main::@4  depth: 1
 Loop head: main::@8 tails: main::@8 blocks: main::@8  depth: 2
 
 
@@ -1525,41 +1522,32 @@ main: {
   //SEG11 [6] *((const byte*) DTV_CONTROL#0) ← (const byte) DTV_HIGHCOLOR#0|(const byte) DTV_BORDER_OFF#0|(const byte) DTV_BADLINE_OFF#0 [ ] ( main:2 [ ] ) -- _deref_pbuc1=vbuc2 
     lda #DTV_HIGHCOLOR|DTV_BORDER_OFF|DTV_BADLINE_OFF
     sta DTV_CONTROL
-    jmp b1
-  //SEG12 main::@1
-  b1:
-  //SEG13 [7] if(true) goto main::@4 [ ] ( main:2 [ ] ) -- true_then_la1 
     jmp b4
-    jmp breturn
-  //SEG14 main::@return
-  breturn:
-  //SEG15 [8] return  [ ] ( main:2 [ ] )
-    rts
-  //SEG16 main::@4
+  //SEG12 main::@4
   b4:
-  //SEG17 [9] if(*((const byte*) RASTER#0)!=(byte/signed byte/word/signed word/dword/signed dword) 64) goto main::@4 [ ] ( main:2 [ ] ) -- _deref_pbuc1_neq_vbuc2_then_la1 
+  //SEG13 [7] if(*((const byte*) RASTER#0)!=(byte/signed byte/word/signed word/dword/signed dword) 64) goto main::@4 [ ] ( main:2 [ ] ) -- _deref_pbuc1_neq_vbuc2_then_la1 
     lda RASTER
     cmp #$40
     bne b4
     jmp b6
-  //SEG18 main::@6
+  //SEG14 main::@6
   b6:
-  //SEG19 [10] *((const byte*) BGCOL#0) ← (byte/signed byte/word/signed word/dword/signed dword) 0 [ ] ( main:2 [ ] ) -- _deref_pbuc1=vbuc2 
+  //SEG15 [8] *((const byte*) BGCOL#0) ← (byte/signed byte/word/signed word/dword/signed dword) 0 [ ] ( main:2 [ ] ) -- _deref_pbuc1=vbuc2 
     lda #0
     sta BGCOL
-  //SEG20 [11] phi from main::@6 to main::@7 [phi:main::@6->main::@7]
+  //SEG16 [9] phi from main::@6 to main::@7 [phi:main::@6->main::@7]
   b7_from_b6:
-  //SEG21 [11] phi (byte) main::r#2 = (byte/signed byte/word/signed word/dword/signed dword) 49 [phi:main::@6->main::@7#0] -- vbuz1=vbuc1 
+  //SEG17 [9] phi (byte) main::r#2 = (byte/signed byte/word/signed word/dword/signed dword) 49 [phi:main::@6->main::@7#0] -- vbuz1=vbuc1 
     lda #$31
     sta r
     jmp b7
-  //SEG22 [11] phi from main::@7 to main::@7 [phi:main::@7->main::@7]
+  //SEG18 [9] phi from main::@7 to main::@7 [phi:main::@7->main::@7]
   b7_from_b7:
-  //SEG23 [11] phi (byte) main::r#2 = (byte) main::r#1 [phi:main::@7->main::@7#0] -- register_copy 
+  //SEG19 [9] phi (byte) main::r#2 = (byte) main::r#1 [phi:main::@7->main::@7#0] -- register_copy 
     jmp b7
-  //SEG24 main::@7
+  //SEG20 main::@7
   b7:
-  //SEG25 asm { nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop  }
+  //SEG21 asm { nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop  }
     nop
     nop
     nop
@@ -1585,54 +1573,54 @@ main: {
     nop
     nop
     nop
-  //SEG26 [13] *((const byte*) BGCOL#0) ← ++ *((const byte*) BGCOL#0) [ main::r#2 ] ( main:2 [ main::r#2 ] ) -- _deref_pbuc1=_inc__deref_pbuc1 
+  //SEG22 [11] *((const byte*) BGCOL#0) ← ++ *((const byte*) BGCOL#0) [ main::r#2 ] ( main:2 [ main::r#2 ] ) -- _deref_pbuc1=_inc__deref_pbuc1 
     inc BGCOL
-  //SEG27 [14] (byte) main::r#1 ← ++ (byte) main::r#2 [ main::r#1 ] ( main:2 [ main::r#1 ] ) -- vbuz1=_inc_vbuz1 
+  //SEG23 [12] (byte) main::r#1 ← ++ (byte) main::r#2 [ main::r#1 ] ( main:2 [ main::r#1 ] ) -- vbuz1=_inc_vbuz1 
     inc r
-  //SEG28 [15] if((byte) main::r#1!=(byte/signed byte/word/signed word/dword/signed dword) 0) goto main::@7 [ main::r#1 ] ( main:2 [ main::r#1 ] ) -- vbuz1_neq_0_then_la1 
+  //SEG24 [13] if((byte) main::r#1!=(byte/signed byte/word/signed word/dword/signed dword) 0) goto main::@7 [ main::r#1 ] ( main:2 [ main::r#1 ] ) -- vbuz1_neq_0_then_la1 
     lda r
     bne b7_from_b7
-  //SEG29 [16] phi from main::@7 to main::@8 [phi:main::@7->main::@8]
+  //SEG25 [14] phi from main::@7 to main::@8 [phi:main::@7->main::@8]
   b8_from_b7:
-  //SEG30 [16] phi (byte) main::c#2 = (byte/signed byte/word/signed word/dword/signed dword) 0 [phi:main::@7->main::@8#0] -- vbuz1=vbuc1 
+  //SEG26 [14] phi (byte) main::c#2 = (byte/signed byte/word/signed word/dword/signed dword) 0 [phi:main::@7->main::@8#0] -- vbuz1=vbuc1 
     lda #0
     sta c
     jmp b8
-  //SEG31 [16] phi from main::@8 to main::@8 [phi:main::@8->main::@8]
+  //SEG27 [14] phi from main::@8 to main::@8 [phi:main::@8->main::@8]
   b8_from_b8:
-  //SEG32 [16] phi (byte) main::c#2 = (byte) main::c#1 [phi:main::@8->main::@8#0] -- register_copy 
+  //SEG28 [14] phi (byte) main::c#2 = (byte) main::c#1 [phi:main::@8->main::@8#0] -- register_copy 
     jmp b8
-  //SEG33 main::@8
+  //SEG29 main::@8
   b8:
-  //SEG34 [17] *((const byte*) DTV_PALETTE#0 + (byte) main::c#2) ← *((const byte[16]) main::palette#0 + (byte) main::c#2) [ main::c#2 ] ( main:2 [ main::c#2 ] ) -- pbuc1_derefidx_vbuz1=pbuc2_derefidx_vbuz1 
+  //SEG30 [15] *((const byte*) DTV_PALETTE#0 + (byte) main::c#2) ← *((const byte[16]) main::palette#0 + (byte) main::c#2) [ main::c#2 ] ( main:2 [ main::c#2 ] ) -- pbuc1_derefidx_vbuz1=pbuc2_derefidx_vbuz1 
     ldy c
     lda palette,y
     sta DTV_PALETTE,y
-  //SEG35 [18] *((const byte[16]) main::palette#0 + (byte) main::c#2) ← ++ *((const byte[16]) main::palette#0 + (byte) main::c#2) [ main::c#2 ] ( main:2 [ main::c#2 ] ) -- pbuc1_derefidx_vbuz1=_inc_pbuc1_derefidx_vbuz1 
+  //SEG31 [16] *((const byte[16]) main::palette#0 + (byte) main::c#2) ← ++ *((const byte[16]) main::palette#0 + (byte) main::c#2) [ main::c#2 ] ( main:2 [ main::c#2 ] ) -- pbuc1_derefidx_vbuz1=_inc_pbuc1_derefidx_vbuz1 
     ldx c
     inc palette,x
-  //SEG36 [19] (byte) main::c#1 ← ++ (byte) main::c#2 [ main::c#1 ] ( main:2 [ main::c#1 ] ) -- vbuz1=_inc_vbuz1 
+  //SEG32 [17] (byte) main::c#1 ← ++ (byte) main::c#2 [ main::c#1 ] ( main:2 [ main::c#1 ] ) -- vbuz1=_inc_vbuz1 
     inc c
-  //SEG37 [20] if((byte) main::c#1!=(byte/signed byte/word/signed word/dword/signed dword) 16) goto main::@8 [ main::c#1 ] ( main:2 [ main::c#1 ] ) -- vbuz1_neq_vbuc1_then_la1 
+  //SEG33 [18] if((byte) main::c#1!=(byte/signed byte/word/signed word/dword/signed dword) 16) goto main::@8 [ main::c#1 ] ( main:2 [ main::c#1 ] ) -- vbuz1_neq_vbuc1_then_la1 
     lda c
     cmp #$10
     bne b8_from_b8
-    jmp b1
+    jmp b4
     palette: .byte 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, $a, $b, $c, $d, $e, $f
 }
 
 REGISTER UPLIFT POTENTIAL REGISTERS
 Statement [5] *((const byte*) DTV_FEATURE#0) ← (const byte) DTV_FEATURE_ENABLE#0 [ ] ( main:2 [ ] ) always clobbers reg byte a 
 Statement [6] *((const byte*) DTV_CONTROL#0) ← (const byte) DTV_HIGHCOLOR#0|(const byte) DTV_BORDER_OFF#0|(const byte) DTV_BADLINE_OFF#0 [ ] ( main:2 [ ] ) always clobbers reg byte a 
-Statement [9] if(*((const byte*) RASTER#0)!=(byte/signed byte/word/signed word/dword/signed dword) 64) goto main::@4 [ ] ( main:2 [ ] ) always clobbers reg byte a 
-Statement [10] *((const byte*) BGCOL#0) ← (byte/signed byte/word/signed word/dword/signed dword) 0 [ ] ( main:2 [ ] ) always clobbers reg byte a 
-Statement [17] *((const byte*) DTV_PALETTE#0 + (byte) main::c#2) ← *((const byte[16]) main::palette#0 + (byte) main::c#2) [ main::c#2 ] ( main:2 [ main::c#2 ] ) always clobbers reg byte a 
+Statement [7] if(*((const byte*) RASTER#0)!=(byte/signed byte/word/signed word/dword/signed dword) 64) goto main::@4 [ ] ( main:2 [ ] ) always clobbers reg byte a 
+Statement [8] *((const byte*) BGCOL#0) ← (byte/signed byte/word/signed word/dword/signed dword) 0 [ ] ( main:2 [ ] ) always clobbers reg byte a 
+Statement [15] *((const byte*) DTV_PALETTE#0 + (byte) main::c#2) ← *((const byte[16]) main::palette#0 + (byte) main::c#2) [ main::c#2 ] ( main:2 [ main::c#2 ] ) always clobbers reg byte a 
 Removing always clobbered register reg byte a as potential for zp ZP_BYTE:3 [ main::c#2 main::c#1 ]
 Statement [5] *((const byte*) DTV_FEATURE#0) ← (const byte) DTV_FEATURE_ENABLE#0 [ ] ( main:2 [ ] ) always clobbers reg byte a 
 Statement [6] *((const byte*) DTV_CONTROL#0) ← (const byte) DTV_HIGHCOLOR#0|(const byte) DTV_BORDER_OFF#0|(const byte) DTV_BADLINE_OFF#0 [ ] ( main:2 [ ] ) always clobbers reg byte a 
-Statement [9] if(*((const byte*) RASTER#0)!=(byte/signed byte/word/signed word/dword/signed dword) 64) goto main::@4 [ ] ( main:2 [ ] ) always clobbers reg byte a 
-Statement [10] *((const byte*) BGCOL#0) ← (byte/signed byte/word/signed word/dword/signed dword) 0 [ ] ( main:2 [ ] ) always clobbers reg byte a 
-Statement [17] *((const byte*) DTV_PALETTE#0 + (byte) main::c#2) ← *((const byte[16]) main::palette#0 + (byte) main::c#2) [ main::c#2 ] ( main:2 [ main::c#2 ] ) always clobbers reg byte a 
+Statement [7] if(*((const byte*) RASTER#0)!=(byte/signed byte/word/signed word/dword/signed dword) 64) goto main::@4 [ ] ( main:2 [ ] ) always clobbers reg byte a 
+Statement [8] *((const byte*) BGCOL#0) ← (byte/signed byte/word/signed word/dword/signed dword) 0 [ ] ( main:2 [ ] ) always clobbers reg byte a 
+Statement [15] *((const byte*) DTV_PALETTE#0 + (byte) main::c#2) ← *((const byte[16]) main::palette#0 + (byte) main::c#2) [ main::c#2 ] ( main:2 [ main::c#2 ] ) always clobbers reg byte a 
 Potential registers zp ZP_BYTE:2 [ main::r#2 main::r#1 ] : zp ZP_BYTE:2 , reg byte a , reg byte x , reg byte y , 
 Potential registers zp ZP_BYTE:3 [ main::c#2 main::c#1 ] : zp ZP_BYTE:3 , reg byte x , reg byte y , 
 
@@ -1640,8 +1628,8 @@ REGISTER UPLIFT SCOPES
 Uplift Scope [main] 353.5: zp ZP_BYTE:3 [ main::c#2 main::c#1 ] 218.83: zp ZP_BYTE:2 [ main::r#2 main::r#1 ] 
 Uplift Scope [] 
 
-Uplifting [main] best 11755 combination reg byte x [ main::c#2 main::c#1 ] reg byte x [ main::r#2 main::r#1 ] 
-Uplifting [] best 11755 combination 
+Uplifting [main] best 11689 combination reg byte x [ main::c#2 main::c#1 ] reg byte x [ main::r#2 main::r#1 ] 
+Uplifting [] best 11689 combination 
 
 ASSEMBLER BEFORE OPTIMIZATION
 //SEG0 Basic Upstart
@@ -1682,40 +1670,31 @@ main: {
   //SEG11 [6] *((const byte*) DTV_CONTROL#0) ← (const byte) DTV_HIGHCOLOR#0|(const byte) DTV_BORDER_OFF#0|(const byte) DTV_BADLINE_OFF#0 [ ] ( main:2 [ ] ) -- _deref_pbuc1=vbuc2 
     lda #DTV_HIGHCOLOR|DTV_BORDER_OFF|DTV_BADLINE_OFF
     sta DTV_CONTROL
-    jmp b1
-  //SEG12 main::@1
-  b1:
-  //SEG13 [7] if(true) goto main::@4 [ ] ( main:2 [ ] ) -- true_then_la1 
     jmp b4
-    jmp breturn
-  //SEG14 main::@return
-  breturn:
-  //SEG15 [8] return  [ ] ( main:2 [ ] )
-    rts
-  //SEG16 main::@4
+  //SEG12 main::@4
   b4:
-  //SEG17 [9] if(*((const byte*) RASTER#0)!=(byte/signed byte/word/signed word/dword/signed dword) 64) goto main::@4 [ ] ( main:2 [ ] ) -- _deref_pbuc1_neq_vbuc2_then_la1 
+  //SEG13 [7] if(*((const byte*) RASTER#0)!=(byte/signed byte/word/signed word/dword/signed dword) 64) goto main::@4 [ ] ( main:2 [ ] ) -- _deref_pbuc1_neq_vbuc2_then_la1 
     lda RASTER
     cmp #$40
     bne b4
     jmp b6
-  //SEG18 main::@6
+  //SEG14 main::@6
   b6:
-  //SEG19 [10] *((const byte*) BGCOL#0) ← (byte/signed byte/word/signed word/dword/signed dword) 0 [ ] ( main:2 [ ] ) -- _deref_pbuc1=vbuc2 
+  //SEG15 [8] *((const byte*) BGCOL#0) ← (byte/signed byte/word/signed word/dword/signed dword) 0 [ ] ( main:2 [ ] ) -- _deref_pbuc1=vbuc2 
     lda #0
     sta BGCOL
-  //SEG20 [11] phi from main::@6 to main::@7 [phi:main::@6->main::@7]
+  //SEG16 [9] phi from main::@6 to main::@7 [phi:main::@6->main::@7]
   b7_from_b6:
-  //SEG21 [11] phi (byte) main::r#2 = (byte/signed byte/word/signed word/dword/signed dword) 49 [phi:main::@6->main::@7#0] -- vbuxx=vbuc1 
+  //SEG17 [9] phi (byte) main::r#2 = (byte/signed byte/word/signed word/dword/signed dword) 49 [phi:main::@6->main::@7#0] -- vbuxx=vbuc1 
     ldx #$31
     jmp b7
-  //SEG22 [11] phi from main::@7 to main::@7 [phi:main::@7->main::@7]
+  //SEG18 [9] phi from main::@7 to main::@7 [phi:main::@7->main::@7]
   b7_from_b7:
-  //SEG23 [11] phi (byte) main::r#2 = (byte) main::r#1 [phi:main::@7->main::@7#0] -- register_copy 
+  //SEG19 [9] phi (byte) main::r#2 = (byte) main::r#1 [phi:main::@7->main::@7#0] -- register_copy 
     jmp b7
-  //SEG24 main::@7
+  //SEG20 main::@7
   b7:
-  //SEG25 asm { nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop  }
+  //SEG21 asm { nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop  }
     nop
     nop
     nop
@@ -1741,43 +1720,42 @@ main: {
     nop
     nop
     nop
-  //SEG26 [13] *((const byte*) BGCOL#0) ← ++ *((const byte*) BGCOL#0) [ main::r#2 ] ( main:2 [ main::r#2 ] ) -- _deref_pbuc1=_inc__deref_pbuc1 
+  //SEG22 [11] *((const byte*) BGCOL#0) ← ++ *((const byte*) BGCOL#0) [ main::r#2 ] ( main:2 [ main::r#2 ] ) -- _deref_pbuc1=_inc__deref_pbuc1 
     inc BGCOL
-  //SEG27 [14] (byte) main::r#1 ← ++ (byte) main::r#2 [ main::r#1 ] ( main:2 [ main::r#1 ] ) -- vbuxx=_inc_vbuxx 
+  //SEG23 [12] (byte) main::r#1 ← ++ (byte) main::r#2 [ main::r#1 ] ( main:2 [ main::r#1 ] ) -- vbuxx=_inc_vbuxx 
     inx
-  //SEG28 [15] if((byte) main::r#1!=(byte/signed byte/word/signed word/dword/signed dword) 0) goto main::@7 [ main::r#1 ] ( main:2 [ main::r#1 ] ) -- vbuxx_neq_0_then_la1 
+  //SEG24 [13] if((byte) main::r#1!=(byte/signed byte/word/signed word/dword/signed dword) 0) goto main::@7 [ main::r#1 ] ( main:2 [ main::r#1 ] ) -- vbuxx_neq_0_then_la1 
     cpx #0
     bne b7_from_b7
-  //SEG29 [16] phi from main::@7 to main::@8 [phi:main::@7->main::@8]
+  //SEG25 [14] phi from main::@7 to main::@8 [phi:main::@7->main::@8]
   b8_from_b7:
-  //SEG30 [16] phi (byte) main::c#2 = (byte/signed byte/word/signed word/dword/signed dword) 0 [phi:main::@7->main::@8#0] -- vbuxx=vbuc1 
+  //SEG26 [14] phi (byte) main::c#2 = (byte/signed byte/word/signed word/dword/signed dword) 0 [phi:main::@7->main::@8#0] -- vbuxx=vbuc1 
     ldx #0
     jmp b8
-  //SEG31 [16] phi from main::@8 to main::@8 [phi:main::@8->main::@8]
+  //SEG27 [14] phi from main::@8 to main::@8 [phi:main::@8->main::@8]
   b8_from_b8:
-  //SEG32 [16] phi (byte) main::c#2 = (byte) main::c#1 [phi:main::@8->main::@8#0] -- register_copy 
+  //SEG28 [14] phi (byte) main::c#2 = (byte) main::c#1 [phi:main::@8->main::@8#0] -- register_copy 
     jmp b8
-  //SEG33 main::@8
+  //SEG29 main::@8
   b8:
-  //SEG34 [17] *((const byte*) DTV_PALETTE#0 + (byte) main::c#2) ← *((const byte[16]) main::palette#0 + (byte) main::c#2) [ main::c#2 ] ( main:2 [ main::c#2 ] ) -- pbuc1_derefidx_vbuxx=pbuc2_derefidx_vbuxx 
+  //SEG30 [15] *((const byte*) DTV_PALETTE#0 + (byte) main::c#2) ← *((const byte[16]) main::palette#0 + (byte) main::c#2) [ main::c#2 ] ( main:2 [ main::c#2 ] ) -- pbuc1_derefidx_vbuxx=pbuc2_derefidx_vbuxx 
     lda palette,x
     sta DTV_PALETTE,x
-  //SEG35 [18] *((const byte[16]) main::palette#0 + (byte) main::c#2) ← ++ *((const byte[16]) main::palette#0 + (byte) main::c#2) [ main::c#2 ] ( main:2 [ main::c#2 ] ) -- pbuc1_derefidx_vbuxx=_inc_pbuc1_derefidx_vbuxx 
+  //SEG31 [16] *((const byte[16]) main::palette#0 + (byte) main::c#2) ← ++ *((const byte[16]) main::palette#0 + (byte) main::c#2) [ main::c#2 ] ( main:2 [ main::c#2 ] ) -- pbuc1_derefidx_vbuxx=_inc_pbuc1_derefidx_vbuxx 
     inc palette,x
-  //SEG36 [19] (byte) main::c#1 ← ++ (byte) main::c#2 [ main::c#1 ] ( main:2 [ main::c#1 ] ) -- vbuxx=_inc_vbuxx 
+  //SEG32 [17] (byte) main::c#1 ← ++ (byte) main::c#2 [ main::c#1 ] ( main:2 [ main::c#1 ] ) -- vbuxx=_inc_vbuxx 
     inx
-  //SEG37 [20] if((byte) main::c#1!=(byte/signed byte/word/signed word/dword/signed dword) 16) goto main::@8 [ main::c#1 ] ( main:2 [ main::c#1 ] ) -- vbuxx_neq_vbuc1_then_la1 
+  //SEG33 [18] if((byte) main::c#1!=(byte/signed byte/word/signed word/dword/signed dword) 16) goto main::@8 [ main::c#1 ] ( main:2 [ main::c#1 ] ) -- vbuxx_neq_vbuc1_then_la1 
     cpx #$10
     bne b8_from_b8
-    jmp b1
+    jmp b4
     palette: .byte 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, $a, $b, $c, $d, $e, $f
 }
 
 ASSEMBLER OPTIMIZATIONS
 Removing instruction jmp b2
 Removing instruction jmp bend
-Removing instruction jmp b1
-Removing instruction jmp breturn
+Removing instruction jmp b4
 Removing instruction jmp b6
 Removing instruction jmp b7
 Removing instruction jmp b8
@@ -1792,21 +1770,13 @@ Removing instruction b8_from_b8:
 Succesful ASM optimization Pass5RedundantLabelElimination
 Removing instruction b2:
 Removing instruction bend:
-Removing instruction breturn:
 Removing instruction b6:
 Removing instruction b7_from_b6:
 Removing instruction b8_from_b7:
 Succesful ASM optimization Pass5UnusedLabelElimination
-Skipping double jump to b4 in jmp b1
-Succesful ASM optimization Pass5DoubleJumpElimination
-Removing unreachable instruction rts
-Succesful ASM optimization Pass5UnreachableCodeElimination
-Removing instruction jmp b4
 Removing instruction jmp b7
 Removing instruction jmp b8
 Succesful ASM optimization Pass5NextJumpElimination
-Removing instruction b1:
-Succesful ASM optimization Pass5RedundantLabelElimination
 
 FINAL SYMBOL TABLE
 (label) @2
@@ -1831,12 +1801,10 @@ FINAL SYMBOL TABLE
 (byte*) RASTER
 (const byte*) RASTER#0 RASTER = ((byte*))(word/dword/signed dword) 53266
 (void()) main()
-(label) main::@1
 (label) main::@4
 (label) main::@6
 (label) main::@7
 (label) main::@8
-(label) main::@return
 (byte) main::c
 (byte) main::c#1 reg byte x 151.5
 (byte) main::c#2 reg byte x 201.99999999999997
@@ -1884,28 +1852,24 @@ main: {
   //SEG11 [6] *((const byte*) DTV_CONTROL#0) ← (const byte) DTV_HIGHCOLOR#0|(const byte) DTV_BORDER_OFF#0|(const byte) DTV_BADLINE_OFF#0 [ ] ( main:2 [ ] ) -- _deref_pbuc1=vbuc2 
     lda #DTV_HIGHCOLOR|DTV_BORDER_OFF|DTV_BADLINE_OFF
     sta DTV_CONTROL
-  //SEG12 main::@1
-  //SEG13 [7] if(true) goto main::@4 [ ] ( main:2 [ ] ) -- true_then_la1 
-  //SEG14 main::@return
-  //SEG15 [8] return  [ ] ( main:2 [ ] )
-  //SEG16 main::@4
+  //SEG12 main::@4
   b4:
-  //SEG17 [9] if(*((const byte*) RASTER#0)!=(byte/signed byte/word/signed word/dword/signed dword) 64) goto main::@4 [ ] ( main:2 [ ] ) -- _deref_pbuc1_neq_vbuc2_then_la1 
+  //SEG13 [7] if(*((const byte*) RASTER#0)!=(byte/signed byte/word/signed word/dword/signed dword) 64) goto main::@4 [ ] ( main:2 [ ] ) -- _deref_pbuc1_neq_vbuc2_then_la1 
     lda RASTER
     cmp #$40
     bne b4
-  //SEG18 main::@6
-  //SEG19 [10] *((const byte*) BGCOL#0) ← (byte/signed byte/word/signed word/dword/signed dword) 0 [ ] ( main:2 [ ] ) -- _deref_pbuc1=vbuc2 
+  //SEG14 main::@6
+  //SEG15 [8] *((const byte*) BGCOL#0) ← (byte/signed byte/word/signed word/dword/signed dword) 0 [ ] ( main:2 [ ] ) -- _deref_pbuc1=vbuc2 
     lda #0
     sta BGCOL
-  //SEG20 [11] phi from main::@6 to main::@7 [phi:main::@6->main::@7]
-  //SEG21 [11] phi (byte) main::r#2 = (byte/signed byte/word/signed word/dword/signed dword) 49 [phi:main::@6->main::@7#0] -- vbuxx=vbuc1 
+  //SEG16 [9] phi from main::@6 to main::@7 [phi:main::@6->main::@7]
+  //SEG17 [9] phi (byte) main::r#2 = (byte/signed byte/word/signed word/dword/signed dword) 49 [phi:main::@6->main::@7#0] -- vbuxx=vbuc1 
     ldx #$31
-  //SEG22 [11] phi from main::@7 to main::@7 [phi:main::@7->main::@7]
-  //SEG23 [11] phi (byte) main::r#2 = (byte) main::r#1 [phi:main::@7->main::@7#0] -- register_copy 
-  //SEG24 main::@7
+  //SEG18 [9] phi from main::@7 to main::@7 [phi:main::@7->main::@7]
+  //SEG19 [9] phi (byte) main::r#2 = (byte) main::r#1 [phi:main::@7->main::@7#0] -- register_copy 
+  //SEG20 main::@7
   b7:
-  //SEG25 asm { nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop  }
+  //SEG21 asm { nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop  }
     nop
     nop
     nop
@@ -1931,28 +1895,28 @@ main: {
     nop
     nop
     nop
-  //SEG26 [13] *((const byte*) BGCOL#0) ← ++ *((const byte*) BGCOL#0) [ main::r#2 ] ( main:2 [ main::r#2 ] ) -- _deref_pbuc1=_inc__deref_pbuc1 
+  //SEG22 [11] *((const byte*) BGCOL#0) ← ++ *((const byte*) BGCOL#0) [ main::r#2 ] ( main:2 [ main::r#2 ] ) -- _deref_pbuc1=_inc__deref_pbuc1 
     inc BGCOL
-  //SEG27 [14] (byte) main::r#1 ← ++ (byte) main::r#2 [ main::r#1 ] ( main:2 [ main::r#1 ] ) -- vbuxx=_inc_vbuxx 
+  //SEG23 [12] (byte) main::r#1 ← ++ (byte) main::r#2 [ main::r#1 ] ( main:2 [ main::r#1 ] ) -- vbuxx=_inc_vbuxx 
     inx
-  //SEG28 [15] if((byte) main::r#1!=(byte/signed byte/word/signed word/dword/signed dword) 0) goto main::@7 [ main::r#1 ] ( main:2 [ main::r#1 ] ) -- vbuxx_neq_0_then_la1 
+  //SEG24 [13] if((byte) main::r#1!=(byte/signed byte/word/signed word/dword/signed dword) 0) goto main::@7 [ main::r#1 ] ( main:2 [ main::r#1 ] ) -- vbuxx_neq_0_then_la1 
     cpx #0
     bne b7
-  //SEG29 [16] phi from main::@7 to main::@8 [phi:main::@7->main::@8]
-  //SEG30 [16] phi (byte) main::c#2 = (byte/signed byte/word/signed word/dword/signed dword) 0 [phi:main::@7->main::@8#0] -- vbuxx=vbuc1 
+  //SEG25 [14] phi from main::@7 to main::@8 [phi:main::@7->main::@8]
+  //SEG26 [14] phi (byte) main::c#2 = (byte/signed byte/word/signed word/dword/signed dword) 0 [phi:main::@7->main::@8#0] -- vbuxx=vbuc1 
     ldx #0
-  //SEG31 [16] phi from main::@8 to main::@8 [phi:main::@8->main::@8]
-  //SEG32 [16] phi (byte) main::c#2 = (byte) main::c#1 [phi:main::@8->main::@8#0] -- register_copy 
-  //SEG33 main::@8
+  //SEG27 [14] phi from main::@8 to main::@8 [phi:main::@8->main::@8]
+  //SEG28 [14] phi (byte) main::c#2 = (byte) main::c#1 [phi:main::@8->main::@8#0] -- register_copy 
+  //SEG29 main::@8
   b8:
-  //SEG34 [17] *((const byte*) DTV_PALETTE#0 + (byte) main::c#2) ← *((const byte[16]) main::palette#0 + (byte) main::c#2) [ main::c#2 ] ( main:2 [ main::c#2 ] ) -- pbuc1_derefidx_vbuxx=pbuc2_derefidx_vbuxx 
+  //SEG30 [15] *((const byte*) DTV_PALETTE#0 + (byte) main::c#2) ← *((const byte[16]) main::palette#0 + (byte) main::c#2) [ main::c#2 ] ( main:2 [ main::c#2 ] ) -- pbuc1_derefidx_vbuxx=pbuc2_derefidx_vbuxx 
     lda palette,x
     sta DTV_PALETTE,x
-  //SEG35 [18] *((const byte[16]) main::palette#0 + (byte) main::c#2) ← ++ *((const byte[16]) main::palette#0 + (byte) main::c#2) [ main::c#2 ] ( main:2 [ main::c#2 ] ) -- pbuc1_derefidx_vbuxx=_inc_pbuc1_derefidx_vbuxx 
+  //SEG31 [16] *((const byte[16]) main::palette#0 + (byte) main::c#2) ← ++ *((const byte[16]) main::palette#0 + (byte) main::c#2) [ main::c#2 ] ( main:2 [ main::c#2 ] ) -- pbuc1_derefidx_vbuxx=_inc_pbuc1_derefidx_vbuxx 
     inc palette,x
-  //SEG36 [19] (byte) main::c#1 ← ++ (byte) main::c#2 [ main::c#1 ] ( main:2 [ main::c#1 ] ) -- vbuxx=_inc_vbuxx 
+  //SEG32 [17] (byte) main::c#1 ← ++ (byte) main::c#2 [ main::c#1 ] ( main:2 [ main::c#1 ] ) -- vbuxx=_inc_vbuxx 
     inx
-  //SEG37 [20] if((byte) main::c#1!=(byte/signed byte/word/signed word/dword/signed dword) 16) goto main::@8 [ main::c#1 ] ( main:2 [ main::c#1 ] ) -- vbuxx_neq_vbuc1_then_la1 
+  //SEG33 [18] if((byte) main::c#1!=(byte/signed byte/word/signed word/dword/signed dword) 16) goto main::@8 [ main::c#1 ] ( main:2 [ main::c#1 ] ) -- vbuxx_neq_vbuc1_then_la1 
     cpx #$10
     bne b8
     jmp b4

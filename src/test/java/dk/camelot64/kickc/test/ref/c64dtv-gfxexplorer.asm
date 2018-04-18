@@ -233,10 +233,10 @@ gfx_mode: {
     stx VIC_CONTROL
     lda form_ctrl_mcm
     cmp #0
-    beq b17
+    beq b16
     lda #VIC_CSEL|VIC_MCM
     jmp b9
-  b17:
+  b16:
     lda #VIC_CSEL
   b9:
     sta VIC_CONTROL2
@@ -443,7 +443,7 @@ gfx_mode: {
     sta BGCOL4
     lda form_dtv_palet
     cmp #0
-    bne b20
+    bne b18
     ldx #0
   b13:
     lda DTV_PALETTE_DEFAULT,x
@@ -451,9 +451,6 @@ gfx_mode: {
     inx
     cpx #$10
     bne b13
-    jmp b19
-  breturn:
-    rts
   b19:
     lda RASTER
     cmp #$ff
@@ -462,8 +459,8 @@ gfx_mode: {
     jsr keyboard_event_get
     cmp #KEY_SPACE
     bne b19
-    jmp breturn
-  b20:
+    rts
+  b18:
     ldx #0
   b15:
     txa
@@ -912,9 +909,6 @@ form_mode: {
     sta BORDERCOL
     lda form_preset
     sta preset_current
-    jmp b5
-  breturn:
-    rts
   b5:
     lda RASTER
     cmp #$ff
@@ -923,7 +917,7 @@ form_mode: {
     txa
     cmp #0
     beq b8
-    jmp breturn
+    rts
   b8:
     lda form_preset
     cmp preset_current

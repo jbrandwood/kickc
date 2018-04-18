@@ -111,9 +111,13 @@ Redundant Phi (byte*) BGCOL#1 (byte*) BGCOL#2
 Succesful SSA optimization Pass2RedundantPhiElimination
 Constant (const byte*) BGCOL#0 = ((byte*))53280
 Succesful SSA optimization Pass2ConstantIdentification
+if() condition always true - replacing block destination if(true) goto main::@1
+Succesful SSA optimization Pass2ConstantIfs
+Removing unused block main::@return
+Succesful SSA optimization Pass2EliminateUnusedBlocks
 OPTIMIZING CONTROL FLOW GRAPH
-Block Sequence Planned @begin @1 @end main main::@1 main::@return 
-Block Sequence Planned @begin @1 @end main main::@1 main::@return 
+Block Sequence Planned @begin @1 @end main main::@1 
+Block Sequence Planned @begin @1 @end main main::@1 
 Adding NOP phi() at start of @begin
 Adding NOP phi() at start of @1
 Adding NOP phi() at start of @end
@@ -124,7 +128,7 @@ Calls in [] to main:2
 Propagating live ranges...
 Created 0 initial phi equivalence classes
 Coalesced down to 0 phi equivalence classes
-Block Sequence Planned @begin @1 @end main main::@1 main::@return 
+Block Sequence Planned @begin @1 @end main main::@1 
 Adding NOP phi() at start of @begin
 Adding NOP phi() at start of @1
 Adding NOP phi() at start of @end
@@ -147,11 +151,7 @@ main: scope:[main]  from @1
 main::@1: scope:[main]  from main main::@1
   [5] *((const byte*) BGCOL#0) ← ++ *((const byte*) BGCOL#0) [ ] ( main:2 [ ] )
   [6] *((const byte*) BGCOL#0) ← -- *((const byte*) BGCOL#0) [ ] ( main:2 [ ] )
-  [7] if(true) goto main::@1 [ ] ( main:2 [ ] )
-  to:main::@return
-main::@return: scope:[main]  from main::@1
-  [8] return  [ ] ( main:2 [ ] )
-  to:@return
+  to:main::@1
 
 DOMINATORS
 @begin dominated by  @begin 
@@ -159,7 +159,6 @@ DOMINATORS
 @end dominated by  @1 @begin @end 
 main dominated by  @1 @begin main 
 main::@1 dominated by  @1 @begin main::@1 main 
-main::@return dominated by  main::@return @1 @begin main::@1 main 
 
 NATURAL LOOPS
 Found back edge: Loop head: main::@1 tails: main::@1 blocks: null
@@ -212,13 +211,7 @@ main: {
     inc BGCOL
   //SEG12 [6] *((const byte*) BGCOL#0) ← -- *((const byte*) BGCOL#0) [ ] ( main:2 [ ] ) -- _deref_pbuc1=_dec__deref_pbuc1 
     dec BGCOL
-  //SEG13 [7] if(true) goto main::@1 [ ] ( main:2 [ ] ) -- true_then_la1 
     jmp b1
-    jmp breturn
-  //SEG14 main::@return
-  breturn:
-  //SEG15 [8] return  [ ] ( main:2 [ ] )
-    rts
 }
 
 REGISTER UPLIFT POTENTIAL REGISTERS
@@ -227,8 +220,8 @@ REGISTER UPLIFT SCOPES
 Uplift Scope [main] 
 Uplift Scope [] 
 
-Uplifting [main] best 228 combination 
-Uplifting [] best 228 combination 
+Uplifting [main] best 192 combination 
+Uplifting [] best 192 combination 
 
 ASSEMBLER BEFORE OPTIMIZATION
 //SEG0 Basic Upstart
@@ -262,20 +255,13 @@ main: {
     inc BGCOL
   //SEG12 [6] *((const byte*) BGCOL#0) ← -- *((const byte*) BGCOL#0) [ ] ( main:2 [ ] ) -- _deref_pbuc1=_dec__deref_pbuc1 
     dec BGCOL
-  //SEG13 [7] if(true) goto main::@1 [ ] ( main:2 [ ] ) -- true_then_la1 
     jmp b1
-    jmp breturn
-  //SEG14 main::@return
-  breturn:
-  //SEG15 [8] return  [ ] ( main:2 [ ] )
-    rts
 }
 
 ASSEMBLER OPTIMIZATIONS
 Removing instruction jmp b1
 Removing instruction jmp bend
 Removing instruction jmp b1
-Removing instruction jmp breturn
 Succesful ASM optimization Pass5NextJumpElimination
 Removing instruction bbegin:
 Removing instruction b1_from_bbegin:
@@ -284,10 +270,7 @@ Removing instruction bend_from_b1:
 Succesful ASM optimization Pass5RedundantLabelElimination
 Removing instruction b1:
 Removing instruction bend:
-Removing instruction breturn:
 Succesful ASM optimization Pass5UnusedLabelElimination
-Removing unreachable instruction rts
-Succesful ASM optimization Pass5UnreachableCodeElimination
 
 FINAL SYMBOL TABLE
 (label) @1
@@ -297,7 +280,6 @@ FINAL SYMBOL TABLE
 (const byte*) BGCOL#0 BGCOL = ((byte*))(word/dword/signed dword) 53280
 (void()) main()
 (label) main::@1
-(label) main::@return
 
 
 
@@ -326,9 +308,6 @@ main: {
     inc BGCOL
   //SEG12 [6] *((const byte*) BGCOL#0) ← -- *((const byte*) BGCOL#0) [ ] ( main:2 [ ] ) -- _deref_pbuc1=_dec__deref_pbuc1 
     dec BGCOL
-  //SEG13 [7] if(true) goto main::@1 [ ] ( main:2 [ ] ) -- true_then_la1 
     jmp b1
-  //SEG14 main::@return
-  //SEG15 [8] return  [ ] ( main:2 [ ] )
 }
 

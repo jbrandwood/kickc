@@ -213,9 +213,11 @@ public class Pass3LiveRangesAnalysis extends Pass2Base {
          ProcedureRef procedure = call.getProcedure();
          LabelRef procedureReturnBlock = procedure.getReturnBlock();
          ControlFlowBlock returnBlock = getProgram().getGraph().getBlock(procedureReturnBlock);
-         Collection<Statement> lastStatements = getLastInBlock(returnBlock);
-         for(Statement lastStatement : lastStatements) {
-            previousStatements.add(new PreviousStatement(lastStatement, PreviousStatement.Type.LAST_IN_METHOD));
+         if(returnBlock!=null) {
+            Collection<Statement> lastStatements = getLastInBlock(returnBlock);
+            for(Statement lastStatement : lastStatements) {
+               previousStatements.add(new PreviousStatement(lastStatement, PreviousStatement.Type.LAST_IN_METHOD));
+            }
          }
       } else if(precedingStatements.size() > 0) {
          // The normal situation where the preceding statements are just normal statements executed before the current statement

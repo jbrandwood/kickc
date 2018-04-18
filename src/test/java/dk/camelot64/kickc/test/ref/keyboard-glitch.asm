@@ -21,16 +21,14 @@ main: {
     jmp b2
 }
 menu: {
-    jmp b2
-  breturn:
-    rts
   b2:
     ldx #KEY_C
     jsr keyboard_key_pressed
     cmp #0
     beq b4
     jsr pressed
-    jmp breturn
+  breturn:
+    rts
   b4:
     ldx #KEY_I
     jsr keyboard_key_pressed
@@ -75,15 +73,12 @@ keyboard_matrix_read: {
 }
 pressed: {
     inc BGCOL
-    jmp b2
-  breturn:
-    rts
   b2:
     ldx #KEY_SPACE
     jsr keyboard_key_pressed
     cmp #0
     beq b2
-    jmp breturn
+    rts
 }
   keyboard_matrix_row_bitmask: .byte $fe, $fd, $fb, $f7, $ef, $df, $bf, $7f
   keyboard_matrix_col_bitmask: .byte 1, 2, 4, 8, $10, $20, $40, $80

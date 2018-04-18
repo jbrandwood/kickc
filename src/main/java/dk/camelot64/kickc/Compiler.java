@@ -185,6 +185,8 @@ public class Compiler {
       optimizations.add(new Pass2TypeInference(program));
       optimizations.add(new PassNEliminateUnusedVars(program));
       optimizations.add(new Pass2NopCastElimination(program));
+      optimizations.add(new Pass2ConstantIfs(program));
+      optimizations.add(new Pass2EliminateUnusedBlocks(program));
       pass2OptimizeSSA(optimizations);
 
       // Constant inlining optimizations - as the last step to ensure that constant identification has been completed

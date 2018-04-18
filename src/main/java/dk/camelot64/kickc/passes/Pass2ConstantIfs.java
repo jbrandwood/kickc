@@ -7,6 +7,7 @@ import dk.camelot64.kickc.model.statements.StatementConditionalJump;
 import dk.camelot64.kickc.model.values.ConstantBool;
 import dk.camelot64.kickc.model.values.ConstantLiteral;
 import dk.camelot64.kickc.model.values.ConstantValue;
+import dk.camelot64.kickc.model.values.LabelRef;
 
 import java.util.ListIterator;
 
@@ -34,6 +35,7 @@ public class Pass2ConstantIfs extends Pass2SsaOptimization {
                      if(((ConstantBool) literal).getBool()) {
                         // if()-value always true - remove if and replace destination
                         getLog().append("if() condition always true - replacing block destination "+statement.toString(getProgram(), false));
+                        Pass2EliminateUnusedBlocks.removePhiRValues(block.getLabel(), getGraph().getDefaultSuccessor(block), getLog());
                         block.setDefaultSuccessor(conditionalJump.getDestination());
                         statementsIt.remove();
                         block.setConditionalSuccessor(null);
@@ -41,6 +43,7 @@ public class Pass2ConstantIfs extends Pass2SsaOptimization {
                      }  else {
                         // if()-value always false - remove if()
                         getLog().append("if() condition always false - eliminating if "+statement.toString(getProgram(), false));
+                        Pass2EliminateUnusedBlocks.removePhiRValues(block.getLabel(), getGraph().getConditionalSuccessor(block), getLog());
                         statementsIt.remove();
                         block.setConditionalSuccessor(null);
                         modified = true;

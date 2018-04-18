@@ -46,6 +46,12 @@ public class TestPrograms {
    }
 
    @Test
+   public void testEmptyBlockError() throws IOException, URISyntaxException {
+      compileAndCompare("emptyblock-error");
+   }
+
+
+   @Test
    public void testBoolMin() throws IOException, URISyntaxException {
       compileAndCompare("bool-min");
    }

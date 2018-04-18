@@ -126,7 +126,6 @@
   .label print_char_cursor = 5
   .label print_line_cursor = $10
   .label keyboard_events_size = 8
-  .label keyboard_modifiers = 7
   .label form_cursor_count = $d
   .label form_field_idx = $e
   jsr main
@@ -142,7 +141,6 @@ main: {
     jsr gfx_init
     lda #0
     sta form_field_idx
-    sta keyboard_modifiers
     sta keyboard_events_size
     lda #FORM_CURSOR_BLINK/2
     sta form_cursor_count
@@ -537,39 +535,37 @@ keyboard_event_scan: {
     jsr keyboard_event_pressed
     cmp #0
     beq b5
-    lda #0|KEY_MODIFIER_LSHIFT
-    sta keyboard_modifiers
+    ldx #0|KEY_MODIFIER_LSHIFT
     jmp b9
   b5:
-    lda #0
-    sta keyboard_modifiers
+    ldx #0
   b9:
     lda #KEY_RSHIFT
     sta keyboard_event_pressed.keycode
     jsr keyboard_event_pressed
     cmp #0
     beq b10
-    lda #KEY_MODIFIER_RSHIFT
-    ora keyboard_modifiers
-    sta keyboard_modifiers
+    txa
+    ora #KEY_MODIFIER_RSHIFT
+    tax
   b10:
     lda #KEY_CTRL
     sta keyboard_event_pressed.keycode
     jsr keyboard_event_pressed
     cmp #0
     beq b11
-    lda #KEY_MODIFIER_CTRL
-    ora keyboard_modifiers
-    sta keyboard_modifiers
+    txa
+    ora #KEY_MODIFIER_CTRL
+    tax
   b11:
     lda #KEY_COMMODORE
     sta keyboard_event_pressed.keycode
     jsr keyboard_event_pressed
     cmp #0
     beq breturn
-    lda #KEY_MODIFIER_COMMODORE
-    ora keyboard_modifiers
-    sta keyboard_modifiers
+    txa
+    ora #KEY_MODIFIER_COMMODORE
+    tax
   breturn:
     rts
   b6:
@@ -586,18 +582,20 @@ keyboard_event_scan: {
     jmp b8
 }
 keyboard_event_pressed: {
+    .label row_bits = 7
     .label keycode = 2
     lda keycode
     lsr
     lsr
     lsr
-    tax
-    ldy keyboard_scan_values,x
+    tay
+    lda keyboard_scan_values,y
+    sta row_bits
     lda #7
     and keycode
-    tax
-    tya
-    and keyboard_matrix_col_bitmask,x
+    tay
+    lda keyboard_matrix_col_bitmask,y
+    and row_bits
     rts
 }
 keyboard_matrix_read: {
@@ -1249,8 +1247,8 @@ form_control: {
     ldy #0
     and (field),y
     sta (field),y
-    lda #KEY_MODIFIER_SHIFT
-    and keyboard_modifiers
+    txa
+    and #KEY_MODIFIER_SHIFT
     cmp #0
     bne b5
     inc form_field_idx
@@ -1276,8 +1274,8 @@ form_control: {
   b4:
     cmp #KEY_CRSR_RIGHT
     bne b9
-    lda #KEY_MODIFIER_SHIFT
-    and keyboard_modifiers
+    txa
+    and #KEY_MODIFIER_SHIFT
     cmp #0
     bne b10
     ldx form_field_idx

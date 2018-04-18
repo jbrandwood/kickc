@@ -1,12 +1,15 @@
 package dk.camelot64.kickc.passes;
 
+import dk.camelot64.kickc.CompileLog;
 import dk.camelot64.kickc.model.ControlFlowBlock;
 import dk.camelot64.kickc.model.Program;
+import dk.camelot64.kickc.model.statements.StatementPhiBlock;
 import dk.camelot64.kickc.model.symbols.Label;
 import dk.camelot64.kickc.model.values.LabelRef;
 import dk.camelot64.kickc.model.values.SymbolRef;
 
 import java.util.LinkedHashSet;
+import java.util.ListIterator;
 import java.util.Set;
 
 /** Pass that eliminates constant if's - they are either removed (if false) or replaces the default successor (if true). */
@@ -32,9 +35,41 @@ public class Pass2EliminateUnusedBlocks extends Pass2SsaOptimization {
          getGraph().remove(unusedBlock);
          Label label = getScope().getLabel(unusedBlock);
          label.getScope().remove(label);
+         removePhiRValues(unusedBlock);
          getLog().append("Removing unused block "+unusedBlock);
       }
       return unusedBlocks.size()>0;
+   }
+
+   /**
+    * Remove all PHI RValues in any phi-statements referencing the passed block
+    * @param removeBlock The block to remove from PHI RValues
+    */
+   private void removePhiRValues(LabelRef removeBlock) {
+      for(ControlFlowBlock block : getGraph().getAllBlocks()) {
+         removePhiRValues(removeBlock, block, getLog());
+      }
+   }
+
+   /**
+    * Remove all Phi RValues in phi-statements referencing the passed block
+    *
+    * @param removeBlock The block to remove from PHI RValues
+    * @param block The block to modify
+    */
+   public static void removePhiRValues(LabelRef removeBlock, ControlFlowBlock block, CompileLog log) {
+      if(block.hasPhiBlock()) {
+         for(StatementPhiBlock.PhiVariable phiVariable : block.getPhiBlock().getPhiVariables()) {
+            ListIterator<StatementPhiBlock.PhiRValue> phiRValueIt = phiVariable.getValues().listIterator();
+            while(phiRValueIt.hasNext()) {
+               StatementPhiBlock.PhiRValue phiRValue = phiRValueIt.next();
+               if(phiRValue.getPredecessor().equals(removeBlock)) {
+                  log.append("Removing PHI-reference to removed block ("+removeBlock+") in block "+block.getLabel());
+                  phiRValueIt.remove();
+               }
+            }
+         }
+      }
    }
 
    /**

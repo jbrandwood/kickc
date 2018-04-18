@@ -1,0 +1,919 @@
+PARSING src/test/java/dk/camelot64/kickc/test/kc/emptyblock-error.kc
+// Error cleaning up unused blocks
+
+
+void main() {
+    while(true) {
+        menu();
+    }
+}
+
+void menu() {
+    while(true) {
+        mode();
+        return;
+     }
+}
+
+byte a = 0;
+byte *B = $1000;
+
+void mode() {
+    while(true) {
+        if(*B == 0) {
+            a = *B;
+        }
+    }
+}
+
+
+
+STATEMENTS
+proc (void()) main()
+main::@1:
+  if(true) goto main::@2
+  goto main::@3
+main::@2:
+  (void~) main::$0 ← call menu 
+  goto main::@1
+main::@3:
+main::@return:
+  return 
+endproc // main()
+proc (void()) menu()
+menu::@1:
+  if(true) goto menu::@2
+  goto menu::@3
+menu::@2:
+  (void~) menu::$0 ← call mode 
+  goto menu::@return
+  goto menu::@1
+menu::@3:
+menu::@return:
+  return 
+endproc // menu()
+  (byte) a ← (byte/signed byte/word/signed word/dword/signed dword) 0
+  (byte*) B ← (word/signed word/dword/signed dword) 4096
+proc (void()) mode()
+mode::@1:
+  if(true) goto mode::@2
+  goto mode::@3
+mode::@2:
+  (boolean~) mode::$0 ← *((byte*) B) == (byte/signed byte/word/signed word/dword/signed dword) 0
+  (boolean~) mode::$1 ← ! (boolean~) mode::$0
+  if((boolean~) mode::$1) goto mode::@4
+  (byte) a ← *((byte*) B)
+mode::@4:
+  goto mode::@1
+mode::@3:
+mode::@return:
+  return 
+endproc // mode()
+  call main 
+
+SYMBOLS
+(byte*) B
+(byte) a
+(void()) main()
+(void~) main::$0
+(label) main::@1
+(label) main::@2
+(label) main::@3
+(label) main::@return
+(void()) menu()
+(void~) menu::$0
+(label) menu::@1
+(label) menu::@2
+(label) menu::@3
+(label) menu::@return
+(void()) mode()
+(boolean~) mode::$0
+(boolean~) mode::$1
+(label) mode::@1
+(label) mode::@2
+(label) mode::@3
+(label) mode::@4
+(label) mode::@return
+
+Promoting word/signed word/dword/signed dword to byte* in B ← ((byte*)) 4096
+INITIAL CONTROL FLOW GRAPH
+@begin: scope:[]  from
+  to:@1
+main: scope:[main]  from
+  to:main::@1
+main::@1: scope:[main]  from main main::@2
+  if(true) goto main::@2
+  to:main::@4
+main::@2: scope:[main]  from main::@1 main::@5
+  (void~) main::$0 ← call menu 
+  to:main::@1
+main::@4: scope:[main]  from main::@1
+  to:main::@3
+main::@3: scope:[main]  from main::@4 main::@6
+  to:main::@return
+main::@5: scope:[main]  from
+  to:main::@2
+main::@6: scope:[main]  from
+  to:main::@3
+main::@return: scope:[main]  from main::@3
+  return 
+  to:@return
+@1: scope:[]  from @begin
+  to:@2
+menu: scope:[menu]  from
+  to:menu::@1
+menu::@1: scope:[menu]  from menu menu::@6
+  if(true) goto menu::@2
+  to:menu::@4
+menu::@2: scope:[menu]  from menu::@1 menu::@5
+  (void~) menu::$0 ← call mode 
+  to:menu::@return
+menu::@4: scope:[menu]  from menu::@1
+  to:menu::@3
+menu::@3: scope:[menu]  from menu::@4 menu::@7
+  to:menu::@return
+menu::@5: scope:[menu]  from
+  to:menu::@2
+menu::@return: scope:[menu]  from menu::@2 menu::@3
+  return 
+  to:@return
+menu::@6: scope:[menu]  from
+  to:menu::@1
+menu::@7: scope:[menu]  from
+  to:menu::@3
+@2: scope:[]  from @1
+  (byte) a ← (byte/signed byte/word/signed word/dword/signed dword) 0
+  (byte*) B ← ((byte*)) (word/signed word/dword/signed dword) 4096
+  to:@3
+mode: scope:[mode]  from
+  to:mode::@1
+mode::@1: scope:[mode]  from mode mode::@4
+  if(true) goto mode::@2
+  to:mode::@5
+mode::@2: scope:[mode]  from mode::@1 mode::@6
+  (boolean~) mode::$0 ← *((byte*) B) == (byte/signed byte/word/signed word/dword/signed dword) 0
+  (boolean~) mode::$1 ← ! (boolean~) mode::$0
+  if((boolean~) mode::$1) goto mode::@4
+  to:mode::@7
+mode::@5: scope:[mode]  from mode::@1
+  to:mode::@3
+mode::@3: scope:[mode]  from mode::@5 mode::@8
+  to:mode::@return
+mode::@6: scope:[mode]  from
+  to:mode::@2
+mode::@4: scope:[mode]  from mode::@2 mode::@7
+  to:mode::@1
+mode::@7: scope:[mode]  from mode::@2
+  (byte) a ← *((byte*) B)
+  to:mode::@4
+mode::@8: scope:[mode]  from
+  to:mode::@3
+mode::@return: scope:[mode]  from mode::@3
+  return 
+  to:@return
+@3: scope:[]  from @2
+  call main 
+  to:@end
+@end: scope:[]  from @3
+
+Eliminating unused variable - keeping the call (void~) main::$0
+Eliminating unused variable - keeping the call (void~) menu::$0
+Removing empty block main::@4
+Removing empty block main::@3
+Removing empty block main::@5
+Removing empty block main::@6
+Removing empty block @1
+Removing empty block menu::@4
+Removing empty block menu::@3
+Removing empty block menu::@5
+Removing empty block menu::@6
+Removing empty block menu::@7
+Removing empty block mode::@5
+Removing empty block mode::@3
+Removing empty block mode::@6
+Removing empty block mode::@8
+PROCEDURE MODIFY VARIABLE ANALYSIS
+main modifies a
+menu modifies a
+mode modifies a
+
+Completing Phi functions...
+Completing Phi functions...
+Completing Phi functions...
+Completing Phi functions...
+Completing Phi functions...
+Completing Phi functions...
+Completing Phi functions...
+Completing Phi functions...
+Completing Phi functions...
+Completing Phi functions...
+
+CONTROL FLOW GRAPH SSA WITH ASSIGNMENT CALL & RETURN
+@begin: scope:[]  from
+  to:@2
+main: scope:[main]  from @3
+  (byte*) B#11 ← phi( @3/(byte*) B#13 )
+  (byte) a#20 ← phi( @3/(byte) a#19 )
+  to:main::@1
+main::@1: scope:[main]  from main main::@7
+  (byte*) B#10 ← phi( main/(byte*) B#11 main::@7/(byte*) B#12 )
+  (byte) a#15 ← phi( main/(byte) a#20 main::@7/(byte) a#0 )
+  if(true) goto main::@2
+  to:main::@return
+main::@2: scope:[main]  from main::@1
+  (byte*) B#9 ← phi( main::@1/(byte*) B#10 )
+  (byte) a#14 ← phi( main::@1/(byte) a#15 )
+  call menu param-assignment
+  to:main::@7
+main::@7: scope:[main]  from main::@2
+  (byte*) B#12 ← phi( main::@2/(byte*) B#9 )
+  (byte) a#8 ← phi( main::@2/(byte) a#3 )
+  (byte) a#0 ← (byte) a#8
+  to:main::@1
+main::@return: scope:[main]  from main::@1
+  (byte) a#9 ← phi( main::@1/(byte) a#15 )
+  (byte) a#1 ← (byte) a#9
+  return 
+  to:@return
+menu: scope:[menu]  from main::@2
+  (byte*) B#8 ← phi( main::@2/(byte*) B#9 )
+  (byte) a#21 ← phi( main::@2/(byte) a#14 )
+  to:menu::@1
+menu::@1: scope:[menu]  from menu
+  (byte*) B#7 ← phi( menu/(byte*) B#8 )
+  (byte) a#17 ← phi( menu/(byte) a#21 )
+  if(true) goto menu::@2
+  to:menu::@return
+menu::@2: scope:[menu]  from menu::@1
+  (byte*) B#6 ← phi( menu::@1/(byte*) B#7 )
+  (byte) a#16 ← phi( menu::@1/(byte) a#17 )
+  call mode param-assignment
+  to:menu::@8
+menu::@8: scope:[menu]  from menu::@2
+  (byte) a#10 ← phi( menu::@2/(byte) a#6 )
+  (byte) a#2 ← (byte) a#10
+  to:menu::@return
+menu::@return: scope:[menu]  from menu::@1 menu::@8
+  (byte) a#11 ← phi( menu::@1/(byte) a#17 menu::@8/(byte) a#2 )
+  (byte) a#3 ← (byte) a#11
+  return 
+  to:@return
+@2: scope:[]  from @begin
+  (byte) a#4 ← (byte/signed byte/word/signed word/dword/signed dword) 0
+  (byte*) B#0 ← ((byte*)) (word/signed word/dword/signed dword) 4096
+  to:@3
+mode: scope:[mode]  from menu::@2
+  (byte) a#22 ← phi( menu::@2/(byte) a#16 )
+  (byte*) B#4 ← phi( menu::@2/(byte*) B#6 )
+  to:mode::@1
+mode::@1: scope:[mode]  from mode mode::@4 mode::@7
+  (byte) a#18 ← phi( mode/(byte) a#22 mode::@4/(byte) a#23 mode::@7/(byte) a#5 )
+  (byte*) B#3 ← phi( mode/(byte*) B#4 mode::@4/(byte*) B#5 mode::@7/(byte*) B#2 )
+  if(true) goto mode::@2
+  to:mode::@return
+mode::@2: scope:[mode]  from mode::@1
+  (byte) a#24 ← phi( mode::@1/(byte) a#18 )
+  (byte*) B#1 ← phi( mode::@1/(byte*) B#3 )
+  (boolean~) mode::$0 ← *((byte*) B#1) == (byte/signed byte/word/signed word/dword/signed dword) 0
+  (boolean~) mode::$1 ← ! (boolean~) mode::$0
+  if((boolean~) mode::$1) goto mode::@4
+  to:mode::@7
+mode::@4: scope:[mode]  from mode::@2
+  (byte) a#23 ← phi( mode::@2/(byte) a#24 )
+  (byte*) B#5 ← phi( mode::@2/(byte*) B#1 )
+  to:mode::@1
+mode::@7: scope:[mode]  from mode::@2
+  (byte*) B#2 ← phi( mode::@2/(byte*) B#1 )
+  (byte) a#5 ← *((byte*) B#2)
+  to:mode::@1
+mode::@return: scope:[mode]  from mode::@1
+  (byte) a#12 ← phi( mode::@1/(byte) a#18 )
+  (byte) a#6 ← (byte) a#12
+  return 
+  to:@return
+@3: scope:[]  from @2
+  (byte*) B#13 ← phi( @2/(byte*) B#0 )
+  (byte) a#19 ← phi( @2/(byte) a#4 )
+  call main param-assignment
+  to:@4
+@4: scope:[]  from @3
+  (byte) a#13 ← phi( @3/(byte) a#1 )
+  (byte) a#7 ← (byte) a#13
+  to:@end
+@end: scope:[]  from @4
+
+SYMBOL TABLE SSA
+(label) @2
+(label) @3
+(label) @4
+(label) @begin
+(label) @end
+(byte*) B
+(byte*) B#0
+(byte*) B#1
+(byte*) B#10
+(byte*) B#11
+(byte*) B#12
+(byte*) B#13
+(byte*) B#2
+(byte*) B#3
+(byte*) B#4
+(byte*) B#5
+(byte*) B#6
+(byte*) B#7
+(byte*) B#8
+(byte*) B#9
+(byte) a
+(byte) a#0
+(byte) a#1
+(byte) a#10
+(byte) a#11
+(byte) a#12
+(byte) a#13
+(byte) a#14
+(byte) a#15
+(byte) a#16
+(byte) a#17
+(byte) a#18
+(byte) a#19
+(byte) a#2
+(byte) a#20
+(byte) a#21
+(byte) a#22
+(byte) a#23
+(byte) a#24
+(byte) a#3
+(byte) a#4
+(byte) a#5
+(byte) a#6
+(byte) a#7
+(byte) a#8
+(byte) a#9
+(void()) main()
+(label) main::@1
+(label) main::@2
+(label) main::@7
+(label) main::@return
+(void()) menu()
+(label) menu::@1
+(label) menu::@2
+(label) menu::@8
+(label) menu::@return
+(void()) mode()
+(boolean~) mode::$0
+(boolean~) mode::$1
+(label) mode::@1
+(label) mode::@2
+(label) mode::@4
+(label) mode::@7
+(label) mode::@return
+
+OPTIMIZING CONTROL FLOW GRAPH
+Inversing boolean not (boolean~) mode::$1 ← *((byte*) B#1) != (byte/signed byte/word/signed word/dword/signed dword) 0 from (boolean~) mode::$0 ← *((byte*) B#1) == (byte/signed byte/word/signed word/dword/signed dword) 0
+Succesful SSA optimization Pass2UnaryNotSimplification
+Not aliassing across scopes: a#20 a#19
+Not aliassing across scopes: B#11 B#13
+Not aliassing across scopes: a#8 a#3
+Not aliassing across scopes: a#21 a#14
+Not aliassing across scopes: B#8 B#9
+Not aliassing across scopes: a#10 a#6
+Not aliassing across scopes: B#4 B#6
+Not aliassing across scopes: a#22 a#16
+Not aliassing across scopes: a#13 a#1
+Alias (byte) a#1 = (byte) a#14 (byte) a#15 (byte) a#9 
+Alias (byte*) B#10 = (byte*) B#9 (byte*) B#12 
+Alias (byte) a#0 = (byte) a#8 
+Alias (byte) a#16 = (byte) a#17 (byte) a#21 
+Alias (byte*) B#6 = (byte*) B#7 (byte*) B#8 
+Alias (byte) a#10 = (byte) a#2 
+Alias (byte) a#11 = (byte) a#3 
+Alias (byte*) B#1 = (byte*) B#3 (byte*) B#5 (byte*) B#2 
+Alias (byte) a#12 = (byte) a#24 (byte) a#18 (byte) a#23 (byte) a#6 
+Alias (byte) a#19 = (byte) a#4 
+Alias (byte*) B#0 = (byte*) B#13 
+Alias (byte) a#13 = (byte) a#7 
+Succesful SSA optimization Pass2AliasElimination
+Not aliassing across scopes: a#20 a#19
+Not aliassing across scopes: B#11 B#0
+Not aliassing across scopes: a#0 a#11
+Not aliassing across scopes: a#16 a#1
+Not aliassing across scopes: B#6 B#10
+Not aliassing across scopes: a#10 a#12
+Not aliassing across scopes: B#4 B#6
+Not aliassing across scopes: a#22 a#16
+Not aliassing across scopes: a#13 a#1
+Self Phi Eliminated (byte*) B#10
+Self Phi Eliminated (byte*) B#1
+Self Phi Eliminated (byte*) B#1
+Self Phi Eliminated (byte) a#12
+Succesful SSA optimization Pass2SelfPhiElimination
+Redundant Phi (byte) a#20 (byte) a#19
+Redundant Phi (byte*) B#11 (byte*) B#0
+Redundant Phi (byte*) B#10 (byte*) B#11
+Redundant Phi (byte) a#0 (byte) a#11
+Redundant Phi (byte) a#16 (byte) a#1
+Redundant Phi (byte*) B#6 (byte*) B#10
+Redundant Phi (byte) a#10 (byte) a#12
+Redundant Phi (byte*) B#4 (byte*) B#6
+Redundant Phi (byte) a#22 (byte) a#16
+Redundant Phi (byte*) B#1 (byte*) B#4
+Redundant Phi (byte) a#13 (byte) a#1
+Succesful SSA optimization Pass2RedundantPhiElimination
+Simple Condition (boolean~) mode::$1 if(*((byte*) B#0)!=(byte/signed byte/word/signed word/dword/signed dword) 0) goto mode::@4
+Succesful SSA optimization Pass2ConditionalJumpSimplification
+Constant (const byte) a#19 = 0
+Constant (const byte*) B#0 = ((byte*))4096
+Succesful SSA optimization Pass2ConstantIdentification
+if() condition always true - replacing block destination if(true) goto main::@2
+if() condition always true - replacing block destination if(true) goto menu::@2
+Removing PHI-reference to removed block (menu::@1) in block menu::@return
+if() condition always true - replacing block destination if(true) goto mode::@2
+Succesful SSA optimization Pass2ConstantIfs
+Removing unused block main::@return
+Removing unused block mode::@return
+Succesful SSA optimization Pass2EliminateUnusedBlocks
+Culled Empty Block (label) main::@7
+Culled Empty Block (label) menu::@1
+Culled Empty Block (label) menu::@8
+Culled Empty Block (label) @2
+Culled Empty Block (label) mode::@4
+Culled Empty Block (label) @4
+Succesful SSA optimization Pass2CullEmptyBlocks
+Not aliassing across scopes: a#11 a#12
+Not aliassing across scopes: a#12 a#1
+Redundant Phi (byte) a#11 (byte) a#12
+Succesful SSA optimization Pass2RedundantPhiElimination
+Not aliassing across scopes: a#12 a#1
+OPTIMIZING CONTROL FLOW GRAPH
+Inlining constant with var siblings (const byte) a#19
+Inlining constant with var siblings (const byte) a#19
+Inlining constant with var siblings (const byte) a#19
+Constant inlined a#19 = (byte/signed byte/word/signed word/dword/signed dword) 0
+Succesful SSA optimization Pass2ConstantInlining
+Block Sequence Planned @begin @3 @end main main::@1 main::@2 menu menu::@2 menu::@return mode mode::@1 mode::@2 mode::@7 
+Block Sequence Planned @begin @3 @end main main::@1 main::@2 menu menu::@2 menu::@return mode mode::@1 mode::@2 mode::@7 
+Adding NOP phi() at start of @begin
+Adding NOP phi() at start of @3
+Adding NOP phi() at start of @end
+Adding NOP phi() at start of main
+Adding NOP phi() at start of main::@2
+Adding NOP phi() at start of menu
+Adding NOP phi() at start of menu::@2
+CALL GRAPH
+Calls in [] to main:2 
+Calls in [main] to menu:7 
+Calls in [menu] to mode:11 
+
+Propagating live ranges...
+Propagating live ranges...
+Propagating live ranges...
+Propagating live ranges...
+Propagating live ranges...
+Created 2 initial phi equivalence classes
+Coalesced [8] a#25 ← a#12
+Coalesced (already) [13] a#26 ← a#1
+Coalesced [17] a#27 ← a#5
+Coalesced down to 1 phi equivalence classes
+Block Sequence Planned @begin @3 @end main main::@1 main::@2 menu menu::@2 menu::@return mode mode::@1 mode::@2 mode::@7 
+Adding NOP phi() at start of @begin
+Adding NOP phi() at start of @3
+Adding NOP phi() at start of @end
+Adding NOP phi() at start of main
+Adding NOP phi() at start of main::@2
+Adding NOP phi() at start of menu
+Adding NOP phi() at start of menu::@2
+Adding NOP phi() at start of mode
+Propagating live ranges...
+Propagating live ranges...
+Propagating live ranges...
+Propagating live ranges...
+Propagating live ranges...
+Propagating live ranges...
+
+FINAL CONTROL FLOW GRAPH
+@begin: scope:[]  from
+  [0] phi() [ ] ( )
+  to:@3
+@3: scope:[]  from @begin
+  [1] phi() [ ] ( )
+  [2] call main param-assignment [ ] ( )
+  to:@end
+@end: scope:[]  from @3
+  [3] phi() [ ] ( )
+main: scope:[main]  from @3
+  [4] phi() [ ] ( main:2 [ ] )
+  to:main::@1
+main::@1: scope:[main]  from main main::@2
+  [5] (byte) a#1 ← phi( main/(byte/signed byte/word/signed word/dword/signed dword) 0 main::@2/(byte) a#12 ) [ a#1 ] ( main:2 [ a#1 ] )
+  to:main::@2
+main::@2: scope:[main]  from main::@1
+  [6] phi() [ a#1 ] ( main:2 [ a#1 ] )
+  [7] call menu param-assignment [ a#12 ] ( main:2 [ a#12 ] )
+  to:main::@1
+menu: scope:[menu]  from main::@2
+  [8] phi() [ a#1 ] ( main:2::menu:7 [ a#1 ] )
+  to:menu::@2
+menu::@2: scope:[menu]  from menu
+  [9] phi() [ a#1 ] ( main:2::menu:7 [ a#1 ] )
+  [10] call mode param-assignment [ a#12 ] ( main:2::menu:7 [ a#12 ] )
+  to:menu::@return
+menu::@return: scope:[menu]  from menu::@2
+  [11] return  [ a#12 ] ( main:2::menu:7 [ a#12 ] )
+  to:@return
+mode: scope:[mode]  from menu::@2
+  [12] phi() [ a#1 ] ( main:2::menu:7::mode:10 [ a#1 ] )
+  to:mode::@1
+mode::@1: scope:[mode]  from mode mode::@2 mode::@7
+  [13] (byte) a#12 ← phi( mode/(byte) a#1 mode::@7/(byte) a#5 ) [ ] ( main:2::menu:7::mode:10 [ ] )
+  to:mode::@2
+mode::@2: scope:[mode]  from mode::@1
+  [14] if(*((const byte*) B#0)!=(byte/signed byte/word/signed word/dword/signed dword) 0) goto mode::@1 [ ] ( main:2::menu:7::mode:10 [ ] )
+  to:mode::@7
+mode::@7: scope:[mode]  from mode::@2
+  [15] (byte) a#5 ← *((const byte*) B#0) [ a#5 ] ( main:2::menu:7::mode:10 [ a#5 ] )
+  to:mode::@1
+
+DOMINATORS
+@begin dominated by  @begin 
+@3 dominated by  @begin @3 
+@end dominated by  @begin @end @3 
+main dominated by  @begin main @3 
+main::@1 dominated by  @begin main @3 main::@1 
+main::@2 dominated by  @begin main @3 main::@1 main::@2 
+menu dominated by  @begin main menu @3 main::@1 main::@2 
+menu::@2 dominated by  @begin menu::@2 main menu @3 main::@1 main::@2 
+menu::@return dominated by  @begin menu::@return menu::@2 main menu @3 main::@1 main::@2 
+mode dominated by  @begin menu::@2 main menu mode @3 main::@1 main::@2 
+mode::@1 dominated by  @begin menu::@2 main menu mode @3 mode::@1 main::@1 main::@2 
+mode::@2 dominated by  @begin menu::@2 main menu mode @3 mode::@1 mode::@2 main::@1 main::@2 
+mode::@7 dominated by  @begin menu::@2 main menu mode @3 mode::@1 mode::@2 main::@1 mode::@7 main::@2 
+
+NATURAL LOOPS
+Found back edge: Loop head: main::@1 tails: main::@2 blocks: null
+Found back edge: Loop head: mode::@1 tails: mode::@2 blocks: null
+Found back edge: Loop head: mode::@1 tails: mode::@7 blocks: null
+Populated: Loop head: main::@1 tails: main::@2 blocks: main::@2 main::@1 
+Populated: Loop head: mode::@1 tails: mode::@2 blocks: mode::@2 mode::@1 
+Populated: Loop head: mode::@1 tails: mode::@7 blocks: mode::@7 mode::@2 mode::@1 
+Loop head: main::@1 tails: main::@2 blocks: main::@2 main::@1 
+Loop head: mode::@1 tails: mode::@2 blocks: mode::@2 mode::@1 
+Loop head: mode::@1 tails: mode::@7 blocks: mode::@7 mode::@2 mode::@1 
+
+NATURAL LOOPS WITH DEPTH
+Found 0 loops in scope []
+Found 1 loops in scope [main]
+  Loop head: main::@1 tails: main::@2 blocks: main::@2 main::@1 
+Found 0 loops in scope [menu]
+Found 2 loops in scope [mode]
+  Loop head: mode::@1 tails: mode::@2 blocks: mode::@2 mode::@1 
+  Loop head: mode::@1 tails: mode::@7 blocks: mode::@7 mode::@2 mode::@1 
+Loop head: main::@1 tails: main::@2 blocks: main::@2 main::@1  depth: 1
+Loop head: mode::@1 tails: mode::@2 blocks: mode::@2 mode::@1  depth: 3
+Loop head: mode::@1 tails: mode::@7 blocks: mode::@7 mode::@2 mode::@1  depth: 2
+
+
+VARIABLE REGISTER WEIGHTS
+(byte*) B
+(byte) a
+(byte) a#1 2.6
+(byte) a#12 38.0
+(byte) a#5 202.0
+(void()) main()
+(void()) menu()
+(void()) mode()
+
+Initial phi equivalence classes
+[ a#1 a#12 a#5 ]
+Complete equivalence classes
+[ a#1 a#12 a#5 ]
+Allocated zp ZP_BYTE:2 [ a#1 a#12 a#5 ]
+
+INITIAL ASM
+//SEG0 Basic Upstart
+.pc = $801 "Basic"
+:BasicUpstart(main)
+.pc = $80d "Program"
+//SEG1 Global Constants & labels
+  .label B = $1000
+  .label a = 2
+//SEG2 @begin
+bbegin:
+//SEG3 [1] phi from @begin to @3 [phi:@begin->@3]
+b3_from_bbegin:
+  jmp b3
+//SEG4 @3
+b3:
+//SEG5 [2] call main param-assignment [ ] ( )
+//SEG6 [4] phi from @3 to main [phi:@3->main]
+main_from_b3:
+  jsr main
+//SEG7 [3] phi from @3 to @end [phi:@3->@end]
+bend_from_b3:
+  jmp bend
+//SEG8 @end
+bend:
+//SEG9 main
+main: {
+  //SEG10 [5] phi from main to main::@1 [phi:main->main::@1]
+  b1_from_main:
+  //SEG11 [5] phi (byte) a#1 = (byte/signed byte/word/signed word/dword/signed dword) 0 [phi:main->main::@1#0] -- vbuz1=vbuc1 
+    lda #0
+    sta a
+    jmp b1
+  //SEG12 main::@1
+  b1:
+  //SEG13 [6] phi from main::@1 to main::@2 [phi:main::@1->main::@2]
+  b2_from_b1:
+    jmp b2
+  //SEG14 main::@2
+  b2:
+  //SEG15 [7] call menu param-assignment [ a#12 ] ( main:2 [ a#12 ] )
+  //SEG16 [8] phi from main::@2 to menu [phi:main::@2->menu]
+  menu_from_b2:
+    jsr menu
+  //SEG17 [5] phi from main::@2 to main::@1 [phi:main::@2->main::@1]
+  b1_from_b2:
+  //SEG18 [5] phi (byte) a#1 = (byte) a#12 [phi:main::@2->main::@1#0] -- register_copy 
+    jmp b1
+}
+//SEG19 menu
+menu: {
+  //SEG20 [9] phi from menu to menu::@2 [phi:menu->menu::@2]
+  b2_from_menu:
+    jmp b2
+  //SEG21 menu::@2
+  b2:
+  //SEG22 [10] call mode param-assignment [ a#12 ] ( main:2::menu:7 [ a#12 ] )
+  //SEG23 [12] phi from menu::@2 to mode [phi:menu::@2->mode]
+  mode_from_b2:
+    jsr mode
+    jmp breturn
+  //SEG24 menu::@return
+  breturn:
+  //SEG25 [11] return  [ a#12 ] ( main:2::menu:7 [ a#12 ] )
+    rts
+}
+//SEG26 mode
+mode: {
+  //SEG27 [13] phi from mode mode::@7 to mode::@1 [phi:mode/mode::@7->mode::@1]
+  b1_from_mode:
+  b1_from_b7:
+  //SEG28 [13] phi (byte) a#12 = (byte) a#1 [phi:mode/mode::@7->mode::@1#0] -- register_copy 
+    jmp b1
+  //SEG29 [13] phi from mode::@2 to mode::@1 [phi:mode::@2->mode::@1]
+  b1_from_b2:
+    jmp b1
+  //SEG30 mode::@1
+  b1:
+    jmp b2
+  //SEG31 mode::@2
+  b2:
+  //SEG32 [14] if(*((const byte*) B#0)!=(byte/signed byte/word/signed word/dword/signed dword) 0) goto mode::@1 [ ] ( main:2::menu:7::mode:10 [ ] ) -- _deref_pbuc1_neq_0_then_la1 
+    lda B
+    cmp #0
+    bne b1_from_b2
+    jmp b7
+  //SEG33 mode::@7
+  b7:
+  //SEG34 [15] (byte) a#5 ← *((const byte*) B#0) [ a#5 ] ( main:2::menu:7::mode:10 [ a#5 ] ) -- vbuz1=_deref_pbuc1 
+    lda B
+    sta a
+    jmp b1_from_b7
+}
+
+REGISTER UPLIFT POTENTIAL REGISTERS
+Statement [14] if(*((const byte*) B#0)!=(byte/signed byte/word/signed word/dword/signed dword) 0) goto mode::@1 [ ] ( main:2::menu:7::mode:10 [ ] ) always clobbers reg byte a 
+Potential registers zp ZP_BYTE:2 [ a#1 a#12 a#5 ] : zp ZP_BYTE:2 , reg byte a , reg byte x , reg byte y , 
+
+REGISTER UPLIFT SCOPES
+Uplift Scope [] 242.6: zp ZP_BYTE:2 [ a#1 a#12 a#5 ] 
+Uplift Scope [main] 
+Uplift Scope [menu] 
+Uplift Scope [mode] 
+
+Uplifting [] best 18376 combination reg byte a [ a#1 a#12 a#5 ] 
+Uplifting [main] best 18376 combination 
+Uplifting [menu] best 18376 combination 
+Uplifting [mode] best 18376 combination 
+
+ASSEMBLER BEFORE OPTIMIZATION
+//SEG0 Basic Upstart
+.pc = $801 "Basic"
+:BasicUpstart(main)
+.pc = $80d "Program"
+//SEG1 Global Constants & labels
+  .label B = $1000
+//SEG2 @begin
+bbegin:
+//SEG3 [1] phi from @begin to @3 [phi:@begin->@3]
+b3_from_bbegin:
+  jmp b3
+//SEG4 @3
+b3:
+//SEG5 [2] call main param-assignment [ ] ( )
+//SEG6 [4] phi from @3 to main [phi:@3->main]
+main_from_b3:
+  jsr main
+//SEG7 [3] phi from @3 to @end [phi:@3->@end]
+bend_from_b3:
+  jmp bend
+//SEG8 @end
+bend:
+//SEG9 main
+main: {
+  //SEG10 [5] phi from main to main::@1 [phi:main->main::@1]
+  b1_from_main:
+  //SEG11 [5] phi (byte) a#1 = (byte/signed byte/word/signed word/dword/signed dword) 0 [phi:main->main::@1#0] -- vbuaa=vbuc1 
+    lda #0
+    jmp b1
+  //SEG12 main::@1
+  b1:
+  //SEG13 [6] phi from main::@1 to main::@2 [phi:main::@1->main::@2]
+  b2_from_b1:
+    jmp b2
+  //SEG14 main::@2
+  b2:
+  //SEG15 [7] call menu param-assignment [ a#12 ] ( main:2 [ a#12 ] )
+  //SEG16 [8] phi from main::@2 to menu [phi:main::@2->menu]
+  menu_from_b2:
+    jsr menu
+  //SEG17 [5] phi from main::@2 to main::@1 [phi:main::@2->main::@1]
+  b1_from_b2:
+  //SEG18 [5] phi (byte) a#1 = (byte) a#12 [phi:main::@2->main::@1#0] -- register_copy 
+    jmp b1
+}
+//SEG19 menu
+menu: {
+  //SEG20 [9] phi from menu to menu::@2 [phi:menu->menu::@2]
+  b2_from_menu:
+    jmp b2
+  //SEG21 menu::@2
+  b2:
+  //SEG22 [10] call mode param-assignment [ a#12 ] ( main:2::menu:7 [ a#12 ] )
+  //SEG23 [12] phi from menu::@2 to mode [phi:menu::@2->mode]
+  mode_from_b2:
+    jsr mode
+    jmp breturn
+  //SEG24 menu::@return
+  breturn:
+  //SEG25 [11] return  [ a#12 ] ( main:2::menu:7 [ a#12 ] )
+    rts
+}
+//SEG26 mode
+mode: {
+  //SEG27 [13] phi from mode mode::@7 to mode::@1 [phi:mode/mode::@7->mode::@1]
+  b1_from_mode:
+  b1_from_b7:
+  //SEG28 [13] phi (byte) a#12 = (byte) a#1 [phi:mode/mode::@7->mode::@1#0] -- register_copy 
+    jmp b1
+  //SEG29 [13] phi from mode::@2 to mode::@1 [phi:mode::@2->mode::@1]
+  b1_from_b2:
+    jmp b1
+  //SEG30 mode::@1
+  b1:
+    jmp b2
+  //SEG31 mode::@2
+  b2:
+  //SEG32 [14] if(*((const byte*) B#0)!=(byte/signed byte/word/signed word/dword/signed dword) 0) goto mode::@1 [ ] ( main:2::menu:7::mode:10 [ ] ) -- _deref_pbuc1_neq_0_then_la1 
+    lda B
+    cmp #0
+    bne b1_from_b2
+    jmp b7
+  //SEG33 mode::@7
+  b7:
+  //SEG34 [15] (byte) a#5 ← *((const byte*) B#0) [ a#5 ] ( main:2::menu:7::mode:10 [ a#5 ] ) -- vbuaa=_deref_pbuc1 
+    lda B
+    jmp b1_from_b7
+}
+
+ASSEMBLER OPTIMIZATIONS
+Removing instruction jmp b3
+Removing instruction jmp bend
+Removing instruction jmp b1
+Removing instruction jmp b2
+Removing instruction jmp b2
+Removing instruction jmp breturn
+Removing instruction jmp b1
+Removing instruction jmp b2
+Removing instruction jmp b7
+Succesful ASM optimization Pass5NextJumpElimination
+Replacing label b1 with b2
+Replacing label b1 with b2
+Replacing label b1_from_b2 with b2
+Removing instruction bbegin:
+Removing instruction b3_from_bbegin:
+Removing instruction main_from_b3:
+Removing instruction bend_from_b3:
+Removing instruction b1:
+Removing instruction b2_from_b1:
+Removing instruction menu_from_b2:
+Removing instruction b2_from_menu:
+Removing instruction mode_from_b2:
+Removing instruction b1_from_mode:
+Removing instruction b1_from_b2:
+Removing instruction b1:
+Succesful ASM optimization Pass5RedundantLabelElimination
+Removing instruction b3:
+Removing instruction bend:
+Removing instruction b1_from_main:
+Removing instruction b1_from_b2:
+Removing instruction b2:
+Removing instruction breturn:
+Removing instruction b7:
+Succesful ASM optimization Pass5UnusedLabelElimination
+Skipping double jump to b2 in jmp b1_from_b7
+Succesful ASM optimization Pass5DoubleJumpElimination
+Relabelling long label b1_from_b7 to b1
+Succesful ASM optimization Pass5RelabelLongLabels
+Removing instruction jmp b2
+Succesful ASM optimization Pass5NextJumpElimination
+Removing instruction lda B
+Succesful ASM optimization Pass5UnnecesaryLoadElimination
+Removing instruction b1:
+Succesful ASM optimization Pass5RedundantLabelElimination
+
+FINAL SYMBOL TABLE
+(label) @3
+(label) @begin
+(label) @end
+(byte*) B
+(const byte*) B#0 B = ((byte*))(word/signed word/dword/signed dword) 4096
+(byte) a
+(byte) a#1 reg byte a 2.6
+(byte) a#12 reg byte a 38.0
+(byte) a#5 reg byte a 202.0
+(void()) main()
+(label) main::@1
+(label) main::@2
+(void()) menu()
+(label) menu::@2
+(label) menu::@return
+(void()) mode()
+(label) mode::@1
+(label) mode::@2
+(label) mode::@7
+
+reg byte a [ a#1 a#12 a#5 ]
+
+
+FINAL ASSEMBLER
+Score: 8874
+
+//SEG0 Basic Upstart
+.pc = $801 "Basic"
+:BasicUpstart(main)
+.pc = $80d "Program"
+//SEG1 Global Constants & labels
+  .label B = $1000
+//SEG2 @begin
+//SEG3 [1] phi from @begin to @3 [phi:@begin->@3]
+//SEG4 @3
+//SEG5 [2] call main param-assignment [ ] ( )
+//SEG6 [4] phi from @3 to main [phi:@3->main]
+  jsr main
+//SEG7 [3] phi from @3 to @end [phi:@3->@end]
+//SEG8 @end
+//SEG9 main
+main: {
+  //SEG10 [5] phi from main to main::@1 [phi:main->main::@1]
+  //SEG11 [5] phi (byte) a#1 = (byte/signed byte/word/signed word/dword/signed dword) 0 [phi:main->main::@1#0] -- vbuaa=vbuc1 
+    lda #0
+  //SEG12 main::@1
+  //SEG13 [6] phi from main::@1 to main::@2 [phi:main::@1->main::@2]
+  //SEG14 main::@2
+  b2:
+  //SEG15 [7] call menu param-assignment [ a#12 ] ( main:2 [ a#12 ] )
+  //SEG16 [8] phi from main::@2 to menu [phi:main::@2->menu]
+    jsr menu
+  //SEG17 [5] phi from main::@2 to main::@1 [phi:main::@2->main::@1]
+  //SEG18 [5] phi (byte) a#1 = (byte) a#12 [phi:main::@2->main::@1#0] -- register_copy 
+    jmp b2
+}
+//SEG19 menu
+menu: {
+  //SEG20 [9] phi from menu to menu::@2 [phi:menu->menu::@2]
+  //SEG21 menu::@2
+  //SEG22 [10] call mode param-assignment [ a#12 ] ( main:2::menu:7 [ a#12 ] )
+  //SEG23 [12] phi from menu::@2 to mode [phi:menu::@2->mode]
+    jsr mode
+  //SEG24 menu::@return
+  //SEG25 [11] return  [ a#12 ] ( main:2::menu:7 [ a#12 ] )
+    rts
+}
+//SEG26 mode
+mode: {
+  //SEG27 [13] phi from mode mode::@7 to mode::@1 [phi:mode/mode::@7->mode::@1]
+  //SEG28 [13] phi (byte) a#12 = (byte) a#1 [phi:mode/mode::@7->mode::@1#0] -- register_copy 
+  //SEG29 [13] phi from mode::@2 to mode::@1 [phi:mode::@2->mode::@1]
+  //SEG30 mode::@1
+  //SEG31 mode::@2
+  b2:
+  //SEG32 [14] if(*((const byte*) B#0)!=(byte/signed byte/word/signed word/dword/signed dword) 0) goto mode::@1 [ ] ( main:2::menu:7::mode:10 [ ] ) -- _deref_pbuc1_neq_0_then_la1 
+    lda B
+    cmp #0
+    bne b2
+  //SEG33 mode::@7
+  //SEG34 [15] (byte) a#5 ← *((const byte*) B#0) [ a#5 ] ( main:2::menu:7::mode:10 [ a#5 ] ) -- vbuaa=_deref_pbuc1 
+    jmp b2
+}
+

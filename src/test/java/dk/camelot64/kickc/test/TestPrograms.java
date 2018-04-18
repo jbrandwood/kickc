@@ -46,6 +46,11 @@ public class TestPrograms {
    }
 
    @Test
+   public void testBoolMin() throws IOException, URISyntaxException {
+      compileAndCompare("bool-min");
+   }
+
+   @Test
    public void testInlineString3() throws IOException, URISyntaxException {
       try {
          compileAndCompare("inline-string-3");

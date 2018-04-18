@@ -46,6 +46,17 @@ public class TestPrograms {
    }
 
    @Test
+   public void testInlineString3() throws IOException, URISyntaxException {
+      try {
+         compileAndCompare("inline-string-3");
+      } catch(CompileError e) {
+         // ignore & return
+         return;
+      }
+      fail("Expected compile error.");
+   }
+
+   @Test
    public void testC64DtvBlitterMin() throws IOException, URISyntaxException {
       compileAndCompare("c64dtv-blittermin");
    }

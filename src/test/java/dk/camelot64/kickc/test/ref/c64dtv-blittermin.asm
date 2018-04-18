@@ -39,6 +39,7 @@
   .label DTV_BLITTER_ALU = $d33e
   .const DTV_BLIT_ADD = $30
   .label DTV_BLITTER_CONTROL2 = $d33f
+  .const DTV_BLIT_CLEAR_IRQ = 1
   .const DTV_BLIT_DEST_CONT = 8
   .const DTV_BLIT_STATUS_BUSY = 1
   .label SCREEN = $400
@@ -47,6 +48,8 @@
 main: {
     lda #DTV_FEATURE_ENABLE
     sta DTV_FEATURE
+    lda #DTV_BLIT_CLEAR_IRQ
+    sta DTV_BLITTER_CONTROL2
     lda #<SRCA
     sta DTV_BLITTER_SRCA_LO
     lda #>SRCA

@@ -10,6 +10,9 @@ void main() {
 
     *DTV_FEATURE = DTV_FEATURE_ENABLE;
 
+    // Instruct blitter not to continue previous blit
+    *DTV_BLITTER_CONTROL2 = DTV_BLIT_CLEAR_IRQ;
+
     *DTV_BLITTER_SRCA_LO = <SRCA;
     *DTV_BLITTER_SRCA_MI = >SRCA;
     *DTV_BLITTER_SRCA_HI = 0;
@@ -516,6 +519,7 @@ endproc // dtvSetCpuBankSegment1()
   (byte[]) SRCB ← { (byte/word/signed word/dword/signed dword) 128 }
 proc (void()) main()
   *((byte*) DTV_FEATURE) ← (byte) DTV_FEATURE_ENABLE
+  *((byte*) DTV_BLITTER_CONTROL2) ← (byte) DTV_BLIT_CLEAR_IRQ
   (byte~) main::$0 ← < (byte[]) SRCA
   *((byte*) DTV_BLITTER_SRCA_LO) ← (byte~) main::$0
   (byte~) main::$1 ← > (byte[]) SRCA
@@ -1042,6 +1046,7 @@ dtvSetCpuBankSegment1::@return: scope:[dtvSetCpuBankSegment1]  from dtvSetCpuBan
   to:@2
 main: scope:[main]  from
   *((byte*) DTV_FEATURE) ← (byte) DTV_FEATURE_ENABLE
+  *((byte*) DTV_BLITTER_CONTROL2) ← (byte) DTV_BLIT_CLEAR_IRQ
   (byte~) main::$0 ← < (byte[]) SRCA
   *((byte*) DTV_BLITTER_SRCA_LO) ← (byte~) main::$0
   (byte~) main::$1 ← > (byte[]) SRCA
@@ -1232,7 +1237,6 @@ Eliminating unused variable (byte) DTV_BLIT_OR and assignment [148] (byte) DTV_B
 Eliminating unused variable (byte) DTV_BLIT_XOR and assignment [149] (byte) DTV_BLIT_XOR ← (byte/signed byte/word/signed word/dword/signed dword) 32
 Eliminating unused variable (byte) DTV_BLIT_XNOR and assignment [150] (byte) DTV_BLIT_XNOR ← (byte/signed byte/word/signed word/dword/signed dword) 40
 Eliminating unused variable (byte) DTV_BLIT_SUB and assignment [152] (byte) DTV_BLIT_SUB ← (byte/signed byte/word/signed word/dword/signed dword) 56
-Eliminating unused variable (byte) DTV_BLIT_CLEAR_IRQ and assignment [154] (byte) DTV_BLIT_CLEAR_IRQ ← (byte/signed byte/word/signed word/dword/signed dword) 1
 Eliminating unused variable (byte) DTV_BLIT_SRCA_CONT and assignment [155] (byte) DTV_BLIT_SRCA_CONT ← (byte/signed byte/word/signed word/dword/signed dword) 2
 Eliminating unused variable (byte) DTV_BLIT_SRCB_CONT and assignment [156] (byte) DTV_BLIT_SRCB_CONT ← (byte/signed byte/word/signed word/dword/signed dword) 4
 Eliminating unused variable (byte) DTV_BLIT_STATUS_IRQ and assignment [159] (byte) DTV_BLIT_STATUS_IRQ ← (byte/signed byte/word/signed word/dword/signed dword) 2
@@ -1285,6 +1289,7 @@ CONTROL FLOW GRAPH SSA WITH ASSIGNMENT CALL & RETURN
   (byte*) DTV_BLITTER_ALU#0 ← ((byte*)) (word/dword/signed dword) 54078
   (byte) DTV_BLIT_ADD#0 ← (byte/signed byte/word/signed word/dword/signed dword) 48
   (byte*) DTV_BLITTER_CONTROL2#0 ← ((byte*)) (word/dword/signed dword) 54079
+  (byte) DTV_BLIT_CLEAR_IRQ#0 ← (byte/signed byte/word/signed word/dword/signed dword) 1
   (byte) DTV_BLIT_DEST_CONT#0 ← (byte/signed byte/word/signed word/dword/signed dword) 8
   (byte) DTV_BLIT_STATUS_BUSY#0 ← (byte/signed byte/word/signed word/dword/signed dword) 1
   (byte*) SCREEN#0 ← ((byte*)) (word/signed word/dword/signed dword) 1024
@@ -1295,6 +1300,7 @@ CONTROL FLOW GRAPH SSA WITH ASSIGNMENT CALL & RETURN
 main: scope:[main]  from @2
   (byte*) DTV_BLITTER_ALU#1 ← phi( @2/(byte*) DTV_BLITTER_ALU#2 )
   *((byte*) DTV_FEATURE#0) ← (byte) DTV_FEATURE_ENABLE#0
+  *((byte*) DTV_BLITTER_CONTROL2#0) ← (byte) DTV_BLIT_CLEAR_IRQ#0
   (byte~) main::$0 ← < (byte[]) SRCA#0
   *((byte*) DTV_BLITTER_SRCA_LO#0) ← (byte~) main::$0
   (byte~) main::$1 ← > (byte[]) SRCA#0
@@ -1442,6 +1448,8 @@ SYMBOL TABLE SSA
 (byte*) DTV_BLITTER_TRANSPARANCY#0
 (byte) DTV_BLIT_ADD
 (byte) DTV_BLIT_ADD#0
+(byte) DTV_BLIT_CLEAR_IRQ
+(byte) DTV_BLIT_CLEAR_IRQ#0
 (byte) DTV_BLIT_DEST_CONT
 (byte) DTV_BLIT_DEST_CONT#0
 (byte) DTV_BLIT_DEST_FWD
@@ -1555,6 +1563,7 @@ Constant (const byte) DTV_BLIT_TRANSPARANCY_NONE#0 = 0
 Constant (const byte*) DTV_BLITTER_ALU#0 = ((byte*))54078
 Constant (const byte) DTV_BLIT_ADD#0 = 48
 Constant (const byte*) DTV_BLITTER_CONTROL2#0 = ((byte*))54079
+Constant (const byte) DTV_BLIT_CLEAR_IRQ#0 = 1
 Constant (const byte) DTV_BLIT_DEST_CONT#0 = 8
 Constant (const byte) DTV_BLIT_STATUS_BUSY#0 = 1
 Constant (const byte*) SCREEN#0 = ((byte*))1024
@@ -1625,7 +1634,7 @@ Propagating live ranges...
 Propagating live ranges...
 Propagating live ranges...
 Created 1 initial phi equivalence classes
-Coalesced [42] main::r#5 ← main::r#1
+Coalesced [43] main::r#5 ← main::r#1
 Coalesced down to 1 phi equivalence classes
 Culled Empty Block (label) main::@5
 Block Sequence Planned @begin @2 @end main main::@2 main::@3 main::@return 
@@ -1650,49 +1659,50 @@ FINAL CONTROL FLOW GRAPH
   [3] phi() [ ] ( )
 main: scope:[main]  from @2
   [4] *((const byte*) DTV_FEATURE#0) ← (const byte) DTV_FEATURE_ENABLE#0 [ ] ( main:2 [ ] )
-  [5] *((const byte*) DTV_BLITTER_SRCA_LO#0) ← <(const byte[]) SRCA#0 [ ] ( main:2 [ ] )
-  [6] *((const byte*) DTV_BLITTER_SRCA_MI#0) ← >(const byte[]) SRCA#0 [ ] ( main:2 [ ] )
-  [7] *((const byte*) DTV_BLITTER_SRCA_HI#0) ← (byte/signed byte/word/signed word/dword/signed dword) 0 [ ] ( main:2 [ ] )
-  [8] *((const byte*) DTV_BLITTER_SRCA_MOD_LO#0) ← (byte/signed byte/word/signed word/dword/signed dword) 0 [ ] ( main:2 [ ] )
-  [9] *((const byte*) DTV_BLITTER_SRCA_MOD_HI#0) ← (byte/signed byte/word/signed word/dword/signed dword) 0 [ ] ( main:2 [ ] )
-  [10] *((const byte*) DTV_BLITTER_SRCA_LIN_LO#0) ← <(word/signed word/dword/signed dword) 256 [ ] ( main:2 [ ] )
-  [11] *((const byte*) DTV_BLITTER_SRCA_LIN_HI#0) ← >(word/signed word/dword/signed dword) 256 [ ] ( main:2 [ ] )
-  [12] *((const byte*) DTV_BLITTER_SRCA_STEP#0) ← (byte/signed byte/word/signed word/dword/signed dword) 16 [ ] ( main:2 [ ] )
-  [13] *((const byte*) DTV_BLITTER_SRCB_LO#0) ← <(const byte[]) SRCB#0 [ ] ( main:2 [ ] )
-  [14] *((const byte*) DTV_BLITTER_SRCB_MI#0) ← >(const byte[]) SRCB#0 [ ] ( main:2 [ ] )
-  [15] *((const byte*) DTV_BLITTER_SRCB_HI#0) ← (byte/signed byte/word/signed word/dword/signed dword) 0 [ ] ( main:2 [ ] )
-  [16] *((const byte*) DTV_BLITTER_SRCB_MOD_LO#0) ← (byte/signed byte/word/signed word/dword/signed dword) 0 [ ] ( main:2 [ ] )
-  [17] *((const byte*) DTV_BLITTER_SRCB_MOD_HI#0) ← (byte/signed byte/word/signed word/dword/signed dword) 0 [ ] ( main:2 [ ] )
-  [18] *((const byte*) DTV_BLITTER_SRCB_LIN_LO#0) ← <(word/signed word/dword/signed dword) 256 [ ] ( main:2 [ ] )
-  [19] *((const byte*) DTV_BLITTER_SRCB_LIN_HI#0) ← >(word/signed word/dword/signed dword) 256 [ ] ( main:2 [ ] )
-  [20] *((const byte*) DTV_BLITTER_SRCB_STEP#0) ← (byte/signed byte/word/signed word/dword/signed dword) 0 [ ] ( main:2 [ ] )
-  [21] *((const byte*) DTV_BLITTER_DEST_LO#0) ← <(const byte*) SCREEN#0 [ ] ( main:2 [ ] )
-  [22] *((const byte*) DTV_BLITTER_DEST_MI#0) ← >(const byte*) SCREEN#0 [ ] ( main:2 [ ] )
-  [23] *((const byte*) DTV_BLITTER_DEST_HI#0) ← (byte/signed byte/word/signed word/dword/signed dword) 0 [ ] ( main:2 [ ] )
-  [24] *((const byte*) DTV_BLITTER_DEST_MOD_LO#0) ← (byte/signed byte/word/signed word/dword/signed dword) 0 [ ] ( main:2 [ ] )
-  [25] *((const byte*) DTV_BLITTER_DEST_MOD_HI#0) ← (byte/signed byte/word/signed word/dword/signed dword) 0 [ ] ( main:2 [ ] )
-  [26] *((const byte*) DTV_BLITTER_DEST_LIN_LO#0) ← <(word/signed word/dword/signed dword) 256 [ ] ( main:2 [ ] )
-  [27] *((const byte*) DTV_BLITTER_DEST_LIN_HI#0) ← >(word/signed word/dword/signed dword) 256 [ ] ( main:2 [ ] )
-  [28] *((const byte*) DTV_BLITTER_DEST_STEP#0) ← (byte/signed byte/word/signed word/dword/signed dword) 16 [ ] ( main:2 [ ] )
-  [29] *((const byte*) DTV_BLITTER_LEN_LO#0) ← (const byte) SRCA_LEN#0 [ ] ( main:2 [ ] )
-  [30] *((const byte*) DTV_BLITTER_LEN_HI#0) ← (byte/signed byte/word/signed word/dword/signed dword) 0 [ ] ( main:2 [ ] )
-  [31] *((const byte*) DTV_BLITTER_ALU#0) ← (const byte) DTV_BLIT_ADD#0 [ ] ( main:2 [ ] )
-  [32] *((const byte*) DTV_BLITTER_TRANSPARANCY#0) ← (const byte) DTV_BLIT_TRANSPARANCY_NONE#0 [ ] ( main:2 [ ] )
-  [33] *((const byte*) DTV_BLITTER_CONTROL#0) ← (const byte) DTV_BLIT_FORCE_START#0|(const byte) DTV_BLIT_SRCA_FWD#0|(const byte) DTV_BLIT_SRCB_FWD#0|(const byte) DTV_BLIT_DEST_FWD#0 [ ] ( main:2 [ ] )
-  [34] *((const byte*) DTV_BLITTER_CONTROL2#0) ← (const byte) DTV_BLIT_DEST_CONT#0 [ ] ( main:2 [ ] )
+  [5] *((const byte*) DTV_BLITTER_CONTROL2#0) ← (const byte) DTV_BLIT_CLEAR_IRQ#0 [ ] ( main:2 [ ] )
+  [6] *((const byte*) DTV_BLITTER_SRCA_LO#0) ← <(const byte[]) SRCA#0 [ ] ( main:2 [ ] )
+  [7] *((const byte*) DTV_BLITTER_SRCA_MI#0) ← >(const byte[]) SRCA#0 [ ] ( main:2 [ ] )
+  [8] *((const byte*) DTV_BLITTER_SRCA_HI#0) ← (byte/signed byte/word/signed word/dword/signed dword) 0 [ ] ( main:2 [ ] )
+  [9] *((const byte*) DTV_BLITTER_SRCA_MOD_LO#0) ← (byte/signed byte/word/signed word/dword/signed dword) 0 [ ] ( main:2 [ ] )
+  [10] *((const byte*) DTV_BLITTER_SRCA_MOD_HI#0) ← (byte/signed byte/word/signed word/dword/signed dword) 0 [ ] ( main:2 [ ] )
+  [11] *((const byte*) DTV_BLITTER_SRCA_LIN_LO#0) ← <(word/signed word/dword/signed dword) 256 [ ] ( main:2 [ ] )
+  [12] *((const byte*) DTV_BLITTER_SRCA_LIN_HI#0) ← >(word/signed word/dword/signed dword) 256 [ ] ( main:2 [ ] )
+  [13] *((const byte*) DTV_BLITTER_SRCA_STEP#0) ← (byte/signed byte/word/signed word/dword/signed dword) 16 [ ] ( main:2 [ ] )
+  [14] *((const byte*) DTV_BLITTER_SRCB_LO#0) ← <(const byte[]) SRCB#0 [ ] ( main:2 [ ] )
+  [15] *((const byte*) DTV_BLITTER_SRCB_MI#0) ← >(const byte[]) SRCB#0 [ ] ( main:2 [ ] )
+  [16] *((const byte*) DTV_BLITTER_SRCB_HI#0) ← (byte/signed byte/word/signed word/dword/signed dword) 0 [ ] ( main:2 [ ] )
+  [17] *((const byte*) DTV_BLITTER_SRCB_MOD_LO#0) ← (byte/signed byte/word/signed word/dword/signed dword) 0 [ ] ( main:2 [ ] )
+  [18] *((const byte*) DTV_BLITTER_SRCB_MOD_HI#0) ← (byte/signed byte/word/signed word/dword/signed dword) 0 [ ] ( main:2 [ ] )
+  [19] *((const byte*) DTV_BLITTER_SRCB_LIN_LO#0) ← <(word/signed word/dword/signed dword) 256 [ ] ( main:2 [ ] )
+  [20] *((const byte*) DTV_BLITTER_SRCB_LIN_HI#0) ← >(word/signed word/dword/signed dword) 256 [ ] ( main:2 [ ] )
+  [21] *((const byte*) DTV_BLITTER_SRCB_STEP#0) ← (byte/signed byte/word/signed word/dword/signed dword) 0 [ ] ( main:2 [ ] )
+  [22] *((const byte*) DTV_BLITTER_DEST_LO#0) ← <(const byte*) SCREEN#0 [ ] ( main:2 [ ] )
+  [23] *((const byte*) DTV_BLITTER_DEST_MI#0) ← >(const byte*) SCREEN#0 [ ] ( main:2 [ ] )
+  [24] *((const byte*) DTV_BLITTER_DEST_HI#0) ← (byte/signed byte/word/signed word/dword/signed dword) 0 [ ] ( main:2 [ ] )
+  [25] *((const byte*) DTV_BLITTER_DEST_MOD_LO#0) ← (byte/signed byte/word/signed word/dword/signed dword) 0 [ ] ( main:2 [ ] )
+  [26] *((const byte*) DTV_BLITTER_DEST_MOD_HI#0) ← (byte/signed byte/word/signed word/dword/signed dword) 0 [ ] ( main:2 [ ] )
+  [27] *((const byte*) DTV_BLITTER_DEST_LIN_LO#0) ← <(word/signed word/dword/signed dword) 256 [ ] ( main:2 [ ] )
+  [28] *((const byte*) DTV_BLITTER_DEST_LIN_HI#0) ← >(word/signed word/dword/signed dword) 256 [ ] ( main:2 [ ] )
+  [29] *((const byte*) DTV_BLITTER_DEST_STEP#0) ← (byte/signed byte/word/signed word/dword/signed dword) 16 [ ] ( main:2 [ ] )
+  [30] *((const byte*) DTV_BLITTER_LEN_LO#0) ← (const byte) SRCA_LEN#0 [ ] ( main:2 [ ] )
+  [31] *((const byte*) DTV_BLITTER_LEN_HI#0) ← (byte/signed byte/word/signed word/dword/signed dword) 0 [ ] ( main:2 [ ] )
+  [32] *((const byte*) DTV_BLITTER_ALU#0) ← (const byte) DTV_BLIT_ADD#0 [ ] ( main:2 [ ] )
+  [33] *((const byte*) DTV_BLITTER_TRANSPARANCY#0) ← (const byte) DTV_BLIT_TRANSPARANCY_NONE#0 [ ] ( main:2 [ ] )
+  [34] *((const byte*) DTV_BLITTER_CONTROL#0) ← (const byte) DTV_BLIT_FORCE_START#0|(const byte) DTV_BLIT_SRCA_FWD#0|(const byte) DTV_BLIT_SRCB_FWD#0|(const byte) DTV_BLIT_DEST_FWD#0 [ ] ( main:2 [ ] )
+  [35] *((const byte*) DTV_BLITTER_CONTROL2#0) ← (const byte) DTV_BLIT_DEST_CONT#0 [ ] ( main:2 [ ] )
   to:main::@2
 main::@2: scope:[main]  from main main::@2 main::@3
-  [35] (byte) main::r#2 ← phi( main/(byte/signed byte/word/signed word/dword/signed dword) 0 main::@3/(byte) main::r#1 ) [ main::r#2 ] ( main:2 [ main::r#2 ] )
-  [36] (byte~) main::$15 ← *((const byte*) DTV_BLITTER_CONTROL2#0) & (const byte) DTV_BLIT_STATUS_BUSY#0 [ main::r#2 main::$15 ] ( main:2 [ main::r#2 main::$15 ] )
-  [37] if((byte~) main::$15!=(byte/signed byte/word/signed word/dword/signed dword) 0) goto main::@2 [ main::r#2 ] ( main:2 [ main::r#2 ] )
+  [36] (byte) main::r#2 ← phi( main/(byte/signed byte/word/signed word/dword/signed dword) 0 main::@3/(byte) main::r#1 ) [ main::r#2 ] ( main:2 [ main::r#2 ] )
+  [37] (byte~) main::$15 ← *((const byte*) DTV_BLITTER_CONTROL2#0) & (const byte) DTV_BLIT_STATUS_BUSY#0 [ main::r#2 main::$15 ] ( main:2 [ main::r#2 main::$15 ] )
+  [38] if((byte~) main::$15!=(byte/signed byte/word/signed word/dword/signed dword) 0) goto main::@2 [ main::r#2 ] ( main:2 [ main::r#2 ] )
   to:main::@3
 main::@3: scope:[main]  from main::@2
-  [38] *((const byte*) DTV_BLITTER_CONTROL#0) ← (const byte) DTV_BLIT_FORCE_START#0|(const byte) DTV_BLIT_SRCA_FWD#0|(const byte) DTV_BLIT_SRCB_FWD#0|(const byte) DTV_BLIT_DEST_FWD#0 [ main::r#2 ] ( main:2 [ main::r#2 ] )
-  [39] (byte) main::r#1 ← ++ (byte) main::r#2 [ main::r#1 ] ( main:2 [ main::r#1 ] )
-  [40] if((byte) main::r#1!=(byte/signed byte/word/signed word/dword/signed dword) 8) goto main::@2 [ main::r#1 ] ( main:2 [ main::r#1 ] )
+  [39] *((const byte*) DTV_BLITTER_CONTROL#0) ← (const byte) DTV_BLIT_FORCE_START#0|(const byte) DTV_BLIT_SRCA_FWD#0|(const byte) DTV_BLIT_SRCB_FWD#0|(const byte) DTV_BLIT_DEST_FWD#0 [ main::r#2 ] ( main:2 [ main::r#2 ] )
+  [40] (byte) main::r#1 ← ++ (byte) main::r#2 [ main::r#1 ] ( main:2 [ main::r#1 ] )
+  [41] if((byte) main::r#1!=(byte/signed byte/word/signed word/dword/signed dword) 8) goto main::@2 [ main::r#1 ] ( main:2 [ main::r#1 ] )
   to:main::@return
 main::@return: scope:[main]  from main::@3
-  [41] return  [ ] ( main:2 [ ] )
+  [42] return  [ ] ( main:2 [ ] )
   to:@return
 
 DOMINATORS
@@ -1753,6 +1763,7 @@ VARIABLE REGISTER WEIGHTS
 (byte*) DTV_BLITTER_SRCB_STEP
 (byte*) DTV_BLITTER_TRANSPARANCY
 (byte) DTV_BLIT_ADD
+(byte) DTV_BLIT_CLEAR_IRQ
 (byte) DTV_BLIT_DEST_CONT
 (byte) DTV_BLIT_DEST_FWD
 (byte) DTV_BLIT_FORCE_START
@@ -1825,6 +1836,7 @@ INITIAL ASM
   .label DTV_BLITTER_ALU = $d33e
   .const DTV_BLIT_ADD = $30
   .label DTV_BLITTER_CONTROL2 = $d33f
+  .const DTV_BLIT_CLEAR_IRQ = 1
   .const DTV_BLIT_DEST_CONT = 8
   .const DTV_BLIT_STATUS_BUSY = 1
   .label SCREEN = $400
@@ -1850,134 +1862,137 @@ main: {
   //SEG9 [4] *((const byte*) DTV_FEATURE#0) ← (const byte) DTV_FEATURE_ENABLE#0 [ ] ( main:2 [ ] ) -- _deref_pbuc1=vbuc2 
     lda #DTV_FEATURE_ENABLE
     sta DTV_FEATURE
-  //SEG10 [5] *((const byte*) DTV_BLITTER_SRCA_LO#0) ← <(const byte[]) SRCA#0 [ ] ( main:2 [ ] ) -- _deref_pbuc1=vbuc2 
+  //SEG10 [5] *((const byte*) DTV_BLITTER_CONTROL2#0) ← (const byte) DTV_BLIT_CLEAR_IRQ#0 [ ] ( main:2 [ ] ) -- _deref_pbuc1=vbuc2 
+    lda #DTV_BLIT_CLEAR_IRQ
+    sta DTV_BLITTER_CONTROL2
+  //SEG11 [6] *((const byte*) DTV_BLITTER_SRCA_LO#0) ← <(const byte[]) SRCA#0 [ ] ( main:2 [ ] ) -- _deref_pbuc1=vbuc2 
     lda #<SRCA
     sta DTV_BLITTER_SRCA_LO
-  //SEG11 [6] *((const byte*) DTV_BLITTER_SRCA_MI#0) ← >(const byte[]) SRCA#0 [ ] ( main:2 [ ] ) -- _deref_pbuc1=vbuc2 
+  //SEG12 [7] *((const byte*) DTV_BLITTER_SRCA_MI#0) ← >(const byte[]) SRCA#0 [ ] ( main:2 [ ] ) -- _deref_pbuc1=vbuc2 
     lda #>SRCA
     sta DTV_BLITTER_SRCA_MI
-  //SEG12 [7] *((const byte*) DTV_BLITTER_SRCA_HI#0) ← (byte/signed byte/word/signed word/dword/signed dword) 0 [ ] ( main:2 [ ] ) -- _deref_pbuc1=vbuc2 
+  //SEG13 [8] *((const byte*) DTV_BLITTER_SRCA_HI#0) ← (byte/signed byte/word/signed word/dword/signed dword) 0 [ ] ( main:2 [ ] ) -- _deref_pbuc1=vbuc2 
     lda #0
     sta DTV_BLITTER_SRCA_HI
-  //SEG13 [8] *((const byte*) DTV_BLITTER_SRCA_MOD_LO#0) ← (byte/signed byte/word/signed word/dword/signed dword) 0 [ ] ( main:2 [ ] ) -- _deref_pbuc1=vbuc2 
+  //SEG14 [9] *((const byte*) DTV_BLITTER_SRCA_MOD_LO#0) ← (byte/signed byte/word/signed word/dword/signed dword) 0 [ ] ( main:2 [ ] ) -- _deref_pbuc1=vbuc2 
     lda #0
     sta DTV_BLITTER_SRCA_MOD_LO
-  //SEG14 [9] *((const byte*) DTV_BLITTER_SRCA_MOD_HI#0) ← (byte/signed byte/word/signed word/dword/signed dword) 0 [ ] ( main:2 [ ] ) -- _deref_pbuc1=vbuc2 
+  //SEG15 [10] *((const byte*) DTV_BLITTER_SRCA_MOD_HI#0) ← (byte/signed byte/word/signed word/dword/signed dword) 0 [ ] ( main:2 [ ] ) -- _deref_pbuc1=vbuc2 
     lda #0
     sta DTV_BLITTER_SRCA_MOD_HI
-  //SEG15 [10] *((const byte*) DTV_BLITTER_SRCA_LIN_LO#0) ← <(word/signed word/dword/signed dword) 256 [ ] ( main:2 [ ] ) -- _deref_pbuc1=vbuc2 
+  //SEG16 [11] *((const byte*) DTV_BLITTER_SRCA_LIN_LO#0) ← <(word/signed word/dword/signed dword) 256 [ ] ( main:2 [ ] ) -- _deref_pbuc1=vbuc2 
     lda #<$100
     sta DTV_BLITTER_SRCA_LIN_LO
-  //SEG16 [11] *((const byte*) DTV_BLITTER_SRCA_LIN_HI#0) ← >(word/signed word/dword/signed dword) 256 [ ] ( main:2 [ ] ) -- _deref_pbuc1=vbuc2 
+  //SEG17 [12] *((const byte*) DTV_BLITTER_SRCA_LIN_HI#0) ← >(word/signed word/dword/signed dword) 256 [ ] ( main:2 [ ] ) -- _deref_pbuc1=vbuc2 
     lda #>$100
     sta DTV_BLITTER_SRCA_LIN_HI
-  //SEG17 [12] *((const byte*) DTV_BLITTER_SRCA_STEP#0) ← (byte/signed byte/word/signed word/dword/signed dword) 16 [ ] ( main:2 [ ] ) -- _deref_pbuc1=vbuc2 
+  //SEG18 [13] *((const byte*) DTV_BLITTER_SRCA_STEP#0) ← (byte/signed byte/word/signed word/dword/signed dword) 16 [ ] ( main:2 [ ] ) -- _deref_pbuc1=vbuc2 
     lda #$10
     sta DTV_BLITTER_SRCA_STEP
-  //SEG18 [13] *((const byte*) DTV_BLITTER_SRCB_LO#0) ← <(const byte[]) SRCB#0 [ ] ( main:2 [ ] ) -- _deref_pbuc1=vbuc2 
+  //SEG19 [14] *((const byte*) DTV_BLITTER_SRCB_LO#0) ← <(const byte[]) SRCB#0 [ ] ( main:2 [ ] ) -- _deref_pbuc1=vbuc2 
     lda #<SRCB
     sta DTV_BLITTER_SRCB_LO
-  //SEG19 [14] *((const byte*) DTV_BLITTER_SRCB_MI#0) ← >(const byte[]) SRCB#0 [ ] ( main:2 [ ] ) -- _deref_pbuc1=vbuc2 
+  //SEG20 [15] *((const byte*) DTV_BLITTER_SRCB_MI#0) ← >(const byte[]) SRCB#0 [ ] ( main:2 [ ] ) -- _deref_pbuc1=vbuc2 
     lda #>SRCB
     sta DTV_BLITTER_SRCB_MI
-  //SEG20 [15] *((const byte*) DTV_BLITTER_SRCB_HI#0) ← (byte/signed byte/word/signed word/dword/signed dword) 0 [ ] ( main:2 [ ] ) -- _deref_pbuc1=vbuc2 
+  //SEG21 [16] *((const byte*) DTV_BLITTER_SRCB_HI#0) ← (byte/signed byte/word/signed word/dword/signed dword) 0 [ ] ( main:2 [ ] ) -- _deref_pbuc1=vbuc2 
     lda #0
     sta DTV_BLITTER_SRCB_HI
-  //SEG21 [16] *((const byte*) DTV_BLITTER_SRCB_MOD_LO#0) ← (byte/signed byte/word/signed word/dword/signed dword) 0 [ ] ( main:2 [ ] ) -- _deref_pbuc1=vbuc2 
+  //SEG22 [17] *((const byte*) DTV_BLITTER_SRCB_MOD_LO#0) ← (byte/signed byte/word/signed word/dword/signed dword) 0 [ ] ( main:2 [ ] ) -- _deref_pbuc1=vbuc2 
     lda #0
     sta DTV_BLITTER_SRCB_MOD_LO
-  //SEG22 [17] *((const byte*) DTV_BLITTER_SRCB_MOD_HI#0) ← (byte/signed byte/word/signed word/dword/signed dword) 0 [ ] ( main:2 [ ] ) -- _deref_pbuc1=vbuc2 
+  //SEG23 [18] *((const byte*) DTV_BLITTER_SRCB_MOD_HI#0) ← (byte/signed byte/word/signed word/dword/signed dword) 0 [ ] ( main:2 [ ] ) -- _deref_pbuc1=vbuc2 
     lda #0
     sta DTV_BLITTER_SRCB_MOD_HI
-  //SEG23 [18] *((const byte*) DTV_BLITTER_SRCB_LIN_LO#0) ← <(word/signed word/dword/signed dword) 256 [ ] ( main:2 [ ] ) -- _deref_pbuc1=vbuc2 
+  //SEG24 [19] *((const byte*) DTV_BLITTER_SRCB_LIN_LO#0) ← <(word/signed word/dword/signed dword) 256 [ ] ( main:2 [ ] ) -- _deref_pbuc1=vbuc2 
     lda #<$100
     sta DTV_BLITTER_SRCB_LIN_LO
-  //SEG24 [19] *((const byte*) DTV_BLITTER_SRCB_LIN_HI#0) ← >(word/signed word/dword/signed dword) 256 [ ] ( main:2 [ ] ) -- _deref_pbuc1=vbuc2 
+  //SEG25 [20] *((const byte*) DTV_BLITTER_SRCB_LIN_HI#0) ← >(word/signed word/dword/signed dword) 256 [ ] ( main:2 [ ] ) -- _deref_pbuc1=vbuc2 
     lda #>$100
     sta DTV_BLITTER_SRCB_LIN_HI
-  //SEG25 [20] *((const byte*) DTV_BLITTER_SRCB_STEP#0) ← (byte/signed byte/word/signed word/dword/signed dword) 0 [ ] ( main:2 [ ] ) -- _deref_pbuc1=vbuc2 
+  //SEG26 [21] *((const byte*) DTV_BLITTER_SRCB_STEP#0) ← (byte/signed byte/word/signed word/dword/signed dword) 0 [ ] ( main:2 [ ] ) -- _deref_pbuc1=vbuc2 
     lda #0
     sta DTV_BLITTER_SRCB_STEP
-  //SEG26 [21] *((const byte*) DTV_BLITTER_DEST_LO#0) ← <(const byte*) SCREEN#0 [ ] ( main:2 [ ] ) -- _deref_pbuc1=vbuc2 
+  //SEG27 [22] *((const byte*) DTV_BLITTER_DEST_LO#0) ← <(const byte*) SCREEN#0 [ ] ( main:2 [ ] ) -- _deref_pbuc1=vbuc2 
     lda #<SCREEN
     sta DTV_BLITTER_DEST_LO
-  //SEG27 [22] *((const byte*) DTV_BLITTER_DEST_MI#0) ← >(const byte*) SCREEN#0 [ ] ( main:2 [ ] ) -- _deref_pbuc1=vbuc2 
+  //SEG28 [23] *((const byte*) DTV_BLITTER_DEST_MI#0) ← >(const byte*) SCREEN#0 [ ] ( main:2 [ ] ) -- _deref_pbuc1=vbuc2 
     lda #>SCREEN
     sta DTV_BLITTER_DEST_MI
-  //SEG28 [23] *((const byte*) DTV_BLITTER_DEST_HI#0) ← (byte/signed byte/word/signed word/dword/signed dword) 0 [ ] ( main:2 [ ] ) -- _deref_pbuc1=vbuc2 
+  //SEG29 [24] *((const byte*) DTV_BLITTER_DEST_HI#0) ← (byte/signed byte/word/signed word/dword/signed dword) 0 [ ] ( main:2 [ ] ) -- _deref_pbuc1=vbuc2 
     lda #0
     sta DTV_BLITTER_DEST_HI
-  //SEG29 [24] *((const byte*) DTV_BLITTER_DEST_MOD_LO#0) ← (byte/signed byte/word/signed word/dword/signed dword) 0 [ ] ( main:2 [ ] ) -- _deref_pbuc1=vbuc2 
+  //SEG30 [25] *((const byte*) DTV_BLITTER_DEST_MOD_LO#0) ← (byte/signed byte/word/signed word/dword/signed dword) 0 [ ] ( main:2 [ ] ) -- _deref_pbuc1=vbuc2 
     lda #0
     sta DTV_BLITTER_DEST_MOD_LO
-  //SEG30 [25] *((const byte*) DTV_BLITTER_DEST_MOD_HI#0) ← (byte/signed byte/word/signed word/dword/signed dword) 0 [ ] ( main:2 [ ] ) -- _deref_pbuc1=vbuc2 
+  //SEG31 [26] *((const byte*) DTV_BLITTER_DEST_MOD_HI#0) ← (byte/signed byte/word/signed word/dword/signed dword) 0 [ ] ( main:2 [ ] ) -- _deref_pbuc1=vbuc2 
     lda #0
     sta DTV_BLITTER_DEST_MOD_HI
-  //SEG31 [26] *((const byte*) DTV_BLITTER_DEST_LIN_LO#0) ← <(word/signed word/dword/signed dword) 256 [ ] ( main:2 [ ] ) -- _deref_pbuc1=vbuc2 
+  //SEG32 [27] *((const byte*) DTV_BLITTER_DEST_LIN_LO#0) ← <(word/signed word/dword/signed dword) 256 [ ] ( main:2 [ ] ) -- _deref_pbuc1=vbuc2 
     lda #<$100
     sta DTV_BLITTER_DEST_LIN_LO
-  //SEG32 [27] *((const byte*) DTV_BLITTER_DEST_LIN_HI#0) ← >(word/signed word/dword/signed dword) 256 [ ] ( main:2 [ ] ) -- _deref_pbuc1=vbuc2 
+  //SEG33 [28] *((const byte*) DTV_BLITTER_DEST_LIN_HI#0) ← >(word/signed word/dword/signed dword) 256 [ ] ( main:2 [ ] ) -- _deref_pbuc1=vbuc2 
     lda #>$100
     sta DTV_BLITTER_DEST_LIN_HI
-  //SEG33 [28] *((const byte*) DTV_BLITTER_DEST_STEP#0) ← (byte/signed byte/word/signed word/dword/signed dword) 16 [ ] ( main:2 [ ] ) -- _deref_pbuc1=vbuc2 
+  //SEG34 [29] *((const byte*) DTV_BLITTER_DEST_STEP#0) ← (byte/signed byte/word/signed word/dword/signed dword) 16 [ ] ( main:2 [ ] ) -- _deref_pbuc1=vbuc2 
     lda #$10
     sta DTV_BLITTER_DEST_STEP
-  //SEG34 [29] *((const byte*) DTV_BLITTER_LEN_LO#0) ← (const byte) SRCA_LEN#0 [ ] ( main:2 [ ] ) -- _deref_pbuc1=vbuc2 
+  //SEG35 [30] *((const byte*) DTV_BLITTER_LEN_LO#0) ← (const byte) SRCA_LEN#0 [ ] ( main:2 [ ] ) -- _deref_pbuc1=vbuc2 
     lda #SRCA_LEN
     sta DTV_BLITTER_LEN_LO
-  //SEG35 [30] *((const byte*) DTV_BLITTER_LEN_HI#0) ← (byte/signed byte/word/signed word/dword/signed dword) 0 [ ] ( main:2 [ ] ) -- _deref_pbuc1=vbuc2 
+  //SEG36 [31] *((const byte*) DTV_BLITTER_LEN_HI#0) ← (byte/signed byte/word/signed word/dword/signed dword) 0 [ ] ( main:2 [ ] ) -- _deref_pbuc1=vbuc2 
     lda #0
     sta DTV_BLITTER_LEN_HI
-  //SEG36 [31] *((const byte*) DTV_BLITTER_ALU#0) ← (const byte) DTV_BLIT_ADD#0 [ ] ( main:2 [ ] ) -- _deref_pbuc1=vbuc2 
+  //SEG37 [32] *((const byte*) DTV_BLITTER_ALU#0) ← (const byte) DTV_BLIT_ADD#0 [ ] ( main:2 [ ] ) -- _deref_pbuc1=vbuc2 
     lda #DTV_BLIT_ADD
     sta DTV_BLITTER_ALU
-  //SEG37 [32] *((const byte*) DTV_BLITTER_TRANSPARANCY#0) ← (const byte) DTV_BLIT_TRANSPARANCY_NONE#0 [ ] ( main:2 [ ] ) -- _deref_pbuc1=vbuc2 
+  //SEG38 [33] *((const byte*) DTV_BLITTER_TRANSPARANCY#0) ← (const byte) DTV_BLIT_TRANSPARANCY_NONE#0 [ ] ( main:2 [ ] ) -- _deref_pbuc1=vbuc2 
     lda #DTV_BLIT_TRANSPARANCY_NONE
     sta DTV_BLITTER_TRANSPARANCY
-  //SEG38 [33] *((const byte*) DTV_BLITTER_CONTROL#0) ← (const byte) DTV_BLIT_FORCE_START#0|(const byte) DTV_BLIT_SRCA_FWD#0|(const byte) DTV_BLIT_SRCB_FWD#0|(const byte) DTV_BLIT_DEST_FWD#0 [ ] ( main:2 [ ] ) -- _deref_pbuc1=vbuc2 
+  //SEG39 [34] *((const byte*) DTV_BLITTER_CONTROL#0) ← (const byte) DTV_BLIT_FORCE_START#0|(const byte) DTV_BLIT_SRCA_FWD#0|(const byte) DTV_BLIT_SRCB_FWD#0|(const byte) DTV_BLIT_DEST_FWD#0 [ ] ( main:2 [ ] ) -- _deref_pbuc1=vbuc2 
     lda #DTV_BLIT_FORCE_START|DTV_BLIT_SRCA_FWD|DTV_BLIT_SRCB_FWD|DTV_BLIT_DEST_FWD
     sta DTV_BLITTER_CONTROL
-  //SEG39 [34] *((const byte*) DTV_BLITTER_CONTROL2#0) ← (const byte) DTV_BLIT_DEST_CONT#0 [ ] ( main:2 [ ] ) -- _deref_pbuc1=vbuc2 
+  //SEG40 [35] *((const byte*) DTV_BLITTER_CONTROL2#0) ← (const byte) DTV_BLIT_DEST_CONT#0 [ ] ( main:2 [ ] ) -- _deref_pbuc1=vbuc2 
     lda #DTV_BLIT_DEST_CONT
     sta DTV_BLITTER_CONTROL2
-  //SEG40 [35] phi from main to main::@2 [phi:main->main::@2]
+  //SEG41 [36] phi from main to main::@2 [phi:main->main::@2]
   b2_from_main:
-  //SEG41 [35] phi (byte) main::r#2 = (byte/signed byte/word/signed word/dword/signed dword) 0 [phi:main->main::@2#0] -- vbuz1=vbuc1 
+  //SEG42 [36] phi (byte) main::r#2 = (byte/signed byte/word/signed word/dword/signed dword) 0 [phi:main->main::@2#0] -- vbuz1=vbuc1 
     lda #0
     sta r
     jmp b2
-  //SEG42 [35] phi from main::@2 to main::@2 [phi:main::@2->main::@2]
+  //SEG43 [36] phi from main::@2 to main::@2 [phi:main::@2->main::@2]
   b2_from_b2:
     jmp b2
-  //SEG43 [35] phi from main::@3 to main::@2 [phi:main::@3->main::@2]
+  //SEG44 [36] phi from main::@3 to main::@2 [phi:main::@3->main::@2]
   b2_from_b3:
-  //SEG44 [35] phi (byte) main::r#2 = (byte) main::r#1 [phi:main::@3->main::@2#0] -- register_copy 
+  //SEG45 [36] phi (byte) main::r#2 = (byte) main::r#1 [phi:main::@3->main::@2#0] -- register_copy 
     jmp b2
-  //SEG45 main::@2
+  //SEG46 main::@2
   b2:
-  //SEG46 [36] (byte~) main::$15 ← *((const byte*) DTV_BLITTER_CONTROL2#0) & (const byte) DTV_BLIT_STATUS_BUSY#0 [ main::r#2 main::$15 ] ( main:2 [ main::r#2 main::$15 ] ) -- vbuz1=_deref_pbuc1_band_vbuc2 
+  //SEG47 [37] (byte~) main::$15 ← *((const byte*) DTV_BLITTER_CONTROL2#0) & (const byte) DTV_BLIT_STATUS_BUSY#0 [ main::r#2 main::$15 ] ( main:2 [ main::r#2 main::$15 ] ) -- vbuz1=_deref_pbuc1_band_vbuc2 
     lda DTV_BLITTER_CONTROL2
     and #DTV_BLIT_STATUS_BUSY
     sta _15
-  //SEG47 [37] if((byte~) main::$15!=(byte/signed byte/word/signed word/dword/signed dword) 0) goto main::@2 [ main::r#2 ] ( main:2 [ main::r#2 ] ) -- vbuz1_neq_0_then_la1 
+  //SEG48 [38] if((byte~) main::$15!=(byte/signed byte/word/signed word/dword/signed dword) 0) goto main::@2 [ main::r#2 ] ( main:2 [ main::r#2 ] ) -- vbuz1_neq_0_then_la1 
     lda _15
     bne b2_from_b2
     jmp b3
-  //SEG48 main::@3
+  //SEG49 main::@3
   b3:
-  //SEG49 [38] *((const byte*) DTV_BLITTER_CONTROL#0) ← (const byte) DTV_BLIT_FORCE_START#0|(const byte) DTV_BLIT_SRCA_FWD#0|(const byte) DTV_BLIT_SRCB_FWD#0|(const byte) DTV_BLIT_DEST_FWD#0 [ main::r#2 ] ( main:2 [ main::r#2 ] ) -- _deref_pbuc1=vbuc2 
+  //SEG50 [39] *((const byte*) DTV_BLITTER_CONTROL#0) ← (const byte) DTV_BLIT_FORCE_START#0|(const byte) DTV_BLIT_SRCA_FWD#0|(const byte) DTV_BLIT_SRCB_FWD#0|(const byte) DTV_BLIT_DEST_FWD#0 [ main::r#2 ] ( main:2 [ main::r#2 ] ) -- _deref_pbuc1=vbuc2 
     lda #DTV_BLIT_FORCE_START|DTV_BLIT_SRCA_FWD|DTV_BLIT_SRCB_FWD|DTV_BLIT_DEST_FWD
     sta DTV_BLITTER_CONTROL
-  //SEG50 [39] (byte) main::r#1 ← ++ (byte) main::r#2 [ main::r#1 ] ( main:2 [ main::r#1 ] ) -- vbuz1=_inc_vbuz1 
+  //SEG51 [40] (byte) main::r#1 ← ++ (byte) main::r#2 [ main::r#1 ] ( main:2 [ main::r#1 ] ) -- vbuz1=_inc_vbuz1 
     inc r
-  //SEG51 [40] if((byte) main::r#1!=(byte/signed byte/word/signed word/dword/signed dword) 8) goto main::@2 [ main::r#1 ] ( main:2 [ main::r#1 ] ) -- vbuz1_neq_vbuc1_then_la1 
+  //SEG52 [41] if((byte) main::r#1!=(byte/signed byte/word/signed word/dword/signed dword) 8) goto main::@2 [ main::r#1 ] ( main:2 [ main::r#1 ] ) -- vbuz1_neq_vbuc1_then_la1 
     lda r
     cmp #8
     bne b2_from_b3
     jmp breturn
-  //SEG52 main::@return
+  //SEG53 main::@return
   breturn:
-  //SEG53 [41] return  [ ] ( main:2 [ ] )
+  //SEG54 [42] return  [ ] ( main:2 [ ] )
     rts
 }
   SRCA: .byte 'c', 'a', 'm', 'e', 'l', 'o', 't', '!', ' '
@@ -1985,72 +2000,74 @@ main: {
 
 REGISTER UPLIFT POTENTIAL REGISTERS
 Statement [4] *((const byte*) DTV_FEATURE#0) ← (const byte) DTV_FEATURE_ENABLE#0 [ ] ( main:2 [ ] ) always clobbers reg byte a 
-Statement [5] *((const byte*) DTV_BLITTER_SRCA_LO#0) ← <(const byte[]) SRCA#0 [ ] ( main:2 [ ] ) always clobbers reg byte a 
-Statement [6] *((const byte*) DTV_BLITTER_SRCA_MI#0) ← >(const byte[]) SRCA#0 [ ] ( main:2 [ ] ) always clobbers reg byte a 
-Statement [7] *((const byte*) DTV_BLITTER_SRCA_HI#0) ← (byte/signed byte/word/signed word/dword/signed dword) 0 [ ] ( main:2 [ ] ) always clobbers reg byte a 
-Statement [8] *((const byte*) DTV_BLITTER_SRCA_MOD_LO#0) ← (byte/signed byte/word/signed word/dword/signed dword) 0 [ ] ( main:2 [ ] ) always clobbers reg byte a 
-Statement [9] *((const byte*) DTV_BLITTER_SRCA_MOD_HI#0) ← (byte/signed byte/word/signed word/dword/signed dword) 0 [ ] ( main:2 [ ] ) always clobbers reg byte a 
-Statement [10] *((const byte*) DTV_BLITTER_SRCA_LIN_LO#0) ← <(word/signed word/dword/signed dword) 256 [ ] ( main:2 [ ] ) always clobbers reg byte a 
-Statement [11] *((const byte*) DTV_BLITTER_SRCA_LIN_HI#0) ← >(word/signed word/dword/signed dword) 256 [ ] ( main:2 [ ] ) always clobbers reg byte a 
-Statement [12] *((const byte*) DTV_BLITTER_SRCA_STEP#0) ← (byte/signed byte/word/signed word/dword/signed dword) 16 [ ] ( main:2 [ ] ) always clobbers reg byte a 
-Statement [13] *((const byte*) DTV_BLITTER_SRCB_LO#0) ← <(const byte[]) SRCB#0 [ ] ( main:2 [ ] ) always clobbers reg byte a 
-Statement [14] *((const byte*) DTV_BLITTER_SRCB_MI#0) ← >(const byte[]) SRCB#0 [ ] ( main:2 [ ] ) always clobbers reg byte a 
-Statement [15] *((const byte*) DTV_BLITTER_SRCB_HI#0) ← (byte/signed byte/word/signed word/dword/signed dword) 0 [ ] ( main:2 [ ] ) always clobbers reg byte a 
-Statement [16] *((const byte*) DTV_BLITTER_SRCB_MOD_LO#0) ← (byte/signed byte/word/signed word/dword/signed dword) 0 [ ] ( main:2 [ ] ) always clobbers reg byte a 
-Statement [17] *((const byte*) DTV_BLITTER_SRCB_MOD_HI#0) ← (byte/signed byte/word/signed word/dword/signed dword) 0 [ ] ( main:2 [ ] ) always clobbers reg byte a 
-Statement [18] *((const byte*) DTV_BLITTER_SRCB_LIN_LO#0) ← <(word/signed word/dword/signed dword) 256 [ ] ( main:2 [ ] ) always clobbers reg byte a 
-Statement [19] *((const byte*) DTV_BLITTER_SRCB_LIN_HI#0) ← >(word/signed word/dword/signed dword) 256 [ ] ( main:2 [ ] ) always clobbers reg byte a 
-Statement [20] *((const byte*) DTV_BLITTER_SRCB_STEP#0) ← (byte/signed byte/word/signed word/dword/signed dword) 0 [ ] ( main:2 [ ] ) always clobbers reg byte a 
-Statement [21] *((const byte*) DTV_BLITTER_DEST_LO#0) ← <(const byte*) SCREEN#0 [ ] ( main:2 [ ] ) always clobbers reg byte a 
-Statement [22] *((const byte*) DTV_BLITTER_DEST_MI#0) ← >(const byte*) SCREEN#0 [ ] ( main:2 [ ] ) always clobbers reg byte a 
-Statement [23] *((const byte*) DTV_BLITTER_DEST_HI#0) ← (byte/signed byte/word/signed word/dword/signed dword) 0 [ ] ( main:2 [ ] ) always clobbers reg byte a 
-Statement [24] *((const byte*) DTV_BLITTER_DEST_MOD_LO#0) ← (byte/signed byte/word/signed word/dword/signed dword) 0 [ ] ( main:2 [ ] ) always clobbers reg byte a 
-Statement [25] *((const byte*) DTV_BLITTER_DEST_MOD_HI#0) ← (byte/signed byte/word/signed word/dword/signed dword) 0 [ ] ( main:2 [ ] ) always clobbers reg byte a 
-Statement [26] *((const byte*) DTV_BLITTER_DEST_LIN_LO#0) ← <(word/signed word/dword/signed dword) 256 [ ] ( main:2 [ ] ) always clobbers reg byte a 
-Statement [27] *((const byte*) DTV_BLITTER_DEST_LIN_HI#0) ← >(word/signed word/dword/signed dword) 256 [ ] ( main:2 [ ] ) always clobbers reg byte a 
-Statement [28] *((const byte*) DTV_BLITTER_DEST_STEP#0) ← (byte/signed byte/word/signed word/dword/signed dword) 16 [ ] ( main:2 [ ] ) always clobbers reg byte a 
-Statement [29] *((const byte*) DTV_BLITTER_LEN_LO#0) ← (const byte) SRCA_LEN#0 [ ] ( main:2 [ ] ) always clobbers reg byte a 
-Statement [30] *((const byte*) DTV_BLITTER_LEN_HI#0) ← (byte/signed byte/word/signed word/dword/signed dword) 0 [ ] ( main:2 [ ] ) always clobbers reg byte a 
-Statement [31] *((const byte*) DTV_BLITTER_ALU#0) ← (const byte) DTV_BLIT_ADD#0 [ ] ( main:2 [ ] ) always clobbers reg byte a 
-Statement [32] *((const byte*) DTV_BLITTER_TRANSPARANCY#0) ← (const byte) DTV_BLIT_TRANSPARANCY_NONE#0 [ ] ( main:2 [ ] ) always clobbers reg byte a 
-Statement [33] *((const byte*) DTV_BLITTER_CONTROL#0) ← (const byte) DTV_BLIT_FORCE_START#0|(const byte) DTV_BLIT_SRCA_FWD#0|(const byte) DTV_BLIT_SRCB_FWD#0|(const byte) DTV_BLIT_DEST_FWD#0 [ ] ( main:2 [ ] ) always clobbers reg byte a 
-Statement [34] *((const byte*) DTV_BLITTER_CONTROL2#0) ← (const byte) DTV_BLIT_DEST_CONT#0 [ ] ( main:2 [ ] ) always clobbers reg byte a 
-Statement [36] (byte~) main::$15 ← *((const byte*) DTV_BLITTER_CONTROL2#0) & (const byte) DTV_BLIT_STATUS_BUSY#0 [ main::r#2 main::$15 ] ( main:2 [ main::r#2 main::$15 ] ) always clobbers reg byte a 
+Statement [5] *((const byte*) DTV_BLITTER_CONTROL2#0) ← (const byte) DTV_BLIT_CLEAR_IRQ#0 [ ] ( main:2 [ ] ) always clobbers reg byte a 
+Statement [6] *((const byte*) DTV_BLITTER_SRCA_LO#0) ← <(const byte[]) SRCA#0 [ ] ( main:2 [ ] ) always clobbers reg byte a 
+Statement [7] *((const byte*) DTV_BLITTER_SRCA_MI#0) ← >(const byte[]) SRCA#0 [ ] ( main:2 [ ] ) always clobbers reg byte a 
+Statement [8] *((const byte*) DTV_BLITTER_SRCA_HI#0) ← (byte/signed byte/word/signed word/dword/signed dword) 0 [ ] ( main:2 [ ] ) always clobbers reg byte a 
+Statement [9] *((const byte*) DTV_BLITTER_SRCA_MOD_LO#0) ← (byte/signed byte/word/signed word/dword/signed dword) 0 [ ] ( main:2 [ ] ) always clobbers reg byte a 
+Statement [10] *((const byte*) DTV_BLITTER_SRCA_MOD_HI#0) ← (byte/signed byte/word/signed word/dword/signed dword) 0 [ ] ( main:2 [ ] ) always clobbers reg byte a 
+Statement [11] *((const byte*) DTV_BLITTER_SRCA_LIN_LO#0) ← <(word/signed word/dword/signed dword) 256 [ ] ( main:2 [ ] ) always clobbers reg byte a 
+Statement [12] *((const byte*) DTV_BLITTER_SRCA_LIN_HI#0) ← >(word/signed word/dword/signed dword) 256 [ ] ( main:2 [ ] ) always clobbers reg byte a 
+Statement [13] *((const byte*) DTV_BLITTER_SRCA_STEP#0) ← (byte/signed byte/word/signed word/dword/signed dword) 16 [ ] ( main:2 [ ] ) always clobbers reg byte a 
+Statement [14] *((const byte*) DTV_BLITTER_SRCB_LO#0) ← <(const byte[]) SRCB#0 [ ] ( main:2 [ ] ) always clobbers reg byte a 
+Statement [15] *((const byte*) DTV_BLITTER_SRCB_MI#0) ← >(const byte[]) SRCB#0 [ ] ( main:2 [ ] ) always clobbers reg byte a 
+Statement [16] *((const byte*) DTV_BLITTER_SRCB_HI#0) ← (byte/signed byte/word/signed word/dword/signed dword) 0 [ ] ( main:2 [ ] ) always clobbers reg byte a 
+Statement [17] *((const byte*) DTV_BLITTER_SRCB_MOD_LO#0) ← (byte/signed byte/word/signed word/dword/signed dword) 0 [ ] ( main:2 [ ] ) always clobbers reg byte a 
+Statement [18] *((const byte*) DTV_BLITTER_SRCB_MOD_HI#0) ← (byte/signed byte/word/signed word/dword/signed dword) 0 [ ] ( main:2 [ ] ) always clobbers reg byte a 
+Statement [19] *((const byte*) DTV_BLITTER_SRCB_LIN_LO#0) ← <(word/signed word/dword/signed dword) 256 [ ] ( main:2 [ ] ) always clobbers reg byte a 
+Statement [20] *((const byte*) DTV_BLITTER_SRCB_LIN_HI#0) ← >(word/signed word/dword/signed dword) 256 [ ] ( main:2 [ ] ) always clobbers reg byte a 
+Statement [21] *((const byte*) DTV_BLITTER_SRCB_STEP#0) ← (byte/signed byte/word/signed word/dword/signed dword) 0 [ ] ( main:2 [ ] ) always clobbers reg byte a 
+Statement [22] *((const byte*) DTV_BLITTER_DEST_LO#0) ← <(const byte*) SCREEN#0 [ ] ( main:2 [ ] ) always clobbers reg byte a 
+Statement [23] *((const byte*) DTV_BLITTER_DEST_MI#0) ← >(const byte*) SCREEN#0 [ ] ( main:2 [ ] ) always clobbers reg byte a 
+Statement [24] *((const byte*) DTV_BLITTER_DEST_HI#0) ← (byte/signed byte/word/signed word/dword/signed dword) 0 [ ] ( main:2 [ ] ) always clobbers reg byte a 
+Statement [25] *((const byte*) DTV_BLITTER_DEST_MOD_LO#0) ← (byte/signed byte/word/signed word/dword/signed dword) 0 [ ] ( main:2 [ ] ) always clobbers reg byte a 
+Statement [26] *((const byte*) DTV_BLITTER_DEST_MOD_HI#0) ← (byte/signed byte/word/signed word/dword/signed dword) 0 [ ] ( main:2 [ ] ) always clobbers reg byte a 
+Statement [27] *((const byte*) DTV_BLITTER_DEST_LIN_LO#0) ← <(word/signed word/dword/signed dword) 256 [ ] ( main:2 [ ] ) always clobbers reg byte a 
+Statement [28] *((const byte*) DTV_BLITTER_DEST_LIN_HI#0) ← >(word/signed word/dword/signed dword) 256 [ ] ( main:2 [ ] ) always clobbers reg byte a 
+Statement [29] *((const byte*) DTV_BLITTER_DEST_STEP#0) ← (byte/signed byte/word/signed word/dword/signed dword) 16 [ ] ( main:2 [ ] ) always clobbers reg byte a 
+Statement [30] *((const byte*) DTV_BLITTER_LEN_LO#0) ← (const byte) SRCA_LEN#0 [ ] ( main:2 [ ] ) always clobbers reg byte a 
+Statement [31] *((const byte*) DTV_BLITTER_LEN_HI#0) ← (byte/signed byte/word/signed word/dword/signed dword) 0 [ ] ( main:2 [ ] ) always clobbers reg byte a 
+Statement [32] *((const byte*) DTV_BLITTER_ALU#0) ← (const byte) DTV_BLIT_ADD#0 [ ] ( main:2 [ ] ) always clobbers reg byte a 
+Statement [33] *((const byte*) DTV_BLITTER_TRANSPARANCY#0) ← (const byte) DTV_BLIT_TRANSPARANCY_NONE#0 [ ] ( main:2 [ ] ) always clobbers reg byte a 
+Statement [34] *((const byte*) DTV_BLITTER_CONTROL#0) ← (const byte) DTV_BLIT_FORCE_START#0|(const byte) DTV_BLIT_SRCA_FWD#0|(const byte) DTV_BLIT_SRCB_FWD#0|(const byte) DTV_BLIT_DEST_FWD#0 [ ] ( main:2 [ ] ) always clobbers reg byte a 
+Statement [35] *((const byte*) DTV_BLITTER_CONTROL2#0) ← (const byte) DTV_BLIT_DEST_CONT#0 [ ] ( main:2 [ ] ) always clobbers reg byte a 
+Statement [37] (byte~) main::$15 ← *((const byte*) DTV_BLITTER_CONTROL2#0) & (const byte) DTV_BLIT_STATUS_BUSY#0 [ main::r#2 main::$15 ] ( main:2 [ main::r#2 main::$15 ] ) always clobbers reg byte a 
 Removing always clobbered register reg byte a as potential for zp ZP_BYTE:2 [ main::r#2 main::r#1 ]
-Statement [38] *((const byte*) DTV_BLITTER_CONTROL#0) ← (const byte) DTV_BLIT_FORCE_START#0|(const byte) DTV_BLIT_SRCA_FWD#0|(const byte) DTV_BLIT_SRCB_FWD#0|(const byte) DTV_BLIT_DEST_FWD#0 [ main::r#2 ] ( main:2 [ main::r#2 ] ) always clobbers reg byte a 
+Statement [39] *((const byte*) DTV_BLITTER_CONTROL#0) ← (const byte) DTV_BLIT_FORCE_START#0|(const byte) DTV_BLIT_SRCA_FWD#0|(const byte) DTV_BLIT_SRCB_FWD#0|(const byte) DTV_BLIT_DEST_FWD#0 [ main::r#2 ] ( main:2 [ main::r#2 ] ) always clobbers reg byte a 
 Statement [4] *((const byte*) DTV_FEATURE#0) ← (const byte) DTV_FEATURE_ENABLE#0 [ ] ( main:2 [ ] ) always clobbers reg byte a 
-Statement [5] *((const byte*) DTV_BLITTER_SRCA_LO#0) ← <(const byte[]) SRCA#0 [ ] ( main:2 [ ] ) always clobbers reg byte a 
-Statement [6] *((const byte*) DTV_BLITTER_SRCA_MI#0) ← >(const byte[]) SRCA#0 [ ] ( main:2 [ ] ) always clobbers reg byte a 
-Statement [7] *((const byte*) DTV_BLITTER_SRCA_HI#0) ← (byte/signed byte/word/signed word/dword/signed dword) 0 [ ] ( main:2 [ ] ) always clobbers reg byte a 
-Statement [8] *((const byte*) DTV_BLITTER_SRCA_MOD_LO#0) ← (byte/signed byte/word/signed word/dword/signed dword) 0 [ ] ( main:2 [ ] ) always clobbers reg byte a 
-Statement [9] *((const byte*) DTV_BLITTER_SRCA_MOD_HI#0) ← (byte/signed byte/word/signed word/dword/signed dword) 0 [ ] ( main:2 [ ] ) always clobbers reg byte a 
-Statement [10] *((const byte*) DTV_BLITTER_SRCA_LIN_LO#0) ← <(word/signed word/dword/signed dword) 256 [ ] ( main:2 [ ] ) always clobbers reg byte a 
-Statement [11] *((const byte*) DTV_BLITTER_SRCA_LIN_HI#0) ← >(word/signed word/dword/signed dword) 256 [ ] ( main:2 [ ] ) always clobbers reg byte a 
-Statement [12] *((const byte*) DTV_BLITTER_SRCA_STEP#0) ← (byte/signed byte/word/signed word/dword/signed dword) 16 [ ] ( main:2 [ ] ) always clobbers reg byte a 
-Statement [13] *((const byte*) DTV_BLITTER_SRCB_LO#0) ← <(const byte[]) SRCB#0 [ ] ( main:2 [ ] ) always clobbers reg byte a 
-Statement [14] *((const byte*) DTV_BLITTER_SRCB_MI#0) ← >(const byte[]) SRCB#0 [ ] ( main:2 [ ] ) always clobbers reg byte a 
-Statement [15] *((const byte*) DTV_BLITTER_SRCB_HI#0) ← (byte/signed byte/word/signed word/dword/signed dword) 0 [ ] ( main:2 [ ] ) always clobbers reg byte a 
-Statement [16] *((const byte*) DTV_BLITTER_SRCB_MOD_LO#0) ← (byte/signed byte/word/signed word/dword/signed dword) 0 [ ] ( main:2 [ ] ) always clobbers reg byte a 
-Statement [17] *((const byte*) DTV_BLITTER_SRCB_MOD_HI#0) ← (byte/signed byte/word/signed word/dword/signed dword) 0 [ ] ( main:2 [ ] ) always clobbers reg byte a 
-Statement [18] *((const byte*) DTV_BLITTER_SRCB_LIN_LO#0) ← <(word/signed word/dword/signed dword) 256 [ ] ( main:2 [ ] ) always clobbers reg byte a 
-Statement [19] *((const byte*) DTV_BLITTER_SRCB_LIN_HI#0) ← >(word/signed word/dword/signed dword) 256 [ ] ( main:2 [ ] ) always clobbers reg byte a 
-Statement [20] *((const byte*) DTV_BLITTER_SRCB_STEP#0) ← (byte/signed byte/word/signed word/dword/signed dword) 0 [ ] ( main:2 [ ] ) always clobbers reg byte a 
-Statement [21] *((const byte*) DTV_BLITTER_DEST_LO#0) ← <(const byte*) SCREEN#0 [ ] ( main:2 [ ] ) always clobbers reg byte a 
-Statement [22] *((const byte*) DTV_BLITTER_DEST_MI#0) ← >(const byte*) SCREEN#0 [ ] ( main:2 [ ] ) always clobbers reg byte a 
-Statement [23] *((const byte*) DTV_BLITTER_DEST_HI#0) ← (byte/signed byte/word/signed word/dword/signed dword) 0 [ ] ( main:2 [ ] ) always clobbers reg byte a 
-Statement [24] *((const byte*) DTV_BLITTER_DEST_MOD_LO#0) ← (byte/signed byte/word/signed word/dword/signed dword) 0 [ ] ( main:2 [ ] ) always clobbers reg byte a 
-Statement [25] *((const byte*) DTV_BLITTER_DEST_MOD_HI#0) ← (byte/signed byte/word/signed word/dword/signed dword) 0 [ ] ( main:2 [ ] ) always clobbers reg byte a 
-Statement [26] *((const byte*) DTV_BLITTER_DEST_LIN_LO#0) ← <(word/signed word/dword/signed dword) 256 [ ] ( main:2 [ ] ) always clobbers reg byte a 
-Statement [27] *((const byte*) DTV_BLITTER_DEST_LIN_HI#0) ← >(word/signed word/dword/signed dword) 256 [ ] ( main:2 [ ] ) always clobbers reg byte a 
-Statement [28] *((const byte*) DTV_BLITTER_DEST_STEP#0) ← (byte/signed byte/word/signed word/dword/signed dword) 16 [ ] ( main:2 [ ] ) always clobbers reg byte a 
-Statement [29] *((const byte*) DTV_BLITTER_LEN_LO#0) ← (const byte) SRCA_LEN#0 [ ] ( main:2 [ ] ) always clobbers reg byte a 
-Statement [30] *((const byte*) DTV_BLITTER_LEN_HI#0) ← (byte/signed byte/word/signed word/dword/signed dword) 0 [ ] ( main:2 [ ] ) always clobbers reg byte a 
-Statement [31] *((const byte*) DTV_BLITTER_ALU#0) ← (const byte) DTV_BLIT_ADD#0 [ ] ( main:2 [ ] ) always clobbers reg byte a 
-Statement [32] *((const byte*) DTV_BLITTER_TRANSPARANCY#0) ← (const byte) DTV_BLIT_TRANSPARANCY_NONE#0 [ ] ( main:2 [ ] ) always clobbers reg byte a 
-Statement [33] *((const byte*) DTV_BLITTER_CONTROL#0) ← (const byte) DTV_BLIT_FORCE_START#0|(const byte) DTV_BLIT_SRCA_FWD#0|(const byte) DTV_BLIT_SRCB_FWD#0|(const byte) DTV_BLIT_DEST_FWD#0 [ ] ( main:2 [ ] ) always clobbers reg byte a 
-Statement [34] *((const byte*) DTV_BLITTER_CONTROL2#0) ← (const byte) DTV_BLIT_DEST_CONT#0 [ ] ( main:2 [ ] ) always clobbers reg byte a 
-Statement [36] (byte~) main::$15 ← *((const byte*) DTV_BLITTER_CONTROL2#0) & (const byte) DTV_BLIT_STATUS_BUSY#0 [ main::r#2 main::$15 ] ( main:2 [ main::r#2 main::$15 ] ) always clobbers reg byte a 
-Statement [38] *((const byte*) DTV_BLITTER_CONTROL#0) ← (const byte) DTV_BLIT_FORCE_START#0|(const byte) DTV_BLIT_SRCA_FWD#0|(const byte) DTV_BLIT_SRCB_FWD#0|(const byte) DTV_BLIT_DEST_FWD#0 [ main::r#2 ] ( main:2 [ main::r#2 ] ) always clobbers reg byte a 
+Statement [5] *((const byte*) DTV_BLITTER_CONTROL2#0) ← (const byte) DTV_BLIT_CLEAR_IRQ#0 [ ] ( main:2 [ ] ) always clobbers reg byte a 
+Statement [6] *((const byte*) DTV_BLITTER_SRCA_LO#0) ← <(const byte[]) SRCA#0 [ ] ( main:2 [ ] ) always clobbers reg byte a 
+Statement [7] *((const byte*) DTV_BLITTER_SRCA_MI#0) ← >(const byte[]) SRCA#0 [ ] ( main:2 [ ] ) always clobbers reg byte a 
+Statement [8] *((const byte*) DTV_BLITTER_SRCA_HI#0) ← (byte/signed byte/word/signed word/dword/signed dword) 0 [ ] ( main:2 [ ] ) always clobbers reg byte a 
+Statement [9] *((const byte*) DTV_BLITTER_SRCA_MOD_LO#0) ← (byte/signed byte/word/signed word/dword/signed dword) 0 [ ] ( main:2 [ ] ) always clobbers reg byte a 
+Statement [10] *((const byte*) DTV_BLITTER_SRCA_MOD_HI#0) ← (byte/signed byte/word/signed word/dword/signed dword) 0 [ ] ( main:2 [ ] ) always clobbers reg byte a 
+Statement [11] *((const byte*) DTV_BLITTER_SRCA_LIN_LO#0) ← <(word/signed word/dword/signed dword) 256 [ ] ( main:2 [ ] ) always clobbers reg byte a 
+Statement [12] *((const byte*) DTV_BLITTER_SRCA_LIN_HI#0) ← >(word/signed word/dword/signed dword) 256 [ ] ( main:2 [ ] ) always clobbers reg byte a 
+Statement [13] *((const byte*) DTV_BLITTER_SRCA_STEP#0) ← (byte/signed byte/word/signed word/dword/signed dword) 16 [ ] ( main:2 [ ] ) always clobbers reg byte a 
+Statement [14] *((const byte*) DTV_BLITTER_SRCB_LO#0) ← <(const byte[]) SRCB#0 [ ] ( main:2 [ ] ) always clobbers reg byte a 
+Statement [15] *((const byte*) DTV_BLITTER_SRCB_MI#0) ← >(const byte[]) SRCB#0 [ ] ( main:2 [ ] ) always clobbers reg byte a 
+Statement [16] *((const byte*) DTV_BLITTER_SRCB_HI#0) ← (byte/signed byte/word/signed word/dword/signed dword) 0 [ ] ( main:2 [ ] ) always clobbers reg byte a 
+Statement [17] *((const byte*) DTV_BLITTER_SRCB_MOD_LO#0) ← (byte/signed byte/word/signed word/dword/signed dword) 0 [ ] ( main:2 [ ] ) always clobbers reg byte a 
+Statement [18] *((const byte*) DTV_BLITTER_SRCB_MOD_HI#0) ← (byte/signed byte/word/signed word/dword/signed dword) 0 [ ] ( main:2 [ ] ) always clobbers reg byte a 
+Statement [19] *((const byte*) DTV_BLITTER_SRCB_LIN_LO#0) ← <(word/signed word/dword/signed dword) 256 [ ] ( main:2 [ ] ) always clobbers reg byte a 
+Statement [20] *((const byte*) DTV_BLITTER_SRCB_LIN_HI#0) ← >(word/signed word/dword/signed dword) 256 [ ] ( main:2 [ ] ) always clobbers reg byte a 
+Statement [21] *((const byte*) DTV_BLITTER_SRCB_STEP#0) ← (byte/signed byte/word/signed word/dword/signed dword) 0 [ ] ( main:2 [ ] ) always clobbers reg byte a 
+Statement [22] *((const byte*) DTV_BLITTER_DEST_LO#0) ← <(const byte*) SCREEN#0 [ ] ( main:2 [ ] ) always clobbers reg byte a 
+Statement [23] *((const byte*) DTV_BLITTER_DEST_MI#0) ← >(const byte*) SCREEN#0 [ ] ( main:2 [ ] ) always clobbers reg byte a 
+Statement [24] *((const byte*) DTV_BLITTER_DEST_HI#0) ← (byte/signed byte/word/signed word/dword/signed dword) 0 [ ] ( main:2 [ ] ) always clobbers reg byte a 
+Statement [25] *((const byte*) DTV_BLITTER_DEST_MOD_LO#0) ← (byte/signed byte/word/signed word/dword/signed dword) 0 [ ] ( main:2 [ ] ) always clobbers reg byte a 
+Statement [26] *((const byte*) DTV_BLITTER_DEST_MOD_HI#0) ← (byte/signed byte/word/signed word/dword/signed dword) 0 [ ] ( main:2 [ ] ) always clobbers reg byte a 
+Statement [27] *((const byte*) DTV_BLITTER_DEST_LIN_LO#0) ← <(word/signed word/dword/signed dword) 256 [ ] ( main:2 [ ] ) always clobbers reg byte a 
+Statement [28] *((const byte*) DTV_BLITTER_DEST_LIN_HI#0) ← >(word/signed word/dword/signed dword) 256 [ ] ( main:2 [ ] ) always clobbers reg byte a 
+Statement [29] *((const byte*) DTV_BLITTER_DEST_STEP#0) ← (byte/signed byte/word/signed word/dword/signed dword) 16 [ ] ( main:2 [ ] ) always clobbers reg byte a 
+Statement [30] *((const byte*) DTV_BLITTER_LEN_LO#0) ← (const byte) SRCA_LEN#0 [ ] ( main:2 [ ] ) always clobbers reg byte a 
+Statement [31] *((const byte*) DTV_BLITTER_LEN_HI#0) ← (byte/signed byte/word/signed word/dword/signed dword) 0 [ ] ( main:2 [ ] ) always clobbers reg byte a 
+Statement [32] *((const byte*) DTV_BLITTER_ALU#0) ← (const byte) DTV_BLIT_ADD#0 [ ] ( main:2 [ ] ) always clobbers reg byte a 
+Statement [33] *((const byte*) DTV_BLITTER_TRANSPARANCY#0) ← (const byte) DTV_BLIT_TRANSPARANCY_NONE#0 [ ] ( main:2 [ ] ) always clobbers reg byte a 
+Statement [34] *((const byte*) DTV_BLITTER_CONTROL#0) ← (const byte) DTV_BLIT_FORCE_START#0|(const byte) DTV_BLIT_SRCA_FWD#0|(const byte) DTV_BLIT_SRCB_FWD#0|(const byte) DTV_BLIT_DEST_FWD#0 [ ] ( main:2 [ ] ) always clobbers reg byte a 
+Statement [35] *((const byte*) DTV_BLITTER_CONTROL2#0) ← (const byte) DTV_BLIT_DEST_CONT#0 [ ] ( main:2 [ ] ) always clobbers reg byte a 
+Statement [37] (byte~) main::$15 ← *((const byte*) DTV_BLITTER_CONTROL2#0) & (const byte) DTV_BLIT_STATUS_BUSY#0 [ main::r#2 main::$15 ] ( main:2 [ main::r#2 main::$15 ] ) always clobbers reg byte a 
+Statement [39] *((const byte*) DTV_BLITTER_CONTROL#0) ← (const byte) DTV_BLIT_FORCE_START#0|(const byte) DTV_BLIT_SRCA_FWD#0|(const byte) DTV_BLIT_SRCB_FWD#0|(const byte) DTV_BLIT_DEST_FWD#0 [ main::r#2 ] ( main:2 [ main::r#2 ] ) always clobbers reg byte a 
 Potential registers zp ZP_BYTE:2 [ main::r#2 main::r#1 ] : zp ZP_BYTE:2 , reg byte x , reg byte y , 
 Potential registers zp ZP_BYTE:3 [ main::$15 ] : zp ZP_BYTE:3 , reg byte a , reg byte x , reg byte y , 
 
@@ -2058,8 +2075,8 @@ REGISTER UPLIFT SCOPES
 Uplift Scope [main] 202: zp ZP_BYTE:3 [ main::$15 ] 22: zp ZP_BYTE:2 [ main::r#2 main::r#1 ] 
 Uplift Scope [] 
 
-Uplifting [main] best 2809 combination reg byte a [ main::$15 ] reg byte x [ main::r#2 main::r#1 ] 
-Uplifting [] best 2809 combination 
+Uplifting [main] best 2815 combination reg byte a [ main::$15 ] reg byte x [ main::r#2 main::r#1 ] 
+Uplifting [] best 2815 combination 
 
 ASSEMBLER BEFORE OPTIMIZATION
 //SEG0 Basic Upstart
@@ -2105,6 +2122,7 @@ ASSEMBLER BEFORE OPTIMIZATION
   .label DTV_BLITTER_ALU = $d33e
   .const DTV_BLIT_ADD = $30
   .label DTV_BLITTER_CONTROL2 = $d33f
+  .const DTV_BLIT_CLEAR_IRQ = 1
   .const DTV_BLIT_DEST_CONT = 8
   .const DTV_BLIT_STATUS_BUSY = 1
   .label SCREEN = $400
@@ -2128,131 +2146,134 @@ main: {
   //SEG9 [4] *((const byte*) DTV_FEATURE#0) ← (const byte) DTV_FEATURE_ENABLE#0 [ ] ( main:2 [ ] ) -- _deref_pbuc1=vbuc2 
     lda #DTV_FEATURE_ENABLE
     sta DTV_FEATURE
-  //SEG10 [5] *((const byte*) DTV_BLITTER_SRCA_LO#0) ← <(const byte[]) SRCA#0 [ ] ( main:2 [ ] ) -- _deref_pbuc1=vbuc2 
+  //SEG10 [5] *((const byte*) DTV_BLITTER_CONTROL2#0) ← (const byte) DTV_BLIT_CLEAR_IRQ#0 [ ] ( main:2 [ ] ) -- _deref_pbuc1=vbuc2 
+    lda #DTV_BLIT_CLEAR_IRQ
+    sta DTV_BLITTER_CONTROL2
+  //SEG11 [6] *((const byte*) DTV_BLITTER_SRCA_LO#0) ← <(const byte[]) SRCA#0 [ ] ( main:2 [ ] ) -- _deref_pbuc1=vbuc2 
     lda #<SRCA
     sta DTV_BLITTER_SRCA_LO
-  //SEG11 [6] *((const byte*) DTV_BLITTER_SRCA_MI#0) ← >(const byte[]) SRCA#0 [ ] ( main:2 [ ] ) -- _deref_pbuc1=vbuc2 
+  //SEG12 [7] *((const byte*) DTV_BLITTER_SRCA_MI#0) ← >(const byte[]) SRCA#0 [ ] ( main:2 [ ] ) -- _deref_pbuc1=vbuc2 
     lda #>SRCA
     sta DTV_BLITTER_SRCA_MI
-  //SEG12 [7] *((const byte*) DTV_BLITTER_SRCA_HI#0) ← (byte/signed byte/word/signed word/dword/signed dword) 0 [ ] ( main:2 [ ] ) -- _deref_pbuc1=vbuc2 
+  //SEG13 [8] *((const byte*) DTV_BLITTER_SRCA_HI#0) ← (byte/signed byte/word/signed word/dword/signed dword) 0 [ ] ( main:2 [ ] ) -- _deref_pbuc1=vbuc2 
     lda #0
     sta DTV_BLITTER_SRCA_HI
-  //SEG13 [8] *((const byte*) DTV_BLITTER_SRCA_MOD_LO#0) ← (byte/signed byte/word/signed word/dword/signed dword) 0 [ ] ( main:2 [ ] ) -- _deref_pbuc1=vbuc2 
+  //SEG14 [9] *((const byte*) DTV_BLITTER_SRCA_MOD_LO#0) ← (byte/signed byte/word/signed word/dword/signed dword) 0 [ ] ( main:2 [ ] ) -- _deref_pbuc1=vbuc2 
     lda #0
     sta DTV_BLITTER_SRCA_MOD_LO
-  //SEG14 [9] *((const byte*) DTV_BLITTER_SRCA_MOD_HI#0) ← (byte/signed byte/word/signed word/dword/signed dword) 0 [ ] ( main:2 [ ] ) -- _deref_pbuc1=vbuc2 
+  //SEG15 [10] *((const byte*) DTV_BLITTER_SRCA_MOD_HI#0) ← (byte/signed byte/word/signed word/dword/signed dword) 0 [ ] ( main:2 [ ] ) -- _deref_pbuc1=vbuc2 
     lda #0
     sta DTV_BLITTER_SRCA_MOD_HI
-  //SEG15 [10] *((const byte*) DTV_BLITTER_SRCA_LIN_LO#0) ← <(word/signed word/dword/signed dword) 256 [ ] ( main:2 [ ] ) -- _deref_pbuc1=vbuc2 
+  //SEG16 [11] *((const byte*) DTV_BLITTER_SRCA_LIN_LO#0) ← <(word/signed word/dword/signed dword) 256 [ ] ( main:2 [ ] ) -- _deref_pbuc1=vbuc2 
     lda #<$100
     sta DTV_BLITTER_SRCA_LIN_LO
-  //SEG16 [11] *((const byte*) DTV_BLITTER_SRCA_LIN_HI#0) ← >(word/signed word/dword/signed dword) 256 [ ] ( main:2 [ ] ) -- _deref_pbuc1=vbuc2 
+  //SEG17 [12] *((const byte*) DTV_BLITTER_SRCA_LIN_HI#0) ← >(word/signed word/dword/signed dword) 256 [ ] ( main:2 [ ] ) -- _deref_pbuc1=vbuc2 
     lda #>$100
     sta DTV_BLITTER_SRCA_LIN_HI
-  //SEG17 [12] *((const byte*) DTV_BLITTER_SRCA_STEP#0) ← (byte/signed byte/word/signed word/dword/signed dword) 16 [ ] ( main:2 [ ] ) -- _deref_pbuc1=vbuc2 
+  //SEG18 [13] *((const byte*) DTV_BLITTER_SRCA_STEP#0) ← (byte/signed byte/word/signed word/dword/signed dword) 16 [ ] ( main:2 [ ] ) -- _deref_pbuc1=vbuc2 
     lda #$10
     sta DTV_BLITTER_SRCA_STEP
-  //SEG18 [13] *((const byte*) DTV_BLITTER_SRCB_LO#0) ← <(const byte[]) SRCB#0 [ ] ( main:2 [ ] ) -- _deref_pbuc1=vbuc2 
+  //SEG19 [14] *((const byte*) DTV_BLITTER_SRCB_LO#0) ← <(const byte[]) SRCB#0 [ ] ( main:2 [ ] ) -- _deref_pbuc1=vbuc2 
     lda #<SRCB
     sta DTV_BLITTER_SRCB_LO
-  //SEG19 [14] *((const byte*) DTV_BLITTER_SRCB_MI#0) ← >(const byte[]) SRCB#0 [ ] ( main:2 [ ] ) -- _deref_pbuc1=vbuc2 
+  //SEG20 [15] *((const byte*) DTV_BLITTER_SRCB_MI#0) ← >(const byte[]) SRCB#0 [ ] ( main:2 [ ] ) -- _deref_pbuc1=vbuc2 
     lda #>SRCB
     sta DTV_BLITTER_SRCB_MI
-  //SEG20 [15] *((const byte*) DTV_BLITTER_SRCB_HI#0) ← (byte/signed byte/word/signed word/dword/signed dword) 0 [ ] ( main:2 [ ] ) -- _deref_pbuc1=vbuc2 
+  //SEG21 [16] *((const byte*) DTV_BLITTER_SRCB_HI#0) ← (byte/signed byte/word/signed word/dword/signed dword) 0 [ ] ( main:2 [ ] ) -- _deref_pbuc1=vbuc2 
     lda #0
     sta DTV_BLITTER_SRCB_HI
-  //SEG21 [16] *((const byte*) DTV_BLITTER_SRCB_MOD_LO#0) ← (byte/signed byte/word/signed word/dword/signed dword) 0 [ ] ( main:2 [ ] ) -- _deref_pbuc1=vbuc2 
+  //SEG22 [17] *((const byte*) DTV_BLITTER_SRCB_MOD_LO#0) ← (byte/signed byte/word/signed word/dword/signed dword) 0 [ ] ( main:2 [ ] ) -- _deref_pbuc1=vbuc2 
     lda #0
     sta DTV_BLITTER_SRCB_MOD_LO
-  //SEG22 [17] *((const byte*) DTV_BLITTER_SRCB_MOD_HI#0) ← (byte/signed byte/word/signed word/dword/signed dword) 0 [ ] ( main:2 [ ] ) -- _deref_pbuc1=vbuc2 
+  //SEG23 [18] *((const byte*) DTV_BLITTER_SRCB_MOD_HI#0) ← (byte/signed byte/word/signed word/dword/signed dword) 0 [ ] ( main:2 [ ] ) -- _deref_pbuc1=vbuc2 
     lda #0
     sta DTV_BLITTER_SRCB_MOD_HI
-  //SEG23 [18] *((const byte*) DTV_BLITTER_SRCB_LIN_LO#0) ← <(word/signed word/dword/signed dword) 256 [ ] ( main:2 [ ] ) -- _deref_pbuc1=vbuc2 
+  //SEG24 [19] *((const byte*) DTV_BLITTER_SRCB_LIN_LO#0) ← <(word/signed word/dword/signed dword) 256 [ ] ( main:2 [ ] ) -- _deref_pbuc1=vbuc2 
     lda #<$100
     sta DTV_BLITTER_SRCB_LIN_LO
-  //SEG24 [19] *((const byte*) DTV_BLITTER_SRCB_LIN_HI#0) ← >(word/signed word/dword/signed dword) 256 [ ] ( main:2 [ ] ) -- _deref_pbuc1=vbuc2 
+  //SEG25 [20] *((const byte*) DTV_BLITTER_SRCB_LIN_HI#0) ← >(word/signed word/dword/signed dword) 256 [ ] ( main:2 [ ] ) -- _deref_pbuc1=vbuc2 
     lda #>$100
     sta DTV_BLITTER_SRCB_LIN_HI
-  //SEG25 [20] *((const byte*) DTV_BLITTER_SRCB_STEP#0) ← (byte/signed byte/word/signed word/dword/signed dword) 0 [ ] ( main:2 [ ] ) -- _deref_pbuc1=vbuc2 
+  //SEG26 [21] *((const byte*) DTV_BLITTER_SRCB_STEP#0) ← (byte/signed byte/word/signed word/dword/signed dword) 0 [ ] ( main:2 [ ] ) -- _deref_pbuc1=vbuc2 
     lda #0
     sta DTV_BLITTER_SRCB_STEP
-  //SEG26 [21] *((const byte*) DTV_BLITTER_DEST_LO#0) ← <(const byte*) SCREEN#0 [ ] ( main:2 [ ] ) -- _deref_pbuc1=vbuc2 
+  //SEG27 [22] *((const byte*) DTV_BLITTER_DEST_LO#0) ← <(const byte*) SCREEN#0 [ ] ( main:2 [ ] ) -- _deref_pbuc1=vbuc2 
     lda #<SCREEN
     sta DTV_BLITTER_DEST_LO
-  //SEG27 [22] *((const byte*) DTV_BLITTER_DEST_MI#0) ← >(const byte*) SCREEN#0 [ ] ( main:2 [ ] ) -- _deref_pbuc1=vbuc2 
+  //SEG28 [23] *((const byte*) DTV_BLITTER_DEST_MI#0) ← >(const byte*) SCREEN#0 [ ] ( main:2 [ ] ) -- _deref_pbuc1=vbuc2 
     lda #>SCREEN
     sta DTV_BLITTER_DEST_MI
-  //SEG28 [23] *((const byte*) DTV_BLITTER_DEST_HI#0) ← (byte/signed byte/word/signed word/dword/signed dword) 0 [ ] ( main:2 [ ] ) -- _deref_pbuc1=vbuc2 
+  //SEG29 [24] *((const byte*) DTV_BLITTER_DEST_HI#0) ← (byte/signed byte/word/signed word/dword/signed dword) 0 [ ] ( main:2 [ ] ) -- _deref_pbuc1=vbuc2 
     lda #0
     sta DTV_BLITTER_DEST_HI
-  //SEG29 [24] *((const byte*) DTV_BLITTER_DEST_MOD_LO#0) ← (byte/signed byte/word/signed word/dword/signed dword) 0 [ ] ( main:2 [ ] ) -- _deref_pbuc1=vbuc2 
+  //SEG30 [25] *((const byte*) DTV_BLITTER_DEST_MOD_LO#0) ← (byte/signed byte/word/signed word/dword/signed dword) 0 [ ] ( main:2 [ ] ) -- _deref_pbuc1=vbuc2 
     lda #0
     sta DTV_BLITTER_DEST_MOD_LO
-  //SEG30 [25] *((const byte*) DTV_BLITTER_DEST_MOD_HI#0) ← (byte/signed byte/word/signed word/dword/signed dword) 0 [ ] ( main:2 [ ] ) -- _deref_pbuc1=vbuc2 
+  //SEG31 [26] *((const byte*) DTV_BLITTER_DEST_MOD_HI#0) ← (byte/signed byte/word/signed word/dword/signed dword) 0 [ ] ( main:2 [ ] ) -- _deref_pbuc1=vbuc2 
     lda #0
     sta DTV_BLITTER_DEST_MOD_HI
-  //SEG31 [26] *((const byte*) DTV_BLITTER_DEST_LIN_LO#0) ← <(word/signed word/dword/signed dword) 256 [ ] ( main:2 [ ] ) -- _deref_pbuc1=vbuc2 
+  //SEG32 [27] *((const byte*) DTV_BLITTER_DEST_LIN_LO#0) ← <(word/signed word/dword/signed dword) 256 [ ] ( main:2 [ ] ) -- _deref_pbuc1=vbuc2 
     lda #<$100
     sta DTV_BLITTER_DEST_LIN_LO
-  //SEG32 [27] *((const byte*) DTV_BLITTER_DEST_LIN_HI#0) ← >(word/signed word/dword/signed dword) 256 [ ] ( main:2 [ ] ) -- _deref_pbuc1=vbuc2 
+  //SEG33 [28] *((const byte*) DTV_BLITTER_DEST_LIN_HI#0) ← >(word/signed word/dword/signed dword) 256 [ ] ( main:2 [ ] ) -- _deref_pbuc1=vbuc2 
     lda #>$100
     sta DTV_BLITTER_DEST_LIN_HI
-  //SEG33 [28] *((const byte*) DTV_BLITTER_DEST_STEP#0) ← (byte/signed byte/word/signed word/dword/signed dword) 16 [ ] ( main:2 [ ] ) -- _deref_pbuc1=vbuc2 
+  //SEG34 [29] *((const byte*) DTV_BLITTER_DEST_STEP#0) ← (byte/signed byte/word/signed word/dword/signed dword) 16 [ ] ( main:2 [ ] ) -- _deref_pbuc1=vbuc2 
     lda #$10
     sta DTV_BLITTER_DEST_STEP
-  //SEG34 [29] *((const byte*) DTV_BLITTER_LEN_LO#0) ← (const byte) SRCA_LEN#0 [ ] ( main:2 [ ] ) -- _deref_pbuc1=vbuc2 
+  //SEG35 [30] *((const byte*) DTV_BLITTER_LEN_LO#0) ← (const byte) SRCA_LEN#0 [ ] ( main:2 [ ] ) -- _deref_pbuc1=vbuc2 
     lda #SRCA_LEN
     sta DTV_BLITTER_LEN_LO
-  //SEG35 [30] *((const byte*) DTV_BLITTER_LEN_HI#0) ← (byte/signed byte/word/signed word/dword/signed dword) 0 [ ] ( main:2 [ ] ) -- _deref_pbuc1=vbuc2 
+  //SEG36 [31] *((const byte*) DTV_BLITTER_LEN_HI#0) ← (byte/signed byte/word/signed word/dword/signed dword) 0 [ ] ( main:2 [ ] ) -- _deref_pbuc1=vbuc2 
     lda #0
     sta DTV_BLITTER_LEN_HI
-  //SEG36 [31] *((const byte*) DTV_BLITTER_ALU#0) ← (const byte) DTV_BLIT_ADD#0 [ ] ( main:2 [ ] ) -- _deref_pbuc1=vbuc2 
+  //SEG37 [32] *((const byte*) DTV_BLITTER_ALU#0) ← (const byte) DTV_BLIT_ADD#0 [ ] ( main:2 [ ] ) -- _deref_pbuc1=vbuc2 
     lda #DTV_BLIT_ADD
     sta DTV_BLITTER_ALU
-  //SEG37 [32] *((const byte*) DTV_BLITTER_TRANSPARANCY#0) ← (const byte) DTV_BLIT_TRANSPARANCY_NONE#0 [ ] ( main:2 [ ] ) -- _deref_pbuc1=vbuc2 
+  //SEG38 [33] *((const byte*) DTV_BLITTER_TRANSPARANCY#0) ← (const byte) DTV_BLIT_TRANSPARANCY_NONE#0 [ ] ( main:2 [ ] ) -- _deref_pbuc1=vbuc2 
     lda #DTV_BLIT_TRANSPARANCY_NONE
     sta DTV_BLITTER_TRANSPARANCY
-  //SEG38 [33] *((const byte*) DTV_BLITTER_CONTROL#0) ← (const byte) DTV_BLIT_FORCE_START#0|(const byte) DTV_BLIT_SRCA_FWD#0|(const byte) DTV_BLIT_SRCB_FWD#0|(const byte) DTV_BLIT_DEST_FWD#0 [ ] ( main:2 [ ] ) -- _deref_pbuc1=vbuc2 
+  //SEG39 [34] *((const byte*) DTV_BLITTER_CONTROL#0) ← (const byte) DTV_BLIT_FORCE_START#0|(const byte) DTV_BLIT_SRCA_FWD#0|(const byte) DTV_BLIT_SRCB_FWD#0|(const byte) DTV_BLIT_DEST_FWD#0 [ ] ( main:2 [ ] ) -- _deref_pbuc1=vbuc2 
     lda #DTV_BLIT_FORCE_START|DTV_BLIT_SRCA_FWD|DTV_BLIT_SRCB_FWD|DTV_BLIT_DEST_FWD
     sta DTV_BLITTER_CONTROL
-  //SEG39 [34] *((const byte*) DTV_BLITTER_CONTROL2#0) ← (const byte) DTV_BLIT_DEST_CONT#0 [ ] ( main:2 [ ] ) -- _deref_pbuc1=vbuc2 
+  //SEG40 [35] *((const byte*) DTV_BLITTER_CONTROL2#0) ← (const byte) DTV_BLIT_DEST_CONT#0 [ ] ( main:2 [ ] ) -- _deref_pbuc1=vbuc2 
     lda #DTV_BLIT_DEST_CONT
     sta DTV_BLITTER_CONTROL2
-  //SEG40 [35] phi from main to main::@2 [phi:main->main::@2]
+  //SEG41 [36] phi from main to main::@2 [phi:main->main::@2]
   b2_from_main:
-  //SEG41 [35] phi (byte) main::r#2 = (byte/signed byte/word/signed word/dword/signed dword) 0 [phi:main->main::@2#0] -- vbuxx=vbuc1 
+  //SEG42 [36] phi (byte) main::r#2 = (byte/signed byte/word/signed word/dword/signed dword) 0 [phi:main->main::@2#0] -- vbuxx=vbuc1 
     ldx #0
     jmp b2
-  //SEG42 [35] phi from main::@2 to main::@2 [phi:main::@2->main::@2]
+  //SEG43 [36] phi from main::@2 to main::@2 [phi:main::@2->main::@2]
   b2_from_b2:
     jmp b2
-  //SEG43 [35] phi from main::@3 to main::@2 [phi:main::@3->main::@2]
+  //SEG44 [36] phi from main::@3 to main::@2 [phi:main::@3->main::@2]
   b2_from_b3:
-  //SEG44 [35] phi (byte) main::r#2 = (byte) main::r#1 [phi:main::@3->main::@2#0] -- register_copy 
+  //SEG45 [36] phi (byte) main::r#2 = (byte) main::r#1 [phi:main::@3->main::@2#0] -- register_copy 
     jmp b2
-  //SEG45 main::@2
+  //SEG46 main::@2
   b2:
-  //SEG46 [36] (byte~) main::$15 ← *((const byte*) DTV_BLITTER_CONTROL2#0) & (const byte) DTV_BLIT_STATUS_BUSY#0 [ main::r#2 main::$15 ] ( main:2 [ main::r#2 main::$15 ] ) -- vbuaa=_deref_pbuc1_band_vbuc2 
+  //SEG47 [37] (byte~) main::$15 ← *((const byte*) DTV_BLITTER_CONTROL2#0) & (const byte) DTV_BLIT_STATUS_BUSY#0 [ main::r#2 main::$15 ] ( main:2 [ main::r#2 main::$15 ] ) -- vbuaa=_deref_pbuc1_band_vbuc2 
     lda DTV_BLITTER_CONTROL2
     and #DTV_BLIT_STATUS_BUSY
-  //SEG47 [37] if((byte~) main::$15!=(byte/signed byte/word/signed word/dword/signed dword) 0) goto main::@2 [ main::r#2 ] ( main:2 [ main::r#2 ] ) -- vbuaa_neq_0_then_la1 
+  //SEG48 [38] if((byte~) main::$15!=(byte/signed byte/word/signed word/dword/signed dword) 0) goto main::@2 [ main::r#2 ] ( main:2 [ main::r#2 ] ) -- vbuaa_neq_0_then_la1 
     cmp #0
     bne b2_from_b2
     jmp b3
-  //SEG48 main::@3
+  //SEG49 main::@3
   b3:
-  //SEG49 [38] *((const byte*) DTV_BLITTER_CONTROL#0) ← (const byte) DTV_BLIT_FORCE_START#0|(const byte) DTV_BLIT_SRCA_FWD#0|(const byte) DTV_BLIT_SRCB_FWD#0|(const byte) DTV_BLIT_DEST_FWD#0 [ main::r#2 ] ( main:2 [ main::r#2 ] ) -- _deref_pbuc1=vbuc2 
+  //SEG50 [39] *((const byte*) DTV_BLITTER_CONTROL#0) ← (const byte) DTV_BLIT_FORCE_START#0|(const byte) DTV_BLIT_SRCA_FWD#0|(const byte) DTV_BLIT_SRCB_FWD#0|(const byte) DTV_BLIT_DEST_FWD#0 [ main::r#2 ] ( main:2 [ main::r#2 ] ) -- _deref_pbuc1=vbuc2 
     lda #DTV_BLIT_FORCE_START|DTV_BLIT_SRCA_FWD|DTV_BLIT_SRCB_FWD|DTV_BLIT_DEST_FWD
     sta DTV_BLITTER_CONTROL
-  //SEG50 [39] (byte) main::r#1 ← ++ (byte) main::r#2 [ main::r#1 ] ( main:2 [ main::r#1 ] ) -- vbuxx=_inc_vbuxx 
+  //SEG51 [40] (byte) main::r#1 ← ++ (byte) main::r#2 [ main::r#1 ] ( main:2 [ main::r#1 ] ) -- vbuxx=_inc_vbuxx 
     inx
-  //SEG51 [40] if((byte) main::r#1!=(byte/signed byte/word/signed word/dword/signed dword) 8) goto main::@2 [ main::r#1 ] ( main:2 [ main::r#1 ] ) -- vbuxx_neq_vbuc1_then_la1 
+  //SEG52 [41] if((byte) main::r#1!=(byte/signed byte/word/signed word/dword/signed dword) 8) goto main::@2 [ main::r#1 ] ( main:2 [ main::r#1 ] ) -- vbuxx_neq_vbuc1_then_la1 
     cpx #8
     bne b2_from_b3
     jmp breturn
-  //SEG52 main::@return
+  //SEG53 main::@return
   breturn:
-  //SEG53 [41] return  [ ] ( main:2 [ ] )
+  //SEG54 [42] return  [ ] ( main:2 [ ] )
     rts
 }
   SRCA: .byte 'c', 'a', 'm', 'e', 'l', 'o', 't', '!', ' '
@@ -2361,6 +2382,8 @@ FINAL SYMBOL TABLE
 (const byte*) DTV_BLITTER_TRANSPARANCY#0 DTV_BLITTER_TRANSPARANCY = ((byte*))(word/dword/signed dword) 54075
 (byte) DTV_BLIT_ADD
 (const byte) DTV_BLIT_ADD#0 DTV_BLIT_ADD = (byte/signed byte/word/signed word/dword/signed dword) 48
+(byte) DTV_BLIT_CLEAR_IRQ
+(const byte) DTV_BLIT_CLEAR_IRQ#0 DTV_BLIT_CLEAR_IRQ = (byte/signed byte/word/signed word/dword/signed dword) 1
 (byte) DTV_BLIT_DEST_CONT
 (const byte) DTV_BLIT_DEST_CONT#0 DTV_BLIT_DEST_CONT = (byte/signed byte/word/signed word/dword/signed dword) 8
 (byte) DTV_BLIT_DEST_FWD
@@ -2401,7 +2424,7 @@ reg byte a [ main::$15 ]
 
 
 FINAL ASSEMBLER
-Score: 1561
+Score: 1567
 
 //SEG0 Basic Upstart
 .pc = $801 "Basic"
@@ -2446,6 +2469,7 @@ Score: 1561
   .label DTV_BLITTER_ALU = $d33e
   .const DTV_BLIT_ADD = $30
   .label DTV_BLITTER_CONTROL2 = $d33f
+  .const DTV_BLIT_CLEAR_IRQ = 1
   .const DTV_BLIT_DEST_CONT = 8
   .const DTV_BLIT_STATUS_BUSY = 1
   .label SCREEN = $400
@@ -2462,115 +2486,118 @@ main: {
   //SEG9 [4] *((const byte*) DTV_FEATURE#0) ← (const byte) DTV_FEATURE_ENABLE#0 [ ] ( main:2 [ ] ) -- _deref_pbuc1=vbuc2 
     lda #DTV_FEATURE_ENABLE
     sta DTV_FEATURE
-  //SEG10 [5] *((const byte*) DTV_BLITTER_SRCA_LO#0) ← <(const byte[]) SRCA#0 [ ] ( main:2 [ ] ) -- _deref_pbuc1=vbuc2 
+  //SEG10 [5] *((const byte*) DTV_BLITTER_CONTROL2#0) ← (const byte) DTV_BLIT_CLEAR_IRQ#0 [ ] ( main:2 [ ] ) -- _deref_pbuc1=vbuc2 
+    lda #DTV_BLIT_CLEAR_IRQ
+    sta DTV_BLITTER_CONTROL2
+  //SEG11 [6] *((const byte*) DTV_BLITTER_SRCA_LO#0) ← <(const byte[]) SRCA#0 [ ] ( main:2 [ ] ) -- _deref_pbuc1=vbuc2 
     lda #<SRCA
     sta DTV_BLITTER_SRCA_LO
-  //SEG11 [6] *((const byte*) DTV_BLITTER_SRCA_MI#0) ← >(const byte[]) SRCA#0 [ ] ( main:2 [ ] ) -- _deref_pbuc1=vbuc2 
+  //SEG12 [7] *((const byte*) DTV_BLITTER_SRCA_MI#0) ← >(const byte[]) SRCA#0 [ ] ( main:2 [ ] ) -- _deref_pbuc1=vbuc2 
     lda #>SRCA
     sta DTV_BLITTER_SRCA_MI
-  //SEG12 [7] *((const byte*) DTV_BLITTER_SRCA_HI#0) ← (byte/signed byte/word/signed word/dword/signed dword) 0 [ ] ( main:2 [ ] ) -- _deref_pbuc1=vbuc2 
+  //SEG13 [8] *((const byte*) DTV_BLITTER_SRCA_HI#0) ← (byte/signed byte/word/signed word/dword/signed dword) 0 [ ] ( main:2 [ ] ) -- _deref_pbuc1=vbuc2 
     lda #0
     sta DTV_BLITTER_SRCA_HI
-  //SEG13 [8] *((const byte*) DTV_BLITTER_SRCA_MOD_LO#0) ← (byte/signed byte/word/signed word/dword/signed dword) 0 [ ] ( main:2 [ ] ) -- _deref_pbuc1=vbuc2 
+  //SEG14 [9] *((const byte*) DTV_BLITTER_SRCA_MOD_LO#0) ← (byte/signed byte/word/signed word/dword/signed dword) 0 [ ] ( main:2 [ ] ) -- _deref_pbuc1=vbuc2 
     sta DTV_BLITTER_SRCA_MOD_LO
-  //SEG14 [9] *((const byte*) DTV_BLITTER_SRCA_MOD_HI#0) ← (byte/signed byte/word/signed word/dword/signed dword) 0 [ ] ( main:2 [ ] ) -- _deref_pbuc1=vbuc2 
+  //SEG15 [10] *((const byte*) DTV_BLITTER_SRCA_MOD_HI#0) ← (byte/signed byte/word/signed word/dword/signed dword) 0 [ ] ( main:2 [ ] ) -- _deref_pbuc1=vbuc2 
     sta DTV_BLITTER_SRCA_MOD_HI
-  //SEG15 [10] *((const byte*) DTV_BLITTER_SRCA_LIN_LO#0) ← <(word/signed word/dword/signed dword) 256 [ ] ( main:2 [ ] ) -- _deref_pbuc1=vbuc2 
+  //SEG16 [11] *((const byte*) DTV_BLITTER_SRCA_LIN_LO#0) ← <(word/signed word/dword/signed dword) 256 [ ] ( main:2 [ ] ) -- _deref_pbuc1=vbuc2 
     lda #<$100
     sta DTV_BLITTER_SRCA_LIN_LO
-  //SEG16 [11] *((const byte*) DTV_BLITTER_SRCA_LIN_HI#0) ← >(word/signed word/dword/signed dword) 256 [ ] ( main:2 [ ] ) -- _deref_pbuc1=vbuc2 
+  //SEG17 [12] *((const byte*) DTV_BLITTER_SRCA_LIN_HI#0) ← >(word/signed word/dword/signed dword) 256 [ ] ( main:2 [ ] ) -- _deref_pbuc1=vbuc2 
     lda #>$100
     sta DTV_BLITTER_SRCA_LIN_HI
-  //SEG17 [12] *((const byte*) DTV_BLITTER_SRCA_STEP#0) ← (byte/signed byte/word/signed word/dword/signed dword) 16 [ ] ( main:2 [ ] ) -- _deref_pbuc1=vbuc2 
+  //SEG18 [13] *((const byte*) DTV_BLITTER_SRCA_STEP#0) ← (byte/signed byte/word/signed word/dword/signed dword) 16 [ ] ( main:2 [ ] ) -- _deref_pbuc1=vbuc2 
     lda #$10
     sta DTV_BLITTER_SRCA_STEP
-  //SEG18 [13] *((const byte*) DTV_BLITTER_SRCB_LO#0) ← <(const byte[]) SRCB#0 [ ] ( main:2 [ ] ) -- _deref_pbuc1=vbuc2 
+  //SEG19 [14] *((const byte*) DTV_BLITTER_SRCB_LO#0) ← <(const byte[]) SRCB#0 [ ] ( main:2 [ ] ) -- _deref_pbuc1=vbuc2 
     lda #<SRCB
     sta DTV_BLITTER_SRCB_LO
-  //SEG19 [14] *((const byte*) DTV_BLITTER_SRCB_MI#0) ← >(const byte[]) SRCB#0 [ ] ( main:2 [ ] ) -- _deref_pbuc1=vbuc2 
+  //SEG20 [15] *((const byte*) DTV_BLITTER_SRCB_MI#0) ← >(const byte[]) SRCB#0 [ ] ( main:2 [ ] ) -- _deref_pbuc1=vbuc2 
     lda #>SRCB
     sta DTV_BLITTER_SRCB_MI
-  //SEG20 [15] *((const byte*) DTV_BLITTER_SRCB_HI#0) ← (byte/signed byte/word/signed word/dword/signed dword) 0 [ ] ( main:2 [ ] ) -- _deref_pbuc1=vbuc2 
+  //SEG21 [16] *((const byte*) DTV_BLITTER_SRCB_HI#0) ← (byte/signed byte/word/signed word/dword/signed dword) 0 [ ] ( main:2 [ ] ) -- _deref_pbuc1=vbuc2 
     lda #0
     sta DTV_BLITTER_SRCB_HI
-  //SEG21 [16] *((const byte*) DTV_BLITTER_SRCB_MOD_LO#0) ← (byte/signed byte/word/signed word/dword/signed dword) 0 [ ] ( main:2 [ ] ) -- _deref_pbuc1=vbuc2 
+  //SEG22 [17] *((const byte*) DTV_BLITTER_SRCB_MOD_LO#0) ← (byte/signed byte/word/signed word/dword/signed dword) 0 [ ] ( main:2 [ ] ) -- _deref_pbuc1=vbuc2 
     sta DTV_BLITTER_SRCB_MOD_LO
-  //SEG22 [17] *((const byte*) DTV_BLITTER_SRCB_MOD_HI#0) ← (byte/signed byte/word/signed word/dword/signed dword) 0 [ ] ( main:2 [ ] ) -- _deref_pbuc1=vbuc2 
+  //SEG23 [18] *((const byte*) DTV_BLITTER_SRCB_MOD_HI#0) ← (byte/signed byte/word/signed word/dword/signed dword) 0 [ ] ( main:2 [ ] ) -- _deref_pbuc1=vbuc2 
     sta DTV_BLITTER_SRCB_MOD_HI
-  //SEG23 [18] *((const byte*) DTV_BLITTER_SRCB_LIN_LO#0) ← <(word/signed word/dword/signed dword) 256 [ ] ( main:2 [ ] ) -- _deref_pbuc1=vbuc2 
+  //SEG24 [19] *((const byte*) DTV_BLITTER_SRCB_LIN_LO#0) ← <(word/signed word/dword/signed dword) 256 [ ] ( main:2 [ ] ) -- _deref_pbuc1=vbuc2 
     lda #<$100
     sta DTV_BLITTER_SRCB_LIN_LO
-  //SEG24 [19] *((const byte*) DTV_BLITTER_SRCB_LIN_HI#0) ← >(word/signed word/dword/signed dword) 256 [ ] ( main:2 [ ] ) -- _deref_pbuc1=vbuc2 
+  //SEG25 [20] *((const byte*) DTV_BLITTER_SRCB_LIN_HI#0) ← >(word/signed word/dword/signed dword) 256 [ ] ( main:2 [ ] ) -- _deref_pbuc1=vbuc2 
     lda #>$100
     sta DTV_BLITTER_SRCB_LIN_HI
-  //SEG25 [20] *((const byte*) DTV_BLITTER_SRCB_STEP#0) ← (byte/signed byte/word/signed word/dword/signed dword) 0 [ ] ( main:2 [ ] ) -- _deref_pbuc1=vbuc2 
+  //SEG26 [21] *((const byte*) DTV_BLITTER_SRCB_STEP#0) ← (byte/signed byte/word/signed word/dword/signed dword) 0 [ ] ( main:2 [ ] ) -- _deref_pbuc1=vbuc2 
     lda #0
     sta DTV_BLITTER_SRCB_STEP
-  //SEG26 [21] *((const byte*) DTV_BLITTER_DEST_LO#0) ← <(const byte*) SCREEN#0 [ ] ( main:2 [ ] ) -- _deref_pbuc1=vbuc2 
+  //SEG27 [22] *((const byte*) DTV_BLITTER_DEST_LO#0) ← <(const byte*) SCREEN#0 [ ] ( main:2 [ ] ) -- _deref_pbuc1=vbuc2 
     lda #<SCREEN
     sta DTV_BLITTER_DEST_LO
-  //SEG27 [22] *((const byte*) DTV_BLITTER_DEST_MI#0) ← >(const byte*) SCREEN#0 [ ] ( main:2 [ ] ) -- _deref_pbuc1=vbuc2 
+  //SEG28 [23] *((const byte*) DTV_BLITTER_DEST_MI#0) ← >(const byte*) SCREEN#0 [ ] ( main:2 [ ] ) -- _deref_pbuc1=vbuc2 
     lda #>SCREEN
     sta DTV_BLITTER_DEST_MI
-  //SEG28 [23] *((const byte*) DTV_BLITTER_DEST_HI#0) ← (byte/signed byte/word/signed word/dword/signed dword) 0 [ ] ( main:2 [ ] ) -- _deref_pbuc1=vbuc2 
+  //SEG29 [24] *((const byte*) DTV_BLITTER_DEST_HI#0) ← (byte/signed byte/word/signed word/dword/signed dword) 0 [ ] ( main:2 [ ] ) -- _deref_pbuc1=vbuc2 
     lda #0
     sta DTV_BLITTER_DEST_HI
-  //SEG29 [24] *((const byte*) DTV_BLITTER_DEST_MOD_LO#0) ← (byte/signed byte/word/signed word/dword/signed dword) 0 [ ] ( main:2 [ ] ) -- _deref_pbuc1=vbuc2 
+  //SEG30 [25] *((const byte*) DTV_BLITTER_DEST_MOD_LO#0) ← (byte/signed byte/word/signed word/dword/signed dword) 0 [ ] ( main:2 [ ] ) -- _deref_pbuc1=vbuc2 
     sta DTV_BLITTER_DEST_MOD_LO
-  //SEG30 [25] *((const byte*) DTV_BLITTER_DEST_MOD_HI#0) ← (byte/signed byte/word/signed word/dword/signed dword) 0 [ ] ( main:2 [ ] ) -- _deref_pbuc1=vbuc2 
+  //SEG31 [26] *((const byte*) DTV_BLITTER_DEST_MOD_HI#0) ← (byte/signed byte/word/signed word/dword/signed dword) 0 [ ] ( main:2 [ ] ) -- _deref_pbuc1=vbuc2 
     sta DTV_BLITTER_DEST_MOD_HI
-  //SEG31 [26] *((const byte*) DTV_BLITTER_DEST_LIN_LO#0) ← <(word/signed word/dword/signed dword) 256 [ ] ( main:2 [ ] ) -- _deref_pbuc1=vbuc2 
+  //SEG32 [27] *((const byte*) DTV_BLITTER_DEST_LIN_LO#0) ← <(word/signed word/dword/signed dword) 256 [ ] ( main:2 [ ] ) -- _deref_pbuc1=vbuc2 
     lda #<$100
     sta DTV_BLITTER_DEST_LIN_LO
-  //SEG32 [27] *((const byte*) DTV_BLITTER_DEST_LIN_HI#0) ← >(word/signed word/dword/signed dword) 256 [ ] ( main:2 [ ] ) -- _deref_pbuc1=vbuc2 
+  //SEG33 [28] *((const byte*) DTV_BLITTER_DEST_LIN_HI#0) ← >(word/signed word/dword/signed dword) 256 [ ] ( main:2 [ ] ) -- _deref_pbuc1=vbuc2 
     lda #>$100
     sta DTV_BLITTER_DEST_LIN_HI
-  //SEG33 [28] *((const byte*) DTV_BLITTER_DEST_STEP#0) ← (byte/signed byte/word/signed word/dword/signed dword) 16 [ ] ( main:2 [ ] ) -- _deref_pbuc1=vbuc2 
+  //SEG34 [29] *((const byte*) DTV_BLITTER_DEST_STEP#0) ← (byte/signed byte/word/signed word/dword/signed dword) 16 [ ] ( main:2 [ ] ) -- _deref_pbuc1=vbuc2 
     lda #$10
     sta DTV_BLITTER_DEST_STEP
-  //SEG34 [29] *((const byte*) DTV_BLITTER_LEN_LO#0) ← (const byte) SRCA_LEN#0 [ ] ( main:2 [ ] ) -- _deref_pbuc1=vbuc2 
+  //SEG35 [30] *((const byte*) DTV_BLITTER_LEN_LO#0) ← (const byte) SRCA_LEN#0 [ ] ( main:2 [ ] ) -- _deref_pbuc1=vbuc2 
     lda #SRCA_LEN
     sta DTV_BLITTER_LEN_LO
-  //SEG35 [30] *((const byte*) DTV_BLITTER_LEN_HI#0) ← (byte/signed byte/word/signed word/dword/signed dword) 0 [ ] ( main:2 [ ] ) -- _deref_pbuc1=vbuc2 
+  //SEG36 [31] *((const byte*) DTV_BLITTER_LEN_HI#0) ← (byte/signed byte/word/signed word/dword/signed dword) 0 [ ] ( main:2 [ ] ) -- _deref_pbuc1=vbuc2 
     lda #0
     sta DTV_BLITTER_LEN_HI
-  //SEG36 [31] *((const byte*) DTV_BLITTER_ALU#0) ← (const byte) DTV_BLIT_ADD#0 [ ] ( main:2 [ ] ) -- _deref_pbuc1=vbuc2 
+  //SEG37 [32] *((const byte*) DTV_BLITTER_ALU#0) ← (const byte) DTV_BLIT_ADD#0 [ ] ( main:2 [ ] ) -- _deref_pbuc1=vbuc2 
     lda #DTV_BLIT_ADD
     sta DTV_BLITTER_ALU
-  //SEG37 [32] *((const byte*) DTV_BLITTER_TRANSPARANCY#0) ← (const byte) DTV_BLIT_TRANSPARANCY_NONE#0 [ ] ( main:2 [ ] ) -- _deref_pbuc1=vbuc2 
+  //SEG38 [33] *((const byte*) DTV_BLITTER_TRANSPARANCY#0) ← (const byte) DTV_BLIT_TRANSPARANCY_NONE#0 [ ] ( main:2 [ ] ) -- _deref_pbuc1=vbuc2 
     lda #DTV_BLIT_TRANSPARANCY_NONE
     sta DTV_BLITTER_TRANSPARANCY
-  //SEG38 [33] *((const byte*) DTV_BLITTER_CONTROL#0) ← (const byte) DTV_BLIT_FORCE_START#0|(const byte) DTV_BLIT_SRCA_FWD#0|(const byte) DTV_BLIT_SRCB_FWD#0|(const byte) DTV_BLIT_DEST_FWD#0 [ ] ( main:2 [ ] ) -- _deref_pbuc1=vbuc2 
+  //SEG39 [34] *((const byte*) DTV_BLITTER_CONTROL#0) ← (const byte) DTV_BLIT_FORCE_START#0|(const byte) DTV_BLIT_SRCA_FWD#0|(const byte) DTV_BLIT_SRCB_FWD#0|(const byte) DTV_BLIT_DEST_FWD#0 [ ] ( main:2 [ ] ) -- _deref_pbuc1=vbuc2 
     lda #DTV_BLIT_FORCE_START|DTV_BLIT_SRCA_FWD|DTV_BLIT_SRCB_FWD|DTV_BLIT_DEST_FWD
     sta DTV_BLITTER_CONTROL
-  //SEG39 [34] *((const byte*) DTV_BLITTER_CONTROL2#0) ← (const byte) DTV_BLIT_DEST_CONT#0 [ ] ( main:2 [ ] ) -- _deref_pbuc1=vbuc2 
+  //SEG40 [35] *((const byte*) DTV_BLITTER_CONTROL2#0) ← (const byte) DTV_BLIT_DEST_CONT#0 [ ] ( main:2 [ ] ) -- _deref_pbuc1=vbuc2 
     lda #DTV_BLIT_DEST_CONT
     sta DTV_BLITTER_CONTROL2
-  //SEG40 [35] phi from main to main::@2 [phi:main->main::@2]
-  //SEG41 [35] phi (byte) main::r#2 = (byte/signed byte/word/signed word/dword/signed dword) 0 [phi:main->main::@2#0] -- vbuxx=vbuc1 
+  //SEG41 [36] phi from main to main::@2 [phi:main->main::@2]
+  //SEG42 [36] phi (byte) main::r#2 = (byte/signed byte/word/signed word/dword/signed dword) 0 [phi:main->main::@2#0] -- vbuxx=vbuc1 
     ldx #0
-  //SEG42 [35] phi from main::@2 to main::@2 [phi:main::@2->main::@2]
-  //SEG43 [35] phi from main::@3 to main::@2 [phi:main::@3->main::@2]
-  //SEG44 [35] phi (byte) main::r#2 = (byte) main::r#1 [phi:main::@3->main::@2#0] -- register_copy 
-  //SEG45 main::@2
+  //SEG43 [36] phi from main::@2 to main::@2 [phi:main::@2->main::@2]
+  //SEG44 [36] phi from main::@3 to main::@2 [phi:main::@3->main::@2]
+  //SEG45 [36] phi (byte) main::r#2 = (byte) main::r#1 [phi:main::@3->main::@2#0] -- register_copy 
+  //SEG46 main::@2
   b2:
-  //SEG46 [36] (byte~) main::$15 ← *((const byte*) DTV_BLITTER_CONTROL2#0) & (const byte) DTV_BLIT_STATUS_BUSY#0 [ main::r#2 main::$15 ] ( main:2 [ main::r#2 main::$15 ] ) -- vbuaa=_deref_pbuc1_band_vbuc2 
+  //SEG47 [37] (byte~) main::$15 ← *((const byte*) DTV_BLITTER_CONTROL2#0) & (const byte) DTV_BLIT_STATUS_BUSY#0 [ main::r#2 main::$15 ] ( main:2 [ main::r#2 main::$15 ] ) -- vbuaa=_deref_pbuc1_band_vbuc2 
     lda DTV_BLITTER_CONTROL2
     and #DTV_BLIT_STATUS_BUSY
-  //SEG47 [37] if((byte~) main::$15!=(byte/signed byte/word/signed word/dword/signed dword) 0) goto main::@2 [ main::r#2 ] ( main:2 [ main::r#2 ] ) -- vbuaa_neq_0_then_la1 
+  //SEG48 [38] if((byte~) main::$15!=(byte/signed byte/word/signed word/dword/signed dword) 0) goto main::@2 [ main::r#2 ] ( main:2 [ main::r#2 ] ) -- vbuaa_neq_0_then_la1 
     cmp #0
     bne b2
-  //SEG48 main::@3
-  //SEG49 [38] *((const byte*) DTV_BLITTER_CONTROL#0) ← (const byte) DTV_BLIT_FORCE_START#0|(const byte) DTV_BLIT_SRCA_FWD#0|(const byte) DTV_BLIT_SRCB_FWD#0|(const byte) DTV_BLIT_DEST_FWD#0 [ main::r#2 ] ( main:2 [ main::r#2 ] ) -- _deref_pbuc1=vbuc2 
+  //SEG49 main::@3
+  //SEG50 [39] *((const byte*) DTV_BLITTER_CONTROL#0) ← (const byte) DTV_BLIT_FORCE_START#0|(const byte) DTV_BLIT_SRCA_FWD#0|(const byte) DTV_BLIT_SRCB_FWD#0|(const byte) DTV_BLIT_DEST_FWD#0 [ main::r#2 ] ( main:2 [ main::r#2 ] ) -- _deref_pbuc1=vbuc2 
     lda #DTV_BLIT_FORCE_START|DTV_BLIT_SRCA_FWD|DTV_BLIT_SRCB_FWD|DTV_BLIT_DEST_FWD
     sta DTV_BLITTER_CONTROL
-  //SEG50 [39] (byte) main::r#1 ← ++ (byte) main::r#2 [ main::r#1 ] ( main:2 [ main::r#1 ] ) -- vbuxx=_inc_vbuxx 
+  //SEG51 [40] (byte) main::r#1 ← ++ (byte) main::r#2 [ main::r#1 ] ( main:2 [ main::r#1 ] ) -- vbuxx=_inc_vbuxx 
     inx
-  //SEG51 [40] if((byte) main::r#1!=(byte/signed byte/word/signed word/dword/signed dword) 8) goto main::@2 [ main::r#1 ] ( main:2 [ main::r#1 ] ) -- vbuxx_neq_vbuc1_then_la1 
+  //SEG52 [41] if((byte) main::r#1!=(byte/signed byte/word/signed word/dword/signed dword) 8) goto main::@2 [ main::r#1 ] ( main:2 [ main::r#1 ] ) -- vbuxx_neq_vbuc1_then_la1 
     cpx #8
     bne b2
-  //SEG52 main::@return
-  //SEG53 [41] return  [ ] ( main:2 [ ] )
+  //SEG53 main::@return
+  //SEG54 [42] return  [ ] ( main:2 [ ] )
     rts
 }
   SRCA: .byte 'c', 'a', 'm', 'e', 'l', 'o', 't', '!', ' '

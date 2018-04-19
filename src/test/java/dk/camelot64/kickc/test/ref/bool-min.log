@@ -3,190 +3,409 @@ PARSING src/test/java/dk/camelot64/kickc/test/kc/bool-min.kc
 // Boolean variables are bytes under the hood
 // 0: false, !=0 : true
 
+const byte* SCREEN = $400;
+
 void main() {
-    const byte* SCREEN = $400;
+    bool_const_if();
+    bool_const_vars();
+}
+
+// A constant boolean inside an if()
+void bool_const_if() {
     boolean b = true;
     if(b) {
-        *SCREEN = 't';
+        SCREEN[0] = 't';
     } else {
-        *SCREEN = 'f';
+        SCREEN[0] = 'f';
+    }
+}
+
+// A bunch of constant boolean vars (used in an if)
+void bool_const_vars() {
+    byte a = 14;
+    boolean b1 = (a==15);
+    boolean b2 = 21 < a;
+    boolean b = b1 || b2;
+    if(b) {
+        SCREEN[1] = 't';
+    } else {
+        SCREEN[1] = 'f';
     }
 }
 
 STATEMENTS
+  (byte*) SCREEN ← (word/signed word/dword/signed dword) 1024
 proc (void()) main()
-  (byte*) main::SCREEN ← (word/signed word/dword/signed dword) 1024
-  (boolean) main::b ← true
-  (boolean~) main::$0 ← ! (boolean) main::b
-  if((boolean~) main::$0) goto main::@1
-  *((byte*) main::SCREEN) ← (byte) 't'
-  goto main::@2
-main::@1:
-  *((byte*) main::SCREEN) ← (byte) 'f'
-main::@2:
+  (void~) main::$0 ← call bool_const_if 
+  (void~) main::$1 ← call bool_const_vars 
 main::@return:
   return 
 endproc // main()
+proc (void()) bool_const_if()
+  (boolean) bool_const_if::b ← true
+  (boolean~) bool_const_if::$0 ← ! (boolean) bool_const_if::b
+  if((boolean~) bool_const_if::$0) goto bool_const_if::@1
+  *((byte*) SCREEN + (byte/signed byte/word/signed word/dword/signed dword) 0) ← (byte) 't'
+  goto bool_const_if::@2
+bool_const_if::@1:
+  *((byte*) SCREEN + (byte/signed byte/word/signed word/dword/signed dword) 0) ← (byte) 'f'
+bool_const_if::@2:
+bool_const_if::@return:
+  return 
+endproc // bool_const_if()
+proc (void()) bool_const_vars()
+  (byte) bool_const_vars::a ← (byte/signed byte/word/signed word/dword/signed dword) 14
+  (boolean~) bool_const_vars::$0 ← (byte) bool_const_vars::a == (byte/signed byte/word/signed word/dword/signed dword) 15
+  (boolean) bool_const_vars::b1 ← (boolean~) bool_const_vars::$0
+  (boolean~) bool_const_vars::$1 ← (byte/signed byte/word/signed word/dword/signed dword) 21 < (byte) bool_const_vars::a
+  (boolean) bool_const_vars::b2 ← (boolean~) bool_const_vars::$1
+  (boolean~) bool_const_vars::$2 ← (boolean) bool_const_vars::b1 || (boolean) bool_const_vars::b2
+  (boolean) bool_const_vars::b ← (boolean~) bool_const_vars::$2
+  (boolean~) bool_const_vars::$3 ← ! (boolean) bool_const_vars::b
+  if((boolean~) bool_const_vars::$3) goto bool_const_vars::@1
+  *((byte*) SCREEN + (byte/signed byte/word/signed word/dword/signed dword) 1) ← (byte) 't'
+  goto bool_const_vars::@2
+bool_const_vars::@1:
+  *((byte*) SCREEN + (byte/signed byte/word/signed word/dword/signed dword) 1) ← (byte) 'f'
+bool_const_vars::@2:
+bool_const_vars::@return:
+  return 
+endproc // bool_const_vars()
   call main 
 
 SYMBOLS
+(byte*) SCREEN
+(void()) bool_const_if()
+(boolean~) bool_const_if::$0
+(label) bool_const_if::@1
+(label) bool_const_if::@2
+(label) bool_const_if::@return
+(boolean) bool_const_if::b
+(void()) bool_const_vars()
+(boolean~) bool_const_vars::$0
+(boolean~) bool_const_vars::$1
+(boolean~) bool_const_vars::$2
+(boolean~) bool_const_vars::$3
+(label) bool_const_vars::@1
+(label) bool_const_vars::@2
+(label) bool_const_vars::@return
+(byte) bool_const_vars::a
+(boolean) bool_const_vars::b
+(boolean) bool_const_vars::b1
+(boolean) bool_const_vars::b2
 (void()) main()
-(boolean~) main::$0
-(label) main::@1
-(label) main::@2
+(void~) main::$0
+(void~) main::$1
 (label) main::@return
-(byte*) main::SCREEN
-(boolean) main::b
 
-Promoting word/signed word/dword/signed dword to byte* in main::SCREEN ← ((byte*)) 1024
+Promoting word/signed word/dword/signed dword to byte* in SCREEN ← ((byte*)) 1024
 INITIAL CONTROL FLOW GRAPH
 @begin: scope:[]  from
+  (byte*) SCREEN ← ((byte*)) (word/signed word/dword/signed dword) 1024
   to:@1
 main: scope:[main]  from
-  (byte*) main::SCREEN ← ((byte*)) (word/signed word/dword/signed dword) 1024
-  (boolean) main::b ← true
-  (boolean~) main::$0 ← ! (boolean) main::b
-  if((boolean~) main::$0) goto main::@1
-  to:main::@3
-main::@1: scope:[main]  from main main::@4
-  *((byte*) main::SCREEN) ← (byte) 'f'
-  to:main::@2
-main::@3: scope:[main]  from main
-  *((byte*) main::SCREEN) ← (byte) 't'
-  to:main::@2
-main::@2: scope:[main]  from main::@1 main::@3
+  (void~) main::$0 ← call bool_const_if 
+  (void~) main::$1 ← call bool_const_vars 
   to:main::@return
-main::@4: scope:[main]  from
-  to:main::@1
-main::@return: scope:[main]  from main::@2
+main::@return: scope:[main]  from main
   return 
   to:@return
 @1: scope:[]  from @begin
+  to:@2
+bool_const_if: scope:[bool_const_if]  from
+  (boolean) bool_const_if::b ← true
+  (boolean~) bool_const_if::$0 ← ! (boolean) bool_const_if::b
+  if((boolean~) bool_const_if::$0) goto bool_const_if::@1
+  to:bool_const_if::@3
+bool_const_if::@1: scope:[bool_const_if]  from bool_const_if bool_const_if::@4
+  *((byte*) SCREEN + (byte/signed byte/word/signed word/dword/signed dword) 0) ← (byte) 'f'
+  to:bool_const_if::@2
+bool_const_if::@3: scope:[bool_const_if]  from bool_const_if
+  *((byte*) SCREEN + (byte/signed byte/word/signed word/dword/signed dword) 0) ← (byte) 't'
+  to:bool_const_if::@2
+bool_const_if::@2: scope:[bool_const_if]  from bool_const_if::@1 bool_const_if::@3
+  to:bool_const_if::@return
+bool_const_if::@4: scope:[bool_const_if]  from
+  to:bool_const_if::@1
+bool_const_if::@return: scope:[bool_const_if]  from bool_const_if::@2
+  return 
+  to:@return
+@2: scope:[]  from @1
+  to:@3
+bool_const_vars: scope:[bool_const_vars]  from
+  (byte) bool_const_vars::a ← (byte/signed byte/word/signed word/dword/signed dword) 14
+  (boolean~) bool_const_vars::$0 ← (byte) bool_const_vars::a == (byte/signed byte/word/signed word/dword/signed dword) 15
+  (boolean) bool_const_vars::b1 ← (boolean~) bool_const_vars::$0
+  (boolean~) bool_const_vars::$1 ← (byte/signed byte/word/signed word/dword/signed dword) 21 < (byte) bool_const_vars::a
+  (boolean) bool_const_vars::b2 ← (boolean~) bool_const_vars::$1
+  (boolean~) bool_const_vars::$2 ← (boolean) bool_const_vars::b1 || (boolean) bool_const_vars::b2
+  (boolean) bool_const_vars::b ← (boolean~) bool_const_vars::$2
+  (boolean~) bool_const_vars::$3 ← ! (boolean) bool_const_vars::b
+  if((boolean~) bool_const_vars::$3) goto bool_const_vars::@1
+  to:bool_const_vars::@3
+bool_const_vars::@1: scope:[bool_const_vars]  from bool_const_vars bool_const_vars::@4
+  *((byte*) SCREEN + (byte/signed byte/word/signed word/dword/signed dword) 1) ← (byte) 'f'
+  to:bool_const_vars::@2
+bool_const_vars::@3: scope:[bool_const_vars]  from bool_const_vars
+  *((byte*) SCREEN + (byte/signed byte/word/signed word/dword/signed dword) 1) ← (byte) 't'
+  to:bool_const_vars::@2
+bool_const_vars::@2: scope:[bool_const_vars]  from bool_const_vars::@1 bool_const_vars::@3
+  to:bool_const_vars::@return
+bool_const_vars::@4: scope:[bool_const_vars]  from
+  to:bool_const_vars::@1
+bool_const_vars::@return: scope:[bool_const_vars]  from bool_const_vars::@2
+  return 
+  to:@return
+@3: scope:[]  from @2
   call main 
   to:@end
-@end: scope:[]  from @1
+@end: scope:[]  from @3
 
-Removing empty block main::@2
-Removing empty block main::@4
+Eliminating unused variable - keeping the call (void~) main::$0
+Eliminating unused variable - keeping the call (void~) main::$1
+Removing empty block @1
+Removing empty block bool_const_if::@2
+Removing empty block bool_const_if::@4
+Removing empty block @2
+Removing empty block bool_const_vars::@2
+Removing empty block bool_const_vars::@4
 PROCEDURE MODIFY VARIABLE ANALYSIS
 
 Completing Phi functions...
 
 CONTROL FLOW GRAPH SSA WITH ASSIGNMENT CALL & RETURN
 @begin: scope:[]  from
-  to:@1
-main: scope:[main]  from @1
-  (byte*) main::SCREEN#0 ← ((byte*)) (word/signed word/dword/signed dword) 1024
-  (boolean) main::b#0 ← true
-  (boolean~) main::$0 ← ! (boolean) main::b#0
-  if((boolean~) main::$0) goto main::@1
-  to:main::@3
+  (byte*) SCREEN#0 ← ((byte*)) (word/signed word/dword/signed dword) 1024
+  to:@3
+main: scope:[main]  from @3
+  call bool_const_if param-assignment
+  to:main::@1
 main::@1: scope:[main]  from main
-  *((byte*) main::SCREEN#0) ← (byte) 'f'
+  call bool_const_vars param-assignment
+  to:main::@2
+main::@2: scope:[main]  from main::@1
   to:main::@return
-main::@3: scope:[main]  from main
-  *((byte*) main::SCREEN#0) ← (byte) 't'
-  to:main::@return
-main::@return: scope:[main]  from main::@1 main::@3
+main::@return: scope:[main]  from main::@2
   return 
   to:@return
-@1: scope:[]  from @begin
+bool_const_if: scope:[bool_const_if]  from main
+  (boolean) bool_const_if::b#0 ← true
+  (boolean~) bool_const_if::$0 ← ! (boolean) bool_const_if::b#0
+  if((boolean~) bool_const_if::$0) goto bool_const_if::@1
+  to:bool_const_if::@3
+bool_const_if::@1: scope:[bool_const_if]  from bool_const_if
+  *((byte*) SCREEN#0 + (byte/signed byte/word/signed word/dword/signed dword) 0) ← (byte) 'f'
+  to:bool_const_if::@return
+bool_const_if::@3: scope:[bool_const_if]  from bool_const_if
+  *((byte*) SCREEN#0 + (byte/signed byte/word/signed word/dword/signed dword) 0) ← (byte) 't'
+  to:bool_const_if::@return
+bool_const_if::@return: scope:[bool_const_if]  from bool_const_if::@1 bool_const_if::@3
+  return 
+  to:@return
+bool_const_vars: scope:[bool_const_vars]  from main::@1
+  (byte) bool_const_vars::a#0 ← (byte/signed byte/word/signed word/dword/signed dword) 14
+  (boolean~) bool_const_vars::$0 ← (byte) bool_const_vars::a#0 == (byte/signed byte/word/signed word/dword/signed dword) 15
+  (boolean) bool_const_vars::b1#0 ← (boolean~) bool_const_vars::$0
+  (boolean~) bool_const_vars::$1 ← (byte/signed byte/word/signed word/dword/signed dword) 21 < (byte) bool_const_vars::a#0
+  (boolean) bool_const_vars::b2#0 ← (boolean~) bool_const_vars::$1
+  (boolean~) bool_const_vars::$2 ← (boolean) bool_const_vars::b1#0 || (boolean) bool_const_vars::b2#0
+  (boolean) bool_const_vars::b#0 ← (boolean~) bool_const_vars::$2
+  (boolean~) bool_const_vars::$3 ← ! (boolean) bool_const_vars::b#0
+  if((boolean~) bool_const_vars::$3) goto bool_const_vars::@1
+  to:bool_const_vars::@3
+bool_const_vars::@1: scope:[bool_const_vars]  from bool_const_vars
+  *((byte*) SCREEN#0 + (byte/signed byte/word/signed word/dword/signed dword) 1) ← (byte) 'f'
+  to:bool_const_vars::@return
+bool_const_vars::@3: scope:[bool_const_vars]  from bool_const_vars
+  *((byte*) SCREEN#0 + (byte/signed byte/word/signed word/dword/signed dword) 1) ← (byte) 't'
+  to:bool_const_vars::@return
+bool_const_vars::@return: scope:[bool_const_vars]  from bool_const_vars::@1 bool_const_vars::@3
+  return 
+  to:@return
+@3: scope:[]  from @begin
   call main param-assignment
-  to:@2
-@2: scope:[]  from @1
+  to:@4
+@4: scope:[]  from @3
   to:@end
-@end: scope:[]  from @2
+@end: scope:[]  from @4
 
 SYMBOL TABLE SSA
-(label) @1
-(label) @2
+(label) @3
+(label) @4
 (label) @begin
 (label) @end
+(byte*) SCREEN
+(byte*) SCREEN#0
+(void()) bool_const_if()
+(boolean~) bool_const_if::$0
+(label) bool_const_if::@1
+(label) bool_const_if::@3
+(label) bool_const_if::@return
+(boolean) bool_const_if::b
+(boolean) bool_const_if::b#0
+(void()) bool_const_vars()
+(boolean~) bool_const_vars::$0
+(boolean~) bool_const_vars::$1
+(boolean~) bool_const_vars::$2
+(boolean~) bool_const_vars::$3
+(label) bool_const_vars::@1
+(label) bool_const_vars::@3
+(label) bool_const_vars::@return
+(byte) bool_const_vars::a
+(byte) bool_const_vars::a#0
+(boolean) bool_const_vars::b
+(boolean) bool_const_vars::b#0
+(boolean) bool_const_vars::b1
+(boolean) bool_const_vars::b1#0
+(boolean) bool_const_vars::b2
+(boolean) bool_const_vars::b2#0
 (void()) main()
-(boolean~) main::$0
 (label) main::@1
-(label) main::@3
+(label) main::@2
 (label) main::@return
-(byte*) main::SCREEN
-(byte*) main::SCREEN#0
-(boolean) main::b
-(boolean) main::b#0
 
 OPTIMIZING CONTROL FLOW GRAPH
-Culled Empty Block (label) @2
+Culled Empty Block (label) main::@2
+Culled Empty Block (label) @4
 Succesful SSA optimization Pass2CullEmptyBlocks
-Constant (const byte*) main::SCREEN#0 = ((byte*))1024
-Constant (const boolean) main::b#0 = true
+Alias (boolean) bool_const_vars::b1#0 = (boolean~) bool_const_vars::$0 
+Alias (boolean) bool_const_vars::b2#0 = (boolean~) bool_const_vars::$1 
+Alias (boolean) bool_const_vars::b#0 = (boolean~) bool_const_vars::$2 
+Succesful SSA optimization Pass2AliasElimination
+Constant (const byte*) SCREEN#0 = ((byte*))1024
+Constant (const boolean) bool_const_if::b#0 = true
+Constant (const byte) bool_const_vars::a#0 = 14
 Succesful SSA optimization Pass2ConstantIdentification
-Constant (const boolean) main::$0 = !main::b#0
+Constant (const boolean) bool_const_if::$0 = !bool_const_if::b#0
+Constant (const boolean) bool_const_vars::b1#0 = bool_const_vars::a#0==15
+Constant (const boolean) bool_const_vars::b2#0 = 21<bool_const_vars::a#0
 Succesful SSA optimization Pass2ConstantIdentification
-if() condition always false - eliminating if if((const boolean) main::$0) goto main::@1
+Constant (const boolean) bool_const_vars::b#0 = bool_const_vars::b1#0||bool_const_vars::b2#0
+Succesful SSA optimization Pass2ConstantIdentification
+Constant (const boolean) bool_const_vars::$3 = !bool_const_vars::b#0
+Succesful SSA optimization Pass2ConstantIdentification
+Consolidated array index constant in *(SCREEN#0+0)
+Consolidated array index constant in *(SCREEN#0+0)
+Consolidated array index constant in *(SCREEN#0+1)
+Consolidated array index constant in *(SCREEN#0+1)
+Succesful SSA optimization Pass2ConstantAdditionElimination
+if() condition always false - eliminating if if((const boolean) bool_const_if::$0) goto bool_const_if::@1
+if() condition always true - replacing block destination if((const boolean) bool_const_vars::$3) goto bool_const_vars::@1
 Succesful SSA optimization Pass2ConstantIfs
-Removing unused block main::@1
+Removing unused block bool_const_if::@1
+Removing unused block bool_const_vars::@3
 Succesful SSA optimization Pass2EliminateUnusedBlocks
-Eliminating unused constant (const boolean) main::$0
+Eliminating unused constant (const boolean) bool_const_if::$0
+Eliminating unused constant (const boolean) bool_const_vars::$3
 Succesful SSA optimization PassNEliminateUnusedVars
-Eliminating unused constant (const boolean) main::b#0
+Eliminating unused constant (const boolean) bool_const_if::b#0
+Eliminating unused constant (const boolean) bool_const_vars::b#0
+Succesful SSA optimization PassNEliminateUnusedVars
+Eliminating unused constant (const boolean) bool_const_vars::b1#0
+Eliminating unused constant (const boolean) bool_const_vars::b2#0
+Succesful SSA optimization PassNEliminateUnusedVars
+Eliminating unused constant (const byte) bool_const_vars::a#0
 Succesful SSA optimization PassNEliminateUnusedVars
 OPTIMIZING CONTROL FLOW GRAPH
-Block Sequence Planned @begin @1 @end main main::@3 main::@return 
-Block Sequence Planned @begin @1 @end main main::@3 main::@return 
+Block Sequence Planned @begin @3 @end main main::@1 main::@return bool_const_vars bool_const_vars::@1 bool_const_vars::@return bool_const_if bool_const_if::@3 bool_const_if::@return 
+Block Sequence Planned @begin @3 @end main main::@1 main::@return bool_const_vars bool_const_vars::@1 bool_const_vars::@return bool_const_if bool_const_if::@3 bool_const_if::@return 
 Adding NOP phi() at start of @begin
-Adding NOP phi() at start of @1
+Adding NOP phi() at start of @3
 Adding NOP phi() at start of @end
 Adding NOP phi() at start of main
+Adding NOP phi() at start of main::@1
+Adding NOP phi() at start of bool_const_vars
+Adding NOP phi() at start of bool_const_if
 CALL GRAPH
 Calls in [] to main:2 
+Calls in [main] to bool_const_if:5 bool_const_vars:7 
 
 Propagating live ranges...
 Created 0 initial phi equivalence classes
 Coalesced down to 0 phi equivalence classes
-Block Sequence Planned @begin @1 @end main main::@3 main::@return 
+Block Sequence Planned @begin @3 @end main main::@1 main::@return bool_const_vars bool_const_vars::@1 bool_const_vars::@return bool_const_if bool_const_if::@3 bool_const_if::@return 
 Adding NOP phi() at start of @begin
-Adding NOP phi() at start of @1
+Adding NOP phi() at start of @3
 Adding NOP phi() at start of @end
 Adding NOP phi() at start of main
+Adding NOP phi() at start of main::@1
+Adding NOP phi() at start of bool_const_vars
+Adding NOP phi() at start of bool_const_if
 Propagating live ranges...
 
 FINAL CONTROL FLOW GRAPH
 @begin: scope:[]  from
   [0] phi() [ ] ( )
-  to:@1
-@1: scope:[]  from @begin
+  to:@3
+@3: scope:[]  from @begin
   [1] phi() [ ] ( )
   [2] call main param-assignment [ ] ( )
   to:@end
-@end: scope:[]  from @1
+@end: scope:[]  from @3
   [3] phi() [ ] ( )
-main: scope:[main]  from @1
+main: scope:[main]  from @3
   [4] phi() [ ] ( main:2 [ ] )
-  to:main::@3
-main::@3: scope:[main]  from main
-  [5] *((const byte*) main::SCREEN#0) ← (byte) 't' [ ] ( main:2 [ ] )
+  [5] call bool_const_if param-assignment [ ] ( main:2 [ ] )
+  to:main::@1
+main::@1: scope:[main]  from main
+  [6] phi() [ ] ( main:2 [ ] )
+  [7] call bool_const_vars param-assignment [ ] ( main:2 [ ] )
   to:main::@return
-main::@return: scope:[main]  from main::@3
-  [6] return  [ ] ( main:2 [ ] )
+main::@return: scope:[main]  from main::@1
+  [8] return  [ ] ( main:2 [ ] )
+  to:@return
+bool_const_vars: scope:[bool_const_vars]  from main::@1
+  [9] phi() [ ] ( main:2::bool_const_vars:7 [ ] )
+  to:bool_const_vars::@1
+bool_const_vars::@1: scope:[bool_const_vars]  from bool_const_vars
+  [10] *((const byte*) SCREEN#0+(byte/signed byte/word/signed word/dword/signed dword) 1) ← (byte) 'f' [ ] ( main:2::bool_const_vars:7 [ ] )
+  to:bool_const_vars::@return
+bool_const_vars::@return: scope:[bool_const_vars]  from bool_const_vars::@1
+  [11] return  [ ] ( main:2::bool_const_vars:7 [ ] )
+  to:@return
+bool_const_if: scope:[bool_const_if]  from main
+  [12] phi() [ ] ( main:2::bool_const_if:5 [ ] )
+  to:bool_const_if::@3
+bool_const_if::@3: scope:[bool_const_if]  from bool_const_if
+  [13] *((const byte*) SCREEN#0+(byte/signed byte/word/signed word/dword/signed dword) 0) ← (byte) 't' [ ] ( main:2::bool_const_if:5 [ ] )
+  to:bool_const_if::@return
+bool_const_if::@return: scope:[bool_const_if]  from bool_const_if::@3
+  [14] return  [ ] ( main:2::bool_const_if:5 [ ] )
   to:@return
 
 DOMINATORS
 @begin dominated by  @begin 
-@1 dominated by  @1 @begin 
-@end dominated by  @1 @begin @end 
-main dominated by  @1 @begin main 
-main::@3 dominated by  @1 @begin main main::@3 
-main::@return dominated by  main::@return @1 @begin main main::@3 
+@3 dominated by  @begin @3 
+@end dominated by  @begin @3 @end 
+main dominated by  @begin @3 main 
+main::@1 dominated by  @begin @3 main::@1 main 
+main::@return dominated by  main::@return @begin @3 main::@1 main 
+bool_const_vars dominated by  bool_const_vars @begin @3 main::@1 main 
+bool_const_vars::@1 dominated by  bool_const_vars @begin @3 bool_const_vars::@1 main::@1 main 
+bool_const_vars::@return dominated by  bool_const_vars @begin @3 bool_const_vars::@1 main::@1 bool_const_vars::@return main 
+bool_const_if dominated by  @begin @3 main bool_const_if 
+bool_const_if::@3 dominated by  bool_const_if::@3 @begin @3 main bool_const_if 
+bool_const_if::@return dominated by  bool_const_if::@3 @begin @3 bool_const_if::@return main bool_const_if 
 
 NATURAL LOOPS
 
 NATURAL LOOPS WITH DEPTH
 Found 0 loops in scope []
 Found 0 loops in scope [main]
+Found 0 loops in scope [bool_const_if]
+Found 0 loops in scope [bool_const_vars]
 
 
 VARIABLE REGISTER WEIGHTS
+(byte*) SCREEN
+(void()) bool_const_if()
+(boolean) bool_const_if::b
+(void()) bool_const_vars()
+(byte) bool_const_vars::a
+(boolean) bool_const_vars::b
+(boolean) bool_const_vars::b1
+(boolean) bool_const_vars::b2
 (void()) main()
-(byte*) main::SCREEN
-(boolean) main::b
 
 Initial phi equivalence classes
 Complete equivalence classes
@@ -197,47 +416,87 @@ INITIAL ASM
 :BasicUpstart(main)
 .pc = $80d "Program"
 //SEG1 Global Constants & labels
+  .label SCREEN = $400
 //SEG2 @begin
 bbegin:
-//SEG3 [1] phi from @begin to @1 [phi:@begin->@1]
-b1_from_bbegin:
-  jmp b1
-//SEG4 @1
-b1:
+//SEG3 [1] phi from @begin to @3 [phi:@begin->@3]
+b3_from_bbegin:
+  jmp b3
+//SEG4 @3
+b3:
 //SEG5 [2] call main param-assignment [ ] ( )
-//SEG6 [4] phi from @1 to main [phi:@1->main]
-main_from_b1:
+//SEG6 [4] phi from @3 to main [phi:@3->main]
+main_from_b3:
   jsr main
-//SEG7 [3] phi from @1 to @end [phi:@1->@end]
-bend_from_b1:
+//SEG7 [3] phi from @3 to @end [phi:@3->@end]
+bend_from_b3:
   jmp bend
 //SEG8 @end
 bend:
 //SEG9 main
 main: {
-    .label SCREEN = $400
-    jmp b3
-  //SEG10 main::@3
-  b3:
-  //SEG11 [5] *((const byte*) main::SCREEN#0) ← (byte) 't' [ ] ( main:2 [ ] ) -- _deref_pbuc1=vbuc2 
-    lda #'t'
-    sta SCREEN
+  //SEG10 [5] call bool_const_if param-assignment [ ] ( main:2 [ ] )
+  //SEG11 [12] phi from main to bool_const_if [phi:main->bool_const_if]
+  bool_const_if_from_main:
+    jsr bool_const_if
+  //SEG12 [6] phi from main to main::@1 [phi:main->main::@1]
+  b1_from_main:
+    jmp b1
+  //SEG13 main::@1
+  b1:
+  //SEG14 [7] call bool_const_vars param-assignment [ ] ( main:2 [ ] )
+  //SEG15 [9] phi from main::@1 to bool_const_vars [phi:main::@1->bool_const_vars]
+  bool_const_vars_from_b1:
+    jsr bool_const_vars
     jmp breturn
-  //SEG12 main::@return
+  //SEG16 main::@return
   breturn:
-  //SEG13 [6] return  [ ] ( main:2 [ ] )
+  //SEG17 [8] return  [ ] ( main:2 [ ] )
+    rts
+}
+//SEG18 bool_const_vars
+bool_const_vars: {
+    jmp b1
+  //SEG19 bool_const_vars::@1
+  b1:
+  //SEG20 [10] *((const byte*) SCREEN#0+(byte/signed byte/word/signed word/dword/signed dword) 1) ← (byte) 'f' [ ] ( main:2::bool_const_vars:7 [ ] ) -- _deref_pbuc1=vbuc2 
+    lda #'f'
+    sta SCREEN+1
+    jmp breturn
+  //SEG21 bool_const_vars::@return
+  breturn:
+  //SEG22 [11] return  [ ] ( main:2::bool_const_vars:7 [ ] )
+    rts
+}
+//SEG23 bool_const_if
+bool_const_if: {
+    jmp b3
+  //SEG24 bool_const_if::@3
+  b3:
+  //SEG25 [13] *((const byte*) SCREEN#0+(byte/signed byte/word/signed word/dword/signed dword) 0) ← (byte) 't' [ ] ( main:2::bool_const_if:5 [ ] ) -- _deref_pbuc1=vbuc2 
+    lda #'t'
+    sta SCREEN+0
+    jmp breturn
+  //SEG26 bool_const_if::@return
+  breturn:
+  //SEG27 [14] return  [ ] ( main:2::bool_const_if:5 [ ] )
     rts
 }
 
 REGISTER UPLIFT POTENTIAL REGISTERS
-Statement [5] *((const byte*) main::SCREEN#0) ← (byte) 't' [ ] ( main:2 [ ] ) always clobbers reg byte a 
+Statement [10] *((const byte*) SCREEN#0+(byte/signed byte/word/signed word/dword/signed dword) 1) ← (byte) 'f' [ ] ( main:2::bool_const_vars:7 [ ] ) always clobbers reg byte a 
+Statement [13] *((const byte*) SCREEN#0+(byte/signed byte/word/signed word/dword/signed dword) 0) ← (byte) 't' [ ] ( main:2::bool_const_if:5 [ ] ) always clobbers reg byte a 
 
 REGISTER UPLIFT SCOPES
 Uplift Scope [main] 
+Uplift Scope [bool_const_if] 
+Uplift Scope [bool_const_vars] 
 Uplift Scope [] 
 
-Uplifting [main] best 57 combination 
-Uplifting [] best 57 combination 
+Uplifting [main] best 126 combination 
+Uplifting [bool_const_if] best 126 combination 
+Uplifting [bool_const_vars] best 126 combination 
+Uplifting [] best 126 combination 
 
 ASSEMBLER BEFORE OPTIMIZATION
 //SEG0 Basic Upstart
@@ -245,93 +504,173 @@ ASSEMBLER BEFORE OPTIMIZATION
 :BasicUpstart(main)
 .pc = $80d "Program"
 //SEG1 Global Constants & labels
+  .label SCREEN = $400
 //SEG2 @begin
 bbegin:
-//SEG3 [1] phi from @begin to @1 [phi:@begin->@1]
-b1_from_bbegin:
-  jmp b1
-//SEG4 @1
-b1:
+//SEG3 [1] phi from @begin to @3 [phi:@begin->@3]
+b3_from_bbegin:
+  jmp b3
+//SEG4 @3
+b3:
 //SEG5 [2] call main param-assignment [ ] ( )
-//SEG6 [4] phi from @1 to main [phi:@1->main]
-main_from_b1:
+//SEG6 [4] phi from @3 to main [phi:@3->main]
+main_from_b3:
   jsr main
-//SEG7 [3] phi from @1 to @end [phi:@1->@end]
-bend_from_b1:
+//SEG7 [3] phi from @3 to @end [phi:@3->@end]
+bend_from_b3:
   jmp bend
 //SEG8 @end
 bend:
 //SEG9 main
 main: {
-    .label SCREEN = $400
-    jmp b3
-  //SEG10 main::@3
-  b3:
-  //SEG11 [5] *((const byte*) main::SCREEN#0) ← (byte) 't' [ ] ( main:2 [ ] ) -- _deref_pbuc1=vbuc2 
-    lda #'t'
-    sta SCREEN
+  //SEG10 [5] call bool_const_if param-assignment [ ] ( main:2 [ ] )
+  //SEG11 [12] phi from main to bool_const_if [phi:main->bool_const_if]
+  bool_const_if_from_main:
+    jsr bool_const_if
+  //SEG12 [6] phi from main to main::@1 [phi:main->main::@1]
+  b1_from_main:
+    jmp b1
+  //SEG13 main::@1
+  b1:
+  //SEG14 [7] call bool_const_vars param-assignment [ ] ( main:2 [ ] )
+  //SEG15 [9] phi from main::@1 to bool_const_vars [phi:main::@1->bool_const_vars]
+  bool_const_vars_from_b1:
+    jsr bool_const_vars
     jmp breturn
-  //SEG12 main::@return
+  //SEG16 main::@return
   breturn:
-  //SEG13 [6] return  [ ] ( main:2 [ ] )
+  //SEG17 [8] return  [ ] ( main:2 [ ] )
+    rts
+}
+//SEG18 bool_const_vars
+bool_const_vars: {
+    jmp b1
+  //SEG19 bool_const_vars::@1
+  b1:
+  //SEG20 [10] *((const byte*) SCREEN#0+(byte/signed byte/word/signed word/dword/signed dword) 1) ← (byte) 'f' [ ] ( main:2::bool_const_vars:7 [ ] ) -- _deref_pbuc1=vbuc2 
+    lda #'f'
+    sta SCREEN+1
+    jmp breturn
+  //SEG21 bool_const_vars::@return
+  breturn:
+  //SEG22 [11] return  [ ] ( main:2::bool_const_vars:7 [ ] )
+    rts
+}
+//SEG23 bool_const_if
+bool_const_if: {
+    jmp b3
+  //SEG24 bool_const_if::@3
+  b3:
+  //SEG25 [13] *((const byte*) SCREEN#0+(byte/signed byte/word/signed word/dword/signed dword) 0) ← (byte) 't' [ ] ( main:2::bool_const_if:5 [ ] ) -- _deref_pbuc1=vbuc2 
+    lda #'t'
+    sta SCREEN+0
+    jmp breturn
+  //SEG26 bool_const_if::@return
+  breturn:
+  //SEG27 [14] return  [ ] ( main:2::bool_const_if:5 [ ] )
     rts
 }
 
 ASSEMBLER OPTIMIZATIONS
-Removing instruction jmp b1
+Removing instruction jmp b3
 Removing instruction jmp bend
+Removing instruction jmp b1
+Removing instruction jmp breturn
+Removing instruction jmp b1
+Removing instruction jmp breturn
 Removing instruction jmp b3
 Removing instruction jmp breturn
 Succesful ASM optimization Pass5NextJumpElimination
 Removing instruction bbegin:
-Removing instruction b1_from_bbegin:
-Removing instruction main_from_b1:
-Removing instruction bend_from_b1:
+Removing instruction b3_from_bbegin:
+Removing instruction main_from_b3:
+Removing instruction bend_from_b3:
+Removing instruction b1_from_main:
+Removing instruction bool_const_vars_from_b1:
 Succesful ASM optimization Pass5RedundantLabelElimination
-Removing instruction b1:
+Removing instruction b3:
 Removing instruction bend:
+Removing instruction bool_const_if_from_main:
+Removing instruction b1:
+Removing instruction breturn:
+Removing instruction b1:
+Removing instruction breturn:
 Removing instruction b3:
 Removing instruction breturn:
 Succesful ASM optimization Pass5UnusedLabelElimination
 
 FINAL SYMBOL TABLE
-(label) @1
+(label) @3
 (label) @begin
 (label) @end
+(byte*) SCREEN
+(const byte*) SCREEN#0 SCREEN = ((byte*))(word/signed word/dword/signed dword) 1024
+(void()) bool_const_if()
+(label) bool_const_if::@3
+(label) bool_const_if::@return
+(boolean) bool_const_if::b
+(void()) bool_const_vars()
+(label) bool_const_vars::@1
+(label) bool_const_vars::@return
+(byte) bool_const_vars::a
+(boolean) bool_const_vars::b
+(boolean) bool_const_vars::b1
+(boolean) bool_const_vars::b2
 (void()) main()
-(label) main::@3
+(label) main::@1
 (label) main::@return
-(byte*) main::SCREEN
-(const byte*) main::SCREEN#0 SCREEN = ((byte*))(word/signed word/dword/signed dword) 1024
-(boolean) main::b
 
 
 
 FINAL ASSEMBLER
-Score: 18
+Score: 48
 
 //SEG0 Basic Upstart
 .pc = $801 "Basic"
 :BasicUpstart(main)
 .pc = $80d "Program"
 //SEG1 Global Constants & labels
+  .label SCREEN = $400
 //SEG2 @begin
-//SEG3 [1] phi from @begin to @1 [phi:@begin->@1]
-//SEG4 @1
+//SEG3 [1] phi from @begin to @3 [phi:@begin->@3]
+//SEG4 @3
 //SEG5 [2] call main param-assignment [ ] ( )
-//SEG6 [4] phi from @1 to main [phi:@1->main]
+//SEG6 [4] phi from @3 to main [phi:@3->main]
   jsr main
-//SEG7 [3] phi from @1 to @end [phi:@1->@end]
+//SEG7 [3] phi from @3 to @end [phi:@3->@end]
 //SEG8 @end
 //SEG9 main
 main: {
-    .label SCREEN = $400
-  //SEG10 main::@3
-  //SEG11 [5] *((const byte*) main::SCREEN#0) ← (byte) 't' [ ] ( main:2 [ ] ) -- _deref_pbuc1=vbuc2 
+  //SEG10 [5] call bool_const_if param-assignment [ ] ( main:2 [ ] )
+  //SEG11 [12] phi from main to bool_const_if [phi:main->bool_const_if]
+    jsr bool_const_if
+  //SEG12 [6] phi from main to main::@1 [phi:main->main::@1]
+  //SEG13 main::@1
+  //SEG14 [7] call bool_const_vars param-assignment [ ] ( main:2 [ ] )
+  //SEG15 [9] phi from main::@1 to bool_const_vars [phi:main::@1->bool_const_vars]
+    jsr bool_const_vars
+  //SEG16 main::@return
+  //SEG17 [8] return  [ ] ( main:2 [ ] )
+    rts
+}
+//SEG18 bool_const_vars
+bool_const_vars: {
+  //SEG19 bool_const_vars::@1
+  //SEG20 [10] *((const byte*) SCREEN#0+(byte/signed byte/word/signed word/dword/signed dword) 1) ← (byte) 'f' [ ] ( main:2::bool_const_vars:7 [ ] ) -- _deref_pbuc1=vbuc2 
+    lda #'f'
+    sta SCREEN+1
+  //SEG21 bool_const_vars::@return
+  //SEG22 [11] return  [ ] ( main:2::bool_const_vars:7 [ ] )
+    rts
+}
+//SEG23 bool_const_if
+bool_const_if: {
+  //SEG24 bool_const_if::@3
+  //SEG25 [13] *((const byte*) SCREEN#0+(byte/signed byte/word/signed word/dword/signed dword) 0) ← (byte) 't' [ ] ( main:2::bool_const_if:5 [ ] ) -- _deref_pbuc1=vbuc2 
     lda #'t'
-    sta SCREEN
-  //SEG12 main::@return
-  //SEG13 [6] return  [ ] ( main:2 [ ] )
+    sta SCREEN+0
+  //SEG26 bool_const_if::@return
+  //SEG27 [14] return  [ ] ( main:2::bool_const_if:5 [ ] )
     rts
 }
 

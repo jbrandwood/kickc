@@ -52,8 +52,8 @@ public class TestPrograms {
 
 
    @Test
-   public void testBoolMin() throws IOException, URISyntaxException {
-      compileAndCompare("bool-min");
+   public void testBoolConst() throws IOException, URISyntaxException {
+      compileAndCompare("bool-const");
    }
 
    @Test

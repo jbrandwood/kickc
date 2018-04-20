@@ -6,6 +6,12 @@
 main: {
     jsr bool_const_if
     jsr bool_const_vars
+    jsr bool_const_inline
+    rts
+}
+bool_const_inline: {
+    lda #'t'
+    sta SCREEN+2
     rts
 }
 bool_const_vars: {

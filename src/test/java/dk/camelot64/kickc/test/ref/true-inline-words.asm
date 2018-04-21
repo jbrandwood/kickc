@@ -12,13 +12,13 @@ main: {
     sta w2
     lda pos
     cmp #'m'
-    bne b1
-    lda #5
+    beq b1
+    lda #2
     sta bgcol
   breturn:
     rts
   b1:
-    lda #2
+    lda #5
     sta bgcol
     jmp breturn
     bs: .byte 'c', 'm'

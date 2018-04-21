@@ -50,10 +50,20 @@ public class TestPrograms {
       compileAndCompare("emptyblock-error");
    }
 
+   @Test
+   public void testConstCondition() throws IOException, URISyntaxException {
+      compileAndCompare("const-condition");
+   }
+
 
    @Test
    public void testBoolConst() throws IOException, URISyntaxException {
       compileAndCompare("bool-const");
+   }
+
+   @Test
+   public void testBoolVars() throws IOException, URISyntaxException {
+      compileAndCompare("bool-vars");
    }
 
    @Test

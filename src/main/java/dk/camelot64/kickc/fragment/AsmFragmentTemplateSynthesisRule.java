@@ -392,7 +392,7 @@ class AsmFragmentTemplateSynthesisRule {
       synths.add(new AsmFragmentTemplateSynthesisRule("(.*)_neq_(.*)_then_(.*)", null, null, "$2_neq_$1_then_$3", null, null));
 
       // Swap parameters on commutative operators
-      synths.add(new AsmFragmentTemplateSynthesisRule("(.*)=(.*)_(band|bor|bxor|plus)_(.*)", null, null, "$1=$4_$3_$2", null, null));
+      synths.add(new AsmFragmentTemplateSynthesisRule("(.*)=(.*)_(band|bor|bxor|plus|and|or)_(.*)", null, null, "$1=$4_$3_$2", null, null));
       // Swap parameters on commutative comparators
       synths.add(new AsmFragmentTemplateSynthesisRule("(.*)_(eq|neq)_(.*)_then_(.*)", null, null, "$3_$2_$1_then_$4", null, null));
 

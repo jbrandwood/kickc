@@ -19,12 +19,12 @@ main: {
     bne b4
     jsr keyboard_key_pressed
     cmp #0
-    beq b5
-    lda #GREEN
+    bne b5
+    lda #BLUE
     sta BGCOL
     jmp b4
   b5:
-    lda #BLUE
+    lda #GREEN
     sta BGCOL
     jmp b4
 }

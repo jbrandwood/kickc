@@ -102,8 +102,8 @@ main: {
     txa
     and #$80
     cmp #0
-    beq b8
-    lda #'1'
+    bne b8
+    lda #'0'
     sta (screen),y
   b9:
     txa
@@ -162,7 +162,7 @@ main: {
     bcc b13
     jmp b5
   b8:
-    lda #'0'
+    lda #'1'
     sta (screen),y
     jmp b9
 }

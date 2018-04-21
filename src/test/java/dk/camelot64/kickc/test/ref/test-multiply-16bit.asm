@@ -389,13 +389,69 @@ mul16u: {
 }
 muls16s: {
     .label m = $a
-    .label i = 8
-    .label return = $a
     .label j = 8
+    .label return = $a
+    .label i = 8
     .label a = 2
     .label b = 4
     lda a+1
-    bpl b1
+    bmi b6
+    bmi b2
+    bne !+
+    lda a
+    beq b2
+  !:
+    lda #<0
+    sta j
+    sta j+1
+    sta m
+    sta m+1
+    lda #<0>>$10
+    sta m+2
+    lda #>0>>$10
+    sta m+3
+  b3:
+    lda b+1
+    ora #$7f
+    bmi !+
+    lda #0
+  !:
+    sta $ff
+    lda m
+    clc
+    adc b
+    sta m
+    lda m+1
+    adc b+1
+    sta m+1
+    lda m+2
+    adc $ff
+    sta m+2
+    lda m+3
+    adc $ff
+    sta m+3
+    inc j
+    bne !+
+    inc j+1
+  !:
+    lda j+1
+    cmp a+1
+    bne b3
+    lda j
+    cmp a
+    bne b3
+    jmp b4
+  b2:
+    lda #<0
+    sta return
+    sta return+1
+    lda #<0>>$10
+    sta return+2
+    lda #>0>>$10
+    sta return+3
+  b4:
+    rts
+  b6:
     lda #<0
     sta i
     sta i+1
@@ -405,7 +461,7 @@ muls16s: {
     sta m+2
     lda #>0>>$10
     sta m+3
-  b2:
+  b5:
     lda b+1
     ora #$7f
     bmi !+
@@ -432,68 +488,11 @@ muls16s: {
     dec i
     lda i+1
     cmp a+1
-    bne b2
+    bne b5
     lda i
     cmp a
-    bne b2
-    jmp b3
-  b6:
-    lda #<0
-    sta return
-    sta return+1
-    lda #<0>>$10
-    sta return+2
-    lda #>0>>$10
-    sta return+3
-  b3:
-    rts
-  b1:
-    lda a+1
-    bmi b6
-    bne !+
-    lda a
-    beq b6
-  !:
-    lda #<0
-    sta j
-    sta j+1
-    sta m
-    sta m+1
-    lda #<0>>$10
-    sta m+2
-    lda #>0>>$10
-    sta m+3
-  b5:
-    lda b+1
-    ora #$7f
-    bmi !+
-    lda #0
-  !:
-    sta $ff
-    lda m
-    clc
-    adc b
-    sta m
-    lda m+1
-    adc b+1
-    sta m+1
-    lda m+2
-    adc $ff
-    sta m+2
-    lda m+3
-    adc $ff
-    sta m+3
-    inc j
-    bne !+
-    inc j+1
-  !:
-    lda j+1
-    cmp a+1
     bne b5
-    lda j
-    cmp a
-    bne b5
-    jmp b3
+    jmp b4
 }
 mul16u_compare: {
     .label a = 2

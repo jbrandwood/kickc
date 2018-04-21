@@ -17,7 +17,7 @@ main: {
 print_msg: {
     .label msg = 4
     cpx #1
-    bne b1
+    beq b1
     lda #<msg_1
     sta msg
     lda #>msg_1
@@ -31,8 +31,8 @@ print_msg: {
   b2:
     jsr print
     rts
-    msg_0: .text "World!@"
-    msg_1: .text "Hello @"
+    msg_0: .text "Hello @"
+    msg_1: .text "World!@"
 }
 print: {
     .label msg = 4

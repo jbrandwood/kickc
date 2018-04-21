@@ -169,12 +169,12 @@ main: {
     ldx #KEY_LSHIFT
     jsr keyboard_key_pressed
     cmp #0
-    beq b8
-    lda #1
+    bne b8
+    lda #0
     sta shift
     jmp b9
   b8:
-    lda #0
+    lda #1
     sta shift
   b9:
     lda #0

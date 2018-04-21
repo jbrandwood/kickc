@@ -441,10 +441,10 @@ gfx_mode: {
     sta BGCOL4
     lda form_dtv_palet
     cmp #0
-    bne b18
+    beq b18
     ldx #0
   b13:
-    lda DTV_PALETTE_DEFAULT,x
+    txa
     sta DTV_PALETTE,x
     inx
     cpx #$10
@@ -461,7 +461,7 @@ gfx_mode: {
   b18:
     ldx #0
   b15:
-    txa
+    lda DTV_PALETTE_DEFAULT,x
     sta DTV_PALETTE,x
     inx
     cpx #$10
@@ -470,15 +470,15 @@ gfx_mode: {
 }
 keyboard_event_get: {
     lda keyboard_events_size
-    bne b1
-    lda #$ff
-  breturn:
-    rts
-  b1:
+    beq b1
     dec keyboard_events_size
     ldy keyboard_events_size
     lda keyboard_events,y
     jmp breturn
+  b1:
+    lda #$ff
+  breturn:
+    rts
 }
 keyboard_event_scan: {
     .label row_scan = $12
@@ -492,40 +492,13 @@ keyboard_event_scan: {
     jsr keyboard_matrix_read
     sta row_scan
     ldy row
-    lda keyboard_scan_values,y
-    cmp row_scan
-    bne !b2+
-    jmp b2
-  !b2:
-    ldx #0
-  b3:
-    lda row_scan
-    ldy row
-    eor keyboard_scan_values,y
-    and keyboard_matrix_col_bitmask,x
-    cmp #0
-    beq b4
-    lda keyboard_events_size
-    cmp #8
-    beq b4
-    lda keyboard_matrix_col_bitmask,x
-    and row_scan
-    cmp #0
+    cmp keyboard_scan_values,y
     bne b6
-    lda #$40
-    ora keycode
-    ldy keyboard_events_size
-    sta keyboard_events,y
-    inc keyboard_events_size
-  b4:
-    inc keycode
-    inx
-    cpx #8
-    bne b3
-    lda row_scan
-    ldy row
-    sta keyboard_scan_values,y
-  b8:
+    lda #8
+    clc
+    adc keycode
+    sta keycode
+  b3:
     inc row
     lda row
     cmp #8
@@ -534,10 +507,10 @@ keyboard_event_scan: {
     sta keyboard_event_pressed.keycode
     jsr keyboard_event_pressed
     cmp #0
-    beq b5
+    beq b2
     ldx #0|KEY_MODIFIER_LSHIFT
     jmp b9
-  b5:
+  b2:
     ldx #0
   b9:
     lda #KEY_RSHIFT
@@ -569,17 +542,41 @@ keyboard_event_scan: {
   breturn:
     rts
   b6:
+    ldx #0
+  b4:
+    lda row_scan
+    ldy row
+    eor keyboard_scan_values,y
+    and keyboard_matrix_col_bitmask,x
+    cmp #0
+    beq b5
+    lda keyboard_events_size
+    cmp #8
+    beq b5
+    lda keyboard_matrix_col_bitmask,x
+    and row_scan
+    cmp #0
+    beq b7
     lda keycode
     ldy keyboard_events_size
     sta keyboard_events,y
     inc keyboard_events_size
-    jmp b4
-  b2:
-    lda #8
-    clc
-    adc keycode
-    sta keycode
-    jmp b8
+  b5:
+    inc keycode
+    inx
+    cpx #8
+    bne b4
+    lda row_scan
+    ldy row
+    sta keyboard_scan_values,y
+    jmp b3
+  b7:
+    lda #$40
+    ora keycode
+    ldy keyboard_events_size
+    sta keyboard_events,y
+    inc keyboard_events_size
+    jmp b5
 }
 keyboard_event_pressed: {
     .label row_bits = 7
@@ -608,72 +605,127 @@ keyboard_matrix_read: {
 get_vic_screen: {
     .label return = 3
     cmp #0
+    beq b1
+    cmp #1
+    beq b2
+    cmp #2
+    beq b3
+    cmp #3
+    beq b4
+    cmp #4
     bne b1
-  b2:
+    lda #<VIC_SCREEN4
+    sta return
+    lda #>VIC_SCREEN4
+    sta return+1
+    jmp breturn
+  b1:
     lda #<VIC_SCREEN0
     sta return
     lda #>VIC_SCREEN0
     sta return+1
-  breturn:
-    rts
-  b1:
-    cmp #1
-    bne b3
+    jmp breturn
+  b2:
     lda #<VIC_SCREEN1
     sta return
     lda #>VIC_SCREEN1
     sta return+1
     jmp breturn
   b3:
-    cmp #2
-    bne b5
     lda #<VIC_SCREEN2
     sta return
     lda #>VIC_SCREEN2
     sta return+1
     jmp breturn
-  b5:
-    cmp #3
-    bne b7
+  b4:
     lda #<VIC_SCREEN3
     sta return
     lda #>VIC_SCREEN3
     sta return+1
-    jmp breturn
-  b7:
-    cmp #4
-    bne b2
-    lda #<VIC_SCREEN4
-    sta return
-    lda #>VIC_SCREEN4
-    sta return+1
-    jmp breturn
+  breturn:
+    rts
 }
 get_vic_charset: {
     .label return = 3
     cmp #0
+    beq b1
+    cmp #1
     bne b1
-  b2:
+    lda #<VIC_BITMAP
+    sta return
+    lda #>VIC_BITMAP
+    sta return+1
+    jmp breturn
+  b1:
     lda #<VIC_CHARSET_ROM
     sta return
     lda #>VIC_CHARSET_ROM
     sta return+1
   breturn:
     rts
-  b1:
-    cmp #1
-    bne b2
-    lda #<VIC_BITMAP
-    sta return
-    lda #>VIC_BITMAP
-    sta return+1
-    jmp breturn
 }
 get_plane: {
     .label return = 9
     cmp #0
+    beq b1
+    cmp #1
+    beq b2
+    cmp #2
+    bne !b3+
+    jmp b3
+  !b3:
+    cmp #3
+    bne !b4+
+    jmp b4
+  !b4:
+    cmp #4
+    bne !b5+
+    jmp b5
+  !b5:
+    cmp #5
+    bne !b6+
+    jmp b6
+  !b6:
+    cmp #6
+    bne !b7+
+    jmp b7
+  !b7:
+    cmp #7
+    bne !b8+
+    jmp b8
+  !b8:
+    cmp #8
+    bne !b9+
+    jmp b9
+  !b9:
+    cmp #9
+    bne !b10+
+    jmp b10
+  !b10:
+    cmp #$a
+    bne !b11+
+    jmp b11
+  !b11:
+    cmp #$b
+    bne !b12+
+    jmp b12
+  !b12:
+    cmp #$c
+    bne !b13+
+    jmp b13
+  !b13:
+    cmp #$d
     bne b1
-  b2:
+    lda #<PLANE_FULL
+    sta return
+    lda #>PLANE_FULL
+    sta return+1
+    lda #<PLANE_FULL>>$10
+    sta return+2
+    lda #>PLANE_FULL>>$10
+    sta return+3
+    jmp breturn
+  b1:
     lda #<$ffffffff&VIC_SCREEN0
     sta return
     lda #>$ffffffff&VIC_SCREEN0
@@ -682,11 +734,8 @@ get_plane: {
     sta return+2
     lda #>$ffffffff&VIC_SCREEN0>>$10
     sta return+3
-  breturn:
-    rts
-  b1:
-    cmp #1
-    bne b3
+    jmp breturn
+  b2:
     lda #<$ffffffff&VIC_SCREEN1
     sta return
     lda #>$ffffffff&VIC_SCREEN1
@@ -697,8 +746,6 @@ get_plane: {
     sta return+3
     jmp breturn
   b3:
-    cmp #2
-    bne b5
     lda #<$ffffffff&VIC_SCREEN2
     sta return
     lda #>$ffffffff&VIC_SCREEN2
@@ -708,9 +755,7 @@ get_plane: {
     lda #>$ffffffff&VIC_SCREEN2>>$10
     sta return+3
     jmp breturn
-  b5:
-    cmp #3
-    bne b7
+  b4:
     lda #<$ffffffff&VIC_SCREEN3
     sta return
     lda #>$ffffffff&VIC_SCREEN3
@@ -720,9 +765,7 @@ get_plane: {
     lda #>$ffffffff&VIC_SCREEN3>>$10
     sta return+3
     jmp breturn
-  b7:
-    cmp #4
-    bne b9
+  b5:
     lda #<$ffffffff&VIC_BITMAP
     sta return
     lda #>$ffffffff&VIC_BITMAP
@@ -732,9 +775,7 @@ get_plane: {
     lda #>$ffffffff&VIC_BITMAP>>$10
     sta return+3
     jmp breturn
-  b9:
-    cmp #5
-    bne b11
+  b6:
     lda #<$ffffffff&VIC_CHARSET_ROM
     sta return
     lda #>$ffffffff&VIC_CHARSET_ROM
@@ -744,9 +785,7 @@ get_plane: {
     lda #>$ffffffff&VIC_CHARSET_ROM>>$10
     sta return+3
     jmp breturn
-  b11:
-    cmp #6
-    bne b13
+  b7:
     lda #<PLANE_8BPP_CHUNKY
     sta return
     lda #>PLANE_8BPP_CHUNKY
@@ -756,9 +795,7 @@ get_plane: {
     lda #>PLANE_8BPP_CHUNKY>>$10
     sta return+3
     jmp breturn
-  b13:
-    cmp #7
-    bne b15
+  b8:
     lda #<PLANE_HORISONTAL
     sta return
     lda #>PLANE_HORISONTAL
@@ -768,9 +805,7 @@ get_plane: {
     lda #>PLANE_HORISONTAL>>$10
     sta return+3
     jmp breturn
-  b15:
-    cmp #8
-    bne b17
+  b9:
     lda #<PLANE_VERTICAL
     sta return
     lda #>PLANE_VERTICAL
@@ -780,9 +815,7 @@ get_plane: {
     lda #>PLANE_VERTICAL>>$10
     sta return+3
     jmp breturn
-  b17:
-    cmp #9
-    bne b19
+  b10:
     lda #<PLANE_HORISONTAL2
     sta return
     lda #>PLANE_HORISONTAL2
@@ -792,9 +825,7 @@ get_plane: {
     lda #>PLANE_HORISONTAL2>>$10
     sta return+3
     jmp breturn
-  b19:
-    cmp #$a
-    bne b21
+  b11:
     lda #<PLANE_VERTICAL2
     sta return
     lda #>PLANE_VERTICAL2
@@ -804,9 +835,7 @@ get_plane: {
     lda #>PLANE_VERTICAL2>>$10
     sta return+3
     jmp breturn
-  b21:
-    cmp #$b
-    bne b23
+  b12:
     lda #<PLANE_CHARSET8
     sta return
     lda #>PLANE_CHARSET8
@@ -816,9 +845,7 @@ get_plane: {
     lda #>PLANE_CHARSET8>>$10
     sta return+3
     jmp breturn
-  b23:
-    cmp #$c
-    bne b25
+  b13:
     lda #<PLANE_BLANK
     sta return
     lda #>PLANE_BLANK
@@ -827,21 +854,8 @@ get_plane: {
     sta return+2
     lda #>PLANE_BLANK>>$10
     sta return+3
-    jmp breturn
-  b25:
-    cmp #$d
-    beq !b2+
-    jmp b2
-  !b2:
-    lda #<PLANE_FULL
-    sta return
-    lda #>PLANE_FULL
-    sta return+1
-    lda #<PLANE_FULL>>$10
-    sta return+2
-    lda #>PLANE_FULL>>$10
-    sta return+3
-    jmp breturn
+  breturn:
+    rts
 }
 form_mode: {
     .label preset_current = $f
@@ -931,102 +945,100 @@ form_mode: {
 render_preset_name: {
     .label name = 3
     cmp #0
-    bne b1
-    lda #<name_0
-    sta name
-    lda #>name_0
-    sta name+1
-    jmp b2
-  b4:
-    lda #<name_10
-    sta name
-    lda #>name_10
-    sta name+1
-  b2:
-    jsr print_str_at
-    rts
-  b1:
+    beq b1
     cmp #1
-    bne b3
-    lda #<name_1
-    sta name
-    lda #>name_1
-    sta name+1
-    jmp b2
-  b3:
+    beq b2
     cmp #2
-    bne b5
-    lda #<name_2
-    sta name
-    lda #>name_2
-    sta name+1
-    jmp b2
-  b5:
+    beq b3
     cmp #3
-    bne b7
-    lda #<name_3
-    sta name
-    lda #>name_3
-    sta name+1
-    jmp b2
-  b7:
+    beq b4
     cmp #4
-    bne b9
-    lda #<name_4
-    sta name
-    lda #>name_4
-    sta name+1
-    jmp b2
-  b9:
+    beq b5
     cmp #5
-    bne b11
-    lda #<name_5
-    sta name
-    lda #>name_5
-    sta name+1
-    jmp b2
-  b11:
+    beq b6
     cmp #6
-    bne b13
-    lda #<name_6
-    sta name
-    lda #>name_6
-    sta name+1
-    jmp b2
-  b13:
+    beq b7
     cmp #7
-    bne b15
-    lda #<name_7
-    sta name
-    lda #>name_7
-    sta name+1
-    jmp b2
-  b15:
+    beq b8
     cmp #8
-    bne b17
-    lda #<name_8
-    sta name
-    lda #>name_8
-    sta name+1
-    jmp b2
-  b17:
+    beq b9
     cmp #9
-    bne b19
-    lda #<name_9
-    sta name
-    lda #>name_9
-    sta name+1
-    jmp b2
-  b19:
+    beq b10
     cmp #$a
-    beq !b4+
-    jmp b4
-  !b4:
+    beq b11
     lda #<name_11
     sta name
     lda #>name_11
     sta name+1
-    jmp b2
+    jmp b22
+  b1:
+    lda #<name_0
+    sta name
+    lda #>name_0
+    sta name+1
+    jmp b22
+  b2:
+    lda #<name_1
+    sta name
+    lda #>name_1
+    sta name+1
+    jmp b22
+  b3:
+    lda #<name_2
+    sta name
+    lda #>name_2
+    sta name+1
+    jmp b22
+  b4:
+    lda #<name_3
+    sta name
+    lda #>name_3
+    sta name+1
+    jmp b22
+  b5:
+    lda #<name_4
+    sta name
+    lda #>name_4
+    sta name+1
+    jmp b22
+  b6:
+    lda #<name_5
+    sta name
+    lda #>name_5
+    sta name+1
+    jmp b22
+  b7:
+    lda #<name_6
+    sta name
+    lda #>name_6
+    sta name+1
+    jmp b22
+  b8:
+    lda #<name_7
+    sta name
+    lda #>name_7
+    sta name+1
+    jmp b22
+  b9:
+    lda #<name_8
+    sta name
+    lda #>name_8
+    sta name+1
+    jmp b22
+  b10:
+    lda #<name_9
+    sta name
+    lda #>name_9
+    sta name+1
+    jmp b22
+  b11:
+    lda #<name_10
+    sta name
+    lda #>name_10
+    sta name+1
+  b22:
+    jsr print_str_at
+    rts
     name_0: .text "Standard Charset              @"
     name_1: .text "Extended Color Charset        @"
     name_2: .text "Standard Bitmap               @"
@@ -1037,8 +1049,8 @@ render_preset_name: {
     name_7: .text "Chunky 8bpp                   @"
     name_8: .text "Sixs Fred                     @"
     name_9: .text "Sixs Fred 2                   @"
-    name_10: .text "Standard Charset              @"
-    name_11: .text "8bpp Pixel Cell               @"
+    name_10: .text "8bpp Pixel Cell               @"
+    name_11: .text "Standard Charset              @"
 }
 print_str_at: {
     .label at = 5
@@ -1100,119 +1112,103 @@ form_field_ptr: {
     rts
 }
 apply_preset: {
-    .label values = 5
     .label preset = 3
     cmp #0
-    bne b1
-  b4:
+    beq b34
+    cmp #1
+    beq b1
+    cmp #2
+    beq b2
+    cmp #3
+    beq b3
+    cmp #4
+    beq b4
+    cmp #5
+    beq b5
+    cmp #6
+    beq b6
+    cmp #7
+    beq b7
+    cmp #8
+    beq b8
+    cmp #9
+    beq b9
+    cmp #$a
+    beq b10
+  b34:
     lda #<preset_stdchar
     sta preset
     lda #>preset_stdchar
     sta preset+1
-  b2:
-    ldx #0
-    lda #<form_fields_val
-    sta values
-    lda #>form_fields_val
-    sta values+1
-  b23:
-    ldy #0
-    lda (preset),y
-    sta (values),y
-    inc values
-    bne !+
-    inc values+1
-  !:
-    inc preset
-    bne !+
-    inc preset+1
-  !:
-    inx
-    cpx #form_fields_cnt
-    bne b23
-    rts
+    jmp b22
   b1:
-    cmp #1
-    bne b3
     lda #<preset_ecmchar
     sta preset
     lda #>preset_ecmchar
     sta preset+1
-    jmp b2
-  b3:
-    cmp #2
-    bne b5
+    jmp b22
+  b2:
     lda #<preset_stdbm
     sta preset
     lda #>preset_stdbm
     sta preset+1
-    jmp b2
-  b5:
-    cmp #3
-    bne b7
+    jmp b22
+  b3:
     lda #<preset_mcbm
     sta preset
     lda #>preset_mcbm
     sta preset+1
-    jmp b2
-  b7:
-    cmp #4
-    bne b9
+    jmp b22
+  b4:
     lda #<preset_hi_stdchar
     sta preset
     lda #>preset_hi_stdchar
     sta preset+1
-    jmp b2
-  b9:
-    cmp #5
-    bne b11
+    jmp b22
+  b5:
     lda #<preset_hi_ecmchar
     sta preset
     lda #>preset_hi_ecmchar
     sta preset+1
-    jmp b2
-  b11:
-    cmp #6
-    bne b13
+    jmp b22
+  b6:
     lda #<preset_twoplane
     sta preset
     lda #>preset_twoplane
     sta preset+1
-    jmp b2
-  b13:
-    cmp #7
-    bne b15
+    jmp b22
+  b7:
     lda #<preset_chunky
     sta preset
     lda #>preset_chunky
     sta preset+1
-    jmp b2
-  b15:
-    cmp #8
-    bne b17
+    jmp b22
+  b8:
     lda #<preset_sixsfred
     sta preset
     lda #>preset_sixsfred
     sta preset+1
-    jmp b2
-  b17:
-    cmp #9
-    bne b19
+    jmp b22
+  b9:
     lda #<preset_sixsfred2
     sta preset
     lda #>preset_sixsfred2
     sta preset+1
-    jmp b2
-  b19:
-    cmp #$a
-    beq !b4+
-    jmp b4
-  !b4:
+    jmp b22
+  b10:
     lda #<preset_8bpppixelcell
     sta preset
     lda #>preset_8bpppixelcell
     sta preset+1
-    jmp b2
+  b22:
+    ldy #0
+  b23:
+    lda (preset),y
+    sta form_fields_val,y
+    iny
+    cpy #form_fields_cnt
+    bne b23
+    rts
 }
 form_control: {
     .label field = 3
@@ -1231,12 +1227,12 @@ form_control: {
     bvc !+
     eor #$80
   !:
-    bmi !b2+
+    bpl !b2+
     jmp b2
   !b2:
-    lda #$80
+    lda #$7f
     ldy #0
-    ora (field),y
+    and (field),y
     sta (field),y
   b3:
     jsr keyboard_event_scan
@@ -1250,12 +1246,12 @@ form_control: {
     txa
     and #KEY_MODIFIER_SHIFT
     cmp #0
-    bne b5
-    inc form_field_idx
+    beq b5
+    dec form_field_idx
     lda form_field_idx
-    cmp #form_fields_cnt
+    cmp #$ff
     bne b7
-    tya
+    lda #form_fields_cnt-1
     sta form_field_idx
   b7:
     lda #FORM_CURSOR_BLINK/2
@@ -1264,11 +1260,11 @@ form_control: {
   breturn:
     rts
   b5:
-    dec form_field_idx
+    inc form_field_idx
     lda form_field_idx
-    cmp #$ff
+    cmp #form_fields_cnt
     bne b7
-    lda #form_fields_cnt-1
+    lda #0
     sta form_field_idx
     jmp b7
   b4:
@@ -1277,15 +1273,17 @@ form_control: {
     txa
     and #KEY_MODIFIER_SHIFT
     cmp #0
-    bne b10
+    beq b10
     ldx form_field_idx
-    inc form_fields_val,x
+    lda form_fields_val,x
+    sec
+    sbc #1
+    sta form_fields_val,x
     ldy form_field_idx
     lda form_fields_val,y
-    cmp form_fields_max,y
-    bcc b12
-    beq b12
-    lda #0
+    cmp #$ff
+    bne b12
+    lda form_fields_max,y
     sta form_fields_val,y
   b12:
     ldy form_field_idx
@@ -1299,15 +1297,13 @@ form_control: {
     jmp breturn
   b10:
     ldx form_field_idx
-    lda form_fields_val,x
-    sec
-    sbc #1
-    sta form_fields_val,x
+    inc form_fields_val,x
     ldy form_field_idx
     lda form_fields_val,y
-    cmp #$ff
-    bne b12
-    lda form_fields_max,y
+    cmp form_fields_max,y
+    bcc b12
+    beq b12
+    lda #0
     sta form_fields_val,y
     jmp b12
   b9:
@@ -1316,9 +1312,9 @@ form_control: {
     ldx #$ff
     jmp breturn
   b2:
-    lda #$7f
+    lda #$80
     ldy #0
-    and (field),y
+    ora (field),y
     sta (field),y
     jmp b3
 }
@@ -1665,9 +1661,9 @@ gfx_init_plane_horisontal: {
     lda #4
     and ay
     cmp #0
-    bne b3
-    lda #0
-    tay
+    beq b3
+    lda #$ff
+    ldy #0
     sta (gfxa),y
     inc gfxa
     bne !+
@@ -1685,8 +1681,8 @@ gfx_init_plane_horisontal: {
     jsr dtvSetCpuBankSegment1
     rts
   b3:
-    lda #$ff
-    ldy #0
+    lda #0
+    tay
     sta (gfxa),y
     inc gfxa
     bne !+
@@ -1855,132 +1851,135 @@ gfx_init_vic_bitmap: {
     lines_y: .byte 0, 0, $c7, $c7, 0, 0, $64, $c7, $64, 0
 }
 bitmap_line: {
-    .label xd = 7
-    .label yd = 8
-    .label x0 = $f
+    .label xd = 8
+    .label yd = 7
+    .label x0 = $d
     .label x1 = $12
-    .label y0 = $d
+    .label y0 = $e
     lda x0
     cmp x1
-    bcs b1
-    lda x1
+    bcc b1
     sec
-    sbc x0
+    sbc x1
     sta xd
-    lda y0
-    sty $ff
-    cmp $ff
-    bcs b2
     tya
-    sec
-    sbc y0
-    sta yd
-    cmp xd
-    bcs b3
-    ldx x0
-    lda x1
-    sta bitmap_line_xdyi.x1
-    jsr bitmap_line_xdyi
-  breturn:
-    rts
-  b3:
-    lda y0
-    sta bitmap_line_ydxi.y
-    ldx x0
-    sty bitmap_line_ydxi.y1
-    jsr bitmap_line_ydxi
-    jmp breturn
-  b2:
+    cmp y0
+    beq !+
+    bcs b2
+  !:
     tya
     eor #$ff
     sec
     adc y0
     sta yd
     cmp xd
-    bcs b6
-    ldx x0
-    jsr bitmap_line_xdyd
-    jmp breturn
-  b6:
-    sty bitmap_line_ydxd.y
+    bcc b3
+    sty bitmap_line_ydxi.y
     ldx x1
-    jsr bitmap_line_ydxd
+    jsr bitmap_line_ydxi
+  breturn:
+    rts
+  b3:
+    ldx x1
+    sty bitmap_line_xdyi.y
+    jsr bitmap_line_xdyi
     jmp breturn
-  b1:
-    lda x0
-    sec
-    sbc x1
-    sta xd
-    lda y0
-    sty $ff
-    cmp $ff
-    bcs b9
+  b2:
     tya
     sec
     sbc y0
     sta yd
     cmp xd
-    bcs b10
-    ldx x1
-    sty bitmap_line_xdyd.y
-    lda x0
-    sta bitmap_line_xdyd.x1
-    jsr bitmap_line_xdyd
-    jmp breturn
-  b10:
+    bcc b6
     lda y0
     sta bitmap_line_ydxd.y
     ldx x0
     sty bitmap_line_ydxd.y1
     jsr bitmap_line_ydxd
     jmp breturn
-  b9:
+  b6:
+    ldx x1
+    sty bitmap_line_xdyd.y
+    lda x0
+    sta bitmap_line_xdyd.x1
+    jsr bitmap_line_xdyd
+    jmp breturn
+  b1:
+    lda x1
+    sec
+    sbc x0
+    sta xd
+    tya
+    cmp y0
+    beq !+
+    bcs b9
+  !:
     tya
     eor #$ff
     sec
     adc y0
     sta yd
     cmp xd
-    bcs b13
+    bcc b10
+    sty bitmap_line_ydxd.y
     ldx x1
-    sty bitmap_line_xdyi.y
-    jsr bitmap_line_xdyi
+    jsr bitmap_line_ydxd
     jmp breturn
-  b13:
-    sty bitmap_line_ydxi.y
-    ldx x1
+  b10:
+    ldx x0
+    jsr bitmap_line_xdyd
+    jmp breturn
+  b9:
+    tya
+    sec
+    sbc y0
+    sta yd
+    cmp xd
+    bcc b13
+    lda y0
+    sta bitmap_line_ydxi.y
+    ldx x0
+    sty bitmap_line_ydxi.y1
     jsr bitmap_line_ydxi
     jmp breturn
+  b13:
+    ldx x0
+    lda x1
+    sta bitmap_line_xdyi.x1
+    jsr bitmap_line_xdyi
+    jmp breturn
 }
-bitmap_line_ydxi: {
+bitmap_line_xdyi: {
+    .label _6 = $12
     .label y = $e
-    .label y1 = $d
-    .label yd = 8
-    .label xd = 7
+    .label x1 = $d
+    .label xd = 8
+    .label yd = 7
     .label e = $f
-    lda xd
+    lda yd
     lsr
     sta e
   b1:
     ldy y
     jsr bitmap_plot
-    inc y
-    lda e
-    clc
-    adc xd
-    sta e
-    lda yd
-    cmp e
-    bcs b2
     inx
     lda e
+    clc
+    adc yd
+    sta e
+    lda xd
+    cmp e
+    bcs b2
+    inc y
+    lda e
     sec
-    sbc yd
+    sbc xd
     sta e
   b2:
-    ldy y1
+    ldy x1
     iny
-    cpy y
+    sty _6
+    cpx _6
     bne b1
     rts
 }
@@ -2009,46 +2008,12 @@ bitmap_plot: {
     sta (_0),y
     rts
 }
-bitmap_line_xdyi: {
-    .label _6 = $12
-    .label y = $d
-    .label x1 = $f
-    .label xd = 7
-    .label yd = 8
-    .label e = $e
-    lda yd
-    lsr
-    sta e
-  b1:
-    ldy y
-    jsr bitmap_plot
-    inx
-    lda e
-    clc
-    adc yd
-    sta e
-    lda xd
-    cmp e
-    bcs b2
-    inc y
-    lda e
-    sec
-    sbc xd
-    sta e
-  b2:
-    ldy x1
-    iny
-    sty _6
-    cpx _6
-    bne b1
-    rts
-}
-bitmap_line_ydxd: {
-    .label y = $e
-    .label y1 = $d
-    .label yd = 8
-    .label xd = 7
-    .label e = $f
+bitmap_line_ydxi: {
+    .label y = $f
+    .label y1 = $e
+    .label yd = 7
+    .label xd = 8
+    .label e = $d
     lda xd
     lsr
     sta e
@@ -2063,7 +2028,7 @@ bitmap_line_ydxd: {
     lda yd
     cmp e
     bcs b2
-    dex
+    inx
     lda e
     sec
     sbc yd
@@ -2077,11 +2042,11 @@ bitmap_line_ydxd: {
 }
 bitmap_line_xdyd: {
     .label _6 = $f
-    .label y = $d
+    .label y = $e
     .label x1 = $12
-    .label xd = 7
-    .label yd = 8
-    .label e = $e
+    .label xd = 8
+    .label yd = 7
+    .label e = $d
     lda yd
     lsr
     sta e
@@ -2106,6 +2071,38 @@ bitmap_line_xdyd: {
     iny
     sty _6
     cpx _6
+    bne b1
+    rts
+}
+bitmap_line_ydxd: {
+    .label y = $f
+    .label y1 = $e
+    .label yd = 7
+    .label xd = 8
+    .label e = $d
+    lda xd
+    lsr
+    sta e
+  b1:
+    ldy y
+    jsr bitmap_plot
+    inc y
+    lda e
+    clc
+    adc xd
+    sta e
+    lda yd
+    cmp e
+    bcs b2
+    dex
+    lda e
+    sec
+    sbc yd
+    sta e
+  b2:
+    ldy y1
+    iny
+    cpy y
     bne b1
     rts
 }

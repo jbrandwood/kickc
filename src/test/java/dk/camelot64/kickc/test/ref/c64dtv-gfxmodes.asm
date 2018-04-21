@@ -799,9 +799,9 @@ mode_twoplanebitmap: {
     lda #4
     and ay
     cmp #0
-    bne b6
-    lda #0
-    tay
+    beq b6
+    lda #$ff
+    ldy #0
     sta (gfxa),y
     inc gfxa
     bne !+
@@ -843,8 +843,8 @@ mode_twoplanebitmap: {
     jsr mode_ctrl
     rts
   b6:
-    lda #$ff
-    ldy #0
+    lda #0
+    tay
     sta (gfxa),y
     inc gfxa
     bne !+
@@ -1350,132 +1350,135 @@ mode_stdbitmap: {
     lines_y: .byte 0, 0, $c7, $c7, 0, 0, $64, $c7, $64, 0
 }
 bitmap_line: {
-    .label xd = 7
-    .label yd = 8
-    .label x0 = $b
+    .label xd = 8
+    .label yd = 7
+    .label x0 = 9
     .label x1 = $c
-    .label y0 = 9
+    .label y0 = $a
     lda x0
     cmp x1
-    bcs b1
-    lda x1
+    bcc b1
     sec
-    sbc x0
+    sbc x1
     sta xd
-    lda y0
-    sty $ff
-    cmp $ff
-    bcs b2
     tya
-    sec
-    sbc y0
-    sta yd
-    cmp xd
-    bcs b3
-    ldx x0
-    lda x1
-    sta bitmap_line_xdyi.x1
-    jsr bitmap_line_xdyi
-  breturn:
-    rts
-  b3:
-    lda y0
-    sta bitmap_line_ydxi.y
-    ldx x0
-    sty bitmap_line_ydxi.y1
-    jsr bitmap_line_ydxi
-    jmp breturn
-  b2:
+    cmp y0
+    beq !+
+    bcs b2
+  !:
     tya
     eor #$ff
     sec
     adc y0
     sta yd
     cmp xd
-    bcs b6
-    ldx x0
-    jsr bitmap_line_xdyd
-    jmp breturn
-  b6:
-    sty bitmap_line_ydxd.y
+    bcc b3
+    sty bitmap_line_ydxi.y
     ldx x1
-    jsr bitmap_line_ydxd
+    jsr bitmap_line_ydxi
+  breturn:
+    rts
+  b3:
+    ldx x1
+    sty bitmap_line_xdyi.y
+    jsr bitmap_line_xdyi
     jmp breturn
-  b1:
-    lda x0
-    sec
-    sbc x1
-    sta xd
-    lda y0
-    sty $ff
-    cmp $ff
-    bcs b9
+  b2:
     tya
     sec
     sbc y0
     sta yd
     cmp xd
-    bcs b10
-    ldx x1
-    sty bitmap_line_xdyd.y
-    lda x0
-    sta bitmap_line_xdyd.x1
-    jsr bitmap_line_xdyd
-    jmp breturn
-  b10:
+    bcc b6
     lda y0
     sta bitmap_line_ydxd.y
     ldx x0
     sty bitmap_line_ydxd.y1
     jsr bitmap_line_ydxd
     jmp breturn
-  b9:
+  b6:
+    ldx x1
+    sty bitmap_line_xdyd.y
+    lda x0
+    sta bitmap_line_xdyd.x1
+    jsr bitmap_line_xdyd
+    jmp breturn
+  b1:
+    lda x1
+    sec
+    sbc x0
+    sta xd
+    tya
+    cmp y0
+    beq !+
+    bcs b9
+  !:
     tya
     eor #$ff
     sec
     adc y0
     sta yd
     cmp xd
-    bcs b13
+    bcc b10
+    sty bitmap_line_ydxd.y
     ldx x1
-    sty bitmap_line_xdyi.y
-    jsr bitmap_line_xdyi
+    jsr bitmap_line_ydxd
     jmp breturn
-  b13:
-    sty bitmap_line_ydxi.y
-    ldx x1
+  b10:
+    ldx x0
+    jsr bitmap_line_xdyd
+    jmp breturn
+  b9:
+    tya
+    sec
+    sbc y0
+    sta yd
+    cmp xd
+    bcc b13
+    lda y0
+    sta bitmap_line_ydxi.y
+    ldx x0
+    sty bitmap_line_ydxi.y1
     jsr bitmap_line_ydxi
     jmp breturn
+  b13:
+    ldx x0
+    lda x1
+    sta bitmap_line_xdyi.x1
+    jsr bitmap_line_xdyi
+    jmp breturn
 }
-bitmap_line_ydxi: {
+bitmap_line_xdyi: {
+    .label _6 = $c
     .label y = $a
-    .label y1 = 9
-    .label yd = 8
-    .label xd = 7
+    .label x1 = 9
+    .label xd = 8
+    .label yd = 7
     .label e = $b
-    lda xd
+    lda yd
     lsr
     sta e
   b1:
     ldy y
     jsr bitmap_plot
-    inc y
-    lda e
-    clc
-    adc xd
-    sta e
-    lda yd
-    cmp e
-    bcs b2
     inx
     lda e
+    clc
+    adc yd
+    sta e
+    lda xd
+    cmp e
+    bcs b2
+    inc y
+    lda e
     sec
-    sbc yd
+    sbc xd
     sta e
   b2:
-    ldy y1
+    ldy x1
     iny
-    cpy y
+    sty _6
+    cpx _6
     bne b1
     rts
 }
@@ -1504,46 +1507,12 @@ bitmap_plot: {
     sta (_0),y
     rts
 }
-bitmap_line_xdyi: {
-    .label _6 = $c
-    .label y = 9
-    .label x1 = $b
-    .label xd = 7
-    .label yd = 8
-    .label e = $a
-    lda yd
-    lsr
-    sta e
-  b1:
-    ldy y
-    jsr bitmap_plot
-    inx
-    lda e
-    clc
-    adc yd
-    sta e
-    lda xd
-    cmp e
-    bcs b2
-    inc y
-    lda e
-    sec
-    sbc xd
-    sta e
-  b2:
-    ldy x1
-    iny
-    sty _6
-    cpx _6
-    bne b1
-    rts
-}
-bitmap_line_ydxd: {
-    .label y = $a
-    .label y1 = 9
-    .label yd = 8
-    .label xd = 7
-    .label e = $b
+bitmap_line_ydxi: {
+    .label y = $b
+    .label y1 = $a
+    .label yd = 7
+    .label xd = 8
+    .label e = 9
     lda xd
     lsr
     sta e
@@ -1558,7 +1527,7 @@ bitmap_line_ydxd: {
     lda yd
     cmp e
     bcs b2
-    dex
+    inx
     lda e
     sec
     sbc yd
@@ -1572,11 +1541,11 @@ bitmap_line_ydxd: {
 }
 bitmap_line_xdyd: {
     .label _6 = $b
-    .label y = 9
+    .label y = $a
     .label x1 = $c
-    .label xd = 7
-    .label yd = 8
-    .label e = $a
+    .label xd = 8
+    .label yd = 7
+    .label e = 9
     lda yd
     lsr
     sta e
@@ -1601,6 +1570,38 @@ bitmap_line_xdyd: {
     iny
     sty _6
     cpx _6
+    bne b1
+    rts
+}
+bitmap_line_ydxd: {
+    .label y = $b
+    .label y1 = $a
+    .label yd = 7
+    .label xd = 8
+    .label e = 9
+    lda xd
+    lsr
+    sta e
+  b1:
+    ldy y
+    jsr bitmap_plot
+    inc y
+    lda e
+    clc
+    adc xd
+    sta e
+    lda yd
+    cmp e
+    bcs b2
+    dex
+    lda e
+    sec
+    sbc yd
+    sta e
+  b2:
+    ldy y1
+    iny
+    cpy y
     bne b1
     rts
 }

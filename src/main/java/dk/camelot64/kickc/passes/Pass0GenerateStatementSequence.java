@@ -248,32 +248,36 @@ public class Pass0GenerateStatementSequence extends KickCBaseVisitor<Object> {
 
    @Override
    public Void visitStmtIfElse(KickCParser.StmtIfElseContext ctx) {
+      KickCParser.StmtContext ifStmt = ctx.stmt(0);
+      KickCParser.StmtContext elseStmt = ctx.stmt(1);
+
       PrePostModifierHandler.addPreModifiers(this, ctx.expr());
       RValue rValue = (RValue) this.visit(ctx.expr());
-      VariableRef notExprVar = getCurrentSymbols().addVariableIntermediate().getRef();
-      sequence.addStatement(new StatementAssignment(notExprVar, null, Operators.LOGIC_NOT, rValue));
-      PrePostModifierHandler.addPostModifiers(this, ctx.expr());
 
-      Label elseJumpLabel = getCurrentSymbols().addLabelIntermediate();
-      Statement ifJmpStmt = new StatementConditionalJump(notExprVar, elseJumpLabel.getRef());
-      sequence.addStatement(ifJmpStmt);
-      this.visit(ctx.stmt(0));
-
-      KickCParser.StmtContext elseStmt = ctx.stmt(1);
-      if(elseStmt != null) {
-         // There is an else statement - add the else part and any needed labels/jumps
+      if(elseStmt==null) {
+         // If without else - skip the entire section if condition not met
+         VariableRef notExprVar = getCurrentSymbols().addVariableIntermediate().getRef();
+         sequence.addStatement(new StatementAssignment(notExprVar, null, Operators.LOGIC_NOT, rValue));
+         PrePostModifierHandler.addPostModifiers(this, ctx.expr());
          Label endJumpLabel = getCurrentSymbols().addLabelIntermediate();
-         Statement endJmpStmt = new StatementJump(endJumpLabel.getRef());
-         sequence.addStatement(endJmpStmt);
-         StatementLabel elseJumpTarget = new StatementLabel(elseJumpLabel.getRef());
-         sequence.addStatement(elseJumpTarget);
+         sequence.addStatement(new StatementConditionalJump(notExprVar, endJumpLabel.getRef()));
+         this.visit(ifStmt);
+         // No else statement - just add the label
+         sequence.addStatement(new StatementLabel(endJumpLabel.getRef()));
+      } else {
+         // If with else - jump to if section if condition met - fall into else otherwise.
+         PrePostModifierHandler.addPostModifiers(this, ctx.expr());
+         Label ifJumpLabel = getCurrentSymbols().addLabelIntermediate();
+         sequence.addStatement(new StatementConditionalJump(rValue, ifJumpLabel.getRef()));
+         // Add else body
          this.visit(elseStmt);
+         // There is an else statement - add the if part and any needed labels/jumps
+         Label endJumpLabel = getCurrentSymbols().addLabelIntermediate();
+         sequence.addStatement(new StatementJump(endJumpLabel.getRef()));
+         sequence.addStatement(new StatementLabel(ifJumpLabel.getRef()));
+         this.visit(ifStmt);
          StatementLabel endJumpTarget = new StatementLabel(endJumpLabel.getRef());
          sequence.addStatement(endJumpTarget);
-      } else {
-         // No else statement - just add the label
-         StatementLabel elseJumpTarget = new StatementLabel(elseJumpLabel.getRef());
-         sequence.addStatement(elseJumpTarget);
       }
       return null;
    }

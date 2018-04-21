@@ -1,19 +1,22 @@
 package dk.camelot64.kickc.passes;
 
-import dk.camelot64.kickc.model.*;
+import dk.camelot64.kickc.model.CompileError;
+import dk.camelot64.kickc.model.ControlFlowBlock;
+import dk.camelot64.kickc.model.Program;
 import dk.camelot64.kickc.model.operators.OperatorBinary;
 import dk.camelot64.kickc.model.operators.OperatorUnary;
 import dk.camelot64.kickc.model.operators.Operators;
-import dk.camelot64.kickc.model.values.*;
 import dk.camelot64.kickc.model.statements.Statement;
 import dk.camelot64.kickc.model.statements.StatementAssignment;
 import dk.camelot64.kickc.model.statements.StatementPhiBlock;
 import dk.camelot64.kickc.model.symbols.ConstantVar;
+import dk.camelot64.kickc.model.symbols.ProgramScope;
 import dk.camelot64.kickc.model.symbols.Scope;
 import dk.camelot64.kickc.model.symbols.Variable;
 import dk.camelot64.kickc.model.types.SymbolType;
 import dk.camelot64.kickc.model.types.SymbolTypeArray;
 import dk.camelot64.kickc.model.types.SymbolTypeInference;
+import dk.camelot64.kickc.model.values.*;
 
 import java.util.*;
 
@@ -92,106 +95,112 @@ public class Pass2ConstantIdentification extends Pass2SsaOptimization {
     */
    private Map<VariableRef, ConstantValue> findConstantVariables() {
       final Map<VariableRef, ConstantValue> constants = new LinkedHashMap<>();
-      ControlFlowGraphBaseVisitor<Void> visitor = new ControlFlowGraphBaseVisitor<Void>() {
-         @Override
-         public Void visitAssignment(StatementAssignment assignment) {
-            LValue lValue = assignment.getlValue();
-            if(lValue instanceof VariableRef) {
-               VariableRef variable = (VariableRef) lValue;
-               if(assignment.getrValue1() == null && getConstant(assignment.getrValue2()) != null) {
-                  if(assignment.getOperator() == null) {
-                     // Constant assignment
-                     ConstantValue constant = getConstant(assignment.getrValue2());
-                     constants.put(variable, constant);
-                  } else {
-                     // Constant unary expression
-                     ConstantValue constant = createUnary(
-                           (OperatorUnary) assignment.getOperator(),
-                           getConstant(assignment.getrValue2())
-                     );
-                     if(constant != null) {
-                        constants.put(variable, constant);
-                     }
-                  }
-               } else if(getConstant(assignment.getrValue1()) != null && getConstant(assignment.getrValue2()) != null) {
-                  // Constant binary expression
-                  ConstantValue constant = createBinary(
-                        getConstant(assignment.getrValue1()),
-                        (OperatorBinary) assignment.getOperator(),
-                        getConstant(assignment.getrValue2()));
-                  if(constant != null) {
+      for(ControlFlowBlock block : getGraph().getAllBlocks()) {
+         for(Statement statement : block.getStatements()) {
+            if(statement instanceof StatementAssignment) {
+               StatementAssignment assignment = (StatementAssignment) statement;
+               findConstantsAssignment(constants, assignment);
+            } else if( statement instanceof StatementPhiBlock) {
+               StatementPhiBlock phi = (StatementPhiBlock) statement;
+               findConstantsPhi(constants, phi);
+            }
+         }
+      }
 
-                     constants.put(variable, constant);
-                  }
-               } else if(assignment.getrValue2() instanceof ValueList && assignment.getOperator() == null && assignment.getrValue1() == null) {
-                  if(lValue instanceof VariableRef) {
-                     Variable lVariable = getScope().getVariable((VariableRef) lValue);
-                     if(lVariable.getType() instanceof SymbolTypeArray) {
-                        ValueList valueList = (ValueList) assignment.getrValue2();
-                        List<RValue> values = valueList.getList();
-                        boolean allConstant = true;
-                        // Type of the elements of the list (deducted from the type of all elements)
-                        SymbolType listType = null;
-                        List<ConstantValue> elements = new ArrayList<>();
-                        for(RValue elmValue : values) {
-                           if(elmValue instanceof ConstantValue) {
-                              ConstantValue constantValue = (ConstantValue) elmValue;
-                              SymbolType elmType = constantValue.getType(getScope());
-                              if(listType == null) {
-                                 listType = elmType;
-                              } else {
-                                 if(!SymbolTypeInference.typeMatch(listType, elmType)) {
-                                    SymbolType intersectType = SymbolTypeInference.intersectTypes(listType, elmType);
-                                    if(intersectType==null) {
-                                       // No overlap between list type and element type
-                                       throw new RuntimeException("Array type " + listType + " does not match element type" + elmType + ". Array: " + valueList.toString(getProgram()));
-                                    } else {
-                                       listType = intersectType;
-                                    }
-                                 }
-                              }
-                              elements.add(constantValue);
+      return constants;
+   }
+
+   private void findConstantsPhi(Map<VariableRef, ConstantValue> constants, StatementPhiBlock phi) {
+      for(StatementPhiBlock.PhiVariable phiVariable : phi.getPhiVariables()) {
+         if(phiVariable.getValues().size() == 1) {
+            StatementPhiBlock.PhiRValue phiRValue = phiVariable.getValues().get(0);
+            if(getConstant(phiRValue.getrValue()) != null) {
+               VariableRef variable = phiVariable.getVariable();
+               ConstantValue constant = getConstant(phiRValue.getrValue());
+               constants.put(variable, constant);
+            }
+         }
+      }
+   }
+
+   private void findConstantsAssignment(Map<VariableRef, ConstantValue> constants, StatementAssignment assignment) {
+      LValue lValue = assignment.getlValue();
+      if(lValue instanceof VariableRef) {
+         VariableRef variable = (VariableRef) lValue;
+         if(assignment.getrValue1() == null && getConstant(assignment.getrValue2()) != null) {
+            if(assignment.getOperator() == null) {
+               // Constant assignment
+               ConstantValue constant = getConstant(assignment.getrValue2());
+               constants.put(variable, constant);
+            } else {
+               // Constant unary expression
+               ConstantValue constant = createUnary(
+                     (OperatorUnary) assignment.getOperator(),
+                     getConstant(assignment.getrValue2())
+               );
+               if(constant != null) {
+                  constants.put(variable, constant);
+               }
+            }
+         } else if(getConstant(assignment.getrValue1()) != null && getConstant(assignment.getrValue2()) != null) {
+            // Constant binary expression
+            ConstantValue constant = createBinary(
+                  getConstant(assignment.getrValue1()),
+                  (OperatorBinary) assignment.getOperator(),
+                  getConstant(assignment.getrValue2()),
+                  getScope());
+            if(constant != null) {
+
+               constants.put(variable, constant);
+            }
+         } else if(assignment.getrValue2() instanceof ValueList && assignment.getOperator() == null && assignment.getrValue1() == null) {
+            // A candidate for a constant list - examine to confirm
+            Variable lVariable = getScope().getVariable((VariableRef) lValue);
+            if(lVariable.getType() instanceof SymbolTypeArray) {
+               ValueList valueList = (ValueList) assignment.getrValue2();
+               List<RValue> values = valueList.getList();
+               boolean allConstant = true;
+               // Type of the elements of the list (deducted from the type of all elements)
+               SymbolType listType = null;
+               List<ConstantValue> elements = new ArrayList<>();
+               for(RValue elmValue : values) {
+                  if(elmValue instanceof ConstantValue) {
+                     ConstantValue constantValue = (ConstantValue) elmValue;
+                     SymbolType elmType = constantValue.getType(getScope());
+                     if(listType == null) {
+                        listType = elmType;
+                     } else {
+                        if(!SymbolTypeInference.typeMatch(listType, elmType)) {
+                           SymbolType intersectType = SymbolTypeInference.intersectTypes(listType, elmType);
+                           if(intersectType==null) {
+                              // No overlap between list type and element type
+                              throw new RuntimeException("Array type " + listType + " does not match element type" + elmType + ". Array: " + valueList.toString(getProgram()));
                            } else {
-                              allConstant = false;
-                              listType = null;
-                              break;
+                              listType = intersectType;
                            }
                         }
-                        if(allConstant && listType != null) {
-                           ConstantValue constant = new ConstantArrayList(elements, listType);
-                           constants.put(variable, constant);
-                        }
                      }
-                  }
-               } else if(Operators.ADDRESS_OF.equals(assignment.getOperator()) && assignment.getrValue1()==null) {
-                  if(assignment.getrValue2() instanceof VariableRef) {
-                     ConstantVarPointer constantVarPointer = new ConstantVarPointer((VariableRef) assignment.getrValue2());
-                     constants.put(variable, constantVarPointer);
-                  }
-               }
-            }
-            return null;
-         }
-
-         @Override
-         public Void visitPhiBlock(StatementPhiBlock phi) {
-            for(StatementPhiBlock.PhiVariable phiVariable : phi.getPhiVariables()) {
-               if(phiVariable.getValues().size() == 1) {
-                  StatementPhiBlock.PhiRValue phiRValue = phiVariable.getValues().get(0);
-                  if(getConstant(phiRValue.getrValue()) != null) {
-                     VariableRef variable = phiVariable.getVariable();
-                     ConstantValue constant = getConstant(phiRValue.getrValue());
-                     constants.put(variable, constant);
+                     elements.add(constantValue);
+                  } else {
+                     allConstant = false;
+                     listType = null;
+                     break;
                   }
                }
+               if(allConstant && listType != null) {
+                  // Constant list confirmed!
+                  ConstantValue constant = new ConstantArrayList(elements, listType);
+                  constants.put(variable, constant);
+               }
             }
-            return null;
+         } else if(Operators.ADDRESS_OF.equals(assignment.getOperator()) && assignment.getrValue1()==null) {
+            // Constant address-of variable
+            if(assignment.getrValue2() instanceof VariableRef) {
+               ConstantVarPointer constantVarPointer = new ConstantVarPointer((VariableRef) assignment.getrValue2());
+               constants.put(variable, constantVarPointer);
+            }
          }
-
-
-      };
-      visitor.visitGraph(getGraph());
-      return constants;
+      }
    }
 
    /**
@@ -200,7 +209,7 @@ public class Pass2ConstantIdentification extends Pass2SsaOptimization {
     * @param rValue The rValue to examine
     * @return The constant value. null is the rValue is not a known constant.
     */
-   private ConstantValue getConstant(RValue rValue) {
+   public static ConstantValue getConstant(RValue rValue) {
       if(rValue instanceof ConstantValue) {
          return (ConstantValue) rValue;
       } else if(rValue instanceof ConstantVar) {
@@ -236,16 +245,16 @@ public class Pass2ConstantIdentification extends Pass2SsaOptimization {
       }
    }
 
-   ConstantValue createBinary(ConstantValue c1, OperatorBinary operator, ConstantValue c2) {
+   static ConstantValue createBinary(ConstantValue c1, OperatorBinary operator, ConstantValue c2, ProgramScope programScope) {
       switch(operator.getOperator()) {
          case "-":
          case "+":
-            if(SymbolType.STRING.equals(c1.getType(getScope()))) {
+            if(SymbolType.STRING.equals(c1.getType(programScope))) {
                if(c1 instanceof ConstantRef) {
-                  c1 = getScope().getConstant((ConstantRef) c1).getValue();
+                  c1 = programScope.getConstant((ConstantRef) c1).getValue();
                }
                if(c2 instanceof ConstantRef) {
-                  c2 = getScope().getConstant((ConstantRef) c2).getValue();
+                  c2 = programScope.getConstant((ConstantRef) c2).getValue();
                }
                return new ConstantBinary(c1, operator, c2);
             }

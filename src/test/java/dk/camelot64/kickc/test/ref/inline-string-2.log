@@ -35,14 +35,13 @@ main::@return:
 endproc // main()
 proc (void()) print_msg((byte) print_msg::idx)
   (boolean~) print_msg::$0 ← (byte) print_msg::idx == (byte/signed byte/word/signed word/dword/signed dword) 1
-  (boolean~) print_msg::$1 ← ! (boolean~) print_msg::$0
-  if((boolean~) print_msg::$1) goto print_msg::@1
-  (byte*) print_msg::msg ← (string) "Hello @"
+  if((boolean~) print_msg::$0) goto print_msg::@1
+  (byte*) print_msg::msg ← (string) "World!@"
   goto print_msg::@2
 print_msg::@1:
-  (byte*) print_msg::msg ← (string) "World!@"
+  (byte*) print_msg::msg ← (string) "Hello @"
 print_msg::@2:
-  (void~) print_msg::$2 ← call print (byte*) print_msg::msg 
+  (void~) print_msg::$1 ← call print (byte*) print_msg::msg 
 print_msg::@return:
   return 
 endproc // print_msg()
@@ -77,8 +76,7 @@ SYMBOLS
 (byte*) print::msg
 (void()) print_msg((byte) print_msg::idx)
 (boolean~) print_msg::$0
-(boolean~) print_msg::$1
-(void~) print_msg::$2
+(void~) print_msg::$1
 (label) print_msg::@1
 (label) print_msg::@2
 (label) print_msg::@return
@@ -101,17 +99,16 @@ main::@return: scope:[main]  from main
   to:@2
 print_msg: scope:[print_msg]  from
   (boolean~) print_msg::$0 ← (byte) print_msg::idx == (byte/signed byte/word/signed word/dword/signed dword) 1
-  (boolean~) print_msg::$1 ← ! (boolean~) print_msg::$0
-  if((boolean~) print_msg::$1) goto print_msg::@1
+  if((boolean~) print_msg::$0) goto print_msg::@1
   to:print_msg::@3
 print_msg::@1: scope:[print_msg]  from print_msg print_msg::@4
-  (byte*) print_msg::msg ← (string) "World!@"
-  to:print_msg::@2
-print_msg::@3: scope:[print_msg]  from print_msg
   (byte*) print_msg::msg ← (string) "Hello @"
   to:print_msg::@2
+print_msg::@3: scope:[print_msg]  from print_msg
+  (byte*) print_msg::msg ← (string) "World!@"
+  to:print_msg::@2
 print_msg::@2: scope:[print_msg]  from print_msg::@1 print_msg::@3
-  (void~) print_msg::$2 ← call print (byte*) print_msg::msg 
+  (void~) print_msg::$1 ← call print (byte*) print_msg::msg 
   to:print_msg::@return
 print_msg::@4: scope:[print_msg]  from
   to:print_msg::@1
@@ -150,9 +147,9 @@ print::@return: scope:[print]  from print::@3
 
 Eliminating unused variable - keeping the call (void~) main::$0
 Eliminating unused variable - keeping the call (void~) main::$1
-Eliminating unused variable - keeping the call (void~) print_msg::$2
+Eliminating unused variable - keeping the call (void~) print_msg::$1
+Creating constant string variable for inline (const string) print_msg::$2 "Hello @"
 Creating constant string variable for inline (const string) print_msg::$3 "World!@"
-Creating constant string variable for inline (const string) print_msg::$4 "Hello @"
 Removing empty block @1
 Removing empty block print_msg::@4
 Removing empty block print::@4
@@ -196,16 +193,15 @@ print_msg: scope:[print_msg]  from main main::@1
   (byte*) screen#24 ← phi( main/(byte*) screen#17 main::@1/(byte*) screen#0 )
   (byte) print_msg::idx#2 ← phi( main/(byte) print_msg::idx#0 main::@1/(byte) print_msg::idx#1 )
   (boolean~) print_msg::$0 ← (byte) print_msg::idx#2 == (byte/signed byte/word/signed word/dword/signed dword) 1
-  (boolean~) print_msg::$1 ← ! (boolean~) print_msg::$0
-  if((boolean~) print_msg::$1) goto print_msg::@1
+  if((boolean~) print_msg::$0) goto print_msg::@1
   to:print_msg::@3
 print_msg::@1: scope:[print_msg]  from print_msg
   (byte*) screen#21 ← phi( print_msg/(byte*) screen#24 )
-  (byte*) print_msg::msg#0 ← (const string) print_msg::$3
+  (byte*) print_msg::msg#0 ← (const string) print_msg::$2
   to:print_msg::@2
 print_msg::@3: scope:[print_msg]  from print_msg
   (byte*) screen#22 ← phi( print_msg/(byte*) screen#24 )
-  (byte*) print_msg::msg#1 ← (const string) print_msg::$4
+  (byte*) print_msg::msg#1 ← (const string) print_msg::$3
   to:print_msg::@2
 print_msg::@2: scope:[print_msg]  from print_msg::@1 print_msg::@3
   (byte*) screen#18 ← phi( print_msg::@1/(byte*) screen#21 print_msg::@3/(byte*) screen#22 )
@@ -280,9 +276,8 @@ SYMBOL TABLE SSA
 (byte*) print::msg#4
 (void()) print_msg((byte) print_msg::idx)
 (boolean~) print_msg::$0
-(boolean~) print_msg::$1
+(const string) print_msg::$2 = (string) "Hello @"
 (const string) print_msg::$3 = (string) "World!@"
-(const string) print_msg::$4 = (string) "Hello @"
 (label) print_msg::@1
 (label) print_msg::@2
 (label) print_msg::@3
@@ -324,8 +319,6 @@ SYMBOL TABLE SSA
 (byte*) screen#9
 
 OPTIMIZING CONTROL FLOW GRAPH
-Inversing boolean not (boolean~) print_msg::$1 ← (byte) print_msg::idx#2 != (byte/signed byte/word/signed word/dword/signed dword) 1 from (boolean~) print_msg::$0 ← (byte) print_msg::idx#2 == (byte/signed byte/word/signed word/dword/signed dword) 1
-Succesful SSA optimization Pass2UnaryNotSimplification
 Not aliassing across scopes: screen#17 screen#20
 Not aliassing across scopes: screen#9 screen#4
 Not aliassing across scopes: screen#10 screen#4
@@ -375,13 +368,13 @@ Redundant Phi (byte*) print::msg#4 (byte*) print::msg#0
 Redundant Phi (byte*) screen#23 (byte*) screen#18
 Redundant Phi (byte*) screen#16 (byte*) screen#1
 Succesful SSA optimization Pass2RedundantPhiElimination
-Simple Condition (boolean~) print_msg::$1 if((byte) print_msg::idx#2!=(byte/signed byte/word/signed word/dword/signed dword) 1) goto print_msg::@1
+Simple Condition (boolean~) print_msg::$0 if((byte) print_msg::idx#2==(byte/signed byte/word/signed word/dword/signed dword) 1) goto print_msg::@1
 Simple Condition (boolean~) print::$0 if(*((byte*) print::msg#2)!=(byte) '@') goto print::@2
 Succesful SSA optimization Pass2ConditionalJumpSimplification
 Constant (const byte) print_msg::idx#0 = 1
 Constant (const byte) print_msg::idx#1 = 2
-Constant (const string) print_msg::msg#0 = print_msg::$3
-Constant (const string) print_msg::msg#1 = print_msg::$4
+Constant (const string) print_msg::msg#0 = print_msg::$2
+Constant (const string) print_msg::msg#1 = print_msg::$3
 Constant (const byte*) screen#20 = ((byte*))1024
 Succesful SSA optimization Pass2ConstantIdentification
 Culled Empty Block (label) main::@2
@@ -412,8 +405,8 @@ Inlining constant with var siblings (const byte*) screen#20
 Constant inlined print_msg::idx#1 = (byte/signed byte/word/signed word/dword/signed dword) 2
 Constant inlined print_msg::idx#0 = (byte/signed byte/word/signed word/dword/signed dword) 1
 Constant inlined screen#20 = ((byte*))(word/signed word/dword/signed dword) 1024
-Constant inlined print_msg::$4 = (const string) print_msg::msg#1
-Constant inlined print_msg::$3 = (const string) print_msg::msg#0
+Constant inlined print_msg::$3 = (const string) print_msg::msg#1
+Constant inlined print_msg::$2 = (const string) print_msg::msg#0
 Succesful SSA optimization Pass2ConstantInlining
 Inlining constant with var siblings (const string) print_msg::msg#0
 Inlining constant with var siblings (const string) print_msg::msg#1
@@ -484,7 +477,7 @@ main::@return: scope:[main]  from main::@1
 print_msg: scope:[print_msg]  from main main::@1
   [9] (byte*) screen#18 ← phi( main/((byte*))(word/signed word/dword/signed dword) 1024 main::@1/(byte*) screen#14 ) [ print_msg::idx#2 screen#18 ] ( main:2::print_msg:5 [ print_msg::idx#2 screen#18 ] main:2::print_msg:7 [ print_msg::idx#2 screen#18 ] )
   [9] (byte) print_msg::idx#2 ← phi( main/(byte/signed byte/word/signed word/dword/signed dword) 1 main::@1/(byte/signed byte/word/signed word/dword/signed dword) 2 ) [ print_msg::idx#2 screen#18 ] ( main:2::print_msg:5 [ print_msg::idx#2 screen#18 ] main:2::print_msg:7 [ print_msg::idx#2 screen#18 ] )
-  [10] if((byte) print_msg::idx#2!=(byte/signed byte/word/signed word/dword/signed dword) 1) goto print_msg::@2 [ screen#18 ] ( main:2::print_msg:5 [ screen#18 ] main:2::print_msg:7 [ screen#18 ] )
+  [10] if((byte) print_msg::idx#2==(byte/signed byte/word/signed word/dword/signed dword) 1) goto print_msg::@2 [ screen#18 ] ( main:2::print_msg:5 [ screen#18 ] main:2::print_msg:7 [ screen#18 ] )
   to:print_msg::@3
 print_msg::@3: scope:[print_msg]  from print_msg
   [11] phi() [ screen#18 ] ( main:2::print_msg:5 [ screen#18 ] main:2::print_msg:7 [ screen#18 ] )
@@ -636,10 +629,10 @@ main: {
 print_msg: {
     .label idx = 2
     .label msg = 5
-  //SEG23 [10] if((byte) print_msg::idx#2!=(byte/signed byte/word/signed word/dword/signed dword) 1) goto print_msg::@2 [ screen#18 ] ( main:2::print_msg:5 [ screen#18 ] main:2::print_msg:7 [ screen#18 ] ) -- vbuz1_neq_vbuc1_then_la1 
+  //SEG23 [10] if((byte) print_msg::idx#2==(byte/signed byte/word/signed word/dword/signed dword) 1) goto print_msg::@2 [ screen#18 ] ( main:2::print_msg:5 [ screen#18 ] main:2::print_msg:7 [ screen#18 ] ) -- vbuz1_eq_vbuc1_then_la1 
     lda idx
     cmp #1
-    bne b2_from_print_msg
+    beq b2_from_print_msg
   //SEG24 [11] phi from print_msg to print_msg::@3 [phi:print_msg->print_msg::@3]
   b3_from_print_msg:
     jmp b3
@@ -677,8 +670,8 @@ print_msg: {
   breturn:
   //SEG35 [15] return  [ screen#14 ] ( main:2::print_msg:5 [ screen#14 ] main:2::print_msg:7 [ screen#14 ] )
     rts
-    msg_0: .text "World!@"
-    msg_1: .text "Hello @"
+    msg_0: .text "Hello @"
+    msg_1: .text "World!@"
 }
 //SEG36 print
 print: {
@@ -801,9 +794,9 @@ main: {
 //SEG22 print_msg
 print_msg: {
     .label msg = 4
-  //SEG23 [10] if((byte) print_msg::idx#2!=(byte/signed byte/word/signed word/dword/signed dword) 1) goto print_msg::@2 [ screen#18 ] ( main:2::print_msg:5 [ screen#18 ] main:2::print_msg:7 [ screen#18 ] ) -- vbuxx_neq_vbuc1_then_la1 
+  //SEG23 [10] if((byte) print_msg::idx#2==(byte/signed byte/word/signed word/dword/signed dword) 1) goto print_msg::@2 [ screen#18 ] ( main:2::print_msg:5 [ screen#18 ] main:2::print_msg:7 [ screen#18 ] ) -- vbuxx_eq_vbuc1_then_la1 
     cpx #1
-    bne b2_from_print_msg
+    beq b2_from_print_msg
   //SEG24 [11] phi from print_msg to print_msg::@3 [phi:print_msg->print_msg::@3]
   b3_from_print_msg:
     jmp b3
@@ -838,8 +831,8 @@ print_msg: {
   breturn:
   //SEG35 [15] return  [ screen#14 ] ( main:2::print_msg:5 [ screen#14 ] main:2::print_msg:7 [ screen#14 ] )
     rts
-    msg_0: .text "World!@"
-    msg_1: .text "Hello @"
+    msg_0: .text "Hello @"
+    msg_1: .text "World!@"
 }
 //SEG36 print
 print: {
@@ -942,8 +935,8 @@ FINAL SYMBOL TABLE
 (byte) print_msg::idx
 (byte) print_msg::idx#2 reg byte x 2.0
 (byte*) print_msg::msg
-(const string) print_msg::msg#0 msg#0 = (string) "World!@"
-(const string) print_msg::msg#1 msg#1 = (string) "Hello @"
+(const string) print_msg::msg#0 msg#0 = (string) "Hello @"
+(const string) print_msg::msg#1 msg#1 = (string) "World!@"
 (byte*) print_msg::msg#2 msg zp ZP_WORD:4 2.0
 (byte*) screen
 (byte*) screen#14 screen zp ZP_WORD:2 4.625
@@ -999,9 +992,9 @@ main: {
 //SEG22 print_msg
 print_msg: {
     .label msg = 4
-  //SEG23 [10] if((byte) print_msg::idx#2!=(byte/signed byte/word/signed word/dword/signed dword) 1) goto print_msg::@2 [ screen#18 ] ( main:2::print_msg:5 [ screen#18 ] main:2::print_msg:7 [ screen#18 ] ) -- vbuxx_neq_vbuc1_then_la1 
+  //SEG23 [10] if((byte) print_msg::idx#2==(byte/signed byte/word/signed word/dword/signed dword) 1) goto print_msg::@2 [ screen#18 ] ( main:2::print_msg:5 [ screen#18 ] main:2::print_msg:7 [ screen#18 ] ) -- vbuxx_eq_vbuc1_then_la1 
     cpx #1
-    bne b1
+    beq b1
   //SEG24 [11] phi from print_msg to print_msg::@3 [phi:print_msg->print_msg::@3]
   //SEG25 print_msg::@3
   //SEG26 [12] phi from print_msg::@3 to print_msg::@2 [phi:print_msg::@3->print_msg::@2]
@@ -1028,8 +1021,8 @@ print_msg: {
   //SEG34 print_msg::@return
   //SEG35 [15] return  [ screen#14 ] ( main:2::print_msg:5 [ screen#14 ] main:2::print_msg:7 [ screen#14 ] )
     rts
-    msg_0: .text "World!@"
-    msg_1: .text "Hello @"
+    msg_0: .text "Hello @"
+    msg_1: .text "World!@"
 }
 //SEG36 print
 print: {

@@ -106,6 +106,8 @@ public class Pass1GenerateSingleStaticAssignmentForm extends Pass1Base {
          for(Statement statement : block.getStatements()) {
             if(statement instanceof StatementReturn) {
                execute(new ValueReplacer.ReplaceableReturn((StatementReturn) statement), blockVersions, blockNewPhis);
+            } else if(statement instanceof StatementConditionalJump) {
+               execute(new ValueReplacer.ReplaceableCondRValue2((StatementConditionalJump) statement), blockVersions, blockNewPhis);
             } else if(statement instanceof StatementAssignment) {
                StatementAssignment assignment = (StatementAssignment) statement;
                execute(new ValueReplacer.ReplaceableRValue1(assignment), blockVersions, blockNewPhis);

@@ -82,9 +82,7 @@ assert_sbyte: {
     sta print_str.str+1
     jsr print_str
     cpx c
-    beq b1
-    lda #RED
-    sta BGCOL
+    bne b1
     lda #<str2
     sta print_str.str
     lda #>str2
@@ -94,6 +92,8 @@ assert_sbyte: {
     jsr print_ln
     rts
   b1:
+    lda #RED
+    sta BGCOL
     lda #<str1
     sta print_str.str
     lda #>str1
@@ -101,8 +101,8 @@ assert_sbyte: {
     jsr print_str
     jmp b2
     str: .text " @"
-    str1: .text "ok@"
-    str2: .text "fail!@"
+    str1: .text "fail!@"
+    str2: .text "ok@"
 }
 print_str: {
     .label str = 2
@@ -204,9 +204,7 @@ assert_byte: {
     sta print_str.str+1
     jsr print_str
     cpx c
-    beq b1
-    lda #RED
-    sta BGCOL
+    bne b1
     lda #<str2
     sta print_str.str
     lda #>str2
@@ -216,6 +214,8 @@ assert_byte: {
     jsr print_ln
     rts
   b1:
+    lda #RED
+    sta BGCOL
     lda #<str1
     sta print_str.str
     lda #>str1
@@ -223,8 +223,8 @@ assert_byte: {
     jsr print_str
     jmp b2
     str: .text " @"
-    str1: .text "ok@"
-    str2: .text "fail!@"
+    str1: .text "fail!@"
+    str2: .text "ok@"
 }
 print_cls: {
     .label sc = 2

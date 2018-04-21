@@ -15,17 +15,15 @@ main: {
     sta SCREEN+0
     lda #midb
     sta SCREEN+1
-    ldx SCREEN+0
-    tay
-    stx $ff
-    cpy $ff
-    bne b1
-    lda #5
+    lda SCREEN+0
+    cmp SCREEN+1
+    beq b1
+    lda #2
     sta BGCOL
   breturn:
     rts
   b1:
-    lda #2
+    lda #5
     sta BGCOL
     jmp breturn
 }

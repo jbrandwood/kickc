@@ -135,18 +135,16 @@ findcol: {
   b2:
     lda x
     cmp xp
-    bcs b4
-    lda xp
+    bcc b4
     sec
-    sbc x
+    sbc xp
     tay
   b5:
     lda y
     cmp yp
-    bcs b6
-    lda yp
+    bcc b6
     sec
-    sbc y
+    sbc yp
     sty $ff
     clc
     adc $ff
@@ -170,18 +168,18 @@ findcol: {
     ldy mindiff
     jmp b8
   b6:
-    lda y
+    lda yp
     sec
-    sbc yp
+    sbc y
     sty $ff
     clc
     adc $ff
     tay
     jmp b7
   b4:
-    lda x
+    lda xp
     sec
-    sbc xp
+    sbc x
     tay
     jmp b5
 }

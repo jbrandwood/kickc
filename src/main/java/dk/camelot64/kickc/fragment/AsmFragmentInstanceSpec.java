@@ -1,8 +1,10 @@
 package dk.camelot64.kickc.fragment;
 
-import dk.camelot64.kickc.model.*;
+import dk.camelot64.kickc.model.ControlFlowBlock;
+import dk.camelot64.kickc.model.ControlFlowGraph;
+import dk.camelot64.kickc.model.Program;
+import dk.camelot64.kickc.model.Registers;
 import dk.camelot64.kickc.model.operators.Operator;
-import dk.camelot64.kickc.model.values.*;
 import dk.camelot64.kickc.model.statements.Statement;
 import dk.camelot64.kickc.model.statements.StatementAssignment;
 import dk.camelot64.kickc.model.statements.StatementConditionalJump;
@@ -13,6 +15,7 @@ import dk.camelot64.kickc.model.symbols.Variable;
 import dk.camelot64.kickc.model.types.SymbolType;
 import dk.camelot64.kickc.model.types.SymbolTypeInference;
 import dk.camelot64.kickc.model.types.SymbolTypePointer;
+import dk.camelot64.kickc.model.values.*;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -294,6 +297,8 @@ public class AsmFragmentInstanceSpec {
          return "vds";
       } else if(SymbolType.STRING.equals(type)) {
          return "pbu";
+      } else if(SymbolType.BOOLEAN.equals(type)) {
+         return "vbo";
       } else if(type instanceof SymbolTypePointer) {
          SymbolType elementType = ((SymbolTypePointer) type).getElementType();
          if(SymbolType.isByte(elementType)) {
@@ -320,7 +325,12 @@ public class AsmFragmentInstanceSpec {
     * @return The register part of the binding name.
     */
    private String getRegisterName(Registers.Register register) {
-      if(Registers.RegisterType.ZP_BYTE.equals(register.getType()) || Registers.RegisterType.ZP_WORD.equals(register.getType())|| Registers.RegisterType.ZP_DWORD.equals(register.getType())) {
+      if(
+            Registers.RegisterType.ZP_BYTE.equals(register.getType()) ||
+                  Registers.RegisterType.ZP_WORD.equals(register.getType()) ||
+                  Registers.RegisterType.ZP_DWORD.equals(register.getType()) ||
+                  Registers.RegisterType.ZP_BOOL.equals(register.getType())
+            ) {
          // Examine if the ZP register is already bound
          Registers.RegisterZp registerZp = (Registers.RegisterZp) register;
          String zpNameIdx = null;

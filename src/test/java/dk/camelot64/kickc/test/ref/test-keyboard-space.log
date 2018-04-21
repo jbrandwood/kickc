@@ -536,74 +536,72 @@ keyboard_event_scan::@1:
   (byte~) keyboard_event_scan::$0 ← call keyboard_matrix_read (byte) keyboard_event_scan::row 
   (byte) keyboard_event_scan::row_scan ← (byte~) keyboard_event_scan::$0
   (boolean~) keyboard_event_scan::$1 ← (byte) keyboard_event_scan::row_scan != *((byte[8]) keyboard_scan_values + (byte) keyboard_event_scan::row)
-  (boolean~) keyboard_event_scan::$2 ← ! (boolean~) keyboard_event_scan::$1
-  if((boolean~) keyboard_event_scan::$2) goto keyboard_event_scan::@2
+  if((boolean~) keyboard_event_scan::$1) goto keyboard_event_scan::@2
+  (byte/signed word/word/dword/signed dword~) keyboard_event_scan::$2 ← (byte) keyboard_event_scan::keycode + (byte/signed byte/word/signed word/dword/signed dword) 8
+  (byte) keyboard_event_scan::keycode ← (byte/signed word/word/dword/signed dword~) keyboard_event_scan::$2
+  goto keyboard_event_scan::@3
+keyboard_event_scan::@2:
   (byte) keyboard_event_scan::col ← (byte/signed byte/word/signed word/dword/signed dword) 0
-keyboard_event_scan::@3:
+keyboard_event_scan::@4:
   (byte~) keyboard_event_scan::$3 ← (byte) keyboard_event_scan::row_scan ^ *((byte[8]) keyboard_scan_values + (byte) keyboard_event_scan::row)
   (byte~) keyboard_event_scan::$4 ← (byte~) keyboard_event_scan::$3 & *((byte[8]) keyboard_matrix_col_bitmask + (byte) keyboard_event_scan::col)
   (boolean~) keyboard_event_scan::$5 ← (byte~) keyboard_event_scan::$4 != (byte/signed byte/word/signed word/dword/signed dword) 0
   (boolean~) keyboard_event_scan::$6 ← ! (boolean~) keyboard_event_scan::$5
-  if((boolean~) keyboard_event_scan::$6) goto keyboard_event_scan::@4
+  if((boolean~) keyboard_event_scan::$6) goto keyboard_event_scan::@5
   (boolean~) keyboard_event_scan::$7 ← (byte) keyboard_events_size != (byte/signed byte/word/signed word/dword/signed dword) 8
   (boolean~) keyboard_event_scan::$8 ← ! (boolean~) keyboard_event_scan::$7
-  if((boolean~) keyboard_event_scan::$8) goto keyboard_event_scan::@5
+  if((boolean~) keyboard_event_scan::$8) goto keyboard_event_scan::@6
   (byte~) keyboard_event_scan::$9 ← (byte) keyboard_event_scan::row_scan & *((byte[8]) keyboard_matrix_col_bitmask + (byte) keyboard_event_scan::col)
   (byte) keyboard_event_scan::event_type ← (byte~) keyboard_event_scan::$9
   (boolean~) keyboard_event_scan::$10 ← (byte) keyboard_event_scan::event_type == (byte/signed byte/word/signed word/dword/signed dword) 0
-  (boolean~) keyboard_event_scan::$11 ← ! (boolean~) keyboard_event_scan::$10
-  if((boolean~) keyboard_event_scan::$11) goto keyboard_event_scan::@6
-  (byte/word/dword~) keyboard_event_scan::$12 ← (byte) keyboard_event_scan::keycode | (byte/signed byte/word/signed word/dword/signed dword) 64
-  *((byte[8]) keyboard_events + (byte) keyboard_events_size) ← (byte/word/dword~) keyboard_event_scan::$12
-  (byte) keyboard_events_size ← ++ (byte) keyboard_events_size
-  goto keyboard_event_scan::@7
-keyboard_event_scan::@6:
+  if((boolean~) keyboard_event_scan::$10) goto keyboard_event_scan::@7
   *((byte[8]) keyboard_events + (byte) keyboard_events_size) ← (byte) keyboard_event_scan::keycode
   (byte) keyboard_events_size ← ++ (byte) keyboard_events_size
+  goto keyboard_event_scan::@8
 keyboard_event_scan::@7:
+  (byte/word/dword~) keyboard_event_scan::$11 ← (byte) keyboard_event_scan::keycode | (byte/signed byte/word/signed word/dword/signed dword) 64
+  *((byte[8]) keyboard_events + (byte) keyboard_events_size) ← (byte/word/dword~) keyboard_event_scan::$11
+  (byte) keyboard_events_size ← ++ (byte) keyboard_events_size
+keyboard_event_scan::@8:
+keyboard_event_scan::@6:
 keyboard_event_scan::@5:
-keyboard_event_scan::@4:
   (byte) keyboard_event_scan::keycode ← ++ (byte) keyboard_event_scan::keycode
   (byte) keyboard_event_scan::col ← ++ (byte) keyboard_event_scan::col
-  (boolean~) keyboard_event_scan::$13 ← (byte) keyboard_event_scan::col != (byte/signed byte/word/signed word/dword/signed dword) 8
-  if((boolean~) keyboard_event_scan::$13) goto keyboard_event_scan::@3
+  (boolean~) keyboard_event_scan::$12 ← (byte) keyboard_event_scan::col != (byte/signed byte/word/signed word/dword/signed dword) 8
+  if((boolean~) keyboard_event_scan::$12) goto keyboard_event_scan::@4
   *((byte[8]) keyboard_scan_values + (byte) keyboard_event_scan::row) ← (byte) keyboard_event_scan::row_scan
-  goto keyboard_event_scan::@8
-keyboard_event_scan::@2:
-  (byte/signed word/word/dword/signed dword~) keyboard_event_scan::$14 ← (byte) keyboard_event_scan::keycode + (byte/signed byte/word/signed word/dword/signed dword) 8
-  (byte) keyboard_event_scan::keycode ← (byte/signed word/word/dword/signed dword~) keyboard_event_scan::$14
-keyboard_event_scan::@8:
+keyboard_event_scan::@3:
   (byte) keyboard_event_scan::row ← ++ (byte) keyboard_event_scan::row
-  (boolean~) keyboard_event_scan::$15 ← (byte) keyboard_event_scan::row != (byte/signed byte/word/signed word/dword/signed dword) 8
-  if((boolean~) keyboard_event_scan::$15) goto keyboard_event_scan::@1
+  (boolean~) keyboard_event_scan::$13 ← (byte) keyboard_event_scan::row != (byte/signed byte/word/signed word/dword/signed dword) 8
+  if((boolean~) keyboard_event_scan::$13) goto keyboard_event_scan::@1
   (byte) keyboard_modifiers ← (byte/signed byte/word/signed word/dword/signed dword) 0
-  (byte~) keyboard_event_scan::$16 ← call keyboard_event_pressed (byte) KEY_LSHIFT 
-  (boolean~) keyboard_event_scan::$17 ← (byte~) keyboard_event_scan::$16 != (byte/signed byte/word/signed word/dword/signed dword) 0
-  (boolean~) keyboard_event_scan::$18 ← ! (boolean~) keyboard_event_scan::$17
-  if((boolean~) keyboard_event_scan::$18) goto keyboard_event_scan::@9
-  (byte~) keyboard_event_scan::$19 ← (byte) keyboard_modifiers | (byte) KEY_MODIFIER_LSHIFT
-  (byte) keyboard_modifiers ← (byte~) keyboard_event_scan::$19
+  (byte~) keyboard_event_scan::$14 ← call keyboard_event_pressed (byte) KEY_LSHIFT 
+  (boolean~) keyboard_event_scan::$15 ← (byte~) keyboard_event_scan::$14 != (byte/signed byte/word/signed word/dword/signed dword) 0
+  (boolean~) keyboard_event_scan::$16 ← ! (boolean~) keyboard_event_scan::$15
+  if((boolean~) keyboard_event_scan::$16) goto keyboard_event_scan::@9
+  (byte~) keyboard_event_scan::$17 ← (byte) keyboard_modifiers | (byte) KEY_MODIFIER_LSHIFT
+  (byte) keyboard_modifiers ← (byte~) keyboard_event_scan::$17
 keyboard_event_scan::@9:
-  (byte~) keyboard_event_scan::$20 ← call keyboard_event_pressed (byte) KEY_RSHIFT 
-  (boolean~) keyboard_event_scan::$21 ← (byte~) keyboard_event_scan::$20 != (byte/signed byte/word/signed word/dword/signed dword) 0
-  (boolean~) keyboard_event_scan::$22 ← ! (boolean~) keyboard_event_scan::$21
-  if((boolean~) keyboard_event_scan::$22) goto keyboard_event_scan::@10
-  (byte~) keyboard_event_scan::$23 ← (byte) keyboard_modifiers | (byte) KEY_MODIFIER_RSHIFT
-  (byte) keyboard_modifiers ← (byte~) keyboard_event_scan::$23
+  (byte~) keyboard_event_scan::$18 ← call keyboard_event_pressed (byte) KEY_RSHIFT 
+  (boolean~) keyboard_event_scan::$19 ← (byte~) keyboard_event_scan::$18 != (byte/signed byte/word/signed word/dword/signed dword) 0
+  (boolean~) keyboard_event_scan::$20 ← ! (boolean~) keyboard_event_scan::$19
+  if((boolean~) keyboard_event_scan::$20) goto keyboard_event_scan::@10
+  (byte~) keyboard_event_scan::$21 ← (byte) keyboard_modifiers | (byte) KEY_MODIFIER_RSHIFT
+  (byte) keyboard_modifiers ← (byte~) keyboard_event_scan::$21
 keyboard_event_scan::@10:
-  (byte~) keyboard_event_scan::$24 ← call keyboard_event_pressed (byte) KEY_CTRL 
-  (boolean~) keyboard_event_scan::$25 ← (byte~) keyboard_event_scan::$24 != (byte/signed byte/word/signed word/dword/signed dword) 0
-  (boolean~) keyboard_event_scan::$26 ← ! (boolean~) keyboard_event_scan::$25
-  if((boolean~) keyboard_event_scan::$26) goto keyboard_event_scan::@11
-  (byte~) keyboard_event_scan::$27 ← (byte) keyboard_modifiers | (byte) KEY_MODIFIER_CTRL
-  (byte) keyboard_modifiers ← (byte~) keyboard_event_scan::$27
+  (byte~) keyboard_event_scan::$22 ← call keyboard_event_pressed (byte) KEY_CTRL 
+  (boolean~) keyboard_event_scan::$23 ← (byte~) keyboard_event_scan::$22 != (byte/signed byte/word/signed word/dword/signed dword) 0
+  (boolean~) keyboard_event_scan::$24 ← ! (boolean~) keyboard_event_scan::$23
+  if((boolean~) keyboard_event_scan::$24) goto keyboard_event_scan::@11
+  (byte~) keyboard_event_scan::$25 ← (byte) keyboard_modifiers | (byte) KEY_MODIFIER_CTRL
+  (byte) keyboard_modifiers ← (byte~) keyboard_event_scan::$25
 keyboard_event_scan::@11:
-  (byte~) keyboard_event_scan::$28 ← call keyboard_event_pressed (byte) KEY_COMMODORE 
-  (boolean~) keyboard_event_scan::$29 ← (byte~) keyboard_event_scan::$28 != (byte/signed byte/word/signed word/dword/signed dword) 0
-  (boolean~) keyboard_event_scan::$30 ← ! (boolean~) keyboard_event_scan::$29
-  if((boolean~) keyboard_event_scan::$30) goto keyboard_event_scan::@12
-  (byte~) keyboard_event_scan::$31 ← (byte) keyboard_modifiers | (byte) KEY_MODIFIER_COMMODORE
-  (byte) keyboard_modifiers ← (byte~) keyboard_event_scan::$31
+  (byte~) keyboard_event_scan::$26 ← call keyboard_event_pressed (byte) KEY_COMMODORE 
+  (boolean~) keyboard_event_scan::$27 ← (byte~) keyboard_event_scan::$26 != (byte/signed byte/word/signed word/dword/signed dword) 0
+  (boolean~) keyboard_event_scan::$28 ← ! (boolean~) keyboard_event_scan::$27
+  if((boolean~) keyboard_event_scan::$28) goto keyboard_event_scan::@12
+  (byte~) keyboard_event_scan::$29 ← (byte) keyboard_modifiers | (byte) KEY_MODIFIER_COMMODORE
+  (byte) keyboard_modifiers ← (byte~) keyboard_event_scan::$29
 keyboard_event_scan::@12:
 keyboard_event_scan::@return:
   return 
@@ -621,14 +619,13 @@ keyboard_event_pressed::@return:
 endproc // keyboard_event_pressed()
 proc (byte()) keyboard_event_get()
   (boolean~) keyboard_event_get::$0 ← (byte) keyboard_events_size == (byte/signed byte/word/signed word/dword/signed dword) 0
-  (boolean~) keyboard_event_get::$1 ← ! (boolean~) keyboard_event_get::$0
-  if((boolean~) keyboard_event_get::$1) goto keyboard_event_get::@1
-  (byte) keyboard_event_get::return ← (byte/word/signed word/dword/signed dword) 255
+  if((boolean~) keyboard_event_get::$0) goto keyboard_event_get::@1
+  (byte) keyboard_events_size ← -- (byte) keyboard_events_size
+  (byte) keyboard_event_get::return ← *((byte[8]) keyboard_events + (byte) keyboard_events_size)
   goto keyboard_event_get::@return
   goto keyboard_event_get::@2
 keyboard_event_get::@1:
-  (byte) keyboard_events_size ← -- (byte) keyboard_events_size
-  (byte) keyboard_event_get::return ← *((byte[8]) keyboard_events + (byte) keyboard_events_size)
+  (byte) keyboard_event_get::return ← (byte/word/signed word/dword/signed dword) 255
   goto keyboard_event_get::@return
 keyboard_event_get::@2:
 keyboard_event_get::@return:
@@ -646,12 +643,11 @@ main::@4:
   if((boolean~) main::$1) goto main::@4
   (byte~) main::$2 ← call keyboard_key_pressed (byte) KEY_SPACE 
   (boolean~) main::$3 ← (byte~) main::$2 != (byte/signed byte/word/signed word/dword/signed dword) 0
-  (boolean~) main::$4 ← ! (boolean~) main::$3
-  if((boolean~) main::$4) goto main::@5
-  *((byte*) BGCOL) ← (byte) GREEN
+  if((boolean~) main::$3) goto main::@5
+  *((byte*) BGCOL) ← (byte) BLUE
   goto main::@6
 main::@5:
-  *((byte*) BGCOL) ← (byte) BLUE
+  *((byte*) BGCOL) ← (byte) GREEN
 main::@6:
   goto main::@1
 main::@3:
@@ -799,7 +795,6 @@ SYMBOLS
 (byte[]) keyboard_char_keycodes
 (byte()) keyboard_event_get()
 (boolean~) keyboard_event_get::$0
-(boolean~) keyboard_event_get::$1
 (label) keyboard_event_get::@1
 (label) keyboard_event_get::@2
 (label) keyboard_event_get::@return
@@ -816,29 +811,27 @@ SYMBOLS
 (byte~) keyboard_event_scan::$0
 (boolean~) keyboard_event_scan::$1
 (boolean~) keyboard_event_scan::$10
-(boolean~) keyboard_event_scan::$11
-(byte/word/dword~) keyboard_event_scan::$12
+(byte/word/dword~) keyboard_event_scan::$11
+(boolean~) keyboard_event_scan::$12
 (boolean~) keyboard_event_scan::$13
-(byte/signed word/word/dword/signed dword~) keyboard_event_scan::$14
+(byte~) keyboard_event_scan::$14
 (boolean~) keyboard_event_scan::$15
-(byte~) keyboard_event_scan::$16
-(boolean~) keyboard_event_scan::$17
-(boolean~) keyboard_event_scan::$18
-(byte~) keyboard_event_scan::$19
-(boolean~) keyboard_event_scan::$2
-(byte~) keyboard_event_scan::$20
-(boolean~) keyboard_event_scan::$21
-(boolean~) keyboard_event_scan::$22
-(byte~) keyboard_event_scan::$23
-(byte~) keyboard_event_scan::$24
-(boolean~) keyboard_event_scan::$25
-(boolean~) keyboard_event_scan::$26
-(byte~) keyboard_event_scan::$27
-(byte~) keyboard_event_scan::$28
-(boolean~) keyboard_event_scan::$29
+(boolean~) keyboard_event_scan::$16
+(byte~) keyboard_event_scan::$17
+(byte~) keyboard_event_scan::$18
+(boolean~) keyboard_event_scan::$19
+(byte/signed word/word/dword/signed dword~) keyboard_event_scan::$2
+(boolean~) keyboard_event_scan::$20
+(byte~) keyboard_event_scan::$21
+(byte~) keyboard_event_scan::$22
+(boolean~) keyboard_event_scan::$23
+(boolean~) keyboard_event_scan::$24
+(byte~) keyboard_event_scan::$25
+(byte~) keyboard_event_scan::$26
+(boolean~) keyboard_event_scan::$27
+(boolean~) keyboard_event_scan::$28
+(byte~) keyboard_event_scan::$29
 (byte~) keyboard_event_scan::$3
-(boolean~) keyboard_event_scan::$30
-(byte~) keyboard_event_scan::$31
 (byte~) keyboard_event_scan::$4
 (boolean~) keyboard_event_scan::$5
 (boolean~) keyboard_event_scan::$6
@@ -896,7 +889,6 @@ SYMBOLS
 (boolean~) main::$1
 (byte~) main::$2
 (boolean~) main::$3
-(boolean~) main::$4
 (label) main::@1
 (label) main::@2
 (label) main::@3
@@ -1141,112 +1133,110 @@ keyboard_event_scan: scope:[keyboard_event_scan]  from
   (byte) keyboard_event_scan::keycode ← (byte/signed byte/word/signed word/dword/signed dword) 0
   (byte) keyboard_event_scan::row ← (byte/signed byte/word/signed word/dword/signed dword) 0
   to:keyboard_event_scan::@1
-keyboard_event_scan::@1: scope:[keyboard_event_scan]  from keyboard_event_scan keyboard_event_scan::@8
+keyboard_event_scan::@1: scope:[keyboard_event_scan]  from keyboard_event_scan keyboard_event_scan::@3
   (byte~) keyboard_event_scan::$0 ← call keyboard_matrix_read (byte) keyboard_event_scan::row 
   (byte) keyboard_event_scan::row_scan ← (byte~) keyboard_event_scan::$0
   (boolean~) keyboard_event_scan::$1 ← (byte) keyboard_event_scan::row_scan != *((byte[8]) keyboard_scan_values + (byte) keyboard_event_scan::row)
-  (boolean~) keyboard_event_scan::$2 ← ! (boolean~) keyboard_event_scan::$1
-  if((boolean~) keyboard_event_scan::$2) goto keyboard_event_scan::@2
+  if((boolean~) keyboard_event_scan::$1) goto keyboard_event_scan::@2
   to:keyboard_event_scan::@13
-keyboard_event_scan::@2: scope:[keyboard_event_scan]  from keyboard_event_scan::@1 keyboard_event_scan::@19
-  (byte/signed word/word/dword/signed dword~) keyboard_event_scan::$14 ← (byte) keyboard_event_scan::keycode + (byte/signed byte/word/signed word/dword/signed dword) 8
-  (byte) keyboard_event_scan::keycode ← (byte/signed word/word/dword/signed dword~) keyboard_event_scan::$14
-  to:keyboard_event_scan::@8
-keyboard_event_scan::@13: scope:[keyboard_event_scan]  from keyboard_event_scan::@1
+keyboard_event_scan::@2: scope:[keyboard_event_scan]  from keyboard_event_scan::@1 keyboard_event_scan::@14
   (byte) keyboard_event_scan::col ← (byte/signed byte/word/signed word/dword/signed dword) 0
+  to:keyboard_event_scan::@4
+keyboard_event_scan::@13: scope:[keyboard_event_scan]  from keyboard_event_scan::@1
+  (byte/signed word/word/dword/signed dword~) keyboard_event_scan::$2 ← (byte) keyboard_event_scan::keycode + (byte/signed byte/word/signed word/dword/signed dword) 8
+  (byte) keyboard_event_scan::keycode ← (byte/signed word/word/dword/signed dword~) keyboard_event_scan::$2
   to:keyboard_event_scan::@3
-keyboard_event_scan::@3: scope:[keyboard_event_scan]  from keyboard_event_scan::@13 keyboard_event_scan::@4
+keyboard_event_scan::@3: scope:[keyboard_event_scan]  from keyboard_event_scan::@13 keyboard_event_scan::@19
+  (byte) keyboard_event_scan::row ← ++ (byte) keyboard_event_scan::row
+  (boolean~) keyboard_event_scan::$13 ← (byte) keyboard_event_scan::row != (byte/signed byte/word/signed word/dword/signed dword) 8
+  if((boolean~) keyboard_event_scan::$13) goto keyboard_event_scan::@1
+  to:keyboard_event_scan::@20
+keyboard_event_scan::@14: scope:[keyboard_event_scan]  from
+  to:keyboard_event_scan::@2
+keyboard_event_scan::@4: scope:[keyboard_event_scan]  from keyboard_event_scan::@2 keyboard_event_scan::@5
   (byte~) keyboard_event_scan::$3 ← (byte) keyboard_event_scan::row_scan ^ *((byte[8]) keyboard_scan_values + (byte) keyboard_event_scan::row)
   (byte~) keyboard_event_scan::$4 ← (byte~) keyboard_event_scan::$3 & *((byte[8]) keyboard_matrix_col_bitmask + (byte) keyboard_event_scan::col)
   (boolean~) keyboard_event_scan::$5 ← (byte~) keyboard_event_scan::$4 != (byte/signed byte/word/signed word/dword/signed dword) 0
   (boolean~) keyboard_event_scan::$6 ← ! (boolean~) keyboard_event_scan::$5
-  if((boolean~) keyboard_event_scan::$6) goto keyboard_event_scan::@4
-  to:keyboard_event_scan::@14
-keyboard_event_scan::@4: scope:[keyboard_event_scan]  from keyboard_event_scan::@3 keyboard_event_scan::@5
+  if((boolean~) keyboard_event_scan::$6) goto keyboard_event_scan::@5
+  to:keyboard_event_scan::@15
+keyboard_event_scan::@5: scope:[keyboard_event_scan]  from keyboard_event_scan::@4 keyboard_event_scan::@6
   (byte) keyboard_event_scan::keycode ← ++ (byte) keyboard_event_scan::keycode
   (byte) keyboard_event_scan::col ← ++ (byte) keyboard_event_scan::col
-  (boolean~) keyboard_event_scan::$13 ← (byte) keyboard_event_scan::col != (byte/signed byte/word/signed word/dword/signed dword) 8
-  if((boolean~) keyboard_event_scan::$13) goto keyboard_event_scan::@3
-  to:keyboard_event_scan::@18
-keyboard_event_scan::@14: scope:[keyboard_event_scan]  from keyboard_event_scan::@3
+  (boolean~) keyboard_event_scan::$12 ← (byte) keyboard_event_scan::col != (byte/signed byte/word/signed word/dword/signed dword) 8
+  if((boolean~) keyboard_event_scan::$12) goto keyboard_event_scan::@4
+  to:keyboard_event_scan::@19
+keyboard_event_scan::@15: scope:[keyboard_event_scan]  from keyboard_event_scan::@4
   (boolean~) keyboard_event_scan::$7 ← (byte) keyboard_events_size != (byte/signed byte/word/signed word/dword/signed dword) 8
   (boolean~) keyboard_event_scan::$8 ← ! (boolean~) keyboard_event_scan::$7
-  if((boolean~) keyboard_event_scan::$8) goto keyboard_event_scan::@5
-  to:keyboard_event_scan::@15
-keyboard_event_scan::@5: scope:[keyboard_event_scan]  from keyboard_event_scan::@14 keyboard_event_scan::@7
-  to:keyboard_event_scan::@4
-keyboard_event_scan::@15: scope:[keyboard_event_scan]  from keyboard_event_scan::@14
+  if((boolean~) keyboard_event_scan::$8) goto keyboard_event_scan::@6
+  to:keyboard_event_scan::@16
+keyboard_event_scan::@6: scope:[keyboard_event_scan]  from keyboard_event_scan::@15 keyboard_event_scan::@8
+  to:keyboard_event_scan::@5
+keyboard_event_scan::@16: scope:[keyboard_event_scan]  from keyboard_event_scan::@15
   (byte~) keyboard_event_scan::$9 ← (byte) keyboard_event_scan::row_scan & *((byte[8]) keyboard_matrix_col_bitmask + (byte) keyboard_event_scan::col)
   (byte) keyboard_event_scan::event_type ← (byte~) keyboard_event_scan::$9
   (boolean~) keyboard_event_scan::$10 ← (byte) keyboard_event_scan::event_type == (byte/signed byte/word/signed word/dword/signed dword) 0
-  (boolean~) keyboard_event_scan::$11 ← ! (boolean~) keyboard_event_scan::$10
-  if((boolean~) keyboard_event_scan::$11) goto keyboard_event_scan::@6
-  to:keyboard_event_scan::@16
-keyboard_event_scan::@6: scope:[keyboard_event_scan]  from keyboard_event_scan::@15 keyboard_event_scan::@17
+  if((boolean~) keyboard_event_scan::$10) goto keyboard_event_scan::@7
+  to:keyboard_event_scan::@17
+keyboard_event_scan::@7: scope:[keyboard_event_scan]  from keyboard_event_scan::@16 keyboard_event_scan::@18
+  (byte/word/dword~) keyboard_event_scan::$11 ← (byte) keyboard_event_scan::keycode | (byte/signed byte/word/signed word/dword/signed dword) 64
+  *((byte[8]) keyboard_events + (byte) keyboard_events_size) ← (byte/word/dword~) keyboard_event_scan::$11
+  (byte) keyboard_events_size ← ++ (byte) keyboard_events_size
+  to:keyboard_event_scan::@8
+keyboard_event_scan::@17: scope:[keyboard_event_scan]  from keyboard_event_scan::@16
   *((byte[8]) keyboard_events + (byte) keyboard_events_size) ← (byte) keyboard_event_scan::keycode
   (byte) keyboard_events_size ← ++ (byte) keyboard_events_size
-  to:keyboard_event_scan::@7
-keyboard_event_scan::@16: scope:[keyboard_event_scan]  from keyboard_event_scan::@15
-  (byte/word/dword~) keyboard_event_scan::$12 ← (byte) keyboard_event_scan::keycode | (byte/signed byte/word/signed word/dword/signed dword) 64
-  *((byte[8]) keyboard_events + (byte) keyboard_events_size) ← (byte/word/dword~) keyboard_event_scan::$12
-  (byte) keyboard_events_size ← ++ (byte) keyboard_events_size
-  to:keyboard_event_scan::@7
-keyboard_event_scan::@7: scope:[keyboard_event_scan]  from keyboard_event_scan::@16 keyboard_event_scan::@6
-  to:keyboard_event_scan::@5
-keyboard_event_scan::@17: scope:[keyboard_event_scan]  from
-  to:keyboard_event_scan::@6
-keyboard_event_scan::@18: scope:[keyboard_event_scan]  from keyboard_event_scan::@4
-  *((byte[8]) keyboard_scan_values + (byte) keyboard_event_scan::row) ← (byte) keyboard_event_scan::row_scan
   to:keyboard_event_scan::@8
-keyboard_event_scan::@8: scope:[keyboard_event_scan]  from keyboard_event_scan::@18 keyboard_event_scan::@2
-  (byte) keyboard_event_scan::row ← ++ (byte) keyboard_event_scan::row
-  (boolean~) keyboard_event_scan::$15 ← (byte) keyboard_event_scan::row != (byte/signed byte/word/signed word/dword/signed dword) 8
-  if((boolean~) keyboard_event_scan::$15) goto keyboard_event_scan::@1
-  to:keyboard_event_scan::@20
-keyboard_event_scan::@19: scope:[keyboard_event_scan]  from
-  to:keyboard_event_scan::@2
-keyboard_event_scan::@20: scope:[keyboard_event_scan]  from keyboard_event_scan::@8
+keyboard_event_scan::@8: scope:[keyboard_event_scan]  from keyboard_event_scan::@17 keyboard_event_scan::@7
+  to:keyboard_event_scan::@6
+keyboard_event_scan::@18: scope:[keyboard_event_scan]  from
+  to:keyboard_event_scan::@7
+keyboard_event_scan::@19: scope:[keyboard_event_scan]  from keyboard_event_scan::@5
+  *((byte[8]) keyboard_scan_values + (byte) keyboard_event_scan::row) ← (byte) keyboard_event_scan::row_scan
+  to:keyboard_event_scan::@3
+keyboard_event_scan::@20: scope:[keyboard_event_scan]  from keyboard_event_scan::@3
   (byte) keyboard_modifiers ← (byte/signed byte/word/signed word/dword/signed dword) 0
-  (byte~) keyboard_event_scan::$16 ← call keyboard_event_pressed (byte) KEY_LSHIFT 
-  (boolean~) keyboard_event_scan::$17 ← (byte~) keyboard_event_scan::$16 != (byte/signed byte/word/signed word/dword/signed dword) 0
-  (boolean~) keyboard_event_scan::$18 ← ! (boolean~) keyboard_event_scan::$17
-  if((boolean~) keyboard_event_scan::$18) goto keyboard_event_scan::@9
+  (byte~) keyboard_event_scan::$14 ← call keyboard_event_pressed (byte) KEY_LSHIFT 
+  (boolean~) keyboard_event_scan::$15 ← (byte~) keyboard_event_scan::$14 != (byte/signed byte/word/signed word/dword/signed dword) 0
+  (boolean~) keyboard_event_scan::$16 ← ! (boolean~) keyboard_event_scan::$15
+  if((boolean~) keyboard_event_scan::$16) goto keyboard_event_scan::@9
   to:keyboard_event_scan::@21
 keyboard_event_scan::@9: scope:[keyboard_event_scan]  from keyboard_event_scan::@20 keyboard_event_scan::@21
-  (byte~) keyboard_event_scan::$20 ← call keyboard_event_pressed (byte) KEY_RSHIFT 
-  (boolean~) keyboard_event_scan::$21 ← (byte~) keyboard_event_scan::$20 != (byte/signed byte/word/signed word/dword/signed dword) 0
-  (boolean~) keyboard_event_scan::$22 ← ! (boolean~) keyboard_event_scan::$21
-  if((boolean~) keyboard_event_scan::$22) goto keyboard_event_scan::@10
+  (byte~) keyboard_event_scan::$18 ← call keyboard_event_pressed (byte) KEY_RSHIFT 
+  (boolean~) keyboard_event_scan::$19 ← (byte~) keyboard_event_scan::$18 != (byte/signed byte/word/signed word/dword/signed dword) 0
+  (boolean~) keyboard_event_scan::$20 ← ! (boolean~) keyboard_event_scan::$19
+  if((boolean~) keyboard_event_scan::$20) goto keyboard_event_scan::@10
   to:keyboard_event_scan::@22
 keyboard_event_scan::@21: scope:[keyboard_event_scan]  from keyboard_event_scan::@20
-  (byte~) keyboard_event_scan::$19 ← (byte) keyboard_modifiers | (byte) KEY_MODIFIER_LSHIFT
-  (byte) keyboard_modifiers ← (byte~) keyboard_event_scan::$19
+  (byte~) keyboard_event_scan::$17 ← (byte) keyboard_modifiers | (byte) KEY_MODIFIER_LSHIFT
+  (byte) keyboard_modifiers ← (byte~) keyboard_event_scan::$17
   to:keyboard_event_scan::@9
 keyboard_event_scan::@10: scope:[keyboard_event_scan]  from keyboard_event_scan::@22 keyboard_event_scan::@9
-  (byte~) keyboard_event_scan::$24 ← call keyboard_event_pressed (byte) KEY_CTRL 
-  (boolean~) keyboard_event_scan::$25 ← (byte~) keyboard_event_scan::$24 != (byte/signed byte/word/signed word/dword/signed dword) 0
-  (boolean~) keyboard_event_scan::$26 ← ! (boolean~) keyboard_event_scan::$25
-  if((boolean~) keyboard_event_scan::$26) goto keyboard_event_scan::@11
+  (byte~) keyboard_event_scan::$22 ← call keyboard_event_pressed (byte) KEY_CTRL 
+  (boolean~) keyboard_event_scan::$23 ← (byte~) keyboard_event_scan::$22 != (byte/signed byte/word/signed word/dword/signed dword) 0
+  (boolean~) keyboard_event_scan::$24 ← ! (boolean~) keyboard_event_scan::$23
+  if((boolean~) keyboard_event_scan::$24) goto keyboard_event_scan::@11
   to:keyboard_event_scan::@23
 keyboard_event_scan::@22: scope:[keyboard_event_scan]  from keyboard_event_scan::@9
-  (byte~) keyboard_event_scan::$23 ← (byte) keyboard_modifiers | (byte) KEY_MODIFIER_RSHIFT
-  (byte) keyboard_modifiers ← (byte~) keyboard_event_scan::$23
+  (byte~) keyboard_event_scan::$21 ← (byte) keyboard_modifiers | (byte) KEY_MODIFIER_RSHIFT
+  (byte) keyboard_modifiers ← (byte~) keyboard_event_scan::$21
   to:keyboard_event_scan::@10
 keyboard_event_scan::@11: scope:[keyboard_event_scan]  from keyboard_event_scan::@10 keyboard_event_scan::@23
-  (byte~) keyboard_event_scan::$28 ← call keyboard_event_pressed (byte) KEY_COMMODORE 
-  (boolean~) keyboard_event_scan::$29 ← (byte~) keyboard_event_scan::$28 != (byte/signed byte/word/signed word/dword/signed dword) 0
-  (boolean~) keyboard_event_scan::$30 ← ! (boolean~) keyboard_event_scan::$29
-  if((boolean~) keyboard_event_scan::$30) goto keyboard_event_scan::@12
+  (byte~) keyboard_event_scan::$26 ← call keyboard_event_pressed (byte) KEY_COMMODORE 
+  (boolean~) keyboard_event_scan::$27 ← (byte~) keyboard_event_scan::$26 != (byte/signed byte/word/signed word/dword/signed dword) 0
+  (boolean~) keyboard_event_scan::$28 ← ! (boolean~) keyboard_event_scan::$27
+  if((boolean~) keyboard_event_scan::$28) goto keyboard_event_scan::@12
   to:keyboard_event_scan::@24
 keyboard_event_scan::@23: scope:[keyboard_event_scan]  from keyboard_event_scan::@10
-  (byte~) keyboard_event_scan::$27 ← (byte) keyboard_modifiers | (byte) KEY_MODIFIER_CTRL
-  (byte) keyboard_modifiers ← (byte~) keyboard_event_scan::$27
+  (byte~) keyboard_event_scan::$25 ← (byte) keyboard_modifiers | (byte) KEY_MODIFIER_CTRL
+  (byte) keyboard_modifiers ← (byte~) keyboard_event_scan::$25
   to:keyboard_event_scan::@11
 keyboard_event_scan::@12: scope:[keyboard_event_scan]  from keyboard_event_scan::@11 keyboard_event_scan::@24
   to:keyboard_event_scan::@return
 keyboard_event_scan::@24: scope:[keyboard_event_scan]  from keyboard_event_scan::@11
-  (byte~) keyboard_event_scan::$31 ← (byte) keyboard_modifiers | (byte) KEY_MODIFIER_COMMODORE
-  (byte) keyboard_modifiers ← (byte~) keyboard_event_scan::$31
+  (byte~) keyboard_event_scan::$29 ← (byte) keyboard_modifiers | (byte) KEY_MODIFIER_COMMODORE
+  (byte) keyboard_modifiers ← (byte~) keyboard_event_scan::$29
   to:keyboard_event_scan::@12
 keyboard_event_scan::@return: scope:[keyboard_event_scan]  from keyboard_event_scan::@12
   return 
@@ -1270,15 +1260,14 @@ keyboard_event_pressed::@1: scope:[keyboard_event_pressed]  from
   to:@7
 keyboard_event_get: scope:[keyboard_event_get]  from
   (boolean~) keyboard_event_get::$0 ← (byte) keyboard_events_size == (byte/signed byte/word/signed word/dword/signed dword) 0
-  (boolean~) keyboard_event_get::$1 ← ! (boolean~) keyboard_event_get::$0
-  if((boolean~) keyboard_event_get::$1) goto keyboard_event_get::@1
+  if((boolean~) keyboard_event_get::$0) goto keyboard_event_get::@1
   to:keyboard_event_get::@3
 keyboard_event_get::@1: scope:[keyboard_event_get]  from keyboard_event_get keyboard_event_get::@5
-  (byte) keyboard_events_size ← -- (byte) keyboard_events_size
-  (byte) keyboard_event_get::return ← *((byte[8]) keyboard_events + (byte) keyboard_events_size)
+  (byte) keyboard_event_get::return ← (byte/word/signed word/dword/signed dword) 255
   to:keyboard_event_get::@return
 keyboard_event_get::@3: scope:[keyboard_event_get]  from keyboard_event_get
-  (byte) keyboard_event_get::return ← (byte/word/signed word/dword/signed dword) 255
+  (byte) keyboard_events_size ← -- (byte) keyboard_events_size
+  (byte) keyboard_event_get::return ← *((byte[8]) keyboard_events + (byte) keyboard_events_size)
   to:keyboard_event_get::@return
 keyboard_event_get::@return: scope:[keyboard_event_get]  from keyboard_event_get::@1 keyboard_event_get::@2 keyboard_event_get::@3
   (byte) keyboard_event_get::return ← (byte) keyboard_event_get::return
@@ -1315,14 +1304,13 @@ main::@4: scope:[main]  from main::@2 main::@4
 main::@9: scope:[main]  from main::@4
   (byte~) main::$2 ← call keyboard_key_pressed (byte) KEY_SPACE 
   (boolean~) main::$3 ← (byte~) main::$2 != (byte/signed byte/word/signed word/dword/signed dword) 0
-  (boolean~) main::$4 ← ! (boolean~) main::$3
-  if((boolean~) main::$4) goto main::@5
+  if((boolean~) main::$3) goto main::@5
   to:main::@10
 main::@5: scope:[main]  from main::@11 main::@9
-  *((byte*) BGCOL) ← (byte) BLUE
+  *((byte*) BGCOL) ← (byte) GREEN
   to:main::@6
 main::@10: scope:[main]  from main::@9
-  *((byte*) BGCOL) ← (byte) GREEN
+  *((byte*) BGCOL) ← (byte) BLUE
   to:main::@6
 main::@6: scope:[main]  from main::@10 main::@5
   to:main::@1
@@ -1571,14 +1559,13 @@ main::@14: scope:[main]  from main::@9
   (byte) keyboard_key_pressed::return#4 ← phi( main::@9/(byte) keyboard_key_pressed::return#2 )
   (byte~) main::$2 ← (byte) keyboard_key_pressed::return#4
   (boolean~) main::$3 ← (byte~) main::$2 != (byte/signed byte/word/signed word/dword/signed dword) 0
-  (boolean~) main::$4 ← ! (boolean~) main::$3
-  if((boolean~) main::$4) goto main::@5
+  if((boolean~) main::$3) goto main::@5
   to:main::@10
 main::@5: scope:[main]  from main::@14
-  *((byte*) BGCOL#0) ← (byte) BLUE#0
+  *((byte*) BGCOL#0) ← (byte) GREEN#0
   to:main::@1
 main::@10: scope:[main]  from main::@14
-  *((byte*) BGCOL#0) ← (byte) GREEN#0
+  *((byte*) BGCOL#0) ← (byte) BLUE#0
   to:main::@1
 main::@return: scope:[main]  from main::@1
   return 
@@ -1658,7 +1645,6 @@ SYMBOL TABLE SSA
 (boolean~) main::$1
 (byte~) main::$2
 (boolean~) main::$3
-(boolean~) main::$4
 (label) main::@1
 (label) main::@10
 (label) main::@13
@@ -1674,8 +1660,6 @@ Culled Empty Block (label) main::@13
 Culled Empty Block (label) main::@2
 Culled Empty Block (label) @9
 Succesful SSA optimization Pass2CullEmptyBlocks
-Inversing boolean not (boolean~) main::$4 ← (byte~) main::$2 == (byte/signed byte/word/signed word/dword/signed dword) 0 from (boolean~) main::$3 ← (byte~) main::$2 != (byte/signed byte/word/signed word/dword/signed dword) 0
-Succesful SSA optimization Pass2UnaryNotSimplification
 Not aliassing across scopes: keyboard_matrix_read::rowid#1 keyboard_matrix_read::rowid#0
 Not aliassing across scopes: keyboard_key_pressed::key#1 keyboard_key_pressed::key#0
 Not aliassing across scopes: keyboard_matrix_read::rowid#0 keyboard_key_pressed::rowidx#0
@@ -1703,7 +1687,7 @@ Redundant Phi (byte) keyboard_matrix_read::rowid#1 (byte) keyboard_matrix_read::
 Redundant Phi (byte) keyboard_key_pressed::key#1 (byte) keyboard_key_pressed::key#0
 Succesful SSA optimization Pass2RedundantPhiElimination
 Simple Condition (boolean~) main::$1 if(*((byte*) RASTER#0)!=(byte/word/signed word/dword/signed dword) 255) goto main::@4
-Simple Condition (boolean~) main::$4 if((byte~) main::$2==(byte/signed byte/word/signed word/dword/signed dword) 0) goto main::@5
+Simple Condition (boolean~) main::$3 if((byte~) main::$2!=(byte/signed byte/word/signed word/dword/signed dword) 0) goto main::@5
 Succesful SSA optimization Pass2ConditionalJumpSimplification
 Constant (const byte*) RASTER#0 = ((byte*))53266
 Constant (const byte*) BGCOL#0 = ((byte*))53281
@@ -1798,13 +1782,13 @@ main::@9: scope:[main]  from main::@4
   to:main::@14
 main::@14: scope:[main]  from main::@9
   [10] (byte~) main::$2 ← (byte) keyboard_key_pressed::return#2 [ main::$2 ] ( main:2 [ main::$2 ] )
-  [11] if((byte~) main::$2==(byte/signed byte/word/signed word/dword/signed dword) 0) goto main::@5 [ ] ( main:2 [ ] )
+  [11] if((byte~) main::$2!=(byte/signed byte/word/signed word/dword/signed dword) 0) goto main::@5 [ ] ( main:2 [ ] )
   to:main::@10
 main::@10: scope:[main]  from main::@14
-  [12] *((const byte*) BGCOL#0) ← (const byte) GREEN#0 [ ] ( main:2 [ ] )
+  [12] *((const byte*) BGCOL#0) ← (const byte) BLUE#0 [ ] ( main:2 [ ] )
   to:main::@4
 main::@5: scope:[main]  from main::@14
-  [13] *((const byte*) BGCOL#0) ← (const byte) BLUE#0 [ ] ( main:2 [ ] )
+  [13] *((const byte*) BGCOL#0) ← (const byte) GREEN#0 [ ] ( main:2 [ ] )
   to:main::@4
 keyboard_key_pressed: scope:[keyboard_key_pressed]  from main::@9
   [14] phi() [ ] ( main:2::keyboard_key_pressed:8 [ ] )
@@ -1986,20 +1970,20 @@ main: {
   //SEG19 [10] (byte~) main::$2 ← (byte) keyboard_key_pressed::return#2 [ main::$2 ] ( main:2 [ main::$2 ] ) -- vbuz1=vbuz2 
     lda keyboard_key_pressed.return_2
     sta _2
-  //SEG20 [11] if((byte~) main::$2==(byte/signed byte/word/signed word/dword/signed dword) 0) goto main::@5 [ ] ( main:2 [ ] ) -- vbuz1_eq_0_then_la1 
+  //SEG20 [11] if((byte~) main::$2!=(byte/signed byte/word/signed word/dword/signed dword) 0) goto main::@5 [ ] ( main:2 [ ] ) -- vbuz1_neq_0_then_la1 
     lda _2
-    beq b5
+    bne b5
     jmp b10
   //SEG21 main::@10
   b10:
-  //SEG22 [12] *((const byte*) BGCOL#0) ← (const byte) GREEN#0 [ ] ( main:2 [ ] ) -- _deref_pbuc1=vbuc2 
-    lda #GREEN
+  //SEG22 [12] *((const byte*) BGCOL#0) ← (const byte) BLUE#0 [ ] ( main:2 [ ] ) -- _deref_pbuc1=vbuc2 
+    lda #BLUE
     sta BGCOL
     jmp b4
   //SEG23 main::@5
   b5:
-  //SEG24 [13] *((const byte*) BGCOL#0) ← (const byte) BLUE#0 [ ] ( main:2 [ ] ) -- _deref_pbuc1=vbuc2 
-    lda #BLUE
+  //SEG24 [13] *((const byte*) BGCOL#0) ← (const byte) GREEN#0 [ ] ( main:2 [ ] ) -- _deref_pbuc1=vbuc2 
+    lda #GREEN
     sta BGCOL
     jmp b4
 }
@@ -2067,8 +2051,8 @@ keyboard_init: {
 
 REGISTER UPLIFT POTENTIAL REGISTERS
 Statement [6] if(*((const byte*) RASTER#0)!=(byte/word/signed word/dword/signed dword) 255) goto main::@4 [ ] ( main:2 [ ] ) always clobbers reg byte a 
-Statement [12] *((const byte*) BGCOL#0) ← (const byte) GREEN#0 [ ] ( main:2 [ ] ) always clobbers reg byte a 
-Statement [13] *((const byte*) BGCOL#0) ← (const byte) BLUE#0 [ ] ( main:2 [ ] ) always clobbers reg byte a 
+Statement [12] *((const byte*) BGCOL#0) ← (const byte) BLUE#0 [ ] ( main:2 [ ] ) always clobbers reg byte a 
+Statement [13] *((const byte*) BGCOL#0) ← (const byte) GREEN#0 [ ] ( main:2 [ ] ) always clobbers reg byte a 
 Statement [18] (byte) keyboard_key_pressed::return#0 ← (byte~) keyboard_key_pressed::$2 & *((const byte[8]) keyboard_matrix_col_bitmask#0+(const byte) keyboard_key_pressed::colidx#0) [ keyboard_key_pressed::return#0 ] ( main:2::keyboard_key_pressed:8 [ keyboard_key_pressed::return#0 ] ) always clobbers reg byte a 
 Statement [20] *((const byte*) CIA1_PORT_A#0) ← *((const byte[8]) keyboard_matrix_row_bitmask#0+(const byte) keyboard_key_pressed::rowidx#0) [ ] ( main:2::keyboard_key_pressed:8::keyboard_matrix_read:15 [ ] ) always clobbers reg byte a 
 Statement [21] (byte) keyboard_matrix_read::return#0 ← ~ *((const byte*) CIA1_PORT_B#0) [ keyboard_matrix_read::return#0 ] ( main:2::keyboard_key_pressed:8::keyboard_matrix_read:15 [ keyboard_matrix_read::return#0 ] ) always clobbers reg byte a 
@@ -2152,20 +2136,20 @@ main: {
   b14:
   //SEG19 [10] (byte~) main::$2 ← (byte) keyboard_key_pressed::return#2 [ main::$2 ] ( main:2 [ main::$2 ] )
     // (byte~) main::$2 = (byte) keyboard_key_pressed::return#2  // register copy reg byte a
-  //SEG20 [11] if((byte~) main::$2==(byte/signed byte/word/signed word/dword/signed dword) 0) goto main::@5 [ ] ( main:2 [ ] ) -- vbuaa_eq_0_then_la1 
+  //SEG20 [11] if((byte~) main::$2!=(byte/signed byte/word/signed word/dword/signed dword) 0) goto main::@5 [ ] ( main:2 [ ] ) -- vbuaa_neq_0_then_la1 
     cmp #0
-    beq b5
+    bne b5
     jmp b10
   //SEG21 main::@10
   b10:
-  //SEG22 [12] *((const byte*) BGCOL#0) ← (const byte) GREEN#0 [ ] ( main:2 [ ] ) -- _deref_pbuc1=vbuc2 
-    lda #GREEN
+  //SEG22 [12] *((const byte*) BGCOL#0) ← (const byte) BLUE#0 [ ] ( main:2 [ ] ) -- _deref_pbuc1=vbuc2 
+    lda #BLUE
     sta BGCOL
     jmp b4
   //SEG23 main::@5
   b5:
-  //SEG24 [13] *((const byte*) BGCOL#0) ← (const byte) BLUE#0 [ ] ( main:2 [ ] ) -- _deref_pbuc1=vbuc2 
-    lda #BLUE
+  //SEG24 [13] *((const byte*) BGCOL#0) ← (const byte) GREEN#0 [ ] ( main:2 [ ] ) -- _deref_pbuc1=vbuc2 
+    lda #GREEN
     sta BGCOL
     jmp b4
 }
@@ -2359,18 +2343,18 @@ main: {
   //SEG18 main::@14
   //SEG19 [10] (byte~) main::$2 ← (byte) keyboard_key_pressed::return#2 [ main::$2 ] ( main:2 [ main::$2 ] )
     // (byte~) main::$2 = (byte) keyboard_key_pressed::return#2  // register copy reg byte a
-  //SEG20 [11] if((byte~) main::$2==(byte/signed byte/word/signed word/dword/signed dword) 0) goto main::@5 [ ] ( main:2 [ ] ) -- vbuaa_eq_0_then_la1 
+  //SEG20 [11] if((byte~) main::$2!=(byte/signed byte/word/signed word/dword/signed dword) 0) goto main::@5 [ ] ( main:2 [ ] ) -- vbuaa_neq_0_then_la1 
     cmp #0
-    beq b5
+    bne b5
   //SEG21 main::@10
-  //SEG22 [12] *((const byte*) BGCOL#0) ← (const byte) GREEN#0 [ ] ( main:2 [ ] ) -- _deref_pbuc1=vbuc2 
-    lda #GREEN
+  //SEG22 [12] *((const byte*) BGCOL#0) ← (const byte) BLUE#0 [ ] ( main:2 [ ] ) -- _deref_pbuc1=vbuc2 
+    lda #BLUE
     sta BGCOL
     jmp b4
   //SEG23 main::@5
   b5:
-  //SEG24 [13] *((const byte*) BGCOL#0) ← (const byte) BLUE#0 [ ] ( main:2 [ ] ) -- _deref_pbuc1=vbuc2 
-    lda #BLUE
+  //SEG24 [13] *((const byte*) BGCOL#0) ← (const byte) GREEN#0 [ ] ( main:2 [ ] ) -- _deref_pbuc1=vbuc2 
+    lda #GREEN
     sta BGCOL
     jmp b4
 }

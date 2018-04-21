@@ -366,46 +366,14 @@ muls8s: {
     .label return = 8
     .label a = 2
     lda a
-    cmp #0
-    bpl b1
-    lda #0
-    tay
-    sta m
-    sta m+1
-  b2:
-    txa
-    sta $fe
-    ora #$7f
-    bmi !+
-    lda #0
-  !:
-    sta $ff
-    sec
-    lda m
-    sbc $fe
-    sta m
-    lda m+1
-    sbc $ff
-    sta m+1
-    dey
-    cpy a
-    bne b2
-    jmp b3
-  b6:
-    lda #<0
-    sta return
-    sta return+1
-  b3:
-    rts
-  b1:
-    lda a
-    cmp #1
     bmi b6
+    cmp #1
+    bmi b2
     lda #0
     tay
     sta m
     sta m+1
-  b5:
+  b3:
     txa
     sta $fe
     ora #$7f
@@ -422,8 +390,38 @@ muls8s: {
     sta m+1
     iny
     cpy a
+    bne b3
+    jmp b4
+  b2:
+    lda #<0
+    sta return
+    sta return+1
+  b4:
+    rts
+  b6:
+    lda #0
+    tay
+    sta m
+    sta m+1
+  b5:
+    txa
+    sta $fe
+    ora #$7f
+    bmi !+
+    lda #0
+  !:
+    sta $ff
+    sec
+    lda m
+    sbc $fe
+    sta m
+    lda m+1
+    sbc $ff
+    sta m+1
+    dey
+    cpy a
     bne b5
-    jmp b3
+    jmp b4
 }
 mul8u_compare: {
     .label ms = 8

@@ -21,24 +21,14 @@ main: {
 line: {
     .const x0 = 0
     .const x1 = $a
-    .label x = 2
-    lda #x0
-    cmp #x1
-    bcs b1
-    sta x
-  b2:
-    ldx x
-    jsr plot
-    inc x
-    lda #x1
-    cmp x
-    bcs b2
-  breturn:
-    rts
-  b1:
     ldx #x0
+  b3:
     jsr plot
-    jmp breturn
+    inx
+    cpx #x1
+    bcc b3
+    beq b3
+    rts
 }
 plot: {
     ldy plots,x

@@ -410,8 +410,8 @@ Adding pre/post-modifier (byte*) mulf_init::sqr1_lo ← ++ (byte*) mulf_init::sq
 Adding pre/post-modifier (byte*) mulf_init::sqr2_hi ← ++ (byte*) mulf_init::sqr2_hi
 Adding pre/post-modifier (byte*) mulf_init::sqr2_lo ← ++ (byte*) mulf_init::sqr2_lo
 Adding pre/post-modifier (word) muls16u::i ← ++ (word) muls16u::i
-Adding pre/post-modifier (signed word) muls16s::i ← -- (signed word) muls16s::i
 Adding pre/post-modifier (signed word) muls16s::j ← ++ (signed word) muls16s::j
+Adding pre/post-modifier (signed word) muls16s::i ← -- (signed word) muls16s::i
 
 STATEMENTS
   (byte*) print_screen ← (word/signed word/dword/signed dword) 1024
@@ -845,29 +845,28 @@ endproc // muls16u()
 proc (signed dword()) muls16s((signed word) muls16s::a , (signed word) muls16s::b)
   (signed dword) muls16s::m ← (byte/signed byte/word/signed word/dword/signed dword) 0
   (boolean~) muls16s::$0 ← (signed word) muls16s::a < (byte/signed byte/word/signed word/dword/signed dword) 0
-  (boolean~) muls16s::$1 ← ! (boolean~) muls16s::$0
-  if((boolean~) muls16s::$1) goto muls16s::@1
-  (signed word) muls16s::i ← (byte/signed byte/word/signed word/dword/signed dword) 0
-muls16s::@2:
-  (signed dword~) muls16s::$2 ← (signed dword) muls16s::m - (signed word) muls16s::b
-  (signed dword) muls16s::m ← (signed dword~) muls16s::$2
-  (signed word) muls16s::i ← -- (signed word) muls16s::i
-  (boolean~) muls16s::$3 ← (signed word) muls16s::i != (signed word) muls16s::a
-  if((boolean~) muls16s::$3) goto muls16s::@2
-  goto muls16s::@3
-muls16s::@1:
-  (boolean~) muls16s::$4 ← (signed word) muls16s::a > (byte/signed byte/word/signed word/dword/signed dword) 0
-  (boolean~) muls16s::$5 ← ! (boolean~) muls16s::$4
-  if((boolean~) muls16s::$5) goto muls16s::@4
+  if((boolean~) muls16s::$0) goto muls16s::@1
+  (boolean~) muls16s::$1 ← (signed word) muls16s::a > (byte/signed byte/word/signed word/dword/signed dword) 0
+  (boolean~) muls16s::$2 ← ! (boolean~) muls16s::$1
+  if((boolean~) muls16s::$2) goto muls16s::@2
   (signed word) muls16s::j ← (byte/signed byte/word/signed word/dword/signed dword) 0
-muls16s::@5:
-  (signed dword~) muls16s::$6 ← (signed dword) muls16s::m + (signed word) muls16s::b
-  (signed dword) muls16s::m ← (signed dword~) muls16s::$6
-  (signed word) muls16s::j ← ++ (signed word) muls16s::j
-  (boolean~) muls16s::$7 ← (signed word) muls16s::j != (signed word) muls16s::a
-  if((boolean~) muls16s::$7) goto muls16s::@5
-muls16s::@4:
 muls16s::@3:
+  (signed dword~) muls16s::$3 ← (signed dword) muls16s::m + (signed word) muls16s::b
+  (signed dword) muls16s::m ← (signed dword~) muls16s::$3
+  (signed word) muls16s::j ← ++ (signed word) muls16s::j
+  (boolean~) muls16s::$4 ← (signed word) muls16s::j != (signed word) muls16s::a
+  if((boolean~) muls16s::$4) goto muls16s::@3
+muls16s::@2:
+  goto muls16s::@4
+muls16s::@1:
+  (signed word) muls16s::i ← (byte/signed byte/word/signed word/dword/signed dword) 0
+muls16s::@5:
+  (signed dword~) muls16s::$5 ← (signed dword) muls16s::m - (signed word) muls16s::b
+  (signed dword) muls16s::m ← (signed dword~) muls16s::$5
+  (signed word) muls16s::i ← -- (signed word) muls16s::i
+  (boolean~) muls16s::$6 ← (signed word) muls16s::i != (signed word) muls16s::a
+  if((boolean~) muls16s::$6) goto muls16s::@5
+muls16s::@4:
   (signed dword) muls16s::return ← (signed dword) muls16s::m
   goto muls16s::@return
 muls16s::@return:
@@ -1249,12 +1248,11 @@ SYMBOLS
 (signed dword()) muls16s((signed word) muls16s::a , (signed word) muls16s::b)
 (boolean~) muls16s::$0
 (boolean~) muls16s::$1
-(signed dword~) muls16s::$2
-(boolean~) muls16s::$3
+(boolean~) muls16s::$2
+(signed dword~) muls16s::$3
 (boolean~) muls16s::$4
-(boolean~) muls16s::$5
-(signed dword~) muls16s::$6
-(boolean~) muls16s::$7
+(signed dword~) muls16s::$5
+(boolean~) muls16s::$6
 (label) muls16s::@1
 (label) muls16s::@2
 (label) muls16s::@3
@@ -2022,46 +2020,45 @@ muls16u::@5: scope:[muls16u]  from
 muls16s: scope:[muls16s]  from
   (signed dword) muls16s::m ← (byte/signed byte/word/signed word/dword/signed dword) 0
   (boolean~) muls16s::$0 ← (signed word) muls16s::a < (byte/signed byte/word/signed word/dword/signed dword) 0
-  (boolean~) muls16s::$1 ← ! (boolean~) muls16s::$0
-  if((boolean~) muls16s::$1) goto muls16s::@1
+  if((boolean~) muls16s::$0) goto muls16s::@1
   to:muls16s::@6
-muls16s::@1: scope:[muls16s]  from muls16s muls16s::@8
-  (boolean~) muls16s::$4 ← (signed word) muls16s::a > (byte/signed byte/word/signed word/dword/signed dword) 0
-  (boolean~) muls16s::$5 ← ! (boolean~) muls16s::$4
-  if((boolean~) muls16s::$5) goto muls16s::@4
-  to:muls16s::@9
-muls16s::@6: scope:[muls16s]  from muls16s
+muls16s::@1: scope:[muls16s]  from muls16s muls16s::@9
   (signed word) muls16s::i ← (byte/signed byte/word/signed word/dword/signed dword) 0
-  to:muls16s::@2
-muls16s::@2: scope:[muls16s]  from muls16s::@2 muls16s::@6
-  (signed dword~) muls16s::$2 ← (signed dword) muls16s::m - (signed word) muls16s::b
-  (signed dword) muls16s::m ← (signed dword~) muls16s::$2
-  (signed word) muls16s::i ← -- (signed word) muls16s::i
-  (boolean~) muls16s::$3 ← (signed word) muls16s::i != (signed word) muls16s::a
-  if((boolean~) muls16s::$3) goto muls16s::@2
+  to:muls16s::@5
+muls16s::@6: scope:[muls16s]  from muls16s
+  (boolean~) muls16s::$1 ← (signed word) muls16s::a > (byte/signed byte/word/signed word/dword/signed dword) 0
+  (boolean~) muls16s::$2 ← ! (boolean~) muls16s::$1
+  if((boolean~) muls16s::$2) goto muls16s::@2
   to:muls16s::@7
-muls16s::@7: scope:[muls16s]  from muls16s::@2
+muls16s::@2: scope:[muls16s]  from muls16s::@6 muls16s::@8
+  to:muls16s::@4
+muls16s::@7: scope:[muls16s]  from muls16s::@6
+  (signed word) muls16s::j ← (byte/signed byte/word/signed word/dword/signed dword) 0
   to:muls16s::@3
-muls16s::@3: scope:[muls16s]  from muls16s::@4 muls16s::@7
+muls16s::@3: scope:[muls16s]  from muls16s::@3 muls16s::@7
+  (signed dword~) muls16s::$3 ← (signed dword) muls16s::m + (signed word) muls16s::b
+  (signed dword) muls16s::m ← (signed dword~) muls16s::$3
+  (signed word) muls16s::j ← ++ (signed word) muls16s::j
+  (boolean~) muls16s::$4 ← (signed word) muls16s::j != (signed word) muls16s::a
+  if((boolean~) muls16s::$4) goto muls16s::@3
+  to:muls16s::@8
+muls16s::@8: scope:[muls16s]  from muls16s::@3
+  to:muls16s::@2
+muls16s::@4: scope:[muls16s]  from muls16s::@10 muls16s::@2
   (signed dword) muls16s::return ← (signed dword) muls16s::m
   to:muls16s::@return
-muls16s::@8: scope:[muls16s]  from
+muls16s::@9: scope:[muls16s]  from
   to:muls16s::@1
-muls16s::@4: scope:[muls16s]  from muls16s::@1 muls16s::@10
-  to:muls16s::@3
-muls16s::@9: scope:[muls16s]  from muls16s::@1
-  (signed word) muls16s::j ← (byte/signed byte/word/signed word/dword/signed dword) 0
-  to:muls16s::@5
-muls16s::@5: scope:[muls16s]  from muls16s::@5 muls16s::@9
-  (signed dword~) muls16s::$6 ← (signed dword) muls16s::m + (signed word) muls16s::b
-  (signed dword) muls16s::m ← (signed dword~) muls16s::$6
-  (signed word) muls16s::j ← ++ (signed word) muls16s::j
-  (boolean~) muls16s::$7 ← (signed word) muls16s::j != (signed word) muls16s::a
-  if((boolean~) muls16s::$7) goto muls16s::@5
+muls16s::@5: scope:[muls16s]  from muls16s::@1 muls16s::@5
+  (signed dword~) muls16s::$5 ← (signed dword) muls16s::m - (signed word) muls16s::b
+  (signed dword) muls16s::m ← (signed dword~) muls16s::$5
+  (signed word) muls16s::i ← -- (signed word) muls16s::i
+  (boolean~) muls16s::$6 ← (signed word) muls16s::i != (signed word) muls16s::a
+  if((boolean~) muls16s::$6) goto muls16s::@5
   to:muls16s::@10
 muls16s::@10: scope:[muls16s]  from muls16s::@5
   to:muls16s::@4
-muls16s::@return: scope:[muls16s]  from muls16s::@11 muls16s::@3
+muls16s::@return: scope:[muls16s]  from muls16s::@11 muls16s::@4
   (signed dword) muls16s::return ← (signed dword) muls16s::return
   return (signed dword) muls16s::return
   to:@return
@@ -2309,8 +2306,8 @@ Removing empty block @23
 Removing empty block muls16u::@4
 Removing empty block muls16u::@5
 Removing empty block @24
-Removing empty block muls16s::@7
 Removing empty block muls16s::@8
+Removing empty block muls16s::@9
 Removing empty block muls16s::@10
 Removing empty block muls16s::@11
 Removing empty block @25
@@ -2888,60 +2885,59 @@ muls16s: scope:[muls16s]  from mul16s_compare::@2
   (signed word) muls16s::a#1 ← phi( mul16s_compare::@2/(signed word) muls16s::a#0 )
   (signed dword) muls16s::m#0 ← (byte/signed byte/word/signed word/dword/signed dword) 0
   (boolean~) muls16s::$0 ← (signed word) muls16s::a#1 < (byte/signed byte/word/signed word/dword/signed dword) 0
-  (boolean~) muls16s::$1 ← ! (boolean~) muls16s::$0
-  if((boolean~) muls16s::$1) goto muls16s::@1
+  if((boolean~) muls16s::$0) goto muls16s::@1
   to:muls16s::@6
 muls16s::@1: scope:[muls16s]  from muls16s
+  (signed word) muls16s::a#6 ← phi( muls16s/(signed word) muls16s::a#1 )
+  (signed word) muls16s::b#4 ← phi( muls16s/(signed word) muls16s::b#5 )
+  (signed dword) muls16s::m#8 ← phi( muls16s/(signed dword) muls16s::m#0 )
+  (signed word) muls16s::i#0 ← (byte/signed byte/word/signed word/dword/signed dword) 0
+  to:muls16s::@5
+muls16s::@6: scope:[muls16s]  from muls16s
   (signed word) muls16s::b#6 ← phi( muls16s/(signed word) muls16s::b#5 )
   (signed dword) muls16s::m#9 ← phi( muls16s/(signed dword) muls16s::m#0 )
   (signed word) muls16s::a#2 ← phi( muls16s/(signed word) muls16s::a#1 )
-  (boolean~) muls16s::$4 ← (signed word) muls16s::a#2 > (byte/signed byte/word/signed word/dword/signed dword) 0
-  (boolean~) muls16s::$5 ← ! (boolean~) muls16s::$4
-  if((boolean~) muls16s::$5) goto muls16s::@4
-  to:muls16s::@9
-muls16s::@6: scope:[muls16s]  from muls16s
-  (signed word) muls16s::a#5 ← phi( muls16s/(signed word) muls16s::a#1 )
-  (signed word) muls16s::b#3 ← phi( muls16s/(signed word) muls16s::b#5 )
-  (signed dword) muls16s::m#6 ← phi( muls16s/(signed dword) muls16s::m#0 )
-  (signed word) muls16s::i#0 ← (byte/signed byte/word/signed word/dword/signed dword) 0
-  to:muls16s::@2
-muls16s::@2: scope:[muls16s]  from muls16s::@2 muls16s::@6
-  (signed word) muls16s::a#3 ← phi( muls16s::@2/(signed word) muls16s::a#3 muls16s::@6/(signed word) muls16s::a#5 )
-  (signed word) muls16s::i#2 ← phi( muls16s::@2/(signed word) muls16s::i#1 muls16s::@6/(signed word) muls16s::i#0 )
-  (signed word) muls16s::b#1 ← phi( muls16s::@2/(signed word) muls16s::b#1 muls16s::@6/(signed word) muls16s::b#3 )
-  (signed dword) muls16s::m#3 ← phi( muls16s::@2/(signed dword) muls16s::m#1 muls16s::@6/(signed dword) muls16s::m#6 )
-  (signed dword~) muls16s::$2 ← (signed dword) muls16s::m#3 - (signed word) muls16s::b#1
-  (signed dword) muls16s::m#1 ← (signed dword~) muls16s::$2
-  (signed word) muls16s::i#1 ← -- (signed word) muls16s::i#2
-  (boolean~) muls16s::$3 ← (signed word) muls16s::i#1 != (signed word) muls16s::a#3
-  if((boolean~) muls16s::$3) goto muls16s::@2
+  (boolean~) muls16s::$1 ← (signed word) muls16s::a#2 > (byte/signed byte/word/signed word/dword/signed dword) 0
+  (boolean~) muls16s::$2 ← ! (boolean~) muls16s::$1
+  if((boolean~) muls16s::$2) goto muls16s::@2
+  to:muls16s::@7
+muls16s::@2: scope:[muls16s]  from muls16s::@6
+  (signed dword) muls16s::m#7 ← phi( muls16s::@6/(signed dword) muls16s::m#9 )
+  to:muls16s::@4
+muls16s::@7: scope:[muls16s]  from muls16s::@6
+  (signed word) muls16s::a#5 ← phi( muls16s::@6/(signed word) muls16s::a#2 )
+  (signed word) muls16s::b#3 ← phi( muls16s::@6/(signed word) muls16s::b#6 )
+  (signed dword) muls16s::m#6 ← phi( muls16s::@6/(signed dword) muls16s::m#9 )
+  (signed word) muls16s::j#0 ← (byte/signed byte/word/signed word/dword/signed dword) 0
   to:muls16s::@3
-muls16s::@3: scope:[muls16s]  from muls16s::@2 muls16s::@4 muls16s::@5
-  (signed dword) muls16s::m#4 ← phi( muls16s::@2/(signed dword) muls16s::m#1 muls16s::@4/(signed dword) muls16s::m#7 muls16s::@5/(signed dword) muls16s::m#2 )
+muls16s::@3: scope:[muls16s]  from muls16s::@3 muls16s::@7
+  (signed word) muls16s::a#3 ← phi( muls16s::@3/(signed word) muls16s::a#3 muls16s::@7/(signed word) muls16s::a#5 )
+  (signed word) muls16s::j#2 ← phi( muls16s::@3/(signed word) muls16s::j#1 muls16s::@7/(signed word) muls16s::j#0 )
+  (signed word) muls16s::b#1 ← phi( muls16s::@3/(signed word) muls16s::b#1 muls16s::@7/(signed word) muls16s::b#3 )
+  (signed dword) muls16s::m#3 ← phi( muls16s::@3/(signed dword) muls16s::m#1 muls16s::@7/(signed dword) muls16s::m#6 )
+  (signed dword~) muls16s::$3 ← (signed dword) muls16s::m#3 + (signed word) muls16s::b#1
+  (signed dword) muls16s::m#1 ← (signed dword~) muls16s::$3
+  (signed word) muls16s::j#1 ← ++ (signed word) muls16s::j#2
+  (boolean~) muls16s::$4 ← (signed word) muls16s::j#1 != (signed word) muls16s::a#3
+  if((boolean~) muls16s::$4) goto muls16s::@3
+  to:muls16s::@4
+muls16s::@4: scope:[muls16s]  from muls16s::@2 muls16s::@3 muls16s::@5
+  (signed dword) muls16s::m#4 ← phi( muls16s::@2/(signed dword) muls16s::m#7 muls16s::@3/(signed dword) muls16s::m#1 muls16s::@5/(signed dword) muls16s::m#2 )
   (signed dword) muls16s::return#0 ← (signed dword) muls16s::m#4
   to:muls16s::@return
-muls16s::@4: scope:[muls16s]  from muls16s::@1
-  (signed dword) muls16s::m#7 ← phi( muls16s::@1/(signed dword) muls16s::m#9 )
-  to:muls16s::@3
-muls16s::@9: scope:[muls16s]  from muls16s::@1
-  (signed word) muls16s::a#6 ← phi( muls16s::@1/(signed word) muls16s::a#2 )
-  (signed word) muls16s::b#4 ← phi( muls16s::@1/(signed word) muls16s::b#6 )
-  (signed dword) muls16s::m#8 ← phi( muls16s::@1/(signed dword) muls16s::m#9 )
-  (signed word) muls16s::j#0 ← (byte/signed byte/word/signed word/dword/signed dword) 0
-  to:muls16s::@5
-muls16s::@5: scope:[muls16s]  from muls16s::@5 muls16s::@9
-  (signed word) muls16s::a#4 ← phi( muls16s::@5/(signed word) muls16s::a#4 muls16s::@9/(signed word) muls16s::a#6 )
-  (signed word) muls16s::j#2 ← phi( muls16s::@5/(signed word) muls16s::j#1 muls16s::@9/(signed word) muls16s::j#0 )
-  (signed word) muls16s::b#2 ← phi( muls16s::@5/(signed word) muls16s::b#2 muls16s::@9/(signed word) muls16s::b#4 )
-  (signed dword) muls16s::m#5 ← phi( muls16s::@5/(signed dword) muls16s::m#2 muls16s::@9/(signed dword) muls16s::m#8 )
-  (signed dword~) muls16s::$6 ← (signed dword) muls16s::m#5 + (signed word) muls16s::b#2
-  (signed dword) muls16s::m#2 ← (signed dword~) muls16s::$6
-  (signed word) muls16s::j#1 ← ++ (signed word) muls16s::j#2
-  (boolean~) muls16s::$7 ← (signed word) muls16s::j#1 != (signed word) muls16s::a#4
-  if((boolean~) muls16s::$7) goto muls16s::@5
-  to:muls16s::@3
-muls16s::@return: scope:[muls16s]  from muls16s::@3
-  (signed dword) muls16s::return#3 ← phi( muls16s::@3/(signed dword) muls16s::return#0 )
+muls16s::@5: scope:[muls16s]  from muls16s::@1 muls16s::@5
+  (signed word) muls16s::a#4 ← phi( muls16s::@1/(signed word) muls16s::a#6 muls16s::@5/(signed word) muls16s::a#4 )
+  (signed word) muls16s::i#2 ← phi( muls16s::@1/(signed word) muls16s::i#0 muls16s::@5/(signed word) muls16s::i#1 )
+  (signed word) muls16s::b#2 ← phi( muls16s::@1/(signed word) muls16s::b#4 muls16s::@5/(signed word) muls16s::b#2 )
+  (signed dword) muls16s::m#5 ← phi( muls16s::@1/(signed dword) muls16s::m#8 muls16s::@5/(signed dword) muls16s::m#2 )
+  (signed dword~) muls16s::$5 ← (signed dword) muls16s::m#5 - (signed word) muls16s::b#2
+  (signed dword) muls16s::m#2 ← (signed dword~) muls16s::$5
+  (signed word) muls16s::i#1 ← -- (signed word) muls16s::i#2
+  (boolean~) muls16s::$6 ← (signed word) muls16s::i#1 != (signed word) muls16s::a#4
+  if((boolean~) muls16s::$6) goto muls16s::@5
+  to:muls16s::@4
+muls16s::@return: scope:[muls16s]  from muls16s::@4
+  (signed dword) muls16s::return#3 ← phi( muls16s::@4/(signed dword) muls16s::return#0 )
   (signed dword) muls16s::return#1 ← (signed dword) muls16s::return#3
   return 
   to:@return
@@ -3972,19 +3968,18 @@ SYMBOL TABLE SSA
 (signed dword()) muls16s((signed word) muls16s::a , (signed word) muls16s::b)
 (boolean~) muls16s::$0
 (boolean~) muls16s::$1
-(signed dword~) muls16s::$2
-(boolean~) muls16s::$3
+(boolean~) muls16s::$2
+(signed dword~) muls16s::$3
 (boolean~) muls16s::$4
-(boolean~) muls16s::$5
-(signed dword~) muls16s::$6
-(boolean~) muls16s::$7
+(signed dword~) muls16s::$5
+(boolean~) muls16s::$6
 (label) muls16s::@1
 (label) muls16s::@2
 (label) muls16s::@3
 (label) muls16s::@4
 (label) muls16s::@5
 (label) muls16s::@6
-(label) muls16s::@9
+(label) muls16s::@7
 (label) muls16s::@return
 (signed word) muls16s::a
 (signed word) muls16s::a#0
@@ -4445,8 +4440,7 @@ Inversing boolean not (boolean~) mul16s::$10 ← (signed word) mul16s::b#2 >= (b
 Inversing boolean not (boolean~) mulf_init::$4 ← (byte~) mulf_init::$2 != (byte/signed byte/word/signed word/dword/signed dword) 0 from (boolean~) mulf_init::$3 ← (byte~) mulf_init::$2 == (byte/signed byte/word/signed word/dword/signed dword) 0
 Inversing boolean not (boolean~) mulf_init::$14 ← (byte) mulf_init::x_255#1 != (byte/signed byte/word/signed word/dword/signed dword) 0 from (boolean~) mulf_init::$13 ← (byte) mulf_init::x_255#1 == (byte/signed byte/word/signed word/dword/signed dword) 0
 Inversing boolean not (boolean~) muls16u::$1 ← (word) muls16u::a#1 == (byte/signed byte/word/signed word/dword/signed dword) 0 from (boolean~) muls16u::$0 ← (word) muls16u::a#1 != (byte/signed byte/word/signed word/dword/signed dword) 0
-Inversing boolean not (boolean~) muls16s::$1 ← (signed word) muls16s::a#1 >= (byte/signed byte/word/signed word/dword/signed dword) 0 from (boolean~) muls16s::$0 ← (signed word) muls16s::a#1 < (byte/signed byte/word/signed word/dword/signed dword) 0
-Inversing boolean not (boolean~) muls16s::$5 ← (signed word) muls16s::a#2 <= (byte/signed byte/word/signed word/dword/signed dword) 0 from (boolean~) muls16s::$4 ← (signed word) muls16s::a#2 > (byte/signed byte/word/signed word/dword/signed dword) 0
+Inversing boolean not (boolean~) muls16s::$2 ← (signed word) muls16s::a#2 <= (byte/signed byte/word/signed word/dword/signed dword) 0 from (boolean~) muls16s::$1 ← (signed word) muls16s::a#2 > (byte/signed byte/word/signed word/dword/signed dword) 0
 Inversing boolean not (boolean~) mul16u_compare::$5 ← (dword) mul16u_compare::ms#1 == (dword) mul16u_compare::mn#0 from (boolean~) mul16u_compare::$4 ← (dword) mul16u_compare::ms#1 != (dword) mul16u_compare::mn#0
 Inversing boolean not (boolean~) mul16u_compare::$7 ← (byte) mul16u_compare::ok#2 != (byte/signed byte/word/signed word/dword/signed dword) 0 from (boolean~) mul16u_compare::$6 ← (byte) mul16u_compare::ok#2 == (byte/signed byte/word/signed word/dword/signed dword) 0
 Inversing boolean not (boolean~) mul16s_compare::$7 ← (signed dword) mul16s_compare::ms#1 == (signed dword) mul16s_compare::mn#0 from (boolean~) mul16s_compare::$6 ← (signed dword) mul16s_compare::ms#1 != (signed dword) mul16s_compare::mn#0
@@ -4506,8 +4500,6 @@ Not aliassing across scopes: muls16s::a#1 muls16s::a#0
 Not aliassing across scopes: muls16s::b#5 muls16s::b#0
 Not aliassing identity: muls16s::b#1 muls16s::b#1
 Not aliassing identity: muls16s::a#3 muls16s::a#3
-Not aliassing identity: muls16s::b#2 muls16s::b#2
-Not aliassing identity: muls16s::a#4 muls16s::a#4
 Not aliassing across scopes: BGCOL#19 BGCOL#23
 Not aliassing across scopes: print_char_cursor#152 print_char_cursor#122
 Not aliassing across scopes: print_line_cursor#80 print_line_cursor#41
@@ -4662,12 +4654,12 @@ Alias (dword) muls16u::m#0 = (dword) muls16u::m#4
 Alias (word) muls16u::b#2 = (word) muls16u::b#3 
 Alias (word) muls16u::a#1 = (word) muls16u::a#3 
 Alias (dword) muls16u::m#1 = (dword~) muls16u::$2 
-Alias (signed word) muls16s::a#1 = (signed word) muls16s::a#2 (signed word) muls16s::a#5 (signed word) muls16s::a#6 
-Alias (signed dword) muls16s::m#0 = (signed dword) muls16s::m#9 (signed dword) muls16s::m#6 (signed dword) muls16s::m#7 (signed dword) muls16s::m#8 
-Alias (signed word) muls16s::b#3 = (signed word) muls16s::b#6 (signed word) muls16s::b#5 (signed word) muls16s::b#4 
-Alias (signed dword) muls16s::m#1 = (signed dword~) muls16s::$2 
+Alias (signed dword) muls16s::m#0 = (signed dword) muls16s::m#8 (signed dword) muls16s::m#9 (signed dword) muls16s::m#7 (signed dword) muls16s::m#6 
+Alias (signed word) muls16s::b#3 = (signed word) muls16s::b#4 (signed word) muls16s::b#5 (signed word) muls16s::b#6 
+Alias (signed word) muls16s::a#1 = (signed word) muls16s::a#6 (signed word) muls16s::a#2 (signed word) muls16s::a#5 
+Alias (signed dword) muls16s::m#1 = (signed dword~) muls16s::$3 
 Alias (signed dword) muls16s::return#0 = (signed dword) muls16s::m#4 (signed dword) muls16s::return#3 (signed dword) muls16s::return#1 
-Alias (signed dword) muls16s::m#2 = (signed dword~) muls16s::$6 
+Alias (signed dword) muls16s::m#2 = (signed dword~) muls16s::$5 
 Alias (word) mul16u_compare::a#1 = (word/signed dword/dword~) mul16u_compare::$0 (word) mul16u_compare::a#3 (word) mul16u_compare::a#9 (word) mul16u_compare::a#10 
 Alias (word) mul16u_compare::b#1 = (word/signed dword/dword~) mul16u_compare::$1 (word) mul16u_compare::b#3 (word) mul16u_compare::b#9 (word) mul16u_compare::b#10 
 Alias (dword) muls16u::return#2 = (dword) muls16u::return#4 
@@ -4812,8 +4804,6 @@ Not aliassing across scopes: muls16s::a#1 muls16s::a#0
 Not aliassing across scopes: muls16s::b#3 muls16s::b#0
 Not aliassing identity: muls16s::b#1 muls16s::b#1
 Not aliassing identity: muls16s::a#3 muls16s::a#3
-Not aliassing identity: muls16s::b#2 muls16s::b#2
-Not aliassing identity: muls16s::a#4 muls16s::a#4
 Not aliassing across scopes: BGCOL#19 BGCOL#1
 Not aliassing across scopes: print_char_cursor#152 print_char_cursor#122
 Not aliassing across scopes: print_line_cursor#80 print_line_cursor#24
@@ -4979,8 +4969,6 @@ Not aliassing across scopes: muls16s::a#1 muls16s::a#0
 Not aliassing across scopes: muls16s::b#3 muls16s::b#0
 Not aliassing identity: muls16s::b#1 muls16s::b#1
 Not aliassing identity: muls16s::a#3 muls16s::a#3
-Not aliassing identity: muls16s::b#2 muls16s::b#2
-Not aliassing identity: muls16s::a#4 muls16s::a#4
 Not aliassing across scopes: BGCOL#19 BGCOL#1
 Not aliassing across scopes: print_char_cursor#152 print_char_cursor#122
 Not aliassing across scopes: print_line_cursor#80 print_line_cursor#24
@@ -5196,10 +5184,10 @@ Simple Condition (boolean~) mulf_init::$14 if((byte) mulf_init::x_255#1!=(byte/s
 Simple Condition (boolean~) mulf_init::$16 if((byte*) mulf_init::sqr2_lo#1!=(byte*~) mulf_init::$15) goto mulf_init::@3
 Simple Condition (boolean~) muls16u::$1 if((word) muls16u::a#0==(byte/signed byte/word/signed word/dword/signed dword) 0) goto muls16u::@1
 Simple Condition (boolean~) muls16u::$3 if((word) muls16u::i#1!=(word) muls16u::a#0) goto muls16u::@2
-Simple Condition (boolean~) muls16s::$1 if((signed word) muls16s::a#0>=(byte/signed byte/word/signed word/dword/signed dword) 0) goto muls16s::@1
-Simple Condition (boolean~) muls16s::$5 if((signed word) muls16s::a#0<=(byte/signed byte/word/signed word/dword/signed dword) 0) goto muls16s::@4
-Simple Condition (boolean~) muls16s::$3 if((signed word) muls16s::i#1!=(signed word) muls16s::a#0) goto muls16s::@2
-Simple Condition (boolean~) muls16s::$7 if((signed word) muls16s::j#1!=(signed word) muls16s::a#0) goto muls16s::@5
+Simple Condition (boolean~) muls16s::$0 if((signed word) muls16s::a#0<(byte/signed byte/word/signed word/dword/signed dword) 0) goto muls16s::@1
+Simple Condition (boolean~) muls16s::$2 if((signed word) muls16s::a#0<=(byte/signed byte/word/signed word/dword/signed dword) 0) goto muls16s::@2
+Simple Condition (boolean~) muls16s::$4 if((signed word) muls16s::j#1!=(signed word) muls16s::a#0) goto muls16s::@3
+Simple Condition (boolean~) muls16s::$6 if((signed word) muls16s::i#1!=(signed word) muls16s::a#0) goto muls16s::@5
 Simple Condition (boolean~) mul16u_compare::$5 if((dword) mul16u_compare::ms#0==(dword) mul16u_compare::mn#0) goto mul16u_compare::@3
 Simple Condition (boolean~) mul16u_compare::$7 if((byte) mul16u_compare::ok#2!=(byte/signed byte/word/signed word/dword/signed dword) 0) goto mul16u_compare::@4
 Simple Condition (boolean~) mul16u_compare::$9 if((byte) mul16u_compare::j#1!=(byte/signed byte/word/signed word/dword/signed dword) 16) goto mul16u_compare::@2
@@ -5288,9 +5276,9 @@ Not culling empty block because it shares successor with its predecessor. (label
 Culled Empty Block (label) @22
 Culled Empty Block (label) main::@4
 Culled Empty Block (label) muls16u::@3
-Culled Empty Block (label) muls16s::@6
-Culled Empty Block (label) muls16s::@4
-Culled Empty Block (label) muls16s::@9
+Culled Empty Block (label) muls16s::@1
+Culled Empty Block (label) muls16s::@2
+Culled Empty Block (label) muls16s::@7
 Not culling empty block because it shares successor with its predecessor. (label) mul16u_compare::@5
 Culled Empty Block (label) mul16u_compare::@12
 Culled Empty Block (label) mul16u_compare::@14
@@ -5584,7 +5572,7 @@ Constant inlined mulf_init::$8 = (const byte[512]) mulf_sqr1_lo#0+(word/signed w
 Constant inlined print_char::ch#1 = (byte) '-'
 Constant inlined print_char::ch#0 = (byte) '-'
 Succesful SSA optimization Pass2ConstantInlining
-Block Sequence Planned @begin @29 @end main main::@1 main::@2 main::@3 main::@return mul16s_compare mul16s_compare::@1 mul16s_compare::@2 mul16s_compare::@10 mul16s_compare::@11 mul16s_compare::@5 mul16s_compare::@3 mul16s_compare::@6 mul16s_compare::@return mul16s_compare::@4 mul16s_compare::@8 mul16s_compare::@9 mul16s_compare::@13 print_ln print_ln::@1 print_ln::@return print_str print_str::@1 print_str::@return print_str::@2 mul16s_error mul16s_error::@1 mul16s_error::@2 mul16s_error::@3 mul16s_error::@4 mul16s_error::@5 mul16s_error::@6 mul16s_error::@7 mul16s_error::@8 mul16s_error::@return print_sdword print_sdword::@2 print_sdword::@4 print_sdword::@1 print_sdword::@return print_dword print_dword::@1 print_dword::@return print_word print_word::@1 print_word::@return print_byte print_byte::@1 print_byte::@return print_char print_char::@return print_sword print_sword::@2 print_sword::@4 print_sword::@1 print_sword::@return mul16s mul16s::@6 mul16s::@3 mul16s::@1 mul16s::@4 mul16s::@2 mul16s::@return mul16u mul16u::@1 mul16u::@return mul16u::@2 mul16u::@7 mul16u::@4 muls16s muls16s::@2 muls16s::@3 muls16s::@return muls16s::@1 muls16s::@5 mul16u_compare mul16u_compare::@1 mul16u_compare::@2 mul16u_compare::@10 mul16u_compare::@11 mul16u_compare::@5 mul16u_compare::@3 mul16u_compare::@6 mul16u_compare::@return mul16u_compare::@4 mul16u_compare::@8 mul16u_compare::@9 mul16u_compare::@13 mul16u_error mul16u_error::@1 mul16u_error::@2 mul16u_error::@3 mul16u_error::@4 mul16u_error::@5 mul16u_error::@6 mul16u_error::@7 mul16u_error::@8 mul16u_error::@return muls16u muls16u::@2 muls16u::@1 muls16u::@return mulf_init mulf_init::@1 mulf_init::@5 mulf_init::@2 mulf_init::@3 mulf_init::@7 mulf_init::@4 mulf_init::@8 mulf_init::@return print_cls print_cls::@1 print_cls::@return 
+Block Sequence Planned @begin @29 @end main main::@1 main::@2 main::@3 main::@return mul16s_compare mul16s_compare::@1 mul16s_compare::@2 mul16s_compare::@10 mul16s_compare::@11 mul16s_compare::@5 mul16s_compare::@3 mul16s_compare::@6 mul16s_compare::@return mul16s_compare::@4 mul16s_compare::@8 mul16s_compare::@9 mul16s_compare::@13 print_ln print_ln::@1 print_ln::@return print_str print_str::@1 print_str::@return print_str::@2 mul16s_error mul16s_error::@1 mul16s_error::@2 mul16s_error::@3 mul16s_error::@4 mul16s_error::@5 mul16s_error::@6 mul16s_error::@7 mul16s_error::@8 mul16s_error::@return print_sdword print_sdword::@2 print_sdword::@4 print_sdword::@1 print_sdword::@return print_dword print_dword::@1 print_dword::@return print_word print_word::@1 print_word::@return print_byte print_byte::@1 print_byte::@return print_char print_char::@return print_sword print_sword::@2 print_sword::@4 print_sword::@1 print_sword::@return mul16s mul16s::@6 mul16s::@3 mul16s::@1 mul16s::@4 mul16s::@2 mul16s::@return mul16u mul16u::@1 mul16u::@return mul16u::@2 mul16u::@7 mul16u::@4 muls16s muls16s::@6 muls16s::@3 muls16s::@4 muls16s::@return muls16s::@5 mul16u_compare mul16u_compare::@1 mul16u_compare::@2 mul16u_compare::@10 mul16u_compare::@11 mul16u_compare::@5 mul16u_compare::@3 mul16u_compare::@6 mul16u_compare::@return mul16u_compare::@4 mul16u_compare::@8 mul16u_compare::@9 mul16u_compare::@13 mul16u_error mul16u_error::@1 mul16u_error::@2 mul16u_error::@3 mul16u_error::@4 mul16u_error::@5 mul16u_error::@6 mul16u_error::@7 mul16u_error::@8 mul16u_error::@return muls16u muls16u::@2 muls16u::@1 muls16u::@return mulf_init mulf_init::@1 mulf_init::@5 mulf_init::@2 mulf_init::@3 mulf_init::@7 mulf_init::@4 mulf_init::@8 mulf_init::@return print_cls print_cls::@1 print_cls::@return 
 Added new block during phi lifting mul16s_compare::@15(between mul16s_compare::@8 and mul16s_compare::@1)
 Added new block during phi lifting mul16s_compare::@16(between mul16s_compare::@4 and mul16s_compare::@2)
 Added new block during phi lifting print_ln::@3(between print_ln::@1 and print_ln::@1)
@@ -5593,9 +5581,9 @@ Added new block during phi lifting print_sword::@5(between print_sword and print
 Added new block during phi lifting mul16s::@7(between mul16s::@6 and mul16s::@1)
 Added new block during phi lifting mul16s::@8(between mul16s::@1 and mul16s::@2)
 Added new block during phi lifting mul16u::@10(between mul16u::@2 and mul16u::@4)
-Added new block during phi lifting muls16s::@12(between muls16s::@2 and muls16s::@2)
-Added new block during phi lifting muls16s::@13(between muls16s::@2 and muls16s::@3)
-Added new block during phi lifting muls16s::@14(between muls16s::@5 and muls16s::@3)
+Added new block during phi lifting muls16s::@12(between muls16s::@3 and muls16s::@3)
+Added new block during phi lifting muls16s::@13(between muls16s::@3 and muls16s::@4)
+Added new block during phi lifting muls16s::@14(between muls16s::@5 and muls16s::@4)
 Added new block during phi lifting muls16s::@15(between muls16s::@5 and muls16s::@5)
 Added new block during phi lifting mul16u_compare::@15(between mul16u_compare::@8 and mul16u_compare::@1)
 Added new block during phi lifting mul16u_compare::@16(between mul16u_compare::@4 and mul16u_compare::@2)
@@ -5606,7 +5594,7 @@ Added new block during phi lifting mulf_init::@10(between mulf_init::@1 and mulf
 Added new block during phi lifting mulf_init::@11(between mulf_init::@4 and mulf_init::@3)
 Added new block during phi lifting mulf_init::@12(between mulf_init::@3 and mulf_init::@4)
 Added new block during phi lifting print_cls::@3(between print_cls::@1 and print_cls::@1)
-Block Sequence Planned @begin @29 @end main main::@1 main::@2 main::@3 main::@return mul16s_compare mul16s_compare::@1 mul16s_compare::@2 mul16s_compare::@10 mul16s_compare::@11 mul16s_compare::@5 mul16s_compare::@3 mul16s_compare::@6 mul16s_compare::@return mul16s_compare::@4 mul16s_compare::@8 mul16s_compare::@9 mul16s_compare::@13 mul16s_compare::@15 mul16s_compare::@16 print_ln print_ln::@1 print_ln::@return print_ln::@3 print_str print_str::@1 print_str::@return print_str::@2 mul16s_error mul16s_error::@1 mul16s_error::@2 mul16s_error::@3 mul16s_error::@4 mul16s_error::@5 mul16s_error::@6 mul16s_error::@7 mul16s_error::@8 mul16s_error::@return print_sdword print_sdword::@2 print_sdword::@4 print_sdword::@1 print_sdword::@return print_sdword::@5 print_dword print_dword::@1 print_dword::@return print_word print_word::@1 print_word::@return print_byte print_byte::@1 print_byte::@return print_char print_char::@return print_sword print_sword::@2 print_sword::@4 print_sword::@1 print_sword::@return print_sword::@5 mul16s mul16s::@6 mul16s::@3 mul16s::@1 mul16s::@4 mul16s::@2 mul16s::@return mul16s::@8 mul16s::@7 mul16u mul16u::@1 mul16u::@return mul16u::@2 mul16u::@7 mul16u::@4 mul16u::@10 muls16s muls16s::@2 muls16s::@13 muls16s::@3 muls16s::@return muls16s::@12 muls16s::@1 muls16s::@5 muls16s::@14 muls16s::@15 mul16u_compare mul16u_compare::@1 mul16u_compare::@2 mul16u_compare::@10 mul16u_compare::@11 mul16u_compare::@5 mul16u_compare::@3 mul16u_compare::@6 mul16u_compare::@return mul16u_compare::@4 mul16u_compare::@8 mul16u_compare::@9 mul16u_compare::@13 mul16u_compare::@15 mul16u_compare::@16 mul16u_error mul16u_error::@1 mul16u_error::@2 mul16u_error::@3 mul16u_error::@4 mul16u_error::@5 mul16u_error::@6 mul16u_error::@7 mul16u_error::@8 mul16u_error::@return muls16u muls16u::@2 muls16u::@7 muls16u::@1 muls16u::@return muls16u::@6 mulf_init mulf_init::@1 mulf_init::@5 mulf_init::@2 mulf_init::@3 mulf_init::@7 mulf_init::@4 mulf_init::@8 mulf_init::@return mulf_init::@11 mulf_init::@12 mulf_init::@9 mulf_init::@10 print_cls print_cls::@1 print_cls::@return print_cls::@3 
+Block Sequence Planned @begin @29 @end main main::@1 main::@2 main::@3 main::@return mul16s_compare mul16s_compare::@1 mul16s_compare::@2 mul16s_compare::@10 mul16s_compare::@11 mul16s_compare::@5 mul16s_compare::@3 mul16s_compare::@6 mul16s_compare::@return mul16s_compare::@4 mul16s_compare::@8 mul16s_compare::@9 mul16s_compare::@13 mul16s_compare::@15 mul16s_compare::@16 print_ln print_ln::@1 print_ln::@return print_ln::@3 print_str print_str::@1 print_str::@return print_str::@2 mul16s_error mul16s_error::@1 mul16s_error::@2 mul16s_error::@3 mul16s_error::@4 mul16s_error::@5 mul16s_error::@6 mul16s_error::@7 mul16s_error::@8 mul16s_error::@return print_sdword print_sdword::@2 print_sdword::@4 print_sdword::@1 print_sdword::@return print_sdword::@5 print_dword print_dword::@1 print_dword::@return print_word print_word::@1 print_word::@return print_byte print_byte::@1 print_byte::@return print_char print_char::@return print_sword print_sword::@2 print_sword::@4 print_sword::@1 print_sword::@return print_sword::@5 mul16s mul16s::@6 mul16s::@3 mul16s::@1 mul16s::@4 mul16s::@2 mul16s::@return mul16s::@8 mul16s::@7 mul16u mul16u::@1 mul16u::@return mul16u::@2 mul16u::@7 mul16u::@4 mul16u::@10 muls16s muls16s::@6 muls16s::@3 muls16s::@13 muls16s::@4 muls16s::@return muls16s::@12 muls16s::@5 muls16s::@14 muls16s::@15 mul16u_compare mul16u_compare::@1 mul16u_compare::@2 mul16u_compare::@10 mul16u_compare::@11 mul16u_compare::@5 mul16u_compare::@3 mul16u_compare::@6 mul16u_compare::@return mul16u_compare::@4 mul16u_compare::@8 mul16u_compare::@9 mul16u_compare::@13 mul16u_compare::@15 mul16u_compare::@16 mul16u_error mul16u_error::@1 mul16u_error::@2 mul16u_error::@3 mul16u_error::@4 mul16u_error::@5 mul16u_error::@6 mul16u_error::@7 mul16u_error::@8 mul16u_error::@return muls16u muls16u::@2 muls16u::@7 muls16u::@1 muls16u::@return muls16u::@6 mulf_init mulf_init::@1 mulf_init::@5 mulf_init::@2 mulf_init::@3 mulf_init::@7 mulf_init::@4 mulf_init::@8 mulf_init::@return mulf_init::@11 mulf_init::@12 mulf_init::@9 mulf_init::@10 print_cls print_cls::@1 print_cls::@return print_cls::@3 
 Adding NOP phi() at start of @begin
 Adding NOP phi() at start of @29
 Adding NOP phi() at start of @end
@@ -5729,12 +5717,12 @@ Coalesced [198] mul16u::a#11 ← mul16u::a#0
 Coalesced [199] mul16u::res#7 ← mul16u::res#6
 Coalesced [200] mul16u::mb#7 ← mul16u::mb#1
 Coalesced (already) [201] mul16u::res#8 ← mul16u::res#2
-Coalesced [207] muls16s::return#5 ← muls16s::m#1
-Coalesced [210] muls16s::m#10 ← muls16s::m#1
-Coalesced [211] muls16s::i#3 ← muls16s::i#1
+Coalesced [208] muls16s::return#5 ← muls16s::m#1
+Coalesced [211] muls16s::m#10 ← muls16s::m#1
+Coalesced [212] muls16s::j#3 ← muls16s::j#1
 Coalesced [217] muls16s::return#6 ← muls16s::m#2
 Coalesced [218] muls16s::m#11 ← muls16s::m#2
-Coalesced [219] muls16s::j#3 ← muls16s::j#1
+Coalesced [219] muls16s::i#3 ← muls16s::i#1
 Coalesced [222] mul16u_compare::a#12 ← mul16u_compare::a#5
 Coalesced [223] mul16u_compare::b#12 ← mul16u_compare::b#5
 Coalesced [234] mul16u::b#4 ← mul16u::b#1
@@ -5801,7 +5789,7 @@ Not culling empty block because it shares successor with its predecessor. (label
 Culled Empty Block (label) mulf_init::@9
 Culled Empty Block (label) mulf_init::@10
 Culled Empty Block (label) print_cls::@3
-Block Sequence Planned @begin @29 @end main main::@1 main::@2 main::@3 main::@return mul16s_compare mul16s_compare::@1 mul16s_compare::@2 mul16s_compare::@10 mul16s_compare::@11 mul16s_compare::@5 mul16s_compare::@3 mul16s_compare::@6 mul16s_compare::@return mul16s_compare::@4 mul16s_compare::@8 mul16s_compare::@9 mul16s_compare::@13 print_ln print_ln::@1 print_ln::@return print_str print_str::@1 print_str::@return print_str::@2 mul16s_error mul16s_error::@1 mul16s_error::@2 mul16s_error::@3 mul16s_error::@4 mul16s_error::@5 mul16s_error::@6 mul16s_error::@7 mul16s_error::@8 mul16s_error::@return print_sdword print_sdword::@2 print_sdword::@4 print_sdword::@1 print_sdword::@return print_dword print_dword::@1 print_dword::@return print_word print_word::@1 print_word::@return print_byte print_byte::@1 print_byte::@return print_char print_char::@return print_sword print_sword::@2 print_sword::@4 print_sword::@1 print_sword::@return mul16s mul16s::@6 mul16s::@3 mul16s::@1 mul16s::@4 mul16s::@2 mul16s::@return mul16u mul16u::@1 mul16u::@return mul16u::@2 mul16u::@7 mul16u::@4 muls16s muls16s::@2 muls16s::@3 muls16s::@return muls16s::@1 muls16s::@5 mul16u_compare mul16u_compare::@1 mul16u_compare::@2 mul16u_compare::@10 mul16u_compare::@11 mul16u_compare::@5 mul16u_compare::@3 mul16u_compare::@6 mul16u_compare::@return mul16u_compare::@4 mul16u_compare::@8 mul16u_compare::@9 mul16u_compare::@13 mul16u_error mul16u_error::@1 mul16u_error::@2 mul16u_error::@3 mul16u_error::@4 mul16u_error::@5 mul16u_error::@6 mul16u_error::@7 mul16u_error::@8 mul16u_error::@return muls16u muls16u::@2 muls16u::@1 muls16u::@return mulf_init mulf_init::@1 mulf_init::@5 mulf_init::@2 mulf_init::@3 mulf_init::@4 mulf_init::@8 mulf_init::@return mulf_init::@12 print_cls print_cls::@1 print_cls::@return 
+Block Sequence Planned @begin @29 @end main main::@1 main::@2 main::@3 main::@return mul16s_compare mul16s_compare::@1 mul16s_compare::@2 mul16s_compare::@10 mul16s_compare::@11 mul16s_compare::@5 mul16s_compare::@3 mul16s_compare::@6 mul16s_compare::@return mul16s_compare::@4 mul16s_compare::@8 mul16s_compare::@9 mul16s_compare::@13 print_ln print_ln::@1 print_ln::@return print_str print_str::@1 print_str::@return print_str::@2 mul16s_error mul16s_error::@1 mul16s_error::@2 mul16s_error::@3 mul16s_error::@4 mul16s_error::@5 mul16s_error::@6 mul16s_error::@7 mul16s_error::@8 mul16s_error::@return print_sdword print_sdword::@2 print_sdword::@4 print_sdword::@1 print_sdword::@return print_dword print_dword::@1 print_dword::@return print_word print_word::@1 print_word::@return print_byte print_byte::@1 print_byte::@return print_char print_char::@return print_sword print_sword::@2 print_sword::@4 print_sword::@1 print_sword::@return mul16s mul16s::@6 mul16s::@3 mul16s::@1 mul16s::@4 mul16s::@2 mul16s::@return mul16u mul16u::@1 mul16u::@return mul16u::@2 mul16u::@7 mul16u::@4 muls16s muls16s::@6 muls16s::@3 muls16s::@4 muls16s::@return muls16s::@5 mul16u_compare mul16u_compare::@1 mul16u_compare::@2 mul16u_compare::@10 mul16u_compare::@11 mul16u_compare::@5 mul16u_compare::@3 mul16u_compare::@6 mul16u_compare::@return mul16u_compare::@4 mul16u_compare::@8 mul16u_compare::@9 mul16u_compare::@13 mul16u_error mul16u_error::@1 mul16u_error::@2 mul16u_error::@3 mul16u_error::@4 mul16u_error::@5 mul16u_error::@6 mul16u_error::@7 mul16u_error::@8 mul16u_error::@return muls16u muls16u::@2 muls16u::@1 muls16u::@return mulf_init mulf_init::@1 mulf_init::@5 mulf_init::@2 mulf_init::@3 mulf_init::@4 mulf_init::@8 mulf_init::@return mulf_init::@12 print_cls print_cls::@1 print_cls::@return 
 Adding NOP phi() at start of @begin
 Adding NOP phi() at start of @29
 Adding NOP phi() at start of @end
@@ -6166,31 +6154,31 @@ mul16u::@4: scope:[mul16u]  from mul16u::@2 mul16u::@7
   [147] (dword) mul16u::mb#1 ← (dword) mul16u::mb#2 << (byte/signed byte/word/signed word/dword/signed dword) 1 [ mul16u::a#0 mul16u::res#6 mul16u::mb#1 ] ( main:2::mul16s_compare:11::mul16s:25::mul16u:122 [ mul16s_compare::i#9 mul16s_compare::a#1 mul16s_compare::b#1 mul16s_compare::j#2 mul16s_compare::ms#0 print_line_cursor#1 mul16s::a#0 mul16s::b#0 mul16u::a#0 mul16u::res#6 mul16u::mb#1 ] main:2::mul16u_compare:9::mul16u:172 [ mul16u_compare::i#9 mul16u_compare::a#1 mul16u_compare::b#1 mul16u_compare::j#2 mul16u_compare::ms#0 mul16u::a#0 mul16u::res#6 mul16u::mb#1 ] )
   to:mul16u::@1
 muls16s: scope:[muls16s]  from mul16s_compare::@2
-  [148] if((signed word) muls16s::a#0>=(byte/signed byte/word/signed word/dword/signed dword) 0) goto muls16s::@1 [ muls16s::a#0 muls16s::b#0 ] ( main:2::mul16s_compare:11::muls16s:20 [ mul16s_compare::i#9 mul16s_compare::a#1 mul16s_compare::b#1 mul16s_compare::j#2 print_line_cursor#1 muls16s::a#0 muls16s::b#0 ] )
-  to:muls16s::@2
-muls16s::@2: scope:[muls16s]  from muls16s muls16s::@2
-  [149] (signed word) muls16s::i#2 ← phi( muls16s::@2/(signed word) muls16s::i#1 muls16s/(byte/signed byte/word/signed word/dword/signed dword) 0 ) [ muls16s::a#0 muls16s::b#0 muls16s::m#3 muls16s::i#2 ] ( main:2::mul16s_compare:11::muls16s:20 [ mul16s_compare::i#9 mul16s_compare::a#1 mul16s_compare::b#1 mul16s_compare::j#2 print_line_cursor#1 muls16s::a#0 muls16s::b#0 muls16s::m#3 muls16s::i#2 ] )
-  [149] (signed dword) muls16s::m#3 ← phi( muls16s::@2/(signed dword) muls16s::m#1 muls16s/(byte/signed byte/word/signed word/dword/signed dword) 0 ) [ muls16s::a#0 muls16s::b#0 muls16s::m#3 muls16s::i#2 ] ( main:2::mul16s_compare:11::muls16s:20 [ mul16s_compare::i#9 mul16s_compare::a#1 mul16s_compare::b#1 mul16s_compare::j#2 print_line_cursor#1 muls16s::a#0 muls16s::b#0 muls16s::m#3 muls16s::i#2 ] )
-  [150] (signed dword) muls16s::m#1 ← (signed dword) muls16s::m#3 - (signed word) muls16s::b#0 [ muls16s::a#0 muls16s::b#0 muls16s::i#2 muls16s::m#1 ] ( main:2::mul16s_compare:11::muls16s:20 [ mul16s_compare::i#9 mul16s_compare::a#1 mul16s_compare::b#1 mul16s_compare::j#2 print_line_cursor#1 muls16s::a#0 muls16s::b#0 muls16s::i#2 muls16s::m#1 ] )
-  [151] (signed word) muls16s::i#1 ← -- (signed word) muls16s::i#2 [ muls16s::a#0 muls16s::b#0 muls16s::m#1 muls16s::i#1 ] ( main:2::mul16s_compare:11::muls16s:20 [ mul16s_compare::i#9 mul16s_compare::a#1 mul16s_compare::b#1 mul16s_compare::j#2 print_line_cursor#1 muls16s::a#0 muls16s::b#0 muls16s::m#1 muls16s::i#1 ] )
-  [152] if((signed word) muls16s::i#1!=(signed word) muls16s::a#0) goto muls16s::@2 [ muls16s::a#0 muls16s::b#0 muls16s::m#1 muls16s::i#1 ] ( main:2::mul16s_compare:11::muls16s:20 [ mul16s_compare::i#9 mul16s_compare::a#1 mul16s_compare::b#1 mul16s_compare::j#2 print_line_cursor#1 muls16s::a#0 muls16s::b#0 muls16s::m#1 muls16s::i#1 ] )
+  [148] if((signed word) muls16s::a#0<(byte/signed byte/word/signed word/dword/signed dword) 0) goto muls16s::@5 [ muls16s::a#0 muls16s::b#0 ] ( main:2::mul16s_compare:11::muls16s:20 [ mul16s_compare::i#9 mul16s_compare::a#1 mul16s_compare::b#1 mul16s_compare::j#2 print_line_cursor#1 muls16s::a#0 muls16s::b#0 ] )
+  to:muls16s::@6
+muls16s::@6: scope:[muls16s]  from muls16s
+  [149] if((signed word) muls16s::a#0<=(byte/signed byte/word/signed word/dword/signed dword) 0) goto muls16s::@4 [ muls16s::a#0 muls16s::b#0 ] ( main:2::mul16s_compare:11::muls16s:20 [ mul16s_compare::i#9 mul16s_compare::a#1 mul16s_compare::b#1 mul16s_compare::j#2 print_line_cursor#1 muls16s::a#0 muls16s::b#0 ] )
   to:muls16s::@3
-muls16s::@3: scope:[muls16s]  from muls16s::@1 muls16s::@2 muls16s::@5
-  [153] (signed dword) muls16s::return#0 ← phi( muls16s::@2/(signed dword) muls16s::m#1 muls16s::@1/(byte/signed byte/word/signed word/dword/signed dword) 0 muls16s::@5/(signed dword) muls16s::m#2 ) [ muls16s::return#0 ] ( main:2::mul16s_compare:11::muls16s:20 [ mul16s_compare::i#9 mul16s_compare::a#1 mul16s_compare::b#1 mul16s_compare::j#2 print_line_cursor#1 muls16s::return#0 ] )
+muls16s::@3: scope:[muls16s]  from muls16s::@3 muls16s::@6
+  [150] (signed word) muls16s::j#2 ← phi( muls16s::@3/(signed word) muls16s::j#1 muls16s::@6/(byte/signed byte/word/signed word/dword/signed dword) 0 ) [ muls16s::a#0 muls16s::b#0 muls16s::m#3 muls16s::j#2 ] ( main:2::mul16s_compare:11::muls16s:20 [ mul16s_compare::i#9 mul16s_compare::a#1 mul16s_compare::b#1 mul16s_compare::j#2 print_line_cursor#1 muls16s::a#0 muls16s::b#0 muls16s::m#3 muls16s::j#2 ] )
+  [150] (signed dword) muls16s::m#3 ← phi( muls16s::@3/(signed dword) muls16s::m#1 muls16s::@6/(byte/signed byte/word/signed word/dword/signed dword) 0 ) [ muls16s::a#0 muls16s::b#0 muls16s::m#3 muls16s::j#2 ] ( main:2::mul16s_compare:11::muls16s:20 [ mul16s_compare::i#9 mul16s_compare::a#1 mul16s_compare::b#1 mul16s_compare::j#2 print_line_cursor#1 muls16s::a#0 muls16s::b#0 muls16s::m#3 muls16s::j#2 ] )
+  [151] (signed dword) muls16s::m#1 ← (signed dword) muls16s::m#3 + (signed word) muls16s::b#0 [ muls16s::a#0 muls16s::b#0 muls16s::j#2 muls16s::m#1 ] ( main:2::mul16s_compare:11::muls16s:20 [ mul16s_compare::i#9 mul16s_compare::a#1 mul16s_compare::b#1 mul16s_compare::j#2 print_line_cursor#1 muls16s::a#0 muls16s::b#0 muls16s::j#2 muls16s::m#1 ] )
+  [152] (signed word) muls16s::j#1 ← ++ (signed word) muls16s::j#2 [ muls16s::a#0 muls16s::b#0 muls16s::m#1 muls16s::j#1 ] ( main:2::mul16s_compare:11::muls16s:20 [ mul16s_compare::i#9 mul16s_compare::a#1 mul16s_compare::b#1 mul16s_compare::j#2 print_line_cursor#1 muls16s::a#0 muls16s::b#0 muls16s::m#1 muls16s::j#1 ] )
+  [153] if((signed word) muls16s::j#1!=(signed word) muls16s::a#0) goto muls16s::@3 [ muls16s::a#0 muls16s::b#0 muls16s::m#1 muls16s::j#1 ] ( main:2::mul16s_compare:11::muls16s:20 [ mul16s_compare::i#9 mul16s_compare::a#1 mul16s_compare::b#1 mul16s_compare::j#2 print_line_cursor#1 muls16s::a#0 muls16s::b#0 muls16s::m#1 muls16s::j#1 ] )
+  to:muls16s::@4
+muls16s::@4: scope:[muls16s]  from muls16s::@3 muls16s::@5 muls16s::@6
+  [154] (signed dword) muls16s::return#0 ← phi( muls16s::@6/(byte/signed byte/word/signed word/dword/signed dword) 0 muls16s::@3/(signed dword) muls16s::m#1 muls16s::@5/(signed dword) muls16s::m#2 ) [ muls16s::return#0 ] ( main:2::mul16s_compare:11::muls16s:20 [ mul16s_compare::i#9 mul16s_compare::a#1 mul16s_compare::b#1 mul16s_compare::j#2 print_line_cursor#1 muls16s::return#0 ] )
   to:muls16s::@return
-muls16s::@return: scope:[muls16s]  from muls16s::@3
-  [154] return  [ muls16s::return#0 ] ( main:2::mul16s_compare:11::muls16s:20 [ mul16s_compare::i#9 mul16s_compare::a#1 mul16s_compare::b#1 mul16s_compare::j#2 print_line_cursor#1 muls16s::return#0 ] )
+muls16s::@return: scope:[muls16s]  from muls16s::@4
+  [155] return  [ muls16s::return#0 ] ( main:2::mul16s_compare:11::muls16s:20 [ mul16s_compare::i#9 mul16s_compare::a#1 mul16s_compare::b#1 mul16s_compare::j#2 print_line_cursor#1 muls16s::return#0 ] )
   to:@return
-muls16s::@1: scope:[muls16s]  from muls16s
-  [155] if((signed word) muls16s::a#0<=(byte/signed byte/word/signed word/dword/signed dword) 0) goto muls16s::@3 [ muls16s::a#0 muls16s::b#0 ] ( main:2::mul16s_compare:11::muls16s:20 [ mul16s_compare::i#9 mul16s_compare::a#1 mul16s_compare::b#1 mul16s_compare::j#2 print_line_cursor#1 muls16s::a#0 muls16s::b#0 ] )
-  to:muls16s::@5
-muls16s::@5: scope:[muls16s]  from muls16s::@1 muls16s::@5
-  [156] (signed word) muls16s::j#2 ← phi( muls16s::@5/(signed word) muls16s::j#1 muls16s::@1/(byte/signed byte/word/signed word/dword/signed dword) 0 ) [ muls16s::a#0 muls16s::b#0 muls16s::m#5 muls16s::j#2 ] ( main:2::mul16s_compare:11::muls16s:20 [ mul16s_compare::i#9 mul16s_compare::a#1 mul16s_compare::b#1 mul16s_compare::j#2 print_line_cursor#1 muls16s::a#0 muls16s::b#0 muls16s::m#5 muls16s::j#2 ] )
-  [156] (signed dword) muls16s::m#5 ← phi( muls16s::@5/(signed dword) muls16s::m#2 muls16s::@1/(byte/signed byte/word/signed word/dword/signed dword) 0 ) [ muls16s::a#0 muls16s::b#0 muls16s::m#5 muls16s::j#2 ] ( main:2::mul16s_compare:11::muls16s:20 [ mul16s_compare::i#9 mul16s_compare::a#1 mul16s_compare::b#1 mul16s_compare::j#2 print_line_cursor#1 muls16s::a#0 muls16s::b#0 muls16s::m#5 muls16s::j#2 ] )
-  [157] (signed dword) muls16s::m#2 ← (signed dword) muls16s::m#5 + (signed word) muls16s::b#0 [ muls16s::a#0 muls16s::b#0 muls16s::m#2 muls16s::j#2 ] ( main:2::mul16s_compare:11::muls16s:20 [ mul16s_compare::i#9 mul16s_compare::a#1 mul16s_compare::b#1 mul16s_compare::j#2 print_line_cursor#1 muls16s::a#0 muls16s::b#0 muls16s::m#2 muls16s::j#2 ] )
-  [158] (signed word) muls16s::j#1 ← ++ (signed word) muls16s::j#2 [ muls16s::a#0 muls16s::b#0 muls16s::m#2 muls16s::j#1 ] ( main:2::mul16s_compare:11::muls16s:20 [ mul16s_compare::i#9 mul16s_compare::a#1 mul16s_compare::b#1 mul16s_compare::j#2 print_line_cursor#1 muls16s::a#0 muls16s::b#0 muls16s::m#2 muls16s::j#1 ] )
-  [159] if((signed word) muls16s::j#1!=(signed word) muls16s::a#0) goto muls16s::@5 [ muls16s::a#0 muls16s::b#0 muls16s::m#2 muls16s::j#1 ] ( main:2::mul16s_compare:11::muls16s:20 [ mul16s_compare::i#9 mul16s_compare::a#1 mul16s_compare::b#1 mul16s_compare::j#2 print_line_cursor#1 muls16s::a#0 muls16s::b#0 muls16s::m#2 muls16s::j#1 ] )
-  to:muls16s::@3
+muls16s::@5: scope:[muls16s]  from muls16s muls16s::@5
+  [156] (signed word) muls16s::i#2 ← phi( muls16s/(byte/signed byte/word/signed word/dword/signed dword) 0 muls16s::@5/(signed word) muls16s::i#1 ) [ muls16s::a#0 muls16s::b#0 muls16s::m#5 muls16s::i#2 ] ( main:2::mul16s_compare:11::muls16s:20 [ mul16s_compare::i#9 mul16s_compare::a#1 mul16s_compare::b#1 mul16s_compare::j#2 print_line_cursor#1 muls16s::a#0 muls16s::b#0 muls16s::m#5 muls16s::i#2 ] )
+  [156] (signed dword) muls16s::m#5 ← phi( muls16s/(byte/signed byte/word/signed word/dword/signed dword) 0 muls16s::@5/(signed dword) muls16s::m#2 ) [ muls16s::a#0 muls16s::b#0 muls16s::m#5 muls16s::i#2 ] ( main:2::mul16s_compare:11::muls16s:20 [ mul16s_compare::i#9 mul16s_compare::a#1 mul16s_compare::b#1 mul16s_compare::j#2 print_line_cursor#1 muls16s::a#0 muls16s::b#0 muls16s::m#5 muls16s::i#2 ] )
+  [157] (signed dword) muls16s::m#2 ← (signed dword) muls16s::m#5 - (signed word) muls16s::b#0 [ muls16s::a#0 muls16s::b#0 muls16s::m#2 muls16s::i#2 ] ( main:2::mul16s_compare:11::muls16s:20 [ mul16s_compare::i#9 mul16s_compare::a#1 mul16s_compare::b#1 mul16s_compare::j#2 print_line_cursor#1 muls16s::a#0 muls16s::b#0 muls16s::m#2 muls16s::i#2 ] )
+  [158] (signed word) muls16s::i#1 ← -- (signed word) muls16s::i#2 [ muls16s::a#0 muls16s::b#0 muls16s::m#2 muls16s::i#1 ] ( main:2::mul16s_compare:11::muls16s:20 [ mul16s_compare::i#9 mul16s_compare::a#1 mul16s_compare::b#1 mul16s_compare::j#2 print_line_cursor#1 muls16s::a#0 muls16s::b#0 muls16s::m#2 muls16s::i#1 ] )
+  [159] if((signed word) muls16s::i#1!=(signed word) muls16s::a#0) goto muls16s::@5 [ muls16s::a#0 muls16s::b#0 muls16s::m#2 muls16s::i#1 ] ( main:2::mul16s_compare:11::muls16s:20 [ mul16s_compare::i#9 mul16s_compare::a#1 mul16s_compare::b#1 mul16s_compare::j#2 print_line_cursor#1 muls16s::a#0 muls16s::b#0 muls16s::m#2 muls16s::i#1 ] )
+  to:muls16s::@4
 mul16u_compare: scope:[mul16u_compare]  from main::@2
   [160] phi() [ ] ( main:2::mul16u_compare:9 [ ] )
   to:mul16u_compare::@1
@@ -6452,11 +6440,11 @@ mul16u::@2 dominated by  mul16u main::@1 main::@2 @29 main mul16u::@1 mul16u::@2
 mul16u::@7 dominated by  mul16u main::@1 main::@2 @29 main mul16u::@1 mul16u::@2 @begin mul16u::@7 
 mul16u::@4 dominated by  mul16u main::@1 main::@2 @29 main mul16u::@1 mul16u::@2 @begin mul16u::@4 
 muls16s dominated by  main::@1 main::@2 main::@3 mul16s_compare @29 main muls16s @begin mul16s_compare::@1 mul16s_compare::@2 
-muls16s::@2 dominated by  main::@1 main::@2 main::@3 mul16s_compare @29 main muls16s muls16s::@2 @begin mul16s_compare::@1 mul16s_compare::@2 
-muls16s::@3 dominated by  main::@1 main::@2 main::@3 mul16s_compare @29 main muls16s muls16s::@3 @begin mul16s_compare::@1 mul16s_compare::@2 
-muls16s::@return dominated by  main::@1 main::@2 main::@3 mul16s_compare @29 main muls16s muls16s::@3 @begin mul16s_compare::@1 mul16s_compare::@2 muls16s::@return 
-muls16s::@1 dominated by  main::@1 main::@2 main::@3 mul16s_compare @29 main muls16s muls16s::@1 @begin mul16s_compare::@1 mul16s_compare::@2 
-muls16s::@5 dominated by  main::@1 main::@2 main::@3 mul16s_compare @29 muls16s::@5 main muls16s muls16s::@1 @begin mul16s_compare::@1 mul16s_compare::@2 
+muls16s::@6 dominated by  main::@1 main::@2 main::@3 mul16s_compare @29 muls16s::@6 main muls16s @begin mul16s_compare::@1 mul16s_compare::@2 
+muls16s::@3 dominated by  main::@1 main::@2 main::@3 mul16s_compare @29 muls16s::@6 main muls16s muls16s::@3 @begin mul16s_compare::@1 mul16s_compare::@2 
+muls16s::@4 dominated by  main::@1 main::@2 main::@3 mul16s_compare @29 main muls16s muls16s::@4 @begin mul16s_compare::@1 mul16s_compare::@2 
+muls16s::@return dominated by  main::@1 main::@2 main::@3 mul16s_compare @29 main muls16s muls16s::@4 @begin mul16s_compare::@1 mul16s_compare::@2 muls16s::@return 
+muls16s::@5 dominated by  main::@1 main::@2 main::@3 mul16s_compare @29 muls16s::@5 main muls16s @begin mul16s_compare::@1 mul16s_compare::@2 
 mul16u_compare dominated by  main::@1 main::@2 mul16u_compare @29 main @begin 
 mul16u_compare::@1 dominated by  main::@1 main::@2 mul16u_compare @29 main @begin mul16u_compare::@1 
 mul16u_compare::@2 dominated by  main::@1 main::@2 mul16u_compare @29 main @begin mul16u_compare::@2 mul16u_compare::@1 
@@ -6503,7 +6491,7 @@ Found back edge: Loop head: mul16s_compare::@1 tails: mul16s_compare::@8 blocks:
 Found back edge: Loop head: print_ln::@1 tails: print_ln::@1 blocks: null
 Found back edge: Loop head: print_str::@1 tails: print_str::@2 blocks: null
 Found back edge: Loop head: mul16u::@1 tails: mul16u::@4 blocks: null
-Found back edge: Loop head: muls16s::@2 tails: muls16s::@2 blocks: null
+Found back edge: Loop head: muls16s::@3 tails: muls16s::@3 blocks: null
 Found back edge: Loop head: muls16s::@5 tails: muls16s::@5 blocks: null
 Found back edge: Loop head: mul16u_compare::@2 tails: mul16u_compare::@4 blocks: null
 Found back edge: Loop head: mul16u_compare::@1 tails: mul16u_compare::@8 blocks: null
@@ -6516,7 +6504,7 @@ Populated: Loop head: mul16s_compare::@1 tails: mul16s_compare::@8 blocks: mul16
 Populated: Loop head: print_ln::@1 tails: print_ln::@1 blocks: print_ln::@1 
 Populated: Loop head: print_str::@1 tails: print_str::@2 blocks: print_str::@2 print_str::@1 
 Populated: Loop head: mul16u::@1 tails: mul16u::@4 blocks: mul16u::@4 mul16u::@2 mul16u::@7 mul16u::@1 
-Populated: Loop head: muls16s::@2 tails: muls16s::@2 blocks: muls16s::@2 
+Populated: Loop head: muls16s::@3 tails: muls16s::@3 blocks: muls16s::@3 
 Populated: Loop head: muls16s::@5 tails: muls16s::@5 blocks: muls16s::@5 
 Populated: Loop head: mul16u_compare::@2 tails: mul16u_compare::@4 blocks: mul16u_compare::@4 mul16u_compare::@3 mul16u_compare::@11 mul16u_compare::@5 mul16u_compare::@10 mul16u_compare::@2 
 Populated: Loop head: mul16u_compare::@1 tails: mul16u_compare::@8 blocks: mul16u_compare::@8 mul16u_compare::@4 mul16u_compare::@3 mul16u_compare::@11 mul16u_compare::@5 mul16u_compare::@10 mul16u_compare::@2 mul16u_compare::@1 
@@ -6529,7 +6517,7 @@ Loop head: mul16s_compare::@1 tails: mul16s_compare::@8 blocks: mul16s_compare::
 Loop head: print_ln::@1 tails: print_ln::@1 blocks: print_ln::@1 
 Loop head: print_str::@1 tails: print_str::@2 blocks: print_str::@2 print_str::@1 
 Loop head: mul16u::@1 tails: mul16u::@4 blocks: mul16u::@4 mul16u::@2 mul16u::@7 mul16u::@1 
-Loop head: muls16s::@2 tails: muls16s::@2 blocks: muls16s::@2 
+Loop head: muls16s::@3 tails: muls16s::@3 blocks: muls16s::@3 
 Loop head: muls16s::@5 tails: muls16s::@5 blocks: muls16s::@5 
 Loop head: mul16u_compare::@2 tails: mul16u_compare::@4 blocks: mul16u_compare::@4 mul16u_compare::@3 mul16u_compare::@11 mul16u_compare::@5 mul16u_compare::@10 mul16u_compare::@2 
 Loop head: mul16u_compare::@1 tails: mul16u_compare::@8 blocks: mul16u_compare::@8 mul16u_compare::@4 mul16u_compare::@3 mul16u_compare::@11 mul16u_compare::@5 mul16u_compare::@10 mul16u_compare::@2 mul16u_compare::@1 
@@ -6562,7 +6550,7 @@ Found 1 loops in scope [print_str]
 Found 1 loops in scope [print_ln]
   Loop head: print_ln::@1 tails: print_ln::@1 blocks: print_ln::@1 
 Found 2 loops in scope [muls16s]
-  Loop head: muls16s::@2 tails: muls16s::@2 blocks: muls16s::@2 
+  Loop head: muls16s::@3 tails: muls16s::@3 blocks: muls16s::@3 
   Loop head: muls16s::@5 tails: muls16s::@5 blocks: muls16s::@5 
 Found 0 loops in scope [mul16s]
 Found 0 loops in scope [mul16s_error]
@@ -6577,7 +6565,7 @@ Loop head: mul16s_compare::@1 tails: mul16s_compare::@8 blocks: mul16s_compare::
 Loop head: print_ln::@1 tails: print_ln::@1 blocks: print_ln::@1  depth: 1
 Loop head: print_str::@1 tails: print_str::@2 blocks: print_str::@2 print_str::@1  depth: 1
 Loop head: mul16u::@1 tails: mul16u::@4 blocks: mul16u::@4 mul16u::@2 mul16u::@7 mul16u::@1  depth: 3
-Loop head: muls16s::@2 tails: muls16s::@2 blocks: muls16s::@2  depth: 3
+Loop head: muls16s::@3 tails: muls16s::@3 blocks: muls16s::@3  depth: 3
 Loop head: muls16s::@5 tails: muls16s::@5 blocks: muls16s::@5  depth: 3
 Loop head: mul16u_compare::@2 tails: mul16u_compare::@4 blocks: mul16u_compare::@4 mul16u_compare::@3 mul16u_compare::@11 mul16u_compare::@5 mul16u_compare::@10 mul16u_compare::@2  depth: 2
 Loop head: mul16u_compare::@1 tails: mul16u_compare::@8 blocks: mul16u_compare::@8 mul16u_compare::@4 mul16u_compare::@3 mul16u_compare::@11 mul16u_compare::@5 mul16u_compare::@10 mul16u_compare::@2 mul16u_compare::@1  depth: 1
@@ -6853,9 +6841,9 @@ Initial phi equivalence classes
 [ mul16u::a#3 mul16u::a#6 mul16u::a#8 mul16u::a#2 mul16u::a#0 ]
 [ mul16u::res#2 mul16u::res#6 mul16u::res#1 ]
 [ mul16u::mb#2 mul16u::mb#0 mul16u::mb#1 ]
-[ muls16s::i#2 muls16s::i#1 ]
-[ muls16s::m#5 muls16s::return#0 muls16s::m#3 muls16s::m#1 muls16s::m#2 ]
 [ muls16s::j#2 muls16s::j#1 ]
+[ muls16s::m#5 muls16s::return#0 muls16s::m#3 muls16s::m#1 muls16s::m#2 ]
+[ muls16s::i#2 muls16s::i#1 ]
 [ mul16u_compare::i#9 mul16u_compare::i#1 ]
 [ mul16u_compare::a#2 mul16u_compare::a#5 mul16u_compare::a#1 ]
 [ mul16u_compare::b#2 mul16u_compare::b#5 mul16u_compare::b#1 ]
@@ -6927,9 +6915,9 @@ Complete equivalence classes
 [ mul16u::a#3 mul16u::a#6 mul16u::a#8 mul16u::a#2 mul16u::a#0 ]
 [ mul16u::res#2 mul16u::res#6 mul16u::res#1 ]
 [ mul16u::mb#2 mul16u::mb#0 mul16u::mb#1 ]
-[ muls16s::i#2 muls16s::i#1 ]
-[ muls16s::m#5 muls16s::return#0 muls16s::m#3 muls16s::m#1 muls16s::m#2 ]
 [ muls16s::j#2 muls16s::j#1 ]
+[ muls16s::m#5 muls16s::return#0 muls16s::m#3 muls16s::m#1 muls16s::m#2 ]
+[ muls16s::i#2 muls16s::i#1 ]
 [ mul16u_compare::i#9 mul16u_compare::i#1 ]
 [ mul16u_compare::a#2 mul16u_compare::a#5 mul16u_compare::a#1 ]
 [ mul16u_compare::b#2 mul16u_compare::b#5 mul16u_compare::b#1 ]
@@ -7000,9 +6988,9 @@ Allocated zp ZP_WORD:33 [ mul16u::b#2 mul16u::b#3 mul16u::b#1 ]
 Allocated zp ZP_WORD:35 [ mul16u::a#3 mul16u::a#6 mul16u::a#8 mul16u::a#2 mul16u::a#0 ]
 Allocated zp ZP_DWORD:37 [ mul16u::res#2 mul16u::res#6 mul16u::res#1 ]
 Allocated zp ZP_DWORD:41 [ mul16u::mb#2 mul16u::mb#0 mul16u::mb#1 ]
-Allocated zp ZP_WORD:45 [ muls16s::i#2 muls16s::i#1 ]
+Allocated zp ZP_WORD:45 [ muls16s::j#2 muls16s::j#1 ]
 Allocated zp ZP_DWORD:47 [ muls16s::m#5 muls16s::return#0 muls16s::m#3 muls16s::m#1 muls16s::m#2 ]
-Allocated zp ZP_WORD:51 [ muls16s::j#2 muls16s::j#1 ]
+Allocated zp ZP_WORD:51 [ muls16s::i#2 muls16s::i#1 ]
 Allocated zp ZP_BYTE:53 [ mul16u_compare::i#9 mul16u_compare::i#1 ]
 Allocated zp ZP_WORD:54 [ mul16u_compare::a#2 mul16u_compare::a#5 mul16u_compare::a#1 ]
 Allocated zp ZP_WORD:56 [ mul16u_compare::b#2 mul16u_compare::b#5 mul16u_compare::b#1 ]
@@ -8067,113 +8055,33 @@ mul16u: {
 //SEG311 muls16s
 muls16s: {
     .label m = $2f
-    .label i = $2d
+    .label j = $2d
     .label return = $2f
-    .label j = $33
+    .label i = $33
     .label a = $52
     .label b = $54
     .label return_2 = $56
-  //SEG312 [148] if((signed word) muls16s::a#0>=(byte/signed byte/word/signed word/dword/signed dword) 0) goto muls16s::@1 [ muls16s::a#0 muls16s::b#0 ] ( main:2::mul16s_compare:11::muls16s:20 [ mul16s_compare::i#9 mul16s_compare::a#1 mul16s_compare::b#1 mul16s_compare::j#2 print_line_cursor#1 muls16s::a#0 muls16s::b#0 ] ) -- vwsz1_ge_0_then_la1 
+  //SEG312 [148] if((signed word) muls16s::a#0<(byte/signed byte/word/signed word/dword/signed dword) 0) goto muls16s::@5 [ muls16s::a#0 muls16s::b#0 ] ( main:2::mul16s_compare:11::muls16s:20 [ mul16s_compare::i#9 mul16s_compare::a#1 mul16s_compare::b#1 mul16s_compare::j#2 print_line_cursor#1 muls16s::a#0 muls16s::b#0 ] ) -- vwsz1_lt_0_then_la1 
     lda a+1
-    bpl b1
-  //SEG313 [149] phi from muls16s to muls16s::@2 [phi:muls16s->muls16s::@2]
-  b2_from_muls16s:
-  //SEG314 [149] phi (signed word) muls16s::i#2 = (byte/signed byte/word/signed word/dword/signed dword) 0 [phi:muls16s->muls16s::@2#0] -- vwsz1=vbuc1 
-    lda #<0
-    sta i
-    lda #>0
-    sta i+1
-  //SEG315 [149] phi (signed dword) muls16s::m#3 = (byte/signed byte/word/signed word/dword/signed dword) 0 [phi:muls16s->muls16s::@2#1] -- vdsz1=vbuc1 
-    lda #<0
-    sta m
-    lda #>0
-    sta m+1
-    lda #<0>>$10
-    sta m+2
-    lda #>0>>$10
-    sta m+3
-    jmp b2
-  //SEG316 [149] phi from muls16s::@2 to muls16s::@2 [phi:muls16s::@2->muls16s::@2]
-  b2_from_b2:
-  //SEG317 [149] phi (signed word) muls16s::i#2 = (signed word) muls16s::i#1 [phi:muls16s::@2->muls16s::@2#0] -- register_copy 
-  //SEG318 [149] phi (signed dword) muls16s::m#3 = (signed dword) muls16s::m#1 [phi:muls16s::@2->muls16s::@2#1] -- register_copy 
-    jmp b2
-  //SEG319 muls16s::@2
-  b2:
-  //SEG320 [150] (signed dword) muls16s::m#1 ← (signed dword) muls16s::m#3 - (signed word) muls16s::b#0 [ muls16s::a#0 muls16s::b#0 muls16s::i#2 muls16s::m#1 ] ( main:2::mul16s_compare:11::muls16s:20 [ mul16s_compare::i#9 mul16s_compare::a#1 mul16s_compare::b#1 mul16s_compare::j#2 print_line_cursor#1 muls16s::a#0 muls16s::b#0 muls16s::i#2 muls16s::m#1 ] ) -- vdsz1=vdsz1_minus_vwsz2 
-    lda b+1
-    ora #$7f
-    bmi !+
-    lda #0
-  !:
-    sta $ff
-    sec
-    lda m
-    sbc b
-    sta m
-    lda m+1
-    sbc b+1
-    sta m+1
-    lda m+2
-    sbc $ff
-    sta m+2
-    lda m+3
-    sbc $ff
-    sta m+3
-  //SEG321 [151] (signed word) muls16s::i#1 ← -- (signed word) muls16s::i#2 [ muls16s::a#0 muls16s::b#0 muls16s::m#1 muls16s::i#1 ] ( main:2::mul16s_compare:11::muls16s:20 [ mul16s_compare::i#9 mul16s_compare::a#1 mul16s_compare::b#1 mul16s_compare::j#2 print_line_cursor#1 muls16s::a#0 muls16s::b#0 muls16s::m#1 muls16s::i#1 ] ) -- vwsz1=_dec_vwsz1 
-    lda i
-    bne !+
-    dec i+1
-  !:
-    dec i
-  //SEG322 [152] if((signed word) muls16s::i#1!=(signed word) muls16s::a#0) goto muls16s::@2 [ muls16s::a#0 muls16s::b#0 muls16s::m#1 muls16s::i#1 ] ( main:2::mul16s_compare:11::muls16s:20 [ mul16s_compare::i#9 mul16s_compare::a#1 mul16s_compare::b#1 mul16s_compare::j#2 print_line_cursor#1 muls16s::a#0 muls16s::b#0 muls16s::m#1 muls16s::i#1 ] ) -- vwsz1_neq_vwsz2_then_la1 
-    lda i+1
-    cmp a+1
-    bne b2_from_b2
-    lda i
-    cmp a
-    bne b2_from_b2
-  //SEG323 [153] phi from muls16s::@2 muls16s::@5 to muls16s::@3 [phi:muls16s::@2/muls16s::@5->muls16s::@3]
-  b3_from_b2:
-  b3_from_b5:
-  //SEG324 [153] phi (signed dword) muls16s::return#0 = (signed dword) muls16s::m#1 [phi:muls16s::@2/muls16s::@5->muls16s::@3#0] -- register_copy 
-    jmp b3
-  //SEG325 [153] phi from muls16s::@1 to muls16s::@3 [phi:muls16s::@1->muls16s::@3]
-  b3_from_b1:
-  //SEG326 [153] phi (signed dword) muls16s::return#0 = (byte/signed byte/word/signed word/dword/signed dword) 0 [phi:muls16s::@1->muls16s::@3#0] -- vdsz1=vbuc1 
-    lda #<0
-    sta return
-    lda #>0
-    sta return+1
-    lda #<0>>$10
-    sta return+2
-    lda #>0>>$10
-    sta return+3
-    jmp b3
-  //SEG327 muls16s::@3
-  b3:
-    jmp breturn
-  //SEG328 muls16s::@return
-  breturn:
-  //SEG329 [154] return  [ muls16s::return#0 ] ( main:2::mul16s_compare:11::muls16s:20 [ mul16s_compare::i#9 mul16s_compare::a#1 mul16s_compare::b#1 mul16s_compare::j#2 print_line_cursor#1 muls16s::return#0 ] )
-    rts
-  //SEG330 muls16s::@1
-  b1:
-  //SEG331 [155] if((signed word) muls16s::a#0<=(byte/signed byte/word/signed word/dword/signed dword) 0) goto muls16s::@3 [ muls16s::a#0 muls16s::b#0 ] ( main:2::mul16s_compare:11::muls16s:20 [ mul16s_compare::i#9 mul16s_compare::a#1 mul16s_compare::b#1 mul16s_compare::j#2 print_line_cursor#1 muls16s::a#0 muls16s::b#0 ] ) -- vwsz1_le_0_then_la1 
+    bmi b5_from_muls16s
+    jmp b6
+  //SEG313 muls16s::@6
+  b6:
+  //SEG314 [149] if((signed word) muls16s::a#0<=(byte/signed byte/word/signed word/dword/signed dword) 0) goto muls16s::@4 [ muls16s::a#0 muls16s::b#0 ] ( main:2::mul16s_compare:11::muls16s:20 [ mul16s_compare::i#9 mul16s_compare::a#1 mul16s_compare::b#1 mul16s_compare::j#2 print_line_cursor#1 muls16s::a#0 muls16s::b#0 ] ) -- vwsz1_le_0_then_la1 
     lda a+1
-    bmi b3_from_b1
+    bmi b4_from_b6
     bne !+
     lda a
-    beq b3_from_b1
+    beq b4_from_b6
   !:
-  //SEG332 [156] phi from muls16s::@1 to muls16s::@5 [phi:muls16s::@1->muls16s::@5]
-  b5_from_b1:
-  //SEG333 [156] phi (signed word) muls16s::j#2 = (byte/signed byte/word/signed word/dword/signed dword) 0 [phi:muls16s::@1->muls16s::@5#0] -- vwsz1=vbuc1 
+  //SEG315 [150] phi from muls16s::@6 to muls16s::@3 [phi:muls16s::@6->muls16s::@3]
+  b3_from_b6:
+  //SEG316 [150] phi (signed word) muls16s::j#2 = (byte/signed byte/word/signed word/dword/signed dword) 0 [phi:muls16s::@6->muls16s::@3#0] -- vwsz1=vbuc1 
     lda #<0
     sta j
     lda #>0
     sta j+1
-  //SEG334 [156] phi (signed dword) muls16s::m#5 = (byte/signed byte/word/signed word/dword/signed dword) 0 [phi:muls16s::@1->muls16s::@5#1] -- vdsz1=vbuc1 
+  //SEG317 [150] phi (signed dword) muls16s::m#3 = (byte/signed byte/word/signed word/dword/signed dword) 0 [phi:muls16s::@6->muls16s::@3#1] -- vdsz1=vbuc1 
     lda #<0
     sta m
     lda #>0
@@ -8182,15 +8090,15 @@ muls16s: {
     sta m+2
     lda #>0>>$10
     sta m+3
-    jmp b5
-  //SEG335 [156] phi from muls16s::@5 to muls16s::@5 [phi:muls16s::@5->muls16s::@5]
-  b5_from_b5:
-  //SEG336 [156] phi (signed word) muls16s::j#2 = (signed word) muls16s::j#1 [phi:muls16s::@5->muls16s::@5#0] -- register_copy 
-  //SEG337 [156] phi (signed dword) muls16s::m#5 = (signed dword) muls16s::m#2 [phi:muls16s::@5->muls16s::@5#1] -- register_copy 
-    jmp b5
-  //SEG338 muls16s::@5
-  b5:
-  //SEG339 [157] (signed dword) muls16s::m#2 ← (signed dword) muls16s::m#5 + (signed word) muls16s::b#0 [ muls16s::a#0 muls16s::b#0 muls16s::m#2 muls16s::j#2 ] ( main:2::mul16s_compare:11::muls16s:20 [ mul16s_compare::i#9 mul16s_compare::a#1 mul16s_compare::b#1 mul16s_compare::j#2 print_line_cursor#1 muls16s::a#0 muls16s::b#0 muls16s::m#2 muls16s::j#2 ] ) -- vdsz1=vdsz1_plus_vwsz2 
+    jmp b3
+  //SEG318 [150] phi from muls16s::@3 to muls16s::@3 [phi:muls16s::@3->muls16s::@3]
+  b3_from_b3:
+  //SEG319 [150] phi (signed word) muls16s::j#2 = (signed word) muls16s::j#1 [phi:muls16s::@3->muls16s::@3#0] -- register_copy 
+  //SEG320 [150] phi (signed dword) muls16s::m#3 = (signed dword) muls16s::m#1 [phi:muls16s::@3->muls16s::@3#1] -- register_copy 
+    jmp b3
+  //SEG321 muls16s::@3
+  b3:
+  //SEG322 [151] (signed dword) muls16s::m#1 ← (signed dword) muls16s::m#3 + (signed word) muls16s::b#0 [ muls16s::a#0 muls16s::b#0 muls16s::j#2 muls16s::m#1 ] ( main:2::mul16s_compare:11::muls16s:20 [ mul16s_compare::i#9 mul16s_compare::a#1 mul16s_compare::b#1 mul16s_compare::j#2 print_line_cursor#1 muls16s::a#0 muls16s::b#0 muls16s::j#2 muls16s::m#1 ] ) -- vdsz1=vdsz1_plus_vwsz2 
     lda b+1
     ora #$7f
     bmi !+
@@ -8210,19 +8118,100 @@ muls16s: {
     lda m+3
     adc $ff
     sta m+3
-  //SEG340 [158] (signed word) muls16s::j#1 ← ++ (signed word) muls16s::j#2 [ muls16s::a#0 muls16s::b#0 muls16s::m#2 muls16s::j#1 ] ( main:2::mul16s_compare:11::muls16s:20 [ mul16s_compare::i#9 mul16s_compare::a#1 mul16s_compare::b#1 mul16s_compare::j#2 print_line_cursor#1 muls16s::a#0 muls16s::b#0 muls16s::m#2 muls16s::j#1 ] ) -- vwsz1=_inc_vwsz1 
+  //SEG323 [152] (signed word) muls16s::j#1 ← ++ (signed word) muls16s::j#2 [ muls16s::a#0 muls16s::b#0 muls16s::m#1 muls16s::j#1 ] ( main:2::mul16s_compare:11::muls16s:20 [ mul16s_compare::i#9 mul16s_compare::a#1 mul16s_compare::b#1 mul16s_compare::j#2 print_line_cursor#1 muls16s::a#0 muls16s::b#0 muls16s::m#1 muls16s::j#1 ] ) -- vwsz1=_inc_vwsz1 
     inc j
     bne !+
     inc j+1
   !:
-  //SEG341 [159] if((signed word) muls16s::j#1!=(signed word) muls16s::a#0) goto muls16s::@5 [ muls16s::a#0 muls16s::b#0 muls16s::m#2 muls16s::j#1 ] ( main:2::mul16s_compare:11::muls16s:20 [ mul16s_compare::i#9 mul16s_compare::a#1 mul16s_compare::b#1 mul16s_compare::j#2 print_line_cursor#1 muls16s::a#0 muls16s::b#0 muls16s::m#2 muls16s::j#1 ] ) -- vwsz1_neq_vwsz2_then_la1 
+  //SEG324 [153] if((signed word) muls16s::j#1!=(signed word) muls16s::a#0) goto muls16s::@3 [ muls16s::a#0 muls16s::b#0 muls16s::m#1 muls16s::j#1 ] ( main:2::mul16s_compare:11::muls16s:20 [ mul16s_compare::i#9 mul16s_compare::a#1 mul16s_compare::b#1 mul16s_compare::j#2 print_line_cursor#1 muls16s::a#0 muls16s::b#0 muls16s::m#1 muls16s::j#1 ] ) -- vwsz1_neq_vwsz2_then_la1 
     lda j+1
     cmp a+1
-    bne b5_from_b5
+    bne b3_from_b3
     lda j
     cmp a
+    bne b3_from_b3
+  //SEG325 [154] phi from muls16s::@3 muls16s::@5 to muls16s::@4 [phi:muls16s::@3/muls16s::@5->muls16s::@4]
+  b4_from_b3:
+  b4_from_b5:
+  //SEG326 [154] phi (signed dword) muls16s::return#0 = (signed dword) muls16s::m#1 [phi:muls16s::@3/muls16s::@5->muls16s::@4#0] -- register_copy 
+    jmp b4
+  //SEG327 [154] phi from muls16s::@6 to muls16s::@4 [phi:muls16s::@6->muls16s::@4]
+  b4_from_b6:
+  //SEG328 [154] phi (signed dword) muls16s::return#0 = (byte/signed byte/word/signed word/dword/signed dword) 0 [phi:muls16s::@6->muls16s::@4#0] -- vdsz1=vbuc1 
+    lda #<0
+    sta return
+    lda #>0
+    sta return+1
+    lda #<0>>$10
+    sta return+2
+    lda #>0>>$10
+    sta return+3
+    jmp b4
+  //SEG329 muls16s::@4
+  b4:
+    jmp breturn
+  //SEG330 muls16s::@return
+  breturn:
+  //SEG331 [155] return  [ muls16s::return#0 ] ( main:2::mul16s_compare:11::muls16s:20 [ mul16s_compare::i#9 mul16s_compare::a#1 mul16s_compare::b#1 mul16s_compare::j#2 print_line_cursor#1 muls16s::return#0 ] )
+    rts
+  //SEG332 [156] phi from muls16s to muls16s::@5 [phi:muls16s->muls16s::@5]
+  b5_from_muls16s:
+  //SEG333 [156] phi (signed word) muls16s::i#2 = (byte/signed byte/word/signed word/dword/signed dword) 0 [phi:muls16s->muls16s::@5#0] -- vwsz1=vbuc1 
+    lda #<0
+    sta i
+    lda #>0
+    sta i+1
+  //SEG334 [156] phi (signed dword) muls16s::m#5 = (byte/signed byte/word/signed word/dword/signed dword) 0 [phi:muls16s->muls16s::@5#1] -- vdsz1=vbuc1 
+    lda #<0
+    sta m
+    lda #>0
+    sta m+1
+    lda #<0>>$10
+    sta m+2
+    lda #>0>>$10
+    sta m+3
+    jmp b5
+  //SEG335 [156] phi from muls16s::@5 to muls16s::@5 [phi:muls16s::@5->muls16s::@5]
+  b5_from_b5:
+  //SEG336 [156] phi (signed word) muls16s::i#2 = (signed word) muls16s::i#1 [phi:muls16s::@5->muls16s::@5#0] -- register_copy 
+  //SEG337 [156] phi (signed dword) muls16s::m#5 = (signed dword) muls16s::m#2 [phi:muls16s::@5->muls16s::@5#1] -- register_copy 
+    jmp b5
+  //SEG338 muls16s::@5
+  b5:
+  //SEG339 [157] (signed dword) muls16s::m#2 ← (signed dword) muls16s::m#5 - (signed word) muls16s::b#0 [ muls16s::a#0 muls16s::b#0 muls16s::m#2 muls16s::i#2 ] ( main:2::mul16s_compare:11::muls16s:20 [ mul16s_compare::i#9 mul16s_compare::a#1 mul16s_compare::b#1 mul16s_compare::j#2 print_line_cursor#1 muls16s::a#0 muls16s::b#0 muls16s::m#2 muls16s::i#2 ] ) -- vdsz1=vdsz1_minus_vwsz2 
+    lda b+1
+    ora #$7f
+    bmi !+
+    lda #0
+  !:
+    sta $ff
+    sec
+    lda m
+    sbc b
+    sta m
+    lda m+1
+    sbc b+1
+    sta m+1
+    lda m+2
+    sbc $ff
+    sta m+2
+    lda m+3
+    sbc $ff
+    sta m+3
+  //SEG340 [158] (signed word) muls16s::i#1 ← -- (signed word) muls16s::i#2 [ muls16s::a#0 muls16s::b#0 muls16s::m#2 muls16s::i#1 ] ( main:2::mul16s_compare:11::muls16s:20 [ mul16s_compare::i#9 mul16s_compare::a#1 mul16s_compare::b#1 mul16s_compare::j#2 print_line_cursor#1 muls16s::a#0 muls16s::b#0 muls16s::m#2 muls16s::i#1 ] ) -- vwsz1=_dec_vwsz1 
+    lda i
+    bne !+
+    dec i+1
+  !:
+    dec i
+  //SEG341 [159] if((signed word) muls16s::i#1!=(signed word) muls16s::a#0) goto muls16s::@5 [ muls16s::a#0 muls16s::b#0 muls16s::m#2 muls16s::i#1 ] ( main:2::mul16s_compare:11::muls16s:20 [ mul16s_compare::i#9 mul16s_compare::a#1 mul16s_compare::b#1 mul16s_compare::j#2 print_line_cursor#1 muls16s::a#0 muls16s::b#0 muls16s::m#2 muls16s::i#1 ] ) -- vwsz1_neq_vwsz2_then_la1 
+    lda i+1
+    cmp a+1
     bne b5_from_b5
-    jmp b3_from_b5
+    lda i
+    cmp a
+    bne b5_from_b5
+    jmp b4_from_b5
 }
 //SEG342 mul16u_compare
 mul16u_compare: {
@@ -9050,13 +9039,13 @@ Removing always clobbered register reg byte a as potential for zp ZP_BYTE:58 [ m
 Statement [140] if((word) mul16u::a#3!=(byte/signed byte/word/signed word/dword/signed dword) 0) goto mul16u::@2 [ mul16u::res#2 mul16u::a#3 mul16u::mb#2 ] ( main:2::mul16s_compare:11::mul16s:25::mul16u:122 [ mul16s_compare::i#9 mul16s_compare::a#1 mul16s_compare::b#1 mul16s_compare::j#2 mul16s_compare::ms#0 print_line_cursor#1 mul16s::a#0 mul16s::b#0 mul16u::res#2 mul16u::a#3 mul16u::mb#2 ] main:2::mul16u_compare:9::mul16u:172 [ mul16u_compare::i#9 mul16u_compare::a#1 mul16u_compare::b#1 mul16u_compare::j#2 mul16u_compare::ms#0 mul16u::res#2 mul16u::a#3 mul16u::mb#2 ] ) always clobbers reg byte a 
 Statement [142] (byte/word~) mul16u::$1 ← (word) mul16u::a#3 & (byte/signed byte/word/signed word/dword/signed dword) 1 [ mul16u::res#2 mul16u::a#3 mul16u::mb#2 mul16u::$1 ] ( main:2::mul16s_compare:11::mul16s:25::mul16u:122 [ mul16s_compare::i#9 mul16s_compare::a#1 mul16s_compare::b#1 mul16s_compare::j#2 mul16s_compare::ms#0 print_line_cursor#1 mul16s::a#0 mul16s::b#0 mul16u::res#2 mul16u::a#3 mul16u::mb#2 mul16u::$1 ] main:2::mul16u_compare:9::mul16u:172 [ mul16u_compare::i#9 mul16u_compare::a#1 mul16u_compare::b#1 mul16u_compare::j#2 mul16u_compare::ms#0 mul16u::res#2 mul16u::a#3 mul16u::mb#2 mul16u::$1 ] ) always clobbers reg byte a 
 Statement [144] (dword) mul16u::res#1 ← (dword) mul16u::res#2 + (dword) mul16u::mb#2 [ mul16u::a#3 mul16u::mb#2 mul16u::res#1 ] ( main:2::mul16s_compare:11::mul16s:25::mul16u:122 [ mul16s_compare::i#9 mul16s_compare::a#1 mul16s_compare::b#1 mul16s_compare::j#2 mul16s_compare::ms#0 print_line_cursor#1 mul16s::a#0 mul16s::b#0 mul16u::a#3 mul16u::mb#2 mul16u::res#1 ] main:2::mul16u_compare:9::mul16u:172 [ mul16u_compare::i#9 mul16u_compare::a#1 mul16u_compare::b#1 mul16u_compare::j#2 mul16u_compare::ms#0 mul16u::a#3 mul16u::mb#2 mul16u::res#1 ] ) always clobbers reg byte a 
-Statement [148] if((signed word) muls16s::a#0>=(byte/signed byte/word/signed word/dword/signed dword) 0) goto muls16s::@1 [ muls16s::a#0 muls16s::b#0 ] ( main:2::mul16s_compare:11::muls16s:20 [ mul16s_compare::i#9 mul16s_compare::a#1 mul16s_compare::b#1 mul16s_compare::j#2 print_line_cursor#1 muls16s::a#0 muls16s::b#0 ] ) always clobbers reg byte a 
-Statement [150] (signed dword) muls16s::m#1 ← (signed dword) muls16s::m#3 - (signed word) muls16s::b#0 [ muls16s::a#0 muls16s::b#0 muls16s::i#2 muls16s::m#1 ] ( main:2::mul16s_compare:11::muls16s:20 [ mul16s_compare::i#9 mul16s_compare::a#1 mul16s_compare::b#1 mul16s_compare::j#2 print_line_cursor#1 muls16s::a#0 muls16s::b#0 muls16s::i#2 muls16s::m#1 ] ) always clobbers reg byte a 
-Statement [151] (signed word) muls16s::i#1 ← -- (signed word) muls16s::i#2 [ muls16s::a#0 muls16s::b#0 muls16s::m#1 muls16s::i#1 ] ( main:2::mul16s_compare:11::muls16s:20 [ mul16s_compare::i#9 mul16s_compare::a#1 mul16s_compare::b#1 mul16s_compare::j#2 print_line_cursor#1 muls16s::a#0 muls16s::b#0 muls16s::m#1 muls16s::i#1 ] ) always clobbers reg byte a 
-Statement [152] if((signed word) muls16s::i#1!=(signed word) muls16s::a#0) goto muls16s::@2 [ muls16s::a#0 muls16s::b#0 muls16s::m#1 muls16s::i#1 ] ( main:2::mul16s_compare:11::muls16s:20 [ mul16s_compare::i#9 mul16s_compare::a#1 mul16s_compare::b#1 mul16s_compare::j#2 print_line_cursor#1 muls16s::a#0 muls16s::b#0 muls16s::m#1 muls16s::i#1 ] ) always clobbers reg byte a 
-Statement [155] if((signed word) muls16s::a#0<=(byte/signed byte/word/signed word/dword/signed dword) 0) goto muls16s::@3 [ muls16s::a#0 muls16s::b#0 ] ( main:2::mul16s_compare:11::muls16s:20 [ mul16s_compare::i#9 mul16s_compare::a#1 mul16s_compare::b#1 mul16s_compare::j#2 print_line_cursor#1 muls16s::a#0 muls16s::b#0 ] ) always clobbers reg byte a 
-Statement [157] (signed dword) muls16s::m#2 ← (signed dword) muls16s::m#5 + (signed word) muls16s::b#0 [ muls16s::a#0 muls16s::b#0 muls16s::m#2 muls16s::j#2 ] ( main:2::mul16s_compare:11::muls16s:20 [ mul16s_compare::i#9 mul16s_compare::a#1 mul16s_compare::b#1 mul16s_compare::j#2 print_line_cursor#1 muls16s::a#0 muls16s::b#0 muls16s::m#2 muls16s::j#2 ] ) always clobbers reg byte a 
-Statement [159] if((signed word) muls16s::j#1!=(signed word) muls16s::a#0) goto muls16s::@5 [ muls16s::a#0 muls16s::b#0 muls16s::m#2 muls16s::j#1 ] ( main:2::mul16s_compare:11::muls16s:20 [ mul16s_compare::i#9 mul16s_compare::a#1 mul16s_compare::b#1 mul16s_compare::j#2 print_line_cursor#1 muls16s::a#0 muls16s::b#0 muls16s::m#2 muls16s::j#1 ] ) always clobbers reg byte a 
+Statement [148] if((signed word) muls16s::a#0<(byte/signed byte/word/signed word/dword/signed dword) 0) goto muls16s::@5 [ muls16s::a#0 muls16s::b#0 ] ( main:2::mul16s_compare:11::muls16s:20 [ mul16s_compare::i#9 mul16s_compare::a#1 mul16s_compare::b#1 mul16s_compare::j#2 print_line_cursor#1 muls16s::a#0 muls16s::b#0 ] ) always clobbers reg byte a 
+Statement [149] if((signed word) muls16s::a#0<=(byte/signed byte/word/signed word/dword/signed dword) 0) goto muls16s::@4 [ muls16s::a#0 muls16s::b#0 ] ( main:2::mul16s_compare:11::muls16s:20 [ mul16s_compare::i#9 mul16s_compare::a#1 mul16s_compare::b#1 mul16s_compare::j#2 print_line_cursor#1 muls16s::a#0 muls16s::b#0 ] ) always clobbers reg byte a 
+Statement [151] (signed dword) muls16s::m#1 ← (signed dword) muls16s::m#3 + (signed word) muls16s::b#0 [ muls16s::a#0 muls16s::b#0 muls16s::j#2 muls16s::m#1 ] ( main:2::mul16s_compare:11::muls16s:20 [ mul16s_compare::i#9 mul16s_compare::a#1 mul16s_compare::b#1 mul16s_compare::j#2 print_line_cursor#1 muls16s::a#0 muls16s::b#0 muls16s::j#2 muls16s::m#1 ] ) always clobbers reg byte a 
+Statement [153] if((signed word) muls16s::j#1!=(signed word) muls16s::a#0) goto muls16s::@3 [ muls16s::a#0 muls16s::b#0 muls16s::m#1 muls16s::j#1 ] ( main:2::mul16s_compare:11::muls16s:20 [ mul16s_compare::i#9 mul16s_compare::a#1 mul16s_compare::b#1 mul16s_compare::j#2 print_line_cursor#1 muls16s::a#0 muls16s::b#0 muls16s::m#1 muls16s::j#1 ] ) always clobbers reg byte a 
+Statement [157] (signed dword) muls16s::m#2 ← (signed dword) muls16s::m#5 - (signed word) muls16s::b#0 [ muls16s::a#0 muls16s::b#0 muls16s::m#2 muls16s::i#2 ] ( main:2::mul16s_compare:11::muls16s:20 [ mul16s_compare::i#9 mul16s_compare::a#1 mul16s_compare::b#1 mul16s_compare::j#2 print_line_cursor#1 muls16s::a#0 muls16s::b#0 muls16s::m#2 muls16s::i#2 ] ) always clobbers reg byte a 
+Statement [158] (signed word) muls16s::i#1 ← -- (signed word) muls16s::i#2 [ muls16s::a#0 muls16s::b#0 muls16s::m#2 muls16s::i#1 ] ( main:2::mul16s_compare:11::muls16s:20 [ mul16s_compare::i#9 mul16s_compare::a#1 mul16s_compare::b#1 mul16s_compare::j#2 print_line_cursor#1 muls16s::a#0 muls16s::b#0 muls16s::m#2 muls16s::i#1 ] ) always clobbers reg byte a 
+Statement [159] if((signed word) muls16s::i#1!=(signed word) muls16s::a#0) goto muls16s::@5 [ muls16s::a#0 muls16s::b#0 muls16s::m#2 muls16s::i#1 ] ( main:2::mul16s_compare:11::muls16s:20 [ mul16s_compare::i#9 mul16s_compare::a#1 mul16s_compare::b#1 mul16s_compare::j#2 print_line_cursor#1 muls16s::a#0 muls16s::b#0 muls16s::m#2 muls16s::i#1 ] ) always clobbers reg byte a 
 Statement [163] (word) mul16u_compare::a#1 ← (word) mul16u_compare::a#2 + (word/signed word/dword/signed dword) 3371 [ mul16u_compare::i#9 mul16u_compare::a#1 mul16u_compare::b#2 mul16u_compare::j#2 ] ( main:2::mul16u_compare:9 [ mul16u_compare::i#9 mul16u_compare::a#1 mul16u_compare::b#2 mul16u_compare::j#2 ] ) always clobbers reg byte a 
 Statement [164] (word) mul16u_compare::b#1 ← (word) mul16u_compare::b#2 + (word/signed word/dword/signed dword) 4093 [ mul16u_compare::i#9 mul16u_compare::a#1 mul16u_compare::b#1 mul16u_compare::j#2 ] ( main:2::mul16u_compare:9 [ mul16u_compare::i#9 mul16u_compare::a#1 mul16u_compare::b#1 mul16u_compare::j#2 ] ) always clobbers reg byte a 
 Statement [165] (word) muls16u::a#0 ← (word) mul16u_compare::a#1 [ mul16u_compare::i#9 mul16u_compare::a#1 mul16u_compare::b#1 mul16u_compare::j#2 muls16u::a#0 ] ( main:2::mul16u_compare:9 [ mul16u_compare::i#9 mul16u_compare::a#1 mul16u_compare::b#1 mul16u_compare::j#2 muls16u::a#0 ] ) always clobbers reg byte a 
@@ -9159,13 +9148,13 @@ Statement [138] (dword) mul16u::mb#0 ← ((dword)) (word) mul16u::b#2 [ mul16u::
 Statement [140] if((word) mul16u::a#3!=(byte/signed byte/word/signed word/dword/signed dword) 0) goto mul16u::@2 [ mul16u::res#2 mul16u::a#3 mul16u::mb#2 ] ( main:2::mul16s_compare:11::mul16s:25::mul16u:122 [ mul16s_compare::i#9 mul16s_compare::a#1 mul16s_compare::b#1 mul16s_compare::j#2 mul16s_compare::ms#0 print_line_cursor#1 mul16s::a#0 mul16s::b#0 mul16u::res#2 mul16u::a#3 mul16u::mb#2 ] main:2::mul16u_compare:9::mul16u:172 [ mul16u_compare::i#9 mul16u_compare::a#1 mul16u_compare::b#1 mul16u_compare::j#2 mul16u_compare::ms#0 mul16u::res#2 mul16u::a#3 mul16u::mb#2 ] ) always clobbers reg byte a 
 Statement [142] (byte/word~) mul16u::$1 ← (word) mul16u::a#3 & (byte/signed byte/word/signed word/dword/signed dword) 1 [ mul16u::res#2 mul16u::a#3 mul16u::mb#2 mul16u::$1 ] ( main:2::mul16s_compare:11::mul16s:25::mul16u:122 [ mul16s_compare::i#9 mul16s_compare::a#1 mul16s_compare::b#1 mul16s_compare::j#2 mul16s_compare::ms#0 print_line_cursor#1 mul16s::a#0 mul16s::b#0 mul16u::res#2 mul16u::a#3 mul16u::mb#2 mul16u::$1 ] main:2::mul16u_compare:9::mul16u:172 [ mul16u_compare::i#9 mul16u_compare::a#1 mul16u_compare::b#1 mul16u_compare::j#2 mul16u_compare::ms#0 mul16u::res#2 mul16u::a#3 mul16u::mb#2 mul16u::$1 ] ) always clobbers reg byte a 
 Statement [144] (dword) mul16u::res#1 ← (dword) mul16u::res#2 + (dword) mul16u::mb#2 [ mul16u::a#3 mul16u::mb#2 mul16u::res#1 ] ( main:2::mul16s_compare:11::mul16s:25::mul16u:122 [ mul16s_compare::i#9 mul16s_compare::a#1 mul16s_compare::b#1 mul16s_compare::j#2 mul16s_compare::ms#0 print_line_cursor#1 mul16s::a#0 mul16s::b#0 mul16u::a#3 mul16u::mb#2 mul16u::res#1 ] main:2::mul16u_compare:9::mul16u:172 [ mul16u_compare::i#9 mul16u_compare::a#1 mul16u_compare::b#1 mul16u_compare::j#2 mul16u_compare::ms#0 mul16u::a#3 mul16u::mb#2 mul16u::res#1 ] ) always clobbers reg byte a 
-Statement [148] if((signed word) muls16s::a#0>=(byte/signed byte/word/signed word/dword/signed dword) 0) goto muls16s::@1 [ muls16s::a#0 muls16s::b#0 ] ( main:2::mul16s_compare:11::muls16s:20 [ mul16s_compare::i#9 mul16s_compare::a#1 mul16s_compare::b#1 mul16s_compare::j#2 print_line_cursor#1 muls16s::a#0 muls16s::b#0 ] ) always clobbers reg byte a 
-Statement [150] (signed dword) muls16s::m#1 ← (signed dword) muls16s::m#3 - (signed word) muls16s::b#0 [ muls16s::a#0 muls16s::b#0 muls16s::i#2 muls16s::m#1 ] ( main:2::mul16s_compare:11::muls16s:20 [ mul16s_compare::i#9 mul16s_compare::a#1 mul16s_compare::b#1 mul16s_compare::j#2 print_line_cursor#1 muls16s::a#0 muls16s::b#0 muls16s::i#2 muls16s::m#1 ] ) always clobbers reg byte a 
-Statement [151] (signed word) muls16s::i#1 ← -- (signed word) muls16s::i#2 [ muls16s::a#0 muls16s::b#0 muls16s::m#1 muls16s::i#1 ] ( main:2::mul16s_compare:11::muls16s:20 [ mul16s_compare::i#9 mul16s_compare::a#1 mul16s_compare::b#1 mul16s_compare::j#2 print_line_cursor#1 muls16s::a#0 muls16s::b#0 muls16s::m#1 muls16s::i#1 ] ) always clobbers reg byte a 
-Statement [152] if((signed word) muls16s::i#1!=(signed word) muls16s::a#0) goto muls16s::@2 [ muls16s::a#0 muls16s::b#0 muls16s::m#1 muls16s::i#1 ] ( main:2::mul16s_compare:11::muls16s:20 [ mul16s_compare::i#9 mul16s_compare::a#1 mul16s_compare::b#1 mul16s_compare::j#2 print_line_cursor#1 muls16s::a#0 muls16s::b#0 muls16s::m#1 muls16s::i#1 ] ) always clobbers reg byte a 
-Statement [155] if((signed word) muls16s::a#0<=(byte/signed byte/word/signed word/dword/signed dword) 0) goto muls16s::@3 [ muls16s::a#0 muls16s::b#0 ] ( main:2::mul16s_compare:11::muls16s:20 [ mul16s_compare::i#9 mul16s_compare::a#1 mul16s_compare::b#1 mul16s_compare::j#2 print_line_cursor#1 muls16s::a#0 muls16s::b#0 ] ) always clobbers reg byte a 
-Statement [157] (signed dword) muls16s::m#2 ← (signed dword) muls16s::m#5 + (signed word) muls16s::b#0 [ muls16s::a#0 muls16s::b#0 muls16s::m#2 muls16s::j#2 ] ( main:2::mul16s_compare:11::muls16s:20 [ mul16s_compare::i#9 mul16s_compare::a#1 mul16s_compare::b#1 mul16s_compare::j#2 print_line_cursor#1 muls16s::a#0 muls16s::b#0 muls16s::m#2 muls16s::j#2 ] ) always clobbers reg byte a 
-Statement [159] if((signed word) muls16s::j#1!=(signed word) muls16s::a#0) goto muls16s::@5 [ muls16s::a#0 muls16s::b#0 muls16s::m#2 muls16s::j#1 ] ( main:2::mul16s_compare:11::muls16s:20 [ mul16s_compare::i#9 mul16s_compare::a#1 mul16s_compare::b#1 mul16s_compare::j#2 print_line_cursor#1 muls16s::a#0 muls16s::b#0 muls16s::m#2 muls16s::j#1 ] ) always clobbers reg byte a 
+Statement [148] if((signed word) muls16s::a#0<(byte/signed byte/word/signed word/dword/signed dword) 0) goto muls16s::@5 [ muls16s::a#0 muls16s::b#0 ] ( main:2::mul16s_compare:11::muls16s:20 [ mul16s_compare::i#9 mul16s_compare::a#1 mul16s_compare::b#1 mul16s_compare::j#2 print_line_cursor#1 muls16s::a#0 muls16s::b#0 ] ) always clobbers reg byte a 
+Statement [149] if((signed word) muls16s::a#0<=(byte/signed byte/word/signed word/dword/signed dword) 0) goto muls16s::@4 [ muls16s::a#0 muls16s::b#0 ] ( main:2::mul16s_compare:11::muls16s:20 [ mul16s_compare::i#9 mul16s_compare::a#1 mul16s_compare::b#1 mul16s_compare::j#2 print_line_cursor#1 muls16s::a#0 muls16s::b#0 ] ) always clobbers reg byte a 
+Statement [151] (signed dword) muls16s::m#1 ← (signed dword) muls16s::m#3 + (signed word) muls16s::b#0 [ muls16s::a#0 muls16s::b#0 muls16s::j#2 muls16s::m#1 ] ( main:2::mul16s_compare:11::muls16s:20 [ mul16s_compare::i#9 mul16s_compare::a#1 mul16s_compare::b#1 mul16s_compare::j#2 print_line_cursor#1 muls16s::a#0 muls16s::b#0 muls16s::j#2 muls16s::m#1 ] ) always clobbers reg byte a 
+Statement [153] if((signed word) muls16s::j#1!=(signed word) muls16s::a#0) goto muls16s::@3 [ muls16s::a#0 muls16s::b#0 muls16s::m#1 muls16s::j#1 ] ( main:2::mul16s_compare:11::muls16s:20 [ mul16s_compare::i#9 mul16s_compare::a#1 mul16s_compare::b#1 mul16s_compare::j#2 print_line_cursor#1 muls16s::a#0 muls16s::b#0 muls16s::m#1 muls16s::j#1 ] ) always clobbers reg byte a 
+Statement [157] (signed dword) muls16s::m#2 ← (signed dword) muls16s::m#5 - (signed word) muls16s::b#0 [ muls16s::a#0 muls16s::b#0 muls16s::m#2 muls16s::i#2 ] ( main:2::mul16s_compare:11::muls16s:20 [ mul16s_compare::i#9 mul16s_compare::a#1 mul16s_compare::b#1 mul16s_compare::j#2 print_line_cursor#1 muls16s::a#0 muls16s::b#0 muls16s::m#2 muls16s::i#2 ] ) always clobbers reg byte a 
+Statement [158] (signed word) muls16s::i#1 ← -- (signed word) muls16s::i#2 [ muls16s::a#0 muls16s::b#0 muls16s::m#2 muls16s::i#1 ] ( main:2::mul16s_compare:11::muls16s:20 [ mul16s_compare::i#9 mul16s_compare::a#1 mul16s_compare::b#1 mul16s_compare::j#2 print_line_cursor#1 muls16s::a#0 muls16s::b#0 muls16s::m#2 muls16s::i#1 ] ) always clobbers reg byte a 
+Statement [159] if((signed word) muls16s::i#1!=(signed word) muls16s::a#0) goto muls16s::@5 [ muls16s::a#0 muls16s::b#0 muls16s::m#2 muls16s::i#1 ] ( main:2::mul16s_compare:11::muls16s:20 [ mul16s_compare::i#9 mul16s_compare::a#1 mul16s_compare::b#1 mul16s_compare::j#2 print_line_cursor#1 muls16s::a#0 muls16s::b#0 muls16s::m#2 muls16s::i#1 ] ) always clobbers reg byte a 
 Statement [163] (word) mul16u_compare::a#1 ← (word) mul16u_compare::a#2 + (word/signed word/dword/signed dword) 3371 [ mul16u_compare::i#9 mul16u_compare::a#1 mul16u_compare::b#2 mul16u_compare::j#2 ] ( main:2::mul16u_compare:9 [ mul16u_compare::i#9 mul16u_compare::a#1 mul16u_compare::b#2 mul16u_compare::j#2 ] ) always clobbers reg byte a 
 Statement [164] (word) mul16u_compare::b#1 ← (word) mul16u_compare::b#2 + (word/signed word/dword/signed dword) 4093 [ mul16u_compare::i#9 mul16u_compare::a#1 mul16u_compare::b#1 mul16u_compare::j#2 ] ( main:2::mul16u_compare:9 [ mul16u_compare::i#9 mul16u_compare::a#1 mul16u_compare::b#1 mul16u_compare::j#2 ] ) always clobbers reg byte a 
 Statement [165] (word) muls16u::a#0 ← (word) mul16u_compare::a#1 [ mul16u_compare::i#9 mul16u_compare::a#1 mul16u_compare::b#1 mul16u_compare::j#2 muls16u::a#0 ] ( main:2::mul16u_compare:9 [ mul16u_compare::i#9 mul16u_compare::a#1 mul16u_compare::b#1 mul16u_compare::j#2 muls16u::a#0 ] ) always clobbers reg byte a 
@@ -9223,9 +9212,9 @@ Potential registers zp ZP_WORD:33 [ mul16u::b#2 mul16u::b#3 mul16u::b#1 ] : zp Z
 Potential registers zp ZP_WORD:35 [ mul16u::a#3 mul16u::a#6 mul16u::a#8 mul16u::a#2 mul16u::a#0 ] : zp ZP_WORD:35 , 
 Potential registers zp ZP_DWORD:37 [ mul16u::res#2 mul16u::res#6 mul16u::res#1 ] : zp ZP_DWORD:37 , 
 Potential registers zp ZP_DWORD:41 [ mul16u::mb#2 mul16u::mb#0 mul16u::mb#1 ] : zp ZP_DWORD:41 , 
-Potential registers zp ZP_WORD:45 [ muls16s::i#2 muls16s::i#1 ] : zp ZP_WORD:45 , 
+Potential registers zp ZP_WORD:45 [ muls16s::j#2 muls16s::j#1 ] : zp ZP_WORD:45 , 
 Potential registers zp ZP_DWORD:47 [ muls16s::m#5 muls16s::return#0 muls16s::m#3 muls16s::m#1 muls16s::m#2 ] : zp ZP_DWORD:47 , 
-Potential registers zp ZP_WORD:51 [ muls16s::j#2 muls16s::j#1 ] : zp ZP_WORD:51 , 
+Potential registers zp ZP_WORD:51 [ muls16s::i#2 muls16s::i#1 ] : zp ZP_WORD:51 , 
 Potential registers zp ZP_BYTE:53 [ mul16u_compare::i#9 mul16u_compare::i#1 ] : zp ZP_BYTE:53 , reg byte x , reg byte y , 
 Potential registers zp ZP_WORD:54 [ mul16u_compare::a#2 mul16u_compare::a#5 mul16u_compare::a#1 ] : zp ZP_WORD:54 , 
 Potential registers zp ZP_WORD:56 [ mul16u_compare::b#2 mul16u_compare::b#5 mul16u_compare::b#1 ] : zp ZP_WORD:56 , 
@@ -9279,7 +9268,7 @@ Potential registers zp ZP_BYTE:170 [ mulf_init::$5 ] : zp ZP_BYTE:170 , reg byte
 Potential registers zp ZP_BYTE:171 [ mulf_init::$6 ] : zp ZP_BYTE:171 , reg byte a , reg byte x , reg byte y , 
 
 REGISTER UPLIFT SCOPES
-Uplift Scope [muls16s] 6,707: zp ZP_DWORD:47 [ muls16s::m#5 muls16s::return#0 muls16s::m#3 muls16s::m#1 muls16s::m#2 ] 2,502.5: zp ZP_WORD:45 [ muls16s::i#2 muls16s::i#1 ] 2,502.5: zp ZP_WORD:51 [ muls16s::j#2 muls16s::j#1 ] 202: zp ZP_DWORD:86 [ muls16s::return#2 ] 191.18: zp ZP_WORD:84 [ muls16s::b#0 ] 175.58: zp ZP_WORD:82 [ muls16s::a#0 ] 
+Uplift Scope [muls16s] 6,707: zp ZP_DWORD:47 [ muls16s::m#5 muls16s::return#0 muls16s::m#3 muls16s::m#1 muls16s::m#2 ] 2,502.5: zp ZP_WORD:45 [ muls16s::j#2 muls16s::j#1 ] 2,502.5: zp ZP_WORD:51 [ muls16s::i#2 muls16s::i#1 ] 202: zp ZP_DWORD:86 [ muls16s::return#2 ] 191.18: zp ZP_WORD:84 [ muls16s::b#0 ] 175.58: zp ZP_WORD:82 [ muls16s::a#0 ] 
 Uplift Scope [mul16u] 3,446.71: zp ZP_DWORD:37 [ mul16u::res#2 mul16u::res#6 mul16u::res#1 ] 2,435.29: zp ZP_DWORD:41 [ mul16u::mb#2 mul16u::mb#0 mul16u::mb#1 ] 2,002: zp ZP_BYTE:136 [ mul16u::$1 ] 1,826.17: zp ZP_WORD:35 [ mul16u::a#3 mul16u::a#6 mul16u::a#8 mul16u::a#2 mul16u::a#0 ] 309: zp ZP_WORD:33 [ mul16u::b#2 mul16u::b#3 mul16u::b#1 ] 202: zp ZP_DWORD:149 [ mul16u::return#3 ] 4: zp ZP_DWORD:120 [ mul16u::return#2 ] 
 Uplift Scope [muls16u] 3,370.33: zp ZP_DWORD:62 [ muls16u::return#0 muls16u::m#3 muls16u::m#1 ] 2,502.5: zp ZP_WORD:60 [ muls16u::i#2 muls16u::i#1 ] 202: zp ZP_DWORD:141 [ muls16u::return#2 ] 183.67: zp ZP_WORD:139 [ muls16u::b#0 ] 157.71: zp ZP_WORD:137 [ muls16u::a#0 ] 
 Uplift Scope [mul16u_compare] 254.86: zp ZP_WORD:54 [ mul16u_compare::a#2 mul16u_compare::a#5 mul16u_compare::a#1 ] 163.38: zp ZP_BYTE:58 [ mul16u_compare::j#2 mul16u_compare::j#1 ] 148.36: zp ZP_WORD:56 [ mul16u_compare::b#2 mul16u_compare::b#5 mul16u_compare::b#1 ] 101: zp ZP_BYTE:59 [ mul16u_compare::ok#2 ] 22.67: zp ZP_DWORD:153 [ mul16u_compare::mn#0 ] 17.6: zp ZP_BYTE:53 [ mul16u_compare::i#9 mul16u_compare::i#1 ] 15.69: zp ZP_DWORD:145 [ mul16u_compare::ms#0 ] 
@@ -9300,33 +9289,33 @@ Uplift Scope [mul16s_error] 0.67: zp ZP_WORD:106 [ mul16s_error::a#0 ] 0.44: zp 
 Uplift Scope [print_ln] 
 Uplift Scope [main] 
 
-Uplifting [muls16s] best 524902 combination zp ZP_DWORD:47 [ muls16s::m#5 muls16s::return#0 muls16s::m#3 muls16s::m#1 muls16s::m#2 ] zp ZP_WORD:45 [ muls16s::i#2 muls16s::i#1 ] zp ZP_WORD:51 [ muls16s::j#2 muls16s::j#1 ] zp ZP_DWORD:86 [ muls16s::return#2 ] zp ZP_WORD:84 [ muls16s::b#0 ] zp ZP_WORD:82 [ muls16s::a#0 ] 
-Uplifting [mul16u] best 520902 combination zp ZP_DWORD:37 [ mul16u::res#2 mul16u::res#6 mul16u::res#1 ] zp ZP_DWORD:41 [ mul16u::mb#2 mul16u::mb#0 mul16u::mb#1 ] reg byte a [ mul16u::$1 ] zp ZP_WORD:35 [ mul16u::a#3 mul16u::a#6 mul16u::a#8 mul16u::a#2 mul16u::a#0 ] zp ZP_WORD:33 [ mul16u::b#2 mul16u::b#3 mul16u::b#1 ] zp ZP_DWORD:149 [ mul16u::return#3 ] zp ZP_DWORD:120 [ mul16u::return#2 ] 
-Uplifting [muls16u] best 520902 combination zp ZP_DWORD:62 [ muls16u::return#0 muls16u::m#3 muls16u::m#1 ] zp ZP_WORD:60 [ muls16u::i#2 muls16u::i#1 ] zp ZP_DWORD:141 [ muls16u::return#2 ] zp ZP_WORD:139 [ muls16u::b#0 ] zp ZP_WORD:137 [ muls16u::a#0 ] 
-Uplifting [mul16u_compare] best 519212 combination zp ZP_WORD:54 [ mul16u_compare::a#2 mul16u_compare::a#5 mul16u_compare::a#1 ] reg byte y [ mul16u_compare::j#2 mul16u_compare::j#1 ] zp ZP_WORD:56 [ mul16u_compare::b#2 mul16u_compare::b#5 mul16u_compare::b#1 ] reg byte a [ mul16u_compare::ok#2 ] zp ZP_DWORD:153 [ mul16u_compare::mn#0 ] reg byte x [ mul16u_compare::i#9 mul16u_compare::i#1 ] zp ZP_DWORD:145 [ mul16u_compare::ms#0 ] 
-Uplifting [mul16s_compare] best 517522 combination zp ZP_WORD:3 [ mul16s_compare::a#2 mul16s_compare::a#5 mul16s_compare::a#1 ] reg byte y [ mul16s_compare::j#2 mul16s_compare::j#1 ] zp ZP_WORD:5 [ mul16s_compare::b#2 mul16s_compare::b#5 mul16s_compare::b#1 ] reg byte a [ mul16s_compare::ok#2 ] zp ZP_DWORD:102 [ mul16s_compare::mn#0 ] reg byte x [ mul16s_compare::i#9 mul16s_compare::i#1 ] zp ZP_DWORD:90 [ mul16s_compare::ms#0 ] 
-Uplifting [mul16s] best 517522 combination zp ZP_DWORD:98 [ mul16s::return#2 ] zp ZP_DWORD:132 [ mul16s::return#0 ] zp ZP_DWORD:29 [ mul16s::m#4 mul16s::m#5 mul16s::m#1 mul16s::m#0 mul16s::m#2 ] zp ZP_WORD:96 [ mul16s::b#0 ] zp ZP_WORD:94 [ mul16s::a#0 ] zp ZP_WORD:124 [ mul16s::$6 ] zp ZP_WORD:126 [ mul16s::$16 ] zp ZP_WORD:128 [ mul16s::$12 ] zp ZP_WORD:130 [ mul16s::$17 ] 
-Uplifting [mulf_init] best 517292 combination zp ZP_WORD:72 [ mulf_init::sqr#3 mulf_init::sqr#4 mulf_init::sqr#1 mulf_init::sqr#2 ] reg byte x [ mulf_init::c#2 mulf_init::c#1 ] zp ZP_BYTE:71 [ mulf_init::x_2#3 mulf_init::x_2#2 mulf_init::x_2#1 ] reg byte a [ mulf_init::$2 ] reg byte a [ mulf_init::$5 ] reg byte a [ mulf_init::$6 ] zp ZP_WORD:75 [ mulf_init::sqr2_lo#2 mulf_init::sqr2_lo#1 ] zp ZP_WORD:67 [ mulf_init::sqr1_lo#2 mulf_init::sqr1_lo#1 ] zp ZP_BYTE:74 [ mulf_init::x_255#2 mulf_init::x_255#1 ] zp ZP_WORD:77 [ mulf_init::sqr2_hi#2 mulf_init::sqr2_hi#1 ] zp ZP_BYTE:79 [ mulf_init::dir#2 mulf_init::dir#3 ] zp ZP_WORD:69 [ mulf_init::sqr1_hi#2 mulf_init::sqr1_hi#1 ] 
+Uplifting [muls16s] best 524905 combination zp ZP_DWORD:47 [ muls16s::m#5 muls16s::return#0 muls16s::m#3 muls16s::m#1 muls16s::m#2 ] zp ZP_WORD:45 [ muls16s::j#2 muls16s::j#1 ] zp ZP_WORD:51 [ muls16s::i#2 muls16s::i#1 ] zp ZP_DWORD:86 [ muls16s::return#2 ] zp ZP_WORD:84 [ muls16s::b#0 ] zp ZP_WORD:82 [ muls16s::a#0 ] 
+Uplifting [mul16u] best 520905 combination zp ZP_DWORD:37 [ mul16u::res#2 mul16u::res#6 mul16u::res#1 ] zp ZP_DWORD:41 [ mul16u::mb#2 mul16u::mb#0 mul16u::mb#1 ] reg byte a [ mul16u::$1 ] zp ZP_WORD:35 [ mul16u::a#3 mul16u::a#6 mul16u::a#8 mul16u::a#2 mul16u::a#0 ] zp ZP_WORD:33 [ mul16u::b#2 mul16u::b#3 mul16u::b#1 ] zp ZP_DWORD:149 [ mul16u::return#3 ] zp ZP_DWORD:120 [ mul16u::return#2 ] 
+Uplifting [muls16u] best 520905 combination zp ZP_DWORD:62 [ muls16u::return#0 muls16u::m#3 muls16u::m#1 ] zp ZP_WORD:60 [ muls16u::i#2 muls16u::i#1 ] zp ZP_DWORD:141 [ muls16u::return#2 ] zp ZP_WORD:139 [ muls16u::b#0 ] zp ZP_WORD:137 [ muls16u::a#0 ] 
+Uplifting [mul16u_compare] best 519215 combination zp ZP_WORD:54 [ mul16u_compare::a#2 mul16u_compare::a#5 mul16u_compare::a#1 ] reg byte y [ mul16u_compare::j#2 mul16u_compare::j#1 ] zp ZP_WORD:56 [ mul16u_compare::b#2 mul16u_compare::b#5 mul16u_compare::b#1 ] reg byte a [ mul16u_compare::ok#2 ] zp ZP_DWORD:153 [ mul16u_compare::mn#0 ] reg byte x [ mul16u_compare::i#9 mul16u_compare::i#1 ] zp ZP_DWORD:145 [ mul16u_compare::ms#0 ] 
+Uplifting [mul16s_compare] best 517525 combination zp ZP_WORD:3 [ mul16s_compare::a#2 mul16s_compare::a#5 mul16s_compare::a#1 ] reg byte y [ mul16s_compare::j#2 mul16s_compare::j#1 ] zp ZP_WORD:5 [ mul16s_compare::b#2 mul16s_compare::b#5 mul16s_compare::b#1 ] reg byte a [ mul16s_compare::ok#2 ] zp ZP_DWORD:102 [ mul16s_compare::mn#0 ] reg byte x [ mul16s_compare::i#9 mul16s_compare::i#1 ] zp ZP_DWORD:90 [ mul16s_compare::ms#0 ] 
+Uplifting [mul16s] best 517525 combination zp ZP_DWORD:98 [ mul16s::return#2 ] zp ZP_DWORD:132 [ mul16s::return#0 ] zp ZP_DWORD:29 [ mul16s::m#4 mul16s::m#5 mul16s::m#1 mul16s::m#0 mul16s::m#2 ] zp ZP_WORD:96 [ mul16s::b#0 ] zp ZP_WORD:94 [ mul16s::a#0 ] zp ZP_WORD:124 [ mul16s::$6 ] zp ZP_WORD:126 [ mul16s::$16 ] zp ZP_WORD:128 [ mul16s::$12 ] zp ZP_WORD:130 [ mul16s::$17 ] 
+Uplifting [mulf_init] best 517295 combination zp ZP_WORD:72 [ mulf_init::sqr#3 mulf_init::sqr#4 mulf_init::sqr#1 mulf_init::sqr#2 ] reg byte x [ mulf_init::c#2 mulf_init::c#1 ] zp ZP_BYTE:71 [ mulf_init::x_2#3 mulf_init::x_2#2 mulf_init::x_2#1 ] reg byte a [ mulf_init::$2 ] reg byte a [ mulf_init::$5 ] reg byte a [ mulf_init::$6 ] zp ZP_WORD:75 [ mulf_init::sqr2_lo#2 mulf_init::sqr2_lo#1 ] zp ZP_WORD:67 [ mulf_init::sqr1_lo#2 mulf_init::sqr1_lo#1 ] zp ZP_BYTE:74 [ mulf_init::x_255#2 mulf_init::x_255#1 ] zp ZP_WORD:77 [ mulf_init::sqr2_hi#2 mulf_init::sqr2_hi#1 ] zp ZP_BYTE:79 [ mulf_init::dir#2 mulf_init::dir#3 ] zp ZP_WORD:69 [ mulf_init::sqr1_hi#2 mulf_init::sqr1_hi#1 ] 
 Limited combination testing to 100 combinations of 1024 possible.
-Uplifting [] best 517292 combination zp ZP_WORD:25 [ print_char_cursor#76 print_char_cursor#120 print_char_cursor#116 print_char_cursor#117 print_char_cursor#118 print_char_cursor#130 print_char_cursor#158 print_char_cursor#159 print_char_cursor#113 print_char_cursor#112 print_char_cursor#20 print_char_cursor#1 print_char_cursor#114 ] zp ZP_WORD:9 [ print_line_cursor#20 print_line_cursor#39 print_line_cursor#1 ] 
-Uplifting [print_str] best 517292 combination zp ZP_WORD:11 [ print_str::str#11 print_str::str#13 print_str::str#0 ] 
-Uplifting [print_cls] best 517292 combination zp ZP_WORD:80 [ print_cls::sc#2 print_cls::sc#1 ] 
-Uplifting [print_word] best 517292 combination zp ZP_WORD:21 [ print_word::w#5 print_word::w#3 print_word::w#4 print_word::w#1 print_word::w#2 print_word::w#11 ] 
-Uplifting [print_sdword] best 517292 combination zp ZP_DWORD:13 [ print_sdword::dw#4 print_sdword::dw#3 print_sdword::dw#1 print_sdword::dw#2 print_sdword::dw#0 ] 
-Uplifting [print_sword] best 517292 combination zp ZP_WORD:27 [ print_sword::w#4 print_sword::w#3 print_sword::w#1 print_sword::w#2 print_sword::w#0 ] 
-Uplifting [print_byte] best 517280 combination reg byte x [ print_byte::b#2 print_byte::b#0 print_byte::b#1 ] reg byte a [ print_byte::$0 ] reg byte a [ print_byte::$2 ] 
-Uplifting [print_dword] best 517280 combination zp ZP_DWORD:17 [ print_dword::dw#3 print_dword::dw#1 print_dword::dw#2 print_dword::dw#0 ] 
-Uplifting [print_char] best 517265 combination reg byte a [ print_char::ch#4 print_char::ch#2 print_char::ch#3 ] 
-Uplifting [mul16u_error] best 517265 combination zp ZP_WORD:157 [ mul16u_error::a#0 ] zp ZP_WORD:159 [ mul16u_error::b#0 ] zp ZP_DWORD:161 [ mul16u_error::ms#0 ] zp ZP_DWORD:165 [ mul16u_error::mn#0 ] 
-Uplifting [mul16s_error] best 517265 combination zp ZP_WORD:106 [ mul16s_error::a#0 ] zp ZP_WORD:108 [ mul16s_error::b#0 ] zp ZP_DWORD:110 [ mul16s_error::ms#0 ] zp ZP_DWORD:114 [ mul16s_error::mn#0 ] 
-Uplifting [print_ln] best 517265 combination 
-Uplifting [main] best 517265 combination 
+Uplifting [] best 517295 combination zp ZP_WORD:25 [ print_char_cursor#76 print_char_cursor#120 print_char_cursor#116 print_char_cursor#117 print_char_cursor#118 print_char_cursor#130 print_char_cursor#158 print_char_cursor#159 print_char_cursor#113 print_char_cursor#112 print_char_cursor#20 print_char_cursor#1 print_char_cursor#114 ] zp ZP_WORD:9 [ print_line_cursor#20 print_line_cursor#39 print_line_cursor#1 ] 
+Uplifting [print_str] best 517295 combination zp ZP_WORD:11 [ print_str::str#11 print_str::str#13 print_str::str#0 ] 
+Uplifting [print_cls] best 517295 combination zp ZP_WORD:80 [ print_cls::sc#2 print_cls::sc#1 ] 
+Uplifting [print_word] best 517295 combination zp ZP_WORD:21 [ print_word::w#5 print_word::w#3 print_word::w#4 print_word::w#1 print_word::w#2 print_word::w#11 ] 
+Uplifting [print_sdword] best 517295 combination zp ZP_DWORD:13 [ print_sdword::dw#4 print_sdword::dw#3 print_sdword::dw#1 print_sdword::dw#2 print_sdword::dw#0 ] 
+Uplifting [print_sword] best 517295 combination zp ZP_WORD:27 [ print_sword::w#4 print_sword::w#3 print_sword::w#1 print_sword::w#2 print_sword::w#0 ] 
+Uplifting [print_byte] best 517283 combination reg byte x [ print_byte::b#2 print_byte::b#0 print_byte::b#1 ] reg byte a [ print_byte::$0 ] reg byte a [ print_byte::$2 ] 
+Uplifting [print_dword] best 517283 combination zp ZP_DWORD:17 [ print_dword::dw#3 print_dword::dw#1 print_dword::dw#2 print_dword::dw#0 ] 
+Uplifting [print_char] best 517268 combination reg byte a [ print_char::ch#4 print_char::ch#2 print_char::ch#3 ] 
+Uplifting [mul16u_error] best 517268 combination zp ZP_WORD:157 [ mul16u_error::a#0 ] zp ZP_WORD:159 [ mul16u_error::b#0 ] zp ZP_DWORD:161 [ mul16u_error::ms#0 ] zp ZP_DWORD:165 [ mul16u_error::mn#0 ] 
+Uplifting [mul16s_error] best 517268 combination zp ZP_WORD:106 [ mul16s_error::a#0 ] zp ZP_WORD:108 [ mul16s_error::b#0 ] zp ZP_DWORD:110 [ mul16s_error::ms#0 ] zp ZP_DWORD:114 [ mul16s_error::mn#0 ] 
+Uplifting [print_ln] best 517268 combination 
+Uplifting [main] best 517268 combination 
 Attempting to uplift remaining variables inzp ZP_BYTE:71 [ mulf_init::x_2#3 mulf_init::x_2#2 mulf_init::x_2#1 ]
-Uplifting [mulf_init] best 517265 combination zp ZP_BYTE:71 [ mulf_init::x_2#3 mulf_init::x_2#2 mulf_init::x_2#1 ] 
+Uplifting [mulf_init] best 517268 combination zp ZP_BYTE:71 [ mulf_init::x_2#3 mulf_init::x_2#2 mulf_init::x_2#1 ] 
 Attempting to uplift remaining variables inzp ZP_BYTE:74 [ mulf_init::x_255#2 mulf_init::x_255#1 ]
-Uplifting [mulf_init] best 517145 combination reg byte x [ mulf_init::x_255#2 mulf_init::x_255#1 ] 
+Uplifting [mulf_init] best 517148 combination reg byte x [ mulf_init::x_255#2 mulf_init::x_255#1 ] 
 Attempting to uplift remaining variables inzp ZP_BYTE:79 [ mulf_init::dir#2 mulf_init::dir#3 ]
-Uplifting [mulf_init] best 517145 combination zp ZP_BYTE:79 [ mulf_init::dir#2 mulf_init::dir#3 ] 
+Uplifting [mulf_init] best 517148 combination zp ZP_BYTE:79 [ mulf_init::dir#2 mulf_init::dir#3 ] 
 Coalescing zero page register with common assignment [ zp ZP_WORD:3 [ mul16s_compare::a#2 mul16s_compare::a#5 mul16s_compare::a#1 ] ] with [ zp ZP_WORD:82 [ muls16s::a#0 ] ] - score: 1
 Coalescing zero page register with common assignment [ zp ZP_WORD:3 [ mul16s_compare::a#2 mul16s_compare::a#5 mul16s_compare::a#1 muls16s::a#0 ] ] with [ zp ZP_WORD:94 [ mul16s::a#0 ] ] - score: 1
 Coalescing zero page register with common assignment [ zp ZP_WORD:3 [ mul16s_compare::a#2 mul16s_compare::a#5 mul16s_compare::a#1 muls16s::a#0 mul16s::a#0 ] ] with [ zp ZP_WORD:106 [ mul16s_error::a#0 ] ] - score: 1
@@ -9369,15 +9358,15 @@ Coalescing zero page register [ zp ZP_WORD:5 [ mul16s_compare::b#2 mul16s_compar
 Coalescing zero page register [ zp ZP_WORD:5 [ mul16s_compare::b#2 mul16s_compare::b#5 mul16s_compare::b#1 muls16s::b#0 mul16s::b#0 mul16s_error::b#0 muls16u::i#2 muls16u::i#1 mulf_init::sqr1_hi#2 mulf_init::sqr1_hi#1 ] ] with [ zp ZP_WORD:77 [ mulf_init::sqr2_hi#2 mulf_init::sqr2_hi#1 ] ]
 Coalescing zero page register [ zp ZP_WORD:9 [ print_line_cursor#20 print_line_cursor#39 print_line_cursor#1 ] ] with [ zp ZP_WORD:72 [ mulf_init::sqr#3 mulf_init::sqr#4 mulf_init::sqr#1 mulf_init::sqr#2 ] ]
 Coalescing zero page register [ zp ZP_WORD:11 [ print_str::str#11 print_str::str#13 print_str::str#0 ] ] with [ zp ZP_WORD:35 [ mul16u::a#3 mul16u::a#6 mul16u::a#8 mul16u::a#2 mul16u::a#0 ] ]
-Coalescing zero page register [ zp ZP_WORD:11 [ print_str::str#11 print_str::str#13 print_str::str#0 mul16u::a#3 mul16u::a#6 mul16u::a#8 mul16u::a#2 mul16u::a#0 ] ] with [ zp ZP_WORD:45 [ muls16s::i#2 muls16s::i#1 ] ]
-Coalescing zero page register [ zp ZP_WORD:11 [ print_str::str#11 print_str::str#13 print_str::str#0 mul16u::a#3 mul16u::a#6 mul16u::a#8 mul16u::a#2 mul16u::a#0 muls16s::i#2 muls16s::i#1 ] ] with [ zp ZP_WORD:51 [ muls16s::j#2 muls16s::j#1 ] ]
-Coalescing zero page register [ zp ZP_WORD:11 [ print_str::str#11 print_str::str#13 print_str::str#0 mul16u::a#3 mul16u::a#6 mul16u::a#8 mul16u::a#2 mul16u::a#0 muls16s::i#2 muls16s::i#1 muls16s::j#2 muls16s::j#1 ] ] with [ zp ZP_WORD:124 [ mul16s::$6 mul16s::$16 ] ]
-Coalescing zero page register [ zp ZP_WORD:11 [ print_str::str#11 print_str::str#13 print_str::str#0 mul16u::a#3 mul16u::a#6 mul16u::a#8 mul16u::a#2 mul16u::a#0 muls16s::i#2 muls16s::i#1 muls16s::j#2 muls16s::j#1 mul16s::$6 mul16s::$16 ] ] with [ zp ZP_WORD:128 [ mul16s::$12 mul16s::$17 ] ]
+Coalescing zero page register [ zp ZP_WORD:11 [ print_str::str#11 print_str::str#13 print_str::str#0 mul16u::a#3 mul16u::a#6 mul16u::a#8 mul16u::a#2 mul16u::a#0 ] ] with [ zp ZP_WORD:45 [ muls16s::j#2 muls16s::j#1 ] ]
+Coalescing zero page register [ zp ZP_WORD:11 [ print_str::str#11 print_str::str#13 print_str::str#0 mul16u::a#3 mul16u::a#6 mul16u::a#8 mul16u::a#2 mul16u::a#0 muls16s::j#2 muls16s::j#1 ] ] with [ zp ZP_WORD:51 [ muls16s::i#2 muls16s::i#1 ] ]
+Coalescing zero page register [ zp ZP_WORD:11 [ print_str::str#11 print_str::str#13 print_str::str#0 mul16u::a#3 mul16u::a#6 mul16u::a#8 mul16u::a#2 mul16u::a#0 muls16s::j#2 muls16s::j#1 muls16s::i#2 muls16s::i#1 ] ] with [ zp ZP_WORD:124 [ mul16s::$6 mul16s::$16 ] ]
+Coalescing zero page register [ zp ZP_WORD:11 [ print_str::str#11 print_str::str#13 print_str::str#0 mul16u::a#3 mul16u::a#6 mul16u::a#8 mul16u::a#2 mul16u::a#0 muls16s::j#2 muls16s::j#1 muls16s::i#2 muls16s::i#1 mul16s::$6 mul16s::$16 ] ] with [ zp ZP_WORD:128 [ mul16s::$12 mul16s::$17 ] ]
 Coalescing zero page register [ zp ZP_BYTE:71 [ mulf_init::x_2#3 mulf_init::x_2#2 mulf_init::x_2#1 ] ] with [ zp ZP_BYTE:79 [ mulf_init::dir#2 mulf_init::dir#3 ] ]
 Allocated (was zp ZP_WORD:3) zp ZP_WORD:2 [ mul16s_compare::a#2 mul16s_compare::a#5 mul16s_compare::a#1 muls16s::a#0 mul16s::a#0 mul16s_error::a#0 print_word::w#5 print_word::w#3 print_word::w#4 print_word::w#1 print_word::w#2 print_word::w#11 print_sword::w#4 print_sword::w#3 print_sword::w#1 print_sword::w#2 print_sword::w#0 mul16u_error::a#0 mul16u_compare::a#2 mul16u_compare::a#5 mul16u_compare::a#1 muls16u::a#0 mulf_init::sqr1_lo#2 mulf_init::sqr1_lo#1 mulf_init::sqr2_lo#2 mulf_init::sqr2_lo#1 print_cls::sc#2 print_cls::sc#1 ]
 Allocated (was zp ZP_WORD:5) zp ZP_WORD:4 [ mul16s_compare::b#2 mul16s_compare::b#5 mul16s_compare::b#1 muls16s::b#0 mul16s::b#0 mul16s_error::b#0 muls16u::i#2 muls16u::i#1 mulf_init::sqr1_hi#2 mulf_init::sqr1_hi#1 mulf_init::sqr2_hi#2 mulf_init::sqr2_hi#1 ]
 Allocated (was zp ZP_WORD:9) zp ZP_WORD:6 [ print_line_cursor#20 print_line_cursor#39 print_line_cursor#1 mulf_init::sqr#3 mulf_init::sqr#4 mulf_init::sqr#1 mulf_init::sqr#2 ]
-Allocated (was zp ZP_WORD:11) zp ZP_WORD:8 [ print_str::str#11 print_str::str#13 print_str::str#0 mul16u::a#3 mul16u::a#6 mul16u::a#8 mul16u::a#2 mul16u::a#0 muls16s::i#2 muls16s::i#1 muls16s::j#2 muls16s::j#1 mul16s::$6 mul16s::$16 mul16s::$12 mul16s::$17 ]
+Allocated (was zp ZP_WORD:11) zp ZP_WORD:8 [ print_str::str#11 print_str::str#13 print_str::str#0 mul16u::a#3 mul16u::a#6 mul16u::a#8 mul16u::a#2 mul16u::a#0 muls16s::j#2 muls16s::j#1 muls16s::i#2 muls16s::i#1 mul16s::$6 mul16s::$16 mul16s::$12 mul16s::$17 ]
 Allocated (was zp ZP_DWORD:13) zp ZP_DWORD:10 [ print_sdword::dw#4 print_sdword::dw#3 print_sdword::dw#1 print_sdword::dw#2 print_sdword::dw#0 print_dword::dw#3 print_dword::dw#1 print_dword::dw#2 print_dword::dw#0 mul16s_error::ms#0 mul16s_compare::ms#0 mul16u_compare::ms#0 mul16u_error::ms#0 muls16s::m#5 muls16s::return#0 muls16s::m#3 muls16s::m#1 muls16s::m#2 muls16s::return#2 muls16u::return#0 muls16u::m#3 muls16u::m#1 muls16u::return#2 ]
 Allocated (was zp ZP_WORD:25) zp ZP_WORD:14 [ print_char_cursor#76 print_char_cursor#120 print_char_cursor#116 print_char_cursor#117 print_char_cursor#118 print_char_cursor#130 print_char_cursor#158 print_char_cursor#159 print_char_cursor#113 print_char_cursor#112 print_char_cursor#20 print_char_cursor#1 print_char_cursor#114 ]
 Allocated (was zp ZP_DWORD:29) zp ZP_DWORD:16 [ mul16s::m#4 mul16s::m#5 mul16s::m#1 mul16s::m#0 mul16s::m#2 mul16u::return#2 mul16s::return#0 mul16u::res#2 mul16u::res#6 mul16u::res#1 mul16u::return#3 mul16s::return#2 mul16s_compare::mn#0 mul16s_error::mn#0 mul16u_compare::mn#0 mul16u_error::mn#0 ]
@@ -10270,112 +10259,32 @@ mul16u: {
 //SEG311 muls16s
 muls16s: {
     .label m = $a
-    .label i = 8
-    .label return = $a
     .label j = 8
+    .label return = $a
+    .label i = 8
     .label a = 2
     .label b = 4
-  //SEG312 [148] if((signed word) muls16s::a#0>=(byte/signed byte/word/signed word/dword/signed dword) 0) goto muls16s::@1 [ muls16s::a#0 muls16s::b#0 ] ( main:2::mul16s_compare:11::muls16s:20 [ mul16s_compare::i#9 mul16s_compare::a#1 mul16s_compare::b#1 mul16s_compare::j#2 print_line_cursor#1 muls16s::a#0 muls16s::b#0 ] ) -- vwsz1_ge_0_then_la1 
+  //SEG312 [148] if((signed word) muls16s::a#0<(byte/signed byte/word/signed word/dword/signed dword) 0) goto muls16s::@5 [ muls16s::a#0 muls16s::b#0 ] ( main:2::mul16s_compare:11::muls16s:20 [ mul16s_compare::i#9 mul16s_compare::a#1 mul16s_compare::b#1 mul16s_compare::j#2 print_line_cursor#1 muls16s::a#0 muls16s::b#0 ] ) -- vwsz1_lt_0_then_la1 
     lda a+1
-    bpl b1
-  //SEG313 [149] phi from muls16s to muls16s::@2 [phi:muls16s->muls16s::@2]
-  b2_from_muls16s:
-  //SEG314 [149] phi (signed word) muls16s::i#2 = (byte/signed byte/word/signed word/dword/signed dword) 0 [phi:muls16s->muls16s::@2#0] -- vwsz1=vbuc1 
-    lda #<0
-    sta i
-    lda #>0
-    sta i+1
-  //SEG315 [149] phi (signed dword) muls16s::m#3 = (byte/signed byte/word/signed word/dword/signed dword) 0 [phi:muls16s->muls16s::@2#1] -- vdsz1=vbuc1 
-    lda #<0
-    sta m
-    lda #>0
-    sta m+1
-    lda #<0>>$10
-    sta m+2
-    lda #>0>>$10
-    sta m+3
-    jmp b2
-  //SEG316 [149] phi from muls16s::@2 to muls16s::@2 [phi:muls16s::@2->muls16s::@2]
-  b2_from_b2:
-  //SEG317 [149] phi (signed word) muls16s::i#2 = (signed word) muls16s::i#1 [phi:muls16s::@2->muls16s::@2#0] -- register_copy 
-  //SEG318 [149] phi (signed dword) muls16s::m#3 = (signed dword) muls16s::m#1 [phi:muls16s::@2->muls16s::@2#1] -- register_copy 
-    jmp b2
-  //SEG319 muls16s::@2
-  b2:
-  //SEG320 [150] (signed dword) muls16s::m#1 ← (signed dword) muls16s::m#3 - (signed word) muls16s::b#0 [ muls16s::a#0 muls16s::b#0 muls16s::i#2 muls16s::m#1 ] ( main:2::mul16s_compare:11::muls16s:20 [ mul16s_compare::i#9 mul16s_compare::a#1 mul16s_compare::b#1 mul16s_compare::j#2 print_line_cursor#1 muls16s::a#0 muls16s::b#0 muls16s::i#2 muls16s::m#1 ] ) -- vdsz1=vdsz1_minus_vwsz2 
-    lda b+1
-    ora #$7f
-    bmi !+
-    lda #0
-  !:
-    sta $ff
-    sec
-    lda m
-    sbc b
-    sta m
-    lda m+1
-    sbc b+1
-    sta m+1
-    lda m+2
-    sbc $ff
-    sta m+2
-    lda m+3
-    sbc $ff
-    sta m+3
-  //SEG321 [151] (signed word) muls16s::i#1 ← -- (signed word) muls16s::i#2 [ muls16s::a#0 muls16s::b#0 muls16s::m#1 muls16s::i#1 ] ( main:2::mul16s_compare:11::muls16s:20 [ mul16s_compare::i#9 mul16s_compare::a#1 mul16s_compare::b#1 mul16s_compare::j#2 print_line_cursor#1 muls16s::a#0 muls16s::b#0 muls16s::m#1 muls16s::i#1 ] ) -- vwsz1=_dec_vwsz1 
-    lda i
-    bne !+
-    dec i+1
-  !:
-    dec i
-  //SEG322 [152] if((signed word) muls16s::i#1!=(signed word) muls16s::a#0) goto muls16s::@2 [ muls16s::a#0 muls16s::b#0 muls16s::m#1 muls16s::i#1 ] ( main:2::mul16s_compare:11::muls16s:20 [ mul16s_compare::i#9 mul16s_compare::a#1 mul16s_compare::b#1 mul16s_compare::j#2 print_line_cursor#1 muls16s::a#0 muls16s::b#0 muls16s::m#1 muls16s::i#1 ] ) -- vwsz1_neq_vwsz2_then_la1 
-    lda i+1
-    cmp a+1
-    bne b2_from_b2
-    lda i
-    cmp a
-    bne b2_from_b2
-  //SEG323 [153] phi from muls16s::@2 muls16s::@5 to muls16s::@3 [phi:muls16s::@2/muls16s::@5->muls16s::@3]
-  b3_from_b2:
-  b3_from_b5:
-  //SEG324 [153] phi (signed dword) muls16s::return#0 = (signed dword) muls16s::m#1 [phi:muls16s::@2/muls16s::@5->muls16s::@3#0] -- register_copy 
-    jmp b3
-  //SEG325 [153] phi from muls16s::@1 to muls16s::@3 [phi:muls16s::@1->muls16s::@3]
-  b3_from_b1:
-  //SEG326 [153] phi (signed dword) muls16s::return#0 = (byte/signed byte/word/signed word/dword/signed dword) 0 [phi:muls16s::@1->muls16s::@3#0] -- vdsz1=vbuc1 
-    lda #<0
-    sta return
-    lda #>0
-    sta return+1
-    lda #<0>>$10
-    sta return+2
-    lda #>0>>$10
-    sta return+3
-    jmp b3
-  //SEG327 muls16s::@3
-  b3:
-    jmp breturn
-  //SEG328 muls16s::@return
-  breturn:
-  //SEG329 [154] return  [ muls16s::return#0 ] ( main:2::mul16s_compare:11::muls16s:20 [ mul16s_compare::i#9 mul16s_compare::a#1 mul16s_compare::b#1 mul16s_compare::j#2 print_line_cursor#1 muls16s::return#0 ] )
-    rts
-  //SEG330 muls16s::@1
-  b1:
-  //SEG331 [155] if((signed word) muls16s::a#0<=(byte/signed byte/word/signed word/dword/signed dword) 0) goto muls16s::@3 [ muls16s::a#0 muls16s::b#0 ] ( main:2::mul16s_compare:11::muls16s:20 [ mul16s_compare::i#9 mul16s_compare::a#1 mul16s_compare::b#1 mul16s_compare::j#2 print_line_cursor#1 muls16s::a#0 muls16s::b#0 ] ) -- vwsz1_le_0_then_la1 
+    bmi b5_from_muls16s
+    jmp b6
+  //SEG313 muls16s::@6
+  b6:
+  //SEG314 [149] if((signed word) muls16s::a#0<=(byte/signed byte/word/signed word/dword/signed dword) 0) goto muls16s::@4 [ muls16s::a#0 muls16s::b#0 ] ( main:2::mul16s_compare:11::muls16s:20 [ mul16s_compare::i#9 mul16s_compare::a#1 mul16s_compare::b#1 mul16s_compare::j#2 print_line_cursor#1 muls16s::a#0 muls16s::b#0 ] ) -- vwsz1_le_0_then_la1 
     lda a+1
-    bmi b3_from_b1
+    bmi b4_from_b6
     bne !+
     lda a
-    beq b3_from_b1
+    beq b4_from_b6
   !:
-  //SEG332 [156] phi from muls16s::@1 to muls16s::@5 [phi:muls16s::@1->muls16s::@5]
-  b5_from_b1:
-  //SEG333 [156] phi (signed word) muls16s::j#2 = (byte/signed byte/word/signed word/dword/signed dword) 0 [phi:muls16s::@1->muls16s::@5#0] -- vwsz1=vbuc1 
+  //SEG315 [150] phi from muls16s::@6 to muls16s::@3 [phi:muls16s::@6->muls16s::@3]
+  b3_from_b6:
+  //SEG316 [150] phi (signed word) muls16s::j#2 = (byte/signed byte/word/signed word/dword/signed dword) 0 [phi:muls16s::@6->muls16s::@3#0] -- vwsz1=vbuc1 
     lda #<0
     sta j
     lda #>0
     sta j+1
-  //SEG334 [156] phi (signed dword) muls16s::m#5 = (byte/signed byte/word/signed word/dword/signed dword) 0 [phi:muls16s::@1->muls16s::@5#1] -- vdsz1=vbuc1 
+  //SEG317 [150] phi (signed dword) muls16s::m#3 = (byte/signed byte/word/signed word/dword/signed dword) 0 [phi:muls16s::@6->muls16s::@3#1] -- vdsz1=vbuc1 
     lda #<0
     sta m
     lda #>0
@@ -10384,15 +10293,15 @@ muls16s: {
     sta m+2
     lda #>0>>$10
     sta m+3
-    jmp b5
-  //SEG335 [156] phi from muls16s::@5 to muls16s::@5 [phi:muls16s::@5->muls16s::@5]
-  b5_from_b5:
-  //SEG336 [156] phi (signed word) muls16s::j#2 = (signed word) muls16s::j#1 [phi:muls16s::@5->muls16s::@5#0] -- register_copy 
-  //SEG337 [156] phi (signed dword) muls16s::m#5 = (signed dword) muls16s::m#2 [phi:muls16s::@5->muls16s::@5#1] -- register_copy 
-    jmp b5
-  //SEG338 muls16s::@5
-  b5:
-  //SEG339 [157] (signed dword) muls16s::m#2 ← (signed dword) muls16s::m#5 + (signed word) muls16s::b#0 [ muls16s::a#0 muls16s::b#0 muls16s::m#2 muls16s::j#2 ] ( main:2::mul16s_compare:11::muls16s:20 [ mul16s_compare::i#9 mul16s_compare::a#1 mul16s_compare::b#1 mul16s_compare::j#2 print_line_cursor#1 muls16s::a#0 muls16s::b#0 muls16s::m#2 muls16s::j#2 ] ) -- vdsz1=vdsz1_plus_vwsz2 
+    jmp b3
+  //SEG318 [150] phi from muls16s::@3 to muls16s::@3 [phi:muls16s::@3->muls16s::@3]
+  b3_from_b3:
+  //SEG319 [150] phi (signed word) muls16s::j#2 = (signed word) muls16s::j#1 [phi:muls16s::@3->muls16s::@3#0] -- register_copy 
+  //SEG320 [150] phi (signed dword) muls16s::m#3 = (signed dword) muls16s::m#1 [phi:muls16s::@3->muls16s::@3#1] -- register_copy 
+    jmp b3
+  //SEG321 muls16s::@3
+  b3:
+  //SEG322 [151] (signed dword) muls16s::m#1 ← (signed dword) muls16s::m#3 + (signed word) muls16s::b#0 [ muls16s::a#0 muls16s::b#0 muls16s::j#2 muls16s::m#1 ] ( main:2::mul16s_compare:11::muls16s:20 [ mul16s_compare::i#9 mul16s_compare::a#1 mul16s_compare::b#1 mul16s_compare::j#2 print_line_cursor#1 muls16s::a#0 muls16s::b#0 muls16s::j#2 muls16s::m#1 ] ) -- vdsz1=vdsz1_plus_vwsz2 
     lda b+1
     ora #$7f
     bmi !+
@@ -10412,19 +10321,100 @@ muls16s: {
     lda m+3
     adc $ff
     sta m+3
-  //SEG340 [158] (signed word) muls16s::j#1 ← ++ (signed word) muls16s::j#2 [ muls16s::a#0 muls16s::b#0 muls16s::m#2 muls16s::j#1 ] ( main:2::mul16s_compare:11::muls16s:20 [ mul16s_compare::i#9 mul16s_compare::a#1 mul16s_compare::b#1 mul16s_compare::j#2 print_line_cursor#1 muls16s::a#0 muls16s::b#0 muls16s::m#2 muls16s::j#1 ] ) -- vwsz1=_inc_vwsz1 
+  //SEG323 [152] (signed word) muls16s::j#1 ← ++ (signed word) muls16s::j#2 [ muls16s::a#0 muls16s::b#0 muls16s::m#1 muls16s::j#1 ] ( main:2::mul16s_compare:11::muls16s:20 [ mul16s_compare::i#9 mul16s_compare::a#1 mul16s_compare::b#1 mul16s_compare::j#2 print_line_cursor#1 muls16s::a#0 muls16s::b#0 muls16s::m#1 muls16s::j#1 ] ) -- vwsz1=_inc_vwsz1 
     inc j
     bne !+
     inc j+1
   !:
-  //SEG341 [159] if((signed word) muls16s::j#1!=(signed word) muls16s::a#0) goto muls16s::@5 [ muls16s::a#0 muls16s::b#0 muls16s::m#2 muls16s::j#1 ] ( main:2::mul16s_compare:11::muls16s:20 [ mul16s_compare::i#9 mul16s_compare::a#1 mul16s_compare::b#1 mul16s_compare::j#2 print_line_cursor#1 muls16s::a#0 muls16s::b#0 muls16s::m#2 muls16s::j#1 ] ) -- vwsz1_neq_vwsz2_then_la1 
+  //SEG324 [153] if((signed word) muls16s::j#1!=(signed word) muls16s::a#0) goto muls16s::@3 [ muls16s::a#0 muls16s::b#0 muls16s::m#1 muls16s::j#1 ] ( main:2::mul16s_compare:11::muls16s:20 [ mul16s_compare::i#9 mul16s_compare::a#1 mul16s_compare::b#1 mul16s_compare::j#2 print_line_cursor#1 muls16s::a#0 muls16s::b#0 muls16s::m#1 muls16s::j#1 ] ) -- vwsz1_neq_vwsz2_then_la1 
     lda j+1
     cmp a+1
-    bne b5_from_b5
+    bne b3_from_b3
     lda j
     cmp a
+    bne b3_from_b3
+  //SEG325 [154] phi from muls16s::@3 muls16s::@5 to muls16s::@4 [phi:muls16s::@3/muls16s::@5->muls16s::@4]
+  b4_from_b3:
+  b4_from_b5:
+  //SEG326 [154] phi (signed dword) muls16s::return#0 = (signed dword) muls16s::m#1 [phi:muls16s::@3/muls16s::@5->muls16s::@4#0] -- register_copy 
+    jmp b4
+  //SEG327 [154] phi from muls16s::@6 to muls16s::@4 [phi:muls16s::@6->muls16s::@4]
+  b4_from_b6:
+  //SEG328 [154] phi (signed dword) muls16s::return#0 = (byte/signed byte/word/signed word/dword/signed dword) 0 [phi:muls16s::@6->muls16s::@4#0] -- vdsz1=vbuc1 
+    lda #<0
+    sta return
+    lda #>0
+    sta return+1
+    lda #<0>>$10
+    sta return+2
+    lda #>0>>$10
+    sta return+3
+    jmp b4
+  //SEG329 muls16s::@4
+  b4:
+    jmp breturn
+  //SEG330 muls16s::@return
+  breturn:
+  //SEG331 [155] return  [ muls16s::return#0 ] ( main:2::mul16s_compare:11::muls16s:20 [ mul16s_compare::i#9 mul16s_compare::a#1 mul16s_compare::b#1 mul16s_compare::j#2 print_line_cursor#1 muls16s::return#0 ] )
+    rts
+  //SEG332 [156] phi from muls16s to muls16s::@5 [phi:muls16s->muls16s::@5]
+  b5_from_muls16s:
+  //SEG333 [156] phi (signed word) muls16s::i#2 = (byte/signed byte/word/signed word/dword/signed dword) 0 [phi:muls16s->muls16s::@5#0] -- vwsz1=vbuc1 
+    lda #<0
+    sta i
+    lda #>0
+    sta i+1
+  //SEG334 [156] phi (signed dword) muls16s::m#5 = (byte/signed byte/word/signed word/dword/signed dword) 0 [phi:muls16s->muls16s::@5#1] -- vdsz1=vbuc1 
+    lda #<0
+    sta m
+    lda #>0
+    sta m+1
+    lda #<0>>$10
+    sta m+2
+    lda #>0>>$10
+    sta m+3
+    jmp b5
+  //SEG335 [156] phi from muls16s::@5 to muls16s::@5 [phi:muls16s::@5->muls16s::@5]
+  b5_from_b5:
+  //SEG336 [156] phi (signed word) muls16s::i#2 = (signed word) muls16s::i#1 [phi:muls16s::@5->muls16s::@5#0] -- register_copy 
+  //SEG337 [156] phi (signed dword) muls16s::m#5 = (signed dword) muls16s::m#2 [phi:muls16s::@5->muls16s::@5#1] -- register_copy 
+    jmp b5
+  //SEG338 muls16s::@5
+  b5:
+  //SEG339 [157] (signed dword) muls16s::m#2 ← (signed dword) muls16s::m#5 - (signed word) muls16s::b#0 [ muls16s::a#0 muls16s::b#0 muls16s::m#2 muls16s::i#2 ] ( main:2::mul16s_compare:11::muls16s:20 [ mul16s_compare::i#9 mul16s_compare::a#1 mul16s_compare::b#1 mul16s_compare::j#2 print_line_cursor#1 muls16s::a#0 muls16s::b#0 muls16s::m#2 muls16s::i#2 ] ) -- vdsz1=vdsz1_minus_vwsz2 
+    lda b+1
+    ora #$7f
+    bmi !+
+    lda #0
+  !:
+    sta $ff
+    sec
+    lda m
+    sbc b
+    sta m
+    lda m+1
+    sbc b+1
+    sta m+1
+    lda m+2
+    sbc $ff
+    sta m+2
+    lda m+3
+    sbc $ff
+    sta m+3
+  //SEG340 [158] (signed word) muls16s::i#1 ← -- (signed word) muls16s::i#2 [ muls16s::a#0 muls16s::b#0 muls16s::m#2 muls16s::i#1 ] ( main:2::mul16s_compare:11::muls16s:20 [ mul16s_compare::i#9 mul16s_compare::a#1 mul16s_compare::b#1 mul16s_compare::j#2 print_line_cursor#1 muls16s::a#0 muls16s::b#0 muls16s::m#2 muls16s::i#1 ] ) -- vwsz1=_dec_vwsz1 
+    lda i
+    bne !+
+    dec i+1
+  !:
+    dec i
+  //SEG341 [159] if((signed word) muls16s::i#1!=(signed word) muls16s::a#0) goto muls16s::@5 [ muls16s::a#0 muls16s::b#0 muls16s::m#2 muls16s::i#1 ] ( main:2::mul16s_compare:11::muls16s:20 [ mul16s_compare::i#9 mul16s_compare::a#1 mul16s_compare::b#1 mul16s_compare::j#2 print_line_cursor#1 muls16s::a#0 muls16s::b#0 muls16s::m#2 muls16s::i#1 ] ) -- vwsz1_neq_vwsz2_then_la1 
+    lda i+1
+    cmp a+1
     bne b5_from_b5
-    jmp b3_from_b5
+    lda i
+    cmp a
+    bne b5_from_b5
+    jmp b4_from_b5
 }
 //SEG342 mul16u_compare
 mul16u_compare: {
@@ -11155,8 +11145,9 @@ Removing instruction jmp b1
 Removing instruction jmp breturn
 Removing instruction jmp b7
 Removing instruction jmp b4
-Removing instruction jmp b2
+Removing instruction jmp b6
 Removing instruction jmp b3
+Removing instruction jmp b4
 Removing instruction jmp breturn
 Removing instruction jmp b5
 Removing instruction jmp b1
@@ -11225,8 +11216,8 @@ Replacing label b1_from_print_sword with b1
 Replacing label b1_from_b6 with b1
 Replacing label b2_from_b1 with b2
 Replacing label b4_from_b2 with b4
-Replacing label b2_from_b2 with b2
-Replacing label b2_from_b2 with b2
+Replacing label b3_from_b3 with b3
+Replacing label b3_from_b3 with b3
 Replacing label b5_from_b5 with b5
 Replacing label b5_from_b5 with b5
 Replacing label b2_from_b4 with b2
@@ -11285,8 +11276,8 @@ Removing instruction b2_from_b4:
 Removing instruction breturn:
 Removing instruction b4_from_b2:
 Removing instruction b4_from_b7:
-Removing instruction b2_from_b2:
-Removing instruction b3_from_b2:
+Removing instruction b3_from_b3:
+Removing instruction b4_from_b3:
 Removing instruction breturn:
 Removing instruction b5_from_b5:
 Removing instruction b1_from_b8:
@@ -11376,8 +11367,8 @@ Removing instruction b1_from_mul16u:
 Removing instruction breturn:
 Removing instruction b7:
 Removing instruction b1_from_b4:
-Removing instruction b2_from_muls16s:
-Removing instruction b5_from_b1:
+Removing instruction b6:
+Removing instruction b3_from_b6:
 Removing instruction b1_from_mul16u_compare:
 Removing instruction b10:
 Removing instruction mul16u_from_b10:
@@ -11413,18 +11404,19 @@ Removing instruction breturn:
 Removing instruction b1_from_print_cls:
 Removing instruction breturn:
 Succesful ASM optimization Pass5UnusedLabelElimination
-Skipping double jump to b3 in jmp b3_from_b5
+Skipping double jump to b4 in jmp b4_from_b5
 Skipping double jump to b4 in bne b12
 Succesful ASM optimization Pass5DoubleJumpElimination
 Relabelling long label b3_from_b11 to b5
-Relabelling long label b3_from_b5 to b4
-Relabelling long label b3_from_b1 to b6
+Relabelling long label b4_from_b5 to b1
+Relabelling long label b4_from_b6 to b2
+Relabelling long label b5_from_muls16s to b6
 Relabelling long label b3_from_b11 to b5
 Relabelling long label b1_from_muls16u to b3
 Succesful ASM optimization Pass5RelabelLongLabels
 Removing instruction jmp b1
 Removing instruction jmp b2
-Removing instruction jmp b2
+Removing instruction jmp b3
 Removing instruction jmp b5
 Removing instruction jmp b1
 Removing instruction jmp b2
@@ -11434,8 +11426,9 @@ Removing instruction jmp b3
 Removing instruction jmp b1
 Succesful ASM optimization Pass5NextJumpElimination
 Removing instruction lda #0
+Removing instruction lda a+1
 Succesful ASM optimization Pass5UnnecesaryLoadElimination
-Removing instruction b4:
+Removing instruction b1:
 Removing instruction b12:
 Succesful ASM optimization Pass5UnusedLabelElimination
 Removing unreachable instruction jmp b4
@@ -11667,10 +11660,10 @@ FINAL SYMBOL TABLE
 (byte[512]) mulf_sqr2_lo
 (const byte[512]) mulf_sqr2_lo#0 mulf_sqr2_lo = { fill( 512, 0) }
 (signed dword()) muls16s((signed word) muls16s::a , (signed word) muls16s::b)
-(label) muls16s::@1
-(label) muls16s::@2
 (label) muls16s::@3
+(label) muls16s::@4
 (label) muls16s::@5
+(label) muls16s::@6
 (label) muls16s::@return
 (signed word) muls16s::a
 (signed word) muls16s::a#0 a zp ZP_WORD:2 175.58333333333334
@@ -11807,7 +11800,7 @@ zp ZP_WORD:4 [ mul16s_compare::b#2 mul16s_compare::b#5 mul16s_compare::b#1 muls1
 reg byte y [ mul16s_compare::j#2 mul16s_compare::j#1 ]
 reg byte a [ mul16s_compare::ok#2 ]
 zp ZP_WORD:6 [ print_line_cursor#20 print_line_cursor#39 print_line_cursor#1 mulf_init::sqr#3 mulf_init::sqr#4 mulf_init::sqr#1 mulf_init::sqr#2 ]
-zp ZP_WORD:8 [ print_str::str#11 print_str::str#13 print_str::str#0 mul16u::a#3 mul16u::a#6 mul16u::a#8 mul16u::a#2 mul16u::a#0 muls16s::i#2 muls16s::i#1 muls16s::j#2 muls16s::j#1 mul16s::$6 mul16s::$16 mul16s::$12 mul16s::$17 ]
+zp ZP_WORD:8 [ print_str::str#11 print_str::str#13 print_str::str#0 mul16u::a#3 mul16u::a#6 mul16u::a#8 mul16u::a#2 mul16u::a#0 muls16s::j#2 muls16s::j#1 muls16s::i#2 muls16s::i#1 mul16s::$6 mul16s::$16 mul16s::$12 mul16s::$17 ]
 zp ZP_DWORD:10 [ print_sdword::dw#4 print_sdword::dw#3 print_sdword::dw#1 print_sdword::dw#2 print_sdword::dw#0 print_dword::dw#3 print_dword::dw#1 print_dword::dw#2 print_dword::dw#0 mul16s_error::ms#0 mul16s_compare::ms#0 mul16u_compare::ms#0 mul16u_error::ms#0 muls16s::m#5 muls16s::return#0 muls16s::m#3 muls16s::m#1 muls16s::m#2 muls16s::return#2 muls16u::return#0 muls16u::m#3 muls16u::m#1 muls16u::return#2 ]
 reg byte x [ print_byte::b#2 print_byte::b#0 print_byte::b#1 ]
 reg byte a [ print_char::ch#4 print_char::ch#2 print_char::ch#3 ]
@@ -11830,7 +11823,7 @@ reg byte a [ mulf_init::$6 ]
 
 
 FINAL ASSEMBLER
-Score: 431398
+Score: 431395
 
 //SEG0 Basic Upstart
 .pc = $801 "Basic"
@@ -12552,109 +12545,39 @@ mul16u: {
 //SEG311 muls16s
 muls16s: {
     .label m = $a
-    .label i = 8
-    .label return = $a
     .label j = 8
+    .label return = $a
+    .label i = 8
     .label a = 2
     .label b = 4
-  //SEG312 [148] if((signed word) muls16s::a#0>=(byte/signed byte/word/signed word/dword/signed dword) 0) goto muls16s::@1 [ muls16s::a#0 muls16s::b#0 ] ( main:2::mul16s_compare:11::muls16s:20 [ mul16s_compare::i#9 mul16s_compare::a#1 mul16s_compare::b#1 mul16s_compare::j#2 print_line_cursor#1 muls16s::a#0 muls16s::b#0 ] ) -- vwsz1_ge_0_then_la1 
-    lda a+1
-    bpl b1
-  //SEG313 [149] phi from muls16s to muls16s::@2 [phi:muls16s->muls16s::@2]
-  //SEG314 [149] phi (signed word) muls16s::i#2 = (byte/signed byte/word/signed word/dword/signed dword) 0 [phi:muls16s->muls16s::@2#0] -- vwsz1=vbuc1 
-    lda #<0
-    sta i
-    sta i+1
-  //SEG315 [149] phi (signed dword) muls16s::m#3 = (byte/signed byte/word/signed word/dword/signed dword) 0 [phi:muls16s->muls16s::@2#1] -- vdsz1=vbuc1 
-    sta m
-    sta m+1
-    lda #<0>>$10
-    sta m+2
-    lda #>0>>$10
-    sta m+3
-  //SEG316 [149] phi from muls16s::@2 to muls16s::@2 [phi:muls16s::@2->muls16s::@2]
-  //SEG317 [149] phi (signed word) muls16s::i#2 = (signed word) muls16s::i#1 [phi:muls16s::@2->muls16s::@2#0] -- register_copy 
-  //SEG318 [149] phi (signed dword) muls16s::m#3 = (signed dword) muls16s::m#1 [phi:muls16s::@2->muls16s::@2#1] -- register_copy 
-  //SEG319 muls16s::@2
-  b2:
-  //SEG320 [150] (signed dword) muls16s::m#1 ← (signed dword) muls16s::m#3 - (signed word) muls16s::b#0 [ muls16s::a#0 muls16s::b#0 muls16s::i#2 muls16s::m#1 ] ( main:2::mul16s_compare:11::muls16s:20 [ mul16s_compare::i#9 mul16s_compare::a#1 mul16s_compare::b#1 mul16s_compare::j#2 print_line_cursor#1 muls16s::a#0 muls16s::b#0 muls16s::i#2 muls16s::m#1 ] ) -- vdsz1=vdsz1_minus_vwsz2 
-    lda b+1
-    ora #$7f
-    bmi !+
-    lda #0
-  !:
-    sta $ff
-    sec
-    lda m
-    sbc b
-    sta m
-    lda m+1
-    sbc b+1
-    sta m+1
-    lda m+2
-    sbc $ff
-    sta m+2
-    lda m+3
-    sbc $ff
-    sta m+3
-  //SEG321 [151] (signed word) muls16s::i#1 ← -- (signed word) muls16s::i#2 [ muls16s::a#0 muls16s::b#0 muls16s::m#1 muls16s::i#1 ] ( main:2::mul16s_compare:11::muls16s:20 [ mul16s_compare::i#9 mul16s_compare::a#1 mul16s_compare::b#1 mul16s_compare::j#2 print_line_cursor#1 muls16s::a#0 muls16s::b#0 muls16s::m#1 muls16s::i#1 ] ) -- vwsz1=_dec_vwsz1 
-    lda i
-    bne !+
-    dec i+1
-  !:
-    dec i
-  //SEG322 [152] if((signed word) muls16s::i#1!=(signed word) muls16s::a#0) goto muls16s::@2 [ muls16s::a#0 muls16s::b#0 muls16s::m#1 muls16s::i#1 ] ( main:2::mul16s_compare:11::muls16s:20 [ mul16s_compare::i#9 mul16s_compare::a#1 mul16s_compare::b#1 mul16s_compare::j#2 print_line_cursor#1 muls16s::a#0 muls16s::b#0 muls16s::m#1 muls16s::i#1 ] ) -- vwsz1_neq_vwsz2_then_la1 
-    lda i+1
-    cmp a+1
-    bne b2
-    lda i
-    cmp a
-    bne b2
-  //SEG323 [153] phi from muls16s::@2 muls16s::@5 to muls16s::@3 [phi:muls16s::@2/muls16s::@5->muls16s::@3]
-  //SEG324 [153] phi (signed dword) muls16s::return#0 = (signed dword) muls16s::m#1 [phi:muls16s::@2/muls16s::@5->muls16s::@3#0] -- register_copy 
-    jmp b3
-  //SEG325 [153] phi from muls16s::@1 to muls16s::@3 [phi:muls16s::@1->muls16s::@3]
-  b6:
-  //SEG326 [153] phi (signed dword) muls16s::return#0 = (byte/signed byte/word/signed word/dword/signed dword) 0 [phi:muls16s::@1->muls16s::@3#0] -- vdsz1=vbuc1 
-    lda #<0
-    sta return
-    sta return+1
-    lda #<0>>$10
-    sta return+2
-    lda #>0>>$10
-    sta return+3
-  //SEG327 muls16s::@3
-  b3:
-  //SEG328 muls16s::@return
-  //SEG329 [154] return  [ muls16s::return#0 ] ( main:2::mul16s_compare:11::muls16s:20 [ mul16s_compare::i#9 mul16s_compare::a#1 mul16s_compare::b#1 mul16s_compare::j#2 print_line_cursor#1 muls16s::return#0 ] )
-    rts
-  //SEG330 muls16s::@1
-  b1:
-  //SEG331 [155] if((signed word) muls16s::a#0<=(byte/signed byte/word/signed word/dword/signed dword) 0) goto muls16s::@3 [ muls16s::a#0 muls16s::b#0 ] ( main:2::mul16s_compare:11::muls16s:20 [ mul16s_compare::i#9 mul16s_compare::a#1 mul16s_compare::b#1 mul16s_compare::j#2 print_line_cursor#1 muls16s::a#0 muls16s::b#0 ] ) -- vwsz1_le_0_then_la1 
+  //SEG312 [148] if((signed word) muls16s::a#0<(byte/signed byte/word/signed word/dword/signed dword) 0) goto muls16s::@5 [ muls16s::a#0 muls16s::b#0 ] ( main:2::mul16s_compare:11::muls16s:20 [ mul16s_compare::i#9 mul16s_compare::a#1 mul16s_compare::b#1 mul16s_compare::j#2 print_line_cursor#1 muls16s::a#0 muls16s::b#0 ] ) -- vwsz1_lt_0_then_la1 
     lda a+1
     bmi b6
+  //SEG313 muls16s::@6
+  //SEG314 [149] if((signed word) muls16s::a#0<=(byte/signed byte/word/signed word/dword/signed dword) 0) goto muls16s::@4 [ muls16s::a#0 muls16s::b#0 ] ( main:2::mul16s_compare:11::muls16s:20 [ mul16s_compare::i#9 mul16s_compare::a#1 mul16s_compare::b#1 mul16s_compare::j#2 print_line_cursor#1 muls16s::a#0 muls16s::b#0 ] ) -- vwsz1_le_0_then_la1 
+    bmi b2
     bne !+
     lda a
-    beq b6
+    beq b2
   !:
-  //SEG332 [156] phi from muls16s::@1 to muls16s::@5 [phi:muls16s::@1->muls16s::@5]
-  //SEG333 [156] phi (signed word) muls16s::j#2 = (byte/signed byte/word/signed word/dword/signed dword) 0 [phi:muls16s::@1->muls16s::@5#0] -- vwsz1=vbuc1 
+  //SEG315 [150] phi from muls16s::@6 to muls16s::@3 [phi:muls16s::@6->muls16s::@3]
+  //SEG316 [150] phi (signed word) muls16s::j#2 = (byte/signed byte/word/signed word/dword/signed dword) 0 [phi:muls16s::@6->muls16s::@3#0] -- vwsz1=vbuc1 
     lda #<0
     sta j
     sta j+1
-  //SEG334 [156] phi (signed dword) muls16s::m#5 = (byte/signed byte/word/signed word/dword/signed dword) 0 [phi:muls16s::@1->muls16s::@5#1] -- vdsz1=vbuc1 
+  //SEG317 [150] phi (signed dword) muls16s::m#3 = (byte/signed byte/word/signed word/dword/signed dword) 0 [phi:muls16s::@6->muls16s::@3#1] -- vdsz1=vbuc1 
     sta m
     sta m+1
     lda #<0>>$10
     sta m+2
     lda #>0>>$10
     sta m+3
-  //SEG335 [156] phi from muls16s::@5 to muls16s::@5 [phi:muls16s::@5->muls16s::@5]
-  //SEG336 [156] phi (signed word) muls16s::j#2 = (signed word) muls16s::j#1 [phi:muls16s::@5->muls16s::@5#0] -- register_copy 
-  //SEG337 [156] phi (signed dword) muls16s::m#5 = (signed dword) muls16s::m#2 [phi:muls16s::@5->muls16s::@5#1] -- register_copy 
-  //SEG338 muls16s::@5
-  b5:
-  //SEG339 [157] (signed dword) muls16s::m#2 ← (signed dword) muls16s::m#5 + (signed word) muls16s::b#0 [ muls16s::a#0 muls16s::b#0 muls16s::m#2 muls16s::j#2 ] ( main:2::mul16s_compare:11::muls16s:20 [ mul16s_compare::i#9 mul16s_compare::a#1 mul16s_compare::b#1 mul16s_compare::j#2 print_line_cursor#1 muls16s::a#0 muls16s::b#0 muls16s::m#2 muls16s::j#2 ] ) -- vdsz1=vdsz1_plus_vwsz2 
+  //SEG318 [150] phi from muls16s::@3 to muls16s::@3 [phi:muls16s::@3->muls16s::@3]
+  //SEG319 [150] phi (signed word) muls16s::j#2 = (signed word) muls16s::j#1 [phi:muls16s::@3->muls16s::@3#0] -- register_copy 
+  //SEG320 [150] phi (signed dword) muls16s::m#3 = (signed dword) muls16s::m#1 [phi:muls16s::@3->muls16s::@3#1] -- register_copy 
+  //SEG321 muls16s::@3
+  b3:
+  //SEG322 [151] (signed dword) muls16s::m#1 ← (signed dword) muls16s::m#3 + (signed word) muls16s::b#0 [ muls16s::a#0 muls16s::b#0 muls16s::j#2 muls16s::m#1 ] ( main:2::mul16s_compare:11::muls16s:20 [ mul16s_compare::i#9 mul16s_compare::a#1 mul16s_compare::b#1 mul16s_compare::j#2 print_line_cursor#1 muls16s::a#0 muls16s::b#0 muls16s::j#2 muls16s::m#1 ] ) -- vdsz1=vdsz1_plus_vwsz2 
     lda b+1
     ora #$7f
     bmi !+
@@ -12674,19 +12597,88 @@ muls16s: {
     lda m+3
     adc $ff
     sta m+3
-  //SEG340 [158] (signed word) muls16s::j#1 ← ++ (signed word) muls16s::j#2 [ muls16s::a#0 muls16s::b#0 muls16s::m#2 muls16s::j#1 ] ( main:2::mul16s_compare:11::muls16s:20 [ mul16s_compare::i#9 mul16s_compare::a#1 mul16s_compare::b#1 mul16s_compare::j#2 print_line_cursor#1 muls16s::a#0 muls16s::b#0 muls16s::m#2 muls16s::j#1 ] ) -- vwsz1=_inc_vwsz1 
+  //SEG323 [152] (signed word) muls16s::j#1 ← ++ (signed word) muls16s::j#2 [ muls16s::a#0 muls16s::b#0 muls16s::m#1 muls16s::j#1 ] ( main:2::mul16s_compare:11::muls16s:20 [ mul16s_compare::i#9 mul16s_compare::a#1 mul16s_compare::b#1 mul16s_compare::j#2 print_line_cursor#1 muls16s::a#0 muls16s::b#0 muls16s::m#1 muls16s::j#1 ] ) -- vwsz1=_inc_vwsz1 
     inc j
     bne !+
     inc j+1
   !:
-  //SEG341 [159] if((signed word) muls16s::j#1!=(signed word) muls16s::a#0) goto muls16s::@5 [ muls16s::a#0 muls16s::b#0 muls16s::m#2 muls16s::j#1 ] ( main:2::mul16s_compare:11::muls16s:20 [ mul16s_compare::i#9 mul16s_compare::a#1 mul16s_compare::b#1 mul16s_compare::j#2 print_line_cursor#1 muls16s::a#0 muls16s::b#0 muls16s::m#2 muls16s::j#1 ] ) -- vwsz1_neq_vwsz2_then_la1 
+  //SEG324 [153] if((signed word) muls16s::j#1!=(signed word) muls16s::a#0) goto muls16s::@3 [ muls16s::a#0 muls16s::b#0 muls16s::m#1 muls16s::j#1 ] ( main:2::mul16s_compare:11::muls16s:20 [ mul16s_compare::i#9 mul16s_compare::a#1 mul16s_compare::b#1 mul16s_compare::j#2 print_line_cursor#1 muls16s::a#0 muls16s::b#0 muls16s::m#1 muls16s::j#1 ] ) -- vwsz1_neq_vwsz2_then_la1 
     lda j+1
     cmp a+1
-    bne b5
+    bne b3
     lda j
     cmp a
+    bne b3
+  //SEG325 [154] phi from muls16s::@3 muls16s::@5 to muls16s::@4 [phi:muls16s::@3/muls16s::@5->muls16s::@4]
+  //SEG326 [154] phi (signed dword) muls16s::return#0 = (signed dword) muls16s::m#1 [phi:muls16s::@3/muls16s::@5->muls16s::@4#0] -- register_copy 
+    jmp b4
+  //SEG327 [154] phi from muls16s::@6 to muls16s::@4 [phi:muls16s::@6->muls16s::@4]
+  b2:
+  //SEG328 [154] phi (signed dword) muls16s::return#0 = (byte/signed byte/word/signed word/dword/signed dword) 0 [phi:muls16s::@6->muls16s::@4#0] -- vdsz1=vbuc1 
+    lda #<0
+    sta return
+    sta return+1
+    lda #<0>>$10
+    sta return+2
+    lda #>0>>$10
+    sta return+3
+  //SEG329 muls16s::@4
+  b4:
+  //SEG330 muls16s::@return
+  //SEG331 [155] return  [ muls16s::return#0 ] ( main:2::mul16s_compare:11::muls16s:20 [ mul16s_compare::i#9 mul16s_compare::a#1 mul16s_compare::b#1 mul16s_compare::j#2 print_line_cursor#1 muls16s::return#0 ] )
+    rts
+  //SEG332 [156] phi from muls16s to muls16s::@5 [phi:muls16s->muls16s::@5]
+  b6:
+  //SEG333 [156] phi (signed word) muls16s::i#2 = (byte/signed byte/word/signed word/dword/signed dword) 0 [phi:muls16s->muls16s::@5#0] -- vwsz1=vbuc1 
+    lda #<0
+    sta i
+    sta i+1
+  //SEG334 [156] phi (signed dword) muls16s::m#5 = (byte/signed byte/word/signed word/dword/signed dword) 0 [phi:muls16s->muls16s::@5#1] -- vdsz1=vbuc1 
+    sta m
+    sta m+1
+    lda #<0>>$10
+    sta m+2
+    lda #>0>>$10
+    sta m+3
+  //SEG335 [156] phi from muls16s::@5 to muls16s::@5 [phi:muls16s::@5->muls16s::@5]
+  //SEG336 [156] phi (signed word) muls16s::i#2 = (signed word) muls16s::i#1 [phi:muls16s::@5->muls16s::@5#0] -- register_copy 
+  //SEG337 [156] phi (signed dword) muls16s::m#5 = (signed dword) muls16s::m#2 [phi:muls16s::@5->muls16s::@5#1] -- register_copy 
+  //SEG338 muls16s::@5
+  b5:
+  //SEG339 [157] (signed dword) muls16s::m#2 ← (signed dword) muls16s::m#5 - (signed word) muls16s::b#0 [ muls16s::a#0 muls16s::b#0 muls16s::m#2 muls16s::i#2 ] ( main:2::mul16s_compare:11::muls16s:20 [ mul16s_compare::i#9 mul16s_compare::a#1 mul16s_compare::b#1 mul16s_compare::j#2 print_line_cursor#1 muls16s::a#0 muls16s::b#0 muls16s::m#2 muls16s::i#2 ] ) -- vdsz1=vdsz1_minus_vwsz2 
+    lda b+1
+    ora #$7f
+    bmi !+
+    lda #0
+  !:
+    sta $ff
+    sec
+    lda m
+    sbc b
+    sta m
+    lda m+1
+    sbc b+1
+    sta m+1
+    lda m+2
+    sbc $ff
+    sta m+2
+    lda m+3
+    sbc $ff
+    sta m+3
+  //SEG340 [158] (signed word) muls16s::i#1 ← -- (signed word) muls16s::i#2 [ muls16s::a#0 muls16s::b#0 muls16s::m#2 muls16s::i#1 ] ( main:2::mul16s_compare:11::muls16s:20 [ mul16s_compare::i#9 mul16s_compare::a#1 mul16s_compare::b#1 mul16s_compare::j#2 print_line_cursor#1 muls16s::a#0 muls16s::b#0 muls16s::m#2 muls16s::i#1 ] ) -- vwsz1=_dec_vwsz1 
+    lda i
+    bne !+
+    dec i+1
+  !:
+    dec i
+  //SEG341 [159] if((signed word) muls16s::i#1!=(signed word) muls16s::a#0) goto muls16s::@5 [ muls16s::a#0 muls16s::b#0 muls16s::m#2 muls16s::i#1 ] ( main:2::mul16s_compare:11::muls16s:20 [ mul16s_compare::i#9 mul16s_compare::a#1 mul16s_compare::b#1 mul16s_compare::j#2 print_line_cursor#1 muls16s::a#0 muls16s::b#0 muls16s::m#2 muls16s::i#1 ] ) -- vwsz1_neq_vwsz2_then_la1 
+    lda i+1
+    cmp a+1
     bne b5
-    jmp b3
+    lda i
+    cmp a
+    bne b5
+    jmp b4
 }
 //SEG342 mul16u_compare
 mul16u_compare: {

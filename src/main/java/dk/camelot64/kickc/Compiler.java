@@ -181,11 +181,12 @@ public class Compiler {
       optimizations.add(new Pass2ConditionalJumpSimplification(program));
       optimizations.add(new Pass2ConstantIdentification(program));
       optimizations.add(new Pass2ConstantAdditionElimination(program));
+      optimizations.add(new Pass2ConstantIfs(program));
       optimizations.add(new Pass2FixInlineConstructors(program));
       optimizations.add(new Pass2TypeInference(program));
       optimizations.add(new PassNEliminateUnusedVars(program));
       optimizations.add(new Pass2NopCastElimination(program));
-      optimizations.add(new Pass2ConstantIfs(program));
+      //optimizations.add(new Pass2ConstantIfs(program));
       optimizations.add(new Pass2EliminateUnusedBlocks(program));
       pass2OptimizeSSA(optimizations);
 

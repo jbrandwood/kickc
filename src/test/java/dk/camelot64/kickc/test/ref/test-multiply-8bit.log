@@ -496,8 +496,8 @@ Adding pre/post-modifier (byte*) mulf_init::sqr1_lo ← ++ (byte*) mulf_init::sq
 Adding pre/post-modifier (byte*) mulf_init::sqr2_hi ← ++ (byte*) mulf_init::sqr2_hi
 Adding pre/post-modifier (byte*) mulf_init::sqr2_lo ← ++ (byte*) mulf_init::sqr2_lo
 Adding pre/post-modifier (byte) muls8u::i ← ++ (byte) muls8u::i
-Adding pre/post-modifier (signed byte) muls8s::i ← -- (signed byte) muls8s::i
 Adding pre/post-modifier (signed byte) muls8s::j ← ++ (signed byte) muls8s::j
+Adding pre/post-modifier (signed byte) muls8s::i ← -- (signed byte) muls8s::i
 Adding pre/post-modifier (byte*) mulf_tables_cmp::asm_sqr ← ++ (byte*) mulf_tables_cmp::asm_sqr
 Adding pre/post-modifier (byte*) mulf_tables_cmp::kc_sqr ← ++ (byte*) mulf_tables_cmp::kc_sqr
 Adding pre/post-modifier (signed byte) mul8s_compare::b ← ++ (signed byte) mul8s_compare::b
@@ -937,29 +937,28 @@ endproc // muls8u()
 proc (signed word()) muls8s((signed byte) muls8s::a , (signed byte) muls8s::b)
   (signed word) muls8s::m ← (byte/signed byte/word/signed word/dword/signed dword) 0
   (boolean~) muls8s::$0 ← (signed byte) muls8s::a < (byte/signed byte/word/signed word/dword/signed dword) 0
-  (boolean~) muls8s::$1 ← ! (boolean~) muls8s::$0
-  if((boolean~) muls8s::$1) goto muls8s::@1
-  (signed byte) muls8s::i ← (byte/signed byte/word/signed word/dword/signed dword) 0
-muls8s::@2:
-  (signed word~) muls8s::$2 ← (signed word) muls8s::m - (signed byte) muls8s::b
-  (signed word) muls8s::m ← (signed word~) muls8s::$2
-  (signed byte) muls8s::i ← -- (signed byte) muls8s::i
-  (boolean~) muls8s::$3 ← (signed byte) muls8s::i != (signed byte) muls8s::a
-  if((boolean~) muls8s::$3) goto muls8s::@2
-  goto muls8s::@3
-muls8s::@1:
-  (boolean~) muls8s::$4 ← (signed byte) muls8s::a > (byte/signed byte/word/signed word/dword/signed dword) 0
-  (boolean~) muls8s::$5 ← ! (boolean~) muls8s::$4
-  if((boolean~) muls8s::$5) goto muls8s::@4
+  if((boolean~) muls8s::$0) goto muls8s::@1
+  (boolean~) muls8s::$1 ← (signed byte) muls8s::a > (byte/signed byte/word/signed word/dword/signed dword) 0
+  (boolean~) muls8s::$2 ← ! (boolean~) muls8s::$1
+  if((boolean~) muls8s::$2) goto muls8s::@2
   (signed byte) muls8s::j ← (byte/signed byte/word/signed word/dword/signed dword) 0
-muls8s::@5:
-  (signed word~) muls8s::$6 ← (signed word) muls8s::m + (signed byte) muls8s::b
-  (signed word) muls8s::m ← (signed word~) muls8s::$6
-  (signed byte) muls8s::j ← ++ (signed byte) muls8s::j
-  (boolean~) muls8s::$7 ← (signed byte) muls8s::j != (signed byte) muls8s::a
-  if((boolean~) muls8s::$7) goto muls8s::@5
-muls8s::@4:
 muls8s::@3:
+  (signed word~) muls8s::$3 ← (signed word) muls8s::m + (signed byte) muls8s::b
+  (signed word) muls8s::m ← (signed word~) muls8s::$3
+  (signed byte) muls8s::j ← ++ (signed byte) muls8s::j
+  (boolean~) muls8s::$4 ← (signed byte) muls8s::j != (signed byte) muls8s::a
+  if((boolean~) muls8s::$4) goto muls8s::@3
+muls8s::@2:
+  goto muls8s::@4
+muls8s::@1:
+  (signed byte) muls8s::i ← (byte/signed byte/word/signed word/dword/signed dword) 0
+muls8s::@5:
+  (signed word~) muls8s::$5 ← (signed word) muls8s::m - (signed byte) muls8s::b
+  (signed word) muls8s::m ← (signed word~) muls8s::$5
+  (signed byte) muls8s::i ← -- (signed byte) muls8s::i
+  (boolean~) muls8s::$6 ← (signed byte) muls8s::i != (signed byte) muls8s::a
+  if((boolean~) muls8s::$6) goto muls8s::@5
+muls8s::@4:
   (signed word) muls8s::return ← (signed word) muls8s::m
   goto muls8s::@return
 muls8s::@return:
@@ -1428,12 +1427,11 @@ SYMBOLS
 (signed word()) muls8s((signed byte) muls8s::a , (signed byte) muls8s::b)
 (boolean~) muls8s::$0
 (boolean~) muls8s::$1
-(signed word~) muls8s::$2
-(boolean~) muls8s::$3
+(boolean~) muls8s::$2
+(signed word~) muls8s::$3
 (boolean~) muls8s::$4
-(boolean~) muls8s::$5
-(signed word~) muls8s::$6
-(boolean~) muls8s::$7
+(signed word~) muls8s::$5
+(boolean~) muls8s::$6
 (label) muls8s::@1
 (label) muls8s::@2
 (label) muls8s::@3
@@ -2204,46 +2202,45 @@ muls8u::@5: scope:[muls8u]  from
 muls8s: scope:[muls8s]  from
   (signed word) muls8s::m ← (byte/signed byte/word/signed word/dword/signed dword) 0
   (boolean~) muls8s::$0 ← (signed byte) muls8s::a < (byte/signed byte/word/signed word/dword/signed dword) 0
-  (boolean~) muls8s::$1 ← ! (boolean~) muls8s::$0
-  if((boolean~) muls8s::$1) goto muls8s::@1
+  if((boolean~) muls8s::$0) goto muls8s::@1
   to:muls8s::@6
-muls8s::@1: scope:[muls8s]  from muls8s muls8s::@8
-  (boolean~) muls8s::$4 ← (signed byte) muls8s::a > (byte/signed byte/word/signed word/dword/signed dword) 0
-  (boolean~) muls8s::$5 ← ! (boolean~) muls8s::$4
-  if((boolean~) muls8s::$5) goto muls8s::@4
-  to:muls8s::@9
-muls8s::@6: scope:[muls8s]  from muls8s
+muls8s::@1: scope:[muls8s]  from muls8s muls8s::@9
   (signed byte) muls8s::i ← (byte/signed byte/word/signed word/dword/signed dword) 0
-  to:muls8s::@2
-muls8s::@2: scope:[muls8s]  from muls8s::@2 muls8s::@6
-  (signed word~) muls8s::$2 ← (signed word) muls8s::m - (signed byte) muls8s::b
-  (signed word) muls8s::m ← (signed word~) muls8s::$2
-  (signed byte) muls8s::i ← -- (signed byte) muls8s::i
-  (boolean~) muls8s::$3 ← (signed byte) muls8s::i != (signed byte) muls8s::a
-  if((boolean~) muls8s::$3) goto muls8s::@2
+  to:muls8s::@5
+muls8s::@6: scope:[muls8s]  from muls8s
+  (boolean~) muls8s::$1 ← (signed byte) muls8s::a > (byte/signed byte/word/signed word/dword/signed dword) 0
+  (boolean~) muls8s::$2 ← ! (boolean~) muls8s::$1
+  if((boolean~) muls8s::$2) goto muls8s::@2
   to:muls8s::@7
-muls8s::@7: scope:[muls8s]  from muls8s::@2
+muls8s::@2: scope:[muls8s]  from muls8s::@6 muls8s::@8
+  to:muls8s::@4
+muls8s::@7: scope:[muls8s]  from muls8s::@6
+  (signed byte) muls8s::j ← (byte/signed byte/word/signed word/dword/signed dword) 0
   to:muls8s::@3
-muls8s::@3: scope:[muls8s]  from muls8s::@4 muls8s::@7
+muls8s::@3: scope:[muls8s]  from muls8s::@3 muls8s::@7
+  (signed word~) muls8s::$3 ← (signed word) muls8s::m + (signed byte) muls8s::b
+  (signed word) muls8s::m ← (signed word~) muls8s::$3
+  (signed byte) muls8s::j ← ++ (signed byte) muls8s::j
+  (boolean~) muls8s::$4 ← (signed byte) muls8s::j != (signed byte) muls8s::a
+  if((boolean~) muls8s::$4) goto muls8s::@3
+  to:muls8s::@8
+muls8s::@8: scope:[muls8s]  from muls8s::@3
+  to:muls8s::@2
+muls8s::@4: scope:[muls8s]  from muls8s::@10 muls8s::@2
   (signed word) muls8s::return ← (signed word) muls8s::m
   to:muls8s::@return
-muls8s::@8: scope:[muls8s]  from
+muls8s::@9: scope:[muls8s]  from
   to:muls8s::@1
-muls8s::@4: scope:[muls8s]  from muls8s::@1 muls8s::@10
-  to:muls8s::@3
-muls8s::@9: scope:[muls8s]  from muls8s::@1
-  (signed byte) muls8s::j ← (byte/signed byte/word/signed word/dword/signed dword) 0
-  to:muls8s::@5
-muls8s::@5: scope:[muls8s]  from muls8s::@5 muls8s::@9
-  (signed word~) muls8s::$6 ← (signed word) muls8s::m + (signed byte) muls8s::b
-  (signed word) muls8s::m ← (signed word~) muls8s::$6
-  (signed byte) muls8s::j ← ++ (signed byte) muls8s::j
-  (boolean~) muls8s::$7 ← (signed byte) muls8s::j != (signed byte) muls8s::a
-  if((boolean~) muls8s::$7) goto muls8s::@5
+muls8s::@5: scope:[muls8s]  from muls8s::@1 muls8s::@5
+  (signed word~) muls8s::$5 ← (signed word) muls8s::m - (signed byte) muls8s::b
+  (signed word) muls8s::m ← (signed word~) muls8s::$5
+  (signed byte) muls8s::i ← -- (signed byte) muls8s::i
+  (boolean~) muls8s::$6 ← (signed byte) muls8s::i != (signed byte) muls8s::a
+  if((boolean~) muls8s::$6) goto muls8s::@5
   to:muls8s::@10
 muls8s::@10: scope:[muls8s]  from muls8s::@5
   to:muls8s::@4
-muls8s::@return: scope:[muls8s]  from muls8s::@11 muls8s::@3
+muls8s::@return: scope:[muls8s]  from muls8s::@11 muls8s::@4
   (signed word) muls8s::return ← (signed word) muls8s::return
   return (signed word) muls8s::return
   to:@return
@@ -2577,8 +2574,8 @@ Removing empty block @23
 Removing empty block muls8u::@4
 Removing empty block muls8u::@5
 Removing empty block @24
-Removing empty block muls8s::@7
 Removing empty block muls8s::@8
+Removing empty block muls8s::@9
 Removing empty block muls8s::@10
 Removing empty block muls8s::@11
 Removing empty block @26
@@ -3223,60 +3220,59 @@ muls8s: scope:[muls8s]  from mul8s_compare::@2
   (signed byte) muls8s::a#1 ← phi( mul8s_compare::@2/(signed byte) muls8s::a#0 )
   (signed word) muls8s::m#0 ← (byte/signed byte/word/signed word/dword/signed dword) 0
   (boolean~) muls8s::$0 ← (signed byte) muls8s::a#1 < (byte/signed byte/word/signed word/dword/signed dword) 0
-  (boolean~) muls8s::$1 ← ! (boolean~) muls8s::$0
-  if((boolean~) muls8s::$1) goto muls8s::@1
+  if((boolean~) muls8s::$0) goto muls8s::@1
   to:muls8s::@6
 muls8s::@1: scope:[muls8s]  from muls8s
+  (signed byte) muls8s::a#6 ← phi( muls8s/(signed byte) muls8s::a#1 )
+  (signed byte) muls8s::b#4 ← phi( muls8s/(signed byte) muls8s::b#5 )
+  (signed word) muls8s::m#8 ← phi( muls8s/(signed word) muls8s::m#0 )
+  (signed byte) muls8s::i#0 ← (byte/signed byte/word/signed word/dword/signed dword) 0
+  to:muls8s::@5
+muls8s::@6: scope:[muls8s]  from muls8s
   (signed byte) muls8s::b#6 ← phi( muls8s/(signed byte) muls8s::b#5 )
   (signed word) muls8s::m#9 ← phi( muls8s/(signed word) muls8s::m#0 )
   (signed byte) muls8s::a#2 ← phi( muls8s/(signed byte) muls8s::a#1 )
-  (boolean~) muls8s::$4 ← (signed byte) muls8s::a#2 > (byte/signed byte/word/signed word/dword/signed dword) 0
-  (boolean~) muls8s::$5 ← ! (boolean~) muls8s::$4
-  if((boolean~) muls8s::$5) goto muls8s::@4
-  to:muls8s::@9
-muls8s::@6: scope:[muls8s]  from muls8s
-  (signed byte) muls8s::a#5 ← phi( muls8s/(signed byte) muls8s::a#1 )
-  (signed byte) muls8s::b#3 ← phi( muls8s/(signed byte) muls8s::b#5 )
-  (signed word) muls8s::m#6 ← phi( muls8s/(signed word) muls8s::m#0 )
-  (signed byte) muls8s::i#0 ← (byte/signed byte/word/signed word/dword/signed dword) 0
-  to:muls8s::@2
-muls8s::@2: scope:[muls8s]  from muls8s::@2 muls8s::@6
-  (signed byte) muls8s::a#3 ← phi( muls8s::@2/(signed byte) muls8s::a#3 muls8s::@6/(signed byte) muls8s::a#5 )
-  (signed byte) muls8s::i#2 ← phi( muls8s::@2/(signed byte) muls8s::i#1 muls8s::@6/(signed byte) muls8s::i#0 )
-  (signed byte) muls8s::b#1 ← phi( muls8s::@2/(signed byte) muls8s::b#1 muls8s::@6/(signed byte) muls8s::b#3 )
-  (signed word) muls8s::m#3 ← phi( muls8s::@2/(signed word) muls8s::m#1 muls8s::@6/(signed word) muls8s::m#6 )
-  (signed word~) muls8s::$2 ← (signed word) muls8s::m#3 - (signed byte) muls8s::b#1
-  (signed word) muls8s::m#1 ← (signed word~) muls8s::$2
-  (signed byte) muls8s::i#1 ← -- (signed byte) muls8s::i#2
-  (boolean~) muls8s::$3 ← (signed byte) muls8s::i#1 != (signed byte) muls8s::a#3
-  if((boolean~) muls8s::$3) goto muls8s::@2
+  (boolean~) muls8s::$1 ← (signed byte) muls8s::a#2 > (byte/signed byte/word/signed word/dword/signed dword) 0
+  (boolean~) muls8s::$2 ← ! (boolean~) muls8s::$1
+  if((boolean~) muls8s::$2) goto muls8s::@2
+  to:muls8s::@7
+muls8s::@2: scope:[muls8s]  from muls8s::@6
+  (signed word) muls8s::m#7 ← phi( muls8s::@6/(signed word) muls8s::m#9 )
+  to:muls8s::@4
+muls8s::@7: scope:[muls8s]  from muls8s::@6
+  (signed byte) muls8s::a#5 ← phi( muls8s::@6/(signed byte) muls8s::a#2 )
+  (signed byte) muls8s::b#3 ← phi( muls8s::@6/(signed byte) muls8s::b#6 )
+  (signed word) muls8s::m#6 ← phi( muls8s::@6/(signed word) muls8s::m#9 )
+  (signed byte) muls8s::j#0 ← (byte/signed byte/word/signed word/dword/signed dword) 0
   to:muls8s::@3
-muls8s::@3: scope:[muls8s]  from muls8s::@2 muls8s::@4 muls8s::@5
-  (signed word) muls8s::m#4 ← phi( muls8s::@2/(signed word) muls8s::m#1 muls8s::@4/(signed word) muls8s::m#7 muls8s::@5/(signed word) muls8s::m#2 )
+muls8s::@3: scope:[muls8s]  from muls8s::@3 muls8s::@7
+  (signed byte) muls8s::a#3 ← phi( muls8s::@3/(signed byte) muls8s::a#3 muls8s::@7/(signed byte) muls8s::a#5 )
+  (signed byte) muls8s::j#2 ← phi( muls8s::@3/(signed byte) muls8s::j#1 muls8s::@7/(signed byte) muls8s::j#0 )
+  (signed byte) muls8s::b#1 ← phi( muls8s::@3/(signed byte) muls8s::b#1 muls8s::@7/(signed byte) muls8s::b#3 )
+  (signed word) muls8s::m#3 ← phi( muls8s::@3/(signed word) muls8s::m#1 muls8s::@7/(signed word) muls8s::m#6 )
+  (signed word~) muls8s::$3 ← (signed word) muls8s::m#3 + (signed byte) muls8s::b#1
+  (signed word) muls8s::m#1 ← (signed word~) muls8s::$3
+  (signed byte) muls8s::j#1 ← ++ (signed byte) muls8s::j#2
+  (boolean~) muls8s::$4 ← (signed byte) muls8s::j#1 != (signed byte) muls8s::a#3
+  if((boolean~) muls8s::$4) goto muls8s::@3
+  to:muls8s::@4
+muls8s::@4: scope:[muls8s]  from muls8s::@2 muls8s::@3 muls8s::@5
+  (signed word) muls8s::m#4 ← phi( muls8s::@2/(signed word) muls8s::m#7 muls8s::@3/(signed word) muls8s::m#1 muls8s::@5/(signed word) muls8s::m#2 )
   (signed word) muls8s::return#0 ← (signed word) muls8s::m#4
   to:muls8s::@return
-muls8s::@4: scope:[muls8s]  from muls8s::@1
-  (signed word) muls8s::m#7 ← phi( muls8s::@1/(signed word) muls8s::m#9 )
-  to:muls8s::@3
-muls8s::@9: scope:[muls8s]  from muls8s::@1
-  (signed byte) muls8s::a#6 ← phi( muls8s::@1/(signed byte) muls8s::a#2 )
-  (signed byte) muls8s::b#4 ← phi( muls8s::@1/(signed byte) muls8s::b#6 )
-  (signed word) muls8s::m#8 ← phi( muls8s::@1/(signed word) muls8s::m#9 )
-  (signed byte) muls8s::j#0 ← (byte/signed byte/word/signed word/dword/signed dword) 0
-  to:muls8s::@5
-muls8s::@5: scope:[muls8s]  from muls8s::@5 muls8s::@9
-  (signed byte) muls8s::a#4 ← phi( muls8s::@5/(signed byte) muls8s::a#4 muls8s::@9/(signed byte) muls8s::a#6 )
-  (signed byte) muls8s::j#2 ← phi( muls8s::@5/(signed byte) muls8s::j#1 muls8s::@9/(signed byte) muls8s::j#0 )
-  (signed byte) muls8s::b#2 ← phi( muls8s::@5/(signed byte) muls8s::b#2 muls8s::@9/(signed byte) muls8s::b#4 )
-  (signed word) muls8s::m#5 ← phi( muls8s::@5/(signed word) muls8s::m#2 muls8s::@9/(signed word) muls8s::m#8 )
-  (signed word~) muls8s::$6 ← (signed word) muls8s::m#5 + (signed byte) muls8s::b#2
-  (signed word) muls8s::m#2 ← (signed word~) muls8s::$6
-  (signed byte) muls8s::j#1 ← ++ (signed byte) muls8s::j#2
-  (boolean~) muls8s::$7 ← (signed byte) muls8s::j#1 != (signed byte) muls8s::a#4
-  if((boolean~) muls8s::$7) goto muls8s::@5
-  to:muls8s::@3
-muls8s::@return: scope:[muls8s]  from muls8s::@3
-  (signed word) muls8s::return#3 ← phi( muls8s::@3/(signed word) muls8s::return#0 )
+muls8s::@5: scope:[muls8s]  from muls8s::@1 muls8s::@5
+  (signed byte) muls8s::a#4 ← phi( muls8s::@1/(signed byte) muls8s::a#6 muls8s::@5/(signed byte) muls8s::a#4 )
+  (signed byte) muls8s::i#2 ← phi( muls8s::@1/(signed byte) muls8s::i#0 muls8s::@5/(signed byte) muls8s::i#1 )
+  (signed byte) muls8s::b#2 ← phi( muls8s::@1/(signed byte) muls8s::b#4 muls8s::@5/(signed byte) muls8s::b#2 )
+  (signed word) muls8s::m#5 ← phi( muls8s::@1/(signed word) muls8s::m#8 muls8s::@5/(signed word) muls8s::m#2 )
+  (signed word~) muls8s::$5 ← (signed word) muls8s::m#5 - (signed byte) muls8s::b#2
+  (signed word) muls8s::m#2 ← (signed word~) muls8s::$5
+  (signed byte) muls8s::i#1 ← -- (signed byte) muls8s::i#2
+  (boolean~) muls8s::$6 ← (signed byte) muls8s::i#1 != (signed byte) muls8s::a#4
+  if((boolean~) muls8s::$6) goto muls8s::@5
+  to:muls8s::@4
+muls8s::@return: scope:[muls8s]  from muls8s::@4
+  (signed word) muls8s::return#3 ← phi( muls8s::@4/(signed word) muls8s::return#0 )
   (signed word) muls8s::return#1 ← (signed word) muls8s::return#3
   return 
   to:@return
@@ -4697,19 +4693,18 @@ SYMBOL TABLE SSA
 (signed word()) muls8s((signed byte) muls8s::a , (signed byte) muls8s::b)
 (boolean~) muls8s::$0
 (boolean~) muls8s::$1
-(signed word~) muls8s::$2
-(boolean~) muls8s::$3
+(boolean~) muls8s::$2
+(signed word~) muls8s::$3
 (boolean~) muls8s::$4
-(boolean~) muls8s::$5
-(signed word~) muls8s::$6
-(boolean~) muls8s::$7
+(signed word~) muls8s::$5
+(boolean~) muls8s::$6
 (label) muls8s::@1
 (label) muls8s::@2
 (label) muls8s::@3
 (label) muls8s::@4
 (label) muls8s::@5
 (label) muls8s::@6
-(label) muls8s::@9
+(label) muls8s::@7
 (label) muls8s::@return
 (signed byte) muls8s::a
 (signed byte) muls8s::a#0
@@ -5229,8 +5224,7 @@ Inversing boolean not (boolean~) mulf_init::$14 ← (byte) mulf_init::x_255#1 !=
 Inversing boolean not (boolean~) mulf8s::$4 ← (signed byte) mulf8s::a#2 >= (byte/signed byte/word/signed word/dword/signed dword) 0 from (boolean~) mulf8s::$3 ← (signed byte) mulf8s::a#2 < (byte/signed byte/word/signed word/dword/signed dword) 0
 Inversing boolean not (boolean~) mulf8s::$10 ← (signed byte) mulf8s::b#2 >= (byte/signed byte/word/signed word/dword/signed dword) 0 from (boolean~) mulf8s::$9 ← (signed byte) mulf8s::b#2 < (byte/signed byte/word/signed word/dword/signed dword) 0
 Inversing boolean not (boolean~) muls8u::$1 ← (byte) muls8u::a#1 == (byte/signed byte/word/signed word/dword/signed dword) 0 from (boolean~) muls8u::$0 ← (byte) muls8u::a#1 != (byte/signed byte/word/signed word/dword/signed dword) 0
-Inversing boolean not (boolean~) muls8s::$1 ← (signed byte) muls8s::a#1 >= (byte/signed byte/word/signed word/dword/signed dword) 0 from (boolean~) muls8s::$0 ← (signed byte) muls8s::a#1 < (byte/signed byte/word/signed word/dword/signed dword) 0
-Inversing boolean not (boolean~) muls8s::$5 ← (signed byte) muls8s::a#2 <= (byte/signed byte/word/signed word/dword/signed dword) 0 from (boolean~) muls8s::$4 ← (signed byte) muls8s::a#2 > (byte/signed byte/word/signed word/dword/signed dword) 0
+Inversing boolean not (boolean~) muls8s::$2 ← (signed byte) muls8s::a#2 <= (byte/signed byte/word/signed word/dword/signed dword) 0 from (boolean~) muls8s::$1 ← (signed byte) muls8s::a#2 > (byte/signed byte/word/signed word/dword/signed dword) 0
 Inversing boolean not (boolean~) mulf_tables_cmp::$1 ← *((byte*) mulf_tables_cmp::kc_sqr#2) == *((byte*) mulf_tables_cmp::asm_sqr#2) from (boolean~) mulf_tables_cmp::$0 ← *((byte*) mulf_tables_cmp::kc_sqr#2) != *((byte*) mulf_tables_cmp::asm_sqr#2)
 Inversing boolean not (boolean~) mul8u_compare::$4 ← (word) mul8u_compare::ms#1 == (word) mul8u_compare::mf#1 from (boolean~) mul8u_compare::$3 ← (word) mul8u_compare::ms#1 != (word) mul8u_compare::mf#1
 Inversing boolean not (boolean~) mul8u_compare::$6 ← (word) mul8u_compare::ms#2 == (word) mul8u_compare::mn#1 from (boolean~) mul8u_compare::$5 ← (word) mul8u_compare::ms#2 != (word) mul8u_compare::mn#1
@@ -5297,8 +5291,6 @@ Not aliassing across scopes: muls8s::a#1 muls8s::a#0
 Not aliassing across scopes: muls8s::b#5 muls8s::b#0
 Not aliassing identity: muls8s::b#1 muls8s::b#1
 Not aliassing identity: muls8s::a#3 muls8s::a#3
-Not aliassing identity: muls8s::b#2 muls8s::b#2
-Not aliassing identity: muls8s::a#4 muls8s::a#4
 Not aliassing across scopes: BGCOL#9 BGCOL#16
 Not aliassing across scopes: print_char_cursor#161 print_char_cursor#139
 Not aliassing across scopes: print_line_cursor#90 print_line_cursor#47
@@ -5492,12 +5484,12 @@ Alias (word) muls8u::m#0 = (word) muls8u::m#4
 Alias (byte) muls8u::b#2 = (byte) muls8u::b#3 
 Alias (byte) muls8u::a#1 = (byte) muls8u::a#3 
 Alias (word) muls8u::m#1 = (word~) muls8u::$2 
-Alias (signed byte) muls8s::a#1 = (signed byte) muls8s::a#2 (signed byte) muls8s::a#5 (signed byte) muls8s::a#6 
-Alias (signed word) muls8s::m#0 = (signed word) muls8s::m#9 (signed word) muls8s::m#6 (signed word) muls8s::m#7 (signed word) muls8s::m#8 
-Alias (signed byte) muls8s::b#3 = (signed byte) muls8s::b#6 (signed byte) muls8s::b#5 (signed byte) muls8s::b#4 
-Alias (signed word) muls8s::m#1 = (signed word~) muls8s::$2 
+Alias (signed word) muls8s::m#0 = (signed word) muls8s::m#8 (signed word) muls8s::m#9 (signed word) muls8s::m#7 (signed word) muls8s::m#6 
+Alias (signed byte) muls8s::b#3 = (signed byte) muls8s::b#4 (signed byte) muls8s::b#5 (signed byte) muls8s::b#6 
+Alias (signed byte) muls8s::a#1 = (signed byte) muls8s::a#6 (signed byte) muls8s::a#2 (signed byte) muls8s::a#5 
+Alias (signed word) muls8s::m#1 = (signed word~) muls8s::$3 
 Alias (signed word) muls8s::return#0 = (signed word) muls8s::m#4 (signed word) muls8s::return#3 (signed word) muls8s::return#1 
-Alias (signed word) muls8s::m#2 = (signed word~) muls8s::$6 
+Alias (signed word) muls8s::m#2 = (signed word~) muls8s::$5 
 Alias (byte*) BGCOL#0 = (byte*) BGCOL#15 (byte*) BGCOL#5 
 Alias (byte*) mulf_tables_cmp::asm_sqr#2 = (byte*) mulf_tables_cmp::asm_sqr#3 (byte*) mulf_tables_cmp::asm_sqr#5 (byte*) mulf_tables_cmp::asm_sqr#4 
 Alias (byte*) mulf_tables_cmp::kc_sqr#2 = (byte*) mulf_tables_cmp::kc_sqr#3 (byte*) mulf_tables_cmp::kc_sqr#7 (byte*) mulf_tables_cmp::kc_sqr#6 (byte*) mulf_tables_cmp::kc_sqr#5 (byte*) mulf_tables_cmp::kc_sqr#4 
@@ -5682,8 +5674,6 @@ Not aliassing across scopes: muls8s::a#1 muls8s::a#0
 Not aliassing across scopes: muls8s::b#3 muls8s::b#0
 Not aliassing identity: muls8s::b#1 muls8s::b#1
 Not aliassing identity: muls8s::a#3 muls8s::a#3
-Not aliassing identity: muls8s::b#2 muls8s::b#2
-Not aliassing identity: muls8s::a#4 muls8s::a#4
 Not aliassing across scopes: BGCOL#9 BGCOL#1
 Not aliassing across scopes: print_char_cursor#161 print_char_cursor#139
 Not aliassing across scopes: print_line_cursor#90 print_line_cursor#27
@@ -5883,8 +5873,6 @@ Not aliassing across scopes: muls8s::a#1 muls8s::a#0
 Not aliassing across scopes: muls8s::b#3 muls8s::b#0
 Not aliassing identity: muls8s::b#1 muls8s::b#1
 Not aliassing identity: muls8s::a#3 muls8s::a#3
-Not aliassing identity: muls8s::b#2 muls8s::b#2
-Not aliassing identity: muls8s::a#4 muls8s::a#4
 Not aliassing across scopes: BGCOL#9 BGCOL#1
 Not aliassing across scopes: print_char_cursor#161 print_char_cursor#139
 Not aliassing across scopes: print_line_cursor#90 print_line_cursor#27
@@ -6156,10 +6144,10 @@ Simple Condition (boolean~) mulf8s::$4 if((signed byte) mulf8s::a#0>=(byte/signe
 Simple Condition (boolean~) mulf8s::$10 if((signed byte) mulf8s::b#0>=(byte/signed byte/word/signed word/dword/signed dword) 0) goto mulf8s::@2
 Simple Condition (boolean~) muls8u::$1 if((byte) muls8u::a#0==(byte/signed byte/word/signed word/dword/signed dword) 0) goto muls8u::@1
 Simple Condition (boolean~) muls8u::$3 if((byte) muls8u::i#1!=(byte) muls8u::a#0) goto muls8u::@2
-Simple Condition (boolean~) muls8s::$1 if((signed byte) muls8s::a#0>=(byte/signed byte/word/signed word/dword/signed dword) 0) goto muls8s::@1
-Simple Condition (boolean~) muls8s::$5 if((signed byte) muls8s::a#0<=(byte/signed byte/word/signed word/dword/signed dword) 0) goto muls8s::@4
-Simple Condition (boolean~) muls8s::$3 if((signed byte) muls8s::i#1!=(signed byte) muls8s::a#0) goto muls8s::@2
-Simple Condition (boolean~) muls8s::$7 if((signed byte) muls8s::j#1!=(signed byte) muls8s::a#0) goto muls8s::@5
+Simple Condition (boolean~) muls8s::$0 if((signed byte) muls8s::a#0<(byte/signed byte/word/signed word/dword/signed dword) 0) goto muls8s::@1
+Simple Condition (boolean~) muls8s::$2 if((signed byte) muls8s::a#0<=(byte/signed byte/word/signed word/dword/signed dword) 0) goto muls8s::@2
+Simple Condition (boolean~) muls8s::$4 if((signed byte) muls8s::j#1!=(signed byte) muls8s::a#0) goto muls8s::@3
+Simple Condition (boolean~) muls8s::$6 if((signed byte) muls8s::i#1!=(signed byte) muls8s::a#0) goto muls8s::@5
 Simple Condition (boolean~) mulf_tables_cmp::$1 if(*((byte*) mulf_tables_cmp::kc_sqr#2)==*((byte*) mulf_tables_cmp::asm_sqr#2)) goto mulf_tables_cmp::@2
 Simple Condition (boolean~) mulf_tables_cmp::$10 if((byte*) mulf_tables_cmp::kc_sqr#1<(byte*~) mulf_tables_cmp::$9) goto mulf_tables_cmp::@1
 Simple Condition (boolean~) mul8u_compare::$4 if((word) mul8u_compare::ms#0==(word) mul8u_compare::mf#0) goto mul8u_compare::@3
@@ -6278,9 +6266,9 @@ Not culling empty block because it shares successor with its predecessor. (label
 Culled Empty Block (label) @22
 Culled Empty Block (label) main::@6
 Culled Empty Block (label) muls8u::@3
-Culled Empty Block (label) muls8s::@6
-Culled Empty Block (label) muls8s::@4
-Culled Empty Block (label) muls8s::@9
+Culled Empty Block (label) muls8s::@1
+Culled Empty Block (label) muls8s::@2
+Culled Empty Block (label) muls8s::@7
 Culled Empty Block (label) @25
 Culled Empty Block (label) mulf_tables_cmp::@9
 Culled Empty Block (label) mulf_tables_cmp::@11
@@ -6711,7 +6699,7 @@ Constant inlined mulf_tables_cmp::asm_sqr#0 = (const byte[512]) mula_sqr1_lo#0
 Constant inlined print_char::ch#1 = (byte) '-'
 Constant inlined print_char::ch#0 = (byte) '-'
 Succesful SSA optimization Pass2ConstantInlining
-Block Sequence Planned @begin @31 @end main main::@1 main::@2 main::@3 main::@4 main::@5 main::@return mul8s_compare mul8s_compare::@1 mul8s_compare::@2 mul8s_compare::@12 mul8s_compare::@13 mul8s_compare::@14 mul8s_compare::@6 mul8s_compare::@3 mul8s_compare::@7 mul8s_compare::@4 mul8s_compare::@8 mul8s_compare::@return mul8s_compare::@5 mul8s_compare::@10 mul8s_compare::@11 mul8s_compare::@16 print_ln print_ln::@1 print_ln::@return print_str print_str::@1 print_str::@return print_str::@2 mul8s_error mul8s_error::@1 mul8s_error::@2 mul8s_error::@3 mul8s_error::@4 mul8s_error::@5 mul8s_error::@6 mul8s_error::@7 mul8s_error::@8 mul8s_error::@9 mul8s_error::@10 mul8s_error::@return print_sword print_sword::@2 print_sword::@4 print_sword::@1 print_sword::@return print_word print_word::@1 print_word::@return print_byte print_byte::@1 print_byte::@return print_char print_char::@return print_sbyte print_sbyte::@2 print_sbyte::@4 print_sbyte::@1 print_sbyte::@return mul8s mul8s::@6 mul8s::@3 mul8s::@1 mul8s::@4 mul8s::@2 mul8s::@return mul8u mul8u::@1 mul8u::@return mul8u::@2 mul8u::@7 mul8u::@4 mulf8s mulf8s::@6 mulf8s::@3 mulf8s::@1 mulf8s::@4 mulf8s::@2 mulf8s::@return mulf8u mulf8u::@return muls8s muls8s::@2 muls8s::@3 muls8s::@return muls8s::@1 muls8s::@5 mul8u_compare mul8u_compare::@1 mul8u_compare::@2 mul8u_compare::@12 mul8u_compare::@13 mul8u_compare::@14 mul8u_compare::@6 mul8u_compare::@3 mul8u_compare::@7 mul8u_compare::@4 mul8u_compare::@8 mul8u_compare::@return mul8u_compare::@5 mul8u_compare::@10 mul8u_compare::@11 mul8u_compare::@16 mul8u_error mul8u_error::@1 mul8u_error::@2 mul8u_error::@3 mul8u_error::@4 mul8u_error::@5 mul8u_error::@6 mul8u_error::@7 mul8u_error::@8 mul8u_error::@9 mul8u_error::@10 mul8u_error::@return muls8u muls8u::@2 muls8u::@1 muls8u::@return mulf_tables_cmp mulf_tables_cmp::@1 mulf_tables_cmp::@3 mulf_tables_cmp::@6 mulf_tables_cmp::@7 mulf_tables_cmp::@8 mulf_tables_cmp::@return mulf_tables_cmp::@2 mulf_tables_cmp::@5 mulf_tables_cmp::@10 mulf_init_asm mulf_init_asm::@return mulf_init mulf_init::@1 mulf_init::@5 mulf_init::@2 mulf_init::@3 mulf_init::@7 mulf_init::@4 mulf_init::@8 mulf_init::@return print_cls print_cls::@1 print_cls::@return 
+Block Sequence Planned @begin @31 @end main main::@1 main::@2 main::@3 main::@4 main::@5 main::@return mul8s_compare mul8s_compare::@1 mul8s_compare::@2 mul8s_compare::@12 mul8s_compare::@13 mul8s_compare::@14 mul8s_compare::@6 mul8s_compare::@3 mul8s_compare::@7 mul8s_compare::@4 mul8s_compare::@8 mul8s_compare::@return mul8s_compare::@5 mul8s_compare::@10 mul8s_compare::@11 mul8s_compare::@16 print_ln print_ln::@1 print_ln::@return print_str print_str::@1 print_str::@return print_str::@2 mul8s_error mul8s_error::@1 mul8s_error::@2 mul8s_error::@3 mul8s_error::@4 mul8s_error::@5 mul8s_error::@6 mul8s_error::@7 mul8s_error::@8 mul8s_error::@9 mul8s_error::@10 mul8s_error::@return print_sword print_sword::@2 print_sword::@4 print_sword::@1 print_sword::@return print_word print_word::@1 print_word::@return print_byte print_byte::@1 print_byte::@return print_char print_char::@return print_sbyte print_sbyte::@2 print_sbyte::@4 print_sbyte::@1 print_sbyte::@return mul8s mul8s::@6 mul8s::@3 mul8s::@1 mul8s::@4 mul8s::@2 mul8s::@return mul8u mul8u::@1 mul8u::@return mul8u::@2 mul8u::@7 mul8u::@4 mulf8s mulf8s::@6 mulf8s::@3 mulf8s::@1 mulf8s::@4 mulf8s::@2 mulf8s::@return mulf8u mulf8u::@return muls8s muls8s::@6 muls8s::@3 muls8s::@4 muls8s::@return muls8s::@5 mul8u_compare mul8u_compare::@1 mul8u_compare::@2 mul8u_compare::@12 mul8u_compare::@13 mul8u_compare::@14 mul8u_compare::@6 mul8u_compare::@3 mul8u_compare::@7 mul8u_compare::@4 mul8u_compare::@8 mul8u_compare::@return mul8u_compare::@5 mul8u_compare::@10 mul8u_compare::@11 mul8u_compare::@16 mul8u_error mul8u_error::@1 mul8u_error::@2 mul8u_error::@3 mul8u_error::@4 mul8u_error::@5 mul8u_error::@6 mul8u_error::@7 mul8u_error::@8 mul8u_error::@9 mul8u_error::@10 mul8u_error::@return muls8u muls8u::@2 muls8u::@1 muls8u::@return mulf_tables_cmp mulf_tables_cmp::@1 mulf_tables_cmp::@3 mulf_tables_cmp::@6 mulf_tables_cmp::@7 mulf_tables_cmp::@8 mulf_tables_cmp::@return mulf_tables_cmp::@2 mulf_tables_cmp::@5 mulf_tables_cmp::@10 mulf_init_asm mulf_init_asm::@return mulf_init mulf_init::@1 mulf_init::@5 mulf_init::@2 mulf_init::@3 mulf_init::@7 mulf_init::@4 mulf_init::@8 mulf_init::@return print_cls print_cls::@1 print_cls::@return 
 Added new block during phi lifting mul8s_compare::@18(between mul8s_compare::@10 and mul8s_compare::@1)
 Added new block during phi lifting mul8s_compare::@19(between mul8s_compare::@5 and mul8s_compare::@2)
 Added new block during phi lifting mul8s_compare::@20(between mul8s_compare::@3 and mul8s_compare::@4)
@@ -6723,9 +6711,9 @@ Added new block during phi lifting mul8s::@8(between mul8s::@1 and mul8s::@2)
 Added new block during phi lifting mul8u::@10(between mul8u::@2 and mul8u::@4)
 Added new block during phi lifting mulf8s::@7(between mulf8s::@6 and mulf8s::@1)
 Added new block during phi lifting mulf8s::@8(between mulf8s::@1 and mulf8s::@2)
-Added new block during phi lifting muls8s::@12(between muls8s::@2 and muls8s::@2)
-Added new block during phi lifting muls8s::@13(between muls8s::@2 and muls8s::@3)
-Added new block during phi lifting muls8s::@14(between muls8s::@5 and muls8s::@3)
+Added new block during phi lifting muls8s::@12(between muls8s::@3 and muls8s::@3)
+Added new block during phi lifting muls8s::@13(between muls8s::@3 and muls8s::@4)
+Added new block during phi lifting muls8s::@14(between muls8s::@5 and muls8s::@4)
 Added new block during phi lifting muls8s::@15(between muls8s::@5 and muls8s::@5)
 Added new block during phi lifting mul8u_compare::@18(between mul8u_compare::@10 and mul8u_compare::@1)
 Added new block during phi lifting mul8u_compare::@19(between mul8u_compare::@5 and mul8u_compare::@2)
@@ -6738,7 +6726,7 @@ Added new block during phi lifting mulf_init::@10(between mulf_init::@1 and mulf
 Added new block during phi lifting mulf_init::@11(between mulf_init::@4 and mulf_init::@3)
 Added new block during phi lifting mulf_init::@12(between mulf_init::@3 and mulf_init::@4)
 Added new block during phi lifting print_cls::@3(between print_cls::@1 and print_cls::@1)
-Block Sequence Planned @begin @31 @end main main::@1 main::@2 main::@3 main::@4 main::@5 main::@return mul8s_compare mul8s_compare::@1 mul8s_compare::@2 mul8s_compare::@12 mul8s_compare::@13 mul8s_compare::@14 mul8s_compare::@6 mul8s_compare::@3 mul8s_compare::@7 mul8s_compare::@4 mul8s_compare::@8 mul8s_compare::@return mul8s_compare::@5 mul8s_compare::@10 mul8s_compare::@11 mul8s_compare::@16 mul8s_compare::@18 mul8s_compare::@19 mul8s_compare::@20 print_ln print_ln::@1 print_ln::@return print_ln::@3 print_str print_str::@1 print_str::@return print_str::@2 mul8s_error mul8s_error::@1 mul8s_error::@2 mul8s_error::@3 mul8s_error::@4 mul8s_error::@5 mul8s_error::@6 mul8s_error::@7 mul8s_error::@8 mul8s_error::@9 mul8s_error::@10 mul8s_error::@return print_sword print_sword::@2 print_sword::@4 print_sword::@1 print_sword::@return print_sword::@5 print_word print_word::@1 print_word::@return print_byte print_byte::@1 print_byte::@return print_char print_char::@return print_sbyte print_sbyte::@2 print_sbyte::@4 print_sbyte::@1 print_sbyte::@return print_sbyte::@5 mul8s mul8s::@6 mul8s::@3 mul8s::@1 mul8s::@4 mul8s::@2 mul8s::@return mul8s::@8 mul8s::@7 mul8u mul8u::@1 mul8u::@return mul8u::@2 mul8u::@7 mul8u::@4 mul8u::@10 mulf8s mulf8s::@6 mulf8s::@3 mulf8s::@1 mulf8s::@4 mulf8s::@2 mulf8s::@return mulf8s::@8 mulf8s::@7 mulf8u mulf8u::@return muls8s muls8s::@2 muls8s::@13 muls8s::@3 muls8s::@return muls8s::@12 muls8s::@1 muls8s::@5 muls8s::@14 muls8s::@15 mul8u_compare mul8u_compare::@1 mul8u_compare::@2 mul8u_compare::@12 mul8u_compare::@13 mul8u_compare::@14 mul8u_compare::@6 mul8u_compare::@3 mul8u_compare::@7 mul8u_compare::@4 mul8u_compare::@8 mul8u_compare::@return mul8u_compare::@5 mul8u_compare::@10 mul8u_compare::@11 mul8u_compare::@16 mul8u_compare::@18 mul8u_compare::@19 mul8u_compare::@20 mul8u_error mul8u_error::@1 mul8u_error::@2 mul8u_error::@3 mul8u_error::@4 mul8u_error::@5 mul8u_error::@6 mul8u_error::@7 mul8u_error::@8 mul8u_error::@9 mul8u_error::@10 mul8u_error::@return muls8u muls8u::@2 muls8u::@7 muls8u::@1 muls8u::@return muls8u::@6 mulf_tables_cmp mulf_tables_cmp::@1 mulf_tables_cmp::@3 mulf_tables_cmp::@6 mulf_tables_cmp::@7 mulf_tables_cmp::@8 mulf_tables_cmp::@return mulf_tables_cmp::@2 mulf_tables_cmp::@5 mulf_tables_cmp::@10 mulf_tables_cmp::@12 mulf_init_asm mulf_init_asm::@return mulf_init mulf_init::@1 mulf_init::@5 mulf_init::@2 mulf_init::@3 mulf_init::@7 mulf_init::@4 mulf_init::@8 mulf_init::@return mulf_init::@11 mulf_init::@12 mulf_init::@9 mulf_init::@10 print_cls print_cls::@1 print_cls::@return print_cls::@3 
+Block Sequence Planned @begin @31 @end main main::@1 main::@2 main::@3 main::@4 main::@5 main::@return mul8s_compare mul8s_compare::@1 mul8s_compare::@2 mul8s_compare::@12 mul8s_compare::@13 mul8s_compare::@14 mul8s_compare::@6 mul8s_compare::@3 mul8s_compare::@7 mul8s_compare::@4 mul8s_compare::@8 mul8s_compare::@return mul8s_compare::@5 mul8s_compare::@10 mul8s_compare::@11 mul8s_compare::@16 mul8s_compare::@18 mul8s_compare::@19 mul8s_compare::@20 print_ln print_ln::@1 print_ln::@return print_ln::@3 print_str print_str::@1 print_str::@return print_str::@2 mul8s_error mul8s_error::@1 mul8s_error::@2 mul8s_error::@3 mul8s_error::@4 mul8s_error::@5 mul8s_error::@6 mul8s_error::@7 mul8s_error::@8 mul8s_error::@9 mul8s_error::@10 mul8s_error::@return print_sword print_sword::@2 print_sword::@4 print_sword::@1 print_sword::@return print_sword::@5 print_word print_word::@1 print_word::@return print_byte print_byte::@1 print_byte::@return print_char print_char::@return print_sbyte print_sbyte::@2 print_sbyte::@4 print_sbyte::@1 print_sbyte::@return print_sbyte::@5 mul8s mul8s::@6 mul8s::@3 mul8s::@1 mul8s::@4 mul8s::@2 mul8s::@return mul8s::@8 mul8s::@7 mul8u mul8u::@1 mul8u::@return mul8u::@2 mul8u::@7 mul8u::@4 mul8u::@10 mulf8s mulf8s::@6 mulf8s::@3 mulf8s::@1 mulf8s::@4 mulf8s::@2 mulf8s::@return mulf8s::@8 mulf8s::@7 mulf8u mulf8u::@return muls8s muls8s::@6 muls8s::@3 muls8s::@13 muls8s::@4 muls8s::@return muls8s::@12 muls8s::@5 muls8s::@14 muls8s::@15 mul8u_compare mul8u_compare::@1 mul8u_compare::@2 mul8u_compare::@12 mul8u_compare::@13 mul8u_compare::@14 mul8u_compare::@6 mul8u_compare::@3 mul8u_compare::@7 mul8u_compare::@4 mul8u_compare::@8 mul8u_compare::@return mul8u_compare::@5 mul8u_compare::@10 mul8u_compare::@11 mul8u_compare::@16 mul8u_compare::@18 mul8u_compare::@19 mul8u_compare::@20 mul8u_error mul8u_error::@1 mul8u_error::@2 mul8u_error::@3 mul8u_error::@4 mul8u_error::@5 mul8u_error::@6 mul8u_error::@7 mul8u_error::@8 mul8u_error::@9 mul8u_error::@10 mul8u_error::@return muls8u muls8u::@2 muls8u::@7 muls8u::@1 muls8u::@return muls8u::@6 mulf_tables_cmp mulf_tables_cmp::@1 mulf_tables_cmp::@3 mulf_tables_cmp::@6 mulf_tables_cmp::@7 mulf_tables_cmp::@8 mulf_tables_cmp::@return mulf_tables_cmp::@2 mulf_tables_cmp::@5 mulf_tables_cmp::@10 mulf_tables_cmp::@12 mulf_init_asm mulf_init_asm::@return mulf_init mulf_init::@1 mulf_init::@5 mulf_init::@2 mulf_init::@3 mulf_init::@7 mulf_init::@4 mulf_init::@8 mulf_init::@return mulf_init::@11 mulf_init::@12 mulf_init::@9 mulf_init::@10 print_cls print_cls::@1 print_cls::@return print_cls::@3 
 Adding NOP phi() at start of @begin
 Adding NOP phi() at start of @31
 Adding NOP phi() at start of @end
@@ -6870,12 +6858,12 @@ Coalesced [210] mulf8s::m#7 ← mulf8s::m#1
 Coalesced [216] mulf8s::m#10 ← mulf8s::m#2
 Coalesced [219] mulf8s::m#9 ← mulf8s::m#5
 Coalesced [220] mulf8s::m#8 ← mulf8s::m#0
-Coalesced [232] muls8s::return#5 ← muls8s::m#1
-Coalesced [235] muls8s::m#10 ← muls8s::m#1
-Coalesced [236] muls8s::i#3 ← muls8s::i#1
+Coalesced [233] muls8s::return#5 ← muls8s::m#1
+Coalesced [236] muls8s::m#10 ← muls8s::m#1
+Coalesced [237] muls8s::j#3 ← muls8s::j#1
 Coalesced [242] muls8s::return#6 ← muls8s::m#2
 Coalesced [243] muls8s::m#11 ← muls8s::m#2
-Coalesced [244] muls8s::j#3 ← muls8s::j#1
+Coalesced [244] muls8s::i#3 ← muls8s::i#1
 Coalesced [255] mulf8u::a#3 ← mulf8u::a#1
 Coalesced [256] mulf8u::b#3 ← mulf8u::b#1
 Coalesced [262] mul8u::b#4 ← mul8u::b#1
@@ -6962,7 +6950,7 @@ Not culling empty block because it shares successor with its predecessor. (label
 Culled Empty Block (label) mulf_init::@9
 Culled Empty Block (label) mulf_init::@10
 Culled Empty Block (label) print_cls::@3
-Block Sequence Planned @begin @31 @end main main::@1 main::@2 main::@3 main::@4 main::@5 main::@return mul8s_compare mul8s_compare::@1 mul8s_compare::@2 mul8s_compare::@12 mul8s_compare::@13 mul8s_compare::@14 mul8s_compare::@6 mul8s_compare::@3 mul8s_compare::@4 mul8s_compare::@8 mul8s_compare::@return mul8s_compare::@5 mul8s_compare::@10 mul8s_compare::@11 mul8s_compare::@16 mul8s_compare::@20 print_ln print_ln::@1 print_ln::@return print_str print_str::@1 print_str::@return print_str::@2 mul8s_error mul8s_error::@1 mul8s_error::@2 mul8s_error::@3 mul8s_error::@4 mul8s_error::@5 mul8s_error::@6 mul8s_error::@7 mul8s_error::@8 mul8s_error::@9 mul8s_error::@10 mul8s_error::@return print_sword print_sword::@2 print_sword::@4 print_sword::@1 print_sword::@return print_word print_word::@1 print_word::@return print_byte print_byte::@1 print_byte::@return print_char print_char::@return print_sbyte print_sbyte::@2 print_sbyte::@4 print_sbyte::@1 print_sbyte::@return mul8s mul8s::@6 mul8s::@3 mul8s::@1 mul8s::@4 mul8s::@2 mul8s::@return mul8u mul8u::@1 mul8u::@return mul8u::@2 mul8u::@7 mul8u::@4 mulf8s mulf8s::@6 mulf8s::@3 mulf8s::@1 mulf8s::@4 mulf8s::@2 mulf8s::@return mulf8u mulf8u::@return muls8s muls8s::@2 muls8s::@3 muls8s::@return muls8s::@1 muls8s::@5 mul8u_compare mul8u_compare::@1 mul8u_compare::@2 mul8u_compare::@12 mul8u_compare::@13 mul8u_compare::@14 mul8u_compare::@6 mul8u_compare::@3 mul8u_compare::@4 mul8u_compare::@8 mul8u_compare::@return mul8u_compare::@5 mul8u_compare::@10 mul8u_compare::@11 mul8u_compare::@16 mul8u_compare::@20 mul8u_error mul8u_error::@1 mul8u_error::@2 mul8u_error::@3 mul8u_error::@4 mul8u_error::@5 mul8u_error::@6 mul8u_error::@7 mul8u_error::@8 mul8u_error::@9 mul8u_error::@10 mul8u_error::@return muls8u muls8u::@2 muls8u::@1 muls8u::@return mulf_tables_cmp mulf_tables_cmp::@1 mulf_tables_cmp::@3 mulf_tables_cmp::@6 mulf_tables_cmp::@7 mulf_tables_cmp::@8 mulf_tables_cmp::@return mulf_tables_cmp::@2 mulf_tables_cmp::@5 mulf_tables_cmp::@10 mulf_init_asm mulf_init_asm::@return mulf_init mulf_init::@1 mulf_init::@5 mulf_init::@2 mulf_init::@3 mulf_init::@4 mulf_init::@8 mulf_init::@return mulf_init::@12 print_cls print_cls::@1 print_cls::@return 
+Block Sequence Planned @begin @31 @end main main::@1 main::@2 main::@3 main::@4 main::@5 main::@return mul8s_compare mul8s_compare::@1 mul8s_compare::@2 mul8s_compare::@12 mul8s_compare::@13 mul8s_compare::@14 mul8s_compare::@6 mul8s_compare::@3 mul8s_compare::@4 mul8s_compare::@8 mul8s_compare::@return mul8s_compare::@5 mul8s_compare::@10 mul8s_compare::@11 mul8s_compare::@16 mul8s_compare::@20 print_ln print_ln::@1 print_ln::@return print_str print_str::@1 print_str::@return print_str::@2 mul8s_error mul8s_error::@1 mul8s_error::@2 mul8s_error::@3 mul8s_error::@4 mul8s_error::@5 mul8s_error::@6 mul8s_error::@7 mul8s_error::@8 mul8s_error::@9 mul8s_error::@10 mul8s_error::@return print_sword print_sword::@2 print_sword::@4 print_sword::@1 print_sword::@return print_word print_word::@1 print_word::@return print_byte print_byte::@1 print_byte::@return print_char print_char::@return print_sbyte print_sbyte::@2 print_sbyte::@4 print_sbyte::@1 print_sbyte::@return mul8s mul8s::@6 mul8s::@3 mul8s::@1 mul8s::@4 mul8s::@2 mul8s::@return mul8u mul8u::@1 mul8u::@return mul8u::@2 mul8u::@7 mul8u::@4 mulf8s mulf8s::@6 mulf8s::@3 mulf8s::@1 mulf8s::@4 mulf8s::@2 mulf8s::@return mulf8u mulf8u::@return muls8s muls8s::@6 muls8s::@3 muls8s::@4 muls8s::@return muls8s::@5 mul8u_compare mul8u_compare::@1 mul8u_compare::@2 mul8u_compare::@12 mul8u_compare::@13 mul8u_compare::@14 mul8u_compare::@6 mul8u_compare::@3 mul8u_compare::@4 mul8u_compare::@8 mul8u_compare::@return mul8u_compare::@5 mul8u_compare::@10 mul8u_compare::@11 mul8u_compare::@16 mul8u_compare::@20 mul8u_error mul8u_error::@1 mul8u_error::@2 mul8u_error::@3 mul8u_error::@4 mul8u_error::@5 mul8u_error::@6 mul8u_error::@7 mul8u_error::@8 mul8u_error::@9 mul8u_error::@10 mul8u_error::@return muls8u muls8u::@2 muls8u::@1 muls8u::@return mulf_tables_cmp mulf_tables_cmp::@1 mulf_tables_cmp::@3 mulf_tables_cmp::@6 mulf_tables_cmp::@7 mulf_tables_cmp::@8 mulf_tables_cmp::@return mulf_tables_cmp::@2 mulf_tables_cmp::@5 mulf_tables_cmp::@10 mulf_init_asm mulf_init_asm::@return mulf_init mulf_init::@1 mulf_init::@5 mulf_init::@2 mulf_init::@3 mulf_init::@4 mulf_init::@8 mulf_init::@return mulf_init::@12 print_cls print_cls::@1 print_cls::@return 
 Adding NOP phi() at start of @begin
 Adding NOP phi() at start of @31
 Adding NOP phi() at start of @end
@@ -7395,31 +7383,31 @@ mulf8u::@return: scope:[mulf8u]  from mulf8u
   [177] return  [ mulf8u::return#0 ] ( main:2::mul8s_compare:15::mulf8s:27::mulf8u:158 [ mul8s_compare::a#7 mul8s_compare::b#10 mul8s_compare::ms#0 print_line_cursor#1 mulf8s::a#0 mulf8s::b#0 mulf8u::return#0 ] main:2::mul8u_compare:13::mulf8u:200 [ print_line_cursor#10 print_char_cursor#30 mul8u_compare::a#7 mul8u_compare::b#10 mul8u_compare::ms#0 mulf8u::return#0 ] )
   to:@return
 muls8s: scope:[muls8s]  from mul8s_compare::@2
-  [178] if((signed byte) muls8s::a#0>=(byte/signed byte/word/signed word/dword/signed dword) 0) goto muls8s::@1 [ muls8s::a#0 muls8s::b#0 ] ( main:2::mul8s_compare:15::muls8s:22 [ mul8s_compare::a#7 mul8s_compare::b#10 print_line_cursor#1 muls8s::a#0 muls8s::b#0 ] )
-  to:muls8s::@2
-muls8s::@2: scope:[muls8s]  from muls8s muls8s::@2
-  [179] (signed byte) muls8s::i#2 ← phi( muls8s::@2/(signed byte) muls8s::i#1 muls8s/(byte/signed byte/word/signed word/dword/signed dword) 0 ) [ muls8s::a#0 muls8s::b#0 muls8s::m#3 muls8s::i#2 ] ( main:2::mul8s_compare:15::muls8s:22 [ mul8s_compare::a#7 mul8s_compare::b#10 print_line_cursor#1 muls8s::a#0 muls8s::b#0 muls8s::m#3 muls8s::i#2 ] )
-  [179] (signed word) muls8s::m#3 ← phi( muls8s::@2/(signed word) muls8s::m#1 muls8s/(byte/signed byte/word/signed word/dword/signed dword) 0 ) [ muls8s::a#0 muls8s::b#0 muls8s::m#3 muls8s::i#2 ] ( main:2::mul8s_compare:15::muls8s:22 [ mul8s_compare::a#7 mul8s_compare::b#10 print_line_cursor#1 muls8s::a#0 muls8s::b#0 muls8s::m#3 muls8s::i#2 ] )
-  [180] (signed word) muls8s::m#1 ← (signed word) muls8s::m#3 - (signed byte) muls8s::b#0 [ muls8s::a#0 muls8s::b#0 muls8s::i#2 muls8s::m#1 ] ( main:2::mul8s_compare:15::muls8s:22 [ mul8s_compare::a#7 mul8s_compare::b#10 print_line_cursor#1 muls8s::a#0 muls8s::b#0 muls8s::i#2 muls8s::m#1 ] )
-  [181] (signed byte) muls8s::i#1 ← -- (signed byte) muls8s::i#2 [ muls8s::a#0 muls8s::b#0 muls8s::m#1 muls8s::i#1 ] ( main:2::mul8s_compare:15::muls8s:22 [ mul8s_compare::a#7 mul8s_compare::b#10 print_line_cursor#1 muls8s::a#0 muls8s::b#0 muls8s::m#1 muls8s::i#1 ] )
-  [182] if((signed byte) muls8s::i#1!=(signed byte) muls8s::a#0) goto muls8s::@2 [ muls8s::a#0 muls8s::b#0 muls8s::m#1 muls8s::i#1 ] ( main:2::mul8s_compare:15::muls8s:22 [ mul8s_compare::a#7 mul8s_compare::b#10 print_line_cursor#1 muls8s::a#0 muls8s::b#0 muls8s::m#1 muls8s::i#1 ] )
+  [178] if((signed byte) muls8s::a#0<(byte/signed byte/word/signed word/dword/signed dword) 0) goto muls8s::@5 [ muls8s::a#0 muls8s::b#0 ] ( main:2::mul8s_compare:15::muls8s:22 [ mul8s_compare::a#7 mul8s_compare::b#10 print_line_cursor#1 muls8s::a#0 muls8s::b#0 ] )
+  to:muls8s::@6
+muls8s::@6: scope:[muls8s]  from muls8s
+  [179] if((signed byte) muls8s::a#0<=(byte/signed byte/word/signed word/dword/signed dword) 0) goto muls8s::@4 [ muls8s::a#0 muls8s::b#0 ] ( main:2::mul8s_compare:15::muls8s:22 [ mul8s_compare::a#7 mul8s_compare::b#10 print_line_cursor#1 muls8s::a#0 muls8s::b#0 ] )
   to:muls8s::@3
-muls8s::@3: scope:[muls8s]  from muls8s::@1 muls8s::@2 muls8s::@5
-  [183] (signed word) muls8s::return#0 ← phi( muls8s::@2/(signed word) muls8s::m#1 muls8s::@1/(byte/signed byte/word/signed word/dword/signed dword) 0 muls8s::@5/(signed word) muls8s::m#2 ) [ muls8s::return#0 ] ( main:2::mul8s_compare:15::muls8s:22 [ mul8s_compare::a#7 mul8s_compare::b#10 print_line_cursor#1 muls8s::return#0 ] )
+muls8s::@3: scope:[muls8s]  from muls8s::@3 muls8s::@6
+  [180] (signed byte) muls8s::j#2 ← phi( muls8s::@3/(signed byte) muls8s::j#1 muls8s::@6/(byte/signed byte/word/signed word/dword/signed dword) 0 ) [ muls8s::a#0 muls8s::b#0 muls8s::m#3 muls8s::j#2 ] ( main:2::mul8s_compare:15::muls8s:22 [ mul8s_compare::a#7 mul8s_compare::b#10 print_line_cursor#1 muls8s::a#0 muls8s::b#0 muls8s::m#3 muls8s::j#2 ] )
+  [180] (signed word) muls8s::m#3 ← phi( muls8s::@3/(signed word) muls8s::m#1 muls8s::@6/(byte/signed byte/word/signed word/dword/signed dword) 0 ) [ muls8s::a#0 muls8s::b#0 muls8s::m#3 muls8s::j#2 ] ( main:2::mul8s_compare:15::muls8s:22 [ mul8s_compare::a#7 mul8s_compare::b#10 print_line_cursor#1 muls8s::a#0 muls8s::b#0 muls8s::m#3 muls8s::j#2 ] )
+  [181] (signed word) muls8s::m#1 ← (signed word) muls8s::m#3 + (signed byte) muls8s::b#0 [ muls8s::a#0 muls8s::b#0 muls8s::j#2 muls8s::m#1 ] ( main:2::mul8s_compare:15::muls8s:22 [ mul8s_compare::a#7 mul8s_compare::b#10 print_line_cursor#1 muls8s::a#0 muls8s::b#0 muls8s::j#2 muls8s::m#1 ] )
+  [182] (signed byte) muls8s::j#1 ← ++ (signed byte) muls8s::j#2 [ muls8s::a#0 muls8s::b#0 muls8s::m#1 muls8s::j#1 ] ( main:2::mul8s_compare:15::muls8s:22 [ mul8s_compare::a#7 mul8s_compare::b#10 print_line_cursor#1 muls8s::a#0 muls8s::b#0 muls8s::m#1 muls8s::j#1 ] )
+  [183] if((signed byte) muls8s::j#1!=(signed byte) muls8s::a#0) goto muls8s::@3 [ muls8s::a#0 muls8s::b#0 muls8s::m#1 muls8s::j#1 ] ( main:2::mul8s_compare:15::muls8s:22 [ mul8s_compare::a#7 mul8s_compare::b#10 print_line_cursor#1 muls8s::a#0 muls8s::b#0 muls8s::m#1 muls8s::j#1 ] )
+  to:muls8s::@4
+muls8s::@4: scope:[muls8s]  from muls8s::@3 muls8s::@5 muls8s::@6
+  [184] (signed word) muls8s::return#0 ← phi( muls8s::@6/(byte/signed byte/word/signed word/dword/signed dword) 0 muls8s::@3/(signed word) muls8s::m#1 muls8s::@5/(signed word) muls8s::m#2 ) [ muls8s::return#0 ] ( main:2::mul8s_compare:15::muls8s:22 [ mul8s_compare::a#7 mul8s_compare::b#10 print_line_cursor#1 muls8s::return#0 ] )
   to:muls8s::@return
-muls8s::@return: scope:[muls8s]  from muls8s::@3
-  [184] return  [ muls8s::return#0 ] ( main:2::mul8s_compare:15::muls8s:22 [ mul8s_compare::a#7 mul8s_compare::b#10 print_line_cursor#1 muls8s::return#0 ] )
+muls8s::@return: scope:[muls8s]  from muls8s::@4
+  [185] return  [ muls8s::return#0 ] ( main:2::mul8s_compare:15::muls8s:22 [ mul8s_compare::a#7 mul8s_compare::b#10 print_line_cursor#1 muls8s::return#0 ] )
   to:@return
-muls8s::@1: scope:[muls8s]  from muls8s
-  [185] if((signed byte) muls8s::a#0<=(byte/signed byte/word/signed word/dword/signed dword) 0) goto muls8s::@3 [ muls8s::a#0 muls8s::b#0 ] ( main:2::mul8s_compare:15::muls8s:22 [ mul8s_compare::a#7 mul8s_compare::b#10 print_line_cursor#1 muls8s::a#0 muls8s::b#0 ] )
-  to:muls8s::@5
-muls8s::@5: scope:[muls8s]  from muls8s::@1 muls8s::@5
-  [186] (signed byte) muls8s::j#2 ← phi( muls8s::@5/(signed byte) muls8s::j#1 muls8s::@1/(byte/signed byte/word/signed word/dword/signed dword) 0 ) [ muls8s::a#0 muls8s::b#0 muls8s::m#5 muls8s::j#2 ] ( main:2::mul8s_compare:15::muls8s:22 [ mul8s_compare::a#7 mul8s_compare::b#10 print_line_cursor#1 muls8s::a#0 muls8s::b#0 muls8s::m#5 muls8s::j#2 ] )
-  [186] (signed word) muls8s::m#5 ← phi( muls8s::@5/(signed word) muls8s::m#2 muls8s::@1/(byte/signed byte/word/signed word/dword/signed dword) 0 ) [ muls8s::a#0 muls8s::b#0 muls8s::m#5 muls8s::j#2 ] ( main:2::mul8s_compare:15::muls8s:22 [ mul8s_compare::a#7 mul8s_compare::b#10 print_line_cursor#1 muls8s::a#0 muls8s::b#0 muls8s::m#5 muls8s::j#2 ] )
-  [187] (signed word) muls8s::m#2 ← (signed word) muls8s::m#5 + (signed byte) muls8s::b#0 [ muls8s::a#0 muls8s::b#0 muls8s::m#2 muls8s::j#2 ] ( main:2::mul8s_compare:15::muls8s:22 [ mul8s_compare::a#7 mul8s_compare::b#10 print_line_cursor#1 muls8s::a#0 muls8s::b#0 muls8s::m#2 muls8s::j#2 ] )
-  [188] (signed byte) muls8s::j#1 ← ++ (signed byte) muls8s::j#2 [ muls8s::a#0 muls8s::b#0 muls8s::m#2 muls8s::j#1 ] ( main:2::mul8s_compare:15::muls8s:22 [ mul8s_compare::a#7 mul8s_compare::b#10 print_line_cursor#1 muls8s::a#0 muls8s::b#0 muls8s::m#2 muls8s::j#1 ] )
-  [189] if((signed byte) muls8s::j#1!=(signed byte) muls8s::a#0) goto muls8s::@5 [ muls8s::a#0 muls8s::b#0 muls8s::m#2 muls8s::j#1 ] ( main:2::mul8s_compare:15::muls8s:22 [ mul8s_compare::a#7 mul8s_compare::b#10 print_line_cursor#1 muls8s::a#0 muls8s::b#0 muls8s::m#2 muls8s::j#1 ] )
-  to:muls8s::@3
+muls8s::@5: scope:[muls8s]  from muls8s muls8s::@5
+  [186] (signed byte) muls8s::i#2 ← phi( muls8s/(byte/signed byte/word/signed word/dword/signed dword) 0 muls8s::@5/(signed byte) muls8s::i#1 ) [ muls8s::a#0 muls8s::b#0 muls8s::m#5 muls8s::i#2 ] ( main:2::mul8s_compare:15::muls8s:22 [ mul8s_compare::a#7 mul8s_compare::b#10 print_line_cursor#1 muls8s::a#0 muls8s::b#0 muls8s::m#5 muls8s::i#2 ] )
+  [186] (signed word) muls8s::m#5 ← phi( muls8s/(byte/signed byte/word/signed word/dword/signed dword) 0 muls8s::@5/(signed word) muls8s::m#2 ) [ muls8s::a#0 muls8s::b#0 muls8s::m#5 muls8s::i#2 ] ( main:2::mul8s_compare:15::muls8s:22 [ mul8s_compare::a#7 mul8s_compare::b#10 print_line_cursor#1 muls8s::a#0 muls8s::b#0 muls8s::m#5 muls8s::i#2 ] )
+  [187] (signed word) muls8s::m#2 ← (signed word) muls8s::m#5 - (signed byte) muls8s::b#0 [ muls8s::a#0 muls8s::b#0 muls8s::m#2 muls8s::i#2 ] ( main:2::mul8s_compare:15::muls8s:22 [ mul8s_compare::a#7 mul8s_compare::b#10 print_line_cursor#1 muls8s::a#0 muls8s::b#0 muls8s::m#2 muls8s::i#2 ] )
+  [188] (signed byte) muls8s::i#1 ← -- (signed byte) muls8s::i#2 [ muls8s::a#0 muls8s::b#0 muls8s::m#2 muls8s::i#1 ] ( main:2::mul8s_compare:15::muls8s:22 [ mul8s_compare::a#7 mul8s_compare::b#10 print_line_cursor#1 muls8s::a#0 muls8s::b#0 muls8s::m#2 muls8s::i#1 ] )
+  [189] if((signed byte) muls8s::i#1!=(signed byte) muls8s::a#0) goto muls8s::@5 [ muls8s::a#0 muls8s::b#0 muls8s::m#2 muls8s::i#1 ] ( main:2::mul8s_compare:15::muls8s:22 [ mul8s_compare::a#7 mul8s_compare::b#10 print_line_cursor#1 muls8s::a#0 muls8s::b#0 muls8s::m#2 muls8s::i#1 ] )
+  to:muls8s::@4
 mul8u_compare: scope:[mul8u_compare]  from main::@4
   [190] phi() [ print_line_cursor#10 print_char_cursor#30 ] ( main:2::mul8u_compare:13 [ print_line_cursor#10 print_char_cursor#30 ] )
   to:mul8u_compare::@1
@@ -7764,11 +7752,11 @@ mulf8s::@return dominated by  main::@1 main::@2 main::@5 main::@3 main::@4 mul8s
 mulf8u dominated by  main::@1 main::@2 main::@3 main::@4 mulf8u main @31 @begin 
 mulf8u::@return dominated by  main::@1 main::@2 main::@3 main::@4 mulf8u main @31 @begin mulf8u::@return 
 muls8s dominated by  muls8s main::@1 main::@2 main::@5 main::@3 main::@4 mul8s_compare::@1 mul8s_compare::@2 main @31 @begin mul8s_compare 
-muls8s::@2 dominated by  muls8s main::@1 main::@2 main::@5 main::@3 main::@4 muls8s::@2 mul8s_compare::@1 mul8s_compare::@2 main @31 @begin mul8s_compare 
-muls8s::@3 dominated by  muls8s main::@1 main::@2 main::@5 main::@3 main::@4 muls8s::@3 mul8s_compare::@1 mul8s_compare::@2 main @31 @begin mul8s_compare 
-muls8s::@return dominated by  muls8s main::@1 main::@2 main::@5 main::@3 main::@4 muls8s::@3 mul8s_compare::@1 mul8s_compare::@2 muls8s::@return main @31 @begin mul8s_compare 
-muls8s::@1 dominated by  muls8s main::@1 main::@2 main::@5 main::@3 main::@4 muls8s::@1 mul8s_compare::@1 mul8s_compare::@2 main @31 @begin mul8s_compare 
-muls8s::@5 dominated by  muls8s main::@1 main::@2 main::@5 main::@3 main::@4 muls8s::@5 muls8s::@1 mul8s_compare::@1 mul8s_compare::@2 main @31 @begin mul8s_compare 
+muls8s::@6 dominated by  muls8s muls8s::@6 main::@1 main::@2 main::@5 main::@3 main::@4 mul8s_compare::@1 mul8s_compare::@2 main @31 @begin mul8s_compare 
+muls8s::@3 dominated by  muls8s muls8s::@6 main::@1 main::@2 main::@5 main::@3 main::@4 muls8s::@3 mul8s_compare::@1 mul8s_compare::@2 main @31 @begin mul8s_compare 
+muls8s::@4 dominated by  muls8s main::@1 main::@2 main::@5 main::@3 main::@4 muls8s::@4 mul8s_compare::@1 mul8s_compare::@2 main @31 @begin mul8s_compare 
+muls8s::@return dominated by  muls8s main::@1 main::@2 main::@5 main::@3 main::@4 muls8s::@4 mul8s_compare::@1 mul8s_compare::@2 muls8s::@return main @31 @begin mul8s_compare 
+muls8s::@5 dominated by  muls8s main::@1 main::@2 main::@5 main::@3 main::@4 muls8s::@5 mul8s_compare::@1 mul8s_compare::@2 main @31 @begin mul8s_compare 
 mul8u_compare dominated by  main::@1 main::@2 main::@3 main::@4 main @31 @begin mul8u_compare 
 mul8u_compare::@1 dominated by  main::@1 mul8u_compare::@1 main::@2 main::@3 main::@4 main @31 @begin mul8u_compare 
 mul8u_compare::@2 dominated by  main::@1 mul8u_compare::@1 main::@2 mul8u_compare::@2 main::@3 main::@4 main @31 @begin mul8u_compare 
@@ -7832,7 +7820,7 @@ Found back edge: Loop head: mul8s_compare::@1 tails: mul8s_compare::@10 blocks: 
 Found back edge: Loop head: print_ln::@1 tails: print_ln::@1 blocks: null
 Found back edge: Loop head: print_str::@1 tails: print_str::@2 blocks: null
 Found back edge: Loop head: mul8u::@1 tails: mul8u::@4 blocks: null
-Found back edge: Loop head: muls8s::@2 tails: muls8s::@2 blocks: null
+Found back edge: Loop head: muls8s::@3 tails: muls8s::@3 blocks: null
 Found back edge: Loop head: muls8s::@5 tails: muls8s::@5 blocks: null
 Found back edge: Loop head: mul8u_compare::@2 tails: mul8u_compare::@5 blocks: null
 Found back edge: Loop head: mul8u_compare::@1 tails: mul8u_compare::@10 blocks: null
@@ -7846,7 +7834,7 @@ Populated: Loop head: mul8s_compare::@1 tails: mul8s_compare::@10 blocks: mul8s_
 Populated: Loop head: print_ln::@1 tails: print_ln::@1 blocks: print_ln::@1 
 Populated: Loop head: print_str::@1 tails: print_str::@2 blocks: print_str::@2 print_str::@1 
 Populated: Loop head: mul8u::@1 tails: mul8u::@4 blocks: mul8u::@4 mul8u::@2 mul8u::@7 mul8u::@1 
-Populated: Loop head: muls8s::@2 tails: muls8s::@2 blocks: muls8s::@2 
+Populated: Loop head: muls8s::@3 tails: muls8s::@3 blocks: muls8s::@3 
 Populated: Loop head: muls8s::@5 tails: muls8s::@5 blocks: muls8s::@5 
 Populated: Loop head: mul8u_compare::@2 tails: mul8u_compare::@5 blocks: mul8u_compare::@5 mul8u_compare::@4 mul8u_compare::@20 mul8u_compare::@3 mul8u_compare::@14 mul8u_compare::@6 mul8u_compare::@13 mul8u_compare::@12 mul8u_compare::@2 
 Populated: Loop head: mul8u_compare::@1 tails: mul8u_compare::@10 blocks: mul8u_compare::@10 mul8u_compare::@5 mul8u_compare::@4 mul8u_compare::@20 mul8u_compare::@3 mul8u_compare::@14 mul8u_compare::@6 mul8u_compare::@13 mul8u_compare::@12 mul8u_compare::@2 mul8u_compare::@1 
@@ -7860,7 +7848,7 @@ Loop head: mul8s_compare::@1 tails: mul8s_compare::@10 blocks: mul8s_compare::@1
 Loop head: print_ln::@1 tails: print_ln::@1 blocks: print_ln::@1 
 Loop head: print_str::@1 tails: print_str::@2 blocks: print_str::@2 print_str::@1 
 Loop head: mul8u::@1 tails: mul8u::@4 blocks: mul8u::@4 mul8u::@2 mul8u::@7 mul8u::@1 
-Loop head: muls8s::@2 tails: muls8s::@2 blocks: muls8s::@2 
+Loop head: muls8s::@3 tails: muls8s::@3 blocks: muls8s::@3 
 Loop head: muls8s::@5 tails: muls8s::@5 blocks: muls8s::@5 
 Loop head: mul8u_compare::@2 tails: mul8u_compare::@5 blocks: mul8u_compare::@5 mul8u_compare::@4 mul8u_compare::@20 mul8u_compare::@3 mul8u_compare::@14 mul8u_compare::@6 mul8u_compare::@13 mul8u_compare::@12 mul8u_compare::@2 
 Loop head: mul8u_compare::@1 tails: mul8u_compare::@10 blocks: mul8u_compare::@10 mul8u_compare::@5 mul8u_compare::@4 mul8u_compare::@20 mul8u_compare::@3 mul8u_compare::@14 mul8u_compare::@6 mul8u_compare::@13 mul8u_compare::@12 mul8u_compare::@2 mul8u_compare::@1 
@@ -7899,7 +7887,7 @@ Found 1 loops in scope [mul8u]
   Loop head: mul8u::@1 tails: mul8u::@4 blocks: mul8u::@4 mul8u::@2 mul8u::@7 mul8u::@1 
 Found 0 loops in scope [mul8u_error]
 Found 2 loops in scope [muls8s]
-  Loop head: muls8s::@2 tails: muls8s::@2 blocks: muls8s::@2 
+  Loop head: muls8s::@3 tails: muls8s::@3 blocks: muls8s::@3 
   Loop head: muls8s::@5 tails: muls8s::@5 blocks: muls8s::@5 
 Found 0 loops in scope [mulf8s]
 Found 0 loops in scope [mul8s]
@@ -7913,7 +7901,7 @@ Loop head: mul8s_compare::@1 tails: mul8s_compare::@10 blocks: mul8s_compare::@1
 Loop head: print_ln::@1 tails: print_ln::@1 blocks: print_ln::@1  depth: 1
 Loop head: print_str::@1 tails: print_str::@2 blocks: print_str::@2 print_str::@1  depth: 1
 Loop head: mul8u::@1 tails: mul8u::@4 blocks: mul8u::@4 mul8u::@2 mul8u::@7 mul8u::@1  depth: 3
-Loop head: muls8s::@2 tails: muls8s::@2 blocks: muls8s::@2  depth: 3
+Loop head: muls8s::@3 tails: muls8s::@3 blocks: muls8s::@3  depth: 3
 Loop head: muls8s::@5 tails: muls8s::@5 blocks: muls8s::@5  depth: 3
 Loop head: mul8u_compare::@2 tails: mul8u_compare::@5 blocks: mul8u_compare::@5 mul8u_compare::@4 mul8u_compare::@20 mul8u_compare::@3 mul8u_compare::@14 mul8u_compare::@6 mul8u_compare::@13 mul8u_compare::@12 mul8u_compare::@2  depth: 2
 Loop head: mul8u_compare::@1 tails: mul8u_compare::@10 blocks: mul8u_compare::@10 mul8u_compare::@5 mul8u_compare::@4 mul8u_compare::@20 mul8u_compare::@3 mul8u_compare::@14 mul8u_compare::@6 mul8u_compare::@13 mul8u_compare::@12 mul8u_compare::@2 mul8u_compare::@1  depth: 1
@@ -8229,9 +8217,9 @@ Initial phi equivalence classes
 [ mulf8s::m#4 mulf8s::m#5 mulf8s::m#1 mulf8s::m#0 mulf8s::m#2 ]
 [ mulf8u::a#2 mulf8u::a#1 mulf8u::a#4 ]
 [ mulf8u::b#2 mulf8u::b#1 mulf8u::b#4 ]
-[ muls8s::i#2 muls8s::i#1 ]
-[ muls8s::m#5 muls8s::return#0 muls8s::m#3 muls8s::m#1 muls8s::m#2 ]
 [ muls8s::j#2 muls8s::j#1 ]
+[ muls8s::m#5 muls8s::return#0 muls8s::m#3 muls8s::m#1 muls8s::m#2 ]
+[ muls8s::i#2 muls8s::i#1 ]
 [ mul8u_compare::a#7 mul8u_compare::a#1 ]
 [ mul8u_compare::b#10 mul8u_compare::b#1 ]
 [ mul8u_compare::ok#3 mul8u_compare::ok#4 ]
@@ -8316,9 +8304,9 @@ Complete equivalence classes
 [ mulf8s::m#4 mulf8s::m#5 mulf8s::m#1 mulf8s::m#0 mulf8s::m#2 ]
 [ mulf8u::a#2 mulf8u::a#1 mulf8u::a#4 ]
 [ mulf8u::b#2 mulf8u::b#1 mulf8u::b#4 ]
-[ muls8s::i#2 muls8s::i#1 ]
-[ muls8s::m#5 muls8s::return#0 muls8s::m#3 muls8s::m#1 muls8s::m#2 ]
 [ muls8s::j#2 muls8s::j#1 ]
+[ muls8s::m#5 muls8s::return#0 muls8s::m#3 muls8s::m#1 muls8s::m#2 ]
+[ muls8s::i#2 muls8s::i#1 ]
 [ mul8u_compare::a#7 mul8u_compare::a#1 ]
 [ mul8u_compare::b#10 mul8u_compare::b#1 ]
 [ mul8u_compare::ok#3 mul8u_compare::ok#4 ]
@@ -8402,9 +8390,9 @@ Allocated zp ZP_WORD:24 [ mul8u::mb#2 mul8u::mb#0 mul8u::mb#1 ]
 Allocated zp ZP_WORD:26 [ mulf8s::m#4 mulf8s::m#5 mulf8s::m#1 mulf8s::m#0 mulf8s::m#2 ]
 Allocated zp ZP_BYTE:28 [ mulf8u::a#2 mulf8u::a#1 mulf8u::a#4 ]
 Allocated zp ZP_BYTE:29 [ mulf8u::b#2 mulf8u::b#1 mulf8u::b#4 ]
-Allocated zp ZP_BYTE:30 [ muls8s::i#2 muls8s::i#1 ]
+Allocated zp ZP_BYTE:30 [ muls8s::j#2 muls8s::j#1 ]
 Allocated zp ZP_WORD:31 [ muls8s::m#5 muls8s::return#0 muls8s::m#3 muls8s::m#1 muls8s::m#2 ]
-Allocated zp ZP_BYTE:33 [ muls8s::j#2 muls8s::j#1 ]
+Allocated zp ZP_BYTE:33 [ muls8s::i#2 muls8s::i#1 ]
 Allocated zp ZP_BYTE:34 [ mul8u_compare::a#7 mul8u_compare::a#1 ]
 Allocated zp ZP_BYTE:35 [ mul8u_compare::b#10 mul8u_compare::b#1 ]
 Allocated zp ZP_BYTE:36 [ mul8u_compare::ok#3 mul8u_compare::ok#4 ]
@@ -9526,100 +9514,41 @@ mulf8u: {
 //SEG354 muls8s
 muls8s: {
     .label m = $1f
-    .label i = $1e
+    .label j = $1e
     .label return = $1f
-    .label j = $21
+    .label i = $21
     .label a = $3c
     .label b = $3d
     .label return_2 = $3e
-  //SEG355 [178] if((signed byte) muls8s::a#0>=(byte/signed byte/word/signed word/dword/signed dword) 0) goto muls8s::@1 [ muls8s::a#0 muls8s::b#0 ] ( main:2::mul8s_compare:15::muls8s:22 [ mul8s_compare::a#7 mul8s_compare::b#10 print_line_cursor#1 muls8s::a#0 muls8s::b#0 ] ) -- vbsz1_ge_0_then_la1 
+  //SEG355 [178] if((signed byte) muls8s::a#0<(byte/signed byte/word/signed word/dword/signed dword) 0) goto muls8s::@5 [ muls8s::a#0 muls8s::b#0 ] ( main:2::mul8s_compare:15::muls8s:22 [ mul8s_compare::a#7 mul8s_compare::b#10 print_line_cursor#1 muls8s::a#0 muls8s::b#0 ] ) -- vbsz1_lt_0_then_la1 
     lda a
-    cmp #0
-    bpl b1
-  //SEG356 [179] phi from muls8s to muls8s::@2 [phi:muls8s->muls8s::@2]
-  b2_from_muls8s:
-  //SEG357 [179] phi (signed byte) muls8s::i#2 = (byte/signed byte/word/signed word/dword/signed dword) 0 [phi:muls8s->muls8s::@2#0] -- vbsz1=vbuc1 
-    lda #0
-    sta i
-  //SEG358 [179] phi (signed word) muls8s::m#3 = (byte/signed byte/word/signed word/dword/signed dword) 0 [phi:muls8s->muls8s::@2#1] -- vwsz1=vbuc1 
-    lda #<0
-    sta m
-    lda #>0
-    sta m+1
-    jmp b2
-  //SEG359 [179] phi from muls8s::@2 to muls8s::@2 [phi:muls8s::@2->muls8s::@2]
-  b2_from_b2:
-  //SEG360 [179] phi (signed byte) muls8s::i#2 = (signed byte) muls8s::i#1 [phi:muls8s::@2->muls8s::@2#0] -- register_copy 
-  //SEG361 [179] phi (signed word) muls8s::m#3 = (signed word) muls8s::m#1 [phi:muls8s::@2->muls8s::@2#1] -- register_copy 
-    jmp b2
-  //SEG362 muls8s::@2
-  b2:
-  //SEG363 [180] (signed word) muls8s::m#1 ← (signed word) muls8s::m#3 - (signed byte) muls8s::b#0 [ muls8s::a#0 muls8s::b#0 muls8s::i#2 muls8s::m#1 ] ( main:2::mul8s_compare:15::muls8s:22 [ mul8s_compare::a#7 mul8s_compare::b#10 print_line_cursor#1 muls8s::a#0 muls8s::b#0 muls8s::i#2 muls8s::m#1 ] ) -- vwsz1=vwsz1_minus_vbsz2 
-    lda b
-    sta $fe
-    ora #$7f
-    bmi !+
-    lda #0
-  !:
-    sta $ff
-    sec
-    lda m
-    sbc $fe
-    sta m
-    lda m+1
-    sbc $ff
-    sta m+1
-  //SEG364 [181] (signed byte) muls8s::i#1 ← -- (signed byte) muls8s::i#2 [ muls8s::a#0 muls8s::b#0 muls8s::m#1 muls8s::i#1 ] ( main:2::mul8s_compare:15::muls8s:22 [ mul8s_compare::a#7 mul8s_compare::b#10 print_line_cursor#1 muls8s::a#0 muls8s::b#0 muls8s::m#1 muls8s::i#1 ] ) -- vbsz1=_dec_vbsz1 
-    dec i
-  //SEG365 [182] if((signed byte) muls8s::i#1!=(signed byte) muls8s::a#0) goto muls8s::@2 [ muls8s::a#0 muls8s::b#0 muls8s::m#1 muls8s::i#1 ] ( main:2::mul8s_compare:15::muls8s:22 [ mul8s_compare::a#7 mul8s_compare::b#10 print_line_cursor#1 muls8s::a#0 muls8s::b#0 muls8s::m#1 muls8s::i#1 ] ) -- vbsz1_neq_vbsz2_then_la1 
-    lda i
-    cmp a
-    bne b2_from_b2
-  //SEG366 [183] phi from muls8s::@2 muls8s::@5 to muls8s::@3 [phi:muls8s::@2/muls8s::@5->muls8s::@3]
-  b3_from_b2:
-  b3_from_b5:
-  //SEG367 [183] phi (signed word) muls8s::return#0 = (signed word) muls8s::m#1 [phi:muls8s::@2/muls8s::@5->muls8s::@3#0] -- register_copy 
-    jmp b3
-  //SEG368 [183] phi from muls8s::@1 to muls8s::@3 [phi:muls8s::@1->muls8s::@3]
-  b3_from_b1:
-  //SEG369 [183] phi (signed word) muls8s::return#0 = (byte/signed byte/word/signed word/dword/signed dword) 0 [phi:muls8s::@1->muls8s::@3#0] -- vwsz1=vbuc1 
-    lda #<0
-    sta return
-    lda #>0
-    sta return+1
-    jmp b3
-  //SEG370 muls8s::@3
-  b3:
-    jmp breturn
-  //SEG371 muls8s::@return
-  breturn:
-  //SEG372 [184] return  [ muls8s::return#0 ] ( main:2::mul8s_compare:15::muls8s:22 [ mul8s_compare::a#7 mul8s_compare::b#10 print_line_cursor#1 muls8s::return#0 ] )
-    rts
-  //SEG373 muls8s::@1
-  b1:
-  //SEG374 [185] if((signed byte) muls8s::a#0<=(byte/signed byte/word/signed word/dword/signed dword) 0) goto muls8s::@3 [ muls8s::a#0 muls8s::b#0 ] ( main:2::mul8s_compare:15::muls8s:22 [ mul8s_compare::a#7 mul8s_compare::b#10 print_line_cursor#1 muls8s::a#0 muls8s::b#0 ] ) -- vbsz1_le_0_then_la1 
+    bmi b5_from_muls8s
+    jmp b6
+  //SEG356 muls8s::@6
+  b6:
+  //SEG357 [179] if((signed byte) muls8s::a#0<=(byte/signed byte/word/signed word/dword/signed dword) 0) goto muls8s::@4 [ muls8s::a#0 muls8s::b#0 ] ( main:2::mul8s_compare:15::muls8s:22 [ mul8s_compare::a#7 mul8s_compare::b#10 print_line_cursor#1 muls8s::a#0 muls8s::b#0 ] ) -- vbsz1_le_0_then_la1 
     lda a
     cmp #1
-    bmi b3_from_b1
-  //SEG375 [186] phi from muls8s::@1 to muls8s::@5 [phi:muls8s::@1->muls8s::@5]
-  b5_from_b1:
-  //SEG376 [186] phi (signed byte) muls8s::j#2 = (byte/signed byte/word/signed word/dword/signed dword) 0 [phi:muls8s::@1->muls8s::@5#0] -- vbsz1=vbuc1 
+    bmi b4_from_b6
+  //SEG358 [180] phi from muls8s::@6 to muls8s::@3 [phi:muls8s::@6->muls8s::@3]
+  b3_from_b6:
+  //SEG359 [180] phi (signed byte) muls8s::j#2 = (byte/signed byte/word/signed word/dword/signed dword) 0 [phi:muls8s::@6->muls8s::@3#0] -- vbsz1=vbuc1 
     lda #0
     sta j
-  //SEG377 [186] phi (signed word) muls8s::m#5 = (byte/signed byte/word/signed word/dword/signed dword) 0 [phi:muls8s::@1->muls8s::@5#1] -- vwsz1=vbuc1 
+  //SEG360 [180] phi (signed word) muls8s::m#3 = (byte/signed byte/word/signed word/dword/signed dword) 0 [phi:muls8s::@6->muls8s::@3#1] -- vwsz1=vbuc1 
     lda #<0
     sta m
     lda #>0
     sta m+1
-    jmp b5
-  //SEG378 [186] phi from muls8s::@5 to muls8s::@5 [phi:muls8s::@5->muls8s::@5]
-  b5_from_b5:
-  //SEG379 [186] phi (signed byte) muls8s::j#2 = (signed byte) muls8s::j#1 [phi:muls8s::@5->muls8s::@5#0] -- register_copy 
-  //SEG380 [186] phi (signed word) muls8s::m#5 = (signed word) muls8s::m#2 [phi:muls8s::@5->muls8s::@5#1] -- register_copy 
-    jmp b5
-  //SEG381 muls8s::@5
-  b5:
-  //SEG382 [187] (signed word) muls8s::m#2 ← (signed word) muls8s::m#5 + (signed byte) muls8s::b#0 [ muls8s::a#0 muls8s::b#0 muls8s::m#2 muls8s::j#2 ] ( main:2::mul8s_compare:15::muls8s:22 [ mul8s_compare::a#7 mul8s_compare::b#10 print_line_cursor#1 muls8s::a#0 muls8s::b#0 muls8s::m#2 muls8s::j#2 ] ) -- vwsz1=vwsz1_plus_vbsz2 
+    jmp b3
+  //SEG361 [180] phi from muls8s::@3 to muls8s::@3 [phi:muls8s::@3->muls8s::@3]
+  b3_from_b3:
+  //SEG362 [180] phi (signed byte) muls8s::j#2 = (signed byte) muls8s::j#1 [phi:muls8s::@3->muls8s::@3#0] -- register_copy 
+  //SEG363 [180] phi (signed word) muls8s::m#3 = (signed word) muls8s::m#1 [phi:muls8s::@3->muls8s::@3#1] -- register_copy 
+    jmp b3
+  //SEG364 muls8s::@3
+  b3:
+  //SEG365 [181] (signed word) muls8s::m#1 ← (signed word) muls8s::m#3 + (signed byte) muls8s::b#0 [ muls8s::a#0 muls8s::b#0 muls8s::j#2 muls8s::m#1 ] ( main:2::mul8s_compare:15::muls8s:22 [ mul8s_compare::a#7 mul8s_compare::b#10 print_line_cursor#1 muls8s::a#0 muls8s::b#0 muls8s::j#2 muls8s::m#1 ] ) -- vwsz1=vwsz1_plus_vbsz2 
     lda b
     sta $fe
     ora #$7f
@@ -9634,13 +9563,72 @@ muls8s: {
     lda m+1
     adc $ff
     sta m+1
-  //SEG383 [188] (signed byte) muls8s::j#1 ← ++ (signed byte) muls8s::j#2 [ muls8s::a#0 muls8s::b#0 muls8s::m#2 muls8s::j#1 ] ( main:2::mul8s_compare:15::muls8s:22 [ mul8s_compare::a#7 mul8s_compare::b#10 print_line_cursor#1 muls8s::a#0 muls8s::b#0 muls8s::m#2 muls8s::j#1 ] ) -- vbsz1=_inc_vbsz1 
+  //SEG366 [182] (signed byte) muls8s::j#1 ← ++ (signed byte) muls8s::j#2 [ muls8s::a#0 muls8s::b#0 muls8s::m#1 muls8s::j#1 ] ( main:2::mul8s_compare:15::muls8s:22 [ mul8s_compare::a#7 mul8s_compare::b#10 print_line_cursor#1 muls8s::a#0 muls8s::b#0 muls8s::m#1 muls8s::j#1 ] ) -- vbsz1=_inc_vbsz1 
     inc j
-  //SEG384 [189] if((signed byte) muls8s::j#1!=(signed byte) muls8s::a#0) goto muls8s::@5 [ muls8s::a#0 muls8s::b#0 muls8s::m#2 muls8s::j#1 ] ( main:2::mul8s_compare:15::muls8s:22 [ mul8s_compare::a#7 mul8s_compare::b#10 print_line_cursor#1 muls8s::a#0 muls8s::b#0 muls8s::m#2 muls8s::j#1 ] ) -- vbsz1_neq_vbsz2_then_la1 
+  //SEG367 [183] if((signed byte) muls8s::j#1!=(signed byte) muls8s::a#0) goto muls8s::@3 [ muls8s::a#0 muls8s::b#0 muls8s::m#1 muls8s::j#1 ] ( main:2::mul8s_compare:15::muls8s:22 [ mul8s_compare::a#7 mul8s_compare::b#10 print_line_cursor#1 muls8s::a#0 muls8s::b#0 muls8s::m#1 muls8s::j#1 ] ) -- vbsz1_neq_vbsz2_then_la1 
     lda j
     cmp a
+    bne b3_from_b3
+  //SEG368 [184] phi from muls8s::@3 muls8s::@5 to muls8s::@4 [phi:muls8s::@3/muls8s::@5->muls8s::@4]
+  b4_from_b3:
+  b4_from_b5:
+  //SEG369 [184] phi (signed word) muls8s::return#0 = (signed word) muls8s::m#1 [phi:muls8s::@3/muls8s::@5->muls8s::@4#0] -- register_copy 
+    jmp b4
+  //SEG370 [184] phi from muls8s::@6 to muls8s::@4 [phi:muls8s::@6->muls8s::@4]
+  b4_from_b6:
+  //SEG371 [184] phi (signed word) muls8s::return#0 = (byte/signed byte/word/signed word/dword/signed dword) 0 [phi:muls8s::@6->muls8s::@4#0] -- vwsz1=vbuc1 
+    lda #<0
+    sta return
+    lda #>0
+    sta return+1
+    jmp b4
+  //SEG372 muls8s::@4
+  b4:
+    jmp breturn
+  //SEG373 muls8s::@return
+  breturn:
+  //SEG374 [185] return  [ muls8s::return#0 ] ( main:2::mul8s_compare:15::muls8s:22 [ mul8s_compare::a#7 mul8s_compare::b#10 print_line_cursor#1 muls8s::return#0 ] )
+    rts
+  //SEG375 [186] phi from muls8s to muls8s::@5 [phi:muls8s->muls8s::@5]
+  b5_from_muls8s:
+  //SEG376 [186] phi (signed byte) muls8s::i#2 = (byte/signed byte/word/signed word/dword/signed dword) 0 [phi:muls8s->muls8s::@5#0] -- vbsz1=vbuc1 
+    lda #0
+    sta i
+  //SEG377 [186] phi (signed word) muls8s::m#5 = (byte/signed byte/word/signed word/dword/signed dword) 0 [phi:muls8s->muls8s::@5#1] -- vwsz1=vbuc1 
+    lda #<0
+    sta m
+    lda #>0
+    sta m+1
+    jmp b5
+  //SEG378 [186] phi from muls8s::@5 to muls8s::@5 [phi:muls8s::@5->muls8s::@5]
+  b5_from_b5:
+  //SEG379 [186] phi (signed byte) muls8s::i#2 = (signed byte) muls8s::i#1 [phi:muls8s::@5->muls8s::@5#0] -- register_copy 
+  //SEG380 [186] phi (signed word) muls8s::m#5 = (signed word) muls8s::m#2 [phi:muls8s::@5->muls8s::@5#1] -- register_copy 
+    jmp b5
+  //SEG381 muls8s::@5
+  b5:
+  //SEG382 [187] (signed word) muls8s::m#2 ← (signed word) muls8s::m#5 - (signed byte) muls8s::b#0 [ muls8s::a#0 muls8s::b#0 muls8s::m#2 muls8s::i#2 ] ( main:2::mul8s_compare:15::muls8s:22 [ mul8s_compare::a#7 mul8s_compare::b#10 print_line_cursor#1 muls8s::a#0 muls8s::b#0 muls8s::m#2 muls8s::i#2 ] ) -- vwsz1=vwsz1_minus_vbsz2 
+    lda b
+    sta $fe
+    ora #$7f
+    bmi !+
+    lda #0
+  !:
+    sta $ff
+    sec
+    lda m
+    sbc $fe
+    sta m
+    lda m+1
+    sbc $ff
+    sta m+1
+  //SEG383 [188] (signed byte) muls8s::i#1 ← -- (signed byte) muls8s::i#2 [ muls8s::a#0 muls8s::b#0 muls8s::m#2 muls8s::i#1 ] ( main:2::mul8s_compare:15::muls8s:22 [ mul8s_compare::a#7 mul8s_compare::b#10 print_line_cursor#1 muls8s::a#0 muls8s::b#0 muls8s::m#2 muls8s::i#1 ] ) -- vbsz1=_dec_vbsz1 
+    dec i
+  //SEG384 [189] if((signed byte) muls8s::i#1!=(signed byte) muls8s::a#0) goto muls8s::@5 [ muls8s::a#0 muls8s::b#0 muls8s::m#2 muls8s::i#1 ] ( main:2::mul8s_compare:15::muls8s:22 [ mul8s_compare::a#7 mul8s_compare::b#10 print_line_cursor#1 muls8s::a#0 muls8s::b#0 muls8s::m#2 muls8s::i#1 ] ) -- vbsz1_neq_vbsz2_then_la1 
+    lda i
+    cmp a
     bne b5_from_b5
-    jmp b3_from_b5
+    jmp b4_from_b5
 }
 //SEG385 mul8u_compare
 mul8u_compare: {
@@ -10683,12 +10671,12 @@ Removing always clobbered register reg byte x as potential for zp ZP_BYTE:67 [ m
 Removing always clobbered register reg byte x as potential for zp ZP_BYTE:34 [ mul8u_compare::a#7 mul8u_compare::a#1 ]
 Removing always clobbered register reg byte x as potential for zp ZP_BYTE:35 [ mul8u_compare::b#10 mul8u_compare::b#1 ]
 Statement [176] (word) mulf8u::return#0 ← *((const byte*) mulf8u::memB#0) w= *((const byte*) mulf8u::memA#0) [ mulf8u::return#0 ] ( main:2::mul8s_compare:15::mulf8s:27::mulf8u:158 [ mul8s_compare::a#7 mul8s_compare::b#10 mul8s_compare::ms#0 print_line_cursor#1 mulf8s::a#0 mulf8s::b#0 mulf8u::return#0 ] main:2::mul8u_compare:13::mulf8u:200 [ print_line_cursor#10 print_char_cursor#30 mul8u_compare::a#7 mul8u_compare::b#10 mul8u_compare::ms#0 mulf8u::return#0 ] ) always clobbers reg byte a 
-Statement [180] (signed word) muls8s::m#1 ← (signed word) muls8s::m#3 - (signed byte) muls8s::b#0 [ muls8s::a#0 muls8s::b#0 muls8s::i#2 muls8s::m#1 ] ( main:2::mul8s_compare:15::muls8s:22 [ mul8s_compare::a#7 mul8s_compare::b#10 print_line_cursor#1 muls8s::a#0 muls8s::b#0 muls8s::i#2 muls8s::m#1 ] ) always clobbers reg byte a 
+Statement [181] (signed word) muls8s::m#1 ← (signed word) muls8s::m#3 + (signed byte) muls8s::b#0 [ muls8s::a#0 muls8s::b#0 muls8s::j#2 muls8s::m#1 ] ( main:2::mul8s_compare:15::muls8s:22 [ mul8s_compare::a#7 mul8s_compare::b#10 print_line_cursor#1 muls8s::a#0 muls8s::b#0 muls8s::j#2 muls8s::m#1 ] ) always clobbers reg byte a 
 Removing always clobbered register reg byte a as potential for zp ZP_BYTE:60 [ muls8s::a#0 ]
 Removing always clobbered register reg byte a as potential for zp ZP_BYTE:61 [ muls8s::b#0 ]
-Removing always clobbered register reg byte a as potential for zp ZP_BYTE:30 [ muls8s::i#2 muls8s::i#1 ]
-Statement [187] (signed word) muls8s::m#2 ← (signed word) muls8s::m#5 + (signed byte) muls8s::b#0 [ muls8s::a#0 muls8s::b#0 muls8s::m#2 muls8s::j#2 ] ( main:2::mul8s_compare:15::muls8s:22 [ mul8s_compare::a#7 mul8s_compare::b#10 print_line_cursor#1 muls8s::a#0 muls8s::b#0 muls8s::m#2 muls8s::j#2 ] ) always clobbers reg byte a 
-Removing always clobbered register reg byte a as potential for zp ZP_BYTE:33 [ muls8s::j#2 muls8s::j#1 ]
+Removing always clobbered register reg byte a as potential for zp ZP_BYTE:30 [ muls8s::j#2 muls8s::j#1 ]
+Statement [187] (signed word) muls8s::m#2 ← (signed word) muls8s::m#5 - (signed byte) muls8s::b#0 [ muls8s::a#0 muls8s::b#0 muls8s::m#2 muls8s::i#2 ] ( main:2::mul8s_compare:15::muls8s:22 [ mul8s_compare::a#7 mul8s_compare::b#10 print_line_cursor#1 muls8s::a#0 muls8s::b#0 muls8s::m#2 muls8s::i#2 ] ) always clobbers reg byte a 
+Removing always clobbered register reg byte a as potential for zp ZP_BYTE:33 [ muls8s::i#2 muls8s::i#1 ]
 Statement [196] (word) muls8u::return#2 ← (word) muls8u::return#0 [ print_line_cursor#10 print_char_cursor#30 mul8u_compare::a#7 mul8u_compare::b#10 muls8u::return#2 ] ( main:2::mul8u_compare:13 [ print_line_cursor#10 print_char_cursor#30 mul8u_compare::a#7 mul8u_compare::b#10 muls8u::return#2 ] ) always clobbers reg byte a 
 Statement [197] (word) mul8u_compare::ms#0 ← (word) muls8u::return#2 [ print_line_cursor#10 print_char_cursor#30 mul8u_compare::a#7 mul8u_compare::b#10 mul8u_compare::ms#0 ] ( main:2::mul8u_compare:13 [ print_line_cursor#10 print_char_cursor#30 mul8u_compare::a#7 mul8u_compare::b#10 mul8u_compare::ms#0 ] ) always clobbers reg byte a 
 Statement [201] (word) mulf8u::return#3 ← (word) mulf8u::return#0 [ print_line_cursor#10 print_char_cursor#30 mul8u_compare::a#7 mul8u_compare::b#10 mul8u_compare::ms#0 mulf8u::return#3 ] ( main:2::mul8u_compare:13 [ print_line_cursor#10 print_char_cursor#30 mul8u_compare::a#7 mul8u_compare::b#10 mul8u_compare::ms#0 mulf8u::return#3 ] ) always clobbers reg byte a 
@@ -10790,8 +10778,8 @@ Statement [167] (byte~) mulf8s::$12 ← > (word) mulf8s::m#5 [ mulf8s::a#0 mulf8
 Statement [168] (byte~) mulf8s::$17 ← (byte~) mulf8s::$12 - (byte)(signed byte) mulf8s::a#0 [ mulf8s::m#5 mulf8s::$17 ] ( main:2::mul8s_compare:15::mulf8s:27 [ mul8s_compare::a#7 mul8s_compare::b#10 mul8s_compare::ms#0 print_line_cursor#1 mulf8s::m#5 mulf8s::$17 ] ) always clobbers reg byte a 
 Statement asm { ldamemA stasm1+1 stasm3+1 eor#$ff stasm2+1 stasm4+1 ldxmemB sec sm1: ldamulf_sqr1_lo,x sm2: sbcmulf_sqr2_lo,x stamemA sm3: ldamulf_sqr1_hi,x sm4: sbcmulf_sqr2_hi,x stamemB  } always clobbers reg byte a reg byte x 
 Statement [176] (word) mulf8u::return#0 ← *((const byte*) mulf8u::memB#0) w= *((const byte*) mulf8u::memA#0) [ mulf8u::return#0 ] ( main:2::mul8s_compare:15::mulf8s:27::mulf8u:158 [ mul8s_compare::a#7 mul8s_compare::b#10 mul8s_compare::ms#0 print_line_cursor#1 mulf8s::a#0 mulf8s::b#0 mulf8u::return#0 ] main:2::mul8u_compare:13::mulf8u:200 [ print_line_cursor#10 print_char_cursor#30 mul8u_compare::a#7 mul8u_compare::b#10 mul8u_compare::ms#0 mulf8u::return#0 ] ) always clobbers reg byte a 
-Statement [180] (signed word) muls8s::m#1 ← (signed word) muls8s::m#3 - (signed byte) muls8s::b#0 [ muls8s::a#0 muls8s::b#0 muls8s::i#2 muls8s::m#1 ] ( main:2::mul8s_compare:15::muls8s:22 [ mul8s_compare::a#7 mul8s_compare::b#10 print_line_cursor#1 muls8s::a#0 muls8s::b#0 muls8s::i#2 muls8s::m#1 ] ) always clobbers reg byte a 
-Statement [187] (signed word) muls8s::m#2 ← (signed word) muls8s::m#5 + (signed byte) muls8s::b#0 [ muls8s::a#0 muls8s::b#0 muls8s::m#2 muls8s::j#2 ] ( main:2::mul8s_compare:15::muls8s:22 [ mul8s_compare::a#7 mul8s_compare::b#10 print_line_cursor#1 muls8s::a#0 muls8s::b#0 muls8s::m#2 muls8s::j#2 ] ) always clobbers reg byte a 
+Statement [181] (signed word) muls8s::m#1 ← (signed word) muls8s::m#3 + (signed byte) muls8s::b#0 [ muls8s::a#0 muls8s::b#0 muls8s::j#2 muls8s::m#1 ] ( main:2::mul8s_compare:15::muls8s:22 [ mul8s_compare::a#7 mul8s_compare::b#10 print_line_cursor#1 muls8s::a#0 muls8s::b#0 muls8s::j#2 muls8s::m#1 ] ) always clobbers reg byte a 
+Statement [187] (signed word) muls8s::m#2 ← (signed word) muls8s::m#5 - (signed byte) muls8s::b#0 [ muls8s::a#0 muls8s::b#0 muls8s::m#2 muls8s::i#2 ] ( main:2::mul8s_compare:15::muls8s:22 [ mul8s_compare::a#7 mul8s_compare::b#10 print_line_cursor#1 muls8s::a#0 muls8s::b#0 muls8s::m#2 muls8s::i#2 ] ) always clobbers reg byte a 
 Statement [196] (word) muls8u::return#2 ← (word) muls8u::return#0 [ print_line_cursor#10 print_char_cursor#30 mul8u_compare::a#7 mul8u_compare::b#10 muls8u::return#2 ] ( main:2::mul8u_compare:13 [ print_line_cursor#10 print_char_cursor#30 mul8u_compare::a#7 mul8u_compare::b#10 muls8u::return#2 ] ) always clobbers reg byte a 
 Statement [197] (word) mul8u_compare::ms#0 ← (word) muls8u::return#2 [ print_line_cursor#10 print_char_cursor#30 mul8u_compare::a#7 mul8u_compare::b#10 mul8u_compare::ms#0 ] ( main:2::mul8u_compare:13 [ print_line_cursor#10 print_char_cursor#30 mul8u_compare::a#7 mul8u_compare::b#10 mul8u_compare::ms#0 ] ) always clobbers reg byte a 
 Statement [201] (word) mulf8u::return#3 ← (word) mulf8u::return#0 [ print_line_cursor#10 print_char_cursor#30 mul8u_compare::a#7 mul8u_compare::b#10 mul8u_compare::ms#0 mulf8u::return#3 ] ( main:2::mul8u_compare:13 [ print_line_cursor#10 print_char_cursor#30 mul8u_compare::a#7 mul8u_compare::b#10 mul8u_compare::ms#0 mulf8u::return#3 ] ) always clobbers reg byte a 
@@ -10853,9 +10841,9 @@ Potential registers zp ZP_WORD:24 [ mul8u::mb#2 mul8u::mb#0 mul8u::mb#1 ] : zp Z
 Potential registers zp ZP_WORD:26 [ mulf8s::m#4 mulf8s::m#5 mulf8s::m#1 mulf8s::m#0 mulf8s::m#2 ] : zp ZP_WORD:26 , 
 Potential registers zp ZP_BYTE:28 [ mulf8u::a#2 mulf8u::a#1 mulf8u::a#4 ] : zp ZP_BYTE:28 , reg byte a , reg byte x , reg byte y , 
 Potential registers zp ZP_BYTE:29 [ mulf8u::b#2 mulf8u::b#1 mulf8u::b#4 ] : zp ZP_BYTE:29 , reg byte a , reg byte x , reg byte y , 
-Potential registers zp ZP_BYTE:30 [ muls8s::i#2 muls8s::i#1 ] : zp ZP_BYTE:30 , reg byte x , reg byte y , 
+Potential registers zp ZP_BYTE:30 [ muls8s::j#2 muls8s::j#1 ] : zp ZP_BYTE:30 , reg byte x , reg byte y , 
 Potential registers zp ZP_WORD:31 [ muls8s::m#5 muls8s::return#0 muls8s::m#3 muls8s::m#1 muls8s::m#2 ] : zp ZP_WORD:31 , 
-Potential registers zp ZP_BYTE:33 [ muls8s::j#2 muls8s::j#1 ] : zp ZP_BYTE:33 , reg byte x , reg byte y , 
+Potential registers zp ZP_BYTE:33 [ muls8s::i#2 muls8s::i#1 ] : zp ZP_BYTE:33 , reg byte x , reg byte y , 
 Potential registers zp ZP_BYTE:34 [ mul8u_compare::a#7 mul8u_compare::a#1 ] : zp ZP_BYTE:34 , reg byte y , 
 Potential registers zp ZP_BYTE:35 [ mul8u_compare::b#10 mul8u_compare::b#1 ] : zp ZP_BYTE:35 , reg byte y , 
 Potential registers zp ZP_BYTE:36 [ mul8u_compare::ok#3 mul8u_compare::ok#4 ] : zp ZP_BYTE:36 , reg byte x , reg byte y , 
@@ -10922,7 +10910,7 @@ Potential registers zp ZP_BYTE:126 [ mulf_init::$5 ] : zp ZP_BYTE:126 , reg byte
 Potential registers zp ZP_BYTE:127 [ mulf_init::$6 ] : zp ZP_BYTE:127 , reg byte a , reg byte x , reg byte y , 
 
 REGISTER UPLIFT SCOPES
-Uplift Scope [muls8s] 6,707: zp ZP_WORD:31 [ muls8s::m#5 muls8s::return#0 muls8s::m#3 muls8s::m#1 muls8s::m#2 ] 2,502.5: zp ZP_BYTE:30 [ muls8s::i#2 muls8s::i#1 ] 2,502.5: zp ZP_BYTE:33 [ muls8s::j#2 muls8s::j#1 ] 202: zp ZP_WORD:62 [ muls8s::return#2 ] 191.18: zp ZP_BYTE:61 [ muls8s::b#0 ] 175.58: zp ZP_BYTE:60 [ muls8s::a#0 ] 
+Uplift Scope [muls8s] 6,707: zp ZP_WORD:31 [ muls8s::m#5 muls8s::return#0 muls8s::m#3 muls8s::m#1 muls8s::m#2 ] 2,502.5: zp ZP_BYTE:30 [ muls8s::j#2 muls8s::j#1 ] 2,502.5: zp ZP_BYTE:33 [ muls8s::i#2 muls8s::i#1 ] 202: zp ZP_WORD:62 [ muls8s::return#2 ] 191.18: zp ZP_BYTE:61 [ muls8s::b#0 ] 175.58: zp ZP_BYTE:60 [ muls8s::a#0 ] 
 Uplift Scope [mul8u] 3,446.71: zp ZP_WORD:22 [ mul8u::res#2 mul8u::res#6 mul8u::res#1 ] 2,435.29: zp ZP_WORD:24 [ mul8u::mb#2 mul8u::mb#0 mul8u::mb#1 ] 2,002: zp ZP_BYTE:94 [ mul8u::$1 ] 1,826.17: zp ZP_BYTE:21 [ mul8u::a#3 mul8u::a#6 mul8u::a#8 mul8u::a#2 mul8u::a#0 ] 309: zp ZP_BYTE:20 [ mul8u::b#2 mul8u::b#3 mul8u::b#1 ] 202: zp ZP_WORD:113 [ mul8u::return#3 ] 4: zp ZP_WORD:88 [ mul8u::return#2 ] 
 Uplift Scope [muls8u] 3,370.33: zp ZP_WORD:38 [ muls8u::return#0 muls8u::m#3 muls8u::m#1 ] 2,502.5: zp ZP_BYTE:37 [ muls8u::i#2 muls8u::i#1 ] 202: zp ZP_WORD:105 [ muls8u::return#2 ] 183.67: zp ZP_BYTE:104 [ muls8u::b#0 ] 157.71: zp ZP_BYTE:103 [ muls8u::a#0 ] 
 Uplift Scope [mulf8u] 258.5: zp ZP_BYTE:29 [ mulf8u::b#2 mulf8u::b#1 mulf8u::b#4 ] 208: zp ZP_BYTE:28 [ mulf8u::a#2 mulf8u::a#1 mulf8u::a#4 ] 202: zp ZP_WORD:109 [ mulf8u::return#3 ] 26.25: zp ZP_WORD:101 [ mulf8u::return#0 ] 4: zp ZP_WORD:95 [ mulf8u::return#2 ] 
@@ -10946,64 +10934,64 @@ Uplift Scope [print_ln]
 Uplift Scope [main] 
 Uplift Scope [mulf_init_asm] 
 
-Uplifting [muls8s] best 313279 combination zp ZP_WORD:31 [ muls8s::m#5 muls8s::return#0 muls8s::m#3 muls8s::m#1 muls8s::m#2 ] reg byte y [ muls8s::i#2 muls8s::i#1 ] reg byte y [ muls8s::j#2 muls8s::j#1 ] zp ZP_WORD:62 [ muls8s::return#2 ] reg byte x [ muls8s::b#0 ] zp ZP_BYTE:60 [ muls8s::a#0 ] 
-Uplifting [mul8u] best 307670 combination zp ZP_WORD:22 [ mul8u::res#2 mul8u::res#6 mul8u::res#1 ] zp ZP_WORD:24 [ mul8u::mb#2 mul8u::mb#0 mul8u::mb#1 ] reg byte a [ mul8u::$1 ] reg byte x [ mul8u::a#3 mul8u::a#6 mul8u::a#8 mul8u::a#2 mul8u::a#0 ] reg byte a [ mul8u::b#2 mul8u::b#3 mul8u::b#1 ] zp ZP_WORD:113 [ mul8u::return#3 ] zp ZP_WORD:88 [ mul8u::return#2 ] 
-Uplifting [muls8u] best 297370 combination zp ZP_WORD:38 [ muls8u::return#0 muls8u::m#3 muls8u::m#1 ] reg byte y [ muls8u::i#2 muls8u::i#1 ] zp ZP_WORD:105 [ muls8u::return#2 ] reg byte x [ muls8u::b#0 ] zp ZP_BYTE:103 [ muls8u::a#0 ] 
-Uplifting [mulf8u] best 296758 combination reg byte x [ mulf8u::b#2 mulf8u::b#1 mulf8u::b#4 ] reg byte a [ mulf8u::a#2 mulf8u::a#1 mulf8u::a#4 ] zp ZP_WORD:109 [ mulf8u::return#3 ] zp ZP_WORD:101 [ mulf8u::return#0 ] zp ZP_WORD:95 [ mulf8u::return#2 ] 
-Uplifting [mul8u_compare] best 295758 combination reg byte x [ mul8u_compare::ok#3 mul8u_compare::ok#4 ] zp ZP_BYTE:35 [ mul8u_compare::b#10 mul8u_compare::b#1 ] zp ZP_BYTE:34 [ mul8u_compare::a#7 mul8u_compare::a#1 ] zp ZP_WORD:115 [ mul8u_compare::mn#0 ] zp ZP_WORD:107 [ mul8u_compare::ms#0 ] zp ZP_WORD:111 [ mul8u_compare::mf#0 ] 
-Uplifting [mul8s_compare] best 294758 combination reg byte x [ mul8s_compare::ok#3 mul8s_compare::ok#4 ] zp ZP_BYTE:3 [ mul8s_compare::b#10 mul8s_compare::b#1 ] zp ZP_BYTE:2 [ mul8s_compare::a#7 mul8s_compare::a#1 ] zp ZP_WORD:76 [ mul8s_compare::mn#0 ] zp ZP_WORD:64 [ mul8s_compare::ms#0 ] zp ZP_WORD:70 [ mul8s_compare::mf#0 ] 
-Uplifting [mulf_init] best 294528 combination zp ZP_WORD:50 [ mulf_init::sqr#3 mulf_init::sqr#4 mulf_init::sqr#1 mulf_init::sqr#2 ] reg byte x [ mulf_init::c#2 mulf_init::c#1 ] zp ZP_BYTE:49 [ mulf_init::x_2#3 mulf_init::x_2#2 mulf_init::x_2#1 ] reg byte a [ mulf_init::$2 ] reg byte a [ mulf_init::$5 ] reg byte a [ mulf_init::$6 ] zp ZP_WORD:53 [ mulf_init::sqr2_lo#2 mulf_init::sqr2_lo#1 ] zp ZP_WORD:45 [ mulf_init::sqr1_lo#2 mulf_init::sqr1_lo#1 ] zp ZP_BYTE:52 [ mulf_init::x_255#2 mulf_init::x_255#1 ] zp ZP_WORD:55 [ mulf_init::sqr2_hi#2 mulf_init::sqr2_hi#1 ] zp ZP_BYTE:57 [ mulf_init::dir#2 mulf_init::dir#3 ] zp ZP_WORD:47 [ mulf_init::sqr1_hi#2 mulf_init::sqr1_hi#1 ] 
+Uplifting [muls8s] best 313280 combination zp ZP_WORD:31 [ muls8s::m#5 muls8s::return#0 muls8s::m#3 muls8s::m#1 muls8s::m#2 ] reg byte y [ muls8s::j#2 muls8s::j#1 ] reg byte y [ muls8s::i#2 muls8s::i#1 ] zp ZP_WORD:62 [ muls8s::return#2 ] reg byte x [ muls8s::b#0 ] zp ZP_BYTE:60 [ muls8s::a#0 ] 
+Uplifting [mul8u] best 307671 combination zp ZP_WORD:22 [ mul8u::res#2 mul8u::res#6 mul8u::res#1 ] zp ZP_WORD:24 [ mul8u::mb#2 mul8u::mb#0 mul8u::mb#1 ] reg byte a [ mul8u::$1 ] reg byte x [ mul8u::a#3 mul8u::a#6 mul8u::a#8 mul8u::a#2 mul8u::a#0 ] reg byte a [ mul8u::b#2 mul8u::b#3 mul8u::b#1 ] zp ZP_WORD:113 [ mul8u::return#3 ] zp ZP_WORD:88 [ mul8u::return#2 ] 
+Uplifting [muls8u] best 297371 combination zp ZP_WORD:38 [ muls8u::return#0 muls8u::m#3 muls8u::m#1 ] reg byte y [ muls8u::i#2 muls8u::i#1 ] zp ZP_WORD:105 [ muls8u::return#2 ] reg byte x [ muls8u::b#0 ] zp ZP_BYTE:103 [ muls8u::a#0 ] 
+Uplifting [mulf8u] best 296759 combination reg byte x [ mulf8u::b#2 mulf8u::b#1 mulf8u::b#4 ] reg byte a [ mulf8u::a#2 mulf8u::a#1 mulf8u::a#4 ] zp ZP_WORD:109 [ mulf8u::return#3 ] zp ZP_WORD:101 [ mulf8u::return#0 ] zp ZP_WORD:95 [ mulf8u::return#2 ] 
+Uplifting [mul8u_compare] best 295759 combination reg byte x [ mul8u_compare::ok#3 mul8u_compare::ok#4 ] zp ZP_BYTE:35 [ mul8u_compare::b#10 mul8u_compare::b#1 ] zp ZP_BYTE:34 [ mul8u_compare::a#7 mul8u_compare::a#1 ] zp ZP_WORD:115 [ mul8u_compare::mn#0 ] zp ZP_WORD:107 [ mul8u_compare::ms#0 ] zp ZP_WORD:111 [ mul8u_compare::mf#0 ] 
+Uplifting [mul8s_compare] best 294759 combination reg byte x [ mul8s_compare::ok#3 mul8s_compare::ok#4 ] zp ZP_BYTE:3 [ mul8s_compare::b#10 mul8s_compare::b#1 ] zp ZP_BYTE:2 [ mul8s_compare::a#7 mul8s_compare::a#1 ] zp ZP_WORD:76 [ mul8s_compare::mn#0 ] zp ZP_WORD:64 [ mul8s_compare::ms#0 ] zp ZP_WORD:70 [ mul8s_compare::mf#0 ] 
+Uplifting [mulf_init] best 294529 combination zp ZP_WORD:50 [ mulf_init::sqr#3 mulf_init::sqr#4 mulf_init::sqr#1 mulf_init::sqr#2 ] reg byte x [ mulf_init::c#2 mulf_init::c#1 ] zp ZP_BYTE:49 [ mulf_init::x_2#3 mulf_init::x_2#2 mulf_init::x_2#1 ] reg byte a [ mulf_init::$2 ] reg byte a [ mulf_init::$5 ] reg byte a [ mulf_init::$6 ] zp ZP_WORD:53 [ mulf_init::sqr2_lo#2 mulf_init::sqr2_lo#1 ] zp ZP_WORD:45 [ mulf_init::sqr1_lo#2 mulf_init::sqr1_lo#1 ] zp ZP_BYTE:52 [ mulf_init::x_255#2 mulf_init::x_255#1 ] zp ZP_WORD:55 [ mulf_init::sqr2_hi#2 mulf_init::sqr2_hi#1 ] zp ZP_BYTE:57 [ mulf_init::dir#2 mulf_init::dir#3 ] zp ZP_WORD:47 [ mulf_init::sqr1_hi#2 mulf_init::sqr1_hi#1 ] 
 Limited combination testing to 100 combinations of 1024 possible.
-Uplifting [mul8s] best 294215 combination zp ZP_WORD:74 [ mul8s::return#2 ] zp ZP_WORD:18 [ mul8s::m#4 mul8s::m#5 mul8s::m#1 mul8s::m#0 mul8s::m#2 ] reg byte y [ mul8s::b#0 ] zp ZP_BYTE:72 [ mul8s::a#0 ] reg byte a [ mul8s::$6 ] reg byte a [ mul8s::$16 ] zp ZP_BYTE:92 [ mul8s::$12 ] zp ZP_BYTE:93 [ mul8s::$17 ] 
+Uplifting [mul8s] best 294216 combination zp ZP_WORD:74 [ mul8s::return#2 ] zp ZP_WORD:18 [ mul8s::m#4 mul8s::m#5 mul8s::m#1 mul8s::m#0 mul8s::m#2 ] reg byte y [ mul8s::b#0 ] zp ZP_BYTE:72 [ mul8s::a#0 ] reg byte a [ mul8s::$6 ] reg byte a [ mul8s::$16 ] zp ZP_BYTE:92 [ mul8s::$12 ] zp ZP_BYTE:93 [ mul8s::$17 ] 
 Limited combination testing to 100 combinations of 2304 possible.
-Uplifting [mulf8s] best 293896 combination zp ZP_WORD:68 [ mulf8s::return#2 ] zp ZP_WORD:26 [ mulf8s::m#4 mulf8s::m#5 mulf8s::m#1 mulf8s::m#0 mulf8s::m#2 ] zp ZP_BYTE:67 [ mulf8s::b#0 ] reg byte y [ mulf8s::a#0 ] reg byte a [ mulf8s::$6 ] reg byte a [ mulf8s::$16 ] reg byte a [ mulf8s::$12 ] zp ZP_BYTE:100 [ mulf8s::$17 ] 
+Uplifting [mulf8s] best 293897 combination zp ZP_WORD:68 [ mulf8s::return#2 ] zp ZP_WORD:26 [ mulf8s::m#4 mulf8s::m#5 mulf8s::m#1 mulf8s::m#0 mulf8s::m#2 ] zp ZP_BYTE:67 [ mulf8s::b#0 ] reg byte y [ mulf8s::a#0 ] reg byte a [ mulf8s::$6 ] reg byte a [ mulf8s::$16 ] reg byte a [ mulf8s::$12 ] zp ZP_BYTE:100 [ mulf8s::$17 ] 
 Limited combination testing to 100 combinations of 1024 possible.
-Uplifting [] best 293896 combination zp ZP_WORD:15 [ print_char_cursor#82 print_char_cursor#137 print_char_cursor#136 print_char_cursor#132 print_char_cursor#149 print_char_cursor#189 print_char_cursor#190 print_char_cursor#131 print_char_cursor#130 print_char_cursor#17 print_char_cursor#30 print_char_cursor#1 print_char_cursor#134 print_char_cursor#223 ] zp ZP_WORD:5 [ print_line_cursor#23 print_line_cursor#45 print_line_cursor#1 print_line_cursor#10 ] 
-Uplifting [mulf_tables_cmp] best 293896 combination zp ZP_WORD:40 [ mulf_tables_cmp::kc_sqr#2 mulf_tables_cmp::kc_sqr#1 ] zp ZP_WORD:42 [ mulf_tables_cmp::asm_sqr#2 mulf_tables_cmp::asm_sqr#1 ] 
-Uplifting [print_str] best 293896 combination zp ZP_WORD:7 [ print_str::str#16 print_str::str#18 print_str::str#0 ] 
-Uplifting [print_cls] best 293896 combination zp ZP_WORD:58 [ print_cls::sc#2 print_cls::sc#1 ] 
-Uplifting [print_byte] best 293875 combination reg byte x [ print_byte::b#5 print_byte::b#3 print_byte::b#4 print_byte::b#9 print_byte::b#1 print_byte::b#2 ] reg byte a [ print_byte::$0 ] reg byte a [ print_byte::$2 ] 
-Uplifting [print_word] best 293875 combination zp ZP_WORD:11 [ print_word::w#6 print_word::w#3 print_word::w#4 print_word::w#5 print_word::w#11 print_word::w#12 print_word::w#13 ] 
-Uplifting [print_sword] best 293875 combination zp ZP_WORD:9 [ print_sword::w#5 print_sword::w#4 print_sword::w#1 print_sword::w#2 print_sword::w#3 print_sword::w#0 ] 
-Uplifting [print_sbyte] best 293861 combination reg byte x [ print_sbyte::b#4 print_sbyte::b#3 print_sbyte::b#1 print_sbyte::b#2 print_sbyte::b#0 ] 
-Uplifting [print_char] best 293846 combination reg byte a [ print_char::ch#4 print_char::ch#2 print_char::ch#3 ] 
-Uplifting [mul8u_error] best 293840 combination reg byte x [ mul8u_error::a#0 ] zp ZP_BYTE:118 [ mul8u_error::b#0 ] zp ZP_WORD:119 [ mul8u_error::ms#0 ] zp ZP_WORD:121 [ mul8u_error::mn#0 ] zp ZP_WORD:123 [ mul8u_error::mf#0 ] 
-Uplifting [mul8s_error] best 293834 combination reg byte x [ mul8s_error::a#0 ] zp ZP_BYTE:79 [ mul8s_error::b#0 ] zp ZP_WORD:80 [ mul8s_error::ms#0 ] zp ZP_WORD:82 [ mul8s_error::mn#0 ] zp ZP_WORD:84 [ mul8s_error::mf#0 ] 
-Uplifting [print_ln] best 293834 combination 
-Uplifting [main] best 293834 combination 
-Uplifting [mulf_init_asm] best 293834 combination 
+Uplifting [] best 293897 combination zp ZP_WORD:15 [ print_char_cursor#82 print_char_cursor#137 print_char_cursor#136 print_char_cursor#132 print_char_cursor#149 print_char_cursor#189 print_char_cursor#190 print_char_cursor#131 print_char_cursor#130 print_char_cursor#17 print_char_cursor#30 print_char_cursor#1 print_char_cursor#134 print_char_cursor#223 ] zp ZP_WORD:5 [ print_line_cursor#23 print_line_cursor#45 print_line_cursor#1 print_line_cursor#10 ] 
+Uplifting [mulf_tables_cmp] best 293897 combination zp ZP_WORD:40 [ mulf_tables_cmp::kc_sqr#2 mulf_tables_cmp::kc_sqr#1 ] zp ZP_WORD:42 [ mulf_tables_cmp::asm_sqr#2 mulf_tables_cmp::asm_sqr#1 ] 
+Uplifting [print_str] best 293897 combination zp ZP_WORD:7 [ print_str::str#16 print_str::str#18 print_str::str#0 ] 
+Uplifting [print_cls] best 293897 combination zp ZP_WORD:58 [ print_cls::sc#2 print_cls::sc#1 ] 
+Uplifting [print_byte] best 293876 combination reg byte x [ print_byte::b#5 print_byte::b#3 print_byte::b#4 print_byte::b#9 print_byte::b#1 print_byte::b#2 ] reg byte a [ print_byte::$0 ] reg byte a [ print_byte::$2 ] 
+Uplifting [print_word] best 293876 combination zp ZP_WORD:11 [ print_word::w#6 print_word::w#3 print_word::w#4 print_word::w#5 print_word::w#11 print_word::w#12 print_word::w#13 ] 
+Uplifting [print_sword] best 293876 combination zp ZP_WORD:9 [ print_sword::w#5 print_sword::w#4 print_sword::w#1 print_sword::w#2 print_sword::w#3 print_sword::w#0 ] 
+Uplifting [print_sbyte] best 293862 combination reg byte x [ print_sbyte::b#4 print_sbyte::b#3 print_sbyte::b#1 print_sbyte::b#2 print_sbyte::b#0 ] 
+Uplifting [print_char] best 293847 combination reg byte a [ print_char::ch#4 print_char::ch#2 print_char::ch#3 ] 
+Uplifting [mul8u_error] best 293841 combination reg byte x [ mul8u_error::a#0 ] zp ZP_BYTE:118 [ mul8u_error::b#0 ] zp ZP_WORD:119 [ mul8u_error::ms#0 ] zp ZP_WORD:121 [ mul8u_error::mn#0 ] zp ZP_WORD:123 [ mul8u_error::mf#0 ] 
+Uplifting [mul8s_error] best 293835 combination reg byte x [ mul8s_error::a#0 ] zp ZP_BYTE:79 [ mul8s_error::b#0 ] zp ZP_WORD:80 [ mul8s_error::ms#0 ] zp ZP_WORD:82 [ mul8s_error::mn#0 ] zp ZP_WORD:84 [ mul8s_error::mf#0 ] 
+Uplifting [print_ln] best 293835 combination 
+Uplifting [main] best 293835 combination 
+Uplifting [mulf_init_asm] best 293835 combination 
 Attempting to uplift remaining variables inzp ZP_BYTE:60 [ muls8s::a#0 ]
-Uplifting [muls8s] best 293834 combination zp ZP_BYTE:60 [ muls8s::a#0 ] 
+Uplifting [muls8s] best 293835 combination zp ZP_BYTE:60 [ muls8s::a#0 ] 
 Attempting to uplift remaining variables inzp ZP_BYTE:3 [ mul8s_compare::b#10 mul8s_compare::b#1 ]
-Uplifting [mul8s_compare] best 293834 combination zp ZP_BYTE:3 [ mul8s_compare::b#10 mul8s_compare::b#1 ] 
+Uplifting [mul8s_compare] best 293835 combination zp ZP_BYTE:3 [ mul8s_compare::b#10 mul8s_compare::b#1 ] 
 Attempting to uplift remaining variables inzp ZP_BYTE:35 [ mul8u_compare::b#10 mul8u_compare::b#1 ]
-Uplifting [mul8u_compare] best 293834 combination zp ZP_BYTE:35 [ mul8u_compare::b#10 mul8u_compare::b#1 ] 
+Uplifting [mul8u_compare] best 293835 combination zp ZP_BYTE:35 [ mul8u_compare::b#10 mul8u_compare::b#1 ] 
 Attempting to uplift remaining variables inzp ZP_BYTE:103 [ muls8u::a#0 ]
-Uplifting [muls8u] best 293834 combination zp ZP_BYTE:103 [ muls8u::a#0 ] 
+Uplifting [muls8u] best 293835 combination zp ZP_BYTE:103 [ muls8u::a#0 ] 
 Attempting to uplift remaining variables inzp ZP_BYTE:2 [ mul8s_compare::a#7 mul8s_compare::a#1 ]
-Uplifting [mul8s_compare] best 293834 combination zp ZP_BYTE:2 [ mul8s_compare::a#7 mul8s_compare::a#1 ] 
+Uplifting [mul8s_compare] best 293835 combination zp ZP_BYTE:2 [ mul8s_compare::a#7 mul8s_compare::a#1 ] 
 Attempting to uplift remaining variables inzp ZP_BYTE:34 [ mul8u_compare::a#7 mul8u_compare::a#1 ]
-Uplifting [mul8u_compare] best 293834 combination zp ZP_BYTE:34 [ mul8u_compare::a#7 mul8u_compare::a#1 ] 
+Uplifting [mul8u_compare] best 293835 combination zp ZP_BYTE:34 [ mul8u_compare::a#7 mul8u_compare::a#1 ] 
 Attempting to uplift remaining variables inzp ZP_BYTE:49 [ mulf_init::x_2#3 mulf_init::x_2#2 mulf_init::x_2#1 ]
-Uplifting [mulf_init] best 293834 combination zp ZP_BYTE:49 [ mulf_init::x_2#3 mulf_init::x_2#2 mulf_init::x_2#1 ] 
+Uplifting [mulf_init] best 293835 combination zp ZP_BYTE:49 [ mulf_init::x_2#3 mulf_init::x_2#2 mulf_init::x_2#1 ] 
 Attempting to uplift remaining variables inzp ZP_BYTE:52 [ mulf_init::x_255#2 mulf_init::x_255#1 ]
-Uplifting [mulf_init] best 293714 combination reg byte x [ mulf_init::x_255#2 mulf_init::x_255#1 ] 
+Uplifting [mulf_init] best 293715 combination reg byte x [ mulf_init::x_255#2 mulf_init::x_255#1 ] 
 Attempting to uplift remaining variables inzp ZP_BYTE:57 [ mulf_init::dir#2 mulf_init::dir#3 ]
-Uplifting [mulf_init] best 293714 combination zp ZP_BYTE:57 [ mulf_init::dir#2 mulf_init::dir#3 ] 
+Uplifting [mulf_init] best 293715 combination zp ZP_BYTE:57 [ mulf_init::dir#2 mulf_init::dir#3 ] 
 Attempting to uplift remaining variables inzp ZP_BYTE:67 [ mulf8s::b#0 ]
-Uplifting [mulf8s] best 293714 combination zp ZP_BYTE:67 [ mulf8s::b#0 ] 
+Uplifting [mulf8s] best 293715 combination zp ZP_BYTE:67 [ mulf8s::b#0 ] 
 Attempting to uplift remaining variables inzp ZP_BYTE:72 [ mul8s::a#0 ]
-Uplifting [mul8s] best 293714 combination zp ZP_BYTE:72 [ mul8s::a#0 ] 
+Uplifting [mul8s] best 293715 combination zp ZP_BYTE:72 [ mul8s::a#0 ] 
 Attempting to uplift remaining variables inzp ZP_BYTE:92 [ mul8s::$12 ]
-Uplifting [mul8s] best 293708 combination reg byte a [ mul8s::$12 ] 
+Uplifting [mul8s] best 293709 combination reg byte a [ mul8s::$12 ] 
 Attempting to uplift remaining variables inzp ZP_BYTE:93 [ mul8s::$17 ]
-Uplifting [mul8s] best 293702 combination reg byte a [ mul8s::$17 ] 
+Uplifting [mul8s] best 293703 combination reg byte a [ mul8s::$17 ] 
 Attempting to uplift remaining variables inzp ZP_BYTE:100 [ mulf8s::$17 ]
-Uplifting [mulf8s] best 293696 combination reg byte a [ mulf8s::$17 ] 
+Uplifting [mulf8s] best 293697 combination reg byte a [ mulf8s::$17 ] 
 Attempting to uplift remaining variables inzp ZP_BYTE:79 [ mul8s_error::b#0 ]
-Uplifting [mul8s_error] best 293696 combination zp ZP_BYTE:79 [ mul8s_error::b#0 ] 
+Uplifting [mul8s_error] best 293697 combination zp ZP_BYTE:79 [ mul8s_error::b#0 ] 
 Attempting to uplift remaining variables inzp ZP_BYTE:118 [ mul8u_error::b#0 ]
-Uplifting [mul8u_error] best 293696 combination zp ZP_BYTE:118 [ mul8u_error::b#0 ] 
+Uplifting [mul8u_error] best 293697 combination zp ZP_BYTE:118 [ mul8u_error::b#0 ] 
 Coalescing zero page register with common assignment [ zp ZP_BYTE:2 [ mul8s_compare::a#7 mul8s_compare::a#1 ] ] with [ zp ZP_BYTE:60 [ muls8s::a#0 ] ] - score: 1
 Coalescing zero page register with common assignment [ zp ZP_BYTE:2 [ mul8s_compare::a#7 mul8s_compare::a#1 muls8s::a#0 ] ] with [ zp ZP_BYTE:72 [ mul8s::a#0 ] ] - score: 1
 Coalescing zero page register with common assignment [ zp ZP_BYTE:3 [ mul8s_compare::b#10 mul8s_compare::b#1 ] ] with [ zp ZP_BYTE:67 [ mulf8s::b#0 ] ] - score: 1
@@ -11999,93 +11987,35 @@ muls8s: {
     .label m = 8
     .label return = 8
     .label a = 2
-  //SEG355 [178] if((signed byte) muls8s::a#0>=(byte/signed byte/word/signed word/dword/signed dword) 0) goto muls8s::@1 [ muls8s::a#0 muls8s::b#0 ] ( main:2::mul8s_compare:15::muls8s:22 [ mul8s_compare::a#7 mul8s_compare::b#10 print_line_cursor#1 muls8s::a#0 muls8s::b#0 ] ) -- vbsz1_ge_0_then_la1 
+  //SEG355 [178] if((signed byte) muls8s::a#0<(byte/signed byte/word/signed word/dword/signed dword) 0) goto muls8s::@5 [ muls8s::a#0 muls8s::b#0 ] ( main:2::mul8s_compare:15::muls8s:22 [ mul8s_compare::a#7 mul8s_compare::b#10 print_line_cursor#1 muls8s::a#0 muls8s::b#0 ] ) -- vbsz1_lt_0_then_la1 
     lda a
-    cmp #0
-    bpl b1
-  //SEG356 [179] phi from muls8s to muls8s::@2 [phi:muls8s->muls8s::@2]
-  b2_from_muls8s:
-  //SEG357 [179] phi (signed byte) muls8s::i#2 = (byte/signed byte/word/signed word/dword/signed dword) 0 [phi:muls8s->muls8s::@2#0] -- vbsyy=vbuc1 
-    lda #0
-    tay
-  //SEG358 [179] phi (signed word) muls8s::m#3 = (byte/signed byte/word/signed word/dword/signed dword) 0 [phi:muls8s->muls8s::@2#1] -- vwsz1=vbuc1 
-    lda #<0
-    sta m
-    lda #>0
-    sta m+1
-    jmp b2
-  //SEG359 [179] phi from muls8s::@2 to muls8s::@2 [phi:muls8s::@2->muls8s::@2]
-  b2_from_b2:
-  //SEG360 [179] phi (signed byte) muls8s::i#2 = (signed byte) muls8s::i#1 [phi:muls8s::@2->muls8s::@2#0] -- register_copy 
-  //SEG361 [179] phi (signed word) muls8s::m#3 = (signed word) muls8s::m#1 [phi:muls8s::@2->muls8s::@2#1] -- register_copy 
-    jmp b2
-  //SEG362 muls8s::@2
-  b2:
-  //SEG363 [180] (signed word) muls8s::m#1 ← (signed word) muls8s::m#3 - (signed byte) muls8s::b#0 [ muls8s::a#0 muls8s::b#0 muls8s::i#2 muls8s::m#1 ] ( main:2::mul8s_compare:15::muls8s:22 [ mul8s_compare::a#7 mul8s_compare::b#10 print_line_cursor#1 muls8s::a#0 muls8s::b#0 muls8s::i#2 muls8s::m#1 ] ) -- vwsz1=vwsz1_minus_vbsxx 
-    txa
-    sta $fe
-    ora #$7f
-    bmi !+
-    lda #0
-  !:
-    sta $ff
-    sec
-    lda m
-    sbc $fe
-    sta m
-    lda m+1
-    sbc $ff
-    sta m+1
-  //SEG364 [181] (signed byte) muls8s::i#1 ← -- (signed byte) muls8s::i#2 [ muls8s::a#0 muls8s::b#0 muls8s::m#1 muls8s::i#1 ] ( main:2::mul8s_compare:15::muls8s:22 [ mul8s_compare::a#7 mul8s_compare::b#10 print_line_cursor#1 muls8s::a#0 muls8s::b#0 muls8s::m#1 muls8s::i#1 ] ) -- vbsyy=_dec_vbsyy 
-    dey
-  //SEG365 [182] if((signed byte) muls8s::i#1!=(signed byte) muls8s::a#0) goto muls8s::@2 [ muls8s::a#0 muls8s::b#0 muls8s::m#1 muls8s::i#1 ] ( main:2::mul8s_compare:15::muls8s:22 [ mul8s_compare::a#7 mul8s_compare::b#10 print_line_cursor#1 muls8s::a#0 muls8s::b#0 muls8s::m#1 muls8s::i#1 ] ) -- vbsyy_neq_vbsz1_then_la1 
-    cpy a
-    bne b2_from_b2
-  //SEG366 [183] phi from muls8s::@2 muls8s::@5 to muls8s::@3 [phi:muls8s::@2/muls8s::@5->muls8s::@3]
-  b3_from_b2:
-  b3_from_b5:
-  //SEG367 [183] phi (signed word) muls8s::return#0 = (signed word) muls8s::m#1 [phi:muls8s::@2/muls8s::@5->muls8s::@3#0] -- register_copy 
-    jmp b3
-  //SEG368 [183] phi from muls8s::@1 to muls8s::@3 [phi:muls8s::@1->muls8s::@3]
-  b3_from_b1:
-  //SEG369 [183] phi (signed word) muls8s::return#0 = (byte/signed byte/word/signed word/dword/signed dword) 0 [phi:muls8s::@1->muls8s::@3#0] -- vwsz1=vbuc1 
-    lda #<0
-    sta return
-    lda #>0
-    sta return+1
-    jmp b3
-  //SEG370 muls8s::@3
-  b3:
-    jmp breturn
-  //SEG371 muls8s::@return
-  breturn:
-  //SEG372 [184] return  [ muls8s::return#0 ] ( main:2::mul8s_compare:15::muls8s:22 [ mul8s_compare::a#7 mul8s_compare::b#10 print_line_cursor#1 muls8s::return#0 ] )
-    rts
-  //SEG373 muls8s::@1
-  b1:
-  //SEG374 [185] if((signed byte) muls8s::a#0<=(byte/signed byte/word/signed word/dword/signed dword) 0) goto muls8s::@3 [ muls8s::a#0 muls8s::b#0 ] ( main:2::mul8s_compare:15::muls8s:22 [ mul8s_compare::a#7 mul8s_compare::b#10 print_line_cursor#1 muls8s::a#0 muls8s::b#0 ] ) -- vbsz1_le_0_then_la1 
+    bmi b5_from_muls8s
+    jmp b6
+  //SEG356 muls8s::@6
+  b6:
+  //SEG357 [179] if((signed byte) muls8s::a#0<=(byte/signed byte/word/signed word/dword/signed dword) 0) goto muls8s::@4 [ muls8s::a#0 muls8s::b#0 ] ( main:2::mul8s_compare:15::muls8s:22 [ mul8s_compare::a#7 mul8s_compare::b#10 print_line_cursor#1 muls8s::a#0 muls8s::b#0 ] ) -- vbsz1_le_0_then_la1 
     lda a
     cmp #1
-    bmi b3_from_b1
-  //SEG375 [186] phi from muls8s::@1 to muls8s::@5 [phi:muls8s::@1->muls8s::@5]
-  b5_from_b1:
-  //SEG376 [186] phi (signed byte) muls8s::j#2 = (byte/signed byte/word/signed word/dword/signed dword) 0 [phi:muls8s::@1->muls8s::@5#0] -- vbsyy=vbuc1 
+    bmi b4_from_b6
+  //SEG358 [180] phi from muls8s::@6 to muls8s::@3 [phi:muls8s::@6->muls8s::@3]
+  b3_from_b6:
+  //SEG359 [180] phi (signed byte) muls8s::j#2 = (byte/signed byte/word/signed word/dword/signed dword) 0 [phi:muls8s::@6->muls8s::@3#0] -- vbsyy=vbuc1 
     lda #0
     tay
-  //SEG377 [186] phi (signed word) muls8s::m#5 = (byte/signed byte/word/signed word/dword/signed dword) 0 [phi:muls8s::@1->muls8s::@5#1] -- vwsz1=vbuc1 
+  //SEG360 [180] phi (signed word) muls8s::m#3 = (byte/signed byte/word/signed word/dword/signed dword) 0 [phi:muls8s::@6->muls8s::@3#1] -- vwsz1=vbuc1 
     lda #<0
     sta m
     lda #>0
     sta m+1
-    jmp b5
-  //SEG378 [186] phi from muls8s::@5 to muls8s::@5 [phi:muls8s::@5->muls8s::@5]
-  b5_from_b5:
-  //SEG379 [186] phi (signed byte) muls8s::j#2 = (signed byte) muls8s::j#1 [phi:muls8s::@5->muls8s::@5#0] -- register_copy 
-  //SEG380 [186] phi (signed word) muls8s::m#5 = (signed word) muls8s::m#2 [phi:muls8s::@5->muls8s::@5#1] -- register_copy 
-    jmp b5
-  //SEG381 muls8s::@5
-  b5:
-  //SEG382 [187] (signed word) muls8s::m#2 ← (signed word) muls8s::m#5 + (signed byte) muls8s::b#0 [ muls8s::a#0 muls8s::b#0 muls8s::m#2 muls8s::j#2 ] ( main:2::mul8s_compare:15::muls8s:22 [ mul8s_compare::a#7 mul8s_compare::b#10 print_line_cursor#1 muls8s::a#0 muls8s::b#0 muls8s::m#2 muls8s::j#2 ] ) -- vwsz1=vwsz1_plus_vbsxx 
+    jmp b3
+  //SEG361 [180] phi from muls8s::@3 to muls8s::@3 [phi:muls8s::@3->muls8s::@3]
+  b3_from_b3:
+  //SEG362 [180] phi (signed byte) muls8s::j#2 = (signed byte) muls8s::j#1 [phi:muls8s::@3->muls8s::@3#0] -- register_copy 
+  //SEG363 [180] phi (signed word) muls8s::m#3 = (signed word) muls8s::m#1 [phi:muls8s::@3->muls8s::@3#1] -- register_copy 
+    jmp b3
+  //SEG364 muls8s::@3
+  b3:
+  //SEG365 [181] (signed word) muls8s::m#1 ← (signed word) muls8s::m#3 + (signed byte) muls8s::b#0 [ muls8s::a#0 muls8s::b#0 muls8s::j#2 muls8s::m#1 ] ( main:2::mul8s_compare:15::muls8s:22 [ mul8s_compare::a#7 mul8s_compare::b#10 print_line_cursor#1 muls8s::a#0 muls8s::b#0 muls8s::j#2 muls8s::m#1 ] ) -- vwsz1=vwsz1_plus_vbsxx 
     txa
     sta $fe
     ora #$7f
@@ -12100,12 +12030,70 @@ muls8s: {
     lda m+1
     adc $ff
     sta m+1
-  //SEG383 [188] (signed byte) muls8s::j#1 ← ++ (signed byte) muls8s::j#2 [ muls8s::a#0 muls8s::b#0 muls8s::m#2 muls8s::j#1 ] ( main:2::mul8s_compare:15::muls8s:22 [ mul8s_compare::a#7 mul8s_compare::b#10 print_line_cursor#1 muls8s::a#0 muls8s::b#0 muls8s::m#2 muls8s::j#1 ] ) -- vbsyy=_inc_vbsyy 
+  //SEG366 [182] (signed byte) muls8s::j#1 ← ++ (signed byte) muls8s::j#2 [ muls8s::a#0 muls8s::b#0 muls8s::m#1 muls8s::j#1 ] ( main:2::mul8s_compare:15::muls8s:22 [ mul8s_compare::a#7 mul8s_compare::b#10 print_line_cursor#1 muls8s::a#0 muls8s::b#0 muls8s::m#1 muls8s::j#1 ] ) -- vbsyy=_inc_vbsyy 
     iny
-  //SEG384 [189] if((signed byte) muls8s::j#1!=(signed byte) muls8s::a#0) goto muls8s::@5 [ muls8s::a#0 muls8s::b#0 muls8s::m#2 muls8s::j#1 ] ( main:2::mul8s_compare:15::muls8s:22 [ mul8s_compare::a#7 mul8s_compare::b#10 print_line_cursor#1 muls8s::a#0 muls8s::b#0 muls8s::m#2 muls8s::j#1 ] ) -- vbsyy_neq_vbsz1_then_la1 
+  //SEG367 [183] if((signed byte) muls8s::j#1!=(signed byte) muls8s::a#0) goto muls8s::@3 [ muls8s::a#0 muls8s::b#0 muls8s::m#1 muls8s::j#1 ] ( main:2::mul8s_compare:15::muls8s:22 [ mul8s_compare::a#7 mul8s_compare::b#10 print_line_cursor#1 muls8s::a#0 muls8s::b#0 muls8s::m#1 muls8s::j#1 ] ) -- vbsyy_neq_vbsz1_then_la1 
+    cpy a
+    bne b3_from_b3
+  //SEG368 [184] phi from muls8s::@3 muls8s::@5 to muls8s::@4 [phi:muls8s::@3/muls8s::@5->muls8s::@4]
+  b4_from_b3:
+  b4_from_b5:
+  //SEG369 [184] phi (signed word) muls8s::return#0 = (signed word) muls8s::m#1 [phi:muls8s::@3/muls8s::@5->muls8s::@4#0] -- register_copy 
+    jmp b4
+  //SEG370 [184] phi from muls8s::@6 to muls8s::@4 [phi:muls8s::@6->muls8s::@4]
+  b4_from_b6:
+  //SEG371 [184] phi (signed word) muls8s::return#0 = (byte/signed byte/word/signed word/dword/signed dword) 0 [phi:muls8s::@6->muls8s::@4#0] -- vwsz1=vbuc1 
+    lda #<0
+    sta return
+    lda #>0
+    sta return+1
+    jmp b4
+  //SEG372 muls8s::@4
+  b4:
+    jmp breturn
+  //SEG373 muls8s::@return
+  breturn:
+  //SEG374 [185] return  [ muls8s::return#0 ] ( main:2::mul8s_compare:15::muls8s:22 [ mul8s_compare::a#7 mul8s_compare::b#10 print_line_cursor#1 muls8s::return#0 ] )
+    rts
+  //SEG375 [186] phi from muls8s to muls8s::@5 [phi:muls8s->muls8s::@5]
+  b5_from_muls8s:
+  //SEG376 [186] phi (signed byte) muls8s::i#2 = (byte/signed byte/word/signed word/dword/signed dword) 0 [phi:muls8s->muls8s::@5#0] -- vbsyy=vbuc1 
+    lda #0
+    tay
+  //SEG377 [186] phi (signed word) muls8s::m#5 = (byte/signed byte/word/signed word/dword/signed dword) 0 [phi:muls8s->muls8s::@5#1] -- vwsz1=vbuc1 
+    lda #<0
+    sta m
+    lda #>0
+    sta m+1
+    jmp b5
+  //SEG378 [186] phi from muls8s::@5 to muls8s::@5 [phi:muls8s::@5->muls8s::@5]
+  b5_from_b5:
+  //SEG379 [186] phi (signed byte) muls8s::i#2 = (signed byte) muls8s::i#1 [phi:muls8s::@5->muls8s::@5#0] -- register_copy 
+  //SEG380 [186] phi (signed word) muls8s::m#5 = (signed word) muls8s::m#2 [phi:muls8s::@5->muls8s::@5#1] -- register_copy 
+    jmp b5
+  //SEG381 muls8s::@5
+  b5:
+  //SEG382 [187] (signed word) muls8s::m#2 ← (signed word) muls8s::m#5 - (signed byte) muls8s::b#0 [ muls8s::a#0 muls8s::b#0 muls8s::m#2 muls8s::i#2 ] ( main:2::mul8s_compare:15::muls8s:22 [ mul8s_compare::a#7 mul8s_compare::b#10 print_line_cursor#1 muls8s::a#0 muls8s::b#0 muls8s::m#2 muls8s::i#2 ] ) -- vwsz1=vwsz1_minus_vbsxx 
+    txa
+    sta $fe
+    ora #$7f
+    bmi !+
+    lda #0
+  !:
+    sta $ff
+    sec
+    lda m
+    sbc $fe
+    sta m
+    lda m+1
+    sbc $ff
+    sta m+1
+  //SEG383 [188] (signed byte) muls8s::i#1 ← -- (signed byte) muls8s::i#2 [ muls8s::a#0 muls8s::b#0 muls8s::m#2 muls8s::i#1 ] ( main:2::mul8s_compare:15::muls8s:22 [ mul8s_compare::a#7 mul8s_compare::b#10 print_line_cursor#1 muls8s::a#0 muls8s::b#0 muls8s::m#2 muls8s::i#1 ] ) -- vbsyy=_dec_vbsyy 
+    dey
+  //SEG384 [189] if((signed byte) muls8s::i#1!=(signed byte) muls8s::a#0) goto muls8s::@5 [ muls8s::a#0 muls8s::b#0 muls8s::m#2 muls8s::i#1 ] ( main:2::mul8s_compare:15::muls8s:22 [ mul8s_compare::a#7 mul8s_compare::b#10 print_line_cursor#1 muls8s::a#0 muls8s::b#0 muls8s::m#2 muls8s::i#1 ] ) -- vbsyy_neq_vbsz1_then_la1 
     cpy a
     bne b5_from_b5
-    jmp b3_from_b5
+    jmp b4_from_b5
 }
 //SEG385 mul8u_compare
 mul8u_compare: {
@@ -13075,8 +13063,9 @@ Removing instruction jmp b4
 Removing instruction jmp b2
 Removing instruction jmp breturn
 Removing instruction jmp breturn
-Removing instruction jmp b2
+Removing instruction jmp b6
 Removing instruction jmp b3
+Removing instruction jmp b4
 Removing instruction jmp breturn
 Removing instruction jmp b5
 Removing instruction jmp b1
@@ -13158,7 +13147,7 @@ Replacing label b2_from_b1 with b2
 Replacing label b4_from_b2 with b4
 Replacing label b1_from_b6 with b1
 Replacing label b2_from_b1 with b2
-Replacing label b2_from_b2 with b2
+Replacing label b3_from_b3 with b3
 Replacing label b5_from_b5 with b5
 Replacing label b20_from_b3 with b20
 Replacing label b2_from_b5 with b2
@@ -13229,8 +13218,8 @@ Removing instruction b1_from_b6:
 Removing instruction b2_from_b1:
 Removing instruction b2_from_b4:
 Removing instruction breturn:
-Removing instruction b2_from_b2:
-Removing instruction b3_from_b2:
+Removing instruction b3_from_b3:
+Removing instruction b4_from_b3:
 Removing instruction breturn:
 Removing instruction b5_from_b5:
 Removing instruction b1_from_b10:
@@ -13340,8 +13329,8 @@ Removing instruction b6:
 Removing instruction b3:
 Removing instruction b4:
 Removing instruction breturn:
-Removing instruction b2_from_muls8s:
-Removing instruction b5_from_b1:
+Removing instruction b6:
+Removing instruction b3_from_b6:
 Removing instruction b1_from_mul8u_compare:
 Removing instruction b12:
 Removing instruction mulf8u_from_b12:
@@ -13397,19 +13386,20 @@ Removing instruction b1_from_print_cls:
 Removing instruction breturn:
 Succesful ASM optimization Pass5UnusedLabelElimination
 Skipping double jump to b4 in beq b20
-Skipping double jump to b3 in jmp b3_from_b5
+Skipping double jump to b4 in jmp b4_from_b5
 Skipping double jump to b4 in beq b20
 Skipping double jump to b4 in bne b12
 Succesful ASM optimization Pass5DoubleJumpElimination
 Relabelling long label b3_from_b14 to b6
-Relabelling long label b3_from_b5 to b4
-Relabelling long label b3_from_b1 to b6
+Relabelling long label b4_from_b5 to b1
+Relabelling long label b4_from_b6 to b2
+Relabelling long label b5_from_muls8s to b6
 Relabelling long label b3_from_b14 to b6
 Relabelling long label b1_from_muls8u to b3
 Succesful ASM optimization Pass5RelabelLongLabels
 Removing instruction jmp b1
 Removing instruction jmp b2
-Removing instruction jmp b2
+Removing instruction jmp b3
 Removing instruction jmp b5
 Removing instruction jmp b1
 Removing instruction jmp b2
@@ -13420,9 +13410,10 @@ Removing instruction jmp b3
 Removing instruction jmp b1
 Succesful ASM optimization Pass5NextJumpElimination
 Removing instruction lda #<0
+Removing instruction lda a
 Succesful ASM optimization Pass5UnnecesaryLoadElimination
 Removing instruction b20:
-Removing instruction b4:
+Removing instruction b1:
 Removing instruction b20:
 Removing instruction b12:
 Succesful ASM optimization Pass5UnusedLabelElimination
@@ -13736,10 +13727,10 @@ FINAL SYMBOL TABLE
 (const string) mulf_tables_cmp::str1 str1 = (string) " / @"
 (const string) mulf_tables_cmp::str2 str2 = (string) "multiply tables match!@"
 (signed word()) muls8s((signed byte) muls8s::a , (signed byte) muls8s::b)
-(label) muls8s::@1
-(label) muls8s::@2
 (label) muls8s::@3
+(label) muls8s::@4
 (label) muls8s::@5
+(label) muls8s::@6
 (label) muls8s::@return
 (signed byte) muls8s::a
 (signed byte) muls8s::a#0 a zp ZP_BYTE:2 175.58333333333334
@@ -13885,8 +13876,8 @@ reg byte x [ mul8u::a#3 mul8u::a#6 mul8u::a#8 mul8u::a#2 mul8u::a#0 ]
 zp ZP_WORD:14 [ mulf8s::m#4 mulf8s::m#5 mulf8s::m#1 mulf8s::m#0 mulf8s::m#2 mulf8s::return#2 mulf8u::return#2 mul8s_compare::mf#0 mul8s_error::mf#0 mulf8u::return#0 mulf8u::return#3 mul8u_compare::mf#0 mul8u_error::mf#0 ]
 reg byte a [ mulf8u::a#2 mulf8u::a#1 mulf8u::a#4 ]
 reg byte x [ mulf8u::b#2 mulf8u::b#1 mulf8u::b#4 ]
-reg byte y [ muls8s::i#2 muls8s::i#1 ]
 reg byte y [ muls8s::j#2 muls8s::j#1 ]
+reg byte y [ muls8s::i#2 muls8s::i#1 ]
 reg byte x [ mul8u_compare::ok#3 mul8u_compare::ok#4 ]
 reg byte y [ muls8u::i#2 muls8u::i#1 ]
 reg byte x [ mulf_init::c#2 mulf_init::c#1 ]
@@ -13914,7 +13905,7 @@ reg byte a [ mulf_init::$6 ]
 
 
 FINAL ASSEMBLER
-Score: 224327
+Score: 224322
 
 //SEG0 Basic Upstart
 .pc = $801 "Basic"
@@ -14659,75 +14650,26 @@ muls8s: {
     .label m = 8
     .label return = 8
     .label a = 2
-  //SEG355 [178] if((signed byte) muls8s::a#0>=(byte/signed byte/word/signed word/dword/signed dword) 0) goto muls8s::@1 [ muls8s::a#0 muls8s::b#0 ] ( main:2::mul8s_compare:15::muls8s:22 [ mul8s_compare::a#7 mul8s_compare::b#10 print_line_cursor#1 muls8s::a#0 muls8s::b#0 ] ) -- vbsz1_ge_0_then_la1 
+  //SEG355 [178] if((signed byte) muls8s::a#0<(byte/signed byte/word/signed word/dword/signed dword) 0) goto muls8s::@5 [ muls8s::a#0 muls8s::b#0 ] ( main:2::mul8s_compare:15::muls8s:22 [ mul8s_compare::a#7 mul8s_compare::b#10 print_line_cursor#1 muls8s::a#0 muls8s::b#0 ] ) -- vbsz1_lt_0_then_la1 
     lda a
-    cmp #0
-    bpl b1
-  //SEG356 [179] phi from muls8s to muls8s::@2 [phi:muls8s->muls8s::@2]
-  //SEG357 [179] phi (signed byte) muls8s::i#2 = (byte/signed byte/word/signed word/dword/signed dword) 0 [phi:muls8s->muls8s::@2#0] -- vbsyy=vbuc1 
-    lda #0
-    tay
-  //SEG358 [179] phi (signed word) muls8s::m#3 = (byte/signed byte/word/signed word/dword/signed dword) 0 [phi:muls8s->muls8s::@2#1] -- vwsz1=vbuc1 
-    sta m
-    sta m+1
-  //SEG359 [179] phi from muls8s::@2 to muls8s::@2 [phi:muls8s::@2->muls8s::@2]
-  //SEG360 [179] phi (signed byte) muls8s::i#2 = (signed byte) muls8s::i#1 [phi:muls8s::@2->muls8s::@2#0] -- register_copy 
-  //SEG361 [179] phi (signed word) muls8s::m#3 = (signed word) muls8s::m#1 [phi:muls8s::@2->muls8s::@2#1] -- register_copy 
-  //SEG362 muls8s::@2
-  b2:
-  //SEG363 [180] (signed word) muls8s::m#1 ← (signed word) muls8s::m#3 - (signed byte) muls8s::b#0 [ muls8s::a#0 muls8s::b#0 muls8s::i#2 muls8s::m#1 ] ( main:2::mul8s_compare:15::muls8s:22 [ mul8s_compare::a#7 mul8s_compare::b#10 print_line_cursor#1 muls8s::a#0 muls8s::b#0 muls8s::i#2 muls8s::m#1 ] ) -- vwsz1=vwsz1_minus_vbsxx 
-    txa
-    sta $fe
-    ora #$7f
-    bmi !+
-    lda #0
-  !:
-    sta $ff
-    sec
-    lda m
-    sbc $fe
-    sta m
-    lda m+1
-    sbc $ff
-    sta m+1
-  //SEG364 [181] (signed byte) muls8s::i#1 ← -- (signed byte) muls8s::i#2 [ muls8s::a#0 muls8s::b#0 muls8s::m#1 muls8s::i#1 ] ( main:2::mul8s_compare:15::muls8s:22 [ mul8s_compare::a#7 mul8s_compare::b#10 print_line_cursor#1 muls8s::a#0 muls8s::b#0 muls8s::m#1 muls8s::i#1 ] ) -- vbsyy=_dec_vbsyy 
-    dey
-  //SEG365 [182] if((signed byte) muls8s::i#1!=(signed byte) muls8s::a#0) goto muls8s::@2 [ muls8s::a#0 muls8s::b#0 muls8s::m#1 muls8s::i#1 ] ( main:2::mul8s_compare:15::muls8s:22 [ mul8s_compare::a#7 mul8s_compare::b#10 print_line_cursor#1 muls8s::a#0 muls8s::b#0 muls8s::m#1 muls8s::i#1 ] ) -- vbsyy_neq_vbsz1_then_la1 
-    cpy a
-    bne b2
-  //SEG366 [183] phi from muls8s::@2 muls8s::@5 to muls8s::@3 [phi:muls8s::@2/muls8s::@5->muls8s::@3]
-  //SEG367 [183] phi (signed word) muls8s::return#0 = (signed word) muls8s::m#1 [phi:muls8s::@2/muls8s::@5->muls8s::@3#0] -- register_copy 
-    jmp b3
-  //SEG368 [183] phi from muls8s::@1 to muls8s::@3 [phi:muls8s::@1->muls8s::@3]
-  b6:
-  //SEG369 [183] phi (signed word) muls8s::return#0 = (byte/signed byte/word/signed word/dword/signed dword) 0 [phi:muls8s::@1->muls8s::@3#0] -- vwsz1=vbuc1 
-    lda #<0
-    sta return
-    sta return+1
-  //SEG370 muls8s::@3
-  b3:
-  //SEG371 muls8s::@return
-  //SEG372 [184] return  [ muls8s::return#0 ] ( main:2::mul8s_compare:15::muls8s:22 [ mul8s_compare::a#7 mul8s_compare::b#10 print_line_cursor#1 muls8s::return#0 ] )
-    rts
-  //SEG373 muls8s::@1
-  b1:
-  //SEG374 [185] if((signed byte) muls8s::a#0<=(byte/signed byte/word/signed word/dword/signed dword) 0) goto muls8s::@3 [ muls8s::a#0 muls8s::b#0 ] ( main:2::mul8s_compare:15::muls8s:22 [ mul8s_compare::a#7 mul8s_compare::b#10 print_line_cursor#1 muls8s::a#0 muls8s::b#0 ] ) -- vbsz1_le_0_then_la1 
-    lda a
-    cmp #1
     bmi b6
-  //SEG375 [186] phi from muls8s::@1 to muls8s::@5 [phi:muls8s::@1->muls8s::@5]
-  //SEG376 [186] phi (signed byte) muls8s::j#2 = (byte/signed byte/word/signed word/dword/signed dword) 0 [phi:muls8s::@1->muls8s::@5#0] -- vbsyy=vbuc1 
+  //SEG356 muls8s::@6
+  //SEG357 [179] if((signed byte) muls8s::a#0<=(byte/signed byte/word/signed word/dword/signed dword) 0) goto muls8s::@4 [ muls8s::a#0 muls8s::b#0 ] ( main:2::mul8s_compare:15::muls8s:22 [ mul8s_compare::a#7 mul8s_compare::b#10 print_line_cursor#1 muls8s::a#0 muls8s::b#0 ] ) -- vbsz1_le_0_then_la1 
+    cmp #1
+    bmi b2
+  //SEG358 [180] phi from muls8s::@6 to muls8s::@3 [phi:muls8s::@6->muls8s::@3]
+  //SEG359 [180] phi (signed byte) muls8s::j#2 = (byte/signed byte/word/signed word/dword/signed dword) 0 [phi:muls8s::@6->muls8s::@3#0] -- vbsyy=vbuc1 
     lda #0
     tay
-  //SEG377 [186] phi (signed word) muls8s::m#5 = (byte/signed byte/word/signed word/dword/signed dword) 0 [phi:muls8s::@1->muls8s::@5#1] -- vwsz1=vbuc1 
+  //SEG360 [180] phi (signed word) muls8s::m#3 = (byte/signed byte/word/signed word/dword/signed dword) 0 [phi:muls8s::@6->muls8s::@3#1] -- vwsz1=vbuc1 
     sta m
     sta m+1
-  //SEG378 [186] phi from muls8s::@5 to muls8s::@5 [phi:muls8s::@5->muls8s::@5]
-  //SEG379 [186] phi (signed byte) muls8s::j#2 = (signed byte) muls8s::j#1 [phi:muls8s::@5->muls8s::@5#0] -- register_copy 
-  //SEG380 [186] phi (signed word) muls8s::m#5 = (signed word) muls8s::m#2 [phi:muls8s::@5->muls8s::@5#1] -- register_copy 
-  //SEG381 muls8s::@5
-  b5:
-  //SEG382 [187] (signed word) muls8s::m#2 ← (signed word) muls8s::m#5 + (signed byte) muls8s::b#0 [ muls8s::a#0 muls8s::b#0 muls8s::m#2 muls8s::j#2 ] ( main:2::mul8s_compare:15::muls8s:22 [ mul8s_compare::a#7 mul8s_compare::b#10 print_line_cursor#1 muls8s::a#0 muls8s::b#0 muls8s::m#2 muls8s::j#2 ] ) -- vwsz1=vwsz1_plus_vbsxx 
+  //SEG361 [180] phi from muls8s::@3 to muls8s::@3 [phi:muls8s::@3->muls8s::@3]
+  //SEG362 [180] phi (signed byte) muls8s::j#2 = (signed byte) muls8s::j#1 [phi:muls8s::@3->muls8s::@3#0] -- register_copy 
+  //SEG363 [180] phi (signed word) muls8s::m#3 = (signed word) muls8s::m#1 [phi:muls8s::@3->muls8s::@3#1] -- register_copy 
+  //SEG364 muls8s::@3
+  b3:
+  //SEG365 [181] (signed word) muls8s::m#1 ← (signed word) muls8s::m#3 + (signed byte) muls8s::b#0 [ muls8s::a#0 muls8s::b#0 muls8s::j#2 muls8s::m#1 ] ( main:2::mul8s_compare:15::muls8s:22 [ mul8s_compare::a#7 mul8s_compare::b#10 print_line_cursor#1 muls8s::a#0 muls8s::b#0 muls8s::j#2 muls8s::m#1 ] ) -- vwsz1=vwsz1_plus_vbsxx 
     txa
     sta $fe
     ora #$7f
@@ -14742,12 +14684,59 @@ muls8s: {
     lda m+1
     adc $ff
     sta m+1
-  //SEG383 [188] (signed byte) muls8s::j#1 ← ++ (signed byte) muls8s::j#2 [ muls8s::a#0 muls8s::b#0 muls8s::m#2 muls8s::j#1 ] ( main:2::mul8s_compare:15::muls8s:22 [ mul8s_compare::a#7 mul8s_compare::b#10 print_line_cursor#1 muls8s::a#0 muls8s::b#0 muls8s::m#2 muls8s::j#1 ] ) -- vbsyy=_inc_vbsyy 
+  //SEG366 [182] (signed byte) muls8s::j#1 ← ++ (signed byte) muls8s::j#2 [ muls8s::a#0 muls8s::b#0 muls8s::m#1 muls8s::j#1 ] ( main:2::mul8s_compare:15::muls8s:22 [ mul8s_compare::a#7 mul8s_compare::b#10 print_line_cursor#1 muls8s::a#0 muls8s::b#0 muls8s::m#1 muls8s::j#1 ] ) -- vbsyy=_inc_vbsyy 
     iny
-  //SEG384 [189] if((signed byte) muls8s::j#1!=(signed byte) muls8s::a#0) goto muls8s::@5 [ muls8s::a#0 muls8s::b#0 muls8s::m#2 muls8s::j#1 ] ( main:2::mul8s_compare:15::muls8s:22 [ mul8s_compare::a#7 mul8s_compare::b#10 print_line_cursor#1 muls8s::a#0 muls8s::b#0 muls8s::m#2 muls8s::j#1 ] ) -- vbsyy_neq_vbsz1_then_la1 
+  //SEG367 [183] if((signed byte) muls8s::j#1!=(signed byte) muls8s::a#0) goto muls8s::@3 [ muls8s::a#0 muls8s::b#0 muls8s::m#1 muls8s::j#1 ] ( main:2::mul8s_compare:15::muls8s:22 [ mul8s_compare::a#7 mul8s_compare::b#10 print_line_cursor#1 muls8s::a#0 muls8s::b#0 muls8s::m#1 muls8s::j#1 ] ) -- vbsyy_neq_vbsz1_then_la1 
+    cpy a
+    bne b3
+  //SEG368 [184] phi from muls8s::@3 muls8s::@5 to muls8s::@4 [phi:muls8s::@3/muls8s::@5->muls8s::@4]
+  //SEG369 [184] phi (signed word) muls8s::return#0 = (signed word) muls8s::m#1 [phi:muls8s::@3/muls8s::@5->muls8s::@4#0] -- register_copy 
+    jmp b4
+  //SEG370 [184] phi from muls8s::@6 to muls8s::@4 [phi:muls8s::@6->muls8s::@4]
+  b2:
+  //SEG371 [184] phi (signed word) muls8s::return#0 = (byte/signed byte/word/signed word/dword/signed dword) 0 [phi:muls8s::@6->muls8s::@4#0] -- vwsz1=vbuc1 
+    lda #<0
+    sta return
+    sta return+1
+  //SEG372 muls8s::@4
+  b4:
+  //SEG373 muls8s::@return
+  //SEG374 [185] return  [ muls8s::return#0 ] ( main:2::mul8s_compare:15::muls8s:22 [ mul8s_compare::a#7 mul8s_compare::b#10 print_line_cursor#1 muls8s::return#0 ] )
+    rts
+  //SEG375 [186] phi from muls8s to muls8s::@5 [phi:muls8s->muls8s::@5]
+  b6:
+  //SEG376 [186] phi (signed byte) muls8s::i#2 = (byte/signed byte/word/signed word/dword/signed dword) 0 [phi:muls8s->muls8s::@5#0] -- vbsyy=vbuc1 
+    lda #0
+    tay
+  //SEG377 [186] phi (signed word) muls8s::m#5 = (byte/signed byte/word/signed word/dword/signed dword) 0 [phi:muls8s->muls8s::@5#1] -- vwsz1=vbuc1 
+    sta m
+    sta m+1
+  //SEG378 [186] phi from muls8s::@5 to muls8s::@5 [phi:muls8s::@5->muls8s::@5]
+  //SEG379 [186] phi (signed byte) muls8s::i#2 = (signed byte) muls8s::i#1 [phi:muls8s::@5->muls8s::@5#0] -- register_copy 
+  //SEG380 [186] phi (signed word) muls8s::m#5 = (signed word) muls8s::m#2 [phi:muls8s::@5->muls8s::@5#1] -- register_copy 
+  //SEG381 muls8s::@5
+  b5:
+  //SEG382 [187] (signed word) muls8s::m#2 ← (signed word) muls8s::m#5 - (signed byte) muls8s::b#0 [ muls8s::a#0 muls8s::b#0 muls8s::m#2 muls8s::i#2 ] ( main:2::mul8s_compare:15::muls8s:22 [ mul8s_compare::a#7 mul8s_compare::b#10 print_line_cursor#1 muls8s::a#0 muls8s::b#0 muls8s::m#2 muls8s::i#2 ] ) -- vwsz1=vwsz1_minus_vbsxx 
+    txa
+    sta $fe
+    ora #$7f
+    bmi !+
+    lda #0
+  !:
+    sta $ff
+    sec
+    lda m
+    sbc $fe
+    sta m
+    lda m+1
+    sbc $ff
+    sta m+1
+  //SEG383 [188] (signed byte) muls8s::i#1 ← -- (signed byte) muls8s::i#2 [ muls8s::a#0 muls8s::b#0 muls8s::m#2 muls8s::i#1 ] ( main:2::mul8s_compare:15::muls8s:22 [ mul8s_compare::a#7 mul8s_compare::b#10 print_line_cursor#1 muls8s::a#0 muls8s::b#0 muls8s::m#2 muls8s::i#1 ] ) -- vbsyy=_dec_vbsyy 
+    dey
+  //SEG384 [189] if((signed byte) muls8s::i#1!=(signed byte) muls8s::a#0) goto muls8s::@5 [ muls8s::a#0 muls8s::b#0 muls8s::m#2 muls8s::i#1 ] ( main:2::mul8s_compare:15::muls8s:22 [ mul8s_compare::a#7 mul8s_compare::b#10 print_line_cursor#1 muls8s::a#0 muls8s::b#0 muls8s::m#2 muls8s::i#1 ] ) -- vbsyy_neq_vbsz1_then_la1 
     cpy a
     bne b5
-    jmp b3
+    jmp b4
 }
 //SEG385 mul8u_compare
 mul8u_compare: {

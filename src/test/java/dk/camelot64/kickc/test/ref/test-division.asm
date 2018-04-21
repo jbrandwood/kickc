@@ -189,7 +189,7 @@ print_str: {
 }
 div16s: {
     .label _2 = 8
-    .label _7 = $a
+    .label _6 = $a
     .label resultu = $c
     .label return = $c
     .label dividend = 8
@@ -197,39 +197,15 @@ div16s: {
     .label dividendu = 8
     .label divisoru = $a
     lda dividend+1
-    bpl b16
-    sec
-    lda _2
-    eor #$ff
-    adc #0
-    sta _2
-    lda _2+1
-    eor #$ff
-    adc #0
-    sta _2+1
-    ldy #1
+    bmi b1
+    ldy #0
   b2:
     lda divisor+1
-    bpl b4
-    sec
-    lda _7
-    eor #$ff
-    adc #0
-    sta _7
-    lda _7+1
-    eor #$ff
-    adc #0
-    sta _7+1
-    tya
-    eor #1
-    tay
+    bmi b3
   b4:
     jsr div16u
     cpy #0
-    bne b5
-  breturn:
-    rts
-  b5:
+    beq breturn
     sec
     lda rem16s
     eor #$ff
@@ -248,9 +224,33 @@ div16s: {
     eor #$ff
     adc #0
     sta return+1
-    jmp breturn
-  b16:
-    ldy #0
+  breturn:
+    rts
+  b3:
+    sec
+    lda _6
+    eor #$ff
+    adc #0
+    sta _6
+    lda _6+1
+    eor #$ff
+    adc #0
+    sta _6+1
+    tya
+    eor #1
+    tay
+    jmp b4
+  b1:
+    sec
+    lda _2
+    eor #$ff
+    adc #0
+    sta _2
+    lda _2+1
+    eor #$ff
+    adc #0
+    sta _2+1
+    ldy #1
     jmp b2
 }
 div16u: {
@@ -388,17 +388,33 @@ print_sbyte: {
 div8s: {
     .label neg = $10
     cpy #0
-    bpl b16
+    bmi b1
+    lda #0
+    sta neg
+  b2:
+    cpx #0
+    bmi b3
+  b4:
+    tya
+    jsr div8u
+    tay
+    lda neg
+    beq b18
+    txa
+    eor #$ff
+    clc
+    adc #1
+    tax
     tya
     eor #$ff
     clc
     adc #1
-    tay
-    lda #1
-    sta neg
-  b2:
-    cpx #0
-    bpl b4
+  breturn:
+    rts
+  b18:
+    tya
+    jmp breturn
+  b3:
     txa
     eor #$ff
     clc
@@ -407,28 +423,14 @@ div8s: {
     lda neg
     eor #1
     sta neg
-  b4:
+    jmp b4
+  b1:
     tya
-    jsr div8u
+    eor #$ff
+    clc
+    adc #1
     tay
-    lda neg
-    bne b5
-    tya
-  breturn:
-    rts
-  b5:
-    txa
-    eor #$ff
-    clc
-    adc #1
-    tax
-    tya
-    eor #$ff
-    clc
-    adc #1
-    jmp breturn
-  b16:
-    lda #0
+    lda #1
     sta neg
     jmp b2
 }

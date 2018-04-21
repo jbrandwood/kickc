@@ -297,8 +297,6 @@ public class AsmFragmentInstanceSpec {
          return "vds";
       } else if(SymbolType.STRING.equals(type)) {
          return "pbu";
-      } else if(SymbolType.BOOLEAN.equals(type)) {
-         return "vbo";
       } else if(type instanceof SymbolTypePointer) {
          SymbolType elementType = ((SymbolTypePointer) type).getElementType();
          if(SymbolType.isByte(elementType)) {
@@ -328,8 +326,7 @@ public class AsmFragmentInstanceSpec {
       if(
             Registers.RegisterType.ZP_BYTE.equals(register.getType()) ||
                   Registers.RegisterType.ZP_WORD.equals(register.getType()) ||
-                  Registers.RegisterType.ZP_DWORD.equals(register.getType()) ||
-                  Registers.RegisterType.ZP_BOOL.equals(register.getType())
+                  Registers.RegisterType.ZP_DWORD.equals(register.getType())
             ) {
          // Examine if the ZP register is already bound
          Registers.RegisterZp registerZp = (Registers.RegisterZp) register;

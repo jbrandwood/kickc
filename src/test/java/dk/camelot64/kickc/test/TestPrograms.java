@@ -14,7 +14,6 @@ import org.junit.Test;
 import java.io.*;
 import java.net.URISyntaxException;
 import java.nio.file.Path;
-import java.util.ConcurrentModificationException;
 
 import static junit.framework.TestCase.fail;
 import static org.junit.Assert.assertTrue;
@@ -42,7 +41,23 @@ public class TestPrograms {
    public static void tearDown() throws Exception {
       CompileLog log = new CompileLog();
       log.setSysOut(true);
-      AsmFragmentTemplateUsages.logUsages(log, false, false,  false, false, false, false);
+      AsmFragmentTemplateUsages.logUsages(log, false, false, false, false, false, false);
+   }
+
+   @Test
+   public void testVarForwardProblem() throws IOException, URISyntaxException {
+      try {
+         compileAndCompare("var-forward-problem");
+      } catch(CompileError e) {
+         // ignore & return
+         return;
+      }
+      fail("Expected compile error.");
+   }
+
+   @Test
+   public void testInlineString3() throws IOException, URISyntaxException {
+      compileAndCompare("inline-string-3");
    }
 
    @Test
@@ -64,17 +79,6 @@ public class TestPrograms {
    @Test
    public void testBoolVars() throws IOException, URISyntaxException {
       compileAndCompare("bool-vars");
-   }
-
-   @Test
-   public void testInlineString3() throws IOException, URISyntaxException {
-      try {
-         compileAndCompare("inline-string-3");
-      } catch(CompileError e) {
-         // ignore & return
-         return;
-      }
-      fail("Expected compile error.");
    }
 
    @Test
@@ -100,17 +104,6 @@ public class TestPrograms {
    @Test
    public void testInlineString2() throws IOException, URISyntaxException {
       compileAndCompare("inline-string-2");
-   }
-
-   @Test
-   public void testVarForwardProblem() throws IOException, URISyntaxException {
-      try {
-         compileAndCompare("var-forward-problem");
-      } catch(CompileError e) {
-         // ignore & return
-         return;
-      }
-      fail("Expected compile error.");
    }
 
    @Test
@@ -254,11 +247,11 @@ public class TestPrograms {
    }
 
    @Test
-    public void testComparisons() throws IOException, URISyntaxException {
-        compileAndCompare("test-comparisons");
-    }
+   public void testComparisons() throws IOException, URISyntaxException {
+      compileAndCompare("test-comparisons");
+   }
 
-    @Test
+   @Test
    public void testMemAlignment() throws IOException, URISyntaxException {
       compileAndCompare("mem-alignment");
    }
@@ -711,10 +704,10 @@ public class TestPrograms {
    private void assertError(String kcFile, String expectError) throws IOException, URISyntaxException {
       try {
          compileAndCompare(kcFile);
-      } catch (CompileError e) {
-         System.out.println("Got error: "+e.getMessage());
+      } catch(CompileError e) {
+         System.out.println("Got error: " + e.getMessage());
          // expecting error!
-         assertTrue("Error message expected  '"+expectError+"' - was:"+e.getMessage(), e.getMessage().contains(expectError));
+         assertTrue("Error message expected  '" + expectError + "' - was:" + e.getMessage(), e.getMessage().contains(expectError));
          return;
       }
       fail("Expected compile error.");
@@ -739,7 +732,7 @@ public class TestPrograms {
       success &= helper.testOutput(fileName, ".sym", program.getScope().getSymbolTableContents(program));
       success &= helper.testOutput(fileName, ".cfg", program.getGraph().toString(program));
       success &= helper.testOutput(fileName, ".log", program.getLog().toString());
-      if (!success) {
+      if(!success) {
          //System.out.println("\nCOMPILE LOG");
          //System.out.println(program.getLog().toString());
          fail("Output does not match reference!");
@@ -755,8 +748,8 @@ public class TestPrograms {
       System.setOut(new PrintStream(kickAssOut));
       int asmRes = KickAssembler.main2(new String[]{asmFile.getAbsolutePath(), "-log", asmLogFile.getAbsolutePath(), "-o", asmPrgFile.getAbsolutePath(), "-vicesymbols", "-showmem"});
       System.setOut(new PrintStream(new FileOutputStream(FileDescriptor.out)));
-      if(asmRes!=0) {
-         fail("KickAssembling file failed! "+kickAssOut.toString());
+      if(asmRes != 0) {
+         fail("KickAssembling file failed! " + kickAssOut.toString());
       }
    }
 
@@ -785,7 +778,6 @@ public class TestPrograms {
       }
       return binDir;
    }
-
 
 
 }

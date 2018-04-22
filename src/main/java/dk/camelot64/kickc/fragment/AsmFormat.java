@@ -96,7 +96,7 @@ public class AsmFormat {
          SymbolType operandType = SymbolTypeInference.inferType(program.getScope(), operand);
          if(SymbolType.isByte(operandType) || SymbolType.isSByte(operandType)) {
             return getAsmConstant(program, operand, outerPrecedence, codeScope);
-         } else if(SymbolType.isWord(operandType) || SymbolType.isSWord(operandType) || operandType instanceof SymbolTypePointer) {
+         } else if(SymbolType.isWord(operandType) || SymbolType.isSWord(operandType) || operandType instanceof SymbolTypePointer || SymbolType.STRING.equals(operandType)) {
             return "<" + getAsmConstant(program, operand, outerPrecedence, codeScope);
          } else if(SymbolType.isDWord(operandType) || SymbolType.isSDWord(operandType)) {
             return getAsmConstant(program, new ConstantBinary(operand, Operators.BOOL_AND, new ConstantInteger((long)0xffff)), outerPrecedence, codeScope);
@@ -107,7 +107,7 @@ public class AsmFormat {
          SymbolType operandType = SymbolTypeInference.inferType(program.getScope(), operand);
          if(SymbolType.isByte(operandType) || SymbolType.isSByte(operandType)) {
             return getAsmConstant(program, new ConstantInteger(0l), outerPrecedence, codeScope);
-         } else if(SymbolType.isWord(operandType) || SymbolType.isSWord(operandType) || operandType instanceof SymbolTypePointer) {
+         } else if(SymbolType.isWord(operandType) || SymbolType.isSWord(operandType) || operandType instanceof SymbolTypePointer || SymbolType.STRING.equals(operandType)) {
             return ">" + getAsmConstant(program, operand, outerPrecedence, codeScope);
          } else if(SymbolType.isDWord(operandType) || SymbolType.isSDWord(operandType)) {
             return getAsmConstant(program, new ConstantBinary(operand, Operators.SHIFT_RIGHT, new ConstantInteger((long)16)), outerPrecedence, codeScope);

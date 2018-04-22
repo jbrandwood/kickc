@@ -45,6 +45,11 @@ public class TestPrograms {
    }
 
    @Test
+   public void testFragmentSynth() throws IOException, URISyntaxException {
+      compileAndCompare("fragment-synth");
+   }
+
+   @Test
    public void testConstPointer() throws IOException, URISyntaxException {
       compileAndCompare("const-pointer");
    }

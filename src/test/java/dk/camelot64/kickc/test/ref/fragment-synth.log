@@ -1,0 +1,736 @@
+PARSING src/test/java/dk/camelot64/kickc/test/kc/fragment-synth.kc
+// Tests a sub-optimal fragment synthesis
+// vbuaa=vbuxx_band_pbuz1_derefidx_vbuc1 < vbuaa=pbuz1_derefidx_vbuc1_band_vbuxx < vbuaa=pbuz1_derefidx_vbuaa_band_vbuxx < vbuaa=pbuz1_derefidx_vbuyy_band_vbuxx < vbuaa=pbuz1_derefidx_vbuyy_band_vbuaa < vbuaa=vbuaa_band_pbuz1_derefidx_vbuyy - clobber:A Y  cycles:11.5
+
+
+void main() {
+    byte* screen = $400;
+    byte* z = $450;
+    z[2] = $f0;
+    z[3] = $0f;
+    byte x = $aa;
+    byte a1 = fct(x, z);
+    screen[0] = a1;
+    z++;
+    x = $55;
+    byte a2 = fct(x, z);
+    screen[1] = a2;
+}
+
+byte fct(byte register(X) x, byte* z) {
+    byte register(A) a = x & z[2];
+    return a;
+}
+
+Adding pre/post-modifier (byte*) main::z ← ++ (byte*) main::z
+SYMBOLS
+(label) @1
+(label) @2
+(label) @begin
+(label) @end
+(byte()) fct((byte) fct::x , (byte*) fct::z)
+(byte~) fct::$0
+(label) fct::@1
+(label) fct::@return
+(byte) fct::a !reg byte a
+(byte) fct::return
+(byte) fct::x !reg byte x
+(byte*) fct::z
+(void()) main()
+(byte~) main::$0
+(byte~) main::$1
+(label) main::@return
+(byte) main::a1
+(byte) main::a2
+(byte*) main::screen
+(byte) main::x
+(byte*) main::z
+
+Promoting word/signed word/dword/signed dword to byte* in main::screen ← ((byte*)) 1024
+Promoting word/signed word/dword/signed dword to byte* in main::z ← ((byte*)) 1104
+INITIAL CONTROL FLOW GRAPH
+@begin: scope:[]  from
+  to:@1
+main: scope:[main]  from
+  (byte*) main::screen ← ((byte*)) (word/signed word/dword/signed dword) 1024
+  (byte*) main::z ← ((byte*)) (word/signed word/dword/signed dword) 1104
+  *((byte*) main::z + (byte/signed byte/word/signed word/dword/signed dword) 2) ← (byte/word/signed word/dword/signed dword) 240
+  *((byte*) main::z + (byte/signed byte/word/signed word/dword/signed dword) 3) ← (byte/signed byte/word/signed word/dword/signed dword) 15
+  (byte) main::x ← (byte/word/signed word/dword/signed dword) 170
+  (byte~) main::$0 ← call fct (byte) main::x (byte*) main::z 
+  (byte) main::a1 ← (byte~) main::$0
+  *((byte*) main::screen + (byte/signed byte/word/signed word/dword/signed dword) 0) ← (byte) main::a1
+  (byte*) main::z ← ++ (byte*) main::z
+  (byte) main::x ← (byte/signed byte/word/signed word/dword/signed dword) 85
+  (byte~) main::$1 ← call fct (byte) main::x (byte*) main::z 
+  (byte) main::a2 ← (byte~) main::$1
+  *((byte*) main::screen + (byte/signed byte/word/signed word/dword/signed dword) 1) ← (byte) main::a2
+  to:main::@return
+main::@return: scope:[main]  from main
+  return 
+  to:@return
+@1: scope:[]  from @begin
+  to:@2
+fct: scope:[fct]  from
+  (byte~) fct::$0 ← (byte) fct::x & *((byte*) fct::z + (byte/signed byte/word/signed word/dword/signed dword) 2)
+  (byte) fct::a ← (byte~) fct::$0
+  (byte) fct::return ← (byte) fct::a
+  to:fct::@return
+fct::@return: scope:[fct]  from fct fct::@1
+  (byte) fct::return ← (byte) fct::return
+  return (byte) fct::return
+  to:@return
+fct::@1: scope:[fct]  from
+  to:fct::@return
+@2: scope:[]  from @1
+  call main 
+  to:@end
+@end: scope:[]  from @2
+
+Removing empty block @1
+Removing empty block fct::@1
+PROCEDURE MODIFY VARIABLE ANALYSIS
+
+Completing Phi functions...
+
+CONTROL FLOW GRAPH SSA WITH ASSIGNMENT CALL & RETURN
+@begin: scope:[]  from
+  to:@2
+main: scope:[main]  from @2
+  (byte*) main::screen#0 ← ((byte*)) (word/signed word/dword/signed dword) 1024
+  (byte*) main::z#0 ← ((byte*)) (word/signed word/dword/signed dword) 1104
+  *((byte*) main::z#0 + (byte/signed byte/word/signed word/dword/signed dword) 2) ← (byte/word/signed word/dword/signed dword) 240
+  *((byte*) main::z#0 + (byte/signed byte/word/signed word/dword/signed dword) 3) ← (byte/signed byte/word/signed word/dword/signed dword) 15
+  (byte) main::x#0 ← (byte/word/signed word/dword/signed dword) 170
+  (byte) fct::x#0 ← (byte) main::x#0
+  (byte*) fct::z#0 ← (byte*) main::z#0
+  call fct param-assignment
+  (byte) fct::return#0 ← (byte) fct::return#3
+  to:main::@1
+main::@1: scope:[main]  from main
+  (byte*) main::z#2 ← phi( main/(byte*) main::z#0 )
+  (byte*) main::screen#1 ← phi( main/(byte*) main::screen#0 )
+  (byte) fct::return#4 ← phi( main/(byte) fct::return#0 )
+  (byte~) main::$0 ← (byte) fct::return#4
+  (byte) main::a1#0 ← (byte~) main::$0
+  *((byte*) main::screen#1 + (byte/signed byte/word/signed word/dword/signed dword) 0) ← (byte) main::a1#0
+  (byte*) main::z#1 ← ++ (byte*) main::z#2
+  (byte) main::x#1 ← (byte/signed byte/word/signed word/dword/signed dword) 85
+  (byte) fct::x#1 ← (byte) main::x#1
+  (byte*) fct::z#1 ← (byte*) main::z#1
+  call fct param-assignment
+  (byte) fct::return#1 ← (byte) fct::return#3
+  to:main::@2
+main::@2: scope:[main]  from main::@1
+  (byte*) main::screen#2 ← phi( main::@1/(byte*) main::screen#1 )
+  (byte) fct::return#5 ← phi( main::@1/(byte) fct::return#1 )
+  (byte~) main::$1 ← (byte) fct::return#5
+  (byte) main::a2#0 ← (byte~) main::$1
+  *((byte*) main::screen#2 + (byte/signed byte/word/signed word/dword/signed dword) 1) ← (byte) main::a2#0
+  to:main::@return
+main::@return: scope:[main]  from main::@2
+  return 
+  to:@return
+fct: scope:[fct]  from main main::@1
+  (byte*) fct::z#2 ← phi( main/(byte*) fct::z#0 main::@1/(byte*) fct::z#1 )
+  (byte) fct::x#2 ← phi( main/(byte) fct::x#0 main::@1/(byte) fct::x#1 )
+  (byte~) fct::$0 ← (byte) fct::x#2 & *((byte*) fct::z#2 + (byte/signed byte/word/signed word/dword/signed dword) 2)
+  (byte) fct::a#0 ← (byte~) fct::$0
+  (byte) fct::return#2 ← (byte) fct::a#0
+  to:fct::@return
+fct::@return: scope:[fct]  from fct
+  (byte) fct::return#6 ← phi( fct/(byte) fct::return#2 )
+  (byte) fct::return#3 ← (byte) fct::return#6
+  return 
+  to:@return
+@2: scope:[]  from @begin
+  call main param-assignment
+  to:@3
+@3: scope:[]  from @2
+  to:@end
+@end: scope:[]  from @3
+
+SYMBOL TABLE SSA
+(label) @2
+(label) @3
+(label) @begin
+(label) @end
+(byte()) fct((byte) fct::x , (byte*) fct::z)
+(byte~) fct::$0
+(label) fct::@return
+(byte) fct::a !reg byte a
+(byte) fct::a#0 !reg byte a
+(byte) fct::return
+(byte) fct::return#0
+(byte) fct::return#1
+(byte) fct::return#2
+(byte) fct::return#3
+(byte) fct::return#4
+(byte) fct::return#5
+(byte) fct::return#6
+(byte) fct::x !reg byte x
+(byte) fct::x#0 !reg byte x
+(byte) fct::x#1 !reg byte x
+(byte) fct::x#2 !reg byte x
+(byte*) fct::z
+(byte*) fct::z#0
+(byte*) fct::z#1
+(byte*) fct::z#2
+(void()) main()
+(byte~) main::$0
+(byte~) main::$1
+(label) main::@1
+(label) main::@2
+(label) main::@return
+(byte) main::a1
+(byte) main::a1#0
+(byte) main::a2
+(byte) main::a2#0
+(byte*) main::screen
+(byte*) main::screen#0
+(byte*) main::screen#1
+(byte*) main::screen#2
+(byte) main::x
+(byte) main::x#0
+(byte) main::x#1
+(byte*) main::z
+(byte*) main::z#0
+(byte*) main::z#1
+(byte*) main::z#2
+
+OPTIMIZING CONTROL FLOW GRAPH
+Culled Empty Block (label) @3
+Succesful SSA optimization Pass2CullEmptyBlocks
+Not aliassing across scopes: fct::x#0 main::x#0
+Not aliassing across scopes: fct::z#0 main::z#0
+Not aliassing across scopes: fct::return#0 fct::return#3
+Not aliassing across scopes: main::$0 fct::return#4
+Not aliassing across scopes: fct::x#1 main::x#1
+Not aliassing across scopes: fct::z#1 main::z#1
+Not aliassing across scopes: fct::return#1 fct::return#3
+Not aliassing across scopes: main::$1 fct::return#5
+Not aliassing across scopes: fct::x#2 fct::x#0
+Not aliassing across scopes: fct::z#2 fct::z#0
+Alias (byte) fct::return#0 = (byte) fct::return#4 
+Alias (byte*) main::screen#0 = (byte*) main::screen#1 (byte*) main::screen#2 
+Alias (byte*) main::z#0 = (byte*) main::z#2 
+Alias (byte) main::a1#0 = (byte~) main::$0 
+Alias (byte) fct::return#1 = (byte) fct::return#5 
+Alias (byte) main::a2#0 = (byte~) main::$1 
+Alias (byte) fct::return#2 = (byte) fct::a#0 (byte~) fct::$0 (byte) fct::return#6 (byte) fct::return#3 
+Succesful SSA optimization Pass2AliasElimination
+Not aliassing across scopes: fct::x#0 main::x#0
+Not aliassing across scopes: fct::z#0 main::z#0
+Not aliassing across scopes: fct::return#0 fct::return#2
+Not aliassing across scopes: main::a1#0 fct::return#0
+Not aliassing across scopes: fct::x#1 main::x#1
+Not aliassing across scopes: fct::z#1 main::z#1
+Not aliassing across scopes: fct::return#1 fct::return#2
+Not aliassing across scopes: main::a2#0 fct::return#1
+Not aliassing across scopes: fct::x#2 fct::x#0
+Not aliassing across scopes: fct::z#2 fct::z#0
+Constant (const byte*) main::screen#0 = ((byte*))1024
+Constant (const byte*) main::z#0 = ((byte*))1104
+Constant (const byte) main::x#0 = 170
+Constant (const byte) main::x#1 = 85
+Succesful SSA optimization Pass2ConstantIdentification
+Constant (const byte) fct::x#0 = main::x#0
+Constant (const byte*) fct::z#0 = main::z#0
+Constant (const byte*) main::z#1 = ++main::z#0
+Constant (const byte) fct::x#1 = main::x#1
+Succesful SSA optimization Pass2ConstantIdentification
+Constant (const byte*) fct::z#1 = main::z#1
+Succesful SSA optimization Pass2ConstantIdentification
+Consolidated array index constant in *(main::z#0+2)
+Consolidated array index constant in *(main::z#0+3)
+Consolidated array index constant in *(main::screen#0+0)
+Consolidated array index constant in *(main::screen#0+1)
+Succesful SSA optimization Pass2ConstantAdditionElimination
+Not aliassing across scopes: fct::return#0 fct::return#2
+Not aliassing across scopes: main::a1#0 fct::return#0
+Not aliassing across scopes: fct::return#1 fct::return#2
+Not aliassing across scopes: main::a2#0 fct::return#1
+OPTIMIZING CONTROL FLOW GRAPH
+Inlining constant with different constant siblings (const byte*) main::z#0
+Inlining constant with different constant siblings (const byte) main::x#0
+Inlining constant with different constant siblings (const byte) main::x#1
+Inlining constant with different constant siblings (const byte*) main::z#1
+Inlining constant with var siblings (const byte) fct::x#0
+Inlining constant with var siblings (const byte*) fct::z#0
+Inlining constant with var siblings (const byte) fct::x#1
+Inlining constant with var siblings (const byte*) fct::z#1
+Constant inlined fct::z#0 = ((byte*))(word/signed word/dword/signed dword) 1104
+Constant inlined fct::z#1 = ++((byte*))(word/signed word/dword/signed dword) 1104
+Constant inlined main::z#0 = ((byte*))(word/signed word/dword/signed dword) 1104
+Constant inlined main::z#1 = ++((byte*))(word/signed word/dword/signed dword) 1104
+Constant inlined main::x#0 = (byte/word/signed word/dword/signed dword) 170
+Constant inlined main::x#1 = (byte/signed byte/word/signed word/dword/signed dword) 85
+Constant inlined fct::x#0 = (byte/word/signed word/dword/signed dword) 170
+Constant inlined fct::x#1 = (byte/signed byte/word/signed word/dword/signed dword) 85
+Succesful SSA optimization Pass2ConstantInlining
+Block Sequence Planned @begin @2 @end main main::@1 main::@2 main::@return fct fct::@return 
+Block Sequence Planned @begin @2 @end main main::@1 main::@2 main::@return fct fct::@return 
+Adding NOP phi() at start of @begin
+Adding NOP phi() at start of @2
+Adding NOP phi() at start of @end
+CALL GRAPH
+Calls in [] to main:2 
+Calls in [main] to fct:6 fct:10 
+
+Propagating live ranges...
+Propagating live ranges...
+Propagating live ranges...
+Created 2 initial phi equivalence classes
+Coalesced down to 2 phi equivalence classes
+Block Sequence Planned @begin @2 @end main main::@1 main::@2 main::@return fct fct::@return 
+Adding NOP phi() at start of @begin
+Adding NOP phi() at start of @2
+Adding NOP phi() at start of @end
+Propagating live ranges...
+Propagating live ranges...
+Propagating live ranges...
+
+FINAL CONTROL FLOW GRAPH
+@begin: scope:[]  from
+  [0] phi() [ ] ( )
+  to:@2
+@2: scope:[]  from @begin
+  [1] phi() [ ] ( )
+  [2] call main param-assignment [ ] ( )
+  to:@end
+@end: scope:[]  from @2
+  [3] phi() [ ] ( )
+main: scope:[main]  from @2
+  [4] *(((byte*))(word/signed word/dword/signed dword) 1104+(byte/signed byte/word/signed word/dword/signed dword) 2) ← (byte/word/signed word/dword/signed dword) 240 [ ] ( main:2 [ ] )
+  [5] *(((byte*))(word/signed word/dword/signed dword) 1104+(byte/signed byte/word/signed word/dword/signed dword) 3) ← (byte/signed byte/word/signed word/dword/signed dword) 15 [ ] ( main:2 [ ] )
+  [6] call fct param-assignment [ fct::return#2 ] ( main:2 [ fct::return#2 ] )
+  [7] (byte) fct::return#0 ← (byte) fct::return#2 [ fct::return#0 ] ( main:2 [ fct::return#0 ] )
+  to:main::@1
+main::@1: scope:[main]  from main
+  [8] (byte) main::a1#0 ← (byte) fct::return#0 [ main::a1#0 ] ( main:2 [ main::a1#0 ] )
+  [9] *((const byte*) main::screen#0+(byte/signed byte/word/signed word/dword/signed dword) 0) ← (byte) main::a1#0 [ ] ( main:2 [ ] )
+  [10] call fct param-assignment [ fct::return#2 ] ( main:2 [ fct::return#2 ] )
+  [11] (byte) fct::return#1 ← (byte) fct::return#2 [ fct::return#1 ] ( main:2 [ fct::return#1 ] )
+  to:main::@2
+main::@2: scope:[main]  from main::@1
+  [12] (byte) main::a2#0 ← (byte) fct::return#1 [ main::a2#0 ] ( main:2 [ main::a2#0 ] )
+  [13] *((const byte*) main::screen#0+(byte/signed byte/word/signed word/dword/signed dword) 1) ← (byte) main::a2#0 [ ] ( main:2 [ ] )
+  to:main::@return
+main::@return: scope:[main]  from main::@2
+  [14] return  [ ] ( main:2 [ ] )
+  to:@return
+fct: scope:[fct]  from main main::@1
+  [15] (byte*) fct::z#2 ← phi( main/((byte*))(word/signed word/dword/signed dword) 1104 main::@1/++((byte*))(word/signed word/dword/signed dword) 1104 ) [ fct::x#2 fct::z#2 ] ( main:2::fct:6 [ fct::x#2 fct::z#2 ] main:2::fct:10 [ fct::x#2 fct::z#2 ] )
+  [15] (byte) fct::x#2 ← phi( main/(byte/word/signed word/dword/signed dword) 170 main::@1/(byte/signed byte/word/signed word/dword/signed dword) 85 ) [ fct::x#2 fct::z#2 ] ( main:2::fct:6 [ fct::x#2 fct::z#2 ] main:2::fct:10 [ fct::x#2 fct::z#2 ] )
+  [16] (byte) fct::return#2 ← (byte) fct::x#2 & *((byte*) fct::z#2 + (byte/signed byte/word/signed word/dword/signed dword) 2) [ fct::return#2 ] ( main:2::fct:6 [ fct::return#2 ] main:2::fct:10 [ fct::return#2 ] )
+  to:fct::@return
+fct::@return: scope:[fct]  from fct
+  [17] return  [ fct::return#2 ] ( main:2::fct:6 [ fct::return#2 ] main:2::fct:10 [ fct::return#2 ] )
+  to:@return
+
+DOMINATORS
+@begin dominated by  @begin 
+@2 dominated by  @2 @begin 
+@end dominated by  @2 @begin @end 
+main dominated by  @2 @begin main 
+main::@1 dominated by  @2 @begin main::@1 main 
+main::@2 dominated by  @2 @begin main::@1 main::@2 main 
+main::@return dominated by  main::@return @2 @begin main::@1 main::@2 main 
+fct dominated by  @2 @begin fct main 
+fct::@return dominated by  @2 @begin fct main fct::@return 
+
+NATURAL LOOPS
+
+NATURAL LOOPS WITH DEPTH
+Found 0 loops in scope []
+Found 0 loops in scope [main]
+Found 0 loops in scope [fct]
+
+
+VARIABLE REGISTER WEIGHTS
+(byte()) fct((byte) fct::x , (byte*) fct::z)
+(byte) fct::a !reg byte a
+(byte) fct::return
+(byte) fct::return#0 4.0
+(byte) fct::return#1 4.0
+(byte) fct::return#2 1.5
+(byte) fct::x !reg byte x
+(byte) fct::x#2 !reg byte x 2.0
+(byte*) fct::z
+(byte*) fct::z#2 2.0
+(void()) main()
+(byte) main::a1
+(byte) main::a1#0 4.0
+(byte) main::a2
+(byte) main::a2#0 4.0
+(byte*) main::screen
+(byte) main::x
+(byte*) main::z
+
+Initial phi equivalence classes
+[ fct::x#2 ]
+[ fct::z#2 ]
+Added variable fct::return#0 to zero page equivalence class [ fct::return#0 ]
+Added variable main::a1#0 to zero page equivalence class [ main::a1#0 ]
+Added variable fct::return#1 to zero page equivalence class [ fct::return#1 ]
+Added variable main::a2#0 to zero page equivalence class [ main::a2#0 ]
+Added variable fct::return#2 to zero page equivalence class [ fct::return#2 ]
+Complete equivalence classes
+[ fct::x#2 ]
+[ fct::z#2 ]
+[ fct::return#0 ]
+[ main::a1#0 ]
+[ fct::return#1 ]
+[ main::a2#0 ]
+[ fct::return#2 ]
+Allocated zp ZP_WORD:2 [ fct::z#2 ]
+Allocated zp ZP_BYTE:4 [ fct::return#0 ]
+Allocated zp ZP_BYTE:5 [ main::a1#0 ]
+Allocated zp ZP_BYTE:6 [ fct::return#1 ]
+Allocated zp ZP_BYTE:7 [ main::a2#0 ]
+Allocated zp ZP_BYTE:8 [ fct::return#2 ]
+
+INITIAL ASM
+//SEG0 Basic Upstart
+.pc = $801 "Basic"
+:BasicUpstart(main)
+.pc = $80d "Program"
+//SEG1 Global Constants & labels
+//SEG2 @begin
+bbegin:
+//SEG3 [1] phi from @begin to @2 [phi:@begin->@2]
+b2_from_bbegin:
+  jmp b2
+//SEG4 @2
+b2:
+//SEG5 [2] call main param-assignment [ ] ( )
+  jsr main
+//SEG6 [3] phi from @2 to @end [phi:@2->@end]
+bend_from_b2:
+  jmp bend
+//SEG7 @end
+bend:
+//SEG8 main
+main: {
+    .label screen = $400
+    .label a1 = 5
+    .label a2 = 7
+  //SEG9 [4] *(((byte*))(word/signed word/dword/signed dword) 1104+(byte/signed byte/word/signed word/dword/signed dword) 2) ← (byte/word/signed word/dword/signed dword) 240 [ ] ( main:2 [ ] ) -- _deref_pbuc1=vbuc2 
+    lda #$f0
+    sta $450+2
+  //SEG10 [5] *(((byte*))(word/signed word/dword/signed dword) 1104+(byte/signed byte/word/signed word/dword/signed dword) 3) ← (byte/signed byte/word/signed word/dword/signed dword) 15 [ ] ( main:2 [ ] ) -- _deref_pbuc1=vbuc2 
+    lda #$f
+    sta $450+3
+  //SEG11 [6] call fct param-assignment [ fct::return#2 ] ( main:2 [ fct::return#2 ] )
+  //SEG12 [15] phi from main to fct [phi:main->fct]
+  fct_from_main:
+  //SEG13 [15] phi (byte*) fct::z#2 = ((byte*))(word/signed word/dword/signed dword) 1104 [phi:main->fct#0] -- pbuz1=pbuc1 
+    lda #<$450
+    sta fct.z
+    lda #>$450
+    sta fct.z+1
+  //SEG14 [15] phi (byte) fct::x#2 = (byte/word/signed word/dword/signed dword) 170 [phi:main->fct#1] -- vbuxx=vbuc1 
+    ldx #$aa
+    jsr fct
+  //SEG15 [7] (byte) fct::return#0 ← (byte) fct::return#2 [ fct::return#0 ] ( main:2 [ fct::return#0 ] ) -- vbuz1=vbuz2 
+    lda fct.return_2
+    sta fct.return
+    jmp b1
+  //SEG16 main::@1
+  b1:
+  //SEG17 [8] (byte) main::a1#0 ← (byte) fct::return#0 [ main::a1#0 ] ( main:2 [ main::a1#0 ] ) -- vbuz1=vbuz2 
+    lda fct.return
+    sta a1
+  //SEG18 [9] *((const byte*) main::screen#0+(byte/signed byte/word/signed word/dword/signed dword) 0) ← (byte) main::a1#0 [ ] ( main:2 [ ] ) -- _deref_pbuc1=vbuz1 
+    lda a1
+    sta screen+0
+  //SEG19 [10] call fct param-assignment [ fct::return#2 ] ( main:2 [ fct::return#2 ] )
+  //SEG20 [15] phi from main::@1 to fct [phi:main::@1->fct]
+  fct_from_b1:
+  //SEG21 [15] phi (byte*) fct::z#2 = ++((byte*))(word/signed word/dword/signed dword) 1104 [phi:main::@1->fct#0] -- pbuz1=pbuc1 
+    lda #<$450+1
+    sta fct.z
+    lda #>$450+1
+    sta fct.z+1
+  //SEG22 [15] phi (byte) fct::x#2 = (byte/signed byte/word/signed word/dword/signed dword) 85 [phi:main::@1->fct#1] -- vbuxx=vbuc1 
+    ldx #$55
+    jsr fct
+  //SEG23 [11] (byte) fct::return#1 ← (byte) fct::return#2 [ fct::return#1 ] ( main:2 [ fct::return#1 ] ) -- vbuz1=vbuz2 
+    lda fct.return_2
+    sta fct.return_1
+    jmp b2
+  //SEG24 main::@2
+  b2:
+  //SEG25 [12] (byte) main::a2#0 ← (byte) fct::return#1 [ main::a2#0 ] ( main:2 [ main::a2#0 ] ) -- vbuz1=vbuz2 
+    lda fct.return_1
+    sta a2
+  //SEG26 [13] *((const byte*) main::screen#0+(byte/signed byte/word/signed word/dword/signed dword) 1) ← (byte) main::a2#0 [ ] ( main:2 [ ] ) -- _deref_pbuc1=vbuz1 
+    lda a2
+    sta screen+1
+    jmp breturn
+  //SEG27 main::@return
+  breturn:
+  //SEG28 [14] return  [ ] ( main:2 [ ] )
+    rts
+}
+//SEG29 fct
+fct: {
+    .label return = 4
+    .label return_1 = 6
+    .label return_2 = 8
+    .label z = 2
+  //SEG30 [16] (byte) fct::return#2 ← (byte) fct::x#2 & *((byte*) fct::z#2 + (byte/signed byte/word/signed word/dword/signed dword) 2) [ fct::return#2 ] ( main:2::fct:6 [ fct::return#2 ] main:2::fct:10 [ fct::return#2 ] ) -- vbuz1=vbuxx_band_pbuz2_derefidx_vbuc1 
+    ldy #2
+    txa
+    and (z),y
+    sta return_2
+    jmp breturn
+  //SEG31 fct::@return
+  breturn:
+  //SEG32 [17] return  [ fct::return#2 ] ( main:2::fct:6 [ fct::return#2 ] main:2::fct:10 [ fct::return#2 ] )
+    rts
+}
+
+REGISTER UPLIFT POTENTIAL REGISTERS
+Statement [4] *(((byte*))(word/signed word/dword/signed dword) 1104+(byte/signed byte/word/signed word/dword/signed dword) 2) ← (byte/word/signed word/dword/signed dword) 240 [ ] ( main:2 [ ] ) always clobbers reg byte a 
+Statement [5] *(((byte*))(word/signed word/dword/signed dword) 1104+(byte/signed byte/word/signed word/dword/signed dword) 3) ← (byte/signed byte/word/signed word/dword/signed dword) 15 [ ] ( main:2 [ ] ) always clobbers reg byte a 
+Statement [16] (byte) fct::return#2 ← (byte) fct::x#2 & *((byte*) fct::z#2 + (byte/signed byte/word/signed word/dword/signed dword) 2) [ fct::return#2 ] ( main:2::fct:6 [ fct::return#2 ] main:2::fct:10 [ fct::return#2 ] ) always clobbers reg byte a reg byte y 
+Potential registers reg byte x [ fct::x#2 ] : reg byte x , 
+Potential registers zp ZP_WORD:2 [ fct::z#2 ] : zp ZP_WORD:2 , 
+Potential registers zp ZP_BYTE:4 [ fct::return#0 ] : zp ZP_BYTE:4 , reg byte a , reg byte x , reg byte y , 
+Potential registers zp ZP_BYTE:5 [ main::a1#0 ] : zp ZP_BYTE:5 , reg byte a , reg byte x , reg byte y , 
+Potential registers zp ZP_BYTE:6 [ fct::return#1 ] : zp ZP_BYTE:6 , reg byte a , reg byte x , reg byte y , 
+Potential registers zp ZP_BYTE:7 [ main::a2#0 ] : zp ZP_BYTE:7 , reg byte a , reg byte x , reg byte y , 
+Potential registers zp ZP_BYTE:8 [ fct::return#2 ] : zp ZP_BYTE:8 , reg byte a , reg byte x , reg byte y , 
+
+REGISTER UPLIFT SCOPES
+Uplift Scope [fct] 4: zp ZP_BYTE:4 [ fct::return#0 ] 4: zp ZP_BYTE:6 [ fct::return#1 ] 2: reg byte x [ fct::x#2 ] 2: zp ZP_WORD:2 [ fct::z#2 ] 1.5: zp ZP_BYTE:8 [ fct::return#2 ] 
+Uplift Scope [main] 4: zp ZP_BYTE:5 [ main::a1#0 ] 4: zp ZP_BYTE:7 [ main::a2#0 ] 
+Uplift Scope [] 
+
+Uplifting [fct] best 113 combination reg byte a [ fct::return#0 ] reg byte a [ fct::return#1 ] reg byte x [ fct::x#2 ] zp ZP_WORD:2 [ fct::z#2 ] reg byte a [ fct::return#2 ] 
+Uplifting [main] best 101 combination reg byte a [ main::a1#0 ] reg byte a [ main::a2#0 ] 
+Uplifting [] best 101 combination 
+
+ASSEMBLER BEFORE OPTIMIZATION
+//SEG0 Basic Upstart
+.pc = $801 "Basic"
+:BasicUpstart(main)
+.pc = $80d "Program"
+//SEG1 Global Constants & labels
+//SEG2 @begin
+bbegin:
+//SEG3 [1] phi from @begin to @2 [phi:@begin->@2]
+b2_from_bbegin:
+  jmp b2
+//SEG4 @2
+b2:
+//SEG5 [2] call main param-assignment [ ] ( )
+  jsr main
+//SEG6 [3] phi from @2 to @end [phi:@2->@end]
+bend_from_b2:
+  jmp bend
+//SEG7 @end
+bend:
+//SEG8 main
+main: {
+    .label screen = $400
+  //SEG9 [4] *(((byte*))(word/signed word/dword/signed dword) 1104+(byte/signed byte/word/signed word/dword/signed dword) 2) ← (byte/word/signed word/dword/signed dword) 240 [ ] ( main:2 [ ] ) -- _deref_pbuc1=vbuc2 
+    lda #$f0
+    sta $450+2
+  //SEG10 [5] *(((byte*))(word/signed word/dword/signed dword) 1104+(byte/signed byte/word/signed word/dword/signed dword) 3) ← (byte/signed byte/word/signed word/dword/signed dword) 15 [ ] ( main:2 [ ] ) -- _deref_pbuc1=vbuc2 
+    lda #$f
+    sta $450+3
+  //SEG11 [6] call fct param-assignment [ fct::return#2 ] ( main:2 [ fct::return#2 ] )
+  //SEG12 [15] phi from main to fct [phi:main->fct]
+  fct_from_main:
+  //SEG13 [15] phi (byte*) fct::z#2 = ((byte*))(word/signed word/dword/signed dword) 1104 [phi:main->fct#0] -- pbuz1=pbuc1 
+    lda #<$450
+    sta fct.z
+    lda #>$450
+    sta fct.z+1
+  //SEG14 [15] phi (byte) fct::x#2 = (byte/word/signed word/dword/signed dword) 170 [phi:main->fct#1] -- vbuxx=vbuc1 
+    ldx #$aa
+    jsr fct
+  //SEG15 [7] (byte) fct::return#0 ← (byte) fct::return#2 [ fct::return#0 ] ( main:2 [ fct::return#0 ] )
+    // (byte) fct::return#0 = (byte) fct::return#2  // register copy reg byte a
+    jmp b1
+  //SEG16 main::@1
+  b1:
+  //SEG17 [8] (byte) main::a1#0 ← (byte) fct::return#0 [ main::a1#0 ] ( main:2 [ main::a1#0 ] )
+    // (byte) main::a1#0 = (byte) fct::return#0  // register copy reg byte a
+  //SEG18 [9] *((const byte*) main::screen#0+(byte/signed byte/word/signed word/dword/signed dword) 0) ← (byte) main::a1#0 [ ] ( main:2 [ ] ) -- _deref_pbuc1=vbuaa 
+    sta screen+0
+  //SEG19 [10] call fct param-assignment [ fct::return#2 ] ( main:2 [ fct::return#2 ] )
+  //SEG20 [15] phi from main::@1 to fct [phi:main::@1->fct]
+  fct_from_b1:
+  //SEG21 [15] phi (byte*) fct::z#2 = ++((byte*))(word/signed word/dword/signed dword) 1104 [phi:main::@1->fct#0] -- pbuz1=pbuc1 
+    lda #<$450+1
+    sta fct.z
+    lda #>$450+1
+    sta fct.z+1
+  //SEG22 [15] phi (byte) fct::x#2 = (byte/signed byte/word/signed word/dword/signed dword) 85 [phi:main::@1->fct#1] -- vbuxx=vbuc1 
+    ldx #$55
+    jsr fct
+  //SEG23 [11] (byte) fct::return#1 ← (byte) fct::return#2 [ fct::return#1 ] ( main:2 [ fct::return#1 ] )
+    // (byte) fct::return#1 = (byte) fct::return#2  // register copy reg byte a
+    jmp b2
+  //SEG24 main::@2
+  b2:
+  //SEG25 [12] (byte) main::a2#0 ← (byte) fct::return#1 [ main::a2#0 ] ( main:2 [ main::a2#0 ] )
+    // (byte) main::a2#0 = (byte) fct::return#1  // register copy reg byte a
+  //SEG26 [13] *((const byte*) main::screen#0+(byte/signed byte/word/signed word/dword/signed dword) 1) ← (byte) main::a2#0 [ ] ( main:2 [ ] ) -- _deref_pbuc1=vbuaa 
+    sta screen+1
+    jmp breturn
+  //SEG27 main::@return
+  breturn:
+  //SEG28 [14] return  [ ] ( main:2 [ ] )
+    rts
+}
+//SEG29 fct
+fct: {
+    .label z = 2
+  //SEG30 [16] (byte) fct::return#2 ← (byte) fct::x#2 & *((byte*) fct::z#2 + (byte/signed byte/word/signed word/dword/signed dword) 2) [ fct::return#2 ] ( main:2::fct:6 [ fct::return#2 ] main:2::fct:10 [ fct::return#2 ] ) -- vbuaa=vbuxx_band_pbuz1_derefidx_vbuc1 
+    ldy #2
+    txa
+    and (z),y
+    jmp breturn
+  //SEG31 fct::@return
+  breturn:
+  //SEG32 [17] return  [ fct::return#2 ] ( main:2::fct:6 [ fct::return#2 ] main:2::fct:10 [ fct::return#2 ] )
+    rts
+}
+
+ASSEMBLER OPTIMIZATIONS
+Removing instruction jmp b2
+Removing instruction jmp bend
+Removing instruction jmp b1
+Removing instruction jmp b2
+Removing instruction jmp breturn
+Removing instruction jmp breturn
+Succesful ASM optimization Pass5NextJumpElimination
+Removing instruction bbegin:
+Removing instruction b2_from_bbegin:
+Removing instruction bend_from_b2:
+Succesful ASM optimization Pass5RedundantLabelElimination
+Removing instruction b2:
+Removing instruction bend:
+Removing instruction fct_from_main:
+Removing instruction b1:
+Removing instruction fct_from_b1:
+Removing instruction b2:
+Removing instruction breturn:
+Removing instruction breturn:
+Succesful ASM optimization Pass5UnusedLabelElimination
+
+FINAL SYMBOL TABLE
+(label) @2
+(label) @begin
+(label) @end
+(byte()) fct((byte) fct::x , (byte*) fct::z)
+(label) fct::@return
+(byte) fct::a !reg byte a
+(byte) fct::return
+(byte) fct::return#0 reg byte a 4.0
+(byte) fct::return#1 reg byte a 4.0
+(byte) fct::return#2 reg byte a 1.5
+(byte) fct::x !reg byte x
+(byte) fct::x#2 !reg byte x 2.0
+(byte*) fct::z
+(byte*) fct::z#2 z zp ZP_WORD:2 2.0
+(void()) main()
+(label) main::@1
+(label) main::@2
+(label) main::@return
+(byte) main::a1
+(byte) main::a1#0 reg byte a 4.0
+(byte) main::a2
+(byte) main::a2#0 reg byte a 4.0
+(byte*) main::screen
+(const byte*) main::screen#0 screen = ((byte*))(word/signed word/dword/signed dword) 1024
+(byte) main::x
+(byte*) main::z
+
+reg byte x [ fct::x#2 ]
+zp ZP_WORD:2 [ fct::z#2 ]
+reg byte a [ fct::return#0 ]
+reg byte a [ main::a1#0 ]
+reg byte a [ fct::return#1 ]
+reg byte a [ main::a2#0 ]
+reg byte a [ fct::return#2 ]
+
+
+FINAL ASSEMBLER
+Score: 83
+
+//SEG0 Basic Upstart
+.pc = $801 "Basic"
+:BasicUpstart(main)
+.pc = $80d "Program"
+//SEG1 Global Constants & labels
+//SEG2 @begin
+//SEG3 [1] phi from @begin to @2 [phi:@begin->@2]
+//SEG4 @2
+//SEG5 [2] call main param-assignment [ ] ( )
+  jsr main
+//SEG6 [3] phi from @2 to @end [phi:@2->@end]
+//SEG7 @end
+//SEG8 main
+main: {
+    .label screen = $400
+  //SEG9 [4] *(((byte*))(word/signed word/dword/signed dword) 1104+(byte/signed byte/word/signed word/dword/signed dword) 2) ← (byte/word/signed word/dword/signed dword) 240 [ ] ( main:2 [ ] ) -- _deref_pbuc1=vbuc2 
+    lda #$f0
+    sta $450+2
+  //SEG10 [5] *(((byte*))(word/signed word/dword/signed dword) 1104+(byte/signed byte/word/signed word/dword/signed dword) 3) ← (byte/signed byte/word/signed word/dword/signed dword) 15 [ ] ( main:2 [ ] ) -- _deref_pbuc1=vbuc2 
+    lda #$f
+    sta $450+3
+  //SEG11 [6] call fct param-assignment [ fct::return#2 ] ( main:2 [ fct::return#2 ] )
+  //SEG12 [15] phi from main to fct [phi:main->fct]
+  //SEG13 [15] phi (byte*) fct::z#2 = ((byte*))(word/signed word/dword/signed dword) 1104 [phi:main->fct#0] -- pbuz1=pbuc1 
+    lda #<$450
+    sta fct.z
+    lda #>$450
+    sta fct.z+1
+  //SEG14 [15] phi (byte) fct::x#2 = (byte/word/signed word/dword/signed dword) 170 [phi:main->fct#1] -- vbuxx=vbuc1 
+    ldx #$aa
+    jsr fct
+  //SEG15 [7] (byte) fct::return#0 ← (byte) fct::return#2 [ fct::return#0 ] ( main:2 [ fct::return#0 ] )
+    // (byte) fct::return#0 = (byte) fct::return#2  // register copy reg byte a
+  //SEG16 main::@1
+  //SEG17 [8] (byte) main::a1#0 ← (byte) fct::return#0 [ main::a1#0 ] ( main:2 [ main::a1#0 ] )
+    // (byte) main::a1#0 = (byte) fct::return#0  // register copy reg byte a
+  //SEG18 [9] *((const byte*) main::screen#0+(byte/signed byte/word/signed word/dword/signed dword) 0) ← (byte) main::a1#0 [ ] ( main:2 [ ] ) -- _deref_pbuc1=vbuaa 
+    sta screen+0
+  //SEG19 [10] call fct param-assignment [ fct::return#2 ] ( main:2 [ fct::return#2 ] )
+  //SEG20 [15] phi from main::@1 to fct [phi:main::@1->fct]
+  //SEG21 [15] phi (byte*) fct::z#2 = ++((byte*))(word/signed word/dword/signed dword) 1104 [phi:main::@1->fct#0] -- pbuz1=pbuc1 
+    lda #<$450+1
+    sta fct.z
+    lda #>$450+1
+    sta fct.z+1
+  //SEG22 [15] phi (byte) fct::x#2 = (byte/signed byte/word/signed word/dword/signed dword) 85 [phi:main::@1->fct#1] -- vbuxx=vbuc1 
+    ldx #$55
+    jsr fct
+  //SEG23 [11] (byte) fct::return#1 ← (byte) fct::return#2 [ fct::return#1 ] ( main:2 [ fct::return#1 ] )
+    // (byte) fct::return#1 = (byte) fct::return#2  // register copy reg byte a
+  //SEG24 main::@2
+  //SEG25 [12] (byte) main::a2#0 ← (byte) fct::return#1 [ main::a2#0 ] ( main:2 [ main::a2#0 ] )
+    // (byte) main::a2#0 = (byte) fct::return#1  // register copy reg byte a
+  //SEG26 [13] *((const byte*) main::screen#0+(byte/signed byte/word/signed word/dword/signed dword) 1) ← (byte) main::a2#0 [ ] ( main:2 [ ] ) -- _deref_pbuc1=vbuaa 
+    sta screen+1
+  //SEG27 main::@return
+  //SEG28 [14] return  [ ] ( main:2 [ ] )
+    rts
+}
+//SEG29 fct
+fct: {
+    .label z = 2
+  //SEG30 [16] (byte) fct::return#2 ← (byte) fct::x#2 & *((byte*) fct::z#2 + (byte/signed byte/word/signed word/dword/signed dword) 2) [ fct::return#2 ] ( main:2::fct:6 [ fct::return#2 ] main:2::fct:10 [ fct::return#2 ] ) -- vbuaa=vbuxx_band_pbuz1_derefidx_vbuc1 
+    ldy #2
+    txa
+    and (z),y
+  //SEG31 fct::@return
+  //SEG32 [17] return  [ fct::return#2 ] ( main:2::fct:6 [ fct::return#2 ] main:2::fct:10 [ fct::return#2 ] )
+    rts
+}
+

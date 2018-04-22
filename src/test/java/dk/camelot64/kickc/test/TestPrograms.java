@@ -636,6 +636,11 @@ public class TestPrograms {
    }
 
    @Test
+   public void testUseUninitialized2() throws IOException, URISyntaxException {
+      assertError("useuninitialized2", "Variable used before being defined");
+   }
+
+   @Test
    public void testTypeMismatch() throws IOException, URISyntaxException {
       assertError("typemismatch", "Type mismatch");
    }

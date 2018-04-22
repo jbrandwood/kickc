@@ -428,352 +428,51 @@ void mulFACby10() {
     }
 }
 
-
-STATEMENTS
-  (byte*) print_screen ← (word/signed word/dword/signed dword) 1024
-  (byte*) print_line_cursor ← (byte*) print_screen
-  (byte*) print_char_cursor ← (byte*) print_line_cursor
-proc (void()) print_str_lines((byte*) print_str_lines::str)
-print_str_lines::@1:
-  (boolean~) print_str_lines::$0 ← *((byte*) print_str_lines::str) != (byte) '@'
-  if((boolean~) print_str_lines::$0) goto print_str_lines::@2
-  goto print_str_lines::@3
-print_str_lines::@2:
-print_str_lines::@4:
-  (byte) print_str_lines::ch ← *((byte*) print_str_lines::str)
-  (byte*) print_str_lines::str ← ++ (byte*) print_str_lines::str
-  (boolean~) print_str_lines::$1 ← (byte) print_str_lines::ch != (byte) '@'
-  (boolean~) print_str_lines::$2 ← ! (boolean~) print_str_lines::$1
-  if((boolean~) print_str_lines::$2) goto print_str_lines::@5
-  *((byte*) print_char_cursor) ← (byte) print_str_lines::ch
-  (byte*) print_char_cursor ← ++ (byte*) print_char_cursor
-print_str_lines::@5:
-  (boolean~) print_str_lines::$3 ← (byte) print_str_lines::ch != (byte) '@'
-  if((boolean~) print_str_lines::$3) goto print_str_lines::@4
-  (void~) print_str_lines::$4 ← call print_ln 
-  goto print_str_lines::@1
-print_str_lines::@3:
-print_str_lines::@return:
-  return 
-endproc // print_str_lines()
-proc (void()) print_str_ln((byte*) print_str_ln::str)
-  (void~) print_str_ln::$0 ← call print_str (byte*) print_str_ln::str 
-  (void~) print_str_ln::$1 ← call print_ln 
-print_str_ln::@return:
-  return 
-endproc // print_str_ln()
-proc (void()) print_str((byte*) print_str::str)
-print_str::@1:
-  (boolean~) print_str::$0 ← *((byte*) print_str::str) != (byte) '@'
-  if((boolean~) print_str::$0) goto print_str::@2
-  goto print_str::@3
-print_str::@2:
-  *((byte*) print_char_cursor) ← *((byte*) print_str::str)
-  (byte*) print_char_cursor ← ++ (byte*) print_char_cursor
-  (byte*) print_str::str ← ++ (byte*) print_str::str
-  goto print_str::@1
-print_str::@3:
-print_str::@return:
-  return 
-endproc // print_str()
-proc (void()) print_str_at((byte*) print_str_at::str , (byte*) print_str_at::at)
-print_str_at::@1:
-  (boolean~) print_str_at::$0 ← *((byte*) print_str_at::str) != (byte) '@'
-  if((boolean~) print_str_at::$0) goto print_str_at::@2
-  goto print_str_at::@3
-print_str_at::@2:
-  *((byte*) print_str_at::at) ← *((byte*) print_str_at::str)
-  (byte*) print_str_at::at ← ++ (byte*) print_str_at::at
-  (byte*) print_str_at::str ← ++ (byte*) print_str_at::str
-  goto print_str_at::@1
-print_str_at::@3:
-print_str_at::@return:
-  return 
-endproc // print_str_at()
-proc (void()) print_ln()
-print_ln::@1:
-  (byte*~) print_ln::$0 ← (byte*) print_line_cursor + (byte/signed byte/word/signed word/dword/signed dword) 40
-  (byte*) print_line_cursor ← (byte*~) print_ln::$0
-  (boolean~) print_ln::$1 ← (byte*) print_line_cursor < (byte*) print_char_cursor
-  if((boolean~) print_ln::$1) goto print_ln::@1
-  (byte*) print_char_cursor ← (byte*) print_line_cursor
-print_ln::@return:
-  return 
-endproc // print_ln()
-proc (void()) print_sword((signed word) print_sword::w)
-  (boolean~) print_sword::$0 ← (signed word) print_sword::w < (byte/signed byte/word/signed word/dword/signed dword) 0
-  (boolean~) print_sword::$1 ← ! (boolean~) print_sword::$0
-  if((boolean~) print_sword::$1) goto print_sword::@1
-  (void~) print_sword::$2 ← call print_char (byte) '-' 
-  (signed word~) print_sword::$3 ← - (signed word) print_sword::w
-  (signed word) print_sword::w ← (signed word~) print_sword::$3
-print_sword::@1:
-  (word~) print_sword::$4 ← ((word)) (signed word) print_sword::w
-  (void~) print_sword::$5 ← call print_word (word~) print_sword::$4 
-print_sword::@return:
-  return 
-endproc // print_sword()
-proc (void()) print_sbyte((signed byte) print_sbyte::b)
-  (boolean~) print_sbyte::$0 ← (signed byte) print_sbyte::b < (byte/signed byte/word/signed word/dword/signed dword) 0
-  (boolean~) print_sbyte::$1 ← ! (boolean~) print_sbyte::$0
-  if((boolean~) print_sbyte::$1) goto print_sbyte::@1
-  (void~) print_sbyte::$2 ← call print_char (byte) '-' 
-  (signed byte~) print_sbyte::$3 ← - (signed byte) print_sbyte::b
-  (signed byte) print_sbyte::b ← (signed byte~) print_sbyte::$3
-print_sbyte::@1:
-  (byte~) print_sbyte::$4 ← ((byte)) (signed byte) print_sbyte::b
-  (void~) print_sbyte::$5 ← call print_byte (byte~) print_sbyte::$4 
-print_sbyte::@return:
-  return 
-endproc // print_sbyte()
-proc (void()) print_word((word) print_word::w)
-  (byte~) print_word::$0 ← > (word) print_word::w
-  (void~) print_word::$1 ← call print_byte (byte~) print_word::$0 
-  (byte~) print_word::$2 ← < (word) print_word::w
-  (void~) print_word::$3 ← call print_byte (byte~) print_word::$2 
-print_word::@return:
-  return 
-endproc // print_word()
-proc (void()) print_dword((dword) print_dword::dw)
-  (word~) print_dword::$0 ← > (dword) print_dword::dw
-  (void~) print_dword::$1 ← call print_word (word~) print_dword::$0 
-  (word~) print_dword::$2 ← < (dword) print_dword::dw
-  (void~) print_dword::$3 ← call print_word (word~) print_dword::$2 
-print_dword::@return:
-  return 
-endproc // print_dword()
-proc (void()) print_sdword((signed dword) print_sdword::dw)
-  (boolean~) print_sdword::$0 ← (signed dword) print_sdword::dw < (byte/signed byte/word/signed word/dword/signed dword) 0
-  (boolean~) print_sdword::$1 ← ! (boolean~) print_sdword::$0
-  if((boolean~) print_sdword::$1) goto print_sdword::@1
-  (void~) print_sdword::$2 ← call print_char (byte) '-' 
-  (signed dword~) print_sdword::$3 ← - (signed dword) print_sdword::dw
-  (signed dword) print_sdword::dw ← (signed dword~) print_sdword::$3
-print_sdword::@1:
-  (dword~) print_sdword::$4 ← ((dword)) (signed dword) print_sdword::dw
-  (void~) print_sdword::$5 ← call print_dword (dword~) print_sdword::$4 
-print_sdword::@return:
-  return 
-endproc // print_sdword()
-  (byte[]) print_hextab ← (string) "0123456789abcdef"
-proc (void()) print_byte((byte) print_byte::b)
-  (byte~) print_byte::$0 ← (byte) print_byte::b >> (byte/signed byte/word/signed word/dword/signed dword) 4
-  (void~) print_byte::$1 ← call print_char *((byte[]) print_hextab + (byte~) print_byte::$0) 
-  (byte~) print_byte::$2 ← (byte) print_byte::b & (byte/signed byte/word/signed word/dword/signed dword) 15
-  (void~) print_byte::$3 ← call print_char *((byte[]) print_hextab + (byte~) print_byte::$2) 
-print_byte::@return:
-  return 
-endproc // print_byte()
-proc (void()) print_char((byte) print_char::ch)
-  *((byte*) print_char_cursor) ← (byte) print_char::ch
-  (byte*) print_char_cursor ← ++ (byte*) print_char_cursor
-print_char::@return:
-  return 
-endproc // print_char()
-proc (void()) print_cls()
-  (byte*) print_cls::sc ← (byte*) print_screen
-print_cls::@1:
-  *((byte*) print_cls::sc) ← (byte) ' '
-  (byte*) print_cls::sc ← ++ (byte*) print_cls::sc
-  (byte*~) print_cls::$0 ← (byte*) print_screen + (word/signed word/dword/signed dword) 1000
-  (boolean~) print_cls::$1 ← (byte*) print_cls::sc != (byte*~) print_cls::$0
-  if((boolean~) print_cls::$1) goto print_cls::@1
-  (byte*) print_line_cursor ← (byte*) print_screen
-  (byte*) print_char_cursor ← (byte*) print_line_cursor
-print_cls::@return:
-  return 
-endproc // print_cls()
-proc (void()) print_set_screen((byte*) print_set_screen::screen)
-  (byte*) print_screen ← (byte*) print_set_screen::screen
-  (byte*) print_line_cursor ← (byte*) print_screen
-  (byte*) print_char_cursor ← (byte*) print_line_cursor
-print_set_screen::@return:
-  return 
-endproc // print_set_screen()
-  (byte*) memLo ← (byte/word/signed word/dword/signed dword) 254
-  (byte*) memHi ← (byte/word/signed word/dword/signed dword) 255
-proc (void()) prepareMEM((byte*) prepareMEM::mem)
-  (byte~) prepareMEM::$0 ← < (byte*) prepareMEM::mem
-  *((byte*) memLo) ← (byte~) prepareMEM::$0
-  (byte~) prepareMEM::$1 ← > (byte*) prepareMEM::mem
-  *((byte*) memHi) ← (byte~) prepareMEM::$1
-prepareMEM::@return:
-  return 
-endproc // prepareMEM()
-proc (void()) setFAC((word) setFAC::w)
-  (byte*~) setFAC::$0 ← ((byte*)) (word) setFAC::w
-  (void~) setFAC::$1 ← call prepareMEM (byte*~) setFAC::$0 
-  asm { ldy$fe lda$ff jsr$b391  }
-setFAC::@return:
-  return 
-endproc // setFAC()
-proc (word()) getFAC()
-  asm { jsr$b1aa sty$fe sta$ff  }
-  (word) getFAC::w ← { *((byte*) memHi), *((byte*) memLo) }
-  (word) getFAC::return ← (word) getFAC::w
-  goto getFAC::@return
-getFAC::@return:
-  (word) getFAC::return ← (word) getFAC::return
-  return (word) getFAC::return
-endproc // getFAC()
-proc (void()) setARGtoFAC()
-  asm { jsr$bc0f  }
-setARGtoFAC::@return:
-  return 
-endproc // setARGtoFAC()
-proc (void()) setFACtoARG()
-  asm { jsr$bbfc  }
-setFACtoARG::@return:
-  return 
-endproc // setFACtoARG()
-proc (void()) setMEMtoFAC((byte*) setMEMtoFAC::mem)
-  (void~) setMEMtoFAC::$0 ← call prepareMEM (byte*) setMEMtoFAC::mem 
-  asm { ldx$fe ldy$ff jsr$bbd4  }
-setMEMtoFAC::@return:
-  return 
-endproc // setMEMtoFAC()
-proc (void()) setFACtoMEM((byte*) setFACtoMEM::mem)
-  (void~) setFACtoMEM::$0 ← call prepareMEM (byte*) setFACtoMEM::mem 
-  asm { lda$fe ldy$ff jsr$bba2  }
-setFACtoMEM::@return:
-  return 
-endproc // setFACtoMEM()
-proc (void()) setFACtoPIhalf()
-  asm { lda#$e0 ldy#$e2 jsr$bba2  }
-setFACtoPIhalf::@return:
-  return 
-endproc // setFACtoPIhalf()
-proc (void()) setFACto2PI()
-  asm { lda#$e5 ldy#$e2 jsr$bba2  }
-setFACto2PI::@return:
-  return 
-endproc // setFACto2PI()
-proc (void()) setARGtoMEM((byte*) setARGtoMEM::mem)
-  (void~) setARGtoMEM::$0 ← call prepareMEM (byte*) setARGtoMEM::mem 
-  asm { lda$fe ldy$ff jsr$ba8c  }
-setARGtoMEM::@return:
-  return 
-endproc // setARGtoMEM()
-proc (void()) addMEMtoFAC((byte*) addMEMtoFAC::mem)
-  (void~) addMEMtoFAC::$0 ← call prepareMEM (byte*) addMEMtoFAC::mem 
-  asm { lda$fe ldy$ff jsr$b867  }
-addMEMtoFAC::@return:
-  return 
-endproc // addMEMtoFAC()
-proc (void()) addARGtoFAC()
-  asm { jsr$b86a  }
-addARGtoFAC::@return:
-  return 
-endproc // addARGtoFAC()
-proc (void()) subFACfromMEM((byte*) subFACfromMEM::mem)
-  (void~) subFACfromMEM::$0 ← call prepareMEM (byte*) subFACfromMEM::mem 
-  asm { lda$fe ldy$ff jsr$b850  }
-subFACfromMEM::@return:
-  return 
-endproc // subFACfromMEM()
-proc (void()) subFACfromARG()
-  asm { jsr$b853  }
-subFACfromARG::@return:
-  return 
-endproc // subFACfromARG()
-proc (void()) divMEMbyFAC((byte*) divMEMbyFAC::mem)
-  (void~) divMEMbyFAC::$0 ← call prepareMEM (byte*) divMEMbyFAC::mem 
-  asm { lda$fe ldy$ff jsr$bb0f  }
-divMEMbyFAC::@return:
-  return 
-endproc // divMEMbyFAC()
-proc (void()) mulFACbyMEM((byte*) mulFACbyMEM::mem)
-  (void~) mulFACbyMEM::$0 ← call prepareMEM (byte*) mulFACbyMEM::mem 
-  asm { lda$fe ldy$ff jsr$ba28  }
-mulFACbyMEM::@return:
-  return 
-endproc // mulFACbyMEM()
-proc (void()) pwrMEMbyFAC((byte*) pwrMEMbyFAC::mem)
-  (void~) pwrMEMbyFAC::$0 ← call prepareMEM (byte*) pwrMEMbyFAC::mem 
-  asm { lda$fe ldy$ff jsr$bf78  }
-pwrMEMbyFAC::@return:
-  return 
-endproc // pwrMEMbyFAC()
-proc (void()) intFAC()
-  asm { jsr$bccc  }
-intFAC::@return:
-  return 
-endproc // intFAC()
-proc (void()) sinFAC()
-  asm { jsr$e26b  }
-sinFAC::@return:
-  return 
-endproc // sinFAC()
-proc (void()) cosFAC()
-  asm { jsr$e264  }
-cosFAC::@return:
-  return 
-endproc // cosFAC()
-proc (void()) tanFAC()
-  asm { jsr$e2b4  }
-tanFAC::@return:
-  return 
-endproc // tanFAC()
-proc (void()) atnFAC()
-  asm { jsr$e303  }
-atnFAC::@return:
-  return 
-endproc // atnFAC()
-proc (void()) sqrFAC()
-  asm { jsr$bf71  }
-sqrFAC::@return:
-  return 
-endproc // sqrFAC()
-proc (void()) expFAC()
-  asm { jsr$bfed  }
-expFAC::@return:
-  return 
-endproc // expFAC()
-proc (void()) logFAC()
-  asm { jsr$b9ea  }
-logFAC::@return:
-  return 
-endproc // logFAC()
-proc (void()) divFACby10()
-  asm { jsr$bafe  }
-divFACby10::@return:
-  return 
-endproc // divFACby10()
-proc (void()) mulFACby10()
-  asm { jsr$bae2  }
-mulFACby10::@return:
-  return 
-endproc // mulFACby10()
-proc (void()) main()
-  (byte[]) main::f_i ← { (byte/signed byte/word/signed word/dword/signed dword) 0, (byte/signed byte/word/signed word/dword/signed dword) 0, (byte/signed byte/word/signed word/dword/signed dword) 0, (byte/signed byte/word/signed word/dword/signed dword) 0, (byte/signed byte/word/signed word/dword/signed dword) 0 }
-  (byte[]) main::f_127 ← { (byte/signed byte/word/signed word/dword/signed dword) 0, (byte/signed byte/word/signed word/dword/signed dword) 0, (byte/signed byte/word/signed word/dword/signed dword) 0, (byte/signed byte/word/signed word/dword/signed dword) 0, (byte/signed byte/word/signed word/dword/signed dword) 0 }
-  (byte*) main::f_2pi ← (word/dword/signed dword) 58085
-  (void~) main::$0 ← call setFAC (word/signed word/dword/signed dword) 1275 
-  (void~) main::$1 ← call divFACby10 
-  (void~) main::$2 ← call setMEMtoFAC (byte[]) main::f_127 
-  (byte) main::i ← (byte/signed byte/word/signed word/dword/signed dword) 1
-main::@1:
-  (word~) main::$3 ← ((word)) (byte) main::i
-  (void~) main::$4 ← call setFAC (word~) main::$3 
-  (void~) main::$5 ← call mulFACbyMEM (byte*) main::f_2pi 
-  (void~) main::$6 ← call setMEMtoFAC (byte[]) main::f_i 
-  (void~) main::$7 ← call setFAC (byte/signed byte/word/signed word/dword/signed dword) 25 
-  (void~) main::$8 ← call divMEMbyFAC (byte[]) main::f_i 
-  (void~) main::$9 ← call sinFAC 
-  (void~) main::$10 ← call mulFACbyMEM (byte[]) main::f_127 
-  (void~) main::$11 ← call addMEMtoFAC (byte[]) main::f_127 
-  (word~) main::$12 ← call getFAC 
-  (void~) main::$13 ← call print_word (word~) main::$12 
-  (void~) main::$14 ← call print_ln 
-  (byte) main::i ← ++ (byte) main::i
-  (boolean~) main::$15 ← (byte) main::i != (byte/signed byte/word/signed word/dword/signed dword) 26
-  if((boolean~) main::$15) goto main::@1
-main::@return:
-  return 
-endproc // main()
-  call main 
-
 SYMBOLS
+(label) @1
+(label) @10
+(label) @11
+(label) @12
+(label) @13
+(label) @14
+(label) @15
+(label) @16
+(label) @17
+(label) @18
+(label) @19
+(label) @2
+(label) @20
+(label) @21
+(label) @22
+(label) @23
+(label) @24
+(label) @25
+(label) @26
+(label) @27
+(label) @28
+(label) @29
+(label) @3
+(label) @30
+(label) @31
+(label) @32
+(label) @33
+(label) @34
+(label) @35
+(label) @36
+(label) @37
+(label) @38
+(label) @39
+(label) @4
+(label) @40
+(label) @41
+(label) @42
+(label) @5
+(label) @6
+(label) @7
+(label) @8
+(label) @9
+(label) @begin
+(label) @end
 (void()) addARGtoFAC()
 (label) addARGtoFAC::@return
 (void()) addMEMtoFAC((byte*) addMEMtoFAC::mem)
@@ -793,6 +492,7 @@ SYMBOLS
 (void()) expFAC()
 (label) expFAC::@return
 (word()) getFAC()
+(label) getFAC::@1
 (label) getFAC::@return
 (word) getFAC::return
 (word) getFAC::w
@@ -818,6 +518,7 @@ SYMBOLS
 (void~) main::$8
 (void~) main::$9
 (label) main::@1
+(label) main::@2
 (label) main::@return
 (byte[]) main::f_127
 (byte*) main::f_2pi
@@ -851,6 +552,7 @@ SYMBOLS
 (byte*~) print_cls::$0
 (boolean~) print_cls::$1
 (label) print_cls::@1
+(label) print_cls::@2
 (label) print_cls::@return
 (byte*) print_cls::sc
 (void()) print_dword((dword) print_dword::dw)
@@ -866,6 +568,7 @@ SYMBOLS
 (byte*~) print_ln::$0
 (boolean~) print_ln::$1
 (label) print_ln::@1
+(label) print_ln::@2
 (label) print_ln::@return
 (void()) print_sbyte((signed byte) print_sbyte::b)
 (boolean~) print_sbyte::$0
@@ -875,6 +578,7 @@ SYMBOLS
 (byte~) print_sbyte::$4
 (void~) print_sbyte::$5
 (label) print_sbyte::@1
+(label) print_sbyte::@2
 (label) print_sbyte::@return
 (signed byte) print_sbyte::b
 (byte*) print_screen
@@ -886,6 +590,7 @@ SYMBOLS
 (dword~) print_sdword::$4
 (void~) print_sdword::$5
 (label) print_sdword::@1
+(label) print_sdword::@2
 (label) print_sdword::@return
 (signed dword) print_sdword::dw
 (void()) print_set_screen((byte*) print_set_screen::screen)
@@ -896,6 +601,9 @@ SYMBOLS
 (label) print_str::@1
 (label) print_str::@2
 (label) print_str::@3
+(label) print_str::@4
+(label) print_str::@5
+(label) print_str::@6
 (label) print_str::@return
 (byte*) print_str::str
 (void()) print_str_at((byte*) print_str_at::str , (byte*) print_str_at::at)
@@ -903,6 +611,9 @@ SYMBOLS
 (label) print_str_at::@1
 (label) print_str_at::@2
 (label) print_str_at::@3
+(label) print_str_at::@4
+(label) print_str_at::@5
+(label) print_str_at::@6
 (label) print_str_at::@return
 (byte*) print_str_at::at
 (byte*) print_str_at::str
@@ -913,10 +624,15 @@ SYMBOLS
 (boolean~) print_str_lines::$3
 (void~) print_str_lines::$4
 (label) print_str_lines::@1
+(label) print_str_lines::@10
 (label) print_str_lines::@2
 (label) print_str_lines::@3
 (label) print_str_lines::@4
 (label) print_str_lines::@5
+(label) print_str_lines::@6
+(label) print_str_lines::@7
+(label) print_str_lines::@8
+(label) print_str_lines::@9
 (label) print_str_lines::@return
 (byte) print_str_lines::ch
 (byte*) print_str_lines::str
@@ -933,6 +649,7 @@ SYMBOLS
 (word~) print_sword::$4
 (void~) print_sword::$5
 (label) print_sword::@1
+(label) print_sword::@2
 (label) print_sword::@return
 (signed word) print_sword::w
 (void()) print_word((word) print_word::w)

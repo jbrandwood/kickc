@@ -412,576 +412,38 @@ Adding pre/post-modifier (byte*) mulf_init::sqr2_lo ← ++ (byte*) mulf_init::sq
 Adding pre/post-modifier (word) muls16u::i ← ++ (word) muls16u::i
 Adding pre/post-modifier (signed word) muls16s::j ← ++ (signed word) muls16s::j
 Adding pre/post-modifier (signed word) muls16s::i ← -- (signed word) muls16s::i
-
-STATEMENTS
-  (byte*) print_screen ← (word/signed word/dword/signed dword) 1024
-  (byte*) print_line_cursor ← (byte*) print_screen
-  (byte*) print_char_cursor ← (byte*) print_line_cursor
-proc (void()) print_str_lines((byte*) print_str_lines::str)
-print_str_lines::@1:
-  (boolean~) print_str_lines::$0 ← *((byte*) print_str_lines::str) != (byte) '@'
-  if((boolean~) print_str_lines::$0) goto print_str_lines::@2
-  goto print_str_lines::@3
-print_str_lines::@2:
-print_str_lines::@4:
-  (byte) print_str_lines::ch ← *((byte*) print_str_lines::str)
-  (byte*) print_str_lines::str ← ++ (byte*) print_str_lines::str
-  (boolean~) print_str_lines::$1 ← (byte) print_str_lines::ch != (byte) '@'
-  (boolean~) print_str_lines::$2 ← ! (boolean~) print_str_lines::$1
-  if((boolean~) print_str_lines::$2) goto print_str_lines::@5
-  *((byte*) print_char_cursor) ← (byte) print_str_lines::ch
-  (byte*) print_char_cursor ← ++ (byte*) print_char_cursor
-print_str_lines::@5:
-  (boolean~) print_str_lines::$3 ← (byte) print_str_lines::ch != (byte) '@'
-  if((boolean~) print_str_lines::$3) goto print_str_lines::@4
-  (void~) print_str_lines::$4 ← call print_ln 
-  goto print_str_lines::@1
-print_str_lines::@3:
-print_str_lines::@return:
-  return 
-endproc // print_str_lines()
-proc (void()) print_str_ln((byte*) print_str_ln::str)
-  (void~) print_str_ln::$0 ← call print_str (byte*) print_str_ln::str 
-  (void~) print_str_ln::$1 ← call print_ln 
-print_str_ln::@return:
-  return 
-endproc // print_str_ln()
-proc (void()) print_str((byte*) print_str::str)
-print_str::@1:
-  (boolean~) print_str::$0 ← *((byte*) print_str::str) != (byte) '@'
-  if((boolean~) print_str::$0) goto print_str::@2
-  goto print_str::@3
-print_str::@2:
-  *((byte*) print_char_cursor) ← *((byte*) print_str::str)
-  (byte*) print_char_cursor ← ++ (byte*) print_char_cursor
-  (byte*) print_str::str ← ++ (byte*) print_str::str
-  goto print_str::@1
-print_str::@3:
-print_str::@return:
-  return 
-endproc // print_str()
-proc (void()) print_str_at((byte*) print_str_at::str , (byte*) print_str_at::at)
-print_str_at::@1:
-  (boolean~) print_str_at::$0 ← *((byte*) print_str_at::str) != (byte) '@'
-  if((boolean~) print_str_at::$0) goto print_str_at::@2
-  goto print_str_at::@3
-print_str_at::@2:
-  *((byte*) print_str_at::at) ← *((byte*) print_str_at::str)
-  (byte*) print_str_at::at ← ++ (byte*) print_str_at::at
-  (byte*) print_str_at::str ← ++ (byte*) print_str_at::str
-  goto print_str_at::@1
-print_str_at::@3:
-print_str_at::@return:
-  return 
-endproc // print_str_at()
-proc (void()) print_ln()
-print_ln::@1:
-  (byte*~) print_ln::$0 ← (byte*) print_line_cursor + (byte/signed byte/word/signed word/dword/signed dword) 40
-  (byte*) print_line_cursor ← (byte*~) print_ln::$0
-  (boolean~) print_ln::$1 ← (byte*) print_line_cursor < (byte*) print_char_cursor
-  if((boolean~) print_ln::$1) goto print_ln::@1
-  (byte*) print_char_cursor ← (byte*) print_line_cursor
-print_ln::@return:
-  return 
-endproc // print_ln()
-proc (void()) print_sword((signed word) print_sword::w)
-  (boolean~) print_sword::$0 ← (signed word) print_sword::w < (byte/signed byte/word/signed word/dword/signed dword) 0
-  (boolean~) print_sword::$1 ← ! (boolean~) print_sword::$0
-  if((boolean~) print_sword::$1) goto print_sword::@1
-  (void~) print_sword::$2 ← call print_char (byte) '-' 
-  (signed word~) print_sword::$3 ← - (signed word) print_sword::w
-  (signed word) print_sword::w ← (signed word~) print_sword::$3
-print_sword::@1:
-  (word~) print_sword::$4 ← ((word)) (signed word) print_sword::w
-  (void~) print_sword::$5 ← call print_word (word~) print_sword::$4 
-print_sword::@return:
-  return 
-endproc // print_sword()
-proc (void()) print_sbyte((signed byte) print_sbyte::b)
-  (boolean~) print_sbyte::$0 ← (signed byte) print_sbyte::b < (byte/signed byte/word/signed word/dword/signed dword) 0
-  (boolean~) print_sbyte::$1 ← ! (boolean~) print_sbyte::$0
-  if((boolean~) print_sbyte::$1) goto print_sbyte::@1
-  (void~) print_sbyte::$2 ← call print_char (byte) '-' 
-  (signed byte~) print_sbyte::$3 ← - (signed byte) print_sbyte::b
-  (signed byte) print_sbyte::b ← (signed byte~) print_sbyte::$3
-print_sbyte::@1:
-  (byte~) print_sbyte::$4 ← ((byte)) (signed byte) print_sbyte::b
-  (void~) print_sbyte::$5 ← call print_byte (byte~) print_sbyte::$4 
-print_sbyte::@return:
-  return 
-endproc // print_sbyte()
-proc (void()) print_word((word) print_word::w)
-  (byte~) print_word::$0 ← > (word) print_word::w
-  (void~) print_word::$1 ← call print_byte (byte~) print_word::$0 
-  (byte~) print_word::$2 ← < (word) print_word::w
-  (void~) print_word::$3 ← call print_byte (byte~) print_word::$2 
-print_word::@return:
-  return 
-endproc // print_word()
-proc (void()) print_dword((dword) print_dword::dw)
-  (word~) print_dword::$0 ← > (dword) print_dword::dw
-  (void~) print_dword::$1 ← call print_word (word~) print_dword::$0 
-  (word~) print_dword::$2 ← < (dword) print_dword::dw
-  (void~) print_dword::$3 ← call print_word (word~) print_dword::$2 
-print_dword::@return:
-  return 
-endproc // print_dword()
-proc (void()) print_sdword((signed dword) print_sdword::dw)
-  (boolean~) print_sdword::$0 ← (signed dword) print_sdword::dw < (byte/signed byte/word/signed word/dword/signed dword) 0
-  (boolean~) print_sdword::$1 ← ! (boolean~) print_sdword::$0
-  if((boolean~) print_sdword::$1) goto print_sdword::@1
-  (void~) print_sdword::$2 ← call print_char (byte) '-' 
-  (signed dword~) print_sdword::$3 ← - (signed dword) print_sdword::dw
-  (signed dword) print_sdword::dw ← (signed dword~) print_sdword::$3
-print_sdword::@1:
-  (dword~) print_sdword::$4 ← ((dword)) (signed dword) print_sdword::dw
-  (void~) print_sdword::$5 ← call print_dword (dword~) print_sdword::$4 
-print_sdword::@return:
-  return 
-endproc // print_sdword()
-  (byte[]) print_hextab ← (string) "0123456789abcdef"
-proc (void()) print_byte((byte) print_byte::b)
-  (byte~) print_byte::$0 ← (byte) print_byte::b >> (byte/signed byte/word/signed word/dword/signed dword) 4
-  (void~) print_byte::$1 ← call print_char *((byte[]) print_hextab + (byte~) print_byte::$0) 
-  (byte~) print_byte::$2 ← (byte) print_byte::b & (byte/signed byte/word/signed word/dword/signed dword) 15
-  (void~) print_byte::$3 ← call print_char *((byte[]) print_hextab + (byte~) print_byte::$2) 
-print_byte::@return:
-  return 
-endproc // print_byte()
-proc (void()) print_char((byte) print_char::ch)
-  *((byte*) print_char_cursor) ← (byte) print_char::ch
-  (byte*) print_char_cursor ← ++ (byte*) print_char_cursor
-print_char::@return:
-  return 
-endproc // print_char()
-proc (void()) print_cls()
-  (byte*) print_cls::sc ← (byte*) print_screen
-print_cls::@1:
-  *((byte*) print_cls::sc) ← (byte) ' '
-  (byte*) print_cls::sc ← ++ (byte*) print_cls::sc
-  (byte*~) print_cls::$0 ← (byte*) print_screen + (word/signed word/dword/signed dword) 1000
-  (boolean~) print_cls::$1 ← (byte*) print_cls::sc != (byte*~) print_cls::$0
-  if((boolean~) print_cls::$1) goto print_cls::@1
-  (byte*) print_line_cursor ← (byte*) print_screen
-  (byte*) print_char_cursor ← (byte*) print_line_cursor
-print_cls::@return:
-  return 
-endproc // print_cls()
-proc (void()) print_set_screen((byte*) print_set_screen::screen)
-  (byte*) print_screen ← (byte*) print_set_screen::screen
-  (byte*) print_line_cursor ← (byte*) print_screen
-  (byte*) print_char_cursor ← (byte*) print_line_cursor
-print_set_screen::@return:
-  return 
-endproc // print_set_screen()
-proc (word()) mul8u((byte) mul8u::a , (byte) mul8u::b)
-  (word) mul8u::res ← (byte/signed byte/word/signed word/dword/signed dword) 0
-  (word) mul8u::mb ← (byte) mul8u::b
-mul8u::@1:
-  (boolean~) mul8u::$0 ← (byte) mul8u::a != (byte/signed byte/word/signed word/dword/signed dword) 0
-  if((boolean~) mul8u::$0) goto mul8u::@2
-  goto mul8u::@3
-mul8u::@2:
-  (byte~) mul8u::$1 ← (byte) mul8u::a & (byte/signed byte/word/signed word/dword/signed dword) 1
-  (boolean~) mul8u::$2 ← (byte~) mul8u::$1 != (byte/signed byte/word/signed word/dword/signed dword) 0
-  (boolean~) mul8u::$3 ← ! (boolean~) mul8u::$2
-  if((boolean~) mul8u::$3) goto mul8u::@4
-  (word~) mul8u::$4 ← (word) mul8u::res + (word) mul8u::mb
-  (word) mul8u::res ← (word~) mul8u::$4
-mul8u::@4:
-  (byte~) mul8u::$5 ← (byte) mul8u::a >> (byte/signed byte/word/signed word/dword/signed dword) 1
-  (byte) mul8u::a ← (byte~) mul8u::$5
-  (word~) mul8u::$6 ← (word) mul8u::mb << (byte/signed byte/word/signed word/dword/signed dword) 1
-  (word) mul8u::mb ← (word~) mul8u::$6
-  goto mul8u::@1
-mul8u::@3:
-  (word) mul8u::return ← (word) mul8u::res
-  goto mul8u::@return
-mul8u::@return:
-  (word) mul8u::return ← (word) mul8u::return
-  return (word) mul8u::return
-endproc // mul8u()
-proc (signed word()) mul8s((signed byte) mul8s::a , (signed byte) mul8s::b)
-  (byte~) mul8s::$0 ← ((byte)) (signed byte) mul8s::a
-  (byte~) mul8s::$1 ← ((byte)) (signed byte) mul8s::b
-  (word~) mul8s::$2 ← call mul8u (byte~) mul8s::$0 (byte~) mul8s::$1 
-  (word) mul8s::m ← (word~) mul8s::$2
-  (boolean~) mul8s::$3 ← (signed byte) mul8s::a < (byte/signed byte/word/signed word/dword/signed dword) 0
-  (boolean~) mul8s::$4 ← ! (boolean~) mul8s::$3
-  if((boolean~) mul8s::$4) goto mul8s::@1
-  (byte~) mul8s::$5 ← > (word) mul8s::m
-  (byte~) mul8s::$6 ← > (word) mul8s::m
-  (byte~) mul8s::$7 ← ((byte)) (signed byte) mul8s::b
-  (byte~) mul8s::$8 ← (byte~) mul8s::$6 - (byte~) mul8s::$7
-  lval((byte~) mul8s::$5) ← (byte~) mul8s::$8
-mul8s::@1:
-  (boolean~) mul8s::$9 ← (signed byte) mul8s::b < (byte/signed byte/word/signed word/dword/signed dword) 0
-  (boolean~) mul8s::$10 ← ! (boolean~) mul8s::$9
-  if((boolean~) mul8s::$10) goto mul8s::@2
-  (byte~) mul8s::$11 ← > (word) mul8s::m
-  (byte~) mul8s::$12 ← > (word) mul8s::m
-  (byte~) mul8s::$13 ← ((byte)) (signed byte) mul8s::a
-  (byte~) mul8s::$14 ← (byte~) mul8s::$12 - (byte~) mul8s::$13
-  lval((byte~) mul8s::$11) ← (byte~) mul8s::$14
-mul8s::@2:
-  (signed word~) mul8s::$15 ← ((signed word)) (word) mul8s::m
-  (signed word) mul8s::return ← (signed word~) mul8s::$15
-  goto mul8s::@return
-mul8s::@return:
-  (signed word) mul8s::return ← (signed word) mul8s::return
-  return (signed word) mul8s::return
-endproc // mul8s()
-proc (signed word()) mul8su((signed byte) mul8su::a , (byte) mul8su::b)
-  (byte~) mul8su::$0 ← ((byte)) (signed byte) mul8su::a
-  (byte~) mul8su::$1 ← ((byte)) (byte) mul8su::b
-  (word~) mul8su::$2 ← call mul8u (byte~) mul8su::$0 (byte~) mul8su::$1 
-  (word) mul8su::m ← (word~) mul8su::$2
-  (boolean~) mul8su::$3 ← (signed byte) mul8su::a < (byte/signed byte/word/signed word/dword/signed dword) 0
-  (boolean~) mul8su::$4 ← ! (boolean~) mul8su::$3
-  if((boolean~) mul8su::$4) goto mul8su::@1
-  (byte~) mul8su::$5 ← > (word) mul8su::m
-  (byte~) mul8su::$6 ← > (word) mul8su::m
-  (byte~) mul8su::$7 ← ((byte)) (byte) mul8su::b
-  (byte~) mul8su::$8 ← (byte~) mul8su::$6 - (byte~) mul8su::$7
-  lval((byte~) mul8su::$5) ← (byte~) mul8su::$8
-mul8su::@1:
-  (signed word~) mul8su::$9 ← ((signed word)) (word) mul8su::m
-  (signed word) mul8su::return ← (signed word~) mul8su::$9
-  goto mul8su::@return
-mul8su::@return:
-  (signed word) mul8su::return ← (signed word) mul8su::return
-  return (signed word) mul8su::return
-endproc // mul8su()
-proc (dword()) mul16u((word) mul16u::a , (word) mul16u::b)
-  (dword) mul16u::res ← (byte/signed byte/word/signed word/dword/signed dword) 0
-  (dword) mul16u::mb ← (word) mul16u::b
-mul16u::@1:
-  (boolean~) mul16u::$0 ← (word) mul16u::a != (byte/signed byte/word/signed word/dword/signed dword) 0
-  if((boolean~) mul16u::$0) goto mul16u::@2
-  goto mul16u::@3
-mul16u::@2:
-  (byte/word~) mul16u::$1 ← (word) mul16u::a & (byte/signed byte/word/signed word/dword/signed dword) 1
-  (boolean~) mul16u::$2 ← (byte/word~) mul16u::$1 != (byte/signed byte/word/signed word/dword/signed dword) 0
-  (boolean~) mul16u::$3 ← ! (boolean~) mul16u::$2
-  if((boolean~) mul16u::$3) goto mul16u::@4
-  (dword~) mul16u::$4 ← (dword) mul16u::res + (dword) mul16u::mb
-  (dword) mul16u::res ← (dword~) mul16u::$4
-mul16u::@4:
-  (word~) mul16u::$5 ← (word) mul16u::a >> (byte/signed byte/word/signed word/dword/signed dword) 1
-  (word) mul16u::a ← (word~) mul16u::$5
-  (dword~) mul16u::$6 ← (dword) mul16u::mb << (byte/signed byte/word/signed word/dword/signed dword) 1
-  (dword) mul16u::mb ← (dword~) mul16u::$6
-  goto mul16u::@1
-mul16u::@3:
-  (dword) mul16u::return ← (dword) mul16u::res
-  goto mul16u::@return
-mul16u::@return:
-  (dword) mul16u::return ← (dword) mul16u::return
-  return (dword) mul16u::return
-endproc // mul16u()
-proc (signed dword()) mul16s((signed word) mul16s::a , (signed word) mul16s::b)
-  (word~) mul16s::$0 ← ((word)) (signed word) mul16s::a
-  (word~) mul16s::$1 ← ((word)) (signed word) mul16s::b
-  (dword~) mul16s::$2 ← call mul16u (word~) mul16s::$0 (word~) mul16s::$1 
-  (dword) mul16s::m ← (dword~) mul16s::$2
-  (boolean~) mul16s::$3 ← (signed word) mul16s::a < (byte/signed byte/word/signed word/dword/signed dword) 0
-  (boolean~) mul16s::$4 ← ! (boolean~) mul16s::$3
-  if((boolean~) mul16s::$4) goto mul16s::@1
-  (word~) mul16s::$5 ← > (dword) mul16s::m
-  (word~) mul16s::$6 ← > (dword) mul16s::m
-  (word~) mul16s::$7 ← ((word)) (signed word) mul16s::b
-  (word~) mul16s::$8 ← (word~) mul16s::$6 - (word~) mul16s::$7
-  lval((word~) mul16s::$5) ← (word~) mul16s::$8
-mul16s::@1:
-  (boolean~) mul16s::$9 ← (signed word) mul16s::b < (byte/signed byte/word/signed word/dword/signed dword) 0
-  (boolean~) mul16s::$10 ← ! (boolean~) mul16s::$9
-  if((boolean~) mul16s::$10) goto mul16s::@2
-  (word~) mul16s::$11 ← > (dword) mul16s::m
-  (word~) mul16s::$12 ← > (dword) mul16s::m
-  (word~) mul16s::$13 ← ((word)) (signed word) mul16s::a
-  (word~) mul16s::$14 ← (word~) mul16s::$12 - (word~) mul16s::$13
-  lval((word~) mul16s::$11) ← (word~) mul16s::$14
-mul16s::@2:
-  (signed dword~) mul16s::$15 ← ((signed dword)) (dword) mul16s::m
-  (signed dword) mul16s::return ← (signed dword~) mul16s::$15
-  goto mul16s::@return
-mul16s::@return:
-  (signed dword) mul16s::return ← (signed dword) mul16s::return
-  return (signed dword) mul16s::return
-endproc // mul16s()
-  (byte[512]) mulf_sqr1_lo ← { fill( 512, 0) }
-  (byte[512]) mulf_sqr1_hi ← { fill( 512, 0) }
-  (byte[512]) mulf_sqr2_lo ← { fill( 512, 0) }
-  (byte[512]) mulf_sqr2_hi ← { fill( 512, 0) }
-proc (void()) mulf_init()
-  (word) mulf_init::sqr ← (byte/signed byte/word/signed word/dword/signed dword) 0
-  (byte) mulf_init::x_2 ← (byte/signed byte/word/signed word/dword/signed dword) 0
-  (byte) mulf_init::c ← (byte/signed byte/word/signed word/dword/signed dword) 0
-  (byte*~) mulf_init::$0 ← (byte[512]) mulf_sqr1_hi + (byte/signed byte/word/signed word/dword/signed dword) 1
-  (byte*) mulf_init::sqr1_hi ← (byte*~) mulf_init::$0
-  (byte*~) mulf_init::$1 ← (byte[512]) mulf_sqr1_lo + (byte/signed byte/word/signed word/dword/signed dword) 1
-  (byte*) mulf_init::sqr1_lo ← (byte*~) mulf_init::$1
-mulf_init::@1:
-  (byte) mulf_init::c ← ++ (byte) mulf_init::c
-  (byte~) mulf_init::$2 ← (byte) mulf_init::c & (byte/signed byte/word/signed word/dword/signed dword) 1
-  (boolean~) mulf_init::$3 ← (byte~) mulf_init::$2 == (byte/signed byte/word/signed word/dword/signed dword) 0
-  (boolean~) mulf_init::$4 ← ! (boolean~) mulf_init::$3
-  if((boolean~) mulf_init::$4) goto mulf_init::@2
-  (byte) mulf_init::x_2 ← ++ (byte) mulf_init::x_2
-  (word) mulf_init::sqr ← ++ (word) mulf_init::sqr
-mulf_init::@2:
-  (byte~) mulf_init::$5 ← < (word) mulf_init::sqr
-  *((byte*) mulf_init::sqr1_lo) ← (byte~) mulf_init::$5
-  (byte~) mulf_init::$6 ← > (word) mulf_init::sqr
-  *((byte*) mulf_init::sqr1_hi) ← (byte~) mulf_init::$6
-  (byte*) mulf_init::sqr1_hi ← ++ (byte*) mulf_init::sqr1_hi
-  (word~) mulf_init::$7 ← (word) mulf_init::sqr + (byte) mulf_init::x_2
-  (word) mulf_init::sqr ← (word~) mulf_init::$7
-  (byte*) mulf_init::sqr1_lo ← ++ (byte*) mulf_init::sqr1_lo
-  (byte*~) mulf_init::$8 ← (byte[512]) mulf_sqr1_lo + (word/signed word/dword/signed dword) 512
-  (boolean~) mulf_init::$9 ← (byte*) mulf_init::sqr1_lo != (byte*~) mulf_init::$8
-  if((boolean~) mulf_init::$9) goto mulf_init::@1
-  (signed byte/signed word/signed dword~) mulf_init::$10 ← - (byte/signed byte/word/signed word/dword/signed dword) 1
-  (byte~) mulf_init::$11 ← ((byte)) (signed byte/signed word/signed dword~) mulf_init::$10
-  (byte) mulf_init::x_255 ← (byte~) mulf_init::$11
-  (byte) mulf_init::dir ← (byte/word/signed word/dword/signed dword) 255
-  (byte*) mulf_init::sqr2_hi ← (byte[512]) mulf_sqr2_hi
-  (byte*) mulf_init::sqr2_lo ← (byte[512]) mulf_sqr2_lo
-mulf_init::@3:
-  *((byte*) mulf_init::sqr2_lo) ← *((byte[512]) mulf_sqr1_lo + (byte) mulf_init::x_255)
-  *((byte*) mulf_init::sqr2_hi) ← *((byte[512]) mulf_sqr1_hi + (byte) mulf_init::x_255)
-  (byte*) mulf_init::sqr2_hi ← ++ (byte*) mulf_init::sqr2_hi
-  (byte~) mulf_init::$12 ← (byte) mulf_init::x_255 + (byte) mulf_init::dir
-  (byte) mulf_init::x_255 ← (byte~) mulf_init::$12
-  (boolean~) mulf_init::$13 ← (byte) mulf_init::x_255 == (byte/signed byte/word/signed word/dword/signed dword) 0
-  (boolean~) mulf_init::$14 ← ! (boolean~) mulf_init::$13
-  if((boolean~) mulf_init::$14) goto mulf_init::@4
-  (byte) mulf_init::dir ← (byte/signed byte/word/signed word/dword/signed dword) 1
-mulf_init::@4:
-  (byte*) mulf_init::sqr2_lo ← ++ (byte*) mulf_init::sqr2_lo
-  (byte*~) mulf_init::$15 ← (byte[512]) mulf_sqr2_lo + (word/signed word/dword/signed dword) 511
-  (boolean~) mulf_init::$16 ← (byte*) mulf_init::sqr2_lo != (byte*~) mulf_init::$15
-  if((boolean~) mulf_init::$16) goto mulf_init::@3
-  (byte*~) mulf_init::$17 ← (byte[512]) mulf_sqr2_lo + (word/signed word/dword/signed dword) 511
-  (byte*~) mulf_init::$18 ← (byte[512]) mulf_sqr1_lo + (word/signed word/dword/signed dword) 256
-  *((byte*~) mulf_init::$17) ← *((byte*~) mulf_init::$18)
-  (byte*~) mulf_init::$19 ← (byte[512]) mulf_sqr2_hi + (word/signed word/dword/signed dword) 511
-  (byte*~) mulf_init::$20 ← (byte[512]) mulf_sqr1_hi + (word/signed word/dword/signed dword) 256
-  *((byte*~) mulf_init::$19) ← *((byte*~) mulf_init::$20)
-mulf_init::@return:
-  return 
-endproc // mulf_init()
-proc (word()) mulf8u((byte) mulf8u::a , (byte) mulf8u::b)
-  (byte*) mulf8u::memA ← (byte/word/signed word/dword/signed dword) 254
-  (byte*) mulf8u::memB ← (byte/word/signed word/dword/signed dword) 255
-  *((byte*) mulf8u::memA) ← (byte) mulf8u::a
-  *((byte*) mulf8u::memB) ← (byte) mulf8u::b
-  asm { ldamemA stasm1+1 stasm3+1 eor#$ff stasm2+1 stasm4+1 ldxmemB sec sm1: ldamulf_sqr1_lo,x sm2: sbcmulf_sqr2_lo,x stamemA sm3: ldamulf_sqr1_hi,x sm4: sbcmulf_sqr2_hi,x stamemB  }
-  (word) mulf8u::return ← { *((byte*) mulf8u::memB), *((byte*) mulf8u::memA) }
-  goto mulf8u::@return
-mulf8u::@return:
-  (word) mulf8u::return ← (word) mulf8u::return
-  return (word) mulf8u::return
-endproc // mulf8u()
-proc (signed word()) mulf8s((signed byte) mulf8s::a , (signed byte) mulf8s::b)
-  (byte~) mulf8s::$0 ← ((byte)) (signed byte) mulf8s::a
-  (byte~) mulf8s::$1 ← ((byte)) (signed byte) mulf8s::b
-  (word~) mulf8s::$2 ← call mulf8u (byte~) mulf8s::$0 (byte~) mulf8s::$1 
-  (word) mulf8s::m ← (word~) mulf8s::$2
-  (boolean~) mulf8s::$3 ← (signed byte) mulf8s::a < (byte/signed byte/word/signed word/dword/signed dword) 0
-  (boolean~) mulf8s::$4 ← ! (boolean~) mulf8s::$3
-  if((boolean~) mulf8s::$4) goto mulf8s::@1
-  (byte~) mulf8s::$5 ← > (word) mulf8s::m
-  (byte~) mulf8s::$6 ← > (word) mulf8s::m
-  (byte~) mulf8s::$7 ← ((byte)) (signed byte) mulf8s::b
-  (byte~) mulf8s::$8 ← (byte~) mulf8s::$6 - (byte~) mulf8s::$7
-  lval((byte~) mulf8s::$5) ← (byte~) mulf8s::$8
-mulf8s::@1:
-  (boolean~) mulf8s::$9 ← (signed byte) mulf8s::b < (byte/signed byte/word/signed word/dword/signed dword) 0
-  (boolean~) mulf8s::$10 ← ! (boolean~) mulf8s::$9
-  if((boolean~) mulf8s::$10) goto mulf8s::@2
-  (byte~) mulf8s::$11 ← > (word) mulf8s::m
-  (byte~) mulf8s::$12 ← > (word) mulf8s::m
-  (byte~) mulf8s::$13 ← ((byte)) (signed byte) mulf8s::a
-  (byte~) mulf8s::$14 ← (byte~) mulf8s::$12 - (byte~) mulf8s::$13
-  lval((byte~) mulf8s::$11) ← (byte~) mulf8s::$14
-mulf8s::@2:
-  (signed word~) mulf8s::$15 ← ((signed word)) (word) mulf8s::m
-  (signed word) mulf8s::return ← (signed word~) mulf8s::$15
-  goto mulf8s::@return
-mulf8s::@return:
-  (signed word) mulf8s::return ← (signed word) mulf8s::return
-  return (signed word) mulf8s::return
-endproc // mulf8s()
-  (byte*) BGCOL ← (word/dword/signed dword) 53281
-proc (void()) main()
-  *((byte*) BGCOL) ← (byte/signed byte/word/signed word/dword/signed dword) 5
-  (void~) main::$0 ← call print_cls 
-  (void~) main::$1 ← call mulf_init 
-  (void~) main::$2 ← call mul16u_compare 
-  (void~) main::$3 ← call mul16s_compare 
-main::@return:
-  return 
-endproc // main()
-proc (dword()) muls16u((word) muls16u::a , (word) muls16u::b)
-  (dword) muls16u::m ← (byte/signed byte/word/signed word/dword/signed dword) 0
-  (boolean~) muls16u::$0 ← (word) muls16u::a != (byte/signed byte/word/signed word/dword/signed dword) 0
-  (boolean~) muls16u::$1 ← ! (boolean~) muls16u::$0
-  if((boolean~) muls16u::$1) goto muls16u::@1
-  (word) muls16u::i ← (byte/signed byte/word/signed word/dword/signed dword) 0
-muls16u::@2:
-  (dword~) muls16u::$2 ← (dword) muls16u::m + (word) muls16u::b
-  (dword) muls16u::m ← (dword~) muls16u::$2
-  (word) muls16u::i ← ++ (word) muls16u::i
-  (boolean~) muls16u::$3 ← (word) muls16u::i != (word) muls16u::a
-  if((boolean~) muls16u::$3) goto muls16u::@2
-muls16u::@1:
-  (dword) muls16u::return ← (dword) muls16u::m
-  goto muls16u::@return
-muls16u::@return:
-  (dword) muls16u::return ← (dword) muls16u::return
-  return (dword) muls16u::return
-endproc // muls16u()
-proc (signed dword()) muls16s((signed word) muls16s::a , (signed word) muls16s::b)
-  (signed dword) muls16s::m ← (byte/signed byte/word/signed word/dword/signed dword) 0
-  (boolean~) muls16s::$0 ← (signed word) muls16s::a < (byte/signed byte/word/signed word/dword/signed dword) 0
-  if((boolean~) muls16s::$0) goto muls16s::@1
-  (boolean~) muls16s::$1 ← (signed word) muls16s::a > (byte/signed byte/word/signed word/dword/signed dword) 0
-  (boolean~) muls16s::$2 ← ! (boolean~) muls16s::$1
-  if((boolean~) muls16s::$2) goto muls16s::@2
-  (signed word) muls16s::j ← (byte/signed byte/word/signed word/dword/signed dword) 0
-muls16s::@3:
-  (signed dword~) muls16s::$3 ← (signed dword) muls16s::m + (signed word) muls16s::b
-  (signed dword) muls16s::m ← (signed dword~) muls16s::$3
-  (signed word) muls16s::j ← ++ (signed word) muls16s::j
-  (boolean~) muls16s::$4 ← (signed word) muls16s::j != (signed word) muls16s::a
-  if((boolean~) muls16s::$4) goto muls16s::@3
-muls16s::@2:
-  goto muls16s::@4
-muls16s::@1:
-  (signed word) muls16s::i ← (byte/signed byte/word/signed word/dword/signed dword) 0
-muls16s::@5:
-  (signed dword~) muls16s::$5 ← (signed dword) muls16s::m - (signed word) muls16s::b
-  (signed dword) muls16s::m ← (signed dword~) muls16s::$5
-  (signed word) muls16s::i ← -- (signed word) muls16s::i
-  (boolean~) muls16s::$6 ← (signed word) muls16s::i != (signed word) muls16s::a
-  if((boolean~) muls16s::$6) goto muls16s::@5
-muls16s::@4:
-  (signed dword) muls16s::return ← (signed dword) muls16s::m
-  goto muls16s::@return
-muls16s::@return:
-  (signed dword) muls16s::return ← (signed dword) muls16s::return
-  return (signed dword) muls16s::return
-endproc // muls16s()
-proc (void()) mul16u_compare()
-  (word) mul16u_compare::a ← (byte/signed byte/word/signed word/dword/signed dword) 0
-  (word) mul16u_compare::b ← (byte/signed byte/word/signed word/dword/signed dword) 0
-  (byte) mul16u_compare::i ← (byte/signed byte/word/signed word/dword/signed dword) 0
-mul16u_compare::@1:
-  (byte) mul16u_compare::j ← (byte/signed byte/word/signed word/dword/signed dword) 0
-mul16u_compare::@2:
-  (word/signed dword/dword~) mul16u_compare::$0 ← (word) mul16u_compare::a + (word/signed word/dword/signed dword) 3371
-  (word) mul16u_compare::a ← (word/signed dword/dword~) mul16u_compare::$0
-  (word/signed dword/dword~) mul16u_compare::$1 ← (word) mul16u_compare::b + (word/signed word/dword/signed dword) 4093
-  (word) mul16u_compare::b ← (word/signed dword/dword~) mul16u_compare::$1
-  (dword~) mul16u_compare::$2 ← call muls16u (word) mul16u_compare::a (word) mul16u_compare::b 
-  (dword) mul16u_compare::ms ← (dword~) mul16u_compare::$2
-  (dword~) mul16u_compare::$3 ← call mul16u (word) mul16u_compare::a (word) mul16u_compare::b 
-  (dword) mul16u_compare::mn ← (dword~) mul16u_compare::$3
-  (byte) mul16u_compare::ok ← (byte/signed byte/word/signed word/dword/signed dword) 1
-  (boolean~) mul16u_compare::$4 ← (dword) mul16u_compare::ms != (dword) mul16u_compare::mn
-  (boolean~) mul16u_compare::$5 ← ! (boolean~) mul16u_compare::$4
-  if((boolean~) mul16u_compare::$5) goto mul16u_compare::@3
-  (byte) mul16u_compare::ok ← (byte/signed byte/word/signed word/dword/signed dword) 0
-mul16u_compare::@3:
-  (boolean~) mul16u_compare::$6 ← (byte) mul16u_compare::ok == (byte/signed byte/word/signed word/dword/signed dword) 0
-  (boolean~) mul16u_compare::$7 ← ! (boolean~) mul16u_compare::$6
-  if((boolean~) mul16u_compare::$7) goto mul16u_compare::@4
-  *((byte*) BGCOL) ← (byte/signed byte/word/signed word/dword/signed dword) 2
-  (void~) mul16u_compare::$8 ← call mul16u_error (word) mul16u_compare::a (word) mul16u_compare::b (dword) mul16u_compare::ms (dword) mul16u_compare::mn 
-  goto mul16u_compare::@return
-mul16u_compare::@4:
-  (byte) mul16u_compare::j ← ++ (byte) mul16u_compare::j
-  (boolean~) mul16u_compare::$9 ← (byte) mul16u_compare::j != (byte/signed byte/word/signed word/dword/signed dword) 16
-  if((boolean~) mul16u_compare::$9) goto mul16u_compare::@2
-  (byte) mul16u_compare::i ← ++ (byte) mul16u_compare::i
-  (boolean~) mul16u_compare::$10 ← (byte) mul16u_compare::i != (byte/signed byte/word/signed word/dword/signed dword) 16
-  if((boolean~) mul16u_compare::$10) goto mul16u_compare::@1
-  (void~) mul16u_compare::$11 ← call print_str (string) "word multiply results match!@" 
-  (void~) mul16u_compare::$12 ← call print_ln 
-mul16u_compare::@return:
-  return 
-endproc // mul16u_compare()
-proc (void()) mul16u_error((word) mul16u_error::a , (word) mul16u_error::b , (dword) mul16u_error::ms , (dword) mul16u_error::mn)
-  (void~) mul16u_error::$0 ← call print_str (string) "word multiply mismatch @" 
-  (void~) mul16u_error::$1 ← call print_word (word) mul16u_error::a 
-  (void~) mul16u_error::$2 ← call print_str (string) "*@" 
-  (void~) mul16u_error::$3 ← call print_word (word) mul16u_error::b 
-  (void~) mul16u_error::$4 ← call print_str (string) " slow:@" 
-  (void~) mul16u_error::$5 ← call print_dword (dword) mul16u_error::ms 
-  (void~) mul16u_error::$6 ← call print_str (string) " / normal:@" 
-  (void~) mul16u_error::$7 ← call print_dword (dword) mul16u_error::mn 
-  (void~) mul16u_error::$8 ← call print_ln 
-mul16u_error::@return:
-  return 
-endproc // mul16u_error()
-proc (void()) mul16s_compare()
-  (signed word/signed dword~) mul16s_compare::$0 ← - (word/signed word/dword/signed dword) 32767
-  (signed word) mul16s_compare::a ← (signed word/signed dword~) mul16s_compare::$0
-  (signed word/signed dword~) mul16s_compare::$1 ← - (word/signed word/dword/signed dword) 32767
-  (signed word) mul16s_compare::b ← (signed word/signed dword~) mul16s_compare::$1
-  (byte) mul16s_compare::i ← (byte/signed byte/word/signed word/dword/signed dword) 0
-mul16s_compare::@1:
-  (byte) mul16s_compare::j ← (byte/signed byte/word/signed word/dword/signed dword) 0
-mul16s_compare::@2:
-  (signed dword/signed word~) mul16s_compare::$2 ← (signed word) mul16s_compare::a + (word/signed word/dword/signed dword) 3371
-  (signed word) mul16s_compare::a ← (signed dword/signed word~) mul16s_compare::$2
-  (signed dword/signed word~) mul16s_compare::$3 ← (signed word) mul16s_compare::b + (word/signed word/dword/signed dword) 4093
-  (signed word) mul16s_compare::b ← (signed dword/signed word~) mul16s_compare::$3
-  (signed dword~) mul16s_compare::$4 ← call muls16s (signed word) mul16s_compare::a (signed word) mul16s_compare::b 
-  (signed dword) mul16s_compare::ms ← (signed dword~) mul16s_compare::$4
-  (signed dword~) mul16s_compare::$5 ← call mul16s (signed word) mul16s_compare::a (signed word) mul16s_compare::b 
-  (signed dword) mul16s_compare::mn ← (signed dword~) mul16s_compare::$5
-  (byte) mul16s_compare::ok ← (byte/signed byte/word/signed word/dword/signed dword) 1
-  (boolean~) mul16s_compare::$6 ← (signed dword) mul16s_compare::ms != (signed dword) mul16s_compare::mn
-  (boolean~) mul16s_compare::$7 ← ! (boolean~) mul16s_compare::$6
-  if((boolean~) mul16s_compare::$7) goto mul16s_compare::@3
-  (byte) mul16s_compare::ok ← (byte/signed byte/word/signed word/dword/signed dword) 0
-mul16s_compare::@3:
-  (boolean~) mul16s_compare::$8 ← (byte) mul16s_compare::ok == (byte/signed byte/word/signed word/dword/signed dword) 0
-  (boolean~) mul16s_compare::$9 ← ! (boolean~) mul16s_compare::$8
-  if((boolean~) mul16s_compare::$9) goto mul16s_compare::@4
-  *((byte*) BGCOL) ← (byte/signed byte/word/signed word/dword/signed dword) 2
-  (void~) mul16s_compare::$10 ← call mul16s_error (signed word) mul16s_compare::a (signed word) mul16s_compare::b (signed dword) mul16s_compare::ms (signed dword) mul16s_compare::mn 
-  goto mul16s_compare::@return
-mul16s_compare::@4:
-  (byte) mul16s_compare::j ← ++ (byte) mul16s_compare::j
-  (boolean~) mul16s_compare::$11 ← (byte) mul16s_compare::j != (byte/signed byte/word/signed word/dword/signed dword) 16
-  if((boolean~) mul16s_compare::$11) goto mul16s_compare::@2
-  (byte) mul16s_compare::i ← ++ (byte) mul16s_compare::i
-  (boolean~) mul16s_compare::$12 ← (byte) mul16s_compare::i != (byte/signed byte/word/signed word/dword/signed dword) 16
-  if((boolean~) mul16s_compare::$12) goto mul16s_compare::@1
-  (void~) mul16s_compare::$13 ← call print_str (string) "signed word multiply results match!@" 
-  (void~) mul16s_compare::$14 ← call print_ln 
-mul16s_compare::@return:
-  return 
-endproc // mul16s_compare()
-proc (void()) mul16s_error((signed word) mul16s_error::a , (signed word) mul16s_error::b , (signed dword) mul16s_error::ms , (signed dword) mul16s_error::mn)
-  (void~) mul16s_error::$0 ← call print_str (string) "signed word multiply mismatch @" 
-  (void~) mul16s_error::$1 ← call print_sword (signed word) mul16s_error::a 
-  (void~) mul16s_error::$2 ← call print_str (string) "*@" 
-  (void~) mul16s_error::$3 ← call print_sword (signed word) mul16s_error::b 
-  (void~) mul16s_error::$4 ← call print_str (string) " slow:@" 
-  (void~) mul16s_error::$5 ← call print_sdword (signed dword) mul16s_error::ms 
-  (void~) mul16s_error::$6 ← call print_str (string) " / normal:@" 
-  (void~) mul16s_error::$7 ← call print_sdword (signed dword) mul16s_error::mn 
-  (void~) mul16s_error::$8 ← call print_ln 
-mul16s_error::@return:
-  return 
-endproc // mul16s_error()
-  call main 
-
 SYMBOLS
+(label) @1
+(label) @10
+(label) @11
+(label) @12
+(label) @13
+(label) @14
+(label) @15
+(label) @16
+(label) @17
+(label) @18
+(label) @19
+(label) @2
+(label) @20
+(label) @21
+(label) @22
+(label) @23
+(label) @24
+(label) @25
+(label) @26
+(label) @27
+(label) @28
+(label) @29
+(label) @3
+(label) @4
+(label) @5
+(label) @6
+(label) @7
+(label) @8
+(label) @9
+(label) @begin
+(label) @end
 (byte*) BGCOL
 (void()) main()
 (void~) main::$0
@@ -1008,6 +470,9 @@ SYMBOLS
 (boolean~) mul16s::$9
 (label) mul16s::@1
 (label) mul16s::@2
+(label) mul16s::@3
+(label) mul16s::@4
+(label) mul16s::@5
 (label) mul16s::@return
 (signed word) mul16s::a
 (signed word) mul16s::b
@@ -1033,6 +498,11 @@ SYMBOLS
 (label) mul16s_compare::@2
 (label) mul16s_compare::@3
 (label) mul16s_compare::@4
+(label) mul16s_compare::@5
+(label) mul16s_compare::@6
+(label) mul16s_compare::@7
+(label) mul16s_compare::@8
+(label) mul16s_compare::@9
 (label) mul16s_compare::@return
 (signed word) mul16s_compare::a
 (signed word) mul16s_compare::b
@@ -1068,6 +538,11 @@ SYMBOLS
 (label) mul16u::@2
 (label) mul16u::@3
 (label) mul16u::@4
+(label) mul16u::@5
+(label) mul16u::@6
+(label) mul16u::@7
+(label) mul16u::@8
+(label) mul16u::@9
 (label) mul16u::@return
 (word) mul16u::a
 (word) mul16u::b
@@ -1092,6 +567,11 @@ SYMBOLS
 (label) mul16u_compare::@2
 (label) mul16u_compare::@3
 (label) mul16u_compare::@4
+(label) mul16u_compare::@5
+(label) mul16u_compare::@6
+(label) mul16u_compare::@7
+(label) mul16u_compare::@8
+(label) mul16u_compare::@9
 (label) mul16u_compare::@return
 (word) mul16u_compare::a
 (word) mul16u_compare::b
@@ -1134,6 +614,9 @@ SYMBOLS
 (boolean~) mul8s::$9
 (label) mul8s::@1
 (label) mul8s::@2
+(label) mul8s::@3
+(label) mul8s::@4
+(label) mul8s::@5
 (label) mul8s::@return
 (signed byte) mul8s::a
 (signed byte) mul8s::b
@@ -1151,6 +634,8 @@ SYMBOLS
 (byte~) mul8su::$8
 (signed word~) mul8su::$9
 (label) mul8su::@1
+(label) mul8su::@2
+(label) mul8su::@3
 (label) mul8su::@return
 (signed byte) mul8su::a
 (byte) mul8su::b
@@ -1168,6 +653,11 @@ SYMBOLS
 (label) mul8u::@2
 (label) mul8u::@3
 (label) mul8u::@4
+(label) mul8u::@5
+(label) mul8u::@6
+(label) mul8u::@7
+(label) mul8u::@8
+(label) mul8u::@9
 (label) mul8u::@return
 (byte) mul8u::a
 (byte) mul8u::b
@@ -1193,12 +683,16 @@ SYMBOLS
 (boolean~) mulf8s::$9
 (label) mulf8s::@1
 (label) mulf8s::@2
+(label) mulf8s::@3
+(label) mulf8s::@4
+(label) mulf8s::@5
 (label) mulf8s::@return
 (signed byte) mulf8s::a
 (signed byte) mulf8s::b
 (word) mulf8s::m
 (signed word) mulf8s::return
 (word()) mulf8u((byte) mulf8u::a , (byte) mulf8u::b)
+(label) mulf8u::@1
 (label) mulf8u::@return
 (byte) mulf8u::a
 (byte) mulf8u::b
@@ -1231,6 +725,10 @@ SYMBOLS
 (label) mulf_init::@2
 (label) mulf_init::@3
 (label) mulf_init::@4
+(label) mulf_init::@5
+(label) mulf_init::@6
+(label) mulf_init::@7
+(label) mulf_init::@8
 (label) mulf_init::@return
 (byte) mulf_init::c
 (byte) mulf_init::dir
@@ -1254,10 +752,16 @@ SYMBOLS
 (signed dword~) muls16s::$5
 (boolean~) muls16s::$6
 (label) muls16s::@1
+(label) muls16s::@10
+(label) muls16s::@11
 (label) muls16s::@2
 (label) muls16s::@3
 (label) muls16s::@4
 (label) muls16s::@5
+(label) muls16s::@6
+(label) muls16s::@7
+(label) muls16s::@8
+(label) muls16s::@9
 (label) muls16s::@return
 (signed word) muls16s::a
 (signed word) muls16s::b
@@ -1272,6 +776,9 @@ SYMBOLS
 (boolean~) muls16u::$3
 (label) muls16u::@1
 (label) muls16u::@2
+(label) muls16u::@3
+(label) muls16u::@4
+(label) muls16u::@5
 (label) muls16u::@return
 (word) muls16u::a
 (word) muls16u::b
@@ -1293,6 +800,7 @@ SYMBOLS
 (byte*~) print_cls::$0
 (boolean~) print_cls::$1
 (label) print_cls::@1
+(label) print_cls::@2
 (label) print_cls::@return
 (byte*) print_cls::sc
 (void()) print_dword((dword) print_dword::dw)
@@ -1308,6 +816,7 @@ SYMBOLS
 (byte*~) print_ln::$0
 (boolean~) print_ln::$1
 (label) print_ln::@1
+(label) print_ln::@2
 (label) print_ln::@return
 (void()) print_sbyte((signed byte) print_sbyte::b)
 (boolean~) print_sbyte::$0
@@ -1317,6 +826,7 @@ SYMBOLS
 (byte~) print_sbyte::$4
 (void~) print_sbyte::$5
 (label) print_sbyte::@1
+(label) print_sbyte::@2
 (label) print_sbyte::@return
 (signed byte) print_sbyte::b
 (byte*) print_screen
@@ -1328,6 +838,7 @@ SYMBOLS
 (dword~) print_sdword::$4
 (void~) print_sdword::$5
 (label) print_sdword::@1
+(label) print_sdword::@2
 (label) print_sdword::@return
 (signed dword) print_sdword::dw
 (void()) print_set_screen((byte*) print_set_screen::screen)
@@ -1338,6 +849,9 @@ SYMBOLS
 (label) print_str::@1
 (label) print_str::@2
 (label) print_str::@3
+(label) print_str::@4
+(label) print_str::@5
+(label) print_str::@6
 (label) print_str::@return
 (byte*) print_str::str
 (void()) print_str_at((byte*) print_str_at::str , (byte*) print_str_at::at)
@@ -1345,6 +859,9 @@ SYMBOLS
 (label) print_str_at::@1
 (label) print_str_at::@2
 (label) print_str_at::@3
+(label) print_str_at::@4
+(label) print_str_at::@5
+(label) print_str_at::@6
 (label) print_str_at::@return
 (byte*) print_str_at::at
 (byte*) print_str_at::str
@@ -1355,10 +872,15 @@ SYMBOLS
 (boolean~) print_str_lines::$3
 (void~) print_str_lines::$4
 (label) print_str_lines::@1
+(label) print_str_lines::@10
 (label) print_str_lines::@2
 (label) print_str_lines::@3
 (label) print_str_lines::@4
 (label) print_str_lines::@5
+(label) print_str_lines::@6
+(label) print_str_lines::@7
+(label) print_str_lines::@8
+(label) print_str_lines::@9
 (label) print_str_lines::@return
 (byte) print_str_lines::ch
 (byte*) print_str_lines::str
@@ -1375,6 +897,7 @@ SYMBOLS
 (word~) print_sword::$4
 (void~) print_sword::$5
 (label) print_sword::@1
+(label) print_sword::@2
 (label) print_sword::@return
 (signed word) print_sword::w
 (void()) print_word((word) print_word::w)

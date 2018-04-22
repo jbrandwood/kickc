@@ -28,50 +28,12 @@ void plot(byte x) {
 }
 
 Adding pre/post-modifier (byte) line::x ← ++ (byte) line::x
-
-STATEMENTS
-  (byte*) plots ← (word/signed word/dword/signed dword) 4096
-  (byte*) SCREEN ← (word/signed word/dword/signed dword) 1024
-proc (void()) main()
-  (byte) main::i ← (byte/signed byte/word/signed word/dword/signed dword) 0
-main::@1:
-  *((byte*) plots + (byte) main::i) ← (byte) main::i
-  *((byte*) SCREEN + (byte) main::i) ← (byte/signed byte/word/signed word/dword/signed dword) 0
-  (byte) main::i ← ++ (byte) main::i
-  (boolean~) main::$0 ← (byte) main::i != (byte/signed byte/word/signed word/dword/signed dword) 40
-  if((boolean~) main::$0) goto main::@1
-main::@2:
-  (void~) main::$1 ← call line (byte/signed byte/word/signed word/dword/signed dword) 0 (byte/signed byte/word/signed word/dword/signed dword) 10 
-  if(true) goto main::@2
-main::@return:
-  return 
-endproc // main()
-proc (void()) line((byte) line::x0 , (byte) line::x1)
-  (boolean~) line::$0 ← (byte) line::x0 < (byte) line::x1
-  if((boolean~) line::$0) goto line::@1
-  (void~) line::$1 ← call plot (byte) line::x0 
-  goto line::@2
-line::@1:
-  (byte) line::x ← (byte) line::x0
-line::@3:
-  (void~) line::$2 ← call plot (byte) line::x 
-  (byte) line::x ← ++ (byte) line::x
-  (boolean~) line::$3 ← (byte) line::x <= (byte) line::x1
-  if((boolean~) line::$3) goto line::@3
-line::@2:
-line::@return:
-  return 
-endproc // line()
-proc (void()) plot((byte) plot::x)
-  (byte) plot::idx ← *((byte*) plots + (byte) plot::x)
-  (byte/signed word/word/dword/signed dword~) plot::$0 ← *((byte*) SCREEN + (byte) plot::idx) + (byte/signed byte/word/signed word/dword/signed dword) 1
-  *((byte*) SCREEN + (byte) plot::idx) ← (byte/signed word/word/dword/signed dword~) plot::$0
-plot::@return:
-  return 
-endproc // plot()
-  call main 
-
 SYMBOLS
+(label) @1
+(label) @2
+(label) @3
+(label) @begin
+(label) @end
 (byte*) SCREEN
 (void()) line((byte) line::x0 , (byte) line::x1)
 (boolean~) line::$0
@@ -81,6 +43,9 @@ SYMBOLS
 (label) line::@1
 (label) line::@2
 (label) line::@3
+(label) line::@4
+(label) line::@5
+(label) line::@6
 (label) line::@return
 (byte) line::x
 (byte) line::x0
@@ -90,6 +55,8 @@ SYMBOLS
 (void~) main::$1
 (label) main::@1
 (label) main::@2
+(label) main::@3
+(label) main::@4
 (label) main::@return
 (byte) main::i
 (void()) plot((byte) plot::x)

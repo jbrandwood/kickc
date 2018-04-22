@@ -90,6 +90,7 @@ public class Compiler {
          StatementSequence sequence = pass0GenerateStatementSequence.getSequence();
          sequence.addStatement(new StatementCall(null, "main", new ArrayList<>()));
          program.setStatementSequence(sequence);
+
          pass1GenerateSSA();
          pass2OptimizeSSA();
          pass3Analysis();
@@ -105,13 +106,16 @@ public class Compiler {
 
    private Program pass1GenerateSSA() {
 
+      //getLog().append("\nSTATEMENTS");
+      //getLog().append(program.getStatementSequence().toString(program));
+
+      new Pass1GenerateControlFlowGraph(program).execute();
+      new Pass1ResolveForwardReferences(program).execute();
       new Pass1TypeInference(program).execute();
-      getLog().append("\nSTATEMENTS");
-      getLog().append(program.getStatementSequence().toString(program));
+
       getLog().append("SYMBOLS");
       getLog().append(program.getScope().getSymbolTableContents(program));
 
-      new Pass1GenerateControlFlowGraph(program).execute();
       new Pass1FixLValuesLoHi(program).execute();
       new Pass1AssertNoLValueIntermediate(program).execute();
       new Pass1AddTypePromotions(program).execute();

@@ -185,247 +185,28 @@ Adding pre/post-modifier (byte*) print_str_at::at ← ++ (byte*) print_str_at::a
 Adding pre/post-modifier (byte*) print_str_at::str ← ++ (byte*) print_str_at::str
 Adding pre/post-modifier (byte*) print_char_cursor ← ++ (byte*) print_char_cursor
 Adding pre/post-modifier (byte*) print_cls::sc ← ++ (byte*) print_cls::sc
-
-STATEMENTS
-  (byte*) print_screen ← (word/signed word/dword/signed dword) 1024
-  (byte*) print_line_cursor ← (byte*) print_screen
-  (byte*) print_char_cursor ← (byte*) print_line_cursor
-proc (void()) print_str_lines((byte*) print_str_lines::str)
-print_str_lines::@1:
-  (boolean~) print_str_lines::$0 ← *((byte*) print_str_lines::str) != (byte) '@'
-  if((boolean~) print_str_lines::$0) goto print_str_lines::@2
-  goto print_str_lines::@3
-print_str_lines::@2:
-print_str_lines::@4:
-  (byte) print_str_lines::ch ← *((byte*) print_str_lines::str)
-  (byte*) print_str_lines::str ← ++ (byte*) print_str_lines::str
-  (boolean~) print_str_lines::$1 ← (byte) print_str_lines::ch != (byte) '@'
-  (boolean~) print_str_lines::$2 ← ! (boolean~) print_str_lines::$1
-  if((boolean~) print_str_lines::$2) goto print_str_lines::@5
-  *((byte*) print_char_cursor) ← (byte) print_str_lines::ch
-  (byte*) print_char_cursor ← ++ (byte*) print_char_cursor
-print_str_lines::@5:
-  (boolean~) print_str_lines::$3 ← (byte) print_str_lines::ch != (byte) '@'
-  if((boolean~) print_str_lines::$3) goto print_str_lines::@4
-  (void~) print_str_lines::$4 ← call print_ln 
-  goto print_str_lines::@1
-print_str_lines::@3:
-print_str_lines::@return:
-  return 
-endproc // print_str_lines()
-proc (void()) print_str_ln((byte*) print_str_ln::str)
-  (void~) print_str_ln::$0 ← call print_str (byte*) print_str_ln::str 
-  (void~) print_str_ln::$1 ← call print_ln 
-print_str_ln::@return:
-  return 
-endproc // print_str_ln()
-proc (void()) print_str((byte*) print_str::str)
-print_str::@1:
-  (boolean~) print_str::$0 ← *((byte*) print_str::str) != (byte) '@'
-  if((boolean~) print_str::$0) goto print_str::@2
-  goto print_str::@3
-print_str::@2:
-  *((byte*) print_char_cursor) ← *((byte*) print_str::str)
-  (byte*) print_char_cursor ← ++ (byte*) print_char_cursor
-  (byte*) print_str::str ← ++ (byte*) print_str::str
-  goto print_str::@1
-print_str::@3:
-print_str::@return:
-  return 
-endproc // print_str()
-proc (void()) print_str_at((byte*) print_str_at::str , (byte*) print_str_at::at)
-print_str_at::@1:
-  (boolean~) print_str_at::$0 ← *((byte*) print_str_at::str) != (byte) '@'
-  if((boolean~) print_str_at::$0) goto print_str_at::@2
-  goto print_str_at::@3
-print_str_at::@2:
-  *((byte*) print_str_at::at) ← *((byte*) print_str_at::str)
-  (byte*) print_str_at::at ← ++ (byte*) print_str_at::at
-  (byte*) print_str_at::str ← ++ (byte*) print_str_at::str
-  goto print_str_at::@1
-print_str_at::@3:
-print_str_at::@return:
-  return 
-endproc // print_str_at()
-proc (void()) print_ln()
-print_ln::@1:
-  (byte*~) print_ln::$0 ← (byte*) print_line_cursor + (byte/signed byte/word/signed word/dword/signed dword) 40
-  (byte*) print_line_cursor ← (byte*~) print_ln::$0
-  (boolean~) print_ln::$1 ← (byte*) print_line_cursor < (byte*) print_char_cursor
-  if((boolean~) print_ln::$1) goto print_ln::@1
-  (byte*) print_char_cursor ← (byte*) print_line_cursor
-print_ln::@return:
-  return 
-endproc // print_ln()
-proc (void()) print_sword((signed word) print_sword::w)
-  (boolean~) print_sword::$0 ← (signed word) print_sword::w < (byte/signed byte/word/signed word/dword/signed dword) 0
-  (boolean~) print_sword::$1 ← ! (boolean~) print_sword::$0
-  if((boolean~) print_sword::$1) goto print_sword::@1
-  (void~) print_sword::$2 ← call print_char (byte) '-' 
-  (signed word~) print_sword::$3 ← - (signed word) print_sword::w
-  (signed word) print_sword::w ← (signed word~) print_sword::$3
-print_sword::@1:
-  (word~) print_sword::$4 ← ((word)) (signed word) print_sword::w
-  (void~) print_sword::$5 ← call print_word (word~) print_sword::$4 
-print_sword::@return:
-  return 
-endproc // print_sword()
-proc (void()) print_sbyte((signed byte) print_sbyte::b)
-  (boolean~) print_sbyte::$0 ← (signed byte) print_sbyte::b < (byte/signed byte/word/signed word/dword/signed dword) 0
-  (boolean~) print_sbyte::$1 ← ! (boolean~) print_sbyte::$0
-  if((boolean~) print_sbyte::$1) goto print_sbyte::@1
-  (void~) print_sbyte::$2 ← call print_char (byte) '-' 
-  (signed byte~) print_sbyte::$3 ← - (signed byte) print_sbyte::b
-  (signed byte) print_sbyte::b ← (signed byte~) print_sbyte::$3
-print_sbyte::@1:
-  (byte~) print_sbyte::$4 ← ((byte)) (signed byte) print_sbyte::b
-  (void~) print_sbyte::$5 ← call print_byte (byte~) print_sbyte::$4 
-print_sbyte::@return:
-  return 
-endproc // print_sbyte()
-proc (void()) print_word((word) print_word::w)
-  (byte~) print_word::$0 ← > (word) print_word::w
-  (void~) print_word::$1 ← call print_byte (byte~) print_word::$0 
-  (byte~) print_word::$2 ← < (word) print_word::w
-  (void~) print_word::$3 ← call print_byte (byte~) print_word::$2 
-print_word::@return:
-  return 
-endproc // print_word()
-proc (void()) print_dword((dword) print_dword::dw)
-  (word~) print_dword::$0 ← > (dword) print_dword::dw
-  (void~) print_dword::$1 ← call print_word (word~) print_dword::$0 
-  (word~) print_dword::$2 ← < (dword) print_dword::dw
-  (void~) print_dword::$3 ← call print_word (word~) print_dword::$2 
-print_dword::@return:
-  return 
-endproc // print_dword()
-proc (void()) print_sdword((signed dword) print_sdword::dw)
-  (boolean~) print_sdword::$0 ← (signed dword) print_sdword::dw < (byte/signed byte/word/signed word/dword/signed dword) 0
-  (boolean~) print_sdword::$1 ← ! (boolean~) print_sdword::$0
-  if((boolean~) print_sdword::$1) goto print_sdword::@1
-  (void~) print_sdword::$2 ← call print_char (byte) '-' 
-  (signed dword~) print_sdword::$3 ← - (signed dword) print_sdword::dw
-  (signed dword) print_sdword::dw ← (signed dword~) print_sdword::$3
-print_sdword::@1:
-  (dword~) print_sdword::$4 ← ((dword)) (signed dword) print_sdword::dw
-  (void~) print_sdword::$5 ← call print_dword (dword~) print_sdword::$4 
-print_sdword::@return:
-  return 
-endproc // print_sdword()
-  (byte[]) print_hextab ← (string) "0123456789abcdef"
-proc (void()) print_byte((byte) print_byte::b)
-  (byte~) print_byte::$0 ← (byte) print_byte::b >> (byte/signed byte/word/signed word/dword/signed dword) 4
-  (void~) print_byte::$1 ← call print_char *((byte[]) print_hextab + (byte~) print_byte::$0) 
-  (byte~) print_byte::$2 ← (byte) print_byte::b & (byte/signed byte/word/signed word/dword/signed dword) 15
-  (void~) print_byte::$3 ← call print_char *((byte[]) print_hextab + (byte~) print_byte::$2) 
-print_byte::@return:
-  return 
-endproc // print_byte()
-proc (void()) print_char((byte) print_char::ch)
-  *((byte*) print_char_cursor) ← (byte) print_char::ch
-  (byte*) print_char_cursor ← ++ (byte*) print_char_cursor
-print_char::@return:
-  return 
-endproc // print_char()
-proc (void()) print_cls()
-  (byte*) print_cls::sc ← (byte*) print_screen
-print_cls::@1:
-  *((byte*) print_cls::sc) ← (byte) ' '
-  (byte*) print_cls::sc ← ++ (byte*) print_cls::sc
-  (byte*~) print_cls::$0 ← (byte*) print_screen + (word/signed word/dword/signed dword) 1000
-  (boolean~) print_cls::$1 ← (byte*) print_cls::sc != (byte*~) print_cls::$0
-  if((boolean~) print_cls::$1) goto print_cls::@1
-  (byte*) print_line_cursor ← (byte*) print_screen
-  (byte*) print_char_cursor ← (byte*) print_line_cursor
-print_cls::@return:
-  return 
-endproc // print_cls()
-proc (void()) print_set_screen((byte*) print_set_screen::screen)
-  (byte*) print_screen ← (byte*) print_set_screen::screen
-  (byte*) print_line_cursor ← (byte*) print_screen
-  (byte*) print_char_cursor ← (byte*) print_line_cursor
-print_set_screen::@return:
-  return 
-endproc // print_set_screen()
-  (byte*) BGCOL ← (word/dword/signed dword) 53281
-  (byte) GREEN ← (byte/signed byte/word/signed word/dword/signed dword) 5
-  (byte) RED ← (byte/signed byte/word/signed word/dword/signed dword) 2
-proc (void()) main()
-  (void~) main::$0 ← call print_cls 
-  *((byte*) BGCOL) ← (byte) GREEN
-  (void~) main::$1 ← call test_bytes 
-  (void~) main::$2 ← call test_sbytes 
-main::@return:
-  return 
-endproc // main()
-proc (void()) test_bytes()
-  (byte) test_bytes::bb ← (byte/signed byte/word/signed word/dword/signed dword) 0
-  (void~) test_bytes::$0 ← call assert_byte (string) "0=0@" (byte) test_bytes::bb (byte/signed byte/word/signed word/dword/signed dword) 0 
-  (byte/signed word/word/dword/signed dword~) test_bytes::$1 ← (byte) test_bytes::bb + (byte/signed byte/word/signed word/dword/signed dword) 2
-  (byte) test_bytes::bc ← (byte/signed word/word/dword/signed dword~) test_bytes::$1
-  (void~) test_bytes::$2 ← call assert_byte (string) "0+2=2@" (byte) test_bytes::bc (byte/signed byte/word/signed word/dword/signed dword) 2 
-  (signed byte~) test_bytes::$3 ← ((signed byte)) (byte) test_bytes::bc
-  (signed word/signed byte/signed dword~) test_bytes::$4 ← (signed byte~) test_bytes::$3 - (byte/signed byte/word/signed word/dword/signed dword) 4
-  (byte~) test_bytes::$5 ← ((byte)) (signed word/signed byte/signed dword~) test_bytes::$4
-  (byte) test_bytes::bd ← (byte~) test_bytes::$5
-  (void~) test_bytes::$6 ← call assert_byte (string) "0+2-4=254@" (byte) test_bytes::bd (byte/word/signed word/dword/signed dword) 254 
-test_bytes::@return:
-  return 
-endproc // test_bytes()
-proc (void()) assert_byte((byte*) assert_byte::msg , (byte) assert_byte::b , (byte) assert_byte::c)
-  (void~) assert_byte::$0 ← call print_str (byte*) assert_byte::msg 
-  (void~) assert_byte::$1 ← call print_str (string) " @" 
-  (boolean~) assert_byte::$2 ← (byte) assert_byte::b != (byte) assert_byte::c
-  if((boolean~) assert_byte::$2) goto assert_byte::@1
-  (void~) assert_byte::$3 ← call print_str (string) "ok@" 
-  goto assert_byte::@2
-assert_byte::@1:
-  *((byte*) BGCOL) ← (byte) RED
-  (void~) assert_byte::$4 ← call print_str (string) "fail!@" 
-assert_byte::@2:
-  (void~) assert_byte::$5 ← call print_ln 
-assert_byte::@return:
-  return 
-endproc // assert_byte()
-proc (void()) test_sbytes()
-  (signed byte) test_sbytes::bb ← (byte/signed byte/word/signed word/dword/signed dword) 0
-  (void~) test_sbytes::$0 ← call assert_sbyte (string) "0=0@" (signed byte) test_sbytes::bb (byte/signed byte/word/signed word/dword/signed dword) 0 
-  (signed word/signed byte/signed dword~) test_sbytes::$1 ← (signed byte) test_sbytes::bb + (byte/signed byte/word/signed word/dword/signed dword) 2
-  (signed byte) test_sbytes::bc ← (signed word/signed byte/signed dword~) test_sbytes::$1
-  (void~) test_sbytes::$2 ← call assert_sbyte (string) "0+2=2@" (signed byte) test_sbytes::bc (byte/signed byte/word/signed word/dword/signed dword) 2 
-  (signed word/signed byte/signed dword~) test_sbytes::$3 ← (signed byte) test_sbytes::bc - (byte/signed byte/word/signed word/dword/signed dword) 4
-  (signed byte) test_sbytes::bd ← (signed word/signed byte/signed dword~) test_sbytes::$3
-  (signed byte/signed word/signed dword~) test_sbytes::$4 ← - (byte/signed byte/word/signed word/dword/signed dword) 2
-  (void~) test_sbytes::$5 ← call assert_sbyte (string) "0+2-4=-2@" (signed byte) test_sbytes::bd (signed byte/signed word/signed dword~) test_sbytes::$4 
-  (signed byte~) test_sbytes::$6 ← - (signed byte) test_sbytes::bd
-  (signed byte) test_sbytes::be ← (signed byte~) test_sbytes::$6
-  (void~) test_sbytes::$7 ← call assert_sbyte (string) "-(0+2-4)=2@" (signed byte) test_sbytes::be (byte/signed byte/word/signed word/dword/signed dword) 2 
-  (signed byte/signed word/signed dword~) test_sbytes::$8 ← - (byte/signed byte/word/signed word/dword/signed dword) 127
-  (signed word/signed byte/signed dword~) test_sbytes::$9 ← (signed byte/signed word/signed dword~) test_sbytes::$8 - (byte/signed byte/word/signed word/dword/signed dword) 127
-  (signed byte~) test_sbytes::$10 ← ((signed byte)) (signed word/signed byte/signed dword~) test_sbytes::$9
-  (signed byte) test_sbytes::bf ← (signed byte~) test_sbytes::$10
-  (void~) test_sbytes::$11 ← call assert_sbyte (string) "-127-127=2@" (signed byte) test_sbytes::bf (byte/signed byte/word/signed word/dword/signed dword) 2 
-test_sbytes::@return:
-  return 
-endproc // test_sbytes()
-proc (void()) assert_sbyte((byte*) assert_sbyte::msg , (signed byte) assert_sbyte::b , (signed byte) assert_sbyte::c)
-  (void~) assert_sbyte::$0 ← call print_str (byte*) assert_sbyte::msg 
-  (void~) assert_sbyte::$1 ← call print_str (string) " @" 
-  (boolean~) assert_sbyte::$2 ← (signed byte) assert_sbyte::b != (signed byte) assert_sbyte::c
-  if((boolean~) assert_sbyte::$2) goto assert_sbyte::@1
-  (void~) assert_sbyte::$3 ← call print_str (string) "ok@" 
-  goto assert_sbyte::@2
-assert_sbyte::@1:
-  *((byte*) BGCOL) ← (byte) RED
-  (void~) assert_sbyte::$4 ← call print_str (string) "fail!@" 
-assert_sbyte::@2:
-  (void~) assert_sbyte::$5 ← call print_ln 
-assert_sbyte::@return:
-  return 
-endproc // assert_sbyte()
-  call main 
-
 SYMBOLS
+(label) @1
+(label) @10
+(label) @11
+(label) @12
+(label) @13
+(label) @14
+(label) @15
+(label) @16
+(label) @17
+(label) @18
+(label) @19
+(label) @2
+(label) @3
+(label) @4
+(label) @5
+(label) @6
+(label) @7
+(label) @8
+(label) @9
+(label) @begin
+(label) @end
 (byte*) BGCOL
 (byte) GREEN
 (byte) RED
@@ -438,6 +219,8 @@ SYMBOLS
 (void~) assert_byte::$5
 (label) assert_byte::@1
 (label) assert_byte::@2
+(label) assert_byte::@3
+(label) assert_byte::@4
 (label) assert_byte::@return
 (byte) assert_byte::b
 (byte) assert_byte::c
@@ -451,6 +234,8 @@ SYMBOLS
 (void~) assert_sbyte::$5
 (label) assert_sbyte::@1
 (label) assert_sbyte::@2
+(label) assert_sbyte::@3
+(label) assert_sbyte::@4
 (label) assert_sbyte::@return
 (signed byte) assert_sbyte::b
 (signed byte) assert_sbyte::c
@@ -475,6 +260,7 @@ SYMBOLS
 (byte*~) print_cls::$0
 (boolean~) print_cls::$1
 (label) print_cls::@1
+(label) print_cls::@2
 (label) print_cls::@return
 (byte*) print_cls::sc
 (void()) print_dword((dword) print_dword::dw)
@@ -490,6 +276,7 @@ SYMBOLS
 (byte*~) print_ln::$0
 (boolean~) print_ln::$1
 (label) print_ln::@1
+(label) print_ln::@2
 (label) print_ln::@return
 (void()) print_sbyte((signed byte) print_sbyte::b)
 (boolean~) print_sbyte::$0
@@ -499,6 +286,7 @@ SYMBOLS
 (byte~) print_sbyte::$4
 (void~) print_sbyte::$5
 (label) print_sbyte::@1
+(label) print_sbyte::@2
 (label) print_sbyte::@return
 (signed byte) print_sbyte::b
 (byte*) print_screen
@@ -510,6 +298,7 @@ SYMBOLS
 (dword~) print_sdword::$4
 (void~) print_sdword::$5
 (label) print_sdword::@1
+(label) print_sdword::@2
 (label) print_sdword::@return
 (signed dword) print_sdword::dw
 (void()) print_set_screen((byte*) print_set_screen::screen)
@@ -520,6 +309,9 @@ SYMBOLS
 (label) print_str::@1
 (label) print_str::@2
 (label) print_str::@3
+(label) print_str::@4
+(label) print_str::@5
+(label) print_str::@6
 (label) print_str::@return
 (byte*) print_str::str
 (void()) print_str_at((byte*) print_str_at::str , (byte*) print_str_at::at)
@@ -527,6 +319,9 @@ SYMBOLS
 (label) print_str_at::@1
 (label) print_str_at::@2
 (label) print_str_at::@3
+(label) print_str_at::@4
+(label) print_str_at::@5
+(label) print_str_at::@6
 (label) print_str_at::@return
 (byte*) print_str_at::at
 (byte*) print_str_at::str
@@ -537,10 +332,15 @@ SYMBOLS
 (boolean~) print_str_lines::$3
 (void~) print_str_lines::$4
 (label) print_str_lines::@1
+(label) print_str_lines::@10
 (label) print_str_lines::@2
 (label) print_str_lines::@3
 (label) print_str_lines::@4
 (label) print_str_lines::@5
+(label) print_str_lines::@6
+(label) print_str_lines::@7
+(label) print_str_lines::@8
+(label) print_str_lines::@9
 (label) print_str_lines::@return
 (byte) print_str_lines::ch
 (byte*) print_str_lines::str
@@ -557,6 +357,7 @@ SYMBOLS
 (word~) print_sword::$4
 (void~) print_sword::$5
 (label) print_sword::@1
+(label) print_sword::@2
 (label) print_sword::@return
 (signed word) print_sword::w
 (void()) print_word((word) print_word::w)

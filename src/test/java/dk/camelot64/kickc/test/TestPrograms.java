@@ -46,13 +46,7 @@ public class TestPrograms {
 
    @Test
    public void testVarForwardProblem() throws IOException, URISyntaxException {
-      try {
          compileAndCompare("var-forward-problem");
-      } catch(CompileError e) {
-         // ignore & return
-         return;
-      }
-      fail("Expected compile error.");
    }
 
    @Test

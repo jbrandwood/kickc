@@ -32,65 +32,11 @@ void gen_char3(byte* dst, word spec) {
         dst[r] = b;
     }
 }
-
-STATEMENTS
-  (byte*) VIC_MEMORY ← (word/dword/signed dword) 53272
-  (byte*) SCREEN ← (word/signed word/dword/signed dword) 1024
-  (byte*) CHARSET ← (word/signed word/dword/signed dword) 12288
-  (word[]) charset_spec_row ← { (word/dword/signed dword) 63450, (word/dword/signed dword) 63454, (word/dword/signed dword) 62030, (word/dword/signed dword) 55006 }
-proc (void()) main()
-  (byte*~) main::$0 ← (byte*) CHARSET + (byte/signed byte/word/signed word/dword/signed dword) 8
-  (byte*) main::charset ← (byte*~) main::$0
-  (byte) main::c ← (byte/signed byte/word/signed word/dword/signed dword) 0
-main::@1:
-  (void~) main::$1 ← call gen_char3 (byte*) main::charset *((word[]) charset_spec_row + (byte) main::c) 
-  (byte*~) main::$2 ← (byte*) main::charset + (byte/signed byte/word/signed word/dword/signed dword) 8
-  (byte*) main::charset ← (byte*~) main::$2
-  (byte/signed word/word/dword/signed dword~) main::$3 ← (byte) main::c + (byte/signed byte/word/signed word/dword/signed dword) 2
-  (byte) main::c ← (byte/signed word/word/dword/signed dword~) main::$3
-  (boolean~) main::$4 ← (byte) main::c != (byte/signed byte/word/signed word/dword/signed dword) 6
-  if((boolean~) main::$4) goto main::@1
-  (word~) main::$5 ← ((word)) (byte*) SCREEN
-  (word/signed dword/dword~) main::$6 ← (word~) main::$5 / (byte/signed byte/word/signed word/dword/signed dword) 64
-  (word~) main::$7 ← ((word)) (byte*) CHARSET
-  (word/signed dword/dword~) main::$8 ← (word~) main::$7 / (word/signed word/dword/signed dword) 1024
-  (word/dword~) main::$9 ← (word/signed dword/dword~) main::$6 | (word/signed dword/dword~) main::$8
-  (byte~) main::$10 ← ((byte)) (word/dword~) main::$9
-  *((byte*) VIC_MEMORY) ← (byte~) main::$10
-main::@return:
-  return 
-endproc // main()
-proc (void()) gen_char3((byte*) gen_char3::dst , (word) gen_char3::spec)
-  (byte) gen_char3::r ← (byte/signed byte/word/signed word/dword/signed dword) 0
-gen_char3::@1:
-  (byte) gen_char3::b ← (byte/signed byte/word/signed word/dword/signed dword) 0
-  (byte) gen_char3::c ← (byte/signed byte/word/signed word/dword/signed dword) 0
-gen_char3::@2:
-  (byte~) gen_char3::$0 ← > (word) gen_char3::spec
-  (byte~) gen_char3::$1 ← (byte~) gen_char3::$0 & (byte/word/signed word/dword/signed dword) 128
-  (boolean~) gen_char3::$2 ← (byte~) gen_char3::$1 != (byte/signed byte/word/signed word/dword/signed dword) 0
-  (boolean~) gen_char3::$3 ← ! (boolean~) gen_char3::$2
-  if((boolean~) gen_char3::$3) goto gen_char3::@3
-  (byte/word/dword~) gen_char3::$4 ← (byte) gen_char3::b | (byte/signed byte/word/signed word/dword/signed dword) 1
-  (byte) gen_char3::b ← (byte/word/dword~) gen_char3::$4
-gen_char3::@3:
-  (byte~) gen_char3::$5 ← (byte) gen_char3::b << (byte/signed byte/word/signed word/dword/signed dword) 1
-  (byte) gen_char3::b ← (byte~) gen_char3::$5
-  (word~) gen_char3::$6 ← (word) gen_char3::spec << (byte/signed byte/word/signed word/dword/signed dword) 1
-  (word) gen_char3::spec ← (word~) gen_char3::$6
-  (byte) gen_char3::c ← ++ (byte) gen_char3::c
-  (boolean~) gen_char3::$7 ← (byte) gen_char3::c != (byte/signed byte/word/signed word/dword/signed dword) 3
-  if((boolean~) gen_char3::$7) goto gen_char3::@2
-  *((byte*) gen_char3::dst + (byte) gen_char3::r) ← (byte) gen_char3::b
-  (byte) gen_char3::r ← ++ (byte) gen_char3::r
-  (boolean~) gen_char3::$8 ← (byte) gen_char3::r != (byte/signed byte/word/signed word/dword/signed dword) 5
-  if((boolean~) gen_char3::$8) goto gen_char3::@1
-gen_char3::@return:
-  return 
-endproc // gen_char3()
-  call main 
-
 SYMBOLS
+(label) @1
+(label) @2
+(label) @begin
+(label) @end
 (byte*) CHARSET
 (byte*) SCREEN
 (byte*) VIC_MEMORY
@@ -108,6 +54,9 @@ SYMBOLS
 (label) gen_char3::@1
 (label) gen_char3::@2
 (label) gen_char3::@3
+(label) gen_char3::@4
+(label) gen_char3::@5
+(label) gen_char3::@6
 (label) gen_char3::@return
 (byte) gen_char3::b
 (byte) gen_char3::c
@@ -127,6 +76,7 @@ SYMBOLS
 (word/signed dword/dword~) main::$8
 (word/dword~) main::$9
 (label) main::@1
+(label) main::@2
 (label) main::@return
 (byte) main::c
 (byte*) main::charset

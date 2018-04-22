@@ -54,95 +54,13 @@ Adding pre/post-modifier (byte) flip::srcIdx ← ++ (byte) flip::srcIdx
 Adding pre/post-modifier (byte) flip::dstIdx ← -- (byte) flip::dstIdx
 Adding pre/post-modifier (byte) plot::i ← ++ (byte) plot::i
 Adding pre/post-modifier (byte) plot::x ← ++ (byte) plot::x
-
-STATEMENTS
-  (byte[256]) buffer1 ← { fill( 256, 0) }
-  (byte[256]) buffer2 ← { fill( 256, 0) }
-  (byte*) RASTER ← (word/dword/signed dword) 53266
-  (byte*) SCREEN ← (word/signed word/dword/signed dword) 1024
-proc (void()) main()
-  (void~) main::$0 ← call prepare 
-main::@1:
-  (byte) main::c ← (byte/signed byte/word/signed word/dword/signed dword) 25
-main::@2:
-main::@3:
-  (boolean~) main::$1 ← *((byte*) RASTER) != (byte/word/signed word/dword/signed dword) 254
-  if((boolean~) main::$1) goto main::@3
-main::@4:
-  (boolean~) main::$2 ← *((byte*) RASTER) != (byte/word/signed word/dword/signed dword) 255
-  if((boolean~) main::$2) goto main::@4
-  (byte) main::c ← -- (byte) main::c
-  (boolean~) main::$3 ← (byte) main::c != (byte/signed byte/word/signed word/dword/signed dword) 0
-  if((boolean~) main::$3) goto main::@2
-  (void~) main::$4 ← call flip 
-  (void~) main::$5 ← call plot 
-  if(true) goto main::@1
-main::@return:
-  return 
-endproc // main()
-proc (void()) prepare()
-  (byte) prepare::i ← (byte/signed byte/word/signed word/dword/signed dword) 0
-prepare::@1:
-  *((byte[256]) buffer1 + (byte) prepare::i) ← (byte) prepare::i
-  (byte) prepare::i ← ++ (byte) prepare::i
-  (boolean~) prepare::$0 ← (byte) prepare::i != (byte/signed byte/word/signed word/dword/signed dword) 0
-  if((boolean~) prepare::$0) goto prepare::@1
-prepare::@return:
-  return 
-endproc // prepare()
-proc (void()) flip()
-  (byte) flip::srcIdx ← (byte/signed byte/word/signed word/dword/signed dword) 0
-  (byte) flip::dstIdx ← (byte/signed byte/word/signed word/dword/signed dword) 15
-  (byte) flip::r ← (byte/signed byte/word/signed word/dword/signed dword) 16
-flip::@1:
-  (byte) flip::c ← (byte/signed byte/word/signed word/dword/signed dword) 16
-flip::@2:
-  *((byte[256]) buffer2 + (byte) flip::dstIdx) ← *((byte[256]) buffer1 + (byte) flip::srcIdx)
-  (byte) flip::srcIdx ← ++ (byte) flip::srcIdx
-  (byte/signed word/word/dword/signed dword~) flip::$0 ← (byte) flip::dstIdx + (byte/signed byte/word/signed word/dword/signed dword) 16
-  (byte) flip::dstIdx ← (byte/signed word/word/dword/signed dword~) flip::$0
-  (byte) flip::c ← -- (byte) flip::c
-  (boolean~) flip::$1 ← (byte) flip::c != (byte/signed byte/word/signed word/dword/signed dword) 0
-  if((boolean~) flip::$1) goto flip::@2
-  (byte) flip::dstIdx ← -- (byte) flip::dstIdx
-  (byte) flip::r ← -- (byte) flip::r
-  (boolean~) flip::$2 ← (byte) flip::r != (byte/signed byte/word/signed word/dword/signed dword) 0
-  if((boolean~) flip::$2) goto flip::@1
-  (byte) flip::i ← (byte/signed byte/word/signed word/dword/signed dword) 0
-flip::@3:
-  *((byte[256]) buffer1 + (byte) flip::i) ← *((byte[256]) buffer2 + (byte) flip::i)
-  (byte) flip::i ← ++ (byte) flip::i
-  (boolean~) flip::$3 ← (byte) flip::i != (byte/signed byte/word/signed word/dword/signed dword) 0
-  if((boolean~) flip::$3) goto flip::@3
-flip::@return:
-  return 
-endproc // flip()
-proc (void()) plot()
-  (byte/word/signed word/dword/signed dword~) plot::$0 ← (byte/signed byte/word/signed word/dword/signed dword) 5 * (byte/signed byte/word/signed word/dword/signed dword) 40
-  (byte*~) plot::$1 ← (byte*) SCREEN + (byte/word/signed word/dword/signed dword~) plot::$0
-  (byte*~) plot::$2 ← (byte*~) plot::$1 + (byte/signed byte/word/signed word/dword/signed dword) 12
-  (byte*) plot::line ← (byte*~) plot::$2
-  (byte) plot::i ← (byte/signed byte/word/signed word/dword/signed dword) 0
-  (byte) plot::y ← (byte/signed byte/word/signed word/dword/signed dword) 16
-plot::@1:
-  (byte) plot::x ← (byte/signed byte/word/signed word/dword/signed dword) 0
-plot::@2:
-  *((byte*) plot::line + (byte) plot::x) ← *((byte[256]) buffer1 + (byte) plot::i)
-  (byte) plot::i ← ++ (byte) plot::i
-  (byte) plot::x ← ++ (byte) plot::x
-  (boolean~) plot::$3 ← (byte) plot::x < (byte/signed byte/word/signed word/dword/signed dword) 16
-  if((boolean~) plot::$3) goto plot::@2
-  (byte*~) plot::$4 ← (byte*) plot::line + (byte/signed byte/word/signed word/dword/signed dword) 40
-  (byte*) plot::line ← (byte*~) plot::$4
-  (byte) plot::y ← -- (byte) plot::y
-  (boolean~) plot::$5 ← (byte) plot::y != (byte/signed byte/word/signed word/dword/signed dword) 0
-  if((boolean~) plot::$5) goto plot::@1
-plot::@return:
-  return 
-endproc // plot()
-  call main 
-
 SYMBOLS
+(label) @1
+(label) @2
+(label) @3
+(label) @4
+(label) @begin
+(label) @end
 (byte*) RASTER
 (byte*) SCREEN
 (byte[256]) buffer1
@@ -155,6 +73,9 @@ SYMBOLS
 (label) flip::@1
 (label) flip::@2
 (label) flip::@3
+(label) flip::@4
+(label) flip::@5
+(label) flip::@6
 (label) flip::@return
 (byte) flip::c
 (byte) flip::dstIdx
@@ -172,6 +93,10 @@ SYMBOLS
 (label) main::@2
 (label) main::@3
 (label) main::@4
+(label) main::@5
+(label) main::@6
+(label) main::@7
+(label) main::@8
 (label) main::@return
 (byte) main::c
 (void()) plot()
@@ -183,6 +108,8 @@ SYMBOLS
 (boolean~) plot::$5
 (label) plot::@1
 (label) plot::@2
+(label) plot::@3
+(label) plot::@4
 (label) plot::@return
 (byte) plot::i
 (byte*) plot::line
@@ -191,6 +118,7 @@ SYMBOLS
 (void()) prepare()
 (boolean~) prepare::$0
 (label) prepare::@1
+(label) prepare::@2
 (label) prepare::@return
 (byte) prepare::i
 

@@ -96,150 +96,14 @@ Adding pre/post-modifier *((byte*) BGCOL) ← -- *((byte*) BGCOL)
 Adding pre/post-modifier (byte) plots::i ← ++ (byte) plots::i
 Adding pre/post-modifier (byte*) init_screen::b ← ++ (byte*) init_screen::b
 Adding pre/post-modifier (byte*) init_screen::c ← ++ (byte*) init_screen::c
-
-STATEMENTS
-  (byte*) D011 ← (word/dword/signed dword) 53265
-  (byte) RST8 ← (byte/word/signed word/dword/signed dword) 128
-  (byte) ECM ← (byte/signed byte/word/signed word/dword/signed dword) 64
-  (byte) BMM ← (byte/signed byte/word/signed word/dword/signed dword) 32
-  (byte) DEN ← (byte/signed byte/word/signed word/dword/signed dword) 16
-  (byte) RSEL ← (byte/signed byte/word/signed word/dword/signed dword) 8
-  (byte*) RASTER ← (word/dword/signed dword) 53266
-  (byte*) D016 ← (word/dword/signed dword) 53270
-  (byte) MCM ← (byte/signed byte/word/signed word/dword/signed dword) 16
-  (byte) CSEL ← (byte/signed byte/word/signed word/dword/signed dword) 8
-  (byte*) D018 ← (word/dword/signed dword) 53272
-  (byte*) BGCOL ← (word/dword/signed dword) 53280
-  (byte*) FGCOL ← (word/dword/signed dword) 53281
-  (byte*) COLS ← (word/dword/signed dword) 55296
-  (byte*) SCREEN ← (word/signed word/dword/signed dword) 1024
-  (byte*) BITMAP ← (word/signed word/dword/signed dword) 8192
-proc (void()) main()
-  *((byte*) BGCOL) ← (byte/signed byte/word/signed word/dword/signed dword) 0
-  *((byte*) FGCOL) ← (byte/signed byte/word/signed word/dword/signed dword) 0
-  (byte~) main::$0 ← (byte) BMM | (byte) DEN
-  (byte~) main::$1 ← (byte~) main::$0 | (byte) RSEL
-  (byte/word/dword~) main::$2 ← (byte~) main::$1 | (byte/signed byte/word/signed word/dword/signed dword) 3
-  *((byte*) D011) ← (byte/word/dword~) main::$2
-  (word~) main::$3 ← ((word)) (byte*) SCREEN
-  (word/signed dword/dword~) main::$4 ← (word~) main::$3 / (byte/signed byte/word/signed word/dword/signed dword) 64
-  (word~) main::$5 ← ((word)) (byte*) BITMAP
-  (word/signed dword/dword~) main::$6 ← (word~) main::$5 / (word/signed word/dword/signed dword) 1024
-  (word/dword~) main::$7 ← (word/signed dword/dword~) main::$4 | (word/signed dword/dword~) main::$6
-  (byte~) main::$8 ← ((byte)) (word/dword~) main::$7
-  *((byte*) D018) ← (byte~) main::$8
-  (void~) main::$9 ← call init_screen 
-  (void~) main::$10 ← call init_plot_tables 
-main::@1:
-main::@2:
-  (boolean~) main::$11 ← *((byte*) RASTER) != (byte/word/signed word/dword/signed dword) 255
-  if((boolean~) main::$11) goto main::@2
-  *((byte*) BGCOL) ← ++ *((byte*) BGCOL)
-  (void~) main::$12 ← call plots 
-  *((byte*) BGCOL) ← -- *((byte*) BGCOL)
-  if(true) goto main::@1
-main::@return:
-  return 
-endproc // main()
-  (byte[]) plots_x ← { (byte/signed byte/word/signed word/dword/signed dword) 60, (byte/signed byte/word/signed word/dword/signed dword) 80, (byte/signed byte/word/signed word/dword/signed dword) 110, (byte/signed byte/word/signed word/dword/signed dword) 80, (byte/signed byte/word/signed word/dword/signed dword) 60, (byte/signed byte/word/signed word/dword/signed dword) 40, (byte/signed byte/word/signed word/dword/signed dword) 10, (byte/signed byte/word/signed word/dword/signed dword) 40 }
-  (byte[]) plots_y ← { (byte/signed byte/word/signed word/dword/signed dword) 10, (byte/signed byte/word/signed word/dword/signed dword) 40, (byte/signed byte/word/signed word/dword/signed dword) 60, (byte/signed byte/word/signed word/dword/signed dword) 80, (byte/signed byte/word/signed word/dword/signed dword) 110, (byte/signed byte/word/signed word/dword/signed dword) 80, (byte/signed byte/word/signed word/dword/signed dword) 60, (byte/signed byte/word/signed word/dword/signed dword) 40 }
-  (byte) plots_cnt ← (byte/signed byte/word/signed word/dword/signed dword) 8
-proc (void()) plots()
-  (byte) plots::i ← (byte/signed byte/word/signed word/dword/signed dword) 0
-plots::@1:
-  (void~) plots::$0 ← call plot *((byte[]) plots_x + (byte) plots::i) *((byte[]) plots_y + (byte) plots::i) 
-  (byte) plots::i ← ++ (byte) plots::i
-  (boolean~) plots::$1 ← (byte) plots::i < (byte) plots_cnt
-  if((boolean~) plots::$1) goto plots::@1
-plots::@return:
-  return 
-endproc // plots()
-  (byte[256]) plot_xlo ← { fill( 256, 0) }
-  (byte[256]) plot_xhi ← { fill( 256, 0) }
-  (byte[256]) plot_ylo ← { fill( 256, 0) }
-  (byte[256]) plot_yhi ← { fill( 256, 0) }
-  (byte[256]) plot_bit ← { fill( 256, 0) }
-proc (void()) plot((byte) plot::x , (byte) plot::y)
-  (byte*) plot::plotter_x ← (byte/signed byte/word/signed word/dword/signed dword) 0
-  (word) plot::plotter_y ← (byte/signed byte/word/signed word/dword/signed dword) 0
-  (byte~) plot::$0 ← > (byte*) plot::plotter_x
-  lval((byte~) plot::$0) ← *((byte[256]) plot_xhi + (byte) plot::x)
-  (byte~) plot::$1 ← < (byte*) plot::plotter_x
-  lval((byte~) plot::$1) ← *((byte[256]) plot_xlo + (byte) plot::x)
-  (byte~) plot::$2 ← > (word) plot::plotter_y
-  lval((byte~) plot::$2) ← *((byte[256]) plot_yhi + (byte) plot::y)
-  (byte~) plot::$3 ← < (word) plot::plotter_y
-  lval((byte~) plot::$3) ← *((byte[256]) plot_ylo + (byte) plot::y)
-  (byte*~) plot::$4 ← (byte*) plot::plotter_x + (word) plot::plotter_y
-  (byte*) plot::plotter ← (byte*~) plot::$4
-  (byte~) plot::$5 ← *((byte*) plot::plotter) | *((byte[256]) plot_bit + (byte) plot::x)
-  *((byte*) plot::plotter) ← (byte~) plot::$5
-plot::@return:
-  return 
-endproc // plot()
-proc (void()) init_plot_tables()
-  (byte) init_plot_tables::bits ← (byte/word/signed word/dword/signed dword) 128
-  (byte) init_plot_tables::x ← (byte/signed byte/word/signed word/dword/signed dword) 0
-init_plot_tables::@1:
-  (byte~) init_plot_tables::$0 ← (byte) init_plot_tables::x & (byte/word/signed word/dword/signed dword) 248
-  *((byte[256]) plot_xlo + (byte) init_plot_tables::x) ← (byte~) init_plot_tables::$0
-  (byte~) init_plot_tables::$1 ← > (byte*) BITMAP
-  *((byte[256]) plot_xhi + (byte) init_plot_tables::x) ← (byte~) init_plot_tables::$1
-  *((byte[256]) plot_bit + (byte) init_plot_tables::x) ← (byte) init_plot_tables::bits
-  (byte~) init_plot_tables::$2 ← (byte) init_plot_tables::bits >> (byte/signed byte/word/signed word/dword/signed dword) 1
-  (byte) init_plot_tables::bits ← (byte~) init_plot_tables::$2
-  (boolean~) init_plot_tables::$3 ← (byte) init_plot_tables::bits == (byte/signed byte/word/signed word/dword/signed dword) 0
-  (boolean~) init_plot_tables::$4 ← ! (boolean~) init_plot_tables::$3
-  if((boolean~) init_plot_tables::$4) goto init_plot_tables::@2
-  (byte) init_plot_tables::bits ← (byte/word/signed word/dword/signed dword) 128
-init_plot_tables::@2:
-  (byte) init_plot_tables::x ← ++ (byte) init_plot_tables::x
-  (boolean~) init_plot_tables::$5 ← (byte) init_plot_tables::x != (byte/signed byte/word/signed word/dword/signed dword) 0
-  if((boolean~) init_plot_tables::$5) goto init_plot_tables::@1
-  (byte*) init_plot_tables::yoffs ← (byte/signed byte/word/signed word/dword/signed dword) 0
-  (byte) init_plot_tables::y ← (byte/signed byte/word/signed word/dword/signed dword) 0
-init_plot_tables::@3:
-  (byte~) init_plot_tables::$6 ← (byte) init_plot_tables::y & (byte/signed byte/word/signed word/dword/signed dword) 7
-  (byte~) init_plot_tables::$7 ← < (byte*) init_plot_tables::yoffs
-  (byte~) init_plot_tables::$8 ← (byte~) init_plot_tables::$6 | (byte~) init_plot_tables::$7
-  *((byte[256]) plot_ylo + (byte) init_plot_tables::y) ← (byte~) init_plot_tables::$8
-  (byte~) init_plot_tables::$9 ← > (byte*) init_plot_tables::yoffs
-  *((byte[256]) plot_yhi + (byte) init_plot_tables::y) ← (byte~) init_plot_tables::$9
-  (byte~) init_plot_tables::$10 ← (byte) init_plot_tables::y & (byte/signed byte/word/signed word/dword/signed dword) 7
-  (boolean~) init_plot_tables::$11 ← (byte~) init_plot_tables::$10 == (byte/signed byte/word/signed word/dword/signed dword) 7
-  (boolean~) init_plot_tables::$12 ← ! (boolean~) init_plot_tables::$11
-  if((boolean~) init_plot_tables::$12) goto init_plot_tables::@4
-  (word/signed word/dword/signed dword~) init_plot_tables::$13 ← (byte/signed byte/word/signed word/dword/signed dword) 40 * (byte/signed byte/word/signed word/dword/signed dword) 8
-  (byte*~) init_plot_tables::$14 ← (byte*) init_plot_tables::yoffs + (word/signed word/dword/signed dword~) init_plot_tables::$13
-  (byte*) init_plot_tables::yoffs ← (byte*~) init_plot_tables::$14
-init_plot_tables::@4:
-  (byte) init_plot_tables::y ← ++ (byte) init_plot_tables::y
-  (boolean~) init_plot_tables::$15 ← (byte) init_plot_tables::y != (byte/signed byte/word/signed word/dword/signed dword) 0
-  if((boolean~) init_plot_tables::$15) goto init_plot_tables::@3
-init_plot_tables::@return:
-  return 
-endproc // init_plot_tables()
-proc (void()) init_screen()
-  (byte*) init_screen::b ← (byte*) BITMAP
-init_screen::@1:
-  *((byte*) init_screen::b) ← (byte/signed byte/word/signed word/dword/signed dword) 0
-  (byte*) init_screen::b ← ++ (byte*) init_screen::b
-  (byte*~) init_screen::$0 ← (byte*) BITMAP + (word/signed word/dword/signed dword) 8192
-  (boolean~) init_screen::$1 ← (byte*) init_screen::b != (byte*~) init_screen::$0
-  if((boolean~) init_screen::$1) goto init_screen::@1
-  (byte*) init_screen::c ← (byte*) SCREEN
-init_screen::@2:
-  *((byte*) init_screen::c) ← (byte/signed byte/word/signed word/dword/signed dword) 20
-  (byte*) init_screen::c ← ++ (byte*) init_screen::c
-  (byte*~) init_screen::$2 ← (byte*) SCREEN + (word/signed word/dword/signed dword) 1024
-  (boolean~) init_screen::$3 ← (byte*) init_screen::c != (byte*~) init_screen::$2
-  if((boolean~) init_screen::$3) goto init_screen::@2
-init_screen::@return:
-  return 
-endproc // init_screen()
-  call main 
-
 SYMBOLS
+(label) @1
+(label) @2
+(label) @3
+(label) @4
+(label) @5
+(label) @begin
+(label) @end
 (byte*) BGCOL
 (byte*) BITMAP
 (byte) BMM
@@ -277,6 +141,10 @@ SYMBOLS
 (label) init_plot_tables::@2
 (label) init_plot_tables::@3
 (label) init_plot_tables::@4
+(label) init_plot_tables::@5
+(label) init_plot_tables::@6
+(label) init_plot_tables::@7
+(label) init_plot_tables::@8
 (label) init_plot_tables::@return
 (byte) init_plot_tables::bits
 (byte) init_plot_tables::x
@@ -289,6 +157,8 @@ SYMBOLS
 (boolean~) init_screen::$3
 (label) init_screen::@1
 (label) init_screen::@2
+(label) init_screen::@3
+(label) init_screen::@4
 (label) init_screen::@return
 (byte*) init_screen::b
 (byte*) init_screen::c
@@ -308,6 +178,8 @@ SYMBOLS
 (void~) main::$9
 (label) main::@1
 (label) main::@2
+(label) main::@3
+(label) main::@4
 (label) main::@return
 (void()) plot((byte) plot::x , (byte) plot::y)
 (byte~) plot::$0
@@ -331,6 +203,7 @@ SYMBOLS
 (void~) plots::$0
 (boolean~) plots::$1
 (label) plots::@1
+(label) plots::@2
 (label) plots::@return
 (byte) plots::i
 (byte) plots_cnt

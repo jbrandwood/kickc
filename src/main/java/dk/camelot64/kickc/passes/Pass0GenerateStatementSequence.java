@@ -657,11 +657,12 @@ public class Pass0GenerateStatementSequence extends KickCBaseVisitor<Object> {
    @Override
    public RValue visitExprId(KickCParser.ExprIdContext ctx) {
       Variable variable = getCurrentSymbols().getVariable(ctx.NAME().getText());
-      if(variable == null) {
-         program.getLog().append("ERROR! Line " + ctx.getStart().getLine() + ". Unknown variable " + ctx.NAME().getText());
-         throw new CompileError("ERROR! Line " + ctx.getStart().getLine() + ". Unknown variable " + ctx.NAME().getText());
+      if(variable != null) {
+         return variable.getRef();
+      } else {
+         // Either forward reference or a non-existing variable. Create a forward reference for later resolving.
+         return new ForwardVariableRef(ctx.NAME().getText());
       }
-      return variable.getRef();
    }
 
    public StatementSequence getSequence() {

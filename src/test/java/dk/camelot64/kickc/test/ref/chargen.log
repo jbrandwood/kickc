@@ -26,49 +26,10 @@ void main() {
 }
 
 Adding pre/post-modifier (byte*) main::sc ← ++ (byte*) main::sc
-
-STATEMENTS
-  (byte*) PROCPORT ← (byte/signed byte/word/signed word/dword/signed dword) 1
-  (byte*) CHARGEN ← (word/dword/signed dword) 53248
-  (byte*) SCREEN ← (word/signed word/dword/signed dword) 1024
-proc (void()) main()
-  asm { sei  }
-  (byte*~) main::$0 ← (byte*) CHARGEN + (byte/signed byte/word/signed word/dword/signed dword) 8
-  (byte*) main::CHAR_A ← (byte*~) main::$0
-  *((byte*) PROCPORT) ← (byte/signed byte/word/signed word/dword/signed dword) 50
-  (byte*) main::sc ← (byte*) SCREEN
-  (byte) main::y ← (byte/signed byte/word/signed word/dword/signed dword) 0
-main::@1:
-  (byte) main::bits ← *((byte*) main::CHAR_A + (byte) main::y)
-  (byte) main::x ← (byte/signed byte/word/signed word/dword/signed dword) 0
-main::@2:
-  (byte) main::c ← (byte) '.'
-  (byte~) main::$1 ← (byte) main::bits & (byte/word/signed word/dword/signed dword) 128
-  (boolean~) main::$2 ← (byte~) main::$1 != (byte/signed byte/word/signed word/dword/signed dword) 0
-  (boolean~) main::$3 ← ! (boolean~) main::$2
-  if((boolean~) main::$3) goto main::@3
-  (byte) main::c ← (byte) '*'
-main::@3:
-  *((byte*) main::sc) ← (byte) main::c
-  (byte*) main::sc ← ++ (byte*) main::sc
-  (byte~) main::$4 ← (byte) main::bits << (byte/signed byte/word/signed word/dword/signed dword) 1
-  (byte) main::bits ← (byte~) main::$4
-  (byte) main::x ← ++ (byte) main::x
-  (boolean~) main::$5 ← (byte) main::x != (byte/signed byte/word/signed word/dword/signed dword) 8
-  if((boolean~) main::$5) goto main::@2
-  (byte*~) main::$6 ← (byte*) main::sc + (byte/signed byte/word/signed word/dword/signed dword) 32
-  (byte*) main::sc ← (byte*~) main::$6
-  (byte) main::y ← ++ (byte) main::y
-  (boolean~) main::$7 ← (byte) main::y != (byte/signed byte/word/signed word/dword/signed dword) 8
-  if((boolean~) main::$7) goto main::@1
-  *((byte*) PROCPORT) ← (byte/signed byte/word/signed word/dword/signed dword) 55
-  asm { cli  }
-main::@return:
-  return 
-endproc // main()
-  call main 
-
 SYMBOLS
+(label) @1
+(label) @begin
+(label) @end
 (byte*) CHARGEN
 (byte*) PROCPORT
 (byte*) SCREEN
@@ -84,6 +45,9 @@ SYMBOLS
 (label) main::@1
 (label) main::@2
 (label) main::@3
+(label) main::@4
+(label) main::@5
+(label) main::@6
 (label) main::@return
 (byte*) main::CHAR_A
 (byte) main::bits

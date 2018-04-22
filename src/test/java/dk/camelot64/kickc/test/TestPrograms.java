@@ -710,6 +710,17 @@ public class TestPrograms {
       assertError("register-clobber", "CLOBBER ERROR");
    }
 
+   @Test
+   public void testRecursionError() throws IOException, URISyntaxException {
+      assertError("recursion-error", "Recursion");
+   }
+
+   @Test
+   public void testRecursionComplexError() throws IOException, URISyntaxException {
+      assertError("recursion-error-complex", "Recursion");
+   }
+
+
    private void assertError(String kcFile, String expectError) throws IOException, URISyntaxException {
       try {
          compileAndCompare(kcFile);

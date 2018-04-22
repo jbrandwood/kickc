@@ -6,6 +6,7 @@ import dk.camelot64.kickc.model.types.SymbolTypeSimple;
 import dk.camelot64.kickc.model.values.ConstantBool;
 import dk.camelot64.kickc.model.values.ConstantInteger;
 import dk.camelot64.kickc.model.values.ConstantLiteral;
+import dk.camelot64.kickc.model.values.ConstantPointer;
 
 import java.util.Objects;
 
@@ -20,7 +21,10 @@ public class OperatorNotEqual extends OperatorBinary {
    public ConstantLiteral calculateLiteral(ConstantLiteral left, ConstantLiteral right) {
       if(left instanceof ConstantInteger && right instanceof ConstantInteger) {
          return new ConstantBool(!Objects.equals(((ConstantInteger) left).getInteger(), ((ConstantInteger) right).getInteger()));
+      } else if(left instanceof ConstantPointer && right instanceof ConstantPointer) {
+         return new ConstantBool(!Objects.equals(((ConstantPointer) left).getLocation(), ((ConstantPointer) right).getLocation()));
       }
+
       throw new CompileError("Calculation not implemented " + left + " " + getOperator() + " " + right);
    }
 

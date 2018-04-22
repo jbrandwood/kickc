@@ -45,6 +45,11 @@ public class TestPrograms {
    }
 
    @Test
+   public void testConstPointer() throws IOException, URISyntaxException {
+      compileAndCompare("const-pointer");
+   }
+
+   @Test
    public void testVarForwardProblem() throws IOException, URISyntaxException {
          compileAndCompare("var-forward-problem");
    }

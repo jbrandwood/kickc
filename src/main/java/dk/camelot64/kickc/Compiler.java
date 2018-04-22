@@ -170,6 +170,7 @@ public class Compiler {
       assertions.add(new Pass2AssertNoProcs(program));
       assertions.add(new Pass2AssertNoLabels(program));
       assertions.add(new Pass2AssertSingleAssignment(program));
+      assertions.add(new Pass2AssertRValues(program));
       for(Pass2SsaAssertion assertion : assertions) {
          assertion.check();
       }

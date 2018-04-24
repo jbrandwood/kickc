@@ -28,9 +28,9 @@ main: {
     bcc !+
     inc charset+1
   !:
-    lda #2
+    lda c
     clc
-    adc c
+    adc #2
     sta c
     cmp #6
     bne b1

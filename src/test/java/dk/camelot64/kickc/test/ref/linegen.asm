@@ -139,9 +139,9 @@ main: {
     sta print_word.w+1
     jsr print_word
     jsr print_ln
-    lda #2
+    lda i
     clc
-    adc i
+    adc #2
     sta i
     cmp #$14*2
     bcc b1
@@ -379,13 +379,13 @@ lin16u_gen: {
     lda val+3
     adc step+3
     sta val+3
-    clc
     lda lintab
-    adc #<2
+    clc
+    adc #2
     sta lintab
-    lda lintab+1
-    adc #>2
-    sta lintab+1
+    bcc !+
+    inc lintab+1
+  !:
     inc i
     bne !+
     inc i+1

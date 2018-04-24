@@ -91,10 +91,8 @@ anim: {
     sbc #sinlen_y
     tax
   b3:
-    lda j2
-    sec
-    sbc #2
-    sta j2
+    dec j2
+    dec j2
     inc j
     lda j
     cmp #7

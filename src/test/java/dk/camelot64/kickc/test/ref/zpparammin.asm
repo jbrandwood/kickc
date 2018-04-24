@@ -9,21 +9,19 @@ main: {
     lda #0
     sta i
   b1:
+    ldx i
+    inx
     ldy i
     iny
-    lda #2
-    clc
-    adc i
-    tax
+    iny
     lda i
     jsr sum
     ldy i
     sta SCREEN,y
+    ldx i
+    inx
     iny
-    lda #2
-    clc
-    adc i
-    tax
+    iny
     lda i
     jsr sum2
     ldy i
@@ -35,19 +33,19 @@ main: {
     rts
 }
 sum2: {
-    sty $ff
+    stx $ff
     clc
     adc $ff
-    stx $ff
+    sty $ff
     clc
     adc $ff
     rts
 }
 sum: {
-    sty $ff
+    stx $ff
     clc
     adc $ff
-    stx $ff
+    sty $ff
     clc
     adc $ff
     rts

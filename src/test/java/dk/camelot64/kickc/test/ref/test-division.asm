@@ -76,9 +76,9 @@ test_16s: {
     sta print_sword.w+1
     jsr print_sword
     jsr print_ln
-    lda #2
+    lda i
     clc
-    adc i
+    adc #2
     sta i
     cmp #$c
     beq !b1+
@@ -537,9 +537,9 @@ test_16u: {
     sta print_word.w+1
     jsr print_word
     jsr print_ln
-    lda #2
+    lda i
     clc
-    adc i
+    adc #2
     sta i
     cmp #$c
     bne b1

@@ -195,13 +195,13 @@ sin16s_gen: {
     iny
     lda _1+1
     sta (sintab),y
-    clc
     lda sintab
-    adc #<2
+    clc
+    adc #2
     sta sintab
-    lda sintab+1
-    adc #>2
-    sta sintab+1
+    bcc !+
+    inc sintab+1
+  !:
     lda x
     clc
     adc step

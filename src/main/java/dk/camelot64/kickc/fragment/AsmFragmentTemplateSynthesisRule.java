@@ -184,6 +184,7 @@ class AsmFragmentTemplateSynthesisRule {
       Map<String, String> mapZ = new LinkedHashMap<>();
       mapZ.put("z2", "z1");
       mapZ.put("z3", "z2");
+      mapZ.put("z4", "z3");
       Map<String, String> mapZ2 = new LinkedHashMap<>();
       mapZ2.put("z3", "z1");
       Map<String, String> mapZ3 = new LinkedHashMap<>();
@@ -439,6 +440,15 @@ class AsmFragmentTemplateSynthesisRule {
       // Rewrite *C1 to YY (if other C1s)
       synths.add(new AsmFragmentTemplateSynthesisRule("(.*c1.*)_deref_pb(.)c1(.*)", rvalYy+"|"+lvalDerefC1, "ldy {c1}", "$1vb$2yy$3", null, null));
 
+      // Rewrite (Z1),y to AA
+      synths.add(new AsmFragmentTemplateSynthesisRule("(.*)pb(.)z1_derefidx_vbuyy(.*)_then_(.*)", twoZ1+"|"+rvalAa, "lda ({z1}),y\n" , "$1vb$2aa$3_then_$4", null, mapZ));
+
+      // Rewrite (Z1),y to save and reload YY from $FF
+      synths.add(new AsmFragmentTemplateSynthesisRule("pb(.)z1_derefidx_vbuyy=(.*)", twoZ1, "sty $ff\n" , "vb$1aa=$2", "ldy $ff\nsta ({z1}),y", mapZ));
+      // Rewrite C1,y to save and reload YY from $FF
+      synths.add(new AsmFragmentTemplateSynthesisRule("pb(.)c1_derefidx_vbuyy=(.*)", twoC1, "sty $ff\n" , "vb$1aa=$2", "ldy $ff\nsta {c1},y", mapC));
+      synths.add(new AsmFragmentTemplateSynthesisRule("pb(.)c1_derefidx_vbuxx=(.*)", twoC1, "stx $ff\n" , "vb$1aa=$2", "ldx $ff\nsta {c1},x", mapC));
+
       // OLD STYLE REWRITES - written when only one rule could be taken
 
       synths.add(new AsmFragmentTemplateSynthesisRule("pb(.)c1_derefidx_vbuz1=(.*)", twoZ1+"|"+twoC1, null, "vb$1aa=$2", "ldx {z1}\n" + "sta {c1},x", mapZC));
@@ -457,6 +467,7 @@ class AsmFragmentTemplateSynthesisRule {
       synths.add(new AsmFragmentTemplateSynthesisRule("(.*)=(.*)_derefidx_vbuz2(.*)", rvalYy+"|"+twoZ2, "ldy {z2}", "$1=$2_derefidx_vbuyy$3", null, mapZ3));
       synths.add(new AsmFragmentTemplateSynthesisRule("(.*)=(.*)_derefidx_vbuz3(.*)", rvalYy, "ldy {z3}", "$1=$2_derefidx_vbuyy$3", null, null));
       synths.add(new AsmFragmentTemplateSynthesisRule("(.*)=(.*)_derefidx_vbuz3(.*)", rvalXx, "ldx {z3}", "$1=$2_derefidx_vbuxx$3", null, null));
+
       // Convert array indexing twice with A/zp1/zp2 to X/Y register with a ldx/ldy prefix ( ..._derefidx_vbunn..._derefidx_vbunn... -> ..._derefidx_vbuxx..._derefidx_vbuxx... )
       synths.add(new AsmFragmentTemplateSynthesisRule("(.*)_derefidx_vbuaa(.*)_derefidx_vbuaa(.*)", threeAa+"|"+rvalXx+"|"+lvalDerefIdxAa, "tax", "$1_derefidx_vbuxx$2_derefidx_vbuxx$3", null, null));
       synths.add(new AsmFragmentTemplateSynthesisRule("(.*)_derefidx_vbuaa(.*)_derefidx_vbuaa(.*)", threeAa+"|"+rvalYy+"|"+lvalDerefIdxAa, "tay", "$1_derefidx_vbuyy$2_derefidx_vbuyy$3", null, null));

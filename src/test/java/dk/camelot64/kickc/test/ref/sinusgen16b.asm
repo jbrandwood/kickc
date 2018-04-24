@@ -54,20 +54,20 @@ main: {
     lda #>str
     sta print_str.str+1
     jsr print_str
-    clc
     lda st1
-    adc #<2
-    sta st1
-    lda st1+1
-    adc #>2
-    sta st1+1
     clc
+    adc #2
+    sta st1
+    bcc !+
+    inc st1+1
+  !:
     lda st2
-    adc #<2
+    clc
+    adc #2
     sta st2
-    lda st2+1
-    adc #>2
-    sta st2+1
+    bcc !+
+    inc st2+1
+  !:
     inx
     cpx #$78
     bne b1
@@ -218,13 +218,13 @@ sin16s_genb: {
     iny
     lda _2+1
     sta (sintab),y
-    clc
     lda sintab
-    adc #<2
+    clc
+    adc #2
     sta sintab
-    lda sintab+1
-    adc #>2
-    sta sintab+1
+    bcc !+
+    inc sintab+1
+  !:
     lda x
     clc
     adc step
@@ -603,13 +603,13 @@ sin16s_gen: {
     iny
     lda _1+1
     sta (sintab),y
-    clc
     lda sintab
-    adc #<2
+    clc
+    adc #2
     sta sintab
-    lda sintab+1
-    adc #>2
-    sta sintab+1
+    bcc !+
+    inc sintab+1
+  !:
     lda x
     clc
     adc step

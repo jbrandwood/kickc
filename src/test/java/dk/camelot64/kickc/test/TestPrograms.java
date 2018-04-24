@@ -45,6 +45,21 @@ public class TestPrograms {
    }
 
    @Test
+   public void testHelloWorld() throws IOException, URISyntaxException {
+      compileAndCompare("helloworld");
+   }
+
+   @Test
+   public void testHelloWorld2() throws IOException, URISyntaxException {
+      compileAndCompare("helloworld2");
+   }
+
+   @Test
+   public void testChessboard() throws IOException, URISyntaxException {
+      compileAndCompare("chessboard");
+   }
+
+   @Test
    public void testFragmentSynth() throws IOException, URISyntaxException {
       compileAndCompare("fragment-synth");
    }

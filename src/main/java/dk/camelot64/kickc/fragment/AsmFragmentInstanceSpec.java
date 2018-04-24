@@ -145,6 +145,12 @@ public class AsmFragmentInstanceSpec {
          signature.append("1");
       } else if(
             rValue2 instanceof ConstantInteger &&
+                  ((ConstantInteger) rValue2).getValue() == 2 &&
+                  operator != null &&
+                  (operator.getOperator().equals("-") || operator.getOperator().equals("+"))) {
+         signature.append("2");
+      } else if(
+            rValue2 instanceof ConstantInteger &&
                   ((ConstantInteger) rValue2).getValue() <= 7 &&
                   operator != null &&
                   (operator.getOperator().equals(">>") || operator.getOperator().equals("<<"))) {

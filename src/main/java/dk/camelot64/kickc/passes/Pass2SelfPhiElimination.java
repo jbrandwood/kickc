@@ -14,7 +14,7 @@ public class Pass2SelfPhiElimination extends Pass2SsaOptimization {
    }
 
    /**
-    * Eliminate alias assignments replacing them with the aliased variable.
+    * Eliminate phi variables pointing to themselves
     */
    @Override
    public boolean step() {

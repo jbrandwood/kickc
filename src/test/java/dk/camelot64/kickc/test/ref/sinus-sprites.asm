@@ -233,10 +233,6 @@ gen_sintab: {
     lda #>f_amp
     sta setMEMtoFAC.mem+1
     jsr setMEMtoFAC
-    lda #<f_min
-    sta addMEMtoFAC.mem
-    lda #>f_min
-    sta addMEMtoFAC.mem+1
     jsr addMEMtoFAC
     lda #<f_min
     sta setMEMtoFAC.mem
@@ -278,10 +274,6 @@ gen_sintab: {
     lda #>f_amp
     sta mulFACbyMEM.mem+1
     jsr mulFACbyMEM
-    lda #<f_min
-    sta addMEMtoFAC.mem
-    lda #>f_min
-    sta addMEMtoFAC.mem+1
     jsr addMEMtoFAC
     jsr getFAC
     lda _23
@@ -331,7 +323,10 @@ getFAC: {
     rts
 }
 addMEMtoFAC: {
-    .label mem = $c
+    lda #<gen_sintab.f_min
+    sta prepareMEM.mem
+    lda #>gen_sintab.f_min
+    sta prepareMEM.mem+1
     jsr prepareMEM
     lda $fe
     ldy $ff

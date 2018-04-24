@@ -1,7 +1,7 @@
 .pc = $801 "Basic"
 :BasicUpstart(main)
 .pc = $80d "Program"
-  .label rem16u = $11
+  .label rem16u = $f
   .label print_char_cursor = 7
   .label print_line_cursor = 3
   jsr main
@@ -11,10 +11,6 @@ main: {
     sta lin16u_gen.lintab
     lda #>lintab1
     sta lin16u_gen.lintab+1
-    lda #<$14
-    sta lin16u_gen.length
-    lda #>$14
-    sta lin16u_gen.length+1
     lda #<$22d
     sta lin16u_gen.min
     lda #>$22d
@@ -28,10 +24,6 @@ main: {
     sta lin16u_gen.lintab
     lda #>lintab2
     sta lin16u_gen.lintab+1
-    lda #<$14
-    sta lin16u_gen.length
-    lda #>$14
-    sta lin16u_gen.length+1
     lda #<$79cb
     sta lin16u_gen.min
     lda #>$79cb
@@ -45,10 +37,6 @@ main: {
     sta lin16u_gen.lintab
     lda #>lintab3
     sta lin16u_gen.lintab+1
-    lda #<$14
-    sta lin16u_gen.length
-    lda #>$14
-    sta lin16u_gen.length+1
     lda #<0
     sta lin16u_gen.min
     sta lin16u_gen.min+1
@@ -295,15 +283,14 @@ print_cls: {
 lin16u_gen: {
     .label _5 = 5
     .label ampl = 3
-    .label stepi = $15
-    .label stepf = $13
-    .label step = $17
+    .label stepi = $13
+    .label stepf = $11
+    .label step = $15
     .label val = 9
-    .label lintab = $d
+    .label lintab = 7
     .label i = 3
     .label max = 3
     .label min = 5
-    .label length = 7
     lda ampl
     sec
     sbc min
@@ -311,12 +298,9 @@ lin16u_gen: {
     lda ampl+1
     sbc min+1
     sta ampl+1
-    lda length
-    sec
-    sbc #1
+    lda #<$14-1
     sta divr16u.divisor
-    lda length+1
-    sbc #0
+    lda #>$14-1
     sta divr16u.divisor+1
     lda #<0
     sta divr16u.rem
@@ -326,12 +310,9 @@ lin16u_gen: {
     sta stepi
     lda divr16u.return+1
     sta stepi+1
-    lda length
-    sec
-    sbc #1
+    lda #<$14-1
     sta divr16u.divisor
-    lda length+1
-    sbc #0
+    lda #>$14-1
     sta divr16u.divisor+1
     lda #<0
     sta divr16u.dividend
@@ -391,21 +372,21 @@ lin16u_gen: {
     inc i+1
   !:
     lda i+1
-    cmp length+1
+    cmp #>$14
     bcc b1
     bne !+
     lda i
-    cmp length
+    cmp #<$14
     bcc b1
   !:
     rts
 }
 divr16u: {
-    .label rem = $11
+    .label rem = $f
     .label dividend = 3
-    .label quotient = $13
-    .label return = $13
-    .label divisor = $f
+    .label quotient = $11
+    .label return = $11
+    .label divisor = $d
     ldx #0
     txa
     sta quotient

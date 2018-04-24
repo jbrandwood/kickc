@@ -5,7 +5,7 @@
   .const PI_u4f28 = $3243f6a9
   .const PI_HALF_u4f28 = $1921fb54
   .label print_line_cursor = $400
-  .label rem16u = 4
+  .label rem16u = 2
   .label print_char_cursor = 8
   jsr main
 main: {
@@ -481,13 +481,9 @@ mul16u: {
     jmp b1
 }
 div32u16u: {
-    .label quotient_hi = $13
-    .label quotient_lo = 8
+    .label quotient_hi = 8
+    .label quotient_lo = 6
     .label return = $1b
-    lda #<main.wavelength
-    sta divr16u.divisor
-    lda #>main.wavelength
-    sta divr16u.divisor+1
     lda #<PI2_u4f28>>$10
     sta divr16u.dividend
     lda #>PI2_u4f28>>$10
@@ -500,10 +496,6 @@ div32u16u: {
     sta quotient_hi
     lda divr16u.return+1
     sta quotient_hi+1
-    lda #<main.wavelength
-    sta divr16u.divisor
-    lda #>main.wavelength
-    sta divr16u.divisor+1
     lda #<PI2_u4f28&$ffff
     sta divr16u.dividend
     lda #>PI2_u4f28&$ffff
@@ -520,11 +512,10 @@ div32u16u: {
     rts
 }
 divr16u: {
-    .label rem = 4
-    .label dividend = 6
-    .label quotient = 8
-    .label return = 8
-    .label divisor = 2
+    .label rem = 2
+    .label dividend = 4
+    .label quotient = 6
+    .label return = 6
     ldx #0
     txa
     sta quotient
@@ -545,11 +536,11 @@ divr16u: {
     asl quotient
     rol quotient+1
     lda rem+1
-    cmp divisor+1
+    cmp #>main.wavelength
     bcc b3
     bne !+
     lda rem
-    cmp divisor
+    cmp #<main.wavelength
     bcc b3
   !:
     inc quotient
@@ -558,10 +549,10 @@ divr16u: {
   !:
     lda rem
     sec
-    sbc divisor
+    sbc #<main.wavelength
     sta rem
     lda rem+1
-    sbc divisor+1
+    sbc #>main.wavelength
     sta rem+1
   b3:
     inx

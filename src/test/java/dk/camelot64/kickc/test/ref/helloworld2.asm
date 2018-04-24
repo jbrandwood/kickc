@@ -5,47 +5,29 @@
   jsr main
 main: {
     lda #<screen
-    sta print_spaced.at
+    sta print2.at
     lda #>screen
-    sta print_spaced.at+1
-    lda #<hello
-    sta print_spaced.msg
-    lda #>hello
-    sta print_spaced.msg+1
-    jsr print_spaced
-    lda #<screen+$28
-    sta print_spaced.at
-    lda #>screen+$28
-    sta print_spaced.at+1
-    lda #<hello
-    sta print_spaced.msg
-    lda #>hello
-    sta print_spaced.msg+1
-    jsr print_spaced
+    sta print2.at+1
+    jsr print2
+    lda #<screen+$50
+    sta print2.at
+    lda #>screen+$50
+    sta print2.at+1
+    jsr print2
     rts
     hello: .text "hello world!@"
 }
-print_spaced: {
-    .label j = 6
-    .label msg = 2
-    .label at = 4
-    lda #0
-    sta j
-    tax
+print2: {
+    .label at = 2
+    ldy #0
+    ldx #0
   b1:
-    txa
-    tay
-    lda (msg),y
-    ldy j
+    lda main.hello,x
     sta (at),y
-    tya
-    clc
-    adc #2
-    sta j
+    iny
+    iny
     inx
-    txa
-    tay
-    lda (msg),y
+    lda main.hello,x
     cmp #'@'
     bne b1
     rts

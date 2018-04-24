@@ -184,6 +184,7 @@ public class Compiler {
       optimizations.add(new Pass2AliasElimination(program));
       optimizations.add(new Pass2SelfPhiElimination(program));
       optimizations.add(new Pass2RedundantPhiElimination(program));
+      optimizations.add(new Pass2IdenticalPhiElimination(program));
       optimizations.add(new Pass2ConditionalJumpSimplification(program));
       optimizations.add(new Pass2ConditionalAndOrRewriting(program));
       optimizations.add(new Pass2ConstantIdentification(program));
@@ -199,6 +200,10 @@ public class Compiler {
       // Constant inlining optimizations - as the last step to ensure that constant identification has been completed
       List<Pass2SsaOptimization> constantOptimizations = new ArrayList<>();
       constantOptimizations.add(new Pass2ConstantInlining(program));
+      constantOptimizations.add(new Pass2IdenticalPhiElimination(program));
+      constantOptimizations.add(new Pass2ConstantIdentification(program));
+      constantOptimizations.add(new Pass2ConstantAdditionElimination(program));
+      constantOptimizations.add(new Pass2ConstantIfs(program));
       pass2OptimizeSSA(constantOptimizations);
 
    }

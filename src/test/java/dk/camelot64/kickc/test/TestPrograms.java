@@ -45,6 +45,11 @@ public class TestPrograms {
    }
 
    @Test
+   public void testConstParam() throws IOException, URISyntaxException {
+      compileAndCompare("const-param");
+   }
+
+   @Test
    public void testHelloWorld() throws IOException, URISyntaxException {
       compileAndCompare("helloworld");
    }

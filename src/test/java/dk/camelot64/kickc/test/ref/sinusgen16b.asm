@@ -7,7 +7,7 @@
   .const PI_u4f12 = $3244
   .const PI_HALF_u4f12 = $1922
   .label print_line_cursor = $400
-  .label rem16u = 4
+  .label rem16u = 2
   .label print_char_cursor = $b
   jsr main
 main: {
@@ -181,18 +181,6 @@ sin16s_genb: {
     .label sintab = 2
     .label x = $d
     .label i = 4
-    lda #<main.wavelength
-    sta div32u16u.divisor
-    lda #>main.wavelength
-    sta div32u16u.divisor+1
-    lda #<PI2_u4f28
-    sta div32u16u.dividend
-    lda #>PI2_u4f28
-    sta div32u16u.dividend+1
-    lda #<PI2_u4f28>>$10
-    sta div32u16u.dividend+2
-    lda #>PI2_u4f28>>$10
-    sta div32u16u.dividend+3
     jsr div32u16u
     lda #<0
     sta i
@@ -474,14 +462,12 @@ mul16u: {
     jmp b1
 }
 div32u16u: {
-    .label quotient_hi = $b
-    .label quotient_lo = 8
+    .label quotient_hi = 8
+    .label quotient_lo = 6
     .label return = $1d
-    .label dividend = $d
-    .label divisor = 2
-    lda dividend+2
+    lda #<PI2_u4f28>>$10
     sta divr16u.dividend
-    lda dividend+3
+    lda #>PI2_u4f28>>$10
     sta divr16u.dividend+1
     lda #<0
     sta divr16u.rem
@@ -491,9 +477,9 @@ div32u16u: {
     sta quotient_hi
     lda divr16u.return+1
     sta quotient_hi+1
-    lda dividend
+    lda #<PI2_u4f28&$ffff
     sta divr16u.dividend
-    lda dividend+1
+    lda #>PI2_u4f28&$ffff
     sta divr16u.dividend+1
     jsr divr16u
     lda quotient_hi
@@ -507,11 +493,10 @@ div32u16u: {
     rts
 }
 divr16u: {
-    .label rem = 4
-    .label dividend = 6
-    .label quotient = 8
-    .label return = 8
-    .label divisor = 2
+    .label rem = 2
+    .label dividend = 4
+    .label quotient = 6
+    .label return = 6
     ldx #0
     txa
     sta quotient
@@ -532,11 +517,11 @@ divr16u: {
     asl quotient
     rol quotient+1
     lda rem+1
-    cmp divisor+1
+    cmp #>main.wavelength
     bcc b3
     bne !+
     lda rem
-    cmp divisor
+    cmp #<main.wavelength
     bcc b3
   !:
     inc quotient
@@ -545,10 +530,10 @@ divr16u: {
   !:
     lda rem
     sec
-    sbc divisor
+    sbc #<main.wavelength
     sta rem
     lda rem+1
-    sbc divisor+1
+    sbc #>main.wavelength
     sta rem+1
   b3:
     inx
@@ -562,18 +547,6 @@ sin16s_gen: {
     .label sintab = 2
     .label x = $d
     .label i = 4
-    lda #<main.wavelength
-    sta div32u16u.divisor
-    lda #>main.wavelength
-    sta div32u16u.divisor+1
-    lda #<PI2_u4f28
-    sta div32u16u.dividend
-    lda #>PI2_u4f28
-    sta div32u16u.dividend+1
-    lda #<PI2_u4f28>>$10
-    sta div32u16u.dividend+2
-    lda #>PI2_u4f28>>$10
-    sta div32u16u.dividend+3
     jsr div32u16u
     lda #<0
     sta i

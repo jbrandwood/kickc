@@ -300,6 +300,17 @@ public class Pass2ConstantIdentification extends Pass2SsaOptimization {
                if(Operators.ADDRESS_OF.equals(assignment.getOperator()) && var.equals(assignment.getrValue2())) {
                   return true;
                }
+            } else if(statement instanceof StatementPhiBlock) {
+               for(StatementPhiBlock.PhiVariable phiVariable : ((StatementPhiBlock) statement).getPhiVariables()) {
+                  for(StatementPhiBlock.PhiRValue phiRValue : phiVariable.getValues()) {
+                     if(phiRValue.getrValue() instanceof ConstantVarPointer) {
+                        if(((ConstantVarPointer)phiRValue.getrValue()).getToVar().equals(var)) {
+                           return true;
+                        }
+
+                     }
+                  }
+               }
             }
          }
       }

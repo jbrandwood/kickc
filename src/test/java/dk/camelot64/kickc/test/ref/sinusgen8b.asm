@@ -8,7 +8,7 @@
   .const PI_u4f12 = $3244
   .const PI_HALF_u4f12 = $1922
   .label print_line_cursor = $400
-  .label rem16u = 5
+  .label rem16u = 2
   .label print_char_cursor = 5
   jsr main
 main: {
@@ -482,13 +482,9 @@ mul16u: {
     jmp b1
 }
 div32u16u: {
-    .label quotient_hi = $13
-    .label quotient_lo = $11
+    .label quotient_hi = $11
+    .label quotient_lo = $f
     .label return = $1c
-    lda #<main.wavelength
-    sta divr16u.divisor
-    lda #>main.wavelength
-    sta divr16u.divisor+1
     lda #<PI2_u4f28>>$10
     sta divr16u.dividend
     lda #>PI2_u4f28>>$10
@@ -501,10 +497,6 @@ div32u16u: {
     sta quotient_hi
     lda divr16u.return+1
     sta quotient_hi+1
-    lda #<main.wavelength
-    sta divr16u.divisor
-    lda #>main.wavelength
-    sta divr16u.divisor+1
     lda #<PI2_u4f28&$ffff
     sta divr16u.dividend
     lda #>PI2_u4f28&$ffff
@@ -521,11 +513,10 @@ div32u16u: {
     rts
 }
 divr16u: {
-    .label rem = 5
-    .label dividend = $f
-    .label quotient = $11
-    .label return = $11
-    .label divisor = 2
+    .label rem = 2
+    .label dividend = 5
+    .label quotient = $f
+    .label return = $f
     ldx #0
     txa
     sta quotient
@@ -546,11 +537,11 @@ divr16u: {
     asl quotient
     rol quotient+1
     lda rem+1
-    cmp divisor+1
+    cmp #>main.wavelength
     bcc b3
     bne !+
     lda rem
-    cmp divisor
+    cmp #<main.wavelength
     bcc b3
   !:
     inc quotient
@@ -559,10 +550,10 @@ divr16u: {
   !:
     lda rem
     sec
-    sbc divisor
+    sbc #<main.wavelength
     sta rem
     lda rem+1
-    sbc divisor+1
+    sbc #>main.wavelength
     sta rem+1
   b3:
     inx
@@ -571,10 +562,10 @@ divr16u: {
     rts
 }
 sin8s_gen: {
-    .label step = $11
+    .label step = $f
     .label sintab = 5
     .label x = 2
-    .label i = $f
+    .label i = $11
     jsr div16u
     lda #<0
     sta i
@@ -777,11 +768,7 @@ mul8u: {
     jmp b1
 }
 div16u: {
-    .label return = $11
-    lda #<main.wavelength
-    sta divr16u.divisor
-    lda #>main.wavelength
-    sta divr16u.divisor+1
+    .label return = $f
     lda #<PI2_u4f12
     sta divr16u.dividend
     lda #>PI2_u4f12

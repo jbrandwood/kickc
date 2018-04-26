@@ -45,6 +45,11 @@ public class TestPrograms {
    }
 
    @Test
+   public void testConstWordPointer() throws IOException, URISyntaxException {
+      compileAndCompare("const-word-pointer");
+   }
+
+   @Test
    public void testConstParam() throws IOException, URISyntaxException {
       compileAndCompare("const-param");
    }

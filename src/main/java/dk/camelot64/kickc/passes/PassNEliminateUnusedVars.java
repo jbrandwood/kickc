@@ -35,7 +35,7 @@ public class PassNEliminateUnusedVars extends Pass2SsaOptimization {
             if(statement instanceof StatementAssignment) {
                StatementAssignment assignment = (StatementAssignment) statement;
                LValue lValue = assignment.getlValue();
-               if(lValue instanceof VariableRef && referenceInfos.isUnused((VariableRef) lValue)) {
+               if(lValue instanceof VariableRef && referenceInfos.isUnused((VariableRef) lValue) && !Pass2ConstantIdentification.isAddressOfUsed((VariableRef) lValue, getProgram())) {
                   getLog().append("Eliminating unused variable " + lValue.toString(getProgram()) + " and assignment " + assignment.toString(getProgram(), false));
                   stmtIt.remove();
                   Variable variable = getScope().getVariable((VariableRef) lValue);
@@ -45,7 +45,7 @@ public class PassNEliminateUnusedVars extends Pass2SsaOptimization {
             } else if(statement instanceof StatementCall) {
                StatementCall call = (StatementCall) statement;
                LValue lValue = call.getlValue();
-               if(lValue instanceof VariableRef && referenceInfos.isUnused((VariableRef) lValue)) {
+               if(lValue instanceof VariableRef && referenceInfos.isUnused((VariableRef) lValue) && !Pass2ConstantIdentification.isAddressOfUsed((VariableRef) lValue, getProgram())) {
                   getLog().append("Eliminating unused variable - keeping the call " + lValue.toString(getProgram()));
                   Variable variable = getScope().getVariable((VariableRef) lValue);
                   variable.getScope().remove(variable);
@@ -58,7 +58,7 @@ public class PassNEliminateUnusedVars extends Pass2SsaOptimization {
                while(phiVarIt.hasNext()) {
                   StatementPhiBlock.PhiVariable phiVariable = phiVarIt.next();
                   VariableRef variableRef = phiVariable.getVariable();
-                  if(referenceInfos.isUnused(variableRef)) {
+                  if(referenceInfos.isUnused(variableRef) && !Pass2ConstantIdentification.isAddressOfUsed(variableRef, getProgram())) {
                      getLog().append("Eliminating unused variable - keeping the phi block " + variableRef.toString(getProgram()));
                      Variable variable = getScope().getVariable(variableRef);
                      variable.getScope().remove(variable);

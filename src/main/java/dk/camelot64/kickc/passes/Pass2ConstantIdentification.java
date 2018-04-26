@@ -44,7 +44,7 @@ public class Pass2ConstantIdentification extends Pass2SsaOptimization {
          Variable variable = getProgram().getScope().getVariable(constRef);
 
          // Weed out all variables that are affected by the address-of operator
-         if(isAddressOfUsed(constRef)) {
+         if(isAddressOfUsed(constRef, getProgram())) {
             constants.remove(constRef);
             continue;
          }
@@ -292,8 +292,9 @@ public class Pass2ConstantIdentification extends Pass2SsaOptimization {
     * @param var tHe variable to examine
     * @return true if the address-of operator is used on the variable
     */
-   private boolean isAddressOfUsed(VariableRef var) {
-      for(ControlFlowBlock block : getGraph().getAllBlocks()) {
+   public static boolean isAddressOfUsed(VariableRef var, Program program) {
+
+      for(ControlFlowBlock block : program.getGraph().getAllBlocks()) {
          for(Statement statement : block.getStatements()) {
             if(statement instanceof StatementAssignment) {
                StatementAssignment assignment = (StatementAssignment) statement;
@@ -314,7 +315,7 @@ public class Pass2ConstantIdentification extends Pass2SsaOptimization {
             }
          }
       }
-      for(ConstantVar constVar : getScope().getAllConstants(true)) {
+      for(ConstantVar constVar : program.getScope().getAllConstants(true)) {
          ConstantValue constantValue = constVar.getValue();
          if(constantValue instanceof ConstantVarPointer) {
             ConstantVarPointer constantVarPointer = (ConstantVarPointer) constantValue;

@@ -11,49 +11,35 @@ main: {
 }
 bool_complex: {
     .label screen = $478
-    .label o1 = 2
-    .label o2 = 3
-    ldx #0
+    ldy #0
   b1:
-    cpx #$a
-    lda #0
-    rol
-    eor #1
-    sta o1
-    txa
+    tya
     and #1
-    cmp #0
-    beq !+
-    lda #1
-  !:
-    eor #1
-    sta o2
-    lda o1
-    cmp #0
-    bne b8
+    tax
+    tya
+    and #1
+    cpy #$a
+    bcc b8
   b7:
-    lda o1
+    cpy #$a
+    bcc b4
     cmp #0
-    bne b4
-    lda o2
-    cmp #0
-    bne b4
+    beq b4
   b2:
     lda #'*'
-    sta screen,x
+    sta screen,y
   b3:
-    inx
-    cpx #$15
+    iny
+    cpy #$15
     bne b1
     rts
   b4:
     lda #' '
-    sta screen,x
+    sta screen,y
     jmp b3
   b8:
-    lda o2
-    cmp #0
-    bne b2
+    cpx #0
+    beq b2
     jmp b7
 }
 bool_not: {

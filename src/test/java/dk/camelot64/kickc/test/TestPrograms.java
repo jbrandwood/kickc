@@ -99,15 +99,24 @@ public class TestPrograms {
       compileAndCompare("const-condition");
    }
 
-
    @Test
    public void testBoolConst() throws IOException, URISyntaxException {
       compileAndCompare("bool-const");
    }
 
    @Test
+   public void testBoolIfs() throws IOException, URISyntaxException {
+      compileAndCompare("bool-ifs");
+   }
+
+   @Test
    public void testBoolVars() throws IOException, URISyntaxException {
       compileAndCompare("bool-vars");
+   }
+
+   @Test
+   public void testBoolFunction() throws IOException, URISyntaxException {
+      compileAndCompare("bool-function");
    }
 
    @Test

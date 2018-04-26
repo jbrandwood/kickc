@@ -11,7 +11,10 @@ void main() {
 void bool_and() {
     const byte* screen = $400;
     for( byte i : 0..20) {
-        if( (i<10) && ((i&1)==0) ) {
+        boolean o1 = (i<10);
+        boolean o2 = ((i&1)==0);
+        boolean o3 = o1 && o2;
+        if(o3) {
             screen[i] = '*';
         } else {
             screen[i] = ' ';
@@ -22,7 +25,10 @@ void bool_and() {
 void bool_or() {
     const byte* screen = $428;
     for( byte i : 0..20) {
-        if( (i<10) || ((i&1)==0) ) {
+        boolean o1 = (i<10);
+        boolean o2 = ((i&1)==0);
+        boolean o3 = o1 || o2;
+        if(o3) {
             screen[i] = '*';
         } else {
             screen[i] = ' ';
@@ -33,8 +39,10 @@ void bool_or() {
 void bool_not() {
     const byte* screen = $450;
     for( byte i : 0..20) {
-        boolean o1 = (i&1)==0;
-        if( !((i<10) || ((i&1)==0)) ) {
+        boolean o1 = (i<10);
+        boolean o2 = (i&1)==0;
+        boolean o3 = !( o1 || o2);
+        if(o3)  {
             screen[i] = '*';
         } else {
             screen[i] = ' ';
@@ -45,8 +53,12 @@ void bool_not() {
 void bool_complex() {
     const byte* screen = $478;
     for( byte i : 0..20) {
-        boolean o1 = (i&1)==0;
-        if( ((i<10) && ((i&1)==0)) || !((i<10) || ((i&1)==0)) ) {
+        boolean o1 = (i<10);
+        boolean o2 = (i&1)==0;
+        boolean o3 = (o1 && o2);
+        boolean o4 = !(o1 || o2);
+        boolean o5 = o3 || o4;
+        if( o5 ) {
             screen[i] = '*';
         } else {
             screen[i] = ' ';
@@ -76,21 +88,19 @@ SYMBOLS
 (label) bool_and::@6
 (label) bool_and::@return
 (byte) bool_and::i
+(boolean) bool_and::o1
+(boolean) bool_and::o2
+(boolean) bool_and::o3
 (byte*) bool_and::screen
 (void()) bool_complex()
-(byte~) bool_complex::$0
-(boolean~) bool_complex::$1
-(boolean~) bool_complex::$10
-(boolean~) bool_complex::$11
-(boolean~) bool_complex::$12
+(boolean~) bool_complex::$0
+(byte~) bool_complex::$1
 (boolean~) bool_complex::$2
-(byte~) bool_complex::$3
+(boolean~) bool_complex::$3
 (boolean~) bool_complex::$4
 (boolean~) bool_complex::$5
 (boolean~) bool_complex::$6
-(byte~) bool_complex::$7
-(boolean~) bool_complex::$8
-(boolean~) bool_complex::$9
+(boolean~) bool_complex::$7
 (label) bool_complex::@1
 (label) bool_complex::@2
 (label) bool_complex::@3
@@ -100,16 +110,18 @@ SYMBOLS
 (label) bool_complex::@return
 (byte) bool_complex::i
 (boolean) bool_complex::o1
+(boolean) bool_complex::o2
+(boolean) bool_complex::o3
+(boolean) bool_complex::o4
+(boolean) bool_complex::o5
 (byte*) bool_complex::screen
 (void()) bool_not()
-(byte~) bool_not::$0
-(boolean~) bool_not::$1
+(boolean~) bool_not::$0
+(byte~) bool_not::$1
 (boolean~) bool_not::$2
-(byte~) bool_not::$3
+(boolean~) bool_not::$3
 (boolean~) bool_not::$4
 (boolean~) bool_not::$5
-(boolean~) bool_not::$6
-(boolean~) bool_not::$7
 (label) bool_not::@1
 (label) bool_not::@2
 (label) bool_not::@3
@@ -119,6 +131,8 @@ SYMBOLS
 (label) bool_not::@return
 (byte) bool_not::i
 (boolean) bool_not::o1
+(boolean) bool_not::o2
+(boolean) bool_not::o3
 (byte*) bool_not::screen
 (void()) bool_or()
 (boolean~) bool_or::$0
@@ -134,6 +148,9 @@ SYMBOLS
 (label) bool_or::@6
 (label) bool_or::@return
 (byte) bool_or::i
+(boolean) bool_or::o1
+(boolean) bool_or::o2
+(boolean) bool_or::o3
 (byte*) bool_or::screen
 (void()) main()
 (void~) main::$0
@@ -166,10 +183,13 @@ bool_and: scope:[bool_and]  from
   to:bool_and::@1
 bool_and::@1: scope:[bool_and]  from bool_and bool_and::@3
   (boolean~) bool_and::$0 ← (byte) bool_and::i < (byte/signed byte/word/signed word/dword/signed dword) 10
+  (boolean) bool_and::o1 ← (boolean~) bool_and::$0
   (byte~) bool_and::$1 ← (byte) bool_and::i & (byte/signed byte/word/signed word/dword/signed dword) 1
   (boolean~) bool_and::$2 ← (byte~) bool_and::$1 == (byte/signed byte/word/signed word/dword/signed dword) 0
-  (boolean~) bool_and::$3 ← (boolean~) bool_and::$0 && (boolean~) bool_and::$2
-  if((boolean~) bool_and::$3) goto bool_and::@2
+  (boolean) bool_and::o2 ← (boolean~) bool_and::$2
+  (boolean~) bool_and::$3 ← (boolean) bool_and::o1 && (boolean) bool_and::o2
+  (boolean) bool_and::o3 ← (boolean~) bool_and::$3
+  if((boolean) bool_and::o3) goto bool_and::@2
   to:bool_and::@4
 bool_and::@2: scope:[bool_and]  from bool_and::@1 bool_and::@5
   *((byte*) bool_and::screen + (byte) bool_and::i) ← (byte) '*'
@@ -197,10 +217,13 @@ bool_or: scope:[bool_or]  from
   to:bool_or::@1
 bool_or::@1: scope:[bool_or]  from bool_or bool_or::@3
   (boolean~) bool_or::$0 ← (byte) bool_or::i < (byte/signed byte/word/signed word/dword/signed dword) 10
+  (boolean) bool_or::o1 ← (boolean~) bool_or::$0
   (byte~) bool_or::$1 ← (byte) bool_or::i & (byte/signed byte/word/signed word/dword/signed dword) 1
   (boolean~) bool_or::$2 ← (byte~) bool_or::$1 == (byte/signed byte/word/signed word/dword/signed dword) 0
-  (boolean~) bool_or::$3 ← (boolean~) bool_or::$0 || (boolean~) bool_or::$2
-  if((boolean~) bool_or::$3) goto bool_or::@2
+  (boolean) bool_or::o2 ← (boolean~) bool_or::$2
+  (boolean~) bool_or::$3 ← (boolean) bool_or::o1 || (boolean) bool_or::o2
+  (boolean) bool_or::o3 ← (boolean~) bool_or::$3
+  if((boolean) bool_or::o3) goto bool_or::@2
   to:bool_or::@4
 bool_or::@2: scope:[bool_or]  from bool_or::@1 bool_or::@5
   *((byte*) bool_or::screen + (byte) bool_or::i) ← (byte) '*'
@@ -227,15 +250,15 @@ bool_not: scope:[bool_not]  from
   (byte) bool_not::i ← (byte/signed byte/word/signed word/dword/signed dword) 0
   to:bool_not::@1
 bool_not::@1: scope:[bool_not]  from bool_not bool_not::@3
-  (byte~) bool_not::$0 ← (byte) bool_not::i & (byte/signed byte/word/signed word/dword/signed dword) 1
-  (boolean~) bool_not::$1 ← (byte~) bool_not::$0 == (byte/signed byte/word/signed word/dword/signed dword) 0
-  (boolean) bool_not::o1 ← (boolean~) bool_not::$1
-  (boolean~) bool_not::$2 ← (byte) bool_not::i < (byte/signed byte/word/signed word/dword/signed dword) 10
-  (byte~) bool_not::$3 ← (byte) bool_not::i & (byte/signed byte/word/signed word/dword/signed dword) 1
-  (boolean~) bool_not::$4 ← (byte~) bool_not::$3 == (byte/signed byte/word/signed word/dword/signed dword) 0
-  (boolean~) bool_not::$5 ← (boolean~) bool_not::$2 || (boolean~) bool_not::$4
-  (boolean~) bool_not::$6 ← ! (boolean~) bool_not::$5
-  if((boolean~) bool_not::$6) goto bool_not::@2
+  (boolean~) bool_not::$0 ← (byte) bool_not::i < (byte/signed byte/word/signed word/dword/signed dword) 10
+  (boolean) bool_not::o1 ← (boolean~) bool_not::$0
+  (byte~) bool_not::$1 ← (byte) bool_not::i & (byte/signed byte/word/signed word/dword/signed dword) 1
+  (boolean~) bool_not::$2 ← (byte~) bool_not::$1 == (byte/signed byte/word/signed word/dword/signed dword) 0
+  (boolean) bool_not::o2 ← (boolean~) bool_not::$2
+  (boolean~) bool_not::$3 ← (boolean) bool_not::o1 || (boolean) bool_not::o2
+  (boolean~) bool_not::$4 ← ! (boolean~) bool_not::$3
+  (boolean) bool_not::o3 ← (boolean~) bool_not::$4
+  if((boolean) bool_not::o3) goto bool_not::@2
   to:bool_not::@4
 bool_not::@2: scope:[bool_not]  from bool_not::@1 bool_not::@5
   *((byte*) bool_not::screen + (byte) bool_not::i) ← (byte) '*'
@@ -245,8 +268,8 @@ bool_not::@4: scope:[bool_not]  from bool_not::@1
   to:bool_not::@3
 bool_not::@3: scope:[bool_not]  from bool_not::@2 bool_not::@4
   (byte) bool_not::i ← ++ (byte) bool_not::i
-  (boolean~) bool_not::$7 ← (byte) bool_not::i != (byte/signed byte/word/signed word/dword/signed dword) 21
-  if((boolean~) bool_not::$7) goto bool_not::@1
+  (boolean~) bool_not::$5 ← (byte) bool_not::i != (byte/signed byte/word/signed word/dword/signed dword) 21
+  if((boolean~) bool_not::$5) goto bool_not::@1
   to:bool_not::@6
 bool_not::@5: scope:[bool_not]  from
   to:bool_not::@2
@@ -262,20 +285,19 @@ bool_complex: scope:[bool_complex]  from
   (byte) bool_complex::i ← (byte/signed byte/word/signed word/dword/signed dword) 0
   to:bool_complex::@1
 bool_complex::@1: scope:[bool_complex]  from bool_complex bool_complex::@3
-  (byte~) bool_complex::$0 ← (byte) bool_complex::i & (byte/signed byte/word/signed word/dword/signed dword) 1
-  (boolean~) bool_complex::$1 ← (byte~) bool_complex::$0 == (byte/signed byte/word/signed word/dword/signed dword) 0
-  (boolean) bool_complex::o1 ← (boolean~) bool_complex::$1
-  (boolean~) bool_complex::$2 ← (byte) bool_complex::i < (byte/signed byte/word/signed word/dword/signed dword) 10
-  (byte~) bool_complex::$3 ← (byte) bool_complex::i & (byte/signed byte/word/signed word/dword/signed dword) 1
-  (boolean~) bool_complex::$4 ← (byte~) bool_complex::$3 == (byte/signed byte/word/signed word/dword/signed dword) 0
-  (boolean~) bool_complex::$5 ← (boolean~) bool_complex::$2 && (boolean~) bool_complex::$4
-  (boolean~) bool_complex::$6 ← (byte) bool_complex::i < (byte/signed byte/word/signed word/dword/signed dword) 10
-  (byte~) bool_complex::$7 ← (byte) bool_complex::i & (byte/signed byte/word/signed word/dword/signed dword) 1
-  (boolean~) bool_complex::$8 ← (byte~) bool_complex::$7 == (byte/signed byte/word/signed word/dword/signed dword) 0
-  (boolean~) bool_complex::$9 ← (boolean~) bool_complex::$6 || (boolean~) bool_complex::$8
-  (boolean~) bool_complex::$10 ← ! (boolean~) bool_complex::$9
-  (boolean~) bool_complex::$11 ← (boolean~) bool_complex::$5 || (boolean~) bool_complex::$10
-  if((boolean~) bool_complex::$11) goto bool_complex::@2
+  (boolean~) bool_complex::$0 ← (byte) bool_complex::i < (byte/signed byte/word/signed word/dword/signed dword) 10
+  (boolean) bool_complex::o1 ← (boolean~) bool_complex::$0
+  (byte~) bool_complex::$1 ← (byte) bool_complex::i & (byte/signed byte/word/signed word/dword/signed dword) 1
+  (boolean~) bool_complex::$2 ← (byte~) bool_complex::$1 == (byte/signed byte/word/signed word/dword/signed dword) 0
+  (boolean) bool_complex::o2 ← (boolean~) bool_complex::$2
+  (boolean~) bool_complex::$3 ← (boolean) bool_complex::o1 && (boolean) bool_complex::o2
+  (boolean) bool_complex::o3 ← (boolean~) bool_complex::$3
+  (boolean~) bool_complex::$4 ← (boolean) bool_complex::o1 || (boolean) bool_complex::o2
+  (boolean~) bool_complex::$5 ← ! (boolean~) bool_complex::$4
+  (boolean) bool_complex::o4 ← (boolean~) bool_complex::$5
+  (boolean~) bool_complex::$6 ← (boolean) bool_complex::o3 || (boolean) bool_complex::o4
+  (boolean) bool_complex::o5 ← (boolean~) bool_complex::$6
+  if((boolean) bool_complex::o5) goto bool_complex::@2
   to:bool_complex::@4
 bool_complex::@2: scope:[bool_complex]  from bool_complex::@1 bool_complex::@5
   *((byte*) bool_complex::screen + (byte) bool_complex::i) ← (byte) '*'
@@ -285,8 +307,8 @@ bool_complex::@4: scope:[bool_complex]  from bool_complex::@1
   to:bool_complex::@3
 bool_complex::@3: scope:[bool_complex]  from bool_complex::@2 bool_complex::@4
   (byte) bool_complex::i ← ++ (byte) bool_complex::i
-  (boolean~) bool_complex::$12 ← (byte) bool_complex::i != (byte/signed byte/word/signed word/dword/signed dword) 21
-  if((boolean~) bool_complex::$12) goto bool_complex::@1
+  (boolean~) bool_complex::$7 ← (byte) bool_complex::i != (byte/signed byte/word/signed word/dword/signed dword) 21
+  if((boolean~) bool_complex::$7) goto bool_complex::@1
   to:bool_complex::@6
 bool_complex::@5: scope:[bool_complex]  from
   to:bool_complex::@2
@@ -304,12 +326,6 @@ Eliminating unused variable - keeping the call (void~) main::$0
 Eliminating unused variable - keeping the call (void~) main::$1
 Eliminating unused variable - keeping the call (void~) main::$2
 Eliminating unused variable - keeping the call (void~) main::$3
-Eliminating unused variable (boolean) bool_not::o1 and assignment [35] (boolean) bool_not::o1 ← (boolean~) bool_not::$1
-Eliminating unused variable (boolean) bool_complex::o1 and assignment [52] (boolean) bool_complex::o1 ← (boolean~) bool_complex::$1
-Eliminating unused variable (boolean~) bool_not::$1 and assignment [34] (boolean~) bool_not::$1 ← (byte~) bool_not::$0 == (byte/signed byte/word/signed word/dword/signed dword) 0
-Eliminating unused variable (boolean~) bool_complex::$1 and assignment [50] (boolean~) bool_complex::$1 ← (byte~) bool_complex::$0 == (byte/signed byte/word/signed word/dword/signed dword) 0
-Eliminating unused variable (byte~) bool_not::$0 and assignment [33] (byte~) bool_not::$0 ← (byte) bool_not::i & (byte/signed byte/word/signed word/dword/signed dword) 1
-Eliminating unused variable (byte~) bool_complex::$0 and assignment [48] (byte~) bool_complex::$0 ← (byte) bool_complex::i & (byte/signed byte/word/signed word/dword/signed dword) 1
 Removing empty block @1
 Removing empty block bool_and::@5
 Removing empty block bool_and::@6
@@ -353,10 +369,13 @@ bool_and: scope:[bool_and]  from main
 bool_and::@1: scope:[bool_and]  from bool_and bool_and::@3
   (byte) bool_and::i#2 ← phi( bool_and/(byte) bool_and::i#0 bool_and::@3/(byte) bool_and::i#1 )
   (boolean~) bool_and::$0 ← (byte) bool_and::i#2 < (byte/signed byte/word/signed word/dword/signed dword) 10
+  (boolean) bool_and::o1#0 ← (boolean~) bool_and::$0
   (byte~) bool_and::$1 ← (byte) bool_and::i#2 & (byte/signed byte/word/signed word/dword/signed dword) 1
   (boolean~) bool_and::$2 ← (byte~) bool_and::$1 == (byte/signed byte/word/signed word/dword/signed dword) 0
-  (boolean~) bool_and::$3 ← (boolean~) bool_and::$0 && (boolean~) bool_and::$2
-  if((boolean~) bool_and::$3) goto bool_and::@2
+  (boolean) bool_and::o2#0 ← (boolean~) bool_and::$2
+  (boolean~) bool_and::$3 ← (boolean) bool_and::o1#0 && (boolean) bool_and::o2#0
+  (boolean) bool_and::o3#0 ← (boolean~) bool_and::$3
+  if((boolean) bool_and::o3#0) goto bool_and::@2
   to:bool_and::@4
 bool_and::@2: scope:[bool_and]  from bool_and::@1
   (byte) bool_and::i#3 ← phi( bool_and::@1/(byte) bool_and::i#2 )
@@ -382,10 +401,13 @@ bool_or: scope:[bool_or]  from main::@1
 bool_or::@1: scope:[bool_or]  from bool_or bool_or::@3
   (byte) bool_or::i#2 ← phi( bool_or/(byte) bool_or::i#0 bool_or::@3/(byte) bool_or::i#1 )
   (boolean~) bool_or::$0 ← (byte) bool_or::i#2 < (byte/signed byte/word/signed word/dword/signed dword) 10
+  (boolean) bool_or::o1#0 ← (boolean~) bool_or::$0
   (byte~) bool_or::$1 ← (byte) bool_or::i#2 & (byte/signed byte/word/signed word/dword/signed dword) 1
   (boolean~) bool_or::$2 ← (byte~) bool_or::$1 == (byte/signed byte/word/signed word/dword/signed dword) 0
-  (boolean~) bool_or::$3 ← (boolean~) bool_or::$0 || (boolean~) bool_or::$2
-  if((boolean~) bool_or::$3) goto bool_or::@2
+  (boolean) bool_or::o2#0 ← (boolean~) bool_or::$2
+  (boolean~) bool_or::$3 ← (boolean) bool_or::o1#0 || (boolean) bool_or::o2#0
+  (boolean) bool_or::o3#0 ← (boolean~) bool_or::$3
+  if((boolean) bool_or::o3#0) goto bool_or::@2
   to:bool_or::@4
 bool_or::@2: scope:[bool_or]  from bool_or::@1
   (byte) bool_or::i#3 ← phi( bool_or::@1/(byte) bool_or::i#2 )
@@ -410,12 +432,15 @@ bool_not: scope:[bool_not]  from main::@2
   to:bool_not::@1
 bool_not::@1: scope:[bool_not]  from bool_not bool_not::@3
   (byte) bool_not::i#2 ← phi( bool_not/(byte) bool_not::i#0 bool_not::@3/(byte) bool_not::i#1 )
-  (boolean~) bool_not::$2 ← (byte) bool_not::i#2 < (byte/signed byte/word/signed word/dword/signed dword) 10
-  (byte~) bool_not::$3 ← (byte) bool_not::i#2 & (byte/signed byte/word/signed word/dword/signed dword) 1
-  (boolean~) bool_not::$4 ← (byte~) bool_not::$3 == (byte/signed byte/word/signed word/dword/signed dword) 0
-  (boolean~) bool_not::$5 ← (boolean~) bool_not::$2 || (boolean~) bool_not::$4
-  (boolean~) bool_not::$6 ← ! (boolean~) bool_not::$5
-  if((boolean~) bool_not::$6) goto bool_not::@2
+  (boolean~) bool_not::$0 ← (byte) bool_not::i#2 < (byte/signed byte/word/signed word/dword/signed dword) 10
+  (boolean) bool_not::o1#0 ← (boolean~) bool_not::$0
+  (byte~) bool_not::$1 ← (byte) bool_not::i#2 & (byte/signed byte/word/signed word/dword/signed dword) 1
+  (boolean~) bool_not::$2 ← (byte~) bool_not::$1 == (byte/signed byte/word/signed word/dword/signed dword) 0
+  (boolean) bool_not::o2#0 ← (boolean~) bool_not::$2
+  (boolean~) bool_not::$3 ← (boolean) bool_not::o1#0 || (boolean) bool_not::o2#0
+  (boolean~) bool_not::$4 ← ! (boolean~) bool_not::$3
+  (boolean) bool_not::o3#0 ← (boolean~) bool_not::$4
+  if((boolean) bool_not::o3#0) goto bool_not::@2
   to:bool_not::@4
 bool_not::@2: scope:[bool_not]  from bool_not::@1
   (byte) bool_not::i#3 ← phi( bool_not::@1/(byte) bool_not::i#2 )
@@ -428,8 +453,8 @@ bool_not::@4: scope:[bool_not]  from bool_not::@1
 bool_not::@3: scope:[bool_not]  from bool_not::@2 bool_not::@4
   (byte) bool_not::i#5 ← phi( bool_not::@2/(byte) bool_not::i#3 bool_not::@4/(byte) bool_not::i#4 )
   (byte) bool_not::i#1 ← ++ (byte) bool_not::i#5
-  (boolean~) bool_not::$7 ← (byte) bool_not::i#1 != (byte/signed byte/word/signed word/dword/signed dword) 21
-  if((boolean~) bool_not::$7) goto bool_not::@1
+  (boolean~) bool_not::$5 ← (byte) bool_not::i#1 != (byte/signed byte/word/signed word/dword/signed dword) 21
+  if((boolean~) bool_not::$5) goto bool_not::@1
   to:bool_not::@return
 bool_not::@return: scope:[bool_not]  from bool_not::@3
   return 
@@ -440,17 +465,19 @@ bool_complex: scope:[bool_complex]  from main::@3
   to:bool_complex::@1
 bool_complex::@1: scope:[bool_complex]  from bool_complex bool_complex::@3
   (byte) bool_complex::i#2 ← phi( bool_complex/(byte) bool_complex::i#0 bool_complex::@3/(byte) bool_complex::i#1 )
-  (boolean~) bool_complex::$2 ← (byte) bool_complex::i#2 < (byte/signed byte/word/signed word/dword/signed dword) 10
-  (byte~) bool_complex::$3 ← (byte) bool_complex::i#2 & (byte/signed byte/word/signed word/dword/signed dword) 1
-  (boolean~) bool_complex::$4 ← (byte~) bool_complex::$3 == (byte/signed byte/word/signed word/dword/signed dword) 0
-  (boolean~) bool_complex::$5 ← (boolean~) bool_complex::$2 && (boolean~) bool_complex::$4
-  (boolean~) bool_complex::$6 ← (byte) bool_complex::i#2 < (byte/signed byte/word/signed word/dword/signed dword) 10
-  (byte~) bool_complex::$7 ← (byte) bool_complex::i#2 & (byte/signed byte/word/signed word/dword/signed dword) 1
-  (boolean~) bool_complex::$8 ← (byte~) bool_complex::$7 == (byte/signed byte/word/signed word/dword/signed dword) 0
-  (boolean~) bool_complex::$9 ← (boolean~) bool_complex::$6 || (boolean~) bool_complex::$8
-  (boolean~) bool_complex::$10 ← ! (boolean~) bool_complex::$9
-  (boolean~) bool_complex::$11 ← (boolean~) bool_complex::$5 || (boolean~) bool_complex::$10
-  if((boolean~) bool_complex::$11) goto bool_complex::@2
+  (boolean~) bool_complex::$0 ← (byte) bool_complex::i#2 < (byte/signed byte/word/signed word/dword/signed dword) 10
+  (boolean) bool_complex::o1#0 ← (boolean~) bool_complex::$0
+  (byte~) bool_complex::$1 ← (byte) bool_complex::i#2 & (byte/signed byte/word/signed word/dword/signed dword) 1
+  (boolean~) bool_complex::$2 ← (byte~) bool_complex::$1 == (byte/signed byte/word/signed word/dword/signed dword) 0
+  (boolean) bool_complex::o2#0 ← (boolean~) bool_complex::$2
+  (boolean~) bool_complex::$3 ← (boolean) bool_complex::o1#0 && (boolean) bool_complex::o2#0
+  (boolean) bool_complex::o3#0 ← (boolean~) bool_complex::$3
+  (boolean~) bool_complex::$4 ← (boolean) bool_complex::o1#0 || (boolean) bool_complex::o2#0
+  (boolean~) bool_complex::$5 ← ! (boolean~) bool_complex::$4
+  (boolean) bool_complex::o4#0 ← (boolean~) bool_complex::$5
+  (boolean~) bool_complex::$6 ← (boolean) bool_complex::o3#0 || (boolean) bool_complex::o4#0
+  (boolean) bool_complex::o5#0 ← (boolean~) bool_complex::$6
+  if((boolean) bool_complex::o5#0) goto bool_complex::@2
   to:bool_complex::@4
 bool_complex::@2: scope:[bool_complex]  from bool_complex::@1
   (byte) bool_complex::i#3 ← phi( bool_complex::@1/(byte) bool_complex::i#2 )
@@ -463,8 +490,8 @@ bool_complex::@4: scope:[bool_complex]  from bool_complex::@1
 bool_complex::@3: scope:[bool_complex]  from bool_complex::@2 bool_complex::@4
   (byte) bool_complex::i#5 ← phi( bool_complex::@2/(byte) bool_complex::i#3 bool_complex::@4/(byte) bool_complex::i#4 )
   (byte) bool_complex::i#1 ← ++ (byte) bool_complex::i#5
-  (boolean~) bool_complex::$12 ← (byte) bool_complex::i#1 != (byte/signed byte/word/signed word/dword/signed dword) 21
-  if((boolean~) bool_complex::$12) goto bool_complex::@1
+  (boolean~) bool_complex::$7 ← (byte) bool_complex::i#1 != (byte/signed byte/word/signed word/dword/signed dword) 21
+  if((boolean~) bool_complex::$7) goto bool_complex::@1
   to:bool_complex::@return
 bool_complex::@return: scope:[bool_complex]  from bool_complex::@3
   return 
@@ -499,20 +526,23 @@ SYMBOL TABLE SSA
 (byte) bool_and::i#3
 (byte) bool_and::i#4
 (byte) bool_and::i#5
+(boolean) bool_and::o1
+(boolean) bool_and::o1#0
+(boolean) bool_and::o2
+(boolean) bool_and::o2#0
+(boolean) bool_and::o3
+(boolean) bool_and::o3#0
 (byte*) bool_and::screen
 (byte*) bool_and::screen#0
 (void()) bool_complex()
-(boolean~) bool_complex::$10
-(boolean~) bool_complex::$11
-(boolean~) bool_complex::$12
+(boolean~) bool_complex::$0
+(byte~) bool_complex::$1
 (boolean~) bool_complex::$2
-(byte~) bool_complex::$3
+(boolean~) bool_complex::$3
 (boolean~) bool_complex::$4
 (boolean~) bool_complex::$5
 (boolean~) bool_complex::$6
-(byte~) bool_complex::$7
-(boolean~) bool_complex::$8
-(boolean~) bool_complex::$9
+(boolean~) bool_complex::$7
 (label) bool_complex::@1
 (label) bool_complex::@2
 (label) bool_complex::@3
@@ -525,15 +555,25 @@ SYMBOL TABLE SSA
 (byte) bool_complex::i#3
 (byte) bool_complex::i#4
 (byte) bool_complex::i#5
+(boolean) bool_complex::o1
+(boolean) bool_complex::o1#0
+(boolean) bool_complex::o2
+(boolean) bool_complex::o2#0
+(boolean) bool_complex::o3
+(boolean) bool_complex::o3#0
+(boolean) bool_complex::o4
+(boolean) bool_complex::o4#0
+(boolean) bool_complex::o5
+(boolean) bool_complex::o5#0
 (byte*) bool_complex::screen
 (byte*) bool_complex::screen#0
 (void()) bool_not()
+(boolean~) bool_not::$0
+(byte~) bool_not::$1
 (boolean~) bool_not::$2
-(byte~) bool_not::$3
+(boolean~) bool_not::$3
 (boolean~) bool_not::$4
 (boolean~) bool_not::$5
-(boolean~) bool_not::$6
-(boolean~) bool_not::$7
 (label) bool_not::@1
 (label) bool_not::@2
 (label) bool_not::@3
@@ -546,6 +586,12 @@ SYMBOL TABLE SSA
 (byte) bool_not::i#3
 (byte) bool_not::i#4
 (byte) bool_not::i#5
+(boolean) bool_not::o1
+(boolean) bool_not::o1#0
+(boolean) bool_not::o2
+(boolean) bool_not::o2#0
+(boolean) bool_not::o3
+(boolean) bool_not::o3#0
 (byte*) bool_not::screen
 (byte*) bool_not::screen#0
 (void()) bool_or()
@@ -566,6 +612,12 @@ SYMBOL TABLE SSA
 (byte) bool_or::i#3
 (byte) bool_or::i#4
 (byte) bool_or::i#5
+(boolean) bool_or::o1
+(boolean) bool_or::o1#0
+(boolean) bool_or::o2
+(boolean) bool_or::o2#0
+(boolean) bool_or::o3
+(boolean) bool_or::o3#0
 (byte*) bool_or::screen
 (byte*) bool_or::screen#0
 (void()) main()
@@ -579,9 +631,23 @@ OPTIMIZING CONTROL FLOW GRAPH
 Culled Empty Block (label) main::@4
 Culled Empty Block (label) @6
 Succesful SSA optimization Pass2CullEmptyBlocks
+Alias (boolean) bool_and::o1#0 = (boolean~) bool_and::$0 
+Alias (boolean) bool_and::o2#0 = (boolean~) bool_and::$2 
+Alias (boolean) bool_and::o3#0 = (boolean~) bool_and::$3 
 Alias (byte) bool_and::i#2 = (byte) bool_and::i#3 (byte) bool_and::i#4 
+Alias (boolean) bool_or::o1#0 = (boolean~) bool_or::$0 
+Alias (boolean) bool_or::o2#0 = (boolean~) bool_or::$2 
+Alias (boolean) bool_or::o3#0 = (boolean~) bool_or::$3 
 Alias (byte) bool_or::i#2 = (byte) bool_or::i#3 (byte) bool_or::i#4 
+Alias (boolean) bool_not::o1#0 = (boolean~) bool_not::$0 
+Alias (boolean) bool_not::o2#0 = (boolean~) bool_not::$2 
+Alias (boolean) bool_not::o3#0 = (boolean~) bool_not::$4 
 Alias (byte) bool_not::i#2 = (byte) bool_not::i#3 (byte) bool_not::i#4 
+Alias (boolean) bool_complex::o1#0 = (boolean~) bool_complex::$0 
+Alias (boolean) bool_complex::o2#0 = (boolean~) bool_complex::$2 
+Alias (boolean) bool_complex::o3#0 = (boolean~) bool_complex::$3 
+Alias (boolean) bool_complex::o4#0 = (boolean~) bool_complex::$5 
+Alias (boolean) bool_complex::o5#0 = (boolean~) bool_complex::$6 
 Alias (byte) bool_complex::i#2 = (byte) bool_complex::i#3 (byte) bool_complex::i#4 
 Succesful SSA optimization Pass2AliasElimination
 Alias (byte) bool_and::i#2 = (byte) bool_and::i#5 
@@ -591,24 +657,24 @@ Alias (byte) bool_complex::i#2 = (byte) bool_complex::i#5
 Succesful SSA optimization Pass2AliasElimination
 Simple Condition (boolean~) bool_and::$4 if((byte) bool_and::i#1!=(byte/signed byte/word/signed word/dword/signed dword) 21) goto bool_and::@1
 Simple Condition (boolean~) bool_or::$4 if((byte) bool_or::i#1!=(byte/signed byte/word/signed word/dword/signed dword) 21) goto bool_or::@1
-Simple Condition (boolean~) bool_not::$7 if((byte) bool_not::i#1!=(byte/signed byte/word/signed word/dword/signed dword) 21) goto bool_not::@1
-Simple Condition (boolean~) bool_complex::$12 if((byte) bool_complex::i#1!=(byte/signed byte/word/signed word/dword/signed dword) 21) goto bool_complex::@1
+Simple Condition (boolean~) bool_not::$5 if((byte) bool_not::i#1!=(byte/signed byte/word/signed word/dword/signed dword) 21) goto bool_not::@1
+Simple Condition (boolean~) bool_complex::$7 if((byte) bool_complex::i#1!=(byte/signed byte/word/signed word/dword/signed dword) 21) goto bool_complex::@1
 Succesful SSA optimization Pass2ConditionalJumpSimplification
-Rewriting && if()-condition to two if()s (boolean~) bool_and::$3 ← (boolean~) bool_and::$0 && (boolean~) bool_and::$2
+Rewriting && if()-condition to two if()s (boolean) bool_and::o3#0 ← (boolean) bool_and::o1#0 && (boolean) bool_and::o2#0
 Succesful SSA optimization Pass2ConditionalAndOrRewriting
-Rewriting || if()-condition to two if()s (boolean~) bool_or::$3 ← (boolean~) bool_or::$0 || (boolean~) bool_or::$2
+Rewriting || if()-condition to two if()s (boolean) bool_or::o3#0 ← (boolean) bool_or::o1#0 || (boolean) bool_or::o2#0
 Succesful SSA optimization Pass2ConditionalAndOrRewriting
-Rewriting ! if()-condition to reversed if() (boolean~) bool_not::$6 ← ! (boolean~) bool_not::$5
+Rewriting ! if()-condition to reversed if() (boolean) bool_not::o3#0 ← ! (boolean~) bool_not::$3
 Succesful SSA optimization Pass2ConditionalAndOrRewriting
-Rewriting || if()-condition to two if()s (boolean~) bool_not::$5 ← (boolean~) bool_not::$2 || (boolean~) bool_not::$4
+Rewriting || if()-condition to two if()s (boolean~) bool_not::$3 ← (boolean) bool_not::o1#0 || (boolean) bool_not::o2#0
 Succesful SSA optimization Pass2ConditionalAndOrRewriting
-Rewriting || if()-condition to two if()s (boolean~) bool_complex::$11 ← (boolean~) bool_complex::$5 || (boolean~) bool_complex::$10
+Rewriting || if()-condition to two if()s (boolean) bool_complex::o5#0 ← (boolean) bool_complex::o3#0 || (boolean) bool_complex::o4#0
 Succesful SSA optimization Pass2ConditionalAndOrRewriting
-Rewriting && if()-condition to two if()s (boolean~) bool_complex::$5 ← (boolean~) bool_complex::$2 && (boolean~) bool_complex::$4
+Rewriting && if()-condition to two if()s (boolean) bool_complex::o3#0 ← (boolean) bool_complex::o1#0 && (boolean) bool_complex::o2#0
 Succesful SSA optimization Pass2ConditionalAndOrRewriting
-Rewriting ! if()-condition to reversed if() (boolean~) bool_complex::$10 ← ! (boolean~) bool_complex::$9
+Rewriting ! if()-condition to reversed if() (boolean) bool_complex::o4#0 ← ! (boolean~) bool_complex::$4
 Succesful SSA optimization Pass2ConditionalAndOrRewriting
-Rewriting || if()-condition to two if()s (boolean~) bool_complex::$9 ← (boolean~) bool_complex::$6 || (boolean~) bool_complex::$8
+Rewriting || if()-condition to two if()s (boolean~) bool_complex::$4 ← (boolean) bool_complex::o1#0 || (boolean) bool_complex::o2#0
 Succesful SSA optimization Pass2ConditionalAndOrRewriting
 Constant (const byte*) bool_and::screen#0 = ((byte*))1024
 Constant (const byte) bool_and::i#0 = 0
@@ -619,16 +685,12 @@ Constant (const byte) bool_not::i#0 = 0
 Constant (const byte*) bool_complex::screen#0 = ((byte*))1144
 Constant (const byte) bool_complex::i#0 = 0
 Succesful SSA optimization Pass2ConstantIdentification
-Simple Condition (boolean~) bool_and::$0 if((byte) bool_and::i#2<(byte/signed byte/word/signed word/dword/signed dword) 10) goto bool_and::@7
-Simple Condition (boolean~) bool_or::$0 if((byte) bool_or::i#2<(byte/signed byte/word/signed word/dword/signed dword) 10) goto bool_or::@2
-Simple Condition (boolean~) bool_not::$2 if((byte) bool_not::i#2<(byte/signed byte/word/signed word/dword/signed dword) 10) goto bool_not::@4
-Simple Condition (boolean~) bool_complex::$2 if((byte) bool_complex::i#2<(byte/signed byte/word/signed word/dword/signed dword) 10) goto bool_complex::@8
-Simple Condition (boolean~) bool_and::$2 if((byte~) bool_and::$1==(byte/signed byte/word/signed word/dword/signed dword) 0) goto bool_and::@2
-Simple Condition (boolean~) bool_or::$2 if((byte~) bool_or::$1==(byte/signed byte/word/signed word/dword/signed dword) 0) goto bool_or::@2
-Simple Condition (boolean~) bool_not::$4 if((byte~) bool_not::$3==(byte/signed byte/word/signed word/dword/signed dword) 0) goto bool_not::@4
-Simple Condition (boolean~) bool_complex::$6 if((byte) bool_complex::i#2<(byte/signed byte/word/signed word/dword/signed dword) 10) goto bool_complex::@4
-Simple Condition (boolean~) bool_complex::$4 if((byte~) bool_complex::$3==(byte/signed byte/word/signed word/dword/signed dword) 0) goto bool_complex::@2
-Simple Condition (boolean~) bool_complex::$8 if((byte~) bool_complex::$7==(byte/signed byte/word/signed word/dword/signed dword) 0) goto bool_complex::@4
+Simple Condition (boolean) bool_and::o1#0 if((byte) bool_and::i#2<(byte/signed byte/word/signed word/dword/signed dword) 10) goto bool_and::@7
+Simple Condition (boolean) bool_or::o1#0 if((byte) bool_or::i#2<(byte/signed byte/word/signed word/dword/signed dword) 10) goto bool_or::@2
+Simple Condition (boolean) bool_not::o1#0 if((byte) bool_not::i#2<(byte/signed byte/word/signed word/dword/signed dword) 10) goto bool_not::@4
+Simple Condition (boolean) bool_and::o2#0 if((byte~) bool_and::$1==(byte/signed byte/word/signed word/dword/signed dword) 0) goto bool_and::@2
+Simple Condition (boolean) bool_or::o2#0 if((byte~) bool_or::$1==(byte/signed byte/word/signed word/dword/signed dword) 0) goto bool_or::@2
+Simple Condition (boolean) bool_not::o2#0 if((byte~) bool_not::$1==(byte/signed byte/word/signed word/dword/signed dword) 0) goto bool_not::@4
 Succesful SSA optimization Pass2ConditionalJumpSimplification
 OPTIMIZING CONTROL FLOW GRAPH
 Inlining constant with var siblings (const byte) bool_and::i#0
@@ -670,10 +732,10 @@ Propagating live ranges...
 Propagating live ranges...
 Propagating live ranges...
 Created 4 initial phi equivalence classes
-Coalesced [24] bool_complex::i#6 ← bool_complex::i#1
-Coalesced [36] bool_not::i#6 ← bool_not::i#1
-Coalesced [47] bool_or::i#6 ← bool_or::i#1
-Coalesced [57] bool_and::i#6 ← bool_and::i#1
+Coalesced [25] bool_complex::i#6 ← bool_complex::i#1
+Coalesced [37] bool_not::i#6 ← bool_not::i#1
+Coalesced [48] bool_or::i#6 ← bool_or::i#1
+Coalesced [58] bool_and::i#6 ← bool_and::i#1
 Coalesced down to 4 phi equivalence classes
 Culled Empty Block (label) bool_complex::@10
 Culled Empty Block (label) bool_not::@8
@@ -730,103 +792,104 @@ bool_complex: scope:[bool_complex]  from main::@3
   to:bool_complex::@1
 bool_complex::@1: scope:[bool_complex]  from bool_complex bool_complex::@3
   [14] (byte) bool_complex::i#2 ← phi( bool_complex/(byte/signed byte/word/signed word/dword/signed dword) 0 bool_complex::@3/(byte) bool_complex::i#1 ) [ bool_complex::i#2 ] ( main:2::bool_complex:11 [ bool_complex::i#2 ] )
-  [15] (byte~) bool_complex::$3 ← (byte) bool_complex::i#2 & (byte/signed byte/word/signed word/dword/signed dword) 1 [ bool_complex::i#2 bool_complex::$3 ] ( main:2::bool_complex:11 [ bool_complex::i#2 bool_complex::$3 ] )
-  [16] (byte~) bool_complex::$7 ← (byte) bool_complex::i#2 & (byte/signed byte/word/signed word/dword/signed dword) 1 [ bool_complex::i#2 bool_complex::$3 bool_complex::$7 ] ( main:2::bool_complex:11 [ bool_complex::i#2 bool_complex::$3 bool_complex::$7 ] )
-  [17] if((byte) bool_complex::i#2<(byte/signed byte/word/signed word/dword/signed dword) 10) goto bool_complex::@8 [ bool_complex::i#2 bool_complex::$3 bool_complex::$7 ] ( main:2::bool_complex:11 [ bool_complex::i#2 bool_complex::$3 bool_complex::$7 ] )
+  [15] (boolean) bool_complex::o1#0 ← (byte) bool_complex::i#2 < (byte/signed byte/word/signed word/dword/signed dword) 10 [ bool_complex::i#2 bool_complex::o1#0 ] ( main:2::bool_complex:11 [ bool_complex::i#2 bool_complex::o1#0 ] )
+  [16] (byte~) bool_complex::$1 ← (byte) bool_complex::i#2 & (byte/signed byte/word/signed word/dword/signed dword) 1 [ bool_complex::i#2 bool_complex::o1#0 bool_complex::$1 ] ( main:2::bool_complex:11 [ bool_complex::i#2 bool_complex::o1#0 bool_complex::$1 ] )
+  [17] (boolean) bool_complex::o2#0 ← (byte~) bool_complex::$1 == (byte/signed byte/word/signed word/dword/signed dword) 0 [ bool_complex::i#2 bool_complex::o1#0 bool_complex::o2#0 ] ( main:2::bool_complex:11 [ bool_complex::i#2 bool_complex::o1#0 bool_complex::o2#0 ] )
+  [18] if((boolean) bool_complex::o1#0) goto bool_complex::@8 [ bool_complex::i#2 bool_complex::o1#0 bool_complex::o2#0 ] ( main:2::bool_complex:11 [ bool_complex::i#2 bool_complex::o1#0 bool_complex::o2#0 ] )
   to:bool_complex::@7
 bool_complex::@7: scope:[bool_complex]  from bool_complex::@1 bool_complex::@8
-  [18] if((byte) bool_complex::i#2<(byte/signed byte/word/signed word/dword/signed dword) 10) goto bool_complex::@4 [ bool_complex::i#2 bool_complex::$7 ] ( main:2::bool_complex:11 [ bool_complex::i#2 bool_complex::$7 ] )
+  [19] if((boolean) bool_complex::o1#0) goto bool_complex::@4 [ bool_complex::i#2 bool_complex::o2#0 ] ( main:2::bool_complex:11 [ bool_complex::i#2 bool_complex::o2#0 ] )
   to:bool_complex::@9
 bool_complex::@9: scope:[bool_complex]  from bool_complex::@7
-  [19] if((byte~) bool_complex::$7==(byte/signed byte/word/signed word/dword/signed dword) 0) goto bool_complex::@4 [ bool_complex::i#2 ] ( main:2::bool_complex:11 [ bool_complex::i#2 ] )
+  [20] if((boolean) bool_complex::o2#0) goto bool_complex::@4 [ bool_complex::i#2 ] ( main:2::bool_complex:11 [ bool_complex::i#2 ] )
   to:bool_complex::@2
 bool_complex::@2: scope:[bool_complex]  from bool_complex::@8 bool_complex::@9
-  [20] *((const byte*) bool_complex::screen#0 + (byte) bool_complex::i#2) ← (byte) '*' [ bool_complex::i#2 ] ( main:2::bool_complex:11 [ bool_complex::i#2 ] )
+  [21] *((const byte*) bool_complex::screen#0 + (byte) bool_complex::i#2) ← (byte) '*' [ bool_complex::i#2 ] ( main:2::bool_complex:11 [ bool_complex::i#2 ] )
   to:bool_complex::@3
 bool_complex::@3: scope:[bool_complex]  from bool_complex::@2 bool_complex::@4
-  [21] (byte) bool_complex::i#1 ← ++ (byte) bool_complex::i#2 [ bool_complex::i#1 ] ( main:2::bool_complex:11 [ bool_complex::i#1 ] )
-  [22] if((byte) bool_complex::i#1!=(byte/signed byte/word/signed word/dword/signed dword) 21) goto bool_complex::@1 [ bool_complex::i#1 ] ( main:2::bool_complex:11 [ bool_complex::i#1 ] )
+  [22] (byte) bool_complex::i#1 ← ++ (byte) bool_complex::i#2 [ bool_complex::i#1 ] ( main:2::bool_complex:11 [ bool_complex::i#1 ] )
+  [23] if((byte) bool_complex::i#1!=(byte/signed byte/word/signed word/dword/signed dword) 21) goto bool_complex::@1 [ bool_complex::i#1 ] ( main:2::bool_complex:11 [ bool_complex::i#1 ] )
   to:bool_complex::@return
 bool_complex::@return: scope:[bool_complex]  from bool_complex::@3
-  [23] return  [ ] ( main:2::bool_complex:11 [ ] )
+  [24] return  [ ] ( main:2::bool_complex:11 [ ] )
   to:@return
 bool_complex::@4: scope:[bool_complex]  from bool_complex::@7 bool_complex::@9
-  [24] *((const byte*) bool_complex::screen#0 + (byte) bool_complex::i#2) ← (byte) ' ' [ bool_complex::i#2 ] ( main:2::bool_complex:11 [ bool_complex::i#2 ] )
+  [25] *((const byte*) bool_complex::screen#0 + (byte) bool_complex::i#2) ← (byte) ' ' [ bool_complex::i#2 ] ( main:2::bool_complex:11 [ bool_complex::i#2 ] )
   to:bool_complex::@3
 bool_complex::@8: scope:[bool_complex]  from bool_complex::@1
-  [25] if((byte~) bool_complex::$3==(byte/signed byte/word/signed word/dword/signed dword) 0) goto bool_complex::@2 [ bool_complex::i#2 bool_complex::$7 ] ( main:2::bool_complex:11 [ bool_complex::i#2 bool_complex::$7 ] )
+  [26] if((boolean) bool_complex::o2#0) goto bool_complex::@2 [ bool_complex::i#2 bool_complex::o1#0 bool_complex::o2#0 ] ( main:2::bool_complex:11 [ bool_complex::i#2 bool_complex::o1#0 bool_complex::o2#0 ] )
   to:bool_complex::@7
 bool_not: scope:[bool_not]  from main::@2
-  [26] phi() [ ] ( main:2::bool_not:9 [ ] )
+  [27] phi() [ ] ( main:2::bool_not:9 [ ] )
   to:bool_not::@1
 bool_not::@1: scope:[bool_not]  from bool_not bool_not::@3
-  [27] (byte) bool_not::i#2 ← phi( bool_not/(byte/signed byte/word/signed word/dword/signed dword) 0 bool_not::@3/(byte) bool_not::i#1 ) [ bool_not::i#2 ] ( main:2::bool_not:9 [ bool_not::i#2 ] )
-  [28] (byte~) bool_not::$3 ← (byte) bool_not::i#2 & (byte/signed byte/word/signed word/dword/signed dword) 1 [ bool_not::i#2 bool_not::$3 ] ( main:2::bool_not:9 [ bool_not::i#2 bool_not::$3 ] )
-  [29] if((byte) bool_not::i#2<(byte/signed byte/word/signed word/dword/signed dword) 10) goto bool_not::@4 [ bool_not::i#2 bool_not::$3 ] ( main:2::bool_not:9 [ bool_not::i#2 bool_not::$3 ] )
+  [28] (byte) bool_not::i#2 ← phi( bool_not/(byte/signed byte/word/signed word/dword/signed dword) 0 bool_not::@3/(byte) bool_not::i#1 ) [ bool_not::i#2 ] ( main:2::bool_not:9 [ bool_not::i#2 ] )
+  [29] (byte~) bool_not::$1 ← (byte) bool_not::i#2 & (byte/signed byte/word/signed word/dword/signed dword) 1 [ bool_not::i#2 bool_not::$1 ] ( main:2::bool_not:9 [ bool_not::i#2 bool_not::$1 ] )
+  [30] if((byte) bool_not::i#2<(byte/signed byte/word/signed word/dword/signed dword) 10) goto bool_not::@4 [ bool_not::i#2 bool_not::$1 ] ( main:2::bool_not:9 [ bool_not::i#2 bool_not::$1 ] )
   to:bool_not::@7
 bool_not::@7: scope:[bool_not]  from bool_not::@1
-  [30] if((byte~) bool_not::$3==(byte/signed byte/word/signed word/dword/signed dword) 0) goto bool_not::@4 [ bool_not::i#2 ] ( main:2::bool_not:9 [ bool_not::i#2 ] )
+  [31] if((byte~) bool_not::$1==(byte/signed byte/word/signed word/dword/signed dword) 0) goto bool_not::@4 [ bool_not::i#2 ] ( main:2::bool_not:9 [ bool_not::i#2 ] )
   to:bool_not::@2
 bool_not::@2: scope:[bool_not]  from bool_not::@7
-  [31] *((const byte*) bool_not::screen#0 + (byte) bool_not::i#2) ← (byte) '*' [ bool_not::i#2 ] ( main:2::bool_not:9 [ bool_not::i#2 ] )
+  [32] *((const byte*) bool_not::screen#0 + (byte) bool_not::i#2) ← (byte) '*' [ bool_not::i#2 ] ( main:2::bool_not:9 [ bool_not::i#2 ] )
   to:bool_not::@3
 bool_not::@3: scope:[bool_not]  from bool_not::@2 bool_not::@4
-  [32] (byte) bool_not::i#1 ← ++ (byte) bool_not::i#2 [ bool_not::i#1 ] ( main:2::bool_not:9 [ bool_not::i#1 ] )
-  [33] if((byte) bool_not::i#1!=(byte/signed byte/word/signed word/dword/signed dword) 21) goto bool_not::@1 [ bool_not::i#1 ] ( main:2::bool_not:9 [ bool_not::i#1 ] )
+  [33] (byte) bool_not::i#1 ← ++ (byte) bool_not::i#2 [ bool_not::i#1 ] ( main:2::bool_not:9 [ bool_not::i#1 ] )
+  [34] if((byte) bool_not::i#1!=(byte/signed byte/word/signed word/dword/signed dword) 21) goto bool_not::@1 [ bool_not::i#1 ] ( main:2::bool_not:9 [ bool_not::i#1 ] )
   to:bool_not::@return
 bool_not::@return: scope:[bool_not]  from bool_not::@3
-  [34] return  [ ] ( main:2::bool_not:9 [ ] )
+  [35] return  [ ] ( main:2::bool_not:9 [ ] )
   to:@return
 bool_not::@4: scope:[bool_not]  from bool_not::@1 bool_not::@7
-  [35] *((const byte*) bool_not::screen#0 + (byte) bool_not::i#2) ← (byte) ' ' [ bool_not::i#2 ] ( main:2::bool_not:9 [ bool_not::i#2 ] )
+  [36] *((const byte*) bool_not::screen#0 + (byte) bool_not::i#2) ← (byte) ' ' [ bool_not::i#2 ] ( main:2::bool_not:9 [ bool_not::i#2 ] )
   to:bool_not::@3
 bool_or: scope:[bool_or]  from main::@1
-  [36] phi() [ ] ( main:2::bool_or:7 [ ] )
+  [37] phi() [ ] ( main:2::bool_or:7 [ ] )
   to:bool_or::@1
 bool_or::@1: scope:[bool_or]  from bool_or bool_or::@3
-  [37] (byte) bool_or::i#2 ← phi( bool_or/(byte/signed byte/word/signed word/dword/signed dword) 0 bool_or::@3/(byte) bool_or::i#1 ) [ bool_or::i#2 ] ( main:2::bool_or:7 [ bool_or::i#2 ] )
-  [38] (byte~) bool_or::$1 ← (byte) bool_or::i#2 & (byte/signed byte/word/signed word/dword/signed dword) 1 [ bool_or::i#2 bool_or::$1 ] ( main:2::bool_or:7 [ bool_or::i#2 bool_or::$1 ] )
-  [39] if((byte) bool_or::i#2<(byte/signed byte/word/signed word/dword/signed dword) 10) goto bool_or::@2 [ bool_or::i#2 bool_or::$1 ] ( main:2::bool_or:7 [ bool_or::i#2 bool_or::$1 ] )
+  [38] (byte) bool_or::i#2 ← phi( bool_or/(byte/signed byte/word/signed word/dword/signed dword) 0 bool_or::@3/(byte) bool_or::i#1 ) [ bool_or::i#2 ] ( main:2::bool_or:7 [ bool_or::i#2 ] )
+  [39] (byte~) bool_or::$1 ← (byte) bool_or::i#2 & (byte/signed byte/word/signed word/dword/signed dword) 1 [ bool_or::i#2 bool_or::$1 ] ( main:2::bool_or:7 [ bool_or::i#2 bool_or::$1 ] )
+  [40] if((byte) bool_or::i#2<(byte/signed byte/word/signed word/dword/signed dword) 10) goto bool_or::@2 [ bool_or::i#2 bool_or::$1 ] ( main:2::bool_or:7 [ bool_or::i#2 bool_or::$1 ] )
   to:bool_or::@7
 bool_or::@7: scope:[bool_or]  from bool_or::@1
-  [40] if((byte~) bool_or::$1==(byte/signed byte/word/signed word/dword/signed dword) 0) goto bool_or::@2 [ bool_or::i#2 ] ( main:2::bool_or:7 [ bool_or::i#2 ] )
+  [41] if((byte~) bool_or::$1==(byte/signed byte/word/signed word/dword/signed dword) 0) goto bool_or::@2 [ bool_or::i#2 ] ( main:2::bool_or:7 [ bool_or::i#2 ] )
   to:bool_or::@4
 bool_or::@4: scope:[bool_or]  from bool_or::@7
-  [41] *((const byte*) bool_or::screen#0 + (byte) bool_or::i#2) ← (byte) ' ' [ bool_or::i#2 ] ( main:2::bool_or:7 [ bool_or::i#2 ] )
+  [42] *((const byte*) bool_or::screen#0 + (byte) bool_or::i#2) ← (byte) ' ' [ bool_or::i#2 ] ( main:2::bool_or:7 [ bool_or::i#2 ] )
   to:bool_or::@3
 bool_or::@3: scope:[bool_or]  from bool_or::@2 bool_or::@4
-  [42] (byte) bool_or::i#1 ← ++ (byte) bool_or::i#2 [ bool_or::i#1 ] ( main:2::bool_or:7 [ bool_or::i#1 ] )
-  [43] if((byte) bool_or::i#1!=(byte/signed byte/word/signed word/dword/signed dword) 21) goto bool_or::@1 [ bool_or::i#1 ] ( main:2::bool_or:7 [ bool_or::i#1 ] )
+  [43] (byte) bool_or::i#1 ← ++ (byte) bool_or::i#2 [ bool_or::i#1 ] ( main:2::bool_or:7 [ bool_or::i#1 ] )
+  [44] if((byte) bool_or::i#1!=(byte/signed byte/word/signed word/dword/signed dword) 21) goto bool_or::@1 [ bool_or::i#1 ] ( main:2::bool_or:7 [ bool_or::i#1 ] )
   to:bool_or::@return
 bool_or::@return: scope:[bool_or]  from bool_or::@3
-  [44] return  [ ] ( main:2::bool_or:7 [ ] )
+  [45] return  [ ] ( main:2::bool_or:7 [ ] )
   to:@return
 bool_or::@2: scope:[bool_or]  from bool_or::@1 bool_or::@7
-  [45] *((const byte*) bool_or::screen#0 + (byte) bool_or::i#2) ← (byte) '*' [ bool_or::i#2 ] ( main:2::bool_or:7 [ bool_or::i#2 ] )
+  [46] *((const byte*) bool_or::screen#0 + (byte) bool_or::i#2) ← (byte) '*' [ bool_or::i#2 ] ( main:2::bool_or:7 [ bool_or::i#2 ] )
   to:bool_or::@3
 bool_and: scope:[bool_and]  from main
-  [46] phi() [ ] ( main:2::bool_and:5 [ ] )
+  [47] phi() [ ] ( main:2::bool_and:5 [ ] )
   to:bool_and::@1
 bool_and::@1: scope:[bool_and]  from bool_and bool_and::@3
-  [47] (byte) bool_and::i#2 ← phi( bool_and/(byte/signed byte/word/signed word/dword/signed dword) 0 bool_and::@3/(byte) bool_and::i#1 ) [ bool_and::i#2 ] ( main:2::bool_and:5 [ bool_and::i#2 ] )
-  [48] (byte~) bool_and::$1 ← (byte) bool_and::i#2 & (byte/signed byte/word/signed word/dword/signed dword) 1 [ bool_and::i#2 bool_and::$1 ] ( main:2::bool_and:5 [ bool_and::i#2 bool_and::$1 ] )
-  [49] if((byte) bool_and::i#2<(byte/signed byte/word/signed word/dword/signed dword) 10) goto bool_and::@7 [ bool_and::i#2 bool_and::$1 ] ( main:2::bool_and:5 [ bool_and::i#2 bool_and::$1 ] )
+  [48] (byte) bool_and::i#2 ← phi( bool_and/(byte/signed byte/word/signed word/dword/signed dword) 0 bool_and::@3/(byte) bool_and::i#1 ) [ bool_and::i#2 ] ( main:2::bool_and:5 [ bool_and::i#2 ] )
+  [49] (byte~) bool_and::$1 ← (byte) bool_and::i#2 & (byte/signed byte/word/signed word/dword/signed dword) 1 [ bool_and::i#2 bool_and::$1 ] ( main:2::bool_and:5 [ bool_and::i#2 bool_and::$1 ] )
+  [50] if((byte) bool_and::i#2<(byte/signed byte/word/signed word/dword/signed dword) 10) goto bool_and::@7 [ bool_and::i#2 bool_and::$1 ] ( main:2::bool_and:5 [ bool_and::i#2 bool_and::$1 ] )
   to:bool_and::@4
 bool_and::@4: scope:[bool_and]  from bool_and::@1 bool_and::@7
-  [50] *((const byte*) bool_and::screen#0 + (byte) bool_and::i#2) ← (byte) ' ' [ bool_and::i#2 ] ( main:2::bool_and:5 [ bool_and::i#2 ] )
+  [51] *((const byte*) bool_and::screen#0 + (byte) bool_and::i#2) ← (byte) ' ' [ bool_and::i#2 ] ( main:2::bool_and:5 [ bool_and::i#2 ] )
   to:bool_and::@3
 bool_and::@3: scope:[bool_and]  from bool_and::@2 bool_and::@4
-  [51] (byte) bool_and::i#1 ← ++ (byte) bool_and::i#2 [ bool_and::i#1 ] ( main:2::bool_and:5 [ bool_and::i#1 ] )
-  [52] if((byte) bool_and::i#1!=(byte/signed byte/word/signed word/dword/signed dword) 21) goto bool_and::@1 [ bool_and::i#1 ] ( main:2::bool_and:5 [ bool_and::i#1 ] )
+  [52] (byte) bool_and::i#1 ← ++ (byte) bool_and::i#2 [ bool_and::i#1 ] ( main:2::bool_and:5 [ bool_and::i#1 ] )
+  [53] if((byte) bool_and::i#1!=(byte/signed byte/word/signed word/dword/signed dword) 21) goto bool_and::@1 [ bool_and::i#1 ] ( main:2::bool_and:5 [ bool_and::i#1 ] )
   to:bool_and::@return
 bool_and::@return: scope:[bool_and]  from bool_and::@3
-  [53] return  [ ] ( main:2::bool_and:5 [ ] )
+  [54] return  [ ] ( main:2::bool_and:5 [ ] )
   to:@return
 bool_and::@7: scope:[bool_and]  from bool_and::@1
-  [54] if((byte~) bool_and::$1==(byte/signed byte/word/signed word/dword/signed dword) 0) goto bool_and::@2 [ bool_and::i#2 ] ( main:2::bool_and:5 [ bool_and::i#2 ] )
+  [55] if((byte~) bool_and::$1==(byte/signed byte/word/signed word/dword/signed dword) 0) goto bool_and::@2 [ bool_and::i#2 ] ( main:2::bool_and:5 [ bool_and::i#2 ] )
   to:bool_and::@4
 bool_and::@2: scope:[bool_and]  from bool_and::@7
-  [55] *((const byte*) bool_and::screen#0 + (byte) bool_and::i#2) ← (byte) '*' [ bool_and::i#2 ] ( main:2::bool_and:5 [ bool_and::i#2 ] )
+  [56] *((const byte*) bool_and::screen#0 + (byte) bool_and::i#2) ← (byte) '*' [ bool_and::i#2 ] ( main:2::bool_and:5 [ bool_and::i#2 ] )
   to:bool_and::@3
 
 DOMINATORS
@@ -906,25 +969,40 @@ VARIABLE REGISTER WEIGHTS
 (byte) bool_and::i
 (byte) bool_and::i#1 16.5
 (byte) bool_and::i#2 11.0
+(boolean) bool_and::o1
+(boolean) bool_and::o2
+(boolean) bool_and::o3
 (byte*) bool_and::screen
 (void()) bool_complex()
-(byte~) bool_complex::$3 7.333333333333333
-(byte~) bool_complex::$7 5.5
+(byte~) bool_complex::$1 22.0
 (byte) bool_complex::i
 (byte) bool_complex::i#1 16.5
-(byte) bool_complex::i#2 9.777777777777779
+(byte) bool_complex::i#2 6.6
+(boolean) bool_complex::o1
+(boolean) bool_complex::o1#0 6.6000000000000005
+(boolean) bool_complex::o2
+(boolean) bool_complex::o2#0 8.25
+(boolean) bool_complex::o3
+(boolean) bool_complex::o4
+(boolean) bool_complex::o5
 (byte*) bool_complex::screen
 (void()) bool_not()
-(byte~) bool_not::$3 11.0
+(byte~) bool_not::$1 11.0
 (byte) bool_not::i
 (byte) bool_not::i#1 16.5
 (byte) bool_not::i#2 11.0
+(boolean) bool_not::o1
+(boolean) bool_not::o2
+(boolean) bool_not::o3
 (byte*) bool_not::screen
 (void()) bool_or()
 (byte~) bool_or::$1 11.0
 (byte) bool_or::i
 (byte) bool_or::i#1 16.5
 (byte) bool_or::i#2 11.0
+(boolean) bool_or::o1
+(boolean) bool_or::o2
+(boolean) bool_or::o3
 (byte*) bool_or::screen
 (void()) main()
 
@@ -933,9 +1011,10 @@ Initial phi equivalence classes
 [ bool_not::i#2 bool_not::i#1 ]
 [ bool_or::i#2 bool_or::i#1 ]
 [ bool_and::i#2 bool_and::i#1 ]
-Added variable bool_complex::$3 to zero page equivalence class [ bool_complex::$3 ]
-Added variable bool_complex::$7 to zero page equivalence class [ bool_complex::$7 ]
-Added variable bool_not::$3 to zero page equivalence class [ bool_not::$3 ]
+Added variable bool_complex::o1#0 to zero page equivalence class [ bool_complex::o1#0 ]
+Added variable bool_complex::$1 to zero page equivalence class [ bool_complex::$1 ]
+Added variable bool_complex::o2#0 to zero page equivalence class [ bool_complex::o2#0 ]
+Added variable bool_not::$1 to zero page equivalence class [ bool_not::$1 ]
 Added variable bool_or::$1 to zero page equivalence class [ bool_or::$1 ]
 Added variable bool_and::$1 to zero page equivalence class [ bool_and::$1 ]
 Complete equivalence classes
@@ -943,20 +1022,22 @@ Complete equivalence classes
 [ bool_not::i#2 bool_not::i#1 ]
 [ bool_or::i#2 bool_or::i#1 ]
 [ bool_and::i#2 bool_and::i#1 ]
-[ bool_complex::$3 ]
-[ bool_complex::$7 ]
-[ bool_not::$3 ]
+[ bool_complex::o1#0 ]
+[ bool_complex::$1 ]
+[ bool_complex::o2#0 ]
+[ bool_not::$1 ]
 [ bool_or::$1 ]
 [ bool_and::$1 ]
 Allocated zp ZP_BYTE:2 [ bool_complex::i#2 bool_complex::i#1 ]
 Allocated zp ZP_BYTE:3 [ bool_not::i#2 bool_not::i#1 ]
 Allocated zp ZP_BYTE:4 [ bool_or::i#2 bool_or::i#1 ]
 Allocated zp ZP_BYTE:5 [ bool_and::i#2 bool_and::i#1 ]
-Allocated zp ZP_BYTE:6 [ bool_complex::$3 ]
-Allocated zp ZP_BYTE:7 [ bool_complex::$7 ]
-Allocated zp ZP_BYTE:8 [ bool_not::$3 ]
-Allocated zp ZP_BYTE:9 [ bool_or::$1 ]
-Allocated zp ZP_BYTE:10 [ bool_and::$1 ]
+Allocated zp ZP_BOOL:6 [ bool_complex::o1#0 ]
+Allocated zp ZP_BYTE:7 [ bool_complex::$1 ]
+Allocated zp ZP_BOOL:8 [ bool_complex::o2#0 ]
+Allocated zp ZP_BYTE:9 [ bool_not::$1 ]
+Allocated zp ZP_BYTE:10 [ bool_or::$1 ]
+Allocated zp ZP_BYTE:11 [ bool_and::$1 ]
 
 INITIAL ASM
 //SEG0 Basic Upstart
@@ -983,7 +1064,7 @@ bend:
 //SEG9 main
 main: {
   //SEG10 [5] call bool_and param-assignment [ ] ( main:2 [ ] )
-  //SEG11 [46] phi from main to bool_and [phi:main->bool_and]
+  //SEG11 [47] phi from main to bool_and [phi:main->bool_and]
   bool_and_from_main:
     jsr bool_and
   //SEG12 [6] phi from main to main::@1 [phi:main->main::@1]
@@ -992,7 +1073,7 @@ main: {
   //SEG13 main::@1
   b1:
   //SEG14 [7] call bool_or param-assignment [ ] ( main:2 [ ] )
-  //SEG15 [36] phi from main::@1 to bool_or [phi:main::@1->bool_or]
+  //SEG15 [37] phi from main::@1 to bool_or [phi:main::@1->bool_or]
   bool_or_from_b1:
     jsr bool_or
   //SEG16 [8] phi from main::@1 to main::@2 [phi:main::@1->main::@2]
@@ -1001,7 +1082,7 @@ main: {
   //SEG17 main::@2
   b2:
   //SEG18 [9] call bool_not param-assignment [ ] ( main:2 [ ] )
-  //SEG19 [26] phi from main::@2 to bool_not [phi:main::@2->bool_not]
+  //SEG19 [27] phi from main::@2 to bool_not [phi:main::@2->bool_not]
   bool_not_from_b2:
     jsr bool_not
   //SEG20 [10] phi from main::@2 to main::@3 [phi:main::@2->main::@3]
@@ -1022,8 +1103,9 @@ main: {
 //SEG26 bool_complex
 bool_complex: {
     .label screen = $478
-    .label _3 = 6
-    .label _7 = 7
+    .label _1 = 7
+    .label o1 = 6
+    .label o2 = 8
     .label i = 2
   //SEG27 [14] phi from bool_complex to bool_complex::@1 [phi:bool_complex->bool_complex::@1]
   b1_from_bool_complex:
@@ -1037,241 +1119,254 @@ bool_complex: {
     jmp b1
   //SEG31 bool_complex::@1
   b1:
-  //SEG32 [15] (byte~) bool_complex::$3 ← (byte) bool_complex::i#2 & (byte/signed byte/word/signed word/dword/signed dword) 1 [ bool_complex::i#2 bool_complex::$3 ] ( main:2::bool_complex:11 [ bool_complex::i#2 bool_complex::$3 ] ) -- vbuz1=vbuz2_band_vbuc1 
-    lda #1
-    and i
-    sta _3
-  //SEG33 [16] (byte~) bool_complex::$7 ← (byte) bool_complex::i#2 & (byte/signed byte/word/signed word/dword/signed dword) 1 [ bool_complex::i#2 bool_complex::$3 bool_complex::$7 ] ( main:2::bool_complex:11 [ bool_complex::i#2 bool_complex::$3 bool_complex::$7 ] ) -- vbuz1=vbuz2_band_vbuc1 
-    lda #1
-    and i
-    sta _7
-  //SEG34 [17] if((byte) bool_complex::i#2<(byte/signed byte/word/signed word/dword/signed dword) 10) goto bool_complex::@8 [ bool_complex::i#2 bool_complex::$3 bool_complex::$7 ] ( main:2::bool_complex:11 [ bool_complex::i#2 bool_complex::$3 bool_complex::$7 ] ) -- vbuz1_lt_vbuc1_then_la1 
+  //SEG32 [15] (boolean) bool_complex::o1#0 ← (byte) bool_complex::i#2 < (byte/signed byte/word/signed word/dword/signed dword) 10 [ bool_complex::i#2 bool_complex::o1#0 ] ( main:2::bool_complex:11 [ bool_complex::i#2 bool_complex::o1#0 ] ) -- vboz1=vbuz2_lt_vbuc1 
     lda i
     cmp #$a
-    bcc b8
-    jmp b7
-  //SEG35 bool_complex::@7
-  b7:
-  //SEG36 [18] if((byte) bool_complex::i#2<(byte/signed byte/word/signed word/dword/signed dword) 10) goto bool_complex::@4 [ bool_complex::i#2 bool_complex::$7 ] ( main:2::bool_complex:11 [ bool_complex::i#2 bool_complex::$7 ] ) -- vbuz1_lt_vbuc1_then_la1 
-    lda i
-    cmp #$a
-    bcc b4
-    jmp b9
-  //SEG37 bool_complex::@9
-  b9:
-  //SEG38 [19] if((byte~) bool_complex::$7==(byte/signed byte/word/signed word/dword/signed dword) 0) goto bool_complex::@4 [ bool_complex::i#2 ] ( main:2::bool_complex:11 [ bool_complex::i#2 ] ) -- vbuz1_eq_0_then_la1 
-    lda _7
-    beq b4
-    jmp b2
-  //SEG39 bool_complex::@2
-  b2:
-  //SEG40 [20] *((const byte*) bool_complex::screen#0 + (byte) bool_complex::i#2) ← (byte) '*' [ bool_complex::i#2 ] ( main:2::bool_complex:11 [ bool_complex::i#2 ] ) -- pbuc1_derefidx_vbuz1=vbuc2 
-    ldy i
-    lda #'*'
-    sta screen,y
-    jmp b3
-  //SEG41 bool_complex::@3
-  b3:
-  //SEG42 [21] (byte) bool_complex::i#1 ← ++ (byte) bool_complex::i#2 [ bool_complex::i#1 ] ( main:2::bool_complex:11 [ bool_complex::i#1 ] ) -- vbuz1=_inc_vbuz1 
-    inc i
-  //SEG43 [22] if((byte) bool_complex::i#1!=(byte/signed byte/word/signed word/dword/signed dword) 21) goto bool_complex::@1 [ bool_complex::i#1 ] ( main:2::bool_complex:11 [ bool_complex::i#1 ] ) -- vbuz1_neq_vbuc1_then_la1 
-    lda i
-    cmp #$15
-    bne b1_from_b3
-    jmp breturn
-  //SEG44 bool_complex::@return
-  breturn:
-  //SEG45 [23] return  [ ] ( main:2::bool_complex:11 [ ] )
-    rts
-  //SEG46 bool_complex::@4
-  b4:
-  //SEG47 [24] *((const byte*) bool_complex::screen#0 + (byte) bool_complex::i#2) ← (byte) ' ' [ bool_complex::i#2 ] ( main:2::bool_complex:11 [ bool_complex::i#2 ] ) -- pbuc1_derefidx_vbuz1=vbuc2 
-    ldy i
-    lda #' '
-    sta screen,y
-    jmp b3
-  //SEG48 bool_complex::@8
-  b8:
-  //SEG49 [25] if((byte~) bool_complex::$3==(byte/signed byte/word/signed word/dword/signed dword) 0) goto bool_complex::@2 [ bool_complex::i#2 bool_complex::$7 ] ( main:2::bool_complex:11 [ bool_complex::i#2 bool_complex::$7 ] ) -- vbuz1_eq_0_then_la1 
-    lda _3
-    beq b2
-    jmp b7
-}
-//SEG50 bool_not
-bool_not: {
-    .label screen = $450
-    .label _3 = 8
-    .label i = 3
-  //SEG51 [27] phi from bool_not to bool_not::@1 [phi:bool_not->bool_not::@1]
-  b1_from_bool_not:
-  //SEG52 [27] phi (byte) bool_not::i#2 = (byte/signed byte/word/signed word/dword/signed dword) 0 [phi:bool_not->bool_not::@1#0] -- vbuz1=vbuc1 
     lda #0
-    sta i
-    jmp b1
-  //SEG53 [27] phi from bool_not::@3 to bool_not::@1 [phi:bool_not::@3->bool_not::@1]
-  b1_from_b3:
-  //SEG54 [27] phi (byte) bool_not::i#2 = (byte) bool_not::i#1 [phi:bool_not::@3->bool_not::@1#0] -- register_copy 
-    jmp b1
-  //SEG55 bool_not::@1
-  b1:
-  //SEG56 [28] (byte~) bool_not::$3 ← (byte) bool_not::i#2 & (byte/signed byte/word/signed word/dword/signed dword) 1 [ bool_not::i#2 bool_not::$3 ] ( main:2::bool_not:9 [ bool_not::i#2 bool_not::$3 ] ) -- vbuz1=vbuz2_band_vbuc1 
-    lda #1
-    and i
-    sta _3
-  //SEG57 [29] if((byte) bool_not::i#2<(byte/signed byte/word/signed word/dword/signed dword) 10) goto bool_not::@4 [ bool_not::i#2 bool_not::$3 ] ( main:2::bool_not:9 [ bool_not::i#2 bool_not::$3 ] ) -- vbuz1_lt_vbuc1_then_la1 
-    lda i
-    cmp #$a
-    bcc b4
-    jmp b7
-  //SEG58 bool_not::@7
-  b7:
-  //SEG59 [30] if((byte~) bool_not::$3==(byte/signed byte/word/signed word/dword/signed dword) 0) goto bool_not::@4 [ bool_not::i#2 ] ( main:2::bool_not:9 [ bool_not::i#2 ] ) -- vbuz1_eq_0_then_la1 
-    lda _3
-    beq b4
-    jmp b2
-  //SEG60 bool_not::@2
-  b2:
-  //SEG61 [31] *((const byte*) bool_not::screen#0 + (byte) bool_not::i#2) ← (byte) '*' [ bool_not::i#2 ] ( main:2::bool_not:9 [ bool_not::i#2 ] ) -- pbuc1_derefidx_vbuz1=vbuc2 
-    ldy i
-    lda #'*'
-    sta screen,y
-    jmp b3
-  //SEG62 bool_not::@3
-  b3:
-  //SEG63 [32] (byte) bool_not::i#1 ← ++ (byte) bool_not::i#2 [ bool_not::i#1 ] ( main:2::bool_not:9 [ bool_not::i#1 ] ) -- vbuz1=_inc_vbuz1 
-    inc i
-  //SEG64 [33] if((byte) bool_not::i#1!=(byte/signed byte/word/signed word/dword/signed dword) 21) goto bool_not::@1 [ bool_not::i#1 ] ( main:2::bool_not:9 [ bool_not::i#1 ] ) -- vbuz1_neq_vbuc1_then_la1 
-    lda i
-    cmp #$15
-    bne b1_from_b3
-    jmp breturn
-  //SEG65 bool_not::@return
-  breturn:
-  //SEG66 [34] return  [ ] ( main:2::bool_not:9 [ ] )
-    rts
-  //SEG67 bool_not::@4
-  b4:
-  //SEG68 [35] *((const byte*) bool_not::screen#0 + (byte) bool_not::i#2) ← (byte) ' ' [ bool_not::i#2 ] ( main:2::bool_not:9 [ bool_not::i#2 ] ) -- pbuc1_derefidx_vbuz1=vbuc2 
-    ldy i
-    lda #' '
-    sta screen,y
-    jmp b3
-}
-//SEG69 bool_or
-bool_or: {
-    .label screen = $428
-    .label _1 = 9
-    .label i = 4
-  //SEG70 [37] phi from bool_or to bool_or::@1 [phi:bool_or->bool_or::@1]
-  b1_from_bool_or:
-  //SEG71 [37] phi (byte) bool_or::i#2 = (byte/signed byte/word/signed word/dword/signed dword) 0 [phi:bool_or->bool_or::@1#0] -- vbuz1=vbuc1 
-    lda #0
-    sta i
-    jmp b1
-  //SEG72 [37] phi from bool_or::@3 to bool_or::@1 [phi:bool_or::@3->bool_or::@1]
-  b1_from_b3:
-  //SEG73 [37] phi (byte) bool_or::i#2 = (byte) bool_or::i#1 [phi:bool_or::@3->bool_or::@1#0] -- register_copy 
-    jmp b1
-  //SEG74 bool_or::@1
-  b1:
-  //SEG75 [38] (byte~) bool_or::$1 ← (byte) bool_or::i#2 & (byte/signed byte/word/signed word/dword/signed dword) 1 [ bool_or::i#2 bool_or::$1 ] ( main:2::bool_or:7 [ bool_or::i#2 bool_or::$1 ] ) -- vbuz1=vbuz2_band_vbuc1 
+    rol
+    eor #1
+    sta o1
+  //SEG33 [16] (byte~) bool_complex::$1 ← (byte) bool_complex::i#2 & (byte/signed byte/word/signed word/dword/signed dword) 1 [ bool_complex::i#2 bool_complex::o1#0 bool_complex::$1 ] ( main:2::bool_complex:11 [ bool_complex::i#2 bool_complex::o1#0 bool_complex::$1 ] ) -- vbuz1=vbuz2_band_vbuc1 
     lda #1
     and i
     sta _1
-  //SEG76 [39] if((byte) bool_or::i#2<(byte/signed byte/word/signed word/dword/signed dword) 10) goto bool_or::@2 [ bool_or::i#2 bool_or::$1 ] ( main:2::bool_or:7 [ bool_or::i#2 bool_or::$1 ] ) -- vbuz1_lt_vbuc1_then_la1 
+  //SEG34 [17] (boolean) bool_complex::o2#0 ← (byte~) bool_complex::$1 == (byte/signed byte/word/signed word/dword/signed dword) 0 [ bool_complex::i#2 bool_complex::o1#0 bool_complex::o2#0 ] ( main:2::bool_complex:11 [ bool_complex::i#2 bool_complex::o1#0 bool_complex::o2#0 ] ) -- vboz1=vbuz2_eq_vbuc1 
+    lda _1
+    cmp #0
+    beq !+
+    lda #1
+  !:
+    eor #1
+    sta o2
+  //SEG35 [18] if((boolean) bool_complex::o1#0) goto bool_complex::@8 [ bool_complex::i#2 bool_complex::o1#0 bool_complex::o2#0 ] ( main:2::bool_complex:11 [ bool_complex::i#2 bool_complex::o1#0 bool_complex::o2#0 ] ) -- vboz1_then_la1 
+    lda o1
+    cmp #0
+    bne b8
+    jmp b7
+  //SEG36 bool_complex::@7
+  b7:
+  //SEG37 [19] if((boolean) bool_complex::o1#0) goto bool_complex::@4 [ bool_complex::i#2 bool_complex::o2#0 ] ( main:2::bool_complex:11 [ bool_complex::i#2 bool_complex::o2#0 ] ) -- vboz1_then_la1 
+    lda o1
+    cmp #0
+    bne b4
+    jmp b9
+  //SEG38 bool_complex::@9
+  b9:
+  //SEG39 [20] if((boolean) bool_complex::o2#0) goto bool_complex::@4 [ bool_complex::i#2 ] ( main:2::bool_complex:11 [ bool_complex::i#2 ] ) -- vboz1_then_la1 
+    lda o2
+    cmp #0
+    bne b4
+    jmp b2
+  //SEG40 bool_complex::@2
+  b2:
+  //SEG41 [21] *((const byte*) bool_complex::screen#0 + (byte) bool_complex::i#2) ← (byte) '*' [ bool_complex::i#2 ] ( main:2::bool_complex:11 [ bool_complex::i#2 ] ) -- pbuc1_derefidx_vbuz1=vbuc2 
+    ldy i
+    lda #'*'
+    sta screen,y
+    jmp b3
+  //SEG42 bool_complex::@3
+  b3:
+  //SEG43 [22] (byte) bool_complex::i#1 ← ++ (byte) bool_complex::i#2 [ bool_complex::i#1 ] ( main:2::bool_complex:11 [ bool_complex::i#1 ] ) -- vbuz1=_inc_vbuz1 
+    inc i
+  //SEG44 [23] if((byte) bool_complex::i#1!=(byte/signed byte/word/signed word/dword/signed dword) 21) goto bool_complex::@1 [ bool_complex::i#1 ] ( main:2::bool_complex:11 [ bool_complex::i#1 ] ) -- vbuz1_neq_vbuc1_then_la1 
+    lda i
+    cmp #$15
+    bne b1_from_b3
+    jmp breturn
+  //SEG45 bool_complex::@return
+  breturn:
+  //SEG46 [24] return  [ ] ( main:2::bool_complex:11 [ ] )
+    rts
+  //SEG47 bool_complex::@4
+  b4:
+  //SEG48 [25] *((const byte*) bool_complex::screen#0 + (byte) bool_complex::i#2) ← (byte) ' ' [ bool_complex::i#2 ] ( main:2::bool_complex:11 [ bool_complex::i#2 ] ) -- pbuc1_derefidx_vbuz1=vbuc2 
+    ldy i
+    lda #' '
+    sta screen,y
+    jmp b3
+  //SEG49 bool_complex::@8
+  b8:
+  //SEG50 [26] if((boolean) bool_complex::o2#0) goto bool_complex::@2 [ bool_complex::i#2 bool_complex::o1#0 bool_complex::o2#0 ] ( main:2::bool_complex:11 [ bool_complex::i#2 bool_complex::o1#0 bool_complex::o2#0 ] ) -- vboz1_then_la1 
+    lda o2
+    cmp #0
+    bne b2
+    jmp b7
+}
+//SEG51 bool_not
+bool_not: {
+    .label screen = $450
+    .label _1 = 9
+    .label i = 3
+  //SEG52 [28] phi from bool_not to bool_not::@1 [phi:bool_not->bool_not::@1]
+  b1_from_bool_not:
+  //SEG53 [28] phi (byte) bool_not::i#2 = (byte/signed byte/word/signed word/dword/signed dword) 0 [phi:bool_not->bool_not::@1#0] -- vbuz1=vbuc1 
+    lda #0
+    sta i
+    jmp b1
+  //SEG54 [28] phi from bool_not::@3 to bool_not::@1 [phi:bool_not::@3->bool_not::@1]
+  b1_from_b3:
+  //SEG55 [28] phi (byte) bool_not::i#2 = (byte) bool_not::i#1 [phi:bool_not::@3->bool_not::@1#0] -- register_copy 
+    jmp b1
+  //SEG56 bool_not::@1
+  b1:
+  //SEG57 [29] (byte~) bool_not::$1 ← (byte) bool_not::i#2 & (byte/signed byte/word/signed word/dword/signed dword) 1 [ bool_not::i#2 bool_not::$1 ] ( main:2::bool_not:9 [ bool_not::i#2 bool_not::$1 ] ) -- vbuz1=vbuz2_band_vbuc1 
+    lda #1
+    and i
+    sta _1
+  //SEG58 [30] if((byte) bool_not::i#2<(byte/signed byte/word/signed word/dword/signed dword) 10) goto bool_not::@4 [ bool_not::i#2 bool_not::$1 ] ( main:2::bool_not:9 [ bool_not::i#2 bool_not::$1 ] ) -- vbuz1_lt_vbuc1_then_la1 
+    lda i
+    cmp #$a
+    bcc b4
+    jmp b7
+  //SEG59 bool_not::@7
+  b7:
+  //SEG60 [31] if((byte~) bool_not::$1==(byte/signed byte/word/signed word/dword/signed dword) 0) goto bool_not::@4 [ bool_not::i#2 ] ( main:2::bool_not:9 [ bool_not::i#2 ] ) -- vbuz1_eq_0_then_la1 
+    lda _1
+    beq b4
+    jmp b2
+  //SEG61 bool_not::@2
+  b2:
+  //SEG62 [32] *((const byte*) bool_not::screen#0 + (byte) bool_not::i#2) ← (byte) '*' [ bool_not::i#2 ] ( main:2::bool_not:9 [ bool_not::i#2 ] ) -- pbuc1_derefidx_vbuz1=vbuc2 
+    ldy i
+    lda #'*'
+    sta screen,y
+    jmp b3
+  //SEG63 bool_not::@3
+  b3:
+  //SEG64 [33] (byte) bool_not::i#1 ← ++ (byte) bool_not::i#2 [ bool_not::i#1 ] ( main:2::bool_not:9 [ bool_not::i#1 ] ) -- vbuz1=_inc_vbuz1 
+    inc i
+  //SEG65 [34] if((byte) bool_not::i#1!=(byte/signed byte/word/signed word/dword/signed dword) 21) goto bool_not::@1 [ bool_not::i#1 ] ( main:2::bool_not:9 [ bool_not::i#1 ] ) -- vbuz1_neq_vbuc1_then_la1 
+    lda i
+    cmp #$15
+    bne b1_from_b3
+    jmp breturn
+  //SEG66 bool_not::@return
+  breturn:
+  //SEG67 [35] return  [ ] ( main:2::bool_not:9 [ ] )
+    rts
+  //SEG68 bool_not::@4
+  b4:
+  //SEG69 [36] *((const byte*) bool_not::screen#0 + (byte) bool_not::i#2) ← (byte) ' ' [ bool_not::i#2 ] ( main:2::bool_not:9 [ bool_not::i#2 ] ) -- pbuc1_derefidx_vbuz1=vbuc2 
+    ldy i
+    lda #' '
+    sta screen,y
+    jmp b3
+}
+//SEG70 bool_or
+bool_or: {
+    .label screen = $428
+    .label _1 = $a
+    .label i = 4
+  //SEG71 [38] phi from bool_or to bool_or::@1 [phi:bool_or->bool_or::@1]
+  b1_from_bool_or:
+  //SEG72 [38] phi (byte) bool_or::i#2 = (byte/signed byte/word/signed word/dword/signed dword) 0 [phi:bool_or->bool_or::@1#0] -- vbuz1=vbuc1 
+    lda #0
+    sta i
+    jmp b1
+  //SEG73 [38] phi from bool_or::@3 to bool_or::@1 [phi:bool_or::@3->bool_or::@1]
+  b1_from_b3:
+  //SEG74 [38] phi (byte) bool_or::i#2 = (byte) bool_or::i#1 [phi:bool_or::@3->bool_or::@1#0] -- register_copy 
+    jmp b1
+  //SEG75 bool_or::@1
+  b1:
+  //SEG76 [39] (byte~) bool_or::$1 ← (byte) bool_or::i#2 & (byte/signed byte/word/signed word/dword/signed dword) 1 [ bool_or::i#2 bool_or::$1 ] ( main:2::bool_or:7 [ bool_or::i#2 bool_or::$1 ] ) -- vbuz1=vbuz2_band_vbuc1 
+    lda #1
+    and i
+    sta _1
+  //SEG77 [40] if((byte) bool_or::i#2<(byte/signed byte/word/signed word/dword/signed dword) 10) goto bool_or::@2 [ bool_or::i#2 bool_or::$1 ] ( main:2::bool_or:7 [ bool_or::i#2 bool_or::$1 ] ) -- vbuz1_lt_vbuc1_then_la1 
     lda i
     cmp #$a
     bcc b2
     jmp b7
-  //SEG77 bool_or::@7
+  //SEG78 bool_or::@7
   b7:
-  //SEG78 [40] if((byte~) bool_or::$1==(byte/signed byte/word/signed word/dword/signed dword) 0) goto bool_or::@2 [ bool_or::i#2 ] ( main:2::bool_or:7 [ bool_or::i#2 ] ) -- vbuz1_eq_0_then_la1 
+  //SEG79 [41] if((byte~) bool_or::$1==(byte/signed byte/word/signed word/dword/signed dword) 0) goto bool_or::@2 [ bool_or::i#2 ] ( main:2::bool_or:7 [ bool_or::i#2 ] ) -- vbuz1_eq_0_then_la1 
     lda _1
     beq b2
     jmp b4
-  //SEG79 bool_or::@4
+  //SEG80 bool_or::@4
   b4:
-  //SEG80 [41] *((const byte*) bool_or::screen#0 + (byte) bool_or::i#2) ← (byte) ' ' [ bool_or::i#2 ] ( main:2::bool_or:7 [ bool_or::i#2 ] ) -- pbuc1_derefidx_vbuz1=vbuc2 
+  //SEG81 [42] *((const byte*) bool_or::screen#0 + (byte) bool_or::i#2) ← (byte) ' ' [ bool_or::i#2 ] ( main:2::bool_or:7 [ bool_or::i#2 ] ) -- pbuc1_derefidx_vbuz1=vbuc2 
     ldy i
     lda #' '
     sta screen,y
     jmp b3
-  //SEG81 bool_or::@3
+  //SEG82 bool_or::@3
   b3:
-  //SEG82 [42] (byte) bool_or::i#1 ← ++ (byte) bool_or::i#2 [ bool_or::i#1 ] ( main:2::bool_or:7 [ bool_or::i#1 ] ) -- vbuz1=_inc_vbuz1 
+  //SEG83 [43] (byte) bool_or::i#1 ← ++ (byte) bool_or::i#2 [ bool_or::i#1 ] ( main:2::bool_or:7 [ bool_or::i#1 ] ) -- vbuz1=_inc_vbuz1 
     inc i
-  //SEG83 [43] if((byte) bool_or::i#1!=(byte/signed byte/word/signed word/dword/signed dword) 21) goto bool_or::@1 [ bool_or::i#1 ] ( main:2::bool_or:7 [ bool_or::i#1 ] ) -- vbuz1_neq_vbuc1_then_la1 
+  //SEG84 [44] if((byte) bool_or::i#1!=(byte/signed byte/word/signed word/dword/signed dword) 21) goto bool_or::@1 [ bool_or::i#1 ] ( main:2::bool_or:7 [ bool_or::i#1 ] ) -- vbuz1_neq_vbuc1_then_la1 
     lda i
     cmp #$15
     bne b1_from_b3
     jmp breturn
-  //SEG84 bool_or::@return
+  //SEG85 bool_or::@return
   breturn:
-  //SEG85 [44] return  [ ] ( main:2::bool_or:7 [ ] )
+  //SEG86 [45] return  [ ] ( main:2::bool_or:7 [ ] )
     rts
-  //SEG86 bool_or::@2
+  //SEG87 bool_or::@2
   b2:
-  //SEG87 [45] *((const byte*) bool_or::screen#0 + (byte) bool_or::i#2) ← (byte) '*' [ bool_or::i#2 ] ( main:2::bool_or:7 [ bool_or::i#2 ] ) -- pbuc1_derefidx_vbuz1=vbuc2 
+  //SEG88 [46] *((const byte*) bool_or::screen#0 + (byte) bool_or::i#2) ← (byte) '*' [ bool_or::i#2 ] ( main:2::bool_or:7 [ bool_or::i#2 ] ) -- pbuc1_derefidx_vbuz1=vbuc2 
     ldy i
     lda #'*'
     sta screen,y
     jmp b3
 }
-//SEG88 bool_and
+//SEG89 bool_and
 bool_and: {
     .label screen = $400
-    .label _1 = $a
+    .label _1 = $b
     .label i = 5
-  //SEG89 [47] phi from bool_and to bool_and::@1 [phi:bool_and->bool_and::@1]
+  //SEG90 [48] phi from bool_and to bool_and::@1 [phi:bool_and->bool_and::@1]
   b1_from_bool_and:
-  //SEG90 [47] phi (byte) bool_and::i#2 = (byte/signed byte/word/signed word/dword/signed dword) 0 [phi:bool_and->bool_and::@1#0] -- vbuz1=vbuc1 
+  //SEG91 [48] phi (byte) bool_and::i#2 = (byte/signed byte/word/signed word/dword/signed dword) 0 [phi:bool_and->bool_and::@1#0] -- vbuz1=vbuc1 
     lda #0
     sta i
     jmp b1
-  //SEG91 [47] phi from bool_and::@3 to bool_and::@1 [phi:bool_and::@3->bool_and::@1]
+  //SEG92 [48] phi from bool_and::@3 to bool_and::@1 [phi:bool_and::@3->bool_and::@1]
   b1_from_b3:
-  //SEG92 [47] phi (byte) bool_and::i#2 = (byte) bool_and::i#1 [phi:bool_and::@3->bool_and::@1#0] -- register_copy 
+  //SEG93 [48] phi (byte) bool_and::i#2 = (byte) bool_and::i#1 [phi:bool_and::@3->bool_and::@1#0] -- register_copy 
     jmp b1
-  //SEG93 bool_and::@1
+  //SEG94 bool_and::@1
   b1:
-  //SEG94 [48] (byte~) bool_and::$1 ← (byte) bool_and::i#2 & (byte/signed byte/word/signed word/dword/signed dword) 1 [ bool_and::i#2 bool_and::$1 ] ( main:2::bool_and:5 [ bool_and::i#2 bool_and::$1 ] ) -- vbuz1=vbuz2_band_vbuc1 
+  //SEG95 [49] (byte~) bool_and::$1 ← (byte) bool_and::i#2 & (byte/signed byte/word/signed word/dword/signed dword) 1 [ bool_and::i#2 bool_and::$1 ] ( main:2::bool_and:5 [ bool_and::i#2 bool_and::$1 ] ) -- vbuz1=vbuz2_band_vbuc1 
     lda #1
     and i
     sta _1
-  //SEG95 [49] if((byte) bool_and::i#2<(byte/signed byte/word/signed word/dword/signed dword) 10) goto bool_and::@7 [ bool_and::i#2 bool_and::$1 ] ( main:2::bool_and:5 [ bool_and::i#2 bool_and::$1 ] ) -- vbuz1_lt_vbuc1_then_la1 
+  //SEG96 [50] if((byte) bool_and::i#2<(byte/signed byte/word/signed word/dword/signed dword) 10) goto bool_and::@7 [ bool_and::i#2 bool_and::$1 ] ( main:2::bool_and:5 [ bool_and::i#2 bool_and::$1 ] ) -- vbuz1_lt_vbuc1_then_la1 
     lda i
     cmp #$a
     bcc b7
     jmp b4
-  //SEG96 bool_and::@4
+  //SEG97 bool_and::@4
   b4:
-  //SEG97 [50] *((const byte*) bool_and::screen#0 + (byte) bool_and::i#2) ← (byte) ' ' [ bool_and::i#2 ] ( main:2::bool_and:5 [ bool_and::i#2 ] ) -- pbuc1_derefidx_vbuz1=vbuc2 
+  //SEG98 [51] *((const byte*) bool_and::screen#0 + (byte) bool_and::i#2) ← (byte) ' ' [ bool_and::i#2 ] ( main:2::bool_and:5 [ bool_and::i#2 ] ) -- pbuc1_derefidx_vbuz1=vbuc2 
     ldy i
     lda #' '
     sta screen,y
     jmp b3
-  //SEG98 bool_and::@3
+  //SEG99 bool_and::@3
   b3:
-  //SEG99 [51] (byte) bool_and::i#1 ← ++ (byte) bool_and::i#2 [ bool_and::i#1 ] ( main:2::bool_and:5 [ bool_and::i#1 ] ) -- vbuz1=_inc_vbuz1 
+  //SEG100 [52] (byte) bool_and::i#1 ← ++ (byte) bool_and::i#2 [ bool_and::i#1 ] ( main:2::bool_and:5 [ bool_and::i#1 ] ) -- vbuz1=_inc_vbuz1 
     inc i
-  //SEG100 [52] if((byte) bool_and::i#1!=(byte/signed byte/word/signed word/dword/signed dword) 21) goto bool_and::@1 [ bool_and::i#1 ] ( main:2::bool_and:5 [ bool_and::i#1 ] ) -- vbuz1_neq_vbuc1_then_la1 
+  //SEG101 [53] if((byte) bool_and::i#1!=(byte/signed byte/word/signed word/dword/signed dword) 21) goto bool_and::@1 [ bool_and::i#1 ] ( main:2::bool_and:5 [ bool_and::i#1 ] ) -- vbuz1_neq_vbuc1_then_la1 
     lda i
     cmp #$15
     bne b1_from_b3
     jmp breturn
-  //SEG101 bool_and::@return
+  //SEG102 bool_and::@return
   breturn:
-  //SEG102 [53] return  [ ] ( main:2::bool_and:5 [ ] )
+  //SEG103 [54] return  [ ] ( main:2::bool_and:5 [ ] )
     rts
-  //SEG103 bool_and::@7
+  //SEG104 bool_and::@7
   b7:
-  //SEG104 [54] if((byte~) bool_and::$1==(byte/signed byte/word/signed word/dword/signed dword) 0) goto bool_and::@2 [ bool_and::i#2 ] ( main:2::bool_and:5 [ bool_and::i#2 ] ) -- vbuz1_eq_0_then_la1 
+  //SEG105 [55] if((byte~) bool_and::$1==(byte/signed byte/word/signed word/dword/signed dword) 0) goto bool_and::@2 [ bool_and::i#2 ] ( main:2::bool_and:5 [ bool_and::i#2 ] ) -- vbuz1_eq_0_then_la1 
     lda _1
     beq b2
     jmp b4
-  //SEG105 bool_and::@2
+  //SEG106 bool_and::@2
   b2:
-  //SEG106 [55] *((const byte*) bool_and::screen#0 + (byte) bool_and::i#2) ← (byte) '*' [ bool_and::i#2 ] ( main:2::bool_and:5 [ bool_and::i#2 ] ) -- pbuc1_derefidx_vbuz1=vbuc2 
+  //SEG107 [56] *((const byte*) bool_and::screen#0 + (byte) bool_and::i#2) ← (byte) '*' [ bool_and::i#2 ] ( main:2::bool_and:5 [ bool_and::i#2 ] ) -- pbuc1_derefidx_vbuz1=vbuc2 
     ldy i
     lda #'*'
     sta screen,y
@@ -1279,61 +1374,75 @@ bool_and: {
 }
 
 REGISTER UPLIFT POTENTIAL REGISTERS
-Statement [15] (byte~) bool_complex::$3 ← (byte) bool_complex::i#2 & (byte/signed byte/word/signed word/dword/signed dword) 1 [ bool_complex::i#2 bool_complex::$3 ] ( main:2::bool_complex:11 [ bool_complex::i#2 bool_complex::$3 ] ) always clobbers reg byte a 
+Statement [15] (boolean) bool_complex::o1#0 ← (byte) bool_complex::i#2 < (byte/signed byte/word/signed word/dword/signed dword) 10 [ bool_complex::i#2 bool_complex::o1#0 ] ( main:2::bool_complex:11 [ bool_complex::i#2 bool_complex::o1#0 ] ) always clobbers reg byte a 
 Removing always clobbered register reg byte a as potential for zp ZP_BYTE:2 [ bool_complex::i#2 bool_complex::i#1 ]
-Statement [16] (byte~) bool_complex::$7 ← (byte) bool_complex::i#2 & (byte/signed byte/word/signed word/dword/signed dword) 1 [ bool_complex::i#2 bool_complex::$3 bool_complex::$7 ] ( main:2::bool_complex:11 [ bool_complex::i#2 bool_complex::$3 bool_complex::$7 ] ) always clobbers reg byte a 
-Removing always clobbered register reg byte a as potential for zp ZP_BYTE:6 [ bool_complex::$3 ]
-Statement [20] *((const byte*) bool_complex::screen#0 + (byte) bool_complex::i#2) ← (byte) '*' [ bool_complex::i#2 ] ( main:2::bool_complex:11 [ bool_complex::i#2 ] ) always clobbers reg byte a 
-Statement [24] *((const byte*) bool_complex::screen#0 + (byte) bool_complex::i#2) ← (byte) ' ' [ bool_complex::i#2 ] ( main:2::bool_complex:11 [ bool_complex::i#2 ] ) always clobbers reg byte a 
-Statement [28] (byte~) bool_not::$3 ← (byte) bool_not::i#2 & (byte/signed byte/word/signed word/dword/signed dword) 1 [ bool_not::i#2 bool_not::$3 ] ( main:2::bool_not:9 [ bool_not::i#2 bool_not::$3 ] ) always clobbers reg byte a 
+Statement [16] (byte~) bool_complex::$1 ← (byte) bool_complex::i#2 & (byte/signed byte/word/signed word/dword/signed dword) 1 [ bool_complex::i#2 bool_complex::o1#0 bool_complex::$1 ] ( main:2::bool_complex:11 [ bool_complex::i#2 bool_complex::o1#0 bool_complex::$1 ] ) always clobbers reg byte a 
+Removing always clobbered register reg byte a as potential for zp ZP_BOOL:6 [ bool_complex::o1#0 ]
+Statement [17] (boolean) bool_complex::o2#0 ← (byte~) bool_complex::$1 == (byte/signed byte/word/signed word/dword/signed dword) 0 [ bool_complex::i#2 bool_complex::o1#0 bool_complex::o2#0 ] ( main:2::bool_complex:11 [ bool_complex::i#2 bool_complex::o1#0 bool_complex::o2#0 ] ) always clobbers reg byte a 
+Statement [18] if((boolean) bool_complex::o1#0) goto bool_complex::@8 [ bool_complex::i#2 bool_complex::o1#0 bool_complex::o2#0 ] ( main:2::bool_complex:11 [ bool_complex::i#2 bool_complex::o1#0 bool_complex::o2#0 ] ) always clobbers reg byte a 
+Removing always clobbered register reg byte a as potential for zp ZP_BOOL:8 [ bool_complex::o2#0 ]
+Statement [19] if((boolean) bool_complex::o1#0) goto bool_complex::@4 [ bool_complex::i#2 bool_complex::o2#0 ] ( main:2::bool_complex:11 [ bool_complex::i#2 bool_complex::o2#0 ] ) always clobbers reg byte a 
+Statement [20] if((boolean) bool_complex::o2#0) goto bool_complex::@4 [ bool_complex::i#2 ] ( main:2::bool_complex:11 [ bool_complex::i#2 ] ) always clobbers reg byte a 
+Statement [21] *((const byte*) bool_complex::screen#0 + (byte) bool_complex::i#2) ← (byte) '*' [ bool_complex::i#2 ] ( main:2::bool_complex:11 [ bool_complex::i#2 ] ) always clobbers reg byte a 
+Statement [25] *((const byte*) bool_complex::screen#0 + (byte) bool_complex::i#2) ← (byte) ' ' [ bool_complex::i#2 ] ( main:2::bool_complex:11 [ bool_complex::i#2 ] ) always clobbers reg byte a 
+Statement [26] if((boolean) bool_complex::o2#0) goto bool_complex::@2 [ bool_complex::i#2 bool_complex::o1#0 bool_complex::o2#0 ] ( main:2::bool_complex:11 [ bool_complex::i#2 bool_complex::o1#0 bool_complex::o2#0 ] ) always clobbers reg byte a 
+Statement [29] (byte~) bool_not::$1 ← (byte) bool_not::i#2 & (byte/signed byte/word/signed word/dword/signed dword) 1 [ bool_not::i#2 bool_not::$1 ] ( main:2::bool_not:9 [ bool_not::i#2 bool_not::$1 ] ) always clobbers reg byte a 
 Removing always clobbered register reg byte a as potential for zp ZP_BYTE:3 [ bool_not::i#2 bool_not::i#1 ]
-Statement [31] *((const byte*) bool_not::screen#0 + (byte) bool_not::i#2) ← (byte) '*' [ bool_not::i#2 ] ( main:2::bool_not:9 [ bool_not::i#2 ] ) always clobbers reg byte a 
-Statement [35] *((const byte*) bool_not::screen#0 + (byte) bool_not::i#2) ← (byte) ' ' [ bool_not::i#2 ] ( main:2::bool_not:9 [ bool_not::i#2 ] ) always clobbers reg byte a 
-Statement [38] (byte~) bool_or::$1 ← (byte) bool_or::i#2 & (byte/signed byte/word/signed word/dword/signed dword) 1 [ bool_or::i#2 bool_or::$1 ] ( main:2::bool_or:7 [ bool_or::i#2 bool_or::$1 ] ) always clobbers reg byte a 
+Statement [32] *((const byte*) bool_not::screen#0 + (byte) bool_not::i#2) ← (byte) '*' [ bool_not::i#2 ] ( main:2::bool_not:9 [ bool_not::i#2 ] ) always clobbers reg byte a 
+Statement [36] *((const byte*) bool_not::screen#0 + (byte) bool_not::i#2) ← (byte) ' ' [ bool_not::i#2 ] ( main:2::bool_not:9 [ bool_not::i#2 ] ) always clobbers reg byte a 
+Statement [39] (byte~) bool_or::$1 ← (byte) bool_or::i#2 & (byte/signed byte/word/signed word/dword/signed dword) 1 [ bool_or::i#2 bool_or::$1 ] ( main:2::bool_or:7 [ bool_or::i#2 bool_or::$1 ] ) always clobbers reg byte a 
 Removing always clobbered register reg byte a as potential for zp ZP_BYTE:4 [ bool_or::i#2 bool_or::i#1 ]
-Statement [41] *((const byte*) bool_or::screen#0 + (byte) bool_or::i#2) ← (byte) ' ' [ bool_or::i#2 ] ( main:2::bool_or:7 [ bool_or::i#2 ] ) always clobbers reg byte a 
-Statement [45] *((const byte*) bool_or::screen#0 + (byte) bool_or::i#2) ← (byte) '*' [ bool_or::i#2 ] ( main:2::bool_or:7 [ bool_or::i#2 ] ) always clobbers reg byte a 
-Statement [48] (byte~) bool_and::$1 ← (byte) bool_and::i#2 & (byte/signed byte/word/signed word/dword/signed dword) 1 [ bool_and::i#2 bool_and::$1 ] ( main:2::bool_and:5 [ bool_and::i#2 bool_and::$1 ] ) always clobbers reg byte a 
+Statement [42] *((const byte*) bool_or::screen#0 + (byte) bool_or::i#2) ← (byte) ' ' [ bool_or::i#2 ] ( main:2::bool_or:7 [ bool_or::i#2 ] ) always clobbers reg byte a 
+Statement [46] *((const byte*) bool_or::screen#0 + (byte) bool_or::i#2) ← (byte) '*' [ bool_or::i#2 ] ( main:2::bool_or:7 [ bool_or::i#2 ] ) always clobbers reg byte a 
+Statement [49] (byte~) bool_and::$1 ← (byte) bool_and::i#2 & (byte/signed byte/word/signed word/dword/signed dword) 1 [ bool_and::i#2 bool_and::$1 ] ( main:2::bool_and:5 [ bool_and::i#2 bool_and::$1 ] ) always clobbers reg byte a 
 Removing always clobbered register reg byte a as potential for zp ZP_BYTE:5 [ bool_and::i#2 bool_and::i#1 ]
-Statement [50] *((const byte*) bool_and::screen#0 + (byte) bool_and::i#2) ← (byte) ' ' [ bool_and::i#2 ] ( main:2::bool_and:5 [ bool_and::i#2 ] ) always clobbers reg byte a 
-Statement [55] *((const byte*) bool_and::screen#0 + (byte) bool_and::i#2) ← (byte) '*' [ bool_and::i#2 ] ( main:2::bool_and:5 [ bool_and::i#2 ] ) always clobbers reg byte a 
-Statement [15] (byte~) bool_complex::$3 ← (byte) bool_complex::i#2 & (byte/signed byte/word/signed word/dword/signed dword) 1 [ bool_complex::i#2 bool_complex::$3 ] ( main:2::bool_complex:11 [ bool_complex::i#2 bool_complex::$3 ] ) always clobbers reg byte a 
-Statement [16] (byte~) bool_complex::$7 ← (byte) bool_complex::i#2 & (byte/signed byte/word/signed word/dword/signed dword) 1 [ bool_complex::i#2 bool_complex::$3 bool_complex::$7 ] ( main:2::bool_complex:11 [ bool_complex::i#2 bool_complex::$3 bool_complex::$7 ] ) always clobbers reg byte a 
-Statement [20] *((const byte*) bool_complex::screen#0 + (byte) bool_complex::i#2) ← (byte) '*' [ bool_complex::i#2 ] ( main:2::bool_complex:11 [ bool_complex::i#2 ] ) always clobbers reg byte a 
-Statement [24] *((const byte*) bool_complex::screen#0 + (byte) bool_complex::i#2) ← (byte) ' ' [ bool_complex::i#2 ] ( main:2::bool_complex:11 [ bool_complex::i#2 ] ) always clobbers reg byte a 
-Statement [28] (byte~) bool_not::$3 ← (byte) bool_not::i#2 & (byte/signed byte/word/signed word/dword/signed dword) 1 [ bool_not::i#2 bool_not::$3 ] ( main:2::bool_not:9 [ bool_not::i#2 bool_not::$3 ] ) always clobbers reg byte a 
-Statement [31] *((const byte*) bool_not::screen#0 + (byte) bool_not::i#2) ← (byte) '*' [ bool_not::i#2 ] ( main:2::bool_not:9 [ bool_not::i#2 ] ) always clobbers reg byte a 
-Statement [35] *((const byte*) bool_not::screen#0 + (byte) bool_not::i#2) ← (byte) ' ' [ bool_not::i#2 ] ( main:2::bool_not:9 [ bool_not::i#2 ] ) always clobbers reg byte a 
-Statement [38] (byte~) bool_or::$1 ← (byte) bool_or::i#2 & (byte/signed byte/word/signed word/dword/signed dword) 1 [ bool_or::i#2 bool_or::$1 ] ( main:2::bool_or:7 [ bool_or::i#2 bool_or::$1 ] ) always clobbers reg byte a 
-Statement [41] *((const byte*) bool_or::screen#0 + (byte) bool_or::i#2) ← (byte) ' ' [ bool_or::i#2 ] ( main:2::bool_or:7 [ bool_or::i#2 ] ) always clobbers reg byte a 
-Statement [45] *((const byte*) bool_or::screen#0 + (byte) bool_or::i#2) ← (byte) '*' [ bool_or::i#2 ] ( main:2::bool_or:7 [ bool_or::i#2 ] ) always clobbers reg byte a 
-Statement [48] (byte~) bool_and::$1 ← (byte) bool_and::i#2 & (byte/signed byte/word/signed word/dword/signed dword) 1 [ bool_and::i#2 bool_and::$1 ] ( main:2::bool_and:5 [ bool_and::i#2 bool_and::$1 ] ) always clobbers reg byte a 
-Statement [50] *((const byte*) bool_and::screen#0 + (byte) bool_and::i#2) ← (byte) ' ' [ bool_and::i#2 ] ( main:2::bool_and:5 [ bool_and::i#2 ] ) always clobbers reg byte a 
-Statement [55] *((const byte*) bool_and::screen#0 + (byte) bool_and::i#2) ← (byte) '*' [ bool_and::i#2 ] ( main:2::bool_and:5 [ bool_and::i#2 ] ) always clobbers reg byte a 
+Statement [51] *((const byte*) bool_and::screen#0 + (byte) bool_and::i#2) ← (byte) ' ' [ bool_and::i#2 ] ( main:2::bool_and:5 [ bool_and::i#2 ] ) always clobbers reg byte a 
+Statement [56] *((const byte*) bool_and::screen#0 + (byte) bool_and::i#2) ← (byte) '*' [ bool_and::i#2 ] ( main:2::bool_and:5 [ bool_and::i#2 ] ) always clobbers reg byte a 
+Statement [15] (boolean) bool_complex::o1#0 ← (byte) bool_complex::i#2 < (byte/signed byte/word/signed word/dword/signed dword) 10 [ bool_complex::i#2 bool_complex::o1#0 ] ( main:2::bool_complex:11 [ bool_complex::i#2 bool_complex::o1#0 ] ) always clobbers reg byte a 
+Statement [16] (byte~) bool_complex::$1 ← (byte) bool_complex::i#2 & (byte/signed byte/word/signed word/dword/signed dword) 1 [ bool_complex::i#2 bool_complex::o1#0 bool_complex::$1 ] ( main:2::bool_complex:11 [ bool_complex::i#2 bool_complex::o1#0 bool_complex::$1 ] ) always clobbers reg byte a 
+Statement [17] (boolean) bool_complex::o2#0 ← (byte~) bool_complex::$1 == (byte/signed byte/word/signed word/dword/signed dword) 0 [ bool_complex::i#2 bool_complex::o1#0 bool_complex::o2#0 ] ( main:2::bool_complex:11 [ bool_complex::i#2 bool_complex::o1#0 bool_complex::o2#0 ] ) always clobbers reg byte a 
+Statement [18] if((boolean) bool_complex::o1#0) goto bool_complex::@8 [ bool_complex::i#2 bool_complex::o1#0 bool_complex::o2#0 ] ( main:2::bool_complex:11 [ bool_complex::i#2 bool_complex::o1#0 bool_complex::o2#0 ] ) always clobbers reg byte a 
+Statement [19] if((boolean) bool_complex::o1#0) goto bool_complex::@4 [ bool_complex::i#2 bool_complex::o2#0 ] ( main:2::bool_complex:11 [ bool_complex::i#2 bool_complex::o2#0 ] ) always clobbers reg byte a 
+Statement [20] if((boolean) bool_complex::o2#0) goto bool_complex::@4 [ bool_complex::i#2 ] ( main:2::bool_complex:11 [ bool_complex::i#2 ] ) always clobbers reg byte a 
+Statement [21] *((const byte*) bool_complex::screen#0 + (byte) bool_complex::i#2) ← (byte) '*' [ bool_complex::i#2 ] ( main:2::bool_complex:11 [ bool_complex::i#2 ] ) always clobbers reg byte a 
+Statement [25] *((const byte*) bool_complex::screen#0 + (byte) bool_complex::i#2) ← (byte) ' ' [ bool_complex::i#2 ] ( main:2::bool_complex:11 [ bool_complex::i#2 ] ) always clobbers reg byte a 
+Statement [26] if((boolean) bool_complex::o2#0) goto bool_complex::@2 [ bool_complex::i#2 bool_complex::o1#0 bool_complex::o2#0 ] ( main:2::bool_complex:11 [ bool_complex::i#2 bool_complex::o1#0 bool_complex::o2#0 ] ) always clobbers reg byte a 
+Statement [29] (byte~) bool_not::$1 ← (byte) bool_not::i#2 & (byte/signed byte/word/signed word/dword/signed dword) 1 [ bool_not::i#2 bool_not::$1 ] ( main:2::bool_not:9 [ bool_not::i#2 bool_not::$1 ] ) always clobbers reg byte a 
+Statement [32] *((const byte*) bool_not::screen#0 + (byte) bool_not::i#2) ← (byte) '*' [ bool_not::i#2 ] ( main:2::bool_not:9 [ bool_not::i#2 ] ) always clobbers reg byte a 
+Statement [36] *((const byte*) bool_not::screen#0 + (byte) bool_not::i#2) ← (byte) ' ' [ bool_not::i#2 ] ( main:2::bool_not:9 [ bool_not::i#2 ] ) always clobbers reg byte a 
+Statement [39] (byte~) bool_or::$1 ← (byte) bool_or::i#2 & (byte/signed byte/word/signed word/dword/signed dword) 1 [ bool_or::i#2 bool_or::$1 ] ( main:2::bool_or:7 [ bool_or::i#2 bool_or::$1 ] ) always clobbers reg byte a 
+Statement [42] *((const byte*) bool_or::screen#0 + (byte) bool_or::i#2) ← (byte) ' ' [ bool_or::i#2 ] ( main:2::bool_or:7 [ bool_or::i#2 ] ) always clobbers reg byte a 
+Statement [46] *((const byte*) bool_or::screen#0 + (byte) bool_or::i#2) ← (byte) '*' [ bool_or::i#2 ] ( main:2::bool_or:7 [ bool_or::i#2 ] ) always clobbers reg byte a 
+Statement [49] (byte~) bool_and::$1 ← (byte) bool_and::i#2 & (byte/signed byte/word/signed word/dword/signed dword) 1 [ bool_and::i#2 bool_and::$1 ] ( main:2::bool_and:5 [ bool_and::i#2 bool_and::$1 ] ) always clobbers reg byte a 
+Statement [51] *((const byte*) bool_and::screen#0 + (byte) bool_and::i#2) ← (byte) ' ' [ bool_and::i#2 ] ( main:2::bool_and:5 [ bool_and::i#2 ] ) always clobbers reg byte a 
+Statement [56] *((const byte*) bool_and::screen#0 + (byte) bool_and::i#2) ← (byte) '*' [ bool_and::i#2 ] ( main:2::bool_and:5 [ bool_and::i#2 ] ) always clobbers reg byte a 
 Potential registers zp ZP_BYTE:2 [ bool_complex::i#2 bool_complex::i#1 ] : zp ZP_BYTE:2 , reg byte x , reg byte y , 
 Potential registers zp ZP_BYTE:3 [ bool_not::i#2 bool_not::i#1 ] : zp ZP_BYTE:3 , reg byte x , reg byte y , 
 Potential registers zp ZP_BYTE:4 [ bool_or::i#2 bool_or::i#1 ] : zp ZP_BYTE:4 , reg byte x , reg byte y , 
 Potential registers zp ZP_BYTE:5 [ bool_and::i#2 bool_and::i#1 ] : zp ZP_BYTE:5 , reg byte x , reg byte y , 
-Potential registers zp ZP_BYTE:6 [ bool_complex::$3 ] : zp ZP_BYTE:6 , reg byte x , reg byte y , 
-Potential registers zp ZP_BYTE:7 [ bool_complex::$7 ] : zp ZP_BYTE:7 , reg byte a , reg byte x , reg byte y , 
-Potential registers zp ZP_BYTE:8 [ bool_not::$3 ] : zp ZP_BYTE:8 , reg byte a , reg byte x , reg byte y , 
-Potential registers zp ZP_BYTE:9 [ bool_or::$1 ] : zp ZP_BYTE:9 , reg byte a , reg byte x , reg byte y , 
-Potential registers zp ZP_BYTE:10 [ bool_and::$1 ] : zp ZP_BYTE:10 , reg byte a , reg byte x , reg byte y , 
+Potential registers zp ZP_BOOL:6 [ bool_complex::o1#0 ] : zp ZP_BOOL:6 , 
+Potential registers zp ZP_BYTE:7 [ bool_complex::$1 ] : zp ZP_BYTE:7 , reg byte a , reg byte x , reg byte y , 
+Potential registers zp ZP_BOOL:8 [ bool_complex::o2#0 ] : zp ZP_BOOL:8 , 
+Potential registers zp ZP_BYTE:9 [ bool_not::$1 ] : zp ZP_BYTE:9 , reg byte a , reg byte x , reg byte y , 
+Potential registers zp ZP_BYTE:10 [ bool_or::$1 ] : zp ZP_BYTE:10 , reg byte a , reg byte x , reg byte y , 
+Potential registers zp ZP_BYTE:11 [ bool_and::$1 ] : zp ZP_BYTE:11 , reg byte a , reg byte x , reg byte y , 
 
 REGISTER UPLIFT SCOPES
-Uplift Scope [bool_complex] 26.28: zp ZP_BYTE:2 [ bool_complex::i#2 bool_complex::i#1 ] 7.33: zp ZP_BYTE:6 [ bool_complex::$3 ] 5.5: zp ZP_BYTE:7 [ bool_complex::$7 ] 
-Uplift Scope [bool_and] 27.5: zp ZP_BYTE:5 [ bool_and::i#2 bool_and::i#1 ] 11: zp ZP_BYTE:10 [ bool_and::$1 ] 
-Uplift Scope [bool_or] 27.5: zp ZP_BYTE:4 [ bool_or::i#2 bool_or::i#1 ] 11: zp ZP_BYTE:9 [ bool_or::$1 ] 
-Uplift Scope [bool_not] 27.5: zp ZP_BYTE:3 [ bool_not::i#2 bool_not::i#1 ] 11: zp ZP_BYTE:8 [ bool_not::$3 ] 
+Uplift Scope [bool_complex] 23.1: zp ZP_BYTE:2 [ bool_complex::i#2 bool_complex::i#1 ] 22: zp ZP_BYTE:7 [ bool_complex::$1 ] 8.25: zp ZP_BOOL:8 [ bool_complex::o2#0 ] 6.6: zp ZP_BOOL:6 [ bool_complex::o1#0 ] 
+Uplift Scope [bool_and] 27.5: zp ZP_BYTE:5 [ bool_and::i#2 bool_and::i#1 ] 11: zp ZP_BYTE:11 [ bool_and::$1 ] 
+Uplift Scope [bool_or] 27.5: zp ZP_BYTE:4 [ bool_or::i#2 bool_or::i#1 ] 11: zp ZP_BYTE:10 [ bool_or::$1 ] 
+Uplift Scope [bool_not] 27.5: zp ZP_BYTE:3 [ bool_not::i#2 bool_not::i#1 ] 11: zp ZP_BYTE:9 [ bool_not::$1 ] 
 Uplift Scope [main] 
 Uplift Scope [] 
 
-Uplifting [bool_complex] best 3238 combination reg byte y [ bool_complex::i#2 bool_complex::i#1 ] reg byte x [ bool_complex::$3 ] reg byte a [ bool_complex::$7 ] 
-Uplifting [bool_and] best 3008 combination reg byte x [ bool_and::i#2 bool_and::i#1 ] reg byte a [ bool_and::$1 ] 
-Uplifting [bool_or] best 2778 combination reg byte x [ bool_or::i#2 bool_or::i#1 ] reg byte a [ bool_or::$1 ] 
-Uplifting [bool_not] best 2548 combination reg byte x [ bool_not::i#2 bool_not::i#1 ] reg byte a [ bool_not::$3 ] 
-Uplifting [main] best 2548 combination 
-Uplifting [] best 2548 combination 
+Uplifting [bool_complex] best 3523 combination reg byte x [ bool_complex::i#2 bool_complex::i#1 ] reg byte a [ bool_complex::$1 ] zp ZP_BOOL:8 [ bool_complex::o2#0 ] zp ZP_BOOL:6 [ bool_complex::o1#0 ] 
+Uplifting [bool_and] best 3293 combination reg byte x [ bool_and::i#2 bool_and::i#1 ] reg byte a [ bool_and::$1 ] 
+Uplifting [bool_or] best 3063 combination reg byte x [ bool_or::i#2 bool_or::i#1 ] reg byte a [ bool_or::$1 ] 
+Uplifting [bool_not] best 2833 combination reg byte x [ bool_not::i#2 bool_not::i#1 ] reg byte a [ bool_not::$1 ] 
+Uplifting [main] best 2833 combination 
+Uplifting [] best 2833 combination 
+Allocated (was zp ZP_BOOL:6) zp ZP_BOOL:2 [ bool_complex::o1#0 ]
+Allocated (was zp ZP_BOOL:8) zp ZP_BOOL:3 [ bool_complex::o2#0 ]
 
 ASSEMBLER BEFORE OPTIMIZATION
 //SEG0 Basic Upstart
@@ -1360,7 +1469,7 @@ bend:
 //SEG9 main
 main: {
   //SEG10 [5] call bool_and param-assignment [ ] ( main:2 [ ] )
-  //SEG11 [46] phi from main to bool_and [phi:main->bool_and]
+  //SEG11 [47] phi from main to bool_and [phi:main->bool_and]
   bool_and_from_main:
     jsr bool_and
   //SEG12 [6] phi from main to main::@1 [phi:main->main::@1]
@@ -1369,7 +1478,7 @@ main: {
   //SEG13 main::@1
   b1:
   //SEG14 [7] call bool_or param-assignment [ ] ( main:2 [ ] )
-  //SEG15 [36] phi from main::@1 to bool_or [phi:main::@1->bool_or]
+  //SEG15 [37] phi from main::@1 to bool_or [phi:main::@1->bool_or]
   bool_or_from_b1:
     jsr bool_or
   //SEG16 [8] phi from main::@1 to main::@2 [phi:main::@1->main::@2]
@@ -1378,7 +1487,7 @@ main: {
   //SEG17 main::@2
   b2:
   //SEG18 [9] call bool_not param-assignment [ ] ( main:2 [ ] )
-  //SEG19 [26] phi from main::@2 to bool_not [phi:main::@2->bool_not]
+  //SEG19 [27] phi from main::@2 to bool_not [phi:main::@2->bool_not]
   bool_not_from_b2:
     jsr bool_not
   //SEG20 [10] phi from main::@2 to main::@3 [phi:main::@2->main::@3]
@@ -1399,10 +1508,12 @@ main: {
 //SEG26 bool_complex
 bool_complex: {
     .label screen = $478
+    .label o1 = 2
+    .label o2 = 3
   //SEG27 [14] phi from bool_complex to bool_complex::@1 [phi:bool_complex->bool_complex::@1]
   b1_from_bool_complex:
-  //SEG28 [14] phi (byte) bool_complex::i#2 = (byte/signed byte/word/signed word/dword/signed dword) 0 [phi:bool_complex->bool_complex::@1#0] -- vbuyy=vbuc1 
-    ldy #0
+  //SEG28 [14] phi (byte) bool_complex::i#2 = (byte/signed byte/word/signed word/dword/signed dword) 0 [phi:bool_complex->bool_complex::@1#0] -- vbuxx=vbuc1 
+    ldx #0
     jmp b1
   //SEG29 [14] phi from bool_complex::@3 to bool_complex::@1 [phi:bool_complex::@3->bool_complex::@1]
   b1_from_b3:
@@ -1410,212 +1521,225 @@ bool_complex: {
     jmp b1
   //SEG31 bool_complex::@1
   b1:
-  //SEG32 [15] (byte~) bool_complex::$3 ← (byte) bool_complex::i#2 & (byte/signed byte/word/signed word/dword/signed dword) 1 [ bool_complex::i#2 bool_complex::$3 ] ( main:2::bool_complex:11 [ bool_complex::i#2 bool_complex::$3 ] ) -- vbuxx=vbuyy_band_vbuc1 
-    tya
-    and #1
-    tax
-  //SEG33 [16] (byte~) bool_complex::$7 ← (byte) bool_complex::i#2 & (byte/signed byte/word/signed word/dword/signed dword) 1 [ bool_complex::i#2 bool_complex::$3 bool_complex::$7 ] ( main:2::bool_complex:11 [ bool_complex::i#2 bool_complex::$3 bool_complex::$7 ] ) -- vbuaa=vbuyy_band_vbuc1 
-    tya
-    and #1
-  //SEG34 [17] if((byte) bool_complex::i#2<(byte/signed byte/word/signed word/dword/signed dword) 10) goto bool_complex::@8 [ bool_complex::i#2 bool_complex::$3 bool_complex::$7 ] ( main:2::bool_complex:11 [ bool_complex::i#2 bool_complex::$3 bool_complex::$7 ] ) -- vbuyy_lt_vbuc1_then_la1 
-    cpy #$a
-    bcc b8
-    jmp b7
-  //SEG35 bool_complex::@7
-  b7:
-  //SEG36 [18] if((byte) bool_complex::i#2<(byte/signed byte/word/signed word/dword/signed dword) 10) goto bool_complex::@4 [ bool_complex::i#2 bool_complex::$7 ] ( main:2::bool_complex:11 [ bool_complex::i#2 bool_complex::$7 ] ) -- vbuyy_lt_vbuc1_then_la1 
-    cpy #$a
-    bcc b4
-    jmp b9
-  //SEG37 bool_complex::@9
-  b9:
-  //SEG38 [19] if((byte~) bool_complex::$7==(byte/signed byte/word/signed word/dword/signed dword) 0) goto bool_complex::@4 [ bool_complex::i#2 ] ( main:2::bool_complex:11 [ bool_complex::i#2 ] ) -- vbuaa_eq_0_then_la1 
-    cmp #0
-    beq b4
-    jmp b2
-  //SEG39 bool_complex::@2
-  b2:
-  //SEG40 [20] *((const byte*) bool_complex::screen#0 + (byte) bool_complex::i#2) ← (byte) '*' [ bool_complex::i#2 ] ( main:2::bool_complex:11 [ bool_complex::i#2 ] ) -- pbuc1_derefidx_vbuyy=vbuc2 
-    lda #'*'
-    sta screen,y
-    jmp b3
-  //SEG41 bool_complex::@3
-  b3:
-  //SEG42 [21] (byte) bool_complex::i#1 ← ++ (byte) bool_complex::i#2 [ bool_complex::i#1 ] ( main:2::bool_complex:11 [ bool_complex::i#1 ] ) -- vbuyy=_inc_vbuyy 
-    iny
-  //SEG43 [22] if((byte) bool_complex::i#1!=(byte/signed byte/word/signed word/dword/signed dword) 21) goto bool_complex::@1 [ bool_complex::i#1 ] ( main:2::bool_complex:11 [ bool_complex::i#1 ] ) -- vbuyy_neq_vbuc1_then_la1 
-    cpy #$15
-    bne b1_from_b3
-    jmp breturn
-  //SEG44 bool_complex::@return
-  breturn:
-  //SEG45 [23] return  [ ] ( main:2::bool_complex:11 [ ] )
-    rts
-  //SEG46 bool_complex::@4
-  b4:
-  //SEG47 [24] *((const byte*) bool_complex::screen#0 + (byte) bool_complex::i#2) ← (byte) ' ' [ bool_complex::i#2 ] ( main:2::bool_complex:11 [ bool_complex::i#2 ] ) -- pbuc1_derefidx_vbuyy=vbuc2 
-    lda #' '
-    sta screen,y
-    jmp b3
-  //SEG48 bool_complex::@8
-  b8:
-  //SEG49 [25] if((byte~) bool_complex::$3==(byte/signed byte/word/signed word/dword/signed dword) 0) goto bool_complex::@2 [ bool_complex::i#2 bool_complex::$7 ] ( main:2::bool_complex:11 [ bool_complex::i#2 bool_complex::$7 ] ) -- vbuxx_eq_0_then_la1 
-    cpx #0
-    beq b2
-    jmp b7
-}
-//SEG50 bool_not
-bool_not: {
-    .label screen = $450
-  //SEG51 [27] phi from bool_not to bool_not::@1 [phi:bool_not->bool_not::@1]
-  b1_from_bool_not:
-  //SEG52 [27] phi (byte) bool_not::i#2 = (byte/signed byte/word/signed word/dword/signed dword) 0 [phi:bool_not->bool_not::@1#0] -- vbuxx=vbuc1 
-    ldx #0
-    jmp b1
-  //SEG53 [27] phi from bool_not::@3 to bool_not::@1 [phi:bool_not::@3->bool_not::@1]
-  b1_from_b3:
-  //SEG54 [27] phi (byte) bool_not::i#2 = (byte) bool_not::i#1 [phi:bool_not::@3->bool_not::@1#0] -- register_copy 
-    jmp b1
-  //SEG55 bool_not::@1
-  b1:
-  //SEG56 [28] (byte~) bool_not::$3 ← (byte) bool_not::i#2 & (byte/signed byte/word/signed word/dword/signed dword) 1 [ bool_not::i#2 bool_not::$3 ] ( main:2::bool_not:9 [ bool_not::i#2 bool_not::$3 ] ) -- vbuaa=vbuxx_band_vbuc1 
+  //SEG32 [15] (boolean) bool_complex::o1#0 ← (byte) bool_complex::i#2 < (byte/signed byte/word/signed word/dword/signed dword) 10 [ bool_complex::i#2 bool_complex::o1#0 ] ( main:2::bool_complex:11 [ bool_complex::i#2 bool_complex::o1#0 ] ) -- vboz1=vbuxx_lt_vbuc1 
+    cpx #$a
+    lda #0
+    rol
+    eor #1
+    sta o1
+  //SEG33 [16] (byte~) bool_complex::$1 ← (byte) bool_complex::i#2 & (byte/signed byte/word/signed word/dword/signed dword) 1 [ bool_complex::i#2 bool_complex::o1#0 bool_complex::$1 ] ( main:2::bool_complex:11 [ bool_complex::i#2 bool_complex::o1#0 bool_complex::$1 ] ) -- vbuaa=vbuxx_band_vbuc1 
     txa
     and #1
-  //SEG57 [29] if((byte) bool_not::i#2<(byte/signed byte/word/signed word/dword/signed dword) 10) goto bool_not::@4 [ bool_not::i#2 bool_not::$3 ] ( main:2::bool_not:9 [ bool_not::i#2 bool_not::$3 ] ) -- vbuxx_lt_vbuc1_then_la1 
-    cpx #$a
-    bcc b4
-    jmp b7
-  //SEG58 bool_not::@7
-  b7:
-  //SEG59 [30] if((byte~) bool_not::$3==(byte/signed byte/word/signed word/dword/signed dword) 0) goto bool_not::@4 [ bool_not::i#2 ] ( main:2::bool_not:9 [ bool_not::i#2 ] ) -- vbuaa_eq_0_then_la1 
+  //SEG34 [17] (boolean) bool_complex::o2#0 ← (byte~) bool_complex::$1 == (byte/signed byte/word/signed word/dword/signed dword) 0 [ bool_complex::i#2 bool_complex::o1#0 bool_complex::o2#0 ] ( main:2::bool_complex:11 [ bool_complex::i#2 bool_complex::o1#0 bool_complex::o2#0 ] ) -- vboz1=vbuaa_eq_vbuc1 
     cmp #0
-    beq b4
+    beq !+
+    lda #1
+  !:
+    eor #1
+    sta o2
+  //SEG35 [18] if((boolean) bool_complex::o1#0) goto bool_complex::@8 [ bool_complex::i#2 bool_complex::o1#0 bool_complex::o2#0 ] ( main:2::bool_complex:11 [ bool_complex::i#2 bool_complex::o1#0 bool_complex::o2#0 ] ) -- vboz1_then_la1 
+    lda o1
+    cmp #0
+    bne b8
+    jmp b7
+  //SEG36 bool_complex::@7
+  b7:
+  //SEG37 [19] if((boolean) bool_complex::o1#0) goto bool_complex::@4 [ bool_complex::i#2 bool_complex::o2#0 ] ( main:2::bool_complex:11 [ bool_complex::i#2 bool_complex::o2#0 ] ) -- vboz1_then_la1 
+    lda o1
+    cmp #0
+    bne b4
+    jmp b9
+  //SEG38 bool_complex::@9
+  b9:
+  //SEG39 [20] if((boolean) bool_complex::o2#0) goto bool_complex::@4 [ bool_complex::i#2 ] ( main:2::bool_complex:11 [ bool_complex::i#2 ] ) -- vboz1_then_la1 
+    lda o2
+    cmp #0
+    bne b4
     jmp b2
-  //SEG60 bool_not::@2
+  //SEG40 bool_complex::@2
   b2:
-  //SEG61 [31] *((const byte*) bool_not::screen#0 + (byte) bool_not::i#2) ← (byte) '*' [ bool_not::i#2 ] ( main:2::bool_not:9 [ bool_not::i#2 ] ) -- pbuc1_derefidx_vbuxx=vbuc2 
+  //SEG41 [21] *((const byte*) bool_complex::screen#0 + (byte) bool_complex::i#2) ← (byte) '*' [ bool_complex::i#2 ] ( main:2::bool_complex:11 [ bool_complex::i#2 ] ) -- pbuc1_derefidx_vbuxx=vbuc2 
     lda #'*'
     sta screen,x
     jmp b3
-  //SEG62 bool_not::@3
+  //SEG42 bool_complex::@3
   b3:
-  //SEG63 [32] (byte) bool_not::i#1 ← ++ (byte) bool_not::i#2 [ bool_not::i#1 ] ( main:2::bool_not:9 [ bool_not::i#1 ] ) -- vbuxx=_inc_vbuxx 
+  //SEG43 [22] (byte) bool_complex::i#1 ← ++ (byte) bool_complex::i#2 [ bool_complex::i#1 ] ( main:2::bool_complex:11 [ bool_complex::i#1 ] ) -- vbuxx=_inc_vbuxx 
     inx
-  //SEG64 [33] if((byte) bool_not::i#1!=(byte/signed byte/word/signed word/dword/signed dword) 21) goto bool_not::@1 [ bool_not::i#1 ] ( main:2::bool_not:9 [ bool_not::i#1 ] ) -- vbuxx_neq_vbuc1_then_la1 
+  //SEG44 [23] if((byte) bool_complex::i#1!=(byte/signed byte/word/signed word/dword/signed dword) 21) goto bool_complex::@1 [ bool_complex::i#1 ] ( main:2::bool_complex:11 [ bool_complex::i#1 ] ) -- vbuxx_neq_vbuc1_then_la1 
     cpx #$15
     bne b1_from_b3
     jmp breturn
-  //SEG65 bool_not::@return
+  //SEG45 bool_complex::@return
   breturn:
-  //SEG66 [34] return  [ ] ( main:2::bool_not:9 [ ] )
+  //SEG46 [24] return  [ ] ( main:2::bool_complex:11 [ ] )
     rts
-  //SEG67 bool_not::@4
+  //SEG47 bool_complex::@4
   b4:
-  //SEG68 [35] *((const byte*) bool_not::screen#0 + (byte) bool_not::i#2) ← (byte) ' ' [ bool_not::i#2 ] ( main:2::bool_not:9 [ bool_not::i#2 ] ) -- pbuc1_derefidx_vbuxx=vbuc2 
+  //SEG48 [25] *((const byte*) bool_complex::screen#0 + (byte) bool_complex::i#2) ← (byte) ' ' [ bool_complex::i#2 ] ( main:2::bool_complex:11 [ bool_complex::i#2 ] ) -- pbuc1_derefidx_vbuxx=vbuc2 
+    lda #' '
+    sta screen,x
+    jmp b3
+  //SEG49 bool_complex::@8
+  b8:
+  //SEG50 [26] if((boolean) bool_complex::o2#0) goto bool_complex::@2 [ bool_complex::i#2 bool_complex::o1#0 bool_complex::o2#0 ] ( main:2::bool_complex:11 [ bool_complex::i#2 bool_complex::o1#0 bool_complex::o2#0 ] ) -- vboz1_then_la1 
+    lda o2
+    cmp #0
+    bne b2
+    jmp b7
+}
+//SEG51 bool_not
+bool_not: {
+    .label screen = $450
+  //SEG52 [28] phi from bool_not to bool_not::@1 [phi:bool_not->bool_not::@1]
+  b1_from_bool_not:
+  //SEG53 [28] phi (byte) bool_not::i#2 = (byte/signed byte/word/signed word/dword/signed dword) 0 [phi:bool_not->bool_not::@1#0] -- vbuxx=vbuc1 
+    ldx #0
+    jmp b1
+  //SEG54 [28] phi from bool_not::@3 to bool_not::@1 [phi:bool_not::@3->bool_not::@1]
+  b1_from_b3:
+  //SEG55 [28] phi (byte) bool_not::i#2 = (byte) bool_not::i#1 [phi:bool_not::@3->bool_not::@1#0] -- register_copy 
+    jmp b1
+  //SEG56 bool_not::@1
+  b1:
+  //SEG57 [29] (byte~) bool_not::$1 ← (byte) bool_not::i#2 & (byte/signed byte/word/signed word/dword/signed dword) 1 [ bool_not::i#2 bool_not::$1 ] ( main:2::bool_not:9 [ bool_not::i#2 bool_not::$1 ] ) -- vbuaa=vbuxx_band_vbuc1 
+    txa
+    and #1
+  //SEG58 [30] if((byte) bool_not::i#2<(byte/signed byte/word/signed word/dword/signed dword) 10) goto bool_not::@4 [ bool_not::i#2 bool_not::$1 ] ( main:2::bool_not:9 [ bool_not::i#2 bool_not::$1 ] ) -- vbuxx_lt_vbuc1_then_la1 
+    cpx #$a
+    bcc b4
+    jmp b7
+  //SEG59 bool_not::@7
+  b7:
+  //SEG60 [31] if((byte~) bool_not::$1==(byte/signed byte/word/signed word/dword/signed dword) 0) goto bool_not::@4 [ bool_not::i#2 ] ( main:2::bool_not:9 [ bool_not::i#2 ] ) -- vbuaa_eq_0_then_la1 
+    cmp #0
+    beq b4
+    jmp b2
+  //SEG61 bool_not::@2
+  b2:
+  //SEG62 [32] *((const byte*) bool_not::screen#0 + (byte) bool_not::i#2) ← (byte) '*' [ bool_not::i#2 ] ( main:2::bool_not:9 [ bool_not::i#2 ] ) -- pbuc1_derefidx_vbuxx=vbuc2 
+    lda #'*'
+    sta screen,x
+    jmp b3
+  //SEG63 bool_not::@3
+  b3:
+  //SEG64 [33] (byte) bool_not::i#1 ← ++ (byte) bool_not::i#2 [ bool_not::i#1 ] ( main:2::bool_not:9 [ bool_not::i#1 ] ) -- vbuxx=_inc_vbuxx 
+    inx
+  //SEG65 [34] if((byte) bool_not::i#1!=(byte/signed byte/word/signed word/dword/signed dword) 21) goto bool_not::@1 [ bool_not::i#1 ] ( main:2::bool_not:9 [ bool_not::i#1 ] ) -- vbuxx_neq_vbuc1_then_la1 
+    cpx #$15
+    bne b1_from_b3
+    jmp breturn
+  //SEG66 bool_not::@return
+  breturn:
+  //SEG67 [35] return  [ ] ( main:2::bool_not:9 [ ] )
+    rts
+  //SEG68 bool_not::@4
+  b4:
+  //SEG69 [36] *((const byte*) bool_not::screen#0 + (byte) bool_not::i#2) ← (byte) ' ' [ bool_not::i#2 ] ( main:2::bool_not:9 [ bool_not::i#2 ] ) -- pbuc1_derefidx_vbuxx=vbuc2 
     lda #' '
     sta screen,x
     jmp b3
 }
-//SEG69 bool_or
+//SEG70 bool_or
 bool_or: {
     .label screen = $428
-  //SEG70 [37] phi from bool_or to bool_or::@1 [phi:bool_or->bool_or::@1]
+  //SEG71 [38] phi from bool_or to bool_or::@1 [phi:bool_or->bool_or::@1]
   b1_from_bool_or:
-  //SEG71 [37] phi (byte) bool_or::i#2 = (byte/signed byte/word/signed word/dword/signed dword) 0 [phi:bool_or->bool_or::@1#0] -- vbuxx=vbuc1 
+  //SEG72 [38] phi (byte) bool_or::i#2 = (byte/signed byte/word/signed word/dword/signed dword) 0 [phi:bool_or->bool_or::@1#0] -- vbuxx=vbuc1 
     ldx #0
     jmp b1
-  //SEG72 [37] phi from bool_or::@3 to bool_or::@1 [phi:bool_or::@3->bool_or::@1]
+  //SEG73 [38] phi from bool_or::@3 to bool_or::@1 [phi:bool_or::@3->bool_or::@1]
   b1_from_b3:
-  //SEG73 [37] phi (byte) bool_or::i#2 = (byte) bool_or::i#1 [phi:bool_or::@3->bool_or::@1#0] -- register_copy 
+  //SEG74 [38] phi (byte) bool_or::i#2 = (byte) bool_or::i#1 [phi:bool_or::@3->bool_or::@1#0] -- register_copy 
     jmp b1
-  //SEG74 bool_or::@1
+  //SEG75 bool_or::@1
   b1:
-  //SEG75 [38] (byte~) bool_or::$1 ← (byte) bool_or::i#2 & (byte/signed byte/word/signed word/dword/signed dword) 1 [ bool_or::i#2 bool_or::$1 ] ( main:2::bool_or:7 [ bool_or::i#2 bool_or::$1 ] ) -- vbuaa=vbuxx_band_vbuc1 
+  //SEG76 [39] (byte~) bool_or::$1 ← (byte) bool_or::i#2 & (byte/signed byte/word/signed word/dword/signed dword) 1 [ bool_or::i#2 bool_or::$1 ] ( main:2::bool_or:7 [ bool_or::i#2 bool_or::$1 ] ) -- vbuaa=vbuxx_band_vbuc1 
     txa
     and #1
-  //SEG76 [39] if((byte) bool_or::i#2<(byte/signed byte/word/signed word/dword/signed dword) 10) goto bool_or::@2 [ bool_or::i#2 bool_or::$1 ] ( main:2::bool_or:7 [ bool_or::i#2 bool_or::$1 ] ) -- vbuxx_lt_vbuc1_then_la1 
+  //SEG77 [40] if((byte) bool_or::i#2<(byte/signed byte/word/signed word/dword/signed dword) 10) goto bool_or::@2 [ bool_or::i#2 bool_or::$1 ] ( main:2::bool_or:7 [ bool_or::i#2 bool_or::$1 ] ) -- vbuxx_lt_vbuc1_then_la1 
     cpx #$a
     bcc b2
     jmp b7
-  //SEG77 bool_or::@7
+  //SEG78 bool_or::@7
   b7:
-  //SEG78 [40] if((byte~) bool_or::$1==(byte/signed byte/word/signed word/dword/signed dword) 0) goto bool_or::@2 [ bool_or::i#2 ] ( main:2::bool_or:7 [ bool_or::i#2 ] ) -- vbuaa_eq_0_then_la1 
+  //SEG79 [41] if((byte~) bool_or::$1==(byte/signed byte/word/signed word/dword/signed dword) 0) goto bool_or::@2 [ bool_or::i#2 ] ( main:2::bool_or:7 [ bool_or::i#2 ] ) -- vbuaa_eq_0_then_la1 
     cmp #0
     beq b2
     jmp b4
-  //SEG79 bool_or::@4
+  //SEG80 bool_or::@4
   b4:
-  //SEG80 [41] *((const byte*) bool_or::screen#0 + (byte) bool_or::i#2) ← (byte) ' ' [ bool_or::i#2 ] ( main:2::bool_or:7 [ bool_or::i#2 ] ) -- pbuc1_derefidx_vbuxx=vbuc2 
+  //SEG81 [42] *((const byte*) bool_or::screen#0 + (byte) bool_or::i#2) ← (byte) ' ' [ bool_or::i#2 ] ( main:2::bool_or:7 [ bool_or::i#2 ] ) -- pbuc1_derefidx_vbuxx=vbuc2 
     lda #' '
     sta screen,x
     jmp b3
-  //SEG81 bool_or::@3
+  //SEG82 bool_or::@3
   b3:
-  //SEG82 [42] (byte) bool_or::i#1 ← ++ (byte) bool_or::i#2 [ bool_or::i#1 ] ( main:2::bool_or:7 [ bool_or::i#1 ] ) -- vbuxx=_inc_vbuxx 
+  //SEG83 [43] (byte) bool_or::i#1 ← ++ (byte) bool_or::i#2 [ bool_or::i#1 ] ( main:2::bool_or:7 [ bool_or::i#1 ] ) -- vbuxx=_inc_vbuxx 
     inx
-  //SEG83 [43] if((byte) bool_or::i#1!=(byte/signed byte/word/signed word/dword/signed dword) 21) goto bool_or::@1 [ bool_or::i#1 ] ( main:2::bool_or:7 [ bool_or::i#1 ] ) -- vbuxx_neq_vbuc1_then_la1 
+  //SEG84 [44] if((byte) bool_or::i#1!=(byte/signed byte/word/signed word/dword/signed dword) 21) goto bool_or::@1 [ bool_or::i#1 ] ( main:2::bool_or:7 [ bool_or::i#1 ] ) -- vbuxx_neq_vbuc1_then_la1 
     cpx #$15
     bne b1_from_b3
     jmp breturn
-  //SEG84 bool_or::@return
+  //SEG85 bool_or::@return
   breturn:
-  //SEG85 [44] return  [ ] ( main:2::bool_or:7 [ ] )
+  //SEG86 [45] return  [ ] ( main:2::bool_or:7 [ ] )
     rts
-  //SEG86 bool_or::@2
+  //SEG87 bool_or::@2
   b2:
-  //SEG87 [45] *((const byte*) bool_or::screen#0 + (byte) bool_or::i#2) ← (byte) '*' [ bool_or::i#2 ] ( main:2::bool_or:7 [ bool_or::i#2 ] ) -- pbuc1_derefidx_vbuxx=vbuc2 
+  //SEG88 [46] *((const byte*) bool_or::screen#0 + (byte) bool_or::i#2) ← (byte) '*' [ bool_or::i#2 ] ( main:2::bool_or:7 [ bool_or::i#2 ] ) -- pbuc1_derefidx_vbuxx=vbuc2 
     lda #'*'
     sta screen,x
     jmp b3
 }
-//SEG88 bool_and
+//SEG89 bool_and
 bool_and: {
     .label screen = $400
-  //SEG89 [47] phi from bool_and to bool_and::@1 [phi:bool_and->bool_and::@1]
+  //SEG90 [48] phi from bool_and to bool_and::@1 [phi:bool_and->bool_and::@1]
   b1_from_bool_and:
-  //SEG90 [47] phi (byte) bool_and::i#2 = (byte/signed byte/word/signed word/dword/signed dword) 0 [phi:bool_and->bool_and::@1#0] -- vbuxx=vbuc1 
+  //SEG91 [48] phi (byte) bool_and::i#2 = (byte/signed byte/word/signed word/dword/signed dword) 0 [phi:bool_and->bool_and::@1#0] -- vbuxx=vbuc1 
     ldx #0
     jmp b1
-  //SEG91 [47] phi from bool_and::@3 to bool_and::@1 [phi:bool_and::@3->bool_and::@1]
+  //SEG92 [48] phi from bool_and::@3 to bool_and::@1 [phi:bool_and::@3->bool_and::@1]
   b1_from_b3:
-  //SEG92 [47] phi (byte) bool_and::i#2 = (byte) bool_and::i#1 [phi:bool_and::@3->bool_and::@1#0] -- register_copy 
+  //SEG93 [48] phi (byte) bool_and::i#2 = (byte) bool_and::i#1 [phi:bool_and::@3->bool_and::@1#0] -- register_copy 
     jmp b1
-  //SEG93 bool_and::@1
+  //SEG94 bool_and::@1
   b1:
-  //SEG94 [48] (byte~) bool_and::$1 ← (byte) bool_and::i#2 & (byte/signed byte/word/signed word/dword/signed dword) 1 [ bool_and::i#2 bool_and::$1 ] ( main:2::bool_and:5 [ bool_and::i#2 bool_and::$1 ] ) -- vbuaa=vbuxx_band_vbuc1 
+  //SEG95 [49] (byte~) bool_and::$1 ← (byte) bool_and::i#2 & (byte/signed byte/word/signed word/dword/signed dword) 1 [ bool_and::i#2 bool_and::$1 ] ( main:2::bool_and:5 [ bool_and::i#2 bool_and::$1 ] ) -- vbuaa=vbuxx_band_vbuc1 
     txa
     and #1
-  //SEG95 [49] if((byte) bool_and::i#2<(byte/signed byte/word/signed word/dword/signed dword) 10) goto bool_and::@7 [ bool_and::i#2 bool_and::$1 ] ( main:2::bool_and:5 [ bool_and::i#2 bool_and::$1 ] ) -- vbuxx_lt_vbuc1_then_la1 
+  //SEG96 [50] if((byte) bool_and::i#2<(byte/signed byte/word/signed word/dword/signed dword) 10) goto bool_and::@7 [ bool_and::i#2 bool_and::$1 ] ( main:2::bool_and:5 [ bool_and::i#2 bool_and::$1 ] ) -- vbuxx_lt_vbuc1_then_la1 
     cpx #$a
     bcc b7
     jmp b4
-  //SEG96 bool_and::@4
+  //SEG97 bool_and::@4
   b4:
-  //SEG97 [50] *((const byte*) bool_and::screen#0 + (byte) bool_and::i#2) ← (byte) ' ' [ bool_and::i#2 ] ( main:2::bool_and:5 [ bool_and::i#2 ] ) -- pbuc1_derefidx_vbuxx=vbuc2 
+  //SEG98 [51] *((const byte*) bool_and::screen#0 + (byte) bool_and::i#2) ← (byte) ' ' [ bool_and::i#2 ] ( main:2::bool_and:5 [ bool_and::i#2 ] ) -- pbuc1_derefidx_vbuxx=vbuc2 
     lda #' '
     sta screen,x
     jmp b3
-  //SEG98 bool_and::@3
+  //SEG99 bool_and::@3
   b3:
-  //SEG99 [51] (byte) bool_and::i#1 ← ++ (byte) bool_and::i#2 [ bool_and::i#1 ] ( main:2::bool_and:5 [ bool_and::i#1 ] ) -- vbuxx=_inc_vbuxx 
+  //SEG100 [52] (byte) bool_and::i#1 ← ++ (byte) bool_and::i#2 [ bool_and::i#1 ] ( main:2::bool_and:5 [ bool_and::i#1 ] ) -- vbuxx=_inc_vbuxx 
     inx
-  //SEG100 [52] if((byte) bool_and::i#1!=(byte/signed byte/word/signed word/dword/signed dword) 21) goto bool_and::@1 [ bool_and::i#1 ] ( main:2::bool_and:5 [ bool_and::i#1 ] ) -- vbuxx_neq_vbuc1_then_la1 
+  //SEG101 [53] if((byte) bool_and::i#1!=(byte/signed byte/word/signed word/dword/signed dword) 21) goto bool_and::@1 [ bool_and::i#1 ] ( main:2::bool_and:5 [ bool_and::i#1 ] ) -- vbuxx_neq_vbuc1_then_la1 
     cpx #$15
     bne b1_from_b3
     jmp breturn
-  //SEG101 bool_and::@return
+  //SEG102 bool_and::@return
   breturn:
-  //SEG102 [53] return  [ ] ( main:2::bool_and:5 [ ] )
+  //SEG103 [54] return  [ ] ( main:2::bool_and:5 [ ] )
     rts
-  //SEG103 bool_and::@7
+  //SEG104 bool_and::@7
   b7:
-  //SEG104 [54] if((byte~) bool_and::$1==(byte/signed byte/word/signed word/dword/signed dword) 0) goto bool_and::@2 [ bool_and::i#2 ] ( main:2::bool_and:5 [ bool_and::i#2 ] ) -- vbuaa_eq_0_then_la1 
+  //SEG105 [55] if((byte~) bool_and::$1==(byte/signed byte/word/signed word/dword/signed dword) 0) goto bool_and::@2 [ bool_and::i#2 ] ( main:2::bool_and:5 [ bool_and::i#2 ] ) -- vbuaa_eq_0_then_la1 
     cmp #0
     beq b2
     jmp b4
-  //SEG105 bool_and::@2
+  //SEG106 bool_and::@2
   b2:
-  //SEG106 [55] *((const byte*) bool_and::screen#0 + (byte) bool_and::i#2) ← (byte) '*' [ bool_and::i#2 ] ( main:2::bool_and:5 [ bool_and::i#2 ] ) -- pbuc1_derefidx_vbuxx=vbuc2 
+  //SEG107 [56] *((const byte*) bool_and::screen#0 + (byte) bool_and::i#2) ← (byte) '*' [ bool_and::i#2 ] ( main:2::bool_and:5 [ bool_and::i#2 ] ) -- pbuc1_derefidx_vbuxx=vbuc2 
     lda #'*'
     sta screen,x
     jmp b3
@@ -1710,11 +1834,13 @@ FINAL SYMBOL TABLE
 (byte) bool_and::i
 (byte) bool_and::i#1 reg byte x 16.5
 (byte) bool_and::i#2 reg byte x 11.0
+(boolean) bool_and::o1
+(boolean) bool_and::o2
+(boolean) bool_and::o3
 (byte*) bool_and::screen
 (const byte*) bool_and::screen#0 screen = ((byte*))(word/signed word/dword/signed dword) 1024
 (void()) bool_complex()
-(byte~) bool_complex::$3 reg byte x 7.333333333333333
-(byte~) bool_complex::$7 reg byte a 5.5
+(byte~) bool_complex::$1 reg byte a 22.0
 (label) bool_complex::@1
 (label) bool_complex::@2
 (label) bool_complex::@3
@@ -1724,12 +1850,19 @@ FINAL SYMBOL TABLE
 (label) bool_complex::@9
 (label) bool_complex::@return
 (byte) bool_complex::i
-(byte) bool_complex::i#1 reg byte y 16.5
-(byte) bool_complex::i#2 reg byte y 9.777777777777779
+(byte) bool_complex::i#1 reg byte x 16.5
+(byte) bool_complex::i#2 reg byte x 6.6
+(boolean) bool_complex::o1
+(boolean) bool_complex::o1#0 o1 zp ZP_BOOL:2 6.6000000000000005
+(boolean) bool_complex::o2
+(boolean) bool_complex::o2#0 o2 zp ZP_BOOL:3 8.25
+(boolean) bool_complex::o3
+(boolean) bool_complex::o4
+(boolean) bool_complex::o5
 (byte*) bool_complex::screen
 (const byte*) bool_complex::screen#0 screen = ((byte*))(word/signed word/dword/signed dword) 1144
 (void()) bool_not()
-(byte~) bool_not::$3 reg byte a 11.0
+(byte~) bool_not::$1 reg byte a 11.0
 (label) bool_not::@1
 (label) bool_not::@2
 (label) bool_not::@3
@@ -1739,6 +1872,9 @@ FINAL SYMBOL TABLE
 (byte) bool_not::i
 (byte) bool_not::i#1 reg byte x 16.5
 (byte) bool_not::i#2 reg byte x 11.0
+(boolean) bool_not::o1
+(boolean) bool_not::o2
+(boolean) bool_not::o3
 (byte*) bool_not::screen
 (const byte*) bool_not::screen#0 screen = ((byte*))(word/signed word/dword/signed dword) 1104
 (void()) bool_or()
@@ -1752,6 +1888,9 @@ FINAL SYMBOL TABLE
 (byte) bool_or::i
 (byte) bool_or::i#1 reg byte x 16.5
 (byte) bool_or::i#2 reg byte x 11.0
+(boolean) bool_or::o1
+(boolean) bool_or::o2
+(boolean) bool_or::o3
 (byte*) bool_or::screen
 (const byte*) bool_or::screen#0 screen = ((byte*))(word/signed word/dword/signed dword) 1064
 (void()) main()
@@ -1760,19 +1899,20 @@ FINAL SYMBOL TABLE
 (label) main::@3
 (label) main::@return
 
-reg byte y [ bool_complex::i#2 bool_complex::i#1 ]
+reg byte x [ bool_complex::i#2 bool_complex::i#1 ]
 reg byte x [ bool_not::i#2 bool_not::i#1 ]
 reg byte x [ bool_or::i#2 bool_or::i#1 ]
 reg byte x [ bool_and::i#2 bool_and::i#1 ]
-reg byte x [ bool_complex::$3 ]
-reg byte a [ bool_complex::$7 ]
-reg byte a [ bool_not::$3 ]
+zp ZP_BOOL:2 [ bool_complex::o1#0 ]
+reg byte a [ bool_complex::$1 ]
+zp ZP_BOOL:3 [ bool_complex::o2#0 ]
+reg byte a [ bool_not::$1 ]
 reg byte a [ bool_or::$1 ]
 reg byte a [ bool_and::$1 ]
 
 
 FINAL ASSEMBLER
-Score: 1810
+Score: 2095
 
 //SEG0 Basic Upstart
 .pc = $801 "Basic"
@@ -1790,17 +1930,17 @@ Score: 1810
 //SEG9 main
 main: {
   //SEG10 [5] call bool_and param-assignment [ ] ( main:2 [ ] )
-  //SEG11 [46] phi from main to bool_and [phi:main->bool_and]
+  //SEG11 [47] phi from main to bool_and [phi:main->bool_and]
     jsr bool_and
   //SEG12 [6] phi from main to main::@1 [phi:main->main::@1]
   //SEG13 main::@1
   //SEG14 [7] call bool_or param-assignment [ ] ( main:2 [ ] )
-  //SEG15 [36] phi from main::@1 to bool_or [phi:main::@1->bool_or]
+  //SEG15 [37] phi from main::@1 to bool_or [phi:main::@1->bool_or]
     jsr bool_or
   //SEG16 [8] phi from main::@1 to main::@2 [phi:main::@1->main::@2]
   //SEG17 main::@2
   //SEG18 [9] call bool_not param-assignment [ ] ( main:2 [ ] )
-  //SEG19 [26] phi from main::@2 to bool_not [phi:main::@2->bool_not]
+  //SEG19 [27] phi from main::@2 to bool_not [phi:main::@2->bool_not]
     jsr bool_not
   //SEG20 [10] phi from main::@2 to main::@3 [phi:main::@2->main::@3]
   //SEG21 main::@3
@@ -1814,182 +1954,197 @@ main: {
 //SEG26 bool_complex
 bool_complex: {
     .label screen = $478
+    .label o1 = 2
+    .label o2 = 3
   //SEG27 [14] phi from bool_complex to bool_complex::@1 [phi:bool_complex->bool_complex::@1]
-  //SEG28 [14] phi (byte) bool_complex::i#2 = (byte/signed byte/word/signed word/dword/signed dword) 0 [phi:bool_complex->bool_complex::@1#0] -- vbuyy=vbuc1 
-    ldy #0
+  //SEG28 [14] phi (byte) bool_complex::i#2 = (byte/signed byte/word/signed word/dword/signed dword) 0 [phi:bool_complex->bool_complex::@1#0] -- vbuxx=vbuc1 
+    ldx #0
   //SEG29 [14] phi from bool_complex::@3 to bool_complex::@1 [phi:bool_complex::@3->bool_complex::@1]
   //SEG30 [14] phi (byte) bool_complex::i#2 = (byte) bool_complex::i#1 [phi:bool_complex::@3->bool_complex::@1#0] -- register_copy 
   //SEG31 bool_complex::@1
   b1:
-  //SEG32 [15] (byte~) bool_complex::$3 ← (byte) bool_complex::i#2 & (byte/signed byte/word/signed word/dword/signed dword) 1 [ bool_complex::i#2 bool_complex::$3 ] ( main:2::bool_complex:11 [ bool_complex::i#2 bool_complex::$3 ] ) -- vbuxx=vbuyy_band_vbuc1 
-    tya
+  //SEG32 [15] (boolean) bool_complex::o1#0 ← (byte) bool_complex::i#2 < (byte/signed byte/word/signed word/dword/signed dword) 10 [ bool_complex::i#2 bool_complex::o1#0 ] ( main:2::bool_complex:11 [ bool_complex::i#2 bool_complex::o1#0 ] ) -- vboz1=vbuxx_lt_vbuc1 
+    cpx #$a
+    lda #0
+    rol
+    eor #1
+    sta o1
+  //SEG33 [16] (byte~) bool_complex::$1 ← (byte) bool_complex::i#2 & (byte/signed byte/word/signed word/dword/signed dword) 1 [ bool_complex::i#2 bool_complex::o1#0 bool_complex::$1 ] ( main:2::bool_complex:11 [ bool_complex::i#2 bool_complex::o1#0 bool_complex::$1 ] ) -- vbuaa=vbuxx_band_vbuc1 
+    txa
     and #1
-    tax
-  //SEG33 [16] (byte~) bool_complex::$7 ← (byte) bool_complex::i#2 & (byte/signed byte/word/signed word/dword/signed dword) 1 [ bool_complex::i#2 bool_complex::$3 bool_complex::$7 ] ( main:2::bool_complex:11 [ bool_complex::i#2 bool_complex::$3 bool_complex::$7 ] ) -- vbuaa=vbuyy_band_vbuc1 
-    tya
-    and #1
-  //SEG34 [17] if((byte) bool_complex::i#2<(byte/signed byte/word/signed word/dword/signed dword) 10) goto bool_complex::@8 [ bool_complex::i#2 bool_complex::$3 bool_complex::$7 ] ( main:2::bool_complex:11 [ bool_complex::i#2 bool_complex::$3 bool_complex::$7 ] ) -- vbuyy_lt_vbuc1_then_la1 
-    cpy #$a
-    bcc b8
-  //SEG35 bool_complex::@7
-  b7:
-  //SEG36 [18] if((byte) bool_complex::i#2<(byte/signed byte/word/signed word/dword/signed dword) 10) goto bool_complex::@4 [ bool_complex::i#2 bool_complex::$7 ] ( main:2::bool_complex:11 [ bool_complex::i#2 bool_complex::$7 ] ) -- vbuyy_lt_vbuc1_then_la1 
-    cpy #$a
-    bcc b4
-  //SEG37 bool_complex::@9
-  //SEG38 [19] if((byte~) bool_complex::$7==(byte/signed byte/word/signed word/dword/signed dword) 0) goto bool_complex::@4 [ bool_complex::i#2 ] ( main:2::bool_complex:11 [ bool_complex::i#2 ] ) -- vbuaa_eq_0_then_la1 
+  //SEG34 [17] (boolean) bool_complex::o2#0 ← (byte~) bool_complex::$1 == (byte/signed byte/word/signed word/dword/signed dword) 0 [ bool_complex::i#2 bool_complex::o1#0 bool_complex::o2#0 ] ( main:2::bool_complex:11 [ bool_complex::i#2 bool_complex::o1#0 bool_complex::o2#0 ] ) -- vboz1=vbuaa_eq_vbuc1 
     cmp #0
-    beq b4
-  //SEG39 bool_complex::@2
+    beq !+
+    lda #1
+  !:
+    eor #1
+    sta o2
+  //SEG35 [18] if((boolean) bool_complex::o1#0) goto bool_complex::@8 [ bool_complex::i#2 bool_complex::o1#0 bool_complex::o2#0 ] ( main:2::bool_complex:11 [ bool_complex::i#2 bool_complex::o1#0 bool_complex::o2#0 ] ) -- vboz1_then_la1 
+    lda o1
+    cmp #0
+    bne b8
+  //SEG36 bool_complex::@7
+  b7:
+  //SEG37 [19] if((boolean) bool_complex::o1#0) goto bool_complex::@4 [ bool_complex::i#2 bool_complex::o2#0 ] ( main:2::bool_complex:11 [ bool_complex::i#2 bool_complex::o2#0 ] ) -- vboz1_then_la1 
+    lda o1
+    cmp #0
+    bne b4
+  //SEG38 bool_complex::@9
+  //SEG39 [20] if((boolean) bool_complex::o2#0) goto bool_complex::@4 [ bool_complex::i#2 ] ( main:2::bool_complex:11 [ bool_complex::i#2 ] ) -- vboz1_then_la1 
+    lda o2
+    cmp #0
+    bne b4
+  //SEG40 bool_complex::@2
   b2:
-  //SEG40 [20] *((const byte*) bool_complex::screen#0 + (byte) bool_complex::i#2) ← (byte) '*' [ bool_complex::i#2 ] ( main:2::bool_complex:11 [ bool_complex::i#2 ] ) -- pbuc1_derefidx_vbuyy=vbuc2 
+  //SEG41 [21] *((const byte*) bool_complex::screen#0 + (byte) bool_complex::i#2) ← (byte) '*' [ bool_complex::i#2 ] ( main:2::bool_complex:11 [ bool_complex::i#2 ] ) -- pbuc1_derefidx_vbuxx=vbuc2 
     lda #'*'
-    sta screen,y
-  //SEG41 bool_complex::@3
+    sta screen,x
+  //SEG42 bool_complex::@3
   b3:
-  //SEG42 [21] (byte) bool_complex::i#1 ← ++ (byte) bool_complex::i#2 [ bool_complex::i#1 ] ( main:2::bool_complex:11 [ bool_complex::i#1 ] ) -- vbuyy=_inc_vbuyy 
-    iny
-  //SEG43 [22] if((byte) bool_complex::i#1!=(byte/signed byte/word/signed word/dword/signed dword) 21) goto bool_complex::@1 [ bool_complex::i#1 ] ( main:2::bool_complex:11 [ bool_complex::i#1 ] ) -- vbuyy_neq_vbuc1_then_la1 
-    cpy #$15
+  //SEG43 [22] (byte) bool_complex::i#1 ← ++ (byte) bool_complex::i#2 [ bool_complex::i#1 ] ( main:2::bool_complex:11 [ bool_complex::i#1 ] ) -- vbuxx=_inc_vbuxx 
+    inx
+  //SEG44 [23] if((byte) bool_complex::i#1!=(byte/signed byte/word/signed word/dword/signed dword) 21) goto bool_complex::@1 [ bool_complex::i#1 ] ( main:2::bool_complex:11 [ bool_complex::i#1 ] ) -- vbuxx_neq_vbuc1_then_la1 
+    cpx #$15
     bne b1
-  //SEG44 bool_complex::@return
-  //SEG45 [23] return  [ ] ( main:2::bool_complex:11 [ ] )
+  //SEG45 bool_complex::@return
+  //SEG46 [24] return  [ ] ( main:2::bool_complex:11 [ ] )
     rts
-  //SEG46 bool_complex::@4
+  //SEG47 bool_complex::@4
   b4:
-  //SEG47 [24] *((const byte*) bool_complex::screen#0 + (byte) bool_complex::i#2) ← (byte) ' ' [ bool_complex::i#2 ] ( main:2::bool_complex:11 [ bool_complex::i#2 ] ) -- pbuc1_derefidx_vbuyy=vbuc2 
+  //SEG48 [25] *((const byte*) bool_complex::screen#0 + (byte) bool_complex::i#2) ← (byte) ' ' [ bool_complex::i#2 ] ( main:2::bool_complex:11 [ bool_complex::i#2 ] ) -- pbuc1_derefidx_vbuxx=vbuc2 
     lda #' '
-    sta screen,y
+    sta screen,x
     jmp b3
-  //SEG48 bool_complex::@8
+  //SEG49 bool_complex::@8
   b8:
-  //SEG49 [25] if((byte~) bool_complex::$3==(byte/signed byte/word/signed word/dword/signed dword) 0) goto bool_complex::@2 [ bool_complex::i#2 bool_complex::$7 ] ( main:2::bool_complex:11 [ bool_complex::i#2 bool_complex::$7 ] ) -- vbuxx_eq_0_then_la1 
-    cpx #0
-    beq b2
+  //SEG50 [26] if((boolean) bool_complex::o2#0) goto bool_complex::@2 [ bool_complex::i#2 bool_complex::o1#0 bool_complex::o2#0 ] ( main:2::bool_complex:11 [ bool_complex::i#2 bool_complex::o1#0 bool_complex::o2#0 ] ) -- vboz1_then_la1 
+    lda o2
+    cmp #0
+    bne b2
     jmp b7
 }
-//SEG50 bool_not
+//SEG51 bool_not
 bool_not: {
     .label screen = $450
-  //SEG51 [27] phi from bool_not to bool_not::@1 [phi:bool_not->bool_not::@1]
-  //SEG52 [27] phi (byte) bool_not::i#2 = (byte/signed byte/word/signed word/dword/signed dword) 0 [phi:bool_not->bool_not::@1#0] -- vbuxx=vbuc1 
+  //SEG52 [28] phi from bool_not to bool_not::@1 [phi:bool_not->bool_not::@1]
+  //SEG53 [28] phi (byte) bool_not::i#2 = (byte/signed byte/word/signed word/dword/signed dword) 0 [phi:bool_not->bool_not::@1#0] -- vbuxx=vbuc1 
     ldx #0
-  //SEG53 [27] phi from bool_not::@3 to bool_not::@1 [phi:bool_not::@3->bool_not::@1]
-  //SEG54 [27] phi (byte) bool_not::i#2 = (byte) bool_not::i#1 [phi:bool_not::@3->bool_not::@1#0] -- register_copy 
-  //SEG55 bool_not::@1
+  //SEG54 [28] phi from bool_not::@3 to bool_not::@1 [phi:bool_not::@3->bool_not::@1]
+  //SEG55 [28] phi (byte) bool_not::i#2 = (byte) bool_not::i#1 [phi:bool_not::@3->bool_not::@1#0] -- register_copy 
+  //SEG56 bool_not::@1
   b1:
-  //SEG56 [28] (byte~) bool_not::$3 ← (byte) bool_not::i#2 & (byte/signed byte/word/signed word/dword/signed dword) 1 [ bool_not::i#2 bool_not::$3 ] ( main:2::bool_not:9 [ bool_not::i#2 bool_not::$3 ] ) -- vbuaa=vbuxx_band_vbuc1 
+  //SEG57 [29] (byte~) bool_not::$1 ← (byte) bool_not::i#2 & (byte/signed byte/word/signed word/dword/signed dword) 1 [ bool_not::i#2 bool_not::$1 ] ( main:2::bool_not:9 [ bool_not::i#2 bool_not::$1 ] ) -- vbuaa=vbuxx_band_vbuc1 
     txa
     and #1
-  //SEG57 [29] if((byte) bool_not::i#2<(byte/signed byte/word/signed word/dword/signed dword) 10) goto bool_not::@4 [ bool_not::i#2 bool_not::$3 ] ( main:2::bool_not:9 [ bool_not::i#2 bool_not::$3 ] ) -- vbuxx_lt_vbuc1_then_la1 
+  //SEG58 [30] if((byte) bool_not::i#2<(byte/signed byte/word/signed word/dword/signed dword) 10) goto bool_not::@4 [ bool_not::i#2 bool_not::$1 ] ( main:2::bool_not:9 [ bool_not::i#2 bool_not::$1 ] ) -- vbuxx_lt_vbuc1_then_la1 
     cpx #$a
     bcc b4
-  //SEG58 bool_not::@7
-  //SEG59 [30] if((byte~) bool_not::$3==(byte/signed byte/word/signed word/dword/signed dword) 0) goto bool_not::@4 [ bool_not::i#2 ] ( main:2::bool_not:9 [ bool_not::i#2 ] ) -- vbuaa_eq_0_then_la1 
+  //SEG59 bool_not::@7
+  //SEG60 [31] if((byte~) bool_not::$1==(byte/signed byte/word/signed word/dword/signed dword) 0) goto bool_not::@4 [ bool_not::i#2 ] ( main:2::bool_not:9 [ bool_not::i#2 ] ) -- vbuaa_eq_0_then_la1 
     cmp #0
     beq b4
-  //SEG60 bool_not::@2
-  //SEG61 [31] *((const byte*) bool_not::screen#0 + (byte) bool_not::i#2) ← (byte) '*' [ bool_not::i#2 ] ( main:2::bool_not:9 [ bool_not::i#2 ] ) -- pbuc1_derefidx_vbuxx=vbuc2 
+  //SEG61 bool_not::@2
+  //SEG62 [32] *((const byte*) bool_not::screen#0 + (byte) bool_not::i#2) ← (byte) '*' [ bool_not::i#2 ] ( main:2::bool_not:9 [ bool_not::i#2 ] ) -- pbuc1_derefidx_vbuxx=vbuc2 
     lda #'*'
     sta screen,x
-  //SEG62 bool_not::@3
+  //SEG63 bool_not::@3
   b3:
-  //SEG63 [32] (byte) bool_not::i#1 ← ++ (byte) bool_not::i#2 [ bool_not::i#1 ] ( main:2::bool_not:9 [ bool_not::i#1 ] ) -- vbuxx=_inc_vbuxx 
+  //SEG64 [33] (byte) bool_not::i#1 ← ++ (byte) bool_not::i#2 [ bool_not::i#1 ] ( main:2::bool_not:9 [ bool_not::i#1 ] ) -- vbuxx=_inc_vbuxx 
     inx
-  //SEG64 [33] if((byte) bool_not::i#1!=(byte/signed byte/word/signed word/dword/signed dword) 21) goto bool_not::@1 [ bool_not::i#1 ] ( main:2::bool_not:9 [ bool_not::i#1 ] ) -- vbuxx_neq_vbuc1_then_la1 
+  //SEG65 [34] if((byte) bool_not::i#1!=(byte/signed byte/word/signed word/dword/signed dword) 21) goto bool_not::@1 [ bool_not::i#1 ] ( main:2::bool_not:9 [ bool_not::i#1 ] ) -- vbuxx_neq_vbuc1_then_la1 
     cpx #$15
     bne b1
-  //SEG65 bool_not::@return
-  //SEG66 [34] return  [ ] ( main:2::bool_not:9 [ ] )
+  //SEG66 bool_not::@return
+  //SEG67 [35] return  [ ] ( main:2::bool_not:9 [ ] )
     rts
-  //SEG67 bool_not::@4
+  //SEG68 bool_not::@4
   b4:
-  //SEG68 [35] *((const byte*) bool_not::screen#0 + (byte) bool_not::i#2) ← (byte) ' ' [ bool_not::i#2 ] ( main:2::bool_not:9 [ bool_not::i#2 ] ) -- pbuc1_derefidx_vbuxx=vbuc2 
+  //SEG69 [36] *((const byte*) bool_not::screen#0 + (byte) bool_not::i#2) ← (byte) ' ' [ bool_not::i#2 ] ( main:2::bool_not:9 [ bool_not::i#2 ] ) -- pbuc1_derefidx_vbuxx=vbuc2 
     lda #' '
     sta screen,x
     jmp b3
 }
-//SEG69 bool_or
+//SEG70 bool_or
 bool_or: {
     .label screen = $428
-  //SEG70 [37] phi from bool_or to bool_or::@1 [phi:bool_or->bool_or::@1]
-  //SEG71 [37] phi (byte) bool_or::i#2 = (byte/signed byte/word/signed word/dword/signed dword) 0 [phi:bool_or->bool_or::@1#0] -- vbuxx=vbuc1 
+  //SEG71 [38] phi from bool_or to bool_or::@1 [phi:bool_or->bool_or::@1]
+  //SEG72 [38] phi (byte) bool_or::i#2 = (byte/signed byte/word/signed word/dword/signed dword) 0 [phi:bool_or->bool_or::@1#0] -- vbuxx=vbuc1 
     ldx #0
-  //SEG72 [37] phi from bool_or::@3 to bool_or::@1 [phi:bool_or::@3->bool_or::@1]
-  //SEG73 [37] phi (byte) bool_or::i#2 = (byte) bool_or::i#1 [phi:bool_or::@3->bool_or::@1#0] -- register_copy 
-  //SEG74 bool_or::@1
+  //SEG73 [38] phi from bool_or::@3 to bool_or::@1 [phi:bool_or::@3->bool_or::@1]
+  //SEG74 [38] phi (byte) bool_or::i#2 = (byte) bool_or::i#1 [phi:bool_or::@3->bool_or::@1#0] -- register_copy 
+  //SEG75 bool_or::@1
   b1:
-  //SEG75 [38] (byte~) bool_or::$1 ← (byte) bool_or::i#2 & (byte/signed byte/word/signed word/dword/signed dword) 1 [ bool_or::i#2 bool_or::$1 ] ( main:2::bool_or:7 [ bool_or::i#2 bool_or::$1 ] ) -- vbuaa=vbuxx_band_vbuc1 
+  //SEG76 [39] (byte~) bool_or::$1 ← (byte) bool_or::i#2 & (byte/signed byte/word/signed word/dword/signed dword) 1 [ bool_or::i#2 bool_or::$1 ] ( main:2::bool_or:7 [ bool_or::i#2 bool_or::$1 ] ) -- vbuaa=vbuxx_band_vbuc1 
     txa
     and #1
-  //SEG76 [39] if((byte) bool_or::i#2<(byte/signed byte/word/signed word/dword/signed dword) 10) goto bool_or::@2 [ bool_or::i#2 bool_or::$1 ] ( main:2::bool_or:7 [ bool_or::i#2 bool_or::$1 ] ) -- vbuxx_lt_vbuc1_then_la1 
+  //SEG77 [40] if((byte) bool_or::i#2<(byte/signed byte/word/signed word/dword/signed dword) 10) goto bool_or::@2 [ bool_or::i#2 bool_or::$1 ] ( main:2::bool_or:7 [ bool_or::i#2 bool_or::$1 ] ) -- vbuxx_lt_vbuc1_then_la1 
     cpx #$a
     bcc b2
-  //SEG77 bool_or::@7
-  //SEG78 [40] if((byte~) bool_or::$1==(byte/signed byte/word/signed word/dword/signed dword) 0) goto bool_or::@2 [ bool_or::i#2 ] ( main:2::bool_or:7 [ bool_or::i#2 ] ) -- vbuaa_eq_0_then_la1 
+  //SEG78 bool_or::@7
+  //SEG79 [41] if((byte~) bool_or::$1==(byte/signed byte/word/signed word/dword/signed dword) 0) goto bool_or::@2 [ bool_or::i#2 ] ( main:2::bool_or:7 [ bool_or::i#2 ] ) -- vbuaa_eq_0_then_la1 
     cmp #0
     beq b2
-  //SEG79 bool_or::@4
-  //SEG80 [41] *((const byte*) bool_or::screen#0 + (byte) bool_or::i#2) ← (byte) ' ' [ bool_or::i#2 ] ( main:2::bool_or:7 [ bool_or::i#2 ] ) -- pbuc1_derefidx_vbuxx=vbuc2 
+  //SEG80 bool_or::@4
+  //SEG81 [42] *((const byte*) bool_or::screen#0 + (byte) bool_or::i#2) ← (byte) ' ' [ bool_or::i#2 ] ( main:2::bool_or:7 [ bool_or::i#2 ] ) -- pbuc1_derefidx_vbuxx=vbuc2 
     lda #' '
     sta screen,x
-  //SEG81 bool_or::@3
+  //SEG82 bool_or::@3
   b3:
-  //SEG82 [42] (byte) bool_or::i#1 ← ++ (byte) bool_or::i#2 [ bool_or::i#1 ] ( main:2::bool_or:7 [ bool_or::i#1 ] ) -- vbuxx=_inc_vbuxx 
+  //SEG83 [43] (byte) bool_or::i#1 ← ++ (byte) bool_or::i#2 [ bool_or::i#1 ] ( main:2::bool_or:7 [ bool_or::i#1 ] ) -- vbuxx=_inc_vbuxx 
     inx
-  //SEG83 [43] if((byte) bool_or::i#1!=(byte/signed byte/word/signed word/dword/signed dword) 21) goto bool_or::@1 [ bool_or::i#1 ] ( main:2::bool_or:7 [ bool_or::i#1 ] ) -- vbuxx_neq_vbuc1_then_la1 
+  //SEG84 [44] if((byte) bool_or::i#1!=(byte/signed byte/word/signed word/dword/signed dword) 21) goto bool_or::@1 [ bool_or::i#1 ] ( main:2::bool_or:7 [ bool_or::i#1 ] ) -- vbuxx_neq_vbuc1_then_la1 
     cpx #$15
     bne b1
-  //SEG84 bool_or::@return
-  //SEG85 [44] return  [ ] ( main:2::bool_or:7 [ ] )
+  //SEG85 bool_or::@return
+  //SEG86 [45] return  [ ] ( main:2::bool_or:7 [ ] )
     rts
-  //SEG86 bool_or::@2
+  //SEG87 bool_or::@2
   b2:
-  //SEG87 [45] *((const byte*) bool_or::screen#0 + (byte) bool_or::i#2) ← (byte) '*' [ bool_or::i#2 ] ( main:2::bool_or:7 [ bool_or::i#2 ] ) -- pbuc1_derefidx_vbuxx=vbuc2 
+  //SEG88 [46] *((const byte*) bool_or::screen#0 + (byte) bool_or::i#2) ← (byte) '*' [ bool_or::i#2 ] ( main:2::bool_or:7 [ bool_or::i#2 ] ) -- pbuc1_derefidx_vbuxx=vbuc2 
     lda #'*'
     sta screen,x
     jmp b3
 }
-//SEG88 bool_and
+//SEG89 bool_and
 bool_and: {
     .label screen = $400
-  //SEG89 [47] phi from bool_and to bool_and::@1 [phi:bool_and->bool_and::@1]
-  //SEG90 [47] phi (byte) bool_and::i#2 = (byte/signed byte/word/signed word/dword/signed dword) 0 [phi:bool_and->bool_and::@1#0] -- vbuxx=vbuc1 
+  //SEG90 [48] phi from bool_and to bool_and::@1 [phi:bool_and->bool_and::@1]
+  //SEG91 [48] phi (byte) bool_and::i#2 = (byte/signed byte/word/signed word/dword/signed dword) 0 [phi:bool_and->bool_and::@1#0] -- vbuxx=vbuc1 
     ldx #0
-  //SEG91 [47] phi from bool_and::@3 to bool_and::@1 [phi:bool_and::@3->bool_and::@1]
-  //SEG92 [47] phi (byte) bool_and::i#2 = (byte) bool_and::i#1 [phi:bool_and::@3->bool_and::@1#0] -- register_copy 
-  //SEG93 bool_and::@1
+  //SEG92 [48] phi from bool_and::@3 to bool_and::@1 [phi:bool_and::@3->bool_and::@1]
+  //SEG93 [48] phi (byte) bool_and::i#2 = (byte) bool_and::i#1 [phi:bool_and::@3->bool_and::@1#0] -- register_copy 
+  //SEG94 bool_and::@1
   b1:
-  //SEG94 [48] (byte~) bool_and::$1 ← (byte) bool_and::i#2 & (byte/signed byte/word/signed word/dword/signed dword) 1 [ bool_and::i#2 bool_and::$1 ] ( main:2::bool_and:5 [ bool_and::i#2 bool_and::$1 ] ) -- vbuaa=vbuxx_band_vbuc1 
+  //SEG95 [49] (byte~) bool_and::$1 ← (byte) bool_and::i#2 & (byte/signed byte/word/signed word/dword/signed dword) 1 [ bool_and::i#2 bool_and::$1 ] ( main:2::bool_and:5 [ bool_and::i#2 bool_and::$1 ] ) -- vbuaa=vbuxx_band_vbuc1 
     txa
     and #1
-  //SEG95 [49] if((byte) bool_and::i#2<(byte/signed byte/word/signed word/dword/signed dword) 10) goto bool_and::@7 [ bool_and::i#2 bool_and::$1 ] ( main:2::bool_and:5 [ bool_and::i#2 bool_and::$1 ] ) -- vbuxx_lt_vbuc1_then_la1 
+  //SEG96 [50] if((byte) bool_and::i#2<(byte/signed byte/word/signed word/dword/signed dword) 10) goto bool_and::@7 [ bool_and::i#2 bool_and::$1 ] ( main:2::bool_and:5 [ bool_and::i#2 bool_and::$1 ] ) -- vbuxx_lt_vbuc1_then_la1 
     cpx #$a
     bcc b7
-  //SEG96 bool_and::@4
+  //SEG97 bool_and::@4
   b4:
-  //SEG97 [50] *((const byte*) bool_and::screen#0 + (byte) bool_and::i#2) ← (byte) ' ' [ bool_and::i#2 ] ( main:2::bool_and:5 [ bool_and::i#2 ] ) -- pbuc1_derefidx_vbuxx=vbuc2 
+  //SEG98 [51] *((const byte*) bool_and::screen#0 + (byte) bool_and::i#2) ← (byte) ' ' [ bool_and::i#2 ] ( main:2::bool_and:5 [ bool_and::i#2 ] ) -- pbuc1_derefidx_vbuxx=vbuc2 
     lda #' '
     sta screen,x
-  //SEG98 bool_and::@3
+  //SEG99 bool_and::@3
   b3:
-  //SEG99 [51] (byte) bool_and::i#1 ← ++ (byte) bool_and::i#2 [ bool_and::i#1 ] ( main:2::bool_and:5 [ bool_and::i#1 ] ) -- vbuxx=_inc_vbuxx 
+  //SEG100 [52] (byte) bool_and::i#1 ← ++ (byte) bool_and::i#2 [ bool_and::i#1 ] ( main:2::bool_and:5 [ bool_and::i#1 ] ) -- vbuxx=_inc_vbuxx 
     inx
-  //SEG100 [52] if((byte) bool_and::i#1!=(byte/signed byte/word/signed word/dword/signed dword) 21) goto bool_and::@1 [ bool_and::i#1 ] ( main:2::bool_and:5 [ bool_and::i#1 ] ) -- vbuxx_neq_vbuc1_then_la1 
+  //SEG101 [53] if((byte) bool_and::i#1!=(byte/signed byte/word/signed word/dword/signed dword) 21) goto bool_and::@1 [ bool_and::i#1 ] ( main:2::bool_and:5 [ bool_and::i#1 ] ) -- vbuxx_neq_vbuc1_then_la1 
     cpx #$15
     bne b1
-  //SEG101 bool_and::@return
-  //SEG102 [53] return  [ ] ( main:2::bool_and:5 [ ] )
+  //SEG102 bool_and::@return
+  //SEG103 [54] return  [ ] ( main:2::bool_and:5 [ ] )
     rts
-  //SEG103 bool_and::@7
+  //SEG104 bool_and::@7
   b7:
-  //SEG104 [54] if((byte~) bool_and::$1==(byte/signed byte/word/signed word/dword/signed dword) 0) goto bool_and::@2 [ bool_and::i#2 ] ( main:2::bool_and:5 [ bool_and::i#2 ] ) -- vbuaa_eq_0_then_la1 
+  //SEG105 [55] if((byte~) bool_and::$1==(byte/signed byte/word/signed word/dword/signed dword) 0) goto bool_and::@2 [ bool_and::i#2 ] ( main:2::bool_and:5 [ bool_and::i#2 ] ) -- vbuaa_eq_0_then_la1 
     cmp #0
     beq b2
     jmp b4
-  //SEG105 bool_and::@2
+  //SEG106 bool_and::@2
   b2:
-  //SEG106 [55] *((const byte*) bool_and::screen#0 + (byte) bool_and::i#2) ← (byte) '*' [ bool_and::i#2 ] ( main:2::bool_and:5 [ bool_and::i#2 ] ) -- pbuc1_derefidx_vbuxx=vbuc2 
+  //SEG107 [56] *((const byte*) bool_and::screen#0 + (byte) bool_and::i#2) ← (byte) '*' [ bool_and::i#2 ] ( main:2::bool_and:5 [ bool_and::i#2 ] ) -- pbuc1_derefidx_vbuxx=vbuc2 
     lda #'*'
     sta screen,x
     jmp b3

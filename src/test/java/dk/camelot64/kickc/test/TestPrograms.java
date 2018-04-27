@@ -45,6 +45,11 @@ public class TestPrograms {
    }
 
    @Test
+   public void testDoubleAssignment() throws IOException, URISyntaxException {
+      compileAndCompare("double-assignment");
+   }
+
+   @Test
    public void testConstWordPointer() throws IOException, URISyntaxException {
       compileAndCompare("const-word-pointer");
    }

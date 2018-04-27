@@ -781,17 +781,17 @@ public class TestPrograms {
 
    @Test
    public void testNoMulRuntime() throws IOException, URISyntaxException {
-      assertError("no-mul-runtime", "No runtime support");
+      assertError("no-mul-runtime", "Runtime multiplication not supported");
    }
 
    @Test
    public void testNoDivRuntime() throws IOException, URISyntaxException {
-      assertError("no-div-runtime", "No runtime support");
+      assertError("no-div-runtime", "Runtime division not supported");
    }
 
    @Test
    public void testNoRemRuntime() throws IOException, URISyntaxException {
-      assertError("no-rem-runtime", "No runtime support");
+      assertError("no-rem-runtime", "Runtime modulus not supported");
    }
 
 

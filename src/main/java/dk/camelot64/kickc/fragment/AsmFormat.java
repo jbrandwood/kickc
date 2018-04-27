@@ -70,7 +70,7 @@ public class AsmFormat {
     * @return
     */
    private static String getAsmConstantBinary(Program program, ConstantValue left, OperatorBinary operator, ConstantValue right, ScopeRef codeScope) {
-      if(Operators.REMAINDER.equals(operator)) {
+      if(Operators.MODULUS.equals(operator)) {
          // Remainder operator % not supported by KickAss - use modulo function instead
          return "mod("+
                getAsmConstant(program, left, operator.getPrecedence(), codeScope) +

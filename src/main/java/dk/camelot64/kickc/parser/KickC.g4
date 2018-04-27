@@ -87,7 +87,7 @@ expr
     | expr ('*' | '/' | '%' ) expr #exprBinary
     | expr ( '+' | '-')  expr #exprBinary
     | ('<' | '>') expr #exprUnary
-    | expr ( '==' | '!=' | '<>' | '<' | '<=' | '=<' | '>=' | '=>' | '>' ) expr #exprBinary
+    | expr ( '==' | '!=' | '<' | '<=' | '>=' | '>' ) expr #exprBinary
     | expr ( '&' ) expr #exprBinary
     | expr ( '^' ) expr #exprBinary
     | expr ( '|' ) expr #exprBinary

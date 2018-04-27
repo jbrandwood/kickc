@@ -6,11 +6,11 @@ import dk.camelot64.kickc.model.values.ConstantInteger;
 import dk.camelot64.kickc.model.values.ConstantLiteral;
 import dk.camelot64.kickc.model.values.ConstantPointer;
 
-/** Numeric division Operator ( x % y ) */
-public class OperatorRemainder extends OperatorBinary {
+/** Numeric modulus operator ie. remainder after division ( x % y ) */
+public class OperatorModulus extends OperatorBinary {
 
-   public OperatorRemainder(int precedence) {
-      super("%", "_rem_", precedence);
+   public OperatorModulus(int precedence) {
+      super("%", "_mod_", precedence);
    }
 
    @Override

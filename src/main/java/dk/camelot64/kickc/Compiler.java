@@ -234,6 +234,7 @@ public class Compiler {
    private void pass3Analysis() {
 
       new Pass3AssertNoValueLists(program).check();
+      new Pass3AssertNoMulDivMod(program).check();
       new Pass3BlockSequencePlanner(program).plan();
       // Phi lifting ensures that all variables in phi-blocks are in different live range equivalence classes
       new Pass3PhiLifting(program).perform();

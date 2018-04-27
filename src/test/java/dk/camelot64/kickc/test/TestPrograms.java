@@ -120,6 +120,11 @@ public class TestPrograms {
    }
 
    @Test
+   public void testBoolPointer() throws IOException, URISyntaxException {
+      compileAndCompare("bool-pointer");
+   }
+
+   @Test
    public void testC64DtvBlitterMin() throws IOException, URISyntaxException {
       compileAndCompare("c64dtv-blittermin");
    }
@@ -754,6 +759,10 @@ public class TestPrograms {
       assertError("recursion-error-complex", "Recursion");
    }
 
+   @Test
+   public void testConstPointerModifyError() throws IOException, URISyntaxException {
+      assertError("const-pointer-modify", "Constants can not be modified");
+   }
 
    private void assertError(String kcFile, String expectError) throws IOException, URISyntaxException {
       try {

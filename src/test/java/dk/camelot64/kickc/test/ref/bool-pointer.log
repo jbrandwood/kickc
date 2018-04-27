@@ -1,0 +1,409 @@
+PARSING src/test/java/dk/camelot64/kickc/test/kc/bool-pointer.kc
+// Tests a pointer to a boolean
+
+void main() {
+    boolean* bscreen = $400;
+    bscreen[0] = true;
+    bscreen[1] = false;
+    bscreen = bscreen+2;
+    *bscreen = true;
+    if(*bscreen) {
+        *(++bscreen)= true;
+    }
+
+}
+Adding pre/post-modifier (boolean*) main::bscreen ← ++ (boolean*) main::bscreen
+SYMBOLS
+(label) @1
+(label) @begin
+(label) @end
+(void()) main()
+(boolean*~) main::$0
+(boolean~) main::$1
+(label) main::@1
+(label) main::@2
+(label) main::@return
+(boolean*) main::bscreen
+
+Promoting word/signed word/dword/signed dword to boolean* in main::bscreen ← ((boolean*)) 1024
+INITIAL CONTROL FLOW GRAPH
+@begin: scope:[]  from
+  to:@1
+main: scope:[main]  from
+  (boolean*) main::bscreen ← ((boolean*)) (word/signed word/dword/signed dword) 1024
+  *((boolean*) main::bscreen + (byte/signed byte/word/signed word/dword/signed dword) 0) ← true
+  *((boolean*) main::bscreen + (byte/signed byte/word/signed word/dword/signed dword) 1) ← false
+  (boolean*~) main::$0 ← (boolean*) main::bscreen + (byte/signed byte/word/signed word/dword/signed dword) 2
+  (boolean*) main::bscreen ← (boolean*~) main::$0
+  *((boolean*) main::bscreen) ← true
+  (boolean~) main::$1 ← ! *((boolean*) main::bscreen)
+  if((boolean~) main::$1) goto main::@1
+  to:main::@2
+main::@1: scope:[main]  from main main::@2
+  to:main::@return
+main::@2: scope:[main]  from main
+  (boolean*) main::bscreen ← ++ (boolean*) main::bscreen
+  *((boolean*) main::bscreen) ← true
+  to:main::@1
+main::@return: scope:[main]  from main::@1
+  return 
+  to:@return
+@1: scope:[]  from @begin
+  call main 
+  to:@end
+@end: scope:[]  from @1
+
+PROCEDURE MODIFY VARIABLE ANALYSIS
+
+Completing Phi functions...
+
+CONTROL FLOW GRAPH SSA WITH ASSIGNMENT CALL & RETURN
+@begin: scope:[]  from
+  to:@1
+main: scope:[main]  from @1
+  (boolean*) main::bscreen#0 ← ((boolean*)) (word/signed word/dword/signed dword) 1024
+  *((boolean*) main::bscreen#0 + (byte/signed byte/word/signed word/dword/signed dword) 0) ← true
+  *((boolean*) main::bscreen#0 + (byte/signed byte/word/signed word/dword/signed dword) 1) ← false
+  (boolean*~) main::$0 ← (boolean*) main::bscreen#0 + (byte/signed byte/word/signed word/dword/signed dword) 2
+  (boolean*) main::bscreen#1 ← (boolean*~) main::$0
+  *((boolean*) main::bscreen#1) ← true
+  (boolean~) main::$1 ← ! *((boolean*) main::bscreen#1)
+  if((boolean~) main::$1) goto main::@1
+  to:main::@2
+main::@1: scope:[main]  from main
+  to:main::@return
+main::@2: scope:[main]  from main
+  (boolean*) main::bscreen#3 ← phi( main/(boolean*) main::bscreen#1 )
+  (boolean*) main::bscreen#2 ← ++ (boolean*) main::bscreen#3
+  *((boolean*) main::bscreen#2) ← true
+  to:main::@return
+main::@return: scope:[main]  from main::@1 main::@2
+  return 
+  to:@return
+@1: scope:[]  from @begin
+  call main param-assignment
+  to:@2
+@2: scope:[]  from @1
+  to:@end
+@end: scope:[]  from @2
+
+SYMBOL TABLE SSA
+(label) @1
+(label) @2
+(label) @begin
+(label) @end
+(void()) main()
+(boolean*~) main::$0
+(boolean~) main::$1
+(label) main::@1
+(label) main::@2
+(label) main::@return
+(boolean*) main::bscreen
+(boolean*) main::bscreen#0
+(boolean*) main::bscreen#1
+(boolean*) main::bscreen#2
+(boolean*) main::bscreen#3
+
+OPTIMIZING CONTROL FLOW GRAPH
+Culled Empty Block (label) main::@1
+Culled Empty Block (label) @2
+Succesful SSA optimization Pass2CullEmptyBlocks
+Alias (boolean*) main::bscreen#1 = (boolean*~) main::$0 (boolean*) main::bscreen#3 
+Succesful SSA optimization Pass2AliasElimination
+Rewriting ! if()-condition to reversed if() (boolean~) main::$1 ← ! *((boolean*) main::bscreen#1)
+Succesful SSA optimization Pass2ConditionalAndOrRewriting
+Constant (const boolean*) main::bscreen#0 = ((boolean*))1024
+Succesful SSA optimization Pass2ConstantIdentification
+Constant (const boolean*) main::bscreen#1 = main::bscreen#0+2
+Succesful SSA optimization Pass2ConstantIdentification
+Constant (const boolean*) main::bscreen#2 = ++main::bscreen#1
+Succesful SSA optimization Pass2ConstantIdentification
+Consolidated array index constant in *(main::bscreen#0+0)
+Consolidated array index constant in *(main::bscreen#0+1)
+Succesful SSA optimization Pass2ConstantAdditionElimination
+OPTIMIZING CONTROL FLOW GRAPH
+Inlining constant with different constant siblings (const boolean*) main::bscreen#0
+Inlining constant with different constant siblings (const boolean*) main::bscreen#0
+Inlining constant with different constant siblings (const boolean*) main::bscreen#1
+Inlining constant with different constant siblings (const boolean*) main::bscreen#1
+Inlining constant with different constant siblings (const boolean*) main::bscreen#2
+Inlining constant with different constant siblings (const boolean*) main::bscreen#2
+Constant inlined main::bscreen#2 = ++((boolean*))(word/signed word/dword/signed dword) 1024+(byte/signed byte/word/signed word/dword/signed dword) 2
+Constant inlined main::bscreen#0 = ((boolean*))(word/signed word/dword/signed dword) 1024
+Constant inlined main::bscreen#1 = ((boolean*))(word/signed word/dword/signed dword) 1024+(byte/signed byte/word/signed word/dword/signed dword) 2
+Succesful SSA optimization Pass2ConstantInlining
+Block Sequence Planned @begin @1 @end main main::@return main::@2 
+Block Sequence Planned @begin @1 @end main main::@return main::@2 
+Adding NOP phi() at start of @begin
+Adding NOP phi() at start of @1
+Adding NOP phi() at start of @end
+CALL GRAPH
+Calls in [] to main:2 
+
+Propagating live ranges...
+Created 0 initial phi equivalence classes
+Coalesced down to 0 phi equivalence classes
+Block Sequence Planned @begin @1 @end main main::@return main::@2 
+Adding NOP phi() at start of @begin
+Adding NOP phi() at start of @1
+Adding NOP phi() at start of @end
+Propagating live ranges...
+
+FINAL CONTROL FLOW GRAPH
+@begin: scope:[]  from
+  [0] phi() [ ] ( )
+  to:@1
+@1: scope:[]  from @begin
+  [1] phi() [ ] ( )
+  [2] call main param-assignment [ ] ( )
+  to:@end
+@end: scope:[]  from @1
+  [3] phi() [ ] ( )
+main: scope:[main]  from @1
+  [4] *(((boolean*))(word/signed word/dword/signed dword) 1024+(byte/signed byte/word/signed word/dword/signed dword) 0) ← true [ ] ( main:2 [ ] )
+  [5] *(((boolean*))(word/signed word/dword/signed dword) 1024+(byte/signed byte/word/signed word/dword/signed dword) 1) ← false [ ] ( main:2 [ ] )
+  [6] *(((boolean*))(word/signed word/dword/signed dword) 1024+(byte/signed byte/word/signed word/dword/signed dword) 2) ← true [ ] ( main:2 [ ] )
+  [7] if(*(((boolean*))(word/signed word/dword/signed dword) 1024+(byte/signed byte/word/signed word/dword/signed dword) 2)) goto main::@2 [ ] ( main:2 [ ] )
+  to:main::@return
+main::@return: scope:[main]  from main main::@2
+  [8] return  [ ] ( main:2 [ ] )
+  to:@return
+main::@2: scope:[main]  from main
+  [9] *(++((boolean*))(word/signed word/dword/signed dword) 1024+(byte/signed byte/word/signed word/dword/signed dword) 2) ← true [ ] ( main:2 [ ] )
+  to:main::@return
+
+DOMINATORS
+@begin dominated by  @begin 
+@1 dominated by  @1 @begin 
+@end dominated by  @1 @begin @end 
+main dominated by  @1 @begin main 
+main::@return dominated by  main::@return @1 @begin main 
+main::@2 dominated by  @1 @begin main::@2 main 
+
+NATURAL LOOPS
+
+NATURAL LOOPS WITH DEPTH
+Found 0 loops in scope []
+Found 0 loops in scope [main]
+
+
+VARIABLE REGISTER WEIGHTS
+(void()) main()
+(boolean*) main::bscreen
+
+Initial phi equivalence classes
+Complete equivalence classes
+New fragment synthesis _deref_pboc1=vboc2
+New fragment synthesis _deref_pboc1=vboc2 - sub-option vboaa=vboc1
+New fragment synthesis vboaa=vboc1
+New fragment synthesis vboaa=vboc1 - Successfully loaded vboaa=vboc1.asm
+Fragment synthesis vboaa=vboc1 - New best, scheduling parent _deref_pboc1=vboc2
+Fragment synthesis _deref_pboc1=vboc2 - Successfully synthesized from vboaa=vboc1
+Found best fragment  _deref_pboc1=vboc2 < vboaa=vboc1 score: 6.5
+New fragment synthesis _deref_pboc1_then_la1
+New fragment synthesis _deref_pboc1_then_la1 - sub-option vboaa_then_la1
+New fragment synthesis _deref_pboc1_then_la1 - sub-option vboxx_then_la1
+New fragment synthesis _deref_pboc1_then_la1 - sub-option vboyy_then_la1
+New fragment synthesis vboaa_then_la1
+New fragment synthesis vboaa_then_la1 - Successfully loaded vboaa_then_la1.asm
+New fragment synthesis vboaa_then_la1 - sub-option vboxx_then_la1
+New fragment synthesis vboaa_then_la1 - sub-option vboyy_then_la1
+New fragment synthesis vboxx_then_la1
+New fragment synthesis vboxx_then_la1 - Successfully loaded vboxx_then_la1.asm
+New fragment synthesis vboxx_then_la1 - sub-option vboaa_then_la1
+New fragment synthesis vboyy_then_la1
+New fragment synthesis vboyy_then_la1 - Successfully loaded vboyy_then_la1.asm
+New fragment synthesis vboyy_then_la1 - sub-option vboaa_then_la1
+Fragment synthesis vboyy_then_la1 - New best, scheduling parent vboaa_then_la1
+Fragment synthesis vboyy_then_la1 - New best, scheduling parent _deref_pboc1_then_la1
+Fragment synthesis vboxx_then_la1 - New best, scheduling parent vboaa_then_la1
+Fragment synthesis vboxx_then_la1 - New best, scheduling parent _deref_pboc1_then_la1
+Fragment synthesis vboaa_then_la1 - Successfully synthesized from vboxx_then_la1
+Fragment synthesis vboaa_then_la1 - Successfully synthesized from vboyy_then_la1
+Fragment synthesis vboaa_then_la1 - New best, scheduling parent vboxx_then_la1
+Fragment synthesis vboaa_then_la1 - New best, scheduling parent vboyy_then_la1
+Fragment synthesis vboaa_then_la1 - New best, scheduling parent _deref_pboc1_then_la1
+Fragment synthesis vboyy_then_la1 - Successfully synthesized from vboaa_then_la1
+Fragment synthesis vboxx_then_la1 - Successfully synthesized from vboaa_then_la1
+Fragment synthesis _deref_pboc1_then_la1 - Successfully synthesized from vboaa_then_la1
+Fragment synthesis _deref_pboc1_then_la1 - Successfully synthesized from vboxx_then_la1
+Fragment synthesis _deref_pboc1_then_la1 - Successfully synthesized from vboyy_then_la1
+Found best fragment  _deref_pboc1_then_la1 < vboaa_then_la1 score: 9.0
+
+INITIAL ASM
+//SEG0 Basic Upstart
+.pc = $801 "Basic"
+:BasicUpstart(main)
+.pc = $80d "Program"
+//SEG1 Global Constants & labels
+//SEG2 @begin
+bbegin:
+//SEG3 [1] phi from @begin to @1 [phi:@begin->@1]
+b1_from_bbegin:
+  jmp b1
+//SEG4 @1
+b1:
+//SEG5 [2] call main param-assignment [ ] ( )
+  jsr main
+//SEG6 [3] phi from @1 to @end [phi:@1->@end]
+bend_from_b1:
+  jmp bend
+//SEG7 @end
+bend:
+//SEG8 main
+main: {
+  //SEG9 [4] *(((boolean*))(word/signed word/dword/signed dword) 1024+(byte/signed byte/word/signed word/dword/signed dword) 0) ← true [ ] ( main:2 [ ] ) -- _deref_pboc1=vboc2 
+    lda #1
+    sta $400+0
+  //SEG10 [5] *(((boolean*))(word/signed word/dword/signed dword) 1024+(byte/signed byte/word/signed word/dword/signed dword) 1) ← false [ ] ( main:2 [ ] ) -- _deref_pboc1=vboc2 
+    lda #0
+    sta $400+1
+  //SEG11 [6] *(((boolean*))(word/signed word/dword/signed dword) 1024+(byte/signed byte/word/signed word/dword/signed dword) 2) ← true [ ] ( main:2 [ ] ) -- _deref_pboc1=vboc2 
+    lda #1
+    sta $400+2
+  //SEG12 [7] if(*(((boolean*))(word/signed word/dword/signed dword) 1024+(byte/signed byte/word/signed word/dword/signed dword) 2)) goto main::@2 [ ] ( main:2 [ ] ) -- _deref_pboc1_then_la1 
+    lda $400+2
+    cmp #0
+    bne b2
+    jmp breturn
+  //SEG13 main::@return
+  breturn:
+  //SEG14 [8] return  [ ] ( main:2 [ ] )
+    rts
+  //SEG15 main::@2
+  b2:
+  //SEG16 [9] *(++((boolean*))(word/signed word/dword/signed dword) 1024+(byte/signed byte/word/signed word/dword/signed dword) 2) ← true [ ] ( main:2 [ ] ) -- _deref_pboc1=vboc2 
+    lda #1
+    sta $400+2+1
+    jmp breturn
+}
+
+REGISTER UPLIFT POTENTIAL REGISTERS
+Statement [4] *(((boolean*))(word/signed word/dword/signed dword) 1024+(byte/signed byte/word/signed word/dword/signed dword) 0) ← true [ ] ( main:2 [ ] ) always clobbers reg byte a 
+Statement [5] *(((boolean*))(word/signed word/dword/signed dword) 1024+(byte/signed byte/word/signed word/dword/signed dword) 1) ← false [ ] ( main:2 [ ] ) always clobbers reg byte a 
+Statement [6] *(((boolean*))(word/signed word/dword/signed dword) 1024+(byte/signed byte/word/signed word/dword/signed dword) 2) ← true [ ] ( main:2 [ ] ) always clobbers reg byte a 
+Statement [7] if(*(((boolean*))(word/signed word/dword/signed dword) 1024+(byte/signed byte/word/signed word/dword/signed dword) 2)) goto main::@2 [ ] ( main:2 [ ] ) always clobbers reg byte a 
+Statement [9] *(++((boolean*))(word/signed word/dword/signed dword) 1024+(byte/signed byte/word/signed word/dword/signed dword) 2) ← true [ ] ( main:2 [ ] ) always clobbers reg byte a 
+
+REGISTER UPLIFT SCOPES
+Uplift Scope [main] 
+Uplift Scope [] 
+
+Uplifting [main] best 56 combination 
+Uplifting [] best 56 combination 
+
+ASSEMBLER BEFORE OPTIMIZATION
+//SEG0 Basic Upstart
+.pc = $801 "Basic"
+:BasicUpstart(main)
+.pc = $80d "Program"
+//SEG1 Global Constants & labels
+//SEG2 @begin
+bbegin:
+//SEG3 [1] phi from @begin to @1 [phi:@begin->@1]
+b1_from_bbegin:
+  jmp b1
+//SEG4 @1
+b1:
+//SEG5 [2] call main param-assignment [ ] ( )
+  jsr main
+//SEG6 [3] phi from @1 to @end [phi:@1->@end]
+bend_from_b1:
+  jmp bend
+//SEG7 @end
+bend:
+//SEG8 main
+main: {
+  //SEG9 [4] *(((boolean*))(word/signed word/dword/signed dword) 1024+(byte/signed byte/word/signed word/dword/signed dword) 0) ← true [ ] ( main:2 [ ] ) -- _deref_pboc1=vboc2 
+    lda #1
+    sta $400+0
+  //SEG10 [5] *(((boolean*))(word/signed word/dword/signed dword) 1024+(byte/signed byte/word/signed word/dword/signed dword) 1) ← false [ ] ( main:2 [ ] ) -- _deref_pboc1=vboc2 
+    lda #0
+    sta $400+1
+  //SEG11 [6] *(((boolean*))(word/signed word/dword/signed dword) 1024+(byte/signed byte/word/signed word/dword/signed dword) 2) ← true [ ] ( main:2 [ ] ) -- _deref_pboc1=vboc2 
+    lda #1
+    sta $400+2
+  //SEG12 [7] if(*(((boolean*))(word/signed word/dword/signed dword) 1024+(byte/signed byte/word/signed word/dword/signed dword) 2)) goto main::@2 [ ] ( main:2 [ ] ) -- _deref_pboc1_then_la1 
+    lda $400+2
+    cmp #0
+    bne b2
+    jmp breturn
+  //SEG13 main::@return
+  breturn:
+  //SEG14 [8] return  [ ] ( main:2 [ ] )
+    rts
+  //SEG15 main::@2
+  b2:
+  //SEG16 [9] *(++((boolean*))(word/signed word/dword/signed dword) 1024+(byte/signed byte/word/signed word/dword/signed dword) 2) ← true [ ] ( main:2 [ ] ) -- _deref_pboc1=vboc2 
+    lda #1
+    sta $400+2+1
+    jmp breturn
+}
+
+ASSEMBLER OPTIMIZATIONS
+Removing instruction jmp b1
+Removing instruction jmp bend
+Removing instruction jmp breturn
+Succesful ASM optimization Pass5NextJumpElimination
+Removing instruction lda $400+2
+Succesful ASM optimization Pass5UnnecesaryLoadElimination
+Removing instruction bbegin:
+Removing instruction b1_from_bbegin:
+Removing instruction bend_from_b1:
+Succesful ASM optimization Pass5RedundantLabelElimination
+Removing instruction b1:
+Removing instruction bend:
+Succesful ASM optimization Pass5UnusedLabelElimination
+
+FINAL SYMBOL TABLE
+(label) @1
+(label) @begin
+(label) @end
+(void()) main()
+(label) main::@2
+(label) main::@return
+(boolean*) main::bscreen
+
+
+
+FINAL ASSEMBLER
+Score: 43
+
+//SEG0 Basic Upstart
+.pc = $801 "Basic"
+:BasicUpstart(main)
+.pc = $80d "Program"
+//SEG1 Global Constants & labels
+//SEG2 @begin
+//SEG3 [1] phi from @begin to @1 [phi:@begin->@1]
+//SEG4 @1
+//SEG5 [2] call main param-assignment [ ] ( )
+  jsr main
+//SEG6 [3] phi from @1 to @end [phi:@1->@end]
+//SEG7 @end
+//SEG8 main
+main: {
+  //SEG9 [4] *(((boolean*))(word/signed word/dword/signed dword) 1024+(byte/signed byte/word/signed word/dword/signed dword) 0) ← true [ ] ( main:2 [ ] ) -- _deref_pboc1=vboc2 
+    lda #1
+    sta $400+0
+  //SEG10 [5] *(((boolean*))(word/signed word/dword/signed dword) 1024+(byte/signed byte/word/signed word/dword/signed dword) 1) ← false [ ] ( main:2 [ ] ) -- _deref_pboc1=vboc2 
+    lda #0
+    sta $400+1
+  //SEG11 [6] *(((boolean*))(word/signed word/dword/signed dword) 1024+(byte/signed byte/word/signed word/dword/signed dword) 2) ← true [ ] ( main:2 [ ] ) -- _deref_pboc1=vboc2 
+    lda #1
+    sta $400+2
+  //SEG12 [7] if(*(((boolean*))(word/signed word/dword/signed dword) 1024+(byte/signed byte/word/signed word/dword/signed dword) 2)) goto main::@2 [ ] ( main:2 [ ] ) -- _deref_pboc1_then_la1 
+    cmp #0
+    bne b2
+  //SEG13 main::@return
+  breturn:
+  //SEG14 [8] return  [ ] ( main:2 [ ] )
+    rts
+  //SEG15 main::@2
+  b2:
+  //SEG16 [9] *(++((boolean*))(word/signed word/dword/signed dword) 1024+(byte/signed byte/word/signed word/dword/signed dword) 2) ← true [ ] ( main:2 [ ] ) -- _deref_pboc1=vboc2 
+    lda #1
+    sta $400+2+1
+    jmp breturn
+}
+

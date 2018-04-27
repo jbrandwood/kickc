@@ -28,6 +28,8 @@ public class AsmFormat {
          return getAsmParamName(constantVar.getScope().getRef(), asmName, codeScope);
       } else if(value instanceof ConstantInteger) {
          return getAsmNumber(((ConstantInteger) value).getValue());
+      } else if(value instanceof ConstantBool) {
+         return getAsmBool(((ConstantBool) value).getBool());
       } else if(value instanceof ConstantChar) {
          return "'" + ((ConstantChar) value).getValue() + "'";
       } else if(value instanceof ConstantString) {
@@ -76,7 +78,7 @@ public class AsmFormat {
          } else {
             return getAsmConstant(program, new ConstantBinary(new ConstantInteger((long)0xff), Operators.BOOL_AND, operand), outerPrecedence, codeScope);
          }
-      } else if(Operators.CAST_WORD.equals(operator) || Operators.CAST_SWORD.equals(operator) || Operators.CAST_PTRBY.equals(operator)) {
+      } else if(Operators.CAST_WORD.equals(operator) || Operators.CAST_SWORD.equals(operator) || Operators.CAST_PTRBY.equals(operator)|| Operators.CAST_PTRBO.equals(operator)) {
          SymbolType operandType = SymbolTypeInference.inferType(program.getScope(), operand);
          if(SymbolType.isWord(operandType) || SymbolType.isSWord(operandType) || SymbolType.isByte(operandType) || SymbolType.isSByte(operandType) || operandType instanceof SymbolTypePointer) {
             // No cast needed
@@ -124,6 +126,7 @@ public class AsmFormat {
       }
    }
 
+
    public static String getAsmNumber(Number number) {
       if(number instanceof Long || number instanceof Integer) {
          if(number.longValue() >= 0L && number.longValue() <= 9L) {
@@ -133,6 +136,19 @@ public class AsmFormat {
          }
       }
       throw new RuntimeException("Unsupported number type " + number);
+   }
+
+   /**
+    * Get the ASM code for a boolean value
+    * @param bool the boolean vallue
+    * @return "0" / "1"
+    */
+   private static String getAsmBool(Boolean bool) {
+      if(bool) {
+         return "1";
+      } else {
+         return "0";
+      }
    }
 
    /**

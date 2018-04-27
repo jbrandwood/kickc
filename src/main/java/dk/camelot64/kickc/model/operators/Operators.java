@@ -30,6 +30,7 @@ public class Operators {
    public static final OperatorUnary CAST_BOOL= new OperatorCastBool(2);
    public static final OperatorBinary MULTIPLY = new OperatorMultiply(3);
    public static final OperatorBinary DIVIDE = new OperatorDivide(3);
+   public static final OperatorBinary REMAINDER = new OperatorRemainder(3);
    public static final OperatorBinary PLUS = new OperatorPlus(4);
    public static final OperatorBinary MINUS = new OperatorMinus(4);
    public static final OperatorBinary SHIFT_LEFT = new OperatorShiftLeft(5);
@@ -58,6 +59,8 @@ public class Operators {
             return MULTIPLY;
          case "/":
             return DIVIDE;
+         case "%":
+            return REMAINDER;
          case "==":
             return EQ;
          case "!=":

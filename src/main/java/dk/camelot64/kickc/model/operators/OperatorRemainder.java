@@ -6,41 +6,32 @@ import dk.camelot64.kickc.model.values.ConstantInteger;
 import dk.camelot64.kickc.model.values.ConstantLiteral;
 import dk.camelot64.kickc.model.values.ConstantPointer;
 
-/** Numeric division Operator ( x / y ) */
-public class OperatorDivide extends OperatorBinary {
+/** Numeric division Operator ( x % y ) */
+public class OperatorRemainder extends OperatorBinary {
 
-   public OperatorDivide(int precedence) {
-      super("/", "_div_", precedence);
+   public OperatorRemainder(int precedence) {
+      super("%", "_rem_", precedence);
    }
 
    @Override
    public ConstantLiteral calculateLiteral(ConstantLiteral left, ConstantLiteral right) {
       if(left instanceof ConstantInteger && right instanceof ConstantInteger) {
-         return new ConstantInteger(((ConstantInteger) left).getInteger() / ((ConstantInteger) right).getInteger());
+         return new ConstantInteger(((ConstantInteger) left).getInteger() % ((ConstantInteger) right).getInteger());
       } else if(left instanceof ConstantPointer && right instanceof ConstantInteger) {
-         return new ConstantPointer(
-               ((ConstantPointer) left).getLocation() / ((ConstantInteger) right).getInteger(),
-               ((ConstantPointer) left).getElementType()
-         );
+         return new ConstantInteger(((ConstantPointer) left).getLocation() % ((ConstantInteger) right).getInteger());
       }
       throw new CompileError("Calculation not implemented " + left + " " + getOperator() + " " + right);
    }
 
    @Override
    public SymbolType inferType(SymbolTypeSimple left, SymbolTypeSimple right) {
-      if(left instanceof SymbolTypePointer) {
-         if(SymbolType.isByte(right) || SymbolType.isWord(right)) {
-            return left;
-         } else {
-            throw new NoMatchingType("Cannot divide pointer by "+right.toString());
-
-         }
-      }
       // Handle numeric types through proper promotion
       if(SymbolType.isInteger(left) && SymbolType.isInteger(right)) {
          return SymbolType.promotedMathType((SymbolTypeInteger) left, (SymbolTypeInteger) right);
       }
-
+      if(left instanceof ConstantPointer && right instanceof ConstantInteger) {
+         return ((ConstantInteger) right).getType();
+      }
       throw new RuntimeException("Type inference case not handled " + left + " " + getOperator() + " " + right);
    }
 

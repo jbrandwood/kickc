@@ -45,6 +45,16 @@ public class TestPrograms {
    }
 
    @Test
+   public void testConcatChar() throws IOException, URISyntaxException {
+      compileAndCompare("concat-char");
+   }
+
+   @Test
+   public void testConstMultDiv() throws IOException, URISyntaxException {
+      compileAndCompare("const-mult-div");
+   }
+
+   @Test
    public void testDoubleAssignment() throws IOException, URISyntaxException {
       compileAndCompare("double-assignment");
    }
@@ -768,6 +778,22 @@ public class TestPrograms {
    public void testConstPointerModifyError() throws IOException, URISyntaxException {
       assertError("const-pointer-modify", "Constants can not be modified");
    }
+
+   @Test
+   public void testNoMulRuntime() throws IOException, URISyntaxException {
+      assertError("no-mul-runtime", "No runtime support");
+   }
+
+   @Test
+   public void testNoDivRuntime() throws IOException, URISyntaxException {
+      assertError("no-div-runtime", "No runtime support");
+   }
+
+   @Test
+   public void testNoRemRuntime() throws IOException, URISyntaxException {
+      assertError("no-rem-runtime", "No runtime support");
+   }
+
 
    private void assertError(String kcFile, String expectError) throws IOException, URISyntaxException {
       try {

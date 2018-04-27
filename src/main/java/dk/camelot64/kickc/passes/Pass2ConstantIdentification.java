@@ -261,6 +261,7 @@ public class Pass2ConstantIdentification extends Pass2SsaOptimization {
             }
          case "*":
          case "/":
+         case "%":
          case "&":
          case "|":
          case "&&":

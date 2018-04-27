@@ -1,14 +1,16 @@
 package dk.camelot64.kickc.fragment;
 
-import dk.camelot64.kickc.model.*;
+import dk.camelot64.kickc.model.CompileError;
+import dk.camelot64.kickc.model.Program;
 import dk.camelot64.kickc.model.operators.Operator;
+import dk.camelot64.kickc.model.operators.OperatorBinary;
 import dk.camelot64.kickc.model.operators.Operators;
-import dk.camelot64.kickc.model.values.*;
 import dk.camelot64.kickc.model.symbols.ConstantVar;
 import dk.camelot64.kickc.model.symbols.Variable;
 import dk.camelot64.kickc.model.types.SymbolType;
 import dk.camelot64.kickc.model.types.SymbolTypeInference;
 import dk.camelot64.kickc.model.types.SymbolTypePointer;
+import dk.camelot64.kickc.model.values.*;
 
 /** Formatting of numbers, constants, names and more for KickAssembler */
 public class AsmFormat {
@@ -43,13 +45,11 @@ public class AsmFormat {
                (parenthesis ? ")" : "");
       } else if(value instanceof ConstantBinary) {
          ConstantBinary binary = (ConstantBinary) value;
-         Operator operator = binary.getOperator();
+         OperatorBinary operator = binary.getOperator();
          boolean parenthesis = operator.getPrecedence() > precedence;
          return
                (parenthesis ? "(" : "") +
-                     getAsmConstant(program, binary.getLeft(), operator.getPrecedence(), codeScope) +
-                     operator.getOperator() +
-                     getAsmConstant(program, binary.getRight(), operator.getPrecedence(), codeScope) +
+                     getAsmConstantBinary(program, binary.getLeft(), operator, binary.getRight(), codeScope) +
                      (parenthesis ? ")" : "");
       } else if(value instanceof ConstantVarPointer) {
          VariableRef toVar = ((ConstantVarPointer) value).getToVar();
@@ -57,6 +57,30 @@ public class AsmFormat {
          return getAsmParamName(variable, codeScope);
       } else {
          throw new RuntimeException("Constant type not supported " + value);
+      }
+   }
+
+   /**
+    * Get ASM for a binary constant expression
+    * @param program The program
+    * @param left The left operand of the expression
+    * @param operator The binary operator
+    * @param left The left operand of the expression
+    * @param codeScope The scope containing the code being generated.
+    * @return
+    */
+   private static String getAsmConstantBinary(Program program, ConstantValue left, OperatorBinary operator, ConstantValue right, ScopeRef codeScope) {
+      if(Operators.REMAINDER.equals(operator)) {
+         // Remainder operator % not supported by KickAss - use modulo function instead
+         return "mod("+
+               getAsmConstant(program, left, operator.getPrecedence(), codeScope) +
+               "," +
+               getAsmConstant(program, right, operator.getPrecedence(), codeScope)+
+               ")";
+      }  else {
+         return getAsmConstant(program, left, operator.getPrecedence(), codeScope) +
+               operator.getOperator() +
+               getAsmConstant(program, right, operator.getPrecedence(), codeScope);
       }
    }
 

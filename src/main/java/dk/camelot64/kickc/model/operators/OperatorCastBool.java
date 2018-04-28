@@ -7,11 +7,11 @@ import dk.camelot64.kickc.model.values.ConstantInteger;
 import dk.camelot64.kickc.model.values.ConstantLiteral;
 import dk.camelot64.kickc.model.values.ConstantPointer;
 
-/** Unary Cast to boolean operator ( (byte) x ) */
+/** Unary Cast to boolean operator ( (boolean) x ) */
 public class OperatorCastBool extends OperatorUnary {
 
    public OperatorCastBool(int precedence) {
-      super("((boolean))", "_bool_", precedence);
+      super("((bool))", "_bool_", precedence);
    }
 
    @Override

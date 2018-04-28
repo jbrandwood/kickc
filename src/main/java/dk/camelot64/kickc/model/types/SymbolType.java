@@ -23,7 +23,7 @@ public interface SymbolType {
    /** String value (treated like byte* ). */
    SymbolTypeNamed STRING = new SymbolTypeNamed("string");
    /** Boolean value. */
-   SymbolTypeNamed BOOLEAN = new SymbolTypeNamed("boolean");
+   SymbolTypeNamed BOOLEAN = new SymbolTypeNamed("bool");
    /** Numeric floating point value. */
    SymbolTypeNamed DOUBLE = new SymbolTypeNamed("double");
    /** A label. Name of functions of jump-targets. */
@@ -55,7 +55,7 @@ public interface SymbolType {
             return SDWORD;
          case "string":
             return STRING;
-         case "boolean":
+         case "bool":
             return BOOLEAN;
          case "void":
             return VOID;

@@ -158,7 +158,7 @@ MNEMONIC:
     'cpy' | 'cmp' | 'cpx' | 'dcp' | 'dec' | 'inc' | 'axs' | 'bne' | 'cld' | 'sbc' | 'isc' | 'inx' | 'beq' | 'sed' | 'dex' | 'iny' | 'ror'
     ;
 
-SIMPLETYPE: 'byte' | 'word' | 'dword' | 'boolean' | 'void' ;
+SIMPLETYPE: 'byte' | 'word' | 'dword' | 'bool' | 'void' ;
 STRING : '"' ('\\"' | ~'"')* '"';
 CHAR : '\''  ('\\\'' | ~'\'' ) '\'';
 BOOLEAN : 'true' | 'false';

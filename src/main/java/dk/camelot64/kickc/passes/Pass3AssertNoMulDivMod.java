@@ -8,7 +8,7 @@ import dk.camelot64.kickc.model.statements.Statement;
 import dk.camelot64.kickc.model.statements.StatementAssignment;
 
 /**
- * Assert that no the code has no multiply/divide/modulus operators left.
+ * Assert that no the code has no multiply/divide/modulo operators left.
  */
 public class Pass3AssertNoMulDivMod extends Pass2SsaAssertion {
 
@@ -28,8 +28,8 @@ public class Pass3AssertNoMulDivMod extends Pass2SsaAssertion {
                if(Operators.DIVIDE.equals(assignment.getOperator())) {
                   throw new CompileError("ERROR! Runtime division not supported. "+statement.toString(getProgram(), false));
                }
-               if(Operators.MODULUS.equals(assignment.getOperator())) {
-                  throw new CompileError("ERROR! Runtime modulus not supported. "+statement.toString(getProgram(), false));
+               if(Operators.MODULO.equals(assignment.getOperator())) {
+                  throw new CompileError("ERROR! Runtime modulo not supported. "+statement.toString(getProgram(), false));
                }
             }
 

@@ -800,8 +800,8 @@ public class TestPrograms {
    }
 
    @Test
-   public void testNoRemRuntime() throws IOException, URISyntaxException {
-      assertError("no-rem-runtime", "Runtime modulus not supported");
+   public void testNoModRuntime() throws IOException, URISyntaxException {
+      assertError("no-mod-runtime", "Runtime modulo not supported");
    }
 
 

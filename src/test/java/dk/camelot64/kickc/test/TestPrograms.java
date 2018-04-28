@@ -45,6 +45,11 @@ public class TestPrograms {
    }
 
    @Test
+   public void testChainedAssignment() throws IOException, URISyntaxException {
+      compileAndCompare("chained-assignment");
+   }
+
+   @Test
    public void testConcatChar() throws IOException, URISyntaxException {
       compileAndCompare("concat-char");
    }

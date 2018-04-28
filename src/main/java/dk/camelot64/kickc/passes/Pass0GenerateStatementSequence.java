@@ -536,6 +536,24 @@ public class Pass0GenerateStatementSequence extends KickCBaseVisitor<Object> {
    }
 
    @Override
+   public Object visitExprAssignmentCompound(KickCParser.ExprAssignmentCompoundContext ctx) {
+      // Assignment (rValue/lValue)
+      LValue lValue = (LValue) visit(ctx.expr(0));
+      if(lValue instanceof VariableRef && ((VariableRef) lValue).isIntermediate()) {
+         // Encountered an intermediate variable. This must be turned into a proper LValue later. Put it into a marker to signify that
+         lValue = new LvalueIntermediate((VariableRef) lValue);
+      }
+      RValue rValue = (RValue) this.visit(ctx.expr(1));
+      // Binary Operator
+      String op = ((TerminalNode) ctx.getChild(1)).getSymbol().getText();
+      Operator operator = Operators.getBinaryCompound(op);
+      // Assignment with operator
+      Statement stmt = new StatementAssignment(lValue, lValue, operator, rValue);
+      sequence.addStatement(stmt);
+      return lValue;
+   }
+
+   @Override
    public RValue visitExprCast(KickCParser.ExprCastContext ctx) {
       RValue child = (RValue) this.visit(ctx.expr());
       SymbolType castType = (SymbolType) this.visit(ctx.typeDecl());

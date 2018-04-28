@@ -45,6 +45,11 @@ public class TestPrograms {
    }
 
    @Test
+   public void testCompoundAssignment() throws IOException, URISyntaxException {
+      compileAndCompare("compound-assignment");
+   }
+
+   @Test
    public void testChainedAssignment() throws IOException, URISyntaxException {
       compileAndCompare("chained-assignment");
    }

@@ -520,6 +520,18 @@ public class KickCBaseListener implements KickCListener {
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
+	@Override public void enterExprAssignmentCompound(KickCParser.ExprAssignmentCompoundContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitExprAssignmentCompound(KickCParser.ExprAssignmentCompoundContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
 	@Override public void enterExprBool(KickCParser.ExprBoolContext ctx) { }
 	/**
 	 * {@inheritDoc}

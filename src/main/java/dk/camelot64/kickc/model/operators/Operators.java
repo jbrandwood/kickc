@@ -98,6 +98,16 @@ public class Operators {
       }
    }
 
+   /**
+    * Get the binary operator to use for a sppecific compound assignment
+    * @param operator The compound operator as a string
+    * @return The binary operator to use
+    */
+   public static Operator getBinaryCompound(String operator) {
+      return getBinary(operator.substring(0, operator.length()-1));
+   }
+
+
    public static Operator getUnary(String op) {
       switch(op) {
          case "+":
@@ -149,4 +159,5 @@ public class Operators {
 
       }
    }
+
 }

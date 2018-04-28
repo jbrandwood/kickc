@@ -94,6 +94,7 @@ expr
     | expr ( '&&' )  expr #exprBinary
     | expr ( '||' )  expr #exprBinary
     | <assoc=right> expr '=' expr  #exprAssignment
+    | <assoc=right> expr ('+=' | '-=' | '*=' | '/=' | '%=' | '<<=' | '>>=' | '&=' | '|=' | '^=' ) expr  #exprAssignmentCompound
     | '{' expr (',' expr )* '}' #initList
     | NAME  #exprId
     | NUMBER #exprNumber

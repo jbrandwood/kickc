@@ -15,7 +15,7 @@ import java.util.*;
  */
 public class ControlFlowGraph {
 
-   private Map<LabelRef, ControlFlowBlock> blocks;
+   private List<ControlFlowBlock> blocks;
    private LabelRef firstBlockRef;
 
    /**
@@ -23,37 +23,41 @@ public class ControlFlowGraph {
     */
    private List<LabelRef> sequence;
 
-   public ControlFlowGraph(Map<LabelRef, ControlFlowBlock> blocks, LabelRef firstBlockRef) {
+   public ControlFlowGraph(List<ControlFlowBlock> blocks, LabelRef firstBlockRef) {
       this.blocks = blocks;
       this.firstBlockRef = firstBlockRef;
    }
 
    public ControlFlowBlock getBlock(LabelRef symbol) {
-      return blocks.get(symbol);
+      for(ControlFlowBlock block : blocks) {
+         if(block.getLabel().equals(symbol)) {
+            return block;
+         }
+      }
+      return null;
    }
 
    public void addBlock(ControlFlowBlock block) {
-      blocks.put(block.getLabel(), block);
+      blocks.add(block);
    }
 
    public ControlFlowBlock getFirstBlock() {
       return getBlock(firstBlockRef);
    }
 
-   public Collection<ControlFlowBlock> getAllBlocks() {
-      if(sequence != null) {
-         ArrayList<ControlFlowBlock> blocks = new ArrayList<>();
-         for(LabelRef labelRef : sequence) {
-            blocks.add(getBlock(labelRef));
-         }
+   public List<ControlFlowBlock> getAllBlocks() {
          return blocks;
-      } else {
-         return blocks.values();
-      }
    }
 
    public void remove(LabelRef label) {
-      blocks.remove(label);
+      ListIterator<ControlFlowBlock> blocksIt = blocks.listIterator();
+      while(blocksIt.hasNext()) {
+         ControlFlowBlock block = blocksIt.next();
+         if(block.getLabel().equals(label)) {
+            blocksIt.remove();
+            return;
+         }
+      }
    }
 
    /**
@@ -105,7 +109,7 @@ public class ControlFlowGraph {
 
    public ControlFlowBlock getDefaultSuccessor(ControlFlowBlock block) {
       if(block.getDefaultSuccessor() != null) {
-         return blocks.get(block.getDefaultSuccessor());
+         return getBlock(block.getDefaultSuccessor());
       } else {
          return null;
       }
@@ -113,7 +117,7 @@ public class ControlFlowGraph {
 
    public ControlFlowBlock getCallSuccessor(ControlFlowBlock block) {
       if(block.getCallSuccessor() != null) {
-         return blocks.get(block.getCallSuccessor());
+         return getBlock(block.getCallSuccessor());
       } else {
          return null;
       }
@@ -121,7 +125,7 @@ public class ControlFlowGraph {
 
    public ControlFlowBlock getConditionalSuccessor(ControlFlowBlock block) {
       if(block.getConditionalSuccessor() != null) {
-         return blocks.get(block.getConditionalSuccessor());
+         return getBlock(block.getConditionalSuccessor());
       } else {
          return null;
       }
@@ -150,7 +154,15 @@ public class ControlFlowGraph {
    }
 
    public void setSequence(List<LabelRef> sequence) {
+      if(sequence.size()!=blocks.size()) {
+         throw new CompileError("ERROR! Sequence does not contain all blocks from the program. Sequence: "+sequence.size()+" Blocks: "+blocks.size());
+      }
       this.sequence = sequence;
+      ArrayList<ControlFlowBlock> seqBlocks = new ArrayList<>();
+      for(LabelRef labelRef : sequence) {
+         seqBlocks.add(getBlock(labelRef));
+      }
+      this.blocks = seqBlocks;
    }
 
    public ControlFlowBlock getMainBlock() {

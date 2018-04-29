@@ -1,6 +1,9 @@
 package dk.camelot64.kickc.passes;
 
-import dk.camelot64.kickc.model.*;
+import dk.camelot64.kickc.model.ControlFlowBlock;
+import dk.camelot64.kickc.model.ControlFlowGraph;
+import dk.camelot64.kickc.model.Program;
+import dk.camelot64.kickc.model.StatementSequence;
 import dk.camelot64.kickc.model.statements.*;
 import dk.camelot64.kickc.model.symbols.*;
 import dk.camelot64.kickc.model.values.LabelRef;
@@ -8,14 +11,14 @@ import dk.camelot64.kickc.model.values.ProcedureRef;
 import dk.camelot64.kickc.model.values.ScopeRef;
 import dk.camelot64.kickc.model.values.SymbolRef;
 
-import java.util.LinkedHashMap;
-import java.util.Map;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Stack;
 
 /** Pass that generates a control flow graph for the program */
 public class Pass1GenerateControlFlowGraph extends Pass1Base {
 
-   private Map<LabelRef, ControlFlowBlock> blocks;
+   private List<ControlFlowBlock> blocks;
 
    public Pass1GenerateControlFlowGraph(Program program) {
       super(program);
@@ -23,7 +26,7 @@ public class Pass1GenerateControlFlowGraph extends Pass1Base {
 
    @Override
    public boolean step() {
-      this.blocks = new LinkedHashMap<>();
+      this.blocks = new ArrayList<>();
       ProgramScope scope = getScope();
       StatementSequence sequence = getProgram().getStatementSequence();
       ControlFlowBlock firstBlock = getOrCreateBlock(scope.addLabel(SymbolRef.BEGIN_BLOCK_NAME).getRef(), ScopeRef.ROOT);
@@ -92,11 +95,13 @@ public class Pass1GenerateControlFlowGraph extends Pass1Base {
    }
 
    private ControlFlowBlock getOrCreateBlock(LabelRef label, ScopeRef scope) {
-      ControlFlowBlock block = blocks.get(label);
-      if(block == null) {
-         block = new ControlFlowBlock(label, scope);
-         blocks.put(block.getLabel(), block);
+      for(ControlFlowBlock block : blocks) {
+         if(block.getLabel().equals(label)) {
+            return block;
+         }
       }
+      ControlFlowBlock block = new ControlFlowBlock(label, scope);
+      blocks.add(block);
       return block;
    }
 

@@ -140,6 +140,8 @@ public class Compiler {
       new Pass1ModifiedVarsAnalysis(program).execute();
       getLog().append(program.getProcedureModifiedVars().toString(program));
 
+      new Pass1ProcedureInline(program).execute();
+
       new Pass1ProcedureCallParameters(program).generate();
       //getLog().append("CONTROL FLOW GRAPH WITH ASSIGNMENT CALL");
       //getLog().append(program.getGraph().toString(program));

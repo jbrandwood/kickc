@@ -9,10 +9,7 @@ import dk.camelot64.kickc.model.statements.StatementPhiBlock;
 import dk.camelot64.kickc.model.symbols.*;
 import dk.camelot64.kickc.model.values.LabelRef;
 
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * Perform PhiLifting to greatly reduce overlapping of alive intervals for variables.
@@ -35,8 +32,10 @@ public class Pass3PhiLifting {
    public void perform() {
       ControlFlowGraph graph = program.getGraph();
       ProgramScope programScope = program.getScope();
-      Collection<ControlFlowBlock> blocks = graph.getAllBlocks();
-      for(ControlFlowBlock block : blocks) {
+      List<ControlFlowBlock> blocks = graph.getAllBlocks();
+      ListIterator<ControlFlowBlock> blocksIt = blocks.listIterator();
+      while(blocksIt.hasNext()) {
+         ControlFlowBlock block = blocksIt.next();
          // Maps old predecessors to new blocks created
          Map<LabelRef, LabelRef> newBlocks = new HashMap<>();
          if(block.hasPhiBlock()) {
@@ -73,7 +72,7 @@ public class Pass3PhiLifting {
                            Scope currentScope = programScope.getSymbol(currentBlockLabel).getScope();
                            Label newBlockLabel = currentScope.addLabelIntermediate();
                            newBlock = new ControlFlowBlock(newBlockLabel.getRef(), currentScope.getRef());
-                           graph.addBlock(newBlock);
+                           blocksIt.add(newBlock);
                            newBlock.setDefaultSuccessor(block.getLabel());
                            newBlocks.put(predecessorRef, newBlock.getLabel());
                            StatementConditionalJump previousConditionalJump = (StatementConditionalJump) lastPredecessorStatement;

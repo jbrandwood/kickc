@@ -1,13 +1,13 @@
 package dk.camelot64.kickc.model;
 
 import dk.camelot64.kickc.model.operators.Operator;
+import dk.camelot64.kickc.model.statements.*;
 import dk.camelot64.kickc.model.values.LValue;
 import dk.camelot64.kickc.model.values.LabelRef;
 import dk.camelot64.kickc.model.values.RValue;
 import dk.camelot64.kickc.model.values.VariableRef;
-import dk.camelot64.kickc.model.statements.*;
 
-import java.util.LinkedHashMap;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -23,7 +23,7 @@ public class ControlFlowGraphCopyVisitor extends ControlFlowGraphBaseVisitor<Obj
    /**
     * The copied blocks.
     */
-   private LinkedHashMap<LabelRef, ControlFlowBlock> copyBlockMap;
+   private List<ControlFlowBlock> copyBlockList;
 
    /**
     * The current block being copied.
@@ -39,15 +39,14 @@ public class ControlFlowGraphCopyVisitor extends ControlFlowGraphBaseVisitor<Obj
    public ControlFlowGraph visitGraph(ControlFlowGraph origGraph) {
       this.origGraph = origGraph;
       // Copy all blocks
-      this.copyBlockMap = new LinkedHashMap<>();
+      this.copyBlockList = new ArrayList<>();
       for(ControlFlowBlock origBlock : origGraph.getAllBlocks()) {
          ControlFlowBlock copyBlock = visitBlock(origBlock);
          if(copyBlock != null) {
-            copyBlockMap.put(copyBlock.getLabel(), copyBlock);
+            copyBlockList.add(copyBlock);
          }
       }
-      ControlFlowBlock copyFirstBlock = copyBlockMap.get(origGraph.getFirstBlock().getLabel());
-      ControlFlowGraph copyGraph = new ControlFlowGraph(copyBlockMap, copyFirstBlock.getLabel());
+      ControlFlowGraph copyGraph = new ControlFlowGraph(copyBlockList, origGraph.getFirstBlock().getLabel());
       return copyGraph;
    }
 
@@ -101,7 +100,7 @@ public class ControlFlowGraphCopyVisitor extends ControlFlowGraphBaseVisitor<Obj
    protected ControlFlowBlock splitCurrentBlock(LabelRef label) {
       ControlFlowBlock newBlock = new ControlFlowBlock(label, origBlock.getScope());
       this.copyBlock.setDefaultSuccessor(newBlock.getLabel());
-      this.copyBlockMap.put(this.copyBlock.getLabel(), this.copyBlock);
+      this.copyBlockList.add(this.copyBlock);
       this.copyBlock = newBlock;
       return newBlock;
    }

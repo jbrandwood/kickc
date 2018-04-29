@@ -1,0 +1,30 @@
+// Test inline function
+// Splits screen so upper half is lower case and lower half lower case
+
+byte* RASTER = $d012;
+byte* D018 = $d018;
+byte* BGCOL = $d021;
+
+byte* screen = $0400;
+byte* charset1 = $1000;
+byte* charset2 = $1800;
+
+void main() {
+    asm { sei }
+    while(true) {
+        while(*RASTER!=$ff) {}
+        //*D018 = toD018(screen, charset1);
+        *D018 = (byte)(((word)screen/$40)|((word)charset1/$400));
+        *BGCOL = $6;
+        while(*RASTER!=$62) {}
+        //*D018 = toD018(screen, charset1);
+        *D018 = (byte)(((word)screen/$40)|((word)charset2/$400));
+        *BGCOL = $b;
+    }
+}
+
+/*
+inline byte toD018( byte* screen, byte* charset) {
+    return (byte)(((word)screen/$40)|((word)charset/$400));
+}
+*/

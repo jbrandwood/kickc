@@ -131,7 +131,9 @@ public class Pass2ConstantIdentification extends Pass2SsaOptimization {
             if(assignment.getOperator() == null) {
                // Constant assignment
                ConstantValue constant = getConstant(assignment.getrValue2());
-               constants.put(variable, constant);
+               if(constant!=null) {
+                  constants.put(variable, constant);
+               }
             } else {
                // Constant unary expression
                ConstantValue constant = createUnary(
@@ -215,6 +217,12 @@ public class Pass2ConstantIdentification extends Pass2SsaOptimization {
       } else if(rValue instanceof ConstantVar) {
          ConstantVar constantVar = (ConstantVar) rValue;
          return constantVar.getRef();
+      } else if(rValue instanceof CastValue) {
+         CastValue castValue = (CastValue) rValue;
+         ConstantValue castConstant = getConstant(castValue.getValue());
+         if(castConstant !=null) {
+            return new ConstantCastValue(castValue.getToType(), castConstant);
+         }
       }
       return null;
    }

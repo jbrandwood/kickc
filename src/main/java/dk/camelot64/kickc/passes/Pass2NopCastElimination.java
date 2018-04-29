@@ -2,10 +2,7 @@ package dk.camelot64.kickc.passes;
 
 import dk.camelot64.kickc.model.*;
 import dk.camelot64.kickc.model.operators.Operators;
-import dk.camelot64.kickc.model.values.CastValue;
-import dk.camelot64.kickc.model.values.RValue;
-import dk.camelot64.kickc.model.values.SymbolRef;
-import dk.camelot64.kickc.model.values.VariableRef;
+import dk.camelot64.kickc.model.values.*;
 import dk.camelot64.kickc.model.statements.Statement;
 import dk.camelot64.kickc.model.statements.StatementAssignment;
 import dk.camelot64.kickc.model.types.SymbolType;
@@ -64,7 +61,11 @@ public class Pass2NopCastElimination extends Pass2SsaOptimization {
                   if(isNopCast) {
                      getLog().append("Eliminating Noop Cast "+assignment.toString(getProgram(), false));
                      // Add the alias for replacement
-                     castAliasses.put((VariableRef) assignment.getlValue(), new CastValue(toType, assignment.getrValue2()));
+                     if(assignment.getrValue2() instanceof ConstantValue) {
+                        castAliasses.put((VariableRef) assignment.getlValue(), new ConstantCastValue(toType, (ConstantValue) assignment.getrValue2()));
+                     }  else {
+                        castAliasses.put((VariableRef) assignment.getlValue(), new CastValue(toType, assignment.getrValue2()));
+                     }
                      // Remove the assignment
                      stmtIt.remove();
                   }

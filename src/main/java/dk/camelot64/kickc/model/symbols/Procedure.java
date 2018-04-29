@@ -15,30 +15,16 @@ public class Procedure extends Scope {
    public static final ProcedureRef ROOT = new ProcedureRef("");
    private final SymbolType returnType;
    private List<String> parameterNames;
+   private boolean declaredInline;
 
    public Procedure(String name, SymbolType returnType, Scope parentScope) {
       super(name, parentScope);
       this.returnType = returnType;
-   }
-
-   private Procedure(
-         String name,
-         SymbolType returnType,
-         List<String> parameterNames,
-         HashMap<String, Symbol> symbols,
-         int intermediateVarCount,
-         int intermediateLabelCount) {
-      super(name, symbols, intermediateVarCount, intermediateLabelCount);
-      this.returnType = returnType;
-      this.parameterNames = parameterNames;
+      this.declaredInline = false;
    }
 
    public List<String> getParameterNames() {
       return parameterNames;
-   }
-
-   public void setParameterNames(List<String> parameterNames) {
-      this.parameterNames = parameterNames;
    }
 
    public Label getLabel() {
@@ -83,6 +69,10 @@ public class Procedure extends Scope {
       return new SymbolTypeProcedure(returnType);
    }
 
+   public boolean isDeclaredInline() {
+      return declaredInline;
+   }
+
    @Override
    public String toString() {
       return toString(null);
@@ -91,6 +81,9 @@ public class Procedure extends Scope {
    @Override
    public String toString(Program program) {
       StringBuilder res = new StringBuilder();
+      if(declaredInline) {
+         res.append("inline ");
+      }
       res.append("(" + getType().getTypeName() + ") ");
       res.append(getFullName());
       res.append("(");
@@ -129,4 +122,9 @@ public class Procedure extends Scope {
       result = 31 * result + (parameterNames != null ? parameterNames.hashCode() : 0);
       return result;
    }
+
+   public void setDeclaredInline(boolean declaredInline) {
+      this.declaredInline = declaredInline;
+   }
+
 }

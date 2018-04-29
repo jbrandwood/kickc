@@ -22,8 +22,16 @@ declSeq
     ;
 
 decl
-    : typeDecl NAME '(' parameterListDecl? ')' '{' stmtSeq? '}' #declMethod
-    | declVar #declVariable
+    : declVariable
+    | declFunction
+    ;
+
+declVariable
+    :  directive* typeDecl directive* NAME ('=' expr)? ';'
+    ;
+
+declFunction
+    : directive* typeDecl directive* NAME '(' parameterListDecl? ')' '{' stmtSeq? '}'
     ;
 
 parameterListDecl
@@ -32,14 +40,11 @@ parameterListDecl
 parameterDecl
     : directive* typeDecl directive* NAME ;
 
-declVar
-    :  directive* typeDecl directive* NAME ('=' expr)? ';'
-    ;
-
 directive
     : 'const' #directiveConst
     | 'align' '(' NUMBER ')' #directiveAlign
     | 'register' '(' NAME ')' #directiveRegister
+    | 'inline' #directiveInline
     ;
 
 stmtSeq
@@ -47,7 +52,7 @@ stmtSeq
     ;
 
 stmt
-    : declVar #stmtDeclVar
+    : declVariable #stmtDeclVar
     | '{' stmtSeq? '}' #stmtBlock
     | expr  ';' #stmtExpr
     | 'if' '(' expr ')' stmt ( 'else' stmt )? #stmtIfElse

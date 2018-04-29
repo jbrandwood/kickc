@@ -135,7 +135,7 @@ public class Operators {
       }
    }
 
-   public static Operator getCastUnary(SymbolType castType) {
+   public static OperatorUnary getCastUnary(SymbolType castType) {
       if(SymbolType.BYTE.equals(castType)) {
          return CAST_BYTE;
       } else if(SymbolType.SBYTE.equals(castType)) {

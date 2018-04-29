@@ -86,10 +86,11 @@ public class Pass0GenerateStatementSequence extends KickCBaseVisitor<Object> {
    }
 
    @Override
-   public Object visitDeclMethod(KickCParser.DeclMethodContext ctx) {
+   public Object visitDeclFunction(KickCParser.DeclFunctionContext ctx) {
       SymbolType type = (SymbolType) visit(ctx.typeDecl());
       String name = ctx.NAME().getText();
       Procedure procedure = getCurrentSymbols().addProcedure(name, type);
+      addDirectives(procedure, ctx.directive());
       scopeStack.push(procedure);
       Label procExit = procedure.addLabel(SymbolRef.PROCEXIT_BLOCK_NAME);
       VariableUnversioned returnVar = null;
@@ -140,12 +141,6 @@ public class Pass0GenerateStatementSequence extends KickCBaseVisitor<Object> {
 
    @Override
    public Object visitDeclVariable(KickCParser.DeclVariableContext ctx) {
-      this.visit(ctx.declVar());
-      return null;
-   }
-
-   @Override
-   public Object visitDeclVar(KickCParser.DeclVarContext ctx) {
       SymbolType type = (SymbolType) visit(ctx.typeDecl());
       String varName = ctx.NAME().getText();
       VariableUnversioned lValue = getCurrentSymbols().addVariable(varName, type);
@@ -170,6 +165,8 @@ public class Pass0GenerateStatementSequence extends KickCBaseVisitor<Object> {
       }
       return null;
    }
+
+
 
    /**
     * Add declared directives to an lValue (typically a variable).
@@ -200,14 +197,40 @@ public class Pass0GenerateStatementSequence extends KickCBaseVisitor<Object> {
             }
             lValue.setDeclaredRegister(register);
          } else {
-            throw new CompileError("Unknown directive " + directive);
+            throw new CompileError("Unsupported variable directive " + directive);
          }
       }
    }
 
+   /**
+    * Add declared directives to a procedure.
+    *
+    * @param procedure The procedure
+    * @param directivesCtx The directives to add
+    */
+   private void addDirectives(Procedure procedure, List<KickCParser.DirectiveContext> directivesCtx) {
+      List<Directive> directives = new ArrayList<>();
+      for(KickCParser.DirectiveContext directiveContext : directivesCtx) {
+         directives.add((Directive) this.visit(directiveContext));
+      }
+      for(Directive directive : directives) {
+         if(directive instanceof DirectiveInline) {
+            procedure.setDeclaredInline(true);
+         } else {
+            throw new CompileError("Unsupported function directive " + directive);
+         }
+      }
+   }
+
+
    @Override
    public Directive visitDirectiveConst(KickCParser.DirectiveConstContext ctx) {
       return new DirectiveConst();
+   }
+
+   @Override
+   public Object visitDirectiveInline(KickCParser.DirectiveInlineContext ctx) {
+      return new DirectiveInline();
    }
 
    @Override
@@ -467,12 +490,6 @@ public class Pass0GenerateStatementSequence extends KickCBaseVisitor<Object> {
       return null;
    }
 
-   @Override
-   public Object visitStmtDeclVar(KickCParser.StmtDeclVarContext ctx) {
-      this.visit(ctx.declVar());
-      return null;
-   }
-
    private void addInitialAssignment(KickCParser.ExprContext initializer, Variable lValue) {
       PrePostModifierHandler.addPreModifiers(this, initializer);
       RValue rValue = (RValue) visit(initializer);
@@ -693,6 +710,10 @@ public class Pass0GenerateStatementSequence extends KickCBaseVisitor<Object> {
 
    /** Variable declared constant. */
    private static class DirectiveConst implements Directive {
+   }
+
+   /** Function declared inline. */
+   private static class DirectiveInline implements Directive {
    }
 
    /** Variable memory alignment. */

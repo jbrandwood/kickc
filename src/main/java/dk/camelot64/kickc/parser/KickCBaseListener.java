@@ -76,13 +76,13 @@ public class KickCBaseListener implements KickCListener {
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterDeclMethod(KickCParser.DeclMethodContext ctx) { }
+	@Override public void enterDecl(KickCParser.DeclContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void exitDeclMethod(KickCParser.DeclMethodContext ctx) { }
+	@Override public void exitDecl(KickCParser.DeclContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
@@ -95,6 +95,18 @@ public class KickCBaseListener implements KickCListener {
 	 * <p>The default implementation does nothing.</p>
 	 */
 	@Override public void exitDeclVariable(KickCParser.DeclVariableContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void enterDeclFunction(KickCParser.DeclFunctionContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitDeclFunction(KickCParser.DeclFunctionContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
@@ -119,18 +131,6 @@ public class KickCBaseListener implements KickCListener {
 	 * <p>The default implementation does nothing.</p>
 	 */
 	@Override public void exitParameterDecl(KickCParser.ParameterDeclContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override public void enterDeclVar(KickCParser.DeclVarContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override public void exitDeclVar(KickCParser.DeclVarContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
@@ -167,6 +167,18 @@ public class KickCBaseListener implements KickCListener {
 	 * <p>The default implementation does nothing.</p>
 	 */
 	@Override public void exitDirectiveRegister(KickCParser.DirectiveRegisterContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void enterDirectiveInline(KickCParser.DirectiveInlineContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitDirectiveInline(KickCParser.DirectiveInlineContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *

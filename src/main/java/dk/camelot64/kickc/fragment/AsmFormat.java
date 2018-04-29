@@ -4,6 +4,7 @@ import dk.camelot64.kickc.model.CompileError;
 import dk.camelot64.kickc.model.Program;
 import dk.camelot64.kickc.model.operators.Operator;
 import dk.camelot64.kickc.model.operators.OperatorBinary;
+import dk.camelot64.kickc.model.operators.OperatorUnary;
 import dk.camelot64.kickc.model.operators.Operators;
 import dk.camelot64.kickc.model.symbols.ConstantVar;
 import dk.camelot64.kickc.model.symbols.Variable;
@@ -55,6 +56,11 @@ public class AsmFormat {
          VariableRef toVar = ((ConstantVarPointer) value).getToVar();
          Variable variable = program.getScope().getVariable(toVar);
          return getAsmParamName(variable, codeScope);
+      } else if(value instanceof ConstantCastValue) {
+         ConstantCastValue castValue = (ConstantCastValue) value;
+         OperatorUnary castOperator = Operators.getCastUnary(castValue.getToType());
+         ConstantUnary castUnary = new ConstantUnary(castOperator, castValue.getValue());
+         return getAsmConstant(program, castUnary, precedence, codeScope);
       } else {
          throw new RuntimeException("Constant type not supported " + value);
       }

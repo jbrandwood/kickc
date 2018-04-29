@@ -107,6 +107,8 @@ public class ValueReplacer {
             }
          } else if(value instanceof CastValue) {
             subValues.add(new ReplaceableCastValue((CastValue) value));
+         } else if(value instanceof ConstantCastValue) {
+            subValues.add(new ReplaceableConstantCastValue((ConstantCastValue) value));
          } else if(value instanceof ConstantVarPointer) {
             subValues.add(new ReplaceableVarPointer((ConstantVarPointer) value));
          }
@@ -160,7 +162,7 @@ public class ValueReplacer {
    }
 
    /**
-    * Replaceable pointer inside a pointer dererence value.
+    * Replaceable value inside a noop cast.
     */
    public static class ReplaceableCastValue extends ReplaceableValue {
       private final CastValue castValue;
@@ -178,6 +180,29 @@ public class ValueReplacer {
       @Override
       public void set(RValue val) {
          castValue.setValue(val);
+      }
+
+   }
+
+   /**
+    * Replaceable value inside a constant noop cast.
+    */
+   public static class ReplaceableConstantCastValue extends ReplaceableValue {
+      private final ConstantCastValue castValue;
+
+
+      public ReplaceableConstantCastValue(ConstantCastValue castValue) {
+         this.castValue = castValue;
+      }
+
+      @Override
+      public RValue get() {
+         return castValue.getValue();
+      }
+
+      @Override
+      public void set(RValue val) {
+         castValue.setValue((ConstantValue) val);
       }
 
    }

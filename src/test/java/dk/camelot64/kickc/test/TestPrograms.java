@@ -45,6 +45,11 @@ public class TestPrograms {
    }
 
    @Test
+   public void testInlineFunction() throws IOException, URISyntaxException {
+      compileAndCompare("inline-function");
+   }
+
+   @Test
    public void testCompoundAssignment() throws IOException, URISyntaxException {
       compileAndCompare("compound-assignment");
    }

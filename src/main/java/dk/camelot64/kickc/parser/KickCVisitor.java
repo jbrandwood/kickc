@@ -41,19 +41,23 @@ public interface KickCVisitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitDeclSeq(KickCParser.DeclSeqContext ctx);
 	/**
-	 * Visit a parse tree produced by the {@code declMethod}
-	 * labeled alternative in {@link KickCParser#decl}.
+	 * Visit a parse tree produced by {@link KickCParser#decl}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
-	T visitDeclMethod(KickCParser.DeclMethodContext ctx);
+	T visitDecl(KickCParser.DeclContext ctx);
 	/**
-	 * Visit a parse tree produced by the {@code declVariable}
-	 * labeled alternative in {@link KickCParser#decl}.
+	 * Visit a parse tree produced by {@link KickCParser#declVariable}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
 	T visitDeclVariable(KickCParser.DeclVariableContext ctx);
+	/**
+	 * Visit a parse tree produced by {@link KickCParser#declFunction}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitDeclFunction(KickCParser.DeclFunctionContext ctx);
 	/**
 	 * Visit a parse tree produced by {@link KickCParser#parameterListDecl}.
 	 * @param ctx the parse tree
@@ -66,12 +70,6 @@ public interface KickCVisitor<T> extends ParseTreeVisitor<T> {
 	 * @return the visitor result
 	 */
 	T visitParameterDecl(KickCParser.ParameterDeclContext ctx);
-	/**
-	 * Visit a parse tree produced by {@link KickCParser#declVar}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitDeclVar(KickCParser.DeclVarContext ctx);
 	/**
 	 * Visit a parse tree produced by the {@code directiveConst}
 	 * labeled alternative in {@link KickCParser#directive}.
@@ -93,6 +91,13 @@ public interface KickCVisitor<T> extends ParseTreeVisitor<T> {
 	 * @return the visitor result
 	 */
 	T visitDirectiveRegister(KickCParser.DirectiveRegisterContext ctx);
+	/**
+	 * Visit a parse tree produced by the {@code directiveInline}
+	 * labeled alternative in {@link KickCParser#directive}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitDirectiveInline(KickCParser.DirectiveInlineContext ctx);
 	/**
 	 * Visit a parse tree produced by {@link KickCParser#stmtSeq}.
 	 * @param ctx the parse tree

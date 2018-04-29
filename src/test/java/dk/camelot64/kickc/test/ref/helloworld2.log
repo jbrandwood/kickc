@@ -10,7 +10,7 @@ void print2(byte* at, byte* msg) {
     byte j=0;
     for(byte i=0; msg[i]!='@'; i++) {
         at[j] = msg[i];
-        j = j + 2;
+        j += 2;
     }
 }
 
@@ -27,8 +27,7 @@ SYMBOLS
 (label) main::@return
 (byte*) main::hello
 (void()) print2((byte*) print2::at , (byte*) print2::msg)
-(byte/signed word/word/dword/signed dword~) print2::$0
-(bool~) print2::$1
+(bool~) print2::$0
 (label) print2::@1
 (label) print2::@2
 (label) print2::@return
@@ -60,11 +59,10 @@ print2: scope:[print2]  from
   to:print2::@1
 print2::@1: scope:[print2]  from print2 print2::@1
   *((byte*) print2::at + (byte) print2::j) ← *((byte*) print2::msg + (byte) print2::i)
-  (byte/signed word/word/dword/signed dword~) print2::$0 ← (byte) print2::j + (byte/signed byte/word/signed word/dword/signed dword) 2
-  (byte) print2::j ← (byte/signed word/word/dword/signed dword~) print2::$0
+  (byte) print2::j ← (byte) print2::j + (byte/signed byte/word/signed word/dword/signed dword) 2
   (byte) print2::i ← ++ (byte) print2::i
-  (bool~) print2::$1 ← *((byte*) print2::msg + (byte) print2::i) != (byte) '@'
-  if((bool~) print2::$1) goto print2::@1
+  (bool~) print2::$0 ← *((byte*) print2::msg + (byte) print2::i) != (byte) '@'
+  if((bool~) print2::$0) goto print2::@1
   to:print2::@2
 print2::@2: scope:[print2]  from print2::@1
   to:print2::@return
@@ -122,11 +120,10 @@ print2::@1: scope:[print2]  from print2 print2::@1
   (byte) print2::i#2 ← phi( print2/(byte) print2::i#0 print2::@1/(byte) print2::i#1 )
   (byte*) print2::msg#2 ← phi( print2/(byte*) print2::msg#3 print2::@1/(byte*) print2::msg#2 )
   *((byte*) print2::at#2 + (byte) print2::j#2) ← *((byte*) print2::msg#2 + (byte) print2::i#2)
-  (byte/signed word/word/dword/signed dword~) print2::$0 ← (byte) print2::j#2 + (byte/signed byte/word/signed word/dword/signed dword) 2
-  (byte) print2::j#1 ← (byte/signed word/word/dword/signed dword~) print2::$0
+  (byte) print2::j#1 ← (byte) print2::j#2 + (byte/signed byte/word/signed word/dword/signed dword) 2
   (byte) print2::i#1 ← ++ (byte) print2::i#2
-  (bool~) print2::$1 ← *((byte*) print2::msg#2 + (byte) print2::i#1) != (byte) '@'
-  if((bool~) print2::$1) goto print2::@1
+  (bool~) print2::$0 ← *((byte*) print2::msg#2 + (byte) print2::i#1) != (byte) '@'
+  if((bool~) print2::$0) goto print2::@1
   to:print2::@return
 print2::@return: scope:[print2]  from print2::@1
   return 
@@ -154,8 +151,7 @@ SYMBOL TABLE SSA
 (byte*) main::hello#0
 (byte*) main::hello#1
 (void()) print2((byte*) print2::at , (byte*) print2::msg)
-(byte/signed word/word/dword/signed dword~) print2::$0
-(bool~) print2::$1
+(bool~) print2::$0
 (label) print2::@1
 (label) print2::@return
 (byte*) print2::at
@@ -195,7 +191,6 @@ Not aliassing across scopes: print2::at#3 print2::at#0
 Alias (byte*) screen#1 = (byte*) screen#2 
 Alias (byte*) main::hello#0 = (byte*) main::hello#1 
 Alias (byte*) print2::at#1 = (byte*~) main::$1 
-Alias (byte) print2::j#1 = (byte/signed word/word/dword/signed dword~) print2::$0 
 Alias (byte*) screen#0 = (byte*) screen#3 
 Succesful SSA optimization Pass2AliasElimination
 Not aliassing across scopes: screen#1 screen#0
@@ -211,7 +206,7 @@ Redundant Phi (byte*) screen#1 (byte*) screen#0
 Redundant Phi (byte*) print2::msg#2 (byte*) print2::msg#3
 Redundant Phi (byte*) print2::at#2 (byte*) print2::at#3
 Succesful SSA optimization Pass2RedundantPhiElimination
-Simple Condition (bool~) print2::$1 if(*((byte*) print2::msg#3 + (byte) print2::i#1)!=(byte) '@') goto print2::@1
+Simple Condition (bool~) print2::$0 if(*((byte*) print2::msg#3 + (byte) print2::i#1)!=(byte) '@') goto print2::@1
 Succesful SSA optimization Pass2ConditionalJumpSimplification
 Constant (const byte*) screen#0 = ((byte*))1024
 Constant (const string) main::hello#0 = main::$3

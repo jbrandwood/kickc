@@ -236,6 +236,11 @@ public class AsmFragmentInstanceSpec {
          SymbolType toType = castVal.getToType();
          value = castVal.getValue();
          return bind(value, toType);
+      } else if(value instanceof ConstantCastValue) {
+         ConstantCastValue castVal = (ConstantCastValue) value;
+         SymbolType toType = castVal.getToType();
+         value = castVal.getValue();
+         return bind(value, toType);
       } else if(value instanceof PointerDereference) {
          PointerDereference deref = (PointerDereference) value;
          SymbolType ptrType = null;

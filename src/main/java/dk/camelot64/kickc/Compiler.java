@@ -128,6 +128,8 @@ public class Compiler {
       new Pass1AssertReturn(program).execute();
       new Pass1AssertUsedVars(program).execute();
 
+      new Pass1ProcedureInline(program).execute();
+
       new Pass1EliminateUncalledProcedures(program).execute();
       new PassNEliminateUnusedVars(program).execute();
       new Pass1ExtractInlineStrings(program).execute();
@@ -139,8 +141,6 @@ public class Compiler {
       getLog().append("PROCEDURE MODIFY VARIABLE ANALYSIS");
       new Pass1ModifiedVarsAnalysis(program).execute();
       getLog().append(program.getProcedureModifiedVars().toString(program));
-
-      new Pass1ProcedureInline(program).execute();
 
       new Pass1ProcedureCallParameters(program).generate();
       //getLog().append("CONTROL FLOW GRAPH WITH ASSIGNMENT CALL");

@@ -226,7 +226,7 @@ public class ControlFlowGraph {
    }
 
    /**
-    * Get all blocks stat are part of the execution of a specific scope. (mostly a procedure)
+    * Get all blocks that are part of the execution of a specific scope. (mostly a procedure)
     *
     * @param scope The scope to find blocks for
     * @return All blocks that are part of the execution of the scope

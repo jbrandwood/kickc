@@ -9,12 +9,14 @@
   .label charset2 = $1800
   jsr main
 main: {
+    .const toD0181_return = screen/$40|charset1/$400
+    .const toD0182_return = screen/$40|charset2/$400
     sei
   b4:
     lda RASTER
     cmp #$ff
     bne b4
-    lda #screen/$40|charset1/$400
+    lda #toD0181_return
     sta D018
     lda #6
     sta BGCOL
@@ -22,7 +24,7 @@ main: {
     lda RASTER
     cmp #$62
     bne b7
-    lda #screen/$40|charset2/$400
+    lda #toD0182_return
     sta D018
     lda #$b
     sta BGCOL

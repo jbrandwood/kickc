@@ -45,8 +45,23 @@ public class TestPrograms {
    }
 
    @Test
+   public void testInlineFunctionPrint() throws IOException, URISyntaxException {
+      compileAndCompare("inline-function-print");
+   }
+
+   @Test
+   public void testInlineFunctionIf() throws IOException, URISyntaxException {
+      compileAndCompare("inline-function-if");
+   }
+
+   @Test
    public void testInlineFunction() throws IOException, URISyntaxException {
       compileAndCompare("inline-function");
+   }
+
+   @Test
+   public void testInlineFunctionMin() throws IOException, URISyntaxException {
+      compileAndCompare("inline-function-min");
    }
 
    @Test

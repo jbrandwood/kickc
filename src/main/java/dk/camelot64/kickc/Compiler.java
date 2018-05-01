@@ -129,6 +129,8 @@ public class Compiler {
       new Pass1AssertUsedVars(program).execute();
 
       new Pass1ProcedureInline(program).execute();
+      //getLog().append("INLINED CONTROL FLOW GRAPH");
+      //getLog().append(program.getGraph().toString(program));
 
       new Pass1EliminateUncalledProcedures(program).execute();
       new PassNEliminateUnusedVars(program).execute();

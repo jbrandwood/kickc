@@ -3,11 +3,9 @@ package dk.camelot64.kickc.passes;
 import dk.camelot64.kickc.model.CompileError;
 import dk.camelot64.kickc.model.ControlFlowBlock;
 import dk.camelot64.kickc.model.Program;
-import dk.camelot64.kickc.model.statements.Statement;
-import dk.camelot64.kickc.model.statements.StatementAssignment;
-import dk.camelot64.kickc.model.statements.StatementCall;
-import dk.camelot64.kickc.model.statements.StatementReturn;
+import dk.camelot64.kickc.model.statements.*;
 import dk.camelot64.kickc.model.symbols.*;
+import dk.camelot64.kickc.model.types.SymbolType;
 import dk.camelot64.kickc.model.values.*;
 
 import java.util.List;
@@ -69,29 +67,31 @@ public class Pass1ProcedureInline extends Pass1Base {
                      // Set successors
                      if(procedureBlock.getDefaultSuccessor() != null) {
                         LabelRef procBlockSuccessorRef = procedureBlock.getDefaultSuccessor();
-                        if(procBlockSuccessorRef.getFullName().equals(SymbolRef.PROCEXIT_BLOCK_NAME)) {
-                           // Set successor of the @return block to the rest block
-                           inlineBlock.setDefaultSuccessor(restBlockLabel.getRef());
-                        } else {
-                           Label procBlockSuccessor = getScope().getLabel(procBlockSuccessorRef);
-                           String inlinedSuccessorName = getInlineSymbolName(procedure, procBlockSuccessor, serial);
-                           Label inlinedSuccessorLabel = callScope.getLabel(inlinedSuccessorName);
-                           inlineBlock.setDefaultSuccessor(inlinedSuccessorLabel.getRef());
-                        }
+                        LabelRef inlinedSuccessor = inlineSuccessor(procBlockSuccessorRef, procedure, callScope, serial, restBlockLabel);
+                        inlineBlock.setDefaultSuccessor(inlinedSuccessor);
                      }
                      if(procedureBlock.getConditionalSuccessor() != null) {
-                        throw new CompileError("Not implemented Inline function conditional successors");
+                        LabelRef procBlockSuccessorRef = procedureBlock.getConditionalSuccessor();
+                        LabelRef inlinedSuccessor = inlineSuccessor(procBlockSuccessorRef, procedure, callScope, serial, restBlockLabel);
+                        inlineBlock.setConditionalSuccessor(inlinedSuccessor);
                      }
                   }
                   // Create a new block for the rest of the calling block
                   ControlFlowBlock restBlock = new ControlFlowBlock(restBlockLabel.getRef(), callScope.getRef());
                   blocksIt.add(restBlock);
                   // Generate return assignment
-                  if(call.getlValue() != null) {
+                  if(!procedure.getReturnType().equals(SymbolType.VOID)) {
                      Variable procReturnVar = procedure.getVariable("return");
                      String inlinedReturnVarName = getInlineSymbolName(procedure, procReturnVar, serial);
                      Variable inlinedReturnVar = callScope.getVariable(inlinedReturnVarName);
                      restBlock.addStatement(new StatementAssignment(call.getlValue(), inlinedReturnVar.getRef()));
+                  } else {
+                     // Remove the tmp var receiving the result
+                     LValue lValue = call.getlValue();
+                     if(lValue instanceof VariableRef) {
+                        callScope.remove(getScope().getVariable((VariableRef) lValue));
+                        call.setlValue(null);
+                     }
                   }
                   // Copy the rest of the calling block to the new block
                   while(statementsIt.hasNext()) {
@@ -114,6 +114,20 @@ public class Pass1ProcedureInline extends Pass1Base {
          }
       }
       return false;
+   }
+
+   private LabelRef inlineSuccessor(LabelRef procBlockSuccessorRef, Procedure procedure, Scope callScope, int serial, Label restBlockLabel) {
+      LabelRef inlinedSuccessor;
+      if(procBlockSuccessorRef.getFullName().equals(SymbolRef.PROCEXIT_BLOCK_NAME)) {
+         // Set successor of the @return block to the rest block
+         inlinedSuccessor = restBlockLabel.getRef();
+      } else {
+         Label procBlockSuccessor = getScope().getLabel(procBlockSuccessorRef);
+         String inlinedSuccessorName = getInlineSymbolName(procedure, procBlockSuccessor, serial);
+         Label inlinedSuccessorLabel = callScope.getLabel(inlinedSuccessorName);
+         inlinedSuccessor = inlinedSuccessorLabel.getRef();
+      }
+      return inlinedSuccessor;
    }
 
 
@@ -150,54 +164,66 @@ public class Pass1ProcedureInline extends Pass1Base {
       Statement inlinedStatement;
       if(procStatement instanceof StatementAssignment) {
          StatementAssignment procAssignment = (StatementAssignment) procStatement;
-         LValue inlineLValue = inlineLValue(procAssignment.getlValue(), procedure, callScope, serial);
-         RValue inlineRValue1 = inlineRValue(procAssignment.getrValue1(), procedure, callScope, serial);
-         RValue inlineRValue2 = inlineRValue(procAssignment.getrValue2(), procedure, callScope, serial);
-         inlinedStatement = new StatementAssignment(inlineLValue, inlineRValue1, procAssignment.getOperator(), inlineRValue2);
+         inlinedStatement = new StatementAssignment(procAssignment.getlValue(), procAssignment.getrValue1(), procAssignment.getOperator(), procAssignment.getrValue2());
+      } else if(procStatement instanceof StatementConditionalJump) {
+         StatementConditionalJump procConditional = (StatementConditionalJump) procStatement;
+         LabelRef procDestinationRef = procConditional.getDestination();
+         Label procDestination = getScope().getLabel(procDestinationRef);
+         Label inlinedDest = procDestination;
+         if(procDestination.getScope().equals(procedure)) {
+            String inlineSymbolName = getInlineSymbolName(procedure, procDestination, serial);
+            inlinedDest = callScope.getLabel(inlineSymbolName);
+         }
+         inlinedStatement = new StatementConditionalJump(procConditional.getrValue1(), procConditional.getOperator(), procConditional.getrValue2(), inlinedDest.getRef());
       } else if(procStatement instanceof StatementReturn) {
          // No statement needed
          return null;
       } else {
          throw new CompileError("Statement type of Inline function not handled " + procStatement);
       }
+      if(inlinedStatement!=null) {
+         ValueReplacer.executeAll(inlinedStatement, new RValueInliner(procedure, serial, callScope), null, null);
+      }
       return inlinedStatement;
    }
 
    /**
-    * Find/create a new LValue to use when inlining an LValue from a procedure
-    *
-    * @param lValue The LValue bein used inside the procedure being inlined
-    * @param serial The serial number (counted up for each inlined call to the same function within the called calling scope).
-    * @return The LValue to use where the procedure is inlined.
+    * Ensures that all VariableRefs pointing to variables in the procedure being inlined are converted to refs to the new inlined variables
+    * Also copies all intermediate RValue objects to ensure they are not references to objects from the original statements in the procedure being inlined
     */
-   private LValue inlineLValue(LValue lValue, Procedure procedure, Scope callScope, int serial) {
-      return (LValue) inlineRValue(lValue, procedure, callScope, serial);
-   }
+   private class RValueInliner implements ValueReplacer.Replacer {
 
-   /**
-    * Find/create a new RValue to use when inlining an RValue from a procedure
-    *
-    * @param rValue The RValue bein used inside the procedure being inlined
-    * @param serial The serial number (counted up for each inlined call to the same function within the called calling scope).
-    * @return The RValue to use where the procedure is inlined.
-    */
-   private RValue inlineRValue(RValue rValue, Procedure procedure, Scope callScope, int serial) {
-      if(rValue == null) {
-         return null;
-      } else if(rValue instanceof VariableRef) {
-         VariableRef procVarRef = (VariableRef) rValue;
-         Variable procVar = getScope().getVariable(procVarRef);
-         if(procVar.getScope().equals(procedure)) {
-            String inlineSymbolName = getInlineSymbolName(procedure, procVar, serial);
-            Variable inlineVar = callScope.getVariable(inlineSymbolName);
-            return inlineVar.getRef();
-         } else {
-            return procVarRef;
+      /** The scope where the precedure is being inlined into. */
+      private final Scope callScope;
+      /** The procedure being inlined. */
+      private final Procedure procedure;
+      /** The serial number (counted up for each inlined call to the same function within the called calling scope) */
+      private final int serial;
+
+      public RValueInliner(Procedure procedure, int serial, Scope callScope) {
+         this.procedure = procedure;
+         this.serial = serial;
+         this.callScope = callScope;
+      }
+
+      @Override
+      public void execute(ValueReplacer.ReplaceableValue replaceable, Statement currentStmt, ListIterator<Statement> stmtIt, ControlFlowBlock currentBlock) {
+         RValue rValue = replaceable.get();
+         if(rValue instanceof VariableRef) {
+            VariableRef procVarRef = (VariableRef) rValue;
+            Variable procVar = Pass1ProcedureInline.this.getScope().getVariable(procVarRef);
+            if(procVar.getScope().equals(procedure)) {
+               String inlineSymbolName = Pass1ProcedureInline.this.getInlineSymbolName(procedure, procVar, serial);
+               Variable inlineVar = callScope.getVariable(inlineSymbolName);
+               replaceable.set(inlineVar.getRef());
+            }
+         } else if(rValue instanceof PointerDereferenceSimple) {
+            replaceable.set(new PointerDereferenceSimple(((PointerDereferenceSimple) rValue).getPointer()));
+         } else if(rValue instanceof PointerDereferenceIndexed) {
+            replaceable.set(new PointerDereferenceIndexed(((PointerDereferenceIndexed) rValue).getPointer(), ((PointerDereferenceIndexed) rValue).getIndex()));
+         } else if(rValue instanceof CastValue) {
+            replaceable.set(new CastValue(((CastValue) rValue).getToType(), ((CastValue) rValue).getValue()));
          }
-      } else if(rValue instanceof ConstantValue) {
-         return rValue;
-      } else {
-         throw new CompileError("Symbol Type of Inline function not handled " + rValue);
       }
    }
 

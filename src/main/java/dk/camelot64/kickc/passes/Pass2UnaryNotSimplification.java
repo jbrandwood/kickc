@@ -50,7 +50,7 @@ public class Pass2UnaryNotSimplification extends Pass2SsaOptimization {
                ) {
             VariableRef tempVar = (VariableRef) assignment.getrValue2();
             StatementAssignment tempAssignment = assignments.get(tempVar);
-            if(usages.get(tempVar) == 1 && tempAssignment.getOperator() != null) {
+            if(usages.get(tempVar) == 1 && tempAssignment!=null && tempAssignment.getOperator() != null) {
                switch(tempAssignment.getOperator().getOperator()) {
                   case "<":
                      createInverse(">=", assignment, tempAssignment);

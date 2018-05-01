@@ -1,0 +1,607 @@
+PARSING src/test/java/dk/camelot64/kickc/test/kc/inline-function-if.kc
+// Test inlining a slightly complex print function (containing an if)
+
+byte* screen = $400;
+
+void main() {
+    screen[0] = toUpper('c',true);
+    screen[1] = toUpper('m',false);
+}
+
+inline byte toUpper(byte ch, bool bo) {
+    byte res = ch;
+    if(bo) {
+        res += $40;
+    }
+    return res;
+}
+
+
+SYMBOLS
+(label) @1
+(label) @2
+(label) @begin
+(label) @end
+(void()) main()
+(byte~) main::$0
+(byte~) main::$1
+(label) main::@return
+(byte*) screen
+inline (byte()) toUpper((byte) toUpper::ch , (bool) toUpper::bo)
+(bool~) toUpper::$0
+(label) toUpper::@1
+(label) toUpper::@2
+(label) toUpper::@3
+(label) toUpper::@return
+(bool) toUpper::bo
+(byte) toUpper::ch
+(byte) toUpper::res
+(byte) toUpper::return
+
+Promoting word/signed word/dword/signed dword to byte* in screen ← ((byte*)) 1024
+INITIAL CONTROL FLOW GRAPH
+@begin: scope:[]  from
+  (byte*) screen ← ((byte*)) (word/signed word/dword/signed dword) 1024
+  to:@1
+main: scope:[main]  from
+  (byte~) main::$0 ← call toUpper (byte) 'c' true 
+  *((byte*) screen + (byte/signed byte/word/signed word/dword/signed dword) 0) ← (byte~) main::$0
+  (byte~) main::$1 ← call toUpper (byte) 'm' false 
+  *((byte*) screen + (byte/signed byte/word/signed word/dword/signed dword) 1) ← (byte~) main::$1
+  to:main::@return
+main::@return: scope:[main]  from main
+  return 
+  to:@return
+@1: scope:[]  from @begin
+  to:@2
+toUpper: scope:[toUpper]  from
+  (byte) toUpper::res ← (byte) toUpper::ch
+  (bool~) toUpper::$0 ← ! (bool) toUpper::bo
+  if((bool~) toUpper::$0) goto toUpper::@1
+  to:toUpper::@2
+toUpper::@1: scope:[toUpper]  from toUpper toUpper::@2
+  (byte) toUpper::return ← (byte) toUpper::res
+  to:toUpper::@return
+toUpper::@2: scope:[toUpper]  from toUpper
+  (byte) toUpper::res ← (byte) toUpper::res + (byte/signed byte/word/signed word/dword/signed dword) 64
+  to:toUpper::@1
+toUpper::@return: scope:[toUpper]  from toUpper::@1 toUpper::@3
+  (byte) toUpper::return ← (byte) toUpper::return
+  return (byte) toUpper::return
+  to:@return
+toUpper::@3: scope:[toUpper]  from
+  to:toUpper::@return
+@2: scope:[]  from @1
+  call main 
+  to:@end
+@end: scope:[]  from @2
+
+Inlined call (byte~) main::$0 ← call toUpper (byte) 'c' true 
+Inlined call (byte~) main::$1 ← call toUpper (byte) 'm' false 
+Removing unused procedure toUpper
+Removing empty block main::toUpper1_@3
+Removing empty block main::toUpper2_@3
+Removing empty block @1
+PROCEDURE MODIFY VARIABLE ANALYSIS
+
+Completing Phi functions...
+Completing Phi functions...
+Completing Phi functions...
+Completing Phi functions...
+Completing Phi functions...
+Completing Phi functions...
+
+CONTROL FLOW GRAPH SSA WITH ASSIGNMENT CALL & RETURN
+@begin: scope:[]  from
+  (byte*) screen#0 ← ((byte*)) (word/signed word/dword/signed dword) 1024
+  to:@2
+main: scope:[main]  from @2
+  (byte*) screen#11 ← phi( @2/(byte*) screen#12 )
+  (byte) main::toUpper1_ch#0 ← (byte) 'c'
+  (bool) main::toUpper1_bo#0 ← true
+  to:main::toUpper1
+main::toUpper1: scope:[main]  from main
+  (byte*) screen#7 ← phi( main/(byte*) screen#11 )
+  (bool) main::toUpper1_bo#1 ← phi( main/(bool) main::toUpper1_bo#0 )
+  (byte) main::toUpper1_ch#1 ← phi( main/(byte) main::toUpper1_ch#0 )
+  (byte) main::toUpper1_res#0 ← (byte) main::toUpper1_ch#1
+  (bool) main::toUpper1_$0#0 ← ! (bool) main::toUpper1_bo#1
+  if((bool) main::toUpper1_$0#0) goto main::toUpper1_@1
+  to:main::toUpper1_@2
+main::toUpper1_@1: scope:[main]  from main::toUpper1 main::toUpper1_@2
+  (byte*) screen#5 ← phi( main::toUpper1/(byte*) screen#7 main::toUpper1_@2/(byte*) screen#8 )
+  (byte) main::toUpper1_res#2 ← phi( main::toUpper1/(byte) main::toUpper1_res#0 main::toUpper1_@2/(byte) main::toUpper1_res#1 )
+  (byte) main::toUpper1_return#0 ← (byte) main::toUpper1_res#2
+  to:main::toUpper1_@return
+main::toUpper1_@2: scope:[main]  from main::toUpper1
+  (byte*) screen#8 ← phi( main::toUpper1/(byte*) screen#7 )
+  (byte) main::toUpper1_res#3 ← phi( main::toUpper1/(byte) main::toUpper1_res#0 )
+  (byte) main::toUpper1_res#1 ← (byte) main::toUpper1_res#3 + (byte/signed byte/word/signed word/dword/signed dword) 64
+  to:main::toUpper1_@1
+main::toUpper1_@return: scope:[main]  from main::toUpper1_@1
+  (byte*) screen#3 ← phi( main::toUpper1_@1/(byte*) screen#5 )
+  (byte) main::toUpper1_return#2 ← phi( main::toUpper1_@1/(byte) main::toUpper1_return#0 )
+  (byte) main::toUpper1_return#1 ← (byte) main::toUpper1_return#2
+  to:main::@1
+main::@1: scope:[main]  from main::toUpper1_@return
+  (byte*) screen#1 ← phi( main::toUpper1_@return/(byte*) screen#3 )
+  (byte) main::toUpper1_return#3 ← phi( main::toUpper1_@return/(byte) main::toUpper1_return#1 )
+  (byte~) main::$0 ← (byte) main::toUpper1_return#3
+  *((byte*) screen#1 + (byte/signed byte/word/signed word/dword/signed dword) 0) ← (byte~) main::$0
+  (byte) main::toUpper2_ch#0 ← (byte) 'm'
+  (bool) main::toUpper2_bo#0 ← false
+  to:main::toUpper2
+main::toUpper2: scope:[main]  from main::@1
+  (byte*) screen#9 ← phi( main::@1/(byte*) screen#1 )
+  (bool) main::toUpper2_bo#1 ← phi( main::@1/(bool) main::toUpper2_bo#0 )
+  (byte) main::toUpper2_ch#1 ← phi( main::@1/(byte) main::toUpper2_ch#0 )
+  (byte) main::toUpper2_res#0 ← (byte) main::toUpper2_ch#1
+  (bool) main::toUpper2_$0#0 ← ! (bool) main::toUpper2_bo#1
+  if((bool) main::toUpper2_$0#0) goto main::toUpper2_@1
+  to:main::toUpper2_@2
+main::toUpper2_@1: scope:[main]  from main::toUpper2 main::toUpper2_@2
+  (byte*) screen#6 ← phi( main::toUpper2/(byte*) screen#9 main::toUpper2_@2/(byte*) screen#10 )
+  (byte) main::toUpper2_res#2 ← phi( main::toUpper2/(byte) main::toUpper2_res#0 main::toUpper2_@2/(byte) main::toUpper2_res#1 )
+  (byte) main::toUpper2_return#0 ← (byte) main::toUpper2_res#2
+  to:main::toUpper2_@return
+main::toUpper2_@2: scope:[main]  from main::toUpper2
+  (byte*) screen#10 ← phi( main::toUpper2/(byte*) screen#9 )
+  (byte) main::toUpper2_res#3 ← phi( main::toUpper2/(byte) main::toUpper2_res#0 )
+  (byte) main::toUpper2_res#1 ← (byte) main::toUpper2_res#3 + (byte/signed byte/word/signed word/dword/signed dword) 64
+  to:main::toUpper2_@1
+main::toUpper2_@return: scope:[main]  from main::toUpper2_@1
+  (byte*) screen#4 ← phi( main::toUpper2_@1/(byte*) screen#6 )
+  (byte) main::toUpper2_return#2 ← phi( main::toUpper2_@1/(byte) main::toUpper2_return#0 )
+  (byte) main::toUpper2_return#1 ← (byte) main::toUpper2_return#2
+  to:main::@2
+main::@2: scope:[main]  from main::toUpper2_@return
+  (byte*) screen#2 ← phi( main::toUpper2_@return/(byte*) screen#4 )
+  (byte) main::toUpper2_return#3 ← phi( main::toUpper2_@return/(byte) main::toUpper2_return#1 )
+  (byte~) main::$1 ← (byte) main::toUpper2_return#3
+  *((byte*) screen#2 + (byte/signed byte/word/signed word/dword/signed dword) 1) ← (byte~) main::$1
+  to:main::@return
+main::@return: scope:[main]  from main::@2
+  return 
+  to:@return
+@2: scope:[]  from @begin
+  (byte*) screen#12 ← phi( @begin/(byte*) screen#0 )
+  call main param-assignment
+  to:@3
+@3: scope:[]  from @2
+  to:@end
+@end: scope:[]  from @3
+
+SYMBOL TABLE SSA
+(label) @2
+(label) @3
+(label) @begin
+(label) @end
+(void()) main()
+(byte~) main::$0
+(byte~) main::$1
+(label) main::@1
+(label) main::@2
+(label) main::@return
+(label) main::toUpper1
+(bool~) main::toUpper1_$0
+(bool) main::toUpper1_$0#0
+(label) main::toUpper1_@1
+(label) main::toUpper1_@2
+(label) main::toUpper1_@return
+(bool) main::toUpper1_bo
+(bool) main::toUpper1_bo#0
+(bool) main::toUpper1_bo#1
+(byte) main::toUpper1_ch
+(byte) main::toUpper1_ch#0
+(byte) main::toUpper1_ch#1
+(byte) main::toUpper1_res
+(byte) main::toUpper1_res#0
+(byte) main::toUpper1_res#1
+(byte) main::toUpper1_res#2
+(byte) main::toUpper1_res#3
+(byte) main::toUpper1_return
+(byte) main::toUpper1_return#0
+(byte) main::toUpper1_return#1
+(byte) main::toUpper1_return#2
+(byte) main::toUpper1_return#3
+(label) main::toUpper2
+(bool~) main::toUpper2_$0
+(bool) main::toUpper2_$0#0
+(label) main::toUpper2_@1
+(label) main::toUpper2_@2
+(label) main::toUpper2_@return
+(bool) main::toUpper2_bo
+(bool) main::toUpper2_bo#0
+(bool) main::toUpper2_bo#1
+(byte) main::toUpper2_ch
+(byte) main::toUpper2_ch#0
+(byte) main::toUpper2_ch#1
+(byte) main::toUpper2_res
+(byte) main::toUpper2_res#0
+(byte) main::toUpper2_res#1
+(byte) main::toUpper2_res#2
+(byte) main::toUpper2_res#3
+(byte) main::toUpper2_return
+(byte) main::toUpper2_return#0
+(byte) main::toUpper2_return#1
+(byte) main::toUpper2_return#2
+(byte) main::toUpper2_return#3
+(byte*) screen
+(byte*) screen#0
+(byte*) screen#1
+(byte*) screen#10
+(byte*) screen#11
+(byte*) screen#12
+(byte*) screen#2
+(byte*) screen#3
+(byte*) screen#4
+(byte*) screen#5
+(byte*) screen#6
+(byte*) screen#7
+(byte*) screen#8
+(byte*) screen#9
+
+OPTIMIZING CONTROL FLOW GRAPH
+Culled Empty Block (label) @3
+Succesful SSA optimization Pass2CullEmptyBlocks
+Not aliassing across scopes: screen#11 screen#12
+Alias (byte) main::toUpper1_ch#0 = (byte) main::toUpper1_ch#1 (byte) main::toUpper1_res#0 (byte) main::toUpper1_res#3 
+Alias (bool) main::toUpper1_bo#0 = (bool) main::toUpper1_bo#1 
+Alias (byte*) screen#11 = (byte*) screen#7 (byte*) screen#8 
+Alias (byte) main::toUpper1_return#0 = (byte) main::toUpper1_res#2 (byte) main::toUpper1_return#2 (byte) main::toUpper1_return#1 (byte) main::toUpper1_return#3 (byte~) main::$0 
+Alias (byte*) screen#1 = (byte*) screen#3 (byte*) screen#5 (byte*) screen#9 (byte*) screen#10 
+Alias (byte) main::toUpper2_ch#0 = (byte) main::toUpper2_ch#1 (byte) main::toUpper2_res#0 (byte) main::toUpper2_res#3 
+Alias (bool) main::toUpper2_bo#0 = (bool) main::toUpper2_bo#1 
+Alias (byte) main::toUpper2_return#0 = (byte) main::toUpper2_res#2 (byte) main::toUpper2_return#2 (byte) main::toUpper2_return#1 (byte) main::toUpper2_return#3 (byte~) main::$1 
+Alias (byte*) screen#2 = (byte*) screen#4 (byte*) screen#6 
+Alias (byte*) screen#0 = (byte*) screen#12 
+Succesful SSA optimization Pass2AliasElimination
+Not aliassing across scopes: screen#11 screen#0
+Alias (byte*) screen#1 = (byte*) screen#11 (byte*) screen#2 
+Succesful SSA optimization Pass2AliasElimination
+Not aliassing across scopes: screen#1 screen#0
+Redundant Phi (byte*) screen#1 (byte*) screen#0
+Succesful SSA optimization Pass2RedundantPhiElimination
+Rewriting ! if()-condition to reversed if() (bool) main::toUpper1_$0#0 ← ! (bool) main::toUpper1_bo#0
+Succesful SSA optimization Pass2ConditionalAndOrRewriting
+Rewriting ! if()-condition to reversed if() (bool) main::toUpper2_$0#0 ← ! (bool) main::toUpper2_bo#0
+Succesful SSA optimization Pass2ConditionalAndOrRewriting
+Constant (const byte*) screen#0 = ((byte*))1024
+Constant (const byte) main::toUpper1_ch#0 = 'c'
+Constant (const bool) main::toUpper1_bo#0 = true
+Constant (const byte) main::toUpper2_ch#0 = 'm'
+Constant (const bool) main::toUpper2_bo#0 = false
+Succesful SSA optimization Pass2ConstantIdentification
+Constant (const byte) main::toUpper1_res#1 = main::toUpper1_ch#0+64
+Constant (const byte) main::toUpper2_res#1 = main::toUpper2_ch#0+64
+Succesful SSA optimization Pass2ConstantIdentification
+Consolidated array index constant in *(screen#0+0)
+Consolidated array index constant in *(screen#0+1)
+Succesful SSA optimization Pass2ConstantAdditionElimination
+Removing PHI-reference to removed block (main::toUpper1) in block main::toUpper1_@1
+if() condition always true - replacing block destination if((const bool) main::toUpper1_bo#0) goto main::toUpper1_@2
+if() condition always false - eliminating if((const bool) main::toUpper2_bo#0) goto main::toUpper2_@2
+Succesful SSA optimization Pass2ConstantIfs
+Eliminating unused constant (const bool) main::toUpper1_bo#0
+Eliminating unused constant (const bool) main::toUpper2_bo#0
+Succesful SSA optimization PassNEliminateUnusedVars
+Removing PHI-reference to removed block (main::toUpper2_@2) in block main::toUpper2_@1
+Removing unused block main::toUpper2_@2
+Succesful SSA optimization Pass2EliminateUnusedBlocks
+Culled Empty Block (label) main::toUpper1_@2
+Culled Empty Block (label) main::toUpper1_@return
+Culled Empty Block (label) main::toUpper2_@return
+Succesful SSA optimization Pass2CullEmptyBlocks
+Redundant Phi (byte) main::toUpper1_return#0 (const byte) main::toUpper1_res#1
+Redundant Phi (byte) main::toUpper2_return#0 (const byte) main::toUpper2_ch#0
+Succesful SSA optimization Pass2RedundantPhiElimination
+Eliminating unused constant (const byte) main::toUpper2_res#1
+Succesful SSA optimization PassNEliminateUnusedVars
+Culled Empty Block (label) main::toUpper1_@1
+Culled Empty Block (label) main::toUpper2_@1
+Succesful SSA optimization Pass2CullEmptyBlocks
+OPTIMIZING CONTROL FLOW GRAPH
+Block Sequence Planned @begin @2 @end main main::toUpper1 main::@1 main::toUpper2 main::@2 main::@return 
+Block Sequence Planned @begin @2 @end main main::toUpper1 main::@1 main::toUpper2 main::@2 main::@return 
+Adding NOP phi() at start of @begin
+Adding NOP phi() at start of @2
+Adding NOP phi() at start of @end
+Adding NOP phi() at start of main
+Adding NOP phi() at start of main::toUpper1
+Adding NOP phi() at start of main::toUpper2
+CALL GRAPH
+Calls in [] to main:2 
+
+Propagating live ranges...
+Created 0 initial phi equivalence classes
+Coalesced down to 0 phi equivalence classes
+Block Sequence Planned @begin @2 @end main main::toUpper1 main::@1 main::toUpper2 main::@2 main::@return 
+Adding NOP phi() at start of @begin
+Adding NOP phi() at start of @2
+Adding NOP phi() at start of @end
+Adding NOP phi() at start of main
+Adding NOP phi() at start of main::toUpper1
+Adding NOP phi() at start of main::toUpper2
+Propagating live ranges...
+
+FINAL CONTROL FLOW GRAPH
+@begin: scope:[]  from
+  [0] phi() [ ] ( )
+  to:@2
+@2: scope:[]  from @begin
+  [1] phi() [ ] ( )
+  [2] call main param-assignment [ ] ( )
+  to:@end
+@end: scope:[]  from @2
+  [3] phi() [ ] ( )
+main: scope:[main]  from @2
+  [4] phi() [ ] ( main:2 [ ] )
+  to:main::toUpper1
+main::toUpper1: scope:[main]  from main
+  [5] phi() [ ] ( main:2 [ ] )
+  to:main::@1
+main::@1: scope:[main]  from main::toUpper1
+  [6] *((const byte*) screen#0+(byte/signed byte/word/signed word/dword/signed dword) 0) ← (const byte) main::toUpper1_res#1 [ ] ( main:2 [ ] )
+  to:main::toUpper2
+main::toUpper2: scope:[main]  from main::@1
+  [7] phi() [ ] ( main:2 [ ] )
+  to:main::@2
+main::@2: scope:[main]  from main::toUpper2
+  [8] *((const byte*) screen#0+(byte/signed byte/word/signed word/dword/signed dword) 1) ← (const byte) main::toUpper2_ch#0 [ ] ( main:2 [ ] )
+  to:main::@return
+main::@return: scope:[main]  from main::@2
+  [9] return  [ ] ( main:2 [ ] )
+  to:@return
+
+DOMINATORS
+@begin dominated by  @begin 
+@2 dominated by  @2 @begin 
+@end dominated by  @2 @begin @end 
+main dominated by  @2 @begin main 
+main::toUpper1 dominated by  @2 main::toUpper1 @begin main 
+main::@1 dominated by  @2 main::toUpper1 @begin main::@1 main 
+main::toUpper2 dominated by  @2 main::toUpper1 @begin main::toUpper2 main::@1 main 
+main::@2 dominated by  @2 main::toUpper1 @begin main::toUpper2 main::@1 main::@2 main 
+main::@return dominated by  main::@return @2 main::toUpper1 @begin main::toUpper2 main::@1 main::@2 main 
+
+NATURAL LOOPS
+
+NATURAL LOOPS WITH DEPTH
+Found 0 loops in scope []
+Found 0 loops in scope [main]
+
+
+VARIABLE REGISTER WEIGHTS
+(void()) main()
+(bool~) main::toUpper1_$0
+(bool) main::toUpper1_bo
+(byte) main::toUpper1_ch
+(byte) main::toUpper1_res
+(byte) main::toUpper1_return
+(bool~) main::toUpper2_$0
+(bool) main::toUpper2_bo
+(byte) main::toUpper2_ch
+(byte) main::toUpper2_res
+(byte) main::toUpper2_return
+(byte*) screen
+
+Initial phi equivalence classes
+Complete equivalence classes
+
+INITIAL ASM
+//SEG0 Basic Upstart
+.pc = $801 "Basic"
+:BasicUpstart(main)
+.pc = $80d "Program"
+//SEG1 Global Constants & labels
+  .label screen = $400
+//SEG2 @begin
+bbegin:
+//SEG3 [1] phi from @begin to @2 [phi:@begin->@2]
+b2_from_bbegin:
+  jmp b2
+//SEG4 @2
+b2:
+//SEG5 [2] call main param-assignment [ ] ( )
+//SEG6 [4] phi from @2 to main [phi:@2->main]
+main_from_b2:
+  jsr main
+//SEG7 [3] phi from @2 to @end [phi:@2->@end]
+bend_from_b2:
+  jmp bend
+//SEG8 @end
+bend:
+//SEG9 main
+main: {
+    .const toUpper1_ch = 'c'
+    .const toUpper2_ch = 'm'
+    .const toUpper1_res = toUpper1_ch+$40
+  //SEG10 [5] phi from main to main::toUpper1 [phi:main->main::toUpper1]
+  toUpper1_from_main:
+    jmp toUpper1
+  //SEG11 main::toUpper1
+  toUpper1:
+    jmp b1
+  //SEG12 main::@1
+  b1:
+  //SEG13 [6] *((const byte*) screen#0+(byte/signed byte/word/signed word/dword/signed dword) 0) ← (const byte) main::toUpper1_res#1 [ ] ( main:2 [ ] ) -- _deref_pbuc1=vbuc2 
+    lda #toUpper1_res
+    sta screen+0
+  //SEG14 [7] phi from main::@1 to main::toUpper2 [phi:main::@1->main::toUpper2]
+  toUpper2_from_b1:
+    jmp toUpper2
+  //SEG15 main::toUpper2
+  toUpper2:
+    jmp b2
+  //SEG16 main::@2
+  b2:
+  //SEG17 [8] *((const byte*) screen#0+(byte/signed byte/word/signed word/dword/signed dword) 1) ← (const byte) main::toUpper2_ch#0 [ ] ( main:2 [ ] ) -- _deref_pbuc1=vbuc2 
+    lda #toUpper2_ch
+    sta screen+1
+    jmp breturn
+  //SEG18 main::@return
+  breturn:
+  //SEG19 [9] return  [ ] ( main:2 [ ] )
+    rts
+}
+
+REGISTER UPLIFT POTENTIAL REGISTERS
+Statement [6] *((const byte*) screen#0+(byte/signed byte/word/signed word/dword/signed dword) 0) ← (const byte) main::toUpper1_res#1 [ ] ( main:2 [ ] ) always clobbers reg byte a 
+Statement [8] *((const byte*) screen#0+(byte/signed byte/word/signed word/dword/signed dword) 1) ← (const byte) main::toUpper2_ch#0 [ ] ( main:2 [ ] ) always clobbers reg byte a 
+
+REGISTER UPLIFT SCOPES
+Uplift Scope [main] 
+Uplift Scope [] 
+
+Uplifting [main] best 99 combination 
+Uplifting [] best 99 combination 
+
+ASSEMBLER BEFORE OPTIMIZATION
+//SEG0 Basic Upstart
+.pc = $801 "Basic"
+:BasicUpstart(main)
+.pc = $80d "Program"
+//SEG1 Global Constants & labels
+  .label screen = $400
+//SEG2 @begin
+bbegin:
+//SEG3 [1] phi from @begin to @2 [phi:@begin->@2]
+b2_from_bbegin:
+  jmp b2
+//SEG4 @2
+b2:
+//SEG5 [2] call main param-assignment [ ] ( )
+//SEG6 [4] phi from @2 to main [phi:@2->main]
+main_from_b2:
+  jsr main
+//SEG7 [3] phi from @2 to @end [phi:@2->@end]
+bend_from_b2:
+  jmp bend
+//SEG8 @end
+bend:
+//SEG9 main
+main: {
+    .const toUpper1_ch = 'c'
+    .const toUpper2_ch = 'm'
+    .const toUpper1_res = toUpper1_ch+$40
+  //SEG10 [5] phi from main to main::toUpper1 [phi:main->main::toUpper1]
+  toUpper1_from_main:
+    jmp toUpper1
+  //SEG11 main::toUpper1
+  toUpper1:
+    jmp b1
+  //SEG12 main::@1
+  b1:
+  //SEG13 [6] *((const byte*) screen#0+(byte/signed byte/word/signed word/dword/signed dword) 0) ← (const byte) main::toUpper1_res#1 [ ] ( main:2 [ ] ) -- _deref_pbuc1=vbuc2 
+    lda #toUpper1_res
+    sta screen+0
+  //SEG14 [7] phi from main::@1 to main::toUpper2 [phi:main::@1->main::toUpper2]
+  toUpper2_from_b1:
+    jmp toUpper2
+  //SEG15 main::toUpper2
+  toUpper2:
+    jmp b2
+  //SEG16 main::@2
+  b2:
+  //SEG17 [8] *((const byte*) screen#0+(byte/signed byte/word/signed word/dword/signed dword) 1) ← (const byte) main::toUpper2_ch#0 [ ] ( main:2 [ ] ) -- _deref_pbuc1=vbuc2 
+    lda #toUpper2_ch
+    sta screen+1
+    jmp breturn
+  //SEG18 main::@return
+  breturn:
+  //SEG19 [9] return  [ ] ( main:2 [ ] )
+    rts
+}
+
+ASSEMBLER OPTIMIZATIONS
+Removing instruction jmp b2
+Removing instruction jmp bend
+Removing instruction jmp toUpper1
+Removing instruction jmp b1
+Removing instruction jmp toUpper2
+Removing instruction jmp b2
+Removing instruction jmp breturn
+Succesful ASM optimization Pass5NextJumpElimination
+Removing instruction bbegin:
+Removing instruction b2_from_bbegin:
+Removing instruction main_from_b2:
+Removing instruction bend_from_b2:
+Removing instruction toUpper1_from_main:
+Removing instruction toUpper1:
+Removing instruction toUpper2_from_b1:
+Removing instruction toUpper2:
+Succesful ASM optimization Pass5RedundantLabelElimination
+Removing instruction b2:
+Removing instruction bend:
+Removing instruction b1:
+Removing instruction b2:
+Removing instruction breturn:
+Succesful ASM optimization Pass5UnusedLabelElimination
+
+FINAL SYMBOL TABLE
+(label) @2
+(label) @begin
+(label) @end
+(void()) main()
+(label) main::@1
+(label) main::@2
+(label) main::@return
+(label) main::toUpper1
+(bool~) main::toUpper1_$0
+(bool) main::toUpper1_bo
+(byte) main::toUpper1_ch
+(const byte) main::toUpper1_ch#0 toUpper1_ch = (byte) 'c'
+(byte) main::toUpper1_res
+(const byte) main::toUpper1_res#1 toUpper1_res = (const byte) main::toUpper1_ch#0+(byte/signed byte/word/signed word/dword/signed dword) 64
+(byte) main::toUpper1_return
+(label) main::toUpper2
+(bool~) main::toUpper2_$0
+(bool) main::toUpper2_bo
+(byte) main::toUpper2_ch
+(const byte) main::toUpper2_ch#0 toUpper2_ch = (byte) 'm'
+(byte) main::toUpper2_res
+(byte) main::toUpper2_return
+(byte*) screen
+(const byte*) screen#0 screen = ((byte*))(word/signed word/dword/signed dword) 1024
+
+
+
+FINAL ASSEMBLER
+Score: 24
+
+//SEG0 Basic Upstart
+.pc = $801 "Basic"
+:BasicUpstart(main)
+.pc = $80d "Program"
+//SEG1 Global Constants & labels
+  .label screen = $400
+//SEG2 @begin
+//SEG3 [1] phi from @begin to @2 [phi:@begin->@2]
+//SEG4 @2
+//SEG5 [2] call main param-assignment [ ] ( )
+//SEG6 [4] phi from @2 to main [phi:@2->main]
+  jsr main
+//SEG7 [3] phi from @2 to @end [phi:@2->@end]
+//SEG8 @end
+//SEG9 main
+main: {
+    .const toUpper1_ch = 'c'
+    .const toUpper2_ch = 'm'
+    .const toUpper1_res = toUpper1_ch+$40
+  //SEG10 [5] phi from main to main::toUpper1 [phi:main->main::toUpper1]
+  //SEG11 main::toUpper1
+  //SEG12 main::@1
+  //SEG13 [6] *((const byte*) screen#0+(byte/signed byte/word/signed word/dword/signed dword) 0) ← (const byte) main::toUpper1_res#1 [ ] ( main:2 [ ] ) -- _deref_pbuc1=vbuc2 
+    lda #toUpper1_res
+    sta screen+0
+  //SEG14 [7] phi from main::@1 to main::toUpper2 [phi:main::@1->main::toUpper2]
+  //SEG15 main::toUpper2
+  //SEG16 main::@2
+  //SEG17 [8] *((const byte*) screen#0+(byte/signed byte/word/signed word/dword/signed dword) 1) ← (const byte) main::toUpper2_ch#0 [ ] ( main:2 [ ] ) -- _deref_pbuc1=vbuc2 
+    lda #toUpper2_ch
+    sta screen+1
+  //SEG18 main::@return
+  //SEG19 [9] return  [ ] ( main:2 [ ] )
+    rts
+}
+

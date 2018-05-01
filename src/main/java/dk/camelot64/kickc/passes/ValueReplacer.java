@@ -24,32 +24,42 @@ public class ValueReplacer {
          ListIterator<Statement> statementsIt = block.getStatements().listIterator();
          while(statementsIt.hasNext()) {
             Statement statement = statementsIt.next();
-            if(statement instanceof StatementAssignment) {
-               executeAll(new ReplaceableLValue((StatementLValue) statement), replacer, statement, statementsIt, block);
-               executeAll(new ReplaceableRValue1((StatementAssignment) statement), replacer, statement, statementsIt, block);
-               executeAll(new ReplaceableRValue2((StatementAssignment) statement), replacer, statement, statementsIt, block);
-            } else if(statement instanceof StatementCall) {
-               executeAll(new ReplaceableLValue((StatementLValue) statement), replacer, statement, statementsIt, block);
-               StatementCall call = (StatementCall) statement;
-               if(call.getParameters() != null) {
-                  int size = call.getParameters().size();
-                  for(int i = 0; i < size; i++) {
-                     executeAll(new ReplaceableCallParameter(call, i), replacer, statement, statementsIt, block);
-                  }
-               }
-            } else if(statement instanceof StatementConditionalJump) {
-               executeAll(new ReplaceableCondRValue1((StatementConditionalJump) statement), replacer, statement, statementsIt, block);
-               executeAll(new ReplaceableCondRValue2((StatementConditionalJump) statement), replacer, statement, statementsIt, block);
-            } else if(statement instanceof StatementReturn) {
-               executeAll(new ReplaceableReturn((StatementReturn) statement), replacer, statement, statementsIt, block);
-            } else if(statement instanceof StatementPhiBlock) {
-               for(StatementPhiBlock.PhiVariable phiVariable : ((StatementPhiBlock) statement).getPhiVariables()) {
-                  executeAll(new ReplaceablePhiVariable(phiVariable), replacer, statement, statementsIt, block);
-                  int size = phiVariable.getValues().size();
-                  for(int i = 0; i < size; i++) {
-                     executeAll(new ReplaceablePhiValue(phiVariable, i), replacer, statement, statementsIt, block);
-                  }
-               }
+            executeAll(statement, replacer, statementsIt, block);
+         }
+      }
+   }
+
+   /**
+    * Execute a replacer on all replaceable values in a statement
+    *
+    * @param statement The statement
+    * @param replacer The replacer to execute
+    */
+   public static void executeAll(Statement statement, Replacer replacer, ListIterator<Statement> statementsIt, ControlFlowBlock block) {
+      if(statement instanceof StatementAssignment) {
+         executeAll(new ReplaceableLValue((StatementLValue) statement), replacer, statement, statementsIt, block);
+         executeAll(new ReplaceableRValue1((StatementAssignment) statement), replacer, statement, statementsIt, block);
+         executeAll(new ReplaceableRValue2((StatementAssignment) statement), replacer, statement, statementsIt, block);
+      } else if(statement instanceof StatementCall) {
+         executeAll(new ReplaceableLValue((StatementLValue) statement), replacer, statement, statementsIt, block);
+         StatementCall call = (StatementCall) statement;
+         if(call.getParameters() != null) {
+            int size = call.getParameters().size();
+            for(int i = 0; i < size; i++) {
+               executeAll(new ReplaceableCallParameter(call, i), replacer, statement, statementsIt, block);
+            }
+         }
+      } else if(statement instanceof StatementConditionalJump) {
+         executeAll(new ReplaceableCondRValue1((StatementConditionalJump) statement), replacer, statement, statementsIt, block);
+         executeAll(new ReplaceableCondRValue2((StatementConditionalJump) statement), replacer, statement, statementsIt, block);
+      } else if(statement instanceof StatementReturn) {
+         executeAll(new ReplaceableReturn((StatementReturn) statement), replacer, statement, statementsIt, block);
+      } else if(statement instanceof StatementPhiBlock) {
+         for(StatementPhiBlock.PhiVariable phiVariable : ((StatementPhiBlock) statement).getPhiVariables()) {
+            executeAll(new ReplaceablePhiVariable(phiVariable), replacer, statement, statementsIt, block);
+            int size = phiVariable.getValues().size();
+            for(int i = 0; i < size; i++) {
+               executeAll(new ReplaceablePhiValue(phiVariable, i), replacer, statement, statementsIt, block);
             }
          }
       }

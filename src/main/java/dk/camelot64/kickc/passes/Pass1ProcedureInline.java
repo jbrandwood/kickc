@@ -8,6 +8,7 @@ import dk.camelot64.kickc.model.symbols.*;
 import dk.camelot64.kickc.model.types.SymbolType;
 import dk.camelot64.kickc.model.values.*;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.ListIterator;
 
@@ -165,6 +166,11 @@ public class Pass1ProcedureInline extends Pass1Base {
       if(procStatement instanceof StatementAssignment) {
          StatementAssignment procAssignment = (StatementAssignment) procStatement;
          inlinedStatement = new StatementAssignment(procAssignment.getlValue(), procAssignment.getrValue1(), procAssignment.getOperator(), procAssignment.getrValue2());
+      } else if(procStatement instanceof StatementCall) {
+         StatementCall procCall = (StatementCall) procStatement;
+         StatementCall inlinedCall = new StatementCall(procCall.getlValue(), procCall.getProcedureName(), new ArrayList<>(procCall.getParameters()));
+         inlinedCall.setProcedure(procCall.getProcedure());
+         inlinedStatement = inlinedCall;
       } else if(procStatement instanceof StatementConditionalJump) {
          StatementConditionalJump procConditional = (StatementConditionalJump) procStatement;
          LabelRef procDestinationRef = procConditional.getDestination();
@@ -223,6 +229,8 @@ public class Pass1ProcedureInline extends Pass1Base {
             replaceable.set(new PointerDereferenceIndexed(((PointerDereferenceIndexed) rValue).getPointer(), ((PointerDereferenceIndexed) rValue).getIndex()));
          } else if(rValue instanceof CastValue) {
             replaceable.set(new CastValue(((CastValue) rValue).getToType(), ((CastValue) rValue).getValue()));
+         } else if(rValue instanceof ValueList) {
+            replaceable.set(new ValueList(new ArrayList<>(((ValueList) rValue).getList())));
          }
       }
    }

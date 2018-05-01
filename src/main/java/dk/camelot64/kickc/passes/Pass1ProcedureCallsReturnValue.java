@@ -33,7 +33,6 @@ public class Pass1ProcedureCallsReturnValue extends ControlFlowGraphCopyVisitor 
       Procedure procedure = program.getScope().getProcedure(procedureRef);
       String procedureName = origCall.getProcedureName();
       StatementCall copyCall = new StatementCall(null, procedureName, null);
-      copyCall.setParametersByAssignment(true);
       copyCall.setProcedure(procedureRef);
       addStatementToCurrentBlock(copyCall);
       getCurrentBlock().setCallSuccessor(procedure.getLabel().getRef());

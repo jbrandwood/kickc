@@ -52,7 +52,6 @@ public class Pass1ProcedureCallParameters extends ControlFlowGraphCopyVisitor {
          procReturnVarRef = procReturnVar.getRef();
       }
       StatementCall copyCall = new StatementCall(procReturnVarRef, procedureName, null);
-      copyCall.setParametersByAssignment(true);
       copyCall.setProcedure(procedureRef);
       addStatementToCurrentBlock(copyCall);
       getCurrentBlock().setCallSuccessor(procedure.getLabel().getRef());

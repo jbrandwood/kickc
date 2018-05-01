@@ -21,14 +21,12 @@ public class StatementCall extends StatementBase implements StatementLValue {
    private String procedureName;
    private ProcedureRef procedure;
    private List<RValue> parameters;
-   private boolean parametersByAssignment;
 
    public StatementCall(LValue lValue, String procedureName, List<RValue> parameters) {
       super(null);
       this.lValue = lValue;
       this.procedureName = procedureName;
       this.parameters = parameters;
-      this.parametersByAssignment = false;
    }
 
    public LValue getlValue() {
@@ -67,17 +65,8 @@ public class StatementCall extends StatementBase implements StatementLValue {
       return parameters.get(idx);
    }
 
-   public boolean isParametersByAssignment() {
-      return parametersByAssignment;
-   }
-
-   public void setParametersByAssignment(boolean parametersByAssignment) {
-      this.parametersByAssignment = parametersByAssignment;
-   }
-
    public void clearParameters() {
       this.parameters = null;
-      this.parametersByAssignment = true;
    }
 
    @Override
@@ -99,9 +88,6 @@ public class StatementCall extends StatementBase implements StatementLValue {
             res.append(parameter.toString(program) + " ");
          }
       }
-      if(parametersByAssignment) {
-         res.append("param-assignment");
-      }
       if(aliveInfo) {
          res.append(super.aliveString(program));
       }
@@ -116,7 +102,6 @@ public class StatementCall extends StatementBase implements StatementLValue {
 
       StatementCall that = (StatementCall) o;
 
-      if(parametersByAssignment != that.parametersByAssignment) return false;
       if(lValue != null ? !lValue.equals(that.lValue) : that.lValue != null) return false;
       if(!procedureName.equals(that.procedureName)) return false;
       if(procedure != null ? !procedure.equals(that.procedure) : that.procedure != null) return false;
@@ -130,7 +115,6 @@ public class StatementCall extends StatementBase implements StatementLValue {
       result = 31 * result + procedureName.hashCode();
       result = 31 * result + (procedure != null ? procedure.hashCode() : 0);
       result = 31 * result + (parameters != null ? parameters.hashCode() : 0);
-      result = 31 * result + (parametersByAssignment ? 1 : 0);
       return result;
    }
 }

@@ -41,7 +41,7 @@ public class Pass1ProcedureInline extends Pass1Base {
                   // Copy all procedure symbols
                   inlineSymbols(procedure, callScope, serial);
                   // Generate parameter assignments
-                  generateParameterAssignments(statementsIt, call, procedure, callScope, serial);
+                  inlineParameterAssignments(statementsIt, call, procedure, callScope, serial);
                   // Create a new block label for the rest of the calling block
                   Label restBlockLabel = callScope.addLabelIntermediate();
                   // Copy all procedure blocks
@@ -236,7 +236,7 @@ public class Pass1ProcedureInline extends Pass1Base {
     * @param callScope The scope where the function is being inlined
     * @param serial The serial number (counted up for each inlined call to the same function within the called calling scope).
     */
-   private void generateParameterAssignments(ListIterator<Statement> statementsIt, StatementCall call, Procedure procedure, Scope callScope, int serial) {
+   private void inlineParameterAssignments(ListIterator<Statement> statementsIt, StatementCall call, Procedure procedure, Scope callScope, int serial) {
       List<Variable> parameterDecls = procedure.getParameters();
       List<RValue> parameterValues = call.getParameters();
       for(int i = 0; i < parameterDecls.size(); i++) {

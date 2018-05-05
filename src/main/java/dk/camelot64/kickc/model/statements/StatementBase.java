@@ -12,10 +12,18 @@ import java.util.List;
 /** Statement base class implementing shared properties and logic */
 public abstract class StatementBase implements Statement {
 
+   private StatementSource source;
+
    private Integer index;
 
-   public StatementBase(Integer index) {
+   public StatementBase(Integer index, StatementSource source) {
       this.index = index;
+      this.source = source;
+   }
+
+   @Override
+   public StatementSource getSource() {
+      return source;
    }
 
    @Override

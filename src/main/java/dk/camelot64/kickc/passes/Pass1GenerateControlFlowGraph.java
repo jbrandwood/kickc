@@ -10,6 +10,7 @@ import dk.camelot64.kickc.model.values.LabelRef;
 import dk.camelot64.kickc.model.values.ProcedureRef;
 import dk.camelot64.kickc.model.values.ScopeRef;
 import dk.camelot64.kickc.model.values.SymbolRef;
+import org.antlr.v4.runtime.RuleContext;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -32,7 +33,7 @@ public class Pass1GenerateControlFlowGraph extends Pass1Base {
       ControlFlowBlock firstBlock = getOrCreateBlock(scope.addLabel(SymbolRef.BEGIN_BLOCK_NAME).getRef(), ScopeRef.ROOT);
       Stack<ControlFlowBlock> blockStack = new Stack<>();
       blockStack.push(firstBlock);
-      sequence.addStatement(new StatementLabel(scope.addLabel(SymbolRef.END_BLOCK_NAME).getRef()));
+      sequence.addStatement(new StatementLabel(scope.addLabel(SymbolRef.END_BLOCK_NAME).getRef(), new StatementSource(RuleContext.EMPTY)));
       for(Statement statement : sequence.getStatements()) {
          ControlFlowBlock currentBlock = blockStack.peek();
          Symbol currentBlockLabel = scope.getSymbol(currentBlock.getLabel());

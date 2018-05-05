@@ -22,24 +22,16 @@ public class StatementAssignment extends StatementBase implements StatementLValu
    private Operator operator;
    private RValue rValue2;
 
-   public StatementAssignment(LValue lValue, RValue rValue2) {
-      this(lValue, null, null, rValue2, null);
+   public StatementAssignment(LValue lValue, RValue rValue2, StatementSource source) {
+      this(lValue, null, null, rValue2, null, source);
    }
 
-   public StatementAssignment(LValue lValue, Operator operator, RValue rValue2) {
-      this(lValue, null, operator, rValue2, null);
+   public StatementAssignment(LValue lValue, Operator operator, RValue rValue2,StatementSource source) {
+      this(lValue, null, operator, rValue2, null, source);
    }
 
-   public StatementAssignment(LValue lValue, RValue rValue1, Operator operator, RValue rValue2) {
-      this(lValue, rValue1, operator, rValue2, null);
-   }
-
-   public StatementAssignment(Variable lValue, Variable rValue2) {
-      this(lValue.getRef(), rValue2.getRef());
-   }
-
-   public StatementAssignment(Variable lValue, RValue rValue2) {
-      this(lValue.getRef(), rValue2);
+   public StatementAssignment(LValue lValue, RValue rValue1, Operator operator, RValue rValue2, StatementSource source) {
+      this(lValue, rValue1, operator, rValue2, null, source);
    }
 
    public StatementAssignment(
@@ -47,8 +39,9 @@ public class StatementAssignment extends StatementBase implements StatementLValu
          RValue rValue1,
          Operator operator,
          RValue rValue2,
-         Integer index) {
-      super(index);
+         Integer index,
+         StatementSource source) {
+      super(index, source);
       this.lValue = lValue;
       this.rValue1 = rValue1;
       this.operator = operator;

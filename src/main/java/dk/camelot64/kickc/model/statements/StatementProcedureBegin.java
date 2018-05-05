@@ -10,8 +10,8 @@ public class StatementProcedureBegin extends StatementBase {
 
    private Strategy strategy;
 
-   public StatementProcedureBegin(ProcedureRef procedure) {
-      super(null);
+   public StatementProcedureBegin(ProcedureRef procedure,StatementSource source) {
+      super(null, source);
       this.procedure = procedure;
    }
 

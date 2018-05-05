@@ -16,4 +16,10 @@ public interface Statement {
 
    /** Set the index of the statement. Indexes are used during live range analysis. */
    void setIndex(Integer idx);
+
+   /**
+    * Get the source for the statement*
+    */
+    StatementSource getSource();
+
 }

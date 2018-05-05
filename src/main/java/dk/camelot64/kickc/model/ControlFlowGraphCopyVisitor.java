@@ -142,7 +142,7 @@ public class ControlFlowGraphCopyVisitor extends ControlFlowGraphBaseVisitor<Obj
       RValue rValue1 = origAssignment.getrValue1();
       Operator operator = origAssignment.getOperator();
       RValue rValue2 = origAssignment.getrValue2();
-      return new StatementAssignment(lValue, rValue1, operator, rValue2);
+      return new StatementAssignment(lValue, rValue1, operator, rValue2, origAssignment.getSource());
    }
 
    @Override
@@ -151,19 +151,19 @@ public class ControlFlowGraphCopyVisitor extends ControlFlowGraphBaseVisitor<Obj
       Operator operator = origConditionalJump.getOperator();
       RValue rValue2 = origConditionalJump.getrValue2();
       LabelRef destination = origConditionalJump.getDestination();
-      return new StatementConditionalJump(rValue1, operator, rValue2, destination);
+      return new StatementConditionalJump(rValue1, operator, rValue2, destination, origConditionalJump.getSource());
    }
 
    @Override
    public StatementJump visitJump(StatementJump origJump) {
       LabelRef destination = origJump.getDestination();
-      return new StatementJump(destination);
+      return new StatementJump(destination, origJump.getSource());
    }
 
    @Override
    public StatementLabel visitJumpTarget(StatementLabel origJump) {
       LabelRef label = origJump.getLabel();
-      return new StatementLabel(label);
+      return new StatementLabel(label, origJump.getSource());
    }
 
    @Override
@@ -171,26 +171,26 @@ public class ControlFlowGraphCopyVisitor extends ControlFlowGraphBaseVisitor<Obj
       LValue lValue = origCall.getlValue();
       String procedureName = origCall.getProcedureName();
       List<RValue> parameters = origCall.getParameters();
-      return new StatementCall(lValue, procedureName, parameters);
+      return new StatementCall(lValue, procedureName, parameters, origCall.getSource());
    }
 
    @Override
    public StatementProcedureBegin visitProcedureBegin(StatementProcedureBegin origProcedureBegin) {
-      return new StatementProcedureBegin(origProcedureBegin.getProcedure());
+      return new StatementProcedureBegin(origProcedureBegin.getProcedure(), origProcedureBegin.getSource());
    }
 
    @Override
    public StatementProcedureEnd visitProcedureEnd(StatementProcedureEnd origProcedureEnd) {
-      return new StatementProcedureEnd(origProcedureEnd.getProcedure());
+      return new StatementProcedureEnd(origProcedureEnd.getProcedure(), origProcedureEnd.getSource());
    }
 
    @Override
    public StatementReturn visitReturn(StatementReturn origReturn) {
-      return new StatementReturn(origReturn.getValue());
+      return new StatementReturn(origReturn.getValue(), origReturn.getSource());
    }
 
    @Override
    public Object visitAsm(StatementAsm asm) {
-      return new StatementAsm(asm.getAsmLines());
+      return new StatementAsm(asm.getAsmLines(), asm.getSource());
    }
 }

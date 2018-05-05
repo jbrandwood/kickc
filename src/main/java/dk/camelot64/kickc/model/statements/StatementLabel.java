@@ -10,8 +10,9 @@ public class StatementLabel extends StatementBase {
 
    private LabelRef label;
 
-   public StatementLabel(LabelRef label) {
-      super(null);
+   public StatementLabel(LabelRef label,
+                         StatementSource source) {
+      super(null, source);
       this.label = label;
    }
 

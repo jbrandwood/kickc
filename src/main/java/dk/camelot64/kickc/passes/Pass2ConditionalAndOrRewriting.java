@@ -91,7 +91,7 @@ public class Pass2ConditionalAndOrRewriting extends Pass2SsaOptimization {
       Label newBlockLabel = currentScope.addLabelIntermediate();
       ControlFlowBlock newBlock = new ControlFlowBlock(newBlockLabel.getRef(), currentScopeRef);
       getGraph().addBlock(newBlock);
-      newBlock.getStatements().add(new StatementConditionalJump(conditionAssignment.getrValue2(), conditional.getDestination()));
+      newBlock.getStatements().add(new StatementConditionalJump(conditionAssignment.getrValue2(), conditional.getDestination(), conditional.getSource()));
       newBlock.setDefaultSuccessor(block.getDefaultSuccessor());
       newBlock.setConditionalSuccessor(conditional.getDestination());
       // Rewrite the conditional to use only the first part of the && condition expression
@@ -114,7 +114,7 @@ public class Pass2ConditionalAndOrRewriting extends Pass2SsaOptimization {
       Label newBlockLabel = currentScope.addLabelIntermediate();
       ControlFlowBlock newBlock = new ControlFlowBlock(newBlockLabel.getRef(), currentScopeRef);
       getGraph().addBlock(newBlock);
-      newBlock.getStatements().add(new StatementConditionalJump(conditionAssignment.getrValue2(), conditional.getDestination()));
+      newBlock.getStatements().add(new StatementConditionalJump(conditionAssignment.getrValue2(), conditional.getDestination(), conditional.getSource()));
       newBlock.setConditionalSuccessor(conditional.getDestination());
       newBlock.setDefaultSuccessor(block.getDefaultSuccessor());
       // Rewrite the conditional to use only the first part of the && condition expression

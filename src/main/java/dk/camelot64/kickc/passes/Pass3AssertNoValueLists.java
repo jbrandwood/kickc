@@ -23,6 +23,7 @@ public class Pass3AssertNoValueLists extends Pass2SsaAssertion {
                   "Error! Value list not resolved to word constructor or array initializer" +
                         "\n value list: " + value.toString(getProgram()) +
                         "\n statement: " + currentStmt.toString(getProgram(), false)
+                  , currentStmt.getSource()
             );
          }
       });

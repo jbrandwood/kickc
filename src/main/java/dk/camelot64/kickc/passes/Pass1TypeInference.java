@@ -33,11 +33,11 @@ public class Pass1TypeInference extends Pass1Base {
                Scope currentScope = getScope().getScope(block.getScope());
                Procedure procedure = currentScope.getProcedure(procedureName);
                if(procedure == null) {
-                  throw new CompileError("Called procedure not found. " + call.toString(getProgram(), false));
+                  throw new CompileError("Called procedure not found. " + call.toString(getProgram(), false), statement.getSource());
                }
                call.setProcedure(procedure.getRef());
                if(procedure.getParameters().size() != call.getParameters().size()) {
-                  throw new CompileError("Wrong number of parameters in call. Expected " + procedure.getParameters().size() + ". " + statement.toString());
+                  throw new CompileError("Wrong number of parameters in call. Expected " + procedure.getParameters().size() + ". " + statement.toString(), statement.getSource());
                }
                SymbolTypeInference.inferCallLValue(getProgram(), (StatementCall) statement, false);
             }

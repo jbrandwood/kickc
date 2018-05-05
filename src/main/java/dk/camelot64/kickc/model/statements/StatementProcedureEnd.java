@@ -10,8 +10,8 @@ public class StatementProcedureEnd extends StatementBase {
 
    private ProcedureRef procedure;
 
-   public StatementProcedureEnd(ProcedureRef procedure) {
-      super(null);
+   public StatementProcedureEnd(ProcedureRef procedure, StatementSource source) {
+      super(null, source);
       this.procedure = procedure;
    }
 

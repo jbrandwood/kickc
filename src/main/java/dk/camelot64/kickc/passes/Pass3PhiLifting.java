@@ -61,7 +61,7 @@ public class Pass3PhiLifting {
                      if(predecessorStatements.size() > 0) {
                         lastPredecessorStatement = predecessorStatements.get(predecessorStatements.size() - 1);
                      }
-                     StatementAssignment newAssignment = new StatementAssignment(newVar, phiRValue.getrValue());
+                     StatementAssignment newAssignment = new StatementAssignment(newVar.getRef(), phiRValue.getrValue(), phiBlock.getSource());
                      if(lastPredecessorStatement instanceof StatementConditionalJump) {
                         // Use or Create a new block between the predecessor and this one - getReplacement labels where appropriate
                         ControlFlowBlock newBlock;

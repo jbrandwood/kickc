@@ -55,7 +55,7 @@ public class Pass1AssertUsedVars extends Pass1Base {
          Collection<VariableRef> used = referenceInfos.getUsedVars(statement);
          for(VariableRef usedRef : used) {
             if(!defined.contains(usedRef)) {
-               throw new CompileError("Error! Variable used before being defined " + usedRef.toString(getProgram()) + " in " + statement.toString(getProgram(), false));
+               throw new CompileError("Error! Variable used before being defined " + usedRef.toString(getProgram()) + " in " + statement.toString(getProgram(), false), statement.getSource());
             }
          }
          Collection<VariableRef> defd = referenceInfos.getDefinedVars(statement);

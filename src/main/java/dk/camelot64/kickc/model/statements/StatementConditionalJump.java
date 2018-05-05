@@ -20,8 +20,8 @@ public class StatementConditionalJump extends StatementBase {
    private RValue rValue2;
    private LabelRef destination;
 
-   public StatementConditionalJump(RValue condition, LabelRef destination) {
-      super(null);
+   public StatementConditionalJump(RValue condition, LabelRef destination,StatementSource source) {
+      super(null, source);
       this.rValue1 = null;
       this.operator = null;
       this.rValue2 = condition;
@@ -32,8 +32,9 @@ public class StatementConditionalJump extends StatementBase {
          RValue rValue1,
          Operator operator,
          RValue rValue2,
-         LabelRef destination) {
-      this(rValue1, operator, rValue2, destination, null);
+         LabelRef destination,
+         StatementSource source) {
+      this(rValue1, operator, rValue2, destination, null, source);
    }
 
    public StatementConditionalJump(
@@ -41,8 +42,9 @@ public class StatementConditionalJump extends StatementBase {
          Operator operator,
          RValue rValue2,
          LabelRef destination,
-         Integer index) {
-      super(index);
+         Integer index,
+         StatementSource source) {
+      super(index, source);
       this.rValue1 = rValue1;
       this.operator = operator;
       this.rValue2 = rValue2;

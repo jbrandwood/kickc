@@ -23,13 +23,13 @@ public class Pass3AssertNoMulDivMod extends Pass2SsaAssertion {
             if(statement instanceof StatementAssignment) {
                StatementAssignment assignment = (StatementAssignment) statement;
                if(Operators.MULTIPLY.equals(assignment.getOperator())) {
-                  throw new CompileError("ERROR! Runtime multiplication not supported. "+statement.toString(getProgram(), false));
+                  throw new CompileError("ERROR! Runtime multiplication not supported. "+statement.toString(getProgram(), false), statement.getSource());
                }
                if(Operators.DIVIDE.equals(assignment.getOperator())) {
-                  throw new CompileError("ERROR! Runtime division not supported. "+statement.toString(getProgram(), false));
+                  throw new CompileError("ERROR! Runtime division not supported. "+statement.toString(getProgram(), false), statement.getSource());
                }
                if(Operators.MODULO.equals(assignment.getOperator())) {
-                  throw new CompileError("ERROR! Runtime modulo not supported. "+statement.toString(getProgram(), false));
+                  throw new CompileError("ERROR! Runtime modulo not supported. "+statement.toString(getProgram(), false), statement.getSource());
                }
             }
 

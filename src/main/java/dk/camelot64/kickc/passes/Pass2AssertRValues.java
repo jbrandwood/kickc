@@ -24,12 +24,12 @@ public class Pass2AssertRValues extends Pass2SsaAssertion {
       ValueReplacer.executeAll(getGraph(), (replaceable, currentStmt, stmtIt, currentBlock) -> {
          RValue rValue = replaceable.get();
          if(rValue instanceof ForwardVariableRef) {
-            throw new CompileError("No forward references allowed "+currentStmt.toString(getProgram(), false));
+            throw new CompileError("No forward references allowed "+currentStmt.toString(getProgram(), false), currentStmt.getSource());
          }
          if(rValue instanceof VariableRef) {
             VariableRef variableRef = (VariableRef) rValue;
             if(!variableRef.isIntermediate() && !variableRef.isVersion()) {
-               throw new CompileError("No unversioned variable references allowed "+currentStmt.toString(getProgram(), false));
+               throw new CompileError("No unversioned variable references allowed "+currentStmt.toString(getProgram(), false), currentStmt.getSource());
             }
          }
       });

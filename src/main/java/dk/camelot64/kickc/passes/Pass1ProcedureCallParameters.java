@@ -43,7 +43,7 @@ public class Pass1ProcedureCallParameters extends ControlFlowGraphCopyVisitor {
       for(int i = 0; i < parameterDecls.size(); i++) {
          Variable parameterDecl = parameterDecls.get(i);
          RValue parameterValue = parameterValues.get(i);
-         addStatementToCurrentBlock(new StatementAssignment(parameterDecl.getRef(), parameterValue));
+         addStatementToCurrentBlock(new StatementAssignment(parameterDecl.getRef(), parameterValue, origCall.getSource()));
       }
       String procedureName = origCall.getProcedureName();
       Variable procReturnVar = procedure.getVariable("return");
@@ -51,7 +51,7 @@ public class Pass1ProcedureCallParameters extends ControlFlowGraphCopyVisitor {
       if(procReturnVar != null) {
          procReturnVarRef = procReturnVar.getRef();
       }
-      StatementCall copyCall = new StatementCall(procReturnVarRef, procedureName, null);
+      StatementCall copyCall = new StatementCall(procReturnVarRef, procedureName, null, origCall.getSource());
       copyCall.setProcedure(procedureRef);
       addStatementToCurrentBlock(copyCall);
       getCurrentBlock().setCallSuccessor(procedure.getLabel().getRef());
@@ -64,7 +64,7 @@ public class Pass1ProcedureCallParameters extends ControlFlowGraphCopyVisitor {
       }
       splitCurrentBlock(currentBlockScope.addLabelIntermediate().getRef());
       if(!SymbolType.VOID.equals(procedure.getReturnType()) && origCall.getlValue() != null) {
-         addStatementToCurrentBlock(new StatementAssignment(origCall.getlValue(), procReturnVarRef));
+         addStatementToCurrentBlock(new StatementAssignment(origCall.getlValue(), procReturnVarRef, origCall.getSource()));
       } else {
          // No return type. Remove variable receiving the result.
          LValue lValue = origCall.getlValue();
@@ -77,7 +77,7 @@ public class Pass1ProcedureCallParameters extends ControlFlowGraphCopyVisitor {
       // Add self-assignments for all variables modified in the procedure
       Set<VariableRef> modifiedVars = program.getProcedureModifiedVars().getModifiedVars(procedure.getRef());
       for(VariableRef modifiedVar : modifiedVars) {
-         addStatementToCurrentBlock(new StatementAssignment(modifiedVar, modifiedVar));
+         addStatementToCurrentBlock(new StatementAssignment(modifiedVar, modifiedVar, origCall.getSource()));
       }
       return null;
    }
@@ -90,7 +90,7 @@ public class Pass1ProcedureCallParameters extends ControlFlowGraphCopyVisitor {
       // Add self-assignments for all variables modified in the procedure
       Set<VariableRef> modifiedVars = program.getProcedureModifiedVars().getModifiedVars(procedure.getRef());
       for(VariableRef modifiedVar : modifiedVars) {
-         addStatementToCurrentBlock(new StatementAssignment(modifiedVar, modifiedVar));
+         addStatementToCurrentBlock(new StatementAssignment(modifiedVar, modifiedVar, origReturn.getSource()));
       }
       return super.visitReturn(origReturn);
    }

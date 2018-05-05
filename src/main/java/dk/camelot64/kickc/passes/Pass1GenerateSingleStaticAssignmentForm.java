@@ -58,7 +58,7 @@ public class Pass1GenerateSingleStaticAssignmentForm extends Pass1Base {
                      if(assignedSymbol.isDeclaredConstant()) {
                         Collection<VariableVersion> versions = assignedVar.getScope().getVersions(assignedSymbol);
                         if(versions.size() != 0) {
-                           throw new CompileError("Error! Constants can not be modified " + statement);
+                           throw new CompileError("Error! Constants can not be modified " + statement, statement.getSource());
                         }
                         version = assignedSymbol.createVersion();
                         version.setDeclaredConstant(true);

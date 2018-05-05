@@ -102,21 +102,21 @@ public class Pass0GenerateStatementSequence extends KickCBaseVisitor<Object> {
          parameterList = (List<Variable>) this.visit(ctx.parameterListDecl());
       }
       procedure.setParameters(parameterList);
-      sequence.addStatement(new StatementProcedureBegin(procedure.getRef()));
+      sequence.addStatement(new StatementProcedureBegin(procedure.getRef(), new StatementSource(ctx)));
       if(ctx.stmtSeq() != null) {
          this.visit(ctx.stmtSeq());
       }
-      sequence.addStatement(new StatementLabel(procExit.getRef()));
+      sequence.addStatement(new StatementLabel(procExit.getRef(), new StatementSource(ctx)));
       if(returnVar != null) {
-         sequence.addStatement(new StatementAssignment(returnVar, returnVar));
+         sequence.addStatement(new StatementAssignment(returnVar.getRef(), returnVar.getRef(), new StatementSource(ctx)));
       }
       VariableRef returnVarRef = null;
       if(returnVar != null) {
          returnVarRef = returnVar.getRef();
       }
-      sequence.addStatement(new StatementReturn(returnVarRef));
+      sequence.addStatement(new StatementReturn(returnVarRef, new StatementSource(ctx)));
       scopeStack.pop();
-      sequence.addStatement(new StatementProcedureEnd(procedure.getRef()));
+      sequence.addStatement(new StatementProcedureEnd(procedure.getRef(), new StatementSource(ctx)));
       return null;
    }
 
@@ -158,9 +158,9 @@ public class Pass0GenerateStatementSequence extends KickCBaseVisitor<Object> {
          SymbolTypeArray typeArray = (SymbolTypeArray) type;
          Integer size = typeArray.getSize();
          if(size == null) {
-            throw new CompileError("Error! Cannot determine array size. " + lValue.toString(program));
+            throw new CompileError("Error! Cannot determine array size. " + lValue.toString(program), new StatementSource(ctx));
          }
-         Statement stmt = new StatementAssignment(lValue, new ConstantArrayFilled(typeArray.getElementType(), size));
+         Statement stmt = new StatementAssignment(lValue.getRef(), new ConstantArrayFilled(typeArray.getElementType(), size), new StatementSource(ctx));
          sequence.addStatement(stmt);
       }
       return null;
@@ -181,23 +181,24 @@ public class Pass0GenerateStatementSequence extends KickCBaseVisitor<Object> {
          directives.add((Directive) this.visit(directiveContext));
       }
       for(Directive directive : directives) {
+         StatementSource source = new StatementSource(directivesCtx.get(0));
          if(directive instanceof DirectiveConst) {
             lValue.setDeclaredConstant(true);
          } else if(directive instanceof DirectiveAlign) {
             if(type instanceof SymbolTypeArray || type.equals(SymbolType.STRING)) {
                lValue.setDeclaredAlignment(((DirectiveAlign) directive).getAlignment());
             } else {
-               throw new CompileError("Error! Cannot align variable that is not a string or an array " + lValue.toString(program));
+               throw new CompileError("Error! Cannot align variable that is not a string or an array " + lValue.toString(program), source);
             }
          } else if(directive instanceof DirectiveRegister) {
             DirectiveRegister directiveRegister = (DirectiveRegister) directive;
             Registers.Register register = Registers.getRegister(directiveRegister.getName());
             if(register == null) {
-               throw new CompileError("Error! Unknown register " + directiveRegister.getName());
+               throw new CompileError("Error! Unknown register " + directiveRegister.getName(), source);
             }
             lValue.setDeclaredRegister(register);
          } else {
-            throw new CompileError("Unsupported variable directive " + directive);
+            throw new CompileError("Unsupported variable directive " + directive, source);
          }
       }
    }
@@ -214,10 +215,11 @@ public class Pass0GenerateStatementSequence extends KickCBaseVisitor<Object> {
          directives.add((Directive) this.visit(directiveContext));
       }
       for(Directive directive : directives) {
+         StatementSource source = new StatementSource(directivesCtx.get(0));
          if(directive instanceof DirectiveInline) {
             procedure.setDeclaredInline(true);
          } else {
-            throw new CompileError("Unsupported function directive " + directive);
+            throw new CompileError("Unsupported function directive " + directive, source);
          }
       }
    }
@@ -280,26 +282,26 @@ public class Pass0GenerateStatementSequence extends KickCBaseVisitor<Object> {
       if(elseStmt==null) {
          // If without else - skip the entire section if condition not met
          VariableRef notExprVar = getCurrentSymbols().addVariableIntermediate().getRef();
-         sequence.addStatement(new StatementAssignment(notExprVar, null, Operators.LOGIC_NOT, rValue));
+         sequence.addStatement(new StatementAssignment(notExprVar, null, Operators.LOGIC_NOT, rValue, new StatementSource(ctx)));
          PrePostModifierHandler.addPostModifiers(this, ctx.expr());
          Label endJumpLabel = getCurrentSymbols().addLabelIntermediate();
-         sequence.addStatement(new StatementConditionalJump(notExprVar, endJumpLabel.getRef()));
+         sequence.addStatement(new StatementConditionalJump(notExprVar, endJumpLabel.getRef(), new StatementSource(ctx)));
          this.visit(ifStmt);
          // No else statement - just add the label
-         sequence.addStatement(new StatementLabel(endJumpLabel.getRef()));
+         sequence.addStatement(new StatementLabel(endJumpLabel.getRef(), new StatementSource(ctx)));
       } else {
          // If with else - jump to if section if condition met - fall into else otherwise.
          PrePostModifierHandler.addPostModifiers(this, ctx.expr());
          Label ifJumpLabel = getCurrentSymbols().addLabelIntermediate();
-         sequence.addStatement(new StatementConditionalJump(rValue, ifJumpLabel.getRef()));
+         sequence.addStatement(new StatementConditionalJump(rValue, ifJumpLabel.getRef(), new StatementSource(ctx)));
          // Add else body
          this.visit(elseStmt);
          // There is an else statement - add the if part and any needed labels/jumps
          Label endJumpLabel = getCurrentSymbols().addLabelIntermediate();
-         sequence.addStatement(new StatementJump(endJumpLabel.getRef()));
-         sequence.addStatement(new StatementLabel(ifJumpLabel.getRef()));
+         sequence.addStatement(new StatementJump(endJumpLabel.getRef(), new StatementSource(ctx)));
+         sequence.addStatement(new StatementLabel(ifJumpLabel.getRef(), new StatementSource(ctx)));
          this.visit(ifStmt);
-         StatementLabel endJumpTarget = new StatementLabel(endJumpLabel.getRef());
+         StatementLabel endJumpTarget = new StatementLabel(endJumpLabel.getRef(), new StatementSource(ctx));
          sequence.addStatement(endJumpTarget);
       }
       return null;
@@ -310,21 +312,21 @@ public class Pass0GenerateStatementSequence extends KickCBaseVisitor<Object> {
       Label beginJumpLabel = getCurrentSymbols().addLabelIntermediate();
       Label doJumpLabel = getCurrentSymbols().addLabelIntermediate();
       Label endJumpLabel = getCurrentSymbols().addLabelIntermediate();
-      StatementLabel beginJumpTarget = new StatementLabel(beginJumpLabel.getRef());
+      StatementLabel beginJumpTarget = new StatementLabel(beginJumpLabel.getRef(), new StatementSource(ctx));
       sequence.addStatement(beginJumpTarget);
       PrePostModifierHandler.addPreModifiers(this, ctx.expr());
       RValue rValue = (RValue) this.visit(ctx.expr());
       PrePostModifierHandler.addPostModifiers(this, ctx.expr());
-      Statement doJmpStmt = new StatementConditionalJump(rValue, doJumpLabel.getRef());
+      Statement doJmpStmt = new StatementConditionalJump(rValue, doJumpLabel.getRef(), new StatementSource(ctx));
       sequence.addStatement(doJmpStmt);
-      Statement endJmpStmt = new StatementJump(endJumpLabel.getRef());
+      Statement endJmpStmt = new StatementJump(endJumpLabel.getRef(), new StatementSource(ctx));
       sequence.addStatement(endJmpStmt);
-      StatementLabel doJumpTarget = new StatementLabel(doJumpLabel.getRef());
+      StatementLabel doJumpTarget = new StatementLabel(doJumpLabel.getRef(), new StatementSource(ctx));
       sequence.addStatement(doJumpTarget);
       this.visit(ctx.stmt());
-      Statement beginJmpStmt = new StatementJump(beginJumpLabel.getRef());
+      Statement beginJmpStmt = new StatementJump(beginJumpLabel.getRef(), new StatementSource(ctx));
       sequence.addStatement(beginJmpStmt);
-      StatementLabel endJumpTarget = new StatementLabel(endJumpLabel.getRef());
+      StatementLabel endJumpTarget = new StatementLabel(endJumpLabel.getRef(), new StatementSource(ctx));
       sequence.addStatement(endJumpTarget);
       return null;
    }
@@ -332,7 +334,7 @@ public class Pass0GenerateStatementSequence extends KickCBaseVisitor<Object> {
    @Override
    public Void visitStmtDoWhile(KickCParser.StmtDoWhileContext ctx) {
       Label beginJumpLabel = getCurrentSymbols().addLabelIntermediate();
-      StatementLabel beginJumpTarget = new StatementLabel(beginJumpLabel.getRef());
+      StatementLabel beginJumpTarget = new StatementLabel(beginJumpLabel.getRef(), new StatementSource(ctx));
       sequence.addStatement(beginJumpTarget);
       if(ctx.stmt() != null) {
          this.visit(ctx.stmt());
@@ -340,7 +342,7 @@ public class Pass0GenerateStatementSequence extends KickCBaseVisitor<Object> {
       PrePostModifierHandler.addPreModifiers(this, ctx.expr());
       RValue rValue = (RValue) this.visit(ctx.expr());
       PrePostModifierHandler.addPostModifiers(this, ctx.expr());
-      Statement doJmpStmt = new StatementConditionalJump(rValue, beginJumpLabel.getRef());
+      Statement doJmpStmt = new StatementConditionalJump(rValue, beginJumpLabel.getRef(), new StatementSource(ctx));
       sequence.addStatement(doJmpStmt);
       return null;
    }
@@ -379,7 +381,7 @@ public class Pass0GenerateStatementSequence extends KickCBaseVisitor<Object> {
       }
       // Add label
       Label repeatLabel = getCurrentSymbols().addLabelIntermediate();
-      StatementLabel repeatTarget = new StatementLabel(repeatLabel.getRef());
+      StatementLabel repeatTarget = new StatementLabel(repeatLabel.getRef(), new StatementSource(ctx));
       sequence.addStatement(repeatTarget);
       // Add body
       if(stmtForCtx.stmt() != null) {
@@ -396,7 +398,7 @@ public class Pass0GenerateStatementSequence extends KickCBaseVisitor<Object> {
       RValue rValue = (RValue) this.visit(ctx.expr(0));
       PrePostModifierHandler.addPostModifiers(this, ctx.expr(0));
       // Add jump if condition was met
-      Statement doJmpStmt = new StatementConditionalJump(rValue, repeatLabel.getRef());
+      Statement doJmpStmt = new StatementConditionalJump(rValue, repeatLabel.getRef(), new StatementSource(ctx));
       sequence.addStatement(doJmpStmt);
       return null;
    }
@@ -417,7 +419,7 @@ public class Pass0GenerateStatementSequence extends KickCBaseVisitor<Object> {
          lValue = getCurrentSymbols().getVariable(varName);
       }
       if(lValue == null) {
-         throw new CompileError("Unknown variable! " + varName);
+         throw new CompileError("Unknown variable! " + varName, new StatementSource(ctx));
       }
       KickCParser.ExprContext rangeFirstCtx = ctx.expr(0);
       KickCParser.ExprContext rangeLastCtx = ctx.expr(1);
@@ -426,11 +428,11 @@ public class Pass0GenerateStatementSequence extends KickCBaseVisitor<Object> {
       ConstantInteger rangeLast = (ConstantInteger) ParseTreeConstantEvaluator.evaluate(rangeLastCtx);
       // Assign loop variable with first value
       RValue rValue = (RValue) visit(rangeFirstCtx);
-      Statement stmtInit = new StatementAssignment(lValue, rValue);
+      Statement stmtInit = new StatementAssignment(lValue.getRef(), rValue, new StatementSource(ctx));
       sequence.addStatement(stmtInit);
       // Add label
       Label repeatLabel = getCurrentSymbols().addLabelIntermediate();
-      StatementLabel repeatTarget = new StatementLabel(repeatLabel.getRef());
+      StatementLabel repeatTarget = new StatementLabel(repeatLabel.getRef(), new StatementSource(ctx));
       sequence.addStatement(repeatTarget);
       // Add body
       if(stmtForCtx.stmt() != null) {
@@ -439,7 +441,7 @@ public class Pass0GenerateStatementSequence extends KickCBaseVisitor<Object> {
       // Add increment
       ConstantInteger beyondLastVal;
       if(rangeFirst.getValue() > rangeLast.getValue()) {
-         Statement stmtInc = new StatementAssignment(lValue.getRef(), Operators.DECREMENT, lValue.getRef());
+         Statement stmtInc = new StatementAssignment(lValue.getRef(), Operators.DECREMENT, lValue.getRef(), new StatementSource(ctx));
          sequence.addStatement(stmtInc);
          if(rangeLast.getValue() == 0) {
             beyondLastVal = new ConstantInteger(255L);
@@ -447,7 +449,7 @@ public class Pass0GenerateStatementSequence extends KickCBaseVisitor<Object> {
             beyondLastVal = new ConstantInteger(rangeLast.getValue() - 1);
          }
       } else {
-         Statement stmtInc = new StatementAssignment(lValue.getRef(), Operators.INCREMENT, lValue.getRef());
+         Statement stmtInc = new StatementAssignment(lValue.getRef(), Operators.INCREMENT, lValue.getRef(), new StatementSource(ctx));
          sequence.addStatement(stmtInc);
          if(rangeLast.getValue() == 255) {
             beyondLastVal = new ConstantInteger(0L);
@@ -459,17 +461,17 @@ public class Pass0GenerateStatementSequence extends KickCBaseVisitor<Object> {
       // Add condition i<last+1 or i<last-1
       VariableIntermediate tmpVar = getCurrentSymbols().addVariableIntermediate();
       VariableRef tmpVarRef = tmpVar.getRef();
-      Statement stmtTmpVar = new StatementAssignment(tmpVarRef, lValue.getRef(), Operators.NEQ, beyondLastVal);
+      Statement stmtTmpVar = new StatementAssignment(tmpVarRef, lValue.getRef(), Operators.NEQ, beyondLastVal, new StatementSource(ctx));
       sequence.addStatement(stmtTmpVar);
       // Add jump if condition was met
-      Statement doJmpStmt = new StatementConditionalJump(tmpVarRef, repeatLabel.getRef());
+      Statement doJmpStmt = new StatementConditionalJump(tmpVarRef, repeatLabel.getRef(), new StatementSource(ctx));
       sequence.addStatement(doJmpStmt);
       return null;
    }
 
    @Override
    public Object visitStmtAsm(KickCParser.StmtAsmContext ctx) {
-      sequence.addStatement(new StatementAsm(ctx.asmLines()));
+      sequence.addStatement(new StatementAsm(ctx.asmLines(), new StatementSource(ctx)));
       return null;
    }
 
@@ -482,18 +484,18 @@ public class Pass0GenerateStatementSequence extends KickCBaseVisitor<Object> {
          PrePostModifierHandler.addPreModifiers(this, exprCtx);
          rValue = (RValue) this.visit(exprCtx);
          Variable returnVar = procedure.getVariable("return");
-         sequence.addStatement(new StatementAssignment(returnVar, rValue));
+         sequence.addStatement(new StatementAssignment(returnVar.getRef(), rValue, new StatementSource(ctx)));
          PrePostModifierHandler.addPostModifiers(this, exprCtx);
       }
       Label returnLabel = procedure.getLabel(SymbolRef.PROCEXIT_BLOCK_NAME);
-      sequence.addStatement(new StatementJump(returnLabel.getRef()));
+      sequence.addStatement(new StatementJump(returnLabel.getRef(), new StatementSource(ctx)));
       return null;
    }
 
    private void addInitialAssignment(KickCParser.ExprContext initializer, Variable lValue) {
       PrePostModifierHandler.addPreModifiers(this, initializer);
       RValue rValue = (RValue) visit(initializer);
-      Statement stmt = new StatementAssignment(lValue, rValue);
+      Statement stmt = new StatementAssignment(lValue.getRef(), rValue, new StatementSource(initializer));
       sequence.addStatement(stmt);
       PrePostModifierHandler.addPostModifiers(this, initializer);
    }
@@ -547,7 +549,7 @@ public class Pass0GenerateStatementSequence extends KickCBaseVisitor<Object> {
          lValue = new LvalueIntermediate((VariableRef) lValue);
       }
       RValue rValue = (RValue) this.visit(ctx.expr(1));
-      Statement stmt = new StatementAssignment(lValue, rValue);
+      Statement stmt = new StatementAssignment(lValue, rValue, new StatementSource(ctx));
       sequence.addStatement(stmt);
       return lValue;
    }
@@ -565,7 +567,7 @@ public class Pass0GenerateStatementSequence extends KickCBaseVisitor<Object> {
       String op = ((TerminalNode) ctx.getChild(1)).getSymbol().getText();
       Operator operator = Operators.getBinaryCompound(op);
       // Assignment with operator
-      Statement stmt = new StatementAssignment(lValue, lValue, operator, rValue);
+      Statement stmt = new StatementAssignment(lValue, lValue, operator, rValue, new StatementSource(ctx));
       sequence.addStatement(stmt);
       return lValue;
    }
@@ -577,7 +579,7 @@ public class Pass0GenerateStatementSequence extends KickCBaseVisitor<Object> {
       Operator operator = Operators.getCastUnary(castType);
       VariableIntermediate tmpVar = getCurrentSymbols().addVariableIntermediate();
       VariableRef tmpVarRef = tmpVar.getRef();
-      Statement stmt = new StatementAssignment(tmpVarRef, operator, child);
+      Statement stmt = new StatementAssignment(tmpVarRef, operator, child, new StatementSource(ctx));
       sequence.addStatement(stmt);
       return tmpVarRef;
    }
@@ -593,7 +595,7 @@ public class Pass0GenerateStatementSequence extends KickCBaseVisitor<Object> {
       }
       VariableIntermediate tmpVar = getCurrentSymbols().addVariableIntermediate();
       VariableRef tmpVarRef = tmpVar.getRef();
-      sequence.addStatement(new StatementCall(tmpVarRef, ctx.NAME().getText(), parameters));
+      sequence.addStatement(new StatementCall(tmpVarRef, ctx.NAME().getText(), parameters, new StatementSource(ctx)));
       return tmpVarRef;
    }
 
@@ -649,7 +651,7 @@ public class Pass0GenerateStatementSequence extends KickCBaseVisitor<Object> {
       Operator operator = Operators.getBinary(op);
       VariableIntermediate tmpVar = getCurrentSymbols().addVariableIntermediate();
       VariableRef tmpVarRef = tmpVar.getRef();
-      Statement stmt = new StatementAssignment(tmpVarRef, left, operator, right);
+      Statement stmt = new StatementAssignment(tmpVarRef, left, operator, right, new StatementSource(ctx));
       sequence.addStatement(stmt);
       return tmpVarRef;
    }
@@ -667,7 +669,7 @@ public class Pass0GenerateStatementSequence extends KickCBaseVisitor<Object> {
       Operator operator = Operators.getUnary(op);
       VariableIntermediate tmpVar = getCurrentSymbols().addVariableIntermediate();
       VariableRef tmpVarRef = tmpVar.getRef();
-      Statement stmt = new StatementAssignment(tmpVarRef, operator, child);
+      Statement stmt = new StatementAssignment(tmpVarRef, operator, child, new StatementSource(ctx));
       sequence.addStatement(stmt);
       return tmpVarRef;
    }
@@ -763,21 +765,22 @@ public class Pass0GenerateStatementSequence extends KickCBaseVisitor<Object> {
          PrePostModifierHandler prePostModifierHandler = new PrePostModifierHandler(parser);
          prePostModifierHandler.visit(ctx);
          List<PrePostModifier> modifiers = prePostModifierHandler.getPostMods();
-         addModifierStatements(parser, modifiers);
+         addModifierStatements(parser, modifiers, new StatementSource(ctx));
       }
 
       public static void addPreModifiers(Pass0GenerateStatementSequence parser, ParserRuleContext ctx) {
          PrePostModifierHandler modifierHandler = new PrePostModifierHandler(parser);
          modifierHandler.visit(ctx);
          List<PrePostModifier> modifiers = modifierHandler.getPreMods();
-         addModifierStatements(parser, modifiers);
+         addModifierStatements(parser, modifiers, new StatementSource(ctx));
       }
 
       private static void addModifierStatements(
             Pass0GenerateStatementSequence parser,
-            List<PrePostModifier> modifiers) {
+            List<PrePostModifier> modifiers,
+            StatementSource source) {
          for(PrePostModifier mod : modifiers) {
-            Statement stmt = new StatementAssignment((LValue) mod.child, mod.operator, mod.child);
+            Statement stmt = new StatementAssignment((LValue) mod.child, mod.operator, mod.child, source);
             parser.sequence.addStatement(stmt);
             parser.program.getLog().append("Adding pre/post-modifier " + stmt.toString(parser.program, true));
          }

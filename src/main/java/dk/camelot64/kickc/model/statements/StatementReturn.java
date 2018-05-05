@@ -13,8 +13,8 @@ public class StatementReturn extends StatementBase {
     */
    private RValue value;
 
-   public StatementReturn(RValue value) {
-      super(null);
+   public StatementReturn(RValue value, StatementSource source) {
+      super(null, source);
       this.value = value;
    }
 

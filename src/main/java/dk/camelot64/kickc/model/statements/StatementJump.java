@@ -13,8 +13,9 @@ public class StatementJump extends StatementBase {
 
    private LabelRef destination;
 
-   public StatementJump(LabelRef destination) {
-      super(null);
+   public StatementJump(LabelRef destination,
+                        StatementSource source) {
+      super(null, source);
       this.destination = destination;
    }
 

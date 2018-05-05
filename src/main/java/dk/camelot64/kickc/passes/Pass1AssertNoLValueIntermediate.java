@@ -26,7 +26,7 @@ public class Pass1AssertNoLValueIntermediate extends Pass1Base {
                if(lValue instanceof LvalueIntermediate) {
                   VariableRef intermediateVar = ((LvalueIntermediate) lValue).getVariable();
                   StatementAssignment assignment = getGraph().getAssignment(intermediateVar);
-                  throw new CompileError("Error! LValue is illegal. " + statement + " - definition of lValue " + assignment);
+                  throw new CompileError("Error! LValue is illegal. " + statement + " - definition of lValue " + assignment, assignment.getSource());
                }
             }
          }

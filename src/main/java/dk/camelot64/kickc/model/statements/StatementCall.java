@@ -22,8 +22,8 @@ public class StatementCall extends StatementBase implements StatementLValue {
    private ProcedureRef procedure;
    private List<RValue> parameters;
 
-   public StatementCall(LValue lValue, String procedureName, List<RValue> parameters) {
-      super(null);
+   public StatementCall(LValue lValue, String procedureName, List<RValue> parameters, StatementSource source) {
+      super(null, source);
       this.lValue = lValue;
       this.procedureName = procedureName;
       this.parameters = parameters;

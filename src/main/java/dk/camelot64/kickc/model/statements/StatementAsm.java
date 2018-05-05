@@ -9,8 +9,9 @@ public class StatementAsm extends StatementBase {
    /** ASM Fragment code. */
    private KickCParser.AsmLinesContext asmLines;
 
-   public StatementAsm(KickCParser.AsmLinesContext asmLines) {
-      super(null);
+   public StatementAsm(KickCParser.AsmLinesContext asmLines,
+                       StatementSource source) {
+      super(null, source);
       this.asmLines = asmLines;
    }
 

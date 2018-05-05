@@ -85,7 +85,7 @@ public class Pass1ProcedureInline extends Pass1Base {
                      Variable procReturnVar = procedure.getVariable("return");
                      String inlinedReturnVarName = getInlineSymbolName(procedure, procReturnVar, serial);
                      Variable inlinedReturnVar = callScope.getVariable(inlinedReturnVarName);
-                     restBlock.addStatement(new StatementAssignment(call.getlValue(), inlinedReturnVar.getRef()));
+                     restBlock.addStatement(new StatementAssignment(call.getlValue(), inlinedReturnVar.getRef(), call.getSource()));
                   } else {
                      // Remove the tmp var receiving the result
                      LValue lValue = call.getlValue();
@@ -165,10 +165,10 @@ public class Pass1ProcedureInline extends Pass1Base {
       Statement inlinedStatement;
       if(procStatement instanceof StatementAssignment) {
          StatementAssignment procAssignment = (StatementAssignment) procStatement;
-         inlinedStatement = new StatementAssignment(procAssignment.getlValue(), procAssignment.getrValue1(), procAssignment.getOperator(), procAssignment.getrValue2());
+         inlinedStatement = new StatementAssignment(procAssignment.getlValue(), procAssignment.getrValue1(), procAssignment.getOperator(), procAssignment.getrValue2(), procAssignment.getSource());
       } else if(procStatement instanceof StatementCall) {
          StatementCall procCall = (StatementCall) procStatement;
-         StatementCall inlinedCall = new StatementCall(procCall.getlValue(), procCall.getProcedureName(), new ArrayList<>(procCall.getParameters()));
+         StatementCall inlinedCall = new StatementCall(procCall.getlValue(), procCall.getProcedureName(), new ArrayList<>(procCall.getParameters()), procCall.getSource());
          inlinedCall.setProcedure(procCall.getProcedure());
          inlinedStatement = inlinedCall;
       } else if(procStatement instanceof StatementConditionalJump) {
@@ -180,12 +180,12 @@ public class Pass1ProcedureInline extends Pass1Base {
             String inlineSymbolName = getInlineSymbolName(procedure, procDestination, serial);
             inlinedDest = callScope.getLabel(inlineSymbolName);
          }
-         inlinedStatement = new StatementConditionalJump(procConditional.getrValue1(), procConditional.getOperator(), procConditional.getrValue2(), inlinedDest.getRef());
+         inlinedStatement = new StatementConditionalJump(procConditional.getrValue1(), procConditional.getOperator(), procConditional.getrValue2(), inlinedDest.getRef(), procConditional.getSource());
       } else if(procStatement instanceof StatementReturn) {
          // No statement needed
          return null;
       } else {
-         throw new CompileError("Statement type of Inline function not handled " + procStatement);
+         throw new CompileError("Statement type of Inline function not handled " + procStatement, procStatement.getSource());
       }
       if(inlinedStatement!=null) {
          ValueReplacer.executeAll(inlinedStatement, new RValueInliner(procedure, serial, callScope), null, null);
@@ -252,7 +252,7 @@ public class Pass1ProcedureInline extends Pass1Base {
          String inlineParameterVarName = getInlineSymbolName(procedure, parameterDecl, serial);
          Variable inlineParameterVar = callScope.getVariable(inlineParameterVarName);
          RValue parameterValue = parameterValues.get(i);
-         statementsIt.add(new StatementAssignment(inlineParameterVar.getRef(), parameterValue));
+         statementsIt.add(new StatementAssignment(inlineParameterVar.getRef(), parameterValue, call.getSource()));
       }
    }
 

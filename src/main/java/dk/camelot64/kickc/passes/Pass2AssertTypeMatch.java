@@ -41,7 +41,7 @@ public class Pass2AssertTypeMatch extends Pass2SsaAssertion {
       }
       // Types do not match
       getLog().append("ERROR! Type mismatch (" + lValueType.getTypeName() + ") cannot be assigned from (" + rValueType.getTypeName() + "). In " + statement.toString(getProgram(), false));
-      throw new CompileError("ERROR! Type mismatch (" + lValueType.getTypeName() + ") cannot be assigned from (" + rValueType.getTypeName() + "). In " + statement.toString(getProgram(), false));
+      throw new CompileError("ERROR! Type mismatch (" + lValueType.getTypeName() + ") cannot be assigned from (" + rValueType.getTypeName() + "). In " + statement.toString(getProgram(), false), statement.getSource());
    }
 
 }

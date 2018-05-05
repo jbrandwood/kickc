@@ -2,6 +2,7 @@ package dk.camelot64.kickc.passes;
 
 import dk.camelot64.kickc.model.*;
 import dk.camelot64.kickc.model.operators.Operators;
+import dk.camelot64.kickc.model.statements.StatementSource;
 import dk.camelot64.kickc.model.values.LValue;
 import dk.camelot64.kickc.model.statements.Statement;
 import dk.camelot64.kickc.model.statements.StatementAssignment;
@@ -67,7 +68,7 @@ public class Pass1AddTypePromotions extends Pass1Base {
          String msg = "ERROR! Type mismatch (" + lValueType.getTypeName() + ") cannot be assigned from (" + rValueType.getTypeName() + "). " +
                "In " + assignment.toString(getProgram(), false);
          getProgram().getLog().append(msg);
-         throw new CompileError(msg);
+         throw new CompileError(msg, assignment.getSource());
       }
    }
 

@@ -45,6 +45,11 @@ public class TestPrograms {
    }
 
    @Test
+   public void testLineAnim() throws IOException, URISyntaxException {
+      compileAndCompare("line-anim");
+   }
+
+   @Test
    public void testInlineFunctionLevel2() throws IOException, URISyntaxException {
       compileAndCompare("inline-function-level2");
    }

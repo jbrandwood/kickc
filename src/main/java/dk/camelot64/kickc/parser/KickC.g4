@@ -9,6 +9,30 @@ asmFile
     : asmLines EOF
     ;
 
+fragmentFile
+    : fragmentDecl EOF
+    ;
+
+fragmentDecl
+    : 'fragment' signature '{' fragmentPart* '}'
+    ;
+
+fragmentPart
+    : 'asm' NAME '{' fragmentAsm '}'    #fragmentPartAsm
+    | 'fragments' '{' fragmentDecl* '}' #fragmentSubFragments
+    ;
+
+fragmentAsm
+    : asmLines                          #fragmentAsmLines
+    | asmParamMode asmDirectiveClobber* #fragmentAsmParam
+    ;
+
+signature
+    : typeDecl directive NAME                   #sigParamDecl
+    | NAME                                      #sigParamUse
+    | NAME '(' signature (',' signature)* ')'   #sigAggregate
+    ;
+
 importSeq
     : importDecl*
     ;
@@ -45,6 +69,7 @@ directive
     | 'align' '(' NUMBER ')' #directiveAlign
     | 'register' '(' NAME ')' #directiveRegister
     | 'inline' #directiveInline
+    | 'zeropage' #directiveZeropage
     ;
 
 stmtSeq
@@ -75,6 +100,7 @@ forIteration
 typeDecl
     : SIMPLETYPE  #typeSimple
     | 'signed' SIMPLETYPE  #typeSignedSimple
+    | 'unsigned' SIMPLETYPE  #typeUnsignedSimple
     | typeDecl '*' #typePtr
     | typeDecl '[' (expr)? ']' #typeArray
     ;
@@ -120,6 +146,13 @@ asmLine
     : asmLabel
     | asmInstruction
     | asmBytes
+    | '{' asmExprReplacement '}'
+    | asmDirectiveClobber
+    ;
+
+asmDirectiveClobber
+    : 'noclobber' '(' NAME ')' #directiveNoClobber
+    | 'allowclobber' '(' NAME ')' #directiveAllowClobber
     ;
 
 asmLabel
@@ -152,9 +185,14 @@ asmExpr
     | asmExpr ( '+' | '-' )  asmExpr #asmExprBinary
     | NAME #asmExprLabel
     | ASMREL #asmExprLabelRel
-    | '{' NAME '}' #asmExprReplace
+    | '{' asmExprReplacement '}' #asmExprReplace
     | NUMBER #asmExprInt
     | CHAR #asmExprChar
+    ;
+
+asmExprReplacement
+    : NAME #asmExprReplacementNamed
+    | 'fragment' signature ( '[' NAME ']')? #asmExprReplacementFragment
     ;
 
 MNEMONIC:

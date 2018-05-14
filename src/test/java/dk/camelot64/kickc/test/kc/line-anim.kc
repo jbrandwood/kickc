@@ -1,7 +1,13 @@
 // Animated lines drawn on a single color bitmap
+import "c64.kc"
+
+byte* BITMAP = $2000;
+byte* SCREEN = $400;
 
 // The number of points
 const byte SIZE = 4;
+// The delay between pixels
+const byte DELAY = 8;
 
 // The coordinates of the lines to animate
 word[4] x_start = { 10, 20, 30, 30 };
@@ -23,15 +29,65 @@ byte[4] delay;
 byte[4] frame;
 
 void main() {
+    *D011 = VIC_BMM|VIC_DEN|VIC_RSEL|3;
+    *VIC_MEMORY =  (byte)((((word)SCREEN&$3fff)/$40)|(((word)BITMAP&$3fff)/$400));
+    bitmap_init(BITMAP);
+    bitmap_clear();
     for( byte i=0; i!=8; i+=2) {
-        init(i);
+        point_init(i);
+        bitmap_plot(x_start[i], y_start[i>>1]);
     }
-
+    while(true) {
+        (*BORDERCOL)++;
+    }
 }
 
-void init(byte point_idx) {
+void point_init(byte point_idx) {
     x_cur[point_idx] = x_start[point_idx]<<4;
     y_cur[point_idx] = ((word)y_start[point_idx>>1])<<4;
+    delay[point_idx>>1] = DELAY;
 }
+
+// Tables for the plotter - initialized by calling bitmap_draw_init();
+const byte[256] bitmap_plot_ylo;
+const byte[256] bitmap_plot_yhi;
+const byte[256] bitmap_plot_bit;
+
+void bitmap_init(byte* bitmap) {
+    byte bits = $80;
+    for(byte x : 0..255) {
+        bitmap_plot_bit[x] = bits;
+        bits >>= 1;
+        if(bits==0) {
+          bits = $80;
+        }
+    }
+    byte* yoffs = bitmap;
+    for(byte y : 0..255) {
+        bitmap_plot_ylo[y] = y&$7 | <yoffs;
+        bitmap_plot_yhi[y] = >yoffs;
+        if((y&$7)==7) {
+            yoffs = yoffs + 40*8;
+        }
+    }
+}
+
+// Clear all graphics on the bitmap
+void bitmap_clear() {
+    byte* bitmap = (byte*) { bitmap_plot_yhi[0], bitmap_plot_ylo[0] };
+    for( byte y: 0..39 ) {
+        for( byte x: 0..199 ) {
+            *bitmap++ = 0;
+        }
+    }
+}
+
+// Plot a single dot in the bitmap
+void bitmap_plot(word x, byte y) {
+    byte* plotter = (byte*) { bitmap_plot_yhi[y], bitmap_plot_ylo[y] };
+    plotter += ( x & $fff7 );
+    *plotter |= bitmap_plot_bit[<x];
+}
+
 
 

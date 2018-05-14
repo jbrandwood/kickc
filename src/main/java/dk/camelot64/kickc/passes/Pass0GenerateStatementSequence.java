@@ -458,7 +458,7 @@ public class Pass0GenerateStatementSequence extends KickCBaseVisitor<Object> {
          }
       }
 
-      // Add condition i<last+1 or i<last-1
+      // Add condition i!=last+1 or i!=last-1
       VariableIntermediate tmpVar = getCurrentSymbols().addVariableIntermediate();
       VariableRef tmpVarRef = tmpVar.getRef();
       Statement stmtTmpVar = new StatementAssignment(tmpVarRef, lValue.getRef(), Operators.NEQ, beyondLastVal, new StatementSource(ctx));
@@ -611,7 +611,7 @@ public class Pass0GenerateStatementSequence extends KickCBaseVisitor<Object> {
 
    @Override
    public RValue visitExprArray(KickCParser.ExprArrayContext ctx) {
-      RValue array = (LValue) visit(ctx.expr(0));
+      RValue array = (RValue) visit(ctx.expr(0));
       RValue index = (RValue) visit(ctx.expr(1));
       return new PointerDereferenceIndexed(array, index);
    }
